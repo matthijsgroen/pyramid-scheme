@@ -60,6 +60,8 @@ The designer's morning list for the unattended camp-release queue. Newest phase 
 - Phase 3 — Loot report rows: "Camp finds" against the table's found items and "Structure parts" against the table's parts, each counted wherever it lies.
 - Phase 3 — The brief wins over the spec on three points: parts scale with the tier (the parts decision above), the found-item count follows the catalogue (the 28 finds decision above), and the Constructies list shows structure art plus "n van m", with parts only in an opened row (the spec showed parts inline).
 - Phase 4 — World-gen offers no slot on the end of a section that resolves to Fez's shop, and clears a placeholder standing there, because a shop room shows only its stock. Nothing (fragment, key, money, camp loot) lands there any more. The bake moved: pieces relocated, so the junior, expert, master and wizard tier fingerprints changed; starter did not. Alternative: let a shop room also hand out its end reward (a new room kind).
+- Phase 4 — World-gen refuses an authored (non-placeholder) `endReward` on a shop's end ("authored endReward on a shop end: <address>"), since it would vanish in play. None is authored today.
+- Phase 4 — checked: no reward on a key-host end at shipped seeds (0 of 633 section end rewards, and 0 at the placement layout too). All 90 key-hosting chests stand on sections the carve grows itself, never on an authored one. Neither `findEmptyChests` (it skips key hosts) nor the loot report (it reads the config) would have counted one.
 
 ## Phase 1 loot
 
