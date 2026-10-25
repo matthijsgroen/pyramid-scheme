@@ -494,6 +494,64 @@
     }
   },
 
+  "camp": {
+    "firstHome": {
+      "1": { "fez": "This is your camp? A fire and a chest?" },
+      "2": { "explorer": "Our camp." },
+      "3": { "fez": "Ours. Right. Then I'm having the spot by the fire." },
+      "4": { "fez": "I am a lizard, after all. When it suits me." }
+    },
+    "homeHaul": {
+      "1": { "fez": "Unpacking! Best bit of the whole trip." },
+      "2": { "explorer": "Better than the pyramid?" },
+      "3": { "fez": "The pyramid isn't ours. This is." }
+    },
+    "homeEmpty": {
+      "1": { "explorer": "Empty-handed." },
+      "2": { "fez": "So? We walked. That counts too." },
+      "3": { "explorer": "Towards what?" },
+      "4": { "fez": "My legs. They're very short, you know." }
+    },
+    "rested": {
+      "1": { "fez": "There. Feeling a bit better?" },
+      "2": { "explorer": "It was only a scratch." },
+      "3": { "fez": "I didn't even look. And I still had to sit down." }
+    },
+    "chapterJunior": {
+      "1": { "fez": "Well, that went nicely. Next!" },
+      "2": { "explorer": "It wasn't that easy." },
+      "3": { "fez": "It is now. Everything's easy afterwards." }
+    },
+    "chapterExpert": {
+      "1": { "fez": "Out there they've got traps. Real ones. They bite." },
+      "2": { "fez": "Get hurt? Then we just walk back. You'll mend at home." },
+      "3": { "explorer": "What about you?" },
+      "4": { "fez": "I'll walk behind you. It's safer there." }
+    },
+    "chapterMaster": {
+      "1": { "fez": "Four pyramids out there. Remember when there was just the one?" },
+      "2": { "explorer": "That wasn't so long ago." },
+      "3": { "fez": "No. Feels it, though." }
+    },
+    "chapterWizard": {
+      "1": { "fez": "Look at the last one. Golden tip and all!" },
+      "2": { "fez": "That one'll cost us. The last one always does." },
+      "3": { "explorer": "Cost us what?" },
+      "4": { "fez": "…I'm not sure any more." }
+    },
+    "firstFind": {
+      "1": { "fez": "Look at that — like it's always been there!" },
+      "2": { "fez": "I've got this itch to hang a price tag on it." },
+      "3": { "explorer": "Don't." },
+      "4": { "fez": "No, no. You don't sell from home. I know that." }
+    },
+    "structureDone": {
+      "1": { "fez": "It's done! Every last bit's in!" },
+      "2": { "explorer": "All our own work." },
+      "3": { "fez": "Well. I mostly pointed." }
+    }
+  },
+
   "bond": {
     "starter": {
       "1": { "fez": "That was quick." },

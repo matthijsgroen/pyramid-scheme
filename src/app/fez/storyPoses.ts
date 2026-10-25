@@ -162,6 +162,25 @@ export const STORY_POSES: Readonly<Record<string, Pose | { pose?: Pose; face: Fa
   "pillar.wizard_treasure_tomb_c.3.fez": { face: "sheepish" },
   "cavern.wizard_treasure_tomb_c.1.fez": "pointUp",
   "cavern.wizard_treasure_tomb_c.3.fez": { face: "wistful" },
+  // The camp: home, homecomings, new chapters, the first find and the first finished structure
+  "camp.firstHome.1.fez": { face: "surprised" },
+  "camp.firstHome.3.fez": { face: "sheepish" },
+  "camp.homeHaul.1.fez": "pointUp",
+  "camp.homeEmpty.4.fez": { face: "sheepish" },
+  "camp.rested.1.fez": { face: "worried" },
+  "camp.rested.3.fez": { face: "sheepish" },
+  "camp.chapterJunior.1.fez": "pointUp",
+  "camp.chapterExpert.1.fez": { face: "worried" },
+  "camp.chapterExpert.4.fez": { face: "sheepish" },
+  "camp.chapterMaster.3.fez": { face: "wistful" },
+  "camp.chapterWizard.1.fez": { face: "surprised" },
+  "camp.chapterWizard.4.fez": { face: "wistful" },
+  "camp.firstFind.1.fez": "pointUp",
+  "camp.firstFind.2.fez": { face: "worried" },
+  "camp.firstFind.3.explorer": { face: "deadpan" },
+  "camp.firstFind.4.fez": { face: "sheepish" },
+  "camp.structureDone.1.fez": { face: "surprised" },
+  "camp.structureDone.3.fez": "pointUp",
 }
 
 /** The pose a line is drawn in and the face over it, if any. */

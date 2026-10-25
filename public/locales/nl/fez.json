@@ -501,6 +501,64 @@
     }
   },
 
+  "camp": {
+    "firstHome": {
+      "1": { "fez": "Is dít je kamp? Een vuurtje en een kist?" },
+      "2": { "explorer": "Ons kamp." },
+      "3": { "fez": "Ons. Goed. Dan wil ik wel het plekje vlak bij het vuur." },
+      "4": { "fez": "Ik ben nou eenmaal een hagedis. Als het mij uitkomt." }
+    },
+    "homeHaul": {
+      "1": { "fez": "Uitpakken! Het mooiste stuk van de hele reis." },
+      "2": { "explorer": "Mooier dan de piramide?" },
+      "3": { "fez": "Die piramide is niet van ons. Dit wel." }
+    },
+    "homeEmpty": {
+      "1": { "explorer": "Lege handen." },
+      "2": { "fez": "Nou en? We hebben gelopen. Dat telt ook." },
+      "3": { "explorer": "Waarvoor?" },
+      "4": { "fez": "Voor mijn benen. Die zijn heel kort, hè." }
+    },
+    "rested": {
+      "1": { "fez": "Zo. Gaat het weer een beetje?" },
+      "2": { "explorer": "Het was maar een schrammetje." },
+      "3": { "fez": "Ik heb niet eens gekeken. En toch moest ik even zitten." }
+    },
+    "chapterJunior": {
+      "1": { "fez": "Nou, dat hebben we mooi gedaan. Volgende!" },
+      "2": { "explorer": "Zo makkelijk ging het niet." },
+      "3": { "fez": "Achteraf wel. Achteraf gaat alles makkelijk." }
+    },
+    "chapterExpert": {
+      "1": { "fez": "Daar verderop zitten valstrikken. Echte, die bijten." },
+      "2": { "fez": "Raak je gewond? Dan lopen we gewoon terug. Thuis knap je wel weer op." },
+      "3": { "explorer": "En jij dan?" },
+      "4": { "fez": "Ik loop achter je. Daar is het veiliger." }
+    },
+    "chapterMaster": {
+      "1": { "fez": "Vier piramides, daarginds. Weet je nog, toen er maar één stond?" },
+      "2": { "explorer": "Zo lang is dat niet geleden." },
+      "3": { "fez": "Nee. Toch voelt het zo." }
+    },
+    "chapterWizard": {
+      "1": { "fez": "Moet je die laatste zien. Met een gouden punt!" },
+      "2": { "fez": "Die gaat ons wat kosten. De laatste kost altijd het meest." },
+      "3": { "explorer": "Wat dan?" },
+      "4": { "fez": "…Weet ik eigenlijk niet meer." }
+    },
+    "firstFind": {
+      "1": { "fez": "Kijk eens, het staat er alsof het er altijd al stond!" },
+      "2": { "fez": "Ik krijg zin om er een prijskaartje aan te hangen." },
+      "3": { "explorer": "Niet doen." },
+      "4": { "fez": "Nee, nee. Thuis verkoop je niks. Dat weet ik heus." }
+    },
+    "structureDone": {
+      "1": { "fez": "Het is af! Alle stukjes zitten erin!" },
+      "2": { "explorer": "Zelf gebouwd." },
+      "3": { "fez": "Nou ja. Ik heb vooral gewezen." }
+    }
+  },
+
   "bond": {
     "starter": {
       "1": { "fez": "Dat ging snel." },

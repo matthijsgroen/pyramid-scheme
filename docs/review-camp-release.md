@@ -354,6 +354,51 @@ From `yarn loot-report` before (651aad2c) and after the bake (88646b9e). `docs/l
   - Fez: "Daar is hij. Alle lijnen op die kaart komen hier uit." / "There it is. Every line on that map ends up here."
   - Explorer: "Dan is dit het eind." / "Then this is the end."
   - Fez: "Van de kaart, ja. Raar. Ik dacht dat dat beter zou voelen." / "Of the map, yes. Funny. I thought that would feel better."
+- Phase 8 — `camp.firstHome` — fires: the camp — the first time it shows after Fez has been met
+  - Fez: "Is dít je kamp? Een vuurtje en een kist?" / "This is your camp? A fire and a chest?"
+  - Explorer: "Ons kamp." / "Our camp."
+  - Fez: "Ons. Goed. Dan wil ik wel het plekje vlak bij het vuur." / "Ours. Right. Then I'm having the spot by the fire."
+  - Fez: "Ik ben nou eenmaal een hagedis. Als het mij uitkomt." / "I am a lizard, after all. When it suits me."
+- Phase 8 — `camp.homeHaul` — fires: the camp — the first home showing after unpacking a haul with something in it
+  - Fez: "Uitpakken! Het mooiste stuk van de hele reis." / "Unpacking! Best bit of the whole trip."
+  - Explorer: "Mooier dan de piramide?" / "Better than the pyramid?"
+  - Fez: "Die piramide is niet van ons. Dit wel." / "The pyramid isn't ours. This is."
+- Phase 8 — `camp.homeEmpty` — fires: the camp — the first home showing after coming home with nothing
+  - Explorer: "Lege handen." / "Empty-handed."
+  - Fez: "Nou en? We hebben gelopen. Dat telt ook." / "So? We walked. That counts too."
+  - Explorer: "Waarvoor?" / "Towards what?"
+  - Fez: "Voor mijn benen. Die zijn heel kort, hè." / "My legs. They're very short, you know."
+- Phase 8 — `camp.rested` — fires: the camp — the first time a homecoming refilled a heart
+  - Fez: "Zo. Gaat het weer een beetje?" / "There. Feeling a bit better?"
+  - Explorer: "Het was maar een schrammetje." / "It was only a scratch."
+  - Fez: "Ik heb niet eens gekeken. En toch moest ik even zitten." / "I didn't even look. And I still had to sit down."
+- Phase 8 — `camp.chapterJunior` — fires: leaving the junior new-chapter card
+  - Fez: "Nou, dat hebben we mooi gedaan. Volgende!" / "Well, that went nicely. Next!"
+  - Explorer: "Zo makkelijk ging het niet." / "It wasn't that easy."
+  - Fez: "Achteraf wel. Achteraf gaat alles makkelijk." / "It is now. Everything's easy afterwards."
+- Phase 8 — `camp.chapterExpert` — fires: leaving the expert new-chapter card
+  - Fez: "Daar verderop zitten valstrikken. Echte, die bijten." / "Out there they've got traps. Real ones. They bite."
+  - Fez: "Raak je gewond? Dan lopen we gewoon terug. Thuis knap je wel weer op." / "Get hurt? Then we just walk back. You'll mend at home."
+  - Explorer: "En jij dan?" / "What about you?"
+  - Fez: "Ik loop achter je. Daar is het veiliger." / "I'll walk behind you. It's safer there."
+- Phase 8 — `camp.chapterMaster` — fires: leaving the master new-chapter card
+  - Fez: "Vier piramides, daarginds. Weet je nog, toen er maar één stond?" / "Four pyramids out there. Remember when there was just the one?"
+  - Explorer: "Zo lang is dat niet geleden." / "That wasn't so long ago."
+  - Fez: "Nee. Toch voelt het zo." / "No. Feels it, though."
+- Phase 8 — `camp.chapterWizard` — fires: leaving the wizard new-chapter card
+  - Fez: "Moet je die laatste zien. Met een gouden punt!" / "Look at the last one. Golden tip and all!"
+  - Fez: "Die gaat ons wat kosten. De laatste kost altijd het meest." / "That one'll cost us. The last one always does."
+  - Explorer: "Wat dan?" / "Cost us what?"
+  - Fez: "…Weet ik eigenlijk niet meer." / "…I'm not sure any more."
+- Phase 8 — `camp.firstFind` — fires: the camp — the first home showing after the first camp find was brought home
+  - Fez: "Kijk eens, het staat er alsof het er altijd al stond!" / "Look at that — like it's always been there!"
+  - Fez: "Ik krijg zin om er een prijskaartje aan te hangen." / "I've got this itch to hang a price tag on it."
+  - Explorer: "Niet doen." / "Don't."
+  - Fez: "Nee, nee. Thuis verkoop je niks. Dat weet ik heus." / "No, no. You don't sell from home. I know that."
+- Phase 8 — `camp.structureDone` — fires: the camp — the first home showing after the first structure has all its parts
+  - Fez: "Het is af! Alle stukjes zitten erin!" / "It's done! Every last bit's in!"
+  - Explorer: "Zelf gebouwd." / "All our own work."
+  - Fez: "Nou ja. Ik heb vooral gewezen." / "Well. I mostly pointed."
 
 ## Failures
 

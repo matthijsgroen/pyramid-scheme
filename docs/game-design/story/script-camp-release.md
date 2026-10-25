@@ -390,6 +390,189 @@ fires: Throne of Eternity — arriving at the cavern
 > **Fez (wistful):** Van de kaart, ja. Raar. Ik dacht dat dat beter zou voelen.
 > _en:_ Of the map, yes. Funny. I thought that would feel better.
 
+## Camp
+
+Home: the explorer and Fez together at their own fire, small and growing. Fez travels home with the explorer
+and sells nothing here. These play at the camp after the coming-home screen is left, and a chapter line
+when the new-chapter card is left (at the camp, or on the way out), so none repeats the card ("Er doemt een
+nieuwe piramide op", "Kom op adem in het kamp"), the rest panel ("Uitgerust bij het vuur") or the coming-home
+labels. Lighter than a tomb's: the player hears one of them on most homecomings early on. No line names a
+find; one homecoming can offer `homeHaul` and `firstFind` both, and only one plays, so neither leans on the
+other.
+
+### `camp.firstHome`
+
+fires: the camp — the first time it shows after Fez has been met; their first evening there together
+
+> **Fez (surprised):** Is dít je kamp? Een vuurtje en een kist?
+> _en:_ This is your camp? A fire and a chest?
+>
+> **Explorer:** Ons kamp.
+> _en:_ Our camp.
+>
+> **Fez (sheepish):** Ons. Goed. Dan wil ik wel het plekje vlak bij het vuur.
+> _en:_ Ours. Right. Then I'm having the spot by the fire.
+>
+> **Fez:** Ik ben nou eenmaal een hagedis. Als het mij uitkomt.
+> _en:_ I am a lizard, after all. When it suits me.
+
+Leans on the meeting ("Een hagedis?! Met een fez?" — "Een handelaar."): Fez only admits to being a lizard
+when it gets him the warm spot. Names only the fire and the chest, which stand in the camp from the start.
+
+### `camp.homeHaul`
+
+fires: the camp — the first home showing after unpacking a haul with something in it
+
+> **Fez (pointUp):** Uitpakken! Het mooiste stuk van de hele reis.
+> _en:_ Unpacking! Best bit of the whole trip.
+>
+> **Explorer:** Mooier dan de piramide?
+> _en:_ Better than the pyramid?
+>
+> **Fez:** Die piramide is niet van ons. Dit wel.
+> _en:_ The pyramid isn't ours. This is.
+
+Works for any haul, coins and mosaic pieces alone included.
+
+### `camp.homeEmpty`
+
+fires: the camp — the first home showing after coming home with nothing
+
+> **Explorer:** Lege handen.
+> _en:_ Empty-handed.
+>
+> **Fez:** Nou en? We hebben gelopen. Dat telt ook.
+> _en:_ So? We walked. That counts too.
+>
+> **Explorer:** Waarvoor?
+> _en:_ Towards what?
+>
+> **Fez (sheepish):** Voor mijn benen. Die zijn heel kort, hè.
+> _en:_ My legs. They're very short, you know.
+
+### `camp.rested`
+
+fires: the camp — the first time a homecoming refilled a heart
+
+> **Fez (worried):** Zo. Gaat het weer een beetje?
+> _en:_ There. Feeling a bit better?
+>
+> **Explorer:** Het was maar een schrammetje.
+> _en:_ It was only a scratch.
+>
+> **Fez (sheepish):** Ik heb niet eens gekeken. En toch moest ik even zitten.
+> _en:_ I didn't even look. And I still had to sit down.
+
+The rest panel already says the hearts are full, so the line is about the fright, not the healing.
+
+### `camp.chapterJunior`
+
+fires: leaving the junior new-chapter card (after Ipi's tomb)
+
+> **Fez (pointUp):** Nou, dat hebben we mooi gedaan. Volgende!
+> _en:_ Well, that went nicely. Next!
+>
+> **Explorer:** Zo makkelijk ging het niet.
+> _en:_ It wasn't that easy.
+>
+> **Fez:** Achteraf wel. Achteraf gaat alles makkelijk.
+> _en:_ It is now. Everything's easy afterwards.
+
+The first step up: cocky and light. Says nothing about Henut, whom the junior tomb's cave introduces.
+
+### `camp.chapterExpert`
+
+fires: leaving the expert new-chapter card (after Henut's tomb)
+
+> **Fez (worried):** Daar verderop zitten valstrikken. Echte, die bijten.
+> _en:_ Out there they've got traps. Real ones. They bite.
+>
+> **Fez:** Raak je gewond? Dan lopen we gewoon terug. Thuis knap je wel weer op.
+> _en:_ Get hurt? Then we just walk back. You'll mend at home.
+>
+> **Explorer:** En jij dan?
+> _en:_ What about you?
+>
+> **Fez (sheepish):** Ik loop achter je. Daar is het veiliger.
+> _en:_ I'll walk behind you. It's safer there.
+
+Carries the sketch's trap line ("Hier liggen de eerste valstrikken — kom terug naar het kamp om op te
+knappen"), which the card left out: Fez warns, because he knows these places. Works at the camp and on the
+way out ("daar verderop", "thuis").
+
+### `camp.chapterMaster`
+
+fires: leaving the master new-chapter card (after the High Priest's tomb)
+
+> **Fez:** Vier piramides, daarginds. Weet je nog, toen er maar één stond?
+> _en:_ Four pyramids out there. Remember when there was just the one?
+>
+> **Explorer:** Zo lang is dat niet geleden.
+> _en:_ That wasn't so long ago.
+>
+> **Fez (wistful):** Nee. Toch voelt het zo.
+> _en:_ No. Feels it, though.
+
+Quieter: the weight of how far they have come, before Act IV. Counts the horizon (one pyramid per chapter,
+`camp.md` §4, four at master): if the horizon changes, the number goes.
+
+### `camp.chapterWizard`
+
+fires: leaving the wizard new-chapter card (after the Pharaoh's tomb)
+
+> **Fez (surprised):** Moet je die laatste zien. Met een gouden punt!
+> _en:_ Look at the last one. Golden tip and all!
+>
+> **Fez:** Die gaat ons wat kosten. De laatste kost altijd het meest.
+> _en:_ That one'll cost us. The last one always does.
+>
+> **Explorer:** Wat dan?
+> _en:_ Cost us what?
+>
+> **Fez (wistful):** …Weet ik eigenlijk niet meer.
+> _en:_ …I'm not sure any more.
+
+The top tier, the richest: Fez's merchant reflex reaching for a price and not finding one, without saying
+what changed (that is `bond.wizard`'s). Leans on the golden capstone on the fifth pyramid (`camp.md` §4).
+
+## Structures and finds
+
+Each plays once, for whichever came first, so no line names a find or a structure. Both play at the camp on
+the next home showing, where the thing stands.
+
+### `camp.firstFind`
+
+fires: the camp — the first home showing after the first camp find was brought home
+
+> **Fez (pointUp):** Kijk eens, het staat er alsof het er altijd al stond!
+> _en:_ Look at that — like it's always been there!
+>
+> **Fez (worried):** Ik krijg zin om er een prijskaartje aan te hangen.
+> _en:_ I've got this itch to hang a price tag on it.
+>
+> **Explorer (deadpan):** Niet doen.
+> _en:_ Don't.
+>
+> **Fez (sheepish):** Nee, nee. Thuis verkoop je niks. Dat weet ik heus.
+> _en:_ No, no. You don't sell from home. I know that.
+
+Says why Fez sells nothing in the camp, in his own mouth.
+
+### `camp.structureDone`
+
+fires: the camp — the first home showing after the first structure has all its parts
+
+> **Fez (surprised):** Het is af! Alle stukjes zitten erin!
+> _en:_ It's done! Every last bit's in!
+>
+> **Explorer:** Zelf gebouwd.
+> _en:_ All our own work.
+>
+> **Fez (pointUp):** Nou ja. Ik heb vooral gewezen.
+> _en:_ Well. I mostly pointed.
+
+The last line is drawn in the pointing pose on purpose.
+
 ## Art list
 
 Nothing wanted: every line above uses a pose and face already drawn.

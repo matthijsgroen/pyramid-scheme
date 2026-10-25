@@ -103,12 +103,12 @@ One Opus agent, same reading list as Task 1 (the acts for what each tier's chapt
 
 - Produces: `camp.firstHome` (fires: the first time the camp shows after Fez has been met — their first evening together there), `camp.homeHaul` (fires: the first home showing after unpacking a haul with something in it), `camp.homeEmpty` (fires: the first home showing after coming home with nothing), `camp.rested` (fires: at the camp, the first time a homecoming refilled a heart), `camp.chapterJunior` / `Expert` / `Master` / `Wizard` (fires: when that tier's new-chapter card is left — the line must work both at the camp and on the way out to the journey).
 
-- [ ] **Step 1: Write** the eight scenes in the script file, nl first, with "fires:" per scene.
-- [ ] **Step 2: Copy** into both `fez.json`; poses.
-- [ ] **Step 3: Drafts list** (`camp`).
-- [ ] **Step 4: Run** `yarn test src/mods/story src/app/fez src/i18n`, `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Review list** Drafts, same format.
-- [ ] **Step 6: Commit** — `story: draft the camp homecoming and chapter lines`
+- [x] **Step 1: Write** the eight scenes in the script file, nl first, with "fires:" per scene.
+- [x] **Step 2: Copy** into both `fez.json`; poses.
+- [x] **Step 3: Drafts list** (`camp`).
+- [x] **Step 4: Run** `yarn test src/mods/story src/app/fez src/i18n`, `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Review list** Drafts, same format.
+- [x] **Step 6: Commit** — `story: draft the camp homecoming and chapter lines` (one commit with Task 3: `story: draft the camp homecoming, chapter, find and structure lines`)
 
 ---
 
@@ -126,7 +126,7 @@ One Opus agent; reading list as Task 2, plus the phase-3 find and structure name
 
 - Produces: `camp.firstFind` (fires: at the camp, the first home showing after the first camp find was brought home), `camp.structureDone` (fires: at the camp, the first home showing after the first structure has all its parts).
 
-- [ ] **Step 1–6** as Task 2. Commit — `story: draft the first find and first structure lines`
+- [x] **Step 1–6** as Task 2. Commit — `story: draft the first find and first structure lines` (committed together with Task 2)
 
 ---
 
