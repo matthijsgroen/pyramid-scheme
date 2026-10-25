@@ -2,6 +2,7 @@ import type { TFn } from "@/app/SiteMap/rewardHandlerRegistry"
 import type { HaulLine } from "@/app/home/haulLines"
 import type { TreasureReward } from "@/game/siteTypes"
 import { campArt } from "@/ui/atoms/campScene/campArt"
+import type { CampStepTable } from "@/mods/camp/game/campSteps"
 import { CAMP_STEPS } from "@/mods/camp/game/campSteps"
 import { campArrivalRewardSchema, campFindRewardSchema, campPartRewardSchema } from "./rewardSchema"
 
@@ -44,17 +45,21 @@ export const summariseParts = (rewards: readonly TreasureReward[], t: TFn): Haul
   }))
 }
 
-// An animal that has come to stand in the camp is one line per purchase, named by the part of its fact after the
-// colon (the strings live under `arrivals`), drawn as the step of the same name or else the purchase's first step.
-export const summariseArrivals = (rewards: readonly TreasureReward[], t: TFn): HaulLine[] =>
+// An animal that has come to stand in the camp is one line per purchase, told by the arrival name and drawn as the
+// step carrying it, both read from the purchase's arrival step in the table. A purchase with none is a table error.
+export const summariseArrivals = (
+  rewards: readonly TreasureReward[],
+  t: TFn,
+  table: CampStepTable = CAMP_STEPS
+): HaulLine[] =>
   rewards.map(reward => {
     const { purchase } = campArrivalRewardSchema.parse(reward)
-    const name = purchase.slice(purchase.indexOf(":") + 1)
-    const steps = CAMP_STEPS.filter(step => step.purchase === purchase)
+    const step = table.find(entry => entry.purchase === purchase && entry.arrival !== undefined)
+    if (!step?.arrival) throw new Error(`camp: purchase "${purchase}" has no arrival step in the step table`)
     return {
       key: `campArrival-${purchase}`,
-      visual: picture((steps.find(step => step.id === name) ?? steps[0])?.id ?? name, "⛺"),
-      title: t(`arrivals.${name}`, NS),
+      visual: picture(step.id, "⛺"),
+      title: t(`arrivals.${step.arrival}`, NS),
       isNew: true,
       news: true,
     }

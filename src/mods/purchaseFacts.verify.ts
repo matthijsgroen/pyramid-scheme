@@ -30,6 +30,11 @@ describe("the shop and the camp agree on purchase facts", () => {
     expect([...storyFacts].filter(fact => !shopFacts.has(fact))).toEqual([])
   })
 
+  it("the story's beats for a gate cover exactly the purchases that open one", () => {
+    const opensAGate = new Set(PURCHASES.filter(purchase => purchase.opens).map(purchase => purchase.fact))
+    expect(ANIMALS.filter(({ fact, needed }) => needed !== opensAGate.has(fact)).map(({ id }) => id)).toEqual([])
+  })
+
   it("the story reads the tag the camp gives an arrived purchase", () => {
     expect(ANIMALS.filter(({ fact }) => storyArrivedTag(fact) !== arrivedTag(fact))).toEqual([])
   })

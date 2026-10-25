@@ -22,7 +22,7 @@ const sound: CampStepTable = [
   step({ id: "hut", tier: "master", source: "structure", parts: ["a", "b", "c", "d"] }),
   step({ id: "seed", tier: "junior" }),
   step({ id: "sprout", tier: "junior", source: "grows", growsFrom: ["seed"] }),
-  step({ id: "cart", tier: "junior", source: "bought", purchase: "purchase:wagon" }),
+  step({ id: "cart", tier: "junior", source: "bought", purchase: "purchase:wagon", arrival: "wagon" }),
   step({ id: "map", source: "fixed" }),
   step({ id: "bed", source: "given" }),
 ]
@@ -41,10 +41,26 @@ describe("campStepProblems", () => {
   })
 
   it("names a tier with two early structures", () => {
-    const early = (id: string) =>
-      step({ id, tier: "junior", source: "structure", parts: ["a", "b"], early: true })
+    const early = (id: string) => step({ id, tier: "junior", source: "structure", parts: ["a", "b"], early: true })
     expect(campStepProblems([early("wall"), early("screen")])).toEqual([
       'junior has 2 early structures ("wall", "screen"), at most one',
+    ])
+  })
+
+  it("names a purchase with no arrival step, or two", () => {
+    const wagon = (id: string, arrival?: string) =>
+      step({ id, source: "bought", purchase: "purchase:wagon", ...(arrival && { arrival }) })
+    expect(campStepProblems([wagon("cart")])).toEqual([
+      'purchase "purchase:wagon" has 0 arrival steps, exactly one is needed',
+    ])
+    expect(campStepProblems([wagon("cart", "wagon"), wagon("wheel", "wheel")])).toEqual([
+      'purchase "purchase:wagon" has 2 arrival steps, exactly one is needed',
+    ])
+  })
+
+  it("names an arrival on a step that is not bought", () => {
+    expect(campStepProblems([step({ id: "pot", arrival: "pot" })])).toEqual([
+      'step "pot" is found but names arrival "pot"',
     ])
   })
 
@@ -118,6 +134,7 @@ describe("campStepProblems", () => {
   it("names a purchase on a step that is not bought", () => {
     expect(campStepProblems([step({ id: "pot", purchase: "purchase:wagon" })])).toEqual([
       'step "pot" is found but names purchase "purchase:wagon"',
+      'purchase "purchase:wagon" has 0 arrival steps, exactly one is needed',
     ])
   })
 
@@ -125,7 +142,7 @@ describe("campStepProblems", () => {
     expect(
       campStepProblems([
         step({ id: "bed", source: "given" }),
-        step({ id: "cart", source: "bought", purchase: "purchase:wagon" }),
+        step({ id: "cart", source: "bought", purchase: "purchase:wagon", arrival: "wagon" }),
         step({ id: "sprout", source: "grows", growsFrom: ["bed", "cart"] }),
       ])
     ).toEqual([

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { TreasureReward } from "@/game/siteTypes"
+import type { CampStepTable } from "@/mods/camp/game/campSteps"
 import { summariseArrivals, summariseFinds, summariseParts } from "./haulLines"
 
 const t = (key: string, opts?: { name?: string; count?: number }) =>
@@ -30,16 +31,43 @@ describe("camp haul lines", () => {
     ])
   })
 
-  it("gives each arrived purchase one new line, named by the part of its fact after the colon", () => {
+  const table: CampStepTable = [
+    { id: "made-up-halter", spot: "s", tier: "junior", source: "bought", purchase: "purchase:made-up-mule" },
+    {
+      id: "made-up-mule",
+      spot: "s",
+      tier: "junior",
+      source: "bought",
+      purchase: "purchase:made-up-mule",
+      arrival: "mule",
+    },
+    {
+      id: "made-up-flag",
+      spot: "s",
+      tier: "junior",
+      source: "bought",
+      purchase: "purchase:made-up-flag",
+      arrival: "banner",
+    },
+  ]
+
+  it("gives each arrived purchase one new line, told by the arrival name its step carries", () => {
     const lines = summariseArrivals(
       [
         { type: "campArrival", purchase: "purchase:made-up-mule" },
         { type: "campArrival", purchase: "purchase:made-up-flag" },
       ],
-      t
+      t,
+      table
     )
-    expect(lines.map(l => l.title)).toEqual(["arrivals.made-up-mule", "arrivals.made-up-flag"])
+    expect(lines.map(l => l.title)).toEqual(["arrivals.mule", "arrivals.banner"])
     expect(lines.every(l => l.isNew && l.news)).toBe(true)
     expect(new Set(lines.map(l => l.key)).size).toBe(2)
+  })
+
+  it("fails loudly for a purchase no step carries an arrival for", () => {
+    expect(() => summariseArrivals([{ type: "campArrival", purchase: "purchase:made-up-gone" }], t, table)).toThrow(
+      /made-up-gone/
+    )
   })
 })

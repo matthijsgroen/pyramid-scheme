@@ -23,6 +23,9 @@ export type CampStepEntry = {
   // The fact whose holding brings a bought step to the camp, as a plain string: the camp learns of a purchase through
   // held keys and imports nothing of the shop.
   purchase?: string
+  // On the one bought step that stands for its purchase in the haul: the name its arrival is told by (a key under
+  // the camp's `arrivals` strings), and the step whose picture the line draws.
+  arrival?: string
   // The structure the player sees the camp change with first: its parts lie in the first two journeys of its tier, so
   // it stands after the second. At most one per tier.
   early?: true
@@ -64,6 +67,8 @@ export const campStepProblems = (table: CampStepTable): string[] => {
       problems.push(`bought step "${entry.id}" names no purchase`)
     if (entry.source !== "bought" && entry.purchase !== undefined)
       problems.push(`step "${entry.id}" is ${entry.source} but names purchase "${entry.purchase}"`)
+    if (entry.source !== "bought" && entry.arrival !== undefined)
+      problems.push(`step "${entry.id}" is ${entry.source} but names arrival "${entry.arrival}"`)
     if (entry.early && entry.source !== "structure") problems.push(`step "${entry.id}" is early but not a structure`)
     if (entry.early && entry.source === "structure" && (entry.parts ?? []).length < 2)
       problems.push(`early structure "${entry.id}" needs at least 2 parts, one for each of the first two journeys`)
@@ -78,6 +83,12 @@ export const campStepProblems = (table: CampStepTable): string[] => {
           else if (sourceOf.get(from) === "given" || sourceOf.get(from) === "bought")
             problems.push(`growing step "${entry.id}" grows from "${from}", which is ${sourceOf.get(from)}`)
     }
+  }
+  const purchases = [...new Set(table.flatMap(entry => (entry.purchase === undefined ? [] : [entry.purchase])))]
+  for (const purchase of purchases) {
+    const arrivals = table.filter(entry => entry.purchase === purchase && entry.arrival !== undefined)
+    if (arrivals.length !== 1)
+      problems.push(`purchase "${purchase}" has ${arrivals.length} arrival steps, exactly one is needed`)
   }
   for (const tier of difficulties) {
     const early = table.filter(entry => entry.early && entry.tier === tier).map(entry => `"${entry.id}"`)
@@ -122,9 +133,19 @@ const rows = (spot: string, source: CampSource, entries: Row[]): CampStepEntry[]
     ...(growsFrom && { growsFrom }),
   }))
 
-// A bought step names the purchase fact that brings it.
-const bought = (spot: string, entries: [id: string, tier: Difficulty, purchase: string][]): CampStepEntry[] =>
-  entries.map(([id, tier, purchase]) => ({ id, spot, tier, source: "bought", purchase }))
+// A bought step names the purchase fact that brings it, and the arrival it stands for when it is that purchase's picture.
+const bought = (
+  spot: string,
+  entries: [id: string, tier: Difficulty, purchase: string, arrival?: string][]
+): CampStepEntry[] =>
+  entries.map(([id, tier, purchase, arrival]) => ({
+    id,
+    spot,
+    tier,
+    source: "bought",
+    purchase,
+    ...(arrival && { arrival }),
+  }))
 
 // Part counts by tier: 2 / 3 / 3 / 4 / 5. Part ids are unique within their structure.
 export const CAMP_STEPS: CampStepTable = [
@@ -176,16 +197,16 @@ export const CAMP_STEPS: CampStepTable = [
   ]),
   ...bought("donkey", [
     ["halter", J, "purchase:donkey"],
-    ["donkey", J, "purchase:donkey"],
+    ["donkey", J, "purchase:donkey", "donkey"],
     ["saddlebags", J, "purchase:donkey"],
-    ["cart", E, "purchase:cart"],
-    ["secondDonkey", M, "purchase:secondDonkey"],
-    ["paintedCart", W, "purchase:sturdyCart"],
+    ["cart", E, "purchase:cart", "cart"],
+    ["secondDonkey", M, "purchase:secondDonkey", "secondDonkey"],
+    ["paintedCart", W, "purchase:sturdyCart", "sturdyCart"],
   ]),
   ...bought("camel", [
-    ["camel", E, "purchase:camel"],
-    ["secondCamel", M, "purchase:secondCamel"],
-    ["caravanBanner", W, "purchase:caravanBanner"],
+    ["camel", E, "purchase:camel", "camel"],
+    ["secondCamel", M, "purchase:secondCamel", "secondCamel"],
+    ["caravanBanner", W, "purchase:caravanBanner", "caravanBanner"],
   ]),
   ...rows("mapTable", "found", [
     ["compass", E],
