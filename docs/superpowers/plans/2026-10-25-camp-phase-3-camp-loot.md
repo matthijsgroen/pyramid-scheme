@@ -240,13 +240,13 @@ Mechanical; one agent (Sonnet).
 - Produces (ui): `StructuresPanel` props `{ title: string; children }` — a heading and the rows; nothing rendered with no rows.
 - Produces (app): `CampCollectionSection` — reads `useCampProgress`, lists `startedStructures` (table order), one `StructureRow` each, art from the structure's camp art, parts named when recorded; open state local to the section (one row open at a time).
 
-- [ ] **Step 1: Failing tests.**
+- [x] **Step 1: Failing tests.**
   - `StructureRow.spec.tsx`: closed shows name and "2 van 4" and no part names; opened shows the found parts' names and "???" for the rest; a complete row shows "gebouwd"; the toggle calls `onToggle` and carries `aria-expanded`.
   - `CampCollectionSection.spec.tsx` (made-up save through the mod's storage, real table not asserted by name): no rows and no heading for an empty save; one row per started structure; a structure with no parts is absent.
-- [ ] **Step 2: Run** `yarn test src/ui/molecules/StructureRow src/mods/camp` — FAIL.
-- [ ] **Step 3: Implement.** Stories: `StructureRow` closed, open with a mix of named and "???" parts, complete, without art; `StructuresPanel` with three rows, one open. Tailwind class order per lint.
-- [ ] **Step 4: Run** the specs — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Commit** — `feat: started structures in the collection, n of m`
+- [x] **Step 2: Run** `yarn test src/ui/molecules/StructureRow src/mods/camp` — FAIL.
+- [x] **Step 3: Implement.** Stories: `StructureRow` closed, open with a mix of named and "???" parts, complete, without art; `StructuresPanel` with three rows, one open. Tailwind class order per lint.
+- [x] **Step 4: Run** the specs — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Commit** — `feat: started structures in the collection, n of m`
 
 ---
 
