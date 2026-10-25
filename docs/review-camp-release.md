@@ -399,6 +399,110 @@ From `yarn loot-report` before (651aad2c) and after the bake (88646b9e). `docs/l
   - Fez: "Het is af! Alle stukjes zitten erin!" / "It's done! Every last bit's in!"
   - Explorer: "Zelf gebouwd." / "All our own work."
   - Fez: "Nou ja. Ik heb vooral gewezen." / "Well. I mostly pointed."
+- Phase 8 — `animal.forSale` — drafted, waits on phase 4 — would fire: Fez's stall — the first time it shows a purchase (the donkey, in Henut's vault)
+  - Fez: "Kijk eens wat ik in de kraam heb! Vanaf nu verkoop ik ook vervoer." / "Look what's at the stall! I do transport now."
+  - Explorer: "Het staat te kauwen." / "It's chewing."
+  - Fez: "Dat zit bij de prijs in." / "That's included in the price."
+- Phase 8 — `animal.boughtDonkey` — drafted, waits on phase 4 — would fire: Fez's stall in Henut's vault — the donkey is bought
+  - Fez: "Verkocht! Eén ezel. Koppig, maar hij draagt alles." / "Sold! One donkey. Stubborn, but he'll carry anything."
+  - Explorer: "Waar is hij dan?" / "So where is he?"
+  - Fez: "Al op weg naar huis. Hij loopt liever zonder ons." / "Already on his way home. He'd rather walk without us."
+- Phase 8 — `animal.blockedDonkey` — drafted, waits on phase 4 — would fire: Travel — the expert tier refuses for want of the donkey
+  - Fez: "Zo ver lopen wij niet, met al die spullen. Daar hoort een ezel bij." / "We're not walking that far with all this stuff. That takes a donkey."
+  - Fez: "En wie heeft er eentje staan? Ik. In mijn kraam bij Henut." / "And guess who has one? Me. At my stall in Henut's vault."
+- Phase 8 — `animal.throughDonkey` — drafted, waits on phase 4 — would fire: the expert tier opens because of the donkey (first expert journey entered)
+  - Explorer: "Hij wil wel." / "He's willing."
+  - Fez: "Vandaag. Morgen hebben we het er weer over." / "Today. Ask him again tomorrow."
+- Phase 8 — `animal.arrivesDonkey` — drafted, waits on phase 4 — would fire: the camp — the donkey's steps arrive on the homecoming
+  - Fez: "Daar staat hij! Hij was er eerder dan wij." / "There he is! Got here before us."
+  - Explorer: "Het vuur heeft hij ook al gevonden." / "Found the fire, too."
+  - Fez: "Mijn plekje. Nou ja. Hij was eerst." / "My spot. Well. He was first."
+- Phase 8 — `animal.boughtCart` — drafted, waits on phase 4 — would fire: Fez's stall in the High Priest's Treasury — the cart is bought
+  - Fez: "Een kar! Twee wielen, en ze rammelen bijna niet." / "A cart! Two wheels, and they hardly rattle."
+  - Explorer: "Bijna?" / "Hardly?"
+  - Fez: "Dat rammelen krijg je er gratis bij." / "The rattle comes free."
+- Phase 8 — `animal.blockedCart` — drafted, waits on phase 4 — would fire: Travel — the master tier refuses for want of the cart
+  - Fez: "De ezel draagt geen tas meer. Ik heb het hem gevraagd." / "The donkey won't take another bag. I asked him."
+  - Fez: "Een kar, dat hebben we nodig. Ik heb er een in mijn kraam, bij de hogepriester." / "A cart, that's what we need. There's one at my stall, at the high priest's."
+- Phase 8 — `animal.throughCart` — drafted, waits on phase 4 — would fire: the master tier opens because of the cart (first master journey entered)
+  - Explorer: "Hoor je dat?" / "Hear that?"
+  - Fez: "Dat is de kar. Hij zingt een beetje." / "That's the cart. It sings a bit."
+  - Explorer: "De hele weg?" / "All the way?"
+- Phase 8 — `animal.arrivesCart` — drafted, waits on phase 4 — would fire: the camp — the cart arrives on the homecoming
+  - Fez: "Een kar bij ons kamp! Nu zien we eruit alsof we ergens heen gaan." / "A cart at our camp! Now we look like we're going somewhere."
+  - Explorer: "We gaan ook ergens heen." / "We are going somewhere."
+  - Fez: "Ja, maar nu ziet iedereen het." / "Yes, but now everyone can tell."
+- Phase 8 — `animal.boughtCamel` — drafted, waits on phase 4 — would fire: Fez's stall in the High Priest's Treasury — the camel is bought
+  - Fez: "Een kameel! Die loopt dagen zonder water. Ik niet, hoor." / "A camel! Goes for days without water. I don't, mind you."
+  - Explorer: "Hij kijkt naar je." / "He's looking at you."
+  - Fez: "Op me neer. Kamelen kijken altijd op je neer." / "Down at me. Camels always look down at you."
+- Phase 8 — `animal.blockedCamel` — drafted, waits on phase 4 — would fire: Travel — the Inner Sanctum refuses for want of the camel
+  - Fez: "Het Binnenste Heiligdom? Daar komen we te voet nooit." / "The Inner Sanctum? We'll never get there on foot."
+  - Fez: "Toevallig heb ik een kameel. In mijn kraam, bij de hogepriester." / "As luck would have it, I have a camel. At my stall, at the high priest's."
+- Phase 8 — `animal.throughCamel` — drafted, waits on phase 4 — would fire: the Inner Sanctum opens because of the camel (entered)
+  - Fez: "Hij knielt! Voor mij!" / "He's kneeling! For me!"
+  - Explorer: "Om op te stappen." / "So we can climb on."
+  - Fez: "Laat me nou even." / "Let me have this."
+- Phase 8 — `animal.arrivesCamel` — drafted, waits on phase 4 — would fire: the camp — the camel's steps arrive on the homecoming
+  - Fez: "Daar staat hij. Hij doet alsof het kamp van hem is." / "There he is. Acting like the camp's his."
+  - Explorer: "En de ezel?" / "And the donkey?"
+  - Fez: "Die doet alsof hij hem niet ziet. Net als ik." / "Pretending not to see him. Same as me."
+- Phase 8 — `animal.boughtSecondDonkey` — drafted, waits on phase 4 — would fire: Fez's stall in the Pharaoh's Secret Hoard — the second donkey is bought
+  - Fez: "Nog een ezel! Dan heeft de eerste eindelijk iemand om mee te praten." / "Another donkey! Now the first one has someone to talk to."
+  - Explorer: "Praten?" / "Talk?"
+  - Fez: "Balken. Dat is praten, maar harder." / "Bray. It's talking, only louder."
+- Phase 8 — `animal.blockedSecondDonkey` — drafted, waits on phase 4 — would fire: Travel — the wizard tier refuses for want of the second donkey
+  - Fez: "De ezel wil niet verder. Niet alleen, zegt hij." / "The donkey won't go on. Not alone, he says."
+  - Explorer: "Zegt hij dat?" / "He said that?"
+  - Fez: "Ik versta ezel. Hij wil een maatje, en bij de farao heb ik er een in de kraam." / "I speak donkey. He wants a pal, and I've got one at my stall in the pharaoh's hoard."
+- Phase 8 — `animal.throughSecondDonkey` — drafted, waits on phase 4 — would fire: the wizard tier opens because of the second donkey (first wizard journey entered)
+  - Fez: "Hoor ze! Ze balken om het hardst." / "Listen to them! Each one louder than the other."
+  - Explorer: "Wie wint er?" / "Who's winning?"
+  - Fez: "Wij niet. Wij moeten het aanhoren." / "Not us. We have to listen to it."
+- Phase 8 — `animal.arrivesSecondDonkey` — drafted, waits on phase 4 — would fire: the camp — the second donkey arrives on the homecoming
+  - Fez: "Kijk ze nou staan. Alsof ze elkaar al jaren kennen." / "Look at them. Like they've known each other for years."
+  - Explorer: "Net als wij." / "Like us."
+  - Fez: "Wij balken minder." / "We bray less."
+- Phase 8 — `animal.boughtSecondCamel` — drafted, waits on phase 4 — would fire: Fez's stall in the Pharaoh's Secret Hoard — the second camel is bought
+  - Fez: "Nog een kameel. Ja. Ik vind ze ook niet aardig." / "Another camel. Yes. I don't like them either."
+  - Fez: "Maar deze kijkt tenminste vriendelijk." / "But this one at least looks friendly."
+  - Explorer: "Hij kijkt naar je fez." / "He's looking at your fez."
+- Phase 8 — `animal.blockedSecondCamel` — drafted, waits on phase 4 — would fire: Travel — the Hall of Osiris refuses for want of the second camel
+  - Fez: "De Hal van Osiris. Met één kameel komen we daar niet." / "The Hall of Osiris. One camel won't get us there."
+  - Fez: "Gelukkig heb ik er nog een, bij de farao in de kraam. Mijn allerlaatste." / "Luckily I've got another, at my stall in the pharaoh's hoard. My very last one."
+  - Explorer: "Dat zeg je altijd." / "You always say that."
+- Phase 8 — `animal.throughSecondCamel` — drafted, waits on phase 4 — would fire: the Hall of Osiris opens because of the second camel (entered)
+  - Fez: "Hij eet aan mijn fez!" / "He's eating my fez!"
+  - Explorer: "Een vriendelijke kameel." / "A friendly camel."
+  - Fez: "Té vriendelijk." / "Too friendly."
+- Phase 8 — `animal.arrivesSecondCamel` — drafted, waits on phase 4 — would fire: the camp — the second camel arrives on the homecoming
+  - Fez: "Twee kamelen. Nu kijken ze met z'n tweeën op me neer." / "Two camels. Now they both look down on me."
+  - Explorer: "Ga dan bij de ezels staan." / "Go and stand with the donkeys, then."
+  - Fez: "Daar sta ik al." / "I already am."
+- Phase 8 — `animal.boughtSturdyCart` — drafted, waits on phase 4 — would fire: Fez's stall in the Vault of the Gods — the sturdier cart is bought
+  - Fez: "Een stevigere kar. Deze zingt niet onderweg." / "A sturdier cart. This one doesn't sing on the road."
+  - Explorer: "Er staan bloemen op geschilderd." / "There are flowers painted on it."
+  - Fez: "Voor de stevigheid." / "For sturdiness."
+- Phase 8 — `animal.blockedSturdyCart` — drafted, waits on phase 4 — would fire: Travel — the Realm of Cosmic Forces refuses for want of the sturdier cart
+  - Fez: "Daar komt die ouwe kar niet heel aan. Daar wil ik iets stevigers voor." / "The old cart won't get there in one piece. That wants something sturdier."
+  - Fez: "Er staat er een in mijn kraam, in de Kluis van de Goden. Niet om de verf, hoor." / "There's one at my stall in the Vault of the Gods. Not for the paint, mind."
+- Phase 8 — `animal.throughSturdyCart` — drafted, waits on phase 4 — would fire: the Realm of Cosmic Forces opens because of the sturdier cart (entered)
+  - Explorer: "Geen gerammel." / "No rattle."
+  - Fez: "Zie je wel? Stevigheid." / "See? Sturdiness."
+  - Explorer: "En de bloemen?" / "And the flowers?"
+  - Fez: "Die helpen ook een beetje." / "They help a bit too."
+- Phase 8 — `animal.arrivesSturdyCart` — drafted, waits on phase 4 — would fire: the camp — the painted cart arrives on the homecoming
+  - Fez: "Moet je zien hoe hij glimt!" / "Look at it shine!"
+  - Explorer: "Mooier dan nodig." / "Prettier than it needs to be."
+  - Fez: "Ja. Ik heb hem ook niet om de stevigheid verkocht." / "Yes. I didn't sell it for the sturdiness either."
+- Phase 8 — `animal.boughtCaravanBanner` — drafted, waits on phase 4 — would fire: Fez's stall in the Throne of Eternity — the caravan banner is bought
+  - Fez: "Een vaandel. Ik moet eerlijk zijn: hij opent niks." / "A banner. I'll be honest: it opens nothing."
+  - Explorer: "Wat doet hij dan?" / "What does it do, then?"
+  - Fez: "Wapperen. Heel mooi wapperen." / "It flaps. Beautifully."
+- Phase 8 — `animal.arrivesCaravanBanner` — drafted, waits on phase 4 — would fire: the camp — the caravan banner arrives on the homecoming
+  - Fez: "Kijk hem wapperen! Boven ons eigen kamp!" / "Look at it flap! Over our own camp!"
+  - Explorer: "Hij opent nog steeds niks." / "Still opens nothing."
+  - Fez: "Nee. Dat hoeft ook niet." / "No. It doesn't have to."
 
 ## Failures
 

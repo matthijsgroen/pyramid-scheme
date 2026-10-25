@@ -552,6 +552,140 @@
     }
   },
 
+  "animal": {
+    "forSale": {
+      "1": { "fez": "Look what's at the stall! I do transport now." },
+      "2": { "explorer": "It's chewing." },
+      "3": { "fez": "That's included in the price." }
+    },
+    "boughtDonkey": {
+      "1": { "fez": "Sold! One donkey. Stubborn, but he'll carry anything." },
+      "2": { "explorer": "So where is he?" },
+      "3": { "fez": "Already on his way home. He'd rather walk without us." }
+    },
+    "blockedDonkey": {
+      "1": { "fez": "We're not walking that far with all this stuff. That takes a donkey." },
+      "2": { "fez": "And guess who has one? Me. At my stall in Henut's vault." }
+    },
+    "throughDonkey": {
+      "1": { "explorer": "He's willing." },
+      "2": { "fez": "Today. Ask him again tomorrow." }
+    },
+    "arrivesDonkey": {
+      "1": { "fez": "There he is! Got here before us." },
+      "2": { "explorer": "Found the fire, too." },
+      "3": { "fez": "My spot. Well. He was first." }
+    },
+    "boughtCart": {
+      "1": { "fez": "A cart! Two wheels, and they hardly rattle." },
+      "2": { "explorer": "Hardly?" },
+      "3": { "fez": "The rattle comes free." }
+    },
+    "blockedCart": {
+      "1": { "fez": "The donkey won't take another bag. I asked him." },
+      "2": { "fez": "A cart, that's what we need. There's one at my stall, at the high priest's." }
+    },
+    "throughCart": {
+      "1": { "explorer": "Hear that?" },
+      "2": { "fez": "That's the cart. It sings a bit." },
+      "3": { "explorer": "All the way?" }
+    },
+    "arrivesCart": {
+      "1": { "fez": "A cart at our camp! Now we look like we're going somewhere." },
+      "2": { "explorer": "We are going somewhere." },
+      "3": { "fez": "Yes, but now everyone can tell." }
+    },
+    "boughtCamel": {
+      "1": { "fez": "A camel! Goes for days without water. I don't, mind you." },
+      "2": { "explorer": "He's looking at you." },
+      "3": { "fez": "Down at me. Camels always look down at you." }
+    },
+    "blockedCamel": {
+      "1": { "fez": "The Inner Sanctum? We'll never get there on foot." },
+      "2": { "fez": "As luck would have it, I have a camel. At my stall, at the high priest's." }
+    },
+    "throughCamel": {
+      "1": { "fez": "He's kneeling! For me!" },
+      "2": { "explorer": "So we can climb on." },
+      "3": { "fez": "Let me have this." }
+    },
+    "arrivesCamel": {
+      "1": { "fez": "There he is. Acting like the camp's his." },
+      "2": { "explorer": "And the donkey?" },
+      "3": { "fez": "Pretending not to see him. Same as me." }
+    },
+    "boughtSecondDonkey": {
+      "1": { "fez": "Another donkey! Now the first one has someone to talk to." },
+      "2": { "explorer": "Talk?" },
+      "3": { "fez": "Bray. It's talking, only louder." }
+    },
+    "blockedSecondDonkey": {
+      "1": { "fez": "The donkey won't go on. Not alone, he says." },
+      "2": { "explorer": "He said that?" },
+      "3": { "fez": "I speak donkey. He wants a pal, and I've got one at my stall in the pharaoh's hoard." }
+    },
+    "throughSecondDonkey": {
+      "1": { "fez": "Listen to them! Each one louder than the other." },
+      "2": { "explorer": "Who's winning?" },
+      "3": { "fez": "Not us. We have to listen to it." }
+    },
+    "arrivesSecondDonkey": {
+      "1": { "fez": "Look at them. Like they've known each other for years." },
+      "2": { "explorer": "Like us." },
+      "3": { "fez": "We bray less." }
+    },
+    "boughtSecondCamel": {
+      "1": { "fez": "Another camel. Yes. I don't like them either." },
+      "2": { "fez": "But this one at least looks friendly." },
+      "3": { "explorer": "He's looking at your fez." }
+    },
+    "blockedSecondCamel": {
+      "1": { "fez": "The Hall of Osiris. One camel won't get us there." },
+      "2": { "fez": "Luckily I've got another, at my stall in the pharaoh's hoard. My very last one." },
+      "3": { "explorer": "You always say that." }
+    },
+    "throughSecondCamel": {
+      "1": { "fez": "He's eating my fez!" },
+      "2": { "explorer": "A friendly camel." },
+      "3": { "fez": "Too friendly." }
+    },
+    "arrivesSecondCamel": {
+      "1": { "fez": "Two camels. Now they both look down on me." },
+      "2": { "explorer": "Go and stand with the donkeys, then." },
+      "3": { "fez": "I already am." }
+    },
+    "boughtSturdyCart": {
+      "1": { "fez": "A sturdier cart. This one doesn't sing on the road." },
+      "2": { "explorer": "There are flowers painted on it." },
+      "3": { "fez": "For sturdiness." }
+    },
+    "blockedSturdyCart": {
+      "1": { "fez": "The old cart won't get there in one piece. That wants something sturdier." },
+      "2": { "fez": "There's one at my stall in the Vault of the Gods. Not for the paint, mind." }
+    },
+    "throughSturdyCart": {
+      "1": { "explorer": "No rattle." },
+      "2": { "fez": "See? Sturdiness." },
+      "3": { "explorer": "And the flowers?" },
+      "4": { "fez": "They help a bit too." }
+    },
+    "arrivesSturdyCart": {
+      "1": { "fez": "Look at it shine!" },
+      "2": { "explorer": "Prettier than it needs to be." },
+      "3": { "fez": "Yes. I didn't sell it for the sturdiness either." }
+    },
+    "boughtCaravanBanner": {
+      "1": { "fez": "A banner. I'll be honest: it opens nothing." },
+      "2": { "explorer": "What does it do, then?" },
+      "3": { "fez": "It flaps. Beautifully." }
+    },
+    "arrivesCaravanBanner": {
+      "1": { "fez": "Look at it flap! Over our own camp!" },
+      "2": { "explorer": "Still opens nothing." },
+      "3": { "fez": "No. It doesn't have to." }
+    }
+  },
+
   "bond": {
     "starter": {
       "1": { "fez": "That was quick." },

@@ -559,6 +559,140 @@
     }
   },
 
+  "animal": {
+    "forSale": {
+      "1": { "fez": "Kijk eens wat ik in de kraam heb! Vanaf nu verkoop ik ook vervoer." },
+      "2": { "explorer": "Het staat te kauwen." },
+      "3": { "fez": "Dat zit bij de prijs in." }
+    },
+    "boughtDonkey": {
+      "1": { "fez": "Verkocht! Eén ezel. Koppig, maar hij draagt alles." },
+      "2": { "explorer": "Waar is hij dan?" },
+      "3": { "fez": "Al op weg naar huis. Hij loopt liever zonder ons." }
+    },
+    "blockedDonkey": {
+      "1": { "fez": "Zo ver lopen wij niet, met al die spullen. Daar hoort een ezel bij." },
+      "2": { "fez": "En wie heeft er eentje staan? Ik. In mijn kraam bij Henut." }
+    },
+    "throughDonkey": {
+      "1": { "explorer": "Hij wil wel." },
+      "2": { "fez": "Vandaag. Morgen hebben we het er weer over." }
+    },
+    "arrivesDonkey": {
+      "1": { "fez": "Daar staat hij! Hij was er eerder dan wij." },
+      "2": { "explorer": "Het vuur heeft hij ook al gevonden." },
+      "3": { "fez": "Mijn plekje. Nou ja. Hij was eerst." }
+    },
+    "boughtCart": {
+      "1": { "fez": "Een kar! Twee wielen, en ze rammelen bijna niet." },
+      "2": { "explorer": "Bijna?" },
+      "3": { "fez": "Dat rammelen krijg je er gratis bij." }
+    },
+    "blockedCart": {
+      "1": { "fez": "De ezel draagt geen tas meer. Ik heb het hem gevraagd." },
+      "2": { "fez": "Een kar, dat hebben we nodig. Ik heb er een in mijn kraam, bij de hogepriester." }
+    },
+    "throughCart": {
+      "1": { "explorer": "Hoor je dat?" },
+      "2": { "fez": "Dat is de kar. Hij zingt een beetje." },
+      "3": { "explorer": "De hele weg?" }
+    },
+    "arrivesCart": {
+      "1": { "fez": "Een kar bij ons kamp! Nu zien we eruit alsof we ergens heen gaan." },
+      "2": { "explorer": "We gaan ook ergens heen." },
+      "3": { "fez": "Ja, maar nu ziet iedereen het." }
+    },
+    "boughtCamel": {
+      "1": { "fez": "Een kameel! Die loopt dagen zonder water. Ik niet, hoor." },
+      "2": { "explorer": "Hij kijkt naar je." },
+      "3": { "fez": "Op me neer. Kamelen kijken altijd op je neer." }
+    },
+    "blockedCamel": {
+      "1": { "fez": "Het Binnenste Heiligdom? Daar komen we te voet nooit." },
+      "2": { "fez": "Toevallig heb ik een kameel. In mijn kraam, bij de hogepriester." }
+    },
+    "throughCamel": {
+      "1": { "fez": "Hij knielt! Voor mij!" },
+      "2": { "explorer": "Om op te stappen." },
+      "3": { "fez": "Laat me nou even." }
+    },
+    "arrivesCamel": {
+      "1": { "fez": "Daar staat hij. Hij doet alsof het kamp van hem is." },
+      "2": { "explorer": "En de ezel?" },
+      "3": { "fez": "Die doet alsof hij hem niet ziet. Net als ik." }
+    },
+    "boughtSecondDonkey": {
+      "1": { "fez": "Nog een ezel! Dan heeft de eerste eindelijk iemand om mee te praten." },
+      "2": { "explorer": "Praten?" },
+      "3": { "fez": "Balken. Dat is praten, maar harder." }
+    },
+    "blockedSecondDonkey": {
+      "1": { "fez": "De ezel wil niet verder. Niet alleen, zegt hij." },
+      "2": { "explorer": "Zegt hij dat?" },
+      "3": { "fez": "Ik versta ezel. Hij wil een maatje, en bij de farao heb ik er een in de kraam." }
+    },
+    "throughSecondDonkey": {
+      "1": { "fez": "Hoor ze! Ze balken om het hardst." },
+      "2": { "explorer": "Wie wint er?" },
+      "3": { "fez": "Wij niet. Wij moeten het aanhoren." }
+    },
+    "arrivesSecondDonkey": {
+      "1": { "fez": "Kijk ze nou staan. Alsof ze elkaar al jaren kennen." },
+      "2": { "explorer": "Net als wij." },
+      "3": { "fez": "Wij balken minder." }
+    },
+    "boughtSecondCamel": {
+      "1": { "fez": "Nog een kameel. Ja. Ik vind ze ook niet aardig." },
+      "2": { "fez": "Maar deze kijkt tenminste vriendelijk." },
+      "3": { "explorer": "Hij kijkt naar je fez." }
+    },
+    "blockedSecondCamel": {
+      "1": { "fez": "De Hal van Osiris. Met één kameel komen we daar niet." },
+      "2": { "fez": "Gelukkig heb ik er nog een, bij de farao in de kraam. Mijn allerlaatste." },
+      "3": { "explorer": "Dat zeg je altijd." }
+    },
+    "throughSecondCamel": {
+      "1": { "fez": "Hij eet aan mijn fez!" },
+      "2": { "explorer": "Een vriendelijke kameel." },
+      "3": { "fez": "Té vriendelijk." }
+    },
+    "arrivesSecondCamel": {
+      "1": { "fez": "Twee kamelen. Nu kijken ze met z'n tweeën op me neer." },
+      "2": { "explorer": "Ga dan bij de ezels staan." },
+      "3": { "fez": "Daar sta ik al." }
+    },
+    "boughtSturdyCart": {
+      "1": { "fez": "Een stevigere kar. Deze zingt niet onderweg." },
+      "2": { "explorer": "Er staan bloemen op geschilderd." },
+      "3": { "fez": "Voor de stevigheid." }
+    },
+    "blockedSturdyCart": {
+      "1": { "fez": "Daar komt die ouwe kar niet heel aan. Daar wil ik iets stevigers voor." },
+      "2": { "fez": "Er staat er een in mijn kraam, in de Kluis van de Goden. Niet om de verf, hoor." }
+    },
+    "throughSturdyCart": {
+      "1": { "explorer": "Geen gerammel." },
+      "2": { "fez": "Zie je wel? Stevigheid." },
+      "3": { "explorer": "En de bloemen?" },
+      "4": { "fez": "Die helpen ook een beetje." }
+    },
+    "arrivesSturdyCart": {
+      "1": { "fez": "Moet je zien hoe hij glimt!" },
+      "2": { "explorer": "Mooier dan nodig." },
+      "3": { "fez": "Ja. Ik heb hem ook niet om de stevigheid verkocht." }
+    },
+    "boughtCaravanBanner": {
+      "1": { "fez": "Een vaandel. Ik moet eerlijk zijn: hij opent niks." },
+      "2": { "explorer": "Wat doet hij dan?" },
+      "3": { "fez": "Wapperen. Heel mooi wapperen." }
+    },
+    "arrivesCaravanBanner": {
+      "1": { "fez": "Kijk hem wapperen! Boven ons eigen kamp!" },
+      "2": { "explorer": "Hij opent nog steeds niks." },
+      "3": { "fez": "Nee. Dat hoeft ook niet." }
+    }
+  },
+
   "bond": {
     "starter": {
       "1": { "fez": "Dat ging snel." },

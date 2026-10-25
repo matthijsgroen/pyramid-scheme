@@ -145,9 +145,9 @@ One Opus agent; reading list as Task 1, plus the phase-4 plan's purchase table a
 
 - Produces: the 27 `animal.*` scenes of the id list in Global Constraints. `animal.boughtCaravanBanner` and `animal.arrivesCaravanBanner` carry the joke: it opens nothing.
 
-- [ ] **Step 1–4** as Task 2.
-- [ ] **Step 5: Review list** Drafts, each scene `Phase 8 — \`<id>\` — drafted, waits on phase 4 — would fire: <where>`.
-- [ ] **Step 6: Commit** — `story: draft the Fez and animal lines, unwired`
+- [x] **Step 1–4** as Task 2.
+- [x] **Step 5: Review list** Drafts, each scene `Phase 8 — \`<id>\` — drafted, waits on phase 4 — would fire: <where>`.
+- [x] **Step 6: Commit** — `story: draft the Fez and animal lines, unwired`
 
 ---
 

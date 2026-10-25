@@ -573,6 +573,409 @@ fires: the camp — the first home showing after the first structure has all its
 
 The last line is drawn in the pointing pose on purpose.
 
+## Fez and the animals — waits on phase 4
+
+**Nothing fires these yet.** Phase 4 (`docs/superpowers/plans/2026-10-25-camp-phase-4-animal-gates.md`) stopped
+before the purchases, their gates and their camp arrivals were built, so every scene below waits on a seam that
+does not exist; `WAITING_BEATS` in `src/mods/story/game/drafts.ts` names it per id. The seams:
+
+- `animal.forSale` — Fez's stall shows a purchase for the first time;
+- `animal.bought<Id>` — a purchase is bought (at the stall, in the tomb);
+- `animal.blocked<Id>` — a gate refuses for want of a purchase (the locked tier or tomb card in Travel);
+- `animal.through<Id>` — a gate opens because of a purchase (the first time that tier or tomb is entered);
+- `animal.arrives<Id>` — a bought step arrives in the camp (the camp, on the homecoming after the purchase).
+
+Fez sells the animals in his tomb shops; at a gate that wants one, Fez says so and says whose tomb his stall
+stands in; in the camp the animal arrives and Fez sells nothing. Each animal has its own character: the donkey
+stubborn, the cart rattling, the camel looking down on Fez, the second donkey company for the first, the
+second camel after his fez, the sturdier cart painted "for sturdiness", the banner for nothing at all.
+
+**Phase-4 dependency.** No line names a price or a catalogue step. The only phase-4 decision the lines lean
+on is decision 6, which tomb's stall sells which animal: the `blocked*` lines name it (Henut's vault, the high
+priest's, the pharaoh's, the Vault of the Gods) and the `bought*` fires name it. If decision 6 changes, those
+lines change with it. The order is never assumed: a player can buy before a gate ever refuses, so no `bought*`
+or `through*` line leans on its `blocked*`; `arrives*` follows `bought*`, and `through*` may come before or after
+`arrives*`.
+
+### `animal.forSale`
+
+fires (once built): Fez's stall — the first time it shows a purchase (the donkey, in Henut's vault) — seam: Fez's stall shows a purchase for the first time
+
+> **Fez (pointUp):** Kijk eens wat ik in de kraam heb! Vanaf nu verkoop ik ook vervoer.
+> _en:_ Look what's at the stall! I do transport now.
+>
+> **Explorer:** Het staat te kauwen.
+> _en:_ It's chewing.
+>
+> **Fez:** Dat zit bij de prijs in.
+> _en:_ That's included in the price.
+
+Names no animal, so it holds whichever purchase shows first; the explorer's line assumes it is an animal (true for the donkey).
+
+### `animal.boughtDonkey`
+
+fires (once built): Fez's stall in Henut's vault — the donkey is bought — seam: a purchase is bought
+
+> **Fez (pointUp):** Verkocht! Eén ezel. Koppig, maar hij draagt alles.
+> _en:_ Sold! One donkey. Stubborn, but he'll carry anything.
+>
+> **Explorer:** Waar is hij dan?
+> _en:_ So where is he?
+>
+> **Fez:** Al op weg naar huis. Hij loopt liever zonder ons.
+> _en:_ Already on his way home. He'd rather walk without us.
+
+The donkey: stubborn, goes his own way. Says the animal waits at home, which is how buying works.
+
+### `animal.blockedDonkey`
+
+fires (once built): Travel — the expert tier refuses for want of the donkey — seam: a gate refuses for want of a purchase
+
+> **Fez (worried):** Zo ver lopen wij niet, met al die spullen. Daar hoort een ezel bij.
+> _en:_ We're not walking that far with all this stuff. That takes a donkey.
+>
+> **Fez (pointUp):** En wie heeft er eentje staan? Ik. In mijn kraam bij Henut.
+> _en:_ And guess who has one? Me. At my stall in Henut's vault.
+
+Names the selling tomb by its ghost, Henut (decision 6: donkey in the junior tomb).
+
+### `animal.throughDonkey`
+
+fires (once built): the expert tier opens because of the donkey (first expert journey entered) — seam: a gate opens because of a purchase
+
+> **Explorer:** Hij wil wel.
+> _en:_ He's willing.
+>
+> **Fez (sheepish):** Vandaag. Morgen hebben we het er weer over.
+> _en:_ Today. Ask him again tomorrow.
+
+Stubborn to the last: willing today, no promises.
+
+### `animal.arrivesDonkey`
+
+fires (once built): the camp — the donkey's steps arrive on the homecoming — seam: a bought step arrives in the camp
+
+> **Fez (surprised):** Daar staat hij! Hij was er eerder dan wij.
+> _en:_ There he is! Got here before us.
+>
+> **Explorer:** Het vuur heeft hij ook al gevonden.
+> _en:_ Found the fire, too.
+>
+> **Fez (sheepish):** Mijn plekje. Nou ja. Hij was eerst.
+> _en:_ My spot. Well. He was first.
+
+Calls back to `camp.firstHome`, where Fez claimed the spot by the fire; reads on its own as well.
+
+### `animal.boughtCart`
+
+fires (once built): Fez's stall in the High Priest's Treasury — the cart is bought — seam: a purchase is bought
+
+> **Fez (pointUp):** Een kar! Twee wielen, en ze rammelen bijna niet.
+> _en:_ A cart! Two wheels, and they hardly rattle.
+>
+> **Explorer (deadpan):** Bijna?
+> _en:_ Hardly?
+>
+> **Fez:** Dat rammelen krijg je er gratis bij.
+> _en:_ The rattle comes free.
+
+The cart: rattles. Fez sells the rattle as a bonus.
+
+### `animal.blockedCart`
+
+fires (once built): Travel — the master tier refuses for want of the cart — seam: a gate refuses for want of a purchase
+
+> **Fez (worried):** De ezel draagt geen tas meer. Ik heb het hem gevraagd.
+> _en:_ The donkey won't take another bag. I asked him.
+>
+> **Fez (pointUp):** Een kar, dat hebben we nodig. Ik heb er een in mijn kraam, bij de hogepriester.
+> _en:_ A cart, that's what we need. There's one at my stall, at the high priest's.
+
+Names the selling tomb by its ghost, the high priest (decision 6: cart in the first expert tomb). The donkey is always held by then (it opens expert).
+
+### `animal.throughCart`
+
+fires (once built): the master tier opens because of the cart (first master journey entered) — seam: a gate opens because of a purchase
+
+> **Explorer:** Hoor je dat?
+> _en:_ Hear that?
+>
+> **Fez (sheepish):** Dat is de kar. Hij zingt een beetje.
+> _en:_ That's the cart. It sings a bit.
+>
+> **Explorer (deadpan):** De hele weg?
+> _en:_ All the way?
+
+### `animal.arrivesCart`
+
+fires (once built): the camp — the cart arrives on the homecoming — seam: a bought step arrives in the camp
+
+> **Fez (pointUp):** Een kar bij ons kamp! Nu zien we eruit alsof we ergens heen gaan.
+> _en:_ A cart at our camp! Now we look like we're going somewhere.
+>
+> **Explorer:** We gaan ook ergens heen.
+> _en:_ We are going somewhere.
+>
+> **Fez:** Ja, maar nu ziet iedereen het.
+> _en:_ Yes, but now everyone can tell.
+
+### `animal.boughtCamel`
+
+fires (once built): Fez's stall in the High Priest's Treasury — the camel is bought — seam: a purchase is bought
+
+> **Fez (pointUp):** Een kameel! Die loopt dagen zonder water. Ik niet, hoor.
+> _en:_ A camel! Goes for days without water. I don't, mind you.
+>
+> **Explorer:** Hij kijkt naar je.
+> _en:_ He's looking at you.
+>
+> **Fez (worried):** Op me neer. Kamelen kijken altijd op je neer.
+> _en:_ Down at me. Camels always look down at you.
+
+The camel: haughty, looks down on the lizard.
+
+### `animal.blockedCamel`
+
+fires (once built): Travel — the Inner Sanctum refuses for want of the camel — seam: a gate refuses for want of a purchase
+
+> **Fez (worried):** Het Binnenste Heiligdom? Daar komen we te voet nooit.
+> _en:_ The Inner Sanctum? We'll never get there on foot.
+>
+> **Fez (pointUp):** Toevallig heb ik een kameel. In mijn kraam, bij de hogepriester.
+> _en:_ As luck would have it, I have a camel. At my stall, at the high priest's.
+
+Names the selling tomb by its ghost, the high priest (decision 6: camel in the first expert tomb). Gives no reason the sanctum wants a camel beyond distance.
+
+### `animal.throughCamel`
+
+fires (once built): the Inner Sanctum opens because of the camel (entered) — seam: a gate opens because of a purchase
+
+> **Fez (surprised):** Hij knielt! Voor mij!
+> _en:_ He's kneeling! For me!
+>
+> **Explorer (deadpan):** Om op te stappen.
+> _en:_ So we can climb on.
+>
+> **Fez (sheepish):** Laat me nou even.
+> _en:_ Let me have this.
+
+### `animal.arrivesCamel`
+
+fires (once built): the camp — the camel's steps arrive on the homecoming — seam: a bought step arrives in the camp
+
+> **Fez:** Daar staat hij. Hij doet alsof het kamp van hem is.
+> _en:_ There he is. Acting like the camp's his.
+>
+> **Explorer:** En de ezel?
+> _en:_ And the donkey?
+>
+> **Fez (sheepish):** Die doet alsof hij hem niet ziet. Net als ik.
+> _en:_ Pretending not to see him. Same as me.
+
+The donkey is always home by then (it opens expert, where the camel is sold).
+
+### `animal.boughtSecondDonkey`
+
+fires (once built): Fez's stall in the Pharaoh's Secret Hoard — the second donkey is bought — seam: a purchase is bought
+
+> **Fez (pointUp):** Nog een ezel! Dan heeft de eerste eindelijk iemand om mee te praten.
+> _en:_ Another donkey! Now the first one has someone to talk to.
+>
+> **Explorer:** Praten?
+> _en:_ Talk?
+>
+> **Fez:** Balken. Dat is praten, maar harder.
+> _en:_ Bray. It's talking, only louder.
+
+The second donkey: company. The two of them are loud.
+
+### `animal.blockedSecondDonkey`
+
+fires (once built): Travel — the wizard tier refuses for want of the second donkey — seam: a gate refuses for want of a purchase
+
+> **Fez (worried):** De ezel wil niet verder. Niet alleen, zegt hij.
+> _en:_ The donkey won't go on. Not alone, he says.
+>
+> **Explorer:** Zegt hij dat?
+> _en:_ He said that?
+>
+> **Fez (pointUp):** Ik versta ezel. Hij wil een maatje, en bij de farao heb ik er een in de kraam.
+> _en:_ I speak donkey. He wants a pal, and I've got one at my stall in the pharaoh's hoard.
+
+Names the selling tomb by its ghost, the pharaoh (decision 6: second donkey in the first master tomb).
+
+### `animal.throughSecondDonkey`
+
+fires (once built): the wizard tier opens because of the second donkey (first wizard journey entered) — seam: a gate opens because of a purchase
+
+> **Fez (surprised):** Hoor ze! Ze balken om het hardst.
+> _en:_ Listen to them! Each one louder than the other.
+>
+> **Explorer:** Wie wint er?
+> _en:_ Who's winning?
+>
+> **Fez (sheepish):** Wij niet. Wij moeten het aanhoren.
+> _en:_ Not us. We have to listen to it.
+
+### `animal.arrivesSecondDonkey`
+
+fires (once built): the camp — the second donkey arrives on the homecoming — seam: a bought step arrives in the camp
+
+> **Fez (surprised):** Kijk ze nou staan. Alsof ze elkaar al jaren kennen.
+> _en:_ Look at them. Like they've known each other for years.
+>
+> **Explorer:** Net als wij.
+> _en:_ Like us.
+>
+> **Fez (sheepish):** Wij balken minder.
+> _en:_ We bray less.
+
+### `animal.boughtSecondCamel`
+
+fires (once built): Fez's stall in the Pharaoh's Secret Hoard — the second camel is bought — seam: a purchase is bought
+
+> **Fez (sheepish):** Nog een kameel. Ja. Ik vind ze ook niet aardig.
+> _en:_ Another camel. Yes. I don't like them either.
+>
+> **Fez:** Maar deze kijkt tenminste vriendelijk.
+> _en:_ But this one at least looks friendly.
+>
+> **Explorer (deadpan):** Hij kijkt naar je fez.
+> _en:_ He's looking at your fez.
+
+The second camel: friendlier than the first — too friendly, as `throughSecondCamel` finds out.
+
+### `animal.blockedSecondCamel`
+
+fires (once built): Travel — the Hall of Osiris refuses for want of the second camel — seam: a gate refuses for want of a purchase
+
+> **Fez (worried):** De Hal van Osiris. Met één kameel komen we daar niet.
+> _en:_ The Hall of Osiris. One camel won't get us there.
+>
+> **Fez (pointUp):** Gelukkig heb ik er nog een, bij de farao in de kraam. Mijn allerlaatste.
+> _en:_ Luckily I've got another, at my stall in the pharaoh's hoard. My very last one.
+>
+> **Explorer (deadpan):** Dat zeg je altijd.
+> _en:_ You always say that.
+
+Names the selling tomb by its ghost, the pharaoh (decision 6: second camel in the first master tomb). The first camel is always held by then.
+
+### `animal.throughSecondCamel`
+
+fires (once built): the Hall of Osiris opens because of the second camel (entered) — seam: a gate opens because of a purchase
+
+> **Fez (worried):** Hij eet aan mijn fez!
+> _en:_ He's eating my fez!
+>
+> **Explorer (deadpan):** Een vriendelijke kameel.
+> _en:_ A friendly camel.
+>
+> **Fez (sheepish):** Té vriendelijk.
+> _en:_ Too friendly.
+
+### `animal.arrivesSecondCamel`
+
+fires (once built): the camp — the second camel arrives on the homecoming — seam: a bought step arrives in the camp
+
+> **Fez:** Twee kamelen. Nu kijken ze met z'n tweeën op me neer.
+> _en:_ Two camels. Now they both look down on me.
+>
+> **Explorer:** Ga dan bij de ezels staan.
+> _en:_ Go and stand with the donkeys, then.
+>
+> **Fez (sheepish):** Daar sta ik al.
+> _en:_ I already am.
+
+Calls back to `boughtCamel` (camels look down on Fez); reads on its own as well.
+
+### `animal.boughtSturdyCart`
+
+fires (once built): Fez's stall in the Vault of the Gods — the sturdier cart is bought — seam: a purchase is bought
+
+> **Fez (pointUp):** Een stevigere kar. Deze zingt niet onderweg.
+> _en:_ A sturdier cart. This one doesn't sing on the road.
+>
+> **Explorer:** Er staan bloemen op geschilderd.
+> _en:_ There are flowers painted on it.
+>
+> **Fez:** Voor de stevigheid.
+> _en:_ For sturdiness.
+
+Sold as sturdier; it is the painted cart (loot spec "Bought at Fez"). Fez insists on the sturdiness.
+
+### `animal.blockedSturdyCart`
+
+fires (once built): Travel — the Realm of Cosmic Forces refuses for want of the sturdier cart — seam: a gate refuses for want of a purchase
+
+> **Fez (worried):** Daar komt die ouwe kar niet heel aan. Daar wil ik iets stevigers voor.
+> _en:_ The old cart won't get there in one piece. That wants something sturdier.
+>
+> **Fez (pointUp):** Er staat er een in mijn kraam, in de Kluis van de Goden. Niet om de verf, hoor.
+> _en:_ There's one at my stall in the Vault of the Gods. Not for the paint, mind.
+
+Names the selling tomb by its place name, the Vault of the Gods (decision 6: sturdier cart in the first wizard tomb). The old cart is always held by then (it opens master).
+
+### `animal.throughSturdyCart`
+
+fires (once built): the Realm of Cosmic Forces opens because of the sturdier cart (entered) — seam: a gate opens because of a purchase
+
+> **Explorer:** Geen gerammel.
+> _en:_ No rattle.
+>
+> **Fez (pointUp):** Zie je wel? Stevigheid.
+> _en:_ See? Sturdiness.
+>
+> **Explorer (deadpan):** En de bloemen?
+> _en:_ And the flowers?
+>
+> **Fez (sheepish):** Die helpen ook een beetje.
+> _en:_ They help a bit too.
+
+### `animal.arrivesSturdyCart`
+
+fires (once built): the camp — the painted cart arrives on the homecoming — seam: a bought step arrives in the camp
+
+> **Fez (surprised):** Moet je zien hoe hij glimt!
+> _en:_ Look at it shine!
+>
+> **Explorer:** Mooier dan nodig.
+> _en:_ Prettier than it needs to be.
+>
+> **Fez (wistful):** Ja. Ik heb hem ook niet om de stevigheid verkocht.
+> _en:_ Yes. I didn't sell it for the sturdiness either.
+
+Wizard tier: Fez owns up to a sale, which is his arc (prices everything → will not name a price).
+
+### `animal.boughtCaravanBanner`
+
+fires (once built): Fez's stall in the Throne of Eternity — the caravan banner is bought — seam: a purchase is bought
+
+> **Fez (sheepish):** Een vaandel. Ik moet eerlijk zijn: hij opent niks.
+> _en:_ A banner. I'll be honest: it opens nothing.
+>
+> **Explorer:** Wat doet hij dan?
+> _en:_ What does it do, then?
+>
+> **Fez (pointUp):** Wapperen. Heel mooi wapperen.
+> _en:_ It flaps. Beautifully.
+
+The joke: it opens nothing, and Fez says so himself — honesty about a sale at the last stall is his arc.
+
+### `animal.arrivesCaravanBanner`
+
+fires (once built): the camp — the caravan banner arrives on the homecoming — seam: a bought step arrives in the camp
+
+> **Fez (surprised):** Kijk hem wapperen! Boven ons eigen kamp!
+> _en:_ Look at it flap! Over our own camp!
+>
+> **Explorer (deadpan):** Hij opent nog steeds niks.
+> _en:_ Still opens nothing.
+>
+> **Fez (wistful):** Nee. Dat hoeft ook niet.
+> _en:_ No. It doesn't have to.
+
+Still opens nothing; Fez is fine with a thing that is for nothing.
+
 ## Art list
 
 Nothing wanted: every line above uses a pose and face already drawn.
