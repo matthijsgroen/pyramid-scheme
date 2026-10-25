@@ -474,6 +474,47 @@ describe("placeFragments at the frontier", () => {
     expect(walk().enteredJourneys).toContain(journeyOfTier("junior"))
   })
 
+  it("a waiting bucket is placed as soon as a placement reaches its slot, before the buckets queued after it", () => {
+    const section = (gate: string | undefined, prefers: string) => ({
+      pathPuzzles: 0,
+      difficulty: "starter" as const,
+      end: "treasure" as const,
+      ...(gate ? { gate: { type: "tomb-key" as const, wardKeyId: gate } } : {}),
+      endReward: { type: "fragmentSlot" as const, prefers },
+    })
+    const configs = {
+      [journeyOfTier("junior")]: [plainSite()],
+      [journeyOfTier("starter")]: [
+        [
+          {
+            ...tagged("made-up-key:gate")[0],
+            sideSections: [
+              section("made-up-key:gate", "made-up-key:junior"),
+              section("made-up-key:later", "made-up-key:other"),
+              section(undefined, "made-up-key:later"),
+            ],
+          },
+        ],
+      ],
+    }
+    const placed: string[] = []
+    const recorded: CurrencyDistribution = {
+      ...keys,
+      toReward: bucket => {
+        placed.push(bucket)
+        return keyOf(bucket)
+      },
+    }
+    const gated: ReachabilitySupport = {
+      ...support,
+      journeyEntryLocks: journeyId =>
+        journeyId === journeyOfTier("junior") ? [{ bucket: "made-up-key:junior", threshold: 1 }] : [],
+      tierUnlockGroups: () => [],
+    }
+    placeFragments(configs, [recorded], undefined, [], [], undefined, 0, gated)
+    expect(placed).toEqual(["made-up-key:gate", "made-up-key:junior", "made-up-key:later"])
+  })
+
   it("every bucket still waiting is named when nothing more can be placed", () => {
     const configs = {
       [journeyOfTier("junior")]: [plainSite()],

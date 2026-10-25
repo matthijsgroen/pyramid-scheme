@@ -281,9 +281,10 @@ export const placeFragments = (
   // the completion pass after it (see `allBuckets` on CurrencyDistribution) — a second call
   // is a no-op if the first one already discovered and placed everything, which today it does.
   //
-  // A bucket with too few reachable slots waits in `waiting` with its refusal. Once the queue is empty, the frontier
-  // tier's buckets join it; when nothing joins, the waiting buckets are tried again if anything was placed since their
-  // last try, and all of them are refused if nothing was. Every retry follows a placement, so the drain ends.
+  // A bucket with too few reachable slots waits in `waiting` with its refusal, and goes back to the head of the queue
+  // after the next placement. Once the queue is empty, the frontier tier's buckets join it; when nothing joins, the
+  // waiting buckets are tried again if anything was placed since their last try, and all of them are refused if
+  // nothing was. Every retry follows a placement, so the drain ends.
   const waiting = new Map<string, string>()
   let placedSinceRetry = false
   const drain = (): void => {
@@ -399,6 +400,10 @@ export const placeFragments = (
       placedSinceRetry = true
       reach = computeReach()
       settleHarvest()
+      // The buckets waiting were found blocking first, so they are tried again first: a placement may have reached
+      // their slots, and the gate they wait on must open before the walk goes on past it.
+      queue.unshift(...waiting.keys())
+      waiting.clear()
       enqueueNewLocks()
     }
   }
