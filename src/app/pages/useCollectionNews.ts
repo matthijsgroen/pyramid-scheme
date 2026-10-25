@@ -15,11 +15,7 @@ export const useCollectionNews = (): {
 } => {
   const seen = useCollectionSeen()
   const entries = collectionSections()
-  const tabs = entries.flatMap(entry => {
-    if (!entry.useTab) return []
-    const tab = entry.useTab()
-    return [{ id: entry.id, tab }]
-  })
+  const tabs = entries.map(entry => ({ id: entry.id, tab: entry.useTab() }))
 
   const { loaded: seenLoaded, hasRecord, seedSection, newIds, markSeen } = seen
   const unseeded = tabs.filter(({ id, tab }) => seenLoaded && tab.loaded && !hasRecord(id))
@@ -42,7 +38,8 @@ export const useCollectionNews = (): {
 
   const markTabSeen = (id: string) => {
     const found = tabs.find(tab => tab.id === id)
-    if (found) void markSeen(id, found.tab.ids)
+    // A tab not yet read holds nothing it could mark, and a seen save not yet read must not be written.
+    if (found && seenLoaded && found.tab.loaded) void markSeen(id, found.tab.ids)
   }
 
   return { tabs: result, total, markTabSeen }

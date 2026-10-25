@@ -1,5 +1,7 @@
 // @vitest-environment jsdom
 import { render, fireEvent, screen, waitFor, cleanup, act } from "@testing-library/react"
+import { useCollectionSeen } from "./useCollectionSeen"
+import type { FC } from "react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { clearGameData, latestGameValue, writeGameData } from "@/support/useGameStorage"
 import {
@@ -124,10 +126,18 @@ describe(CollectionPage, () => {
     await seenSave({ a: ["a1"] })
     render(<CollectionPage />)
 
+    // Something else marks the open tab's items seen while the player looks at it.
+    const Marker: FC = () => {
+      const { markSeen } = useCollectionSeen()
+      return <button onClick={() => void markSeen("a", ["a1", "a2"])}>mark elsewhere</button>
+    }
+    render(<Marker />)
     expect((await screen.findByText("Item a2")).textContent).toContain("collection.newLabel")
-    await act(async () => new Promise(resolve => setTimeout(resolve, 20)))
+
+    fireEvent.click(screen.getByText("mark elsewhere"))
+    await waitFor(() => expect(stored().a).toEqual(["a1", "a2"]))
+
     expect(screen.getByText("Item a2").textContent).toContain("collection.newLabel")
-    expect(stored().a).toEqual(["a1"])
   })
 
   it("marks the open tab seen when it unmounts, and not the tab it never opened", async () => {
@@ -147,13 +157,18 @@ describe(CollectionPage, () => {
 
   it("marks nothing for a tab that is not loaded", async () => {
     register("a", 1)
-    setTab("a", { ids: [], loaded: false })
+    setTab("a", { ids: ["a1", "a2"], loaded: false })
+    await seenSave({ a: ["a1"] })
     const { unmount } = render(<CollectionPage />)
     await screen.findByRole("tab")
 
     unmount()
-    await act(async () => new Promise(resolve => setTimeout(resolve, 20)))
+    // The unmount's mark is queued as a microtask and its write chains on promises: draining them
+    // counts steps, not time.
+    await act(async () => {
+      for (let step = 0; step < 20; step++) await Promise.resolve()
+    })
 
-    expect(stored()).toEqual({})
+    expect(stored()).toEqual({ a: ["a1"] })
   })
 })

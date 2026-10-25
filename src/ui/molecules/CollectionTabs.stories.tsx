@@ -13,7 +13,7 @@ const tabs = [
 const meta = {
   component: CollectionTabs,
   parameters: { layout: "centered" },
-  args: { tabs, selected: "a", onSelect: () => {}, panelId: "story-panel" },
+  args: { tabs, selected: "a", onSelect: () => {}, label: "Je verzameling", panelId: "story-panel" },
   decorators: [
     Story => (
       <div className="w-[358px] bg-[#F4EAD5] p-3.5">

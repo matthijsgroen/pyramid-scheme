@@ -45,7 +45,7 @@ describe("useCollectionNews", () => {
     setTab("stones", { ids: [], loaded: false })
     const { result } = render()
     await waitFor(() => expect(latestGameValue("collectionSeen")).toEqual({ version: 1, seen: { shells: ["a"] } }))
-    await act(async () => new Promise(resolve => setTimeout(resolve, 20)))
+    // Both sections are weighed in the same effect, so stones was passed over once shells is seeded.
     expect(latestGameValue("collectionSeen")).toEqual({ version: 1, seen: { shells: ["a"] } })
     setTab("stones", { ids: ["x"], loaded: true })
     act(() => result.current.bump())
@@ -71,6 +71,22 @@ describe("useCollectionNews", () => {
     expect(result.current.news.total).toBe(2)
     await act(async () => result.current.news.markTabSeen("shells"))
     expect(result.current.news.tabs.map(tab => tab.newIds)).toEqual([[], ["y"]])
+  })
+
+  it("marks nothing for a tab that is not loaded, even when its section has a record", async () => {
+    register("stones", 1)
+    setTab("stones", { ids: ["x"] })
+    const { result } = render()
+    await waitFor(() => expect(latestGameValue("collectionSeen")).toEqual({ version: 1, seen: { stones: ["x"] } }))
+    setTab("stones", { ids: ["x", "y"], loaded: false })
+    act(() => result.current.bump())
+
+    await act(async () => result.current.news.markTabSeen("stones"))
+
+    expect(latestGameValue("collectionSeen")).toEqual({ version: 1, seen: { stones: ["x"] } })
+    setTab("stones", { ids: ["x", "y"], loaded: true })
+    act(() => result.current.bump())
+    expect(result.current.news.tabs[0].newIds).toEqual(["y"])
   })
 
   it("counts nothing for a tab that is not shown", async () => {

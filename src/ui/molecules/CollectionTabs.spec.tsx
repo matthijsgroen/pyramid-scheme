@@ -12,14 +12,14 @@ const tabs = [
 ]
 
 const tabsOf = (selected: string, onSelect = vi.fn()) => {
-  render(<CollectionTabs tabs={tabs} selected={selected} onSelect={onSelect} panelId="panel" />)
+  render(<CollectionTabs tabs={tabs} selected={selected} onSelect={onSelect} label="Made-up tabs" panelId="panel" />)
   return onSelect
 }
 
 describe("CollectionTabs", () => {
   it("is a tablist whose selected tab is aria-selected and controls the panel", () => {
     tabsOf("b")
-    expect(screen.getByRole("tablist")).toBeTruthy()
+    expect(screen.getByRole("tablist", { name: "Made-up tabs" })).toBeTruthy()
     expect(screen.getByRole("tab", { name: "Beta · 1 nieuw" }).getAttribute("aria-selected")).toBe("true")
     expect(screen.getByRole("tab", { name: "Alpha" }).getAttribute("aria-selected")).toBe("false")
     expect(screen.getByRole("tab", { name: "Alpha" }).getAttribute("aria-controls")).toBe("panel")

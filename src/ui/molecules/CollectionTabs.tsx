@@ -6,13 +6,15 @@ export type CollectionTabsProps = {
   tabs: CollectionTab[]
   selected: string
   onSelect: (id: string) => void
+  /** What the row of tabs is called, for a screen reader. */
+  label: string
   /** The id of the tabpanel the tabs control. */
   panelId: string
 }
 
 // A row of tabs that scrolls sideways when they do not fit; the selected one is dark. The arrow keys move
 // to the neighbour (wrapping) and select it, Home and End jump to the ends.
-export const CollectionTabs: FC<CollectionTabsProps> = ({ tabs, selected, onSelect, panelId }) => {
+export const CollectionTabs: FC<CollectionTabsProps> = ({ tabs, selected, onSelect, label, panelId }) => {
   const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     const index = tabs.findIndex(tab => tab.id === selected)
     const target =
@@ -33,6 +35,7 @@ export const CollectionTabs: FC<CollectionTabsProps> = ({ tabs, selected, onSele
   return (
     <div
       role="tablist"
+      aria-label={label}
       onKeyDown={onKeyDown}
       className="flex gap-1.5 overflow-x-auto rounded-xl bg-[#E9DCBF] p-1 text-[#2B2118]"
     >

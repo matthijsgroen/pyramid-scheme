@@ -38,6 +38,13 @@ describe("useCampTab", () => {
     expect(result.current.ids).toEqual(["hut/poles", "well/rope"])
   })
 
+  it("leaves out a stored part the table does not know", async () => {
+    await withSave({ hut: ["poles", "made-up-part"], "made-up-structure": ["x"] })
+    const { result } = renderHook(() => useCampTab(table))
+    await waitFor(() => expect(result.current.loaded).toBe(true))
+    expect(result.current.ids).toEqual(["hut/poles"])
+  })
+
   it("is not loaded before the camp save has been read", async () => {
     await withSave({ hut: ["poles"] })
     const { result } = renderHook(() => useCampTab(table))

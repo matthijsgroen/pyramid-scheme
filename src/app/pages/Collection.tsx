@@ -136,11 +136,12 @@ export const CollectionPage: FC = () => {
               }))}
               selected={current.id}
               onSelect={selectTab}
+              label={t("collection.tabsLabel")}
               panelId={panelId}
             />
-            {/* The open tab's section from a mod (shop's junk, hieroglyph fragments, tomb treasures, …):
-                it registers itself gated on its mod, so a tab drops out with its mod — core names none. */}
-            <div role="tabpanel" id={panelId} aria-labelledby={`${panelId}-tab-${current.id}`}>
+            {/* The open tab's section from a mod: it registers itself gated on its mod, so a tab drops
+                out with its mod — core names none. */}
+            <div role="tabpanel" id={panelId} aria-labelledby={`${panelId}-tab-${current.id}`} tabIndex={0}>
               <section.Component
                 selectedItem={selectedItem}
                 onSelect={setSelectedItem}
