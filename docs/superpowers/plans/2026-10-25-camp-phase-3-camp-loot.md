@@ -103,13 +103,13 @@ Each is the option that changes the least shipped behaviour or the one the brief
 - Produces (game): `campDemand(table): Record<Difficulty, { finds: number; parts: number }>` and `campUnits(table): CampUnit[]`, where `CampUnit = { kind: "find"; step } | { kind: "part"; structure; part }` with its tier — every unit the world must carry, in table order.
 - Produces (app): `campCatalogueMismatches(table, catalogue: CampCatalogue): string[]` — a catalogue step with no table entry, a table entry with no catalogue step, a different spot or tier (table tier vs the step's `chapter`), a `given` step in the catalogue not `given` in the table or the reverse.
 
-- [ ] **Step 1: Failing tests** (made-up tables only).
+- [x] **Step 1: Failing tests** (made-up tables only).
   - `campSteps.spec.ts`: a sound made-up table gives no problems; each problem above is reported once, naming the step; `campDemand` sums finds and parts per tier and leaves a tier with none at zero; `campUnits` lists every find and every part, each with its step's tier, in table order; bought, grows, fixed and given steps make no units.
   - `campCatalogueAgreement.spec.ts`: a made-up catalogue and table that agree give no mismatches; a step missing on either side, a moved spot, a different tier and a `given` disagreement are each named.
 - [ ] **Step 2: Run** `yarn test src/mods/camp` — FAIL.
-- [ ] **Step 3: Implement.** `CAMP_STEPS` follows the step table above exactly, part counts 2 / 3 / 3 / 4 / 5 by tier, part ids camelCase and meaningful (`stoneRing`: `fieldStones`, `sandBed`…). The table file's top comment says what each source means and that the step order of the art is never a game rule. `campCatalogue.verify.ts` asserts `campStepProblems(CAMP_STEPS)` and `campCatalogueMismatches(CAMP_STEPS, CAMP_CATALOGUE)` are empty. The descriptor comment says what the camp mod owns (camp finds, structure parts, the camp save, the camp's Collection section) and what toggle-off leaves (puzzle slots back to the shop, no camp save read, no Constructies).
-- [ ] **Step 4: Run** `yarn test src/mods/camp`, `yarn vitest run --config vitest.verify.config.ts src/mods/camp` — PASS. `yarn check-types`, `yarn lint` (import rules at zero).
-- [ ] **Step 5: Commit** — `feat: a camp mod with every camp step's source and tier`
+- [x] **Step 3: Implement.** `CAMP_STEPS` follows the step table above exactly, part counts 2 / 3 / 3 / 4 / 5 by tier, part ids camelCase and meaningful (`stoneRing`: `fieldStones`, `sandBed`…). The table file's top comment says what each source means and that the step order of the art is never a game rule. `campCatalogue.verify.ts` asserts `campStepProblems(CAMP_STEPS)` and `campCatalogueMismatches(CAMP_STEPS, CAMP_CATALOGUE)` are empty. The descriptor comment says what the camp mod owns (camp finds, structure parts, the camp save, the camp's Collection section) and what toggle-off leaves (puzzle slots back to the shop, no camp save read, no Constructies).
+- [x] **Step 4: Run** `yarn test src/mods/camp`, `yarn vitest run --config vitest.verify.config.ts src/mods/camp` — PASS. `yarn check-types`, `yarn lint` (import rules at zero).
+- [x] **Step 5: Commit** — `feat: a camp mod with every camp step's source and tier`
 
 ---
 
@@ -127,10 +127,10 @@ Mechanical; one agent (Sonnet).
 
 - Produces keys (namespace `camp`): `spots.<spotId>` (12); `finds.<stepId>` (28 — the thing picked up: "Palmzaad" for `seed` and `secondPalm`, "Vijgenzaad" for `figTree`, "Papyruswortel", "Rietstek", "Sterrendoek" for `cloth`, "Uitkijkvlag" for `flag`); `structures.<structureId>` (26, the structure's name: "Put" for `well`); `parts.<structureId>.<partId>` (99); `collection.title` ("Constructies" / "Structures"); `collection.progress` ("{{found}} van {{total}}" / "{{found}} of {{total}}"); `collection.built` ("gebouwd" / "built"); `collection.unknownPart` ("???"); `collection.open` / `collection.close` (the row toggle's accessible label); `reward.find` ("Kampvondst" / "Camp find"); `reward.part` ("Onderdeel" / "Part"); `reward.progress` ("{{name}} · {{found}} van {{total}}" / "{{name}} · {{found}} of {{total}}").
 
-- [ ] **Step 1: Draft** every name in nl first (spoken, everyday Dutch; a thing a traveller would call it), then en. Part names are things that could lie in a tomb or a ruin: stones, poles, rope, a pulley wheel, mud bricks, thatch, planks.
-- [ ] **Step 2: Check** with a throwaway script in the session scratchpad (not committed) that every step id, structure id and part id in `CAMP_STEPS` has its key in both files, and nothing else is there. `yarn test src/i18n`.
-- [ ] **Step 3: Review list:** under Drafts, `Phase 3 — structure parts` with one line per structure: `<structure nl / en>: <part nl / en>, …`; and `Phase 3 — find names` with one line listing the 28 (nl / en).
-- [ ] **Step 4:** `yarn check-types`, `yarn lint`. **Commit** — `feat: names for every camp find, structure and part`
+- [x] **Step 1: Draft** every name in nl first (spoken, everyday Dutch; a thing a traveller would call it), then en. Part names are things that could lie in a tomb or a ruin: stones, poles, rope, a pulley wheel, mud bricks, thatch, planks.
+- [x] **Step 2: Check** with a throwaway script in the session scratchpad (not committed) that every step id, structure id and part id in `CAMP_STEPS` has its key in both files, and nothing else is there. `yarn test src/i18n`.
+- [x] **Step 3: Review list:** under Drafts, `Phase 3 — structure parts` with one line per structure: `<structure nl / en>: <part nl / en>, …`; and `Phase 3 — find names` with one line listing the 28 (nl / en).
+- [x] **Step 4:** `yarn check-types`, `yarn lint`. **Commit** — `feat: names for every camp find, structure and part`
 
 ---
 

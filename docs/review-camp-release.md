@@ -78,6 +78,34 @@ From `yarn loot-report` on the committed bake (byte-identical to phase 1's). `do
 
 - Phase 1 — Fez's `shopArrival2`, now without supplies. en: "Rare finds cost the most, but I'll pay you for any trinkets you're carrying." nl: "Zeldzame vondsten kosten het meest, maar ik betaal je voor snuisterijen die je meedraagt."
 - Phase 1 — `chest.waterskinDescription`. en: "Cool water. You drink it on the spot and feel your wounds ease." nl: "Koel water. Je drinkt hem meteen leeg en voelt je wonden minder pijn doen."
+- Phase 3 — structure parts (names are drafts, nl / en; one line per structure):
+  - Stenen kring / Stone ring: Veldkeien / Field stones, Zandbed / Sand bed
+  - Vuur / Fire: Tondel / Tinder, Acaciahout / Acacia logs
+  - Kookstenen / Cooking stones: Platte steen / Flat stone, Steunstenen / Support stones
+  - Zitstenen / Seating stones: Gladde keien / Smooth boulders, Zandsteenblok / Sandstone block, Gehouwen plaat / Hewn slab
+  - Leemoven / Clay oven: Ovenvloer / Oven floor, Vuurvaste stenen / Firebricks, Rookgat / Smoke hole, Koperen rooster / Copper grate
+  - Windscherm / Windbreak: Rietbundels / Reed bundles, Houten palen / Wooden stakes
+  - Tent / Tent: Tentstokken / Tent poles, Geweven doek / Woven cloth, Haringen / Tent pegs
+  - Tweede tent / Second tent: Groot tentdoek / Large tent cloth, Nokbalk / Ridge pole, Spantouwen / Guy ropes, Wollen vloerkleed / Wool ground cloth
+  - Paviljoen / Pavilion: Paviljoenpalen / Pavilion posts, Linnen dak / Linen canopy, Gordijnen / Curtains, Wollen kleden / Wool rugs, Houten vloer / Wooden floor
+  - Put / Well: Putstenen / Well stones, Lang touw / Long rope, Emmer / Bucket, Windas / Windlass
+  - Katrolput / Pulley well: Katrol / Pulley wheel, Draagframe / Support frame, Hijstouw / Hoisting rope, Tegengewicht / Counterweight, Leren emmer / Leather bucket
+  - Driepoot / Tripod: Drie stokken / Three poles, Bindtouw / Binding rope, Bronzen haak / Bronze hook
+  - Broodoven / Bread oven: Leemstenen / Mud bricks, Kleipleister / Clay plaster, Ovenklep / Oven lid
+  - Droogrek / Drying rack: Rekpalen / Rack poles, Dwarshout / Crossbar, Vlechtwerk / Wickerwork tray, Hangkoorden / Hanging cords
+  - Feestmaal / Feast: Lage tafel / Low table, Broodmanden / Bread baskets, Gebraden eend / Roast duck, Bierkruiken / Beer jars, Fruitschaal / Fruit bowl
+  - Kaartentafel / Map table: Tafelblad / Table top, Schragen / Trestles, Leren riempjes / Leather straps
+  - Lotusbak / Lotus planter: Kleibak / Clay trough, Nijlslib / Nile silt, Waterkruik / Water jar, Lotusknollen / Lotus tubers, Stenen rand / Stone rim
+  - Vijverrand / Pond edge: Rivierstenen / River stones, Kleibed / Clay bedding, Grind / Gravel, Afbakenpaaltjes / Boundary stakes
+  - Uitkijkpaal / Lookout post: Palmstam / Palm trunk, Voetstenen / Foundation stones, Wiggen / Wedges, Schoren / Braces
+  - Uitkijkplatform / Lookout platform: Draagbalken / Support beams, Planken / Planks, Sjortouw / Lashing rope, Reling / Railing
+  - Ladder / Ladder: Ladderzijden / Ladder rails, Sporten / Rungs, Grondpennen / Ground pegs, Leren lussen / Leather loops
+  - Dak / Roof: Dakbalkjes / Roof poles, Palmbladeren / Palm thatch, Kleilaag / Clay layer, Bindgras / Binding grass
+  - Seinvuur / Signal fire: Vuurschaal / Fire basin, Pek / Pitch, Droog kreupelhout / Dry brushwood, Vuursteen / Flint, Blaasbalg / Bellows
+  - Sterrenmasten / Canopy masts: Masten / Masts, Hoekstenen / Corner stones, Tuilijnen / Stay lines, Grote haringen / Large pegs, Paalvoeten / Pole sockets
+  - Sterren / Stars: Bladgoud / Gold leaf, Naald en draad / Needle and thread, Indigoverf / Indigo dye, Krijt / Chalk, Sjablonen / Stencils
+  - Planeten / Planets: Oker / Ochre, Koperen schijven / Copper discs, Lapispoeder / Lapis powder, Ophanglusjes / Hanging loops, Passer / Dividers
+- Phase 3 — find names (nl / en): Kookpot / Cooking pot, Zitkussens / Seat cushions, Rietmat / Reed mat, Deken / Blanket, Tenttapijt / Tent rug, Tentvlag / Tent flag, Kalebas / Gourd, Kruik / Jar, Tweede kruik / Second jar, Kruidenrek / Spice rack, Broodplank / Bread board, Kompas / Compass, Sterrenkaart / Star map, Rolkoker / Scroll case, Astrolabium / Astrolabe, Rieten wereldbol / Reed globe, Palmzaad / Palm seed, Palmzaad / Palm seed, Vijgenzaad / Fig seed, Papyruswortel / Papyrus root, Rietstek / Reed cutting, Lotusknol / Lotus tuber, Uitkijkvlag / Lookout flag, Thoth-beeldje / Thoth statuette, Bastet-beeldje / Bastet statuette, Anubis-beeldje / Anubis statuette, Ra-beeldje / Ra statuette, Sterrendoek / Star cloth
 
 ## Failures
 
