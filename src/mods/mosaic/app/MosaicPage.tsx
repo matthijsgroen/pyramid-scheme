@@ -20,9 +20,9 @@ export const MosaicPage: FC = () => {
   )
   const placed = Object.fromEntries(MOSAIC_TIERS.map(t => [t, placedCount(t)])) as TierCounts
 
-  // From lg the camp popup sizes to its content, so the window claims the viewport's height itself.
+  // The camp popup gives a window screen the full height of its panel; this fills it.
   return (
-    <div className="flex size-full flex-col bg-stone-950 lg:h-[calc(100dvh-11rem)]">
+    <div className="flex size-full min-h-0 flex-col bg-stone-950">
       <MosaicWindow
         owned={owned}
         placed={placed}

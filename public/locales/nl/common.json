@@ -55,7 +55,6 @@
     "blocked": {
       "carrying": "Niet te passeren met een steen"
     },
-    "travel": "Reizen",
     "chooseYourJourney": "Kies je Expeditie",
     "backToMap": "Terug naar kaart",
     "startAdventure": "Begin je avontuur door piramides te verkennen.",
@@ -204,7 +203,6 @@
     }
   },
   "collection": {
-    "title": "Collectie",
     "clickForDetails": "Tik op een tegel voor details",
     "categories": {
       "deities": "🏺 Goden",

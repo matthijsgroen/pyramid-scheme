@@ -29,3 +29,37 @@ describe("CampPopup", () => {
     expect(document.activeElement).toBe(screen.getByRole("dialog"))
   })
 })
+
+describe("CampPopup dialog behaviour", () => {
+  it("ignores an Escape pressed inside a dialog nested in it", () => {
+    const onClose = vi.fn()
+    render(
+      <CampPopup title="Journeys" closeLabel="Close" onClose={onClose}>
+        <div role="dialog" aria-label="Confirm">
+          <button>Yes</button>
+        </div>
+      </CampPopup>
+    )
+    fireEvent.keyDown(screen.getByText("Yes"), { key: "Escape" })
+    expect(onClose).not.toHaveBeenCalled()
+  })
+
+  it("gives focus back to what opened it", () => {
+    const opener = document.createElement("button")
+    document.body.append(opener)
+    opener.focus()
+    const { unmount } = render(<CampPopup title="Journeys" closeLabel="Close" onClose={() => {}} />)
+    expect(document.activeElement).toBe(screen.getByRole("dialog"))
+    unmount()
+    expect(document.activeElement).toBe(opener)
+    opener.remove()
+  })
+
+  it("keeps Tab inside the dialog", () => {
+    render(<CampPopup title="Journeys" closeLabel="Close" onClose={() => {}} />)
+    const close = screen.getByLabelText("Close")
+    close.focus()
+    fireEvent.keyDown(close, { key: "Tab" })
+    expect(document.activeElement).toBe(close)
+  })
+})

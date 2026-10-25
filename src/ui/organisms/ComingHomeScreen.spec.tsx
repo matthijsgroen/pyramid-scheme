@@ -41,3 +41,20 @@ describe("ComingHomeScreen", () => {
     expect(onDone).toHaveBeenCalledOnce()
   })
 })
+
+describe("ComingHomeScreen as a dialog", () => {
+  it("is a modal dialog named by its title, with focus inside it", () => {
+    screenOf()
+    const dialog = screen.getByRole("dialog", { name: "Back" })
+    expect(dialog.getAttribute("aria-modal")).toBe("true")
+    expect(document.activeElement).toBe(dialog)
+  })
+
+  it("keeps Tab on the button, the only control", () => {
+    screenOf()
+    const button = screen.getByText("Unpack")
+    button.focus()
+    fireEvent.keyDown(button, { key: "Tab" })
+    expect(document.activeElement).toBe(button)
+  })
+})

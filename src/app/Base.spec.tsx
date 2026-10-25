@@ -23,6 +23,7 @@ const journeys = [
 let activeJourneyId: string | undefined
 let available = new Set<string>()
 let progress: Record<string, { inProgress: boolean; completionCount: number; levelNr: number }> = {}
+let unexplored = new Set<number>()
 const startJourney = vi.fn()
 
 vi.mock("@/app/translations/useJourneyTranslations", () => ({ useJourneyTranslations: () => journeys }))
@@ -31,7 +32,7 @@ vi.mock("@/app/state/useJourneys", () => ({
     activeJourneyId,
     startJourney,
     getJourney: (id: string) => progress[id],
-    getUnexploredLevels: () => new Set<number>(),
+    getUnexploredLevels: () => unexplored,
   }),
 }))
 vi.mock("@/app/pages/useAvailableJourneyIds", () => ({ useAvailableJourneyIds: () => available }))
@@ -116,6 +117,7 @@ beforeEach(async () => {
   activeJourneyId = undefined
   available = new Set(["a", "b"])
   progress = {}
+  unexplored = new Set()
   startJourney.mockReset()
 })
 afterEach(() => {
@@ -217,6 +219,14 @@ describe(Base, () => {
       expect(screen.queryByText("camp.comingHome.title")).toBeNull()
     })
 
+    it("has no button on the discover hint on desktop, where the journeys are in the page", () => {
+      stubDesktop(true)
+      progress = { a: { inProgress: false, completionCount: 1, levelNr: 1 } }
+      unexplored = new Set([2])
+      renderBase()
+      expect(screen.getByText("camp.hint 1").closest("button")).toBeNull()
+    })
+
     it("shows no coming-home screen on a plain visit", () => {
       renderBase()
       expect(screen.queryByText("camp.comingHome.title")).toBeNull()
@@ -283,5 +293,30 @@ describe("home hooks", () => {
 
     await act(async () => fireEvent.click(screen.getByText("camp.comingHome.toCamp")))
     expect(ran).toHaveBeenCalled()
+  })
+  it("runs a hook once, and only after the new-chapter card is closed", async () => {
+    vi.resetModules()
+    await writeGameData({ homecoming: { version: 1, haul: [], chapter: "starter" } })
+    chapter = "expert"
+    const { registerHomeHook } = await import("@/app/home/homeHooks")
+    const { Base: FreshBase } = await import("./Base")
+    const { FezContext: FreshFez } = await import("@/app/fez/context")
+    const ran = vi.fn()
+    registerHomeHook(() => ran())
+    render(
+      <Develop>
+        <FreshFez.Provider value={{ showConversation: () => {} }}>
+          <FreshBase startGame={() => {}} />
+        </FreshFez.Provider>
+      </Develop>
+    )
+    await screen.findByText("camp.chapter.title")
+    expect(ran).not.toHaveBeenCalled()
+
+    await act(async () => fireEvent.click(screen.getByText("camp.chapter.later")))
+    expect(ran).toHaveBeenCalled()
+    const runsAfterClose = ran.mock.calls.length
+    await act(async () => {})
+    expect(ran.mock.calls.length).toBe(runsAfterClose)
   })
 })

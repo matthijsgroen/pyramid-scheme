@@ -10,7 +10,8 @@ export type ContinueCardProps = {
   /** Left out where the journeys list already stands beside the card (desktop). */
   onAllJourneys?: () => void
   emptyText?: string
-  hint?: { text: string; onOpen: () => void }
+  /** Without `onOpen` the row is a plain note. */
+  hint?: { text: string; onOpen?: () => void }
   /** Lets the app wrap the Op pad button (e.g. in a tap hint). */
   setOffSlot?: (button: ReactNode) => ReactNode
 }
@@ -67,16 +68,22 @@ export const ContinueCard: FC<ContinueCardProps> = ({
           {allJourneysLabel}
         </button>
       )}
-      {hint && (
-        <button
-          type="button"
-          onClick={hint.onOpen}
-          className="flex items-center gap-2.5 rounded-xl bg-[#E9DCBF] px-3 py-2.5 text-left text-sm"
-        >
-          <span className="size-2.5 flex-none rounded-full bg-[#A3401A]" />
-          <span>{hint.text}</span>
-        </button>
-      )}
+      {hint &&
+        (hint.onOpen ? (
+          <button
+            type="button"
+            onClick={hint.onOpen}
+            className="flex items-center gap-2.5 rounded-xl bg-[#E9DCBF] px-3 py-2.5 text-left text-sm"
+          >
+            <span className="size-2.5 flex-none rounded-full bg-[#A3401A]" />
+            <span>{hint.text}</span>
+          </button>
+        ) : (
+          <div className="flex items-center gap-2.5 rounded-xl bg-[#E9DCBF] px-3 py-2.5 text-sm">
+            <span className="size-2.5 flex-none rounded-full bg-[#A3401A]" />
+            <span>{hint.text}</span>
+          </div>
+        ))}
     </div>
   )
 }

@@ -55,7 +55,6 @@
     "blocked": {
       "carrying": "Cannot pass with a stone"
     },
-    "travel": "Travel",
     "chooseYourJourney": "Choose Your Expedition",
     "backToMap": "Back to map",
     "startAdventure": "Start your adventure by exploring pyramids.",
@@ -204,7 +203,6 @@
     }
   },
   "collection": {
-    "title": "Collection",
     "clickForDetails": "Tap a tile for details",
     "categories": {
       "deities": "🏺 Deities",

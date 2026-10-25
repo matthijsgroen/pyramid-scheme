@@ -53,3 +53,10 @@ describe("ContinueCard", () => {
     expect(screen.getByTestId("wrap").textContent).toBe("Set off")
   })
 })
+
+describe("ContinueCard hint without onOpen", () => {
+  it("is a plain note, not a button", () => {
+    card({ hint: { text: "Something new" } })
+    expect(screen.getByText("Something new").closest("button")).toBeNull()
+  })
+})

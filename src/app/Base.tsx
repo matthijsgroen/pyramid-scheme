@@ -162,7 +162,12 @@ export const Base = ({
       onAllJourneys={isDesktop ? undefined : () => setPopup("journeys")}
       emptyText={t("camp.continue.empty")}
       hint={
-        toDiscover > 0 ? { text: t("camp.hint", { count: toDiscover }), onOpen: () => setPopup("journeys") } : undefined
+        toDiscover > 0
+          ? {
+              text: t("camp.hint", { count: toDiscover }),
+              onOpen: isDesktop ? undefined : () => setPopup("journeys"),
+            }
+          : undefined
       }
       setOffSlot={button => <TapHint show={setOffHint && !speaking}>{button}</TapHint>}
     />
@@ -212,14 +217,19 @@ export const Base = ({
         aside={isDesktop ? <TravelPage startGame={startGame} hints={false} /> : undefined}
       />
       {popup && (
-        <CampPopup title={popupTitle[popup]} closeLabel={t("camp.close")} onClose={closePopup}>
+        <CampPopup
+          title={popupTitle[popup]}
+          closeLabel={t("camp.close")}
+          onClose={closePopup}
+          fill={popup === "window"}
+        >
           {popup === "collection" && <CollectionPage />}
           {popup === "window" && WindowScreen && <WindowScreen />}
           {popup === "journeys" && <TravelPage startGame={startGame} />}
         </CampPopup>
       )}
       {cameHome && <ComingHome onDone={() => onArrived?.()} />}
-      {!cameHome && !announced && <HomeHooks />}
+      {settled && !cameHome && !announced && <HomeHooks />}
       {announced && <NewChapter tier={announced} startGame={startGame} onClose={() => setChapterClosed(true)} />}
       <SettingsModal isOpen={showSettings} onClose={() => setShowSettings(false)} startGame={startGame} />
       {isDevelopMode && <LockEditorHost />}

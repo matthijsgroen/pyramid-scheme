@@ -1,4 +1,5 @@
 import type { FC, ReactNode } from "react"
+import { focusOnMount, trapTab } from "@/ui/atoms/dialogFocus"
 import { HaulRow } from "@/ui/molecules/HaulRow"
 
 export type ComingHomeScreenProps = {
@@ -25,8 +26,13 @@ export const ComingHomeScreen: FC<ComingHomeScreenProps> = ({
 }) => (
   <div className="fixed inset-0 z-40 flex h-(--screen-height) justify-center overflow-auto bg-[#1B2236] px-4 pt-[max(1.75rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))] text-[#F4EAD5] lg:items-center lg:p-10">
     <section
+      ref={focusOnMount}
+      role="dialog"
+      aria-modal="true"
       aria-labelledby="coming-home-title"
-      className="grid w-full max-w-md grid-cols-1 content-start justify-items-center gap-4 lg:max-w-3xl lg:grid-cols-[14rem_minmax(0,1fr)] lg:grid-rows-[auto_auto_1fr] lg:justify-items-stretch lg:gap-x-7 lg:rounded-[20px] lg:border-2 lg:border-[#2B2118] lg:bg-[#F4EAD5] lg:p-8 lg:text-[#2B2118]"
+      tabIndex={-1}
+      onKeyDown={trapTab}
+      className="grid w-full max-w-md grid-cols-1 content-start justify-items-center gap-4 outline-none lg:max-w-3xl lg:grid-cols-[14rem_minmax(0,1fr)] lg:grid-rows-[auto_auto_1fr] lg:justify-items-stretch lg:gap-x-7 lg:rounded-[20px] lg:border-2 lg:border-[#2B2118] lg:bg-[#F4EAD5] lg:p-8 lg:text-[#2B2118]"
     >
       <h1
         id="coming-home-title"

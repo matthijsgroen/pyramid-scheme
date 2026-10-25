@@ -139,3 +139,28 @@ describe("the developer block", () => {
     expect(screen.getByTestId("save-transfer")).toBeTruthy()
   })
 })
+
+describe("SettingsModal as a dialog", () => {
+  it("is a modal dialog that Escape closes", () => {
+    const onClose = vi.fn()
+    render(<SettingsModal isOpen onClose={onClose} startGame={() => {}} />)
+    const dialog = screen.getByRole("dialog", { name: "ui.settings" })
+    expect(dialog.getAttribute("aria-modal")).toBe("true")
+    fireEvent.keyDown(dialog, { key: "Escape" })
+    expect(onClose).toHaveBeenCalledOnce()
+  })
+
+  it("mounts the playtesting tools only while open in develop mode", () => {
+    const withDevelop = (isOpen: boolean, isDevelopMode: boolean) => (
+      <DevelopContext.Provider value={{ isDevelopMode, setDevelopMode: () => {} }}>
+        <SettingsModal isOpen={isOpen} onClose={() => {}} startGame={() => {}} />
+      </DevelopContext.Provider>
+    )
+    const { rerender } = render(withDevelop(true, false))
+    expect(screen.queryByTestId("puzzle-lab")).toBeNull()
+    rerender(withDevelop(true, true))
+    expect(screen.getByTestId("puzzle-lab")).toBeTruthy()
+    rerender(withDevelop(false, true))
+    expect(screen.queryByTestId("puzzle-lab")).toBeNull()
+  })
+})

@@ -36,3 +36,15 @@ describe("NewChapterScreen", () => {
     expect(screen.getByText("Later")).toBeTruthy()
   })
 })
+
+describe("NewChapterScreen as a dialog", () => {
+  it("is modal, holds focus and treats Escape as Later", () => {
+    const onClose = vi.fn()
+    chapter({ onClose })
+    const dialog = screen.getByRole("dialog", { name: "A new pyramid" })
+    expect(dialog.getAttribute("aria-modal")).toBe("true")
+    expect(document.activeElement).toBe(dialog)
+    fireEvent.keyDown(dialog, { key: "Escape" })
+    expect(onClose).toHaveBeenCalledOnce()
+  })
+})
