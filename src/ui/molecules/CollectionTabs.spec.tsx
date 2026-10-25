@@ -49,4 +49,19 @@ describe("CollectionTabs", () => {
     fireEvent.keyDown(screen.getByRole("tab", { name: "Alpha" }), { key: "x" })
     expect(onSelect).not.toHaveBeenCalled()
   })
+
+  it("shows no arrows when the tabs fit, and lights only the way there is more to see when they do not", () => {
+    tabsOf("a")
+    expect(document.querySelectorAll("button[aria-hidden]")).toHaveLength(0)
+    cleanup()
+
+    const width = vi.spyOn(HTMLElement.prototype, "scrollWidth", "get").mockReturnValue(500)
+    const client = vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockReturnValue(200)
+    tabsOf("a")
+    const [left, right] = document.querySelectorAll("button[aria-hidden]")
+    expect(left.className).toContain("opacity-25")
+    expect(right.className).not.toContain("opacity-25")
+    width.mockRestore()
+    client.mockRestore()
+  })
 })
