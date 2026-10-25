@@ -78,11 +78,11 @@ Small; one agent (Sonnet).
 
 - Produces: `CampSceneProps.standIns?: boolean`. Without it, a placed piece whose art is missing renders nothing (no box, no shadow, no light from it), and an entrance whose object has no art is not offered. With it, today's stand-in box.
 
-- [ ] **Step 1: Failing tests** (`CampScene.spec.tsx`, made-up catalogue with one piece that has art and one id that has none): without `standIns` the missing piece is not in the DOM and no `.camp-standin` exists; with `standIns` it is; an entrance on a piece with no art is not rendered without `standIns`.
-- [ ] **Step 2: Run** `yarn test src/ui/atoms/CampScene` — FAIL.
-- [ ] **Step 3: Implement.** The prop's doc comment says stand-ins are for Storybook while art is owed, and the app never passes it.
-- [ ] **Step 4: Run** the specs — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Commit** — `feat: the camp scene leaves a spot bare when its art is owed`
+- [x] **Step 1: Failing tests** (`CampScene.spec.tsx`, made-up catalogue with one piece that has art and one id that has none): without `standIns` the missing piece is not in the DOM and no `.camp-standin` exists; with `standIns` it is; an entrance on a piece with no art is not rendered without `standIns`.
+- [x] **Step 2: Run** `yarn test src/ui/atoms/CampScene` — FAIL.
+- [x] **Step 3: Implement.** The prop's doc comment says stand-ins are for Storybook while art is owed, and the app never passes it.
+- [x] **Step 4: Run** the specs — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Commit** — `feat: the camp scene leaves a spot bare when its art is owed`
 
 ---
 
@@ -197,11 +197,11 @@ One agent (Sonnet).
 - Produces: `continueJourney(input): { journeyId: string; mode: "continue" | "start"; levelNr?: number; levelCount: number } | undefined` where `input = { journeys; activeJourneyId?; isInProgress(id); completionCount(id); levelNr(id); available: ReadonlySet<string>; lockOpen(id); hidden(id) }`. Rule: the active journey when in progress (`continue`, with its level); else, over journeys that are pickable (an available pyramid journey, or an entry-locked one whose lock is open), not hidden and never completed, the first in list order of the highest difficulty that has one (`start`); else undefined.
 - Produces: `newToDiscoverCount(input): number` — finished journeys (completion > 0) with at least one reachable unexplored level.
 
-- [ ] **Step 1: Failing tests** (made-up journeys over two tiers, one tomb with a lock): in progress wins over everything; with nothing in progress the higher tier's first open unfinished journey is chosen over a lower tier's; a locked tomb is skipped, an opened one counts; a hidden journey is skipped; a completed one is skipped; all done gives undefined; the count counts only finished journeys with unexplored levels.
-- [ ] **Step 2: Run** `yarn test src/app/home/continueJourney` — FAIL.
-- [ ] **Step 3: Implement** as pure functions; the comment states the rule in one sentence each.
-- [ ] **Step 4: Run** — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Commit** — `feat: the camp knows which journey to offer next`
+- [x] **Step 1: Failing tests** (made-up journeys over two tiers, one tomb with a lock): in progress wins over everything; with nothing in progress the higher tier's first open unfinished journey is chosen over a lower tier's; a locked tomb is skipped, an opened one counts; a hidden journey is skipped; a completed one is skipped; all done gives undefined; the count counts only finished journeys with unexplored levels.
+- [x] **Step 2: Run** `yarn test src/app/home/continueJourney` — FAIL.
+- [x] **Step 3: Implement** as pure functions; the comment states the rule in one sentence each.
+- [x] **Step 4: Run** — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Commit** — `feat: the camp knows which journey to offer next`
 
 ---
 
