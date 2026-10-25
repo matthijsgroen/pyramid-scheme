@@ -184,7 +184,7 @@ and its map view. The Verzameling as a popup from the chest, per `MobielVerzamel
 collection sections as tabs, NIEUW badges, plus the Constructies tab from phase 3 and the story log. The mosaic
 window per `MobielMozaiek.dc.html`.
 
-### Phase 8 — story drafts [ ]
+### Phase 8 — story drafts [x]
 
 Draft every new line in the voice of the story docs (spoken, from the character's feeling, addressed to someone;
 jokes land on first read; the explorer speaks only where it helps), mark each as a draft, and wire its hook:
@@ -220,3 +220,4 @@ worktree, and the review list sorted: decisions, drafts, failures, things to loo
 - 2026-10-25 — phase 4 STOPPED after Tasks 1–2 (plan `docs/superpowers/plans/2026-10-25-camp-phase-4-animal-gates.md`): gates AND every mod's requirement; gate walk; loot never on a shop's end (8 hieroglyph pieces were lost there, pre-existing on main). Blocker, pre-existing: placement walks default-seed floors, the bake ships pinned seeds — at the shipped layout no wizard journey can be entered (review list, Failures). Tasks 3–8 wait on the designer. Phase 5 skipped (needs 4). Next: phase 6.
 - 2026-10-25 — phase 6 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-6-camp-home.md`): the camp is home (HUD, scene entrances, Verder met, desktop side panel); coming-home screen with the haul; new-chapter card; settings hold the dev tools; story log is a Collection section; nothing chains into the next journey. Alle reizen is still the old Travel page (phase 7). Next: phase 7 plan task.
 - 2026-10-25 — phase 7 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-7-journeys-collection.md`): Alle reizen replaces Travel (one list, tiers newest first, locked needs, `extraNeeds` seam for animals later); the Verzameling opens in tabs with NIEUW and a chest badge (seen save); mosaic window count line. Next: phase 8 plan task.
+- 2026-10-25 — phase 8 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-8-story-drafts.md`): 64 draft scenes nl+en (27 tomb, 10 camp, 27 animal — the animal ones unwired, waiting on phase 4) in `docs/game-design/story/script-camp-release.md`; tomb and camp beats wired once each; develop mode plays the drafts from settings. Next: phase 9 wrap-up.
