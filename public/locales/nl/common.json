@@ -115,7 +115,8 @@
     "canAttempt": "Je kunt proberen door te gaan.",
     "tooWeak": "Gevaarlijk zwak — een mislukte poging laat je met niets achter.",
     "attempt": "Val proberen",
-    "turnAround": "Omdraaien"
+    "turnAround": "Omdraaien",
+    "rested": "Uitgerust bij het vuur — weer helemaal fit"
   },
   "gate": {
     "title": "🔒 Gesloten Poort",
@@ -172,7 +173,12 @@
     "soldOut": "Uitverkocht",
     "dismiss": "Vertrekken",
     "rareItems": "Zeldzame Vondsten",
-    "sellSection": "Snuisterijen verkopen"
+    "sellSection": "Snuisterijen verkopen",
+    "haul": {
+      "coins_one": "+{{count}} munt",
+      "coins_other": "+{{count}} munten",
+      "note": "Losse munten onderweg"
+    }
   },
   "level": {
     "completed": "Niveau Voltooid!"
@@ -187,6 +193,15 @@
       "expert": "Het Licht Binnenlaten",
       "master": "De Groene Koning",
       "wizard": "De Veer en het Hart"
+    },
+    "entrance": {
+      "title": "Mozaïek",
+      "label": "Mozaïek {{found}}/{{total}}"
+    },
+    "haul": {
+      "pieces_one": "{{count}} mozaïekstukje",
+      "pieces_other": "{{count}} mozaïekstukjes",
+      "note": "Naar het glas-in-loodraam"
     }
   },
   "collection": {

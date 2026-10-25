@@ -236,5 +236,10 @@
     "find": "Camp find",
     "part": "Part",
     "progress": "{{name}} · {{found}} of {{total}}"
+  },
+  "haul": {
+    "new": "New in your camp",
+    "parts_one": "{{name}} · {{count}} part",
+    "parts_other": "{{name}} · {{count}} parts"
   }
 }

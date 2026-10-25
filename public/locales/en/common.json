@@ -115,7 +115,8 @@
     "canAttempt": "You can attempt to pass through.",
     "tooWeak": "Dangerously weak — a failed attempt will leave you with nothing.",
     "attempt": "Attempt the trap",
-    "turnAround": "Turn around"
+    "turnAround": "Turn around",
+    "rested": "Rested by the fire — fit again"
   },
   "gate": {
     "title": "🔒 Locked Gate",
@@ -172,7 +173,12 @@
     "soldOut": "Sold out",
     "dismiss": "Leave",
     "rareItems": "Rare Finds",
-    "sellSection": "Trinkets to sell"
+    "sellSection": "Trinkets to sell",
+    "haul": {
+      "coins_one": "+{{count}} coin",
+      "coins_other": "+{{count}} coins",
+      "note": "Loose coins on the way"
+    }
   },
   "level": {
     "completed": "Level Completed!"
@@ -187,6 +193,15 @@
       "expert": "Letting the Sun In",
       "master": "The Green King",
       "wizard": "The Feather and the Heart"
+    },
+    "entrance": {
+      "title": "Mosaic",
+      "label": "Mosaic {{found}}/{{total}}"
+    },
+    "haul": {
+      "pieces_one": "{{count}} mosaic piece",
+      "pieces_other": "{{count}} mosaic pieces",
+      "note": "For the stained-glass window"
     }
   },
   "collection": {

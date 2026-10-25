@@ -236,5 +236,10 @@
     "find": "Kampvondst",
     "part": "Onderdeel",
     "progress": "{{name}} · {{found}} van {{total}}"
+  },
+  "haul": {
+    "new": "Nieuw in je kamp",
+    "parts_one": "{{name}} · {{count}} onderdeel",
+    "parts_other": "{{name}} · {{count}} onderdelen"
   }
 }
