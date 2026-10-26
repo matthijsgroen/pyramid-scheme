@@ -9,7 +9,7 @@
 1. **Phase 4b, a lock as a blueprint.** On a lock floor the carve already absorbs ungated side sections onto laid nodes, spread from the way in (`prepareFloor.ts` `isContentSection`, `laidFloor.ts` `fillLaidFloor`). This plan gives each eligible side section **a corridor of the lock**: a pure assignment (`assignCorridors`) pairs sections with the lock plan's corridors before the lay, one per corridor while corridors last, and only when there are more sections than corridors does a corridor take a second; the lay sizes each corridor for its sections' rooms; the fill seats a section on its corridor only, in walk order, its puzzles first and its chest last, the corridor's doors between them where the lay puts them. Trapped (sealed) side sections become eligible; gated, keyed and hidden ones stay branches (a key or a detector inside a lock would make it not provably solvable). An absorbed trap room keeps the isolation `sealed` asks for.
 2. **A side path that fits no layout inside the lock is hung outside it, never dropped.** The layout search tries every candidate with every eligible section inside; when none meets the hard criteria it moves one section outside the lock (the last authored first) and searches again, until a layout is found. A section outside the lock is a branch off laid ground, as gated sections are today, so its rooms and loot still exist. The sections moved out are pinned on the floor (`outsideLock`) and listed by `yarn layout-report`. No hard criterion is relaxed: a floor that meets none with every section outside still fails the bake by name.
 3. **Phase 4c, stairs name their floor.** A side path ending in a stair, and a floor's main path, may name the floor index the stair leads to (`toFloor`); default is the next floor, so every existing authoring wires as before. A floor may author its `depth` (default its index); a stair climbs when it leads to a shallower floor, and that direction is stamped on the stair so the map draws it. A stair always leads to a later floor index (refused otherwise), so the reachability walk, which visits floors in index order, needs no change.
-4. **The tunnel.** starter_1 pyramid 1: floor 0's Sphinx ward chest becomes a ward stair (`toFloor: 2`) gated by the same Vault of the Gods key; floor 2 is a wizard cave floor (cave dressing, seven puzzles on its main path, no lock) whose main path climbs (`toFloor: 3`) into floor 3, the Sphinx interior (new `sphinx` tileset), whose one room is the reading. The wall data (`walls.ts`, keyed by journey) is unchanged.
+4. **The tunnel.** starter_1 pyramid 1: floor 0's Sphinx ward chest becomes a ward stair (`toFloor: 2`) gated by the same Vault of the Gods key; floors 2–6 go down two short wizard floors to a cave floor (seven puzzles on its main path), then up a small cave floor into floor 6, the Sphinx interior (new `sphinx` tileset), whose one room is the reading. The wall data (`walls.ts`, keyed by journey) is unchanged.
 5. **One bake at the end** (Task 7), after `yarn layout-report` has measured 4b without baking (Task 3).
 
 **Tech Stack:** TypeScript, Vitest, `src/game/{laidFloor,lockPlan,lockPuzzles}.ts`, `src/game/carve/{prepareFloor,layFloor,isolate,roomSpecs}.ts`, `src/worldGen/{carveSeedSearch,buildSite,sideSections,dsl,serializer}.ts`, `scripts/{layoutPicker,layoutReport,generateWorld}.ts`, `src/app/SiteMap/*`, `yarn repaint`.
@@ -32,6 +32,7 @@ Answers to the plan's questions (designer, 2026-10-26):
 6. **Ordinary loot in the tunnel:** its chests are filled by the solver behind the wizard key, as the old ward chest's end was.
 7. **Sphinx art is not a release blocker:** the ward key into the cave and the Sphinx is not obtainable yet, so the art comes later. The prompts go into the repaint queue; until painted the floor draws placeholders.
 8. **No puzzle on the floor-0 ward stair:** the cave carries the puzzles; the section's corridor still wears wizard stone.
+10. **The tunnel is pure DSL, and deeper** (designer, 2026-10-26): starter floor 0's wizard wing goes down to a wizard floor, down to a second wizard floor, down to the cave floor with the seven puzzles, up to a small cave floor, up to the Sphinx floor. "A few short floors so the passage seems to lie deeper." Nothing about the route lives outside `starter.ts`.
 9. **No Sphinx placement verify.** The existing `sphinxPlacement.spec.ts` stays as it is unless the authoring change breaks it; then it is adjusted minimally.
 
 ## Global Constraints
@@ -42,7 +43,7 @@ Answers to the plan's questions (designer, 2026-10-26):
 - **No side path is ever lost.** Every authored side section exists in the carved floor: inside the lock on a corridor, or outside it as a branch (ruling 4).
 - **`src/ui` takes props only**, and each changed `src/ui` component gets or updates its story with made-up props.
 - **Strings** go nl first (spoken, everyday Dutch), then en, in `public/locales/{nl,en}/`. This plan adds none; a task that finds it needs one adds both and lists it under Drafts in `docs/review-camp-release.md`.
-- **Saves stay compatible after this release.** Ids are authoring names, never indices that shift: the tunnel floors are starter_1 pyramid 1's floors 2 and 3 for good (a later floor is appended, never inserted); stair ids stay `stairIdAt` addresses. This release resets saves, so no version bump.
+- **Saves stay compatible after this release.** Ids are authoring names, never indices that shift: the tunnel floors are starter_1 pyramid 1's floors 2 to 6 for good (a later floor is appended, never inserted); stair ids stay `stairIdAt` addresses. This release resets saves, so no version bump.
 - **Tests never pin authored content or real-world counts.** Specs build made-up locks, plans, floors and sites. Agreement over the real data lives in `.verify.ts` files. Count work (carves, lays), never wall-clock.
 - **Comments describe the current state and why**, never history.
 - **Never weaken a check or relax a hard criterion.** Where a side path stands (inside the lock or outside it) is a preference the search orders, not a criterion it drops. Never hand-edit a baked number: pins, ledger entries and fingerprints come out of a deliberate bake.
@@ -58,7 +59,7 @@ Answers to the plan's questions (designer, 2026-10-26):
 2. **Only open side paths enter a lock.** A gated, keyed or hidden section, one with sub-sections, a lever, a one-way's name or a stair end is never assigned a corridor, at any setting (Task 1).
 3. **No stray edge bypasses an absorbed trap room.** The only ways into a trap room on a corridor are the lay's own passages (Task 2).
 4. **A side path moved outside the lock still exists.** Every authored side section's rooms and end are on the carved grid whether it stands on a corridor or hangs as a branch; a floor with `outsideLock` loses no room and no loot slot (Tasks 1, 3).
-5. **Every existing site wires its stairs as before.** Defaults keep `wireSideSectionStaircases`' output byte-identical for every made-up site that names no target and no depth; the tunnel's two stairs pair once each and draw in the right direction (Tasks 4, 6).
+5. **Every existing site wires its stairs as before.** Defaults keep `wireSideSectionStaircases`' output byte-identical for every made-up site that names no target and no depth; the tunnel's five stairs pair once each and draw in the right direction (Tasks 4, 6).
 6. **The ending is reachable only through the Vault's key**, the reading stands once in the world, inside the Sphinx, and the reed leaf is still only in the Vault (Task 7's bake, and the existing Sphinx spec on the baked world).
 
 ---
@@ -357,8 +358,13 @@ Sonnet.
 
 - Modify: `src/worldGen/spec/starter.ts`, `journey("starter_1").pyramid(1, …)`:
   - floor 0: the Sphinx `wardChest({ tomb: "wizard_treasure_tomb", index: 0, puzzles: 1, nodes: [reading] })` becomes `wardPath({ tomb: "wizard_treasure_tomb", index: 0, toFloor: 2 })` with no puzzle (ruling 8); the starter-tomb `wardPath` keeps its default target (floor 1);
-  - `.floor(2, …)`: the fields of `CAVE_DRESSING` (from `src/worldGen/spec/cave.ts`) that a floor takes, `difficulty: "wizard"`, `pathPuzzles: 7`, `encounter: "puzzle"`, `sideSections: []`, `depth: 1`, `toFloor: 3`, no lock (rulings 5, 6): the seven puzzles stand on the main path between the stair down and the stair up, a long corridor;
-  - `.floor(3, …)`: `tileset: "sphinx"`, `difficulty: "wizard"`, `pathPuzzles: 1`, `nodes: [{ where: "first", encounter: "reading" }]`, `sideSections: []`, `depth: 0` (ruling 7);
+  - the route (ruling 10), floors appended after the existing ones, each main path's stair naming the next with `toFloor`, `sideSections: []` and no lock on all of them:
+    - `.floor(2, …)`: wizard stone, `difficulty: "wizard"`, short (`pathPuzzles: 2`), `depth: 1`, `toFloor: 3` (down);
+    - `.floor(3, …)`: wizard stone, `difficulty: "wizard"`, short (`pathPuzzles: 2`), `depth: 2`, `toFloor: 4` (down);
+    - `.floor(4, …)`: the fields of `CAVE_DRESSING` (from `src/worldGen/spec/cave.ts`) that a floor takes, `difficulty: "wizard"`, `pathPuzzles: 7`, `encounter: "puzzle"`, `depth: 3`, `toFloor: 5` (rulings 5, 6): the seven puzzles stand on the main path between the stair down and the stair up, a long corridor;
+    - `.floor(5, …)`: `CAVE_DRESSING`, `difficulty: "wizard"`, small (`pathPuzzles: 1`), `depth: 2`, `toFloor: 6` (up);
+    - `.floor(6, …)`: `tileset: "sphinx"`, `difficulty: "wizard"`, `pathPuzzles: 1`, `nodes: [{ where: "first", encounter: "reading" }]`, `depth: 1` (up from the small cave; ruling 7);
+  - if `validate-world` or the layout search refuses a short floor (too few puzzles to carve), raise that floor's `pathPuzzles` by one until it carves, and list the final counts in the report;
   - the comment block above the Sphinx stair says, current state only: sealed and visible in the first hour, opened in the last by the Vault of the Gods' key; down into a cave, then up into the Sphinx itself, where the writing first seen outside is read clear of the sand.
 - `src/mods/story/game/reading/sphinxPlacement.spec.ts` stays (ruling 9). It reads the committed world, so it still passes until Task 7's bake; Task 7 adjusts it minimally if the baked world breaks it.
 - Modify: `src/app/SiteMap/floorMaterial.verify.ts`: its comment and, if the bake changes it, its tier expectation for starter_1 floor 0 (the ward section's corridor is still wizard stone; no tier is pinned beyond what the floor draws).
@@ -368,7 +374,7 @@ Sonnet.
 
 No unit test pins the authored floors; the bake is the check.
 
-- [ ] **Step 1: Author** the floors and comments. `yarn check-types`; `yarn lint`; `timeout 900 yarn validate-world` must pass the structural checks it runs (stair pairing included: the two new stairs pair once each). Do not bake.
+- [ ] **Step 1: Author** the floors and comments. `yarn check-types`; `yarn lint`; `timeout 900 yarn validate-world` must pass the structural checks it runs (stair pairing included: the tunnel's five stairs pair once each). Do not bake.
 - [ ] **Step 2: Commit:** `feat: the Sphinx is read inside, through a cave behind the ward gate`
 
 ---
