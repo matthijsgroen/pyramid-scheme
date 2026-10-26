@@ -644,16 +644,25 @@ const search = (
 /** What one grid's searches decided: the laid floor, or how far the furthest search got. */
 type GridOutcome = { laid?: LaidLocks; furthest?: Part }
 
-// THE LAY IS A PURE FUNCTION OF (plan, seed, grid), and the bake asks it the same question many times over: every
-// packing of one seed lays the same plan with the same seed, only from a different starting grid. Each grid's outcome
-// is kept and read back, bounded so a long session holds a few thousand at most.
-const GRID_OUTCOMES_KEPT = 4096
+let gridOutcomesKept = 0
 const gridOutcomes = new Map<string, GridOutcome>()
+
+/**
+ * THE LAY IS A PURE FUNCTION OF (plan, seed, grid), and the bake's layout search asks it the same question many times
+ * over: every packing of one seed lays the same plan with the same seed, only from a different starting grid. With
+ * `limit` above 0 each grid's outcome is kept, up to `limit` of them, and read back; 0 (the default, as play runs)
+ * keeps none and forgets what was kept.
+ */
+export const keepLayOutcomes = (limit: number) => {
+  gridOutcomesKept = limit
+  gridOutcomes.clear()
+}
 const remembered = (key: string, decide: () => GridOutcome): GridOutcome => {
+  if (gridOutcomesKept <= 0) return decide()
   const known = gridOutcomes.get(key)
   if (known) return known
   const outcome = decide()
-  if (gridOutcomes.size >= GRID_OUTCOMES_KEPT) gridOutcomes.delete(gridOutcomes.keys().next().value!)
+  if (gridOutcomes.size >= gridOutcomesKept) gridOutcomes.delete(gridOutcomes.keys().next().value!)
   gridOutcomes.set(key, outcome)
   return outcome
 }
@@ -682,7 +691,7 @@ export const layLockPlan = (plan: LockPlan, { seed, n, ceiling = LAY_GRID_CEILIN
       return { furthest: furthest.part }
     })
     if (laid) return handOut(laid)
-    refusal = { part: furthest ?? { kind: "region", id: plan.route[0] }, grid }
+    refusal = { part: furthest ? { ...furthest } : { kind: "region", id: plan.route[0] }, grid }
   }
   // Only a plan no search laid is searched again with its drops looked ahead to, so every plan that lays without
   // it lays as it always has. The look-ahead cuts dead branches early, so one search per grid is enough.

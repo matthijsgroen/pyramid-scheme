@@ -1,4 +1,5 @@
 import { DEFAULT_PACKING, PACKING_CEILING } from "../src/game/siteAssembler"
+import { keepLayOutcomes } from "../src/game/layLocks"
 import {
   ALL_INSIDE,
   describeLayoutFailure,
@@ -24,6 +25,9 @@ import { unjudgedLocks } from "../src/game/lockPuzzles"
 import type { CorridorAssignment } from "../src/game/corridorSidePaths"
 import { searchStages, type StageJob } from "./layoutSearchPool"
 import { floorHash, sourceFingerprint, type CarveLedger, type CarveLedgerEntry } from "./carveLedger"
+
+// The layout search lays each seed's plan once for all its packings; set here, so every search worker keeps them too.
+keepLayOutcomes(4096)
 
 // Seeds tried at each packing, offsets 0 … CARVE_SEED_BUDGET-1 from the floor's base seed.
 export const CARVE_SEED_BUDGET = 100
@@ -133,7 +137,8 @@ export const floorSearch = (journeyId: string, floor: FloorConfig, levelNr: numb
   return { base, authored, authoring, assembleAt, prepared, corridorsWith, stages, options }
 }
 
-/** One stage of one floor searched on its own: what a search worker runs. */
+/** One stage of one floor searched on its own: what a search worker runs. A found pin is carved again by the picker
+ * (`carvePin`); a notFound is taken as the worker reports it, the same search the picker would run. */
 export const searchStage = ({ journeyId, floor, levelNr, floorIndex, stage }: StageJob): LayoutPin | LayoutNotFound => {
   const { base, assembleAt, stages, options } = floorSearch(journeyId, floor, levelNr, floorIndex)
   const result = searchCarvePair(base, assembleAt, { ...options, stages: [stages[stage]] })

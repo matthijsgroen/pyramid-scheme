@@ -1,5 +1,5 @@
 import { workerData, type MessagePort } from "worker_threads"
-import { DONE, FOUND_AT, NEXT, type StageJob, type WorkerReply } from "./layoutSearchPool"
+import { DONE, FOUND_AT, LIVE, NEXT, type StageJob, type WorkerReply } from "./layoutSearchPool"
 
 /** A search worker (layoutSearchPool.ts): takes the next stage job until none is left, skipping a stage when an
  * earlier stage of its floor has already found, and replies with what each decided. */
@@ -36,3 +36,6 @@ try {
   for (let job = Atomics.add(counters, NEXT, 1); job < jobs.length; job = Atomics.add(counters, NEXT, 1))
     reply({ job, error: String((error as Error)?.stack ?? error) })
 }
+// Counted off however the jobs ended, so the picker knows when no worker is left to answer.
+Atomics.sub(counters, LIVE, 1)
+Atomics.notify(counters, DONE)

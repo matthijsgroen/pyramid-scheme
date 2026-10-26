@@ -19,10 +19,13 @@ export type StageSearched = LayoutPin | LayoutNotFound | null
 
 export type WorkerReply = { job: number; searched: StageSearched } | { job: number; error: string }
 
-/** The shared counters: the next job to hand out, the jobs done, then per floor the first stage that found. */
+/** The shared counters: the next job to hand out, the jobs done, the workers running, then per floor the first stage
+ * that found. */
 export const NEXT = 0
 export const DONE = 1
-export const FOUND_AT = 2
+/** Workers still running, each counted off when it stops: all stopped with jobs undone is a failed search. */
+export const LIVE = 2
+export const FOUND_AT = 3
 export const NONE_FOUND = 0x7fffffff
 
 /** In the order the workers take them: every floor's first stage before any floor's second, so a later stage is
@@ -44,7 +47,9 @@ export const searchStages = (jobs: StageJob[], groups: number): StageSearched[] 
   const counters = new Int32Array(new SharedArrayBuffer(4 * (FOUND_AT + groups)))
   counters.fill(NONE_FOUND, FOUND_AT)
   const ports: MessagePort[] = []
-  const workers = Array.from({ length: Math.min(WORKERS, jobs.length) }, () => {
+  const count = Math.min(WORKERS, jobs.length)
+  Atomics.store(counters, LIVE, count)
+  const workers = Array.from({ length: count }, () => {
     const { port1, port2 } = new MessageChannel()
     ports.push(port1)
     return new Worker(new URL("./layoutSearchWorker.ts", import.meta.url), {
@@ -52,7 +57,7 @@ export const searchStages = (jobs: StageJob[], groups: number): StageSearched[] 
       transferList: [port2],
     })
   })
-  const searched: StageSearched[] = new Array(jobs.length).fill(null)
+  const searched: Array<StageSearched | undefined> = new Array(jobs.length).fill(undefined)
   const drain = () => {
     for (const port of ports)
       for (let reply = receiveMessageOnPort(port); reply; reply = receiveMessageOnPort(port)) {
@@ -68,10 +73,16 @@ export const searchStages = (jobs: StageJob[], groups: number): StageSearched[] 
     for (let done = Atomics.load(counters, DONE); done < jobs.length; done = Atomics.load(counters, DONE)) {
       Atomics.wait(counters, DONE, done, 1000)
       drain()
+      if (Atomics.load(counters, LIVE) === 0 && Atomics.load(counters, DONE) < jobs.length)
+        throw new Error(
+          `layout search workers stopped with ${jobs.length - Atomics.load(counters, DONE)} stage(s) undone`
+        )
     }
     drain()
+    const missing = searched.flatMap((result, i) => (result === undefined ? [i] : []))
+    if (missing.length > 0) throw new Error(`layout search: no reply for stage job(s) ${missing.join(", ")}`)
   } finally {
     for (const worker of workers) void worker.terminate()
   }
-  return searched
+  return searched as StageSearched[]
 }

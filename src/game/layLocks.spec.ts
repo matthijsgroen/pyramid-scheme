@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { expandFloorLocks } from "./floorLocks"
 import type { PlacedLock } from "./floorLocks"
-import { layLockPlan, startingGridSize } from "./layLocks"
+import { keepLayOutcomes, layLockPlan, startingGridSize } from "./layLocks"
 import { planLockFloor } from "./lockPlan"
 import type { LockPlan } from "./lockPlan"
 import type { FloorConfig } from "./siteTypes"
@@ -59,20 +59,41 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
     expect(lay()).toEqual(lay())
   })
 
-  it("lays the same floor asked again after a caller changed the one it was handed", () => {
+  it("lays the same floor from kept outcomes after a caller changed the one it was handed", () => {
     const plan = FIXTURES.sluice()
-    const first = layLockPlan(plan, { seed: 3, n: startingGridSize(plan) })
-    const kept = structuredClone(first)
-    if (first.ok) first.laid.route.push("99,99")
-    expect(layLockPlan(plan, { seed: 3, n: startingGridSize(plan) })).toEqual(kept)
+    keepLayOutcomes(64)
+    try {
+      const first = layLockPlan(plan, { seed: 3, n: startingGridSize(plan) })
+      const kept = structuredClone(first)
+      if (first.ok) first.laid.route.push("99,99")
+      else first.refusal.part.id = "changed"
+      expect(layLockPlan(plan, { seed: 3, n: startingGridSize(plan) })).toEqual(kept)
+    } finally {
+      keepLayOutcomes(0)
+    }
   })
 
-  it("lays from the grid a smaller start grew to the floor that start laid", () => {
+  it("lays from kept outcomes, from any starting grid, the floor a lay that keeps none lays", () => {
     const plan = FIXTURES.mirrorFork()
     const asked = startingGridSize(plan)
-    for (const seed of SEEDS) {
-      const grown = layLockPlan(plan, { seed, n: asked })
-      if (grown.ok && grown.laid.n > asked) expect(layLockPlan(plan, { seed, n: grown.laid.n })).toEqual(grown)
+    const fresh = (n: number, seed: number) => {
+      keepLayOutcomes(0)
+      return layLockPlan(plan, { seed, n })
+    }
+    keepLayOutcomes(256)
+    try {
+      for (const seed of SEEDS.slice(0, 12)) {
+        const grown = layLockPlan(plan, { seed, n: asked })
+        const larger = grown.ok ? grown.laid.n : asked + 2
+        keepLayOutcomes(256)
+        layLockPlan(plan, { seed, n: asked })
+        const fromKept = layLockPlan(plan, { seed, n: larger })
+        expect(fromKept).toEqual(fresh(larger, seed))
+        expect(grown).toEqual(fresh(asked, seed))
+        keepLayOutcomes(256)
+      }
+    } finally {
+      keepLayOutcomes(0)
     }
   })
 
