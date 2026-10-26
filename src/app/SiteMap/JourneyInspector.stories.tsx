@@ -89,13 +89,40 @@ const rewardColor = (r: TreasureReward): string => {
 // ---------------------------------------------------------------------------
 // Puzzle/chest breakdown for a floor
 // ---------------------------------------------------------------------------
-const FloorDetail = ({ floor, active }: { floor: FloorConfig; active: boolean }) => {
+// The stairs leaving a floor: the main path's and each stair branch's, with the floor index the stair's peer stands
+// on (the floor whose entrance carries the same stairId) and which way the flight runs (a link's `goes`, else down).
+type StairOut = { from: string; to?: number; goes: "up" | "down" }
+const stairsOf = (floor: FloorConfig, index: number, floors: readonly FloorConfig[]): StairOut[] => {
+  const peer = (stairId: string) =>
+    floors.findIndex(other => typeof other.entrance === "object" && other.entrance.stairId === stairId)
+  const out = (from: string, link: FloorConfig["exitOrStaircase"] | FloorConfig["sideSections"][number]["end"]) => {
+    if (link === "staircase") return [{ from, to: index + 1, goes: "down" as const }]
+    if (typeof link !== "object") return []
+    const to = peer(link.stairId)
+    return [{ from, to: to === -1 ? undefined : to, goes: link.goes ?? ("down" as const) }]
+  }
+  return [
+    ...out("main path", floor.exitOrStaircase),
+    ...floor.sideSections.flatMap((section, si) => out(`branch ${si + 1}`, section.end)),
+  ]
+}
+
+const FloorDetail = ({
+  floor,
+  active,
+  stairs,
+}: {
+  floor: FloorConfig
+  active: boolean
+  stairs: readonly StairOut[]
+}) => {
   return (
     <div className={`mb-3 text-xs ${active ? "text-stone-200" : "text-stone-600"}`}>
       <div className="mb-1 flex gap-2">
         <span className="font-semibold text-stone-400">{floor.encounter ?? "sumplete"}</span>
         <span className="text-stone-500">{floor.difficulty}</span>
       </div>
+      <div className="mb-1 text-stone-500">dressing: {floor.tileset ?? `${floor.difficulty} (tier)`}</div>
       <div>
         {Array.from({ length: floor.pathPuzzles }, (_, i) => {
           const reward = floor.rewards?.[i]
@@ -119,6 +146,12 @@ const FloorDetail = ({ floor, active }: { floor: FloorConfig; active: boolean })
               {s.gate ? ` [${s.gate.type}]` : ""}: {s.pathPuzzles} puzzles
             </span>
             {s.endReward && <span className={`ml-1 ${rewardColor(s.endReward)}`}>→ {rewardLabel(s.endReward)}</span>}
+          </div>
+        ))}
+        {floor.exitOrStaircase === "exit" && <div className="mt-1 text-sky-300">⇥ site exit (main path)</div>}
+        {stairs.map(stair => (
+          <div key={stair.from} className="mt-1 text-sky-300">
+            {stair.goes === "up" ? "↑" : "↓"} stair {stair.goes} ({stair.from}) → floor index {stair.to ?? "unpaired"}
           </div>
         ))}
       </div>
@@ -318,7 +351,11 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
                   Floor {fi + 1}
                 </div>
               )}
-              <FloorDetail floor={floor} active={fi === currentFloor || siteConfig.length === 1} />
+              <FloorDetail
+                floor={floor}
+                active={fi === currentFloor || siteConfig.length === 1}
+                stairs={stairsOf(floor, fi, siteConfig)}
+              />
             </div>
           ))}
         </div>
