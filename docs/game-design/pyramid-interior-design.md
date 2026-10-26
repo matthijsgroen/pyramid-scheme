@@ -263,6 +263,17 @@ by the exit. Every room a player can walk into has to walk back to that way home
 
 Every ward gate leads to exactly one stairhead. The stairhead is on the other side. The floor is the reward — each new floor has its own puzzle rooms, branch endpoints, loot, and potentially another ward gate.
 
+### A stair names its floor and its direction
+
+A stair side path and a floor's main path may name the floor index their stair leads to (`toFloor`); without it a
+stair leads to the next floor, and a main path on the main walk stairs on only when no other stair enters that floor
+(`wireSideSectionStaircases` in `src/worldGen/buildSite.ts`). A stair always leads to a later floor index, never to
+its own floor or one already entered, so the reachability walk visits floors in index order. A floor may author its
+`depth` (default its index): a stair climbs when it leads to a shallower floor, and that direction is stamped on the
+link (`goes`) and on the stairhead cell (`stairGoes`), so the map draws a flight going up or down. `goes` is drawn
+only and stays out of the section hashes. starter_1's ward stair to the Sphinx uses both: down from floor 0 to
+floors 2 and 3, the cave on floor 4, then up through floor 5 into the Sphinx on floor 6.
+
 ### Map pieces on deep floors
 
 Floors don't just contain hieroglyph fragments and mosaic tiles — they can contain map pieces for later tombs in the tier. A pyramid in the expert tier might have:

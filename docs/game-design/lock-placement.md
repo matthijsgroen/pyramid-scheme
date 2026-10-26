@@ -192,22 +192,44 @@ fork-switch `lightbeamSwitch`, one-way `zipline`, flame `torch`, weights `stoneP
 ### What a lock floor's side sections stand on
 
 A lock is laid first and the floor's content is seated on it. The main path's own puzzles stand on the lock's
-route, and an **ungated side section** (no gate, not sealed, not hidden, no sub-sections, ending in a chest, no lever,
-not named by a one-way, not a junction's way) is content, not a branch: its puzzles and end chest stand on the lock's
-laid corridors and regions, in walk order. When those stretches are too short, the lay is lengthened on its cheapest
-region or corridor and laid again. Gates and drops keep their nodes, so rooms and obstacles interleave along a
-corridor. Every other section — gated, keyed, sealed (a trap path), hidden, with sub-sections, or a junction's way —
-hangs as a branch off laid ground, filtered only by region appetite. Every catalogue lock is stood with every region
-`free`, so no authored appetite is in force.
+route. An **open side section** (no gate, not hidden, no sub-sections, ending in a chest or shop, no lever, not named
+by a one-way, not a junction's way) is offered **a corridor of the lock of its own**: its puzzles and end chest stand
+on that corridor in walk order, puzzles first and the chest last, with the corridor's doors and drops between them
+where the lay puts them. The lay lengthens each corridor for the rooms it carries. A **trapped** (sealed) side section
+is offered a corridor too, because a trap costs only hearts and the camp always heals; its trap room keeps the
+isolation `sealed` asks for, and the only ways into it are the lay's own passages. Gated, keyed and hidden sections,
+sections with sub-sections and a junction's ways hang as branches off laid ground, because a key or a detector inside a lock would
+leave it not provably solvable. The section hosting the key a floor-key gate waits on is spread over laid ground no
+door shuts.
+
+Only a corridor inside the lock carries a side path: both its end regions are lock regions, so one touching the
+floor's own entrance or exit never does. Off-route corridors are offered first, then on-route ones. A corridor
+carrying a drop's stretch, a fork-switch junction's arm, one arriving in a sequence step's region, and one joining a
+nested lock into its host's nest spot carry none.
+
+The order a layout is searched in (`sidePathStages`, `src/worldGen/carveSeedSearch.ts`):
+
+1. One side path to a corridor, in authored order. Sections beyond the corridors that take them hang outside the
+   lock as branches from the start (`outsideLock`).
+2. While no layout fits, one more section moves outside the lock, the last authored first, until every section is
+   outside.
+3. Only when nothing fits even with every section outside does a corridor take two (`corridorsTakeTwo`), searched
+   the same way.
+
+A side path is never dropped: inside the lock or outside it, its rooms and loot exist. A floor's `outsideLock` and
+`corridorsTakeTwo` are written by the bake, and `yarn layout-report` lists the floors carrying side paths in their
+corridors, the sections hung outside, and the floors whose corridors take two. Every catalogue lock is stood with
+every region `free`, so no authored appetite is in force.
 
 ### A lock holds a puzzle on its way
 
-A layout is accepted only if every lock holds a puzzle on its way: on the lock's solving walk, from the first sight of
-its shut door to its last control, at least one encounter room that is neither its control nor its door. "On the way"
-is judged per region on the shortest solving walk, so a puzzle in a dead-end branch of a region the walk crosses
-counts. A region whose appetite asks for puzzles or a reward must hold one too. It is one of the bake's hard layout
-criteria (`HARD_CRITERIA` in `src/worldGen/carveSeedSearch.ts`). A floor with no content that may stand on lock
-ground (no main-path puzzle and no content section) is infeasible and fails the bake by name.
+A layout is accepted only if every lock holds an encounter on its way: on the lock's solving walk, from the first
+sight of its shut door to its last control, at least one encounter room (a puzzle, a trap, a chest or a shop) that is
+neither its control nor its door. "On the way" is judged per region on the shortest solving walk, so a room in a
+dead-end branch of a region the walk crosses counts. A region whose appetite asks for puzzles or a reward must hold
+one too. It is one of the bake's hard layout criteria (`HARD_CRITERIA` in `src/worldGen/carveSeedSearch.ts`). A floor
+with no content that may stand on lock ground (no main-path puzzle and no content section) is infeasible and fails the
+bake by name.
 
 A lock that stands before the floor's content (every region but its way out takes nothing, `lockBeforeFloorContent`)
 is exempt: it is a lesson in the lock alone. Every other criterion still holds for it. The starter tomb's level 2

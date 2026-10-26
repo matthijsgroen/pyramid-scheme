@@ -153,3 +153,13 @@ browser".
   exit, the cavern beat on level 2, Ipi's afterword only after the cavern. At camp: `camp.firstHome`,
   `camp.homeHaul` / `camp.homeEmpty`, `camp.firstFind`. Settings (develop mode) plays every draft per area.
 - **Mosaic window.** "n van 252 stukjes", "k nieuw" and the bar once a piece is found; set them in by hand.
+- **A side path in a lock's corridor.** Heilige Ibis Migratie level 1 (`dropDown`): side paths s2–s4 stand on the
+  lock's corridors. Walking between the lock's areas, do you meet a side path's puzzles and then its chest, with the
+  lock's drop between them, and does it read as one walk rather than a detour? Piramide van Djoser level 4
+  (`buildersLift`) does the same on three corridors, with a fourth side path hanging outside the lock.
+- **The tunnel to the Sphinx.** Develop mode, Settings → "All treasures + keys". Dageraad bij de Sfinx level 1,
+  floor 1: the Vault of the Gods' ward gate opens and its stair goes down to "Floor 3", down to "Floor 4", down to
+  the cave on "Floor 5" (seven puzzles on one long corridor), up to the small cave on "Floor 6", up into the Sphinx
+  on "Floor 7". Does each flight run the way you go, does the passage feel deep, and does the reading inside the
+  Sphinx land (the wall's copy still speaks of the sand)? The Sphinx's floor draws in placeholder colours until it
+  is painted.

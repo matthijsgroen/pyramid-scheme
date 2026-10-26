@@ -32,8 +32,8 @@ Answers to the plan's questions (designer, 2026-10-26):
 6. **Ordinary loot in the tunnel:** its chests are filled by the solver behind the wizard key, as the old ward chest's end was.
 7. **Sphinx art is not a release blocker:** the ward key into the cave and the Sphinx is not obtainable yet, so the art comes later. The prompts go into the repaint queue; until painted the floor draws placeholders.
 8. **No puzzle on the floor-0 ward stair:** the cave carries the puzzles; the section's corridor still wears wizard stone.
-10. **The tunnel is pure DSL, and deeper** (designer, 2026-10-26): starter floor 0's wizard wing goes down to a wizard floor, down to a second wizard floor, down to the cave floor with the seven puzzles, up to a small cave floor, up to the Sphinx floor. "A few short floors so the passage seems to lie deeper." Nothing about the route lives outside `starter.ts`.
-9. **No Sphinx placement verify.** The existing `sphinxPlacement.spec.ts` stays as it is unless the authoring change breaks it; then it is adjusted minimally.
+9. **The tunnel is pure DSL, and deeper** (designer, 2026-10-26): starter floor 0's wizard wing goes down to a wizard floor, down to a second wizard floor, down to the cave floor with the seven puzzles, up to a small cave floor, up to the Sphinx floor. "A few short floors so the passage seems to lie deeper." Nothing about the route lives outside `starter.ts`.
+10. **No Sphinx placement verify.** The existing `sphinxPlacement.spec.ts` stays as it is unless the authoring change breaks it; then it is adjusted minimally.
 
 ## Global Constraints
 
@@ -81,7 +81,7 @@ Answers to the plan's questions (designer, 2026-10-26):
 - Produces: `AbsorbedDemand.corridor?: string`; `planToLay(plan, { content, appetite, corridorRooms })`.
 - Consumes: `LockPlan`, `PlanCorridor`, `appetiteAccepts`, `corridorSeats` (export it from `laidFloor.ts` if it is not yet).
 
-- [ ] **Step 1: Failing tests** (made-up plans and floors, no real lock):
+- [x] **Step 1: Failing tests** (made-up plans and floors, no real lock):
   - `corridorSidePaths.spec.ts`:
     - "an off-route corridor is offered before an on-route one";
     - "a corridor carrying a drop, a junction's arm, a sequence threshold or a spliced nest spot is never offered";
@@ -97,11 +97,11 @@ Answers to the plan's questions (designer, 2026-10-26):
     - "a section named in outsideLock hangs as a branch, open or sealed";
     - "every authored side section is either a corridor demand or a branch: none is lost" (made-up floors with 0, 1 and more eligible corridors than sections, and with outsideLock naming every section).
   - `laidFloor.spec.ts`: "planToLay lays an assigned corridor long enough for its section's rooms".
-- [ ] **Step 2: Run** `yarn test src/game/corridorSidePaths src/game/carve/prepareFloor src/game/laidFloor` → FAIL.
-- [ ] **Step 3: Implement.** The top comment of `corridorSidePaths.ts` says, in the current state, why only open side paths go into a lock (a key or a detector inside would make the lock not provably solvable) and why a trap may (a trap costs hearts and the camp always heals).
-- [ ] **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`. Do not bake.
-- [ ] **Step 5: Per-task review** (Opus): nothing gated or hidden is ever assigned; no section is lost; the assignment reads no seed.
-- [ ] **Step 6: Commit:** `feat: open side paths are assigned a lock corridor of their own`
+- [x] **Step 2: Run** `yarn test src/game/corridorSidePaths src/game/carve/prepareFloor src/game/laidFloor` → FAIL.
+- [x] **Step 3: Implement.** The top comment of `corridorSidePaths.ts` says, in the current state, why only open side paths go into a lock (a key or a detector inside would make the lock not provably solvable) and why a trap may (a trap costs hearts and the camp always heals).
+- [x] **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`. Do not bake.
+- [x] **Step 5: Per-task review** (Opus): nothing gated or hidden is ever assigned; no section is lost; the assignment reads no seed.
+- [x] **Step 6: Commit:** `feat: open side paths are assigned a lock corridor of their own`
 
 ---
 
@@ -126,7 +126,7 @@ Answers to the plan's questions (designer, 2026-10-26):
 - Produces: `corridorUnfed(laid: Pick<LaidFloor, "stretches" | "absorbed">, demands: readonly AbsorbedDemand[]): string[]`, one line per assigned section with a room off its corridor: `side path s<i> on <corridor> has a room off it`.
 - Consumes: Task 1's `AbsorbedDemand.corridor`, `CorridorAssignment`.
 
-- [ ] **Step 1: Failing tests** (made-up locks laid by `layLockPlan`, made-up sections):
+- [x] **Step 1: Failing tests** (made-up locks laid by `layLockPlan`, made-up sections):
   - `laidFloor.spec.ts`:
     - "a section assigned to a corridor stands wholly on that corridor's nodes";
     - "its puzzles come before its chest along the walk";
@@ -138,11 +138,11 @@ Answers to the plan's questions (designer, 2026-10-26):
     - "a corridor whose assigned side path stands elsewhere is named" (replaces the `it.todo`);
     - "a chest on the lock's way counts", "a trap room on the lock's way counts": a made-up floor whose only room on the way is a chest (then a trap) passes, and is named when that room is moved off the way;
   - `layoutFeasibility.spec.ts`: "a lock floor whose only content is a trapped side path is not infeasible".
-- [ ] **Step 2: Run** `yarn test src/game/laidFloor src/game/carve src/game/lockPuzzles` → FAIL.
-- [ ] **Step 3: Implement.**
-- [ ] **Step 4: Run** → PASS; `yarn test src/game src/worldGen`; `yarn check-types`; `yarn lint`. Do not bake.
-- [ ] **Step 5: Per-task review** (Opus): the lock walk and every other hard criterion judge the grid as before; isolation holds; no fill quietly misplaces a corridor section.
-- [ ] **Step 6: Commit:** `feat: a side path stands on its own lock corridor, obstacles between`
+- [x] **Step 2: Run** `yarn test src/game/laidFloor src/game/carve src/game/lockPuzzles` → FAIL.
+- [x] **Step 3: Implement.**
+- [x] **Step 4: Run** → PASS; `yarn test src/game src/worldGen`; `yarn check-types`; `yarn lint`. Do not bake.
+- [x] **Step 5: Per-task review** (Opus): the lock walk and every other hard criterion judge the grid as before; isolation holds; no fill quietly misplaces a corridor section.
+- [x] **Step 6: Commit:** `feat: a side path stands on its own lock corridor, obstacles between`
 
 ---
 
@@ -162,17 +162,17 @@ Answers to the plan's questions (designer, 2026-10-26):
 - Produces: `LayoutFound.outsideLock: number[]`; `CarvePairOptions.assemble` receives it (`(seed, packing, attempts, outsideLock) => AssemblerResult`); `CarvePairOptions.eligibleSections: number[]` in authored order.
 - Consumes: Task 1's `FloorConfig.outsideLock`.
 
-- [ ] **Step 1: Failing tests** (`carveSeedSearch.spec.ts`, injected assembler, counted carves):
+- [x] **Step 1: Failing tests** (`carveSeedSearch.spec.ts`, injected assembler, counted carves):
   - "a floor that carves with every side path inside is pinned so, and no later stage is carved";
   - "a floor that carves only with its last side path outside is found at stage 1, outsideLock naming that section";
   - "sections move outside last authored first, one per stage";
   - "a floor that meets no hard criterion even with every side path outside is notFound, counting every stage";
   - "a pin with outsideLock verifies in one carve with that list";
   - `serializer.spec.ts`: "outsideLock is written and read back".
-- [ ] **Step 2: Run** `yarn test src/worldGen/carveSeedSearch src/worldGen/serializer` → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`.
-- [ ] **Step 5: Measure, without baking:** `timeout 900 yarn layout-report`. Under §4 Failures of `docs/review-camp-release.md` write every infeasible or not-found floor with its message (this is what Task 7's bake will refuse); under §2 a `Phase 4b — corridor fill` line with the floors that carry side paths in their corridors, the corridors used (and how many take two), and every side path hung outside its lock. A side path outside the lock is accepted (ruling 4), not a failure.
-- [ ] **Step 6: Per-task review** (Opus): where side paths stand orders the search and refuses nothing; no stage loses a section; the hash and the serializer agree.
-- [ ] **Step 7: Commit:** `feat: side paths stay in a lock unless no layout fits them`
+- [x] **Step 2: Run** `yarn test src/worldGen/carveSeedSearch src/worldGen/serializer` → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`.
+- [x] **Step 5: Measure, without baking:** `timeout 900 yarn layout-report`. Under §4 Failures of `docs/review-camp-release.md` write every infeasible or not-found floor with its message (this is what Task 7's bake will refuse); under §2 a `Phase 4b — corridor fill` line with the floors that carry side paths in their corridors, the corridors used (and how many take two), and every side path hung outside its lock. A side path outside the lock is accepted (ruling 4), not a failure.
+- [x] **Step 6: Per-task review** (Opus): where side paths stand orders the search and refuses nothing; no stage loses a section; the hash and the serializer agree.
+- [x] **Step 7: Commit:** `feat: side paths stay in a lock unless no layout fits them`
 
 ---
 
@@ -198,7 +198,7 @@ Answers to the plan's questions (designer, 2026-10-26):
 - Produces: `SideSectionConstraint.toFloor`, `FloorConstraint.toFloor`, `FloorConstraint.depth`, `wardPath({ …, toFloor })`, `RoomCell.stairGoes`, the link `goes`.
 - Consumes: `stairIdAt`, `findMispairedStairs` (unchanged; it already counts every link).
 
-- [ ] **Step 1: Failing tests** (made-up sites):
+- [x] **Step 1: Failing tests** (made-up sites):
   - `buildSite.spec.ts`:
     - "a site naming no target and no depth wires exactly as before": three made-up shapes (a main chain, a ward stair off floor 0, a tomb-like chain of side stairs), each compared field by field with the wiring the current rule gives (write the expected configs out by hand in the spec);
     - "two stair sections on one floor enter the floors they name";
@@ -208,11 +208,11 @@ Answers to the plan's questions (designer, 2026-10-26):
   - `roomSpecs` spec: "a stairhead carries its link's direction, else the default".
   - `SiteMapView.spec.tsx`: "a stair marked up at a floor's main end draws the climbing flight and no cresset".
   - `serializer.spec.ts`: "`goes` is written and read back".
-- [ ] **Step 2: Run** `yarn test src/worldGen/buildSite src/game/carve src/app/SiteMap/SiteMapView src/worldGen/serializer` → FAIL.
-- [ ] **Step 3: Implement.** The comment above `wireSideSectionStaircases` is rewritten to the current rule.
-- [ ] **Step 4: Run** → PASS; `yarn test src/worldGen src/app/SiteMap`; `yarn check-types`; `yarn lint`. Do not bake.
-- [ ] **Step 5: Per-task review** (Opus): defaults change nothing; the reachability walk's index-order assumption is guaranteed by the refusal; stair travel (`stairPeerPosition`) needs no change.
-- [ ] **Step 6: Commit:** `feat: a stair names the floor it leads to and which way it goes`
+- [x] **Step 2: Run** `yarn test src/worldGen/buildSite src/game/carve src/app/SiteMap/SiteMapView src/worldGen/serializer` → FAIL.
+- [x] **Step 3: Implement.** The comment above `wireSideSectionStaircases` is rewritten to the current rule.
+- [x] **Step 4: Run** → PASS; `yarn test src/worldGen src/app/SiteMap`; `yarn check-types`; `yarn lint`. Do not bake.
+- [x] **Step 5: Per-task review** (Opus): defaults change nothing; the reachability walk's index-order assumption is guaranteed by the refusal; stair travel (`stairPeerPosition`) needs no change.
+- [x] **Step 6: Commit:** `feat: a stair names the floor it leads to and which way it goes`
 
 ---
 
@@ -344,9 +344,9 @@ its colours or its subject from it. Same aspect as the reference; do not re-comp
 **Import:** `yarn import-panel art/masters/tombWall/sphinx.webp --tier=sphinx`
 ````
 
-- [ ] **Step 1: Failing tests:** `src/app/SiteMap/tileMaterials` spec (or the nearest palette spec): "every tileset has a palette and a mood" iterating the `Tileset` values (add the values list next to the type if none exists); `scripts/repaintQueue.spec.ts` parses the four new keys with their attachments and import lines.
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`; `yarn repaint` lists the four keys.
-- [ ] **Step 5: Commit:** `feat: a sphinx tileset and the prompts to paint it`
+- [x] **Step 1: Failing tests:** `src/app/SiteMap/tileMaterials` spec (or the nearest palette spec): "every tileset has a palette and a mood" iterating the `Tileset` values (add the values list next to the type if none exists); `scripts/repaintQueue.spec.ts` parses the four new keys with their attachments and import lines.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`; `yarn repaint` lists the four keys.
+- [x] **Step 5: Commit:** `feat: a sphinx tileset and the prompts to paint it`
 
 ---
 
@@ -374,8 +374,8 @@ Sonnet.
 
 No unit test pins the authored floors; the bake is the check.
 
-- [ ] **Step 1: Author** the floors and comments. `yarn check-types`; `yarn lint`; `timeout 900 yarn validate-world` must pass the structural checks it runs (stair pairing included: the tunnel's five stairs pair once each). Do not bake.
-- [ ] **Step 2: Commit:** `feat: the Sphinx is read inside, through a cave behind the ward gate`
+- [x] **Step 1: Author** the floors and comments. `yarn check-types`; `yarn lint`; `timeout 900 yarn validate-world` must pass the structural checks it runs (stair pairing included: the tunnel's five stairs pair once each). Do not bake.
+- [x] **Step 2: Commit:** `feat: the Sphinx is read inside, through a cave behind the ward gate`
 
 ---
 
@@ -385,16 +385,16 @@ Docs: Sonnet. The rest: Opus.
 
 **Files (by the bake):** `src/data/generatedWorld.ts`, `src/data/carveLedger.json`, `src/data/tierFingerprints.json` (moved tiers, deliberately), `docs/loot-report.md`, `.betterer.results` (re-key only).
 
-- [ ] **Step 1: Before:** `timeout 900 yarn loot-report` on the committed bake; keep its totals in the scratchpad.
-- [ ] **Step 2: Seeds:** `timeout 900 yarn verify-seeds`. A shortfall for the tunnel's wizard rooms is generated with `yarn generate-seeds` (see `scripts/puzzleSeeds.ts`) before the bake; the known twin-stars/wizard shortfall is recorded, not chased.
-- [ ] **Step 3: Bake:** `timeout 900 yarn generate-world`.
+- [x] **Step 1: Before:** `timeout 900 yarn loot-report` on the committed bake; keep its totals in the scratchpad.
+- [x] **Step 2: Seeds:** `timeout 900 yarn verify-seeds`. A shortfall for the tunnel's wizard rooms is generated with `yarn generate-seeds` (see `scripts/puzzleSeeds.ts`) before the bake; the known twin-stars/wizard shortfall is recorded, not chased.
+- [x] **Step 3: Bake:** `timeout 900 yarn generate-world`.
   - A layout refusal (infeasible or not found) stops the task: the floors and criteria go under Failures (Task 3 listed them already).
   - Otherwise it must print `strict walk enters N of N journeys` with N the journey count, report no "loot moved a wall" and no "web moved", pair every stair (no mispaired stair), place every hieroglyph, leave 0 empty chests, and pass every money ground.
-- [ ] **Step 4: Fingerprints:** every tier may move. For each moved tier, copy its hash and write one review-list line why (lock floors re-carved with side paths in their corridors; starter for the tunnel).
-- [ ] **Step 5: Report and checks:** `timeout 900 yarn loot-report` (totals exact; the slot mix moves); `timeout 900 yarn layout-report` (prints the corridor-fill line); `timeout 900 yarn verify-content` (`laidCarveWorld.verify.ts`, `bakedCarve.verify.ts`, `worldWinnable.verify.ts` included); `timeout 900 yarn verify`; `timeout 900 yarn build`.
-- [ ] **Step 5b: The Sphinx spec:** `yarn test src/mods/story/game/reading`. If `sphinxPlacement.spec.ts` fails on the baked world (it looks for the reading room in a side section and its gate on that section), adjust it minimally: find the reading room on a floor's main path as well, and read the tomb-key gate off the floor-0 stair section leading to it. Nothing else in it changes.
-- [ ] **Step 6: Commit:** `chore: bake side paths into lock corridors and the Sphinx tunnel`
-- [ ] **Step 7: Docs**, current state only:
+- [x] **Step 4: Fingerprints:** every tier may move. For each moved tier, copy its hash and write one review-list line why (lock floors re-carved with side paths in their corridors; starter for the tunnel).
+- [x] **Step 5: Report and checks:** `timeout 900 yarn loot-report` (totals exact; the slot mix moves); `timeout 900 yarn layout-report` (prints the corridor-fill line); `timeout 900 yarn verify-content` (`laidCarveWorld.verify.ts`, `bakedCarve.verify.ts`, `worldWinnable.verify.ts` included); `timeout 900 yarn verify`; `timeout 900 yarn build`.
+- [x] **Step 5b: The Sphinx spec:** `yarn test src/mods/story/game/reading`. If `sphinxPlacement.spec.ts` fails on the baked world (it looks for the reading room in a side section and its gate on that section), adjust it minimally: find the reading room on a floor's main path as well, and read the tomb-key gate off the floor-0 stair section leading to it. Nothing else in it changes.
+- [x] **Step 6: Commit:** `chore: bake side paths into lock corridors and the Sphinx tunnel`
+- [x] **Step 7: Docs**, current state only:
   - `docs/game-design/lock-placement.md` "What a lock floor's side sections stand on": an open or trapped side section is assigned a corridor of its own and stands on it, obstacles between; gated, keyed and hidden ones hang as branches; a corridor takes a second side path only when sections outnumber corridors; a side path that fits no layout inside hangs outside the lock as a branch (`outsideLock`), never dropped, and the layout report lists it; and in "A lock holds a puzzle on its way", that any encounter room counts (chest, puzzle, trap, shop);
   - `docs/game-design/keys-and-locks-solver.md`: the layout stage's preference order gains the corridor fill;
   - `docs/game-design/pyramid-interior-design.md` (or wherever stairs are described; grep `wireSideSectionStaircases`): stairs name their floor and their direction;
@@ -405,7 +405,8 @@ Docs: Sonnet. The rest: Opus.
   - this plan: tick the boxes.
 
   **Commit:** `docs: side paths in lock corridors and the Sphinx tunnel`
-- [ ] **Step 8: Look:** `yarn dev` with develop mode: walk one lock floor the layout report names as carrying a side path; grant the Vault key, open starter_1 floor 0's ward stair, cross the cave, climb into the Sphinx, read the wall. Take screenshots. Anything not reachable goes under Look at in browser with steps.
+
+- [x] **Step 8: Look:** `yarn dev` with develop mode: walk one lock floor the layout report names as carrying a side path; grant the Vault key, open starter_1 floor 0's ward stair, cross the cave, climb into the Sphinx, read the wall. Take screenshots. Anything not reachable goes under Look at in browser with steps.
 
 ---
 

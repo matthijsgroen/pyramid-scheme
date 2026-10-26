@@ -51,7 +51,12 @@ one finished (`buildConfigs` in `src/worldGen/configBuilder.ts`, called by
    `packing` is an intention, not a criterion: the search tries every seed
    at the authored packing first, then raised packings closest first, then
    the runtime ladder carve, and pins the first candidate meeting every
-   hard criterion. A floor whose authoring no layout can meet fails the bake
+   hard criterion. The corridor fill is an intention too, searched as
+   stages around that order: first every open side path on a lock
+   corridor of its own, then one more moved outside the lock as a branch
+   (last authored first) while nothing fits, and only with every one
+   outside a corridor taking two. A side path is never dropped
+   (`lock-placement.md`, "What a lock floor's side sections stand on"). A floor whose authoring no layout can meet fails the bake
    as **infeasible**; one the bounded search did not meet fails as **not
    found**, naming the floor and the criterion. A pin that still verifies
    is kept without a search.

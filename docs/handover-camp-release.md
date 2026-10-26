@@ -163,7 +163,7 @@ visible in the collection. Ends with a bake, the loot report in the review list,
 updated deliberately (the world is unreleased; starter moves only if this phase must touch it, and the review
 list says why).
 
-### Phase 4b — locks as side-path blueprints [ ]
+### Phase 4b — locks as side-path blueprints [x]
 
 A lock is a generic blueprint of rooms and corridors; its corridors may be filled as a side path, so between
 two areas of a lock lie a side path's puzzles and chests with the lock's obstacles in between. Open and trapped
@@ -172,7 +172,7 @@ lock would make it not provably solvable). Its own plan; after phase 4, before t
 lock floor and bakes through the layout-first guards. The layout-first plan leaves `it.todo("a corridor asking for
 a side path that carries none is named")` ready for it.
 
-### Phase 4c — the tunnel to the Sphinx [ ]
+### Phase 4c — the tunnel to the Sphinx [x]
 
 The ending moves inside the Sphinx. Behind starter_1's ward gate (opened by the Vault of the Gods' key, sealed
 and visible in the first hour as today) a staircase leads down into a cave floor at wizard difficulty; the player
@@ -244,7 +244,9 @@ worktree, and the review list sorted: decisions, drafts, failures, things to loo
 - 2026-10-25 — phase 9 wrap-up done: changelog condensed, playtest backlog and the docs the queue made stale updated (`camp.md`, the mod architecture, the Travel page's old references), loot report unchanged, the review list sorted with a "Start here" summary, the clean-worktree gate green (bake clean after re-keying the carve ledger's hashes, verify, verify-content, build); branch pushed, no PR.
 - 2026-10-25 — phase 4 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-4-layout-first.md`, which replaced the old plan's Tasks 3–8): every floor's layout is picked before loot under hard criteria (packing is intent), keys are placed on it room by room, a hidden corridor needs the corridor detector, and the bake refuses a stamped world with a stuck point (29 of 29 journeys entered); the seven purchases are keys sold by Fez; Alle reizen shows a locked tier's need and where to buy it; bought animals arrive in the camp; all 27 animal beats play. Starter teaches five families. Shop toggle-off is refused by the bake (review list, Failures); camp off passes.
 - 2026-10-25 — phase 5 done inside phase 4's plan: money is placed last, ground by ground (21 grounds, every one with a surplus, the smallest +166); sellables 30–150; the allowance is gone; found waterskins follow the traps (0.5 per trap, 159) and Fez sells 14. Clean-worktree gate green (review list, §2 Phase 4 gate).
+- 2026-10-26 — phase 4b done (plan `docs/superpowers/plans/2026-10-26-camp-phase-4b-4c.md`): open and trapped side paths stand on a lock's inside corridors, one to a corridor; 35 floors carry them on 101 corridors, 39 side paths on 19 floors hang outside their lock, 2 floors take two to a corridor; the layout search keeps lays and spreads stages over cores, so the bake fits 900 s (345 s). Three checks fail on the baked world and wait (review list, Failures): toggle-off on junior_4 L4 F0, a prop bound for portals, a roomless lock region on expert_4 L4 F0.
+- 2026-10-26 — phase 4c done (same plan): stairs name their floor and direction; starter_1's ward stair goes down two wizard floors to a seven-puzzle cave, up a small cave into the Sphinx, where the wall is read. Strict walk 29 of 29, totals exact, smallest ground +164. Sphinx art queued for painting, not a blocker.
 
 ## Next
 
-Phase 4b (locks as side-path blueprints) and phase 4c (the tunnel to the Sphinx), planned and baked together, in a fresh session. Before or beside them: the shop toggle-off decision (review list, Failures).
+Phase 4b's three failing checks (review list, Failures): the toggle-off difference on junior_4 L4 F0 first, since toggle-off is the mod acceptance gate; then the designer's calls on the portal prop bound and the roomless workshop region. The two walks under the review list's §5 (a side path in a lock corridor; the ward stair, cave and climb into the Sphinx). The shop toggle-off decision (review list, Failures).
