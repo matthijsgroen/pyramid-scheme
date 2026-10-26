@@ -89,8 +89,9 @@ const rewardColor = (r: TreasureReward): string => {
 // ---------------------------------------------------------------------------
 // Puzzle/chest breakdown for a floor
 // ---------------------------------------------------------------------------
-// The stairs leaving a floor: the main path's and each stair branch's, with the floor index the stair's peer stands
-// on (the floor whose entrance carries the same stairId) and which way the flight runs (a link's `goes`, else down).
+// The stairs on a floor: the one it is entered by and the ones leaving it (the main path's, each stair branch's), with
+// the floor the stair's peer stands on (the shared stairId pairs them) and which way the flight runs from here: a
+// link's `goes`, else up for an entrance and down for every other stair.
 type StairOut = { from: string; to?: number; goes: "up" | "down" }
 const stairsOf = (floor: FloorConfig, index: number, floors: readonly FloorConfig[]): StairOut[] => {
   const peer = (stairId: string) =>
@@ -101,7 +102,17 @@ const stairsOf = (floor: FloorConfig, index: number, floors: readonly FloorConfi
     const to = peer(link.stairId)
     return [{ from, to: to === -1 ? undefined : to, goes: link.goes ?? ("down" as const) }]
   }
+  const linksOut = (other: FloorConfig) => [other.exitOrStaircase, ...other.sideSections.map(section => section.end)]
+  const source = (stairId: string) =>
+    floors.findIndex(other => linksOut(other).some(link => typeof link === "object" && link.stairId === stairId))
+  const entrance = (): StairOut[] => {
+    if (floor.entrance === "stairhead") return [{ from: "entrance", to: index - 1, goes: "up" }]
+    if (typeof floor.entrance !== "object") return []
+    const from = source(floor.entrance.stairId)
+    return [{ from: "entrance", to: from === -1 ? undefined : from, goes: floor.entrance.goes ?? "up" }]
+  }
   return [
+    ...entrance(),
     ...out("main path", floor.exitOrStaircase),
     ...floor.sideSections.flatMap((section, si) => out(`branch ${si + 1}`, section.end)),
   ]
