@@ -53,10 +53,14 @@ export const computeLegacySideSectionHash = (
     )
   )
 
-// The floor-wide inputs to the carve itself: change either and every cell on the floor moves.
+// The floor-wide inputs to the carve itself: change any and every cell on the floor moves. `outsideLock` moves a side
+// path off its lock corridor into a branch and `corridorsTakeTwo` lets a corridor carry two, which re-lays the lock
+// and re-carves the floor around it.
 const carveShape = (config: FloorConfig) => ({
   packing: config.packing,
   corridorStraightness: config.corridorStraightness,
+  outsideLock: config.outsideLock,
+  corridorsTakeTwo: config.corridorsTakeTwo,
 })
 
 export const computeMainSectionHash = (config: FloorConfig, isolated: boolean): string =>

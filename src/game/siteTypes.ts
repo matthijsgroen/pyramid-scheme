@@ -709,6 +709,9 @@ export type FloorConfig = {
   /** The top-level side sections, by index, that hang outside the floor's lock as branches instead of standing on
    * one of its corridors: the ones no layout of the lock fits. Written by the layout search, never by hand. */
   outsideLock?: number[]
+  /** A corridor of the floor's lock may carry two side sections instead of one: set only where no layout fits even
+   * with every side path outside the lock. Written by the layout search, never by hand. */
+  corridorsTakeTwo?: true
   /** THE WEB'S DOORS ON GROUND NO LOCK OWNS, each asking for its `web:` key (src/game/webDoors.ts): laid on the
    * finished carve, so they move no wall, and left off it where no registered mod realises web sand. Placed by the
    * bake from the tier's web (docs/instructions/sand-pyramid.md). */

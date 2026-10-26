@@ -227,6 +227,8 @@ export type FloorPrep = Readonly<{
     contentSections: ReadonlySet<number>
     junctionSections: readonly number[]
     absorbedDemands: readonly AbsorbedDemand[]
+    /** The side sections, in authored order, offered a corridor of the lock, `outsideLock` or not. */
+    corridorCandidates: readonly number[]
     /** The lock corridor each side section standing in the lock is assigned; a section not named hangs as a branch
      * or, as the floor-key host, is spread over the laid nodes. */
     corridorAssignments: readonly CorridorAssignment[]

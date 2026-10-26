@@ -117,6 +117,11 @@ export type FloorConfig = {
   lootByIndex?: Record<number, false>
   corridorStraightness?: number
   packing?: number
+  /** The top-level side sections, by index, that hang outside the floor's lock as branches. Written by the layout
+   * search. Mirrors game/siteTypes.ts. */
+  outsideLock?: number[]
+  /** A lock corridor may carry two side sections. Written by the layout search. Mirrors game/siteTypes.ts. */
+  corridorsTakeTwo?: true
   /** The seed this floor carves at, in place of the one its address derives. Read inside the assembler, so
    * every entry point that carves the floor (the hook, stair travel, the scanner, the bake) agrees. Baked
    * from a search that found a seed carving soundly on the first attempt. */

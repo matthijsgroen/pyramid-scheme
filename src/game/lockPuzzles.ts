@@ -4,7 +4,7 @@ import { finished, reachableStates } from "./lockWalk"
 import type { LockSpec, LockState, MechanismId, RegionId } from "./lockWalk"
 import type { AbsorbedDemand, LaidFloor } from "./laidFloor"
 import type { RegionAppetite } from "./regions"
-import type { FloorConfig, FloorGrid, GridCell } from "./siteTypes"
+import type { FloorConfig, FloorGrid, GridCell, RoomCell } from "./siteTypes"
 
 // A LOCK HOLDS AN ENCOUNTER ON ITS WAY: between seeing the problem and solving it the player meets at least one
 // encounter room (a puzzle, a trap, a chest, a shop), so a lock is never a walk from a shut door to the lever that
@@ -27,12 +27,11 @@ const isControl = (cell: GridCell): boolean =>
     cell.pipeHole !== undefined)
 
 /** Any encounter room (a puzzle, a trap, a chest, a shop) that is neither a control nor a door. */
-const isEncounterOnTheWay = (cell: GridCell): boolean =>
+const isEncounterOnTheWay = (cell: GridCell): cell is RoomCell =>
   cell.type === "room" && cell.roomType === "encounter" && !isControl(cell) && doorKeysOf(cell).length === 0
 
 /** A room a chain authored by position (a puzzle or a trap): what feeds a region asking for puzzles. */
-const isPuzzleRoom = (cell: GridCell): boolean =>
-  isEncounterOnTheWay(cell) && cell.type === "room" && cell.pathIndex !== undefined
+const isPuzzleRoom = (cell: GridCell): boolean => isEncounterOnTheWay(cell) && cell.pathIndex !== undefined
 
 const holdsReward = (cell: GridCell): boolean =>
   cell.type === "room" &&

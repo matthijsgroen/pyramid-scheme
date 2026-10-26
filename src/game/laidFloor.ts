@@ -145,10 +145,33 @@ const corridorLabels = (plan: LockPlan, corridor: PlanCorridor, k: number): stri
 }
 
 /**
+ * WHICH WAYS THE FILL WALKS A CORRIDOR: by depth from the way in, so from the end the way in reaches without crossing
+ * the corridor. On a loop the way in reaches both ends and depth meets somewhere inside, so both ways are named.
+ */
+const corridorWalks = (plan: LockPlan, corridor: PlanCorridor): { forward: boolean; backward: boolean } => {
+  const edges = [
+    ...plan.corridors.filter(other => other.id !== corridor.id).map(other => [other.from, other.to]),
+    ...plan.drops.map(drop => [drop.launch, drop.landing]),
+  ]
+  const reached = new Set([plan.route[0]])
+  for (let grew = true; grew;) {
+    grew = false
+    for (const [a, b] of edges)
+      if (reached.has(a) !== reached.has(b)) {
+        reached.add(reached.has(a) ? b : a)
+        grew = true
+      }
+  }
+  const fromFirst = reached.has(corridor.from)
+  const toFirst = reached.has(corridor.to)
+  return fromFirst === toFirst ? { forward: true, backward: true } : { forward: fromFirst, backward: toFirst }
+}
+
+/**
  * WHETHER A CORRIDOR LAID FOR A SIDE SECTION CAN SEAT ITS ROOMS: laid with a node for each room beyond what its doors
- * and hubs need, its nodes that are no door or threshold, walked from either end, take the rooms in order, each on a
- * node whose region's appetite takes its kind. Its two halves answer to different regions, so a corridor whose ends
- * between them take every kind may still put no node where one room needs it.
+ * and hubs need, its nodes that are no door or threshold, walked every way the fill may walk them (`corridorWalks`),
+ * take the rooms in order, each on a node whose region's appetite takes its kind. Its two halves answer to different
+ * regions, so a corridor whose ends between them take every kind may still put no node where one room needs it.
  */
 export const corridorTakes = (
   plan: LockPlan,
@@ -167,7 +190,8 @@ export const corridorTakes = (
       return at++ < walk.length
     })
   }
-  return seats(free) || seats([...free].reverse())
+  const walks = corridorWalks(plan, corridor)
+  return (!walks.forward || seats(free)) && (!walks.backward || seats([...free].reverse()))
 }
 
 /**

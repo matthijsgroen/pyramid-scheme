@@ -9,7 +9,9 @@ import {
   refusal,
   verifyCarvePair,
   STAMPED_SEED_RANGE,
+  sidePathStages,
   type CarvePairOptions,
+  type SidePathStage,
 } from "./carveSeedSearch"
 
 const grid = {} as FloorGrid
@@ -23,6 +25,7 @@ const options = (over: Partial<CarvePairOptions> = {}): CarvePairOptions => ({
   seedBudget: 5,
   fullLadder: Infinity,
   judge,
+  stages: [],
   ...over,
 })
 
@@ -256,6 +259,102 @@ describe(searchCarvePair, () => {
   })
 })
 
+describe("where the side paths stand", () => {
+  const on = (section: number, corridor: string) => ({ section, corridor })
+
+  it("sections past the corridors hang outside from the first stage, then move outside last authored first, one per stage", () => {
+    expect(sidePathStages([0, 2, 5, 6], [on(0, "a"), on(2, "b"), on(5, "c")], [])).toEqual([
+      { outsideLock: [6] },
+      { outsideLock: [5, 6] },
+      { outsideLock: [2, 5, 6] },
+      { outsideLock: [0, 2, 5, 6] },
+    ])
+  })
+
+  it("a corridor takes a second section only after every stage of one to a corridor, and only while one holds two", () => {
+    const single = [on(0, "a"), on(1, "b")]
+    const double = [on(0, "a"), on(1, "b"), on(2, "a"), on(3, "b")]
+    expect(sidePathStages([0, 1, 2, 3], single, double)).toEqual([
+      { outsideLock: [2, 3] },
+      { outsideLock: [1, 2, 3] },
+      { outsideLock: [0, 1, 2, 3] },
+      { outsideLock: [], corridorsTakeTwo: true },
+      { outsideLock: [3], corridorsTakeTwo: true },
+    ])
+  })
+
+  it("a floor with no section offered a corridor asks one stage", () => {
+    expect(sidePathStages([], [], [])).toEqual([{ outsideLock: [] }])
+  })
+
+  // A stand-in floor whose carve holds only while no more than `fits` of its side paths stand in the lock.
+  const lockHolding = (offered: number, fits: number) => {
+    const asked: SidePathStage[] = []
+    const assemble = (_seed: number, _packing: number, _attempts: number, sidePaths: SidePathStage) => {
+      asked.push(sidePaths)
+      return offered - sidePaths.outsideLock.length <= fits ? carvedAt(0) : failed
+    }
+    return { asked, assemble }
+  }
+  const stageOptions = (stages: SidePathStage[]) => options({ seedBudget: 3, ceiling: 0.12, stages })
+  const twoInside = sidePathStages([1, 3], [on(1, "a"), on(3, "b")], [])
+
+  it("a floor that carves with every side path inside is pinned so, and no later stage is carved", () => {
+    const { asked, assemble } = lockHolding(2, 2)
+    const found = searchCarvePair(100, assemble, stageOptions(twoInside))
+    expect(found).toMatchObject({ kind: "found", seed: 100, sidePaths: { outsideLock: [] } })
+    expect(asked).toEqual([{ outsideLock: [] }])
+  })
+
+  it("a floor that carves only with its last side path outside is found at stage 1, outsideLock naming that section", () => {
+    const { asked, assemble } = lockHolding(2, 1)
+    const found = searchCarvePair(100, assemble, stageOptions(twoInside))
+    expect(found).toMatchObject({ kind: "found", seed: 100, packing: 0.1, offset: 0, sidePaths: { outsideLock: [3] } })
+    // Stage 0 is spent whole first: 3 seeds × 2 packings and the ladder.
+    expect(asked.filter(stage => stage.outsideLock.length === 0)).toHaveLength(7)
+    expect(asked).toHaveLength(8)
+  })
+
+  it("asks the stages in the order given", () => {
+    const seen: SidePathStage[] = []
+    const stages = sidePathStages([0, 2, 5], [on(0, "a"), on(2, "b"), on(5, "c")], [])
+    searchCarvePair(
+      100,
+      (_seed, _packing, _attempts, sidePaths) => {
+        if (seen.at(-1) !== sidePaths) seen.push(sidePaths)
+        return failed
+      },
+      stageOptions(stages)
+    )
+    expect(seen).toEqual(stages)
+  })
+
+  it("a floor that meets no hard criterion even with every side path outside is notFound, counting every stage", () => {
+    let carves = 0
+    const missing = searchCarvePair(
+      1,
+      () => {
+        carves++
+        return carvedAt(0)
+      },
+      options({
+        seedBudget: 3,
+        ceiling: 0.12,
+        stages: sidePathStages([0, 4], [on(0, "a"), on(4, "b")], []),
+        judge: () => ({ criterion: "no dead region", detail: "at 3,3" }),
+      })
+    )
+    // Three stages of 3 seeds × 2 packings and the ladder.
+    expect(carves).toBe(21)
+    expect(missing).toMatchObject({
+      kind: "notFound",
+      hardest: "no dead region",
+      counts: { "no dead region": 21 },
+      stages: 3,
+    })
+  })
+})
+
 describe(verifyCarvePair, () => {
   const ladder = { authoredPacking: 0.1, fullLadder: Infinity, judge }
 
@@ -299,6 +398,25 @@ describe(verifyCarvePair, () => {
     const unfed = () => ({ criterion: "lock holds an encounter" as const, detail: "lever" })
     expect(verifyCarvePair(100, { seed: 100, packing: 0.1 }, () => carvedAt(6), { ...ladder, judge: unfed })).toBeNull()
     expect(verifyCarvePair(100, { seed: 103, packing: 0.1 }, () => carvedAt(0), { ...ladder, judge: unfed })).toBeNull()
+  })
+
+  it("a pin with outsideLock verifies in one carve with its side paths", () => {
+    const asked: SidePathStage[] = []
+    const found = verifyCarvePair(
+      100,
+      { seed: 103, packing: 0.14, sidePaths: { outsideLock: [2, 4], corridorsTakeTwo: true } },
+      (_seed, _packing, _attempts, sidePaths) => {
+        asked.push(sidePaths)
+        return carvedAt(0)
+      },
+      ladder
+    )
+    expect(found).toMatchObject({
+      kind: "found",
+      seed: 103,
+      sidePaths: { outsideLock: [2, 4], corridorsTakeTwo: true },
+    })
+    expect(asked).toEqual([{ outsideLock: [2, 4], corridorsTakeTwo: true }])
   })
 
   it("measures the offset past the base inside the stamped range", () => {

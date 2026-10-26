@@ -23,9 +23,9 @@ const takes = (appetite: ReadonlyMap<string, RegionAppetite>, corridor: PlanCorr
 /**
  * The corridors a side path may stand on, off-route ones first, then on-route ones, each in plan order. Only a
  * corridor inside a lock, both its ends a lock's regions: one touching the floor's own entrance or exit stands
- * before or past the lock, not in it. Never one carrying a drop's stretch, a fork-switch junction's arm, one arriving in a sequence step's region (its nodes
- * stay bare for the step's tile), one joining a nested lock into its host's nest spot, or one between regions
- * that take no room.
+ * before or past the lock, not in it. Never one carrying a drop's stretch, a fork-switch junction's arm, one
+ * arriving in a sequence step's region (its nodes stay bare for the step's tile), one joining a nested lock into its
+ * host's nest spot, or one between regions that take no room.
  */
 export const eligibleCorridors = (plan: LockPlan, appetite: ReadonlyMap<string, RegionAppetite>): PlanCorridor[] => {
   const holdsStep = new Set(
@@ -58,21 +58,24 @@ export const eligibleCorridors = (plan: LockPlan, appetite: ReadonlyMap<string, 
 
 /**
  * PAIRS SIDE SECTIONS WITH CORRIDORS, in authored section order onto the corridors' order: each section takes the
- * first corridor holding the fewest sections among those that can seat its rooms (`corridorTakes`), so a
- * corridor takes a second section only once every corridor that would take it holds one. A section no corridor
- * takes is left out, and hangs as a branch.
+ * first corridor holding the fewest sections among those that can seat its rooms (`corridorTakes`) and still hold
+ * fewer than `perCorridor`. One section a corridor is the rule; the layout search asks for two
+ * (`FloorConfig.corridorsTakeTwo`) only when no layout fits even with every side path outside the lock, and then a
+ * corridor takes a second only once every corridor that would take it holds one. A section no corridor takes is
+ * left out, and hangs as a branch.
  */
 export const assignCorridors = (
   corridors: readonly PlanCorridor[],
   sections: readonly { section: number; kinds: readonly ContentKind[] }[],
   appetite: ReadonlyMap<string, RegionAppetite>,
-  plan: LockPlan
+  plan: LockPlan,
+  perCorridor: 1 | 2 = 1
 ): CorridorAssignment[] => {
   const load = corridors.map(() => 0)
   return sections.flatMap(({ section, kinds }) => {
     let best = -1
     corridors.forEach((corridor, i) => {
-      if (!corridorTakes(plan, corridor, kinds, appetite)) return
+      if (load[i] >= perCorridor || !corridorTakes(plan, corridor, kinds, appetite)) return
       if (best < 0 || load[i] < load[best]) best = i
     })
     if (best < 0) return []

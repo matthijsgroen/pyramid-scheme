@@ -202,6 +202,8 @@ const floorFieldEmitters: {
   lootByIndex: v => (Object.keys(v).length ? `lootByIndex: ${serializeLootByIndex(v)}` : null),
   corridorStraightness: v => `corridorStraightness: ${v}`,
   packing: v => `packing: ${v}`,
+  outsideLock: v => (v.length ? `outsideLock: ${JSON.stringify(v)}` : null),
+  corridorsTakeTwo: () => `corridorsTakeTwo: true`,
   seed: v => `seed: ${v}`,
   sealed: v => (v ? `sealed: true` : null),
   mainEndReward: v => `mainEndReward: ${serializeReward(v)}`,

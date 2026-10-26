@@ -323,7 +323,7 @@ describe("a switch fork", () => {
     })
   })
 
-  it("holds a junction on a floor a lock is laid on, its switch choosing between two of the ungated paths", () => {
+  it("holds a junction on a floor a lock is laid on, its switch closing two side paths and at most the way on", () => {
     const chest = { pathPuzzles: 1, difficulty: "junior" as const, end: "treasure" as const }
     const config: FloorConfig = {
       ...switchConfig(ONE_SWITCH),
@@ -338,7 +338,10 @@ describe("a switch fork", () => {
       if (!result.success) continue
       const at = findRoom(result.grid, cell => cell.roomType === "fork" && cell.family === "sumplete")
       // The junction may also stand where the route goes on, so its switch can close that way too.
-      expect(at?.cell.exits?.filter(exit => exit.gateKeyId !== undefined && exit.kind === "side")).toHaveLength(2)
+      const gated = at?.cell.exits?.filter(exit => exit.gateKeyId !== undefined) ?? []
+      expect(gated.filter(exit => exit.kind === "side")).toHaveLength(2)
+      expect(gated.every(exit => exit.kind === "side" || exit.kind === "main")).toBe(true)
+      expect(gated.length).toBeLessThanOrEqual(3)
       expect(validateSite(result.grid)).toEqual({ valid: true })
     }
   })

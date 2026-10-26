@@ -270,6 +270,8 @@ describe("what a world-spec setting may and may not move", () => {
     ["pathPuzzles", c => ({ ...structuredClone(c), pathPuzzles: c.pathPuzzles + 1 })],
     ["packing", c => ({ ...structuredClone(c), packing: (c.packing ?? 1) + 0.5 })],
     ["corridorStraightness", c => ({ ...structuredClone(c), corridorStraightness: 0.2 })],
+    ["outsideLock", c => ({ ...structuredClone(c), outsideLock: c.sideSections.map((_, i) => i) })],
+    ["corridorsTakeTwo", c => ({ ...structuredClone(c), corridorsTakeTwo: true })],
     ["difficulty", c => ({ ...structuredClone(c), difficulty: c.difficulty === "wizard" ? "starter" : "wizard" })],
     [
       "sealed",

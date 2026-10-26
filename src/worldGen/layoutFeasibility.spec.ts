@@ -52,6 +52,7 @@ describe(layoutInfeasible, () => {
           seedBudget: 3,
           fullLadder: Infinity,
           judge: result => refusal(result, config),
+          stages: [],
         }
       )
     )

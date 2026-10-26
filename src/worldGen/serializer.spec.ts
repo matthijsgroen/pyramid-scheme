@@ -421,6 +421,34 @@ describe("generateFile — every term of a gate survives the bake", () => {
   })
 })
 
+describe("generateFile — where the side paths stand survives the bake", () => {
+  const floor = (outsideLock?: number[]) => ({
+    pathPuzzles: 1,
+    difficulty: "junior" as const,
+    end: "treasure" as const,
+    exitOrStaircase: "exit" as const,
+    sideSections: [],
+    ...(outsideLock ? { outsideLock } : {}),
+  })
+
+  it("outsideLock is written and read back", () => {
+    const emitted = generateFile({ testJourney: [[floor([1, 3])]] })
+    const line = emitted.match(/outsideLock: (.*),$/m)
+    expect(line && JSON.parse(line[1])).toEqual([1, 3])
+  })
+
+  it("corridorsTakeTwo is written", () => {
+    expect(generateFile({ testJourney: [[{ ...floor(), corridorsTakeTwo: true as const }]] })).toContain(
+      "corridorsTakeTwo: true,"
+    )
+  })
+
+  it("a floor with every side path inside its lock carries no outsideLock", () => {
+    expect(generateFile({ testJourney: [[floor([])]] })).not.toContain("outsideLock")
+    expect(generateFile({ testJourney: [[floor()]] })).not.toContain("outsideLock")
+  })
+})
+
 describe("generateFile — the web survives the bake", () => {
   it("writes a reward carrying a list, and a floor's web doors, so both read back", () => {
     const floor = {

@@ -2,15 +2,20 @@ import { createHash } from "crypto"
 import { existsSync, readFileSync, writeFileSync } from "fs"
 import { dirname, join, resolve } from "path"
 import { fileURLToPath } from "url"
-import type { LayoutNotFound } from "../src/worldGen/carveSeedSearch"
+import type { LayoutNotFound, SidePathStage } from "../src/worldGen/carveSeedSearch"
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")
 export const LEDGER_PATH = join(root, "src/data/carveLedger.json")
 
-/** Floors the bounded search found no layout for, by `journey#level#floor`, with what it found. An entry holds only
- * while its `hash` still equals what the floor hashes to now, so a floor is skipped exactly as long as nothing that
- * could change the outcome has changed. An entry of any other kind is read as absent. */
-export type CarveLedgerEntry = { kind: "notFound"; hash: string; result: LayoutNotFound }
+/** What the search decided for a floor, by `journey#level#floor`, held only while its `hash` still equals what the
+ * floor hashes to now, so a decision stands exactly as long as nothing that could change it has changed.
+ * - `notFound`: the bounded search found no layout; the floor is not searched again.
+ * - `sidePaths`: the layout was found only at this later side-path stage (more side paths outside the lock, or two to
+ *   a corridor). Its pin is verified with it; once the hash moves the floor is searched again from the most preferred
+ *   stage, so it can take its side paths back. */
+export type CarveLedgerEntry =
+  | { kind: "notFound"; hash: string; result: LayoutNotFound }
+  | { kind: "sidePaths"; hash: string; sidePaths: SidePathStage }
 export type CarveLedger = Record<string, CarveLedgerEntry | undefined>
 
 export const readLedger = (): CarveLedger =>

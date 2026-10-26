@@ -613,16 +613,16 @@ export const prepareFloor = (
   // EVERY OTHER SECTION THAT FITS IS OFFERED A CORRIDOR OF THE LOCK of its own, in authored order; one the layout
   // search moved `outsideLock`, and one no corridor takes, hangs as a branch off laid ground instead.
   const outsideLock = new Set(config.outsideLock ?? [])
+  const corridorCandidates = sideSections.flatMap((section, i) =>
+    fitsInLock(section, i) && !hostsKeys(i) && !junctionSections.includes(i) ? [i] : []
+  )
   const corridorAssignments = plan
     ? assignCorridors(
         eligibleCorridors(plan, appetiteOfRegion),
-        sideSections.flatMap((section, i) =>
-          fitsInLock(section, i) && !hostsKeys(i) && !junctionSections.includes(i) && !outsideLock.has(i)
-            ? [{ section: i, kinds: kindsOf(i) }]
-            : []
-        ),
+        corridorCandidates.filter(i => !outsideLock.has(i)).map(i => ({ section: i, kinds: kindsOf(i) })),
         appetiteOfRegion,
-        plan
+        plan,
+        config.corridorsTakeTwo ? 2 : 1
       )
     : []
   const corridorOf = new Map(corridorAssignments.map(({ section, corridor }) => [section, corridor]))
@@ -896,6 +896,7 @@ export const prepareFloor = (
         contentSections,
         junctionSections,
         absorbedDemands,
+        corridorCandidates,
         corridorAssignments,
         appetiteOfRegion,
         branchSections,

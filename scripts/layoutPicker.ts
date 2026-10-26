@@ -1,12 +1,15 @@
 import { DEFAULT_PACKING, PACKING_CEILING } from "../src/game/siteAssembler"
 import {
+  ALL_INSIDE,
   describeLayoutFailure,
   PACKING_STEP,
   refusal,
   searchCarvePair,
+  sidePathStages,
   verifyCarvePair,
   type LayoutFound,
   type LayoutNotFound,
+  type SidePathStage,
 } from "../src/worldGen/carveSeedSearch"
 import { prepareLayout, searchLayout } from "../src/worldGen/layoutFeasibility"
 import { gridShape, layoutKey } from "../src/worldGen/layoutCheck"
@@ -15,10 +18,14 @@ import type { FloorConfig, SiteConfig } from "../src/worldGen/types"
 import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
 import { worldFloorCarve } from "../src/mods/carveWorldFloor"
 import { unjudgedLocks } from "../src/game/lockPuzzles"
+import type { CorridorAssignment } from "../src/game/corridorSidePaths"
 import { floorHash, sourceFingerprint, type CarveLedger } from "./carveLedger"
 
 // Seeds tried at each packing, offsets 0 … CARVE_SEED_BUDGET-1 from the floor's base seed.
 export const CARVE_SEED_BUDGET = 100
+
+const sameStage = (a: SidePathStage, b: SidePathStage) =>
+  a.outsideLock.join() === b.outsideLock.join() && !a.corridorsTakeTwo === !b.corridorsTakeTwo
 
 /** One floor's pick, for the bake's summary. */
 export type FloorPick = {
@@ -29,6 +36,10 @@ export type FloorPick = {
   laddered: boolean
   /** Locks on the picked grid whose puzzle on the way could not be judged (`judgeLockPuzzles`). */
   unjudged: string[]
+  /** The side sections standing on a lock corridor, and on which. */
+  corridors: CorridorAssignment[]
+  /** Where the search stood the side paths: those outside the lock, and whether a corridor takes two. */
+  sidePaths: SidePathStage
 }
 
 /** A floor no layout was picked for: its authoring cannot meet a hard criterion, or the bounded search met none. */
@@ -95,28 +106,63 @@ export const makeLayoutPicker = ({
     const authored = floor.packing ?? DEFAULT_PACKING
     const carve = carveAt(journeyId, levelNr, floorIndex)
     // The authored packing is passed as written (possibly absent), so a floor pinned at it carves exactly as the
-    // runtime carves its unstamped config.
-    const assembleAt = (seed: number, packing: number, maxAttempts: number) =>
-      carve({ ...floor, seed, packing: packing === authored ? floor.packing : packing }, maxAttempts)
+    // runtime carves its unstamped config. The side-path fields are written only where they say something, as the
+    // bake writes them.
+    const { outsideLock: _outside, corridorsTakeTwo: _two, ...authoring } = floor
+    const standing = ({ outsideLock, corridorsTakeTwo }: SidePathStage): FloorConfig => ({
+      ...authoring,
+      ...(outsideLock.length > 0 ? { outsideLock } : {}),
+      ...(corridorsTakeTwo ? { corridorsTakeTwo } : {}),
+    })
+    const assembleAt = (seed: number, packing: number, maxAttempts: number, sidePaths: SidePathStage) =>
+      carve({ ...standing(sidePaths), seed, packing: packing === authored ? floor.packing : packing }, maxAttempts)
     const judge = (result: Parameters<typeof refusal>[0]) => refusal(result, floor as GameFloorConfig)
+    const prepared = carve.prepare(authoring)
+    const corridorsWith = (sidePaths: SidePathStage): CorridorAssignment[] => {
+      const prep = carve.prepare(standing(sidePaths))
+      return prep.ok ? [...prep.prep.sections.corridorAssignments] : []
+    }
+    const stages = prepared.ok
+      ? sidePathStages(
+          prepared.prep.sections.corridorCandidates,
+          prepared.prep.sections.corridorAssignments,
+          corridorsWith({ outsideLock: [], corridorsTakeTwo: true })
+        )
+      : [ALL_INSIDE]
     const options = {
       authoredPacking: authored,
       ceiling: PACKING_CEILING,
       seedBudget: CARVE_SEED_BUDGET,
       fullLadder: Infinity,
       judge,
+      stages,
     }
-    const hash = floorHash(carveSources, floor, { ...options, step: PACKING_STEP })
+    const hash = floorHash(carveSources, authoring, { ...options, step: PACKING_STEP })
     const pinned = baked?.[journeyId]?.[levelNr - 1]?.[floorIndex]
-    const result = searchLayout(floor as GameFloorConfig, carve.prepare(floor), (): LayoutFound | LayoutNotFound => {
-      const verified = pinned
-        ? verifyCarvePair(base, { seed: pinned.seed ?? base, packing: pinned.packing ?? authored }, assembleAt, options)
-        : null
+    const recorded = ledger[key]
+    const result = searchLayout(authoring as GameFloorConfig, prepared, (): LayoutFound | LayoutNotFound => {
+      // A pin at the most preferred side-path stage holds as any pin does. One at a later stage holds only while the
+      // floor hashes as it did when it was found there: otherwise it is searched again from the first stage.
+      const pinnedStage: SidePathStage = {
+        outsideLock: pinned?.outsideLock ?? [],
+        ...(pinned?.corridorsTakeTwo ? { corridorsTakeTwo: true as const } : {}),
+      }
+      const stageHolds =
+        sameStage(pinnedStage, stages[0]) ||
+        (recorded?.kind === "sidePaths" && recorded.hash === hash && sameStage(recorded.sidePaths, pinnedStage))
+      const verified =
+        pinned && stageHolds
+          ? verifyCarvePair(
+              base,
+              { seed: pinned.seed ?? base, packing: pinned.packing ?? authored, sidePaths: pinnedStage },
+              assembleAt,
+              options
+            )
+          : null
       if (verified) {
         stats.verified++
         return verified
       }
-      const recorded = ledger[key]
       if (recorded?.kind === "notFound" && recorded.hash === hash) {
         stats.ledgered++
         return recorded.result
@@ -132,9 +178,17 @@ export const makeLayoutPicker = ({
         offset: result.offset,
         laddered: result.laddered,
         unjudged: unjudgedLocks(result.grid, floor as GameFloorConfig),
+        corridors: corridorsWith(result.sidePaths),
+        sidePaths: result.sidePaths,
       })
       floor.seed = result.seed
       floor.packing = result.packing
+      if (result.sidePaths.outsideLock.length > 0) floor.outsideLock = result.sidePaths.outsideLock
+      else delete floor.outsideLock
+      if (result.sidePaths.corridorsTakeTwo) floor.corridorsTakeTwo = true
+      else delete floor.corridorsTakeTwo
+      if (!sameStage(result.sidePaths, stages[0]))
+        nextLedger[key] = { kind: "sidePaths", hash, sidePaths: result.sidePaths }
       pickedShapes.set(key, gridShape(result.grid))
       return
     }
@@ -176,6 +230,36 @@ export const printPicks = (picks: FloorPick[], stats: ReturnType<typeof makeLayo
   if (laddered.length > 0) {
     console.log(`  Floors that carve only on the ladder (accepted: they meet every hard criterion):`)
     for (const f of laddered) console.log(`    ${f.key}`)
+  }
+  printSidePaths(picks)
+}
+
+/** Where the side paths of lock floors stand: on the lock's corridors, or hung outside it where no layout fit them. */
+const printSidePaths = (picks: FloorPick[]) => {
+  const inLock = picks.filter(f => f.corridors.length > 0)
+  const load = inLock.map(f => {
+    const perCorridor = new Map<string, number>()
+    for (const { corridor } of f.corridors) perCorridor.set(corridor, (perCorridor.get(corridor) ?? 0) + 1)
+    return perCorridor
+  })
+  const corridors = load.reduce((sum, perCorridor) => sum + perCorridor.size, 0)
+  const doubled = load.reduce((sum, perCorridor) => sum + [...perCorridor.values()].filter(n => n > 1).length, 0)
+  const outside = picks.filter(f => f.sidePaths.outsideLock.length > 0)
+  const moved = outside.reduce((sum, f) => sum + f.sidePaths.outsideLock.length, 0)
+  console.log(
+    `  Side paths: ${inLock.length} floor(s) carry side paths in their lock corridors (${corridors} corridors, ${doubled} taking two), ${moved} side path(s) on ${outside.length} floor(s) hang outside the lock`
+  )
+  for (const f of inLock)
+    console.log(`    ${f.key}: ${f.corridors.map(({ section, corridor }) => `s${section} on ${corridor}`).join(", ")}`)
+  if (outside.length > 0) {
+    console.log(`  Side paths hung outside their lock (accepted: no layout fit them inside, one to a corridor):`)
+    for (const f of outside)
+      console.log(`    ${f.key}: ${f.sidePaths.outsideLock.map(section => `s${section}`).join(", ")}`)
+  }
+  const doubling = picks.filter(f => f.sidePaths.corridorsTakeTwo)
+  if (doubling.length > 0) {
+    console.log(`  Floors whose lock corridors take two side paths (no layout fit even with every side path outside):`)
+    for (const f of doubling) console.log(`    ${f.key}`)
   }
 }
 

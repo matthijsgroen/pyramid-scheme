@@ -112,9 +112,17 @@ describe("pairing side sections with corridors", () => {
     ])
   })
 
-  it("with more sections than corridors, a corridor takes a second only after every corridor has one", () => {
+  it("with more sections than corridors, a corridor takes one and the sections past them are left out", () => {
     const assigned = assignCorridors(corridors.slice(0, 2), sections(0, 0, 0, 0, 0), FREE, plan())
-    expect(assigned.map(a => a.corridor)).toEqual(["a>side", "b>annex", "a>side", "b>annex", "a>side"])
+    expect(assigned).toEqual([
+      { section: 0, corridor: "a>side" },
+      { section: 1, corridor: "b>annex" },
+    ])
+  })
+
+  it("asked for two a corridor, a corridor takes a second only after every corridor has one, and never a third", () => {
+    const assigned = assignCorridors(corridors.slice(0, 2), sections(0, 0, 0, 0, 0), FREE, plan(), 2)
+    expect(assigned.map(a => a.corridor)).toEqual(["a>side", "b>annex", "a>side", "b>annex"])
   })
 
   it("a section no corridor's appetite takes is left unassigned", () => {
@@ -143,12 +151,49 @@ describe("pairing side sections with corridors", () => {
       ["a", "puzzles"],
       ["b", "reward"],
     ])
-    const doored = plan({ corridors: [{ ...corridor("a", "b", true), barriers: ["G"] }] })
+    const route = [corridor("entrance", "a", true), corridor("b", "exit", true)]
+    const doored = plan({ corridors: [...route, { ...corridor("a", "b", true), barriers: ["G"] }] })
     expect(assignCorridors(eligibleCorridors(doored, appetite), sections(1), appetite, doored)).toEqual([])
-    const open = plan({ corridors: [corridor("a", "b", true)] })
+    const open = plan({ corridors: [...route, corridor("a", "b", true)] })
     expect(assignCorridors(eligibleCorridors(open, appetite), sections(1), appetite, open)).toEqual([
       { section: 0, corridor: "a>b" },
     ])
+  })
+
+  it("a corridor is taken only when its rooms seat in the order the fill walks it, from the end nearer the way in", () => {
+    // The fill walks a>side from a: a puzzle on side and the chest after it on a would be seated walking in from side.
+    const backwards = new Map<string, RegionAppetite>([
+      ["a", "reward"],
+      ["side", "puzzles"],
+    ])
+    const offRoute = (taking: Map<string, RegionAppetite>, p: LockPlan) =>
+      assignCorridors(
+        eligibleCorridors(p, taking).filter(c => c.id.includes("side")),
+        sections(1),
+        taking,
+        p
+      )
+    expect(offRoute(backwards, plan())).toEqual([])
+    // Written side>a, the corridor is still walked from a, its `to` end.
+    const forwards = new Map<string, RegionAppetite>([
+      ["a", "puzzles"],
+      ["side", "reward"],
+    ])
+    const written = plan({
+      corridors: plan().corridors.map(c => (c.id === "a>side" ? corridor("side", "a", false) : c)),
+    })
+    expect(offRoute(forwards, written)).toEqual([{ section: 0, corridor: "side>a" }])
+  })
+
+  it("a corridor on a loop, reached from both ends, is taken only when its rooms seat walked either way", () => {
+    const appetite = new Map<string, RegionAppetite>([
+      ["a", "puzzles"],
+      ["side", "reward"],
+    ])
+    const loop = plan({ corridors: [...plan().corridors, corridor("side", "b", false)] })
+    const offered = eligibleCorridors(loop, appetite).filter(c => c.id === "a>side")
+    expect(assignCorridors(offered, sections(1), appetite, loop)).toEqual([])
+    expect(assignCorridors(offered, sections(1), appetite, plan())).toEqual([{ section: 0, corridor: "a>side" }])
   })
 
   it("the same plan and sections always give the same assignment", () => {
