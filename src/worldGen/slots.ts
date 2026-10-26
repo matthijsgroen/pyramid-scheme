@@ -67,6 +67,16 @@ export type Slot = {
 // dynamic loot rather than crashing.
 export type FamilyPriorityFor = (encounter: string | string[] | undefined, defaultTag: string) => number
 
+// A path end that held a loot slot when the layout was picked stays a loot end once placement is done, filled or
+// left empty, so the carve reads the same free ends after placement as before it.
+const fillLootEnd =
+  (section: SubSection) =>
+  (reward: TreasureReward | undefined): void => {
+    section.endReward = reward
+    if (reward === undefined) section.lootEnd = true
+    else delete section.lootEnd
+  }
+
 // The ward keys a section's own tomb-key gate asks for: none when it has no such gate.
 const tombKeysOf = (section: SubSection): string[] =>
   section.gate?.type === "tomb-key" ? [section.gate.wardKeyId] : []
@@ -250,9 +260,7 @@ export const collectSlots = (
               true,
               (section.endReward as FragmentSlotReward).prefers,
               secHidden,
-              r => {
-                s.endReward = r
-              },
+              fillLootEnd(s),
               section.endReward as FragmentSlotReward
             )
           } else if (section.gate?.type === "tomb-key" && !section.endReward && rewardCapable) {
@@ -288,9 +296,7 @@ export const collectSlots = (
                 true,
                 (sub.endReward as FragmentSlotReward).prefers,
                 subHidden,
-                r => {
-                  ss.endReward = r
-                },
+                fillLootEnd(ss),
                 sub.endReward as FragmentSlotReward
               )
             } else if (sub.gate?.type === "tomb-key" && !sub.endReward && subRewardCapable) {

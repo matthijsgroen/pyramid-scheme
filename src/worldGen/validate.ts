@@ -11,6 +11,7 @@ import { WORLD_TARGETS } from "./worldTargets"
 import { capabilitiesFor, type SiteCapabilities } from "./capabilities"
 import type { GateWalk } from "./gateWalk"
 import type { JourneyMeta } from "./reachability"
+import type { Distribution } from "./slotAllocator"
 
 const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_JOURNEYS.map(j => j.id)])
 
@@ -180,6 +181,9 @@ export const validateRewardCounts = (
 // assembler hands it a key, and the room the player opens is not empty at all. Only the assembled
 // room knows the difference.
 //
+// Only a world with a filler (a distribution marked `fillsLast`, which takes every chest the others
+// leave) owes every chest loot. Without one, the chests nothing else claims stand empty by design.
+//
 // `place` is the section the chest ends, in words an author reads off the spec: "main", "side n" for
 // the n-th path off the main one, "side n.m" for that path's m-th sub path (both counted from 1, in the
 // order the floor lists them), or the section's own label where it has one.
@@ -210,8 +214,10 @@ export const findEmptyChests = (
     floor: SiteConfig[number],
     levelNr: number,
     floorIndex: number
-  ) => AssembledFloor | null
+  ) => AssembledFloor | null,
+  distributions: readonly Pick<Distribution, "fillsLast">[]
 ): EmptyChest[] => {
+  if (!distributions.some(d => d.fillsLast)) return []
   const empties: EmptyChest[] = []
   for (const [journeyId, sites] of Object.entries(configs)) {
     // A site outside the loot economy grows no reward slot at all (capabilities.ts), so every chest

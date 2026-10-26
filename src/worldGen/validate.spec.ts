@@ -217,8 +217,10 @@ describe("findEmptyChests", () => {
     staircases: {},
   })
 
+  const withFiller = [{}, { fillsLast: true as const }]
+
   const found = (rooms: Array<Partial<RoomCell>>) =>
-    findEmptyChests({ j: [[floor()]] }, () => grid(rooms)).map(c => `${c.row},${c.col}`)
+    findEmptyChests({ j: [[floor()]] }, () => grid(rooms), withFiller).map(c => `${c.row},${c.col}`)
 
   it("names a treasure room that holds nothing", () => {
     expect(found([{ tags: ["treasure"] }])).toEqual(["0,0"])
@@ -241,6 +243,13 @@ describe("findEmptyChests", () => {
 
   it("leaves puzzle rooms alone — a puzzle without loot is an ordinary room", () => {
     expect(found([{ tags: ["puzzle"] }])).toEqual([])
+  })
+
+  it("names no empty chest in a world whose distributions hold no filler", () => {
+    const empty = () => grid([{ tags: ["treasure"] }, { tags: ["shop"], stock: [undefined] }])
+    expect(findEmptyChests({ j: [[floor()]] }, empty, [{}])).toEqual([])
+    expect(findEmptyChests({ j: [[floor()]] }, empty, [])).toEqual([])
+    expect(findEmptyChests({ j: [[floor()]] }, empty, withFiller)).toHaveLength(2)
   })
 })
 

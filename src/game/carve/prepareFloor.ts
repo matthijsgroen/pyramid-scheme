@@ -793,7 +793,7 @@ export const prepareFloor = (
     return group.length > 0 ? [group] : []
   })
 
-  // Only FREE (no endReward) treasure-end gated sections can relay the next key onward; staircase-end
+  // Only FREE (no reward, no loot end) treasure-end gated sections can relay the next key onward; staircase-end
   // sections are always leaves, so they come last in the key chain.
   const gatedTreasureIdxs = gatedFloorKeyIdxs.filter(i => sideSections[i].end !== "staircase")
   const gatedStaircaseIdxs = gatedFloorKeyIdxs.filter(i => sideSections[i].end === "staircase")

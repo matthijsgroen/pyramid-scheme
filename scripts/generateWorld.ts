@@ -17,7 +17,7 @@ import { writeFileSync } from "fs"
 import { join, dirname } from "path"
 import { fileURLToPath } from "url"
 import { buildWorldConfigs } from "../src/mods/buildWorldConfigs"
-import { MOD_REACHABILITY_SUPPORT } from "../src/mods/registeredMods"
+import { DYNAMIC_DISTRIBUTIONS, MOD_REACHABILITY_SUPPORT } from "../src/mods/registeredMods"
 import { checkPlacedWeb } from "../src/worldGen/webBakeCheck"
 import { placementMoved, webJourneysOf } from "../src/worldGen/webPlacement"
 import { layoutKey, layoutMoved } from "../src/worldGen/layoutCheck"
@@ -174,7 +174,7 @@ if (stuck.length > 0) {
 }
 console.log(`  ${walkedJourneys}`)
 
-const emptyChests = findEmptyChests(configs, carveFinal)
+const emptyChests = findEmptyChests(configs, carveFinal, DYNAMIC_DISTRIBUTIONS)
 
 printStats(configs)
 const cov = hieroglyphCoverage(configs, HIEROGLYPH_REQUIRED)

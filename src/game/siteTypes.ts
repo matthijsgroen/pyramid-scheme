@@ -545,6 +545,8 @@ export type SubSection = {
   end: "treasure" | "staircase" | { stairId: string }
   gate?: GateConfig
   endReward?: TreasureReward
+  /** A loot end placement left empty. It stays a loot end, so the carve never takes it for a free end to put a key in. */
+  lootEnd?: true
   rewards?: (TreasureReward | undefined)[]
   hidden?: boolean
   /** Isolates this section's cells from leftover maze edges, so a compact layout can't merge a shortcut around it. */

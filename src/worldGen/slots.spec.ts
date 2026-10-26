@@ -242,3 +242,26 @@ describe("collectSlots on a shop's end", () => {
     expect(collectSlots({ starter_1: [site] }, () => 0, resolve).filter(s => s.kind === "end")).toHaveLength(1)
   })
 })
+
+describe("collectSlots on a side path's loot end", () => {
+  const siteWithLootEnd = (): SiteConfig => [
+    {
+      ...siteWithFragmentSlot()[0],
+      mainEndReward: undefined,
+      sideSections: [{ pathPuzzles: 0, difficulty: "starter", end: "treasure", endReward: { type: "fragmentSlot" } }],
+    },
+  ]
+
+  it("keeps an end it leaves empty a loot end", () => {
+    const site = siteWithLootEnd()
+    collectSlots({ starter_1: [site] })[0].assign(undefined)
+    expect(site[0].sideSections[0]).toMatchObject({ lootEnd: true })
+    expect(site[0].sideSections[0].endReward).toBeUndefined()
+  })
+
+  it("marks nothing on an end it fills", () => {
+    const site = siteWithLootEnd()
+    collectSlots({ starter_1: [site] })[0].assign({ type: "money", amount: 1 })
+    expect(site[0].sideSections[0].lootEnd).toBeUndefined()
+  })
+})

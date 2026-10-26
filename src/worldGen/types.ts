@@ -49,6 +49,8 @@ export type SubSection = {
       }
     | { type: "tomb-key"; wardKeyId: string }
   endReward?: TreasureReward
+  /** A loot end placement left empty. Mirrors game/siteTypes.ts. */
+  lootEnd?: true
   rewards?: (TreasureReward | undefined)[]
   hidden?: boolean
   /** Isolates this section's cells from leftover maze edges, so a compact layout can't merge a shortcut around it. */

@@ -15,7 +15,7 @@ const assembled = (config: FloorConfig) => {
 }
 
 const emptyPlaces = (config: FloorConfig) =>
-  findEmptyChests({ "made-up": [[config] as unknown as SiteConfig] }, () => assembled(config))
+  findEmptyChests({ "made-up": [[config] as unknown as SiteConfig] }, () => assembled(config), [{ fillsLast: true }])
     .map(c => c.place)
     .sort()
 

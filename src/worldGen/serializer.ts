@@ -70,6 +70,7 @@ const serializeSideSection = (s: SideSection): string => {
   if (s.label !== undefined) parts.unshift(`label: ${JSON.stringify(s.label)}`)
   if (s.gate) parts.push(`gate: ${serializeGate(s.gate)}`)
   if (s.endReward) parts.push(`endReward: ${serializeReward(s.endReward)}`)
+  if (s.lootEnd) parts.push(`lootEnd: true`)
   if (s.rewards?.length) parts.push(`rewards: ${serializePuzzleRewards(s.rewards)}`)
   if (s.hidden) parts.push(`hidden: true`)
   if (s.sealed) parts.push(`sealed: true`)
