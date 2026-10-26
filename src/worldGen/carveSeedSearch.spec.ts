@@ -10,7 +10,9 @@ import {
   verifyCarvePair,
   STAMPED_SEED_RANGE,
   sidePathStages,
+  mergeStageSearches,
   type CarvePairOptions,
+  type CarveRefusal,
   type SidePathStage,
 } from "./carveSeedSearch"
 
@@ -352,6 +354,51 @@ describe("where the side paths stand", () => {
       counts: { "no dead region": 21 },
       stages: 3,
     })
+  })
+})
+
+describe(mergeStageSearches, () => {
+  const stages: SidePathStage[] = [{ outsideLock: [] }, { outsideLock: [2] }, { outsideLock: [1, 2] }]
+  // A stand-in floor whose refusal turns on the seed, the packing and where its side paths stand, carving at
+  // `carvesAt` only.
+  const floor = (carvesAt?: { seed: number; outside: number }) => {
+    const criteria = ["carves", "lock walks sound", "no dead region"] as const
+    const verdict = new Map<AssemblerResult, CarveRefusal>()
+    const assemble = (seed: number, packing: number, _attempts: number, sidePaths: SidePathStage) => {
+      const result = carvedAt(0)
+      if (carvesAt && seed === carvesAt.seed && sidePaths.outsideLock.length === carvesAt.outside) return result
+      const criterion = criteria[(seed + Math.round(packing * 50) + sidePaths.outsideLock.length) % 3]
+      verdict.set(result, { criterion, detail: `${criterion} at ${seed} ${packing} ${sidePaths.outsideLock}` })
+      return result
+    }
+    const judge = (result: AssemblerResult) => verdict.get(result) ?? null
+    return { assemble, options: options({ seedBudget: 4, ceiling: 0.14, stages, judge }) }
+  }
+  const withoutGrid = (result: ReturnType<typeof searchCarvePair>) => {
+    if (result.kind === "notFound") return result
+    const { grid: _grid, ...pin } = result
+    return pin
+  }
+  const inTurn = ({ assemble, options }: ReturnType<typeof floor>) => withoutGrid(searchCarvePair(5, assemble, options))
+  const apart = ({ assemble, options }: ReturnType<typeof floor>) =>
+    mergeStageSearches(stages.map(stage => withoutGrid(searchCarvePair(5, assemble, { ...options, stages: [stage] }))))
+
+  it("decides the stage searching them in turn finds", () => {
+    const found = floor({ seed: 7, outside: 1 })
+    expect(apart(found)).toEqual(inTurn(found))
+    expect(apart(found)).toMatchObject({ kind: "found", seed: 7, sidePaths: stages[1] })
+  })
+
+  it("adds up every stage's refusals and keeps the hardest detail last met, as searching them in turn does", () => {
+    const lost = floor()
+    expect(JSON.stringify(apart(lost))).toBe(JSON.stringify(inTurn(lost)))
+    expect(apart(lost)).toMatchObject({ kind: "notFound", stages: 3 })
+  })
+
+  it("passes over a stage left unsearched after an earlier one found", () => {
+    const found = floor({ seed: 6, outside: 0 })
+    const first = withoutGrid(searchCarvePair(5, found.assemble, { ...found.options, stages: [stages[0]] }))
+    expect(mergeStageSearches([first, null, null])).toEqual(inTurn(found))
   })
 })
 

@@ -59,6 +59,23 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
     expect(lay()).toEqual(lay())
   })
 
+  it("lays the same floor asked again after a caller changed the one it was handed", () => {
+    const plan = FIXTURES.sluice()
+    const first = layLockPlan(plan, { seed: 3, n: startingGridSize(plan) })
+    const kept = structuredClone(first)
+    if (first.ok) first.laid.route.push("99,99")
+    expect(layLockPlan(plan, { seed: 3, n: startingGridSize(plan) })).toEqual(kept)
+  })
+
+  it("lays from the grid a smaller start grew to the floor that start laid", () => {
+    const plan = FIXTURES.mirrorFork()
+    const asked = startingGridSize(plan)
+    for (const seed of SEEDS) {
+      const grown = layLockPlan(plan, { seed, n: asked })
+      if (grown.ok && grown.laid.n > asked) expect(layLockPlan(plan, { seed, n: grown.laid.n })).toEqual(grown)
+    }
+  })
+
   it("lays different floors for different seeds", () => {
     const plan = FIXTURES.sluice()
     const routes = new Set(

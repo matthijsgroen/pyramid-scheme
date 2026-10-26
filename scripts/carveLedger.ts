@@ -11,8 +11,8 @@ export const LEDGER_PATH = join(root, "src/data/carveLedger.json")
  * floor hashes to now, so a decision stands exactly as long as nothing that could change it has changed.
  * - `notFound`: the bounded search found no layout; the floor is not searched again.
  * - `sidePaths`: the layout was found only at this later side-path stage (more side paths outside the lock, or two to
- *   a corridor). Its pin is verified with it; once the hash moves the floor is searched again from the most preferred
- *   stage, so it can take its side paths back. */
+ *   a corridor). Its hash covers the authoring alone (`stageHolds`): the pin is verified with it, and once the
+ *   authoring moves the floor is searched again from the most preferred stage, so it can take its side paths back. */
 export type CarveLedgerEntry =
   | { kind: "notFound"; hash: string; result: LayoutNotFound }
   | { kind: "sidePaths"; hash: string; sidePaths: SidePathStage }

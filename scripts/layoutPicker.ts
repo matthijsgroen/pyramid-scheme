@@ -6,12 +6,15 @@ import {
   refusal,
   searchCarvePair,
   sidePathStages,
+  mergeStageSearches,
   verifyCarvePair,
   type LayoutFound,
   type LayoutNotFound,
+  type LayoutPin,
+  type LayoutResult,
   type SidePathStage,
 } from "../src/worldGen/carveSeedSearch"
-import { prepareLayout, searchLayout } from "../src/worldGen/layoutFeasibility"
+import { layoutInfeasible, prepareLayout } from "../src/worldGen/layoutFeasibility"
 import { gridShape, layoutKey } from "../src/worldGen/layoutCheck"
 import type { FloorConfig as GameFloorConfig } from "../src/game/siteTypes"
 import type { FloorConfig, SiteConfig } from "../src/worldGen/types"
@@ -19,13 +22,30 @@ import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
 import { worldFloorCarve } from "../src/mods/carveWorldFloor"
 import { unjudgedLocks } from "../src/game/lockPuzzles"
 import type { CorridorAssignment } from "../src/game/corridorSidePaths"
-import { floorHash, sourceFingerprint, type CarveLedger } from "./carveLedger"
+import { searchStages, type StageJob } from "./layoutSearchPool"
+import { floorHash, sourceFingerprint, type CarveLedger, type CarveLedgerEntry } from "./carveLedger"
 
 // Seeds tried at each packing, offsets 0 … CARVE_SEED_BUDGET-1 from the floor's base seed.
 export const CARVE_SEED_BUDGET = 100
 
 const sameStage = (a: SidePathStage, b: SidePathStage) =>
   a.outsideLock.join() === b.outsideLock.join() && !a.corridorsTakeTwo === !b.corridorsTakeTwo
+
+/**
+ * WHETHER A PIN'S SIDE-PATH STAGE MAY BE VERIFIED rather than searched from the first stage. A pin at the most
+ * preferred stage always may. A pin at a later stage may only while the ledger records the floor found there for the
+ * same AUTHORING: a changed authoring searches again from the first stage, so the floor can take its side paths back.
+ * `authoringHash` leaves the carve's sources out, so a carve-code change re-verifies the pin in one carve and
+ * searches only when that carve fails.
+ */
+export const stageHolds = (
+  pinned: SidePathStage,
+  first: SidePathStage,
+  recorded: CarveLedgerEntry | undefined,
+  authoringHash: string
+): boolean =>
+  sameStage(pinned, first) ||
+  (recorded?.kind === "sidePaths" && recorded.hash === authoringHash && sameStage(recorded.sidePaths, pinned))
 
 /** One floor's pick, for the bake's summary. */
 export type FloorPick = {
@@ -71,12 +91,69 @@ export const unboundOutsideInputs = (configs: Record<string, SiteConfig[]>): str
   )
 
 /**
+ * HOW ONE FLOOR IS CARVED, JUDGED AND STAGED BY THE SEARCH, shared by the picker and its search workers
+ * (layoutSearchPool.ts), so a stage searched apart carves exactly as the bake does.
+ */
+export const floorSearch = (journeyId: string, floor: FloorConfig, levelNr: number, floorIndex: number) => {
+  const base = floor.seed ?? floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex)
+  const authored = floor.packing ?? DEFAULT_PACKING
+  const carve = carveAt(journeyId, levelNr, floorIndex)
+  // The authored packing is passed as written (possibly absent), so a floor pinned at it carves exactly as the
+  // runtime carves its unstamped config. The side-path fields are written only where they say something, as the
+  // bake writes them.
+  const { outsideLock: _outside, corridorsTakeTwo: _two, ...authoring } = floor
+  const standing = ({ outsideLock, corridorsTakeTwo }: SidePathStage): FloorConfig => ({
+    ...authoring,
+    ...(outsideLock.length > 0 ? { outsideLock } : {}),
+    ...(corridorsTakeTwo ? { corridorsTakeTwo } : {}),
+  })
+  const assembleAt = (seed: number, packing: number, maxAttempts: number, sidePaths: SidePathStage) =>
+    carve({ ...standing(sidePaths), seed, packing: packing === authored ? floor.packing : packing }, maxAttempts)
+  const judge = (result: Parameters<typeof refusal>[0]) => refusal(result, floor as GameFloorConfig)
+  const prepared = carve.prepare(authoring)
+  const corridorsWith = (sidePaths: SidePathStage): CorridorAssignment[] => {
+    const prep = carve.prepare(standing(sidePaths))
+    return prep.ok ? [...prep.prep.sections.corridorAssignments] : []
+  }
+  const stages = prepared.ok
+    ? sidePathStages(
+        prepared.prep.sections.corridorCandidates,
+        prepared.prep.sections.corridorAssignments,
+        corridorsWith({ outsideLock: [], corridorsTakeTwo: true })
+      )
+    : [ALL_INSIDE]
+  const options = {
+    authoredPacking: authored,
+    ceiling: PACKING_CEILING,
+    seedBudget: CARVE_SEED_BUDGET,
+    fullLadder: Infinity,
+    judge,
+    stages,
+  }
+  return { base, authored, authoring, assembleAt, prepared, corridorsWith, stages, options }
+}
+
+/** One stage of one floor searched on its own: what a search worker runs. */
+export const searchStage = ({ journeyId, floor, levelNr, floorIndex, stage }: StageJob): LayoutPin | LayoutNotFound => {
+  const { base, assembleAt, stages, options } = floorSearch(journeyId, floor, levelNr, floorIndex)
+  const result = searchCarvePair(base, assembleAt, { ...options, stages: [stages[stage]] })
+  if (result.kind === "notFound") return result
+  const { grid: _grid, ...pin } = result
+  return pin
+}
+
+/**
  * THE LAYOUT STAGE OF THE BAKE: every floor of the structural world gets the layout closest to its authored packing
  * that meets every hard criterion (carveSeedSearch.ts), or is listed as a failure. A floor whose authoring cannot meet
  * a criterion at any seed is infeasible and never carved (layoutFeasibility.ts). A floor already carrying a baked
  * (seed, packing) is verified in one carve and searched only when the pair no longer holds. A floor the search once
  * found nothing for is recorded in the ledger against a hash of its authoring and of every source file the carve
  * reads, and is not searched again while neither changes.
+ *
+ * The floors to search are searched together, each side-path stage of each floor on its own, across the machine's
+ * cores (layoutSearchPool.ts); each floor then takes the first of its stages that found a layout, as searching them in
+ * turn would (`mergeStageSearches`), and its pin is carved once more here. Every decision is made in floor order, so
+ * the output is the same however many cores share the work.
  */
 export const makeLayoutPicker = ({
   ledger,
@@ -99,86 +176,66 @@ export const makeLayoutPicker = ({
   // The shape of every floor's grid as its layout was picked: what the final world must still carve to.
   const pickedShapes = new Map<string, string>()
 
-  const pickFloor = (journeyId: string, floor: FloorConfig, levelNr: number, floorIndex: number) => {
+  /** What a floor's pin, the ledger or its authoring decide without a search; `search` when none of them does. */
+  const decideFloor = (journeyId: string, floor: FloorConfig, levelNr: number, floorIndex: number) => {
     const key = layoutKey(journeyId, levelNr, floorIndex)
     const where = `${journeyId} level ${levelNr} floor ${floorIndex}`
-    const base = floor.seed ?? floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex)
-    const authored = floor.packing ?? DEFAULT_PACKING
-    const carve = carveAt(journeyId, levelNr, floorIndex)
-    // The authored packing is passed as written (possibly absent), so a floor pinned at it carves exactly as the
-    // runtime carves its unstamped config. The side-path fields are written only where they say something, as the
-    // bake writes them.
-    const { outsideLock: _outside, corridorsTakeTwo: _two, ...authoring } = floor
-    const standing = ({ outsideLock, corridorsTakeTwo }: SidePathStage): FloorConfig => ({
-      ...authoring,
-      ...(outsideLock.length > 0 ? { outsideLock } : {}),
-      ...(corridorsTakeTwo ? { corridorsTakeTwo } : {}),
-    })
-    const assembleAt = (seed: number, packing: number, maxAttempts: number, sidePaths: SidePathStage) =>
-      carve({ ...standing(sidePaths), seed, packing: packing === authored ? floor.packing : packing }, maxAttempts)
-    const judge = (result: Parameters<typeof refusal>[0]) => refusal(result, floor as GameFloorConfig)
-    const prepared = carve.prepare(authoring)
-    const corridorsWith = (sidePaths: SidePathStage): CorridorAssignment[] => {
-      const prep = carve.prepare(standing(sidePaths))
-      return prep.ok ? [...prep.prep.sections.corridorAssignments] : []
-    }
-    const stages = prepared.ok
-      ? sidePathStages(
-          prepared.prep.sections.corridorCandidates,
-          prepared.prep.sections.corridorAssignments,
-          corridorsWith({ outsideLock: [], corridorsTakeTwo: true })
-        )
-      : [ALL_INSIDE]
-    const options = {
-      authoredPacking: authored,
-      ceiling: PACKING_CEILING,
-      seedBudget: CARVE_SEED_BUDGET,
-      fullLadder: Infinity,
-      judge,
-      stages,
-    }
+    const search = floorSearch(journeyId, floor, levelNr, floorIndex)
+    const { base, authored, authoring, assembleAt, prepared, stages, options } = search
     const hash = floorHash(carveSources, authoring, { ...options, step: PACKING_STEP })
+    const authoringHash = floorHash("", authoring, { ...options, step: PACKING_STEP })
+    const floorAt = { journeyId, floor, levelNr, floorIndex, key, where, search, hash, authoringHash }
+    const infeasible = layoutInfeasible(authoring as GameFloorConfig, prepared)
+    if (infeasible.length > 0)
+      return { ...floorAt, decided: { kind: "infeasible", ...infeasible[0], all: infeasible } as LayoutResult }
     const pinned = baked?.[journeyId]?.[levelNr - 1]?.[floorIndex]
     const recorded = ledger[key]
-    const result = searchLayout(authoring as GameFloorConfig, prepared, (): LayoutFound | LayoutNotFound => {
-      // A pin at the most preferred side-path stage holds as any pin does. One at a later stage holds only while the
-      // floor hashes as it did when it was found there: otherwise it is searched again from the first stage.
-      const pinnedStage: SidePathStage = {
-        outsideLock: pinned?.outsideLock ?? [],
-        ...(pinned?.corridorsTakeTwo ? { corridorsTakeTwo: true as const } : {}),
-      }
-      const stageHolds =
-        sameStage(pinnedStage, stages[0]) ||
-        (recorded?.kind === "sidePaths" && recorded.hash === hash && sameStage(recorded.sidePaths, pinnedStage))
-      const verified =
-        pinned && stageHolds
-          ? verifyCarvePair(
-              base,
-              { seed: pinned.seed ?? base, packing: pinned.packing ?? authored, sidePaths: pinnedStage },
-              assembleAt,
-              options
-            )
-          : null
-      if (verified) {
-        stats.verified++
-        return verified
-      }
-      if (recorded?.kind === "notFound" && recorded.hash === hash) {
-        stats.ledgered++
-        return recorded.result
-      }
-      stats.searched++
-      return searchCarvePair(base, assembleAt, options)
-    })
+    const pinnedStage: SidePathStage = {
+      outsideLock: pinned?.outsideLock ?? [],
+      ...(pinned?.corridorsTakeTwo ? { corridorsTakeTwo: true as const } : {}),
+    }
+    const verified =
+      pinned && stageHolds(pinnedStage, stages[0], recorded, authoringHash)
+        ? verifyCarvePair(
+            base,
+            { seed: pinned.seed ?? base, packing: pinned.packing ?? authored, sidePaths: pinnedStage },
+            assembleAt,
+            options
+          )
+        : null
+    if (verified) {
+      stats.verified++
+      return { ...floorAt, decided: verified as LayoutResult }
+    }
+    if (recorded?.kind === "notFound" && recorded.hash === hash) {
+      stats.ledgered++
+      return { ...floorAt, decided: recorded.result as LayoutResult }
+    }
+    stats.searched++
+    return { ...floorAt, decided: undefined }
+  }
+  type Decision = ReturnType<typeof decideFloor>
+
+  /** The searched stages' pin carved once more with its grid; a pin that no longer carves here is a search that
+   * disagrees with the bake, which is refused loudly rather than shipped. */
+  const carvePin = ({ search, where }: Decision, pin: LayoutPin): LayoutFound => {
+    const carved = verifyCarvePair(search.base, pin, search.assembleAt, search.options)
+    if (!carved || carved.laddered !== pin.laddered)
+      throw new Error(`${where}: the layout its search found does not carve again in the bake`)
+    return carved
+  }
+
+  const settle = (decision: Decision, result: LayoutResult) => {
+    const { key, where, floor, search, hash, authoringHash } = decision
     if (result.kind === "found") {
       picks.push({
         key,
-        authored,
+        authored: search.authored,
         packing: result.packing,
         offset: result.offset,
         laddered: result.laddered,
         unjudged: unjudgedLocks(result.grid, floor as GameFloorConfig),
-        corridors: corridorsWith(result.sidePaths),
+        corridors: search.corridorsWith(result.sidePaths),
         sidePaths: result.sidePaths,
       })
       floor.seed = result.seed
@@ -187,8 +244,8 @@ export const makeLayoutPicker = ({
       else delete floor.outsideLock
       if (result.sidePaths.corridorsTakeTwo) floor.corridorsTakeTwo = true
       else delete floor.corridorsTakeTwo
-      if (!sameStage(result.sidePaths, stages[0]))
-        nextLedger[key] = { kind: "sidePaths", hash, sidePaths: result.sidePaths }
+      if (!sameStage(result.sidePaths, search.stages[0]))
+        nextLedger[key] = { kind: "sidePaths", hash: authoringHash, sidePaths: result.sidePaths }
       pickedShapes.set(key, gridShape(result.grid))
       return
     }
@@ -199,8 +256,25 @@ export const makeLayoutPicker = ({
 
   /** Picks every floor of `configs`, writing each found pair on its floor; failures are collected, never thrown. */
   const pickAll = (configs: Record<string, SiteConfig[]>) => {
+    const decisions: Decision[] = []
     for (const [journeyId, sites] of Object.entries(configs))
-      sites.forEach((site, levelIndex) => site.forEach((floor, f) => pickFloor(journeyId, floor, levelIndex + 1, f)))
+      sites.forEach((site, levelIndex) =>
+        site.forEach((floor, f) => decisions.push(decideFloor(journeyId, floor, levelIndex + 1, f)))
+      )
+    const searching = decisions.filter(decision => decision.decided === undefined)
+    const jobs: StageJob[] = searching.flatMap(({ journeyId, floor, levelNr, floorIndex, search }, group) =>
+      search.stages.map((_, stage) => ({ journeyId, floor, levelNr, floorIndex, stage, group }))
+    )
+    const searched = searchStages(jobs, searching.length)
+    for (const decision of decisions) {
+      if (decision.decided) {
+        settle(decision, decision.decided)
+        continue
+      }
+      const group = searching.indexOf(decision)
+      const merged = mergeStageSearches(jobs.flatMap((job, i) => (job.group === group ? [searched[i]] : [])))
+      settle(decision, merged.kind === "found" ? carvePin(decision, merged) : merged)
+    }
   }
 
   return { pickAll, pickedShapes, failures, picks, stats, nextLedger }

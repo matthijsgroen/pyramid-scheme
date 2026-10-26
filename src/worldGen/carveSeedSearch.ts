@@ -282,6 +282,39 @@ export const searchCarvePair = (
   }
 }
 
+/** A found layout without its grid: what a search run apart from the bake hands back, to be carved again there. */
+export type LayoutPin = Omit<LayoutFound, "grid">
+
+/**
+ * WHAT SEARCHING THE STAGES IN TURN DECIDES, from each stage searched on its own (`searchCarvePair` given that one
+ * stage): the first stage in order that found a layout; or, when none did, the refusals of them all, the hardest
+ * criterion any reached and the detail of the last carve that reached it. A stage left unsearched (null) is one a
+ * stage before it already decided.
+ */
+export const mergeStageSearches = (
+  searched: ReadonlyArray<LayoutPin | LayoutNotFound | null>
+): LayoutPin | LayoutNotFound => {
+  let merged: LayoutNotFound | undefined
+  for (const result of searched) {
+    if (result === null) continue
+    if (result.kind === "found") return result
+    if (!merged) {
+      merged = { ...result, counts: { ...result.counts }, stages: 1 }
+      continue
+    }
+    // In the order the stage met them, so the counts read as they would had the stages been searched in one run.
+    for (const [criterion, count] of Object.entries(result.counts) as Array<[HardCriterion, number]>)
+      merged.counts[criterion] = (merged.counts[criterion] ?? 0) + count
+    if (HARD_CRITERIA.indexOf(result.hardest) >= HARD_CRITERIA.indexOf(merged.hardest)) {
+      merged.hardest = result.hardest
+      merged.detail = result.detail
+    }
+    merged.stages++
+  }
+  if (!merged) throw new Error("no stage was searched")
+  return merged
+}
+
 /** The bake's line for a floor no layout was picked for. */
 export const describeLayoutFailure = (where: string, result: LayoutNotFound | LayoutInfeasible): string => {
   if (result.kind === "infeasible")

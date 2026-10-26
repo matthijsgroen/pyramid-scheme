@@ -641,6 +641,25 @@ const search = (
   return { laid, deepest, parts: steps.map(entry => entry.part) }
 }
 
+/** What one grid's searches decided: the laid floor, or how far the furthest search got. */
+type GridOutcome = { laid?: LaidLocks; furthest?: Part }
+
+// THE LAY IS A PURE FUNCTION OF (plan, seed, grid), and the bake asks it the same question many times over: every
+// packing of one seed lays the same plan with the same seed, only from a different starting grid. Each grid's outcome
+// is kept and read back, bounded so a long session holds a few thousand at most.
+const GRID_OUTCOMES_KEPT = 4096
+const gridOutcomes = new Map<string, GridOutcome>()
+const remembered = (key: string, decide: () => GridOutcome): GridOutcome => {
+  const known = gridOutcomes.get(key)
+  if (known) return known
+  const outcome = decide()
+  if (gridOutcomes.size >= GRID_OUTCOMES_KEPT) gridOutcomes.delete(gridOutcomes.keys().next().value!)
+  gridOutcomes.set(key, outcome)
+  return outcome
+}
+/** A kept laid floor is handed out as a copy, so no caller can change what is kept. */
+const handOut = (laid: LaidLocks): LayResult => ({ ok: true, laid: structuredClone(laid) })
+
 /**
  * LAYS A LOCK PLAN ON THE NODE LATTICE: the route first, then each off-route region beside one already laid,
  * a drop's two ends exactly its straight reach apart, a junction's exits the corridors laid out of it. The
@@ -648,25 +667,35 @@ const search = (
  * hops, shortest first, and the grid grows from `n` until the plan fits or the ceiling refuses it by name.
  */
 export const layLockPlan = (plan: LockPlan, { seed, n, ceiling = LAY_GRID_CEILING }: LayOptions): LayResult => {
+  const planKey = JSON.stringify(plan)
   let refusal: LayRefusal | undefined
   for (let grid = n; grid <= Math.max(n, ceiling); grid += GRID_STEP) {
-    let furthest = { deepest: -1, part: undefined as Part | undefined }
-    for (let extra = 0; extra <= MAX_EXTRA_NODES; extra++)
-      for (let restart = 0; restart < RESTARTS; restart++) {
-        const rand = mulberry32(seed + grid * 7919 + extra * 104729 + restart * 15485863)
-        const { laid, deepest, parts } = search(plan, grid, rand, extra)
-        if (laid) return { ok: true, laid }
-        if (deepest > furthest.deepest) furthest = { deepest, part: parts[deepest] }
-      }
-    refusal = { part: furthest.part ?? { kind: "region", id: plan.route[0] }, grid }
+    const { laid, furthest } = remembered(`${seed}|${grid}|${planKey}`, () => {
+      let furthest = { deepest: -1, part: undefined as Part | undefined }
+      for (let extra = 0; extra <= MAX_EXTRA_NODES; extra++)
+        for (let restart = 0; restart < RESTARTS; restart++) {
+          const rand = mulberry32(seed + grid * 7919 + extra * 104729 + restart * 15485863)
+          const { laid, deepest, parts } = search(plan, grid, rand, extra)
+          if (laid) return { laid }
+          if (deepest > furthest.deepest) furthest = { deepest, part: parts[deepest] }
+        }
+      return { furthest: furthest.part }
+    })
+    if (laid) return handOut(laid)
+    refusal = { part: furthest ?? { kind: "region", id: plan.route[0] }, grid }
   }
   // Only a plan no search laid is searched again with its drops looked ahead to, so every plan that lays without
   // it lays as it always has. The look-ahead cuts dead branches early, so one search per grid is enough.
   if (plan.drops.length > 0)
-    for (let grid = n; grid <= Math.max(n, ceiling); grid += GRID_STEP)
-      for (let extra = 0; extra <= MAX_EXTRA_NODES; extra++) {
-        const { laid } = search(plan, grid, mulberry32(seed + grid * 7919 + extra * 104729), extra, true)
-        if (laid) return { ok: true, laid }
-      }
+    for (let grid = n; grid <= Math.max(n, ceiling); grid += GRID_STEP) {
+      const { laid } = remembered(`${seed}|${grid}|ahead|${planKey}`, () => {
+        for (let extra = 0; extra <= MAX_EXTRA_NODES; extra++) {
+          const { laid } = search(plan, grid, mulberry32(seed + grid * 7919 + extra * 104729), extra, true)
+          if (laid) return { laid }
+        }
+        return {}
+      })
+      if (laid) return handOut(laid)
+    }
   return { ok: false, refusal: refusal! }
 }
