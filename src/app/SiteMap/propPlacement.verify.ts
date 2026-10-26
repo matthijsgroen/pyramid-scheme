@@ -142,7 +142,8 @@ describe("a prop stands against a wall", () => {
   // Measured PER ROOM KIND, because the two kinds of room have different amounts of wall to offer and
   // one bound over both hides that. A dead end is a pocket with stone on three sides; a FORK is a
   // junction with passages leaving in three directions, so it often has no claimed cell with void above
-  // it at all. Lumped together they read 6.2%, which says nothing about either.
+  // it at all. Lumped together they read 6.2%, which says nothing about either. An entrance a side
+  // section hangs off forks too, so it counts as a fork here, not as a portal.
   const openBehindByOwner = (): Map<string, { props: number; open: number }> => {
     const tally = new Map<string, { props: number; open: number }>()
     for (const [siteId, levels] of Object.entries(generatedWorldConfigs).slice(0, 12)) {
@@ -154,7 +155,13 @@ describe("a prop stands against a wall", () => {
         for (const [key] of claims.decorationAt) {
           const [or, oc] = (claims.claimedBy.get(key) ?? key).split(",").map(Number)
           const owner = grid.cells[or]?.[oc]
-          const kind = owner?.type === "room" ? owner.roomType : "unknown"
+          // A portal the player can leave more than one way is a junction: it is tallied with the forks.
+          const kind =
+            owner?.type !== "room"
+              ? "unknown"
+              : owner.roomType === "portal" && owner.dirs.size > 1
+                ? "fork"
+                : owner.roomType
           const [r, c] = key.split(",").map(Number)
           const north = grid.cells[r - 1]?.[c]
           const row = tally.get(kind) ?? { props: 0, open: 0 }
