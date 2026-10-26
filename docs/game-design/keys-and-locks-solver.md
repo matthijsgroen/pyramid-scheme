@@ -47,7 +47,7 @@ one finished (`buildConfigs` in `src/worldGen/configBuilder.ts`, called by
    `pickLayout` hook; the bake supplies the carve search and its ledger,
    `src/worldGen/carveSeedSearch.ts`). The pick must meet the **hard
    criteria** (`HARD_CRITERIA`): it carves, its lock walks sound, every lock
-   holds a puzzle on its way, no dead region, every route stub holds a room.
+   holds an encounter on its way, no dead region, every route stub holds a room.
    `packing` is an intention, not a criterion: the search tries every seed
    at the authored packing first, then raised packings closest first, then
    the runtime ladder carve, and pins the first candidate meeting every
