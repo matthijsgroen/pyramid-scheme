@@ -414,6 +414,7 @@ Grounds (21, from `docs/loot-report.md`; a ground is named by the key pieces bou
 
 ## 3. Drafts
 
+- Phase 4c — `reading.sphinx.wrong`, read inside the Sphinx (designer chose it, 2026-10-26). nl: "Hetzelfde schrift als buiten, maar hier is het zand er nooit bij gekomen. Twee tekens nog scherp gehakt, en een lege plek waar het derde stond." en: "The same writing as outside, but the sand never reached it here. Two signs still cut clean, and a space where the third was."
 - Phase 1 — Fez's `shopArrival2`, now without supplies. en: "Rare finds cost the most, but I'll pay you for any trinkets you're carrying." nl: "Zeldzame vondsten kosten het meest, maar ik betaal je voor snuisterijen die je meedraagt."
 - Phase 1 — `chest.waterskinDescription`. en: "Cool water. You drink it on the spot and feel your wounds ease." nl: "Koel water. Je drinkt hem meteen leeg en voelt je wonden minder pijn doen."
 - Phase 3 — structure parts (names are drafts, nl / en; one line per structure):
