@@ -26,13 +26,27 @@ beforeEach(async () => {
 
 // A fresh mount starts from the default save; the showing must wait for the stored one.
 describe("the home showing", () => {
-  it("carries the tags of a find and a standing structure from the stored save", async () => {
+  it("carries the tag of a standing structure from the stored save, not of a find", async () => {
     await writeGameData({
       "pyramid-scheme-mod-camp": { version: 1, finds: ["seed"], parts: { tent: ["poles", "canvas"] }, grown: [] },
     })
     render(<HomeHooks onReported={() => {}} />)
 
     await vi.waitFor(() => expect(reported.filter(r => r.kind === "homeShown")).toHaveLength(1))
-    expect(reported.find(r => r.kind === "homeShown")).toMatchObject({ tags: ["camp.found", "camp.structureDone"] })
+    expect(reported.find(r => r.kind === "homeShown")).toMatchObject({ tags: ["camp.structureDone"] })
+  })
+
+  it("adds the arrival's tags to the save's on the showing after a homecoming", async () => {
+    await writeGameData({
+      "pyramid-scheme-mod-camp": { version: 1, finds: ["seed"], parts: { tent: ["poles", "canvas"] }, grown: [] },
+    })
+    render(<HomeHooks arrived={{ haul: true, tags: ["camp.found"] }} onReported={() => {}} />)
+
+    await vi.waitFor(() => expect(reported.filter(r => r.kind === "homeShown")).toHaveLength(1))
+    expect(reported.find(r => r.kind === "homeShown")).toEqual({
+      kind: "homeShown",
+      arrived: { haul: true },
+      tags: ["camp.structureDone", "camp.found"],
+    })
   })
 })

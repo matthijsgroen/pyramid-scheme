@@ -26,8 +26,8 @@ describe("the camp's home tags", () => {
     await expectTags({ version: 1, finds: [], parts: {}, grown: [] }, [])
   })
 
-  it("say camp.found once the save holds a find", async () => {
-    await expectTags({ version: 1, finds: ["shell"], parts: {}, grown: [] }, ["camp.found"])
+  it("say nothing of a find in the save: a find is told by the homecoming that brings it", async () => {
+    await expectTags({ version: 1, finds: ["shell"], parts: {}, grown: [] }, [])
   })
 
   it("say camp.structureDone once a structure has all its parts", async () => {
@@ -35,7 +35,7 @@ describe("the camp's home tags", () => {
   })
 
   it("say nothing of a structure still missing a part", async () => {
-    await expectTags({ version: 1, finds: ["shell"], parts: { tent: ["poles"] }, grown: [] }, ["camp.found"])
+    await expectTags({ version: 1, finds: ["shell"], parts: { tent: ["poles"] }, grown: [] }, [])
   })
 
   it("say which purchase has arrived, and none that is only held", async () => {

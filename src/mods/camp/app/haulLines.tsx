@@ -17,7 +17,8 @@ const picture = (id: string, emoji: string) => {
   )
 }
 
-// Each find is its own line, marked new: a find is a piece of the camp the player has not seen there.
+// Each find is its own line, marked new: a find is a piece of the camp the player has not seen there. It tells the
+// home showing after this homecoming that something was found.
 export const summariseFinds = (rewards: readonly TreasureReward[], t: TFn): HaulLine[] =>
   rewards.map((reward, index) => {
     const { step } = campFindRewardSchema.parse(reward)
@@ -27,6 +28,7 @@ export const summariseFinds = (rewards: readonly TreasureReward[], t: TFn): Haul
       title: t(`finds.${step}`, NS),
       note: t("haul.new", NS),
       isNew: true,
+      tag: "camp.found",
     }
   })
 

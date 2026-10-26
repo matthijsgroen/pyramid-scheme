@@ -9,14 +9,19 @@ const fireUrl = campArt("campfire")?.url
 
 // Coming home: the fire, what the mods say about resting, and the haul since the last unpacking. The
 // button is the only thing that empties the haul, so a trip's loot is never lost to a reload.
-export const ComingHome = ({ onDone }: { onDone: (haul: boolean) => void }) => {
+export type Arrival = { haul: boolean; tags: readonly string[] }
+
+export const ComingHome = ({ onDone }: { onDone: (arrival: Arrival) => void }) => {
   const { t } = useTranslation("common")
   const { haul, clearHaul, loaded } = useHomeSave()
   const lines = useHaulLines(haul)
 
   const unpack = async () => {
     await clearHaul()
-    onDone(lines.some(line => !line.news))
+    onDone({
+      haul: lines.some(line => !line.news),
+      tags: lines.flatMap(line => (line.tag ? [line.tag] : [])),
+    })
   }
 
   // Only a haul the screen shows is emptied: leaving past one the player never saw (not read yet, or of a
@@ -40,7 +45,7 @@ export const ComingHome = ({ onDone }: { onDone: (haul: boolean) => void }) => {
         badge: isNew ? t("camp.comingHome.new") : undefined,
       }))}
       buttonLabel={shown ? t("camp.comingHome.unpack") : t("camp.comingHome.toCamp")}
-      onDone={shown ? unpack : () => onDone(false)}
+      onDone={shown ? unpack : () => onDone({ haul: false, tags: [] })}
     />
   )
 }

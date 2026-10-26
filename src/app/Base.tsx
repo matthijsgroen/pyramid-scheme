@@ -21,6 +21,7 @@ import { useJourneyTranslations } from "@/app/translations/useJourneyTranslation
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { ComingHome } from "@/app/home/ComingHome"
 import { HomeHooks } from "@/app/home/HomeShowing"
+import type { Arrival } from "@/app/home/ComingHome"
 import { NewChapter } from "@/app/home/NewChapter"
 import { useHomeSave } from "@/app/home/useHomeSave"
 import { useCampFound } from "@/app/home/campFoundSource"
@@ -61,7 +62,7 @@ export const Base = ({
   const [showSettings, setShowSettings] = useState(false)
   const [chapterClosed, setChapterClosed] = useState(false)
   // Kept from leaving the coming-home screen until the home showing has reported it.
-  const [arrived, setArrived] = useState<{ haul: boolean } | undefined>()
+  const [arrived, setArrived] = useState<Arrival | undefined>()
   const forgetArrival = useCallback(() => setArrived(undefined), [])
   const [setOffHint, setOffTapped] = useTapHint("setOff")
 
@@ -247,8 +248,8 @@ export const Base = ({
       )}
       {cameHome && (
         <ComingHome
-          onDone={haul => {
-            setArrived({ haul })
+          onDone={arrival => {
+            setArrived(arrival)
             onArrived?.()
           }}
         />

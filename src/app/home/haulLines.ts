@@ -6,7 +6,8 @@ import { useMergedRewardDisplays } from "@/app/SiteMap/rewardDisplayRegistry"
 
 // One line of what the player carried home.
 // `news` marks a line that tells something instead of listing loot carried home (an arrival): it is shown and
-// unpacked like the rest, but a haul of only such lines is not loot brought home.
+// unpacked like the rest, but a haul of only such lines is not loot brought home. `tag` is what the line tells the
+// home showing that follows this homecoming, as a plain tag only that showing carries.
 export type HaulLine = {
   key: string
   visual: ReactNode
@@ -14,6 +15,7 @@ export type HaulLine = {
   note?: string
   isNew?: boolean
   news?: boolean
+  tag?: string
 }
 
 type Summariser = (rewards: readonly TreasureReward[], t: TFn) => HaulLine[]
