@@ -57,6 +57,13 @@ export const pinsFrom =
             floor.seed ??
             floorAssemblySeed(persistentInteriorSeed(journeyId), levelIndex + 1, floorIndex)
           if (pinned?.packing !== undefined) floor.packing = pinned.packing
+          // Where its side paths stand is part of the picked layout: without it the floor carves another shape.
+          if (pinned) {
+            if (pinned.outsideLock) floor.outsideLock = pinned.outsideLock
+            else delete floor.outsideLock
+            if (pinned.corridorsTakeTwo) floor.corridorsTakeTwo = true
+            else delete floor.corridorsTakeTwo
+          }
         })
       )
   }

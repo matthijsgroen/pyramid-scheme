@@ -3,7 +3,9 @@ import type { FloorConfig, SiteConfig } from "@/worldGen/types"
 import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
 import { pinsFrom } from "./buildWorldConfigs"
 
-const floor = (pin: Partial<Pick<FloorConfig, "seed" | "packing">> = {}): FloorConfig => ({
+const floor = (
+  pin: Partial<Pick<FloorConfig, "seed" | "packing" | "outsideLock" | "corridorsTakeTwo">> = {}
+): FloorConfig => ({
   pathPuzzles: 1,
   difficulty: "starter",
   end: "treasure",
@@ -29,6 +31,19 @@ describe(pinsFrom, () => {
     const pins = (world: Record<string, SiteConfig[]>) =>
       Object.values(world).map(sites => sites.map(site => site.map(f => [f.seed, f.packing])))
     expect(pins(configs)).toEqual(pins(baked))
+  })
+
+  it("pinsFrom carries where a baked floor's side paths stand, so the floor carves as it was picked", () => {
+    const baked: Record<string, SiteConfig[]> = {
+      made_up: [[floor({ seed: 11, outsideLock: [2, 3], corridorsTakeTwo: true }), floor({ seed: 12 })]],
+    }
+    const configs: Record<string, SiteConfig[]> = {
+      made_up: [[floor(), floor({ outsideLock: [1], corridorsTakeTwo: true })]],
+    }
+    pinsFrom(baked)(configs)
+    expect(configs.made_up[0][0]).toMatchObject({ outsideLock: [2, 3], corridorsTakeTwo: true })
+    expect(configs.made_up[0][1].outsideLock).toBeUndefined()
+    expect(configs.made_up[0][1].corridorsTakeTwo).toBeUndefined()
   })
 
   it("pins a floor the baked world does not have at the seed play carves it at", () => {
