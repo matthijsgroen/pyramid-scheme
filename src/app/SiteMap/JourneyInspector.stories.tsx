@@ -134,6 +134,20 @@ const FloorDetail = ({
         <span className="text-stone-500">{floor.difficulty}</span>
       </div>
       <div className="mb-1 text-stone-500">dressing: {floor.tileset ?? `${floor.difficulty} (tier)`}</div>
+      {floor.locks?.map(placed => (
+        <div key={placed.as ?? placed.lock.name} className="mb-1 text-violet-300">
+          🔒 {placed.lock.name}
+          {placed.as ? ` as ${placed.as}` : ""}
+          {placed.inside ? ` in ${placed.inside.instance}` : ""}
+          {placed.web ? " · web" : ""}
+        </div>
+      ))}
+      {floor.outsideLock?.length ? (
+        <div className="mb-1 text-violet-400">
+          outside the lock: {floor.outsideLock.map(si => `branch ${si + 1}`).join(", ")}
+        </div>
+      ) : null}
+      {floor.corridorsTakeTwo && <div className="mb-1 text-violet-400">a corridor takes two side paths</div>}
       <div>
         {Array.from({ length: floor.pathPuzzles }, (_, i) => {
           const reward = floor.rewards?.[i]
