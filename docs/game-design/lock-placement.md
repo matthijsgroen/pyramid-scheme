@@ -221,6 +221,12 @@ A side path is never dropped: inside the lock or outside it, its rooms and loot 
 corridors, the sections hung outside, and the floors whose corridors take two. Every catalogue lock is stood with
 every region `free`, so no authored appetite is in force.
 
+### What a lock region holds
+
+A lock region may be corridors only, one room or several rooms; what it never does is
+cross a puzzle's boundary. A region holding only corridors is still a region the player can stand in: "no dead
+region" holds for it like for any other.
+
 ### A lock holds a puzzle on its way
 
 A layout is accepted only if every lock holds an encounter on its way: on the lock's solving walk, from the first
