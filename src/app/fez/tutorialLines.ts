@@ -35,6 +35,7 @@ export const TUTORIAL_LINES: Record<string, PoseChat[]> = {
   notEnoughHieroglyphs: pose(["notEnoughHieroglyphs"], "pointUp", ["notEnoughHieroglyphs2"]),
   tombLoot: pose("glassesPoint", ["tombLoot"]),
   mapPiece: pose(["mapPiece", "mapPiece2"], "pointUp", ["mapPiece3"]),
+  mapComplete: pose(["mapComplete", "mapComplete2"], "pointUp", ["mapComplete3"]),
   pyramidBlockedBlocks: pose(
     ["pyramidBlockedBlocks", "pyramidBlockedBlocks2", "pyramidBlockedBlocks3"],
     "glassesPoint",

@@ -1,5 +1,6 @@
 import { useModState } from "@/app/state/useModState"
-import { useMemo } from "react"
+import { use, useMemo } from "react"
+import { FezContext } from "@/app/fez/context"
 import { useTranslation } from "react-i18next"
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
 import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
@@ -31,6 +32,7 @@ if (isModEnabled("tomb-treasure")) {
   registerRewardSchema("tombKey", tombKeySchema)
   registerRewardContribution(() => {
     const tomb = useTombTreasureProgress()
+    const fez = use(FezContext)
     return {
       effects: {
         mapPiece: (reward, { journeyId }) => {
@@ -44,6 +46,13 @@ if (isModEnabled("tomb-treasure")) {
           // perk is dispatched or banked here, so a key granted any other way (the dev menu's
           // "All treasures + keys") carries its perk too. See §7.4/§8.1.
           tomb.addTombKey(keyId)
+        },
+      },
+      // Told once each: what a piece is, and the moment a map is whole and its tomb opens.
+      seen: {
+        mapPiece: reward => {
+          const { found, required } = tomb.mapPieceProgress(mapPieceSchema.parse(reward).tombId)
+          fez.showConversation(found >= required ? "mapComplete" : "mapPiece")
         },
       },
     }
