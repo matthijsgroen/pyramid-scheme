@@ -250,11 +250,18 @@ export const buildRoomClaims = (
     const [r, c] = anchor.split(",").map(Number)
     return Array.from({ length: rows * cols }, (_, i) => `${r + Math.floor(i / cols)},${c + (i % cols)}`)
   }
-  const standOn = (kind: DecorationKind, usable: readonly string[]): string[] | undefined => {
+  // `against: "stone"` takes only a fit with wall behind it: a room already holding its prop gains nothing
+  // from a second one leaning over the floor.
+  const standOn = (
+    kind: DecorationKind,
+    usable: readonly string[],
+    against: "stone" | "stoneFirst" = "stoneFirst"
+  ): string[] | undefined => {
     const footprint = footprintOf(kind)
     const free = new Set(usable)
     const fits = usable.map(anchor => footprintCells(anchor, footprint)).filter(cells => cells.every(k => free.has(k)))
-    return fits.find(cells => cells.slice(0, footprint.cols).every(wallBehind)) ?? fits[0]
+    const backed = fits.find(cells => cells.slice(0, footprint.cols).every(wallBehind))
+    return against === "stone" ? backed : (backed ?? fits[0])
   }
   const decorationAt = new Map<string, DecorationKind>()
   const decorationCells = new Set<string>()
@@ -306,10 +313,11 @@ export const buildRoomClaims = (
     // `placeholder/` on purpose, so a stand-in can never be multiplied across the map by a rule nobody
     // is watching.
     kind => authoredHere.includes(kind) && !!tileUrl(floorTier(grid), kind),
-    // Same rule as the leader: on the map first, then the footprint and the wall-behind preference.
-    (free, kind) => {
+    // On the map first, then the footprint. The god's pair leans where it must, as the leader does; any
+    // other companion stands against stone or is left out.
+    (free, kind, pair) => {
       const inside = free.filter(onGrid)
-      return standOn(kind, inside.length ? inside : free)?.[0]
+      return standOn(kind, inside.length ? inside : free, pair ? "stoneFirst" : "stone")?.[0]
     }
   )) {
     decorationAt.set(anchor, kind)

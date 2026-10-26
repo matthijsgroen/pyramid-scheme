@@ -137,3 +137,40 @@ describe("a prop wider than one cell", () => {
     expect([...claims.decorationCells].sort()).toEqual(["1,2", "1,3"])
   })
 })
+
+describe("a companion stands against stone or not at all", () => {
+  // A stairhead on the map's top row: the leader takes the one free cell with wall above it; the rest of
+  // its floor lies under the stair or a passage. "a" is a site whose hash gives this room a companion.
+  const stairhead = (eastOfStair: "stone" | "passage"): FloorGrid => {
+    const portal: RoomCell = {
+      type: "room",
+      roomType: "portal",
+      stairId: "down",
+      stairGoes: "down",
+      dirs: new Set<Direction>(["w"]),
+      state,
+      decoration: "shelf",
+      activity: "storage",
+    }
+    const below = eastOfStair === "passage" ? [corridor(["s"]), corridor(["n"])] : [empty, empty]
+    return {
+      ...floor([
+        [corridor(["e"]), portal, empty],
+        [empty, empty, below[0]],
+        [empty, empty, below[1]],
+      ]),
+      siteId: "a",
+      staircases: { down: [0, 1] },
+    }
+  }
+
+  it("stands a companion on a free cell with wall above it", () => {
+    const claims = buildRoomClaims(stairhead("stone"), footprints([]))
+    expect([...claims.decorationAt.keys()]).toEqual(["0,2", "1,2"])
+  })
+
+  it("leaves the companion out when the only cells left have floor above them, keeping the leader", () => {
+    const claims = buildRoomClaims(stairhead("passage"), footprints([]))
+    expect([...claims.decorationAt]).toEqual([["0,2", "shelf"]])
+  })
+})
