@@ -185,8 +185,8 @@ Notes the port must keep:
 - **`checkChainsSeated` reads the loop's memory today:** `if (barriersShort) continue` (2978) skips recording
   `gateSeamMissing` once any attempt noted a short run. Port it as a rule in `shortfalls.ts`, not a read in the pass.
 - **`shutSwitchGround` changes `edgeAllowed`.** `reserveJunctions` sees doors without the switch ground.
-  `closeWaysOut`, the drops and `render` see them with it. `standsBehind` over state gives each the view it has
-  today.
+  `closeWaysOut` and the drops see them with it. `render` does not: its edges ask the authored doors only, so a
+  switch standing in a reserved junction moves no wall.
 - **`shutSwitchGround` builds up its own doors as it goes.** Junction n+1's walk sees junction n's doors (3591).
 - **`chainRooms` overwrites `mainRooms` on shared cells.** A sub-branch may hang off a laid chain cell that is a
   fork (3181–3182, then 3211–3447), so `roomAt` reads `chainRooms` first.
@@ -384,8 +384,8 @@ difference is explained in the step's report.
 
 - `render` returns a `WritableGrid` (a `FloorGrid` with mutable `cells`): `FloorGrid.cells` is readonly, and
   `settle` still writes into the grid until step 11 moves its writes out.
-- `render` reads `maze`, `branches`, `doors`, `lay`, `labels`, both room maps, `switchDoors` (its edges see the
-  switch ground) and `drops`; `exitKindOf` lives in it, over `forkPositions`, `rooms` and `routeStepOf`. The
+- `render` reads `maze`, `branches`, `doors`, `lay`, `labels`, both room maps and `drops`, never `switchDoors`
+  (a switch moves no wall); `exitKindOf` lives in it, over `forkPositions`, `rooms` and `routeStepOf`. The
   patron and dressing rules (`PATRON_KINDS`, `PATRON_PER_FLOOR`, `wallSuiting`) are copied into `render.ts`;
   the originals go with `assembleExpandedFloor` at step 9.
 - `settle` also reads `forks`, `junctions.order` (today's `junctionIdxOf`, the fork-switch's junction),

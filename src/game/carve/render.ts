@@ -41,7 +41,6 @@ export type RenderState = Pick<
   | "labels"
   | "mainRooms"
   | "chainRooms"
-  | "switchDoors"
   | "drops"
   | "forks"
   | "switchWays"
@@ -68,6 +67,8 @@ const wallSuiting = (pool: WallDecorationKind[], prop: DecorationKind | undefine
  * its launch, run and landing; then the entrance opens and the chambers are dressed. It decides
  * nothing a pass could: what it reads back off the grid (a node's `dirs` for a drop's join and a room's
  * footprint for its dressing) is what it itself just wrote. The carve is checked against this view open.
+ * Its edges ask the authored doors only, never a switch's: what `forks` reserved is carved the same whether or
+ * not a mod stands a switch in it.
  */
 export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid => {
   const { siteId } = prep.input
@@ -79,7 +80,7 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
   const { used } = state.branches
   const labels = state.labels
   const roomSpecs = rooms(state)
-  const allowed = edgeAllowed(state, state.switchDoors)
+  const allowed = edgeAllowed(state)
   const forks = forkPositions(state)
   const stepOf = routeStepOf(state.maze)
 

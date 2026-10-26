@@ -71,7 +71,6 @@ export const TAIL_READS = [
   "labels",
   "mainRooms",
   "chainRooms",
-  "switchDoors",
   "drops",
   "forks",
   "switchWays",

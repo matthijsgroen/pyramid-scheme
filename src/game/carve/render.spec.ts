@@ -8,6 +8,7 @@ import { prepareFloor } from "./prepareFloor"
 import { render, renderShut } from "./render"
 import type { RenderState } from "./render"
 import { validate } from "./validate"
+import { dirsOf } from "../testSupport/modOff"
 import { assembleFloor } from "./assembleFloor"
 import type { Cell, DressingPools, OneWayEdge, RoomSpec } from "./state"
 import { ACTIVITIES, activitiesFor, type ActivityId } from "../activities"
@@ -68,7 +69,6 @@ describe("render", () => {
       },
       mainRooms,
       chainRooms: new Map(),
-      switchDoors: new Map(),
       drops,
       forks: { reserved: [], inFork: new Set<string>(), switchesPlaced: 0 },
       switchWays: [],
@@ -168,6 +168,32 @@ describe("a reserved junction", () => {
   it("leaves it open where no switch stands in it, and shuts it in the view the carve is checked against", () => {
     expect(render(prep, junctionState(0)).cells[2][2]).toMatchObject({ type: "corridor" })
     expect(renderShut(prep, junctionState(0)).cells[2][2]).toMatchObject({ requiredKeyId: "switch:way" })
+  })
+
+  // The junction's two ways out, 2,2 and the exit 0,4, meet again at 2,4 by a leftover edge 2,2–2,4 beside
+  // gated ground; the switch's doors stand each way's ground behind its own door.
+  it("keeps every wall where it stands with no switch when a switch's ways out meet again", () => {
+    const looped = (switchesPlaced: number) => {
+      const base = junctionState(switchesPlaced)
+      return {
+        ...base,
+        maze: { ...base.maze, passages: new Set([...passages, pkey(0, 4, 2, 4), pkey(2, 2, 2, 4)]) },
+        branches: { ...base.branches, used: new Set([...base.branches.used, "2,4"]) },
+        doors: {
+          ...base.doors,
+          intended: new Set([...passages, pkey(0, 4, 2, 4)]),
+          gated: new Set(["2,2"]),
+        },
+        switchDoors:
+          switchesPlaced > 0
+            ? new Map([
+                ["2,2", new Set(["door 2,2"])],
+                ["2,4", new Set(["door 0,4"])],
+              ])
+            : new Map(),
+      }
+    }
+    expect(dirsOf(render(prep, looped(1)))).toBe(dirsOf(render(prep, looped(0))))
   })
 })
 
@@ -350,7 +376,6 @@ describe("dressing by purpose", () => {
         ["2,2", { roomType: "encounter", family: "keyGate", requiredKeyId: "ward", gateVariant: "tomb-key" }],
         ["4,2", { roomType: "encounter", family: "sumplete" }],
       ]),
-      switchDoors: new Map(),
       drops: [],
       forks: { reserved: [], inFork: new Set<string>(), switchesPlaced: 0 },
       switchWays: [],
