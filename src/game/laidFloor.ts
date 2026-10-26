@@ -145,6 +145,32 @@ const corridorLabels = (plan: LockPlan, corridor: PlanCorridor, k: number): stri
 }
 
 /**
+ * WHETHER A CORRIDOR LAID FOR A SIDE SECTION CAN SEAT ITS ROOMS: laid with a node for each room beyond what its doors
+ * and hubs need, its nodes that are no door or threshold, walked from either end, take the rooms in order, each on a
+ * node whose region's appetite takes its kind. Its two halves answer to different regions, so a corridor whose ends
+ * between them take every kind may still put no node where one room needs it.
+ */
+export const corridorTakes = (
+  plan: LockPlan,
+  corridor: PlanCorridor,
+  kinds: readonly ContentKind[],
+  appetite: ReadonlyMap<string, RegionAppetite>
+): boolean => {
+  const k = corridorNodesWanted(plan, corridor) + kinds.length
+  const { doors, thresholds } = corridorSeats(plan, corridor, k)
+  const held = new Set([...doors, ...thresholds])
+  const free = corridorLabels(plan, corridor, k).filter((_, i) => !held.has(i))
+  const seats = (walk: readonly string[]) => {
+    let at = 0
+    return kinds.every(kind => {
+      while (at < walk.length && !appetiteAccepts(appetite.get(walk[at]) ?? "free", kind)) at++
+      return at++ < walk.length
+    })
+  }
+  return seats(free) || seats([...free].reverse())
+}
+
+/**
  * HOW MANY NODES A REGION'S MECHANICS WANT, beyond the doors its corridors carry: one per control and tile, and
  * for a region with tiles one more for every way off the route that leaves it, because a tile stands on a node
  * with two ways and not three. A sequence step's region wants a node for each way into it whose tile stands on the

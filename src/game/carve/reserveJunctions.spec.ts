@@ -337,7 +337,8 @@ describe("a switch fork", () => {
     for (const result of results) {
       if (!result.success) continue
       const at = findRoom(result.grid, cell => cell.roomType === "fork" && cell.family === "sumplete")
-      expect(at?.cell.exits?.filter(exit => exit.gateKeyId !== undefined)).toHaveLength(2)
+      // The junction may also stand where the route goes on, so its switch can close that way too.
+      expect(at?.cell.exits?.filter(exit => exit.gateKeyId !== undefined && exit.kind === "side")).toHaveLength(2)
       expect(validateSite(result.grid)).toEqual({ valid: true })
     }
   })

@@ -621,7 +621,8 @@ export const prepareFloor = (
             ? [{ section: i, kinds: kindsOf(i) }]
             : []
         ),
-        appetiteOfRegion
+        appetiteOfRegion,
+        plan
       )
     : []
   const corridorOf = new Map(corridorAssignments.map(({ section, corridor }) => [section, corridor]))

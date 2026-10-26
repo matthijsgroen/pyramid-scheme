@@ -377,7 +377,7 @@ describe("a side section assigned to a lock corridor", { timeout: 60_000 }, () =
   }
   const leverPlan = () => planOf([{ lock: leverLock() }])
   const assignedTo = (plan: LockPlan) =>
-    assignCorridors(eligibleCorridors(plan, FREE), [{ section: 1, kinds }], FREE)[0].corridor
+    assignCorridors(eligibleCorridors(plan, FREE), [{ section: 1, kinds }], FREE, plan)[0].corridor
 
   it("a section assigned to a corridor stands wholly on that corridor's nodes", () => {
     const plan = leverPlan()

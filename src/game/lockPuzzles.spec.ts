@@ -108,11 +108,10 @@ const onSide = (grid: FloorGrid, which: (cell: GridCell) => boolean) =>
   grid.cells.flat().some(cell => cell.type === "room" && cell.sectionAddress !== "main" && which(cell))
 
 describe("any encounter on a lock's way counts", () => {
-  // Side paths fill the plan's corridors in order, the way into the lock first, so the second one stands in the lock.
-  const withSides = (side: SideSection): FloorConfig => ({ ...floorWith(0), sideSections: [side, side] })
+  const withSide = (side: SideSection): FloorConfig => ({ ...floorWith(0), sideSections: [side] })
 
   it("a chest on the lock's way counts", () => {
-    const config = withSides({ pathPuzzles: 0, difficulty: "expert", end: "treasure" })
+    const config = withSide({ pathPuzzles: 0, difficulty: "expert", end: "treasure" })
     for (const seed of SEEDS) {
       const grid = carve(config, seed)
       expect(onSide(grid, isChest)).toBe(true)
@@ -122,7 +121,7 @@ describe("any encounter on a lock's way counts", () => {
   })
 
   it("a trap room on the lock's way counts", () => {
-    const config = withSides({ pathPuzzles: 1, difficulty: "expert", end: "treasure", sealed: true, encounter: "trap" })
+    const config = withSide({ pathPuzzles: 1, difficulty: "expert", end: "treasure", sealed: true, encounter: "trap" })
     for (const seed of SEEDS) {
       const trapsOnly = without(carve(config, seed), isChest)
       expect(onSide(trapsOnly, isPathRoom)).toBe(true)

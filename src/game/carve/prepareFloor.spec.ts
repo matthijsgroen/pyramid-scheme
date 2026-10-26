@@ -290,6 +290,11 @@ describe("a lock floor's side sections", () => {
     if (!result.ok) throw new Error(JSON.stringify(result.reasons))
     return result.prep.sections
   }
+  // The plan's corridors with both ends in the lock: the only ones a side path may stand on.
+  const insideCorridors = (plan: LockPlan) => {
+    const owned = new Set(plan.regions.flatMap(region => (region.owner === undefined ? [] : [region.id])))
+    return plan.corridors.filter(corridor => owned.has(corridor.from) && owned.has(corridor.to))
+  }
   const assigned = (sections: ReturnType<typeof lockFloor>) =>
     sections.absorbedDemands.flatMap(({ section, corridor }) => (corridor === undefined ? [] : [section]))
 
@@ -352,7 +357,7 @@ describe("a lock floor's side sections", () => {
       {
         name: "one eligible corridor",
         more: { sideSections: four },
-        planned: plan => ({ ...plan, corridors: plan.corridors.slice(0, 1) }),
+        planned: plan => ({ ...plan, corridors: insideCorridors(plan).slice(0, 1) }),
       },
       { name: "more corridors than sections", more: { sideSections: four.slice(0, 2) } },
       { name: "every section outside the lock", more: { sideSections: four, outsideLock: [0, 1, 2, 3] } },
@@ -368,7 +373,7 @@ describe("a lock floor's side sections", () => {
       new Set(
         lockFloor({ sideSections: four }, plan => ({
           ...plan,
-          corridors: plan.corridors.slice(0, 1),
+          corridors: insideCorridors(plan).slice(0, 1),
         })).corridorAssignments.map(({ corridor }) => corridor)
       ).size
     ).toBe(1)
