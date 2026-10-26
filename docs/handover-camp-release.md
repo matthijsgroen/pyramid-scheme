@@ -249,4 +249,13 @@ worktree, and the review list sorted: decisions, drafts, failures, things to loo
 
 ## Next
 
-Phase 4b's three failing checks (review list, Failures): the toggle-off difference on junior_4 L4 F0 first, since toggle-off is the mod acceptance gate; then the designer's calls on the portal prop bound and the roomless workshop region. The two walks under the review list's §5 (a side path in a lock corridor; the ward stair, cave and climb into the Sphinx). The shop toggle-off decision (review list, Failures).
+The portal prop bound (review list, Failures: one-way portals stand 8/89 props against open floor, bound 8 %; the designer chose to stand them against stone, not to raise the bound). The two walks under the review list's §5 (a side path in a lock corridor; the ward stair, cave and climb into the Sphinx).
+
+## After the release
+
+The ending takes its time (designer, 2026-10-26). The way to the Sphinx should already tell the player this is the end, together with the Sphinx's own styling:
+
+- The cave stays an ordinary cave: caves are rare enough in the game to feel special on their own.
+- Short beats on the way (arriving on the first wizard floor under the starter pyramid, in the cave, at the climb), a quieter rhythm, warm light falling down the last stair.
+- On the Sphinx floor the player looks around before the reading plays; the four Sphinx surfaces get painted (`yarn repaint sphinx/…`).
+- The Vault's key is not obtainable yet, so none of this is in the release. Dressing and beats move no wall, so they can land later without breaking saves.
