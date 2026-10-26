@@ -16,8 +16,9 @@ vi.mock("@/app/Inventory/useInventory", () => ({
   useInventory: () => ({ inventory }),
 }))
 
-// Painted or not, a junk item is tapped the same way; the test finds it by its glyph.
-vi.mock("./sellableArt", () => ({ sellableArt: () => undefined }))
+// Unpainted unless a test paints it, so the other tests find an item by its glyph.
+let art: string | undefined
+vi.mock("./sellableArt", () => ({ sellableArt: () => art }))
 
 const { ShopCollectionSection } = await import("./ShopCollectionSection")
 
@@ -47,5 +48,18 @@ describe("ShopCollectionSection hide-until-collected", () => {
     expect(onSelect).toHaveBeenCalledWith(
       expect.objectContaining({ id: item.id, symbol: item.symbol, difficulty: expect.any(String) })
     )
+  })
+
+  it("hands the painted art to the detail panel too", () => {
+    const item = ALL_SELLABLES[0]
+    inventory = { [item.id]: 1 }
+    art = "painted.webp"
+    const onSelect = vi.fn()
+    const { container } = render(
+      <ShopCollectionSection selectedItem={null} onSelect={onSelect} isNew={() => false} newLabel="NEW" />
+    )
+    fireEvent.click(container.querySelector('img[src="painted.webp"]')!)
+    art = undefined
+    expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({ id: item.id, imageUrl: "painted.webp" }))
   })
 })

@@ -38,6 +38,7 @@ export const ShopCollectionSection: FC<CollectionSectionProps> = ({ selectedItem
               onSelect({
                 id: item.id,
                 symbol: item.symbol,
+                imageUrl: sellableArt(item.id),
                 // The detail panel shows whatever difficulty the item carries, so the tier's is it.
                 difficulty: difficultyByMaterialTier[item.tier],
                 name: t(`${item.id}.name`, { ns: "sellables" }),

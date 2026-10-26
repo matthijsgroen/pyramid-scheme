@@ -32,7 +32,13 @@ const DetailPanel: FC<{
                 with it — HieroglyphTile throws on a symbol with no difficulty. */}
             <div className="flex-shrink-0">
               {difficulty ? (
-                <HieroglyphTile symbol={item.symbol} difficulty={difficulty} size="lg" disabled={false} />
+                <HieroglyphTile
+                  symbol={item.symbol}
+                  imageUrl={item.imageUrl}
+                  difficulty={difficulty}
+                  size="lg"
+                  disabled={false}
+                />
               ) : (
                 <span className="font-mono text-4xl">{item.symbol}</span>
               )}

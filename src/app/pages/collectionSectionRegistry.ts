@@ -6,6 +6,8 @@ import type { Difficulty } from "@/data/difficultyLevels"
 export type CollectionItem = {
   id: string
   symbol: string
+  // Art the tile shows instead of the symbol, when the section has some.
+  imageUrl?: string
   name: string
   description: string
   effectDescription?: string
