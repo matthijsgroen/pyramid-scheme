@@ -14,6 +14,8 @@ import {
   expectRouteIsWholeRoute,
 } from "../game/testSupport/laidCarveChecks"
 import type { LaidCarve } from "../game/testSupport/laidCarveChecks"
+import { corridorUnfed } from "../game/lockPuzzles"
+import { prepareLayout } from "./layoutFeasibility"
 
 const JOURNEY_ID = "test"
 
@@ -99,11 +101,17 @@ describe("a mirrorFork is carved from the structure laid for it", { timeout: 300
         }
       })
 
-      it("stands an ungated side path's rooms on laid nodes in walk order and leaves a gated one a branch", () => {
+      it("stands each side path the floor fills into the lock on laid nodes in walk order, an assigned one on its own corridor, and leaves a gated one a branch", () => {
         const sides = make().sideSections
+        const prepared = prepareLayout(JOURNEY_ID, make(), 1, {
+          resolveEncounter: resolveEncounterMeta,
+          resolveKeyRequirements,
+        })
+        if (!prepared.ok) throw new Error(JSON.stringify(prepared.reasons))
+        const demands = prepared.prep.sections.absorbedDemands
         for (const { grid, laid } of carved()) {
-          const filled = sides.flatMap((side, i) => (side.gate === undefined ? [i] : []))
-          expect(laid.absorbed.map(({ section }) => section)).toEqual(filled)
+          expect(laid.absorbed.map(({ section }) => section)).toEqual(demands.map(({ section }) => section))
+          expect(corridorUnfed(laid, demands)).toEqual([])
           for (const { section, cells } of laid.absorbed) {
             const own = grid.cells.flatMap((row, r) =>
               row.flatMap((cell, c) =>

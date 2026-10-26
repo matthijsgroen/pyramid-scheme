@@ -1,4 +1,5 @@
 import { layLockPlan } from "../layLocks"
+import { corridorUnfed } from "../lockPuzzles"
 import {
   answerBareStubs,
   fillLaidFloor,
@@ -22,7 +23,8 @@ const MAX_LENGTHENINGS = 12
  * has its own stream, so a floor without locks draws exactly what it always drew.
  *
  * THE FLOOR'S OWN CONTENT IS FILLED INTO WHAT IS LAID, and where the laid stretches are too short for it the
- * plan asks the lay for more nodes on the cheapest stretch and lays again, rather than growing a branch.
+ * plan asks the lay for more nodes on the cheapest stretch and lays again, rather than growing a branch. A side
+ * section assigned to a corridor stands wholly on it; a fill that seats one of its rooms elsewhere is refused.
  *
  * Every lay that holds grows the grid, and the next attempt starts from it even when this one refuses.
  */
@@ -70,6 +72,10 @@ export const layFloor = pass("layFloor", ["rung", "attempt"], ["lay", "laidN"], 
       appetiteOfRegion
     )
     if ("placed" in filled) {
+      const offCorridor = absorbedDemands.flatMap(demand =>
+        corridorUnfed({ stretches: seated.stretches, absorbed: filled.placed }, [demand]).length > 0 ? demand.kinds : []
+      )
+      if (offCorridor.length > 0) return { retry: [{ type: "contentNotLaid", kinds: offCorridor }] }
       const laid = { ...seated, absorbed: filled.placed, lengthened }
       const answered = answerStubs ? answerBareStubs(plan, laid, absorbedDemands, appetiteOfRegion) : laid
       onLaid?.(answered)

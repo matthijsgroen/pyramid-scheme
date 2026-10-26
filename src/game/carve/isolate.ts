@@ -1,7 +1,7 @@
 import { gateKeyOf } from "./ids"
 import { keyOf } from "./derive"
 import { makePkey } from "./grid"
-import { MAIN_SECTION_ADDRESS } from "./sections"
+import { doorsShutting, MAIN_SECTION_ADDRESS } from "./sections"
 import { pass } from "./state"
 import type { Cell } from "./state"
 
@@ -87,6 +87,15 @@ export const isolate = pass("isolate", ["maze", "keys", "labels", "lay"], ["door
     for (const cell of chain.cells) {
       gated.add(keyOf(cell))
       for (const door of chain.doors) needsDoor(keyOf(cell), door)
+    }
+  }
+  // A sealed section filled into laid nodes stands behind its own seal as a sealed chain does: only the lay's
+  // passages, all of them intended, reach its rooms.
+  for (const { section, cells } of laid?.absorbed ?? []) {
+    const doors = doorsShutting(prep.sections.sideSections[section], `s${section}`, [])
+    for (const cellKey of cells) {
+      if (doors.length > 0) gated.add(cellKey)
+      for (const door of doors) needsDoor(cellKey, door)
     }
   }
 

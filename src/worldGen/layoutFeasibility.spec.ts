@@ -56,7 +56,7 @@ describe(layoutInfeasible, () => {
       )
     )
     expect(carves).toBe(0)
-    expect(result).toMatchObject({ kind: "infeasible", criterion: "lock holds a puzzle" })
+    expect(result).toMatchObject({ kind: "infeasible", criterion: "lock holds an encounter" })
     expect(result.kind === "infeasible" ? result.detail : "").toContain("lever")
   })
 
@@ -74,6 +74,11 @@ describe(layoutInfeasible, () => {
     expect(layoutInfeasible(floor({ pathPuzzles: 1 }), prepared(floor({ pathPuzzles: 1 })))).toEqual([])
     const open = floor({ sideSections: [section()] })
     expect(layoutInfeasible(open, prepared(open))).toEqual([])
+  })
+
+  it("a lock floor whose only content is a trapped side path is not infeasible", () => {
+    const trapped = floor({ sideSections: [section({ pathPuzzles: 1, sealed: true, encounter: "trap" })] })
+    expect(layoutInfeasible(trapped, prepared(trapped))).toEqual([])
   })
 
   it("a floor with no lock needs no puzzle", () => {
@@ -102,7 +107,7 @@ describe(layoutInfeasible, () => {
     }
     const config = floor({ pathPuzzles: 1, locks: [{ lock: hungry }] })
     const found = layoutInfeasible(config, prepared(config))
-    expect(found.map(f => f.criterion)).toEqual(["lock holds a puzzle"])
+    expect(found.map(f => f.criterion)).toEqual(["lock holds an encounter"])
     expect(found[0].detail).toContain("lever.foyer")
   })
 })

@@ -512,8 +512,8 @@ export const placeContentOnRoute = (
  */
 export type AbsorbedDemand = { section: number; kinds: ContentKind[]; open?: boolean; corridor?: string }
 
-/** A room of a section no laid node took. */
-export type MissingRoom = { kind: ContentKind; open: boolean }
+/** A room of a section no laid node took; `corridor` names the corridor its section is assigned to. */
+export type MissingRoom = { kind: ContentKind; open: boolean; corridor?: string }
 
 /** The laid node each room of an absorbed section stands on, the end room last. */
 export type AbsorbedPlace = { section: number; cells: CellKey[] }
@@ -523,16 +523,30 @@ export type Lengthening = { kind: "region" | "corridor"; id: string; nodes: numb
 
 /**
  * FILLS THE FLOOR'S AUTHORED SIDE SECTIONS INTO THE LAID NODES, or names the kinds of room that found none.
- * A room may stand on any node that is no door, junction, drop end, entrance, exit or node the main content
- * took, in a region whose appetite takes its kind, and a region always keeps the nodes its mechanics' seats
+ * A room may stand on any node that is no door, threshold, junction, drop end, entrance, exit or node the main
+ * content took, in a region whose appetite takes its kind, and a region always keeps the nodes its mechanics' seats
  * want: on the route those come off the route's nodes, off it off the region's own. A section's rooms stand
  * in walk order from the way in, its puzzles first and its end room last, spread along the walk; a floor the
  * spread cannot seat is packed from the way in instead.
+ *
+ * A SECTION ASSIGNED TO A CORRIDOR STANDS ON THAT CORRIDOR'S NODES ONLY, spread along it the same way, so the
+ * lock's obstacles stand between its rooms where the corridor carries them. The assigned sections are filled
+ * first, every other section after them over the whole floor.
  */
 export const fillLaidFloor = (
   floor: Pick<
     LaidFloor,
-    "route" | "routeLabels" | "label" | "depth" | "open" | "doors" | "thresholds" | "junctions" | "drops" | "seatDemand"
+    | "route"
+    | "routeLabels"
+    | "label"
+    | "depth"
+    | "open"
+    | "doors"
+    | "thresholds"
+    | "junctions"
+    | "drops"
+    | "seatDemand"
+    | "stretches"
   >,
   taken: ReadonlySet<CellKey>,
   demands: readonly AbsorbedDemand[],
@@ -549,9 +563,11 @@ export const fillLaidFloor = (
     ...floor.junctions.map(junction => junction.cell),
     ...floor.drops.flatMap(drop => [drop.from, drop.to]),
   ])
-  const candidates = [...floor.label.keys()]
-    .filter(key => !held.has(key) && floor.depth.has(key))
-    .sort((a, b) => floor.depth.get(a)! - floor.depth.get(b)! || (a < b ? -1 : 1))
+  const walkOrder = (keys: Iterable<CellKey>) =>
+    [...keys]
+      .filter(key => !held.has(key) && floor.depth.has(key))
+      .sort((a, b) => floor.depth.get(a)! - floor.depth.get(b)! || (a < b ? -1 : 1))
+  const candidates = walkOrder(floor.label.keys())
   const onRoute = new Set(floor.routeLabels)
   const poolOf = (key: CellKey) => `${floor.label.get(key)!}|${routeKeys.has(key) ? "route" : "chain"}`
   const allowance = new Map<string, number>()
@@ -563,37 +579,51 @@ export const fillLaidFloor = (
   const accepts = (key: CellKey, kind: ContentKind, open: boolean) =>
     appetiteAccepts(appetite.get(floor.label.get(key)!) ?? "free", kind) && (!open || floor.open.has(key))
 
+  // Each group of sections shares the nodes it may take: one per assigned corridor, then the rest of the floor.
+  const corridors = [...new Set(demands.flatMap(({ corridor }) => (corridor === undefined ? [] : [corridor])))]
+  const groups = [
+    ...corridors.map(corridor => ({
+      nodes: walkOrder(floor.stretches.get(`corridor:${corridor}`) ?? []),
+      members: demands.filter(demand => demand.corridor === corridor),
+    })),
+    { nodes: candidates, members: demands.filter(demand => demand.corridor === undefined) },
+  ]
+
   const fill = (spread: boolean): { placed: AbsorbedPlace[]; missing: MissingRoom[] } => {
     const room = new Map(allowance)
-    const used = new Set<number>()
-    const placed: AbsorbedPlace[] = []
+    const used = new Set<CellKey>()
+    const placedOf = new Map<AbsorbedDemand, AbsorbedPlace>()
     const missing: MissingRoom[] = []
-    demands.forEach(({ section, kinds, open = false }, s) => {
-      const cells: CellKey[] = []
-      let behind = -1
-      for (const [j, kind] of kinds.entries()) {
-        const target = spread
-          ? Math.floor(((j + (s + 1) / (demands.length + 1)) / kinds.length) * candidates.length)
-          : behind + 1
-        let best = -1
-        for (let p = behind + 1; p < candidates.length; p++) {
-          const key = candidates[p]
-          if (used.has(p) || !accepts(key, kind, open) || (room.get(poolOf(key)) ?? 0) <= 0) continue
-          if (best < 0 || Math.abs(p - target) < Math.abs(best - target)) best = p
-          if (p >= target) break
+    for (const { nodes, members } of groups)
+      members.forEach((demand, s) => {
+        const { section, kinds, open = false, corridor } = demand
+        const cells: CellKey[] = []
+        let behind = -1
+        for (const [j, kind] of kinds.entries()) {
+          const target = spread
+            ? Math.floor(((j + (s + 1) / (members.length + 1)) / kinds.length) * nodes.length)
+            : behind + 1
+          let best = -1
+          for (let p = behind + 1; p < nodes.length; p++) {
+            const key = nodes[p]
+            if (used.has(key) || !accepts(key, kind, open) || (room.get(poolOf(key)) ?? 0) <= 0) continue
+            if (best < 0 || Math.abs(p - target) < Math.abs(best - target)) best = p
+            if (p >= target) break
+          }
+          if (best < 0) {
+            missing.push(
+              ...kinds.slice(j).map(missed => ({ kind: missed, open, ...(corridor !== undefined ? { corridor } : {}) }))
+            )
+            break
+          }
+          used.add(nodes[best])
+          room.set(poolOf(nodes[best]), room.get(poolOf(nodes[best]))! - 1)
+          cells.push(nodes[best])
+          behind = best
         }
-        if (best < 0) {
-          missing.push(...kinds.slice(j).map(missed => ({ kind: missed, open })))
-          break
-        }
-        used.add(best)
-        room.set(poolOf(candidates[best]), room.get(poolOf(candidates[best]))! - 1)
-        cells.push(candidates[best])
-        behind = best
-      }
-      placed.push({ section, cells })
-    })
-    return { placed, missing }
+        placedOf.set(demand, { section, cells })
+      })
+    return { placed: demands.map(demand => placedOf.get(demand)!), missing }
   }
 
   const spread = fill(true)
@@ -631,7 +661,10 @@ export const lengtheningCandidates = (
   }
   const consider = (kind: Lengthening["kind"], id: string, label: string, onRoute: boolean) => {
     const fits = missing.filter(
-      missed => appetiteAccepts(appetite.get(label) ?? "free", missed.kind) && (!missed.open || isOpen(kind, id))
+      missed =>
+        (missed.corridor === undefined || (kind === "corridor" && missed.corridor === id)) &&
+        appetiteAccepts(appetite.get(label) ?? "free", missed.kind) &&
+        (!missed.open || isOpen(kind, id))
     )
     if (fits.length === 0) return
     found.push({

@@ -173,7 +173,7 @@ describe.each(FLOORS)("forced steps over $name", ({ make, minSound }) => {
           // all has none on its way either.
           const puzzleRooms = grid.cells.flat().filter(cell => cell.type === "room" && cell.pathIndex !== undefined)
           const lockWithNothing = (make().locks?.length ?? 0) > 0 && puzzleRooms.length === 0
-          expect(refused?.criterion ?? null).toBe(lockWithNothing ? "lock holds a puzzle" : null)
+          expect(refused?.criterion ?? null).toBe(lockWithNothing ? "lock holds an encounter" : null)
         } else expect(refused?.criterion).toBe("lock walks sound")
       }
       expect(kept).toBeGreaterThan(0)

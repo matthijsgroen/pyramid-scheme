@@ -1,4 +1,3 @@
-import { corridorNodesWanted, corridorSeats } from "./laidFloor"
 import type { LockPlan, PlanCorridor } from "./lockPlan"
 import { appetiteAccepts } from "./regions"
 import type { ContentKind, RegionAppetite } from "./regions"
@@ -27,6 +26,9 @@ const takes = (appetite: ReadonlyMap<string, RegionAppetite>, corridor: PlanCorr
  * that take no room.
  */
 export const eligibleCorridors = (plan: LockPlan, appetite: ReadonlyMap<string, RegionAppetite>): PlanCorridor[] => {
+  const holdsStep = new Set(
+    plan.regions.filter(region => region.seats.some(seat => seat.for === "threshold")).map(region => region.id)
+  )
   const dropStretch = new Set(plan.regions.filter(region => region.answersTo !== undefined).map(region => region.id))
   const arms = new Set(plan.junctions.flatMap(junction => junction.arms))
   const ownerOf = new Map(plan.regions.map(region => [region.id, region.owner]))
@@ -42,7 +44,8 @@ export const eligibleCorridors = (plan: LockPlan, appetite: ReadonlyMap<string, 
       !dropStretch.has(corridor.from) &&
       !dropStretch.has(corridor.to) &&
       !arms.has(corridor.id) &&
-      corridorSeats(plan, corridor, corridorNodesWanted(plan, corridor) + 2).thresholds.length === 0 &&
+      !holdsStep.has(corridor.from) &&
+      !holdsStep.has(corridor.to) &&
       !splices(corridor) &&
       ALL_KINDS.some(kind => takes(appetite, corridor, kind))
   )

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest"
 import type { Lock } from "./lockAuthoring"
-import { judgeLockPuzzles, lockGroundUnfed, lockWithoutPuzzle } from "./lockPuzzles"
+import { corridorUnfed, judgeLockPuzzles, lockGroundUnfed, lockWithoutPuzzle } from "./lockPuzzles"
 import { assembleFloor } from "./siteAssembler"
-import type { FloorConfig, FloorGrid } from "./siteTypes"
+import type { FloorConfig, FloorGrid, GridCell, SideSection } from "./siteTypes"
 import { BINDING } from "./testSupport/lockFixtures"
 import { leverLock } from "./testSupport/floorLockFixtures"
 import { resolveEncounterMeta, resolveKeyRequirements } from "@/mods/allFamilyMeta"
@@ -91,6 +91,47 @@ describe(lockWithoutPuzzle, () => {
   })
 })
 
+/** The grid with every side section's room matching `which` turned into bare ground: the room is gone from the way. */
+const without = (grid: FloorGrid, which: (cell: GridCell) => boolean): FloorGrid => ({
+  ...grid,
+  cells: grid.cells.map(row =>
+    row.map(cell =>
+      cell.type === "room" && cell.sectionAddress !== "main" && which(cell)
+        ? { type: "corridor" as const, dirs: cell.dirs, state: cell.state, region: cell.region }
+        : cell
+    )
+  ),
+})
+const isChest = (cell: GridCell) => cell.type === "room" && cell.tags?.includes("treasure") === true
+const isPathRoom = (cell: GridCell) => cell.type === "room" && cell.pathIndex !== undefined
+const onSide = (grid: FloorGrid, which: (cell: GridCell) => boolean) =>
+  grid.cells.flat().some(cell => cell.type === "room" && cell.sectionAddress !== "main" && which(cell))
+
+describe("any encounter on a lock's way counts", () => {
+  // Side paths fill the plan's corridors in order, the way into the lock first, so the second one stands in the lock.
+  const withSides = (side: SideSection): FloorConfig => ({ ...floorWith(0), sideSections: [side, side] })
+
+  it("a chest on the lock's way counts", () => {
+    const config = withSides({ pathPuzzles: 0, difficulty: "expert", end: "treasure" })
+    for (const seed of SEEDS) {
+      const grid = carve(config, seed)
+      expect(onSide(grid, isChest)).toBe(true)
+      expect(lockWithoutPuzzle(grid, config)).toEqual([])
+      expect(lockWithoutPuzzle(without(grid, isChest), config)).toEqual(["lever"])
+    }
+  })
+
+  it("a trap room on the lock's way counts", () => {
+    const config = withSides({ pathPuzzles: 1, difficulty: "expert", end: "treasure", sealed: true, encounter: "trap" })
+    for (const seed of SEEDS) {
+      const trapsOnly = without(carve(config, seed), isChest)
+      expect(onSide(trapsOnly, isPathRoom)).toBe(true)
+      expect(lockWithoutPuzzle(trapsOnly, config)).toEqual([])
+      expect(lockWithoutPuzzle(without(trapsOnly, isPathRoom), config)).toEqual(["lever"])
+    }
+  })
+})
+
 describe(lockGroundUnfed, () => {
   it("a region asking for puzzles that holds none is named", () => {
     const grid = carve(floorWith(0), 1)
@@ -117,6 +158,23 @@ describe(lockGroundUnfed, () => {
       `lever.${unfed} asks for reward and holds none`,
     ])
   })
+})
 
-  it.todo("a corridor asking for a side path that carries none is named")
+describe(corridorUnfed, () => {
+  it("a corridor whose assigned side path stands elsewhere is named", () => {
+    const laid = {
+      stretches: new Map([["corridor:A>B", ["0,2", "0,4", "0,6"]]]),
+      absorbed: [
+        { section: 0, cells: ["0,2", "0,4"] },
+        { section: 1, cells: ["0,6", "2,6"] },
+        { section: 2, cells: ["4,4"] },
+      ],
+    }
+    const demands = [
+      { section: 0, kinds: ["puzzle" as const, "reward" as const], corridor: "A>B" },
+      { section: 1, kinds: ["puzzle" as const, "reward" as const], corridor: "A>B" },
+      { section: 2, kinds: ["reward" as const] },
+    ]
+    expect(corridorUnfed(laid, demands)).toEqual(["side path s1 on A>B has a room off it"])
+  })
 })

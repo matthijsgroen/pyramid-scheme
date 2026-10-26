@@ -327,7 +327,10 @@ describe("a lock floor's side sections", () => {
       { name: "stair-ended", more: { sideSections: [section({ end: "staircase" })] }, never: 0 },
     ]
     for (const { name, more, never } of floors) {
-      const sections = lockFloor(more)
+      // A plain section beside it, so a floor that assigns nothing at all cannot pass.
+      const plainIdx = more.sideSections!.length
+      const sections = lockFloor({ ...more, sideSections: [...more.sideSections!, section()] })
+      expect(assigned(sections), name).toContain(plainIdx)
       expect(assigned(sections), name).not.toContain(never)
       expect(
         sections.corridorAssignments.map(({ section }) => section),

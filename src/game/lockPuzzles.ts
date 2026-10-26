@@ -2,12 +2,14 @@ import { doorKeysOf, floorLock, regionsOf } from "./floorLock"
 import type { PlacedLock } from "./floorLocks"
 import { finished, reachableStates } from "./lockWalk"
 import type { LockSpec, LockState, MechanismId, RegionId } from "./lockWalk"
+import type { AbsorbedDemand, LaidFloor } from "./laidFloor"
 import type { RegionAppetite } from "./regions"
 import type { FloorConfig, FloorGrid, GridCell } from "./siteTypes"
 
-// A LOCK HOLDS A PUZZLE ON ITS WAY: between seeing the problem and solving it the player meets at least one puzzle
-// room, so a lock is never a walk from a shut door to the lever that opens it. A lock here is an authored `locks`
-// instance, read off the grid: its cells stand in regions named `<instance>.<region>`.
+// A LOCK HOLDS AN ENCOUNTER ON ITS WAY: between seeing the problem and solving it the player meets at least one
+// encounter room (a puzzle, a trap, a chest, a shop), so a lock is never a walk from a shut door to the lever that
+// opens it. A lock here is an authored `locks` instance, read off the grid: its cells stand in regions named
+// `<instance>.<region>`.
 
 /** The instance an authored region label belongs to, or undefined for the floor's own ground. */
 const instanceOf = (label: string | undefined): string | undefined => {
@@ -24,13 +26,13 @@ const isControl = (cell: GridCell): boolean =>
     cell.plate !== undefined ||
     cell.pipeHole !== undefined)
 
-/** A room a chain authored by position (a puzzle or a trap), which is neither a control nor a door. */
+/** Any encounter room (a puzzle, a trap, a chest, a shop) that is neither a control nor a door. */
+const isEncounterOnTheWay = (cell: GridCell): boolean =>
+  cell.type === "room" && cell.roomType === "encounter" && !isControl(cell) && doorKeysOf(cell).length === 0
+
+/** A room a chain authored by position (a puzzle or a trap): what feeds a region asking for puzzles. */
 const isPuzzleRoom = (cell: GridCell): boolean =>
-  cell.type === "room" &&
-  cell.roomType === "encounter" &&
-  cell.pathIndex !== undefined &&
-  !isControl(cell) &&
-  doorKeysOf(cell).length === 0
+  isEncounterOnTheWay(cell) && cell.type === "room" && cell.pathIndex !== undefined
 
 const holdsReward = (cell: GridCell): boolean =>
   cell.type === "room" &&
@@ -62,17 +64,17 @@ const solvingPath = (spec: LockSpec, order: LockState[], edges: number[][]): Loc
 export type LockPuzzleVerdict = { without: string[]; unjudged: string[] }
 
 /**
- * THE LOCKS WHOSE SOLVING WALK PASSES NO PUZZLE ROOM, by instance name. The walk is the shortest one from the
+ * THE LOCKS WHOSE SOLVING WALK PASSES NO ENCOUNTER ROOM, by instance name. The walk is the shortest one from the
  * entrance to the way out over the floor's lock states; its stretch from the first time the player stands beside one
  * of the lock's doors to the last time they work one of its controls (whichever comes first) must cross a region
- * holding a puzzle room that is neither a control nor a door. A lock whose walk never stands beside its door or never
+ * holding an encounter room that is neither a control nor a door. A lock whose walk never stands beside its door or never
  * works its control is judged on the stretch the walk spends on its ground; one whose states are too many to walk is
  * judged on its whole ground.
  *
  * A LOCK NONE OF WHOSE CONTROLS CAN BE TIED TO ITS GROUND IS UNJUDGED, never passed: a control that is no room of the
  * lock (a floor key's chest, a room with no region label), or a floor whose lock does not compile into a walk.
  *
- * A LOCK STANDING BEFORE THE FLOOR'S CONTENT (`standsBeforeContent`) IS NOT ASKED FOR A PUZZLE: it is a lesson in the
+ * A LOCK STANDING BEFORE THE FLOOR'S CONTENT (`standsBeforeContent`) IS NOT ASKED FOR AN ENCOUNTER: it is a lesson in the
  * lock alone, so it is neither named nor unjudged here. Every other hard criterion still holds for it.
  */
 export const judgeLockPuzzles = (grid: FloorGrid, floor: Pick<FloorConfig, "locks">): LockPuzzleVerdict => {
@@ -113,13 +115,13 @@ export const judgeLockPuzzles = (grid: FloorGrid, floor: Pick<FloorConfig, "lock
 
   const found = reachableStates(spec)
   const path = found === "tooLarge" ? undefined : solvingPath(spec, found.order, found.edges)
-  const holdsPuzzle = (regions: Iterable<RegionId>) =>
-    [...regions].some(region => (cellsOf.get(region) ?? []).some(isPuzzleRoom))
+  const holdsEncounter = (regions: Iterable<RegionId>) =>
+    [...regions].some(region => (cellsOf.get(region) ?? []).some(isEncounterOnTheWay))
 
   const without = [...mechanismsOf]
     .filter(([instance, mechanisms]) => {
       const ground = groundOf.get(instance) ?? new Set<RegionId>()
-      if (!path) return !holdsPuzzle(ground)
+      if (!path) return !holdsEncounter(ground)
       const owned = new Set(mechanisms)
       const beside = new Set(
         Object.values(spec.gates)
@@ -134,14 +136,14 @@ export const judgeLockPuzzles = (grid: FloorGrid, floor: Pick<FloorConfig, "lock
         sight < 0 || worked < 0
           ? path.filter(state => ground.has(state.region))
           : path.slice(Math.min(sight, worked), Math.max(sight, worked) + 1)
-      return !holdsPuzzle(stretch.map(state => state.region))
+      return !holdsEncounter(stretch.map(state => state.region))
     })
     .map(([instance]) => instance)
     .sort()
   return { without, unjudged }
 }
 
-/** The locks whose solving walk passes no puzzle room (`judgeLockPuzzles`). */
+/** The locks whose solving walk passes no encounter room (`judgeLockPuzzles`). */
 export const lockWithoutPuzzle = (grid: FloorGrid, floor: Pick<FloorConfig, "locks">): string[] =>
   judgeLockPuzzles(grid, floor).without
 
@@ -157,7 +159,7 @@ export type LockPart = { kind: "region"; placed: PlacedLock; region: string }
 export const appetiteOf = (part: LockPart): RegionAppetite => part.placed.lock.regions[part.region]?.takes ?? "free"
 
 /** A lock placed before the floor's content: every region but its way out takes nothing, so the floor's content lies
- * past it. Such a lock is a lesson in the lock alone and is asked for no puzzle on its way. */
+ * past it. Such a lock is a lesson in the lock alone and is asked for no encounter on its way. */
 export const standsBeforeContent = (placed: PlacedLock): boolean => {
   const ground = Object.keys(placed.lock.regions).filter(region => region !== placed.lock.out)
   return ground.length > 0 && ground.every(region => appetiteOf({ kind: "region", placed, region }) === "nothing")
@@ -179,3 +181,17 @@ export const lockGroundUnfed = (grid: FloorGrid, floor: Pick<FloorConfig, "locks
     })
   })
 }
+
+/** Every side section assigned to a lock corridor with a room standing off that corridor's laid nodes. */
+export const corridorUnfed = (
+  laid: Pick<LaidFloor, "stretches" | "absorbed">,
+  demands: readonly AbsorbedDemand[]
+): string[] =>
+  demands.flatMap(({ section, corridor }) => {
+    if (corridor === undefined) return []
+    const nodes = new Set(laid.stretches.get(`corridor:${corridor}`) ?? [])
+    const place = laid.absorbed.find(found => found.section === section)
+    return place !== undefined && place.cells.every(cell => nodes.has(cell))
+      ? []
+      : [`side path s${section} on ${corridor} has a room off it`]
+  })

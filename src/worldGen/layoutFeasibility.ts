@@ -27,14 +27,15 @@ export const prepareLayout = (
   return prepareFloor(siteId, expanded.config, addressSeed, resolvers, planLockFloor(expanded))
 }
 
-/** Puzzles on sections a player walks into through no door: an ungated, unsealed, visible section and the open
- * sections hanging off it. Only these can stand on a lock's way, since a door cuts its ground off from the way. */
-const openPuzzles = (sections: readonly (SubSection & { sideSections?: SubSection[] })[]): number =>
+/** Encounter rooms on sections a player walks into through no gate: an ungated, visible section, sealed or not,
+ * its puzzles and its chest or shop, and the same of the sections hanging off it. Only these can stand on a lock's way,
+ * since a gate cuts its ground off from the way; a sealed section may stand on a lock corridor. */
+const openEncounters = (sections: readonly (SubSection & { sideSections?: SubSection[] })[]): number =>
   sections.reduce(
     (sum, section) =>
-      section.gate || section.sealed || section.hidden
+      section.gate || section.hidden
         ? sum
-        : sum + section.pathPuzzles + openPuzzles(section.sideSections ?? []),
+        : sum + section.pathPuzzles + (section.end === "treasure" ? 1 : 0) + openEncounters(section.sideSections ?? []),
     0
   )
 
@@ -51,9 +52,9 @@ const allRewards = (sections: readonly { end: SubSection["end"]; sideSections?: 
  * EVERY HARD CRITERION THE AUTHORING CANNOT MEET AT ANY SEED:
  * - the assembler refuses it before any attempt (a one-way naming a missing section, a switch asking for more
  *   junctions than `forks` reserves): `carves`;
- * - a lock floor with no puzzle that may stand on a lock's way, none on the main path and none on an open section:
- *   `lock holds a puzzle`. A lock standing before the floor's content is asked for none (`standsBeforeContent`);
- * - more lock regions asking for puzzles, or for a reward, than the floor has to give: `lock holds a puzzle`.
+ * - a lock floor with no encounter that may stand on a lock's way, no puzzle on the main path and no room on an
+ *   ungated, visible section: `lock holds an encounter`. A lock standing before the floor's content is asked for none (`standsBeforeContent`);
+ * - more lock regions asking for puzzles, or for a reward, than the floor has to give: `lock holds an encounter`.
  */
 export const layoutInfeasible = (floor: FloorConfig, prep: PreparedLayout): CarveRefusal[] => {
   if (!prep.ok)
@@ -64,10 +65,10 @@ export const layoutInfeasible = (floor: FloorConfig, prep: PreparedLayout): Carv
   if (locks.length === 0) return []
   const found: CarveRefusal[] = []
   const names = locks.filter(placed => !standsBeforeContent(placed)).map(placed => placed.as ?? placed.lock.name)
-  if (names.length > 0 && floor.pathPuzzles + openPuzzles(floor.sideSections) === 0)
+  if (names.length > 0 && floor.pathPuzzles + openEncounters(floor.sideSections) === 0)
     found.push({
-      criterion: "lock holds a puzzle",
-      detail: `lock ${names.join(", ")}: pathPuzzles is 0 and every side section with puzzles stands behind a gate, a seal or a hidden way, so no puzzle can stand on a lock's way`,
+      criterion: "lock holds an encounter",
+      detail: `lock ${names.join(", ")}: pathPuzzles is 0 and every side section stands behind a gate or a hidden way, so no encounter can stand on a lock's way`,
     })
   const asking = (appetite: "puzzles" | "reward") =>
     locks.flatMap(placed =>
@@ -84,7 +85,7 @@ export const layoutInfeasible = (floor: FloorConfig, prep: PreparedLayout): Carv
     const regions = asking(appetite)
     if (regions.length > has)
       found.push({
-        criterion: "lock holds a puzzle",
+        criterion: "lock holds an encounter",
         detail: `${regions.join(", ")} ask for ${appetite}, ${regions.length} region(s), and the floor authors ${has}`,
       })
   }
