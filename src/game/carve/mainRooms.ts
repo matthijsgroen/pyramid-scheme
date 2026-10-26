@@ -141,8 +141,9 @@ export const mainRooms = pass(
     })
 
     // Corridor cells that are branch junctions become fork nodes too. A junction that already holds a main-path
-    // room stays that room: the carve is free to hang a side section off the entrance, off a puzzle or off the
-    // goal chest, and none of those is a place the player chooses a way out from.
+    // room stays that room. The carve may hang a side section off a puzzle, off the goal chest or off the
+    // entrance, never off the exit. An entrance a branch hangs off keeps its portal spec (its stair or its door),
+    // and the map draws it as a chamber that forks (`isChamber`), not as a stop in a corridor.
     for (const key of forkPositions(state)) if (!rooms.has(key)) rooms.set(key, { roomType: "fork" })
 
     if (config.exitOrStaircase === "exit") rooms.set(keyOf(exit), { roomType: "portal" })

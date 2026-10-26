@@ -23,7 +23,8 @@ import type { Difficulty } from "@/data/difficultyLevels"
 // fill plus 0-4 wall strips, chosen per side from the same `dirs` bitmask the future
 // sprite-tile renderer will use (see docs/game-design/spritesheet-renderer-prep.md).
 
-// Forks and dead-end (leaf) treasure/stairhead/exit rooms claim adjacent grid cells as
+// Forks, portals with more than one way out, and dead-end (leaf) treasure/stairhead/exit
+// rooms (every chamber, `isChamber`) claim adjacent grid cells as
 // part of their own footprint — real extra tiles, grid-aligned, rather than a rendering
 // stretch. That keeps every room shape made of whole cells, which is what the eventual
 // sprite-tile renderer needs to tile cleanly (see
