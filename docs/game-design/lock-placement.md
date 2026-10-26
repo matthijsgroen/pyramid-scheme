@@ -227,7 +227,7 @@ A lock region may be corridors only, one room or several rooms; what it never do
 cross a puzzle's boundary. A region holding only corridors is still a region the player can stand in: "no dead
 region" holds for it like for any other.
 
-### A lock holds a puzzle on its way
+### A lock holds an encounter on its way
 
 A layout is accepted only if every lock holds an encounter on its way: on the lock's solving walk, from the first
 sight of its shut door to its last control, at least one encounter room (a puzzle, a trap, a chest or a shop) that is
