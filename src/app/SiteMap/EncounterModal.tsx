@@ -41,17 +41,18 @@ import { imageMap, WALL_SIZE } from "@/ui/atoms/tombImageMap"
 // while Fez greets, and a frame with nothing in it collapses to its padding: a bar across the map.
 export const EncounterModal: FC<{ children: ReactNode; tileset?: Tileset }> = ({ children, tileset }) => {
   const wall = tileset ? imageMap[tileset] : undefined
+  const art = wall?.image
   return (
     <div className="fixed inset-0 z-20 flex justify-center overflow-x-hidden overflow-y-auto bg-black/80 p-safe-edge has-[[data-encounter-content]:empty]:hidden">
       <div
         className="relative m-auto flex w-full max-w-md flex-col items-center gap-4 overflow-hidden rounded-lg border border-amber-900 bg-stone-900 p-3"
         style={
-          wall
-            ? { backgroundImage: `url(${wall.image})`, backgroundSize: WALL_SIZE, backgroundPosition: "center top" }
+          art
+            ? { backgroundImage: `url(${art})`, backgroundSize: WALL_SIZE, backgroundPosition: "center top" }
             : undefined
         }
       >
-        {wall && <div aria-hidden className="pointer-events-none absolute inset-0 bg-stone-900/55" />}
+        {art && <div aria-hidden className="pointer-events-none absolute inset-0 bg-stone-900/55" />}
         {/* Over the scrim, and the only reason this wrapper exists. */}
         <div data-encounter-content className="relative flex w-full flex-col items-center gap-4">
           {children}

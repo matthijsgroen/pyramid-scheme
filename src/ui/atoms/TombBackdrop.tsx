@@ -15,6 +15,7 @@ export const TombBackdrop: FC<
   const settings = imageMap[difficulty]
   const color = settings.color
   const gradient = settings.gradient
+  const art = settings.image ? `url(${settings.image})` : undefined
 
   return (
     <div
@@ -28,8 +29,10 @@ export const TombBackdrop: FC<
       style={{
         backgroundImage:
           scale === "large"
-            ? `url(${settings.image})`
-            : `url(${settings.image}), linear-gradient(var(--tw-gradient-stops))`,
+            ? art
+            : art
+              ? `${art}, linear-gradient(var(--tw-gradient-stops))`
+              : "linear-gradient(var(--tw-gradient-stops))",
         backgroundSize: scale === "large" ? WALL_SIZE : `${WALL_SIZE}, 100% 100%`,
         backgroundPosition: "center",
         backgroundAttachment: "fixed",

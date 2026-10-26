@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest"
 import { GROWTH_POOLS, growthTile, moodFor } from "./moodSettings"
+import { tierPalette } from "./tileMaterials"
+import { imageMap } from "@/ui/atoms/tombImageMap"
+import type { Tileset } from "@/game/siteTypes"
 
 describe("the air a floor is drawn in", () => {
   it("gives every rank its own ambience, with nothing authored", () => {
@@ -106,5 +109,27 @@ describe("what may grow in a slot", () => {
     expect(growthTile("overgrown", GROWTH_POOLS.wall[0])).toBe("overgrown-wall")
     expect(growthTile("overgrown", GROWTH_POOLS.chamber[0])).toBe("overgrown-plant")
     expect(growthTile("overgrown", "flowers")).toBe("overgrown-flowers")
+  })
+})
+
+describe("every tileset", () => {
+  const all: Record<Tileset, true> = {
+    starter: true,
+    junior: true,
+    expert: true,
+    master: true,
+    wizard: true,
+    cave: true,
+    sphinx: true,
+  }
+
+  it.each(Object.keys(all) as Tileset[])("%s has a palette and a mood", tileset => {
+    expect(tierPalette[tileset].bed).toBeTruthy()
+    expect(moodFor(tileset).tint).toBeDefined()
+  })
+
+  it("keeps daylight out of the Sphinx and paints no wall until its panel is imported", () => {
+    expect(moodFor("sphinx").beam).toBe(0)
+    expect(imageMap.sphinx.image).toBeUndefined()
   })
 })

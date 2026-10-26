@@ -535,7 +535,7 @@ export type { Difficulty } from "@/data/difficultyLevels"
 import type { Difficulty } from "@/data/difficultyLevels"
 /** What a floor, path or room is DRAWN in: its tiles, palette, mood and encounter wall. A rank is the stone
  * built for that difficulty; `cave` is a set of its own. Apart from `difficulty`, which picks the board. */
-export type Tileset = Difficulty | "cave"
+export type Tileset = Difficulty | "cave" | "sphinx"
 /** Which way a stair runs from where it stands. */
 export type StairGoes = "up" | "down"
 /** A stairhead's link to its peer on another floor: the shared `stairId` pairs the two. `goes` is written only where

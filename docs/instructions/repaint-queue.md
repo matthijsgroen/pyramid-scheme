@@ -1610,6 +1610,120 @@ yarn import-tile art/masters/props/wizard/mat.webp --tier=wizard --name=mat --sl
 
 ---
 
+## The Sphinx — four
+
+The inside of the Sphinx is cut from the plateau's own bedrock: layered limestone, swept clean of the sand that
+keeps burying the outside. Four surfaces, the same loop as the cave's.
+
+### `sphinx/floor` — the Sphinx's cut bedrock floor
+
+**Attach:** `art/masters/surfaces/starter-floor.webp` — the merchant's floor, for scale and paint quality only
+
+```
+Top-down dungeon game tile art for the inside of the Great Sphinx, a passage cut into the desert bedrock.
+A FLOOR CUT FROM ONE MASS OF LIVING ROCK, never laid: soft yellow limestone dressed flat by masons, long
+shallow chisel strokes running one way, faint horizontal bands where harder grey-buff layers cross the
+softer yellow ones, a few hairline cracks following those bands, a little fine sand swept into the hollows
+and nothing more — the sand that buries the outside never got in here.
+Warm, dim and still: lamplight, no daylight. Every part of the floor is readable, nothing sinks into black.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Limestone #8a7556, its harder bands #7d7462, shadow #4a3c2b, sand #b39b72. Nothing lighter than #c9b48c,
+nothing darker than #2a2117.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its scale. Do NOT take its
+colours, its slabs or its subject from it.
+THE CAMERA: straight down. A seamless square tile.
+NOTHING LAID: no slabs, no paving, no bricks, no joints, no mortar, no courses of blocks. The bands are
+rock strata, soft-edged and uneven, never ruled lines.
+It tiles, so NOTHING crosses the whole image: no band, crack or stain runs edge to edge, and no feature
+touches two edges. Value spread evenly over the whole tile.
+Even lighting, no hotspot, no vignette.
+```
+
+**Prepare:** if the generator returns a wide band rather than a square, stack it on itself, cut the square and make it seamless; that square is the master, `art/masters/surfaces/sphinx-floor.webp`:
+`magick band.jpeg band.jpeg -append -gravity Center -crop 2688x2688+0+0 +repage square.png && yarn make-seamless square.png`
+
+**Import:** `yarn import-tile art/masters/surfaces/sphinx-floor.webp --tier=sphinx --name=floor --slot=floor --filter=smooth --key=none --repeat=2`
+
+### `sphinx/wall-face` — the Sphinx's cut bedrock wall face
+
+**Attach:** `art/masters/surfaces/cave-wall-face.webp` — the cave's face, for the frontal band and the paint only
+
+```
+Top-down dungeon game tile art for the inside of the Great Sphinx, a passage cut into the desert bedrock.
+The standing face of a wall seen from the front: the plateau's own limestone, cut straight down by masons
+and never built: horizontal strata stacked up the face, soft yellow layers worn back a little and harder
+grey-buff layers standing proud of them, long diagonal chisel marks across every layer, a few small
+hollows where the softest rock crumbled. NOTHING BUILT: no bricks, no blocks, no joints, no mortar, no
+paint, no carving, no hieroglyphs.
+Pale and lit, catching the lamplight, clearly lighter than the floor in front of it.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
+Yellow limestone #b9a179, harder bands #a39a86, top light #d8c49c, shadow #5e4c36. Nothing lighter than
+#e6d6b2, nothing darker than #3a2e20.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it.
+Flat frontal view, no perspective. A wide band, seamless left to right; the strata run the whole width,
+nothing else does. Even lighting.
+```
+
+**Prepare:** the generator returns a band about a third of a face's 8:1. Lay three side by side and make it seamless along x; that band is the master, `art/masters/surfaces/sphinx-wall-face.webp`:
+`magick band.jpeg band.jpeg band.jpeg +append wide.png && yarn make-seamless --axis=x wide.png`
+
+**Import:** `yarn import-tile art/masters/surfaces/sphinx-wall-face.webp --tier=sphinx --name=wall-face --slot=face --filter=smooth --key=none --headroom=0.14 --repeat=1` (check the face against the floor with `yarn rank-colour` and set `--brightness` from it)
+
+### `sphinx/threshold` — a step cut in the Sphinx's bedrock
+
+**Attach:** `art/masters/surfaces/starter-threshold.webp` — the merchant's sill, for its camera and proportions only
+
+```
+Top-down dungeon game tile art for the inside of the Great Sphinx, a passage cut into the desert bedrock.
+A sill where one cut passage meets the next: a low step left standing in the living limestone, its top
+worn smooth and slightly dished by feet, chisel marks still on its face, a thin line of fine sand along
+its foot. NOTHING LAID: no slab, no joints, no blocks, no paint.
+Warm, dim and readable. HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and
+fine speckle in the surface, soft shading. Painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
+Limestone #8a7556, its harder bands #7d7462, shadow #4a3c2b, sand #b39b72. Nothing lighter than #c9b48c,
+nothing darker than #2a2117.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS FOR CAMERA AND PROPORTIONS ONLY. Do NOT take its colours, its cut stone or its
+subject from it.
+Same camera and proportions as the attached sill. Even lighting.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/sphinx-threshold.webp --tier=sphinx --name=threshold --slot=sill --filter=smooth --key=none`
+
+### `sphinx/wall-panel` — the inscription wall, inside the Sphinx
+
+**Attach:** `art/masters/tombWall/starter.webp` — the merchant's encounter wall, for the frame's proportions only
+
+```
+A whole wall inside the Great Sphinx, seen straight on, for a puzzle's backdrop: the plateau's own
+limestone cut straight down, horizontal strata of soft yellow and harder grey-buff layers, chisel marks
+across them. In the middle of the wall the masons dressed one broad rectangle smooth and flat, a little
+paler than the rock around it, its edges softened by age: the place where a line of writing is cut.
+LEAVE THAT RECTANGLE PLAIN — no signs, no hieroglyphs, no carving, no cartouche, no figures: the writing
+is laid over it by the game. A little fine sand along the foot of the wall, no more; the sand outside
+never reached in here. Lamplit, warm, still.
+HAND-PAINTED digital art: matte, soft brush texture, grit and speckle. NO OUTLINES — no black contour, no
+ink, no cel shading, no vector look.
+Yellow limestone #b9a179, harder bands #a39a86, the dressed panel #c9b48c, shadow #5e4c36. Nothing lighter
+than #e6d6b2, nothing darker than #3a2e20.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY, for the frame's proportions and paint quality. Do NOT take
+its colours or its subject from it. Same aspect as the reference; do not re-compose it square.
+```
+
+**Import:** `yarn import-panel art/masters/tombWall/sphinx.webp --tier=sphinx`
+
+---
+
 ## Patrons — seventeen
 
 **IF A GOD COMES BACK AS THE HEAP, `prim_shrine` TAKES `--contents=standing`.** The default contents is

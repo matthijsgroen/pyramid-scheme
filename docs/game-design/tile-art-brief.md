@@ -405,6 +405,25 @@ tileset is its skin, so the shared kinds are the same slots as every rank's.
 prop box; `bones` lies across two cells, and a room with no two free cells side by side stands a one-cell
 kind from its pool instead. Their masters are in `art/masters/`.
 
+## 4b. The Sphinx tileset
+
+`sphinx` is a tileset, not a rank: the inside of the Great Sphinx draws from `tiles/sphinx/`, warm, dim and still,
+lamplit with no daylight shaft. It is cut from the plateau's own bedrock, layered limestone swept clean of the sand
+that buries the outside, so nothing in it is laid: no slabs, no bricks, no joints. It has the four surfaces:
+
+| Surface            | Slot        | What it is                                                               |
+| ------------------ | ----------- | ------------------------------------------------------------------------ |
+| **floor**          | floor tile  | bedrock dressed flat, chisel strokes one way, soft strata, a little sand |
+| **wall face**      | face band   | the same rock cut straight down, soft layers worn back, hard ones proud  |
+| **threshold**      | sill        | a low step left standing in the living rock, worn by feet                |
+| **encounter wall** | whole panel | the rock wall with one broad rectangle dressed smooth, left plain        |
+
+Palette: floor `#8a7556`, wall `#b9a179` with top `#d8c49c` and shadow `#5e4c36`, outline `#2a2117`. The
+inscription itself is drawn by the reading encounter over the dressed rectangle, never painted into the wall, so
+the panel prompt forbids signs, carving and figures. The prompts are in `docs/instructions/repaint-queue.md`
+("The Sphinx — four"). Until they are painted the floor draws placeholder tiles and an encounter shows the card
+colour; that is not a release blocker.
+
 ## 5. What has to be built for §3–§4
 
 | Needed for                | Change                                                                                                                                                                                     | Size  |

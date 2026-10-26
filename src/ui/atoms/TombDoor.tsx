@@ -21,6 +21,7 @@ export const TombDoor: FC<
   }>
 > = ({ children, className, wall, inWall, open = false, ref }) => {
   const settings = imageMap[wall]
+  const art = settings.image ? `url(${settings.image})` : undefined
   return (
     <div ref={ref} className={clsx(settings.behind, "perspective-midrange perspective-origin-left", className)}>
       <div
@@ -32,13 +33,13 @@ export const TombDoor: FC<
         style={
           inWall
             ? {
-                backgroundImage: `${SCRIM}, url(${settings.image})`,
+                backgroundImage: art ? `${SCRIM}, ${art}` : undefined,
                 backgroundSize: `100% 100%, ${inWall.size}`,
                 backgroundPosition: `0 0, ${inWall.position}`,
                 backgroundRepeat: "no-repeat",
               }
             : {
-                backgroundImage: `url(${settings.image})`,
+                backgroundImage: art,
                 backgroundSize: WALL_SIZE,
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",

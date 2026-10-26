@@ -58,9 +58,9 @@ const MARGIN = 2
 
 /** One purpose per row of rooms, joined by corridors: rows run east, the first rooms join north-south. */
 const sheetGrid = (tier: Tileset, purposes: Purpose[]): FloorGrid => {
-  // A rank is both what the rooms are worth and what they wear; a tileset that is no rank (the cave) wears its
+  // A rank is both what the rooms are worth and what they wear; a tileset that is no rank (the cave, the Sphinx) wears its
   // own and stands at the starter's worth.
-  const rank = tier === "cave" ? "starter" : tier
+  const rank = tier === "cave" || tier === "sphinx" ? "starter" : tier
   const widest = Math.max(1, ...purposes.map(p => p.rooms.length))
   const rows = MARGIN * 2 + (purposes.length - 1) * STEP + 1
   const cols = MARGIN * 2 + (widest - 1) * STEP + 1
@@ -96,7 +96,7 @@ const sheetGrid = (tier: Tileset, purposes: Purpose[]): FloorGrid => {
   return {
     siteId: `${tier}-on-the-floor`,
     difficulty: rank,
-    ...(tier === "cave" ? { tileset: tier } : {}),
+    ...(tier === "cave" || tier === "sphinx" ? { tileset: tier } : {}),
     rows,
     cols,
     cells,
@@ -106,7 +106,7 @@ const sheetGrid = (tier: Tileset, purposes: Purpose[]): FloorGrid => {
   }
 }
 
-const TILESETS: Tileset[] = [...difficulties, "cave"]
+const TILESETS: Tileset[] = [...difficulties, "cave", "sphinx"]
 
 const RankOnTheFloor: FC<{ tier: Tileset }> = ({ tier }) => {
   const purposes = purposesFor(tier)
@@ -143,3 +143,4 @@ export const Expert: Story = { name: "expert on the floor", args: { tier: "exper
 export const Master: Story = { name: "master on the floor", args: { tier: "master" } }
 export const Wizard: Story = { name: "wizard on the floor", args: { tier: "wizard" } }
 export const Cave: Story = { name: "cave on the floor", args: { tier: "cave" } }
+export const Sphinx: Story = { name: "sphinx on the floor", args: { tier: "sphinx" } }

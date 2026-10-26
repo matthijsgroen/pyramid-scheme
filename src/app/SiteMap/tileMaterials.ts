@@ -165,6 +165,25 @@ export const tierPalette: Record<Tileset, TierPalette> = {
     propDark: "#9c968a",
     outline: "#1a1612",
   },
+  // The Sphinx's inside, cut from the plateau's own bedrock: warm limestone, lamplit and swept clean of sand.
+  // No rank's stone, so it borrows no rank's metal either.
+  sphinx: {
+    bed: "#8a7556",
+    slab: "#93805f",
+    slabHi: "#9c8967",
+    slabLo: "#82704f",
+    joint: "#2a2117",
+    accent: METALS.starter.accent,
+    wall: "#b9a179",
+    wallTop: "#d8c49c",
+    wallBase: "#5e4c36",
+    shade: "rgba(42,33,23,0.4)",
+    faceNight: 0,
+    lamp: 1,
+    prop: "#d8c49c",
+    propDark: "#a39a86",
+    outline: "#2a2117",
+  },
 }
 
 /** The alpha of a tier's night, read back off its own wash.

@@ -23,8 +23,8 @@ export const squareCut = ({ width, height }: { width: number; height: number }) 
   return { left: Math.floor((width - size) / 2), top: Math.floor((height - size) / 2), width: size, height: size }
 }
 
-/** A rank's wall, or a tileset that is no rank (the cave). */
-const PANEL_TIERS: string[] = [...difficulties, "cave"]
+/** A rank's wall, or a tileset that is no rank (the cave, the Sphinx). */
+const PANEL_TIERS: string[] = [...difficulties, "cave", "sphinx"]
 
 export const panelPath = (tier: string) => join("src", "assets", "tombWall", `${tier}.webp`)
 

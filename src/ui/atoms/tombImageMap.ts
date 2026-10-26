@@ -6,6 +6,18 @@ import wizardWall from "@/assets/tombWall/wizard.webp"
 import caveWall from "@/assets/tombWall/cave.webp"
 import type { Tileset } from "@/game/siteTypes"
 
+// Panels dropped in by `yarn import-panel` that no import above names; a tileset with none paints no wall.
+const panels = import.meta.glob("@/assets/tombWall/*.webp", {
+  eager: true,
+  query: "?url",
+  import: "default",
+}) as Record<string, string>
+const painted: Partial<Record<Tileset, string>> = {}
+for (const [path, url] of Object.entries(panels)) {
+  const name = /\/([^/]+)\.webp$/.exec(path)?.[1]
+  if (name === "sphinx") painted.sphinx = url
+}
+
 /**
  * The wall a tomb puzzle is set against, one per tileset (each rank, and the cave), so a board wears the stone of the place it was
  * found in: behind the tableau (TombBackdrop), the passage door (TombDoor) and every encounter
@@ -18,7 +30,7 @@ import type { Tileset } from "@/game/siteTypes"
  * is outlined in, because a warm brown void behind the gods' calcite reads as a different tomb. All
  * three come from `tierPalette` in src/app/SiteMap/tileMaterials.ts.
  */
-export const imageMap: Record<Tileset, { color: string; gradient: string; behind: string; image: string }> = {
+export const imageMap: Record<Tileset, { color: string; gradient: string; behind: string; image?: string }> = {
   starter: {
     image: starterWall,
     behind: "bg-[#15110c]",
@@ -55,6 +67,14 @@ export const imageMap: Record<Tileset, { color: string; gradient: string; behind
     behind: "bg-[#120f0c]",
     color: "bg-[#1f1b16]",
     gradient: "bg-gradient-to-t from-[#1f1b16] from-50% to-[#41392f] to-100%",
+  },
+  // The Sphinx's inscription wall. Its panel arrives with `yarn import-panel`; until then there is no
+  // `image` and the card colour shows.
+  sphinx: {
+    image: painted.sphinx,
+    behind: "bg-[#2a2117]",
+    color: "bg-[#5e4c36]",
+    gradient: "bg-gradient-to-t from-[#5e4c36] from-50% to-[#d8c49c] to-100%",
   },
 }
 
