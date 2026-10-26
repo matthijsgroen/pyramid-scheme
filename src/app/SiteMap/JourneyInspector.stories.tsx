@@ -151,7 +151,8 @@ const FloorDetail = ({
         {floor.exitOrStaircase === "exit" && <div className="mt-1 text-sky-300">⇥ site exit (main path)</div>}
         {stairs.map(stair => (
           <div key={stair.from} className="mt-1 text-sky-300">
-            {stair.goes === "up" ? "↑" : "↓"} stair {stair.goes} ({stair.from}) → floor index {stair.to ?? "unpaired"}
+            {stair.goes === "up" ? "↑" : "↓"} stair {stair.goes} ({stair.from}) →{" "}
+            {stair.to === undefined ? "unpaired" : `Floor ${stair.to + 1}`}
           </div>
         ))}
       </div>
