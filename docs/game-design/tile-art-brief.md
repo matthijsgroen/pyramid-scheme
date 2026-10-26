@@ -422,7 +422,7 @@ Palette: floor `#8a7556`, wall `#b9a179` with top `#d8c49c` and shadow `#5e4c36`
 inscription itself is drawn by the reading encounter over the dressed rectangle, never painted into the wall, so
 the panel prompt forbids signs, carving and figures. The prompts are in `docs/instructions/repaint-queue.md`
 ("The Sphinx — four"). Until they are painted the floor draws placeholder tiles and an encounter shows the card
-colour; that is not a release blocker.
+colour.
 
 ## 5. What has to be built for §3–§4
 
