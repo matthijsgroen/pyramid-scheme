@@ -26,11 +26,9 @@ export const useExpeditionIntro = ({
   showConversation,
 }: IntroArgs): void => {
   useEffect(() => {
-    // The tableau's own lesson waits for the tableau (TombPuzzle): here it is not on screen yet.
-    if (isTomb) {
-      showConversation("tombIntro")
-      return
-    }
+    // A tomb's arrival is its cave's story beat (the siteArrived report below), and the tableau's own
+    // lesson waits for the tableau (TombPuzzle).
+    if (isTomb) return
     // The journey's beat is about the PLACE, so it plays with the place's pyramid on screen. Its id
     // is the journey's, not this pyramid's: heard at whichever pyramid comes first, it is skipped at
     // the rest. Story, so the tutorials toggle cannot silence it. `pyramidIntro` is about this board.

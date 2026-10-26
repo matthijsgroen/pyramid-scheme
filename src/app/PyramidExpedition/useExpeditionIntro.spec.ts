@@ -89,8 +89,8 @@ describe("useExpeditionIntro", () => {
     ])
   })
 
-  it("welcomes the tomb, and leaves the tableau's lesson to the tableau", () => {
-    expect(render({ isTomb: true }).map(s => s.id)).toEqual(["tombIntro"])
+  it("leaves a tomb's arrival to its cave, and the tableau's lesson to the tableau", () => {
+    expect(render({ isTomb: true })).toEqual([])
   })
 
   it("says nothing about boards inside a tomb", () => {
@@ -131,7 +131,7 @@ describe("useExpeditionIntro", () => {
     })
   })
 
-  it("offers the tomb's welcome before reporting the arrival", () => {
+  it("offers the welcome before reporting the arrival", () => {
     calls.length = 0
     const showConversation = vi.fn((id: string) => {
       calls.push(`offer:${id}`)
@@ -139,14 +139,13 @@ describe("useExpeditionIntro", () => {
     renderHook(() =>
       useExpeditionIntro({
         journeyId: "made-up",
-        isTomb: true,
+        isTomb: false,
         hasBlockedBlocks: false,
         levelNr: 1,
-        exterior: "caveMouth",
         showConversation,
       })
     )
 
-    expect(calls).toEqual(["offer:tombIntro", "report:siteArrived"])
+    expect(calls).toEqual(["offer:pyramidIntro", "report:siteArrived"])
   })
 })

@@ -12,7 +12,7 @@ to somebody; the explorer speaks only where it helps, never with a pronoun, a na
 ## Tombs
 
 Three beats a tomb, none of them ahead of the tomb's ghost scene (which plays later, on the cavern's
-floors), and none repeating `tombIntro` or `exitPillar`:
+floors), and none repeating `exitPillar`:
 
 - **cave** — the cave mouth, level 1's exterior: the first moment in a hill's dark mouth.
 - **pillar** — the cave's exit pillar: daylight at the end of the cave.
@@ -20,7 +20,7 @@ floors), and none repeating `tombIntro` or `exitPillar`:
 
 ### `starter_treasure_tomb` — Forgotten Merchant's Cache
 
-Before Ipi, and the first tomb: `tombIntro` ("There! The hidden tomb!") plays just before the cave line, so the cave opens on the surprise that the tomb is a hill. Leans on the map hint's cellar door. Starter cave locks are levers and doors.
+Before Ipi, and the first tomb: the cave line is the whole arrival, and it opens on the surprise that the tomb is a hill. Leans on the map hint's cellar door. Starter cave locks are levers and doors.
 
 #### `cave.starter_treasure_tomb`
 
