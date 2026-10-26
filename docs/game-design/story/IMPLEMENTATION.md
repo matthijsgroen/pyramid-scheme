@@ -200,17 +200,17 @@ before translation starts rather than after.
 On `story/journey-beats` (PR #304), playing in English and Dutch. What is written here as "ready now"
 below was the plan; this is what came of it.
 
-| Built                                          | Where it lives                                                                    |
-| ---------------------------------------------- | --------------------------------------------------------------------------------- |
-| Journey arrivals, all 20, fired at the pyramid | `useExpeditionIntro.ts` + `fez.json` `arrival.*` — 96 lines                       |
-| Two speakers, portraits, sides swapping        | `Fez.tsx`, `portraits.ts`                                                         |
-| Story beats exempt from the tutorials toggle   | `shouldSkipConversation`                                                          |
-| The eight tomb scenes                          | `fez.json` `tomb.*` — 86 lines, five ghosts drawn and placed                      |
-| The reaction rail — five of the six bonds      | `reactionContributions.ts` (core) + `story/game/reaction/beatFor.ts`              |
-| The Sphinx ending                              | `walls.ts` `starter_1`, the ward gate in `starter.ts`, the reed leaf in the Vault |
-| The story mod                                  | `src/mods/story/` — `conversation` and `reading` families                         |
-| The story log                                  | a mod screen; arrivals and tomb scenes, re-readable                               |
-| The explorer and the five ghosts               | `art/masters/characters/`, imported by `yarn import-portrait --bust=0.55`         |
+| Built                                          | Where it lives                                                                                                          |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Journey arrivals, all 20, fired at the pyramid | `useExpeditionIntro.ts` + `fez.json` `arrival.*` — 96 lines                                                             |
+| Two speakers, portraits, sides swapping        | `Fez.tsx`, `portraits.ts`                                                                                               |
+| Story beats exempt from the tutorials toggle   | `shouldSkipConversation`                                                                                                |
+| The eight tomb scenes                          | `fez.json` `tomb.*` — 86 lines, five ghosts drawn and placed                                                            |
+| The reaction rail — five of the six bonds      | `reactionContributions.ts` (core) + `story/game/reaction/beatFor.ts`                                                    |
+| The Sphinx ending                              | `walls.ts` `starter_1`; in `starter.ts` the ward stair, the cave floor and the Sphinx floor; the reed leaf in the Vault |
+| The story mod                                  | `src/mods/story/` — `conversation` and `reading` families                                                               |
+| The story log                                  | a mod screen; arrivals and tomb scenes, re-readable                                                                     |
+| The explorer and the five ghosts               | `art/masters/characters/`, imported by `yarn import-portrait --bust=0.55`                                               |
 
 **238 authored lines against this document's own count of 237.** The content is complete except for two
 beats that cannot be written yet (below).

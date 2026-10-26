@@ -32,6 +32,10 @@ const holdChest = (index: number) => wardChest({ tomb: "starter_treasure_tomb", 
 // Cycled per pyramid ordinal so no pyramid stacks two chests behind the identical key.
 const HOLD_CYCLE = [1, 2, 0, 1]
 
+// The cave's look on one floor of a built pyramid: the fields of CAVE_DRESSING a floor takes.
+const { tileset, decorations, wallDecorations, corridorStraightness } = CAVE_DRESSING
+const CAVE_FLOOR = { tileset, decorations, wallDecorations, corridorStraightness }
+
 // The tier + 1 step inside the cavern: a junior puzzle as the second room, after the first tableau.
 const juniorBetweenTableaus = { where: 2, encounter: "puzzle", difficulty: "junior" } as const
 
@@ -114,22 +118,39 @@ export const starterRules: Rule[] = [
         // slot beyond the gating pass's fixed demand, so the capped mosaic pass fills it. Without it
         // the first mosaic sits on the hidden path above, invisible until the master-tier detector.
         sidePath({ endReward: "mosaicPiece" }),
-        // The Sphinx inscription, and the end of the game. Sealed and visible in the first hour,
-        // opened in the last by wizard_a_1 out of the Vault of the Gods — so the writing nobody
-        // could read is read in the place it was first seen, rather than somewhere that merely
-        // shares its name. The reading encounter is the room itself, not what guards it.
-        wardChest({
-          tomb: "wizard_treasure_tomb",
-          index: 0,
-          puzzles: 1,
-          nodes: [{ where: "first", encounter: "reading" }],
-        }),
+        // The stair to the Sphinx, and the end of the game. Sealed and visible in the first hour,
+        // opened in the last by wizard_a_1 out of the Vault of the Gods. It goes down into a cave and
+        // then up into the Sphinx itself, where the writing first seen outside is read clear of the
+        // sand. The stair carries no puzzle: the cave below carries them.
+        wardPath({ tomb: "wizard_treasure_tomb", index: 0, toFloor: 2 }),
       ],
     })
     .floor(1, {
       mainEndReward: "mosaicPiece",
       pathPuzzles: 2,
       sideSections: [sidePath({ puzzles: 1 })],
+    })
+    // The tunnel to the Sphinx: two short wizard floors down, the cave with its long corridor of
+    // puzzles, a small cave climbing back up, and the Sphinx, whose one room is the reading.
+    .floor(2, { difficulty: "wizard", pathPuzzles: 2, depth: 1, toFloor: 3, sideSections: [] })
+    .floor(3, { difficulty: "wizard", pathPuzzles: 2, depth: 2, toFloor: 4, sideSections: [] })
+    .floor(4, {
+      ...CAVE_FLOOR,
+      difficulty: "wizard",
+      pathPuzzles: 7,
+      encounter: "puzzle",
+      depth: 3,
+      toFloor: 5,
+      sideSections: [],
+    })
+    .floor(5, { ...CAVE_FLOOR, difficulty: "wizard", pathPuzzles: 1, depth: 2, toFloor: 6, sideSections: [] })
+    .floor(6, {
+      tileset: "sphinx",
+      difficulty: "wizard",
+      pathPuzzles: 1,
+      nodes: [{ where: "first", encounter: "reading" }],
+      depth: 1,
+      sideSections: [],
     }),
 
   journey("starter_1")
