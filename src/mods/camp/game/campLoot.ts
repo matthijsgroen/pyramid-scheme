@@ -15,7 +15,8 @@ import { PYRAMID_JOURNEYS } from "@/worldGen/data"
 //
 // A tier's early structure is the exception to the spread: its first part lies on the earliest main slot of the
 // tier's first journey and its second on the second journey's, in the order the game opens a tier's journeys, so
-// the player sees the camp change after the second journey.
+// the player sees the camp change after the second journey. Those two journeys carry nothing else of the camp
+// while the tier's other journeys have room, so the early structure is the first thing the camp gains.
 
 const interleave = <T>(groups: readonly (readonly T[])[]): T[] => {
   const ordered: T[] = []
@@ -122,11 +123,17 @@ export const makeCampLoot = (table: CampStepTable, journeys: JourneyOrder = PYRA
           )
         const early = earlyOf(table, tier)
         const pinned: Slot[] = early ? earlySlots(early, tierSlots, journeys) : []
-        const classes = groupBy(
-          tierSlots.filter(s => !pinned.includes(s)),
-          reachClass
-        )
-        return [...pinned, ...[0, 1, 2].flatMap(c => roundRobinOverSites(classes.get(c) ?? []))].slice(0, needed)
+        const earlyJourneys = new Set(pinned.map(s => s.journeyId))
+        const rest = tierSlots.filter(s => !pinned.includes(s))
+        const ranked = (from: readonly Slot[]) => {
+          const classes = groupBy(from, reachClass)
+          return [0, 1, 2].flatMap(c => roundRobinOverSites(classes.get(c) ?? []))
+        }
+        return [
+          ...pinned,
+          ...ranked(rest.filter(s => !earlyJourneys.has(s.journeyId))),
+          ...ranked(rest.filter(s => earlyJourneys.has(s.journeyId))),
+        ].slice(0, needed)
       })
     },
     // Deals each tier's units to its slots in rank order. An early structure's first two parts go to its pinned slots.

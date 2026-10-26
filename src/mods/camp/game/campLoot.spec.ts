@@ -206,13 +206,27 @@ describe("makeCampLoot early structure", () => {
     expect(partOn(slots, "screen").sort()).toEqual(["made-up-b:0#2=poles", "made-up-c:0#2=reeds"])
   })
 
-  it("other structures still spread over the tier's sites", () => {
+  it("the first two journeys carry nothing else of the camp while later journeys have room", () => {
+    const slots = journeyWorld()
+    place(slots, [makeCampLoot(earlyTable, journeys)])
+    const early = campSlots(slots).filter(s => s.journeyId !== "made-up-a")
+    expect(early.map(s => rewardOf(s).structure)).toEqual(["screen", "screen"])
+  })
+
+  it("other structures still spread over the sites of the later journeys", () => {
     const slots = journeyWorld()
     place(slots, [makeCampLoot(earlyTable, journeys)])
     const sites = campSlots(slots)
       .filter(s => rewardOf(s).structure === "hut")
       .map(s => s.siteId)
-    expect(new Set(sites).size).toBe(3)
+    expect(new Set(sites)).toEqual(new Set(["made-up-a:0", "made-up-a:1"]))
+  })
+
+  it("the first two journeys take the rest of the camp when later journeys run out of room", () => {
+    const slots = journeyWorld().filter(s => s.journeyId !== "made-up-a")
+    const short = [...journeys.slice(0, 2), { id: "made-up-a", tier: "starter" as const }]
+    place(slots, [makeCampLoot(earlyTable, short)])
+    expect(campSlots(slots)).toHaveLength(6)
   })
 
   it("an early structure in a tier with one journey fails, naming the structure", () => {

@@ -1,6 +1,6 @@
 {
   "starter": {
-    "hash": "e913dc1fec4a3337",
+    "hash": "cb11badd2c2a1357",
     "journeyCount": 5
   },
   "junior": {
@@ -16,7 +16,7 @@
     "journeyCount": 6
   },
   "wizard": {
-    "hash": "57389ea18be4ad67",
+    "hash": "87c036e44f5bbd5a",
     "journeyCount": 7
   }
 }

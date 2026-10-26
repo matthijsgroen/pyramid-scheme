@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1445384062
+export const worldContentHash = 834070448
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -294,7 +294,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
         rewards: [
           { type: "campPart", structure: "windbreak", part: "reedBundles" },
-          { type: "campFind", step: "gourd" },
+          { type: "money", amount: 3 },
         ],
       },
     ],
@@ -397,7 +397,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 2975698674563321,
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
-        rewards: [{ type: "campFind", step: "jar" }],
+        rewards: [{ type: "money", amount: 1 }],
       },
     ],
   ],
@@ -775,7 +775,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 3323337401,
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
-        rewards: [{ type: "campPart", structure: "stoneRing", part: "sandBed" }],
+        rewards: [{ type: "money", amount: 2 }],
       },
       {
         pathPuzzles: 3,
@@ -1063,7 +1063,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 1354033022,
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         rewards: [
-          { type: "campPart", structure: "fire", part: "acaciaLogs" },
+          { type: "campFind", step: "gourd" },
           { type: "money", amount: 2 },
         ],
       },
@@ -1255,7 +1255,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 175768595654519,
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
         rewards: [
-          { type: "campPart", structure: "cookingStones", part: "supportStones" },
+          { type: "campFind", step: "jar" },
           { type: "money", amount: 1 },
           { type: "money", amount: 2 },
         ],
@@ -1448,7 +1448,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 1354033022,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art5", pieceIndex: 0 },
         rewards: [
-          { type: "money", amount: 2 },
+          { type: "campPart", structure: "stoneRing", part: "sandBed" },
           { type: "money", amount: 3 },
           { type: "money", amount: 3 },
         ],
@@ -1641,7 +1641,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 175768595654521,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a8", pieceIndex: 0 },
         rewards: [
-          { type: "money", amount: 2 },
+          { type: "campPart", structure: "fire", part: "acaciaLogs" },
           { type: "money", amount: 2 },
           { type: "money", amount: 3 },
           { type: "money", amount: 3 },
@@ -1836,7 +1836,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 9109538588672876,
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         rewards: [
-          { type: "money", amount: 3 },
+          { type: "campPart", structure: "cookingStones", part: "supportStones" },
           { type: "money", amount: 3 },
         ],
       },
@@ -16963,7 +16963,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         rewards: [
           { type: "money", amount: 3 },
           { type: "money", amount: 3 },
-          undefined,
+          { type: "money", amount: 1 },
           undefined,
           undefined,
           undefined,
