@@ -6,7 +6,7 @@ import type { ContentKind, RegionAppetite } from "./regions"
 /**
  * WHICH LOCK CORRIDORS CARRY A FLOOR'S SIDE PATHS. Only an open side path goes into a lock: a key or a detector
  * inside one would make the lock not provably solvable, because the walk through it would then depend on what
- * the player carries. A trapped side path may go in, because a trap costs only hearts and the camp always heals.
+ * the player carries. A sealed section may go in, because its cost is not one the lock's walk depends on.
  */
 
 /** A side section and the lock corridor (`PlanCorridor.id`) its rooms stand on. */

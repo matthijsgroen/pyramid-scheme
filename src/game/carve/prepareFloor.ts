@@ -582,8 +582,8 @@ export const prepareFloor = (
   const junctionNodes = plan ? forkDemands.length : 0
   const appetiteOfRegion = new Map((regionLayout?.regions ?? []).map(region => [region.name, region.appetite]))
   // A SIDE SECTION FITS IN A LOCK when nothing about it needs a door or a branch: no gate of its own, not hidden,
-  // nothing hung off it, a chest or shop at its end, no lever in it and no one-way naming it. A sealed (trapped)
-  // section fits, because a trap costs only hearts and the camp always heals. A gated, keyed or hidden section stays a
+  // nothing hung off it, a chest or shop at its end, no lever in it and no one-way naming it. A sealed
+  // section fits, because its cost is not one the lock's walk depends on. A gated, keyed or hidden section stays a
   // branch off laid ground, because a key or a detector inside a lock would leave it not provably solvable.
   const oneWayNames = new Set((config.oneWays ?? []).flatMap(way => [way.from, way.to]))
   const fitsInLock = (section: SideSection, i: number): boolean =>

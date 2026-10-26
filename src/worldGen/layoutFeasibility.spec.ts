@@ -1,12 +1,10 @@
 import { describe, expect, it } from "vitest"
-import type { AssemblerResult, FloorConfig, SideSection } from "@/game/siteTypes"
+import type { FloorConfig, SideSection } from "@/game/siteTypes"
 import { BINDING } from "@/game/testSupport/lockFixtures"
 import { leverLock } from "@/game/testSupport/floorLockFixtures"
 import type { Lock } from "@/game/lockAuthoring"
 import { resolveEncounterMeta, resolveKeyRequirements } from "@/mods/allFamilyMeta"
-import { assembleFloor } from "@/game/siteAssembler"
-import { refusal, searchCarvePair } from "./carveSeedSearch"
-import { layoutInfeasible, prepareLayout, searchLayout } from "./layoutFeasibility"
+import { layoutInfeasible, prepareLayout } from "./layoutFeasibility"
 
 const section = (over: Partial<SideSection> = {}): SideSection => ({
   pathPuzzles: 2,
@@ -36,31 +34,6 @@ const prepared = (config: FloorConfig) =>
 const gated = section({ gate: { type: "tomb-key", wardKeyId: "ward" } })
 
 describe(layoutInfeasible, () => {
-  it("a lock floor with no main-path puzzle and only gated sections is infeasible before any carve", () => {
-    const config = floor({ sideSections: [gated, section({ hidden: true })] })
-    let carves = 0
-    const result = searchLayout(config, prepared(config), () =>
-      searchCarvePair(
-        7,
-        (seed, packing, maxAttempts): AssemblerResult => {
-          carves++
-          return assembleFloor("site", { ...config, seed, packing }, seed, resolveEncounterMeta, { maxAttempts })
-        },
-        {
-          authoredPacking: 0.5,
-          ceiling: 1,
-          seedBudget: 3,
-          fullLadder: Infinity,
-          judge: result => refusal(result, config),
-          stages: [],
-        }
-      )
-    )
-    expect(carves).toBe(0)
-    expect(result).toMatchObject({ kind: "infeasible", criterion: "lock holds an encounter" })
-    expect(result.kind === "infeasible" ? result.detail : "").toContain("lever")
-  })
-
   it("a lock standing before the floor's content is asked for no puzzle, even on a floor with none", () => {
     const lock = leverLock()
     const before: Lock = {

@@ -6,7 +6,8 @@ import wizardWall from "@/assets/tombWall/wizard.webp"
 import caveWall from "@/assets/tombWall/cave.webp"
 import type { Tileset } from "@/game/siteTypes"
 
-// Panels dropped in by `yarn import-panel` that no import above names; a tileset with none paints no wall.
+// The sphinx panel is not painted yet, so it is read by an eager glob and a tileset with no file paints no wall; once
+// painted it becomes a plain import like the others.
 const panels = import.meta.glob("@/assets/tombWall/*.webp", {
   eager: true,
   query: "?url",

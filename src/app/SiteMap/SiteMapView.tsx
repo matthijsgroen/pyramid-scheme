@@ -5,6 +5,7 @@ import type {
   Direction,
   FloorGrid,
   Patron,
+  StairGoes,
   Tileset,
   WallDecorationKind,
 } from "../../game/siteTypes"
@@ -253,20 +254,17 @@ const leverArmTransform = (angleDeg: number): string =>
 
 const NO_STATES: ReadonlyMap<string, string> = new Map()
 
-// A stairhead climbs when its link says so; a cell carrying no direction climbs only at the floor's own entrance.
-const stairClimbs = (
-  grid: Pick<FloorGrid, "entrancePos">,
-  cell: { stairGoes?: "up" | "down" },
-  r: number,
-  c: number
-) => (cell.stairGoes ? cell.stairGoes === "up" : r === grid.entrancePos[0] && c === grid.entrancePos[1])
+// `stairGoes` decides the flight's direction; the entrance position is only the fallback for a cell carrying none.
+const stairClimbs = (grid: Pick<FloorGrid, "entrancePos">, cell: { stairGoes?: StairGoes }, r: number, c: number) =>
+  cell.stairGoes ? cell.stairGoes === "up" : r === grid.entrancePos[0] && c === grid.entrancePos[1]
 
 /** Every node's own furniture on one floor, in map space — chests beside treasure rooms, flights at
  * stairheads. See `NodeSprite` for why this is a list and not a child of each node's own `<g>`.
  *
  * A SHOP wears the treasure marker and gets no chest: his goods are a market stall rather than a sealed
- * chest, and drawing one would say the wrong thing about a room you buy from. A stairhead at the floor's
- * own `entrancePos` is the way back UP (pyramid-interior-design.md: a stairhead descends), and absent
+ * chest, and drawing one would say the wrong thing about a room you buy from. A stairhead's `stairGoes`
+ * decides its flight's direction; the floor's own `entrancePos` is only the fallback, the way back UP
+ * (pyramid-interior-design.md: a stairhead descends). Absent
  * art simply yields nothing, leaving the vector marker to carry the node as it always did.
  */
 // eslint-disable-next-line react-refresh/only-export-components -- pure function over the grid, exported so tests can assert on sprites

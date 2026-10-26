@@ -676,7 +676,7 @@ const handOut = (laid: LaidLocks): LayResult => ({ ok: true, laid: structuredClo
  * hops, shortest first, and the grid grows from `n` until the plan fits or the ceiling refuses it by name.
  */
 export const layLockPlan = (plan: LockPlan, { seed, n, ceiling = LAY_GRID_CEILING }: LayOptions): LayResult => {
-  const planKey = JSON.stringify(plan)
+  const planKey = gridOutcomesKept > 0 ? JSON.stringify(plan) : ""
   let refusal: LayRefusal | undefined
   for (let grid = n; grid <= Math.max(n, ceiling); grid += GRID_STEP) {
     const { laid, furthest } = remembered(`${seed}|${grid}|${planKey}`, () => {

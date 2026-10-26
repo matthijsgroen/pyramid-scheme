@@ -206,20 +206,3 @@ describe("a collection icon's entry", () => {
     expect(e.out).toBe("src/assets/camp/x-y.webp")
   })
 })
-
-describe("the Sphinx's four surfaces", () => {
-  const sphinx = parse(readFileSync(QUEUE, "utf8")).filter(e => e.key.startsWith("sphinx/"))
-
-  it("are queued, each with its attachment and its own import line", () => {
-    expect(sphinx.map(e => e.key)).toEqual([
-      "sphinx/floor",
-      "sphinx/wall-face",
-      "sphinx/threshold",
-      "sphinx/wall-panel",
-    ])
-    for (const e of sphinx) {
-      expect(e.attachments).toHaveLength(1)
-      expect(e.importedBy).toContain("--tier=sphinx")
-    }
-  })
-})

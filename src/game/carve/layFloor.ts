@@ -1,5 +1,4 @@
 import { layLockPlan } from "../layLocks"
-import { corridorUnfed } from "../lockPuzzles"
 import {
   answerBareStubs,
   fillLaidFloor,
@@ -72,10 +71,6 @@ export const layFloor = pass("layFloor", ["rung", "attempt"], ["lay", "laidN"], 
       appetiteOfRegion
     )
     if ("placed" in filled) {
-      const offCorridor = absorbedDemands.flatMap(demand =>
-        corridorUnfed({ stretches: seated.stretches, absorbed: filled.placed }, [demand]).length > 0 ? demand.kinds : []
-      )
-      if (offCorridor.length > 0) return { retry: [{ type: "contentNotLaid", kinds: offCorridor }] }
       const laid = { ...seated, absorbed: filled.placed, lengthened }
       const answered = answerStubs ? answerBareStubs(plan, laid, absorbedDemands, appetiteOfRegion) : laid
       onLaid?.(answered)

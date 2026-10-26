@@ -5,7 +5,7 @@ import { appetiteOf, standsBeforeContent } from "@/game/lockPuzzles"
 import { planLockFloor } from "@/game/lockPlan"
 import type { AssembleFloorKeyRequirements, ResolveEncounter } from "@/game/siteAssembler"
 import type { AssemblerFailure, FloorConfig, SubSection } from "@/game/siteTypes"
-import type { CarveRefusal, LayoutFound, LayoutNotFound, LayoutResult } from "./carveSeedSearch"
+import type { CarveRefusal } from "./carveSeedSearch"
 
 // WHAT NO SEED CAN ANSWER. Each check here reads the authoring alone and holds for every seed, so a floor failing
 // one is reported as infeasible without a single carve, and the author is told which field to change rather than
@@ -90,15 +90,4 @@ export const layoutInfeasible = (floor: FloorConfig, prep: PreparedLayout): Carv
       })
   }
   return found
-}
-
-/** A floor's layout: infeasible when its authoring says so, without running `search`; else what `search` finds. */
-export const searchLayout = (
-  floor: FloorConfig,
-  prep: PreparedLayout,
-  search: () => LayoutFound | LayoutNotFound
-): LayoutResult => {
-  const infeasible = layoutInfeasible(floor, prep)
-  if (infeasible.length > 0) return { kind: "infeasible", ...infeasible[0], all: infeasible }
-  return search()
 }
