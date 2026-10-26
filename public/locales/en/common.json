@@ -1174,7 +1174,7 @@
       "cannot": "You do not know the sign that belongs here. Not yet."
     },
     "sphinx": {
-      "wrong": "The writing at the base, where the sand keeps shifting off. Two signs still cut clean, and a space where the third was.",
+      "wrong": "The same writing as outside, but the sand never reached it here. Two signs still cut clean, and a space where the third was.",
       "fixed": "That is the whole of it.",
       "pick": "Put the sign you are carrying into the space.",
       "cannot": "Two signs you know, and a space you cannot fill. Not yet.",
