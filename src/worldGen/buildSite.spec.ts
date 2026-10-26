@@ -115,7 +115,20 @@ describe("wireSideSectionStaircases", () => {
     wireSideSectionStaircases(floors, site, { toFloor: [undefined, 2] })
     expect(floors[0].exitOrStaircase).toBe("exit")
     expect(floors[1]).toMatchObject({ entrance: { stairId: "w" }, exitOrStaircase: { stairId: "j:p0:f1:main" } })
-    expect(floors[2]).toMatchObject({ entrance: { stairId: "j:p0:f1:main" }, exitOrStaircase: "exit" })
+    expect(floors[2]).toMatchObject({ entrance: { stairId: "j:p0:f1:main" }, exitOrStaircase: "none" })
+  })
+
+  it("an off-walk floor's own toFloor keeps its stair, wherever its chain enters it from", () => {
+    // Side stair 0 → 1, main 1 → 2, main 2 → 3: each off-walk floor names its way on and keeps it.
+    const floors = [floor(stair("w")), floor(), floor(), floor()]
+    wireSideSectionStaircases(floors, site, { toFloor: [undefined, 2, 3] })
+    expect(floors[1].exitOrStaircase).toEqual({ stairId: "j:p0:f1:main" })
+    expect(floors[2]).toMatchObject({
+      entrance: { stairId: "j:p0:f1:main" },
+      exitOrStaircase: { stairId: "j:p0:f2:main" },
+    })
+    expect(floors[3]).toMatchObject({ entrance: { stairId: "j:p0:f2:main" }, exitOrStaircase: "none" })
+    expect(floors[0].exitOrStaircase).toBe("exit")
   })
 
   it("a stair to a shallower floor goes up, and the floor it enters is entered going down", () => {
@@ -239,6 +252,8 @@ describe("buildSite", () => {
     expect(floors[2].entrance).toEqual({ stairId: "j1:p0:f0:s0" })
     expect(floors[2].exitOrStaircase).toEqual({ stairId: "j1:p0:f2:main", goes: "up" })
     expect(floors[3].entrance).toEqual({ stairId: "j1:p0:f2:main", goes: "down" })
+    // Reached only through the side stair, so the site's one exit stays on floor 1.
+    expect(floors[3].exitOrStaircase).toBe("none")
   })
 
   it("auto multi-floor branch: mainFloors > 1 chains floors via wireStaircases, non-last floor gets a real reward slot", () => {

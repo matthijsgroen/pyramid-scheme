@@ -197,8 +197,9 @@ export type StairLinks = {
 // sites, whether a shortcut is ward-gated by an external key (a pyramid's authored floors[]) or self-gated by the
 // floor's own treasure (a tomb's, pyramid-interior-design.md §8: "the treasure IS the key").
 //
-// - A stair section leads to its `toFloor`, else the next floor. The floor it enters is off the main walk: one exit
-//   per site, at the main path's end, so that floor's way out is the stair back up, unless it names one of its own.
+// - A stair section leads to its `toFloor`, else the next floor. The floor it enters is off the main walk, and so is
+//   every floor a stair from an off-walk floor enters: one exit per site, at the main path's end, so such a floor's
+//   way out is the stair back up (`"none"`), unless it names a `toFloor` of its own.
 // - A floor's main path stairs to its `toFloor` where authored. Unset, a floor on the main walk stairs to the next
 //   floor when no other stair enters that floor, so a site authored floor by floor is one walk down to a single exit
 //   on its last floor; a floor off the main walk keeps no way out of its own.
@@ -216,8 +217,10 @@ export const wireSideSectionStaircases = (
 ): void => {
   const depthOf = (fi: number) => links.depth?.[fi] ?? fi
   const entered = new Set<number>()
+  // Floors off the main walk: every floor a side stair enters, and every floor a stair from one of those enters.
+  const offWalk = new Set<number>()
   const unwired = new Set(links.sectionTargets?.keys())
-  const link = (from: number, to: number, stairId: string): StairLink => {
+  const link = (from: number, to: number, stairId: string, leavesWalk: boolean): StairLink => {
     const refuse = (why: string) =>
       new Error(
         `buildSite: journey=${site.journeyId} pyramid=${site.pyramidIndex + 1} floor=${from}: stair ${stairId} leads to floor ${to}, ${why}`
@@ -229,6 +232,10 @@ export const wireSideSectionStaircases = (
     if (entered.has(to)) throw refuse("which another stair already enters")
     if (depthOf(to) === depthOf(from)) throw refuse(`which lies at the same depth (${depthOf(to)})`)
     entered.add(to)
+    if (leavesWalk) {
+      offWalk.add(to)
+      floors[to].exitOrStaircase = "none"
+    }
     const climbs = depthOf(to) < depthOf(from)
     floors[to].entrance = climbs ? { stairId, goes: "down" } : { stairId }
     return climbs ? { stairId, goes: "up" } : { stairId }
@@ -239,14 +246,13 @@ export const wireSideSectionStaircases = (
       if (typeof section.end !== "object") continue
       const to = links.sectionTargets?.get(section.end.stairId) ?? fi + 1
       unwired.delete(section.end.stairId)
-      section.end = link(fi, to, section.end.stairId)
-      floors[to].exitOrStaircase = "none"
+      section.end = link(fi, to, section.end.stairId, true)
     }
     const mainId = stairIdAt({ ...site, floorIndex: fi, path: "main" })
     const authored = links.toFloor?.[fi]
-    if (authored !== undefined) floor.exitOrStaircase = link(fi, authored, mainId)
-    else if (floor.exitOrStaircase !== "none" && fi + 1 < floors.length && !entered.has(fi + 1))
-      floor.exitOrStaircase = link(fi, fi + 1, mainId)
+    if (authored !== undefined) floor.exitOrStaircase = link(fi, authored, mainId, offWalk.has(fi))
+    else if (!offWalk.has(fi) && floor.exitOrStaircase !== "none" && fi + 1 < floors.length && !entered.has(fi + 1))
+      floor.exitOrStaircase = link(fi, fi + 1, mainId, false)
   }
   // Only a floor's own top-level sections take a stair; a target named anywhere else would be lost without a word.
   if (unwired.size > 0)
