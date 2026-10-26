@@ -706,6 +706,9 @@ export type FloorConfig = {
    * `regionLayout`, `obstacles`, `controls`, `forks` and `barrierOrder` where the floor is assembled, so a
    * floor authoring `locks` may not author those itself: the contradiction is refused by name. */
   locks?: PlacedLock[]
+  /** The top-level side sections, by index, that hang outside the floor's lock as branches instead of standing on
+   * one of its corridors: the ones no layout of the lock fits. Written by the layout search, never by hand. */
+  outsideLock?: number[]
   /** THE WEB'S DOORS ON GROUND NO LOCK OWNS, each asking for its `web:` key (src/game/webDoors.ts): laid on the
    * finished carve, so they move no wall, and left off it where no registered mod realises web sand. Placed by the
    * bake from the tier's web (docs/instructions/sand-pyramid.md). */

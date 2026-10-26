@@ -106,7 +106,7 @@ const thresholdsOnCorridor = (plan: LockPlan, corridor: PlanCorridor, k: number)
 }
 
 /** Every node a corridor must lay: one per door, and one at each end arriving in a hub holding a step. */
-const corridorNodesWanted = (plan: LockPlan, corridor: PlanCorridor): number =>
+export const corridorNodesWanted = (plan: LockPlan, corridor: PlanCorridor): number =>
   doorsOnCorridor(plan, corridor).length + (isHub(plan, corridor.from) ? 1 : 0) + (isHub(plan, corridor.to) ? 1 : 0)
 
 /**
@@ -116,7 +116,7 @@ const corridorNodesWanted = (plan: LockPlan, corridor: PlanCorridor): number =>
  * leaving it alike: that is where the carve has always stood their doors, so a corridor of free items lays as before.
  * A threshold for a step's region stands at that region's end, inside its doors, and answers to that region.
  */
-const corridorSeats = (
+export const corridorSeats = (
   plan: LockPlan,
   corridor: PlanCorridor,
   k: number
@@ -174,11 +174,16 @@ const nodesForSeats = (plan: LockPlan, region: LockPlan["regions"][number]): num
  * door always has a node of its own between the two stretches it separates and never takes one a region
  * needs for a seat: a corridor holds a node for each door on it, and a region none for the doors of its own
  * barrier. The route holds room for the floor's own content, in regions that take it, because the main path
- * is the route and nothing else.
+ * is the route and nothing else. A corridor a side section is assigned to holds a node for each of its rooms
+ * beyond what its doors and hubs need.
  */
 export const planToLay = (
   plan: LockPlan,
-  floor: { content: ContentKind[]; appetite: ReadonlyMap<string, RegionAppetite> }
+  floor: {
+    content: ContentKind[]
+    appetite: ReadonlyMap<string, RegionAppetite>
+    corridorRooms: ReadonlyMap<string, number>
+  }
 ): LockPlan => {
   const regions = plan.regions.map(region => ({
     ...region,
@@ -201,7 +206,10 @@ export const planToLay = (
   return {
     ...plan,
     regions,
-    corridors: plan.corridors.map(corridor => ({ ...corridor, minNodes: corridorNodesWanted(plan, corridor) })),
+    corridors: plan.corridors.map(corridor => ({
+      ...corridor,
+      minNodes: corridorNodesWanted(plan, corridor) + (floor.corridorRooms.get(corridor.id) ?? 0),
+    })),
   }
 }
 
@@ -500,9 +508,9 @@ export const placeContentOnRoute = (
 /**
  * What an authored side section holds, in the order the player meets it: its puzzles, then its end room.
  * `open` asks for ground the way in reaches without opening a door, for a section hosting a key that the floor's
- * own gates wait on.
+ * own gates wait on. `corridor` names the lock corridor the section is assigned to (`assignCorridors`).
  */
-export type AbsorbedDemand = { section: number; kinds: ContentKind[]; open?: boolean }
+export type AbsorbedDemand = { section: number; kinds: ContentKind[]; open?: boolean; corridor?: string }
 
 /** A room of a section no laid node took. */
 export type MissingRoom = { kind: ContentKind; open: boolean }

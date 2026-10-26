@@ -34,6 +34,7 @@ import type {
   ForkSwitchControl,
 } from "../obstacles"
 import type { ContentKind, RegionAppetite, SideChain } from "../regions"
+import type { CorridorAssignment } from "../corridorSidePaths"
 import type { AbsorbedDemand, LaidFloor } from "../laidFloor"
 import type { LockPlan } from "../lockPlan"
 import type { CarveFault } from "../carveAgreement"
@@ -226,6 +227,9 @@ export type FloorPrep = Readonly<{
     contentSections: ReadonlySet<number>
     junctionSections: readonly number[]
     absorbedDemands: readonly AbsorbedDemand[]
+    /** The lock corridor each side section standing in the lock is assigned; a section not named hangs as a branch
+     * or, as the floor-key host, is spread over the laid nodes. */
+    corridorAssignments: readonly CorridorAssignment[]
     appetiteOfRegion: ReadonlyMap<string, RegionAppetite>
     branchSections: readonly number[]
     hubGroupSize: number

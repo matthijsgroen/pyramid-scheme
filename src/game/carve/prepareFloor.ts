@@ -30,6 +30,7 @@ import {
   topologyFaults,
 } from "../obstacles"
 import type { EdgeGateObstacle, FloorCorridor, Obstacle, OneWayObstacle, StatefulControl } from "../obstacles"
+import { assignCorridors, eligibleCorridors } from "../corridorSidePaths"
 import { planToLay } from "../laidFloor"
 import type { AbsorbedDemand } from "../laidFloor"
 import type { LockPlan } from "../lockPlan"
@@ -579,9 +580,64 @@ export const prepareFloor = (
   // A junction `forks` holds on a laid floor hangs its branches from a route node no room takes, so the route is laid
   // one node longer for each.
   const junctionNodes = plan ? forkDemands.length : 0
+  const appetiteOfRegion = new Map((regionLayout?.regions ?? []).map(region => [region.name, region.appetite]))
+  // A SIDE SECTION FITS IN A LOCK when nothing about it needs a door or a branch: no gate of its own, not hidden,
+  // nothing hung off it, a chest or shop at its end, no lever in it and no one-way naming it. A sealed (trapped)
+  // section fits, because a trap costs only hearts and the camp always heals. A gated, keyed or hidden section stays a
+  // branch off laid ground, because a key or a detector inside a lock would leave it not provably solvable.
+  const oneWayNames = new Set((config.oneWays ?? []).flatMap(way => [way.from, way.to]))
+  const fitsInLock = (section: SideSection, i: number): boolean =>
+    plan !== undefined &&
+    !section.gate &&
+    !section.hidden &&
+    !section.sideSections?.length &&
+    section.end === "treasure" &&
+    leverRooms(leverAtPositional, `s${i}`) === 0 &&
+    !oneWayNames.has(addresses.of.get(`s${i}`) ?? `s${i}`)
+  const isContentSection = (section: SideSection, i: number): boolean => fitsInLock(section, i) && !section.sealed
+  // The section hosting the key a floor-key gate waits on stands on ground no door shuts, spread over the laid
+  // nodes rather than on a corridor: nothing opens a door for the player to fetch the key that opens another.
+  const hostsKeys = (section: number) => gatedFloorKeyIdxs.length > 0 && ungatedIdxs[0] === section
+  // A JUNCTION `forks` HOLDS ON A LAID FLOOR CHOOSES BETWEEN BRANCHES: every node the lay gives holds a room, so
+  // the last unsealed sections that fit, as many as the junctions have ways out, stay branches and hang from a
+  // bare node of the route as a hub of their own (`junctionGroups` below).
+  const contentCandidates = sideSections.flatMap((section, i) =>
+    isContentSection(section, i) && !hostsKeys(i) ? [i] : []
+  )
+  const junctionWays = plan ? forkDemands.reduce((sum, exits) => sum + exits, 0) : 0
+  const junctionSections = junctionWays > 0 ? contentCandidates.slice(-junctionWays) : []
+  const kindsOf = (section: number): ContentKind[] => [
+    ...Array.from({ length: sideSections[section].pathPuzzles }, (): ContentKind => "puzzle"),
+    "reward",
+  ]
+  // EVERY OTHER SECTION THAT FITS IS OFFERED A CORRIDOR OF THE LOCK of its own, in authored order; one the layout
+  // search moved `outsideLock`, and one no corridor takes, hangs as a branch off laid ground instead.
+  const outsideLock = new Set(config.outsideLock ?? [])
+  const corridorAssignments = plan
+    ? assignCorridors(
+        eligibleCorridors(plan, appetiteOfRegion),
+        sideSections.flatMap((section, i) =>
+          fitsInLock(section, i) && !hostsKeys(i) && !junctionSections.includes(i) && !outsideLock.has(i)
+            ? [{ section: i, kinds: kindsOf(i) }]
+            : []
+        ),
+        appetiteOfRegion
+      )
+    : []
+  const corridorOf = new Map(corridorAssignments.map(({ section, corridor }) => [section, corridor]))
+  const keyHost = sideSections.findIndex((section, i) => isContentSection(section, i) && hostsKeys(i))
+  const contentSections = new Set([...(keyHost >= 0 ? [keyHost] : []), ...corridorOf.keys()].sort((a, b) => a - b))
+  const absorbedDemands: AbsorbedDemand[] = [...contentSections].map(section => ({
+    section,
+    kinds: kindsOf(section),
+    ...(hostsKeys(section) ? { open: true } : {}),
+    ...(corridorOf.has(section) ? { corridor: corridorOf.get(section)! } : {}),
+  }))
+  const corridorRooms = new Map<string, number>()
+  for (const { section, corridor } of corridorAssignments)
+    corridorRooms.set(corridor, (corridorRooms.get(corridor) ?? 0) + kindsOf(section).length)
   // A lock floor is laid before anything grows around it, so its stretches and corridors take room the
   // authored sections do not.
-  const appetiteOfRegion = new Map((regionLayout?.regions ?? []).map(region => [region.name, region.appetite]))
   const layPlan = plan
     ? planToLay(plan, {
         content: [
@@ -593,55 +649,21 @@ export const prepareFloor = (
           ...Array.from({ length: junctionNodes }, (): ContentKind => "puzzle"),
         ],
         appetite: appetiteOfRegion,
+        corridorRooms,
       })
     : undefined
-  // AN UNGATED SIDE SECTION IS CONTENT, NOT A BRANCH: a section whose entrance carries no door (no gate of its
-  // own, not sealed, not hidden), that hangs nothing off itself, ends in a chest or shop, holds no lever and
-  // is not named by a one-way, has its rooms stood on laid corridor and region nodes. A gated, keyed, sealed or
-  // hidden section stays a branch off laid ground, because a gate needs a branch to stand on.
-  const oneWayNames = new Set((config.oneWays ?? []).flatMap(way => [way.from, way.to]))
-  const isContentSection = (section: SideSection, i: number): boolean =>
-    plan !== undefined &&
-    !section.gate &&
-    !section.sealed &&
-    !section.hidden &&
-    !section.sideSections?.length &&
-    section.end === "treasure" &&
-    leverRooms(leverAtPositional, `s${i}`) === 0 &&
-    !oneWayNames.has(addresses.of.get(`s${i}`) ?? `s${i}`)
-  // The section hosting the key a floor-key gate waits on stands on ground no door shuts: nothing opens a door
-  // for the player to fetch the key that opens another.
-  const hostsKeys = (section: number) => gatedFloorKeyIdxs.length > 0 && ungatedIdxs[0] === section
-  // A JUNCTION `forks` HOLDS ON A LAID FLOOR CHOOSES BETWEEN BRANCHES: every node the lay gives holds a room, so
-  // the last ungated sections, as many as the junctions have ways out, stay branches and hang from a bare node
-  // of the route as a hub of their own (`junctionGroups` below).
-  const contentCandidates = sideSections.flatMap((section, i) =>
-    isContentSection(section, i) && !hostsKeys(i) ? [i] : []
-  )
-  const junctionWays = plan ? forkDemands.reduce((sum, exits) => sum + exits, 0) : 0
-  const junctionSections = junctionWays > 0 ? contentCandidates.slice(-junctionWays) : []
-  const contentSections = new Set(
-    sideSections.flatMap((section, i) => (isContentSection(section, i) && !junctionSections.includes(i) ? [i] : []))
-  )
-  const absorbedDemands: AbsorbedDemand[] = [...contentSections].map(section => ({
-    section,
-    kinds: [
-      ...Array.from({ length: sideSections[section].pathPuzzles }, (): ContentKind => "puzzle"),
-      "reward" as const,
-    ],
-    ...(hostsKeys(section) ? { open: true } : {}),
-  }))
   const lockCells = layPlan
     ? layPlan.regions.reduce((sum, region) => sum + Math.max(2, region.minNodes), 0) +
       layPlan.corridors.reduce((sum, corridor) => sum + corridor.minNodes + 1, 0)
     : 0
 
   // Minimum node count needed (real path nodes only — the connector cell between two
-  // adjacent nodes lives at a separate, non-node grid position).
+  // adjacent nodes lives at a separate, non-node grid position). A section on a lock corridor is in `lockCells`.
   const minCells =
     mainPathCells +
     lockCells +
     sideSections.reduce((sum, sec, idx) => {
+      if (corridorOf.has(idx)) return sum
       const secCells = chainRoomCount(leverAtPositional, sec, `s${idx}`)
       const subCells = (sec.sideSections ?? []).reduce(
         (s2, sub, subIdx) => s2 + chainRoomCount(leverAtPositional, sub, `s${idx}.${subIdx}`),
@@ -873,6 +895,7 @@ export const prepareFloor = (
         contentSections,
         junctionSections,
         absorbedDemands,
+        corridorAssignments,
         appetiteOfRegion,
         branchSections,
         hubGroupSize,

@@ -37,10 +37,11 @@ const planOf = (locks: PlacedLock[]): LockPlan => {
 }
 
 const FREE = new Map<string, RegionAppetite>()
-const WANTS = { content: [] as Array<"puzzle" | "reward">, appetite: FREE }
+const NONE = new Map<string, number>()
+const WANTS = { content: [] as Array<"puzzle" | "reward">, appetite: FREE, corridorRooms: NONE }
 
 const seated = (plan: LockPlan, seed: number, content: Array<"puzzle" | "reward"> = []): LaidFloor => {
-  const toLay = planToLay(plan, { content, appetite: FREE })
+  const toLay = planToLay(plan, { content, appetite: FREE, corridorRooms: NONE })
   const result = layLockPlan(toLay, { seed, n: startingGridSize(toLay) })
   if (!result.ok) throw new Error("did not lay")
   return seatLaidFloor(plan, result.laid)
@@ -69,11 +70,27 @@ describe("the plan the carve asks to be laid", () => {
   it("gives the route a spare node for each piece of the floor's own content", () => {
     const original = planOf([{ lock: leverLock() }])
     const spare = (content: Array<"puzzle" | "reward">) =>
-      planToLay(original, { content, appetite: FREE })
+      planToLay(original, { content, appetite: FREE, corridorRooms: NONE })
         .regions.filter(region => original.route.slice(1, -1).includes(region.id))
         .reduce((sum, region) => sum + region.minNodes - region.seats.length, 0)
     expect(spare([])).toBeLessThan(3)
     expect(spare(["puzzle", "puzzle", "reward"])).toBeGreaterThanOrEqual(3)
+  })
+
+  it("planToLay lays an assigned corridor long enough for its section's rooms", () => {
+    const original = planOf([{ lock: leverLock() }])
+    const bare = planToLay(original, WANTS)
+    const [assigned, other] = original.corridors.map(corridor => corridor.id)
+    const sized = planToLay(original, { ...WANTS, corridorRooms: new Map([[assigned, 3]]) })
+    const minimum = (plan: LockPlan, id: string) => plan.corridors.find(corridor => corridor.id === id)!.minNodes
+    expect(minimum(sized, assigned)).toBe(minimum(bare, assigned) + 3)
+    expect(minimum(sized, other)).toBe(minimum(bare, other))
+    for (const seed of SEEDS) {
+      const result = layLockPlan(sized, { seed, n: startingGridSize(sized) })
+      if (!result.ok) throw new Error("did not lay")
+      const laid = result.laid.corridors.find(corridor => corridor.id === assigned)!
+      expect(laid.nodes.length).toBeGreaterThanOrEqual(minimum(bare, assigned) + 3)
+    }
   })
 
   it("puts that room only in regions whose appetite takes the content", () => {
@@ -83,7 +100,7 @@ describe("the plan the carve asks to be laid", () => {
       ["lever.hall", "puzzles"],
       ["lever.landing", "reward"],
     ])
-    const grown = planToLay(original, { content: ["puzzle", "puzzle", "puzzle"], appetite })
+    const grown = planToLay(original, { content: ["puzzle", "puzzle", "puzzle"], appetite, corridorRooms: NONE })
     const minimum = (id: string) => grown.regions.find(region => region.id === id)!.minNodes
     expect(minimum("lever.foyer")).toBe(1)
     expect(minimum("lever.hall")).toBeGreaterThan(1)

@@ -166,6 +166,7 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
     const plan = planToLay(planOf([{ lock: freeRegions(parseLock(ROUND_THE_HUB, "hub").lock) }], STONES), {
       content: [],
       appetite: new Map(),
+      corridorRooms: new Map(),
     })
     const laidSeeds = SEEDS.slice(0, 10).flatMap(seed => {
       const result = layLockPlan(plan, { seed, n: startingGridSize(plan) })
@@ -182,6 +183,7 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
     const plan = planToLay(planOf([{ lock: freeRegions(parseLock(TWO_DROPS, "twoDrops").lock) }]), {
       content: ["puzzle", "puzzle", "reward"],
       appetite: new Map(),
+      corridorRooms: new Map(),
     })
     const laidSeeds = SEEDS.slice(0, 10).flatMap(seed => {
       const result = layLockPlan(plan, { seed, n: startingGridSize(plan) })
@@ -195,7 +197,11 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
 
 describe("laying corridors that share a pair, and corridors that fall", { timeout: 120_000 }, () => {
   const planFor = (text: string, name: string) =>
-    planToLay(planOf([{ lock: freeRegions(parseLock(text, name).lock) }]), { content: [], appetite: new Map() })
+    planToLay(planOf([{ lock: freeRegions(parseLock(text, name).lock) }]), {
+      content: [],
+      appetite: new Map(),
+      corridorRooms: new Map(),
+    })
   const nodesOf = (laid: { regions: { id: string; nodes: string[] }[] }, id: string) =>
     laid.regions.find(region => region.id === id)!.nodes
   const layAll = (plan: ReturnType<typeof planFor>) =>
