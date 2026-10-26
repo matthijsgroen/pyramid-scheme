@@ -2685,6 +2685,128 @@ yarn import-tile art/masters/props/master/statue-horus.webp --tier=master --name
 
 ---
 
+## Doors — six
+
+The picture a shut door shows in its popup, above the key it asks for: one per ward tier (`door/ward-<tier>`) and one
+plain door for every colour gate (`door/colour`), landing in `src/assets/doors/<name>.webp`. Until a file lands the
+popup shows no door, so none of these blocks anything. The popup stands on the room's own wall, so each door is
+painted against its rank's wall master for the brushwork and the stone.
+
+**The door alone, never a doorway in a wall** (`tile-art-brief.md`: a doorway asked for comes back as a strip of
+wall). Its frame and lintel are part of the door; past them is magenta. **No sign on it:** the key's own sign and
+colour are drawn by the game beside the picture, so a carved glyph or a coloured band would contradict it.
+
+**Wizard is the top difficulty, never a kind of magic** — the gods' door is the richest in material, and still a door.
+
+### `door/ward-starter` — the merchant's ward door
+
+1. `art/masters/tombWall/starter.webp` — the starter wall, for the brushwork and the stone only
+
+```
+FRAME: square, 1:1. The door stands alone, centred and seen straight on, filling about 85% of the height. Do not crop it and do not re-compose it.
+
+STYLE: hand-painted digital art, matte: soft brush texture, grit and speckle, NO outlines anywhere, every edge is a change of value between painted areas. Even, soft light from the upper left, lamplit and warm. No glow cast on anything, no light pool, no cast shadow, no ground, no floor, no steps. No text, no letters, no hieroglyphs, no figures, no frame, no border.
+
+THE ATTACHED IMAGE IS A WALL, already painted in the finished style of this set. Take ONLY its brushwork, its stone and its colour range. Nothing of the wall itself appears in the picture.
+
+SUBJECT: A merchant's storeroom door: thick sun-bleached planks of acacia on two cross-battens, iron nails, a heavy wooden bar across it in two brackets. Over the join of bar and door a knot of palm-fibre cord, sealed with a lump of grey clay pressed with a plain round seal. Worn, honest, a little warped. The door is shut.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges, right up to the door's frame. No wall, no gradient, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/doors --name=ward-starter --size=512`
+
+### `door/ward-junior` — the nobleman's ward door
+
+1. `art/masters/tombWall/junior.webp` — the junior wall, for the brushwork and the stone only
+
+```
+FRAME: square, 1:1. The door stands alone, centred and seen straight on, filling about 85% of the height. Do not crop it and do not re-compose it.
+
+STYLE: hand-painted digital art, matte: soft brush texture, grit and speckle, NO outlines anywhere, every edge is a change of value between painted areas. Even, soft light from the upper left, lamplit and warm. No glow cast on anything, no light pool, no cast shadow, no ground, no floor, no steps. No text, no letters, no hieroglyphs, no figures, no frame, no border.
+
+THE ATTACHED IMAGE IS A WALL, already painted in the finished style of this set. Take ONLY its brushwork, its stone and its colour range. Nothing of the wall itself appears in the picture.
+
+SUBJECT: A nobleman's door: a double-leaf door of dark cedar in a painted mud-plaster frame, the leaves edged in bronze strips, two heavy bronze bolts shot home. A cord across both handles, sealed with a broad red clay seal. Well kept, the owner's wealth in the wood. The door is shut.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges, right up to the door's frame. No wall, no gradient, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/doors --name=ward-junior --size=512`
+
+### `door/ward-expert` — the high priest's ward door
+
+1. `art/masters/tombWall/expert.webp` — the expert wall, for the brushwork and the stone only
+
+```
+FRAME: square, 1:1. The door stands alone, centred and seen straight on, filling about 85% of the height. Do not crop it and do not re-compose it.
+
+STYLE: hand-painted digital art, matte: soft brush texture, grit and speckle, NO outlines anywhere, every edge is a change of value between painted areas. Even, soft light from the upper left, lamplit and warm. No glow cast on anything, no light pool, no cast shadow, no ground, no floor, no steps. No text, no letters, no hieroglyphs, no figures, no frame, no border.
+
+THE ATTACHED IMAGE IS A WALL, already painted in the finished style of this set. Take ONLY its brushwork, its stone and its colour range. Nothing of the wall itself appears in the picture.
+
+SUBJECT: A temple door: a tall double-leaf door of dark wood in a cut-stone frame shaped like a false-door stela, a torus moulding and a cavetto cornice above the lintel. Bronze hinge pins top and bottom, the leaves bound shut with cord through two bronze rings and sealed with a temple seal in grey clay. The door is shut.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges, right up to the door's frame. No wall, no gradient, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/doors --name=ward-expert --size=512`
+
+### `door/ward-master` — the pharaoh's ward door
+
+1. `art/masters/tombWall/master.webp` — the master wall, for the brushwork and the stone only
+
+```
+FRAME: square, 1:1. The door stands alone, centred and seen straight on, filling about 85% of the height. Do not crop it and do not re-compose it.
+
+STYLE: hand-painted digital art, matte: soft brush texture, grit and speckle, NO outlines anywhere, every edge is a change of value between painted areas. Even, soft light from the upper left, lamplit and warm. No glow cast on anything, no light pool, no cast shadow, no ground, no floor, no steps. No text, no letters, no hieroglyphs, no figures, no frame, no border.
+
+THE ATTACHED IMAGE IS A WALL, already painted in the finished style of this set. Take ONLY its brushwork, its stone and its colour range. Nothing of the wall itself appears in the picture.
+
+SUBJECT: A pharaoh's tomb door: no leaves at all, a single great blocking stone of black granite lowered into the doorway between granite jambs, its face polished, a gold-leafed band along its top edge. The granite lintel above it carries a carved winged sun disc, no writing. The door is shut.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges, right up to the door's frame. No wall, no gradient, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/doors --name=ward-master --size=512`
+
+### `door/ward-wizard` — the gods' ward door
+
+1. `art/masters/tombWall/wizard.webp` — the wizard wall, for the brushwork and the stone only
+
+```
+FRAME: square, 1:1. The door stands alone, centred and seen straight on, filling about 85% of the height. Do not crop it and do not re-compose it.
+
+STYLE: hand-painted digital art, matte: soft brush texture, grit and speckle, NO outlines anywhere, every edge is a change of value between painted areas. Even, soft light from the upper left, lamplit and warm. No glow cast on anything, no light pool, no cast shadow, no ground, no floor, no steps. No text, no letters, no hieroglyphs, no figures, no frame, no border.
+
+THE ATTACHED IMAGE IS A WALL, already painted in the finished style of this set. Take ONLY its brushwork, its stone and its colour range. Nothing of the wall itself appears in the picture.
+
+SUBJECT: The richest door in the land: a tall pylon gateway in miniature, its jambs faced with gilded panels and bands of blue faience tile, a winged sun disc in gold leaf over the lintel. In the opening a double-leaf door of ebony clad in hammered electrum, shut flush, heavy bronze bolts. Rich materials only, nothing glowing, nothing magical. The door is shut.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges, right up to the door's frame. No wall, no gradient, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/doors --name=ward-wizard --size=512`
+
+### `door/colour` — the colour door, one for every floor
+
+1. `art/masters/tombWall/starter.webp` — the starter wall, for the brushwork and the stone only
+
+```
+FRAME: square, 1:1. The door stands alone, centred and seen straight on, filling about 85% of the height. Do not crop it and do not re-compose it.
+
+STYLE: hand-painted digital art, matte: soft brush texture, grit and speckle, NO outlines anywhere, every edge is a change of value between painted areas. Even, soft light from the upper left, lamplit and warm. No glow cast on anything, no light pool, no cast shadow, no ground, no floor, no steps. No text, no letters, no hieroglyphs, no figures, no frame, no border.
+
+THE ATTACHED IMAGE IS A WALL, already painted in the finished style of this set. Take ONLY its brushwork, its stone and its colour range. Nothing of the wall itself appears in the picture.
+
+SUBJECT: A plain inner door of a tomb: a single leaf of weathered wooden planks on two cross-battens, in a squared limestone frame, an iron ring for a handle and an empty iron hasp where a lock would hang. Plain, ordinary, nothing on it: the same door on every floor. The door is shut.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges, right up to the door's frame. No wall, no gradient, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/doors --name=colour --size=512`
+
+
 ## Collection icons — sellables
 
 The pictures the Collection shows for the junk the player finds and sells: one per sellable (`sellable/<id>`, landing
