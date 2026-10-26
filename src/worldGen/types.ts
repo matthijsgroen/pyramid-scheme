@@ -5,6 +5,7 @@ import type {
   HandleSide,
   Patron,
   SiteCondition,
+  StairLink,
   WallDecorationKind,
 } from "../game/siteTypes"
 import type { PlacedContainer } from "../game/regions"
@@ -34,7 +35,7 @@ export type SubSection = {
   difficulty: Difficulty
   /** The tileset this path is drawn in. Mirrors game/siteTypes.ts. */
   tileset?: Tileset
-  end: "treasure" | "staircase" | { stairId: string }
+  end: "treasure" | "staircase" | StairLink
   gate?:
     | {
         type: "floor-key"
@@ -97,8 +98,8 @@ export type FloorConfig = {
   /** The tileset this floor is drawn in. Mirrors game/siteTypes.ts. */
   tileset?: Tileset
   end: "treasure"
-  exitOrStaircase: "exit" | "none" | "staircase" | { stairId: string }
-  entrance?: "stairhead" | { stairId: string }
+  exitOrStaircase: "exit" | "none" | "staircase" | StairLink
+  entrance?: "stairhead" | StairLink
   sideSections: SideSection[]
   mainEndReward?: TreasureReward
   rewards?: (TreasureReward | undefined)[]

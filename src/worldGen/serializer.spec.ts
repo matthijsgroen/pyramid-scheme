@@ -467,3 +467,37 @@ describe("generateFile — the web survives the bake", () => {
     expect(emitted).toContain(`webDoors: [{"key":"web:w3#1","at":{"seam":2}}]`)
   })
 })
+
+describe("generateFile — which way a stair runs survives the bake", () => {
+  const floor = (goes: boolean) => ({
+    pathPuzzles: 1,
+    difficulty: "wizard" as const,
+    end: "treasure" as const,
+    entrance: { stairId: "in", ...(goes ? { goes: "down" as const } : {}) },
+    exitOrStaircase: { stairId: "out", ...(goes ? { goes: "up" as const } : {}) },
+    sideSections: [
+      {
+        pathPuzzles: 0,
+        difficulty: "wizard" as const,
+        end: { stairId: "side", ...(goes ? { goes: "up" as const } : {}) },
+      },
+    ],
+  })
+  const link = (emitted: string, field: string) => {
+    const found = emitted.match(new RegExp(`${field}: \\{ stairId: "(\\w+)"(?:, goes: "(\\w+)")? \\}`))
+    return found && { stairId: found[1], ...(found[2] ? { goes: found[2] } : {}) }
+  }
+
+  it("`goes` is written and read back", () => {
+    const emitted = generateFile({ testJourney: [[floor(true)]] })
+    expect(link(emitted, "entrance")).toEqual({ stairId: "in", goes: "down" })
+    expect(link(emitted, "exitOrStaircase")).toEqual({ stairId: "out", goes: "up" })
+    expect(link(emitted, "end")).toEqual({ stairId: "side", goes: "up" })
+  })
+
+  it("a stair running the default way writes no `goes`", () => {
+    const emitted = generateFile({ testJourney: [[floor(false)]] })
+    expect(emitted).not.toContain("goes")
+    expect(link(emitted, "exitOrStaircase")).toEqual({ stairId: "out" })
+  })
+})

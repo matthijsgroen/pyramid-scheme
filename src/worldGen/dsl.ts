@@ -174,6 +174,9 @@ export type SideSectionConstraint<TExtra extends string = never> = {
   wallDecorations?: WallDecorationKind[]
   /** "staircase" ends the path at a stairhead into the next floor instead of a treasure room. */
   end?: "treasure" | "staircase"
+  /** The index of the floor a "staircase" end leads to; unset, the next floor. Always a later floor of the same site,
+   * entered by no other stair. Read only with `end: "staircase"`. Structural. */
+  toFloor?: number
   /** Invisible without the Detection perk. */
   hidden?: boolean
   /** Isolates this section's cells from leftover maze edges in a compact layout, so a
@@ -185,6 +188,13 @@ export type SideSectionConstraint<TExtra extends string = never> = {
 export type FloorConstraint<TExtra extends string = never> = {
   pathPuzzles?: PathPuzzlesPreset | number
   difficulty?: Difficulty
+  /** The index of the floor this floor's main path ends in a stair to, in place of an exit. Unset, the main path
+   * stairs to the next floor when no other stair enters that floor, as a floor on the main walk always has. Always a
+   * later floor of the same site, entered by no other stair. Structural. */
+  toFloor?: number
+  /** How far down this floor lies; unset, its index. A larger depth is further down, so a stair to a shallower floor
+   * climbs. Two floors a stair joins never lie at one depth. Structural: it decides which way each stair runs. */
+  depth?: number
   /** What this floor and its paths are drawn in, apart from the `difficulty` its boards are built at. Unset
    * inherits the site's, else the floor is drawn in its `difficulty`. */
   tileset?: Tileset
@@ -645,7 +655,7 @@ export const sidePath = (opts: PathOpts = {}): SideSectionConstraint => {
 const wardKeyTier = (tombId: string, index: number): Difficulty | undefined =>
   wardKeyDifficulty(TOMB_PERK_IDS[tombId]?.[index])
 
-/** A side path gated by a ward key (tomb treasure), ending in a stairhead to the next floor. */
+/** A side path gated by a ward key (tomb treasure), ending in a stairhead to the next floor, or to `toFloor`. */
 export const wardPath = (opts: PathOpts & { tomb: string; index: number }): SideSectionConstraint => {
   const { puzzles, tier, tomb: tombId, index, ...rest } = opts
   const resolvedTier = tier ?? wardKeyTier(tombId, index)

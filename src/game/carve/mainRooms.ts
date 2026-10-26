@@ -9,6 +9,7 @@ import {
   familyOrdinals,
   puzzleRoomSpec,
   regionBarrierDoorSpec,
+  stairGoesOf,
 } from "./roomSpecs"
 import { MAIN_SECTION_ADDRESS } from "./sections"
 import { pass } from "./state"
@@ -72,7 +73,7 @@ export const mainRooms = pass(
         if (config.entrance) {
           const stairId =
             typeof config.entrance === "object" ? config.entrance.stairId : stairOnThisFloor(floorRef, "entrance")
-          rooms.set(key, { roomType: "portal", stairId })
+          rooms.set(key, { roomType: "portal", stairId, stairGoes: stairGoesOf(config.entrance, "up") })
         } else rooms.set(key, { roomType: "portal" })
       } else if (mi === goal) {
         if (!goalIsChest) return
@@ -148,7 +149,7 @@ export const mainRooms = pass(
     else if (config.exitOrStaircase !== "none") {
       const stairId =
         typeof config.exitOrStaircase === "object" ? config.exitOrStaircase.stairId : stairOnThisFloor(floorRef, "main")
-      rooms.set(keyOf(exit), { roomType: "portal", stairId })
+      rooms.set(keyOf(exit), { roomType: "portal", stairId, stairGoes: stairGoesOf(config.exitOrStaircase, "down") })
     }
 
     state.mainRooms = rooms

@@ -253,6 +253,14 @@ const leverArmTransform = (angleDeg: number): string =>
 
 const NO_STATES: ReadonlyMap<string, string> = new Map()
 
+// A stairhead climbs when its link says so; a cell carrying no direction climbs only at the floor's own entrance.
+const stairClimbs = (
+  grid: Pick<FloorGrid, "entrancePos">,
+  cell: { stairGoes?: "up" | "down" },
+  r: number,
+  c: number
+) => (cell.stairGoes ? cell.stairGoes === "up" : r === grid.entrancePos[0] && c === grid.entrancePos[1])
+
 /** Every node's own furniture on one floor, in map space — chests beside treasure rooms, flights at
  * stairheads. See `NodeSprite` for why this is a list and not a child of each node's own `<g>`.
  *
@@ -626,7 +634,7 @@ export const nodeSpritesFor = (
           mirrored: false,
         })
       } else if (kind === "stairhead") {
-        const goesUp = r === grid.entrancePos[0] && c === grid.entrancePos[1]
+        const goesUp = stairClimbs(grid, cell, r, c)
         // A FLIGHT IS AIMED BY WHICH ONE IS DRAWN, not by turning one. Descending, it can only come
         // TOWARD the viewer — receding, the rise subtracts what the going adds and the treads collapse
         // into one band — so a stairhead entered from the side takes the flight that walks across X
@@ -1930,9 +1938,8 @@ export const SiteMapView = ({
                 // A fogged room never reaches here — the loop above draws unlit cells — so no guard is
                 // needed to keep a chest out of the dark.
                 const hasChest = shapeKind === "treasure" && !cell.tags?.includes("shop")
-                // A stairhead at the floor's own entrance is the way back UP; any other descends.
                 const isStair = shapeKind === "stairhead"
-                const goesUp = isStair && r === grid.entrancePos[0] && c === grid.entrancePos[1]
+                const goesUp = isStair && stairClimbs(grid, cell, r, c)
                 const hasStair =
                   isStair && !!tileOrPlaceholder(cellTileset(cell, grid, tier), goesUp ? "stair-up" : "stair-down")
                 // A DRAWN EXIT LOSES ITS MARKER for the stairhead's reason: the art IS the node, and unlike

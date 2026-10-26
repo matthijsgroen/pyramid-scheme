@@ -47,7 +47,8 @@ const buildDslSection = <TExtra extends string>(
   floor: FloorStairAddress,
   path: string,
   parentLoot: false | undefined,
-  parentTileset: Tileset | undefined
+  parentTileset: Tileset | undefined,
+  stairTargets: Map<string, number> | undefined
 ): SideSection => {
   const gate = specToGate(cs.gate)
   const sectionDifficulty = cs.difficulty ?? difficulty
@@ -62,9 +63,11 @@ const buildDslSection = <TExtra extends string>(
     floor,
     `${path}.`,
     loot,
-    tileset
+    tileset,
+    stairTargets
   )
   const end = cs.end === "staircase" ? { stairId: stairIdAt({ ...floor, path }) } : ("treasure" as const)
+  if (end !== "treasure" && cs.toFloor !== undefined) stairTargets?.set(end.stairId, cs.toFloor)
   // A treasure end with no authored reward and no gate is a plain loot slot — default it to the
   // untagged `treasure` slot (filled by whatever's spare) — unless the section is lootless, where it holds
   // nothing. A gated end already becomes a slot via its open gate (collectSlots); a staircase end bears no reward.
@@ -117,10 +120,20 @@ const buildDslSections = <TExtra extends string>(
   pathPrefix: string,
   parentLoot: false | undefined,
   parentTileset: Tileset | undefined,
+  stairTargets: Map<string, number> | undefined,
   startIndex = 0
 ): SideSection[] =>
   (constraintSections ?? []).map((cs, i) =>
-    buildDslSection(cs, difficulty, resolveReward, floor, `${pathPrefix}${startIndex + i}`, parentLoot, parentTileset)
+    buildDslSection(
+      cs,
+      difficulty,
+      resolveReward,
+      floor,
+      `${pathPrefix}${startIndex + i}`,
+      parentLoot,
+      parentTileset,
+      stairTargets
+    )
   )
 
 export type BuildSideSectionsOptions<TExtra extends string = never> = {
@@ -137,6 +150,9 @@ export type BuildSideSectionsOptions<TExtra extends string = never> = {
   journeyId: string
   /** Where this floor sits, for the ids its stairheads take (game/stairAddress.ts). */
   floor: FloorStairAddress
+  /** Filled with each authored stair's id → the floor index its `toFloor` names, for the stair wiring
+   * (buildSite.ts's wireSideSectionStaircases). A stair naming no floor is left out: it leads to the next one. */
+  stairTargets?: Map<string, number>
   constraintSections?: SideSectionConstraint<TExtra>[]
   /** `false` when the floor these sections hang off is lootless; they inherit it unless they say otherwise. */
   loot?: false
@@ -211,6 +227,7 @@ export const buildSideSections = <TExtra extends string = never>(
     resolveReward,
     journeyId,
     floor,
+    stairTargets,
     constraintSections,
     loot,
     hasMapPieceBranch,
@@ -251,7 +268,17 @@ export const buildSideSections = <TExtra extends string = never>(
   }
 
   sections.push(
-    ...buildDslSections(constraintSections, difficulty, resolveReward, floor, "s", loot, undefined, sections.length)
+    ...buildDslSections(
+      constraintSections,
+      difficulty,
+      resolveReward,
+      floor,
+      "s",
+      loot,
+      undefined,
+      stairTargets,
+      sections.length
+    )
   )
 
   const colorCount = Math.min(keyColors ?? 1, 5)

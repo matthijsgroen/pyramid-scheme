@@ -1,4 +1,5 @@
 import type { FloorConfig, SideSection, SiteConfig, TreasureReward } from "./types"
+import type { StairLink } from "@/game/siteTypes"
 import type { PlacedContainer } from "@/game/regions"
 import { isForkSwitch, isSequence, isWeights, type Control, type GateTerms, type Obstacle } from "@/game/obstacles"
 import { WORLD_SEED } from "./data"
@@ -63,8 +64,12 @@ const serializeLootByIndex = (m: Record<number, false>): string =>
     .map(k => `${k}: false`)
     .join(", ")} }`
 
+// A stair's link: its id, and which way it runs only where that is not the default.
+const serializeStairLink = (link: StairLink): string =>
+  `{ stairId: "${link.stairId}"${link.goes ? `, goes: "${link.goes}"` : ""} }`
+
 const serializeSideSection = (s: SideSection): string => {
-  const endStr = typeof s.end === "object" ? `{ stairId: "${s.end.stairId}" }` : `"${s.end}"`
+  const endStr = typeof s.end === "object" ? serializeStairLink(s.end) : `"${s.end}"`
   const parts = [`pathPuzzles: ${s.pathPuzzles}`, `difficulty: "${s.difficulty}"`, `end: ${endStr}`]
   if (s.tileset !== undefined) parts.splice(2, 0, `tileset: "${s.tileset}"`)
   if (s.label !== undefined) parts.unshift(`label: ${JSON.stringify(s.label)}`)
@@ -183,10 +188,10 @@ const floorFieldEmitters: {
   tileset: v => `tileset: "${v}"`,
   end: () => `end: "treasure"`,
   exitOrStaircase: v =>
-    typeof v === "object" ? `exitOrStaircase: { stairId: "${v.stairId}" }` : `exitOrStaircase: "${v}"`,
+    typeof v === "object" ? `exitOrStaircase: ${serializeStairLink(v)}` : `exitOrStaircase: "${v}"`,
   sideSections: v =>
     `sideSections: ${v.length === 0 ? "[]" : `[\n${v.map(s => `      ${serializeSideSection(s)}`).join(",\n")},\n    ]`}`,
-  entrance: v => `entrance: ${typeof v === "object" ? `{ stairId: "${v.stairId}" }` : `"${v}"`}`,
+  entrance: v => `entrance: ${typeof v === "object" ? serializeStairLink(v) : `"${v}"`}`,
   encounter: v => `encounter: ${serializeEncounter(v)}`,
   encounterArgs: v => `encounterArgs: ${JSON.stringify(v)}`,
   theme: v => `theme: ${JSON.stringify(v)}`,

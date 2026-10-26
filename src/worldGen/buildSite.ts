@@ -1,4 +1,4 @@
-import type { DecorationKind, Patron, SiteCondition, Tileset, WallDecorationKind } from "../game/siteTypes"
+import type { DecorationKind, Patron, SiteCondition, StairLink, Tileset, WallDecorationKind } from "../game/siteTypes"
 import type { Difficulty, FloorConfig, SideSection, Tier, TreasureReward } from "./types"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { GLOBAL_DEFAULTS } from "./spec/global"
@@ -182,32 +182,77 @@ export const wireStaircases = (floors: FloorConfig[], site: { journeyId: string;
   }
 }
 
-// Wires floors[fi+1].entrance to whichever of floors[fi]'s own side sections ends in a
-// stairhead — the shared floor-to-floor chaining mechanism for authored multi-floor sites,
-// whether the shortcut is ward-gated by an external key (a pyramid's authored floors[]) or
-// self-gated by the floor's own treasure (a tomb's shortcut — pyramid-interior-design.md
-// §8, "the treasure IS the key"). Both are just a side section whose `end` is a stairhead.
-// A floor reached by a side stair is off the main path, so it has no exit: its way out is
-// that stair, back up (one exit per site, at the main path's end).
+/** What an authored site says about its stairs beyond the default chain, all by floor index. */
+export type StairLinks = {
+  /** Per floor: the floor its main path stairs to, where authored. */
+  toFloor?: readonly (number | undefined)[]
+  /** Per floor: how far down it lies, where authored; unset, its index. */
+  depth?: readonly (number | undefined)[]
+  /** A side section's stairId → the floor its stair leads to, where authored; unset, the next floor. */
+  sectionTargets?: ReadonlyMap<string, number>
+}
+
+// Wires an authored site's stairs: each side section ending in a stairhead, and each floor's main path, pairs with the
+// entrance of the floor it leads to by one shared stairId. This is the chaining mechanism for authored multi-floor
+// sites, whether a shortcut is ward-gated by an external key (a pyramid's authored floors[]) or self-gated by the
+// floor's own treasure (a tomb's, pyramid-interior-design.md §8: "the treasure IS the key").
 //
-// A floor ON THE MAIN WALK with no stairhead section of its own goes down by its main path instead, the way a
-// pyramid's main floors do (wireStaircases), so a site authored floor by floor can be one walk down to a
-// single exit on its last floor. A floor reached by a side stair stays off that walk and gains no main stair.
+// - A stair section leads to its `toFloor`, else the next floor. The floor it enters is off the main walk: one exit
+//   per site, at the main path's end, so that floor's way out is the stair back up, unless it names one of its own.
+// - A floor's main path stairs to its `toFloor` where authored. Unset, a floor on the main walk stairs to the next
+//   floor when no other stair enters that floor, so a site authored floor by floor is one walk down to a single exit
+//   on its last floor; a floor off the main walk keeps no way out of its own.
+// - Each stair runs by the two floors' depths (unset, the floor index): to a deeper floor it goes down, to a
+//   shallower one up. Only a direction other than the default is written: a floor's entrance goes up, every other
+//   stair down.
+//
+// Only a floor's own top-level side sections stair to another floor; a `toFloor` on a deeper section is refused.
+// A stair always leads to a LATER floor index, entered by no other stair, at another depth; anything else is refused
+// by name. So floors are wired in index order, and the reachability walk, which visits them in that order, holds.
 export const wireSideSectionStaircases = (
   floors: FloorConfig[],
-  site: { journeyId: string; pyramidIndex: number }
+  site: { journeyId: string; pyramidIndex: number },
+  links: StairLinks = {}
 ): void => {
-  for (let fi = 0; fi < floors.length - 1; fi++) {
-    const stairSection = floors[fi].sideSections.find(s => typeof s.end === "object")
-    if (stairSection && typeof stairSection.end === "object") {
-      floors[fi + 1].entrance = { stairId: stairSection.end.stairId }
-      floors[fi + 1].exitOrStaircase = "none"
-    } else if (floors[fi].exitOrStaircase !== "none") {
-      const id = stairIdAt({ ...site, floorIndex: fi, path: "main" })
-      floors[fi].exitOrStaircase = { stairId: id }
-      floors[fi + 1].entrance = { stairId: id }
-    }
+  const depthOf = (fi: number) => links.depth?.[fi] ?? fi
+  const entered = new Set<number>()
+  const unwired = new Set(links.sectionTargets?.keys())
+  const link = (from: number, to: number, stairId: string): StairLink => {
+    const refuse = (why: string) =>
+      new Error(
+        `buildSite: journey=${site.journeyId} pyramid=${site.pyramidIndex + 1} floor=${from}: stair ${stairId} leads to floor ${to}, ${why}`
+      )
+    if (to === from) throw refuse("its own floor")
+    if (to < from) throw refuse("an earlier floor; a stair leads only to a later one")
+    if (!Number.isInteger(to) || to >= floors.length)
+      throw refuse(`which the site does not have (it builds ${floors.length})`)
+    if (entered.has(to)) throw refuse("which another stair already enters")
+    if (depthOf(to) === depthOf(from)) throw refuse(`which lies at the same depth (${depthOf(to)})`)
+    entered.add(to)
+    const climbs = depthOf(to) < depthOf(from)
+    floors[to].entrance = climbs ? { stairId, goes: "down" } : { stairId }
+    return climbs ? { stairId, goes: "up" } : { stairId }
   }
+  for (let fi = 0; fi < floors.length; fi++) {
+    const floor = floors[fi]
+    for (const section of floor.sideSections) {
+      if (typeof section.end !== "object") continue
+      const to = links.sectionTargets?.get(section.end.stairId) ?? fi + 1
+      unwired.delete(section.end.stairId)
+      section.end = link(fi, to, section.end.stairId)
+      floors[to].exitOrStaircase = "none"
+    }
+    const mainId = stairIdAt({ ...site, floorIndex: fi, path: "main" })
+    const authored = links.toFloor?.[fi]
+    if (authored !== undefined) floor.exitOrStaircase = link(fi, authored, mainId)
+    else if (floor.exitOrStaircase !== "none" && fi + 1 < floors.length && !entered.has(fi + 1))
+      floor.exitOrStaircase = link(fi, fi + 1, mainId)
+  }
+  // Only a floor's own top-level sections take a stair; a target named anywhere else would be lost without a word.
+  if (unwired.size > 0)
+    throw new Error(
+      `buildSite: journey=${site.journeyId} pyramid=${site.pyramidIndex + 1}: stair ${[...unwired].join(", ")} names a floor but is no floor's own side section, so it leads nowhere`
+    )
 }
 
 // ── Pyramid site construction ─────────────────────────────────────────────────
@@ -299,6 +344,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     // already understands it.
     const floors = constraint.floors as (FloorConstraint<TExtra> | null)[]
     const floorConfigs: FloorConfig[] = []
+    const sectionTargets = new Map<string, number>()
     for (let fi = 0; fi < floors.length; fi++) {
       const fc = floors[fi] ?? {}
       const floorPP = typeof fc.pathPuzzles === "number" ? fc.pathPuzzles : pp
@@ -314,6 +360,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         // than every floor of it repeating one roll.
         journeyId: `${journeyId}:${i}:floor${fi}`,
         floor: { journeyId, pyramidIndex: i, floorIndex: fi },
+        stairTargets: sectionTargets,
         constraintSections: floorSections,
         loot: floorLoot,
         // Floor-level declared side/hidden paths. Authored per-floor (fc.*); no pyramid/tier
@@ -397,7 +444,15 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         })
       )
     }
-    wireSideSectionStaircases(floorConfigs, { journeyId, pyramidIndex: i })
+    wireSideSectionStaircases(
+      floorConfigs,
+      { journeyId, pyramidIndex: i },
+      {
+        toFloor: floors.map(fc => fc?.toFloor),
+        depth: floors.map(fc => fc?.depth),
+        sectionTargets,
+      }
+    )
     initPuzzleChains(floorConfigs)
     return { floors: floorConfigs }
   }

@@ -240,6 +240,17 @@ describe("what a world-spec setting may and may not move", () => {
         }),
     ],
     [
+      "which way a stair runs",
+      c =>
+        edited(c, (n, isFloor) => {
+          const climbing = (link: unknown) => (link && typeof link === "object" ? { ...link, goes: "up" } : link)
+          if (isFloor) {
+            n.entrance = climbing(n.entrance)
+            n.exitOrStaircase = climbing(n.exitOrStaircase)
+          } else n.end = climbing(n.end)
+        }),
+    ],
+    [
       "the tileset a floor and its paths are drawn in",
       c =>
         edited(c, n => {

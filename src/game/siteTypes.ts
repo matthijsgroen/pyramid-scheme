@@ -298,6 +298,8 @@ export type RoomCell = {
   // (siteValidator.ts, SiteMapView.tsx) classify a room without knowing family ids itself.
   tags?: string[]
   stairId?: string
+  /** Which way a stairhead's flight runs from this room: its link's `goes`, else that link's default. */
+  stairGoes?: StairGoes
   decoration?: DecorationKind
   /** The single-cell kind this room stands instead when `decoration` covers more than one cell and the
    * room has no free floor that shape (roomClaims.ts). Picked from the same pool by the same hash, so the
@@ -534,6 +536,11 @@ import type { Difficulty } from "@/data/difficultyLevels"
 /** What a floor, path or room is DRAWN in: its tiles, palette, mood and encounter wall. A rank is the stone
  * built for that difficulty; `cave` is a set of its own. Apart from `difficulty`, which picks the board. */
 export type Tileset = Difficulty | "cave"
+/** Which way a stair runs from where it stands. */
+export type StairGoes = "up" | "down"
+/** A stairhead's link to its peer on another floor: the shared `stairId` pairs the two. `goes` is written only where
+ * it differs from the default (a floor's entrance goes up, every other stair down); it is drawn and moves nothing. */
+export type StairLink = { stairId: string; goes?: StairGoes }
 export type SubSection = {
   /** The authored name for this path, if it has one — what a save files its cells under, in place of
    * the positional `s0`/`s0.1`. See SideSectionConstraint.label and cellIdentity.ts. */
@@ -542,7 +549,7 @@ export type SubSection = {
   difficulty: Difficulty
   /** The tileset this path is drawn in, in place of the floor's tileset or its own `difficulty`. */
   tileset?: Tileset
-  end: "treasure" | "staircase" | { stairId: string }
+  end: "treasure" | "staircase" | StairLink
   gate?: GateConfig
   endReward?: TreasureReward
   /** A loot end placement left empty. It stays a loot end, so the carve never takes it for a free end to put a key in. */
@@ -600,9 +607,9 @@ export type FloorConfig = {
   /** The tileset this floor is drawn in, in place of its `difficulty`; its paths inherit it. */
   tileset?: Tileset
   end: "treasure"
-  exitOrStaircase: "exit" | "none" | "staircase" | { stairId: string }
-  /** If set, the entrance room becomes an up-stairhead with this stairId. */
-  entrance?: "stairhead" | { stairId: string }
+  exitOrStaircase: "exit" | "none" | "staircase" | StairLink
+  /** If set, the entrance room becomes a stairhead with this stairId, going up unless its link says otherwise. */
+  entrance?: "stairhead" | StairLink
   sideSections: SideSection[]
   /** Pool of decoration kinds the main path's rooms are dressed from. */
   decorations?: DecorationKind[]

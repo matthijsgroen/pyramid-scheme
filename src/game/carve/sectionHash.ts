@@ -1,5 +1,5 @@
 import { hashString } from "@/support/hashString"
-import type { FloorConfig, SideSection, SubSection } from "../siteTypes"
+import type { FloorConfig, SideSection, StairLink, SubSection } from "../siteTypes"
 
 // A section hash is a run's handle on a stretch of floor: saved explored cells and found hidden
 // corridors are filed under it, and a cell whose hash no longer matches is dropped as stale. So it
@@ -21,13 +21,17 @@ import type { FloorConfig, SideSection, SubSection } from "../siteTypes"
 //
 // `legacySectionHash` is the same hash without that substitution, carried on every cell so a save written
 // under the old scheme keeps matching its own cells. Delete both once no live save predates it.
+// Which way a stair runs is drawn, never carved, so a stair link's `goes` stays out of every hash.
+const carvedLink = <T extends string | StairLink>(link: T): T | StairLink =>
+  typeof link === "object" ? { stairId: link.stairId } : link
+
 export const computeLegacyMainSectionHash = (config: FloorConfig): string =>
   String(
     hashString(
       JSON.stringify({
         pathPuzzles: config.pathPuzzles,
         difficulty: config.difficulty,
-        exitOrStaircase: config.exitOrStaircase,
+        exitOrStaircase: carvedLink(config.exitOrStaircase),
       })
     )
   )
@@ -44,7 +48,7 @@ export const computeLegacySideSectionHash = (
         parentIdx,
         pathPuzzles: section.pathPuzzles,
         difficulty: section.difficulty,
-        end: section.end,
+        end: carvedLink(section.end),
         hidden: section.hidden,
         sealed: section.sealed,
         encounter: section.encounter,
@@ -69,7 +73,7 @@ export const computeMainSectionHash = (config: FloorConfig, isolated: boolean): 
       JSON.stringify({
         pathPuzzles: config.pathPuzzles,
         difficulty: config.difficulty,
-        exitOrStaircase: config.exitOrStaircase,
+        exitOrStaircase: carvedLink(config.exitOrStaircase),
         isolated,
         ...carveShape(config),
       })
@@ -91,7 +95,7 @@ export const computeSideSectionHash = (
         ...carveShape(floor),
         pathPuzzles: section.pathPuzzles,
         difficulty: section.difficulty,
-        end: section.end,
+        end: carvedLink(section.end),
         hidden: section.hidden,
         isolated,
         gateType: section.gate?.type,

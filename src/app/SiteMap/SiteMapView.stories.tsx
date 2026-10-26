@@ -565,3 +565,30 @@ export const ExplorerAtStairUp: Story = {
     return { grid, revealAllCells: true, explorerPos: grid.entrancePos }
   })(),
 }
+
+// A made-up cave floor whose main path ends in a stair UP: the way on climbs to a shallower floor, so its
+// flight is the climbing one, unlit, though it stands at the far end of the floor rather than at its entrance.
+export const StairClimbingOutOfACave: Story = {
+  name: "A stair climbing out of a cave",
+  args: (() => {
+    const result = assembleFloor(
+      "story-cave-climb",
+      {
+        pathPuzzles: 2,
+        difficulty: "wizard",
+        tileset: "cave",
+        end: "treasure",
+        entrance: { stairId: "story-cave-in" },
+        exitOrStaircase: { stairId: "story-cave-out", goes: "up" },
+        sideSections: [],
+      },
+      7
+    )
+    if (!result.success) throw new Error("story grid assembly failed")
+    const grid = revealAll(result.grid)
+    const climb = grid.cells
+      .flatMap((row, r) => row.map((cell, c) => ({ cell, at: [r, c] as const })))
+      .find(({ cell }) => cell.type === "room" && cell.stairId === "story-cave-out")
+    return { grid, revealAllCells: true, explorerPos: climb?.at ?? grid.entrancePos }
+  })(),
+}

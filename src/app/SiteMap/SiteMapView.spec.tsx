@@ -1957,6 +1957,25 @@ describe("a staircase is drawn as the flight it is", () => {
     expect(onClick).toHaveBeenCalledWith(0, 1)
   })
 
+  it("a stair marked up at a floor's main end draws the climbing flight and no cresset", () => {
+    const marked = (stairGoes?: "up" | "down") => {
+      const grid = makeGrid([
+        [empty, { ...portal("reachable", "s1"), ...(stairGoes ? { stairGoes } : {}) } as GridCell, empty],
+        [empty, corridor("completed", false), empty],
+      ])
+      return { ...grid, entrancePos: [1, 1] as const }
+    }
+    const pools = (container: HTMLElement) => container.querySelectorAll("[data-light-pool]").length
+
+    const down = render(<SiteMapView grid={marked()} revealAllCells />).container
+    expect(urlOf(stairsIn(down)[0])).toContain("stair-down")
+    expect(pools(down)).toBeGreaterThan(0)
+
+    const up = render(<SiteMapView grid={marked("up")} revealAllCells />).container
+    expect(urlOf(stairsIn(up)[0])).toContain("stair-up")
+    expect(pools(up)).toBe(0)
+  })
+
   it("draws the same flight at a rank with no stair art of its own", () => {
     // The flights live in `tiles/default/`, the way the explorer and the sand do, so a rank that has
     // painted none of its own still shows one: `tileUrl` falls back <tier>/<name> to default/<name>.
