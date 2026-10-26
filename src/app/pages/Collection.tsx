@@ -3,7 +3,6 @@ import { use, useEffect, useId, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { HieroglyphTile } from "@/ui/molecules/HieroglyphTile"
 import { useInventory } from "@/app/Inventory/useInventory"
-import { FezContext } from "../fez/context"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
@@ -75,21 +74,13 @@ const DetailPanel: FC<{
 export const CollectionPage: FC = () => {
   const [selectedItem, setSelectedItem] = useState<CollectionItem | null>(null)
   const { t } = useTranslation("common")
-  const { inventory, addItem } = useInventory()
+  const { addItem } = useInventory()
   const { isDevelopMode } = use(DevelopContext)
   const panelId = useId()
   const { tabs, markTabSeen } = useCollectionNews()
   const [picked, setPicked] = useState<string | undefined>()
   // What was new in the open tab when it opened: its badges stay while the player looks.
   const [opened, setOpened] = useState<{ tab: string; ids: readonly string[] }>({ tab: "", ids: [] })
-
-  const { showConversation } = use(FezContext)
-
-  useEffect(() => {
-    if (inventory && Object.keys(inventory).length > 0) {
-      showConversation("collectionIntro")
-    }
-  }, [inventory, showConversation])
 
   const shown = tabs.filter(tab => tab.shown)
   const current = shown.find(tab => tab.id === picked) ?? shown.find(tab => tab.newIds.length > 0) ?? shown[0]
