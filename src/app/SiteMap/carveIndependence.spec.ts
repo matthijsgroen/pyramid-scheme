@@ -46,9 +46,10 @@ const LEVEL = 3
 
 describe("a save survives the floor being carved somewhere else", () => {
   const before = gridFor(JOURNEY, LEVEL, 0)
-  // A seed one step along: the corridors land elsewhere AND the walk comes out a different length,
-  // which is the move compaction will make on all 74 floors. Nothing authored changes.
-  const after = gridFor(JOURNEY, LEVEL, 0, 1)
+  // A seed two steps along (the next one does not carve this floor): the corridors land elsewhere AND the
+  // walk comes out a different length, which is the move compaction will make on all 74 floors. Nothing
+  // authored changes.
+  const after = gridFor(JOURNEY, LEVEL, 0, 2)
 
   it("really did re-carve, and re-LENGTH — otherwise nothing below proves anything", () => {
     const drawn = (grid: FloorGrid) => grid.cells.flat().filter(cell => cell.type !== "empty").length

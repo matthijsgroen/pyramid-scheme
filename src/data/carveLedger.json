@@ -1,1 +1,36 @@
-{}
+{
+  "expert_1#3#0": {
+    "kind": "sidePaths",
+    "hash": "80f6505920c62bd6ef1667fa30c1cc4ebc940e24",
+    "sidePaths": {
+      "outsideLock": [
+        4,
+        5,
+        6
+      ],
+      "corridorsTakeTwo": true
+    }
+  },
+  "expert_1#4#0": {
+    "kind": "sidePaths",
+    "hash": "aa37cbbd5e064927a13ffa8a2a7cf705ed81fca3",
+    "sidePaths": {
+      "outsideLock": [
+        4,
+        5,
+        6
+      ],
+      "corridorsTakeTwo": true
+    }
+  },
+  "junior_4#2#0": {
+    "kind": "sidePaths",
+    "hash": "9063e0d66f3dee258e70fb87924b1aa5f13af713",
+    "sidePaths": {
+      "outsideLock": [
+        2,
+        3
+      ]
+    }
+  }
+}
