@@ -9,7 +9,9 @@ import type { LockNesting, LockNestingFault, PlacedLock } from "./floorLocks"
 import type { LockFault, RealisationBinding } from "./lockCompile"
 import type { ActivityId } from "./activities"
 import type { WebDoorPlacement } from "./webDoors"
-export type RoomType = "portal" | "fork" | "encounter"
+/** `chamber` is a pass-through room on a path: a corridor node widened into a room that serves an activity, holding
+ * no encounter and answering to no slot. */
+export type RoomType = "portal" | "fork" | "encounter" | "chamber"
 // OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
 // core enumerates no reward/currency id. A reward is a `type` tag plus arbitrary payload fields the
 // owning mod defines. Validated at load against per-type zod schemas registered by the mods

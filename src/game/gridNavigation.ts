@@ -386,13 +386,15 @@ export const renderAscii = (grid: FloorGrid): string => {
       const base =
         cell.roomType === "fork"
           ? "f"
-          : cell.roomType === "portal"
-            ? isEntrance
-              ? "e"
-              : cell.stairId
-                ? "s"
-                : "x"
-            : (cell.tags?.map(t => tagLetters[t]).find(Boolean) ?? "?")
+          : cell.roomType === "chamber"
+            ? "c"
+            : cell.roomType === "portal"
+              ? isEntrance
+                ? "e"
+                : cell.stairId
+                  ? "s"
+                  : "x"
+              : (cell.tags?.map(t => tagLetters[t]).find(Boolean) ?? "?")
       line += upper ? base.toUpperCase() : base
     }
     rows.push(line)

@@ -18,6 +18,10 @@ describe("isChamber", () => {
     expect(isChamber(portal("n"), "entrance")).toBe(false)
   })
 
+  it("makes a pass-through chamber a chamber, whatever activity it was given", () => {
+    expect(isChamber({ roomType: "chamber", dirs: new Set<Direction>(["e", "w"]) }, "fork")).toBe(true)
+  })
+
   it("leaves a puzzle standing where a branch hangs off it a stop in the corridor", () => {
     expect(isChamber({ roomType: "encounter", dirs: new Set<Direction>(["n", "e", "s"]) }, "puzzle")).toBe(false)
   })

@@ -326,8 +326,8 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
               bcell.sequenceTile !== undefined ||
               bcell.pipeHole !== undefined
             if (isGate || isMechanism || bcell.roomType === "portal" || isTreasureLike) hasInteresting = true
-            else if (isPuzzleLike || bcell.roomType === "fork") {
-              // traverse through puzzles/forks to find what's at the end of the branch
+            else if (isPuzzleLike || bcell.roomType === "fork" || bcell.roomType === "chamber") {
+              // traverse through puzzles, forks and chambers to find what's at the end of the branch
               for (const d of bcell.dirs) {
                 const [dr, dc] = MOVES[d as string]
                 bfsQueue.push([br + dr, bc + dc])

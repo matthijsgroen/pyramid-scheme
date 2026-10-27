@@ -40,7 +40,7 @@ const mechanismSlot = (mechanismId: string): string => `xmech:${mechanismId}`
  *   PLUS the neighbouring region it is the entrance from
  * - a staircase is its `stairId`; the two plain portals are the entrance and the exit
  *
- * Corridors and bare forks get none, because they have no authored identity — how many corridor cells
+ * Corridors, bare forks and pass-through chambers get none, because they have no authored identity — how many corridor cells
  * there are and where the chain turns IS the carve. A fork carrying an encounter — a switch — does have
  * one: the encounter was authored onto the floor, and its progress has to survive the junction moving to
  * another cell.
@@ -54,6 +54,7 @@ export const cellSlot = (grid: FloorGrid, row: number, col: number): string | nu
   const cell = grid.cells[row]?.[col]
   if (!cell || cell.type !== "room") return null
   if (cell.roomType === "fork" && cell.family === undefined) return null
+  if (cell.roomType === "chamber") return null
   if (cell.roomType === "portal") {
     if (cell.stairId) return `stair:${cell.stairId}`
     return row === grid.entrancePos[0] && col === grid.entrancePos[1] ? "entrance" : "exit"

@@ -349,6 +349,40 @@ describe(validateSite, () => {
     ])
   })
 
+  it("noAllBlandFork: walks through a pass-through chamber to what lies beyond it", () => {
+    const chamber: RoomCell = { type: "room", roomType: "chamber", dirs: new Set(["n", "s"]), state: "reachable" }
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("fork", ["w", "e", "s"])],
+        [0, 2, room("puzzle", ["w"])],
+        [1, 1, chamber],
+        [2, 1, room("treasure", ["n"], { reward: { type: "money", amount: 1 } })],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(validateSite(grid)).toEqual({ valid: true })
+  })
+
+  it("noAllBlandFork: a branch holding only a chamber that ends in nothing is still bland", () => {
+    const chamber: RoomCell = { type: "room", roomType: "chamber", dirs: new Set(["n"]), state: "reachable" }
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("fork", ["w", "e", "s"])],
+        [0, 2, room("puzzle", ["w"])],
+        [1, 1, chamber],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    const result = validateSite(grid)
+    expect(result.valid ? [] : result.reasons.filter(r => r.type === "allBlandFork")).toEqual([
+      { type: "allBlandFork", forkPos: [0, 1] },
+    ])
+  })
+
   it("keyBeforeGate: tomb-key gate is not validated (key lives off-floor)", () => {
     // tomb-key gate with no matching key on this floor — should still pass
     const grid = buildGrid(
