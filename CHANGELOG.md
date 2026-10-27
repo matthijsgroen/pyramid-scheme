@@ -16,7 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A new healing system: hearts refill at the camp, and waterskins heal on the spot.
 - A storyline, with Fez, the explorer and a ghost in every tomb.
 - Every treasure tomb is hidden in a cave, with its pyramid in a sunlit cavern below.
-- Pyramid corridors now run through dressed chambers along the way.
 - Side paths run through a lock's corridors; the Sphinx is read from inside, through a cave behind the ward gate.
 - Saved games start over this release.
 
