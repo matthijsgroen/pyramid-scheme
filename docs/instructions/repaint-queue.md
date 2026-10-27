@@ -2238,7 +2238,7 @@ keeps burying the outside. Four surfaces, the same loop as the cave's.
 
 ### `sphinx/floor` — smooth limestone tiles crossed by gold horizon bands
 
-**Re-roll:** the first roll was eroded cliff rock — deep pits, stepped ledges along the strata, cracks and sand — and it repeated itself four times inside one image. The floor is a mason's finished floor: dressed flat and smooth, strata as flat colour bands only, swept clean. The designer then chose a new floor altogether: smooth limestone tiles crossed by gold bands, the horizon lines of the god of the horizon.
+**Re-roll:** the first roll was eroded cliff rock — deep pits, stepped ledges along the strata, cracks and sand — and it repeated itself four times inside one image. The floor is a mason's finished floor: dressed flat and smooth, strata as flat colour bands only, swept clean. The designer then chose a new floor altogether: smooth limestone tiles crossed by gold bands, the horizon lines of the god of the horizon. The first banded roll read as a brick wall — small 2:1 tiles, dark joints — and its two bands differed (a row of gold tiles, a bar with rounded ends that broke at the image edge): the slabs are now large, the joints faint, and both bands one continuous square-ended bar.
 
 **Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's rock floor, for paint quality only: it is uncut rock with no slabs, the nearest thing to bedrock
 
@@ -2257,23 +2257,25 @@ No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality only — NOT its rough, broken rock,
 which this floor must not have. Do NOT take its colours, its layout or its subject from it.
 THE CAMERA: straight down. A seamless square tile.
-THE TILES: smooth rectangular limestone tiles, each twice as wide as it is tall, laid in straight rows.
-COUNT THEM: exactly 4 tiles across the width of the image and 8 rows down it; each row is shifted by half a
-tile against the next. The joints are shallow soft grooves, a quiet step darker than the tile — never black,
-never a drawn line. No pits, no cracks, no wear, no sand.
-THE GOLD BANDS: exactly TWO broad bands of polished gold #d9a93f run straight across the full width of the
-image, each as tall as half a row, lying flush in the floor between two rows of tiles — one a quarter of the
-way down, one three quarters. They are inlaid metal, smooth, with a soft lighter sheen #f5dc8e along their
-length and a darker edge #8a6a24 where they meet the stone. No pattern, no glyphs on them.
+THE FLOOR SLABS: LARGE smooth limestone flagstones, each a little wider than it is tall — floor slabs, NOT
+bricks, NOT a wall. COUNT THEM: exactly 3 slabs across the width of the image and 4 rows down it; each row
+is shifted by half a slab against the next. The joints are fine shallow grooves, only a quiet step darker
+than the stone — barely there, never dark lines, never black.
+THE GOLD BANDS: exactly TWO IDENTICAL bands, each ONE CONTINUOUS BAR of polished gold #d9a93f with no joints
+and no segments in it, running dead straight across the full width of the image and off BOTH side edges with
+SQUARE, cut-off ends — no rounded ends, no caps. Each is as tall as a third of a row and lies flush in the
+floor along a row joint — one a quarter of the way down, one three quarters. Smooth inlaid metal, a soft
+lighter sheen #f5dc8e along its length and a darker edge #8a6a24 where it meets the stone. No pattern, no
+glyphs on them.
 ONE SINGLE PICTURE: do not repeat the image inside itself.
 It tiles: the bands and the rows run unbroken off both side edges and line up with the next copy; nothing
 else crosses the image. Value spread evenly over the stone.
 Even lighting, no hotspot, no vignette.
 ```
 
-**Prepare:** the rows and bands are laid so a half-shift lands them on themselves, but a roll that is not exact crossfades into doubled joints under `--land`'s make-seamless, as expert's grid did. If it comes back exact, save the download itself as the master, `art/masters/surfaces/sphinx-floor.webp`, and run the Import line.
+**Prepare:** a laid floor whose rows run exactly to the edges is seamless as it comes, and `--land`'s make-seamless would crossfade it into doubled joints, as expert's grid did. Save the download itself as the master, `art/masters/surfaces/sphinx-floor.webp`, and run the Import line.
 
-**Import:** `yarn import-tile art/masters/surfaces/sphinx-floor.webp --tier=sphinx --name=floor --slot=floor --filter=smooth --key=none --repeat=2`
+**Import:** `yarn import-tile art/masters/surfaces/sphinx-floor.webp --tier=sphinx --name=floor --slot=floor --filter=smooth --key=none --repeat=1`
 
 ### `sphinx/wall-face` — the Sphinx's cut bedrock wall face
 
