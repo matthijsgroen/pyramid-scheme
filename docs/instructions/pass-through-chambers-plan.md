@@ -61,7 +61,9 @@ padding node between content k and k+1 to a `"chamber"` room, carrying `authored
   wing's role serves, and where there is none, any prop of the pool (filler such as pillar or mat). It stays a
   chamber either way; the pass never skips it for want of an activity.
 - **Order:** turns and horizontals before verticals; no chamber two cells from another room that claims floor (a
-  fork, a portal, a dead end, another chamber), which would contest a diagonal. Ties break by hash, never by `rand()`, so no other draw moves.
+  fork, a portal, a dead end, another chamber), which would contest a diagonal. A puzzle that claims floor only
+  for a story's authored activity does not count, so a story moves no chamber; where the two meet, the map's
+  claim rule (`roomClaims.ts`) settles the diagonal. Ties break by hash, never by `rand()`, so no other draw moves.
 - **None free:** `chambers: n` seats fewer and the attempt carves on, so the count never moves a pin. A
   `chamberAfter` is a hard requirement: where its gap holds no free node the attempt refuses with
   `chambersNotSeated` and the next attempt or rung is tried.

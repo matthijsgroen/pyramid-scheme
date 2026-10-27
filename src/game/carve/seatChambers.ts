@@ -42,8 +42,10 @@ const gapsBetween = (nodes: readonly string[], at: readonly number[]): Gap[] =>
  * door, threshold, drop, stair, fork, switch or pipe hole, and none of a lock region a mechanic will stand its seats
  * in. It runs after every pass that seats something on a node, so none of them has to know chambers exist.
  *
- * No chamber stands where its 3×3 meets another room that claims floor (a fork, a portal, a dead end, another
- * chamber): two claims would contest a diagonal. A turn or a horizontal comes before a vertical, whose corridor
+ * No chamber stands where its 3×3 meets another room that claims floor by its shape (a fork, a portal, a dead
+ * end, another chamber): two claims would contest a diagonal. A puzzle that claims floor only for the activity a
+ * story authored on it does not count, so authoring a story moves no chamber; where the two meet, the map's claim
+ * rule settles the diagonal. A turn or a horizontal comes before a vertical, whose corridor
  * crosses the north row a prop stands against. Ties break by hash, never by `rand()`, so no other draw moves.
  * `chambers` is an intent, as `packing` is: a floor with room for fewer seats fewer and carves on. Only a
  * `chamberAfter` whose gap holds no free node refuses the attempt.
@@ -130,7 +132,7 @@ export const seatChambers = pass(
     const claimsFloor = (key: string): boolean => {
       if (chambers.has(key)) return true
       const spec = roomAt.get(key)
-      if (spec?.roomType === "fork" || spec?.roomType === "portal" || spec?.authoredActivity !== undefined) return true
+      if (spec?.roomType === "fork" || spec?.roomType === "portal") return true
       return state.branches.used.has(key) && waysOut(key) !== 2
     }
     const free = (key: string): boolean => {

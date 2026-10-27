@@ -106,6 +106,24 @@ describe("seatChambers", () => {
     }
   })
 
+  it("seats its chambers where it would without a story's activity on a puzzle, whatever claims a diagonal", () => {
+    const storied = { 0: "weighing", 1: "weighing", 2: "weighing" } as const
+    const SPREAD = [...SEEDS, 7, 8, 9, 10, 11, 12]
+    const at = (grid: FloorGrid) => chambersOf(grid).map(({ r, c }) => `${r},${c}`)
+    const nearStory = SPREAD.filter(seed => {
+      const plain = carved(chamberFloor({ chambers: 3 }), seed)
+      const story = carved(chamberFloor({ chambers: 3, activitiesByIndex: storied }), seed)
+      expect(at(story)).toEqual(at(plain))
+      return chambersOf(story).some(({ r, c }) =>
+        [0, 1, 2].some(k => {
+          const puzzle = puzzleAt(story, k)
+          return Math.abs(puzzle.r - r) <= 2 && Math.abs(puzzle.c - c) <= 2
+        })
+      )
+    })
+    expect(nearStory.length).toBeGreaterThan(0)
+  })
+
   it("dresses a chamber for the activity it was authored for", () => {
     const grid = carved(chamberFloor({ chambersByIndex: { 0: "weighing" } }), 1)
     const [{ cell }] = chambersOf(grid)
