@@ -114,6 +114,609 @@ landed. `prop-pipeline.md` has the numbers.
 
 ---
 
+## Rank surfaces — twelve
+
+The floor, the wall face and the sill of the four ranks above the merchant, in the character of
+[visual-direction.md](../game-design/visual-direction.md): ground plus metal, the floor darkening rank by rank
+as the daylight does. They come BEFORE every prop in this file, because a prop is judged against its rank's
+floor and wall and these are the floor and wall. These are SURFACES, not props — no scaffold, no mask. Each
+block carries the whole preamble, the way the merchant's four did; the one attachment is a STYLE reference
+whose colours the prompt tells the model to ignore.
+
+| Rank             | Floor                                | Wall face                                      | Sill                                     |
+| ---------------- | ------------------------------------ | ---------------------------------------------- | ---------------------------------------- |
+| junior · copper  | light-mid warm sandstone, `#c8a070`  | dark, painted murals, ground `#9a7650`         | sandstone with a copper strip, `#b08a5e` |
+| expert · silver  | light cool polished tiles, `#c9d0d6` | dark cool stone, sunk relief, ground `#7c8a98` | alabaster with a lapis line, `#b4bdc5`   |
+| master · gold    | **dark** granite, `#57534b`          | **light**, gilded relief, ground `#c4ad7c`     | red granite with a gold band, `#806a5e`  |
+| wizard · emerald | **dark** night-green, `#24453b`      | **light**, calcite lit from behind, `#8fc4ab`  | green stone with a gold line, `#3f6b5c`  |
+
+**Floor first, rank by rank.** A rank's floor is painted against the merchant's repainted floor,
+`art/masters/surfaces/starter-floor.webp` — the only surface painted to the current standard, so the four
+come out of one hand. Once a rank's floor lands, its master is `art/masters/surfaces/<rank>-floor.webp`,
+which is the file that rank's wall face and sill attach: they are painted against the new ground. Painted
+before the floor, they would be handed the old one.
+
+**The old masters are not attached.** `art/masters/surfaces/<rank>-*.webp` and `art/masters/tombWall/<rank>.webp`
+are the placeholder-era art: dark grey-brown, basalt and verdigris, the mud this direction replaces. A reference
+carries colour as strongly as it carries handling, and a floor entry could not attach its own old master anyway:
+it is the path `--land` writes the return to.
+
+**The colours in these blocks are TARGETS.** `tierPalette` in `src/app/SiteMap/tileMaterials.ts` still holds the
+placeholder art's tokens for these four ranks (master's granite is the exception, and the target here is the
+same stone). After a rank's floor and wall face land, the ground tokens — `bed`, `slab`, `slabHi`, `slabLo`,
+`joint`, `wall`, `wallTop`, `wallBase` — are re-sampled from the new art and `yarn rank-colour` is run: the wall
+face at least 25 L\* off the floor (`MIN_STEP`). Junior and expert are light floors, so their faces are shadowed
+below the floor and `faceNight` is re-solved for them; master and wizard are DARK floors, so the face and the
+props sit on the LIGHT side, the face art carries the step on its own, and `faceNight` goes toward 0 as the
+cave's does.
+
+**A sill sits between the floor and the wall in value**, or it reads as a hole in the paving rather than a
+step across it. On a light rank that is a step darker than the floor; on a dark rank, a step lighter.
+`--brightness` on the import, in whichever direction the ordering asks.
+
+**What `--land` does with them**: a floor is made seamless both ways and a face along x before the import. A
+face that comes back a third of 8:1 is laid three side by side first, as the Sphinx's are:
+`magick band.jpeg band.jpeg band.jpeg +append wide.png`.
+
+### `junior/floor` — warm sandstone paving, petals in the joints
+
+**Attach:** `art/masters/surfaces/starter-floor.webp` — the merchant's repainted floor, for paint quality and slab scale only
+
+```
+FRAME: square, exactly 1:1. A seamless floor texture filling the whole frame. Do not re-compose it as a strip.
+
+Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
+Rank: a NOBLEMAN's tomb, built as his painted house — the second of five. Warm sandstone carrying murals,
+copper vessels gone green at the rim, lotus and papyrus, rosettes, a banquet frieze. Festive and colourful,
+a scented incense haze in the air.
+Lit evenly by lamplight and daylight together — every corner of the room is visible, nothing sinks into
+darkness.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Palette, strictly: floor #c8a070 / #d4ad7e / #ba9162 on a #a98256 bed, joints #6a4a2c,
+walls #9a7650 with #c9a477 tops and #4a3320 at the base, copper #c8642c with light #f2b48a and shade
+#55210c, verdigris #4f9a86, painted red ochre #a8442a, Egyptian blue #2f6f8f.
+Every colour comes from that list. Nothing lighter than #e6c89a, nothing darker than #2a1a0e.
+Warm and clear, with real colour: the copper is saturated and reads from across the room. The STONE
+stays calm — the ground is quiet so the copper and the paint can stand out on it.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality, its texture and its slab scale.
+Do NOT take its colours or its subject from it — the palette above is the only source of colour.
+
+Seamless top-down floor texture, viewed straight down.
+Warm sandstone paving laid in a running bond, well kept. COUNT THE SLABS: exactly 7 slabs across the width
+of the image and 14 rows down it, so each slab is twice as wide as it is tall and takes up about a seventh
+of the frame. Small paving stones, not flagstones. Square corners — not rounded rectangles.
+The slabs BUTT AGAINST EACH OTHER. The joint between two slabs is a shallow GROOVE: a soft narrow shadow
+where the surface dips and rises again — modelled, never a drawn line, never black. No slab has a contour
+around it.
+The slabs are WARM SANDSTONE, #c8a070, varying from slab to slab across #d4ad7e and #ba9162 so the bond
+reads without the seams having to draw it. Honey and apricot, a clear step warmer and deeper than pale
+limestone, never grey, never brown.
+Lightly worn: shallow scuffs, a few softened corners showing the #a98256 bed in the notch, fine hairline
+cracks stopping at a slab's edge. All of it painted as depth and all of it SHALLOW.
+The nobleman's life on it: a few fallen lotus petals, pale and blue-tinged, lying in the joints, a faint
+ring where a wine jar stood, and two or three tiny verdigris #4f9a86 specks where a copper vessel was set
+down. Small, scattered, and few. No painted pattern on the floor: the murals are on the walls.
+It tiles, so NOTHING crosses the whole image: no crack, stain or scuff longer than an eighth of the frame,
+and no feature touching two edges. Spread evenly — no corner busier than another.
+Even lighting across the entire image, no hotspot, no vignette. Edge to edge texture.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/junior-floor.webp --tier=junior --name=floor --slot=floor --filter=smooth --key=none --repeat=2.4`
+
+### `junior/wall-face` — a painted procession over a dado band
+
+**Attach:** `art/masters/surfaces/junior-floor.webp` — the nobleman's NEW floor, as the style reference (paint `junior/floor` first)
+
+```
+FRAME: a wide strip, exactly 8 times as wide as it is tall. Do not crop it and do not re-compose it square.
+
+Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
+Rank: a NOBLEMAN's tomb, built as his painted house — the second of five. Warm sandstone carrying murals,
+copper vessels gone green at the rim, lotus and papyrus, rosettes, a banquet frieze. Festive and colourful,
+a scented incense haze in the air.
+Lit evenly by lamplight and daylight together — every corner of the room is visible, nothing sinks into
+darkness.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Palette, strictly: floor #c8a070 / #d4ad7e / #ba9162 on a #a98256 bed, joints #6a4a2c,
+walls #9a7650 with #c9a477 tops and #4a3320 at the base, copper #c8642c with light #f2b48a and shade
+#55210c, verdigris #4f9a86, painted red ochre #a8442a, Egyptian blue #2f6f8f.
+Every colour comes from that list. Nothing lighter than #e6c89a, nothing darker than #2a1a0e.
+Warm and clear, with real colour: the copper is saturated and reads from across the room. The STONE
+stays calm — the ground is quiet so the copper and the paint can stand out on it.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it — the palette above is the only source of colour.
+
+Seamless horizontal strip of a plastered wall, seen straight on from the front at eye level.
+The whole wall is PAINTED, the way a nobleman's house is: smooth mud plaster over the stone, its ground a
+warm ochre #9a7650, a clear step DARKER than the sandstone floor in front of it, never lighter, so the
+room keeps its depth.
+THREE REGISTERS of a painted procession run along it, small figures in profile the old Egyptian way, about
+thirty figures across the whole strip: on top, offering bearers carrying baskets, lotus bunches and copper
+jars; in the middle, cattle and geese driven along, one goose a little larger, painted where an owl would
+be; at the bottom, a banquet — seated guests with lotus flowers, a harpist, servants pouring wine. The
+figures are painted in red ochre #a8442a, Egyptian blue #2f6f8f, verdigris green #4f9a86 and pale linen,
+on the ochre ground, the paint a little faded and rubbed.
+A PAINTED DADO BAND along the foot of the wall, dark red ochre with a thin blue line above it; a narrow
+lotus-and-rosette border along the top. Thin copper #c8642c lines divide the registers, gone green
+#4f9a86 in places.
+The very top edge carries a lighter cap #c9a477 where the wall's top surface catches the light; the very
+bottom edge a darker base #4a3320 where it meets the floor. Those two bands, the dado, the border and the
+register lines run unbroken the whole width — they are the only things that do.
+It tiles left to right: no figure big enough to be recognised twice in a row, no crack or stain longer
+than an eighth of the strip.
+Even lighting left to right, no hotspot, no vignette. Edge to edge texture.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/junior-wall-face.webp --tier=junior --name=wall-face --slot=face --filter=smooth --key=none --headroom=0.14`
+
+`--repeat=1`, the default: the procession comes back at one wall's height, and doubling it halves the
+figures and puts the strip on the face twice.
+
+### `junior/threshold` — a sandstone step with a copper strip
+
+**Attach:** `art/masters/surfaces/junior-floor.webp` — the nobleman's NEW floor, as the style reference (paint `junior/floor` first)
+
+```
+FRAME: a wide strip, exactly 5 times as wide as it is tall, filling the frame edge to edge. Do not re-compose it square.
+
+Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
+Rank: a NOBLEMAN's tomb, built as his painted house — the second of five. Warm sandstone carrying murals,
+copper vessels gone green at the rim, lotus and papyrus, rosettes, a banquet frieze. Festive and colourful,
+a scented incense haze in the air.
+Lit evenly by lamplight and daylight together — every corner of the room is visible, nothing sinks into
+darkness.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Palette, strictly: floor #c8a070 / #d4ad7e / #ba9162 on a #a98256 bed, joints #6a4a2c,
+walls #9a7650 with #c9a477 tops and #4a3320 at the base, copper #c8642c with light #f2b48a and shade
+#55210c, verdigris #4f9a86, painted red ochre #a8442a, Egyptian blue #2f6f8f.
+Every colour comes from that list. Nothing lighter than #e6c89a, nothing darker than #2a1a0e.
+Warm and clear, with real colour: the copper is saturated and reads from across the room. The STONE
+stays calm — the ground is quiet so the copper and the paint can stand out on it.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it — the palette above is the only source of colour.
+
+A single worn sandstone step seen from straight above, spanning the full width of a doorway, with no
+background.
+It is ONE band of stone across the whole width: a soft shadow along its far edge where it drops to the
+floor beyond, its own worn top surface across the middle, a soft shadow along its near edge. No object
+sits on it and nothing crosses it end to end except those two edges and one copper strip.
+The stone is the floor's own sandstone at #b08a5e — the same paving as the chamber, laid as one long
+block, a step darker than the floor either side of it, never lighter.
+Dished in the middle by feet, its ends a little crumbled. A thin strip of copper #c8642c set into the
+stone along its near edge, bright where it is still polished, gone verdigris green #4f9a86 at both ends
+where no foot reaches.
+Even lighting left to right, no hotspot, no vignette.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/junior-threshold.webp --tier=junior --name=threshold --slot=sill --filter=smooth --key=none`
+
+### `expert/floor` — pale polished temple tiles
+
+**Attach:** `art/masters/surfaces/starter-floor.webp` — the merchant's repainted floor, for paint quality and slab scale only
+
+```
+FRAME: square, exactly 1:1. A seamless floor texture filling the whole frame. Do not re-compose it as a strip.
+
+Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
+Rank: a HIGH PRIEST's tomb, built as a clean temple — the third of five. Pale polished tiles and alabaster,
+light satin curtains, silver lamps, lapis inlay, ceiling stars, djed and was pillars, sunk-relief text
+columns, Thoth's ibis. Light, cool and serene; one slow thread of incense; nothing living.
+Lit evenly by a cool clear light — every corner of the room is visible, nothing sinks into darkness.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Palette, strictly: floor #c9d0d6 / #d6dce1 / #bcc4cb on a #aab3bb bed, joints #6f7d8a,
+walls #7c8a98 with #aeb9c4 tops and #2e3946 at the base, silver #9fb3c8 with light #e6eef6 and shade
+#4b5d75, lapis #2c4f8c.
+Every colour comes from that list. Nothing lighter than #eef2f5, nothing darker than #1a212a.
+Cool and clear: the silver and the lapis read from across the room. The STONE stays calm — the ground is
+quiet so the metal can stand out on it.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality, its texture and its slab scale.
+Do NOT take its colours, its warmth or its subject from it — the palette above is the only source of colour.
+
+Seamless top-down floor texture, viewed straight down.
+Pale polished temple tiles laid in a running bond, kept spotless. COUNT THE TILES: exactly 7 tiles across
+the width of the image and 14 rows down it, so each tile is twice as wide as it is tall and takes up about
+a seventh of the frame. Small dressed tiles, not flagstones. Square corners — not rounded rectangles.
+The tiles BUTT AGAINST EACH OTHER. The joint between two tiles is a shallow GROOVE: a soft narrow shadow
+where the surface dips and rises again — modelled, never a drawn line, never black. No tile has a contour
+around it.
+The tiles are PALE COOL LIMESTONE AND ALABASTER, #c9d0d6, varying from tile to tile across #d6dce1 and
+#bcc4cb so the bond reads without the seams having to draw it. Cool grey-white with a faint blue in it,
+never cream, never warm. Some tiles show the soft cloudy veining of alabaster, faint and low in contrast.
+A soft satin sheen on the polish, painted as a gentle lift in value, never a glare or a reflection.
+Barely worn: a few softened corners showing the #aab3bb bed, one or two fine hairline cracks stopping at a
+tile's edge, and two or three tiny chips of lapis #2c4f8c lost in the joints. Small, scattered, and few.
+No dust, no debris, no plants.
+It tiles, so NOTHING crosses the whole image: no crack, vein or stain longer than an eighth of the frame,
+and no feature touching two edges. Spread evenly — no corner busier than another.
+Even lighting across the entire image, no hotspot, no vignette. Edge to edge texture.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/expert-floor.webp --tier=expert --name=floor --slot=floor --filter=smooth --key=none --repeat=2.4`
+
+### `expert/wall-face` — cool dressed stone in sunk-relief columns
+
+**Attach:** `art/masters/surfaces/expert-floor.webp` — the priest's NEW floor, as the style reference (paint `expert/floor` first)
+
+```
+FRAME: a wide strip, exactly 8 times as wide as it is tall. Do not crop it and do not re-compose it square.
+
+Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
+Rank: a HIGH PRIEST's tomb, built as a clean temple — the third of five. Pale polished tiles and alabaster,
+light satin curtains, silver lamps, lapis inlay, ceiling stars, djed and was pillars, sunk-relief text
+columns, Thoth's ibis. Light, cool and serene; one slow thread of incense; nothing living.
+Lit evenly by a cool clear light — every corner of the room is visible, nothing sinks into darkness.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Palette, strictly: floor #c9d0d6 / #d6dce1 / #bcc4cb on a #aab3bb bed, joints #6f7d8a,
+walls #7c8a98 with #aeb9c4 tops and #2e3946 at the base, silver #9fb3c8 with light #e6eef6 and shade
+#4b5d75, lapis #2c4f8c.
+Every colour comes from that list. Nothing lighter than #eef2f5, nothing darker than #1a212a.
+Cool and clear: the silver and the lapis read from across the room. The STONE stays calm — the ground is
+quiet so the metal can stand out on it.
+No modern text, no Latin letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it — the palette above is the only source of colour.
+
+Seamless horizontal strip of a temple wall, seen straight on from the front at eye level.
+Fine dressed blue-grey stone, #7c8a98, a clear step DARKER and cooler than the pale tiled floor in front
+of it, never lighter, so the room keeps its depth. The blocks are large and their joints barely show.
+The wall is cut with VERTICAL COLUMNS of sunk-relief hieroglyphs, about twenty columns across the whole
+strip, each column a narrow panel of small signs cut INTO the stone and filled with lapis blue #2c4f8c,
+the fill worn thin in places. The signs are small and soft, read as texture at this size, never as
+letters. Between every few columns a taller carved emblem breaks the rhythm: a djed pillar, a was
+sceptre, a crescent moon, an ibis standing — cut the same way, no larger than a column is wide.
+A thin silver #9fb3c8 band inlaid along the top of the carved field, and a plain dado of the same stone
+below it.
+The very top edge carries a lighter cap #aeb9c4 where the wall's top surface catches the light; the very
+bottom edge a darker base #2e3946 where it meets the floor. Those two bands and the silver line run
+unbroken the whole width — they are the only things that do.
+It tiles left to right: no emblem big enough to be recognised twice in a row, no crack or stain longer
+than an eighth of the strip.
+Even lighting left to right, no hotspot, no vignette. Edge to edge texture.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/expert-wall-face.webp --tier=expert --name=wall-face --slot=face --filter=smooth --key=none --headroom=0.14`
+
+`--repeat=1`, the default: the columns come back at one wall's height.
+
+### `expert/threshold` — an alabaster step with a lapis line
+
+**Attach:** `art/masters/surfaces/expert-floor.webp` — the priest's NEW floor, as the style reference (paint `expert/floor` first)
+
+```
+FRAME: a wide strip, exactly 5 times as wide as it is tall, filling the frame edge to edge. Do not re-compose it square.
+
+Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
+Rank: a HIGH PRIEST's tomb, built as a clean temple — the third of five. Pale polished tiles and alabaster,
+light satin curtains, silver lamps, lapis inlay, ceiling stars, djed and was pillars, sunk-relief text
+columns, Thoth's ibis. Light, cool and serene; one slow thread of incense; nothing living.
+Lit evenly by a cool clear light — every corner of the room is visible, nothing sinks into darkness.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Palette, strictly: floor #c9d0d6 / #d6dce1 / #bcc4cb on a #aab3bb bed, joints #6f7d8a,
+walls #7c8a98 with #aeb9c4 tops and #2e3946 at the base, silver #9fb3c8 with light #e6eef6 and shade
+#4b5d75, lapis #2c4f8c.
+Every colour comes from that list. Nothing lighter than #eef2f5, nothing darker than #1a212a.
+Cool and clear: the silver and the lapis read from across the room. The STONE stays calm — the ground is
+quiet so the metal can stand out on it.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it — the palette above is the only source of colour.
+
+A single alabaster step seen from straight above, spanning the full width of a doorway, with no
+background.
+It is ONE band of stone across the whole width: a soft shadow along its far edge where it drops to the
+floor beyond, its own polished top surface across the middle, a soft shadow along its near edge. No object
+sits on it and nothing crosses it end to end except those two edges and one inlaid line.
+The stone is cool alabaster at #b4bdc5, cloudy and faintly veined — one long block, a step darker than the
+tiled floor either side of it, never lighter.
+Polished smooth, a gentle hollow in the middle where feet cross it. One thin line of lapis #2c4f8c inlaid
+along its near edge, edged in silver #9fb3c8, whole and clean.
+Even lighting left to right, no hotspot, no vignette.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/expert-threshold.webp --tier=expert --name=threshold --slot=sill --filter=smooth --key=none`
+
+### `master/floor` — dark polished granite, gold dust in the joints
+
+**Attach:** `art/masters/surfaces/starter-floor.webp` — the merchant's repainted floor, for paint quality and slab scale only
+
+```
+FRAME: square, exactly 1:1. A seamless floor texture filling the whole frame. Do not re-compose it as a strip.
+
+Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
+Rank: a PHARAOH's tomb, its galleries cut for ceremony — the fourth of five. Dark granite underfoot, gold
+everywhere it is carried: gilded statues, gold-inlaid coffins, a gilded shrine, braziers. Cartouches, the
+winged sun disc, uraeus cobras, a kheker frieze. Still and ceremonial, gold dust catching the light;
+nothing living.
+Lit for ceremony: the floor is dark stone, and every part of it is still readable — nothing sinks into
+black.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Palette, strictly: floor #57534b / #615c53 / #4e4a43 on a #4a4640 bed, joints #25221d,
+walls #c4ad7c with #e8d4a0 tops and #6b4f12 in shade, gold #d9a93f with light #f5dc8e and shade #6b4f12,
+red granite #806a5e.
+Every colour comes from that list. The floor stone is nothing lighter than #77716a and nothing darker
+than #141210; only the gold dust is brighter.
+Dark and calm underfoot, the gold saturated and bright against it. The STONE stays quiet so the gold
+can stand out on it.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality, its texture and its slab scale.
+Do NOT take its colours, its lightness or its subject from it — the palette above is the only source of
+colour.
+
+Seamless top-down floor texture, viewed straight down.
+Dark grey granite paving laid in a running bond, dressed and polished. COUNT THE SLABS: exactly 7 slabs
+across the width of the image and 14 rows down it, so each slab is twice as wide as it is tall and takes
+up about a seventh of the frame. Small paving stones, not flagstones. Square corners — not rounded
+rectangles.
+The slabs BUTT AGAINST EACH OTHER. The joint between two slabs is a shallow GROOVE: a soft narrow shadow
+where the surface dips and rises again — modelled, never a drawn line, never black. No slab has a contour
+around it.
+The slabs are DARK GRANITE, #57534b, varying from slab to slab across #615c53 and #4e4a43 so the bond reads
+without the seams having to draw it. A fine salt-and-pepper grain of paler and darker crystals in every
+slab, low in contrast. A soft polish, painted as a gentle lift in value, never a glare or a reflection.
+Barely worn: a few softened corners showing the #4a4640 bed, one or two fine hairline cracks stopping at a
+slab's edge. A little GOLD DUST #d9a93f settled in some of the joints and in a few hollows — tiny points,
+never a line along a whole joint. Small, scattered, and few.
+It tiles, so NOTHING crosses the whole image: no crack, stain or line of dust longer than an eighth of the
+frame, and no feature touching two edges. Spread evenly — no corner busier than another.
+Even lighting across the entire image, no hotspot, no vignette. Edge to edge texture.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/master-floor.webp --tier=master --name=floor --slot=floor --filter=smooth --key=none --repeat=2.4`
+
+### `master/wall-face` — gilded relief under a kheker frieze
+
+**Attach:** `art/masters/surfaces/master-floor.webp` — the pharaoh's NEW floor, as the style reference (paint `master/floor` first)
+
+```
+FRAME: a wide strip, exactly 8 times as wide as it is tall. Do not crop it and do not re-compose it square.
+
+Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
+Rank: a PHARAOH's tomb, its galleries cut for ceremony — the fourth of five. Dark granite underfoot, gold
+everywhere it is carried: gilded statues, gold-inlaid coffins, a gilded shrine, braziers. Cartouches, the
+winged sun disc, uraeus cobras, a kheker frieze. Still and ceremonial, gold dust catching the light;
+nothing living.
+Lit for ceremony: the floor is dark stone, and every part of it is still readable — nothing sinks into
+black.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Palette, strictly: floor #57534b / #615c53 / #4e4a43 on a #4a4640 bed, joints #25221d,
+walls #c4ad7c with #e8d4a0 tops and #6b4f12 in shade, gold #d9a93f with light #f5dc8e and shade #6b4f12,
+red granite #806a5e.
+Every colour comes from that list. Nothing lighter than #f5dc8e, nothing darker than #2a2012.
+Dark and calm underfoot, the gold saturated and bright against it.
+No modern text, no Latin letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours, its darkness or its subject from it — the palette above is the only source of colour.
+
+Seamless horizontal strip of a gallery wall, seen straight on from the front at eye level.
+The wall is LIGHT and catches the light: fine pale limestone dressed smooth and washed with gold, #c4ad7c,
+a clear step LIGHTER than the dark granite floor in front of it, never darker. The blocks are large and
+their joints barely show.
+Along the top, a KHEKER FRIEZE: a row of small tied-reed finials, gilded, standing side by side the whole
+width. Below it the wall is carved in low raised relief and gilded: a row of CARTOUCHE OVALS, about twelve
+across the whole strip, each a rounded frame of gold rope whose inside is plain polished gold, nothing
+written in it; between each pair of cartouches a rearing uraeus cobra, small. The gold #d9a93f is
+saturated, lit to #f5dc8e on its raised edges and shaded #6b4f12 in its cut sides.
+A plain dado of the same pale stone along the foot of the wall, edged with one thin gold line.
+The very top edge carries a lighter cap #e8d4a0 where the wall's top surface catches the light; the very
+bottom edge a darker base #6b4f12 where it meets the floor. Those two bands, the frieze and the gold line
+run unbroken the whole width — they are the only things that do.
+It tiles left to right: no cobra or cartouche different enough to be recognised twice in a row, no crack
+or stain longer than an eighth of the strip.
+Even lighting left to right, no hotspot, no vignette. Edge to edge texture.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/master-wall-face.webp --tier=master --name=wall-face --slot=face --filter=smooth --key=none --headroom=0.14`
+
+### `master/threshold` — a red granite step with a gold band
+
+**Attach:** `art/masters/surfaces/master-floor.webp` — the pharaoh's NEW floor, as the style reference (paint `master/floor` first)
+
+```
+FRAME: a wide strip, exactly 5 times as wide as it is tall, filling the frame edge to edge. Do not re-compose it square.
+
+Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
+Rank: a PHARAOH's tomb, its galleries cut for ceremony — the fourth of five. Dark granite underfoot, gold
+everywhere it is carried: gilded statues, gold-inlaid coffins, a gilded shrine, braziers. Cartouches, the
+winged sun disc, uraeus cobras, a kheker frieze. Still and ceremonial, gold dust catching the light;
+nothing living.
+Lit for ceremony: the floor is dark stone, and every part of it is still readable — nothing sinks into
+black.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Palette, strictly: floor #57534b / #615c53 / #4e4a43 on a #4a4640 bed, joints #25221d,
+walls #c4ad7c with #e8d4a0 tops and #6b4f12 in shade, gold #d9a93f with light #f5dc8e and shade #6b4f12,
+red granite #806a5e.
+Every colour comes from that list. Nothing lighter than #f5dc8e, nothing darker than #141210.
+Dark and calm underfoot, the gold saturated and bright against it.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it — the palette above is the only source of colour.
+
+A single polished granite step seen from straight above, spanning the full width of a doorway, with no
+background.
+It is ONE band of stone across the whole width: a soft shadow along its far edge where it drops to the
+floor beyond, its own polished top surface across the middle, a soft shadow along its near edge. No object
+sits on it and nothing crosses it end to end except those two edges and one gold band.
+The stone is RED GRANITE, #806a5e, coarse-grained with darker and paler crystals — one long block, a step
+LIGHTER and warmer than the dark grey granite floor either side of it, never darker.
+Barely worn, a faint hollow in the middle where feet cross it. One band of gold leaf #d9a93f along its near
+edge, bright, rubbed through to the stone only where every foot lands.
+Even lighting left to right, no hotspot, no vignette.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/master-threshold.webp --tier=master --name=threshold --slot=sill --filter=smooth --key=none`
+
+### `wizard/floor` — night-green stone with a field of stars in it
+
+**Attach:** `art/masters/surfaces/starter-floor.webp` — the merchant's repainted floor, for paint quality and slab scale only
+
+```
+FRAME: square, exactly 1:1. A seamless floor texture filling the whole frame. Do not re-compose it as a strip.
+
+Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
+Rank: the tomb of the GODS — the richest of five, not of this world. Deep night-green stone, translucent
+calcite lit from behind, a field of stars like the sky goddess Nut's, emerald with gold. The stars, the
+ankh, the Eye of Horus, Ma'at's feather. Motes of light rising; nothing living.
+The floor is dark, and every part of it is still readable — nothing sinks into black.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Palette, strictly: floor #24453b / #2d5246 / #1e3b33 on a #17302a bed, joints #0f231d,
+walls #8fc4ab with #d6f5e6 tops and #2c5a4a in shade, emerald #1f9e6b with light #9ee6c3 and shade
+#0d4a33, gold #e3c46a, green stone #3f6b5c.
+Every colour comes from that list. The floor stone is nothing lighter than #3a6656 and nothing darker
+than #0a1a15; only the stars and the few seams of light are brighter.
+Deep and calm underfoot, the emerald and the gold bright against it. The STONE stays quiet so the light
+can stand out on it.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality, its texture and its slab scale.
+Do NOT take its colours, its lightness or its subject from it — the palette above is the only source of
+colour.
+
+Seamless top-down floor texture, viewed straight down.
+Deep night-green stone paving laid in a running bond, dressed and polished. COUNT THE SLABS: exactly 7
+slabs across the width of the image and 14 rows down it, so each slab is twice as wide as it is tall and
+takes up about a seventh of the frame. Small paving stones, not flagstones. Square corners — not rounded
+rectangles.
+The slabs BUTT AGAINST EACH OTHER. The joint between two slabs is a shallow GROOVE: a soft narrow shadow
+where the surface dips and rises again — modelled, never a drawn line. No slab has a contour around it.
+The slabs are DEEP NIGHT-GREEN, #24453b, varying from slab to slab across #2d5246 and #1e3b33 so the bond
+reads without the seams having to draw it. Green-black, like a polished serpentine, never grey, never
+blue.
+IN THE STONE, a field of STARS: fine scattered points of pale #d6f5e6 and gold #e3c46a, set into the
+polish like a night sky, most of them tiny, a very few a little larger. Even, sparse, never a cluster,
+never a line.
+Two or three short SEAMS OF LIGHT where a crack in a slab lets a soft emerald #1f9e6b to #9ee6c3 glow up
+from beneath — each no longer than half a slab, stopping inside it. No glow spills onto the stone around
+them.
+It tiles, so NOTHING crosses the whole image: no seam, crack or stain longer than an eighth of the frame,
+and no feature touching two edges. Spread evenly — no corner busier than another.
+Even lighting across the entire image, no hotspot, no vignette. Edge to edge texture.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/wizard-floor.webp --tier=wizard --name=floor --slot=floor --filter=smooth --key=none --repeat=2.4`
+
+### `wizard/wall-face` — calcite lit from behind, light in the joints
+
+**Attach:** `art/masters/surfaces/wizard-floor.webp` — the gods' NEW floor, as the style reference (paint `wizard/floor` first)
+
+```
+FRAME: a wide strip, exactly 8 times as wide as it is tall. Do not crop it and do not re-compose it square.
+
+Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
+Rank: the tomb of the GODS — the richest of five, not of this world. Deep night-green stone, translucent
+calcite lit from behind, a field of stars like the sky goddess Nut's, emerald with gold. The stars, the
+ankh, the Eye of Horus, Ma'at's feather. Motes of light rising; nothing living.
+The floor is dark, and every part of it is still readable — nothing sinks into black.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Palette, strictly: floor #24453b / #2d5246 / #1e3b33 on a #17302a bed, joints #0f231d,
+walls #8fc4ab with #d6f5e6 tops and #2c5a4a in shade, emerald #1f9e6b with light #9ee6c3 and shade
+#0d4a33, gold #e3c46a, green stone #3f6b5c.
+Every colour comes from that list. Nothing lighter than #e6faf0, nothing darker than #0a1a15.
+Deep and calm underfoot, the emerald and the gold bright against it.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours, its darkness or its subject from it — the palette above is the only source of colour.
+
+Seamless horizontal strip of a wall built of translucent calcite, seen straight on from the front at eye
+level.
+COUNT THE BLOCKS: exactly 3 courses stacked in the strip's height and 16 blocks across its width, each
+course offset half a block from the one above. Square corners.
+The wall is LIGHT: pale green calcite #8fc4ab, cloudy and banded inside, LIT FROM BEHIND so it glows
+softly from within, a clear step LIGHTER than the dark floor in front of it, never darker. Each block is
+a little brighter in its middle and a little deeper toward its edges.
+THE LIGHT LEAKS FROM THE JOINTS: the joint between two blocks is a thin soft seam of brighter light
+#d6f5e6 to #9ee6c3, painted as light coming through a gap, never a drawn line, never dark.
+Along the top of the wall, a narrow band of deep emerald #0d4a33 set with small five-pointed gold #e3c46a
+stars, evenly spaced, the sky of Nut; below it the calcite, plain.
+The very top edge carries a lighter cap #d6f5e6 where the wall's top surface catches the light; the very
+bottom edge a darker base #2c5a4a where it meets the floor. Those two bands and the star band run
+unbroken the whole width — they are the only things that do.
+Light through stone only: no sparkle, no rays, no haze, no glow spilling past the wall.
+It tiles left to right: nothing else crosses the full width, no crack or stain longer than an eighth of
+it, and no block different enough to be recognised twice in a row.
+Even lighting left to right, no hotspot, no vignette. Edge to edge texture.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/wizard-wall-face.webp --tier=wizard --name=wall-face --slot=face --filter=smooth --key=none --headroom=0.14 --repeat=2`
+
+`--repeat=2`, the merchant's: a counted course of blocks comes back a size too big, as his bricks did.
+
+### `wizard/threshold` — a green stone step with a gold line
+
+**Attach:** `art/masters/surfaces/wizard-floor.webp` — the gods' NEW floor, as the style reference (paint `wizard/floor` first)
+
+```
+FRAME: a wide strip, exactly 5 times as wide as it is tall, filling the frame edge to edge. Do not re-compose it square.
+
+Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
+Rank: the tomb of the GODS — the richest of five, not of this world. Deep night-green stone, translucent
+calcite lit from behind, a field of stars like the sky goddess Nut's, emerald with gold. The stars, the
+ankh, the Eye of Horus, Ma'at's feather. Motes of light rising; nothing living.
+The floor is dark, and every part of it is still readable — nothing sinks into black.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Palette, strictly: floor #24453b / #2d5246 / #1e3b33 on a #17302a bed, joints #0f231d,
+walls #8fc4ab with #d6f5e6 tops and #2c5a4a in shade, emerald #1f9e6b with light #9ee6c3 and shade
+#0d4a33, gold #e3c46a, green stone #3f6b5c.
+Every colour comes from that list. Nothing lighter than #e6faf0, nothing darker than #0a1a15.
+Deep and calm underfoot, the emerald and the gold bright against it.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it — the palette above is the only source of colour.
+
+A single polished green stone step seen from straight above, spanning the full width of a doorway, with no
+background.
+It is ONE band of stone across the whole width: a soft shadow along its far edge where it drops to the
+floor beyond, its own polished top surface across the middle, a soft shadow along its near edge. No object
+sits on it and nothing crosses it end to end except those two edges and one gold line.
+The stone is a mid green #3f6b5c, smooth and faintly banded like malachite — one long block, a step
+LIGHTER than the night-green floor either side of it, never darker.
+Unworn, as if no foot has crossed it. One thin line of gold #e3c46a inlaid along its near edge, whole and
+bright.
+Even lighting left to right, no hotspot, no vignette.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/wizard-threshold.webp --tier=wizard --name=threshold --slot=sill --filter=smooth --key=none`
+
+---
+
 ## Priest — fifteen
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and
@@ -2805,7 +3408,6 @@ BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills 
 ```
 
 **Import:** `yarn import-camp <file> --out-dir=src/assets/doors --name=colour --size=512`
-
 
 ## Collection icons — sellables
 
