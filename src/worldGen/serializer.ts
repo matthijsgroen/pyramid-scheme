@@ -57,6 +57,14 @@ const serializeGate = (g: NonNullable<SideSection["gate"]>): string =>
     .map(([k, v]) => `${k}: ${serializeValue(v)}`)
     .join(", ")} }`
 
+// Per-node chambers: `{ 0: true, 2: "ledger" }` — `true` leaves the activity to the carve.
+const serializeChambersByIndex = (m: Record<number, string | true>): string =>
+  `{ ${Object.keys(m)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .map(k => `${k}: ${JSON.stringify(m[k])}`)
+    .join(", ")} }`
+
 const serializeLootByIndex = (m: Record<number, false>): string =>
   `{ ${Object.keys(m)
     .map(Number)
@@ -89,6 +97,8 @@ const serializeSideSection = (s: SideSection): string => {
     parts.push(`encountersByIndex: ${serializeEncountersByIndex(s.encountersByIndex)}`)
   if (s.activitiesByIndex && Object.keys(s.activitiesByIndex).length)
     parts.push(`activitiesByIndex: ${serializeEncountersByIndex(s.activitiesByIndex)}`)
+  if (s.chambersByIndex && Object.keys(s.chambersByIndex).length)
+    parts.push(`chambersByIndex: ${serializeChambersByIndex(s.chambersByIndex)}`)
   if (s.difficultiesByIndex && Object.keys(s.difficultiesByIndex).length)
     parts.push(`difficultiesByIndex: ${serializeEncountersByIndex(s.difficultiesByIndex)}`)
   if (s.loot === false) parts.push(`loot: false`)
@@ -202,6 +212,8 @@ const floorFieldEmitters: {
   role: v => `role: ${serializeEncounter(v)}`,
   encountersByIndex: v => (Object.keys(v).length ? `encountersByIndex: ${serializeEncountersByIndex(v)}` : null),
   activitiesByIndex: v => (Object.keys(v).length ? `activitiesByIndex: ${serializeEncountersByIndex(v)}` : null),
+  chambersByIndex: v => (Object.keys(v).length ? `chambersByIndex: ${serializeChambersByIndex(v)}` : null),
+  chambers: v => (v ? `chambers: ${v}` : null),
   difficultiesByIndex: v => (Object.keys(v).length ? `difficultiesByIndex: ${serializeEncountersByIndex(v)}` : null),
   loot: () => `loot: false`,
   lootByIndex: v => (Object.keys(v).length ? `lootByIndex: ${serializeLootByIndex(v)}` : null),

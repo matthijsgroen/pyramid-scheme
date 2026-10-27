@@ -8,7 +8,13 @@ import { initPuzzleChains } from "./puzzleRewards"
 import { buildSideSections, type ResolveReward } from "./sideSections"
 import { stairIdAt } from "../game/stairAddress"
 import type { FloorConstraint, PyramidConstraint, RewardSpec } from "./dsl"
-import { resolveNodeActivities, resolveNodeDifficulties, resolveNodeLoot, resolveNodeSelectors } from "./dsl"
+import {
+  resolveNodeActivities,
+  resolveNodeChambers,
+  resolveNodeDifficulties,
+  resolveNodeLoot,
+  resolveNodeSelectors,
+} from "./dsl"
 import { ONE_WAY_KIND, declaredBinding, regionBarrierBinding, resolveBinding } from "./realisationBinding"
 
 // ── Per-pyramid randomized resolution ─────────────────────────────────────────
@@ -95,6 +101,8 @@ export type BuildFloorOptions = {
   encounter?: FloorConfig["encounter"]
   encountersByIndex?: FloorConfig["encountersByIndex"]
   activitiesByIndex?: FloorConfig["activitiesByIndex"]
+  chambersByIndex?: FloorConfig["chambersByIndex"]
+  chambers?: number
   difficultiesByIndex?: FloorConfig["difficultiesByIndex"]
   loot?: FloorConfig["loot"]
   lootByIndex?: FloorConfig["lootByIndex"]
@@ -145,6 +153,10 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.activitiesByIndex && Object.keys(opts.activitiesByIndex).length
     ? { activitiesByIndex: opts.activitiesByIndex }
     : {}),
+  ...(opts.chambersByIndex && Object.keys(opts.chambersByIndex).length
+    ? { chambersByIndex: opts.chambersByIndex }
+    : {}),
+  ...(opts.chambers ? { chambers: opts.chambers } : {}),
   ...(opts.difficultiesByIndex && Object.keys(opts.difficultiesByIndex).length
     ? { difficultiesByIndex: opts.difficultiesByIndex }
     : {}),
@@ -413,6 +425,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           // Resolve this floor's authored `nodes` selectors → per-node encounter overrides (§G).
           encountersByIndex: resolveNodeSelectors(fc.nodes, floorPP),
           activitiesByIndex: resolveNodeActivities(fc.nodes, floorPP),
+          chambersByIndex: resolveNodeChambers(fc.nodes, floorPP),
+          chambers: fc.chambers ?? constraint.chambers,
           difficultiesByIndex: resolveNodeDifficulties(fc.nodes, floorPP),
           loot: floorLoot,
           lootByIndex: resolveNodeLoot(fc.nodes, floorPP),
@@ -490,6 +504,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             sideSections: [],
             mainEndReward: unauthoredEnd(constraint.loot),
             loot: constraint.loot,
+            chambers: constraint.chambers,
             encounter: constraint.encounter,
             // The junctions the site asks every floor of it to carve, and what stands in them.
             forks: constraint.forks,
@@ -575,6 +590,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           wallDecorations: constraint.wallDecorations,
           corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
           packing: resolvePacking(constraint, journeyId, i),
+          chambers: constraint.chambers,
           seed: constraint.seed,
           sealed: resolveSealed(constraint),
         })
@@ -645,6 +661,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             pathPuzzles: wing.floorPP,
             difficulty: wing.difficulty,
             sideSections: [],
+            chambers: constraint.chambers,
             entrance: { stairId: wingStairId },
             // A wing is off the main path: its way out is the stair it came down.
             exitOrStaircase: "none",
@@ -757,6 +774,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     wallDecorations: constraint.wallDecorations,
     corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
     packing: resolvePacking(constraint, journeyId, i),
+    chambers: constraint.chambers,
     seed: constraint.seed,
     sealed: resolveSealed(constraint),
   })

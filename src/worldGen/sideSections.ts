@@ -5,7 +5,13 @@ import { TIER_UNLOCK_PERK_IDS } from "../data/treasurePerks"
 import { hashStr, pathEndToReward, specToGate } from "./rewards"
 import { stairIdAt, type StairAddress } from "../game/stairAddress"
 import type { KeyColor, PathEntry, RewardSpec, SideIntensity, SideSectionConstraint } from "./dsl"
-import { resolveNodeActivities, resolveNodeDifficulties, resolveNodeLoot, resolveNodeSelectors } from "./dsl"
+import {
+  resolveNodeActivities,
+  resolveNodeChambers,
+  resolveNodeDifficulties,
+  resolveNodeLoot,
+  resolveNodeSelectors,
+} from "./dsl"
 
 const ALL_KEY_COLORS: KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
 
@@ -82,6 +88,7 @@ const buildDslSection = <TExtra extends string>(
   // on any path, not just the main path (§G).
   const encountersByIndex = resolveNodeSelectors(cs.nodes, pathPuzzles)
   const activitiesByIndex = resolveNodeActivities(cs.nodes, pathPuzzles)
+  const chambersByIndex = resolveNodeChambers(cs.nodes, pathPuzzles)
   const difficultiesByIndex = resolveNodeDifficulties(cs.nodes, pathPuzzles)
   const lootByIndex = resolveNodeLoot(cs.nodes, pathPuzzles)
   return {
@@ -100,6 +107,7 @@ const buildDslSection = <TExtra extends string>(
     ...(cs.encounter !== undefined ? { encounter: cs.encounter } : {}),
     ...(Object.keys(encountersByIndex).length ? { encountersByIndex } : {}),
     ...(Object.keys(activitiesByIndex).length ? { activitiesByIndex } : {}),
+    ...(Object.keys(chambersByIndex).length ? { chambersByIndex } : {}),
     ...(Object.keys(difficultiesByIndex).length ? { difficultiesByIndex } : {}),
     ...(loot === false ? { loot } : {}),
     ...(Object.keys(lootByIndex).length ? { lootByIndex } : {}),

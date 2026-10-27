@@ -38,7 +38,9 @@ The maze needs no space set aside. What is missing is a room on the path that is
   - `.floor(1, { nodes: [{ where: 2, chamberAfter: "banquet" }] })`
   - `sidePath({ puzzles: 3, nodes: [{ where: { every: 2 }, chamberAfter: true }] })`
 - **How many:** `chambers: n` on `.pyramid()` or a floor's settings; the carve spreads them over the gaps between
-  puzzles.
+  puzzles. A floor's own count wins over the site's; the site's reaches every floor the pyramid builds, its ward
+  wings included. It counts the main path's chambers in all, its `chamberAfter` ones among them, and is baked as
+  `chambers` beside `chambersByIndex` (`serializer.ts`).
 
 ## The carve
 

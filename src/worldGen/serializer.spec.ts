@@ -18,6 +18,8 @@ describe("generateFile — serializeSideSection field coverage", () => {
       sealed: true,
       theme: "night",
       activitiesByIndex: { 0: "ledger" },
+      chambersByIndex: { 0: true, 1: "ledger" },
+      chambers: 3,
       sideSections: [
         {
           pathPuzzles: 1,
@@ -30,6 +32,7 @@ describe("generateFile — serializeSideSection field coverage", () => {
           sealed: true,
           encounter: "tableau",
           activitiesByIndex: { 0: "selling" },
+          chambersByIndex: { 0: "storage" },
           sideSections: [{ pathPuzzles: 0, difficulty: "junior", end: "treasure", endReward: { type: "mosaicPiece" } }],
         },
       ],
@@ -74,6 +77,12 @@ describe("generateFile — serializeSideSection field coverage", () => {
   it("keeps an authored room activity on both a serialized floor and a serialized side section", () => {
     expect(output).toContain('activitiesByIndex: { 0: "ledger" }')
     expect(output).toContain('activitiesByIndex: { 0: "selling" }')
+  })
+
+  it("keeps a floor's chambers and a side section's chamber in the bake", () => {
+    expect(output).toContain('chambersByIndex: { 0: true, 1: "ledger" }')
+    expect(output).toContain("chambers: 3")
+    expect(output).toContain('chambersByIndex: { 0: "storage" }')
   })
 })
 

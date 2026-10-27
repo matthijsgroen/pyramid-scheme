@@ -75,6 +75,9 @@ export type NodeSelector = {
   difficulty?: Difficulty
   /** `false` keeps generated loot out of this room. Authored rewards are never touched. */
   loot?: false
+  /** A pass-through chamber in the gap after the selected room: a corridor node widened into a room dressed for
+   * this activity, or for one the carve picks where `true`. The room itself stays where it is. */
+  chamberAfter?: ActivityId | true
 }
 
 /** Expand `nodes` selectors against a path's node `count` into a sparse 0-based index → encounter
@@ -97,6 +100,12 @@ export const resolveNodeDifficulties = (nodes: NodeSelector[] | undefined, count
 /** Expand `nodes` selectors into a sparse 0-based index → `false` map of the rooms kept free of generated loot. */
 export const resolveNodeLoot = (nodes: NodeSelector[] | undefined, count: number): Record<number, false> =>
   resolveNodeField(nodes, count, sel => sel.loot)
+
+/** Expand `nodes` selectors into a sparse 0-based index → the chamber that stands after that room. */
+export const resolveNodeChambers = (
+  nodes: NodeSelector[] | undefined,
+  count: number
+): Record<number, ActivityId | true> => resolveNodeField(nodes, count, sel => sel.chamberAfter)
 
 const resolveNodeField = <T>(
   nodes: NodeSelector[] | undefined,
@@ -207,6 +216,9 @@ export type FloorConstraint<TExtra extends string = never> = {
    * puzzle chain (e.g. `{ where: "last", encounter: "capstone" }` for the crocodile capstone). See
    * NodeSelector. Replaces the old hardcoded last-main-puzzle special case. */
   nodes?: NodeSelector[]
+  /** How many pass-through chambers this floor's main path holds in all, its `chamberAfter` ones among them; the
+   * carve spreads the rest over the gaps between its puzzles. Unset inherits the site's. */
+  chambers?: number
   /** WHAT THE CARVE MUST PROVIDE: `count` junctions with at least `exits` ways out free to be closed
    * — the main path onward and the side paths off the junction, never the way back, never one
    * something else already stands in, never one into a hidden branch. A carve offering fewer is
@@ -435,6 +447,9 @@ export type PyramidConstraint = {
   packingChance?: number
   /** packing used on a packingChance hit. Default 1.6. */
   packingWhenHit?: number
+  /** How many pass-through chambers every floor's main path holds, unless a floor names its own — see
+   * FloorConstraint.chambers. Never defaulted: a floor declares none unless this or the floor says so. */
+  chambers?: number
   /** Isolates the main path's cells from leftover maze edges in a compact layout, so a
    * shortcut can't merge around a main-path puzzle room. Per-floor `sealed` overrides this. */
   sealed?: boolean

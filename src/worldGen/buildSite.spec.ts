@@ -232,6 +232,33 @@ describe("buildSite", () => {
     expect(floors[0].mainEndReward).not.toEqual({ type: "fragmentSlot" })
   })
 
+  it("authored floors[] branch: a floor's chambers come from its own nodes and count, else the site's count", () => {
+    const { floors } = buildSite({
+      ...baseCtx,
+      constraint: {
+        chambers: 2,
+        floors: [
+          { pathPuzzles: 2, chambers: 3, nodes: [{ where: 1, chamberAfter: "ledger" }] },
+          { pathPuzzles: 2, sideSections: [{ pathPuzzles: 2, nodes: [{ where: "last", chamberAfter: true }] }] },
+        ],
+      },
+    })
+    expect([floors[0].chambers, floors[0].chambersByIndex]).toEqual([3, { 0: "ledger" }])
+    expect([floors[1].chambers, floors[1].chambersByIndex]).toEqual([2, undefined])
+    expect(floors[1].sideSections[0].chambersByIndex).toEqual({ 1: true })
+  })
+
+  it("declares no chamber on a floor that neither it nor its site asks for", () => {
+    const { floors } = buildSite({ ...baseCtx, constraint: { floors: [{ pathPuzzles: 2 }] } })
+    expect(floors[0]).not.toHaveProperty("chambers")
+    expect(floors[0]).not.toHaveProperty("chambersByIndex")
+  })
+
+  it("auto-built pyramid: every floor carries the site's chamber count", () => {
+    const { floors } = buildSite({ ...baseCtx, constraint: { chambers: 2 } })
+    expect(floors.map(floor => floor.chambers)).toEqual(floors.map(() => 2))
+  })
+
   it("authored floors[] branch: a stair section and a main path lead to the floors they name, climbing by depth", () => {
     const { floors } = buildSite({
       ...baseCtx,

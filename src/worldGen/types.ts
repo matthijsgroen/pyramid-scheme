@@ -65,6 +65,8 @@ export type SubSection = {
   encountersByIndex?: Record<number, string | string[]>
   /** Per-node authored activity, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
   activitiesByIndex?: Record<number, ActivityId>
+  /** Per-node pass-through chamber, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
+  chambersByIndex?: Record<number, ActivityId | true>
   /** Per-node difficulty, resolved from `nodes` selectors: a room builds at `difficultiesByIndex[k] ?? difficulty`
    * (see roomDifficulty). Mirrors game/siteTypes.ts. */
   difficultiesByIndex?: Record<number, Difficulty>
@@ -110,6 +112,10 @@ export type FloorConfig = {
   encountersByIndex?: Record<number, string | string[]>
   /** Per-node authored activity for the main path, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
   activitiesByIndex?: Record<number, ActivityId>
+  /** Per-node pass-through chamber on the main path, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
+  chambersByIndex?: Record<number, ActivityId | true>
+  /** How many pass-through chambers the main path holds in all. Mirrors game/siteTypes.ts. */
+  chambers?: number
   /** Per-node difficulty for the main path, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
   difficultiesByIndex?: Record<number, Difficulty>
   /** `false` keeps generated loot out of this floor. Mirrors game/siteTypes.ts. */

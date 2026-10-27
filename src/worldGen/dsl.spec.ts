@@ -4,6 +4,7 @@ import {
   tier,
   journey,
   resolveNodeActivities,
+  resolveNodeChambers,
   resolveNodeSelectors,
   wardPath,
   wardChest,
@@ -21,6 +22,24 @@ describe("resolveNodeActivities", () => {
 
   it("skips a selector that authors no activity", () => {
     expect(resolveNodeActivities([{ where: "last", encounter: "conversation" }], 4)).toEqual({})
+  })
+})
+
+describe("resolveNodeChambers", () => {
+  it("resolves a chamber after each selected node, an activity or the carve's pick", () => {
+    expect(
+      resolveNodeChambers(
+        [
+          { where: { every: 2 }, chamberAfter: true },
+          { where: 3, chamberAfter: "ledger" },
+        ],
+        4
+      )
+    ).toEqual({ 0: true, 2: "ledger" })
+  })
+
+  it("skips a selector that authors no chamber", () => {
+    expect(resolveNodeChambers([{ where: "last", activity: "ledger" }], 4)).toEqual({})
   })
 })
 
