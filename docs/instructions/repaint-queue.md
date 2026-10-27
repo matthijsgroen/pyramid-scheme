@@ -158,11 +158,11 @@ step across it. On a light rank that is a step darker than the floor; on a dark 
 face that comes back a third of 8:1 is laid three side by side first, as the Sphinx's are:
 `magick band.jpeg band.jpeg band.jpeg +append wide.png`.
 
-### `junior/floor` — red sandstone paving of mixed slabs
+### `junior/floor` — large red sandstone flagstones
 
-**Re-roll:** the first roll came out pale honey sandstone, 6 L* under the merchant's limestone and the same hue (L* 69 against 75): the ranks did not tell apart. The ground is now mid-tone red sandstone, about L* 55. The second roll had the right ground, but its joints were near-black drawn lines (p5 lum 64 against a slab band of 129): they are now soft grooves only a step darker than the slab, #7a5434, and nothing on the floor goes darker than #6a4630. The third roll had soft joints, but every slab was the same size in a strict running bond, so it read as a red brick wall, and its petals were white specks repeating in a grid: the paving is now mixed sizes and the petals are gone.
+**Re-roll:** the first roll came out pale honey sandstone, 6 L* under the merchant's limestone and the same hue (L* 69 against 75): the ranks did not tell apart. The ground is now mid-tone red sandstone, about L* 55. The second roll had the right ground, but its joints were near-black drawn lines (p5 lum 64 against a slab band of 129): they are now soft grooves only a step darker than the slab, #7a5434, and nothing on the floor goes darker than #6a4630. The third roll had soft joints, but every slab was the same size in a strict running bond, so it read as a red brick wall, and its petals were white specks repeating in a grid: the paving is now mixed sizes and the petals are gone. The fourth roll copied the merchant's own slab layout from the attached floor: the attachment is now the cave's slabless rock, and the paving is a few large square flagstones, unlike anything on the merchant's floor.
 
-**Attach:** `art/masters/surfaces/starter-floor.webp` — the merchant's repainted floor, for paint quality and slab scale only
+**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's rock floor, for paint quality only: it has no slabs, so it hands the generator no layout to copy
 
 ```
 FRAME: square, exactly 1:1. A seamless floor texture filling the whole frame. Do not re-compose it as a strip.
@@ -184,15 +184,15 @@ Every colour comes from that list. Nothing on the floor lighter than #c09060, no
 Warm and clear, with real colour: the copper is saturated and reads from across the room. The STONE
 stays calm — the ground is quiet so the copper and the paint can stand out on it.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality, its texture and its slab scale.
-Do NOT take its colours or its subject from it — the palette above is the only source of colour.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture, nothing else.
+Do NOT take its colours, its layout or its subject from it — the palette above is the only source of colour.
 
 Seamless top-down floor texture, viewed straight down.
-Red sandstone PAVING of MIXED SIZES, well kept — dressed stone slabs, NOT bricks and NOT a running bond.
-Slabs of three or four sizes fitted together the way flagstones are: a few large slabs about a quarter of
-the frame wide, many middling ones about a seventh, and small square stones filling the gaps between
-them. The courses break and shift — no joint runs straight across the whole image, and no two neighbouring
-slabs are the same size. Square corners — not rounded rectangles.
+Red sandstone FLAGSTONES, LARGE and nearly SQUARE, well kept — the floor of a great house, not a
+storeroom. COUNT THEM: about 4 flagstones across the width of the image and 4 down, each a little more or
+less than a quarter of the frame, none exactly alike in size. Each row is shifted by about half a stone
+against the next. No small filler stones, no strips, no bricks: few, big, calm stones. Square corners —
+not rounded rectangles.
 The slabs BUTT AGAINST EACH OTHER. The joint between two slabs is a shallow GROOVE: a soft narrow shadow
 where the surface dips and rises again — modelled, never a drawn line, never black. No slab has a contour
 around it. At its deepest a groove is #7a5434, one quiet step under the slab — the bond reads from the slabs' own tones, not from dark lines between them.
