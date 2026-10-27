@@ -2238,20 +2238,23 @@ keeps burying the outside. Four surfaces, the same loop as the cave's.
 
 ### `sphinx/floor` — the Sphinx's cut bedrock floor
 
+**Re-roll:** the first roll was eroded cliff rock — deep pits, stepped ledges along the strata, cracks and sand — and it repeated itself four times inside one image. The floor is a mason's finished floor: dressed flat and smooth, strata as flat colour bands only, swept clean.
+
 **Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's rock floor, for paint quality only: it is uncut rock with no slabs, the nearest thing to bedrock
 
 ```
 Top-down dungeon game tile art for the inside of the Great Sphinx, a passage cut into the desert bedrock.
-A FLOOR CUT FROM ONE MASS OF LIVING ROCK, never laid: soft yellow limestone dressed flat by masons, long
-shallow chisel strokes running one way, faint horizontal bands where harder grey-buff layers cross the
-softer yellow ones, a few hairline cracks following those bands, a little fine sand swept into the hollows
-and nothing more — the sand that buries the outside never got in here.
+A FLOOR CUT FROM ONE MASS OF LIVING ROCK, never laid: soft yellow limestone dressed FLAT AND SMOOTH by
+masons and kept clean — a fine, finished floor, not weathered rock. Perfectly level: no pits, no holes,
+no ledges, no steps, no crumbling edges, no deep cracks, no relief at all. Only the faintest long chisel
+marks running one way, and soft horizontal bands of colour where harder grey-buff layers cross the yellow,
+lying FLAT in the surface — a change of colour, never a change of height. Swept clean: no sand.
 Warm, dim and still: lamplight, no daylight. Every part of the floor is readable, nothing sinks into black.
 HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
 surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
 a comic, not a cartoon. An edge is a change of value, never a stroke.
-Limestone #8a7556, its harder bands #7d7462, shadow #4a3c2b, sand #b39b72. Nothing lighter than #c9b48c,
+Limestone #8a7556, its harder bands #7d7462, shadow #4a3c2b, pale #a8916b. Nothing lighter than #c9b48c,
 nothing darker than #2a2117.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its scale. Do NOT take its
@@ -2259,6 +2262,7 @@ colours, its slabs or its subject from it.
 THE CAMERA: straight down. A seamless square tile.
 NOTHING LAID: no slabs, no paving, no bricks, no joints, no mortar, no courses of blocks. The bands are
 rock strata, soft-edged and uneven, never ruled lines.
+ONE SINGLE PICTURE: do not repeat the image inside itself.
 It tiles, so NOTHING crosses the whole image: no band, crack or stain runs edge to edge, and no feature
 touches two edges. Value spread evenly over the whole tile.
 Even lighting, no hotspot, no vignette.
