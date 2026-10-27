@@ -68,20 +68,22 @@ export const tierPalette: Record<Tileset, TierPalette> = {
     propDark: "#5c5347",
     outline: "#15110c",
   },
+  // A nobleman's painted house: gold-ochre sandstone flagstones under a dark red-brown mural frieze, copper
+  // and verdigris as its colour (docs/game-design/visual-direction.md). The floor and wall tokens are the
+  // repainted floor's and wall face's.
   junior: {
-    bed: "#b08a5c",
-    slab: "#c39c68",
-    slabHi: "#cfa974",
-    slabLo: "#b8925f",
-    joint: "#4a3520",
+    bed: "#9a724c",
+    slab: "#bb9060",
+    slabHi: "#c09664",
+    slabLo: "#b28458",
+    joint: "#735536",
     accent: METALS.junior.accent,
-    wall: "#8f6a3f",
+    wall: "#734931",
     wallTop: "#b58a55",
-    wallBase: "#4a3520",
-    // The shallowest of the five, and sandstone gives the day's heat back all night: the warmest dark
-    // in the game, and the highest alpha, because its slabs are also the palest.
-    shade: "rgba(36,23,8,0.66)",
-    faceNight: 0.14,
+    wallBase: "#432416",
+    // Rooms are lit, as the merchant's are: the night is a light hand in the rank's own near-black.
+    shade: "rgba(36,23,8,0.3)",
+    faceNight: 0.45,
     lamp: 1,
     prop: "#e0c193",
     propDark: "#9c7442",

@@ -162,7 +162,7 @@ face that comes back a third of 8:1 is laid three side by side first, as the Sph
 
 ### `junior/floor` — large red sandstone flagstones
 
-**Re-roll:** the first roll came out pale honey sandstone, 6 L* under the merchant's limestone and the same hue (L* 69 against 75): the ranks did not tell apart. The ground is now mid-tone red sandstone, about L* 55. The second roll had the right ground, but its joints were near-black drawn lines (p5 lum 64 against a slab band of 129): they are now soft grooves only a step darker than the slab, #7a5434, and nothing on the floor goes darker than #6a4630. The third roll had soft joints, but every slab was the same size in a strict running bond, so it read as a red brick wall, and its petals were white specks repeating in a grid: the paving is now mixed sizes and the petals are gone. The fourth roll copied the merchant's own slab layout from the attached floor: the attachment is now the cave's slabless rock, and the paving is a few large square flagstones, unlike anything on the merchant's floor.
+**Re-roll:** the first roll came out pale honey sandstone, 6 L* under the merchant's limestone and the same hue (L* 69 against 75): the ranks did not tell apart. The ground is now mid-tone red sandstone, about L* 55. The second roll had the right ground, but its joints were near-black drawn lines (p5 lum 64 against a slab band of 129): they are now soft grooves only a step darker than the slab, #7a5434, and nothing on the floor goes darker than #6a4630. The third roll had soft joints, but every slab was the same size in a strict running bond, so it read as a red brick wall, and its petals were white specks repeating in a grid: the paving is now mixed sizes and the petals are gone. The fourth roll copied the merchant's own slab layout from the attached floor: the attachment is now the cave's slabless rock, and the paving is a few large square flagstones, unlike anything on the merchant's floor. The fifth roll was right in layout but red, the colour of the copper it should carry: its master was shifted to gold-ochre afterwards (hue +12, brightness ×1.18), so the metal lives on the walls and props and the ground stays calm.
 
 **Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's rock floor, for paint quality only: it has no slabs, so it hands the generator no layout to copy
 
@@ -211,7 +211,7 @@ and no feature touching two edges. Spread evenly — no corner busier than anoth
 Even lighting across the entire image, no hotspot, no vignette. Edge to edge texture.
 ```
 
-**Import:** `yarn import-tile art/masters/surfaces/junior-floor.webp --tier=junior --name=floor --slot=floor --filter=smooth --key=none --repeat=2.4`
+**Import:** `yarn import-tile art/masters/surfaces/junior-floor.webp --tier=junior --name=floor --slot=floor --filter=smooth --key=none --repeat=2`
 
 ### `junior/wall-face` — a painted procession over a dado band
 
@@ -354,7 +354,7 @@ and no feature touching two edges. Spread evenly — no corner busier than anoth
 Even lighting across the entire image, no hotspot, no vignette. Edge to edge texture.
 ```
 
-**Import:** `yarn import-tile art/masters/surfaces/expert-floor.webp --tier=expert --name=floor --slot=floor --filter=smooth --key=none --repeat=2.4`
+**Import:** `yarn import-tile art/masters/surfaces/expert-floor.webp --tier=expert --name=floor --slot=floor --filter=smooth --key=none --repeat=2`
 
 ### `expert/wall-face` — cool dressed stone in sunk-relief columns
 
@@ -494,7 +494,7 @@ frame, and no feature touching two edges. Spread evenly — no corner busier tha
 Even lighting across the entire image, no hotspot, no vignette. Edge to edge texture.
 ```
 
-**Import:** `yarn import-tile art/masters/surfaces/master-floor.webp --tier=master --name=floor --slot=floor --filter=smooth --key=none --repeat=2.4`
+**Import:** `yarn import-tile art/masters/surfaces/master-floor.webp --tier=master --name=floor --slot=floor --filter=smooth --key=none --repeat=2`
 
 ### `master/wall-face` — gilded relief under a kheker frieze
 
@@ -633,7 +633,7 @@ and no feature touching two edges. Spread evenly — no corner busier than anoth
 Even lighting across the entire image, no hotspot, no vignette. Edge to edge texture.
 ```
 
-**Import:** `yarn import-tile art/masters/surfaces/wizard-floor.webp --tier=wizard --name=floor --slot=floor --filter=smooth --key=none --repeat=2.4`
+**Import:** `yarn import-tile art/masters/surfaces/wizard-floor.webp --tier=wizard --name=floor --slot=floor --filter=smooth --key=none --repeat=2`
 
 ### `wizard/wall-face` — calcite lit from behind, light in the joints
 

@@ -15,9 +15,9 @@
  *   --key=#ff00ff    background colour to make transparent (default magenta). --key=none to skip.
  *   --tolerance=60   how far from that colour still counts as background (0-441, default 60)
  *   --filter=nearest keep hard pixel edges. --filter=smooth for painted art (default: nearest)
- *   --repeat=1.4     fit the art N times across the slot instead of once, for a megatile whose subject
- *                    came back too big. Fractional is the point — a whole number makes the repeat
- *                    visible. Run `make-seamless` on the SOURCE first, or the grid shows its own seams.
+ *   --repeat=2       fit the art N times across the slot instead of once, for a megatile whose subject
+ *                    came back too big. A whole number: the slot is tiled again on the map, and only whole
+ *                    copies meet their neighbour. Run `make-seamless` on the SOURCE first.
  *   --headroom=0.25  squeeze the art into the LOWER part of the slot and leave the rest clear. On a FACE
  *                    the cap is painted the wall's own top colour, because a face IS the wall; on any
  *                    other slot it is left transparent, so the wall behind a hanging thing still shows.
@@ -614,6 +614,12 @@ const main = async (): Promise<void> => {
   mkdirSync(dir, { recursive: true })
   const out = join(dir, `${name}.png`)
   const repeat = Number(arg("repeat", "1"))
+  if (!Number.isInteger(repeat) || repeat < 1) {
+    console.error(
+      `--repeat=${arg("repeat", "1")}: a whole number. The map tiles this slot again, so a cut copy meets a whole one at every seam.`
+    )
+    process.exit(1)
+  }
   const tileW = Math.round(w / repeat)
   // A face repeats HORIZONTALLY only, the same axis `make-seamless --axis=x` works on: its bands are
   // registered top to bottom and stacking a second copy under them would draw two walls. It is also the
@@ -631,10 +637,8 @@ const main = async (): Promise<void> => {
   // One tile, or a grid of a smaller copy. A generator draws a floor's subject at whatever scale it likes
   // and cannot be talked down reliably; shrinking and repeating is the one lever that needs no re-roll.
   //
-  // `repeat` is fractional on purpose. A whole number is what makes a repeat VISIBLE — at 2 the megatile
-  // is four identical quarters and the eye finds them at once. At 1.4 the copies run off the edge and are
-  // cropped, so no two are the same, and because the source is already seamless (run `make-seamless` on
-  // it first) the crop still tiles.
+  // `repeat` is whole. The map lays this slot edge to edge, so a copy cut off at the slot's edge would meet
+  // the next slot's first copy mid-stone; whole copies of a seamless source meet as the source does.
   const across = Math.ceil(w / tileW)
   const down = Math.ceil(h / tileH)
   const tiles =
