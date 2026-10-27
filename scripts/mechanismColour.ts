@@ -5,8 +5,8 @@
  *   yarn tsx scripts/mechanismColour.ts
  *
  * The method is rankColour's: the floor takes the night once, a standing piece takes it again at
- * `SEATING_PASS`, and both are read as L*. Mechanism art is shared (`tiles/default/`), so only the floor and
- * the night change per row. `share` is how much of the piece's own paint stands MIN_STEP off the floor: a
+ * `SEATING_PASS`, and both are read as L*. Each row reads its pieces through its tileset's mechanism style
+ * (`MECHANISM_STYLE`, deepest painted folder first), the same chain the renderer draws them by. `share` is how much of the piece's own paint stands MIN_STEP off the floor: a
  * mean can pass on a piece whose thin parts vanish, and fail on one whose highlights still read.
  * The pipe hole sits in the wall band, so it is held against the wall face rather than the floor.
  */
@@ -18,6 +18,7 @@ import type { Tileset } from "../src/game/siteTypes"
 import { tierPalette } from "../src/app/SiteMap/tileMaterials"
 import { SEATING_PASS } from "../src/app/SiteMap/lighting"
 import { hexToRgb, parseRgba, toLch, wash, type Rgb } from "../src/support/colour"
+import { MECHANISM_STYLE, mechanismFolders } from "../src/app/SiteMap/mechanismStyle"
 import { artMean, MIN_STEP } from "./rankColour"
 
 const TILESETS: Tileset[] = [...difficulties, "cave", "sphinx"]
@@ -38,8 +39,9 @@ const PIECES: Record<string, { tiles: string[]; on?: "wall" }> = {
   drop: { tiles: ["dropEast"] },
 }
 
-const opaquePixels = async (name: string): Promise<Rgb[]> => {
-  const { data, info } = await sharp(`src/assets/tiles/default/${name}.png`)
+const opaquePixels = async (tier: Tileset, name: string): Promise<Rgb[]> => {
+  const folder = mechanismFolders(MECHANISM_STYLE[tier]).find(f => existsSync(`src/assets/tiles/${f}/${name}.png`))
+  const { data, info } = await sharp(`src/assets/tiles/${folder ?? "default"}/${name}.png`)
     .ensureAlpha()
     .raw()
     .toBuffer({ resolveWithObject: true })
@@ -54,18 +56,18 @@ const surface = async (tier: Tileset, name: "floor" | "wall-face", flat: string)
   existsSync(`src/assets/tiles/${tier}/${name}.png`) ? artMean(tier, name) : hexToRgb(flat)
 
 const main = async () => {
-  const pixels = Object.fromEntries(
-    await Promise.all(
-      Object.entries(PIECES).map(async ([piece, { tiles }]) => [
-        piece,
-        (await Promise.all(tiles.map(opaquePixels))).flat(),
-      ])
-    )
-  ) as Record<string, Rgb[]>
   const steps: Record<string, Record<string, string>> = {}
   const shares: Record<string, Record<string, string>> = {}
   const fails: string[] = []
   for (const tier of TILESETS) {
+    const pixels = Object.fromEntries(
+      await Promise.all(
+        Object.entries(PIECES).map(async ([piece, { tiles }]) => [
+          piece,
+          (await Promise.all(tiles.map(name => opaquePixels(tier, name)))).flat(),
+        ])
+      )
+    ) as Record<string, Rgb[]>
     const palette = tierPalette[tier]
     const { rgb: night, alpha } = parseRgba(palette.shade)
     const floorL = toLch(wash(await surface(tier, "floor", palette.slab), night, alpha)).L
