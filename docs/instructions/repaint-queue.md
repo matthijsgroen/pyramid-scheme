@@ -354,6 +354,8 @@ and no feature touching two edges. Spread evenly — no corner busier than anoth
 Even lighting across the entire image, no hotspot, no vignette. Edge to edge texture.
 ```
 
+**Prepare:** a straight grid of whole tiles is seamless as it comes, and `--land`'s make-seamless crossfades it against a shifted copy into doubled, ghosted joints. Save the download itself as the master, `art/masters/surfaces/expert-floor.webp`, and run the Import line.
+
 **Import:** `yarn import-tile art/masters/surfaces/expert-floor.webp --tier=expert --name=floor --slot=floor --filter=smooth --key=none --repeat=2`
 
 ### `expert/wall-face` — cool dressed stone in sunk-relief columns
