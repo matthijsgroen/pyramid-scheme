@@ -128,18 +128,20 @@ export const tierPalette: Record<Tileset, TierPalette> = {
     propDark: "#8a6a24",
     outline: "#141210",
   },
+  // The gods: a still floor holding a dimmed crimson-and-purple nebula and its stars, emerald and gold on the walls
+  // and props. The floor tokens are the repainted floor's.
   wizard: {
-    bed: "#4e7268",
-    slab: "#5a8074",
-    slabHi: "#658c80",
-    slabLo: "#537668",
-    joint: "#22423a",
+    bed: "#211a32",
+    slab: "#3a213d",
+    slabHi: "#4f2843",
+    slabLo: "#2a1d38",
+    joint: "#14172e",
     accent: METALS.wizard.accent,
     wall: "#3a6155",
     wallTop: "#4f7c6d",
     wallBase: "#1d3830",
-    // Verdigris and standing water. Not the absence of a lamp — the colour the place already is.
-    shade: "rgba(15,35,29,0.61)",
+    // A dark floor: the night is a light hand in the sky's own near-black, so the nebula keeps its colour.
+    shade: "rgba(20,23,46,0.25)",
     faceNight: 0.45,
     lamp: 1,
     prop: "#8fd9bd",

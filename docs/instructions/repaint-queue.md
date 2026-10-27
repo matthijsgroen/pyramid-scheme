@@ -641,7 +641,9 @@ the dark before it reaches the frame's edge on any side. Spread evenly — no co
 Even lighting across the entire image, no hotspot, no vignette. Edge to edge texture.
 ```
 
-**Import:** `yarn import-tile art/masters/surfaces/wizard-floor.webp --tier=wizard --name=floor --slot=floor --filter=smooth --key=none --repeat=2`
+**Scale:** a nebula has no stones to size, so it goes in at `--repeat=1`: at 2 its one cloud comes back every four cells and reads as wallpaper. `--stars=14` lifts the fine stars the resize averages away.
+
+**Import:** `yarn import-tile art/masters/surfaces/wizard-floor.webp --tier=wizard --name=floor --slot=floor --filter=smooth --key=none --repeat=1 --stars=14`
 
 ### `wizard/wall-face` — calcite lit from behind, light in the joints
 

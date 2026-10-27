@@ -62,6 +62,9 @@
  *                    allowed, as it would eat an object's transparency.
  *   --flatten=0.5    blend toward the material the slot is made of — the rank's slab for a floor, its wall
  *                    for a face — so a surface sits behind the props. Toward the palette, not toward grey.
+ *   --stars=14       lift every point brighter than its own surroundings by more than N (luminance) toward
+ *                    white, after the resize: the fine stars a generator paints at 2048 average away at
+ *                    896, and a global lift would blow a bright pocket of cloud out with them.
  *   --trim           trim the keyed background away and scale the object to fill the slot, keeping its
  *                    aspect. For a WALL item, whose frame IS its placement: a return with air round the
  *                    object leaves that air in the band and reads as a sticker stuck on the wall.
@@ -322,6 +325,20 @@ const SHADOW_FLOOR = 70
  *
  * Returns RGBA where alpha is the mask, which is what `dest-in` wants.
  */
+/** Lifts each pixel brighter than its blurred surroundings by more than `margin` toward white. */
+export const liftPoints = async (png: Buffer, margin: number): Promise<Buffer> => {
+  const { data, info } = await sharp(png).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  const around = await sharp(png).ensureAlpha().blur(5).raw().toBuffer()
+  const lum = (d: Uint8Array, i: number) => d[i] * 0.3 + d[i + 1] * 0.59 + d[i + 2] * 0.11
+  for (let i = 0; i < data.length; i += 4) {
+    const over = lum(data, i) - lum(around, i)
+    if (over <= margin) continue
+    const f = (Math.min(1, (over - margin) / 40) * 0.8 + 0.2) * 0.85
+    for (let c = 0; c < 3; c++) data[i + c] = Math.round(data[i + c] + (255 - data[i + c]) * f)
+  }
+  return sharp(data, { raw: info }).png({ compressionLevel: 9 }).toBuffer()
+}
+
 export const growMask = ({
   mask,
   maskChannels,
@@ -696,12 +713,14 @@ const main = async (): Promise<void> => {
       create: { width: w, height: h, channels: 4 as const, background: { r: wr, g: wg, b: wb, alpha: flatten } },
     },
   }
-  const rendered = await sharp(laid)
+  const washed = await sharp(laid)
     // `atop` keeps the destination's alpha, so the wash lands on the art and NOT on the hole through it.
     // An arch is the first slot with real transparency, and a plain overlay filled its doorway with stone.
     .composite(flatten > 0 ? [{ ...wash, blend: "atop" as const }] : [])
     .png({ compressionLevel: 9 })
     .toBuffer()
+  const stars = Number(arg("stars", "0"))
+  const rendered = stars > 0 ? await liftPoints(washed, stars) : washed
 
   // ONLY WRITE WHAT CHANGED. `art/rebuild.sh` re-imports all 190 tiles to prove no geometry change has
   // silently invalidated a master, and the proof it wants is that the BYTES come back the same — which
