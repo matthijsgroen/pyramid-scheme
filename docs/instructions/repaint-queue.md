@@ -3314,6 +3314,708 @@ yarn import-tile art/masters/props/master/statue-horus.webp --tier=master --name
 
 ---
 
+## Mechanism styles — light and bone
+
+The lever, torch, plate, gate, drop, pipe hole and narrow passage are shared art in `tiles/default/`, painted
+mid-dark, and on a dark floor they vanish: through the renderer's night the cave floor reads L\* 27, master's
+25 and wizard's 17, and the default pieces seat at L\* 20–30 — `yarn tsx scripts/mechanismColour.ts` has wizard's
+lever 8.7 L\* off its floor with 2% of its paint reading, and the cave's lever, torch, plate and gate at 0%. The
+thin shapes (the lever's shaft, the torch's post, the side-on gate) barely read on any floor. A style repaints
+the pieces for the floors that use it (`MECHANISM_STYLE` in `src/app/SiteMap/mechanismStyle.ts`, chain and folders
+in `tile-art-brief.md`): master and wizard draw `light`, the cave `light/bone`, the rest `default`.
+
+**A style variant is the SAME object with the SAME silhouette.** The player learned these pieces once and must
+not learn them again; only value and material change. So every entry here is an EDIT of the default piece's own
+painted master, on its own canvas, and imports with the default piece's own masks, seats and scales — the
+`art/rebuild.sh` lines, with `--tier=mechanism/light` (or `mechanism/light/bone`) so `import-tile` writes
+`src/assets/tiles/mechanism/<style>/<name>.png`, the folder the style chain reads.
+
+- **`light`** — the same pieces in light values, with catch-lights, to read on the DARK floors: master's gold
+  galleries and wizard's nebula. Every default piece is a candidate; the sequence tile is not here because the
+  review found it reads.
+- **`light/bone`** — the cave paints only two things: the lever in weathered bone and ivory, and a bone-coloured
+  pillar as the torch to light. Everything else in the cave falls back to `light`.
+
+**The value target, for every entry.** At least 25 L\* off the floor it serves after the night (`MIN_STEP`) —
+not on the mean alone but over most of its paint, since a mean can pass on a piece whose thin parts vanish.
+And BOTH ways at once: a dark contact shadow where it meets the floor, so it seats, and a light catch-light
+along its upper-left edges, so it reads against the dark. Master is the binding floor of the two `light` serves
+(25 against 17), which is why the `light` entries attach it. Thicker silhouettes only where the default is
+thin — the lever's shaft, the torch's post, the side-on gate — and then the same object, a little heavier.
+
+**`--land` cannot measure these yet.** It grades against a rank, and `mechanism/light` is none, so it imports
+and says "No rank to measure it against — look at it". Measure the master by hand against each floor it serves
+(`yarn tile-stats <master> --tier=master --slot=prop`, again with `--tier=wizard`, and `--tier=cave` for bone),
+and look at it on the review sheet (Storybook `app-topology-on-every-floor--sheet`). `mechanismColour.ts` reads
+`tiles/default/` only, so it does not see a landed style either.
+
+**The keys are `light/<name>` and `bone/<name>`** because `yarn repaint` reads a key as one `tier/name` pair;
+the Import line is what names the real folder.
+
+### `light/leverBase` — the floor lever's dome and kerb, in light values
+
+The one painting `leverBaseBack` and `leverBaseFront` are both cut from, at the track's own near wall, exactly
+as the default pair is: same master canvas, same two masks, so the arm still slots between them.
+
+**Attach:**
+
+1. `art/masters/props/default/leverBase.webp` — the piece itself, to edit: shape, silhouette, camera
+2. `art/masters/surfaces/master-floor.webp` — the dark floor it must read on, for value only
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: the base of a floor lever — a ribbed bronze DOME with a slot cut in its top, set in a low stone KERB. Same object, same silhouette, same camera. Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Repaint value and light only.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR IT STANDS ON, a dark polished stone. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
+
+THE CHANGE: paint the whole piece LIGHT, so it stands out clearly on that dark floor. The kerb becomes pale limestone, #cfc3a8, its top edge catching a pale cream catch-light. The dome becomes pale polished bronze, #d6b878, its ribs picked out with lighter tops and a soft pale catch-light along the upper-left curve; the slot stays a dark opening. Keep clear form shading — the dark side of the dome is still clearly lighter than the floor. A narrow dark band where the kerb meets the ground, so it sits on it.
+
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece, exactly where it is in the reference. No floor, no gradient, no shadow on the magenta.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold lever --contents=base --colour=#a7b2be --floor=#8d98a5
+yarn render-prop --primitive=lever --contents=baseBack --shadow=0 --background=none --colour=#a7b2be --floor=#8d98a5 --out="$HOME/tile-previews/leverBaseBack-expert-obj.png"
+yarn render-prop --primitive=lever --contents=baseFront --shadow=0 --background=none --colour=#a7b2be --floor=#8d98a5 --out="$HOME/tile-previews/leverBaseFront-expert-obj.png"
+yarn import-tile art/masters/props/mechanism/light/leverBase.webp --tier=mechanism/light --name=leverBaseBack --slot=prop \
+  --filter=smooth --mask="$HOME/tile-previews/leverBaseBack-expert-obj.png" --seat="$SHADOW" --no-trim
+yarn import-tile art/masters/props/mechanism/light/leverBase.webp --tier=mechanism/light --name=leverBaseFront --slot=prop \
+  --filter=smooth --mask="$HOME/tile-previews/leverBaseFront-expert-obj.png" --no-trim
+```
+
+### `light/leverArm` — the lever's arm, in light values, its shaft heavier
+
+**Attach:**
+
+1. `art/masters/props/default/leverArm.webp` — the piece itself, to edit: shape, silhouette, camera
+2. `art/masters/surfaces/master-floor.webp` — the dark floor it must read on, for value only
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: the arm of a floor lever — a straight wooden SHAFT, a bronze COLLAR near its top, and a squared bronze HANDLE block bent forward at the top. Same object, same camera. Keep every edge, every proportion and every silhouette exactly as in the reference image, except the one change of shape below — do not move, resize, straighten, add, remove or restyle any other part of it, and do not change the angle it stands at. Repaint value and light only, with ONE change of shape below.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR IT STANDS ON, a dark polished stone. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
+
+THE ONE CHANGE OF SHAPE: the shaft is too thin to read. Paint it about half again as wide, the same straight post in the same place, centred on the same line, the same length. Nothing else changes size.
+
+THE CHANGE OF VALUE: paint the whole arm LIGHT, so it stands out clearly on that dark floor. The shaft becomes pale bleached acacia, #c9b38a, with a pale catch-light running up its left edge and a darker right side that is still clearly lighter than the floor. The collar and the handle become pale polished bronze, #d6b878, the handle's top face the lightest thing on the arm.
+
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece. No floor, no gradient, no shadow on the magenta.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold lever --contents=arm --shadow=0 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/mechanism/light/leverArm.webp --tier=mechanism/light --name=leverArm --slot=prop \
+  --filter=smooth --mask="$OBJ" --mask-grow=40 --no-trim
+```
+
+`--mask-grow=40` is a placeholder for the wider shaft: the scaffold's mask is the default arm's width, and
+without it the new width is cut back off. Raise it until the shaft's edges survive, no further.
+
+### `light/torchUnlit` — the standing torch, unlit, in light values, its post heavier
+
+**Attach:**
+
+1. `art/masters/props/default/torchUnlit.webp` — the piece itself, to edit: shape, silhouette, camera
+2. `art/masters/surfaces/master-floor.webp` — the dark floor it must read on, for value only
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: a standing torch — a stepped octagonal stone BASE, a tall wooden POST with a bronze collar at its foot and below its head, and a HEAD of wrapped cloth at the top, unlit. Same object, same camera. Keep every edge, every proportion and every silhouette exactly as in the reference image, except the one change of shape below — do not move, resize, straighten, add, remove or restyle any other part of it, and do not change the angle it stands at. Repaint value and light only, with ONE change of shape below.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR IT STANDS ON, a dark polished stone. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
+
+THE ONE CHANGE OF SHAPE: the post is too thin to read. Paint it about half again as wide, the same straight post in the same place, the same height. The base, the collars and the head keep their size.
+
+THE CHANGE OF VALUE: paint the whole torch LIGHT, so it stands out clearly on that dark floor. The base becomes pale limestone, #cfc3a8, each step's top edge catching a pale cream catch-light. The post becomes pale bleached acacia, #c9b38a, a catch-light up its left edge. The collars are pale polished bronze, #d6b878. The cloth head stays the darkest part — a mid-brown, #8a6f52, sooted at the top — still clearly lighter than the floor. A narrow dark band where the base meets the ground, so it sits on it.
+
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow. No flame, no smoke.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece. No floor, no gradient, no shadow on the magenta.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold torch --spin=15 --drop=accent --colour-cloth=#3e3731 --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/mechanism/light/torchUnlit.webp --tier=mechanism/light --name=torchUnlit --slot=prop \
+  --filter=smooth --seat="$SHADOW" --scale=0.5639
+```
+
+Cut unmasked, as the default is, so the wider post needs no grown mask. `--scale` is the default's and holds
+while the painting's trimmed height is the default's 2110 px; if the return is taller or shorter, re-derive it
+and `light/torchLit`'s together, the way `art/rebuild.sh` does for the pair.
+
+### `light/torchLit` — the standing torch, lit, in light values
+
+**WAITS ON `light/torchUnlit`.** It is an EDIT of the landed light unlit torch, as the default lit one is of the
+default unlit one, so lighting it only adds the flame and the two coincide part for part.
+
+**Attach:**
+
+1. `art/masters/props/mechanism/light/torchUnlit.webp` — the light unlit torch, to edit
+2. `art/masters/props/default/torchLit.webp` — the default lit torch: the flame to add, and how far it reaches
+
+```
+FRAME: portrait, exactly as the first reference, but taller at the top by the flame, as the second reference is. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS A STANDING TORCH, unlit, already painted. Keep every edge, every proportion and every silhouette of it exactly as it is — base, post, collars and cloth head unchanged, the same paint. Do not move, resize, straighten, add, remove or restyle any part of it.
+
+THE SECOND ATTACHED IMAGE IS THE SAME TORCH LIT. Take ONLY its flame: add that flame on top of the cloth head, the same shape, the same size, the same place. The cloth head's top is lit warm orange where the flame sits on it.
+
+The flame is matte painted orange and yellow tongues. No glow cast on the torch, no light pool, no halo, no smoke.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the torch and its flame. No floor, no gradient, no shadow on the magenta.
+```
+
+**Import:** `yarn import-tile art/masters/props/mechanism/light/torchLit.webp --tier=mechanism/light --name=torchLit --slot=prop --filter=smooth --scale=0.6513`
+
+### `bone/leverBase` — the cave lever's dome and kerb, in bone
+
+The cave's own lever. Cut into `leverBaseBack` and `leverBaseFront` from this one painting, as the default pair is.
+
+**Attach:**
+
+1. `art/masters/props/default/leverBase.webp` — the piece itself, to edit: shape, silhouette, camera
+2. `art/masters/surfaces/cave-floor.webp` — the cave's rock floor it must read on, for value only
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: the base of a floor lever — a ribbed DOME with a slot cut in its top, set in a low KERB. Same object, same silhouette, same camera. Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Repaint material, value and light only.
+
+THE SECOND ATTACHED IMAGE IS THE CAVE FLOOR IT STANDS ON, dark rock. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
+
+THE CHANGE: the whole piece is WEATHERED BONE. The dome is a great bleached skull-cap of bone, pale ivory #d8cdb4, its ribs the ridges of the bone, fine cracks and pitting along them, a warm tan shadow #a8957a in the hollows between ribs; the slot stays a dark opening. The kerb is a ring of old ivory, a shade warmer and darker than the dome, chipped at its edge. A soft pale catch-light along the upper-left curve. Where the kerb meets the ground, a DARK contact base, #2a221c, a narrow band so the bone sits on the rock instead of floating over it.
+
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow. No skulls, no teeth, no figures: bone as a material, nothing more.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece, exactly where it is in the reference. No floor, no gradient, no shadow on the magenta.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold lever --contents=base --colour=#a7b2be --floor=#8d98a5
+yarn render-prop --primitive=lever --contents=baseBack --shadow=0 --background=none --colour=#a7b2be --floor=#8d98a5 --out="$HOME/tile-previews/leverBaseBack-expert-obj.png"
+yarn render-prop --primitive=lever --contents=baseFront --shadow=0 --background=none --colour=#a7b2be --floor=#8d98a5 --out="$HOME/tile-previews/leverBaseFront-expert-obj.png"
+yarn import-tile art/masters/props/mechanism/light/bone/leverBase.webp --tier=mechanism/light/bone --name=leverBaseBack --slot=prop \
+  --filter=smooth --mask="$HOME/tile-previews/leverBaseBack-expert-obj.png" --seat="$SHADOW" --no-trim
+yarn import-tile art/masters/props/mechanism/light/bone/leverBase.webp --tier=mechanism/light/bone --name=leverBaseFront --slot=prop \
+  --filter=smooth --mask="$HOME/tile-previews/leverBaseFront-expert-obj.png" --no-trim
+```
+
+### `bone/leverArm` — the cave lever's arm, in bone, its shaft heavier
+
+**Attach:**
+
+1. `art/masters/props/default/leverArm.webp` — the piece itself, to edit: shape, silhouette, camera
+2. `art/masters/surfaces/cave-floor.webp` — the cave's rock floor it must read on, for value only
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: the arm of a floor lever — a straight SHAFT, a COLLAR near its top, and a squared HANDLE block bent forward at the top. Same object, same camera. Keep every edge, every proportion and every silhouette exactly as in the reference image, except the one change of shape below — do not move, resize, straighten, add, remove or restyle any other part of it, and do not change the angle it stands at. Repaint material, value and light only, with ONE change of shape below.
+
+THE SECOND ATTACHED IMAGE IS THE CAVE FLOOR IT STANDS ON, dark rock. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
+
+THE ONE CHANGE OF SHAPE: the shaft is too thin to read. Paint it about half again as wide, the same straight post in the same place, centred on the same line, the same length. Nothing else changes size.
+
+THE CHANGE: the whole arm is WEATHERED BONE. The shaft is a long bone, pale ivory #d8cdb4, faintly grained along its length, with a warm tan shadow #a8957a down its right side and a pale catch-light up its left. The collar is a band of darker, older ivory bound round it. The handle is a squared knuckle of bone, its top face the palest thing on the arm, its underside in warm shadow.
+
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow. No skulls, no teeth, no figures: bone as a material, nothing more.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece. No floor, no gradient, no shadow on the magenta.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold lever --contents=arm --shadow=0 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/mechanism/light/bone/leverArm.webp --tier=mechanism/light/bone --name=leverArm --slot=prop \
+  --filter=smooth --mask="$OBJ" --mask-grow=40 --no-trim
+```
+
+### `bone/torchUnlit` — the cave's torch to light: a bone pillar, unlit
+
+**Attach:**
+
+1. `art/masters/props/default/torchUnlit.webp` — the piece itself, to edit: shape, silhouette, camera
+2. `art/masters/surfaces/cave-floor.webp` — the cave's rock floor it must read on, for value only
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: a standing torch — a stepped octagonal BASE, a tall POST with a collar at its foot and below its head, and a HEAD at the top, unlit. Same object, same camera. Keep every edge, every proportion and every silhouette exactly as in the reference image, except the one change of shape below — do not move, resize, straighten, add, remove or restyle any other part of it, and do not change the angle it stands at. Repaint material, value and light only, with ONE change of shape below.
+
+THE SECOND ATTACHED IMAGE IS THE CAVE FLOOR IT STANDS ON, dark rock. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
+
+THE ONE CHANGE OF SHAPE: the post is too thin to read. Paint it about half again as wide, a PILLAR now rather than a pole, in the same place, the same height. The base, the collars and the head keep their size.
+
+THE CHANGE: the base and the pillar are BONE-COLOURED, weathered: pale ivory #d8cdb4, faintly grained and pitted, a warm tan shadow #a8957a down the pillar's right side and under each step of the base, a pale catch-light up the pillar's left edge and along each step's top. The collars are a darker, older ivory. The head is the same flame cup as the reference, unlit: its wrapping dark and sooted, #4a3c30, the darkest thing on the piece. Where the base meets the ground, a DARK contact base, #2a221c, a narrow band so it sits on the rock.
+
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow. No flame, no smoke. No skulls, no teeth, no figures: bone as a colour and a material, nothing more.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece. No floor, no gradient, no shadow on the magenta.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold torch --spin=15 --drop=accent --colour-cloth=#3e3731 --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/mechanism/light/bone/torchUnlit.webp --tier=mechanism/light/bone --name=torchUnlit --slot=prop \
+  --filter=smooth --seat="$SHADOW" --scale=0.5639
+```
+
+### `bone/torchLit` — the cave's bone pillar, lit
+
+**WAITS ON `bone/torchUnlit`**, for `light/torchLit`'s reason: an edit of the landed unlit one, so the two coincide.
+
+**Attach:**
+
+1. `art/masters/props/mechanism/light/bone/torchUnlit.webp` — the bone pillar unlit, to edit
+2. `art/masters/props/default/torchLit.webp` — the default lit torch: the flame to add, and how far it reaches
+
+```
+FRAME: portrait, exactly as the first reference, but taller at the top by the flame, as the second reference is. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS A BONE PILLAR TORCH, unlit, already painted. Keep every edge, every proportion and every silhouette of it exactly as it is — base, pillar, collars and head unchanged, the same paint. Do not move, resize, straighten, add, remove or restyle any part of it.
+
+THE SECOND ATTACHED IMAGE IS A TORCH OF THE SAME SHAPE, LIT. Take ONLY its flame: add that flame on top of the head, the same shape, the same size, the same place. The head's top is lit warm orange where the flame sits in it.
+
+The flame is matte painted orange and yellow tongues. No glow cast on the bone, no light pool, no halo, no smoke.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the torch and its flame. No floor, no gradient, no shadow on the magenta.
+```
+
+**Import:** `yarn import-tile art/masters/props/mechanism/light/bone/torchLit.webp --tier=mechanism/light/bone --name=torchLit --slot=prop --filter=smooth --scale=0.6513`
+
+### `light/plate` — the pressure plate, raised, in light values
+
+The three plate looks swap on one cell, so they are one paint chain as the default's are: `plate`, then
+`plateDown` as an edit of it, then `plateStone` as an edit of that. **The limestone block in `plateStone` must
+stay the palest thing on the plate**, so the slab goes light but stops a clear step short of it.
+
+**Attach:**
+
+1. `art/masters/props/default/plate.webp` — the piece itself, to edit: shape, silhouette, camera
+2. `art/masters/surfaces/master-floor.webp` — the dark floor it must read on, for value only
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: a pressure plate — a square SLAB raised a little above a stone KERB that frames it. Same object, same silhouette, same camera. Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Repaint value and light only.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR IT STANDS ON, a dark polished stone. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
+
+THE CHANGE: paint the plate LIGHT, so it stands out clearly on that dark floor. The kerb becomes pale limestone, #cfc3a8, its top edges catching a pale cream catch-light and a dark joint line, #2a2622, where it meets the ground. The slab becomes a mid-light polished bronze, #b39a68 — clearly lighter than the floor, but a clear step darker than the kerb's catch-light, so a pale stone set on it later would still stand out. A thin catch-light along the slab's upper-left edge, and a dark shadow line under its near edge where it stands proud of the kerb.
+
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece, exactly where it is in the reference. No floor, no gradient, no shadow on the magenta.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold plate --drop=limestone --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/mechanism/light/plate.webp --tier=mechanism/light --name=plate --slot=prop \
+  --filter=smooth --seat="$SHADOW"
+```
+
+Cut unmasked with the default's flags: the painted kerb is larger than the scaffold's footprint.
+
+### `light/plateDown` — the pressure plate, sunk, in light values
+
+**WAITS ON `light/plate`.**
+
+**Attach:**
+
+1. `art/masters/props/mechanism/light/plate.webp` — the light plate, to edit
+2. `art/masters/props/default/plateDown.webp` — the default sunk plate: what changes, and only that
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS A PRESSURE PLATE, raised, already painted. Keep every edge, every proportion and every silhouette exactly as in the reference image — the kerb and everything outside the slab the same paint, nothing moved, resized, added or removed.
+
+THE SECOND ATTACHED IMAGE IS THE SAME PLATE PRESSED DOWN. Make the one change it shows: the slab is sunk level with its kerb, so the shadow line under its near edge is gone and a thin dark gap runs round it inside the kerb instead. The slab keeps its colour and its catch-light.
+
+Matte paint, soft brush texture, no outlines, no gloss.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece. No floor, no gradient, no shadow on the magenta.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold plate --drop=limestone --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/mechanism/light/plateDown.webp --tier=mechanism/light --name=plateDown --slot=prop \
+  --filter=smooth --seat="$SHADOW"
+```
+
+### `light/plateStone` — the sunk plate with the stone on it, in light values
+
+**WAITS ON `light/plateDown`.**
+
+**Attach:**
+
+1. `art/masters/props/mechanism/light/plateDown.webp` — the light sunk plate, to edit
+2. `art/masters/props/default/plateStone.webp` — the default plate with its stone: the stone to add
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS A PRESSURE PLATE, sunk, already painted. Keep every edge, every proportion and every silhouette exactly as in the reference image — the same paint, nothing moved, resized, added or removed.
+
+THE SECOND ATTACHED IMAGE SHOWS A LIMESTONE BLOCK resting on the same plate. Add that block, the same shape, the same size, the same place. It is the palest thing on the plate: cream limestone #ece3cf, a catch-light on its top face, and a DARK contact shadow, #2a2622, tight under it where it rests on the slab, so it reads against the slab's own light bronze.
+
+Matte paint, soft brush texture, no outlines, no gloss.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece. No floor, no gradient, no shadow on the magenta.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold plate --drop=limestone --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/mechanism/light/plateStone.webp --tier=mechanism/light --name=plateStone --slot=prop \
+  --filter=smooth --seat="$SHADOW"
+```
+
+### `light/gate` — the gate, shut, face on, in light values
+
+**THE GATE HAS NO PAINTED MASTER.** The default four are the Blender render imported as it stands
+(`art/rebuild.sh`, "the ward gate"), so these four paint over a fresh render of the same scaffold — the same
+object by construction. Render each attachment first:
+
+**Prepare:** `yarn render-prop --primitive=gate --contents=shut --colour=#cbbd9c --floor=#57534b --out="$HOME/tile-previews/gate-light.png"` — and `--contents=open`, `shut-side`, `open-side` into `gate-open-light.png`, `gate-side-light.png`, `gate-open-side-light.png` for the three after it.
+
+**Attach:**
+
+1. `~/tile-previews/gate-light.png` — the scaffold: the gate's own geometry, the same object as the default
+2. `art/masters/surfaces/master-floor.webp` — the dark floor it must read on, for value only
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE PIECE'S SHAPE: a gate in a doorway — two stone JAMBS, a LINTEL across their tops, and between them a GRILLE of upright bars on cross-rails, shut. Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material, value and light.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR IT STANDS ON, a dark polished stone. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
+
+THE PAINT: LIGHT values, so it stands out clearly on that dark floor. The jambs and the lintel are pale limestone, #cfc3a8, their top faces and upper-left edges catching a pale cream catch-light, dressed blocks with fine joints. The grille is pale bronze, #c9ad72, each bar with a thin catch-light down its left edge and a darker right edge that is still clearly lighter than the floor; the gaps between the bars stay open. A narrow dark band, #2a2622, where the jambs meet the ground.
+
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the gate, between its bars included. No floor, no gradient, no shadow on the magenta.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold gate --contents=shut
+yarn import-tile art/masters/props/mechanism/light/gate.webp --tier=mechanism/light --name=gate --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `light/gate-side` — the gate, shut, side on, in light values, its bars heavier
+
+**Attach:**
+
+1. `~/tile-previews/gate-side-light.png` — the scaffold: the same gate in a wall running up the page
+2. `art/masters/surfaces/master-floor.webp` — the dark floor it must read on, for value only
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE PIECE'S SHAPE: a gate seen side on, in a wall that runs away from you — a stone PIER behind, a stone PIER in front, and between them the GRILLE seen edge on, a thin line of bars. Keep every edge, every proportion and every silhouette exactly as in the reference image, except the one change of shape below — do not move, resize, straighten, add, remove or restyle any other part of it, and do not change the angle it stands at. Paint only material, value and light, with ONE change of shape below.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR IT STANDS ON, a dark polished stone. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
+
+THE ONE CHANGE OF SHAPE: the grille seen edge on is too thin to read. Paint it about half again as thick, in the same place between the same two piers. The piers keep their size.
+
+THE PAINT: LIGHT values, so it stands out clearly on that dark floor. The piers are pale limestone, #cfc3a8, top faces and upper-left edges catching a pale cream catch-light. The grille is pale bronze, #c9ad72, a catch-light along its top. A narrow dark band, #2a2622, where the piers meet the ground.
+
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the gate. No floor, no gradient, no shadow on the magenta.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold gate --contents=shut-side
+yarn import-tile art/masters/props/mechanism/light/gate-side.webp --tier=mechanism/light --name=gate-side --slot=prop \
+  --filter=smooth --mask="$OBJ" --mask-grow=40 --seat="$SHADOW"
+```
+
+### `light/gate-open` — the gate, open, face on, in light values
+
+**Attach:**
+
+1. `~/tile-previews/gate-open-light.png` — the scaffold: the same gate, its grille sunk into the threshold
+2. `art/masters/surfaces/master-floor.webp` — the dark floor it must read on, for value only
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE PIECE'S SHAPE: an opened gate — the grille has sunk into the floor and only its top BAR lies flush in the threshold, a long thin bar across the doorway. Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material, value and light.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR IT LIES IN, a dark polished stone. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
+
+THE PAINT: the bar is pale bronze, #c9ad72, with a pale catch-light along its top face and a thin dark slot line, #2a2622, round it where it lies in the floor.
+
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the bar. No floor, no gradient, no shadow on the magenta.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold gate --contents=open
+yarn import-tile art/masters/props/mechanism/light/gate-open.webp --tier=mechanism/light --name=gate-open --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `light/gate-open-side` — the gate, open, side on, in light values
+
+**Attach:**
+
+1. `~/tile-previews/gate-open-side-light.png` — the scaffold: the sunk bar aimed into depth
+2. `art/masters/surfaces/master-floor.webp` — the dark floor it must read on, for value only
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE PIECE'S SHAPE: an opened gate seen side on — only the grille's top BAR, lying flush in the floor, running away from you. Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material, value and light.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR IT LIES IN, a dark polished stone. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
+
+THE PAINT: the bar is pale bronze, #c9ad72, with a pale catch-light along its top face and a thin dark slot line, #2a2622, round it where it lies in the floor.
+
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the bar. No floor, no gradient, no shadow on the magenta.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold gate --contents=open-side
+yarn import-tile art/masters/props/mechanism/light/gate-open-side.webp --tier=mechanism/light --name=gate-open-side --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.43
+```
+
+### `light/dropEast` — the one-way drop, riding east, in light values
+
+The three drops are each their own painting, as the defaults are. Every flag is the default's: the edit keeps
+the master's canvas, and `--tight` is master pixels to a map unit.
+
+**Attach:**
+
+1. `art/masters/props/default/dropEast.webp` — the piece itself, to edit: shape, silhouette, camera
+2. `art/masters/surfaces/master-floor.webp` — the dark floor it must read on, for value only
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: a one-way drop — a broken PIT in the paving, a flight of STEPS up onto a block at one lip, a tall POST there and a short POST at the far lip, a taut ROPE run between them, loose blocks round the edge. Same object, same silhouette, same camera. Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Repaint value and light only.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR IT IS CUT IN, a dark polished stone. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
+
+THE CHANGE: paint the stone LIGHT, so the drop stands out clearly on that dark floor. The paving round the pit, the steps, the block and the loose blocks become pale limestone, #cfc3a8, each top face and upper-left edge catching a pale cream catch-light and each block's underside a darker tan that is still clearly lighter than the floor. The posts are pale bleached wood, #c9b38a; the rope is pale hemp, #e0d2ae, the lightest line in the picture. The pit itself STAYS BLACK — the dark opening is what makes it a drop.
+
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece, exactly where it is in the reference. No gradient, no shadow on the magenta.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold pit --contents=drop --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/mechanism/light/dropEast.webp --tier=mechanism/light --name=dropEast --slot=prop --crop-below=1513 --tight=9.464 \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `light/dropNorth` — the one-way drop, riding north, in light values
+
+**Attach:**
+
+1. `art/masters/props/default/dropNorth.webp` — the piece itself, to edit: shape, silhouette, camera
+2. `art/masters/surfaces/master-floor.webp` — the dark floor it must read on, for value only
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: a one-way drop seen down its length — a broken PIT across the passage, a flight of STEPS up onto a block, a tall POST and a short POST with a taut ROPE run between them, loose blocks round the edge. Same object, same silhouette, same camera. Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Repaint value and light only.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR IT IS CUT IN, a dark polished stone. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
+
+THE CHANGE: paint the stone LIGHT, so the drop stands out clearly on that dark floor. The paving, the steps, the block and the loose blocks become pale limestone, #cfc3a8, each top face and upper-left edge catching a pale cream catch-light and each block's underside a darker tan that is still clearly lighter than the floor. The posts are pale bleached wood, #c9b38a; the rope is pale hemp, #e0d2ae, the lightest line in the picture. The pit itself STAYS BLACK — the dark opening is what makes it a drop.
+
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece, exactly where it is in the reference. No gradient, no shadow on the magenta.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold pit --contents=dropNorth --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/mechanism/light/dropNorth.webp --tier=mechanism/light --name=dropNorth --slot=prop --tight=15.375 \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `light/dropSouth` — the one-way drop, riding south, in light values
+
+Cut by the chroma key alone, as the default is: its master was stretched by hand after painting, so the
+render's mask no longer fits it. The edit keeps the stretch.
+
+**Attach:**
+
+1. `art/masters/props/default/dropSouth.webp` — the piece itself, to edit: shape, silhouette, camera
+2. `art/masters/surfaces/master-floor.webp` — the dark floor it must read on, for value only
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: a one-way drop seen down its length — a flight of STEPS and a wall of blocks at the far lip, a long black PIT, a tall POST and a short POST with a taut ROPE run between them, loose blocks at the near edge. Same object, same silhouette, same camera. Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Repaint value and light only.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR IT IS CUT IN, a dark polished stone. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
+
+THE CHANGE: paint the stone LIGHT, so the drop stands out clearly on that dark floor. The steps, the wall of blocks and the loose blocks become pale limestone, #cfc3a8, each top face and upper-left edge catching a pale cream catch-light and each block's underside a darker tan that is still clearly lighter than the floor. The posts are pale bleached wood, #c9b38a; the rope is pale hemp, #e0d2ae, the lightest line in the picture. The pit itself STAYS BLACK — the dark opening is what makes it a drop.
+
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece, exactly where it is in the reference. No gradient, no shadow on the magenta.
+```
+
+**Import:** `yarn import-tile art/masters/props/mechanism/light/dropSouth.webp --tier=mechanism/light --name=dropSouth --slot=prop --tight=21.18 --filter=smooth`
+
+### `light/pipeHole` — the stone pipe's mouth, in the master and wizard walls
+
+**THE PIPE HOLE STANDS ON THE WALL, NOT THE FLOOR, and master's and wizard's walls are the LIGHT surface** of
+their rank (the rank-surfaces table above). So this is the one `light` entry that does not go lighter: the
+mouth stays black and the lip ring gets a dark inner shadow AND a pale catch-light on its outer rim, so it reads
+against a light face. It **WAITS ON `master/wall-face`**, whose landed master is its value reference; painted
+before it, it is judged against the placeholder face. Cut to the same `pipeHole-mask.png` ellipse as the default,
+so only the mouth lands and the room's own wall shows round it.
+
+**Attach:**
+
+1. `art/masters/props/default/pipeHole.webp` — the piece itself, to edit: shape, silhouette, camera
+2. `art/masters/surfaces/master-wall-face.webp` — the wall face it sits in, for value only
+
+```
+FRAME: landscape, two units wide by one tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: the round MOUTH of a stone pipe set in a wall, a thick stone LIP ring round a black opening, the wall's blocks round it. Same object, same silhouette, same camera. Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it. Repaint value and light only.
+
+THE SECOND ATTACHED IMAGE IS THE WALL FACE IT SITS IN. Take ONLY its value and colour range for the blocks round the mouth. Nothing of that wall's carving appears in the picture.
+
+THE CHANGE: the blocks round the mouth take the second image's light values. The lip ring is pale limestone, #cfc3a8, with a pale cream catch-light round its upper-left outer rim and a deep shadow, #2a2622, round its inner edge where it turns into the pipe. The opening stays BLACK, deep, nothing in it.
+
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the wall piece, exactly where it is in the reference. No gradient, no shadow on the magenta.
+```
+
+**Import:** `yarn import-tile art/masters/props/mechanism/light/pipeHole.webp --tier=mechanism/light --name=pipeHole --slot=wall --filter=smooth --mask=art/masters/props/default/pipeHole-mask.png`
+
+### `light/pipeHoleStone` — the stone pipe's mouth with a stone in it
+
+**WAITS ON `light/pipeHole`**: an edit of it, as the default is, so the two swap on one wall.
+
+**Attach:**
+
+1. `art/masters/props/mechanism/light/pipeHole.webp` — the light pipe mouth, to edit
+2. `art/masters/props/default/pipeHoleStone.webp` — the default mouth with its stone: the stone to add
+
+```
+FRAME: landscape, two units wide by one tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS A PIPE MOUTH IN A WALL, already painted. Keep every edge, every proportion and every silhouette exactly as in the reference image — the same paint, nothing moved, resized, added or removed.
+
+THE SECOND ATTACHED IMAGE SHOWS A LIMESTONE BLOCK lodged in the same mouth. Add that block, the same shape, the same size, the same place: cream limestone #ece3cf, a catch-light on its upper-left face, a dark shadow, #2a2622, where it meets the lip.
+
+Matte paint, soft brush texture, no outlines, no gloss.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the wall piece. No gradient, no shadow on the magenta.
+```
+
+**Import:** `yarn import-tile art/masters/props/mechanism/light/pipeHoleStone.webp --tier=mechanism/light --name=pipeHoleStone --slot=wall --filter=smooth --mask=art/masters/props/default/pipeHole-mask.png`
+
+### `light/narrowAcross` — the narrow passage, wall across the corridor, in light values
+
+**Attach:**
+
+1. `art/masters/props/default/narrowAcross.webp` — the piece itself, to edit: shape, silhouette, camera
+2. `art/masters/surfaces/master-floor.webp` — the dark floor it must read on, for value only
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: a block WALL across a corridor with a tall narrow CRACK through its middle, a coping along its top and fallen blocks at its foot. Same object, same silhouette, same camera. Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Repaint value and light only.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR IT STANDS ON, a dark polished stone. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
+
+THE CHANGE: paint the wall LIGHT, so it stands out clearly on that dark floor. The blocks, the coping and the fallen blocks become pale limestone, #cfc3a8, the coping's top face and each block's upper-left edge catching a pale cream catch-light, the joints a fine darker line. The crack STAYS BLACK, top to bottom — it is the way through. A dark band, #2a2622, where the wall and the fallen blocks meet the ground.
+
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece, exactly where it is in the reference. No floor, no gradient, no shadow on the magenta.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold narrow --contents=across --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/mechanism/light/narrowAcross.webp --tier=mechanism/light --name=narrowAcross --slot=prop \
+  --filter=smooth --seat="$SHADOW"
+```
+
+### `light/narrowAlong` — the narrow passage, wall along the corridor, in light values
+
+**Attach:**
+
+1. `art/masters/props/default/narrowAlong.webp` — the piece itself, to edit: shape, silhouette, camera
+2. `art/masters/surfaces/master-floor.webp` — the dark floor it must read on, for value only
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: the same block wall seen end on — its narrow END and its long TOP running away from you, the CRACK cut across the top, fallen blocks either side. Same object, same silhouette, same camera. Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Repaint value and light only.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR IT STANDS ON, a dark polished stone. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
+
+THE CHANGE: paint the wall LIGHT, so it stands out clearly on that dark floor. The top, the end and the fallen blocks become pale limestone, #cfc3a8, the long top catching a pale cream catch-light and the end face a darker tan that is still clearly lighter than the floor. The crack STAYS BLACK — it is the way through. A dark band, #2a2622, where the wall and the fallen blocks meet the ground.
+
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece, exactly where it is in the reference. No floor, no gradient, no shadow on the magenta.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold narrow --contents=along --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/mechanism/light/narrowAlong.webp --tier=mechanism/light --name=narrowAlong --slot=prop \
+  --filter=smooth --seat="$SHADOW"
+```
+
 ## Doors — six
 
 The picture a shut door shows in its popup, above the key it asks for: one per ward tier (`door/ward-<tier>`) and one
