@@ -8,7 +8,7 @@ import {
   type RoomCell,
   type Tileset,
 } from "@/game/siteTypes"
-import { cellAt, isChamber, isClaimableNeighbor } from "@/game/roomFootprint"
+import { cellAt, isChamber, isClaimableNeighbor, portalKindOf } from "@/game/roomFootprint"
 import { DIR_MOVES, OPPOSITE_DIR } from "./corridorRuns"
 import { buildTileRegions, type FloorAt, type Rect, type TileRegions } from "./tileRegions"
 import { CELL, SIDE_W } from "./mapScale"
@@ -263,6 +263,10 @@ export const buildRoomClaims = (
     const backed = fits.find(cells => cells.slice(0, footprint.cols).every(wallBehind))
     return against === "stone" ? backed : (backed ?? fits[0])
   }
+  // The floor a room owns on the map, its claims inside the grid.
+  const claimedOnGrid = new Map<string, number>()
+  for (const [key, ownerKey] of claimedBy)
+    if (onGrid(key)) claimedOnGrid.set(ownerKey, (claimedOnGrid.get(ownerKey) ?? 0) + 1)
   const decorationAt = new Map<string, DecorationKind>()
   const decorationCells = new Set<string>()
   const roomsForCompanion: Parameters<typeof companionFor>[1][number][] = []
@@ -272,9 +276,14 @@ export const buildRoomClaims = (
     if (owner?.type !== "room" || !owner.decoration) continue
     const inside = candidates.filter(onGrid)
     const usable = inside.length ? inside : candidates
+    // A STAIR IS A WAY THROUGH: the player crosses its room to the stair, so a prop there stands against stone or
+    // not at all, never leaning over the floor they cross. An entrance or exit is a dead end, so its prop takes the
+    // usual preference.
+    const isPortal = owner.roomType === "portal"
+    const stair = isPortal && portalKindOf(grid, ownerRow, ownerCol, owner) === "stairhead"
     // A room with no floor the shape of its prop stands the single-cell kind the carve picked beside it.
     const standing = [owner.decoration, owner.decorationFallback]
-      .flatMap(kind => (kind ? [{ kind, cells: standOn(kind, usable) }] : []))
+      .flatMap(kind => (kind ? [{ kind, cells: standOn(kind, usable, stair ? "stone" : "stoneFirst") }] : []))
       .find(({ cells }) => cells !== undefined)
     if (!standing?.cells) continue
     const { kind: leader, cells: takenCells } = standing
@@ -284,6 +293,9 @@ export const buildRoomClaims = (
     // inferred from prop and wall item both being patron kinds, which is unreachable at a rank whose
     // wall pool holds nothing a god can appear on — the merchant hangs a goods niche and a tally board.
     const shrine = owner.patronRoom === true
+    // A PORTAL ON A FLOOR'S EDGE IS SMALL: one whose claim inside the grid and its own passages do not fill the ring
+    // around it keeps to its one prop, so a cramped way in or out is not crowded further.
+    if (isPortal && (claimedOnGrid.get(ownerKey) ?? 0) + owner.dirs.size < 8) continue
     roomsForCompanion.push({
       ownerKey,
       leader,

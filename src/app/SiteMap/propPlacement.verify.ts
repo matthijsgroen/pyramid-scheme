@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
 import { revealAll } from "@/game/gridNavigation"
+import { portalKindOf } from "@/game/roomFootprint"
 import type { FloorGrid } from "@/game/siteTypes"
 import { buildRoomClaims } from "./roomClaims"
 import { wallItemsFor } from "./SiteMapView"
@@ -143,7 +144,8 @@ describe("a prop stands against a wall", () => {
   // one bound over both hides that. A dead end is a pocket with stone on three sides; a FORK is a
   // junction with passages leaving in three directions, so it often has no claimed cell with void above
   // it at all. Lumped together they read 6.2%, which says nothing about either. An entrance a side
-  // section hangs off forks too, so it counts as a fork here, not as a portal.
+  // section hangs off forks too, so it counts as a fork here, not as a portal. A stairhead is tallied on its own
+  // whatever its ways out: the player crosses its room to the stair.
   const openBehindByOwner = (): Map<string, { props: number; open: number }> => {
     const tally = new Map<string, { props: number; open: number }>()
     for (const [siteId, levels] of Object.entries(generatedWorldConfigs).slice(0, 12)) {
@@ -155,13 +157,17 @@ describe("a prop stands against a wall", () => {
         for (const [key] of claims.decorationAt) {
           const [or, oc] = (claims.claimedBy.get(key) ?? key).split(",").map(Number)
           const owner = grid.cells[or]?.[oc]
-          // A portal the player can leave more than one way is a junction: it is tallied with the forks.
+          // A way in or out the player can leave more than one way is a junction: it is tallied with the forks.
           const kind =
             owner?.type !== "room"
               ? "unknown"
-              : owner.roomType === "portal" && owner.dirs.size > 1
-                ? "fork"
-                : owner.roomType
+              : owner.roomType !== "portal"
+                ? owner.roomType
+                : portalKindOf(grid, or, oc, owner) === "stairhead"
+                  ? "stairhead"
+                  : owner.dirs.size > 1
+                    ? "fork"
+                    : "portal"
           const [r, c] = key.split(",").map(Number)
           const north = grid.cells[r - 1]?.[c]
           const row = tally.get(kind) ?? { props: 0, open: 0 }
@@ -175,20 +181,22 @@ describe("a prop stands against a wall", () => {
   it("stands a pocket's prop against stone, all but never otherwise", () => {
     const tally = openBehindByOwner()
     const ends = tally.get("encounter")!
-    const portals = tally.get("portal")!
     expect(ends.props).toBeGreaterThan(0)
-    // 6.2% of 324 (end rooms) and 6.4% of 78 (portals) measured. A room whose only spare cell has floor
-    // above it still gets its prop — a prop is better than a bare chamber, and one leaning statue is
-    // cheaper than a second claim rule.
-    // The series: end rooms 0.3%, then 6.6% when the corridors were compacted, now 6.2%; portals 1.1%,
-    // now 6.4% because the baked carve seeds changed which floors exist. The preference is unchanged
-    // throughout: a compact floor has less stone to lean on.
-    // What abandoning the preference reads (claiming the first spare cell instead of one with wall above
-    // it): 50.6% for end rooms and 42.3% for portals. The bound sits at 8%, so it still has teeth —
-    // about six times the measurement and a sixth of the abandoned reading. The next rise
-    // is a decision to take, not a bound to raise.
+    // 0 of 10 end rooms measured. A room whose only spare cell has floor above it still gets its prop — a prop is
+    // better than a bare chamber, and one leaning statue is cheaper than a second claim rule.
     expect(ends.open / ends.props).toBeLessThan(0.08)
-    expect(portals.open / portals.props).toBeLessThan(0.08)
+  }, 30000)
+
+  it("never leans a stairhead's prop over floor, where the player crosses the room to the stair", () => {
+    const stairheads = openBehindByOwner().get("stairhead")!
+    expect(stairheads.props).toBeGreaterThan(0)
+    expect(stairheads.open).toBe(0)
+  }, 30000)
+
+  // A floor's way in or out is a dead end nobody walks past, so a prop with floor behind it is allowed there and
+  // carries no bound: 4 of 46 measured, most of them portals on the floor's edge with no stone left to lean on.
+  it("still dresses a floor's ways in and out", () => {
+    expect(openBehindByOwner().get("portal")!.props).toBeGreaterThan(0)
   }, 30000)
 
   it("still leans most of a junction's props on stone, though it has less to lean on", () => {
