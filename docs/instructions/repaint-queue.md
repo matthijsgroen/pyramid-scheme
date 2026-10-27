@@ -588,7 +588,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ### `wizard/floor` — a still, mirror-dark floor holding the night sky
 
-**Re-roll:** the ground was night-green, the same hue as the emerald it should carry, so the metal would sink into the floor. It is now midnight blue-black with a nebula in the stone and clearly visible inlaid stars; the emerald is kept to the seams of light, the walls and the props.
+**Re-roll:** the ground was night-green, the same hue as the emerald it should carry, so the metal would sink into the floor. It is now midnight blue-black with a nebula in the stone and clearly visible inlaid stars; the emerald is kept to the seams of light, the walls and the props. The still-water roll copied the rank's symbols (ankh, eye, feather) onto the floor, drew five-pointed stars, repeated itself four times inside one image, and its cloud was a dull indigo: the floor now carries one colourful billowing nebula, its stars as fine dots, and no symbols.
 
 **Re-roll:** the nebula roll came back as rough fitted stones. The floor is meant to be super clean, like walking on still water: one smooth jointless surface with the sky in it.
 
@@ -599,18 +599,17 @@ FRAME: square, exactly 1:1. A seamless floor texture filling the whole frame. Do
 
 Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
 Rank: the tomb of the GODS — the richest of five, not of this world. Midnight stone holding the night sky,
-translucent calcite lit from behind, the sky goddess Nut's stars, emerald with gold. The stars, the
-ankh, the Eye of Horus, Ma'at's feather. Motes of light rising; nothing living.
+translucent calcite lit from behind, the sky goddess Nut's stars, emerald with gold. Nothing living.
 The floor is dark, and every part of it is still readable — nothing sinks into black.
 HAND-PAINTED digital texture art: soft brushwork, forms modelled with soft shading, the surface itself
 smooth and glossy. Realistic materials, painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
 a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: floor #161c38 / #1d2547 / #11162d on a #0c1124 bed, joints #080b18, nebula #3b2f6e / #27506f,
+Palette, strictly: floor #161c38 / #1d2547 / #11162d on a #0c1124 bed, joints #080b18, nebula magenta #c0478a, violet #7a4bc0, teal #2f9fb0, a warm glow #e8a24a at its heart, stars #fff6dc,
 walls #8fc4ab with #d6f5e6 tops and #2c5a4a in shade, emerald #1f9e6b with light #9ee6c3 and shade
 #0d4a33, gold #e3c46a, green stone #3f6b5c.
-Every colour comes from that list. The floor stone and its nebula are nothing lighter than #4a4a86 and
-nothing darker than #070a16; only the stars and the few seams of light are brighter.
+Every colour comes from that list. The dark of the surface is nothing darker than #070a16; the nebula may reach
+mid-tone, and only the stars are brighter than it.
 Deep and calm underfoot, the stars and the gold bright against it; the emerald belongs to the walls and
 the things standing on the floor, not to the floor. The STONE stays quiet so the light
 can stand out on it.
@@ -625,15 +624,18 @@ it reads as the surface of dark water at night: polished like black glass, perfe
 lying in it.
 The surface is MIDNIGHT BLUE-BLACK, #161c38, drifting softly across #1d2547 and #11162d. Never grey, never
 green, never rough: no grit, no speckle, no texture of stone.
-IN THE SURFACE, as a reflection, a NEBULA: soft clouds of deep indigo-violet #3b2f6e and deep sea-blue #27506f drifting
-slowly through it, one sky across the whole surface. Soft-edged and slow, low in value, no brighter
-than the clamp above — the night sky seen in still dark water, not a glowing picture.
-Over it, CLEARLY VISIBLE STARS: points of pale gold #f3e7b8 and gold #e3c46a lying in the surface, read
-from across the room — about thirty in the whole image, most small, five or six a little larger, each a
-round point with a soft bright core. No rays, no sparkle, no cross-shaped glints. Spread evenly,
-never a cluster, never a line.
-It tiles, so NOTHING crosses the whole image: no cloud brighter or bigger than an eighth of the frame,
-and no feature touching two edges. Spread evenly — no corner busier than another.
+IN THE SURFACE, as a reflection, a COLOURFUL NEBULA: one great billowing cloud like the aftermath of a
+burst, magenta #c0478a, violet #7a4bc0 and teal #2f9fb0 swirling into each other, with a warm glow #e8a24a
+deep in its heart. Soft, layered, painterly — rich colour, lit from within, blooming out across most of
+the surface and thinning into the dark at its edges, so dark sky still shows between its arms.
+Over it, a field of STARS AS DOTS: many tiny bright round pinpoints of #fff6dc, hundreds of them, most a
+single fine dot, a few dozen a little bigger, each just a soft bright point. NOT star shapes — no points,
+no five-pointed stars, no rays, no sparkle, no cross-shaped glints. Denser in the cloud, sparser in the
+dark.
+NO SYMBOLS on the floor: no ankh, no eye, no feather, no hieroglyph, nothing drawn — only sky.
+ONE SINGLE PICTURE: do not repeat the image inside itself, never two or four copies of the same cloud.
+It tiles, so NOTHING crosses the whole image: no hard edge anywhere, the cloud fading into
+the dark before it reaches the frame's edge on any side. Spread evenly — no corner busier than another.
 Even lighting across the entire image, no hotspot, no vignette. Edge to edge texture.
 ```
 
