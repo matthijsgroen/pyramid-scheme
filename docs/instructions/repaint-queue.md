@@ -2236,40 +2236,42 @@ yarn import-tile art/masters/props/wizard/mat.webp --tier=wizard --name=mat --sl
 The inside of the Sphinx is cut from the plateau's own bedrock: layered limestone, swept clean of the sand that
 keeps burying the outside. Four surfaces, the same loop as the cave's.
 
-### `sphinx/floor` — the Sphinx's cut bedrock floor
+### `sphinx/floor` — smooth limestone tiles crossed by gold horizon bands
 
-**Re-roll:** the first roll was eroded cliff rock — deep pits, stepped ledges along the strata, cracks and sand — and it repeated itself four times inside one image. The floor is a mason's finished floor: dressed flat and smooth, strata as flat colour bands only, swept clean.
+**Re-roll:** the first roll was eroded cliff rock — deep pits, stepped ledges along the strata, cracks and sand — and it repeated itself four times inside one image. The floor is a mason's finished floor: dressed flat and smooth, strata as flat colour bands only, swept clean. The designer then chose a new floor altogether: smooth limestone tiles crossed by gold bands, the horizon lines of the god of the horizon.
 
 **Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's rock floor, for paint quality only: it is uncut rock with no slabs, the nearest thing to bedrock
 
 ```
 Top-down dungeon game tile art for the inside of the Great Sphinx, a passage cut into the desert bedrock.
-A FLOOR CUT FROM ONE MASS OF LIVING ROCK, never laid: soft yellow limestone dressed FLAT AND SMOOTH by
-masons and kept clean — a fine, finished floor, not weathered rock. Perfectly level: no pits, no holes,
-no ledges, no steps, no crumbling edges, no deep cracks, no relief at all. Only the faintest long chisel
-marks running one way, and soft horizontal bands of colour where harder grey-buff layers cross the yellow,
-lying FLAT in the surface — a change of colour, never a change of height. Swept clean: no sand.
+A FINE CEREMONIAL FLOOR inside the Sphinx, the god of the horizon: smooth warm limestone tiles, dressed flat
+and polished, kept clean, crossed by broad bands of GOLD like horizon lines.
 Warm, dim and still: lamplight, no daylight. Every part of the floor is readable, nothing sinks into black.
 HAND-PAINTED digital texture art: matte, visible soft brush texture, a fine even grain in the
 surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
 a comic, not a cartoon. An edge is a change of value, never a stroke.
-Limestone #8a7556, its harder bands #7d7462, shadow #4a3c2b, pale #a8916b. Nothing lighter than #c9b48c,
-nothing darker than #2a2117.
+Limestone #9a8462 / #a8916b / #8a7556, joints #5e4c36, gold #d9a93f with light #f5dc8e and shade #8a6a24.
+Nothing lighter than #f5dc8e, nothing darker than #2a2117.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality only — NOT its rough, broken rock,
-which this floor must not have. Do NOT take its colours, its slabs or its subject from it.
+which this floor must not have. Do NOT take its colours, its layout or its subject from it.
 THE CAMERA: straight down. A seamless square tile.
-NOTHING LAID: no slabs, no paving, no bricks, no joints, no mortar, no courses of blocks. The bands are
-rock strata, soft-edged and uneven, never ruled lines.
+THE TILES: smooth rectangular limestone tiles, each twice as wide as it is tall, laid in straight rows.
+COUNT THEM: exactly 4 tiles across the width of the image and 8 rows down it; each row is shifted by half a
+tile against the next. The joints are shallow soft grooves, a quiet step darker than the tile — never black,
+never a drawn line. No pits, no cracks, no wear, no sand.
+THE GOLD BANDS: exactly TWO broad bands of polished gold #d9a93f run straight across the full width of the
+image, each as tall as half a row, lying flush in the floor between two rows of tiles — one a quarter of the
+way down, one three quarters. They are inlaid metal, smooth, with a soft lighter sheen #f5dc8e along their
+length and a darker edge #8a6a24 where they meet the stone. No pattern, no glyphs on them.
 ONE SINGLE PICTURE: do not repeat the image inside itself.
-It tiles, so NOTHING crosses the whole image: no band, crack or stain runs edge to edge, and no feature
-touches two edges. Value spread evenly over the whole tile.
+It tiles: the bands and the rows run unbroken off both side edges and line up with the next copy; nothing
+else crosses the image. Value spread evenly over the stone.
 Even lighting, no hotspot, no vignette.
 ```
 
-**Prepare:** if the generator returns a wide band rather than a square, stack it on itself, cut the square and make it seamless; that square is the master, `art/masters/surfaces/sphinx-floor.webp`:
-`magick band.jpeg band.jpeg -append -gravity Center -crop 2688x2688+0+0 +repage square.png && yarn make-seamless square.png`
+**Prepare:** the rows and bands are laid so a half-shift lands them on themselves, but a roll that is not exact crossfades into doubled joints under `--land`'s make-seamless, as expert's grid did. If it comes back exact, save the download itself as the master, `art/masters/surfaces/sphinx-floor.webp`, and run the Import line.
 
 **Import:** `yarn import-tile art/masters/surfaces/sphinx-floor.webp --tier=sphinx --name=floor --slot=floor --filter=smooth --key=none --repeat=2`
 
