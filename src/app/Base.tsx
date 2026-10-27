@@ -47,11 +47,14 @@ const CARD_GAP = 16
 export const Base = ({
   startGame,
   cameHome = false,
+  greet = true,
   onArrived,
 }: {
   startGame: () => void
   /** The player just came back from a journey: the coming-home screen shows over the camp until it is done. */
   cameHome?: boolean
+  /** False while something else has the player's attention first. */
+  greet?: boolean
   onArrived?: () => void
 }) => {
   const { t } = useTranslation("common")
@@ -68,8 +71,8 @@ export const Base = ({
 
   // Fez greets once the player has unpacked, not behind the coming-home screen.
   useEffect(() => {
-    if (!cameHome) showConversation("welcome")
-  }, [showConversation, cameHome])
+    if (!cameHome && greet) showConversation("welcome")
+  }, [showConversation, cameHome, greet])
 
   // Seven taps on the title toggles develop mode, on any build: phone playtesting happens against the
   // deployed one. See useSecretTaps for why seven taps is safe to ship.

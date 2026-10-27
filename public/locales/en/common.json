@@ -1355,5 +1355,10 @@
     "showStops": "Show the sites of {{name}}",
     "stopPyramid": "Pyramid",
     "stopTomb": "Site"
+  },
+  "newVersion": {
+    "title": "A new version!",
+    "name": "The game has changed a lot",
+    "body": "So your journey starts over. New tombs, finds and a camp to build are waiting."
   }
 }

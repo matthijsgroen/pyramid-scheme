@@ -11,9 +11,12 @@ import { DevelopModeProvider } from "./contexts/DevelopMode"
 import PWABadge from "./PWABadge"
 import { SaveUnreadableGuard } from "@/app/SaveUnreadableGuard"
 import { useHomecoming } from "@/app/homecomingRegistry"
+import { NewVersionNotice } from "@/app/NewVersionNotice"
 
-function App() {
+function App({ newVersion = false }: { newVersion?: boolean }) {
   const [inGame, setInGame] = useState(false)
+  // Held in memory only: a reload before it is dismissed simply goes straight to the camp.
+  const [announcing, setAnnouncing] = useState(newVersion)
   // Set at the two ways home, never stored: a reload at base shows no coming-home screen.
   const [cameHome, setCameHome] = useState(false)
   const journeys = useJourneys()
@@ -36,7 +39,14 @@ function App() {
   return (
     <DevelopModeProvider>
       <FezCompanion journeyProgress={getJourney}>
-        {!inGame && <Base startGame={() => setInGame(true)} cameHome={cameHome} onArrived={() => setCameHome(false)} />}
+        {!inGame && (
+          <Base
+            startGame={() => setInGame(true)}
+            cameHome={cameHome}
+            greet={!announcing}
+            onArrived={() => setCameHome(false)}
+          />
+        )}
         {inGame && journeyInfo && journeyInfo.journey && (
           <PyramidExpedition
             key={activeJourneyId}
@@ -56,6 +66,7 @@ function App() {
             }}
           />
         )}
+        {announcing && <NewVersionNotice onDismiss={() => setAnnouncing(false)} />}
         <PWABadge />
         <SaveUnreadableGuard />
       </FezCompanion>

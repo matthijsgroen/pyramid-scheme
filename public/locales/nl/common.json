@@ -1362,5 +1362,10 @@
     "showStops": "Toon de plekken van {{name}}",
     "stopPyramid": "Piramide",
     "stopTomb": "Plek"
+  },
+  "newVersion": {
+    "title": "Een nieuwe versie!",
+    "name": "Het spel is flink veranderd",
+    "body": "Daarom begint je reis opnieuw. Er wachten nieuwe tombes, vondsten en een kamp om op te bouwen."
   }
 }
