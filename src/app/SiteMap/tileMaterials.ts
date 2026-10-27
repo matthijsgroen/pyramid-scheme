@@ -169,14 +169,14 @@ export const tierPalette: Record<Tileset, TierPalette> = {
     propDark: "#9c968a",
     outline: "#1a1612",
   },
-  // The Sphinx's inside, cut from the plateau's own bedrock: warm limestone, lamplit and swept clean of sand.
-  // No rank's stone, so it borrows no rank's metal either.
+  // The Sphinx's inside: smooth warm limestone slabs crossed by gold horizon bands, lamplit and swept clean. The
+  // floor tokens are the repainted floor's; no rank's stone, so it borrows no rank's metal either.
   sphinx: {
-    bed: "#8a7556",
-    slab: "#93805f",
-    slabHi: "#9c8967",
-    slabLo: "#82704f",
-    joint: "#2a2117",
+    bed: "#907658",
+    slab: "#a58664",
+    slabHi: "#aa8b67",
+    slabLo: "#9b7e5f",
+    joint: "#7d603c",
     accent: METALS.starter.accent,
     wall: "#b9a179",
     wallTop: "#d8c49c",

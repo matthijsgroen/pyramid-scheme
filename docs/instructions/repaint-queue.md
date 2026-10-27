@@ -2273,7 +2273,7 @@ else crosses the image. Value spread evenly over the stone.
 Even lighting, no hotspot, no vignette.
 ```
 
-**Prepare:** a laid floor whose rows run exactly to the edges is seamless as it comes, and `--land`'s make-seamless would crossfade it into doubled joints, as expert's grid did. Save the download itself as the master, `art/masters/surfaces/sphinx-floor.webp`, and run the Import line.
+**Prepare:** a laid floor is seamless only if its rows run exactly to the edges, and `--land`'s make-seamless would crossfade it into doubled joints. Cut one period, from the centre of one gold band to the centre of the next (half the image tall), stack it twice into the square master `art/masters/surfaces/sphinx-floor.webp`, so every vertical seam falls inside a band, and run the Import line.
 
 **Import:** `yarn import-tile art/masters/surfaces/sphinx-floor.webp --tier=sphinx --name=floor --slot=floor --filter=smooth --key=none --repeat=1`
 
