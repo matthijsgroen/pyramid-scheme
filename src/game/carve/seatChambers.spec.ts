@@ -19,33 +19,49 @@ const chambersOf = (grid: FloorGrid) => roomsWhere(grid, cell => cell.roomType =
 const puzzleAt = (grid: FloorGrid, k: number) =>
   roomsWhere(grid, cell => cell.roomType === "encounter" && cell.pathIndex === k && cell.sectionAddress === "main")[0]
 
+const roomySide = { pathPuzzles: 2, difficulty: "junior" as const, end: "treasure" as const }
+
+const expectOnlyWidened = (without: FloorGrid, withChambers: FloorGrid) => {
+  const chambers = new Set(chambersOf(withChambers).map(({ r, c }) => `${r},${c}`))
+  withChambers.cells.forEach((row, r) =>
+    row.forEach((cell, c) => {
+      const before = without.cells[r][c]
+      if (chambers.has(`${r},${c}`)) {
+        expect(before.type).toBe("corridor")
+        if (before.type !== "empty" && cell.type !== "empty") expect(cell.dirs).toEqual(before.dirs)
+      } else {
+        expect(cell.type).toBe(before.type)
+        if (cell.type === "room" && before.type === "room") {
+          expect([cell.roomType, cell.pathIndex, cell.familyOrdinal, [...cell.dirs]]).toEqual([
+            before.roomType,
+            before.pathIndex,
+            before.familyOrdinal,
+            [...before.dirs],
+          ])
+        }
+      }
+    })
+  )
+}
+
 describe("seatChambers", () => {
   it("moves no wall and no puzzle: a chamber only widens a node that was corridor", () => {
     for (const seed of SEEDS) {
-      const without = carved(chamberFloor(), seed)
       const withChambers = carved(chamberFloor({ chambers: 2 }), seed)
-      const chambers = new Set(chambersOf(withChambers).map(({ r, c }) => `${r},${c}`))
-      expect(chambers.size).toBe(2)
-      withChambers.cells.forEach((row, r) =>
-        row.forEach((cell, c) => {
-          const before = without.cells[r][c]
-          if (chambers.has(`${r},${c}`)) {
-            expect(before.type).toBe("corridor")
-            if (before.type !== "empty" && cell.type !== "empty") expect(cell.dirs).toEqual(before.dirs)
-          } else {
-            expect(cell.type).toBe(before.type)
-            if (cell.type === "room" && before.type === "room") {
-              expect([cell.roomType, cell.pathIndex, cell.familyOrdinal, [...cell.dirs]]).toEqual([
-                before.roomType,
-                before.pathIndex,
-                before.familyOrdinal,
-                [...before.dirs],
-              ])
-            }
-          }
-        })
-      )
+      expect(chambersOf(withChambers)).toHaveLength(2)
+      expectOnlyWidened(carved(chamberFloor(), seed), withChambers)
     }
+  })
+
+  it("seats what fits of the count on the side paths too and carves on, moving no wall", () => {
+    const spilling = { pathPuzzles: 1, packing: 1 as const, sideSections: [roomySide] }
+    const seated = SEEDS.map(seed => {
+      const withChambers = carved(chamberFloor({ ...spilling, chambers: 40 }), seed)
+      expectOnlyWidened(carved(chamberFloor(spilling), seed), withChambers)
+      return chambersOf(withChambers).map(({ cell }) => cell.sectionAddress)
+    })
+    for (const addresses of seated) expect(addresses.length).toBeLessThan(40)
+    expect(seated.flat()).toContain("s0")
   })
 
   it("stands the chamber authored after a puzzle on the way from that puzzle to the next", () => {
@@ -105,8 +121,8 @@ describe("seatChambers", () => {
     expect(cell.decoration).toBe("pillar")
   })
 
-  it("refuses a floor whose gaps hold no free node for a chamber it declares", () => {
-    const result = assembleFloor("chamber-site", chamberFloor({ pathPuzzles: 1, packing: 1, chambers: 40 }), 1)
+  it("refuses a floor whose chamber authored after a puzzle finds no free node in that puzzle's gap", () => {
+    const result = assembleFloor("chamber-site", chamberFloor({ chambersByIndex: { 3: true } }), 1)
     expect(result.success).toBe(false)
     if (!result.success) expect(result.reasons.map(reason => reason.type)).toContain("chambersNotSeated")
   })

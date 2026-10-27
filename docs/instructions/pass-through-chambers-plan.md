@@ -37,8 +37,8 @@ The maze needs no space set aside. What is missing is a room on the path that is
   sits in the gap after that node; `true` leaves the activity to the carve, as at a fork.
   - `.floor(1, { nodes: [{ where: 2, chamberAfter: "banquet" }] })`
   - `sidePath({ puzzles: 3, nodes: [{ where: { every: 2 }, chamberAfter: true }] })`
-- **How many:** `chambers: n` on `.pyramid()` or a floor's settings; the carve spreads them over the gaps between
-  puzzles. A floor's own count wins over the site's; the site's reaches every floor the pyramid builds, its ward
+- **How many:** `chambers: n` on `.pyramid()` or a floor's settings, an intent like `packing`: the carve seats as
+  many as the floor has room for, up to n, and never refuses a floor for the rest. A floor's own count wins over the site's; the site's reaches every floor the pyramid builds, its ward
   wings included. It counts the main path's chambers in all, its `chamberAfter` ones among them, and is baked as
   `chambers` beside `chambersByIndex` (`serializer.ts`).
 
@@ -54,13 +54,17 @@ padding node between content k and k+1 to a `"chamber"` room, carrying `authored
 - **Which gaps:** the main path's gaps run from each puzzle to the next (the last to the exit; a main path with no
   puzzle is one gap). `chambers: n` counts the main path's chambers in all, its `chamberAfter` ones among them; the
   rest spread evenly over the gaps, an empty gap nearest the target first, then one already holding a chamber.
-  A side path takes its `chamberAfter` ones only. A section filled into laid nodes seats none.
+  What the main path has no free node for goes to the side paths' free nodes outside any lock region, a path
+  holding fewer chambers first, then turns and horizontals, then by hash. A side path's own count is its
+  `chamberAfter` ones. A section filled into laid nodes seats none.
 - **Activity `true`:** the chamber is dressed like every other chamber — an activity its pool furnishes and its
   wing's role serves, and where there is none, any prop of the pool (filler such as pillar or mat). It stays a
   chamber either way; the pass never skips it for want of an activity.
 - **Order:** turns and horizontals before verticals; no chamber two cells from another room that claims floor (a
   fork, a portal, a dead end, another chamber), which would contest a diagonal. Ties break by hash, never by `rand()`, so no other draw moves.
-- **None free:** the attempt refuses with `chambersNotSeated`, and the bake raises that floor's `packing`.
+- **None free:** `chambers: n` seats fewer and the attempt carves on, so the count never moves a pin. A
+  `chamberAfter` is a hard requirement: where its gap holds no free node the attempt refuses with
+  `chambersNotSeated` and the next attempt or rung is tried.
 - **The cell:** a new `RoomType` `"chamber"` (`siteTypes.ts`), not a bare fork: the fork's bland check
   (`siteValidator.ts:290`) and its `exits` must not apply.
 
@@ -69,8 +73,9 @@ padding node between content k and k+1 to a `"chamber"` room, carrying `authored
 - Puzzles keep their path index, reward index and family ordinal (`cellSlot.ts`): no puzzle node is added or moved.
 - A chamber has no slot: `cellSlot` returns null for it, as for a bare fork. Otherwise two chambers in one section
   collide on the duplicate-slot check.
-- No wall moves while a free node exists at the pinned seed and packing. A floor that refuses has its pin searched
-  again.
+- No wall moves: the pass draws no number, and the count never refuses, so at a floor's seed, packing and
+  attempt its walls with chambers are its walls without them. Only a floor whose `chamberAfter` refuses has its pin
+  searched again.
 - The lock walk treats rooms and corridors alike (`floorLockWalk.ts`); laid doors are never free nodes.
 - `yarn generate-world` rewrites only floors that declare chambers, plus those tiers' `tierFingerprints.json`.
   Starter declares none: its fingerprint and its entries in `generatedWorld.ts` stay the same. `chambers: n` is set
@@ -86,12 +91,12 @@ padding node between content k and k+1 to a `"chamber"` room, carrying `authored
 4. **DSL.** `chamberAfter` and `chambers`, wired through `buildSite` and `sideSections`, and the serializer.
 5. **Junior.** Chambers in the junior specs, re-bake, the junior fingerprint, a row in
    `worldFloorAssembly.verify.ts` that a chamber moves no wall at the pinned layout, and a line in
-   `world-spec-stability.md`: a chamber moves walls only where the floor has no free node.
+   `world-spec-stability.md`: `chambers` is free; a `chamberAfter` moves walls only where its gap has no free node.
 
 ## Free nodes, measured
 
-Free padding nodes per pyramid floor (good: a turn or a horizontal; weak: a vertical), counting only nodes with no
-fork, dead end or portal two cells away diagonally. Mean / median / minimum:
+What the count has to work with: free padding nodes per pyramid floor (good: a turn or a horizontal; weak: a
+vertical), counting only nodes with no fork, dead end or portal two cells away diagonally. Mean / median / minimum:
 
 | tier    | good         | weak         | floors with no good one |
 | ------- | ------------ | ------------ | ----------------------- |
@@ -101,5 +106,7 @@ fork, dead end or portal two cells away diagonally. Mean / median / minimum:
 | master  | 21.2 / 5 / 1 | 9.7 / 3 / 0  | 0 of 42                 |
 | wizard  | 20.9 / 5 / 1 | 10.1 / 2 / 0 | 0 of 66                 |
 
-Junior tombs: 3.7 / 4 / 2. Every junior floor takes at least one chamber with a 2×1 prop, most take three, without a
-re-pin. A laid lock door on a corridor node is not seen by this count, so the true number can be a little lower.
+Junior tombs: 3.7 / 4 / 2. The count runs over the whole floor, side paths included, while a chamber's own rules
+see far fewer: the main path's gaps alone, less every node of a lock region a mechanic seats in and every laid
+door. A lock floor (a lock on floor 0, `lockOnMainFloor`, `lessonOnMainFloor`) can have no main-path gap with a
+free node at all, which is why the count is an intent and spills onto the side paths.

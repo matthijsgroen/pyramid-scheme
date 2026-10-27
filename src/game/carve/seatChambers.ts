@@ -9,8 +9,8 @@ import type { Cell, RoomSpec, Shortfall } from "./state"
 /** One stretch of a path between a puzzle and whatever stands next along it: the nodes a chamber may take. */
 type Gap = readonly string[]
 
-/** One path's chambers as authored: its gaps in path order, the chamber after each puzzle, and how many in all. */
-type PathChambers = { address: string; gaps: readonly Gap[]; after: Record<number, ActivityId | true>; total: number }
+/** One side path's chambers as authored: its gaps in path order, the chamber after each puzzle, and all its nodes. */
+type SidePath = { address: string; gaps: readonly Gap[]; after: Record<number, ActivityId | true>; nodes: Gap }
 
 /** The offsets of every node whose 3×3 meets a node's own: the two the corridor runs to and the four diagonals. */
 const NEAR: ReadonlyArray<readonly [number, number]> = [
@@ -28,10 +28,15 @@ const NEAR: ReadonlyArray<readonly [number, number]> = [
 const spreadTargets = (count: number, gaps: number): number[] =>
   Array.from({ length: count }, (_, i) => Math.min(gaps - 1, Math.floor(((i + 0.5) * gaps) / count)))
 
+/** A path's gaps: from each puzzle to the next, the last to the path's end; `from` is -1 for a puzzle not found. */
+const gapsBetween = (nodes: readonly string[], at: readonly number[]): Gap[] =>
+  at.map((from, k) => (from < 0 ? [] : nodes.slice(from + 1, k + 1 < at.length ? at[k + 1] : nodes.length - 1)))
+
 /**
  * A PASS-THROUGH CHAMBER IS A FREE NODE OF A PATH WIDENED INTO A ROOM, in the gap after the puzzle it was authored
- * after (`chambersByIndex`), and on the main path as many more as `chambers` asks, spread over the gaps between
- * its puzzles. No puzzle moves: a chamber takes only a node nothing stands on.
+ * after (`chambersByIndex`), and as many more as `chambers` asks and the floor has room for: spread over the main
+ * path's gaps between its puzzles first, then on its side paths' nodes outside any lock region. No puzzle moves: a
+ * chamber takes only a node nothing stands on.
  *
  * Free is a corridor node with exactly two ways out that no pass seated anything on: no gate, control, lever, laid
  * door, threshold, drop, stair, fork, switch or pipe hole, and none of a lock region a mechanic will stand its seats
@@ -40,7 +45,8 @@ const spreadTargets = (count: number, gaps: number): number[] =>
  * No chamber stands where its 3×3 meets another room that claims floor (a fork, a portal, a dead end, another
  * chamber): two claims would contest a diagonal. A turn or a horizontal comes before a vertical, whose corridor
  * crosses the north row a prop stands against. Ties break by hash, never by `rand()`, so no other draw moves.
- * A path whose gaps hold no free node for a chamber it declares refuses the attempt.
+ * `chambers` is an intent, as `packing` is: a floor with room for fewer seats fewer and carves on. Only a
+ * `chamberAfter` whose gap holds no free node refuses the attempt.
  */
 export const seatChambers = pass(
   "seatChambers",
@@ -68,40 +74,30 @@ export const seatChambers = pass(
     const chambers = new Map<string, RoomSpec>()
     state.chambers = chambers
 
-    const paths: PathChambers[] = []
     const { mainPath } = state.maze
     const mainAfter = config.chambersByIndex ?? {}
     const mainTotal = Math.max(config.chambers ?? 0, Object.keys(mainAfter).length)
-    if (mainTotal > 0) {
-      const puzzleSteps = [...contentNow(state).puzzleRole].sort(([, a], [, b]) => a - b).map(([step]) => step)
-      const bounds = puzzleSteps.length > 0 ? puzzleSteps : [0]
-      const gaps = bounds.map((from, k) =>
-        mainPath.slice(from + 1, k + 1 < bounds.length ? bounds[k + 1] : mainPath.length - 1).map(keyOf)
-      )
-      paths.push({ address: MAIN_SECTION_ADDRESS, gaps, after: mainAfter, total: mainTotal })
-    }
-    for (const { section, cells, positional, laid } of state.keys.chains) {
-      const after = section.chambersByIndex
-      if (laid || after === undefined || Object.keys(after).length === 0) continue
-      const puzzleAt = (k: number) =>
-        cells.findIndex(cell => {
-          const spec = state.chainRooms.get(keyOf(cell))
-          return spec?.roomType === "encounter" && spec.family !== undefined && spec.pathIndex === k
-        })
-      const at = Array.from({ length: section.pathPuzzles }, (_, k) => puzzleAt(k))
-      const gaps = at.map((from, k) =>
-        from < 0
-          ? []
-          : cells.slice(from + 1, k + 1 < at.length ? at[k + 1] : cells.length - 1).map((cell: Cell) => keyOf(cell))
-      )
-      paths.push({
-        address: addressOf.get(positional) ?? positional,
-        gaps,
-        after,
-        total: Object.keys(after).length,
+    const sides: SidePath[] = state.keys.chains
+      .filter(chain => !chain.laid)
+      .map(({ section, cells, positional }) => {
+        const nodes = cells.map((cell: Cell) => keyOf(cell))
+        const puzzleAt = (k: number) =>
+          cells.findIndex(cell => {
+            const spec = state.chainRooms.get(keyOf(cell))
+            return spec?.roomType === "encounter" && spec.family !== undefined && spec.pathIndex === k
+          })
+        return {
+          address: addressOf.get(positional) ?? positional,
+          gaps: gapsBetween(
+            nodes,
+            Array.from({ length: section.pathPuzzles }, (_, k) => puzzleAt(k))
+          ),
+          after: section.chambersByIndex ?? {},
+          nodes,
+        }
       })
-    }
-    if (paths.length === 0) return
+    const sideAfter = sides.some(side => Object.keys(side.after).length > 0)
+    if (mainTotal === 0 && !sideAfter) return
 
     const roomAt = rooms(state)
     const exitsOf = nodeExitsOf(state)
@@ -147,36 +143,57 @@ export const seatChambers = pass(
       return dirs.includes("n") && dirs.includes("s")
     }
     const rank = (key: string) => hashString(`${siteId}|chamber|${key}`)
-    const bestIn = (gap: Gap): string | undefined =>
-      gap
-        .filter(free)
-        .sort((a, b) => Number(isVertical(a)) - Number(isVertical(b)) || rank(a) - rank(b) || a.localeCompare(b))[0]
+    const byPreference = (a: string, b: string) =>
+      Number(isVertical(a)) - Number(isVertical(b)) || rank(a) - rank(b) || a.localeCompare(b)
+    const bestIn = (gap: Gap): string | undefined => gap.filter(free).sort(byPreference)[0]
+    const seatOn = (key: string, activity: ActivityId | true) =>
+      chambers.set(key, { roomType: "chamber", ...(activity === true ? {} : { authoredActivity: activity }) })
 
+    // Every chamber authored after a puzzle first: it is the only one a floor must seat.
     const short: Shortfall[] = []
-    for (const { address, gaps, after, total } of paths) {
-      let seated = 0
-      const holding = new Set<number>()
-      const seat = (gapIndex: number, activity: ActivityId | true): boolean => {
-        const key = gaps[gapIndex] === undefined ? undefined : bestIn(gaps[gapIndex])
-        if (key === undefined) return false
-        chambers.set(key, { roomType: "chamber", ...(activity === true ? {} : { authoredActivity: activity }) })
-        holding.add(gapIndex)
-        seated += 1
-        return true
+    const seatAfter = (address: string, gaps: readonly Gap[], after: Record<number, ActivityId | true>) => {
+      const held = new Set<number>()
+      for (const [k, activity] of Object.entries(after).sort(([a], [b]) => Number(a) - Number(b))) {
+        const key = gaps[Number(k)] === undefined ? undefined : bestIn(gaps[Number(k)])
+        if (key === undefined) continue
+        seatOn(key, activity)
+        held.add(Number(k))
       }
-      for (const [k, activity] of Object.entries(after).sort(([a], [b]) => Number(a) - Number(b)))
-        seat(Number(k), activity)
-      // The rest go where the spread wants them, else to the nearest gap with room: an empty gap first, then one
-      // that already holds a chamber.
-      for (const target of spreadTargets(total - Object.keys(after).length, gaps.length)) {
-        const byDistance = gaps.map((_, i) => i).sort((a, b) => Math.abs(a - target) - Math.abs(b - target) || a - b)
-        const pick =
-          byDistance.find(i => !holding.has(i) && bestIn(gaps[i]) !== undefined) ??
-          byDistance.find(i => bestIn(gaps[i]) !== undefined)
-        if (pick !== undefined) seat(pick, true)
-      }
-      if (seated < total) short.push({ type: "chambersNotSeated", address, wanted: total, seated })
+      const wanted = Object.keys(after).length
+      if (held.size < wanted) short.push({ type: "chambersNotSeated", address, wanted, seated: held.size })
+      return held
     }
+    const puzzleSteps = [...contentNow(state).puzzleRole].sort(([, a], [, b]) => a - b).map(([step]) => step)
+    const mainNodes = mainPath.map(keyOf)
+    const mainGaps = gapsBetween(mainNodes, puzzleSteps.length > 0 ? puzzleSteps : [0])
+    const holding = seatAfter(MAIN_SECTION_ADDRESS, mainGaps, mainAfter)
+    for (const side of sides) seatAfter(side.address, side.gaps, side.after)
     if (short.length > 0) return { retry: short }
+
+    // The rest of the count where the spread wants them, else to the nearest main gap with room: an empty gap
+    // first, then one that already holds a chamber. What the main path has no room for goes to the side paths.
+    let wanted = mainTotal - holding.size
+    for (const target of spreadTargets(wanted, mainGaps.length)) {
+      const byDistance = mainGaps.map((_, i) => i).sort((a, b) => Math.abs(a - target) - Math.abs(b - target) || a - b)
+      const pick =
+        byDistance.find(i => !holding.has(i) && bestIn(mainGaps[i]) !== undefined) ??
+        byDistance.find(i => bestIn(mainGaps[i]) !== undefined)
+      const key = pick === undefined ? undefined : bestIn(mainGaps[pick])
+      if (pick === undefined || key === undefined) break
+      seatOn(key, true)
+      holding.add(pick)
+      wanted -= 1
+    }
+    // A side path holding fewer chambers comes first, so they spread over the paths; its lock regions are not floor.
+    const held = (side: SidePath) => side.nodes.filter(key => chambers.has(key)).length
+    for (; wanted > 0; wanted -= 1) {
+      const pick = sides
+        .flatMap(side =>
+          side.nodes.filter(key => laid?.label.get(key) === undefined && free(key)).map(key => ({ key, n: held(side) }))
+        )
+        .sort((a, b) => a.n - b.n || byPreference(a.key, b.key))[0]
+      if (pick === undefined) break
+      seatOn(pick.key, true)
+    }
   }
 )
