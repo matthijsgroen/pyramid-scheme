@@ -131,7 +131,8 @@ export const starterRules: Rule[] = [
       sideSections: [sidePath({ puzzles: 1 })],
     })
     // The tunnel to the Sphinx: two short wizard floors down, the cave with its long corridor of
-    // puzzles, a small cave climbing back up, and the Sphinx, whose one room is the reading.
+    // puzzles, a small cave climbing back up, and the Sphinx: five puzzles that carry no loot, then
+    // the reading as the floor's last room.
     .floor(2, { difficulty: "wizard", pathPuzzles: 2, depth: 1, toFloor: 3, sideSections: [] })
     .floor(3, { difficulty: "wizard", pathPuzzles: 2, depth: 2, toFloor: 4, sideSections: [] })
     .floor(4, {
@@ -147,8 +148,11 @@ export const starterRules: Rule[] = [
     .floor(6, {
       tileset: "sphinx",
       difficulty: "wizard",
-      pathPuzzles: 1,
-      nodes: [{ where: "first", encounter: "reading" }],
+      pathPuzzles: 6,
+      nodes: [
+        { where: { every: 1 }, loot: false },
+        { where: "last", encounter: "reading" },
+      ],
       depth: 1,
       sideSections: [],
     }),

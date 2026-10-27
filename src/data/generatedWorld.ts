@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 397241613
+export const worldContentHash = 1696222995
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -419,7 +419,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         rewards: [{ type: "money", amount: 2 }],
       },
       {
-        pathPuzzles: 1,
+        pathPuzzles: 6,
         difficulty: "wizard",
         tileset: "sphinx",
         end: "treasure",
@@ -449,11 +449,19 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         wallDecorations: ["niche", "tallyBoard"],
         role: "puzzle",
-        encountersByIndex: { 0: "reading" },
+        encountersByIndex: {
+          0: "hidato",
+          1: "star-battle",
+          2: "procession",
+          3: "twin-stars",
+          4: "sudoku",
+          5: "reading",
+        },
+        lootByIndex: { 0: false, 1: false, 2: false, 3: false, 4: false, 5: false },
         packing: 0.1,
         seed: 2975698674563326,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a9", pieceIndex: 0 },
-        rewards: [undefined],
+        rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
       },
     ],
     [
