@@ -759,8 +759,8 @@ export type FloorConfig = {
   /** Per-node pass-through chamber on the main path: 0-based room index → a chamber in the gap after that room, dressed
    * for the named activity, or for one the carve picks where `true`. */
   chambersByIndex?: Record<number, ActivityId | true>
-  /** How many pass-through chambers the main path holds in all, `chambersByIndex` among them: the carve spreads the
-   * rest over the gaps between its puzzles. */
+  /** How many pass-through chambers the floor asks for, `chambersByIndex` among them. An intent: the carve seats
+   * as many as have room, the main path's gaps first, then its side paths, and never refuses the floor for the rest. */
   chambers?: number
   /** Per-node difficulty for the main path: 0-based room index → the tier that room builds at, else `difficulty`. */
   difficultiesByIndex?: Record<number, Difficulty>
@@ -956,8 +956,8 @@ export type AssemblerReason =
   | { type: "plateNotPlaced"; plate: string }
   /** No carve found a back-walled bare node for a pipe's hole in its region. `hole` is the first left without one. */
   | { type: "pipeHoleNotPlaced"; hole: string }
-  /** A path declares more pass-through chambers than the gaps between its puzzles had free nodes for:
-   * `address` is the path, `seated` the most one attempt found room for. See FloorConfig.chambers. */
+  /** A path's chambers authored after a puzzle found no free node in that puzzle's gap: `address` is the path,
+   * `seated` how many of them one attempt found room for. See FloorConfig.chambersByIndex. */
   | { type: "chambersNotSeated"; address: string; wanted: number; seated: number }
   /** The floor's mechanics (and sequence tiles) need more distinct glyphs than the six a mark can wear,
    * so a mark would be shared. `ids` are the ones left without a glyph, in authoring order. */
