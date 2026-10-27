@@ -45,11 +45,30 @@ skin):
 - Untagged kinds (rubble, pillar, mat) stay filler that fits anywhere.
 - **`PROP_ROLES` is derived from the activities**, so there is one list, not two that drift.
 
-Junior and up get their own activities when their rank is repainted — the list in the story review session:
-banquet, dressing room, household shrine, garden court (junior); purification, offering, sanctuary, House of
-Life, star-watching (expert); treasury, audience, burial chamber, armoury (master); the weighing of the heart,
-Nut's sky, the sun barque, the primordial waters (wizard). **Weighing returns at the end**: goods in the
-merchant's storehouse, the heart before the gods — the same scale.
+Junior and up get their own activities when their rank is repainted. **The count grows by one per rank**, as the
+floors grow (designer, 2026-10-27): starter 5, junior 6, expert 7, master 8, wizard 9. The lists as they stand:
+purification, offering, sanctuary, House of Life, star-watching (expert); treasury, audience, burial chamber,
+armoury (master); the weighing of the heart, Nut's sky, the sun barque, the primordial waters (wizard) — each
+filled to its count at its repaint. **Weighing returns at the end**: goods in the merchant's storehouse, the heart
+before the gods — the same scale.
+
+### Junior — a nobleman's house
+
+Decided 2026-10-27. A New Kingdom noble kept no room for art: the art is the house, murals on every wall, so it is
+junior's ground and not an activity. Music belongs to the banquet.
+
+| Activity         | Props                                                                        | Wall                       |
+| ---------------- | ---------------------------------------------------------------------------- | -------------------------- |
+| banquet          | **banquetTable** (bread, fruit, wine jars), **harp**, jarRack (wine)         | hanging (a banquet frieze) |
+| dressing room    | **dressingTable** (copper mirror, kohl pots), **wigStand**, shelf (perfume)  | sconce (a mirror)          |
+| household shrine | shrine (Bes, Taweret), offeringTable (flowers), lamp                         | stela (a false door)       |
+| garden court     | basin (a lotus pool, copper rim), **pottedTree**, pillar (lotus column), mat | —                          |
+| bedroom          | **bed** (lion legs), **headrest**, chestProp (linen)                         | —                          |
+| bakery-brewery   | **grindstone**, **breadOven**, jarRack (beer)                                | —                          |
+
+Footprints (`DECORATION_FOOTPRINTS`): banquetTable, bed and the lotus pool 2×1; harp and pottedTree 1×1 with
+`tall: 1`; the rest 1×1. Everything stands against the north wall. Once rooms have walk paths the banquet
+table and the pool move to a room's middle, the player walking round them.
 
 ## 2. Who has the room: one purpose, by precedence
 
