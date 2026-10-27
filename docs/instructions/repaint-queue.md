@@ -160,7 +160,7 @@ face that comes back a third of 8:1 is laid three side by side first, as the Sph
 
 ### `junior/floor` — red sandstone paving, petals in the joints
 
-**Re-roll:** the first roll came out pale honey sandstone, 6 L* under the merchant's limestone and the same hue (L* 69 against 75): the ranks did not tell apart. The ground is now mid-tone red sandstone, about L* 55.
+**Re-roll:** the first roll came out pale honey sandstone, 6 L* under the merchant's limestone and the same hue (L* 69 against 75): the ranks did not tell apart. The ground is now mid-tone red sandstone, about L* 55. The second roll had the right ground, but its joints were near-black drawn lines (p5 lum 64 against a slab band of 129): they are now soft grooves only a step darker than the slab, #7a5434, and nothing on the floor goes darker than #6a4630.
 
 **Attach:** `art/masters/surfaces/starter-floor.webp` — the merchant's repainted floor, for paint quality and slab scale only
 
@@ -177,10 +177,10 @@ HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fi
 surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
 a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: floor #a87a52 / #b4865c / #9c704a on a #8a6040 bed, joints #4e3320,
+Palette, strictly: floor #a87a52 / #b4865c / #9c704a on a #8a6040 bed, joints #7a5434,
 walls #6e4a30 with #9a7050 tops and #3a2416 at the base, copper #c8642c with light #f2b48a and shade
 #55210c, verdigris #4f9a86, painted red ochre #a8442a, Egyptian blue #2f6f8f.
-Every colour comes from that list. Nothing on the floor lighter than #c09060, nothing darker than #2a1a0e.
+Every colour comes from that list. Nothing on the floor lighter than #c09060, nothing darker than #6a4630 — the joints included.
 Warm and clear, with real colour: the copper is saturated and reads from across the room. The STONE
 stays calm — the ground is quiet so the copper and the paint can stand out on it.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
@@ -193,7 +193,7 @@ of the image and 14 rows down it, so each slab is twice as wide as it is tall an
 of the frame. Small paving stones, not flagstones. Square corners — not rounded rectangles.
 The slabs BUTT AGAINST EACH OTHER. The joint between two slabs is a shallow GROOVE: a soft narrow shadow
 where the surface dips and rises again — modelled, never a drawn line, never black. No slab has a contour
-around it.
+around it. At its deepest a groove is #7a5434, one quiet step under the slab — the bond reads from the slabs' own tones, not from dark lines between them.
 The slabs are RED SANDSTONE, #a87a52, varying from slab to slab across #b4865c and #9c704a so the bond
 reads without the seams having to draw it. Terracotta and rust: MID-TONE, clearly darker and redder than
 pale limestone or honey sandstone — never pale, never beige, never grey.
