@@ -414,8 +414,8 @@ export const useSiteNavigation = ({
       // the re-entry block above: a switch says its rooms stay re-enterable, and offers its board again.
       //
       // What a fork HOLDS decides only whether a screen opens on arrival: the junction opens none, the
-      // encounter standing in it does.
-      if (cell.roomType === "fork") {
+      // encounter standing in it does. A pass-through chamber holds nothing, and is written down the same way.
+      if (cell.roomType === "fork" || cell.roomType === "chamber") {
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
         if (cell.family !== undefined) scheduleArrival(walkDelay(row, col), () => onEncounter([row, col], true))

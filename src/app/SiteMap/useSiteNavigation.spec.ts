@@ -133,6 +133,7 @@ const bareFork: GridCell = {
   ordinal: "1",
 }
 const switchRoom: GridCell = { ...bareFork, family: "sumplete", tags: ["puzzle"] }
+const chamber: GridCell = { ...bareFork, roomType: "chamber" }
 const fogged: GridCell = {
   type: "corridor",
   dirs: new Set(["w"]),
@@ -314,6 +315,16 @@ describe("useSiteNavigation", () => {
 
   it("walks through a bare junction without opening anything", () => {
     const { hook, journeys, onEncounter } = setup([entrance, bareFork])
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+
+    expect(journeys.markCellExplored).toHaveBeenCalledWith(SECTION, "0:0,1", CORRIDOR_AT_1)
+    expect(onEncounter).not.toHaveBeenCalled()
+  })
+
+  it("writes down a pass-through chamber by standing in it, and opens nothing", () => {
+    const { hook, journeys, onEncounter } = setup([entrance, chamber])
 
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
