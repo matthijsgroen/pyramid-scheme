@@ -588,7 +588,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ### `wizard/floor` — a still, mirror-dark floor holding the night sky
 
-**Re-roll:** the ground was night-green, the same hue as the emerald it should carry, so the metal would sink into the floor. It is now midnight blue-black with a nebula in the stone and clearly visible inlaid stars; the emerald is kept to the seams of light, the walls and the props. The still-water roll copied the rank's symbols (ankh, eye, feather) onto the floor, drew five-pointed stars, repeated itself four times inside one image, and its cloud was a dull indigo: the floor now carries one colourful billowing nebula, its stars as fine dots, and no symbols.
+**Re-roll:** the ground was night-green, the same hue as the emerald it should carry, so the metal would sink into the floor. It is now midnight blue-black with a nebula in the stone and clearly visible inlaid stars; the emerald is kept to the seams of light, the walls and the props. The still-water roll copied the rank's symbols (ankh, eye, feather) onto the floor, drew five-pointed stars, repeated itself four times inside one image, and its cloud was a dull indigo: the floor now carries one colourful billowing nebula, its stars as fine dots, and no symbols. The designer's reference is a telescope photograph of a star-forming nebula, dimmed and leaning crimson and purple: the cloud is now mottled gas and dust rather than soft billows, its stars a dense field of fine specks.
 
 **Re-roll:** the nebula roll came back as rough fitted stones. The floor is meant to be super clean, like walking on still water: one smooth jointless surface with the sky in it.
 
@@ -605,11 +605,11 @@ HAND-PAINTED digital texture art: soft brushwork, forms modelled with soft shadi
 smooth and glossy. Realistic materials, painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
 a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: floor #161c38 / #1d2547 / #11162d on a #0c1124 bed, joints #080b18, nebula magenta #c0478a, violet #7a4bc0, teal #2f9fb0, a warm glow #e8a24a at its heart, stars #fff6dc,
+Palette, strictly: floor #161c38 / #1d2547 / #11162d on a #0c1124 bed, joints #080b18, nebula crimson #7e2440, deep magenta #8a2e6a, purple #4e2470, deep blue #1c2350, a dim warm glow #b8743a, stars #fff6dc,
 walls #8fc4ab with #d6f5e6 tops and #2c5a4a in shade, emerald #1f9e6b with light #9ee6c3 and shade
 #0d4a33, gold #e3c46a, green stone #3f6b5c.
-Every colour comes from that list. The dark of the surface is nothing darker than #070a16; the nebula may reach
-mid-tone, and only the stars are brighter than it.
+Every colour comes from that list. The dark of the surface is nothing darker than #070a16; the nebula stays DIM —
+nothing in it lighter than #a85a8a — and only the stars are brighter than it.
 Deep and calm underfoot, the stars and the gold bright against it; the emerald belongs to the walls and
 the things standing on the floor, not to the floor. The STONE stays quiet so the light
 can stand out on it.
@@ -624,14 +624,16 @@ it reads as the surface of dark water at night: polished like black glass, perfe
 lying in it.
 The surface is MIDNIGHT BLUE-BLACK, #161c38, drifting softly across #1d2547 and #11162d. Never grey, never
 green, never rough: no grit, no speckle, no texture of stone.
-IN THE SURFACE, as a reflection, a COLOURFUL NEBULA: one great billowing cloud like the aftermath of a
-burst, magenta #c0478a, violet #7a4bc0 and teal #2f9fb0 swirling into each other, with a warm glow #e8a24a
-deep in its heart. Soft, layered, painterly — rich colour, lit from within, blooming out across most of
-the surface and thinning into the dark at its edges, so dark sky still shows between its arms.
-Over it, a field of STARS AS DOTS: many tiny bright round pinpoints of #fff6dc, hundreds of them, most a
-single fine dot, a few dozen a little bigger, each just a soft bright point. NOT star shapes — no points,
-no five-pointed stars, no rays, no sparkle, no cross-shaped glints. Denser in the cloud, sparser in the
-dark.
+IN THE SURFACE, as a reflection, a DEEP-SPACE NEBULA, the way a telescope photograph of a star-forming
+cloud looks, but DIMMED: dark, yet glowing as if it gives off its own light. Mostly crimson #7e2440, deep
+magenta #8a2e6a and purple #4e2470, shading into deep blue #1c2350 at its edges, with a little dim warm
+glow #b8743a in a few hot pockets. The cloud is MOTTLED AND GRAINY — patchy gas and dust, broken into
+wisps, knots and dark dust lanes, never smooth soft billows. It spreads over most of the surface, and dark
+sky shows through it in places.
+Through it, a DENSE STAR FIELD of tiny bright round specks of #fff6dc, thousands of them, most a single
+fine point, a few hundred a little bigger, a handful brighter with a soft glow round them, and here and
+there a small tight cluster. NOT star shapes — no points, no five-pointed stars, no rays, no sparkle, no
+cross-shaped glints.
 NO SYMBOLS on the floor: no ankh, no eye, no feather, no hieroglyph, nothing drawn — only sky.
 ONE SINGLE PICTURE: do not repeat the image inside itself, never two or four copies of the same cloud.
 It tiles, so NOTHING crosses the whole image: no hard edge anywhere, the cloud fading into
