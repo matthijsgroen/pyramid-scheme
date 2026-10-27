@@ -75,6 +75,7 @@ describe("render", () => {
       switchRooms: new Map(),
       forkSwitchRooms: new Map(),
       pipeHoles,
+      chambers: new Map(),
     })
   }
 
@@ -151,6 +152,7 @@ describe("a reserved junction", () => {
     switchWays: [[{ dir: "s" as const, cell: "2,2", gateKeyId: "switch:way" }]],
     forkSwitchRooms: new Map(),
     pipeHoles: new Map(),
+    chambers: new Map(),
     switchRooms: new Map(switchesPlaced > 0 ? [["0,2", { family: "sumplete", mechanismId: "switch:0" }]] : []),
   })
 
@@ -382,6 +384,7 @@ describe("dressing by purpose", () => {
       switchRooms: new Map(switchAtJunction ? [["0,4", { family: "sumplete", mechanismId: "switch:0" }]] : []),
       forkSwitchRooms: new Map(),
       pipeHoles: new Map(),
+      chambers: new Map(),
     })
     return (pk: string) => {
       const [r, c] = pk.split(",").map(Number)

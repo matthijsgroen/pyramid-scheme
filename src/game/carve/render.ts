@@ -47,6 +47,7 @@ export type RenderState = Pick<
   | "switchRooms"
   | "forkSwitchRooms"
   | "pipeHoles"
+  | "chambers"
 >
 
 /**
@@ -79,7 +80,7 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
   const [exR, exC] = exit
   const { used } = state.branches
   const labels = state.labels
-  const roomSpecs = rooms(state)
+  const roomSpecs: ReadonlyMap<string, RoomSpec> = new Map([...rooms(state), ...state.chambers])
   const allowed = edgeAllowed(state)
   const forks = forkPositions(state)
   const stepOf = routeStepOf(state.maze)

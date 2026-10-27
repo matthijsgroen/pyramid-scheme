@@ -151,6 +151,18 @@ export const basicConfig = (): FloorConfig => ({
   sideSections: [],
 })
 
+/** A long main path with room between its puzzles for pass-through chambers, dressed from a made-up pool. */
+export const chamberFloor = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
+  pathPuzzles: 3,
+  difficulty: "junior",
+  end: "treasure",
+  exitOrStaircase: "exit",
+  sideSections: [],
+  packing: 3,
+  decorations: ["scale", "weightsTable", "pillar"],
+  ...overrides,
+})
+
 export const firstPyramid = (): FloorConfig => ({
   pathPuzzles: 0,
   difficulty: "starter",

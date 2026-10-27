@@ -126,6 +126,7 @@ Flat keys, so `Pick` types each pass. Optional until its pass runs.
 | `switchRooms`      | `Map<junction, Partial<RoomSpec>>`: the switch's encounter                                          | `standSwitches`        |
 | `forkSwitchRooms`  | `Map<junction, { room, gateKeyByDir }>`: a `{ in }` fork's encounter                                | `standForkSwitches`    |
 | `pipeHoles`        | `Map<hole, { cell }>`: the node each pipe's hole stands on                                          | `placePipeHoles`       |
+| `chambers`         | `Map<cell, RoomSpec>`: each pass-through chamber, by the node it widened                            | `seatChambers`         |
 
 **Derived, in `carve/derive.ts`** (today's locals that are lookups, not decisions): `routeStepOf` and
 `mainPathIndexByKey` (one function), `absorbedCell`, `dropEnds`, `regionDoorAt`, `gateAtCell`,
@@ -173,6 +174,7 @@ moves every floor after it.
 | 22  | `standSwitches.ts`        | `forks`                                                  | `switchRooms`      | G5's decision                                                       |
 | 23  | `standForkSwitches.ts`    | `junctions`, `keys`, `lay`, `nodeExitsOf`, `rooms`       | `forkSwitchRooms`  | G6's decision                                                       |
 | 24  | `placePipeHoles.ts`       | `labels`, `rooms`, `edgeAllowed`, `drops`, `switchWays`  | `pipeHoles`        | the stone pipe (stone-pipe.md); draws nothing                       |
+| 25  | `seatChambers.ts`         | `rooms`, `nodeExitsOf`, `lay`, `drops`, `pipeHoles`      | `chambers`         | pass-through-chambers-plan.md; draws nothing                        |
 | —   | `render.ts`               | all                                                      | grid               | 3720–4101, then G4–G7's writes                                      |
 | —   | `validate.ts`             | state, grid, its open and shut views                     | —                  | 4103–4467's checks                                                  |
 | —   | `standPieces.ts`          | `maze`, `switchWays`, `pipeHoles`, grid                  | grid               | G8, G9 (4470–4518)                                                  |

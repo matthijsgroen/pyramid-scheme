@@ -22,6 +22,7 @@ import { seatMainBarrierDoors } from "./seatMainBarrierDoors"
 import { seatMainControls } from "./seatMainControls"
 import { seatRouteRegions } from "./seatRouteRegions"
 import { seatSeamGates } from "./seatSeamGates"
+import { seatChambers } from "./seatChambers"
 import { requireReads } from "./state"
 import type { Finish, PassEntry } from "./state"
 import { shutSwitchGround } from "./shutSwitchGround"
@@ -60,6 +61,7 @@ export const PASSES: readonly PassEntry[] = [
   standSwitches,
   standForkSwitches,
   placePipeHoles,
+  seatChambers,
 ]
 
 /** What the tail reads: every key `render`, `validate` and `standPieces` take from the passes, each checked as a pass's are. */
@@ -77,6 +79,7 @@ export const TAIL_READS = [
   "switchRooms",
   "forkSwitchRooms",
   "pipeHoles",
+  "chambers",
 ] as const satisfies readonly (keyof RenderState)[]
 
 /**

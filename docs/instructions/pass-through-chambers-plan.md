@@ -42,13 +42,23 @@ The maze needs no space set aside. What is missing is a room on the path that is
 
 ## The carve
 
-A new pass, `seatChambers`, after `reserveJunctions` (`carve/passes.ts`). For each declared chamber it promotes one
-free padding node between content k and k+1 to a bare room carrying `authoredActivity`.
+A new pass, `seatChambers` (`carve/seatChambers.ts`), the last of `PASSES`: after every pass that seats something on a
+node, so none of them has to know chambers exist. It draws nothing. For each declared chamber it promotes one free
+padding node between content k and k+1 to a `"chamber"` room, carrying `authoredActivity` where one was named.
 
-- **Free:** no gate, control, lever, laid lock door, stair or fork; exactly two directions.
-- **Order:** turns and horizontals before verticals; no chamber two cells from another chamber or a fork, which
-  would contest a diagonal. Ties break by hash, never by `rand()`, so no other draw moves.
-- **None free:** the floor refuses with a shortfall, and the bake raises that floor's `packing`.
+- **Free:** no gate, control, lever, laid lock door or threshold, drop end, stair, fork, switch or pipe hole;
+  exactly two directions; not a node of a lock region a mechanic stands its seats in (`seatDemand`), so a plate or
+  tile placed after the passes keeps its node.
+- **Which gaps:** the main path's gaps run from each puzzle to the next (the last to the exit; a main path with no
+  puzzle is one gap). `chambers: n` counts the main path's chambers in all, its `chamberAfter` ones among them; the
+  rest spread evenly over the gaps, an empty gap nearest the target first, then one already holding a chamber.
+  A side path takes its `chamberAfter` ones only. A section filled into laid nodes seats none.
+- **Activity `true`:** the chamber is dressed like every other chamber — an activity its pool furnishes and its
+  wing's role serves, and where there is none, any prop of the pool (filler such as pillar or mat). It stays a
+  chamber either way; the pass never skips it for want of an activity.
+- **Order:** turns and horizontals before verticals; no chamber two cells from another room that claims floor (a
+  fork, a portal, a dead end, another chamber), which would contest a diagonal. Ties break by hash, never by `rand()`, so no other draw moves.
+- **None free:** the attempt refuses with `chambersNotSeated`, and the bake raises that floor's `packing`.
 - **The cell:** a new `RoomType` `"chamber"` (`siteTypes.ts`), not a bare fork: the fork's bland check
   (`siteValidator.ts:290`) and its `exits` must not apply.
 
