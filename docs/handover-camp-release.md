@@ -251,6 +251,8 @@ worktree, and the review list sorted: decisions, drafts, failures, things to loo
 
 The two walks under the review list's §5 (a side path in a lock corridor; the ward stair, cave and climb into the Sphinx).
 
+Topology pieces on a dark floor (designer, 2026-10-27): levers in the cave barely show. Look at lighting the mechanism pieces (levers and the rest) so they read on dark stone.
+
 ## After the release
 
 The ending takes its time (designer, 2026-10-26). The way to the Sphinx should already tell the player this is the end, together with the Sphinx's own styling:
