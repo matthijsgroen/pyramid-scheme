@@ -76,7 +76,18 @@ free padding node between content k and k+1 to a bare room carrying `authoredAct
    `worldFloorAssembly.verify.ts` that a chamber moves no wall at the pinned layout, and a line in
    `world-spec-stability.md`: a chamber moves walls only where the floor has no free node.
 
-## Before slice 1
+## Free nodes, measured
 
-Count the free padding nodes per junior floor (good: turn or horizontal; weak: vertical). A floor with none refuses
-and re-pins.
+Free padding nodes per pyramid floor (good: a turn or a horizontal; weak: a vertical), counting only nodes with no
+fork, dead end or portal two cells away diagonally. Mean / median / minimum:
+
+| tier    | good         | weak         | floors with no good one |
+| ------- | ------------ | ------------ | ----------------------- |
+| starter | 2.3 / 2 / 0  | 1.1 / 1 / 0  | 1 of 15                 |
+| junior  | 4.2 / 3 / 1  | 1.8 / 1 / 0  | 0 of 20                 |
+| expert  | 8.2 / 7 / 1  | 3.0 / 2 / 0  | 0 of 25                 |
+| master  | 21.2 / 5 / 1 | 9.7 / 3 / 0  | 0 of 42                 |
+| wizard  | 20.9 / 5 / 1 | 10.1 / 2 / 0 | 0 of 66                 |
+
+Junior tombs: 3.7 / 4 / 2. Every junior floor takes at least one chamber with a 2×1 prop, most take three, without a
+re-pin. A laid lock door on a corridor node is not seen by this count, so the true number can be a little lower.
