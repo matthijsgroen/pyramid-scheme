@@ -134,7 +134,9 @@ type Props = {
   /** A narrow passage being squeezed through, drawn the way it is crossed (`SqueezeWay`); the explorer is hidden meanwhile. */
   squeeze?: Squeeze | null
   /** Current floor index. Keys the explorer dot so a floor switch remounts it (instant snap to the
-   * new floor's entrance) instead of animating a walk from the previous floor's coordinates. */
+   * new floor's entrance) instead of animating a walk from the previous floor's coordinates, and tells a
+   * floor switch from a barrier opening, so no cover of the floor left is kept to fade over the new one.
+   * A caller that switches floors passes it. */
   currentFloor?: number
   /** Keys the player already holds — used only to color a gate as locked/unlocked on the map. */
   ownedKeys?: ReadonlySet<string>

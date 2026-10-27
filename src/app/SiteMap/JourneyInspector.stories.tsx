@@ -341,6 +341,7 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
             grid={grid}
             onCellClick={handleClick}
             explorerPos={pos}
+            currentFloor={currentFloor}
             revealAllCells={revealAll}
             freeWalk={revealAll}
           />
