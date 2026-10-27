@@ -19,7 +19,12 @@ const chambersOf = (grid: FloorGrid) => roomsWhere(grid, cell => cell.roomType =
 const puzzleAt = (grid: FloorGrid, k: number) =>
   roomsWhere(grid, cell => cell.roomType === "encounter" && cell.pathIndex === k && cell.sectionAddress === "main")[0]
 
-const roomySide = { pathPuzzles: 2, difficulty: "junior" as const, end: "treasure" as const }
+const roomySide = {
+  pathPuzzles: 2,
+  difficulty: "junior" as const,
+  end: "treasure" as const,
+  decorations: ["pillar" as const],
+}
 
 const expectOnlyWidened = (without: FloorGrid, withChambers: FloorGrid) => {
   const chambers = new Set(chambersOf(withChambers).map(({ r, c }) => `${r},${c}`))
@@ -64,6 +69,15 @@ describe("seatChambers", () => {
     expect(seated.flat()).toContain("s0")
   })
 
+  it("seats none of the count on a side path authored with no props, so every chamber it seats is dressed", () => {
+    const bare = { pathPuzzles: 1, packing: 1 as const, sideSections: [{ ...roomySide, decorations: undefined }] }
+    for (const seed of SEEDS) {
+      const chambers = chambersOf(carved(chamberFloor({ ...bare, chambers: 40 }), seed))
+      expect(chambers.map(({ cell }) => cell.sectionAddress)).not.toContain("s0")
+      for (const { cell } of chambers) expect(cell.decoration).toBeDefined()
+    }
+  })
+
   it("stands the chamber authored after a puzzle on the way from that puzzle to the next", () => {
     for (const seed of SEEDS) {
       const grid = carved(chamberFloor({ chambersByIndex: { 1: true } }), seed)
@@ -77,12 +91,7 @@ describe("seatChambers", () => {
   })
 
   it("seats a chamber authored on a side path in that path's own gap, filed under its section", () => {
-    const side = {
-      pathPuzzles: 2,
-      difficulty: "junior" as const,
-      end: "treasure" as const,
-      chambersByIndex: { 0: true as const },
-    }
+    const side = { ...roomySide, chambersByIndex: { 0: true as const } }
     for (const seed of SEEDS) {
       const grid = carved(chamberFloor({ sideSections: [side] }), seed)
       expect(chambersOf(grid).map(({ cell }) => cell.sectionAddress)).toEqual(["s0"])

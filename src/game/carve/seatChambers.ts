@@ -45,7 +45,9 @@ const gapsBetween = (nodes: readonly string[], at: readonly number[]): Gap[] =>
  * No chamber stands where its 3×3 meets another room that claims floor by its shape (a fork, a portal, a dead
  * end, another chamber): two claims would contest a diagonal. A puzzle that claims floor only for the activity a
  * story authored on it does not count, so authoring a story moves no chamber; where the two meet, the map's claim
- * rule settles the diagonal. A turn or a horizontal comes before a vertical, whose corridor
+ * rule settles the diagonal. A chamber whose activity is left to the carve stands only where its section's pool
+ * holds a prop, since a chamber is always dressed and a section authored with no props has nothing to dress it with.
+ * A turn or a horizontal comes before a vertical, whose corridor
  * crosses the north row a prop stands against. Ties break by hash, never by `rand()`, so no other draw moves.
  * `chambers` is an intent, as `packing` is: a floor with room for fewer seats fewer and carves on. Only a
  * `chamberAfter` whose gap holds no free node refuses the attempt.
@@ -68,6 +70,7 @@ export const seatChambers = pass(
     "forkSwitchRooms",
     "drops",
     "pipeHoles",
+    "labels",
   ],
   ["chambers"],
   (prep, state) => {
@@ -147,7 +150,9 @@ export const seatChambers = pass(
     const rank = (key: string) => hashString(`${siteId}|chamber|${key}`)
     const byPreference = (a: string, b: string) =>
       Number(isVertical(a)) - Number(isVertical(b)) || rank(a) - rank(b) || a.localeCompare(b)
-    const bestIn = (gap: Gap): string | undefined => gap.filter(free).sort(byPreference)[0]
+    const dressable = (key: string): boolean => (state.labels.dressing.get(key)?.props?.length ?? 0) > 0
+    const bestIn = (gap: Gap, activity: ActivityId | true = true): string | undefined =>
+      gap.filter(key => free(key) && (activity !== true || dressable(key))).sort(byPreference)[0]
     const seatOn = (key: string, activity: ActivityId | true) =>
       chambers.set(key, { roomType: "chamber", ...(activity === true ? {} : { authoredActivity: activity }) })
 
@@ -156,7 +161,7 @@ export const seatChambers = pass(
     const seatAfter = (address: string, gaps: readonly Gap[], after: Record<number, ActivityId | true>) => {
       const held = new Set<number>()
       for (const [k, activity] of Object.entries(after).sort(([a], [b]) => Number(a) - Number(b))) {
-        const key = gaps[Number(k)] === undefined ? undefined : bestIn(gaps[Number(k)])
+        const key = gaps[Number(k)] === undefined ? undefined : bestIn(gaps[Number(k)], activity)
         if (key === undefined) continue
         seatOn(key, activity)
         held.add(Number(k))
@@ -191,7 +196,9 @@ export const seatChambers = pass(
     for (; wanted > 0; wanted -= 1) {
       const pick = sides
         .flatMap(side =>
-          side.nodes.filter(key => laid?.label.get(key) === undefined && free(key)).map(key => ({ key, n: held(side) }))
+          side.nodes
+            .filter(key => laid?.label.get(key) === undefined && free(key) && dressable(key))
+            .map(key => ({ key, n: held(side) }))
         )
         .sort((a, b) => a.n - b.n || byPreference(a.key, b.key))[0]
       if (pick === undefined) break
