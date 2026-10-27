@@ -20,6 +20,8 @@ type Store = {
   latest: <T>(key: string) => { has: boolean; value: T | undefined }
   remember: <T>(key: string, value: T) => void
   forget: (key: string) => void
+  /** A key whose read failed: what is on disk is unknown, so this session never writes it. */
+  markUnreadable: (key: string) => void
 }
 
 const stores = new Map<string, Store>()
@@ -39,6 +41,9 @@ const getStore = (storeName: string): Store => {
     // every subscriber — walking the state backwards. The visible form of that was the explorer
     // jumping to where it was going, snapping back to where it started, and then walking there.
     const writeSeq = new Map<string, number>()
+    // A save that could not be read is still there; writing what this session holds would replace it
+    // with a fresh game. Such a key lives in memory only until the page is reloaded.
+    const unreadable = new Set<string>()
 
     const newStore: Store = {
       getItem: async <T>(key: string) => forage.getItem<T>(key),
@@ -46,7 +51,7 @@ const getStore = (storeName: string): Store => {
         const seq = (writeSeq.get(key) ?? 0) + 1
         writeSeq.set(key, seq)
         newest.set(key, value)
-        await forage.setItem<T>(key, value)
+        if (!unreadable.has(key)) await forage.setItem<T>(key, value)
         // Superseded while the write was in flight: the newer write owns the value now, and will
         // announce it itself. Announcing this one would hand subscribers a value already stale.
         if (writeSeq.get(key) !== seq) return value
@@ -59,10 +64,11 @@ const getStore = (storeName: string): Store => {
       },
       removeItem: async key => {
         newest.delete(key)
-        await forage.removeItem(key)
+        if (!unreadable.has(key)) await forage.removeItem(key)
       },
       clear: async () => {
         newest.clear()
+        unreadable.clear()
         await forage.clear()
       },
       keys: () => forage.keys(),
@@ -72,6 +78,9 @@ const getStore = (storeName: string): Store => {
       },
       forget: key => {
         newest.delete(key)
+      },
+      markUnreadable: key => {
+        unreadable.add(key)
       },
       subscribe: <T>(key: string, callback: (value: T) => void) => {
         subscribers.push({ key, callback } as {
@@ -205,7 +214,9 @@ export const useOfflineStorage = <T>(
         }
       })
       .catch(() => {
-        // A failed read must not leave every later setValue awaiting a rejected promise.
+        // A failed read must not leave every later setValue awaiting a rejected promise, nor let one
+        // write the pre-load default over the save it could not read.
+        store.markUnreadable(key)
       })
       .then(() => {
         if (!cancelled) setLoaded(true)

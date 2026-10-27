@@ -343,3 +343,28 @@ describe("reading and writing a whole store", () => {
     expect(await readOfflineStore(store)).toEqual(save)
   })
 })
+
+describe("useOfflineStorage — a read that fails", () => {
+  it("never writes over the save it could not read", async () => {
+    const storeName = `unreadable-${Math.random()}`
+    const backing = localForage.createInstance({ name: `${storeName}-backing` })
+    await backing.setItem("save", ["kept"])
+    vi.spyOn(localForage, "createInstance").mockImplementationOnce(
+      () =>
+        ({
+          getItem: () => Promise.reject(new Error("read failed")),
+          setItem: (k: string, v: unknown) => backing.setItem(k, v),
+          removeItem: (k: string) => backing.removeItem(k),
+          clear: () => backing.clear(),
+        }) as unknown as LocalForage
+    )
+
+    const { result } = renderHook(() => useOfflineStorage<string[]>("save", [], storeName))
+    await act(async () => {
+      await result.current[1](list => [...list, "new"])
+    })
+
+    expect(result.current[0]).toEqual(["new"])
+    expect(await backing.getItem("save")).toEqual(["kept"])
+  })
+})
