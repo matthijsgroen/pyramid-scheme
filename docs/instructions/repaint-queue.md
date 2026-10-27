@@ -130,9 +130,11 @@ whose colours the prompt tells the model to ignore.
 | master · gold    | **dark** granite, `#57534b`          | **light**, gilded relief, ground `#c4ad7c`     | red granite with a gold band, `#806a5e`  |
 | wizard · emerald | **dark** night-green, `#24453b`      | **light**, calcite lit from behind, `#8fc4ab`  | green stone with a gold line, `#3f6b5c`  |
 
-**Floor first, rank by rank.** A rank's floor is painted against the merchant's repainted floor,
-`art/masters/surfaces/starter-floor.webp` — the only surface painted to the current standard, so the four
-come out of one hand. Once a rank's floor lands, its master is `art/masters/surfaces/<rank>-floor.webp`,
+**Floor first, rank by rank.** A rank's floor attaches the cave's rock floor,
+`art/masters/surfaces/cave-floor.webp`, for paint quality only: it is painted to the current standard and has
+no slabs, so the generator takes no layout from it. Attached the merchant's floor, it copied his slab layout.
+Each rank lays its stone its own way — junior large offset squares, expert a straight grid of squares, master
+long slabs, wizard fitted polygons — so no two read alike. Once a rank's floor lands, its master is `art/masters/surfaces/<rank>-floor.webp`,
 which is the file that rank's wall face and sill attach: they are painted against the new ground. Painted
 before the floor, they would be handed the old one.
 
@@ -308,7 +310,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ### `expert/floor` — pale polished temple tiles
 
-**Attach:** `art/masters/surfaces/starter-floor.webp` — the merchant's repainted floor, for paint quality and slab scale only
+**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's rock floor, for paint quality only: it has no slabs, so it hands the generator no layout to copy
 
 ```
 FRAME: square, exactly 1:1. A seamless floor texture filling the whole frame. Do not re-compose it as a strip.
@@ -329,13 +331,14 @@ Every colour comes from that list. Nothing lighter than #eef2f5, nothing darker 
 Cool and clear: the silver and the lapis read from across the room. The STONE stays calm — the ground is
 quiet so the metal can stand out on it.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality, its texture and its slab scale.
-Do NOT take its colours, its warmth or its subject from it — the palette above is the only source of colour.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture, nothing else.
+Do NOT take its colours, its layout, its warmth or its subject from it — the palette above is the only source of colour.
 
 Seamless top-down floor texture, viewed straight down.
-Pale polished temple tiles laid in a running bond, kept spotless. COUNT THE TILES: exactly 7 tiles across
-the width of the image and 14 rows down it, so each tile is twice as wide as it is tall and takes up about
-a seventh of the frame. Small dressed tiles, not flagstones. Square corners — not rounded rectangles.
+Pale polished temple tiles, SQUARE and all the SAME SIZE, laid in a STRAIGHT GRID, kept spotless. COUNT THE
+TILES: exactly 5 across the width of the image and 5 down it, every joint running straight through from
+edge to edge in both directions — a measured, ordered floor, nothing offset, nothing staggered. Crisp square
+corners — not rounded.
 The tiles BUTT AGAINST EACH OTHER. The joint between two tiles is a shallow GROOVE: a soft narrow shadow
 where the surface dips and rises again — modelled, never a drawn line, never black. No tile has a contour
 around it.
@@ -443,7 +446,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ### `master/floor` — dark polished granite, gold dust in the joints
 
-**Attach:** `art/masters/surfaces/starter-floor.webp` — the merchant's repainted floor, for paint quality and slab scale only
+**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's rock floor, for paint quality only: it has no slabs, so it hands the generator no layout to copy
 
 ```
 FRAME: square, exactly 1:1. A seamless floor texture filling the whole frame. Do not re-compose it as a strip.
@@ -467,14 +470,15 @@ than #141210; only the gold dust is brighter.
 Dark and calm underfoot, the gold saturated and bright against it. The STONE stays quiet so the gold
 can stand out on it.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality, its texture and its slab scale.
-Do NOT take its colours, its lightness or its subject from it — the palette above is the only source of
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture, nothing else.
+Do NOT take its colours, its layout, its lightness or its subject from it — the palette above is the only source of
 colour.
 
 Seamless top-down floor texture, viewed straight down.
-Dark grey granite paving laid in a running bond, dressed and polished. COUNT THE SLABS: exactly 7 slabs
-across the width of the image and 14 rows down it, so each slab is twice as wide as it is tall and takes
-up about a seventh of the frame. Small paving stones, not flagstones. Square corners — not rounded
+Dark grey granite paving of LONG dressed slabs, ceremonial and polished. COUNT THE SLABS: each slab is
+about a third of the frame long and a seventh of it wide, so three times as long as it is wide, laid in
+courses running across the image, 7 courses down, each course's joints shifted by about a third of a slab.
+Long, heavy, deliberate stones — not squares, not bricks, not small paving. Square corners — not rounded
 rectangles.
 The slabs BUTT AGAINST EACH OTHER. The joint between two slabs is a shallow GROOVE: a soft narrow shadow
 where the surface dips and rises again — modelled, never a drawn line, never black. No slab has a contour
@@ -582,7 +586,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ### `wizard/floor` — night-green stone with a field of stars in it
 
-**Attach:** `art/masters/surfaces/starter-floor.webp` — the merchant's repainted floor, for paint quality and slab scale only
+**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's rock floor, for paint quality only: it has no slabs, so it hands the generator no layout to copy
 
 ```
 FRAME: square, exactly 1:1. A seamless floor texture filling the whole frame. Do not re-compose it as a strip.
@@ -604,15 +608,15 @@ than #0a1a15; only the stars and the few seams of light are brighter.
 Deep and calm underfoot, the emerald and the gold bright against it. The STONE stays quiet so the light
 can stand out on it.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality, its texture and its slab scale.
-Do NOT take its colours, its lightness or its subject from it — the palette above is the only source of
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture, nothing else.
+Do NOT take its colours, its layout, its lightness or its subject from it — the palette above is the only source of
 colour.
 
 Seamless top-down floor texture, viewed straight down.
-Deep night-green stone paving laid in a running bond, dressed and polished. COUNT THE SLABS: exactly 7
-slabs across the width of the image and 14 rows down it, so each slab is twice as wide as it is tall and
-takes up about a seventh of the frame. Small paving stones, not flagstones. Square corners — not rounded
-rectangles.
+Deep night-green stone paving of FITTED POLYGONS, dressed and polished: stones of five, six or seven straight
+sides fitted tight against each other with no courses at all, the way the oldest temple walls are fitted —
+no rows, no grid, no rectangles. COUNT THEM: about 5 stones across the width of the image and 5 down, each
+a different shape, none much bigger than another. Their corners are crisp, not rounded.
 The slabs BUTT AGAINST EACH OTHER. The joint between two slabs is a shallow GROOVE: a soft narrow shadow
 where the surface dips and rises again — modelled, never a drawn line. No slab has a contour around it.
 The slabs are DEEP NIGHT-GREEN, #24453b, varying from slab to slab across #2d5246 and #1e3b33 so the bond
@@ -2224,7 +2228,7 @@ keeps burying the outside. Four surfaces, the same loop as the cave's.
 
 ### `sphinx/floor` — the Sphinx's cut bedrock floor
 
-**Attach:** `art/masters/surfaces/starter-floor.webp` — the merchant's floor, for scale and paint quality only
+**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's rock floor, for paint quality only: it is uncut rock with no slabs, the nearest thing to bedrock
 
 ```
 Top-down dungeon game tile art for the inside of the Great Sphinx, a passage cut into the desert bedrock.
