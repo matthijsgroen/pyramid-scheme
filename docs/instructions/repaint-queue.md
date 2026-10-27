@@ -128,7 +128,7 @@ whose colours the prompt tells the model to ignore.
 | junior · copper  | mid-tone red sandstone, `#a87a52`    | dark, painted murals, ground `#6e4a30`         | sandstone with a copper strip, `#94683f` |
 | expert · silver  | light cool polished tiles, `#c9d0d6` | dark cool stone, sunk relief, ground `#7c8a98` | alabaster with a lapis line, `#b4bdc5`   |
 | master · gold    | **dark** granite, `#57534b`          | **light**, gilded relief, ground `#c4ad7c`     | red granite with a gold band, `#806a5e`  |
-| wizard · emerald | **dark** night-green, `#24453b`      | **light**, calcite lit from behind, `#8fc4ab`  | green stone with a gold line, `#3f6b5c`  |
+| wizard · emerald | **dark** midnight nebula, `#161c38`  | **light**, calcite lit from behind, `#8fc4ab`  | green stone with a gold line, `#3f6b5c`  |
 
 **Floor first, rank by rank.** A rank's floor attaches the cave's rock floor,
 `art/masters/surfaces/cave-floor.webp`, for paint quality only: it is painted to the current standard and has
@@ -586,7 +586,9 @@ Even lighting left to right, no hotspot, no vignette.
 
 **Import:** `yarn import-tile art/masters/surfaces/master-threshold.webp --tier=master --name=threshold --slot=sill --filter=smooth --key=none`
 
-### `wizard/floor` — night-green stone with a field of stars in it
+### `wizard/floor` — midnight stone with a nebula and stars in it
+
+**Re-roll:** the ground was night-green, the same hue as the emerald it should carry, so the metal would sink into the floor. It is now midnight blue-black with a nebula in the stone and clearly visible inlaid stars; the emerald is kept to the seams of light, the walls and the props.
 
 **Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's rock floor, for paint quality only: it has no slabs, so it hands the generator no layout to copy
 
@@ -594,20 +596,21 @@ Even lighting left to right, no hotspot, no vignette.
 FRAME: square, exactly 1:1. A seamless floor texture filling the whole frame. Do not re-compose it as a strip.
 
 Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
-Rank: the tomb of the GODS — the richest of five, not of this world. Deep night-green stone, translucent
-calcite lit from behind, a field of stars like the sky goddess Nut's, emerald with gold. The stars, the
+Rank: the tomb of the GODS — the richest of five, not of this world. Midnight stone holding the night sky,
+translucent calcite lit from behind, the sky goddess Nut's stars, emerald with gold. The stars, the
 ankh, the Eye of Horus, Ma'at's feather. Motes of light rising; nothing living.
 The floor is dark, and every part of it is still readable — nothing sinks into black.
 HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
 surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
 a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: floor #24453b / #2d5246 / #1e3b33 on a #17302a bed, joints #0f231d,
+Palette, strictly: floor #161c38 / #1d2547 / #11162d on a #0c1124 bed, joints #080b18, nebula #3b2f6e / #27506f,
 walls #8fc4ab with #d6f5e6 tops and #2c5a4a in shade, emerald #1f9e6b with light #9ee6c3 and shade
 #0d4a33, gold #e3c46a, green stone #3f6b5c.
-Every colour comes from that list. The floor stone is nothing lighter than #3a6656 and nothing darker
-than #0a1a15; only the stars and the few seams of light are brighter.
-Deep and calm underfoot, the emerald and the gold bright against it. The STONE stays quiet so the light
+Every colour comes from that list. The floor stone and its nebula are nothing lighter than #4a4a86 and
+nothing darker than #070a16; only the stars and the few seams of light are brighter.
+Deep and calm underfoot, the stars and the gold bright against it; the emerald belongs to the walls and
+the things standing on the floor, not to the floor. The STONE stays quiet so the light
 can stand out on it.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture, nothing else.
@@ -615,18 +618,22 @@ Do NOT take its colours, its layout, its lightness or its subject from it — th
 colour.
 
 Seamless top-down floor texture, viewed straight down.
-Deep night-green stone paving of FITTED POLYGONS, dressed and polished: stones of five, six or seven straight
+Midnight stone paving of FITTED POLYGONS, dressed and polished: stones of five, six or seven straight
 sides fitted tight against each other with no courses at all, the way the oldest temple walls are fitted —
 no rows, no grid, no rectangles. COUNT THEM: about 5 stones across the width of the image and 5 down, each
 a different shape, none much bigger than another. Their corners are crisp, not rounded.
 The slabs BUTT AGAINST EACH OTHER. The joint between two slabs is a shallow GROOVE: a soft narrow shadow
 where the surface dips and rises again — modelled, never a drawn line. No slab has a contour around it.
-The slabs are DEEP NIGHT-GREEN, #24453b, varying from slab to slab across #2d5246 and #1e3b33 so the bond
-reads without the seams having to draw it. Green-black, like a polished serpentine, never grey, never
-blue.
-IN THE STONE, a field of STARS: fine scattered points of pale #d6f5e6 and gold #e3c46a, set into the
-polish like a night sky, most of them tiny, a very few a little larger. Even, sparse, never a cluster,
-never a line.
+The slabs are MIDNIGHT BLUE-BLACK, #161c38, varying from slab to slab across #1d2547 and #11162d so the
+bond reads without the seams having to draw it. Polished like black granite, never grey, never green.
+IN THE STONE, a NEBULA: soft clouds of deep indigo-violet #3b2f6e and deep sea-blue #27506f drifting
+through the polish the way veins drift through marble, one sky laid across all the stones, its clouds
+running on over the joints from one stone to the next. Soft-edged and slow, low in value, no brighter
+than the clamp above — the night sky seen in dark stone, not a glowing picture.
+Over it, CLEARLY VISIBLE STARS: points of pale gold #f3e7b8 and gold #e3c46a inlaid in the polish, read
+from across the room — about thirty in the whole image, most small, five or six a little larger, each a
+round inlaid point with a soft bright core. No rays, no sparkle, no cross-shaped glints. Spread evenly,
+never a cluster, never a line.
 Two or three short SEAMS OF LIGHT where a crack in a slab lets a soft emerald #1f9e6b to #9ee6c3 glow up
 from beneath — each no longer than half a slab, stopping inside it. No glow spills onto the stone around
 them.
@@ -653,7 +660,7 @@ HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fi
 surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
 a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: floor #24453b / #2d5246 / #1e3b33 on a #17302a bed, joints #0f231d,
+Palette, strictly: floor #161c38 / #1d2547 / #11162d on a #0c1124 bed, joints #080b18, nebula #3b2f6e / #27506f,
 walls #8fc4ab with #d6f5e6 tops and #2c5a4a in shade, emerald #1f9e6b with light #9ee6c3 and shade
 #0d4a33, gold #e3c46a, green stone #3f6b5c.
 Every colour comes from that list. Nothing lighter than #e6faf0, nothing darker than #0a1a15.
@@ -702,7 +709,7 @@ HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fi
 surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
 a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: floor #24453b / #2d5246 / #1e3b33 on a #17302a bed, joints #0f231d,
+Palette, strictly: floor #161c38 / #1d2547 / #11162d on a #0c1124 bed, joints #080b18, nebula #3b2f6e / #27506f,
 walls #8fc4ab with #d6f5e6 tops and #2c5a4a in shade, emerald #1f9e6b with light #9ee6c3 and shade
 #0d4a33, gold #e3c46a, green stone #3f6b5c.
 Every colour comes from that list. Nothing lighter than #e6faf0, nothing darker than #0a1a15.
