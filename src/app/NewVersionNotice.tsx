@@ -1,7 +1,6 @@
 import type { FC } from "react"
 import { useTranslation } from "react-i18next"
 import { LootPopup } from "@/ui/atoms/LootPopup"
-import map from "@/assets/camp/map.webp"
 
 // Shown once, over the camp, to a player whose older save this launch threw away (see saveEpoch).
 export const NewVersionNotice: FC<{ onDismiss: () => void }> = ({ onDismiss }) => {
@@ -13,7 +12,7 @@ export const NewVersionNotice: FC<{ onDismiss: () => void }> = ({ onDismiss }) =
       youFoundLabel={t("newVersion.title")}
       itemName={t("newVersion.name")}
       itemDescription={t("newVersion.body")}
-      itemComponent={<img src={map} alt="" draggable={false} className="w-44 select-none" />}
+      itemComponent={<img src={`${import.meta.env.BASE_URL}pwa-192x192.png`} alt="" className="size-24 rounded-2xl" />}
       clickToContinueLabel={t("loot.clickToContinue")}
       onDismiss={onDismiss}
     />
