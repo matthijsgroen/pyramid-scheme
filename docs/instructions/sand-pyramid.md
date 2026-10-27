@@ -555,7 +555,7 @@ authored data on the tier, set for wizard.
   markers its door carries.
 - **Web marks:** a glyph set disjoint from `MARK_GLYPHS`, on a sand ground in a cartouche.
 
-**Art tasks, for `docs/instructions/art-tasks.md` (default-tier art, the same at every difficulty):**
+**Art tasks, for `docs/instructions/art-tasks.md` (shared art; a mechanism style may repaint the lever):**
 
 > **sandLever** — not the floor lever: a heavy stone post, a sun-disc or star-chart head instead of the plain
 > handle, a channel of sand running from its base into the floor. Two poses: set (head up, channel full) and

@@ -10,17 +10,18 @@ fifth rank from costing as much to draw as the first.
 
 ## The contract
 
-| Slot            | File                         | Size         | Anchor                                                                |
-| --------------- | ---------------------------- | ------------ | --------------------------------------------------------------------- |
-| Floor megatile  | `tiles/<rank>/floor.png`     | 448×448      | tiles both ways, world-aligned. `yarn make-seamless`                  |
-| Wall face       | `tiles/<rank>/wall-face.png` | 448×56       | tiles horizontally only; **shown at 448×28** — see below              |
-| Threshold sill  | `tiles/<rank>/threshold.png` | 56×12        | laid across the way through, at a rank seam                           |
-| Archway         | `tiles/<rank>/arch.png`      | 84×56        | middle transparent; jambs in the outer 14px each side                 |
-| Chamber prop    | `tiles/<rank>/<kind>.png`    | 56×84        | **bottom-anchored**; the top 28 is headroom, used only by tall things |
-| Multi-cell prop | `tiles/<rank>/<kind>.png`    | 126×84 (2×1) | as a prop, spanning its footprint: see below                          |
-| Wall item       | `tiles/<rank>/<kind>.png`    | 56×28        | painted on the face band                                              |
-| Floor scatter   | `tiles/<rank>/<kind>.png`    | 56×84        | flat on the floor, soft-edged; the PROP box, bottom-anchored          |
-| Shared          | `tiles/default/<name>.png`   | varies       | not a rank: the explorer, the scarab                                  |
+| Slot            | File                                 | Size         | Anchor                                                                |
+| --------------- | ------------------------------------ | ------------ | --------------------------------------------------------------------- |
+| Floor megatile  | `tiles/<rank>/floor.png`             | 448×448      | tiles both ways, world-aligned. `yarn make-seamless`                  |
+| Wall face       | `tiles/<rank>/wall-face.png`         | 448×56       | tiles horizontally only; **shown at 448×28** — see below              |
+| Threshold sill  | `tiles/<rank>/threshold.png`         | 56×12        | laid across the way through, at a rank seam                           |
+| Archway         | `tiles/<rank>/arch.png`              | 84×56        | middle transparent; jambs in the outer 14px each side                 |
+| Chamber prop    | `tiles/<rank>/<kind>.png`            | 56×84        | **bottom-anchored**; the top 28 is headroom, used only by tall things |
+| Multi-cell prop | `tiles/<rank>/<kind>.png`            | 126×84 (2×1) | as a prop, spanning its footprint: see below                          |
+| Wall item       | `tiles/<rank>/<kind>.png`            | 56×28        | painted on the face band                                              |
+| Floor scatter   | `tiles/<rank>/<kind>.png`            | 56×84        | flat on the floor, soft-edged; the PROP box, bottom-anchored          |
+| Shared          | `tiles/default/<name>.png`           | varies       | not a rank: the explorer, the scarab                                  |
+| Mechanism piece | `tiles/mechanism/<style>/<name>.png` | as its slot  | a lever, torch, plate, gate…: shared in `tiles/default/`, see below   |
 
 **A multi-cell prop covers `cols` × `rows` cells and stands `tall` cells higher** (the kind's
 `DECORATION_FOOTPRINTS` entry): 56 + 70 per extra column wide, 84 + 84 per extra row + 56 per `tall` high.
@@ -41,6 +42,13 @@ Fixed regardless of style: transparent background, an outline where a shape meet
 shadow under anything standing (that is what makes an object sit ON the ground in a top-down view, in any
 medium), and the megatiles tiling. A missing file falls back to `default/`, then to a placeholder glyph — so
 this list can land one file at a time and nothing breaks while it is half-drawn.
+
+**A mechanism piece is the same object on every floor, drawn in a STYLE.** The lever, torch, plate, pipe hole,
+sequence tile, gate, narrow passage, drop and sand lever are shared art in `tiles/default/`; a style repaints a
+piece so it reads on the floors that use it — a bone lever and a bone pillar on the cave's dark rock. Each tileset
+draws in one style (`MECHANISM_STYLE` in `src/app/SiteMap/mechanismStyle.ts`): `default`, `light`, `dark` or the
+nested `light/bone`. A piece resolves deepest style first and falls back one segment at a time — `light/bone`,
+then `light`, then `default`, then the placeholder — so a style needs only the pieces it changes.
 
 ## The camera — one angle for the whole set
 

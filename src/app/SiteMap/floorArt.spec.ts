@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import type { FloorConfig } from "@/game/siteTypes"
 import { floorArtUrls, floorTilesets, siteArtUrls } from "./floorArt"
+import { MECHANISM_STYLE, mechanismFolders } from "./mechanismStyle"
 
 const floor = (extra: Partial<FloorConfig> = {}): FloorConfig => ({
   pathPuzzles: 2,
@@ -52,6 +53,13 @@ describe("floorArtUrls", () => {
       "placeholder/a.png",
       "placeholder/b.png",
     ])
+  })
+
+  it("fetches the mechanism style folders the floor's tilesets draw their pieces in", () => {
+    const styleFolders = mechanismFolders(MECHANISM_STYLE.cave)
+    expect(floorArtUrls(floor({ tileset: "cave" }), folders)).toEqual(
+      expect.arrayContaining(styleFolders.map(folder => `${folder}/a.png`))
+    )
   })
 
   it("lists the floor the player stands on first in a site", () => {

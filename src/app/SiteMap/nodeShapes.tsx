@@ -1,7 +1,7 @@
-import type { CellState, GateVariant, KeyColor } from "@/game/siteTypes"
+import type { CellState, GateVariant, KeyColor, Tileset } from "@/game/siteTypes"
 import type { TileStatus } from "@/game/sequence"
 import { sequenceTileLook } from "./sequenceTileLook"
-import { ART_IMAGE_RENDERING, sharedTileUrl } from "./tileAssets"
+import { ART_IMAGE_RENDERING, mechanismTileUrl } from "./tileAssets"
 import { type Difficulty, difficulties } from "@/data/difficultyLevels"
 import { METALS } from "@/ui/tokens/metalPalette"
 import { keyColorHex } from "@/ui/tokens/keyColors"
@@ -96,6 +96,8 @@ export type ShapeProps = {
   plate?: { glyph: number; status: TileStatus }
   // The icon of the family standing in the room (FamilyMeta.icon), drawn by a "mechanism" marker.
   icon?: string
+  // The tileset the cell is drawn in, which picks the mechanism style a painted piece is drawn in (MECHANISM_STYLE).
+  tileset?: Tileset
 }
 
 // The painted tile is drawn in the prop frame a flush thing is seated in (`nodeSpritesFor`'s plate), so it
@@ -106,12 +108,12 @@ const TILE_TOP_Y = 10.5
 const FLOOR_SQUASH = 40 / 56
 const GLYPH_OUTLINE = "#2b2116"
 
-/** A sequence tile: one shared painting for every glyph and state, the glyph drawn on its top face in the
- * glyph's state colour (`sequenceTileLook`). Without the painting, a vector slab stands in. */
-const SequenceTileShape = ({ plate }: ShapeProps) => {
+/** A sequence tile: one painting in the cell's mechanism style for every glyph and state, the glyph drawn on its top
+ * face in the glyph's state colour (`sequenceTileLook`). Without the painting, a vector slab stands in. */
+const SequenceTileShape = ({ plate, tileset }: ShapeProps) => {
   const r = NODE_RADIUS_PUZZLE
   const status = plate?.status ?? "unwalked"
-  const url = sharedTileUrl("sequenceTile")
+  const url = mechanismTileUrl(tileset ?? "starter", "sequenceTile")
   return (
     <g data-plate={plate?.glyph} data-status={status}>
       {url ? (
@@ -466,8 +468,9 @@ export const NodeShape = ({
   mark,
   plate,
   icon,
+  tileset,
 }: ShapeProps & { type: ShapeKind }) => {
-  const p = { state, gateVariant, keyColor, keyColors, difficulty, mark, plate, icon }
+  const p = { state, gateVariant, keyColor, keyColors, difficulty, mark, plate, icon, tileset }
   switch (type) {
     case "entrance":
       return <EntranceShape {...p} />

@@ -1,7 +1,6 @@
 import type { FloorConfig, SubSection, SideSection, Tileset } from "@/game/siteTypes"
+import { MECHANISM_STYLE, mechanismFolders } from "./mechanismStyle"
 import { tilesetFolderUrls } from "./tileAssets"
-
-type ArtFolder = Tileset | "default" | "placeholder"
 
 /**
  * The tilesets one floor draws in, read off its config the way `cellTileset` reads them off the carved
@@ -26,16 +25,19 @@ export const floorTilesets = (floor: FloorConfig): Tileset[] => {
 }
 
 /**
- * Every image the map can draw on this floor: the folders of the tilesets it is drawn in, the art every
- * tileset shares (the explorer, the stairs) and the stand-ins for kinds not painted yet. A whole folder
+ * Every image the map can draw on this floor: the folders of the tilesets it is drawn in, the mechanism styles
+ * those tilesets draw their pieces in, the art every tileset shares (the explorer, the stairs) and the
+ * stand-ins for kinds not painted yet. A whole folder
  * rather than the kinds the carve places, because the carve is only known once the floor is assembled —
  * and a folder is a handful of files.
  */
 export const floorArtUrls = (
   floor: FloorConfig,
-  folderUrls: (folder: ArtFolder) => string[] = tilesetFolderUrls
+  folderUrls: (folder: string) => string[] = tilesetFolderUrls
 ): string[] => {
-  const folders: ArtFolder[] = [...floorTilesets(floor), "default", "placeholder"]
+  const tilesets = floorTilesets(floor)
+  const styles = tilesets.flatMap(tileset => mechanismFolders(MECHANISM_STYLE[tileset]).filter(f => f !== "default"))
+  const folders: string[] = [...tilesets, ...styles, "default", "placeholder"]
   return [...new Set(folders.flatMap(folderUrls))]
 }
 
@@ -43,7 +45,7 @@ export const floorArtUrls = (
 export const siteArtUrls = (
   site: readonly FloorConfig[],
   firstFloor = 0,
-  folderUrls?: (folder: ArtFolder) => string[]
+  folderUrls?: (folder: string) => string[]
 ): string[] => {
   const first = site[firstFloor]
   const order = first ? [first, ...site.filter(floor => floor !== first)] : site

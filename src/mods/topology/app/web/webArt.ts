@@ -2,9 +2,10 @@ import { webMarkFor } from "@/game/mark"
 import type { LeverTiles, RewardArt } from "@/app/SiteMap/rewardHandlerRegistry"
 import type { WebActivatorShape } from "@/mods/topology/game/web/activator"
 
-// HOW A WEB ACTIVATOR STANDS IN ITS ROOM (docs/instructions/sand-pyramid.md, "The look"): the sand lever and the web key
-// are default-tier art, the same at every difficulty. Neither is painted yet (docs/instructions/art-tasks.md, "The sand
-// web"), so each names the floor's own art to draw until it is: the lever's three pieces, and the chest.
+// HOW A WEB ACTIVATOR STANDS IN ITS ROOM (docs/instructions/sand-pyramid.md, "The look"): the sand lever is mechanism
+// art, drawn in the floor's mechanism style (MECHANISM_STYLE) and shared by default; the web key is a prop. Neither is
+// painted yet (docs/instructions/art-tasks.md, "The sand web"), so each names the floor's own art to draw until it is:
+// the lever's three pieces, and the chest.
 
 /** The floor lever's pieces (src/mods/topology/game/handle/meta.ts): what a sand lever is NOT. */
 export const FLOOR_LEVER_TILES: LeverTiles = { back: "leverBaseBack", arm: "leverArm", front: "leverBaseFront" }

@@ -53,6 +53,8 @@ import {
   tileUrl,
   tileVariants,
   sharedTileUrl,
+  mechanismTileOrPlaceholder,
+  mechanismTileUrl,
 } from "./tileAssets"
 import { storedAtCell } from "@/game/cellAddress"
 import { tileStatusAt } from "@/game/sequencePlay"
@@ -328,16 +330,16 @@ export const nodeSpritesFor = (
   // A DROP IS PLACED BY THE CARVE'S SHAPE, NOT DRESSED: its obstacle is the ONE_WAY_RUN_CELLS cells the
   // carve reserved between a launch and a landing, and the art is drawn across all of them — every one is
   // in the footprint, so nothing else stands under it. It is a node sprite, never a `DecorationKind`, so
-  // no dressing pool can name it. `tileUrl` and not `tileOrPlaceholder`: an obstacle with no painted art
-  // keeps the plain corridor it always drew rather than a stand-in. The obstacle reveals as
-  // one, so its last cell being fogged means all of it is.
+  // no dressing pool can name it. `mechanismTileUrl` and not `mechanismTileOrPlaceholder`: an obstacle with no
+  // painted art keeps the plain corridor it always drew rather than a stand-in. The obstacle reveals as one, so its
+  // last cell being fogged means all of it is.
   for (const run of oneWayRuns(grid)) {
     const [lr, lc] = run.cells[run.cells.length - 1]
     const end = grid.cells[lr][lc]
     if (end.type !== "corridor") continue
     const art = DROP_ART[run.dir]
     const { x, y, w, h } = dropFrame(run.cells, run.dir)
-    const dropUrl = art && tileUrl(cellTileset(end, grid, floorTier), art.name)
+    const dropUrl = art && mechanismTileUrl(cellTileset(end, grid, floorTier), art.name)
     if (!art || !dropUrl || end.state === "fogged") continue
     out.push({
       footprint: clipCells(run.cells.map(([r, c]) => `${r},${c}`)),
@@ -402,9 +404,9 @@ export const nodeSpritesFor = (
     // real oblique view and a rotation is not (`NodeSprite`).
     const name = `${open ? "gate-open" : "gate"}${dc !== 0 ? "-side" : ""}`
     const url =
-      tileOrPlaceholder(tier, name) ??
-      tileOrPlaceholder(tier, open ? "gate-open" : "gate") ??
-      (open ? tileOrPlaceholder(tier, "gate") : undefined)
+      mechanismTileOrPlaceholder(tier, name) ??
+      mechanismTileOrPlaceholder(tier, open ? "gate-open" : "gate") ??
+      (open ? mechanismTileOrPlaceholder(tier, "gate") : undefined)
     if (!url) return
 
     // THE BARS STAND ON THE SILL. Wherever one rank's stone meets another's across a way the player
@@ -478,7 +480,8 @@ export const nodeSpritesFor = (
         const leverUrls =
           rewardArt?.kind === "lever"
             ? (["back", "arm", "front"] as const).map(
-                piece => tileUrl(tier, rewardArt.tiles[piece]) ?? tileUrl(tier, rewardArt.stand[piece])
+                piece =>
+                  mechanismTileUrl(tier, rewardArt.tiles[piece]) ?? mechanismTileUrl(tier, rewardArt.stand[piece])
               )
             : undefined
         if (!url && !leverUrls) continue
@@ -525,9 +528,10 @@ export const nodeSpritesFor = (
         })
       } else if (kind === "gate" && cell.passage) {
         // A NARROW PASSAGE IS A WALL STANDING IN ITS OWN CELL, a crack in it: drawn in the cell-wide prop frame like a
-        // plate, never hung on a seam like a gate's leaf, and the same at every rank. Nobody stands in it; it fades
-        // while the explorer waits on the cell behind it. Unpainted, it is drawn as the shut gate it is to the walk.
-        const url = passageArtUrl(cell)
+        // plate, never hung on a seam like a gate's leaf, in the cell's mechanism style (`MECHANISM_STYLE`). Nobody
+        // stands in it; it fades while the explorer waits on the cell behind it. Unpainted, it is drawn as the shut
+        // gate it is to the walk.
+        const url = passageArtUrl(cell, tier)
         if (url)
           out.push({
             footprint,
@@ -548,14 +552,14 @@ export const nodeSpritesFor = (
           wall: isSealedWayOut(cell),
         })
       } else if (drawingOf(cell)?.art === "lever") {
-        // BLOCKED UNTIL ALL THREE TILES EXIST, AND NEVER PLACEHOLDER: `tileUrl`, not `tileOrPlaceholder`
-        // — a stand-in dome with no arm to swing would draw a lie, and the superseded single-piece
-        // `leverLeft`/`leverRight` tiles are not reached for either. A rank with only some of the three
-        // painted draws none of them, leaving the room's own marker to carry it, same as an unpainted
-        // stairhead or exit above.
-        const back = tileUrl(tier, "leverBaseBack")
-        const arm = tileUrl(tier, "leverArm")
-        const front = tileUrl(tier, "leverBaseFront")
+        // BLOCKED UNTIL ALL THREE TILES EXIST, AND NEVER PLACEHOLDER: `mechanismTileUrl`, not
+        // `mechanismTileOrPlaceholder` — a stand-in dome with no arm to swing would draw a lie, and the superseded
+        // single-piece `leverLeft`/`leverRight` tiles are not reached for either. A rank with only some of the three
+        // painted draws none of them, leaving the room's own marker to carry it, same as an unpainted stairhead or exit
+        // above.
+        const back = mechanismTileUrl(tier, "leverBaseBack")
+        const arm = mechanismTileUrl(tier, "leverArm")
+        const front = mechanismTileUrl(tier, "leverBaseFront")
         if (!back || !arm || !front) continue
         // Stepped off its own doorways exactly as a chest is (`nodeArtOffset`): a lever is a cell's
         // worth of furniture like any other, not a doorway fitting.
@@ -582,12 +586,12 @@ export const nodeSpritesFor = (
           armStack: { armUrl: arm, frontUrl: front, angleDeg },
         })
       } else if (drawingOf(cell)?.art === "standingTorch") {
-        // ONE SHARED PAINTING, lit or not by the control's own position. A lit torch is NOT eased back the way
-        // an emptied chest is: the flame is what says it is used, and a see-through post over its own pool of
-        // light reads as a ghost. Its marker still wears the ✓. The lit tile is imported with no seat shadow,
-        // because the pool laid at its foot lights the floor that shadow would have fallen on.
+        // ONE PAINTING IN THE CELL'S MECHANISM STYLE, lit or not by the control's own position. A lit torch is NOT
+        // eased back the way an emptied chest is: the flame is what says it is used, and a see-through post over its
+        // own pool of light reads as a ghost. Its marker still wears the ✓. The lit tile is imported with no seat
+        // shadow, because the pool laid at its foot lights the floor that shadow would have fallen on.
         const spent = isSpentAt(grid, floorIndex, r, c, cell, mechanismStates)
-        const url = sharedTileUrl(spent ? "torchLit" : "torchUnlit")
+        const url = mechanismTileUrl(tier, spent ? "torchLit" : "torchUnlit")
         if (!url) continue
         const { dx, dy } = nodeArtOffset(cell.dirs)
         const x = cx + dx - CELL / 2
@@ -604,10 +608,10 @@ export const nodeSpritesFor = (
         })
       } else if (cell.plate) {
         // A PLATE IS FLAT ON THE FLOOR, drawn in the cell-wide prop frame like an exit, in the look its stones and
-        // the explorer's weight give it now. The shared painting, never a rank's: a plate is the same at every rank.
+        // the explorer's weight give it now. Drawn in the cell's mechanism style (`MECHANISM_STYLE`).
         const standing = standingAt !== undefined && standingAt[0] === r && standingAt[1] === c
         const look = plateLookAt(grid, floorIndex, r, c, mechanismStates ?? NO_STATES, standing)
-        const url = look && sharedTileUrl(PLATE_TILE[look])
+        const url = look && mechanismTileUrl(tier, PLATE_TILE[look])
         if (!url) continue
         out.push({
           footprint,
@@ -619,9 +623,9 @@ export const nodeSpritesFor = (
         })
       } else if (cell.pipeHole) {
         // A PIPE'S HOLE IS IN THE BACK WALL of its node, drawn on the wall band above the floor square in the look
-        // its stones give it. The shared painting, never a rank's.
+        // its stones give it, in the cell's mechanism style.
         const look = holeLookAt(grid, floorIndex, r, c, mechanismStates ?? NO_STATES)
-        const url = look && sharedTileUrl(PIPE_HOLE_TILE[look])
+        const url = look && mechanismTileUrl(tier, PIPE_HOLE_TILE[look])
         if (!url) continue
         out.push({
           footprint,
@@ -1949,13 +1953,15 @@ export const SiteMapView = ({
                 // A PAINTED PLATE IS THE NODE, as a flight is: the vector slab underneath has nothing more to say.
                 const hasPlate = drawnPlates.has(`plate:${r},${c}`)
                 // A STANDING TORCH IS THE NODE, as a plate is: the flame square under it would put a second torch on the tile.
-                const hasTorch = drawingOf(cell)?.art === "standingTorch" && !!sharedTileUrl("torchUnlit")
+                const hasTorch =
+                  drawingOf(cell)?.art === "standingTorch" &&
+                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "torchUnlit")
                 // A PAINTED LEVER IS THE NODE, as a torch is: the marker square under it would put a second lever on the tile.
                 const hasLever =
                   drawingOf(cell)?.art === "lever" &&
-                  !!tileUrl(cellTileset(cell, grid, tier), "leverBaseBack") &&
-                  !!tileUrl(cellTileset(cell, grid, tier), "leverArm") &&
-                  !!tileUrl(cellTileset(cell, grid, tier), "leverBaseFront")
+                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "leverBaseBack") &&
+                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "leverArm") &&
+                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "leverBaseFront")
                 const roomR = nodeRadius[shapeKind]
                 // A WAY A SWITCH SHUT IS A WALL, AND A WALL WEARS NO NODE. The bars standing in its doorway
                 // already say the way is closed; a gate marker on top of them offers a second reading — a
@@ -1999,6 +2005,7 @@ export const SiteMapView = ({
                           difficulty={wardKeyDifficulty(cell.requiredKeyId)}
                           icon={familyIconOf(cell)}
                           mark={cell.mark}
+                          tileset={cellTileset(cell, grid, tier)}
                           plate={
                             cell.sequenceTile && plateStatus
                               ? { glyph: cell.sequenceTile.glyph, status: plateStatus }

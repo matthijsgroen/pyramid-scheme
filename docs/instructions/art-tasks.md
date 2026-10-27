@@ -243,10 +243,11 @@ texture needs to leave room for it.
 ## 5c. The sand web — four paintings, drawn today as placeholders
 
 The sand web (`sand-pyramid.md`, "The look") is built and draws with stand-ins; nothing in it is painted. All four are
-**default-tier art, the same at every difficulty** (masters in `art/masters/props/default/` and
-`art/masters/surfaces/`). Each stand-in is named in code, so a painted file dropped in under the key takes over with
-no other edit: `src/mods/topology/app/web/webArt.ts` (the lever and the key) and `WEB_SAND_META` / `WEB_SEAL_META` in
-`src/mods/topology/game/regionBarrier/meta.ts` (the sand and the seal, their `owed` field names the key).
+shared art (`tiles/default/`); the sand lever is a mechanism piece, which a mechanism style may repaint
+(`tile-art-brief.md`). Masters in `art/masters/props/default/` and `art/masters/surfaces/`. Each stand-in is named in
+code, so a painted file dropped in under the key takes over with no other edit: `src/mods/topology/app/web/webArt.ts`
+(the lever and the key) and `WEB_SAND_META` / `WEB_SEAL_META` in `src/mods/topology/game/regionBarrier/meta.ts` (the
+sand and the seal, their `owed` field names the key).
 
 | key         | drawn today as                                                  | the painting                                                                 |
 | ----------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------- |
