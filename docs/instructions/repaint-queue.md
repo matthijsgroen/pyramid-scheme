@@ -125,7 +125,7 @@ whose colours the prompt tells the model to ignore.
 
 | Rank             | Floor                                | Wall face                                      | Sill                                     |
 | ---------------- | ------------------------------------ | ---------------------------------------------- | ---------------------------------------- |
-| junior · copper  | light-mid warm sandstone, `#c8a070`  | dark, painted murals, ground `#9a7650`         | sandstone with a copper strip, `#b08a5e` |
+| junior · copper  | mid-tone red sandstone, `#a87a52`    | dark, painted murals, ground `#6e4a30`         | sandstone with a copper strip, `#94683f` |
 | expert · silver  | light cool polished tiles, `#c9d0d6` | dark cool stone, sunk relief, ground `#7c8a98` | alabaster with a lapis line, `#b4bdc5`   |
 | master · gold    | **dark** granite, `#57534b`          | **light**, gilded relief, ground `#c4ad7c`     | red granite with a gold band, `#806a5e`  |
 | wizard · emerald | **dark** night-green, `#24453b`      | **light**, calcite lit from behind, `#8fc4ab`  | green stone with a gold line, `#3f6b5c`  |
@@ -158,7 +158,9 @@ step across it. On a light rank that is a step darker than the floor; on a dark 
 face that comes back a third of 8:1 is laid three side by side first, as the Sphinx's are:
 `magick band.jpeg band.jpeg band.jpeg +append wide.png`.
 
-### `junior/floor` — warm sandstone paving, petals in the joints
+### `junior/floor` — red sandstone paving, petals in the joints
+
+**Re-roll:** the first roll came out pale honey sandstone, 6 L* under the merchant's limestone and the same hue (L* 69 against 75): the ranks did not tell apart. The ground is now mid-tone red sandstone, about L* 55.
 
 **Attach:** `art/masters/surfaces/starter-floor.webp` — the merchant's repainted floor, for paint quality and slab scale only
 
@@ -175,10 +177,10 @@ HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fi
 surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
 a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: floor #c8a070 / #d4ad7e / #ba9162 on a #a98256 bed, joints #6a4a2c,
-walls #9a7650 with #c9a477 tops and #4a3320 at the base, copper #c8642c with light #f2b48a and shade
+Palette, strictly: floor #a87a52 / #b4865c / #9c704a on a #8a6040 bed, joints #4e3320,
+walls #6e4a30 with #9a7050 tops and #3a2416 at the base, copper #c8642c with light #f2b48a and shade
 #55210c, verdigris #4f9a86, painted red ochre #a8442a, Egyptian blue #2f6f8f.
-Every colour comes from that list. Nothing lighter than #e6c89a, nothing darker than #2a1a0e.
+Every colour comes from that list. Nothing on the floor lighter than #c09060, nothing darker than #2a1a0e.
 Warm and clear, with real colour: the copper is saturated and reads from across the room. The STONE
 stays calm — the ground is quiet so the copper and the paint can stand out on it.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
@@ -186,16 +188,16 @@ THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality, its textu
 Do NOT take its colours or its subject from it — the palette above is the only source of colour.
 
 Seamless top-down floor texture, viewed straight down.
-Warm sandstone paving laid in a running bond, well kept. COUNT THE SLABS: exactly 7 slabs across the width
+Red sandstone paving laid in a running bond, well kept. COUNT THE SLABS: exactly 7 slabs across the width
 of the image and 14 rows down it, so each slab is twice as wide as it is tall and takes up about a seventh
 of the frame. Small paving stones, not flagstones. Square corners — not rounded rectangles.
 The slabs BUTT AGAINST EACH OTHER. The joint between two slabs is a shallow GROOVE: a soft narrow shadow
 where the surface dips and rises again — modelled, never a drawn line, never black. No slab has a contour
 around it.
-The slabs are WARM SANDSTONE, #c8a070, varying from slab to slab across #d4ad7e and #ba9162 so the bond
-reads without the seams having to draw it. Honey and apricot, a clear step warmer and deeper than pale
-limestone, never grey, never brown.
-Lightly worn: shallow scuffs, a few softened corners showing the #a98256 bed in the notch, fine hairline
+The slabs are RED SANDSTONE, #a87a52, varying from slab to slab across #b4865c and #9c704a so the bond
+reads without the seams having to draw it. Terracotta and rust: MID-TONE, clearly darker and redder than
+pale limestone or honey sandstone — never pale, never beige, never grey.
+Lightly worn: shallow scuffs, a few softened corners showing the #8a6040 bed in the notch, fine hairline
 cracks stopping at a slab's edge. All of it painted as depth and all of it SHALLOW.
 The nobleman's life on it: a few fallen lotus petals, pale and blue-tinged, lying in the joints, a faint
 ring where a wine jar stood, and two or three tiny verdigris #4f9a86 specks where a copper vessel was set
@@ -224,8 +226,8 @@ HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fi
 surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
 a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: floor #c8a070 / #d4ad7e / #ba9162 on a #a98256 bed, joints #6a4a2c,
-walls #9a7650 with #c9a477 tops and #4a3320 at the base, copper #c8642c with light #f2b48a and shade
+Palette, strictly: floor #a87a52 / #b4865c / #9c704a on a #8a6040 bed, joints #4e3320,
+walls #6e4a30 with #9a7050 tops and #3a2416 at the base, copper #c8642c with light #f2b48a and shade
 #55210c, verdigris #4f9a86, painted red ochre #a8442a, Egyptian blue #2f6f8f.
 Every colour comes from that list. Nothing lighter than #e6c89a, nothing darker than #2a1a0e.
 Warm and clear, with real colour: the copper is saturated and reads from across the room. The STONE
@@ -236,7 +238,7 @@ colours or its subject from it — the palette above is the only source of colou
 
 Seamless horizontal strip of a plastered wall, seen straight on from the front at eye level.
 The whole wall is PAINTED, the way a nobleman's house is: smooth mud plaster over the stone, its ground a
-warm ochre #9a7650, a clear step DARKER than the sandstone floor in front of it, never lighter, so the
+deep red-brown #6e4a30, a clear step DARKER than the sandstone floor in front of it, never lighter, so the
 room keeps its depth.
 THREE REGISTERS of a painted procession run along it, small figures in profile the old Egyptian way, about
 thirty figures across the whole strip: on top, offering bearers carrying baskets, lotus bunches and copper
@@ -247,7 +249,7 @@ on the ochre ground, the paint a little faded and rubbed.
 A PAINTED DADO BAND along the foot of the wall, dark red ochre with a thin blue line above it; a narrow
 lotus-and-rosette border along the top. Thin copper #c8642c lines divide the registers, gone green
 #4f9a86 in places.
-The very top edge carries a lighter cap #c9a477 where the wall's top surface catches the light; the very
+The very top edge carries a lighter cap #9a7050 where the wall's top surface catches the light; the very
 bottom edge a darker base #4a3320 where it meets the floor. Those two bands, the dado, the border and the
 register lines run unbroken the whole width — they are the only things that do.
 It tiles left to right: no figure big enough to be recognised twice in a row, no crack or stain longer
@@ -277,8 +279,8 @@ HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fi
 surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
 a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: floor #c8a070 / #d4ad7e / #ba9162 on a #a98256 bed, joints #6a4a2c,
-walls #9a7650 with #c9a477 tops and #4a3320 at the base, copper #c8642c with light #f2b48a and shade
+Palette, strictly: floor #a87a52 / #b4865c / #9c704a on a #8a6040 bed, joints #4e3320,
+walls #6e4a30 with #9a7050 tops and #3a2416 at the base, copper #c8642c with light #f2b48a and shade
 #55210c, verdigris #4f9a86, painted red ochre #a8442a, Egyptian blue #2f6f8f.
 Every colour comes from that list. Nothing lighter than #e6c89a, nothing darker than #2a1a0e.
 Warm and clear, with real colour: the copper is saturated and reads from across the room. The STONE
@@ -292,7 +294,7 @@ background.
 It is ONE band of stone across the whole width: a soft shadow along its far edge where it drops to the
 floor beyond, its own worn top surface across the middle, a soft shadow along its near edge. No object
 sits on it and nothing crosses it end to end except those two edges and one copper strip.
-The stone is the floor's own sandstone at #b08a5e — the same paving as the chamber, laid as one long
+The stone is the floor's own sandstone at #94683f — the same paving as the chamber, laid as one long
 block, a step darker than the floor either side of it, never lighter.
 Dished in the middle by feet, its ends a little crumbled. A thin strip of copper #c8642c set into the
 stone along its near edge, bright where it is still polished, gone verdigris green #4f9a86 at both ends
