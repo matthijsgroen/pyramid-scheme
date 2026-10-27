@@ -586,9 +586,11 @@ Even lighting left to right, no hotspot, no vignette.
 
 **Import:** `yarn import-tile art/masters/surfaces/master-threshold.webp --tier=master --name=threshold --slot=sill --filter=smooth --key=none`
 
-### `wizard/floor` — midnight stone with a nebula and stars in it
+### `wizard/floor` — a still, mirror-dark floor holding the night sky
 
 **Re-roll:** the ground was night-green, the same hue as the emerald it should carry, so the metal would sink into the floor. It is now midnight blue-black with a nebula in the stone and clearly visible inlaid stars; the emerald is kept to the seams of light, the walls and the props.
+
+**Re-roll:** the nebula roll came back as rough fitted stones. The floor is meant to be super clean, like walking on still water: one smooth jointless surface with the sky in it.
 
 **Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's rock floor, for paint quality only: it has no slabs, so it hands the generator no layout to copy
 
@@ -600,8 +602,8 @@ Rank: the tomb of the GODS — the richest of five, not of this world. Midnight 
 translucent calcite lit from behind, the sky goddess Nut's stars, emerald with gold. The stars, the
 ankh, the Eye of Horus, Ma'at's feather. Motes of light rising; nothing living.
 The floor is dark, and every part of it is still readable — nothing sinks into black.
-HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
-surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+HAND-PAINTED digital texture art: soft brushwork, forms modelled with soft shading, the surface itself
+smooth and glossy. Realistic materials, painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
 a comic, not a cartoon. An edge is a change of value, never a stroke.
 Palette, strictly: floor #161c38 / #1d2547 / #11162d on a #0c1124 bed, joints #080b18, nebula #3b2f6e / #27506f,
@@ -613,31 +615,24 @@ Deep and calm underfoot, the stars and the gold bright against it; the emerald b
 the things standing on the floor, not to the floor. The STONE stays quiet so the light
 can stand out on it.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture, nothing else.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality only — NOT its rough rock texture, which this floor must not have.
 Do NOT take its colours, its layout, its lightness or its subject from it — the palette above is the only source of
 colour.
 
 Seamless top-down floor texture, viewed straight down.
-Midnight stone paving of FITTED POLYGONS, dressed and polished: stones of five, six or seven straight
-sides fitted tight against each other with no courses at all, the way the oldest temple walls are fitted —
-no rows, no grid, no rectangles. COUNT THEM: about 5 stones across the width of the image and 5 down, each
-a different shape, none much bigger than another. Their corners are crisp, not rounded.
-The slabs BUTT AGAINST EACH OTHER. The joint between two slabs is a shallow GROOVE: a soft narrow shadow
-where the surface dips and rises again — modelled, never a drawn line. No slab has a contour around it.
-The slabs are MIDNIGHT BLUE-BLACK, #161c38, varying from slab to slab across #1d2547 and #11162d so the
-bond reads without the seams having to draw it. Polished like black granite, never grey, never green.
-IN THE STONE, a NEBULA: soft clouds of deep indigo-violet #3b2f6e and deep sea-blue #27506f drifting
-through the polish the way veins drift through marble, one sky laid across all the stones, its clouds
-running on over the joints from one stone to the next. Soft-edged and slow, low in value, no brighter
-than the clamp above — the night sky seen in dark stone, not a glowing picture.
-Over it, CLEARLY VISIBLE STARS: points of pale gold #f3e7b8 and gold #e3c46a inlaid in the polish, read
+ONE SMOOTH, SEAMLESS SURFACE — NO SLABS, NO STONES, NO JOINTS, NO TILES, NO CRACKS. A floor so clean and still
+it reads as the surface of dark water at night: polished like black glass, perfectly flat, with the sky
+lying in it.
+The surface is MIDNIGHT BLUE-BLACK, #161c38, drifting softly across #1d2547 and #11162d. Never grey, never
+green, never rough: no grit, no speckle, no texture of stone.
+IN THE SURFACE, as a reflection, a NEBULA: soft clouds of deep indigo-violet #3b2f6e and deep sea-blue #27506f drifting
+slowly through it, one sky across the whole surface. Soft-edged and slow, low in value, no brighter
+than the clamp above — the night sky seen in still dark water, not a glowing picture.
+Over it, CLEARLY VISIBLE STARS: points of pale gold #f3e7b8 and gold #e3c46a lying in the surface, read
 from across the room — about thirty in the whole image, most small, five or six a little larger, each a
-round inlaid point with a soft bright core. No rays, no sparkle, no cross-shaped glints. Spread evenly,
+round point with a soft bright core. No rays, no sparkle, no cross-shaped glints. Spread evenly,
 never a cluster, never a line.
-Two or three short SEAMS OF LIGHT where a crack in a slab lets a soft emerald #1f9e6b to #9ee6c3 glow up
-from beneath — each no longer than half a slab, stopping inside it. No glow spills onto the stone around
-them.
-It tiles, so NOTHING crosses the whole image: no seam, crack or stain longer than an eighth of the frame,
+It tiles, so NOTHING crosses the whole image: no cloud brighter or bigger than an eighth of the frame,
 and no feature touching two edges. Spread evenly — no corner busier than another.
 Even lighting across the entire image, no hotspot, no vignette. Edge to edge texture.
 ```
