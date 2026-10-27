@@ -9,6 +9,7 @@ import { useRelaidFloorsBackfill } from "@/app/SiteMap/useRelaidFloorsBackfill"
 import { FezCompanion } from "./app/fez/FezCompanion"
 import { DevelopModeProvider } from "./contexts/DevelopMode"
 import PWABadge from "./PWABadge"
+import { SaveUnreadableGuard } from "@/app/SaveUnreadableGuard"
 import { useHomecoming } from "@/app/homecomingRegistry"
 
 function App() {
@@ -56,6 +57,7 @@ function App() {
           />
         )}
         <PWABadge />
+        <SaveUnreadableGuard />
       </FezCompanion>
     </DevelopModeProvider>
   )

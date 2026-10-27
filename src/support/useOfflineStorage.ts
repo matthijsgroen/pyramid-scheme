@@ -5,6 +5,8 @@ import localForage from "localforage"
 const isSetFunction = <T>(v: SetStateAction<T>): v is (prevValue: T) => T => typeof v === "function"
 
 type Store = {
+  /** Deletes the whole database behind this store. */
+  drop: () => Promise<void>
   getItem: <T>(key: string) => Promise<T | null>
   setItem: <T>(key: string, value: T) => Promise<T | null>
   removeItem: (key: string) => Promise<void>
@@ -26,6 +28,33 @@ type Store = {
 
 const stores = new Map<string, Store>()
 
+// Whether any save could not be read this session, and who wants to hear it: the game cannot tell a
+// fresh game from a save it failed to read, so the player is told and chooses.
+let saveUnreadable = false
+const unreadableListeners = new Set<() => void>()
+
+/** Calls back once a save turns out unreadable (at once, if one already has). */
+export const onSaveUnreadable = (callback: () => void): VoidFunction => {
+  if (saveUnreadable) callback()
+  unreadableListeners.add(callback)
+  return () => unreadableListeners.delete(callback)
+}
+
+// A read that fails is usually the browser dropping its database connection for a moment, so it is
+// tried again before the save is given up on.
+const RETRY_DELAYS_MS = [100, 400]
+
+const readWithRetry = async <T>(store: Store, key: string): Promise<T | null> => {
+  for (const delay of RETRY_DELAYS_MS) {
+    try {
+      return await store.getItem<T>(key)
+    } catch {
+      await new Promise(resolve => setTimeout(resolve, delay))
+    }
+  }
+  return store.getItem<T>(key)
+}
+
 const getStore = (storeName: string): Store => {
   const store = stores.get(storeName)
   if (!store) {
@@ -46,6 +75,7 @@ const getStore = (storeName: string): Store => {
     const unreadable = new Set<string>()
 
     const newStore: Store = {
+      drop: () => forage.dropInstance(),
       getItem: async <T>(key: string) => forage.getItem<T>(key),
       setItem: async <T>(key: string, value: T) => {
         const seq = (writeSeq.get(key) ?? 0) + 1
@@ -81,6 +111,10 @@ const getStore = (storeName: string): Store => {
       },
       markUnreadable: key => {
         unreadable.add(key)
+        if (!saveUnreadable) {
+          saveUnreadable = true
+          unreadableListeners.forEach(listener => listener())
+        }
       },
       subscribe: <T>(key: string, callback: (value: T) => void) => {
         subscribers.push({ key, callback } as {
@@ -97,6 +131,11 @@ const getStore = (storeName: string): Store => {
     return newStore
   }
   return store
+}
+
+/** Deletes every store this session has opened: a player's way out of a save that never loads again. */
+export const dropOfflineStores = async (): Promise<void> => {
+  await Promise.all([...stores.values()].map(store => store.drop().catch(() => {})))
 }
 
 export const clearOfflineStore = (storeName = "defaultStore"): Promise<void> => {
@@ -186,8 +225,7 @@ export const useOfflineStorage = <T>(
     // there: four uncaught `ReferenceError: window is not defined` per CI run, from whichever spec
     // happened to lose the race, while every test passed.
     let cancelled = false
-    loadPromiseRef.current = store
-      .getItem<T>(key)
+    loadPromiseRef.current = readWithRetry<T>(store, key)
       .then(read => {
         if (cancelled || stateVersionRef.current !== readAtVersion) return
         // A write issued after this read started has not landed or been announced yet, but the

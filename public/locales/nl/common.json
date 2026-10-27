@@ -1,5 +1,16 @@
 {
   "language": "Nederlands",
+  "saveUnreadable": {
+    "title": "Je voortgang kan niet geladen worden",
+    "body": "De browser geeft je opgeslagen spel nu niet vrij. Je save is niet weg: herlaad de pagina om het opnieuw te proberen.",
+    "banner": "Voortgang wordt niet opgeslagen. Tik om te herladen.",
+    "reload": "Herlaad",
+    "continue": "Speel verder zonder opslaan",
+    "reset": "Begin opnieuw (save wissen)",
+    "confirmReset": "Dit wist je hele save, en dat kan niet ongedaan worden. Opnieuw beginnen?",
+    "confirmResetYes": "Ja, wis mijn save",
+    "confirmResetNo": "Nee, terug"
+  },
   "difficulty": {
     "starter": "Beginner",
     "junior": "Junior",

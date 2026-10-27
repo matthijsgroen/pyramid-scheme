@@ -2,7 +2,7 @@
 import { describe, it, expect, vi } from "vitest"
 import { renderHook, act } from "@testing-library/react"
 import localForage from "localforage"
-import { readOfflineStore, useOfflineStorage, writeOfflineStore } from "./useOfflineStorage"
+import { onSaveUnreadable, readOfflineStore, useOfflineStorage, writeOfflineStore } from "./useOfflineStorage"
 
 // The hook builds one localForage instance per store name, lazily. Intercepting that first
 // construction for an unused store name gives a real backing store with a counted `getItem`.
@@ -366,5 +366,52 @@ describe("useOfflineStorage — a read that fails", () => {
 
     expect(result.current[0]).toEqual(["new"])
     expect(await backing.getItem("save")).toEqual(["kept"])
+  })
+})
+
+describe("useOfflineStorage — a read that fails for a moment", () => {
+  it("tries again and loads the save", async () => {
+    const storeName = `flaky-${Math.random()}`
+    const backing = localForage.createInstance({ name: `${storeName}-backing` })
+    await backing.setItem("save", ["kept"])
+    let failures = 1
+    vi.spyOn(localForage, "createInstance").mockImplementationOnce(
+      () =>
+        ({
+          getItem: (k: string) => (failures-- > 0 ? Promise.reject(new Error("read failed")) : backing.getItem(k)),
+          setItem: (k: string, v: unknown) => backing.setItem(k, v),
+          removeItem: (k: string) => backing.removeItem(k),
+          clear: () => backing.clear(),
+        }) as unknown as LocalForage
+    )
+    const { result } = renderHook(() => useOfflineStorage<string[]>("save", [], storeName))
+    await act(async () => {
+      await result.current[1](list => [...list, "new"])
+    })
+
+    expect(await backing.getItem("save")).toEqual(["kept", "new"])
+  })
+
+  it("says so when the save stays unreadable", async () => {
+    const storeName = `dead-${Math.random()}`
+    vi.spyOn(localForage, "createInstance").mockImplementationOnce(
+      () =>
+        ({
+          getItem: () => Promise.reject(new Error("read failed")),
+          setItem: () => Promise.resolve(),
+          removeItem: () => Promise.resolve(),
+          clear: () => Promise.resolve(),
+        }) as unknown as LocalForage
+    )
+    const unreadable = vi.fn()
+    const stop = onSaveUnreadable(unreadable)
+
+    const { result } = renderHook(() => useOfflineStorage<string[]>("save", [], storeName))
+    await act(async () => {
+      await result.current[1](["x"])
+    })
+    stop()
+
+    expect(unreadable).toHaveBeenCalled()
   })
 })
