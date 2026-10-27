@@ -93,7 +93,9 @@ export const juniorRules: Rule[] = [
 
   tier("junior")
     // Two pass-through chambers on every floor of a junior pyramid: dressed rooms the corridor runs through.
-    .set({ chambers: 2 })
+    // Packing one widening above the default (the carve's ladder doubles it), so the walk has the free nodes
+    // they stand on.
+    .set({ chambers: 2, packing: 0.2 })
     .sidePaths("medium")
     .settings(JUNIOR_FRAGMENT_PATH)
     // One VISIBLE mosaic per pyramid: the corridor detector isn't earned until the master tier, so

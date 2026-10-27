@@ -51,6 +51,13 @@ export const stageHolds = (
   sameStage(pinned, first) ||
   (recorded?.kind === "sidePaths" && recorded.hash === authoringHash && sameStage(recorded.sidePaths, pinned))
 
+/**
+ * WHETHER A PIN'S PACKING MAY BE VERIFIED: only at or above the authored packing. The search never goes below it, so a
+ * pin under it was picked for an authoring that asked for less room, and is searched again.
+ */
+export const packingHolds = (pinned: number | undefined, authored: number): boolean =>
+  pinned === undefined || pinned >= authored
+
 /** One floor's pick, for the bake's summary. */
 export type FloorPick = {
   key: string
@@ -200,7 +207,7 @@ export const makeLayoutPicker = ({
       ...(pinned?.corridorsTakeTwo ? { corridorsTakeTwo: true as const } : {}),
     }
     const verified =
-      pinned && stageHolds(pinnedStage, stages[0], recorded, authoringHash)
+      pinned && packingHolds(pinned.packing, authored) && stageHolds(pinnedStage, stages[0], recorded, authoringHash)
         ? verifyCarvePair(
             base,
             { seed: pinned.seed ?? base, packing: pinned.packing ?? authored, sidePaths: pinnedStage },
