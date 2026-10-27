@@ -55,7 +55,9 @@ before the gods — the same scale.
 ### Junior — a nobleman's house
 
 Decided 2026-10-27. A New Kingdom noble kept no room for art: the art is the house, murals on every wall, so it is
-junior's ground and not an activity. Music belongs to the banquet.
+junior's ground and not an activity. Music belongs to the banquet. A reception hall is left to the ranks above, where the priest, the pharaoh and the gods each
+receive in their own way (one activity, each rank's own dressing); the bakery-brewery gives the house more of its
+own character.
 
 | Activity         | Props                                                                        | Wall                       |
 | ---------------- | ---------------------------------------------------------------------------- | -------------------------- |
