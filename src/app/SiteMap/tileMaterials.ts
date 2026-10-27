@@ -48,7 +48,7 @@ export type TierPalette = {
 export const tierPalette: Record<Tileset, TierPalette> = {
   // A merchant's storehouse: pale warm limestone underfoot, red ochre and turquoise as its colour
   // (docs/game-design/visual-direction.md). The floor and wall tokens are the repainted floor's and wall face's;
-  // the prop tokens move with the props' repaint.
+  // `prop` is the mean of the repainted props.
   starter: {
     bed: "#bfae8c",
     slab: "#d8c8a8",
@@ -64,7 +64,7 @@ export const tierPalette: Record<Tileset, TierPalette> = {
     shade: "rgba(21,17,12,0.3)",
     faceNight: 0.55,
     lamp: 0.3,
-    prop: "#a49781",
+    prop: "#694935",
     propDark: "#5c5347",
     outline: "#15110c",
   },
