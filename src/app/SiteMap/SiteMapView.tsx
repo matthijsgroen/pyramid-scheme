@@ -391,7 +391,9 @@ export const nodeSpritesFor = (
       const beyond = approach?.get(`${r + mr},${c + mc}`)
       return beyond?.[0] === r && beyond?.[1] === c
     })
-    const [dr, dc] = sealed ? DIR_MOVES[sealed] : [r - ar, c - ac]
+    // A WAY A SWITCH SHUT CANNOT BE STOOD ON: the walk halts on the cell before it, so its bars hang
+    // on that seam, across the way the player came, right in front of where he stops.
+    const [dr, dc] = wall ? [ar - r, ac - c] : sealed ? DIR_MOVES[sealed] : [r - ar, c - ac]
 
     // A GATE IS AIMED BY WHICH ONE IS DRAWN, the same as a flight. Shutting a way walked ACROSS, the
     // grille's own plane is the y-z one and this projection draws that as a line, so `-side` is a
