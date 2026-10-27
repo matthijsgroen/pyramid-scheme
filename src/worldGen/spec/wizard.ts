@@ -84,6 +84,7 @@ export const wizardRules: Rule[] = [
   // "master but more of everything" shape that made half of wizard's chests loose change.
   tier("wizard")
     .set({
+      chambers: 3, // pass-through chambers per floor: dressed rooms the corridor runs through
       mainFloors: 2,
       wardWings: 1,
       wardPaths: 2,
@@ -184,6 +185,7 @@ export const wizardRules: Rule[] = [
   ...["wizard_treasure_tomb", "wizard_treasure_tomb_b", "wizard_treasure_tomb_c"].map(id => tombCave(id, "wizard", 3)),
 
   tomb("wizard_treasure_tomb", {
+    chambers: 0, // the tier's pass-through chambers are for its pyramids; a tomb runs tableau to tableau
     encounter: "tomb-puzzle",
     difficulty: "wizard",
     floorCount: 4,
@@ -232,6 +234,7 @@ export const wizardRules: Rule[] = [
     ],
   }),
   tomb("wizard_treasure_tomb_b", {
+    chambers: 0, // the tier's pass-through chambers are for its pyramids; a tomb runs tableau to tableau
     encounter: "tomb-puzzle",
     difficulty: "wizard",
     floorCount: 4,
@@ -271,6 +274,7 @@ export const wizardRules: Rule[] = [
     ],
   }),
   tomb("wizard_treasure_tomb_c", {
+    chambers: 0, // the tier's pass-through chambers are for its pyramids; a tomb runs tableau to tableau
     encounter: "tomb-puzzle",
     difficulty: "wizard",
     floorCount: 4,

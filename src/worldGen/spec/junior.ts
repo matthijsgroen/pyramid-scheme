@@ -92,7 +92,8 @@ export const juniorRules: Rule[] = [
   }),
 
   tier("junior")
-    .set({})
+    // Two pass-through chambers on every floor of a junior pyramid: dressed rooms the corridor runs through.
+    .set({ chambers: 2 })
     .sidePaths("medium")
     .settings(JUNIOR_FRAGMENT_PATH)
     // One VISIBLE mosaic per pyramid: the corridor detector isn't earned until the master tier, so
@@ -204,6 +205,7 @@ export const juniorRules: Rule[] = [
   tombCave("junior_treasure_tomb", "junior", 1),
 
   tomb("junior_treasure_tomb", {
+    chambers: 0, // the tier's pass-through chambers are for its pyramids; a tomb runs tableau to tableau
     encounter: "tomb-puzzle",
     difficulty: "junior",
     floorCount: 6,

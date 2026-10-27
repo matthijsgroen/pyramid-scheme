@@ -102,6 +102,7 @@ export const masterRules: Rule[] = [
   }),
 
   tier("master").set({
+    chambers: 3, // pass-through chambers per floor: dressed rooms the corridor runs through
     wardWings: 1,
     wardPaths: 1,
     wardPathTrapped: true, // hazardous returns — revisiting ward paths costs health
@@ -196,6 +197,7 @@ export const masterRules: Rule[] = [
   ...["master_treasure_tomb", "master_treasure_tomb_b"].map(id => tombCave(id, "master", 2)),
 
   tomb("master_treasure_tomb", {
+    chambers: 0, // the tier's pass-through chambers are for its pyramids; a tomb runs tableau to tableau
     encounter: "tomb-puzzle",
     difficulty: "master",
     floorCount: 5,
@@ -240,6 +242,7 @@ export const masterRules: Rule[] = [
     ],
   }),
   tomb("master_treasure_tomb_b", {
+    chambers: 0, // the tier's pass-through chambers are for its pyramids; a tomb runs tableau to tableau
     encounter: "tomb-puzzle",
     difficulty: "master",
     floorCount: 5,

@@ -133,6 +133,7 @@ export const expertRules: Rule[] = [
   }),
 
   tier("expert").set({
+    chambers: 3, // pass-through chambers per floor: dressed rooms the corridor runs through
     keyDensity: "low",
     sharedKeyChance: 0.15,
     windyChance: 0.25,
@@ -215,6 +216,7 @@ export const expertRules: Rule[] = [
   ...["expert_treasure_tomb", "expert_treasure_tomb_b"].map(id => tombCave(id, "expert", 2)),
 
   tomb("expert_treasure_tomb", {
+    chambers: 0, // the tier's pass-through chambers are for its pyramids; a tomb runs tableau to tableau
     encounter: "tomb-puzzle",
     difficulty: "expert",
     floorCount: 4,
@@ -256,6 +258,7 @@ export const expertRules: Rule[] = [
     ],
   }),
   tomb("expert_treasure_tomb_b", {
+    chambers: 0, // the tier's pass-through chambers are for its pyramids; a tomb runs tableau to tableau
     encounter: "tomb-puzzle",
     difficulty: "expert",
     floorCount: 4,

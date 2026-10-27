@@ -5,6 +5,7 @@ import type { Tier } from "../types"
 // A tomb's first level is a cave: its own tiles, cave furniture rather than the tier pool's rooms, and
 // passages that turn far more often than a built corridor does.
 export const CAVE_DRESSING: PyramidConstraint = {
+  chambers: 0, // a cave takes none of its tier's pass-through chambers
   tileset: "cave",
   decorations: ["basin", "pillar", "rubblePile", "pit", "crystal", "brazier", "stalagmite", "puddle", "bones"],
   wallDecorations: ["roots", "stalactites"],

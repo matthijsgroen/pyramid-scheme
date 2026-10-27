@@ -520,3 +520,29 @@ describe("a room marked explored on arrival holds no reward", () => {
     }
   }, 60_000)
 })
+
+// A floor's chamber count is an intent seated without a draw: it never refuses an attempt and moves no other
+// decision, so at the seed and packing the bake pinned a floor at, its walls are the walls it lays with no count.
+describe("a floor's chamber count moves no wall at the pinned layout", () => {
+  const walls = (g: FloorGrid) =>
+    JSON.stringify(g.cells.map(row => row.map(c => (c.type === "empty" ? "." : [...c.dirs].sort().join("")))))
+
+  it("lays every floor that asks for chambers with the walls it lays without the count", () => {
+    const counted = allFloors().filter(floor => (floor.config.chambers ?? 0) > 0)
+    expect(counted.length).toBeGreaterThan(0)
+
+    const moved = counted.flatMap(floor => {
+      const opts = {
+        resolveKeyRequirements,
+        floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
+      }
+      const { chambers: _count, ...uncounted } = floor.config
+      const withThem = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, opts)
+      const without = assembleFloor(floor.journeyId, uncounted, floor.seed, resolveEncounter, opts)
+      if (!withThem.success || !without.success) return [`${floor.label}: does not assemble`]
+      return walls(withThem.grid) === walls(without.grid) ? [] : [`${floor.label}: walls moved`]
+    })
+
+    expect(moved, `${moved.length} floor(s):\n${moved.slice(0, 10).join("\n")}`).toEqual([])
+  }, 120_000)
+})

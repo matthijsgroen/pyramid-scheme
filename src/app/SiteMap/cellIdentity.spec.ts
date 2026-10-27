@@ -66,14 +66,16 @@ describe("naming a cell", () => {
     expect(addressed.length).toBe(drawn.length)
   })
 
-  it("gives corridors and forks no slot, because the carve is all they are", () => {
+  it("gives corridors, forks and chambers no slot, because the carve is all they are", () => {
     const unslotted = grid.cells.flatMap((row, r) =>
       row.flatMap((cell, c) => (cell.type !== "empty" && !cellSlot(grid, r, c) ? [cell] : []))
     )
 
     expect(unslotted.length).toBeGreaterThan(50)
     expect(
-      unslotted.every(cell => cell.type === "corridor" || (cell.type === "room" && cell.roomType === "fork"))
+      unslotted.every(
+        cell => cell.type === "corridor" || (cell.type === "room" && ["fork", "chamber"].includes(cell.roomType))
+      )
     ).toBe(true)
   })
 
