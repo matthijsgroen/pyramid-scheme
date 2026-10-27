@@ -158,9 +158,9 @@ step across it. On a light rank that is a step darker than the floor; on a dark 
 face that comes back a third of 8:1 is laid three side by side first, as the Sphinx's are:
 `magick band.jpeg band.jpeg band.jpeg +append wide.png`.
 
-### `junior/floor` — red sandstone paving, petals in the joints
+### `junior/floor` — red sandstone paving of mixed slabs
 
-**Re-roll:** the first roll came out pale honey sandstone, 6 L* under the merchant's limestone and the same hue (L* 69 against 75): the ranks did not tell apart. The ground is now mid-tone red sandstone, about L* 55. The second roll had the right ground, but its joints were near-black drawn lines (p5 lum 64 against a slab band of 129): they are now soft grooves only a step darker than the slab, #7a5434, and nothing on the floor goes darker than #6a4630.
+**Re-roll:** the first roll came out pale honey sandstone, 6 L* under the merchant's limestone and the same hue (L* 69 against 75): the ranks did not tell apart. The ground is now mid-tone red sandstone, about L* 55. The second roll had the right ground, but its joints were near-black drawn lines (p5 lum 64 against a slab band of 129): they are now soft grooves only a step darker than the slab, #7a5434, and nothing on the floor goes darker than #6a4630. The third roll had soft joints, but every slab was the same size in a strict running bond, so it read as a red brick wall, and its petals were white specks repeating in a grid: the paving is now mixed sizes and the petals are gone.
 
 **Attach:** `art/masters/surfaces/starter-floor.webp` — the merchant's repainted floor, for paint quality and slab scale only
 
@@ -188,9 +188,11 @@ THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality, its textu
 Do NOT take its colours or its subject from it — the palette above is the only source of colour.
 
 Seamless top-down floor texture, viewed straight down.
-Red sandstone paving laid in a running bond, well kept. COUNT THE SLABS: exactly 7 slabs across the width
-of the image and 14 rows down it, so each slab is twice as wide as it is tall and takes up about a seventh
-of the frame. Small paving stones, not flagstones. Square corners — not rounded rectangles.
+Red sandstone PAVING of MIXED SIZES, well kept — dressed stone slabs, NOT bricks and NOT a running bond.
+Slabs of three or four sizes fitted together the way flagstones are: a few large slabs about a quarter of
+the frame wide, many middling ones about a seventh, and small square stones filling the gaps between
+them. The courses break and shift — no joint runs straight across the whole image, and no two neighbouring
+slabs are the same size. Square corners — not rounded rectangles.
 The slabs BUTT AGAINST EACH OTHER. The joint between two slabs is a shallow GROOVE: a soft narrow shadow
 where the surface dips and rises again — modelled, never a drawn line, never black. No slab has a contour
 around it. At its deepest a groove is #7a5434, one quiet step under the slab — the bond reads from the slabs' own tones, not from dark lines between them.
@@ -199,9 +201,9 @@ reads without the seams having to draw it. Terracotta and rust: MID-TONE, clearl
 pale limestone or honey sandstone — never pale, never beige, never grey.
 Lightly worn: shallow scuffs, a few softened corners showing the #8a6040 bed in the notch, fine hairline
 cracks stopping at a slab's edge. All of it painted as depth and all of it SHALLOW.
-The nobleman's life on it: a few fallen lotus petals, pale and blue-tinged, lying in the joints, a faint
-ring where a wine jar stood, and two or three tiny verdigris #4f9a86 specks where a copper vessel was set
-down. Small, scattered, and few. No painted pattern on the floor: the murals are on the walls.
+The nobleman's life on it: a faint ring where a wine jar stood, and two or three tiny verdigris #4f9a86
+specks where a copper vessel was set down. Small, scattered, few, and in the stone's own values — no
+white, no pale speck that reads from across the room. No petals, no leaves, no loose objects. No painted pattern on the floor: the murals are on the walls.
 It tiles, so NOTHING crosses the whole image: no crack, stain or scuff longer than an eighth of the frame,
 and no feature touching two edges. Spread evenly — no corner busier than another.
 Even lighting across the entire image, no hotspot, no vignette. Edge to edge texture.
