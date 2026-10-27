@@ -2250,15 +2250,15 @@ no ledges, no steps, no crumbling edges, no deep cracks, no relief at all. Only 
 marks running one way, and soft horizontal bands of colour where harder grey-buff layers cross the yellow,
 lying FLAT in the surface — a change of colour, never a change of height. Swept clean: no sand.
 Warm, dim and still: lamplight, no daylight. Every part of the floor is readable, nothing sinks into black.
-HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+HAND-PAINTED digital texture art: matte, visible soft brush texture, a fine even grain in the
 surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
 a comic, not a cartoon. An edge is a change of value, never a stroke.
 Limestone #8a7556, its harder bands #7d7462, shadow #4a3c2b, pale #a8916b. Nothing lighter than #c9b48c,
 nothing darker than #2a2117.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its scale. Do NOT take its
-colours, its slabs or its subject from it.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality only — NOT its rough, broken rock,
+which this floor must not have. Do NOT take its colours, its slabs or its subject from it.
 THE CAMERA: straight down. A seamless square tile.
 NOTHING LAID: no slabs, no paving, no bricks, no joints, no mortar, no courses of blocks. The bands are
 rock strata, soft-edged and uneven, never ruled lines.
