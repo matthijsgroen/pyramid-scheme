@@ -3,6 +3,40 @@
 The designer's morning list for the unattended camp-release queue (`docs/handover-camp-release.md`). Read it top
 down: the summary, then the decisions by phase, the drafts, what failed, and what to look at in the browser.
 
+## 0. Before the release
+
+Tick these off one by one; the release is `yarn release` and the merge, both the designer's.
+
+**Walks** (steps under §5):
+
+- [ ] The ward stair, the cave and the climb into the Sphinx (phase 4c), now with the Sphinx floor's five puzzles.
+- [ ] Piramide van Djoser (expert_4) level 4, `buildersLift`: side paths in the lock's corridors.
+
+**Checks in the game:**
+
+- [ ] A save from before this release: the new-version popup shows, the explorer's welcome only after it.
+- [ ] Hearts full on the coming-home screen after trap damage.
+- [ ] A waterskin heals one heart while hurt.
+- [ ] A camp part popup and a find popup with its art.
+- [ ] A new chapter after finishing the starter tier.
+- [ ] A tomb at 2 of 3 map pieces: locked, with the map hint.
+- [ ] "Onderbreek expeditie" asks first with a pyramid under way.
+- [ ] The gate popup shows the merchant's ward door and the colour door.
+- [ ] The starter tomb's cave: the bone lever in its stone heap reads, and is thrown.
+
+**Designer choices** (each noted under §5):
+
+- [ ] The opening story scene counting as news in the Verzameling.
+- [ ] Ipi's tomb arrival through the develop-mode jump.
+- [ ] The dashed current stop in Alle reizen.
+- [ ] Find icons on the haul screen (the jar is tiny).
+- [ ] Uitpakken pinned to the bottom on a phone.
+- [ ] Cinzel not loaded; titles in the browser's serif.
+
+**UI changes** (the designer's, to be listed):
+
+- [ ]
+
 ## 1. Start here
 
 What got built, per phase:
