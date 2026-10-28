@@ -3523,27 +3523,24 @@ yarn import-tile art/masters/props/mechanism/light/bone/leverBase.webp --tier=me
 
 ### `bone/leverArm` — the cave lever's arm, a real long bone
 
-**Re-roll:** the first prompt asked for the default arm in bone colour, and that is what came back: the same shaft, collar and squared handle. The designer wants the handle to BE a bone: the arm is now one real long bone with its knobbed joint end as the grip. Its silhouette is new, so it is keyed off its magenta rather than cut by the default arm's mask; `--no-trim` keeps it on the canvas where the dome turns it.
+**Re-roll:** the first prompt asked for the default arm in bone colour, and that is what came back: the same shaft, collar and squared handle. The designer wants the handle to BE a bone: the arm is now one real long bone with its knobbed joint end as the grip. Its silhouette is new, so it is keyed off its magenta rather than cut by the default arm's mask; `--no-trim` keeps it on the canvas where the dome turns it. The bone roll was right as a bone but came back on a painted cave floor (taken from the value reference) and full length with a knob at both ends: the floor reference is gone, the background is magenta only, and the bone stops square where the reference arm's foot is.
 
 **Attach:**
 
 1. `art/masters/props/default/leverArm.webp` — the piece itself, to edit: shape, silhouette, camera
-2. `art/masters/surfaces/cave-floor.webp` — the cave's rock floor it must read on, for value only
 
 ```
 FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
 
-THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: the arm of a floor lever — a straight SHAFT, a COLLAR near its top, and a squared HANDLE block bent forward at the top. Same object, same camera. Keep its length, the line it stands on, where its foot is and the angle it stands at exactly as in the reference — the foot sits in the lever's dome and turns there. The SHAPE changes as described below; nothing else moves.
+THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: the arm of a floor lever — a straight SHAFT, a COLLAR near its top, and a squared HANDLE block bent forward at the top. Same object, same camera. Keep its length, the line it stands on, where its foot is and the angle it stands at exactly as in the reference: the bone occupies exactly the space the reference arm occupies, top to bottom, and no more — the foot sits in the lever's dome and turns there. The SHAPE changes as described below; nothing else moves.
 
-THE SECOND ATTACHED IMAGE IS THE CAVE FLOOR IT STANDS ON, dark rock. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
-
-THE CHANGE OF SHAPE: the arm IS A BONE — one real long bone, like a thigh bone, used as the lever. Its shaft runs where the reference's shaft runs, about half again as wide, slightly waisted in the middle as a real bone is. Where the reference has its squared handle, the bone ends in its own rounded KNOB — the two smooth knuckles of a bone's joint end, a little wider than the shaft, which the hand grips. The collar is gone: a bone has none; at most a strip of old leather bound round the shaft where the collar was. The foot end disappears into the dome as the reference's does.
+THE CHANGE OF SHAPE: the arm IS A BONE — one real long bone, like a thigh bone, used as the lever. Its shaft runs where the reference's shaft runs, about half again as wide, slightly waisted in the middle as a real bone is. Where the reference has its squared handle, the bone ends in its own rounded KNOB — the two smooth knuckles of a bone's joint end, a little wider than the shaft, which the hand grips. The collar is gone: a bone has none; at most a strip of old leather bound round the shaft where the collar was. The foot end is where the reference arm's foot is, cut off square there: it disappears into the lever's dome, so only ONE knob shows — the grip at the top.
 
 THE MATERIAL: weathered bone, pale ivory #d8cdb4, faintly grained along its length, with a warm tan shadow #a8957a down its right side and a pale catch-light up its left; the knob's top is the palest thing on it. The leather strip, if any, is dark brown #4a3424.
 
 Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow. One bone, nothing else: no skull, no teeth, no figures, no second bone.
 
-BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece. No floor, no gradient, no shadow on the magenta.
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the bone, exactly where the reference has magenta. NO floor, no rock, no ground, no texture, no gradient, no shadow behind it — the bone alone on magenta.
 ```
 
 **Import:** `yarn import-tile art/masters/props/mechanism/light/bone/leverArm.webp --tier=mechanism/light/bone --name=leverArm --slot=prop --filter=smooth --no-trim`
