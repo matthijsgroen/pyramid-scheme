@@ -22,7 +22,8 @@ export type CampSceneProps = {
   chapter: Difficulty
   /** Per spot, the pieces found so far, in any order. */
   found: CampFound
-  insets?: { top: number; bottom: number }
+  /** Room kept free of the camp. `right` is covered by a panel: the sky and sand run on under it, the camp does not. */
+  insets?: { top: number; bottom: number; right?: number }
   entrances?: { chest?: CampEntrance; window?: CampEntrance; mapTable?: CampEntrance }
   catalogue?: CampCatalogue
   className?: string
@@ -410,7 +411,8 @@ export const CampScene = ({
   standIns = false,
 }: CampSceneProps) => {
   const rootClass = [SCENE, className].filter(Boolean).join(" ")
-  const layout = layoutCamp({ width, height, insets, chapter, found, catalogue })
+  const { right = 0, ...layoutInsets } = insets
+  const layout = layoutCamp({ width: width - right, height, insets: layoutInsets, chapter, found, catalogue })
   if (!layout) return <div className={rootClass} />
 
   const { unit: u, horizon } = layout

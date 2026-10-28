@@ -27,3 +27,4 @@ type Story = StoryObj<typeof meta>
 
 export const Phone: Story = { globals: { viewport: { value: "phone" } } }
 export const Desktop: Story = { globals: { viewport: { value: "desktop" } } }
+export const DesktopQuiet: Story = { args: { quiet: true }, globals: { viewport: { value: "desktop" } } }

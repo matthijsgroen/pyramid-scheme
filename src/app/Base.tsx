@@ -33,7 +33,7 @@ import { CampScene } from "@/ui/atoms/CampScene"
 import { TapHint } from "@/ui/atoms/TapHint"
 import { CampHud } from "@/ui/molecules/CampHud"
 import { ContinueCard } from "@/ui/molecules/ContinueCard"
-import { CampHomeLayout } from "@/ui/organisms/CampHomeLayout"
+import { CAMP_PANEL_WIDTH, CampHomeLayout } from "@/ui/organisms/CampHomeLayout"
 import { CampPopup } from "@/ui/organisms/CampPopup"
 
 type Popup = "collection" | "window" | "journeys"
@@ -212,22 +212,23 @@ export const Base = ({
               height={scene.height}
               chapter={chapter}
               found={found}
-              insets={{ top: hud.height, bottom: isDesktop ? 0 : card.height + CARD_GAP }}
+              insets={
+                isDesktop
+                  ? { top: hud.height, bottom: 0, right: CAMP_PANEL_WIDTH }
+                  : { top: hud.height, bottom: card.height + CARD_GAP }
+              }
               // The entrances say their names only when they can be used: not while someone speaks.
               entrances={speaking ? undefined : entrances}
             />
           )
         }
         // The card and the journey list wait while someone speaks: behind a conversation they only make the
-        // screen busy. Invisible, not gone, so the scene keeps its place.
-        card={
-          <div ref={cardRef} className={speaking ? "invisible" : undefined}>
-            {continueCard}
-          </div>
-        }
+        // screen busy.
+        quiet={speaking}
+        card={<div ref={cardRef}>{continueCard}</div>}
         aside={
           isDesktop ? (
-            <div className={`flex min-h-0 flex-1 flex-col ${speaking ? "invisible" : ""}`}>
+            <div className="flex min-h-0 flex-1 flex-col">
               <AllJourneys startGame={startGame} compact />
             </div>
           ) : undefined
