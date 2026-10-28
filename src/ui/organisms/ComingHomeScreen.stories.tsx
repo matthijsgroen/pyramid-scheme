@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { ComingHomeScreen } from "./ComingHomeScreen"
 import { campArt } from "@/ui/atoms/campScene/campArt"
+import { MapPieceIcon } from "@/ui/molecules/MapPieceIcon"
 
 const fireUrl = campArt("campfire")?.url
 const fire = fireUrl ? <img src={fireUrl} alt="" className="h-full object-contain" /> : <span>🔥</span>
@@ -49,3 +50,20 @@ type Story = StoryObj<typeof meta>
 
 export const ThreeLines: Story = {}
 export const Empty: Story = { args: { lines: [] } }
+export const OversizedVisuals: Story = {
+  args: {
+    lines: [
+      {
+        key: "coins",
+        visual: <span className="text-6xl">🪙</span>,
+        title: "+85 munten",
+        note: "Losse munten onderweg",
+      },
+      { key: "pieces", visual: <span className="text-6xl">🔷</span>, title: "3 mozaïekstukjes" },
+      { key: "map", visual: <MapPieceIcon progress={{ found: 1, required: 4 }} />, title: "Kaartdeel" },
+      ...(fireUrl
+        ? [{ key: "fire", visual: <img src={fireUrl} alt="" className="size-24 object-contain" />, title: "Kampvuur" }]
+        : []),
+    ],
+  },
+}
