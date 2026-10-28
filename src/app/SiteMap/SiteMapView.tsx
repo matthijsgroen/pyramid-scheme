@@ -59,6 +59,7 @@ import {
 import { storedAtCell } from "@/game/cellAddress"
 import { tileStatusAt } from "@/game/sequencePlay"
 import { explorerWeight, holeLookAt, isCarrying, plateLookAt, type ExplorerWeight } from "@/game/stonePlay"
+import type { MechanismStyle } from "./mechanismStyle"
 import { passageArtUrl } from "./passageArt"
 import { PLATE_TILE } from "./plateArt"
 import { PIPE_HOLE_TILE } from "./pipeHoleArt"
@@ -153,6 +154,8 @@ type Props = {
   occupantOf?: OccupantOf
   /** A finished room that plays again when walked back into (roomReplays), wearing the replay symbol. */
   replaysAt?: ReplaysAt
+  /** Draws every mechanism piece in this style instead of its tileset's (`MECHANISM_STYLE`): a review sheet's. */
+  mechanismStyle?: MechanismStyle
   className?: string
 }
 
@@ -284,7 +287,9 @@ export const nodeSpritesFor = (
   /** Where the explorer stands once his walk has settled, for the plate he presses; unset while he walks. */
   standingAt?: readonly [number, number],
   /** What the explorer's weight moves while he stands on a plate: drawn so, never walked so. */
-  weight?: ExplorerWeight
+  weight?: ExplorerWeight,
+  /** Draws every mechanism piece in this style instead of its tileset's (`MECHANISM_STYLE`). */
+  mechanismStyle?: MechanismStyle
 ): NodeSprite[] => {
   // Which cells belong to each room: the room's own, plus everything it claimed.
   const footprints = new Map<string, string[]>()
@@ -341,7 +346,7 @@ export const nodeSpritesFor = (
     if (end.type !== "corridor") continue
     const art = DROP_ART[run.dir]
     const { x, y, w, h } = dropFrame(run.cells, run.dir)
-    const dropUrl = art && mechanismTileUrl(cellTileset(end, grid, floorTier), art.name)
+    const dropUrl = art && mechanismTileUrl(cellTileset(end, grid, floorTier), art.name, mechanismStyle)
     if (!art || !dropUrl || end.state === "fogged") continue
     out.push({
       footprint: clipCells(run.cells.map(([r, c]) => `${r},${c}`)),
@@ -406,9 +411,9 @@ export const nodeSpritesFor = (
     // real oblique view and a rotation is not (`NodeSprite`).
     const name = `${open ? "gate-open" : "gate"}${dc !== 0 ? "-side" : ""}`
     const url =
-      mechanismTileOrPlaceholder(tier, name) ??
-      mechanismTileOrPlaceholder(tier, open ? "gate-open" : "gate") ??
-      (open ? mechanismTileOrPlaceholder(tier, "gate") : undefined)
+      mechanismTileOrPlaceholder(tier, name, mechanismStyle) ??
+      mechanismTileOrPlaceholder(tier, open ? "gate-open" : "gate", mechanismStyle) ??
+      (open ? mechanismTileOrPlaceholder(tier, "gate", mechanismStyle) : undefined)
     if (!url) return
 
     // THE BARS STAND ON THE SILL. Wherever one rank's stone meets another's across a way the player
@@ -483,7 +488,8 @@ export const nodeSpritesFor = (
           rewardArt?.kind === "lever"
             ? (["back", "arm", "front"] as const).map(
                 piece =>
-                  mechanismTileUrl(tier, rewardArt.tiles[piece]) ?? mechanismTileUrl(tier, rewardArt.stand[piece])
+                  mechanismTileUrl(tier, rewardArt.tiles[piece], mechanismStyle) ??
+                  mechanismTileUrl(tier, rewardArt.stand[piece], mechanismStyle)
               )
             : undefined
         if (!url && !leverUrls) continue
@@ -533,7 +539,7 @@ export const nodeSpritesFor = (
         // plate, never hung on a seam like a gate's leaf, in the cell's mechanism style (`MECHANISM_STYLE`). Nobody
         // stands in it; it fades while the explorer waits on the cell behind it. Unpainted, it is drawn as the shut
         // gate it is to the walk.
-        const url = passageArtUrl(cell, tier)
+        const url = passageArtUrl(cell, tier, mechanismStyle)
         if (url)
           out.push({
             footprint,
@@ -559,9 +565,9 @@ export const nodeSpritesFor = (
         // single-piece `leverLeft`/`leverRight` tiles are not reached for either. A rank with only some of the three
         // painted draws none of them, leaving the room's own marker to carry it, same as an unpainted stairhead or exit
         // above.
-        const back = mechanismTileUrl(tier, "leverBaseBack")
-        const arm = mechanismTileUrl(tier, "leverArm")
-        const front = mechanismTileUrl(tier, "leverBaseFront")
+        const back = mechanismTileUrl(tier, "leverBaseBack", mechanismStyle)
+        const arm = mechanismTileUrl(tier, "leverArm", mechanismStyle)
+        const front = mechanismTileUrl(tier, "leverBaseFront", mechanismStyle)
         if (!back || !arm || !front) continue
         // Stepped off its own doorways exactly as a chest is (`nodeArtOffset`): a lever is a cell's
         // worth of furniture like any other, not a doorway fitting.
@@ -593,7 +599,7 @@ export const nodeSpritesFor = (
         // own pool of light reads as a ghost. Its marker still wears the ✓. The lit tile is imported with no seat
         // shadow, because the pool laid at its foot lights the floor that shadow would have fallen on.
         const spent = isSpentAt(grid, floorIndex, r, c, cell, mechanismStates)
-        const url = mechanismTileUrl(tier, spent ? "torchLit" : "torchUnlit")
+        const url = mechanismTileUrl(tier, spent ? "torchLit" : "torchUnlit", mechanismStyle)
         if (!url) continue
         const { dx, dy } = nodeArtOffset(cell.dirs)
         const x = cx + dx - CELL / 2
@@ -613,7 +619,7 @@ export const nodeSpritesFor = (
         // the explorer's weight give it now. Drawn in the cell's mechanism style (`MECHANISM_STYLE`).
         const standing = standingAt !== undefined && standingAt[0] === r && standingAt[1] === c
         const look = plateLookAt(grid, floorIndex, r, c, mechanismStates ?? NO_STATES, standing)
-        const url = look && mechanismTileUrl(tier, PLATE_TILE[look])
+        const url = look && mechanismTileUrl(tier, PLATE_TILE[look], mechanismStyle)
         if (!url) continue
         out.push({
           footprint,
@@ -627,7 +633,7 @@ export const nodeSpritesFor = (
         // A PIPE'S HOLE IS IN THE BACK WALL of its node, drawn on the wall band above the floor square in the look
         // its stones give it, in the cell's mechanism style.
         const look = holeLookAt(grid, floorIndex, r, c, mechanismStates ?? NO_STATES)
-        const url = look && mechanismTileUrl(tier, PIPE_HOLE_TILE[look])
+        const url = look && mechanismTileUrl(tier, PIPE_HOLE_TILE[look], mechanismStyle)
         if (!url) continue
         out.push({
           footprint,
@@ -1337,6 +1343,7 @@ export const SiteMapView = ({
   notice,
   occupantOf,
   replaysAt,
+  mechanismStyle,
   className,
 }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
@@ -1388,9 +1395,10 @@ export const SiteMapView = ({
         mechanismStates,
         currentFloor ?? 0,
         isTraveling ? undefined : settledExplorerPos,
-        weight
+        weight,
+        mechanismStyle
       ),
-    [grid, claims, tier, mechanismStates, currentFloor, isTraveling, settledExplorerPos, weight]
+    [grid, claims, tier, mechanismStates, currentFloor, isTraveling, settledExplorerPos, weight, mechanismStyle]
   )
   const drawnPlates = useMemo(
     () =>
@@ -1957,13 +1965,13 @@ export const SiteMapView = ({
                 // A STANDING TORCH IS THE NODE, as a plate is: the flame square under it would put a second torch on the tile.
                 const hasTorch =
                   drawingOf(cell)?.art === "standingTorch" &&
-                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "torchUnlit")
+                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "torchUnlit", mechanismStyle)
                 // A PAINTED LEVER IS THE NODE, as a torch is: the marker square under it would put a second lever on the tile.
                 const hasLever =
                   drawingOf(cell)?.art === "lever" &&
-                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "leverBaseBack") &&
-                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "leverArm") &&
-                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "leverBaseFront")
+                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "leverBaseBack", mechanismStyle) &&
+                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "leverArm", mechanismStyle) &&
+                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "leverBaseFront", mechanismStyle)
                 const roomR = nodeRadius[shapeKind]
                 // A WAY A SWITCH SHUT IS A WALL, AND A WALL WEARS NO NODE. The bars standing in its doorway
                 // already say the way is closed; a gate marker on top of them offers a second reading — a
@@ -2008,6 +2016,7 @@ export const SiteMapView = ({
                           icon={familyIconOf(cell)}
                           mark={cell.mark}
                           tileset={cellTileset(cell, grid, tier)}
+                          mechanismStyle={mechanismStyle}
                           plate={
                             cell.sequenceTile && plateStatus
                               ? { glyph: cell.sequenceTile.glyph, status: plateStatus }

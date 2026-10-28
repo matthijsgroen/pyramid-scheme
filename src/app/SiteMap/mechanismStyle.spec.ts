@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { styleChain } from "./mechanismStyle"
+import { MECHANISM_STYLE, mechanismStyleOf, styleChain } from "./mechanismStyle"
 import { mechanismTileIn } from "./tileAssets"
 
 const files = new Map([
@@ -36,5 +36,15 @@ describe("mechanism style chain", () => {
     expect(mechanismTileIn(files, "light", "plate", true)).toBe("default-plate")
     expect(mechanismTileIn(files, "light/bone", "gate", true)).toBe("stand-in-gate")
     expect(mechanismTileIn(files, "light/bone", "gate")).toBeUndefined()
+  })
+
+  it("draws a tileset's own style when no override is given", () => {
+    expect(mechanismStyleOf("cave")).toBe(MECHANISM_STYLE.cave)
+    expect(mechanismStyleOf("starter")).toBe(MECHANISM_STYLE.starter)
+  })
+
+  it("draws the override style instead of the tileset's", () => {
+    expect(mechanismTileIn(files, mechanismStyleOf("starter", "light/bone"), "leverArm")).toBe("bone-arm")
+    expect(mechanismTileIn(files, mechanismStyleOf("cave", "default"), "leverArm")).toBe("default-arm")
   })
 })

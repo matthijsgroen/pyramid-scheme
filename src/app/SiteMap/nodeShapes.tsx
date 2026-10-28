@@ -1,4 +1,5 @@
 import type { CellState, GateVariant, KeyColor, Tileset } from "@/game/siteTypes"
+import type { MechanismStyle } from "./mechanismStyle"
 import type { TileStatus } from "@/game/sequence"
 import { sequenceTileLook } from "./sequenceTileLook"
 import { ART_IMAGE_RENDERING, mechanismTileUrl } from "./tileAssets"
@@ -98,6 +99,8 @@ export type ShapeProps = {
   icon?: string
   // The tileset the cell is drawn in, which picks the mechanism style a painted piece is drawn in (MECHANISM_STYLE).
   tileset?: Tileset
+  // Draws the painted piece in this mechanism style instead of the tileset's (`SiteMapView`'s `mechanismStyle`).
+  mechanismStyle?: MechanismStyle
 }
 
 // The painted tile is drawn in the prop frame a flush thing is seated in (`nodeSpritesFor`'s plate), so it
@@ -110,10 +113,10 @@ const GLYPH_OUTLINE = "#2b2116"
 
 /** A sequence tile: one painting in the cell's mechanism style for every glyph and state, the glyph drawn on its top
  * face in the glyph's state colour (`sequenceTileLook`). Without the painting, a vector slab stands in. */
-const SequenceTileShape = ({ plate, tileset }: ShapeProps) => {
+const SequenceTileShape = ({ plate, tileset, mechanismStyle }: ShapeProps) => {
   const r = NODE_RADIUS_PUZZLE
   const status = plate?.status ?? "unwalked"
-  const url = mechanismTileUrl(tileset ?? "starter", "sequenceTile")
+  const url = mechanismTileUrl(tileset ?? "starter", "sequenceTile", mechanismStyle)
   return (
     <g data-plate={plate?.glyph} data-status={status}>
       {url ? (
@@ -469,8 +472,9 @@ export const NodeShape = ({
   plate,
   icon,
   tileset,
+  mechanismStyle,
 }: ShapeProps & { type: ShapeKind }) => {
-  const p = { state, gateVariant, keyColor, keyColors, difficulty, mark, plate, icon, tileset }
+  const p = { state, gateVariant, keyColor, keyColors, difficulty, mark, plate, icon, tileset, mechanismStyle }
   switch (type) {
     case "entrance":
       return <EntranceShape {...p} />

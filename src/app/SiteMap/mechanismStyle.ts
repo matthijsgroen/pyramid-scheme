@@ -21,6 +21,11 @@ export const MECHANISM_STYLE: Record<Tileset, MechanismStyle> = {
   sphinx: "default",
 }
 
+/** The style a cell drawn in `tileset` paints its pieces in: `override` when given (a review sheet comparing
+ * styles), the tileset's own otherwise. */
+export const mechanismStyleOf = (tileset: Tileset, override?: MechanismStyle): MechanismStyle =>
+  override ?? MECHANISM_STYLE[tileset]
+
 /** The styles a piece is looked up in, deepest first: `light/bone` → light/bone, light, default. */
 export const styleChain = (style: string): string[] => {
   const segments = style === "default" ? [] : style.split("/")

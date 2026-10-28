@@ -3,7 +3,10 @@ import type { FC } from "react"
 import { cellAddress } from "@/game/cellAddress"
 import { difficulties } from "@/data/difficultyLevels"
 import type { FloorGrid, GridCell, MechanismRecord, RoomCell, Tileset } from "@/game/siteTypes"
+import { type MechanismStyle, mechanismFolders, mechanismStyleOf } from "./mechanismStyle"
+import { usePreloadArt } from "./preloadArt"
 import { SiteMapView } from "./SiteMapView"
+import { tilesetFolderUrls } from "./tileAssets"
 import "@/mods/registerModApps"
 
 // Every mechanism piece on every floor, drawn by the real map: one strip per tileset, the pieces along one
@@ -131,43 +134,88 @@ const stripGrid = (tier: Tileset) => {
 }
 
 const TILESETS: Tileset[] = [...difficulties, "cave", "sphinx"]
+const STYLES: MechanismStyle[] = ["default", "light", "dark", "light/bone"]
+type StyleChoice = "mapped" | MechanismStyle
+const STYLE_KEYS: Record<string, MechanismStyle> = Object.fromEntries(
+  STYLES.map(style => [style.replace("/", "-"), style])
+)
 
-const Sheet: FC<{ tilesets: Tileset[] }> = ({ tilesets }) => (
-  <div className="flex min-h-screen w-max flex-col gap-1 bg-neutral-900 p-2">
-    <ol className="m-0 flex gap-x-3 p-1 text-[11px] text-white/70">
-      {[...PIECES.map(p => p.label), "drop"].map((label, i) => (
-        <li key={label}>
-          {i + 1}. {label}
-        </li>
-      ))}
-    </ol>
-    {tilesets.map(tier => {
-      const { grid, states } = stripGrid(tier)
-      return (
-        <figure key={tier} data-tileset={tier} className="m-0 flex flex-col">
-          <figcaption className="text-xs text-white">{tier}</figcaption>
-          <SiteMapView
-            grid={grid}
-            currentFloor={0}
-            explorerPos={[1, 0]}
-            mechanismStates={states}
-            className="h-64 w-675"
-          />
-        </figure>
-      )
-    })}
-  </div>
+/** One strip: a tileset's floor with its pieces drawn in `style`, or in the tileset's own when unset. */
+type Row = { tileset: Tileset; style?: MechanismStyle }
+
+const Rows: FC<{ rows: Row[] }> = ({ rows }) => {
+  // The art a style draws is fetched as the map needs it; preloading every chain it reads keeps a switch of the
+  // control from drawing the sheet in tile by tile.
+  usePreloadArt(
+    rows.flatMap(row => mechanismFolders(mechanismStyleOf(row.tileset, row.style)).flatMap(tilesetFolderUrls))
+  )
+  return (
+    <div className="flex min-h-screen w-max flex-col gap-1 bg-neutral-900 p-2">
+      <ol className="m-0 flex gap-x-3 p-1 text-[11px] text-white/70">
+        {[...PIECES.map(p => p.label), "drop"].map((label, i) => (
+          <li key={label}>
+            {i + 1}. {label}
+          </li>
+        ))}
+      </ol>
+      {rows.map(({ tileset, style }) => {
+        const { grid, states } = stripGrid(tileset)
+        const drawn = mechanismStyleOf(tileset, style)
+        return (
+          <figure key={`${tileset}:${drawn}`} data-tileset={tileset} data-style={drawn} className="m-0 flex flex-col">
+            <figcaption className="text-xs text-white">
+              {tileset} · {drawn}
+              {style === undefined ? " (mapped)" : ""}
+              <span className="text-white/50"> — reads {mechanismFolders(drawn).join(" → ")}</span>
+            </figcaption>
+            <SiteMapView
+              grid={grid}
+              currentFloor={0}
+              explorerPos={[1, 0]}
+              mechanismStates={states}
+              mechanismStyle={style}
+              className="h-64 w-675"
+            />
+          </figure>
+        )
+      })}
+    </div>
+  )
+}
+
+const Sheet: FC<{ tilesets: Tileset[]; style: StyleChoice; tileset: Tileset }> = ({ tilesets, style }) => (
+  <Rows rows={tilesets.map(tileset => ({ tileset, style: style === "mapped" ? undefined : style }))} />
 )
 
 const meta = {
   title: "Topology/On every floor",
   component: Sheet,
   parameters: { layout: "fullscreen" },
-  args: { tilesets: TILESETS },
+  args: { tilesets: TILESETS, style: "mapped", tileset: "master" },
+  argTypes: {
+    // A url arg cannot hold a slash, so the control's key for a nested style is dashed and mapped back.
+    style: {
+      control: { type: "inline-radio", labels: STYLE_KEYS },
+      options: ["mapped", ...Object.keys(STYLE_KEYS)],
+      mapping: STYLE_KEYS,
+    },
+    tileset: { control: { type: "inline-radio" }, options: TILESETS },
+  },
 } satisfies Meta<typeof Sheet>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-/** Rows are tilesets, columns are pieces in their looks; mechanism art is shared, so only the floor changes. */
-export const Sheet_: Story = { name: "every piece on every floor" }
+/** Rows are tilesets, columns are pieces in their looks; `style` draws every row in one style, `mapped` in each
+ * tileset's own (`MECHANISM_STYLE`). */
+export const Sheet_: Story = {
+  name: "every piece on every floor",
+  parameters: { controls: { include: ["style"] } },
+}
+
+/** Rows are the styles on the one `tileset`'s floor, to compare them side by side. */
+export const StylesOnOneFloor: Story = {
+  name: "every style on one floor",
+  parameters: { controls: { include: ["tileset"] } },
+  render: ({ tileset }) => <Rows rows={STYLES.map(style => ({ tileset, style }))} />,
+}

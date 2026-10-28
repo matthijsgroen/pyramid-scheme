@@ -1,5 +1,5 @@
 import type { Tileset } from "@/game/siteTypes"
-import { MECHANISM_STYLE, mechanismFolders } from "./mechanismStyle"
+import { type MechanismStyle, mechanismFolders, mechanismStyleOf } from "./mechanismStyle"
 
 // Every tile is one file, the filename is the key, and a missing one simply resolves to undefined
 // so the caller can fall back (docs/game-design/spritesheet-renderer-prep.md, "The art itself").
@@ -134,13 +134,17 @@ export const mechanismTileIn = (
  * A MECHANISM PIECE'S PAINTING for a cell drawn in `tileset`: the tileset's style (`MECHANISM_STYLE`) and the
  * styles above it, down to the shared `tiles/default/` drawing. Undefined when nothing paints it, for a piece
  * that must not stand in a placeholder (a lever with no arm, a drop) — `mechanismTileOrPlaceholder` otherwise.
+ * `style` draws it in that style instead of the tileset's, for a review sheet comparing styles on one floor.
  */
-export const mechanismTileUrl = (tileset: Tileset, name: string): string | undefined =>
-  mechanismTileIn(byTier, MECHANISM_STYLE[tileset], name)
+export const mechanismTileUrl = (tileset: Tileset, name: string, style?: MechanismStyle): string | undefined =>
+  mechanismTileIn(byTier, mechanismStyleOf(tileset, style), name)
 
 /** What to DRAW for a mechanism piece: its style chain's painting, or the stand-in. */
-export const mechanismTileOrPlaceholder = (tileset: Tileset, name: string): string | undefined =>
-  mechanismTileIn(byTier, MECHANISM_STYLE[tileset], name, true)
+export const mechanismTileOrPlaceholder = (
+  tileset: Tileset,
+  name: string,
+  style?: MechanismStyle
+): string | undefined => mechanismTileIn(byTier, mechanismStyleOf(tileset, style), name, true)
 
 /** Art that is the same in every tomb, from `tiles/default/`. The explorer is one person walking down
  * five ranks of tomb, not a fifth of a set — a rank dresses the place, never the player. */

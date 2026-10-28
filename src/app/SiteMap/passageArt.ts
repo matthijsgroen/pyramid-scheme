@@ -1,6 +1,7 @@
 import type { ResolvePassageRealisation } from "@/game/passageRealisation"
 import type { RoomCell, Tileset } from "@/game/siteTypes"
 import { resolvePassageRealisation } from "@/mods/allPassageRealisations"
+import type { MechanismStyle } from "./mechanismStyle"
 import { mechanismTileUrl } from "./tileAssets"
 
 /** The tile a passage is drawn with: its realisation's wall across a way running north-south, and along one
@@ -15,8 +16,8 @@ export const passageTile = (
   return cell.dirs.has("n") || cell.dirs.has("s") ? art.across : art.along
 }
 
-/** The passage's painting in the mechanism style of the tileset the cell is drawn in. */
-export const passageArtUrl = (cell: RoomCell, tileset: Tileset): string | undefined => {
+/** The passage's painting in the mechanism style of the tileset the cell is drawn in, or in `style`. */
+export const passageArtUrl = (cell: RoomCell, tileset: Tileset, style?: MechanismStyle): string | undefined => {
   const name = passageTile(cell)
-  return name === undefined ? undefined : mechanismTileUrl(tileset, name)
+  return name === undefined ? undefined : mechanismTileUrl(tileset, name, style)
 }
