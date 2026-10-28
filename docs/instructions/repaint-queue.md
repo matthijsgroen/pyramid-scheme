@@ -472,7 +472,7 @@ than #141210; only the gold dust is brighter.
 Dark and calm underfoot, the gold saturated and bright against it. The STONE stays quiet so the gold
 can stand out on it.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture, nothing else.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality only — NOT its rough, broken rock: this floor is dressed and polished.
 Do NOT take its colours, its layout, its lightness or its subject from it — the palette above is the only source of
 colour.
 
@@ -495,6 +495,8 @@ It tiles, so NOTHING crosses the whole image: no crack, stain or line of dust lo
 frame, and no feature touching two edges. Spread evenly — no corner busier than another.
 Even lighting across the entire image, no hotspot, no vignette. Edge to edge texture.
 ```
+
+**Prepare:** a laid floor whose courses run exactly to the edges is seamless as it comes, and `--land`'s make-seamless would crossfade it into doubled joints, as expert's grid did. If the courses meet themselves at the edges, save the download itself as the master, `art/masters/surfaces/master-floor.webp`, and run the Import line; if not, `--land` it.
 
 **Import:** `yarn import-tile art/masters/surfaces/master-floor.webp --tier=master --name=floor --slot=floor --filter=smooth --key=none --repeat=2`
 
