@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Every treasure tomb is hidden in a cave, with its pyramid in a sunlit cavern below.
 - Side paths run through a lock's corridors; the Sphinx is read from inside, through a cave behind the ward gate.
 - Saved games start over this release.
+- The game left open during an update reloads into the new version instead of crashing.
 
 ## 0.44.0 - 2026-09-18
 
