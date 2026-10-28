@@ -11,6 +11,11 @@ it ships; tick it off there.
 
 ### Starter
 
+**Build:**
+
+- [ ] Walk paths through rooms: the explorer walks a path inside a room instead of always through its centre,
+      so a prop can stand in the middle (from Thursday 2026-10-29).
+
 **Checks in the game:**
 
 - [ ] A save from before this release: the new-version popup shows, the explorer's welcome only after it.
@@ -36,6 +41,8 @@ it ships; tick it off there.
 
 ### Junior
 
+- [ ] Rooms that grow for larger art: a room claims more floor where a prop's footprint needs it, the walk path
+      routed round it (the banquet table and the lotus pool in the middle). The same question for every tier after.
 - [ ] Art: `junior/threshold`; the junior props and the six activities (themed-rooms.md, "Junior"), then their props' repaint.
 - [ ] Pass-through chambers read as rooms on the re-laid junior floors (1.17 a floor today).
 - [ ] The nobleman's ward door, `door/ward-junior`.
