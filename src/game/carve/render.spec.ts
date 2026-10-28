@@ -16,7 +16,9 @@ import {
   DECORATION_KINDS,
   decorationFootprint,
   isSingleCell,
+  type DecorationKind,
   type Direction,
+  type PropFootprint,
   type FloorConfig,
   type FloorGrid,
   type GridCell,
@@ -329,6 +331,8 @@ describe("dressing by purpose", () => {
     patron?: FloorConfig["patron"]
     switchAtJunction?: boolean
     authored?: Record<string, ActivityId>
+    propFootprint?: (kind: DecorationKind) => PropFootprint
+    passThrough?: boolean
   }
   const dressed = ({
     pools = TRADE,
@@ -337,12 +341,14 @@ describe("dressing by purpose", () => {
     patron,
     switchAtJunction = false,
     authored = {},
+    propFootprint,
+    passThrough = false,
   }: Setup = {}) => {
     const withAuthored = (entries: [string, RoomSpec][]) =>
       new Map<string, RoomSpec>(
         entries.map(([pk, spec]) => [pk, authored[pk] ? { ...spec, authoredActivity: authored[pk] } : spec])
       )
-    const prep = prepOf(plainFloor(patron ? { patron } : {}))
+    const prep = prepOf(plainFloor(patron ? { patron } : {}), 1, propFootprint ? { propFootprint } : {})
     const labels = noLabels()
     for (const node of nodes) labels.dressing.set(node, pools)
     if (stairPools) labels.dressing.set("0,6", stairPools)
@@ -369,7 +375,7 @@ describe("dressing by purpose", () => {
       },
       mainRooms: withAuthored([
         ["0,0", { roomType: "portal" }],
-        ["0,2", { roomType: "encounter", family: "sumplete" }],
+        ["0,2", passThrough ? { roomType: "chamber" } : { roomType: "encounter", family: "sumplete" }],
         ["0,4", { roomType: "fork" }],
         ["0,6", { roomType: "portal", stairId: "down" }],
       ]),
@@ -392,6 +398,58 @@ describe("dressing by purpose", () => {
     }
   }
   const activityOf = (id: string) => ACTIVITIES.find(activity => activity.id === id)
+
+  describe("a centre kind", () => {
+    // A stand-in: no shipped kind is flagged centre, so the rule is exercised on a kind the test names.
+    const basinInTheMiddle = (kind: DecorationKind): PropFootprint =>
+      kind === "basin" ? { cols: 2, rows: 1, tall: 0, centre: true } : decorationFootprint(kind)
+    const pools = (props: DecorationKind[]): DressingPools => ({ props, wall: [], role: "agriculture" })
+    const orders: DecorationKind[][] = [
+      ["basin", "jarRack", "shelf"],
+      ["jarRack", "basin", "shelf"],
+      ["shelf", "jarRack", "basin"],
+      ["jarRack", "shelf", "basin"],
+    ]
+
+    it("gives a fork whose activity has a centre kind that kind, every time", () => {
+      for (const props of orders)
+        expect(dressed({ junctionPools: pools(props), propFootprint: basinInTheMiddle })("0,4").decoration).toBe(
+          "basin"
+        )
+    })
+
+    it("gives a pass-through chamber a centre kind too", () => {
+      for (const props of orders)
+        expect(
+          dressed({ passThrough: true, pools: pools(props), propFootprint: basinInTheMiddle })("0,2").decoration
+        ).toBe("basin")
+    })
+
+    it("keeps a centre kind off a stairhead, which has no middle to stand in", () => {
+      for (const props of orders) {
+        const room = dressed({ stairPools: pools(props), propFootprint: basinInTheMiddle })("0,6")
+        expect(room.decoration).toBeDefined()
+        expect(room.decoration).not.toBe("basin")
+      }
+    })
+
+    it("names the single-cell kind a centre object falls back to", () => {
+      const room = dressed({ junctionPools: pools(["basin", "jarRack", "shelf"]), propFootprint: basinInTheMiddle })(
+        "0,4"
+      )
+      expect(room.decorationFallback).toBeDefined()
+      expect(isSingleCell(basinInTheMiddle(room.decorationFallback!))).toBe(true)
+    })
+
+    it("dresses as before when no kind is flagged centre", () => {
+      const setups: Setup[] = [{}, { junctionPools: pools(orders[0]) }, { passThrough: true }]
+      for (const setup of setups) {
+        const before = dressed(setup)
+        const after = dressed({ ...setup, propFootprint: decorationFootprint })
+        for (const node of nodes) expect(after(node)).toEqual(before(node))
+      }
+    })
+  })
 
   it("dresses a junction from one activity its pool furnishes", () => {
     const room = dressed()("0,4")

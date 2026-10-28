@@ -78,3 +78,17 @@ export const isChamber = (cell: Pick<RoomCell, "roomType" | "dirs" | "authoredAc
   cell.authoredActivity !== undefined ||
   (cell.roomType === "portal" && cell.dirs.size > 1) ||
   ((kind === "treasure" || kind === "stairhead" || kind === "exit") && cell.dirs.size === 1)
+
+/**
+ * Whether the room at (r, c) claims floor on the map: the rule the renderer dresses by and the map grows rooms
+ * by, read off the cell. A portal is the kind its place makes it, a treasure or shop encounter is a
+ * `"treasure"`, anything else a `"room"`.
+ */
+export const claimsFloorAt = (grid: FloorGrid, r: number, c: number): boolean => {
+  const cell = cellAt(grid, r, c)
+  if (cell.type !== "room") return false
+  const treasureLike =
+    cell.roomType === "encounter" && (cell.tags?.includes("treasure") === true || cell.tags?.includes("shop") === true)
+  const kind = cell.roomType === "portal" ? portalKindOf(grid, r, c, cell) : treasureLike ? "treasure" : "room"
+  return isChamber(cell, kind)
+}

@@ -2,7 +2,7 @@ import { hashString } from "@/support/hashString"
 import { oneWayRunCells } from "../carveConstants"
 import { ACTIVITIES } from "../activities"
 import { activitiesServing, rolesOfProp, rolesOfWallItem } from "../dressingTags"
-import { footprintSize, isChamber, portalKindOf } from "../roomFootprint"
+import { claimsFloorAt, footprintSize } from "../roomFootprint"
 import type {
   CorridorCell,
   DecorationKind,
@@ -12,7 +12,7 @@ import type {
   RoomCell,
   WallDecorationKind,
 } from "../siteTypes"
-import { MECHANISM_AT_REST, decorationFootprint, isSingleCell } from "../siteTypes"
+import { MECHANISM_AT_REST, isCentreKind, isSingleCell } from "../siteTypes"
 import { holeRegion } from "../mechanics/weights"
 import { standOnCorridor } from "../sequenceTiles"
 import { edgeAllowed, forkPositions, rooms, routeStepOf } from "./derive"
@@ -277,17 +277,17 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
   // A DEDICATED FLOOR SHOWS ITS GOD AT LEAST ONCE, in the chamber it is organised around: a fork first, then the
   // biggest room by the floor it draws (`footprintSize`, the renderer's own claim rule), hash breaking ties. Never
   // a portal or a mechanism's room, and only a room whose own pool can carry a patron.
+  const claimGrid: FloorGrid = {
+    cells: cells2D,
+    rows: N,
+    cols: N,
+    entrancePos: [entR, entC],
+    exitPos: [exR, exC],
+    siteId,
+    staircases: {},
+  }
   const patronRooms = new Set<string>()
   if (config.patron !== undefined && PATRON_PER_FLOOR > 0) {
-    const claimGrid: FloorGrid = {
-      cells: cells2D,
-      rows: N,
-      cols: N,
-      entrancePos: [entR, entC],
-      exitPos: [exR, exC],
-      siteId,
-      staircases: {},
-    }
     const rowCol = (pk: string): [number, number] => {
       const [r, c] = pk.split(",").map(Number)
       return [r, c]
@@ -316,17 +316,9 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
     for (const pk of eligible.slice(0, PATRON_PER_FLOOR)) patronRooms.add(pk)
   }
 
-  const chamberAt = (pk: string, spec: RoomSpec): boolean => {
+  const chamberAt = (pk: string): boolean => {
     const [r, c] = pk.split(",").map(Number)
-    const cell = cells2D[r][c]
-    if (cell.type !== "room") return false
-    const kind =
-      spec.roomType === "portal"
-        ? portalKindOf({ entrancePos: [entR, entC] }, r, c, spec)
-        : isTreasureLike(spec)
-          ? "treasure"
-          : "room"
-    return isChamber(cell, kind)
+    return claimsFloorAt(claimGrid, r, c)
   }
   const fromPoolOrOwn = <T>(pool: readonly T[] | undefined, own: readonly T[]): readonly T[] => {
     const shared = pool?.filter(k => own.includes(k)) ?? []
@@ -335,7 +327,7 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
   for (const [pk, spec] of roomSpecs) {
     const isPatron = patronRooms.has(pk)
     const authored = ACTIVITIES.find(a => a.id === spec.authoredActivity)
-    if (!chamberAt(pk, spec)) continue
+    if (!chamberAt(pk)) continue
     if (!authored && (isMechanism(pk, spec) || (!isPatron && isTreasureLike(spec)))) continue
     const pools = labels.dressing.get(pk)
     const activity =
@@ -344,14 +336,20 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
     // The god's room draws from the god-bearing kinds, a statue first where the pool has one.
     const patronProps = pools?.props?.filter(k => PATRON_KINDS.has(k))
     const godProps = patronProps?.includes("statue") ? (["statue"] as DecorationKind[]) : patronProps
-    const propPool = authored
+    const basePool = authored
       ? fromPoolOrOwn(pools?.props, authored.props)
       : isPatron
         ? godProps
         : activity
           ? pools?.props?.filter(k => activity.props.includes(k))
           : pools?.props
-    const picked = pickDressing(propPool, pk, "decoration")
+    // A centre kind stands in the middle of a room that forks or that a path passes through, and there it is
+    // the dressing every time; on any other chamber it has no middle to stand in, so it is left out of the pool.
+    const isCentre = (k: DecorationKind) => isCentreKind(k, prep.input.propFootprint)
+    const centreKinds = basePool?.filter(isCentre) ?? []
+    const takesCentre = spec.roomType === "fork" || spec.roomType === "chamber"
+    const propPool = centreKinds.length && !takesCentre ? basePool?.filter(k => !isCentre(k)) : basePool
+    const picked = pickDressing(takesCentre && centreKinds.length ? centreKinds : propPool, pk, "decoration")
     // No pit beside a way down: re-picked rather than filtered, so the pool's length moves no other room.
     const [r, c] = pk.split(",").map(Number)
     const owner = cells2D[r][c]
@@ -367,9 +365,11 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
     // A prop bigger than a cell may find no floor its shape on the map (roomClaims.ts), so it carries the
     // single-cell kind to stand instead, from the same pool by its own salt: no other pick moves.
     const decorationFallback =
-      decoration && !isSingleCell(decorationFootprint(decoration))
+      decoration && !isSingleCell(prep.input.propFootprint(decoration))
         ? pickDressing(
-            propPool?.filter(k => isSingleCell(decorationFootprint(k)) && !(k === "pit" && besideStair)),
+            propPool?.filter(
+              k => isSingleCell(prep.input.propFootprint(k)) && !isCentre(k) && !(k === "pit" && besideStair)
+            ),
             pk,
             "decoration:single-cell"
           )

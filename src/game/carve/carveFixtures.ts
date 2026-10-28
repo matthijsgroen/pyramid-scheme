@@ -11,7 +11,7 @@ import type { FloorConfig, FloorGrid, Direction, RoomCell } from "../siteTypes"
 import type { StatefulControl } from "../obstacles"
 import type { PlacedContainer, RegionGraph } from "../regions"
 import type { CarveState, Cell, CellLabels, FloorPrep } from "./state"
-import type { ResolveEncounter } from "../siteAssembler"
+import type { AssembleFloorKeyRequirements, ResolveEncounter } from "../siteAssembler"
 /** A plain floor's config, with what a test sets on it. */
 export const plainFloor = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
   pathPuzzles: 1,
@@ -23,10 +23,10 @@ export const plainFloor = (overrides: Partial<FloorConfig> = {}): FloorConfig =>
 })
 
 /** The prep of a floor, its locks expanded and planned as `assembleFloor` does; throws where it refuses. */
-export const prepOf = (config: FloorConfig, seed = 1): FloorPrep => {
+export const prepOf = (config: FloorConfig, seed = 1, requirements: AssembleFloorKeyRequirements = {}): FloorPrep => {
   const expanded = expandFloorLocks(config)
   if (!expanded.ok) throw new Error(JSON.stringify(expanded.reasons))
-  const result = prepareFloor("site", expanded.config, seed, {}, planLockFloor(expanded))
+  const result = prepareFloor("site", expanded.config, seed, requirements, planLockFloor(expanded))
   if (!result.ok) throw new Error(JSON.stringify(result.reasons))
   return result.prep
 }

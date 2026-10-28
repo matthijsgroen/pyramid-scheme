@@ -142,7 +142,13 @@ export type DecorationKind = (typeof DECORATION_KINDS)[number]
  * extra height above the normal prop frame, for art that stands higher than a face band. The anchor is the
  * north-west cell; every cell of the footprint must be the room's own free floor for the prop to stand.
  */
-export type PropFootprint = { cols: number; rows: number; tall: number }
+export type PropFootprint = {
+  cols: number
+  rows: number
+  tall: number
+  /** Marks a kind that stands in a room's middle: the room it dresses is drawn around it. */
+  centre?: true
+}
 export const SINGLE_CELL: PropFootprint = { cols: 1, rows: 1, tall: 0 }
 /** The kinds bigger than one cell. Every kind not listed is `SINGLE_CELL`. */
 export const DECORATION_FOOTPRINTS: Partial<Record<DecorationKind, PropFootprint>> = {
@@ -150,6 +156,10 @@ export const DECORATION_FOOTPRINTS: Partial<Record<DecorationKind, PropFootprint
   bones: { cols: 2, rows: 1, tall: 0 },
 }
 export const decorationFootprint = (kind: DecorationKind): PropFootprint => DECORATION_FOOTPRINTS[kind] ?? SINGLE_CELL
+export const isCentreKind = (
+  kind: DecorationKind,
+  footprintOf: (k: DecorationKind) => PropFootprint = decorationFootprint
+): boolean => footprintOf(kind).centre === true
 export const isSingleCell = ({ cols, rows }: PropFootprint): boolean => cols === 1 && rows === 1
 // What hangs ON a wall, drawn into a cell's face band rather than standing on its floor. Its own
 // vocabulary rather than a slice of DecorationKind: a stela is not a prop that could stand in the
@@ -210,6 +220,12 @@ export type SiteCondition = { kind: ConditionKind; amount: number }
  */
 export const PATRONS = ["anubis", "horus", "sobek", "bastet", "maat", "ra", "sekhmet", "thoth", "osiris"] as const
 export type Patron = (typeof PATRONS)[number]
+/** A rectangle of grid cells: `rows` south and `cols` east of its north-west cell. */
+export type CellRect = { top: number; left: number; rows: number; cols: number }
+/** A centre kind standing in a grown room, with the cells it covers. */
+export type CentrePiece = { kind: DecorationKind } & CellRect
+export type GrownRoom = { rect: CellRect; piece: CentrePiece }
+
 export type RoomCell = {
   type: "room"
   roomType: RoomType
@@ -307,6 +323,9 @@ export type RoomCell = {
    * room has no free floor that shape (roomClaims.ts). Picked from the same pool by the same hash, so the
    * map never has to know the pool. Unset when `decoration` is single-cell or the pool has no such kind. */
   decorationFallback?: DecorationKind
+  /** The room's grown rectangle and the centre piece standing in it, in absolute grid cells. The footprint is
+   * written on the piece so the map never consults the footprint table. */
+  grownRoom?: GrownRoom
   wallDecoration?: WallDecorationKind
   /** What the room is for (activities.ts): its props and wall item come from this activity. Unset on a
    * room some other purpose has, or on a rank whose pool furnishes no activity. */

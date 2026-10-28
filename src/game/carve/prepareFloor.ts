@@ -14,7 +14,7 @@ import type { OneWayRefusal } from "../oneWayRealisation"
 import type { RegionBarrierRefusal } from "../regionBarrierRealisation"
 import type { AssembleFloorKeyRequirements, ResolveEncounter, ResolveKeyRequirements } from "../siteAssembler"
 import type { AssemblerFailure, FloorConfig, MechanismRecord, SideSection, SubSection } from "../siteTypes"
-import { HANDLE_SIDES } from "../siteTypes"
+import { HANDLE_SIDES, decorationFootprint } from "../siteTypes"
 import { forkOnward, forkSeams, offRouteChains, regionRoute, strandedRegions } from "../regions"
 import type { ContentKind, SideChain } from "../regions"
 import {
@@ -89,6 +89,7 @@ export const prepareFloor = (
     resolveOneWay = defaultResolveOneWayRealisation,
     resolveRegionBarrier = defaultResolveRegionBarrierRealisation,
     resolvePassage = defaultResolvePassageRealisation,
+    propFootprint = decorationFootprint,
     maxAttempts = ASSEMBLY_ATTEMPTS,
     onLaid,
   } = resolvers
@@ -842,6 +843,7 @@ export const prepareFloor = (
         resolveOneWay,
         resolveRegionBarrier,
         resolvePassage,
+        propFootprint,
       },
       config: { config, authored: authoredConfig, addressOf: addresses.of },
       layout: {

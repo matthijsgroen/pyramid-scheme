@@ -15,6 +15,7 @@ import type {
   FloorConfig,
   KeyColor,
   MechanismRecord,
+  PropFootprint,
   RoomCell,
   SideSection,
   SubSection,
@@ -149,6 +150,7 @@ export type FloorPrep = Readonly<{
     resolveOneWay: ResolveOneWayRealisation
     resolveRegionBarrier: ResolveRegionBarrierRealisation
     resolvePassage: ResolvePassageRealisation
+    propFootprint: (kind: DecorationKind) => PropFootprint
   }>
   config: Readonly<{
     /** The floor with its handles' gates on it. */
