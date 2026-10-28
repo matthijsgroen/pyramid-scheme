@@ -18,7 +18,7 @@ it ships; tick it off there.
 
 **Checks in the game:**
 
-- [ ] A save from before this release: the new-version popup shows, the explorer's welcome only after it.
+- [x] A save from before this release: the new-version popup shows, the explorer's welcome only after it.
 - [ ] A camp part popup and a find popup with its art.
 - [ ] A new chapter after finishing the starter tier.
 - [ ] A tomb at 2 of 3 map pieces: locked, with the map hint.
