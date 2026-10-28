@@ -3520,7 +3520,7 @@ yarn import-tile art/masters/props/mechanism/light/bone/leverBase.webp --tier=me
 
 ### `bone/leverArm` — the cave lever's arm, a real long bone
 
-**Re-roll:** the first prompt asked for the default arm in bone colour, and that is what came back: the same shaft, collar and squared handle. The designer wants the handle to BE a bone: the arm is now one real long bone with its knobbed joint end as the grip. The mask grows further so the knob is not cut off.
+**Re-roll:** the first prompt asked for the default arm in bone colour, and that is what came back: the same shaft, collar and squared handle. The designer wants the handle to BE a bone: the arm is now one real long bone with its knobbed joint end as the grip. Its silhouette is new, so it is keyed off its magenta rather than cut by the default arm's mask; `--no-trim` keeps it on the canvas where the dome turns it.
 
 **Attach:**
 
@@ -3543,13 +3543,7 @@ Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint
 BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece. No floor, no gradient, no shadow on the magenta.
 ```
 
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold lever --contents=arm --shadow=0 --colour=#a7b2be --floor=#8d98a5
-yarn import-tile art/masters/props/mechanism/light/bone/leverArm.webp --tier=mechanism/light/bone --name=leverArm --slot=prop \
-  --filter=smooth --mask="$OBJ" --mask-grow=80 --no-trim
-```
+**Import:** `yarn import-tile art/masters/props/mechanism/light/bone/leverArm.webp --tier=mechanism/light/bone --name=leverArm --slot=prop --filter=smooth --no-trim`
 
 ### `bone/torchUnlit` — the cave's torch to light: a bone pillar, unlit
 
