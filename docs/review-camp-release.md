@@ -3,13 +3,15 @@
 The designer's morning list for the unattended camp-release queue (`docs/handover-camp-release.md`). Read it top
 down: the summary, then the decisions by phase, the drafts, what failed, and what to look at in the browser.
 
-## 0. Before the release
+## 0. Release by tier
 
-Tick these off one by one; the release is `yarn release` and the merge, both the designer's.
+The game ships one tier at a time (designer, 2026-10-28): each release opens the next tier, `LAST_RELEASED_DIFFICULTY`
+moves one step, and `yarn release` and the merge are the designer's. Each tier's list is what has to be true before
+it ships; tick it off there.
 
-**Walks:** none for this release — the Sphinx walk waits on its key, and Djoser (expert_4) is past the starter tier; both stay under §5.
+### Starter
 
-**Checks in the game** (hearts and waterskins wait for expert, where the traps start):
+**Checks in the game:**
 
 - [ ] A save from before this release: the new-version popup shows, the explorer's welcome only after it.
 - [ ] A camp part popup and a find popup with its art.
@@ -31,6 +33,33 @@ Tick these off one by one; the release is `yarn release` and the merge, both the
 **UI changes** (the designer's, to be listed):
 
 - [ ]
+
+### Junior
+
+- [ ] Art: `junior/threshold`; the junior props and the six activities (themed-rooms.md, "Junior"), then their props' repaint.
+- [ ] Pass-through chambers read as rooms on the re-laid junior floors (1.17 a floor today).
+- [ ] The nobleman's ward door, `door/ward-junior`.
+
+### Expert
+
+- [ ] Traps: hearts full on the coming-home screen after trap damage (§5, phase 1).
+- [ ] A waterskin heals one heart while hurt, two with pack-mule (§5, phase 1).
+- [ ] Walk: Piramide van Djoser (expert_4) level 4, `buildersLift`, side paths in the lock's corridors (§5, phase 4b).
+- [ ] Art: `expert/wall-face`, `expert/threshold`; `door/ward-expert`.
+
+### Master
+
+- [ ] Art: `master/floor` (re-roll queued), `master/wall-face`, `master/threshold`; `door/ward-master`.
+- [ ] The rest of the `light` mechanism set — plate, gate, drop, pipe hole, narrow passage — read on the dark floor
+      (`Topology/On every floor`, `yarn tsx scripts/mechanismColour.ts`).
+
+### Wizard
+
+- [ ] Art: `wizard/wall-face`, `wizard/threshold`; `door/ward-wizard`.
+- [ ] Walk: the ward stair, the cave and the climb into the Sphinx, with its five puzzles (§5, phase 4c) — once the
+      Vault's key can be found.
+- [ ] Ending polish: beats on the way to the Sphinx, the Sphinx's four surfaces painted (handover-camp-release.md,
+      "After the release").
 
 ## 1. Start here
 
