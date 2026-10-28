@@ -3518,7 +3518,9 @@ yarn import-tile art/masters/props/mechanism/light/bone/leverBase.webp --tier=me
   --filter=smooth --mask="$HOME/tile-previews/leverBaseFront-expert-obj.png" --no-trim
 ```
 
-### `bone/leverArm` — the cave lever's arm, in bone, its shaft heavier
+### `bone/leverArm` — the cave lever's arm, a real long bone
+
+**Re-roll:** the first prompt asked for the default arm in bone colour, and that is what came back: the same shaft, collar and squared handle. The designer wants the handle to BE a bone: the arm is now one real long bone with its knobbed joint end as the grip. The mask grows further so the knob is not cut off.
 
 **Attach:**
 
@@ -3528,15 +3530,15 @@ yarn import-tile art/masters/props/mechanism/light/bone/leverBase.webp --tier=me
 ```
 FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
 
-THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: the arm of a floor lever — a straight SHAFT, a COLLAR near its top, and a squared HANDLE block bent forward at the top. Same object, same camera. Keep every edge, every proportion and every silhouette exactly as in the reference image, except the one change of shape below — do not move, resize, straighten, add, remove or restyle any other part of it, and do not change the angle it stands at. Repaint material, value and light only, with ONE change of shape below.
+THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: the arm of a floor lever — a straight SHAFT, a COLLAR near its top, and a squared HANDLE block bent forward at the top. Same object, same camera. Keep its length, the line it stands on, where its foot is and the angle it stands at exactly as in the reference — the foot sits in the lever's dome and turns there. The SHAPE changes as described below; nothing else moves.
 
 THE SECOND ATTACHED IMAGE IS THE CAVE FLOOR IT STANDS ON, dark rock. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
 
-THE ONE CHANGE OF SHAPE: the shaft is too thin to read. Paint it about half again as wide, the same straight post in the same place, centred on the same line, the same length. Nothing else changes size.
+THE CHANGE OF SHAPE: the arm IS A BONE — one real long bone, like a thigh bone, used as the lever. Its shaft runs where the reference's shaft runs, about half again as wide, slightly waisted in the middle as a real bone is. Where the reference has its squared handle, the bone ends in its own rounded KNOB — the two smooth knuckles of a bone's joint end, a little wider than the shaft, which the hand grips. The collar is gone: a bone has none; at most a strip of old leather bound round the shaft where the collar was. The foot end disappears into the dome as the reference's does.
 
-THE CHANGE: the whole arm is WEATHERED BONE. The shaft is a long bone, pale ivory #d8cdb4, faintly grained along its length, with a warm tan shadow #a8957a down its right side and a pale catch-light up its left. The collar is a band of darker, older ivory bound round it. The handle is a squared knuckle of bone, its top face the palest thing on the arm, its underside in warm shadow.
+THE MATERIAL: weathered bone, pale ivory #d8cdb4, faintly grained along its length, with a warm tan shadow #a8957a down its right side and a pale catch-light up its left; the knob's top is the palest thing on it. The leather strip, if any, is dark brown #4a3424.
 
-Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow. No skulls, no teeth, no figures: bone as a material, nothing more.
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow. One bone, nothing else: no skull, no teeth, no figures, no second bone.
 
 BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece. No floor, no gradient, no shadow on the magenta.
 ```
@@ -3546,7 +3548,7 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold lever --contents=arm --shadow=0 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/mechanism/light/bone/leverArm.webp --tier=mechanism/light/bone --name=leverArm --slot=prop \
-  --filter=smooth --mask="$OBJ" --mask-grow=40 --no-trim
+  --filter=smooth --mask="$OBJ" --mask-grow=80 --no-trim
 ```
 
 ### `bone/torchUnlit` — the cave's torch to light: a bone pillar, unlit
