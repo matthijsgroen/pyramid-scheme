@@ -62,27 +62,28 @@ mudbrick ground, red ochre and terracotta, a turquoise faience accent, under a n
 
 ### By job
 
-| Token               | Is                                             |
-| ------------------- | ---------------------------------------------- |
-| `camp-paper`        | parchment-100                                  |
-| `camp-card`         | parchment-50                                   |
-| `camp-chip`         | parchment-200                                  |
-| `camp-rule`         | parchment-300                                  |
-| `camp-dashed`       | parchment-400                                  |
-| `camp-ink`          | ink-900                                        |
-| `camp-ink-soft`     | ink-700                                        |
-| `camp-label`        | ink-600                                        |
-| `camp-muted`        | ink-500                                        |
-| `camp-accent`       | ochre-500                                      |
-| `camp-accent-hover` | ochre-600                                      |
-| `camp-on-accent`    | parchment-50                                   |
-| `camp-select`       | faience-700                                    |
-| `camp-night`        | night-800                                      |
-| `camp-night-deep`   | night-900                                      |
-| `camp-on-night`     | night-200                                      |
-| `camp-glow`         | ember-500                                      |
-| `camp-glass`        | parchment-100 at 80%, where the backdrop blurs |
-| `camp-glass-solid`  | parchment-100 at 95%, where it cannot          |
+| Token               | Is                                                                               |
+| ------------------- | -------------------------------------------------------------------------------- |
+| `camp-paper`        | parchment-100                                                                    |
+| `camp-card`         | parchment-50                                                                     |
+| `camp-chip`         | parchment-200                                                                    |
+| `camp-rule`         | parchment-300                                                                    |
+| `camp-dashed`       | parchment-400                                                                    |
+| `camp-ink`          | ink-900                                                                          |
+| `camp-ink-soft`     | ink-700                                                                          |
+| `camp-label`        | ink-600                                                                          |
+| `camp-muted`        | ink-500                                                                          |
+| `camp-accent`       | ochre-500                                                                        |
+| `camp-accent-hover` | ochre-600                                                                        |
+| `camp-on-accent`    | parchment-50                                                                     |
+| `camp-select`       | faience-700                                                                      |
+| `camp-night`        | night-800                                                                        |
+| `camp-night-deep`   | night-900                                                                        |
+| `camp-on-night`     | night-200                                                                        |
+| `camp-glow`         | ember-500                                                                        |
+| `camp-glass`        | warm tint `#EFD9B0` at 55%, where the backdrop blurs (16px) and saturates (160%) |
+| `camp-glass-solid`  | the same tint at 92%, where it cannot                                            |
+| `camp-glass-edge`   | white at 45%, the 1px edge that catches the light                                |
 
 ## The sketches' hex and its token
 
@@ -164,5 +165,6 @@ Rules and dashed borders are decoration, not text: parchment-300 on parchment-50
 parchment-100 2.0:1. A dashed "not held" border that has to read on its own would need a darker step (`#8C7350`
 reaches 3.75:1).
 
-Over the purple band of the sky the 80% glass reads greyish-lavender at its top edge (seen in the story at
-1440×900); where that matters the 95% solid surface keeps it parchment.
+The glass is the designer's choice (C in the `GlassVariants` story, 2026-10-28): a warm, see-through tint the fire and
+sand glow through. Over the night sky its mixed colour sits darker than the contrast rows above assume; the designer
+judged the text readable there.

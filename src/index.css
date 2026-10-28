@@ -148,9 +148,12 @@ body {
   --color-camp-night-deep: var(--color-night-900);
   --color-camp-on-night: var(--color-night-200);
   --color-camp-glow: var(--color-ember-500);
-  /* The see-through panel over the scene: 80% where the backdrop blurs, 95% where it cannot. */
-  --color-camp-glass: color-mix(in srgb, var(--color-parchment-100) 80%, transparent);
-  --color-camp-glass-solid: color-mix(in srgb, var(--color-parchment-100) 95%, transparent);
+  /* The see-through panel over the scene: a warm tint at 55% where the backdrop blurs and glows, 92% where it
+     cannot; its edge catches the light. */
+  --color-camp-glass-tint: #efd9b0;
+  --color-camp-glass: color-mix(in srgb, var(--color-camp-glass-tint) 55%, transparent);
+  --color-camp-glass-solid: color-mix(in srgb, var(--color-camp-glass-tint) 92%, transparent);
+  --color-camp-glass-edge: rgb(255 255 255 / 0.45);
 
   --animate-fade-in: fade-in 1s forwards ease-in-out;
   @keyframes fade-in {

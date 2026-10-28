@@ -27,7 +27,7 @@ export const CampHomeLayout: FC<CampHomeLayoutProps> = ({ hud, scene, sceneRef, 
       {scene}
     </div>
     <div
-      className={`absolute inset-x-0 bottom-0 z-10 flex flex-col gap-3.5 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] lg:static lg:col-start-2 lg:row-start-2 lg:min-h-0 lg:overflow-auto lg:border-l-2 lg:border-camp-ink lg:bg-camp-glass-solid lg:p-6 lg:text-camp-ink lg:supports-backdrop-filter:bg-camp-glass lg:supports-backdrop-filter:backdrop-blur-md ${quiet ? "invisible" : ""}`}
+      className={`absolute inset-x-0 bottom-0 z-10 flex flex-col gap-3.5 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] lg:static lg:col-start-2 lg:row-start-2 lg:min-h-0 lg:overflow-auto lg:border-l lg:border-camp-glass-edge lg:bg-camp-glass-solid lg:p-6 lg:text-camp-ink lg:supports-backdrop-filter:bg-camp-glass lg:supports-backdrop-filter:backdrop-blur-lg lg:supports-backdrop-filter:backdrop-saturate-160 ${quiet ? "invisible" : ""}`}
     >
       {card}
       {aside && <div className="hidden min-h-0 flex-1 flex-col lg:flex">{aside}</div>}

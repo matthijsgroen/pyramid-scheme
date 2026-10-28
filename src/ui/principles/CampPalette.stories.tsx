@@ -320,9 +320,9 @@ const EDGE = "ring-1 ring-white/45 ring-inset"
 
 const GLASS_VARIANTS: { name: string; note: string; className: string }[] = [
   {
-    name: "Today",
-    note: "parchment-100/80, blur 12px",
-    className: "rounded-[18px] border-2 border-camp-ink bg-camp-glass backdrop-blur-md",
+    name: "In use: camp-glass",
+    note: "the chosen glass (C), from the tokens",
+    className: `rounded-[18px] bg-camp-glass backdrop-blur-lg backdrop-saturate-160 ring-1 ring-camp-glass-edge ring-inset`,
   },
   {
     name: "A light frost",
