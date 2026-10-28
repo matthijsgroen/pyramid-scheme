@@ -49,12 +49,16 @@ it ships; tick it off there.
 
 ### Master
 
+- [ ] More floor locks on the master floors — the designer writes master locks (designer-todo.md); today master is
+      `bathHouse` and Claude's `masonsRamp`.
 - [ ] Art: `master/floor` (re-roll queued), `master/wall-face`, `master/threshold`; `door/ward-master`.
 - [ ] The rest of the `light` mechanism set — plate, gate, drop, pipe hole, narrow passage — read on the dark floor
       (`Topology/On every floor`, `yarn tsx scripts/mechanismColour.ts`).
 
 ### Wizard
 
+- [ ] The web puzzles: the wizard_3 sand web lock over the wizard floor locks, its content the designer's
+      (sand-pyramid.md; engine and editor on main, slice 11 waits on the designer).
 - [ ] Art: `wizard/wall-face`, `wizard/threshold`; `door/ward-wizard`.
 - [ ] Walk: the ward stair, the cave and the climb into the Sphinx, with its five puzzles (§5, phase 4c) — once the
       Vault's key can be found.
