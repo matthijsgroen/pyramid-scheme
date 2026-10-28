@@ -12,7 +12,7 @@ export type CollectionTabsProps = {
   panelId: string
 }
 
-// A row of tabs that scrolls sideways when they do not fit; the selected one is dark. The arrow keys move
+// A row of tabs that scrolls sideways when they do not fit; the selected one is faience. The arrow keys move
 // to the neighbour (wrapping) and select it, Home and End jump to the ends. When the row overflows, an arrow
 // stands at each end and lights up while there is more to see that way; tapping it scrolls the row. The
 // arrows are for pointers only: the keyboard already moves through the tabs.
@@ -91,7 +91,7 @@ export const CollectionTabs: FC<CollectionTabsProps> = ({ tabs, selected, onSele
               aria-controls={panelId}
               tabIndex={active ? 0 : -1}
               onClick={() => onSelect(tab.id)}
-              className={`h-11 flex-1 shrink-0 rounded-[9px] px-3 text-[13px] font-extrabold whitespace-nowrap ${active ? "bg-camp-ink text-camp-card" : "bg-transparent"}`}
+              className={`h-11 flex-1 shrink-0 rounded-[9px] px-3 text-[13px] font-extrabold whitespace-nowrap ${active ? "bg-camp-select text-camp-card" : "bg-transparent"}`}
             >
               {tab.label}
             </button>

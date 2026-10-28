@@ -43,7 +43,7 @@ export const ComingHomeScreen: FC<ComingHomeScreenProps> = ({
       <div className="flex flex-col items-center gap-3 lg:col-start-1 lg:row-span-3 lg:row-start-1">
         <div className="flex h-36 items-center justify-center lg:h-40">{fire}</div>
         {rest && (
-          <div className="flex flex-col items-center gap-1.5 text-center text-sm text-[#D9CFB8] lg:text-camp-ink-soft">
+          <div className="flex flex-col items-center gap-1.5 text-center text-sm text-parchment-200 lg:text-camp-ink-soft">
             {rest}
           </div>
         )}

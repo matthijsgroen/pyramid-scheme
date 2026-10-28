@@ -4,7 +4,7 @@ The colours of the UI around the camp (HUD, popups, the desktop side panel, card
 Tailwind v4 theme colours in `src/index.css` (`@theme`), so each is a class: `bg-parchment-100`,
 `text-ink-600`, `border-ochre-500`, with opacity modifiers (`bg-night-800/90`). The Storybook page
 **Design/CampPalette** (`src/ui/principles/CampPalette.stories.tsx`) lays them over the starter camp, with the
-contrast of every pairing below and today's components beside copies dressed in the tokens.
+contrast of every pairing below and the camp components that wear them.
 
 ## Where the colours come from
 
@@ -84,30 +84,29 @@ mudbrick ground, red ochre and terracotta, a turquoise faience accent, under a n
 | `camp-glass`        | parchment-100 at 80%, where the backdrop blurs |
 | `camp-glass-solid`  | parchment-100 at 95%, where it cannot          |
 
-## Today's hex and its token
+## The sketches' hex and its token
 
-The camp UI (17 files under `src/ui` and `src/app`) still writes the hex from the
-[camp sketches](camp-sketches/README.md). Each maps to a token:
+The [camp sketches](camp-sketches/README.md) write hex; the camp UI writes the token each one maps to:
 
-| Hex       | Token                 | Where                                                 |
-| --------- | --------------------- | ----------------------------------------------------- |
-| `#FFF8EA` | parchment-50          | cards, text on accent                                 |
-| `#F4EAD5` | parchment-100         | popup and side panel (`/95`, `/80`), HUD text         |
-| `#E9DCBF` | parchment-200         | chips, hint row, tab track, progress track            |
-| `#D6C4A0` | parchment-300         | popup header rule, haul row border                    |
-| `#C9B48E` | parchment-300 (shift) | TierHeader rule                                       |
-| `#B8A584` | parchment-400         | dashed placeholders                                   |
-| `#7B5B3A` | ink-500               | JourneyRow icon fill                                  |
-| `#5C4A36` | ink-600               | labels, notes                                         |
-| `#4A3B2A` | ink-700               | body text                                             |
-| `#2B2118` | ink-900               | text, outlines, selected tab                          |
-| `#A3401A` | ochre-500             | primary buttons, NEW, badges, notice dot              |
-| `#8A3515` | ochre-600             | button hover                                          |
-| `#27304A` | night-800             | HUD, camp background, coming-home card                |
-| `#1B2236` | night-900             | coming-home screen                                    |
-| `#C9CFE2` | night-200             | text on night                                         |
-| `#D9CFB8` | parchment-200 (shift) | coming-home text on night                             |
-| `#3F6B2E` | none                  | JourneyRow's done check; a green outside this palette |
+| Hex       | Token                 | Where                                                          |
+| --------- | --------------------- | -------------------------------------------------------------- |
+| `#FFF8EA` | parchment-50          | cards, text on accent                                          |
+| `#F4EAD5` | parchment-100         | popup and side panel (`/95`, `/80`), HUD text                  |
+| `#E9DCBF` | parchment-200         | chips, hint row, tab track, progress track                     |
+| `#D6C4A0` | parchment-300         | popup header rule, haul row border                             |
+| `#C9B48E` | parchment-300 (shift) | TierHeader rule                                                |
+| `#B8A584` | parchment-400         | dashed placeholders                                            |
+| `#7B5B3A` | ink-500               | JourneyRow icon fill                                           |
+| `#5C4A36` | ink-600               | labels, notes                                                  |
+| `#4A3B2A` | ink-700               | body text                                                      |
+| `#2B2118` | ink-900               | text, outlines                                                 |
+| `#A3401A` | ochre-500             | primary buttons, NEW, badges, notice dot                       |
+| `#8A3515` | ochre-600             | button hover                                                   |
+| `#27304A` | night-800             | HUD, camp background, coming-home card                         |
+| `#1B2236` | night-900             | coming-home screen                                             |
+| `#C9CFE2` | night-200             | text on night                                                  |
+| `#D9CFB8` | parchment-200 (shift) | coming-home text on night                                      |
+| `#3F6B2E` | none                  | JourneyRow's done check keeps it; a green outside this palette |
 
 ## Deliberate shifts
 
@@ -115,13 +114,13 @@ The camp UI (17 files under `src/ui` and `src/app`) still writes the hex from th
   own; the chip colour is near it, reads 11.6:1 on night-900 against 10.2, and leaves one warm text colour on
   dark.
 - **`#C9B48E` → parchment-300 `#D6C4A0`.** TierHeader's hairline joins the popup's rule: one rule colour.
-- **Faience is new.** The UI has no turquoise yet, though the starter rank's accent is turquoise faience. The
+- **Faience is the starter accent.** The sketches had no turquoise, though the starter rank's accent is turquoise faience. The
   art's blues lean lapis (stained glass `#306980`, window `#367FB1`); faience is pushed greener (hue ~180°) to
-  stand apart from the night sky (hue ~225°). Proposed for the selected tab (today ink-900) and info hints that
-  are not "new" (today ochre), so ochre stays for NEW and the one thing to press.
+  stand apart from the night sky (hue ~225°). It fills the selected tab (ink-900 in the sketches) and the dot of an
+  info hint that is not "new" (ochre in the sketches), so ochre stays for NEW and the one thing to press.
 - **Ember is new as a ramp.** Coins (`#E0A526`) and the scene's focus ring (`#E0B33F`) were one-offs; ember-500
   takes both.
-- Every other value is today's hex unchanged.
+- Every other value is the sketches' hex unchanged.
 
 ## Contrast
 

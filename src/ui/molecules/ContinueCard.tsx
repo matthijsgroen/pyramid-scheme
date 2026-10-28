@@ -57,12 +57,12 @@ export const ContinueCard: FC<ContinueCardProps> = ({
             onClick={hint.onOpen}
             className="flex items-center gap-2.5 rounded-xl bg-camp-chip px-3 py-2.5 text-left text-sm"
           >
-            <span className="size-2.5 flex-none rounded-full bg-camp-accent" />
+            <span className="size-2.5 flex-none rounded-full bg-faience-600" />
             <span>{hint.text}</span>
           </button>
         ) : (
           <div className="flex items-center gap-2.5 rounded-xl bg-camp-chip px-3 py-2.5 text-sm">
-            <span className="size-2.5 flex-none rounded-full bg-camp-accent" />
+            <span className="size-2.5 flex-none rounded-full bg-faience-600" />
             <span>{hint.text}</span>
           </div>
         ))}

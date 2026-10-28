@@ -4,12 +4,13 @@ import { CampScene } from "@/ui/atoms/CampScene"
 import { NewBadge } from "@/ui/atoms/NewBadge"
 import { fullFound } from "@/ui/atoms/campScene/campLayout"
 import { CAMP_CATALOGUE } from "@/ui/atoms/campScene/campCatalogue"
+import { CampHud } from "@/ui/molecules/CampHud"
+import { CollectionTabs } from "@/ui/molecules/CollectionTabs"
 import { ContinueCard } from "@/ui/molecules/ContinueCard"
 import { HaulRow } from "@/ui/molecules/HaulRow"
 
 // The camp's UI colours (the `@theme` tokens in src/index.css) laid over the starter camp, so the see-through
-// panels are judged on the scene they blur. Below the swatches, today's components stand beside story-local
-// copies dressed in the tokens.
+// panels are judged on the scene they blur. Below the swatches, the camp components that wear them.
 
 type Swatch = { token: string; hex: string; from: string }
 
@@ -212,95 +213,11 @@ const SEMANTIC: [string, string][] = [
   ["camp-glass-solid", "parchment-100 at 95%"],
 ]
 
-// Story-local copies in the tokens. The changes they propose: the selected tab and an info hint in faience
-// (ochre stays for NEW and the one thing to press), the focus ring in ember.
-
-const TokenTabs: FC<{ tabs: string[] }> = ({ tabs }) => (
-  <div className="flex gap-1.5 rounded-xl bg-camp-chip p-1 text-camp-ink">
-    {tabs.map((tab, i) => (
-      <span
-        key={tab}
-        className={`flex h-11 flex-1 items-center justify-center rounded-[9px] px-3 text-[13px] font-extrabold ${i === 0 ? "bg-camp-select text-camp-card" : ""}`}
-      >
-        {tab}
-      </span>
-    ))}
-  </div>
-)
-
-const TodayTabs: FC<{ tabs: string[] }> = ({ tabs }) => (
-  <div className="flex gap-1.5 rounded-xl bg-[#E9DCBF] p-1 text-[#2B2118]">
-    {tabs.map((tab, i) => (
-      <span
-        key={tab}
-        className={`flex h-11 flex-1 items-center justify-center rounded-[9px] px-3 text-[13px] font-extrabold ${i === 0 ? "bg-[#2B2118] text-[#FFF8EA]" : ""}`}
-      >
-        {tab}
-      </span>
-    ))}
-  </div>
-)
-
-const TokenHaulRow: FC<{ title: string; note: string; badge?: string; visual: ReactNode }> = ({
-  title,
-  note,
-  badge,
-  visual,
-}) => (
-  <div className="flex items-center gap-3 rounded-[10px] border-2 border-transparent bg-camp-paper p-2.5 text-camp-ink lg:border-camp-rule lg:bg-camp-card">
-    <span className="relative flex size-10 flex-none overflow-hidden rounded-lg">{visual}</span>
-    <span className="flex flex-1 flex-col gap-px">
-      <span className="text-[15px] font-extrabold">{title}</span>
-      <span className="text-[13px] text-camp-label">{note}</span>
-    </span>
-    {badge && (
-      <span className="rounded-[10px] bg-camp-accent px-2 py-0.5 text-xs font-extrabold text-camp-on-accent">
-        {badge}
-      </span>
-    )}
-  </div>
-)
-
-const TokenContinueCard: FC = () => (
-  <div className="flex flex-col gap-3 text-camp-ink">
-    <div className="flex flex-col gap-2.5 rounded-[14px] border-2 border-camp-ink bg-camp-card p-4 lg:p-[18px]">
-      <div className="text-xs font-extrabold tracking-widest text-camp-label uppercase">Verder met</div>
-      <div className="flex flex-col gap-0.5">
-        <div className="font-pyramid text-lg lg:text-xl">Vallei van de Ambachtslieden</div>
-        <div className="text-sm text-camp-label">Piramide 3 van 5 · Junior</div>
-      </div>
-      <button
-        type="button"
-        className="h-13 w-full rounded-xl bg-camp-accent px-4 text-[17px] font-extrabold text-camp-on-accent outline-offset-2 hover:bg-camp-accent-hover focus-visible:outline-2 focus-visible:outline-camp-glow"
-      >
-        Op pad
-      </button>
-    </div>
-    <div className="flex items-center gap-2.5 rounded-xl bg-camp-chip px-3 py-2.5 text-sm">
-      <span className="size-2.5 flex-none rounded-full bg-faience-600" />
-      <span>2 oude reizen hebben iets nieuws te ontdekken</span>
-    </div>
-  </div>
-)
-
-const HUD_TODAY = "flex h-14 items-center justify-between rounded-xl bg-[#27304A]/90 px-4 text-[#F4EAD5]"
-const HUD_TOKENS = "flex h-14 items-center justify-between rounded-xl bg-camp-night/90 px-4 text-camp-paper"
-
-const Side: FC<{ title: string; children: ReactNode }> = ({ title, children }) => (
+const InUse: FC<{ title: string; children: ReactNode }> = ({ title, children }) => (
   <div className="flex min-w-0 flex-1 flex-col gap-3">
     <h3 className="text-xs font-extrabold tracking-widest text-camp-label uppercase">{title}</h3>
     {children}
   </div>
-)
-
-const Compare: FC<{ title: string; today: ReactNode; tokens: ReactNode }> = ({ title, today, tokens }) => (
-  <Glass>
-    <h2 className="mb-3 font-pyramid text-xl">{title}</h2>
-    <div className="flex flex-col gap-4 sm:flex-row">
-      <Side title="Today">{today}</Side>
-      <Side title="Tokens">{tokens}</Side>
-    </div>
-  </Glass>
 )
 
 const coin = <span className="size-full bg-ember-500" />
@@ -354,61 +271,45 @@ const PalettePage: FC = () => {
               </ul>
             </Glass>
           </div>
-          <Compare
-            title="Popup tabs"
-            today={<TodayTabs tabs={["Hiërogliefen", "Schatten"]} />}
-            tokens={<TokenTabs tabs={["Hiërogliefen", "Schatten"]} />}
-          />
-          <Compare
-            title="Haul row"
-            today={
-              <>
+          <Glass>
+            <h2 className="mb-3 font-pyramid text-xl">In use</h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <InUse title="Popup tabs">
+                <CollectionTabs
+                  tabs={[
+                    { id: "a", label: "Hiërogliefen" },
+                    { id: "b", label: "Schatten" },
+                  ]}
+                  selected="a"
+                  onSelect={() => {}}
+                  label="Je verzameling"
+                  panelId="palette-panel"
+                />
+              </InUse>
+              <InUse title="Haul row">
                 <HaulRow visual={coin} title="+85 munten" note="Losse munten onderweg" />
                 <HaulRow visual={tile} title="Bronzen waterkruik" note="Nieuw in je kamp" badge="NIEUW" />
-              </>
-            }
-            tokens={
-              <>
-                <TokenHaulRow visual={coin} title="+85 munten" note="Losse munten onderweg" />
-                <TokenHaulRow visual={tile} title="Bronzen waterkruik" note="Nieuw in je kamp" badge="NIEUW" />
-              </>
-            }
-          />
-          <Compare
-            title="Continue card"
-            today={
-              <ContinueCard
-                heading="Verder met"
-                journeyName="Vallei van de Ambachtslieden"
-                detail="Piramide 3 van 5 · Junior"
-                setOffLabel="Op pad"
-                hint={{ text: "2 oude reizen hebben iets nieuws te ontdekken" }}
-              />
-            }
-            tokens={<TokenContinueCard />}
-          />
-          <Compare
-            title="HUD and NEW badge"
-            today={
-              <div className={HUD_TODAY}>
-                <span className="font-pyramid">Kamp</span>
-                <span className="text-sm text-[#C9CFE2]">
-                  Verzameling <NewBadge label="NIEUW" />
-                </span>
-              </div>
-            }
-            tokens={
-              <div className={HUD_TOKENS}>
-                <span className="font-pyramid">Kamp</span>
-                <span className="text-sm text-camp-on-night">
-                  Verzameling{" "}
-                  <span className="rounded-full bg-camp-accent px-1.5 py-px text-[10px] font-extrabold text-camp-on-accent">
-                    NIEUW
-                  </span>
-                </span>
-              </div>
-            }
-          />
+              </InUse>
+              <InUse title="Continue card">
+                <ContinueCard
+                  heading="Verder met"
+                  journeyName="Vallei van de Ambachtslieden"
+                  detail="Piramide 3 van 5 · Junior"
+                  setOffLabel="Op pad"
+                  hint={{ text: "2 oude reizen hebben iets nieuws te ontdekken" }}
+                />
+              </InUse>
+              <InUse title="HUD and NEW badge">
+                <div className="overflow-hidden rounded-xl">
+                  <CampHud title="Kamp" onTitleTap={() => {}} settingsLabel="Instellingen" onSettings={() => {}}>
+                    <span className="text-sm text-camp-on-night">
+                      Verzameling <NewBadge label="NIEUW" />
+                    </span>
+                  </CampHud>
+                </div>
+              </InUse>
+            </div>
+          </Glass>
         </div>
       </div>
     </div>

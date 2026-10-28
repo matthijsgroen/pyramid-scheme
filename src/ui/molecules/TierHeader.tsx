@@ -20,7 +20,7 @@ export const TierHeader: FC<TierHeaderProps> = ({ title, progress, collapsible, 
   const rest = (
     <>
       <span>{title}</span>
-      <span className="h-px flex-1 bg-[#C9B48E]" />
+      <span className="h-px flex-1 bg-camp-rule" />
       <span className="font-semibold tracking-normal normal-case">{progress}</span>
       {dot && <NoticeDot label={dotLabel} />}
     </>
