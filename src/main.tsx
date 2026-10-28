@@ -7,6 +7,9 @@ import "@/app/SiteMap/registerRewardHandlers"
 import App from "@/App.tsx"
 import { CrashBoundary } from "@/app/CrashBoundary"
 import { settleSaveEpoch } from "@/app/saveEpoch"
+import { reloadOnStaleChunk } from "@/app/reloadOnStaleChunk"
+
+reloadOnStaleChunk()
 
 // Before the first render: every hook reads the save on mount, and must read the settled one.
 void settleSaveEpoch().then(newVersion =>
