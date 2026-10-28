@@ -3,9 +3,10 @@ import { expandFloorLocks } from "../floorLocks"
 import { planLockFloor } from "../lockPlan"
 import { roomlessRouteStubs } from "../routeStubs"
 import type { AssembleFloorKeyRequirements, ResolveEncounter } from "../siteAssembler"
-import type { AssemblerResult, FloorConfig } from "../siteTypes"
+import { decorationFootprint, type AssemblerResult, type FloorConfig, type FloorGrid } from "../siteTypes"
 import { layWebDoors, WEB_SAND_REALISATION, webSandKindRefusals } from "../webDoors"
 import { carveFloor } from "./carveFloor"
+import { growRooms } from "./growRooms"
 import { gateKeyOf } from "./ids"
 import { finishAttempt, PASSES } from "./passes"
 import { prepareFloor } from "./prepareFloor"
@@ -48,7 +49,10 @@ export const assembleFloor = (
   const gates = expanded.webGates ?? []
   const { resolveRegionBarrier } = keyRequirements
   const realised = !resolveRegionBarrier || resolveRegionBarrier(WEB_SAND_REALISATION) !== undefined
-  if ((doors.length === 0 && gates.length === 0) || !realised) return nested
+  // Rooms grow round their centre piece last, on the floor as it will be walked, web doors and all.
+  const grown = (grid: FloorGrid): FloorGrid =>
+    growRooms(grid, siteId, keyRequirements.propFootprint ?? decorationFootprint)
+  if ((doors.length === 0 && gates.length === 0) || !realised) return { ...nested, grid: grown(nested.grid) }
   // One sand kind per site: this floor's own lock may not bind sand beside its web's. The rest of the site is the
   // bake's to check (`webSandKindRefusals` over every floor).
   const mixed = webSandKindRefusals([authoredConfig])
@@ -57,5 +61,5 @@ export const assembleFloor = (
   const gateTags = resolveEncounter(CARVE_FAMILY_QUERIES.keyGate, CARVE_FAMILY_QUERIES.keyGate).tags
   const marked = authoredConfig.webMarks ? { ...nested.grid, webMarks: authoredConfig.webMarks } : nested.grid
   const laid = layWebDoors(marked, doors, gates, gateTags, id => gateKeyOf(floorRef, id))
-  return laid.ok ? { ...nested, grid: laid.grid } : { success: false, reasons: [laid.fault] }
+  return laid.ok ? { ...nested, grid: grown(laid.grid) } : { success: false, reasons: [laid.fault] }
 }
