@@ -31,9 +31,10 @@ needs no centre piece itself.
 - **The dressing decides, the carve builds it** (designer, 2026-10-28): a room's activity and its centre object are
   chosen first, and the carve gives that room the space the object's footprint needs plus room to walk round it.
   Not the DSL. The object's footprint is its kind's `DECORATION_FOOTPRINTS` entry (`src/game/siteTypes.ts`).
-- **This revises the stability tenet for junior and up:** a room's activity, its dressing pool and a story-authored
-  activity become structural there — changing them can move walls, and the activity pick moves ahead of the maze.
-  `docs/game-design/world-spec-stability.md` and its sweep are updated to say so; starter keeps the old tenet.
+- **This revises the stability tenet, the same rule at every tier** (designer, 2026-10-28: one rule everywhere, no
+  per-tier exceptions): a room's activity, its dressing pool and a story-authored activity become structural —
+  changing them can move walls, and the activity pick moves ahead of the maze. `docs/game-design/world-spec-stability.md`
+  and its sweep are updated to say so.
 - **Decoration must not lose to convenience:** a room that wants a centre object gets one. The single-cell fallback is
   for a room the floor genuinely cannot widen, and it should be rare — the carve searches for a layout that fits
   rather than shrinking the dressing. A floor where centre objects keep falling back is a bland floor, which is a
@@ -42,9 +43,9 @@ needs no centre piece itself.
 - **No space:** the existing fallback stays as the last resort — the room takes a single-cell prop instead
   (`decorationFallback`, `src/game/carve/render.ts`), stays its normal size and keeps today's walk. The bake reports
   how many centre objects fell back, per tier.
-- Growing moves walls. That is allowed for every tier that has not shipped; a shipped tier's layouts stay fixed.
-  Starter is about to ship, so this is built for junior and later and must leave starter's floors byte-identical
-  (the starter tier fingerprint).
+- Growing moves walls. Starter has no centre objects, so under the same rule its rooms do not grow; this work must
+  still leave starter's carved floors exactly as they are (starter ships first). A later dressing change on a shipped
+  tier can move its walls like any other tier's; saves survive it (below).
 
 ## Goals
 
@@ -69,7 +70,7 @@ needs no centre piece itself.
 ## Constraints
 
 - Saves are keyed by authoring address and slot, never by cell coordinates
-  (`docs/instructions/world-reshape-release.md`), so growing rooms in unshipped tiers costs no save migration.
+  (`docs/instructions/world-reshape-release.md`), so growing a room costs no save migration.
 - **Rooms grow on lock floors too** (designer, 2026-10-28), inside lock regions included. The lock walk
   (`floorLockWalk.ts`) and the strict world walk must still pass; `.lock` files do not change. Because those walks
   only test reachability, a new check guards the lesson rules a grown room could break: a lesson's shut door is seen
@@ -85,7 +86,7 @@ needs no centre piece itself.
 - **Which rooms grow:** forks and pass-through chambers. Dead-end rooms (stairheads, the exit, treasure ends) keep
   their size and their node.
 - **Starter guard:** the tier fingerprint hashes configs, not carved floors, so a new check snapshots starter's carved
-  floors and proves them unchanged. "Shipped" is read from the floor's tier.
+  floors and proves this work leaves them unchanged.
 - **Order:** built and tested with stand-in kinds first; junior's real centre objects, their activities and art follow
   as their own step.
 
