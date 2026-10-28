@@ -7,9 +7,8 @@ down: the summary, then the decisions by phase, the drafts, what failed, and wha
 
 Tick these off one by one; the release is `yarn release` and the merge, both the designer's.
 
-**Walks** (steps under §5):
+**Walks** (steps under §5; the ward stair to the Sphinx waits, since its key is not obtainable yet):
 
-- [ ] The ward stair, the cave and the climb into the Sphinx (phase 4c), now with the Sphinx floor's five puzzles.
 - [ ] Piramide van Djoser (expert_4) level 4, `buildersLift`: side paths in the lock's corridors.
 
 **Checks in the game:**
