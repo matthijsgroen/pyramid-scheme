@@ -86,6 +86,72 @@ body {
   /* The tiles and the locks set their glyphs in mono; the hieroglyph face has to lead that stack too,
      or `font-mono` would override the one inherited from the document and draw a box again. */
   --font-mono: "Hieroglyphs", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* The camp's UI colours, sampled from the camp art: docs/design/camp-palette.md has where each comes from
+     and the contrast each pairing holds. Paper is the tent canvas, ink its shadows, ochre the terracotta of
+     the fire and the reed mats, faience the starter rank's turquoise, night the sky, ember the fire's glow. */
+  --color-parchment-50: #fff8ea;
+  --color-parchment-100: #f4ead5;
+  --color-parchment-200: #e9dcbf;
+  --color-parchment-300: #d6c4a0;
+  --color-parchment-400: #b8a584;
+
+  --color-ink-500: #7b5b3a;
+  --color-ink-600: #5c4a36;
+  --color-ink-700: #4a3b2a;
+  --color-ink-800: #3a2e22;
+  --color-ink-900: #2b2118;
+
+  --color-ochre-100: #f5d9c7;
+  --color-ochre-300: #d58b56;
+  --color-ochre-400: #c25e30;
+  --color-ochre-500: #a3401a;
+  --color-ochre-600: #8a3515;
+  --color-ochre-700: #6e2a12;
+  --color-ochre-800: #451d19;
+
+  --color-faience-100: #cde8e4;
+  --color-faience-300: #7fc4c0;
+  --color-faience-500: #2e8a88;
+  --color-faience-600: #23706f;
+  --color-faience-700: #1c5a5c;
+
+  --color-night-200: #c9cfe2;
+  --color-night-600: #475481;
+  --color-night-700: #3a4566;
+  --color-night-800: #27304a;
+  --color-night-900: #1b2236;
+  --color-night-950: #0f1733;
+
+  --color-ember-200: #ffe3a8;
+  --color-ember-300: #ffd27a;
+  --color-ember-400: #eab54b;
+  --color-ember-500: #e0a526;
+  --color-ember-600: #b87f14;
+  --color-ember-700: #855a0c;
+
+  /* The same colours by the job they do in the camp UI. */
+  --color-camp-paper: var(--color-parchment-100);
+  --color-camp-card: var(--color-parchment-50);
+  --color-camp-chip: var(--color-parchment-200);
+  --color-camp-rule: var(--color-parchment-300);
+  --color-camp-dashed: var(--color-parchment-400);
+  --color-camp-ink: var(--color-ink-900);
+  --color-camp-ink-soft: var(--color-ink-700);
+  --color-camp-label: var(--color-ink-600);
+  --color-camp-muted: var(--color-ink-500);
+  --color-camp-accent: var(--color-ochre-500);
+  --color-camp-accent-hover: var(--color-ochre-600);
+  --color-camp-on-accent: var(--color-parchment-50);
+  --color-camp-select: var(--color-faience-700);
+  --color-camp-night: var(--color-night-800);
+  --color-camp-night-deep: var(--color-night-900);
+  --color-camp-on-night: var(--color-night-200);
+  --color-camp-glow: var(--color-ember-500);
+  /* The see-through panel over the scene: 80% where the backdrop blurs, 95% where it cannot. */
+  --color-camp-glass: color-mix(in srgb, var(--color-parchment-100) 80%, transparent);
+  --color-camp-glass-solid: color-mix(in srgb, var(--color-parchment-100) 95%, transparent);
+
   --animate-fade-in: fade-in 1s forwards ease-in-out;
   @keyframes fade-in {
     0% {
