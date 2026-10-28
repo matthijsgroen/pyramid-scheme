@@ -3483,9 +3483,11 @@ BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere 
 
 **Import:** `yarn import-tile art/masters/props/mechanism/light/torchLit.webp --tier=mechanism/light --name=torchLit --slot=prop --filter=smooth --scale=0.6513`
 
-### `bone/leverBase` — the cave lever's dome and kerb, in bone
+### `bone/leverBase` — the cave lever's base, a heap of pale stones
 
 The cave's own lever. Cut into `leverBaseBack` and `leverBaseFront` from this one painting, as the default pair is.
+
+**Re-roll:** the designer wants the cave lever's base to be a heap of stones the bone stands in, not a dome in bone colour. It keeps the dome's exact outline so the default's back and front masks still cut it.
 
 **Attach:**
 
@@ -3499,9 +3501,9 @@ THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: the base of a floor leve
 
 THE SECOND ATTACHED IMAGE IS THE CAVE FLOOR IT STANDS ON, dark rock. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
 
-THE CHANGE: the whole piece is WEATHERED BONE. The dome is a great bleached skull-cap of bone, pale ivory #d8cdb4, its ribs the ridges of the bone, fine cracks and pitting along them, a warm tan shadow #a8957a in the hollows between ribs; the slot stays a dark opening. The kerb is a ring of old ivory, a shade warmer and darker than the dome, chipped at its edge. A soft pale catch-light along the upper-left curve. Where the kerb meets the ground, a DARK contact base, #2a221c, a narrow band so the bone sits on the rock instead of floating over it.
+THE CHANGE: the dome and kerb become a HEAP OF STONES piled to exactly the dome's outline — a low round cairn of rounded cave stones, fist-sized and smaller, stacked tight, filling the reference's silhouette edge to edge, with the kerb's ring as a wider bottom course of flatter stones. PALE stones, #cfc6b4 to #b8ad98, each with a pale catch-light on its top and a warm shadow #8a7d68 underneath, the gaps between them a dark #2a221c, so the heap reads light against dark rock. The slot at the top stays a dark opening between the topmost stones: the bone lever stands in it.
 
-Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow. No skulls, no teeth, no figures: bone as a material, nothing more.
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow. Stones only: no bone, no skull, no figures, nothing else in the heap.
 
 BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece, exactly where it is in the reference. No floor, no gradient, no shadow on the magenta.
 ```
