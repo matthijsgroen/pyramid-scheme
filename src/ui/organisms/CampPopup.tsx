@@ -13,7 +13,7 @@ export type CampPopupProps = {
 const TITLE_ID = "camp-popup-title"
 
 // Everything the camp opens (journeys, collection, shop) is a popup over it: an inset panel on a phone that
-// takes the height inside the safe edges, a large centred panel from `lg`.
+// takes the height inside the safe edges, a large centred panel from `lg`. The camp shows through it, blurred.
 export const CampPopup: FC<CampPopupProps> = ({ title, closeLabel, onClose, fill = false, children }) => {
   const escape = closeOnEscape(onClose)
   const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
@@ -21,7 +21,7 @@ export const CampPopup: FC<CampPopupProps> = ({ title, closeLabel, onClose, fill
     trapTab(event)
   }
   return (
-    <div className="fixed inset-0 z-50 flex items-stretch justify-center bg-black/60 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] lg:items-center lg:p-4">
+    <div className="fixed inset-0 z-50 flex items-stretch justify-center bg-black/40 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] lg:items-center lg:p-4">
       <div
         ref={focusOnMount}
         role="dialog"
@@ -29,7 +29,7 @@ export const CampPopup: FC<CampPopupProps> = ({ title, closeLabel, onClose, fill
         aria-labelledby={TITLE_ID}
         tabIndex={-1}
         onKeyDown={onKeyDown}
-        className={`flex min-h-0 w-full flex-col overflow-hidden rounded-[18px] border-2 border-[#2B2118] bg-[#F4EAD5] text-[#2B2118] outline-none ${fill ? "lg:h-full" : ""} lg:max-h-full lg:max-w-4xl lg:rounded-[20px]`}
+        className={`flex min-h-0 w-full flex-col overflow-hidden rounded-[18px] border-2 border-[#2B2118] bg-[#F4EAD5]/95 text-[#2B2118] outline-none supports-backdrop-filter:bg-[#F4EAD5]/80 supports-backdrop-filter:backdrop-blur-md ${fill ? "lg:h-full" : ""} lg:max-h-full lg:max-w-4xl lg:rounded-[20px]`}
       >
         <div className="flex items-center justify-between gap-3 border-b-[1.5px] border-[#D6C4A0] pr-0.5 pl-4 lg:border-b-0 lg:pl-6">
           <h2 id={TITLE_ID} className="font-pyramid text-[22px] lg:text-2xl">
