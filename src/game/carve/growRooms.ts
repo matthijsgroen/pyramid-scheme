@@ -60,12 +60,14 @@ const preferred = (a: Candidate, b: Candidate): boolean =>
 const growsAt = (cell: GridCell, footprintOf: FootprintOf): cell is RoomCell & { decoration: DecorationKind } =>
   cell.type === "room" &&
   (cell.roomType === "fork" || cell.roomType === "chamber") &&
+  cell.mechanism === undefined &&
   cell.decoration !== undefined &&
   isCentreKind(cell.decoration, footprintOf)
 
 /**
- * A fork or pass-through chamber dressed with a centre kind takes the rect its piece needs plus a ring to walk round
- * it, where the floor has one: void, and its own straight arms, which run on to the rect's edge. The rect, ringed
+ * A fork or pass-through chamber dressed with a centre kind, and standing no mechanism, takes the rect its piece needs
+ * plus a ring to walk round it, where the floor has one: void, and its own straight arms, which run on to the rect's
+ * edge. The rect, ringed
  * once more, keeps clear of every other chamber's 3×3 and of every rect grown before it. No cell's type or dirs
  * changes; a room with no such rect stays as it is, with its `decorationFallback`.
  */

@@ -13,7 +13,8 @@ import {
   type RoomCell,
   type RoomType,
 } from "../siteTypes"
-import { BINDING, carveLockFloor, mirrorForkLock } from "../testSupport/lockFixtures"
+import type { Lock } from "../lockAuthoring"
+import { BINDING, carveLockFloor } from "../testSupport/lockFixtures"
 import { assembleFloor } from "./assembleFloor"
 import { plainFloor } from "./carveFixtures"
 import { centreFallbacks, growRooms } from "./growRooms"
@@ -27,6 +28,21 @@ const STAND_INS: Partial<Record<DecorationKind, PropFootprint>> = {
   pillar: SMALL_CENTRE,
 }
 const footprintOf = (kind: DecorationKind): PropFootprint => STAND_INS[kind] ?? decorationFootprint(kind)
+
+/** A plain fork in the entrance between two open arms; a lever in the left arm opens the way out. */
+const branchLock = (): Lock => ({
+  name: "branch",
+  regions: { in: { takes: "free" }, left: { takes: "free" }, right: { takes: "free" }, out: { takes: "free" } },
+  connections: [
+    { between: ["in", "left"] },
+    { between: ["in", "right"] },
+    { between: ["in", "out"], barriers: ["in-out"] },
+  ],
+  gates: { "in-out": { from: "in", to: "out", owners: ["T"] } },
+  mechanics: { T: { control: "toggle", in: "left", starts: "a", opens: { a: [], b: ["in-out"] } } },
+  in: "in",
+  out: "out",
+})
 
 const dirSet = (dirs: string) => new Set(dirs.split("") as Direction[])
 const corridor = (dirs: string, extra: object = {}): GridCell => ({
@@ -177,11 +193,12 @@ describe("growRooms", () => {
   })
 
   it("leaves a dead end, a portal and a mechanism room their size", () => {
-    const mechanism = { states: ["a", "b"], initial: "a", returnsToInitial: true } as unknown as MechanismRecord
+    const mechanism: MechanismRecord = { states: ["rest", "a"], initial: "rest", returnsToInitial: true, positions: [] }
     const rooms: Record<string, GridCell> = {
       deadEnd: room("encounter", "n", { decoration: "basin", tags: ["treasure"] }),
       portal: room("portal", "ns", { decoration: "basin" }),
-      mechanism: room("encounter", "ns", { decoration: "basin", mechanism }),
+      forkSwitch: room("fork", "ns", { decoration: "basin", mechanism }),
+      chamberMechanism: room("chamber", "ns", { decoration: "basin", mechanism }),
     }
     for (const [name, cell] of Object.entries(rooms)) {
       const grid = verticalChamber(9, { "2,4": cell })
@@ -227,7 +244,7 @@ describe("growRooms", () => {
 
   it("leaves a lock floor's walk exactly as it was", () => {
     // The fixture's pools dress nothing, so its forks and chambers are dressed with the stand-in here.
-    const carved = carveLockFloor(mirrorForkLock(), BINDING)
+    const carved = carveLockFloor(branchLock(), BINDING)
     const grid: FloorGrid = {
       ...carved,
       cells: carved.cells.map(row =>
