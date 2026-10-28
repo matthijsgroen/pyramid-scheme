@@ -35,8 +35,11 @@ it ships; tick it off there.
 - [ ] Uitpakken pinned to the bottom on a phone.
 - [ ] Cinzel not loaded; titles in the browser's serif.
 
-**UI changes** (the designer's, to be listed):
+**UI changes** (the designer's):
 
+- [ ] The haul list's icons fit their box: coins, mosaic pieces, map pieces and fragments are whole, not cropped.
+- [ ] On desktop the side panel is gone during a conversation, not left empty.
+- [ ] The popup on mobile and the side panel on desktop: a semi-transparent background with a backdrop blur.
 - [ ]
 
 ### Junior
