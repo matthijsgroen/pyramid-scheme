@@ -9,7 +9,7 @@ const meta = {
   args: {
     sceneRef: () => {},
     hud: <CampHud title="Kamp" onTitleTap={() => {}} settingsLabel="Instellingen" onSettings={() => {}} />,
-    scene: <div className="size-full bg-[#7B5B3A]" />,
+    scene: <div className="size-full bg-ink-500" />,
     card: (
       <ContinueCard
         heading="Verder met"
@@ -18,7 +18,7 @@ const meta = {
         setOffLabel="Op pad"
       />
     ),
-    aside: <div className="flex-1 rounded-[10px] border-2 border-dashed border-[#B8A584] p-3">Aside</div>,
+    aside: <div className="flex-1 rounded-[10px] border-2 border-dashed border-camp-dashed p-3">Aside</div>,
   },
 } satisfies Meta<typeof CampHomeLayout>
 

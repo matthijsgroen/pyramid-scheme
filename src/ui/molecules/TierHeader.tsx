@@ -12,7 +12,7 @@ export type TierHeaderProps = {
 }
 
 const BASE =
-  "flex w-full items-center gap-2 py-0.5 text-left text-xs font-extrabold tracking-widest text-[#5C4A36] uppercase"
+  "flex w-full items-center gap-2 py-0.5 text-left text-xs font-extrabold tracking-widest text-camp-label uppercase"
 
 // The divider over a tier's rows: its name, a line, how far it is. A tier that can be folded is one button
 // with a chevron; the dot there tells there is news inside while it is shut.

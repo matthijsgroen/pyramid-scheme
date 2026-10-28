@@ -35,7 +35,7 @@ const meta = {
       },
       {
         key: "c",
-        visual: <span className="size-full bg-[#E0A526]" />,
+        visual: <span className="size-full bg-ember-500" />,
         title: "+85 munten",
         note: "Losse munten onderweg",
       },

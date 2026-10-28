@@ -69,7 +69,7 @@ export const CollectionTabs: FC<CollectionTabsProps> = ({ tabs, selected, onSele
   )
 
   return (
-    <div className="flex items-stretch rounded-xl bg-[#E9DCBF] text-[#2B2118]">
+    <div className="flex items-stretch rounded-xl bg-camp-chip text-camp-ink">
       {overflows && arrow(-1, more.left)}
       <div
         ref={rowRef}
@@ -91,7 +91,7 @@ export const CollectionTabs: FC<CollectionTabsProps> = ({ tabs, selected, onSele
               aria-controls={panelId}
               tabIndex={active ? 0 : -1}
               onClick={() => onSelect(tab.id)}
-              className={`h-11 flex-1 shrink-0 rounded-[9px] px-3 text-[13px] font-extrabold whitespace-nowrap ${active ? "bg-[#2B2118] text-[#FFF8EA]" : "bg-transparent"}`}
+              className={`h-11 flex-1 shrink-0 rounded-[9px] px-3 text-[13px] font-extrabold whitespace-nowrap ${active ? "bg-camp-ink text-camp-card" : "bg-transparent"}`}
             >
               {tab.label}
             </button>

@@ -29,25 +29,25 @@ export const ContinueCard: FC<ContinueCardProps> = ({
     <button
       type="button"
       onClick={onSetOff}
-      className="h-13 w-full rounded-xl bg-[#A3401A] px-4 text-[17px] font-extrabold text-[#FFF8EA] hover:bg-[#8A3515]"
+      className="h-13 w-full rounded-xl bg-camp-accent px-4 text-[17px] font-extrabold text-camp-on-accent hover:bg-camp-accent-hover"
     >
       {setOffLabel}
     </button>
   )
   return (
-    <div className="flex flex-col gap-3 text-[#2B2118]">
-      <div className="flex flex-col gap-2.5 rounded-[14px] border-2 border-[#2B2118] bg-[#FFF8EA] p-4 lg:p-[18px]">
-        <div className="text-xs font-extrabold tracking-widest text-[#5C4A36] uppercase">{heading}</div>
+    <div className="flex flex-col gap-3 text-camp-ink">
+      <div className="flex flex-col gap-2.5 rounded-[14px] border-2 border-camp-ink bg-camp-card p-4 lg:p-[18px]">
+        <div className="text-xs font-extrabold tracking-widest text-camp-label uppercase">{heading}</div>
         {journeyName ? (
           <>
             <div className="flex flex-col gap-0.5">
               <div className="font-pyramid text-lg lg:text-xl">{journeyName}</div>
-              {detail && <div className="text-sm text-[#5C4A36]">{detail}</div>}
+              {detail && <div className="text-sm text-camp-label">{detail}</div>}
             </div>
             {setOffSlot ? setOffSlot(setOff) : setOff}
           </>
         ) : (
-          emptyText && <div className="text-[15px] text-[#4A3B2A]">{emptyText}</div>
+          emptyText && <div className="text-[15px] text-camp-ink-soft">{emptyText}</div>
         )}
       </div>
       {hint &&
@@ -55,14 +55,14 @@ export const ContinueCard: FC<ContinueCardProps> = ({
           <button
             type="button"
             onClick={hint.onOpen}
-            className="flex items-center gap-2.5 rounded-xl bg-[#E9DCBF] px-3 py-2.5 text-left text-sm"
+            className="flex items-center gap-2.5 rounded-xl bg-camp-chip px-3 py-2.5 text-left text-sm"
           >
-            <span className="size-2.5 flex-none rounded-full bg-[#A3401A]" />
+            <span className="size-2.5 flex-none rounded-full bg-camp-accent" />
             <span>{hint.text}</span>
           </button>
         ) : (
-          <div className="flex items-center gap-2.5 rounded-xl bg-[#E9DCBF] px-3 py-2.5 text-sm">
-            <span className="size-2.5 flex-none rounded-full bg-[#A3401A]" />
+          <div className="flex items-center gap-2.5 rounded-xl bg-camp-chip px-3 py-2.5 text-sm">
+            <span className="size-2.5 flex-none rounded-full bg-camp-accent" />
             <span>{hint.text}</span>
           </div>
         ))}

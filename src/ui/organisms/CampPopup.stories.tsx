@@ -15,7 +15,7 @@ export const WithFiller: Story = {
     <CampPopup {...args}>
       <ul className="flex flex-col gap-2">
         {Array.from({ length: 12 }, (_, i) => (
-          <li key={i} className="rounded-[10px] border-2 border-[#D6C4A0] bg-[#FFF8EA] px-3 py-2.5 font-extrabold">
+          <li key={i} className="rounded-[10px] border-2 border-camp-rule bg-camp-card px-3 py-2.5 font-extrabold">
             Reis {i + 1}
           </li>
         ))}

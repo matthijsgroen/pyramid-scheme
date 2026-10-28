@@ -41,7 +41,7 @@ export const StructureRow: FC<StructureRowProps> = ({ name, artUrl, found, total
           {parts.map(part => (
             <li
               key={part.id}
-              className={`flex items-center gap-2 rounded-md text-sm text-amber-950 ${part.newLabel ? "border-2 border-[#A3401A] px-1" : ""}`}
+              className={`flex items-center gap-2 rounded-md text-sm text-amber-950 ${part.newLabel ? "border-2 border-camp-accent px-1" : ""}`}
             >
               <span className="flex size-6 shrink-0 items-center justify-center">
                 {part.name !== undefined && part.iconUrl && (

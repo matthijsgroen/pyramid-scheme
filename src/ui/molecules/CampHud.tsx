@@ -24,7 +24,7 @@ export const CampHud: FC<CampHudProps> = ({
   onSettings,
   children,
 }) => (
-  <header className="flex h-14 items-center justify-between bg-[#27304A]/90 px-4 text-[#F4EAD5] lg:h-16 lg:px-7">
+  <header className="flex h-14 items-center justify-between bg-camp-night/90 px-4 text-camp-paper lg:h-16 lg:px-7">
     <div className="flex items-center gap-2">
       <button
         type="button"
@@ -33,11 +33,11 @@ export const CampHud: FC<CampHudProps> = ({
       >
         {title}
         {tapsLeft !== undefined && tapsLeft >= 1 && tapsLeft <= 3 && (
-          <span className="ml-2 text-sm font-normal text-[#C9CFE2]">{tapsLeft}…</span>
+          <span className="ml-2 text-sm font-normal text-camp-on-night">{tapsLeft}…</span>
         )}
       </button>
       {devBadge && (
-        <span className="rounded bg-[#A3401A] px-1.5 py-0.5 text-[10px] font-extrabold tracking-wider text-[#FFF8EA]">
+        <span className="rounded bg-camp-accent px-1.5 py-0.5 text-[10px] font-extrabold tracking-wider text-camp-on-accent">
           {devBadge}
         </span>
       )}
@@ -48,7 +48,7 @@ export const CampHud: FC<CampHudProps> = ({
         type="button"
         aria-label={settingsLabel}
         onClick={onSettings}
-        className="flex size-9 items-center justify-center rounded-full text-[#F4EAD5] hover:bg-white/10"
+        className="flex size-9 items-center justify-center rounded-full text-camp-paper hover:bg-white/10"
       >
         <GearIcon size={22} />
       </button>

@@ -41,16 +41,18 @@ const Fitted: FC<{ children: ReactNode }> = ({ children }) => {
 
 // One line of the haul brought home.
 export const HaulRow: FC<HaulRowProps> = ({ visual, title, note, badge }) => (
-  <div className="flex items-center gap-3 rounded-[10px] border-2 border-transparent bg-[#F4EAD5] p-2.5 text-[#2B2118] lg:border-[#D6C4A0] lg:bg-[#FFF8EA]">
+  <div className="flex items-center gap-3 rounded-[10px] border-2 border-transparent bg-camp-paper p-2.5 text-camp-ink lg:border-camp-rule lg:bg-camp-card">
     <span className="relative flex size-10 flex-none overflow-hidden rounded-lg">
       <Fitted>{visual}</Fitted>
     </span>
     <span className="flex flex-1 flex-col gap-px">
       <span className="text-[15px] font-extrabold">{title}</span>
-      {note && <span className="text-[13px] text-[#5C4A36]">{note}</span>}
+      {note && <span className="text-[13px] text-camp-label">{note}</span>}
     </span>
     {badge && (
-      <span className="rounded-[10px] bg-[#A3401A] px-2 py-0.5 text-xs font-extrabold text-[#FFF8EA]">{badge}</span>
+      <span className="rounded-[10px] bg-camp-accent px-2 py-0.5 text-xs font-extrabold text-camp-on-accent">
+        {badge}
+      </span>
     )}
   </div>
 )

@@ -58,7 +58,7 @@ const groups = [
 ]
 
 const footer = (
-  <p className="rounded-[10px] bg-[#E9DCBF] px-3 py-2.5 text-[13px] text-[#4A3B2A]">De volgende tier komt eraan.</p>
+  <p className="rounded-[10px] bg-camp-chip px-3 py-2.5 text-[13px] text-camp-ink-soft">De volgende tier komt eraan.</p>
 )
 
 const meta = {
@@ -73,7 +73,7 @@ type Story = StoryObj<typeof meta>
 export const Phone: Story = {
   decorators: [
     Story => (
-      <div className="h-150 w-[358px] overflow-auto bg-[#F4EAD5] p-3.5">
+      <div className="h-150 w-[358px] overflow-auto bg-camp-paper p-3.5">
         <Story />
       </div>
     ),
@@ -82,7 +82,7 @@ export const Phone: Story = {
 export const InPanel: Story = {
   decorators: [
     Story => (
-      <div className="h-150 w-110 overflow-auto bg-[#F4EAD5] p-3.5">
+      <div className="h-150 w-110 overflow-auto bg-camp-paper p-3.5">
         <Story />
       </div>
     ),

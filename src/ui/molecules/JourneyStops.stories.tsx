@@ -16,7 +16,7 @@ const meta = {
   },
   decorators: [
     Story => (
-      <div className="w-[330px] bg-[#F4EAD5] p-3.5">
+      <div className="w-[330px] bg-camp-paper p-3.5">
         <Story />
       </div>
     ),
@@ -30,7 +30,7 @@ export const Mixed: Story = {}
 export const WithModSlot: Story = {
   render: args => (
     <JourneyStops {...args}>
-      <p className="rounded-[10px] bg-[#E9DCBF] px-3 py-2 text-[13px]">Een kaartje van een mod</p>
+      <p className="rounded-[10px] bg-camp-chip px-3 py-2 text-[13px]">Een kaartje van een mod</p>
     </JourneyStops>
   ),
 }

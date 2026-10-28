@@ -8,7 +8,7 @@ const meta = {
   args: { name: "Vallei van de Smeden", status: "open", exterior: "pyramid", currentLabel: "NU" },
   decorators: [
     Story => (
-      <div className="w-[358px] bg-[#F4EAD5] p-3.5">
+      <div className="w-[358px] bg-camp-paper p-3.5">
         <Story />
       </div>
     ),

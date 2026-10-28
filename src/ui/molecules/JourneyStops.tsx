@@ -23,7 +23,7 @@ const CHIP = "relative flex size-11 items-center justify-center rounded-full bor
 // The sites of a journey: their kind once, then one numbered stop each, so a long journey stays one
 // short row. Only a stop already passed is a button; one ahead or buried is shown but cannot be entered.
 export const JourneyStops: FC<JourneyStopsProps> = ({ label, stops, onStop, children }) => (
-  <div className="flex flex-col gap-2 text-[#2B2118]">
+  <div className="flex flex-col gap-2 text-camp-ink">
     <div className="flex flex-wrap items-center gap-2">
       <span className="text-sm font-bold">{label}</span>
       <ol className="flex flex-wrap gap-2">
@@ -32,7 +32,7 @@ export const JourneyStops: FC<JourneyStopsProps> = ({ label, stops, onStop, chil
             <>
               {stop.n}
               {stop.dot && (
-                <span className="absolute -top-0.5 -right-0.5 flex rounded-full ring-2 ring-[#FFF8EA]">
+                <span className="absolute -top-0.5 -right-0.5 flex rounded-full ring-2 ring-camp-card">
                   <NoticeDot label={stop.dotLabel} />
                 </span>
               )}
@@ -45,14 +45,14 @@ export const JourneyStops: FC<JourneyStopsProps> = ({ label, stops, onStop, chil
                   type="button"
                   aria-label={`${label} ${stop.n}`}
                   onClick={() => onStop(stop.n)}
-                  className={`${CHIP} border-[#A3401A] bg-[#A3401A] text-[#FFF8EA]`}
+                  className={`${CHIP} border-camp-accent bg-camp-accent text-camp-on-accent`}
                 >
                   {inner}
                 </button>
               ) : (
                 <span
                   aria-label={`${label} ${stop.n}`}
-                  className={`${CHIP} border-dashed border-[#B8A584] text-[#5C4A36] ${stop.state === "buried" ? "opacity-60" : ""}`}
+                  className={`${CHIP} border-dashed border-camp-dashed text-camp-label ${stop.state === "buried" ? "opacity-60" : ""}`}
                 >
                   {inner}
                 </span>

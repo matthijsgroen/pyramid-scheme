@@ -6,13 +6,13 @@ const meta = {
   component: HaulRow,
   parameters: { layout: "centered" },
   args: {
-    visual: <span className="size-full bg-[#E0A526]" />,
+    visual: <span className="size-full bg-ember-500" />,
     title: "+85 munten",
     note: "Losse munten onderweg",
   },
   decorators: [
     Story => (
-      <div className="w-80 bg-[#27304A] p-4">
+      <div className="w-80 bg-camp-night p-4">
         <Story />
       </div>
     ),

@@ -35,7 +35,7 @@ export const CollectibleSlot: FC<CollectibleSlotProps> = props => {
   const slot = <SlotBody {...props} />
   if (!props.newLabel || props.state === "empty") return slot
   return (
-    <div className="relative inline-block w-fit rounded-[10px] border-2 border-[#A3401A] p-0.5">
+    <div className="relative inline-block w-fit rounded-[10px] border-2 border-camp-accent p-0.5">
       {slot}
       <NewBadge label={props.newLabel} className="absolute -top-1.5 -right-1.5" />
     </div>

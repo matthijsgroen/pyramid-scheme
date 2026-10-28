@@ -7,7 +7,7 @@ const meta = {
   args: { title: "Junior", progress: "1 van 5 klaar" },
   decorators: [
     Story => (
-      <div className="w-[358px] bg-[#F4EAD5] p-3.5">
+      <div className="w-[358px] bg-camp-paper p-3.5">
         <Story />
       </div>
     ),

@@ -26,7 +26,7 @@ const Harness = ({ initialOwned = zero() }: { initialOwned?: TierCounts }) => {
   const find = (tier: MosaicTier, n: number) => setOwned(o => ({ ...o, [tier]: o[tier] + n }))
 
   return (
-    <div className="flex h-screen flex-col bg-[#F4EAD5]">
+    <div className="flex h-screen flex-col bg-camp-paper">
       <MosaicWindow
         owned={owned}
         placed={placed}

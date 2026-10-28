@@ -7,7 +7,7 @@ const meta = {
   args: { label: "61 van 252 stukjes", value: 61, max: 252 },
   decorators: [
     Story => (
-      <div className="w-[330px] bg-[#F4EAD5] p-3.5">
+      <div className="w-[330px] bg-camp-paper p-3.5">
         <Story />
       </div>
     ),

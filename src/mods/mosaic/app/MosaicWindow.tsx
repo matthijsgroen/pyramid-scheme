@@ -105,7 +105,7 @@ export const MosaicWindow: FC<{
               key={tier}
               disabled={placing || !onNarrate}
               onClick={() => onNarrate?.(beatFor(tier), () => {}, { replay: true })}
-              className="rounded-full border border-[#B8A584] px-3 py-1 text-xs text-[#5C4A36] disabled:opacity-50"
+              className="rounded-full border border-camp-dashed px-3 py-1 text-xs text-camp-label disabled:opacity-50"
             >
               ℹ {t(`mosaic.panel.${tier}`)}
             </button>

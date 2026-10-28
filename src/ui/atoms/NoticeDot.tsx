@@ -7,6 +7,6 @@ export const NoticeDot: FC<{ label?: string }> = ({ label }) => (
     role={label ? "img" : undefined}
     aria-label={label}
     aria-hidden={label ? undefined : true}
-    className="size-2.5 shrink-0 rounded-full bg-[#A3401A]"
+    className="size-2.5 shrink-0 rounded-full bg-camp-accent"
   />
 )

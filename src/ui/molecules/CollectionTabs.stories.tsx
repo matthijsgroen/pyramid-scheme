@@ -16,7 +16,7 @@ const meta = {
   args: { tabs, selected: "a", onSelect: () => {}, label: "Je verzameling", panelId: "story-panel" },
   decorators: [
     Story => (
-      <div className="w-[358px] bg-[#F4EAD5] p-3.5">
+      <div className="w-[358px] bg-camp-paper p-3.5">
         <Story />
       </div>
     ),

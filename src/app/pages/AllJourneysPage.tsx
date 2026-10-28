@@ -283,11 +283,11 @@ export const AllJourneys: FC<{ startGame: () => void; compact?: boolean }> = ({ 
         groups={model.groups.map(groupFor)}
         footer={
           comingSoon && (
-            <div className="rounded-xl border-2 border-dashed border-[#B8A584] p-3 text-left">
+            <div className="rounded-xl border-2 border-dashed border-camp-dashed p-3 text-left">
               <div className="mb-1 text-[15px] font-extrabold">
                 🚧 {t("ui.tierComingSoonTitle", { tier: t(`difficulty.${comingSoon}`) })}
               </div>
-              <p className="text-[13px] text-[#4A3B2A]">
+              <p className="text-[13px] text-camp-ink-soft">
                 {t("ui.tierComingSoon", { tier: t(`difficulty.${comingSoon}`) })}
               </p>
             </div>
