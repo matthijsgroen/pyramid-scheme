@@ -316,6 +316,67 @@ const PalettePage: FC = () => {
   )
 }
 
+const EDGE = "ring-1 ring-white/45 ring-inset"
+
+const GLASS_VARIANTS: { name: string; note: string; className: string }[] = [
+  {
+    name: "Today",
+    note: "parchment-100/80, blur 12px",
+    className: "rounded-[18px] border-2 border-camp-ink bg-camp-glass backdrop-blur-md",
+  },
+  {
+    name: "A light frost",
+    note: "parchment-100/60, blur 20px, saturate 140%, light edge",
+    className: `rounded-[18px] bg-parchment-100/60 backdrop-blur-[20px] backdrop-saturate-140 ${EDGE}`,
+  },
+  {
+    name: "B thick frost",
+    note: "parchment-100/70 gradient, blur 24px, shadow, light edge",
+    className: `rounded-[18px] bg-linear-to-b from-parchment-50/80 to-parchment-100/70 backdrop-blur-[24px] shadow-[0_10px_30px_-6px_rgba(15,23,51,0.45)] ${EDGE}`,
+  },
+  {
+    name: "C tinted glass",
+    note: "warm tint 55%, blur 16px, saturate 160%, light edge",
+    className: `rounded-[18px] bg-[#EFD9B0]/55 backdrop-blur-[16px] backdrop-saturate-160 ${EDGE}`,
+  },
+]
+
+const GlassVariantsPage: FC = () => {
+  const { width, height } = useViewport()
+  return (
+    <div className="relative h-screen overflow-hidden">
+      <div className="absolute inset-0">
+        <CampScene width={width} height={height} chapter="starter" found={fullFound(CAMP_CATALOGUE, "starter")} />
+      </div>
+      <div className="absolute inset-0 overflow-auto px-3 py-4">
+        <div className="mx-auto grid max-w-350 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {GLASS_VARIANTS.map(v => (
+            <section
+              key={v.name}
+              className={`flex min-h-[70vh] flex-col gap-3 p-4 text-camp-ink lg:mt-[12vh] ${v.className}`}
+            >
+              <h2 className="font-pyramid text-xl">{v.name}</h2>
+              <p className="text-xs text-camp-label">{v.note}</p>
+              <p className="text-sm">
+                Verzameling <NewBadge label="NIEUW" />
+              </p>
+              <p className="text-sm text-camp-ink-soft">Je kamp heeft iets nieuws gevonden onderweg.</p>
+              <ContinueCard
+                heading="Verder met"
+                journeyName="Vallei van de Ambachtslieden"
+                detail="Piramide 3 van 5 · Junior"
+                setOffLabel="Op pad"
+              />
+              <HaulRow visual={coin} title="+85 munten" note="Losse munten onderweg" />
+              <HaulRow visual={tile} title="Bronzen waterkruik" note="Nieuw in je kamp" badge="NIEUW" />
+            </section>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const meta = {
   parameters: { layout: "fullscreen" },
   render: () => <PalettePage />,
@@ -324,3 +385,5 @@ const meta = {
 export default meta
 
 export const CampPalette: StoryObj<typeof meta> = {}
+
+export const GlassVariants: StoryObj<typeof meta> = { render: () => <GlassVariantsPage /> }
