@@ -9,11 +9,9 @@ Tick these off one by one; the release is `yarn release` and the merge, both the
 
 **Walks:** none for this release — the Sphinx walk waits on its key, and Djoser (expert_4) is past the starter tier; both stay under §5.
 
-**Checks in the game:**
+**Checks in the game** (hearts and waterskins wait for expert, where the traps start):
 
 - [ ] A save from before this release: the new-version popup shows, the explorer's welcome only after it.
-- [ ] Hearts full on the coming-home screen after trap damage.
-- [ ] A waterskin heals one heart while hurt.
 - [ ] A camp part popup and a find popup with its art.
 - [ ] A new chapter after finishing the starter tier.
 - [ ] A tomb at 2 of 3 map pieces: locked, with the map hint.
