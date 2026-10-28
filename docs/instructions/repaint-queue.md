@@ -3487,7 +3487,7 @@ BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere 
 
 The cave's own lever. Cut into `leverBaseBack` and `leverBaseFront` from this one painting, as the default pair is.
 
-**Re-roll:** the designer wants the cave lever's base to be a heap of stones the bone stands in, not a dome in bone colour. It keeps the dome's exact outline so the default's back and front masks still cut it.
+**Re-roll:** the designer wants the cave lever's base to be a heap of stones the bone stands in, not a dome in bone colour. It keeps the dome's exact outline so the default's back and front masks still cut it. The first heap came back a tall cone filling the frame, with a bone standing in its slot: the heap is now held to the dome's low size, and the slot is empty.
 
 **Attach:**
 
@@ -3501,9 +3501,10 @@ THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: the base of a floor leve
 
 THE SECOND ATTACHED IMAGE IS THE CAVE FLOOR IT STANDS ON, dark rock. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
 
-THE CHANGE: the dome and kerb become a HEAP OF STONES piled to exactly the dome's outline — a low round cairn of rounded cave stones, fist-sized and smaller, stacked tight, filling the reference's silhouette edge to edge, with the kerb's ring as a wider bottom course of flatter stones. PALE stones, #cfc6b4 to #b8ad98, each with a pale catch-light on its top and a warm shadow #8a7d68 underneath, the gaps between them a dark #2a221c, so the heap reads light against dark rock. The slot at the top stays a dark opening between the topmost stones: the bone lever stands in it.
+THE CHANGE: the dome and kerb become a HEAP OF STONES piled to exactly the dome's outline — a low round cairn of rounded cave stones, fist-sized and smaller, stacked tight, filling the reference's silhouette edge to edge, with the kerb's ring as a wider bottom course of flatter stones. PALE stones, #cfc6b4 to #b8ad98, each with a pale catch-light on its top and a warm shadow #8a7d68 underneath, the gaps between them a dark #2a221c, so the heap reads light against dark rock. The slot at the top stays an EMPTY dark hole between the topmost stones — nothing stands in it, nothing sticks out of it.
 
-Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow. Stones only: no bone, no skull, no figures, nothing else in the heap.
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow. Stones only: NO BONE, no stick, no handle, no lever arm, no skull, nothing in or on the heap — the arm is a separate picture.
+SIZE: the heap is LOW and exactly as big as the reference dome — the same width, the same height, standing in the same place in the BOTTOM of the frame. Everything above the reference dome's top stays plain magenta. Do not build it taller, do not let it grow into a cone or a tower.
 
 BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece, exactly where it is in the reference. No floor, no gradient, no shadow on the magenta.
 ```
