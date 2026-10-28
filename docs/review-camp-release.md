@@ -57,6 +57,7 @@ it ships; tick it off there.
 
 ### Wizard
 
+- [ ] More floor locks on the wizard floors, the designer's (designer-todo.md); the web puzzles stand on them.
 - [ ] The web puzzles: the wizard_3 sand web lock over the wizard floor locks, its content the designer's
       (sand-pyramid.md; engine and editor on main, slice 11 waits on the designer).
 - [ ] Art: `wizard/wall-face`, `wizard/threshold`; `door/ward-wizard`.
