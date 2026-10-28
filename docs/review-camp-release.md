@@ -7,9 +7,7 @@ down: the summary, then the decisions by phase, the drafts, what failed, and wha
 
 Tick these off one by one; the release is `yarn release` and the merge, both the designer's.
 
-**Walks** (steps under §5; the ward stair to the Sphinx waits, since its key is not obtainable yet):
-
-- [ ] Piramide van Djoser (expert_4) level 4, `buildersLift`: side paths in the lock's corridors.
+**Walks:** none for this release — the Sphinx walk waits on its key, and Djoser (expert_4) is past the starter tier; both stay under §5.
 
 **Checks in the game:**
 
