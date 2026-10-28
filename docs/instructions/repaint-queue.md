@@ -3545,27 +3545,26 @@ BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere 
 
 **Import:** `yarn import-tile art/masters/props/mechanism/light/bone/leverArm.webp --tier=mechanism/light/bone --name=leverArm --slot=prop --filter=smooth --no-trim`
 
-### `bone/torchUnlit` — the cave's torch to light: a bone pillar, unlit
+### `bone/torchUnlit` — the cave's torch to light: a bone standing out of the ground, unlit
+
+**Re-roll:** the first roll was the default torch in bone colour — base, collars and post — and the designer wants a real bone sticking out of the ground with the torch at its tip. The cave-floor reference is gone, so the background stays magenta.
 
 **Attach:**
 
 1. `art/masters/props/default/torchUnlit.webp` — the piece itself, to edit: shape, silhouette, camera
-2. `art/masters/surfaces/cave-floor.webp` — the cave's rock floor it must read on, for value only
 
 ```
 FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
 
-THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: a standing torch — a stepped octagonal BASE, a tall POST with a collar at its foot and below its head, and a HEAD at the top, unlit. Same object, same camera. Keep every edge, every proportion and every silhouette exactly as in the reference image, except the one change of shape below — do not move, resize, straighten, add, remove or restyle any other part of it, and do not change the angle it stands at. Repaint material, value and light only, with ONE change of shape below.
+THE FIRST ATTACHED IMAGE IS THE PIECE, already painted: a standing torch — a stepped octagonal BASE, a tall POST with a collar at its foot and below its head, and a HEAD at the top, unlit. Same object, same camera. Keep its height, where it stands and the camera exactly as in the reference: the piece stands where the reference torch stands and is as tall. The SHAPE changes as described below.
 
-THE SECOND ATTACHED IMAGE IS THE CAVE FLOOR IT STANDS ON, dark rock. Take ONLY its darkness, as the value the piece must stand out against. Nothing of that floor appears in the picture.
+THE CHANGE OF SHAPE: the torch IS A BONE — one real long bone, like a thigh bone, standing upright and stuck into the ground, as tall as the reference torch. NO octagonal base, no collars, no post: the bone's lower end goes straight down into a small heap of broken rock and grit at its foot, half buried, where the reference's base is. Its upper end, the bone's rounded KNOB, is the torch head: wrapped in old cloth soaked in pitch and bound with cord, where the reference's head is.
 
-THE ONE CHANGE OF SHAPE: the post is too thin to read. Paint it about half again as wide, a PILLAR now rather than a pole, in the same place, the same height. The base, the collars and the head keep their size.
+THE MATERIAL: weathered bone, pale ivory #d8cdb4, faintly grained, a warm tan shadow #a8957a down its right side and a pale catch-light up its left. The wrapping on the knob is dark and sooted, #4a3c30, the darkest thing on the piece. The rock heap at its foot is dark grey #3a332c with paler chips, and a dark contact shadow #2a221c where it meets the ground.
 
-THE CHANGE: the base and the pillar are BONE-COLOURED, weathered: pale ivory #d8cdb4, faintly grained and pitted, a warm tan shadow #a8957a down the pillar's right side and under each step of the base, a pale catch-light up the pillar's left edge and along each step's top. The collars are a darker, older ivory. The head is the same flame cup as the reference, unlit: its wrapping dark and sooted, #4a3c30, the darkest thing on the piece. Where the base meets the ground, a DARK contact base, #2a221c, a narrow band so it sits on the rock.
+Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow. No flame, no smoke. One bone and its wrapping, nothing else: no skull, no teeth, no figures, no second bone.
 
-Matte paint, soft brush texture, no outlines: the catch-lights are lighter paint, not gloss, not shine, not a glow. No flame, no smoke. No skulls, no teeth, no figures: bone as a colour and a material, nothing more.
-
-BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece. No floor, no gradient, no shadow on the magenta.
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the piece. NO floor, no rock beyond the small heap at its foot, no texture, no gradient, no shadow on the magenta.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -3576,19 +3575,19 @@ yarn import-tile art/masters/props/mechanism/light/bone/torchUnlit.webp --tier=m
   --filter=smooth --seat="$SHADOW" --scale=0.5639
 ```
 
-### `bone/torchLit` — the cave's bone pillar, lit
+### `bone/torchLit` — the cave's bone torch, lit
 
 **WAITS ON `bone/torchUnlit`**, for `light/torchLit`'s reason: an edit of the landed unlit one, so the two coincide.
 
 **Attach:**
 
-1. `art/masters/props/mechanism/light/bone/torchUnlit.webp` — the bone pillar unlit, to edit
+1. `art/masters/props/mechanism/light/bone/torchUnlit.webp` — the bone torch unlit, to edit
 2. `art/masters/props/default/torchLit.webp` — the default lit torch: the flame to add, and how far it reaches
 
 ```
 FRAME: portrait, exactly as the first reference, but taller at the top by the flame, as the second reference is. Do not re-compose it into a square. Paint over the first reference image itself.
 
-THE FIRST ATTACHED IMAGE IS A BONE PILLAR TORCH, unlit, already painted. Keep every edge, every proportion and every silhouette of it exactly as it is — base, pillar, collars and head unchanged, the same paint. Do not move, resize, straighten, add, remove or restyle any part of it.
+THE FIRST ATTACHED IMAGE IS A BONE STANDING OUT OF THE GROUND, its knob wrapped as a torch head, unlit, already painted. Keep every edge, every proportion and every silhouette of it exactly as it is — base, pillar, collars and head unchanged, the same paint. Do not move, resize, straighten, add, remove or restyle any part of it.
 
 THE SECOND ATTACHED IMAGE IS A TORCH OF THE SAME SHAPE, LIT. Take ONLY its flame: add that flame on top of the head, the same shape, the same size, the same place. The head's top is lit warm orange where the flame sits in it.
 
