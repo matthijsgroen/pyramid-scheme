@@ -423,6 +423,15 @@ export const litClaimOwner = (grid: FloorGrid, claims: RoomClaims, r: number, c:
   return owner?.type === "room" && owner.state !== "fogged" ? owner : undefined
 }
 
+// The grown room whose rect holds this cell, the node's own included, if that room is lit.
+export const litGrownOwner = (grid: FloorGrid, r: number, c: number): RoomCell | undefined => {
+  const ownerKey = grownCells(grid).get(`${r},${c}`)
+  if (!ownerKey) return undefined
+  const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
+  const owner = grid.cells[ownerRow]?.[ownerCol]
+  return owner?.type === "room" && owner.state !== "fogged" ? owner : undefined
+}
+
 // True if the void/corridor cell at `key` was claimed by a junction (fork) room — the other end of
 // a fork-to-fork merge (see isPassable below).
 const claimedByFork = (grid: FloorGrid, claims: RoomClaims, key: string): boolean => {

@@ -220,6 +220,19 @@ describe("ExplorerDot in a grown room", () => {
     })
   })
 
+  it("announces null once he sets out from a corridor point after a room, and never before one", () => {
+    const onWaypoint = vi.fn()
+    const { frame, onArrive } = walk([2, 7], [2, 0], { onWaypoint })
+    while (!onArrive.mock.calls.length) frame()
+    const roomPoints = waypointsOf(findPath(grid, [2, 7], [2, 0])).filter(p => p.inRoom)
+    expect(onWaypoint.mock.calls.map(([p]) => p)).toEqual([...roomPoints, null])
+
+    const plain = vi.fn()
+    const first = walk([2, 0], [2, 1], { onWaypoint: plain })
+    while (!first.onArrive.mock.calls.length) first.frame()
+    expect(plain).not.toHaveBeenCalled()
+  })
+
   it("walks a route through no grown room on exactly the frames it walks without waypointsOf", () => {
     const plain = revealAll(floorFrom(["E..", "  .", "  R"]))
     const offset = (r: number, c: number) => (r === 2 && c === 2 ? { dx: 7, dy: -3 } : { dx: 0, dy: 1 })

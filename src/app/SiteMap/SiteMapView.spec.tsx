@@ -2935,4 +2935,17 @@ describe("SiteMapView — a grown room", () => {
     })
     expect(standing).toMatchSnapshot()
   })
+
+  it("draws a piece anchored on the room's own node, and hides it while that room is fogged", () => {
+    const grownRoom = {
+      rect: { top: 1, left: 2, rows: 4, cols: 5 },
+      piece: { kind: "basin" as const, top: GROWN_FORK[0], left: GROWN_FORK[1], rows: 1, cols: 2 },
+    }
+    const onNode = `${GROWN_FORK[0]},${GROWN_FORK[1]}`
+    const lit = render(<SiteMapView grid={revealAll(grownForkFloor({ grownRoom }, true))} explorerPos={[2, 0]} />)
+    expect(lit.container.querySelector(`[data-centre-piece="${onNode}"]`)).not.toBeNull()
+    lit.unmount()
+    const fogged = render(<SiteMapView grid={grownForkFloor({ grownRoom }, true)} explorerPos={[2, 0]} />)
+    expect(fogged.container.querySelector("[data-centre-piece]")).toBeNull()
+  })
 })

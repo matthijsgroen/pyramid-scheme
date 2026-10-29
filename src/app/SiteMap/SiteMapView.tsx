@@ -96,6 +96,7 @@ import {
   floorTier,
   isPassable,
   litClaimOwner,
+  litGrownOwner,
   tileRegionsFor,
   type RoomClaims,
 } from "./roomClaims"
@@ -1392,9 +1393,10 @@ export const SiteMapView = ({
   // destination, so the old markers no longer apply), and don't show the new ones at the
   // far end until the dot actually arrives there rather than while it's still gliding.
   const [settledExplorerPos, setSettledExplorerPos] = useState(explorerPos)
-  // The room point he last set out from on a walk under way, and the point that stretch heads for; cleared on arrival.
+  // The room point he last set out from on a walk under way, and the point that stretch heads for; cleared once he
+  // sets out from a corridor point and on arrival.
   const [roomStretch, setRoomStretch] = useState<{ at: WalkPoint; to?: WalkPoint } | null>(null)
-  const onWaypoint = useCallback((at: WalkPoint, to?: WalkPoint) => setRoomStretch({ at, to }), [])
+  const onWaypoint = useCallback((at: WalkPoint | null, to?: WalkPoint) => setRoomStretch(at ? { at, to } : null), [])
   const isTraveling = !!(
     explorerPos &&
     settledExplorerPos &&
@@ -1572,12 +1574,13 @@ export const SiteMapView = ({
     }))
     for (const [cellKey, kind] of claims.decorationAt) {
       const [r, c] = cellKey.split(",").map(Number)
-      const owner = litClaimOwner(grid, claims, r, c)
+      // A grown room's piece belongs to its room's node, which its anchor may be.
+      const piece = centrePieces.get(cellKey)
+      const owner = piece ? litGrownOwner(grid, r, c) : litClaimOwner(grid, claims, r, c)
       if (!owner) continue
       const { cx, cy } = cellCenter(r, c)
       // A prop bigger than a cell spans its footprint from the anchor and sorts by its bottom row; a grown room's
       // piece spans the cells the carve gave it.
-      const piece = centrePieces.get(cellKey)
       const frame = propFrame(
         r,
         c,
