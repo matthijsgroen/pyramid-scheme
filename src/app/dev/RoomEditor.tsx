@@ -3,28 +3,20 @@ import { useTranslation } from "react-i18next"
 import { difficulties } from "@/data/difficultyLevels"
 import { prefabFaults, variantsOf } from "@/game/prefabChecks"
 import { parsePrefab } from "@/game/prefabNotation"
+import { printPrefab } from "@/game/prefabPrint"
 import type { Prefab } from "@/game/prefabTypes"
 import type { Direction, Tileset } from "@/game/siteTypes"
 import { prefabChoices } from "@/app/SiteMap/prefabPreviewFloor"
 import { PrefabRoomPreview } from "@/app/SiteMap/PrefabRoomPreview"
 import { addLegendLine, roomPalette } from "@/app/SiteMap/roomPalette"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
+import { addLayout } from "./roomEditing"
+import { ROOM_CATALOGUE } from "./roomEditorCatalogue"
 import { encodeRoomHash, initialRoomText } from "./roomEditorUrl"
+import { ROOM_KIND_DRAG, RoomDrawing } from "./RoomDrawing"
 
 const TIERS: readonly Tileset[] = [...difficulties, "cave", "sphinx"]
 const DIRECTIONS: readonly Direction[] = ["n", "e", "s", "w"]
-
-// The browser reads no folder: the catalogued rooms come in through the bundler.
-const CATALOGUE: Record<string, string> = {}
-for (const [path, text] of Object.entries(
-  import.meta.glob("../../game/rooms/**/*.room", { query: "?raw", import: "default", eager: true }) as Record<
-    string,
-    string
-  >
-)) {
-  if (path.endsWith("-blocked.room")) continue
-  CATALOGUE[path.slice(path.lastIndexOf("/") + 1, -".room".length)] = text
-}
 
 type Parsed = { prefab: Prefab; faults: string[] } | { error: string }
 
@@ -67,6 +59,8 @@ export const RoomEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
 }) => {
   const { t } = useTranslation()
   const [text, setText] = useState(initialText)
+  const [past, setPast] = useState<readonly string[]>([])
+  const [layoutName, setLayoutName] = useState("")
   const [picked, setPicked] = useState<Tileset | null>(null)
   const [variant, setVariant] = useState(0)
   const [fill, setFill] = useState(0)
@@ -86,10 +80,27 @@ export const RoomEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
     prefab && prefab.tier !== tier ? t("devRoomEditor.tierDisagrees", { header: prefab.tier, picked: tier }) : null
   const faults = !prefab ? [] : [...(tierFault ? [tierFault] : []), ...("faults" in parsed ? parsed.faults : [])]
 
-  const edit = (next: string) => {
+  const show = (next: string) => {
     setText(next)
     setCopied(null)
     window.history.replaceState(null, "", encodeRoomHash(next))
+  }
+  /** Every edit is one undo step, but the cells after the first of one drag join its step. */
+  const edit = (next: string, step = true) => {
+    if (next === text) return
+    if (step) setPast([...past, text])
+    show(next)
+  }
+  const undo = () => {
+    if (past.length === 0) return
+    show(past[past.length - 1])
+    setPast(past.slice(0, -1))
+  }
+  const openRoom = (name: string) => {
+    edit(ROOM_CATALOGUE[name])
+    setPicked(null)
+    setVariant(0)
+    setFill(0)
   }
   const copy = async (what: string) => {
     try {
@@ -103,7 +114,8 @@ export const RoomEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
     { value: "", label: t("devRoomEditor.automatic") },
     ...DIRECTIONS.map(dir => ({ value: dir, label: t(`devRoomEditor.direction.${dir}`) })),
   ]
-  const catalogued = Object.keys(CATALOGUE)
+  const catalogued = Object.keys(ROOM_CATALOGUE)
+  const drawnLayout = variants[shownVariant]?.layout ?? 0
 
   return (
     <div className="flex h-(--screen-height) flex-col gap-3 overflow-y-auto bg-neutral-900 p-4 text-white">
@@ -121,7 +133,7 @@ export const RoomEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
               label={t("devRoomEditor.catalogue")}
               value=""
               options={[{ value: "", label: "…" }, ...catalogued.map(name => ({ value: name, label: name }))]}
-              onChange={name => name && edit(CATALOGUE[name])}
+              onChange={name => name && openRoom(name)}
             />
           )}
           {onClose && <DeveloperButton label={t("devRoomEditor.close")} onClick={onClose} />}
@@ -146,6 +158,7 @@ export const RoomEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
               onClick={() => copy(`${window.location.origin}${window.location.pathname}${encodeRoomHash(text)}`)}
             />
             <DeveloperButton label={t("devRoomEditor.copyText")} onClick={() => copy(text)} />
+            {past.length > 0 && <DeveloperButton label={t("devRoomEditor.undo")} onClick={undo} />}
             {copied && (
               <span role="status" className="text-sm text-white/80">
                 {t(`devRoomEditor.${copied}`)}
@@ -160,6 +173,8 @@ export const RoomEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
                   <button
                     type="button"
                     onClick={() => edit(addLegendLine(text, entry))}
+                    draggable
+                    onDragStart={e => e.dataTransfer.setData(ROOM_KIND_DRAG, entry.kind)}
                     title={`${entry.layer} ${entry.cols}x${entry.rows}${entry.painted ? "" : ` (${t("devRoomEditor.unpainted")})`}`}
                     className={`flex w-20 flex-col items-center gap-1 rounded-md border border-white/20 p-1 text-xs ${entry.painted ? "" : "opacity-50 grayscale"}`}
                   >
@@ -212,6 +227,37 @@ export const RoomEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
             </div>
           )}
           {prefab && (
+            <RoomDrawing
+              prefab={prefab}
+              layout={drawnLayout}
+              palette={palette}
+              onChange={(next, stroke) => edit(printPrefab(next), !stroke)}
+            />
+          )}
+          {prefab && (
+            <form
+              className="flex flex-wrap items-end gap-2"
+              onSubmit={e => {
+                e.preventDefault()
+                const next = addLayout(prefab, drawnLayout, layoutName.trim())
+                if (next === prefab) return
+                edit(printPrefab(next))
+                setLayoutName("")
+                setVariant(variantsOf(next).findIndex(v => v.layout === next.layouts.length - 1))
+              }}
+            >
+              <label className="flex flex-col gap-1 text-xs text-white/60">
+                {t("devRoomEditor.newLayout")}
+                <input
+                  value={layoutName}
+                  onChange={e => setLayoutName(e.target.value)}
+                  className="rounded-md border border-red-400 bg-stone-950 p-1 text-sm text-white"
+                />
+              </label>
+              <DeveloperButton label={t("devRoomEditor.addLayout")} />
+            </form>
+          )}
+          {prefab && (
             <PrefabRoomPreview
               prefab={prefab}
               tileset={tier}
@@ -226,8 +272,8 @@ export const RoomEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
             <h3 className="mb-1 text-xs font-bold text-white/60 uppercase">{t("devRoomEditor.checks")}</h3>
             <ul className="font-mono text-sm">
               {"error" in parsed && <li className="text-red-300">✗ {parsed.error}</li>}
-              {faults.map(fault => (
-                <li key={fault} className="text-amber-300">
+              {faults.map((fault, i) => (
+                <li key={i} className="text-amber-300">
                   ⚠ {fault}
                 </li>
               ))}

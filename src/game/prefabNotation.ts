@@ -32,6 +32,7 @@ THE LEGEND
 
 COMMENTS
   // comment                    ignored to the end of the line; a file opens with // designed by: name
+                                drawing in the editor rewrites the text and moves every comment to the top
 `.slice(1)
 
 const LAYERS: readonly PlaceLayer[] = ["wall", "floor", "ground", "wallItem"]
@@ -91,7 +92,11 @@ export const parsePrefab = (
   const fail = (n: number, message: string): never => {
     throw new Error(`line ${n}: ${message}`)
   }
-  const designedBy = text.match(/^\s*\/\/\s*designed by:\s*(.+?)\s*$/im)?.[1]
+  const designedBy = text.match(/^[ \t]*\/\/[ \t]*designed by:[ \t]*(\S.*?)[ \t]*$/im)?.[1]
+  const notes = text
+    .split("\n")
+    .flatMap(raw => raw.match(/\/\/(.*)/)?.[1].trim() ?? [])
+    .filter(note => !/^designed by:/i.test(note))
   const lines = text
     .split("\n")
     .map((raw, i) => ({ n: i + 1, line: raw.replace(/\/\/.*/, "").trim() }))
@@ -261,5 +266,16 @@ export const parsePrefab = (
     places[letter] = { ...place, ...size }
   }
 
-  return { name: roomName, tier: roomTier, activity, mirror, designedBy, layouts, places, specials }
+  return {
+    name: roomName,
+    tier: roomTier,
+    activity,
+    mirror,
+    designedBy,
+    ...(notes.length > 0 ? { notes } : {}),
+    ...(lists.size > 0 ? { lists: Object.fromEntries(lists) } : {}),
+    layouts,
+    places,
+    specials,
+  }
 }

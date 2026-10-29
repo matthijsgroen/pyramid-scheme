@@ -34,9 +34,10 @@ export const PrefabRoomPreview = ({ prefab, tileset, variant = 0, fill = 0, from
     }
   }, [prefab, variant, fill, tileset])
   const { t } = useTranslation()
-  // A position belongs to the floor it was chosen on; a new prefab, variant or fill starts at the first door.
-  const [chosen, setChosen] = useState<{ at: At; on: unknown }>({ at: "from", on: shown })
-  const at = chosen.on === shown ? chosen.at : "from"
+  // A position belongs to the floor it was chosen on; a new prefab, variant or fill starts at the stop, so the view
+  // opens on the room rather than the corridor outside a door.
+  const [chosen, setChosen] = useState<{ at: At; on: unknown }>({ at: "stop", on: shown })
+  const at = chosen.on === shown ? chosen.at : "stop"
   const setAt = (next: At) => setChosen({ at: next, on: shown })
   if ("error" in shown) return <p className="p-2 text-sm text-red-700">{shown.error}</p>
   const { preview, grid } = shown

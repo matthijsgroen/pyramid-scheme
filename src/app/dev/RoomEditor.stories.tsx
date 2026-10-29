@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { RoomEditor } from "./RoomEditor"
+import { START_ROOM } from "./roomEditorUrl"
 import "@/mods/registerModApps"
 
 const meta = {
@@ -30,3 +31,6 @@ s stop
 `,
   },
 }
+
+// The editor's starting room, empty but for the stop: draw walls, doors and props onto it.
+export const Empty: Story = { args: { initialText: START_ROOM } }

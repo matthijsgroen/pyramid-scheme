@@ -32,6 +32,10 @@ export type Prefab = {
   activity?: ActivityId
   mirror: boolean
   designedBy?: string
+  /** The file's comments other than its designed-by line, in the order written; printPrefab writes them at the top. */
+  notes?: readonly string[]
+  /** The named lists the file declares, so printPrefab writes a place's kinds by list name again. */
+  lists?: Readonly<Record<string, readonly string[]>>
   layouts: readonly PrefabLayout[]
   places: Readonly<Record<string, PlaceDef>>
   /** Letter to special. */

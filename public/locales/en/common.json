@@ -1386,7 +1386,7 @@
     "copyLink": "Copy link",
     "copyText": "Copy text",
     "copied": "Copied",
-    "failed": "Could not copy; the link is in the address bar",
+    "failed": "Could not copy to the clipboard",
     "palette": "Palette",
     "unpainted": "not painted yet",
     "layout": "Layout",
@@ -1404,6 +1404,37 @@
     },
     "checks": "Checks",
     "sound": "The room passes its checks",
-    "tierDisagrees": "The header says tier {{header}}, drawn here in {{picked}}"
+    "tierDisagrees": "The header says tier {{header}}, drawn here in {{picked}}",
+    "undo": "Undo",
+    "drawing": "Drawing",
+    "tool": {
+      "select": "Select",
+      "wall": "Wall",
+      "floor": "Floor",
+      "door": "Door place",
+      "stop": "Stop",
+      "actor": "Actor",
+      "chest": "Chest",
+      "portal": "Portal",
+      "mechanism": "Mechanism",
+      "erase": "Erase",
+      "copy": "Draw {{letter}}"
+    },
+    "againstWall": "Dropped props stand against the north wall",
+    "dropHint": "Drag a palette entry onto a cell; it takes its own footprint",
+    "newLayout": "New layout name",
+    "addLayout": "Copy as layout",
+    "inspector": {
+      "title": "Place {{letter}}",
+      "optional": "Optional",
+      "kinds": "Kinds",
+      "counted": "Fill only some",
+      "take": "Take",
+      "of": "of",
+      "per": "per",
+      "perNone": "each on its own",
+      "drawAnother": "Draw another",
+      "close": "Close"
+    }
   }
 }

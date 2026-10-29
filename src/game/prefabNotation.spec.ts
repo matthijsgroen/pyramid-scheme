@@ -48,6 +48,18 @@ describe("parsePrefab", () => {
     expect(places.g.group).toEqual({ take: 3, of: 4 })
   })
 
+  it("keeps the named lists and the comments besides the designed-by line", () => {
+    const room = parse(
+      `// designed by: someone\n// a note\n${withLegend("gift = jarRack | shelf\ng floor gift // why")}`
+    )
+    expect(room.lists).toEqual({ gift: ["jarRack", "shelf"] })
+    expect(room.notes).toEqual(["a note", "why"])
+  })
+
+  it("reads an empty designed-by line as no one", () => {
+    expect(parse(`// designed by:\nroom hall\n${withLegend("g floor pillar")}`).designedBy).toBeUndefined()
+  })
+
   it("reads a per-group", () => {
     const text = withLegend("q floor pillar\nr floor? rubblePile 1 of 3 per q", [
       "# # # # #",

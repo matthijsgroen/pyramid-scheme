@@ -1386,7 +1386,7 @@
     "copyLink": "Link kopiëren",
     "copyText": "Tekst kopiëren",
     "copied": "Gekopieerd",
-    "failed": "Kopiëren mislukt; de link staat in de adresbalk",
+    "failed": "Kopiëren naar het klembord mislukt",
     "palette": "Palet",
     "unpainted": "nog niet getekend",
     "layout": "Indeling",
@@ -1404,6 +1404,37 @@
     },
     "checks": "Controles",
     "sound": "De kamer doorstaat de controles",
-    "tierDisagrees": "De kop zegt niveau {{header}}, hier getekend in {{picked}}"
+    "tierDisagrees": "De kop zegt niveau {{header}}, hier getekend in {{picked}}",
+    "undo": "Ongedaan maken",
+    "drawing": "Tekening",
+    "tool": {
+      "select": "Kiezen",
+      "wall": "Muur",
+      "floor": "Vloer",
+      "door": "Deurplek",
+      "stop": "Stopplek",
+      "actor": "Figuur",
+      "chest": "Kist",
+      "portal": "Portaal",
+      "mechanism": "Mechaniek",
+      "erase": "Wissen",
+      "copy": "Teken {{letter}}"
+    },
+    "againstWall": "Neergezette voorwerpen staan tegen de noordmuur",
+    "dropHint": "Sleep een paletvak op een vakje; het neemt zijn eigen maat",
+    "newLayout": "Naam nieuwe indeling",
+    "addLayout": "Kopieer als indeling",
+    "inspector": {
+      "title": "Plek {{letter}}",
+      "optional": "Optioneel",
+      "kinds": "Soorten",
+      "counted": "Vul er maar enkele",
+      "take": "Neem",
+      "of": "van",
+      "per": "per",
+      "perNone": "elk op zich",
+      "drawAnother": "Nog een tekenen",
+      "close": "Sluiten"
+    }
   }
 }
