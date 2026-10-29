@@ -189,7 +189,18 @@ const kindFor = (place: PlaceDef, hash: number, patron: boolean): PlaceKind | un
   return undefined
 }
 
-const furnish = (grid: FloorGrid, r: number, c: number, prefab: Prefab, fit: Fit, siteId: string): PrefabRoom => {
+/** A choice made by hand in place of the hash, for a preview: which variant of `variantsOf`, which fill of its fills. */
+export type PrefabPick = { variant?: number; fill?: number }
+
+const furnish = (
+  grid: FloorGrid,
+  r: number,
+  c: number,
+  prefab: Prefab,
+  fit: Fit,
+  siteId: string,
+  pick?: PrefabPick
+): PrefabRoom => {
   const { variant, rect, doors } = fit
   const pk = `${r},${c}`
   const at = (i: number, j: number): Cell => [rect.top + i - 1, rect.left + j - 1]
@@ -199,7 +210,7 @@ const furnish = (grid: FloorGrid, r: number, c: number, prefab: Prefab, fit: Fit
   }
   const fills = fillsOf(variant, prefab)
   if (fills.length === 0) throw new Error(`[carve] room ${prefab.name} has no fill: its check faults`)
-  const fill = fills[hashString(`${siteId}:prefab:${pk}:fill`) % fills.length]
+  const fill = fills[(pick?.fill ?? hashString(`${siteId}:prefab:${pk}:fill`)) % fills.length]
   const standing = new Map<string, true>()
   const objects: PrefabObject[] = []
   for (const blob of placeBlobs(variant, prefab)) {
@@ -255,20 +266,23 @@ const furnish = (grid: FloorGrid, r: number, c: number, prefab: Prefab, fit: Fit
 /**
  * THE PREFAB LAID OVER THE ROOM (OR CORRIDOR END) AT r,c, or undefined where it fits no way. Each variant is tried with its node on
  * each free inside cell (`fitAt`); the fit absorbing the fewest arm cells wins, then the hash of the variant, then
- * the first node cell in reading order. Its fill and each place's kind are hashed from the site and the room.
+ * the first node cell in reading order. Its fill and each place's kind are hashed from the site and the room; a
+ * `pick` names the variant and the fill instead.
  */
 export const fitPrefab = (
   grid: FloorGrid,
   r: number,
   c: number,
   prefab: Prefab,
-  siteId: string
+  siteId: string,
+  pick?: PrefabPick
 ): PrefabRoom | undefined => {
   const cell = cellAt(grid, r, c)
   if (cell.type === "empty") return undefined
   const others = occupied(grid, r, c)
   let best: (Fit & { tie: number }) | undefined
-  for (const variant of variantsOf(prefab)) {
+  const variants = variantsOf(prefab)
+  for (const variant of pick?.variant === undefined ? variants : [variants[pick.variant % variants.length]]) {
     const tie = hashString(`${siteId}|prefab|${r},${c}|${variant.layout}${variant.mirrored ? "m" : ""}`)
     variant.cells.forEach((row, i) =>
       [...row].forEach((ch, j) => {
@@ -278,7 +292,7 @@ export const fitPrefab = (
       })
     )
   }
-  return best && furnish(grid, r, c, prefab, best, siteId)
+  return best && furnish(grid, r, c, prefab, best, siteId, pick)
 }
 
 /** Every designed room the floor and its sections name, by name. */

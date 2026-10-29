@@ -1,4 +1,12 @@
-import type { CellState, Direction, FloorGrid, GridCell, RoomCell } from "@/game/siteTypes"
+import type {
+  CellState,
+  DecorationKind,
+  Direction,
+  FloorGrid,
+  GridCell,
+  PropFootprint,
+  RoomCell,
+} from "@/game/siteTypes"
 import { decorationFootprint } from "@/game/siteTypes"
 import { ONE_WAY_RUN_CELLS } from "@/game/siteAssembler"
 import { fitPrefab } from "@/game/carve/placePrefabs"
@@ -152,10 +160,14 @@ export const addressed = (grid: FloorGrid): FloorGrid => {
   return { ...grid, cells }
 }
 
-/** A made-up prefab read as the bake reads a `.room` file; a `mat` lies on the ground. */
-const madeUpPrefab = (text: string): Prefab =>
-  parsePrefab(`tier expert\n${text}`, "room", kind =>
-    kind === "mat" ? { cols: 1, rows: 1, tall: 0, ground: true } : decorationFootprint(kind)
+/** A made-up prefab read as the bake reads a `.room` file; a `mat` lies on the ground. `footprints` sizes kinds a
+ * story needs bigger than the catalogue's. */
+export const madeUpPrefab = (text: string, footprints: Partial<Record<DecorationKind, PropFootprint>> = {}): Prefab =>
+  parsePrefab(
+    `tier expert\n${text}`,
+    "room",
+    kind =>
+      footprints[kind] ?? (kind === "mat" ? { cols: 1, rows: 1, tall: 0, ground: true } : decorationFootprint(kind))
   )
 
 /** The floor with `prefab` laid over the node at `at` by the carve's own fit. */

@@ -1,7 +1,8 @@
 import { useState } from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { revealAll } from "@/game/gridNavigation"
-import { EDGE_NODE, PREFAB_FORK, edgePrefabFloor, prefabForkFloor } from "./floorFixtures.testing"
+import { EDGE_NODE, PREFAB_FORK, edgePrefabFloor, madeUpPrefab, prefabForkFloor } from "./floorFixtures.testing"
+import { PrefabRoomPreview } from "./PrefabRoomPreview"
 import { SiteMapView } from "./SiteMapView"
 import "@/mods/registerModApps"
 
@@ -99,3 +100,88 @@ export const TFork: StoryObj<typeof EdgeRoom> = {
   render: args => <EdgeRoom {...args} />,
   args: { shape: "T", explorerAt: "south" },
 }
+
+// Made-up halls on a floor of their own (PrefabRoomPreview): every door a straight arm reaches is in use, and the
+// explorer walks between two of them. Variant 1 of a mirror prefab is its mirror image; the fill picks which of a
+// room's optional or grouped places stand.
+const DAIS = { cols: 2, rows: 2, tall: 0 }
+
+const HALL = madeUpPrefab(
+  `room hall
+mirror
+layout
+# # # # # d # # # # #
+# . . . . . . . . . #
+# . p . p . p t t . #
+d . . . s . . t t . #
+# . p . p . p . . . #
+# . . . . . . . . . #
+# # # # # d # # # # #
+p floor pillar
+t floor sarcophagus
+s stop`,
+  { sarcophagus: DAIS }
+)
+
+const RUINED_HALL = madeUpPrefab(`room ruinedHall
+layout
+# # # # d # # # #
+# . . . . . . . #
+# r q r . r q r #
+d . r . . . r . d
+# . . s . . . . #
+# # # # d # # # #
+q floor pillar
+r floor? rubblePile 1 of 3 per q
+s stop`)
+
+const STEPS_ROOM = madeUpPrefab(
+  `room stepsRoom
+mirror
+layout
+# # # # d # # # #
+# . . . . . . . #
+d . s . . g g . d
+# . . . . . . . #
+# # # # d # # # #
+g ground mat
+s stop`,
+  { mat: { cols: 2, rows: 1, tall: 0, ground: true } }
+)
+
+const STOREROOM = madeUpPrefab(`room storeroom
+layout
+# # # # # # # # #
+d . . . . . . . d
+# g . g . g . g #
+# . . . s . . . #
+# # # # # # # # #
+gift = jarRack | basin | basketStack
+g floor gift 3 of 4
+s stop`)
+
+const preview = (args: React.ComponentProps<typeof PrefabRoomPreview>): StoryObj<typeof PrefabRoomPreview> => ({
+  render: props => <PrefabRoomPreview {...props} />,
+  argTypes: {
+    prefab: { control: false },
+    variant: { control: { type: "number", min: 0, max: 3 } },
+    fill: { control: { type: "number", min: 0, max: 20 } },
+    from: { control: "inline-radio", options: ["n", "s", "e", "w"] },
+    to: { control: "inline-radio", options: ["n", "s", "e", "w"] },
+  },
+  args,
+})
+
+/** Two rows of pillars with the aisle between, a 2×2 dais clear of the far wall: from the west door up the aisle. */
+export const HallWithDais = preview({ prefab: HALL, from: "w", to: "n" })
+/** The same hall mirrored: the dais at the west end, the steps and the walk the other way round. */
+export const HallMirrored = preview({ prefab: HALL, variant: 1, from: "e", to: "n" })
+/** Stumps on the pillar places, a fallen top lying at one of three places beside each. */
+export const RuinedHall = preview({ prefab: RUINED_HALL, from: "w", to: "e" })
+export const RuinedHallOtherFill = preview({ prefab: RUINED_HALL, fill: 1, from: "w", to: "e" })
+/** Ground steps drawn under the player; the mirror flips them. */
+export const GroundSteps = preview({ prefab: STEPS_ROOM, from: "w", to: "e" })
+export const GroundStepsMirrored = preview({ prefab: STEPS_ROOM, variant: 1, from: "e", to: "w" })
+/** Three of the four gift places hold a gift, different ones per fill. */
+export const StoreroomGifts = preview({ prefab: STOREROOM, from: "w", to: "e" })
+export const StoreroomGiftsOtherFill = preview({ prefab: STOREROOM, fill: 2, from: "w", to: "e" })
