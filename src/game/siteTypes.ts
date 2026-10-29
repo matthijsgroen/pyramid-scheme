@@ -10,6 +10,7 @@ import type { LockFault, RealisationBinding } from "./lockCompile"
 import type { ActivityId } from "./activities"
 import type { PlaceKind, PlaceLayer, Prefab } from "./prefabTypes"
 import type { WebDoorPlacement } from "./webDoors"
+import type { PlanKind } from "./carve/floorPlans"
 /** `chamber` is a pass-through room on a path: a corridor node widened into a room that serves an activity, holding
  * no encounter and answering to no slot. */
 export type RoomType = "portal" | "fork" | "encounter" | "chamber"
@@ -362,6 +363,8 @@ export type RoomCell = {
   authoredActivity?: ActivityId
   /** The designed room a story pinned to this room (`nodes: [{ room }]`): a key of the floor's `prefabs`. */
   pinnedPrefab?: string
+  /** The corridor arriving at this room, from the way in, is wide (`nodes: [{ width: 2 }]`). */
+  wideWayIn?: true
   /**
    * THE GOD'S ROOM on a dedicated floor: the biggest chamber, dressed with a statue of him and paired.
    *
@@ -629,6 +632,8 @@ export type SubSection = {
   prefabPlacements?: { room: string; min: number; max: number; central: number }[]
   /** Per-node designed room: 0-based room index → the name of the prefab that room is. */
   prefabsByIndex?: Record<number, string>
+  /** Per-node wide way in: 0-based room index → `true`, the corridor arriving at that room is wide. */
+  wideByIndex?: Record<number, true>
   /** Per-node difficulty: 0-based room index → the tier that room builds at, else the section's `difficulty`. */
   difficultiesByIndex?: Record<number, Difficulty>
   /** `false` keeps generated loot out of this section's puzzle rooms (and its unauthored end); authored rewards stay. */
@@ -824,6 +829,8 @@ export type FloorConfig = {
   prefabPlacements?: { room: string; min: number; max: number; central: number }[]
   /** Per-node designed room: 0-based room index → the name of the prefab that room is. */
   prefabsByIndex?: Record<number, string>
+  /** Per-node wide way in for the main path: 0-based room index → `true`, the corridor arriving at that room is wide. */
+  wideByIndex?: Record<number, true>
   /** Per-node difficulty for the main path: 0-based room index → the tier that room builds at, else `difficulty`. */
   difficultiesByIndex?: Record<number, Difficulty>
   /** `false` keeps generated loot out of this floor's main-path puzzle rooms (and its unauthored end); authored rewards stay. */
@@ -832,6 +839,12 @@ export type FloorConfig = {
   lootByIndex?: Record<number, false>
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65 (fairly straight); lower = more winding. */
   corridorStraightness?: number
+  /** The shape the main path is laid in. */
+  plan?: PlanKind
+  /** How sprawling the carve is: 0 = compact, 1 = sprawling. Unset reads `DEFAULT_SPREAD`. */
+  spread?: number
+  /** The width of the floor's corridors, in cells. */
+  corridorWidth?: 2
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
   packing?: number
   /** The seed this floor carves at, in place of the one its address derives. Read inside the assembler, so

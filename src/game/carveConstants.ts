@@ -33,3 +33,7 @@ export const oneWayReach = (dir: Direction): number => oneWayRunCells(dir) + 3
 // winding corridors) tighter, >1 gives it more breathing room. Overridable per floor via
 // FloorConfig.packing.
 export const DEFAULT_PACKING = 0.1
+
+// How sprawling a floor's carve is, 0 = compact to 1 = sprawling. Overridable per floor via FloorConfig.spread;
+// a config carries the field only where it is authored.
+export const DEFAULT_SPREAD = 0.3
