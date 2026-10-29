@@ -55,6 +55,8 @@ tsx bake scripts.
 **Files:**
 
 - Create: `src/game/prefabTypes.ts`, `src/game/prefabNotation.ts`
+- Modify: `src/game/siteTypes.ts:145` (`PropFootprint` gains `ground?: true`; a kind's footprint is the one source
+  of its size — the `.room` file states none)
 - Test: `src/game/prefabNotation.spec.ts`
 
 **Interfaces:**
@@ -99,8 +101,8 @@ The notation (spec "The file format", plus decisions taken there):
 - `layout [name]` then grid rows: one character per cell, separated by single spaces. Fixed signs `#` wall,
   `d` door place, `.` free floor. Ring = outermost row/col; `d` and wall-item letters only on the ring; every
   other letter only inside.
-- Legend lines `<letter> <layer>[?] <kind|list>[ | …] [WxH] [K of N [per <letter>]]`, or `<letter> <special>`.
-  `?` marks optional. `WxH` must equal the drawn extent of that letter's connected blob.
+- Legend lines `<letter> <layer>[?] <kind|list>[ | …] [K of N [per <letter>]]`, or `<letter> <special>`.
+  `?` marks optional. A place has no size of its own: every kind it lists has the footprint of its drawn blob in `DECORATION_FOOTPRINTS` (a kind flagged `ground` there fits only a `ground` place), else the line is refused.
 - Exactly one `stop` letter per layout, inside, on free floor. `wall` places only on the first inside row.
 - Every listed kind is a known `DecorationKind`/`WallDecorationKind` (or `patron` for floor places) and its
   `decorationFootprint` equals the place's footprint; `wallItem` takes `WallDecorationKind`s only.
@@ -113,7 +115,7 @@ The notation (spec "The file format", plus decisions taken there):
   - `reads a per-group` — `r floor? rubblePile 1 of 3 per q` → `group.per === "q"`.
   - `reads mirror and a second named layout`.
   - refusals, each `toThrow(/line \d+: /)`: unknown kind; a `d` inside the ring; a wall place below the first
-    inside row; two stops; no stop; `WxH` not matching the drawing; a letter used but never declared; a
+    inside row; two stops; no stop; a listed kind whose footprint differs from the drawing, or a `ground`-flagged kind on a non-ground place; a letter used but never declared; a
     `wallItem` with a floor kind.
 - [ ] **Step 2: Run** `yarn vitest run src/game/prefabNotation.spec.ts` — FAIL (module missing).
 - [ ] **Step 3: Implement** `parsePrefab` and `PREFAB_SYNTAX` in `src/game/prefabNotation.ts`, line-based like
@@ -390,7 +392,39 @@ The notation (spec "The file format", plus decisions taken there):
       looking: objects on their places, walk round pillars, stop marker, fade behind a tall object, flipped steps.
 - [ ] **Step 3: Commit** `feat: storybook room prefab catalogue`.
 
-### Task 10: Starter rooms
+### Task 10: The room editor (dev mode)
+
+**Files:**
+
+- Create: `src/app/dev/RoomEditor.tsx`, `src/app/dev/RoomEditor.stories.tsx`, `src/app/dev/RoomEditor.spec.tsx`,
+  `src/app/dev/roomEditorUrl.ts` (+spec), `src/app/SiteMap/roomPalette.ts` (+spec)
+- Modify: `src/app/dev/devActionContributions.ts` (open the editor, beside the lock editor), locale files (nl + en)
+
+**Interfaces:**
+
+- Follows `src/app/dev/LockEditor.tsx` / `LockEditorHost.tsx` / `lockEditorUrl.ts`: text on the left, live result
+  on the right, the text shared by a URL hash (`encodeRoomHash`/`decodeRoomHash`) and a copy button. The browser
+  writes no file: the designer pastes the text into `src/game/rooms/<tier>/<name>.room` (or hands it over).
+- **Tier picker** (starter … wizard, cave, sphinx): the preview draws with that tier's art; a `tier` header that
+  disagrees is a shown fault, not a silent override.
+- **Preview:** the Task 9 room drawing (one shared component, not a copy) with controls for layout, mirror, fill
+  index and a walk between two chosen doors; `prefabFaults` and parse errors (`line N: …`) listed under it.
+- **Palette:** `roomPalette(tier: Tileset): PaletteEntry[]` with
+  `PaletteEntry = { kind: string; layer: "prop" | "wallItem" | "ground"; cols: number; rows: number; painted: boolean; url: string }`
+  — every `DecorationKind` and `WallDecorationKind`, footprint from `decorationFootprint`, `painted` from `tileUrl`
+  (else the placeholder sprite, shown greyed). Clicking an entry inserts a legend line for the next free letter
+  (`<letter> floor <kind>`, `wallItem` / `ground` by the kind's layer).
+- Opening the editor on a catalogued room (a picker of `ROOM_CATALOGUE` names via `import.meta.glob` raw text).
+
+- [ ] **Step 1: Failing tests:** `roomPalette` marks a painted kind `painted` and an unpainted one not, with the
+      kind's footprint; `roomEditorUrl` round-trips a room text; `RoomEditor.spec.tsx` — typing a room with an
+      unknown kind shows the `line N:` error; clicking a palette entry adds its legend line; switching tier redraws
+      with that tier (the preview's tileset prop changes).
+- [ ] **Step 2–4:** FAIL → implement → PASS. All strings in nl + en.
+- [ ] **Step 5:** Storybook `RoomEditor` story; screenshot it with a made-up hall at two tiers — check by looking.
+- [ ] **Step 6: Commit** `feat: dev room editor`.
+
+### Task 11: Starter rooms
 
 **Files:**
 

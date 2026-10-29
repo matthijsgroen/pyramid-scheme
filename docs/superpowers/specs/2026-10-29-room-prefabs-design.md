@@ -28,9 +28,9 @@ player walks between and past the pillars and round the throne; he stands in the
 ## What a prefab is
 
 - **A text file**, drawn by hand (Claude or the designer), in the manner of the `.lock` files: a header (name, tier,
-  activity) and the room as an ASCII grid. An editor may follow later; not now.
+  activity) and the room as an ASCII grid, written in a dev-mode room editor (below) or by hand.
 - **Per tier.** Each tier has its own prefabs, in its own dressing.
-- **Door places, not doors.** The file marks where a door *may* be; the carve chooses which it uses. An unused
+- **Door places, not doors.** The file marks where a door _may_ be; the carve chooses which it uses. An unused
   door place is wall. One hall thereby fits a fork, a pass-through and a side branch.
 - **A stop**, marked in the file: where the player stands when he taps the room, and where the room's marker sits.
 - **Walks are not drawn.** The walk is the shortest way over the room's free cells (the room-walk-paths work,
@@ -98,6 +98,14 @@ Starter's floors are small, so its prefabs are small; they use starter's painted
 re-snapshotted once, after the designer has looked at the carved starter floors, and guards them from then on. This
 release resets saves.
 
+## The room editor
+
+A dev-mode editor beside the lock editor (designer, 2026-10-29): pick the tier, write the text, see the room drawn
+live with that tier's art, with its variants, fills, a walk between doors and the check's faults. A palette shows
+every prop and wall item with its sprite and footprint, greyed where the tier has not painted it yet; a click
+adds its legend line. A kind's size comes only from its registered footprint, never from the file. The text is
+shared by link or copied into its `.room` file.
+
 ## The check
 
 Every prefab is checked on its own, for every variant (mirror, turned layout) and every fill the carve may choose
@@ -116,7 +124,7 @@ A prefab that fails is refused, so the carve can never place a room one cannot c
 
 ## Non-goals
 
-- A visual prefab editor (text files first).
+- A drag-and-drop editor: the room editor edits the text and previews it.
 - Rotated props.
 - Changing rooms the DSL does not name.
 - Drawing walk paths.
@@ -187,7 +195,7 @@ d . . . . d
 # # d # d #
 
 p  floor  pillar | patron
-T  throne 2x2
+T  floor  throne
 n  wallItem
 s  stop
 ```
@@ -206,6 +214,7 @@ s  stop
 
   `q` is a stump; the `r` places touching it hold its fallen top, one per stump. An `r` touching two stumps counts
   for both.
+
 - `gift = jarStack | basketStack | chestProp` declares a named list of kinds for this file's places.
 - Chest, portal and mechanism places are legend lines too (`c chest`, `o portal`, `m mechanism`).
 
