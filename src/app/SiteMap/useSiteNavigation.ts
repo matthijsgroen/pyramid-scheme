@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useMemo, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { cellAddress } from "./cellIdentity"
 import { storedAtCell } from "@/game/cellAddress"
@@ -14,6 +14,8 @@ import { encodeEdge } from "./edgeId"
 import { actsOnArrival, staysOpen } from "./nodeKinds"
 import { buildOfferContext, clickTargetAt } from "./clickTargets"
 import { buildRoomClaims } from "./roomClaims"
+import { walkPoints, walkSteps } from "./roomWalk"
+import { standingOffset } from "./standingSpot"
 import { stairPeerPosition } from "./stairTravel"
 import { crossAtOnce, type PlayTraversal, type Traversal } from "./obstacleTraversal"
 import type { ResolveOneWayRealisation } from "@/game/oneWayRealisation"
@@ -141,10 +143,15 @@ export const useSiteNavigation = ({
     []
   )
 
+  const claims = useMemo(() => grid && buildRoomClaims(grid), [grid])
+  // Counted as the explorer walks it: a corridor cell is one step, a stretch round a room's centre piece its length.
   const walkDelay = useCallback(
-    (row: number, col: number) =>
-      grid ? Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100 : 0,
-    [grid, explorerPos]
+    (row: number, col: number) => {
+      if (!grid || !claims) return 0
+      const standAt = (r: number, c: number) => standingOffset(grid, claims, r, c)
+      return walkSteps(walkPoints(grid, findPath(grid, explorerPos, [row, col]), standAt)) * 120 + 100
+    },
+    [grid, claims, explorerPos]
   )
   // A STONE NEVER LEAVES ITS FLOOR, and every one-way and every passage takes empty hands: a carrying walk ends where
   // the player stands and says why, instead of offering the way on.

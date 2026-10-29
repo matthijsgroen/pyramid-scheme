@@ -1,22 +1,40 @@
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
+import { grownCells, inRect } from "@/game/roomShape"
 import { DIR_MOVES } from "./corridorRuns"
-import { COL_PITCH, ROW_PITCH } from "./mapScale"
+import { COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import { shapeKindFor } from "./nodeKinds"
 import { nodeArtOffset } from "./nodeArt"
 import type { RoomClaims } from "./roomClaims"
+import { roomStop } from "./roomWalk"
 
 export type StandingOffset = { readonly dx: number; readonly dy: number }
 
 const AT_CENTRE: StandingOffset = { dx: 0, dy: 0 }
+
+const offsetTo = (r: number, c: number, [tr, tc]: readonly [number, number]): StandingOffset => ({
+  dx: cellCenter(tr, tc).cx - cellCenter(r, c).cx,
+  dy: cellCenter(tr, tc).cy - cellCenter(r, c).cy,
+})
+
+/** The stop of the grown room whose rect holds this cell, the node's own included. */
+const grownStop = (grid: FloorGrid, r: number, c: number) => {
+  const node = grownCells(grid).get(`${r},${c}`)
+  if (!node) return undefined
+  const [nr, nc] = node.split(",").map(Number)
+  return roomStop(grid, nr, nc)
+}
 
 // Beside it first, on the floor line the flight stands on; in front of it next; behind it last.
 const ASIDE: ReadonlyArray<Direction> = ["e", "w", "s", "n"]
 
 /** Where the explorer is drawn standing in a room, relative to its node's centre. A stair's art IS its
  * node, so on the centre he stands in its shaft; he stands in the cell next to it instead — a bare cell of
- * the room's own floor, one with no prop in it. Drawing only: the explorer is still AT the node. */
+ * the room's own floor, one with no prop in it. Drawing only: the explorer is still AT the node.
+ * In a grown room, on its node or on a cell it absorbed, he stands at the room's stop. */
 export const standingOffset = (grid: FloorGrid, claims: RoomClaims, r: number, c: number): StandingOffset => {
+  const stop = grownStop(grid, r, c)
+  if (stop) return offsetTo(r, c, stop)
   const cell = cellAt(grid, r, c)
   if (cell.type !== "room" || shapeKindFor(grid, r, c, cell) !== "stairhead") return AT_CENTRE
   return besideNode(grid, claims, r, c) ?? AT_CENTRE
@@ -24,9 +42,18 @@ export const standingOffset = (grid: FloorGrid, claims: RoomClaims, r: number, c
 
 /** Where somebody the room is FOR stands (roomOccupants): in a bare cell of the room beside its node, so the
  * explorer walking up to the marker meets them rather than standing in them — or, in a room with no floor to
- * spare, in the corner a node's furniture takes, away from every way out. */
+ * spare, in the corner a node's furniture takes, away from every way out. In a grown room, beside the stop: east of it,
+ * else west, on the room's floor and off its piece. */
 export const occupantOffset = (grid: FloorGrid, claims: RoomClaims, r: number, c: number): StandingOffset => {
   const cell = cellAt(grid, r, c)
+  if (cell.type === "room" && cell.grownRoom) {
+    const stop = roomStop(grid, r, c)!
+    const { rect, piece } = cell.grownRoom
+    const beside = [1, -1]
+      .map(dc => [stop[0], stop[1] + dc] as const)
+      .find(([sr, sc]) => inRect(rect, sr, sc) && !inRect(piece, sr, sc))
+    if (beside) return offsetTo(r, c, beside)
+  }
   return besideNode(grid, claims, r, c) ?? nodeArtOffset(cell.type === "empty" ? undefined : cell.dirs)
 }
 

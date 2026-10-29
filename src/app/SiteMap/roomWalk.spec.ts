@@ -137,6 +137,33 @@ describe("roomWalk", () => {
     expect(points.slice(1, -1).every(p => p.inRoom && !inside(p))).toBe(true)
   })
 
+  it("sets out from and comes to rest at the stop when the route starts or ends on an absorbed arm cell", () => {
+    const grid = makeGrid()
+    const stop = roomPath(grid, NODE, "stop", "stop")[0]
+    const none = () => ({ dx: 0, dy: 0 })
+    const out = walkPoints(
+      grid,
+      [
+        [2, 3],
+        [2, 2],
+        [2, 1],
+      ],
+      none
+    )
+    const back = walkPoints(
+      grid,
+      [
+        [2, 1],
+        [2, 2],
+        [2, 3],
+      ],
+      none
+    )
+    expect(out[0]).toEqual(stop)
+    expect(back.at(-1)).toEqual(stop)
+    out.slice(1).forEach((p, i) => expect(cutsPiece(out[i], p)).toBe(false))
+  })
+
   it("counts a corridor step as one and a room segment by its length", () => {
     expect(stepsBetween({ x: 0, y: 0 }, { x: 500, y: 9 })).toBe(1)
     expect(stepsBetween({ x: 0, y: 0, inRoom: true }, { x: 70, y: 0 })).toBeCloseTo(1)

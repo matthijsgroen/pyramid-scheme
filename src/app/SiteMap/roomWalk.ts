@@ -160,7 +160,8 @@ const endFor = (grid: FloorGrid, node: Cell, at: Cell): RoomEnd => {
 }
 
 /** The pixel points the explorer walks for a route: cell centres, the first and last at their standing spots, each stretch
- * through a grown room replaced by the shortest way round its piece. */
+ * through a grown room replaced by the shortest way round its piece. A route that starts or ends in a grown room starts or
+ * ends at its stop, the spot he stands on in it. */
 export const walkPoints = (
   grid: FloorGrid,
   route: ReadonlyArray<Cell>,
@@ -177,7 +178,9 @@ export const walkPoints = (
         if (!next || next[0] !== node[0] || next[1] !== node[1]) break
         j++
       }
-      points.push(...roomPath(grid, node, endFor(grid, node, route[i]), endFor(grid, node, route[j])))
+      const from = i === 0 ? "stop" : endFor(grid, node, route[i])
+      const to = j === route.length - 1 ? "stop" : endFor(grid, node, route[j])
+      points.push(...roomPath(grid, node, from, to))
       i = j + 1
       continue
     }

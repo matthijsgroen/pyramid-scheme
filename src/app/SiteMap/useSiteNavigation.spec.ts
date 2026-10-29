@@ -5,10 +5,18 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import type { CellState, Direction, FloorGrid, GridCell, MechanismRecord, RoomCell, SiteConfig } from "@/game/siteTypes"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { registerFamily } from "@/app/families/familyRegistry"
-import { getCell } from "@/game/gridNavigation"
+import { getCell, revealAll } from "@/game/gridNavigation"
 import { cellAddress } from "./cellIdentity"
 import { encodeEdge } from "./edgeId"
-import { AXES, DROP_AT, addressed, dropGrid, obstacleIndexes } from "./floorFixtures.testing"
+import {
+  AXES,
+  DROP_AT,
+  GROWN_FORK,
+  addressed,
+  dropGrid,
+  grownForkFloor,
+  obstacleIndexes,
+} from "./floorFixtures.testing"
 import { cellCenter } from "./mapScale"
 import { useSiteNavigation } from "./useSiteNavigation"
 import { SiteMapView } from "./SiteMapView"
@@ -370,6 +378,38 @@ describe("useSiteNavigation", () => {
 
     act(() => promptOf(hook).take())
     expect(onEncounter).toHaveBeenCalledWith([0, 1], true)
+  })
+
+  // Up the south arm into the grown fork: three cells, but the walk is two steps, onto the stop.
+  it("offers a grown room's prompt after the room walk, not the cell count", () => {
+    const lit = revealAll(grownForkFloor({ family: RETURNABLE_FAMILY }))
+    const grid: FloorGrid = {
+      ...lit,
+      cells: lit.cells.map((row, r) =>
+        row.map((cell, c): GridCell => (r === 2 && c === 4 ? ({ ...cell, state: "completed" } as GridCell) : cell))
+      ),
+    }
+    const { journeys } = setup([entrance])
+    const hook = renderHook(() =>
+      useSiteNavigation({
+        journeys,
+        journeyId: "j1",
+        siteConfig,
+        seed: 1,
+        currentFloor: 0,
+        grid,
+        explorerPos: [5, 4],
+        onEncounter: vi.fn(),
+        onExitReached: vi.fn(),
+      })
+    )
+
+    act(() => hook.result.current.onCellClick(...GROWN_FORK))
+    act(() => void vi.advanceTimersByTime(2 * 120 + 100 - 1))
+    expect(hook.result.current.prompt).toBeNull()
+    act(() => void vi.advanceTimersByTime(1))
+
+    expect(promptOf(hook)).toMatchObject({ kind: "room", at: [...GROWN_FORK], familyId: RETURNABLE_FAMILY })
   })
 
   // A gate's bars are drawn across the FAR side of its own square, so the square is ground the player

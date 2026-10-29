@@ -65,6 +65,7 @@ import {
   corridorPiece,
   dropGrid,
   floorFrom,
+  grownForkFloor,
   roomPiece,
   type Piece,
 } from "./floorFixtures.testing"
@@ -501,7 +502,7 @@ const cornerAtLaunch = floorFrom(["E.R", `  .${ZIPLINE}.`, `${pad}R`], DROP)
 const cornerAtLanding = floorFrom([`${pad}E`, `R.${ZIPLINE}.`, `${pad}R`], DROP)
 const gateAndDrop = floorFrom([`E.Y.A.R${ZIPLINE}R.R`], { ...DROP, Y: lever(leverOpening("a")), A: gate("a") })
 
-// `minSteps` sits just under each fixture's measured step count (109, 33, 93, 75, 90, 13 and 21), so a walk
+// `minSteps` sits just under each fixture's measured step count (109, 33, 93, 75, 90, 13, 21 and 39), so a walk
 // that stalls early is red rather than quietly shorter.
 type Fixture = { name: string; grid: FloorGrid; minSteps: number }
 
@@ -515,6 +516,7 @@ const fixtures: Fixture[] = [
   { name: "a corner beside a drop's launch", grid: cornerAtLaunch, minSteps: 4 },
   { name: "a corner beside a drop's landing", grid: cornerAtLanding, minSteps: 4 },
   { name: "a gate and a one-way drop on one floor", grid: gateAndDrop, minSteps: 18 },
+  { name: "a fork grown round a centre piece, walked through and round", grid: grownForkFloor(), minSteps: 35 },
 ]
 
 // A drop stood at from its landing, in every shape the drop takes (axis × what stands at each end).

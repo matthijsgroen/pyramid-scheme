@@ -147,3 +147,20 @@ export const addressed = (grid: FloorGrid): FloorGrid => {
   )
   return { ...grid, cells }
 }
+
+/** A fork at `GROWN_FORK` with arms west, east and south, grown round a 2×1 stand-in piece (row 2, cols 3-4)
+ * to rows 1-4, cols 2-6: its doors are 2,2 (west), 2,6 (east) and 4,4 (south). The entrance is at 2,0. */
+export const GROWN_FORK = [2, 4] as const
+export const GROWN_PIECE = { top: 2, left: 3, rows: 1, cols: 2 }
+export const grownForkFloor = (fork: Partial<Extract<GridCell, { type: "room" }>> = {}): FloorGrid =>
+  floorFrom(["", "", "E...G..R", "    .", "    .", "    R"], {
+    G: dirs => ({
+      type: "room",
+      roomType: "fork",
+      dirs: new Set(dirs),
+      state: "fogged",
+      decoration: "basin",
+      grownRoom: { rect: { top: 1, left: 2, rows: 4, cols: 5 }, piece: { kind: "basin", ...GROWN_PIECE } },
+      ...fork,
+    }),
+  })

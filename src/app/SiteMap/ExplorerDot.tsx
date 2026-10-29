@@ -5,8 +5,10 @@ import { CELL, EXPLORER_DOT_RADIUS, cellCenter } from "./mapScale"
 import { sharedTileFrames } from "./tileAssets"
 import { tierPalette } from "./tileMaterials"
 import type { StandingOffset } from "./standingSpot"
+import { stepsBetween, type WalkPoint } from "./roomWalk"
 
-type Point = { x: number; y: number }
+type Point = WalkPoint
+type Route = ReadonlyArray<readonly [number, number]>
 
 // The explorer is a figure standing IN its cell: a shade under a cell wide, bottom-anchored so the feet
 // sit on the cell's floor line and the head stays inside its own square. Small enough that the map still
@@ -46,6 +48,11 @@ type Props = {
   /** Where in its room the figure stands, off the node's centre (see `standingOffset`). The walk between
    * cells still runs centre to centre; only the spot it sets out from and the spot it stops at move. */
   standAt?: (r: number, c: number) => StandingOffset
+  /** The points a route is walked through. Without it: cell centres, the first and last at their standing spots. */
+  waypointsOf?: (route: Route) => WalkPoint[]
+  /** Fires with a room point when a segment sets out from it, and with the point he comes to rest on when that is
+   * a room point: once per room waypoint, never per frame and never in a corridor. */
+  onWaypoint?: (at: WalkPoint) => void
 }
 
 export const ExplorerDot = ({
@@ -56,6 +63,8 @@ export const ExplorerDot = ({
   carrying = false,
   onArrive,
   standAt,
+  waypointsOf,
+  onWaypoint,
 }: Props) => {
   // The map lays cells out on a stretched pitch so every wall has a place of its own — the dot walks
   // between floor-square centres, wherever those land.
@@ -82,6 +91,9 @@ export const ExplorerDot = ({
   const mountedRef = useRef(false)
   const onArriveRef = useRef(onArrive)
   onArriveRef.current = onArrive
+  const announce = (at: Point) => {
+    if (at.inRoom) onWaypoint?.(at)
+  }
 
   useEffect(() => {
     const from = prevPosRef.current
@@ -115,7 +127,9 @@ export const ExplorerDot = ({
       onArriveRef.current?.()
       return
     }
-    const waypoints = route.map((at, i) => (i === 0 || i === route.length - 1 ? toPixel(at) : throughPixel(at)))
+    const waypoints = waypointsOf
+      ? waypointsOf(route)
+      : route.map((at, i) => (i === 0 || i === route.length - 1 ? toPixel(at) : throughPixel(at)))
     const dest = waypoints[waypoints.length - 1]
 
     // Snap if mid-glide
@@ -123,12 +137,14 @@ export const ExplorerDot = ({
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
       animatingRef.current = false
       setSvgPos(dest)
+      announce(dest)
       onArriveRef.current?.()
       return
     }
 
     if (waypoints.length <= 1) {
       setSvgPos(dest)
+      announce(dest)
       onArriveRef.current?.()
       return
     }
@@ -139,12 +155,18 @@ export const ExplorerDot = ({
     let segStart = waypoints[0]
     let segEnd = waypoints[1]
     let startTime: number | null = null
-    const faceSegment = () => setFacing(facingOf(segEnd.x - segStart.x, segEnd.y - segStart.y))
-    faceSegment()
+    // A room segment lasts as many steps as it is long, so he keeps one pace through a room and along a corridor.
+    let duration = segmentDuration
+    const setOut = () => {
+      setFacing(facingOf(segEnd.x - segStart.x, segEnd.y - segStart.y))
+      duration = segmentDuration * stepsBetween(segStart, segEnd)
+      announce(segStart)
+    }
+    setOut()
 
     const animate = (ts: number) => {
       if (startTime === null) startTime = ts
-      const t = Math.min((ts - startTime) / segmentDuration, 1)
+      const t = duration > 0 ? Math.min((ts - startTime) / duration, 1) : 1
       const eased = 1 - (1 - t) * (1 - t) // ease-out quad
       setSvgPos({
         x: segStart.x + (segEnd.x - segStart.x) * eased,
@@ -155,12 +177,13 @@ export const ExplorerDot = ({
         if (segIdx < waypoints.length - 1) {
           segStart = waypoints[segIdx]
           segEnd = waypoints[segIdx + 1]
-          faceSegment()
+          setOut()
           startTime = ts
           rafRef.current = requestAnimationFrame(animate)
         } else {
           animatingRef.current = false
           setWalking(false)
+          announce(segEnd)
           onArriveRef.current?.()
         }
       } else {
@@ -169,9 +192,9 @@ export const ExplorerDot = ({
     }
 
     rafRef.current = requestAnimationFrame(animate)
+    // Leaves `animatingRef` set: the next move reads it to snap to its destination rather than walk from the old one.
     return () => {
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
-      animatingRef.current = false
       setWalking(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

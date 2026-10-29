@@ -99,6 +99,7 @@ import {
   type RoomClaims,
 } from "./roomClaims"
 import { occupantOffset, standingOffset } from "./standingSpot"
+import { walkPoints } from "./roomWalk"
 import { OccupantFigure } from "./OccupantFigure"
 import type { ReplaysAt } from "./roomReplays"
 import type { OccupantOf } from "./roomOccupants"
@@ -1564,6 +1565,10 @@ export const SiteMapView = ({
   const explorerBaseY = explorerPos
     ? cellCenter(explorerPos[0], explorerPos[1]).cy + standAt(explorerPos[0], explorerPos[1]).dy + CELL / 2
     : Infinity
+  const waypointsOf = useCallback(
+    (route: ReadonlyArray<readonly [number, number]>) => walkPoints(grid, route, standAt),
+    [grid, standAt]
+  )
   // A GATE IS DRAWN WITH THE ARCHWAYS, after everything else, for the archway's own reason: it is a
   // thing in the world rather than a decal, so the player walks BEHIND it, and it is hung in the wall
   // band where an arch is — sorted by its floor line among the furniture it came out UNDER the doorway
@@ -2063,6 +2068,7 @@ export const SiteMapView = ({
                   carrying={carrying}
                   onArrive={() => setSettledExplorerPos(explorerPos)}
                   standAt={standAt}
+                  waypointsOf={waypointsOf}
                 />
               )}
               {ride &&
