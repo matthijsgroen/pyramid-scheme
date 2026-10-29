@@ -148,6 +148,8 @@ export type PropFootprint = {
   tall: number
   /** Marks a kind that stands in a room's middle: the room it dresses is drawn around it. */
   centre?: true
+  /** Marks a kind drawn on the floor under the player and walked over; it fits only a prefab's ground place. */
+  ground?: true
 }
 export const SINGLE_CELL: PropFootprint = { cols: 1, rows: 1, tall: 0 }
 /** The kinds bigger than one cell. Every kind not listed is `SINGLE_CELL`. */
