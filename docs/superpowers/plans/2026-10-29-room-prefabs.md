@@ -424,7 +424,39 @@ The notation (spec "The file format", plus decisions taken there):
 - [ ] **Step 5:** Storybook `RoomEditor` story; screenshot it with a made-up hall at two tiers — check by looking.
 - [ ] **Step 6: Commit** `feat: dev room editor`.
 
-### Task 11: Starter rooms
+### Task 11: Drawing rooms in the editor
+
+**Files:**
+
+- Create: `src/game/prefabPrint.ts` (+spec), `src/app/dev/roomEditing.ts` (+spec), `src/app/dev/PlaceInspector.tsx`
+- Modify: `src/app/dev/RoomEditor.tsx`, `RoomEditor.spec.tsx`, `RoomEditor.stories.tsx`, locale files (nl + en)
+
+**Interfaces:**
+
+- Produces: `printPrefab(prefab: Prefab): string` — the canonical text; `parsePrefab(printPrefab(p))` deep-equals `p`,
+  and printing a parsed catalogue room changes only spacing (named lists kept, comments and `designed by` kept).
+- Produces (`roomEditing.ts`, pure, each `(prefab, layoutIndex, …) => Prefab`): `paintCell(…, r, c, sign: "#" | "." | "d")`,
+  `setSpecial(…, r, c, special: SpecialPlace)` (moves `stop` — one per layout), `dropKind(…, r, c, kind)` (claims the
+  kind's footprint from `decorationFootprint` at `r,c` with a new letter, refused where it overlaps the ring, a door
+  or another place, or a wall prop off the first inside row), `removePlace(…, r, c)`,
+  `editPlace(prefab, letter, patch: Partial<Pick<PlaceDef, "optional" | "kinds" | "group">>)`,
+  `addLayout(prefab, fromIndex, name)` (a copy to rework by hand; no rotation).
+- The editor: tools (wall, floor, door place, stop, actor, chest, portal, mechanism, erase) applied by click or drag
+  over the preview; palette entries dragged onto a cell call `dropKind`; clicking a place opens `PlaceInspector`
+  (optional, alternative kinds from the palette, `K of N`, `per <letter>`). Every edit goes model → `printPrefab` →
+  the text box, so the text stays the one thing saved; typing in the text re-parses as before. Undo: one step per
+  edit (a history of texts).
+
+- [ ] **Step 1: Failing tests:** `printPrefab` round-trips made-up rooms with lists, groups, `per`, mirror and two
+      layouts; `dropKind` of a 2×2 kind claims 4 cells and refuses over a door; `setSpecial` keeps one stop;
+      `editPlace` to `3 of 4` shows in the printed text; `RoomEditor.spec.tsx` — dragging a palette kind onto a
+      cell adds its legend line and letter to the text; undo restores the previous text.
+- [ ] **Step 2–4:** FAIL → implement → PASS.
+- [ ] **Step 5:** In Storybook, draw a small hall from an empty room (walls, doors, two pillars, a throne, a stop);
+      screenshot each step — check by looking; the check shows no faults and the text parses.
+- [ ] **Step 6: Commit** `feat: draw rooms in the room editor`.
+
+### Task 12: Starter rooms
 
 **Files:**
 

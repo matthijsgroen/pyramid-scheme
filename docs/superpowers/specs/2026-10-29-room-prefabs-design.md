@@ -103,7 +103,9 @@ release resets saves.
 A dev-mode editor beside the lock editor (designer, 2026-10-29): pick the tier, write the text, see the room drawn
 live with that tier's art, with its variants, fills, a walk between doors and the check's faults. A palette shows
 every prop and wall item with its sprite and footprint, greyed where the tier has not painted it yet; a click
-adds its legend line. A kind's size comes only from its registered footprint, never from the file. The text is
+adds its legend line. The room can also be drawn: paint walls, floor and door places, set the stop and other
+special places, drag props onto cells (they take their registered footprint), and set a place's options in a small
+inspector; every edit rewrites the text. A kind's size comes only from its registered footprint, never from the file. The text is
 shared by link or copied into its `.room` file.
 
 ## The check
@@ -124,7 +126,7 @@ A prefab that fails is refused, so the carve can never place a room one cannot c
 
 ## Non-goals
 
-- A drag-and-drop editor: the room editor edits the text and previews it.
+- Rotating a layout in the editor: a turned variant is a copy reworked by hand.
 - Rotated props.
 - Changing rooms the DSL does not name.
 - Drawing walk paths.
