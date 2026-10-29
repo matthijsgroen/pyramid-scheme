@@ -3,7 +3,8 @@ import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { describe, expect, it } from "vitest"
 import { parsePrefab } from "./prefabNotation"
-import { catalogueRoom, findRoom, roomEntriesIn, soundRoom } from "./roomCatalogue"
+import { prefabFaults } from "./prefabChecks"
+import { catalogueRoom, findRoom, newRoomText, roomCatalogueIn, roomEntriesIn } from "./roomCatalogue"
 
 const room = (tier: string, rows = ["# # # # #", "# . s . #", "# . . . #", "# # d # #"]) =>
   `tier ${tier}\nlayout\n${rows.join("\n")}\ns stop\n`
@@ -52,18 +53,31 @@ describe("the room catalogue's file reader", () => {
 })
 
 describe("catalogueRoom", () => {
+  const walled = (middle: string) =>
+    `tier starter\nlayout\n# # # # # # #\n# s . ${middle} . . #\n# # # # d # #\ns stop\n${
+      middle === "p" ? "p floor pillar\n" : ""
+    }`
+
   it("throws for a room that is not in the catalogue", () => {
     expect(findRoom("noSuchRoom")).toBeUndefined()
     expect(() => catalogueRoom("noSuchRoom")).toThrow(/no room noSuchRoom/)
   })
 
-  it("refuses a room whose own check finds a fault and passes one that walks", () => {
-    // A pillar on the only way from the door to the stop.
-    const faulty = parsePrefab(
-      "tier starter\nlayout\n# # # # # #\n# s p . . #\n# # # # # #\n# # d # # #\ns stop\np floor pillar\n",
-      "faulty"
-    )
-    expect(() => soundRoom("faulty", faulty)).toThrow(/room faulty is not sound/)
-    expect(soundRoom("fine", parsePrefab(room("starter"), "fine")).name).toBe("fine")
+  it("refuses a room only the pillar cuts off and hands out the same room without it", () => {
+    const folder = root()
+    writeFileSync(join(folder, "starter/blocked.room"), walled("p"))
+    writeFileSync(join(folder, "starter/open.room"), walled("."))
+    const catalogue = roomCatalogueIn(folder)
+    expect(() => catalogueRoom("blocked", catalogue)).toThrow(/room blocked is not sound/)
+    expect(catalogueRoom("open", catalogue).name).toBe("open")
+  })
+})
+
+describe("a new room file", () => {
+  it("parses and passes its own check", () => {
+    const prefab = parsePrefab(newRoomText("junior", "fresh"), "fresh")
+    expect(prefab.name).toBe("fresh")
+    expect(prefab.tier).toBe("junior")
+    expect(prefabFaults(prefab)).toEqual([])
   })
 })

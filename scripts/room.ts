@@ -13,8 +13,9 @@ import { fillsOf, placeBlobs, prefabFaults, variantsOf } from "../src/game/prefa
 import type { Variant } from "../src/game/prefabChecks"
 import { PREFAB_SYNTAX } from "../src/game/prefabNotation"
 import type { Prefab } from "../src/game/prefabTypes"
-import { ROOM_CATALOGUE, ROOM_ENTRIES } from "../src/game/roomCatalogue"
+import { ROOM_CATALOGUE, ROOM_ENTRIES, newRoomText } from "../src/game/roomCatalogue"
 import { difficulties } from "../src/data/difficultyLevels"
+import type { Difficulty } from "../src/data/difficultyLevels"
 
 const args = process.argv.slice(2)
 const newIndex = args.indexOf("--new")
@@ -95,19 +96,7 @@ if (args.includes("--help")) {
       process.exitCode = 1
     } else {
       mkdirSync(dirname(path), { recursive: true })
-      const help = PREFAB_SYNTAX.split("\n").map(line => `//${line}`.trimEnd())
-      writeFileSync(
-        path,
-        [
-          "// A new room. Lines starting with // are ignored.",
-          "//",
-          ...help,
-          "",
-          `room ${name}`,
-          `tier ${tier}`,
-          "",
-        ].join("\n")
-      )
+      writeFileSync(path, newRoomText(tier as Difficulty, name))
       console.log(`started ${path}`)
     }
   }

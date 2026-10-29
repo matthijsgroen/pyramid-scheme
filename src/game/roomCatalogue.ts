@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url"
 import { difficulties } from "@/data/difficultyLevels"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { prefabFaults } from "./prefabChecks"
-import { parsePrefab } from "./prefabNotation"
+import { PREFAB_SYNTAX, parsePrefab } from "./prefabNotation"
 import type { Prefab } from "./prefabTypes"
 
 // A path, never a `new URL(…, import.meta.url)`: under jsdom (the verify sweeps) `URL` is the browser's, and
@@ -43,6 +43,10 @@ export const roomEntriesIn = (root: string): RoomEntry[] => {
   return entries
 }
 
+/** The parsed rooms under a rooms root. */
+export const roomCatalogueIn = (root: string): Readonly<Record<string, Prefab>> =>
+  Object.fromEntries(roomEntriesIn(root).map(entry => [entry.name, parsePrefab(entry.text, entry.name)]))
+
 export const ROOM_ENTRIES = roomEntriesIn(join(here, "rooms"))
 export const ROOM_CATALOGUE: Readonly<Record<string, Prefab>> = Object.fromEntries(
   ROOM_ENTRIES.map(entry => [entry.name, parsePrefab(entry.text, entry.name)])
@@ -50,16 +54,30 @@ export const ROOM_CATALOGUE: Readonly<Record<string, Prefab>> = Object.fromEntri
 
 export const findRoom = (name: string): Prefab | undefined => ROOM_CATALOGUE[name]
 
-/** The room when its own check finds no fault, else a throw naming the faults. */
-export const soundRoom = (name: string, prefab: Prefab): Prefab => {
+/** A room from its .room file, for the world spec; refused when missing or when its own check finds a fault. */
+export const catalogueRoom = (name: string, catalogue: Readonly<Record<string, Prefab>> = ROOM_CATALOGUE): Prefab => {
+  const prefab = catalogue[name]
+  if (!prefab) throw new Error(`no room ${name} in src/game/rooms`)
   const faults = prefabFaults(prefab)
   if (faults.length > 0) throw new Error(`room ${name} is not sound: ${faults.join("; ")}`)
   return prefab
 }
 
-/** A room from its .room file, for the world spec; refused when missing or when its own check finds a fault. */
-export const catalogueRoom = (name: string): Prefab => {
-  const prefab = findRoom(name)
-  if (!prefab) throw new Error(`no room ${name} in src/game/rooms`)
-  return soundRoom(name, prefab)
-}
+/** A fresh room file: the notation as comments above a minimal room that already passes its check. */
+export const newRoomText = (tier: Difficulty, name: string): string =>
+  [
+    "// A new room. Lines starting with // are ignored.",
+    "//",
+    ...PREFAB_SYNTAX.split("\n").map(line => `//${line}`.trimEnd()),
+    "",
+    `room ${name}`,
+    `tier ${tier}`,
+    "layout",
+    "# # # # #",
+    "# . . . #",
+    "# . s . #",
+    "# . . . #",
+    "# # d # #",
+    "s stop",
+    "",
+  ].join("\n")
