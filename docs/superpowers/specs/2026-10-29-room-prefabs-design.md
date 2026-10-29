@@ -46,8 +46,8 @@ player walks between and past the pillars and round the throne; he stands in the
 
 ## Places, filled per room
 
-The file mostly marks **places**, not objects; the carve fills each from the room's activity pool in the room's
-tier, deterministically from the site. Three storerooms on one floor are dressed three ways.
+The file mostly marks **places**, not objects; the carve fills each from the kinds the file lists for it,
+deterministically from the site. Three storerooms on one floor are dressed three ways.
 
 - **Kinds of place:**
   - a wall place (against the north wall: a jar rack, a shelf, a desk);
@@ -56,9 +56,9 @@ tier, deterministically from the site. Three storerooms on one floor are dressed
   - a wall-item place (a niche, a tally board, a frieze).
 - **A place may be optional** and sometimes stay empty.
 - **Place groups with a count:** "of these 5 places, 3 are filled", for example with gifts brought to the hall
-  (jars, baskets, chests from the tier's pool). The carve picks which 3 per room.
-- **An object may claim more than its place:** a fallen pillar is a stump on the pillar place and rubble on a
-  neighbouring cell that cannot be walked. The file says which neighbour the rubble may take.
+  (jars, baskets, chests, as the file lists them). The carve picks which 3 per room.
+- **A ruined room is drawn:** a stump on the pillar place, and around it the places where its fallen top may lie,
+  one of them filled per stump. The top cannot be walked over.
 - **Patron statues stand on pillar places:** a pillar place may hold the floor's patron statue, swapped for the
   right patron. There is no separate patron letter.
 
@@ -126,8 +126,9 @@ A prefab that fails is refused, so the carve can never place a room one cannot c
 - **The order inside the carve is the builder's.** The designer judges the carved floor, not the steps; prefab
   rooms will likely have to claim their space before the maze is drawn.
 - **Story rooms and Fez's stall are not taken** by a prefab; they keep their own set (`themed-rooms.md` §2).
-- **Places name what they take:** a place lists the kinds it may hold (`pillar | patron`), a pool tag (`gift`) or
-  `any` of its footprint from the activity pool; the check enumerates exactly that list.
+- **Places name what they take, in the file** (designer, 2026-10-29): a place lists the kinds it may hold
+  (`pillar | patron`) or a named list the file declares (`gift = jarStack | basketStack | chestProp`). No tag or
+  pool in code decides what stands in a prefab; the check enumerates exactly the file's lists.
 - **The floor does not widen itself for a prefab.** A hall that does not fit refuses the bake; the designer raises
   packing.
 - **Lock controls stand only on mechanism places** in a prefab room, and the lesson check runs for every variant.
@@ -179,7 +180,16 @@ s  stop
 - A letter repeated over several cells is one object of that footprint.
 - `floor?` marks an optional place; `3 of 4` after a legend line makes that letter's places one group of which 3
   are filled.
-- `fallenPillar>e,w` claims the cell east or west of its place as rubble; the check tries both.
+- A ruined hall is drawn, not derived (designer, 2026-10-29):
+
+  ```
+  q  floor  pillarStump | patron
+  r  floor? pillarTop  1 of 3 per q
+  ```
+
+  `q` is a stump; the `r` places touching it hold its fallen top, one per stump. An `r` touching two stumps counts
+  for both.
+- `gift = jarStack | basketStack | chestProp` declares a named list of kinds for this file's places.
 - Chest, portal and mechanism places are legend lines too (`c chest`, `o portal`, `m mechanism`).
 
 ## Left to the builder
