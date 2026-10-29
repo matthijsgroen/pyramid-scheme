@@ -26,6 +26,7 @@ import type { Distribution } from "./slotAllocator"
 import type { FamilyPriorityFor } from "./slots"
 import type { ResolveEncounter, ResolveKeyRequirements } from "../game/siteAssembler"
 import { defaultResolveEncounter } from "../game/encounterFallback"
+import { prefabArtValidator } from "./prefabArtValidator"
 import { validateRewardCounts, type WorldValidator } from "./validate"
 import { capabilitiesFor } from "./capabilities"
 import { clearUncollectedSlots } from "./slots"
@@ -457,7 +458,7 @@ export const buildConfigs = (
   // get to, hidden pockets and authored-key doors included. A mod counts its own kind in there to
   // hold its collection's target count; one that only reads the configs ignores it. `walk` is the
   // strict gate walk over the same finished world: what lies before a gate.
-  for (const validate of worldValidators) validate(allConfigs, reachableRewards, walk)
+  for (const validate of [prefabArtValidator, ...worldValidators]) validate(allConfigs, reachableRewards, walk)
 
   const expectedCurrencyRewards = currencies.reduce((sum, c) => sum + (c.expectedTotal?.() ?? 0), 0)
   const isCurrencyReward = (r: TreasureReward) => currencies.some(c => c.bucketForReward?.(r) !== undefined)
