@@ -1,7 +1,6 @@
 import { Fragment, useCallback, useEffect, useMemo, useState, type ReactNode } from "react"
 import type {
   CellState,
-  CentrePiece,
   DecorationKind,
   Direction,
   FloorGrid,
@@ -10,7 +9,7 @@ import type {
   Tileset,
   WallDecorationKind,
 } from "../../game/siteTypes"
-import { decorationFootprint } from "../../game/siteTypes"
+import { DECORATION_KINDS, WALL_DECORATION_KINDS, decorationFootprint } from "../../game/siteTypes"
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { isSealedWayOut, oneWayRuns, revealAll } from "../../game/gridNavigation"
 import { CHAR_H, CHAR_W, ExplorerDot, FOOT_LIFT, LightPool } from "./ExplorerDot"
@@ -96,13 +95,12 @@ import {
   floorTier,
   isPassable,
   litClaimOwner,
-  litGrownOwner,
   tileRegionsFor,
   type RoomClaims,
 } from "./roomClaims"
-import { occupantOffset, standingOffset } from "./standingSpot"
+import { occupantOffset, prefabArtOffset, standingOffset } from "./standingSpot"
 import { markerCell, walkPoints, type WalkPoint } from "./roomWalk"
-import { grownCells } from "@/game/roomShape"
+import { prefabRoomAt, prefabRoomCells } from "@/game/roomShape"
 import { OccupantFigure } from "./OccupantFigure"
 import type { ReplaysAt } from "./roomReplays"
 import type { OccupantOf } from "./roomOccupants"
@@ -265,7 +263,7 @@ const leverArmTransform = (angleDeg: number): string =>
 
 const NO_STATES: ReadonlyMap<string, string> = new Map()
 
-/** Whether a piece would hide the explorer: he is behind its floor line and his figure, along the stretch he is on,
+/** Whether an object would hide the explorer: he is behind its floor line and his figure, along the stretch he is on,
  * overlaps the box its sprite is drawn in. */
 const hides = (
   frame: { x: number; y: number; w: number; baseY: number },
@@ -513,7 +511,7 @@ export const nodeSpritesFor = (
               )
             : undefined
         if (!url && !leverUrls) continue
-        const { dx, dy } = nodeArtOffset(cell.dirs)
+        const { dx, dy } = prefabArtOffset(grid, r, c) ?? nodeArtOffset(cell.dirs)
         const placed = {
           x: cx + dx - CELL / 2,
           y: cy + dy + CELL / 2 - PROP_H,
@@ -544,7 +542,8 @@ export const nodeSpritesFor = (
         // for a stair's cresset.
         const url = tileOrPlaceholder(tier, "exit")
         if (!url) continue
-        const { cx: ex, cy: ey } = cellCenter(r, c)
+        const art = prefabArtOffset(grid, r, c) ?? { dx: 0, dy: 0 }
+        const [ex, ey] = [cx + art.dx, cy + art.dy]
         out.push({
           footprint,
           key: `exit:${r},${c}`,
@@ -591,7 +590,7 @@ export const nodeSpritesFor = (
         if (!back || !arm || !front) continue
         // Stepped off its own doorways exactly as a chest is (`nodeArtOffset`): a lever is a cell's
         // worth of furniture like any other, not a doorway fitting.
-        const { dx, dy } = nodeArtOffset(cell.dirs)
+        const { dx, dy } = prefabArtOffset(grid, r, c) ?? nodeArtOffset(cell.dirs)
         // THE CONTROL'S CURRENT POSITION, NOT ALWAYS ITS INITIAL ONE: the same address `openDoorsFor`
         // reads a saved position off, falling back to the mechanism's own `initial` for the same reason
         // it does — a save with no entry yet is standing wherever the floor was authored to start it.
@@ -621,7 +620,7 @@ export const nodeSpritesFor = (
         const spent = isSpentAt(grid, floorIndex, r, c, cell, mechanismStates)
         const url = mechanismTileUrl(tier, spent ? "torchLit" : "torchUnlit", mechanismStyle)
         if (!url) continue
-        const { dx, dy } = nodeArtOffset(cell.dirs)
+        const { dx, dy } = prefabArtOffset(grid, r, c) ?? nodeArtOffset(cell.dirs)
         const x = cx + dx - CELL / 2
         const floorLine = cy + dy + CELL / 2
         out.push({
@@ -697,6 +696,8 @@ export const nodeSpritesFor = (
         // east drew its torch on the right and lit the floor on the left.
         const flameOnRight = side !== undefined
         const flameDx = (flameOnRight === mirrored ? -1 : 1) * STAIR_FLAME_DX
+        const art = prefabArtOffset(grid, r, c) ?? { dx: 0, dy: 0 }
+        const [sx, sy] = [cx + art.dx, cy + art.dy]
         out.push({
           // ONLY THE DESCENDING FLIGHTS CARRY A CRESSET. A shaft is a hole in the floor and needs a
           // flame at its lip to read as one; the climbing flights are lit by the room they stand in and
@@ -707,16 +708,16 @@ export const nodeSpritesFor = (
             ? {}
             : {
                 light: {
-                  x: cx + flameDx,
-                  y: cy - CELL * 0.1,
+                  x: sx + flameDx,
+                  y: sy - CELL * 0.1,
                   r: LAMP_POOL_RADIUS,
                 },
               }),
           footprint,
           key: `stair:${r},${c}`,
           url,
-          x: cx - CELL / 2,
-          y: cy + CELL / 2 - PROP_H,
+          x: sx - CELL / 2,
+          y: sy + CELL / 2 - PROP_H,
           mirrored,
         })
       }
@@ -761,6 +762,7 @@ const Decoration = ({
   seed,
   patron,
   frame,
+  flip,
 }: {
   kind: DecorationKind
   tier: Tileset
@@ -768,6 +770,8 @@ const Decoration = ({
   patron?: Patron
   /** The sprite's box relative to the anchor cell's centre (`propFrame`), spanning the whole footprint. */
   frame: { x: number; y: number; w: number; h: number }
+  /** Drawn mirrored left to right: a ground object in a mirrored prefab room. */
+  flip?: boolean
 }) => {
   // A PATRON BEATS A VARIANT. Both choose a drawing, and where a site names a god that choice is
   // authored rather than positional — a dedicated tomb whose statues varied by cell would be saying two
@@ -792,6 +796,7 @@ const Decoration = ({
           h={frame.h}
           stretch={false}
           filter={STANDING_RELIEF[tier]}
+          mirrored={flip}
         />
       ) : (
         <DecorationGlyph kind={kind} />
@@ -799,6 +804,100 @@ const Decoration = ({
     </>
   )
 }
+
+type PropFrame = { x: number; y: number; w: number; h: number; baseY: number }
+
+/** A prop drawn at its anchor cell: a box with no size of its own, standing at the middle of the cell, so what is
+ * inside it is drawn in cell-local units, the way it was inside a `<g transform>`. */
+const PropAt = ({
+  at,
+  frame,
+  prefab,
+  faded,
+  ...decoration
+}: {
+  /** The anchor cell's key. */
+  at: string
+  kind: DecorationKind
+  tier: Tileset
+  patron?: Patron
+  seed: string
+  frame: PropFrame
+  flip?: boolean
+  /** One of a prefab room's objects. */
+  prefab?: boolean
+  faded?: boolean
+}) => {
+  const [r, c] = at.split(",").map(Number)
+  const { cx, cy } = cellCenter(r, c)
+  return (
+    <div
+      {...(prefab ? { "data-prefab-object": at } : {})}
+      style={{
+        position: "absolute",
+        left: cx,
+        top: cy,
+        width: 0,
+        height: 0,
+        ...(faded ? { opacity: OCCLUDER_FADE } : {}),
+      }}
+    >
+      <Decoration {...decoration} frame={{ x: frame.x - cx, y: frame.y - cy, w: frame.w, h: frame.h }} />
+    </div>
+  )
+}
+
+type PrefabProp = {
+  /** The anchor cell's key. */
+  at: string
+  layer: "floor" | "wall" | "ground"
+  kind: DecorationKind
+  tier: Tileset
+  frame: PropFrame
+  flip?: boolean
+}
+
+/** One of a prefab room's objects, marked so a test can find it. */
+const PrefabPropAt = ({ prop, grid, faded }: { prop: PrefabProp; grid: FloorGrid; faded?: boolean }) => (
+  <PropAt
+    at={prop.at}
+    kind={prop.kind}
+    tier={prop.tier}
+    patron={grid.patron}
+    seed={`${grid.siteId}:${prop.at}`}
+    frame={prop.frame}
+    flip={prop.flip}
+    prefab
+    faded={faded}
+  />
+)
+
+const isDecorationKind = (kind: string): kind is DecorationKind =>
+  (DECORATION_KINDS as readonly string[]).includes(kind)
+
+/** What stands in each lit prefab room, from the room's own objects and nothing else, each spanning the cells the
+ * carve gave it. Wall items hang with the rest (`wallItemsFor`). */
+const prefabPropsFor = (grid: FloorGrid, floorTier: Tileset): PrefabProp[] =>
+  [...new Set(prefabRoomCells(grid).values())].flatMap(owner => {
+    const [r, c] = owner.split(",").map(Number)
+    const cell = cellAt(grid, r, c)
+    if (cell.type === "empty" || cell.state === "fogged" || !cell.prefabRoom) return []
+    const tier = cellTileset(cell, grid, floorTier)
+    return cell.prefabRoom.objects.flatMap(({ kind, layer, top, left, rows, cols, flip }): PrefabProp[] =>
+      layer === "wallItem" || !isDecorationKind(kind)
+        ? []
+        : [
+            {
+              at: `${top},${left}`,
+              layer,
+              kind,
+              tier,
+              frame: propFrame(top, left, { ...decorationFootprint(kind), rows, cols }),
+              ...(flip ? { flip } : {}),
+            },
+          ]
+    )
+  })
 
 /** GROUND: blown sand, or a mat of grass, drawn over the floor and clipped to it.
  *
@@ -995,6 +1094,19 @@ export const wallItemsFor = (grid: FloorGrid, claims: RoomClaims, ownedKeys?: Re
     else claimedByOwner.set(ownerKey, [cellKey])
   }
   const items: WallItem[] = []
+  // A prefab room's wall items hang where its file puts them, on the ring's north wall: in the face band of the cell
+  // below.
+  for (const owner of new Set(prefabRoomCells(grid).values())) {
+    const [r, c] = owner.split(",").map(Number)
+    const room = prefabRoomAt(grid, r, c)
+    for (const { kind, layer, top, left } of room?.objects ?? []) {
+      if (layer !== "wallItem" || top !== room!.rect.top - 1) continue
+      if (!(WALL_DECORATION_KINDS as readonly string[]).includes(kind)) continue
+      const at = floorAt(top + 1, left)
+      if (typeof at === "string") continue
+      items.push({ row: top + 1, col: left, kind: kind as WallDecorationKind, tier: at.tier, state: at.state })
+    }
+  }
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
@@ -1450,28 +1562,19 @@ export const SiteMapView = ({
   )
   const movedMarkers = useMemo(() => {
     const moved = new Map<string, readonly [number, number]>()
-    for (const key of grownCells(grid).keys()) {
+    for (const key of prefabRoomCells(grid).keys()) {
       const [r, c] = key.split(",").map(Number)
       moved.set(key, markerCell(grid, r, c))
     }
     return moved
   }, [grid])
-  // A grown room's piece, by the cell it is anchored on.
-  const centrePieces = useMemo(() => {
-    const pieces = new Map<string, CentrePiece>()
-    for (const owner of new Set(grownCells(grid).values())) {
-      const [r, c] = owner.split(",").map(Number)
-      const room = grid.cells[r][c]
-      if (room.type === "room" && room.grownRoom)
-        pieces.set(`${room.grownRoom.piece.top},${room.grownRoom.piece.left}`, room.grownRoom.piece)
-    }
-    return pieces
-  }, [grid])
-  // The stretch a piece is judged against: the room stretch he is walking, else the spot he set out from until he
-  // reaches one, else where he stands. A floor with no piece needs none.
+  // What stands in the lit prefab rooms, each with its frame, wall items aside (`wallItemsFor`).
+  const prefabProps = useMemo(() => prefabPropsFor(grid, tier), [grid, tier])
+  // The stretch an object is judged against: the room stretch he is walking, else the spot he set out from until he
+  // reaches one, else where he stands. A floor with no object standing up needs none.
   const fadeStretch = useMemo(
     () =>
-      !centrePieces.size
+      !prefabProps.some(prop => prop.layer !== "ground")
         ? null
         : (roomStretch ??
           (isTraveling && settledExplorerPos
@@ -1479,7 +1582,7 @@ export const SiteMapView = ({
             : explorerPos
               ? { at: pointOf(explorerPos) }
               : null)),
-    [centrePieces, roomStretch, isTraveling, settledExplorerPos, explorerPos, pointOf]
+    [prefabProps, roomStretch, isTraveling, settledExplorerPos, explorerPos, pointOf]
   )
 
   // Everything that stands on this floor, in one list: a room's furniture and a node's own, each with
@@ -1574,44 +1677,38 @@ export const SiteMapView = ({
     }))
     for (const [cellKey, kind] of claims.decorationAt) {
       const [r, c] = cellKey.split(",").map(Number)
-      // A grown room's piece belongs to its room's node, which its anchor may be.
-      const piece = centrePieces.get(cellKey)
-      const owner = piece ? litGrownOwner(grid, r, c) : litClaimOwner(grid, claims, r, c)
+      const owner = litClaimOwner(grid, claims, r, c)
       if (!owner) continue
-      const { cx, cy } = cellCenter(r, c)
-      // A prop bigger than a cell spans its footprint from the anchor and sorts by its bottom row; a grown room's
-      // piece spans the cells the carve gave it.
-      const frame = propFrame(
-        r,
-        c,
-        piece ? { ...decorationFootprint(kind), rows: piece.rows, cols: piece.cols } : decorationFootprint(kind)
-      )
+      const frame = propFrame(r, c, decorationFootprint(kind))
       sprites.push({
         key: `prop:${cellKey}`,
         baseY: frame.baseY,
         node: (
-          // A box with no size of its own, standing at the middle of the cell: what is inside it is then
-          // drawn in cell-local units, the way it was inside a `<g transform>`.
-          <div
+          <PropAt
             key={`prop:${cellKey}`}
-            {...(piece ? { "data-centre-piece": cellKey } : {})}
-            style={{
-              position: "absolute",
-              left: cx,
-              top: cy,
-              width: 0,
-              height: 0,
-              ...(piece && fadeStretch && hides(frame, fadeStretch) ? { opacity: OCCLUDER_FADE } : {}),
-            }}
-          >
-            <Decoration
-              kind={kind}
-              tier={cellTileset(owner, grid, tier)}
-              patron={grid.patron}
-              seed={`${grid.siteId}:${cellKey}`}
-              frame={{ x: frame.x - cx, y: frame.y - cy, w: frame.w, h: frame.h }}
-            />
-          </div>
+            at={cellKey}
+            kind={kind}
+            tier={cellTileset(owner, grid, tier)}
+            patron={grid.patron}
+            seed={`${grid.siteId}:${cellKey}`}
+            frame={frame}
+          />
+        ),
+      })
+    }
+    // A prefab room's object fades while it would hide him; one walked over lies under him (`underfoot`).
+    for (const prop of prefabProps) {
+      if (prop.layer === "ground") continue
+      sprites.push({
+        key: `prefab:${prop.at}`,
+        baseY: prop.frame.baseY,
+        node: (
+          <PrefabPropAt
+            key={`prefab:${prop.at}`}
+            prop={prop}
+            grid={grid}
+            faded={!!fadeStretch && hides(prop.frame, fadeStretch)}
+          />
         ),
       })
     }
@@ -1638,7 +1735,19 @@ export const SiteMapView = ({
         })
       )
     return sprites.sort((a, b) => a.baseY - b.baseY)
-  }, [grid, claims, tier, nodeSprites, explorerPos, squeeze, occupantOf, centrePieces, fadeStretch])
+  }, [grid, claims, tier, nodeSprites, explorerPos, squeeze, occupantOf, prefabProps, fadeStretch])
+  // What lies on a prefab room's floor and is walked over: under everything that stands, him included.
+  const underfoot = useMemo(
+    (): StandingSprite[] =>
+      prefabProps
+        .filter(prop => prop.layer === "ground")
+        .map(prop => ({
+          key: `prefab:${prop.at}`,
+          baseY: prop.frame.baseY,
+          node: <PrefabPropAt key={`prefab:${prop.at}`} prop={prop} grid={grid} />,
+        })),
+    [prefabProps, grid]
+  )
 
   // The line the player stands on. A sprite lower than it is nearer the viewer and is drawn after him;
   // one level with it loses the tie, because the actor belongs in front of the furniture he shares a
@@ -1971,7 +2080,7 @@ export const SiteMapView = ({
                 const c = ci - 1
                 const cell = cellAt(grid, r, c)
                 const cellKey = `${r},${c}`
-                // A grown room's node is drawn on its stop and an arm it absorbed at its door; the tap stays the cell's own.
+                // A prefab room's node is drawn on its stop and an arm it absorbed at its door; the tap stays the cell's own.
                 const { cx, cy } = cellCenter(...(movedMarkers.get(cellKey) ?? [r, c]))
                 const claimOwner = litClaimOwner(grid, claims, r, c)
 
@@ -2140,6 +2249,7 @@ export const SiteMapView = ({
               carries a clip is laid out as a full-map layer with the art placed by background-position,
               which is why the footprint path needs no translating (see `Sprite`). */}
             <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+              <StandingLayer sprites={underfoot} />
               {/* The floor light first, so everything standing is standing IN it. */}
               {standing.map(s2 =>
                 s2.light ? <LightPool key={`light:${s2.key}`} r={s2.light.r} cx={s2.light.x} cy={s2.light.y} /> : null

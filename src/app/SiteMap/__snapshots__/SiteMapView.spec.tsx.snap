@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SiteMapView — a grown room > draws a room with no centre object exactly as before 1`] = `
+exports[`SiteMapView — a prefab room > draws a room with no prefab exactly as before 1`] = `
 [
   {
     "explorer": "378,308",

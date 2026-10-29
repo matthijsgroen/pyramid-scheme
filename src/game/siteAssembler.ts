@@ -80,8 +80,8 @@ export type AssembleFloorKeyRequirements = {
   /** Says which passage a gate empty hands alone open is dressed as. Production passes the registry's; absent
    * (stories, specs, the builder) the fallback accepts any named one. One no registered mod declares leaves a door. */
   resolvePassage?: ResolvePassageRealisation
-  /** How much floor each prop kind covers, and which stand in a room's middle. Absent (production, stories)
-   * the shipped table answers; a spec injects stand-in centre kinds here. */
+  /** How much floor each prop kind covers. Absent (production, stories) the shipped table answers; a spec injects
+   * stand-in footprints here. */
   propFootprint?: (kind: DecorationKind) => PropFootprint
   /** How many attempts the floor may take, at most ASSEMBLY_ATTEMPTS. The bake's seed search asks for 1:
    * it wants a seed that carves at the authored `packing`, and a seed that only carves after the ladder

@@ -1,6 +1,6 @@
 import { doorOpen, type DoorMode } from "./doorOpen"
 import { findPath, walkableFrom } from "./gridNavigation"
-import { grownCells, inRect } from "./roomShape"
+import { inRect, prefabRoomAt, prefabRoomCells } from "./roomShape"
 import type { Direction, FloorGrid, GridCell, MechanismRecord, RoomCell } from "./siteTypes"
 
 // A LESSON SHOWS ITS PROBLEM BEFORE ITS ANSWER (docs/game-design/lock-curriculum.md): the shut door is met before
@@ -97,16 +97,15 @@ export const lessonOrderFaults = (grid: FloorGrid): string[] => {
     if (!way) continue
     if (way.some(([r, c]) => controlCells.has(at(r, c))))
       faults.push(`gate ${gateKeyId}: its control stands on the way to its door`)
-    const grown = grownCells(grid)
-    const rooms = new Set(way.flatMap(([r, c]) => grown.get(at(r, c)) ?? []))
+    const prefabs = prefabRoomCells(grid)
+    const rooms = new Set(way.flatMap(([r, c]) => prefabs.get(at(r, c)) ?? []))
     for (const node of rooms) {
       const [r, c] = node.split(",").map(Number)
-      const room = grid.cells[r][c] as RoomCell
-      const { top, left, rows, cols } = room.grownRoom!.rect
+      const { top, left, rows, cols } = prefabRoomAt(grid, r, c)!.rect
       const ring = { top: top - 1, left: left - 1, rows: rows + 2, cols: cols + 2 }
       if ([...controlCells].some(key => inRect(ring, ...(key.split(",").map(Number) as [number, number]))))
         faults.push(
-          `gate ${gateKeyId}: its control stands in the ring of the grown room at ${node} on the way to its door`
+          `gate ${gateKeyId}: its control stands in the ring of the prefab room at ${node} on the way to its door`
         )
     }
   }

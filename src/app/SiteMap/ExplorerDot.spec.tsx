@@ -5,7 +5,7 @@ import type { FloorGrid, GridCell } from "@/game/siteTypes"
 import { ExplorerDot } from "./ExplorerDot"
 import { findPath, revealAll } from "@/game/gridNavigation"
 import { CELL, COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
-import { GROWN_FORK, GROWN_PIECE, floorFrom, grownForkFloor } from "./floorFixtures.testing"
+import { PREFAB_FORK, PREFAB_PILLARS, floorFrom, prefabForkFloor } from "./floorFixtures.testing"
 import { buildRoomClaims } from "./roomClaims"
 import { roomStop, walkPoints, walkSteps } from "./roomWalk"
 import { standingOffset } from "./standingSpot"
@@ -86,17 +86,18 @@ const handFrames = () => {
   return { frame, pending: () => queue.length > 0 }
 }
 
-describe("ExplorerDot in a grown room", () => {
-  const grid = revealAll(grownForkFloor())
+describe("ExplorerDot in a prefab room", () => {
+  const grid = revealAll(prefabForkFloor())
   const claims = buildRoomClaims(grid)
   const standAt = (r: number, c: number) => standingOffset(grid, claims, r, c)
   const waypointsOf = (route: ReadonlyArray<readonly [number, number]>) => walkPoints(grid, route, standAt)
-  const stop = roomStop(grid, ...GROWN_FORK)!
+  const stop = roomStop(grid, ...PREFAB_FORK)!
   const stopAt = `${cellCenter(...stop).cx},${cellCenter(...stop).cy}`
-  const nw = cellCenter(GROWN_PIECE.top, GROWN_PIECE.left)
-  const se = cellCenter(GROWN_PIECE.top + GROWN_PIECE.rows - 1, GROWN_PIECE.left + GROWN_PIECE.cols - 1)
   const inPiece = ([x, y]: number[]) =>
-    x > nw.cx - CELL / 2 && x < se.cx + CELL / 2 && y > nw.cy - CELL / 2 && y < se.cy + CELL / 2
+    PREFAB_PILLARS.some(([r, c]) => {
+      const { cx, cy } = cellCenter(r, c)
+      return Math.abs(x - cx) < CELL / 2 && Math.abs(y - cy) < CELL / 2
+    })
   const at = (container: HTMLElement) =>
     container.querySelector("[data-explorer]")!.getAttribute("data-at")!.split(",").map(Number)
 
@@ -122,29 +123,29 @@ describe("ExplorerDot in a grown room", () => {
     return { ...view, ...frames, onArrive, dot }
   }
 
-  it("walks round the piece from one door to the other, never inside it", () => {
-    const { container, frame, onArrive } = walk([2, 0], [2, 7])
+  it("walks round a pillar from the west door to the stop, never inside one", () => {
+    const { container, frame, onArrive } = walk([4, 0], PREFAB_FORK)
     const seen: number[][] = []
     while (!onArrive.mock.calls.length) {
       frame()
       seen.push(at(container))
     }
     expect(seen.filter(inPiece)).toEqual([])
-    expect(seen.some(([, y]) => y > se.cy + CELL / 2)).toBe(true)
-    expect(at(container)).toEqual([cellCenter(2, 7).cx, cellCenter(2, 7).cy])
+    expect(waypointsOf(findPath(grid, [4, 0], PREFAB_FORK)).filter(p => p.inRoom).length).toBeGreaterThan(2)
+    expect(at(container).join(",")).toBe(stopAt)
   })
 
   it("comes to rest at the room's stop when the room is the destination", () => {
-    const { container, frame, onArrive } = walk([2, 0], GROWN_FORK)
+    const { container, frame, onArrive } = walk([4, 0], PREFAB_FORK)
     while (!onArrive.mock.calls.length) frame()
     expect(at(container).join(",")).toBe(stopAt)
   })
 
-  it("never shows him under the piece when a second tap lands mid-walk", () => {
-    const { container, frame, rerender, dot, onArrive } = walk([2, 0], [2, 7])
+  it("never shows him inside a pillar when a second tap lands mid-walk", () => {
+    const { container, frame, rerender, dot, onArrive } = walk([4, 0], [4, 12])
     for (let i = 0; i < 25; i++) frame()
     expect(onArrive).not.toHaveBeenCalled()
-    rerender(dot(GROWN_FORK))
+    rerender(dot(PREFAB_FORK))
     const seen: number[][] = []
     while (!onArrive.mock.calls.length) {
       frame()
@@ -155,13 +156,13 @@ describe("ExplorerDot in a grown room", () => {
   })
 
   it("walks the next tap normally after a mid-walk re-route has settled", () => {
-    const { container, frame, rerender, dot, onArrive } = walk([2, 0], [2, 7])
+    const { container, frame, rerender, dot, onArrive } = walk([4, 0], [4, 12])
     for (let i = 0; i < 25; i++) frame()
-    rerender(dot(GROWN_FORK))
+    rerender(dot(PREFAB_FORK))
     while (!onArrive.mock.calls.length) frame()
     onArrive.mockClear()
 
-    rerender(dot([5, 4]))
+    rerender(dot([9, 6]))
     expect(at(container).join(",")).toBe(stopAt)
     let frames = 0
     while (!onArrive.mock.calls.length) {
@@ -169,12 +170,12 @@ describe("ExplorerDot in a grown room", () => {
       frames++
     }
     expect(frames).toBeGreaterThan(STEP_MS / FRAME_MS)
-    expect(at(container)).toEqual([cellCenter(5, 4).cx, cellCenter(5, 4).cy])
+    expect(at(container)).toEqual([cellCenter(9, 6).cx, cellCenter(9, 6).cy])
   })
 
   it("takes as long per step in a room as in a corridor", () => {
-    const { frame, onArrive } = walk([2, 0], [2, 7])
-    const points = waypointsOf(findPath(grid, [2, 0], [2, 7]))
+    const { frame, onArrive } = walk([4, 0], [4, 12])
+    const points = waypointsOf(findPath(grid, [4, 0], [4, 12]))
     let frames = 0
     while (!onArrive.mock.calls.length) {
       frame()
@@ -187,15 +188,18 @@ describe("ExplorerDot in a grown room", () => {
     expect(walkSteps(points)).toBeGreaterThan(points.length - 1)
   })
 
-  it("keeps one pace round a corner of the piece, never slowing to it", () => {
-    const { container, frame, onArrive } = walk([2, 0], [2, 7])
+  it("keeps one pace round a corner of a pillar, never slowing to it", () => {
+    // From the west door round the west pillar to the south door, and on out of the room.
+    const { container, frame, onArrive } = walk([4, 0], [9, 6])
     const seen: number[][] = []
     while (!onArrive.mock.calls.length) {
       frame()
       seen.push(at(container))
     }
-    const corner = cellCenter(GROWN_PIECE.top + GROWN_PIECE.rows, GROWN_PIECE.left - 1)
-    const k = seen.findIndex(([x, y]) => x === corner.cx && y === corner.cy)
+    const roomPoints = waypointsOf(findPath(grid, [4, 0], [9, 6])).filter(p => p.inRoom)
+    expect(roomPoints.length).toBeGreaterThan(2)
+    const corner = roomPoints[1]
+    const k = seen.findIndex(([x, y]) => x === corner.x && y === corner.y)
     expect(k).toBeGreaterThan(2)
     const pace = (a: number[], b: number[]) => Math.hypot((a[0] - b[0]) / COL_PITCH, (a[1] - b[1]) / ROW_PITCH)
     expect(pace(seen[k - 2], seen[k - 1])).toBeCloseTo(pace(seen[k + 1], seen[k + 2]), 6)
@@ -204,14 +208,14 @@ describe("ExplorerDot in a grown room", () => {
 
   it("announces each room waypoint once, and never in a corridor", () => {
     const onWaypoint = vi.fn()
-    const { frame, onArrive } = walk([2, 0], [2, 7], { onWaypoint })
+    const { frame, onArrive } = walk([4, 0], [4, 10], { onWaypoint })
     while (!onArrive.mock.calls.length) frame()
-    const roomPoints = waypointsOf(findPath(grid, [2, 0], [2, 7])).filter(p => p.inRoom)
+    const roomPoints = waypointsOf(findPath(grid, [4, 0], [4, 10])).filter(p => p.inRoom)
     expect(roomPoints.length).toBeGreaterThan(1)
     expect(onWaypoint.mock.calls.map(([p]) => p)).toEqual(roomPoints)
 
     const ending = vi.fn()
-    const second = walk([2, 0], GROWN_FORK, { onWaypoint: ending })
+    const second = walk([4, 0], PREFAB_FORK, { onWaypoint: ending })
     while (!second.onArrive.mock.calls.length) second.frame()
     expect(ending.mock.calls.at(-1)?.[0]).toEqual({
       x: cellCenter(...stop).cx,
@@ -222,18 +226,18 @@ describe("ExplorerDot in a grown room", () => {
 
   it("announces null once he sets out from a corridor point after a room, and never before one", () => {
     const onWaypoint = vi.fn()
-    const { frame, onArrive } = walk([2, 7], [2, 0], { onWaypoint })
+    const { frame, onArrive } = walk([4, 12], [4, 0], { onWaypoint })
     while (!onArrive.mock.calls.length) frame()
-    const roomPoints = waypointsOf(findPath(grid, [2, 7], [2, 0])).filter(p => p.inRoom)
+    const roomPoints = waypointsOf(findPath(grid, [4, 12], [4, 0])).filter(p => p.inRoom)
     expect(onWaypoint.mock.calls.map(([p]) => p)).toEqual([...roomPoints, null])
 
     const plain = vi.fn()
-    const first = walk([2, 0], [2, 1], { onWaypoint: plain })
+    const first = walk([4, 0], [4, 1], { onWaypoint: plain })
     while (!first.onArrive.mock.calls.length) first.frame()
     expect(plain).not.toHaveBeenCalled()
   })
 
-  it("walks a route through no grown room on exactly the frames it walks without waypointsOf", () => {
+  it("walks a route through no prefab room on exactly the frames it walks without waypointsOf", () => {
     const plain = revealAll(floorFrom(["E..", "  .", "  R"]))
     const offset = (r: number, c: number) => (r === 2 && c === 2 ? { dx: 7, dy: -3 } : { dx: 0, dy: 1 })
     const trace = (props: object) => {

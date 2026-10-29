@@ -286,13 +286,13 @@ describe("path building", () => {
   })
 })
 
-describe("a grown room", () => {
-  const room = (grownRoom?: RoomCell["grownRoom"]): RoomCell => ({
+describe("a prefab room", () => {
+  const room = (prefabRoom?: RoomCell["prefabRoom"]): RoomCell => ({
     type: "room",
     roomType: "fork",
     dirs: new Set(["e"]),
     state: "completed",
-    ...(grownRoom ? { grownRoom } : {}),
+    ...(prefabRoom ? { prefabRoom } : {}),
   })
   const floorWith = (cells: FloorGrid["cells"]): FloorGrid => ({
     siteId: "site",
@@ -315,7 +315,18 @@ describe("a grown room", () => {
 
   it("draws as one floor with no partition inside it", () => {
     const rect = { top: 1, left: 0, rows: 2, cols: 2 }
-    const grid = rows(room({ rect, piece: { kind: "basin", top: 1, left: 0, rows: 1, cols: 1 } }))
+    const grid = rows(
+      room({
+        name: "hall",
+        layout: 0,
+        mirrored: false,
+        rect,
+        stop: [1, 1],
+        objects: [{ kind: "basin", layer: "floor", top: 1, left: 0, rows: 1, cols: 1 }],
+        blocked: ["1,0"],
+        doors: { e: [2, 2] },
+      })
+    )
     const floor = allFloorRects(tileRegionsFor(grid, buildRoomClaims(grid)))
     expect(has(floor, westGap(1, 1))).toBe(true)
     expect(has(floor, westGap(2, 1))).toBe(true)

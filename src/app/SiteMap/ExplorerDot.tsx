@@ -158,7 +158,7 @@ export const ExplorerDot = ({
     let startTime: number | null = null
     // A room segment lasts as many steps as it is long, so he keeps one pace through a room and along a corridor.
     let duration = segmentDuration
-    // Round a room's piece he walks at one pace: a stretch between two room points eases only when it ends the walk.
+    // Round what stands in a room he walks at one pace: a stretch between two room points eases only when it ends the walk.
     let steady = false
     const setOut = () => {
       setFacing(facingOf(segEnd.x - segStart.x, segEnd.y - segStart.y))

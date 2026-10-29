@@ -69,8 +69,8 @@ own character.
 | bakery-brewery   | **grindstone**, **breadOven**, jarRack (beer)                                | —                          |
 
 Footprints (`DECORATION_FOOTPRINTS`): banquetTable, bed and the lotus pool 2×1; harp and pottedTree 1×1 with
-`tall: 1`; the rest 1×1. A centre kind is flagged in `DECORATION_FOOTPRINTS`, and a room whose activity or pool
-offers one grows round it (`growRooms.ts`): the banquet table and the pool stand in the room's middle, the player
+`tall: 1`; the rest 1×1. A kind stands in a room's middle only on a sized or floor place of a designed room the DSL
+lays over it (a prefab, `placePrefabs.ts`): the banquet table and the pool stand where its file draws them, the player
 walking round them. Every other kind stands against the north wall.
 
 ## 2. Who has the room: one purpose, by precedence

@@ -15,7 +15,6 @@ import {
   sidePathStages,
   mergeStageSearches,
   describeLayoutFailure,
-  type CarveAssemble,
   type CarvePairOptions,
   type CarveRefusal,
   type LayoutNotFound,
@@ -528,52 +527,6 @@ describe("a lesson's order on the carved floor", () => {
     })
     expect(refusal(leverFirst, { locks: [{ lock: plain }] })).toBeNull()
     expect(refusal(carved(drawnFloor(["E-+-D-x", "  |", "  L"])), { locks: [{ lock: lesson }] })).toBeNull()
-  })
-})
-
-describe("prefer", () => {
-  // A made-up grid per seed: its `prefer` score is the seed's offset from 100 read off this table.
-  const scored = (scores: number[]) => {
-    const grids = scores.map(score => ({ score }) as unknown as FloorGrid)
-    const assemble: CarveAssemble = (seed): AssemblerResult => ({ success: true, grid: grids[seed - 100], attempt: 0 })
-    const prefer = (g: FloorGrid) => (g as unknown as { score: number }).score
-    return { assemble, prefer }
-  }
-
-  it("pins the first seed with no fallback over an earlier one with fallbacks", () => {
-    const { assemble, prefer } = scored([2, 1, 0, 0, 1])
-    expect(searchCarvePair(100, assemble, options({ prefer }))).toMatchObject({ kind: "found", seed: 102, offset: 2 })
-  })
-
-  it("pins the fewest fallbacks when no seed has none, without raising packing", () => {
-    const asked: number[] = []
-    const { assemble, prefer } = scored([3, 2, 1, 1, 2])
-    const found = searchCarvePair(
-      100,
-      (seed, packing, attempts, sidePaths) => {
-        asked.push(packing)
-        return assemble(seed, packing, attempts, sidePaths)
-      },
-      options({ prefer })
-    )
-    expect(found).toMatchObject({ kind: "found", seed: 102, packing: 0.1 })
-    expect(new Set(asked)).toEqual(new Set([0.1]))
-  })
-
-  it("returns the first hard-criteria seed unchanged when prefer is absent or always 0", () => {
-    const { assemble } = scored([5, 5, 5, 5, 5])
-    const plain = searchCarvePair(100, assemble, options())
-    expect(plain).toMatchObject({ kind: "found", seed: 100, offset: 0 })
-    expect(searchCarvePair(100, assemble, options({ prefer: () => 0 }))).toEqual(plain)
-  })
-
-  it("keeps a pin whose carve has a fallback, with that carve's grid for the report", () => {
-    const { assemble, prefer } = scored([1, 0])
-    const base = { seed: 100, packing: 0.1 }
-    const kept = verifyCarvePair(100, base, assemble, options({ prefer }))
-    expect(kept).toMatchObject({ kind: "found", seed: 100 })
-    expect(prefer(kept!.grid)).toBe(1)
-    expect(verifyCarvePair(100, { ...base, seed: 101 }, assemble, options({ prefer }))).toMatchObject({ seed: 101 })
   })
 })
 

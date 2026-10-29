@@ -1,7 +1,6 @@
-import { cellAt } from "@/game/roomFootprint"
-import { STEP, grownCells, roomDoors } from "@/game/roomShape"
-import type { CellRect, Direction, FloorGrid } from "@/game/siteTypes"
-import { CELL, COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
+import { STEP, inRect, prefabRoomAt, prefabRoomCells, roomDoors } from "@/game/roomShape"
+import type { Direction, FloorGrid, PrefabRoom } from "@/game/siteTypes"
+import { COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import type { StandingOffset } from "./standingSpot"
 
 export type WalkPoint = { x: number; y: number; inRoom?: true }
@@ -9,57 +8,46 @@ export type RoomEnd = { door: Direction } | "stop"
 
 type Cell = readonly [number, number]
 
-const grownOf = (grid: FloorGrid, r: number, c: number) => {
-  const cell = cellAt(grid, r, c)
-  return cell.type === "room" ? cell.grownRoom : undefined
-}
-
 const centreOf = ([r, c]: Cell): WalkPoint => {
   const { cx, cy } = cellCenter(r, c)
   return { x: cx, y: cy }
 }
 
-const isDoor = (grid: FloorGrid, node: Cell, at: Cell): boolean =>
-  Object.values(roomDoors(grid, node[0], node[1])).some(d => d[0] === at[0] && d[1] === at[1])
+/** The cell a prefab room's node is drawn and met at: the prefab's stop. */
+export const roomStop = (grid: FloorGrid, r: number, c: number): Cell | undefined => prefabRoomAt(grid, r, c)?.stop
 
-/** The ring cell a grown room's node is drawn and met at: south of the piece in the column nearest the node's,
- * skipping door cells, then the other south cells nearest first, then east, west, north. */
-export const roomStop = (grid: FloorGrid, r: number, c: number): Cell | undefined => {
-  const grown = grownOf(grid, r, c)
-  if (!grown) return undefined
-  const { rect, piece } = grown
-  const { top, left, rows, cols } = piece
-  const spans = (from: number, count: number) => Array.from({ length: count }, (_, i) => from + i)
-  const nearest = (cells: Cell[], by: 0 | 1) =>
-    [...cells].sort((a, b) => Math.abs(a[by] - (by ? c : r)) - Math.abs(b[by] - (by ? c : r)) || a[by] - b[by])
-  const sides: Cell[][] = [
-    nearest(
-      spans(left, cols).map((cc): Cell => [top + rows, cc]),
-      1
-    ),
-    nearest(
-      spans(top, rows).map((rr): Cell => [rr, left + cols]),
-      0
-    ),
-    nearest(
-      spans(top, rows).map((rr): Cell => [rr, left - 1]),
-      0
-    ),
-    nearest(
-      spans(left, cols).map((cc): Cell => [top - 1, cc]),
-      1
-    ),
-  ]
-  const inside = (at: Cell) => within(rect, at)
-  return sides.flat().find(at => inside(at) && !isDoor(grid, [r, c], at)) ?? [r, c]
+/** The cells of a room's arms inside its rect, from the node to each door, the node's own included. */
+const armCells = (grid: FloorGrid, [r, c]: Cell): Set<string> => {
+  const cells = new Set([`${r},${c}`])
+  for (const [dir, door] of Object.entries(roomDoors(grid, r, c)) as [Direction, Cell][]) {
+    const [dr, dc] = STEP[dir]
+    for (let at: Cell = [r, c]; at[0] !== door[0] || at[1] !== door[1];) {
+      at = [at[0] + dr, at[1] + dc]
+      cells.add(`${at[0]},${at[1]}`)
+    }
+  }
+  return cells
 }
 
-const within = (rect: CellRect, [r, c]: Cell): boolean =>
-  r >= rect.top && r < rect.top + rect.rows && c >= rect.left && c < rect.left + rect.cols
+/** The room's floor the walk may cross: its rect but what is blocked, its node and arms always. */
+const freeCells = (grid: FloorGrid, node: Cell, room: PrefabRoom): Set<string> => {
+  const blocked = new Set(room.blocked)
+  const free = armCells(grid, node)
+  const { top, left, rows, cols } = room.rect
+  for (let r = top; r < top + rows; r++)
+    for (let c = left; c < left + cols; c++) if (!blocked.has(`${r},${c}`)) free.add(`${r},${c}`)
+  return free
+}
 
 type Box = { x0: number; y0: number; x1: number; y1: number }
 
-/** Whether the segment passes through the OPEN interior of the box; grazing its boundary is allowed. */
+/** A blocked cell as the walk sees it: its whole pitch, so the gap between two cells of one object is blocked too. */
+const boxOf = ([r, c]: Cell): Box => {
+  const { cx, cy } = cellCenter(r, c)
+  return { x0: cx - COL_PITCH / 2, y0: cy - ROW_PITCH / 2, x1: cx + COL_PITCH / 2, y1: cy + ROW_PITCH / 2 }
+}
+
+/** Whether the segment passes through the OPEN interior of the box; grazing its boundary or a corner is allowed. */
 const crosses = (a: WalkPoint, b: WalkPoint, box: Box): boolean => {
   const dx = b.x - a.x
   const dy = b.y - a.y
@@ -80,67 +68,96 @@ const crosses = (a: WalkPoint, b: WalkPoint, box: Box): boolean => {
     if (p < 0) t0 = Math.max(t0, t)
     else t1 = Math.min(t1, t)
   }
-  return t0 < t1
+  return t1 - t0 > 1e-9
 }
 
-const dist = (a: WalkPoint, b: WalkPoint) => Math.hypot(a.x - b.x, a.y - b.y)
+// Side to side, and corner to corner past two free sides.
+const STEPS: ReadonlyArray<readonly [number, number]> = [
+  [-1, 0],
+  [1, 0],
+  [0, 1],
+  [0, -1],
+  [-1, -1],
+  [-1, 1],
+  [1, -1],
+  [1, 1],
+]
 
-/** The shortest polyline between two ends of a grown room that does not cut through its piece. */
+/** The shortest run of cells from `a` to `b` over `free`, each step as long as it is on the map. */
+const cellRun = (free: ReadonlySet<string>, a: Cell, b: Cell): Cell[] => {
+  const key = ([r, c]: Cell) => `${r},${c}`
+  const dist = new Map<string, number>([[key(a), 0]])
+  const prev = new Map<string, Cell>()
+  const cells = new Map<string, Cell>([[key(a), a]])
+  const done = new Set<string>()
+  for (;;) {
+    let at: string | undefined
+    for (const [k, d] of dist) if (!done.has(k) && (at === undefined || d < dist.get(at)!)) at = k
+    if (at === undefined || at === key(b)) break
+    done.add(at)
+    const [r, c] = cells.get(at)!
+    for (const [dr, dc] of STEPS) {
+      const next: Cell = [r + dr, c + dc]
+      if (!free.has(key(next)) || done.has(key(next))) continue
+      if (dr !== 0 && dc !== 0 && (!free.has(`${r + dr},${c}`) || !free.has(`${r},${c + dc}`))) continue
+      const d = dist.get(at)! + Math.hypot(dr * ROW_PITCH, dc * COL_PITCH)
+      if (d >= (dist.get(key(next)) ?? Infinity)) continue
+      dist.set(key(next), d)
+      prev.set(key(next), [r, c])
+      cells.set(key(next), next)
+    }
+  }
+  if (!dist.has(key(b))) return [a, b]
+  const run: Cell[] = [b]
+  for (let at = prev.get(key(b)); at; at = prev.get(key(at))) run.unshift(at)
+  return run
+}
+
+/** The walk between two ends of a prefab room: the shortest run of its free cells, pulled straight wherever the
+ * line between two of its points crosses nothing blocked. */
 export const roomPath = (grid: FloorGrid, node: Cell, from: RoomEnd, to: RoomEnd): WalkPoint[] => {
-  const grown = grownOf(grid, node[0], node[1])
-  if (!grown) return []
-  const { top, left, rows, cols } = grown.piece
+  const room = prefabRoomAt(grid, node[0], node[1])
+  if (!room) return []
   const doors = roomDoors(grid, node[0], node[1])
-  const endCell = (end: RoomEnd): Cell =>
-    end === "stop" ? (roomStop(grid, node[0], node[1]) ?? node) : (doors[end.door] ?? node)
+  const endCell = (end: RoomEnd): Cell => (end === "stop" ? room.stop : (doors[end.door] ?? node))
   const a = endCell(from)
   const b = endCell(to)
-  if (a[0] === b[0] && a[1] === b[1]) return [{ ...centreOf(a), inRoom: true }]
+  const inRoom = (cell: Cell): WalkPoint => ({ ...centreOf(cell), inRoom: true })
+  if (a[0] === b[0] && a[1] === b[1]) return [inRoom(a)]
 
-  const nw = cellCenter(top, left)
-  const se = cellCenter(top + rows - 1, left + cols - 1)
-  const box: Box = { x0: nw.cx - CELL / 2, y0: nw.cy - CELL / 2, x1: se.cx + CELL / 2, y1: se.cy + CELL / 2 }
-  const points = [
-    a,
-    b,
-    [top + rows, left - 1],
-    [top + rows, left + cols],
-    [top - 1, left - 1],
-    [top - 1, left + cols],
-  ].map((cell): WalkPoint => ({ ...centreOf(cell as Cell), inRoom: true }))
-  const best = points.map(() => Infinity)
-  const prev = points.map(() => -1)
-  const done = points.map(() => false)
-  best[0] = 0
-  for (;;) {
-    let u = -1
-    points.forEach((_, i) => {
-      if (!done[i] && best[i] < Infinity && (u < 0 || best[i] < best[u])) u = i
-    })
-    if (u < 0 || u === 1) break
-    done[u] = true
-    points.forEach((p, v) => {
-      if (done[v] || crosses(points[u], p, box)) return
-      const d = best[u] + dist(points[u], p)
-      if (d < best[v] - 1e-9) {
-        best[v] = d
-        prev[v] = u
+  const free = freeCells(grid, node, room)
+  const { top, left, rows, cols } = room.rect
+  const boxes: Box[] = []
+  for (let r = top; r < top + rows; r++)
+    for (let c = left; c < left + cols; c++) if (!free.has(`${r},${c}`)) boxes.push(boxOf([r, c]))
+  const sees = (p: WalkPoint, q: WalkPoint) => !boxes.some(box => crosses(p, q, box))
+
+  // Pulled straight: the shortest chain of the run's points whose every leg crosses nothing blocked.
+  const run = cellRun(free, a, b).map(inRoom)
+  const best = run.map((_, j) => (j === 0 ? 0 : Infinity))
+  const prev = run.map(() => -1)
+  for (let j = 1; j < run.length; j++)
+    for (let i = 0; i < j; i++) {
+      if (i < j - 1 && !sees(run[i], run[j])) continue
+      const d = best[i] + Math.hypot(run[j].x - run[i].x, run[j].y - run[i].y)
+      if (d < best[j] - 1e-9) {
+        best[j] = d
+        prev[j] = i
       }
-    })
-  }
+    }
   const path: WalkPoint[] = []
-  for (let at = 1; at >= 0; at = prev[at]) path.unshift(points[at])
+  for (let at = run.length - 1; at >= 0; at = prev[at]) path.unshift(run[at])
   return path
 }
 
 /** The direction of the arm whose straight run inside the room holds this cell. */
 const armOf = (grid: FloorGrid, node: Cell, at: Cell): Direction | undefined => {
-  const grown = grownOf(grid, node[0], node[1])
-  if (!grown) return undefined
+  const room = prefabRoomAt(grid, node[0], node[1])
+  if (!room) return undefined
   for (const dir of Object.keys(roomDoors(grid, node[0], node[1])) as Direction[]) {
     const [dr, dc] = STEP[dir]
     let cell: Cell = node
-    while (within(grown.rect, [cell[0] + dr, cell[1] + dc])) {
+    while (inRect(room.rect, cell[0] + dr, cell[1] + dc)) {
       cell = [cell[0] + dr, cell[1] + dc]
       if (cell[0] === at[0] && cell[1] === at[1]) return dir
     }
@@ -149,7 +166,7 @@ const armOf = (grid: FloorGrid, node: Cell, at: Cell): Direction | undefined => 
 }
 
 const nodeOf = (grid: FloorGrid, at: Cell): Cell | undefined => {
-  const key = grownCells(grid).get(`${at[0]},${at[1]}`)
+  const key = prefabRoomCells(grid).get(`${at[0]},${at[1]}`)
   return key ? (key.split(",").map(Number) as unknown as Cell) : undefined
 }
 
@@ -166,8 +183,8 @@ const endFor = (grid: FloorGrid, node: Cell, inside: Cell, outside: Cell): RoomE
 }
 
 /** The pixel points the explorer walks for a route: cell centres, the first and last at their standing spots, each stretch
- * through a grown room replaced by the shortest way round its piece. A route that starts or ends in a grown room starts or
- * ends at its stop, the spot he stands on in it. */
+ * through a prefab room replaced by its walk round what stands in it. A route that starts or ends in a prefab room starts
+ * or ends at its stop, the spot he stands on in it. */
 export const walkPoints = (
   grid: FloorGrid,
   route: ReadonlyArray<Cell>,
@@ -209,7 +226,7 @@ export const stepsBetween = (a: WalkPoint, b: WalkPoint): number =>
 export const walkSteps = (points: readonly WalkPoint[]): number =>
   points.slice(1).reduce((sum, p, i) => sum + stepsBetween(points[i], p), 0)
 
-/** Where a cell's marker is drawn: a grown node at its stop, an absorbed arm cell at its door. */
+/** Where a cell's marker is drawn: a prefab room's node at its stop, an absorbed arm cell at its door. */
 export const markerCell = (grid: FloorGrid, r: number, c: number): Cell => {
   const node = nodeOf(grid, [r, c])
   if (!node) return [r, c]

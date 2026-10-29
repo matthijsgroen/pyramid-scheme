@@ -41,7 +41,7 @@ import { worldGateWalk } from "../src/mods/worldGateWalk"
 import { refusal as carveRefusal } from "../src/worldGen/carveSeedSearch"
 import { generatedWorldConfigs } from "../src/data/generatedWorld"
 import { readLedger, writeLedger } from "./carveLedger"
-import { centreFallbacksByTier, describeCentreTally } from "../src/worldGen/centreReport"
+import { describePrefabTally, prefabTallyByTier } from "../src/worldGen/prefabReport"
 import { carveAt, makeLayoutPicker, printFailures, printPicks, unboundOutsideInputs } from "./layoutPicker"
 import type { FloorConfig as GameFloorConfig, FloorGrid } from "../src/game/siteTypes"
 import type { FloorConfig } from "../src/worldGen/types"
@@ -252,8 +252,8 @@ const { walked, stranding } = findStrandingLocks(configs, carveFinal)
 // it rose), and how many carve only on the ladder.
 printPicks(picker.picks, picker.stats)
 console.log(
-  describeCentreTally(
-    centreFallbacksByTier(configs, (journeyId, levelNr, floorIndex, config) =>
+  describePrefabTally(
+    prefabTallyByTier(configs, (journeyId, levelNr, floorIndex, config) =>
       carveFinal(journeyId, config as FloorConfig, levelNr, floorIndex)
     )
   )

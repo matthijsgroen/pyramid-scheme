@@ -5,6 +5,7 @@ import type {
   Direction,
   FloorGrid,
   GridCell,
+  PrefabRoom,
   PropFootprint,
   RoomCell,
 } from "@/game/siteTypes"
@@ -180,14 +181,21 @@ describe("a companion stands against stone or not at all", () => {
   })
 })
 
-describe("a grown room", () => {
-  // `basin` is a made-up centre kind two cells across.
-  const centre: PropFootprint = { cols: 2, rows: 1, tall: 0, centre: true }
-  const centreFootprints = (kind: DecorationKind): PropFootprint =>
-    kind === "basin" ? centre : { cols: 1, rows: 1, tall: 0 }
-  const piece = { kind: "basin", top: 3, left: 1, rows: 1, cols: 2 } as const
-  // The node at 2,2 grew a 5x2 rect, taller than its ring, that swallowed its west arm cell 2,1; a second junction sits against it.
-  const grown = (owner: Partial<RoomCell> = {}, arm: Partial<{ state: CellState }> = {}): FloorGrid =>
+describe("a prefab room", () => {
+  const prefabRoom = (rect: PrefabRoom["rect"], objects: PrefabRoom["objects"] = []): PrefabRoom => ({
+    name: "hall",
+    layout: 0,
+    mirrored: false,
+    rect,
+    stop: [1, 1],
+    objects,
+    blocked: [],
+    doors: {},
+  })
+  const basin = { kind: "basin", layer: "floor", top: 3, left: 1, rows: 1, cols: 2 } as const
+  // The node at 2,2 is laid over by a 5x2 rect, taller than its ring, that swallowed its west arm cell 2,1; a second
+  // junction sits against it. The node is dressed too, which the prefab's objects take the place of.
+  const laid = (owner: Partial<RoomCell> = {}, arm: Partial<{ state: CellState }> = {}): FloorGrid =>
     floor([
       [empty, empty, empty, empty, empty, empty],
       [empty, empty, empty, empty, empty, empty],
@@ -195,8 +203,8 @@ describe("a grown room", () => {
         corridor(["e"]),
         { ...corridor(["e", "w"]), ...arm } as GridCell,
         fork(["e", "w"], {
-          decoration: "basin",
-          grownRoom: { rect: { top: 0, left: 1, rows: 5, cols: 2 }, piece },
+          decoration: "shelf",
+          prefabRoom: prefabRoom({ top: 0, left: 1, rows: 5, cols: 2 }, [basin]),
           ...owner,
         }),
         fork(["e", "w"]),
@@ -209,13 +217,13 @@ describe("a grown room", () => {
   const rectCells = ["0,1", "0,2", "1,1", "1,2", "2,1", "3,1", "3,2", "4,1", "4,2"]
 
   it("claims every cell of its rect, absorbed arm cells included", () => {
-    const { claimedBy } = buildRoomClaims(grown(), centreFootprints)
+    const { claimedBy } = buildRoomClaims(laid())
     expect(rectCells.map(key => claimedBy.get(key))).toEqual(rectCells.map(() => "2,2"))
     expect(claimedBy.has("2,2")).toBe(false)
   })
 
   it("opens every pair of adjacent cells inside the rect", () => {
-    const { openEdges } = buildRoomClaims(grown(), centreFootprints)
+    const { openEdges } = buildRoomClaims(laid())
     expect(openEdges).toContain("1,1|1,2")
     expect(openEdges).toContain("1,1|2,1")
     expect(openEdges).toContain("1,2|2,2")
@@ -225,44 +233,47 @@ describe("a grown room", () => {
     expect(openEdges).toContain("3,1|4,1")
   })
 
-  it("stands the piece where the carve put it, its whole footprint", () => {
-    const claims = buildRoomClaims(grown(), centreFootprints)
-    expect([...claims.decorationAt]).toEqual([["3,1", "basin"]])
+  it("stands no prop of the claims' own and keeps the floor of its objects clear", () => {
+    const claims = buildRoomClaims(laid(), footprints([]))
+    expect([...claims.decorationAt]).toEqual([])
     expect([...claims.decorationCells].sort()).toEqual(["3,1", "3,2"])
   })
 
-  it("stands the single-cell fallback in a room whose centre object did not grow", () => {
-    const claims = buildRoomClaims(
-      floor(northSouth({ decoration: "basin", decorationFallback: "jarRack" })),
-      centreFootprints
-    )
-    expect([...claims.decorationAt.values()]).toEqual(["jarRack"])
-  })
-
-  it("stands nothing for an ungrown centre kind with no fallback", () => {
-    const claims = buildRoomClaims(floor(northSouth({ decoration: "basin" })), centreFootprints)
-    expect(claims.decorationAt.size).toBe(0)
-  })
-
   it("lets no neighbouring room claim a cell of the rect", () => {
-    const { claimedBy } = buildRoomClaims(grown(), centreFootprints)
+    const { claimedBy } = buildRoomClaims(laid())
     expect([...claimedBy].filter(([key]) => rectCells.includes(key)).every(([, owner]) => owner === "2,2")).toBe(true)
     expect([...claimedBy.values()]).toContain("2,3")
   })
 
-  it("takes no companion", () => {
-    const claims = buildRoomClaims(grown(), centreFootprints)
-    expect(claims.decorationAt.size).toBe(1)
-  })
-
   it("leaves a lit absorbed arm to its own state while the room is fogged", () => {
-    const grid = grown({ state: "fogged" })
-    const claims = buildRoomClaims(grid, centreFootprints)
+    const grid = laid({ state: "fogged" })
+    const claims = buildRoomClaims(grid)
     expect(litClaimOwner(grid, claims, 2, 1)).toBeUndefined()
     expect(litClaimOwner(grid, claims, 1, 1)).toBeUndefined()
     const regions = tileRegionsFor(grid, claims)
     expect(allFloorRects(regions).length).toBeGreaterThan(0)
     expect(cellFloorAt(grid, claims, undefined, 2, 1)).toMatchObject({ kind: "corridor", state: "completed" })
     expect(cellFloorAt(grid, claims, undefined, 1, 1)).toBe("stone")
+  })
+
+  it("draws the rect of a prefab laid over a corridor's end as that corridor's room", () => {
+    const grid = floor([
+      [empty, empty, empty],
+      [
+        corridor(["e"]),
+        {
+          type: "corridor",
+          dirs: new Set(["w"]),
+          state,
+          prefabRoom: prefabRoom({ top: 0, left: 1, rows: 3, cols: 2 }),
+        },
+        empty,
+      ],
+      [empty, empty, empty],
+    ])
+    const claims = buildRoomClaims(grid)
+    expect(claims.claimedBy.get("0,2")).toBe("1,1")
+    expect(litClaimOwner(grid, claims, 0, 2)).toBe(grid.cells[1][1])
+    expect(cellFloorAt(grid, claims, undefined, 0, 2)).toMatchObject({ kind: "room", state: "completed" })
   })
 })

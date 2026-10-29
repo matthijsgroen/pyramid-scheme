@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { lessonOrderFaults } from "./lessonOrder"
-import type { GrownRoom, MechanismRecord } from "./siteTypes"
+import type { MechanismRecord, PrefabRoom } from "./siteTypes"
 import { drawnFloor as floor, lever } from "./testSupport/lessonOrderFixtures"
 
 describe(lessonOrderFaults, () => {
@@ -19,13 +19,19 @@ describe(lessonOrderFaults, () => {
     expect(lessonOrderFaults(floor(["E-L-D-x"]))).toContain("gate G: its door is not seen before its control")
   })
 
-  it("refuses a lever standing in the ring of a grown room on the way", () => {
-    const grownRoom: GrownRoom = {
+  it("refuses a lever standing in the ring of a prefab room on the way", () => {
+    const prefabRoom: PrefabRoom = {
+      name: "hall",
+      layout: 0,
+      mirrored: false,
       rect: { top: 0, left: 1, rows: 2, cols: 3 },
-      piece: { kind: "basin", top: 1, left: 2, rows: 1, cols: 1 },
+      stop: [1, 2],
+      objects: [],
+      blocked: [],
+      doors: { w: [0, 0], e: [0, 4] },
     }
-    expect(lessonOrderFaults(floor(["E-R-D-x", "|", "|   L", "+---+"], { grownRoom }))).toEqual([
-      "gate G: its control stands in the ring of the grown room at 0,2 on the way to its door",
+    expect(lessonOrderFaults(floor(["E-R-D-x", "|", "|   L", "+---+"], { prefabRoom }))).toEqual([
+      "gate G: its control stands in the ring of the prefab room at 0,2 on the way to its door",
     ])
   })
 

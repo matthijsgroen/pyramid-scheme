@@ -1,6 +1,6 @@
 import {
   decorationFootprint,
-  isCentreKind,
+  type CorridorCell,
   type DecorationKind,
   type Direction,
   type FloorGrid,
@@ -9,7 +9,7 @@ import {
   type RoomCell,
   type Tileset,
 } from "@/game/siteTypes"
-import { grownCells } from "@/game/roomShape"
+import { prefabRoomAt, prefabRoomCells } from "@/game/roomShape"
 import { cellAt, isChamber, isClaimableNeighbor, portalKindOf } from "@/game/roomFootprint"
 import { DIR_MOVES, OPPOSITE_DIR } from "./corridorRuns"
 import { buildTileRegions, type FloorAt, type Rect, type TileRegions } from "./tileRegions"
@@ -144,16 +144,16 @@ export const buildRoomClaims = (
   const diagonalCandidates = new Map<string, DiagonalCandidate[]>()
   let scanOrder = 0
 
-  // A GROWN ROOM IS CLAIMED WHOLE, FIRST. Its rect is the carve's, so every cell of it but the node
+  // A PREFAB ROOM IS CLAIMED WHOLE, FIRST. Its rect is the carve's, so every cell of it but the node
   // belongs to the room (absorbed arm cells included) and every adjacent pair inside it is one space.
   // Claiming before the scan is what keeps another room's ring out of the rect, and the room takes
   // no ring of its own.
-  const grownOwners = new Set(grownCells(grid).values())
-  for (const ownerKey of grownOwners) {
+  const prefabOwners = new Set(prefabRoomCells(grid).values())
+  for (const ownerKey of prefabOwners) {
     const [r, c] = ownerKey.split(",").map(Number)
-    const room = grid.cells[r][c]
-    if (room.type !== "room" || !room.grownRoom) continue
-    const { top, left, rows, cols } = room.grownRoom.rect
+    const room = prefabRoomAt(grid, r, c)
+    if (!room) continue
+    const { top, left, rows, cols } = room.rect
     for (let rr = top; rr < top + rows; rr++)
       for (let cc = left; cc < left + cols; cc++) {
         if (rr !== r || cc !== c) noteClaim(`${rr},${cc}`, ownerKey)
@@ -165,7 +165,7 @@ export const buildRoomClaims = (
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
-      if (cell.type !== "room" || cell.grownRoom || !canClaimVoid(grid, r, c, cell)) continue
+      if (cell.type !== "room" || cell.prefabRoom || !canClaimVoid(grid, r, c, cell)) continue
       const ownerKey = `${r},${c}`
       const claimedThisOwner = new Set<string>()
       for (const [dr, dc] of ORTHO_OFFSETS) {
@@ -293,7 +293,7 @@ export const buildRoomClaims = (
   for (const [ownerKey, candidates] of ownerPropCandidates) {
     const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
     const owner = grid.cells[ownerRow]?.[ownerCol]
-    if (owner?.type !== "room" || !owner.decoration || owner.grownRoom) continue
+    if (owner?.type !== "room" || !owner.decoration || owner.prefabRoom) continue
     const inside = candidates.filter(onGrid)
     const usable = inside.length ? inside : candidates
     // A STAIR IS A WAY THROUGH: the player crosses its room to the stair, so a prop there stands against stone or
@@ -301,14 +301,9 @@ export const buildRoomClaims = (
     // usual preference.
     const isPortal = owner.roomType === "portal"
     const stair = isPortal && portalKindOf(grid, ownerRow, ownerCol, owner) === "stairhead"
-    // A room with no floor the shape of its prop stands the single-cell kind the carve picked beside it. A
-    // centre kind stands only where the room grew round it: a room that did not grow has no middle for it.
+    // A room with no floor the shape of its prop stands the single-cell kind the carve picked beside it.
     const standing = [owner.decoration, owner.decorationFallback]
-      .flatMap(kind =>
-        kind && !isCentreKind(kind, footprintOf)
-          ? [{ kind, cells: standOn(kind, usable, stair ? "stone" : "stoneFirst") }]
-          : []
-      )
+      .flatMap(kind => (kind ? [{ kind, cells: standOn(kind, usable, stair ? "stone" : "stoneFirst") }] : []))
       .find(({ cells }) => cells !== undefined)
     if (!standing?.cells) continue
     const { kind: leader, cells: takenCells } = standing
@@ -329,15 +324,15 @@ export const buildRoomClaims = (
       ...(owner.activity ? { activity: owner.activity } : {}),
     })
   }
-  // A grown room's piece stands where the carve put it, its whole footprint.
-  for (const ownerKey of grownOwners) {
+  // A prefab room's objects stand where the carve put them and are drawn from the room itself (SiteMapView); here
+  // they only keep scatter and standing spots off their cells.
+  for (const ownerKey of prefabOwners) {
     const [r, c] = ownerKey.split(",").map(Number)
-    const room = grid.cells[r][c]
-    if (room.type !== "room" || !room.grownRoom) continue
-    const { kind, top, left, rows, cols } = room.grownRoom.piece
-    decorationAt.set(`${top},${left}`, kind)
-    for (let rr = top; rr < top + rows; rr++)
-      for (let cc = left; cc < left + cols; cc++) decorationCells.add(`${rr},${cc}`)
+    for (const { layer, top, left, rows, cols } of prefabRoomAt(grid, r, c)?.objects ?? []) {
+      if (layer === "wallItem") continue
+      for (let rr = top; rr < top + rows; rr++)
+        for (let cc = left; cc < left + cols; cc++) decorationCells.add(`${rr},${cc}`)
+    }
   }
   // What this rank is furnished with at all — see the two tests below.
   const authoredHere = authoredKindsFor(floorTier(grid)).props
@@ -412,24 +407,22 @@ export const buildRoomClaims = (
 }
 
 // The room a claimed cell renders as part of, if that room is lit — the claim borrows the owner's
-// state, so a fogged owner takes its whole blob (void cells included) with it.
-export const litClaimOwner = (grid: FloorGrid, claims: RoomClaims, r: number, c: number): RoomCell | undefined => {
+// state, so a fogged owner takes its whole blob (void cells included) with it. A prefab room laid over a
+// corridor's end is owned by that corridor.
+export const litClaimOwner = (
+  grid: FloorGrid,
+  claims: RoomClaims,
+  r: number,
+  c: number
+): RoomCell | CorridorCell | undefined => {
   const cell = cellAt(grid, r, c)
   if (cell.type !== "empty" && cell.type !== "corridor") return undefined
   const ownerKey = claims.claimedBy.get(`${r},${c}`)
   if (!ownerKey) return undefined
   const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
   const owner = grid.cells[ownerRow]?.[ownerCol]
-  return owner?.type === "room" && owner.state !== "fogged" ? owner : undefined
-}
-
-// The grown room whose rect holds this cell, the node's own included, if that room is lit.
-export const litGrownOwner = (grid: FloorGrid, r: number, c: number): RoomCell | undefined => {
-  const ownerKey = grownCells(grid).get(`${r},${c}`)
-  if (!ownerKey) return undefined
-  const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
-  const owner = grid.cells[ownerRow]?.[ownerCol]
-  return owner?.type === "room" && owner.state !== "fogged" ? owner : undefined
+  const lit = owner !== undefined && owner.type !== "empty" && owner.state !== "fogged"
+  return lit && (owner.type === "room" || owner.prefabRoom) ? owner : undefined
 }
 
 // True if the void/corridor cell at `key` was claimed by a junction (fork) room — the other end of

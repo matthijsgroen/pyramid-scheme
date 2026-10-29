@@ -1,4 +1,4 @@
-import type { Direction, FloorGrid, GridCell, GrownRoom, MechanismRecord } from "../siteTypes"
+import type { Direction, FloorGrid, GridCell, MechanismRecord, PrefabRoom } from "../siteTypes"
 
 export const lever: MechanismRecord = {
   states: ["a", "b"],
@@ -20,11 +20,11 @@ const MOVES: [Direction, number, number][] = [
 ]
 
 /** A made-up floor drawn in characters: `E` the entrance, `-|+x` corridor, `D` a door the lever `L` opens (`mechanism`
- * in its place), `Y` a door the board `B` in its own junction opens, `R` a fork (grown to `grownRoom`). Every two
+ * in its place), `Y` a door the board `B` in its own junction opens, `R` a fork (laid over by `prefabRoom`). Every two
  * drawn cells side by side are joined. */
 export const drawnFloor = (
   rows: string[],
-  extra: { grownRoom?: GrownRoom; mechanism?: MechanismRecord } = {}
+  extra: { prefabRoom?: PrefabRoom; mechanism?: MechanismRecord } = {}
 ): FloorGrid => {
   const width = Math.max(...rows.map(row => row.length))
   const drawn = (r: number, c: number) => (rows[r]?.[c] ?? " ") !== " "
@@ -39,7 +39,7 @@ export const drawnFloor = (
       if (ch === "D" || ch === "Y") return { ...room, tags: ["gate"], requiredKeyId: ch === "D" ? "G" : "Y" }
       if (ch === "L") return { ...room, mechanism: extra.mechanism ?? lever }
       if (ch === "B") return { ...room, mechanism: board, exits: [{ dir: "e", kind: "side", gateKeyId: "Y" }] }
-      if (ch === "R") return { ...room, ...(extra.grownRoom ? { grownRoom: extra.grownRoom } : {}) }
+      if (ch === "R") return { ...room, ...(extra.prefabRoom ? { prefabRoom: extra.prefabRoom } : {}) }
       return { type: "corridor", dirs, state: "fogged" }
     })
   )

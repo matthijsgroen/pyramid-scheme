@@ -3,10 +3,9 @@ import { expandFloorLocks } from "../floorLocks"
 import { planLockFloor } from "../lockPlan"
 import { roomlessRouteStubs } from "../routeStubs"
 import type { AssembleFloorKeyRequirements, ResolveEncounter } from "../siteAssembler"
-import { decorationFootprint, type AssemblerResult, type FloorConfig, type FloorGrid } from "../siteTypes"
+import type { AssemblerResult, FloorConfig } from "../siteTypes"
 import { layWebDoors, WEB_SAND_REALISATION, webSandKindRefusals } from "../webDoors"
 import { carveFloor } from "./carveFloor"
-import { growRooms } from "./growRooms"
 import { gateKeyOf } from "./ids"
 import { finishAttempt, PASSES } from "./passes"
 import { webDoorInPrefab } from "./placePrefabs"
@@ -50,10 +49,7 @@ export const assembleFloor = (
   const gates = expanded.webGates ?? []
   const { resolveRegionBarrier } = keyRequirements
   const realised = !resolveRegionBarrier || resolveRegionBarrier(WEB_SAND_REALISATION) !== undefined
-  // Rooms grow round their centre piece last, on the floor as it will be walked, web doors and all.
-  const grown = (grid: FloorGrid): FloorGrid =>
-    growRooms(grid, siteId, keyRequirements.propFootprint ?? decorationFootprint)
-  if ((doors.length === 0 && gates.length === 0) || !realised) return { ...nested, grid: grown(nested.grid) }
+  if ((doors.length === 0 && gates.length === 0) || !realised) return nested
   // One sand kind per site: this floor's own lock may not bind sand beside its web's. The rest of the site is the
   // bake's to check (`webSandKindRefusals` over every floor).
   const mixed = webSandKindRefusals([authoredConfig])
@@ -66,5 +62,5 @@ export const assembleFloor = (
   // A designed room's walls are drawn round its own arms: a web door standing inside one is a fault, as an unseated
   // door is.
   const inside = webDoorInPrefab(marked, laid.grid)
-  return inside ? { success: false, reasons: [inside] } : { ...nested, grid: grown(laid.grid) }
+  return inside ? { success: false, reasons: [inside] } : { ...nested, grid: laid.grid }
 }

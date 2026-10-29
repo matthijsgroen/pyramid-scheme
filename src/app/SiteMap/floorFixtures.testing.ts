@@ -1,5 +1,9 @@
-import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
+import type { CellState, Direction, FloorGrid, GridCell, RoomCell } from "@/game/siteTypes"
+import { decorationFootprint } from "@/game/siteTypes"
 import { ONE_WAY_RUN_CELLS } from "@/game/siteAssembler"
+import { fitPrefab } from "@/game/carve/placePrefabs"
+import { parsePrefab } from "@/game/prefabNotation"
+import type { Prefab } from "@/game/prefabTypes"
 
 // Hand-built floors for specs that pin one mechanic each. A fixture names the mechanic it exercises;
 // none of them is carved from an authored floor.
@@ -148,40 +152,145 @@ export const addressed = (grid: FloorGrid): FloorGrid => {
   return { ...grid, cells }
 }
 
-/** A fork at `GROWN_FORK` with arms west, east and south, grown round a 2×1 stand-in piece (row 2, cols 3-4)
- * to rows 1-4, cols 2-6: its doors are 2,2 (west), 2,6 (east) and 4,4 (south). The entrance is at 2,0. With `north`
- * a fourth arm leaves by the door at 1,4 for a room at 0,4, behind the piece. */
-export const GROWN_FORK = [2, 4] as const
-export const GROWN_PIECE = { top: 2, left: 3, rows: 1, cols: 2 }
-export const grownForkFloor = (fork: Partial<Extract<GridCell, { type: "room" }>> = {}, north = false): FloorGrid =>
-  floorFrom([north ? "    R" : "", north ? "    ." : "", "E...G..R", "    .", "    .", "    R"], {
-    G: dirs => ({
-      type: "room",
-      roomType: "fork",
-      dirs: new Set(dirs),
-      state: "fogged",
-      decoration: "basin",
-      grownRoom: { rect: { top: 1, left: 2, rows: 4, cols: 5 }, piece: { kind: "basin", ...GROWN_PIECE } },
-      ...fork,
-    }),
-  })
+/** A made-up prefab read as the bake reads a `.room` file; a `mat` lies on the ground. */
+const madeUpPrefab = (text: string): Prefab =>
+  parsePrefab(`tier expert\n${text}`, "room", kind =>
+    kind === "mat" ? { cols: 1, rows: 1, tall: 0, ground: true } : decorationFootprint(kind)
+  )
 
-/** A room grown to rows 1-3, cols 2-5 round a 2×1 stand-in piece at row 2, cols 3-4, its node on the rect's edge.
- * `L`: a chamber at 1,2 on the north-west corner, in from the entrance at 0,2 and out east along row 1 to a room at
- * 1,6. `T`: a fork at 3,2 on the south-west corner, west to the entrance at 3,0, south to a room at 5,2 and east along
- * row 3 to a room at 3,6. */
-export const EDGE_NODE = { L: [1, 2], T: [3, 2] } as const
-export const edgeGrownFloor = (shape: keyof typeof EDGE_NODE): FloorGrid =>
-  floorFrom(shape === "L" ? ["  E", "  G...R", "", ""] : ["", "", "", "E.G...R", "  .", "  R"], {
-    G: dirs => ({
-      type: "room",
-      roomType: shape === "L" ? "chamber" : "fork",
-      dirs: new Set(dirs),
-      state: "fogged",
-      decoration: "basin",
-      grownRoom: {
-        rect: { top: 1, left: 2, rows: 3, cols: 4 },
-        piece: { kind: "basin", top: 2, left: 3, rows: 1, cols: 2 },
-      },
+/** The floor with `prefab` laid over the node at `at` by the carve's own fit. */
+const laidOver = (grid: FloorGrid, [r, c]: readonly [number, number], prefab: Prefab): FloorGrid => {
+  const prefabRoom = fitPrefab(grid, r, c, prefab, grid.siteId)
+  if (!prefabRoom) throw new Error(`${prefab.name} does not fit at ${r},${c}`)
+  const cells = grid.cells.map(row => [...row])
+  cells[r][c] = { ...(cells[r][c] as RoomCell), prefabRoom }
+  return { ...grid, cells }
+}
+
+const FORK_HALL = madeUpPrefab(`room forkHall
+layout
+# # n # d # # # #
+# w . . . . . a #
+d . . . . . . . d
+# . p . . . p . #
+# . . . . . s . #
+# # # # d # # # #
+w wall jarRack
+n wallItem niche
+p floor pillar
+a actor
+s stop`)
+
+/** A fork at `PREFAB_FORK` with arms west, east and south (and north to a room at 0,6 with `north`), laid over by a
+ * made-up hall: rect rows 3-6, cols 3-9, its arms leaving by the door places at 4,2 (west), 4,10 (east), 7,6 (south)
+ * and 2,6 (north). A niche hangs on the north wall at 2,4, a jar rack stands against it at 3,3, the actor's place is 3,9, two pillars stand at
+ * `PREFAB_PILLARS` and the stop is 6,8, south of the east pillar. The entrance is at 4,0. */
+export const PREFAB_FORK = [4, 6] as const
+export const PREFAB_PILLARS = [
+  [5, 4],
+  [5, 8],
+] as const
+export const forkFloor = (fork: Partial<RoomCell> = {}, north = false): FloorGrid =>
+  floorFrom(
+    [
+      ...(north ? ["      R", "      .", "      .", "      ."] : ["", "", "", ""]),
+      "E.....G.....R",
+      "      .",
+      "      .",
+      "      .",
+      "      .",
+      "      R",
+    ],
+    { G: dirs => ({ type: "room", roomType: "fork", dirs: new Set(dirs), state: "fogged", ...fork }) }
+  )
+export const prefabForkFloor = (fork: Partial<RoomCell> = {}, north = false): FloorGrid =>
+  laidOver(forkFloor(fork, north), PREFAB_FORK, FORK_HALL)
+
+/** Rooms whose node stands next to the ring, round a 2×1 skeleton. `L`: a chamber at 3,2 on the rect's north-west
+ * corner (rows 3-5, cols 2-5), in by the north door place at 2,2 from the entrance at 0,2 and out east along row 3 by
+ * the door place at 3,6 to a room at 3,8; its stop is 5,2. `T`: a fork at 3,3 on the south-west corner (rows 1-3,
+ * cols 3-6), west by 3,2 to the entrance at 3,0, south by 4,3 to a room at 6,3 and east along row 3 by 3,7 to a room
+ * at 3,9; its stop is 1,6. */
+export const EDGE_NODE = { L: [3, 2], T: [3, 3] } as const
+const L_CHAMBER = madeUpPrefab(`room lChamber
+layout
+# d # # # #
+# . . . . d
+# . p p . #
+# s . . . #
+# # # # # #
+p floor bones
+s stop`)
+const T_FORK = madeUpPrefab(`room tFork
+layout
+# # # # # #
+# . . . s #
+# . p p . #
+d . . . . d
+# d # # # #
+p floor bones
+s stop`)
+export const edgePrefabFloor = (shape: keyof typeof EDGE_NODE, node: Partial<RoomCell> = {}): FloorGrid =>
+  laidOver(
+    floorFrom(
+      shape === "L" ? ["  E", "  .", "  .", "  G.....R", "", ""] : ["", "", "", "E..G.....R", "   .", "   .", "   R"],
+      {
+        G: dirs => ({
+          type: "room",
+          roomType: shape === "L" ? "chamber" : "fork",
+          dirs: new Set(dirs),
+          state: "fogged",
+          ...node,
+        }),
+      }
+    ),
+    EDGE_NODE[shape],
+    shape === "L" ? L_CHAMBER : T_FORK
+  )
+
+/** A treasure room at `PREFAB_CHEST` at the end of the corridor from the entrance at 1,0, laid over by a made-up vault
+ * whose chest place is 1,5 and stop 2,4. */
+export const PREFAB_CHEST = [1, 3] as const
+const VAULT = madeUpPrefab(`room vault
+layout
+# # # # #
+d . . c #
+# . s . #
+# # # # #
+c chest
+s stop`)
+export const prefabChestFloor = (): FloorGrid =>
+  laidOver(
+    floorFrom(["", "E..T", "", "       "], {
+      T: dirs => ({
+        type: "room",
+        roomType: "encounter",
+        family: "treasure-chest",
+        tags: ["treasure"],
+        dirs: new Set(dirs),
+        state: "fogged",
+      }),
     }),
-  })
+    PREFAB_CHEST,
+    VAULT
+  )
+
+/** A chamber at `PREFAB_PORCH` entered from the west, laid over by a made-up porch drawn with its door on the east: only
+ * its mirror fits, which lays the mat on the ground place at 1,5, beyond the stop at 1,3. */
+export const PREFAB_PORCH = [1, 4] as const
+const PORCH = madeUpPrefab(`room porch
+mirror
+layout
+# # # # #
+# g . s d
+# # # # #
+g ground mat
+s stop`)
+export const prefabPorchFloor = (): FloorGrid =>
+  laidOver(
+    floorFrom(["", "E...C", "       "], {
+      C: dirs => ({ type: "room", roomType: "chamber", dirs: new Set(dirs), state: "fogged" }),
+    }),
+    PREFAB_PORCH,
+    PORCH
+  )

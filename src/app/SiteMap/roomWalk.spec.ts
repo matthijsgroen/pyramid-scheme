@@ -1,168 +1,171 @@
 import { describe, expect, it } from "vitest"
 import { roomDoors } from "@/game/roomShape"
-import type { Direction, FloorGrid, GridCell } from "@/game/siteTypes"
-import { CELL, cellCenter } from "./mapScale"
+import type { FloorGrid } from "@/game/siteTypes"
+import { CELL, COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
+import { EDGE_NODE, PREFAB_FORK, PREFAB_PILLARS, edgePrefabFloor, prefabForkFloor } from "./floorFixtures.testing"
 import { markerCell, roomPath, roomStop, stepsBetween, walkPoints, walkSteps } from "./roomWalk"
 import type { RoomEnd, WalkPoint } from "./roomWalk"
 
-const corridor = (...dirs: Direction[]): GridCell => ({ type: "corridor", dirs: new Set(dirs), state: "fogged" })
+type Cell = readonly [number, number]
 
-// A fork at 2,4 with arms W, E, S, grown to rows 1-4, cols 2-6; a 2x1 stand-in piece at row 2, cols 3-4.
-const NODE = [2, 4] as const
-const PIECE = { top: 2, left: 3, rows: 1, cols: 2 }
-const makeGrid = (): FloorGrid => {
-  const placed: Record<string, GridCell> = {
-    "2,4": {
-      type: "room",
-      roomType: "fork",
-      dirs: new Set<Direction>(["e", "w", "s"]),
-      state: "fogged",
-      decoration: "basin",
-      grownRoom: { rect: { top: 1, left: 2, rows: 4, cols: 5 }, piece: { kind: "basin", ...PIECE } },
-    },
-    "2,0": corridor("e", "w"),
-    "2,1": corridor("e", "w"),
-    "2,2": corridor("e", "w"),
-    "2,3": corridor("e", "w"),
-    "2,5": corridor("e", "w"),
-    "2,6": corridor("e", "w"),
-    "2,7": corridor("e", "w"),
-    "3,4": corridor("n", "s"),
-    "4,4": corridor("n", "s"),
-    "5,4": corridor("n", "s"),
-  }
-  return {
-    cells: Array.from({ length: 6 }, (_, r) =>
-      Array.from({ length: 8 }, (_, c): GridCell => placed[`${r},${c}`] ?? { type: "empty" })
-    ),
-    rows: 6,
-    cols: 8,
-    entrancePos: [-9, -9],
-    exitPos: [-9, -9],
-    siteId: "site",
-    staircases: {},
-  }
+/** The box an object's sprite stands in on its cell. */
+const boxOf = ([r, c]: Cell) => {
+  const { cx, cy } = cellCenter(r, c)
+  return { x0: cx - CELL / 2, y0: cy - CELL / 2, x1: cx + CELL / 2, y1: cy + CELL / 2 }
 }
-
-const nw = cellCenter(PIECE.top, PIECE.left)
-const se = cellCenter(PIECE.top + PIECE.rows - 1, PIECE.left + PIECE.cols - 1)
-const box = { x0: nw.cx - CELL / 2, y0: nw.cy - CELL / 2, x1: se.cx + CELL / 2, y1: se.cy + CELL / 2 }
-const inside = (p: WalkPoint) => p.x > box.x0 && p.x < box.x1 && p.y > box.y0 && p.y < box.y1
-const length = (pts: WalkPoint[]) => pts.slice(1).reduce((s, p, i) => s + Math.hypot(p.x - pts[i].x, p.y - pts[i].y), 0)
-const cutsPiece = (a: WalkPoint, b: WalkPoint) => {
-  for (let t = 0; t <= 1; t += 0.01) if (inside({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t })) return true
+const inBox = (p: WalkPoint, box: ReturnType<typeof boxOf>) =>
+  p.x > box.x0 && p.x < box.x1 && p.y > box.y0 && p.y < box.y1
+const cuts = (a: WalkPoint, b: WalkPoint, cells: readonly Cell[]) => {
+  for (let t = 0; t <= 1; t += 0.01) {
+    const p = { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }
+    if (cells.some(cell => inBox(p, boxOf(cell)))) return true
+  }
   return false
 }
-const ends: RoomEnd[] = [{ door: "w" }, { door: "e" }, { door: "s" }, "stop"]
+const length = (pts: readonly WalkPoint[]) =>
+  pts.slice(1).reduce((s, p, i) => s + Math.hypot(p.x - pts[i].x, p.y - pts[i].y), 0)
+const run = (...cells: string[]) => cells.map(at => at.split(",").map(Number) as [number, number])
+const atCentre = (p: WalkPoint, [r, c]: Cell) => p.x === cellCenter(r, c).cx && p.y === cellCenter(r, c).cy
+const none = () => ({ dx: 0, dy: 0 })
 
-describe("roomWalk", () => {
-  it("goes straight between two doors on the same side of the piece", () => {
-    const path = roomPath(makeGrid(), NODE, { door: "s" }, "stop")
-    expect(path).toHaveLength(2)
-  })
+/** Every cell an object or the ring blocks in the room at `node`, inside its rect. */
+const blockedIn = (grid: FloorGrid, [r, c]: Cell): Cell[] => {
+  const cell = grid.cells[r][c]
+  const room = cell.type === "empty" ? undefined : cell.prefabRoom
+  return (room?.objects ?? []).flatMap(o =>
+    Array.from({ length: o.rows * o.cols }, (_, i): Cell => [o.top + Math.floor(i / o.cols), o.left + (i % o.cols)])
+  )
+}
 
-  it("goes round the near side when the two doors are on opposite sides", () => {
-    const path = roomPath(makeGrid(), NODE, { door: "w" }, { door: "e" })
-    expect(path.length).toBeGreaterThan(2)
-    for (const p of path) {
-      expect(inside(p)).toBe(false)
-      expect(p.inRoom).toBe(true)
+/** The shortest walk over the room's free cell centres, by any straight line that crosses no blocked cell: the
+ * yardstick the room's own walk is held to. */
+const shortestOver = (grid: FloorGrid, node: Cell, a: Cell, b: Cell): number => {
+  const cell = grid.cells[node[0]][node[1]]
+  const room = cell.type === "empty" ? undefined : cell.prefabRoom
+  if (!room) throw new Error("no room")
+  const blocked = new Set(room.blocked)
+  const { top, left, rows, cols } = room.rect
+  const cells: Cell[] = []
+  const walls: Cell[] = []
+  for (let r = top; r < top + rows; r++)
+    for (let c = left; c < left + cols; c++) (blocked.has(`${r},${c}`) ? walls : cells).push([r, c])
+  const pt = ([r, c]: Cell): WalkPoint => ({ x: cellCenter(r, c).cx, y: cellCenter(r, c).cy })
+  const pitchCuts = (p: WalkPoint, q: WalkPoint) => {
+    for (let t = 0.001; t < 1; t += 0.001) {
+      const x = p.x + (q.x - p.x) * t
+      const y = p.y + (q.y - p.y) * t
+      if (walls.some(w => Math.abs(x - pt(w).x) < COL_PITCH / 2 - 0.01 && Math.abs(y - pt(w).y) < ROW_PITCH / 2 - 0.01))
+        return true
     }
-    expect(path.slice(1, -1).every(p => p.y > box.y1)).toBe(true)
+    return false
+  }
+  const index = (at: Cell) => cells.findIndex(c => c[0] === at[0] && c[1] === at[1])
+  const best = cells.map(() => Infinity)
+  const done = cells.map(() => false)
+  best[index(a)] = 0
+  for (;;) {
+    let u = -1
+    cells.forEach((_, i) => {
+      if (!done[i] && best[i] < Infinity && (u < 0 || best[i] < best[u])) u = i
+    })
+    if (u < 0) break
+    done[u] = true
+    cells.forEach((c, v) => {
+      if (done[v] || pitchCuts(pt(cells[u]), pt(c))) return
+      best[v] = Math.min(best[v], best[u] + Math.hypot(pt(cells[u]).x - pt(c).x, pt(cells[u]).y - pt(c).y))
+    })
+  }
+  return best[index(b)]
+}
+
+describe("a walk through a prefab room", () => {
+  const grid = prefabForkFloor()
+  const node = PREFAB_FORK
+  const ends: RoomEnd[] = [{ door: "w" }, { door: "e" }, { door: "s" }, "stop"]
+  const endCell = (end: RoomEnd) => {
+    const [p] = roomPath(grid, node, end, end)
+    return run(
+      ...[...Array(grid.rows).keys()].flatMap(r =>
+        [...Array(grid.cols).keys()].filter(c => atCentre(p, [r, c])).map(c => `${r},${c}`)
+      )
+    )[0]
+  }
+
+  it("goes straight from a door to the stop when nothing stands between", () => {
+    expect(roomPath(grid, node, { door: "s" }, "stop")).toHaveLength(2)
   })
 
-  it("takes the shorter way round for every pair of exits", () => {
-    const grid = makeGrid()
-    const corner = (r: number, c: number): WalkPoint => ({ x: cellCenter(r, c).cx, y: cellCenter(r, c).cy })
-    const [north, south] = [PIECE.top - 1, PIECE.top + PIECE.rows].map(row => [
-      corner(row, PIECE.left - 1),
-      corner(row, PIECE.left + PIECE.cols),
-    ])
+  it("walks round a pillar between the west door and the stop, every point in the room", () => {
+    const path = roomPath(grid, node, { door: "w" }, "stop")
+    expect(path.length).toBeGreaterThan(2)
+    for (const p of path) expect(p.inRoom).toBe(true)
+    path.slice(1).forEach((p, i) => expect(cuts(path[i], p, PREFAB_PILLARS), `${i}`).toBe(false))
+  })
+
+  it("takes the shortest way over the room's floor for every pair of ends", () => {
     for (const a of ends)
       for (const b of ends) {
-        const start = roomPath(grid, NODE, a, a)[0]
-        const end = roomPath(grid, NODE, b, b)[0]
-        const forced = [north, south].map(side => length([start, ...side, end]))
-        const forcedBack = [north, south].map(side => length([start, ...[...side].reverse(), end]))
-        expect(length(roomPath(grid, NODE, a, b))).toBeLessThanOrEqual(Math.min(...forced, ...forcedBack) + 1e-6)
+        const shortest = shortestOver(grid, node, endCell(a), endCell(b))
+        expect(length(roomPath(grid, node, a, b)), `${JSON.stringify(a)}→${JSON.stringify(b)}`).toBeLessThanOrEqual(
+          shortest + 1e-6
+        )
       }
   })
 
-  it("never crosses the piece", () => {
-    const grid = makeGrid()
+  it("never crosses what stands in it", () => {
+    const standing = blockedIn(grid, node)
     for (const a of ends)
       for (const b of ends) {
-        const path = roomPath(grid, NODE, a, b)
-        path.slice(1).forEach((p, i) => expect(cutsPiece(path[i], p)).toBe(false))
+        const path = roomPath(grid, node, a, b)
+        path.slice(1).forEach((p, i) => expect(cuts(path[i], p, standing)).toBe(false))
       }
   })
 
-  it("puts the stop south of the piece, on no door", () => {
-    const grid = makeGrid()
-    const stop = roomStop(grid, 2, 4)
-    expect(stop).toEqual([3, 4])
-    expect(roomStop(grid, 2, 3)).toBeUndefined()
+  it("walks round two pillars without zig-zag", () => {
+    const pitch = (p: WalkPoint, q: WalkPoint) => Math.hypot((p.x - q.x) / COL_PITCH, (p.y - q.y) / ROW_PITCH)
+    for (const a of ends)
+      for (const b of ends) {
+        const path = roomPath(grid, node, a, b)
+        // Two turns within one cell are a step on the grid, not a way round anything.
+        for (let i = 1; i + 2 < path.length; i++)
+          expect(pitch(path[i], path[i + 1]), `${JSON.stringify(a)}→${JSON.stringify(b)} at ${i}`).toBeGreaterThan(1)
+      }
+  })
+
+  it("meets the room at the prefab's stop, and no other cell", () => {
+    expect(roomStop(grid, ...node)).toEqual([6, 8])
+    expect(roomStop(grid, 4, 5)).toBeUndefined()
     expect(roomStop(grid, 0, 0)).toBeUndefined()
   })
 
-  it("leaves a route through no grown room exactly as today's waypoints", () => {
-    const grid = makeGrid()
-    const route: [number, number][] = [
-      [2, 0],
-      [2, 1],
-      [3, 1],
-    ]
-    const points = walkPoints(grid, route, (r, c) => (r === 3 && c === 1 ? { dx: 5, dy: -4 } : { dx: 0, dy: 0 }))
+  it("leaves a route through no prefab room exactly as today's waypoints", () => {
+    const route = run("4,0", "4,1", "5,1")
+    const points = walkPoints(grid, route, (r, c) => (r === 5 && c === 1 ? { dx: 5, dy: -4 } : { dx: 0, dy: 0 }))
     const at = (r: number, c: number) => cellCenter(r, c)
     expect(points).toEqual([
-      { x: at(2, 0).cx, y: at(2, 0).cy },
-      { x: at(2, 1).cx, y: at(2, 1).cy },
-      { x: at(3, 1).cx + 5, y: at(3, 1).cy - 4 },
+      { x: at(4, 0).cx, y: at(4, 0).cy },
+      { x: at(4, 1).cx, y: at(4, 1).cy },
+      { x: at(5, 1).cx + 5, y: at(5, 1).cy - 4 },
     ])
   })
 
-  it("replaces a run through a grown room with its path", () => {
-    const grid = makeGrid()
-    const route: [number, number][] = [
-      [2, 1],
-      [2, 2],
-      [2, 3],
-      [2, 4],
-      [2, 5],
-      [2, 6],
-      [2, 7],
-    ]
-    const points = walkPoints(grid, route, () => ({ dx: 0, dy: 0 }))
+  it("replaces a run through a prefab room with its walk", () => {
+    const route = run("4,1", "4,2", "4,3", "4,4", "4,5", "4,6", "4,7", "4,8", "4,9", "4,10", "4,11")
+    const points = walkPoints(grid, route, none)
     expect(points[0].inRoom).toBeUndefined()
     expect(points.at(-1)?.inRoom).toBeUndefined()
-    expect(points.slice(1, -1).every(p => p.inRoom && !inside(p))).toBe(true)
+    const inside = points.filter(p => p.inRoom)
+    expect(inside.length).toBeGreaterThan(1)
+    inside.slice(1).forEach((p, i) => expect(cuts(inside[i], p, PREFAB_PILLARS)).toBe(false))
   })
 
   it("sets out from and comes to rest at the stop when the route starts or ends on an absorbed arm cell", () => {
-    const grid = makeGrid()
-    const stop = roomPath(grid, NODE, "stop", "stop")[0]
-    const none = () => ({ dx: 0, dy: 0 })
-    const out = walkPoints(
-      grid,
-      [
-        [2, 3],
-        [2, 2],
-        [2, 1],
-      ],
-      none
-    )
-    const back = walkPoints(
-      grid,
-      [
-        [2, 1],
-        [2, 2],
-        [2, 3],
-      ],
-      none
-    )
+    const stop = roomPath(grid, node, "stop", "stop")[0]
+    const out = walkPoints(grid, run("4,5", "4,4", "4,3", "4,2", "4,1"), none)
+    const back = walkPoints(grid, run("4,1", "4,2", "4,3", "4,4", "4,5"), none)
     expect(out[0]).toEqual(stop)
     expect(back.at(-1)).toEqual(stop)
-    out.slice(1).forEach((p, i) => expect(cutsPiece(out[i], p)).toBe(false))
+    out.slice(1).forEach((p, i) => expect(cuts(out[i], p, PREFAB_PILLARS)).toBe(false))
   })
 
   it("counts a corridor step as one and a room segment by its length", () => {
@@ -178,104 +181,48 @@ describe("roomWalk", () => {
     ).toBeCloseTo(3)
   })
 
-  it("draws a grown room's marker at its stop and an absorbed arm's at its door", () => {
-    const grid = makeGrid()
-    expect(markerCell(grid, 2, 4)).toEqual(roomStop(grid, 2, 4))
-    expect(markerCell(grid, 2, 3)).toEqual([2, 2])
-    expect(markerCell(grid, 2, 5)).toEqual([2, 6])
-    expect(markerCell(grid, 3, 4)).toEqual([4, 4])
-    expect(markerCell(grid, 2, 1)).toEqual([2, 1])
+  it("draws a prefab room's marker at its stop and an absorbed arm's at its door", () => {
+    expect(markerCell(grid, ...node)).toEqual(roomStop(grid, ...node))
+    expect(markerCell(grid, 4, 5)).toEqual([4, 3])
+    expect(markerCell(grid, 4, 7)).toEqual([4, 9])
+    expect(markerCell(grid, 5, 6)).toEqual([6, 6])
+    expect(markerCell(grid, 4, 1)).toEqual([4, 1])
   })
 })
 
-// A 3×4 room (rows 1-3, cols 2-5) round a 2×1 stand-in piece at row 2, cols 3-4, its node on the rect's edge.
-const SMALL_PIECE = { top: 2, left: 3, rows: 1, cols: 2 }
-const edgeRoom = (
-  node: readonly [number, number],
-  roomType: "fork" | "chamber",
-  dirs: Direction[],
-  corridors: string
-) => {
-  const placed: Record<string, GridCell> = {}
-  for (const entry of corridors.split(" ")) {
-    const [at, ds] = entry.split(":")
-    placed[at] = corridor(...(ds.split("") as Direction[]))
-  }
-  placed[`${node[0]},${node[1]}`] = {
-    type: "room",
-    roomType,
-    dirs: new Set(dirs),
-    state: "fogged",
-    decoration: "basin",
-    grownRoom: { rect: { top: 1, left: 2, rows: 3, cols: 4 }, piece: { kind: "basin", ...SMALL_PIECE } },
-  }
-  return {
-    cells: Array.from({ length: 6 }, (_, r) =>
-      Array.from({ length: 8 }, (_, c): GridCell => placed[`${r},${c}`] ?? { type: "empty" })
-    ),
-    rows: 6,
-    cols: 8,
-    entrancePos: [-9, -9],
-    exitPos: [-9, -9],
-    siteId: "site",
-    staircases: {},
-  } as FloorGrid
-}
-const small = (() => {
-  const nw = cellCenter(SMALL_PIECE.top, SMALL_PIECE.left)
-  const se = cellCenter(SMALL_PIECE.top, SMALL_PIECE.left + SMALL_PIECE.cols - 1)
-  return { x0: nw.cx - CELL / 2, y0: nw.cy - CELL / 2, x1: se.cx + CELL / 2, y1: se.cy + CELL / 2 }
-})()
-const cutsSmall = (a: WalkPoint, b: WalkPoint) => {
-  for (let t = 0; t <= 1; t += 0.01) {
-    const x = a.x + (b.x - a.x) * t
-    const y = a.y + (b.y - a.y) * t
-    if (x > small.x0 && x < small.x1 && y > small.y0 && y < small.y1) return true
-  }
-  return false
-}
-const run = (...cells: string[]) => cells.map(at => at.split(",").map(Number) as [number, number])
-const atCentre = (p: WalkPoint, [r, c]: readonly [number, number]) =>
-  p.x === cellCenter(r, c).cx && p.y === cellCenter(r, c).cy
-
-describe("a walk through a grown room whose node stands on its edge", () => {
-  const none = () => ({ dx: 0, dy: 0 })
-  // An L chamber at the rect's north-west corner: in from the north on the node, out east along row 1.
-  const lChamber = edgeRoom([1, 2], "chamber", ["n", "e"], "0,2:ns 1,3:ew 1,4:ew 1,5:ew 1,6:ew 1,7:ew")
-  // A T fork at the rect's south-west corner: south and west leave from the node, east runs along row 3.
-  const tFork = edgeRoom(
-    [3, 2],
-    "fork",
-    ["s", "w", "e"],
-    "4,2:ns 5,2:ns 3,1:ew 3,0:ew 3,3:ew 3,4:ew 3,5:ew 3,6:ew 3,7:ew"
-  )
+describe("a walk through a prefab room whose node stands next to its ring", () => {
+  const lChamber = edgePrefabFloor("L")
+  const tFork = edgePrefabFloor("T")
+  const bones = (grid: FloorGrid, node: Cell) => blockedIn(grid, node)
   const tRoutes = {
-    s: run("5,2", "4,2"),
-    w: run("3,0", "3,1"),
-    e: run("3,7", "3,6", "3,5", "3,4", "3,3"),
+    s: run("6,3", "5,3", "4,3"),
+    w: run("3,0", "3,1", "3,2"),
+    e: run("3,9", "3,8", "3,7", "3,6", "3,5", "3,4"),
   }
 
-  it("never crosses the piece and takes no detour via the stop on an L chamber, either way", () => {
-    const stop = roomStop(lChamber, 1, 2)!
+  it("never crosses the skeleton and takes no detour via the stop on an L chamber, either way", () => {
+    const stop = roomStop(lChamber, ...EDGE_NODE.L)!
     for (const route of [
-      run("0,2", "1,2", "1,3", "1,4", "1,5", "1,6", "1,7"),
-      run("1,7", "1,6", "1,5", "1,4", "1,3", "1,2", "0,2"),
+      run("1,2", "2,2", "3,2", "3,3", "3,4", "3,5", "3,6", "3,7", "3,8"),
+      run("3,8", "3,7", "3,6", "3,5", "3,4", "3,3", "3,2", "2,2", "1,2"),
     ]) {
       const points = walkPoints(lChamber, route, none)
-      points.slice(1).forEach((p, i) => expect(cutsSmall(points[i], p), `${i}`).toBe(false))
+      points.slice(1).forEach((p, i) => expect(cuts(points[i], p, bones(lChamber, EDGE_NODE.L)), `${i}`).toBe(false))
       expect(points.some(p => atCentre(p, stop))).toBe(false)
-      expect(points.every(p => p.y === cellCenter(0, 0).cy || p.y === cellCenter(1, 0).cy)).toBe(true)
+      expect(points.every(p => [1, 2, 3].some(r => p.y === cellCenter(r, 0).cy))).toBe(true)
     }
   })
 
-  it("walks a T fork between any two of its exits without crossing the piece or calling at the stop", () => {
-    const stop = roomStop(tFork, 3, 2)!
+  it("walks a T fork between any two of its exits without crossing the skeleton or calling at the stop", () => {
+    const stop = roomStop(tFork, ...EDGE_NODE.T)!
     for (const [a, into] of Object.entries(tRoutes))
       for (const [b, out] of Object.entries(tRoutes)) {
         if (a === b) continue
-        const route = [...into, [3, 2] as [number, number], ...[...out].reverse()]
+        const route = [...into, [3, 3] as [number, number], ...[...out].reverse()]
         const points = walkPoints(tFork, route, none)
-        points.slice(1).forEach((p, i) => expect(cutsSmall(points[i], p), `${a}→${b} ${i}`).toBe(false))
+        points
+          .slice(1)
+          .forEach((p, i) => expect(cuts(points[i], p, bones(tFork, EDGE_NODE.T)), `${a}→${b} ${i}`).toBe(false))
         expect(
           points.some(p => atCentre(p, stop)),
           `${a}→${b}`
@@ -284,21 +231,20 @@ describe("a walk through a grown room whose node stands on its edge", () => {
   })
 
   it("walks the T fork's south-to-west turn on the node itself, as a corridor corner", () => {
-    const points = walkPoints(tFork, [...tRoutes.s, [3, 2], ...[...tRoutes.w].reverse()], none)
+    const points = walkPoints(tFork, [...tRoutes.s, [3, 3], ...[...tRoutes.w].reverse()], none)
     expect(points.map(p => [p.x, p.y])).toEqual(
-      run("5,2", "4,2", "3,2", "3,1", "3,0").map(([r, c]) => [cellCenter(r, c).cx, cellCenter(r, c).cy])
+      run("6,3", "5,3", "4,3", "3,3", "3,2", "3,1", "3,0").map(([r, c]) => [cellCenter(r, c).cx, cellCenter(r, c).cy])
     )
   })
 
   it("still sets out from and comes to rest at the stop when the route starts or ends on the node", () => {
-    const stop = roomStop(tFork, 3, 2)!
-    expect(atCentre(walkPoints(tFork, [[3, 2], ...[...tRoutes.w].reverse()], none)[0], stop)).toBe(true)
-    expect(atCentre(walkPoints(tFork, [...tRoutes.w, [3, 2]], none).at(-1)!, stop)).toBe(true)
+    const stop = roomStop(tFork, ...EDGE_NODE.T)!
+    expect(atCentre(walkPoints(tFork, [[3, 3], ...[...tRoutes.w].reverse()], none)[0], stop)).toBe(true)
+    expect(atCentre(walkPoints(tFork, [...tRoutes.w, [3, 3]], none).at(-1)!, stop)).toBe(true)
   })
 
-  it("puts the stop past a door on the south ring", () => {
-    const fork = edgeRoom([3, 3], "fork", ["s", "w", "e"], "4,3:ns 3,2:ew 3,1:ew 3,4:ew 3,5:ew 3,6:ew")
-    expect(roomDoors(fork, 3, 3).s).toEqual([3, 3])
-    expect(roomStop(fork, 3, 3)).toEqual([3, 4])
+  it("leaves a door it stands next to from the node itself, and meets the room at the prefab's stop", () => {
+    expect(roomDoors(tFork, ...EDGE_NODE.T)).toEqual({ s: [3, 3], w: [3, 3], e: [3, 6] })
+    expect(roomStop(tFork, ...EDGE_NODE.T)).toEqual([1, 6])
   })
 })

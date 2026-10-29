@@ -408,58 +408,6 @@ describe("dressing by purpose", () => {
   }
   const activityOf = (id: string) => ACTIVITIES.find(activity => activity.id === id)
 
-  describe("a centre kind", () => {
-    // A stand-in: no shipped kind is flagged centre, so the rule is exercised on a kind the test names.
-    const basinInTheMiddle = (kind: DecorationKind): PropFootprint =>
-      kind === "basin" ? { cols: 2, rows: 1, tall: 0, centre: true } : decorationFootprint(kind)
-    const pools = (props: DecorationKind[]): DressingPools => ({ props, wall: [], role: "agriculture" })
-    const orders: DecorationKind[][] = [
-      ["basin", "jarRack", "shelf"],
-      ["jarRack", "basin", "shelf"],
-      ["shelf", "jarRack", "basin"],
-      ["jarRack", "shelf", "basin"],
-    ]
-
-    it("gives a fork whose activity has a centre kind that kind, every time", () => {
-      for (const props of orders)
-        expect(dressed({ junctionPools: pools(props), propFootprint: basinInTheMiddle })("0,4").decoration).toBe(
-          "basin"
-        )
-    })
-
-    it("gives a pass-through chamber a centre kind too", () => {
-      for (const props of orders)
-        expect(
-          dressed({ passThrough: true, pools: pools(props), propFootprint: basinInTheMiddle })("0,2").decoration
-        ).toBe("basin")
-    })
-
-    it("keeps a centre kind off a stairhead, which has no middle to stand in", () => {
-      for (const props of orders) {
-        const room = dressed({ stairPools: pools(props), propFootprint: basinInTheMiddle })("0,6")
-        expect(room.decoration).toBeDefined()
-        expect(room.decoration).not.toBe("basin")
-      }
-    })
-
-    it("names the single-cell kind a centre object falls back to", () => {
-      const room = dressed({ junctionPools: pools(["basin", "jarRack", "shelf"]), propFootprint: basinInTheMiddle })(
-        "0,4"
-      )
-      expect(room.decorationFallback).toBeDefined()
-      expect(isSingleCell(basinInTheMiddle(room.decorationFallback!))).toBe(true)
-    })
-
-    it("dresses as before when no kind is flagged centre", () => {
-      const setups: Setup[] = [{}, { junctionPools: pools(orders[0]) }, { passThrough: true }]
-      for (const setup of setups) {
-        const before = dressed(setup)
-        const after = dressed({ ...setup, propFootprint: decorationFootprint })
-        for (const node of nodes) expect(after(node)).toEqual(before(node))
-      }
-    })
-  })
-
   it("dresses a junction from one activity its pool furnishes", () => {
     const room = dressed()("0,4")
     expect(room.activity).toBeDefined()

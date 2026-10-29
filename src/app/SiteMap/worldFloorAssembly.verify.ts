@@ -145,11 +145,11 @@ describe("what a world-spec setting may and may not move", () => {
     JSON.stringify(
       g.cells.map(row => row.map(c => (c.type === "empty" ? "." : `${c.type[0]}${[...c.dirs].sort().join("")}`)))
     )
-  // A grown room's rectangle is part of the drawn walls: growth moves them and no cell's type or dirs.
+  // A prefab room's rectangle is part of the drawn walls: laying one moves them and no cell's type or dirs.
   const shape = (g: FloorGrid) =>
     JSON.stringify([
       bareShape(g),
-      g.cells.map(row => row.map(c => (c.type === "room" && c.grownRoom ? c.grownRoom.rect : null))),
+      g.cells.map(row => row.map(c => (c.type !== "empty" && c.prefabRoom ? c.prefabRoom.rect : null))),
     ])
   const sectionHashes = (g: FloorGrid) =>
     JSON.stringify(
@@ -269,9 +269,8 @@ describe("what a world-spec setting may and may not move", () => {
     120_000
   )
 
-  // Rule 1b — the dressing that can carry a centre object grows the room round it (growRooms), which
-  // moves its drawn walls and no cell's type or dirs, so section hashes hold by design. On these, only
-  // the grown rectangles may differ: every cell's type and dirs must stay identical on every floor.
+  // Rule 1b — the dressing a room is given moves no cell's type or dirs, so section hashes hold by design:
+  // every cell's type and dirs must stay identical on every floor.
   const DRESSING: Array<[string, (c: FloorConfig) => FloorConfig]> = [
     [
       "the decoration pool",

@@ -12,7 +12,7 @@ import type {
   RoomCell,
   WallDecorationKind,
 } from "../siteTypes"
-import { MECHANISM_AT_REST, isCentreKind, isSingleCell } from "../siteTypes"
+import { MECHANISM_AT_REST, isSingleCell } from "../siteTypes"
 import { holeRegion } from "../mechanics/weights"
 import { standOnCorridor } from "../sequenceTiles"
 import { edgeAllowed, forkPositions, rooms, routeStepOf } from "./derive"
@@ -338,20 +338,14 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
     // The god's room draws from the god-bearing kinds, a statue first where the pool has one.
     const patronProps = pools?.props?.filter(k => PATRON_KINDS.has(k))
     const godProps = patronProps?.includes("statue") ? (["statue"] as DecorationKind[]) : patronProps
-    const basePool = authored
+    const propPool = authored
       ? fromPoolOrOwn(pools?.props, authored.props)
       : isPatron
         ? godProps
         : activity
           ? pools?.props?.filter(k => activity.props.includes(k))
           : pools?.props
-    // A centre kind stands in the middle of a room that forks or that a path passes through, and there it is
-    // the dressing every time; on any other chamber it has no middle to stand in, so it is left out of the pool.
-    const isCentre = (k: DecorationKind) => isCentreKind(k, prep.input.propFootprint)
-    const centreKinds = basePool?.filter(isCentre) ?? []
-    const takesCentre = spec.roomType === "fork" || spec.roomType === "chamber"
-    const propPool = centreKinds.length && !takesCentre ? basePool?.filter(k => !isCentre(k)) : basePool
-    const picked = pickDressing(takesCentre && centreKinds.length ? centreKinds : propPool, pk, "decoration")
+    const picked = pickDressing(propPool, pk, "decoration")
     // No pit beside a way down: re-picked rather than filtered, so the pool's length moves no other room.
     const [r, c] = pk.split(",").map(Number)
     const owner = cells2D[r][c]
@@ -369,9 +363,7 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
     const decorationFallback =
       decoration && !isSingleCell(prep.input.propFootprint(decoration))
         ? pickDressing(
-            propPool?.filter(
-              k => isSingleCell(prep.input.propFootprint(k)) && !isCentre(k) && !(k === "pit" && besideStair)
-            ),
+            propPool?.filter(k => isSingleCell(prep.input.propFootprint(k)) && !(k === "pit" && besideStair)),
             pk,
             "decoration:single-cell"
           )
