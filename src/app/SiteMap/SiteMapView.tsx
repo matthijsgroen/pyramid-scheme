@@ -13,7 +13,7 @@ import type {
 import { decorationFootprint } from "../../game/siteTypes"
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { isSealedWayOut, oneWayRuns, revealAll } from "../../game/gridNavigation"
-import { ExplorerDot, LightPool } from "./ExplorerDot"
+import { CHAR_H, CHAR_W, ExplorerDot, FOOT_LIFT, LightPool } from "./ExplorerDot"
 import { RiderSprite, ZiplineRider } from "./ZiplineRider"
 import { poseFor, type RidePoses } from "./ridePoses"
 import type { Ride } from "./useZiplineRide"
@@ -264,12 +264,21 @@ const leverArmTransform = (angleDeg: number): string =>
 
 const NO_STATES: ReadonlyMap<string, string> = new Map()
 
-/** Whether a piece stands over the explorer: the stretch he is on runs north of its floor line and across its width. */
+/** Whether a piece would hide the explorer: he is behind its floor line and his figure, along the stretch he is on,
+ * overlaps the box its sprite is drawn in. */
 const hides = (
-  frame: { x: number; w: number; baseY: number },
+  frame: { x: number; y: number; w: number; baseY: number },
   { at, to = at }: { at: WalkPoint; to?: WalkPoint }
-): boolean =>
-  at.y + CELL / 2 < frame.baseY && Math.max(at.x, to.x) > frame.x && Math.min(at.x, to.x) < frame.x + frame.w
+): boolean => {
+  const feet = at.y + CELL / 2 - FOOT_LIFT
+  return (
+    at.y + CELL / 2 < frame.baseY &&
+    feet > frame.y &&
+    feet - CHAR_H < frame.baseY &&
+    Math.max(at.x, to.x) + CHAR_W / 2 > frame.x &&
+    Math.min(at.x, to.x) - CHAR_W / 2 < frame.x + frame.w
+  )
+}
 
 // `stairGoes` decides the flight's direction; the entrance position is only the fallback for a cell carrying none.
 const stairClimbs = (grid: Pick<FloorGrid, "entrancePos">, cell: { stairGoes?: StairGoes }, r: number, c: number) =>

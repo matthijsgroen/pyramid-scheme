@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { act, render, fireEvent, screen } from "@testing-library/react"
-import { afterEach, describe, expect, it, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { SiteMapView, approachCells, cornerRocksFor } from "./SiteMapView"
 import { allFloorRects, buildRoomClaims, tileRegionsFor } from "./roomClaims"
 import { grassMatsFor } from "./floorScatter"
@@ -24,6 +24,7 @@ import type {
   RoomCell,
   Tileset,
 } from "@/game/siteTypes"
+import { DECORATION_FOOTPRINTS } from "@/game/siteTypes"
 import { assembleFloor } from "@/game/siteAssembler"
 import { registerFamily } from "@/app/families/familyRegistry"
 import "@/mods/registerModApps"
@@ -2883,22 +2884,33 @@ describe("SiteMapView — a grown room", () => {
     for (const at of pastSouthDoor) expect(at.behind, `${at.x},${at.y}`).toBe(false)
   })
 
-  it("fades the piece while the explorer stands behind it, and only then", () => {
-    for (const [pos, faded] of [
-      [[0, 4], true],
-      [GROWN_FORK, false],
-      [[2, 0], false],
-      [[5, 4], false],
-    ] as const) {
-      const { container, unmount } = render(<SiteMapView grid={grid} explorerPos={pos} />)
-      expect(piece(container).style.opacity === `${OCCLUDER_FADE}`, `${pos}`).toBe(faded)
-      unmount()
-    }
-    const { seen } = walk([5, 4], [0, 4])
-    expect(seen.some(at => at.faded)).toBe(true)
-    for (const at of seen.filter(at => at.faded)) expect(at.y + CELL / 2, `${at.x},${at.y}`).toBeLessThan(floorLine)
-    const back = walk([0, 4], [2, 0]).seen
-    expect(back.at(-1)?.faded).toBe(false)
+  const fadedWhere = (pos: readonly [number, number]) => {
+    const { container, unmount } = render(<SiteMapView grid={grid} explorerPos={pos} />)
+    const faded = piece(container).style.opacity === `${OCCLUDER_FADE}`
+    unmount()
+    return faded
+  }
+
+  it("never fades a flat piece, which cannot hide him from anywhere", () => {
+    for (const pos of [[0, 4], GROWN_FORK, [2, 0], [5, 4]] as const) expect(fadedWhere(pos), `${pos}`).toBe(false)
+    expect(walk([5, 4], [0, 4]).seen.some(at => at.faded)).toBe(false)
+  })
+
+  describe("a piece standing a cell tall", () => {
+    const flat = DECORATION_FOOTPRINTS.basin
+    beforeEach(() => void (DECORATION_FOOTPRINTS.basin = { cols: 1, rows: 1, tall: 1 }))
+    afterEach(() => void (DECORATION_FOOTPRINTS.basin = flat))
+
+    it("fades the piece while the explorer is behind it, and only then", () => {
+      // The room at 0,4 is behind the piece but beyond a wall, out of its reach.
+      for (const pos of [[0, 4], GROWN_FORK, [2, 0], [5, 4]] as const) expect(fadedWhere(pos), `${pos}`).toBe(false)
+      const { seen } = walk([5, 4], [0, 4])
+      const northRing = seen.filter(at => at.y === cellCenter(1, 0).cy && at.x > cellLeft(GROWN_PIECE.left) - CELL)
+      expect(northRing.length).toBeGreaterThan(0)
+      expect(northRing.some(at => at.faded)).toBe(true)
+      for (const at of seen.filter(at => at.faded)) expect(at.y + CELL / 2, `${at.x},${at.y}`).toBeLessThan(floorLine)
+      expect(seen.at(-1)?.faded).toBe(false)
+    })
   })
 
   it("draws a room with no centre object exactly as before", () => {
