@@ -153,9 +153,15 @@ const nodeOf = (grid: FloorGrid, at: Cell): Cell | undefined => {
   return key ? (key.split(",").map(Number) as unknown as Cell) : undefined
 }
 
-const endFor = (grid: FloorGrid, node: Cell, at: Cell): RoomEnd => {
-  if (at[0] === node[0] && at[1] === node[1]) return "stop"
-  const door = armOf(grid, node, at)
+const stepDir = (from: Cell, to: Cell): Direction | undefined =>
+  (Object.keys(STEP) as Direction[]).find(dir => from[0] + STEP[dir][0] === to[0] && from[1] + STEP[dir][1] === to[1])
+
+/** The door a route crosses stepping from `outside` to `inside` the room: the side it steps over, a node on the rect's
+ * edge being its own door. A hop that is no single step falls back to the arm `inside` stands on. */
+const endFor = (grid: FloorGrid, node: Cell, inside: Cell, outside: Cell): RoomEnd => {
+  const step = stepDir(inside, outside)
+  if (step && roomDoors(grid, node[0], node[1])[step]) return { door: step }
+  const door = armOf(grid, node, inside)
   return door ? { door } : "stop"
 }
 
@@ -178,8 +184,8 @@ export const walkPoints = (
         if (!next || next[0] !== node[0] || next[1] !== node[1]) break
         j++
       }
-      const from = i === 0 ? "stop" : endFor(grid, node, route[i])
-      const to = j === route.length - 1 ? "stop" : endFor(grid, node, route[j])
+      const from = i === 0 ? "stop" : endFor(grid, node, route[i], route[i - 1])
+      const to = j === route.length - 1 ? "stop" : endFor(grid, node, route[j], route[j + 1])
       points.push(...roomPath(grid, node, from, to))
       i = j + 1
       continue

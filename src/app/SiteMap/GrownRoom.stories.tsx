@@ -1,7 +1,7 @@
 import { useState } from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { revealAll } from "@/game/gridNavigation"
-import { GROWN_FORK, grownForkFloor } from "./floorFixtures.testing"
+import { EDGE_NODE, GROWN_FORK, edgeGrownFloor, grownForkFloor } from "./floorFixtures.testing"
 import { SiteMapView } from "./SiteMapView"
 import "@/mods/registerModApps"
 
@@ -58,4 +58,38 @@ export const WalkWestToEast: Story = {
     const walk = Array.from(canvasElement.querySelectorAll("button")).find(b => b.textContent?.includes("east"))
     walk?.click()
   },
+}
+
+// Rooms whose node stands on the rect's edge: the L chamber from its north door to its east room, the T fork between
+// its south, west and east exits. Each button walks him there; none of the walks calls at the stop or crosses the piece.
+const EDGE_SPOTS = {
+  L: { north: [0, 2], east: [1, 6], stop: EDGE_NODE.L },
+  T: { west: [3, 0], south: [5, 2], east: [3, 6], stop: EDGE_NODE.T },
+} as const
+
+const EdgeRoom = ({ shape, explorerAt }: { shape: keyof typeof EDGE_NODE; explorerAt: string }) => {
+  const spots: Record<string, readonly [number, number]> = EDGE_SPOTS[shape]
+  const [grid] = useState(() => revealAll(edgeGrownFloor(shape)))
+  const [pos, setPos] = useState<readonly [number, number]>(spots[explorerAt])
+  return (
+    <div>
+      <div className="flex gap-4 p-2 text-sm">
+        {Object.keys(spots).map(spot => (
+          <button key={spot} type="button" onClick={() => setPos(spots[spot])}>
+            To {spot}
+          </button>
+        ))}
+      </div>
+      <SiteMapView grid={grid} explorerPos={pos} onCellClick={(r, c) => setPos([r, c])} className="h-160 w-full" />
+    </div>
+  )
+}
+
+export const LChamber: StoryObj<typeof EdgeRoom> = {
+  render: args => <EdgeRoom {...args} />,
+  args: { shape: "L", explorerAt: "north" },
+}
+export const TFork: StoryObj<typeof EdgeRoom> = {
+  render: args => <EdgeRoom {...args} />,
+  args: { shape: "T", explorerAt: "south" },
 }

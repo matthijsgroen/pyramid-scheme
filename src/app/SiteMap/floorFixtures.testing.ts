@@ -165,3 +165,23 @@ export const grownForkFloor = (fork: Partial<Extract<GridCell, { type: "room" }>
       ...fork,
     }),
   })
+
+/** A room grown to rows 1-3, cols 2-5 round a 2×1 stand-in piece at row 2, cols 3-4, its node on the rect's edge.
+ * `L`: a chamber at 1,2 on the north-west corner, in from the entrance at 0,2 and out east along row 1 to a room at
+ * 1,6. `T`: a fork at 3,2 on the south-west corner, west to the entrance at 3,0, south to a room at 5,2 and east along
+ * row 3 to a room at 3,6. */
+export const EDGE_NODE = { L: [1, 2], T: [3, 2] } as const
+export const edgeGrownFloor = (shape: keyof typeof EDGE_NODE): FloorGrid =>
+  floorFrom(shape === "L" ? ["  E", "  G...R", "", ""] : ["", "", "", "E.G...R", "  .", "  R"], {
+    G: dirs => ({
+      type: "room",
+      roomType: shape === "L" ? "chamber" : "fork",
+      dirs: new Set(dirs),
+      state: "fogged",
+      decoration: "basin",
+      grownRoom: {
+        rect: { top: 1, left: 2, rows: 3, cols: 4 },
+        piece: { kind: "basin", top: 2, left: 3, rows: 1, cols: 2 },
+      },
+    }),
+  })
