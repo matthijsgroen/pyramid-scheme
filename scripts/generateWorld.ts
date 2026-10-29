@@ -40,6 +40,7 @@ import { worldGateWalk } from "../src/mods/worldGateWalk"
 import { refusal as carveRefusal } from "../src/worldGen/carveSeedSearch"
 import { generatedWorldConfigs } from "../src/data/generatedWorld"
 import { readLedger, writeLedger } from "./carveLedger"
+import { centreFallbacksByTier, describeCentreTally } from "../src/worldGen/centreReport"
 import { carveAt, makeLayoutPicker, printFailures, printPicks, unboundOutsideInputs } from "./layoutPicker"
 import type { FloorConfig as GameFloorConfig, FloorGrid } from "../src/game/siteTypes"
 import type { FloorConfig } from "../src/worldGen/types"
@@ -240,6 +241,13 @@ const { walked, stranding } = findStrandingLocks(configs, carveFinal)
 // packing above what was authored (the author's cue: the authored value cannot carve, so each is listed with how far
 // it rose), and how many carve only on the ladder.
 printPicks(picker.picks, picker.stats)
+console.log(
+  describeCentreTally(
+    centreFallbacksByTier(configs, (journeyId, levelNr, floorIndex, config) =>
+      carveFinal(journeyId, config as FloorConfig, levelNr, floorIndex)
+    )
+  )
+)
 if (CARVE_RESEARCH) console.log("  (CARVE_RESEARCH=1: every pin and ledger entry ignored)")
 
 // How far the sweep reached, printed on every run: a walk that reports no failure is otherwise

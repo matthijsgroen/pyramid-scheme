@@ -17,7 +17,8 @@ import {
 } from "../src/worldGen/carveSeedSearch"
 import { layoutInfeasible, prepareLayout } from "../src/worldGen/layoutFeasibility"
 import { gridShape, layoutKey } from "../src/worldGen/layoutCheck"
-import type { FloorConfig as GameFloorConfig } from "../src/game/siteTypes"
+import { decorationFootprint, type FloorConfig as GameFloorConfig, type FloorGrid } from "../src/game/siteTypes"
+import { centreFallbacks } from "../src/game/carve/growRooms"
 import type { FloorConfig, SiteConfig } from "../src/worldGen/types"
 import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
 import { worldFloorCarve } from "../src/mods/carveWorldFloor"
@@ -140,6 +141,7 @@ export const floorSearch = (journeyId: string, floor: FloorConfig, levelNr: numb
     fullLadder: Infinity,
     judge,
     stages,
+    prefer: (grid: FloorGrid) => centreFallbacks(grid, decorationFootprint).length,
   }
   return { base, authored, authoring, assembleAt, prepared, corridorsWith, stages, options }
 }

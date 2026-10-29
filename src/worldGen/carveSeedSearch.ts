@@ -179,6 +179,8 @@ export type CarvePairOptions = {
   judge: (result: AssemblerResult) => CarveRefusal | null
   /** Where the side paths may stand, most preferred first (`sidePathStages`); a floor with no lock asks one. */
   stages: SidePathStage[]
+  /** How far a carve is from what the floor's decoration wants, lower better; 0 ends the search at its packing. */
+  prefer?: (grid: FloorGrid) => number
 }
 
 const offsetOf = (base: number, seed: number) =>
@@ -195,12 +197,18 @@ export const verifyCarvePair = (
   base: number,
   pair: { seed: number; packing: number; sidePaths?: SidePathStage },
   assemble: CarveAssemble,
-  { authoredPacking, fullLadder, judge }: Pick<CarvePairOptions, "authoredPacking" | "fullLadder" | "judge">
+  {
+    authoredPacking,
+    fullLadder,
+    judge,
+    prefer,
+  }: Pick<CarvePairOptions, "authoredPacking" | "fullLadder" | "judge" | "prefer">
 ): LayoutFound | null => {
   const atBase = pair.seed === base && pair.packing === authoredPacking
   const sidePaths = pair.sidePaths ?? ALL_INSIDE
   const result = assemble(pair.seed, pair.packing, atBase ? fullLadder : 1, sidePaths)
   if (!result.success || (!atBase && result.attempt > 0) || judge(result)) return null
+  if (prefer && prefer(result.grid) > 0) return null
   return {
     kind: "found",
     seed: pair.seed,
@@ -216,7 +224,9 @@ export const verifyCarvePair = (
  * THE LAYOUT CLOSEST TO WHAT THE AUTHOR WROTE THAT MEETS EVERY HARD CRITERION. Packing is the author's intention,
  * never a requirement, so it orders the candidates and refuses none: every seed at the authored packing, then each
  * raised packing closest first, each candidate one attempt; then, last, the runtime ladder carve at the base seed,
- * which widens the grid as play would. The first candidate meeting every hard criterion is pinned. One that only the
+ * which widens the grid as play would. The first candidate meeting every hard criterion is pinned, or, with `prefer`,
+ * the first of that packing's candidates with the lowest `prefer` (0 ends the packing's search at once), never at a
+ * higher packing. One that only the
  * ladder carves is `laddered`; the ladder carve is judged like any other, so no fallback ships a floor unchecked.
  *
  * Packing is the OUTER loop and seeds the inner: a seed is free to move and a packing is the author's intent, so
@@ -232,7 +242,7 @@ export const verifyCarvePair = (
 export const searchCarvePair = (
   base: number,
   assemble: CarveAssemble,
-  { authoredPacking, ceiling, seedBudget, fullLadder, step = PACKING_STEP, judge, stages }: CarvePairOptions
+  { authoredPacking, ceiling, seedBudget, fullLadder, step = PACKING_STEP, judge, stages, prefer }: CarvePairOptions
 ): LayoutFound | LayoutNotFound => {
   const counts: Partial<Record<HardCriterion, number>> = {}
   let hardest = 0
@@ -252,13 +262,27 @@ export const searchCarvePair = (
   }
   const packings = packingsFor(authoredPacking, ceiling, step)
   const searchStage = (sidePaths: SidePathStage): LayoutFound | null => {
-    for (const packing of packings)
+    for (const packing of packings) {
+      let best: { found: LayoutFound; score: number } | null = null
       for (let offset = 0; offset < seedBudget; offset++) {
         const seed = seedAtOffset(base, offset)
         const result = assemble(seed, packing, 1, sidePaths)
-        if (accepts(result) && result.success)
-          return { kind: "found", seed, packing, laddered: false, grid: result.grid, offset, sidePaths }
+        if (!accepts(result) || !result.success) continue
+        const found: LayoutFound = {
+          kind: "found",
+          seed,
+          packing,
+          laddered: false,
+          grid: result.grid,
+          offset,
+          sidePaths,
+        }
+        const score = prefer ? prefer(result.grid) : 0
+        if (score === 0) return found
+        if (!best || score < best.score) best = { found, score }
       }
+      if (best) return best.found
+    }
     const ladder = assemble(base, authoredPacking, fullLadder, sidePaths)
     if (accepts(ladder) && ladder.success)
       return {
