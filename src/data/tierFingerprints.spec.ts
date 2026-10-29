@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
-import type { FloorConfig, SiteConfig } from "@/game/siteTypes"
+import type { FloorConfig, FloorGrid, SiteConfig } from "@/game/siteTypes"
 import { difficulties, type Difficulty } from "./difficultyLevels"
-import { stableStringify, tierFingerprints } from "./tierFingerprints"
+import { carvedFloorDigest, stableStringify, tierFingerprints } from "./tierFingerprints"
 
 // A world of two journeys per tier, each one site of two floors. Every floor and every side section
 // carries a family record, a carve pin and loot, so every test below has something of each to change.
@@ -141,5 +141,19 @@ describe("tier fingerprints", () => {
       delete configs[shipped[0].id]
       expect(() => tierFingerprints(shipped, configs)).toThrow(`Journey "${shipped[0].id}" has no baked config`)
     })
+  })
+})
+
+describe("carvedFloorDigest", () => {
+  const grid = (dirs: Set<string>): FloorGrid =>
+    ({
+      rows: 1,
+      cols: 3,
+      cells: [[{ type: "empty" }, { type: "corridor", dirs: new Set(["e"]) }, { type: "corridor", dirs }]],
+    }) as unknown as FloorGrid
+
+  it("tells two grids apart by a cell's dirs alone", () => {
+    expect(carvedFloorDigest(grid(new Set(["w"])))).not.toBe(carvedFloorDigest(grid(new Set(["w", "n"]))))
+    expect(carvedFloorDigest(grid(new Set(["w", "n"])))).toBe(carvedFloorDigest(grid(new Set(["n", "w"]))))
   })
 })

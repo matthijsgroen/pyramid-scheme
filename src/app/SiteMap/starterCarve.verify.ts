@@ -23,19 +23,5 @@ describe("starter's carved floors", () => {
     const digests = Object.fromEntries(starterFloors().map(f => [f.label, carvedFloorDigest(assembled(f))]))
     expect(Object.keys(digests).length).toBeGreaterThan(5)
     await expect(JSON.stringify(digests, null, 2) + "\n").toMatchFileSnapshot("../../data/starterCarve.json")
-  }, 60_000)
-})
-
-describe("carvedFloorDigest", () => {
-  const grid = (dirs: Set<string>): FloorGrid =>
-    ({
-      rows: 1,
-      cols: 3,
-      cells: [[{ type: "empty" }, { type: "corridor", dirs: new Set(["e"]) }, { type: "corridor", dirs }]],
-    }) as unknown as FloorGrid
-
-  it("tells two grids apart by a cell's dirs alone", () => {
-    expect(carvedFloorDigest(grid(new Set(["w"])))).not.toBe(carvedFloorDigest(grid(new Set(["w", "n"]))))
-    expect(carvedFloorDigest(grid(new Set(["w", "n"])))).toBe(carvedFloorDigest(grid(new Set(["n", "w"]))))
   })
 })
