@@ -13,7 +13,7 @@ import { fillsOf, placeBlobs, prefabFaults, variantsOf } from "../src/game/prefa
 import type { Variant } from "../src/game/prefabChecks"
 import { PREFAB_SYNTAX } from "../src/game/prefabNotation"
 import type { Prefab } from "../src/game/prefabTypes"
-import { ROOM_CATALOGUE, ROOM_ENTRIES, newRoomText } from "../src/game/roomCatalogue"
+import { roomCatalogue, roomEntries, newRoomText } from "../src/game/roomCatalogue"
 import { difficulties } from "../src/data/difficultyLevels"
 import type { Difficulty } from "../src/data/difficultyLevels"
 
@@ -54,8 +54,8 @@ const report = (name: string, prefab: Prefab): boolean => {
 }
 
 const table = (): boolean => {
-  const rows = ROOM_ENTRIES.map(entry => {
-    const prefab = ROOM_CATALOGUE[entry.name]
+  const rows = roomEntries().map(entry => {
+    const prefab = roomCatalogue()[entry.name]
     const variants = variantsOf(prefab)
     return {
       name: `${entry.tier}/${entry.path}`,
@@ -103,11 +103,15 @@ if (args.includes("--help")) {
 } else if (!named) {
   process.exitCode = table() ? 0 : 1
 } else {
-  const entry = ROOM_ENTRIES.find(e => e.name === named || `${e.tier}/${e.path}` === named)
+  const entry = roomEntries().find(e => e.name === named || `${e.tier}/${e.path}` === named)
   if (!entry) {
     console.error(
-      `no room called ${named}; the catalogue has ${ROOM_ENTRIES.map(e => e.name).join(", ") || "no rooms yet"}`
+      `no room called ${named}; the catalogue has ${
+        roomEntries()
+          .map(e => e.name)
+          .join(", ") || "no rooms yet"
+      }`
     )
     process.exitCode = 1
-  } else process.exitCode = report(entry.name, ROOM_CATALOGUE[entry.name]) ? 0 : 1
+  } else process.exitCode = report(entry.name, roomCatalogue()[entry.name]) ? 0 : 1
 }

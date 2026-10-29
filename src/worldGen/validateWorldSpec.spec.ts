@@ -35,13 +35,6 @@ describe("validateWorldSpec — designed rooms", () => {
     expect(check({ difficulty: "junior", rooms: [{ room: "ghost" }] })).toEqual([expect.stringContaining("ghost")])
   })
 
-  it("names a room whose tier is not the floor's difficulty, on a pinned node as on a count", () => {
-    expect(check({ difficulty: "expert", rooms: [{ room: "hall" }] })[0]).toMatch(/hall is tier junior.*expert/)
-    expect(check({ floors: [{ difficulty: "expert", nodes: [{ where: 1, room: "hall" }] }] })[0]).toMatch(
-      /hall is tier junior.*expert/
-    )
-  })
-
   it("names min above max and central outside 0 to 1", () => {
     expect(check({ difficulty: "junior", rooms: [{ room: "hall", min: 3, max: 2 }] })[0]).toMatch(/min 3 above max 2/)
     expect(check({ difficulty: "junior", rooms: [{ room: "hall", central: 1.5 }] })[0]).toMatch(/central 1.5/)

@@ -9,7 +9,7 @@ import { buildSideSections, type ResolveReward } from "./sideSections"
 import { stairIdAt } from "../game/stairAddress"
 import type { FloorConstraint, PyramidConstraint, RewardSpec } from "./dsl"
 import type { Prefab } from "../game/prefabTypes"
-import { ROOM_CATALOGUE, catalogueRoom } from "../game/roomCatalogue"
+import { catalogueRoom } from "../game/roomCatalogue"
 import {
   resolveFloorRooms,
   resolveNodeRooms,
@@ -355,11 +355,17 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     sideTheme,
     sideDecorations,
     sideWallDecorations,
-    catalogue = ROOM_CATALOGUE,
+    catalogue,
   } = ctx
+  // A name is looked up when a floor names it; with no catalogue handed in, the designed rooms are read then.
   const lookupRoom = (name: string) => catalogueRoom(name, catalogue)
-  // The rooms the site names for every floor it builds without a list of its own.
-  const siteRooms = resolveFloorRooms(constraint.rooms, {}, lookupRoom)
+  // The rooms the site names for every floor it builds without a list of its own, checked against that floor's
+  // difficulty where the floor is built.
+  const siteRoomsAt = (difficulty: Difficulty, label: string) =>
+    resolveFloorRooms(constraint.rooms, {}, lookupRoom, {
+      difficulty,
+      label: `journey=${journeyId} pyramid=${i + 1} ${label}`,
+    })
 
   // The end of a path that authors no reward is an open loot slot, unless it is lootless.
   const unauthoredEnd = (loot: false | undefined): TreasureReward | undefined =>
@@ -445,7 +451,10 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           chambersByIndex: resolveNodeChambers(fc.nodes, floorPP),
           chambers: fc.chambers ?? constraint.chambers,
           // A floor's own list replaces the site's, the way `chambers` does.
-          ...resolveFloorRooms(fc.rooms ?? constraint.rooms, resolveNodeRooms(fc.nodes, floorPP), lookupRoom),
+          ...resolveFloorRooms(fc.rooms ?? constraint.rooms, resolveNodeRooms(fc.nodes, floorPP), lookupRoom, {
+            difficulty: floorDiff,
+            label: `journey=${journeyId} pyramid=${i + 1} floor=${fi}`,
+          }),
           difficultiesByIndex: resolveNodeDifficulties(fc.nodes, floorPP),
           loot: floorLoot,
           lootByIndex: resolveNodeLoot(fc.nodes, floorPP),
@@ -524,7 +533,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             mainEndReward: unauthoredEnd(constraint.loot),
             loot: constraint.loot,
             chambers: constraint.chambers,
-            ...siteRooms,
+            ...siteRoomsAt(difficulty, "floor"),
             encounter: constraint.encounter,
             // The junctions the site asks every floor of it to carve, and what stands in them.
             forks: constraint.forks,
@@ -612,7 +621,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
           packing: resolvePacking(constraint, journeyId, i),
           chambers: constraint.chambers,
-          ...siteRooms,
+          ...siteRoomsAt(difficulty, "floor"),
           seed: constraint.seed,
           sealed: resolveSealed(constraint),
         })
@@ -684,7 +693,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             difficulty: wing.difficulty,
             sideSections: [],
             chambers: constraint.chambers,
-            ...siteRooms,
+            ...siteRoomsAt(wing.difficulty, "wing"),
             entrance: { stairId: wingStairId },
             // A wing is off the main path: its way out is the stair it came down.
             exitOrStaircase: "none",
@@ -799,7 +808,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
     packing: resolvePacking(constraint, journeyId, i),
     chambers: constraint.chambers,
-    ...siteRooms,
+    ...siteRoomsAt(difficulty, "floor"),
     seed: constraint.seed,
     sealed: resolveSealed(constraint),
   })

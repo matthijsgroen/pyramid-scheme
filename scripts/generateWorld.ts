@@ -24,6 +24,7 @@ import { layoutKey, layoutMoved } from "../src/worldGen/layoutCheck"
 import type { PickLayout } from "../src/worldGen/configBuilder"
 import type { WebPlacement } from "../src/worldGen/webPlacement"
 import { generateFile, printStats } from "../src/worldGen/serializer"
+import { RoomFault } from "../src/worldGen/dsl"
 import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
 import {
   findDeadRegions,
@@ -107,7 +108,16 @@ const pickLayout: PickLayout = configs => {
 // coverage guard among them) — so `yarn validate-world` catches a coverage shortfall; it skips only
 // the file write below.
 const webPlacements: WebPlacement[] = []
-const configs = buildWorldConfigs(EMPTY_FRACTION, { pickLayout, onWebPlaced: placed => webPlacements.push(placed) })
+const buildConfigs = () => {
+  try {
+    return buildWorldConfigs(EMPTY_FRACTION, { pickLayout, onWebPlaced: placed => webPlacements.push(placed) })
+  } catch (e) {
+    if (!(e instanceof RoomFault)) throw e
+    console.error(`✗ ${e.message}`)
+    process.exit(1)
+  }
+}
+const configs = buildConfigs()
 // Hieroglyph finalize (mod-owned, §D): stamp each fragment's pieceIndex — hieroglyph-specific
 // logic the core serializer no longer owns. Every symbol's full required count is guaranteed
 // placed by this point (placeFragments.ts's completion pass + the hieroglyph coverage

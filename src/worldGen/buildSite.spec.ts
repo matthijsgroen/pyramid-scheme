@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { buildFloor, buildSite, wireSideSectionStaircases, wireStaircases } from "./buildSite"
 import type { FloorConfig, SideSection } from "./types"
-import type { PyramidConstraint } from "./dsl"
+import { wardWing, type PyramidConstraint } from "./dsl"
 import { collectSlots } from "./slots"
 import { parsePrefab } from "../game/prefabNotation"
 
@@ -277,6 +277,44 @@ describe("buildSite", () => {
   it("an auto-built pyramid's floors hold the site's rooms", () => {
     const { floors } = buildSite({ ...baseCtx, catalogue, constraint: { rooms: [{ room: "hall", max: 2 }] } })
     expect(floors[0].prefabPlacements).toEqual([{ room: "hall", min: 0, max: 2, central: 0.5 }])
+  })
+
+  describe("a room's tier is the difficulty of the floor that names it", () => {
+    const junior = { ...catalogue, hall: parsePrefab(roomText("junior"), "hall") }
+    const refused = (constraint: PyramidConstraint) => () => buildSite({ ...baseCtx, catalogue: junior, constraint })
+
+    it("refuses a count on a floor of another difficulty, naming journey, floor, room and both tiers", () => {
+      expect(refused({ floors: [{ pathPuzzles: 1 }, { pathPuzzles: 1, rooms: [{ room: "hall" }] }] })).toThrow(
+        /journey=j1 pyramid=1 floor=1: room hall is tier junior but the difficulty there is starter/
+      )
+    })
+
+    it("refuses a pinned node and a section's pin the same way", () => {
+      expect(refused({ floors: [{ pathPuzzles: 1, nodes: [{ where: 1, room: "hall" }] }] })).toThrow(
+        /floor=0: room hall/
+      )
+      expect(
+        refused({
+          floors: [{ pathPuzzles: 1, sideSections: [{ pathPuzzles: 1, nodes: [{ where: 1, room: "hall" }] }] }],
+        })
+      ).toThrow(/floor=0 section=s0: room hall is tier junior but the difficulty there is starter/)
+    })
+
+    it("refuses a site's rooms on an auto-built floor of another difficulty", () => {
+      expect(refused({ rooms: [{ room: "hall" }] })).toThrow(/room hall is tier junior/)
+    })
+
+    it("refuses a site's rooms on a wing built at another difficulty, with no exception for wings", () => {
+      const wing = wardWing({ tomb: "starter_treasure_tomb", index: 0, tier: "junior" })
+      expect(refused({ mainFloors: 1, wardWings: [wing], rooms: [{ room: "nook" }] })).toThrow(
+        /wing: room nook is tier starter but the difficulty there is junior/
+      )
+    })
+
+    it("accepts a room of the floor's own difficulty on every floor, wings included", () => {
+      const wing = wardWing({ tomb: "starter_treasure_tomb", index: 0, tier: "starter" })
+      expect(refused({ mainFloors: 1, wardWings: [wing], rooms: [{ room: "nook" }] })).not.toThrow()
+    })
   })
 
   it("declares no prefab field on a floor that names no room", () => {

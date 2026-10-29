@@ -47,16 +47,18 @@ export const roomEntriesIn = (root: string): RoomEntry[] => {
 export const roomCatalogueIn = (root: string): Readonly<Record<string, Prefab>> =>
   Object.fromEntries(roomEntriesIn(root).map(entry => [entry.name, parsePrefab(entry.text, entry.name)]))
 
-export const ROOM_ENTRIES = roomEntriesIn(join(here, "rooms"))
-export const ROOM_CATALOGUE: Readonly<Record<string, Prefab>> = Object.fromEntries(
-  ROOM_ENTRIES.map(entry => [entry.name, parsePrefab(entry.text, entry.name)])
-)
+// Read on first use, so importing this module touches no disk.
+let entries: RoomEntry[] | undefined
+let catalogue: Readonly<Record<string, Prefab>> | undefined
+export const roomEntries = (): RoomEntry[] => (entries ??= roomEntriesIn(join(here, "rooms")))
+export const roomCatalogue = (): Readonly<Record<string, Prefab>> =>
+  (catalogue ??= Object.fromEntries(roomEntries().map(entry => [entry.name, parsePrefab(entry.text, entry.name)])))
 
-export const findRoom = (name: string): Prefab | undefined => ROOM_CATALOGUE[name]
+export const findRoom = (name: string): Prefab | undefined => roomCatalogue()[name]
 
 /** A room from its .room file, for the world spec; refused when missing or when its own check finds a fault. */
-export const catalogueRoom = (name: string, catalogue: Readonly<Record<string, Prefab>> = ROOM_CATALOGUE): Prefab => {
-  const prefab = catalogue[name]
+export const catalogueRoom = (name: string, rooms: Readonly<Record<string, Prefab>> = roomCatalogue()): Prefab => {
+  const prefab = rooms[name]
   if (!prefab) throw new Error(`no room ${name} in src/game/rooms`)
   const faults = prefabFaults(prefab)
   if (faults.length > 0) throw new Error(`room ${name} is not sound: ${faults.join("; ")}`)

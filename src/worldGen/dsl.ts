@@ -93,20 +93,31 @@ export const withRoomDefaults = (p: RoomPlacement): Required<RoomPlacement> => {
   return { room: p.room, min, max: p.max ?? (min || 1), central: p.central ?? 0.5 }
 }
 
+/** A spec naming a room where it cannot stand; the bake prints it and stops. */
+export class RoomFault extends Error {}
+
 /** A floor's rooms, resolved: every prefab it names (parsed by `lookup`, so the baked world carries them), the
  * placements with their defaults, and the pinned ones by node index. Only what is non-empty is present. */
 export const resolveFloorRooms = (
   placements: RoomPlacement[] | undefined,
   pinned: Record<number, string>,
-  lookup: (name: string) => Prefab
+  lookup: (name: string) => Prefab,
+  /** Where the rooms are named: a room's tier is the difficulty of the floor or section that names it. */
+  at: { difficulty: Difficulty; label: string }
 ): {
   prefabs?: Record<string, Prefab>
   prefabPlacements?: Required<RoomPlacement>[]
   prefabsByIndex?: Record<number, string>
 } => {
   const names = [...(placements ?? []).map(p => p.room), ...Object.values(pinned)]
+  const prefabs = Object.fromEntries([...new Set(names)].map(name => [name, lookup(name)]))
+  for (const prefab of Object.values(prefabs))
+    if (prefab.tier !== at.difficulty)
+      throw new RoomFault(
+        `${at.label}: room ${prefab.name} is tier ${prefab.tier} but the difficulty there is ${at.difficulty}`
+      )
   return {
-    ...(names.length ? { prefabs: Object.fromEntries([...new Set(names)].map(name => [name, lookup(name)])) } : {}),
+    ...(names.length ? { prefabs } : {}),
     ...(placements?.length ? { prefabPlacements: placements.map(withRoomDefaults) } : {}),
     ...(Object.keys(pinned).length ? { prefabsByIndex: pinned } : {}),
   }

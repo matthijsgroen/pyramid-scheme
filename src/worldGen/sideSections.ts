@@ -100,7 +100,10 @@ const buildDslSection = <TExtra extends string>(
   const encountersByIndex = resolveNodeSelectors(cs.nodes, pathPuzzles)
   const activitiesByIndex = resolveNodeActivities(cs.nodes, pathPuzzles)
   const chambersByIndex = resolveNodeChambers(cs.nodes, pathPuzzles)
-  const rooms = resolveFloorRooms(undefined, resolveNodeRooms(cs.nodes, pathPuzzles), lookupRoom)
+  const rooms = resolveFloorRooms(undefined, resolveNodeRooms(cs.nodes, pathPuzzles), lookupRoom, {
+    difficulty: sectionDifficulty,
+    label: `journey=${floor.journeyId} pyramid=${floor.pyramidIndex + 1} floor=${floor.floorIndex} section=${path}`,
+  })
   const difficultiesByIndex = resolveNodeDifficulties(cs.nodes, pathPuzzles)
   const lootByIndex = resolveNodeLoot(cs.nodes, pathPuzzles)
   return {
