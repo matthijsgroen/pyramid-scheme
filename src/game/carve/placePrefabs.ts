@@ -332,6 +332,31 @@ const candidatesFor = (prefab: Prefab, siteId: string, r: number, c: number, dir
     .map(variant => ({ variant, tie: variantTie(siteId, r, c, variant) }))
     .sort((a, b) => a.tie - b.tie)
 
+/** Where a node stands in a variant, ring included: its size, the node's cell and the door place each way out
+ * leaves by, every offset from the variant's top-left. */
+export type PrefabSeat = { rows: number; cols: number; node: Cell; doors: Partial<Record<Direction, Cell>> }
+
+/** The first free inside cell of `variant` in reading order from which each of `dirs` runs straight to a door place
+ * on the ring, as its seat; undefined where no cell lines up with a door place on every side. */
+export const seatOf = (variant: Variant, dirs: ReadonlySet<Direction>): PrefabSeat | undefined => {
+  const { cells } = variant
+  const rows = cells.length
+  const cols = cells[0].length
+  for (let i = 1; i < rows - 1; i++)
+    for (let j = 1; j < cols - 1; j++) {
+      if (cells[i][j] !== ".") continue
+      const doors: Partial<Record<Direction, Cell>> = {}
+      for (const dir of dirs) {
+        const [dr, dc] = STEP[dir]
+        let [di, dj] = [i + dr, j + dc]
+        while (di > 0 && di < rows - 1 && dj > 0 && dj < cols - 1) [di, dj] = [di + dr, dj + dc]
+        if (cells[di][dj] === "d") doors[dir] = [di, dj]
+      }
+      if (Object.keys(doors).length === dirs.size) return { rows, cols, node: [i, j], doors }
+    }
+  return undefined
+}
+
 /** A prefab chosen for the node at `cell`: which variant (layout and mirror) and, by hand, which fill. */
 export type PrefabChoice = { cell: Cell; name: string; layout: number; mirrored: boolean; pick: PrefabPick }
 
