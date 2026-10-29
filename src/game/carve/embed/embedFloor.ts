@@ -92,8 +92,8 @@ const readSketch = (lattice: FloorGrid) => {
 }
 
 /** Each node's footprint: a designed room's own, a room that claims floor 3×3 round its node, anything else its one
- * cell. A stop on the main path running straight through keeps to its block's middle line across its way, so a run
- * of stops stays one straight corridor; a drop's ends sit flush toward each other and on one middle line. */
+ * cell. A stop on the main path whose ways out all lie on one axis keeps to its block's middle line across them, so
+ * a run of stops stays one straight corridor; a drop's ends sit flush toward each other and on one middle line. */
 const blockNodes = (lattice: FloorGrid, nodes: readonly CellKey[], drops: readonly Drop[], opts: EmbedOptions) =>
   nodes.map((key): BlockNode => {
     const [r, c] = key.split(",").map(Number)
@@ -102,9 +102,10 @@ const blockNodes = (lattice: FloorGrid, nodes: readonly CellKey[], drops: readon
     const size = room ?? (claimsFloorAt(lattice, r, c) ? { rows: 3, cols: 3, node: [1, 1] as Cell } : undefined)
     const hold: BlockNode["hold"] = { row: "free", col: "free" }
     const dirs = cell.type === "empty" ? new Set<Direction>() : cell.dirs
-    const straight = dirs.size === 2 && ((dirs.has("e") && dirs.has("w")) || (dirs.has("n") && dirs.has("s")))
+    const eastWest = (["e", "w"] as const).filter(d => dirs.has(d)).length
+    const straight = dirs.size > 0 && (eastWest === 0 || eastWest === dirs.size)
     if (!size && straight && cell.type !== "empty" && cell.sectionAddress === MAIN_SECTION_ADDRESS)
-      hold[dirs.has("e") ? "row" : "col"] = "middle"
+      hold[eastWest > 0 ? "row" : "col"] = "middle"
     for (const drop of drops) {
       if (drop.from !== key && drop.to !== key) continue
       if (room) throw new Error(`[carve] a drop leaves the designed room at ${key}`)
@@ -202,11 +203,12 @@ export const embedFloor = (lattice: FloorGrid, opts: EmbedOptions): Embedded => 
     const back = OPPOSITE[dir]
     const fromRay = rayOut(byKey.get(a)!, blocks, opts.rooms.get(a), dir)
     const toRay = rayOut(byKey.get(b)!, blocks, opts.rooms.get(b), back)
-    const gaps = dir === "e" ? blocks.colGaps : blocks.rowGaps
-    const gap = gaps.get(dir === "e" ? byKey.get(a)!.c : byKey.get(a)!.r)!
+    const node = byKey.get(a)!
+    const gap = (dir === "e" ? blocks.colGaps.get(node.c) : blocks.rowGaps.get(node.r))!
+    const across = (dir === "e" ? blocks.rowBlocks.get(node.r) : blocks.colBlocks.get(node.c))!
     const from = fromRay[fromRay.length - 1] ?? at(a)
     const to = toRay[toRay.length - 1] ?? at(b)
-    const band = routeBand(from, to, dir, gap, opts.straightness, rand)
+    const band = routeBand(from, to, dir, gap, across, opts.straightness, rand)
     const between = [...fromRay, ...band, ...[...toRay].reverse()]
     for (const cell of between) put(cell, connector)
     const path = [at(a), ...between, at(b)]

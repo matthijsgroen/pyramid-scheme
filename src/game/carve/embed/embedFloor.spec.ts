@@ -102,6 +102,32 @@ const nodeGraph = (grid: FloorGrid, nodes: ReadonlyMap<string, Cell>): string[] 
   return [...pairs].sort()
 }
 
+/** For each lattice edge whose two nodes line up after the embed, how often its corridor turns. */
+const alignedTurns = (sketch: FloorGrid, grid: FloorGrid, nodes: ReadonlyMap<string, Cell>): number[] => {
+  const nodeAt = new Set([...nodes.values()].map(([r, c]) => `${r},${c}`))
+  return [...nodes].flatMap(([key, start]) => {
+    const [r, c] = key.split(",").map(Number)
+    const node = sketch.cells[r][c]
+    if (node.type === "empty") return []
+    return (["e", "s"] as const)
+      .filter(d => node.dirs.has(d))
+      .flatMap(d => {
+        const end = nodes.get(`${r + MOVES[d][0] * 2},${c + MOVES[d][1] * 2}`)!
+        if (end[d === "e" ? 0 : 1] !== start[d === "e" ? 0 : 1]) return []
+        let [at, dir, turns] = [step(start, d), d as Direction, 0]
+        while (!nodeAt.has(`${at[0]},${at[1]}`)) {
+          const cell = grid.cells[at[0]][at[1]]
+          const next = cell.type === "empty" ? dir : [...cell.dirs].find(way => way !== OPPOSITE[dir])!
+          if (next !== dir) turns++
+          dir = next
+          at = step(at, dir)
+        }
+        return [turns]
+      })
+  })
+}
+const step = ([r, c]: Cell, d: Direction): Cell => [r + MOVES[d][0], c + MOVES[d][1]]
+
 const unmutual = (grid: FloorGrid): string[] =>
   grid.cells.flatMap((row, r) =>
     row.flatMap((cell, c) =>
@@ -201,8 +227,11 @@ s stop`,
       const room = stamped.cells[nr][nc]
       const doors = room.type === "room" ? room.prefabRoom?.doors : undefined
       expect(doors).toEqual({ w: [nr, rect.left - 1], s: [rect.top + rect.rows, nc] })
-      for (const [dr, dc] of Object.values(doors ?? {}))
-        expect(embedded.cells[dr][dc]).toMatchObject({ type: "corridor", dirs: expect.any(Set) })
+      for (const [side, [dr, dc]] of Object.entries(doors ?? {}) as [Direction, Cell][]) {
+        const door = embedded.cells[dr][dc]
+        expect(door.type).toBe("corridor")
+        expect(door.type !== "empty" && [...door.dirs].sort()).toEqual([side, OPPOSITE[side]].sort())
+      }
     }
   })
 
@@ -242,6 +271,25 @@ s stop`,
       "~",
       ".",
     ])
+  })
+
+  it("an aligned edge winds when straightness is 0 and runs straight at 1", () => {
+    const bent = (straightness: number) =>
+      SEEDS.flatMap(seed => {
+        const grid = lattice(STOPS)
+        const { grid: embedded, nodes } = embedFloor(grid, opts({ seed, straightness }))
+        return alignedTurns(grid, embedded, nodes)
+      })
+    expect(bent(0).some(turns => turns > 0)).toBe(true)
+    expect(bent(1).every(turns => turns === 0)).toBe(true)
+  })
+
+  it("a run of stops stays one straight corridor at spread 1", () => {
+    for (const seed of SEEDS) {
+      const { nodes } = embedFloor(lattice(STOPS), opts({ seed, spread: 1, straightness: 1 }))
+      const rows = ["0,2", "0,4", "0,8"].map(key => nodes.get(key)![0])
+      expect(new Set(rows).size).toBe(1)
+    }
   })
 
   it("the smallest floor embeds", () => {

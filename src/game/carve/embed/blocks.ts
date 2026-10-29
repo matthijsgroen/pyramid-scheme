@@ -23,8 +23,8 @@ export type BlockNode = {
 /** A drop between two nodes on one axis, which holds them `reach` cells apart: launch, run, landing and the step on. */
 export type BlockDrop = { from: string; to: string; dir: Direction; reach: number }
 
-/** The gap cells after a kept lattice line, first to last, by that line's lattice index. */
-export type Gaps = ReadonlyMap<number, readonly [number, number]>
+/** Cells on one axis, first to last, by a kept lattice line's index. */
+export type Spans = ReadonlyMap<number, readonly [number, number]>
 
 export type Blocks = {
   rows: number
@@ -33,8 +33,12 @@ export type Blocks = {
   origin: ReadonlyMap<string, Cell>
   /** Each node's own cell, by node key. */
   at: ReadonlyMap<string, Cell>
-  rowGaps: Gaps
-  colGaps: Gaps
+  /** The gap cells after each kept line but the last. */
+  rowGaps: Spans
+  colGaps: Spans
+  /** Each kept lattice line's block cells, first to last, by that line's lattice index. */
+  rowBlocks: Spans
+  colBlocks: Spans
 }
 
 type AxisName = "row" | "col"
@@ -58,8 +62,8 @@ const offsetFor = (hold: Hold, size: number, extent: number, inside: number, ran
  * its widest; a lattice line no node stands on is dropped. Each footprint is offset in its block by its hold, then
  * each boundary between kept lines gets a gap of `1 + round(spread * GAP_RANGE * u)` with u in [0.5, 1.5). A boundary
  * a drop crosses takes no draw: it is as wide as puts the drop's two nodes its `reach` apart, never less than one
- * cell, so between two claiming rooms it is the run exactly and the launch and landing stand in their rings. Draws come from `rand`, offsets first in the
- * order the nodes are given, then row gaps, then column gaps.
+ * cell, so between two claiming rooms it is the run exactly and the launch and landing stand in their rings. Draws
+ * come from `rand`, offsets first in the order the nodes are given, then row gaps, then column gaps.
  */
 export const layBlocks = (
   nodes: readonly BlockNode[],
@@ -134,13 +138,15 @@ export const layBlocks = (
     origin.set(node.key, [top, left])
     at.set(node.key, [top + node.node[0], left + node.node[1]])
   }
-  const gapsAfter = (axis: AxisName, start: readonly number[]): Gaps =>
+  const gapsAfter = (axis: AxisName, start: readonly number[]): Spans =>
     new Map(
       lines[axis].slice(0, -1).map((line, i) => {
         const first = start[i] + size[axis][i]
         return [line, [first, first + gaps[axis][i] - 1] as const]
       })
     )
+  const blocksOf = (axis: AxisName, start: readonly number[]): Spans =>
+    new Map(lines[axis].map((line, i) => [line, [start[i], start[i] + size[axis][i] - 1] as const]))
   const total = (axis: AxisName, start: readonly number[]) =>
     lines[axis].length === 0 ? 0 : start[start.length - 1] + size[axis][size[axis].length - 1]
   return {
@@ -150,6 +156,8 @@ export const layBlocks = (
     at,
     rowGaps: gapsAfter("row", rowStart),
     colGaps: gapsAfter("col", colStart),
+    rowBlocks: blocksOf("row", rowStart),
+    colBlocks: blocksOf("col", colStart),
   }
 }
 
