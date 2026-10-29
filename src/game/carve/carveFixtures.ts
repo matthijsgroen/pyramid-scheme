@@ -3,7 +3,7 @@ import { planLockFloor } from "../lockPlan"
 import { mulberry32 } from "../random"
 import { carveFloor } from "./carveFloor"
 import { firstRung } from "./ladder"
-import { PASSES } from "./passes"
+import { LATTICE_ENGINE } from "./engines"
 import { prepareFloor } from "./prepareFloor"
 import { assembleFloor } from "./assembleFloor"
 import { defaultResolveEncounter } from "../siteAssembler"
@@ -72,9 +72,12 @@ export const straightWalk = (steps: number) => {
 /** The state of the first attempt, climbing the ladder as the loop does, whose every pass holds. */
 export const firstCarved = (prep: FloorPrep): CarveState => {
   let carved: CarveState | undefined
-  carveFloor(prep, PASSES, (_, state) => {
-    carved ??= state
-    return { rows: 0, cols: 0 } as unknown as FloorGrid
+  carveFloor(prep, {
+    ...LATTICE_ENGINE,
+    finish: (_, state) => {
+      carved ??= state
+      return { rows: 0, cols: 0 } as unknown as FloorGrid
+    },
   })
   if (!carved) throw new Error("no attempt got through every pass")
   return carved

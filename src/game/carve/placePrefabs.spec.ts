@@ -15,8 +15,9 @@ import {
 import { assembleFloor } from "./assembleFloor"
 import { chamberFloor, prepOf } from "./carveFixtures"
 import { carveFloor } from "./carveFloor"
+import { LATTICE_ENGINE } from "./engines"
 import { finish } from "./finish"
-import { finishAttempt, PASSES, TAIL_READS } from "./passes"
+import { TAIL_READS } from "./passes"
 import { fitPrefab, placePrefabs, webDoorInPrefab } from "./placePrefabs"
 import { render } from "./render"
 import { requireReads, type Finish, type FloorPrep } from "./state"
@@ -440,8 +441,8 @@ describe("the carve", () => {
 
   it("a floor with no prefabs carves byte-identically", () => {
     const prep = prepOf(chamberFloor(), 7)
-    const plain = carveFloor(prep, PASSES, withoutPrefabs)
-    const laid = carveFloor(prep, PASSES, finishAttempt)
+    const plain = carveFloor(prep, { ...LATTICE_ENGINE, finish: withoutPrefabs })
+    const laid = carveFloor(prep, LATTICE_ENGINE)
     if (!plain.success || !laid.success) throw new Error("the fixture floor does not carve")
     expect(carvedFloorDigest(laid.grid)).toBe(carvedFloorDigest(plain.grid))
   })

@@ -1,5 +1,6 @@
 import { describe, expect, it, beforeAll } from "vitest"
 import { carveFloor } from "./carveFloor"
+import { LATTICE_ENGINE } from "./engines"
 import {
   firstCarved,
   plainFloor,
@@ -15,7 +16,6 @@ import {
   assembleWithSwitch,
 } from "./carveFixtures"
 import { freeWaysOut, rooms } from "./derive"
-import { PASSES, finishAttempt } from "./passes"
 import { assembleFloor } from "./assembleFloor"
 import { reachableFrom, validateSite } from "../siteValidator"
 import { cellSlot } from "../cellSlot"
@@ -49,7 +49,7 @@ describe("reserveJunctions", () => {
       ],
       forks: [{ exits: 2, count: 1 }],
     })
-    const result = carveFloor(prepOf(config, 3), PASSES, finishAttempt)
+    const result = carveFloor(prepOf(config, 3), LATTICE_ENGINE)
     expect(result.success === false && result.reasons).toContainEqual({
       type: "forksUnsatisfied",
       exits: 2,
