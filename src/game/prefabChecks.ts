@@ -72,6 +72,16 @@ const touching = (a: PlacedObject, b: PlacedObject): boolean => {
   return (apartX === 0 && apartY < 0) || (apartY === 0 && apartX < 0)
 }
 
+// Counts stop at this, so nothing past MAX_FILLS is ever built.
+const CAP = MAX_FILLS + 1
+
+/** C(n, k), or CAP when it is larger. */
+const binomial = (n: number, k: number): number => {
+  let count = 1
+  for (let i = 1; i <= k && count < CAP; i++) count = (count * (n - k + i)) / i
+  return Math.min(count, CAP)
+}
+
 const combinations = <T>(items: readonly T[], size: number): T[][] => {
   if (size === 0) return [[]]
   if (items.length < size) return []
@@ -79,35 +89,55 @@ const combinations = <T>(items: readonly T[], size: number): T[][] => {
   return [...combinations(tail, size - 1).map(rest => [head, ...rest]), ...combinations(tail, size)]
 }
 
-/** The ways one place can be filled: the sets of its blob keys that are filled. */
-const choicesOf = (place: PlaceDef, blobs: PlacedObject[], all: PlacedObject[]): string[][] => {
+const TOO_MANY = "too many fills to check"
+type Choices = { sets: string[][] } | { fault: string }
+
+/** The ways one place can be filled: the sets of its blob keys that are filled, or why it cannot be. */
+const choicesOf = (place: PlaceDef, blobs: PlacedObject[], all: PlacedObject[]): Choices => {
   const keys = blobs.map(keyOf)
   const { group } = place
   if (group?.per) {
-    const owners = all.filter(blob => blob.letter === group.per)
+    const { take, per } = group
+    const owners = all.filter(blob => blob.letter === per)
     // Each owner takes `take` of the blobs touching it; a blob touching two is decided once, for both.
     let partial: Map<string, boolean>[] = [new Map()]
     for (const owner of owners) {
       const near = blobs.filter(blob => touching(blob, owner)).map(keyOf)
-      partial = partial.flatMap(decided => {
+      if (near.length < take)
+        return { fault: `${place.letter} cannot fill ${take} of ${near.length} per ${per}@${keyOf(owner)}` }
+      const next: Map<string, boolean>[] = []
+      for (const decided of partial) {
         const filled = near.filter(key => decided.get(key) === true).length
         const open = near.filter(key => !decided.has(key))
-        return combinations(open, group.take - filled).map(picked => {
-          const next = new Map(decided)
-          for (const key of open) next.set(key, picked.includes(key))
-          return next
-        })
-      })
+        if (take < filled || take - filled > open.length) continue
+        if (binomial(open.length, take - filled) + next.length > CAP) return { fault: TOO_MANY }
+        for (const picked of combinations(open, take - filled)) {
+          const grown = new Map(decided)
+          for (const key of open) grown.set(key, picked.includes(key))
+          next.push(grown)
+        }
+      }
+      partial = next
     }
-    return partial.map(decided => keys.filter(key => decided.get(key) === true))
+    if (partial.length === 0) return { fault: `${place.letter} cannot fill ${take} per ${per}` }
+    return { sets: partial.map(decided => keys.filter(key => decided.get(key) === true)) }
   }
-  if (group) return combinations(keys, group.take)
-  if (!place.optional) return [keys]
-  return keys.reduce<string[][]>((sets, key) => sets.flatMap(set => [set, [...set, key]]), [[]])
+  if (group) {
+    if (keys.length < group.take) return { fault: `${place.letter} cannot fill ${group.take} of ${keys.length}` }
+    return binomial(keys.length, group.take) > MAX_FILLS
+      ? { fault: TOO_MANY }
+      : { sets: combinations(keys, group.take) }
+  }
+  if (!place.optional) return { sets: [keys] }
+  if (2 ** keys.length > MAX_FILLS) return { fault: TOO_MANY }
+  return { sets: keys.reduce<string[][]>((sets, key) => sets.flatMap(set => [set, [...set, key]]), [[]]) }
 }
 
-/** Every legal fill; with a `limit`, stops once one more than that many are found. */
-export const fillsOf = (variant: Variant, prefab: Prefab, limit = Infinity): Fill[] => {
+const labelOf = (variant: Variant, prefab: Prefab): string =>
+  `layout ${prefab.layouts[variant.layout].name || `#${variant.layout}`}${variant.mirrored ? " mirrored" : ""}`
+
+/** Every legal fill of a variant, or the one fault that stops them being listed. */
+const planFills = (variant: Variant, prefab: Prefab): { fills: Fill[] } | { fault: string } => {
   const all = placeBlobs(variant, prefab)
   let fills: string[][] = [[]]
   for (const place of Object.values(prefab.places)) {
@@ -116,9 +146,17 @@ export const fillsOf = (variant: Variant, prefab: Prefab, limit = Infinity): Fil
       all.filter(blob => blob.letter === place.letter),
       all
     )
-    fills = fills.flatMap(fill => choices.map(choice => [...fill, ...choice])).slice(0, limit + 1)
+    if ("fault" in choices) return { fault: `${labelOf(variant, prefab)}: ${choices.fault}` }
+    if (fills.length * choices.sets.length > MAX_FILLS) return { fault: `${labelOf(variant, prefab)}: ${TOO_MANY}` }
+    fills = fills.flatMap(fill => choices.sets.map(choice => [...fill, ...choice]))
   }
-  return fills.map(fill => new Map(fill.map(key => [key, true as const])))
+  return { fills: fills.map(fill => new Map(fill.map(key => [key, true as const]))) }
+}
+
+/** Every legal fill; none when the places cannot be filled or the fills pass MAX_FILLS (prefabFaults says which). */
+export const fillsOf = (variant: Variant, prefab: Prefab): Fill[] => {
+  const plan = planFills(variant, prefab)
+  return "fills" in plan ? plan.fills : []
 }
 
 export const blockedCells = (variant: Variant, prefab: Prefab, fill: Fill): ReadonlySet<string> => {
@@ -167,13 +205,11 @@ const filledNames = (variant: Variant, prefab: Prefab, fill: Fill): string => {
   return names.length > 0 ? names.join(" ") : "nothing"
 }
 
-const faultsOf = (variant: Variant, prefab: Prefab, fill: Fill): string[] => {
+type Doors = [number, number][]
+
+const faultsOf = (variant: Variant, prefab: Prefab, fill: Fill, doors: Doors, label: string): string[] => {
   const blocked = blockedCells(variant, prefab, fill)
-  const doors: [number, number][] = []
-  variant.cells.forEach((row, r) => [...row].forEach((ch, c) => ch === "d" && doors.push([r, c])))
-  if (doors.length === 0) return []
-  const layout = prefab.layouts[variant.layout].name || `#${variant.layout}`
-  const where = `layout ${layout}${variant.mirrored ? " mirrored" : ""}, filled ${filledNames(variant, prefab, fill)}`
+  const where = `${label}, filled ${filledNames(variant, prefab, fill)}`
   const faults: string[] = []
   const reached = reachFrom(variant, blocked, doors[0])
   const door = ([r, c]: [number, number]) => `door ${r},${c}`
@@ -199,13 +235,14 @@ const faultsOf = (variant: Variant, prefab: Prefab, fill: Fill): string[] => {
   return faults
 }
 
-/** Every way the doors, the stop or a blocking special are cut off; empty when the prefab always walks. */
+/** Every way the places cannot be filled or the doors, the stop or a blocking special are cut off; empty when the prefab always walks. */
 export const prefabFaults = (prefab: Prefab): string[] =>
   variantsOf(prefab).flatMap(variant => {
-    const fills = fillsOf(variant, prefab, MAX_FILLS)
-    if (fills.length > MAX_FILLS) {
-      const layout = prefab.layouts[variant.layout].name || `#${variant.layout}`
-      return [`layout ${layout}${variant.mirrored ? " mirrored" : ""}: too many fills to check`]
-    }
-    return fills.flatMap(fill => faultsOf(variant, prefab, fill))
+    const plan = planFills(variant, prefab)
+    if ("fault" in plan) return [plan.fault]
+    const doors: Doors = []
+    variant.cells.forEach((row, r) => [...row].forEach((ch, c) => ch === "d" && doors.push([r, c])))
+    if (doors.length === 0) return []
+    const label = labelOf(variant, prefab)
+    return plan.fills.flatMap(fill => faultsOf(variant, prefab, fill, doors, label))
   })

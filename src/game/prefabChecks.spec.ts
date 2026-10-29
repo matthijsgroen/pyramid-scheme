@@ -99,6 +99,43 @@ describe("prefab variants and checks", () => {
     expect(faults[0]).toContain(`chest "c"`)
   })
 
+  it("refuses a group that cannot fill what it takes", () => {
+    const prefab = room("", ["# # # # #", "# g . g #", "# s . . #", "# # d # #"], ["s stop", "g floor? pillar 3 of 3"])
+    expect(prefabFaults(prefab)).toEqual(["layout #0: g cannot fill 3 of 2"])
+  })
+
+  it("refuses a per owner with too few blobs touching it", () => {
+    const prefab = room(
+      "",
+      ["# # # d # # #", "# q . . r . #", "# s . . . . #", "# # # # # # #"],
+      ["s stop", "q floor pillar", "r floor rubblePile 1 of 1 per q"]
+    )
+    expect(prefabFaults(prefab)).toEqual(["layout #0: r cannot fill 1 of 0 per q@1,1"])
+  })
+
+  it("names a mirrored variant in a fault", () => {
+    const prefab = room("mirror", ["# # # # # #", "d . p s . d", "# # # # # #"], ["s stop", "p floor? pillar"])
+    expect(prefabFaults(prefab).some(fault => fault.startsWith("layout #0 mirrored, filled p@1,"))).toBe(true)
+  })
+
+  it("refuses 30 optional blobs by their count, building no fill", () => {
+    const blobs = 30
+    const row = (fill: (x: number) => string) =>
+      ["#", ...Array.from({ length: blobs * 2 - 1 }, (_, x) => fill(x)), "#"].join(" ")
+    const prefab = room(
+      "",
+      [
+        row(() => "#").replace("# #", "# d"),
+        row(x => (x % 2 === 0 ? "g" : ".")),
+        row(x => (x === 0 ? "s" : ".")),
+        row(() => "#"),
+      ],
+      ["s stop", "g floor? pillar"]
+    )
+    expect(prefabFaults(prefab)).toEqual(["layout #0: too many fills to check"])
+    expect(fillsOf(variantsOf(prefab)[0], prefab)).toEqual([])
+  })
+
   it("refuses past MAX_FILLS", () => {
     const blobs = 13
     const row = (fill: (x: number) => string) =>
