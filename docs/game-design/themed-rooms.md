@@ -86,9 +86,11 @@ walking round them. Every other kind stands against the north wall.
 Two layers lie **over** any purpose rather than beside it: the site's **condition** (overgrowth, flooding —
 an overlay, exists) and a **ward pocket**, which is dressed in the rank it belongs to (exists).
 
-**Story rooms borrow an activity's set** so a scene has a place on the floor without new art: Fez's meeting on
-`starter_1` floor 0 is **selling** (he is the merchant who overpaid for a map), Ipi's tomb room is **ledger**.
-A scene that needs a thing of its own (the Sphinx inscription) gets its own prop — rare.
+**Story rooms are pinned prefabs** (`nodes: [{ room }]`): a scene happens in one designed room, dressed from an
+activity's kinds, with an `actor` place for its figure beside the stop. Fez's meeting on `starter_1` floor 0 is
+`fezStall`, a **selling** room (he is the merchant who overpaid for a map); Ipi's tomb room is `ipiLedger`, a
+**ledger** room among his jars. A scene that needs a thing of its own (the Sphinx inscription) gets its own prop —
+rare.
 
 ## 3. The carve dresses every chamber
 
@@ -98,6 +100,10 @@ A scene that needs a thing of its own (the Sphinx inscription) gets its own prop
   map. Puzzles stand in corridors and carry no prop; the entrance claims no floor and is bare. Props stay **out
   of the node's cell**, so a tap is never blocked.
 - Lead plus companion both come from the room's activity; the companion odds stay as they are.
+- **A prefab room dresses itself.** Where the DSL lays a designed room over a chamber (`rooms` on a floor or a
+  pyramid, `src/game/rooms/<tier>/*.room`), the file's places choose its props and wall items, not the activity's
+  pool. Starter names one room per activity (`STARTER_ROOMS` in `src/worldGen/spec/starter.ts`): the storeroom at
+  the ends of a floor, the packing room and the ledger room between, the weighing and selling rooms in its middle.
 - Changing the pools re-bakes `generatedWorld.ts` and the tier fingerprint; saves and runs are untouched
   (`world-spec-stability.md`: decorations are free fields).
 - **No rotation.** One sprite per prop, against the north wall. Facing other walls would cost 2–4 drawings per

@@ -1,0 +1,23 @@
+// designed by: Claude
+// starter. The selling room: a counter on the north wall, and an awning or a market table beside it.
+room sellingRoom
+tier starter
+activity selling
+mirror
+
+layout
+# # d # #
+# k . g #
+d s . . d
+# d d d #
+
+layout small
+# # # #
+# k g #
+d s . d
+# d d #
+
+wares = hanging | offeringTable
+k wall counter
+g wall? wares
+s stop

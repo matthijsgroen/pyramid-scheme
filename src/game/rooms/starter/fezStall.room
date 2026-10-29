@@ -1,0 +1,16 @@
+// designed by: Claude
+// starter. Fez's stall on the first floor: Fez at the north wall beside his counter, the place you stop in front of him.
+room fezStall
+tier starter
+activity selling
+mirror
+
+layout
+# # d # #
+# a . k #
+d s . . d
+# d d d #
+
+k wall counter
+a actor
+s stop

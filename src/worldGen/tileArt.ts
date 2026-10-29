@@ -1,9 +1,11 @@
 import { existsSync } from "node:fs"
-import { join } from "node:path"
+import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 import type { Tileset } from "@/game/siteTypes"
 
-const tilesRoot = () => fileURLToPath(new URL("../assets/tiles", import.meta.url))
+// A path, never a `new URL(…, import.meta.url)`: under jsdom (the verify sweeps) `URL` is the browser's, and
+// resolves against an http origin.
+const tilesRoot = () => join(dirname(fileURLToPath(import.meta.url)), "../assets/tiles")
 
 /** Whether a tileset has painted art for a kind: its own file or the shared `default/` one, never `placeholder/`.
  * The node-side twin of `tileUrl` (app/SiteMap/tileAssets.ts); the folder is read when asked, not at import. */

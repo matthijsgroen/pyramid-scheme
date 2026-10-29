@@ -39,6 +39,18 @@ const CAVE_FLOOR = { tileset, decorations, wallDecorations, corridorStraightness
 // The tier + 1 step inside the cavern: a junior puzzle as the second room, after the first tableau.
 const juniorBetweenTableaus = { where: 2, encounter: "puzzle", difficulty: "junior" } as const
 
+// The merchant's house as designed rooms: the stores at the far ends of a floor, the counter and the scale in its
+// middle, the packing and the books between (docs/game-design/themed-rooms.md). A floor drawn at another difficulty
+// names none, since a room is dressed in the tier it is drawn for.
+const STARTER_ROOMS = [
+  { room: "storeroom", min: 0, max: 2, central: 0 },
+  { room: "packingRoom", min: 0, max: 2, central: 0.3 },
+  { room: "ledgerRoom", min: 0, max: 2, central: 0.6 },
+  { room: "weighingRoom", min: 0, max: 2, central: 0.8 },
+  { room: "sellingRoom", min: 0, max: 2, central: 1 },
+]
+const NO_ROOMS = { rooms: [] }
+
 export const starterRules: Rule[] = [
   // a merchant's house of trade: scales and weights, baskets and bales, a counter, a scribe's desk,
   // shelves and amphorae, a market table, a water jar, mats.
@@ -86,6 +98,7 @@ export const starterRules: Rule[] = [
   ...["starter_1", "starter_2", "starter_3", "starter_4"].map(jid =>
     journey(jid).pyramid("first", { mainEndReward: "mapPiece" })
   ),
+  ...["starter_1", "starter_2", "starter_3", "starter_4"].map(jid => journey(jid, { rooms: STARTER_ROOMS })),
 
   // starter_1 — the whole game's onboarding. Pyramid 1: the map piece + a gentle ward path into
   // the starter tomb (see the deadlock fix below). Pyramid 2: one main puzzle, its chests from
@@ -107,7 +120,7 @@ export const starterRules: Rule[] = [
       // (docs/game-design/world-spec-stability.md). LAST, as in starter_treasure_tomb below, so the
       // rooms ahead of him keep their place along the path.
       pathPuzzles: 1,
-      nodes: [{ where: "last", encounter: "conversation", activity: "selling" }],
+      nodes: [{ where: "last", encounter: "conversation", activity: "selling", room: "fezStall" }],
       sideSections: [
         // Shares the starter→junior tier-unlock key — narratively you need it anyway.
         wardPath({ puzzles: 1, tomb: "starter_treasure_tomb", index: 0 }),
@@ -133,10 +146,11 @@ export const starterRules: Rule[] = [
     // The tunnel to the Sphinx: two short wizard floors down, the cave with its long corridor of
     // puzzles, a small cave climbing back up, and the Sphinx: five puzzles that carry no loot, then
     // the reading as the floor's last room.
-    .floor(2, { difficulty: "wizard", pathPuzzles: 2, depth: 1, toFloor: 3, sideSections: [] })
-    .floor(3, { difficulty: "wizard", pathPuzzles: 2, depth: 2, toFloor: 4, sideSections: [] })
+    .floor(2, { difficulty: "wizard", ...NO_ROOMS, pathPuzzles: 2, depth: 1, toFloor: 3, sideSections: [] })
+    .floor(3, { difficulty: "wizard", ...NO_ROOMS, pathPuzzles: 2, depth: 2, toFloor: 4, sideSections: [] })
     .floor(4, {
       ...CAVE_FLOOR,
+      ...NO_ROOMS,
       difficulty: "wizard",
       pathPuzzles: 7,
       encounter: "puzzle",
@@ -144,8 +158,17 @@ export const starterRules: Rule[] = [
       toFloor: 5,
       sideSections: [],
     })
-    .floor(5, { ...CAVE_FLOOR, difficulty: "wizard", pathPuzzles: 1, depth: 2, toFloor: 6, sideSections: [] })
+    .floor(5, {
+      ...CAVE_FLOOR,
+      ...NO_ROOMS,
+      difficulty: "wizard",
+      pathPuzzles: 1,
+      depth: 2,
+      toFloor: 6,
+      sideSections: [],
+    })
     .floor(6, {
+      ...NO_ROOMS,
       tileset: "sphinx",
       difficulty: "wizard",
       pathPuzzles: 6,
@@ -199,6 +222,7 @@ export const starterRules: Rule[] = [
       mainEndReward: "mosaicPiece",
       pathPuzzles: 2,
       difficulty: "junior",
+      ...NO_ROOMS,
       sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 4, encounter: "trap", endReward: "mosaicPiece" })],
     }),
 
@@ -214,6 +238,7 @@ export const starterRules: Rule[] = [
     .floor(1, {
       pathPuzzles: 3,
       difficulty: "expert",
+      ...NO_ROOMS,
       sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 2, encounter: "trap", endReward: "mosaicPiece" })],
     }),
 
@@ -271,7 +296,10 @@ export const starterRules: Rule[] = [
         mainEndReward: "tombTreasure",
         encounterArgs: { runNr: 1 },
         pathPuzzles: TOMB_ROOMS_PER_FLOOR.starter + 2,
-        nodes: [juniorBetweenTableaus, { where: "last", encounter: "conversation", activity: "ledger" }],
+        nodes: [
+          juniorBetweenTableaus,
+          { where: "last", encounter: "conversation", activity: "ledger", room: "ipiLedger" },
+        ],
       },
       {
         mainEndReward: "tombTreasure",

@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A storyline, with Fez, the explorer and a ghost in every tomb.
 - Every treasure tomb is hidden in a cave, with its pyramid in a sunlit cavern below.
 - Side paths run through a lock's corridors; the Sphinx is read from inside, through a cave behind the ward gate.
+- Designed rooms in the starter pyramids.
 - Saved games start over this release.
 - The game left open during an update reloads into the new version instead of crashing.
 
