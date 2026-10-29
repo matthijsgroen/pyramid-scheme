@@ -85,6 +85,7 @@ layout turned
     it("no stop", () => refused(withLegend("g floor pillar", ["# # # #", "# . g #", "# . . #", "# # # #"])))
     it("a kind whose footprint differs from the drawing", () => refused(withLegend("g floor basin")))
     it("a ground kind on a non-ground place", () => refused(withLegend("g floor mat")))
+    it("a free-standing kind on a ground place", () => refused(withLegend("g ground pillar")))
     it("a letter used but never declared", () => refused(withLegend("x floor pillar")))
     it("a wallItem with a floor kind", () =>
       refused(withLegend("g wallItem pillar", ["# # g #", "# s . #", "# . . #", "# # # #"])))

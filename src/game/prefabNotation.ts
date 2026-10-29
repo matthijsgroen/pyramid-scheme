@@ -251,6 +251,8 @@ export const parsePrefab = (
         )
       if (footprint.ground && place.layer !== "ground")
         fail(entry.n, `"${kind}" lies on the ground, "${letter}" is a ${place.layer} place`)
+      if (!footprint.ground && place.layer === "ground")
+        fail(entry.n, `"${kind}" stands free, "${letter}" is a ground place`)
     }
     if (place.group && place.group.take > place.group.of)
       fail(entry.n, `cannot take ${place.group.take} of ${place.group.of}`)
