@@ -19,7 +19,7 @@ THE DRAWING
   layout [name]                 a drawn variant; the rows follow, one character per cell, a space between
   #  wall   d  door place   .  free floor
   every other character is a letter of the legend; the outermost row and column are the ring
-  d and wall-item letters stand on the ring, every other letter inside; a letter drawn over several
+  d letters stand on the ring, wall-item letters on its north row, every other letter inside; a letter drawn over several
   cells is one object of that footprint, and a footprint is a full rectangle
 
 THE LEGEND
@@ -200,6 +200,7 @@ export const parsePrefab = (
         used.add(ch)
         const onRing = "place" in entry && entry.place.layer === "wallItem"
         if (onRing && !ring) fail(here, `wall item "${ch}" inside the ring`)
+        if (onRing && r !== 0) fail(here, `wall item "${ch}" off the north wall`)
         if (!onRing && ring) fail(here, `"${ch}" on the ring`)
         if ("special" in entry && entry.special === "stop") stops++
       })

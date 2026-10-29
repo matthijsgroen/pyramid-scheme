@@ -88,9 +88,13 @@ const emptyDeadEnd = (cell: GridCell, r: number, c: number): boolean => {
   )
 }
 
+/** A room whose content is stood on, so its node is where he stands: a plate, a pipe's hole, a sequence tile. */
+const stoodOn = (cell: RoomCell): boolean =>
+  cell.plate !== undefined || cell.pipeHole !== undefined || cell.sequenceTile !== undefined
+
 /** What a room a placement may take holds, or undefined where no placement takes it: the entrance, a room that
- * claims no floor (a puzzle stop) unless it is an empty dead end, a story's or the god's room, a door, and any
- * encounter but a chest. */
+ * claims no floor (a puzzle stop) unless it is an empty dead end, a story's or the god's room, a door, a room whose
+ * content is stood on, and any encounter but a chest. */
 const takeableHolds = (grid: FloorGrid, r: number, c: number): Holds | undefined => {
   const cell = cellAt(grid, r, c)
   if (cell.type === "empty" || cell.prefabRoom) return undefined
@@ -98,7 +102,7 @@ const takeableHolds = (grid: FloorGrid, r: number, c: number): Holds | undefined
   if (emptyDeadEnd(cell, r, c)) return "nothing"
   if (cell.type !== "room" || cell.pinnedPrefab !== undefined) return undefined
   if (!claimsFloorAt(grid, r, c) || cell.authoredActivity !== undefined || cell.patronRoom) return undefined
-  if (isDoor(cell)) return undefined
+  if (isDoor(cell) || stoodOn(cell)) return undefined
   const holds = holdsOf(cell)
   if (holds === "nothing" && cell.family !== undefined) return undefined
   return holds

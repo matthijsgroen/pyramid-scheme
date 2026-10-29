@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
 import { roomDoors } from "@/game/roomShape"
-import type { FloorGrid } from "@/game/siteTypes"
+import type { FloorGrid, GridCell } from "@/game/siteTypes"
 import { CELL, COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import { EDGE_NODE, PREFAB_FORK, PREFAB_PILLARS, edgePrefabFloor, prefabForkFloor } from "./floorFixtures.testing"
 import { markerCell, roomPath, roomStop, stepsBetween, walkPoints, walkSteps } from "./roomWalk"
@@ -130,6 +130,31 @@ describe("a walk through a prefab room", () => {
         for (let i = 1; i + 2 < path.length; i++)
           expect(pitch(path[i], path[i + 1]), `${JSON.stringify(a)}→${JSON.stringify(b)} at ${i}`).toBeGreaterThan(1)
       }
+  })
+
+  describe("a room whose floor does not join its ends", () => {
+    afterEach(() => vi.unstubAllEnvs())
+    // The stop walled in on every side.
+    const walledIn = (): FloorGrid => {
+      const cells = grid.cells.map(row => [...row])
+      const fork = cells[node[0]][node[1]]
+      if (fork.type === "empty" || !fork.prefabRoom) throw new Error("no prefab room")
+      const blocked = [...fork.prefabRoom.blocked, "6,7", "6,9", "5,7", "5,9"]
+      cells[node[0]][node[1]] = { ...fork, prefabRoom: { ...fork.prefabRoom, blocked } } as GridCell
+      return { ...grid, cells }
+    }
+
+    it("throws while developing", () => {
+      expect(() => roomPath(walledIn(), node, { door: "w" }, "stop")).toThrow(/no way from 4,3 to 6,8/)
+    })
+
+    it("walks a straight line in play", () => {
+      vi.stubEnv("DEV", false)
+      const path = roomPath(walledIn(), node, { door: "w" }, "stop")
+      expect(path.map(p => [p.x, p.y])).toEqual(
+        run("4,3", "6,8").map(([r, c]) => [cellCenter(r, c).cx, cellCenter(r, c).cy])
+      )
+    })
   })
 
   it("meets the room at the prefab's stop, and no other cell", () => {

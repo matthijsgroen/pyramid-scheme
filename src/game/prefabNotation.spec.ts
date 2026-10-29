@@ -89,6 +89,17 @@ layout turned
     it("a letter used but never declared", () => refused(withLegend("x floor pillar")))
     it("a wallItem with a floor kind", () =>
       refused(withLegend("g wallItem pillar", ["# # g #", "# s . #", "# . . #", "# # # #"])))
+    it("a wall item on the ring off its north wall, in any layout", () => {
+      const refused = (text: string) => expect(() => parse(text)).toThrow(/line \d+: wall item "g" off the north wall/)
+      refused(withLegend("g wallItem niche", ["# # # #", "g s . #", "# . . #", "# # # #"]))
+      refused(withLegend("g wallItem niche", ["# # # #", "# s . #", "# . . #", "# # g #"]))
+      refused(`${withLegend("g wallItem niche", ["# # g #", "# s . #", "# . . #", "# # # #"])}
+layout turned
+# # # #
+# s . g
+# # # #
+`)
+    })
     it("rows of unequal width", () => refused(withLegend("g floor pillar", ["# # # #", "# s g", "# . . #", "# # # #"])))
   })
 })

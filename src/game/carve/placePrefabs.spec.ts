@@ -293,6 +293,35 @@ s stop`)
 })
 
 describe("placePrefabs", () => {
+  it("takes a lever's room by its mechanism place, never a room whose content is stood on", () => {
+    const mill = prefab(`room mill
+layout
+# # # # #
+# m . . #
+d . . s d
+# # d # #
+m mechanism
+s stop`)
+    const at = (fork: Partial<RoomCell>) =>
+      prefabRooms(
+        placed(
+          placePrefabs(
+            prepFor({ ...placing("mill", 0, 9), prefabs: { ...PREFABS, mill } }),
+            floorFrom(TWO_FORKS, { "4,4": fork, "4,12": fork })
+          )
+        )
+      )
+    const levers = at({ mechanism: LEVER })
+    expect(levers.length).toBeGreaterThan(0)
+    for (const { room } of levers) expect(room.nodeArt).toEqual([room.rect.top, room.rect.left])
+    const stoodOn: Record<string, Partial<RoomCell>> = {
+      plate: { plate: { id: "plate" } },
+      "pipe hole": { pipeHole: { pipe: "p", region: "r" } },
+      "sequence tile": { sequenceTile: { id: "q", step: 0, glyph: 0, entrance: "e" } },
+    }
+    for (const [what, fork] of Object.entries(stoodOn)) expect(at(fork), what).toEqual([])
+  })
+
   it("takes a chest room only with a chest place, and puts the chest's art there", () => {
     const grid = floorFrom(CHEST_FLOOR)
     const halls = prefabRooms(placed(placePrefabs(prepFor(placing("hall", 0, 9)), grid)))

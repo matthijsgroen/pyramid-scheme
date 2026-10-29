@@ -71,50 +71,67 @@ const crosses = (a: WalkPoint, b: WalkPoint, box: Box): boolean => {
   return t1 - t0 > 1e-9
 }
 
-// Side to side, and corner to corner past two free sides.
-const STEPS: ReadonlyArray<readonly [number, number]> = [
-  [-1, 0],
-  [1, 0],
-  [0, 1],
-  [0, -1],
-  [-1, -1],
-  [-1, 1],
-  [1, -1],
-  [1, 1],
-]
+const keyOf = ([r, c]: Cell) => `${r},${c}`
 
-/** The shortest run of cells from `a` to `b` over `free`, each step as long as it is on the map. */
-const cellRun = (free: ReadonlySet<string>, a: Cell, b: Cell): Cell[] => {
-  const key = ([r, c]: Cell) => `${r},${c}`
-  const dist = new Map<string, number>([[key(a), 0]])
-  const prev = new Map<string, Cell>()
-  const cells = new Map<string, Cell>([[key(a), a]])
-  const done = new Set<string>()
-  for (;;) {
-    let at: string | undefined
-    for (const [k, d] of dist) if (!done.has(k) && (at === undefined || d < dist.get(at)!)) at = k
-    if (at === undefined || at === key(b)) break
-    done.add(at)
-    const [r, c] = cells.get(at)!
-    for (const [dr, dc] of STEPS) {
-      const next: Cell = [r + dr, c + dc]
-      if (!free.has(key(next)) || done.has(key(next))) continue
-      if (dr !== 0 && dc !== 0 && (!free.has(`${r + dr},${c}`) || !free.has(`${r},${c + dc}`))) continue
-      const d = dist.get(at)! + Math.hypot(dr * ROW_PITCH, dc * COL_PITCH)
-      if (d >= (dist.get(key(next)) ?? Infinity)) continue
-      dist.set(key(next), d)
-      prev.set(key(next), [r, c])
-      cells.set(key(next), next)
+/** Whether a leg between two cell centres may be walked: it crosses no blocked cell and squeezes through no corner
+ * that two blocked cells meet at from opposite sides. */
+const legal = (free: ReadonlySet<string>, from: Cell, to: Cell): boolean => {
+  const a = centreOf(from)
+  const b = centreOf(to)
+  const [r0, r1] = [Math.min(from[0], to[0]), Math.max(from[0], to[0])]
+  const [c0, c1] = [Math.min(from[1], to[1]), Math.max(from[1], to[1])]
+  const blocked = (r: number, c: number) => !free.has(`${r},${c}`)
+  for (let r = r0; r <= r1; r++)
+    for (let c = c0; c <= c1; c++) if (blocked(r, c) && crosses(a, b, boxOf([r, c]))) return false
+  const length = Math.hypot(b.x - a.x, b.y - a.y)
+  for (let r = r0; r < r1; r++)
+    for (let c = c0; c < c1; c++) {
+      const pinched = (blocked(r, c) && blocked(r + 1, c + 1)) || (blocked(r, c + 1) && blocked(r + 1, c))
+      if (!pinched) continue
+      const corner = { x: cellCenter(r, c).cx + COL_PITCH / 2, y: cellCenter(r, c).cy + ROW_PITCH / 2 }
+      const off = Math.abs((b.x - a.x) * (corner.y - a.y) - (b.y - a.y) * (corner.x - a.x)) / length
+      if (off < 1e-6) return false
     }
-  }
-  if (!dist.has(key(b))) return [a, b]
-  const run: Cell[] = [b]
-  for (let at = prev.get(key(b)); at; at = prev.get(key(at))) run.unshift(at)
-  return run
+  return true
 }
 
-/** The walk between two ends of a prefab room: the shortest run of its free cells, pulled straight wherever the
- * line between two of its points crosses nothing blocked. */
+/** The shortest walk from `a` to `b` over `free`: straight legs between cell centres, each one `legal`. */
+const shortestWalk = (free: ReadonlySet<string>, a: Cell, b: Cell): Cell[] | undefined => {
+  const cells = [...free].map(key => key.split(",").map(Number) as unknown as Cell)
+  const from = cells.findIndex(cell => keyOf(cell) === keyOf(a))
+  const to = cells.findIndex(cell => keyOf(cell) === keyOf(b))
+  if (from < 0 || to < 0) return undefined
+  const dist = cells.map(() => Infinity)
+  const prev = cells.map(() => -1)
+  const done = cells.map(() => false)
+  dist[from] = 0
+  for (;;) {
+    let u = -1
+    cells.forEach((_, i) => {
+      if (!done[i] && dist[i] < Infinity && (u < 0 || dist[i] < dist[u])) u = i
+    })
+    if (u < 0 || u === to) break
+    done[u] = true
+    const p = centreOf(cells[u])
+    cells.forEach((cell, v) => {
+      if (done[v]) return
+      const q = centreOf(cell)
+      const d = dist[u] + Math.hypot(q.x - p.x, q.y - p.y)
+      if (d < dist[v] - 1e-9 && legal(free, cells[u], cell)) {
+        dist[v] = d
+        prev[v] = u
+      }
+    })
+  }
+  if (dist[to] === Infinity) return undefined
+  const walk: Cell[] = []
+  for (let at = to; at >= 0; at = prev[at]) walk.unshift(cells[at])
+  return walk
+}
+
+/** The walk between two ends of a prefab room: the shortest way over its free cells in straight legs that cross
+ * nothing blocked. Ends the room's own floor does not join are a broken room: an error while developing, a straight
+ * line in play. */
 export const roomPath = (grid: FloorGrid, node: Cell, from: RoomEnd, to: RoomEnd): WalkPoint[] => {
   const room = prefabRoomAt(grid, node[0], node[1])
   if (!room) return []
@@ -124,30 +141,11 @@ export const roomPath = (grid: FloorGrid, node: Cell, from: RoomEnd, to: RoomEnd
   const b = endCell(to)
   const inRoom = (cell: Cell): WalkPoint => ({ ...centreOf(cell), inRoom: true })
   if (a[0] === b[0] && a[1] === b[1]) return [inRoom(a)]
-
-  const free = freeCells(grid, node, room)
-  const { top, left, rows, cols } = room.rect
-  const boxes: Box[] = []
-  for (let r = top; r < top + rows; r++)
-    for (let c = left; c < left + cols; c++) if (!free.has(`${r},${c}`)) boxes.push(boxOf([r, c]))
-  const sees = (p: WalkPoint, q: WalkPoint) => !boxes.some(box => crosses(p, q, box))
-
-  // Pulled straight: the shortest chain of the run's points whose every leg crosses nothing blocked.
-  const run = cellRun(free, a, b).map(inRoom)
-  const best = run.map((_, j) => (j === 0 ? 0 : Infinity))
-  const prev = run.map(() => -1)
-  for (let j = 1; j < run.length; j++)
-    for (let i = 0; i < j; i++) {
-      if (i < j - 1 && !sees(run[i], run[j])) continue
-      const d = best[i] + Math.hypot(run[j].x - run[i].x, run[j].y - run[i].y)
-      if (d < best[j] - 1e-9) {
-        best[j] = d
-        prev[j] = i
-      }
-    }
-  const path: WalkPoint[] = []
-  for (let at = run.length - 1; at >= 0; at = prev[at]) path.unshift(run[at])
-  return path
+  const walk = shortestWalk(freeCells(grid, node, room), a, b)
+  if (walk) return walk.map(inRoom)
+  if (import.meta.env?.DEV)
+    throw new Error(`[roomWalk] ${room.name} at ${keyOf(node)}: no way from ${keyOf(a)} to ${keyOf(b)}`)
+  return [inRoom(a), inRoom(b)]
 }
 
 /** The direction of the arm whose straight run inside the room holds this cell. */
