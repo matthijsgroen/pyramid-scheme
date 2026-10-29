@@ -8,7 +8,7 @@ import type { GateFace } from "./gateFace"
 import type { LockNesting, LockNestingFault, PlacedLock } from "./floorLocks"
 import type { LockFault, RealisationBinding } from "./lockCompile"
 import type { ActivityId } from "./activities"
-import type { Prefab } from "./prefabTypes"
+import type { PlaceKind, PlaceLayer, Prefab } from "./prefabTypes"
 import type { WebDoorPlacement } from "./webDoors"
 /** `chamber` is a pass-through room on a path: a corridor node widened into a room that serves an activity, holding
  * no encounter and answering to no slot. */
@@ -228,6 +228,38 @@ export type CellRect = { top: number; left: number; rows: number; cols: number }
 /** A centre kind standing in a grown room, with the cells it covers. */
 export type CentrePiece = { kind: DecorationKind } & CellRect
 export type GrownRoom = { rect: CellRect; piece: CentrePiece }
+/** One object standing in a prefab room, in absolute grid cells; `flip` draws a mirrored room's ground object
+ * mirrored. */
+export type PrefabObject = {
+  kind: PlaceKind
+  layer: PlaceLayer
+  top: number
+  left: number
+  rows: number
+  cols: number
+  flip?: true
+}
+type Cell = readonly [number, number]
+/** A designed room laid over a room node (carve/placePrefabs.ts), in absolute grid cells. */
+export type PrefabRoom = {
+  /** The prefab's name: a key of the floor's `prefabs`. */
+  name: string
+  /** Which of the prefab's layouts, and whether mirrored left to right. */
+  layout: number
+  mirrored: boolean
+  /** The inside of the ring. */
+  rect: CellRect
+  stop: Cell
+  actor?: Cell
+  /** Where the room's chest, portal or mechanism stands: the prefab's place for it. */
+  nodeArt?: Cell
+  /** What stands, after the fill. */
+  objects: readonly PrefabObject[]
+  /** "r,c" the walk may not cross: the ring's walls, unused door places and what blocks inside. */
+  blocked: readonly string[]
+  /** The door places in use, on the ring, by the way out each serves. */
+  doors: Partial<Record<Direction, Cell>>
+}
 
 export type RoomCell = {
   type: "room"
@@ -329,6 +361,8 @@ export type RoomCell = {
   /** The room's grown rectangle and the centre piece standing in it, in absolute grid cells. The footprint is
    * written on the piece so the map never consults the footprint table. */
   grownRoom?: GrownRoom
+  /** The designed room laid over this node; it is this room's dressing. */
+  prefabRoom?: PrefabRoom
   wallDecoration?: WallDecorationKind
   /** What the room is for (activities.ts): its props and wall item come from this activity. Unset on a
    * room some other purpose has, or on a rank whose pool furnishes no activity. */
@@ -997,6 +1031,9 @@ export type AssemblerReason =
   /** A path's chambers authored after a puzzle found no free node in that puzzle's gap: `address` is the path,
    * `seated` how many of them one attempt found room for. See FloorConfig.chambersByIndex. */
   | { type: "chambersNotSeated"; address: string; wanted: number; seated: number }
+  /** Fewer of a designed room fitted the floor than its `min`: `room` is the prefab, `placed` how many one attempt
+   * fitted. A pinned room that fits nowhere wants 1. See FloorConfig.prefabPlacements. */
+  | { type: "prefabsNotPlaced"; room: string; wanted: number; placed: number }
   /** The floor's mechanics (and sequence tiles) need more distinct glyphs than the six a mark can wear,
    * so a mark would be shared. `ids` are the ones left without a glyph, in authoring order. */
   | { type: "marksExhausted"; ids: string[] }

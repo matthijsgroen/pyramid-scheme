@@ -9,6 +9,7 @@ import { carveFloor } from "./carveFloor"
 import { growRooms } from "./growRooms"
 import { gateKeyOf } from "./ids"
 import { finishAttempt, PASSES } from "./passes"
+import { webDoorInPrefab } from "./placePrefabs"
 import { prepareFloor } from "./prepareFloor"
 import { CARVE_FAMILY_QUERIES } from "../encounterFallback"
 
@@ -61,5 +62,9 @@ export const assembleFloor = (
   const gateTags = resolveEncounter(CARVE_FAMILY_QUERIES.keyGate, CARVE_FAMILY_QUERIES.keyGate).tags
   const marked = authoredConfig.webMarks ? { ...nested.grid, webMarks: authoredConfig.webMarks } : nested.grid
   const laid = layWebDoors(marked, doors, gates, gateTags, id => gateKeyOf(floorRef, id))
-  return laid.ok ? { ...nested, grid: grown(laid.grid) } : { success: false, reasons: [laid.fault] }
+  if (!laid.ok) return { success: false, reasons: [laid.fault] }
+  // A designed room's walls are drawn round its own arms: a web door standing inside one is a fault, as an unseated
+  // door is.
+  const inside = webDoorInPrefab(marked, laid.grid)
+  return inside ? { success: false, reasons: [inside] } : { ...nested, grid: grown(laid.grid) }
 }

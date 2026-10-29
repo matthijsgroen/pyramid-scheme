@@ -12,6 +12,7 @@ import { placeDrops } from "./placeDrops"
 import { placeJunctions } from "./placeJunctions"
 import { placeMainContent } from "./placeMainContent"
 import { placePipeHoles } from "./placePipeHoles"
+import { placePrefabs } from "./placePrefabs"
 import { relayKeys } from "./relayKeys"
 import { render } from "./render"
 import type { RenderState } from "./render"
@@ -84,10 +85,11 @@ export const TAIL_READS = [
 
 /**
  * THE TAIL OF AN ATTEMPT, once every pass holds: render writes the grid from the decisions, validate asks
- * the grid's checks, the pieces a walk steps on stand on it, and finish dresses the carve that passes them.
+ * the grid's checks, the pieces a walk steps on stand on it, finish dresses the carve that passes them, and the
+ * designed rooms the floor names are laid over its rooms.
  */
 export const finishAttempt: Finish = (prep, state) => {
   const decided = requireReads("render", TAIL_READS, state)
   const grid = render(prep, decided)
-  return validate(prep, decided, grid) ?? standPieces(prep, decided, grid) ?? finish(prep, grid)
+  return validate(prep, decided, grid) ?? standPieces(prep, decided, grid) ?? placePrefabs(prep, finish(prep, grid))
 }

@@ -11,28 +11,9 @@ import {
   type PropFootprint,
   type RoomCell,
 } from "../siteTypes"
-import { OPPOSITE } from "./grid"
+import { absorbable, meets, ringed } from "./placePrefabs"
 
 type FootprintOf = (kind: DecorationKind) => PropFootprint
-
-const meets = (a: CellRect, b: CellRect): boolean =>
-  a.top < b.top + b.rows && b.top < a.top + a.rows && a.left < b.left + b.cols && b.left < a.left + a.cols
-
-const ringed = ({ top, left, rows, cols }: CellRect): CellRect => ({
-  top: top - 1,
-  left: left - 1,
-  rows: rows + 2,
-  cols: cols + 2,
-})
-
-/** A corridor an arm may run through as the room's own floor: straight along the arm, plain ground, in sight. */
-const absorbable = (cell: GridCell, dir: Direction): boolean =>
-  cell.type === "corridor" &&
-  !cell.hidden &&
-  cell.obstacle === undefined &&
-  cell.dirs.size === 2 &&
-  cell.dirs.has(dir) &&
-  cell.dirs.has(OPPOSITE[dir])
 
 /** How many arm cells the room takes as floor at `rect`, or `undefined` where the rect holds anything else. */
 const absorbedAt = (grid: FloorGrid, r: number, c: number, dirs: ReadonlySet<Direction>, rect: CellRect) => {

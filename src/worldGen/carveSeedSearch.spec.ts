@@ -14,9 +14,11 @@ import {
   STAMPED_SEED_RANGE,
   sidePathStages,
   mergeStageSearches,
+  describeLayoutFailure,
   type CarveAssemble,
   type CarvePairOptions,
   type CarveRefusal,
+  type LayoutNotFound,
   type SidePathStage,
 } from "./carveSeedSearch"
 
@@ -572,5 +574,24 @@ describe("prefer", () => {
     expect(kept).toMatchObject({ kind: "found", seed: 100 })
     expect(prefer(kept!.grid)).toBe(1)
     expect(verifyCarvePair(100, { ...base, seed: 101 }, assemble, options({ prefer }))).toMatchObject({ seed: 101 })
+  })
+})
+
+describe("describeLayoutFailure", () => {
+  it("names a designed room placed fewer times than its min", () => {
+    const detail = JSON.stringify([
+      { type: "prefabsNotPlaced", room: "hall", wanted: 2, placed: 1 },
+      { type: "layoutNotFound" },
+    ])
+    const result: LayoutNotFound = {
+      kind: "notFound",
+      hardest: "carves",
+      detail,
+      counts: { carves: 3 },
+      seeds: 3,
+      packings: 1,
+      stages: 1,
+    }
+    expect(describeLayoutFailure("j1 floor 0", result)).toBe("j1 floor 0: room hall placed 1 of min 2")
   })
 })

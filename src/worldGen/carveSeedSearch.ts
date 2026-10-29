@@ -1,6 +1,6 @@
 import { walkFloorLock, describeFloorWalkFailure, deadFloorRegions } from "@/game/floorLockWalk"
 import { lockGroundUnfed, lockWithoutPuzzle } from "@/game/lockPuzzles"
-import type { AssemblerResult, FloorConfig, FloorGrid } from "@/game/siteTypes"
+import type { AssemblerReason, AssemblerResult, FloorConfig, FloorGrid } from "@/game/siteTypes"
 import type { CorridorAssignment } from "@/game/corridorSidePaths"
 import { roomlessRouteStubs } from "@/game/routeStubs"
 import { lessonOrderFaults } from "@/game/lessonOrder"
@@ -339,10 +339,27 @@ export const mergeStageSearches = (
   return merged
 }
 
+/** The designed room a carve's reasons (a "carves" refusal's detail) name as placed fewer times than its min. */
+const prefabShortfall = (detail: string): Extract<AssemblerReason, { type: "prefabsNotPlaced" }> | undefined => {
+  try {
+    const reasons: unknown = JSON.parse(detail)
+    return Array.isArray(reasons)
+      ? (reasons as AssemblerReason[]).find(
+          (reason): reason is Extract<AssemblerReason, { type: "prefabsNotPlaced" }> =>
+            reason.type === "prefabsNotPlaced"
+        )
+      : undefined
+  } catch {
+    return undefined
+  }
+}
+
 /** The bake's line for a floor no layout was picked for. */
 export const describeLayoutFailure = (where: string, result: LayoutNotFound | LayoutInfeasible): string => {
   if (result.kind === "infeasible")
     return result.all.map(({ criterion, detail }) => `${where}: infeasible — ${criterion}: ${detail}`).join("\n")
+  const short = result.hardest === "carves" ? prefabShortfall(result.detail) : undefined
+  if (short) return `${where}: room ${short.room} placed ${short.placed} of min ${short.wanted}`
   const counts = HARD_CRITERIA.flatMap(criterion =>
     result.counts[criterion] ? [`${criterion} ${result.counts[criterion]}`] : []
   ).join(", ")
