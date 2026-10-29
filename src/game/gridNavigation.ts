@@ -287,6 +287,28 @@ export const walkableFrom = (grid: FloorGrid, from: readonly [number, number]): 
   return seen
 }
 
+/** Walking distance from `from` to every cell it reaches, keyed "r,c". Structure only (dirs and bounds):
+ * a carve-time measure of the layout, so ground still in the dark counts. */
+export const distancesFrom = (grid: FloorGrid, from: readonly [number, number]): ReadonlyMap<string, number> => {
+  const dist = new Map<string, number>([[`${from[0]},${from[1]}`, 0]])
+  const queue: Array<readonly [number, number]> = [from]
+  for (let i = 0; i < queue.length; i++) {
+    const [r, c] = queue[i]
+    const cell = grid.cells[r]?.[c]
+    if (!cell || cell.type === "empty") continue
+    for (const d of cell.dirs) {
+      const nr = r + MOVES[d][0],
+        nc = c + MOVES[d][1]
+      const key = `${nr},${nc}`
+      const neighbor = grid.cells[nr]?.[nc]
+      if (dist.has(key) || !neighbor || neighbor.type === "empty") continue
+      dist.set(key, dist.get(`${r},${c}`)! + 1)
+      queue.push([nr, nc])
+    }
+  }
+  return dist
+}
+
 export const revealAll = (grid: FloorGrid): FloorGrid => {
   const newCells = grid.cells.map(row =>
     row.map(cell => {
