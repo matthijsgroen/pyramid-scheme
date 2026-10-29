@@ -1,7 +1,33 @@
 import type { LaidFloor } from "../laidFloor"
 import { DIRS2, NODE_STEP, makePkey } from "./grid"
+import { FLOOR_PLANS } from "./floorPlans"
 import { pass } from "./state"
 import type { Cell } from "./state"
+
+/** What steers a DFS step: how likely it keeps straight ahead, and how likely a turn goes the way the last one did. */
+type Steer = { straightBias: number; turnBias: number }
+
+/** Which way a step turns relative to the one before it: 1 and -1 are the two rotations, 0 is straight on. */
+const turnOf = (from: [number, number], to: [number, number]) => Math.sign(from[0] * to[1] - from[1] * to[0])
+
+/** The next cell of a DFS walk: straight on by the bias, else a turn the way the last one went by the turn bias,
+ * else any open neighbour. A walk with no turn bias draws exactly as a plain straightness bias does. */
+const stepFrom = (
+  unvisited: Array<[number, number]>,
+  [r, c]: [number, number],
+  incoming: [number, number] | undefined,
+  lastTurn: number,
+  rand: () => number,
+  { straightBias, turnBias }: Steer
+) => {
+  const straightAhead = incoming && unvisited.find(([nr, nc]) => nr - r === incoming[0] && nc - c === incoming[1])
+  if (straightAhead && rand() < straightBias) return straightAhead
+  if (turnBias > 0 && incoming && lastTurn !== 0) {
+    const sameWay = unvisited.find(([nr, nc]) => turnOf(incoming, [nr - r, nc - c]) === lastTurn)
+    if (sameWay && rand() < turnBias) return sameWay
+  }
+  return unvisited[Math.floor(rand() * unvisited.length)]
+}
 
 // Generate a perfect DFS maze on an N×N grid starting from (entR, entC).
 // Returns the BFS path from entrance to the chosen main-path endpoint, and the passages set.
@@ -12,19 +38,13 @@ import type { Cell } from "./state"
 // `targetDistance` hops from the entrance (falling back to the true farthest node if the grid is too
 // small to reach it), so path length is something an author can actually target via
 // FloorConfig.packing rather than an emergent side effect of grid size.
-const buildMaze = (
-  N: number,
-  entR: number,
-  entC: number,
-  rand: () => number,
-  straightBias: number,
-  targetDistance: number
-) => {
+const buildMaze = (N: number, entR: number, entC: number, rand: () => number, steer: Steer, targetDistance: number) => {
   const passages = new Set<string>()
   const visited = new Set<string>()
   const pkey = makePkey(N)
-  // Direction of travel used to reach each visited cell, for the straightness bias.
+  // Direction of travel used to reach each visited cell, for the straightness bias, and the way its last turn went.
   const arrivedVia = new Map<string, [number, number]>()
+  const lastTurnAt = new Map<string, number>()
 
   // ponytail: iterative DFS avoids stack overflow for large N
   const stack: Array<[number, number]> = [[entR, entC]]
@@ -38,12 +58,12 @@ const buildMaze = (
       stack.pop()
     } else {
       const incoming = arrivedVia.get(`${r},${c}`)
-      const straightAhead = incoming && unvisited.find(([nr, nc]) => nr - r === incoming[0] && nc - c === incoming[1])
-      const [nr, nc] =
-        straightAhead && rand() < straightBias ? straightAhead : unvisited[Math.floor(rand() * unvisited.length)]
+      const lastTurn = lastTurnAt.get(`${r},${c}`) ?? 0
+      const [nr, nc] = stepFrom(unvisited, [r, c], incoming, lastTurn, rand, steer)
       passages.add(pkey(r, c, nr, nc))
       visited.add(`${nr},${nc}`)
       arrivedVia.set(`${nr},${nc}`, [nr - r, nc - c])
+      lastTurnAt.set(`${nr},${nc}`, (incoming && turnOf(incoming, [nr - r, nc - c])) || lastTurn)
       stack.push([nr, nc])
     }
   }
@@ -94,11 +114,12 @@ const buildMaze = (
 // Grows the maze among the nodes a lock left free: passages join the laid ways exactly as laid, and a free
 // node is reached from another free node and from no laid one, so a side path grown here can never join two
 // regions the lock keeps apart. A side path attaches to laid ground by a passage the attach itself carves.
-const growMazeAround = (N: number, laid: LaidFloor, rand: () => number, straightBias: number) => {
+const growMazeAround = (N: number, laid: LaidFloor, rand: () => number, steer: Steer) => {
   const passages = new Set<string>(laid.passages)
   const pkey = makePkey(N)
   const visited = new Set<string>([...laid.label.keys(), ...laid.held])
   const arrivedVia = new Map<string, [number, number]>()
+  const lastTurnAt = new Map<string, number>()
   for (let sr = 0; sr < N; sr += NODE_STEP)
     for (let sc = 0; sc < N; sc += NODE_STEP) {
       if (visited.has(`${sr},${sc}`)) continue
@@ -114,12 +135,13 @@ const growMazeAround = (N: number, laid: LaidFloor, rand: () => number, straight
           continue
         }
         const incoming = arrivedVia.get(`${r},${c}`)
-        const straightAhead = incoming && unvisited.find(([nr, nc]) => nr - r === incoming[0] && nc - c === incoming[1])
-        const [nr, nc] =
-          straightAhead && rand() < straightBias ? straightAhead : unvisited[Math.floor(rand() * unvisited.length)]
+        const lastTurn = lastTurnAt.get(`${r},${c}`) ?? 0
+        const [nr, nc] = stepFrom(unvisited, [r, c], incoming, lastTurn, rand, steer)
         passages.add(pkey(r, c, nr, nc))
         visited.add(`${nr},${nc}`)
         arrivedVia.set(`${nr},${nc}`, [nr - r, nc - c])
+        lastTurnAt.set(`${nr},${nc}`, (incoming && turnOf(incoming, [nr - r, nc - c])) || lastTurn)
+        lastTurnAt.set(`${nr},${nc}`, (incoming && turnOf(incoming, [nr - r, nc - c])) || lastTurn)
         stack.push([nr, nc])
       }
     }
@@ -137,39 +159,48 @@ const growMazeAround = (N: number, laid: LaidFloor, rand: () => number, straight
  * visit the moment it's stepped on. Every passage incident to the exit except the one to its main-path
  * predecessor is dropped here, before any branch is hung, so nothing branches through or beside it.
  */
-export const growMaze = pass("growMaze", ["rung", "lay", "rand"], ["maze"], (prep, state) => {
-  const laid = state.lay?.laid
-  const { rand } = state
-  const N = laid ? laid.n : state.rung.n
-  // Pick entrance from edge cells (non-corner preferred for more connections).
-  // Must be an even/even position — the only kind of cell that can be a real node.
-  const edgeCells: Cell[] = []
-  for (let r = 0; r < N; r += 2) {
-    edgeCells.push([r, 0])
-    edgeCells.push([r, N - 1])
-  }
-  for (let c = 2; c < N - 1; c += 2) {
-    edgeCells.push([0, c])
-    edgeCells.push([N - 1, c])
-  }
-  const [entR, entC] = laid ? laid.route[0] : edgeCells[Math.floor(rand() * edgeCells.length)]
-
-  const { straightBias } = prep.sizing
-  const { mainPath, passages } = laid
-    ? growMazeAround(N, laid, rand, straightBias)
-    : buildMaze(N, entR, entC, rand, straightBias, state.rung.targetDistance)
-
-  const exit = mainPath[mainPath.length - 1]
-  if (mainPath.length > 1) {
-    const pkey = makePkey(N)
-    const [exR, exC] = exit
-    const [predR, predC] = mainPath[mainPath.length - 2]
-    for (const [dr, dc] of DIRS2) {
-      const nr = exR + dr,
-        nc = exC + dc
-      if (nr === predR && nc === predC) continue
-      passages.delete(pkey(exR, exC, nr, nc))
+export const growMaze = pass(
+  "growMaze",
+  ["rung", "lay", "rand"],
+  ["maze"],
+  (prep, state) => {
+    const laid = state.lay?.laid
+    const { rand } = state
+    const N = laid ? laid.n : state.rung.n
+    // Pick entrance from edge cells (non-corner preferred for more connections).
+    // Must be an even/even position — the only kind of cell that can be a real node.
+    const edgeCells: Cell[] = []
+    for (let r = 0; r < N; r += 2) {
+      edgeCells.push([r, 0])
+      edgeCells.push([r, N - 1])
     }
-  }
-  state.maze = { n: N, entrance: [entR, entC], exit, mainPath, passages }
-})
+    for (let c = 2; c < N - 1; c += 2) {
+      edgeCells.push([0, c])
+      edgeCells.push([N - 1, c])
+    }
+    const [entR, entC] = laid ? laid.route[0] : edgeCells[Math.floor(rand() * edgeCells.length)]
+
+    const plan = state.plan && FLOOR_PLANS[state.plan]
+    const steer: Steer = plan
+      ? { straightBias: prep.config.config.corridorStraightness ?? plan.straightness, turnBias: plan.turnBias }
+      : { straightBias: prep.sizing.straightBias, turnBias: 0 }
+    const { mainPath, passages } = laid
+      ? growMazeAround(N, laid, rand, steer)
+      : buildMaze(N, entR, entC, rand, steer, state.rung.targetDistance)
+
+    const exit = mainPath[mainPath.length - 1]
+    if (mainPath.length > 1) {
+      const pkey = makePkey(N)
+      const [exR, exC] = exit
+      const [predR, predC] = mainPath[mainPath.length - 2]
+      for (const [dr, dc] of DIRS2) {
+        const nr = exR + dr,
+          nc = exC + dc
+        if (nr === predR && nc === predC) continue
+        passages.delete(pkey(exR, exC, nr, nc))
+      }
+    }
+    state.maze = { n: N, entrance: [entR, entC], exit, mainPath, passages }
+  },
+  ["plan"]
+)

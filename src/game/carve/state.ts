@@ -21,6 +21,7 @@ import type {
   SubSection,
   WallDecorationKind,
 } from "../siteTypes"
+import type { PlanKind } from "./floorPlans"
 import type { MarkAllocation, Mark } from "../mark"
 import type { SequenceSigns } from "../sequenceSigns"
 import type {
@@ -297,6 +298,8 @@ export type CarveState = {
   rung: Rung
   /** The attempt's one stream: every pass that draws, draws from it in pass order. */
   rand: () => number
+  /** The shape the floor's main path is laid in; absent under an engine that picks none. */
+  plan?: PlanKind
   /** The grid the lay grew to, written even when the lay refuses: the next rung starts from it. */
   laidN?: number
   /** The lock the floor lays and the route steps its content takes; null where the floor lays none. */
@@ -383,13 +386,16 @@ export type Shortfall =
 export type Refusal = { retry: readonly Shortfall[] } | { fatal: AssemblerFailure["reasons"] }
 
 /** The state a pass sees: what it reads, present and read-only, and what it writes. */
-type PassState<R extends keyof CarveState, W extends keyof CarveState> = Readonly<Pick<Required<CarveState>, R>> &
+type PassState<R extends keyof CarveState, W extends keyof CarveState, O extends keyof CarveState = never> = Readonly<
+  Pick<Required<CarveState>, R>
+> &
+  Readonly<Pick<CarveState, O>> &
   Pick<CarveState, W>
 
 /** One step of an attempt: decides from prep and what earlier passes wrote, writes its own keys or refuses. */
-export type Pass<R extends keyof CarveState, W extends keyof CarveState> = (
+export type Pass<R extends keyof CarveState, W extends keyof CarveState, O extends keyof CarveState = never> = (
   prep: FloorPrep,
-  state: PassState<R, W>
+  state: PassState<R, W, O>
 ) => Refusal | void
 
 /** A pass as the loop runs it, with the keys it reads and writes named so the order can be checked. */
@@ -397,6 +403,8 @@ export type PassEntry = {
   name: string
   reads: readonly (keyof CarveState)[]
   writes: readonly (keyof CarveState)[]
+  /** Keys it reads when present and does without when absent. */
+  optionalReads: readonly (keyof CarveState)[]
   run: (prep: FloorPrep, state: CarveState) => Refusal | void
 }
 
@@ -416,22 +424,24 @@ export const requireReads = <K extends keyof CarveState>(
  * that an earlier pass already wrote, and a key it leaves unwritten after it did not refuse, are mistakes in
  * the passes, so each throws. A pass with nothing to write says so with an explicit null or no-op value. The
  * keys are taken from the lists alone, so a pass whose own type reads or writes a key its lists leave out does
- * not compile.
+ * not compile. `optionalReads` are keys the pass may find absent, which the guard leaves alone.
  */
-export const pass = <R extends keyof CarveState, W extends keyof CarveState>(
+export const pass = <R extends keyof CarveState, W extends keyof CarveState, O extends keyof CarveState = never>(
   name: string,
   reads: readonly R[],
   writes: readonly W[],
-  run: Pass<NoInfer<R>, NoInfer<W>>
+  run: Pass<NoInfer<R>, NoInfer<W>, NoInfer<O>>,
+  optionalReads: readonly O[] = []
 ): PassEntry => ({
   name,
   reads,
   writes,
+  optionalReads,
   run: (prep, state) => {
     requireReads(name, reads, state)
     for (const key of writes)
       if (state[key] !== undefined) throw new Error(`[carve] ${name} writes ${key}, which an earlier pass wrote`)
-    const refusal = run(prep, state as PassState<R, W>)
+    const refusal = run(prep, state as PassState<R, W, O>)
     if (refusal) return refusal
     for (const key of writes) if (state[key] === undefined) throw new Error(`[carve] ${name} did not write ${key}`)
   },
