@@ -141,7 +141,6 @@ const growMazeAround = (N: number, laid: LaidFloor, rand: () => number, steer: S
         visited.add(`${nr},${nc}`)
         arrivedVia.set(`${nr},${nc}`, [nr - r, nc - c])
         lastTurnAt.set(`${nr},${nc}`, (incoming && turnOf(incoming, [nr - r, nc - c])) || lastTurn)
-        lastTurnAt.set(`${nr},${nc}`, (incoming && turnOf(incoming, [nr - r, nc - c])) || lastTurn)
         stack.push([nr, nc])
       }
     }
