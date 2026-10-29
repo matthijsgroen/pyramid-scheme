@@ -65,6 +65,14 @@ tier, deterministically from the site. Three storerooms on one floor are dressed
 ## Placing prefabs on a floor: the DSL
 
 - **Only rooms the DSL names become prefabs.** Every other room stays as rooms are today.
+- **A prefab takes over a room the floor already has; it never adds one** (designer, 2026-10-29). The floor's graph —
+  its forks, chambers and branches, and so its loot slots, keys and lock walk — is decided as today; centrality
+  picks which of its rooms a prefab takes. A floor with too few fitting rooms is refused (min is hard), and the
+  designer gives it more side paths in the DSL.
+- **Which rooms a prefab may take** (designer, 2026-10-29): forks, pass-through chambers and empty dead ends; and a
+  room that holds a chest or a portal (stairhead, exit) only when the prefab marks a place for it — a chest place,
+  a portal place. The room's chest or portal then stands on that place. One generic rule: a prefab takes a room
+  whose contents it has a place for.
 - Per prefab the DSL gives:
   - **min and max** placements;
   - **how central** it lies: from the ends of the floor (dead-end branches far out) to its middle (a junction close
@@ -117,14 +125,66 @@ A prefab that fails is refused, so the carve can never place a room one cannot c
 
 - **The order inside the carve is the builder's.** The designer judges the carved floor, not the steps; prefab
   rooms will likely have to claim their space before the maze is drawn.
+- **Story rooms and Fez's stall are not taken** by a prefab; they keep their own set (`themed-rooms.md` §2).
+- **Places name what they take:** a place lists the kinds it may hold (`pillar | patron`), a pool tag (`gift`) or
+  `any` of its footprint from the activity pool; the check enumerates exactly that list.
+- **The floor does not widen itself for a prefab.** A hall that does not fit refuses the bake; the designer raises
+  packing.
+- **Lock controls stand only on mechanism places** in a prefab room, and the lesson check runs for every variant.
+- **The patron room stays as today.** A pillar place takes the patron's statue only on a floor with a patron.
+- **Junior loses nothing:** no shipped kind is a centre kind yet (the bake stands 0 centre pieces), so removing
+  "piece plus one ring" changes no floor. The first real prefabs come with junior's repaint; until then the work
+  is built and tested with made-up prefabs.
 - **Centre kinds no longer grow rooms by themselves.** A room only grows as a prefab the DSL names; a banquet table
   is a sized place in a junior prefab. `growRooms`' "piece plus one ring" goes away; the walk, the stop and the fade
   from room-walk-paths stay.
 - **"Central"** is measured by walking distance to the floor's far ends, not by drawn position.
 
+## The file format (Claude's proposal, for the designer to review)
+
+```
+// designed by: designer
+// master. A long hall: two rows of pillars, an aisle, the throne on its dais.
+room audienceHall
+tier master
+activity audience
+mirror
+
+layout
+# # n d # d # n # #
+d . p . p . p . . #
+d . . . . . s T T d
+d . p . p . p T T #
+# # # d # d # # # #
+
+layout turned
+# # d # n #
+# . . T T #
+d . . T T d
+# p . s . p
+d . . . . d
+# p . . . p
+d . . . . d
+# p . . . p
+# # d # d #
+
+p  floor  pillar | patron
+T  throne 2x2
+n  wallItem
+s  stop
+```
+
+- Fixed signs: `#` wall, `d` door place, `.` free floor. Every other letter is declared in the file's legend.
+- `mirror` lets the carve use the room mirrored left↔right; each further `layout` is a drawn variant.
+- A letter repeated over several cells is one object of that footprint.
+- `floor?` marks an optional place; `3 of 4` after a legend line makes that letter's places one group of which 3
+  are filled.
+- `fallenPillar>e,w` claims the cell east or west of its place as rubble; the check tries both.
+- Chest, portal and mechanism places are legend lines too (`c chest`, `o portal`, `m mechanism`).
+
 ## Left to the builder
 
-- The exact text format and its letters.
+- The final text format and its letters, starting from the proposal above.
 - The DSL syntax for prefab, min/max and centrality.
 - How the carve finds space, and how it chooses doors, mirror, variant and fills.
 - How the lesson check and the bake report treat prefab rooms.
