@@ -89,11 +89,14 @@ The designer: "standaard goed, met sturing van generiek naar specifiek mogelijk 
 ## The builder's calls (Claude's, for the designer to check)
 
 - **A new pass list in the existing frame.** `src/game/carve/` already runs typed passes over `FloorPrep` /
-  `CarveState` (`docs/instructions/carve-passes.md`). The new engine is a second pass list in that frame:
-  `prepareFloor`, the refusals, `validate`, `render` and `finish` are shared; the passes that lay out space (the
-  two-cell lattice: `growMaze`, junctions, rooms on nodes, chain and branch hanging, the ladder) are replaced; lock
-  seating, gates, switches and drops are reused where they do not assume the lattice and rewritten where they do.
-  The new list is swapped in once it carves every floor. The order of passes is the builder's.
+  `CarveState` (`docs/instructions/carve-passes.md`). The passes keep deciding the floor's **topology** — which
+  nodes, which rooms, where chains hang, where locks and gates sit — on the node lattice, which becomes a sketch,
+  not the floor. A new **embed** step then gives that sketch real space: each room claims its footprint first (a
+  prefab's rect, a plain room's ring, a stop's cell), then each corridor is routed between them, with its length
+  (compact ↔ sprawling), its bends (straight ↔ winding) and its width. The sketch's size is internal and never
+  seen; the floor's size follows from the embed. Lock seating, the lesson rules and the solver therefore keep
+  working on the same decisions; validate runs on the embedded floor. The engine is swapped in once it carves every
+  floor. The order of passes is the builder's.
 - **Every tier carves and passes the gates before the swap; only starter is judged by eye for this release**
   (release tier by tier). Junior and up are looked at with their own release.
 - **A lock area's shape is the engine's choice from the seed**, steerable by a selector. A lock's own region
