@@ -69,7 +69,8 @@ own character.
 | bakery-brewery   | **grindstone**, **breadOven**, jarRack (beer)                                | —                          |
 
 Footprints (`DECORATION_FOOTPRINTS`): banquetTable, bed and the lotus pool 2×1; harp and pottedTree 1×1 with
-`tall: 1`; the rest 1×1. Everything stands against the north wall. Once rooms have walk paths the banquet
+`tall: 1`; the rest 1×1. A centre kind is flagged in `DECORATION_FOOTPRINTS`, and a room whose activity or pool
+offers one grows round it (`growRooms.ts`). Everything stands against the north wall. Once rooms have walk paths the banquet
 table and the pool move to a room's middle, the player walking round them.
 
 ## 2. Who has the room: one purpose, by precedence

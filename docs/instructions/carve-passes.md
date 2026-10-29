@@ -180,6 +180,10 @@ moves every floor after it.
 | —   | `standPieces.ts`          | `maze`, `switchWays`, `pipeHoles`, grid                  | grid               | G8, G9 (4470–4518)                                                  |
 | —   | `finish.ts`               | prep, grid                                               | grid               | 4520–4541                                                           |
 
+Room growth (`growRooms.ts`) is not a pass: it runs in `assembleFloor` on the finished carve, after the web doors are
+stood. It writes `grownRoom` on a node, absorbs a room's own straight arm corridor cells into the room's rectangle,
+and changes no cell's type or `dirs`, so no pass reads it and no section hash sees it.
+
 Notes the port must keep:
 
 - **`seatChainGates` before `checkChainsSeated`.** A short run is noted (`runShort`) even when the attempt then fails
