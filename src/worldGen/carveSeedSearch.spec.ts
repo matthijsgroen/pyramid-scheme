@@ -565,10 +565,12 @@ describe("prefer", () => {
     expect(searchCarvePair(100, assemble, options({ prefer: () => 0 }))).toEqual(plain)
   })
 
-  it("searches a pin again when its carve has a fallback", () => {
+  it("keeps a pin whose carve has a fallback, with that carve's grid for the report", () => {
     const { assemble, prefer } = scored([1, 0])
     const base = { seed: 100, packing: 0.1 }
-    expect(verifyCarvePair(100, base, assemble, options({ prefer }))).toBeNull()
+    const kept = verifyCarvePair(100, base, assemble, options({ prefer }))
+    expect(kept).toMatchObject({ kind: "found", seed: 100 })
+    expect(prefer(kept!.grid)).toBe(1)
     expect(verifyCarvePair(100, { ...base, seed: 101 }, assemble, options({ prefer }))).toMatchObject({ seed: 101 })
   })
 })

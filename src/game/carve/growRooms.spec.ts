@@ -208,6 +208,17 @@ describe("growRooms", () => {
     }
   })
 
+  it("counts no fallback for a room that never grows: a dead end, a portal or a mechanism room", () => {
+    const mechanism: MechanismRecord = { states: ["rest", "a"], initial: "rest", returnsToInitial: true, positions: [] }
+    const rooms: GridCell[] = [
+      room("encounter", "n", { decoration: "basin", tags: ["treasure"] }),
+      room("portal", "ns", { decoration: "basin" }),
+      room("fork", "ns", { decoration: "basin", mechanism }),
+      room("chamber", "ns", { decoration: "basin", mechanism }),
+    ]
+    for (const cell of rooms) expect(centreFallbacks(verticalChamber(9, { "2,4": cell }), footprintOf)).toEqual([])
+  })
+
   it("falls back, keeping today's room, when no placement fits; centreFallbacks names it", () => {
     const grid = horizontalChamber(corridor("en"), corridor("ws"))
     const grown = growRooms(grid, "site", footprintOf)

@@ -1,5 +1,5 @@
-import { decorationFootprint, isCentreKind, type DecorationKind, type PropFootprint } from "@/game/siteTypes"
-import { centreFallbacks } from "@/game/carve/growRooms"
+import { decorationFootprint, type DecorationKind, type PropFootprint } from "@/game/siteTypes"
+import { centreFallbacks, growsAt } from "@/game/carve/growRooms"
 import { difficulties as TIERS, type Difficulty } from "@/data/difficultyLevels"
 import type { CarveFinalFloor } from "./layoutCheck"
 import type { SiteConfig } from "./types"
@@ -7,8 +7,8 @@ import type { FloorConfig as GameFloorConfig } from "@/game/siteTypes"
 
 export type CentreTally = { stood: number; fellBack: number }
 
-/** Per tier, the centre objects of the final world's floors that stood (their room grew) and that fell back to one
- * cell. The tier is the floor's `difficulty`. */
+/** Per tier, the centre objects of the final world's floors in rooms that may grow (`growsAt`): those that stood (their
+ * room grew) and those that fell back to one cell. The tier is the floor's `difficulty`. */
 export const centreFallbacksByTier = (
   configs: Record<string, SiteConfig[]>,
   carveFinal: CarveFinalFloor,
@@ -24,9 +24,7 @@ export const centreFallbacksByTier = (
         const grid = carveFinal(journeyId, siteIdx + 1, floorIndex, floor as GameFloorConfig)
         if (!grid) return
         const fellBack = centreFallbacks(grid, footprintOf).length
-        const wanted = grid.cells
-          .flat()
-          .filter(cell => cell.type === "room" && cell.decoration && isCentreKind(cell.decoration, footprintOf)).length
+        const wanted = grid.cells.flat().filter(cell => growsAt(cell, footprintOf)).length
         tally[floor.difficulty].fellBack += fellBack
         tally[floor.difficulty].stood += wanted - fellBack
       })

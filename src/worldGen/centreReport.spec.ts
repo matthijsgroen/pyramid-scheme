@@ -6,8 +6,9 @@ import type { SiteConfig } from "./types"
 const BASIN: PropFootprint = { cols: 2, rows: 1, tall: 0, centre: true }
 const footprintOf = (kind: DecorationKind): PropFootprint => (kind === "bones" ? BASIN : { cols: 1, rows: 1, tall: 0 })
 
-const room = (decoration: DecorationKind, grown: boolean) => ({
+const room = (decoration: DecorationKind, grown: boolean, roomType = "fork") => ({
   type: "room",
+  roomType,
   decoration,
   ...(grown ? { grownRoom: {} } : {}),
 })
@@ -15,10 +16,10 @@ const gridOf = (...cells: ReturnType<typeof room>[]) => ({ cells: [cells] }) as 
 const floor = (difficulty: string) => ({ difficulty }) as unknown as SiteConfig[number]
 
 describe(centreFallbacksByTier, () => {
-  it("counts stood and fell-back centre objects per tier", () => {
+  it("counts stood and fell-back centre objects per tier, in rooms that may grow", () => {
     const configs = { j: [[floor("junior"), floor("expert")], [floor("junior")]] }
     const grids = [
-      gridOf(room("bones", true), room("bones", false), room("lamp", false)),
+      gridOf(room("bones", true), room("bones", false), room("lamp", false), room("bones", false, "encounter")),
       gridOf(room("bones", true)),
       gridOf(room("bones", false)),
     ]

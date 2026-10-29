@@ -57,7 +57,8 @@ type Candidate = { rect: CellRect; absorbed: number; offset: number; tie: number
 const preferred = (a: Candidate, b: Candidate): boolean =>
   (a.absorbed - b.absorbed || a.offset - b.offset || a.tie - b.tie) < 0
 
-const growsAt = (cell: GridCell, footprintOf: FootprintOf): cell is RoomCell & { decoration: DecorationKind } =>
+/** A fork or pass-through chamber dressed with a centre kind and standing no mechanism: a room that may grow. */
+export const growsAt = (cell: GridCell, footprintOf: FootprintOf): cell is RoomCell & { decoration: DecorationKind } =>
   cell.type === "room" &&
   (cell.roomType === "fork" || cell.roomType === "chamber") &&
   cell.mechanism === undefined &&
@@ -123,15 +124,13 @@ export const growRooms = (grid: FloorGrid, siteId: string, footprintOf: Footprin
   return grown.length === 0 ? grid : { ...grid, cells }
 }
 
-/** The rooms dressed with a centre kind that found no rect to grow into, keyed `r,c`. */
+/** The rooms that may grow (`growsAt`) and found no rect to grow into, keyed `r,c`. */
 export const centreFallbacks = (
   grid: FloorGrid,
   footprintOf: FootprintOf
 ): Array<{ at: string; kind: DecorationKind }> =>
   grid.cells.flatMap((row, r) =>
     row.flatMap((cell, c) =>
-      cell.type === "room" && cell.decoration && !cell.grownRoom && isCentreKind(cell.decoration, footprintOf)
-        ? [{ at: `${r},${c}`, kind: cell.decoration }]
-        : []
+      growsAt(cell, footprintOf) && !cell.grownRoom ? [{ at: `${r},${c}`, kind: cell.decoration }] : []
     )
   )

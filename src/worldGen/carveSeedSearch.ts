@@ -197,18 +197,12 @@ export const verifyCarvePair = (
   base: number,
   pair: { seed: number; packing: number; sidePaths?: SidePathStage },
   assemble: CarveAssemble,
-  {
-    authoredPacking,
-    fullLadder,
-    judge,
-    prefer,
-  }: Pick<CarvePairOptions, "authoredPacking" | "fullLadder" | "judge" | "prefer">
+  { authoredPacking, fullLadder, judge }: Pick<CarvePairOptions, "authoredPacking" | "fullLadder" | "judge">
 ): LayoutFound | null => {
   const atBase = pair.seed === base && pair.packing === authoredPacking
   const sidePaths = pair.sidePaths ?? ALL_INSIDE
   const result = assemble(pair.seed, pair.packing, atBase ? fullLadder : 1, sidePaths)
   if (!result.success || (!atBase && result.attempt > 0) || judge(result)) return null
-  if (prefer && prefer(result.grid) > 0) return null
   return {
     kind: "found",
     seed: pair.seed,
