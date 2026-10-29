@@ -24,7 +24,10 @@ s stop
 // A made-up catalogued room in another tier.
 const NOOK = vi.hoisted(() => "room nook\ntier junior\nlayout\n# # # # #\n# . s . #\n# # d # #\ns stop\n")
 
-vi.mock("./roomEditorCatalogue", () => ({ ROOM_CATALOGUE: { nook: NOOK } }))
+// A catalogued room whose text has no room line: it is named after its file.
+const BARE = vi.hoisted(() => "tier starter\nlayout\n# # # # #\n# . s . #\n# # d # #\ns stop\n")
+
+vi.mock("./roomEditorCatalogue", () => ({ ROOM_CATALOGUE: { nook: NOOK, bare: BARE } }))
 
 const textOf = () => (screen.getByLabelText("devRoomEditor.notation") as HTMLTextAreaElement).value
 const cellAt = (r: number, c: number) => document.querySelector(`[data-cell="${r},${c}"]`) as HTMLElement
@@ -106,5 +109,22 @@ describe("the room editor", () => {
     fireEvent.change(screen.getByLabelText("devRoomEditor.catalogue"), { target: { value: "nook" } })
     expect(textOf()).toBe(NOOK)
     expect((screen.getByLabelText("devRoomEditor.tier") as HTMLSelectElement).value).toBe("junior")
+  })
+
+  it("keeps a catalogued room without a room line unnamed when drawn on", () => {
+    render(<RoomEditor initialText={HALL} />)
+    fireEvent.change(screen.getByLabelText("devRoomEditor.catalogue"), { target: { value: "bare" } })
+    fireEvent.click(screen.getByRole("button", { name: "devRoomEditor.tool.wall" }))
+    fireEvent.pointerDown(cellAt(1, 1))
+    expect(textOf()).toContain("\n# # s . #\n")
+    expect(textOf()).not.toMatch(/^room /m)
+  })
+
+  it("says why the drawing refuses an edit", () => {
+    render(<RoomEditor initialText={HALL} />)
+    fireEvent.click(screen.getByRole("button", { name: "devRoomEditor.tool.floor" }))
+    fireEvent.pointerDown(cellAt(0, 1))
+    expect(screen.getByRole("alert").textContent).toContain("devRoomEditor.refused.floorOnRing")
+    expect(textOf()).toBe(HALL)
   })
 })

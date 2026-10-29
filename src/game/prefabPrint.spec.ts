@@ -66,3 +66,18 @@ describe("printPrefab", () => {
     expect(printPrefab(parse(canonical))).toBe(canonical)
   })
 })
+
+describe("printPrefab's room line", () => {
+  const unnamed = "tier junior\nlayout\n# # #\n# s #\n# # #\ns stop\n"
+
+  it("is left out when the room is named as the text is read", () => {
+    const room = parsePrefab(unnamed, "nook")
+    const printed = printPrefab(room, { readAs: "nook" })
+    expect(printed).not.toMatch(/^room /m)
+    expect(parsePrefab(printed, "nook")).toEqual(room)
+  })
+
+  it("is written when the room's own name differs", () => {
+    expect(printPrefab(parsePrefab(`room hall\n${unnamed}`, "nook"), { readAs: "nook" })).toMatch(/^room hall$/m)
+  })
+})

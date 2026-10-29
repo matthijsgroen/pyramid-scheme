@@ -10,19 +10,24 @@ import { prefabChoices } from "@/app/SiteMap/prefabPreviewFloor"
 import { PrefabRoomPreview } from "@/app/SiteMap/PrefabRoomPreview"
 import { addLegendLine, roomPalette } from "@/app/SiteMap/roomPalette"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
-import { addLayout } from "./roomEditing"
+import { addLayout, isRefusal } from "./roomEditing"
+import type { Refusal } from "./roomEditing"
 import { ROOM_CATALOGUE } from "./roomEditorCatalogue"
 import { encodeRoomHash, initialRoomText } from "./roomEditorUrl"
 import { ROOM_KIND_DRAG, RoomDrawing } from "./RoomDrawing"
+import { refusalText } from "./refusalText"
 
 const TIERS: readonly Tileset[] = [...difficulties, "cave", "sphinx"]
 const DIRECTIONS: readonly Direction[] = ["n", "e", "s", "w"]
 
 type Parsed = { prefab: Prefab; faults: string[] } | { error: string }
 
-const parse = (text: string): Parsed => {
+// A text without a room line is named after its file, as the catalogue reads it; one typed fresh is "room".
+const UNNAMED = "room"
+
+const parse = (text: string, name: string): Parsed => {
   try {
-    const prefab = parsePrefab(text)
+    const prefab = parsePrefab(text, name)
     return { prefab, faults: prefabFaults(prefab) }
   } catch (error) {
     return { error: error instanceof Error ? error.message : String(error) }
@@ -61,13 +66,17 @@ export const RoomEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
   const [text, setText] = useState(initialText)
   const [past, setPast] = useState<readonly string[]>([])
   const [layoutName, setLayoutName] = useState("")
+  const [layoutRefusal, setLayoutRefusal] = useState<Refusal>()
+  /** The catalogue file the text came from: what it is read under, so printing keeps its room line as it was. */
+  const [fileName, setFileName] = useState(UNNAMED)
   const [picked, setPicked] = useState<Tileset | null>(null)
   const [variant, setVariant] = useState(0)
   const [fill, setFill] = useState(0)
   const [from, setFrom] = useState<Direction | undefined>()
   const [to, setTo] = useState<Direction | undefined>()
   const [copied, setCopied] = useState<"copied" | "failed" | null>(null)
-  const parsed = useMemo(() => parse(text), [text])
+  const parsed = useMemo(() => parse(text, fileName), [text, fileName])
+  const print = (next: Prefab) => printPrefab(next, { readAs: fileName })
   const prefab = "prefab" in parsed ? parsed.prefab : undefined
   const tier: Tileset = picked ?? prefab?.tier ?? "starter"
   const palette = useMemo(() => roomPalette(tier), [tier])
@@ -98,6 +107,7 @@ export const RoomEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
   }
   const openRoom = (name: string) => {
     edit(ROOM_CATALOGUE[name])
+    setFileName(name)
     setPicked(null)
     setVariant(0)
     setFill(0)
@@ -231,7 +241,7 @@ export const RoomEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
               prefab={prefab}
               layout={drawnLayout}
               palette={palette}
-              onChange={(next, stroke) => edit(printPrefab(next), !stroke)}
+              onChange={(next, stroke) => edit(print(next), !stroke)}
             />
           )}
           {prefab && (
@@ -240,8 +250,9 @@ export const RoomEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
               onSubmit={e => {
                 e.preventDefault()
                 const next = addLayout(prefab, drawnLayout, layoutName.trim())
-                if (next === prefab) return
-                edit(printPrefab(next))
+                setLayoutRefusal(isRefusal(next) ? next : undefined)
+                if (isRefusal(next) || next === prefab) return
+                edit(print(next))
                 setLayoutName("")
                 setVariant(variantsOf(next).findIndex(v => v.layout === next.layouts.length - 1))
               }}
@@ -255,6 +266,11 @@ export const RoomEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
                 />
               </label>
               <DeveloperButton label={t("devRoomEditor.addLayout")} />
+              {layoutRefusal && (
+                <p role="alert" className="text-sm text-amber-300">
+                  ⚠ {refusalText(t, layoutRefusal)}
+                </p>
+              )}
             </form>
           )}
           {prefab && (

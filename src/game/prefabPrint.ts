@@ -20,13 +20,14 @@ const placeLine = (place: PlaceDef, lists: Readonly<Record<string, readonly stri
   return `${place.letter} ${place.layer}${place.optional ? "?" : ""} ${writtenKinds(place.kinds, lists).join(" | ")}${counted}`
 }
 
-/** The text of a prefab; parsePrefab reads it back to the same prefab. */
-export const printPrefab = (prefab: Prefab): string => {
+/** The text of a prefab; parsePrefab reads it back to the same prefab. `readAs` is the name the text will be read
+ * under (parsePrefab's `name`, the file's name): the room line is written only when the room's name differs from it. */
+export const printPrefab = (prefab: Prefab, { readAs }: { readAs?: string } = {}): string => {
   const lists = prefab.lists ?? {}
   const lines = [
     prefab.designedBy ? `// designed by: ${prefab.designedBy}` : "// designed by:",
     ...(prefab.notes ?? []).map(note => (note ? `// ${note}` : "//")),
-    `room ${prefab.name}`,
+    ...(prefab.name === readAs ? [] : [`room ${prefab.name}`]),
     `tier ${prefab.tier}`,
     ...(prefab.activity ? [`activity ${prefab.activity}`] : []),
     ...(prefab.mirror ? ["mirror"] : []),

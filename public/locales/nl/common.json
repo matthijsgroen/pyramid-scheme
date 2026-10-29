@@ -1435,6 +1435,31 @@
       "perNone": "elk op zich",
       "drawAnother": "Nog een tekenen",
       "close": "Sluiten"
-    }
+    },
+    "refused": {
+      "notFree": "Niet op vrije vloer binnen de kamer",
+      "wallRow": "Een muurplek staat op de eerste rij binnen de noordmuur",
+      "northWall": "Een muurvoorwerp hangt aan de noordmuur",
+      "floorOnRing": "Op de buitenrand horen alleen muren en deurplekken",
+      "doorInside": "Een deurplek staat op de buitenrand",
+      "keepStop": "De stopplek blijft: zet hem ergens anders neer om hem te verplaatsen",
+      "noLetter": "Alle letters zijn al gebruikt",
+      "layoutName": "Geef de indeling een naam die nog geen andere indeling heeft",
+      "notation": "De notatie weigert het: {{message}}"
+    },
+    "layer": {
+      "wall": "tegen de muur",
+      "floor": "vloer",
+      "ground": "grond",
+      "wallItem": "muurvoorwerp"
+    },
+    "cell": "Vakje {{row}},{{col}}: {{what}}",
+    "cellWhat": {
+      "wall": "muur",
+      "floor": "vrije vloer",
+      "door": "deurplek",
+      "place": "{{letter}}, {{kinds}}"
+    },
+    "rewrites": "Tekenen herschrijft de tekst: elk commentaar gaat naar boven"
   }
 }

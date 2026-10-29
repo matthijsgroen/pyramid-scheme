@@ -3,8 +3,10 @@ import { useTranslation } from "react-i18next"
 import { placeBlobs } from "@/game/prefabChecks"
 import type { PlaceKind, Prefab, SpecialPlace } from "@/game/prefabTypes"
 import type { PaletteEntry } from "@/app/SiteMap/roomPalette"
-import { copyPlace, dropKind, editPlace, paintCell, removePlace, setSpecial } from "./roomEditing"
+import { copyPlace, dropKind, editPlace, isRefusal, paintCell, removePlace, setSpecial } from "./roomEditing"
+import type { Edited, Refusal } from "./roomEditing"
 import { PlaceInspector } from "./PlaceInspector"
+import { refusalText } from "./refusalText"
 
 /** The palette entry being dragged travels as this data type. */
 export const ROOM_KIND_DRAG = "application/x-room-kind"
@@ -37,6 +39,7 @@ export const RoomDrawing: FC<Props> = ({ prefab, layout, palette, onChange }) =>
   const [copying, setCopying] = useState<string>()
   const [selected, setSelected] = useState<string>()
   const [againstWall, setAgainstWall] = useState(false)
+  const [refusal, setRefusal] = useState<Refusal>()
   // A drag under way, and whether it has changed the room yet: its first change is a new undo step.
   const [stroke, setStroke] = useState<"none" | "down" | "changed">("none")
   useEffect(() => {
@@ -48,8 +51,27 @@ export const RoomDrawing: FC<Props> = ({ prefab, layout, palette, onChange }) =>
   const cells = prefab.layouts[layout].cells
   const place = selected ? prefab.places[selected] : undefined
   const blobs = placeBlobs({ layout, mirrored: false, cells }, prefab)
+  const whatIs = (ch: string): string => {
+    if (ch === "#") return t("devRoomEditor.cellWhat.wall")
+    if (ch === ".") return t("devRoomEditor.cellWhat.floor")
+    if (ch === "d") return t("devRoomEditor.cellWhat.door")
+    const special = prefab.specials[ch]
+    const kinds = special ? t(`devRoomEditor.tool.${special}`) : (prefab.places[ch]?.kinds.join(" | ") ?? "")
+    return t("devRoomEditor.cellWhat.place", { letter: ch, kinds })
+  }
   const urlOf = (kind: string) => palette.find(entry => entry.kind === kind)?.url
 
+  /** Hands up a changed room, or keeps the refusal to show; true when the room changed. */
+  const take = (next: Edited, joinStroke: boolean): boolean => {
+    if (isRefusal(next)) {
+      setRefusal(next)
+      return false
+    }
+    if (next === prefab) return false
+    setRefusal(undefined)
+    onChange(next, joinStroke)
+    return true
+  }
   /** Applies the tool at r,c; true when the room changed. */
   const apply = (r: number, c: number, joinStroke: boolean): boolean => {
     const ch = cells[r][c]
@@ -67,14 +89,11 @@ export const RoomDrawing: FC<Props> = ({ prefab, layout, palette, onChange }) =>
               ? copyPlace(prefab, layout, r, c, copying)
               : prefab
             : setSpecial(prefab, layout, r, c, tool)
-    if (next === prefab) return false
-    onChange(next, joinStroke)
-    return true
+    return take(next, joinStroke)
   }
   const drop = (r: number, c: number, kind: string) => {
     const prop = palette.find(entry => entry.kind === kind)?.layer === "prop"
-    const next = dropKind(prefab, layout, r, c, kind as PlaceKind, againstWall && prop ? { layer: "wall" } : {})
-    if (next !== prefab) onChange(next, false)
+    take(dropKind(prefab, layout, r, c, kind as PlaceKind, againstWall && prop ? { layer: "wall" } : {}), false)
   }
 
   const fitting = place
@@ -123,6 +142,7 @@ export const RoomDrawing: FC<Props> = ({ prefab, layout, palette, onChange }) =>
         {t("devRoomEditor.againstWall")}
       </label>
       <p className="text-xs text-white/60">{t("devRoomEditor.dropHint")}</p>
+      <p className="text-xs text-white/60">{t("devRoomEditor.rewrites")}</p>
       <div
         className="grid w-fit touch-none gap-px bg-black select-none"
         style={{ gridTemplateColumns: `repeat(${cells[0].length}, 2rem)`, gridAutoRows: "2rem" }}
@@ -145,7 +165,8 @@ export const RoomDrawing: FC<Props> = ({ prefab, layout, palette, onChange }) =>
                 key={`${r},${c}`}
                 type="button"
                 data-cell={`${r},${c}`}
-                title={special ?? prefab.places[ch]?.kinds.join(" | ") ?? ch}
+                title={whatIs(ch)}
+                aria-label={t("devRoomEditor.cell", { row: r, col: c, what: whatIs(ch) })}
                 style={{ gridRow: r + 1, gridColumn: c + 1 }}
                 className={`font-mono text-xs ${look}`}
                 onPointerDown={e => {
@@ -186,6 +207,11 @@ export const RoomDrawing: FC<Props> = ({ prefab, layout, palette, onChange }) =>
           )
         })}
       </div>
+      {refusal && (
+        <p role="alert" className="text-sm text-amber-300">
+          ⚠ {refusalText(t, refusal)}
+        </p>
+      )}
       {place && (
         <PlaceInspector
           place={place}
@@ -193,8 +219,7 @@ export const RoomDrawing: FC<Props> = ({ prefab, layout, palette, onChange }) =>
           letters={Object.keys(prefab.places).filter(letter => letter !== place.letter)}
           drawn={blobs.filter(blob => blob.letter === place.letter).length}
           onChange={patch => {
-            const next = editPlace(prefab, place.letter, patch)
-            if (next !== prefab) onChange(next, false)
+            take(editPlace(prefab, place.letter, patch), false)
           }}
           onDrawAnother={() => {
             setCopying(place.letter)

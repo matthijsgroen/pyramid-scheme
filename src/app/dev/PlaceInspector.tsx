@@ -32,7 +32,8 @@ export const PlaceInspector: FC<Props> = ({ place, fitting, letters, drawn, onCh
       className="flex flex-col gap-2 rounded-md border border-white/20 p-2 text-sm"
     >
       <h3 className="text-xs font-bold text-white/60 uppercase">
-        {t("devRoomEditor.inspector.title", { letter: place.letter })} · {place.layer} {place.cols}x{place.rows}
+        {t("devRoomEditor.inspector.title", { letter: place.letter })} · {t(`devRoomEditor.layer.${place.layer}`)}{" "}
+        {place.cols}x{place.rows}
       </h3>
       <label className="flex items-center gap-2">
         <input type="checkbox" checked={place.optional} onChange={e => onChange({ optional: e.target.checked })} />

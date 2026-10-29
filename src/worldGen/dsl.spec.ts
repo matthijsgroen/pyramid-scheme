@@ -3,6 +3,7 @@ import {
   global,
   tier,
   journey,
+  resolveFloorRooms,
   resolveNodeActivities,
   resolveNodeChambers,
   resolveNodeRooms,
@@ -12,6 +13,7 @@ import {
   wardChest,
   wardWing,
 } from "./dsl"
+import { parsePrefab } from "../game/prefabNotation"
 
 // ── Node selectors → per-index encounter overrides (§G) ───────────────────────
 
@@ -45,6 +47,18 @@ describe("resolveNodeRooms", () => {
 
   it("skips a selector that pins no room", () => {
     expect(resolveNodeRooms([{ where: "last", encounter: "conversation" }], 4)).toEqual({})
+  })
+})
+
+describe("resolveFloorRooms", () => {
+  it("bakes a room without its comments or how its lists are spelled", () => {
+    const listed =
+      "// designed by: someone\n// a note\ntier junior\nlayout\n# # # #\n# s g #\n# # d #\ns stop\nkit = pillar | statue\ng floor kit"
+    const plain =
+      "// designed by: someone\ntier junior\nlayout\n# # # #\n# s g #\n# # d #\ns stop\ng floor pillar | statue"
+    const baked = (text: string) =>
+      resolveFloorRooms([{ room: "hall" }], {}, name => parsePrefab(text, name), { difficulty: "junior", label: "f" })
+    expect(JSON.stringify(baked(listed).prefabs)).toBe(JSON.stringify(baked(plain).prefabs))
   })
 })
 

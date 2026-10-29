@@ -1435,6 +1435,31 @@
       "perNone": "each on its own",
       "drawAnother": "Draw another",
       "close": "Close"
-    }
+    },
+    "refused": {
+      "notFree": "Not on free floor inside the room",
+      "wallRow": "A wall place stands on the first row inside the north wall",
+      "northWall": "A wall item hangs on the north wall",
+      "floorOnRing": "The outer ring takes walls and door places only",
+      "doorInside": "A door place stands on the outer ring",
+      "keepStop": "The stop stays: set it elsewhere to move it",
+      "noLetter": "Every letter is taken",
+      "layoutName": "Give the layout a name no other layout has",
+      "notation": "The notation refuses it: {{message}}"
+    },
+    "layer": {
+      "wall": "against the wall",
+      "floor": "floor",
+      "ground": "ground",
+      "wallItem": "wall item"
+    },
+    "cell": "Cell {{row}},{{col}}: {{what}}",
+    "cellWhat": {
+      "wall": "wall",
+      "floor": "free floor",
+      "door": "door place",
+      "place": "{{letter}}, {{kinds}}"
+    },
+    "rewrites": "Drawing rewrites the text: every comment moves to the top"
   }
 }

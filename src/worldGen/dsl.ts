@@ -1,6 +1,7 @@
 import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
 import type { ActivityId } from "../game/activities"
 import type { Prefab } from "../game/prefabTypes"
+import { bakedPrefab } from "../game/prefabNotation"
 import type { DecorationKind, HandleSide, Patron, SiteCondition, Tileset, WallDecorationKind } from "../game/siteTypes"
 import type { PlacedContainer } from "../game/regions"
 import type { BarrierOrder, Control, Obstacle } from "@/game/obstacles"
@@ -110,7 +111,7 @@ export const resolveFloorRooms = (
   prefabsByIndex?: Record<number, string>
 } => {
   const names = [...(placements ?? []).map(p => p.room), ...Object.values(pinned)]
-  const prefabs = Object.fromEntries([...new Set(names)].map(name => [name, lookup(name)]))
+  const prefabs = Object.fromEntries([...new Set(names)].map(name => [name, bakedPrefab(lookup(name))]))
   for (const prefab of Object.values(prefabs))
     if (prefab.tier !== at.difficulty)
       throw new RoomFault(

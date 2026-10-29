@@ -84,6 +84,13 @@ const blobsOf = (rows: readonly string[], letter: string, fail: (message: string
   return blobs
 }
 
+/** The prefab as the world bakes it: what the carve and the map read, without the text's comments and lists. */
+export const bakedPrefab = (prefab: Prefab): Prefab => {
+  if (!prefab.notes && !prefab.lists) return prefab
+  const { notes: _notes, lists: _lists, ...baked } = prefab
+  return baked
+}
+
 export const parsePrefab = (
   text: string,
   name = "room",

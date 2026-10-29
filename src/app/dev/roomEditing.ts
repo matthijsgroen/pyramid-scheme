@@ -1,6 +1,7 @@
 // DRAWING A ROOM PREFAB: the edits the room editor's drawing makes, each a pure step from one prefab to the next.
-// An edit the notation would refuse returns the prefab unchanged, so the drawing can never write text that fails to
-// parse; a fault the check finds (a door cut off) is the designer's to see and fix.
+// An edit the notation would refuse comes back as a Refusal saying why, so the drawing can never write text that fails
+// to parse; a fault the check finds (a door cut off) is the designer's to see and fix. An edit that changes nothing
+// returns the same prefab.
 import { parsePrefab } from "@/game/prefabNotation"
 import { printPrefab } from "@/game/prefabPrint"
 import type { PlaceDef, PlaceKind, PlaceLayer, Prefab, SpecialPlace } from "@/game/prefabTypes"
@@ -10,6 +11,23 @@ import type { DecorationKind, PropFootprint } from "@/game/siteTypes"
 type Footprints = (kind: DecorationKind) => PropFootprint
 type Patch = Partial<Pick<PlaceDef, "optional" | "kinds" | "group">>
 
+/** Why an edit was refused; "notation" carries the parser's own message. */
+export type Refusal = {
+  refused:
+    | "notFree"
+    | "wallRow"
+    | "northWall"
+    | "floorOnRing"
+    | "doorInside"
+    | "keepStop"
+    | "noLetter"
+    | "layoutName"
+    | "notation"
+  message?: string
+}
+export type Edited = Prefab | Refusal
+export const isRefusal = (edited: Edited): edited is Refusal => "refused" in edited
+
 // Every letter a place may take; "d" is a door place.
 const LETTERS = "abcefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 const FIXED = new Set(["#", ".", "d"])
@@ -18,12 +36,12 @@ const isLetter = (ch: string | undefined): ch is string => ch !== undefined && !
 const onRing = (cells: readonly string[], r: number, c: number): boolean =>
   r === 0 || c === 0 || r === cells.length - 1 || c === cells[0].length - 1
 
-/** The prefab as its printed text reads back, or `before` when the notation refuses it. */
-const sound = (before: Prefab, after: Prefab, footprintOf: Footprints): Prefab => {
+/** The prefab as its printed text reads back, or the notation's refusal. */
+const sound = (after: Prefab, footprintOf: Footprints): Edited => {
   try {
     return parsePrefab(printPrefab(after), after.name, footprintOf)
-  } catch {
-    return before
+  } catch (error) {
+    return { refused: "notation", message: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -88,11 +106,14 @@ export const paintCell = (
   c: number,
   sign: "#" | "." | "d",
   footprintOf: Footprints = decorationFootprint
-): Prefab => {
+): Edited => {
   const cells = prefab.layouts[layout].cells
   if (cells[r]?.[c] === undefined || cells[r][c] === sign) return prefab
+  if (sign === "." && onRing(cells, r, c)) return { refused: "floorOnRing" }
+  if (sign === "d" && !onRing(cells, r, c)) return { refused: "doorInside" }
+  if (prefab.specials[cells[r][c]] === "stop") return { refused: "keepStop" }
   const cleared = isLetter(cells[r][c]) ? clearBlob(cells, r, c) : [...cells]
-  return sound(prefab, withoutUndrawn(withCells(prefab, layout, setCell(cleared, r, c, sign))), footprintOf)
+  return sound(withoutUndrawn(withCells(prefab, layout, setCell(cleared, r, c, sign))), footprintOf)
 }
 
 /** Sets a special place on free floor; the stop moves there, since a layout has one. */
@@ -103,15 +124,16 @@ export const setSpecial = (
   c: number,
   special: SpecialPlace,
   footprintOf: Footprints = decorationFootprint
-): Prefab => {
+): Edited => {
   const cells = prefab.layouts[layout].cells
-  if (cells[r]?.[c] !== ".") return prefab
+  if (cells[r]?.[c] === undefined) return prefab
+  if (prefab.specials[cells[r][c]] === special) return prefab
+  if (cells[r][c] !== ".") return { refused: "notFree" }
   const stop = Object.keys(prefab.specials).find(letter => prefab.specials[letter] === "stop")
   const letter = special === "stop" && stop ? stop : freeLetter(prefab)
-  if (!letter) return prefab
+  if (!letter) return { refused: "noLetter" }
   const moved = cells.map(row => row.replaceAll(letter, "."))
   return sound(
-    prefab,
     { ...withCells(prefab, layout, setCell(moved, r, c, letter)), specials: { ...prefab.specials, [letter]: special } },
     footprintOf
   )
@@ -119,14 +141,14 @@ export const setSpecial = (
 
 /** Draws an object of `cols` x `rows` from r,c (its north-west cell) on free floor, or for a wall item on the
  * north wall; a wall place stands on the first inside row. */
-const claim = (prefab: Prefab, layout: number, r: number, c: number, place: PlaceDef): Prefab | undefined => {
+const claim = (prefab: Prefab, layout: number, r: number, c: number, place: PlaceDef): Prefab | Refusal => {
   let cells = [...prefab.layouts[layout].cells]
-  if (place.layer === "wall" && r !== 1) return undefined
+  if (place.layer === "wall" && r !== 1) return { refused: "wallRow" }
   for (let y = r; y < r + place.rows; y++)
     for (let x = c; x < c + place.cols; x++) {
       const here = cells[y]?.[x]
       const fits = place.layer === "wallItem" ? y === 0 && here === "#" : here === "." && !onRing(cells, y, x)
-      if (!fits) return undefined
+      if (!fits) return { refused: place.layer === "wallItem" ? "northWall" : "notFree" }
       cells = setCell(cells, y, x, place.letter)
     }
   return { ...withCells(prefab, layout, cells), places: { ...prefab.places, [place.letter]: place } }
@@ -144,9 +166,9 @@ export const dropKind = (
   c: number,
   kind: PlaceKind,
   { layer, footprintOf = decorationFootprint }: { layer?: PlaceLayer; footprintOf?: Footprints } = {}
-): Prefab => {
+): Edited => {
   const letter = freeLetter(prefab)
-  if (!letter) return prefab
+  if (!letter) return { refused: "noLetter" }
   const single = kind === "patron" || (WALL_DECORATION_KINDS as readonly string[]).includes(kind)
   const footprint = single ? { cols: 1, rows: 1, tall: 0 } : footprintOf(kind as DecorationKind)
   const place: PlaceDef = {
@@ -158,7 +180,7 @@ export const dropKind = (
     rows: footprint.rows,
   }
   const claimed = claim(prefab, layout, r, c, place)
-  return claimed ? sound(prefab, claimed, footprintOf) : prefab
+  return isRefusal(claimed) ? claimed : sound(claimed, footprintOf)
 }
 
 /** Draws one more object of an existing place at r,c, in the place's footprint. */
@@ -169,10 +191,11 @@ export const copyPlace = (
   c: number,
   letter: string,
   footprintOf: Footprints = decorationFootprint
-): Prefab => {
+): Edited => {
   const place = prefab.places[letter]
-  const claimed = place && claim(prefab, layout, r, c, place)
-  return claimed ? sound(prefab, claimed, footprintOf) : prefab
+  if (!place) return prefab
+  const claimed = claim(prefab, layout, r, c, place)
+  return isRefusal(claimed) ? claimed : sound(claimed, footprintOf)
 }
 
 /** Takes out the object or special place drawn at r,c; its legend line goes when no layout draws it any more. */
@@ -182,10 +205,11 @@ export const removePlace = (
   r: number,
   c: number,
   footprintOf: Footprints = decorationFootprint
-): Prefab => {
+): Edited => {
   const cells = prefab.layouts[layout].cells
   if (!isLetter(cells[r]?.[c])) return prefab
-  return sound(prefab, withoutUndrawn(withCells(prefab, layout, clearBlob(cells, r, c))), footprintOf)
+  if (prefab.specials[cells[r][c]] === "stop") return { refused: "keepStop" }
+  return sound(withoutUndrawn(withCells(prefab, layout, clearBlob(cells, r, c))), footprintOf)
 }
 
 /** Changes a place's options; `group: undefined` fills every place of the letter again. */
@@ -194,12 +218,12 @@ export const editPlace = (
   letter: string,
   patch: Patch,
   footprintOf: Footprints = decorationFootprint
-): Prefab => {
+): Edited => {
   const place = prefab.places[letter]
   if (!place) return prefab
   const { group, ...rest } = { ...place, ...patch }
   const next: PlaceDef = { ...rest, ...(group ? { group } : {}) }
-  return sound(prefab, { ...prefab, places: { ...prefab.places, [letter]: next } }, footprintOf)
+  return sound({ ...prefab, places: { ...prefab.places, [letter]: next } }, footprintOf)
 }
 
 /** A copy of a layout under a new name, to rework by hand. */
@@ -208,8 +232,9 @@ export const addLayout = (
   fromIndex: number,
   name: string,
   footprintOf: Footprints = decorationFootprint
-): Prefab => {
+): Edited => {
   const from = prefab.layouts[fromIndex]
-  if (!from || name === "" || prefab.layouts.some(layout => layout.name === name)) return prefab
-  return sound(prefab, { ...prefab, layouts: [...prefab.layouts, { name, cells: from.cells }] }, footprintOf)
+  if (!from) return prefab
+  if (name === "" || prefab.layouts.some(layout => layout.name === name)) return { refused: "layoutName" }
+  return sound({ ...prefab, layouts: [...prefab.layouts, { name, cells: from.cells }] }, footprintOf)
 }
