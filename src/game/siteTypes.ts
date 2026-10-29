@@ -1035,8 +1035,9 @@ export type AssemblerReason =
    * `seated` how many of them one attempt found room for. See FloorConfig.chambersByIndex. */
   | { type: "chambersNotSeated"; address: string; wanted: number; seated: number }
   /** Fewer of a designed room fitted the floor than its `min`: `room` is the prefab, `placed` how many one attempt
-   * fitted. A pinned room that fits nowhere wants 1. See FloorConfig.prefabPlacements. */
-  | { type: "prefabsNotPlaced"; room: string; wanted: number; placed: number }
+   * fitted. A pinned room that fits nowhere wants 1, and `why` says what its node holds instead of the room, where
+   * something does. See FloorConfig.prefabPlacements. */
+  | { type: "prefabsNotPlaced"; room: string; wanted: number; placed: number; why?: string }
   /** The floor's mechanics (and sequence tiles) need more distinct glyphs than the six a mark can wear,
    * so a mark would be shared. `ids` are the ones left without a glyph, in authoring order. */
   | { type: "marksExhausted"; ids: string[] }

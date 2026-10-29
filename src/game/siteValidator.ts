@@ -185,12 +185,16 @@ const BACK: Record<string, string> = { n: "s", s: "n", e: "w", w: "e" }
 // where the corridor runs on, round the bend where it turns and has no other way. Nodes sit two cells
 // apart on a lattice floor, a corridor of any length and shape apart on an embedded one, and directly
 // adjacent on a hand-built one.
-export const nodeBeyond = (grid: FloorGrid, from: Pos, dir: string): Pos | undefined => {
+export const nodeBeyond = (grid: FloorGrid, from: Pos, dir: string): Pos | undefined =>
+  arrivalBeyond(grid, from, dir)?.at
+
+/** The room `nodeBeyond` reaches, and the heading the walk arrives on it with. */
+const arrivalBeyond = (grid: FloorGrid, from: Pos, dir: string): { at: Pos; heading: Direction } | undefined => {
   let heading = dir as Direction
   let [r, c] = [from[0] + MOVES[heading][0], from[1] + MOVES[heading][1]]
   for (let steps = 0; steps < grid.rows * grid.cols && r >= 0 && r < grid.rows && c >= 0 && c < grid.cols; steps++) {
     const cell = grid.cells[r][c]
-    if (cell.type === "room") return [r, c]
+    if (cell.type === "room") return { at: [r, c], heading }
     if (cell.type !== "corridor") return undefined
     const bend = [...cell.dirs].filter(way => way !== BACK[heading])
     if (!cell.dirs.has(heading) && cell.dirs.size === 2 && bend.length === 1) heading = bend[0]
@@ -202,10 +206,11 @@ export const nodeBeyond = (grid: FloorGrid, from: Pos, dir: string): Pos | undef
 // The door a gated way out of a fork stands on: the next room along it, or, when that room is a sequence tile (a step
 // in the fork's own region stands its tile as the room's first cell, inside the door), the room past the tile.
 export const armDoor = (grid: FloorGrid, from: Pos, dir: string): Pos | undefined => {
-  const next = nodeBeyond(grid, from, dir)
+  const arrival = arrivalBeyond(grid, from, dir)
+  const next = arrival?.at
   const cell = next && grid.cells[next[0]][next[1]]
   if (!next || cell?.type !== "room" || cell.sequenceTile === undefined) return next
-  const onward = [...cell.dirs].filter(way => way !== BACK[dir])
+  const onward = [...cell.dirs].filter(way => way !== BACK[arrival.heading])
   return onward.length === 1 ? nodeBeyond(grid, next, onward[0]) : undefined
 }
 

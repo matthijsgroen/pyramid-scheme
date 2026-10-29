@@ -561,10 +561,18 @@ export const choosePrefabs = (
   const placements = prep.config.config.prefabPlacements ?? []
   const prefabNamed = prefabNamedIn(prep.config.config)
   const chosen: PrefabChoice[] = []
-  const taken = new Set<string>([...dropEnds(grid), ...held])
+  const drops = dropEnds(grid)
+  const taken = new Set<string>([...drops, ...held])
   for (const { r, c, name } of pinnedOf(grid)) {
-    const choice = taken.has(`${r},${c}`) ? undefined : choiceAt(prep, grid, [r, c], prefabNamed(name))
-    if (!choice) return { retry: [{ type: "prefabsNotPlaced", room: name, wanted: 1, placed: 0 }] }
+    const at = `${r},${c}`
+    const why = drops.has(at)
+      ? `its node ${at} is a drop's end`
+      : held.has(at)
+        ? `its node ${at} holds a piece`
+        : undefined
+    const choice = why ? undefined : choiceAt(prep, grid, [r, c], prefabNamed(name))
+    if (!choice)
+      return { retry: [{ type: "prefabsNotPlaced", room: name, wanted: 1, placed: 0, ...(why ? { why } : {}) }] }
     chosen.push(choice)
     taken.add(`${r},${c}`)
   }

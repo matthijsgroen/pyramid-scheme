@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { nodeBeyond, reachableFrom, validateJourney, validateSite } from "./siteValidator"
+import { armDoor, nodeBeyond, reachableFrom, validateJourney, validateSite } from "./siteValidator"
 import type { CellState, CorridorCell, Direction, FloorGrid, GridCell, RoomCell } from "./siteTypes"
 
 // ─── Grid builders ────────────────────────────────────────────────────────────
@@ -515,6 +515,23 @@ describe(nodeBeyond, () => {
       [0, 2]
     )
     expect(nodeBeyond(grid, [0, 0], "e")).toEqual([0, 2])
+  })
+})
+
+describe(armDoor, () => {
+  it("finds the door past a sequence tile the way out reaches round a bend", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("fork", ["e"])],
+        [0, 1, corridor(["w", "s"])],
+        [1, 1, room("puzzle", ["n", "e"], { sequenceTile: { id: "s", step: 0, glyph: 0, entrance: "start" } })],
+        [1, 2, corridor(["w", "e"])],
+        [1, 3, switchGate(["w"], "k")],
+      ],
+      [0, 0],
+      [1, 3]
+    )
+    expect(armDoor(grid, [0, 0], "e")).toEqual([1, 3])
   })
 })
 

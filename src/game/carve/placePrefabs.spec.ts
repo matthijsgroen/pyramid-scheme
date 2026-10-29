@@ -508,6 +508,17 @@ describe("choosePrefabs", () => {
     expect(choosePrefabs(prepFor(placing("hall", 0, 9)), { ...grid, cells })).toEqual([])
   })
 
+  it("refuses a pinned room whose node a drop leaves from, saying so", () => {
+    const grid = floorFrom(CROSS, { "4,4": { pinnedPrefab: "hall" } })
+    const run = grid.cells[4][6]
+    if (run.type !== "corridor") throw new Error("the east arm is corridor")
+    const cells = grid.cells.map(row => [...row])
+    cells[4][6] = { ...run, obstacle: { dir: "e", kind: "zipline" } }
+    expect(choosePrefabs(prepFor({}), { ...grid, cells })).toEqual({
+      retry: [{ type: "prefabsNotPlaced", room: "hall", wanted: 1, placed: 0, why: "its node 4,4 is a drop's end" }],
+    })
+  })
+
   it("passes by a variant whose door places line up with no one free cell", () => {
     const skew = prefab(`room skew
 layout

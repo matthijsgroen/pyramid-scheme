@@ -33,4 +33,5 @@ export const ROOMS_ENGINE: Engine = {
 
 /** The engine a verify file carves with: `CARVE_ENGINE_OVERRIDE=rooms` asks for the rooms engine, anything else the
  * one every floor ships with. */
-export const engineFromEnv = (): Engine => (process.env.CARVE_ENGINE_OVERRIDE === "rooms" ? ROOMS_ENGINE : CARVE_ENGINE)
+export const engineFromEnv = (): Engine =>
+  typeof process !== "undefined" && process.env.CARVE_ENGINE_OVERRIDE === "rooms" ? ROOMS_ENGINE : CARVE_ENGINE
