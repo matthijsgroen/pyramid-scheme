@@ -80,6 +80,20 @@ deterministically from the site. Three storerooms on one floor are dressed three
 - **min is hard**: a floor that cannot hold it is refused at bake time with a clear message, like the economy guard.
   Between min and max the carve places as many as fit. No silent shrinking to a smaller room.
 - Where the DSL names a prefab is the builder's call (floor and pyramid level, like `chambers`).
+- **Story rooms are pinned prefabs** (designer, 2026-10-29). A scene happens in one authored room, so its prefab is
+  pinned to that node through the existing node selectors (`nodes: [{ where, room }]` beside `activity`), not
+  placed by min/max/centrality. The prefab marks where the scene's figure stands (an actor place beside the stop).
+  Fez's meeting on `starter_1` floor 0, Ipi's room, the Sphinx inscription and the Djoser and Sphinx walks become
+  prefabs; a scene stops borrowing an activity's set.
+
+## Starter first
+
+Starter gets prefab rooms in this release (designer, 2026-10-29: "laten we starter goed doen"): its story rooms as
+pinned prefabs, and prefab rooms for its activities (weighing, packing, storage, selling, ledger) placed by the DSL.
+Starter's floors are small, so its prefabs are small; they use starter's painted props and the new starter kinds in
+`themed-rooms.md` §1. Starter's carved floors change on purpose: the starter guard (`starterCarve.verify.ts`) is
+re-snapshotted once, after the designer has looked at the carved starter floors, and guards them from then on. This
+release resets saves.
 
 ## The check
 
@@ -117,15 +131,14 @@ A prefab that fails is refused, so the carve can never place a room one cannot c
 - Rooms keep growing on lock floors; the lock walk and the lesson check (a lesson's shut door seen before its
   control, the control off the obvious path) still pass.
 - Saves are keyed by authoring address and slot, never by cells: no save migration.
-- Starter's carved floors stay exactly as they are until starter's DSL names a prefab (the starter guard,
-  `starterCarve.verify.ts`).
+- Starter's carved floors change only through prefabs its DSL names, and are re-snapshotted once after the designer
+  has seen them (the starter guard, `starterCarve.verify.ts`).
 - Strings nl + en; core names no mod; bake and verify under `timeout 900`.
 
 ## The builder's calls (Claude's, for the designer to check)
 
 - **The order inside the carve is the builder's.** The designer judges the carved floor, not the steps; prefab
   rooms will likely have to claim their space before the maze is drawn.
-- **Story rooms and Fez's stall are not taken** by a prefab; they keep their own set (`themed-rooms.md` §2).
 - **Places name what they take, in the file** (designer, 2026-10-29): a place lists the kinds it may hold
   (`pillar | patron`) or a named list the file declares (`gift = jarStack | basketStack | chestProp`). No tag or
   pool in code decides what stands in a prefab; the check enumerates exactly the file's lists.
@@ -134,8 +147,9 @@ A prefab that fails is refused, so the carve can never place a room one cannot c
 - **Lock controls stand only on mechanism places** in a prefab room, and the lesson check runs for every variant.
 - **The patron room stays as today.** A pillar place takes the patron's statue only on a floor with a patron.
 - **Junior loses nothing:** no shipped kind is a centre kind yet (the bake stands 0 centre pieces), so removing
-  "piece plus one ring" changes no floor. The first real prefabs come with junior's repaint; until then the work
-  is built and tested with made-up prefabs.
+  "piece plus one ring" changes no floor. The first real prefabs are starter's; junior's come with its repaint.
+  The engine is built and tested with made-up prefabs; real prefabs are never pinned in unit tests.
+- **A prefab whose prop has no art yet** is refused at bake time, so a floor never shows a missing sprite.
 - **Centre kinds no longer grow rooms by themselves.** A room only grows as a prefab the DSL names; a banquet table
   is a sized place in a junior prefab. `growRooms`' "piece plus one ring" goes away; the walk, the stop and the fade
   from room-walk-paths stay.
