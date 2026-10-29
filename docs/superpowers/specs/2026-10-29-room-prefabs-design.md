@@ -53,7 +53,10 @@ deterministically from the site. Three storerooms on one floor are dressed three
   - a wall place (against the north wall: a jar rack, a shelf, a desk);
   - a floor place (free-standing: a basin, a pillar, a mat);
   - a sized place (2×1, 2×2 …) that takes only kinds of that footprint (a banquet table, a throne);
-  - a wall-item place (a niche, a tally board, a frieze).
+  - a wall-item place (a niche, a tally board, a frieze);
+  - a ground place (designer, 2026-10-29): drawn on the floor under the player and walked over, such as steps up
+    to a dais. The check counts it as free floor. Mirroring flips its sprite; a turned layout names its own kind
+    (steps rising north are another drawing).
 - **A place may be optional** and sometimes stay empty.
 - **Place groups with a count:** "of these 5 places, 3 are filled", for example with gifts brought to the hall
   (jars, baskets, chests, as the file lists them). The carve picks which 3 per room.
