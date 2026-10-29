@@ -8,7 +8,11 @@ import { initPuzzleChains } from "./puzzleRewards"
 import { buildSideSections, type ResolveReward } from "./sideSections"
 import { stairIdAt } from "../game/stairAddress"
 import type { FloorConstraint, PyramidConstraint, RewardSpec } from "./dsl"
+import type { Prefab } from "../game/prefabTypes"
+import { ROOM_CATALOGUE, catalogueRoom } from "../game/roomCatalogue"
 import {
+  resolveFloorRooms,
+  resolveNodeRooms,
   resolveNodeActivities,
   resolveNodeChambers,
   resolveNodeDifficulties,
@@ -103,6 +107,9 @@ export type BuildFloorOptions = {
   activitiesByIndex?: FloorConfig["activitiesByIndex"]
   chambersByIndex?: FloorConfig["chambersByIndex"]
   chambers?: number
+  prefabs?: FloorConfig["prefabs"]
+  prefabPlacements?: FloorConfig["prefabPlacements"]
+  prefabsByIndex?: FloorConfig["prefabsByIndex"]
   difficultiesByIndex?: FloorConfig["difficultiesByIndex"]
   loot?: FloorConfig["loot"]
   lootByIndex?: FloorConfig["lootByIndex"]
@@ -157,6 +164,9 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
     ? { chambersByIndex: opts.chambersByIndex }
     : {}),
   ...(opts.chambers ? { chambers: opts.chambers } : {}),
+  ...(opts.prefabs && Object.keys(opts.prefabs).length ? { prefabs: opts.prefabs } : {}),
+  ...(opts.prefabPlacements?.length ? { prefabPlacements: opts.prefabPlacements } : {}),
+  ...(opts.prefabsByIndex && Object.keys(opts.prefabsByIndex).length ? { prefabsByIndex: opts.prefabsByIndex } : {}),
   ...(opts.difficultiesByIndex && Object.keys(opts.difficultiesByIndex).length
     ? { difficultiesByIndex: opts.difficultiesByIndex }
     : {}),
@@ -299,6 +309,8 @@ export type BuildSiteContext<TExtra extends string = never> = {
   sideTheme?: string
   sideDecorations?: DecorationKind[]
   sideWallDecorations?: WallDecorationKind[]
+  /** The rooms a spec may name, parsed. Defaults to the designed rooms under src/game/rooms. */
+  catalogue?: Readonly<Record<string, Prefab>>
 }
 
 // Lays `floorLocks` over floors the auto build made: the targeted floor gains its locks and the binding resolved
@@ -343,7 +355,11 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     sideTheme,
     sideDecorations,
     sideWallDecorations,
+    catalogue = ROOM_CATALOGUE,
   } = ctx
+  const lookupRoom = (name: string) => catalogueRoom(name, catalogue)
+  // The rooms the site names for every floor it builds without a list of its own.
+  const siteRooms = resolveFloorRooms(constraint.rooms, {}, lookupRoom)
 
   // The end of a path that authors no reward is an open loot slot, unless it is lootless.
   const unauthoredEnd = (loot: false | undefined): TreasureReward | undefined =>
@@ -392,6 +408,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         sideTheme,
         sideDecorations,
         sideWallDecorations,
+        lookupRoom,
       })
       const floorStraightness = fc.corridorStraightness ?? resolveCorridorStraightness(constraint, journeyId, i)
       const floorPacking = fc.packing ?? resolvePacking(constraint, journeyId, i)
@@ -427,6 +444,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           activitiesByIndex: resolveNodeActivities(fc.nodes, floorPP),
           chambersByIndex: resolveNodeChambers(fc.nodes, floorPP),
           chambers: fc.chambers ?? constraint.chambers,
+          // A floor's own list replaces the site's, the way `chambers` does.
+          ...resolveFloorRooms(fc.rooms ?? constraint.rooms, resolveNodeRooms(fc.nodes, floorPP), lookupRoom),
           difficultiesByIndex: resolveNodeDifficulties(fc.nodes, floorPP),
           loot: floorLoot,
           lootByIndex: resolveNodeLoot(fc.nodes, floorPP),
@@ -505,6 +524,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             mainEndReward: unauthoredEnd(constraint.loot),
             loot: constraint.loot,
             chambers: constraint.chambers,
+            ...siteRooms,
             encounter: constraint.encounter,
             // The junctions the site asks every floor of it to carve, and what stands in them.
             forks: constraint.forks,
@@ -556,6 +576,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         sideTheme,
         sideDecorations,
         sideWallDecorations,
+        lookupRoom,
         declaredSidePaths: constraint.sidePaths,
         declaredHiddenPaths: constraint.hiddenPaths,
       })
@@ -591,6 +612,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
           packing: resolvePacking(constraint, journeyId, i),
           chambers: constraint.chambers,
+          ...siteRooms,
           seed: constraint.seed,
           sealed: resolveSealed(constraint),
         })
@@ -662,6 +684,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             difficulty: wing.difficulty,
             sideSections: [],
             chambers: constraint.chambers,
+            ...siteRooms,
             entrance: { stairId: wingStairId },
             // A wing is off the main path: its way out is the stair it came down.
             exitOrStaircase: "none",
@@ -741,6 +764,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     sideTheme,
     sideDecorations,
     sideWallDecorations,
+    lookupRoom,
     declaredSidePaths: constraint.sidePaths,
     declaredHiddenPaths: constraint.hiddenPaths,
   })
@@ -775,6 +799,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
     packing: resolvePacking(constraint, journeyId, i),
     chambers: constraint.chambers,
+    ...siteRooms,
     seed: constraint.seed,
     sealed: resolveSealed(constraint),
   })

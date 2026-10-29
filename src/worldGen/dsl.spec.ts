@@ -5,7 +5,9 @@ import {
   journey,
   resolveNodeActivities,
   resolveNodeChambers,
+  resolveNodeRooms,
   resolveNodeSelectors,
+  withRoomDefaults,
   wardPath,
   wardChest,
   wardWing,
@@ -22,6 +24,40 @@ describe("resolveNodeActivities", () => {
 
   it("skips a selector that authors no activity", () => {
     expect(resolveNodeActivities([{ where: "last", encounter: "conversation" }], 4)).toEqual({})
+  })
+})
+
+describe("resolveNodeRooms", () => {
+  it("resolves a pinned room to its 0-based node index, 1-based `where` like an activity", () => {
+    expect(
+      resolveNodeRooms(
+        [
+          { where: "last", room: "hall" },
+          { where: 1, room: "nook" },
+        ],
+        4
+      )
+    ).toEqual({
+      3: "hall",
+      0: "nook",
+    })
+  })
+
+  it("skips a selector that pins no room", () => {
+    expect(resolveNodeRooms([{ where: "last", encounter: "conversation" }], 4)).toEqual({})
+  })
+})
+
+describe("withRoomDefaults", () => {
+  it("defaults min 0, max to min or else 1, central to the middle of the walk", () => {
+    expect(withRoomDefaults({ room: "a" })).toEqual({ room: "a", min: 0, max: 1, central: 0.5 })
+    expect(withRoomDefaults({ room: "a", min: 2 })).toEqual({ room: "a", min: 2, max: 2, central: 0.5 })
+    expect(withRoomDefaults({ room: "a", min: 1, max: 3, central: 0 })).toEqual({
+      room: "a",
+      min: 1,
+      max: 3,
+      central: 0,
+    })
   })
 })
 

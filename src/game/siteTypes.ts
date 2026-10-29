@@ -8,6 +8,7 @@ import type { GateFace } from "./gateFace"
 import type { LockNesting, LockNestingFault, PlacedLock } from "./floorLocks"
 import type { LockFault, RealisationBinding } from "./lockCompile"
 import type { ActivityId } from "./activities"
+import type { Prefab } from "./prefabTypes"
 import type { WebDoorPlacement } from "./webDoors"
 /** `chamber` is a pass-through room on a path: a corridor node widened into a room that serves an activity, holding
  * no encounter and answering to no slot. */
@@ -335,6 +336,8 @@ export type RoomCell = {
   /** The activity a story authored for this room (`nodes: [{ activity }]`). It wins over every other purpose,
    * and it makes the room a chamber even where it stands in a corridor (`isChamber`): a scene needs its set. */
   authoredActivity?: ActivityId
+  /** The designed room a story pinned to this room (`nodes: [{ room }]`): a key of the floor's `prefabs`. */
+  pinnedPrefab?: string
   /**
    * THE GOD'S ROOM on a dedicated floor: the biggest chamber, dressed with a statue of him and paired.
    *
@@ -595,6 +598,13 @@ export type SubSection = {
   /** Per-node pass-through chamber: 0-based room index → a chamber in the gap after that room, dressed for the named
    * activity, or for one the carve picks where `true`. */
   chambersByIndex?: Record<number, ActivityId | true>
+  /** Every designed room the section names, parsed, keyed by name: the baked world carries them. */
+  prefabs?: Record<string, Prefab>
+  /** The counted designed rooms the section holds, every field filled in. `min` are required, `max` allowed; `central`
+   * is how deep into the walk they lean (0 the ends, 1 the middle). */
+  prefabPlacements?: { room: string; min: number; max: number; central: number }[]
+  /** Per-node designed room: 0-based room index → the name of the prefab that room is. */
+  prefabsByIndex?: Record<number, string>
   /** Per-node difficulty: 0-based room index → the tier that room builds at, else the section's `difficulty`. */
   difficultiesByIndex?: Record<number, Difficulty>
   /** `false` keeps generated loot out of this section's puzzle rooms (and its unauthored end); authored rewards stay. */
@@ -783,6 +793,13 @@ export type FloorConfig = {
   /** How many pass-through chambers the floor asks for, `chambersByIndex` among them. An intent: the carve seats
    * as many as have room, the main path's gaps first, then its side paths, and never refuses the floor for the rest. */
   chambers?: number
+  /** Every designed room the floor names, parsed, keyed by name: the baked world carries them. */
+  prefabs?: Record<string, Prefab>
+  /** The counted designed rooms the floor holds, every field filled in. `min` are required, `max` allowed; `central`
+   * is how deep into the walk they lean (0 the ends, 1 the middle). */
+  prefabPlacements?: { room: string; min: number; max: number; central: number }[]
+  /** Per-node designed room: 0-based room index → the name of the prefab that room is. */
+  prefabsByIndex?: Record<number, string>
   /** Per-node difficulty for the main path: 0-based room index → the tier that room builds at, else `difficulty`. */
   difficultiesByIndex?: Record<number, Difficulty>
   /** `false` keeps generated loot out of this floor's main-path puzzle rooms (and its unauthored end); authored rewards stay. */

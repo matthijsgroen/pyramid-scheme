@@ -38,6 +38,17 @@ describe("mainRooms", () => {
     expect(at(goal)?.family).toBe("treasure-chest")
   })
 
+  it("pins the room a story named to the puzzle at that index, and no other", () => {
+    const state = firstCarved(
+      prepOf(plainFloor({ pathPuzzles: 2, exitOrStaircase: "exit", prefabsByIndex: { 1: "hall" } }))
+    )
+    const pinned = [...state.mainRooms!.values()].filter(room => room.pathIndex !== undefined)
+    expect(pinned.map(room => [room.pathIndex, room.pinnedPrefab])).toEqual([
+      [0, undefined],
+      [1, "hall"],
+    ])
+  })
+
   describe("the goal of a floor with no main-end reward", () => {
     const goalOf = (config: Parameters<typeof plainFloor>[0]) => {
       const state = firstCarved(prepOf(plainFloor({ pathPuzzles: 2, exitOrStaircase: "exit", ...config })))

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { generateFile } from "./serializer"
 import type { SiteConfig } from "./types"
+import { parsePrefab } from "../game/prefabNotation"
 
 // Regression test for a real bug: serializeSideSection hand-enumerates fields and silently
 // dropped `rewards` (a shop's stock array) and nested `sideSections` — round-tripping a
@@ -88,6 +89,43 @@ describe("generateFile — serializeSideSection field coverage", () => {
 
 // A switch is authored on the floor and read back out of the baked file; a field the serializer does
 // not emit is a feature the world was built without, with nothing failing to say so.
+describe("generateFile — a designed room survives the bake", () => {
+  const hall = parsePrefab("tier junior\nlayout\n# # # # #\n# . . . #\n# . s . #\n# . . . #\n# # d # #\ns stop", "hall")
+  const placement = { room: "hall", min: 1, max: 2, central: 0.5 }
+  const withRooms = {
+    prefabs: { hall },
+    prefabPlacements: [placement],
+    prefabsByIndex: { 0: "hall" },
+  }
+  const output = generateFile({
+    j: [
+      [
+        {
+          pathPuzzles: 1,
+          difficulty: "junior",
+          end: "treasure",
+          exitOrStaircase: "exit",
+          ...withRooms,
+          sideSections: [{ pathPuzzles: 1, difficulty: "junior", end: "treasure", ...withRooms }],
+        },
+      ],
+    ],
+  })
+
+  it("emits the prefab, its placements and its pins on both a floor and a section", () => {
+    expect(output.split(`prefabs: ${JSON.stringify({ hall })}`)).toHaveLength(3)
+    expect(output.split(`prefabPlacements: ${JSON.stringify([placement])}`)).toHaveLength(3)
+    expect(output.split('prefabsByIndex: { 0: "hall" }')).toHaveLength(3)
+  })
+
+  it("emits nothing for a floor with no room", () => {
+    const bare = generateFile({
+      j: [[{ pathPuzzles: 1, difficulty: "junior", end: "treasure", exitOrStaircase: "exit", sideSections: [] }]],
+    })
+    expect(bare).not.toContain("prefab")
+  })
+})
+
 describe("generateFile — a switch fork survives the bake", () => {
   const output = generateFile({
     test_journey: [

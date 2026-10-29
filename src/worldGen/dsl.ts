@@ -1,5 +1,6 @@
 import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
 import type { ActivityId } from "../game/activities"
+import type { Prefab } from "../game/prefabTypes"
 import type { DecorationKind, HandleSide, Patron, SiteCondition, Tileset, WallDecorationKind } from "../game/siteTypes"
 import type { PlacedContainer } from "../game/regions"
 import type { BarrierOrder, Control, Obstacle } from "@/game/obstacles"
@@ -78,6 +79,37 @@ export type NodeSelector = {
   /** A pass-through chamber in the gap after the selected room: a corridor node widened into a room dressed for
    * this activity, or for one the carve picks where `true`. The room itself stays where it is. */
   chamberAfter?: ActivityId | true
+  /** A designed room (a `.room` file's name) this node is pinned to. The room's tier is this floor's difficulty. */
+  room?: string
+}
+
+/** How many of a named room a floor holds, and where. `min` of them are required, up to `max` allowed (default
+ * `min`, else 1); `central` says how deep into the walk they lean: 0 = the ends, 1 = the middle (default 0.5). */
+export type RoomPlacement = { room: string; min?: number; max?: number; central?: number }
+
+/** A placement with its defaults filled in. */
+export const withRoomDefaults = (p: RoomPlacement): Required<RoomPlacement> => {
+  const min = p.min ?? 0
+  return { room: p.room, min, max: p.max ?? (min || 1), central: p.central ?? 0.5 }
+}
+
+/** A floor's rooms, resolved: every prefab it names (parsed by `lookup`, so the baked world carries them), the
+ * placements with their defaults, and the pinned ones by node index. Only what is non-empty is present. */
+export const resolveFloorRooms = (
+  placements: RoomPlacement[] | undefined,
+  pinned: Record<number, string>,
+  lookup: (name: string) => Prefab
+): {
+  prefabs?: Record<string, Prefab>
+  prefabPlacements?: Required<RoomPlacement>[]
+  prefabsByIndex?: Record<number, string>
+} => {
+  const names = [...(placements ?? []).map(p => p.room), ...Object.values(pinned)]
+  return {
+    ...(names.length ? { prefabs: Object.fromEntries([...new Set(names)].map(name => [name, lookup(name)])) } : {}),
+    ...(placements?.length ? { prefabPlacements: placements.map(withRoomDefaults) } : {}),
+    ...(Object.keys(pinned).length ? { prefabsByIndex: pinned } : {}),
+  }
 }
 
 /** Expand `nodes` selectors against a path's node `count` into a sparse 0-based index → encounter
@@ -106,6 +138,10 @@ export const resolveNodeChambers = (
   nodes: NodeSelector[] | undefined,
   count: number
 ): Record<number, ActivityId | true> => resolveNodeField(nodes, count, sel => sel.chamberAfter)
+
+/** Expand `nodes` selectors into a sparse 0-based index → pinned room name map. */
+export const resolveNodeRooms = (nodes: NodeSelector[] | undefined, count: number): Record<number, string> =>
+  resolveNodeField(nodes, count, sel => sel.room)
 
 const resolveNodeField = <T>(
   nodes: NodeSelector[] | undefined,
@@ -219,6 +255,9 @@ export type FloorConstraint<TExtra extends string = never> = {
   /** How many pass-through chambers this floor's main path holds in all, its `chamberAfter` ones among them; the
    * carve spreads the rest over the gaps between its puzzles. Unset inherits the site's. */
   chambers?: number
+  /** The designed rooms this floor's main path holds, by `.room` name. Unset inherits the site's; a floor's own list
+   * replaces it. Structural. */
+  rooms?: RoomPlacement[]
   /** WHAT THE CARVE MUST PROVIDE: `count` junctions with at least `exits` ways out free to be closed
    * — the main path onward and the side paths off the junction, never the way back, never one
    * something else already stands in, never one into a hidden branch. A carve offering fewer is
@@ -450,6 +489,8 @@ export type PyramidConstraint = {
   /** How many pass-through chambers every floor's main path holds, unless a floor names its own — see
    * FloorConstraint.chambers. Never defaulted: a floor declares none unless this or the floor says so. */
   chambers?: number
+  /** The designed rooms every floor's main path holds, unless a floor names its own — see FloorConstraint.rooms. */
+  rooms?: RoomPlacement[]
   /** Isolates the main path's cells from leftover maze edges in a compact layout, so a
    * shortcut can't merge around a main-path puzzle room. Per-floor `sealed` overrides this. */
   sealed?: boolean

@@ -100,6 +100,7 @@ export const puzzleRoomSpec = (
   const { resolveEncounter, resolveKeyRequirements, resolveBoardIndex, floorRef } = prep.input
   const reward = section.rewards?.[pi]
   const authoredActivity = section.activitiesByIndex?.[pi]
+  const pinnedPrefab = section.prefabsByIndex?.[pi]
   const override = section.encountersByIndex?.[pi]
   const family =
     override !== undefined ? resolveEncounter(override, "puzzle") : resolveEncounter(section.encounter, "puzzle")
@@ -129,6 +130,7 @@ export const puzzleRoomSpec = (
     ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
     ...(reward ? { reward } : {}),
     ...(authoredActivity ? { authoredActivity } : {}),
+    ...(pinnedPrefab ? { pinnedPrefab } : {}),
   }
 }
 

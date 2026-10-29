@@ -9,9 +9,18 @@ import {
   resolveNodeActivities,
   resolveNodeChambers,
   resolveNodeDifficulties,
+  resolveFloorRooms,
   resolveNodeLoot,
+  resolveNodeRooms,
   resolveNodeSelectors,
 } from "./dsl"
+import type { Prefab } from "../game/prefabTypes"
+
+/** Looks a designed room up by name; refuses when the caller handed none. */
+export type RoomLookup = (name: string) => Prefab
+const noRooms: RoomLookup = name => {
+  throw new Error(`room ${name} is pinned but no room catalogue was handed to buildSideSections`)
+}
 
 const ALL_KEY_COLORS: KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
 
@@ -54,7 +63,8 @@ const buildDslSection = <TExtra extends string>(
   path: string,
   parentLoot: false | undefined,
   parentTileset: Tileset | undefined,
-  stairTargets: Map<string, number> | undefined
+  stairTargets: Map<string, number> | undefined,
+  lookupRoom: RoomLookup
 ): SideSection => {
   const gate = specToGate(cs.gate)
   const sectionDifficulty = cs.difficulty ?? difficulty
@@ -70,7 +80,8 @@ const buildDslSection = <TExtra extends string>(
     `${path}.`,
     loot,
     tileset,
-    stairTargets
+    stairTargets,
+    lookupRoom
   )
   const end = cs.end === "staircase" ? { stairId: stairIdAt({ ...floor, path }) } : ("treasure" as const)
   if (end !== "treasure" && cs.toFloor !== undefined) stairTargets?.set(end.stairId, cs.toFloor)
@@ -89,6 +100,7 @@ const buildDslSection = <TExtra extends string>(
   const encountersByIndex = resolveNodeSelectors(cs.nodes, pathPuzzles)
   const activitiesByIndex = resolveNodeActivities(cs.nodes, pathPuzzles)
   const chambersByIndex = resolveNodeChambers(cs.nodes, pathPuzzles)
+  const rooms = resolveFloorRooms(undefined, resolveNodeRooms(cs.nodes, pathPuzzles), lookupRoom)
   const difficultiesByIndex = resolveNodeDifficulties(cs.nodes, pathPuzzles)
   const lootByIndex = resolveNodeLoot(cs.nodes, pathPuzzles)
   return {
@@ -108,6 +120,7 @@ const buildDslSection = <TExtra extends string>(
     ...(Object.keys(encountersByIndex).length ? { encountersByIndex } : {}),
     ...(Object.keys(activitiesByIndex).length ? { activitiesByIndex } : {}),
     ...(Object.keys(chambersByIndex).length ? { chambersByIndex } : {}),
+    ...rooms,
     ...(Object.keys(difficultiesByIndex).length ? { difficultiesByIndex } : {}),
     ...(loot === false ? { loot } : {}),
     ...(Object.keys(lootByIndex).length ? { lootByIndex } : {}),
@@ -129,6 +142,7 @@ const buildDslSections = <TExtra extends string>(
   parentLoot: false | undefined,
   parentTileset: Tileset | undefined,
   stairTargets: Map<string, number> | undefined,
+  lookupRoom: RoomLookup,
   startIndex = 0
 ): SideSection[] =>
   (constraintSections ?? []).map((cs, i) =>
@@ -140,7 +154,8 @@ const buildDslSections = <TExtra extends string>(
       `${pathPrefix}${startIndex + i}`,
       parentLoot,
       parentTileset,
-      stairTargets
+      stairTargets,
+      lookupRoom
     )
   )
 
@@ -184,6 +199,8 @@ export type BuildSideSectionsOptions<TExtra extends string = never> = {
   sideTheme?: string
   sideDecorations?: DecorationKind[]
   sideWallDecorations?: WallDecorationKind[]
+  /** Parses a room a section pins by name; needed only where one does. */
+  lookupRoom?: RoomLookup
   /** Pyramid-only: prepends a hardcoded mapPiece branch pointing at this tier's tomb. */
   hasMapPieceBranch?: boolean
   /** Pyramid-only: prepends a hardcoded tier-unlock ward-key gate. */
@@ -250,6 +267,7 @@ export const buildSideSections = <TExtra extends string = never>(
     sideTheme,
     sideDecorations,
     sideWallDecorations,
+    lookupRoom = noRooms,
   } = opts
 
   const sections: SideSection[] = []
@@ -285,6 +303,7 @@ export const buildSideSections = <TExtra extends string = never>(
       loot,
       undefined,
       stairTargets,
+      lookupRoom,
       sections.length
     )
   )

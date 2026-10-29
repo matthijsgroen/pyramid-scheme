@@ -111,6 +111,7 @@ export const mainRooms = pass(
           override !== undefined ? resolveEncounter(override, "puzzle") : resolveEncounter(config.encounter, "puzzle")
         const reward = config.rewards?.[k]
         const authoredActivity = config.activitiesByIndex?.[k]
+        const pinnedPrefab = config.prefabsByIndex?.[k]
         const familyOrdinal = mainOrdinalOf(family.familyId)
         const requiredKeyIds = resolveKeyRequirements(family.familyId, {
           ...floorRef,
@@ -136,6 +137,7 @@ export const mainRooms = pass(
           ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
           ...(authoredActivity ? { authoredActivity } : {}),
+          ...(pinnedPrefab ? { pinnedPrefab } : {}),
         })
       }
     })

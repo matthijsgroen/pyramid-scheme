@@ -3,6 +3,11 @@ import { buildFloor, buildSite, wireSideSectionStaircases, wireStaircases } from
 import type { FloorConfig, SideSection } from "./types"
 import type { PyramidConstraint } from "./dsl"
 import { collectSlots } from "./slots"
+import { parsePrefab } from "../game/prefabNotation"
+
+// Made-up rooms, so nothing here reads the real catalogue.
+const roomText = (tier: string) => `tier ${tier}\nlayout\n# # # # #\n# . . . #\n# . s . #\n# . . . #\n# # d # #\ns stop`
+const catalogue = { hall: parsePrefab(roomText("starter"), "hall"), nook: parsePrefab(roomText("starter"), "nook") }
 
 describe("buildFloor", () => {
   it("defaults to an exiting floor with no main reward (the caller/site decides the chest)", () => {
@@ -246,6 +251,37 @@ describe("buildSite", () => {
     expect([floors[0].chambers, floors[0].chambersByIndex]).toEqual([3, { 0: "ledger" }])
     expect([floors[1].chambers, floors[1].chambersByIndex]).toEqual([2, undefined])
     expect(floors[1].sideSections[0].chambersByIndex).toEqual({ 1: true })
+  })
+
+  it("a floor's rooms and pinned nodes carry the parsed prefabs, with placement defaults filled in", () => {
+    const { floors } = buildSite({
+      ...baseCtx,
+      catalogue,
+      constraint: {
+        rooms: [{ room: "nook" }],
+        floors: [
+          { pathPuzzles: 2, rooms: [{ room: "hall", min: 2 }], nodes: [{ where: 1, room: "nook" }] },
+          { pathPuzzles: 2, sideSections: [{ pathPuzzles: 2, nodes: [{ where: "last", room: "hall" }] }] },
+        ],
+      },
+    })
+    expect(floors[0].prefabPlacements).toEqual([{ room: "hall", min: 2, max: 2, central: 0.5 }])
+    expect(floors[0].prefabsByIndex).toEqual({ 0: "nook" })
+    expect(Object.keys(floors[0].prefabs ?? {}).sort()).toEqual(["hall", "nook"])
+    expect(floors[0].prefabs?.hall).toBe(catalogue.hall)
+    expect(floors[1].prefabPlacements).toEqual([{ room: "nook", min: 0, max: 1, central: 0.5 }])
+    expect(floors[1].sideSections[0].prefabsByIndex).toEqual({ 1: "hall" })
+    expect(floors[1].sideSections[0].prefabs).toEqual({ hall: catalogue.hall })
+  })
+
+  it("an auto-built pyramid's floors hold the site's rooms", () => {
+    const { floors } = buildSite({ ...baseCtx, catalogue, constraint: { rooms: [{ room: "hall", max: 2 }] } })
+    expect(floors[0].prefabPlacements).toEqual([{ room: "hall", min: 0, max: 2, central: 0.5 }])
+  })
+
+  it("declares no prefab field on a floor that names no room", () => {
+    const { floors } = buildSite({ ...baseCtx, constraint: { floors: [{ pathPuzzles: 2 }] } })
+    for (const field of ["prefabs", "prefabPlacements", "prefabsByIndex"]) expect(floors[0]).not.toHaveProperty(field)
   })
 
   it("declares no chamber on a floor that neither it nor its site asks for", () => {

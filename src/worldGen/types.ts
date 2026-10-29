@@ -1,4 +1,5 @@
 import type { ActivityId } from "../game/activities"
+import type { Prefab } from "../game/prefabTypes"
 import type {
   DecorationKind,
   ForkDemand,
@@ -67,6 +68,10 @@ export type SubSection = {
   activitiesByIndex?: Record<number, ActivityId>
   /** Per-node pass-through chamber, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
   chambersByIndex?: Record<number, ActivityId | true>
+  /** The designed rooms this names, the counted ones and the pinned ones. Mirrors game/siteTypes.ts. */
+  prefabs?: Record<string, Prefab>
+  prefabPlacements?: { room: string; min: number; max: number; central: number }[]
+  prefabsByIndex?: Record<number, string>
   /** Per-node difficulty, resolved from `nodes` selectors: a room builds at `difficultiesByIndex[k] ?? difficulty`
    * (see roomDifficulty). Mirrors game/siteTypes.ts. */
   difficultiesByIndex?: Record<number, Difficulty>
@@ -116,6 +121,10 @@ export type FloorConfig = {
   chambersByIndex?: Record<number, ActivityId | true>
   /** How many pass-through chambers the main path holds in all. Mirrors game/siteTypes.ts. */
   chambers?: number
+  /** The designed rooms this names, the counted ones and the pinned ones. Mirrors game/siteTypes.ts. */
+  prefabs?: Record<string, Prefab>
+  prefabPlacements?: { room: string; min: number; max: number; central: number }[]
+  prefabsByIndex?: Record<number, string>
   /** Per-node difficulty for the main path, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
   difficultiesByIndex?: Record<number, Difficulty>
   /** `false` keeps generated loot out of this floor. Mirrors game/siteTypes.ts. */

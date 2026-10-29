@@ -99,6 +99,10 @@ const serializeSideSection = (s: SideSection): string => {
     parts.push(`activitiesByIndex: ${serializeEncountersByIndex(s.activitiesByIndex)}`)
   if (s.chambersByIndex && Object.keys(s.chambersByIndex).length)
     parts.push(`chambersByIndex: ${serializeChambersByIndex(s.chambersByIndex)}`)
+  if (s.prefabs && Object.keys(s.prefabs).length) parts.push(`prefabs: ${JSON.stringify(s.prefabs)}`)
+  if (s.prefabPlacements?.length) parts.push(`prefabPlacements: ${JSON.stringify(s.prefabPlacements)}`)
+  if (s.prefabsByIndex && Object.keys(s.prefabsByIndex).length)
+    parts.push(`prefabsByIndex: ${serializeEncountersByIndex(s.prefabsByIndex)}`)
   if (s.difficultiesByIndex && Object.keys(s.difficultiesByIndex).length)
     parts.push(`difficultiesByIndex: ${serializeEncountersByIndex(s.difficultiesByIndex)}`)
   if (s.loot === false) parts.push(`loot: false`)
@@ -214,6 +218,9 @@ const floorFieldEmitters: {
   activitiesByIndex: v => (Object.keys(v).length ? `activitiesByIndex: ${serializeEncountersByIndex(v)}` : null),
   chambersByIndex: v => (Object.keys(v).length ? `chambersByIndex: ${serializeChambersByIndex(v)}` : null),
   chambers: v => (v ? `chambers: ${v}` : null),
+  prefabs: v => (Object.keys(v).length ? `prefabs: ${JSON.stringify(v)}` : null),
+  prefabPlacements: v => (v.length ? `prefabPlacements: ${JSON.stringify(v)}` : null),
+  prefabsByIndex: v => (Object.keys(v).length ? `prefabsByIndex: ${serializeEncountersByIndex(v)}` : null),
   difficultiesByIndex: v => (Object.keys(v).length ? `difficultiesByIndex: ${serializeEncountersByIndex(v)}` : null),
   loot: () => `loot: false`,
   lootByIndex: v => (Object.keys(v).length ? `lootByIndex: ${serializeLootByIndex(v)}` : null),
