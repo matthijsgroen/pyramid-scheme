@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest"
 import type { AssemblerResult, FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { assembleFloor, PACKING_CEILING } from "@/game/siteAssembler"
+import type { Lock } from "@/game/lockAuthoring"
+import { LOCK_ENTRIES } from "@/game/lockCatalogue"
+import { drawnFloor } from "@/game/testSupport/lessonOrderFixtures"
 import {
   packingAtRung,
   roomlessRouteStubs,
@@ -497,5 +500,30 @@ describe(roomlessRouteStubs, () => {
       corridor("lock:l.path", "l.path")
     )
     expect(roomlessRouteStubs(grid)).toEqual([])
+  })
+})
+
+describe("a lesson's order on the carved floor", () => {
+  // A made-up lock under the name of whichever lesson the catalogue holds first, and one under a name no lock has.
+  const lockNamed = (name: string): Lock => ({
+    name,
+    regions: {},
+    connections: [],
+    gates: {},
+    mechanics: {},
+    in: "in",
+    out: "out",
+  })
+  const lesson = lockNamed(LOCK_ENTRIES.find(entry => entry.lesson)!.name)
+  const plain = lockNamed("madeUpLock")
+  const carved = (grid: FloorGrid): AssemblerResult => ({ success: true, grid, attempt: 0 })
+
+  it("refuses a lesson floor whose carve breaks the order, and only a lesson floor", () => {
+    const leverFirst = carved(drawnFloor(["E-L-D-x"]))
+    expect(refusal(leverFirst, { locks: [{ lock: lesson }] })).toMatchObject({
+      criterion: "lesson shows its door first",
+    })
+    expect(refusal(leverFirst, { locks: [{ lock: plain }] })).toBeNull()
+    expect(refusal(carved(drawnFloor(["E-+-D-x", "  |", "  L"])), { locks: [{ lock: lesson }] })).toBeNull()
   })
 })

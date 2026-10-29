@@ -7,6 +7,8 @@ import { deadFloorRegions, walkFloorLock } from "@/game/floorLockWalk"
 import { deadRegions, reachableStates, walkLock, type LockSpec } from "@/game/lockWalk"
 import { legalTargets } from "@/game/mechanismDoors"
 import { oneWayRuns } from "@/game/gridNavigation"
+import { isLessonLock } from "@/game/lockCatalogue"
+import { lessonOrderFaults } from "@/game/lessonOrder"
 import { BINDING, carveLockFloor, mirrorForkLock } from "@/game/testSupport/lockFixtures"
 import { TOPOLOGY_ON } from "@/game/testSupport/modOff"
 import { allFloors, resolveKeyRequirements } from "./worldFloors.testing"
@@ -15,7 +17,14 @@ import { authoredByCompiled, failureOf, withoutLayout } from "@/worldGen/regionP
 // THE LOCK FLOORS THE SHIPPED WORLD STANDS, carved at the (packing, seed) the player gets: what the compiled lock
 // says of a floor must agree with the floor's own cells, and reading a floor differently must not change a verdict.
 
-type Carved = { label: string; grid: FloorGrid; placesLocks: boolean; hasLayout: boolean; plainControls: boolean }
+type Carved = {
+  label: string
+  grid: FloorGrid
+  placesLocks: boolean
+  hasLayout: boolean
+  plainControls: boolean
+  placesLesson: boolean
+}
 
 const carved: Carved[] = []
 
@@ -32,6 +41,7 @@ beforeAll(() => {
       grid: result.grid,
       placesLocks: placed.length > 0,
       hasLayout: !!floor.config.regionLayout,
+      placesLesson: placed.some(({ lock }) => isLessonLock(lock.name)),
       // A sequence advances at each of its tiles and stones move at each plate: neither is a mechanism working in one place.
       plainControls: !placed.some(
         ({ lock }) => lock.weights !== undefined || Object.values(lock.mechanics).some(m => m.control === "sequence")
@@ -100,6 +110,12 @@ describe("the shipped world's lock floors", () => {
   it("leave the verdict of every floor as it was with the regions flooded together", () => {
     for (const { label, grid, lock } of withLock())
       expect(failureOf(lock), label).toBe(failureOf(floorLock(withoutLayout(grid))!))
+  })
+
+  it("every placed lesson shows its door first", () => {
+    const lessons = carved.filter(c => c.placesLesson)
+    expect(lessons.length).toBeGreaterThan(5)
+    for (const { label, grid } of lessons) expect(lessonOrderFaults(grid), label).toEqual([])
   })
 
   it("carry every cell knowing its region, and every region the lock declares holding a cell", () => {

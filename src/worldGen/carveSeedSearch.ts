@@ -3,6 +3,8 @@ import { lockGroundUnfed, lockWithoutPuzzle } from "@/game/lockPuzzles"
 import type { AssemblerResult, FloorConfig, FloorGrid } from "@/game/siteTypes"
 import type { CorridorAssignment } from "@/game/corridorSidePaths"
 import { roomlessRouteStubs } from "@/game/routeStubs"
+import { lessonOrderFaults } from "@/game/lessonOrder"
+import { isLessonLock } from "@/game/lockCatalogue"
 
 /** What every picked layout meets, in the order they are asked; a carve that fails one is never asked the next.
  * Packing and the carve's attempt are no criteria: they order the search (`searchCarvePair`). */
@@ -12,6 +14,7 @@ export const HARD_CRITERIA = [
   "lock holds an encounter",
   "no dead region",
   "every stub holds a room",
+  "lesson shows its door first",
 ] as const
 export type HardCriterion = (typeof HARD_CRITERIA)[number]
 export type CarveRefusal = { criterion: HardCriterion; detail: string }
@@ -24,6 +27,7 @@ export const AUTHORING_FIELD: Record<HardCriterion, string> = {
     "where the lock stands (a lock placed before the floor's content, lockBeforeFloorContent), its regions' `takes`, or pathPuzzles and sideSections (any puzzle, trap, chest or shop on the lock's way counts)",
   "no dead region": "locks",
   "every stub holds a room": "sideSections or locks",
+  "lesson shows its door first": "locks",
 }
 
 /** A layout that meets every hard criterion. `laddered`: it carves only on the runtime ladder, past attempt 0. */
@@ -89,6 +93,8 @@ export const refusal = (result: AssemblerResult, floor: Pick<FloorConfig, "locks
   if (dead.length > 0) return { criterion: "no dead region", detail: dead.join(", ") }
   const bare = roomlessRouteStubs(result.grid)
   if (bare.length > 0) return { criterion: "every stub holds a room", detail: bare.join(", ") }
+  const misordered = floor.locks?.some(({ lock }) => isLessonLock(lock.name)) ? lessonOrderFaults(result.grid) : []
+  if (misordered.length > 0) return { criterion: "lesson shows its door first", detail: misordered.join(", ") }
   return null
 }
 
