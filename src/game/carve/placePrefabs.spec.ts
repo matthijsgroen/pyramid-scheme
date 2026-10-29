@@ -18,7 +18,7 @@ import { carveFloor } from "./carveFloor"
 import { LATTICE_ENGINE } from "./engines"
 import { finish } from "./finish"
 import { TAIL_READS } from "./passes"
-import { fitPrefab, placePrefabs, webDoorInPrefab } from "./placePrefabs"
+import { choosePrefabs, fitPrefab, placePrefabs, stampPrefab, webDoorInPrefab } from "./placePrefabs"
 import { render } from "./render"
 import { requireReads, type Finish, type FloorPrep } from "./state"
 import { standPieces } from "./standPieces"
@@ -476,5 +476,42 @@ describe("the carve", () => {
       ),
     })
     expect(carvedFloorDigest(strip(laid.grid))).toBe(carvedFloorDigest(strip(plain.grid)))
+  })
+})
+
+describe("choosePrefabs", () => {
+  it("choosePrefabs skips a node whose exit side has no door place", () => {
+    const choices = choosePrefabs(prepFor({ ...placing("gallery", 0, 9) }), floorFrom(CROSS))
+    expect(choices).toEqual([])
+    const halls = choosePrefabs(prepFor(placing("hall", 0, 9)), floorFrom(CROSS))
+    expect(halls).toEqual([expect.objectContaining({ cell: [4, 4], name: "hall" })])
+  })
+
+  it("a min the sketch cannot meet refuses naming the room", () => {
+    expect(choosePrefabs(prepFor(placing("gallery", 1, 2)), floorFrom(CROSS))).toEqual({
+      retry: [{ type: "prefabsNotPlaced", room: "gallery", wanted: 1, placed: 0 }],
+    })
+  })
+
+  it("chooses a node a room cannot fit over, where placePrefabs passes it by", () => {
+    const crowded = CROSS.map((row, r) => (r === 3 ? row.slice(0, 3) + "C" + row.slice(4) : row))
+    const grid = floorFrom(crowded)
+    expect(choosePrefabs(prepFor(placing("hall", 0, 1)), grid)).toEqual([expect.objectContaining({ name: "hall" })])
+  })
+
+  it("stampPrefab draws the room at the rect it is given", () => {
+    const grid = floorFrom(CROSS)
+    const prep = prepFor({})
+    const choice = { cell: [4, 4] as [number, number], name: "hall", layout: 0, mirrored: false, pick: {} }
+    const rect = { top: 3, left: 3, rows: 3, cols: 3 }
+    const stamped = stampPrefab(grid, choice, rect, prep)
+    expect(prefabRooms(stamped)).toEqual([
+      expect.objectContaining({
+        r: 4,
+        c: 4,
+        room: expect.objectContaining({ name: "hall", rect, doors: { n: [2, 4], s: [6, 4], w: [4, 2], e: [4, 6] } }),
+      }),
+    ])
+    expect(prefabRooms(grid)).toEqual([])
   })
 })
