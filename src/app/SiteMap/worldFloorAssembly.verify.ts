@@ -140,18 +140,17 @@ describe("no encounter can move a wall", () => {
 describe("what a world-spec setting may and may not move", () => {
   const sampled = () => allFloors().filter((_, i) => i % 3 === 0)
 
-  // A grown room's rectangle is part of the shape: growth moves the drawn walls and no cell's type or dirs.
-  const shape = (g: FloorGrid) =>
+  // Every cell's type and dirs: the corridors, doors and rooms as the carve laid them.
+  const bareShape = (g: FloorGrid) =>
     JSON.stringify(
-      g.cells.map(row =>
-        row.map(c => {
-          if (c.type === "empty") return "."
-          const grown = c.type === "room" && c.grownRoom ? JSON.stringify(c.grownRoom.rect) : ""
-          return `${c.type[0]}${[...c.dirs].sort().join("")}${grown}`
-        })
-      )
+      g.cells.map(row => row.map(c => (c.type === "empty" ? "." : `${c.type[0]}${[...c.dirs].sort().join("")}`)))
     )
-  const holdsGrownRoom = (g: FloorGrid) => g.cells.flat().some(c => c.type === "room" && c.grownRoom !== undefined)
+  // A grown room's rectangle is part of the drawn walls: growth moves them and no cell's type or dirs.
+  const shape = (g: FloorGrid) =>
+    JSON.stringify([
+      bareShape(g),
+      g.cells.map(row => row.map(c => (c.type === "room" && c.grownRoom ? c.grownRoom.rect : null))),
+    ])
   const sectionHashes = (g: FloorGrid) =>
     JSON.stringify(
       [
@@ -181,7 +180,7 @@ describe("what a world-spec setting may and may not move", () => {
   const compare = (mutate: (c: FloorConfig) => FloorConfig) => {
     const wallsMoved: string[] = []
     const reshapedWithoutRehashing: string[] = []
-    const movedWithoutGrowth: string[] = []
+    const dirsMoved: string[] = []
     for (const floor of sampled()) {
       const opts = {
         resolveKeyRequirements,
@@ -199,10 +198,10 @@ describe("what a world-spec setting may and may not move", () => {
       if (!before.success || !after.success) continue
       if (shape(before.grid) === shape(after.grid)) continue
       wallsMoved.push(floor.label)
-      if (!holdsGrownRoom(before.grid) && !holdsGrownRoom(after.grid)) movedWithoutGrowth.push(floor.label)
+      if (bareShape(before.grid) !== bareShape(after.grid)) dirsMoved.push(floor.label)
       if (sectionHashes(before.grid) === sectionHashes(after.grid)) reshapedWithoutRehashing.push(floor.label)
     }
-    return { wallsMoved, reshapedWithoutRehashing, movedWithoutGrowth }
+    return { wallsMoved, reshapedWithoutRehashing, dirsMoved }
   }
 
   // Rule 1 — content, dressing and key assignment are not the shape of the place.
@@ -224,6 +223,13 @@ describe("what a world-spec setting may and may not move", () => {
           const gate = n.gate as Node | undefined
           if (gate?.wardKeyId) gate.wardKeyId = "some_other_key"
           if (gate?.color) gate.color = "purple"
+        }),
+    ],
+    [
+      "the wall items a room hangs",
+      c =>
+        edited(c, n => {
+          if (n.wallDecorations) n.wallDecorations = ["tallyBoard"]
         }),
     ],
     [
@@ -263,17 +269,15 @@ describe("what a world-spec setting may and may not move", () => {
     120_000
   )
 
-  // Rule 1b — the dressing a room is given can grow it round a centre object (growRooms), which moves
-  // its drawn walls and no cell's type or dirs, so section hashes hold by design. A floor whose walls
-  // moved on one of these must hold a grown room before or after the change: anything else is a wall
-  // that moved for another reason.
+  // Rule 1b — the dressing that can carry a centre object grows the room round it (growRooms), which
+  // moves its drawn walls and no cell's type or dirs, so section hashes hold by design. On these, only
+  // the grown rectangles may differ: every cell's type and dirs must stay identical on every floor.
   const DRESSING: Array<[string, (c: FloorConfig) => FloorConfig]> = [
     [
       "the decoration pool",
       c =>
         edited(c, n => {
           if (n.decorations) n.decorations = ["rubblePile"]
-          if (n.wallDecorations) n.wallDecorations = ["niche"]
         }),
     ],
     [
@@ -281,7 +285,6 @@ describe("what a world-spec setting may and may not move", () => {
       c =>
         edited(c, n => {
           if (n.decorations) n.decorations = ["scale", "basketStack", "scribeDesk"]
-          if (n.wallDecorations) n.wallDecorations = ["tallyBoard"]
         }),
     ],
     [
@@ -294,12 +297,12 @@ describe("what a world-spec setting may and may not move", () => {
   ]
 
   it.each(DRESSING)(
-    "%s moves walls only by growing a room",
+    "%s moves no cell's type or dirs",
     (_label, mutate) => {
-      const { movedWithoutGrowth } = compare(mutate)
+      const { dirsMoved } = compare(mutate)
       expect(
-        movedWithoutGrowth,
-        `${movedWithoutGrowth.length} floor(s) moved walls with no grown room:\n${movedWithoutGrowth.slice(0, 5).join("\n")}`
+        dirsMoved,
+        `${dirsMoved.length} floor(s) changed a cell's type or dirs:\n${dirsMoved.slice(0, 5).join("\n")}`
       ).toEqual([])
     },
     120_000
