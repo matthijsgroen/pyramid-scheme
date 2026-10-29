@@ -331,6 +331,7 @@ describe("dressing by purpose", () => {
     patron?: FloorConfig["patron"]
     switchAtJunction?: boolean
     authored?: Record<string, ActivityId>
+    pinned?: Record<string, string>
     propFootprint?: (kind: DecorationKind) => PropFootprint
     passThrough?: boolean
   }
@@ -341,12 +342,20 @@ describe("dressing by purpose", () => {
     patron,
     switchAtJunction = false,
     authored = {},
+    pinned = {},
     propFootprint,
     passThrough = false,
   }: Setup = {}) => {
     const withAuthored = (entries: [string, RoomSpec][]) =>
       new Map<string, RoomSpec>(
-        entries.map(([pk, spec]) => [pk, authored[pk] ? { ...spec, authoredActivity: authored[pk] } : spec])
+        entries.map(([pk, spec]) => [
+          pk,
+          {
+            ...spec,
+            ...(authored[pk] ? { authoredActivity: authored[pk] } : {}),
+            ...(pinned[pk] ? { pinnedPrefab: pinned[pk] } : {}),
+          },
+        ])
       )
     const prep = prepOf(plainFloor(patron ? { patron } : {}), 1, propFootprint ? { propFootprint } : {})
     const labels = noLabels()
@@ -581,6 +590,13 @@ describe("dressing by purpose", () => {
     const junction = dressed({ pools, patron: "anubis", authored: { "0,4": "ledger" } })("0,4")
     expect(junction).toMatchObject({ activity: "ledger", decoration: "shelf" })
     expect(junction).not.toHaveProperty("patronRoom")
+  })
+
+  it("keeps the god off a room a designed room is pinned to", () => {
+    const pools: DressingPools = { props: ["statue", "shelf", "rubblePile"], wall: ["stela", "niche"] }
+    const at = dressed({ pools, patron: "anubis", pinned: { "0,4": "hall" } })
+    expect(at("0,4")).not.toHaveProperty("patronRoom")
+    expect(at("2,4")).toMatchObject({ decoration: "statue", patronRoom: true })
   })
 
   it("dresses the same site the same way every time", () => {

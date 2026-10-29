@@ -149,7 +149,7 @@ const placed = (result: ReturnType<typeof placePrefabs>): FloorGrid => {
 }
 const prefabRooms = (grid: FloorGrid) =>
   grid.cells.flatMap((row, r) =>
-    row.flatMap((cell, c) => (cell.type === "room" && cell.prefabRoom ? [{ r, c, room: cell.prefabRoom }] : []))
+    row.flatMap((cell, c) => (cell.type !== "empty" && cell.prefabRoom ? [{ r, c, room: cell.prefabRoom }] : []))
   )
 
 // A fork at 4,4 with an arm of four each way: the entrance west, treasure at the other three ends.
@@ -266,6 +266,32 @@ describe("fitPrefab", () => {
   })
 })
 
+describe("a patron place", () => {
+  const shrine = (kinds: string) =>
+    prefab(`room shrine
+layout
+# # d # #
+# p . . #
+d . . . d
+# . . s #
+# # d # #
+p ${kinds}
+s stop`)
+  const kindOf = (kinds: string, patron?: "anubis") =>
+    fitPrefab({ ...floorFrom(CROSS), ...(patron ? { patron } : {}) }, 4, 4, shrine(kinds), "site")?.objects.map(
+      ({ kind }) => kind
+    )
+
+  it("holds the floor's patron statue on a floor with a patron", () => {
+    expect(kindOf("floor patron", "anubis")).toEqual(["statue"])
+  })
+
+  it("holds the place's next kind on a floor without, or nothing where the place is optional", () => {
+    expect(kindOf("floor patron | pillar | pillar")).toEqual(["pillar"])
+    expect(kindOf("floor? patron")).toEqual([])
+  })
+})
+
 describe("placePrefabs", () => {
   it("takes a chest room only with a chest place, and puts the chest's art there", () => {
     const grid = floorFrom(CHEST_FLOOR)
@@ -285,6 +311,19 @@ describe("placePrefabs", () => {
       prefabRooms(placed(placePrefabs(prepFor(placing("den", 1, 1, central)), grid))).map(({ r, c }) => `${r},${c}`)
     expect(at(1)).toEqual(["4,6"])
     expect(at(0)).toEqual(["4,18"])
+  })
+
+  it("central 0 takes the empty dead end of a long branch", () => {
+    const grid = floorFrom(LONG_ARM.map((row, r) => (r === 4 ? "E.....F............  " : row)))
+    const rooms = prefabRooms(placed(placePrefabs(prepFor(placing("hall", 1, 1, 0)), grid)))
+    expect(rooms.map(({ r, c }) => `${r},${c}`)).toEqual(["4,18"])
+    expect(grid.cells[4][18].type).toBe("corridor")
+    expect(rooms[0].room.doors).toEqual({ w: [4, 17] })
+  })
+
+  it("leaves a dead end holding loot to a prefab with a chest place", () => {
+    const rooms = prefabRooms(placed(placePrefabs(prepFor(placing("hall", 1, 1, 0)), floorFrom(LONG_ARM))))
+    expect(rooms.map(({ r, c }) => `${r},${c}`)).toEqual(["4,6"])
   })
 
   it("places up to max", () => {

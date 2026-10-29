@@ -276,7 +276,7 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
 
   // A DEDICATED FLOOR SHOWS ITS GOD AT LEAST ONCE, in the chamber it is organised around: a fork first, then the
   // biggest room by the floor it draws (`footprintSize`, the renderer's own claim rule), hash breaking ties. Never
-  // a portal or a mechanism's room, and only a room whose own pool can carry a patron.
+  // a portal, a mechanism's room or a story's room, and only a room whose own pool can carry a patron.
   const claimGrid: FloorGrid = {
     cells: cells2D,
     rows: N,
@@ -300,6 +300,8 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
     const eligible = [...new Set([...forks, ...endpointPositions])]
       .filter(pk => (labels.dressing.get(pk)?.props ?? []).some(k => PATRON_KINDS.has(k)))
       .filter(pk => roomSpecs.get(pk)?.authoredActivity === undefined)
+      // A designed room pinned here is its own dressing (placePrefabs.ts): the god would lose his room to it.
+      .filter(pk => roomSpecs.get(pk)?.pinnedPrefab === undefined)
       .filter(pk => {
         const spec = roomSpecs.get(pk)
         const [r, c] = rowCol(pk)

@@ -83,6 +83,8 @@ export type CorridorCell = {
    * the door, open, in the mark and colour it wore shut. Derived from the mechanism's position each
    * time the floor is read and never stored. */
   openGate?: OpenGate
+  /** The designed room laid over this corridor's dead end (carve/placePrefabs.ts). */
+  prefabRoom?: PrefabRoom
 }
 /** What an open gate keeps of the room it was: the fields that say it is a gate and whose. */
 export type OpenGate = Pick<

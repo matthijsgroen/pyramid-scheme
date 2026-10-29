@@ -592,6 +592,8 @@ describe("describeLayoutFailure", () => {
       packings: 1,
       stages: 1,
     }
-    expect(describeLayoutFailure("j1 floor 0", result)).toBe("j1 floor 0: room hall placed 1 of min 2")
+    const line = describeLayoutFailure("j1 floor 0", result)
+    expect(line.startsWith("j1 floor 0: room hall placed 1 of min 2; no layout in 3 seeds")).toBe(true)
+    expect(line).toContain(detail)
   })
 })

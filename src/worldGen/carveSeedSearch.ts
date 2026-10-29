@@ -359,12 +359,13 @@ export const describeLayoutFailure = (where: string, result: LayoutNotFound | La
   if (result.kind === "infeasible")
     return result.all.map(({ criterion, detail }) => `${where}: infeasible — ${criterion}: ${detail}`).join("\n")
   const short = result.hardest === "carves" ? prefabShortfall(result.detail) : undefined
-  if (short) return `${where}: room ${short.room} placed ${short.placed} of min ${short.wanted}`
+  // A designed room short of its min is named first; the search's line follows, with every other reason it kept.
+  const room = short ? `room ${short.room} placed ${short.placed} of min ${short.wanted}; ` : ""
   const counts = HARD_CRITERIA.flatMap(criterion =>
     result.counts[criterion] ? [`${criterion} ${result.counts[criterion]}`] : []
   ).join(", ")
   const stages = result.stages > 1 ? `, at each of ${result.stages} side-path stages,` : ""
-  return `${where}: no layout in ${result.seeds} seeds × ${result.packings} packings and the ladder${stages} meets "${
+  return `${where}: ${room}no layout in ${result.seeds} seeds × ${result.packings} packings and the ladder${stages} meets "${
     result.hardest
   }" (${counts}) — change ${AUTHORING_FIELD[result.hardest]} or raise the budget; ${result.detail}`
 }

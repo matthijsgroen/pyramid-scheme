@@ -16,7 +16,7 @@ import type {
 } from "../siteTypes"
 import type { WebDoorFault } from "../webDoors"
 import { centrality } from "./centrality"
-import { OPPOSITE } from "./grid"
+import { NODE_STEP, OPPOSITE } from "./grid"
 import { childSectionsOf } from "./sections"
 import type { FloorPrep, Refusal } from "./state"
 
@@ -53,7 +53,8 @@ const isDoor = (cell: RoomCell): boolean =>
   cell.passage !== undefined ||
   cell.webDoor !== undefined
 
-const holdsOf = (cell: RoomCell): Holds => {
+const holdsOf = (cell: GridCell): Holds => {
+  if (cell.type !== "room") return "nothing"
   if (
     cell.mechanism !== undefined ||
     cell.worksMechanism !== undefined ||
@@ -67,12 +68,35 @@ const holdsOf = (cell: RoomCell): Holds => {
   return "nothing"
 }
 
+/** A dead end with nothing in it: a node in sight with one way out, a corridor's end or a room where no encounter,
+ * loot, stair, mechanism or door stands and no story or pin is authored. */
+const emptyDeadEnd = (cell: GridCell, r: number, c: number): boolean => {
+  if (cell.type === "empty" || cell.dirs.size !== 1 || cell.hidden) return false
+  if (r % NODE_STEP !== 0 || c % NODE_STEP !== 0) return false
+  if (cell.type === "corridor") return cell.obstacle === undefined && cell.openGate === undefined
+  return (
+    cell.roomType !== "portal" &&
+    cell.family === undefined &&
+    !cell.tags?.length &&
+    cell.reward === undefined &&
+    cell.stock === undefined &&
+    cell.stairId === undefined &&
+    cell.authoredActivity === undefined &&
+    cell.pinnedPrefab === undefined &&
+    holdsOf(cell) === "nothing" &&
+    !isDoor(cell)
+  )
+}
+
 /** What a room a placement may take holds, or undefined where no placement takes it: the entrance, a room that
- * claims no floor (a puzzle stop), a story's or the god's room, a door, and any encounter but a chest. */
+ * claims no floor (a puzzle stop) unless it is an empty dead end, a story's or the god's room, a door, and any
+ * encounter but a chest. */
 const takeableHolds = (grid: FloorGrid, r: number, c: number): Holds | undefined => {
   const cell = cellAt(grid, r, c)
-  if (cell.type !== "room" || cell.prefabRoom || cell.pinnedPrefab !== undefined) return undefined
+  if (cell.type === "empty" || cell.prefabRoom) return undefined
   if (r === grid.entrancePos[0] && c === grid.entrancePos[1]) return undefined
+  if (emptyDeadEnd(cell, r, c)) return "nothing"
+  if (cell.type !== "room" || cell.pinnedPrefab !== undefined) return undefined
   if (!claimsFloorAt(grid, r, c) || cell.authoredActivity !== undefined || cell.patronRoom) return undefined
   if (isDoor(cell)) return undefined
   const holds = holdsOf(cell)
@@ -141,7 +165,7 @@ const occupied = (grid: FloorGrid, r: number, c: number): CellRect[] =>
       if (rr === r && cc === c) return []
       const taken: CellRect[] = []
       if (claimsFloorAt(grid, rr, cc)) taken.push({ top: rr - 1, left: cc - 1, rows: 3, cols: 3 })
-      if (cell.type === "room" && cell.prefabRoom) taken.push(cell.prefabRoom.rect)
+      if (cell.type !== "empty" && cell.prefabRoom) taken.push(cell.prefabRoom.rect)
       return taken
     })
   )
@@ -207,7 +231,7 @@ const furnish = (grid: FloorGrid, r: number, c: number, prefab: Prefab, fit: Fit
       if (kind !== undefined && !special.has(kind)) special.set(kind, at(i, j))
     })
   )
-  const holds = holdsOf(cellAt(grid, r, c) as RoomCell)
+  const holds = holdsOf(cellAt(grid, r, c))
   const nodeArt = holds === "nothing" ? undefined : special.get(placeFor[holds])
   const actor = special.get("actor")
   return {
@@ -225,7 +249,7 @@ const furnish = (grid: FloorGrid, r: number, c: number, prefab: Prefab, fit: Fit
 }
 
 /**
- * THE PREFAB LAID OVER THE ROOM AT r,c, or undefined where it fits no way. Each variant is tried with its node on
+ * THE PREFAB LAID OVER THE ROOM (OR CORRIDOR END) AT r,c, or undefined where it fits no way. Each variant is tried with its node on
  * each free inside cell (`fitAt`); the fit absorbing the fewest arm cells wins, then the hash of the variant, then
  * the first node cell in reading order. Its fill and each place's kind are hashed from the site and the room.
  */
@@ -237,7 +261,7 @@ export const fitPrefab = (
   siteId: string
 ): PrefabRoom | undefined => {
   const cell = cellAt(grid, r, c)
-  if (cell.type !== "room") return undefined
+  if (cell.type === "empty") return undefined
   const others = occupied(grid, r, c)
   let best: (Fit & { tie: number }) | undefined
   for (const variant of variantsOf(prefab)) {
@@ -271,7 +295,7 @@ export const prefabCells = (grid: FloorGrid): ReadonlyMap<string, string> => {
   const inside = new Map<string, string>()
   for (const row of grid.cells)
     for (const cell of row) {
-      if (cell.type !== "room" || !cell.prefabRoom) continue
+      if (cell.type === "empty" || !cell.prefabRoom) continue
       const { rect, name } = cell.prefabRoom
       for (let r = rect.top; r < rect.top + rect.rows; r++)
         for (let c = rect.left; c < rect.left + rect.cols; c++) inside.set(`${r},${c}`, name)
@@ -316,6 +340,11 @@ export const placePrefabs = (prep: FloorPrep, grid: FloorGrid): Refusal | FloorG
   const cells = grid.cells.map(row => [...row])
   const working: FloorGrid = { ...grid, cells }
   const lay = (r: number, c: number, prefab: Prefab, room: PrefabRoom) => {
+    const cell = cells[r][c]
+    if (cell.type === "corridor") {
+      cells[r][c] = { ...cell, prefabRoom: room }
+      return
+    }
     const {
       decoration: _decoration,
       decorationFallback: _fallback,
@@ -323,7 +352,7 @@ export const placePrefabs = (prep: FloorPrep, grid: FloorGrid): Refusal | FloorG
       patronRoom: _patron,
       activity: _activity,
       ...kept
-    } = cells[r][c] as RoomCell
+    } = cell as RoomCell
     cells[r][c] = { ...kept, ...(prefab.activity ? { activity: prefab.activity } : {}), prefabRoom: room }
   }
 
@@ -335,7 +364,9 @@ export const placePrefabs = (prep: FloorPrep, grid: FloorGrid): Refusal | FloorG
   }
 
   const rooms: Cell[] = []
-  grid.cells.forEach((row, r) => row.forEach((_, c) => claimsFloorAt(grid, r, c) && rooms.push([r, c])))
+  grid.cells.forEach((row, r) =>
+    row.forEach((cell, c) => (claimsFloorAt(grid, r, c) || emptyDeadEnd(cell, r, c)) && rooms.push([r, c]))
+  )
   const central = centrality(grid, rooms)
   for (const { room: name, min, max, central: wanted } of placements) {
     const prefab = prefabNamed(name)
