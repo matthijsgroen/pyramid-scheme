@@ -3,7 +3,7 @@ import { fillsOf, variantsOf } from "@/game/prefabChecks"
 import type { Prefab } from "@/game/prefabTypes"
 import { STEP } from "@/game/roomShape"
 import type { Direction, FloorGrid } from "@/game/siteTypes"
-import { floorFrom } from "./floorFixtures.testing"
+import { floorFromPieces } from "./floorFrom"
 
 type Cell = readonly [number, number]
 
@@ -78,9 +78,12 @@ export const prefabPreviewFloor = (prefab: Prefab, variant = 0, fill = 0): Prefa
       entrance = false
     }
     if (entrance) put([0, 0], "E")
-    const floor = floorFrom(
+    const floor = floorFromPieces(
       rows.map(row => row.join("")),
-      { G: dirs => ({ type: "room", roomType: "chamber", dirs: new Set(dirs), state: "fogged" }) }
+      {
+        R: dirs => ({ type: "room", roomType: "encounter", dirs: new Set(dirs), state: "fogged" }),
+        G: dirs => ({ type: "room", roomType: "chamber", dirs: new Set(dirs), state: "fogged" }),
+      }
     )
     const [r, c] = at(i, j)
     const prefabRoom = fitPrefab(floor, r, c, prefab, floor.siteId, { variant, fill })

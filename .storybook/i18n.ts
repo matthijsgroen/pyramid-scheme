@@ -14,6 +14,7 @@ import fezEn from "../public/locales/en/fez.json"
 i18n.use(initReactI18next).init({
   lng: "en",
   fallbackLng: "en",
+  defaultNS: "common",
   debug: false,
   interpolation: {
     escapeValue: false,

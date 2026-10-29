@@ -1110,7 +1110,14 @@
       }
     },
     "events": {
-      "default": ["the fire", "the water carrying", "the baking", "the boat trip", "the ox driving", "the night watch"],
+      "default": [
+        "the fire",
+        "the water carrying",
+        "the baking",
+        "the boat trip",
+        "the ox driving",
+        "the night watch"
+      ],
       "funerary": [
         "the plastering",
         "the grid drawing",
@@ -1360,5 +1367,13 @@
     "title": "A new version!",
     "name": "The game has changed a lot",
     "body": "So your journey starts over. New tombs, finds and a camp to build are waiting."
+  },
+  "devPrefabPreview": {
+    "firstDoor": "To the first door",
+    "stop": "To the stop",
+    "secondDoor": "To the second door",
+    "doorsInUse_one": "{{count}} door in use",
+    "doorsInUse_other": "{{count}} doors in use",
+    "walled": "{{count}} walled"
   }
 }

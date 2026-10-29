@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { revealAll } from "@/game/gridNavigation"
 import type { Prefab } from "@/game/prefabTypes"
 import type { Direction, Tileset } from "@/game/siteTypes"
@@ -32,7 +33,11 @@ export const PrefabRoomPreview = ({ prefab, tileset, variant = 0, fill = 0, from
       return { error: error instanceof Error ? error.message : String(error) }
     }
   }, [prefab, variant, fill, tileset])
-  const [at, setAt] = useState<At>("from")
+  const { t } = useTranslation()
+  // A position belongs to the floor it was chosen on; a new prefab, variant or fill starts at the first door.
+  const [chosen, setChosen] = useState<{ at: At; on: unknown }>({ at: "from", on: shown })
+  const at = chosen.on === shown ? chosen.at : "from"
+  const setAt = (next: At) => setChosen({ at: next, on: shown })
   if ("error" in shown) return <p className="p-2 text-sm text-red-700">{shown.error}</p>
   const { preview, grid } = shown
   const open = Object.keys(preview.doors) as Direction[]
@@ -44,17 +49,17 @@ export const PrefabRoomPreview = ({ prefab, tileset, variant = 0, fill = 0, from
     <div>
       <div className="flex gap-4 p-2 text-sm">
         <button type="button" onClick={() => setAt("from")}>
-          To the first door
+          {t("devPrefabPreview.firstDoor")}
         </button>
         <button type="button" onClick={() => setAt("stop")}>
-          To the stop
+          {t("devPrefabPreview.stop")}
         </button>
         <button type="button" onClick={() => setAt("to")}>
-          To the second door
+          {t("devPrefabPreview.secondDoor")}
         </button>
         <span>
-          {open.length} door{open.length === 1 ? "" : "s"} in use
-          {preview.unusedDoors > 0 ? `, ${preview.unusedDoors} walled` : ""}
+          {t("devPrefabPreview.doorsInUse", { count: open.length })}
+          {preview.unusedDoors > 0 ? `, ${t("devPrefabPreview.walled", { count: preview.unusedDoors })}` : ""}
         </span>
       </div>
       <SiteMapView

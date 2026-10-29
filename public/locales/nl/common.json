@@ -1367,5 +1367,13 @@
     "title": "Een nieuwe versie!",
     "name": "Het spel is flink veranderd",
     "body": "Daarom begint je reis opnieuw. Er wachten nieuwe tombes, vondsten en een kamp om op te bouwen."
+  },
+  "devPrefabPreview": {
+    "firstDoor": "Naar de eerste deur",
+    "stop": "Naar de stopplek",
+    "secondDoor": "Naar de tweede deur",
+    "doorsInUse_one": "{{count}} deur in gebruik",
+    "doorsInUse_other": "{{count}} deuren in gebruik",
+    "walled": "{{count}} dichtgemetseld"
   }
 }
