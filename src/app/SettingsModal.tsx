@@ -12,6 +12,7 @@ import { useDevActions } from "@/app/dev/useDevActions"
 import { PuzzleLab } from "@/app/dev/PuzzleLab"
 import { SaveTransfer } from "@/app/dev/SaveTransfer"
 import { START_LOCK, encodeLockHash } from "@/app/dev/lockEditorUrl"
+import { START_ROOM, encodeRoomHash } from "@/app/dev/roomEditorUrl"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useJourneyTranslations } from "@/app/translations/useJourneyTranslations"
 
@@ -49,10 +50,14 @@ const DevTools: FC<{ startGame: () => void; onClose: () => void }> = ({ startGam
       )}
       <DevPanel title="Playtesting tools (every journey is pickable in develop mode)" actions={devActions} />
       <SaveTransfer />
-      <div className="flex justify-center">
+      <div className="flex justify-center gap-2">
         <DeveloperButton
           onClick={() => (window.location.hash = encodeLockHash(START_LOCK))}
           label={t("devLockEditor.open")}
+        />
+        <DeveloperButton
+          onClick={() => (window.location.hash = encodeRoomHash(START_ROOM))}
+          label={t("devRoomEditor.open")}
         />
       </div>
       <PuzzleLab />

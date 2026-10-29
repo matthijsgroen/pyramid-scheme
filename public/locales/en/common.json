@@ -1375,5 +1375,35 @@
     "doorsInUse_one": "{{count}} door in use",
     "doorsInUse_other": "{{count}} doors in use",
     "walled": "{{count}} walled"
+  },
+  "devRoomEditor": {
+    "title": "Room editor",
+    "open": "Room editor",
+    "close": "Close",
+    "tier": "Tier",
+    "catalogue": "Open a room",
+    "notation": "Room notation",
+    "copyLink": "Copy link",
+    "copyText": "Copy text",
+    "copied": "Copied",
+    "failed": "Could not copy; the link is in the address bar",
+    "palette": "Palette",
+    "unpainted": "not painted yet",
+    "layout": "Layout",
+    "mirrored": "(mirrored)",
+    "fill_one": "Fill ({{count}} choice)",
+    "fill_other": "Fill ({{count}} choices)",
+    "fromDoor": "Walk from",
+    "toDoor": "Walk to",
+    "automatic": "Automatic",
+    "direction": {
+      "n": "North door",
+      "e": "East door",
+      "s": "South door",
+      "w": "West door"
+    },
+    "checks": "Checks",
+    "sound": "The room passes its checks",
+    "tierDisagrees": "The header says tier {{header}}, drawn here in {{picked}}"
   }
 }

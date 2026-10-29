@@ -1375,5 +1375,35 @@
     "doorsInUse_one": "{{count}} deur in gebruik",
     "doorsInUse_other": "{{count}} deuren in gebruik",
     "walled": "{{count}} dichtgemetseld"
+  },
+  "devRoomEditor": {
+    "title": "Kamer-editor",
+    "open": "Kamer-editor",
+    "close": "Sluiten",
+    "tier": "Niveau",
+    "catalogue": "Open een kamer",
+    "notation": "Kamernotatie",
+    "copyLink": "Link kopiëren",
+    "copyText": "Tekst kopiëren",
+    "copied": "Gekopieerd",
+    "failed": "Kopiëren mislukt; de link staat in de adresbalk",
+    "palette": "Palet",
+    "unpainted": "nog niet getekend",
+    "layout": "Indeling",
+    "mirrored": "(gespiegeld)",
+    "fill_one": "Invulling ({{count}} keuze)",
+    "fill_other": "Invulling ({{count}} keuzes)",
+    "fromDoor": "Loop van",
+    "toDoor": "Loop naar",
+    "automatic": "Automatisch",
+    "direction": {
+      "n": "Noorddeur",
+      "e": "Oostdeur",
+      "s": "Zuiddeur",
+      "w": "Westdeur"
+    },
+    "checks": "Controles",
+    "sound": "De kamer doorstaat de controles",
+    "tierDisagrees": "De kop zegt niveau {{header}}, hier getekend in {{picked}}"
   }
 }
