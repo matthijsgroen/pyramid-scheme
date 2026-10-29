@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import type { FloorGrid, GridCell } from "@/game/siteTypes"
 import { ExplorerDot } from "./ExplorerDot"
 import { findPath, revealAll } from "@/game/gridNavigation"
-import { CELL, cellCenter } from "./mapScale"
+import { CELL, COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import { GROWN_FORK, GROWN_PIECE, floorFrom, grownForkFloor } from "./floorFixtures.testing"
 import { buildRoomClaims } from "./roomClaims"
 import { roomStop, walkPoints, walkSteps } from "./roomWalk"
@@ -185,6 +185,21 @@ describe("ExplorerDot in a grown room", () => {
     expect(frames).toBeGreaterThanOrEqual(1 + walkSteps(points) * perStep)
     expect(frames).toBeLessThanOrEqual(1 + walkSteps(points) * perStep + points.length)
     expect(walkSteps(points)).toBeGreaterThan(points.length - 1)
+  })
+
+  it("keeps one pace round a corner of the piece, never slowing to it", () => {
+    const { container, frame, onArrive } = walk([2, 0], [2, 7])
+    const seen: number[][] = []
+    while (!onArrive.mock.calls.length) {
+      frame()
+      seen.push(at(container))
+    }
+    const corner = cellCenter(GROWN_PIECE.top + GROWN_PIECE.rows, GROWN_PIECE.left - 1)
+    const k = seen.findIndex(([x, y]) => x === corner.cx && y === corner.cy)
+    expect(k).toBeGreaterThan(2)
+    const pace = (a: number[], b: number[]) => Math.hypot((a[0] - b[0]) / COL_PITCH, (a[1] - b[1]) / ROW_PITCH)
+    expect(pace(seen[k - 2], seen[k - 1])).toBeCloseTo(pace(seen[k + 1], seen[k + 2]), 6)
+    expect(pace(seen[k - 2], seen[k - 1])).toBeCloseTo(FRAME_MS / STEP_MS, 6)
   })
 
   it("announces each room waypoint once, and never in a corridor", () => {

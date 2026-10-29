@@ -1,14 +1,14 @@
 // @vitest-environment jsdom
-import { render, fireEvent, screen } from "@testing-library/react"
-import { describe, expect, it, vi } from "vitest"
+import { act, render, fireEvent, screen } from "@testing-library/react"
+import { afterEach, describe, expect, it, vi } from "vitest"
 import { SiteMapView, approachCells, cornerRocksFor } from "./SiteMapView"
 import { allFloorRects, buildRoomClaims, tileRegionsFor } from "./roomClaims"
 import { grassMatsFor } from "./floorScatter"
 import { footprintPath } from "./tileRegions"
 import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY } from "./nodeArt"
-import { ExplorerFigure } from "./ExplorerDot"
+import { CHAR_H, CHAR_W, ExplorerFigure, FOOT_LIFT } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
-import { ARCH_H, ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
+import { ARCH_H, ARCH_RISE, CELL, PROP_H, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
 import { ALL_STATES } from "./tileRegions"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
 import { tierPalette } from "./tileMaterials"
@@ -29,7 +29,18 @@ import { registerFamily } from "@/app/families/familyRegistry"
 import "@/mods/registerModApps"
 import { floorWithHandle } from "@/game/testSupport/handleFixtures"
 import { cellAddress } from "@/game/cellAddress"
-import { AXES, DROP_AT, dropGrid, obstacleIndexes } from "./floorFixtures.testing"
+import {
+  AXES,
+  DROP_AT,
+  GROWN_FORK,
+  GROWN_PIECE,
+  dropGrid,
+  grownForkFloor,
+  obstacleIndexes,
+} from "./floorFixtures.testing"
+import { revealAll } from "@/game/gridNavigation"
+import { roomStop } from "./roomWalk"
+import { OCCLUDER_FADE } from "./htmlLayers"
 import { CHAMBER_SCALE, GROWTH_POOLS, growthTile } from "./moodSettings"
 import { sharedTileUrl } from "./tileAssets"
 import { STANDING_RELIEF, lampStrength } from "./lighting"
@@ -2758,5 +2769,158 @@ describe("SiteMapView — the notice", () => {
     expect(region.textContent).toBe("Cannot pass with a stone")
     rerender(<SiteMapView grid={grid} notice={null} />)
     expect(region.textContent).toBe("")
+  })
+})
+
+describe("SiteMapView — a grown room", () => {
+  const FRAME_MS = 10
+  const handFrames = () => {
+    let queue: FrameRequestCallback[] = []
+    let now = 0
+    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => queue.push(cb))
+    vi.stubGlobal("cancelAnimationFrame", () => void (queue = []))
+    const frame = () => {
+      const due = queue
+      queue = []
+      now += FRAME_MS
+      act(() => due.forEach(cb => cb(now)))
+    }
+    return { frame, pending: () => queue.length > 0 }
+  }
+  afterEach(() => vi.unstubAllGlobals())
+
+  const grid = revealAll(grownForkFloor({}, true))
+  const stop = roomStop(grid, ...GROWN_FORK)!
+  const markerAtCentre = (container: HTMLElement, [r, c]: readonly [number, number]) =>
+    Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).filter(
+      el =>
+        parseFloat(el.style.left) + CELL / 2 === cellCenter(r, c).cx &&
+        parseFloat(el.style.top) + CELL / 2 === cellCenter(r, c).cy
+    )
+  const piece = (container: HTMLElement) => container.querySelector<HTMLElement>("[data-centre-piece]")!
+  const explorer = (container: HTMLElement) => container.querySelector<HTMLElement>("[data-explorer]")!
+  const explorerAt = (container: HTMLElement) => explorer(container).getAttribute("data-at")!.split(",").map(Number)
+  const floorLine = cellTop(GROWN_PIECE.top + GROWN_PIECE.rows - 1) + CELL
+  const behind = (container: HTMLElement) =>
+    !!(explorer(container).compareDocumentPosition(piece(container)) & Node.DOCUMENT_POSITION_FOLLOWING)
+
+  const walk = (from: readonly [number, number], to: readonly [number, number]) => {
+    const view = render(<SiteMapView grid={grid} explorerPos={from} />)
+    const frames = handFrames()
+    view.rerender(<SiteMapView grid={grid} explorerPos={to} />)
+    const seen: { x: number; y: number; behind: boolean; faded: boolean }[] = []
+    while (frames.pending()) {
+      frames.frame()
+      const [x, y] = explorerAt(view.container)
+      seen.push({
+        x,
+        y,
+        behind: behind(view.container),
+        faded: piece(view.container).style.opacity === `${OCCLUDER_FADE}`,
+      })
+    }
+    return { ...view, seen }
+  }
+
+  it("draws a grown room's node marker on its stop, and a tap there walks to the room", () => {
+    const onClick = vi.fn()
+    const { container } = render(<SiteMapView grid={grid} onCellClick={onClick} explorerPos={[2, 0]} />)
+    const fork = markerAtCentre(container, stop).find(el => el.querySelector("[data-shape-kind='fork']"))
+    expect(fork).toBeDefined()
+    expect(markerAtCentre(container, GROWN_FORK)).toHaveLength(0)
+    fireEvent.click(fork!)
+    expect(onClick).toHaveBeenCalledWith(...GROWN_FORK)
+  })
+
+  it("draws the run arrow of an absorbed arm at the room's door", () => {
+    const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} explorerPos={GROWN_FORK} />)
+    for (const [arm, door] of [
+      [
+        [2, 3],
+        [2, 2],
+      ],
+      [
+        [2, 5],
+        [2, 6],
+      ],
+      [
+        [3, 4],
+        [4, 4],
+      ],
+    ] as const) {
+      expect(
+        markerAtCentre(container, arm).some(
+          el => !el.querySelector("[data-shape-kind]") && el.querySelector("polygon")
+        ),
+        `${arm}`
+      ).toBe(false)
+      expect(
+        markerAtCentre(container, door).some(el => el.querySelector("polygon")),
+        `${door}`
+      ).toBe(true)
+    }
+  })
+
+  it("sorts the explorer against the piece by the waypoint he last passed", () => {
+    // From the room behind the piece to the one in front of it, round the piece by its north ring.
+    const { seen } = walk([0, 4], [5, 4])
+    const feet = (at: { y: number }) => at.y + CELL / 2 - FOOT_LIFT
+    const pieceTop = floorLine - PROP_H
+    const overPiece = seen.filter(
+      at =>
+        at.x + CHAR_W / 2 > cellLeft(GROWN_PIECE.left) &&
+        at.x - CHAR_W / 2 < cellLeft(GROWN_PIECE.left + GROWN_PIECE.cols - 1) + CELL &&
+        feet(at) > pieceTop &&
+        feet(at) - CHAR_H < floorLine
+    )
+    const northRing = seen.filter(at => at.y === cellCenter(1, 0).cy)
+    const pastSouthDoor = seen.filter(at => at.y >= cellCenter(4, 0).cy)
+    expect(northRing.length).toBeGreaterThan(0)
+    expect(pastSouthDoor.length).toBeGreaterThan(0)
+    for (const at of northRing) expect(at.behind, `${at.x},${at.y}`).toBe(true)
+    for (const at of overPiece.filter(at => at.y + CELL / 2 < floorLine))
+      expect(at.behind, `${at.x},${at.y}`).toBe(true)
+    for (const at of pastSouthDoor) expect(at.behind, `${at.x},${at.y}`).toBe(false)
+  })
+
+  it("fades the piece while the explorer stands behind it, and only then", () => {
+    for (const [pos, faded] of [
+      [[0, 4], true],
+      [GROWN_FORK, false],
+      [[2, 0], false],
+      [[5, 4], false],
+    ] as const) {
+      const { container, unmount } = render(<SiteMapView grid={grid} explorerPos={pos} />)
+      expect(piece(container).style.opacity === `${OCCLUDER_FADE}`, `${pos}`).toBe(faded)
+      unmount()
+    }
+    const { seen } = walk([5, 4], [0, 4])
+    expect(seen.some(at => at.faded)).toBe(true)
+    for (const at of seen.filter(at => at.faded)) expect(at.y + CELL / 2, `${at.x},${at.y}`).toBeLessThan(floorLine)
+    const back = walk([0, 4], [2, 0]).seen
+    expect(back.at(-1)?.faded).toBe(false)
+  })
+
+  it("draws a room with no centre object exactly as before", () => {
+    const plain = revealAll(grownForkFloor({ grownRoom: undefined }, true))
+    const digest = (container: HTMLElement) => ({
+      markers: Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).map(
+        el => `${el.style.left},${el.style.top},${el.style.cursor} ${el.innerHTML}`
+      ),
+      sprites: spritesIn(container).map(el => `${urlOf(el)} ${JSON.stringify(boxOf(el))} ${el.style.opacity}`),
+      explorer: explorer(container).getAttribute("data-at"),
+      order: Array.from(container.querySelectorAll<HTMLElement>("[data-explorer], [data-node-sprite]")).map(
+        el => el.getAttribute("data-node-sprite") ?? "explorer"
+      ),
+    })
+    const standing = [GROWN_FORK, [0, 4], [2, 0]].map(pos => {
+      const { container, unmount } = render(
+        <SiteMapView grid={plain} onCellClick={() => {}} explorerPos={pos as readonly [number, number]} />
+      )
+      const seen = digest(container)
+      unmount()
+      return seen
+    })
+    expect(standing).toMatchSnapshot()
   })
 })

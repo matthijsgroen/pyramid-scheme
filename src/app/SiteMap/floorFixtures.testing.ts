@@ -149,11 +149,12 @@ export const addressed = (grid: FloorGrid): FloorGrid => {
 }
 
 /** A fork at `GROWN_FORK` with arms west, east and south, grown round a 2×1 stand-in piece (row 2, cols 3-4)
- * to rows 1-4, cols 2-6: its doors are 2,2 (west), 2,6 (east) and 4,4 (south). The entrance is at 2,0. */
+ * to rows 1-4, cols 2-6: its doors are 2,2 (west), 2,6 (east) and 4,4 (south). The entrance is at 2,0. With `north`
+ * a fourth arm leaves by the door at 1,4 for a room at 0,4, behind the piece. */
 export const GROWN_FORK = [2, 4] as const
 export const GROWN_PIECE = { top: 2, left: 3, rows: 1, cols: 2 }
-export const grownForkFloor = (fork: Partial<Extract<GridCell, { type: "room" }>> = {}): FloorGrid =>
-  floorFrom(["", "", "E...G..R", "    .", "    .", "    R"], {
+export const grownForkFloor = (fork: Partial<Extract<GridCell, { type: "room" }>> = {}, north = false): FloorGrid =>
+  floorFrom([north ? "    R" : "", north ? "    ." : "", "E...G..R", "    .", "    .", "    R"], {
     G: dirs => ({
       type: "room",
       roomType: "fork",

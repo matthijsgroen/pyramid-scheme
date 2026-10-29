@@ -1,6 +1,7 @@
 import { Fragment, useCallback, useEffect, useMemo, useState, type ReactNode } from "react"
 import type {
   CellState,
+  CentrePiece,
   DecorationKind,
   Direction,
   FloorGrid,
@@ -99,7 +100,8 @@ import {
   type RoomClaims,
 } from "./roomClaims"
 import { occupantOffset, standingOffset } from "./standingSpot"
-import { walkPoints } from "./roomWalk"
+import { markerCell, walkPoints, type WalkPoint } from "./roomWalk"
+import { grownCells } from "@/game/roomShape"
 import { OccupantFigure } from "./OccupantFigure"
 import type { ReplaysAt } from "./roomReplays"
 import type { OccupantOf } from "./roomOccupants"
@@ -261,6 +263,13 @@ const leverArmTransform = (angleDeg: number): string =>
   `scaleY(${1 / LEVER_CORRECTION_S}) rotate(${angleDeg}deg) scaleY(${LEVER_CORRECTION_S})`
 
 const NO_STATES: ReadonlyMap<string, string> = new Map()
+
+/** Whether a piece stands over the explorer: the stretch he is on runs north of its floor line and across its width. */
+const hides = (
+  frame: { x: number; w: number; baseY: number },
+  { at, to = at }: { at: WalkPoint; to?: WalkPoint }
+): boolean =>
+  at.y + CELL / 2 < frame.baseY && Math.max(at.x, to.x) > frame.x && Math.min(at.x, to.x) < frame.x + frame.w
 
 // `stairGoes` decides the flight's direction; the entrance position is only the fallback for a cell carrying none.
 const stairClimbs = (grid: Pick<FloorGrid, "entrancePos">, cell: { stairGoes?: StairGoes }, r: number, c: number) =>
@@ -1374,6 +1383,9 @@ export const SiteMapView = ({
   // destination, so the old markers no longer apply), and don't show the new ones at the
   // far end until the dot actually arrives there rather than while it's still gliding.
   const [settledExplorerPos, setSettledExplorerPos] = useState(explorerPos)
+  // The room point he last set out from on a walk under way, and the point that stretch heads for; cleared on arrival.
+  const [roomStretch, setRoomStretch] = useState<{ at: WalkPoint; to?: WalkPoint } | null>(null)
+  const onWaypoint = useCallback((at: WalkPoint, to?: WalkPoint) => setRoomStretch({ at, to }), [])
   const isTraveling = !!(
     explorerPos &&
     settledExplorerPos &&
@@ -1415,6 +1427,49 @@ export const SiteMapView = ({
   // The walkable floor, as rectangles: what a layer cut to the floor is cut to. The sand is the only one
   // left — everything else that used to share the map-wide clip now carries its own shape.
   const floorRects = useMemo(() => allFloorRects(regions), [regions])
+
+  const standAt = useCallback((r: number, c: number) => standingOffset(grid, claims, r, c), [grid, claims])
+  const pointOf = useCallback(
+    ([r, c]: readonly [number, number]): WalkPoint => {
+      const { cx, cy } = cellCenter(r, c)
+      const { dx, dy } = standAt(r, c)
+      return { x: cx + dx, y: cy + dy }
+    },
+    [standAt]
+  )
+  const movedMarkers = useMemo(() => {
+    const moved = new Map<string, readonly [number, number]>()
+    for (const key of grownCells(grid).keys()) {
+      const [r, c] = key.split(",").map(Number)
+      moved.set(key, markerCell(grid, r, c))
+    }
+    return moved
+  }, [grid])
+  // A grown room's piece, by the cell it is anchored on.
+  const centrePieces = useMemo(() => {
+    const pieces = new Map<string, CentrePiece>()
+    for (const owner of new Set(grownCells(grid).values())) {
+      const [r, c] = owner.split(",").map(Number)
+      const room = grid.cells[r][c]
+      if (room.type === "room" && room.grownRoom)
+        pieces.set(`${room.grownRoom.piece.top},${room.grownRoom.piece.left}`, room.grownRoom.piece)
+    }
+    return pieces
+  }, [grid])
+  // The stretch a piece is judged against: the room stretch he is walking, else the spot he set out from until he
+  // reaches one, else where he stands. A floor with no piece needs none.
+  const fadeStretch = useMemo(
+    () =>
+      !centrePieces.size
+        ? null
+        : (roomStretch ??
+          (isTraveling && settledExplorerPos
+            ? { at: pointOf(settledExplorerPos) }
+            : explorerPos
+              ? { at: pointOf(explorerPos) }
+              : null)),
+    [centrePieces, roomStretch, isTraveling, settledExplorerPos, explorerPos, pointOf]
+  )
 
   // Everything that stands on this floor, in one list: a room's furniture and a node's own, each with
   // the line it stands on. Split at the explorer's own floor line so he is drawn in the middle.
@@ -1511,15 +1566,32 @@ export const SiteMapView = ({
       const owner = litClaimOwner(grid, claims, r, c)
       if (!owner) continue
       const { cx, cy } = cellCenter(r, c)
-      // A prop bigger than a cell spans its footprint from the anchor and sorts by its bottom row.
-      const frame = propFrame(r, c, decorationFootprint(kind))
+      // A prop bigger than a cell spans its footprint from the anchor and sorts by its bottom row; a grown room's
+      // piece spans the cells the carve gave it.
+      const piece = centrePieces.get(cellKey)
+      const frame = propFrame(
+        r,
+        c,
+        piece ? { ...decorationFootprint(kind), rows: piece.rows, cols: piece.cols } : decorationFootprint(kind)
+      )
       sprites.push({
         key: `prop:${cellKey}`,
         baseY: frame.baseY,
         node: (
           // A box with no size of its own, standing at the middle of the cell: what is inside it is then
           // drawn in cell-local units, the way it was inside a `<g transform>`.
-          <div key={`prop:${cellKey}`} style={{ position: "absolute", left: cx, top: cy, width: 0, height: 0 }}>
+          <div
+            key={`prop:${cellKey}`}
+            {...(piece ? { "data-centre-piece": cellKey } : {})}
+            style={{
+              position: "absolute",
+              left: cx,
+              top: cy,
+              width: 0,
+              height: 0,
+              ...(piece && fadeStretch && hides(frame, fadeStretch) ? { opacity: OCCLUDER_FADE } : {}),
+            }}
+          >
             <Decoration
               kind={kind}
               tier={cellTileset(owner, grid, tier)}
@@ -1554,17 +1626,19 @@ export const SiteMapView = ({
         })
       )
     return sprites.sort((a, b) => a.baseY - b.baseY)
-  }, [grid, claims, tier, nodeSprites, explorerPos, squeeze, occupantOf])
+  }, [grid, claims, tier, nodeSprites, explorerPos, squeeze, occupantOf, centrePieces, fadeStretch])
 
   // The line the player stands on. A sprite lower than it is nearer the viewer and is drawn after him;
   // one level with it loses the tie, because the actor belongs in front of the furniture he shares a
   // floor line with — UNLESS that furniture is the room he is standing at (`atExplorer`), which wins
   // the tie instead: a lever the player is stood on has to stay visible while he works it, not vanish
   // behind him.
-  const standAt = useCallback((r: number, c: number) => standingOffset(grid, claims, r, c), [grid, claims])
-  const explorerBaseY = explorerPos
-    ? cellCenter(explorerPos[0], explorerPos[1]).cy + standAt(explorerPos[0], explorerPos[1]).dy + CELL / 2
-    : Infinity
+  // While a room walk is under way, the line of the room point he last set out from.
+  const explorerBaseY = roomStretch
+    ? roomStretch.at.y + CELL / 2
+    : explorerPos
+      ? pointOf(explorerPos).y + CELL / 2
+      : Infinity
   const waypointsOf = useCallback(
     (route: ReadonlyArray<readonly [number, number]>) => walkPoints(grid, route, standAt),
     [grid, standAt]
@@ -1884,8 +1958,9 @@ export const SiteMapView = ({
               return Array.from({ length: grid.cols + 2 }, (_, ci) => {
                 const c = ci - 1
                 const cell = cellAt(grid, r, c)
-                const { cx, cy } = cellCenter(r, c)
                 const cellKey = `${r},${c}`
+                // A grown room's node is drawn on its stop and an arm it absorbed at its door; the tap stays the cell's own.
+                const { cx, cy } = cellCenter(...(movedMarkers.get(cellKey) ?? [r, c]))
                 const claimOwner = litClaimOwner(grid, claims, r, c)
 
                 // A cell claimed by a neighboring room — genuine void (including one step
@@ -2066,9 +2141,13 @@ export const SiteMapView = ({
                   grid={grid}
                   pos={explorerPos}
                   carrying={carrying}
-                  onArrive={() => setSettledExplorerPos(explorerPos)}
+                  onArrive={() => {
+                    setSettledExplorerPos(explorerPos)
+                    setRoomStretch(null)
+                  }}
                   standAt={standAt}
                   waypointsOf={waypointsOf}
+                  onWaypoint={onWaypoint}
                 />
               )}
               {ride &&

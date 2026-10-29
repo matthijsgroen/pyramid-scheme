@@ -50,9 +50,9 @@ type Props = {
   standAt?: (r: number, c: number) => StandingOffset
   /** The points a route is walked through. Without it: cell centres, the first and last at their standing spots. */
   waypointsOf?: (route: Route) => WalkPoint[]
-  /** Fires with a room point when a segment sets out from it, and with the point he comes to rest on when that is
-   * a room point: once per room waypoint, never per frame and never in a corridor. */
-  onWaypoint?: (at: WalkPoint) => void
+  /** Fires with a room point and the point the segment heads for when a segment sets out from it, and with the point
+   * he comes to rest on when that is a room point: once per room waypoint, never per frame and never in a corridor. */
+  onWaypoint?: (at: WalkPoint, to?: WalkPoint) => void
 }
 
 export const ExplorerDot = ({
@@ -91,8 +91,8 @@ export const ExplorerDot = ({
   const mountedRef = useRef(false)
   const onArriveRef = useRef(onArrive)
   onArriveRef.current = onArrive
-  const announce = (at: Point) => {
-    if (at.inRoom) onWaypoint?.(at)
+  const announce = (at: Point, to?: Point) => {
+    if (at.inRoom) onWaypoint?.(at, to)
   }
 
   useEffect(() => {
@@ -157,17 +157,20 @@ export const ExplorerDot = ({
     let startTime: number | null = null
     // A room segment lasts as many steps as it is long, so he keeps one pace through a room and along a corridor.
     let duration = segmentDuration
+    // Round a room's piece he walks at one pace: a stretch between two room points eases only when it ends the walk.
+    let steady = false
     const setOut = () => {
       setFacing(facingOf(segEnd.x - segStart.x, segEnd.y - segStart.y))
       duration = segmentDuration * stepsBetween(segStart, segEnd)
-      announce(segStart)
+      steady = !!segStart.inRoom && !!segEnd.inRoom && segIdx < waypoints.length - 2
+      announce(segStart, segEnd)
     }
     setOut()
 
     const animate = (ts: number) => {
       if (startTime === null) startTime = ts
       const t = duration > 0 ? Math.min((ts - startTime) / duration, 1) : 1
-      const eased = 1 - (1 - t) * (1 - t) // ease-out quad
+      const eased = steady ? t : 1 - (1 - t) * (1 - t) // ease-out quad
       setSvgPos({
         x: segStart.x + (segEnd.x - segStart.x) * eased,
         y: segStart.y + (segEnd.y - segStart.y) * eased,
