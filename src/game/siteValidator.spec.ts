@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { reachableFrom, validateJourney, validateSite } from "./siteValidator"
+import { nodeBeyond, reachableFrom, validateJourney, validateSite } from "./siteValidator"
 import type { CellState, CorridorCell, Direction, FloorGrid, GridCell, RoomCell } from "./siteTypes"
 
 // ─── Grid builders ────────────────────────────────────────────────────────────
@@ -486,6 +486,37 @@ describe(validateSite, () => {
 })
 
 // ─── reachableFrom: requiredKeyIds (a tableau needing several hieroglyphs complete) ───────
+
+describe(nodeBeyond, () => {
+  it("follows a way out round its bends to the room it leads to", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("fork", ["e"])],
+        [0, 1, corridor(["w", "e"])],
+        [0, 2, corridor(["w", "s"])],
+        [1, 2, corridor(["n", "e"])],
+        [1, 3, switchGate(["w"], "k")],
+      ],
+      [0, 0],
+      [1, 3]
+    )
+    expect(nodeBeyond(grid, [0, 0], "e")).toEqual([1, 3])
+  })
+
+  it("walks straight through a junction it meets", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("fork", ["e"])],
+        [0, 1, corridor(["w", "e", "s"])],
+        [0, 2, switchGate(["w"], "k")],
+        [1, 1, corridor(["n"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(nodeBeyond(grid, [0, 0], "e")).toEqual([0, 2])
+  })
+})
 
 describe(reachableFrom, () => {
   it("blocks a room needing several keys until all of them are owned", () => {

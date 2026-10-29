@@ -22,6 +22,7 @@ import type { FloorConfig, SiteConfig } from "../src/worldGen/types"
 import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
 import { worldFloorCarve } from "../src/mods/carveWorldFloor"
 import { unjudgedLocks } from "../src/game/lockPuzzles"
+import { longestRoomToRoom } from "../src/game/carve/embed/embedFloor"
 import type { CorridorAssignment } from "../src/game/corridorSidePaths"
 import { searchStages, type StageJob } from "./layoutSearchPool"
 import { floorHash, sourceFingerprint, type CarveLedger, type CarveLedgerEntry } from "./carveLedger"
@@ -71,6 +72,10 @@ export type FloorPick = {
   corridors: CorridorAssignment[]
   /** Where the search stood the side paths: those outside the lock, and whether a corridor takes two. */
   sidePaths: SidePathStage
+  /** The picked grid's size, and its longest walk from one room to the next over corridor alone. */
+  rows: number
+  cols: number
+  longestCorridor: number
 }
 
 /** A floor no layout was picked for: its authoring cannot meet a hard criterion, or the bounded search met none. */
@@ -249,6 +254,9 @@ export const makeLayoutPicker = ({
         unjudged: unjudgedLocks(result.grid, floor as GameFloorConfig),
         corridors: search.corridorsWith(result.sidePaths),
         sidePaths: result.sidePaths,
+        rows: result.grid.rows,
+        cols: result.grid.cols,
+        longestCorridor: longestRoomToRoom(result.grid),
       })
       floor.seed = result.seed
       floor.packing = result.packing
@@ -318,6 +326,13 @@ export const printPicks = (picks: FloorPick[], stats: ReturnType<typeof makeLayo
     for (const f of laddered) console.log(`    ${f.key}`)
   }
   printSidePaths(picks)
+  printSizes(picks)
+}
+
+/** Every floor's size and its longest corridor between two rooms, so rooms standing far apart are seen. */
+const printSizes = (picks: FloorPick[]) => {
+  console.log(`  Sizes (rows x cols, longest corridor between two rooms):`)
+  for (const f of picks) console.log(`    ${f.key}: ${f.rows}x${f.cols}, ${f.longestCorridor}`)
 }
 
 /** Where the side paths of lock floors stand: on the lock's corridors, or hung outside it where no layout fit them. */

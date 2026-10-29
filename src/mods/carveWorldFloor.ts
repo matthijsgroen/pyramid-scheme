@@ -1,3 +1,4 @@
+import type { Engine } from "@/game/carve/engines"
 import { assembleFloor } from "@/game/siteAssembler"
 import type { AssembleFloorKeyRequirements } from "@/game/siteAssembler"
 import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
@@ -7,8 +8,8 @@ import { resolveOneWayRealisation, resolvePassageRealisation, resolveRegionBarri
 
 /** The seed and resolvers play carves a world floor with (`assemblePlayedFloor`), so the bake picks, checks and ships
  * the floor the player walks. A board's index is left out: it deals which board a room draws, never a wall, and it is
- * dealt from the baked world itself. */
-export const worldFloorCarve = (journeyId: string, levelNr: number, floorIndex: number) => {
+ * dealt from the baked world itself. `engine` carves in place of the one every floor ships with. */
+export const worldFloorCarve = (journeyId: string, levelNr: number, floorIndex: number, engine?: Engine) => {
   const seed = floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex)
   const resolvers: AssembleFloorKeyRequirements = {
     resolveKeyRequirements,
@@ -18,10 +19,14 @@ export const worldFloorCarve = (journeyId: string, levelNr: number, floorIndex: 
     resolvePassage: resolvePassageRealisation,
   }
   const carve = (config: FloorConfig, maxAttempts?: number): AssemblerResult =>
-    assembleFloor(journeyId, config, seed, resolveEncounterMeta, {
-      ...resolvers,
-      ...(maxAttempts !== undefined ? { maxAttempts } : {}),
-    })
+    assembleFloor(
+      journeyId,
+      config,
+      seed,
+      resolveEncounterMeta,
+      { ...resolvers, ...(maxAttempts !== undefined ? { maxAttempts } : {}) },
+      engine ? { engine } : {}
+    )
   return { seed, resolvers: { ...resolvers, resolveEncounter: resolveEncounterMeta }, carve }
 }
 

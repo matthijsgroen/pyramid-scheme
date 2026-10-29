@@ -66,7 +66,8 @@ const thresholdsOf = (
   cells: GridCell[][],
   neighbours: (key: string) => string[],
   region: string,
-  free: (key: string) => boolean
+  free: (key: string) => boolean,
+  isNode: IsNode
 ): { places: { at: Place; entrance: string }[] } | { reason: string } => {
   const entrance = `${grid.entrancePos[0]},${grid.entrancePos[1]}`
   const inside = (key: string) => key !== entrance && regionAt(grid, key) === region
@@ -89,7 +90,7 @@ const thresholdsOf = (
     let found: string | undefined
     for (let hops = 0; hops < grid.rows * grid.cols && !found; hops++) {
       const [r, c] = at.split(",").map(Number)
-      if (free(at) && isCandidate(cells[r][c], r, c, region)) {
+      if (free(at) && isCandidate(cells[r][c], r, c, region, isNode)) {
         found = at
         break
       }
@@ -125,17 +126,21 @@ const thresholdsOf = (
   }
 }
 
+/** Whether r,c is one of the floor's nodes, where a walk stops, rather than corridor between two of them. */
+export type IsNode = (r: number, c: number) => boolean
+
+/** The nodes of a floor carved on the lattice: every even/even cell. */
+export const latticeNode: IsNode = (r, c) => r % 2 === 0 && c % 2 === 0
+
 // A tile stands on a bare corridor node of its region: ground the player walks onto,
-// with nothing else on it. Nodes only (even/even), since a connector between two nodes is not somewhere a
-// walk stops.
-export const isCandidate = (cell: GridCell, r: number, c: number, region: string): boolean =>
+// with nothing else on it. Nodes only, since a connector between two nodes is not somewhere a walk stops.
+export const isCandidate = (cell: GridCell, r: number, c: number, region: string, isNode: IsNode): boolean =>
   cell.type === "corridor" &&
   cell.region === region &&
   !cell.hidden &&
   !cell.obstacle &&
   cell.dirs.size <= 2 &&
-  r % 2 === 0 &&
-  c % 2 === 0
+  isNode(r, c)
 
 /** The encounter room a corridor node becomes when a mechanism's piece stands on it: `dirs` and the section's
  * identity carried over, so no wall moves, plus the piece's own fields. */
@@ -170,7 +175,8 @@ export const placeSequences = (
   cells: GridCell[][],
   grid: FloorGrid,
   sequences: readonly SequenceDemand[],
-  reserved: ReadonlySet<string> = new Set()
+  reserved: ReadonlySet<string> = new Set(),
+  isNode: IsNode = latticeNode
 ): { id: string; step: number; reason: string } | undefined => {
   const neighbours = neighboursOf(grid)
   const taken = new Set<string>()
@@ -180,7 +186,7 @@ export const placeSequences = (
     for (const [step, region] of regions.entries()) {
       const earlier = regions.indexOf(region)
       if (earlier < step) return { id, step, reason: `${region} holds step ${earlier} too` }
-      const found = thresholdsOf(grid, cells, neighbours, region, key => !taken.has(key) && !reserved.has(key))
+      const found = thresholdsOf(grid, cells, neighbours, region, key => !taken.has(key) && !reserved.has(key), isNode)
       if ("reason" in found) return { id, step, reason: found.reason }
       for (const { at } of found.places) taken.add(`${at[0]},${at[1]}`)
       steps.push(found.places)

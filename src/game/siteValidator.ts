@@ -1,4 +1,4 @@
-import type { FloorGrid, ValidationReason, ValidationResult, TombKeyReward } from "./siteTypes"
+import type { Direction, FloorGrid, ValidationReason, ValidationResult, TombKeyReward } from "./siteTypes"
 import type { DoorMode } from "./doorOpen"
 import { oneWayRuns } from "./gridNavigation"
 
@@ -178,22 +178,26 @@ export const collectReachableKeys = (
   return { reachable, keys: collectedKeys, blockedRequirements }
 }
 
+const BACK: Record<string, string> = { n: "s", s: "n", e: "w", w: "e" }
+
 // The room one of a fork's ways out leads to. A fork names its exits by compass point, and what stands
-// down one is the next ROOM along it, with the connector cells between them walked straight through —
-// nodes sit two cells apart on an assembled floor, and directly adjacent on a hand-built one.
+// down one is the next ROOM along it, with the corridor cells between them walked through: straight on
+// where the corridor runs on, round the bend where it turns and has no other way. Nodes sit two cells
+// apart on a lattice floor, a corridor of any length and shape apart on an embedded one, and directly
+// adjacent on a hand-built one.
 export const nodeBeyond = (grid: FloorGrid, from: Pos, dir: string): Pos | undefined => {
-  const [dr, dc] = MOVES[dir]
-  let [r, c] = [from[0] + dr, from[1] + dc]
-  while (r >= 0 && r < grid.rows && c >= 0 && c < grid.cols) {
+  let heading = dir as Direction
+  let [r, c] = [from[0] + MOVES[heading][0], from[1] + MOVES[heading][1]]
+  for (let steps = 0; steps < grid.rows * grid.cols && r >= 0 && r < grid.rows && c >= 0 && c < grid.cols; steps++) {
     const cell = grid.cells[r][c]
     if (cell.type === "room") return [r, c]
     if (cell.type !== "corridor") return undefined
-    ;[r, c] = [r + dr, c + dc]
+    const bend = [...cell.dirs].filter(way => way !== BACK[heading])
+    if (!cell.dirs.has(heading) && cell.dirs.size === 2 && bend.length === 1) heading = bend[0]
+    ;[r, c] = [r + MOVES[heading][0], c + MOVES[heading][1]]
   }
   return undefined
 }
-
-const BACK: Record<string, string> = { n: "s", s: "n", e: "w", w: "e" }
 
 // The door a gated way out of a fork stands on: the next room along it, or, when that room is a sequence tile (a step
 // in the fork's own region stands its tile as the room's first cell, inside the door), the room past the tile.

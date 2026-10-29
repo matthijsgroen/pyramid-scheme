@@ -1,12 +1,13 @@
 import { describe, expect, it } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
+import { engineFromEnv } from "@/game/carve/engines"
 import { worldFloorCarve } from "@/mods/carveWorldFloor"
 import { refusal } from "./carveSeedSearch"
 
 /** What play carves a shipped floor to, ladder and all, judged on every hard criterion. */
 const refusalOf = (journeyId: string, levelNr: number, floorIndex: number) => {
   const floor = generatedWorldConfigs[journeyId][levelNr - 1][floorIndex]
-  return refusal(worldFloorCarve(journeyId, levelNr, floorIndex).carve(floor), floor)
+  return refusal(worldFloorCarve(journeyId, levelNr, floorIndex, engineFromEnv()).carve(floor), floor)
 }
 
 describe("the baked (packing, seed) pair of every shipped floor", () => {

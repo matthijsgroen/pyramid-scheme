@@ -273,6 +273,36 @@ s stop`,
     ])
   })
 
+  it("a node two drops leave at right angles lines up with both, each run exact", () => {
+    const sketch = lattice(["E.F.SL>>>DR", "    L", "    v", "    D", "    R"])
+    for (const seed of SEEDS) {
+      const { grid, nodes } = embedFloor(sketch, opts({ seed, spread: 1 }))
+      expect(oneWayRuns(grid).map(run => run.cells.length)).toEqual([3, 1])
+      expect(nodes.get("0,4")![0]).toBe(nodes.get("0,10")![0])
+      expect(nodes.get("0,4")![1]).toBe(nodes.get("4,4")![1])
+    }
+  })
+
+  it("a mechanism worked at another node is worked where that node stands", () => {
+    const sketch = lattice(["E.R.R"])
+    const cells = sketch.cells.map(row => [...row])
+    const lever = cells[0][2] as RoomCell
+    cells[0][2] = {
+      ...lever,
+      mechanism: {
+        states: ["a", "b"],
+        initial: "a",
+        returnsToInitial: true,
+        positions: [],
+        transitions: [{ to: "b", at: [0, 4] }],
+      },
+    }
+    const { grid, nodes } = embedFloor({ ...sketch, cells }, opts({ spread: 1 }))
+    const [r, c] = nodes.get("0,2")!
+    const worked = grid.cells[r][c]
+    expect(worked.type === "room" && worked.mechanism?.transitions?.[0].at).toEqual(nodes.get("0,4"))
+  })
+
   it("an aligned edge winds when straightness is 0 and runs straight at 1", () => {
     const bent = (straightness: number) =>
       SEEDS.flatMap(seed => {

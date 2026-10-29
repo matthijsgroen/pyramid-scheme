@@ -1,4 +1,5 @@
 import { hashString } from "@/support/hashString"
+import { oneWayRuns } from "../gridNavigation"
 import { blockedCells, fillsOf, placeBlobs, variantsOf, type Variant } from "../prefabChecks"
 import type { PlaceDef, PlaceKind, Prefab, SpecialPlace } from "../prefabTypes"
 import { cellAt, claimsFloorAt } from "../roomFootprint"
@@ -411,10 +412,7 @@ const laidOver = (cell: GridCell, prefab: Prefab, room: PrefabRoom): GridCell =>
  */
 export const stampPrefab = (grid: FloorGrid, choice: PrefabChoice, rect: CellRect, prep: FloorPrep): FloorGrid => {
   const [r, c] = choice.cell
-  const prefab = prefabsOf(prep.config.config)[choice.name]
-  if (!prefab) throw new Error(`[carve] room ${choice.name} is named but the floor carries no such prefab`)
-  const variant = variantsOf(prefab).find(v => v.layout === choice.layout && v.mirrored === choice.mirrored)
-  if (!variant) throw new Error(`[carve] room ${choice.name} has no layout ${choice.layout}`)
+  const { prefab, variant } = chosenVariant(prep, choice)
   const node = cellAt(grid, r, c)
   if (node.type === "empty") throw new Error(`[carve] room ${choice.name} is stamped on void at ${r},${c}`)
   const doors = doorsAt(variant, rect, r, c, node.dirs)
@@ -424,6 +422,20 @@ export const stampPrefab = (grid: FloorGrid, choice: PrefabChoice, rect: CellRec
     ...grid,
     cells: grid.cells.map((row, rr) => (rr === r ? row.map((cell, cc) => (cc === c ? laid : cell)) : row)),
   }
+}
+
+const chosenVariant = (prep: FloorPrep, choice: PrefabChoice): { prefab: Prefab; variant: Variant } => {
+  const prefab = prefabNamedIn(prep.config.config)(choice.name)
+  const variant = variantsOf(prefab).find(v => v.layout === choice.layout && v.mirrored === choice.mirrored)
+  if (!variant) throw new Error(`[carve] room ${choice.name} has no layout ${choice.layout}`)
+  return { prefab, variant }
+}
+
+/** Where the chosen room's node stands in its variant, leaving by `dirs` (`seatOf`). */
+export const seatOfChoice = (prep: FloorPrep, choice: PrefabChoice, dirs: ReadonlySet<Direction>): PrefabSeat => {
+  const seat = seatOf(chosenVariant(prep, choice).variant, dirs)
+  if (!seat) throw new Error(`[carve] room ${choice.name} was chosen at ${choice.cell.join(",")} with no seat`)
+  return seat
 }
 
 /** Every designed room the floor and its sections name, by name. */
@@ -514,27 +526,44 @@ const prefabNamedIn =
     return prefab
   }
 
-/** The choice for the node at r,c: its first variant by hash with a door place on every side the node leaves by. */
+/** The choice for the node at r,c: its first variant by hash with a seat, a free cell lined up with a door place on
+ * every side the node leaves by (`seatOf`). */
 const choiceAt = (prep: FloorPrep, grid: FloorGrid, [r, c]: Cell, prefab: Prefab): PrefabChoice | undefined => {
   const cell = cellAt(grid, r, c)
   if (cell.type === "empty") return undefined
-  const first = candidatesFor(prefab, prep.input.siteId, r, c, cell.dirs)[0]
+  const first = candidatesFor(prefab, prep.input.siteId, r, c, cell.dirs).find(
+    ({ variant }) => seatOf(variant, cell.dirs) !== undefined
+  )
   return first && choiceOf(prefab, [r, c], first.variant)
 }
 
+/** The nodes a drop leaves or lands beside: its way runs straight from the node, which no designed room holds. */
+const dropEnds = (grid: FloorGrid): Set<string> =>
+  new Set(
+    oneWayRuns(grid).flatMap(({ launch, landing, dir }) => {
+      const [dr, dc] = STEP[dir]
+      return [`${launch[0] - dr},${launch[1] - dc}`, `${landing[0] + dr},${landing[1] + dc}`]
+    })
+  )
+
 /**
- * WHICH DESIGNED ROOM EACH NODE GETS, from the graph alone: no test of the space around a node. Pinned rooms first,
- * each on its own node, and one with no variant whose door places meet the node's ways out refuses the attempt; then
- * each placement in the order the floor names them, over the nodes it may take (`rankedNodes`) that have such a
- * variant, nearest its `central` first, up to `max`; fewer than `min` refuses the attempt.
+ * WHICH DESIGNED ROOM EACH NODE GETS, from the graph alone: no test of the space around a node. A node a drop leaves
+ * or lands beside, or one of `held` (a piece's), holds none. Pinned rooms first, each on its own node, and one with no
+ * variant seating the node's ways out refuses the attempt; then each placement in the order the floor names them,
+ * over the nodes it may take (`rankedNodes`) that have such a variant, nearest its `central` first, up to `max`;
+ * fewer than `min` refuses the attempt.
  */
-export const choosePrefabs = (prep: FloorPrep, grid: FloorGrid): Refusal | PrefabChoice[] => {
+export const choosePrefabs = (
+  prep: FloorPrep,
+  grid: FloorGrid,
+  held: ReadonlySet<string> = new Set()
+): Refusal | PrefabChoice[] => {
   const placements = prep.config.config.prefabPlacements ?? []
   const prefabNamed = prefabNamedIn(prep.config.config)
   const chosen: PrefabChoice[] = []
-  const taken = new Set<string>()
+  const taken = new Set<string>([...dropEnds(grid), ...held])
   for (const { r, c, name } of pinnedOf(grid)) {
-    const choice = choiceAt(prep, grid, [r, c], prefabNamed(name))
+    const choice = taken.has(`${r},${c}`) ? undefined : choiceAt(prep, grid, [r, c], prefabNamed(name))
     if (!choice) return { retry: [{ type: "prefabsNotPlaced", room: name, wanted: 1, placed: 0 }] }
     chosen.push(choice)
     taken.add(`${r},${c}`)

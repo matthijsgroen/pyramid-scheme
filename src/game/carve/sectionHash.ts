@@ -53,6 +53,7 @@ export const computeLegacySideSectionHash = (
         sealed: section.sealed,
         encounter: section.encounter,
         gateType: section.gate?.type,
+        wideByIndex: section.wideByIndex,
       })
     )
   )
@@ -65,6 +66,9 @@ const carveShape = (config: FloorConfig) => ({
   corridorStraightness: config.corridorStraightness,
   outsideLock: config.outsideLock,
   corridorsTakeTwo: config.corridorsTakeTwo,
+  plan: config.plan,
+  spread: config.spread,
+  corridorWidth: config.corridorWidth,
 })
 
 export const computeMainSectionHash = (config: FloorConfig, isolated: boolean): string =>
@@ -76,6 +80,7 @@ export const computeMainSectionHash = (config: FloorConfig, isolated: boolean): 
         exitOrStaircase: carvedLink(config.exitOrStaircase),
         isolated,
         ...carveShape(config),
+        wideByIndex: config.wideByIndex,
       })
     )
   )

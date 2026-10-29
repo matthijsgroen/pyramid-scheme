@@ -93,7 +93,9 @@ const readSketch = (lattice: FloorGrid) => {
 
 /** Each node's footprint: a designed room's own, a room that claims floor 3×3 round its node, anything else its one
  * cell. A stop on the main path whose ways out all lie on one axis keeps to its block's middle line across them, so
- * a run of stops stays one straight corridor; a drop's ends sit flush toward each other and on one middle line. */
+ * a run of stops stays one straight corridor; a drop's ends sit flush toward each other and on one middle line. A node
+ * two drops meet at right angles keeps both middle lines: lined up, a drop's run is exact; flush, it only saves
+ * corridor. */
 const blockNodes = (lattice: FloorGrid, nodes: readonly CellKey[], drops: readonly Drop[], opts: EmbedOptions) =>
   nodes.map((key): BlockNode => {
     const [r, c] = key.split(",").map(Number)
@@ -106,13 +108,16 @@ const blockNodes = (lattice: FloorGrid, nodes: readonly CellKey[], drops: readon
     const straight = dirs.size > 0 && (eastWest === 0 || eastWest === dirs.size)
     if (!size && straight && cell.type !== "empty" && cell.sectionAddress === MAIN_SECTION_ADDRESS)
       hold[eastWest > 0 ? "row" : "col"] = "middle"
+    const across = new Set<"row" | "col">()
     for (const drop of drops) {
       if (drop.from !== key && drop.to !== key) continue
       if (room) throw new Error(`[carve] a drop leaves the designed room at ${key}`)
       const vertical = drop.dir === "n" || drop.dir === "s"
       const forward = drop.dir === "s" || drop.dir === "e"
-      hold[vertical ? "row" : "col"] = (drop.from === key) === forward ? "far" : "near"
+      const along = vertical ? "row" : "col"
+      if (!across.has(along)) hold[along] = (drop.from === key) === forward ? "far" : "near"
       hold[vertical ? "col" : "row"] = "middle"
+      across.add(vertical ? "col" : "row")
     }
     return { key, r, c, rows: size?.rows ?? 1, cols: size?.cols ?? 1, node: size?.node ?? [0, 0], hold }
   })
@@ -132,7 +137,7 @@ const rayOut = (node: BlockNode, blocks: Blocks, room: EmbedRoom | undefined, di
 }
 
 /** The rooms' longest walk from one room to the next over corridor alone. */
-const longestRoomToRoom = (grid: FloorGrid): number => {
+export const longestRoomToRoom = (grid: FloorGrid): number => {
   let longest = 0
   grid.cells.forEach((row, r) =>
     row.forEach((cell, c) => {
@@ -165,7 +170,8 @@ const longestRoomToRoom = (grid: FloorGrid): number => {
  * node and, for a designed room, through the door place its seat names (`routeBand`); every drop runs straight, its
  * run exact, any length its ends stand apart beyond their reach walked as plain corridor before the launch. Each
  * node's cell is copied whole with `dirs` recomputed from the corridors, and each corridor cell takes its connector's
- * labels. Draws come from the embed's own stream, so the passes' draws are untouched.
+ * labels, and a mechanism's record names the cells it is worked at where those nodes now stand. Draws come from the
+ * embed's own stream, so the passes' draws are untouched.
  */
 export const embedFloor = (lattice: FloorGrid, opts: EmbedOptions): Embedded => {
   const rand = mulberry32(opts.seed ^ EMBED_SALT)
@@ -233,7 +239,9 @@ export const embedFloor = (lattice: FloorGrid, opts: EmbedOptions): Embedded => 
     rows: blocks.rows,
     cols: blocks.cols,
     cells: cells.map((row, r) =>
-      row.map((cell, c) => (cell.type === "empty" ? cell : { ...cell, dirs: dirs.get(keyOf([r, c])) ?? new Set() }))
+      row.map((cell, c) =>
+        cell.type === "empty" ? cell : placeMechanism({ ...cell, dirs: dirs.get(keyOf([r, c])) ?? new Set() }, blocks)
+      )
     ),
     entrancePos: placed(blocks, lattice.entrancePos),
     exitPos: placed(blocks, lattice.exitPos),
@@ -252,6 +260,21 @@ export const embedFloor = (lattice: FloorGrid, opts: EmbedOptions): Embedded => 
     prefabRects,
     nodes: new Map(nodes.map(key => [key, at(key)])),
     report: { rows: grid.rows, cols: grid.cols, longestRoomToRoom: longestRoomToRoom(grid) },
+  }
+}
+
+/** A mechanism's record with each cell it is worked at moved to where that node stands. */
+const placeMechanism = (cell: GridCell, blocks: Blocks): GridCell => {
+  if (cell.type !== "room" || !cell.mechanism) return cell
+  const { transitions, underfoot } = cell.mechanism
+  if (!transitions && !underfoot) return cell
+  return {
+    ...cell,
+    mechanism: {
+      ...cell.mechanism,
+      ...(transitions ? { transitions: transitions.map(move => ({ ...move, at: placed(blocks, move.at) })) } : {}),
+      ...(underfoot ? { underfoot: underfoot.map(stand => ({ ...stand, at: placed(blocks, stand.at) })) } : {}),
+    },
   }
 }
 

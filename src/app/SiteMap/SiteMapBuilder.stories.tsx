@@ -1,5 +1,8 @@
 import { useMemo, useState } from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
+import { generatedWorldConfigs } from "../../data/generatedWorld"
+import { LATTICE_ENGINE, ROOMS_ENGINE, type Engine } from "../../game/carve/engines"
+import { worldFloorCarve } from "../../mods/carveWorldFloor"
 import { assembleFloor } from "../../game/siteAssembler"
 import { completeCell, getCell } from "../../game/gridNavigation"
 import type { Difficulty, FloorConfig, FloorGrid, GateConfig, SideSection, SiteConfig } from "../../game/siteTypes"
@@ -9,7 +12,11 @@ type GateOption = "none" | GateConfig["type"]
 
 const DIFFICULTIES: Difficulty[] = ["starter", "junior", "expert", "master", "wizard"]
 
+type EngineName = "lattice" | "rooms"
+const ENGINES: Record<EngineName, Engine> = { lattice: LATTICE_ENGINE, rooms: ROOMS_ENGINE }
+
 type Props = {
+  engine: EngineName
   seed: number
   difficulty: Difficulty
   pathPuzzles: number
@@ -29,6 +36,7 @@ type Props = {
 }
 
 const SiteMapBuilder = ({
+  engine,
   seed,
   difficulty,
   pathPuzzles,
@@ -81,7 +89,7 @@ const SiteMapBuilder = ({
     packing,
   }
 
-  const result = assembleFloor("builder", config, seed)
+  const result = assembleFloor("builder", config, seed, undefined, {}, { engine: ENGINES[engine] })
   if (!result.success) {
     return (
       <div className="p-4 font-mono text-sm text-red-400">
@@ -101,6 +109,7 @@ const meta = {
   component: SiteMapBuilder,
   parameters: { layout: "centered" },
   argTypes: {
+    engine: { control: "inline-radio", options: ["lattice", "rooms"] },
     seed: { control: { type: "number" } },
     // The five ranks, so a floor can be built out of any combination of stone. A floor routinely shows two
     // or three at once — the material follows each SECTION, not the floor — and a seam is where a rank's
@@ -128,6 +137,7 @@ type Story = StoryObj<typeof meta>
 
 export const Builder: Story = {
   args: {
+    engine: "lattice",
     seed: 1,
     difficulty: "starter",
     pathPuzzles: 0,
@@ -154,6 +164,7 @@ export const Builder: Story = {
  */
 export const RankSeams: Story = {
   args: {
+    engine: "lattice",
     seed: 3,
     difficulty: "starter",
     pathPuzzles: 1,
@@ -178,6 +189,7 @@ export const RankSeams: Story = {
  * `packing` (grid footprint tightness) and `corridorStraightness` (corridor turniness). */
 export const PackingAndStraightness: Story = {
   args: {
+    engine: "lattice",
     seed: 7,
     difficulty: "starter",
     pathPuzzles: 4,
@@ -200,6 +212,7 @@ export const PackingAndStraightness: Story = {
 
 export const FirstPyramid: Story = {
   args: {
+    engine: "lattice",
     seed: 42,
     difficulty: "starter",
     pathPuzzles: 0,
@@ -393,4 +406,41 @@ export const TwoFloorLayout: StoryObj = {
     />
   ),
   parameters: { layout: "centered" },
+}
+
+// ── A shipped floor ────────────────────────────────────────────────────────────
+
+const SHIPPED_FLOORS = Object.entries(generatedWorldConfigs).flatMap(([journeyId, levels]) =>
+  levels.flatMap((floors, level) => floors.map((_, floorIndex) => `${journeyId}#${level + 1}#${floorIndex}`))
+)
+
+/** A floor of the baked world, carved by either engine at the seed play carves it at. */
+const ShippedFloorView = ({ floor, engine }: { floor: string; engine: EngineName }) => {
+  const [journeyId, levelNr, floorIndex] = floor.split("#")
+  const result = useMemo(() => {
+    const config = generatedWorldConfigs[journeyId]?.[Number(levelNr) - 1]?.[Number(floorIndex)]
+    if (!config) return undefined
+    return worldFloorCarve(journeyId, Number(levelNr), Number(floorIndex), ENGINES[engine]).carve(config)
+  }, [journeyId, levelNr, floorIndex, engine])
+  if (!result) return <div className="p-4 font-mono text-sm text-red-400">No floor {floor}</div>
+  if (!result.success)
+    return <div className="p-4 font-mono text-sm text-red-400">Assembly failed: {JSON.stringify(result.reasons)}</div>
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <span className="font-mono text-xs text-stone-400">
+        {floor} · {result.grid.rows}×{result.grid.cols}
+      </span>
+      <SiteMapView grid={result.grid} revealAllCells className="max-h-[85vh] max-w-[95vw]" />
+    </div>
+  )
+}
+
+export const ShippedFloor: StoryObj<typeof ShippedFloorView> = {
+  render: args => <ShippedFloorView {...args} />,
+  args: { floor: "starter_1#1#0", engine: "rooms" },
+  argTypes: {
+    floor: { control: "select", options: SHIPPED_FLOORS },
+    engine: { control: "inline-radio", options: ["lattice", "rooms"] },
+  },
+  parameters: { layout: "fullscreen" },
 }
