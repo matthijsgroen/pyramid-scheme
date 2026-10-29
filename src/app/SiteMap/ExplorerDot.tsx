@@ -192,9 +192,9 @@ export const ExplorerDot = ({
     }
 
     rafRef.current = requestAnimationFrame(animate)
-    // Leaves `animatingRef` set: the next move reads it to snap to its destination rather than walk from the old one.
     return () => {
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
+      animatingRef.current = false
       setWalking(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

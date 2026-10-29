@@ -140,13 +140,36 @@ describe("ExplorerDot in a grown room", () => {
     expect(at(container).join(",")).toBe(stopAt)
   })
 
-  it("snaps to the stop when a second tap lands mid-walk", () => {
+  it("never shows him under the piece when a second tap lands mid-walk", () => {
     const { container, frame, rerender, dot, onArrive } = walk([2, 0], [2, 7])
     for (let i = 0; i < 25; i++) frame()
     expect(onArrive).not.toHaveBeenCalled()
     rerender(dot(GROWN_FORK))
+    const seen: number[][] = []
+    while (!onArrive.mock.calls.length) {
+      frame()
+      seen.push(at(container))
+    }
+    expect(seen.filter(inPiece)).toEqual([])
     expect(at(container).join(",")).toBe(stopAt)
-    expect(onArrive).toHaveBeenCalledTimes(1)
+  })
+
+  it("walks the next tap normally after a mid-walk re-route has settled", () => {
+    const { container, frame, rerender, dot, onArrive } = walk([2, 0], [2, 7])
+    for (let i = 0; i < 25; i++) frame()
+    rerender(dot(GROWN_FORK))
+    while (!onArrive.mock.calls.length) frame()
+    onArrive.mockClear()
+
+    rerender(dot([5, 4]))
+    expect(at(container).join(",")).toBe(stopAt)
+    let frames = 0
+    while (!onArrive.mock.calls.length) {
+      frame()
+      frames++
+    }
+    expect(frames).toBeGreaterThan(STEP_MS / FRAME_MS)
+    expect(at(container)).toEqual([cellCenter(5, 4).cx, cellCenter(5, 4).cy])
   })
 
   it("takes as long per step in a room as in a corridor", () => {
