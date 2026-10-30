@@ -82,13 +82,13 @@ const zeroLineSteps = (puzzle: PairPuzzle, marks: Marks): PairStep[] =>
       : []
   })
 
-/** A square with no anchor up, down, left or right of it can never hold a piece. */
-const noAnchorSteps = (puzzle: PairPuzzle, marks: Marks): PairStep[] =>
-  puzzle.anchors.flatMap((_anchor, cell) =>
-    isFree(puzzle, marks, cell) && !anchorsBeside(puzzle, cell).length
-      ? [{ technique: "noAnchor" as const, cells: [cell], decisions: empty([cell]) }]
-      : []
+/** Squares with no anchor up, down, left or right of them can never hold a piece; one step takes them all. */
+const noAnchorSteps = (puzzle: PairPuzzle, marks: Marks): PairStep[] => {
+  const lonely = puzzle.anchors.flatMap((_anchor, cell) =>
+    isFree(puzzle, marks, cell) && !anchorsBeside(puzzle, cell).length ? [cell] : []
   )
+  return lonely.length ? [{ technique: "noAnchor", cells: lonely, decisions: empty(lonely) }] : []
+}
 
 /** A line holding its count has nothing left to give. */
 const lineFullSteps = (puzzle: PairPuzzle, marks: Marks): PairStep[] =>
@@ -141,15 +141,17 @@ const ownedAnchors = (puzzle: PairPuzzle, marks: Marks): Map<number, number> => 
   return owner
 }
 
-/** A square whose every neighbouring anchor already has its piece is ruled out. */
+/**
+ * A square whose every neighbouring anchor already has its piece is ruled out, one step per owned anchor:
+ * the squares beside it that no other free anchor could still use.
+ */
 const claimedSteps = (puzzle: PairPuzzle, marks: Marks): PairStep[] => {
   const owner = ownedAnchors(puzzle, marks)
-  if (!owner.size) return []
-  return puzzle.anchors.flatMap((_anchor, cell) => {
-    const beside = anchorsBeside(puzzle, cell)
-    if (!isFree(puzzle, marks, cell) || !beside.length || !beside.every(anchor => owner.has(anchor))) return []
-    const evidence = beside.flatMap(anchor => [anchor, owner.get(anchor) as number])
-    return [{ technique: "claimed" as const, cells: evidence, decisions: empty([cell]) }]
+  return [...owner].flatMap(([anchor, piece]) => {
+    const spent = orthogonalOf(puzzle.size, anchor).filter(
+      cell => isFree(puzzle, marks, cell) && anchorsBeside(puzzle, cell).every(other => owner.has(other))
+    )
+    return spent.length ? [{ technique: "claimed" as const, cells: [anchor, piece], decisions: empty(spent) }] : []
   })
 }
 

@@ -43,10 +43,12 @@ describe("pair puzzle techniques", () => {
     ])
   })
 
-  it("rules out a square with no anchor beside it", () => {
+  it("rules out every square with no anchor beside it in one step", () => {
     const board = drawn(["A..", "...", "..."], [1, 1, 1], [1, 1, 1])
     const step = fires(board, "noAnchor")
-    expect(step?.decisions).toEqual([{ cell: 2, mark: "empty" }])
+    expect(step?.cells).toEqual([2, 4, 5, 6, 7, 8])
+    expect(step?.decisions.map(d => d.cell)).toEqual([2, 4, 5, 6, 7, 8])
+    expect(step?.decisions.every(d => d.mark === "empty")).toBe(true)
   })
 
   it("empties the rest of a line that has its pieces", () => {
@@ -77,6 +79,14 @@ describe("pair puzzle techniques", () => {
     const step = fires(board, "claimed")
     expect(step?.cells).toEqual([2, 1])
     expect(step?.decisions).toEqual([{ cell: 3, mark: "empty" }])
+  })
+
+  it("rules out every square an owned anchor leaves unusable in one step", () => {
+    // The piece at 7 has no anchor but 4, so 1, 3 and 5, beside 4 alone, cannot be pieces.
+    const board = drawn(["x.x", ".A.", "xPx"], [0, 0, 1], [0, 1, 0])
+    const step = nextPairStep(board.puzzle, [...board.marks], ["claimed"])
+    expect(step?.cells).toEqual([4, 7])
+    expect(step?.decisions.map(d => d.cell)).toEqual([1, 3, 5])
   })
 
   it("does not claim an anchor a piece might not belong to", () => {
