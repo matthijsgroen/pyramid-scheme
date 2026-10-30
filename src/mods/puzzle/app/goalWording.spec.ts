@@ -75,7 +75,7 @@ describe("the goal above the rules", () => {
     const faces: Record<string, string[]> = {
       constellation: ["default", "causeway", "irrigation", "ceiling"],
       hidato: ["default", "channel", "scribe", "chambers"],
-      starBattle: ["default", "fields", "twinDefault", "twinFields", "scarabs"],
+      starBattle: ["default", "fields", "twinDefault", "twinFields", "lamps", "market", "lotus", "cats"],
       sudoku: ["default", "papyrus"],
       canisters: ["default", "grain", "oil", "wine", "natron", "ink"],
       rushHour: ["default", "market"],

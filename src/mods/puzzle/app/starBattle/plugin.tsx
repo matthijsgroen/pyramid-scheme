@@ -38,7 +38,7 @@ if (isModEnabled("puzzle")) {
     generate: (seed, ctx) => generatePuzzle<StarBattlePuzzleWithAnswer>(TWIN_STARS_META, seed, ctx),
     Component: StarBattleComponent,
   })
-  // Walls instead of regions: the board brings its own `walls`, so the same screen draws it in the scarab dress
+  // Walls instead of regions: the board brings its own `walls`, so the same screen draws it in the dress its room role picks
   // (skins.ts). Lab-only — it is not in the mod's family list.
   registerFamily({
     meta: REGIONLESS_BATTLE_META,

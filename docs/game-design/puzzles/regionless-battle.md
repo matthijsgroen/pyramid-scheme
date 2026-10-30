@@ -102,8 +102,18 @@ that cover them.
 
 ## 8. Theming
 
-Tags `puzzle`, `funerary`, `cosmos`, each with the `default` face, and one theme, `default`. The icon is a
-beetle on amber. The one skin (`scarabs`, `REGIONLESS_SKINS` in `skins.ts`) is a pyramid floor: sandstone squares,
-walls as raised stone blocks (`skin.stone`, lit from the top left), scarabs as the pieces, drawn as the inline `Scarab`
-glyph. The title is `starBattle.name.scarabs`, "Scarab Field". The family is registered in `plugin.tsx` and reachable in
+Tags `puzzle`, `light`, `trade`, `water`, `funerary`. A room's role picks the skin through `REGIONLESS_BATTLE_META.faces`
+(`REGIONLESS_SKINS` in `skins.ts`); a room with no role of its own wears the default. Walls are raised blocks
+(`skin.stone`, lit from the top left) that nothing can stand on, and the no-touching rule has a reason in each place.
+
+| skin (theme) | role | piece | walls | why pieces never touch | title |
+| --- | --- | --- | --- | --- | --- |
+| lamps (`default`) | `light`, fallback | oil lamp (`OilLamp`) | stone blocks | their pools of light would overlap | Oil Lamps |
+| market (`market`) | `trade` | stall (`MarketStall`) | houses | rivals never set up side by side | Market Stalls |
+| lotus (`lotus`) | `water` | lotus (`Lotus`) | rocks | each flower needs open water | Lotus Pond |
+| cats (`cats`) | `funerary` | sleeping cat (`Cat`) | pillars | each cat keeps its own patch of sun | Temple Cats |
+
+Lamps and cats on dark and sunlit flagstones; market in daylight on dust; lotus on dark water. The solve celebration
+is the lamp's and the market's flare, the lotus's bloom, and the cat's gentle flare. Copy is keyed by the skin's `name`
+under `starBattle.*`. The icon is an oil lamp on amber. The family is registered in `plugin.tsx` and reachable in
 the puzzle lab only; it stays out of the mod's family list until a site is meant to deal it.

@@ -1,8 +1,9 @@
 import { isRegionless, type StarBattlePuzzle } from "@/mods/puzzle/game/starBattle/starBattle"
 import { STAR_BATTLE_META } from "@/mods/puzzle/game/starBattle/meta"
+import { REGIONLESS_BATTLE_META } from "@/mods/puzzle/game/starBattle/regionlessMeta"
 import { faceFor, withAmbience } from "../faceFor"
 import type { FC } from "react"
-import { Farmstead, Scarab, Star } from "./glyphs"
+import { Cat, Farmstead, Lotus, MarketStall, OilLamp, Star } from "./glyphs"
 
 /**
  * What each of this mechanic's places looks like, and how a room works out which place it is.
@@ -140,32 +141,104 @@ const SKINS: Record<string, StarBattleSkin> = {
 }
 
 /**
- * **Scarabs on a pyramid floor** — the one dress a regionless board wears. Sandstone flags set edge to edge,
- * the answer a scarab standing on one, and the walls raised stone blocks that nothing can stand on: a block is
- * lit from the top left, so it reads as standing up out of the floor rather than as a darker square.
+ * What a regionless board wears, one dress per kind of room. Walls are raised blocks that nothing can stand on,
+ * so each skin's `stone` is the thing that place is built of, lit from the top left so it reads as standing up
+ * out of the ground rather than as a darker square. There is no boundary stroke: a regionless board draws only
+ * its rim.
  *
- * The ground is light, as a sunlit floor is, so the scarab is dark against it and the hint rings are drawn in
- * ink. There is no boundary stroke: a regionless board draws none, only its rim, and the rim is the shadow
- * the floor sits in.
+ * `name` is what the copy is keyed on (it must not collide with a region skin's name), and the table key is
+ * what `REGIONLESS_BATTLE_META.faces` names.
  */
+const LIT = "shadow-[inset_3px_3px_0_rgba(255,255,255,0.3),inset_-3px_-3px_0_rgba(0,0,0,0.4)]"
+
 const REGIONLESS_SKINS: Record<string, StarBattleSkin> = {
+  /**
+   * **Oil lamps on a dark temple floor** — the plain dress and the one any room without its own gets. The
+   * ground is dark so a lamp is the brightest thing on it and a spent square is simply unlit; the answer is
+   * warm amber and the walls are cool stone blocks, so piece and wall differ in hue as well as in shape.
+   */
   default: {
-    name: "scarabs",
-    token: "🪲",
-    stone: "bg-stone-500 shadow-[inset_3px_3px_0_rgba(255,255,255,0.3),inset_-3px_-3px_0_rgba(0,0,0,0.4)]",
-    cell: "bg-[#e6cf9d]",
-    spent: "bg-[#d2b87c]",
-    wall: "rgb(87 83 78 / 0.9)",
+    name: "lamps",
+    token: "🪔",
+    stone: `bg-slate-500 ${LIT}`,
+    cell: "bg-stone-800",
+    spent: "bg-stone-900",
+    wall: "rgb(120 113 108 / 0.9)",
+    seam: "rgb(120 113 108 / 0.5)",
+    Glyph: OilLamp,
+    answer: "text-amber-300",
+    dark: "text-stone-500",
+    hatch: "rgba(252,211,77,0.45)",
+    evidence: "ring-sky-300/60",
+    focus: "ring-amber-300",
+    conflict: "ring-red-500/80",
+    // A lamp catching: light only, no swell, since a lamp stands on the floor rather than hanging in the sky.
+    celebrate: "animate-flare",
+  },
+  /**
+   * **Stalls in a market square** — daylight on packed earth. The stall is dark red-brown against pale dust, and
+   * the houses are warm plastered blocks around the square.
+   */
+  market: {
+    name: "market",
+    token: "🏪",
+    stone: `bg-[#b98a66] ${LIT}`,
+    cell: "bg-[#ecd9b0]",
+    spent: "bg-[#d8c08c]",
+    wall: "rgb(120 53 15 / 0.8)",
     seam: "rgb(120 90 40 / 0.4)",
-    Glyph: Scarab,
-    answer: "text-emerald-900",
+    Glyph: MarketStall,
+    answer: "text-red-900",
     dark: "text-stone-700/70",
     hatch: "rgba(120,53,15,0.4)",
     evidence: "ring-sky-800/70",
-    focus: "ring-emerald-950",
+    focus: "ring-red-950",
     conflict: "ring-red-800",
-    // Each scarab turns one full circle as its turn in the completion run comes.
-    celebrate: "animate-spin-once",
+    // A stall opening for the day: a flash of light, no swell.
+    celebrate: "animate-flare",
+  },
+  /**
+   * **Lotus on a pond** — dark green water, the flower a pale pink so it is the brightest thing on it, and rocks
+   * as grey-brown islets standing out of the water.
+   */
+  lotus: {
+    name: "lotus",
+    token: "🪷",
+    stone: `bg-stone-500 ${LIT}`,
+    cell: "bg-teal-900",
+    spent: "bg-teal-950",
+    wall: "rgb(94 234 212 / 0.6)",
+    seam: "rgb(94 234 212 / 0.25)",
+    Glyph: Lotus,
+    answer: "text-pink-200",
+    dark: "text-teal-300/60",
+    hatch: "rgba(251,207,232,0.45)",
+    evidence: "ring-sky-300/60",
+    focus: "ring-pink-300",
+    conflict: "ring-red-400/90",
+    // A flower opening: it swells as it brightens.
+    celebrate: "animate-bloom",
+  },
+  /**
+   * **Cats on a temple floor** — warm sunlit flagstones, the cat dark against them, and pale pillars. The
+   * celebration is the gentle flare: a cat does not leap, it stretches into the sun.
+   */
+  cats: {
+    name: "cats",
+    token: "🐈",
+    stone: `bg-stone-300 ${LIT}`,
+    cell: "bg-[#efe0b8]",
+    spent: "bg-[#dcc794]",
+    wall: "rgb(120 113 108 / 0.9)",
+    seam: "rgb(146 100 40 / 0.35)",
+    Glyph: Cat,
+    answer: "text-stone-800",
+    dark: "text-stone-600/70",
+    hatch: "rgba(120,53,15,0.4)",
+    evidence: "ring-sky-800/70",
+    focus: "ring-amber-900",
+    conflict: "ring-red-800",
+    celebrate: "animate-flare",
   },
 }
 
@@ -181,10 +254,9 @@ export const skinFor = (
   theme: string | undefined,
   board = 0,
   room?: string
-): StarBattleSkin =>
-  isRegionless(puzzle)
-    ? withAmbience(REGIONLESS_SKINS.default, theme)
-    : withAmbience(
-        SKINS[faceFor(STAR_BATTLE_META.faces, role, theme, Object.keys(SKINS), board, room)] ?? SKINS.default,
-        theme
-      )
+): StarBattleSkin => {
+  const regionless = isRegionless(puzzle)
+  const skins = regionless ? REGIONLESS_SKINS : SKINS
+  const meta = regionless ? REGIONLESS_BATTLE_META : STAR_BATTLE_META
+  return withAmbience(skins[faceFor(meta.faces, role, theme, Object.keys(skins), board, room)] ?? skins.default, theme)
+}

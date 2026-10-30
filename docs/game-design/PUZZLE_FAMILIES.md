@@ -409,9 +409,9 @@ The same board with two stars to a group, so every count becomes a capacity argu
 
 Design doc: [puzzles/star-battle.md §11](puzzles/star-battle.md)
 
-### 4.25a Regionless battle (scarab field)
+### 4.25a Regionless battle (lamps, stalls, lotus, cats)
 
-Star battle with stone blocks instead of regions: one scarab to every row and column, none touching, and the blocks are floor nothing can stand on. Debut tier expert; theme fit pyramid floor (the scarab dress). **Lab-only** until bake integration: it is registered for the puzzle lab and not in the mod's family list.
+Star battle with stone blocks instead of regions: one piece to every row and column, none touching, and the blocks are walls nothing can stand on. Debut tier expert; skins by room role: oil lamps (`light`, default), market stalls (`trade`), lotus flowers (`water`), temple cats (`funerary`). **Lab-only** until bake integration: it is registered for the puzzle lab and not in the mod's family list.
 
 Design doc: [puzzles/regionless-battle.md](puzzles/regionless-battle.md)
 

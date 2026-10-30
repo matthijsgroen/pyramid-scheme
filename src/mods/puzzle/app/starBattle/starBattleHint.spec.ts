@@ -179,7 +179,7 @@ describe("hints on a regionless board", () => {
   })
 })
 
-describe("scarab field hints are phrased in both locales", () => {
+describe.each(["lamps", "market", "lotus", "cats"])("%s hints are phrased in both locales", skin => {
   const lines = ["row", "col"]
   const counted = ["groupFull", "groupTight", "onlyWay", "everyWay"].flatMap(rung =>
     lines.flatMap(line => [`${rung}.${line}_one`, `${rung}.${line}_other`])
@@ -196,7 +196,9 @@ describe("scarab field hints are phrased in both locales", () => {
 
   it.each(keys)("%s reads as a sentence in English and Dutch", key => {
     for (const locale of [en, nl]) {
-      const block = locale.starBattle.hint.scarabs as unknown as Record<string, unknown>
+      const block = (locale.starBattle.hint as unknown as Record<string, Record<string, unknown>>)[
+        skin
+      ] as unknown as Record<string, unknown>
       const phrase = key.startsWith("action.") ? (block.action as Record<string, string>)[key.slice(7)] : block[key]
       expect(typeof phrase).toBe("string")
     }
