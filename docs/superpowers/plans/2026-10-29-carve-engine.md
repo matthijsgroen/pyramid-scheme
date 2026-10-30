@@ -9,11 +9,9 @@ spread, winding and width; caves included; packing gone.
 **Architecture:** `carveFloor` takes an `Engine` record. `LATTICE_ENGINE` is today's carve, byte-identical, until the
 swap. `ROOMS_ENGINE` runs the same `PASSES` (plus `pickPlan` up front), chooses prefabs on the sketch, renders the
 lattice grid, then `embedFloor` turns it into the real grid. After that come validate, the pieces and finish, and
-then the prefabs are stamped. `embedFloor` uses a block model:
-- Each lattice node gets a block sized by what stands there.
-- Each lattice edge gets its own band between two blocks, so routes can never cross.
-- Rows and columns get seeded gaps (spread) and seeded jitter.
-- Corridors are routed as Z shapes inside their band (winding).
+then the prefabs are stamped. `embedFloor` reads the sketch as a graph (rooms and rigid lock regions are blocks,
+corridors are strings holding their stops), lays it out (main path first, side paths hung on as subtrees, then
+compacted), and carves the layout (Task 11; the block embed of Task 5 is replaced).
 
 **Tech Stack:** TypeScript, Vitest (`yarn test`), `*.verify.ts` (`yarn verify`), Storybook, `yarn generate-world`.
 
@@ -42,7 +40,7 @@ then the prefabs are stamped. `embedFloor` uses a block model:
 ## Review Focus
 
 1. **The smallest floor** (an entrance, one stop, the exit, no side paths) embeds into a valid grid. Owner: Task 5.
-2. **A drop and a wide corridor across the same column boundary.** The drop keeps its exact run, and the wide
+2. **A drop and a wide corridor that meet.** The drop keeps its exact run, and the wide
    corridor narrows where it meets the drop. Owner: Task 7.
 3. **A prefab named with `min` whose door places miss one of the node's edge sides** is not chosen there, and when
    no node fits, the refusal names the room. Owner: Task 4.
@@ -278,12 +276,104 @@ then the prefabs are stamped. `embedFloor` uses a block model:
   cave into the scratchpad, and check rooms have space and corridors join them.
 - [ ] **Step 6: Commit** `feat: rooms engine carves every floor`.
 
+### Task 11: Graph and layout (runs after Task 6, before Task 7)
+
+The block embed of Task 5 stretched the lattice's rows and columns. The designer looked at it (starter_1#1#0: 40×48
+against 25×25 on LATTICE, small rooms far apart, long empty corridors, a grid look) and chose a real layout stage
+(spec, "Three stages: graph, layout, carve"). This task replaces the inside of `embedFloor`. Its signature,
+`EmbedOptions`, `Embedded` and `longestRoomToRoom` stay, so the Task 6 wiring (`passes.ts:156`, `layoutPicker.ts`)
+is untouched.
+
+**Files:**
+- Create: `src/game/carve/embed/graph.ts` (sketch → graph), `src/game/carve/embed/layout.ts` (place and compact),
+  and `src/game/carve/embed/carveLayout.ts` (layout → grid).
+- Modify: `src/game/carve/embed/embedFloor.ts`, which becomes `carveLayout(layoutFloor(floorGraph(…)))` plus the
+  report.
+- Delete: `src/game/carve/embed/blocks.ts` and `route.ts`, with their tests.
+- Test: `src/game/carve/embed/{graph,layout}.spec.ts`; `embedFloor.spec.ts` keeps every test that still states a true
+  claim.
+- Create: `scripts/layoutMeasure.ts` (`yarn layout-measure`). It carves every shipped floor with `ROOMS_ENGINE` and
+  prints per floor: rooms size, LATTICE size, area ratio, longest room-to-room walk and layout attempts used. It ends
+  with a summary line.
+
+**Interfaces:**
+- `floorGraph(lattice: FloorGrid, rooms: ReadonlyMap<CellKey, EmbedRoom>): FloorGraph`.
+  - **Pieces:**
+    - every claiming room is a block: `claimsFloorAt`, 3×3 with its ring;
+    - every prefab is a block: its `EmbedRoom`;
+    - every lock region whose walk depends on its geometry is a block. These are the cells a mechanism's
+      `transitions` or `underfoot` name, sequence tiles and plates. The connected lattice cells of one such region
+      stay together and are copied at lattice spacing, as one rigid piece;
+    - the entrance and the exit are blocks.
+  - **Strings:** each maximal chain of corridor cells and 1×1 nodes (stops, turns, doors, gates) between two pieces
+    is one string, holding its nodes in order.
+  - **Drops:** a drop is a string with a fixed straight run, `oneWayRunCells(dir)`, and no bend.
+- `layoutFloor(graph: FloorGraph, opts: EmbedOptions): Layout | { refused: string }`.
+  - `Layout` holds each block's top-left, and each string's polyline as orthogonal corner cells.
+
+**The algorithm.** It is pinned here because the tests do not determine it:
+1. **Order.** The main path from the entrance to the exit first, then each side subtree depth-first, in the graph's
+   order.
+2. **Place.** Each piece hangs on its parent through a string.
+   - The string leaves the parent's block at a door place: a prefab's marked place, or the middle of a side of a
+     plain block. It reaches the child's facing door place.
+   - Its length is at least the cells its nodes need at today's pitch: 2 per node, plus 1. `spread` adds
+     `round(spread * GAP_RANGE * u)` cells, with `GAP_RANGE = 6` and `u` in `[0.5, 1.5)`.
+   - It runs straight. With chance `1 - straightness` it takes one bend (an L) or two bends (a Z); the bend positions
+     are seeded.
+   - Candidates (side, door place, shape) are tried in seeded order. The first one whose cells and blocks are free
+     wins. "Free" means: no cell is used, and no cell is orthogonally next to a used cell of another piece or string,
+     except where the string meets its own two pieces.
+3. **Compact.** In a fixed order, try to slide each subtree (a piece and everything hung below it) one cell toward its
+   parent on each axis. That shortens or reshapes its string, never below its minimum length, and only while every
+   cell stays free. Repeat until no move succeeds.
+4. **Retry.** A piece with no free candidate re-places its subtree, up to 8 times. After that, the floor lays out again
+   from `seed ^ attempt`, up to 16 attempts. Past both caps it returns `{ refused }`, naming the node, and
+   `embedFloor` turns that into the existing retry reason.
+5. **Cycles.** Measure first whether any shipped floor's graph has a cycle.
+   - If none does: a cycle is refused with a clear reason, and a test pins that refusal.
+   - If some do: lay each cycle as one closed piece, both arms grown from one parent and joined.
+6. **Carve.**
+   - Blocks copy their lattice cells: rooms keep every field; a rigid lock region keeps its spacing.
+   - Strings become corridor cells with the lattice connector's labels. Each node of a string sits on its polyline in
+     order, spaced evenly.
+   - `dirs` follow the polylines. `exits`, `entrancePos` and `exitPos` are carried by node.
+   - The result is trimmed to its bounding box plus a 1-cell margin.
+
+- [ ] **Step 1: Measure the before.** Write `scripts/layoutMeasure.ts`, run it on HEAD (the block embed), and keep
+  the output in the report.
+- [ ] **Step 2: Write the failing tests**, on made-up sketches built with `carveFixtures.ts`:
+  - `"a chain of stops between two rooms becomes one string holding them in order"`.
+  - `"a lock region that walks by its geometry stays one rigid block"`.
+  - `"no string runs beside another string or a block it does not join"`, over 200 seeds of a made-up floor with
+    four side paths.
+  - `"compaction never leaves a string shorter than its nodes need"`.
+  - `"a drop keeps its exact straight run"`.
+  - `"the same seed lays out the same; another seed moves pieces, not the graph"`.
+  - `"a floor that cannot be laid out is refused, naming the node"`.
+  - Keep `"every lattice node keeps its neighbours"`, `"every dirs is mutual"` and `"the smallest floor embeds"`.
+- [ ] **Step 3:** Run `yarn test src/game/carve/embed`. The new tests must fail.
+- [ ] **Step 4:** Implement.
+- [ ] **Step 5:** Run the gates:
+  - `yarn check-types`, `yarn lint`, `yarn test`;
+  - the digests equal the baseline (LATTICE is untouched);
+  - `CARVE_ENGINE_OVERRIDE=rooms timeout 900 yarn verify bakedCarve toggleOff`, plus the STRUCTURAL sweep. At least
+    the floors that passed at 091f37c5 still pass. List every floor that newly fails or newly passes.
+- [ ] **Step 6: Measure the after.** Targets:
+  - the median rooms/LATTICE area ratio over all shipped floors is at most 1.2;
+  - every starter floor is at most 1.3;
+  - the longest room-to-room walk drops clearly;
+  - layout refusals are at most 1% of attempts.
+
+  A target that cannot be met is reported with the reason; no check is bent.
+- [ ] **Step 7: Commit** `feat: floors are laid out as a graph before they are carved`.
+
 ### Task 7: Wide corridors
 
 **Files:**
 - Modify: `src/game/siteTypes.ts` (`CorridorCell.shoulder?: Direction` and `RoomCell.shoulder?: Direction`, the side
-  the corridor's second lane lies on), `src/game/carve/embed/route.ts`, `src/game/carve/embed/blocks.ts`. A row or
-  column holding a wide edge's 1×1 nodes is at least 2 high or wide.
+  the corridor's second lane lies on), `src/game/carve/embed/layout.ts` and `carveLayout.ts` (Task 11). A wide string reserves two lanes, and its 1-cell
+  margin lies outside both.
 - Modify: the map's walker and stop positions in `src/app/SiteMap` (`roomWalk.ts`, the explorer position, and the
   marker/tap target placement). These read `shoulder` and draw half a cell toward it. The second lane's cell is
   drawn as corridor floor and is never a walk step.
@@ -313,7 +403,7 @@ then the prefabs are stamped. `embedFloor` uses a block model:
 
 **Files:**
 - Create: `src/game/carve/embed/cavern.ts`
-- Modify: `src/game/carve/embed/blocks.ts`
+- Modify: `src/game/carve/embed/graph.ts` (Task 11: the block size of a claiming room)
 - Test: `src/game/carve/embed/cavern.spec.ts`
 
 **Interfaces:**
