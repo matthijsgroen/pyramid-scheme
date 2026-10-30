@@ -2,8 +2,7 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest"
 import { cleanup, render, within } from "@testing-library/react"
 import { act } from "react"
-import { generateFutoshiki } from "@/mods/puzzle/game/futoshiki/generateFutoshiki"
-import { FUTOSHIKI_CONFIG } from "@/mods/puzzle/game/futoshiki/futoshikiConfig"
+import type { FutoshikiPuzzle as FutoshikiPuzzleData } from "@/mods/puzzle/game/futoshiki/generateFutoshiki"
 import { buildFutoshikiHint, type FutoshikiHint } from "./futoshikiHint"
 import { FutoshikiPuzzle } from "./FutoshikiPuzzle"
 
@@ -17,7 +16,31 @@ beforeAll(() => {
 })
 afterEach(cleanup)
 
-const puzzle = generateFutoshiki(FUTOSHIKI_CONFIG.expert.size, 1, FUTOSHIKI_CONFIG.expert)
+const _ = undefined
+// A 5×5 board with two givens; the hint is scripted, so the signs only have to be the board's own.
+const puzzle: FutoshikiPuzzleData = {
+  size: 5,
+  givens: [
+    [_, _, _, _, _],
+    [_, _, _, _, _],
+    [_, _, _, _, 5],
+    [_, _, _, _, _],
+    [_, _, _, _, 1],
+  ],
+  constraints: [
+    { row: 0, col: 2, direction: "right", relation: "<" },
+    { row: 1, col: 0, direction: "right", relation: ">" },
+    { row: 4, col: 1, direction: "right", relation: "<" },
+  ],
+  solution: [
+    [1, 5, 3, 4, 2],
+    [5, 4, 1, 2, 3],
+    [4, 1, 2, 3, 5],
+    [3, 2, 5, 1, 4],
+    [2, 3, 4, 5, 1],
+  ],
+  techniqueCap: "signChain",
+}
 const empty = puzzle.givens.flatMap((row, r) => row.flatMap((value, c) => (value === undefined ? [{ r, c }] : [])))
 const [A, B] = empty
 
@@ -68,6 +91,14 @@ describe("FutoshikiPuzzle hint that stays", () => {
     const { reveal, press, text } = setup()
     reveal()
     press("ui.notes")
+    expect(text()).toContain("hint.first")
+  })
+
+  it("keeps the hint when an empty square is erased, which changes nothing", () => {
+    const { reveal, select, press, text } = setup()
+    reveal()
+    select(B)
+    press("ui.erase")
     expect(text()).toContain("hint.first")
   })
 

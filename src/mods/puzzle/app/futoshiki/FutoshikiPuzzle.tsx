@@ -1,4 +1,4 @@
-import { useCallback, useMemo, type FC } from "react"
+import { useMemo, type FC } from "react"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
 import { useTranslation } from "react-i18next"
@@ -9,6 +9,7 @@ import { buildFutoshikiHint } from "@/mods/puzzle/app/futoshiki/futoshikiHint"
 import { useFutoshikiEntry } from "@/mods/puzzle/app/futoshiki/useFutoshikiEntry"
 import type { FutoshikiPuzzle as FutoshikiPuzzleData } from "@/mods/puzzle/game/futoshiki/generateFutoshiki"
 import {
+  type FutoshikiState,
   canUndoFutoshiki,
   clearFutoshikiCell,
   createFutoshikiState,
@@ -21,7 +22,7 @@ import {
 import { futoshikiConflicts, isFutoshikiSolved, strandedNotes } from "@/mods/puzzle/game/futoshiki/futoshikiStatus"
 import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
-import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
+import { hintIdleDelay, type InputEffect } from "@/mods/core/app/useHintAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"
 
 type Props = {
@@ -79,18 +80,12 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
   const celebration = useCelebration(finished, size)
   const counted = celebration.progress > 0 ? Math.round(celebration.progress * size) : undefined
 
-  const enterNumber = useCallback(
-    (value: number) => {
-      if (!selected) return
-      const { row, col } = selected
-      setState(prev => (pencil ? toggleFutoshikiNote(prev, row, col, value) : setFutoshikiValue(prev, row, col, value)))
-    },
-    [selected, pencil, setState]
-  )
-
-  const eraseCell = useCallback(() => {
-    if (selected) setState(prev => clearFutoshikiCell(prev, selected.row, selected.col))
-  }, [selected, setState])
+  // The hint decides nothing checkable, so a square that changes ends it and one left as it was is a look.
+  // The board shares every square a move leaves alone, so an unchanged square is the same object.
+  const apply = (next: FutoshikiState, row: number, col: number, reportInput: (effect: InputEffect) => void) => {
+    reportInput(next.cells[row][col] === state.cells[row][col] ? "look" : "move")
+    setState(next)
+  }
 
   return (
     <PuzzleFamilyShell
@@ -138,13 +133,16 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
             exhausted={exhaustedNumbers(values, size)}
             disabled={!selected || finished}
             onNumber={value => {
-              reportInput()
-              enterNumber(value)
+              if (!selected) return
+              const { row, col } = selected
+              const next = pencil
+                ? toggleFutoshikiNote(state, row, col, value)
+                : setFutoshikiValue(state, row, col, value)
+              apply(next, row, col, reportInput)
             }}
             onErase={() => {
-              if (finished) return
-              reportInput()
-              eraseCell()
+              if (finished || !selected) return
+              apply(clearFutoshikiCell(state, selected.row, selected.col), selected.row, selected.col, reportInput)
             }}
             onTogglePencil={() => {
               reportInput("look")

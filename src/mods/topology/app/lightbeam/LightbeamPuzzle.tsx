@@ -58,14 +58,6 @@ export const LightbeamPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
   // the button is offered before there is anything to say (see `PuzzleFamilyShell`'s `hint`).
   const hintText = useCallback(() => hint && t(`lightbeam.hint.${hint.key}`), [hint, t])
 
-  const cycle = useCallback(
-    (piece: number) => {
-      if (solved) return // the light is on its way to the shrine; nothing may move under it
-      setState(prev => cycleLightbeamPiece(prev, puzzle, piece))
-    },
-    [puzzle, solved, setState]
-  )
-
   return (
     <PuzzleFamilyShell
       onSolved={onSolved}
@@ -88,8 +80,11 @@ export const LightbeamPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
           litBeam={hintVisible ? hint?.beam : undefined}
           surge={celebration.progress}
           onCycle={piece => {
-            reportInput()
-            cycle(piece)
+            if (solved) return // the light is on its way to the shrine; nothing may move under it
+            // A piece with a single way to stand cycles back onto itself: nothing changed, so it is a look.
+            const next = cycleLightbeamPiece(state, puzzle, piece)
+            reportInput(next.states[piece] === state.states[piece] ? "look" : "move")
+            setState(next)
           }}
         />
       )}
