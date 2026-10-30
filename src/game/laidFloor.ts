@@ -1,4 +1,4 @@
-import type { CellKey, LaidDrop, LaidLocks } from "./layLocks"
+import type { CellKey, LaidBlock, LaidDrop, LaidLocks } from "./layLocks"
 import type { Alignment } from "./lockAuthoring"
 import type { LockPlan, PlanCorridor } from "./lockPlan"
 import { appetiteAccepts } from "./regions"
@@ -297,8 +297,12 @@ export type LaidFloor = {
    * none to spare, kept bare: the step's tile stands on the first of them the way in reaches, with no room before
    * it and no branch beside it. */
   thresholds: Set<CellKey>
-  /** Route steps nothing else may take: every door and threshold on the route and every junction. */
+  /** Route steps nothing else may take: every door and threshold on the route, every junction, and every bare node. */
   reserved: Set<number>
+  /** The regions laid as designed rooms. */
+  blocks: LaidBlock[]
+  /** A designed room's nodes other than its own: walked under its floor, so nothing stands on them. */
+  bare: Set<CellKey>
   /** How many nodes of each region a mechanic's seat will want: the controls and sequence tiles standing in it. */
   seatDemand: Map<string, number>
   junctions: LaidJunctionSeat[]
@@ -400,7 +404,9 @@ export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
   const routeStep = new Map(laid.route.map((node, i) => [node, i] as const))
   const routeSet = new Set(laid.route)
   const reserved = new Set<number>()
-  for (const cell of [...doorCells, ...thresholdCells, ...junctionCells]) {
+  const blocks = laid.blocks ?? []
+  const bare = new Set(blocks.flatMap(block => block.nodes.filter(node => node !== block.anchor && label.has(node))))
+  for (const cell of [...doorCells, ...thresholdCells, ...junctionCells, ...bare]) {
     const step = routeStep.get(cell)
     if (step !== undefined) reserved.add(step)
   }
@@ -492,6 +498,8 @@ export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
     doors: doorCells,
     thresholds: thresholdCells,
     reserved,
+    blocks,
+    bare,
     seatDemand: new Map(
       plan.regions
         .filter(region => region.answersTo === undefined)

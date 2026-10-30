@@ -42,6 +42,33 @@ export type LaidDrop = {
   landingCell: CellKey
 }
 
+/** A DESIGNED ROOM'S SHAPE ON THE LATTICE, in cell offsets from its inside's top-left: the inside's size, the parity
+ * of that top-left, the cell its node stands on, and its straight ways, each from that node through a door place to
+ * the first node past the ring. */
+export type RoomShape = {
+  h: number
+  w: number
+  pt: number
+  pl: number
+  anchor: readonly [number, number]
+  rays: ReadonlyArray<ReadonlyArray<readonly [number, number]>>
+}
+
+/** A region the floor asks to be laid as a designed room, and the shapes the room may take. */
+export type BlockAsk = { region: string; room: string; shapes: readonly RoomShape[] }
+
+/** A REGION LAID AS A DESIGNED ROOM: the shape it took (an index into its ask's shapes) with its inside's top-left at
+ * `top`,`left`, the node it stands on, and every node its rect and ring hold. */
+export type LaidBlock = {
+  region: string
+  room: string
+  shape: number
+  top: number
+  left: number
+  anchor: CellKey
+  nodes: CellKey[]
+}
+
 /**
  * THE PLAN OF A LOCK FLOOR, LAID ON A LATTICE OF `n` x `n` CELLS: pre-claimed structure the carve grows around.
  * `route` is the whole top-level route, entrance to exit, as one path of nodes. `claimed` is every node cell
@@ -58,6 +85,8 @@ export type LaidLocks = {
   claimed: CellKey[]
   held: CellKey[]
   passages: string[]
+  /** The regions laid as designed rooms; absent where the floor asks none. */
+  blocks?: LaidBlock[]
 }
 
 /** The part of the plan the search could not place, the furthest it got before running out of room. */
@@ -71,6 +100,8 @@ export type LayOptions = {
   n: number
   /** The largest grid the layout may grow to. */
   ceiling?: number
+  /** The regions laid as designed rooms. */
+  blocks?: readonly BlockAsk[]
 }
 
 /**
@@ -114,6 +145,8 @@ const MAX_EXTRA_PER_REGION = 2
 const WALKS_PER_ANCHOR = 3
 const PATHS_PER_LENGTH = 2
 const DETOUR_HOPS = 4
+// How many placements of a designed room one search tries for its region, best first.
+const BLOCK_OPTIONS = 60
 
 const DIRS: Array<[number, number, Direction]> = [
   [-1, 0, "n"],
@@ -122,6 +155,14 @@ const DIRS: Array<[number, number, Direction]> = [
   [0, -1, "w"],
 ]
 const opposite = (d: number) => (d + 2) % 4
+
+/** Every ordered pick of `count` different items of `items`. */
+const arrangements = <T>(items: readonly T[], count: number): T[][] =>
+  count === 0
+    ? [[]]
+    : items.flatMap((item, i) =>
+        arrangements([...items.slice(0, i), ...items.slice(i + 1)], count - 1).map(rest => [item, ...rest])
+      )
 
 type Part = LayRefusal["part"]
 type Step = { part: Part; run: (next: () => boolean) => boolean }
@@ -134,7 +175,8 @@ const search = (
   n: number,
   rand: () => number,
   extraNodes: number,
-  dropsAhead = false
+  dropsAhead = false,
+  blockAsks: readonly BlockAsk[] = []
 ): { laid?: LaidLocks; deepest: number; parts: Part[] } => {
   const M = (n + 1) / 2
   const coords = (i: number): [number, number] => [Math.floor(i / M), i % M]
@@ -163,6 +205,11 @@ const search = (
   const junctionAt = new Map<string, number>()
   const corridorPath = new Map<string, number[]>()
   const dropAt = new Map<string, DropAt>()
+  const blockAt = new Map<string, LaidBlock>()
+  // A room's ways: the node each of its corridors arrives at, keyed `corridor|region`; and how many of a room's
+  // nodes, from its first, are the walk through it.
+  const rayEnd = new Map<string, number>()
+  const walkLength = new Map<string, number>()
   const trail: Array<() => void> = []
   let extraLeft = extraNodes
   let work = 0
@@ -242,6 +289,8 @@ const search = (
   }
 
   const attachNodes = (corridor: PlanCorridor, region: string, isFrom: boolean): number[] => {
+    const end = rayEnd.get(`${corridor.id}|${region}`)
+    if (end !== undefined) return [end]
     const nodes = regionNodes.get(region)!
     const ia = routeIndex.get(corridor.from)
     const ib = routeIndex.get(corridor.to)
@@ -257,7 +306,115 @@ const search = (
   const steps: Step[] = []
   const placed = new Set<string>()
 
+  /**
+   * A REGION LAID AS A DESIGNED ROOM: the room's rect and ring on free nodes, the room's node the region's, and one
+   * ray through a door place for each of the region's corridors, the corridor arriving at the end of its own ray.
+   * Every other side of the region's nodes is taken and the room's other nodes are held, so nothing reaches into the
+   * room but along its rays. Its nodes list the walk through it first: in by the ray the route (or the way in)
+   * arrives by, over the room's node, out by the ray the route leaves by.
+   */
+  const blockStep = (region: PlanRegion, ask: BlockAsk): Step => ({
+    part: { kind: "region", id: region.id },
+    run: next => {
+      const ways = corridorsOf(region.id)
+      const otherOf = (corridor: PlanCorridor) => (corridor.from === region.id ? corridor.to : corridor.from)
+      const at = routeIndex.get(region.id)
+      const enters = ways.find(corridor =>
+        at === undefined
+          ? placed.has(otherOf(corridor))
+          : corridor.onRoute && routeIndex.get(otherOf(corridor)) === at - 1
+      )
+      const leaves =
+        at === undefined
+          ? undefined
+          : ways.find(corridor => corridor.onRoute && routeIndex.get(otherOf(corridor)) === at + 1)
+      const ordered = [
+        ...(enters ? [enters] : []),
+        ...(leaves ? [leaves] : []),
+        ...ways.filter(corridor => corridor !== enters && corridor !== leaves),
+      ]
+      if (ordered.length === 0) return false
+      const nodeAt = (r: number, c: number) =>
+        r < 0 || c < 0 || r >= n || c >= n || r % 2 !== 0 || c % 2 !== 0 ? -1 : idOf(r / 2, c / 2)
+      type Ray = { inner: number[]; out: number; dir: number }
+      type Option = { score: number; anchor: number; held: number[]; rays: Ray[]; block: LaidBlock }
+      const options: Option[] = []
+      ask.shapes.forEach((shape, index) => {
+        if (shape.rays.length < ordered.length) return
+        for (let top = 1; top + shape.h <= n - 1; top++) {
+          if (top % 2 !== shape.pt) continue
+          for (let left = 1; left + shape.w <= n - 1; left++) {
+            if (left % 2 !== shape.pl) continue
+            const all: number[] = []
+            for (let r = top - 1; r <= top + shape.h; r++)
+              for (let c = left - 1; c <= left + shape.w; c++) if (r % 2 === 0 && c % 2 === 0) all.push(nodeAt(r, c))
+            if (all.some(node => node < 0 || occupied.has(node))) continue
+            const anchor = nodeAt(top + shape.anchor[0], left + shape.anchor[1])
+            const rays = shape.rays.flatMap((ray): Ray[] => {
+              const nodes = ray.map(([i, j]) => nodeAt(top + i, left + j))
+              const out = nodes[nodes.length - 1]
+              return out < 0 ? [] : [{ inner: nodes.slice(1, -1), out, dir: dirBetween(nodes[nodes.length - 2], out) }]
+            })
+            for (const pick of arrangements(rays, ordered.length)) {
+              let score = rand()
+              const fits = pick.every((ray, k) => {
+                const other = otherOf(ordered[k])
+                const owner = occupied.get(ray.out)
+                if (owner !== undefined && owner !== other) return false
+                if (placed.has(other))
+                  score += Math.min(...regionNodes.get(other)!.map(node => distance(ray.out, node)))
+                return true
+              })
+              if (!fits) continue
+              const held = all.filter(node => node !== anchor && !pick.some(ray => ray.inner.includes(node)))
+              const block: LaidBlock = {
+                region: region.id,
+                room: ask.room,
+                shape: index,
+                top,
+                left,
+                anchor: cell(anchor),
+                nodes: all.map(cell),
+              }
+              options.push({ score, anchor, held, rays: pick, block })
+            }
+          }
+        }
+      })
+      options.sort((a, b) => a.score - b.score)
+      for (const { anchor, held, rays, block } of options.slice(0, BLOCK_OPTIONS)) {
+        if (spent()) return false
+        const mark = trail.length
+        const nodes = [anchor, ...rays.flatMap(ray => ray.inner)]
+        nodes.forEach(node => claim(node, region.id))
+        held.forEach(node => claim(node, `block:${region.id}`))
+        for (const ray of rays) {
+          const line = [anchor, ...ray.inner]
+          for (let i = 0; i + 1 < line.length; i++) link(line[i], dirBetween(line[i], line[i + 1]))
+        }
+        const outward = new Set(rays.map(ray => (ray.inner[ray.inner.length - 1] ?? anchor) * 4 + ray.dir))
+        for (const node of nodes)
+          for (let d = 0; d < 4; d++) if (sideFree(node, d) && !outward.has(node * 4 + d)) takeSide(node, d)
+        rays.forEach((ray, k) =>
+          record(rayEnd, `${ordered[k].id}|${region.id}`, ray.inner[ray.inner.length - 1] ?? anchor)
+        )
+        const out = leaves && leaves !== ordered[0] ? rays[ordered.indexOf(leaves)].inner : []
+        const walk = [...[...rays[0].inner].reverse(), anchor, ...out]
+        record(regionNodes, region.id, [...walk, ...nodes.filter(node => !walk.includes(node))])
+        record(walkLength, region.id, walk.length)
+        record(blockAt, region.id, block)
+        placed.add(region.id)
+        trail.push(() => placed.delete(region.id))
+        if (next()) return true
+        undoTo(mark)
+      }
+      return false
+    },
+  })
+
   const regionStep = (region: PlanRegion, pin: { drop: string; other: string } | undefined): Step => {
+    const ask = blockAsks.find(candidate => candidate.region === region.id)
+    if (ask) return blockStep(region, ask)
     const entrance = region.id === plan.route[0]
     const junction = junctionOf.get(region.id)
     const ownsOnward =
@@ -525,7 +682,7 @@ const search = (
       return { id: region.id, nodes: (entry === nodes[nodes.length - 1] ? [...nodes].reverse() : nodes).map(cell) }
     })
     const route = plan.route.flatMap((id, i) => {
-      const nodes = regionNodes.get(id)!
+      const nodes = regionNodes.get(id)!.slice(0, walkLength.get(id))
       const next = plan.route[i + 1]
       if (next === undefined) return nodes.map(cell)
       const corridor = plan.corridors.find(
@@ -577,11 +734,12 @@ const search = (
       junctions,
       drops,
       claimed: [...occupied.entries()]
-        .filter(([, owner]) => !owner.startsWith("run:"))
+        .filter(([, owner]) => !owner.startsWith("run:") && !owner.startsWith("block:"))
         .map(([i]) => cell(i))
         .sort(),
       held: drops.flatMap(drop => [drop.launchCell, ...drop.run, drop.landingCell]).sort(),
       passages: passages.map(([a, b]) => pkey(a, b)).sort(),
+      ...(blockAt.size > 0 ? { blocks: [...blockAt.values()] } : {}),
     }
   }
 
@@ -675,8 +833,11 @@ const handOut = (laid: LaidLocks): LayResult => ({ ok: true, laid: structuredClo
  * carve decides every length: stretches take the nodes they need beyond their minimum, corridors the
  * hops, shortest first, and the grid grows from `n` until the plan fits or the ceiling refuses it by name.
  */
-export const layLockPlan = (plan: LockPlan, { seed, n, ceiling = LAY_GRID_CEILING }: LayOptions): LayResult => {
-  const planKey = gridOutcomesKept > 0 ? JSON.stringify(plan) : ""
+export const layLockPlan = (
+  plan: LockPlan,
+  { seed, n, ceiling = LAY_GRID_CEILING, blocks = [] }: LayOptions
+): LayResult => {
+  const planKey = gridOutcomesKept > 0 ? JSON.stringify(blocks.length > 0 ? [plan, blocks] : plan) : ""
   let refusal: LayRefusal | undefined
   for (let grid = n; grid <= Math.max(n, ceiling); grid += GRID_STEP) {
     const { laid, furthest } = remembered(`${seed}|${grid}|${planKey}`, () => {
@@ -684,7 +845,7 @@ export const layLockPlan = (plan: LockPlan, { seed, n, ceiling = LAY_GRID_CEILIN
       for (let extra = 0; extra <= MAX_EXTRA_NODES; extra++)
         for (let restart = 0; restart < RESTARTS; restart++) {
           const rand = mulberry32(seed + grid * 7919 + extra * 104729 + restart * 15485863)
-          const { laid, deepest, parts } = search(plan, grid, rand, extra)
+          const { laid, deepest, parts } = search(plan, grid, rand, extra, false, blocks)
           if (laid) return { laid }
           if (deepest > furthest.deepest) furthest = { deepest, part: parts[deepest] }
         }
@@ -699,7 +860,7 @@ export const layLockPlan = (plan: LockPlan, { seed, n, ceiling = LAY_GRID_CEILIN
     for (let grid = n; grid <= Math.max(n, ceiling); grid += GRID_STEP) {
       const { laid } = remembered(`${seed}|${grid}|ahead|${planKey}`, () => {
         for (let extra = 0; extra <= MAX_EXTRA_NODES; extra++) {
-          const { laid } = search(plan, grid, mulberry32(seed + grid * 7919 + extra * 104729), extra, true)
+          const { laid } = search(plan, grid, mulberry32(seed + grid * 7919 + extra * 104729), extra, true, blocks)
           if (laid) return { laid }
         }
         return {}

@@ -213,12 +213,13 @@ export const hangBranches = pass(
       branchCandidates.push([pr, pc])
       if (pi < goalIndex && !regionSeamIndices.has(pi)) mainZoneCandidates.push([pr, pc])
     }
-    // Side paths hang off the ground a lock laid as well as off the route, never off a door.
+    // Side paths hang off the ground a lock laid as well as off the route, never off a door or beside a designed room.
     for (const chain of laid?.chains ?? [])
       for (const [pr, pc] of chain.cells)
         if (
           !laid!.doors.has(`${pr},${pc}`) &&
           !laid!.thresholds.has(`${pr},${pc}`) &&
+          !zone.has(`${pr},${pc}`) &&
           rawFreeNeighbors(pr, pc).length > 0
         )
           branchCandidates.push([pr, pc])
@@ -648,6 +649,7 @@ export const hangBranches = pass(
       ...doorsTaken,
       ...sectionGroups.flatMap(({ cells, via }) => [...cells, ...(via ?? [])]).map(cellKey),
       ...subChains.flatMap(({ cells }) => cells).map(cellKey),
+      ...(laid?.chains ?? []).flatMap(({ cells }) => cells).map(cellKey),
     ])
     for (const node of held) if (!walked.has(node)) usedCells.delete(node)
     state.branches = { used: usedCells, groups: sectionGroups, subChains, seamDrops, carved }

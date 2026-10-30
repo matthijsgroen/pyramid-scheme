@@ -40,8 +40,8 @@ import { standSwitches } from "./standSwitches"
  * docs/instructions/carve-passes.md for the list it grows to.
  */
 export const PASSES: readonly PassEntry[] = [
-  reserveRooms,
   layFloor,
+  reserveRooms,
   growMaze,
   seatRouteRegions,
   seatSeamGates,

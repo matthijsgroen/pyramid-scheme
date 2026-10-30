@@ -487,3 +487,63 @@ export const ShippedFloor: StoryObj<typeof ShippedFloorView> = {
   },
   parameters: { layout: "fullscreen" },
 }
+
+// ── A lock region laid as a designed room ──────────────────────────────────────
+
+// A made-up shrine, 5 by 5 inside, a door place on every side and its lever's place in a corner.
+const SHRINE = parsePrefab(
+  `room shrine
+tier starter
+layout
+# # # d # # #
+# m . . . . #
+# . . . . . #
+d . . . . . d
+# . . . . . #
+# . . . . s #
+# # # d # # #
+m mechanism
+s stop`,
+  "shrine"
+)
+
+// The tomb's lock floors: caveLevers, pitStair, throwItBack.
+const LOCK_FLOORS = ["starter_treasure_tomb#1#0", "starter_treasure_tomb#2#1", "starter_treasure_tomb#2#3"]
+
+/** A shipped lock floor carved with the made-up shrine asked into the lock region nearest `central` along its route. */
+const LockRegionRoomView = ({ floor, central }: { floor: string; central: number }) => {
+  const [journeyId, levelNr, floorIndex] = floor.split("#")
+  const result = useMemo(() => {
+    const config = generatedWorldConfigs[journeyId]?.[Number(levelNr) - 1]?.[Number(floorIndex)]
+    if (!config) return undefined
+    const asked: FloorConfig = {
+      ...config,
+      prefabs: { ...config.prefabs, shrine: SHRINE },
+      prefabPlacements: [{ room: "shrine", min: 1, max: 1, central }],
+    }
+    return worldFloorCarve(journeyId, Number(levelNr), Number(floorIndex)).carve(asked)
+  }, [journeyId, levelNr, floorIndex, central])
+  if (!result) return <div className="p-4 font-mono text-sm text-red-400">No floor {floor}</div>
+  if (!result.success)
+    return <div className="p-4 font-mono text-sm text-red-400">Assembly failed: {JSON.stringify(result.reasons)}</div>
+  const shrine = result.grid.cells.flat().find(cell => cell.type !== "empty" && cell.prefabRoom?.name === "shrine")
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <span className="font-mono text-xs text-stone-400">
+        {floor} · {result.grid.rows}×{result.grid.cols} · attempt {result.attempt} · shrine in{" "}
+        {shrine && shrine.type !== "empty" ? shrine.region : "no region"}
+      </span>
+      <SiteMapView grid={result.grid} revealAllCells className="max-h-[85vh] max-w-[95vw]" />
+    </div>
+  )
+}
+
+export const LockRegionRoom: StoryObj<typeof LockRegionRoomView> = {
+  render: args => <LockRegionRoomView {...args} />,
+  args: { floor: LOCK_FLOORS[0], central: 1 },
+  argTypes: {
+    floor: { control: "select", options: LOCK_FLOORS },
+    central: { control: { type: "range", min: 0, max: 1, step: 0.25 } },
+  },
+  parameters: { layout: "fullscreen" },
+}

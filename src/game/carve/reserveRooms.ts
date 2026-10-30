@@ -1,3 +1,5 @@
+import type { BlockAsk } from "../layLocks"
+import type { LockPlan, PlanRegion } from "../lockPlan"
 import { variantsOf } from "../prefabChecks"
 import type { Prefab, SpecialPlace } from "../prefabTypes"
 import { shuffle } from "../random"
@@ -13,7 +15,7 @@ import type { Cell, FloorPrep, Refusal } from "./state"
  * A DESIGNED ROOM'S BLOCK OF LATTICE NODES, claimed before the maze is dug: its prefab rect (ring included) laid on
  * the lattice, the node it stands on (`anchor`) and the straight ways out of it (`rays`), each running from the
  * anchor through a door place to the first node past the ring. `on` is where the floor's graph holds it: a step of
- * the main path (`pin` naming the main-path puzzle it is pinned to), or a side path's end.
+ * the main path (`pin` naming the main-path puzzle it is pinned to), a side path's end, or a lock's region.
  */
 export type ReservedBlock = {
   room: string
@@ -25,7 +27,7 @@ export type ReservedBlock = {
   anchor: Cell
   rays: Cell[][]
   nodes: ReadonlySet<string>
-  on: { main: number; pin?: number } | { section: number }
+  on: { main: number; pin?: number } | { section: number } | { region: string }
 }
 
 /** A side path walked to the block at its end: the node it hangs from, the door nodes of the room it leaves by
@@ -232,25 +234,66 @@ const walkMap = (n: number, from: Cell, free: (key: string) => boolean) => {
 type Place = "main" | "end"
 
 /** One room the floor asks for and where its graph holds it: a main-path puzzle it is pinned to, a main-path hub
- * `central` deep, or a side path's end. `placement` is its index in `prefabPlacements`. */
+ * `central` deep, a side path's end, or a lock's region. `placement` is its index in `prefabPlacements`. */
 export type RoomAsk = {
   room: string
   placement?: number
-  at: { pin: number } | { central: number } | { section: number }
+  at: { pin: number } | { central: number } | { section: number } | { region: string }
 }
 
 const endHolds = (section: SideSection): SpecialPlace => (section.end === "treasure" ? "chest" : "portal")
+
+/**
+ * WHETHER A DESIGNED ROOM MAY TAKE A LOCK'S REGION: the room has a door place for every way the region has and a
+ * mechanism place for every control it seats. The region is a lock's own (not the floor's entrance or exit), its
+ * ways are corridors (a drop needs its straight run, so a drop's end is never a room), and it seats nothing but its
+ * controls and its doors (the doors stand on its corridors), at most one control: the room is one node.
+ */
+export const roomTakesRegion = (plan: LockPlan, region: PlanRegion, prefab: Prefab): boolean => {
+  if (region.owner === undefined || region.answersTo !== undefined) return false
+  if (plan.drops.some(drop => drop.launch === region.id || drop.landing === region.id)) return false
+  if (plan.junctions.some(junction => junction.region === region.id)) return false
+  if (region.seats.some(seat => seat.for !== "control" && seat.for !== "door")) return false
+  const controls = region.seats.filter(seat => seat.for === "control").length
+  const mechanisms = Object.values(prefab.specials).filter(place => place === "mechanism").length
+  if (controls > Math.min(1, mechanisms)) return false
+  const ways = plan.corridors.filter(corridor => corridor.from === region.id || corridor.to === region.id).length
+  return ways > 0 && shapesOf(prefab).some(shape => shape.rays.length >= ways)
+}
+
+/** How central a lock's region lies along the lock's route: an off-route region by the route region it hangs off. */
+const centralityAlongRoute = (plan: LockPlan, region: PlanRegion): number => {
+  const at = plan.route.indexOf(region.onRoute ? region.id : (region.mouth ?? ""))
+  return at < 0 ? 0 : centralityOf(at, plan.route.length)
+}
 
 /**
  * WHICH DESIGNED ROOMS A FLOOR ASKS TO RESERVE, from its config alone: every pinned room on its main-path puzzle,
  * then each placement up to `max` in the order the floor names them. A placement takes a side path's end whose
  * content it has a place for (a chest, a portal) where it leans to the floor's ends (`central` 0), else a hub on the
  * main path, else such an end. A hub is a fork the side paths branch off, so a floor holds no more hubs than it has
- * groups of side paths to hang from them. A lock floor asks none here.
+ * groups of side paths to hang from them. On a lock floor each placement takes, up to `max`, the lock's regions it
+ * may take (`roomTakesRegion`), nearest its `central` along the lock's route first; the lay places those rooms.
  */
 export const roomAsks = (prep: FloorPrep): RoomAsk[] => {
   const { config } = prep.config
-  if (prep.sizing.layPlan) return []
+  const plan = prep.sizing.layPlan
+  if (plan) {
+    const taken = new Set<string>()
+    return (config.prefabPlacements ?? []).flatMap(({ room, max, central }, placement): RoomAsk[] => {
+      const prefab = config.prefabs?.[room]
+      if (!prefab) return []
+      const regions = plan.regions
+        .filter(region => !taken.has(region.id) && roomTakesRegion(plan, region, prefab))
+        .map(region => ({ region, off: Math.abs(centralityAlongRoute(plan, region) - central) }))
+        .sort((a, b) => a.off - b.off)
+        .slice(0, max)
+      return regions.map(({ region }) => {
+        taken.add(region.id)
+        return { room, placement, at: { region: region.id } }
+      })
+    })
+  }
   const pins = Object.entries(config.prefabsByIndex ?? {})
     .filter(([, room]) => config.prefabs?.[room] !== undefined)
     .map(([k, room]): RoomAsk => ({ room, at: { pin: Number(k) } }))
@@ -334,275 +377,300 @@ const SIDE_STARTS = 8
 
 type Laid = Omit<ReservedBlock, "on" | "room" | "prefab" | "variant" | "mirrored"> & { shape: Shape }
 
+const blockFrom = (
+  room: string,
+  { shape, rect, anchor, rays, nodes }: Laid,
+  on: ReservedBlock["on"]
+): ReservedBlock => ({
+  room,
+  prefab: { cell: anchor, name: room, layout: shape.layout, mirrored: shape.mirrored, pick: {} },
+  variant: shape.variant,
+  mirrored: shape.mirrored,
+  rect,
+  anchor,
+  rays,
+  nodes,
+  on,
+})
+
+/** The lock regions the floor's rooms ask the lay for on attempt `attempt`, each with the shapes its room may take. */
+export const blockAsks = (prep: FloorPrep, attempt: number): BlockAsk[] => {
+  const prefabs = prep.config.config.prefabs ?? {}
+  return keptAsks(prep, roomAsks(prep), attempt).flatMap(({ room, at }) =>
+    "region" in at ? [{ region: at.region, room, shapes: shapesOf(prefabs[room]) }] : []
+  )
+}
+
 /**
  * THE DESIGNED ROOMS CLAIM THEIR BLOCKS BEFORE THE MAZE IS DUG (`roomAsks`), and the main path and the side paths
  * ending in one are walked to them first: from an edge entrance through each main block in turn, in by one ray, over
  * its anchor and out by another, to an end the rung's distance along; then each side path from a hub's free ray, or
  * else from a bare main-path node, to the block at its end. Each block is placed where its walk lands nearest the
  * length it wants, its ring clear of every other block's. A pinned room that finds no place refuses the attempt, as
- * does a placement whose `min` is not met; the others are left out. A floor that asks none draws nothing.
+ * does a placement whose `min` is not met; the others are left out. A floor that asks none draws nothing. On a lock
+ * floor the lay places the rooms in their regions (`blockAsks`) and they are read off it here, drawing nothing.
  */
-export const reserveRooms = pass("reserveRooms", ["rung", "rand", "attempt"], ["blocks", "walks"], (prep, state) => {
-  const asked = roomAsks(prep)
-  // A placement the floor has no slot for, up to its `min`, refuses every attempt by name.
-  for (const [placement, { room, min }] of (prep.sizing.layPlan
-    ? []
-    : (prep.config.config.prefabPlacements ?? [])
-  ).entries()) {
-    const slots = asked.filter(ask => ask.placement === placement).length
-    if (slots < min) return refused(room, min, 0)
-  }
-  const asks = keptAsks(prep, asked, state.attempt)
-  if (asks.length === 0) {
-    state.blocks = []
-    state.walks = null
-    return
-  }
-  const { rand, rung } = state
-  const n = rung.n
-  const length = rung.targetDistance
-  const { contentCount, leverOnMain } = prep.sizing
-  const { sideSections } = prep.sections
-  const prefabs = prep.config.config.prefabs ?? {}
-  const edge = edgeNodes(n)
-  const entrance = edge[Math.floor(rand() * edge.length)]
+export const reserveRooms = pass(
+  "reserveRooms",
+  ["rung", "rand", "attempt", "lay"],
+  ["blocks", "walks"],
+  (prep, state) => {
+    const asked = roomAsks(prep)
+    // A placement the floor has no slot for, up to its `min`, refuses every attempt by name.
+    for (const [placement, { room, min }] of (prep.config.config.prefabPlacements ?? []).entries()) {
+      const slots = asked.filter(ask => ask.placement === placement).length
+      if (slots < min) return refused(room, min, 0)
+    }
+    // On a lock floor the lay placed the rooms in their regions.
+    const laid = state.lay?.laid
+    if (laid) {
+      const prefabs = prep.config.config.prefabs ?? {}
+      state.blocks = laid.blocks.map(({ region, room, shape, top, left }) => {
+        const chosen = shapesOf(prefabs[room])[shape]
+        return blockFrom(room, { ...placeShape(laid.n, chosen, top, left)!, shape: chosen }, { region })
+      })
+      state.walks = null
+      return
+    }
+    const asks = keptAsks(prep, asked, state.attempt)
+    if (asks.length === 0) {
+      state.blocks = []
+      state.walks = null
+      return
+    }
+    const { rand, rung } = state
+    const n = rung.n
+    const length = rung.targetDistance
+    const { contentCount, leverOnMain } = prep.sizing
+    const { sideSections } = prep.sections
+    const prefabs = prep.config.config.prefabs ?? {}
+    const edge = edgeNodes(n)
+    const entrance = edge[Math.floor(rand() * edge.length)]
 
-  const taken = new Set<string>([keyOf(entrance)])
-  const blocks: ReservedBlock[] = []
-  const free = (key: string) => !taken.has(key)
-  const clearOf = (rect: CellRect) => blocks.every(other => !meets(grownBy(rect, 2), grownBy(other.rect, 1)))
+    const taken = new Set<string>([keyOf(entrance)])
+    const blocks: ReservedBlock[] = []
+    const free = (key: string) => !taken.has(key)
+    const clearOf = (rect: CellRect) => blocks.every(other => !meets(grownBy(rect, 2), grownBy(other.rect, 1)))
 
-  /** Every placement of `room` reachable from `from` over free nodes by one of its rays, best scored first, each
-   * score jittered by a draw; `ways` is how many rays it needs. */
-  const options = (
-    room: string,
-    from: Cell,
-    score: (steps: number, ray: Cell[], rays: number) => number,
-    ways: number
-  ) =>
-    placements(room, from, ways, (steps, ray, rays) => score(steps, ray, rays) + rand() * 0.9).sort(
-      (a, b) => a.score - b.score
-    )
-  /** Whether `room` still has a placement reachable from `from`, drawing nothing. */
-  const canStand = (room: string, from: Cell, ways: number) => placements(room, from, ways, () => 0, true).length > 0
-  const placements = (
-    room: string,
-    from: Cell,
-    ways: number,
-    score: (steps: number, ray: Cell[], rays: number) => number,
-    first = false
-  ) => {
-    const shapes = shapesOf(prefabs[room])
-    const reach = walkMap(n, from, free)
-    const found: Array<{ laid: Laid; entry: number; score: number }> = []
-    for (const shape of shapes) {
-      if (shape.rays.length < ways) continue
-      for (let top = 1; top + shape.h <= n - 1; top++) {
-        if (top % 2 !== shape.pt) continue
-        for (let left = 1; left + shape.w <= n - 1; left++) {
-          if (left % 2 !== shape.pl) continue
-          const placed = placeShape(n, shape, top, left)
-          if (!placed || placed.rays.length < ways || !clearOf(placed.rect)) continue
-          if ([...placed.nodes].some(node => taken.has(node))) continue
-          placed.rays.forEach((ray, entry) => {
-            const out = keyOf(ray[ray.length - 1])
-            const walk = reach.best.get(out)
-            if (!walk || taken.has(out)) return
-            found.push({ laid: { ...placed, shape }, entry, score: score(walk.steps, ray, placed.rays.length) })
-          })
-          if (first && found.length > 0) return found
+    /** Every placement of `room` reachable from `from` over free nodes by one of its rays, best scored first, each
+     * score jittered by a draw; `ways` is how many rays it needs. */
+    const options = (
+      room: string,
+      from: Cell,
+      score: (steps: number, ray: Cell[], rays: number) => number,
+      ways: number
+    ) =>
+      placements(room, from, ways, (steps, ray, rays) => score(steps, ray, rays) + rand() * 0.9).sort(
+        (a, b) => a.score - b.score
+      )
+    /** Whether `room` still has a placement reachable from `from`, drawing nothing. */
+    const canStand = (room: string, from: Cell, ways: number) => placements(room, from, ways, () => 0, true).length > 0
+    const placements = (
+      room: string,
+      from: Cell,
+      ways: number,
+      score: (steps: number, ray: Cell[], rays: number) => number,
+      first = false
+    ) => {
+      const shapes = shapesOf(prefabs[room])
+      const reach = walkMap(n, from, free)
+      const found: Array<{ laid: Laid; entry: number; score: number }> = []
+      for (const shape of shapes) {
+        if (shape.rays.length < ways) continue
+        for (let top = 1; top + shape.h <= n - 1; top++) {
+          if (top % 2 !== shape.pt) continue
+          for (let left = 1; left + shape.w <= n - 1; left++) {
+            if (left % 2 !== shape.pl) continue
+            const placed = placeShape(n, shape, top, left)
+            if (!placed || placed.rays.length < ways || !clearOf(placed.rect)) continue
+            if ([...placed.nodes].some(node => taken.has(node))) continue
+            placed.rays.forEach((ray, entry) => {
+              const out = keyOf(ray[ray.length - 1])
+              const walk = reach.best.get(out)
+              if (!walk || taken.has(out)) return
+              found.push({ laid: { ...placed, shape }, entry, score: score(walk.steps, ray, placed.rays.length) })
+            })
+            if (first && found.length > 0) return found
+          }
         }
       }
+      return found
     }
-    return found
-  }
 
-  /** Walks `into` on from `from` to the block's entry ray and along it to the anchor, claiming the block. */
-  const walkInto = (into: Cell[], from: Cell, laid: Laid, entry: number): boolean => {
-    const ray = laid.rays[entry]
-    const out = ray[ray.length - 1]
-    const reach = walkMap(n, from, key => free(key) && !laid.nodes.has(key))
-    if (!reach.best.has(keyOf(out))) return false
-    const walk = reach.pathTo(out).slice(1)
-    for (const cell of walk) taken.add(keyOf(cell))
-    for (const node of laid.nodes) taken.add(node)
-    into.push(...walk, ...[...ray].reverse().slice(1))
-    return true
-  }
-
-  const blockOf = (ask: RoomAsk, laid: Laid, on: ReservedBlock["on"]): ReservedBlock => {
-    const { shape, rect, anchor, rays, nodes } = laid
-    return {
-      room: ask.room,
-      prefab: { cell: anchor, name: ask.room, layout: shape.layout, mirrored: shape.mirrored, pick: {} },
-      variant: shape.variant,
-      mirrored: shape.mirrored,
-      rect,
-      anchor,
-      rays,
-      nodes,
-      on,
+    /** Walks `into` on from `from` to the block's entry ray and along it to the anchor, claiming the block. */
+    const walkInto = (into: Cell[], from: Cell, laid: Laid, entry: number): boolean => {
+      const ray = laid.rays[entry]
+      const out = ray[ray.length - 1]
+      const reach = walkMap(n, from, key => free(key) && !laid.nodes.has(key))
+      if (!reach.best.has(keyOf(out))) return false
+      const walk = reach.pathTo(out).slice(1)
+      for (const cell of walk) taken.add(keyOf(cell))
+      for (const node of laid.nodes) taken.add(node)
+      into.push(...walk, ...[...ray].reverse().slice(1))
+      return true
     }
-  }
 
-  // THE MAIN PATH, through each main block in the order it lies along the walk.
-  const spread = spreadContentIndices(contentCount, 1, length + 1)
-  const mains = asks
-    .flatMap((ask): Array<{ ask: RoomAsk; pin: number | undefined; depth: number }> => {
-      if ("pin" in ask.at) {
-        const at = spread[ask.at.pin + (leverOnMain ? 1 : 0)] ?? Math.round(length / 2)
-        return [{ ask, pin: ask.at.pin, depth: at / length }]
-      }
-      if ("central" in ask.at) {
-        const { central } = ask.at
-        return [{ ask, pin: undefined, depth: rand() < 0.5 ? central / 2 : 1 - central / 2 }]
-      }
-      return []
-    })
-    .sort((a, b) => a.depth - b.depth)
-  const sides = asks.filter(ask => "section" in ask.at)
+    const blockOf = (ask: RoomAsk, laid: Laid, on: ReservedBlock["on"]): ReservedBlock => blockFrom(ask.room, laid, on)
 
-  // A pinned room is passed through; a hub also needs a way out for a side path.
-  const waysOf = (pin: number | undefined) => (pin === undefined ? 3 : 2)
-  const path: Cell[] = [entrance]
-  // The steps walked so far that a block's nodes leave free for the floor's content.
-  const walked = () => path.filter(cell => !blocks.some(block => block.nodes.has(keyOf(cell)))).length - 1
-  const laidOf = new Map<number, number>()
-  for (const [m, { ask, pin, depth }] of mains.entries()) {
-    const cur = path[path.length - 1]
-    const want = Math.max(1, Math.round(depth * length) - walked())
-    const later = [
-      ...mains.slice(m + 1).map(main => ({ ask: main.ask, ways: waysOf(main.pin) })),
-      ...sides.map(side => ({ ask: side, ways: 1 })),
-    ]
-    // A hub leans to the shapes with the most ways out: every one the main path leaves free is a side path's.
-    const score = (steps: number, ray: Cell[], rays: number) =>
-      Math.abs(steps + ray.length - 1 - want) + (pin === undefined ? HUB_WAY_WEIGHT * (4 - rays) : 0)
-    let laidHere = false
-    for (const option of options(ask.room, cur, score, waysOf(pin)).slice(0, MAIN_OPTIONS)) {
-      const pathBefore = path.length
-      const takenBefore = new Set(taken)
-      const undo = () => {
-        path.length = pathBefore
-        taken.clear()
-        for (const key of takenBefore) taken.add(key)
-      }
-      if (!walkInto(path, cur, option.laid, option.entry)) {
-        undo()
-        continue
-      }
-      const anchorStep = path.length - 1
-      const exits = shuffle(
-        option.laid.rays.filter((ray, i) => i !== option.entry && !taken.has(keyOf(ray[ray.length - 1]))),
-        rand
-      )
-        .map(ray => ({ ray, room: walkMap(n, ray[ray.length - 1], free).best.size }))
-        .sort((a, b) => b.room - a.room)
-      if (exits.length === 0 || exits[0].room < 2) {
-        undo()
-        continue
-      }
-      for (const cell of exits[0].ray.slice(1)) taken.add(keyOf(cell))
-      path.push(...exits[0].ray.slice(1))
-      const end = path[path.length - 1]
-      blocks.push(blockOf(ask, option.laid, { main: anchorStep, ...(pin !== undefined ? { pin } : {}) }))
-      if (!later.every(({ ask, ways }) => canStand(ask.room, end, ways))) {
-        blocks.pop()
-        undo()
-        continue
-      }
-      laidHere = true
-      if (ask.placement !== undefined) laidOf.set(ask.placement, (laidOf.get(ask.placement) ?? 0) + 1)
-      break
-    }
-    if (!laidHere && pin !== undefined) return refused(ask.room, 1, 0)
-  }
+    // THE MAIN PATH, through each main block in the order it lies along the walk.
+    const spread = spreadContentIndices(contentCount, 1, length + 1)
+    const mains = asks
+      .flatMap((ask): Array<{ ask: RoomAsk; pin: number | undefined; depth: number }> => {
+        if ("pin" in ask.at) {
+          const at = spread[ask.at.pin + (leverOnMain ? 1 : 0)] ?? Math.round(length / 2)
+          return [{ ask, pin: ask.at.pin, depth: at / length }]
+        }
+        if ("central" in ask.at) {
+          const { central } = ask.at
+          return [{ ask, pin: undefined, depth: rand() < 0.5 ? central / 2 : 1 - central / 2 }]
+        }
+        return []
+      })
+      .sort((a, b) => a.depth - b.depth)
+    const sides = asks.filter(ask => "section" in ask.at)
 
-  // The rest of the main path, to an end the rung's distance along, clear of every block.
-  {
-    const cur = path[path.length - 1]
-    const remaining = Math.max(1, length - walked())
-    const near = blockZone(blocks)
-    const reach = walkMap(n, cur, free)
-    const ends = shuffle(
-      [...reach.best.entries()].filter(([key]) => key !== keyOf(cur) && !near.has(key)),
-      rand
-    ).sort((a, b) => Math.abs(a[1].steps - remaining) - Math.abs(b[1].steps - remaining))
-    if (ends.length === 0) return { retry: [] }
-    const walk = reach.pathTo(cellOf(ends[0][0])).slice(1)
-    for (const cell of walk) taken.add(keyOf(cell))
-    path.push(...walk)
-  }
-
-  // THE SIDE PATHS ENDING IN A BLOCK, each from a hub's free ray (the most central hub first) or a bare main node.
-  const spines = new Map<number, Spine>()
-  const spreadOnPath = spreadContentIndices(contentCount, 1, path.length)
-  const goal = spreadOnPath[spreadOnPath.length - 1] ?? path.length - 1
-  const doorsWalked = new Set(path.map(keyOf))
-  for (const ask of sides) {
-    if (!("section" in ask.at)) continue
-    const si = ask.at.section
-    const needed = paddedChainLength(
-      rung.chainPacking,
-      chainRoomCount(prep.mechanisms.leverAtPositional, sideSections[si], `s${si}`)
-    )
-    const near = blockZone(blocks)
-    const hubStarts = blocks
-      .filter(block => "main" in block.on)
-      .map(block => ({ block, central: centralityOf((block.on as { main: number }).main, path.length) }))
-      .sort((a, b) => b.central - a.central)
-      .flatMap(({ block }) =>
-        block.rays
-          .filter(ray => ray.every((cell, i) => i === 0 || !doorsWalked.has(keyOf(cell))))
-          .filter(ray => !taken.has(keyOf(ray[ray.length - 1])))
-          .map(ray => ({ attachedAt: block.anchor, via: ray.slice(1, -1), from: ray[ray.length - 1] }))
-      )
-    const nodeStarts = shuffle(
-      path.slice(1, Math.max(1, goal)).filter(cell => !near.has(keyOf(cell))),
-      rand
-    ).map(cell => ({ attachedAt: cell, via: [] as Cell[], from: cell }))
-    let laidHere = false
-    for (const start of [...hubStarts, ...nodeStarts.slice(0, SIDE_STARTS)]) {
-      const fromHub = start.from !== start.attachedAt
-      const wasFree = !taken.has(keyOf(start.from))
-      if (fromHub) taken.add(keyOf(start.from))
-      const score = (steps: number, ray: Cell[]) =>
-        Math.abs((fromHub ? steps + 1 : steps) + ray.length - 1 - (needed + ray.length - 2))
-      for (const option of options(ask.room, start.from, score, 1).slice(0, SIDE_OPTIONS)) {
+    // A pinned room is passed through; a hub also needs a way out for a side path.
+    const waysOf = (pin: number | undefined) => (pin === undefined ? 3 : 2)
+    const path: Cell[] = [entrance]
+    // The steps walked so far that a block's nodes leave free for the floor's content.
+    const walked = () => path.filter(cell => !blocks.some(block => block.nodes.has(keyOf(cell)))).length - 1
+    const laidOf = new Map<number, number>()
+    for (const [m, { ask, pin, depth }] of mains.entries()) {
+      const cur = path[path.length - 1]
+      const want = Math.max(1, Math.round(depth * length) - walked())
+      const later = [
+        ...mains.slice(m + 1).map(main => ({ ask: main.ask, ways: waysOf(main.pin) })),
+        ...sides.map(side => ({ ask: side, ways: 1 })),
+      ]
+      // A hub leans to the shapes with the most ways out: every one the main path leaves free is a side path's.
+      const score = (steps: number, ray: Cell[], rays: number) =>
+        Math.abs(steps + ray.length - 1 - want) + (pin === undefined ? HUB_WAY_WEIGHT * (4 - rays) : 0)
+      let laidHere = false
+      for (const option of options(ask.room, cur, score, waysOf(pin)).slice(0, MAIN_OPTIONS)) {
+        const pathBefore = path.length
         const takenBefore = new Set(taken)
-        const cells: Cell[] = fromHub ? [start.from] : []
-        if (!walkInto(cells, start.from, option.laid, option.entry)) {
+        const undo = () => {
+          path.length = pathBefore
           taken.clear()
           for (const key of takenBefore) taken.add(key)
+        }
+        if (!walkInto(path, cur, option.laid, option.entry)) {
+          undo()
           continue
         }
-        for (const cell of start.via) doorsWalked.add(keyOf(cell))
-        blocks.push(blockOf(ask, option.laid, { section: si }))
-        laidOf.set(ask.placement!, (laidOf.get(ask.placement!) ?? 0) + 1)
-        spines.set(si, { attachedAt: start.attachedAt, via: start.via, cells })
+        const anchorStep = path.length - 1
+        const exits = shuffle(
+          option.laid.rays.filter((ray, i) => i !== option.entry && !taken.has(keyOf(ray[ray.length - 1]))),
+          rand
+        )
+          .map(ray => ({ ray, room: walkMap(n, ray[ray.length - 1], free).best.size }))
+          .sort((a, b) => b.room - a.room)
+        if (exits.length === 0 || exits[0].room < 2) {
+          undo()
+          continue
+        }
+        for (const cell of exits[0].ray.slice(1)) taken.add(keyOf(cell))
+        path.push(...exits[0].ray.slice(1))
+        const end = path[path.length - 1]
+        blocks.push(blockOf(ask, option.laid, { main: anchorStep, ...(pin !== undefined ? { pin } : {}) }))
+        if (!later.every(({ ask, ways }) => canStand(ask.room, end, ways))) {
+          blocks.pop()
+          undo()
+          continue
+        }
         laidHere = true
+        if (ask.placement !== undefined) laidOf.set(ask.placement, (laidOf.get(ask.placement) ?? 0) + 1)
         break
       }
-      if (laidHere) break
-      if (fromHub && wasFree) taken.delete(keyOf(start.from))
+      if (!laidHere && pin !== undefined) return refused(ask.room, 1, 0)
     }
-  }
 
-  // A placement short of its `min` refuses the attempt by name.
-  for (const [placement, { room, min }] of (prep.config.config.prefabPlacements ?? []).entries()) {
-    const placed = laidOf.get(placement) ?? 0
-    if (placed < min) return refused(room, min, placed)
-  }
+    // The rest of the main path, to an end the rung's distance along, clear of every block.
+    {
+      const cur = path[path.length - 1]
+      const remaining = Math.max(1, length - walked())
+      const near = blockZone(blocks)
+      const reach = walkMap(n, cur, free)
+      const ends = shuffle(
+        [...reach.best.entries()].filter(([key]) => key !== keyOf(cur) && !near.has(key)),
+        rand
+      ).sort((a, b) => Math.abs(a[1].steps - remaining) - Math.abs(b[1].steps - remaining))
+      if (ends.length === 0) return { retry: [] }
+      const walk = reach.pathTo(cellOf(ends[0][0])).slice(1)
+      for (const cell of walk) taken.add(keyOf(cell))
+      path.push(...walk)
+    }
 
-  const pkey = makePkey(n)
-  const passages = new Set<string>()
-  const link = (cells: Cell[]) =>
-    cells.slice(1).forEach((cell, i) => passages.add(pkey(cells[i][0], cells[i][1], cell[0], cell[1])))
-  link(path)
-  for (const { attachedAt, via, cells } of spines.values()) link([attachedAt, ...via, ...cells])
-  state.blocks = blocks
-  state.walks = { entrance, mainPath: path, spines, passages }
-})
+    // THE SIDE PATHS ENDING IN A BLOCK, each from a hub's free ray (the most central hub first) or a bare main node.
+    const spines = new Map<number, Spine>()
+    const spreadOnPath = spreadContentIndices(contentCount, 1, path.length)
+    const goal = spreadOnPath[spreadOnPath.length - 1] ?? path.length - 1
+    const doorsWalked = new Set(path.map(keyOf))
+    for (const ask of sides) {
+      if (!("section" in ask.at)) continue
+      const si = ask.at.section
+      const needed = paddedChainLength(
+        rung.chainPacking,
+        chainRoomCount(prep.mechanisms.leverAtPositional, sideSections[si], `s${si}`)
+      )
+      const near = blockZone(blocks)
+      const hubStarts = blocks
+        .filter(block => "main" in block.on)
+        .map(block => ({ block, central: centralityOf((block.on as { main: number }).main, path.length) }))
+        .sort((a, b) => b.central - a.central)
+        .flatMap(({ block }) =>
+          block.rays
+            .filter(ray => ray.every((cell, i) => i === 0 || !doorsWalked.has(keyOf(cell))))
+            .filter(ray => !taken.has(keyOf(ray[ray.length - 1])))
+            .map(ray => ({ attachedAt: block.anchor, via: ray.slice(1, -1), from: ray[ray.length - 1] }))
+        )
+      const nodeStarts = shuffle(
+        path.slice(1, Math.max(1, goal)).filter(cell => !near.has(keyOf(cell))),
+        rand
+      ).map(cell => ({ attachedAt: cell, via: [] as Cell[], from: cell }))
+      let laidHere = false
+      for (const start of [...hubStarts, ...nodeStarts.slice(0, SIDE_STARTS)]) {
+        const fromHub = start.from !== start.attachedAt
+        const wasFree = !taken.has(keyOf(start.from))
+        if (fromHub) taken.add(keyOf(start.from))
+        const score = (steps: number, ray: Cell[]) =>
+          Math.abs((fromHub ? steps + 1 : steps) + ray.length - 1 - (needed + ray.length - 2))
+        for (const option of options(ask.room, start.from, score, 1).slice(0, SIDE_OPTIONS)) {
+          const takenBefore = new Set(taken)
+          const cells: Cell[] = fromHub ? [start.from] : []
+          if (!walkInto(cells, start.from, option.laid, option.entry)) {
+            taken.clear()
+            for (const key of takenBefore) taken.add(key)
+            continue
+          }
+          for (const cell of start.via) doorsWalked.add(keyOf(cell))
+          blocks.push(blockOf(ask, option.laid, { section: si }))
+          laidOf.set(ask.placement!, (laidOf.get(ask.placement!) ?? 0) + 1)
+          spines.set(si, { attachedAt: start.attachedAt, via: start.via, cells })
+          laidHere = true
+          break
+        }
+        if (laidHere) break
+        if (fromHub && wasFree) taken.delete(keyOf(start.from))
+      }
+    }
+
+    // A placement short of its `min` refuses the attempt by name.
+    for (const [placement, { room, min }] of (prep.config.config.prefabPlacements ?? []).entries()) {
+      const placed = laidOf.get(placement) ?? 0
+      if (placed < min) return refused(room, min, placed)
+    }
+
+    const pkey = makePkey(n)
+    const passages = new Set<string>()
+    const link = (cells: Cell[]) =>
+      cells.slice(1).forEach((cell, i) => passages.add(pkey(cells[i][0], cells[i][1], cell[0], cell[1])))
+    link(path)
+    for (const { attachedAt, via, cells } of spines.values()) link([attachedAt, ...via, ...cells])
+    state.blocks = blocks
+    state.walks = { entrance, mainPath: path, spines, passages }
+  }
+)
 
 /** Each block's room drawn over its anchor, at its rect. */
 export const stampBlocks = (prep: FloorPrep, blocks: readonly ReservedBlock[], grid: FloorGrid): FloorGrid =>

@@ -114,11 +114,12 @@ const buildMaze = (N: number, entR: number, entC: number, rand: () => number, st
 
 // Grows the maze among the nodes a lock left free: passages join the laid ways exactly as laid, and a free
 // node is reached from another free node and from no laid one, so a side path grown here can never join two
-// regions the lock keeps apart. A side path attaches to laid ground by a passage the attach itself carves.
-const growMazeAround = (N: number, laid: LaidFloor, rand: () => number, steer: Steer) => {
+// regions the lock keeps apart. A side path attaches to laid ground by a passage the attach itself carves. A designed
+// room's nodes (`held`) are its own: nothing is dug through it.
+const growMazeAround = (N: number, laid: LaidFloor, rand: () => number, steer: Steer, held: ReadonlySet<string>) => {
   const passages = new Set<string>(laid.passages)
   const pkey = makePkey(N)
-  const visited = new Set<string>([...laid.label.keys(), ...laid.held])
+  const visited = new Set<string>([...laid.label.keys(), ...laid.held, ...held])
   const arrivedVia = new Map<string, [number, number]>()
   const lastTurnAt = new Map<string, number>()
   for (let sr = 0; sr < N; sr += NODE_STEP)
@@ -234,7 +235,7 @@ export const growMaze = pass(
 
     const steer: Steer = { straightBias: prep.sizing.straightBias, turnBias: 0 }
     const { mainPath, passages } = laid
-      ? growMazeAround(N, laid, rand, steer)
+      ? growMazeAround(N, laid, rand, steer, blockNodes(state.blocks))
       : walks
         ? growAroundBlocks(N, walks, state.blocks ?? [], rand, steer)
         : buildMaze(N, entR, entC, rand, steer, state.rung.targetDistance)

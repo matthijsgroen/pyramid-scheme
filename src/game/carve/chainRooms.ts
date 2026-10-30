@@ -180,6 +180,7 @@ export const chainRooms = pass(
           !laidDoorIdx.has(i) &&
           !absorbed.has(keyOf(cells[i])) &&
           !laid?.thresholds.has(keyOf(cells[i])) &&
+          !laid?.bare.has(keyOf(cells[i])) &&
           i !== leverIndexInChain &&
           !takenByChainControl.has(i)
 
