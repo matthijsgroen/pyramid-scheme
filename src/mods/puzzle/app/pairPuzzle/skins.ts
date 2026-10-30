@@ -5,8 +5,7 @@ import { Mummy, Sarcophagus } from "./glyphs"
  * What the mummy rest board looks like.
  *
  * The family emits logical state only: a square is empty, ruled out by the player or holds a piece, an anchor
- * is printed, a line is open, met or broken. The skin decides the pixels (`docs/instructions/puzzle-screens.md`
- * §2). One skin, a pyramid burial room in the same sandstone as the scarab board.
+ * is printed, a line is open, met or broken. The skin decides the pixels (`docs/instructions/puzzle-screens.md`). One skin, a pyramid burial room in the same sandstone as the scarab board.
  */
 export type PairSkin = {
   /** Which place this is, as its own name: the goal, the rules and every hint sentence are keyed on it. */

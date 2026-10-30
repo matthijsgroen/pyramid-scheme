@@ -1,7 +1,7 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { PairOptions } from "./generatePairPuzzle"
 
-// Tier settings, per docs/game-design/puzzles/pair-puzzle.md §5.
+// Tier settings, per docs/game-design/puzzles/pair-puzzle.md.
 const MASTER: PairOptions = {
   size: 8,
   density: 0.17,

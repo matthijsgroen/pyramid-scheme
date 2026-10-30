@@ -22,7 +22,7 @@ import { PairPuzzleRules } from "./PairPuzzleRules"
 type Props = {
   puzzle: PairPuzzleWithAnswer
   difficulty?: Difficulty
-  /** The pool this room was drawn from (docs/instructions/puzzle-screens.md §2). */
+  /** The pool this room was drawn from (docs/instructions/puzzle-screens.md). */
   role?: string | string[]
   theme?: string
   room?: string
@@ -40,7 +40,7 @@ export const PairPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }
   const [asked, setAsked] = useState(false)
   const hint = useMemo(() => (asked ? buildPairHint(puzzle, state) : undefined), [asked, puzzle, state])
 
-  // The board finishes itself before the shell hears "solved", one piece at a time (puzzle-screens.md §3);
+  // The board finishes itself before the shell hears "solved", one piece at a time (puzzle-screens.md);
   // input is refused for that beat so a tap cannot undo a piece mid-run.
   const finished = pairSolved(puzzle, state)
   const pieces = state.marks.flatMap((value, cell) => (value === "piece" ? [cell] : []))

@@ -1,7 +1,7 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { RegionlessOptions } from "./generateRegionlessBattle"
 
-// Tier settings, per docs/game-design/puzzles/regionless-battle.md §5. A board needs about a third of its
+// Tier settings, per docs/game-design/puzzles/regionless-battle.md. A board needs about a third of its
 // squares walled however the tier is set, so the tiers separate by size and by what they demand of the
 // ladder; `maxWallShare` only trims the long tail of wall counts.
 const EXPERT: RegionlessOptions = {
