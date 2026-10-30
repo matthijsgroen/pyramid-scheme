@@ -9,13 +9,8 @@ layout
 # t d # #
 # w . x #
 d . . s d
+# . . . #
 # d d d #
-
-layout small
-# t # #
-# w x #
-d s . d
-# d d #
 
 w wall weightsTable
 x floor scale

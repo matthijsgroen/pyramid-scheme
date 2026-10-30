@@ -9,13 +9,8 @@ layout
 # n d # #
 # w . c #
 d s . . d
+# . . . #
 # d d d #
-
-layout small
-# n # #
-# w c #
-d s . d
-# d d #
 
 stock = jarRack | shelf
 w wall stock

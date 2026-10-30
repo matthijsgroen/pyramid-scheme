@@ -9,15 +9,9 @@ layout
 # # d # #
 # g . g #
 d s . . d
+# . . . #
 # d d d #
-
-layout small
-# # # #
-# g b #
-d s . d
-# d d #
 
 goods = basketStack | bales
 g floor goods
-b floor goods
 s stop

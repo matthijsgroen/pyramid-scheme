@@ -9,13 +9,8 @@ layout
 # # d # #
 # k . g #
 d s . . d
+# . . . #
 # d d d #
-
-layout small
-# # # #
-# k g #
-d s . d
-# d d #
 
 wares = hanging | offeringTable
 k wall counter

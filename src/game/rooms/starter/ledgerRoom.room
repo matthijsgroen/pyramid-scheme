@@ -9,13 +9,8 @@ layout
 # t d n #
 # k . h #
 d s . . d
+# . . . #
 # d d d #
-
-layout small
-# t n #
-# k h #
-d s . d
-# d d #
 
 k wall scribeDesk
 h wall? shelf
