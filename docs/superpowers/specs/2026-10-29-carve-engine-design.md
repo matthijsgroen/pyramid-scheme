@@ -36,7 +36,7 @@ first-class space, claimed first; corridors join them.
   walk and stops work on any corridor, not only on marked stretches.
 - **Size follows content** (designer). A floor is as big as its rooms and corridors need. No fixed grid, no maximum
   per tier, no ladder growing the grid until things fit.
-- **Caves are the same engine** (designer). Same order — caverns first, then passages — with another shape
+- **Caves are the same engine** (designer). Until the cave content pass, cave rooms are 3×3 like every other room (designer, 2026-10-30). Same order — caverns first, then passages — with another shape
   vocabulary: ragged edges, caverns instead of rooms, winding passages that widen and narrow. The sunlit cavern is a
   pinned prefab like a story room; caves may get their own prefabs.
 

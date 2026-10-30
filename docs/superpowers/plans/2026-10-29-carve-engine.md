@@ -399,7 +399,11 @@ is untouched.
   line, and the corridor narrows at the door.
 - [ ] **Step 6: Commit** `feat: wide corridors walk their centre line`.
 
-### Task 8: Caverns
+### Task 8: Caverns (deferred)
+
+Deferred (designer, 2026-10-30: "3x3 houden voor nu, ik wil na de werkende engine pas de content gaan doen"). Caves keep
+3×3 rooms on the rooms engine; caverns come with the cave content.
+
 
 **Files:**
 - Create: `src/game/carve/embed/cavern.ts`
