@@ -11,7 +11,6 @@ import {
   resolveNodeDifficulties,
   resolveFloorRooms,
   resolveNodeLoot,
-  resolveNodeWidths,
   resolveNodeRooms,
   resolveNodeSelectors,
 } from "./dsl"
@@ -107,7 +106,6 @@ const buildDslSection = <TExtra extends string>(
   })
   const difficultiesByIndex = resolveNodeDifficulties(cs.nodes, pathPuzzles)
   const lootByIndex = resolveNodeLoot(cs.nodes, pathPuzzles)
-  const wideByIndex = resolveNodeWidths(cs.nodes, pathPuzzles)
   return {
     ...(cs.label !== undefined ? { label: cs.label } : {}),
     pathPuzzles,
@@ -129,7 +127,6 @@ const buildDslSection = <TExtra extends string>(
     ...(Object.keys(difficultiesByIndex).length ? { difficultiesByIndex } : {}),
     ...(loot === false ? { loot } : {}),
     ...(Object.keys(lootByIndex).length ? { lootByIndex } : {}),
-    ...(Object.keys(wideByIndex).length ? { wideByIndex } : {}),
     ...(cs.encounterArgs !== undefined ? { encounterArgs: cs.encounterArgs } : {}),
     ...(cs.theme !== undefined ? { theme: cs.theme } : {}),
   }

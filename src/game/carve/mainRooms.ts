@@ -138,7 +138,6 @@ export const mainRooms = pass(
           ...(reward ? { reward } : {}),
           ...(authoredActivity ? { authoredActivity } : {}),
           ...(pinnedPrefab ? { pinnedPrefab } : {}),
-          ...(config.wideByIndex?.[k] ? { wideWayIn: true as const } : {}),
         })
       }
     })

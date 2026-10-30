@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest"
-import { engineFromEnv } from "@/game/carve/engines"
 import { assembleFloor } from "@/game/siteAssembler"
 import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
 import { classifyForkShape, type ForkShape } from "@/game/forkShape"
@@ -191,9 +190,8 @@ describe("what a world-spec setting may and may not move", () => {
       // tableau nobody wrote, and that family throws rather than inventing one. Not a finding; skip.
       let before, after
       try {
-        const engine = { engine: engineFromEnv() }
-        before = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, opts, engine)
-        after = assembleFloor(floor.journeyId, mutate(floor.config), floor.seed, resolveEncounter, opts, engine)
+        before = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, opts)
+        after = assembleFloor(floor.journeyId, mutate(floor.config), floor.seed, resolveEncounter, opts)
       } catch {
         continue
       }
@@ -314,16 +312,6 @@ describe("what a world-spec setting may and may not move", () => {
     ["pathPuzzles", c => ({ ...structuredClone(c), pathPuzzles: c.pathPuzzles + 1 })],
     ["packing", c => ({ ...structuredClone(c), packing: (c.packing ?? 1) + 0.5 })],
     ["corridorStraightness", c => ({ ...structuredClone(c), corridorStraightness: 0.2 })],
-    ["plan", c => ({ ...structuredClone(c), plan: c.plan === "spiral" ? "axis" : "spiral" })],
-    ["spread", c => ({ ...structuredClone(c), spread: c.spread === 1 ? 0 : 1 })],
-    ["corridorWidth", c => ({ ...structuredClone(c), corridorWidth: c.corridorWidth === 2 ? undefined : 2 })],
-    [
-      "a wide way in",
-      c =>
-        edited(c, n => {
-          n.wideByIndex = { 0: true }
-        }),
-    ],
     ["outsideLock", c => ({ ...structuredClone(c), outsideLock: c.sideSections.map((_, i) => i) })],
     ["corridorsTakeTwo", c => ({ ...structuredClone(c), corridorsTakeTwo: true })],
     ["difficulty", c => ({ ...structuredClone(c), difficulty: c.difficulty === "wizard" ? "starter" : "wizard" })],

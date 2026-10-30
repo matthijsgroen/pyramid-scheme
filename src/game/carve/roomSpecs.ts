@@ -131,7 +131,6 @@ export const puzzleRoomSpec = (
     ...(reward ? { reward } : {}),
     ...(authoredActivity ? { authoredActivity } : {}),
     ...(pinnedPrefab ? { pinnedPrefab } : {}),
-    ...(section.wideByIndex?.[pi] ? { wideWayIn: true as const } : {}),
   }
 }
 

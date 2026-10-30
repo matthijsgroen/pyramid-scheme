@@ -17,7 +17,6 @@ import {
   resolveNodeChambers,
   resolveNodeDifficulties,
   resolveNodeLoot,
-  resolveNodeWidths,
   resolveNodeSelectors,
 } from "./dsl"
 import { ONE_WAY_KIND, declaredBinding, regionBarrierBinding, resolveBinding } from "./realisationBinding"
@@ -111,7 +110,6 @@ export type BuildFloorOptions = {
   prefabs?: FloorConfig["prefabs"]
   prefabPlacements?: FloorConfig["prefabPlacements"]
   prefabsByIndex?: FloorConfig["prefabsByIndex"]
-  wideByIndex?: FloorConfig["wideByIndex"]
   difficultiesByIndex?: FloorConfig["difficultiesByIndex"]
   loot?: FloorConfig["loot"]
   lootByIndex?: FloorConfig["lootByIndex"]
@@ -128,9 +126,6 @@ export type BuildFloorOptions = {
   realisations?: FloorConfig["realisations"]
   switches?: FloorConfig["switches"]
   corridorStraightness?: number
-  plan?: FloorConfig["plan"]
-  spread?: number
-  corridorWidth?: FloorConfig["corridorWidth"]
   packing?: number
   seed?: number
   sealed?: boolean
@@ -177,11 +172,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
     : {}),
   ...(opts.loot === false ? { loot: false as const } : {}),
   ...(opts.lootByIndex && Object.keys(opts.lootByIndex).length ? { lootByIndex: opts.lootByIndex } : {}),
-  ...(opts.wideByIndex && Object.keys(opts.wideByIndex).length ? { wideByIndex: opts.wideByIndex } : {}),
   ...(opts.corridorStraightness !== undefined ? { corridorStraightness: opts.corridorStraightness } : {}),
-  ...(opts.plan !== undefined ? { plan: opts.plan } : {}),
-  ...(opts.spread !== undefined ? { spread: opts.spread } : {}),
-  ...(opts.corridorWidth !== undefined ? { corridorWidth: opts.corridorWidth } : {}),
   ...(opts.packing !== undefined ? { packing: opts.packing } : {}),
   ...(opts.seed !== undefined ? { seed: opts.seed } : {}),
   ...(opts.sealed ? { sealed: true } : {}),
@@ -467,7 +458,6 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           difficultiesByIndex: resolveNodeDifficulties(fc.nodes, floorPP),
           loot: floorLoot,
           lootByIndex: resolveNodeLoot(fc.nodes, floorPP),
-          wideByIndex: resolveNodeWidths(fc.nodes, floorPP),
           // A floor's own junctions win; otherwise the site's, the way `encounter` and `theme` resolve.
           forks: fc.forks ?? constraint.forks,
           oneWays: fc.oneWays ?? constraint.oneWays,
@@ -486,9 +476,6 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           realisations: bakedBinding,
           switches: fc.switches ?? constraint.switches,
           corridorStraightness: floorStraightness,
-          plan: fc.plan ?? constraint.plan,
-          spread: fc.spread ?? constraint.spread,
-          corridorWidth: fc.corridorWidth ?? constraint.corridorWidth,
           packing: floorPacking,
           seed: fc.seed,
           sealed: floorSealed,
@@ -632,9 +619,6 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           decorations: constraint.decorations,
           wallDecorations: constraint.wallDecorations,
           corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
-          plan: constraint.plan,
-          spread: constraint.spread,
-          corridorWidth: constraint.corridorWidth,
           packing: resolvePacking(constraint, journeyId, i),
           chambers: constraint.chambers,
           ...siteRoomsAt(difficulty, "floor"),
@@ -822,9 +806,6 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     decorations: constraint.decorations,
     wallDecorations: constraint.wallDecorations,
     corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
-    plan: constraint.plan,
-    spread: constraint.spread,
-    corridorWidth: constraint.corridorWidth,
     packing: resolvePacking(constraint, journeyId, i),
     chambers: constraint.chambers,
     ...siteRoomsAt(difficulty, "floor"),

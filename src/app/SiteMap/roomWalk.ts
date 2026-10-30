@@ -1,6 +1,5 @@
 import { STEP, inRect, prefabRoomAt, prefabRoomCells, roomDoors } from "@/game/roomShape"
 import type { Direction, FloorGrid, PrefabRoom } from "@/game/siteTypes"
-import { centreLine } from "./centreLine"
 import { COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import type { StandingOffset } from "./standingSpot"
 
@@ -211,8 +210,7 @@ export const walkPoints = (
       const { dx, dy } = standAt(route[i][0], route[i][1])
       points.push({ x: cx + dx, y: cy + dy })
     } else {
-      const { dx, dy } = centreLine(grid, route[i][0], route[i][1])
-      points.push({ x: cx + dx, y: cy + dy })
+      points.push({ x: cx, y: cy })
     }
     i++
   }

@@ -1,7 +1,6 @@
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
 import { inRect, prefabRoomAt, prefabRoomCells } from "@/game/roomShape"
-import { centreLine } from "./centreLine"
 import { DIR_MOVES } from "./corridorRuns"
 import { COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import { shapeKindFor } from "./nodeKinds"
@@ -39,13 +38,12 @@ const ASIDE: ReadonlyArray<Direction> = ["e", "w", "s", "n"]
 /** Where the explorer is drawn standing in a room, relative to its node's centre. A stair's art IS its
  * node, so on the centre he stands in its shaft; he stands in the cell next to it instead — a bare cell of
  * the room's own floor, one with no prop in it. Drawing only: the explorer is still AT the node.
- * In a prefab room, on its node or on a cell it absorbed, he stands at the room's stop. In a wide corridor he stands on
- * its centre line (`centreLine`). */
+ * In a prefab room, on its node or on a cell it absorbed, he stands at the room's stop. */
 export const standingOffset = (grid: FloorGrid, claims: RoomClaims, r: number, c: number): StandingOffset => {
   const stop = prefabStop(grid, r, c)
   if (stop) return offsetTo(r, c, stop)
   const cell = cellAt(grid, r, c)
-  if (cell.type !== "room" || shapeKindFor(grid, r, c, cell) !== "stairhead") return centreLine(grid, r, c)
+  if (cell.type !== "room" || shapeKindFor(grid, r, c, cell) !== "stairhead") return AT_CENTRE
   return besideNode(grid, claims, r, c) ?? AT_CENTRE
 }
 

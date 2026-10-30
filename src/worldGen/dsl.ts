@@ -1,6 +1,5 @@
 import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
 import type { ActivityId } from "../game/activities"
-import type { PlanKind } from "../game/carve/floorPlans"
 import type { Prefab } from "../game/prefabTypes"
 import { bakedPrefab } from "../game/prefabNotation"
 import type { DecorationKind, HandleSide, Patron, SiteCondition, Tileset, WallDecorationKind } from "../game/siteTypes"
@@ -83,8 +82,6 @@ export type NodeSelector = {
   chamberAfter?: ActivityId | true
   /** A designed room (a `.room` file's name) this node is pinned to. The room's tier is this floor's difficulty. */
   room?: string
-  /** `2` makes the corridor arriving at the selected room, from the way in, wide. */
-  width?: 2
 }
 
 /** How many of a named room a floor holds, and where. `min` of them are required, up to `max` allowed (default
@@ -157,10 +154,6 @@ export const resolveNodeChambers = (
 /** Expand `nodes` selectors into a sparse 0-based index → pinned room name map. */
 export const resolveNodeRooms = (nodes: NodeSelector[] | undefined, count: number): Record<number, string> =>
   resolveNodeField(nodes, count, sel => sel.room)
-
-/** Expand `nodes` selectors into a sparse 0-based index → `true` map of the rooms whose way in is wide. */
-export const resolveNodeWidths = (nodes: NodeSelector[] | undefined, count: number): Record<number, true> =>
-  resolveNodeField(nodes, count, sel => (sel.width === 2 ? (true as const) : undefined))
 
 const resolveNodeField = <T>(
   nodes: NodeSelector[] | undefined,
@@ -339,12 +332,6 @@ export type FloorConstraint<TExtra extends string = never> = {
   switches?: { encounter: string | string[]; min: number; max: number }
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */
   corridorStraightness?: number
-  /** The shape the main path is laid in. */
-  plan?: PlanKind
-  /** How sprawling the carve is, 0 = compact, 1 = sprawling. */
-  spread?: number
-  /** `2` makes the floor's corridors two cells wide. */
-  corridorWidth?: 2
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
   packing?: number
   /** The seed this floor carves at, in place of the one its address derives. Authored only where the floor
@@ -498,12 +485,6 @@ export type PyramidConstraint = {
   encounterArgs?: unknown
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */
   corridorStraightness?: number
-  /** The shape the main path is laid in. */
-  plan?: PlanKind
-  /** How sprawling the carve is, 0 = compact, 1 = sprawling. */
-  spread?: number
-  /** `2` makes the floor's corridors two cells wide. */
-  corridorWidth?: 2
   /** Chance [0-1], rolled per pyramid, of an extra-winding floor. Ignored if corridorStraightness is set. */
   windyChance?: number
   /** corridorStraightness used on a windyChance hit. Default 0.35. */

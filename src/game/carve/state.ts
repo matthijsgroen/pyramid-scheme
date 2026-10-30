@@ -21,7 +21,6 @@ import type {
   SubSection,
   WallDecorationKind,
 } from "../siteTypes"
-import type { PlanKind } from "./floorPlans"
 import type { MarkAllocation, Mark } from "../mark"
 import type { SequenceSigns } from "../sequenceSigns"
 import type {
@@ -298,8 +297,6 @@ export type CarveState = {
   rung: Rung
   /** The attempt's one stream: every pass that draws, draws from it in pass order. */
   rand: () => number
-  /** The shape the floor's main path is laid in; absent under an engine that picks none. */
-  plan?: PlanKind
   /** The grid the lay grew to, written even when the lay refuses: the next rung starts from it. */
   laidN?: number
   /** The lock the floor lays and the route steps its content takes; null where the floor lays none. */

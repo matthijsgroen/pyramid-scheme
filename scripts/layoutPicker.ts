@@ -22,13 +22,44 @@ import type { FloorConfig, SiteConfig } from "../src/worldGen/types"
 import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
 import { worldFloorCarve } from "../src/mods/carveWorldFloor"
 import { unjudgedLocks } from "../src/game/lockPuzzles"
-import { longestRoomToRoom } from "../src/game/carve/embed/embedFloor"
+import type { Cell } from "../src/game/carve/state"
+import type { Direction, FloorGrid } from "../src/game/siteTypes"
 import type { CorridorAssignment } from "../src/game/corridorSidePaths"
 import { searchStages, type StageJob } from "./layoutSearchPool"
 import { floorHash, sourceFingerprint, type CarveLedger, type CarveLedgerEntry } from "./carveLedger"
 
 // The layout search lays each seed's plan once for all its packings; set here, so every search worker keeps them too.
 keepLayOutcomes(4096)
+
+const MOVES: Record<Direction, Cell> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+
+/** The rooms' longest walk from one room to the next over corridor alone. */
+const longestRoomToRoom = (grid: FloorGrid): number => {
+  let longest = 0
+  grid.cells.forEach((row, r) =>
+    row.forEach((cell, c) => {
+      if (cell.type !== "room") return
+      const seen = new Set([`${r},${c}`])
+      let frontier: Cell[] = [[r, c]]
+      for (let d = 1; frontier.length; d++) {
+        const next: Cell[] = []
+        for (const at of frontier) {
+          const here = grid.cells[at[0]][at[1]]
+          if (here.type === "empty" || (here.type === "room" && d > 1)) continue
+          for (const dir of here.dirs) {
+            const to: Cell = [at[0] + MOVES[dir][0], at[1] + MOVES[dir][1]]
+            if (seen.has(`${to[0]},${to[1]}`)) continue
+            seen.add(`${to[0]},${to[1]}`)
+            if (grid.cells[to[0]][to[1]].type === "room") longest = Math.max(longest, d)
+            next.push(to)
+          }
+        }
+        frontier = next
+      }
+    })
+  )
+  return longest
+}
 
 // Seeds tried at each packing, offsets 0 … CARVE_SEED_BUDGET-1 from the floor's base seed.
 export const CARVE_SEED_BUDGET = 100

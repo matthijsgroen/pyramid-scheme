@@ -1,6 +1,5 @@
 import { beforeAll, describe, it, expect } from "vitest"
 import { dropUnownedAuthoring } from "@/worldGen/modOwnedAuthoring"
-import { engineFromEnv } from "@/game/carve/engines"
 import { assembleFloor, type ResolveEncounter } from "@/game/siteAssembler"
 import { TOPOLOGY_OFF, dirsApartFromDrops, dirsOf } from "@/game/testSupport/modOff"
 import type { FloorConfig as GameFloorConfig } from "@/game/siteTypes"
@@ -46,18 +45,11 @@ describe("the carve a floor authoring forks gets", () => {
       const withForks = { ...floor.config, forks: FORKS }
       const authored = { ...withForks, switches: SWITCHES }
       const opts = (resolve: ResolveEncounter, config: GameFloorConfig, off = false) =>
-        assembleFloor(
-          floor.journeyId,
-          config,
-          floor.seed,
-          resolve,
-          {
-            resolveKeyRequirements,
-            ...(off ? { resolveOneWay: TOPOLOGY_OFF.resolveOneWay, resolvePassage: TOPOLOGY_OFF.resolvePassage } : {}),
-            floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
-          },
-          { engine: engineFromEnv() }
-        )
+        assembleFloor(floor.journeyId, config, floor.seed, resolve, {
+          resolveKeyRequirements,
+          ...(off ? { resolveOneWay: TOPOLOGY_OFF.resolveOneWay, resolvePassage: TOPOLOGY_OFF.resolvePassage } : {}),
+          floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
+        })
       const forksOnly = opts(resolveEncounter, withForks)
       const withSwitch = opts(resolveEncounter, authored)
       // What the build looks like once topology has left it: `dropUnownedAuthoring` drops `switches` and

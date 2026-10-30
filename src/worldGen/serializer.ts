@@ -65,13 +65,6 @@ const serializeChambersByIndex = (m: Record<number, string | true>): string =>
     .map(k => `${k}: ${JSON.stringify(m[k])}`)
     .join(", ")} }`
 
-const serializeWideByIndex = (m: Record<number, true>): string =>
-  `{ ${Object.keys(m)
-    .map(Number)
-    .sort((a, b) => a - b)
-    .map(k => `${k}: true`)
-    .join(", ")} }`
-
 const serializeLootByIndex = (m: Record<number, false>): string =>
   `{ ${Object.keys(m)
     .map(Number)
@@ -115,8 +108,6 @@ const serializeSideSection = (s: SideSection): string => {
   if (s.loot === false) parts.push(`loot: false`)
   if (s.lootByIndex && Object.keys(s.lootByIndex).length)
     parts.push(`lootByIndex: ${serializeLootByIndex(s.lootByIndex)}`)
-  if (s.wideByIndex && Object.keys(s.wideByIndex).length)
-    parts.push(`wideByIndex: ${serializeWideByIndex(s.wideByIndex)}`)
   if (s.sideSections?.length)
     parts.push(`sideSections: [${s.sideSections.map(sub => serializeSideSection(sub as SideSection)).join(", ")}]`)
   return `{ ${parts.join(", ")} }`
@@ -234,10 +225,6 @@ const floorFieldEmitters: {
   loot: () => `loot: false`,
   lootByIndex: v => (Object.keys(v).length ? `lootByIndex: ${serializeLootByIndex(v)}` : null),
   corridorStraightness: v => `corridorStraightness: ${v}`,
-  plan: v => `plan: "${v}"`,
-  spread: v => `spread: ${v}`,
-  corridorWidth: v => `corridorWidth: ${v}`,
-  wideByIndex: v => (Object.keys(v).length ? `wideByIndex: ${serializeWideByIndex(v)}` : null),
   packing: v => `packing: ${v}`,
   outsideLock: v => (v.length ? `outsideLock: ${JSON.stringify(v)}` : null),
   corridorsTakeTwo: () => `corridorsTakeTwo: true`,

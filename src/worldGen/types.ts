@@ -1,5 +1,4 @@
 import type { ActivityId } from "../game/activities"
-import type { PlanKind } from "../game/carve/floorPlans"
 import type { Prefab } from "../game/prefabTypes"
 import type {
   DecorationKind,
@@ -73,8 +72,6 @@ export type SubSection = {
   prefabs?: Record<string, Prefab>
   prefabPlacements?: { room: string; min: number; max: number; central: number }[]
   prefabsByIndex?: Record<number, string>
-  /** Per-node wide way in, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
-  wideByIndex?: Record<number, true>
   /** Per-node difficulty, resolved from `nodes` selectors: a room builds at `difficultiesByIndex[k] ?? difficulty`
    * (see roomDifficulty). Mirrors game/siteTypes.ts. */
   difficultiesByIndex?: Record<number, Difficulty>
@@ -128,8 +125,6 @@ export type FloorConfig = {
   prefabs?: Record<string, Prefab>
   prefabPlacements?: { room: string; min: number; max: number; central: number }[]
   prefabsByIndex?: Record<number, string>
-  /** Per-node wide way in for the main path, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
-  wideByIndex?: Record<number, true>
   /** Per-node difficulty for the main path, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
   difficultiesByIndex?: Record<number, Difficulty>
   /** `false` keeps generated loot out of this floor. Mirrors game/siteTypes.ts. */
@@ -137,9 +132,6 @@ export type FloorConfig = {
   /** Per-node loot for the main path, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
   lootByIndex?: Record<number, false>
   corridorStraightness?: number
-  plan?: PlanKind
-  spread?: number
-  corridorWidth?: 2
   packing?: number
   /** The top-level side sections, by index, that hang outside the floor's lock as branches. Written by the layout
    * search. Mirrors game/siteTypes.ts. */
