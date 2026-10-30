@@ -124,8 +124,9 @@ The algorithm comes from spike 2 (report §"What changed"), with its "still hack
   to the lay instead of walking it itself when the floor has a lock.
 - The rule (one, uniform): a prefab may take a lock region when the prefab has a door place for every way the
   region has and a mechanism place for every control the region seats (the room-prefabs rule "a prefab takes a room
-  whose contents it has a place for"). A region with many ways (a hub such as caveLevers' `hall`) is laid as the
-  anchor plus one ray per way. A drop end stays a corridor stop: a drop needs its straight run, so a drop's end is
+  whose contents it has a place for"). A region with up to four ways is laid as the anchor plus one ray per way;
+  a room with more than four ways (doors keyed per door place) waits until a throne room asks for it (designer,
+  2026-10-30), so caveLevers' 5-way `hall` stays a plain region for now. A drop end stays a corridor stop: a drop needs its straight run, so a drop's end is
   never a room. The region's controls stand on the mechanism places. "Central" on a lock floor is measured along
   the lock's route.
 
