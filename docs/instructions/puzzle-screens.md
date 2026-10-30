@@ -44,7 +44,7 @@ the board, and that is the thing a player says to themselves about it afterwards
 - **The tier is not part of it.** Not because difficulty does not matter, but because **a label inside
   the room says it in the wrong place and too late**: every path is already authored to a difficulty
   (`SubSection.difficulty`), and what that data is for is telling a player which kind of area they are
-  walking into *while they navigate the floor*, so the challenge a room serves is the one they were
+  walking into _while they navigate the floor_, so the challenge a room serves is the one they were
   expecting. The signal belongs on the floor; by the time the board is open it has been read.
 
 ### 1.2 Under the board: the goal, then how to play
@@ -138,23 +138,23 @@ stronger statement and the one an author can see.
 
 ## 3. Controls — two slots from the shell, the rest from the input surface
 
-| Control | Where                                                                                                        |
-| ------- | ------------------------------------------------------------------------------------------------------------ |
-| Back    | Top row, left. Returns to the site map (`onCancel`).                                                          |
-| Reset   | Top row, right. Restores the generated start state. No confirm dialog for a puzzle board.                    |
-| Undo    | Under the board, left pill (`undo`). Omitted by families whose board is its own undo — a tap that cycles.      |
-| Hint    | Under the board, right pill. Shows the next step and why. Disabled 10s after use.                            |
-| Notes   | In the pad, as a key. The family's, not the shell's.                                                         |
-| Erase   | In the pad, as a key. The family's, not the shell's.                                                         |
-| Idle    | A still board highlights the hint button — 30s at starter, up to 90s at wizard. Any input clears it.         |
-| Done    | The board freezes on solve; the banner lands 0.8s later and waits for a tap to leave.                        |
+| Control | Where                                                                                                     |
+| ------- | --------------------------------------------------------------------------------------------------------- |
+| Back    | Top row, left. Returns to the site map (`onCancel`).                                                      |
+| Reset   | Top row, right. Restores the generated start state. No confirm dialog for a puzzle board.                 |
+| Undo    | Under the board, left pill (`undo`). Omitted by families whose board is its own undo — a tap that cycles. |
+| Hint    | Under the board, right pill. Shows the next step and why. Disabled 10s after use.                         |
+| Notes   | In the pad, as a key. The family's, not the shell's.                                                      |
+| Erase   | In the pad, as a key. The family's, not the shell's.                                                      |
+| Idle    | A still board highlights the hint button — 30s at starter, up to 90s at wizard. Any input clears it.      |
+| Done    | The board freezes on solve; the banner lands 0.8s later and waits for a tap to leave.                     |
 
 **Two slots under the board, and only ever two.** A step back and a hint are the only controls that mean
 the same thing on every board, so they are the only ones that earn a fixed place — landed on by thumb,
 without looking, whichever room the player walked into. They are equal-width pills, so they sit in the
 same two places on a lightbeam board and a sudoku one.
 
-**Notes and erase are NOT chrome.** They change what the next tap *does* — the eraser aims it at nothing,
+**Notes and erase are NOT chrome.** They change what the next tap _does_ — the eraser aims it at nothing,
 the pencil re-aims every key above it — so they belong in the pad, cut to the same square as a value key
 and standing in the same grid. Put in the shell's row alongside undo and hint, wearing words, they read as
 a toolbar: four labelled buttons of equal weight, two of which silently re-aim the keypad. The reference
@@ -224,15 +224,44 @@ re-implementing them:
   onCancel={onCancel}
   solved={isSolved} // or call api.solved() for event-shaped families
   onReset={() => setState(initialState)}
-  hint={hint && t(`sumplete.hint.${hint.key}`, hint.params)}
+  hint={() => hint && t(`sumplete.hint.${hint.key}`, hint.params)}
+  onHintRevealed={freeze}
+  onHintHidden={drop}
   rules={<SumpleteRules />}
 >
   {({ reportInput, hintVisible }) => <SumpleteBoard … />}
 </PuzzleFamilyShell>
 ```
 
-Every state-changing player action calls `reportInput` so the idle timer resets
-and the stale hint clears. A family that tracks its own 30s timer is a bug.
+Every player input calls `reportInput`, which restarts the idle timer and clears the nudge. A family that
+tracks its own 30s timer is a bug. The input also says what it did to a revealed hint, as one of three
+effects:
+
+| Effect      | Means                                                                       | The hint |
+| ----------- | --------------------------------------------------------------------------- | -------- |
+| `"move"`    | A change the hint did not ask for, or the one that completes it             | ends     |
+| `"follows"` | A change on a square the hint is about, toward what it asks, with more left | stays    |
+| `"look"`    | No board value changed: a selection, the pencil, a refused or no-op tap     | stays    |
+
+**No board value changed is a look**, whatever the gesture was meant to do: an erase on an empty square, a
+pour the board refuses and a tap on a piece with one way to stand all leave the hint up. Undo and reset are
+moves. A family with no decisions to check (futoshiki, balance, lightbeam, canisters) reports `"move"` for
+every change and `"look"` for none.
+
+**The hint shown is the one the player asked for.** `useFrozenHint` (`src/mods/core/app/useFrozenHint.ts`)
+builds it on `onHintRevealed` and drops it on `onHintHidden`, so a hint that names several squares keeps
+naming the same ones while they are carried out, and the next ask builds a fresh one. A family that derives
+its hint on every change to decide whether the button shows passes `hint` while either the live hint or the
+frozen one is there, so a revealed hint stays on screen until the shell hides it.
+
+**The classifiers are shared** (`src/mods/core/app/markMoveEffect.ts`), so the rule is the same on every
+board. `classifyItemMove` takes a decision per item (`holds`, `follows`) and the items a move changed;
+`cycleDecision` builds that decision from the family's tap cycle, so a value on the way to the target (a
+dark mark before a star, a sun before a moon) follows. `openItems` is what the markings still draw, and
+`openFocus` moves the focus ring to the first item left once its own is done. A handler computes the next
+board once, classifies the old board against it, and sets that same board. Hidato is the one board whose input is not a
+click: a tap is two pointer events and a drag a stream of them, which can share a batch, so its updates go
+through the latest board.
 
 ## 4. Hints teach, they do not spoil
 
