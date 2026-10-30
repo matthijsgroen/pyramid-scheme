@@ -236,8 +236,11 @@ const faultsOf = (variant: Variant, prefab: Prefab, fill: Fill, doors: Doors, la
 }
 
 /** Every way the places cannot be filled or the doors, the stop or a blocking special are cut off; empty when the prefab always walks. */
-export const prefabFaults = (prefab: Prefab): string[] =>
-  variantsOf(prefab).flatMap(variant => {
+export const prefabFaults = (prefab: Prefab): string[] => [
+  ...[...Object.keys(prefab.places), ...Object.keys(prefab.specials)]
+    .filter(letter => !prefab.layouts.some(layout => layout.cells.some(row => row.includes(letter))))
+    .map(letter => `"${letter}" is declared but never drawn`),
+  ...variantsOf(prefab).flatMap(variant => {
     const plan = planFills(variant, prefab)
     if ("fault" in plan) return [plan.fault]
     const doors: Doors = []
@@ -245,4 +248,5 @@ export const prefabFaults = (prefab: Prefab): string[] =>
     if (doors.length === 0) return []
     const label = labelOf(variant, prefab)
     return plan.fills.flatMap(fill => faultsOf(variant, prefab, fill, doors, label))
-  })
+  }),
+]

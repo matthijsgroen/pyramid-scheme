@@ -91,6 +91,17 @@ export const bakedPrefab = (prefab: Prefab): Prefab => {
   return baked
 }
 
+const undrawnSize = (
+  place: { layer: PlaceLayer; kinds: readonly string[] },
+  footprintOf: (kind: DecorationKind) => PropFootprint
+) => {
+  const kind = place.kinds[0]
+  if (place.layer === "wallItem" || kind === "patron" || !(DECORATION_KINDS as readonly string[]).includes(kind))
+    return { cols: 1, rows: 1 }
+  const { cols, rows } = footprintOf(kind as DecorationKind)
+  return { cols, rows }
+}
+
 export const parsePrefab = (
   text: string,
   name = "room",
@@ -187,7 +198,6 @@ export const parsePrefab = (
 
   const layouts: PrefabLayout[] = []
   const sizes = new Map<string, { cols: number; rows: number }>()
-  const used = new Set<string>()
   for (const layout of drawn) {
     const { rows, n } = layout
     if (rows.length < 3) fail(n, "a layout needs at least three rows")
@@ -209,7 +219,6 @@ export const parsePrefab = (
           return
         }
         const entry = legend.get(ch) ?? fail(here, `"${ch}" is used but never declared`)
-        used.add(ch)
         const onRing = "place" in entry && entry.place.layer === "wallItem"
         if (onRing && !ring) fail(here, `wall item "${ch}" inside the ring`)
         if (onRing && r !== 0) fail(here, `wall item "${ch}" off the north wall`)
@@ -235,13 +244,13 @@ export const parsePrefab = (
   const places: Record<string, PlaceDef> = {}
   const specials: Record<string, SpecialPlace> = {}
   for (const [letter, entry] of legend) {
-    if (!used.has(letter)) fail(entry.n, `"${letter}" is declared but never drawn`)
     if ("special" in entry) {
       specials[letter] = entry.special
       continue
     }
     const { place } = entry
-    const size = sizes.get(letter) as { cols: number; rows: number }
+    // An undrawn place takes its first kind's footprint, so the room still reads and draws; prefabFaults names it.
+    const size = sizes.get(letter) ?? undrawnSize(place, footprintOf)
     for (const kind of place.kinds) {
       const isWallKind = (WALL_DECORATION_KINDS as readonly string[]).includes(kind)
       const isFloorKind = (DECORATION_KINDS as readonly string[]).includes(kind)

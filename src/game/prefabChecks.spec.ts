@@ -11,6 +11,11 @@ const room = (header: string, grid: string[], legend: string[]) =>
   parsePrefab(`tier junior\n${header}\nlayout\n${grid.join("\n")}\n${legend.join("\n")}`, "test", footprintOf)
 
 describe("prefab variants and checks", () => {
+  it("a declared place or special that is never drawn still reads, and the checks name it", () => {
+    const prefab = room("", ["# # d # #", "# s . . #", "# # # # #"], ["s stop", "w wall shelf", "a actor"])
+    expect(prefabFaults(prefab)).toEqual(['"w" is declared but never drawn', '"a" is declared but never drawn'])
+  })
+
   it("mirrors doors, places and the stop", () => {
     const prefab = room(
       "mirror",
