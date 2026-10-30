@@ -441,6 +441,14 @@ const alongObstacle = (cell: GridCell, dir: "s" | "e"): boolean => {
   return !!run && (dir === "e" ? run === "e" || run === "w" : run === "s" || run === "n")
 }
 
+// A wide corridor's second lane is one floor with the corridor it widens: open toward its lane cell, toward the
+// corridor's other lane cells and toward the rest of its second lane.
+const widens = (lane: GridCell, other: GridCell, otherKey: string): boolean =>
+  lane.type === "corridor" &&
+  !!lane.shoulderOf &&
+  other.type !== "empty" &&
+  (lane.shoulderOf === otherKey || !!other.shoulder || (other.type === "corridor" && !!other.shoulderOf))
+
 // Whether the player can pass between two cells the map draws floor for. Adjacency is NOT passage:
 // a room claims the cells around it as footprint, so its floor can sit flush against a corridor it
 // has no way through to, and that boundary needs a partition (see tileRegions.ts) or the room reads
@@ -460,6 +468,7 @@ export const isPassable = (grid: FloorGrid, claims: RoomClaims, r: number, c: nu
   // Left shut, every seam in the run draws a side wall and the back wall breaks into jambs.
   if (alongObstacle(cell, dir) && neighbor.type !== "empty") return true
   if (alongObstacle(neighbor, dir) && cell.type !== "empty") return true
+  if (widens(cell, neighbor, `${nr},${nc}`) || widens(neighbor, cell, `${r},${c}`)) return true
   // Two junction rooms that each claim their own side of a shared void/corridor cell
   // (buildRoomClaims assigns that cell to whichever claims first) should still read as one open
   // space — junctions are connective tissue, not a distinct place, unlike other room types, which
@@ -574,6 +583,13 @@ export const cellFloorAt = (
   }
   const cell = cellAt(grid, r, c)
   if (cell.type === "empty") return "stone"
+  // A second lane is corridor floor, lit as the lane cell it widens is.
+  if (cell.type === "corridor" && cell.shoulderOf) {
+    const [lr, lc] = cell.shoulderOf.split(",").map(Number)
+    const lane = cellAt(grid, lr, lc)
+    if (lane.type === "empty" || lane.state === "fogged") return "unlit"
+    return { state: lane.state, kind: "corridor", tier: tierOf(lane, lr, lc) }
+  }
   // A real passage still in the dark is not stone — see FloorAt.
   if (cell.state === "fogged") return "unlit"
   const kind = cell.type === "room" ? "room" : "corridor"

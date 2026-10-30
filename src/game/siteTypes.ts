@@ -86,6 +86,13 @@ export type CorridorCell = {
   openGate?: OpenGate
   /** The designed room laid over this corridor's dead end (carve/placePrefabs.ts). */
   prefabRoom?: PrefabRoom
+  /** THIS CELL WALKS A WIDE CORRIDOR: the side its second lane lies on, the right-hand side of the way the corridor
+   * was laid. The player walks the centre line between the lanes, half a cell toward this side; on a bend, half a cell
+   * toward both its ways where this names one of them (the lane runs on the inside), else half a cell away from both. */
+  shoulder?: Direction
+  /** THIS CELL IS A WIDE CORRIDOR'S SECOND LANE, "r,c" naming the lane cell it widens. It names no direction and no
+   * neighbour names it, so no walk enters it; the map draws it as floor in its lane cell's state. */
+  shoulderOf?: string
 }
 /** What an open gate keeps of the room it was: the fields that say it is a gate and whose. */
 export type OpenGate = Pick<
@@ -365,6 +372,8 @@ export type RoomCell = {
   pinnedPrefab?: string
   /** The corridor arriving at this room, from the way in, is wide (`nodes: [{ width: 2 }]`). */
   wideWayIn?: true
+  /** This room stands in a wide corridor: the side its second lane lies on (CorridorCell.shoulder). */
+  shoulder?: Direction
   /**
    * THE GOD'S ROOM on a dedicated floor: the biggest chamber, dressed with a statue of him and paired.
    *

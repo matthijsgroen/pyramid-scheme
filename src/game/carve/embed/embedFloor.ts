@@ -13,6 +13,8 @@ export type EmbedOptions = {
   rooms: ReadonlyMap<CellKey, EmbedRoom>
   /** Sketch nodes the floor names by their place, which stay nodes on the laid floor however plain they look. */
   keep?: ReadonlySet<CellKey>
+  /** Every corridor of the floor is wide (`corridorWidth: 2`). */
+  wide?: boolean
 }
 
 /** `slack` counts the strings the press left longer than their stops need, before any spread, and `pushes` the
@@ -68,7 +70,7 @@ export const longestRoomToRoom = (grid: FloorGrid): number => {
  * from the layout's own stream, so the passes' draws are untouched.
  */
 export const embedFloor = (lattice: FloorGrid, opts: EmbedOptions): Embedded | EmbedRefusal => {
-  const layout = layoutFloor(floorGraph(lattice, opts.rooms, opts.keep), opts)
+  const layout = layoutFloor(floorGraph(lattice, opts.rooms, opts.keep, opts.wide), opts)
   if ("refused" in layout) return { retry: [], refused: layout.refused }
   const { grid, prefabRects, nodes, sources } = carveLayout(layout)
   return {

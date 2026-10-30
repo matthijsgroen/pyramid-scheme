@@ -26,7 +26,8 @@ export type DropCells = { launch: CorridorCell; run: CorridorCell[]; landing: Co
 /** The corridor between two pieces: its stops in order from `a` to `b` (the nodes it holds that are more than plain
  * corridor), the sketch's corridor cells before each stop and after the last (connectors, and plain corridor nodes,
  * which melt into the string), the way it leaves each end on the sketch, the sketch's cells strictly between its
- * ends, and where on them each stop stands. A drop runs from `a` to `b` and holds no node. */
+ * ends, and where on them each stop stands. A drop runs from `a` to `b` and holds no node. `wide` says, for the
+ * stretch before each stop and the one after the last, whether it is a wide corridor; a narrow string has none. */
 export type FloorString = {
   a: CellKey
   b: CellKey
@@ -37,6 +38,7 @@ export type FloorString = {
   path: Cell[]
   stopAt: number[]
   drop?: DropCells
+  wide?: boolean[]
 }
 
 export type FloorGraph = {
@@ -79,11 +81,14 @@ type Way = { to: CellKey; dir: Direction; connector?: Cell; drop?: { launch: Cel
  * designed room, claims floor, is the entrance or the exit, ends a drop, or has other than two ways out; every chain
  * of other nodes between two pieces is one string, and every drop is a string of its own. A stood tile or plate is
  * no part of a sketch: pieces stand on the laid floor, so a sketch carrying one is a pass-order mistake.
+ * A stretch of a string between two of its nodes is wide on a `wide` floor, or where the node farther from the
+ * entrance asks for a wide way in (`wideWayIn`); a drop is never wide.
  */
 export const floorGraph = (
   lattice: FloorGrid,
   rooms: ReadonlyMap<CellKey, EmbedRoom>,
-  keep: ReadonlySet<CellKey> = new Set()
+  keep: ReadonlySet<CellKey> = new Set(),
+  wide = false
 ): FloorGraph => {
   const runs = oneWayRuns(lattice)
   const dropCells = new Set(runs.flatMap(run => [run.launch, ...run.cells, run.landing].map(keyOf)))
@@ -212,5 +217,49 @@ export const floorGraph = (
         stopAt,
       })
     }
+  widen(lattice, strings, entrance, wide)
   return { lattice, pieces, strings, entrance, exit }
+}
+
+/** Marks each wide stretch of each string, by how far along the sketch its ends lie from the entrance. */
+const widen = (lattice: FloorGrid, strings: FloorString[], entrance: CellKey, wide: boolean) => {
+  const asks = (key: CellKey) => {
+    const [r, c] = cellOfKey(key)
+    const cell = lattice.cells[r][c]
+    return cell.type === "room" && !!cell.wideWayIn
+  }
+  const stretches = strings.flatMap(s => {
+    if (s.drop) return []
+    const ends = [s.a, ...s.nodes, s.b]
+    const at = [-1, ...s.stopAt, s.path.length]
+    return ends.slice(1).map((to, j) => ({ from: ends[j], to, length: at[j + 1] - at[j] }))
+  })
+  if (!wide && !stretches.some(({ from, to }) => asks(from) || asks(to))) return
+  const near = new Map<CellKey, [CellKey, number][]>()
+  const link = (x: CellKey, y: CellKey, length: number) => (near.get(x) ?? near.set(x, []).get(x)!).push([y, length])
+  for (const s of strings) if (s.drop) link(s.a, s.b, s.path.length + 1)
+  for (const { from, to, length } of stretches) {
+    link(from, to, length)
+    link(to, from, length)
+  }
+  const distance = new Map<CellKey, number>([[entrance, 0]])
+  const done = new Set<CellKey>()
+  for (;;) {
+    let next: CellKey | undefined
+    for (const [key, d] of distance) if (!done.has(key) && (next === undefined || d < distance.get(next)!)) next = key
+    if (next === undefined) break
+    done.add(next)
+    for (const [to, length] of near.get(next) ?? [])
+      if (distance.get(next)! + length < (distance.get(to) ?? Infinity)) distance.set(to, distance.get(next)! + length)
+  }
+  const far = (from: CellKey, to: CellKey) => {
+    const [df, dt] = [distance.get(from) ?? Infinity, distance.get(to) ?? Infinity]
+    return df > dt ? [from] : dt > df ? [to] : [from, to]
+  }
+  for (const s of strings) {
+    if (s.drop) continue
+    const ends = [s.a, ...s.nodes, s.b]
+    const flags = ends.slice(1).map((to, j) => wide || far(ends[j], to).some(asks))
+    if (flags.some(Boolean)) s.wide = flags
+  }
 }

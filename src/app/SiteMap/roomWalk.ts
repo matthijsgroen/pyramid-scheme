@@ -1,5 +1,6 @@
 import { STEP, inRect, prefabRoomAt, prefabRoomCells, roomDoors } from "@/game/roomShape"
 import type { Direction, FloorGrid, PrefabRoom } from "@/game/siteTypes"
+import { centreLine } from "./centreLine"
 import { COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import type { StandingOffset } from "./standingSpot"
 
@@ -180,7 +181,7 @@ const endFor = (grid: FloorGrid, node: Cell, inside: Cell, outside: Cell): RoomE
   return door ? { door } : "stop"
 }
 
-/** The pixel points the explorer walks for a route: cell centres, the first and last at their standing spots, each stretch
+/** The pixel points the explorer walks for a route: cell centres (a wide corridor's on its centre line), the first and last at their standing spots, each stretch
  * through a prefab room replaced by its walk round what stands in it. A route that starts or ends in a prefab room starts
  * or ends at its stop, the spot he stands on in it. */
 export const walkPoints = (
@@ -210,7 +211,8 @@ export const walkPoints = (
       const { dx, dy } = standAt(route[i][0], route[i][1])
       points.push({ x: cx + dx, y: cy + dy })
     } else {
-      points.push({ x: cx, y: cy })
+      const { dx, dy } = centreLine(grid, route[i][0], route[i][1])
+      points.push({ x: cx + dx, y: cy + dy })
     }
     i++
   }

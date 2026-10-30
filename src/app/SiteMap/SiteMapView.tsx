@@ -100,6 +100,7 @@ import {
 } from "./roomClaims"
 import { occupantOffset, prefabArtOffset, standingOffset } from "./standingSpot"
 import { markerCell, walkPoints, type WalkPoint } from "./roomWalk"
+import { centreLine } from "./centreLine"
 import { prefabRoomAt, prefabRoomCells } from "@/game/roomShape"
 import { OccupantFigure } from "./OccupantFigure"
 import type { ReplaysAt } from "./roomReplays"
@@ -2081,7 +2082,11 @@ export const SiteMapView = ({
                 const cell = cellAt(grid, r, c)
                 const cellKey = `${r},${c}`
                 // A prefab room's node is drawn on its stop and an arm it absorbed at its door; the tap stays the cell's own.
-                const { cx, cy } = cellCenter(...(movedMarkers.get(cellKey) ?? [r, c]))
+                // A wide corridor's marker, and its tap, sit on its centre line.
+                const moved = movedMarkers.get(cellKey)
+                const line = moved ? undefined : centreLine(grid, r, c)
+                const centre = cellCenter(...(moved ?? [r, c]))
+                const [cx, cy] = [centre.cx + (line?.dx ?? 0), centre.cy + (line?.dy ?? 0)]
                 const claimOwner = litClaimOwner(grid, claims, r, c)
 
                 // A cell claimed by a neighboring room — genuine void (including one step
@@ -2116,6 +2121,8 @@ export const SiteMapView = ({
 
                 if (cell.type === "empty") return null
                 if (cell.state === "fogged") return null
+                // A second lane is floor beside its lane, never a place to walk to.
+                if (cell.type === "corridor" && cell.shoulderOf) return null
 
                 if (cell.type === "corridor") {
                   const offer = clickTargetAt(grid, claims, r, c, offerContext)

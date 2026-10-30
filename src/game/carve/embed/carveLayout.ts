@@ -1,8 +1,9 @@
 import type { CellRect, CorridorCell, Direction, FloorGrid, GridCell } from "../../siteTypes"
 import { OPPOSITE } from "../grid"
 import type { Cell } from "../state"
-import { cellOfKey, dirBetween, keyOf, through, type CellKey } from "./graph"
+import { cellOfKey, dirBetween, keyOf, MOVES, through, type CellKey } from "./graph"
 import { doorRay, footprint, type Layout } from "./layout"
+import { laneCell, narrowsLane, secondLane, shoulderAt } from "./wide"
 
 export type Carved = {
   grid: FloorGrid
@@ -27,7 +28,10 @@ const filing = (cell: CorridorCell) =>
  * order, and its stops stand where the layout put them; a drop lays its launch, run and landing, the run walked by
  * nothing, any cells before its launch plain corridor. `dirs` follow the strings. A room's
  * `exits` turn with the ways they name, and a mechanism's places, the entrance, the exit and the stairs move with
- * their nodes. The grid is trimmed to what the pieces and strings claim, plus a margin of one cell.
+ * their nodes. A wide string lays its second lane (`secondLane`) where no cell of its way, or a cell next to it,
+ * narrows the corridor (`narrowsLane`): each lane cell takes its lane cell's labels and names it, and each cell of the
+ * way it widens names the side it lies on. The grid is trimmed to what the pieces and strings claim, plus a margin of
+ * one cell.
  */
 export const carveLayout = (layout: Layout): Carved => {
   const { graph, blocks } = layout
@@ -63,6 +67,8 @@ export const carveLayout = (layout: Layout): Carved => {
   const turned = new Map<CellKey, Map<Direction, Direction>>()
   const turn = (node: CellKey, sketchDir: Direction, floorDir: Direction) =>
     (turned.get(node) ?? turned.set(node, new Map()).get(node)!).set(sketchDir, floorDir)
+  /** Each wide string's way from door place to door place, and where on it its stops stand. */
+  const wideWays: { wide: boolean[]; way: Cell[]; stops: number[] }[] = []
 
   graph.strings.forEach((s, si) => {
     const { corners, stops } = layout.strings[si]
@@ -118,6 +124,12 @@ export const carveLayout = (layout: Layout): Carved => {
       })
     })
     for (let k = 1; k < walk.length; k++) link(walk[k - 1], walk[k])
+    if (s.wide) {
+      const doorA = fromA.cells.length ? fromA.cells[fromA.cells.length - 1] : nodes.get(s.a)!
+      const doorB = fromB.cells.length ? fromB.cells[fromB.cells.length - 1] : nodes.get(s.b)!
+      const stops = places.map(i => i + 1 - fromA.cells.length)
+      wideWays.push({ wide: s.wide, way: [doorA, ...inner, doorB], stops })
+    }
     s.nodes.forEach((node, i) => {
       const k = places[i] + 1
       const at = s.stopAt[i]
@@ -125,6 +137,24 @@ export const carveLayout = (layout: Layout): Carved => {
       turn(node, dirBetween(s.path[at], s.path[at + 1]), dirBetween(walk[k], walk[k + 1]))
     })
   })
+
+  const shoulders = new Map<string, Direction>()
+  const lanes = new Map<string, string>()
+  for (const { wide, way, stops } of wideWays) {
+    const narrow = (at: Cell) =>
+      [at, ...Object.values(MOVES).map(([dr, dc]): Cell => [at[0] + dr, at[1] + dc])].some(near =>
+        narrowsLane(laid.get(keyOf(near))?.cell)
+      )
+    const isWide = (i: number) => {
+      const j = stops.filter(stop => stop < i).length
+      return (stops.includes(i) ? wide[j] || wide[j + 1] : wide[j]) && !narrow(way[i])
+    }
+    for (const { at, of } of secondLane(way, isWide)) {
+      put(at, laneCell(laid.get(keyOf(way[of]))!.cell, keyOf(way[of])))
+      lanes.set(keyOf(at), keyOf(way[of]))
+    }
+    for (let i = 2; i < way.length - 2; i++) if (isWide(i)) shoulders.set(keyOf(way[i]), shoulderAt(way, i))
+  }
 
   const all = [...claimed, ...[...laid.values()].map(({ at }) => at)]
   const top = Math.min(...all.map(([r]) => r)) - 1
@@ -145,7 +175,14 @@ export const carveLayout = (layout: Layout): Carved => {
   for (const { at, cell, ways } of laid.values()) {
     if (cell.type === "empty") continue
     const [r, c] = shift(at)
-    cells[r][c] = { ...cell, dirs: ways }
+    const widens = lanes.get(keyOf(at))
+    const shoulder = shoulders.get(keyOf(at))
+    cells[r][c] = {
+      ...cell,
+      dirs: ways,
+      ...(widens ? { shoulderOf: keyOf(shift(cellOfKey(widens))) } : {}),
+      ...(shoulder ? { shoulder } : {}),
+    }
   }
   for (const [node, ways] of turned) {
     const [r, c] = moved.get(node)!

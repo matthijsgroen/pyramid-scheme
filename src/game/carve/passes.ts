@@ -147,15 +147,16 @@ const SIDES = Object.values(MOVES)
 
 /**
  * Where a piece may stand on a laid floor: any corridor cell of a string, that is no door (it touches no room and
- * lies in no designed room's footprint), no gate held open, and no part of a drop or next to one. Where its region
- * holds open ground (reached from the way in without passing a gate), a piece stands on that ground, so it is never
- * met only beyond a gate it may hold.
+ * lies in no designed room's footprint), no gate held open, no second lane, and no part of a drop or next to one.
+ * Where its region holds open ground, a piece stands on that ground, so it is never met only beyond a gate it may
+ * hold. Open ground is what a walk reaches from the entrance by the cells' ways without entering a room that asks for
+ * a key (`requiredKeyId` or `requiredKeyIds`) or a region barrier's door.
  */
 const standable = (grid: FloorGrid, rects: readonly CellRect[]): IsNode => {
   const at = (r: number, c: number) => grid.cells[r]?.[c]
   const ground = (r: number, c: number) => {
     const cell = at(r, c)
-    if (cell?.type !== "corridor" || cell.openGate || cell.obstacle) return false
+    if (cell?.type !== "corridor" || cell.openGate || cell.obstacle || cell.shoulderOf) return false
     if (
       rects.some(
         rect => r >= rect.top - 1 && r <= rect.top + rect.rows && c >= rect.left - 1 && c <= rect.left + rect.cols
@@ -177,7 +178,7 @@ const standable = (grid: FloorGrid, rects: readonly CellRect[]): IsNode => {
       const [dr, dc] = MOVES[dir]
       const next = at(r + dr, c + dc)
       if (!next || next.type === "empty" || open.has(`${r + dr},${c + dc}`)) continue
-      if (next.type === "room" && next.requiredKeyId) continue
+      if (next.type === "room" && (next.requiredKeyId || next.requiredKeyIds?.length || next.regionBarrier)) continue
       open.add(`${r + dr},${c + dc}`)
       queue.push([r + dr, c + dc])
     }
@@ -222,6 +223,7 @@ export const finishInRooms: Finish = (prep, state) => {
     spread: config.spread ?? DEFAULT_SPREAD,
     rooms,
     keep: new Set([...held, ...decided.switchWays.flatMap(ways => ways.map(way => way.cell))]),
+    wide: config.corridorWidth === 2,
   })
   if ("refused" in embedded) return embedded
   const { nodes, prefabRects, sources } = embedded

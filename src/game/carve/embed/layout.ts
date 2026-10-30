@@ -13,6 +13,7 @@ import {
   type FloorString,
   type Piece,
 } from "./graph"
+import { secondLane } from "./wide"
 
 /** How far a string's draw reaches past its nodes' need at full spread. */
 export const GAP_RANGE = 6
@@ -94,8 +95,17 @@ type Edge = { u: number; v: number; axis: 0 | 1; extU: number; extV: number; min
 const E = 1 << 20
 
 /** A drawing of the floor in cells: who holds each cell (an element's index, an edge's index after the elements, or
- * -1), the drawing's top-left on the floor, and the first cell two holders claim. */
-type Raster = { top: number; left: number; rows: number; cols: number; grid: Int32Array; overlap?: [number, number] }
+ * -1), the drawing's top-left on the floor, the first cell two holders claim, and on a floor with a wide string which
+ * cells are second lanes. */
+type Raster = {
+  top: number
+  left: number
+  rows: number
+  cols: number
+  grid: Int32Array
+  overlap?: [number, number]
+  lane?: Uint8Array
+}
 
 /**
  * THE FLOOR'S GRAPH GIVEN POSITIONS. Every sketch node starts where the sketch draws it. A string holds only its
@@ -114,6 +124,9 @@ type Raster = { top: number; left: number; rows: number; cols: number; grid: Int
  *   then the floor is pressed again.
  * - Spread: each string but a drop gets `round(spread * GAP_RANGE * u)` cells more, u in [0.5, 1.5), pushed in on
  *   one of its runs.
+ * A wide string holds its second lane (`secondLane`) as well: each lane cell is held by the stop, bend or run whose
+ * cell lays it, so the margin lies outside both lanes and the press keeps the lane's line. A lane cell may touch its
+ * own string anywhere.
  * A floor is refused only where two holders can be parted on neither axis.
  */
 export const layoutFloor = (
@@ -230,10 +243,60 @@ export const layoutFloor = (
       cells.push(e.axis === 1 ? [across, k] : [k, across])
     return cells
   }
-  const cellsOf = (owner: number): Cell[] =>
+  /** Each wide string's second lane on the floor as it stands, by the holder whose cell lays it, and for each of a
+   * wide string's own holders (its stops, bends and runs) the string and its place along it. Laid afresh by every
+   * drawing and every press. */
+  let lanes = new Map<number, Cell[]>()
+  let laneString = new Map<number, [number, number]>()
+  const wideStrings = strings.flatMap((s, si) => (s.wide ? [si] : []))
+  const layLanes = () => {
+    if (!wideStrings.length) return
+    lanes = new Map()
+    laneString = new Map()
+    for (const si of wideStrings) {
+      const chain = chains[si]
+      const runs = edges.flatMap((e, j) => (e.si === si ? [E + j] : []))
+      chain.slice(1, -1).forEach((owner, k) => laneString.set(owner, [si, 2 * k + 2]))
+      runs.forEach((owner, k) => laneString.set(owner, [si, 2 * k + 1]))
+      const doorA = door(chain[0], sides[si][0])
+      const doorB = door(chain[chain.length - 1], sides[si][1])
+      const way = [doorA, ...through([doorA, ...chain.slice(1, -1).map(i => pos[i]), doorB]), doorB]
+      // Who holds each cell of the way, and which stretch between stops it lies on.
+      const owners: number[] = []
+      const stretch: number[] = []
+      const stopHere: boolean[] = []
+      for (let i = 1, k = 0, stop = 0; i < way.length - 1; i++) {
+        const next = chain[k + 1]
+        if (k + 1 < chain.length - 1 && keyOf(pos[next]) === keyOf(way[i])) {
+          owners[i] = next
+          stopHere[i] = next < sketchNodes
+          stretch[i] = stop
+          if (stopHere[i]) stop++
+          k++
+        } else {
+          owners[i] = runs[k]
+          stretch[i] = stop
+        }
+      }
+      const flags = strings[si].wide!
+      const wide = (i: number) => (stopHere[i] ? flags[stretch[i] - 1] || flags[stretch[i]] : flags[stretch[i]])
+      for (const { at, of } of secondLane(way, wide))
+        (lanes.get(owners[of]) ?? lanes.set(owners[of], []).get(owners[of])!).push(at)
+    }
+  }
+  /** Whether a lane cell of one holder may touch the other: both of one wide string, at most a stop or bend apart. */
+  const sameLane = (x: number, y: number) => {
+    const [a, b] = [laneString.get(x), laneString.get(y)]
+    return !!a && !!b && a[0] === b[0] && Math.abs(a[1] - b[1]) <= 3
+  }
+  const ownCells = (owner: number): Cell[] =>
     owner < E
       ? shapes[owner].map(([r, c]): Cell => [pos[owner][0] + r, pos[owner][1] + c])
       : edgeCells(edges[owner - E])
+  const cellsOf = (owner: number): Cell[] => {
+    const lane = lanes.get(owner)
+    return lane ? [...ownCells(owner), ...lane] : ownCells(owner)
+  }
   const anchors = (owner: number): Cell[] =>
     owner < E ? [pos[owner]] : [pos[edges[owner - E].u], pos[edges[owner - E].v]]
   const joined = (x: number, y: number) => {
@@ -246,6 +309,7 @@ export const layoutFloor = (
   const keyOfOwner = (owner: number) => keys[owner < E ? owner : edges[owner - E].u]
 
   const raster = (): Raster => {
+    layLanes()
     const all: [number, Cell[]][] = []
     for (let i = 0; i < keys.length; i++) all.push([i, cellsOf(i)])
     edges.forEach((_, j) => all.push([E + j, cellsOf(E + j)]))
@@ -269,15 +333,22 @@ export const layoutFloor = (
         if (grid[at] >= 0 && grid[at] !== owner) overlap ??= [grid[at], owner]
         grid[at] = owner
       }
-    return { top, left, rows, cols, grid, ...(overlap ? { overlap } : {}) }
+    if (!wideStrings.length) return { top, left, rows, cols, grid, ...(overlap ? { overlap } : {}) }
+    const lane = new Uint8Array(rows * cols)
+    for (const cells of lanes.values()) for (const [r, c] of cells) lane[(r - top) * cols + (c - left)] = 1
+    return { top, left, rows, cols, grid, lane, ...(overlap ? { overlap } : {}) }
   }
-  const touching = ({ rows, cols, grid }: Raster): [number, number] | undefined => {
+  const touching = ({ rows, cols, grid, lane }: Raster): [number, number] | undefined => {
     for (let r = 0; r < rows; r++)
       for (let c = 0; c < cols; c++) {
         const here = grid[r * cols + c]
         if (here < 0) continue
-        for (const there of [c + 1 < cols ? grid[r * cols + c + 1] : -1, r + 1 < rows ? grid[(r + 1) * cols + c] : -1])
-          if (there >= 0 && there !== here && !joined(here, there)) return [here, there]
+        for (const at of [c + 1 < cols ? r * cols + c + 1 : -1, r + 1 < rows ? (r + 1) * cols + c : -1]) {
+          const there = at < 0 ? -1 : grid[at]
+          if (there < 0 || there === here || joined(here, there)) continue
+          if (lane && (lane[r * cols + c] || lane[at]) && sameLane(here, there)) continue
+          return [here, there]
+        }
       }
     return undefined
   }
@@ -432,34 +503,41 @@ export const layoutFloor = (
    * on a line and none needed between lines. Holders two lines apart may pass each other: that is how a bend moves.
    */
   const pressAxis = (axis: 0 | 1): boolean | "restless" => {
+    layLanes()
     const across = (1 - axis) as 0 | 1
     const group = keys.map((_, i) => i)
     const find = (i: number): number => (group[i] === i ? i : (group[i] = find(group[i])))
     for (const e of edges) if (e.axis !== axis) group[find(e.u)] = find(e.v)
     const roots = keys.map((_, i) => find(i))
     // An item: a held cell on a line at a place, held by `owner` and moving with group `g` at `off` from it.
-    type Item = { line: number; p: number; g: number; off: number; owner: number }
+    type Item = { line: number; p: number; g: number; off: number; owner: number; lane?: true }
     const items: Item[] = []
+    const item = (cell: Cell, g: number, owner: number, lane: boolean): Item => ({
+      line: cell[across],
+      p: cell[axis],
+      g,
+      off: cell[axis] - pos[g][axis],
+      owner,
+      ...(lane ? { lane: true as const } : {}),
+    })
     for (let i = 0; i < keys.length; i++) {
       const g = roots[i]
-      for (const [r, c] of cellsOf(i)) {
-        const cell: Cell = [r, c]
-        items.push({ line: cell[across], p: cell[axis], g, off: cell[axis] - pos[g][axis], owner: i })
-      }
+      for (const [r, c] of ownCells(i)) items.push(item([r, c], g, i, false))
+      for (const cell of lanes.get(i) ?? []) items.push(item(cell, g, i, true))
     }
     edges.forEach((e, j) => {
-      const cells = edgeCells(e)
-      if (e.axis !== axis) {
-        const g = roots[e.u]
-        for (const cell of cells)
-          items.push({ line: cell[across], p: cell[axis], g, off: cell[axis] - pos[g][axis], owner: E + j })
-        return
+      const runs: [Cell[], boolean][] = [[edgeCells(e), false]]
+      const lane = lanes.get(E + j)
+      if (lane) runs.push([[...lane].sort((x, y) => x[axis] - y[axis]), true])
+      for (const [cells, isLane] of runs) {
+        if (e.axis !== axis) {
+          for (const cell of cells) items.push(item(cell, roots[e.u], E + j, isLane))
+          continue
+        }
+        if (!cells.length) continue
+        items.push(item(cells[0], roots[e.u], E + j, isLane))
+        items.push(item(cells[cells.length - 1], roots[e.v], E + j, isLane))
       }
-      if (!cells.length) return
-      const [first, last] = [cells[0], cells[cells.length - 1]]
-      const [gu, gv] = [roots[e.u], roots[e.v]]
-      items.push({ line: first[across], p: first[axis], g: gu, off: first[axis] - pos[gu][axis], owner: E + j })
-      items.push({ line: last[across], p: last[axis], g: gv, off: last[axis] - pos[gv][axis], owner: E + j })
     })
     const lines = new Map<number, Item[]>()
     for (const item of items) (lines.get(item.line) ?? lines.set(item.line, []).get(item.line)!).push(item)
@@ -476,7 +554,14 @@ export const layoutFloor = (
     for (const [line, list] of lines) {
       for (let k = 0; k + 1 < list.length; k++)
         if (list[k].owner !== list[k + 1].owner)
-          need(list[k], list[k + 1], joined(list[k].owner, list[k + 1].owner) ? 1 : 2)
+          need(
+            list[k],
+            list[k + 1],
+            joined(list[k].owner, list[k + 1].owner) ||
+              ((list[k].lane || list[k + 1].lane) && sameLane(list[k].owner, list[k + 1].owner))
+              ? 1
+              : 2
+          )
       const next = lines.get(line + 1)
       if (!next) continue
       const nearestAfter = (from: Item[], to: Item[]) => {
