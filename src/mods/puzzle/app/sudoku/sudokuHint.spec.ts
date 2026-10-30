@@ -79,41 +79,38 @@ describe("the next thing to say to the player", () => {
       expect(hint?.targets).toEqual(new Map([[sudokuCellKey(row, col), [board.solution[row][col]]]]))
     })
 
-    it("maps every square a rule out settles to the notes to rub out of it", () => {
-      // Walk a board with the solution's own values, collecting every rule out met on the way.
-      const ruleOutsOf = (seed: number) => {
-        const puzzle = generateSudoku(seed, SUDOKU_CONFIG.wizard)
-        const values = puzzle.givens.map(row => [...row])
-        const found: NonNullable<ReturnType<typeof buildSudokuHint>>[] = []
-        for (let step = 0; step < 40; step++) {
-          const hint = buildSudokuHint(puzzle, values, noNotes(), puzzle.solution, puzzle.techniqueCap)
-          if (!hint?.move) break
-          if (hint.move.kind === "place") {
-            values[hint.focus.row][hint.focus.col] = hint.move.value
-            continue
-          }
-          found.push(hint)
-          // Settle some other empty square from the solution so the walk moves on.
-          const open = values.flatMap((row, r) =>
-            row.flatMap((v, c) => (v === undefined && !hint.cells.has(sudokuCellKey(r, c)) ? [{ r, c }] : []))
-          )
-          if (!open.length) break
-          values[open[0].r][open[0].c] = puzzle.solution[open[0].r][open[0].c]
-        }
-        return found
-      }
-      const ruleOuts = [1, 2, 3, 4, 5, 6, 7, 8].flatMap(ruleOutsOf)
-      expect(ruleOuts.length, "no wizard board reaches a rule out").toBeGreaterThan(0)
-      for (const hint of ruleOuts) {
-        expect(new Set(hint.targets?.keys())).toEqual(hint.cells)
-        for (const values of hint.targets!.values()) expect(values).toEqual([hint.params.value])
-        expect(hint.targets!.get(sudokuCellKey(hint.focus.row, hint.focus.col))).toContain(hint.move?.value)
-      }
-      expect(
-        ruleOuts.some(hint => hint.cells.size > 1),
-        "no board rules out in several squares"
-      ).toBe(true)
-    }, 60000)
+    it("maps every square a pointing step rules out to the value to rub out of it", () => {
+      // A hand-made board with nothing written: pencilled notes keep the 1 out of the lower squares of the top-left
+      // chamber, so its 1 can only sit in the top row, and the rest of that row cannot hold one.
+      const solution = [
+        [1, 2, 3, 4, 5, 6],
+        [3, 4, 5, 6, 1, 2],
+        [5, 6, 1, 2, 3, 4],
+        [2, 1, 4, 3, 6, 5],
+        [4, 3, 6, 5, 2, 1],
+        [6, 5, 2, 1, 4, 3],
+      ]
+      const hand = { size: 6, boxWidth: 2, boxHeight: 3, givens: solution.map(row => row.map(() => undefined)) }
+      const notes = noNotes()
+      for (const [row, col] of [
+        [1, 0],
+        [1, 1],
+        [2, 0],
+        [2, 1],
+      ])
+        notes[row][col] = [2, 3, 4, 5, 6]
+
+      const hint = buildSudokuHint(hand, hand.givens, notes, solution, "boxLine")
+      expect(hint?.key).toBe("pointing.row")
+      expect(hint?.targets).toEqual(
+        new Map([
+          ["0,2", [1]],
+          ["0,3", [1]],
+          ["0,4", [1]],
+          ["0,5", [1]],
+        ])
+      )
+    })
 
     it("has no targets for a mistake", () => {
       const { row, col } = anEmptySquare()
