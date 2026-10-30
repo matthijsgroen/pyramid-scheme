@@ -3,7 +3,7 @@ import clsx from "clsx"
 import { useTranslation } from "react-i18next"
 import { useTimeout } from "@/support/useTimeout"
 import { useVisibleElapsed } from "@/support/useVisibleElapsed"
-import { HINT_COOLDOWN_MS, useHintAvailability } from "./useHintAvailability"
+import { HINT_COOLDOWN_MS, useHintAvailability, type InputEffect } from "./useHintAvailability"
 import type { SolveOutcome } from "@/app/reactions/reactionContributions"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
@@ -11,8 +11,11 @@ import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 export type PuzzleShellApi = {
   /** Call when the board reaches its solved state. */
   solved: () => void
-  /** Call on every player action, so the idle nudge and the stale hint clear. */
-  reportInput: () => void
+  /**
+   * Call on every player action, so the idle nudge clears and restarts. The effect says what the action does
+   * to a revealed hint: "move" (the default) ends it, "follows" and "look" leave it up.
+   */
+  reportInput: (effect?: InputEffect) => void
   /** True while the hint is on screen — families highlight the cells it names. */
   hintVisible: boolean
 }
@@ -59,6 +62,8 @@ type Props = {
   idleMs?: number
   /** Fired when the player asks for the hint — families use it to aim the board at what it names. */
   onHintRevealed?: () => void
+  /** Fired when a revealed hint goes away (a move ended it) — families drop what they froze at reveal. */
+  onHintHidden?: () => void
   /**
    * One sentence: what a finished board looks like, shown above the rules.
    *
@@ -116,6 +121,7 @@ export const PuzzleFamilyShell = ({
   hint,
   idleMs,
   onHintRevealed,
+  onHintHidden,
   goal,
   title,
   rules,
@@ -129,6 +135,12 @@ export const PuzzleFamilyShell = ({
 
   // Resolved only once revealed, which is the whole point of allowing a function: an unread hint costs nothing.
   const hintText = revealed ? (typeof hint === "function" ? hint() : hint) : undefined
+
+  const wasRevealed = useRef(false)
+  useEffect(() => {
+    if (wasRevealed.current && !revealed) onHintHidden?.()
+    wasRevealed.current = revealed
+  }, [revealed, onHintHidden])
 
   // The board is frozen the moment it is solved, not when the banner arrives: the pause before it is
   // long enough to tap a cell, and a tap there un-solved the puzzle while the win was already on its

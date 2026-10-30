@@ -71,4 +71,45 @@ describe("useHintAvailability", () => {
     act(() => result.current.reportInput())
     expect(result.current.revealed).toBe(false)
   })
+
+  describe("reportInput effects", () => {
+    const revealed = () => {
+      const hook = renderHook(() => useHintAvailability())
+      act(() => hook.result.current.reveal())
+      return hook.result
+    }
+
+    it("hides the hint on a move, and on no argument", () => {
+      const result = revealed()
+      act(() => result.current.reportInput("move"))
+      expect(result.current.revealed).toBe(false)
+      act(() => result.current.reveal())
+      act(() => result.current.reportInput())
+      expect(result.current.revealed).toBe(false)
+    })
+
+    it("keeps the hint when the move follows it", () => {
+      const result = revealed()
+      act(() => result.current.reportInput("follows"))
+      expect(result.current.revealed).toBe(true)
+    })
+
+    it("keeps the hint when the player only looks", () => {
+      const result = revealed()
+      act(() => result.current.reportInput("look"))
+      expect(result.current.revealed).toBe(true)
+    })
+
+    it.each(["follows", "look"] as const)("%s clears the nudge and restarts the idle wait", effect => {
+      const { result } = renderHook(() => useHintAvailability())
+      act(() => vi.advanceTimersByTime(HINT_IDLE_MS))
+      expect(result.current.nudging).toBe(true)
+      act(() => result.current.reportInput(effect))
+      expect(result.current.nudging).toBe(false)
+      act(() => vi.advanceTimersByTime(HINT_IDLE_MS - 1))
+      expect(result.current.nudging).toBe(false)
+      act(() => vi.advanceTimersByTime(1))
+      expect(result.current.nudging).toBe(true)
+    })
+  })
 })

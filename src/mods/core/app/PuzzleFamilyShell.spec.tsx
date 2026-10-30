@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react"
-import { afterEach, describe, expect, it, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { PuzzleFamilyShell } from "./PuzzleFamilyShell"
 import { DevelopContext } from "@/contexts/DevelopMode"
 
@@ -102,6 +102,65 @@ describe("PuzzleFamilyShell", () => {
     } finally {
       vi.useRealTimers()
     }
+  })
+
+  describe("a revealed hint", () => {
+    beforeEach(() => {
+      Element.prototype.scrollIntoView = () => {}
+    })
+    const renderHinted = () =>
+      render(
+        <PuzzleFamilyShell
+          onSolved={() => {}}
+          onCancel={() => {}}
+          hint="do this"
+          onReset={() => {}}
+          undo={{ onPress: () => {}, enabled: true }}
+        >
+          {({ reportInput }) => (
+            <>
+              <button onClick={() => reportInput("follows")}>follow</button>
+              <button onClick={() => reportInput("look")}>look</button>
+              <button onClick={() => reportInput()}>move</button>
+            </>
+          )}
+        </PuzzleFamilyShell>
+      )
+    const reveal = () => fireEvent.click(screen.getByRole("button", { name: /ui.hint/ }))
+
+    it("stays through a move that follows it and through looking", () => {
+      renderHinted()
+      reveal()
+      fireEvent.click(screen.getByText("follow"))
+      expect(screen.queryByText("do this")).not.toBeNull()
+      fireEvent.click(screen.getByText("look"))
+      expect(screen.queryByText("do this")).not.toBeNull()
+    })
+
+    it.each([
+      ["a move", () => fireEvent.click(screen.getByText("move"))],
+      ["undo", () => fireEvent.click(screen.getByRole("button", { name: /ui.undo/ }))],
+      ["reset", () => fireEvent.click(screen.getByRole("button", { name: /ui.reset/ }))],
+    ])("ends on %s", (_name, press) => {
+      renderHinted()
+      reveal()
+      expect(screen.queryByText("do this")).not.toBeNull()
+      press()
+      expect(screen.queryByText("do this")).toBeNull()
+    })
+
+    it("tells the family when the hint is hidden", () => {
+      const onHintHidden = vi.fn()
+      render(
+        <PuzzleFamilyShell onSolved={() => {}} onCancel={() => {}} hint="do this" onHintHidden={onHintHidden}>
+          {({ reportInput }) => <button onClick={() => reportInput()}>move</button>}
+        </PuzzleFamilyShell>
+      )
+      reveal()
+      expect(onHintHidden).not.toHaveBeenCalled()
+      fireEvent.click(screen.getByText("move"))
+      expect(onHintHidden).toHaveBeenCalledTimes(1)
+    })
   })
 
   /** The solved board is the reward: it stays on screen, behind a light dim, until the player is done with it. */
