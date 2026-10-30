@@ -688,9 +688,14 @@ const isDoorCell = (cell: GridCell): boolean =>
 
 /**
  * A BLOCK'S RING IS ITS OWN: no room but its anchor's stands inside its rect or ring, no gate, no other room's 3×3
- * reaches into it, and no other block's ring meets it. Any of them refuses the attempt, naming the room.
+ * reaches into it, and no other block's ring meets it. Any of them refuses the attempt, naming the room. Every
+ * `shut` cell counts as a gate whether or not a switch shuts it, so a mod being absent changes no refusal.
  */
-export const ringFault = (grid: FloorGrid, blocks: readonly ReservedBlock[]): Refusal | undefined => {
+export const ringFault = (
+  grid: FloorGrid,
+  blocks: readonly ReservedBlock[],
+  shut: ReadonlySet<string> = new Set()
+): Refusal | undefined => {
   const anchors = new Set(blocks.map(block => keyOf(block.anchor)))
   const fault = (block: ReservedBlock, why: string): Refusal => ({
     retry: [{ type: "prefabsNotPlaced", room: block.room, wanted: 1, placed: 0, why }],
@@ -703,7 +708,7 @@ export const ringFault = (grid: FloorGrid, blocks: readonly ReservedBlock[]): Re
       for (let c = ring.left; c < ring.left + ring.cols; c++) {
         const cell = grid.cells[r]?.[c]
         if (!cell || anchors.has(`${r},${c}`)) continue
-        if (isDoorCell(cell)) return fault(block, `a gate stands at ${r},${c} in its ring`)
+        if (isDoorCell(cell) || shut.has(`${r},${c}`)) return fault(block, `a gate stands at ${r},${c} in its ring`)
         if (cell.type === "room") return fault(block, `a room stands at ${r},${c} in its ring`)
       }
     for (let r = ring.top - 1; r <= ring.top + ring.rows; r++)

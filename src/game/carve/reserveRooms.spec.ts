@@ -3,7 +3,7 @@ import { carvedFloorDigest } from "@/data/tierFingerprints"
 import { parsePrefab } from "../prefabNotation"
 import type { FloorConfig, FloorGrid, GridCell, PrefabRoom, RoomCell, SideSection } from "../siteTypes"
 import { assembleFloor } from "./assembleFloor"
-import { plainFloor, prepOf } from "./carveFixtures"
+import { ONE_SWITCH, assembleAt, plainFloor, prepOf } from "./carveFixtures"
 
 import { ringFault, roomAsks, type ReservedBlock } from "./reserveRooms"
 
@@ -59,6 +59,8 @@ const roomsOf = (grid: FloorGrid) =>
       cell.type !== "empty" && cell.prefabRoom ? [{ r, c, cell, room: cell.prefabRoom as PrefabRoom }] : []
     )
   )
+
+const SEEDS = 40
 
 const hubFloor = plainFloor({
   pathPuzzles: 1,
@@ -122,6 +124,26 @@ describe("reserveRooms", () => {
     expect(result.success).toBe(false)
     if (result.success) return
     expect(result.reasons).toContainEqual(expect.objectContaining({ type: "prefabsNotPlaced", room: "hall" }))
+  })
+
+  it("a floor with a reserved room carves the same walls with a switch in its junction and without", () => {
+    const forked = { ...hubFloor, forks: [{ exits: 2, count: 1 }] }
+    const wallsOf = (config: FloorConfig, seed: number) => {
+      const result = assembleAt("site", config, seed)
+      return result.success
+        ? result.grid.cells.map(row => row.map(cell => (cell.type === "empty" ? "" : [...cell.dirs].sort().join(""))))
+        : null
+    }
+    const seeds = Array.from({ length: SEEDS }, (_, i) => i + 1)
+    const carves = seeds.map(seed => ({
+      seed,
+      bare: wallsOf(forked, seed),
+      switched: wallsOf({ ...forked, switches: ONE_SWITCH }, seed),
+    }))
+    expect(carves.filter(({ bare }) => bare !== null).length).toBeGreaterThan(SEEDS / 2)
+    expect(
+      carves.filter(({ bare, switched }) => JSON.stringify(bare) !== JSON.stringify(switched)).map(({ seed }) => seed)
+    ).toEqual([])
   })
 
   it("the same seed carves the same reserved floor twice", () => {
