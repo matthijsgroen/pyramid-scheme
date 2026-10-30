@@ -9,7 +9,7 @@ spread, winding and width; caves included; packing gone.
 **Architecture:** `carveFloor` takes an `Engine` record. `LATTICE_ENGINE` is today's carve, byte-identical, until the
 swap. `ROOMS_ENGINE` runs the same `PASSES` (plus `pickPlan` up front), chooses prefabs on the sketch, renders the
 lattice grid, then `embedFloor` turns it into the real grid. After that come validate, the pieces and finish, and
-then the prefabs are stamped. `embedFloor` reads the sketch as a graph (rooms and rigid lock regions are blocks,
+then the prefabs are stamped. `embedFloor` reads the sketch as a graph (rooms are blocks, locks keep their behaviour, not their shape,
 corridors are strings holding their stops), lays it out (main path first, side paths hung on as subtrees, then
 compacted), and carves the layout (Task 11; the block embed of Task 5 is replaced).
 
@@ -301,9 +301,9 @@ is untouched.
   - **Pieces:**
     - every claiming room is a block: `claimsFloorAt`, 3×3 with its ring;
     - every prefab is a block: its `EmbedRoom`;
-    - every lock region whose walk depends on its geometry is a block. These are the cells a mechanism's
-      `transitions` or `underfoot` name, sequence tiles and plates. The connected lattice cells of one such region
-      stay together and are copied at lattice spacing, as one rigid piece;
+    - a lock keeps its behaviour, not its shape (designer, 2026-10-30): its rooms, stops and corridors are laid out
+      like any other piece, and its walk is checked after the carve. Only cells a mechanism needs next to each other
+      (a `transitions` or `underfoot` cell beside its node) stay together, as small a group as possible;
     - the entrance and the exit are blocks.
   - **Strings:** each maximal chain of corridor cells and 1×1 nodes (stops, turns, doors, gates) between two pieces
     is one string, holding its nodes in order.
@@ -344,7 +344,7 @@ is untouched.
   the output in the report.
 - [ ] **Step 2: Write the failing tests**, on made-up sketches built with `carveFixtures.ts`:
   - `"a chain of stops between two rooms becomes one string holding them in order"`.
-  - `"a lock region that walks by its geometry stays one rigid block"`.
+  - `"a lock.s rooms and stops are laid out freely and its walk still passes"` (made-up lock).
   - `"no string runs beside another string or a block it does not join"`, over 200 seeds of a made-up floor with
     four side paths.
   - `"compaction never leaves a string shorter than its nodes need"`.
