@@ -7,6 +7,7 @@ import { generatePairPuzzle } from "@/mods/puzzle/game/pairPuzzle/generatePairPu
 import { PAIR_PUZZLE_CONFIG } from "@/mods/puzzle/game/pairPuzzle/pairPuzzleConfig"
 import { PAIR_TECHNIQUES } from "@/mods/puzzle/game/pairPuzzle/techniques"
 import { buildPairHint } from "./pairPuzzleHint"
+import { PAIR_SKINS } from "./skins"
 
 const board = generatePairPuzzle(3, PAIR_PUZZLE_CONFIG.master)
 
@@ -94,7 +95,7 @@ describe("mummy rest copy", () => {
     for (const technique of PAIR_TECHNIQUES) expect(keys.some(key => key.startsWith(technique))).toBe(true)
   })
 
-  const SKIN_NAMES = ["mummies", "beetles"] as const
+  const SKIN_NAMES = Object.values(PAIR_SKINS).map(s => s.name) as (keyof typeof en.pairPuzzle.name)[]
 
   it.each(keys)("%s reads as a sentence in English and Dutch, for every skin", key => {
     for (const locale of [en, nl])

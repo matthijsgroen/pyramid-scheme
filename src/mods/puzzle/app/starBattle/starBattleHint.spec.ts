@@ -9,6 +9,7 @@ import { generateRegionlessBattle } from "@/mods/puzzle/game/starBattle/generate
 import { REGIONLESS_BATTLE_CONFIG } from "@/mods/puzzle/game/starBattle/regionlessConfig"
 import { STAR_BATTLE_TECHNIQUES } from "@/mods/puzzle/game/starBattle/techniques"
 import { buildStarBattleHint } from "./starBattleHint"
+import { REGIONLESS_SKINS } from "./skins"
 
 const board = generateStarBattle(5, STAR_BATTLE_CONFIG.expert)
 const answer = (): (CellMark | undefined)[] => board.solution.map(star => (star ? "star" : "dark"))
@@ -179,7 +180,7 @@ describe("hints on a regionless board", () => {
   })
 })
 
-describe.each(["lamps", "market", "lotus", "cats"])("%s hints are phrased in both locales", skin => {
+describe.each(Object.values(REGIONLESS_SKINS).map(s => s.name))("%s hints are phrased in both locales", skin => {
   const lines = ["row", "col"]
   const counted = ["groupFull", "groupTight", "onlyWay", "everyWay"].flatMap(rung =>
     lines.flatMap(line => [`${rung}.${line}_one`, `${rung}.${line}_other`])

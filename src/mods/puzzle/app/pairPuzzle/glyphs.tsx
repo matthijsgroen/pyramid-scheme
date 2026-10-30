@@ -1,8 +1,8 @@
 import { useId, type FC } from "react"
 
 /**
- * The drawings of the pair boards (mummy rest and dung beetles). Their own module because a file that exports components may
- * export nothing else, and the skin table is not a component.
+ * The drawings of the pair boards (mummy rest and dung beetles). Their own module because a file that exports
+ * components may export nothing else, and the skin table is not a component.
  *
  * All are silhouettes, a shape and not a colour, so they read at arm's length and without any hue.
  */

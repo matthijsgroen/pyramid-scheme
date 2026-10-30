@@ -606,7 +606,7 @@
         "enter": "Tik een tegel om die af te strepen, tik weer voor een olielamp, en nog eens om het te wissen."
       },
       "market": {
-        "touch": "Twee kramen mogen nooit naast elkaar staan — ook niet schuin. Concurrenten zetten zich nooit naast elkaar neer.",
+        "touch": "Twee kramen mogen nooit naast elkaar staan — ook niet schuin. Concurrenten staan nooit naast elkaar.",
         "walls": "De huizen horen bij het plein: daar kan niemand een kraam neerzetten, en het is geen plek.",
         "enter": "Tik een plek om die af te strepen, tik weer voor een kraam, en nog eens om het te wissen."
       },
@@ -1296,7 +1296,14 @@
       }
     },
     "events": {
-      "default": ["het vuur", "het water halen", "het bakken", "de boottocht", "het ossen drijven", "de nachtwake"],
+      "default": [
+        "het vuur",
+        "het water halen",
+        "het bakken",
+        "de boottocht",
+        "het ossen drijven",
+        "de nachtwake"
+      ],
       "funerary": [
         "het pleisteren",
         "het uitzetten van het raster",

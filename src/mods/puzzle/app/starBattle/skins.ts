@@ -151,9 +151,9 @@ const SKINS: Record<string, StarBattleSkin> = {
  */
 const LIT = "shadow-[inset_3px_3px_0_rgba(255,255,255,0.3),inset_-3px_-3px_0_rgba(0,0,0,0.4)]"
 
-const REGIONLESS_SKINS: Record<string, StarBattleSkin> = {
+export const REGIONLESS_SKINS: Record<string, StarBattleSkin> = {
   /**
-   * **Oil lamps on a dark temple floor** — the plain dress and the one any room without its own gets. The
+   * **Oil lamps on a dark temple floor** — the plain dress, worn by light rooms and by some rooms with no role of their own. The
    * ground is dark so a lamp is the brightest thing on it and a spent square is simply unlit; the answer is
    * warm amber and the walls are cool stone blocks, so piece and wall differ in hue as well as in shape.
    */
@@ -221,7 +221,7 @@ const REGIONLESS_SKINS: Record<string, StarBattleSkin> = {
   },
   /**
    * **Cats on a temple floor** — warm sunlit flagstones, the cat dark against them, and pale pillars. The
-   * celebration is the gentle flare: a cat does not leap, it stretches into the sun.
+   * celebration is the flare: a cat does not leap, it stretches into the sun.
    */
   cats: {
     name: "cats",

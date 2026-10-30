@@ -139,8 +139,8 @@ body {
     }
   }
 
-  /* A scarab finishing: it turns once on the spot, the sun beetle rolling its sun. A full circle, so it ends
-     facing the way it was placed. */
+  /* A dung ball turning once on the spot as its beetle arrives. A full circle, so it ends facing the way it
+     was placed. */
   --animate-spin-once: spin-once 600ms ease-in-out;
   @keyframes spin-once {
     from {
@@ -700,6 +700,7 @@ body {
   .animate-pour-level,
   .animate-refuse,
   .animate-flare,
+  .animate-bloom,
   .animate-spin-once,
   .animate-into-tomb,
   .animate-walk-beside {

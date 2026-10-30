@@ -19,7 +19,10 @@ export type PairSkin = {
   spent: string
   /** The border every square draws on all four edges, as a CSS colour. */
   seam: string
-  /** The square a sarcophagus is printed on, with the sarcophagus colour: printed floor, so a darker tile and a muted tone, never as strong as a placed piece. */
+  /**
+   * The square an anchor is printed on, with the anchor's colour: printed floor, so a darker tile and a muted
+   * tone, never as strong as a placed piece.
+   */
   anchor: string
   Anchor: FC
   /** What a piece looks like standing in a square, and its colour. */
@@ -37,37 +40,11 @@ export type PairSkin = {
   /** What an anchor's square does as its piece arrives in that run. */
   anchorCelebrate: string
   /** What the anchor's drawing alone does then, for a drawing that moves within its square (a ball rolls). */
-  anchorGlyphCelebrate?: string
+  anchorGlyphCelebrate: string
   /** The count beside a line while it still owes pieces, once it holds exactly its count, and once it cannot be met. */
   countOpen: string
   countMet: string
   countBroken: string
-}
-
-const BEETLES: PairSkin = {
-  name: "beetles",
-  // Dark desert earth, so the pale beetle is the brightest thing on the board and the ball is a muted brown
-  // clod on a still darker tile: a different hue from the beetle as well as a different shape.
-  cell: "bg-[#4a3b2d]",
-  spent: "bg-[#392d22]",
-  seam: "rgb(168 138 100 / 0.35)",
-  anchor:
-    "bg-[#2b2118] text-[#a9774a] shadow-[inset_2px_2px_0_rgba(255,255,255,0.12),inset_-2px_-2px_0_rgba(0,0,0,0.4)]",
-  Anchor: DungBall,
-  Glyph: DungBeetle,
-  answer: "scale-125 text-teal-300",
-  dark: "text-stone-400/70",
-  hatch: "rgba(252,211,77,0.45)",
-  evidence: "ring-sky-300/60",
-  focus: "ring-amber-300",
-  conflict: "ring-red-400/90",
-  // The beetle walks up to its ball and stays beside it, and the ball turns once as it gets there.
-  celebrate: "animate-walk-beside relative z-10",
-  anchorCelebrate: "",
-  anchorGlyphCelebrate: "animate-spin-once [animation-delay:400ms]",
-  countOpen: "text-stone-200",
-  countMet: "text-emerald-400",
-  countBroken: "text-red-400",
 }
 
 export const PAIR_SKINS: Record<string, PairSkin> = {
@@ -90,11 +67,36 @@ export const PAIR_SKINS: Record<string, PairSkin> = {
     // Raised above the squares so the walk is drawn over the neighbouring one.
     celebrate: "animate-into-tomb relative z-10",
     anchorCelebrate: "animate-flare [animation-delay:450ms]",
+    anchorGlyphCelebrate: "",
     countOpen: "text-stone-200",
     countMet: "text-emerald-400",
     countBroken: "text-red-400",
   },
-  beetles: BEETLES,
+  beetles: {
+    name: "beetles",
+    // Dark desert earth, so the pale beetle is the brightest thing on the board and the ball is a muted brown
+    // clod on a still darker tile: a different hue from the beetle as well as a different shape.
+    cell: "bg-[#4a3b2d]",
+    spent: "bg-[#392d22]",
+    seam: "rgb(168 138 100 / 0.35)",
+    anchor:
+      "bg-[#2b2118] text-[#a9774a] shadow-[inset_2px_2px_0_rgba(255,255,255,0.12),inset_-2px_-2px_0_rgba(0,0,0,0.4)]",
+    Anchor: DungBall,
+    Glyph: DungBeetle,
+    answer: "scale-125 text-teal-300",
+    dark: "text-stone-400/70",
+    hatch: "rgba(252,211,77,0.45)",
+    evidence: "ring-sky-300/60",
+    focus: "ring-amber-300",
+    conflict: "ring-red-400/90",
+    // The beetle walks up to its ball and stays beside it, and the ball turns once as it gets there.
+    celebrate: "animate-walk-beside relative z-10",
+    anchorCelebrate: "",
+    anchorGlyphCelebrate: "animate-spin-once [animation-delay:400ms]",
+    countOpen: "text-stone-200",
+    countMet: "text-emerald-400",
+    countBroken: "text-red-400",
+  },
 }
 
 /** Which place this room is, resolved like every family resolves it (`app/faceFor.ts`). */

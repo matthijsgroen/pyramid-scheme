@@ -103,7 +103,7 @@ that cover them.
 ## 8. Theming
 
 Tags `puzzle`, `light`, `trade`, `water`, `funerary`. A room's role picks the skin through `REGIONLESS_BATTLE_META.faces`
-(`REGIONLESS_SKINS` in `skins.ts`); a room with no role of its own wears the default. Walls are raised blocks
+(`REGIONLESS_SKINS` in `skins.ts`); a room with no role of its own wears the default or, about one in three, a spare face. Walls are raised blocks
 (`skin.stone`, lit from the top left) that nothing can stand on, and the no-touching rule has a reason in each place.
 
 | skin (theme) | role | piece | walls | why pieces never touch | title |
@@ -114,6 +114,6 @@ Tags `puzzle`, `light`, `trade`, `water`, `funerary`. A room's role picks the sk
 | cats (`cats`) | `funerary` | sleeping cat (`Cat`) | pillars | each cat keeps its own patch of sun | Temple Cats |
 
 Lamps and cats on dark and sunlit flagstones; market in daylight on dust; lotus on dark water. The solve celebration
-is the lamp's and the market's flare, the lotus's bloom, and the cat's gentle flare. Copy is keyed by the skin's `name`
+is the lamp's and the market's flare, the lotus's bloom, and the cat's flare. Copy is keyed by the skin's `name`
 under `starBattle.*`. The icon is an oil lamp on amber. The family is registered in `plugin.tsx` and reachable in
 the puzzle lab only; it stays out of the mod's family list until a site is meant to deal it.
