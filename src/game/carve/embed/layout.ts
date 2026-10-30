@@ -2,32 +2,46 @@ import { mulberry32 } from "../../random"
 import type { Direction } from "../../siteTypes"
 import { OPPOSITE } from "../grid"
 import type { Cell } from "../state"
-import { cellOfKey, keyOf, type CellKey, type FloorGraph, type FloorString, type Piece } from "./graph"
+import {
+  cellOfKey,
+  dirBetween,
+  keyOf,
+  step,
+  through,
+  type CellKey,
+  type FloorGraph,
+  type FloorString,
+  type Piece,
+} from "./graph"
 
 /** How far a string's draw reaches past its nodes' need at full spread. */
 export const GAP_RANGE = 6
-/** How often the push may make room before the floor counts as one it cannot lay out. */
-const PUSH_LIMIT = 20000
+/** How often the push may make room, per element and in all, before the floor counts as one it cannot lay out. The
+ * shipped floors take at most 37 rounds over 148 elements. */
+const PUSH_PER_ELEMENT = 4
+const PUSH_BASE = 64
+/** How often the press may raise a group, per held cell, before it counts as one that finds no rest. The shipped
+ * floors take at most 1.5. */
+const RAISES_PER_CELL = 8
+/** The cells a string keeps between two of its stops, or between a stop and a door place. */
+const STOP_GAP = 1
 
 /** How often the press works both axes at most. */
 const PRESS_ROUNDS = 8
 
 const LAYOUT_SALT = 0x5bd1e995
-const MOVES: Record<Direction, Cell> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
-const step = (at: Cell, dir: Direction, k = 1): Cell => [at[0] + MOVES[dir][0] * k, at[1] + MOVES[dir][1] * k]
-const dirBetween = ([r, c]: Cell, [nr, nc]: Cell): Direction => (nr < r ? "n" : nr > r ? "s" : nc > c ? "e" : "w")
 
 /** A string as laid: its corner cells from its `a` end's door place to its `b` end's, and where each of its nodes
  * stands, in order. */
 export type LaidString = { corners: Cell[]; stops: Cell[] }
 
-/** Where each piece's top-left stands and how each string runs; `attempts` counts the floor attempts it took and
- * `slack` the strings the press left longer than their nodes need, before any spread. */
+/** Where each piece's top-left stands and how each string runs; `slack` counts the strings the press left longer than
+ * their stops need, before any spread, and `pushes` the rounds the push took. */
 export type Layout = {
   graph: FloorGraph
   blocks: Map<CellKey, Cell>
   strings: LaidString[]
-  attempts: number
+  pushes: number
   slack: number
 }
 
@@ -58,23 +72,12 @@ export const doorRay = (piece: Piece, side: Direction): Cell[] | undefined => {
   return Array.from({ length }, (_, k) => step(at, side, k + 1))
 }
 
-/** The cells a string needs between its door places: two per node, plus one; a drop its launch, run and landing,
- * less what its ends' rings hold. */
+/** The cells a string needs between its door places: each stop and a gap before each and after the last; a drop its
+ * launch, run and landing, less what its ends' rings hold. */
 export const needOf = (s: FloorString, rayA: number, rayB: number): number =>
-  s.drop ? s.drop.run.length + 2 - rayA - rayB : 2 * s.nodes.length + 1
-
-/** Every cell strictly between consecutive points that each share a line with the next, the inner points included. */
-const through = (points: readonly Cell[]): Cell[] => {
-  const cells: Cell[] = []
-  let [r, c] = points[0]
-  for (const [tr, tc] of points.slice(1))
-    while (r !== tr || c !== tc) {
-      r += Math.sign(tr - r)
-      c += Math.sign(tc - c)
-      cells.push([r, c])
-    }
-  return cells.slice(0, -1)
-}
+  s.drop ? s.drop.run.length + 2 - rayA - rayB : s.nodes.length + (s.nodes.length + 1) * STOP_GAP
+/** How far apart two stops' nodes stand at least, whose door places reach `exA` and `exB` cells out. */
+const stopDistance = (exA: number, exB: number) => exA + exB + STOP_GAP + 1
 
 const cornersOf = (doorA: Cell, cells: readonly Cell[], doorB: Cell): Cell[] => {
   const all = [doorA, ...cells, doorB]
@@ -176,7 +179,14 @@ export const layoutFloor = (
     const [extA, extB] = [ext(chain[0], sideA), ext(chain[chain.length - 1], sideB)]
     if (extA === undefined || extB === undefined) return keys[extA === undefined ? chain[0] : chain[chain.length - 1]]
     if (s.drop) {
-      add(chain[0], chain[1], sideA, extA, extB, Math.max(s.drop.run.length + 3, extA + extB + 2))
+      add(
+        chain[0],
+        chain[1],
+        sideA,
+        extA,
+        extB,
+        Math.max(needOf(s, extA, extB) + extA + extB + 1, stopDistance(extA, extB))
+      )
       return runs
     }
     const anchors = chain.flatMap((i, j) => (i < sketchNodes ? [j] : []))
@@ -187,7 +197,7 @@ export const layoutFloor = (
         { length: to - from },
         (_, j) => 1 + (j === 0 ? exFrom : 0) + (j === to - from - 1 ? exTo : 0)
       )
-      mins[0] += Math.max(0, exFrom + exTo + 2 - mins.reduce((sum, m) => sum + m, 0))
+      mins[0] += Math.max(0, stopDistance(exFrom, exTo) - mins.reduce((sum, m) => sum + m, 0))
       for (let j = from; j < to; j++) {
         const dir =
           j === 0 ? sideA : j === chain.length - 2 ? OPPOSITE[sideB] : dirBetween(pos[chain[j]], pos[chain[j + 1]])
@@ -390,8 +400,10 @@ export const layoutFloor = (
     return true
   }
 
-  for (let round = 0; ; round++) {
-    if (round > PUSH_LIMIT) return { refused: `no room for the piece at ${graph.entrance}` }
+  let pushes = 0
+  for (; ; pushes++) {
+    if (pushes > PUSH_BASE + PUSH_PER_ELEMENT * keys.length)
+      return { refused: `the push finds no room for the floor at ${graph.entrance}` }
     const drawn = raster()
     if (drawn.overlap) {
       const line = parting(...drawn.overlap)
@@ -419,7 +431,7 @@ export const layoutFloor = (
    * keeps its need; on each line, and between neighbouring lines, holders keep their order with a cell between them
    * on a line and none needed between lines. Holders two lines apart may pass each other: that is how a bend moves.
    */
-  const pressAxis = (axis: 0 | 1): boolean => {
+  const pressAxis = (axis: 0 | 1): boolean | "restless" => {
     const across = (1 - axis) as 0 | 1
     const group = keys.map((_, i) => i)
     const find = (i: number): number => (group[i] === i ? i : (group[i] = find(group[i])))
@@ -491,7 +503,7 @@ export const layoutFloor = (
       for (const [h, w] of out.get(g) ?? [])
         if (x.get(g)! + w > x.get(h)!) {
           x.set(h, x.get(g)! + w)
-          if (++relaxations > 50 * items.length * groups.length) throw new Error("[carve] the press found no fixpoint")
+          if (++relaxations > RAISES_PER_CELL * items.length) return "restless"
           if (!queued.has(h)) {
             queued.add(h)
             queue.push(h)
@@ -533,13 +545,20 @@ export const layoutFloor = (
     for (let i = 0; i < keys.length; i++) pos[i][axis] += shift.get(roots[i])!
     return new Set(items.map(item => shift.get(item.g))).size > 1
   }
-  const press = () => {
+  /** Presses both axes until nothing moves; false where a group finds no rest. */
+  const press = (): boolean => {
     for (let round = 0, moved = true; moved && round < PRESS_ROUNDS; round++) {
       moved = false
-      for (const axis of [1, 0] as const) if (pressAxis(axis)) moved = true
+      for (const axis of [1, 0] as const) {
+        const result = pressAxis(axis)
+        if (result === "restless") return false
+        if (result) moved = true
+      }
     }
+    return true
   }
-  press()
+  const restless = { refused: `the press finds no rest for the floor at ${graph.entrance}` }
+  if (!press()) return restless
 
   // The sides each end's strings leave it by: a piece with more than two ways keeps the sketch's, so the order of
   // its ways around it stays.
@@ -564,7 +583,7 @@ export const layoutFloor = (
     if (s.drop) return false
     const chain = chains[si]
     const [a, b] = [chain[0], chain[chain.length - 1]]
-    const need = 2 * s.nodes.length + 1
+    const need = needOf(s, 0, 0)
     const now = lengthBetweenDoors(si)
     if (now <= need) return false
     const leaf = (end: number) => ways.get(end) === 1
@@ -726,7 +745,7 @@ export const layoutFloor = (
     let laid = false
     for (let si = 0; si < strings.length; si++) if (reroute(si)) laid = true
     if (!laid) break
-    press()
+    if (!press()) return restless
   }
 
   const slack = strings.filter((_, si) => edges.some(e => e.si === si && lengthOf(e) > e.min)).length
@@ -759,7 +778,7 @@ export const layoutFloor = (
       const stops = s.nodes.map(node => [...posOf(node)] as Cell)
       return { corners: cornersOf(doorA, through([doorA, ...points, doorB]), doorB), stops }
     }),
-    attempts: 1,
     slack,
+    pushes,
   }
 }

@@ -1,7 +1,7 @@
-import type { CellRect, Direction, FloorGrid, GridCell } from "../../siteTypes"
+import type { CellRect, CorridorCell, Direction, FloorGrid, GridCell } from "../../siteTypes"
 import { OPPOSITE } from "../grid"
 import type { Cell } from "../state"
-import { cellOfKey, keyOf, type CellKey } from "./graph"
+import { cellOfKey, dirBetween, keyOf, through, type CellKey } from "./graph"
 import { doorRay, footprint, type Layout } from "./layout"
 
 export type Carved = {
@@ -10,23 +10,15 @@ export type Carved = {
   prefabRects: Map<CellKey, CellRect>
   /** Where each sketch node stands on the floor. */
   nodes: Map<CellKey, Cell>
+  /** Which sketch cell each corridor cell of a string stands for, by floor cell. */
+  sources: Map<CellKey, CellKey>
 }
 
-const dirBetween = ([r, c]: Cell, [nr, nc]: Cell): Direction => (nr < r ? "n" : nr > r ? "s" : nc > c ? "e" : "w")
 const add = ([r, c]: Cell, [dr, dc]: Cell): Cell => [r + dr, c + dc]
 
-/** Every cell of a polyline strictly between its first and last corner. */
-const between = (corners: readonly Cell[]): Cell[] => {
-  const cells: Cell[] = []
-  let [r, c] = corners[0]
-  for (const [tr, tc] of corners.slice(1))
-    while (r !== tr || c !== tc) {
-      r += Math.sign(tr - r)
-      c += Math.sign(tc - c)
-      cells.push([r, c])
-    }
-  return cells.slice(0, -1)
-}
+/** What a corridor cell is filed under: its section, region, tier and tileset, and whether it is hidden. */
+const filing = (cell: CorridorCell) =>
+  [cell.sectionAddress, cell.region, cell.hidden, cell.difficulty, cell.tileset].join("|")
 
 /**
  * THE LAYOUT CARVED INTO A GRID. Each piece's node keeps every field of its sketch cell where the layout put it. Each
@@ -46,6 +38,7 @@ export const carveLayout = (layout: Layout): Carved => {
   const nodes = new Map<CellKey, Cell>()
   type Laid = { at: Cell; cell: GridCell; ways: Set<Direction> }
   const laid = new Map<string, Laid>()
+  const source = new Map<string, CellKey>()
   const claimed: Cell[] = []
   const put = (at: Cell, cell: GridCell) => {
     if (laid.has(keyOf(at))) throw new Error(`[carve] the layout laid two things at ${keyOf(at)}`)
@@ -81,7 +74,8 @@ export const carveLayout = (layout: Layout): Carved => {
     }
     const fromA = rayOf(s.a, corners[0], corners[1])
     const fromB = rayOf(s.b, corners[corners.length - 1], corners[corners.length - 2])
-    const inner = between(corners)
+    // The string's cells from door place to door place, its own door places and rays included.
+    const inner = through(corners)
     const path = [...fromA.cells, ...inner, ...[...fromB.cells].reverse()]
     const walk = [nodes.get(s.a)!, ...path, nodes.get(s.b)!]
     turn(s.a, s.dirA, fromA.side)
@@ -91,6 +85,7 @@ export const carveLayout = (layout: Layout): Carved => {
       const pad = path.length - run.length - 2
       if (pad < 0) throw new Error(`[carve] the drop from ${s.a} is shorter than its run`)
       ;[...Array.from({ length: pad }, () => launch), launch, ...run, landing].forEach((cell, k) => put(path[k], cell))
+      path.forEach((cell, k) => source.set(keyOf(cell), keyOf(s.path[Math.max(0, k - pad)])))
       const onRun = (k: number) => k > pad + 1 && k < walk.length - 2
       for (let k = 1; k < walk.length; k++) if (!onRun(k - 1) && !onRun(k)) link(walk[k - 1], walk[k])
       return
@@ -110,12 +105,17 @@ export const carveLayout = (layout: Layout): Carved => {
       put(cell, sketch(cellOfKey(node)))
       spans.push([])
     })
-    // A stretch laid shorter than the sketch drew it keeps one cell of each section it crosses first.
+    // A stretch laid shorter than the sketch drew it keeps the first cell of each change in how its cells are filed.
     spans.forEach((span, j) => {
-      const drawn = s.runs[j]
-      const firsts = drawn.filter((cell, k) => k === 0 || cell.sectionAddress !== drawn[k - 1].sectionAddress)
+      const from = j === 0 ? 0 : s.stopAt[j - 1] + 1
+      const drawn = s.runs[j].map((cell, k) => ({ cell, at: s.path[from + k] }))
+      const firsts = drawn.filter(({ cell }, k) => k === 0 || filing(cell) !== filing(drawn[k - 1].cell))
       const labels = span.length < drawn.length ? firsts : drawn
-      span.forEach((i, k) => put(path[i], labels[Math.floor((k * labels.length) / span.length)]))
+      span.forEach((i, k) => {
+        const { cell, at } = labels[Math.floor((k * labels.length) / span.length)]
+        put(path[i], cell)
+        source.set(keyOf(path[i]), keyOf(at))
+      })
     })
     for (let k = 1; k < walk.length; k++) link(walk[k - 1], walk[k])
     s.nodes.forEach((node, i) => {
@@ -186,5 +186,6 @@ export const carveLayout = (layout: Layout): Carved => {
     },
     prefabRects,
     nodes: moved,
+    sources: new Map([...source].map(([at, from]) => [keyOf(shift(cellOfKey(at))), from])),
   }
 }

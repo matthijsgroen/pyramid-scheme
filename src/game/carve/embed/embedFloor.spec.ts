@@ -14,8 +14,8 @@ import { OPPOSITE } from "../grid"
 import { seatOf, stampPrefab } from "../placePrefabs"
 import type { Cell, FloorPrep } from "../state"
 import { embedFloor, type EmbedOptions, type Embedded } from "./embedFloor"
+import { MOVES } from "./graph"
 
-const MOVES: Record<Direction, Cell> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 const DIRS = Object.keys(MOVES) as Direction[]
 
 const opts = (overrides: Partial<EmbedOptions> = {}): EmbedOptions => ({
@@ -125,6 +125,28 @@ const SEEDS = [1, 2, 3, 4, 5, 6, 7, 8]
 /** A lever with two ways to the hall: straight through one door, or round by the side room through the other. */
 const ROUND_THE_SIDE =
   "in -[L]- hall\nhall -- out\nin -- side\nside -[L:a]- hall\nL toggle @in\nin ?\nhall ?\nout ?\nside ?"
+
+/** Two stones in a hall the route crosses, with a nook off it: the hall holds ground off the route as well as on it. */
+const NOOK_STONES =
+  "in -- hall\nhall -[p]- out\nhall -- nook\np plate @hall\nshelf plate @hall stone\nin ?\nhall ?\nnook ?\nout ?"
+
+/** The cells of the shortest walk from the entrance to the exit, gates and all. */
+const routeOf = (grid: FloorGrid): Set<string> => {
+  const from = new Map<string, string | undefined>([[`${grid.entrancePos[0]},${grid.entrancePos[1]}`, undefined]])
+  const queue: Cell[] = [[...grid.entrancePos]]
+  while (queue.length) {
+    const [r, c] = queue.shift()!
+    for (const [dr, dc] of Object.values(MOVES)) {
+      const next = grid.cells[r + dr]?.[c + dc]
+      if (!next || next.type === "empty" || from.has(`${r + dr},${c + dc}`)) continue
+      from.set(`${r + dr},${c + dc}`, `${r},${c}`)
+      queue.push([r + dr, c + dc])
+    }
+  }
+  const route = new Set<string>()
+  for (let at: string | undefined = `${grid.exitPos[0]},${grid.exitPos[1]}`; at; at = from.get(at)) route.add(at)
+  return route
+}
 
 const lockFloor = (text: string, name: string): FloorConfig => ({
   pathPuzzles: 0,
@@ -332,7 +354,6 @@ s stop`,
     const { grid, report } = embed(drawnSketch(BRANCHING), opts({ spread: 1 }))
     expect([report.rows, report.cols]).toEqual([grid.rows, grid.cols])
     expect(report.longestRoomToRoom).toBeGreaterThan(0)
-    expect(report.attempts).toBeGreaterThanOrEqual(1)
   })
 
   it("the smallest floor embeds", () => {
@@ -356,6 +377,41 @@ s stop`,
       const [xr, xc] = grid.exitPos
       expect(grid.cells[xr][xc]).toMatchObject({ type: "room" })
     }
+  })
+
+  it("on the rooms engine a plate stands on the route only where its region holds no ground off it", () => {
+    const config = {
+      ...lockFloor(NOOK_STONES, "nookStones"),
+      spread: 1,
+      realisations: { ...BINDING, weights: "stonePlate", pipe: "stonePipe" },
+    }
+    let plates = 0
+    for (let seed = 1; seed <= 12; seed++) {
+      const result = assembleFloor("test", config, seed, undefined, {}, { engine: ROOMS_ENGINE })
+      if (!result.success) continue
+      const { grid } = result
+      const route = routeOf(grid)
+      // Ground a plate could take: corridor of the region, no fork, touching no room but another plate.
+      const free = (region: string | undefined) =>
+        grid.cells.flatMap((row, r) =>
+          row.flatMap((cell, c) => {
+            if (cell.type !== "corridor" || cell.region !== region || cell.dirs.size > 2 || cell.obstacle) return []
+            const touches = Object.values(MOVES).some(([dr, dc]) => {
+              const next = grid.cells[r + dr]?.[c + dc]
+              return next && ((next.type === "room" && !next.plate) || (next.type === "corridor" && next.obstacle))
+            })
+            return touches ? [] : [`${r},${c}`]
+          })
+        )
+      grid.cells.forEach((row, r) =>
+        row.forEach((cell, c) => {
+          if (cell.type !== "room" || !cell.plate) return
+          plates++
+          if (route.has(`${r},${c}`)) expect(free(cell.region).filter(at => !route.has(at))).toEqual([])
+        })
+      )
+    }
+    expect(plates).toBeGreaterThan(0)
   })
 
   it("a lock's rooms and stops are laid out freely and its walk still passes", () => {

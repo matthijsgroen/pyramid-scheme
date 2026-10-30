@@ -47,10 +47,25 @@ export type FloorGraph = {
   exit: CellKey
 }
 
-const MOVES: Record<Direction, Cell> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+export const MOVES: Record<Direction, Cell> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 export const keyOf = ([r, c]: readonly [number, number]): CellKey => `${r},${c}`
 export const cellOfKey = (key: CellKey): Cell => key.split(",").map(Number) as Cell
-const step = ([r, c]: Cell, dir: Direction, k = 1): Cell => [r + MOVES[dir][0] * k, c + MOVES[dir][1] * k]
+export const step = ([r, c]: Cell, dir: Direction, k = 1): Cell => [r + MOVES[dir][0] * k, c + MOVES[dir][1] * k]
+export const dirBetween = ([r, c]: Cell, [nr, nc]: Cell): Direction =>
+  nr < r ? "n" : nr > r ? "s" : nc > c ? "e" : "w"
+
+/** Every cell strictly between consecutive points that each share a line with the next, the inner points included. */
+export const through = (points: readonly Cell[]): Cell[] => {
+  const cells: Cell[] = []
+  let [r, c] = points[0]
+  for (const [tr, tc] of points.slice(1))
+    while (r !== tr || c !== tc) {
+      r += Math.sign(tr - r)
+      c += Math.sign(tc - c)
+      cells.push([r, c])
+    }
+  return cells.slice(0, -1)
+}
 
 const asCorridor = (cell: GridCell, at: Cell): CorridorCell => {
   if (cell.type !== "corridor") throw new Error(`[carve] the sketch's connector at ${keyOf(at)} is not a corridor`)
@@ -169,6 +184,8 @@ export const floorGraph = (
       const path: Cell[] = [first.connector!]
       let way = first
       while (!pieces.has(way.to)) {
+        if (inner.length > nodes.length)
+          throw new Error(`[carve] the sketch's way from ${a} by ${first.dir} never ends`)
         const at = way.to
         const back = OPPOSITE[way.dir]
         inner.push(at)
@@ -196,27 +213,4 @@ export const floorGraph = (
       })
     }
   return { lattice, pieces, strings, entrance, exit }
-}
-
-/** The strings a loop holds: each one whose two ends stay joined without it. */
-export const loopHeld = (graph: FloorGraph): Set<number> => {
-  const held = new Set<number>()
-  graph.strings.forEach((cut, i) => {
-    const near = new Map<CellKey, CellKey[]>()
-    graph.strings.forEach((s, j) => {
-      if (j === i) return
-      near.set(s.a, [...(near.get(s.a) ?? []), s.b])
-      near.set(s.b, [...(near.get(s.b) ?? []), s.a])
-    })
-    const seen = new Set([cut.a])
-    const queue = [cut.a]
-    while (queue.length)
-      for (const next of near.get(queue.pop()!) ?? [])
-        if (!seen.has(next)) {
-          seen.add(next)
-          queue.push(next)
-        }
-    if (seen.has(cut.b)) held.add(i)
-  })
-  return held
 }

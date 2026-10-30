@@ -5,6 +5,7 @@ import { chainRooms } from "./chainRooms"
 import { checkChainsSeated } from "./checkChainsSeated"
 import { keyOf } from "./derive"
 import { embedFloor } from "./embed/embedFloor"
+import { MOVES } from "./embed/graph"
 import { finish } from "./finish"
 import { growMaze } from "./growMaze"
 import { hangBranches } from "./hangBranches"
@@ -101,20 +102,31 @@ export const finishAttempt: Finish = (prep, state) => {
   return validate(prep, decided, grid) ?? standPieces(prep, decided, grid) ?? placePrefabs(prep, finish(prep, grid))
 }
 
-/** The pieces' reads with every cell named on the sketch moved to where its node stands on the floor; a cell that
- * is no node (a connector) has no place a piece could stand, so it is left out. */
-const piecesOnFloor = (decided: PiecesState, nodes: ReadonlyMap<string, Cell>): PiecesState => {
+/** The pieces' reads with every cell named on the sketch moved to where it stands on the floor. The main path is
+ * its nodes and every corridor cell that stands for the sketch's main path between them; a switch way or a pipe hole
+ * on a cell that is no node has no place a piece could stand, so it is left out. */
+const piecesOnFloor = (
+  decided: PiecesState,
+  nodes: ReadonlyMap<string, Cell>,
+  sources: ReadonlyMap<string, string>
+): PiecesState => {
   const moved = (key: string) => {
     const cell = nodes.get(key)
     return cell && `${cell[0]},${cell[1]}`
   }
+  const { mainPath } = decided.maze
+  const drawnMain = new Set(mainPath.map(keyOf))
+  mainPath.slice(1).forEach(([r, c], i) => drawnMain.add(`${(r + mainPath[i][0]) / 2},${(c + mainPath[i][1]) / 2}`))
   return {
     maze: {
       ...decided.maze,
-      mainPath: decided.maze.mainPath.flatMap(cell => {
-        const at = nodes.get(keyOf(cell))
-        return at ? [at] : []
-      }),
+      mainPath: [
+        ...mainPath.flatMap(cell => {
+          const at = nodes.get(keyOf(cell))
+          return at ? [at] : []
+        }),
+        ...[...sources].flatMap(([at, from]) => (drawnMain.has(from) ? [at.split(",").map(Number) as Cell] : [])),
+      ],
     },
     switchWays: decided.switchWays.map(ways =>
       ways.flatMap(way => {
@@ -131,6 +143,58 @@ const piecesOnFloor = (decided: PiecesState, nodes: ReadonlyMap<string, Cell>): 
   }
 }
 
+const SIDES = Object.values(MOVES)
+
+/**
+ * Where a piece may stand on a laid floor: any corridor cell of a string, that is no door (it touches no room and
+ * lies in no designed room's footprint), no gate held open, and no part of a drop or next to one. Where its region
+ * holds open ground (reached from the way in without passing a gate), a piece stands on that ground, so it is never
+ * met only beyond a gate it may hold.
+ */
+const standable = (grid: FloorGrid, rects: readonly CellRect[]): IsNode => {
+  const at = (r: number, c: number) => grid.cells[r]?.[c]
+  const ground = (r: number, c: number) => {
+    const cell = at(r, c)
+    if (cell?.type !== "corridor" || cell.openGate || cell.obstacle) return false
+    if (
+      rects.some(
+        rect => r >= rect.top - 1 && r <= rect.top + rect.rows && c >= rect.left - 1 && c <= rect.left + rect.cols
+      )
+    )
+      return false
+    return SIDES.every(([dr, dc]) => {
+      const next = at(r + dr, c + dc)
+      return !next || next.type === "empty" || (next.type === "corridor" && !next.obstacle)
+    })
+  }
+  const open = new Set<string>([`${grid.entrancePos[0]},${grid.entrancePos[1]}`])
+  const queue: Cell[] = [[...grid.entrancePos]]
+  while (queue.length) {
+    const [r, c] = queue.shift()!
+    const cell = at(r, c)
+    if (!cell || cell.type === "empty") continue
+    for (const dir of cell.dirs) {
+      const [dr, dc] = MOVES[dir]
+      const next = at(r + dr, c + dc)
+      if (!next || next.type === "empty" || open.has(`${r + dr},${c + dc}`)) continue
+      if (next.type === "room" && next.requiredKeyId) continue
+      open.add(`${r + dr},${c + dc}`)
+      queue.push([r + dr, c + dc])
+    }
+  }
+  const openRegions = new Set<string | undefined>()
+  grid.cells.forEach((row, r) =>
+    row.forEach((cell, c) => {
+      if (cell.type === "corridor" && open.has(`${r},${c}`) && ground(r, c)) openRegions.add(cell.region)
+    })
+  )
+  return (r, c) => {
+    const cell = at(r, c)
+    if (!ground(r, c) || cell?.type !== "corridor") return false
+    return open.has(`${r},${c}`) || !openRegions.has(cell.region)
+  }
+}
+
 /**
  * THE TAIL OF AN ATTEMPT ON THE ROOMS ENGINE. The designed rooms are chosen on the sketch with every reserved junction
  * shut, so whether a mod stands a switch there cannot move a room; render writes the sketch, and the embed gives each
@@ -138,34 +202,6 @@ const piecesOnFloor = (decided: PiecesState, nodes: ReadonlyMap<string, Cell>): 
  * lattice, the pieces kept off the designed rooms' nodes, and each designed room is stamped at the rect the embed
  * gave it.
  */
-/**
- * Where a piece may stand on a laid floor: any corridor cell of a string, that is no door (it touches no room and
- * lies in no designed room's footprint), no gate held open, and no part of a drop or next to one.
- */
-const standable =
-  (grid: FloorGrid, rects: readonly CellRect[]): IsNode =>
-  (r, c) => {
-    const cell = grid.cells[r][c]
-    if (cell.type !== "corridor" || cell.openGate || cell.obstacle) return false
-    if (
-      rects.some(
-        rect => r >= rect.top - 1 && r <= rect.top + rect.rows && c >= rect.left - 1 && c <= rect.left + rect.cols
-      )
-    )
-      return false
-    return (
-      [
-        [-1, 0],
-        [1, 0],
-        [0, -1],
-        [0, 1],
-      ] as const
-    ).every(([dr, dc]) => {
-      const next = grid.cells[r + dr]?.[c + dc]
-      return !next || next.type === "empty" || (next.type === "corridor" && !next.obstacle)
-    })
-  }
-
 export const finishInRooms: Finish = (prep, state) => {
   const decided = requireReads("render", [...TAIL_READS, "plan"], state)
   const held = new Set([...decided.pipeHoles.values()].map(({ cell }) => cell))
@@ -188,13 +224,16 @@ export const finishInRooms: Finish = (prep, state) => {
     keep: new Set([...held, ...decided.switchWays.flatMap(ways => ways.map(way => way.cell))]),
   })
   if ("refused" in embedded) return embedded
-  const { nodes, prefabRects } = embedded
+  const { nodes, prefabRects, sources } = embedded
   // The embed builds every row afresh, so the pieces may stand on it in place.
   const grid = embedded.grid as WritableGrid
   const kept = new Set(choices.map(choice => keyOf(nodes.get(keyOf(choice.cell))!)))
   const refused =
     validate(prep, decided, grid) ??
-    standPieces(prep, piecesOnFloor(decided, nodes), grid, { isNode: standable(grid, [...prefabRects.values()]), kept })
+    standPieces(prep, piecesOnFloor(decided, nodes, sources), grid, {
+      isNode: standable(grid, [...prefabRects.values()]),
+      kept,
+    })
   if (refused) return refused
   return choices.reduce(
     (laid, choice) =>

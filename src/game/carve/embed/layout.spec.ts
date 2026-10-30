@@ -56,8 +56,10 @@ const standing = (layout: Layout): Map<string, Cell> => {
 }
 
 describe("layoutFloor", () => {
-  it("a sketch whose rooms all fit is laid out at its lattice positions, pressed", () => {
-    const at = standing(laid(STOPS_ONLY, { spread: 0 }))
+  it("a sketch whose rooms all fit is laid out at its lattice positions, pressed, without a push", () => {
+    const layout = laid(STOPS_ONLY, { spread: 0 })
+    expect(layout.pushes).toBe(0)
+    const at = standing(layout)
     const [r0, c0] = at.get("0,0")!
     for (const [key, [r, c]] of at) expect([r - r0, c - c0]).toEqual(cellOfKey(key))
   })
@@ -74,14 +76,16 @@ describe("layoutFloor", () => {
       const [er, ec] = at.get("2,0")!
       return [at.get(key)![0] - er, at.get(key)![1] - ec]
     }
-    const pushed = standing(laid(rows, { spread: 0 }, new Map([["2,4", prefab]])))
+    const pushedLayout = laid(rows, { spread: 0 }, new Map([["2,4", prefab]]))
+    expect(pushedLayout.pushes).toBeLessThanOrEqual(4)
+    const pushed = standing(pushedLayout)
     const bare = standing(laid(rows, { spread: 0 }))
     expect(from(pushed, "0,0")).toEqual(from(bare, "0,0"))
     expect(from(pushed, "2,2")).toEqual(from(bare, "2,2"))
     expect(from(pushed, "2,4")[1]).toBeGreaterThan(from(bare, "2,4")[1])
   })
 
-  it("the press leaves no string longer than its nodes need at spread 0", () => {
+  it("on sketches of plain stops and claiming rooms the press leaves no string longer than its stops need", () => {
     for (const rows of [STOPS_ONLY, FOUR_SIDES]) expect(laid(rows, { spread: 0 }).slack).toBe(0)
   })
 
