@@ -3,8 +3,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import { cleanup, fireEvent, render, within } from "@testing-library/react"
 import { act } from "react"
 import { colOf, rowOf } from "@/mods/puzzle/game/constellation/constellation"
-import { CONSTELLATION_CONFIG } from "@/mods/puzzle/game/constellation/constellationConfig"
-import { generateConstellation } from "@/mods/puzzle/game/constellation/generateConstellation"
+import { FIXTURE } from "@/mods/puzzle/game/constellation/boards.fixture"
 import { buildConstellationHint, type ConstellationHint } from "./constellationHint"
 import { ConstellationPuzzle } from "./ConstellationPuzzle"
 
@@ -31,7 +30,7 @@ beforeAll(() => {
 })
 afterEach(cleanup)
 
-const puzzle = generateConstellation(5, CONSTELLATION_CONFIG.expert)
+const puzzle = FIXTURE.expert[4]
 // The pairs of the answer: lines the rules allow together, so drawing one never meets a crossing.
 const answer = puzzle.solution.flatMap((count, pair) => (count > 0 ? [pair] : []))
 

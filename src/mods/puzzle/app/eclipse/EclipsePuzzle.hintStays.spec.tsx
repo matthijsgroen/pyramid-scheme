@@ -2,8 +2,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest"
 import { cleanup, render, within } from "@testing-library/react"
 import { act } from "react"
-import { ECLIPSE_CONFIG } from "@/mods/puzzle/game/eclipse/eclipseConfig"
-import { generateEclipse } from "@/mods/puzzle/game/eclipse/generateEclipse"
+import { FIXTURE } from "@/mods/puzzle/game/eclipse/boards.fixture"
 import type { Mark } from "@/mods/puzzle/game/eclipse/eclipse"
 import { buildEclipseHint, type EclipseHint } from "./eclipseHint"
 import { EclipsePuzzle } from "./EclipsePuzzle"
@@ -27,7 +26,7 @@ beforeAll(() => {
 })
 afterEach(cleanup)
 
-const puzzle = generateEclipse(4, ECLIPSE_CONFIG.starter)
+const puzzle = FIXTURE.starter[3]
 // Given squares are printed, not tapped, so the squares a test names are the free ones, in board order.
 const free = puzzle.given.flatMap((mark, cell) => (mark === undefined ? [cell] : []))
 
@@ -129,8 +128,15 @@ describe("EclipsePuzzle hint that stays", () => {
   })
 
   it("ends the hint when a decided square is cleared again", () => {
-    const { tap, shown } = open(hintOf([[free[0], "moon"]]))
-    tap(free[0], free[0], free[0])
+    const { tap, shown } = open(
+      hintOf([
+        [free[0], "moon"],
+        [free[1], "moon"],
+      ])
+    )
+    tap(free[0], free[0])
+    expect(shown()).toContain("first")
+    tap(free[0])
     expect(shown()).not.toContain("first")
   })
 

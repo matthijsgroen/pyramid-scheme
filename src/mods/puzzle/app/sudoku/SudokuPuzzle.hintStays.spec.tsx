@@ -2,8 +2,7 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest"
 import { cleanup, render, within } from "@testing-library/react"
 import { act } from "react"
-import { generateSudoku } from "@/mods/puzzle/game/sudoku/generateSudoku"
-import { SUDOKU_CONFIG } from "@/mods/puzzle/game/sudoku/sudokuConfig"
+import { FIXTURE } from "@/mods/puzzle/game/sudoku/boards.fixture"
 import { buildSudokuHint, type SudokuHint } from "./sudokuHint"
 import { SudokuPuzzle } from "./SudokuPuzzle"
 
@@ -18,7 +17,7 @@ beforeAll(() => {
 })
 afterEach(cleanup)
 
-const puzzle = generateSudoku(1, SUDOKU_CONFIG.expert)
+const puzzle = FIXTURE.expert[0]
 const empties = puzzle.givens.flatMap((row, r) => row.flatMap((value, c) => (value === undefined ? [{ r, c }] : [])))
 const [A, B, C] = empties
 const at = (cell: { r: number; c: number }) => cell.r * 6 + cell.c

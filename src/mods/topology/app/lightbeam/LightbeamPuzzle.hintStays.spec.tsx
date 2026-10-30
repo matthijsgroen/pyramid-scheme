@@ -4,7 +4,7 @@ import { cleanup, render, screen, within } from "@testing-library/react"
 import { act } from "react"
 import { lightbeamHintSteps, pickLightbeamHint } from "./lightbeamHint"
 import { LightbeamPuzzle } from "./LightbeamPuzzle"
-import { generateLightbeamFor } from "./plugin"
+import { FIXTURE } from "@/mods/topology/game/lightbeam/boards.fixture"
 
 vi.mock("react-i18next", () => ({ useTranslation: () => ({ t: (key: string) => key }) }))
 vi.mock("./lightbeamHint", () => ({ lightbeamHintSteps: vi.fn(() => []), pickLightbeamHint: vi.fn() }))
@@ -14,7 +14,7 @@ beforeAll(() => {
 })
 afterEach(cleanup)
 
-const puzzle = generateLightbeamFor("starter", 1)
+const puzzle = FIXTURE.starter[0]
 
 const open = () => {
   vi.mocked(lightbeamHintSteps).mockClear()

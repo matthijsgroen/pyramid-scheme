@@ -2,8 +2,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest"
 import { cleanup, render, within } from "@testing-library/react"
 import { act } from "react"
-import { SUMPLETE_CONFIG } from "@/mods/puzzle/game/sumplete/sumpleteConfig"
-import { generateSumplete } from "@/mods/puzzle/game/sumplete/generateSumplete"
+import type { SumpleteGrid } from "@/mods/puzzle/game/sumplete/generateSumplete"
 import { buildSumpleteHint, type SumpleteHint } from "./sumpleteHint"
 import { SumpletePuzzle } from "./SumpletePuzzle"
 
@@ -26,7 +25,23 @@ beforeAll(() => {
 })
 afterEach(cleanup)
 
-const puzzle = generateSumplete(SUMPLETE_CONFIG.starter.size, 4, SUMPLETE_CONFIG.starter)
+const puzzle: SumpleteGrid = {
+  grid: [
+    [6, 6, 6, 7],
+    [4, 6, 4, 3],
+    [2, 5, 9, 6],
+    [8, 7, 3, 6],
+  ],
+  rowTargets: [18, 9, 11, 14],
+  colTargets: [16, 12, 15, 9],
+  solution: [
+    [true, true, true, false],
+    [false, true, false, true],
+    [true, false, true, false],
+    [true, false, false, true],
+  ],
+  techniqueCap: "parity",
+}
 const size = puzzle.grid.length
 const keyOf = (cell: number) => `${Math.floor(cell / size)},${cell % size}`
 

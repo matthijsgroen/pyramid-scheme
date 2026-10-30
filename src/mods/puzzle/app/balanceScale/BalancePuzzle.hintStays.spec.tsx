@@ -2,8 +2,7 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest"
 import { cleanup, render, within } from "@testing-library/react"
 import { act } from "react"
-import { BALANCE_CONFIG } from "@/mods/puzzle/game/balanceScale/balanceConfig"
-import { generateBalance } from "@/mods/puzzle/game/balanceScale/generateBalance"
+import type { BalancePuzzle as BalancePuzzleData } from "@/mods/puzzle/game/balanceScale/generateBalance"
 import { buildBalanceHint } from "./balanceHint"
 import { BalancePuzzle } from "./BalancePuzzle"
 
@@ -15,7 +14,20 @@ beforeAll(() => {
 })
 afterEach(cleanup)
 
-const puzzle = generateBalance(3, BALANCE_CONFIG.starter)
+const feather = { kind: "glyph", glyph: "🪶" } as const
+const beetle = { kind: "glyph", glyph: "🪲" } as const
+/** Two glyphs on two scales: three feathers weigh a beetle and 8, two feathers weigh 12. */
+const puzzle: BalancePuzzleData = {
+  glyphs: ["🪶", "🪲"],
+  scales: [
+    { left: [feather, feather, feather], right: [beetle, { kind: "weight", value: 8 }] },
+    { left: [feather, feather], right: [{ kind: "weight", value: 12 }] },
+  ],
+  maxValue: 10,
+  cancelling: false,
+  solution: { "🪶": 6, "🪲": 10 },
+  techniqueCap: "equalShares",
+}
 
 const open = () => {
   vi.mocked(buildBalanceHint).mockReset()

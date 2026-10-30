@@ -2,8 +2,7 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest"
 import { cleanup, fireEvent, render, within } from "@testing-library/react"
 import { act } from "react"
-import { generateHidato } from "@/mods/puzzle/game/hidato/generateHidato"
-import { HIDATO_CONFIG } from "@/mods/puzzle/game/hidato/hidatoConfig"
+import type { HidatoPuzzle as HidatoPuzzleData } from "@/mods/puzzle/game/hidato/generateHidato"
 import { hexKey } from "@/mods/puzzle/game/hidato/hex"
 import { buildHidatoHint } from "@/mods/puzzle/app/hidato/hidatoHint"
 import { HidatoPuzzle } from "./HidatoPuzzle"
@@ -17,7 +16,43 @@ beforeAll(() => {
 })
 afterEach(cleanup)
 
-const puzzle = generateHidato(4, HIDATO_CONFIG.starter)
+/** A fourteen-cell comb: 1 and 3 are given, so 2 is the first number to write. */
+const puzzle: HidatoPuzzleData = {
+  cells: [
+    { q: 1, r: -2 },
+    { q: 2, r: -2 },
+    { q: 0, r: -1 },
+    { q: 1, r: -1 },
+    { q: 2, r: -1 },
+    { q: -1, r: 0 },
+    { q: 0, r: 0 },
+    { q: 1, r: 0 },
+    { q: 2, r: 0 },
+    { q: -1, r: 1 },
+    { q: 0, r: 1 },
+    { q: 1, r: 1 },
+    { q: -1, r: 2 },
+    { q: 0, r: 2 },
+  ],
+  givens: { "2,-1": 1, "1,1": 3, "1,-1": 11, "1,0": 13, "0,1": 14, "-1,1": 6, "0,0": 12 },
+  solution: {
+    "2,-1": 1,
+    "2,0": 2,
+    "1,1": 3,
+    "0,2": 4,
+    "-1,2": 5,
+    "-1,1": 6,
+    "-1,0": 7,
+    "0,-1": 8,
+    "1,-2": 9,
+    "2,-2": 10,
+    "1,-1": 11,
+    "0,0": 12,
+    "1,0": 13,
+    "0,1": 14,
+  },
+  pruning: "adjacency",
+}
 const order = puzzle.cells.map(hexKey)
 const cellOf = (value: number) => Object.entries(puzzle.solution).find(([, other]) => other === value)![0]
 const isGiven = (value: number) => puzzle.givens[cellOf(value)] !== undefined

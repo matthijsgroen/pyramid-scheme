@@ -2,8 +2,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest"
 import { cleanup, render, within } from "@testing-library/react"
 import { act } from "react"
-import { PAIR_PUZZLE_CONFIG } from "@/mods/puzzle/game/pairPuzzle/pairPuzzleConfig"
-import { generatePairPuzzle } from "@/mods/puzzle/game/pairPuzzle/generatePairPuzzle"
+import type { PairPuzzleWithAnswer } from "@/mods/puzzle/game/pairPuzzle/generatePairPuzzle"
 import { buildPairHint, type PairHint } from "./pairPuzzleHint"
 import { PairPuzzle } from "./PairPuzzle"
 
@@ -36,7 +35,16 @@ const hintOf = (action: "place" | "ruleOut" | undefined, decided: number[], key 
   focus: decided[0],
 })
 
-const puzzle = generatePairPuzzle(3, PAIR_PUZZLE_CONFIG.starter)
+const squares = (rows: string[]) => rows.flatMap(row => [...row].map(square => square === "#"))
+/** An 8×8 board: a "#" per anchor, and a "#" per piece of the answer. */
+const puzzle: PairPuzzleWithAnswer = {
+  size: 8,
+  anchors: squares([".......#", "#.......", "#..##.#.", "........", ".#......", ".......#", "#....#..", "....#..."]),
+  rowCounts: [1, 2, 1, 2, 2, 1, 1, 1],
+  colCounts: [1, 2, 1, 1, 1, 2, 1, 2],
+  solution: squares(["......#.", ".#.#....", ".......#", "#...#...", "..#....#", ".....#..", ".#......", ".....#.."]),
+  techniqueCap: "lineBlock",
+}
 // Anchors are printed, not tapped, so the squares a test names are the free ones, in board order.
 const free = puzzle.anchors.flatMap((anchor, cell) => (anchor ? [] : [cell]))
 

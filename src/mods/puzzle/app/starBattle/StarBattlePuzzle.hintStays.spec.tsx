@@ -2,8 +2,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest"
 import { cleanup, render, within } from "@testing-library/react"
 import { act } from "react"
-import { STAR_BATTLE_CONFIG } from "@/mods/puzzle/game/starBattle/starBattleConfig"
-import { generateStarBattle } from "@/mods/puzzle/game/starBattle/generateStarBattle"
+import type { StarBattlePuzzleWithAnswer } from "@/mods/puzzle/game/starBattle/generateStarBattle"
 import { buildStarBattleHint, type StarBattleHint } from "./starBattleHint"
 import { StarBattlePuzzle } from "./StarBattlePuzzle"
 
@@ -36,7 +35,14 @@ const hintOf = (action: "place" | "ruleOut" | undefined, decided: number[], key 
   focus: decided[0],
 })
 
-const puzzle = generateStarBattle(3, STAR_BATTLE_CONFIG.starter)
+/** A 5×5 one-star board, a row of digits per row of regions and a "#" per star. */
+const puzzle: StarBattlePuzzleWithAnswer = {
+  size: 5,
+  quota: 1,
+  regions: ["44031", "42331", "42233", "44333", "44444"].flatMap(row => [...row].map(Number)),
+  solution: ["..#..", "....#", ".#...", "...#.", "#...."].flatMap(row => [...row].map(square => square === "#")),
+  techniqueCap: "groupTight",
+}
 
 const open = (hint: StarBattleHint) => {
   vi.mocked(buildStarBattleHint).mockReset()
