@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { formulaToString } from "@/game/formulas/formulas"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
+import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import {
   bitten,
@@ -105,10 +106,16 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
   const finished = isSolved(puzzle, path)
   const wanted = wantedStep(puzzle, path)
 
-  const hint = () =>
+  // The sentence as it was when the player asked: it names a column's stone, and a step ends it anyway.
+  const {
+    hint: frozen,
+    freeze,
+    drop,
+  } = useFrozenHint(() =>
     wanted === undefined
       ? undefined
       : t(`crocodile.hint.${puzzle.signs[facing]}`, { value: puzzle.columns[facing][wanted].value })
+  )
 
   return (
     <PuzzleFamilyShell
@@ -116,7 +123,9 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
       onCancel={onCancel}
       solved={finished}
       onReset={() => setState(resetCrossing)}
-      hint={hint}
+      hint={() => frozen}
+      onHintRevealed={freeze}
+      onHintHidden={drop}
       idleMs={hintIdleDelay(difficulty)}
       title={t("crocodile.name")}
       goal={t("crocodile.goal")}
@@ -130,8 +139,10 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
     >
       {({ reportInput }) => {
         const tapStone = (column: number, stone: number) => {
-          reportInput()
-          if (bittenAt || column !== facing) return
+          // A tap the pit ignores changes nothing, so it only looks.
+          const ignored = bittenAt || column !== facing
+          reportInput(ignored ? "look" : "move")
+          if (ignored) return
           if (stone === wanted) return setState(stepOnto(stone))
           trap.takeTrapDamage()
           setState(bitten(column, stone))

@@ -15,9 +15,11 @@ import {
   pickUpHidato,
   stepHidato,
   undoHidato,
+  type HidatoState,
 } from "@/mods/puzzle/game/hidato/hidatoState"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { useCelebration } from "@/mods/core/app/useCelebration"
+import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { skinFor } from "./skins"
@@ -42,10 +44,13 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
   const [state, setState] = usePuzzleState(() => createHidatoState(puzzle), puzzle)
   const last = puzzle.cells.length
 
-  const hint = useMemo(
+  // Derived on every change: whether there is a hint at all is what shows the button. What the player is
+  // shown is the one from the moment they asked, held until a move that changes a number ends it.
+  const available = useMemo(
     () => buildHidatoHint(puzzle, state.values, puzzle.solution, puzzle.pruning),
     [puzzle, state.values]
   )
+  const { hint, freeze, drop } = useFrozenHint(() => available)
 
   /**
    * The run flies the comb before the shell is told: 1 lights, then 2, then 3, to the last cell — the
@@ -69,14 +74,18 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
       onReset={() => setState(createHidatoState(puzzle))}
       undo={{ onPress: () => setState(undoHidato), enabled: canUndoHidato(state) && !finished }}
       hint={
-        hint &&
-        [
-          t(`hidato.hint.${skin.name}.reason.${hint.key}`, hint.params),
-          hint.place !== undefined && t(`hidato.hint.${skin.name}.action.place`, { value: hint.place }),
-        ]
-          .filter(Boolean)
-          .join("\n")
+        available &&
+        (() =>
+          hint &&
+          [
+            t(`hidato.hint.${skin.name}.reason.${hint.key}`, hint.params),
+            hint.place !== undefined && t(`hidato.hint.${skin.name}.action.place`, { value: hint.place }),
+          ]
+            .filter(Boolean)
+            .join("\n"))
       }
+      onHintRevealed={freeze}
+      onHintHidden={drop}
       idleMs={hintIdleDelay(difficulty)}
       title={t(`hidato.name.${skin.name}`)}
       goal={t(`hidato.goal.${skin.name}`, { last })}
@@ -95,7 +104,7 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
           lit={lit}
           onPickUp={key => {
             if (finished) return
-            reportInput()
+            reportInput("look")
             // A press picks the run up and decides nothing else: what the touch meant is known only
             // once it lifts, and reading it as a tap here rubbed out the very number a drag was
             // starting from (design doc §6.5).
@@ -103,24 +112,27 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
           }}
           onTap={(key, wasPen) => {
             if (finished) return // the run is flying; nothing may change under it
-            reportInput()
             // Which of the three a tap is follows from what the cell holds and whether the run was
             // ALREADY standing there. Tapping the number the run is on takes it back off — backing out
             // of a wrong turn is the same gesture as walking into it — but a given can only be put
             // down, never taken off, and a cell the press has just picked the run up at is done.
-            setState(prev =>
-              prev.values[key] === undefined
-                ? stepHidato(prev, key, puzzle)
+            const decide = (from: HidatoState) =>
+              from.values[key] === undefined
+                ? stepHidato(from, key, puzzle)
                 : !wasPen
-                  ? prev
+                  ? from
                   : puzzle.givens[key] === undefined
-                    ? eraseHidato(prev, key, puzzle)
-                    : armHidato(prev, key)
-            )
+                    ? eraseHidato(from, key, puzzle)
+                    : armHidato(from, key)
+            // Arming the run on a number only picks it up: no value changed, so a hint stays. Read off the
+            // board as drawn; the update itself still goes through the latest state.
+            reportInput(decide(state).values === state.values ? "look" : "move")
+            setState(decide)
           }}
           onDrag={key => {
             if (finished) return
-            reportInput()
+            // A drag that goes nowhere writes nothing, so a hint stays through it.
+            reportInput(stepHidato(state, key, puzzle).values === state.values ? "look" : "move")
             // Every reading a drag has is the board's own: carrying the run on, passing through what
             // is already written, and backing out of the last turn are all one step along the run
             // (stepHidato), which is the only thing that knows which way it is being counted.
