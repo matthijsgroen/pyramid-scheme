@@ -69,4 +69,57 @@ describe("the next thing to say to the player", () => {
     const hint = buildSudokuHint(gentle, gentle.givens, noNotes(), gentle.solution, gentle.techniqueCap)
     expect(hint?.key).toBe("nakedSingle")
   })
+
+  describe("what each square is asked for", () => {
+    it("maps the placed square to the value to write", () => {
+      const { row, col } = anEmptySquare()
+      const notes = noNotes()
+      notes[row][col] = [board.solution[row][col]]
+      const hint = buildSudokuHint(board, start(), notes, board.solution, board.techniqueCap)
+      expect(hint?.targets).toEqual(new Map([[sudokuCellKey(row, col), [board.solution[row][col]]]]))
+    })
+
+    it("maps every square a rule out settles to the notes to rub out of it", () => {
+      // Walk a board with the solution's own values, collecting every rule out met on the way.
+      const ruleOutsOf = (seed: number) => {
+        const puzzle = generateSudoku(seed, SUDOKU_CONFIG.wizard)
+        const values = puzzle.givens.map(row => [...row])
+        const found: NonNullable<ReturnType<typeof buildSudokuHint>>[] = []
+        for (let step = 0; step < 40; step++) {
+          const hint = buildSudokuHint(puzzle, values, noNotes(), puzzle.solution, puzzle.techniqueCap)
+          if (!hint?.move) break
+          if (hint.move.kind === "place") {
+            values[hint.focus.row][hint.focus.col] = hint.move.value
+            continue
+          }
+          found.push(hint)
+          // Settle some other empty square from the solution so the walk moves on.
+          const open = values.flatMap((row, r) =>
+            row.flatMap((v, c) => (v === undefined && !hint.cells.has(sudokuCellKey(r, c)) ? [{ r, c }] : []))
+          )
+          if (!open.length) break
+          values[open[0].r][open[0].c] = puzzle.solution[open[0].r][open[0].c]
+        }
+        return found
+      }
+      const ruleOuts = [1, 2, 3, 4, 5, 6, 7, 8].flatMap(ruleOutsOf)
+      expect(ruleOuts.length, "no wizard board reaches a rule out").toBeGreaterThan(0)
+      for (const hint of ruleOuts) {
+        expect(new Set(hint.targets?.keys())).toEqual(hint.cells)
+        for (const values of hint.targets!.values()) expect(values).toEqual([hint.params.value])
+        expect(hint.targets!.get(sudokuCellKey(hint.focus.row, hint.focus.col))).toContain(hint.move?.value)
+      }
+      expect(
+        ruleOuts.some(hint => hint.cells.size > 1),
+        "no board rules out in several squares"
+      ).toBe(true)
+    }, 60000)
+
+    it("has no targets for a mistake", () => {
+      const { row, col } = anEmptySquare()
+      const values = start()
+      values[row][col] = (board.solution[row][col] % 6) + 1
+      expect(buildSudokuHint(board, values, noNotes(), board.solution, board.techniqueCap)?.targets).toBeUndefined()
+    })
+  })
 })

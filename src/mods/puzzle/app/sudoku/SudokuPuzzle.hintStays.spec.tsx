@@ -156,6 +156,33 @@ describe("SudokuPuzzle hint that stays", () => {
       expect(shown()).toBe(false)
     })
 
+    it("ends the hint when the hinted digit is pencilled instead of written", () => {
+      const { reveal, notes, press, shown } = setup(hintOf("place", [[A, [4]]]))
+      reveal()
+      notes()
+      press("4")
+      expect(shown()).toBe(false)
+    })
+
+    it("ends the hint when the hinted digit is pressed twice, so it is written and cleared", () => {
+      const { reveal, press, shown } = setup(hintOf("place", [[A, [4]]]))
+      reveal()
+      press("4")
+      press("4")
+      expect(shown()).toBe(false)
+    })
+
+    it("completes the hint when the hinted square is picked first and the digit entered after", () => {
+      const { reveal, select, press, shown } = setup(hintOf("place", [[A, [4]]]))
+      reveal()
+      select(B)
+      expect(shown()).toBe(true)
+      select(A)
+      expect(shown()).toBe(true)
+      press("4")
+      expect(shown()).toBe(false)
+    })
+
     it("ends the hint when another digit is entered", () => {
       const { reveal, press, shown } = setup(hintOf("place", [[A, [4]]]))
       reveal()
