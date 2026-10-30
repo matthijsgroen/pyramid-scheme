@@ -79,13 +79,31 @@ also turns `touch` into a hint answered after every star. The same reasoning app
 
 ## Entry tier
 
-Not starter. The final entry tier per family comes from the separate tier session. Until then (Claude's call):
+Not starter. One new family per empty tier (user approved, 2026-10-30), so no tier introduces more than one new rule
+set. The tier session may still move them.
 
-- `regionless-battle`: junior 6×6 → wizard 9×9, with fewer walls as tiers rise (walls are the gifts, the way small
-  regions are in star battle §5).
-- `regionless-twin-battle`: 10×10 only, expert and up; tiers vary walls and required rungs, like twin stars §11.2.
-- `pair-puzzle`: junior about 6×6 → wizard about 10×10; upper tiers get harder through ambiguous pairings and the
-  advanced rungs, not only through size.
+| family                   | enters | boards                                                                  |
+| ------------------------ | ------ | ----------------------------------------------------------------------- |
+| `regionless-battle`      | expert | about 7×7 at expert → 9×9 at wizard; fewer walls as tiers rise           |
+| `pair-puzzle`            | master | about 8×8 at master → 10×10 at wizard; harder through ambiguous pairings |
+| `regionless-twin-battle` | wizard | 10×10                                                                   |
+
+Walls are the regionless families' gifts, the way small regions are in star battle §5. The first tier a family
+enters at is its teaching tier: easiest settings of that family, whatever the tier's name.
+
+Why these tiers, measured on `camp/home-and-loot` at `f9a63d65` (every pyramid floor carved, keyed by the floor's own
+difficulty):
+
+| tier    | pyramid floors | walkable cells/floor | rooms/floor | rooms | puzzle families | new |
+| ------- | -------------- | -------------------- | ----------- | ----- | --------------- | --- |
+| starter | 15             | 47                   | 5.5         | 82    | 5               | 5   |
+| junior  | 20             | 74                   | 7.8         | 155   | 13              | 8   |
+| expert  | 25             | 104                  | 14.9        | 373   | 13              | 0   |
+| master  | 42             | 133                  | 10.9        | 457   | 13              | 0   |
+| wizard  | 69             | 115                  | 10.8        | 745   | 13              | 0   |
+
+Rooms include reflex traps. Junior already introduces 8 rule sets; expert to wizard introduce none while rooms per
+family grow from about 29 to 57. Tombs stay at 5–6 rooms per floor at every tier and do not scale.
 
 Build every family so its tier table can start at any tier, and keep each tier's settings in one config table (like
 `starBattleConfig.ts`), so the tier session only edits `minTier` and the table.
@@ -161,10 +179,11 @@ position-only uniqueness.
 - Exact rung list after measuring.
 - SVG drawings for scarab, mummy and sarcophagus, and the sandstone floor palette.
 - Order of work. Suggested: regionless battle → regionless twin battle → pair puzzle.
+- Note the measurements above are from `camp/home-and-loot`; build on that branch once it lands on main, or rebase onto it.
 
 ## Follow-up (not this project)
 
-- Tier session: which families enter at which tier, across all families.
+- Tier session: which families enter at which tier, across all families. Junior introducing 8 rule sets at once is the first thing to look at.
 - More skins for all three families.
 
 ## Sources
