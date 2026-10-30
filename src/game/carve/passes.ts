@@ -101,6 +101,6 @@ export const finishAttempt: Finish = (prep, state) => {
     standPieces(prep, decided, grid) ??
     (blocks.length ? ringFault(grid, blocks) : undefined)
   if (refusal) return refusal
-  const laid = placePrefabs(prep, finish(prep, grid), !state.lay)
+  const laid = placePrefabs(prep, finish(prep, grid), blocks.length > 0)
   return blocks.length && !("retry" in laid) && !("fatal" in laid) ? croppedToBox(laid) : laid
 }

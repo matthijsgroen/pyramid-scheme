@@ -269,10 +269,11 @@ export const roomAsks = (prep: FloorPrep): RoomAsk[] => {
     const prefab = config.prefabs?.[room]
     if (!prefab) return
     const places = Object.values(prefab.specials)
+    const hubDoors = shapesOf(prefab).some(shape => shape.rays.length >= 3)
     for (let k = 0; k < max; k++) {
       const end = ends.find(si => !taken.has(si) && places.includes(endHolds(sideSections[si])))
       const endFits = end !== undefined && hubs <= hubRoom(taken.size + 1)
-      const hubFits = hubs < hubRoom(taken.size)
+      const hubFits = hubDoors && hubs < hubRoom(taken.size)
       const place: Place | undefined =
         endFits && (central === 0 || !hubFits) ? "end" : hubFits ? "main" : endFits ? "end" : undefined
       if (place === undefined) break
@@ -673,8 +674,8 @@ export const croppedToBox = (grid: FloorGrid): FloorGrid => {
   if (top === Infinity) return grid
   const dr = top - (top % NODE_STEP)
   const dc = left - (left % NODE_STEP)
-  const rows = bottom - dr + 1
-  const cols = right - dc + 1
+  const rows = bottom - dr + 1 + ((bottom - dr) % 2)
+  const cols = right - dc + 1 + ((right - dc) % 2)
   if (dr === 0 && dc === 0 && rows === grid.rows && cols === grid.cols) return grid
   const at = ([r, c]: readonly [number, number]): [number, number] => [r - dr, c - dc]
   const atKey = (key: string) => at(cellOf(key)).join(",")

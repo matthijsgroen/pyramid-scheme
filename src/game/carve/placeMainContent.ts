@@ -1,5 +1,5 @@
 import { spreadContentIndices } from "./grid"
-import { blockNodes } from "./reserveRooms"
+import { blockNodes, blockZone } from "./reserveRooms"
 import { pass } from "./state"
 
 /**
@@ -47,6 +47,7 @@ export const placeMainContent = pass(
     const placed: number[] = state.lay ? [...state.lay.mainSteps] : []
     if (blocks.length > 0 && !state.lay) {
       const held = blockNodes(blocks)
+      const zone = blockZone(blocks)
       const pinnedAt = new Map<number, number>()
       for (const { on } of blocks)
         if ("main" in on && on.pin !== undefined) pinnedAt.set(on.pin + (leverOnMain ? 1 : 0), on.main)
@@ -63,7 +64,10 @@ export const placeMainContent = pass(
           mainPath.length - 1,
           ...[...pinnedAt].filter(([later]) => later > slot).map(([, step]) => step)
         )
-        const free = (index: number) => !seams.has(index) && !held.has(`${mainPath[index][0]},${mainPath[index][1]}`)
+        const free = (index: number) => {
+          const key = `${mainPath[index][0]},${mainPath[index][1]}`
+          return !seams.has(index) && !held.has(key) && !zone.has(key)
+        }
         let index = Math.max(wanted, before + 1)
         while (index < bound && !free(index)) index += 1
         if (index >= bound) for (index = Math.min(wanted, bound) - 1; index > before && !free(index);) index -= 1

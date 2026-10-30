@@ -3,8 +3,9 @@ import { carvedFloorDigest } from "@/data/tierFingerprints"
 import { parsePrefab } from "../prefabNotation"
 import type { FloorConfig, FloorGrid, GridCell, PrefabRoom, RoomCell, SideSection } from "../siteTypes"
 import { assembleFloor } from "./assembleFloor"
-import { plainFloor } from "./carveFixtures"
-import { ringFault, type ReservedBlock } from "./reserveRooms"
+import { plainFloor, prepOf } from "./carveFixtures"
+
+import { ringFault, roomAsks, type ReservedBlock } from "./reserveRooms"
 
 const HALL = parsePrefab(
   `room hall
@@ -195,5 +196,43 @@ describe("ringFault", () => {
     expect(ringFault(floor({}), [block, beside])).toEqual({
       retry: [expect.objectContaining({ room: "den", why: "its ring meets room vault" })],
     })
+  })
+})
+
+describe("a room that no ask reserves", () => {
+  const LANE = parsePrefab(
+    `room lane
+tier starter
+layout
+# # # # #
+# . . . #
+d . s . #
+# . . . #
+# # # # #
+p floor pillar
+s stop`,
+    "lane"
+  )
+  const laneFloor = (min: number) =>
+    plainFloor({
+      pathPuzzles: 1,
+      sideSections: [side(), side(), side()],
+      prefabs: { lane: LANE },
+      prefabPlacements: [{ room: "lane", min, max: 1, central: 1 }],
+    })
+
+  it("a hall with two doors is never asked to be a hub", () => {
+    expect(roomAsks(prepOf(laneFloor(0))).filter(ask => "central" in ask.at)).toHaveLength(0)
+  })
+
+  it("a room no ask reserves is still asked for after the dig, so a min it cannot meet refuses naming it", () => {
+    const result = assembleFloor(
+      "site",
+      plainFloor({ prefabs: { hall: HALL }, prefabPlacements: [{ room: "hall", min: 1, max: 1, central: 0 }] }),
+      7
+    )
+    expect(result.success).toBe(false)
+    if (result.success) return
+    expect(result.reasons).toContainEqual(expect.objectContaining({ type: "prefabsNotPlaced", room: "hall" }))
   })
 })
