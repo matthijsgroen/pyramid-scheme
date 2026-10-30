@@ -1,5 +1,7 @@
 import { useMemo, type FC } from "react"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
+import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
+import { classifyItemMove, openItems, type Decision } from "@/mods/core/app/markMoveEffect"
 import { useTranslation } from "react-i18next"
 import { SudokuBoard } from "@/mods/puzzle/app/sudoku/SudokuBoard"
 import { SudokuPad } from "@/mods/puzzle/app/sudoku/SudokuPad"
@@ -8,6 +10,7 @@ import { buildSudokuHint } from "@/mods/puzzle/app/sudoku/sudokuHint"
 import { useSudokuEntry } from "@/mods/puzzle/app/sudoku/useSudokuEntry"
 import { skinFor } from "@/mods/puzzle/app/sudoku/skins"
 import type { SudokuPuzzle as SudokuPuzzleData } from "@/mods/puzzle/game/sudoku/generateSudoku"
+import type { SudokuCell } from "@/mods/puzzle/game/sudoku/sudokuState"
 import {
   canUndoSudoku,
   clearSudokuCell,
@@ -16,14 +19,38 @@ import {
   sudokuValues,
   setSudokuValue,
   toggleSudokuNote,
+  type SudokuState,
   undoSudokuMove,
 } from "@/mods/puzzle/game/sudoku/sudokuState"
 import { isSudokuSolved, strandedNotes, sudokuConflicts } from "@/mods/puzzle/game/sudoku/sudokuStatus"
-import { boxCount } from "@/mods/puzzle/game/sudoku/techniques"
+import { boxCount, sudokuCellKey } from "@/mods/puzzle/game/sudoku/techniques"
 import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
-import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
+import { hintIdleDelay, type InputEffect } from "@/mods/core/app/useHintAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"
+
+/**
+ * What a hint asks of one square. A place wants the value written; a rule out wants the named notes gone, and
+ * a note rubbed out on the way follows it, but one added or any value written does not.
+ */
+const decisionFor = (kind: "place" | "ruleOut", targets: readonly number[]): Decision<SudokuCell> =>
+  kind === "place"
+    ? {
+        holds: cell => cell.value === targets[0],
+        follows: (_before, after) => after.value === targets[0],
+      }
+    : {
+        holds: cell => !targets.some(value => cell.notes.includes(value)),
+        follows: (before, after) =>
+          before.value === after.value &&
+          after.notes.every(value => before.notes.includes(value)) &&
+          before.notes.filter(value => !after.notes.includes(value)).every(value => targets.includes(value)),
+      }
+
+const cellAt = (cells: SudokuCell[][], key: string): SudokuCell => {
+  const [row, col] = key.split(",").map(Number)
+  return cells[row][col]
+}
 
 type Props = {
   puzzle: SudokuPuzzleData
@@ -65,10 +92,20 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
   const twinned = selected ? values[selected.row][selected.col] : undefined
   const conflicts = useMemo(() => sudokuConflicts(puzzle, values), [puzzle, values])
   const stranded = useMemo(() => strandedNotes(puzzle, values, sudokuNotes(state)), [puzzle, values, state])
-  const hint = useMemo(
+  // Derived on every change: whether there is a hint at all is what shows the button. What the player is
+  // shown is the one from the moment they asked, held until a move ends it, so a hint that names several
+  // squares keeps naming the same ones while they are carried out.
+  const available = useMemo(
     () => buildSudokuHint(puzzle, sudokuValues(state), sudokuNotes(state), solution, techniqueCap),
     [puzzle, state, solution, techniqueCap]
   )
+  const { hint, freeze, drop } = useFrozenHint(() => available)
+  const decisions = new Map(
+    hint?.move && hint.targets
+      ? [...hint.targets].map(([cell, targets]) => [cell, decisionFor(hint.move!.kind, targets)] as const)
+      : []
+  )
+  const open = hint ? openItems(hint.cells, decisions, cell => cellAt(state.cells, cell)) : undefined
 
   /**
    * The board finishes itself before the shell is told, in whichever way its face finishes: a chamber
@@ -103,10 +140,28 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
   const counted = skin.scroll ? undefined : reached
   const rolled = skin.scroll ? reached : undefined
 
-  const enterValue = (value: number) => {
+  /** Tells the shell what a move did to the hint on screen: a no-op only looks, a hinted step follows or completes it. */
+  const effectOf = (next: SudokuState, row: number, col: number) => {
+    const cell = sudokuCellKey(row, col)
+    const was = state.cells[row][col]
+    const is = next.cells[row][col]
+    const changed = was.value !== is.value || was.notes.join() !== is.notes.join()
+    if (!hint) return changed ? ("move" as const) : ("look" as const)
+    return classifyItemMove(
+      hint.cells,
+      decisions,
+      changed ? [cell] : [],
+      item => cellAt(state.cells, item),
+      item => cellAt(next.cells, item)
+    )
+  }
+
+  const enterValue = (value: number, reportInput: (effect: InputEffect) => void) => {
     if (!selected) return
     const { row, col } = selected
-    setState(prev => (pencil ? toggleSudokuNote(prev, row, col, value) : setSudokuValue(prev, row, col, value)))
+    const next = pencil ? toggleSudokuNote(state, row, col, value) : setSudokuValue(state, row, col, value)
+    reportInput(effectOf(next, row, col))
+    setState(next)
   }
 
   return (
@@ -120,27 +175,33 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
       }}
       undo={{ onPress: () => setState(undoSudokuMove), enabled: canUndoSudoku(state) && !finished }}
       hint={
-        hint &&
-        [
-          // The value a reason is about reaches the sentence as the skin's own token, never as a
-          // number: over a register, "4" would be the one thing on the screen that is not a sign. It is
-          // the same character the squares show, which is what the bundled face guarantees.
-          t(`sudoku.hint.${skin.name}.reason.${hint.key}`, {
-            token: hint.params.value === undefined ? undefined : skin.token(hint.params.value),
-          }),
-          hint.move &&
-            t(`sudoku.hint.${skin.name}.action.${hint.move.kind}`, {
-              count: hint.move.count,
-              token: skin.token(hint.move.value),
+        available &&
+        (() =>
+          hint &&
+          [
+            // The value a reason is about reaches the sentence as the skin's own token, never as a
+            // number: over a register, "4" would be the one thing on the screen that is not a sign. It is
+            // the same character the squares show, which is what the bundled face guarantees.
+            t(`sudoku.hint.${skin.name}.reason.${hint.key}`, {
+              token: hint.params.value === undefined ? undefined : skin.token(hint.params.value),
             }),
-        ]
-          .filter(Boolean)
-          .join("\n")
+            hint.move &&
+              t(`sudoku.hint.${skin.name}.action.${hint.move.kind}`, {
+                count: hint.move.count,
+                token: skin.token(hint.move.value),
+              }),
+          ]
+            .filter(Boolean)
+            .join("\n"))
       }
       idleMs={hintIdleDelay(difficulty)}
       // Reading a hint and then hunting for the square it means is the whole gap between advice and
       // acting on it, so asking for one aims the board and the pad at that square.
-      onHintRevealed={() => hint && focusCell(hint.focus.row, hint.focus.col)}
+      onHintRevealed={() => {
+        freeze()
+        if (available) focusCell(available.focus.row, available.focus.col)
+      }}
+      onHintHidden={drop}
       title={t(`sudoku.name.${skin.name}`)}
       goal={t(`sudoku.goal.${skin.name}`)}
       rules={<SudokuRules skin={skin.name} />}
@@ -154,14 +215,14 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
             conflicts={conflicts}
             stranded={stranded}
             selected={selected}
-            hatched={hintVisible ? hint?.cells : undefined}
+            hatched={hintVisible ? open : undefined}
             marked={hintVisible ? hint?.evidence : undefined}
             twinned={twinned}
             counted={counted}
             rolled={rolled}
             onSelect={(row, col) => {
               if (finished) return // the board is reading itself back; nothing may change under it
-              reportInput()
+              reportInput("look")
               selectCell(row, col)
             }}
           />
@@ -171,17 +232,15 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
             pencil={pencil}
             exhausted={exhaustedValues(values, size)}
             disabled={!selected || finished}
-            onValue={value => {
-              reportInput()
-              enterValue(value)
-            }}
+            onValue={value => enterValue(value, reportInput)}
             onErase={() => {
               if (finished || !selected) return
-              reportInput()
-              setState(prev => clearSudokuCell(prev, selected.row, selected.col))
+              const next = clearSudokuCell(state, selected.row, selected.col)
+              reportInput(effectOf(next, selected.row, selected.col))
+              setState(next)
             }}
             onTogglePencil={() => {
-              reportInput()
+              reportInput("look")
               togglePencil()
             }}
           />

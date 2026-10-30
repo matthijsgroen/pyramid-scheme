@@ -31,6 +31,11 @@ export type SudokuHint = {
   focus: SudokuCellRef
   /** Absent for a mistake, which asks for nothing: the way out of a wrong mark is the player's to find. */
   move?: SudokuMove
+  /**
+   * What each square in `cells` is asked for: the value to write (one) for a place, the notes to rub
+   * out for a rule out. Absent with `move`, so a mistake names squares but decides nothing checkable.
+   */
+  targets?: ReadonlyMap<string, readonly number[]>
 }
 
 // Several rungs read as a different sentence per group ("nowhere else in this row" against "nowhere
@@ -52,6 +57,14 @@ const moveOf = (step: SudokuStep): SudokuMove => {
   }
 }
 
+const targetsOf = (step: SudokuStep): ReadonlyMap<string, readonly number[]> =>
+  new Map(
+    step.decisions.map(decision => [
+      sudokuCellKey(decision.row, decision.col),
+      decision.kind === "place" ? [decision.value] : decision.values,
+    ])
+  )
+
 const asHint = (step: SudokuStep): SudokuHint => ({
   key: stepKey(step),
   params: step.params,
@@ -59,6 +72,7 @@ const asHint = (step: SudokuStep): SudokuHint => ({
   evidence: keysOf(step.evidence ?? []),
   focus: step.cells[0],
   move: moveOf(step),
+  targets: targetsOf(step),
 })
 
 /**

@@ -1,5 +1,6 @@
 import { useCallback, useMemo, type FC } from "react"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
+import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
 import { useTranslation } from "react-i18next"
 import { FutoshikiBoard } from "@/mods/puzzle/app/futoshiki/FutoshikiBoard"
 import { FutoshikiPad } from "@/mods/puzzle/app/futoshiki/FutoshikiPad"
@@ -47,10 +48,14 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
   const values = useMemo(() => futoshikiValues(state), [state])
   const conflicts = useMemo(() => futoshikiConflicts(puzzle, values), [puzzle, values])
   const stranded = useMemo(() => strandedNotes(puzzle, values, futoshikiNotes(state)), [puzzle, values, state])
-  const hint = useMemo(
+  // Derived on every change: whether there is a hint at all is what shows the button. What the player is
+  // shown is the one from the moment they asked, held until a move ends it. It decides nothing checkable,
+  // so every change to the board ends it and only looking keeps it.
+  const available = useMemo(
     () => buildFutoshikiHint(puzzle, futoshikiValues(state), futoshikiNotes(state), solution, techniqueCap),
     [puzzle, state, solution, techniqueCap]
   )
+  const { hint, freeze, drop } = useFrozenHint(() => available)
 
   /**
    * The board finishes itself before the shell is told, by COUNTING UP: the whole grid rolls to 1, the squares
@@ -97,11 +102,15 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
         clearSelection()
       }}
       undo={{ onPress: () => setState(undoFutoshikiMove), enabled: canUndoFutoshiki(state) && !finished }}
-      hint={hint && t(`futoshiki.hint.${hint.key}`, hint.params)}
+      hint={available && (() => hint && t(`futoshiki.hint.${hint.key}`, hint.params))}
       idleMs={hintIdleDelay(difficulty)}
       // Reading a hint and then hunting for the square it means is the whole gap between advice and
       // acting on it, so asking for one aims the board and the pad at that square.
-      onHintRevealed={() => hint && focusCell(hint.focus.row, hint.focus.col)}
+      onHintRevealed={() => {
+        freeze()
+        if (available) focusCell(available.focus.row, available.focus.col)
+      }}
+      onHintHidden={drop}
       title={t("futoshiki.name")}
       goal={t("futoshiki.goal")}
       rules={<FutoshikiRules />}
@@ -119,7 +128,7 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
             counted={counted}
             onSelect={(row, col) => {
               if (finished) return // the board is finishing; nothing may change under the celebration
-              reportInput()
+              reportInput("look")
               selectCell(row, col)
             }}
           />
@@ -138,7 +147,7 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
               eraseCell()
             }}
             onTogglePencil={() => {
-              reportInput()
+              reportInput("look")
               togglePencil()
             }}
           />
