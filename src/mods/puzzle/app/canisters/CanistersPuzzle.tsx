@@ -121,8 +121,9 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, ro
             onPour={to => {
               // A pour the board refuses (nothing to move, budget spent) only changes what is held, so a
               // hint stays through it.
-              reportInput(pourInto(state, puzzle, to).volumes === state.volumes ? "look" : "move")
-              setState(current => pourInto(current, puzzle, to))
+              const next = pourInto(state, puzzle, to)
+              reportInput(next.volumes === state.volumes ? "look" : "move")
+              setState(next)
             }}
             onClaim={canister => {
               reportInput()

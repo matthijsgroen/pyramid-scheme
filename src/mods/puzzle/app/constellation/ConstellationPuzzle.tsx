@@ -6,7 +6,7 @@ import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { useCelebration } from "@/mods/core/app/useCelebration"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
-import { classifyItemMove, openItems, type Decision } from "@/mods/core/app/markMoveEffect"
+import { classifyItemMove, openFocus, openItems, type Decision } from "@/mods/core/app/markMoveEffect"
 import {
   canUndoConstellation,
   constellationSolved,
@@ -58,9 +58,10 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
   const { hint, freeze, drop } = useFrozenHint(() => buildConstellationHint(puzzle, state))
   const decisions = new Map((hint?.bounds ?? []).map(bound => [bound.pair, decisionFor(bound)]))
   const open = hint ? openItems(toDo(hint), decisions, pair => state.lines[pair]) : undefined
+  // Every pair stays marked except a line already drawn as the hint asked.
   const shown =
     hint && open ? new Set([...hint.pairs].filter(pair => open.has(pair) || !toDo(hint).includes(pair))) : undefined
-  const focus = hint && open && hint.focus !== undefined && !shown?.has(hint.focus) ? [...open][0] : hint?.focus
+  const focus = hint && shown ? openFocus(hint.focus, shown) : undefined
 
   /**
    * The board finishes itself before the shell is told, one node at a time.
@@ -133,10 +134,7 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
                   )
                 : "move"
             )
-            // From the board it replaces rather than from the render's own copy: two fingers releasing
-            // inside one batch would otherwise both read the same board, and one of the two lines would be
-            // dropped. Undo has the same reason to care — its stack is part of that board.
-            setState(previous => cycleConstellationLine(puzzle, previous, pair))
+            setState(next)
           }}
         />
       )}

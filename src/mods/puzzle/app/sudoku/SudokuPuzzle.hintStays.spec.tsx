@@ -38,7 +38,7 @@ const hintOf = (
 })
 
 const setup = (hint: SudokuHint) => {
-  const current = { hint }
+  const current: { hint: SudokuHint | undefined } = { hint }
   vi.mocked(buildSudokuHint).mockReset()
   vi.mocked(buildSudokuHint).mockImplementation(() => current.hint)
   const { container } = render(
@@ -59,6 +59,10 @@ const setup = (hint: SudokuHint) => {
     reveal: () => {
       act(() => within(container).getByRole("button", { name: /hint/i }).click())
       current.hint = hintOf("place", [[C, [6]]], "second")
+    },
+    /** From here on the board has nothing left to say. */
+    exhaust: () => {
+      current.hint = undefined
     },
     shown: () => (container.textContent ?? "").includes("reason.first"),
     shownSecond: () => (container.textContent ?? "").includes("reason.second"),
@@ -117,6 +121,13 @@ describe("SudokuPuzzle hint that stays", () => {
       view.press("1")
       expect(view.shown()).toBe(true)
       expect(view.hatched()).toEqual([at(B)])
+    })
+
+    it("keeps the hint it revealed through a following move after which the board has no hint of its own", () => {
+      const view = start()
+      view.exhaust()
+      view.press("1")
+      expect(view.shown()).toBe(true)
     })
 
     it("ends the hint when the last hinted note is rubbed out", () => {

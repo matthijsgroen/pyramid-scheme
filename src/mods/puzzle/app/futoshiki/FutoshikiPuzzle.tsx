@@ -97,7 +97,7 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
         clearSelection()
       }}
       undo={{ onPress: () => setState(undoFutoshikiMove), enabled: canUndoFutoshiki(state) && !finished }}
-      hint={available && (() => hint && t(`futoshiki.hint.${hint.key}`, hint.params))}
+      hint={(available ?? hint) && (() => hint && t(`futoshiki.hint.${hint.key}`, hint.params))}
       idleMs={hintIdleDelay(difficulty)}
       // Reading a hint and then hunting for the square it means is the whole gap between advice and
       // acting on it, so asking for one aims the board and the pad at that square.

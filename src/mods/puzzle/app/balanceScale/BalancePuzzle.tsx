@@ -5,7 +5,7 @@ import type { Difficulty } from "@/data/difficultyLevels"
 import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
-import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
+import { hintIdleDelay, type InputEffect } from "@/mods/core/app/useHintAvailability"
 import { computeBalanceLines, isBalanceSolved } from "@/mods/puzzle/game/balanceScale/balanceStatus"
 import {
   applySwap,
@@ -85,7 +85,7 @@ export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room
 
   // A tap that only arms a piece for a swap, or does nothing, leaves every weight and note as it was, and
   // that is no reason to take a hint down.
-  const apply = (reportInput: (effect?: "move" | "look") => void, next: BalanceState) => {
+  const apply = (reportInput: (effect: InputEffect) => void, next: BalanceState) => {
     reportInput(next.values === state.values && next.notes === state.notes ? "look" : "move")
     setState(next)
   }
@@ -99,7 +99,7 @@ export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room
       // **The hint names a piece by the symbol the board is drawing**, so it goes through the face too. A
       // sentence that typed the generator's own glyph while the board drew this room's would be pointing at
       // something not on screen — the trap sudoku's signs already paid for.
-      hint={available && (() => hint && t(`balance.hint.${hint.key}`, symbolise(hint.params, skin.symbol)))}
+      hint={(available ?? hint) && (() => hint && t(`balance.hint.${hint.key}`, symbolise(hint.params, skin.symbol)))}
       onHintRevealed={freeze}
       onHintHidden={drop}
       idleMs={hintIdleDelay(difficulty)}

@@ -74,7 +74,7 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
       onReset={() => setState(createHidatoState(puzzle))}
       undo={{ onPress: () => setState(undoHidato), enabled: canUndoHidato(state) && !finished }}
       hint={
-        available &&
+        (available ?? hint) &&
         (() =>
           hint &&
           [
@@ -124,8 +124,9 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
                   : puzzle.givens[key] === undefined
                     ? eraseHidato(from, key, puzzle)
                     : armHidato(from, key)
-            // Arming the run on a number only picks it up: no value changed, so a hint stays. Read off the
-            // board as drawn; the update itself still goes through the latest state.
+            // Arming the run on a number only picks it up: no value changed, so a hint stays. Unlike a click,
+            // a tap is two pointer events and a drag a stream of them, which can land in one batch, so the
+            // update goes through the latest board while the hint is judged on the board as drawn.
             reportInput(decide(state).values === state.values ? "look" : "move")
             setState(decide)
           }}

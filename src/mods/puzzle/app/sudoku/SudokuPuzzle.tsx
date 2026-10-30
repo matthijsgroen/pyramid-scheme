@@ -175,7 +175,7 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
       }}
       undo={{ onPress: () => setState(undoSudokuMove), enabled: canUndoSudoku(state) && !finished }}
       hint={
-        available &&
+        (available ?? hint) &&
         (() =>
           hint &&
           [
