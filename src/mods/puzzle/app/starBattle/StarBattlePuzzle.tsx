@@ -17,11 +17,11 @@ import {
 import type { StarBattlePuzzleWithAnswer } from "@/mods/puzzle/game/starBattle/generateStarBattle"
 import { buildStarBattleHint } from "./starBattleHint"
 import { skinFor } from "./skins"
+import { StarBattleBoard } from "./StarBattleBoard"
+import { StarBattleRules } from "./StarBattleRules"
 
 /** Twin stars is its own family off this screen, so its two faces have names of their own. */
 const twinName = (skin: string) => (skin === "fields" ? "twinFields" : "twinDefault")
-import { StarBattleBoard } from "./StarBattleBoard"
-import { StarBattleRules } from "./StarBattleRules"
 
 type Props = {
   puzzle: StarBattlePuzzleWithAnswer
@@ -41,7 +41,7 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
   const [state, setState] = usePuzzleState(() => createStarBattleState(puzzle), puzzle)
   // Which place this room is. The board, the goal, the rules and every hint sentence are all drawn from it,
   // so it is resolved once.
-  const skin = skinFor(role, theme, 0, room)
+  const skin = skinFor(puzzle, role, theme, 0, room)
 
   /**
    * Whether the player has asked for a hint, which is what gates deriving one.
@@ -98,7 +98,7 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
       idleMs={hintIdleDelay(difficulty)}
       title={t(`starBattle.name.${puzzle.quota > 1 ? twinName(skin.name) : skin.name}`)}
       goal={t(`starBattle.goal.${skin.name}`, { count: puzzle.quota })}
-      rules={<StarBattleRules skin={skin.name} />}
+      rules={<StarBattleRules skin={skin.name} walls={!!puzzle.walls} />}
     >
       {({ reportInput, hintVisible }) => (
         <>

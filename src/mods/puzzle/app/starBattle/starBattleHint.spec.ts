@@ -2,9 +2,11 @@ import { describe, expect, it } from "vitest"
 import en from "../../../../../public/locales/en/common.json"
 import nl from "../../../../../public/locales/nl/common.json"
 import { difficulties } from "@/data/difficultyLevels"
-import { createStarBattleState, type CellMark } from "@/mods/puzzle/game/starBattle/starBattle"
+import { createStarBattleState, isWall, type CellMark } from "@/mods/puzzle/game/starBattle/starBattle"
 import { STAR_BATTLE_CONFIG } from "@/mods/puzzle/game/starBattle/starBattleConfig"
 import { generateStarBattle } from "@/mods/puzzle/game/starBattle/generateStarBattle"
+import { generateRegionlessBattle } from "@/mods/puzzle/game/starBattle/generateRegionlessBattle"
+import { REGIONLESS_BATTLE_CONFIG } from "@/mods/puzzle/game/starBattle/regionlessConfig"
 import { STAR_BATTLE_TECHNIQUES } from "@/mods/puzzle/game/starBattle/techniques"
 import { buildStarBattleHint } from "./starBattleHint"
 
@@ -147,6 +149,47 @@ describe("every reason the ladder can give is phrased in both locales", () => {
       const rules = locale.starBattle.rules as unknown as Record<string, Record<string, string>>
       for (const place of PLACES)
         for (const rule of ["touch", "enter"]) expect(typeof rules[place][rule], `${place}.${rule}`).toBe("string")
+    }
+  })
+})
+
+describe("hints on a regionless board", () => {
+  it("never decide or focus on a wall, from 20 player-reachable states", { timeout: 120_000 }, () => {
+    const regionless = generateRegionlessBattle(3, REGIONLESS_BATTLE_CONFIG.expert)
+    const marks: (CellMark | undefined)[] = new Array(regionless.size ** 2).fill(undefined)
+    let seen = 0
+    for (let guard = 0; guard < 20; guard++) {
+      const hint = buildStarBattleHint(regionless, { marks })
+      if (!hint) break
+      seen++
+      for (const cell of hint.decided) expect(isWall(regionless, cell), `decided ${cell}`).toBe(false)
+      expect(isWall(regionless, hint.focus!), "focus").toBe(false)
+      marks[hint.focus!] = regionless.solution[hint.focus!] ? "star" : "dark"
+    }
+    expect(seen).toBeGreaterThan(0)
+  })
+})
+
+describe("scarab field hints are phrased in both locales", () => {
+  const lines = ["row", "col"]
+  const counted = ["groupFull", "groupTight", "onlyWay", "everyWay"].flatMap(rung =>
+    lines.flatMap(line => [`${rung}.${line}_one`, `${rung}.${line}_other`])
+  )
+  const keys = [
+    "mistake",
+    "touch",
+    ...counted,
+    "lineBlock.rowsToCols",
+    "lineBlock.colsToRows",
+    ...lines.map(line => `wouldStrand.${line}`),
+    ...["ruleOut_one", "ruleOut_other", "place_one", "place_other"].map(move => `action.${move}`),
+  ]
+
+  it.each(keys)("%s reads as a sentence in English and Dutch", key => {
+    for (const locale of [en, nl]) {
+      const block = locale.starBattle.hint.scarabs as unknown as Record<string, unknown>
+      const phrase = key.startsWith("action.") ? (block.action as Record<string, string>)[key.slice(7)] : block[key]
+      expect(typeof phrase).toBe("string")
     }
   })
 })

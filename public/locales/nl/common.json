@@ -599,6 +599,11 @@
       "fields": {
         "touch": "Twee boerderijen mogen elkaar nooit raken — ook niet met een punt. Zo dicht bij elkaar delen ze één put.",
         "enter": "Tik een akker om die af te strepen, tik weer voor een boerderij, en nog eens om het te wissen."
+      },
+      "scarabs": {
+        "touch": "Twee scarabeeën mogen nooit naast elkaar staan — ook niet schuin.",
+        "walls": "De grijze stenen blokken horen bij de vloer: er kan niets op staan, en het is geen vakje.",
+        "enter": "Tik een zandsteenvakje om het af te strepen, tik weer voor een scarabee, en nog eens om het te wissen."
       }
     },
     "hint": {
@@ -699,23 +704,56 @@
           "place_one": "Zet een {{token}} op de gearceerde akker.",
           "place_other": "Zet een {{token}} op elke gearceerde akker."
         }
+      },
+      "scarabs": {
+        "mistake": "Dit teken kan niet kloppen.",
+        "touch": "Hier een {{token}}, en geen enkele scarabee mag ernaast staan — ook niet schuin.",
+        "groupFull.row_one": "Deze rij heeft zijn scarabee al.",
+        "groupFull.col_one": "Deze kolom heeft zijn scarabee al.",
+        "groupTight.row_one": "Deze rij heeft nog één zandsteenvakje over.",
+        "groupTight.row_other": "Deze rij heeft nog {{count}} zandsteenvakjes over.",
+        "groupTight.col_one": "Deze kolom heeft nog één zandsteenvakje over.",
+        "groupTight.col_other": "Deze kolom heeft nog {{count}} zandsteenvakjes over.",
+        "onlyWay.row_one": "Tussen de stenen blokken is er in deze rij nog maar één vakje voor een scarabee.",
+        "onlyWay.col_one": "Tussen de stenen blokken is er in deze kolom nog maar één vakje voor een scarabee.",
+        "everyWay.row_one": "Waar de scarabee van deze rij ook staat, hij staat altijd hier.",
+        "everyWay.col_one": "Waar de scarabee van deze kolom ook staat, hij staat altijd hier.",
+        "lineBlock.rowsToCols": "De gemarkeerde rijen hebben hun scarabeeën in de vakjes van die kolommen, dus die kolommen hebben er niets over.",
+        "lineBlock.colsToRows": "De gemarkeerde kolommen hebben hun scarabeeën in de vakjes van die rijen, dus die rijen hebben er niets over.",
+        "wouldStrand.row": "Met een scarabee hier houdt de gemarkeerde rij geen plek meer over.",
+        "wouldStrand.col": "Met een scarabee hier houdt de gemarkeerde kolom geen plek meer over.",
+        "action": {
+          "ruleOut_one": "Streep het gearceerde vakje af.",
+          "ruleOut_other": "Streep de gearceerde vakjes af.",
+          "place_one": "Zet een scarabee in het gearceerde vakje.",
+          "place_other": "Zet een scarabee in elk gearceerd vakje."
+        },
+        "groupFull.row_other": "Deze rij heeft zijn {{count}} scarabeeën al.",
+        "groupFull.col_other": "Deze kolom heeft zijn {{count}} scarabeeën al.",
+        "onlyWay.row_other": "Er is maar één manier om {{count}} scarabeeën in deze rij te zetten.",
+        "onlyWay.col_other": "Er is maar één manier om {{count}} scarabeeën in deze kolom te zetten.",
+        "everyWay.row_other": "Waar de {{count}} scarabeeën van deze rij ook staan, één staat altijd hier.",
+        "everyWay.col_other": "Waar de {{count}} scarabeeën van deze kolom ook staan, één staat altijd hier."
       }
     },
     "quota": {
       "default": "Per rij, kolom en gebied",
-      "fields": "Per rij, kolom en stuk land"
+      "fields": "Per rij, kolom en stuk land",
+      "scarabs": "Per rij en kolom"
     },
     "goal": {
       "default_one": "Elke rij, elke kolom en elk gebied heeft precies één ster.",
       "default_other": "Elke rij, elke kolom en elk gebied heeft precies {{count}} sterren.",
       "fields_one": "Elke rij, elke kolom en elk stuk land heeft precies één boerderij.",
-      "fields_other": "Elke rij, elke kolom en elk stuk land heeft precies {{count}} boerderijen."
+      "fields_other": "Elke rij, elke kolom en elk stuk land heeft precies {{count}} boerderijen.",
+      "scarabs": "Elke rij en elke kolom heeft precies één scarabee."
     },
     "name": {
       "default": "Sterren Apart",
       "fields": "Boerderijen",
       "twinDefault": "Tweelingsterren",
-      "twinFields": "Dubbele Boerderijen"
+      "twinFields": "Dubbele Boerderijen",
+      "scarabs": "Scarabeeënveld"
     }
   },
   "rushHour": {

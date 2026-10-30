@@ -48,3 +48,24 @@ export const Farmstead: FC = () => (
     </g>
   </svg>
 )
+
+/**
+ * The answer over a pyramid floor: a scarab, seen from above.
+ *
+ * It is a silhouette like the other two — a split shell with a head and three legs a side. The split down the
+ * middle is a real gap between two wing-cases, so it shows the floor colour without the glyph carrying one.
+ */
+export const Scarab: FC = () => (
+  <svg viewBox="-50 -50 100 100" className="size-full" aria-hidden focusable="false">
+    <g fill="currentColor">
+      <path d="M -3 -14 C -30 -14 -34 12 -26 30 C -20 41 -10 42 -3 40 Z" />
+      <path d="M 3 -14 C 30 -14 34 12 26 30 C 20 41 10 42 3 40 Z" />
+      {/* The head, with the two horns of its front edge. */}
+      <path d="M -12 -22 L -9 -40 L -3 -34 L 3 -34 L 9 -40 L 12 -22 Q 0 -18 -12 -22 Z" />
+    </g>
+    <g fill="none" stroke="currentColor" strokeWidth={7} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M -27 -4 L -42 -14 M -31 12 L -45 12 M -25 30 L -40 40" />
+      <path d="M 27 -4 L 42 -14 M 31 12 L 45 12 M 25 30 L 40 40" />
+    </g>
+  </svg>
+)

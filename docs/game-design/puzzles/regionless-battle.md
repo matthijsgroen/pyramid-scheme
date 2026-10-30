@@ -86,7 +86,12 @@ Expert asks `firstStarAfter: 1`, so no board opens with a star on step 0. Measur
 
 ## 6. Controls
 
-As star battle (§6 there): tap cycles empty, dark, star; a drag sweeps darks. Walls ignore both.
+As star battle (§6 there): tap cycles empty, dark, star; a drag sweeps darks. A wall is not a button: a tap on it does
+nothing, and a drag passes over it without taking it, so only the open squares either side are ruled out. Checked on the
+9×9 board at 360px wide (squares about 35px): a tap 35% off-centre in every open square hits that square, and a
+diagonal drag rules out only squares on its path.
+
+The rim is drawn, the inside has no region strokes, so the walls are the only thing that divides the floor.
 
 ## 7. Hints
 
@@ -96,4 +101,7 @@ that cover them.
 ## 8. Theming
 
 Tags `puzzle`, `funerary`, `cosmos`, each with the `default` face, and one theme, `default`. The icon is a
-beetle on amber. Walls need a drawn reading in each face before a site is dealt this board.
+beetle on amber. The one skin (`scarabs`, `REGIONLESS_SKINS` in `skins.ts`) is a pyramid floor: sandstone squares,
+walls as raised stone blocks (`skin.stone`, lit from the top left), scarabs as the pieces, drawn as the inline `Scarab`
+glyph. The title is `starBattle.name.scarabs`, "Scarab Field". The family is registered in `plugin.tsx` and reachable in
+the puzzle lab only; it stays out of the mod's family list until a site is meant to deal it.

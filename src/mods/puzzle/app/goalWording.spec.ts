@@ -75,7 +75,7 @@ describe("the goal above the rules", () => {
     const faces: Record<string, string[]> = {
       constellation: ["default", "causeway", "irrigation", "ceiling"],
       hidato: ["default", "channel", "scribe", "chambers"],
-      starBattle: ["default", "fields", "twinDefault", "twinFields"],
+      starBattle: ["default", "fields", "twinDefault", "twinFields", "scarabs"],
       sudoku: ["default", "papyrus"],
       canisters: ["default", "grain", "oil", "wine", "natron", "ink"],
       rushHour: ["default", "market"],
@@ -194,7 +194,7 @@ describe("the goal above the rules", () => {
   ]
 
   it.each(STAR_BATTLE_PLACES)("twin stars drawn for $role wears its own face", ({ role, skin }) => {
-    expect(starBattleSkinFor(role, undefined).name).toBe(skin)
+    expect(starBattleSkinFor({ size: 2, quota: 1 }, role, undefined).name).toBe(skin)
   })
 
   /**

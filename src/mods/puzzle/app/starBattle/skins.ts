@@ -1,7 +1,8 @@
+import type { StarBattlePuzzle } from "@/mods/puzzle/game/starBattle/starBattle"
 import { STAR_BATTLE_META } from "@/mods/puzzle/game/starBattle/meta"
 import { faceFor, withAmbience } from "../faceFor"
 import type { FC } from "react"
-import { Farmstead, Star } from "./glyphs"
+import { Farmstead, Scarab, Star } from "./glyphs"
 
 /**
  * What each of this mechanic's places looks like, and how a room works out which place it is.
@@ -31,6 +32,11 @@ export type StarBattleSkin = {
   name: string
   /** The token this place's sentences put in their glyph slot, so a hint can say the thing rather than name it. */
   token: string
+  /**
+   * A wall cell: raised stone that nothing can stand on. Every skin carries one, but only a board with
+   * `walls` draws it.
+   */
+  stone: string
   /** A square the player may still use, and one a placed answer has already ruled out. */
   cell: string
   spent: string
@@ -75,6 +81,7 @@ const SKINS: Record<string, StarBattleSkin> = {
   default: {
     name: "default",
     token: "⭐",
+    stone: "bg-stone-600",
     cell: "bg-stone-800",
     spent: "bg-stone-900",
     wall: "rgb(253 230 138 / 0.85)",
@@ -111,6 +118,7 @@ const SKINS: Record<string, StarBattleSkin> = {
   fields: {
     name: "fields",
     token: "🛖",
+    stone: "bg-[#8a7a5a]",
     // Tilled earth, and the ruled-out square is ground already in somebody's shadow.
     cell: "bg-[#e0c896]",
     spent: "bg-[#c9ac74]",
@@ -132,18 +140,50 @@ const SKINS: Record<string, StarBattleSkin> = {
 }
 
 /**
+ * **Scarabs on a pyramid floor** — the one dress a regionless board wears. Sandstone flags set edge to edge,
+ * the answer a scarab standing on one, and the walls raised stone blocks that nothing can stand on: a block is
+ * lit from the top left, so it reads as standing up out of the floor rather than as a darker square.
+ *
+ * The ground is light, as a sunlit floor is, so the scarab is dark against it and the hint rings are drawn in
+ * ink. There is no boundary stroke: a regionless board draws none, only its rim, and the rim is the shadow
+ * the floor sits in.
+ */
+const REGIONLESS_SKINS: Record<string, StarBattleSkin> = {
+  default: {
+    name: "scarabs",
+    token: "🪲",
+    stone: "bg-stone-500 shadow-[inset_3px_3px_0_rgba(255,255,255,0.3),inset_-3px_-3px_0_rgba(0,0,0,0.4)]",
+    cell: "bg-[#e6cf9d]",
+    spent: "bg-[#d2b87c]",
+    wall: "rgb(87 83 78 / 0.9)",
+    seam: "rgb(120 90 40 / 0.4)",
+    Glyph: Scarab,
+    answer: "text-emerald-900",
+    dark: "text-stone-700/70",
+    hatch: "rgba(120,53,15,0.4)",
+    evidence: "ring-sky-800/70",
+    focus: "ring-emerald-950",
+    conflict: "ring-red-800",
+    celebrate: "animate-flare",
+  },
+}
+
+/**
  * Which place this room is, resolved the same way every family resolves it (`app/faceFor.ts`).
  *
  * The map itself lives on this family's `FamilyMeta`, where world-gen can read it too
  * (`docs/instructions/puzzle-screens.md` §2).
  */
 export const skinFor = (
+  puzzle: StarBattlePuzzle,
   role: string | string[] | undefined,
   theme: string | undefined,
   board = 0,
   room?: string
 ): StarBattleSkin =>
-  withAmbience(
-    SKINS[faceFor(STAR_BATTLE_META.faces, role, theme, Object.keys(SKINS), board, room)] ?? SKINS.default,
-    theme
-  )
+  puzzle.walls
+    ? withAmbience(REGIONLESS_SKINS.default, theme)
+    : withAmbience(
+        SKINS[faceFor(STAR_BATTLE_META.faces, role, theme, Object.keys(SKINS), board, room)] ?? SKINS.default,
+        theme
+      )

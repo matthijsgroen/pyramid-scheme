@@ -2,6 +2,7 @@ import clsx from "clsx"
 import { useRef, useState, type FC, type PointerEvent } from "react"
 import {
   colOf,
+  isWall,
   rowOf,
   ruledOutByStars,
   starBattleConflicts,
@@ -73,7 +74,7 @@ const hatchOf = (skin: StarBattleSkin) => ({
 const boundary = (puzzle: StarBattlePuzzle, cell: number, dRow: number, dCol: number) => {
   const [row, col] = [rowOf(puzzle.size, cell) + dRow, colOf(puzzle.size, cell) + dCol]
   if (row < 0 || row >= puzzle.size || col < 0 || col >= puzzle.size) return true
-  return puzzle.regions?.[row * puzzle.size + col] !== puzzle.regions?.[cell]
+  return !!puzzle.regions && puzzle.regions[row * puzzle.size + col] !== puzzle.regions[cell]
 }
 
 export const StarBattleBoard: FC<Props> = ({
@@ -130,7 +131,8 @@ export const StarBattleBoard: FC<Props> = ({
     const over = cellUnder(event.clientX, event.clientY)
     // Reaching a DIFFERENT square is what turns a tap into a sweep, so the threshold is one square wide —
     // generous enough that a wobbly tap stays a tap.
-    if (over === undefined || over === gesture.from) return
+    // A wall is not a square a mark can go in, so a drag passes over it without taking it.
+    if (over === undefined || over === gesture.from || isWall(puzzle, over)) return
     if (!gesture.swept.length) gesture.swept.push(gesture.from)
     if (!gesture.swept.includes(over)) gesture.swept.push(over)
     setSweeping([...gesture.swept])
@@ -174,60 +176,66 @@ export const StarBattleBoard: FC<Props> = ({
           gridTemplateRows: `repeat(${size}, minmax(0, 1fr))`,
         }}
       >
-        {state.marks.map((value, cell) => (
-          <button
-            key={cell}
-            onPointerDown={beginDrag(cell)}
-            onPointerMove={moveDrag}
-            onPointerUp={endDrag}
-            onPointerCancel={endDrag}
-            style={{
-              // Every edge alike: the walls are drawn over the top of these, by `Walls`.
-              borderColor: skin.seam,
-              ...(decided?.has(cell) ? hatch : {}),
-            }}
-            onClick={() => {
-              if (swallowClick.current) {
-                swallowClick.current = false
-                return
-              }
-              onTapCell(cell)
-            }}
-            className={clsx(
-              // `min-h-0` is load-bearing. A grid item's automatic minimum size comes from its CONTENT, and
-              // WebKit works this square's out by resolving the glyph's `size-full` against the square's full
-              // width — percentage padding counts as zero while it does — and then adding the real 14% back
-              // on each side. A square with a mark in it therefore demands width + 28% and grows past its
-              // track, while an empty one sits at the track's height. On iOS that showed as the ground
-              // spilling below the board under exactly the squares the player had darkened, and only along
-              // the bottom row: everywhere else the row beneath paints over the overflow. The track decides
-              // how big a square is; nothing standing in one gets a say.
-              "flex aspect-square min-h-0 items-center justify-center border p-[14%] transition-colors",
-              // A square a star already rules out RECEDES: it is not a mark and must not read as one, so it
-              // loses contrast rather than gaining anything of its own.
-              spent.has(cell) && !decided?.has(cell) ? skin.spent : skin.cell,
-              // Inset, because the squares touch: a ring drawn outside one would sit on top of its
-              // neighbour. A broken rule first, then the one square a hint is ABOUT, then the squares it
-              // argues FROM — evidence and conclusion cannot look the same, or "this square" is a guess
-              // between six of them.
-              conflicts.has(cell)
-                ? `ring-2 ring-inset ${skin.conflict}`
-                : cell === focus
-                  ? `ring-3 ring-inset ${skin.focus}`
-                  : highlighted?.has(cell) && `ring-2 ring-inset ${skin.evidence}`
-            )}
-          >
-            {value === "star" ? (
-              <span className={clsx("block size-full", skin.answer, celebrated?.has(cell) && skin.celebrate)}>
-                <skin.Glyph />
-              </span>
-            ) : value === "dark" || sweeping.includes(cell) ? (
-              <span className={clsx("block size-full", skin.dark)}>
-                <DarkGlyph />
-              </span>
-            ) : null}
-          </button>
-        ))}
+        {state.marks.map((value, cell) =>
+          isWall(puzzle, cell) ? (
+            // Stone is floor plan, not a control: no button, no pointer handlers, so a tap or a drag that starts
+            // on it does nothing and a screen reader is not offered a square it cannot use.
+            <div key={cell} data-wall aria-hidden className={clsx("aspect-square min-h-0", skin.stone)} />
+          ) : (
+            <button
+              key={cell}
+              onPointerDown={beginDrag(cell)}
+              onPointerMove={moveDrag}
+              onPointerUp={endDrag}
+              onPointerCancel={endDrag}
+              style={{
+                // Every edge alike: the walls are drawn over the top of these, by `Walls`.
+                borderColor: skin.seam,
+                ...(decided?.has(cell) ? hatch : {}),
+              }}
+              onClick={() => {
+                if (swallowClick.current) {
+                  swallowClick.current = false
+                  return
+                }
+                onTapCell(cell)
+              }}
+              className={clsx(
+                // `min-h-0` is load-bearing. A grid item's automatic minimum size comes from its CONTENT, and
+                // WebKit works this square's out by resolving the glyph's `size-full` against the square's full
+                // width — percentage padding counts as zero while it does — and then adding the real 14% back
+                // on each side. A square with a mark in it therefore demands width + 28% and grows past its
+                // track, while an empty one sits at the track's height. On iOS that showed as the ground
+                // spilling below the board under exactly the squares the player had darkened, and only along
+                // the bottom row: everywhere else the row beneath paints over the overflow. The track decides
+                // how big a square is; nothing standing in one gets a say.
+                "flex aspect-square min-h-0 items-center justify-center border p-[14%] transition-colors",
+                // A square a star already rules out RECEDES: it is not a mark and must not read as one, so it
+                // loses contrast rather than gaining anything of its own.
+                spent.has(cell) && !decided?.has(cell) ? skin.spent : skin.cell,
+                // Inset, because the squares touch: a ring drawn outside one would sit on top of its
+                // neighbour. A broken rule first, then the one square a hint is ABOUT, then the squares it
+                // argues FROM — evidence and conclusion cannot look the same, or "this square" is a guess
+                // between six of them.
+                conflicts.has(cell)
+                  ? `ring-2 ring-inset ${skin.conflict}`
+                  : cell === focus
+                    ? `ring-3 ring-inset ${skin.focus}`
+                    : highlighted?.has(cell) && `ring-2 ring-inset ${skin.evidence}`
+              )}
+            >
+              {value === "star" ? (
+                <span className={clsx("block size-full", skin.answer, celebrated?.has(cell) && skin.celebrate)}>
+                  <skin.Glyph />
+                </span>
+              ) : value === "dark" || sweeping.includes(cell) ? (
+                <span className={clsx("block size-full", skin.dark)}>
+                  <DarkGlyph />
+                </span>
+              ) : null}
+            </button>
+          )
+        )}
         <GridWalls
           size={size}
           isWall={(row, col, dRow, dCol) => boundary(puzzle, row * size + col, dRow, dCol)}
