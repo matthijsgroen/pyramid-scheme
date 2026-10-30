@@ -409,6 +409,18 @@ The same board with two stars to a group, so every count becomes a capacity argu
 
 Design doc: [puzzles/star-battle.md §11](puzzles/star-battle.md)
 
+### 4.25a Regionless battle (scarab field)
+
+Star battle with stone blocks instead of regions: one scarab to every row and column, none touching, and the blocks are floor nothing can stand on. Debut tier expert; theme fit pyramid floor (the scarab dress). **Lab-only** until bake integration: it is registered for the puzzle lab and not in the mod's family list.
+
+Design doc: [puzzles/star-battle.md](puzzles/star-battle.md)
+
+### 4.25b Pair puzzle (mummy rest)
+
+The Tents genre: every printed sarcophagus owns one mummy on an orthogonally adjacent square, no two mummies touch, and each row and column holds its printed count. Debut tier master (wizard adds the `wouldStrand` hypothesis rung); theme fit funerary, the burial room. **Lab-only** until bake integration: registered for the puzzle lab through `app/pairPuzzle/plugin.tsx`, not in `src/mods/puzzle/index.ts`.
+
+Design doc: [puzzles/pair-puzzle.md](puzzles/pair-puzzle.md)
+
 ### 4.26 Sudoku (six chambers)
 
 The catalogue's Latin-square slot (§4.8) entered from its own side: **the region IS the third group**, and every deduction that involves one is a deduction neither Futoshiki nor any other grid family here can teach. Authored at 6×6 with chambers two squares wide and three tall — three across, two down, so a chamber argues with three lines across it and two down.

@@ -756,6 +756,54 @@
       "scarabs": "Scarab Field"
     }
   },
+  "pairPuzzle": {
+    "name": {
+      "mummies": "Mummy Rest"
+    },
+    "goal": {
+      "mummies": "Every sarcophagus gets one mummy beside it, and every row and column holds exactly the number of mummies printed beside it."
+    },
+    "rules": {
+      "mummies": {
+        "pair": "Each sarcophagus has one mummy resting directly above, below, left or right of it, and every mummy rests beside a sarcophagus of its own.",
+        "count": "The number beside a row or column says how many mummies it holds. It turns green when the line holds exactly that many, and red when it cannot be met.",
+        "touch": "No two mummies may stand next to each other — corners count.",
+        "enter": "Tap a square to rule it out, tap again to lay a mummy there, once more to clear it. Drag across squares to rule out a run. Sarcophagi cannot be tapped."
+      }
+    },
+    "hint": {
+      "mummies": {
+        "mistake": "This mark cannot be right.",
+        "touch": "This mummy is down, so no other may stand next to it — corners count.",
+        "zeroLine.row": "This row holds no mummies, so all of it is empty.",
+        "zeroLine.col": "This column holds no mummies, so all of it is empty.",
+        "noAnchor": "These squares have no sarcophagus beside them, so no mummy can rest here.",
+        "lineFull.row_one": "This row already has its mummy.",
+        "lineFull.row_other": "This row already has its {{count}} mummies.",
+        "lineFull.col_one": "This column already has its mummy.",
+        "lineFull.col_other": "This column already has its {{count}} mummies.",
+        "lineTight.row_one": "This row is down to one square for its mummy.",
+        "lineTight.row_other": "This row is down to exactly {{count}} squares for its {{count}} mummies.",
+        "lineTight.col_one": "This column is down to one square for its mummy.",
+        "lineTight.col_other": "This column is down to exactly {{count}} squares for its {{count}} mummies.",
+        "onlyWay": "This sarcophagus has only one square left beside it for its mummy.",
+        "claimed": "This sarcophagus already has its mummy, so the squares beside it that no other sarcophagus can use stay empty.",
+        "lineBlock.rowsToCols_one": "The marked rows hold one more mummy than their own sarcophagi can give, so it comes from a sarcophagus just outside them.",
+        "lineBlock.rowsToCols_other": "The marked rows hold {{count}} more mummies than their own sarcophagi can give, so they come from sarcophagi just outside them.",
+        "lineBlock.colsToRows_one": "The marked columns hold one more mummy than their own sarcophagi can give, so it comes from a sarcophagus just outside them.",
+        "lineBlock.colsToRows_other": "The marked columns hold {{count}} more mummies than their own sarcophagi can give, so they come from sarcophagi just outside them.",
+        "wouldStrand.row": "A mummy here would leave the marked row without room for the mummies it still owes.",
+        "wouldStrand.col": "A mummy here would leave the marked column without room for the mummies it still owes.",
+        "wouldStrand.anchor": "A mummy here would leave the marked sarcophagus with no square beside it for its own.",
+        "action": {
+          "ruleOut_one": "Rule out the hatched square.",
+          "ruleOut_other": "Rule out the hatched squares.",
+          "place_one": "Lay a mummy on the hatched square.",
+          "place_other": "Lay a mummy on each hatched square."
+        }
+      }
+    }
+  },
   "rushHour": {
     "name": {
       "default": "The Blockade",

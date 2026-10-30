@@ -71,16 +71,36 @@ block of one line, 2 with two lines) and wizard 27 times (22 with one, 5 with tw
 
 ## 6. Controls
 
-Tap cycles empty, `empty`, `piece`; anchors do not respond. A drag sweeps `empty` over open squares
-(`sweepPairCells`), one undo step per drag. The eight squares around a piece are drawn spent
-(`ruledOutByPieces`).
+Tap cycles empty, `empty`, `piece`; an anchor is a plain element with no button, so a tap or a drag starting on
+it does nothing. A drag sweeps `empty` over open squares (`sweepPairCells`), passing over anchors without
+taking them, one undo step per drag. The eight squares around a piece are drawn spent (`ruledOutByPieces`).
+The counts sit above the columns and right of the rows and are coloured by `lineStatus`: open, met (green) and
+broken (red: a line that holds too many or has too few squares left). Squares that break a rule are ringed
+after the same quiet beat star battle waits.
+
+**Hit-testing on 9×9 at 360px.** Checked in the lab at wizard: taps on the first and last squares mark the
+square under the finger, and a drag along the bottom row and down the right column marks exactly the squares
+crossed, anchors skipped, and one undo takes a whole drag back. The drag reads the cell grid's own box, so the
+count gutters do not shift it.
 
 ## 7. Hints
 
 The hint engine reads the ladder: a step names its technique, its `variant`, the squares it argues from
-(`cells`) and the squares it decides (`decisions`).
+(`cells`) and the squares it decides (`decisions`). `buildPairHint` says a wrong mark first, then the cheapest
+rung on the board's own ladder (`techniqueCap`), as star battle does. The sentence is the reason, a second line
+is the move ("Rule out the hatched squares", "Lay a mummy on each hatched square"), and the decided squares
+are hatched. A step never decides an anchor, so the hatch lands on open squares only; the squares a reason
+argues from may include anchors and are ringed. `lineFull`, `lineTight` and `lineBlock` read in the singular
+and plural by their count; `lineBlock`'s `rowsToCols` and `colsToRows` read as "the marked rows" and "the
+marked columns". `noAnchor` and `claimed` decide many squares in one step. Following hints alone solved a
+master and a wizard board in the lab.
 
 ## 8. Theming
 
-Tags `puzzle` and `funerary`, the `default` face, one theme, `default`. The icon is a coffin on stone. No skin
-exists yet; the family stays out of the mod's family list until a site is meant to deal it.
+Tags `puzzle` and `funerary`, the `default` face, one theme, `default`; the icon is a coffin on stone. One skin,
+`mummies` ("Mummy Rest" / "Mummierust"), a pyramid burial room in the sandstone of the scarab board:
+sarcophagi (anchors, printed on the board, drawn as an outlined lidded case) and mummies (the pieces, a
+wrapped figure with the bands cut out of the silhouette). Both are inline SVG in `app/pairPuzzle/glyphs.tsx`;
+every colour lives in `skins.ts`, including the three count colours. The copy lives under `pairPuzzle.*`.
+The screen is registered in `app/pairPuzzle/plugin.tsx` and reachable in the puzzle lab only: the family stays
+out of the mod's family list until a site is meant to deal it.

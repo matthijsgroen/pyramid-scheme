@@ -756,6 +756,54 @@
       "scarabs": "Scarabeeënveld"
     }
   },
+  "pairPuzzle": {
+    "name": {
+      "mummies": "Mummierust"
+    },
+    "goal": {
+      "mummies": "Elke sarcofaag krijgt één mummie naast zich, en elke rij en kolom bevat precies zoveel mummies als ernaast staat."
+    },
+    "rules": {
+      "mummies": {
+        "pair": "Bij elke sarcofaag rust precies één mummie, direct erboven, eronder, links of rechts ervan, en elke mummie rust naast een eigen sarcofaag.",
+        "count": "Het getal naast een rij of kolom zegt hoeveel mummies erin liggen. Het wordt groen als de lijn precies dat aantal heeft, en rood als het niet meer kan kloppen.",
+        "touch": "Geen twee mummies mogen naast elkaar liggen — hoeken tellen mee.",
+        "enter": "Tik een vakje aan om het uit te sluiten, nog eens om er een mummie neer te leggen, en nog eens om het te wissen. Sleep over vakjes om een reeks uit te sluiten. Sarcofagen zijn niet aan te tikken."
+      }
+    },
+    "hint": {
+      "mummies": {
+        "mistake": "Deze markering kan niet kloppen.",
+        "touch": "Deze mummie ligt er, dus er mag er geen naast liggen — hoeken tellen mee.",
+        "zeroLine.row": "In deze rij ligt geen mummie, dus de hele rij is leeg.",
+        "zeroLine.col": "In deze kolom ligt geen mummie, dus de hele kolom is leeg.",
+        "noAnchor": "Naast deze vakjes staat geen sarcofaag, dus hier kan geen mummie rusten.",
+        "lineFull.row_one": "Deze rij heeft haar mummie al.",
+        "lineFull.row_other": "Deze rij heeft haar {{count}} mummies al.",
+        "lineFull.col_one": "Deze kolom heeft zijn mummie al.",
+        "lineFull.col_other": "Deze kolom heeft zijn {{count}} mummies al.",
+        "lineTight.row_one": "Deze rij heeft nog maar één vakje over voor haar mummie.",
+        "lineTight.row_other": "Deze rij heeft nog precies {{count}} vakjes over voor haar {{count}} mummies.",
+        "lineTight.col_one": "Deze kolom heeft nog maar één vakje over voor zijn mummie.",
+        "lineTight.col_other": "Deze kolom heeft nog precies {{count}} vakjes over voor zijn {{count}} mummies.",
+        "onlyWay": "Naast deze sarcofaag is nog maar één vakje over voor zijn mummie.",
+        "claimed": "Deze sarcofaag heeft zijn mummie al, dus de vakjes ernaast die geen andere sarcofaag kan gebruiken blijven leeg.",
+        "lineBlock.rowsToCols_one": "De gemarkeerde rijen hebben één mummie meer dan hun eigen sarcofagen kunnen leveren, dus die komt van een sarcofaag net buiten de rijen.",
+        "lineBlock.rowsToCols_other": "De gemarkeerde rijen hebben {{count}} mummies meer dan hun eigen sarcofagen kunnen leveren, dus die komen van sarcofagen net buiten de rijen.",
+        "lineBlock.colsToRows_one": "De gemarkeerde kolommen hebben één mummie meer dan hun eigen sarcofagen kunnen leveren, dus die komt van een sarcofaag net buiten de kolommen.",
+        "lineBlock.colsToRows_other": "De gemarkeerde kolommen hebben {{count}} mummies meer dan hun eigen sarcofagen kunnen leveren, dus die komen van sarcofagen net buiten de kolommen.",
+        "wouldStrand.row": "Een mummie hier laat de gemarkeerde rij zonder ruimte voor de mummies die nog moeten komen.",
+        "wouldStrand.col": "Een mummie hier laat de gemarkeerde kolom zonder ruimte voor de mummies die nog moeten komen.",
+        "wouldStrand.anchor": "Een mummie hier laat de gemarkeerde sarcofaag zonder vakje ernaast voor zijn eigen mummie.",
+        "action": {
+          "ruleOut_one": "Sluit het gearceerde vakje uit.",
+          "ruleOut_other": "Sluit de gearceerde vakjes uit.",
+          "place_one": "Leg een mummie op het gearceerde vakje.",
+          "place_other": "Leg een mummie op elk gearceerd vakje."
+        }
+      }
+    }
+  },
   "rushHour": {
     "name": {
       "default": "De Blokkade",
