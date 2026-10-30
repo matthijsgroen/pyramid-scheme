@@ -164,7 +164,8 @@ const REGIONLESS_SKINS: Record<string, StarBattleSkin> = {
     evidence: "ring-sky-800/70",
     focus: "ring-emerald-950",
     conflict: "ring-red-800",
-    celebrate: "animate-flare",
+    // Each scarab turns one full circle as its turn in the completion run comes.
+    celebrate: "animate-spin-once",
   },
 }
 

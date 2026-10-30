@@ -139,6 +139,18 @@ body {
     }
   }
 
+  /* A scarab finishing: it turns once on the spot, the sun beetle rolling its sun. A full circle, so it ends
+     facing the way it was placed. */
+  --animate-spin-once: spin-once 600ms ease-in-out;
+  @keyframes spin-once {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
   /* A sheet taken up: the roll travels from the foot of a chamber to its head, and then back down. What it
      uncovers is the table the sheet lies on, so the writing goes up with the part already rolled — the way
      it would on a real sheet, where a rolled inch is an inch you cannot read.
@@ -655,7 +667,8 @@ body {
   .animate-pour,
   .animate-pour-level,
   .animate-refuse,
-  .animate-flare {
+  .animate-flare,
+  .animate-spin-once {
     animation-duration: 1ms;
   }
 }
