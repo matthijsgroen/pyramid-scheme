@@ -19,7 +19,7 @@ family shape: game core, techniques, generator, meta, app plugin.
 - Star battle and twin stars boards stay byte-identical: `yarn verify-seeds` passes before and after every task that touches `src/mods/puzzle/game/starBattle/`.
 - Family ids name the puzzle type, never a skin element: `regionless-battle`, `pair-puzzle`.
 - Entry tiers: `regionless-battle` expert, `pair-puzzle` master. No family enters starter.
-- Boards: regionless battle ~7×7 expert → 9×9 wizard; pair puzzle ~8×8 master → 10×10 wizard.
+- Boards: regionless battle ~7×7 expert → 9×9 wizard; pair puzzle ~8×8 master → 9×9 wizard (no board above 9×9: cells drop under 35px on 360px phones).
 - The eight squares around a placed piece are drawn as spent in both families; `touch` is propagation, free in grading.
 - Pair puzzle uniqueness is over piece positions only; a finished board does not show the pairing.
 - One skin each: scarabs on sandstone with raised stone wall blocks; sarcophagi as anchors and mummies as pieces. Pieces drawn as SVG in code.
@@ -35,7 +35,7 @@ family shape: game core, techniques, generator, meta, app plugin.
 1. A tap or a drag across a wall cell changes nothing and adds no undo entry — the player should not be able to mark stone.
 2. A hint on a walled board never points at, or decides, a wall cell.
 3. Pair puzzle: pieces that satisfy every count but cannot be paired one-to-one with the anchors (two pieces sharing one sarcophagus) are not solved.
-4. The 9×9 regionless board and the 10×10 pair board at 360px wide: cells land at about 35px and 32px, under the 44px tap guideline. Check in the lab that tap and drag still hit the intended cell and record what you see in the family doc.
+4. The 9×9 boards at 360px wide: cells land at about 35px, under the 44px tap guideline. Check in the lab that tap and drag still hit the intended cell and record what you see in the family doc.
 5. Star battle boards unchanged after the shared-core edits (`yarn verify-seeds`, `generateStarBattle.verify.ts`).
 
 ---
@@ -272,7 +272,7 @@ Rung meanings are in the spec ("Deduction ladders — Pair puzzle"). `variant` i
 
 Generation: place a random non-touching piece set at `density`, give each piece a distinct orthogonal anchor (not a piece cell), derive the counts, accept when the board settles under the tier's ladder and meets `requires`/`requiresCount`; nearest miss as fallback.
 
-Starting values: master `{ size: 8, density: 0.17, techniqueCap: "lineBlock", requires: ["claimed", "lineBlock"], requiresCount: 2 }`; wizard `{ size: 10, density: 0.17, techniqueCap: "wouldStrand", requires: ["wouldStrand"], requiresCount: 3 }`; lower tiers point at master's.
+Starting values: master `{ size: 8, density: 0.17, techniqueCap: "lineBlock", requires: ["claimed", "lineBlock"], requiresCount: 2 }`; wizard `{ size: 9, density: 0.17, techniqueCap: "wouldStrand", requires: ["wouldStrand"], requiresCount: 3 }`; lower tiers point at master's.
 
 Meta: `id: "pair-puzzle"`, `ownerMod: "puzzle"`, `tags: ["puzzle", "funerary"]`, `faces: { funerary: ["default"] }`, `themes: ["default"]`, `minTier: "master"`, `icon: "⚰️"`, `color: "stone"`, `rewardPriority: 60`, `seedable` over generator/grader/config.
 

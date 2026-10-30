@@ -83,7 +83,7 @@ set. The tier session may still move them.
 | family                   | enters | boards                                                                  |
 | ------------------------ | ------ | ----------------------------------------------------------------------- |
 | `regionless-battle`      | expert | about 7×7 at expert → 9×9 at wizard; fewer walls as tiers rise           |
-| `pair-puzzle`            | master | about 8×8 at master → 10×10 at wizard; harder through ambiguous pairings |
+| `pair-puzzle`            | master | about 8×8 at master → 9×9 at wizard; harder through ambiguous pairings   |
 
 Walls are regionless battle's gifts, the way small regions are in star battle §5. The first tier a family
 enters at is its teaching tier: easiest settings of that family, whatever the tier's name.
