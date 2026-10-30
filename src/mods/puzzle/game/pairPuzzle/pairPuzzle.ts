@@ -145,12 +145,12 @@ export const pairSolved = (puzzle: PairPuzzle, state: PairMarks): boolean => {
   )
 }
 
-/** The eight neighbours of each piece, shown as spent rather than written; anchors are never ruled out. */
+/** The eight neighbours of each piece, shown as spent rather than written; anchors and cells the player already marked are never included. */
 export const ruledOutByPieces = (puzzle: PairPuzzle, marks: PairMarks["marks"]): Set<number> =>
   new Set(
     marks
       .flatMap((mark, cell) => (mark === "piece" ? neighboursOf(puzzle.size, cell) : []))
-      .filter(at => !puzzle.anchors[at])
+      .filter(at => !puzzle.anchors[at] && !marks[at])
   )
 
 /** The first mark contradicting the answer, wrong `empty` included: it stalls a board as thoroughly. */

@@ -98,6 +98,12 @@ describe("pair puzzle", () => {
     expect(out.has(5)).toBe(false)
   })
 
+  it("touching pieces and marked cells are not ruled out", () => {
+    const marks = withPieces([5, 10]).marks.map((m, i) => (i === 0 ? "empty" : m)) as (PairMark | undefined)[]
+    const out = ruledOutByPieces(board, marks)
+    expect([out.has(5), out.has(10), out.has(0)]).toEqual([false, false, false])
+  })
+
   it("the first mistake is a wrong piece or a wrong empty", () => {
     const solution = Array.from({ length: 16 }, (_u, i) => i === 0 || i === 15)
     expect(firstPairMistake(withPieces([0, 15]).marks, solution)).toBeUndefined()
