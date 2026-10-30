@@ -1,11 +1,13 @@
 import clsx from "clsx"
-import { useCallback, useMemo, useState, type FC } from "react"
+import { useCallback, type FC } from "react"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
+import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
+import { classifyMarkMove, openDecisions, openFocus, type MarkVocabulary } from "@/mods/core/app/markMoveEffect"
 import {
   canUndoStarBattle,
   createStarBattleState,
@@ -15,11 +17,14 @@ import {
   sweepStarBattleCells,
   undoStarBattle,
 } from "@/mods/puzzle/game/starBattle/starBattle"
+import type { CellMark } from "@/mods/puzzle/game/starBattle/starBattle"
 import type { StarBattlePuzzleWithAnswer } from "@/mods/puzzle/game/starBattle/generateStarBattle"
 import { buildStarBattleHint } from "./starBattleHint"
 import { skinFor } from "./skins"
 import { StarBattleBoard } from "./StarBattleBoard"
 import { StarBattleRules } from "./StarBattleRules"
+
+const MARKS: MarkVocabulary<CellMark> = { place: "star", ruleOut: "dark" }
 
 /** Twin stars is its own family off this screen, so its two faces have names of their own. */
 const twinName = (skin: string) => (skin === "fields" ? "twinFields" : "twinDefault")
@@ -45,14 +50,14 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
   const skin = skinFor(puzzle, role, theme, 0, room)
 
   /**
-   * Whether the player has asked for a hint, which is what gates deriving one.
+   * The hint as it was when the player asked, held until a move ends it.
    *
-   * The top rung sweeps every pair of regions against every pair of lines. Derived as the board changed,
-   * that lands on **every tap** for a string nobody asked to read — the cost lightbeam paid for once.
+   * Only derived on the ask: the top rung sweeps every pair of regions against every pair of lines, which
+   * on every tap would be paid for a string nobody asked to read. Frozen so a hint naming several squares
+   * keeps naming the same ones while they are carried out.
    */
-  const [asked, setAsked] = useState(false)
-
-  const hint = useMemo(() => (asked ? buildStarBattleHint(puzzle, state) : undefined), [asked, puzzle, state])
+  const { hint, freeze, drop } = useFrozenHint(() => buildStarBattleHint(puzzle, state))
+  const open = hint ? openDecisions(hint, MARKS, state.marks) : undefined
 
   /**
    * The board finishes itself before the shell is told, one answer at a time.
@@ -95,7 +100,8 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
       // reading — which is the mistake a board of mostly-elimination produces.
       undo={{ onPress: () => setState(undoStarBattle(state)), enabled: canUndoStarBattle(state) && !finished }}
       hint={hintText}
-      onHintRevealed={() => setAsked(true)}
+      onHintRevealed={freeze}
+      onHintHidden={drop}
       idleMs={hintIdleDelay(difficulty)}
       title={t(`starBattle.name.${puzzle.quota > 1 ? twinName(skin.name) : skin.name}`)}
       goal={t(`starBattle.goal.${skin.name}`, { count: puzzle.quota })}
@@ -126,18 +132,20 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
             state={state}
             skin={skin}
             highlighted={hintVisible ? hint?.cells : undefined}
-            decided={hintVisible ? hint?.decided : undefined}
-            focus={hintVisible ? hint?.focus : undefined}
+            decided={hintVisible ? open : undefined}
+            focus={hintVisible && hint && open ? openFocus(hint.focus, open) : undefined}
             celebrated={celebrated}
             onTapCell={cell => {
               if (finished) return // the board is finishing; nothing may change under the celebration
-              reportInput()
-              setState(cycleStarBattleCell(state, cell, puzzle))
+              const next = cycleStarBattleCell(state, cell, puzzle)
+              reportInput(hint ? classifyMarkMove(hint, MARKS, "tap", state.marks, next.marks) : "move")
+              setState(next)
             }}
             onSweepCells={cells => {
               if (finished) return
-              reportInput()
-              setState(sweepStarBattleCells(state, cells, puzzle))
+              const next = sweepStarBattleCells(state, cells, puzzle)
+              reportInput(hint ? classifyMarkMove(hint, MARKS, "sweep", state.marks, next.marks) : "move")
+              setState(next)
             }}
           />
         </>

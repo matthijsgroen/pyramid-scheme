@@ -1,10 +1,12 @@
-import { useCallback, useMemo, useState, type FC } from "react"
+import { useCallback, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
+import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
+import { classifyMarkMove, openDecisions, openFocus, type MarkVocabulary } from "@/mods/core/app/markMoveEffect"
 import {
   canUndoPair,
   createPairState,
@@ -13,11 +15,14 @@ import {
   sweepPairCells,
   undoPair,
 } from "@/mods/puzzle/game/pairPuzzle/pairPuzzle"
+import type { PairMark } from "@/mods/puzzle/game/pairPuzzle/pairPuzzle"
 import type { PairPuzzleWithAnswer } from "@/mods/puzzle/game/pairPuzzle/generatePairPuzzle"
 import { buildPairHint } from "./pairPuzzleHint"
 import { pairSkinFor } from "./skins"
 import { PairPuzzleBoard } from "./PairPuzzleBoard"
 import { PairPuzzleRules } from "./PairPuzzleRules"
+
+const MARKS: MarkVocabulary<PairMark> = { place: "piece", ruleOut: "empty" }
 
 type Props = {
   puzzle: PairPuzzleWithAnswer
@@ -35,10 +40,10 @@ export const PairPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }
   const [state, setState] = usePuzzleState(() => createPairState(puzzle), puzzle)
   const skin = pairSkinFor()
 
-  // A hint is derived only once asked for: the top rungs hypothesise square by square, and deriving one on
-  // every tap would pay for a string nobody asked to read.
-  const [asked, setAsked] = useState(false)
-  const hint = useMemo(() => (asked ? buildPairHint(puzzle, state) : undefined), [asked, puzzle, state])
+  // A hint is derived only once asked for (the top rungs hypothesise square by square) and held as it was
+  // until a move ends it, so one that names several squares keeps naming the same ones.
+  const { hint, freeze, drop } = useFrozenHint(() => buildPairHint(puzzle, state))
+  const open = hint ? openDecisions(hint, MARKS, state.marks) : undefined
 
   // The board finishes itself before the shell hears "solved", one piece at a time (puzzle-screens.md);
   // input is refused for that beat so a tap cannot undo a piece mid-run.
@@ -64,7 +69,8 @@ export const PairPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }
       onReset={() => setState(createPairState(puzzle))}
       undo={{ onPress: () => setState(undoPair(state)), enabled: canUndoPair(state) && !finished }}
       hint={hintText}
-      onHintRevealed={() => setAsked(true)}
+      onHintRevealed={freeze}
+      onHintHidden={drop}
       idleMs={hintIdleDelay(difficulty)}
       title={t(`pairPuzzle.name.${skin.name}`)}
       goal={t(`pairPuzzle.goal.${skin.name}`)}
@@ -76,18 +82,20 @@ export const PairPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }
           state={state}
           skin={skin}
           highlighted={hintVisible ? hint?.cells : undefined}
-          decided={hintVisible ? hint?.decided : undefined}
-          focus={hintVisible ? hint?.focus : undefined}
+          decided={hintVisible ? open : undefined}
+          focus={hintVisible && hint && open ? openFocus(hint.focus, open) : undefined}
           celebrated={celebrated}
           onTapCell={cell => {
             if (finished) return
-            reportInput()
-            setState(cyclePairCell(state, cell, puzzle))
+            const next = cyclePairCell(state, cell, puzzle)
+            reportInput(hint ? classifyMarkMove(hint, MARKS, "tap", state.marks, next.marks) : "move")
+            setState(next)
           }}
           onSweepCells={cells => {
             if (finished) return
-            reportInput()
-            setState(sweepPairCells(state, cells, puzzle))
+            const next = sweepPairCells(state, cells, puzzle)
+            reportInput(hint ? classifyMarkMove(hint, MARKS, "sweep", state.marks, next.marks) : "move")
+            setState(next)
           }}
         />
       )}
