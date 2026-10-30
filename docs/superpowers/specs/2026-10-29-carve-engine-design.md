@@ -97,7 +97,8 @@ The designer: "standaard goed, met sturing van generiek naar specifiek mogelijk 
     already in the lock format, so it lives in the graph, not in geometry.
   - **Layout.** Pieces get positions; nothing is a cell yet. A room is a block with door places (a prefab's rect, a
     plain room's footprint). A lock keeps its behaviour, not its shape (designer, 2026-10-30): its rooms and stops
-    are laid out like any other, and its walk is checked after the carve. A corridor is a string: an orthogonal
+    are laid out like any other, and its walk is checked after the carve. A lock may also get extra side corridors
+    and rooms, as long as its puzzle stays the same (designer, 2026-10-30); not built until a floor needs it. A corridor is a string: an orthogonal
     polyline between two door places, holding its stops in order, with a 1-cell margin no other piece may use, so
     corridors never cross and never run alongside each other or past a room they do not join. A drop is a fixed
     straight piece. The main path is laid first, then each side path as a subtree hung on its parent (built up as
