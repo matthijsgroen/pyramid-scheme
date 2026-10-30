@@ -131,12 +131,12 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
             onTapCell={cell => {
               if (finished) return // the board is finishing; nothing may change under the celebration
               reportInput()
-              setState(cycleStarBattleCell(state, cell))
+              setState(cycleStarBattleCell(state, cell, puzzle))
             }}
             onSweepCells={cells => {
               if (finished) return
               reportInput()
-              setState(sweepStarBattleCells(state, cells))
+              setState(sweepStarBattleCells(state, cells, puzzle))
             }}
           />
         </>

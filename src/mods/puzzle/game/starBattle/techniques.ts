@@ -1,4 +1,5 @@
 import {
+  blankMarks,
   cols,
   groupsOf,
   neighboursOf,
@@ -459,7 +460,7 @@ export const solveStarBattleByTechniques = (
   puzzle: StarBattlePuzzle,
   allowed: readonly StarBattleTechniqueId[] = STAR_BATTLE_TECHNIQUES
 ): StarBattleSolveResult => {
-  const marks: Marks = new Array(puzzle.size * puzzle.size).fill(undefined)
+  const marks: Marks = blankMarks(puzzle)
   const steps = applyStarBattleTechniques(puzzle, marks, allowed)
   const groups = groupsOf(puzzle)
   return {

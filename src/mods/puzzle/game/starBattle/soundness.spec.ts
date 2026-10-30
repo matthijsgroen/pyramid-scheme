@@ -96,15 +96,15 @@ const completions = (puzzle: StarBattlePuzzle, marks: Marks, limit: number): num
       for (let at = col; at < size; at++) {
         const cell = cells[at]
         if (marks[cell] === "dark") continue
-        if (inColumn[at] === quota || inRegion[puzzle.regions[cell]] === quota) continue
+        if (inColumn[at] === quota || inRegion[puzzle.regions![cell]] === quota) continue
         if (taken.some(other => neighboursOf(size, cell).includes(other))) continue
         taken.push(cell)
         inColumn[at]++
-        inRegion[puzzle.regions[cell]]++
+        inRegion[puzzle.regions![cell]]++
         choose(at + 1, owed - 1)
         taken.pop()
         inColumn[at]--
-        inRegion[puzzle.regions[cell]]--
+        inRegion[puzzle.regions![cell]]--
       }
     }
     choose(0, quota)

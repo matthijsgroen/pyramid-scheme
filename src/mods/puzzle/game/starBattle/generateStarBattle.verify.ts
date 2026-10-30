@@ -59,7 +59,7 @@ const FAMILIES: { name: string; config: Record<Difficulty, StarBattleOptions>; t
 
 /** Whether every region is one connected piece: a region drawn in two halves is not a clue anyone can read. */
 const contiguous = (puzzle: StarBattlePuzzle, region: number) => {
-  const cells = puzzle.regions.flatMap((at, cell) => (at === region ? [cell] : []))
+  const cells = puzzle.regions!.flatMap((at, cell) => (at === region ? [cell] : []))
   const seen = new Set([cells[0]])
   const queue = [cells[0]]
   while (queue.length) {
@@ -68,7 +68,7 @@ const contiguous = (puzzle: StarBattlePuzzle, region: number) => {
     for (const at of neighboursOf(puzzle.size, cell)) {
       const straight =
         cell % puzzle.size === at % puzzle.size || Math.floor(cell / puzzle.size) === Math.floor(at / puzzle.size)
-      if (!straight || seen.has(at) || puzzle.regions[at] !== region) continue
+      if (!straight || seen.has(at) || puzzle.regions![at] !== region) continue
       seen.add(at)
       queue.push(at)
     }
@@ -102,7 +102,7 @@ describe.each(FAMILIES)("generateStarBattle for $name", ({ config, tiers }) => {
     board.solution.forEach((star, cell) => {
       if (star) expect(neighboursOf(board.size, cell).filter(at => board.solution[at])).toEqual([])
     })
-    expect(board.regions.length).toBe(options.size ** 2)
+    expect(board.regions!.length).toBe(options.size ** 2)
     // A two-star region is joined to its second star by the path claimed with it, so contiguity is a
     // property of the seeding rather than something the growth happens to preserve — which is exactly
     // why it is worth asserting at both quotas.
@@ -142,7 +142,7 @@ describe.each(FAMILIES)("generateStarBattle for $name", ({ config, tiers }) => {
     tier => {
       const board = boardAt(config, tier)
       for (let region = 0; region < board.size; region++) {
-        const cells = board.regions.flatMap((at, cell) => (at === region ? [cell] : []))
+        const cells = board.regions!.flatMap((at, cell) => (at === region ? [cell] : []))
         expect(
           new Set(cells.map(cell => Math.floor(cell / board.size))).size,
           `${tier} region ${region}`
@@ -177,7 +177,7 @@ describe.each(FAMILIES)("generateStarBattle for $name", ({ config, tiers }) => {
     const board = boardAt(config, tier)
     expect(Object.keys(board).sort(), tier).toEqual(["quota", "regions", "size", "solution", "techniqueCap"])
     // Region sizes are spread rather than even, and that spread is what makes the map a clue at all.
-    const sizes = [...Array(options.size).keys()].map(region => board.regions.filter(at => at === region).length)
+    const sizes = [...Array(options.size).keys()].map(region => board.regions!.filter(at => at === region).length)
     expect(Math.min(...sizes), `${tier} smallest region`).toBeLessThan(options.size)
     expect(Math.max(...sizes), `${tier} largest region`).toBeGreaterThan(options.size)
   })

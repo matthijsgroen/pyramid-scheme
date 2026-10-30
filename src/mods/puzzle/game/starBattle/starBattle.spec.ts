@@ -40,18 +40,18 @@ describe("starBattle", () => {
   // Elimination first, because elimination is what a player spends a board doing.
   it("cycles a square empty → dark → star → empty", () => {
     let state = createStarBattleState(board)
-    state = cycleStarBattleCell(state, 0)
+    state = cycleStarBattleCell(state, 0, board)
     expect(state.marks[0]).toBe("dark")
-    state = cycleStarBattleCell(state, 0)
+    state = cycleStarBattleCell(state, 0, board)
     expect(state.marks[0]).toBe("star")
-    state = cycleStarBattleCell(state, 0)
+    state = cycleStarBattleCell(state, 0, board)
     expect(state.marks[0]).toBeUndefined()
   })
 
   it("steps back one tap at a time, and stops at the opening board", () => {
     let state = createStarBattleState(board)
-    state = cycleStarBattleCell(state, 0)
-    state = cycleStarBattleCell(state, 5)
+    state = cycleStarBattleCell(state, 0, board)
+    state = cycleStarBattleCell(state, 5, board)
     state = undoStarBattle(state)
     expect(state.marks[5]).toBeUndefined()
     expect(state.marks[0]).toBe("dark")
@@ -98,7 +98,7 @@ describe("starBattle", () => {
 
   describe("a run ruled out in one move", () => {
     it("rules out the empty squares and one press takes the whole run back", () => {
-      const swept = sweepStarBattleCells(createStarBattleState(board), [0, 1, 2])
+      const swept = sweepStarBattleCells(createStarBattleState(board), [0, 1, 2], board)
       expect(swept.marks.slice(0, 3)).toEqual(["dark", "dark", "dark"])
       // One entry, not three: a run darkened on a wrong reading is what undo is for.
       expect(undoStarBattle(swept).marks.slice(0, 3)).toEqual([undefined, undefined, undefined])
@@ -106,17 +106,17 @@ describe("starBattle", () => {
 
     it("leaves every square that already carries a mark", () => {
       let state = createStarBattleState(board)
-      state = cycleStarBattleCell(state, 1) // dark
-      state = cycleStarBattleCell(state, 2)
-      state = cycleStarBattleCell(state, 2) // star
-      const swept = sweepStarBattleCells(state, [0, 1, 2])
+      state = cycleStarBattleCell(state, 1, board) // dark
+      state = cycleStarBattleCell(state, 2, board)
+      state = cycleStarBattleCell(state, 2, board) // star
+      const swept = sweepStarBattleCells(state, [0, 1, 2], board)
       // A sweep can never take a star back, which is what makes it safe to aim broadly.
       expect(swept.marks.slice(0, 3)).toEqual(["dark", "dark", "star"])
     })
 
     it("is not a move at all when there is nothing left to rule out", () => {
-      const state = sweepStarBattleCells(createStarBattleState(board), [0])
-      expect(sweepStarBattleCells(state, [0])).toBe(state)
+      const state = sweepStarBattleCells(createStarBattleState(board), [0], board)
+      expect(sweepStarBattleCells(state, [0], board)).toBe(state)
     })
   })
 

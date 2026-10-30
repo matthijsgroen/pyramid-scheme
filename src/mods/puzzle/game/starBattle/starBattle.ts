@@ -18,9 +18,19 @@ export type StarBattlePuzzle = {
    *
    * **This is the board's only clue**, which is what makes the family what it is: where the boundaries run
    * is the whole of what the player is given, and every square is theirs to fill.
+   *
+   * Unset on a regionless board, whose groups are its rows and columns alone.
    */
-  regions: readonly number[]
+  regions?: readonly number[]
+  /** Squares that hold no star and are not the player's to mark: a wall stands in for a region boundary. */
+  walls?: readonly boolean[]
 }
+
+export const isWall = (puzzle: StarBattlePuzzle, cell: number): boolean => puzzle.walls?.[cell] === true
+
+/** The marks a board starts with: walls are ruled out, everything else is open. Solvers begin here. */
+export const blankMarks = (puzzle: StarBattlePuzzle): (CellMark | undefined)[] =>
+  Array.from({ length: puzzle.size * puzzle.size }, (_unused, cell) => (isWall(puzzle, cell) ? "dark" : undefined))
 
 /** What is written on the board, and nothing else — a solver never needs the undo stack. */
 export type StarBattleMarks = {
@@ -58,9 +68,11 @@ export const cols = (size: number): number[][] =>
   Array.from({ length: size }, (_unused, col) => Array.from({ length: size }, (_u, row) => cellAt(size, row, col)))
 
 export const regionCells = (puzzle: StarBattlePuzzle): number[][] =>
-  Array.from({ length: puzzle.size }, (_unused, region) =>
-    puzzle.regions.flatMap((at, cell) => (at === region ? [cell] : []))
-  )
+  !puzzle.regions
+    ? []
+    : Array.from({ length: puzzle.size }, (_unused, region) =>
+        (puzzle.regions ?? []).flatMap((at, cell) => (at === region ? [cell] : []))
+      )
 
 /**
  * Every group that owes stars: the rows, the columns and the regions.
@@ -98,7 +110,12 @@ export const createStarBattleState = (puzzle: StarBattlePuzzle): StarBattleState
  * bookkeeping, and a board that could not record "not here" would make them hold the whole cross-hatch in
  * their head.
  */
-export const cycleStarBattleCell = (state: StarBattleState, cell: number): StarBattleState => {
+export const cycleStarBattleCell = (
+  state: StarBattleState,
+  cell: number,
+  puzzle: StarBattlePuzzle
+): StarBattleState => {
+  if (isWall(puzzle, cell)) return state
   const next = state.marks[cell] === undefined ? "dark" : state.marks[cell] === "dark" ? "star" : undefined
   return {
     marks: state.marks.map((mark, index) => (index === cell ? next : mark)),
@@ -118,8 +135,12 @@ export const cycleStarBattleCell = (state: StarBattleState, cell: number): StarB
  * undo entry, so undo takes back the whole sweep rather than unpicking it a square at a time — a run
  * darkened on a wrong reading is precisely what that button is for.
  */
-export const sweepStarBattleCells = (state: StarBattleState, cells: readonly number[]): StarBattleState => {
-  const ruling = cells.filter(cell => !state.marks[cell])
+export const sweepStarBattleCells = (
+  state: StarBattleState,
+  cells: readonly number[],
+  puzzle: StarBattlePuzzle
+): StarBattleState => {
+  const ruling = cells.filter(cell => !state.marks[cell] && !isWall(puzzle, cell))
   if (!ruling.length) return state
   return {
     marks: state.marks.map((mark, index) => (ruling.includes(index) ? "dark" : mark)),
@@ -158,7 +179,9 @@ export const starsIn = (marks: StarBattleMarks["marks"], group: readonly number[
  */
 export const ruledOutByStars = (puzzle: StarBattlePuzzle, marks: StarBattleMarks["marks"]): Set<number> =>
   new Set(
-    marks.flatMap((mark, cell) => (mark === "star" ? neighboursOf(puzzle.size, cell) : [])).filter(at => !marks[at])
+    marks
+      .flatMap((mark, cell) => (mark === "star" ? neighboursOf(puzzle.size, cell) : []))
+      .filter(at => !marks[at] && !isWall(puzzle, at))
   )
 
 /** Pairs of stars that touch. Reds the pair, because the broken rule is about two squares. */
