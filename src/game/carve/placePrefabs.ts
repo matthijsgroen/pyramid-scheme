@@ -504,7 +504,8 @@ const pinnedOf = (grid: FloorGrid): Array<{ r: number; c: number; name: string }
   const pinned: Array<{ r: number; c: number; name: string }> = []
   grid.cells.forEach((row, r) =>
     row.forEach((cell, c) => {
-      if (cell.type === "room" && cell.pinnedPrefab !== undefined) pinned.push({ r, c, name: cell.pinnedPrefab })
+      if (cell.type === "room" && cell.pinnedPrefab !== undefined && !cell.prefabRoom)
+        pinned.push({ r, c, name: cell.pinnedPrefab })
     })
   )
   return pinned
@@ -598,11 +599,12 @@ export const choosePrefabs = (
  * THE DESIGNED ROOMS LAID OVER THE FINISHED CARVE. The nodes `choosePrefabs` ranks, except that a node the room does
  * not fit over (`bestFit`) is passed by for the next in rank: pinned rooms first, one that fits nowhere refuses the
  * attempt; then each placement up to `max`; fewer than `min` refuses the attempt. Each fit is stamped
- * (`stampPrefab`). A floor that names none is handed back as it came.
+ * (`stampPrefab`). A floor that names none is handed back as it came. Where the floor's rooms `reserved` their
+ * blocks before the maze was dug (reserveRooms.ts), its placements are theirs and a room already drawn is passed by.
  */
-export const placePrefabs = (prep: FloorPrep, grid: FloorGrid): Refusal | FloorGrid => {
+export const placePrefabs = (prep: FloorPrep, grid: FloorGrid, reserved = false): Refusal | FloorGrid => {
   const { siteId } = prep.input
-  const placements = prep.config.config.prefabPlacements ?? []
+  const placements = reserved ? [] : (prep.config.config.prefabPlacements ?? [])
   const pinned = pinnedOf(grid)
   if (placements.length === 0 && pinned.length === 0) return grid
   const prefabNamed = prefabNamedIn(prep.config.config)

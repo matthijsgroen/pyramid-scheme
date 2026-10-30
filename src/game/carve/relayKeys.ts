@@ -87,6 +87,7 @@ export const relayKeys = pass("relayKeys", ["branches", "lay", "rand"], ["keys"]
         section,
         cells: group.cells,
         attachedAt: group.attachedAt,
+        ...(group.via ? { via: group.via } : {}),
         positional,
         idx: group.sectionIdx,
         doors: doorsShutting(section, positional, []),

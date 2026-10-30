@@ -28,6 +28,20 @@ export const CONNECTOR_DIRS: Array<[number, number, Direction]> = [
 ]
 export const OPPOSITE: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
 
+/** The nodes on an `n`-wide grid's edge an entrance may stand on, in the order an entrance is drawn from. */
+export const edgeNodes = (n: number): Array<[number, number]> => {
+  const edge: Array<[number, number]> = []
+  for (let r = 0; r < n; r += NODE_STEP) {
+    edge.push([r, 0])
+    edge.push([r, n - 1])
+  }
+  for (let c = NODE_STEP; c < n - 1; c += NODE_STEP) {
+    edge.push([0, c])
+    edge.push([n - 1, c])
+  }
+  return edge
+}
+
 /** The key of the passage between two nodes on an `n`-wide grid, the same whichever end it is read from. */
 export const makePkey = (n: number) => (r1: number, c1: number, r2: number, c2: number) => {
   const a = r1 * n + c1,

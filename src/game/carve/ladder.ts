@@ -1,5 +1,6 @@
 import { startingGridSize } from "../layLocks"
 import { carvedCells, deriveN, distanceFor } from "./ids"
+import { gridWith, reservedNodeCount } from "./reserveRooms"
 import type { FloorPrep, Rung } from "./state"
 
 // THE LADDER IS LOAD-BEARING. The bake picks each floor's layout (worldGen/carveSeedSearch.ts): every seed at the
@@ -43,13 +44,17 @@ const PACKING_WIDEN = 2
 // instead carves a walk hundreds of cells long for a floor holding three puzzles.
 export const PACKING_CEILING = 1
 
-/** Attempt 0's rung: the authored wish, and a grid sized to the floor's content or its lay, whichever is larger. */
+/** Attempt 0's rung: the authored wish, and a grid sized to the floor's content or its lay, whichever is larger,
+ * with room on top for the nodes the floor's designed rooms reserve. */
 export const firstRung = (prep: FloorPrep): Rung => {
   const packing = prep.sizing.packing
   const targetDistance = distanceFor(prep, packing)
-  const startingN = Math.max(
-    deriveN(prep, { packing, targetDistance }, prep.sizing.minCells),
-    prep.sizing.layPlan ? startingGridSize(prep.sizing.layPlan) : 0
+  const startingN = gridWith(
+    Math.max(
+      deriveN(prep, { packing, targetDistance }, prep.sizing.minCells),
+      prep.sizing.layPlan ? startingGridSize(prep.sizing.layPlan) : 0
+    ),
+    reservedNodeCount(prep)
   )
   return { n: startingN, startingN, packing, targetDistance, chainPacking: packing, recovery: false }
 }

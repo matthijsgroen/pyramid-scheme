@@ -1,4 +1,5 @@
 import { spreadContentIndices } from "./grid"
+import { blockNodes } from "./reserveRooms"
 import { pass } from "./state"
 
 /**
@@ -27,41 +28,78 @@ import { pass } from "./state"
  *
  * A path with no free node left for every piece of content is retried rather than refused: the path
  * lengthens across the attempt budget.
+ *
+ * A RESERVED ROOM'S NODES HOLD NOTHING BUT ITS OWN: a main-path puzzle pinned to a room stands on the room's
+ * anchor, and every other piece is moved forward past the room's nodes, or back where nothing free lies ahead of the
+ * next pinned piece, each piece kept after the one before it.
  */
-export const placeMainContent = pass("placeMainContent", ["maze", "regions", "lay"], ["content"], (prep, state) => {
-  const { contentCount, leverOnMain } = prep.sizing
-  const { mainPath } = state.maze
-  const { seams } = state.regions
-  if (mainPath.length < contentCount + 2) return { retry: [] } // need entrance + content + a distinct exit
+export const placeMainContent = pass(
+  "placeMainContent",
+  ["maze", "regions", "lay"],
+  ["content"],
+  (prep, state) => {
+    const { contentCount, leverOnMain } = prep.sizing
+    const { mainPath } = state.maze
+    const { seams } = state.regions
+    if (mainPath.length < contentCount + 2) return { retry: [] } // need entrance + content + a distinct exit
 
-  const placed: number[] = state.lay ? [...state.lay.mainSteps] : []
-  for (const wanted of state.lay ? [] : spreadContentIndices(contentCount, 1, mainPath.length)) {
-    let index = wanted
-    while (index < mainPath.length - 1 && (seams.has(index) || placed.includes(index))) index += 1
-    if (index >= mainPath.length - 1) break
-    placed.push(index)
-  }
-  if (placed.length < contentCount) return { retry: [] }
-  // A FLOOR WITH NO EXIT ENDS AT ITS GOAL CHEST: the main path's terminal is a dead end, and with no pillar to
-  // stand there the chest takes it, so no empty stub runs on past the last thing the floor holds.
-  const terminal = mainPath.length - 1
-  if (!state.lay && prep.config.config.exitOrStaircase === "none" && !seams.has(terminal))
-    placed[placed.length - 1] = terminal
+    const blocks = state.blocks ?? []
+    const placed: number[] = state.lay ? [...state.lay.mainSteps] : []
+    if (blocks.length > 0 && !state.lay) {
+      const held = blockNodes(blocks)
+      const pinnedAt = new Map<number, number>()
+      for (const { on } of blocks)
+        if ("main" in on && on.pin !== undefined) pinnedAt.set(on.pin + (leverOnMain ? 1 : 0), on.main)
+      const wants = spreadContentIndices(contentCount, 1, mainPath.length)
+      for (const [slot, wanted] of wants.entries()) {
+        const before = placed[placed.length - 1] ?? 0
+        const pinned = pinnedAt.get(slot)
+        if (pinned !== undefined) {
+          if (pinned <= before) return { retry: [] }
+          placed.push(pinned)
+          continue
+        }
+        const bound = Math.min(
+          mainPath.length - 1,
+          ...[...pinnedAt].filter(([later]) => later > slot).map(([, step]) => step)
+        )
+        const free = (index: number) => !seams.has(index) && !held.has(`${mainPath[index][0]},${mainPath[index][1]}`)
+        let index = Math.max(wanted, before + 1)
+        while (index < bound && !free(index)) index += 1
+        if (index >= bound) for (index = Math.min(wanted, bound) - 1; index > before && !free(index);) index -= 1
+        if (index <= before) return { retry: [] }
+        placed.push(index)
+      }
+    }
+    for (const wanted of state.lay || blocks.length > 0 ? [] : spreadContentIndices(contentCount, 1, mainPath.length)) {
+      let index = wanted
+      while (index < mainPath.length - 1 && (seams.has(index) || placed.includes(index))) index += 1
+      if (index >= mainPath.length - 1) break
+      placed.push(index)
+    }
+    if (placed.length < contentCount) return { retry: [] }
+    // A FLOOR WITH NO EXIT ENDS AT ITS GOAL CHEST: the main path's terminal is a dead end, and with no pillar to
+    // stand there the chest takes it, so no empty stub runs on past the last thing the floor holds.
+    const terminal = mainPath.length - 1
+    if (!state.lay && prep.config.config.exitOrStaircase === "none" && !seams.has(terminal))
+      placed[placed.length - 1] = terminal
 
-  // EACH PUZZLE'S AUTHORED ORDINAL — 0-based, in path order — ASSIGNED ONCE, HERE, before a control gets
-  // any chance to move one of these nodes. `k` indexes `config.rewards[k]`/`config.encountersByIndex[k]`, is
-  // handed to `resolveKeyRequirements` as `pathIndex`, and the room built from it carries `pathIndex: k`
-  // onward into its own save address (`p${k}`, cellSlot.ts). A puzzle keeps its ordinal wherever its node
-  // ends up: a control that displaces it moves its entry rather than renumbering every puzzle after it.
-  const puzzleRole = new Map<number, number>()
-  placed.slice(leverOnMain ? 1 : 0, -1).forEach((idx, k) => puzzleRole.set(idx, k))
+    // EACH PUZZLE'S AUTHORED ORDINAL — 0-based, in path order — ASSIGNED ONCE, HERE, before a control gets
+    // any chance to move one of these nodes. `k` indexes `config.rewards[k]`/`config.encountersByIndex[k]`, is
+    // handed to `resolveKeyRequirements` as `pathIndex`, and the room built from it carries `pathIndex: k`
+    // onward into its own save address (`p${k}`, cellSlot.ts). A puzzle keeps its ordinal wherever its node
+    // ends up: a control that displaces it moves its entry rather than renumbering every puzzle after it.
+    const puzzleRole = new Map<number, number>()
+    placed.slice(leverOnMain ? 1 : 0, -1).forEach((idx, k) => puzzleRole.set(idx, k))
 
-  state.content = {
-    placed,
-    goal: placed[placed.length - 1],
-    // A lever the main path holds takes the first content node: it opens what lies further on, so the
-    // walk has to reach it before the doors it owns are worth reaching.
-    lever: leverOnMain ? placed[0] : -1,
-    puzzleRole,
-  }
-})
+    state.content = {
+      placed,
+      goal: placed[placed.length - 1],
+      // A lever the main path holds takes the first content node: it opens what lies further on, so the
+      // walk has to reach it before the doors it owns are worth reaching.
+      lever: leverOnMain ? placed[0] : -1,
+      puzzleRole,
+    }
+  },
+  ["blocks"]
+)

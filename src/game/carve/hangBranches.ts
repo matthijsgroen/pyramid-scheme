@@ -6,6 +6,7 @@ import type { KeyColor, SideSection, SubSection } from "../siteTypes"
 import { absorbedCell, contentNow, gateIndices } from "./derive"
 import { CONNECTOR_DIRS, DIRS, DIRS2, NODE_STEP, OPPOSITE, makePkey } from "./grid"
 import { chainRoomCount, nid, paddedChainLength } from "./ids"
+import { blockNodes, blockZone, centralityOf, type ReservedBlock } from "./reserveRooms"
 import { childSectionsOf, doorsShutting } from "./sections"
 import { pass } from "./state"
 import type { Cell, Chain, DropSeam, OneWayEdge, SectionGroup } from "./state"
@@ -23,7 +24,8 @@ const extendPath = (
   neighbors: (r: number, c: number) => Array<[number, number]>,
   usedCells: Set<string>,
   rand: () => number,
-  scorer?: (r: number, c: number) => number
+  scorer?: (r: number, c: number) => number,
+  mayEnd?: (r: number, c: number) => boolean
 ): Array<[number, number]> | null => {
   if (count === 0) return []
   const result: Array<[number, number]> = []
@@ -31,7 +33,9 @@ const extendPath = (
 
   const dfs = (r: number, c: number, remaining: number): boolean => {
     if (remaining === 0) return true
-    const free = neighbors(r, c).filter(([nr, nc]) => !tempUsed.has(`${nr},${nc}`))
+    const free = neighbors(r, c).filter(
+      ([nr, nc]) => !tempUsed.has(`${nr},${nc}`) && (remaining > 1 || !mayEnd || mayEnd(nr, nc))
+    )
     const nbrs =
       remaining === 1 && scorer
         ? free
@@ -56,6 +60,11 @@ const extendPath = (
  * EVERY AUTHORED SIDE PATH, HUNG OFF THE MAIN WALK, and its sub-sections hung off it: which cells each took,
  * the passages carved to reach them, and the drops a seam carries. Branch points are scored by how open the
  * ground around them is, jittered so mazes stay varied; the sections are bundled onto shared hubs.
+ *
+ * A RESERVED ROOM IS A HUB: a side path walked to a block at its end is hung as walked, and every room on the main
+ * path is offered to the side paths before any bare node, the most central first, each leaving by one of the room's
+ * free rays. No branch point stands in a block or close enough for its room to reach into a ring. A room the floor
+ * placed on the main path that no side path branches off refuses the attempt.
  */
 export const hangBranches = pass(
   "hangBranches",
@@ -89,6 +98,24 @@ export const hangBranches = pass(
     const takenByControl = new Set(state.mainControls.at.values())
     const gated = gateIndices(state)
     const absorbed = absorbedCell(state.lay)
+    const blocks = state.blocks ?? []
+    const held = blockNodes(blocks)
+    const zone = blockZone(blocks)
+    const cellKey = ([r, c]: Cell) => `${r},${c}`
+    // A chain's end room claims floor, so it never ends where its room would reach into a ring.
+    const mayEnd = blocks.length > 0 ? (r: number, c: number) => !zone.has(`${r},${c}`) : undefined
+    const hubs = blocks
+      .flatMap(block => ("main" in block.on ? [{ block, on: block.on }] : []))
+      .sort(
+        (a, b) =>
+          Number(a.on.pin !== undefined) - Number(b.on.pin !== undefined) ||
+          centralityOf(b.on.main, mainPath.length) - centralityOf(a.on.main, mainPath.length)
+      )
+      .map(({ block }) => block)
+    const hubAt = new Map<string, ReservedBlock>(hubs.map(block => [cellKey(block.anchor), block]))
+    const spines = state.walks?.spines ?? new Map()
+    // The door nodes a walk already passes through, which no other way out may take.
+    const doorsTaken = new Set<string>(mainPath.map(cellKey))
 
     // Passages an attach carves where a candidate had no natural one, beside the maze's own.
     const carved = new Set<string>()
@@ -100,6 +127,13 @@ export const hangBranches = pass(
 
     // Full mainPath as corridor so sections can branch from anywhere along it
     const usedCells = new Set<string>(mainPath.map(([r, c]) => `${r},${c}`))
+    // A block's nodes are its room's alone while the chains are placed.
+    for (const node of held) usedCells.add(node)
+    for (const { via, cells } of spines.values())
+      for (const cell of [...via, ...cells]) {
+        usedCells.add(cellKey(cell))
+        doorsTaken.add(cellKey(cell))
+      }
     // Cells a drop seam holds clear while the chains are still being placed, so nothing else is carved
     // through them; given back once the chains are down, as the seam runs are held by the drops from then on.
     const heldForSeams = new Set<string>()
@@ -139,6 +173,13 @@ export const hangBranches = pass(
         ([nr, nc]) => nr >= 0 && nr < N && nc >= 0 && nc < N && !usedCells.has(`${nr},${nc}`)
       )
 
+    /** The rays of a room no walk has taken, whose node past the ring is free. */
+    const freeRays = (block: ReservedBlock) =>
+      block.rays.filter(
+        ray =>
+          ray.slice(1, -1).every(cell => !doorsTaken.has(cellKey(cell))) && !usedCells.has(cellKey(ray[ray.length - 1]))
+      )
+
     const branchCandidates: Array<[number, number]> = []
     // Cells within the actual puzzle-bearing stretch of the main path (before the goal),
     // in path order — kept separate so fork placement can prefer interleaving with main-path
@@ -167,7 +208,8 @@ export const hangBranches = pass(
     for (let pi = 0; pi < mainPath.length - 1; pi++) {
       const [pr, pc] = mainPath[pi]
       if (forkJunctionIdx.has(pi) || laid?.reserved.has(pi)) continue
-      if (rawFreeNeighbors(pr, pc).length === 0) continue
+      const hub = hubAt.get(`${pr},${pc}`)
+      if (hub ? freeRays(hub).length === 0 : zone.has(`${pr},${pc}`) || rawFreeNeighbors(pr, pc).length === 0) continue
       branchCandidates.push([pr, pc])
       if (pi < goalIndex && !regionSeamIndices.has(pi)) mainZoneCandidates.push([pr, pc])
     }
@@ -227,8 +269,14 @@ export const hangBranches = pass(
       candidates: Array<[number, number]>,
       needed: number,
       mayCarve: boolean
-    ): { cells: Array<[number, number]>; attachedAt: [number, number] } | null => {
+    ): { cells: Array<[number, number]>; attachedAt: [number, number]; via?: Cell[] } | null => {
       for (const [pcr, pcc] of candidates) {
+        const hub = hubAt.get(`${pcr},${pcc}`)
+        if (hub) {
+          const attached = attachAtHub(hub, needed)
+          if (attached) return attached
+          continue
+        }
         let freeAdj = shuffle(
           neighbors(pcr, pcc).filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`)),
           rand
@@ -253,9 +301,17 @@ export const hangBranches = pass(
         }
         if (freeAdj.length === 0) continue
         for (const [startR, startC] of freeAdj) {
+          if (needed === 1 && mayEnd && !mayEnd(startR, startC)) continue
           usedCells.add(`${startR},${startC}`)
-          const rest = extendPath(startR, startC, needed - 1, neighbors, usedCells, rand, (r, c) =>
-            pocketSize([r, c], 8)
+          const rest = extendPath(
+            startR,
+            startC,
+            needed - 1,
+            neighbors,
+            usedCells,
+            rand,
+            (r, c) => pocketSize([r, c], 8),
+            mayEnd
           )
           if (rest === null) {
             usedCells.delete(`${startR},${startC}`)
@@ -265,6 +321,44 @@ export const hangBranches = pass(
           cells.slice(1).forEach(([r, c]) => usedCells.add(`${r},${c}`))
           return { cells, attachedAt: [pcr, pcc] }
         }
+      }
+      return null
+    }
+
+    /**
+     * Hangs a chain off a reserved room through one of its free rays: the ray's door nodes lead to its node past the
+     * ring, where the chain starts and walks on through whatever is still empty.
+     */
+    const attachAtHub = (
+      block: ReservedBlock,
+      needed: number
+    ): { cells: Array<[number, number]>; attachedAt: [number, number]; via: Cell[] } | null => {
+      for (const ray of shuffle(freeRays(block), rand)) {
+        const out = ray[ray.length - 1]
+        if (needed === 1 && mayEnd && !mayEnd(out[0], out[1])) continue
+        usedCells.add(cellKey(out))
+        const rest = extendPath(
+          out[0],
+          out[1],
+          needed - 1,
+          neighbors,
+          usedCells,
+          rand,
+          (r, c) => pocketSize([r, c], 8),
+          mayEnd
+        )
+        if (rest === null) {
+          usedCells.delete(cellKey(out))
+          continue
+        }
+        rest.forEach(cell => usedCells.add(cellKey(cell)))
+        ray.slice(1).forEach(([r, c], i) => {
+          const key = pkey(ray[i][0], ray[i][1], r, c)
+          if (!hasPassage(key)) carved.add(key)
+        })
+        const via = ray.slice(1, -1)
+        for (const cell of via) doorsTaken.add(cellKey(cell))
+        return { cells: [out, ...rest], attachedAt: block.anchor, via }
       }
       return null
     }
@@ -297,7 +391,16 @@ export const hangBranches = pass(
           const held = [...between, `${fr},${fc}`]
           if (held.some(cellKey => usedCells.has(cellKey))) continue
           for (const cellKey of held) usedCells.add(cellKey)
-          const rest = extendPath(fr, fc, needed - 1, neighbors, usedCells, rand, (r, c) => pocketSize([r, c], 8))
+          const rest = extendPath(
+            fr,
+            fc,
+            needed - 1,
+            neighbors,
+            usedCells,
+            rand,
+            (r, c) => pocketSize([r, c], 8),
+            mayEnd
+          )
           if (rest === null) {
             for (const cellKey of held) usedCells.delete(cellKey)
             continue
@@ -343,12 +446,15 @@ export const hangBranches = pass(
       !forkJunctionIdx.has(mi) &&
       !laid?.reserved.has(mi) &&
       !absorbed.has(`${mainPath[mi][0]},${mainPath[mi][1]}`) &&
+      !zone.has(`${mainPath[mi][0]},${mainPath[mi][1]}`) &&
       !dropEnds.has(`${mainPath[mi][0]},${mainPath[mi][1]}`)
     // Bundle side sections onto shared branch points ("hubs"): a `{ in }` fork's sections first, then each
     // junction a laid floor's `forks` holds, then the rest in a shuffled order, `hubGroupSize` to a hub.
     const sectionOrder = shuffle([...branchSections], rand)
     const forkedSections = new Set([...forkGroups, ...junctionGroups].flat())
-    const looseSections = sectionOrder.filter(si => !forkedSections.has(si))
+    const looseSections = sectionOrder.filter(si => !forkedSections.has(si) && !spines.has(si))
+    for (const [sectionIdx, { attachedAt, via, cells }] of spines)
+      sectionGroups.push({ sectionIdx, cells, attachedAt, ...(via.length ? { via } : {}) })
     const hubGroups: number[][] = [...forkGroups, ...junctionGroups].map(group => [...group])
     for (let i = 0; i < looseSections.length; i += hubGroupSize) {
       hubGroups.push(looseSections.slice(i, i + hubGroupSize))
@@ -378,6 +484,12 @@ export const hangBranches = pass(
       const ownSlice = mainZoneSlices[sliceOrder[groupIdx]]
       const junctionCell = groupIdx < forkIns.length ? mainPath[junctionIdxOf[groupIdx]] : undefined
       const holdsJunction = groupIdx >= forkIns.length && groupIdx < forkIns.length + junctionGroups.length
+      // The rooms on the main path come first, this group's own before the others, while they have a ray free.
+      const ownHub = hubs[groupIdx - forkIns.length - junctionGroups.length]
+      const roomsFirst = (): Array<[number, number]> =>
+        [...(ownHub ? [ownHub] : []), ...hubs.filter(hub => hub !== ownHub)]
+          .filter(hub => freeRays(hub).length > 0)
+          .map(hub => hub.anchor)
 
       for (const si of group) {
         // Try the shared hub first (if this group already has one), then this group's own
@@ -392,8 +504,8 @@ export const hangBranches = pass(
               ? [hubCell]
               : scoreCandidates(mainPath.filter((_, mi) => bareRouteStep(mi)))
             : hubCell
-              ? [hubCell, ...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
-              : [...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
+              ? [hubCell, ...roomsFirst(), ...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
+              : [...roomsFirst(), ...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
         // On a laid floor a path hangs only where its region takes everything the path holds.
         const candidateSources = laid
           ? everywhere.filter(([cr, cc]) =>
@@ -434,6 +546,7 @@ export const hangBranches = pass(
       // only opening has to be carved (see the fallback below) counts too — pre-filtering it out
       // here would put it out of that fallback's reach.
       const hasCarveableNeighbor = (pr: number, pc: number) =>
+        !zone.has(`${pr},${pc}`) &&
         DIRS2.some(
           ([dr, dc]) =>
             pr + dr >= 0 && pr + dr < N && pc + dc >= 0 && pc + dc < N && !usedCells.has(`${pr + dr},${pc + dc}`)
@@ -443,7 +556,7 @@ export const hangBranches = pass(
           .slice(0, -1)
           .filter(
             ([pr, pc]) =>
-              neighbors(pr, pc).some(([ar, ac]) => !usedCells.has(`${ar},${ac}`)) ||
+              (!zone.has(`${pr},${pc}`) && neighbors(pr, pc).some(([ar, ac]) => !usedCells.has(`${ar},${ac}`))) ||
               (rung.recovery && hasCarveableNeighbor(pr, pc))
           ),
         rand
@@ -518,6 +631,26 @@ export const hangBranches = pass(
     if (failed)
       return { retry: forkShort === undefined ? [] : [{ type: "forkSeamsNotLaid", fork: forkIns[forkShort] }] }
     for (const cellKey of heldForSeams) usedCells.delete(cellKey)
+    const bare = hubs.find(
+      hub =>
+        "main" in hub.on &&
+        hub.on.pin === undefined &&
+        !sectionGroups.some(g => cellKey(g.attachedAt) === cellKey(hub.anchor))
+    )
+    if (bare)
+      return {
+        retry: [
+          { type: "prefabsNotPlaced", room: bare.room, wanted: 1, placed: 0, why: "no side path branches off it" },
+        ],
+      }
+    // A block's nodes no walk passes through are no ground at all.
+    const walked = new Set<string>([
+      ...doorsTaken,
+      ...sectionGroups.flatMap(({ cells, via }) => [...cells, ...(via ?? [])]).map(cellKey),
+      ...subChains.flatMap(({ cells }) => cells).map(cellKey),
+    ])
+    for (const node of held) if (!walked.has(node)) usedCells.delete(node)
     state.branches = { used: usedCells, groups: sectionGroups, subChains, seamDrops, carved }
-  }
+  },
+  ["blocks", "walks"]
 )

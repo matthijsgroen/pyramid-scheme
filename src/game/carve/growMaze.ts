@@ -1,5 +1,7 @@
 import type { LaidFloor } from "../laidFloor"
-import { DIRS2, NODE_STEP, makePkey } from "./grid"
+import { shuffle } from "../random"
+import { DIRS2, NODE_STEP, edgeNodes, makePkey } from "./grid"
+import { blockNodes, type ReservedBlock, type ReservedWalk } from "./reserveRooms"
 import { pass } from "./state"
 import type { Cell } from "./state"
 
@@ -146,9 +148,65 @@ const growMazeAround = (N: number, laid: LaidFloor, rand: () => number, steer: S
   return { mainPath: laid.route, passages }
 }
 
+// Grows the maze around the ways walked to the reserved blocks: every walked node is a root, taken in a shuffled
+// order after the hubs' doors, and the DFS steps onto any node no walk and no block holds. A block is entered and left only along the
+// rays its walks took, so nothing is dug through a ring.
+const growAroundBlocks = (
+  N: number,
+  walks: ReservedWalk,
+  blocks: readonly ReservedBlock[],
+  rand: () => number,
+  steer: Steer
+) => {
+  const passages = new Set<string>(walks.passages)
+  const pkey = makePkey(N)
+  const held = blockNodes(blocks)
+  const walked = [...walks.mainPath, ...[...walks.spines.values()].flatMap(({ via, cells }) => [...via, ...cells])]
+  const walkedKeys = new Set(walked.map(([r, c]) => `${r},${c}`))
+  const visited = new Set<string>([...held, ...walkedKeys])
+  const arrivedVia = new Map<string, [number, number]>()
+  const lastTurnAt = new Map<string, number>()
+  // A room on the main path is a hub: the node past each of its free rays roots a maze of its own, grown first, for
+  // a side path to leave the room by.
+  const doors = blocks
+    .filter(({ on }) => "main" in on)
+    .flatMap(({ rays }) => rays)
+    .filter(ray => ray.slice(1, -1).every(([r, c]) => !walkedKeys.has(`${r},${c}`)))
+    .map(ray => ray[ray.length - 1])
+    .filter(([r, c]) => !visited.has(`${r},${c}`))
+  for (const [r, c] of doors) visited.add(`${r},${c}`)
+  const stack: Array<[number, number]> = [
+    ...shuffle(
+      walked.filter(([r, c]) => !held.has(`${r},${c}`)),
+      rand
+    ),
+    ...shuffle(doors, rand),
+  ]
+  while (stack.length > 0) {
+    const [r, c] = stack[stack.length - 1]
+    const unvisited = DIRS2.map(([dr, dc]) => [r + dr, c + dc] as [number, number]).filter(
+      ([nr, nc]) => nr >= 0 && nr < N && nc >= 0 && nc < N && !visited.has(`${nr},${nc}`)
+    )
+    if (unvisited.length === 0) {
+      stack.pop()
+      continue
+    }
+    const incoming = arrivedVia.get(`${r},${c}`)
+    const lastTurn = lastTurnAt.get(`${r},${c}`) ?? 0
+    const [nr, nc] = stepFrom(unvisited, [r, c], incoming, lastTurn, rand, steer)
+    passages.add(pkey(r, c, nr, nc))
+    visited.add(`${nr},${nc}`)
+    arrivedVia.set(`${nr},${nc}`, [nr - r, nc - c])
+    lastTurnAt.set(`${nr},${nc}`, (incoming && turnOf(incoming, [nr - r, nc - c])) || lastTurn)
+    stack.push([nr, nc])
+  }
+  return { mainPath: walks.mainPath, passages }
+}
+
 /**
  * THE MAZE THE FLOOR IS CARVED FROM: a laid floor's route with a maze grown among the nodes the lock left
- * free, or a fresh maze from an edge entrance whose main path walks the rung's target distance.
+ * free, the ways walked to the reserved rooms with a maze grown around them, or a fresh maze from an edge
+ * entrance whose main path walks the rung's target distance.
  *
  * The exit is a true dead end (degree 1). The packing knob (targetDistance) ends the main path at a
  * mid-maze node, not the maze's farthest leaf, so the exit cell keeps tree passages toward the
@@ -157,39 +215,43 @@ const growMazeAround = (N: number, laid: LaidFloor, rand: () => number, steer: S
  * visit the moment it's stepped on. Every passage incident to the exit except the one to its main-path
  * predecessor is dropped here, before any branch is hung, so nothing branches through or beside it.
  */
-export const growMaze = pass("growMaze", ["rung", "lay", "rand"], ["maze"], (prep, state) => {
-  const laid = state.lay?.laid
-  const { rand } = state
-  const N = laid ? laid.n : state.rung.n
-  // Pick entrance from edge cells (non-corner preferred for more connections).
-  // Must be an even/even position — the only kind of cell that can be a real node.
-  const edgeCells: Cell[] = []
-  for (let r = 0; r < N; r += 2) {
-    edgeCells.push([r, 0])
-    edgeCells.push([r, N - 1])
-  }
-  for (let c = 2; c < N - 1; c += 2) {
-    edgeCells.push([0, c])
-    edgeCells.push([N - 1, c])
-  }
-  const [entR, entC] = laid ? laid.route[0] : edgeCells[Math.floor(rand() * edgeCells.length)]
+export const growMaze = pass(
+  "growMaze",
+  ["rung", "lay", "rand"],
+  ["maze"],
+  (prep, state) => {
+    const laid = state.lay?.laid
+    const { rand } = state
+    const walks = state.walks ?? undefined
+    const N = laid ? laid.n : state.rung.n
+    // The entrance stands on an edge node — the only kind of cell that can be a real node.
+    const edgeCells: Cell[] = laid || walks ? [] : edgeNodes(N)
+    const [entR, entC] = laid
+      ? laid.route[0]
+      : walks
+        ? walks.entrance
+        : edgeCells[Math.floor(rand() * edgeCells.length)]
 
-  const steer: Steer = { straightBias: prep.sizing.straightBias, turnBias: 0 }
-  const { mainPath, passages } = laid
-    ? growMazeAround(N, laid, rand, steer)
-    : buildMaze(N, entR, entC, rand, steer, state.rung.targetDistance)
+    const steer: Steer = { straightBias: prep.sizing.straightBias, turnBias: 0 }
+    const { mainPath, passages } = laid
+      ? growMazeAround(N, laid, rand, steer)
+      : walks
+        ? growAroundBlocks(N, walks, state.blocks ?? [], rand, steer)
+        : buildMaze(N, entR, entC, rand, steer, state.rung.targetDistance)
 
-  const exit = mainPath[mainPath.length - 1]
-  if (mainPath.length > 1) {
-    const pkey = makePkey(N)
-    const [exR, exC] = exit
-    const [predR, predC] = mainPath[mainPath.length - 2]
-    for (const [dr, dc] of DIRS2) {
-      const nr = exR + dr,
-        nc = exC + dc
-      if (nr === predR && nc === predC) continue
-      passages.delete(pkey(exR, exC, nr, nc))
+    const exit = mainPath[mainPath.length - 1]
+    if (mainPath.length > 1) {
+      const pkey = makePkey(N)
+      const [exR, exC] = exit
+      const [predR, predC] = mainPath[mainPath.length - 2]
+      for (const [dr, dc] of DIRS2) {
+        const nr = exR + dr,
+          nc = exC + dc
+        if (nr === predR && nc === predC) continue
+        passages.delete(pkey(exR, exC, nr, nc))
+      }
     }
-  }
-  state.maze = { n: N, entrance: [entR, entC], exit, mainPath, passages }
-})
+    state.maze = { n: N, entrance: [entR, entC], exit, mainPath, passages }
+  },
+  ["walks", "blocks"]
+)

@@ -12,7 +12,6 @@ import {
   type MechanismRecord,
   type RoomCell,
 } from "../siteTypes"
-import { assembleFloor } from "./assembleFloor"
 import { chamberFloor, prepOf } from "./carveFixtures"
 import { carveFloor } from "./carveFloor"
 import { LATTICE_ENGINE } from "./engines"
@@ -126,14 +125,6 @@ layout
 # m . s d
 # # # # #
 m ground mat
-s stop`)
-
-const ALCOVE = prefab(`room alcove
-mirror
-layout
-# d # #
-d . s d
-# d # #
 s stop`)
 
 const PREFABS = { hall: HALL, wideHall: WIDE_HALL, gallery: GALLERY, vault: VAULT, den: DEN, store: STORE }
@@ -445,37 +436,6 @@ describe("the carve", () => {
     const laid = carveFloor(prep, LATTICE_ENGINE)
     if (!plain.success || !laid.success) throw new Error("the fixture floor does not carve")
     expect(carvedFloorDigest(laid.grid)).toBe(carvedFloorDigest(plain.grid))
-  })
-
-  it("lays a prefab over a carved room without moving a wall", () => {
-    const named = { prefabs: { alcove: ALCOVE }, prefabPlacements: [{ room: "alcove", min: 0, max: 9, central: 0.5 }] }
-    const plain = assembleFloor("site", chamberFloor({ chambers: 3 }), 7)
-    const laid = assembleFloor("site", chamberFloor({ chambers: 3, ...named }), 7)
-    if (!plain.success || !laid.success) throw new Error("the fixture floor does not carve")
-    const rooms = prefabRooms(laid.grid)
-    expect(rooms.length).toBeGreaterThan(0)
-    for (const { r, c } of rooms) {
-      const before = plain.grid.cells[r][c]
-      expect(laid.grid.cells[r][c]).toMatchObject({ type: before.type, dirs: (before as RoomCell).dirs })
-    }
-    const strip = (grid: FloorGrid): FloorGrid => ({
-      ...grid,
-      cells: grid.cells.map(row =>
-        row.map(cell => {
-          if (cell.type !== "room") return cell
-          const {
-            prefabRoom: _p,
-            decoration: _d,
-            decorationFallback: _f,
-            wallDecoration: _w,
-            activity: _a,
-            ...rest
-          } = cell
-          return rest
-        })
-      ),
-    })
-    expect(carvedFloorDigest(strip(laid.grid))).toBe(carvedFloorDigest(strip(plain.grid)))
   })
 })
 

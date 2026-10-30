@@ -43,6 +43,7 @@ import type { ResolveBoardIndex } from "../seeds/boardIndex"
 import type { ResolveOneWayRealisation } from "../oneWayRealisation"
 import type { ResolveRegionBarrierRealisation } from "../regionBarrierRealisation"
 import type { ResolvePassageRealisation } from "../passageRealisation"
+import type { ReservedBlock, ReservedWalk } from "./reserveRooms"
 
 /** A grid position, row then column. */
 export type Cell = [number, number]
@@ -81,6 +82,8 @@ export type Chain = {
   section: SideSection | SubSection
   cells: Cell[]
   attachedAt: Cell
+  /** The door nodes of the designed room it leaves, between `attachedAt` and its first cell; absent off a plain node. */
+  via?: Cell[]
   /** Where it sits among its siblings: `s0`, `s0.1`. */
   positional: string
   /** Its own index, and its parent's where it has one — what the section hash is keyed on. */
@@ -105,7 +108,7 @@ export type SwitchWay = { dir: Direction; cell: string; gateKeyId: string }
 export type ForkSwitchRoom = { room: Partial<RoomSpec>; gateKeyByDir: ReadonlyMap<Direction, string> }
 
 /** A top-level side section hung off the route: the cells it took and the route cell it hangs from. */
-export type SectionGroup = { sectionIdx: number; cells: Cell[]; attachedAt: Cell }
+export type SectionGroup = { sectionIdx: number; cells: Cell[]; attachedAt: Cell; via?: Cell[] }
 
 /** A room as a pass decides it; the renderer adds what the grid alone knows. */
 export type RoomSpec = Omit<RoomCell, "type" | "dirs" | "state" | "sectionHash" | "legacySectionHash" | "hidden">
@@ -297,6 +300,10 @@ export type CarveState = {
   rung: Rung
   /** The attempt's one stream: every pass that draws, draws from it in pass order. */
   rand: () => number
+  /** The designed rooms that claimed their block of nodes before the maze was dug; empty where the floor names none. */
+  blocks?: readonly ReservedBlock[]
+  /** The main path and the side paths walked to and through those blocks; null where no block was reserved. */
+  walks?: ReservedWalk | null
   /** The grid the lay grew to, written even when the lay refuses: the next rung starts from it. */
   laidN?: number
   /** The lock the floor lays and the route steps its content takes; null where the floor lays none. */

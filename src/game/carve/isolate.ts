@@ -82,7 +82,7 @@ export const isolate = pass("isolate", ["maze", "keys", "labels", "lay"], ["door
       const hangsFrom = ground.get(keyOf(chain.attachedAt))
       if (hangsFrom !== undefined) for (const cell of chain.cells) ground.set(keyOf(cell), hangsFrom)
     }
-    markChain(chain.attachedAt, chain.cells)
+    markChain(chain.attachedAt, [...(chain.via ?? []), ...chain.cells])
     if (chain.doors.length === 0) continue
     for (const cell of chain.cells) {
       gated.add(keyOf(cell))

@@ -15,8 +15,10 @@ import { placePipeHoles } from "./placePipeHoles"
 import { placePrefabs } from "./placePrefabs"
 import { relayKeys } from "./relayKeys"
 import { render } from "./render"
-import type { RenderState } from "./render"
+import type { RenderState, WritableGrid } from "./render"
 import { reserveJunctions } from "./reserveJunctions"
+import { croppedToBox, ringFault, stampBlocks } from "./reserveRooms"
+import { reserveRooms } from "./reserveRooms"
 import { seatChainGates } from "./seatChainGates"
 import { seatGateRuns } from "./seatGateRuns"
 import { seatMainBarrierDoors } from "./seatMainBarrierDoors"
@@ -38,6 +40,7 @@ import { standSwitches } from "./standSwitches"
  * docs/instructions/carve-passes.md for the list it grows to.
  */
 export const PASSES: readonly PassEntry[] = [
+  reserveRooms,
   layFloor,
   growMaze,
   seatRouteRegions,
@@ -84,12 +87,20 @@ export const TAIL_READS = [
 ] as const satisfies readonly (keyof RenderState)[]
 
 /**
- * THE TAIL OF AN ATTEMPT, once every pass holds: render writes the grid from the decisions, validate asks
- * the grid's checks, the pieces a walk steps on stand on it, finish dresses the carve that passes them, and the
- * designed rooms the floor names are laid over its rooms.
+ * THE TAIL OF AN ATTEMPT, once every pass holds: render writes the grid from the decisions and the rooms that
+ * reserved their blocks are drawn over their anchors, validate asks the grid's checks, the pieces a walk steps on
+ * stand on it, every block's ring is checked clear, finish dresses the carve that passes them, the designed rooms
+ * nothing reserved are laid over its rooms, and a floor with blocks is cut to its box.
  */
 export const finishAttempt: Finish = (prep, state) => {
   const decided = requireReads("render", TAIL_READS, state)
-  const grid = render(prep, decided)
-  return validate(prep, decided, grid) ?? standPieces(prep, decided, grid) ?? placePrefabs(prep, finish(prep, grid))
+  const blocks = state.blocks ?? []
+  const grid = stampBlocks(prep, blocks, render(prep, decided)) as WritableGrid
+  const refusal =
+    validate(prep, decided, grid) ??
+    standPieces(prep, decided, grid) ??
+    (blocks.length ? ringFault(grid, blocks) : undefined)
+  if (refusal) return refusal
+  const laid = placePrefabs(prep, finish(prep, grid), !state.lay)
+  return blocks.length && !("retry" in laid) && !("fatal" in laid) ? croppedToBox(laid) : laid
 }
