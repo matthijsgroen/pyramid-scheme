@@ -36,7 +36,7 @@ export const ContinueCard: FC<ContinueCardProps> = ({
   )
   return (
     <div className="flex flex-col gap-3 text-camp-ink">
-      <div className="flex flex-col gap-2.5 rounded-[14px] border-2 border-camp-ink bg-camp-card p-4 max-lg:bg-camp-glass-solid max-lg:supports-backdrop-filter:bg-camp-glass max-lg:supports-backdrop-filter:backdrop-blur-lg max-lg:supports-backdrop-filter:backdrop-saturate-160 lg:p-[18px]">
+      <div className="flex flex-col gap-2.5 rounded-[14px] border-2 border-camp-ink bg-camp-card p-4 max-lg:border max-lg:border-camp-glass-edge max-lg:bg-camp-glass-solid max-lg:supports-backdrop-filter:bg-camp-glass max-lg:supports-backdrop-filter:backdrop-blur-lg max-lg:supports-backdrop-filter:backdrop-saturate-160 lg:p-[18px]">
         <div className="text-xs font-extrabold tracking-widest text-camp-label uppercase">{heading}</div>
         {journeyName ? (
           <>
