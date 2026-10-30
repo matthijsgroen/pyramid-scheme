@@ -47,7 +47,7 @@ counter runs.
 
 | tier   | size | density | cap         | requires                | firstPieceAfter |
 | ------ | ---- | ------- | ----------- | ----------------------- | --------------- |
-| master | 8    | 0.17    | lineBlock   | claimed or lineBlock x2 | none            |
+| master | 8    | 0.17    | lineBlock   | claimed or lineBlock x2 | 1               |
 | wizard | 9    | 0.17    | wouldStrand | wouldStrand x3          | none            |
 
 Below master the table points at master's settings: unreachable, but total. No board is above 9×9.
@@ -59,9 +59,10 @@ Measured over seeds 1 to 24:
 | master | 11     | 18 to 25 | 1 to 7 (mostly 2 to 4) | about 20ms   |
 | wizard | 14     | 25 to 34 | 1 to 7 (mostly 2 to 3) | about 40ms   |
 
-**No first-piece gate.** The entry tier never opens with a piece: the first step is an elimination on every
-measured board, and 3 of 24 master boards place their first piece at step 1 (the second step), so a gate of 2 would only trim a
-few draws. The anti-goal (a deduction before the first placement) holds without one.
+**Master gates the first piece at step 1**, so the entry tier never opens with a piece: a deduction comes
+before the first placement. Every measured board already meets it, so the gate rejects no seed of the table
+above. A gate of 2 would refuse the 3 of 24 master boards that place their first piece at step 1 for little
+gain. Wizard carries no gate; its measured boards open with an elimination all the same.
 
 **Every rung fires on generated boards.** Across the master and wizard seeds of the verify file, each of the
 nine techniques turns on at least one board.

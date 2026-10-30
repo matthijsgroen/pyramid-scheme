@@ -8,7 +8,8 @@ export const REGIONLESS_BATTLE_META: FamilyMeta = {
   tags: ["puzzle", "funerary", "cosmos"],
   faces: { funerary: ["default"], cosmos: ["default"] },
   themes: ["default"],
-  // Lab-only until a skin carries it; the walls need a reading before a site is dealt this board.
+  // The entry tier per docs/game-design/puzzles/regionless-battle.md; the tier session may move it. Lab-only
+  // because it is not in `puzzleMod.families`.
   minTier: "expert",
   icon: "🪲",
   color: "amber",

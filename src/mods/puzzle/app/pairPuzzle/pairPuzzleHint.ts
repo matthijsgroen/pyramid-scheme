@@ -10,7 +10,7 @@ import {
 export type PairHint = {
   /** Translation key under `pairPuzzle.hint.<place>`: the reason, on its own line. */
   key: string
-  /** What the sentence interpolates. The token is the screen's, as in star battle. */
+  /** What the sentence interpolates. */
   params: { count?: number }
   /** What to do about it, as a key under `pairPuzzle.hint.<place>.action`. */
   action: "ruleOut" | "place" | undefined

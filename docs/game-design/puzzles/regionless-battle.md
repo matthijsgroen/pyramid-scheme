@@ -68,10 +68,10 @@ itself: every step was forced, so no solution counter runs.
 
 Below expert the table points at the expert settings: unreachable, but total, as in `TWIN_STARS_CONFIG`.
 
-**The planned shares (0.30, 0.22, 0.16) were unreachable and are gone.** Even thinned, a board needs about a
-third of its squares walled, so a share that falls with the grid refuses every draw. Measured thinned wall
-counts: 7×7 at 13 to 18 (27 to 37 percent), 8×8 at 19 to 27, 9×9 at 26 to 33. The tiers are separated by size
-and by what the board demands of the ladder, not by a falling wall share. The cap only trims the long tail.
+**A board needs about a third of its squares walled, at every size.** Even thinned, the measured wall counts
+are 7×7 at 13 to 18 (27 to 37 percent), 8×8 at 19 to 27, 9×9 at 26 to 33, so a share that fell with the grid
+would refuse every draw. The tiers are separated by size and by what the board demands of the ladder, not by
+the wall share; `maxWallShare` only trims the long tail.
 
 Measured over seeds 1 to 8 of the shipped settings:
 
@@ -81,8 +81,10 @@ Measured over seeds 1 to 8 of the shipped settings:
 | master | 20 to 23 | 21 to 25 | 3 to 4             | 0 to 1    | 2 to 7      | about 0.4s   |
 | wizard | 28 to 32 | 24 to 31 | 5 to 8             | 0 to 2    | 4 to 11     | about 3s     |
 
-Expert asks `firstStarAfter: 1`, so no board opens with a star on step 0. Measured at 7×7: 1 settles 8 of 8 seeds, while 2 and 3 settle 0 of 8 within the attempt budget, so 1 is the most this grid gives. Wizard's long draw is the rejection loop against four
-`wouldStrand` steps and a late first star.
+Expert asks `firstStarAfter: 1`, so no board opens with a star on step 0. Measured at 7×7: 1 settles 8 of 8
+seeds, while 2 and 3 settle 0 of 8 within the attempt budget, so 1 is the most this grid gives.
+
+Wizard's long draw is the rejection loop against four `wouldStrand` steps and a late first star.
 
 ## 6. Controls
 

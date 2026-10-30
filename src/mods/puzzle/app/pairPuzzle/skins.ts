@@ -10,8 +10,6 @@ import { Mummy, Sarcophagus } from "./glyphs"
 export type PairSkin = {
   /** Which place this is, as its own name: the goal, the rules and every hint sentence are keyed on it. */
   name: string
-  /** The token a sentence puts in its glyph slot. */
-  token: string
   /** A square the player may still use, and one a placed piece already rules out. */
   cell: string
   spent: string
@@ -40,7 +38,6 @@ export type PairSkin = {
 export const PAIR_SKINS: Record<string, PairSkin> = {
   default: {
     name: "mummies",
-    token: "🧟",
     cell: "bg-[#e6cf9d]",
     spent: "bg-[#d2b87c]",
     seam: "rgb(120 90 40 / 0.4)",

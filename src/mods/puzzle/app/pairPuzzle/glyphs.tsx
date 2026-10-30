@@ -1,4 +1,4 @@
-import type { FC } from "react"
+import { useId, type FC } from "react"
 
 /**
  * The two drawings of the mummy rest board. Their own module because a file that exports components may
@@ -35,18 +35,22 @@ export const Sarcophagus: FC = () => (
  * The wrappings are gaps cut through the shape with a mask, so they show whatever ground the square has and
  * the drawing carries no colour of its own.
  */
-export const Mummy: FC = () => (
-  <svg viewBox="-50 -50 100 100" className="size-full" aria-hidden focusable="false">
-    <mask id="mummy-wrappings" maskUnits="userSpaceOnUse" x={-50} y={-50} width={100} height={100}>
-      <rect x={-50} y={-50} width={100} height={100} fill="white" />
-      <g fill="none" stroke="black" strokeWidth={5} strokeLinecap="round">
-        <path d="M -19 0 L 19 6 M -20 14 L 20 20 M -20 28 L 20 34" />
-        <path d="M -8 -34 L 8 -30" />
+export const Mummy: FC = () => {
+  // One mask per drawing: a board draws many mummies, and a shared id would point them all at the first.
+  const wrappings = useId()
+  return (
+    <svg viewBox="-50 -50 100 100" className="size-full" aria-hidden focusable="false">
+      <mask id={wrappings} maskUnits="userSpaceOnUse" x={-50} y={-50} width={100} height={100}>
+        <rect x={-50} y={-50} width={100} height={100} fill="white" />
+        <g fill="none" stroke="black" strokeWidth={5} strokeLinecap="round">
+          <path d="M -19 0 L 19 6 M -20 14 L 20 20 M -20 28 L 20 34" />
+          <path d="M -8 -34 L 8 -30" />
+        </g>
+      </mask>
+      <g fill="currentColor" mask={`url(#${wrappings})`}>
+        <circle cx={0} cy={-30} r={13} />
+        <path d="M -17 -14 L 17 -14 L 21 40 L -21 40 Z" />
       </g>
-    </mask>
-    <g fill="currentColor" mask="url(#mummy-wrappings)">
-      <circle cx={0} cy={-30} r={13} />
-      <path d="M -17 -14 L 17 -14 L 21 40 L -21 40 Z" />
-    </g>
-  </svg>
-)
+    </svg>
+  )
+}

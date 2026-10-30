@@ -50,7 +50,7 @@ export const PairPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }
   // Two lines: the reason, then what to do about it.
   const hintText = useCallback(() => {
     if (!hint) return undefined
-    const params = { ...hint.params, token: skin.token }
+    const { params } = hint
     const reason = t(`pairPuzzle.hint.${skin.name}.${hint.key}`, params)
     if (!hint.action) return reason
     return `${reason}\n${t(`pairPuzzle.hint.${skin.name}.action.${hint.action}`, { ...params, count: hint.settles })}`

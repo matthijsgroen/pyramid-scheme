@@ -413,7 +413,7 @@ Design doc: [puzzles/star-battle.md §11](puzzles/star-battle.md)
 
 Star battle with stone blocks instead of regions: one scarab to every row and column, none touching, and the blocks are floor nothing can stand on. Debut tier expert; theme fit pyramid floor (the scarab dress). **Lab-only** until bake integration: it is registered for the puzzle lab and not in the mod's family list.
 
-Design doc: [puzzles/star-battle.md](puzzles/star-battle.md)
+Design doc: [puzzles/regionless-battle.md](puzzles/regionless-battle.md)
 
 ### 4.25b Pair puzzle (mummy rest)
 

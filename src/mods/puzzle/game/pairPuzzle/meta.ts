@@ -8,7 +8,8 @@ export const PAIR_PUZZLE_META: FamilyMeta = {
   tags: ["puzzle", "funerary"],
   faces: { funerary: ["default"] },
   themes: ["default"],
-  // Lab-only until a skin carries it.
+  // The entry tier per docs/game-design/puzzles/pair-puzzle.md; the tier session may move it. Lab-only because
+  // it is not in `puzzleMod.families`.
   minTier: "master",
   icon: "⚰️",
   color: "stone",

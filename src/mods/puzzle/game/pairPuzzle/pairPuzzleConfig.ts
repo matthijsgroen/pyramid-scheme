@@ -8,6 +8,7 @@ const MASTER: PairOptions = {
   techniqueCap: "lineBlock",
   requires: ["claimed", "lineBlock"],
   requiresCount: 2,
+  firstPieceAfter: 1,
 }
 
 export const PAIR_PUZZLE_CONFIG: Record<Difficulty, PairOptions> = {
