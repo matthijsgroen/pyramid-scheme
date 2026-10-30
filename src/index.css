@@ -173,13 +173,20 @@ body {
 
   /* A piece walking up to the square beside it and staying there, short of the middle so the thing it walked
      to is still seen: `--dx`/`--dy` as for into-tomb. */
-  --animate-walk-beside: walk-beside 500ms ease-in-out forwards;
+  --animate-walk-beside: walk-beside 700ms ease-in-out forwards;
   @keyframes walk-beside {
+    /* First it turns on the spot to face its anchor (`--turn`, set by the board), then it walks. */
     from {
       translate: 0 0;
+      rotate: 0deg;
+    }
+    35% {
+      translate: 0 0;
+      rotate: var(--turn, 0deg);
     }
     to {
       translate: calc(var(--dx, 0) * 70%) calc(var(--dy, 0) * 70%);
+      rotate: var(--turn, 0deg);
     }
   }
 

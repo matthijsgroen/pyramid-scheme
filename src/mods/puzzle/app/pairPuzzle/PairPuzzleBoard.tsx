@@ -63,10 +63,10 @@ export const PairPuzzleBoard: FC<Props> = ({
   const walkTo = (piece: number): CSSProperties | undefined => {
     const anchor = pairing?.get(piece)
     if (anchor === undefined) return undefined
-    return {
-      "--dx": colOf(size, anchor) - colOf(size, piece),
-      "--dy": rowOf(size, anchor) - rowOf(size, piece),
-    } as CSSProperties
+    const dx = colOf(size, anchor) - colOf(size, piece)
+    const dy = rowOf(size, anchor) - rowOf(size, piece)
+    // `--turn` faces a drawing whose head points up toward its anchor; a skin's walk may use it or not.
+    return { "--dx": dx, "--dy": dy, "--turn": `${dx * 90 + (dy > 0 ? 180 : 0)}deg` } as CSSProperties
   }
   const grid = useRef<HTMLDivElement | null>(null)
   // The gesture lives in a ref and lands once on release, so a drag is one undo step (see star battle).

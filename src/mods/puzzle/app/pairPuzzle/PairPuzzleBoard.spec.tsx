@@ -68,6 +68,8 @@ describe("PairPuzzleBoard", () => {
     const walking = container.querySelector<HTMLElement>(".animate-walk-beside")!
     expect(walking.style.getPropertyValue("--dx")).toBe("1")
     expect(walking.style.getPropertyValue("--dy")).toBe("0")
+    // Head to the top at rest, so facing a ball to its right is a quarter turn clockwise.
+    expect(walking.style.getPropertyValue("--turn")).toBe("90deg")
     expect(container.querySelector("[data-anchor] .animate-spin-once")).not.toBeNull()
   })
 

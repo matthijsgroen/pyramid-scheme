@@ -89,10 +89,10 @@ export const PAIR_SKINS: Record<string, PairSkin> = {
     evidence: "ring-sky-300/60",
     focus: "ring-amber-300",
     conflict: "ring-red-400/90",
-    // The beetle walks up to its ball and stays beside it, and the ball turns once as it gets there.
+    // The beetle turns to face its ball, walks up to it and stays beside it; the ball turns once as it arrives.
     celebrate: "animate-walk-beside relative z-10",
     anchorCelebrate: "",
-    anchorGlyphCelebrate: "animate-spin-once [animation-delay:400ms]",
+    anchorGlyphCelebrate: "animate-spin-once [animation-delay:600ms]",
     countOpen: "text-stone-200",
     countMet: "text-emerald-400",
     countBroken: "text-red-400",
