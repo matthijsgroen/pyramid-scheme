@@ -18,7 +18,7 @@ export type PairSkin = {
   spent: string
   /** The border every square draws on all four edges, as a CSS colour. */
   seam: string
-  /** The square a sarcophagus is printed on: not the player's to mark, so it is drawn heavier than the floor. */
+  /** The square a sarcophagus is printed on, with the sarcophagus colour: printed floor, so a darker tile and a muted tone, never as strong as a placed piece. */
   anchor: string
   Anchor: FC
   /** What a piece looks like standing in a square, and its colour. */
@@ -45,10 +45,11 @@ export const PAIR_SKINS: Record<string, PairSkin> = {
     cell: "bg-[#e6cf9d]",
     spent: "bg-[#d2b87c]",
     seam: "rgb(120 90 40 / 0.4)",
-    anchor: "bg-[#c9a766] shadow-[inset_2px_2px_0_rgba(255,255,255,0.25),inset_-2px_-2px_0_rgba(0,0,0,0.3)]",
+    anchor:
+      "bg-[#b89b60] text-amber-950/45 shadow-[inset_2px_2px_0_rgba(255,255,255,0.25),inset_-2px_-2px_0_rgba(0,0,0,0.3)]",
     Anchor: Sarcophagus,
     Glyph: Mummy,
-    answer: "text-amber-950",
+    answer: "scale-125 text-stone-950",
     dark: "text-stone-700/70",
     hatch: "rgba(120,53,15,0.4)",
     evidence: "ring-sky-800/70",

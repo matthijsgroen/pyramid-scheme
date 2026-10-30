@@ -8,7 +8,7 @@ import type { FC } from "react"
  */
 
 /**
- * The sarcophagus printed on the board: a lidded stone case seen from above, wide at the shoulders and
+ * The sarcophagus printed on the board: a lidded stone case seen from above, lying on its side so it never reads as a standing mummy, wide at the shoulders and
  * narrowing to the foot, with a band across the lid.
  *
  * It is an outline with a solid band, where the mummy is solid throughout, so the two never read as the same
@@ -16,13 +16,15 @@ import type { FC } from "react"
  */
 export const Sarcophagus: FC = () => (
   <svg viewBox="-50 -50 100 100" className="size-full" aria-hidden focusable="false">
-    <g fill="none" stroke="currentColor" strokeWidth={8} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M -17 -42 L 17 -42 L 27 -22 L 21 38 L -21 38 L -27 -22 Z" />
-    </g>
-    <g fill="currentColor">
-      <circle cx={0} cy={-26} r={9} />
-      <path d="M -17 -6 L 17 -6 L 16 4 L -16 4 Z" />
-      <path d="M -15 14 L 15 14 L 14 24 L -14 24 Z" />
+    <g transform="rotate(90)">
+      <g fill="none" stroke="currentColor" strokeWidth={8} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M -17 -42 L 17 -42 L 27 -22 L 21 38 L -21 38 L -27 -22 Z" />
+      </g>
+      <g fill="currentColor">
+        <circle cx={0} cy={-26} r={9} />
+        <path d="M -17 -6 L 17 -6 L 16 4 L -16 4 Z" />
+        <path d="M -15 14 L 15 14 L 14 24 L -14 24 Z" />
+      </g>
     </g>
   </svg>
 )

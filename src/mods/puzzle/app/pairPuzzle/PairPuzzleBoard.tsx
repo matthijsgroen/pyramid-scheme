@@ -146,12 +146,7 @@ export const PairPuzzleBoard: FC<Props> = ({
               key={cell}
               data-anchor
               aria-hidden
-              className={clsx(
-                "flex aspect-square min-h-0 items-center justify-center p-[10%]",
-                skin.anchor,
-                skin.answer,
-                ring
-              )}
+              className={clsx("flex aspect-square min-h-0 items-center justify-center p-[10%]", skin.anchor, ring)}
             >
               <skin.Anchor />
             </div>
