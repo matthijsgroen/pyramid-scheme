@@ -15,19 +15,22 @@ afterEach(cleanup)
 
 const puzzle: CanistersPuzzleData = { capacities: [8, 5, 3], start: [8, 0, 0], targets: [4], budget: 5 }
 
-const open = () => {
+const stuck = { key: "stuck", params: { target: 4 } } as never
+const beta = { key: "line", goal: { key: "beta", params: {} } } as never
+
+const open = (board = puzzle, before?: (hold: (index: number) => void) => void, later = beta) => {
   vi.mocked(buildCanistersHint).mockReset()
-  vi.mocked(buildCanistersHint)
-    .mockReturnValueOnce({ key: "stuck", params: { target: 4 } })
-    .mockReturnValue({ key: "line", goal: { key: "beta", params: {} } } as never)
-  const { container } = render(<CanistersPuzzle puzzle={puzzle} onSolved={() => {}} onCancel={() => {}} />)
+  vi.mocked(buildCanistersHint).mockReturnValueOnce(stuck).mockReturnValue(later)
+  const { container } = render(<CanistersPuzzle puzzle={board} onSolved={() => {}} onCancel={() => {}} />)
   const vessels = () =>
     within(container)
       .getAllByRole("button")
       .filter(button => (button.getAttribute("aria-label") ?? "").startsWith("canister of"))
+  const hold = (index: number) => act(() => vessels()[index].click())
+  before?.(hold)
   act(() => within(container).getByRole("button", { name: /hint/i }).click())
   return {
-    hold: (index: number) => act(() => vessels()[index].click()),
+    hold,
     shown: () => container.textContent ?? "",
   }
 }
@@ -39,6 +42,20 @@ describe("CanistersPuzzle hint that stays", () => {
     hold(0)
     expect(shown()).toContain("canisters.hint.stuck")
     expect(shown()).not.toContain("canisters.hint.goal.beta")
+  })
+
+  it("keeps the hint through a pour the spent budget refuses", () => {
+    const { hold, shown } = open(
+      { ...puzzle, budget: 1 },
+      hold => {
+        hold(0)
+        hold(1) // the one pour there is
+      },
+      stuck
+    )
+    hold(0)
+    hold(2) // refused: nothing is left to pour with
+    expect(shown()).toContain("canisters.hint.stuck")
   })
 
   it("ends the hint on a pour", () => {
