@@ -168,10 +168,16 @@ position-only uniqueness.
 - Solve-time budget: 10 s floor, under 6 min at wizard, soft target (`project_puzzle_solve_time_budget`).
 - No wall-clock assertions in tests; count work (`feedback_count_work_not_wall_clock`).
 - Name every element and say what each clue means on the rules screen (`feedback_flavor_text_allowed`).
-- The starter world must not move: no family enters starter. Junior and up rebake with `yarn generate-world` and
-  update `tierFingerprints.json` (`feedback_bake_freely_before_release`); check for an uncommitted playtest bake
-  first.
-- CHANGELOG `## Unreleased` entry, one line per user-facing change.
+- **Built in isolation, baked later (user's decision).** Each family is a complete plugin — game module, meta, app
+  plugin (board, rules, hints, skin), copy — but its meta is NOT added to `puzzleMod.families`
+  (`src/mods/puzzle/index.ts`). That list is the world switch: a family left out is playable in the puzzle lab and
+  nowhere else. So this project leaves `generatedWorld.ts`, `carveLedger.json` and `tierFingerprints.json`
+  byte-identical, and needs no rebake.
+- Integration is a separate later step: add the metas to `puzzleMod.families`, rebake with `yarn generate-world`,
+  update `tierFingerprints.json` (`feedback_bake_freely_before_release`; check for an uncommitted playtest bake
+  first). No family enters starter.
+- CHANGELOG `## Unreleased` entry, one line per user-facing change (lab-only families are dev-facing; add the entry
+  at integration).
 
 ## Left to the builder
 
@@ -179,11 +185,12 @@ position-only uniqueness.
 - Exact rung list after measuring.
 - SVG drawings for scarab, mummy and sarcophagus, and the sandstone floor palette.
 - Order of work. Suggested: regionless battle → regionless twin battle → pair puzzle.
-- Note the measurements above are from `camp/home-and-loot`; build on that branch once it lands on main, or rebase onto it.
+- This branch is forked from `camp/home-and-loot`, where the measurements were taken.
 
 ## Follow-up (not this project)
 
 - Tier session: which families enter at which tier, across all families. Junior introducing 8 rule sets at once is the first thing to look at.
+- Bake integration: add the three metas to `puzzleMod.families` and rebake.
 - More skins for all three families.
 
 ## Sources
