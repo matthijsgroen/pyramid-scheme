@@ -159,6 +159,7 @@ export const finishInRooms: Finish = (prep, state) => {
     straightness: config.corridorStraightness ?? FLOOR_PLANS[decided.plan].straightness,
     rooms,
   })
+  if ("refused" in embedded) return embedded
   const { nodes, prefabRects } = embedded
   // The embed builds every row afresh, so the pieces may stand on it in place.
   const grid = embedded.grid as WritableGrid
