@@ -1,8 +1,9 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { RegionlessOptions } from "./generateRegionlessBattle"
 
-// Tier settings, per docs/game-design/puzzles/regionless-battle.md §4. Fewer walls is harder, so the share
-// falls as the grid grows.
+// Tier settings, per docs/game-design/puzzles/regionless-battle.md §5. A board needs about a third of its
+// squares walled however the tier is set, so the tiers separate by size and by what they demand of the
+// ladder; `maxWallShare` only trims the long tail of wall counts.
 const EXPERT: RegionlessOptions = {
   size: 7,
   quota: 1,
@@ -10,6 +11,7 @@ const EXPERT: RegionlessOptions = {
   techniqueCap: "lineBlock",
   requires: ["lineBlock"],
   requiresCount: 1,
+  firstStarAfter: 1,
 }
 
 export const REGIONLESS_BATTLE_CONFIG: Record<Difficulty, RegionlessOptions> = {

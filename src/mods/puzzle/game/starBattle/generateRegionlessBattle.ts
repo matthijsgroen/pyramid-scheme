@@ -73,14 +73,16 @@ export const generateRegionlessBattle = (
       random
     )
     const walls: boolean[] = new Array(size * size).fill(false)
-    const settledWith = (): StarBattlePuzzle | undefined => {
+    const settledWith = () => {
       const puzzle: StarBattlePuzzle = { size, quota, walls: [...walls] }
-      return settles(puzzle, allowed, solution) ? puzzle : undefined
+      const result = settles(puzzle, allowed, solution)
+      return result && { puzzle, result }
     }
     // No board settles under a quarter of its squares walled (measured: 19 of 49 at best), so those first
     // walls go in without a solve each.
-    order.slice(0, Math.floor(size * size * FIRST_SOLVE_SHARE)).forEach(cell => (walls[cell] = true))
-    if (!order.some(cell => ((walls[cell] = true), settledWith()))) continue
+    const bulk = Math.floor(size * size * FIRST_SOLVE_SHARE)
+    order.slice(0, bulk).forEach(cell => (walls[cell] = true))
+    if (!settledWith() && !order.slice(bulk).some(cell => ((walls[cell] = true), settledWith()))) continue
     for (const cell of shuffle(
       order.filter(at => walls[at]),
       random
@@ -89,8 +91,7 @@ export const generateRegionlessBattle = (
       if (!settledWith()) walls[cell] = true
     }
     if (walls.filter(Boolean).length > mostWalls) continue
-    const puzzle = settledWith()!
-    const result = settles(puzzle, allowed, solution)!
+    const { puzzle, result } = settledWith()!
     const board = { ...puzzle, solution, techniqueCap }
     if (meetsShape(result.steps, options)) return board
     const demanded = demandedRungs(result.steps, requires)

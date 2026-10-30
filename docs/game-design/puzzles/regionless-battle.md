@@ -62,7 +62,7 @@ itself: every step was forced, so no solution counter runs.
 
 | tier   | size | maxWallShare | cap         | requires       | firstStarAfter |
 | ------ | ---- | ------------ | ----------- | -------------- | -------------- |
-| expert | 7    | 0.36         | lineBlock   | lineBlock x1   | none           |
+| expert | 7    | 0.36         | lineBlock   | lineBlock x1   | 1              |
 | master | 8    | 0.36         | wouldStrand | wouldStrand x2 | 3              |
 | wizard | 9    | 0.40         | wouldStrand | wouldStrand x4 | 5              |
 
@@ -77,12 +77,11 @@ Measured over seeds 1 to 8 of the shipped settings:
 
 | tier   | walls    | steps    | first star at step | lineBlock | wouldStrand | time a board |
 | ------ | -------- | -------- | ------------------ | --------- | ----------- | ------------ |
-| expert | 14 to 17 | 16 to 17 | 0 to 1             | 1         | 0           | about 0.15s  |
+| expert | 16 to 17 | 16 to 17 | 1                  | 1         | 0           | about 0.33s  |
 | master | 20 to 23 | 21 to 25 | 3 to 4             | 0 to 1    | 2 to 7      | about 0.4s   |
 | wizard | 28 to 32 | 24 to 31 | 5 to 8             | 0 to 2    | 4 to 11     | about 3s     |
 
-Expert's first star lands on step 0 or 1: a 7×7 with `lineBlock` required has no room for an opening, and a
-`firstStarAfter` there would be a different tier. Wizard's long draw is the rejection loop against four
+Expert asks `firstStarAfter: 1`, so no board opens with a star on step 0. Measured at 7×7: 1 settles 8 of 8 seeds, while 2 and 3 settle 0 of 8 within the attempt budget, so 1 is the most this grid gives. Wizard's long draw is the rejection loop against four
 `wouldStrand` steps and a late first star.
 
 ## 6. Controls
