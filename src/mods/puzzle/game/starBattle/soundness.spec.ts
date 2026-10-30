@@ -1,13 +1,12 @@
 import { describe, expect, it } from "vitest"
-import { mulberry32 } from "@/game/random"
+import { mulberry32, shuffle } from "@/game/random"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { puzzleSeeds } from "@/data/puzzleSeeds"
 import { configHash } from "@/game/seeds/configHash"
-import { blankMarks, cellAt, neighboursOf, type StarBattlePuzzle } from "./starBattle"
+import { blankMarks } from "./starBattle"
 import { STAR_BATTLE_CONFIG } from "./starBattleConfig"
 import { TWIN_STARS_CONFIG } from "./twinStars"
-import { generateRegionlessBattle } from "./generateRegionlessBattle"
-import { REGIONLESS_BATTLE_CONFIG } from "./regionlessConfig"
+import { completions, holdsIn, walledState } from "./soundnessOracle"
 import { generateStarBattle, type StarBattleOptions, type StarBattlePuzzleWithAnswer } from "./generateStarBattle"
 import {
   applyStarBattleTechniques,
@@ -66,59 +65,6 @@ const playerState = (board: StarBattlePuzzleWithAnswer, random: () => number): M
     if (star) return random() < stars ? "star" : undefined
     return random() < darks ? "dark" : undefined
   })
-}
-
-/**
- * Every legal star set that agrees with what is on the board — the oracle a forced step is held to.
- *
- * Checking a decision against the ANSWER only proves the rung is not lying about this board. Checking it
- * against every completion proves the step was FORCED, which is the claim a hint makes and the claim
- * uniqueness rests on.
- *
- * Walks the rows and takes each row's stars as a COMBINATION, so it enumerates at either quota — the quota
- * is what makes a row's choice one square or several, and every other rule reads the same way round.
- */
-const completions = (puzzle: StarBattlePuzzle, marks: Marks, limit: number): number[][] => {
-  const { size, quota } = puzzle
-  const found: number[][] = []
-  const taken: number[] = []
-  const inColumn = new Array(size).fill(0)
-  const inRegion = new Array(size).fill(0)
-  const walk = (row: number) => {
-    if (found.length >= limit) return
-    if (row === size) {
-      found.push([...taken])
-      return
-    }
-    const cells = Array.from({ length: size }, (_unused, col) => cellAt(size, row, col))
-    // Stars the player already wrote down are part of the state, so a completion that leaves one out is a
-    // completion of a different board.
-    const written = cells.filter(cell => marks[cell] === "star")
-    const from = taken.length
-    const choose = (col: number, owed: number) => {
-      if (found.length >= limit) return
-      if (owed === 0) {
-        if (written.every(cell => taken.slice(from).includes(cell))) walk(row + 1)
-        return
-      }
-      for (let at = col; at < size; at++) {
-        const cell = cells[at]
-        if (marks[cell] === "dark") continue
-        if (inColumn[at] === quota || (puzzle.regions && inRegion[puzzle.regions[cell]] === quota)) continue
-        if (taken.some(other => neighboursOf(size, cell).includes(other))) continue
-        taken.push(cell)
-        inColumn[at]++
-        if (puzzle.regions) inRegion[puzzle.regions[cell]]++
-        choose(at + 1, owed - 1)
-        taken.pop()
-        inColumn[at]--
-        if (puzzle.regions) inRegion[puzzle.regions[cell]]--
-      }
-    }
-    choose(0, quota)
-  }
-  walk(0)
-  return found
 }
 
 describe("star battle soundness", () => {
@@ -208,16 +154,30 @@ const walledBoard = (): StarBattlePuzzleWithAnswer => {
   return { size, quota: 1, walls, solution, techniqueCap: "wouldStrand" } as unknown as StarBattlePuzzleWithAnswer
 }
 
-const walledState = (board: StarBattlePuzzleWithAnswer, random: () => number): Marks => {
-  const stars = random()
-  const darks = random()
-  const base = blankMarks(board)
-  return board.solution.map((star, cell) => {
-    if (base[cell]) return base[cell]
-    if (star) return random() < stars ? "star" : undefined
-    return random() < darks ? "dark" : undefined
+/** A random legal star set behind random walls: no settling, no uniqueness filter. */
+const randomWalledBoard = (seed: number, size: number): StarBattlePuzzleWithAnswer => {
+  const random = mulberry32(seed)
+  const columns = Array.from({ length: size }, (_unused, col) => col)
+  let answer = shuffle(columns, random)
+  while (answer.some((col, row) => row > 0 && Math.abs(col - answer[row - 1]) <= 1)) answer = shuffle(columns, random)
+  const share = 0.2 + random() * 0.4
+  const walls = Array.from({ length: size * size }, (_unused, cell) => {
+    if (answer[Math.floor(cell / size)] === cell % size) return false
+    return random() < share
   })
+  const solution = Array.from(
+    { length: size * size },
+    (_unused, cell) => answer[Math.floor(cell / size)] === cell % size
+  )
+  return { size, quota: 1, walls, solution, techniqueCap: "wouldStrand" }
 }
+
+const RANDOM_WALLED = [5, 6].flatMap(size =>
+  Array.from({ length: 25 }, (_unused, at) => {
+    const board = randomWalledBoard(size * 1000 + at, size)
+    return { board, fillings: completions(board, blankMarks(board), 1000) }
+  })
+)
 
 describe("regionless soundness", () => {
   it("every regionless rung agrees with the answer from any state a player reaches", () => {
@@ -265,62 +225,39 @@ describe("regionless soundness", () => {
     expect(checked).toBeGreaterThan(100)
   })
 
-  const GENERATED: { tier: Difficulty; seeds: number[] }[] = [
-    { tier: "expert", seeds: [1, 2, 3] },
-    { tier: "master", seeds: [1, 2, 3] },
-    { tier: "wizard", seeds: [1, 2] },
-  ]
-
-  it.each(GENERATED)(
-    "every regionless rung agrees with the answer on generated $tier boards",
-    { timeout: 120_000 },
-    ({ tier, seeds }) => {
-      const random = mulberry32(3307)
-      let fired = 0
-      for (const seed of seeds) {
-        const board = generateRegionlessBattle(seed, REGIONLESS_BATTLE_CONFIG[tier])
-        for (let round = 0; round < 40; round++) {
-          for (const step of applyStarBattleTechniques(board, walledState(board, random), REGIONLESS_TECHNIQUES)) {
-            for (const decision of step.decisions) {
-              fired++
+  /**
+   * Random walled boards, unsettled and not unique: a board with several completions is where a rung that
+   * quietly assumed the one answer gets caught, which a unique board cannot show.
+   */
+  it("every regionless rung is forced on random walled boards", () => {
+    const random = mulberry32(2719)
+    const fired = new Map<string, number>()
+    let threeLineBlocks = 0
+    let several = 0
+    for (const { board, fillings } of RANDOM_WALLED) {
+      if (fillings.length > 1) several++
+      for (let round = 0; round < 20; round++) {
+        const answer = fillings[Math.floor(random() * fillings.length)]
+        const solution = board.solution.map((_star, cell) => answer.includes(cell))
+        const marks = walledState({ ...board, solution }, random)
+        const ways = fillings.filter(way => marks.every((mark, cell) => !mark || holdsIn(way, { cell, mark })))
+        for (const ladder of [...REGIONLESS_TECHNIQUES.map(id => [id]), [...REGIONLESS_TECHNIQUES]]) {
+          for (const step of applyStarBattleTechniques(board, [...marks], ladder)) {
+            if (ladder.length === 1) fired.set(step.technique, (fired.get(step.technique) ?? 0) + 1)
+            if (step.technique === "lineBlock" && step.cells.length === 3 * board.size) threeLineBlocks++
+            for (const decision of step.decisions)
               expect(
-                decision.mark === "star" ? board.solution[decision.cell] : !board.solution[decision.cell],
-                `${tier} seed ${seed} ${step.technique}.${step.variant} on cell ${decision.cell}`
+                ways.every(way => holdsIn(way, decision)),
+                `${step.technique}.${step.variant} on cell ${decision.cell}, ${ways.length} ways`
               ).toBe(true)
-            }
           }
         }
       }
-      expect(fired).toBeGreaterThan(0)
     }
-  )
-
-  it.each(GENERATED.filter(({ tier }) => tier !== "wizard"))(
-    "every regionless rung is forced by the generated $tier board it fired from",
-    { timeout: 120_000 },
-    ({ tier, seeds }) => {
-      const random = mulberry32(6619)
-      let checked = 0
-      for (const seed of seeds) {
-        const board = generateRegionlessBattle(seed, REGIONLESS_BATTLE_CONFIG[tier])
-        for (let round = 0; round < 30; round++) {
-          const marks = walledState(board, random)
-          const ways = completions(board, marks, 200)
-          if (!ways.length) continue
-          for (const technique of REGIONLESS_TECHNIQUES) {
-            const step = nextStarBattleStep(board, [...marks], [technique])
-            if (!step) continue
-            for (const decision of step.decisions) {
-              const holds = ways.every(way =>
-                decision.mark === "star" ? way.includes(decision.cell) : !way.includes(decision.cell)
-              )
-              expect(holds, `${tier} seed ${seed} ${technique} on cell ${decision.cell}`).toBe(true)
-              checked++
-            }
-          }
-        }
-      }
-      expect(checked).toBeGreaterThan(20)
-    }
-  )
+    expect(several).toBeGreaterThan(10)
+    // A guard that never saw a rung fire is not guarding it. `onlyWay` and `everyWay` are inert at one star.
+    for (const technique of REGIONLESS_TECHNIQUES.filter(id => id !== "onlyWay" && id !== "everyWay"))
+      expect(fired.get(technique) ?? 0, technique).toBeGreaterThan(0)
+    expect(threeLineBlocks).toBeGreaterThan(0)
+  })
 })
