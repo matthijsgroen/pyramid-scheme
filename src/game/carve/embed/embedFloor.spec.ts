@@ -21,7 +21,6 @@ const DIRS = Object.keys(MOVES) as Direction[]
 const opts = (overrides: Partial<EmbedOptions> = {}): EmbedOptions => ({
   seed: 1,
   spread: 0.5,
-  straightness: 0.3,
   rooms: new Map(),
   ...overrides,
 })
@@ -32,11 +31,12 @@ const embed = (grid: FloorGrid, options: EmbedOptions): Embedded => {
   return embedded
 }
 
+/** A drawn sketch's stops: its rooms, every node that is more than plain corridor. */
 const latticeNodes = (grid: FloorGrid): Map<string, Cell> => {
   const nodes = new Map<string, Cell>()
   grid.cells.forEach((row, r) =>
     row.forEach((cell, c) => {
-      if (r % 2 || c % 2 || cell.type === "empty" || (cell.type === "corridor" && cell.obstacle)) return
+      if (r % 2 || c % 2 || cell.type !== "room") return
       nodes.set(`${r},${c}`, [r, c])
     })
   )
@@ -137,13 +137,26 @@ const lockFloor = (text: string, name: string): FloorConfig => ({
 })
 
 describe("embedFloor", () => {
-  it("every lattice node keeps its neighbours", () => {
+  it("every stop keeps its neighbours", () => {
     for (const rows of [BRANCHING, STOPS, LOOPED, FOUR_SIDES])
       for (const seed of SEEDS) {
         const grid = drawnSketch(rows)
         const { grid: embedded, nodes } = embed(grid, opts({ seed }))
         expect(nodeGraph(embedded, nodes)).toEqual(nodeGraph(grid, latticeNodes(grid)))
       }
+  })
+
+  it("a plain corridor node melts into its string, its section label stays on the corridor", () => {
+    const sketch = drawnSketch(["E.F.....S.T"])
+    // The stretch from the fork to the stop is a side section of its own; the rest of the floor is the main path.
+    const cells = sketch.cells.map(row =>
+      row.map((cell, c) => (cell.type === "empty" ? cell : { ...cell, sectionAddress: c > 2 && c < 8 ? "s0" : "main" }))
+    )
+    const { grid, nodes } = embed({ ...sketch, cells }, opts({ spread: 0 }))
+    expect(nodes.has("0,4") || nodes.has("0,6")).toBe(false)
+    const corridor = grid.cells.flat().filter(cell => cell.type === "corridor")
+    expect(corridor.every(cell => cell.sectionAddress !== undefined)).toBe(true)
+    expect(corridor.filter(cell => cell.sectionAddress === "s0").length).toBeGreaterThan(0)
   })
 
   it("every dirs is mutual", () => {
@@ -296,22 +309,6 @@ s stop`,
     const [r, c] = nodes.get("0,2")!
     const worked = grid.cells[r][c]
     expect(worked.type === "room" && worked.mechanism?.transitions?.[0].at).toEqual(nodes.get("0,4"))
-  })
-
-  it("a corridor bends far less often at straightness 1 than at 0", () => {
-    const bends = (straightness: number) =>
-      SEEDS.flatMap(seed =>
-        embed(drawnSketch(FOUR_SIDES), opts({ seed, straightness, spread: 1 })).grid.cells.flatMap(row =>
-          row.filter(
-            cell =>
-              cell.type === "corridor" &&
-              cell.dirs.size === 2 &&
-              !(cell.dirs.has("n") && cell.dirs.has("s")) &&
-              !(cell.dirs.has("e") && cell.dirs.has("w"))
-          )
-        )
-      ).length
-    expect(bends(1) * 4).toBeLessThan(bends(0))
   })
 
   it("the same seed embeds the same; another seed moves only cells, not the node graph", () => {

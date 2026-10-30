@@ -2,25 +2,18 @@ import { mulberry32 } from "../../random"
 import type { Direction } from "../../siteTypes"
 import { OPPOSITE } from "../grid"
 import type { Cell } from "../state"
-import { cellOfKey, keyOf, loopHeld, type CellKey, type FloorGraph, type FloorString, type Piece } from "./graph"
+import { cellOfKey, keyOf, type CellKey, type FloorGraph, type FloorString, type Piece } from "./graph"
 
 /** How far a string's draw reaches past its nodes' need at full spread. */
 export const GAP_RANGE = 6
-/** How often a stop re-places its subtree before it gives up, and how often the floor lays out afresh. */
-export const SUBTREE_TRIES = 8
-export const FLOOR_ATTEMPTS = 16
-/** The candidates one attempt may try per stop before it gives up. */
-const ATTEMPT_BUDGET = 400
-/** The most free ground a stop looks for below it before it counts as room enough. */
-const ROOM_LOOK = 120
-/** How much longer than its draw a leg may run to find room. */
-const DETOURS = [0, 2, 4, 8]
+/** How often the push may make room before the floor counts as one it cannot lay out. */
+const PUSH_LIMIT = 20000
+
+/** How often the press works both axes at most. */
+const PRESS_ROUNDS = 8
 
 const LAYOUT_SALT = 0x5bd1e995
 const MOVES: Record<Direction, Cell> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
-const SIDES: Direction[] = ["n", "e", "s", "w"]
-const TURNS: Record<Direction, Direction[]> = { n: ["e", "w"], s: ["e", "w"], e: ["n", "s"], w: ["n", "s"] }
-const add = ([r, c]: Cell, [dr, dc]: Cell): Cell => [r + dr, c + dc]
 const step = (at: Cell, dir: Direction, k = 1): Cell => [at[0] + MOVES[dir][0] * k, at[1] + MOVES[dir][1] * k]
 const dirBetween = ([r, c]: Cell, [nr, nc]: Cell): Direction => (nr < r ? "n" : nr > r ? "s" : nc > c ? "e" : "w")
 
@@ -28,8 +21,15 @@ const dirBetween = ([r, c]: Cell, [nr, nc]: Cell): Direction => (nr < r ? "n" : 
  * stands, in order. */
 export type LaidString = { corners: Cell[]; stops: Cell[] }
 
-/** Where each piece's top-left stands and how each string runs; `attempts` counts the floor attempts it took. */
-export type Layout = { graph: FloorGraph; blocks: Map<CellKey, Cell>; strings: LaidString[]; attempts: number }
+/** Where each piece's top-left stands and how each string runs; `attempts` counts the floor attempts it took and
+ * `slack` the strings the press left longer than their nodes need, before any spread. */
+export type Layout = {
+  graph: FloorGraph
+  blocks: Map<CellKey, Cell>
+  strings: LaidString[]
+  attempts: number
+  slack: number
+}
 
 /** A piece's cells as offsets from its top-left, and where its top-left stands on the sketch. */
 export const footprint = (piece: Piece): { used: Cell[]; origin: Cell } => {
@@ -63,18 +63,6 @@ export const doorRay = (piece: Piece, side: Direction): Cell[] | undefined => {
 export const needOf = (s: FloorString, rayA: number, rayB: number): number =>
   s.drop ? s.drop.run.length + 2 - rayA - rayB : 2 * s.nodes.length + 1
 
-type Leg = { dir: Direction; len: number }
-const walkLegs = (door: Cell, legs: readonly Leg[]): Cell[] => {
-  const cells: Cell[] = []
-  let at = door
-  for (const { dir, len } of legs)
-    for (let k = 0; k < len; k++) {
-      at = step(at, dir)
-      cells.push(at)
-    }
-  return cells
-}
-
 /** Every cell strictly between consecutive points that each share a line with the next, the inner points included. */
 const through = (points: readonly Cell[]): Cell[] => {
   const cells: Cell[] = []
@@ -95,659 +83,683 @@ const cornersOf = (doorA: Cell, cells: readonly Cell[], doorB: Cell): Cell[] => 
   )
 }
 
-const shuffled = <T>(items: readonly T[], rand: () => number): T[] => {
-  const out = [...items]
-  for (let i = out.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1))
-    ;[out[i], out[j]] = [out[j], out[i]]
-  }
-  return out
-}
+/** One straight run between two sketch nodes: `u` the low end on `axis` (0 rows, 1 columns), the doors' reach into
+ * each end, and the distance between the ends' nodes it keeps at least. */
+type Edge = { u: number; v: number; axis: 0 | 1; extU: number; extV: number; min: number; si: number }
 
-/** `parts` lengths of at least one summing to `total`, cut at seeded places. */
-const cut = (total: number, parts: number, rand: () => number): number[] | undefined => {
-  if (total < parts) return undefined
-  if (parts === 1) return [total]
-  const first = 1 + Math.floor(rand() * (total - parts + 1))
-  return [first, ...cut(total - first, parts - 1, rand)!]
-}
+/** Where an owner number names a run rather than an element: a run's owner is `E` plus its index. */
+const E = 1 << 20
 
-/** A cell as one number, for the layout's own bookkeeping. */
-const SPAN = 1 << 14
-const ck = ([r, c]: Cell): number => (r + SPAN / 2) * SPAN + c + SPAN / 2
-const cellAt = (k: number): Cell => [Math.floor(k / SPAN) - SPAN / 2, (k % SPAN) - SPAN / 2]
-
-type Box = { top: number; bottom: number; left: number; right: number }
-const bounds = (keys: Iterable<number>, start?: Box): Box => {
-  const box = start ? { ...start } : { top: Infinity, bottom: -Infinity, left: Infinity, right: -Infinity }
-  for (const key of keys) {
-    const [r, c] = cellAt(key)
-    box.top = Math.min(box.top, r)
-    box.bottom = Math.max(box.bottom, r)
-    box.left = Math.min(box.left, c)
-    box.right = Math.max(box.right, c)
-  }
-  return box
-}
-/** How much a box has grown: its longer side first, so a floor grows square rather than along one side, then its area. */
-const growth = (box: Box) => {
-  const [rows, cols] = [box.bottom - box.top + 1, box.right - box.left + 1]
-  return Math.max(rows, cols) * 1e6 + rows * cols
-}
-
-/** Who holds a cell: `p:key` for a block, `g:index` for a leg, with a leg cell's place along it. */
-type Holder = { owner: string; index: number; last: number }
-type Hold = Map<number, Holder>
-/** A leg as laid from its parent's door place: its runs, and the length compaction keeps it at or above. */
-type Line = { door: Cell; legs: Leg[]; need: number }
-/** One leg of a string the tree holds, between two of its stops (its end pieces and its nodes). */
-type Segment = { si: number; a: CellKey; b: CellKey; fixedA?: Direction; fixedB?: Direction }
+/** A drawing of the floor in cells: who holds each cell (an element's index, an edge's index after the elements, or
+ * -1), the drawing's top-left on the floor, and the first cell two holders claim. */
+type Raster = { top: number; left: number; rows: number; cols: number; grid: Int32Array; overlap?: [number, number] }
 
 /**
- * A block of the layout: one piece, one node of a string, or every piece a loop joins with the strings between them.
- * `pieces` and `nodes` give where each of its pieces' top-left and each of its nodes stands, `inside` how each string
- * within it runs, all as offsets from its top-left. A block of one piece or node is left by any side it has a way out
- * by; a loop's block keeps the sketch's sides.
- */
-type Block = {
-  key: CellKey
-  used: Cell[]
-  pieces: Map<CellKey, Cell>
-  nodes: Map<CellKey, Cell>
-  inside: Map<number, LaidString>
-  free: boolean
-}
-
-const single = (piece: Piece): Block => ({
-  key: piece.key,
-  used: footprint(piece).used,
-  pieces: new Map([[piece.key, [0, 0]]]),
-  nodes: new Map([[piece.key, nodeOffset(piece)]]),
-  inside: new Map(),
-  free: piece.kind !== "prefab",
-})
-
-/**
- * THE PIECES A LOOP JOINS, AS ONE BLOCK: the sketch's own shape at a pitch wide enough that no two of its pieces
- * touch (`2 * reach + 2`, `reach` the furthest any piece reaches from its node), each string inside it running
- * straight from node to node. A drop inside it walks plain corridor before its launch where the pitch leaves more room
- * than its run.
- */
-const loopBlock = (graph: FloorGraph, pieceKeys: readonly CellKey[], inside: readonly number[]): Block => {
-  const pieces = pieceKeys.map(key => graph.pieces.get(key)!)
-  const reach = Math.max(
-    0,
-    ...pieces.map(piece => {
-      if (piece.kind === "node") return 0
-      if (piece.kind === "room") return 1
-      const { rows, cols, node } = piece.room
-      return Math.max(node[0], node[1], rows - 1 - node[0], cols - 1 - node[1])
-    })
-  )
-  const pitch = 2 * reach + 2
-  const scaled = (key: CellKey): Cell => {
-    const [r, c] = cellOfKey(key)
-    return [(r / 2) * pitch, (c / 2) * pitch]
-  }
-  const nodes = new Map<CellKey, Cell>()
-  const placedPieces = new Map<CellKey, Cell>()
-  const used: Cell[] = []
-  for (const piece of pieces) {
-    const at = scaled(piece.key)
-    nodes.set(piece.key, at)
-    const topLeft: Cell = [at[0] - nodeOffset(piece)[0], at[1] - nodeOffset(piece)[1]]
-    placedPieces.set(piece.key, topLeft)
-    used.push(...footprint(piece).used.map(cell => add(topLeft, cell)))
-  }
-  const laid = new Map<number, LaidString>()
-  for (const si of inside) {
-    const s = graph.strings[si]
-    for (const node of s.nodes) nodes.set(node, scaled(node))
-    const door = (end: CellKey, side: Direction) => {
-      const piece = graph.pieces.get(end)!
-      const ray = doorRay(piece, side)!
-      return ray.length ? add(placedPieces.get(end)!, ray[ray.length - 1]) : nodes.get(end)!
-    }
-    const [doorA, doorB] = [door(s.a, s.dirA), door(s.b, s.dirB)]
-    const stops = s.nodes.map(node => nodes.get(node)!)
-    const cells = through([doorA, ...stops, doorB])
-    used.push(...cells)
-    laid.set(si, { corners: cornersOf(doorA, cells, doorB), stops })
-  }
-  const top = Math.min(...used.map(([r]) => r))
-  const left = Math.min(...used.map(([, c]) => c))
-  const shift = ([r, c]: Cell): Cell => [r - top, c - left]
-  return {
-    key: pieceKeys[0],
-    used: [...new Map(used.map(cell => [keyOf(shift(cell)), shift(cell)])).values()],
-    pieces: new Map([...placedPieces].map(([key, at]) => [key, shift(at)])),
-    nodes: new Map([...nodes].map(([key, at]) => [key, shift(at)])),
-    inside: new Map(
-      [...laid].map(([si, { corners, stops }]) => [si, { corners: corners.map(shift), stops: stops.map(shift) }])
-    ),
-    free: false,
-  }
-}
-
-/** The cells of a block no way from outside its box reaches: the faces its loops close. */
-const enclosed = (unit: Block): Set<string> => {
-  const used = new Set(unit.used.map(keyOf))
-  const rows = Math.max(...unit.used.map(([r]) => r)) + 1
-  const cols = Math.max(...unit.used.map(([, c]) => c)) + 1
-  const outside = new Set<string>()
-  const queue: Cell[] = [[-1, -1]]
-  outside.add(keyOf([-1, -1]))
-  while (queue.length) {
-    const at = queue.pop()!
-    for (const dir of SIDES) {
-      const [r, c] = step(at, dir)
-      if (r < -1 || c < -1 || r > rows || c > cols || used.has(keyOf([r, c])) || outside.has(keyOf([r, c]))) continue
-      outside.add(keyOf([r, c]))
-      queue.push([r, c])
-    }
-  }
-  const faces = new Set<string>()
-  for (let r = 0; r < rows; r++)
-    for (let c = 0; c < cols; c++) if (!used.has(keyOf([r, c])) && !outside.has(keyOf([r, c]))) faces.add(keyOf([r, c]))
-  return faces
-}
-
-/** The string `cut` and every string reached past its end `far` without it. */
-const beyond = (graph: FloorGraph, cut: number, far: CellKey): number[] => {
-  const near = new Map<CellKey, number[]>()
-  graph.strings.forEach((s, si) => {
-    if (si === cut) return
-    for (const end of [s.a, s.b]) near.set(end, [...(near.get(end) ?? []), si])
-  })
-  const reach = (from: CellKey) => {
-    const seen = new Set([from])
-    const found = new Set<number>()
-    const queue = [from]
-    while (queue.length)
-      for (const si of near.get(queue.pop()!) ?? []) {
-        found.add(si)
-        for (const end of [graph.strings[si].a, graph.strings[si].b])
-          if (!seen.has(end)) {
-            seen.add(end)
-            queue.push(end)
-          }
-      }
-    return found
-  }
-  return [cut, ...reach(far)]
-}
-
-/**
- * THE FLOOR'S GRAPH GIVEN POSITIONS. The pieces a loop joins become one block that keeps the sketch's shape
- * (`loopBlock`); every other piece, and every node of a string between blocks, is a block of its own, and the strings
- * between blocks form a tree grown from the entrance. A string is laid leg by leg between its stops (its end pieces and
- * its nodes, each node a one-cell joint where it may turn). The main path to the exit is laid first, then each side
- * subtree depth-first. Each stop hangs on the one before it through its leg, which leaves that stop's door place on a
- * side and reaches the next one's facing door place:
- * - a leg runs at least one cell, a drop exactly its launch, run and landing, so a string runs its need (`needOf`);
- *   `round(spread * GAP_RANGE * u)` cells more, u in [0.5, 1.5), are shared out over a string's legs;
- * - with chance `straightness` a leg runs straight, otherwise it takes one bend (an L) or two (a Z or a U) at seeded
- *   places; a drop never bends;
- * - candidates (shape, side, bend, and a longer run where the drawn one finds no room) whose cells are free are taken
- *   those leaving the child room for its subtree first (`roomFor`), then the rolled shape, then the order that grows
- *   the floor's bounding box least, the seeded order breaking ties. Free: no cell held, and none next to another
- *   block's or leg's but where a leg's end cell meets its own stop.
- * A stop no candidate fits makes its parent re-place its subtree, at most `SUBTREE_TRIES` times; past that the attempt
- * ends. Then, in placing order, each subtree slides one cell toward its parent wherever its leg can lose a cell above
- * its drawn length and every cell stays free, until none moves. A floor that will not lay out tries again from
- * `seed ^ attempt`, up to `FLOOR_ATTEMPTS` times, then is refused naming the stop that found no room.
+ * THE FLOOR'S GRAPH GIVEN POSITIONS. Every sketch node starts where the sketch draws it. A string holds only its
+ * stops; a plain corridor node melts into it, standing as a bend where the sketch turns there. Every run between two
+ * points of a string is straight, and a piece with more than two ways keeps the side each leaves by, so the order of
+ * its ways and every loop stays, and the floor stays planar.
+ * - Push: two holders that overlap part on the straight line that needs the least room, everything beyond it moving
+ *   on. A run shorter than its stops need (two cells per stop plus one between door places, a drop its launch, run and
+ *   landing), or two holders that touch without joining (a 1-cell margin between all that does not join), get one
+ *   cell at a time on the seam that parts them and moves the fewest held cells: only what lies beyond it moves, and a
+ *   line with nothing beyond it stays as it is.
+ * - Press: on each axis in turn, every group of holders a run across the axis ties together moves as far toward the
+ *   low side as it may (`pressAxis`), then toward the high side as far as its runs pull it, until nothing moves.
+ * - Re-route: a string longer than its stops need is laid afresh on the shortest free way between its ends that holds
+ *   them, its bends wherever that way turns, its leaf end moving with it (`reroute`), where the floor grows no larger;
+ *   then the floor is pressed again.
+ * - Spread: each string but a drop gets `round(spread * GAP_RANGE * u)` cells more, u in [0.5, 1.5), pushed in on
+ *   one of its runs.
+ * A floor is refused only where two holders can be parted on neither axis.
  */
 export const layoutFloor = (
   graph: FloorGraph,
-  opts: { seed: number; spread: number; straightness: number }
+  opts: { seed: number; spread: number }
 ): Layout | { refused: string } => {
   const { strings } = graph
-  const onLoop = loopHeld(graph)
-
-  // The blocks: each loop's pieces together, every other piece alone, and every node of a string between blocks. A
-  // side branch that leaves a loop's block into a face the loop closes is laid inside the block with it.
-  const held = new Set(onLoop)
-  const blocks = new Map<CellKey, Block>()
-  const blockOf = new Map<CellKey, CellKey>()
-  for (;;) {
-    blocks.clear()
-    blockOf.clear()
-    const group = new Map([...graph.pieces.keys()].map(key => [key, key]))
-    const root = (key: CellKey): CellKey => (group.get(key) === key ? key : root(group.get(key)!))
-    strings.forEach((s, si) => {
-      const [ra, rb] = [root(s.a), root(s.b)]
-      if (held.has(si) && ra !== rb) group.set(rb, ra)
-    })
-    const members = new Map<CellKey, CellKey[]>()
-    for (const key of graph.pieces.keys()) members.set(root(key), [...(members.get(root(key)) ?? []), key])
-    for (const [head, keys] of members) {
-      const inside = strings.flatMap((s, si) => (held.has(si) && root(s.a) === head ? [si] : []))
-      const unit = inside.length ? loopBlock(graph, keys, inside) : single(graph.pieces.get(head)!)
-      blocks.set(unit.key, unit)
-      for (const key of unit.nodes.keys()) blockOf.set(key, unit.key)
-    }
-    const faces = new Map<CellKey, Set<string>>()
-    const facesOf = (unit: Block) => faces.get(unit.key) ?? faces.set(unit.key, enclosed(unit)).get(unit.key)!
-    const into = (end: CellKey, dir: Direction) => {
-      const unit = blocks.get(blockOf.get(end)!)!
-      if (unit.free || unit.inside.size === 0) return false
-      const ray = doorRay(graph.pieces.get(end)!, dir)!
-      const door = ray.length ? add(unit.pieces.get(end)!, ray[ray.length - 1]) : unit.nodes.get(end)!
-      return facesOf(unit).has(keyOf(step(door, dir)))
-    }
-    const inward = strings.findIndex((s, si) => !held.has(si) && (into(s.a, s.dirA) || into(s.b, s.dirB)))
-    if (inward < 0) break
-    const { a, dirA } = strings[inward]
-    for (const si of beyond(graph, inward, into(a, dirA) ? strings[inward].b : a)) held.add(si)
+  const keys: CellKey[] = [...graph.pieces.keys()]
+  for (const s of strings) keys.push(...s.nodes)
+  const index = new Map(keys.map((key, i) => [key, i]))
+  /** The sketch's nodes come first; a bend a re-route lays stands after them. */
+  const sketchNodes = keys.length
+  const pos: Cell[] = keys.map(cellOfKey)
+  const shapes: Cell[][] = keys.map(key => {
+    const piece = graph.pieces.get(key)
+    if (!piece) return [[0, 0]]
+    const off = nodeOffset(piece)
+    return footprint(piece).used.map(([r, c]): Cell => [r - off[0], c - off[1]])
+  })
+  const ext = (i: number, dir: Direction): number | undefined => {
+    const piece = i < sketchNodes ? graph.pieces.get(keys[i]) : undefined
+    return piece ? doorRay(piece, dir)?.length : 0
   }
-  const segments: Segment[] = []
-  strings.forEach((s, si) => {
-    if (held.has(si)) return
-    const chain = [s.a, ...s.nodes, s.b]
-    for (const node of s.nodes) {
-      const unit = single({ kind: "node", key: node })
-      blocks.set(node, unit)
-      blockOf.set(node, node)
-    }
-    // Each stop's way toward the next and back, as the sketch draws it.
-    const toward = (j: number, k: number) =>
-      s.drop ? (j === 0 ? s.dirA : s.dirB) : dirBetween(cellOfKey(chain[j]), s.path[2 * Math.min(j, k)])
-    for (let j = 0; j + 1 < chain.length; j++) {
-      const fixed = (key: CellKey) => s.drop || !blocks.get(blockOf.get(key)!)!.free
-      segments.push({
+
+  const door = (i: number, dir: Direction) => step(pos[i], dir, ext(i, dir)!)
+
+  // Each string as the elements it runs through from its `a` end to its `b` end, and the sides it leaves its ends by.
+  // A plain corridor node where the sketch turns becomes a bend; one the string runs straight through is gone.
+  const chains: number[][] = strings.map((s, si) => {
+    if (s.drop) return [index.get(s.a)!, index.get(s.b)!]
+    const points = s.path.flatMap((cell, i) => {
+      if (i % 2 === 0) return []
+      const stop = s.stopAt.indexOf(i)
+      if (stop >= 0) return [index.get(s.nodes[stop])!]
+      if (dirBetween(s.path[i - 1], cell) === dirBetween(cell, s.path[i + 1])) return []
+      keys.push(`bend ${si} ${keys.length}`)
+      pos.push([...cell])
+      shapes.push([[0, 0]])
+      return [keys.length - 1]
+    })
+    return [index.get(s.a)!, ...points, index.get(s.b)!]
+  })
+  const sides: [Direction, Direction][] = strings.map(s => [s.dirA, s.dirB])
+  /** A string's runs. Between two of its stops (its ends and its nodes) its runs keep the cells the stops need: one
+   * between door places at least, two per run where a bend splits it. */
+  const runsOf = (si: number): Edge[] | string => {
+    const s = strings[si]
+    const chain = chains[si]
+    const runs: Edge[] = []
+    const add = (x: number, y: number, dir: Direction, ex: number, ey: number, min: number) => {
+      const low = dir === "s" || dir === "e"
+      runs.push({
+        u: low ? x : y,
+        v: low ? y : x,
+        axis: dir === "n" || dir === "s" ? 0 : 1,
+        extU: low ? ex : ey,
+        extV: low ? ey : ex,
+        min,
         si,
-        a: chain[j],
-        b: chain[j + 1],
-        ...(fixed(chain[j]) ? { fixedA: toward(j, j + 1) } : {}),
-        ...(fixed(chain[j + 1]) ? { fixedB: toward(j + 1, j) } : {}),
       })
     }
-  })
-
-  // The tree of blocks, from the entrance's block, the main path's child first.
-  const near = new Map<CellKey, number[]>()
-  segments.forEach((g, i) => {
-    for (const end of [g.a, g.b]) near.set(blockOf.get(end)!, [...(near.get(blockOf.get(end)!) ?? []), i])
-  })
-  const rootKey = blockOf.get(graph.entrance)!
-  const parentSeg = new Map<CellKey, number>()
-  const parentOf = new Map<CellKey, CellKey>()
-  const found: CellKey[] = [rootKey]
-  for (let i = 0; i < found.length; i++)
-    for (const gi of near.get(found[i]) ?? []) {
-      const g = segments[gi]
-      const other = blockOf.get(blockOf.get(g.a) === found[i] ? g.b : g.a)!
-      if (other === rootKey || parentSeg.has(other)) continue
-      parentSeg.set(other, gi)
-      parentOf.set(other, found[i])
-      found.push(other)
+    const [sideA, sideB] = sides[si]
+    const [extA, extB] = [ext(chain[0], sideA), ext(chain[chain.length - 1], sideB)]
+    if (extA === undefined || extB === undefined) return keys[extA === undefined ? chain[0] : chain[chain.length - 1]]
+    if (s.drop) {
+      add(chain[0], chain[1], sideA, extA, extB, Math.max(s.drop.run.length + 3, extA + extB + 2))
+      return runs
     }
-  if (found.length !== blocks.size) throw new Error("[carve] the floor's pieces do not hang together")
-  const main = new Set<CellKey>([rootKey])
-  for (let at = blockOf.get(graph.exit)!; at !== rootKey; at = parentOf.get(at)!) main.add(at)
-  const children = new Map<CellKey, CellKey[]>()
-  for (const key of found.slice(1)) children.set(parentOf.get(key)!, [...(children.get(parentOf.get(key)!) ?? []), key])
-  for (const [key, kids] of children)
-    children.set(key, [...kids.filter(kid => main.has(kid)), ...kids.filter(kid => !main.has(kid))])
-  const subtree = new Map<CellKey, CellKey[]>()
-  const order: CellKey[] = []
-  const collect = (key: CellKey): CellKey[] => {
-    order.push(key)
-    const all = [key, ...(children.get(key) ?? []).flatMap(collect)]
-    subtree.set(key, all)
-    return all
-  }
-  collect(rootKey)
-  const ends = new Map<string, [string, string]>(
-    [...parentSeg].map(([key, gi]) => [`g:${gi}`, [`p:${parentOf.get(key)}`, `p:${key}`]])
-  )
-  // A drop fixes the side it leaves a one-cell node or a room by, so no other leg takes that side.
-  const reserved = new Map<CellKey, Set<Direction>>()
-  for (const s of strings)
-    if (s.drop)
-      for (const [end, dir] of [
-        [s.a, s.dirA],
-        [s.b, s.dirB],
-      ] as const)
-        reserved.set(end, (reserved.get(end) ?? new Set<Direction>()).add(dir))
-  // The free ground a stop's subtree wants below it: three cells for each cell its blocks claim, and one more
-  // each, looked for up to `ROOM_LOOK` cells.
-  const roomNeed = new Map(
-    [...subtree].map(([key, all]) => [
-      key,
-      Math.min(
-        ROOM_LOOK,
-        all.filter(below => below !== key).reduce((sum, below) => sum + 3 * (blocks.get(below)!.used.length + 1), 0)
-      ),
-    ])
-  )
-  const corners = new Map(
-    [...blocks].map(([key, { used }]) => [
-      key,
-      [Math.max(...used.map(([r]) => r)), Math.max(...used.map(([, c]) => c))] as Cell,
-    ])
-  )
-  const owned = (key: CellKey, at: Cell) => blocks.get(key)!.used.map(cell => add(at, cell))
-  /** The way a string's end at `node` leaves its block by `side`: its door place and the cells inside the block out
-   * to it, as offsets from the block's top-left, or undefined where it has no way out there. */
-  const port = (node: CellKey, side: Direction) => {
-    const unit = blocks.get(blockOf.get(node)!)!
-    const piece = graph.pieces.get(node) ?? { kind: "node" as const, key: node }
-    const base = unit.pieces.get(node) ?? [0, 0]
-    const ray = doorRay(piece, side)
-    if (!ray) return undefined
-    const cells = ray.map(cell => add(base, cell))
-    return { ray: cells, door: cells.length ? cells[cells.length - 1] : unit.nodes.get(node)! }
-  }
-
-  /** Whether `fresh` may be taken over `hold`: no cell held, and none next to another holder's but where a leg's end
-   * cell meets its own stop. */
-  const fits = (hold: Hold, fresh: Hold) => {
-    const meets = (x: Holder, other: string) => {
-      const pair = ends.get(x.owner)
-      return pair !== undefined && ((x.index === 0 && other === pair[0]) || (x.index === x.last && other === pair[1]))
-    }
-    for (const [key, here] of fresh) {
-      if (hold.has(key)) return false
-      const at = cellAt(key)
-      for (const dir of SIDES) {
-        const nk = ck(step(at, dir))
-        const there = fresh.get(nk) ?? hold.get(nk)
-        if (!there) continue
-        if (there.owner === here.owner) {
-          if (here.owner.startsWith("p:") || Math.abs(there.index - here.index) === 1) continue
-          return false
-        }
-        if (meets(here, there.owner) || meets(there, here.owner)) continue
-        return false
+    const anchors = chain.flatMap((i, j) => (i < sketchNodes ? [j] : []))
+    for (let k = 0; k + 1 < anchors.length; k++) {
+      const [from, to] = [anchors[k], anchors[k + 1]]
+      const [exFrom, exTo] = [from === 0 ? extA : 0, to === chain.length - 1 ? extB : 0]
+      const mins = Array.from(
+        { length: to - from },
+        (_, j) => 1 + (j === 0 ? exFrom : 0) + (j === to - from - 1 ? exTo : 0)
+      )
+      mins[0] += Math.max(0, exFrom + exTo + 2 - mins.reduce((sum, m) => sum + m, 0))
+      for (let j = from; j < to; j++) {
+        const dir =
+          j === 0 ? sideA : j === chain.length - 2 ? OPPOSITE[sideB] : dirBetween(pos[chain[j]], pos[chain[j + 1]])
+        add(chain[j], chain[j + 1], dir, j === 0 ? extA : 0, j === chain.length - 2 ? extB : 0, mins[j - from])
       }
     }
+    return runs
+  }
+  let edges: Edge[] = []
+  const rebuild = (): string | undefined => {
+    const all: Edge[] = []
+    for (let si = 0; si < strings.length; si++) {
+      const runs = runsOf(si)
+      if (typeof runs === "string") return runs
+      all.push(...runs)
+    }
+    edges = all
+    adjacent.clear()
+    for (const e of edges) adjacent.add(`${e.u},${e.v}`).add(`${e.v},${e.u}`)
+    return undefined
+  }
+  const adjacent = new Set<string>()
+  const missing = rebuild()
+  if (missing) return { refused: `no room for the piece at ${missing}` }
+  const lengthOf = (e: Edge) => pos[e.v][e.axis] - pos[e.u][e.axis]
+  const edgeCells = (e: Edge): Cell[] => {
+    const cells: Cell[] = []
+    const across = pos[e.u][1 - e.axis]
+    for (let k = pos[e.u][e.axis] + e.extU + 1; k < pos[e.v][e.axis] - e.extV; k++)
+      cells.push(e.axis === 1 ? [across, k] : [k, across])
+    return cells
+  }
+  const cellsOf = (owner: number): Cell[] =>
+    owner < E
+      ? shapes[owner].map(([r, c]): Cell => [pos[owner][0] + r, pos[owner][1] + c])
+      : edgeCells(edges[owner - E])
+  const anchors = (owner: number): Cell[] =>
+    owner < E ? [pos[owner]] : [pos[edges[owner - E].u], pos[edges[owner - E].v]]
+  const joined = (x: number, y: number) => {
+    if (x < E && y < E) return adjacent.has(`${x},${y}`)
+    if (x >= E && y >= E) return false
+    const e = edges[(x >= E ? x : y) - E]
+    const end = x >= E ? y : x
+    return e.u === end || e.v === end
+  }
+  const keyOfOwner = (owner: number) => keys[owner < E ? owner : edges[owner - E].u]
+
+  const raster = (): Raster => {
+    const all: [number, Cell[]][] = []
+    for (let i = 0; i < keys.length; i++) all.push([i, cellsOf(i)])
+    edges.forEach((_, j) => all.push([E + j, cellsOf(E + j)]))
+    let [top, left, bottom, right] = [Infinity, Infinity, -Infinity, -Infinity]
+    for (const [, cells] of all)
+      for (const [r, c] of cells) {
+        top = Math.min(top, r)
+        bottom = Math.max(bottom, r)
+        left = Math.min(left, c)
+        right = Math.max(right, c)
+      }
+    top--
+    left--
+    const rows = bottom - top + 2
+    const cols = right - left + 2
+    const grid = new Int32Array(rows * cols).fill(-1)
+    let overlap: [number, number] | undefined
+    for (const [owner, cells] of all)
+      for (const [r, c] of cells) {
+        const at = (r - top) * cols + (c - left)
+        if (grid[at] >= 0 && grid[at] !== owner) overlap ??= [grid[at], owner]
+        grid[at] = owner
+      }
+    return { top, left, rows, cols, grid, ...(overlap ? { overlap } : {}) }
+  }
+  const touching = ({ rows, cols, grid }: Raster): [number, number] | undefined => {
+    for (let r = 0; r < rows; r++)
+      for (let c = 0; c < cols; c++) {
+        const here = grid[r * cols + c]
+        if (here < 0) continue
+        for (const there of [c + 1 < cols ? grid[r * cols + c + 1] : -1, r + 1 < rows ? grid[(r + 1) * cols + c] : -1])
+          if (there >= 0 && there !== here && !joined(here, there)) return [here, there]
+      }
+    return undefined
+  }
+  const insert = (axis: 0 | 1, boundary: number, k: number) => {
+    for (const at of pos) if (at[axis] >= boundary) at[axis] += k
+  }
+
+  /** The straight line that parts two holders with the least room, and the room it needs. */
+  const parting = (x: number, y: number) => {
+    let best: { axis: 0 | 1; boundary: number; k: number } | undefined
+    for (const axis of [1, 0] as const) {
+      const ax = anchors(x).map(at => at[axis])
+      const ay = anchors(y).map(at => at[axis])
+      const [low, high] =
+        Math.max(...ax) < Math.min(...ay) ? [x, y] : Math.max(...ay) < Math.min(...ax) ? [y, x] : [undefined, undefined]
+      if (low === undefined || high === undefined) continue
+      const boundary = Math.max(...anchors(low).map(at => at[axis])) + 1
+      let k = 0
+      const highCells = cellsOf(high)
+      for (const l of cellsOf(low))
+        for (const h of highCells) {
+          const off = Math.abs(l[1 - axis] - h[1 - axis])
+          if (off <= 1) k = Math.max(k, (off === 0 ? 2 : 1) - (h[axis] - l[axis]))
+        }
+      if (k > 0 && (!best || k < best.k)) best = { axis, boundary, k }
+    }
+    return best
+  }
+
+  /** The seam across `axis` that parts `low` from `high` (all of `low` before it on every line, all of `high` at or
+   * after it), splits no piece, keeps every joined pair in line and brings nothing new side by side when one cell goes
+   * in along it; of those, the one that moves the fewest held cells. */
+  const insertionSeam = (drawn: Raster, low: number, high: number, axis: 0 | 1) => {
+    const { top, left, rows, cols, grid } = drawn
+    const [L, P] = axis === 1 ? [rows, cols] : [cols, rows]
+    const [lineOrigin, posOrigin] = axis === 1 ? [top, left] : [left, top]
+    const at = (l: number, p: number) => (p < 0 || p >= P ? -1 : axis === 1 ? grid[l * cols + p] : grid[p * cols + l])
+    const after = Array.from({ length: L }, () => -1)
+    const before = Array.from({ length: L }, () => P)
+    for (const [r, c] of [...cellsOf(low), ...anchors(low)]) {
+      const [l, p] = axis === 1 ? [r - top, c - left] : [c - left, r - top]
+      after[l] = Math.max(after[l], p)
+    }
+    for (const [r, c] of [...cellsOf(high), ...anchors(high)]) {
+      const [l, p] = axis === 1 ? [r - top, c - left] : [c - left, r - top]
+      before[l] = Math.min(before[l], p)
+    }
+    const allowed = (l: number, p: number) => {
+      if (p <= after[l] || p > before[l]) return false
+      const [x, y] = [at(l, p - 1), at(l, p)]
+      return !(x >= 0 && x === y && x < E)
+    }
+    const moved = Array.from({ length: L }, (_, l) => {
+      const counts = new Int32Array(P + 1)
+      for (let p = P - 1; p >= 0; p--) counts[p] = counts[p + 1] + (at(l, p) >= 0 ? 1 : 0)
+      return counts
+    })
+    const linked = (l: number, c: number) => {
+      const [x, y] = [at(l, c), at(l + 1, c)]
+      return x >= 0 && y >= 0 && (x === y || joined(x, y))
+    }
+    const both = (l: number, c: number, m: number, d: number) => at(l, c) >= 0 && at(m, d) >= 0
+    const W = P + 1
+    const cost = new Float64Array(L * W).fill(Infinity)
+    const from = new Int32Array(L * W).fill(-1)
+    for (let p = 0; p <= P; p++) if (allowed(0, p)) cost[p] = moved[0][p]
+    for (let l = 0; l + 1 < L; l++) {
+      const here = (p: number) => cost[l * W + p]
+      const offer = (p: number, s: number) => {
+        if (s < 0 || !allowed(l + 1, p)) return
+        const total = here(s) + moved[l + 1][p]
+        if (total < cost[(l + 1) * W + p]) {
+          cost[(l + 1) * W + p] = total
+          from[(l + 1) * W + p] = s
+        }
+      }
+      const better = (a: number, b: number) => (a < 0 ? b : b < 0 ? a : here(b) < here(a) ? b : a)
+      let best = -1
+      for (let k = 0; k <= P; k++) {
+        const own = here(k) < Infinity ? k : -1
+        offer(k, better(best, own))
+        best = linked(l, k) ? -1 : better(both(l, k - 1, l + 1, k) ? -1 : best, own)
+      }
+      best = -1
+      for (let k = P; k >= 0; k--) {
+        const own = here(k) < Infinity ? k : -1
+        offer(k, better(best, own))
+        best = linked(l, k - 1) ? -1 : better(both(l, k, l + 1, k - 1) ? -1 : best, own)
+      }
+    }
+    let end = -1
+    for (let p = 0; p <= P; p++) if (cost[(L - 1) * W + p] < (end < 0 ? Infinity : cost[(L - 1) * W + end])) end = p
+    if (end < 0) return undefined
+    const total = cost[(L - 1) * W + end]
+    const seam = new Int32Array(L)
+    for (let l = L - 1; l >= 0; l--) {
+      seam[l] = end
+      if (l > 0) end = from[l * W + end]
+    }
+    return {
+      total,
+      apply: () => {
+        for (const cell of pos) if (cell[axis] - posOrigin >= seam[cell[1 - axis] - lineOrigin]) cell[axis]++
+      },
+    }
+  }
+  /** One cell of room between two holders, on the seam that moves the least; false where no seam parts them. */
+  const pushApart = (drawn: Raster, x: number, y: number, axes: readonly (0 | 1)[]) => {
+    let best: ReturnType<typeof insertionSeam>
+    for (const axis of axes)
+      for (const [low, high] of [
+        [x, y],
+        [y, x],
+      ]) {
+        const seam = insertionSeam(drawn, low, high, axis)
+        if (seam && (!best || seam.total < best.total)) best = seam
+      }
+    if (!best) return false
+    best.apply()
     return true
   }
 
-  let failure = `no room for the piece at ${graph.entrance}`
-  for (let attempt = 0; attempt < FLOOR_ATTEMPTS; attempt++) {
-    const rand = mulberry32(opts.seed ^ attempt ^ LAYOUT_SALT)
-    let budget = ATTEMPT_BUDGET * blocks.size
-    // Set once a stop has re-placed its subtree `SUBTREE_TRIES` times: the attempt is over.
-    let spent = false
-    const at = new Map<CellKey, Cell>()
-    const sides = new Map<CellKey, Set<Direction>>()
-    const lines = new Map<number, Line>()
-    const hold: Hold = new Map()
-    const drawn = strings.map(() => Math.round(opts.spread * GAP_RANGE * (0.5 + rand())))
-    const share = segments.map(g => {
-      const s = strings[g.si]
-      const parts = s.nodes.length + 1
-      const j = g.a === s.a ? 0 : s.nodes.indexOf(g.a) + 1
-      return Math.floor((drawn[g.si] * (j + 1)) / parts) - Math.floor((drawn[g.si] * j) / parts)
+  for (let round = 0; ; round++) {
+    if (round > PUSH_LIMIT) return { refused: `no room for the piece at ${graph.entrance}` }
+    const drawn = raster()
+    if (drawn.overlap) {
+      const line = parting(...drawn.overlap)
+      if (!line) return { refused: `no room for the piece at ${keyOfOwner(drawn.overlap[0])}` }
+      insert(line.axis, line.boundary, line.k)
+      continue
+    }
+    const short = edges.find(e => lengthOf(e) < e.min)
+    if (short) {
+      if (!pushApart(drawn, short.u, short.v, [short.axis]))
+        insert(short.axis, pos[short.u][short.axis] + 1, short.min - lengthOf(short))
+      continue
+    }
+    const clash = touching(drawn)
+    if (!clash) break
+    if (pushApart(drawn, clash[0], clash[1], [1, 0])) continue
+    const line = parting(...clash)
+    if (!line) return { refused: `no room for the piece at ${keyOfOwner(clash[0])}` }
+    insert(line.axis, line.boundary, line.k)
+  }
+
+  /**
+   * Moves every group of holders that a run across `axis` ties together as far toward the low side as it may go (the
+   * least solution of the floor's constraints, by longest paths), and says whether any moved. A run along `axis`
+   * keeps its need; on each line, and between neighbouring lines, holders keep their order with a cell between them
+   * on a line and none needed between lines. Holders two lines apart may pass each other: that is how a bend moves.
+   */
+  const pressAxis = (axis: 0 | 1): boolean => {
+    const across = (1 - axis) as 0 | 1
+    const group = keys.map((_, i) => i)
+    const find = (i: number): number => (group[i] === i ? i : (group[i] = find(group[i])))
+    for (const e of edges) if (e.axis !== axis) group[find(e.u)] = find(e.v)
+    const roots = keys.map((_, i) => find(i))
+    // An item: a held cell on a line at a place, held by `owner` and moving with group `g` at `off` from it.
+    type Item = { line: number; p: number; g: number; off: number; owner: number }
+    const items: Item[] = []
+    for (let i = 0; i < keys.length; i++) {
+      const g = roots[i]
+      for (const [r, c] of cellsOf(i)) {
+        const cell: Cell = [r, c]
+        items.push({ line: cell[across], p: cell[axis], g, off: cell[axis] - pos[g][axis], owner: i })
+      }
+    }
+    edges.forEach((e, j) => {
+      const cells = edgeCells(e)
+      if (e.axis !== axis) {
+        const g = roots[e.u]
+        for (const cell of cells)
+          items.push({ line: cell[across], p: cell[axis], g, off: cell[axis] - pos[g][axis], owner: E + j })
+        return
+      }
+      if (!cells.length) return
+      const [first, last] = [cells[0], cells[cells.length - 1]]
+      const [gu, gv] = [roots[e.u], roots[e.v]]
+      items.push({ line: first[across], p: first[axis], g: gu, off: first[axis] - pos[gu][axis], owner: E + j })
+      items.push({ line: last[across], p: last[axis], g: gv, off: last[axis] - pos[gv][axis], owner: E + j })
     })
-    const bends = segments.map(() => (rand() < opts.straightness ? 0 : rand() < 0.5 ? 1 : 2))
+    const lines = new Map<number, Item[]>()
+    for (const item of items) (lines.get(item.line) ?? lines.set(item.line, []).get(item.line)!).push(item)
+    for (const list of lines.values()) list.sort((a, b) => a.p - b.p)
 
-    const blockCells = (key: CellKey, shift: Cell = [0, 0]): [number, Holder][] =>
-      owned(key, add(at.get(key)!, shift)).map(cell => [ck(cell), { owner: `p:${key}`, index: 0, last: 0 }])
-    const legCells = (gi: number, line: Line, shift: Cell = [0, 0]): [number, Holder][] => {
-      const cells = walkLegs(add(line.door, shift), line.legs)
-      return cells.map((cell, index) => [ck(cell), { owner: `g:${gi}`, index, last: cells.length - 1 }])
+    // Constraints: x[to] >= x[from] + w.
+    const out = new Map<number, [number, number][]>()
+    const need = (a: Item, b: Item, gap: number) => {
+      if (a.g === b.g) return
+      ;(out.get(a.g) ?? out.set(a.g, []).get(a.g)!).push([b.g, gap + a.off - b.off])
     }
-    /** Every placed cell of `key`'s subtree below its own leg, moved by `shift`. */
-    const subtreeCells = (key: CellKey, shift: Cell = [0, 0]): [number, Holder][] =>
-      subtree
-        .get(key)!
-        .flatMap(below =>
-          at.has(below)
-            ? [
-                ...blockCells(below, shift),
-                ...(below === key ? [] : legCells(parentSeg.get(below)!, lines.get(parentSeg.get(below)!)!, shift)),
-              ]
-            : []
-        )
-    const sideOf = (key: CellKey) => sides.get(key) ?? sides.set(key, new Set()).get(key)!
-    /** The box the placed blocks span. */
-    const placedBox = (): Box =>
-      bounds([...at].flatMap(([key, topLeft]) => [ck(topLeft), ck(add(topLeft, corners.get(key)!))]))
-    /** Whether the free ground a child at `topLeft` reaches, by cells nothing holds or touches, holds its subtree. */
-    const roomFor = (child: CellKey, topLeft: Cell, fresh: Hold): boolean => {
-      const need = roomNeed.get(child)!
-      if (need === 0) return true
-      const held = (k: number) => fresh.get(k) ?? hold.get(k)
-      const own = `p:${child}`
-      const free = (k: number) => {
-        if (held(k)) return false
-        const cell = cellAt(k)
-        return SIDES.every(dir => {
-          const there = held(ck(step(cell, dir)))
-          return !there || there.owner === own
-        })
+    for (const e of edges)
+      if (e.axis === axis) need({ g: roots[e.u], off: 0 } as Item, { g: roots[e.v], off: 0 } as Item, e.min)
+    for (const [line, list] of lines) {
+      for (let k = 0; k + 1 < list.length; k++)
+        if (list[k].owner !== list[k + 1].owner)
+          need(list[k], list[k + 1], joined(list[k].owner, list[k + 1].owner) ? 1 : 2)
+      const next = lines.get(line + 1)
+      if (!next) continue
+      const nearestAfter = (from: Item[], to: Item[]) => {
+        let j = 0
+        for (const a of from) {
+          while (j < to.length && to[j].p <= a.p) j++
+          if (j < to.length) need(a, to[j], 1)
+        }
       }
-      const seen = new Set<number>()
-      const queue: number[] = []
-      const visit = (k: number) => {
-        if (seen.has(k) || !free(k)) return
-        seen.add(k)
-        queue.push(k)
+      nearestAfter(list, next)
+      nearestAfter(next, list)
+    }
+
+    const groups = [...new Set(roots)]
+    const x = new Map<number, number>()
+    for (const g of groups) x.set(g, 0)
+    for (const item of items) x.set(item.g, Math.max(x.get(item.g)!, -item.off))
+    const queue = [...groups]
+    const queued = new Set(groups)
+    let relaxations = 0
+    while (queue.length) {
+      const g = queue.shift()!
+      queued.delete(g)
+      for (const [h, w] of out.get(g) ?? [])
+        if (x.get(g)! + w > x.get(h)!) {
+          x.set(h, x.get(g)! + w)
+          if (++relaxations > 50 * items.length * groups.length) throw new Error("[carve] the press found no fixpoint")
+          if (!queued.has(h)) {
+            queued.add(h)
+            queue.push(h)
+          }
+        }
+    }
+    // Then each group its runs pull toward the high side moves there as far as its constraints and the floor's
+    // extent allow, so a run ends no longer than the pressed floor makes it.
+    const into = new Map<number, [number, number][]>()
+    for (const [g, list] of out) for (const [h, w] of list) (into.get(h) ?? into.set(h, []).get(h)!).push([g, w])
+    const pull = new Map<number, number>()
+    for (const e of edges)
+      if (e.axis === axis && roots[e.u] !== roots[e.v]) {
+        pull.set(roots[e.u], (pull.get(roots[e.u]) ?? 0) + 1)
+        pull.set(roots[e.v], (pull.get(roots[e.v]) ?? 0) - 1)
       }
-      for (const cell of owned(child, topLeft)) for (const dir of SIDES) visit(ck(step(cell, dir)))
-      for (let i = 0; i < queue.length && seen.size < need; i++)
-        for (const dir of SIDES) visit(ck(step(cellAt(queue[i]), dir)))
-      return seen.size >= need
+    const reach = new Map<number, [number, number]>()
+    for (const item of items) {
+      const [lo, hi] = reach.get(item.g) ?? [Infinity, -Infinity]
+      reach.set(item.g, [Math.min(lo, item.off), Math.max(hi, item.off)])
     }
-
-    function* candidates(child: CellKey, extra: number) {
-      const gi = parentSeg.get(child)!
-      const g = segments[gi]
-      const s = strings[g.si]
-      const parent = parentOf.get(child)!
-      const childAtA = blockOf.get(g.a) === child
-      const [parentNode, childNode] = childAtA ? [g.b, g.a] : [g.a, g.b]
-      const parentFixed = childAtA ? g.fixedB : g.fixedA
-      const childFixed = childAtA ? g.fixedA : g.fixedB
-      const rolled = s.drop ? 0 : bends[gi]
-      const shapes = s.drop ? [0] : [rolled, ...[0, 1, 2].filter(b => b !== rolled)]
-      const order = parentFixed
-        ? [parentFixed]
-        : shuffled(
-            SIDES.filter(side => !sideOf(parent).has(side) && !reserved.get(parentNode)?.has(side)),
-            rand
-          )
-      for (const shape of shapes)
-        for (const side of order) {
-          const out = port(parentNode, side)
-          if (!out) continue
-          const door = add(at.get(parent)!, out.door)
-          const turns = shuffled(TURNS[side], rand)
-          const patterns: Direction[][] =
-            shape === 0
-              ? [[side]]
-              : shape === 1
-                ? turns.map(t => [side, t])
-                : turns.flatMap(t =>
-                    shuffled(
-                      [
-                        [side, t, side],
-                        [side, t, OPPOSITE[side]],
-                      ],
-                      rand
-                    )
-                  )
-          for (const dirs of patterns) {
-            const last = dirs[dirs.length - 1]
-            const childSide = OPPOSITE[last]
-            if (childFixed ? childFixed !== childSide : reserved.get(childNode)?.has(childSide)) continue
-            const into = port(childNode, childSide)
-            if (!into) continue
-            const need = s.drop ? needOf(s, out.ray.length, into.ray.length) : 1
-            if (need < 1) continue
-            const length = s.drop ? need : need + share[gi]
-            const lengths = cut(length + extra, dirs.length, rand)
-            if (!lengths) continue
-            const legs = dirs.map((dir, k) => ({ dir, len: lengths[k] }))
-            const cells = walkLegs(door, legs)
-            const childDoor = step(cells[cells.length - 1], last)
-            yield {
-              tier: shape === rolled ? 0 : 1,
-              line: { door, legs, need: length },
-              side: childSide,
-              topLeft: [childDoor[0] - into.door[0], childDoor[1] - into.door[1]] as Cell,
-            }
-          }
+    const extent = Math.max(...items.map(item => x.get(item.g)! + item.off))
+    for (let round = 0, changed = true; changed && round < PRESS_ROUNDS * 10; round++) {
+      changed = false
+      for (const g of groups) {
+        // A group its runs pull both ways equally goes high too, so that one pulled high behind it can follow.
+        if (!reach.has(g) || !pull.has(g)) continue
+        const toward = pull.get(g)! >= 0 ? 1 : -1
+        let target = toward > 0 ? extent - reach.get(g)![1] : -reach.get(g)![0]
+        if (toward > 0) for (const [h, w] of out.get(g) ?? []) target = Math.min(target, x.get(h)! - w)
+        else for (const [h, w] of into.get(g) ?? []) target = Math.max(target, x.get(h)! + w)
+        if (toward > 0 ? target > x.get(g)! : target < x.get(g)!) {
+          x.set(g, target)
+          changed = true
         }
+      }
     }
+    const shift = new Map(groups.map(g => [g, x.get(g)! - pos[g][axis]]))
+    for (let i = 0; i < keys.length; i++) pos[i][axis] += shift.get(roots[i])!
+    return new Set(items.map(item => shift.get(item.g))).size > 1
+  }
+  const press = () => {
+    for (let round = 0, moved = true; moved && round < PRESS_ROUNDS; round++) {
+      moved = false
+      for (const axis of [1, 0] as const) if (pressAxis(axis)) moved = true
+    }
+  }
+  press()
 
-    const hangChildren = (key: CellKey): boolean => (children.get(key) ?? []).every(hang)
-    const hang = (child: CellKey): boolean => {
-      const gi = parentSeg.get(child)!
-      const parent = parentOf.get(child)!
-      const box = placedBox()
-      let tries = 0
-      for (const extra of strings[segments[gi].si].drop ? [0] : DETOURS) {
-        type Fitting = {
-          tier: number
-          line: Line
-          side: Direction
-          topLeft: Cell
-          fresh: Hold
-          grown: number
-          index: number
-        }
-        const fitting: Fitting[] = []
-        for (const cand of candidates(child, extra)) {
-          if (--budget < 0) break
-          at.set(child, cand.topLeft)
-          const fresh: Hold = new Map(legCells(gi, cand.line))
-          let clash = false
-          for (const [key, holder] of blockCells(child)) {
-            if (fresh.has(key)) clash = true
-            fresh.set(key, holder)
-          }
-          at.delete(child)
-          if (clash || !fits(hold, fresh)) continue
-          fitting.push({ ...cand, fresh, grown: growth(bounds(fresh.keys(), box)), index: fitting.length })
-        }
-        fitting.sort((x, y) => x.tier - y.tier || x.grown - y.grown || x.index - y.index)
-        // Those leaving room for the subtree first, each looked at only when its turn comes.
-        const cramped: Fitting[] = []
-        const ordered = function* () {
-          for (const cand of fitting)
-            if (roomFor(child, cand.topLeft, cand.fresh)) yield cand
-            else cramped.push(cand)
-          yield* cramped
-        }
-        for (const cand of ordered()) {
-          at.set(child, cand.topLeft)
-          for (const [key, holder] of cand.fresh) hold.set(key, holder)
-          lines.set(gi, cand.line)
-          sideOf(parent).add(cand.line.legs[0].dir)
-          sides.set(child, new Set([cand.side]))
-          if (hangChildren(child)) return true
-          for (const [key] of [...subtreeCells(child), ...legCells(gi, cand.line)]) hold.delete(key)
-          for (const below of subtree.get(child)!) {
-            at.delete(below)
-            sides.delete(below)
-            lines.delete(parentSeg.get(below)!)
-          }
-          sideOf(parent).delete(cand.line.legs[0].dir)
-          if (spent || budget < 0) break
-          if (++tries >= SUBTREE_TRIES) {
-            spent = true
+  // The sides each end's strings leave it by: a piece with more than two ways keeps the sketch's, so the order of
+  // its ways around it stays.
+  const ways = new Map<number, number>()
+  for (const chain of chains)
+    for (const end of [chain[0], chain[chain.length - 1]]) ways.set(end, (ways.get(end) ?? 0) + 1)
+  const lengthBetweenDoors = (si: number) => {
+    const chain = chains[si]
+    let total = 0
+    for (let j = 0; j + 1 < chain.length; j++)
+      total += Math.abs(pos[chain[j]][0] - pos[chain[j + 1]][0]) + Math.abs(pos[chain[j]][1] - pos[chain[j + 1]][1])
+    return total - ext(chain[0], sides[si][0])! - ext(chain[chain.length - 1], sides[si][1])! - 1
+  }
+  /**
+   * Lays a string afresh on the shortest way through free ground between its ends that still holds its stops, where
+   * that is shorter than its way now: free ground holds nothing and touches nothing but the door it leaves or reaches.
+   * An end with two ways or fewer may be left by any side its other way does not take; the string's bends then stand
+   * wherever the new way turns.
+   */
+  const reroute = (si: number): boolean => {
+    const s = strings[si]
+    if (s.drop) return false
+    const chain = chains[si]
+    const [a, b] = [chain[0], chain[chain.length - 1]]
+    const need = 2 * s.nodes.length + 1
+    const now = lengthBetweenDoors(si)
+    if (now <= need) return false
+    const leaf = (end: number) => ways.get(end) === 1
+    // The way is looked for from a fixed end; a far end that is a leaf moves to wherever the way can end first.
+    const fromB = leaf(a) && !leaf(b)
+    const [start, startSelf, far, farSelf] = fromB ? ([b, 1, a, 0] as const) : ([a, 0, b, 1] as const)
+    const moves = leaf(far)
+    const used = (end: number, self: 0 | 1) =>
+      new Set(
+        chains.flatMap((other, oi) => [
+          ...(other[0] === end && !(oi === si && self === 0) ? [sides[oi][0]] : []),
+          ...(other[other.length - 1] === end && !(oi === si && self === 1) ? [sides[oi][1]] : []),
+        ])
+      )
+    const sidesOf = (end: number, self: 0 | 1): Direction[] =>
+      (ways.get(end) ?? 0) > 2
+        ? [sides[si][self]]
+        : (["n", "e", "s", "w"] as Direction[]).filter(dir => ext(end, dir) !== undefined && !used(end, self).has(dir))
+    const own = new Set<number>(chain.slice(1, -1))
+    if (moves) own.add(far)
+    edges.forEach((e, j) => e.si === si && own.add(E + j))
+    const { top, left, rows, cols, grid } = raster()
+    const PAD = 2 + Math.max(...shapes[far].map(([r, c]) => Math.max(Math.abs(r), Math.abs(c))))
+    const held = ([r, c]: Cell) => {
+      const [gr, gc] = [r - top, c - left]
+      if (gr < 0 || gc < 0 || gr >= rows || gc >= cols) return false
+      const owner = grid[gr * cols + gc]
+      return owner >= 0 && !own.has(owner)
+    }
+    const inside = ([r, c]: Cell) => r >= top - PAD && c >= left - PAD && r < top + rows + PAD && c < left + cols + PAD
+    const same = (x: Cell, y: Cell) => x[0] === y[0] && x[1] === y[1]
+    const free = (cell: Cell, doors: readonly Cell[]) =>
+      inside(cell) &&
+      !held(cell) &&
+      (["n", "e", "s", "w"] as Direction[]).every(
+        dir => !held(step(cell, dir)) || doors.some(d => same(d, step(cell, dir)))
+      )
+    const startDoors = sidesOf(start, startSelf).map(side => ({ side, door: door(start, side) }))
+    const fixedGoals = moves ? [] : sidesOf(far, farSelf).map(side => ({ side, door: door(far, side) }))
+    const goalAt = new Map(fixedGoals.map(g => [keyOf(step(g.door, g.side)), g]))
+    const parent = new Map<string, string | undefined>()
+    const arrived = new Map<string, Direction>()
+    const turns = new Map<string, number>()
+    const pathTo = (cell: Cell) => {
+      const way: Cell[] = []
+      for (let k: string | undefined = keyOf(cell); k !== undefined; k = parent.get(k)) way.unshift(cellOfKey(k))
+      return way
+    }
+    /** Where the far end stands and the side it is reached by when the way ends at `cell`, if it may. */
+    const ending = (cell: Cell): { side: Direction; node: Cell } | undefined => {
+      if (!moves) {
+        const goal = goalAt.get(keyOf(cell))
+        if (!goal || !free(cell, [goal.door, ...startDoors.map(st => st.door)])) return undefined
+        return { side: goal.side, node: pos[far] }
+      }
+      const dir = arrived.get(keyOf(cell))!
+      const side = OPPOSITE[dir]
+      const reach = ext(far, side)
+      if (reach === undefined) return undefined
+      const node = step(step(cell, dir), dir, reach)
+      const cells = shapes[far].map(([r, c]): Cell => [node[0] + r, node[1] + c])
+      const way = pathTo(cell)
+      const doorCell = step(cell, dir)
+      for (const at of cells) {
+        if (!free(at, [])) return undefined
+        for (const w of way)
+          if (Math.abs(w[0] - at[0]) + Math.abs(w[1] - at[1]) <= 1 && !(same(w, cell) && same(at, doorCell)))
+            return undefined
+      }
+      return { side, node }
+    }
+    let frontier: Cell[] = []
+    for (const { side, door: d } of startDoors) {
+      const cell = step(d, side)
+      if (parent.has(keyOf(cell)) || !free(cell, [d, ...fixedGoals.map(g => g.door)])) continue
+      parent.set(keyOf(cell), undefined)
+      arrived.set(keyOf(cell), side)
+      turns.set(keyOf(cell), 0)
+      frontier.push(cell)
+    }
+    let found: { cell: Cell; side: Direction; node: Cell } | undefined
+    for (let length = 1; frontier.length && length < now && !found; length++) {
+      if (length >= need)
+        for (const cell of frontier) {
+          const end = ending(cell)
+          if (end) {
+            found = { cell, ...end }
             break
           }
         }
-        if (spent || budget < 0) break
+      // Of the ways that reach a cell first, the one that turns least.
+      const next = new Map<string, Cell>()
+      for (const cell of frontier)
+        for (const dir of ["n", "e", "s", "w"] as Direction[]) {
+          const to = step(cell, dir)
+          const bent = turns.get(keyOf(cell))! + (arrived.get(keyOf(cell)) === dir ? 0 : 1)
+          if (parent.has(keyOf(to)) && !(next.has(keyOf(to)) && bent < turns.get(keyOf(to))!)) continue
+          const goal = goalAt.get(keyOf(to))
+          if (!free(to, goal ? [goal.door] : [])) continue
+          parent.set(keyOf(to), keyOf(cell))
+          arrived.set(keyOf(to), dir)
+          turns.set(keyOf(to), bent)
+          next.set(keyOf(to), to)
+        }
+      frontier = [...next.values()]
+    }
+    if (!found) return false
+    const way = pathTo(found.cell)
+    const startSide = arrived.get(keyOf(way[0]))!
+    const was = {
+      chain: chains[si],
+      sides: sides[si],
+      at: chain.map(i => [...pos[i]] as Cell),
+    }
+    pos[far] = [...found.node]
+    // The way from `a` to `b`, and the sides it leaves them by.
+    const [wayAB, sideA, sideB] = fromB ? [[...way].reverse(), found.side, startSide] : [way, startSide, found.side]
+    const [doorA, doorB] = [door(a, sideA), door(b, sideB)]
+    const stopAt = new Set(s.nodes.map((_, i) => 2 * i + 1))
+    const points: number[] = []
+    let stop = 0
+    wayAB.forEach((cell, i) => {
+      const before = i === 0 ? doorA : wayAB[i - 1]
+      const after = i === wayAB.length - 1 ? doorB : wayAB[i + 1]
+      if (stopAt.has(i)) {
+        const node = index.get(s.nodes[stop++])!
+        pos[node] = [...cell]
+        points.push(node)
+      } else if (dirBetween(before, cell) !== dirBetween(cell, after)) {
+        keys.push(`bend ${si} ${keys.length}`)
+        pos.push([...cell])
+        shapes.push([[0, 0]])
+        points.push(keys.length - 1)
       }
-      if (!spent) failure = `no room for the piece at ${child}`
-      return false
-    }
-
-    /** Slides each subtree one cell toward its parent while its leg can lose a cell above its drawn length and every
-     * cell stays free, in placing order, until none moves. */
-    const compact = () => {
-      let moved = true
-      while (moved) {
-        moved = false
-        for (const key of order.slice(1)) {
-          const gi = parentSeg.get(key)!
-          if (strings[segments[gi].si].drop) continue
-          for (const dir of SIDES) {
-            const line = lines.get(gi)!
-            if (line.legs.reduce((sum, leg) => sum + leg.len, 0) <= line.need) break
-            const leg = line.legs
-              .map((l, i) => (l.dir === dir && l.len > 1 ? i : -1))
-              .reduce((a, b) => Math.max(a, b), -1)
-            if (leg < 0) continue
-            const shift = MOVES[OPPOSITE[dir]]
-            const shorter = { ...line, legs: line.legs.map((l, i) => (i === leg ? { ...l, len: l.len - 1 } : l)) }
-            const before = [...subtreeCells(key), ...legCells(gi, line)]
-            for (const [cellKey] of before) hold.delete(cellKey)
-            const fresh: Hold = new Map()
-            let clash = false
-            for (const [cellKey, holder] of [...subtreeCells(key, shift), ...legCells(gi, shorter)]) {
-              if (fresh.has(cellKey)) clash = true
-              fresh.set(cellKey, holder)
-            }
-            if (clash || !fits(hold, fresh)) {
-              for (const [cellKey, holder] of before) hold.set(cellKey, holder)
-              continue
-            }
-            for (const [cellKey, holder] of fresh) hold.set(cellKey, holder)
-            for (const below of subtree.get(key)!) {
-              at.set(below, add(at.get(below)!, shift))
-              if (below === key) continue
-              const bi = parentSeg.get(below)!
-              const l = lines.get(bi)!
-              lines.set(bi, { ...l, door: add(l.door, shift) })
-            }
-            lines.set(gi, shorter)
-            moved = true
-          }
-        }
-      }
-    }
-
-    at.set(rootKey, [0, 0])
-    for (const [key, holder] of blockCells(rootKey)) hold.set(key, holder)
-    if (!hangChildren(rootKey)) continue
-    compact()
-
-    const legEnds = (gi: number) => {
-      const { door, legs } = lines.get(gi)!
-      const cells = walkLegs(door, legs)
-      return { from: door, cells, to: step(cells[cells.length - 1], legs[legs.length - 1].dir) }
-    }
-    const nodeAt = (node: CellKey) => add(at.get(blockOf.get(node)!)!, blocks.get(blockOf.get(node)!)!.nodes.get(node)!)
-    const pieceAt = new Map<CellKey, Cell>()
-    for (const [key, unit] of blocks)
-      for (const [piece, offset] of unit.pieces)
-        if (graph.pieces.has(piece)) pieceAt.set(piece, add(at.get(key)!, offset))
-    return {
-      graph,
-      blocks: pieceAt,
-      strings: strings.map((s, si) => {
-        if (held.has(si)) {
-          const unit = blocks.get(blockOf.get(s.a)!)!
-          const { corners: inner, stops } = unit.inside.get(si)!
-          const shift = at.get(unit.key)!
-          return { corners: inner.map(cell => add(cell, shift)), stops: stops.map(cell => add(cell, shift)) }
-        }
-        const chain = [s.a, ...s.nodes, s.b]
-        const cells: Cell[] = []
-        let doorA: Cell = [0, 0]
-        let doorB: Cell = [0, 0]
-        for (let j = 0; j + 1 < chain.length; j++) {
-          const [here, next] = [blockOf.get(chain[j])!, blockOf.get(chain[j + 1])!]
-          const forward = parentOf.get(next) === here
-          const gi = parentSeg.get(forward ? next : here)!
-          const leg = legEnds(gi)
-          const run = forward ? leg.cells : [...leg.cells].reverse()
-          if (j === 0) doorA = forward ? leg.from : leg.to
-          if (j === chain.length - 2) doorB = forward ? leg.to : leg.from
-          if (j > 0) cells.push(nodeAt(chain[j]))
-          cells.push(...run)
-        }
-        return { corners: cornersOf(doorA, cells, doorB), stops: s.nodes.map(nodeAt) }
-      }),
-      attempts: attempt + 1,
-    }
+    })
+    for (const i of chain.slice(1, -1)) if (i >= sketchNodes) shapes[i] = []
+    chains[si] = [a, ...points, b]
+    sides[si] = [sideA, sideB]
+    rebuild()
+    const drawn = raster()
+    if (
+      !drawn.overlap &&
+      !touching(drawn) &&
+      edges.every(e => lengthOf(e) >= e.min) &&
+      drawn.rows * drawn.cols <= rows * cols
+    )
+      return true
+    for (const i of points) if (i >= sketchNodes) shapes[i] = []
+    chains[si] = was.chain
+    sides[si] = was.sides
+    was.chain.forEach((i, k) => {
+      pos[i] = was.at[k]
+      if (i >= sketchNodes) shapes[i] = [[0, 0]]
+    })
+    rebuild()
+    return false
   }
-  return { refused: failure }
+  for (let round = 0; round < PRESS_ROUNDS; round++) {
+    let laid = false
+    for (let si = 0; si < strings.length; si++) if (reroute(si)) laid = true
+    if (!laid) break
+    press()
+  }
+
+  const slack = strings.filter((_, si) => edges.some(e => e.si === si && lengthOf(e) > e.min)).length
+
+  if (opts.spread > 0) {
+    const rand = mulberry32(opts.seed ^ LAYOUT_SALT)
+    strings.forEach((s, si) => {
+      const extra = Math.round(opts.spread * GAP_RANGE * (0.5 + rand()))
+      const own = edges.filter(e => e.si === si)
+      const e = own[Math.floor(rand() * own.length)]
+      if (s.drop) return
+      for (let k = 0; k < extra; k++)
+        if (!pushApart(raster(), e.u, e.v, [e.axis])) insert(e.axis, pos[e.u][e.axis] + 1, 1)
+    })
+  }
+
+  const posOf = (key: CellKey) => pos[index.get(key)!]
+  const blocks = new Map<CellKey, Cell>()
+  for (const [key, piece] of graph.pieces) {
+    const off = nodeOffset(piece)
+    blocks.set(key, [posOf(key)[0] - off[0], posOf(key)[1] - off[1]])
+  }
+  return {
+    graph,
+    blocks,
+    strings: strings.map((s, si) => {
+      const chain = chains[si]
+      const [doorA, doorB] = [door(chain[0], sides[si][0]), door(chain[chain.length - 1], sides[si][1])]
+      const points = chain.slice(1, -1).map(i => [...pos[i]] as Cell)
+      const stops = s.nodes.map(node => [...posOf(node)] as Cell)
+      return { corners: cornersOf(doorA, through([doorA, ...points, doorB]), doorB), stops }
+    }),
+    attempts: 1,
+    slack,
+  }
 }

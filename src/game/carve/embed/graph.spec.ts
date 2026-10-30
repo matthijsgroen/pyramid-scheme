@@ -8,7 +8,19 @@ describe("floorGraph", () => {
     expect([...graph.pieces.keys()]).toEqual(["0,0", "0,2", "0,10"])
     const chain = graph.strings.find(s => s.a === "0,2")!
     expect(chain).toMatchObject({ b: "0,10", dirA: "e", dirB: "w", nodes: ["0,4", "0,6", "0,8"] })
-    expect(chain.connectors.map(cell => cell.ordinal)).toEqual(["0,3", "0,5", "0,7", "0,9"])
+    expect(chain.runs.map(run => run.map(cell => cell.ordinal))).toEqual([["0,3"], ["0,5"], ["0,7"], ["0,9"]])
+  })
+
+  it("a plain corridor node is no stop: it melts into its string's corridor", () => {
+    const graph = floorGraph(drawnSketch(["E.F.....S.T"]), new Map())
+    const chain = graph.strings.find(s => s.a === "0,2")!
+    expect(chain.nodes).toEqual(["0,8"])
+    expect(chain.runs.map(run => run.map(cell => cell.ordinal))).toEqual([["0,3", "0,4", "0,5", "0,6", "0,7"], ["0,9"]])
+  })
+
+  it("a plain corridor node the floor names by its place stays a stop", () => {
+    const graph = floorGraph(drawnSketch(["E.F.....S.T"]), new Map(), new Set(["0,4"]))
+    expect(graph.strings.find(s => s.a === "0,2")!.nodes).toEqual(["0,4", "0,8"])
   })
 
   it("a drop is a string of its own between two pieces, holding its run", () => {

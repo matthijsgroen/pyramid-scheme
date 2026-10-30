@@ -23,17 +23,19 @@ export type Piece =
 /** A drop's own cells, as the sketch draws them from its launch to its landing. */
 export type DropCells = { launch: CorridorCell; run: CorridorCell[]; landing: CorridorCell }
 
-/** The corridor between two pieces: its one-cell nodes in order from `a` to `b`, the sketch's connector before each
- * node and after the last, the way it leaves each end on the sketch, and the sketch's cells strictly between its
- * ends. A drop runs from `a` to `b` and holds no node. */
+/** The corridor between two pieces: its stops in order from `a` to `b` (the nodes it holds that are more than plain
+ * corridor), the sketch's corridor cells before each stop and after the last (connectors, and plain corridor nodes,
+ * which melt into the string), the way it leaves each end on the sketch, the sketch's cells strictly between its
+ * ends, and where on them each stop stands. A drop runs from `a` to `b` and holds no node. */
 export type FloorString = {
   a: CellKey
   b: CellKey
   dirA: Direction
   dirB: Direction
   nodes: CellKey[]
-  connectors: CorridorCell[]
+  runs: CorridorCell[][]
   path: Cell[]
+  stopAt: number[]
   drop?: DropCells
 }
 
@@ -63,7 +65,11 @@ type Way = { to: CellKey; dir: Direction; connector?: Cell; drop?: { launch: Cel
  * of other nodes between two pieces is one string, and every drop is a string of its own. A stood tile or plate is
  * no part of a sketch: pieces stand on the laid floor, so a sketch carrying one is a pass-order mistake.
  */
-export const floorGraph = (lattice: FloorGrid, rooms: ReadonlyMap<CellKey, EmbedRoom>): FloorGraph => {
+export const floorGraph = (
+  lattice: FloorGrid,
+  rooms: ReadonlyMap<CellKey, EmbedRoom>,
+  keep: ReadonlySet<CellKey> = new Set()
+): FloorGraph => {
   const runs = oneWayRuns(lattice)
   const dropCells = new Set(runs.flatMap(run => [run.launch, ...run.cells, run.landing].map(keyOf)))
   const cellAt = ([r, c]: Cell) => lattice.cells[r][c]
@@ -122,6 +128,19 @@ export const floorGraph = (lattice: FloorGrid, rooms: ReadonlyMap<CellKey, Embed
     if (!pieces.has(key)) throw new Error(`[carve] a designed room is named for ${key}, where the sketch has no node`)
   if (!pieces.has(entrance) || !pieces.has(exit)) throw new Error(`[carve] the sketch's entrance or exit is no node`)
 
+  // A plain node is bare corridor: no room, no gate held open, and nothing the floor names by its place.
+  const named = new Set([...keep, keyOf(lattice.entrancePos), keyOf(lattice.exitPos)])
+  for (const stair of Object.values(lattice.staircases)) named.add(keyOf(stair))
+  for (const row of lattice.cells)
+    for (const cell of row)
+      if (cell.type === "room" && cell.mechanism) {
+        for (const move of cell.mechanism.transitions ?? []) named.add(keyOf(move.at))
+        for (const stand of cell.mechanism.underfoot ?? []) named.add(keyOf(stand.at))
+      }
+  const plain = (at: Cell) => {
+    const cell = cellAt(at)
+    return cell.type === "corridor" && !cell.openGate && !cell.prefabRoom && !cell.obstacle && !named.has(keyOf(at))
+  }
   const strings: FloorString[] = []
   const walked = new Set<string>()
   for (const a of pieces.keys())
@@ -135,8 +154,9 @@ export const floorGraph = (lattice: FloorGrid, rooms: ReadonlyMap<CellKey, Embed
           dirA: first.dir,
           dirB: OPPOSITE[first.dir],
           nodes: [],
-          connectors: [],
+          runs: [],
           path: [launch, ...run, landing],
+          stopAt: [],
           drop: {
             launch: asCorridor(cellAt(launch), launch),
             run: run.map(cell => asCorridor(cellAt(cell), cell)),
@@ -156,14 +176,23 @@ export const floorGraph = (lattice: FloorGrid, rooms: ReadonlyMap<CellKey, Embed
         path.push(cellOfKey(at), way.connector!)
       }
       walked.add(`${a}>${first.dir}`).add(`${way.to}>${OPPOSITE[way.dir]}`)
+      const stopAt: number[] = []
+      const runs: CorridorCell[][] = [[]]
+      path.forEach((cell, i) => {
+        if (i % 2 === 1 && !plain(cell)) {
+          stopAt.push(i)
+          runs.push([])
+        } else runs[runs.length - 1].push(asCorridor(cellAt(cell), cell))
+      })
       strings.push({
         a,
         b: way.to,
         dirA: first.dir,
         dirB: OPPOSITE[way.dir],
-        nodes: inner,
-        connectors: path.filter((_, i) => i % 2 === 0).map(cell => asCorridor(cellAt(cell), cell)),
+        nodes: stopAt.map(i => keyOf(path[i])),
+        runs,
         path,
+        stopAt,
       })
     }
   return { lattice, pieces, strings, entrance, exit }

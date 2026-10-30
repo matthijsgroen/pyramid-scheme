@@ -101,11 +101,20 @@ The designer: "standaard goed, met sturing van generiek naar specifiek mogelijk 
     and rooms, as long as its puzzle stays the same (designer, 2026-10-30); not built until a floor needs it. A corridor is a string: an orthogonal
     polyline between two door places, holding its stops in order, with a 1-cell margin no other piece may use, so
     corridors never cross and never run alongside each other or past a room they do not join. A drop is a fixed
-    straight piece. The main path is laid first, then each side path as a subtree hung on its parent (built up as
-    in Enter the Gungeon, not searched as in Edgar: floors are nearly trees). Then the layout is compacted: subtrees
-    slide toward their parent until something is in the way; `spread` sets how tight, `straightness` how often a
-    string bends. A failed placement retries inside its subtree, then the floor retries from a derived seed, with a
-    hard cap; after that the bake refuses with the reason.
+    straight piece. A plain corridor node (no stop, gate, door, drop end, fork, room or mechanism place) is no stop:
+    it melts into its string, which needs only two cells per real stop plus one, and its labels go onto the string's
+    corridor cells (designer, 2026-10-30).
+    - The layout starts from the sketch: every piece stands where the lattice draws it.
+    - A piece whose footprint does not fit there pushes space in on the cut that parts it from what it hits; only what
+      lies beyond the cut moves.
+    - Then the floor is pressed: per axis, every group moves as far toward the low side as the constraints allow
+      (longest path), then as far toward the high side as its strings pull it.
+    - A string still longer than its stops need is re-laid on the shortest free way between its ends, its bends
+      wherever that way turns, a dead-end room moving with it. Then the floor is pressed again.
+    - A piece with more than two ways keeps the side each leaves by, so cyclic order and planarity hold.
+    - `spread` adds length after the press (`DEFAULT_SPREAD` is 0: an unauthored floor is pressed tight). The sketch
+      already carries `straightness`; the layout does not read it.
+    - A layout is refused only where two pieces can be parted on neither axis; no shipped floor is.
   - **Carve.** Strings become corridors (narrow, or wide where the DSL asks), blocks become rooms, then validate and
     the existing checks run on the carved floor.
   - The layout may be drawn on its own (blocks and lines) in Storybook; that is optional. The failure rate of the

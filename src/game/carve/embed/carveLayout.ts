@@ -30,9 +30,10 @@ const between = (corners: readonly Cell[]): Cell[] => {
 
 /**
  * THE LAYOUT CARVED INTO A GRID. Each piece's node keeps every field of its sketch cell where the layout put it. Each
- * string becomes corridor: its cells from node to node, out through each end's door place, take the labels of the
- * sketch connector they stand for, and its nodes stand where the layout put them; a drop lays its launch, run and landing, the run walked by nothing, any cells before its launch
- * plain corridor. `dirs` follow the strings. A room's
+ * string becomes corridor: its cells from stop to stop, out through each end's door place, take the labels of the
+ * sketch's corridor cells on that stretch (its connectors and the plain nodes melted into it), spread over them in
+ * order, and its stops stand where the layout put them; a drop lays its launch, run and landing, the run walked by
+ * nothing, any cells before its launch plain corridor. `dirs` follow the strings. A room's
  * `exits` turn with the ways they name, and a mechanism's places, the entrance, the exit and the stairs move with
  * their nodes. The grid is trimmed to what the pieces and strings claim, plus a margin of one cell.
  */
@@ -100,20 +101,28 @@ export const carveLayout = (layout: Layout): Carved => {
       if (i === undefined) throw new Error(`[carve] a node of the string from ${s.a} stands off its way`)
       return i
     })
-    let segment = 0
+    // The cells before each stop and after the last take the labels of the sketch's corridor there, spread in order.
+    const spans: number[][] = [[]]
     path.forEach((cell, i) => {
-      if (places[segment] !== i) return put(cell, s.connectors[segment])
-      const node = s.nodes[segment]
+      if (places[spans.length - 1] !== i) return spans[spans.length - 1].push(i)
+      const node = s.nodes[spans.length - 1]
       nodes.set(node, cell)
       put(cell, sketch(cellOfKey(node)))
-      segment++
+      spans.push([])
+    })
+    // A stretch laid shorter than the sketch drew it keeps one cell of each section it crosses first.
+    spans.forEach((span, j) => {
+      const drawn = s.runs[j]
+      const firsts = drawn.filter((cell, k) => k === 0 || cell.sectionAddress !== drawn[k - 1].sectionAddress)
+      const labels = span.length < drawn.length ? firsts : drawn
+      span.forEach((i, k) => put(path[i], labels[Math.floor((k * labels.length) / span.length)]))
     })
     for (let k = 1; k < walk.length; k++) link(walk[k - 1], walk[k])
     s.nodes.forEach((node, i) => {
       const k = places[i] + 1
-      const sketchAt = s.path[2 * i + 1]
-      turn(node, dirBetween(sketchAt, s.path[2 * i]), dirBetween(walk[k], walk[k - 1]))
-      turn(node, dirBetween(sketchAt, s.path[2 * i + 2]), dirBetween(walk[k], walk[k + 1]))
+      const at = s.stopAt[i]
+      turn(node, dirBetween(s.path[at], s.path[at - 1]), dirBetween(walk[k], walk[k - 1]))
+      turn(node, dirBetween(s.path[at], s.path[at + 1]), dirBetween(walk[k], walk[k + 1]))
     })
   })
 

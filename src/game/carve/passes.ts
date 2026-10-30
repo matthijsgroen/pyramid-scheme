@@ -1,11 +1,11 @@
 import { DEFAULT_SPREAD } from "../carveConstants"
-import type { Direction } from "../siteTypes"
+import type { IsNode } from "../sequenceTiles"
+import type { CellRect, Direction, FloorGrid } from "../siteTypes"
 import { chainRooms } from "./chainRooms"
 import { checkChainsSeated } from "./checkChainsSeated"
 import { keyOf } from "./derive"
 import { embedFloor } from "./embed/embedFloor"
 import { finish } from "./finish"
-import { FLOOR_PLANS } from "./floorPlans"
 import { growMaze } from "./growMaze"
 import { hangBranches } from "./hangBranches"
 import { isolate } from "./isolate"
@@ -138,6 +138,34 @@ const piecesOnFloor = (decided: PiecesState, nodes: ReadonlyMap<string, Cell>): 
  * lattice, the pieces kept off the designed rooms' nodes, and each designed room is stamped at the rect the embed
  * gave it.
  */
+/**
+ * Where a piece may stand on a laid floor: any corridor cell of a string, that is no door (it touches no room and
+ * lies in no designed room's footprint), no gate held open, and no part of a drop or next to one.
+ */
+const standable =
+  (grid: FloorGrid, rects: readonly CellRect[]): IsNode =>
+  (r, c) => {
+    const cell = grid.cells[r][c]
+    if (cell.type !== "corridor" || cell.openGate || cell.obstacle) return false
+    if (
+      rects.some(
+        rect => r >= rect.top - 1 && r <= rect.top + rect.rows && c >= rect.left - 1 && c <= rect.left + rect.cols
+      )
+    )
+      return false
+    return (
+      [
+        [-1, 0],
+        [1, 0],
+        [0, -1],
+        [0, 1],
+      ] as const
+    ).every(([dr, dc]) => {
+      const next = grid.cells[r + dr]?.[c + dc]
+      return !next || next.type === "empty" || (next.type === "corridor" && !next.obstacle)
+    })
+  }
+
 export const finishInRooms: Finish = (prep, state) => {
   const decided = requireReads("render", [...TAIL_READS, "plan"], state)
   const held = new Set([...decided.pipeHoles.values()].map(({ cell }) => cell))
@@ -156,18 +184,17 @@ export const finishInRooms: Finish = (prep, state) => {
   const embedded = embedFloor(sketch, {
     seed: prep.input.seed,
     spread: config.spread ?? DEFAULT_SPREAD,
-    straightness: config.corridorStraightness ?? FLOOR_PLANS[decided.plan].straightness,
     rooms,
+    keep: new Set([...held, ...decided.switchWays.flatMap(ways => ways.map(way => way.cell))]),
   })
   if ("refused" in embedded) return embedded
   const { nodes, prefabRects } = embedded
   // The embed builds every row afresh, so the pieces may stand on it in place.
   const grid = embedded.grid as WritableGrid
-  const onFloor = new Set([...nodes.values()].map(keyOf))
   const kept = new Set(choices.map(choice => keyOf(nodes.get(keyOf(choice.cell))!)))
   const refused =
     validate(prep, decided, grid) ??
-    standPieces(prep, piecesOnFloor(decided, nodes), grid, { isNode: (r, c) => onFloor.has(`${r},${c}`), kept })
+    standPieces(prep, piecesOnFloor(decided, nodes), grid, { isNode: standable(grid, [...prefabRects.values()]), kept })
   if (refused) return refused
   return choices.reduce(
     (laid, choice) =>

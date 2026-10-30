@@ -2,19 +2,21 @@ import type { CellRect, Direction, FloorGrid } from "../../siteTypes"
 import type { Cell } from "../state"
 import { carveLayout } from "./carveLayout"
 import { floorGraph, keyOf, type CellKey, type EmbedRoom } from "./graph"
-import { FLOOR_ATTEMPTS, layoutFloor } from "./layout"
+import { layoutFloor } from "./layout"
 
 export type { CellKey, EmbedRoom }
 
 export type EmbedOptions = {
   seed: number
   spread: number
-  straightness: number
   /** The designed rooms by sketch node. */
   rooms: ReadonlyMap<CellKey, EmbedRoom>
+  /** Sketch nodes the floor names by their place, which stay nodes on the laid floor however plain they look. */
+  keep?: ReadonlySet<CellKey>
 }
 
-export type EmbedReport = { rows: number; cols: number; longestRoomToRoom: number; attempts: number }
+/** `slack` counts the strings the press left longer than their nodes need, before any spread. */
+export type EmbedReport = { rows: number; cols: number; longestRoomToRoom: number; attempts: number; slack: number }
 
 export type Embedded = {
   grid: FloorGrid
@@ -28,8 +30,9 @@ export type Embedded = {
 /** A floor the layout found no room for: an attempt's retry, naming the piece. */
 export type EmbedRefusal = { retry: []; refused: string }
 
-/** How many layouts ran, the floor attempts they took and how many were refused, for `yarn layout-measure`. */
-export const layoutTally = { layouts: 0, attempts: 0, refused: 0 }
+/** How many layouts ran, the floor attempts they took, how many were refused and how many strings they left longer
+ * than their nodes need, for `yarn layout-measure`. */
+export const layoutTally = { layouts: 0, attempts: 0, refused: 0, slack: 0, sketchBare: 0 }
 
 const MOVES: Record<Direction, Cell> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 
@@ -61,6 +64,22 @@ export const longestRoomToRoom = (grid: FloorGrid): number => {
   return longest
 }
 
+/** The corridor cells that are bare floor: no stop, door, gate, drop or fork, so not a room, not part of a drop or
+ * next to one, not next to a room, and leaving by at most two ways. */
+export const bareCorridorCells = (grid: FloorGrid): number => {
+  const at = (r: number, c: number) => grid.cells[r]?.[c]
+  let bare = 0
+  grid.cells.forEach((row, r) =>
+    row.forEach((cell, c) => {
+      if (cell.type !== "corridor" || cell.obstacle || cell.openGate || cell.prefabRoom || cell.dirs.size > 2) return
+      const near = Object.values(MOVES).map(([dr, dc]) => at(r + dr, c + dc))
+      if (near.some(next => next?.type === "room" || (next?.type === "corridor" && next.obstacle))) return
+      bare++
+    })
+  )
+  return bare
+}
+
 /**
  * THE SKETCH GIVEN REAL SPACE, in three stages: the sketch read as a graph of pieces and the strings between them
  * (`floorGraph`), the pieces and strings given positions (`layoutFloor`), and the positions carved into a grid
@@ -69,13 +88,15 @@ export const longestRoomToRoom = (grid: FloorGrid): number => {
  */
 export const embedFloor = (lattice: FloorGrid, opts: EmbedOptions): Embedded | EmbedRefusal => {
   layoutTally.layouts++
-  const layout = layoutFloor(floorGraph(lattice, opts.rooms), opts)
+  const layout = layoutFloor(floorGraph(lattice, opts.rooms, opts.keep), opts)
   if ("refused" in layout) {
-    layoutTally.attempts += FLOOR_ATTEMPTS
+    layoutTally.attempts++
     layoutTally.refused++
     return { retry: [], refused: layout.refused }
   }
   layoutTally.attempts += layout.attempts
+  layoutTally.slack += layout.slack
+  layoutTally.sketchBare = bareCorridorCells(lattice)
   const { grid, prefabRects, nodes } = carveLayout(layout)
   return {
     grid,
@@ -86,6 +107,7 @@ export const embedFloor = (lattice: FloorGrid, opts: EmbedOptions): Embedded | E
       cols: grid.cols,
       longestRoomToRoom: longestRoomToRoom(grid),
       attempts: layout.attempts,
+      slack: layout.slack,
     },
   }
 }
