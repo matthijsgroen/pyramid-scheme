@@ -25,7 +25,25 @@ export const STAR_BATTLE_TECHNIQUES = [
   "wouldStrand",
 ] as const
 
-export type StarBattleTechniqueId = (typeof STAR_BATTLE_TECHNIQUES)[number]
+/**
+ * A regionless board has no region boundary for `regionLine`, `lineRegion` or `spanning` to read, so its
+ * ladder swaps them for `lineBlock`, which counts rows against columns directly.
+ */
+export const REGIONLESS_TECHNIQUES = [
+  "touch",
+  "groupFull",
+  "groupTight",
+  "onlyWay",
+  "everyWay",
+  "lineBlock",
+  "wouldStrand",
+] as const
+
+export type StarBattleTechniqueId = (typeof STAR_BATTLE_TECHNIQUES)[number] | "lineBlock"
+
+/** The ladder a board is graded and hinted on: walls mean no regions, so the regionless one. */
+export const ladderOf = (puzzle: StarBattlePuzzle): readonly StarBattleTechniqueId[] =>
+  puzzle.walls ? REGIONLESS_TECHNIQUES : STAR_BATTLE_TECHNIQUES
 
 /**
  * **This family's two orders coincide, and that is worth stating rather than encoding twice.**
@@ -57,7 +75,10 @@ export type StarBattleStep = {
 
 export type Marks = (CellMark | undefined)[]
 
-export const techniqueRank = (id: StarBattleTechniqueId): number => STAR_BATTLE_TECHNIQUES.indexOf(id)
+export const techniqueRank = (
+  id: StarBattleTechniqueId,
+  ladder: readonly StarBattleTechniqueId[] = STAR_BATTLE_TECHNIQUES
+): number => ladder.indexOf(id)
 
 const freeIn = (_puzzle: StarBattlePuzzle, marks: Marks, group: readonly number[]) => group.filter(cell => !marks[cell])
 
@@ -394,6 +415,50 @@ const wouldStrandSteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleSte
   return []
 }
 
+const combinations = <T>(items: T[], size: number): T[][] =>
+  size === 0
+    ? [[]]
+    : items.flatMap((item, index) => combinations(items.slice(index + 1), size - 1).map(rest => [item, ...rest]))
+
+/**
+ * k rows whose free squares sit in exactly k columns, owing what those columns owe: the columns' stars
+ * all come from those rows, so the columns hold none anywhere else. The same with rows and columns swapped.
+ *
+ * Two and three lines only — a four-line block no longer fits a phone-width banner. Rows and columns are
+ * never mixed in one block, for the double-counting reason `spanningSteps` records.
+ */
+const lineBlockSteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep[] => {
+  const owed = (group: readonly number[]) => owedBy(puzzle, marks, group)
+  const free = (group: readonly number[]) => freeIn(puzzle, marks, group)
+  const sweep = (from: number[][], into: number[][], variant: string): StarBattleStep[] =>
+    [2, 3].flatMap(k =>
+      combinations(from, k).flatMap(block => {
+        const inside = block.flatMap(free)
+        const owes = block.reduce((total, line) => total + owed(line), 0)
+        if (!inside.length || owes <= 0) return []
+        const cover = into.filter(line => free(line).some(cell => inside.includes(cell)))
+        if (cover.length !== k) return []
+        if (cover.reduce((total, line) => total + owed(line), 0) !== owes) return []
+        const elsewhere = cover.flatMap(free).filter(cell => !inside.includes(cell))
+        return elsewhere.length
+          ? [
+              {
+                technique: "lineBlock" as const,
+                variant,
+                count: owes,
+                cells: block.flat(),
+                decisions: darken(elsewhere),
+              },
+            ]
+          : []
+      })
+    )
+  return [
+    ...sweep(rows(puzzle.size), cols(puzzle.size), "rowsToCols"),
+    ...sweep(cols(puzzle.size), rows(puzzle.size), "colsToRows"),
+  ]
+}
+
 const IMPLEMENTATIONS: Record<StarBattleTechniqueId, (puzzle: StarBattlePuzzle, marks: Marks) => StarBattleStep[]> = {
   touch: touchSteps,
   groupFull: groupFullSteps,
@@ -403,6 +468,7 @@ const IMPLEMENTATIONS: Record<StarBattleTechniqueId, (puzzle: StarBattlePuzzle, 
   regionLine: regionLineSteps,
   lineRegion: lineRegionSteps,
   spanning: spanningSteps,
+  lineBlock: lineBlockSteps,
   wouldStrand: wouldStrandSteps,
 }
 
@@ -415,7 +481,7 @@ const IMPLEMENTATIONS: Record<StarBattleTechniqueId, (puzzle: StarBattlePuzzle, 
 export const nextStarBattleStep = (
   puzzle: StarBattlePuzzle,
   marks: Marks,
-  allowed: readonly StarBattleTechniqueId[] = STAR_BATTLE_TECHNIQUES
+  allowed: readonly StarBattleTechniqueId[] = ladderOf(puzzle)
 ): StarBattleStep | undefined => {
   for (const technique of allowed) {
     const [step] = IMPLEMENTATIONS[technique](puzzle, marks)
@@ -430,7 +496,7 @@ const MAX_PASSES = 4000
 export const applyStarBattleTechniques = (
   puzzle: StarBattlePuzzle,
   marks: Marks,
-  allowed: readonly StarBattleTechniqueId[] = STAR_BATTLE_TECHNIQUES
+  allowed: readonly StarBattleTechniqueId[] = ladderOf(puzzle)
 ): StarBattleStep[] => {
   const steps: StarBattleStep[] = []
   for (let pass = 0; pass < MAX_PASSES; pass++) {
@@ -458,8 +524,9 @@ export const starMask = (marks: Marks): boolean[] => marks.map(mark => mark === 
 
 export const solveStarBattleByTechniques = (
   puzzle: StarBattlePuzzle,
-  allowed: readonly StarBattleTechniqueId[] = STAR_BATTLE_TECHNIQUES
+  allowed: readonly StarBattleTechniqueId[] = ladderOf(puzzle)
 ): StarBattleSolveResult => {
+  const ladder = ladderOf(puzzle)
   const marks: Marks = blankMarks(puzzle)
   const steps = applyStarBattleTechniques(puzzle, marks, allowed)
   const groups = groupsOf(puzzle)
@@ -469,7 +536,7 @@ export const solveStarBattleByTechniques = (
     steps,
     deepest: steps.reduce<StarBattleTechniqueId | undefined>(
       (deepest, step) =>
-        !deepest || techniqueRank(step.technique) > techniqueRank(deepest) ? step.technique : deepest,
+        !deepest || techniqueRank(step.technique, ladder) > techniqueRank(deepest, ladder) ? step.technique : deepest,
       undefined
     ),
   }

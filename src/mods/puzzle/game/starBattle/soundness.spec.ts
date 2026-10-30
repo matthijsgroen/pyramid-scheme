@@ -3,11 +3,17 @@ import { mulberry32 } from "@/game/random"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { puzzleSeeds } from "@/data/puzzleSeeds"
 import { configHash } from "@/game/seeds/configHash"
-import { cellAt, neighboursOf, type StarBattlePuzzle } from "./starBattle"
+import { blankMarks, cellAt, neighboursOf, type StarBattlePuzzle } from "./starBattle"
 import { STAR_BATTLE_CONFIG } from "./starBattleConfig"
 import { TWIN_STARS_CONFIG } from "./twinStars"
 import { generateStarBattle, type StarBattleOptions, type StarBattlePuzzleWithAnswer } from "./generateStarBattle"
-import { applyStarBattleTechniques, nextStarBattleStep, STAR_BATTLE_TECHNIQUES, type Marks } from "./techniques"
+import {
+  applyStarBattleTechniques,
+  nextStarBattleStep,
+  REGIONLESS_TECHNIQUES,
+  STAR_BATTLE_TECHNIQUES,
+  type Marks,
+} from "./techniques"
 
 /**
  * The guard on §3.3 of the design doc: **a rung must never say something the answer disagrees with, from any
@@ -96,15 +102,15 @@ const completions = (puzzle: StarBattlePuzzle, marks: Marks, limit: number): num
       for (let at = col; at < size; at++) {
         const cell = cells[at]
         if (marks[cell] === "dark") continue
-        if (inColumn[at] === quota || inRegion[puzzle.regions![cell]] === quota) continue
+        if (inColumn[at] === quota || (puzzle.regions && inRegion[puzzle.regions[cell]] === quota)) continue
         if (taken.some(other => neighboursOf(size, cell).includes(other))) continue
         taken.push(cell)
         inColumn[at]++
-        inRegion[puzzle.regions![cell]]++
+        if (puzzle.regions) inRegion[puzzle.regions[cell]]++
         choose(at + 1, owed - 1)
         taken.pop()
         inColumn[at]--
-        inRegion[puzzle.regions![cell]]--
+        if (puzzle.regions) inRegion[puzzle.regions[cell]]--
       }
     }
     choose(0, quota)
@@ -175,6 +181,85 @@ describe("star battle soundness", () => {
       }
     }
     // A test that silently exercised nothing is not a guard.
+    expect(checked).toBeGreaterThan(100)
+  })
+})
+
+/**
+ * Hand-made walled boards with a known answer, one per reading `lineBlock` makes. Answer columns by row
+ * are 1,3,5,0,2,4 (no two touch). Rows 0 and 3 are walled but for columns 0-1, and columns 4 and 5 are
+ * walled but for rows 2 and 5, so both blocks exist and each has to agree with the answer.
+ */
+const walledBoard = (): StarBattlePuzzleWithAnswer => {
+  const size = 6
+  const answer = [1, 3, 5, 0, 2, 4]
+  const walls = Array.from({ length: size * size }, (_unused, cell) => {
+    const row = Math.floor(cell / size)
+    const col = cell % size
+    if (answer[row] === col) return false
+    return ([0, 3].includes(row) && col > 1) || ([4, 5].includes(col) && [1, 4].includes(row))
+  })
+  const solution = Array.from(
+    { length: size * size },
+    (_unused, cell) => answer[Math.floor(cell / size)] === cell % size
+  )
+  return { size, quota: 1, walls, solution, techniqueCap: "wouldStrand" } as unknown as StarBattlePuzzleWithAnswer
+}
+
+const walledState = (board: StarBattlePuzzleWithAnswer, random: () => number): Marks => {
+  const stars = random()
+  const darks = random()
+  const base = blankMarks(board)
+  return board.solution.map((star, cell) => {
+    if (base[cell]) return base[cell]
+    if (star) return random() < stars ? "star" : undefined
+    return random() < darks ? "dark" : undefined
+  })
+}
+
+describe("regionless soundness", () => {
+  it("every regionless rung agrees with the answer from any state a player reaches", () => {
+    const random = mulberry32(9931)
+    const board = walledBoard()
+    let lineBlocks = 0
+    for (let round = 0; round < 300; round++) {
+      const steps = applyStarBattleTechniques(board, walledState(board, random), REGIONLESS_TECHNIQUES)
+      for (const step of steps) {
+        if (step.technique === "lineBlock") lineBlocks++
+        for (const decision of step.decisions)
+          expect(
+            decision.mark === "star" ? board.solution[decision.cell] : !board.solution[decision.cell],
+            `${step.technique}.${step.variant} on cell ${decision.cell}`
+          ).toBe(true)
+      }
+    }
+    // A guard that never saw the new rung fire is not guarding it.
+    expect(lineBlocks).toBeGreaterThan(0)
+  })
+
+  it("every regionless rung is forced by the board it fired from", () => {
+    const random = mulberry32(5521)
+    const board = walledBoard()
+    let checked = 0
+    let lineBlocks = 0
+    for (let round = 0; round < 200; round++) {
+      const marks = walledState(board, random)
+      const ways = completions(board, marks, 500)
+      if (!ways.length) continue
+      for (const technique of REGIONLESS_TECHNIQUES) {
+        const step = nextStarBattleStep(board, [...marks], [technique])
+        if (!step) continue
+        if (technique === "lineBlock") lineBlocks++
+        for (const decision of step.decisions) {
+          const holds = ways.every(way =>
+            decision.mark === "star" ? way.includes(decision.cell) : !way.includes(decision.cell)
+          )
+          expect(holds, `${technique} on cell ${decision.cell}, ${ways.length} ways`).toBe(true)
+          checked++
+        }
+      }
+    }
+    expect(lineBlocks).toBeGreaterThan(0)
     expect(checked).toBeGreaterThan(100)
   })
 })

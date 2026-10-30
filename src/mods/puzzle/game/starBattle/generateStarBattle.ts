@@ -105,8 +105,10 @@ export type StarBattleOptions = {
  */
 const MAX_ATTEMPTS = 20_000
 
-export const techniquesUpTo = (cap: StarBattleTechniqueId): StarBattleTechniqueId[] =>
-  STAR_BATTLE_TECHNIQUES.filter(id => techniqueRank(id) <= techniqueRank(cap))
+export const techniquesUpTo = (
+  cap: StarBattleTechniqueId,
+  ladder: readonly StarBattleTechniqueId[] = STAR_BATTLE_TECHNIQUES
+): StarBattleTechniqueId[] => ladder.filter(id => techniqueRank(id, ladder) <= techniqueRank(cap, ladder))
 
 /**
  * A legal star set: `quota` to a row, `quota` to a column, no two touching. Drawn by backtracking down the

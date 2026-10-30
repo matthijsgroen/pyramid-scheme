@@ -1,6 +1,6 @@
 import { blankMarks, firstStarBattleMistake, type StarBattleMarks } from "@/mods/puzzle/game/starBattle/starBattle"
 import { techniquesUpTo, type StarBattlePuzzleWithAnswer } from "@/mods/puzzle/game/starBattle/generateStarBattle"
-import { nextStarBattleStep, stepFocus, type StarBattleStep } from "@/mods/puzzle/game/starBattle/techniques"
+import { ladderOf, nextStarBattleStep, stepFocus, type StarBattleStep } from "@/mods/puzzle/game/starBattle/techniques"
 
 export type StarBattleHint = {
   /** Translation key under `starBattle.hint.<place>` — the REASON, on its own line. */
@@ -70,7 +70,7 @@ export const buildStarBattleHint = (
   const step = nextStarBattleStep(
     puzzle,
     blankMarks(puzzle).map((blank, cell) => state.marks[cell] ?? blank),
-    techniquesUpTo(puzzle.techniqueCap)
+    techniquesUpTo(puzzle.techniqueCap, ladderOf(puzzle))
   )
   if (!step) return undefined
   return {
