@@ -1,4 +1,4 @@
-import type { StarBattlePuzzle } from "@/mods/puzzle/game/starBattle/starBattle"
+import { isRegionless, type StarBattlePuzzle } from "@/mods/puzzle/game/starBattle/starBattle"
 import { STAR_BATTLE_META } from "@/mods/puzzle/game/starBattle/meta"
 import { faceFor, withAmbience } from "../faceFor"
 import type { FC } from "react"
@@ -181,7 +181,7 @@ export const skinFor = (
   board = 0,
   room?: string
 ): StarBattleSkin =>
-  puzzle.walls
+  isRegionless(puzzle)
     ? withAmbience(REGIONLESS_SKINS.default, theme)
     : withAmbience(
         SKINS[faceFor(STAR_BATTLE_META.faces, role, theme, Object.keys(SKINS), board, room)] ?? SKINS.default,

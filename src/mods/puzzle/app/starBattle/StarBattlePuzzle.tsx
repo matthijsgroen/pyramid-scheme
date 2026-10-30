@@ -10,6 +10,7 @@ import {
   canUndoStarBattle,
   createStarBattleState,
   cycleStarBattleCell,
+  isRegionless,
   starBattleSolved,
   sweepStarBattleCells,
   undoStarBattle,
@@ -98,7 +99,7 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
       idleMs={hintIdleDelay(difficulty)}
       title={t(`starBattle.name.${puzzle.quota > 1 ? twinName(skin.name) : skin.name}`)}
       goal={t(`starBattle.goal.${skin.name}`, { count: puzzle.quota })}
-      rules={<StarBattleRules skin={skin.name} walls={!!puzzle.walls} />}
+      rules={<StarBattleRules skin={skin.name} walls={isRegionless(puzzle)} />}
     >
       {({ reportInput, hintVisible }) => (
         <>

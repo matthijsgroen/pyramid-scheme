@@ -4,7 +4,7 @@
  * Cells are addressed by a single index, `row * size + col`, as in star battle. The answer is the piece
  * positions alone; which piece belongs to which anchor is never shown, only checked.
  */
-import { colOf, neighboursOf, rowOf } from "../starBattle/starBattle"
+import { cols, neighboursOf, orthogonalOf, rows } from "../starBattle/starBattle"
 
 /** What a player writes in a square. `empty` is their own bookkeeping — the answer is the pieces alone. */
 export type PairMark = "piece" | "empty"
@@ -62,10 +62,6 @@ export const undoPair = (state: PairState): PairState => {
 
 export const canUndoPair = (state: PairState): boolean => state.past.length > 0
 
-/** The up/down/left/right squares of a cell. */
-const orthogonalOf = (size: number, cell: number): number[] =>
-  neighboursOf(size, cell).filter(at => rowOf(size, at) === rowOf(size, cell) || colOf(size, at) === colOf(size, cell))
-
 const anchorCells = (puzzle: PairPuzzle): number[] => puzzle.anchors.flatMap((a, cell) => (a ? [cell] : []))
 
 /**
@@ -96,15 +92,12 @@ const lineOf = (puzzle: PairPuzzle, marks: PairMarks["marks"], cells: number[], 
   return pieces === count ? "met" : "open"
 }
 
-const rowCells = (size: number, row: number) => Array.from({ length: size }, (_u, col) => row * size + col)
-const colCells = (size: number, col: number) => Array.from({ length: size }, (_u, row) => row * size + col)
-
 export const lineStatus = (
   puzzle: PairPuzzle,
   marks: PairMarks["marks"]
 ): { rows: LineStatus[]; cols: LineStatus[] } => ({
-  rows: puzzle.rowCounts.map((count, row) => lineOf(puzzle, marks, rowCells(puzzle.size, row), count)),
-  cols: puzzle.colCounts.map((count, col) => lineOf(puzzle, marks, colCells(puzzle.size, col), count)),
+  rows: rows(puzzle.size).map((cells, row) => lineOf(puzzle, marks, cells, puzzle.rowCounts[row])),
+  cols: cols(puzzle.size).map((cells, col) => lineOf(puzzle, marks, cells, puzzle.colCounts[col])),
 })
 
 /**
@@ -124,8 +117,8 @@ export const pairConflicts = (puzzle: PairPuzzle, state: PairMarks): Set<number>
     const held = cells.filter(cell => marks[cell] === "piece")
     if (held.length > count) held.forEach(cell => bad.add(cell))
   }
-  puzzle.rowCounts.forEach((count, row) => overfull(rowCells(size, row), count))
-  puzzle.colCounts.forEach((count, col) => overfull(colCells(size, col), count))
+  rows(size).forEach((cells, row) => overfull(cells, puzzle.rowCounts[row]))
+  cols(size).forEach((cells, col) => overfull(cells, puzzle.colCounts[col]))
   return bad
 }
 
@@ -135,8 +128,8 @@ export const pairSolved = (puzzle: PairPuzzle, state: PairMarks): boolean => {
   const { marks } = state
   const held = (cells: number[]) => cells.filter(cell => marks[cell] === "piece").length
   return (
-    puzzle.rowCounts.every((count, row) => held(rowCells(size, row)) === count) &&
-    puzzle.colCounts.every((count, col) => held(colCells(size, col)) === count) &&
+    rows(size).every((cells, row) => held(cells) === puzzle.rowCounts[row]) &&
+    cols(size).every((cells, col) => held(cells) === puzzle.colCounts[col]) &&
     pairConflicts(puzzle, state).size === 0 &&
     hasPerfectPairing(
       puzzle,

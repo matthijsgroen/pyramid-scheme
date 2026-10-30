@@ -1,4 +1,4 @@
-import { colOf, cols, neighboursOf, rowOf, rows } from "../starBattle/starBattle"
+import { cols, neighboursOf, orthogonalOf, rows } from "../starBattle/starBattle"
 import { pairSolved, type PairMark, type PairPuzzle } from "./pairPuzzle"
 
 // The deduction system behind both generation and hints, ordered by how well each reason explains itself,
@@ -44,9 +44,6 @@ const freeIn = (puzzle: PairPuzzle, marks: Marks, cells: readonly number[]) =>
   cells.filter(cell => isFree(puzzle, marks, cell))
 
 const piecesIn = (marks: Marks, cells: readonly number[]) => cells.filter(cell => marks[cell] === "piece").length
-
-const orthogonalOf = (size: number, cell: number): number[] =>
-  neighboursOf(size, cell).filter(at => rowOf(size, at) === rowOf(size, cell) || colOf(size, at) === colOf(size, cell))
 
 const anchorsBeside = (puzzle: PairPuzzle, cell: number) =>
   orthogonalOf(puzzle.size, cell).filter(at => puzzle.anchors[at])
@@ -157,8 +154,8 @@ const claimedSteps = (puzzle: PairPuzzle, marks: Marks): PairStep[] => {
 
 /**
  * A run of adjacent lines counting more pieces than it holds anchors: the surplus pairs with anchors just
- * outside the run. When the anchors that could take one from inside are exactly as many as the surplus,
- * each takes the one square it touches inside the run.
+ * outside the run. Each outside anchor reaches into the run through one door square; when the usable door
+ * squares are exactly as many as the surplus, every one of them holds a piece.
  *
  * Sound because every piece in the run pairs with an anchor inside it or orthogonally beside it, and an
  * anchor outside the run touches it through one square only.

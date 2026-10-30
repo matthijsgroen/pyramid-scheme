@@ -2,6 +2,7 @@ import {
   blankMarks,
   cols,
   groupsOf,
+  isRegionless,
   neighboursOf,
   regionCells,
   rows,
@@ -41,9 +42,9 @@ export const REGIONLESS_TECHNIQUES = [
 
 export type StarBattleTechniqueId = (typeof STAR_BATTLE_TECHNIQUES)[number] | "lineBlock"
 
-/** The ladder a board is graded and hinted on: walls mean no regions, so the regionless one. */
+/** The ladder a board is graded and hinted on: a board without regions climbs the regionless one. */
 export const ladderOf = (puzzle: StarBattlePuzzle): readonly StarBattleTechniqueId[] =>
-  puzzle.walls ? REGIONLESS_TECHNIQUES : STAR_BATTLE_TECHNIQUES
+  isRegionless(puzzle) ? REGIONLESS_TECHNIQUES : STAR_BATTLE_TECHNIQUES
 
 /**
  * **This family's two orders coincide, and that is worth stating rather than encoding twice.**
@@ -331,8 +332,42 @@ const lineRegionSteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep
     })
   )
 
-const pairsOf = <T>(items: T[]): [T, T][] =>
-  items.flatMap((first, index) => items.slice(index + 1).map((second): [T, T] => [first, second]))
+const combinations = <T>(items: T[], size: number): T[][] =>
+  size === 0
+    ? [[]]
+    : items.flatMap((item, index) => combinations(items.slice(index + 1), size - 1).map(rest => [item, ...rest]))
+
+/**
+ * k groups from `from` whose free squares sit in exactly k groups of `into`, owing what those owe: the
+ * `into` groups' stars all come from the block, so they hold none anywhere else. The sweep both
+ * `spanning` and `lineBlock` read, at the block sizes each one's sentence can carry.
+ */
+const blockSweep = (
+  puzzle: StarBattlePuzzle,
+  marks: Marks,
+  from: number[][],
+  into: number[][],
+  sizes: readonly number[],
+  technique: "spanning" | "lineBlock",
+  variant: string
+): StarBattleStep[] => {
+  const owed = (group: readonly number[]) => owedBy(puzzle, marks, group)
+  const free = (group: readonly number[]) => freeIn(puzzle, marks, group)
+  return sizes.flatMap(k =>
+    combinations(from, k).flatMap(block => {
+      const inside = block.flatMap(free)
+      const owes = block.reduce((total, group) => total + owed(group), 0)
+      if (!inside.length || owes <= 0) return []
+      const cover = into.filter(group => free(group).some(cell => inside.includes(cell)))
+      if (cover.length !== k) return []
+      if (cover.reduce((total, group) => total + owed(group), 0) !== owes) return []
+      const elsewhere = cover.flatMap(free).filter(cell => !inside.includes(cell))
+      return elsewhere.length
+        ? [{ technique, variant, count: owes, cells: block.flat(), decisions: darken(elsewhere) }]
+        : []
+    })
+  )
+}
 
 /**
  * Two groups whose free squares fit inside two groups of the other kind, quotas agreeing.
@@ -346,21 +381,8 @@ const pairsOf = <T>(items: T[]): [T, T][] =>
  * the constraint the ladder is built to.
  */
 const spanningSteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep[] => {
-  const owed = (group: readonly number[]) => owedBy(puzzle, marks, group)
-  const free = (group: readonly number[]) => freeIn(puzzle, marks, group)
-  const sweep = (from: number[][], into: number[][], variant: string): StarBattleStep[] =>
-    pairsOf(from).flatMap(pair => {
-      const inside = pair.flatMap(free)
-      const owes = pair.reduce((total, group) => total + owed(group), 0)
-      if (!inside.length || owes <= 0) return []
-      const cover = into.filter(group => free(group).some(cell => inside.includes(cell)))
-      if (cover.length !== pair.length) return []
-      if (cover.reduce((total, group) => total + owed(group), 0) !== owes) return []
-      const elsewhere = cover.flatMap(free).filter(cell => !inside.includes(cell))
-      return elsewhere.length
-        ? [{ technique: "spanning" as const, variant, count: owes, cells: pair.flat(), decisions: darken(elsewhere) }]
-        : []
-    })
+  const sweep = (from: number[][], into: number[][], variant: string) =>
+    blockSweep(puzzle, marks, from, into, [2], "spanning", variant)
   const regions = regionCells(puzzle)
   return [
     ...sweep(regions, rows(puzzle.size), "toRows"),
@@ -415,44 +437,16 @@ const wouldStrandSteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleSte
   return []
 }
 
-const combinations = <T>(items: T[], size: number): T[][] =>
-  size === 0
-    ? [[]]
-    : items.flatMap((item, index) => combinations(items.slice(index + 1), size - 1).map(rest => [item, ...rest]))
-
 /**
  * k rows whose free squares sit in exactly k columns, owing what those columns owe: the columns' stars
  * all come from those rows, so the columns hold none anywhere else. The same with rows and columns swapped.
  *
- * Two and three lines only — a four-line block no longer fits a phone-width banner. Rows and columns are
+ * Two and three lines only — a four-line block does not fit a phone-width banner. Rows and columns are
  * never mixed in one block, for the double-counting reason `spanningSteps` records.
  */
 const lineBlockSteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep[] => {
-  const owed = (group: readonly number[]) => owedBy(puzzle, marks, group)
-  const free = (group: readonly number[]) => freeIn(puzzle, marks, group)
-  const sweep = (from: number[][], into: number[][], variant: string): StarBattleStep[] =>
-    [2, 3].flatMap(k =>
-      combinations(from, k).flatMap(block => {
-        const inside = block.flatMap(free)
-        const owes = block.reduce((total, line) => total + owed(line), 0)
-        if (!inside.length || owes <= 0) return []
-        const cover = into.filter(line => free(line).some(cell => inside.includes(cell)))
-        if (cover.length !== k) return []
-        if (cover.reduce((total, line) => total + owed(line), 0) !== owes) return []
-        const elsewhere = cover.flatMap(free).filter(cell => !inside.includes(cell))
-        return elsewhere.length
-          ? [
-              {
-                technique: "lineBlock" as const,
-                variant,
-                count: owes,
-                cells: block.flat(),
-                decisions: darken(elsewhere),
-              },
-            ]
-          : []
-      })
-    )
+  const sweep = (from: number[][], into: number[][], variant: string) =>
+    blockSweep(puzzle, marks, from, into, [2, 3], "lineBlock", variant)
   return [
     ...sweep(rows(puzzle.size), cols(puzzle.size), "rowsToCols"),
     ...sweep(cols(puzzle.size), rows(puzzle.size), "colsToRows"),

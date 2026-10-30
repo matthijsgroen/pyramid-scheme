@@ -28,6 +28,9 @@ export type StarBattlePuzzle = {
 
 export const isWall = (puzzle: StarBattlePuzzle, cell: number): boolean => puzzle.walls?.[cell] === true
 
+/** A board without regions counts its rows and columns alone, and is graded, hinted and dressed for that. */
+export const isRegionless = (puzzle: StarBattlePuzzle): boolean => puzzle.regions === undefined
+
 /** The marks a board starts with: walls are ruled out, everything else is open. Solvers begin here. */
 export const blankMarks = (puzzle: StarBattlePuzzle): (CellMark | undefined)[] =>
   Array.from({ length: puzzle.size * puzzle.size }, (_unused, cell) => (isWall(puzzle, cell) ? "dark" : undefined))
@@ -61,6 +64,10 @@ export const neighboursOf = (size: number, cell: number): number[] => {
   )
 }
 
+/** The four squares that share an edge with `cell`: the ones a piece can be paired with. */
+export const orthogonalOf = (size: number, cell: number): number[] =>
+  neighboursOf(size, cell).filter(at => rowOf(size, at) === rowOf(size, cell) || colOf(size, at) === colOf(size, cell))
+
 export const rows = (size: number): number[][] =>
   Array.from({ length: size }, (_unused, row) => Array.from({ length: size }, (_u, col) => cellAt(size, row, col)))
 
@@ -68,10 +75,10 @@ export const cols = (size: number): number[][] =>
   Array.from({ length: size }, (_unused, col) => Array.from({ length: size }, (_u, row) => cellAt(size, row, col)))
 
 export const regionCells = (puzzle: StarBattlePuzzle): number[][] =>
-  !puzzle.regions
+  isRegionless(puzzle)
     ? []
     : Array.from({ length: puzzle.size }, (_unused, region) =>
-        (puzzle.regions ?? []).flatMap((at, cell) => (at === region ? [cell] : []))
+        puzzle.regions!.flatMap((at, cell) => (at === region ? [cell] : []))
       )
 
 /**

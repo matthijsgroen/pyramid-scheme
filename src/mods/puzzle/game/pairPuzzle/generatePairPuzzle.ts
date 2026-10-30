@@ -1,6 +1,6 @@
 import type { Grade } from "@/game/families/familyMeta"
 import { mulberry32, shuffle } from "@/game/random"
-import { colOf, neighboursOf, rowOf } from "../starBattle/starBattle"
+import { cols, neighboursOf, orthogonalOf, rows } from "../starBattle/starBattle"
 import { type PairPuzzle } from "./pairPuzzle"
 import { pairTechniquesUpTo, solvePairByTechniques, type PairStep, type PairTechniqueId } from "./techniques"
 
@@ -47,9 +47,6 @@ const settles = (puzzle: PairPuzzle, allowed: PairTechniqueId[], solution: reado
     : undefined
 }
 
-const orthogonal = (size: number, cell: number) =>
-  neighboursOf(size, cell).filter(at => rowOf(size, at) === rowOf(size, cell) || colOf(size, at) === colOf(size, cell))
-
 /** Pieces that touch no other piece, each with its own orthogonal anchor on a square that is not a piece. */
 const layout = (size: number, count: number, random: () => number) => {
   const pieces: number[] = []
@@ -67,7 +64,7 @@ const layout = (size: number, count: number, random: () => number) => {
   if (pieces.length < count) return undefined
   const anchors = new Set<number>()
   for (const piece of pieces) {
-    const free = orthogonal(size, piece).filter(at => !pieces.includes(at) && !anchors.has(at))
+    const free = orthogonalOf(size, piece).filter(at => !pieces.includes(at) && !anchors.has(at))
     if (!free.length) return undefined
     anchors.add(free[Math.floor(random() * free.length)])
   }
@@ -77,13 +74,11 @@ const layout = (size: number, count: number, random: () => number) => {
 const boardOf = (size: number, pieces: number[], anchors: Set<number>) => {
   const solution = Array.from({ length: size * size }, (_unused, cell) => pieces.includes(cell))
   const held = (cells: number[]) => cells.filter(cell => solution[cell]).length
-  const line = (index: number, byRow: boolean) =>
-    Array.from({ length: size }, (_unused, at) => (byRow ? index * size + at : at * size + index))
   return {
     size,
     anchors: Array.from({ length: size * size }, (_unused, cell) => anchors.has(cell)),
-    rowCounts: Array.from({ length: size }, (_unused, row) => held(line(row, true))),
-    colCounts: Array.from({ length: size }, (_unused, col) => held(line(col, false))),
+    rowCounts: rows(size).map(held),
+    colCounts: cols(size).map(held),
     solution,
   }
 }

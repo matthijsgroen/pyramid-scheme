@@ -194,7 +194,7 @@ describe("the goal above the rules", () => {
   ]
 
   it.each(STAR_BATTLE_PLACES)("twin stars drawn for $role wears its own face", ({ role, skin }) => {
-    expect(starBattleSkinFor({ size: 2, quota: 1 }, role, undefined).name).toBe(skin)
+    expect(starBattleSkinFor({ size: 2, quota: 1, regions: [0, 0, 1, 1] }, role, undefined).name).toBe(skin)
   })
 
   /**

@@ -2,6 +2,7 @@ import clsx from "clsx"
 import { useRef, useState, type FC, type PointerEvent } from "react"
 import {
   colOf,
+  isRegionless,
   isWall,
   rowOf,
   ruledOutByStars,
@@ -74,7 +75,7 @@ const hatchOf = (skin: StarBattleSkin) => ({
 const boundary = (puzzle: StarBattlePuzzle, cell: number, dRow: number, dCol: number) => {
   const [row, col] = [rowOf(puzzle.size, cell) + dRow, colOf(puzzle.size, cell) + dCol]
   if (row < 0 || row >= puzzle.size || col < 0 || col >= puzzle.size) return true
-  return !!puzzle.regions && puzzle.regions[row * puzzle.size + col] !== puzzle.regions[cell]
+  return !isRegionless(puzzle) && puzzle.regions![row * puzzle.size + col] !== puzzle.regions![cell]
 }
 
 export const StarBattleBoard: FC<Props> = ({

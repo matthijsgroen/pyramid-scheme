@@ -1,13 +1,10 @@
 import { describe, expect, it } from "vitest"
 import { mulberry32 } from "@/game/random"
-import { neighboursOf } from "../starBattle/starBattle"
+import { cols, neighboursOf, orthogonalOf, rows } from "../starBattle/starBattle"
 import { hasPerfectPairing, type PairMark, type PairPuzzle } from "./pairPuzzle"
 import { applyPairTechniques, PAIR_TECHNIQUES, type PairTechniqueId } from "./techniques"
 
 type Marks = (PairMark | undefined)[]
-
-const orthogonal = (size: number, cell: number) =>
-  neighboursOf(size, cell).filter(at => at % size === cell % size || Math.floor(at / size) === Math.floor(cell / size))
 
 /** Anchors and counts from a random legal answer: pieces apart, each beside an anchor of its own. */
 const randomBoard = (seed: number, size: number): PairPuzzle => {
@@ -17,7 +14,7 @@ const randomBoard = (seed: number, size: number): PairPuzzle => {
   const target = Math.round((size * size) / 5)
   for (let tries = 0, placed = 0; tries < 200 && placed < target; tries++) {
     const piece = Math.floor(random() * size * size)
-    const beside = orthogonal(size, piece).filter(at => !anchors[at] && !pieces[at])
+    const beside = orthogonalOf(size, piece).filter(at => !anchors[at] && !pieces[at])
     if (anchors[piece] || pieces[piece] || !beside.length) continue
     if (neighboursOf(size, piece).some(at => pieces[at])) continue
     pieces[piece] = true
@@ -25,13 +22,11 @@ const randomBoard = (seed: number, size: number): PairPuzzle => {
     placed++
   }
   const count = (cells: number[]) => cells.filter(cell => pieces[cell]).length
-  const line = (at: number, step: number, stride: number) =>
-    Array.from({ length: size }, (_u, i) => at * stride + i * step)
   return {
     size,
     anchors,
-    rowCounts: Array.from({ length: size }, (_u, row) => count(line(row, 1, size))),
-    colCounts: Array.from({ length: size }, (_u, col) => count(line(col, size, 1))),
+    rowCounts: rows(size).map(count),
+    colCounts: cols(size).map(count),
   }
 }
 
@@ -41,7 +36,7 @@ const legalFillings = (puzzle: PairPuzzle): number[][] => {
   const found: number[][] = []
   const taken: number[] = []
   const inCol = new Array(size).fill(0)
-  const nearAnchor = (cell: number) => orthogonal(size, cell).some(at => puzzle.anchors[at])
+  const nearAnchor = (cell: number) => orthogonalOf(size, cell).some(at => puzzle.anchors[at])
   const walk = (row: number) => {
     if (row === size) {
       const mask = Array.from({ length: size * size }, (_u, cell) => taken.includes(cell))
