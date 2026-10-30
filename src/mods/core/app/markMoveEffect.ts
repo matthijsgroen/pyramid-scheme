@@ -54,3 +54,40 @@ export const classifyMarkMove = <M>(
   if (!follows) return "move"
   return openDecisions(hint, vocab, after).size === 0 ? "move" : "follows"
 }
+
+/**
+ * What one item of a hint wants of the board, for families whose items each have their own target.
+ *
+ * `holds` says the item already is what the hint asks; `follows` says a change of the item got closer to
+ * it, which includes a value on the way through the family's tap cycle (a moon is reached via a sun).
+ */
+export type Decision<V> = {
+  holds: (value: V) => boolean
+  follows: (before: V, after: V) => boolean
+}
+
+/** The items whose decision does not hold yet. An item without a decision (a mistake hint's) stays open. */
+export const openItems = <K, V>(
+  items: Iterable<K>,
+  decisions: ReadonlyMap<K, Decision<V>>,
+  read: (item: K) => V
+): Set<K> => new Set([...items].filter(item => !decisions.get(item)?.holds(read(item))))
+
+/**
+ * Classifies a move against a hint whose items each carry their own decision.
+ *
+ * Nothing changed is a look; a move that only changes decided items toward their targets follows, unless it
+ * leaves every decision holding, which completes the hint; anything else ends it.
+ */
+export const classifyItemMove = <K, V>(
+  items: Iterable<K>,
+  decisions: ReadonlyMap<K, Decision<V>>,
+  changed: readonly K[],
+  before: (item: K) => V,
+  after: (item: K) => V
+): InputEffect => {
+  if (!changed.length) return "look"
+  const follows = changed.every(item => decisions.get(item)?.follows(before(item), after(item)) ?? false)
+  if (!follows) return "move"
+  return openItems(items, decisions, after).size === 0 ? "move" : "follows"
+}

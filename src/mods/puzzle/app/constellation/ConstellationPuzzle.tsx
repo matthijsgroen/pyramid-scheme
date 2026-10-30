@@ -1,23 +1,38 @@
-import { useCallback, useMemo, useState, type FC } from "react"
+import { useCallback, type FC } from "react"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { useCelebration } from "@/mods/core/app/useCelebration"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
+import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
+import { classifyItemMove, openItems, type Decision } from "@/mods/core/app/markMoveEffect"
 import {
   canUndoConstellation,
   constellationSolved,
   createConstellationState,
   cycleConstellationLine,
+  MAX_LINES,
   undoConstellation,
 } from "@/mods/puzzle/game/constellation/constellation"
 import type { ConstellationPuzzleWithAnswer } from "@/mods/puzzle/game/constellation/generateConstellation"
 import { ConstellationBoard } from "./ConstellationBoard"
 import { skinFor } from "./skins"
 
-import { buildConstellationHint } from "./constellationHint"
+import { buildConstellationHint, type ConstellationHint } from "./constellationHint"
 import { ConstellationRules } from "./ConstellationRules"
+
+/**
+ * What a pair is held to. A pair that must be drawn is carried out by lines towards its floor, never past its
+ * ceiling. A pair that is only barred or capped holds from the start, so there is nothing to carry out: it
+ * stays marked while the hint is up, and any change to it ends the hint.
+ */
+const decisionFor = ({ min = 0, max = MAX_LINES }: { min?: number; max?: number }): Decision<number> => ({
+  holds: lines => lines >= min && lines <= max,
+  follows: (before, after) => min > 0 && after > before && after <= max,
+})
+
+const toDo = (hint: ConstellationHint) => hint.bounds.filter(bound => (bound.min ?? 0) > 0).map(bound => bound.pair)
 
 type Props = {
   puzzle: ConstellationPuzzleWithAnswer
@@ -38,15 +53,14 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
   const { name: skin } = skinFor(role, theme, 0, room)
   const [state, setState] = usePuzzleState(() => createConstellationState(puzzle), puzzle)
 
-  /**
-   * Whether the player has asked for a hint, which is what gates deriving one.
-   *
-   * The top rung walks groups across the whole board. Derived as the board changed, that lands on every
-   * gesture, for a string nobody asked to read.
-   */
-  const [asked, setAsked] = useState(false)
-
-  const hint = useMemo(() => (asked ? buildConstellationHint(puzzle, state) : undefined), [asked, puzzle, state])
+  // The top rung walks groups across the whole board: derived only once asked for, and held as it was until a
+  // move ends it, so a hint that names several lines keeps naming the same ones while they are drawn.
+  const { hint, freeze, drop } = useFrozenHint(() => buildConstellationHint(puzzle, state))
+  const decisions = new Map((hint?.bounds ?? []).map(bound => [bound.pair, decisionFor(bound)]))
+  const open = hint ? openItems(toDo(hint), decisions, pair => state.lines[pair]) : undefined
+  const shown =
+    hint && open ? new Set([...hint.pairs].filter(pair => open.has(pair) || !toDo(hint).includes(pair))) : undefined
+  const focus = hint && open && hint.focus !== undefined && !shown?.has(hint.focus) ? [...open][0] : hint?.focus
 
   /**
    * The board finishes itself before the shell is told, one node at a time.
@@ -87,7 +101,8 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
       // A drag gives one pair back, so undo is for stepping back off a run of lines drawn on a wrong reading.
       undo={{ onPress: () => setState(undoConstellation), enabled: canUndoConstellation(state) && !finished }}
       hint={hintText}
-      onHintRevealed={() => setAsked(true)}
+      onHintRevealed={freeze}
+      onHintHidden={drop}
       idleMs={hintIdleDelay(difficulty)}
       title={t(`constellation.name.${skin}`)}
       goal={t(`constellation.goal.${skin}`)}
@@ -97,8 +112,8 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
         <ConstellationBoard
           puzzle={puzzle}
           state={state}
-          highlighted={hintVisible ? hint?.pairs : undefined}
-          focus={hintVisible ? hint?.focus : undefined}
+          highlighted={hintVisible ? shown : undefined}
+          focus={hintVisible ? focus : undefined}
           litStars={hintVisible ? hint?.stars : undefined}
           theme={theme}
           role={role}
@@ -106,7 +121,18 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
           celebrated={celebrated}
           onDrawLine={pair => {
             if (finished) return // the board is finishing; nothing may change under the celebration
-            reportInput()
+            const next = cycleConstellationLine(puzzle, state, pair)
+            reportInput(
+              hint
+                ? classifyItemMove(
+                    toDo(hint),
+                    decisions,
+                    next.lines[pair] === state.lines[pair] ? [] : [pair],
+                    item => state.lines[item],
+                    item => next.lines[item]
+                  )
+                : "move"
+            )
             // From the board it replaces rather than from the render's own copy: two fingers releasing
             // inside one batch would otherwise both read the same board, and one of the two lines would be
             // dropped. Undo has the same reason to care — its stack is part of that board.

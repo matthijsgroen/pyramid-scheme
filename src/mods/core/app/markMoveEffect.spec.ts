@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest"
-import { classifyMarkMove, openDecisions, openFocus, type MarkVocabulary } from "./markMoveEffect"
+import {
+  classifyItemMove,
+  classifyMarkMove,
+  openDecisions,
+  openFocus,
+  openItems,
+  type Decision,
+  type MarkVocabulary,
+} from "./markMoveEffect"
 
 type Mark = "star" | "dark"
 const vocab: MarkVocabulary<Mark> = { place: "star", ruleOut: "dark" }
@@ -75,5 +83,44 @@ describe("openDecisions and openFocus", () => {
     expect(openFocus(0, new Set([1, 2]))).toBe(1)
     expect(openFocus(1, new Set([1, 2]))).toBe(1)
     expect(openFocus(0, new Set())).toBeUndefined()
+  })
+})
+
+describe("classifyItemMove and openItems", () => {
+  // Items are strings and values are counts: a target of two is reached through one, and never past two.
+  const toward = (target: number): Decision<number> => ({
+    holds: value => value === target,
+    follows: (_before, after) => after <= target && after > _before,
+  })
+  const decisions = new Map([
+    ["a", toward(2)],
+    ["b", toward(1)],
+  ])
+  const items = ["a", "b"]
+  const read = (values: Record<string, number>) => (item: string) => values[item] ?? 0
+  const move = (before: Record<string, number>, after: Record<string, number>, changed: string[]) =>
+    classifyItemMove(items, decisions, changed, read(before), read(after))
+
+  it("follows a change that gets closer while another decision is still open", () => {
+    expect(move({}, { a: 1 }, ["a"])).toBe("follows")
+  })
+
+  it("completes on the change that leaves every decision holding", () => {
+    expect(move({ a: 2 }, { a: 2, b: 1 }, ["b"])).toBe("move")
+  })
+
+  it("ends on a change past the target, to an item without a decision, or from a mistake hint", () => {
+    expect(move({ b: 1 }, { b: 2 }, ["b"])).toBe("move")
+    expect(move({}, { c: 1 }, ["c"])).toBe("move")
+    expect(classifyItemMove(items, new Map(), ["a"], read({}), read({ a: 1 }))).toBe("move")
+  })
+
+  it("looks when nothing changed", () => {
+    expect(move({}, {}, [])).toBe("look")
+  })
+
+  it("lists the items not holding yet, and keeps an item without a decision open", () => {
+    expect([...openItems(items, decisions, read({ a: 2 }))]).toEqual(["b"])
+    expect([...openItems(["x"], decisions, read({}))]).toEqual(["x"])
   })
 })

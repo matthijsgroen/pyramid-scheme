@@ -1,4 +1,6 @@
-import { useCallback, useMemo, type FC } from "react"
+import { useMemo, type FC } from "react"
+import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
+import { classifyItemMove, openItems, type Decision } from "@/mods/core/app/markMoveEffect"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import { SumpleteBoard } from "@/mods/puzzle/app/sumplete/SumpleteBoard"
@@ -6,11 +8,18 @@ import { SumpleteRules } from "@/mods/puzzle/app/sumplete/SumpleteRules"
 import { buildSumpleteHint } from "@/mods/puzzle/app/sumplete/sumpleteHint"
 import { computeColLines, computeRowLines, isSumpleteSolved } from "@/mods/puzzle/game/sumplete/sumpleteStatus"
 import { createSumpleteState, toggleSumpleteCell } from "@/mods/puzzle/game/sumplete/sumpleteState"
+import type { SumpleteMark } from "@/mods/puzzle/game/sumplete/techniques"
 import type { SumpleteGrid } from "@/mods/puzzle/game/sumplete/generateSumplete"
 import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"
+
+/** The tap cycle runs unknown, strike, keep: a keep is reached through a strike, a strike is reached directly. */
+const decisionFor = (target: SumpleteMark): Decision<SumpleteMark> => ({
+  holds: mark => mark === target,
+  follows: (_before, after) => after === target || (target === "keep" && after === "strike"),
+})
 
 type Props = {
   puzzle: SumpleteGrid
@@ -19,15 +28,15 @@ type Props = {
   onCancel: () => void
 }
 
+const cellMark = (cells: SumpleteMark[][], key: string): SumpleteMark => {
+  const [row, col] = key.split(",").map(Number)
+  return cells[row][col]
+}
+
 export const SumpletePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const { grid, rowTargets, colTargets, solution, techniqueCap } = puzzle
   const [state, setState] = usePuzzleState(() => createSumpleteState(grid.length), puzzle)
-
-  const toggle = useCallback(
-    (row: number, col: number) => setState(prev => toggleSumpleteCell(prev, row, col)),
-    [setState]
-  )
 
   const rows = computeRowLines(grid, state.cells, rowTargets)
   const cols = computeColLines(grid, state.cells, colTargets)
@@ -53,10 +62,16 @@ export const SumpletePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCanc
   const celebration = useCelebration(finished, lines)
   const checked = celebration.progress > 0 ? Math.round(celebration.progress * lines) : undefined
 
-  const hint = useMemo(
+  // Derived on every change: whether there is a hint at all is what shows the button. What the player is
+  // shown is the one from the moment they asked, held until a move ends it, so a hint that names several
+  // numbers keeps naming the same ones while they are carried out.
+  const available = useMemo(
     () => buildSumpleteHint({ grid, rowTargets, colTargets }, state.cells, solution, techniqueCap),
     [grid, rowTargets, colTargets, state.cells, solution, techniqueCap]
   )
+  const { hint, freeze, drop } = useFrozenHint(() => available)
+  const decisions = new Map([...(hint?.targets ?? [])].map(([cell, target]) => [cell, decisionFor(target)]))
+  const open = hint ? openItems(hint.cells, decisions, cell => cellMark(state.cells, cell)) : undefined
 
   return (
     <PuzzleFamilyShell
@@ -66,14 +81,18 @@ export const SumpletePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCanc
       onReset={() => setState(createSumpleteState(grid.length))}
       // Two lines: the reason, then the move it asks for (`puzzle-screens.md` §4).
       hint={
-        hint &&
-        [
-          t(`sumplete.hint.${hint.key}`, hint.params),
-          hint.action && t(`sumplete.hint.action.${hint.action.key}`, { count: hint.action.count }),
-        ]
-          .filter(Boolean)
-          .join("\n")
+        available &&
+        (() =>
+          hint &&
+          [
+            t(`sumplete.hint.${hint.key}`, hint.params),
+            hint.action && t(`sumplete.hint.action.${hint.action.key}`, { count: hint.action.count }),
+          ]
+            .filter(Boolean)
+            .join("\n"))
       }
+      onHintRevealed={freeze}
+      onHintHidden={drop}
       idleMs={hintIdleDelay(difficulty)}
       title={t("sumplete.name")}
       goal={t("sumplete.goal")}
@@ -85,13 +104,25 @@ export const SumpletePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCanc
           cells={state.cells}
           rows={rows}
           cols={cols}
-          highlighted={hintVisible ? hint?.cells : undefined}
+          highlighted={hintVisible ? open : undefined}
           litLine={hintVisible ? hint?.line : undefined}
           checked={checked}
           onToggle={(row, col) => {
             if (finished) return // the board is finishing; nothing may change under the celebration
-            reportInput()
-            toggle(row, col)
+            const next = toggleSumpleteCell(state, row, col)
+            const cell = `${row},${col}`
+            reportInput(
+              hint
+                ? classifyItemMove(
+                    hint.cells,
+                    decisions,
+                    next.cells[row][col] === state.cells[row][col] ? [] : [cell],
+                    item => cellMark(state.cells, item),
+                    item => cellMark(next.cells, item)
+                  )
+                : "move"
+            )
+            setState(next)
           }}
         />
       )}
