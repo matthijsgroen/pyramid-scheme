@@ -51,7 +51,8 @@ export const narrowsLane = (cell: GridCell | undefined): boolean => {
   )
 }
 
-/** A second lane's cell: the labels of the lane cell it widens, no way out, and that cell named. */
+/** A second lane's cell: the labels of the lane cell it widens but its ordinal, no way out, and that cell named. It
+ * has no ordinal and no slot, so it has no address of its own: a save never names it. */
 export const laneCell = (of: GridCell, shoulderOf: string): CorridorCell => {
   if (of.type === "empty") throw new Error(`[carve] a second lane widens no corridor at ${shoulderOf}`)
   const labels = {
@@ -62,7 +63,6 @@ export const laneCell = (of: GridCell, shoulderOf: string): CorridorCell => {
     region: of.region,
     sectionHash: of.sectionHash,
     legacySectionHash: of.legacySectionHash,
-    ordinal: of.ordinal,
     hidden: of.hidden,
   }
   return {

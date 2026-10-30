@@ -30,7 +30,7 @@ const filing = (cell: CorridorCell) =>
  * `exits` turn with the ways they name, and a mechanism's places, the entrance, the exit and the stairs move with
  * their nodes. A wide string lays its second lane (`secondLane`) where no cell of its way, or a cell next to it,
  * narrows the corridor (`narrowsLane`): each lane cell takes its lane cell's labels and names it, and each cell of the
- * way it widens names the side it lies on. The grid is trimmed to what the pieces and strings claim, plus a margin of
+ * way it widens names the side it lies on. A lane needs two such cells in a row: a lone one lays none. The grid is trimmed to what the pieces and strings claim, plus a margin of
  * one cell.
  */
 export const carveLayout = (layout: Layout): Carved => {
@@ -145,10 +145,12 @@ export const carveLayout = (layout: Layout): Carved => {
       [at, ...Object.values(MOVES).map(([dr, dc]): Cell => [at[0] + dr, at[1] + dc])].some(near =>
         narrowsLane(laid.get(keyOf(near))?.cell)
       )
-    const isWide = (i: number) => {
+    const wideHere = (i: number) => {
+      if (i < 2 || i > way.length - 3) return false
       const j = stops.filter(stop => stop < i).length
       return (stops.includes(i) ? wide[j] || wide[j + 1] : wide[j]) && !narrow(way[i])
     }
+    const isWide = (i: number) => wideHere(i) && (wideHere(i - 1) || wideHere(i + 1))
     for (const { at, of } of secondLane(way, isWide)) {
       put(at, laneCell(laid.get(keyOf(way[of]))!.cell, keyOf(way[of])))
       lanes.set(keyOf(at), keyOf(way[of]))

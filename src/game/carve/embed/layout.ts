@@ -37,13 +37,15 @@ const LAYOUT_SALT = 0x5bd1e995
 export type LaidString = { corners: Cell[]; stops: Cell[] }
 
 /** Where each piece's top-left stands and how each string runs; `slack` counts the strings the press left longer than
- * their stops need, before any spread, and `pushes` the rounds the push took. */
+ * their stops need, before any spread, `pushes` the rounds the push took, and `lanes` the cells it holds for second
+ * lanes. */
 export type Layout = {
   graph: FloorGraph
   blocks: Map<CellKey, Cell>
   strings: LaidString[]
   pushes: number
   slack: number
+  lanes: Cell[]
 }
 
 /** A piece's cells as offsets from its top-left, and where its top-left stands on the sketch. */
@@ -125,8 +127,8 @@ type Raster = {
  * - Spread: each string but a drop gets `round(spread * GAP_RANGE * u)` cells more, u in [0.5, 1.5), pushed in on
  *   one of its runs.
  * A wide string holds its second lane (`secondLane`) as well: each lane cell is held by the stop, bend or run whose
- * cell lays it, so the margin lies outside both lanes and the press keeps the lane's line. A lane cell may touch its
- * own string anywhere.
+ * cell lays it, so the margin lies outside both lanes and the press keeps the lane's line. A lane cell may touch a
+ * holder of its own string at most a stop or bend along it (`sameLane`); everywhere else the margin holds.
  * A floor is refused only where two holders can be parted on neither axis.
  */
 export const layoutFloor = (
@@ -279,7 +281,7 @@ export const layoutFloor = (
         }
       }
       const flags = strings[si].wide!
-      const wide = (i: number) => (stopHere[i] ? flags[stretch[i] - 1] || flags[stretch[i]] : flags[stretch[i]])
+      const wide = (i: number) => (stopHere[i] ? flags[stretch[i]] || flags[stretch[i] + 1] : flags[stretch[i]])
       for (const { at, of } of secondLane(way, wide))
         (lanes.get(owners[of]) ?? lanes.set(owners[of], []).get(owners[of])!).push(at)
     }
@@ -853,6 +855,7 @@ export const layoutFloor = (
     const off = nodeOffset(piece)
     blocks.set(key, [posOf(key)[0] - off[0], posOf(key)[1] - off[1]])
   }
+  layLanes()
   return {
     graph,
     blocks,
@@ -865,5 +868,6 @@ export const layoutFloor = (
     }),
     slack,
     pushes,
+    lanes: [...lanes.values()].flat(),
   }
 }

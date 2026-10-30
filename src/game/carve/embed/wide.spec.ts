@@ -6,8 +6,10 @@ import { drawnSketch, plainFloor } from "../carveFixtures"
 import { ROOMS_ENGINE } from "../engines"
 import { OPPOSITE } from "../grid"
 import type { Cell } from "../state"
+import { carveLayout } from "./carveLayout"
 import { embedFloor, type EmbedOptions } from "./embedFloor"
-import { keyOf, MOVES } from "./graph"
+import { floorGraph, keyOf, MOVES } from "./graph"
+import { layoutFloor } from "./layout"
 import { narrowsLane } from "./wide"
 
 const SEEDS = [1, 2, 3, 4, 5, 6]
@@ -190,5 +192,21 @@ describe("wide corridors", () => {
     if (!result.success) throw new Error(JSON.stringify(result.reasons))
     expect(lanesOf(result.grid).length).toBeGreaterThan(0)
     expect(validateSite(result.grid)).toEqual({ valid: true })
+  })
+
+  it("every lane the carve lays was held by the layout, the stop before an asking node included", () => {
+    const rows = ["E.F.S.S.S.S.S.S.S.T", "  .", "  S.S.S.S.F", "          .", "          S.S"]
+    for (const seed of SEEDS) {
+      const graph = floorGraph(sketchWith(rows, { "0,12": { wideWayIn: true } }), new Map())
+      const layout = layoutFloor(graph, { seed, spread: 0 })
+      if ("refused" in layout) throw new Error(layout.refused)
+      const carved = carveLayout(layout)
+      const [lr, lc] = layout.blocks.get(graph.entrance)!
+      const [fr, fc] = carved.nodes.get(graph.entrance)!
+      const held = new Set(layout.lanes.map(([r, c]) => keyOf([r + fr - lr, c + fc - lc])))
+      const laid = lanesOf(carved.grid)
+      expect(laid.length).toBeGreaterThan(2)
+      for (const { at: lane } of laid) expect(held.has(keyOf(lane)), `lane at ${keyOf(lane)}`).toBe(true)
+    }
   })
 })

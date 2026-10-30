@@ -441,13 +441,24 @@ const alongObstacle = (cell: GridCell, dir: "s" | "e"): boolean => {
   return !!run && (dir === "e" ? run === "e" || run === "w" : run === "s" || run === "n")
 }
 
-// A wide corridor's second lane is one floor with the corridor it widens: open toward its lane cell, toward the
-// corridor's other lane cells and toward the rest of its second lane.
-const widens = (lane: GridCell, other: GridCell, otherKey: string): boolean =>
-  lane.type === "corridor" &&
-  !!lane.shoulderOf &&
-  other.type !== "empty" &&
-  (lane.shoulderOf === otherKey || !!other.shoulder || (other.type === "corridor" && !!other.shoulderOf))
+// A wide corridor's second lane is one floor with the corridor it widens: open toward its own lane cell, and toward
+// a neighbouring cell of the same second lane or that cell's lane cell.
+const widens = (grid: FloorGrid, lane: GridCell, other: GridCell, otherKey: string): boolean => {
+  if (lane.type !== "corridor" || !lane.shoulderOf || other.type === "empty") return false
+  if (lane.shoulderOf === otherKey) return true
+  if (other.type === "corridor" && other.shoulderOf) return near(grid, lane.shoulderOf, other.shoulderOf)
+  return near(grid, lane.shoulderOf, otherKey)
+}
+// Whether two cells of a corridor's way are one stretch of it: the same cell, or at most two of its ways apart (round a
+// bend, the lane in its inside corner widens the cell before the bend and lies beside the one after it).
+const near = (grid: FloorGrid, a: string, b: string): boolean => {
+  const ways = (key: string): string[] => {
+    const [r, c] = key.split(",").map(Number)
+    const cell = cellAt(grid, r, c)
+    return cell.type === "empty" ? [] : [...cell.dirs].map(dir => `${r + DIR_MOVES[dir][0]},${c + DIR_MOVES[dir][1]}`)
+  }
+  return a === b || ways(a).some(next => next === b || ways(next).includes(b))
+}
 
 // Whether the player can pass between two cells the map draws floor for. Adjacency is NOT passage:
 // a room claims the cells around it as footprint, so its floor can sit flush against a corridor it
@@ -468,7 +479,7 @@ export const isPassable = (grid: FloorGrid, claims: RoomClaims, r: number, c: nu
   // Left shut, every seam in the run draws a side wall and the back wall breaks into jambs.
   if (alongObstacle(cell, dir) && neighbor.type !== "empty") return true
   if (alongObstacle(neighbor, dir) && cell.type !== "empty") return true
-  if (widens(cell, neighbor, `${nr},${nc}`) || widens(neighbor, cell, `${r},${c}`)) return true
+  if (widens(grid, cell, neighbor, `${nr},${nc}`) || widens(grid, neighbor, cell, `${r},${c}`)) return true
   // Two junction rooms that each claim their own side of a shared void/corridor cell
   // (buildRoomClaims assigns that cell to whichever claims first) should still read as one open
   // space — junctions are connective tissue, not a distinct place, unlike other room types, which
