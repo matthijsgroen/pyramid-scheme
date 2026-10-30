@@ -6,6 +6,8 @@ import { configHash } from "@/game/seeds/configHash"
 import { blankMarks, cellAt, neighboursOf, type StarBattlePuzzle } from "./starBattle"
 import { STAR_BATTLE_CONFIG } from "./starBattleConfig"
 import { TWIN_STARS_CONFIG } from "./twinStars"
+import { generateRegionlessBattle } from "./generateRegionlessBattle"
+import { REGIONLESS_BATTLE_CONFIG } from "./regionlessConfig"
 import { generateStarBattle, type StarBattleOptions, type StarBattlePuzzleWithAnswer } from "./generateStarBattle"
 import {
   applyStarBattleTechniques,
@@ -262,4 +264,63 @@ describe("regionless soundness", () => {
     expect(lineBlocks).toBeGreaterThan(0)
     expect(checked).toBeGreaterThan(100)
   })
+
+  const GENERATED: { tier: Difficulty; seeds: number[] }[] = [
+    { tier: "expert", seeds: [1, 2, 3] },
+    { tier: "master", seeds: [1, 2, 3] },
+    { tier: "wizard", seeds: [1, 2] },
+  ]
+
+  it.each(GENERATED)(
+    "every regionless rung agrees with the answer on generated $tier boards",
+    { timeout: 120_000 },
+    ({ tier, seeds }) => {
+      const random = mulberry32(3307)
+      let fired = 0
+      for (const seed of seeds) {
+        const board = generateRegionlessBattle(seed, REGIONLESS_BATTLE_CONFIG[tier])
+        for (let round = 0; round < 40; round++) {
+          for (const step of applyStarBattleTechniques(board, walledState(board, random), REGIONLESS_TECHNIQUES)) {
+            for (const decision of step.decisions) {
+              fired++
+              expect(
+                decision.mark === "star" ? board.solution[decision.cell] : !board.solution[decision.cell],
+                `${tier} seed ${seed} ${step.technique}.${step.variant} on cell ${decision.cell}`
+              ).toBe(true)
+            }
+          }
+        }
+      }
+      expect(fired).toBeGreaterThan(0)
+    }
+  )
+
+  it.each(GENERATED.filter(({ tier }) => tier !== "wizard"))(
+    "every regionless rung is forced by the generated $tier board it fired from",
+    { timeout: 120_000 },
+    ({ tier, seeds }) => {
+      const random = mulberry32(6619)
+      let checked = 0
+      for (const seed of seeds) {
+        const board = generateRegionlessBattle(seed, REGIONLESS_BATTLE_CONFIG[tier])
+        for (let round = 0; round < 30; round++) {
+          const marks = walledState(board, random)
+          const ways = completions(board, marks, 200)
+          if (!ways.length) continue
+          for (const technique of REGIONLESS_TECHNIQUES) {
+            const step = nextStarBattleStep(board, [...marks], [technique])
+            if (!step) continue
+            for (const decision of step.decisions) {
+              const holds = ways.every(way =>
+                decision.mark === "star" ? way.includes(decision.cell) : !way.includes(decision.cell)
+              )
+              expect(holds, `${tier} seed ${seed} ${technique} on cell ${decision.cell}`).toBe(true)
+              checked++
+            }
+          }
+        }
+      }
+      expect(checked).toBeGreaterThan(20)
+    }
+  )
 })
