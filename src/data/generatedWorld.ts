@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 2046179623
+export const worldContentHash = 14487232
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -223,10 +223,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "storage",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#nd##", "#w.c#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#n##", "#wc#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
@@ -239,13 +236,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "packing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#g.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#gb#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#g.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
-              b: { letter: "b", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
             },
             specials: { s: "stop" },
           },
@@ -255,10 +248,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "ledger",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#tn#", "#kh#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["scribeDesk"], cols: 1, rows: 1 },
               h: { letter: "h", layer: "wall", optional: true, kinds: ["shelf"], cols: 1, rows: 1 },
@@ -273,10 +263,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "weighing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#td##", "#w.x#", "d..sd", "#ddd#"] },
-              { name: "small", cells: ["#t##", "#wx#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#td##", "#w.x#", "d..sd", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["weightsTable"], cols: 1, rows: 1 },
               x: { letter: "x", layer: "floor", optional: false, kinds: ["scale"], cols: 1, rows: 1 },
@@ -290,10 +277,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "selling",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#k.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#kg#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#k.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "wall", optional: true, kinds: ["hanging", "offeringTable"], cols: 1, rows: 1 },
@@ -306,7 +290,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "selling",
             mirror: true,
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["##d##", "#a.k#", "ds..d", "#ddd#"] }],
+            layouts: [{ name: "", cells: ["##d##", "#a.k#", "ds..d", "#...#", "#ddd#"] }],
             places: { k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 } },
             specials: { a: "actor", s: "stop" },
           },
@@ -394,10 +378,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "storage",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#nd##", "#w.c#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#n##", "#wc#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
@@ -410,13 +391,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "packing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#g.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#gb#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#g.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
-              b: { letter: "b", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
             },
             specials: { s: "stop" },
           },
@@ -426,10 +403,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "ledger",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#tn#", "#kh#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["scribeDesk"], cols: 1, rows: 1 },
               h: { letter: "h", layer: "wall", optional: true, kinds: ["shelf"], cols: 1, rows: 1 },
@@ -444,10 +418,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "weighing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#td##", "#w.x#", "d..sd", "#ddd#"] },
-              { name: "small", cells: ["#t##", "#wx#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#td##", "#w.x#", "d..sd", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["weightsTable"], cols: 1, rows: 1 },
               x: { letter: "x", layer: "floor", optional: false, kinds: ["scale"], cols: 1, rows: 1 },
@@ -461,10 +432,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "selling",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#k.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#kg#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#k.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "wall", optional: true, kinds: ["hanging", "offeringTable"], cols: 1, rows: 1 },
@@ -762,10 +730,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "storage",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#nd##", "#w.c#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#n##", "#wc#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
@@ -778,13 +743,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "packing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#g.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#gb#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#g.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
-              b: { letter: "b", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
             },
             specials: { s: "stop" },
           },
@@ -794,10 +755,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "ledger",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#tn#", "#kh#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["scribeDesk"], cols: 1, rows: 1 },
               h: { letter: "h", layer: "wall", optional: true, kinds: ["shelf"], cols: 1, rows: 1 },
@@ -812,10 +770,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "weighing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#td##", "#w.x#", "d..sd", "#ddd#"] },
-              { name: "small", cells: ["#t##", "#wx#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#td##", "#w.x#", "d..sd", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["weightsTable"], cols: 1, rows: 1 },
               x: { letter: "x", layer: "floor", optional: false, kinds: ["scale"], cols: 1, rows: 1 },
@@ -829,10 +784,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "selling",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#k.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#kg#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#k.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "wall", optional: true, kinds: ["hanging", "offeringTable"], cols: 1, rows: 1 },
@@ -1023,10 +975,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "storage",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#nd##", "#w.c#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#n##", "#wc#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
@@ -1039,13 +988,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "packing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#g.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#gb#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#g.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
-              b: { letter: "b", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
             },
             specials: { s: "stop" },
           },
@@ -1055,10 +1000,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "ledger",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#tn#", "#kh#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["scribeDesk"], cols: 1, rows: 1 },
               h: { letter: "h", layer: "wall", optional: true, kinds: ["shelf"], cols: 1, rows: 1 },
@@ -1073,10 +1015,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "weighing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#td##", "#w.x#", "d..sd", "#ddd#"] },
-              { name: "small", cells: ["#t##", "#wx#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#td##", "#w.x#", "d..sd", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["weightsTable"], cols: 1, rows: 1 },
               x: { letter: "x", layer: "floor", optional: false, kinds: ["scale"], cols: 1, rows: 1 },
@@ -1090,10 +1029,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "selling",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#k.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#kg#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#k.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "wall", optional: true, kinds: ["hanging", "offeringTable"], cols: 1, rows: 1 },
@@ -1324,10 +1260,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "storage",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#nd##", "#w.c#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#n##", "#wc#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
@@ -1340,13 +1273,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "packing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#g.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#gb#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#g.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
-              b: { letter: "b", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
             },
             specials: { s: "stop" },
           },
@@ -1356,10 +1285,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "ledger",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#tn#", "#kh#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["scribeDesk"], cols: 1, rows: 1 },
               h: { letter: "h", layer: "wall", optional: true, kinds: ["shelf"], cols: 1, rows: 1 },
@@ -1374,10 +1300,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "weighing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#td##", "#w.x#", "d..sd", "#ddd#"] },
-              { name: "small", cells: ["#t##", "#wx#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#td##", "#w.x#", "d..sd", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["weightsTable"], cols: 1, rows: 1 },
               x: { letter: "x", layer: "floor", optional: false, kinds: ["scale"], cols: 1, rows: 1 },
@@ -1391,10 +1314,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "selling",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#k.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#kg#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#k.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "wall", optional: true, kinds: ["hanging", "offeringTable"], cols: 1, rows: 1 },
@@ -1703,10 +1623,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "storage",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#nd##", "#w.c#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#n##", "#wc#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
@@ -1719,13 +1636,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "packing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#g.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#gb#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#g.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
-              b: { letter: "b", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
             },
             specials: { s: "stop" },
           },
@@ -1735,10 +1648,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "ledger",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#tn#", "#kh#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["scribeDesk"], cols: 1, rows: 1 },
               h: { letter: "h", layer: "wall", optional: true, kinds: ["shelf"], cols: 1, rows: 1 },
@@ -1753,10 +1663,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "weighing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#td##", "#w.x#", "d..sd", "#ddd#"] },
-              { name: "small", cells: ["#t##", "#wx#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#td##", "#w.x#", "d..sd", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["weightsTable"], cols: 1, rows: 1 },
               x: { letter: "x", layer: "floor", optional: false, kinds: ["scale"], cols: 1, rows: 1 },
@@ -1770,10 +1677,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "selling",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#k.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#kg#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#k.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "wall", optional: true, kinds: ["hanging", "offeringTable"], cols: 1, rows: 1 },
@@ -1987,10 +1891,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "storage",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#nd##", "#w.c#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#n##", "#wc#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
@@ -2003,13 +1904,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "packing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#g.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#gb#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#g.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
-              b: { letter: "b", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
             },
             specials: { s: "stop" },
           },
@@ -2019,10 +1916,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "ledger",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#tn#", "#kh#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["scribeDesk"], cols: 1, rows: 1 },
               h: { letter: "h", layer: "wall", optional: true, kinds: ["shelf"], cols: 1, rows: 1 },
@@ -2037,10 +1931,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "weighing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#td##", "#w.x#", "d..sd", "#ddd#"] },
-              { name: "small", cells: ["#t##", "#wx#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#td##", "#w.x#", "d..sd", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["weightsTable"], cols: 1, rows: 1 },
               x: { letter: "x", layer: "floor", optional: false, kinds: ["scale"], cols: 1, rows: 1 },
@@ -2054,10 +1945,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "selling",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#k.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#kg#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#k.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "wall", optional: true, kinds: ["hanging", "offeringTable"], cols: 1, rows: 1 },
@@ -2272,10 +2160,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "storage",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#nd##", "#w.c#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#n##", "#wc#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
@@ -2288,13 +2173,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "packing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#g.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#gb#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#g.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
-              b: { letter: "b", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
             },
             specials: { s: "stop" },
           },
@@ -2304,10 +2185,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "ledger",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#tn#", "#kh#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["scribeDesk"], cols: 1, rows: 1 },
               h: { letter: "h", layer: "wall", optional: true, kinds: ["shelf"], cols: 1, rows: 1 },
@@ -2322,10 +2200,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "weighing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#td##", "#w.x#", "d..sd", "#ddd#"] },
-              { name: "small", cells: ["#t##", "#wx#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#td##", "#w.x#", "d..sd", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["weightsTable"], cols: 1, rows: 1 },
               x: { letter: "x", layer: "floor", optional: false, kinds: ["scale"], cols: 1, rows: 1 },
@@ -2339,10 +2214,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "selling",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#k.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#kg#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#k.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "wall", optional: true, kinds: ["hanging", "offeringTable"], cols: 1, rows: 1 },
@@ -2557,10 +2429,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "storage",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#nd##", "#w.c#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#n##", "#wc#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
@@ -2573,13 +2442,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "packing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#g.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#gb#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#g.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
-              b: { letter: "b", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
             },
             specials: { s: "stop" },
           },
@@ -2589,10 +2454,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "ledger",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#tn#", "#kh#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["scribeDesk"], cols: 1, rows: 1 },
               h: { letter: "h", layer: "wall", optional: true, kinds: ["shelf"], cols: 1, rows: 1 },
@@ -2607,10 +2469,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "weighing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#td##", "#w.x#", "d..sd", "#ddd#"] },
-              { name: "small", cells: ["#t##", "#wx#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#td##", "#w.x#", "d..sd", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["weightsTable"], cols: 1, rows: 1 },
               x: { letter: "x", layer: "floor", optional: false, kinds: ["scale"], cols: 1, rows: 1 },
@@ -2624,10 +2483,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "selling",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#k.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#kg#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#k.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "wall", optional: true, kinds: ["hanging", "offeringTable"], cols: 1, rows: 1 },
@@ -2844,10 +2700,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "storage",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#nd##", "#w.c#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#n##", "#wc#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
@@ -2860,13 +2713,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "packing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#g.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#gb#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#g.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
-              b: { letter: "b", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
             },
             specials: { s: "stop" },
           },
@@ -2876,10 +2725,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "ledger",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#tn#", "#kh#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["scribeDesk"], cols: 1, rows: 1 },
               h: { letter: "h", layer: "wall", optional: true, kinds: ["shelf"], cols: 1, rows: 1 },
@@ -2894,10 +2740,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "weighing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#td##", "#w.x#", "d..sd", "#ddd#"] },
-              { name: "small", cells: ["#t##", "#wx#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#td##", "#w.x#", "d..sd", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["weightsTable"], cols: 1, rows: 1 },
               x: { letter: "x", layer: "floor", optional: false, kinds: ["scale"], cols: 1, rows: 1 },
@@ -2911,10 +2754,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "selling",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#k.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#kg#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#k.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "wall", optional: true, kinds: ["hanging", "offeringTable"], cols: 1, rows: 1 },
@@ -3127,10 +2967,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "storage",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#nd##", "#w.c#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#n##", "#wc#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
@@ -3143,13 +2980,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "packing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#g.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#gb#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#g.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
-              b: { letter: "b", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
             },
             specials: { s: "stop" },
           },
@@ -3159,10 +2992,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "ledger",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#tn#", "#kh#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["scribeDesk"], cols: 1, rows: 1 },
               h: { letter: "h", layer: "wall", optional: true, kinds: ["shelf"], cols: 1, rows: 1 },
@@ -3177,10 +3007,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "weighing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#td##", "#w.x#", "d..sd", "#ddd#"] },
-              { name: "small", cells: ["#t##", "#wx#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#td##", "#w.x#", "d..sd", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["weightsTable"], cols: 1, rows: 1 },
               x: { letter: "x", layer: "floor", optional: false, kinds: ["scale"], cols: 1, rows: 1 },
@@ -3194,10 +3021,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "selling",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#k.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#kg#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#k.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "wall", optional: true, kinds: ["hanging", "offeringTable"], cols: 1, rows: 1 },
@@ -3411,10 +3235,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "storage",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#nd##", "#w.c#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#n##", "#wc#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
@@ -3427,13 +3248,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "packing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#g.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#gb#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#g.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
-              b: { letter: "b", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
             },
             specials: { s: "stop" },
           },
@@ -3443,10 +3260,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "ledger",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#tn#", "#kh#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["scribeDesk"], cols: 1, rows: 1 },
               h: { letter: "h", layer: "wall", optional: true, kinds: ["shelf"], cols: 1, rows: 1 },
@@ -3461,10 +3275,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "weighing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#td##", "#w.x#", "d..sd", "#ddd#"] },
-              { name: "small", cells: ["#t##", "#wx#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#td##", "#w.x#", "d..sd", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["weightsTable"], cols: 1, rows: 1 },
               x: { letter: "x", layer: "floor", optional: false, kinds: ["scale"], cols: 1, rows: 1 },
@@ -3478,10 +3289,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "selling",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#k.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#kg#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#k.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "wall", optional: true, kinds: ["hanging", "offeringTable"], cols: 1, rows: 1 },
@@ -3730,10 +3538,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "storage",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#nd##", "#w.c#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#n##", "#wc#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
@@ -3746,13 +3551,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "packing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#g.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#gb#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#g.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
-              b: { letter: "b", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
             },
             specials: { s: "stop" },
           },
@@ -3762,10 +3563,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "ledger",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["#tn#", "#kh#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#tdn#", "#k.h#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["scribeDesk"], cols: 1, rows: 1 },
               h: { letter: "h", layer: "wall", optional: true, kinds: ["shelf"], cols: 1, rows: 1 },
@@ -3780,10 +3578,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "weighing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["#td##", "#w.x#", "d..sd", "#ddd#"] },
-              { name: "small", cells: ["#t##", "#wx#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["#td##", "#w.x#", "d..sd", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["weightsTable"], cols: 1, rows: 1 },
               x: { letter: "x", layer: "floor", optional: false, kinds: ["scale"], cols: 1, rows: 1 },
@@ -3797,10 +3592,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "selling",
             mirror: true,
             designedBy: "Claude",
-            layouts: [
-              { name: "", cells: ["##d##", "#k.g#", "ds..d", "#ddd#"] },
-              { name: "small", cells: ["####", "#kg#", "ds.d", "#dd#"] },
-            ],
+            layouts: [{ name: "", cells: ["##d##", "#k.g#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "wall", optional: true, kinds: ["hanging", "offeringTable"], cols: 1, rows: 1 },
