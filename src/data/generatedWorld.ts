@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 14487232
+export const worldContentHash = 597558253
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -1044,8 +1044,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { room: "weighingRoom", min: 0, max: 2, central: 0.8 },
           { room: "sellingRoom", min: 0, max: 2, central: 1 },
         ],
-        packing: 0.12,
-        seed: 3323337401,
+        packing: 0.1,
+        seed: 3323337411,
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         rewards: [{ type: "campPart", structure: "windbreak", part: "stakes" }],
       },
@@ -1692,8 +1692,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { room: "weighingRoom", min: 0, max: 2, central: 0.8 },
           { room: "sellingRoom", min: 0, max: 2, central: 1 },
         ],
-        packing: 0.14,
-        seed: 1354033022,
+        packing: 0.1,
+        seed: 175768595654518,
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         rewards: [
           { type: "campFind", step: "gourd" },
@@ -2230,7 +2230,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { room: "sellingRoom", min: 0, max: 2, central: 1 },
         ],
         packing: 0.1,
-        seed: 1354033022,
+        seed: 1354033017,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art5", pieceIndex: 0 },
         rewards: [
           { type: "campPart", structure: "stoneRing", part: "sandBed" },
@@ -2769,7 +2769,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { room: "weighingRoom", min: 0, max: 2, central: 0.8 },
           { room: "sellingRoom", min: 0, max: 2, central: 1 },
         ],
-        packing: 0.14,
+        packing: 0.1,
         seed: 9109538588672876,
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         rewards: [
@@ -3305,7 +3305,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { room: "sellingRoom", min: 0, max: 2, central: 1 },
         ],
         packing: 0.1,
-        seed: 3148170099,
+        seed: 3148170098,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a8", pieceIndex: 1 },
         rewards: [undefined, undefined, undefined],
       },
@@ -3385,7 +3385,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "starter",
             end: "treasure",
-            endReward: { type: "sellable", itemId: "sell_stone_1" },
+            endReward: { type: "sellable", itemId: "sell_stone_3" },
             rewards: [undefined],
             encounter: "sudoku",
             decorations: [
@@ -3447,7 +3447,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "starter",
             end: "treasure",
-            endReward: { type: "sellable", itemId: "sell_stone_3" },
+            endReward: { type: "sellable", itemId: "sell_stone_1" },
             rewards: [undefined],
             encounter: "sudoku",
             decorations: [
@@ -3607,8 +3607,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { room: "weighingRoom", min: 0, max: 2, central: 0.8 },
           { room: "sellingRoom", min: 0, max: 2, central: 1 },
         ],
-        packing: 0.14,
-        seed: 3148170100,
+        packing: 0.1,
+        seed: 9109538588672880,
         mainEndReward: { type: "money", amount: 2 },
         rewards: [undefined, undefined, undefined, undefined],
       },
