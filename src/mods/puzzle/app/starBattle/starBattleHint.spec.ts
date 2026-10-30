@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 import en from "../../../../../public/locales/en/common.json"
 import nl from "../../../../../public/locales/nl/common.json"
 import { difficulties } from "@/data/difficultyLevels"
-import { createStarBattleState, isWall, type CellMark } from "@/mods/puzzle/game/starBattle/starBattle"
+import { createStarBattleState, isWall, ruledOutByStars, type CellMark } from "@/mods/puzzle/game/starBattle/starBattle"
 import { STAR_BATTLE_CONFIG } from "@/mods/puzzle/game/starBattle/starBattleConfig"
 import { generateStarBattle } from "@/mods/puzzle/game/starBattle/generateStarBattle"
 import { generateRegionlessBattle } from "@/mods/puzzle/game/starBattle/generateRegionlessBattle"
@@ -14,6 +14,15 @@ const board = generateStarBattle(5, STAR_BATTLE_CONFIG.expert)
 const answer = (): (CellMark | undefined)[] => board.solution.map(star => (star ? "star" : "dark"))
 
 describe("star battle hints", () => {
+  it("never asks to rule out a square the board already shows as spent beside a star", () => {
+    const marks = createStarBattleState(board).marks.slice()
+    const star = board.solution.findIndex(Boolean)
+    marks[star] = "star"
+    const hint = buildStarBattleHint(board, { marks })
+    expect(hint?.key).not.toBe("touch")
+    for (const spent of ruledOutByStars(board, marks)) expect(hint?.decided.has(spent)).toBe(false)
+  })
+
   it("names a move on a fresh board, and points at what it reasons from", () => {
     const hint = buildStarBattleHint(board, createStarBattleState(board))
     expect(hint).toBeDefined()

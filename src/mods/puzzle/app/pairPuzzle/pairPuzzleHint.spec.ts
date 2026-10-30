@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import en from "../../../../../public/locales/en/common.json"
 import nl from "../../../../../public/locales/nl/common.json"
-import { createPairState } from "@/mods/puzzle/game/pairPuzzle/pairPuzzle"
+import { createPairState, ruledOutByPieces } from "@/mods/puzzle/game/pairPuzzle/pairPuzzle"
 import type { PairMark } from "@/mods/puzzle/game/pairPuzzle/pairPuzzle"
 import { generatePairPuzzle } from "@/mods/puzzle/game/pairPuzzle/generatePairPuzzle"
 import { PAIR_PUZZLE_CONFIG } from "@/mods/puzzle/game/pairPuzzle/pairPuzzleConfig"
@@ -11,6 +11,15 @@ import { buildPairHint } from "./pairPuzzleHint"
 const board = generatePairPuzzle(3, PAIR_PUZZLE_CONFIG.master)
 
 describe("pair puzzle hints", () => {
+  it("never asks to rule out a square the board already shows as spent beside a piece", () => {
+    const marks = createPairState(board).marks.slice()
+    const piece = board.solution.findIndex(Boolean)
+    marks[piece] = "piece"
+    const hint = buildPairHint(board, { marks })
+    expect(hint?.key).not.toBe("touch")
+    for (const spent of ruledOutByPieces(board, marks)) expect(hint?.decided.has(spent)).toBe(false)
+  })
+
   it("names a move on a fresh board, and points at what it reasons from", () => {
     const hint = buildPairHint(board, createPairState(board))
     expect(hint).toBeDefined()

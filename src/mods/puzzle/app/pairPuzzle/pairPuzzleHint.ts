@@ -1,4 +1,4 @@
-import { firstPairMistake, type PairMarks } from "@/mods/puzzle/game/pairPuzzle/pairPuzzle"
+import { firstPairMistake, ruledOutByPieces, type PairMarks } from "@/mods/puzzle/game/pairPuzzle/pairPuzzle"
 import type { PairPuzzleWithAnswer } from "@/mods/puzzle/game/pairPuzzle/generatePairPuzzle"
 import {
   nextPairStep,
@@ -43,11 +43,11 @@ export const buildPairHint = (puzzle: PairPuzzleWithAnswer, state: PairMarks): P
       focus: mistake,
     }
 
-  const step = nextPairStep(
-    puzzle,
-    puzzle.solution.map((_piece, cell) => state.marks[cell]),
-    pairTechniquesUpTo(puzzle.techniqueCap)
-  )
+  // The squares around a piece are drawn as spent (`ruledOutByPieces`), so the hint reasons from them as ruled
+  // out too: the adjacency rule is the screen's bookkeeping, never a move the player is asked to make.
+  const marks = puzzle.solution.map((_piece, cell) => state.marks[cell])
+  for (const spent of ruledOutByPieces(puzzle, marks)) marks[spent] = "empty"
+  const step = nextPairStep(puzzle, marks, pairTechniquesUpTo(puzzle.techniqueCap))
   if (!step) return undefined
   return {
     key: stepKey(step),
