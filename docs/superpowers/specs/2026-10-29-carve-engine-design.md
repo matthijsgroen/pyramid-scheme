@@ -88,15 +88,26 @@ The designer: "standaard goed, met sturing van generiek naar specifiek mogelijk 
 
 ## The builder's calls (Claude's, for the designer to check)
 
-- **A new pass list in the existing frame.** `src/game/carve/` already runs typed passes over `FloorPrep` /
-  `CarveState` (`docs/instructions/carve-passes.md`). The passes keep deciding the floor's **topology** — which
-  nodes, which rooms, where chains hang, where locks and gates sit — on the node lattice, which becomes a sketch,
-  not the floor. A new **embed** step then gives that sketch real space: each room claims its footprint first (a
-  prefab's rect, a plain room's ring, a stop's cell), then each corridor is routed between them, with its length
-  (compact ↔ sprawling), its bends (straight ↔ winding) and its width. The sketch's size is internal and never
-  seen; the floor's size follows from the embed. Lock seating, the lesson rules and the solver therefore keep
-  working on the same decisions; validate runs on the embedded floor. The engine is swapped in once it carves every
-  floor. The order of passes is the builder's.
+- **Three stages: graph, layout, carve** (designer, 2026-10-30, after seeing a first try that stretched the lattice's
+  rows and columns: too big, rooms far apart, it read as a grid).
+  - **Graph.** The existing passes in `src/game/carve/` (`docs/instructions/carve-passes.md`) keep deciding the
+    floor's topology — which nodes, which rooms, where chains hang, where locks, gates and drops sit. Their lattice
+    is only a scratchpad: the result is read as a graph (rooms, corridor stops, gates, drops and the corridors that
+    join them) and the lattice positions are dropped. A lesson's order (its shut door met before its control) is
+    already in the lock format, so it lives in the graph, not in geometry.
+  - **Layout.** Pieces get positions; nothing is a cell yet. A room is a block with door places (a prefab's rect, a
+    plain room's footprint, a lock's own `regionLayout` as one fixed block). A corridor is a string: an orthogonal
+    polyline between two door places, holding its stops in order, with a 1-cell margin no other piece may use, so
+    corridors never cross and never run alongside each other or past a room they do not join. A drop is a fixed
+    straight piece. The main path is laid first, then each side path as a subtree hung on its parent (built up as
+    in Enter the Gungeon, not searched as in Edgar: floors are nearly trees). Then the layout is compacted: subtrees
+    slide toward their parent until something is in the way; `spread` sets how tight, `straightness` how often a
+    string bends. A failed placement retries inside its subtree, then the floor retries from a derived seed, with a
+    hard cap; after that the bake refuses with the reason.
+  - **Carve.** Strings become corridors (narrow, or wide where the DSL asks), blocks become rooms, then validate and
+    the existing checks run on the carved floor.
+  - The layout may be drawn on its own (blocks and lines) in Storybook; that is optional. The failure rate of the
+    layout is measured over every shipped floor and many seeds before the swap.
 - **Every tier carves and passes the gates before the swap; only starter is judged by eye for this release**
   (release tier by tier). Junior and up are looked at with their own release.
 - **A lock area's shape is the engine's choice from the seed**, steerable by a selector. A lock's own region
