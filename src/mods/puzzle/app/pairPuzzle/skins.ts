@@ -1,11 +1,15 @@
 import type { FC } from "react"
-import { Mummy, Sarcophagus } from "./glyphs"
+import { PAIR_PUZZLE_META } from "@/mods/puzzle/game/pairPuzzle/meta"
+import { faceFor } from "../faceFor"
+import { DungBall, DungBeetle, Mummy, Sarcophagus } from "./glyphs"
 
 /**
- * What the mummy rest board looks like.
+ * What a pair board looks like in each place.
  *
  * The family emits logical state only: a square is empty, ruled out by the player or holds a piece, an anchor
- * is printed, a line is open, met or broken. The skin decides the pixels (`docs/instructions/puzzle-screens.md`). One skin, a pyramid burial room in the same sandstone as the scarab board.
+ * is printed, a line is open, met or broken. The skin decides the pixels (`docs/instructions/puzzle-screens.md`).
+ * Two places: a pyramid burial room (mummies resting beside sarcophagi) and a desert at night (dung beetles
+ * beside the balls they roll).
  */
 export type PairSkin = {
   /** Which place this is, as its own name: the goal, the rules and every hint sentence are keyed on it. */
@@ -30,12 +34,40 @@ export type PairSkin = {
   conflict: string
   /** What a piece does for its turn in the completion run. */
   celebrate: string
-  /** What an anchor does as its piece arrives in that run. */
+  /** What an anchor's square does as its piece arrives in that run. */
   anchorCelebrate: string
+  /** What the anchor's drawing alone does then, for a drawing that moves within its square (a ball rolls). */
+  anchorGlyphCelebrate?: string
   /** The count beside a line while it still owes pieces, once it holds exactly its count, and once it cannot be met. */
   countOpen: string
   countMet: string
   countBroken: string
+}
+
+const BEETLES: PairSkin = {
+  name: "beetles",
+  // Dark desert earth, so the pale beetle is the brightest thing on the board and the ball is a muted brown
+  // clod on a still darker tile: a different hue from the beetle as well as a different shape.
+  cell: "bg-[#4a3b2d]",
+  spent: "bg-[#392d22]",
+  seam: "rgb(168 138 100 / 0.35)",
+  anchor:
+    "bg-[#2b2118] text-[#a9774a] shadow-[inset_2px_2px_0_rgba(255,255,255,0.12),inset_-2px_-2px_0_rgba(0,0,0,0.4)]",
+  Anchor: DungBall,
+  Glyph: DungBeetle,
+  answer: "scale-125 text-teal-300",
+  dark: "text-stone-400/70",
+  hatch: "rgba(252,211,77,0.45)",
+  evidence: "ring-sky-300/60",
+  focus: "ring-amber-300",
+  conflict: "ring-red-400/90",
+  // The beetle walks up to its ball and stays beside it, and the ball turns once as it gets there.
+  celebrate: "animate-walk-beside relative z-10",
+  anchorCelebrate: "",
+  anchorGlyphCelebrate: "animate-spin-once [animation-delay:400ms]",
+  countOpen: "text-stone-200",
+  countMet: "text-emerald-400",
+  countBroken: "text-red-400",
 }
 
 export const PAIR_SKINS: Record<string, PairSkin> = {
@@ -62,7 +94,14 @@ export const PAIR_SKINS: Record<string, PairSkin> = {
     countMet: "text-emerald-400",
     countBroken: "text-red-400",
   },
+  beetles: BEETLES,
 }
 
-/** One face for now; resolved through a function so a second one is a table entry. */
-export const pairSkinFor = (): PairSkin => PAIR_SKINS.default
+/** Which place this room is, resolved like every family resolves it (`app/faceFor.ts`). */
+export const pairSkinFor = (
+  role: string | string[] | undefined,
+  theme: string | undefined,
+  board = 0,
+  room?: string
+): PairSkin =>
+  PAIR_SKINS[faceFor(PAIR_PUZZLE_META.faces, role, theme, Object.keys(PAIR_SKINS), board, room)] ?? PAIR_SKINS.default

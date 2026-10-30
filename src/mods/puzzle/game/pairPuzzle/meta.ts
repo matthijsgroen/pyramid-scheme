@@ -5,9 +5,9 @@ import { PAIR_PUZZLE_CONFIG } from "./pairPuzzleConfig"
 export const PAIR_PUZZLE_META: FamilyMeta = {
   id: "pair-puzzle",
   ownerMod: "puzzle",
-  tags: ["puzzle", "funerary"],
-  faces: { funerary: ["default"] },
-  themes: ["default"],
+  tags: ["puzzle", "funerary", "cosmos"],
+  faces: { funerary: ["default"], cosmos: ["beetles"] },
+  themes: ["default", "beetles"],
   // The entry tier per docs/game-design/puzzles/pair-puzzle.md; the tier session may move it. Lab-only because
   // it is not in `puzzleMod.families`.
   minTier: "master",

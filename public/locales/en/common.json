@@ -872,10 +872,12 @@
   },
   "pairPuzzle": {
     "name": {
-      "mummies": "Mummy Rest"
+      "mummies": "Mummy Rest",
+      "beetles": "Dung Beetles"
     },
     "goal": {
-      "mummies": "Every sarcophagus gets one mummy beside it, and every row and column holds exactly the number of mummies printed beside it."
+      "mummies": "Every sarcophagus gets one mummy beside it, and every row and column holds exactly the number of mummies printed beside it.",
+      "beetles": "Every dung ball gets one beetle beside it, and every row and column holds exactly the number of beetles printed beside it."
     },
     "rules": {
       "mummies": {
@@ -883,6 +885,12 @@
         "count": "The number beside a row or column says how many mummies it holds. It turns green when the line holds exactly that many, and red when it cannot be met.",
         "touch": "No two mummies may stand next to each other — corners count.",
         "enter": "Tap a square to rule it out, tap again to lay a mummy there, once more to clear it. Drag across squares to rule out a run. Sarcophagi cannot be tapped."
+      },
+      "beetles": {
+        "pair": "Each dung ball has one beetle directly above, below, left or right of it, and every beetle stands beside a ball of its own to roll.",
+        "count": "The number beside a row or column says how many beetles it holds. It turns green when the line holds exactly that many, and red when it cannot be met.",
+        "touch": "No two beetles may stand next to each other — corners count.",
+        "enter": "Tap a square to rule it out, tap again to put a beetle there, once more to clear it. Drag across squares to rule out a run. Dung balls cannot be tapped."
       }
     },
     "hint": {
@@ -914,6 +922,36 @@
           "ruleOut_other": "Rule out the hatched squares.",
           "place_one": "Lay a mummy on the hatched square.",
           "place_other": "Lay a mummy on each hatched square."
+        }
+      },
+      "beetles": {
+        "mistake": "This mark cannot be right.",
+        "touch": "This beetle is down, so no other may stand next to it — corners count.",
+        "zeroLine.row": "This row holds no beetles, so all of it is empty.",
+        "zeroLine.col": "This column holds no beetles, so all of it is empty.",
+        "noAnchor": "These squares have no dung ball beside them, so no beetle can stand here.",
+        "lineFull.row_one": "This row already has its beetle.",
+        "lineFull.row_other": "This row already has its {{count}} beetles.",
+        "lineFull.col_one": "This column already has its beetle.",
+        "lineFull.col_other": "This column already has its {{count}} beetles.",
+        "lineTight.row_one": "This row is down to one square for its beetle.",
+        "lineTight.row_other": "This row is down to exactly {{count}} squares for its {{count}} beetles.",
+        "lineTight.col_one": "This column is down to one square for its beetle.",
+        "lineTight.col_other": "This column is down to exactly {{count}} squares for its {{count}} beetles.",
+        "onlyWay": "This dung ball has only one square left beside it for its beetle.",
+        "claimed": "This dung ball already has its beetle, so the squares beside it that no other ball can use stay empty.",
+        "lineBlock.rowsToCols_one": "The marked rows hold one more beetle than their own dung balls can give, so it comes from a ball just outside them.",
+        "lineBlock.rowsToCols_other": "The marked rows hold {{count}} more beetles than their own dung balls can give, so they come from balls just outside them.",
+        "lineBlock.colsToRows_one": "The marked columns hold one more beetle than their own dung balls can give, so it comes from a ball just outside them.",
+        "lineBlock.colsToRows_other": "The marked columns hold {{count}} more beetles than their own dung balls can give, so they come from balls just outside them.",
+        "wouldStrand.row": "A beetle here would leave the marked row without room for the beetles it still owes.",
+        "wouldStrand.col": "A beetle here would leave the marked column without room for the beetles it still owes.",
+        "wouldStrand.anchor": "A beetle here would leave the marked dung ball with no square beside it for its own beetle.",
+        "action": {
+          "ruleOut_one": "Rule out the hatched square.",
+          "ruleOut_other": "Rule out the hatched squares.",
+          "place_one": "Put a beetle on the hatched square.",
+          "place_other": "Put a beetle on each hatched square."
         }
       }
     }

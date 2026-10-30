@@ -167,7 +167,9 @@ export const PairPuzzleBoard: FC<Props> = ({
                 arrived.has(cell) && skin.anchorCelebrate
               )}
             >
-              <skin.Anchor />
+              <span className={clsx("block size-full", arrived.has(cell) && skin.anchorGlyphCelebrate)}>
+                <skin.Anchor />
+              </span>
             </div>
           ) : (
             <button

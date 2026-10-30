@@ -415,9 +415,9 @@ Star battle with stone blocks instead of regions: one piece to every row and col
 
 Design doc: [puzzles/regionless-battle.md](puzzles/regionless-battle.md)
 
-### 4.25b Pair puzzle (mummy rest)
+### 4.25b Pair puzzle (mummy rest, dung beetles)
 
-The Tents genre: every printed sarcophagus owns one mummy on an orthogonally adjacent square, no two mummies touch, and each row and column holds its printed count. Debut tier master (wizard adds the `wouldStrand` hypothesis rung); theme fit funerary, the burial room. **Lab-only** until bake integration: registered for the puzzle lab through `app/pairPuzzle/plugin.tsx`, not in `src/mods/puzzle/index.ts`.
+The Tents genre: every printed sarcophagus owns one mummy on an orthogonally adjacent square, no two mummies touch, and each row and column holds its printed count. Debut tier master (wizard adds the `wouldStrand` hypothesis rung); two skins: mummies beside sarcophagi (funerary, the burial room; default) and dung beetles beside dung balls (cosmos). **Lab-only** until bake integration: registered for the puzzle lab through `app/pairPuzzle/plugin.tsx`, not in `src/mods/puzzle/index.ts`.
 
 Design doc: [puzzles/pair-puzzle.md](puzzles/pair-puzzle.md)
 

@@ -52,3 +52,52 @@ export const Mummy: FC = () => {
     </svg>
   )
 }
+
+/**
+ * The dung ball printed on the board: a round ball with a few pits cut out of it, muted on a darker tile.
+ * Round and without legs, where the beetle is long and has them, so the two differ in outline and not only
+ * in colour.
+ */
+export const DungBall: FC = () => {
+  const pits = useId()
+  return (
+    <svg viewBox="-50 -50 100 100" className="size-full" aria-hidden focusable="false">
+      <mask id={pits} maskUnits="userSpaceOnUse" x={-50} y={-50} width={100} height={100}>
+        <rect x={-50} y={-50} width={100} height={100} fill="white" />
+        <g fill="black">
+          <circle cx={-14} cy={-14} r={5} />
+          <circle cx={12} cy={-6} r={4} />
+          <circle cx={-4} cy={12} r={5} />
+          <circle cx={16} cy={20} r={3.5} />
+        </g>
+      </mask>
+      <circle cx={0} cy={0} r={38} fill="currentColor" mask={`url(#${pits})`} />
+    </svg>
+  )
+}
+
+/**
+ * The piece the player places: a dung beetle seen from above, head to the top, with a wing-case split down
+ * its back and three legs a side. The split is a gap cut through the shell with a mask, so the drawing
+ * carries no colour of its own.
+ */
+export const DungBeetle: FC = () => {
+  const split = useId()
+  return (
+    <svg viewBox="-50 -50 100 100" className="size-full" aria-hidden focusable="false">
+      <mask id={split} maskUnits="userSpaceOnUse" x={-50} y={-50} width={100} height={100}>
+        <rect x={-50} y={-50} width={100} height={100} fill="white" />
+        <path d="M 0 -8 L 0 34" stroke="black" strokeWidth={4} strokeLinecap="round" />
+      </mask>
+      <g fill="none" stroke="currentColor" strokeWidth={6} strokeLinecap="round">
+        <path d="M -16 -4 L -40 -16 M -18 10 L -44 10 M -15 24 L -38 38" />
+        <path d="M 16 -4 L 40 -16 M 18 10 L 44 10 M 15 24 L 38 38" />
+        <path d="M -9 -38 L -16 -46 M 9 -38 L 16 -46" />
+      </g>
+      <g fill="currentColor">
+        <path d="M -14 -26 L 14 -26 L 10 -38 L -10 -38 Z" />
+        <ellipse cx={0} cy={11} rx={22} ry={30} mask={`url(#${split})`} />
+      </g>
+    </svg>
+  )
+}

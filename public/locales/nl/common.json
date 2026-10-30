@@ -872,10 +872,12 @@
   },
   "pairPuzzle": {
     "name": {
-      "mummies": "Mummierust"
+      "mummies": "Mummierust",
+      "beetles": "Mestkevers"
     },
     "goal": {
-      "mummies": "Elke sarcofaag krijgt één mummie naast zich, en elke rij en kolom bevat precies zoveel mummies als ernaast staat."
+      "mummies": "Elke sarcofaag krijgt één mummie naast zich, en elke rij en kolom bevat precies zoveel mummies als ernaast staat.",
+      "beetles": "Elke mestbal krijgt één kever naast zich, en elke rij en kolom bevat precies zoveel kevers als ernaast staat."
     },
     "rules": {
       "mummies": {
@@ -883,6 +885,12 @@
         "count": "Het getal naast een rij of kolom zegt hoeveel mummies erin liggen. Het wordt groen als de lijn precies dat aantal heeft, en rood als het niet meer kan kloppen.",
         "touch": "Geen twee mummies mogen naast elkaar liggen — hoeken tellen mee.",
         "enter": "Tik een vakje aan om het uit te sluiten, nog eens om er een mummie neer te leggen, en nog eens om het te wissen. Sleep over vakjes om een reeks uit te sluiten. Sarcofagen zijn niet aan te tikken."
+      },
+      "beetles": {
+        "pair": "Bij elke mestbal staat precies één kever, direct erboven, eronder, links of rechts ervan, en elke kever staat naast een eigen bal om te rollen.",
+        "count": "Het getal naast een rij of kolom zegt hoeveel kevers erin staan. Het wordt groen als de lijn precies dat aantal heeft, en rood als het niet meer kan kloppen.",
+        "touch": "Geen twee kevers mogen naast elkaar staan — hoeken tellen mee.",
+        "enter": "Tik een vakje aan om het uit te sluiten, nog eens om er een kever neer te zetten, en nog eens om het te wissen. Sleep over vakjes om een reeks uit te sluiten. Mestballen zijn niet aan te tikken."
       }
     },
     "hint": {
@@ -914,6 +922,36 @@
           "ruleOut_other": "Sluit de gearceerde vakjes uit.",
           "place_one": "Leg een mummie op het gearceerde vakje.",
           "place_other": "Leg een mummie op elk gearceerd vakje."
+        }
+      },
+      "beetles": {
+        "mistake": "Deze markering kan niet kloppen.",
+        "touch": "Deze kever staat er, dus er mag er geen naast staan — hoeken tellen mee.",
+        "zeroLine.row": "In deze rij staat geen kever, dus de hele rij is leeg.",
+        "zeroLine.col": "In deze kolom staat geen kever, dus de hele kolom is leeg.",
+        "noAnchor": "Naast deze vakjes ligt geen mestbal, dus hier kan geen kever staan.",
+        "lineFull.row_one": "Deze rij heeft haar kever al.",
+        "lineFull.row_other": "Deze rij heeft haar {{count}} kevers al.",
+        "lineFull.col_one": "Deze kolom heeft zijn kever al.",
+        "lineFull.col_other": "Deze kolom heeft zijn {{count}} kevers al.",
+        "lineTight.row_one": "Deze rij heeft nog maar één vakje over voor haar kever.",
+        "lineTight.row_other": "Deze rij heeft nog precies {{count}} vakjes over voor haar {{count}} kevers.",
+        "lineTight.col_one": "Deze kolom heeft nog maar één vakje over voor zijn kever.",
+        "lineTight.col_other": "Deze kolom heeft nog precies {{count}} vakjes over voor zijn {{count}} kevers.",
+        "onlyWay": "Naast deze mestbal is nog maar één vakje over voor zijn kever.",
+        "claimed": "Deze mestbal heeft zijn kever al, dus de vakjes ernaast die geen andere bal kan gebruiken blijven leeg.",
+        "lineBlock.rowsToCols_one": "De gemarkeerde rijen hebben één kever meer dan hun eigen mestballen kunnen leveren, dus die komt van een bal net buiten de rijen.",
+        "lineBlock.rowsToCols_other": "De gemarkeerde rijen hebben {{count}} kevers meer dan hun eigen mestballen kunnen leveren, dus die komen van ballen net buiten de rijen.",
+        "lineBlock.colsToRows_one": "De gemarkeerde kolommen hebben één kever meer dan hun eigen mestballen kunnen leveren, dus die komt van een bal net buiten de kolommen.",
+        "lineBlock.colsToRows_other": "De gemarkeerde kolommen hebben {{count}} kevers meer dan hun eigen mestballen kunnen leveren, dus die komen van ballen net buiten de kolommen.",
+        "wouldStrand.row": "Een kever hier laat de gemarkeerde rij zonder ruimte voor de kevers die nog moeten komen.",
+        "wouldStrand.col": "Een kever hier laat de gemarkeerde kolom zonder ruimte voor de kevers die nog moeten komen.",
+        "wouldStrand.anchor": "Een kever hier laat de gemarkeerde mestbal zonder vakje ernaast voor zijn eigen kever.",
+        "action": {
+          "ruleOut_one": "Sluit het gearceerde vakje uit.",
+          "ruleOut_other": "Sluit de gearceerde vakjes uit.",
+          "place_one": "Zet een kever op het gearceerde vakje.",
+          "place_other": "Zet een kever op elk gearceerd vakje."
         }
       }
     }

@@ -36,10 +36,10 @@ type Props = {
   onCancel: () => void
 }
 
-export const PairPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }) => {
+export const PairPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const [state, setState] = usePuzzleState(() => createPairState(puzzle), puzzle)
-  const skin = pairSkinFor()
+  const skin = pairSkinFor(role, theme, puzzle.size, room)
 
   // A hint is derived only once asked for (the top rungs hypothesise square by square) and held as it was
   // until a move ends it, so one that names several squares keeps naming the same ones.

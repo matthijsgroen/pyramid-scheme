@@ -98,10 +98,19 @@ master and a wizard board in the lab.
 
 ## 8. Theming
 
-Tags `puzzle` and `funerary`, the `default` face, one theme, `default`; the icon is a coffin on stone. One skin,
-`mummies` ("Mummy Rest" / "Mummierust"), a pyramid burial room in the sandstone of the scarab board:
-sarcophagi (anchors, printed on the board, drawn as an outlined lidded case) and mummies (the pieces, a
-wrapped figure with the bands cut out of the silhouette). Both are inline SVG in `app/pairPuzzle/glyphs.tsx`;
-every colour lives in `skins.ts`, including the three count colours. The copy lives under `pairPuzzle.*`.
+Tags `puzzle`, `funerary` and `cosmos`; faces `funerary: ["default"]` and `cosmos: ["beetles"]`; themes `default` and
+`beetles` (the lab picks a skin by theme). The icon is a coffin on stone. Two skins, resolved by `pairSkinFor` through
+`faceFor` like every family:
+
+| skin | role | anchor (printed) | piece | solve animation |
+| --- | --- | --- | --- | --- |
+| `mummies` (default; "Mummy Rest" / "Mummierust") | `funerary` | sarcophagus | mummy | the mummy walks into its sarcophagus, which flares |
+| `beetles` ("Dung Beetles" / "Mestkevers") | `cosmos` | dung ball | dung beetle | the beetle walks up to its ball and the ball turns once |
+
+`mummies` is a pyramid burial room in sandstone: sarcophagi drawn as an outlined lidded case, mummies as a wrapped
+figure with the bands cut out of the silhouette. `beetles` is dark desert earth: a muted brown ball with pits on a
+darker tile, and a pale teal beetle with a split wing-case and three legs a side, so ball and beetle differ in
+outline and hue. Glyphs are inline SVG in `app/pairPuzzle/glyphs.tsx`; every colour lives in `skins.ts`, including the
+three count colours. The copy lives under `pairPuzzle.*`, keyed by skin name.
 The screen is registered in `app/pairPuzzle/plugin.tsx` and reachable in the puzzle lab only: the family stays
 out of the mod's family list until a site is meant to deal it.

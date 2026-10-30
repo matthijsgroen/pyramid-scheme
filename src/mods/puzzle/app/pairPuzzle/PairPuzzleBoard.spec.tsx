@@ -50,6 +50,27 @@ describe("PairPuzzleBoard", () => {
     expect(walking.style.getPropertyValue("--dy")).toBe("0")
     expect(container.querySelector("[data-anchor]")!.className).toContain("animate-flare")
   })
+  it("walks a celebrated beetle toward its ball, and the ball gets the roll", () => {
+    const beetles = PAIR_SKINS.beetles
+    const marks = blank()
+    marks[0] = "piece"
+    const { container } = render(
+      <PairPuzzleBoard
+        puzzle={puzzle}
+        state={{ marks }}
+        skin={beetles}
+        celebrated={new Set([0])}
+        pairing={new Map([[0, 1]])}
+        onTapCell={() => undefined}
+        onSweepCells={() => undefined}
+      />
+    )
+    const walking = container.querySelector<HTMLElement>(".animate-walk-beside")!
+    expect(walking.style.getPropertyValue("--dx")).toBe("1")
+    expect(walking.style.getPropertyValue("--dy")).toBe("0")
+    expect(container.querySelector("[data-anchor] .animate-spin-once")).not.toBeNull()
+  })
+
   it("draws an anchor without a button, so it cannot be tapped", () => {
     const taps: number[] = []
     const { container } = show(blank(), taps)

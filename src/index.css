@@ -171,6 +171,18 @@ body {
     }
   }
 
+  /* A piece walking up to the square beside it and staying there, short of the middle so the thing it walked
+     to is still seen: `--dx`/`--dy` as for into-tomb. */
+  --animate-walk-beside: walk-beside 500ms ease-in-out forwards;
+  @keyframes walk-beside {
+    from {
+      translate: 0 0;
+    }
+    to {
+      translate: calc(var(--dx, 0) * 70%) calc(var(--dy, 0) * 70%);
+    }
+  }
+
   /* A sheet taken up: the roll travels from the foot of a chamber to its head, and then back down. What it
      uncovers is the table the sheet lies on, so the writing goes up with the part already rolled — the way
      it would on a real sheet, where a rolled inch is an inch you cannot read.
@@ -689,7 +701,8 @@ body {
   .animate-refuse,
   .animate-flare,
   .animate-spin-once,
-  .animate-into-tomb {
+  .animate-into-tomb,
+  .animate-walk-beside {
     animation-duration: 1ms;
   }
 }

@@ -94,20 +94,24 @@ describe("mummy rest copy", () => {
     for (const technique of PAIR_TECHNIQUES) expect(keys.some(key => key.startsWith(technique))).toBe(true)
   })
 
-  it.each(keys)("%s reads as a sentence in English and Dutch", key => {
-    for (const locale of [en, nl]) {
-      const block = locale.pairPuzzle.hint.mummies as unknown as Record<string, unknown>
-      const phrase = key.startsWith("action.") ? (block.action as Record<string, string>)[key.slice(7)] : block[key]
-      expect(typeof phrase).toBe("string")
-    }
+  const SKIN_NAMES = ["mummies", "beetles"] as const
+
+  it.each(keys)("%s reads as a sentence in English and Dutch, for every skin", key => {
+    for (const locale of [en, nl])
+      for (const skin of SKIN_NAMES) {
+        const block = locale.pairPuzzle.hint[skin] as unknown as Record<string, unknown>
+        const phrase = key.startsWith("action.") ? (block.action as Record<string, string>)[key.slice(7)] : block[key]
+        expect(typeof phrase, skin).toBe("string")
+      }
   })
 
-  it("has the name, the goal and the four rules in both", () => {
-    for (const locale of [en, nl]) {
-      expect(typeof locale.pairPuzzle.name.mummies).toBe("string")
-      expect(typeof locale.pairPuzzle.goal.mummies).toBe("string")
-      const rules = locale.pairPuzzle.rules.mummies as Record<string, string>
-      for (const rule of ["pair", "count", "touch", "enter"]) expect(typeof rules[rule], rule).toBe("string")
-    }
+  it("has the name, the goal and the four rules in both, for every skin", () => {
+    for (const locale of [en, nl])
+      for (const skin of SKIN_NAMES) {
+        expect(typeof locale.pairPuzzle.name[skin]).toBe("string")
+        expect(typeof locale.pairPuzzle.goal[skin]).toBe("string")
+        const rules = locale.pairPuzzle.rules[skin] as Record<string, string>
+        for (const rule of ["pair", "count", "touch", "enter"]) expect(typeof rules[rule], rule).toBe("string")
+      }
   })
 })
