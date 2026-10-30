@@ -33,6 +33,14 @@ COMMENTS
   // comment                    ignored to the end of the line; a file opens with // designed by: name
 ```
 
+## Where a room stands
+
+A room claims its space before the maze is dug (`reserveRooms`, docs/instructions/carve-passes.md): its rect and
+ring are reserved on the lattice, the paths are walked to it, and the maze grows around it.
+
+A lock region can be a designed room. Such a room has at most four ways, no drop end, a door place (`d`) for each way
+and a mechanism place (`m`) for each control the region holds.
+
 ## The check
 
 `src/game/prefabChecks.ts` takes every variant of a room (each layout, plus its mirror when the header says

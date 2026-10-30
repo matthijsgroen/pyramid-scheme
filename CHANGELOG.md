@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Designed rooms on the starter floors.
 - New art for the starter pyramids.
 - The camp: your base, which you build out with what you find.
 - A new look: the camp is your home screen, with all journeys in one list and the collection in tabs.
