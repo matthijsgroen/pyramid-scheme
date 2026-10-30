@@ -28,7 +28,10 @@ export type PairSkin = {
   evidence: string
   focus: string
   conflict: string
+  /** What a piece does for its turn in the completion run. */
   celebrate: string
+  /** What an anchor does as its piece arrives in that run. */
+  anchorCelebrate: string
   /** The count beside a line while it still owes pieces, once it holds exactly its count, and once it cannot be met. */
   countOpen: string
   countMet: string
@@ -51,7 +54,10 @@ export const PAIR_SKINS: Record<string, PairSkin> = {
     evidence: "ring-sky-800/70",
     focus: "ring-emerald-950",
     conflict: "ring-red-800",
-    celebrate: "animate-flare",
+    // Each mummy walks into its sarcophagus and is gone; the sarcophagus catches the light as it arrives.
+    // Raised above the squares so the walk is drawn over the neighbouring one.
+    celebrate: "animate-into-tomb relative z-10",
+    anchorCelebrate: "animate-flare [animation-delay:450ms]",
     countOpen: "text-stone-200",
     countMet: "text-emerald-400",
     countBroken: "text-red-400",

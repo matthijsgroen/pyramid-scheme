@@ -7,6 +7,7 @@ import {
   hasPerfectPairing,
   lineStatus,
   pairConflicts,
+  pairingOf,
   pairSolved,
   ruledOutByPieces,
   sweepPairCells,
@@ -44,6 +45,17 @@ describe("pair puzzle", () => {
     const pieces = (cells: number[]) => Array.from({ length: 16 }, (_u, i) => cells.includes(i))
     expect(hasPerfectPairing(board, pieces([0, 15]))).toBe(true)
     expect(hasPerfectPairing(board, pieces([0, 2]))).toBe(false)
+  })
+
+  it("a pairing names the anchor each piece belongs to", () => {
+    const pieces = (cells: number[]) => Array.from({ length: 16 }, (_u, i) => cells.includes(i))
+    expect(pairingOf(board, pieces([0, 15]))).toEqual(
+      new Map([
+        [0, 1],
+        [15, 11],
+      ])
+    )
+    expect(pairingOf(board, pieces([0, 2]))).toBeUndefined()
   })
 
   it("a tap on an anchor changes nothing", () => {

@@ -31,6 +31,25 @@ const show = (marks: (PairMark | undefined)[], taps: number[] = []) =>
 const blank = () => new Array<PairMark | undefined>(9).fill(undefined)
 
 describe("PairPuzzleBoard", () => {
+  it("walks a celebrated piece toward its anchor, and the anchor catches the light", () => {
+    const marks = blank()
+    marks[0] = "piece"
+    const { container } = render(
+      <PairPuzzleBoard
+        puzzle={puzzle}
+        state={{ marks }}
+        skin={skin}
+        celebrated={new Set([0])}
+        pairing={new Map([[0, 1]])}
+        onTapCell={() => undefined}
+        onSweepCells={() => undefined}
+      />
+    )
+    const walking = container.querySelector<HTMLElement>(".animate-into-tomb")!
+    expect(walking.style.getPropertyValue("--dx")).toBe("1")
+    expect(walking.style.getPropertyValue("--dy")).toBe("0")
+    expect(container.querySelector("[data-anchor]")!.className).toContain("animate-flare")
+  })
   it("draws an anchor without a button, so it cannot be tapped", () => {
     const taps: number[] = []
     const { container } = show(blank(), taps)

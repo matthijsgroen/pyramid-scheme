@@ -151,6 +151,26 @@ body {
     }
   }
 
+  /* A piece walking into the square beside it and gone: `--dx`/`--dy` are the step in squares (-1, 0 or 1),
+     set by the board. The glyph fills 80% of its square, so one square is 125% of the glyph. It stays gone
+     (`forwards`): the piece is inside now. `translate` and `scale` are their own properties so they compose
+     with a skin's own `scale` rather than being multiplied by it. */
+  --animate-into-tomb: into-tomb 600ms ease-in forwards;
+  @keyframes into-tomb {
+    from {
+      translate: 0 0;
+      opacity: 1;
+    }
+    70% {
+      opacity: 1;
+    }
+    to {
+      translate: calc(var(--dx, 0) * 125%) calc(var(--dy, 0) * 125%);
+      scale: 0.5;
+      opacity: 0;
+    }
+  }
+
   /* A sheet taken up: the roll travels from the foot of a chamber to its head, and then back down. What it
      uncovers is the table the sheet lies on, so the writing goes up with the part already rolled — the way
      it would on a real sheet, where a rolled inch is an inch you cannot read.
@@ -668,7 +688,8 @@ body {
   .animate-pour-level,
   .animate-refuse,
   .animate-flare,
-  .animate-spin-once {
+  .animate-spin-once,
+  .animate-into-tomb {
     animation-duration: 1ms;
   }
 }

@@ -65,13 +65,15 @@ export const canUndoPair = (state: PairState): boolean => state.past.length > 0
 const anchorCells = (puzzle: PairPuzzle): number[] => puzzle.anchors.flatMap((a, cell) => (a ? [cell] : []))
 
 /**
- * Whether the pieces can be dealt out one to an anchor: bipartite matching, each piece beside its own
- * anchor and every anchor used once. Counts alone cannot tell, because two pieces may crowd one anchor.
+ * One way to deal the pieces out one to an anchor, as piece → anchor: bipartite matching, each piece beside
+ * its own anchor and every anchor used once. Undefined when there is none. Counts alone cannot tell, because
+ * two pieces may crowd one anchor. Where several pairings exist this is one of them: a board's answer is
+ * where the pieces stand, never which anchor each one belongs to.
  */
-export const hasPerfectPairing = (puzzle: PairPuzzle, pieces: readonly boolean[]): boolean => {
+export const pairingOf = (puzzle: PairPuzzle, pieces: readonly boolean[]): Map<number, number> | undefined => {
   const pieceCells = pieces.flatMap((p, cell) => (p ? [cell] : []))
   const anchors = anchorCells(puzzle)
-  if (pieceCells.length !== anchors.length) return false
+  if (pieceCells.length !== anchors.length) return undefined
   const owner = new Map<number, number>()
   const assign = (piece: number, seen: Set<number>): boolean =>
     orthogonalOf(puzzle.size, piece).some(anchor => {
@@ -82,8 +84,12 @@ export const hasPerfectPairing = (puzzle: PairPuzzle, pieces: readonly boolean[]
       owner.set(anchor, piece)
       return true
     })
-  return pieceCells.every(piece => assign(piece, new Set()))
+  if (!pieceCells.every(piece => assign(piece, new Set()))) return undefined
+  return new Map([...owner].map(([anchor, piece]) => [piece, anchor]))
 }
+
+export const hasPerfectPairing = (puzzle: PairPuzzle, pieces: readonly boolean[]): boolean =>
+  pairingOf(puzzle, pieces) !== undefined
 
 const lineOf = (puzzle: PairPuzzle, marks: PairMarks["marks"], cells: number[], count: number): LineStatus => {
   const pieces = cells.filter(cell => marks[cell] === "piece").length

@@ -1,5 +1,6 @@
 import clsx from "clsx"
-import { useRef, useState, type FC, type PointerEvent } from "react"
+import { useRef, useState, type CSSProperties, type FC, type PointerEvent } from "react"
+import { colOf, rowOf } from "@/mods/puzzle/game/starBattle/starBattle"
 import {
   lineStatus,
   pairConflicts,
@@ -23,6 +24,8 @@ type Props = {
   focus?: number
   /** The pieces that have had their turn in the completion run, so far. */
   celebrated?: ReadonlySet<number>
+  /** The anchor each piece walks into during that run, as piece → anchor. */
+  pairing?: ReadonlyMap<number, number>
   onTapCell: (cell: number) => void
   /** A run of squares ruled out in one gesture. */
   onSweepCells: (cells: number[]) => void
@@ -50,10 +53,21 @@ export const PairPuzzleBoard: FC<Props> = ({
   decided,
   focus,
   celebrated,
+  pairing,
   onTapCell,
   onSweepCells,
 }) => {
   const { size } = puzzle
+  const arrived = new Set([...(celebrated ?? [])].flatMap(piece => pairing?.get(piece) ?? []))
+  // The step from a piece to its anchor, in squares, for the walk the skin draws.
+  const walkTo = (piece: number): CSSProperties | undefined => {
+    const anchor = pairing?.get(piece)
+    if (anchor === undefined) return undefined
+    return {
+      "--dx": colOf(size, anchor) - colOf(size, piece),
+      "--dy": rowOf(size, anchor) - rowOf(size, piece),
+    } as CSSProperties
+  }
   const grid = useRef<HTMLDivElement | null>(null)
   // The gesture lives in a ref and lands once on release, so a drag is one undo step (see star battle).
   const drag = useRef<{ from: number; swept: number[] } | undefined>(undefined)
@@ -146,7 +160,12 @@ export const PairPuzzleBoard: FC<Props> = ({
               key={cell}
               data-anchor
               aria-hidden
-              className={clsx("flex aspect-square min-h-0 items-center justify-center p-[10%]", skin.anchor, ring)}
+              className={clsx(
+                "flex aspect-square min-h-0 items-center justify-center p-[10%]",
+                skin.anchor,
+                ring,
+                arrived.has(cell) && skin.anchorCelebrate
+              )}
             >
               <skin.Anchor />
             </div>
@@ -174,7 +193,10 @@ export const PairPuzzleBoard: FC<Props> = ({
               )}
             >
               {value === "piece" ? (
-                <span className={clsx("block size-full", skin.answer, celebrated?.has(cell) && skin.celebrate)}>
+                <span
+                  className={clsx("block size-full", skin.answer, celebrated?.has(cell) && skin.celebrate)}
+                  style={celebrated?.has(cell) ? walkTo(cell) : undefined}
+                >
                   <skin.Glyph />
                 </span>
               ) : value === "empty" || sweeping.includes(cell) ? (

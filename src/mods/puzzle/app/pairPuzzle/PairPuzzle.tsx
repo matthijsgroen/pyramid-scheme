@@ -11,6 +11,7 @@ import {
   canUndoPair,
   createPairState,
   cyclePairCell,
+  pairingOf,
   pairSolved,
   sweepPairCells,
   undoPair,
@@ -51,6 +52,14 @@ export const PairPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }
   const pieces = state.marks.flatMap((value, cell) => (value === "piece" ? [cell] : []))
   const celebration = useCelebration(finished, pieces.length)
   const celebrated = new Set(pieces.slice(0, Math.round(celebration.progress * pieces.length)))
+  // Where each piece walks to in that run. A solved board always has a pairing; which one is drawn does not
+  // matter when there are several, the answer is where the pieces stand.
+  const pairing = finished
+    ? pairingOf(
+        puzzle,
+        state.marks.map(mark => mark === "piece")
+      )
+    : undefined
 
   // Two lines: the reason, then what to do about it.
   const hintText = useCallback(() => {
@@ -85,6 +94,7 @@ export const PairPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }
           decided={hintVisible ? open : undefined}
           focus={hintVisible && hint && open ? openFocus(hint.focus, open) : undefined}
           celebrated={celebrated}
+          pairing={pairing}
           onTapCell={cell => {
             if (finished) return
             const next = cyclePairCell(state, cell, puzzle)
