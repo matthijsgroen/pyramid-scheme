@@ -1,6 +1,6 @@
 import { useMemo, type FC } from "react"
 import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
-import { classifyItemMove, openItems, type Decision } from "@/mods/core/app/markMoveEffect"
+import { classifyItemMove, cycleDecision, openItems } from "@/mods/core/app/markMoveEffect"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import { SumpleteBoard } from "@/mods/puzzle/app/sumplete/SumpleteBoard"
@@ -15,11 +15,8 @@ import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"
 
-/** The tap cycle runs unknown, strike, keep: a keep is reached through a strike, a strike is reached directly. */
-const decisionFor = (target: SumpleteMark): Decision<SumpleteMark> => ({
-  holds: mark => mark === target,
-  follows: (_before, after) => after === target || (target === "keep" && after === "strike"),
-})
+/** The tap cycle (toggleSumpleteCell): a keep is reached through a strike. */
+const CYCLE: readonly SumpleteMark[] = ["unknown", "strike", "keep"]
 
 type Props = {
   puzzle: SumpleteGrid
@@ -70,7 +67,7 @@ export const SumpletePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCanc
     [grid, rowTargets, colTargets, state.cells, solution, techniqueCap]
   )
   const { hint, freeze, drop } = useFrozenHint(() => available)
-  const decisions = new Map([...(hint?.targets ?? [])].map(([cell, target]) => [cell, decisionFor(target)]))
+  const decisions = new Map([...(hint?.targets ?? [])].map(([cell, target]) => [cell, cycleDecision(CYCLE, target)]))
   const open = hint ? openItems(hint.cells, decisions, cell => cellMark(state.cells, cell)) : undefined
 
   return (

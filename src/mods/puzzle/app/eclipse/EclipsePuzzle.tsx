@@ -6,7 +6,7 @@ import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
-import { classifyItemMove, openItems, openFocus, type Decision } from "@/mods/core/app/markMoveEffect"
+import { classifyItemMove, cycleDecision, openItems, openFocus } from "@/mods/core/app/markMoveEffect"
 import {
   canUndoEclipse,
   createEclipseState,
@@ -29,11 +29,8 @@ type Props = {
   onCancel: () => void
 }
 
-/** The tap cycle runs empty, sun, moon: a moon is reached through a sun, a sun is reached directly. */
-const decisionFor = (target: Mark): Decision<Mark | undefined> => ({
-  holds: mark => mark === target,
-  follows: (_before, after) => after === target || (target === "moon" && after === "sun"),
-})
+/** The tap cycle (cycleEclipseCell): a moon is reached through a sun. */
+const CYCLE: readonly (Mark | undefined)[] = [undefined, "sun", "moon"]
 
 export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
@@ -42,7 +39,7 @@ export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, 
   // A hint reads the board, and the top rung enumerates every legal filling of every line: derived only once
   // asked for, and held as it was until a move ends it, so one that names several squares keeps naming them.
   const { hint, freeze, drop } = useFrozenHint(() => buildEclipseHint(puzzle, state, puzzle.solution))
-  const decisions = new Map([...(hint?.targets ?? [])].map(([cell, target]) => [cell, decisionFor(target)]))
+  const decisions = new Map([...(hint?.targets ?? [])].map(([cell, target]) => [cell, cycleDecision(CYCLE, target)]))
   const open = hint ? openItems(hint.decided, decisions, cell => state.marks[cell]) : undefined
 
   /**

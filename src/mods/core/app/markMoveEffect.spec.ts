@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import {
   classifyItemMove,
   classifyMarkMove,
+  cycleDecision,
   openDecisions,
   openFocus,
   openItems,
@@ -48,9 +49,10 @@ describe("classifyMarkMove", () => {
     expect(classifyMarkMove(place, vocab, "tap", board({ 5: "dark" }), board({ 5: "star" }))).toBe("move")
   })
 
-  it("ends every move on a mistake hint", () => {
+  it("ends every move on a mistake hint, and keeps it through a tap that changes nothing", () => {
     const mistake = { decided: new Set([0]), action: undefined }
     expect(classifyMarkMove(mistake, vocab, "tap", board({ 0: "star" }), board({}))).toBe("move")
+    expect(classifyMarkMove(mistake, vocab, "tap", board({ 0: "star" }), board({ 0: "star" }))).toBe("look")
   })
 
   it("follows a sweep that only darkens decided rule-out squares", () => {
@@ -73,10 +75,39 @@ describe("classifyMarkMove", () => {
   })
 })
 
+describe("cycleDecision", () => {
+  const cycle = [undefined, "sun", "moon"] as const
+  const moon = cycleDecision<(typeof cycle)[number]>(cycle, "moon")
+  const sun = cycleDecision<(typeof cycle)[number]>(cycle, "sun")
+
+  it("follows the target, and a value the cycle passes on the way to it", () => {
+    expect(moon.follows(undefined, "sun")).toBe(true)
+    expect(moon.follows("sun", "moon")).toBe(true)
+    expect(sun.follows(undefined, "sun")).toBe(true)
+  })
+
+  it("does not follow a value past the target, or back to the cycle's start", () => {
+    expect(sun.follows("sun", "moon")).toBe(false)
+    expect(moon.follows("moon", undefined)).toBe(false)
+  })
+
+  it("follows nothing toward a target the cycle never reaches", () => {
+    const short = cycleDecision<string | undefined>([undefined, "dark"], "star")
+    expect(short.follows(undefined, "dark")).toBe(false)
+    expect(short.follows(undefined, "star")).toBe(false)
+  })
+
+  it("holds only on the target", () => {
+    expect(moon.holds("moon")).toBe(true)
+    expect(moon.holds("sun")).toBe(false)
+  })
+})
+
 describe("openDecisions and openFocus", () => {
   it("lists only the decisions not yet holding their target", () => {
     expect([...openDecisions(ruleOut, vocab, board({ 0: "dark" }))]).toEqual([1, 2])
     expect([...openDecisions(place, vocab, board({ 3: "dark" }))]).toEqual([3, 4])
+    expect([...openDecisions({ decided: new Set([0]), action: undefined }, vocab, board({ 0: "star" }))]).toEqual([0])
   })
 
   it("moves the focus to the first open decision once its square is done", () => {
