@@ -1,6 +1,6 @@
 # Regionless battle and pair puzzle — design
 
-Three new puzzle families for the higher tiers. The two puzzles they are modelled on were shown by the user as
+Two new puzzle families for the higher tiers. The two puzzles they are modelled on were shown by the user as
 screenshots from a phone app ("Ninjas", "Pandas").
 
 ## Intent
@@ -9,8 +9,7 @@ More puzzle variety above starter. Both mechanics are well known outside the gam
 feed the deduction ladders and hints directly:
 
 - **Ninjas** is a regionless Star Battle with blocked cells. Known as *Star Battle (Regionless)* on Logic Masters and
-  as *Battle Star* in the UK Puzzle Association guides. The two-per-line form on 10×10 is the regionless twin of
-  *Two Not Touch*.
+  as *Battle Star* in the UK Puzzle Association guides.
 - **Pandas** is *Tents* (also *Tents and Trees*, *Campsites*; Simon Tatham's collection calls it Tents).
 
 The funerary role is the biggest gap in rooms reached (`journeys.md` §9). These families add funerary pool depth.
@@ -18,14 +17,13 @@ The funerary role is the biggest gap in rooms reached (`journeys.md` §9). These
 ## Goals
 
 1. **`regionless-battle`**: regionless star battle, one piece per row and column.
-2. **`regionless-twin-battle`**: the same with two per row and column, its own family — the twin stars precedent
-   (`docs/game-design/puzzles/star-battle.md` §11: a tier may make reasoning harder, it may not change the task).
-3. **`pair-puzzle`**: Tents.
+2. **`pair-puzzle`**: Tents.
 
 Family ids name the puzzle type, never a skin element (user's rule). Scarabs, mummies and sarcophagi are skins.
 
 ## Non-goals
 
+- A two-per-line regionless family. Dropped (user, 2026-10-30): 7×7 and smaller admit no placement, 8×8 admits only two (mirror images), so 9×9 is the smallest with variety, and at 9×9–10×10 the cells sit at 32–37px on 360–375px phones.
 - The starter tier. Starter has enough puzzles; these are for the higher tiers.
 - Deciding the exact entry tier per family. That is a separate session reviewing which families enter at which
   tier, across all families (user's request). Until then see "Entry tier" below.
@@ -42,10 +40,10 @@ Family ids name the puzzle type, never a skin element (user's rule). Scarabs, mu
 
 ## Rules
 
-### Regionless battle / regionless twin battle
+### Regionless battle
 
 - Square grid. Some cells are walls: nothing can be placed in them.
-- Each row and each column holds exactly **N** pieces (N = 1 for regionless battle, 2 for regionless twin battle).
+- Each row and each column holds exactly one piece.
 - No two pieces touch, diagonals included.
 - Walls only block their own cell. They do not split a row or column into separate stretches. A row's count is over
   the whole row.
@@ -65,13 +63,13 @@ Family ids name the puzzle type, never a skin element (user's rule). Scarabs, mu
 
 ## Skins (one each)
 
-- **Regionless families:** scarabs, on a pyramid-floor look (sandstone tiles; walls as raised stone blocks).
+- **Regionless battle:** scarabs, on a pyramid-floor look (sandstone tiles; walls as raised stone blocks).
 - **Pair puzzle:** sarcophagi as anchors, mummies as pieces.
 
 ## Spent squares
 
 The eight squares around a placed piece are drawn as spent (receded), exactly as star battle does with
-`ruledOutByStars` (`src/mods/puzzle/game/starBattle/starBattle.ts:159`), in all three families. So `touch` stays
+`ruledOutByStars` (`src/mods/puzzle/game/starBattle/starBattle.ts:159`), in both families. So `touch` stays
 propagation, not a step: free in grading and never answered by a hint (star-battle.md §3, T0).
 
 The user first wanted star battle's shading removed as too easy, then kept it once it was clear that removing it
@@ -86,9 +84,8 @@ set. The tier session may still move them.
 | ------------------------ | ------ | ----------------------------------------------------------------------- |
 | `regionless-battle`      | expert | about 7×7 at expert → 9×9 at wizard; fewer walls as tiers rise           |
 | `pair-puzzle`            | master | about 8×8 at master → 10×10 at wizard; harder through ambiguous pairings |
-| `regionless-twin-battle` | wizard | 10×10                                                                   |
 
-Walls are the regionless families' gifts, the way small regions are in star battle §5. The first tier a family
+Walls are regionless battle's gifts, the way small regions are in star battle §5. The first tier a family
 enters at is its teaching tier: easiest settings of that family, whatever the tier's name.
 
 Why these tiers, measured on `camp/home-and-loot` at `f9a63d65` (every pyramid floor carved, keyed by the floor's own
@@ -110,11 +107,11 @@ Build every family so its tier table can start at any tier, and keep each tier's
 
 ## Claude's calls (check while reading)
 
-- **Board reuse.** Regionless families reuse star battle's board, marks, drag, spent squares, completion run and hint
+- **Board reuse.** Regionless battle reuses star battle's board, marks, drag, spent squares, completion run and hint
   plumbing. The family's puzzle type gains walls instead of regions; read how far regions reach in the star battle
   code (`groupsOf`, `regionCells`, the `boundary` strokes in `StarBattleBoard.tsx`) and decide whether a shared core
   with two puzzle shapes or a separate family module is cleaner. Pair puzzle gets its own module and board.
-- **Tags.** Regionless families: `["puzzle", "funerary", "cosmos"]` (the scarab is the sun beetle). Pair puzzle:
+- **Tags.** Regionless battle: `["puzzle", "funerary", "cosmos"]` (the scarab is the sun beetle). Pair puzzle:
   `["puzzle", "funerary"]`. Confirm against the role pools and `rolePools.verify.ts`.
 - Display names (en + nl) follow the skin, the way star battle's sentences are keyed on the skin's `name`/`token`;
   only the ids are generic.
@@ -125,7 +122,7 @@ Each family gets a technique ladder that drives both generation (grading) and hi
 explains itself, as `techniques.ts` does for star battle. These rungs come from the published literature and are
 where to start, not a fixed list; measure them on generated boards as star-battle.md §3.4 did.
 
-### Regionless battle / twin
+### Regionless battle
 
 From star battle, minus everything region-based:
 
@@ -161,7 +158,7 @@ position-only uniqueness.
 - Follow `docs/instructions/puzzle-screens.md` and the star battle family as the template: meta, generator with
   uniqueness proof, grader, techniques, hint engine, board, rules screen, skin, en + nl copy.
 - Each family gets its own design doc under `docs/game-design/puzzles/` (rules, ladder, generation, knobs, hints),
-  following `star-battle.md`'s outline. The twin is a section of the regionless battle doc, like twin stars is §11.
+  following `star-battle.md`'s outline.
 - Soundness: property-test the rungs from player-reachable states and against a line's legal fillings, not only on
   generated boards (`project_eclipse_solver_soundness`).
 - Generation and solvability checks live in `*.verify.ts`, not unit tests (`project_board_fixtures`).
@@ -184,14 +181,14 @@ position-only uniqueness.
 - Wall density curves per tier, and the generator approach (walls first then fill, or solution first then walls).
 - Exact rung list after measuring.
 - SVG drawings for scarab, mummy and sarcophagus, and the sandstone floor palette.
-- Order of work. Suggested: regionless battle → regionless twin battle → pair puzzle.
+- Order of work. Suggested: regionless battle → pair puzzle.
 - This branch is forked from `camp/home-and-loot`, where the measurements were taken.
 
 ## Follow-up (not this project)
 
 - Tier session: which families enter at which tier, across all families. Junior introducing 8 rule sets at once is the first thing to look at.
-- Bake integration: add the three metas to `puzzleMod.families` and rebake.
-- More skins for all three families.
+- Bake integration: add the two metas to `puzzleMod.families` and rebake.
+- More skins for both families.
 
 ## Sources
 

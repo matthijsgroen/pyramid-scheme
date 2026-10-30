@@ -2,8 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Three new lab-only puzzle families — `regionless-battle`, `regionless-twin-battle` (scarab skin) and
-`pair-puzzle` (sarcophagus/mummy skin) — playable in the puzzle lab, not yet in the world bake.
+**Goal:** Two new lab-only puzzle families — `regionless-battle` (scarab skin) and `pair-puzzle` (sarcophagus/mummy skin) — playable in the puzzle lab, not yet in the world bake.
 
 **Architecture:** The regionless families are star battle boards with `walls` instead of `regions`: the star battle
 core gains optional walls, one new rung (`lineBlock`) on a second ladder, its own generator, and a second skin table.
@@ -16,12 +15,12 @@ family shape: game core, techniques, generator, meta, app plugin.
 
 ## Global Constraints
 
-- Lab-only: the three metas are NOT added to `puzzleMod.families` (`src/mods/puzzle/index.ts`). `src/data/generatedWorld.ts`, `src/data/carveLedger.json`, `src/data/tierFingerprints.json` and `src/data/puzzleSeeds.ts` stay byte-identical.
+- Lab-only: the two metas are NOT added to `puzzleMod.families` (`src/mods/puzzle/index.ts`). `src/data/generatedWorld.ts`, `src/data/carveLedger.json`, `src/data/tierFingerprints.json` and `src/data/puzzleSeeds.ts` stay byte-identical.
 - Star battle and twin stars boards stay byte-identical: `yarn verify-seeds` passes before and after every task that touches `src/mods/puzzle/game/starBattle/`.
-- Family ids name the puzzle type, never a skin element: `regionless-battle`, `regionless-twin-battle`, `pair-puzzle`.
-- Entry tiers: `regionless-battle` expert, `pair-puzzle` master, `regionless-twin-battle` wizard. No family enters starter.
-- Boards: regionless battle ~7×7 expert → 9×9 wizard; regionless twin battle 10×10; pair puzzle ~8×8 master → 10×10 wizard.
-- The eight squares around a placed piece are drawn as spent in all three families; `touch` is propagation, free in grading.
+- Family ids name the puzzle type, never a skin element: `regionless-battle`, `pair-puzzle`.
+- Entry tiers: `regionless-battle` expert, `pair-puzzle` master. No family enters starter.
+- Boards: regionless battle ~7×7 expert → 9×9 wizard; pair puzzle ~8×8 master → 10×10 wizard.
+- The eight squares around a placed piece are drawn as spent in both families; `touch` is propagation, free in grading.
 - Pair puzzle uniqueness is over piece positions only; a finished board does not show the pairing.
 - One skin each: scarabs on sandstone with raised stone wall blocks; sarcophagi as anchors and mummies as pieces. Pieces drawn as SVG in code.
 - Generation and solvability checks live in `*.verify.ts`; soundness is property-tested from player-reachable states.
@@ -36,7 +35,7 @@ family shape: game core, techniques, generator, meta, app plugin.
 1. A tap or a drag across a wall cell changes nothing and adds no undo entry — the player should not be able to mark stone.
 2. A hint on a walled board never points at, or decides, a wall cell.
 3. Pair puzzle: pieces that satisfy every count but cannot be paired one-to-one with the anchors (two pieces sharing one sarcophagus) are not solved.
-4. The 10×10 twin board at 360px wide: cells land under the 44px tap guideline (twin stars §11 rejected 10×10 for this). The user asked for 10×10; check in the lab that tap and drag still hit the intended cell and record what you see in the family doc.
+4. The 9×9 regionless board and the 10×10 pair board at 360px wide: cells land at about 35px and 32px, under the 44px tap guideline. Check in the lab that tap and drag still hit the intended cell and record what you see in the family doc.
 5. Star battle boards unchanged after the shared-core edits (`yarn verify-seeds`, `generateStarBattle.verify.ts`).
 
 ---
@@ -142,31 +141,29 @@ it("a regionless board's groups are its rows and columns", () => {
   - `RegionlessOptions = { size: number; quota: number; maxWallShare: number; techniqueCap: StarBattleTechniqueId; requires?: StarBattleTechniqueId[]; requiresCount?: number; firstStarAfter?: number }`
   - `generateRegionlessBattle(seed: number, options: RegionlessOptions, attempts?: number): StarBattlePuzzleWithAnswer` — result has `walls`, no `regions`.
   - `gradeRegionlessBattle(board: StarBattlePuzzleWithAnswer, options: RegionlessOptions): Grade | null`
-  - `REGIONLESS_BATTLE_CONFIG`, `REGIONLESS_TWIN_CONFIG: Record<Difficulty, RegionlessOptions>`
-  - `REGIONLESS_BATTLE_META`, `REGIONLESS_TWIN_META: FamilyMeta`
+  - `REGIONLESS_BATTLE_CONFIG: Record<Difficulty, RegionlessOptions>`
+  - `REGIONLESS_BATTLE_META: FamilyMeta`
 
 Generation: solution first (`starSet`), then add walls one at a time on random non-solution cells until the board settles under the tier's ladder and meets its shape (same `requires`/`requiresCount`/`firstStarAfter` meaning as star battle); give up the attempt once walls exceed `maxWallShare × size²`; keep the nearest miss as fallback like `generateStarBattle`. Walls are the gifts: fewer walls, harder board.
 
 Starting tier values (tune with the verify file; record the measured ranges in the family doc):
 
-| table | tier | size | quota | maxWallShare | techniqueCap | requires (count) | firstStarAfter |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| battle | expert | 7 | 1 | 0.3 | lineBlock | lineBlock (1) | – |
-| battle | master | 8 | 1 | 0.22 | wouldStrand | wouldStrand (2) | 3 |
-| battle | wizard | 9 | 1 | 0.16 | wouldStrand | wouldStrand (4) | 5 |
-| twin | wizard | 10 | 2 | 0.2 | wouldStrand | wouldStrand (4) | 5 |
+| tier | size | quota | maxWallShare | techniqueCap | requires (count) | firstStarAfter |
+| --- | --- | --- | --- | --- | --- | --- |
+| expert | 7 | 1 | 0.3 | lineBlock | lineBlock (1) | – |
+| master | 8 | 1 | 0.22 | wouldStrand | wouldStrand (2) | 3 |
+| wizard | 9 | 1 | 0.16 | wouldStrand | wouldStrand (4) | 5 |
 
-Tiers below a family's `minTier` point at its entry-tier settings (unreachable, but the table is total, as in `TWIN_STARS_CONFIG`).
+Tiers below `minTier` point at the expert settings (unreachable, but the table is total, as in `TWIN_STARS_CONFIG`).
 
-Metas (both `ownerMod: "puzzle"`, `tags: ["puzzle", "funerary", "cosmos"]`, `faces: { funerary: ["default"], cosmos: ["default"] }`, `themes: ["default"]`, `rewardPriority: 60`, `seedable` over the generator/grader/config):
-- `REGIONLESS_BATTLE_META`: `id: "regionless-battle"`, `minTier: "expert"`, `icon: "🪲"`, `color: "amber"`.
-- `REGIONLESS_TWIN_META`: `id: "regionless-twin-battle"`, `minTier: "wizard"`, `icon: "🪲"`, `color: "yellow"`.
+Meta (`ownerMod: "puzzle"`, `tags: ["puzzle", "funerary", "cosmos"]`, `faces: { funerary: ["default"], cosmos: ["default"] }`, `themes: ["default"]`, `rewardPriority: 60`, `seedable` over the generator/grader/config):
+- `id: "regionless-battle"`, `minTier: "expert"`, `icon: "🪲"`, `color: "amber"`.
 
-- [ ] **Step 1: Write `generateRegionlessBattle.verify.ts`**: for each reachable tier of both tables, 8 seeds: the board settles under `techniquesUpTo(cap, REGIONLESS_TECHNIQUES)` from `blankMarks`; `walls` count ≤ `maxWallShare × size²`; no wall on a solution cell; `gradeRegionlessBattle` is non-null; assert `meta.minTier` matches the Global Constraints.
+- [ ] **Step 1: Write `generateRegionlessBattle.verify.ts`**: for each reachable tier, 8 seeds: the board settles under `techniquesUpTo(cap, REGIONLESS_TECHNIQUES)` from `blankMarks`; `walls` count ≤ `maxWallShare × size²`; no wall on a solution cell; `gradeRegionlessBattle` is non-null; assert `meta.minTier` matches the Global Constraints.
 - [ ] **Step 2: Run** `yarn verify-content src/mods/puzzle/game/starBattle/generateRegionlessBattle.verify.ts` — FAIL.
 - [ ] **Step 3: Implement** generator, config, metas. Do not touch `src/mods/puzzle/index.ts`.
 - [ ] **Step 4: Run** the verify file — PASS. Record steps-per-board and first-star step per tier.
-- [ ] **Step 5: Write `docs/game-design/puzzles/regionless-battle.md`** following `star-battle.md`'s outline (rules, ladder with `lineBlock`, generation, knobs with the measured numbers, controls, hints, theming); the twin as its own section, like star-battle §11. Literature: UKPA "Battle Star", Logic Masters "Star Battle (Regionless)".
+- [ ] **Step 5: Write `docs/game-design/puzzles/regionless-battle.md`** following `star-battle.md`'s outline (rules, ladder with `lineBlock`, generation, knobs with the measured numbers, controls, hints, theming). Note why there is no two-per-line variant (see the spec's non-goals). Literature: UKPA "Battle Star", Logic Masters "Star Battle (Regionless)".
 - [ ] **Step 6: Commit** — `git commit -m "feat: regionless battle generator and tiers"`
 
 ### Task 4: Regionless screen — scarab skin, walls drawn, copy, lab registration
@@ -182,21 +179,21 @@ Metas (both `ownerMod: "puzzle"`, `tags: ["puzzle", "funerary", "cosmos"]`, `fac
   - `skinFor(puzzle: StarBattlePuzzle, role, theme, board?, room?)` — picks `REGIONLESS_SKINS` (one entry, `default`, whose `name` is `"scarabs"`) when `puzzle.walls` is set, else today's `SKINS`.
   - `StarBattleSkin` gains `stone: string` (wall-cell class) — set on every skin; only walled boards draw it.
   - `Scarab: FC` in `glyphs.tsx`.
-  - Title key: quota 1 → `starBattle.name.<skin.name>`, quota 2 → `starBattle.name.twin<SkinName>` (generalise `twinName`; `twinDefault`/`twinFields` keep their keys).
+  - Title key: `starBattle.name.scarabs`; the existing `twinName` path stays for twin stars only.
 
 Board: wall cells render as raised stone (`skin.stone`), are not buttons (no tap, no drag target), and region boundaries are drawn only when `regions` is set. Rules: `StarBattleRules` takes `walls: boolean` and adds the `starBattle.rules.<skin>.walls` bullet when true.
 
-Copy (en; nl alongside): `starBattle.name.scarabs` "Scarab Field" / "Scarabeeënveld"; `starBattle.name.twinScarabs` "Scarab Pairs" / "Scarabeeënparen"; `goal.scarabs`, `quota.scarabs`, `rules.scarabs.{touch,walls,enter}`, and every `hint.scarabs.*` key the regionless ladder can produce: `mistake`, `touch`, `groupFull|groupTight|onlyWay|everyWay.{row,col}_{one,other}`, `lineBlock.{rowsToCols,colsToRows}`, `wouldStrand.{row,col}`, `action.*` (same shape as `hint.default.action`). Name each element and what it means: scarabs, sandstone squares, stone blocks where nothing can stand.
+Copy (en; nl alongside): `starBattle.name.scarabs` "Scarab Field" / "Scarabeeënveld"; `goal.scarabs`, `quota.scarabs`, `rules.scarabs.{touch,walls,enter}`, and every `hint.scarabs.*` key the regionless ladder can produce: `mistake`, `touch`, `groupFull|groupTight|onlyWay|everyWay.{row,col}_{one,other}`, `lineBlock.{rowsToCols,colsToRows}`, `wouldStrand.{row,col}`, `action.*` (same shape as `hint.default.action`). Name each element and what it means: scarabs, sandstone squares, stone blocks where nothing can stand.
 
 - [ ] **Step 1: Write the failing tests**:
   - `StarBattleBoard.spec.tsx`: on a walled board, a wall cell renders no button and has the stone class; clicking the cell next to it still works.
   - `starBattleHint.spec.ts`: for 20 player-reachable states of a generated regionless board, the hint's `decided` and `focus` never include a wall cell.
 - [ ] **Step 2: Run** them — FAIL.
 - [ ] **Step 3: Implement** skin, glyph, board, rules, title, copy.
-- [ ] **Step 4: Register** both families in `plugin.tsx` the way twin stars is (same `StarBattleComponent`, `generatePuzzle(META, seed, ctx)`), still gated on `isModEnabled("puzzle")`.
+- [ ] **Step 4: Register** the family in `plugin.tsx` the way twin stars is (same `StarBattleComponent`, `generatePuzzle(META, seed, ctx)`), still gated on `isModEnabled("puzzle")`.
 - [ ] **Step 5: Run** `yarn vitest run src/mods/puzzle src/i18n` — PASS (`keys.spec` and `goalWording.spec` cover the new keys and titles).
-- [ ] **Step 6: Look at it.** Open the puzzle lab (settings, develop mode), pick each regionless family at each reachable tier, play to solved; screenshot at 360×640 and at desktop width. Check Review Focus 1, 2 and 4 by hand.
-- [ ] **Step 7: Commit** — `git commit -m "feat: scarab field and scarab pairs in the puzzle lab"`
+- [ ] **Step 6: Look at it.** Open the puzzle lab (settings, develop mode), pick regionless battle at each reachable tier, play to solved; screenshot at 360×640 and at desktop width. Check Review Focus 1, 2 and 4 by hand.
+- [ ] **Step 7: Commit** — `git commit -m "feat: scarab field in the puzzle lab"`
 
 ### Task 5: Pair puzzle game core
 
