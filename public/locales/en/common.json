@@ -731,8 +731,8 @@
         "groupTight.row_other": "This row is down to {{count}} flagstones.",
         "groupTight.col_one": "This column is down to one flagstone.",
         "groupTight.col_other": "This column is down to {{count}} flagstones.",
-        "onlyWay.row_one": "Between the stone blocks, there is only one square left in this row for a oil lamp.",
-        "onlyWay.col_one": "Between the stone blocks, there is only one square left in this column for a oil lamp.",
+        "onlyWay.row_one": "Between the stone blocks, there is only one square left in this row for an oil lamp.",
+        "onlyWay.col_one": "Between the stone blocks, there is only one square left in this column for an oil lamp.",
         "onlyWay.row_other": "There is only one way to fit {{count}} oil lamps in this row.",
         "onlyWay.col_other": "There is only one way to fit {{count}} oil lamps in this column.",
         "everyWay.row_one": "Wherever this row's oil lamp goes, it is always here.",
@@ -741,13 +741,13 @@
         "everyWay.col_other": "Wherever this column's {{count}} oil lamps go, one is always here.",
         "lineBlock.rowsToCols": "The marked rows keep their oil lamps in the squares of those columns, so those columns have none to spare.",
         "lineBlock.colsToRows": "The marked columns keep their oil lamps in the squares of those rows, so those rows have none to spare.",
-        "wouldStrand.row": "A oil lamp here would leave the marked row nowhere to go.",
-        "wouldStrand.col": "A oil lamp here would leave the marked column nowhere to go.",
+        "wouldStrand.row": "An oil lamp here would leave the marked row nowhere to go.",
+        "wouldStrand.col": "An oil lamp here would leave the marked column nowhere to go.",
         "action": {
           "ruleOut_one": "Rule out the hatched square.",
           "ruleOut_other": "Rule out the hatched squares.",
-          "place_one": "Put a oil lamp in the hatched square.",
-          "place_other": "Put a oil lamp in each hatched square."
+          "place_one": "Put an oil lamp in the hatched square.",
+          "place_other": "Put an oil lamp in each hatched square."
         }
       },
       "market": {
@@ -782,7 +782,7 @@
       },
       "lotus": {
         "mistake": "This mark cannot be right.",
-        "touch": "A {{token}} here, and no lotus may stand next to another — corners count.",
+        "touch": "A {{token}} here, and no lotus may float next to another — corners count.",
         "groupFull.row_one": "This row already has its lotus.",
         "groupFull.col_one": "This column already has its lotus.",
         "groupFull.row_other": "This row already has its {{count}} lotuses.",
@@ -812,7 +812,7 @@
       },
       "cats": {
         "mistake": "This mark cannot be right.",
-        "touch": "A {{token}} here, and no cat may stand next to another — corners count.",
+        "touch": "A {{token}} here, and no cat may sleep next to another — corners count.",
         "groupFull.row_one": "This row already has its cat.",
         "groupFull.col_one": "This column already has its cat.",
         "groupFull.row_other": "This row already has its {{count}} cats.",

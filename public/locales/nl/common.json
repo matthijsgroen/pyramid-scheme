@@ -782,7 +782,7 @@
       },
       "lotus": {
         "mistake": "Dit teken kan niet kloppen.",
-        "touch": "Hier een {{token}}, en geen enkele lotus mag ernaast staan — ook niet schuin.",
+        "touch": "Hier een {{token}}, en geen enkele lotus mag ernaast drijven — ook niet schuin.",
         "groupFull.row_one": "Deze rij heeft zijn lotus al.",
         "groupFull.col_one": "Deze kolom heeft zijn lotus al.",
         "groupFull.row_other": "Deze rij heeft zijn {{count}} lotussen al.",
@@ -812,7 +812,7 @@
       },
       "cats": {
         "mistake": "Dit teken kan niet kloppen.",
-        "touch": "Hier een {{token}}, en geen enkele kat mag ernaast staan — ook niet schuin.",
+        "touch": "Hier een {{token}}, en geen enkele kat mag ernaast slapen — ook niet schuin.",
         "groupFull.row_one": "Deze rij heeft zijn kat al.",
         "groupFull.col_one": "Deze kolom heeft zijn kat al.",
         "groupFull.row_other": "Deze rij heeft zijn {{count}} katten al.",
