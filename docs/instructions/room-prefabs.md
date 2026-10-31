@@ -26,7 +26,7 @@ THE LEGEND
   g floor? gift 3 of 4          ? makes it optional; "3 of 4": of the places of g, three are filled
   r floor? rubblePile 1 of 3 per q   one of three per place of q
   s stop                        where the player stands: exactly one per layout, inside
-  a actor   c chest   o portal   m mechanism    special places, inside
+  c chest   o portal   m mechanism    special places, inside; somebody stands north of the stop
   gift = jarRack | basin        a named list of kinds, declared before the legend line that uses it
 
 COMMENTS
@@ -45,8 +45,18 @@ and a mechanism place (`m`) for each control the region holds.
 
 `src/game/prefabChecks.ts` takes every variant of a room (each layout, plus its mirror when the header says
 `mirror`) in every legal fill of its places, and requires that the doors stay joined and the stop and every
-blocking special (actor, chest, portal, mechanism) stay reachable. A room whose places cannot be filled, or whose
+blocking special (chest, portal, mechanism) stay reachable. A room whose places cannot be filled, or whose
 fills pass `MAX_FILLS`, is faulty too. `prefabFaults` lists every fault; empty means the room always walks.
+
+## Somebody in the room
+
+Somebody a room is for (an encounter whose family sets `actor` on its `FamilyMeta`) stands on the cell directly north
+of the stop; a mirrored variant mirrors left to right, so north stays north. A room is FIT for somebody when that cell
+is bare floor inside the ring (no place, no wall, no door) and, in every variant and every legal fill, the doors stay
+joined and the stop and every blocking special stay reachable with that cell blocked (`fitsActor`). Not fit is not a
+fault: in a room that is not fit, somebody stands beside the stop, as in a plain room. A room pinned (`room:` on a
+node selector) to a node whose encounter has somebody must be fit, or the bake refuses naming the room and the node.
+A room placed by `rooms` needs no fit. The room's walk never steps on the cell somebody stands on.
 
 `catalogueRoom(name)` (`src/game/roomCatalogue.ts`) hands out a room by its bare name and throws when it is missing
 or has a fault. `src/game/rooms.verify.ts` runs the check on every room in the catalogue.
@@ -54,8 +64,9 @@ or has a fault. `src/game/rooms.verify.ts` runs the check on every room in the c
 ## `yarn room`
 
 ```
-yarn room                      the catalogue as one table: tier, layouts, variants, fills, faults
-yarn room hall                 one room: its faults, and each variant drawn with one sample fill
+yarn room                      the catalogue as one table: tier, layouts, variants, fills, faults, fit
+yarn room hall                 one room: its faults, whether it is fit for somebody, and each variant drawn with one
+                               sample fill ("a" north of the stop where it is fit)
 yarn room --new junior/hall    starts src/game/rooms/junior/hall.room with the notation as comments
 yarn room --help               the notation
 ```

@@ -122,24 +122,29 @@ const laidOver = (grid: FloorGrid, [r, c]: readonly [number, number], prefab: Pr
   return { ...grid, cells }
 }
 
-const FORK_HALL = madeUpPrefab(`room forkHall
+const hall = (stop: string) =>
+  madeUpPrefab(`room forkHall
 layout
 # # n # d # # # #
-# w . . . . . a #
+# w . . . . . . #
 d . . . . . . . d
 # . p . . . p . #
-# . . . . . s . #
+${stop}
 # # # # d # # # #
 w wall jarRack
 n wallItem niche
 p floor pillar
-a actor
 s stop`)
+// Its stop stands south of the east pillar, so somebody cannot stand north of it.
+const FORK_HALL = hall("# . . . . . s . #")
+// The same hall with its stop one cell west, bare floor north of it: fit for somebody.
+const FIT_HALL = hall("# . . . . s . . #")
 
 /** A fork at `PREFAB_FORK` with arms west, east and south (and north to a room at 0,6 with `north`), laid over by a
  * made-up hall: rect rows 3-6, cols 3-9, its arms leaving by the door places at 4,2 (west), 4,10 (east), 7,6 (south)
- * and 2,6 (north). A niche hangs on the north wall at 2,4, a jar rack stands against it at 3,3, the actor's place is 3,9, two pillars stand at
- * `PREFAB_PILLARS` and the stop is 6,8, south of the east pillar. The entrance is at 4,0. */
+ * and 2,6 (north). A niche hangs on the north wall at 2,4, a jar rack stands against it at 3,3, two pillars stand at
+ * `PREFAB_PILLARS` and the stop is 6,8, south of the east pillar, so the hall is not fit for somebody. The entrance is
+ * at 4,0. */
 export const PREFAB_FORK = [4, 6] as const
 export const PREFAB_PILLARS = [
   [5, 4],
@@ -160,6 +165,9 @@ export const forkFloor = (fork: Partial<RoomCell> = {}, north = false): FloorGri
   )
 export const prefabForkFloor = (fork: Partial<RoomCell> = {}, north = false): FloorGrid =>
   laidOver(forkFloor(fork, north), PREFAB_FORK, FORK_HALL)
+/** `prefabForkFloor` laid over by the same hall with its stop where bare floor stands north of it. */
+export const fitForkFloor = (fork: Partial<RoomCell> = {}): FloorGrid =>
+  laidOver(forkFloor(fork), PREFAB_FORK, FIT_HALL)
 
 /** Rooms whose node stands next to the ring, round a 2×1 skeleton. `L`: a chamber at 3,2 on the rect's north-west
  * corner (rows 3-5, cols 2-5), in by the north door place at 2,2 from the entrance at 0,2 and out east along row 3 by

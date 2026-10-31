@@ -29,6 +29,8 @@ export type EncounterResolution = {
   ownerMod?: string
   /** What a sequence realisation says about its tiles and door (FamilyMeta.sequence). */
   sequence?: FamilyMeta["sequence"]
+  /** Somebody stands in the room (FamilyMeta.actor). */
+  actor?: true
 }
 export type ResolveEncounter = (encounter: string | string[] | undefined, defaultTag: string) => EncounterResolution
 
@@ -47,6 +49,7 @@ export const encounterFromMeta = (meta: FamilyMeta | undefined, fallback: string
     ownerMod: meta.ownerMod,
     ...(meta.reEnterable ? { reEnterable: true } : {}),
     ...(meta.sequence ? { sequence: meta.sequence } : {}),
+    ...(meta.actor ? { actor: true as const } : {}),
   }
 }
 

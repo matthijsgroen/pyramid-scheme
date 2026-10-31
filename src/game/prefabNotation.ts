@@ -27,7 +27,7 @@ THE LEGEND
   g floor? gift 3 of 4          ? makes it optional; "3 of 4": of the places of g, three are filled
   r floor? rubblePile 1 of 3 per q   one of three per place of q
   s stop                        where the player stands: exactly one per layout, inside
-  a actor   c chest   o portal   m mechanism    special places, inside
+  c chest   o portal   m mechanism    special places, inside; somebody stands north of the stop
   gift = jarRack | basin        a named list of kinds, declared before the legend line that uses it
 
 COMMENTS
@@ -36,7 +36,7 @@ COMMENTS
 `.slice(1)
 
 const LAYERS: readonly PlaceLayer[] = ["wall", "floor", "ground", "wallItem"]
-const SPECIALS: readonly SpecialPlace[] = ["stop", "actor", "chest", "portal", "mechanism"]
+const SPECIALS: readonly SpecialPlace[] = ["stop", "chest", "portal", "mechanism"]
 const FIXED = new Set(["#", "d", "."])
 const NAME = /^[A-Za-z_]\w*$/
 

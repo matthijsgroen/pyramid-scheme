@@ -6,7 +6,7 @@ import type { DecorationKind, WallDecorationKind } from "./siteTypes"
 /** wall: stands against the north wall; floor: free-standing; ground: drawn under the player and walked over;
  * wallItem: hangs on a ring wall. */
 export type PlaceLayer = "wall" | "floor" | "ground" | "wallItem"
-export type SpecialPlace = "stop" | "actor" | "chest" | "portal" | "mechanism"
+export type SpecialPlace = "stop" | "chest" | "portal" | "mechanism"
 export type PlaceKind = DecorationKind | WallDecorationKind | "patron"
 export type PlaceDef = {
   letter: string

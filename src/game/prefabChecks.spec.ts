@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { blockedCells, fillsOf, MAX_FILLS, placeBlobs, prefabFaults, variantsOf } from "./prefabChecks"
+import { blockedCells, fillsOf, fitsActor, MAX_FILLS, placeBlobs, prefabFaults, variantsOf } from "./prefabChecks"
 import { parsePrefab } from "./prefabNotation"
 import { SINGLE_CELL } from "./siteTypes"
 import type { DecorationKind, PropFootprint } from "./siteTypes"
@@ -12,8 +12,8 @@ const room = (header: string, grid: string[], legend: string[]) =>
 
 describe("prefab variants and checks", () => {
   it("a declared place or special that is never drawn still reads, and the checks name it", () => {
-    const prefab = room("", ["# # d # #", "# s . . #", "# # # # #"], ["s stop", "w wall shelf", "a actor"])
-    expect(prefabFaults(prefab)).toEqual(['"w" is declared but never drawn', '"a" is declared but never drawn'])
+    const prefab = room("", ["# # d # #", "# s . . #", "# # # # #"], ["s stop", "w wall shelf", "c chest"])
+    expect(prefabFaults(prefab)).toEqual(['"w" is declared but never drawn', '"c" is declared but never drawn'])
   })
 
   it("mirrors doors, places and the stop", () => {
@@ -157,5 +157,26 @@ describe("prefab variants and checks", () => {
     )
     expect(2 ** blobs).toBeGreaterThan(MAX_FILLS)
     expect(prefabFaults(prefab)).toEqual([expect.stringContaining("too many fills to check")])
+  })
+})
+
+describe("a room fit for somebody", () => {
+  it("a room is fit for somebody when the cell north of its stop is bare and off every walk", () => {
+    const grid = ["# # # # # #", "# k . . . #", "d . . s . d", "# # # d # #"]
+    expect(fitsActor(room("mirror", grid, ["s stop", "k wall shelf"]))).toBe(true)
+    const placed = ["# # # # # #", "# k . k . #", "d . . s . d", "# # # d # #"]
+    expect(fitsActor(room("", placed, ["s stop", "k wall? shelf"]))).toBe(false)
+  })
+
+  it("a room whose doors need the cell north of the stop is not fit", () => {
+    const prefab = room("", ["# # # d # #", "# . . . . #", "d . . s . #", "# # # # # #"], ["s stop"])
+    expect(prefabFaults(prefab)).toEqual([])
+    expect(fitsActor(prefab)).toBe(false)
+  })
+
+  it("the actor is no special place of the notation", () => {
+    expect(() => room("", ["# # d # #", "# a s . #", "# # # # #"], ["s stop", "a actor"])).toThrow(
+      /neither a layer nor a special/
+    )
   })
 })

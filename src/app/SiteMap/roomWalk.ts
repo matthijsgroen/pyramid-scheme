@@ -29,13 +29,15 @@ const armCells = (grid: FloorGrid, [r, c]: Cell): Set<string> => {
   return cells
 }
 
-/** The room's floor the walk may cross: its rect but what is blocked, its node and arms always. */
+/** The room's floor the walk may cross: its rect but what is blocked, its node and arms always, and never the cell
+ * somebody stands on. */
 const freeCells = (grid: FloorGrid, node: Cell, room: PrefabRoom): Set<string> => {
   const blocked = new Set(room.blocked)
   const free = armCells(grid, node)
   const { top, left, rows, cols } = room.rect
   for (let r = top; r < top + rows; r++)
     for (let c = left; c < left + cols; c++) if (!blocked.has(`${r},${c}`)) free.add(`${r},${c}`)
+  if (room.actor) free.delete(keyOf(room.actor))
   return free
 }
 

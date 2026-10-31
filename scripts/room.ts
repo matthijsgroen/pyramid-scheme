@@ -2,14 +2,15 @@
 /**
  * Draws a designed room written in prefabNotation.ts's notation and runs the prefab check on it.
  *
- *   yarn room                      the catalogue as one table: tier, layouts, variants, fills, faults
- *   yarn room hall                 one of them: its faults, and each variant drawn with one sample fill
+ *   yarn room                      the catalogue as one table: tier, layouts, variants, fills, faults, fit
+ *   yarn room hall                 one of them: its faults, whether somebody fits, and each variant drawn with one
+ *                                  sample fill, somebody as "a" north of the stop where the room is fit
  *   yarn room --new junior/hall    starts src/game/rooms/junior/hall.room with the notation as comments
  *   yarn room --help               the notation
  */
 import { existsSync, mkdirSync, writeFileSync } from "node:fs"
 import { dirname } from "node:path"
-import { fillsOf, placeBlobs, prefabFaults, variantsOf } from "../src/game/prefabChecks"
+import { actorCellOf, fillsOf, fitsActor, placeBlobs, prefabFaults, variantsOf } from "../src/game/prefabChecks"
 import type { Variant } from "../src/game/prefabChecks"
 import { PREFAB_SYNTAX } from "../src/game/prefabNotation"
 import type { Prefab } from "../src/game/prefabTypes"
@@ -21,14 +22,22 @@ const args = process.argv.slice(2)
 const newIndex = args.indexOf("--new")
 const named = args.find((arg, i) => !arg.startsWith("--") && (newIndex < 0 || i !== newIndex + 1))
 
-/** The variant's drawing with one sample fill: filled places show their letters, unfilled optional ones a dot. */
-const drawVariant = (variant: Variant, prefab: Prefab): string => {
+/** The variant's drawing with one sample fill: filled places show their letters, unfilled optional ones a dot, and
+ * in a room fit for somebody an "a" where they stand. */
+const drawVariant = (variant: Variant, prefab: Prefab, fit: boolean): string => {
   const [fill] = fillsOf(variant, prefab)
   const grid = variant.cells.map(row => [...row])
   for (const blob of placeBlobs(variant, prefab)) {
     if (fill?.has(`${blob.top},${blob.left}`)) continue
     for (let r = blob.top; r < blob.top + blob.rows; r++)
       for (let c = blob.left; c < blob.left + blob.cols; c++) grid[r][c] = "."
+  }
+  const stop = variant.cells.flatMap((row, r) =>
+    [...row].flatMap((ch, c) => (prefab.specials[ch] === "stop" ? [[r, c] as const] : []))
+  )[0]
+  if (fit && stop) {
+    const [ar, ac] = actorCellOf(stop)
+    grid[ar][ac] = "a"
   }
   return grid.map(row => row.join(" ")).join("\n")
 }
@@ -38,16 +47,18 @@ const variantLabel = (variant: Variant, prefab: Prefab): string =>
 
 const report = (name: string, prefab: Prefab): boolean => {
   const faults = prefabFaults(prefab)
+  const fit = fitsActor(prefab)
   const lines = [
     `## ${name}`,
     "",
     faults.length === 0 ? "every variant walks in every fill" : faults.map(f => `✗ ${f}`).join("\n"),
+    fit ? "fit for somebody north of the stop" : "not fit for somebody: they stand beside the stop",
   ]
   for (const variant of variantsOf(prefab))
     lines.push(
       "",
       `${variantLabel(variant, prefab)} (${fillsOf(variant, prefab).length} fills)`,
-      drawVariant(variant, prefab)
+      drawVariant(variant, prefab, fit)
     )
   console.log(lines.join("\n") + "\n")
   return faults.length === 0
@@ -63,10 +74,14 @@ const table = (): boolean => {
       variants: variants.length,
       fills: variants.reduce((sum, variant) => sum + fillsOf(variant, prefab).length, 0),
       faults: prefabFaults(prefab).length,
+      fit: fitsActor(prefab) ? "fit" : "-",
     }
   })
-  const header = ["room", "layouts", "variants", "fills", "faults"]
-  const cells = [header, ...rows.map(r => [r.name, `${r.layouts}`, `${r.variants}`, `${r.fills}`, `${r.faults}`])]
+  const header = ["room", "layouts", "variants", "fills", "faults", "fit"]
+  const cells = [
+    header,
+    ...rows.map(r => [r.name, `${r.layouts}`, `${r.variants}`, `${r.fills}`, `${r.faults}`, r.fit]),
+  ]
   const widths = header.map((_, i) => Math.max(...cells.map(row => row[i].length)))
   console.log(
     cells

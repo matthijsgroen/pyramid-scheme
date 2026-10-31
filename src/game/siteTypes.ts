@@ -243,6 +243,8 @@ export type PrefabRoom = {
   /** The inside of the ring. */
   rect: CellRect
   stop: Cell
+  /** Where somebody stands in it: north of the stop, in a room fit for them (prefabChecks.fitsActor). The walk never
+   * steps on it. */
   actor?: Cell
   /** Where the room's chest, portal or mechanism stands: the prefab's place for it. */
   nodeArt?: Cell

@@ -405,8 +405,10 @@ describe("useSiteNavigation", () => {
       })
     )
 
+    // Two corridor steps, then the chamber's walk from its north door round the cell north of the stop.
+    const arrival = (7 + 2 * Math.SQRT2) * 120 + 100
     act(() => hook.result.current.onCellClick(...EDGE_NODE.L))
-    act(() => void vi.advanceTimersByTime(5 * 120 + 100 - 1))
+    act(() => void vi.advanceTimersByTime(arrival - 1))
     expect(hook.result.current.prompt).toBeNull()
     act(() => void vi.advanceTimersByTime(1))
 

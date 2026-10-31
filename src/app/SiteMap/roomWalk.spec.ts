@@ -2,7 +2,14 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { roomDoors } from "@/game/roomShape"
 import type { FloorGrid, GridCell } from "@/game/siteTypes"
 import { CELL, COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
-import { EDGE_NODE, PREFAB_FORK, PREFAB_PILLARS, edgePrefabFloor, prefabForkFloor } from "./floorFixtures.testing"
+import {
+  EDGE_NODE,
+  PREFAB_FORK,
+  PREFAB_PILLARS,
+  edgePrefabFloor,
+  fitForkFloor,
+  prefabForkFloor,
+} from "./floorFixtures.testing"
 import { markerCell, roomPath, roomStop, stepsBetween, walkPoints, walkSteps } from "./roomWalk"
 import type { RoomEnd, WalkPoint } from "./roomWalk"
 
@@ -212,6 +219,22 @@ describe("a walk through a prefab room", () => {
     expect(markerCell(grid, 4, 7)).toEqual([4, 9])
     expect(markerCell(grid, 5, 6)).toEqual([6, 6])
     expect(markerCell(grid, 4, 1)).toEqual([4, 1])
+  })
+})
+
+describe("a walk through a room fit for somebody", () => {
+  it("the room walk never steps on the actor cell of a fit room", () => {
+    const grid = fitForkFloor()
+    const stop = roomStop(grid, ...PREFAB_FORK)!
+    const actor: Cell = [stop[0] - 1, stop[1]]
+    const cell = grid.cells[PREFAB_FORK[0]][PREFAB_FORK[1]]
+    expect(cell.type !== "empty" && cell.prefabRoom?.actor).toEqual(actor)
+    const ends: RoomEnd[] = [{ door: "w" }, { door: "e" }, { door: "s" }, "stop"]
+    for (const from of ends)
+      for (const to of ends) {
+        const walk = roomPath(grid, PREFAB_FORK, from, to)
+        walk.slice(1).forEach((p, i) => expect(cuts(walk[i], p, [actor])).toBe(false))
+      }
   })
 })
 

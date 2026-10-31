@@ -84,6 +84,11 @@ export type FamilyMeta = {
    * so it keeps its screen; this is for the family that has none at all.
    */
   actsOnArrival?: boolean
+  /**
+   * Somebody stands in this family's room. They stand north of the stop of a designed room fit for them
+   * (prefabChecks.fitsActor), beside the node anywhere else; a designed room pinned to such a node must be fit.
+   */
+  actor?: true
   // How many reward slots a node of this family exposes. Default 1 (an ordinary node bears one
   // reward, like a chest or a puzzle-chain position). A shop is the one family that overrides it
   // (6): its node carries a `rewards[]` stock array of this length, filled by the mods that place

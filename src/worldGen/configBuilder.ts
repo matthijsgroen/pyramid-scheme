@@ -17,6 +17,7 @@ import { specToReward } from "./rewards"
 import { buildSite } from "./buildSite"
 import { assignEncounters, type EncounterAllocator, type FamilyCapacityFor, type IsTrapFamily } from "./placeEncounters"
 import { dropUnownedAuthoring } from "./modOwnedAuthoring"
+import { refuseUnfitActorRooms } from "./actorRooms"
 import { dressByRole } from "./dressingRoles"
 import { clearShopEnds, placeShopStock, trimEmptyStock, type ShopStockAssignment } from "./shopStock"
 import { placeFragments } from "./placeFragments"
@@ -405,6 +406,8 @@ export const buildConfigs = (
   // Injected from src/mods (allFamilyMeta.allocateEncounterSpread) — src/worldGen can't read the
   // family registry. When absent (a direct buildConfigs call in a test), roles stay as authored.
   if (allocateEncounter) assignEncounters(allConfigs, allocateEncounter, familyCapacityFor, isTrapFamily)
+  // A room pinned to a node with somebody in it must be fit for them, which only the resolved family says.
+  if (resolveEncounter) refuseUnfitActorRooms(allConfigs, resolveEncounter)
 
   // Phase 3.55: dress each node for the PLACE it turned out to be. The roles above are what a wing is
   // (journeys.md), so they also decide its furniture: a trade wing shows amphorae and a tally board,

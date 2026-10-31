@@ -77,8 +77,8 @@ describe("drawing a room", () => {
     expect(rows(room)[1][1]).toBe("s")
   })
 
-  it("adds an actor as a special place of its own", () => {
-    expect(ok(editing.setSpecial(EMPTY, 0, 1, 1, "actor", footprintOf)).specials).toEqual({ s: "stop", a: "actor" })
+  it("adds a chest as a special place of its own", () => {
+    expect(ok(editing.setSpecial(EMPTY, 0, 1, 1, "chest", footprintOf)).specials).toEqual({ s: "stop", a: "chest" })
   })
 
   it("writes a count group into the text", () => {

@@ -1,6 +1,7 @@
 // THE PREFAB CHECK: every variant of a room prefab (each layout, plus its mirror) in every legal fill of its
-// places must keep the doors joined and the stop and every blocking special reachable. Pure; the notation is
-// read by prefabNotation.ts.
+// places must keep the doors joined and the stop and every blocking special reachable. A room is fit for somebody when
+// the cell north of its stop is bare and the room still walks with them standing there. Pure; the notation is read
+// by prefabNotation.ts.
 import type { PlaceDef, Prefab } from "./prefabTypes"
 
 export type PlacedObject = { letter: string; top: number; left: number; rows: number; cols: number }
@@ -16,7 +17,7 @@ const STEPS = [
   [0, 1],
   [0, -1],
 ] as const
-const BLOCKING_SPECIALS = new Set(["actor", "chest", "portal", "mechanism"])
+const BLOCKING_SPECIALS = new Set(["chest", "portal", "mechanism"])
 
 const reversed = (row: string): string => [...row].reverse().join("")
 
@@ -207,8 +208,16 @@ const filledNames = (variant: Variant, prefab: Prefab, fill: Fill): string => {
 
 type Doors = [number, number][]
 
-const faultsOf = (variant: Variant, prefab: Prefab, fill: Fill, doors: Doors, label: string): string[] => {
-  const blocked = blockedCells(variant, prefab, fill)
+const faultsOf = (
+  variant: Variant,
+  prefab: Prefab,
+  fill: Fill,
+  doors: Doors,
+  label: string,
+  standing?: string
+): string[] => {
+  const blocked = new Set(blockedCells(variant, prefab, fill))
+  if (standing) blocked.add(standing)
   const where = `${label}, filled ${filledNames(variant, prefab, fill)}`
   const faults: string[] = []
   const reached = reachFrom(variant, blocked, doors[0])
@@ -235,6 +244,36 @@ const faultsOf = (variant: Variant, prefab: Prefab, fill: Fill, doors: Doors, la
   return faults
 }
 
+const stopOf = (variant: Variant, prefab: Prefab): [number, number] | undefined => {
+  for (const [r, row] of variant.cells.entries())
+    for (const [c, ch] of [...row].entries()) if (prefab.specials[ch] === "stop") return [r, c]
+  return undefined
+}
+
+const doorsOf = (variant: Variant): Doors => {
+  const doors: Doors = []
+  variant.cells.forEach((row, r) => [...row].forEach((ch, c) => ch === "d" && doors.push([r, c])))
+  return doors
+}
+
+/** Where somebody stands in a room: the cell directly north of its stop. */
+export const actorCellOf = (stop: readonly [number, number]): [number, number] => [stop[0] - 1, stop[1]]
+
+/** Whether somebody may stand north of the stop in every variant and every fill: that cell is bare floor inside the
+ * ring, and the doors, the stop and every blocking special stay reachable with them standing there. */
+export const fitsActor = (prefab: Prefab): boolean =>
+  variantsOf(prefab).every(variant => {
+    const stop = stopOf(variant, prefab)
+    if (!stop) return false
+    const [r, c] = actorCellOf(stop)
+    if (r < 1 || variant.cells[r][c] !== ".") return false
+    const plan = planFills(variant, prefab)
+    if ("fault" in plan) return false
+    const doors = doorsOf(variant)
+    if (doors.length === 0) return true
+    return plan.fills.every(fill => faultsOf(variant, prefab, fill, doors, "", `${r},${c}`).length === 0)
+  })
+
 /** Every way the places cannot be filled or the doors, the stop or a blocking special are cut off; empty when the prefab always walks. */
 export const prefabFaults = (prefab: Prefab): string[] => [
   ...[...Object.keys(prefab.places), ...Object.keys(prefab.specials)]
@@ -243,8 +282,7 @@ export const prefabFaults = (prefab: Prefab): string[] => [
   ...variantsOf(prefab).flatMap(variant => {
     const plan = planFills(variant, prefab)
     if ("fault" in plan) return [plan.fault]
-    const doors: Doors = []
-    variant.cells.forEach((row, r) => [...row].forEach((ch, c) => ch === "d" && doors.push([r, c])))
+    const doors = doorsOf(variant)
     if (doors.length === 0) return []
     const label = labelOf(variant, prefab)
     return plan.fills.flatMap(fill => faultsOf(variant, prefab, fill, doors, label))

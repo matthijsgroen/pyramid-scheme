@@ -1,5 +1,5 @@
 import { hashString } from "@/support/hashString"
-import { blockedCells, fillsOf, placeBlobs, variantsOf, type Variant } from "../prefabChecks"
+import { actorCellOf, blockedCells, fillsOf, fitsActor, placeBlobs, variantsOf, type Variant } from "../prefabChecks"
 import type { PlaceDef, PlaceKind, Prefab, SpecialPlace } from "../prefabTypes"
 import { cellAt, claimsFloorAt } from "../roomFootprint"
 import { inRect, STEP } from "../roomShape"
@@ -136,6 +136,16 @@ const kindFor = (place: PlaceDef, hash: number, patron: boolean): PlaceKind | un
   return undefined
 }
 
+const fitness = new WeakMap<Prefab, boolean>()
+/** Whether the prefab is fit for somebody, worked out once per prefab. */
+const fitFor = (prefab: Prefab): boolean => {
+  const known = fitness.get(prefab)
+  if (known !== undefined) return known
+  const fit = fitsActor(prefab)
+  fitness.set(prefab, fit)
+  return fit
+}
+
 /** A choice made by hand in place of the hash, for a preview: which variant of `variantsOf`, which fill of its fills. */
 export type PrefabPick = { variant?: number; fill?: number }
 
@@ -195,13 +205,14 @@ const furnish = (
   )
   const holds = holdsOf(cellAt(grid, r, c))
   const nodeArt = holds === "nothing" ? undefined : special.get(placeFor[holds])
-  const actor = special.get("actor")
+  const stop = special.get("stop") as Cell
+  const actor = fitFor(prefab) ? actorCellOf(stop) : undefined
   return {
     name: prefab.name,
     layout: variant.layout,
     mirrored: variant.mirrored,
     rect,
-    stop: special.get("stop") as Cell,
+    stop,
     ...(actor ? { actor } : {}),
     ...(nodeArt ? { nodeArt } : {}),
     objects,

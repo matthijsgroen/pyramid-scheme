@@ -11,13 +11,12 @@ import { refusalText } from "./refusalText"
 /** The palette entry being dragged travels as this data type. */
 export const ROOM_KIND_DRAG = "application/x-room-kind"
 
-const TOOLS = ["select", "wall", "floor", "door", "stop", "actor", "chest", "portal", "mechanism", "erase"] as const
+const TOOLS = ["select", "wall", "floor", "door", "stop", "chest", "portal", "mechanism", "erase"] as const
 type Tool = (typeof TOOLS)[number] | "copy"
 const SIGN = { wall: "#", floor: ".", door: "d" } as const
 const PALETTE_LAYER = { floor: "prop", wall: "prop", ground: "ground", wallItem: "wallItem" } as const
 const SPECIAL_LOOK: Record<SpecialPlace, string> = {
   stop: "bg-sky-500",
-  actor: "bg-violet-500",
   chest: "bg-yellow-500",
   portal: "bg-teal-500",
   mechanism: "bg-rose-500",

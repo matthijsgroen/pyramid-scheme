@@ -13,4 +13,5 @@ export const CONVERSATION_META: FamilyMeta = {
   rewardPriority: 0,
   reEnterable: true,
   invitation: "story.invitation",
+  actor: true,
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 import { COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
-import { PREFAB_CHEST, PREFAB_FORK, prefabChestFloor, prefabForkFloor } from "./floorFixtures.testing"
+import { PREFAB_CHEST, PREFAB_FORK, fitForkFloor, prefabChestFloor, prefabForkFloor } from "./floorFixtures.testing"
 import { roomStop } from "./roomWalk"
 import { buildRoomClaims } from "./roomClaims"
 import { occupantOffset, prefabArtOffset, standingOffset } from "./standingSpot"
@@ -108,21 +108,23 @@ describe("where the explorer stands in a prefab room", () => {
     for (const [r, c] of absorbed) expect(offsetAt(grid, r, c)).toEqual(offsetTo([r, c], stop))
   })
 
-  it("the actor stands on the actor place", () => {
-    expect(cellOf(PREFAB_FORK, occupantOffset(grid, buildRoomClaims(grid), ...PREFAB_FORK))).toEqual([3, 9])
-  })
-
-  it("stands an occupant beside the stop, on free floor, in a room with no actor place", () => {
-    const cells = grid.cells.map(row => [...row])
-    const fork = cells[PREFAB_FORK[0]][PREFAB_FORK[1]]
-    if (fork.type !== "room" || !fork.prefabRoom) throw new Error("no prefab room")
-    const { actor: _actor, ...noActor } = fork.prefabRoom
-    cells[PREFAB_FORK[0]][PREFAB_FORK[1]] = { ...fork, prefabRoom: noActor }
-    const bare = { ...grid, cells }
-    expect(cellOf(PREFAB_FORK, occupantOffset(bare, buildRoomClaims(bare), ...PREFAB_FORK))).toEqual([
+  it("somebody in a fit room stands north of the stop; elsewhere beside the node", () => {
+    const fit = fitForkFloor()
+    const fitStop = roomStop(fit, ...PREFAB_FORK)!
+    expect(cellOf(PREFAB_FORK, occupantOffset(fit, buildRoomClaims(fit), ...PREFAB_FORK))).toEqual([
+      fitStop[0] - 1,
+      fitStop[1],
+    ])
+    expect(cellOf(PREFAB_FORK, occupantOffset(grid, buildRoomClaims(grid), ...PREFAB_FORK))).toEqual([
       stop[0],
       stop[1] + 1,
     ])
+    const plain = floor([
+      [empty, corridor(["s"]), empty],
+      [empty, { type: "room", roomType: "encounter", dirs: new Set<Direction>(["n"]), state }, empty],
+      [empty, empty, empty],
+    ])
+    expect(occupantOffset(plain, buildRoomClaims(plain), 1, 1)).not.toEqual({ dx: 0, dy: 0 })
   })
 
   it("the chest art stands on its place", () => {

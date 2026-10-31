@@ -7,9 +7,9 @@ import { SiteMapView } from "./SiteMapView"
 import "@/mods/registerModApps"
 
 // A made-up floor: a fork with arms west, east and south, laid over by a made-up hall — a niche and a jar rack on the
-// north wall, two pillars, the actor's place in the north-east corner and the stop south of the east pillar — and a
-// fourth arm north to a room behind it. The explorer stands outside the west door, on the stop, in the east room or in
-// the room north of the hall; a tap anywhere walks him there, and "Walk west → stop" walks him round the west pillar.
+// north wall, two pillars and the stop south of the east pillar — and a fourth arm north to a room behind it. The
+// explorer stands outside the west door, on the stop, in the east room or in the room north of the hall; a tap anywhere
+// walks him there, and "Walk west → stop" walks him round the west pillar.
 
 const SPOTS = {
   west: [4, 1],
