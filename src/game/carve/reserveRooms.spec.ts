@@ -542,7 +542,6 @@ s stop`,
     expect(shapes.some(shape => shape.ports.length === 4 && shape.pt === 1 && shape.pl === 1)).toBe(true)
     const crossing = shapes.find(shape => shape.ports.length === 4 && shape.pt === 1 && shape.pl === 1)!
     expect(crossing.anchor).toEqual([1, 1])
-    expect(crossing.bare).toBe(false)
   })
 
   it("a hub room never offers the port the main path took to a side path", () => {

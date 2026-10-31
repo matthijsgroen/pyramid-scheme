@@ -219,7 +219,7 @@ const search = (
   const blockAt = new Map<string, LaidBlock>()
   // A room's ways: the node each of its corridors arrives at, keyed `corridor|region`; and how many of a room's
   // nodes, from its first, are the walk through it.
-  const rayEnd = new Map<string, number>()
+  const portEnd = new Map<string, number>()
   const walkLength = new Map<string, number>()
   const trail: Array<() => void> = []
   let extraLeft = extraNodes
@@ -300,7 +300,7 @@ const search = (
   }
 
   const attachNodes = (corridor: PlanCorridor, region: string, isFrom: boolean): number[] => {
-    const end = rayEnd.get(`${corridor.id}|${region}`)
+    const end = portEnd.get(`${corridor.id}|${region}`)
     if (end !== undefined) return [end]
     const nodes = regionNodes.get(region)!
     const ia = routeIndex.get(corridor.from)
@@ -426,7 +426,7 @@ const search = (
         for (const node of nodes)
           for (let d = 0; d < 4; d++) if (sideFree(node, d) && !outward.has(node * 4 + d)) takeSide(node, d)
         ports.forEach((port, w) =>
-          record(rayEnd, `${ordered[w].id}|${region.id}`, porch?.p === w ? porch.at : port.node)
+          record(portEnd, `${ordered[w].id}|${region.id}`, porch?.p === w ? porch.at : port.node)
         )
         if (porch) {
           const { node, dir } = ports[porch.p]

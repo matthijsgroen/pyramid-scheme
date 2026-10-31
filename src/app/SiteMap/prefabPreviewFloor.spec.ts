@@ -31,6 +31,11 @@ gift = jarRack | basin
 g floor gift 3 of 4
 s stop`)
 
+const sidesOf = (preview: ReturnType<typeof prefabPreviewFloor>) =>
+  Object.values(preview.doors)
+    .map(door => door.side)
+    .sort()
+
 describe("prefabPreviewFloor", () => {
   it("joins four doors from a node in the middle of a wide room", () => {
     const cross = madeUpPrefab(`room cross
@@ -44,20 +49,20 @@ d . . . . . . . . . d
 # # # # # d # # # # #
 s stop`)
     const preview = prefabPreviewFloor(cross)
-    expect(Object.keys(preview.doors).sort()).toEqual(["e", "n", "s", "w"])
+    expect(sidesOf(preview)).toEqual(["e", "n", "s", "w"])
     expect(preview.unusedDoors).toBe(0)
   })
 
   it("joins every door place a straight arm reaches and walls the rest", () => {
     const preview = prefabPreviewFloor(HALL)
-    expect(Object.keys(preview.doors).sort()).toEqual(["e", "n", "w"])
+    expect(sidesOf(preview)).toEqual(["e", "n", "w"])
     expect(preview.unusedDoors).toBe(1)
     expect(roomAt(preview).blocked).toContain(`${roomAt(preview).rect.top - 1},${roomAt(preview).rect.left + 4}`)
   })
 
   it("gives a cell outside each door that the walk can start from", () => {
     const preview = prefabPreviewFloor(HALL)
-    const west = preview.doors.w!
+    const west = Object.values(preview.doors).find(door => door.side === "w")!.out
     const cell = preview.grid.cells[west[0]][west[1]]
     expect(cell.type).toBe("corridor")
     expect(roomAt(preview).doors).toContainEqual([west[0], west[1] + 1])

@@ -50,7 +50,7 @@ export type ReservedWalk = {
 export type Port = { node: Cell; door: Cell; out: Cell }
 
 /** A variant at one parity of the lattice: its inside size, the anchor and its ports as offsets from the inside's
- * top-left, whether the anchor stands on bare floor, and how many nodes the rect and ring hold. */
+ * top-left, and how many nodes the rect and ring hold. */
 type Shape = {
   variant: number
   layout: number
@@ -60,7 +60,6 @@ type Shape = {
   pt: number
   pl: number
   anchor: Cell
-  bare: boolean
   ports: Port[]
   nodes: number
 }
@@ -120,7 +119,6 @@ export const shapesOf = (prefab: Prefab): Shape[] => {
             pt,
             pl,
             anchor,
-            bare: at(anchor[0], anchor[1]) === ".",
             ports,
             nodes,
           })

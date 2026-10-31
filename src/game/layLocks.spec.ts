@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import { expandFloorLocks } from "./floorLocks"
 import type { PlacedLock } from "./floorLocks"
 import { keepLayOutcomes, layLockPlan, startingGridSize } from "./layLocks"
+import type { RoomShape } from "./layLocks"
 import { planLockFloor } from "./lockPlan"
 import type { LockPlan } from "./lockPlan"
 import type { FloorConfig } from "./siteTypes"
@@ -52,6 +53,43 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
       const minimum = name === "mirrorFork" ? 30 : 40
       expect(laidSeeds.length).toBeGreaterThanOrEqual(minimum)
     })
+
+  // A MADE-UP ROOM: a 3x3 inside with its node in one corner and a door on its west and its south wall.
+  it("holds a lay with a designed room to the same claims, its floor's joins read as passages", () => {
+    const shape: RoomShape = {
+      h: 3,
+      w: 3,
+      pt: 0,
+      pl: 0,
+      anchor: [0, 0],
+      ports: [
+        { node: [0, 0], door: [0, -1], out: [0, -2] },
+        { node: [2, 0], door: [3, 0], out: [4, 0] },
+      ],
+    }
+    const plan = FIXTURES.lever()
+    const ends = (id: string) => plan.corridors.filter(corridor => corridor.from === id || corridor.to === id).length
+    const room = plan.regions.find(
+      region =>
+        region.owner !== undefined &&
+        region.answersTo === undefined &&
+        region.seats.every(seat => seat.for === "control" || seat.for === "door") &&
+        plan.drops.every(drop => drop.launch !== region.id && drop.landing !== region.id) &&
+        plan.junctions.every(junction => junction.region !== region.id) &&
+        ends(region.id) === 2
+    )!
+    const roomed = SEEDS.slice(0, 10).flatMap(seed => {
+      const result = layLockPlan(plan, {
+        seed,
+        n: startingGridSize(plan),
+        blocks: [{ region: room.id, room: "made-up", shapes: [shape] }],
+      })
+      if (!result.ok) return []
+      expectLaidPlan(plan, result.laid)
+      return result.laid.blocks ? [seed] : []
+    })
+    expect(roomed.length).toBeGreaterThan(0)
+  })
 
   it("never lays a junction one node from the exit or another junction where the two can never merge", () => {
     const plan = FIXTURES.mirrorFork()

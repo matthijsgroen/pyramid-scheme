@@ -41,9 +41,10 @@ export const PrefabRoomPreview = ({ prefab, tileset, variant = 0, fill = 0, from
   const setAt = (next: At) => setChosen({ at: next, on: shown })
   if ("error" in shown) return <p className="p-2 text-sm text-red-700">{shown.error}</p>
   const { preview, grid } = shown
-  const open = Object.keys(preview.doors) as Direction[]
-  const start = preview.doors[from ?? open[0]] ?? preview.stop
-  const end = preview.doors[to ?? open[open.length - 1]] ?? preview.stop
+  const open = Object.values(preview.doors)
+  const onSide = (side: Direction | undefined) => open.find(door => door.side === side)?.out
+  const start = onSide(from) ?? open[0]?.out ?? preview.stop
+  const end = onSide(to) ?? open[open.length - 1]?.out ?? preview.stop
   const spots = { from: start, to: end, stop: preview.stop }
   const pos = typeof at === "string" ? spots[at] : at
   return (

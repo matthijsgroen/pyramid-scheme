@@ -530,7 +530,7 @@ export const hangBranches = pass(
       const ownSlice = mainZoneSlices[sliceOrder[groupIdx]]
       const junctionCell = groupIdx < forkIns.length ? mainPath[junctionIdxOf[groupIdx]] : undefined
       const holdsJunction = groupIdx >= forkIns.length && groupIdx < forkIns.length + junctionGroups.length
-      // The rooms on the main path come first, this group's own before the others, while they have a ray free.
+      // The rooms on the main path come first, this group's own before the others, while they have a port free.
       const looseIdx = groupIdx - forkIns.length - junctionGroups.length
       const mayHub = looseIdx >= hubEligibleFrom
       const ownHub = mayHub ? hubs[looseIdx - hubEligibleFrom] : undefined

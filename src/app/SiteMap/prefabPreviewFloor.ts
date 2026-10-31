@@ -9,11 +9,12 @@ type Cell = readonly [number, number]
 
 export type PrefabPreview = {
   grid: FloorGrid
-  /** The node the prefab is laid over, and the cell outside each door place in use, by the way out it serves. */
+  /** The node the prefab is laid over. */
   node: Cell
   /** Where the player stands. */
   stop: Cell
-  doors: Partial<Record<Direction, Cell>>
+  /** The cell outside each door place in use, by the door's place on the ring, with the side it stands on. */
+  doors: Record<string, { side: Direction; out: Cell }>
   /** The door places no straight arm from the node can reach, which stay walled. */
   unusedDoors: number
 }
@@ -94,8 +95,8 @@ export const prefabPreviewFloor = (prefab: Prefab, variant = 0, fill = 0): Prefa
     cellsOut[r][c] = { ...node, prefabRoom }
     const outside = Object.fromEntries(
       prefabRoom.doors.map(([dr, dc]) => {
-        const dir = sideOf(prefabRoom.rect, [dr, dc])
-        return [dir, [dr + STEP[dir][0], dc + STEP[dir][1]] as Cell]
+        const side = sideOf(prefabRoom.rect, [dr, dc])
+        return [`${dr},${dc}`, { side, out: [dr + STEP[side][0], dc + STEP[side][1]] as Cell }]
       })
     )
     return {

@@ -16,6 +16,13 @@ import type { RoomEnd, WalkPoint } from "./roomWalk"
 
 type Cell = readonly [number, number]
 
+/** The first door on a side of the room at `node`, as a walk end. */
+const doorOn = (grid: FloorGrid, node: Cell, side: "n" | "s" | "e" | "w"): RoomEnd => {
+  const door = roomDoors(grid, node[0], node[1]).find(candidate => candidate.side === side)
+  if (!door) throw new Error(`no ${side} door`)
+  return { doorAt: door.at }
+}
+
 /** The box an object's sprite stands in on its cell. */
 const boxOf = ([r, c]: Cell) => {
   const { cx, cy } = cellCenter(r, c)
@@ -89,7 +96,7 @@ const shortestOver = (grid: FloorGrid, node: Cell, a: Cell, b: Cell): number => 
 describe("a walk through a prefab room", () => {
   const grid = prefabForkFloor()
   const node = PREFAB_FORK
-  const ends: RoomEnd[] = [{ door: "w" }, { door: "e" }, { door: "s" }, "stop"]
+  const ends: RoomEnd[] = [doorOn(grid, node, "w"), doorOn(grid, node, "e"), doorOn(grid, node, "s"), "stop"]
   const endCell = (end: RoomEnd) => {
     const [p] = roomPath(grid, node, end, end)
     return run(
@@ -100,11 +107,11 @@ describe("a walk through a prefab room", () => {
   }
 
   it("goes straight from a door to the stop when nothing stands between", () => {
-    expect(roomPath(grid, node, { door: "s" }, "stop")).toHaveLength(2)
+    expect(roomPath(grid, node, doorOn(grid, node, "s"), "stop")).toHaveLength(2)
   })
 
   it("walks round a pillar between the west door and the stop, every point in the room", () => {
-    const path = roomPath(grid, node, { door: "w" }, "stop")
+    const path = roomPath(grid, node, doorOn(grid, node, "w"), "stop")
     expect(path.length).toBeGreaterThan(2)
     for (const p of path) expect(p.inRoom).toBe(true)
     path.slice(1).forEach((p, i) => expect(cuts(path[i], p, PREFAB_PILLARS), `${i}`).toBe(false))
@@ -153,12 +160,12 @@ describe("a walk through a prefab room", () => {
     }
 
     it("throws while developing", () => {
-      expect(() => roomPath(walledIn(), node, { door: "w" }, "stop")).toThrow(/no way from 4,3 to 6,8/)
+      expect(() => roomPath(walledIn(), node, doorOn(walledIn(), node, "w"), "stop")).toThrow(/no way from 4,3 to 6,8/)
     })
 
     it("walks a straight line in play", () => {
       vi.stubEnv("DEV", false)
-      const path = roomPath(walledIn(), node, { door: "w" }, "stop")
+      const path = roomPath(walledIn(), node, doorOn(walledIn(), node, "w"), "stop")
       expect(path.map(p => [p.x, p.y])).toEqual(
         run("4,3", "6,8").map(([r, c]) => [cellCenter(r, c).cx, cellCenter(r, c).cy])
       )
@@ -278,7 +285,12 @@ describe("a walk through a room fit for somebody", () => {
     const actor: Cell = [stop[0] - 1, stop[1]]
     const cell = grid.cells[PREFAB_FORK[0]][PREFAB_FORK[1]]
     expect(cell.type !== "empty" && cell.prefabRoom?.actor).toEqual(actor)
-    const ends: RoomEnd[] = [{ door: "w" }, { door: "e" }, { door: "s" }, "stop"]
+    const ends: RoomEnd[] = [
+      doorOn(grid, PREFAB_FORK, "w"),
+      doorOn(grid, PREFAB_FORK, "e"),
+      doorOn(grid, PREFAB_FORK, "s"),
+      "stop",
+    ]
     for (const from of ends)
       for (const to of ends) {
         const walk = roomPath(grid, PREFAB_FORK, from, to)

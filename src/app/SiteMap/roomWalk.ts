@@ -1,11 +1,11 @@
 import { STEP, inRect, prefabRoomAt, prefabRoomCells, roomDoors, type RoomDoor } from "@/game/roomShape"
-import type { Direction, FloorGrid, PrefabRoom } from "@/game/siteTypes"
+import type { FloorGrid, PrefabRoom } from "@/game/siteTypes"
 import { COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import type { StandingOffset } from "./standingSpot"
 
 export type WalkPoint = { x: number; y: number; inRoom?: true }
-/** A door by the side it stands on (the first there) or by its place on the ring, or the room's stop. */
-export type RoomEnd = { door: Direction } | { doorAt: Cell } | "stop"
+/** A door by its place on the ring, or the room's stop. */
+export type RoomEnd = { doorAt: Cell } | "stop"
 
 type Cell = readonly [number, number]
 
@@ -148,12 +148,7 @@ export const roomPath = (grid: FloorGrid, node: Cell, from: RoomEnd, to: RoomEnd
   if (!room) return []
   const doors = roomDoors(grid, node[0], node[1])
   const endCell = (end: RoomEnd): Cell =>
-    end === "stop"
-      ? room.stop
-      : (("door" in end
-          ? doors.find(door => door.side === end.door)
-          : doors.find(door => keyOf(door.at) === keyOf(end.doorAt))
-        )?.inside ?? node)
+    end === "stop" ? room.stop : (doors.find(door => keyOf(door.at) === keyOf(end.doorAt))?.inside ?? node)
   const a = endCell(from)
   const b = endCell(to)
   const inRoom = (cell: Cell): WalkPoint => ({ ...centreOf(cell), inRoom: true })
