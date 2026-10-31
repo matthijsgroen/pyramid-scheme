@@ -1,4 +1,15 @@
 {
+  "expert_1#1#0": {
+    "kind": "sidePaths",
+    "hash": "da7705c0ee050c360c1f72503f5de7a963a462ab",
+    "sidePaths": {
+      "outsideLock": [
+        5,
+        6
+      ],
+      "corridorsTakeTwo": true
+    }
+  },
   "expert_1#3#0": {
     "kind": "sidePaths",
     "hash": "a0d1ce2d12ef622f6445029a1ccdda8d557b279c",
