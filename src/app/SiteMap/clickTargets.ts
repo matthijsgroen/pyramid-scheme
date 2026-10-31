@@ -71,11 +71,12 @@ export const clickTargetAt = (
   ctx: OfferContext
 ): readonly [number, number] | null => {
   const cell = cellAt(grid, r, c)
-  // A designed room's own floor is walked by the room, never stopped on: its ways meet it at its doors.
+  // A designed room's own floor is walked by the room, never stopped on: its ways meet it at its doors. Beside the
+  // player, a step onto it is offered as the walk to the room's node.
   const place = roomPlaceOf(grid, r, c)
-  if (place === "inner") return null
   const roomStop = place === "door" || place === "node"
   const runTarget = cell.type === "corridor" ? ctx.runTargets.get(`${r},${c}`) : undefined
+  if (place === "inner" && !runTarget) return null
   const target = runTarget ? ([runTarget.row, runTarget.col] as const) : ([r, c] as const)
 
   // A cell a neighbouring room has claimed draws as part of that room, but interacts as ITSELF: a
@@ -121,7 +122,7 @@ export const clickTargetAt = (
  *   corridor nobody is in reads as a way the player has this moment, which it is not.
  * - `dot`: a corner or dead end the player can stop on.
  *
- * The one offer with no marker is a corridor corner already walked, not beside the player, and not a drop's launch or landing: `null` there is
+ * The one offer with no marker is a corridor corner, a drop's launch or landing, or a designed room's door, already walked and not beside the player: `null` there is
  * a decision, and the guard in `movementInvariant.spec.ts` exempts exactly that case by name.
  */
 export type OfferMarker = { kind: "node" } | { kind: "dot" } | { kind: "arrow"; dir: Direction }
@@ -155,11 +156,18 @@ export const markerAt = (
     if (ctx.nearCells.has(`${r},${c}`)) return { kind: "arrow", dir: entered }
     return cell.state === "completed" ? null : { kind: "dot" }
   }
-  if (cell.state === "reachable" && isCorridorCorner(cell.dirs)) return { kind: "dot" }
+  // A door of a designed room in use is a stopping point like a corner, whatever its shape; beside the player it
+  // is the next step of the way he is standing in, so it points there.
+  const door = roomPlaceOf(grid, r, c) === "door"
+  const stop = door || isCorridorCorner(cell.dirs)
+  if (cell.state === "reachable" && stop) {
+    const step = door ? ctx.nearCells.get(`${r},${c}`) : undefined
+    return step ? { kind: "arrow", dir: step } : { kind: "dot" }
+  }
   // A corner the player has already walked is drawn ground they can see, so it needs no marker to be
   // found; it stays a tap to walk back to. Right beside the player it is the next step of the way he is
   // standing in, so it points there (an arrow is only ever drawn around the player).
-  if (cell.state === "completed" && isCorridorCorner(cell.dirs)) {
+  if (cell.state === "completed" && stop) {
     const step = ctx.nearCells.get(`${r},${c}`)
     return step ? { kind: "arrow", dir: step } : null
   }

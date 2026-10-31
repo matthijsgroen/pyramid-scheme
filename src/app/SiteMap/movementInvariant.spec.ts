@@ -71,7 +71,7 @@ import {
   type Piece,
 } from "./floorFixtures.testing"
 import { ONE_WAY_RUN_CELLS } from "@/game/siteAssembler"
-import { roomDoors } from "@/game/roomShape"
+import { roomDoors, roomPlaceOf } from "@/game/roomShape"
 // Populates the family registry, the same side effect every other assembled-floor spec relies on.
 import "@/mods/registerModApps"
 
@@ -169,7 +169,7 @@ const markerViolations = (grid: FloorGrid, explorerPos: readonly [number, number
   // jsdom has no layout, so it has no `scrollTo`; the map centres on the explorer through it.
   Element.prototype.scrollTo ??= () => {}
   const exempt = new Set<string>()
-  // GROUND ALREADY WALKED NEEDS NO MARK, and that now covers a drop's ends as well as a corner: a map
+  // GROUND ALREADY WALKED NEEDS NO MARK, and that covers a drop's ends and a designed room's doors as well as a corner: a map
   // that keeps marking where the player has been fills up with his own history. It is a trade, and the
   // cost is named here rather than hidden — such a cell is still a tap, so it is a tap with nothing drawn
   // on it, which is the shape of a defect reported from play on 2026-10-01. What makes it bearable is
@@ -181,7 +181,7 @@ const markerViolations = (grid: FloorGrid, explorerPos: readonly [number, number
       if (
         cell.type === "corridor" &&
         cell.state === "completed" &&
-        (isCorridorCorner(cell.dirs) || dropEnds.has(`${r},${c}`))
+        (isCorridorCorner(cell.dirs) || dropEnds.has(`${r},${c}`) || roomPlaceOf(grid, r, c) === "door")
       ) {
         const { cx, cy } = cellCenter(r, c)
         exempt.add(`${cx - CELL / 2}px,${cy - CELL / 2}px`)

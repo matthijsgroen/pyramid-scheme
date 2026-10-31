@@ -272,6 +272,37 @@ describe("a room laid over a fork", () => {
     expect(doors).toHaveLength(4)
     for (const { at } of doors) expect(clickTargetAt(grid, claims, at[0], at[1], ctx), `${at}`).toEqual(at)
   })
+
+  it("a door beside the player points there, and a walked door far off draws nothing", () => {
+    const claims = buildRoomClaims(grid)
+    const [door] = roomDoors(grid, ...PREFAB_FORK).filter(({ side }) => side === "w")
+    const [r, c] = door.at
+    const beside = offerContextFrom(grid, [r, c - 1], {})
+    expect(markerAt(grid, claims, r, c, beside)).toEqual({ kind: "arrow", dir: "e" })
+    const walked = completeCell(grid, r, c)
+    const away = offerContextFrom(walked, grid.entrancePos, {})
+    expect(markerAt(walked, buildRoomClaims(walked), r, c, away)).toBeNull()
+  })
+
+  it("standing on a door, the step into the room points at its node", () => {
+    const claims = buildRoomClaims(grid)
+    const [door] = roomDoors(grid, ...PREFAB_FORK).filter(({ side }) => side === "w")
+    const [r, c] = door.at
+    const ctx = offerContextFrom(grid, door.at, {})
+    expect(clickTargetAt(grid, claims, r, c + 1, ctx)).toEqual(PREFAB_FORK)
+    expect(markerAt(grid, claims, r, c + 1, ctx)).toEqual({ kind: "arrow", dir: "e" })
+  })
+
+  it("standing on the node, each step out of it points at the door on that side", () => {
+    const claims = buildRoomClaims(grid)
+    const ctx = offerContextFrom(grid, PREFAB_FORK, {})
+    for (const { at, side } of roomDoors(grid, ...PREFAB_FORK)) {
+      const [dr, dc] = DIR_MOVES[side]
+      const [r, c] = [PREFAB_FORK[0] + dr, PREFAB_FORK[1] + dc]
+      expect(clickTargetAt(grid, claims, r, c, ctx), side).toEqual(at)
+      expect(markerAt(grid, claims, r, c, ctx), side).toEqual({ kind: "arrow", dir: side })
+    }
+  })
 })
 
 // The corridor detector's own hint is a marker on the cell BESIDE a hidden passage: masking erases the
