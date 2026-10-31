@@ -271,6 +271,7 @@ export const starterRules: Rule[] = [
   journey("starter_treasure_tomb").pyramid("first", {
     ...CAVE_DRESSING,
     difficulty: "starter",
+    rooms: [{ room: "caveBasin", min: 1, max: 1, central: 1 }],
     floors: [{ pathPuzzles: 3, encounter: "puzzle", ...lockOnFloor("caveLevers") }],
   }),
 

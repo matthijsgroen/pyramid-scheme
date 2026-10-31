@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1285269230
+export const worldContentHash = 520210142
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -21738,6 +21738,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["roots", "stalactites"],
         role: "puzzle",
         encountersByIndex: { 0: "balance-scale", 1: "lightbeam", 2: "sudoku" },
+        prefabs: {
+          caveBasin: {
+            name: "caveBasin",
+            tier: "starter",
+            mirror: true,
+            designedBy: "Claude",
+            layouts: [{ name: "", cells: ["##d##", "#...#", "d.bsd", "#...#", "##d##"] }],
+            places: { b: { letter: "b", layer: "floor", optional: false, kinds: ["basin"], cols: 1, rows: 1 } },
+            specials: { s: "stop" },
+          },
+        },
+        prefabPlacements: [{ room: "caveBasin", min: 1, max: 1, central: 1 }],
         corridorStraightness: 0.3,
         packing: 0.1,
         seed: 1835615271702410,
