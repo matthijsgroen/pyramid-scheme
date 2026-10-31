@@ -16,7 +16,9 @@ export const expectLaidPlan = (plan: LockPlan, laid: LaidLocks): void => {
     return x < y ? `${x}-${y}` : `${y}-${x}`
   }
   const passages = new Set(laid.passages)
-  const joined = (a: string, b: string) => passages.has(passageKey(a, b))
+  // A designed room's floor joins its anchor to each port node without a passage of the lattice.
+  const floorJoins = new Set(laid.joins)
+  const joined = (a: string, b: string) => passages.has(passageKey(a, b)) || floorJoins.has(passageKey(a, b))
   const claimed = new Set(laid.claimed)
   const regionOf = new Map(laid.regions.flatMap(region => region.nodes.map(node => [node, region.id] as const)))
   const nodesOf = (id: string) => laid.regions.find(region => region.id === id)!.nodes
@@ -46,7 +48,8 @@ export const expectLaidPlan = (plan: LockPlan, laid: LaidLocks): void => {
   }
 
   // 4. the passages are exactly stretches and corridors; two regions meet only across a plan corridor
-  expect([...allowed].sort()).toEqual([...passages].sort())
+  expect([...allowed].filter(key => !floorJoins.has(key)).sort()).toEqual([...passages].sort())
+  expect([...floorJoins].every(key => allowed.has(key))).toBe(true)
   const meets = new Set(plan.corridors.map(corridor => [corridor.from, corridor.to].sort().join("|")))
   for (const corridor of laid.corridors) {
     const chain = [corridor.start, ...corridor.nodes, corridor.end]
@@ -76,7 +79,7 @@ export const expectLaidPlan = (plan: LockPlan, laid: LaidLocks): void => {
   }
 
   // 3. every drop a straight run from a launch node to a landing node, its cells held and never walked
-  const touched = new Set(laid.passages.flatMap(key => key.split("-")))
+  const touched = new Set([...laid.passages, ...laid.joins].flatMap(key => key.split("-")))
   for (const drop of plan.drops) {
     const laidDrop = laid.drops.find(candidate => candidate.id === drop.id)!
     expect(nodesOf(drop.launch)).toContain(laidDrop.from)

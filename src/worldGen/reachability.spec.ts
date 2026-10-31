@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest"
 import type { SiteConfig } from "./types"
 import type { ResolveEncounter } from "../game/siteAssembler"
-import { defaultResolveEncounter } from "../game/siteAssembler"
+import { assembleFloor, defaultResolveEncounter } from "../game/siteAssembler"
+import type { FloorConfig as GameFloorConfig } from "../game/siteTypes"
 import {
   computeReachability,
+  createFloorAssemblyCache,
   floorKey,
   isOrderedJourney,
   isTierUnlocked,
@@ -32,9 +34,8 @@ const testSupport = (entryThresholds: Record<string, number> = {}): Reachability
         : r.type === "hieroglyphFragment"
           ? `hieroglyph:${r.hieroglyphId as string}`
           : undefined,
-  journeyEntryLock: j =>
-    j in entryThresholds ? { bucket: mapPieceBucket(j), threshold: entryThresholds[j] } : undefined,
-  tierUnlockBucket: t => TIER_UNLOCK[t],
+  journeyEntryLocks: j => (j in entryThresholds ? [{ bucket: mapPieceBucket(j), threshold: entryThresholds[j] }] : []),
+  tierUnlockGroups: t => (TIER_UNLOCK[t] ? [TIER_UNLOCK[t]] : []),
 })
 
 // Two floors, floor 0's side section gated by `wardKeyId`, ending in a stairhead wired to
@@ -195,6 +196,20 @@ const reEnterableFamilies: ResolveEncounter = (encounter, defaultTag) => ({
 })
 
 describe(reachableFloorsInSite, () => {
+  it("placement carves each floor at the layout's pin", () => {
+    const floor = ungatedTwoFloorSite()[1]
+    const pin = [7919, 15838, 23757].find(seed => assembleFloor("j", { ...floor, seed } as GameFloorConfig, 1).success)!
+    const site: SiteConfig = [{ ...floor, entrance: undefined, seed: pin, packing: 0.5 }]
+    const cache = createFloorAssemblyCache()
+    reachableFloorsInSite({ journeyId: "j", levelIndex: 0 }, site, new Set(), undefined, undefined, cache)
+    const carved = [...cache.entries()]
+    expect(carved.map(([key]) => key)).toEqual([`j:0#0#${pin}#0.5`])
+    const atPin = assembleFloor("j", site[0] as GameFloorConfig, pin, defaultResolveEncounter, {
+      floorRef: { journeyId: "j", levelIndex: 0, floorIndex: 0 },
+    })
+    expect(carved[0][1]).toEqual(atPin)
+  })
+
   it("floor 0 is always reachable, no keys needed", () => {
     const site = gatedTwoFloorSite("some-key")
     const result = reachableFloorsInSite({ journeyId: "j", levelIndex: 0 }, site, new Set())
@@ -367,6 +382,98 @@ describe(reachableFloorsInSite, () => {
     expect(result.reachableRewards).toEqual([{ type: "mosaicPiece", tier: "starter" }])
   })
 
+  const shopSite = (gate?: { type: "tomb-key"; wardKeyId: string }): SiteConfig => [
+    {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        {
+          pathPuzzles: 0,
+          difficulty: "starter",
+          end: "treasure",
+          encounter: "fez-shop",
+          rewards: [{ type: "tombKey", keyId: "stocked-key" }],
+          ...(gate ? { gate } : {}),
+        },
+      ],
+    },
+  ]
+
+  it("harvests a key standing in a reachable shop's stock, as it would a room's reward", () => {
+    const result = reachableFloorsInSite(
+      { journeyId: "j", levelIndex: 0 },
+      shopSite(),
+      new Set(),
+      undefined,
+      undefined,
+      undefined,
+      testSupport()
+    )
+    expect(result.harvestedCounts.get("stocked-key")).toBe(1)
+  })
+
+  it("with stockHeld, harvests only the stock pieces held, lists every piece as stock and keeps stock out of the rewards", () => {
+    const bought = { type: "tombKey", keyId: "bought-key" }
+    const unbought = { type: "tombKey", keyId: "unbought-key" }
+    const site: SiteConfig = [
+      {
+        pathPuzzles: 1,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        sideSections: [
+          {
+            pathPuzzles: 0,
+            difficulty: "starter",
+            end: "treasure",
+            encounter: "fez-shop",
+            rewards: [bought, unbought],
+          },
+        ],
+      },
+    ]
+    const ref = { journeyId: "j", levelIndex: 0 }
+    const held = reachableFloorsInSite(
+      ref,
+      site,
+      new Set(),
+      undefined,
+      undefined,
+      undefined,
+      testSupport(),
+      undefined,
+      false,
+      undefined,
+      {
+        stockHeld: reward => reward === bought,
+      }
+    )
+    expect(held.harvestedCounts.get("bought-key")).toBe(1)
+    expect(held.harvestedCounts.get("unbought-key")).toBeUndefined()
+    expect(held.reachableStock).toEqual([bought, unbought])
+    expect(held.reachableRewards).toEqual([])
+
+    const everyPiece = reachableFloorsInSite(ref, site, new Set(), undefined, undefined, undefined, testSupport())
+    expect(everyPiece.harvestedCounts.get("unbought-key")).toBe(1)
+    expect(everyPiece.reachableStock).toEqual([bought, unbought])
+    expect(everyPiece.reachableRewards).toEqual([bought, unbought])
+  })
+
+  it("does not harvest a key in a shop behind a still-locked gate", () => {
+    const result = reachableFloorsInSite(
+      { journeyId: "j", levelIndex: 0 },
+      shopSite({ type: "tomb-key", wardKeyId: "never-supplied" }),
+      new Set(),
+      undefined,
+      undefined,
+      undefined,
+      testSupport()
+    )
+    expect(result.harvestedCounts.get("stocked-key")).toBeUndefined()
+  })
+
   it("leaves out a reward behind a still-locked gate, so the list is reachable loot and not all loot", () => {
     const site: SiteConfig = [
       {
@@ -454,6 +561,25 @@ describe(isTierUnlocked, () => {
 
   it("holding none of the tier's keys stays locked even if unrelated other buckets are held", () => {
     expect(isTierUnlocked("junior", new Set(["junior_a_1", "some_other_bucket"]), testSupport())).toBe(false)
+  })
+
+  const groupSupport = (groups: string[][]): ReachabilitySupport => ({ tierUnlockGroups: () => groups })
+
+  it("opens a tier with two groups only once each group has a held bucket", () => {
+    const support = groupSupport([["perk-a"], ["other-mod-key"]])
+    expect(isTierUnlocked("expert", new Set(["perk-a"]), support)).toBe(false)
+    expect(isTierUnlocked("expert", new Set(["other-mod-key"]), support)).toBe(false)
+    expect(isTierUnlocked("expert", new Set(["perk-a", "other-mod-key"]), support)).toBe(true)
+  })
+
+  it("opens a tier with one group of three on any one of them", () => {
+    const support = groupSupport([["one", "two", "three"]])
+    expect(isTierUnlocked("expert", new Set(["two"]), support)).toBe(true)
+    expect(isTierUnlocked("expert", new Set(["four"]), support)).toBe(false)
+  })
+
+  it("opens a tier with no groups", () => {
+    expect(isTierUnlocked("wizard", new Set(), groupSupport([]))).toBe(true)
   })
 })
 
@@ -548,6 +674,34 @@ describe(computeReachability, () => {
     expect(enough.reachableFloors.has(floorKey({ journeyId: "tomb", levelIndex: 0, floorIndex: 0 }))).toBe(true)
   })
 
+  it("enters a journey with two entry locks only once both hold, discovering each unmet one", () => {
+    const allConfigs: Record<string, SiteConfig[]> = { tomb: [ungatedTwoFloorSite()] }
+    const journeyMeta = { tomb: { tier: "starter" as const } }
+    const support: ReachabilitySupport = {
+      journeyEntryLocks: () => [
+        { bucket: "pieces", threshold: 2 },
+        { bucket: "other-mod-key", threshold: 1 },
+      ],
+    }
+    const reach = (counts: [string, number][]) =>
+      computeReachability(allConfigs, journeyMeta, new Map(counts), undefined, undefined, support)
+
+    const none = reach([])
+    expect(none.reachableFloors.size).toBe(0)
+    expect(none.discoveredLocks).toEqual(new Set(["pieces", "other-mod-key"]))
+
+    const onlyPieces = reach([["pieces", 2]])
+    expect(onlyPieces.reachableFloors.size).toBe(0)
+    expect(onlyPieces.discoveredLocks).toEqual(new Set(["other-mod-key"]))
+
+    const both = reach([
+      ["pieces", 2],
+      ["other-mod-key", 1],
+    ])
+    expect(both.reachableFloors.has(floorKey({ journeyId: "tomb", levelIndex: 0, floorIndex: 0 }))).toBe(true)
+    expect(both.discoveredLocks.size).toBe(0)
+  })
+
   it("unlockedTiers reflects only the tiers whose (mod-supplied) unlock keys are held, plus the lockless first tier", () => {
     const result = computeReachability(
       {},
@@ -636,5 +790,112 @@ describe("isOrderedJourney", () => {
 
   it("leaves a journey unordered when its lock inputs are open ground, as with no mod realising the web", () => {
     expect(isOrderedJourney(withLockWeb({ inputs: {}, open: true }))).toBe(false)
+  })
+})
+
+describe("reachableFloorsInSite on a hidden stair", () => {
+  // Floor 0's hidden side section ends in the stairhead floor 1 is entered by: floor 1 is reached only through
+  // hidden cells, and holds a reward of its own.
+  const floorOneLoot = { type: "mosaicPiece", tier: "starter" } as const
+  const hiddenStairSite = (): SiteConfig => [
+    {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [{ pathPuzzles: 0, difficulty: "starter", end: { stairId: "site:hidden" }, hidden: true }],
+    },
+    {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      entrance: { stairId: "site:hidden" },
+      mainEndReward: floorOneLoot,
+      sideSections: [],
+    },
+  ]
+  const ref = { journeyId: "j", levelIndex: 0 }
+  const sight: ReachabilitySupport = { hiddenRequirement: () => "made-up-sight" }
+  const walk = (held: string[], support: ReachabilitySupport, authoredKeysHeld = false) =>
+    reachableFloorsInSite(
+      ref,
+      hiddenStairSite(),
+      new Set(held),
+      undefined,
+      undefined,
+      undefined,
+      support,
+      undefined,
+      authoredKeysHeld
+    )
+
+  it("with no hidden requirement a hidden section is never ground to the strict walk, and discovers no lock", () => {
+    const result = walk([], {})
+    expect(result.floors).toEqual(new Set([0]))
+    expect(result.reachableRewards).not.toContainEqual(floorOneLoot)
+    expect(result.discoveredLocks.size).toBe(0)
+  })
+
+  it("with no hidden requirement the permissive walk still walks a hidden section open", () => {
+    const result = walk([], {}, true)
+    expect(result.floors).toEqual(new Set([0, 1]))
+    expect(result.reachableRewards).toContainEqual(floorOneLoot)
+  })
+
+  it("leaves the floor past a hidden stair out until the requirement is held, and discovers it as a lock", () => {
+    const shut = walk([], sight)
+    expect(shut.floors).toEqual(new Set([0]))
+    expect(shut.reachableRewards).not.toContainEqual(floorOneLoot)
+    expect(shut.discoveredLocks).toEqual(new Set(["made-up-sight"]))
+
+    const held = walk(["made-up-sight"], sight)
+    expect(held.floors).toEqual(new Set([0, 1]))
+    expect(held.discoveredLocks.size).toBe(0)
+  })
+
+  it("walks a hidden section open in the permissive bracket, which answers what is ever obtainable", () => {
+    const result = walk([], sight, true)
+    expect(result.floors).toEqual(new Set([0, 1]))
+    expect(result.discoveredLocks.size).toBe(0)
+  })
+
+  it("discovers no lock on a floor whose walk never stands beside a hidden cell", () => {
+    const site: SiteConfig = [{ ...hiddenStairSite()[1], entrance: undefined }]
+    const result = reachableFloorsInSite(ref, site, new Set(), undefined, undefined, undefined, sight)
+    expect(result.discoveredLocks.size).toBe(0)
+  })
+})
+
+describe("the walk carves a floor as play carves it", () => {
+  // A made-up floor whose sub-section key gate takes an id derived from the id the floor is carved under.
+  const floor: SiteConfig[number] = {
+    pathPuzzles: 1,
+    difficulty: "starter",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    seed: 7,
+    sideSections: [
+      {
+        pathPuzzles: 1,
+        difficulty: "starter",
+        end: "treasure",
+        sideSections: [
+          { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+          { pathPuzzles: 0, difficulty: "starter", end: "treasure", gate: { type: "floor-key" } },
+        ],
+      },
+    ],
+  }
+
+  it("carves under the journey id, so the walked grid and its key ids equal the runtime carve", () => {
+    const cache = createFloorAssemblyCache()
+    reachableFloorsInSite({ journeyId: "made-up", levelIndex: 2 }, [floor], new Set(), undefined, undefined, cache)
+    const walked = [...cache.values()][0]
+    const played = assembleFloor("made-up", floor as GameFloorConfig, 7, defaultResolveEncounter, {
+      floorRef: { journeyId: "made-up", levelIndex: 2, floorIndex: 0 },
+    })
+    expect(played.success).toBe(true)
+    expect(walked).toEqual(played)
   })
 })

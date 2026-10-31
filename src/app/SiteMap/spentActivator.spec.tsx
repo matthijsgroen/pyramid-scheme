@@ -119,7 +119,7 @@ describe("a spent activator says so on the map", () => {
     it(`${name}: a torch or lever wears the mark its door's board shows for it, and none where no board does`, () => {
       const { grid: base } = carved.get(name)!
       const grid = withoutUnpairedMarks(withGateFaces(walked(base), 0, new Map()))
-      const sprites = nodeSpritesFor(grid, buildRoomClaims(grid), "starter", undefined, new Map(), 0)
+      const sprites = nodeSpritesFor(grid, buildRoomClaims(grid), "starter", new Map(), 0)
       const boardMarks = grid.cells
         .flat()
         .flatMap(cell => (cell.type === "room" ? (cell.gateFace?.markers ?? []) : []))
@@ -138,7 +138,7 @@ describe("a spent activator says so on the map", () => {
       const torches = torchesOf(base)
       const grid = walked(base)
       for (const { label, states } of everyLighting(base, torches)) {
-        const sprites = nodeSpritesFor(grid, buildRoomClaims(grid), "starter", undefined, states, 0)
+        const sprites = nodeSpritesFor(grid, buildRoomClaims(grid), "starter", states, 0)
         for (const { at } of torches) {
           const lit = states.get(cellAddress(base, 0, at[0], at[1])!) === "lit"
           const where = `${name} / ${label} / torch at ${at}`
@@ -232,7 +232,6 @@ const harness = (name: string) => {
         journeyData: [makeJourneyData(JOURNEY)],
       }),
       getPurchasedShopSlots: () => new Set<string>(),
-      getSkippedConsumables: () => new Set<string>(),
     } as unknown as JourneyAPI
     const assembled = useAssembledFloor(
       JOURNEY,
@@ -257,7 +256,6 @@ const harness = (name: string) => {
       grid: assembled.grid,
       explorerPos: assembled.explorerPos,
       onEncounter: ([r, c]) => void encountered.push([r, c]),
-      onSkippedConsumable: () => {},
       onExitReached: () => {},
     })
     return { ...assembled, ...nav, journeys, encountered }

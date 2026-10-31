@@ -13,9 +13,14 @@ import {
 import { makePkey } from "./grid"
 import { gateKeyOf } from "./ids"
 import { isolate } from "./isolate"
+import { edgeAllowed } from "./derive"
 import { assembleFloor } from "./assembleFloor"
 import type { Chain, FloorPrep } from "./state"
 import type { Direction, FloorConfig, FloorGrid } from "../siteTypes"
+import { carveOnce } from "../testSupport/laidCarveChecks"
+import { leverLock } from "../testSupport/floorLockFixtures"
+import { BINDING } from "../testSupport/lockFixtures"
+import { resolveEncounterMeta, resolveKeyRequirements } from "@/mods/allFamilyMeta"
 const chainOf = (prep: FloorPrep, positional: string, doors: string[], cells: Chain["cells"]): Chain => ({
   section: prep.sections.sideSections[0],
   cells,
@@ -86,6 +91,43 @@ describe("isolate", () => {
     expect(behind.get("4,2")).toEqual(new Set([gateKeyOf(prep.input.floorRef, "bars")]))
     expect(behind.has("2,2")).toBe(false)
     expect(seamBehind.get("4,2")?.size).toBe(2)
+  })
+
+  it("keeps a stray maze edge out of a sealed section's room filled into laid nodes, and lets one beside an open one", () => {
+    const sealedPrep = prepOf(
+      plainFloor({
+        sideSections: [
+          { pathPuzzles: 0, difficulty: "starter", end: "treasure", sealed: true },
+          { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+        ],
+      })
+    )
+    const maze = straightWalk(3)
+    const ground = new Map(["0,0", "0,2", "0,4", "2,2", "2,4"].map(cell => [cell, "at 0,0"]))
+    const state = {
+      ...freshState(sealedPrep),
+      maze: { ...maze, passages: new Set([pkey(0, 0, 0, 2), pkey(0, 2, 0, 4), pkey(0, 2, 2, 2), pkey(0, 4, 2, 4)]) },
+      branches: { carved: new Set<string>() } as never,
+      labels: noLabels(),
+      keys: { chains: [], hostColors: new Map() },
+      lay: {
+        laid: {
+          passages: [pkey(0, 0, 0, 2), pkey(0, 2, 0, 4)],
+          ground,
+          absorbed: [
+            { section: 0, cells: ["0,2"] },
+            { section: 1, cells: ["0,4"] },
+          ],
+        } as never,
+        mainSteps: [],
+      },
+    }
+    isolate.run(sealedPrep, state)
+    expect(state.doors!.behind.get("0,2")).toEqual(new Set(["s0"]))
+    const allowed = edgeAllowed(state as never)
+    expect(allowed(0, 0, 0, 2)).toBe(true)
+    expect(allowed(0, 2, 2, 2)).toBe(false)
+    expect(allowed(0, 4, 2, 4)).toBe(true)
   })
 })
 
@@ -325,5 +367,53 @@ describe("carved through assembleFloor", () => {
       const onlyViaThisPuzzle = [...fullyReachable].filter(k => !withoutFirstPuzzle.has(k))
       expect(onlyViaThisPuzzle.length).toBeGreaterThan(1)
     }
+  })
+
+  it("an absorbed trap room is reached only through the lay's passages", () => {
+    const DIRS: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+    const OPPOSITE: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
+    const config: FloorConfig = {
+      pathPuzzles: 1,
+      difficulty: "expert",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      locks: [{ lock: leverLock() }],
+      realisations: BINDING,
+      sideSections: [{ pathPuzzles: 1, difficulty: "expert", end: "treasure", sealed: true, encounter: "trap" }],
+    }
+    let rooms = 0
+    for (let seed = 1; seed <= 20; seed++) {
+      const result = carveOnce("trap-on-a-corridor", config, seed, resolveEncounterMeta, { resolveKeyRequirements })
+      if (!result.ok) continue
+      const { grid, laid } = result
+      const laidWays = new Map<string, string[]>()
+      for (const key of laid.passages) {
+        const [x, y] = key.split("-").map(Number)
+        const [a, b] = [x, y].map(node => `${Math.floor(node / laid.n)},${node % laid.n}`)
+        laidWays.set(a, [...(laidWays.get(a) ?? []), b])
+        laidWays.set(b, [...(laidWays.get(b) ?? []), a])
+      }
+      // Every node a carved passage joins this one to: through the cell between them, open both ways.
+      const carvedWays = (key: string): string[] => {
+        const [r, c] = key.split(",").map(Number)
+        const cell = grid.cells[r][c]
+        if (cell.type === "empty") return []
+        return [...cell.dirs].flatMap(dir => {
+          const [dr, dc] = DIRS[dir]
+          const between = grid.cells[r + dr]?.[c + dc]
+          return between && between.type !== "empty" && between.dirs.has(OPPOSITE[dir])
+            ? [`${r + 2 * dr},${c + 2 * dc}`]
+            : []
+        })
+      }
+      for (const key of laid.absorbed.find(place => place.section === 0)?.cells ?? []) {
+        const [r, c] = key.split(",").map(Number)
+        const cell = grid.cells[r][c]
+        if (cell.type !== "room" || !isTrapRoom(cell)) continue
+        rooms++
+        expect(carvedWays(key).sort(), `seed ${seed} at ${key}`).toEqual([...(laidWays.get(key) ?? [])].sort())
+      }
+    }
+    expect(rooms).toBeGreaterThan(0)
   })
 })

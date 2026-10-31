@@ -262,7 +262,10 @@ export const webDoorLeaks = (grid: FloorGrid): string[] => {
       cells: grid.cells.map((row, r) => row.map((cell, c) => (shut.has(`${r},${c}`) ? { type: "empty" } : cell))),
     }
     const held = new Set([...allKeys].filter(id => id !== webKey))
-    const reached = reachableFrom(without, grid.entrancePos, held, undefined, undefined, true, mechanismGatesOf(grid))
+    const reached = reachableFrom(without, grid.entrancePos, held, {
+      authoredKeysHeld: true,
+      mechanismGates: mechanismGatesOf(grid),
+    })
     for (const door of doors) {
       const sides = joinedTo(grid, door).filter(side => !shut.has(key(side)) && reached.has(key(side)))
       if (sides.length > 1) leaks.push(`${webKey} at ${key(door)}: the floor walks round it`)

@@ -32,7 +32,7 @@ export type Wall = {
  * an apprentice actually makes, because the bird signs differ by a beak. She is not wrong to be
  * annoyed: it is not her name until it is fixed.
  *
- * The Sphinx, behind `starter_1`'s ward gate.
+ * The Sphinx. The wall stands inside it, down the ward stair of `starter_1`.
  *
  * The writing from the first minute of the game. A cartouche, the Horus falcon, and a slot the sand
  * took — so what the player can read, after fifty hours of collecting gods, is a god's name. The

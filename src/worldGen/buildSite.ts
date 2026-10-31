@@ -1,4 +1,4 @@
-import type { DecorationKind, Patron, SiteCondition, Tileset, WallDecorationKind } from "../game/siteTypes"
+import type { DecorationKind, Patron, SiteCondition, StairLink, Tileset, WallDecorationKind } from "../game/siteTypes"
 import type { Difficulty, FloorConfig, SideSection, Tier, TreasureReward } from "./types"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { GLOBAL_DEFAULTS } from "./spec/global"
@@ -8,7 +8,17 @@ import { initPuzzleChains } from "./puzzleRewards"
 import { buildSideSections, type ResolveReward } from "./sideSections"
 import { stairIdAt } from "../game/stairAddress"
 import type { FloorConstraint, PyramidConstraint, RewardSpec } from "./dsl"
-import { resolveNodeActivities, resolveNodeDifficulties, resolveNodeLoot, resolveNodeSelectors } from "./dsl"
+import type { Prefab } from "../game/prefabTypes"
+import { catalogueRoom } from "../game/roomCatalogue"
+import {
+  resolveFloorRooms,
+  resolveNodeRooms,
+  resolveNodeActivities,
+  resolveNodeChambers,
+  resolveNodeDifficulties,
+  resolveNodeLoot,
+  resolveNodeSelectors,
+} from "./dsl"
 import { ONE_WAY_KIND, declaredBinding, regionBarrierBinding, resolveBinding } from "./realisationBinding"
 
 // ── Per-pyramid randomized resolution ─────────────────────────────────────────
@@ -95,6 +105,11 @@ export type BuildFloorOptions = {
   encounter?: FloorConfig["encounter"]
   encountersByIndex?: FloorConfig["encountersByIndex"]
   activitiesByIndex?: FloorConfig["activitiesByIndex"]
+  chambersByIndex?: FloorConfig["chambersByIndex"]
+  chambers?: number
+  prefabs?: FloorConfig["prefabs"]
+  prefabPlacements?: FloorConfig["prefabPlacements"]
+  prefabsByIndex?: FloorConfig["prefabsByIndex"]
   difficultiesByIndex?: FloorConfig["difficultiesByIndex"]
   loot?: FloorConfig["loot"]
   lootByIndex?: FloorConfig["lootByIndex"]
@@ -145,6 +160,13 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.activitiesByIndex && Object.keys(opts.activitiesByIndex).length
     ? { activitiesByIndex: opts.activitiesByIndex }
     : {}),
+  ...(opts.chambersByIndex && Object.keys(opts.chambersByIndex).length
+    ? { chambersByIndex: opts.chambersByIndex }
+    : {}),
+  ...(opts.chambers ? { chambers: opts.chambers } : {}),
+  ...(opts.prefabs && Object.keys(opts.prefabs).length ? { prefabs: opts.prefabs } : {}),
+  ...(opts.prefabPlacements?.length ? { prefabPlacements: opts.prefabPlacements } : {}),
+  ...(opts.prefabsByIndex && Object.keys(opts.prefabsByIndex).length ? { prefabsByIndex: opts.prefabsByIndex } : {}),
   ...(opts.difficultiesByIndex && Object.keys(opts.difficultiesByIndex).length
     ? { difficultiesByIndex: opts.difficultiesByIndex }
     : {}),
@@ -182,32 +204,83 @@ export const wireStaircases = (floors: FloorConfig[], site: { journeyId: string;
   }
 }
 
-// Wires floors[fi+1].entrance to whichever of floors[fi]'s own side sections ends in a
-// stairhead — the shared floor-to-floor chaining mechanism for authored multi-floor sites,
-// whether the shortcut is ward-gated by an external key (a pyramid's authored floors[]) or
-// self-gated by the floor's own treasure (a tomb's shortcut — pyramid-interior-design.md
-// §8, "the treasure IS the key"). Both are just a side section whose `end` is a stairhead.
-// A floor reached by a side stair is off the main path, so it has no exit: its way out is
-// that stair, back up (one exit per site, at the main path's end).
+/** What an authored site says about its stairs beyond the default chain, all by floor index. */
+export type StairLinks = {
+  /** Per floor: the floor its main path stairs to, where authored. */
+  toFloor?: readonly (number | undefined)[]
+  /** Per floor: how far down it lies, where authored; unset, its index. */
+  depth?: readonly (number | undefined)[]
+  /** A side section's stairId → the floor its stair leads to, where authored; unset, the next floor. */
+  sectionTargets?: ReadonlyMap<string, number>
+}
+
+// Wires an authored site's stairs: each side section ending in a stairhead, and each floor's main path, pairs with the
+// entrance of the floor it leads to by one shared stairId. This is the chaining mechanism for authored multi-floor
+// sites, whether a shortcut is ward-gated by an external key (a pyramid's authored floors[]) or self-gated by the
+// floor's own treasure (a tomb's, pyramid-interior-design.md §8: "the treasure IS the key").
 //
-// A floor ON THE MAIN WALK with no stairhead section of its own goes down by its main path instead, the way a
-// pyramid's main floors do (wireStaircases), so a site authored floor by floor can be one walk down to a
-// single exit on its last floor. A floor reached by a side stair stays off that walk and gains no main stair.
+// - A stair section leads to its `toFloor`, else the next floor. The floor it enters is off the main walk, and so is
+//   every floor a stair from an off-walk floor enters: one exit per site, at the main path's end, so such a floor's
+//   way out is the stair back up (`"none"`), unless it names a `toFloor` of its own.
+// - A floor's main path stairs to its `toFloor` where authored. Unset, a floor on the main walk stairs to the next
+//   floor when no other stair enters that floor, so a site authored floor by floor is one walk down to a single exit
+//   on its last floor; a floor off the main walk keeps no way out of its own.
+// - Each stair runs by the two floors' depths (unset, the floor index): to a deeper floor it goes down, to a
+//   shallower one up. Only a direction other than the default is written: a floor's entrance goes up, every other
+//   stair down.
+//
+// Only a floor's own top-level side sections stair to another floor; a `toFloor` on a deeper section is refused.
+// A stair always leads to a LATER floor index, entered by no other stair, at another depth; anything else is refused
+// by name. So floors are wired in index order, and the reachability walk, which visits them in that order, holds.
 export const wireSideSectionStaircases = (
   floors: FloorConfig[],
-  site: { journeyId: string; pyramidIndex: number }
+  site: { journeyId: string; pyramidIndex: number },
+  links: StairLinks = {}
 ): void => {
-  for (let fi = 0; fi < floors.length - 1; fi++) {
-    const stairSection = floors[fi].sideSections.find(s => typeof s.end === "object")
-    if (stairSection && typeof stairSection.end === "object") {
-      floors[fi + 1].entrance = { stairId: stairSection.end.stairId }
-      floors[fi + 1].exitOrStaircase = "none"
-    } else if (floors[fi].exitOrStaircase !== "none") {
-      const id = stairIdAt({ ...site, floorIndex: fi, path: "main" })
-      floors[fi].exitOrStaircase = { stairId: id }
-      floors[fi + 1].entrance = { stairId: id }
+  const depthOf = (fi: number) => links.depth?.[fi] ?? fi
+  const entered = new Set<number>()
+  // Floors off the main walk: every floor a side stair enters, and every floor a stair from one of those enters.
+  const offWalk = new Set<number>()
+  const unwired = new Set(links.sectionTargets?.keys())
+  const link = (from: number, to: number, stairId: string, leavesWalk: boolean): StairLink => {
+    const refuse = (why: string) =>
+      new Error(
+        `buildSite: journey=${site.journeyId} pyramid=${site.pyramidIndex + 1} floor=${from}: stair ${stairId} leads to floor ${to}, ${why}`
+      )
+    if (to === from) throw refuse("its own floor")
+    if (to < from) throw refuse("an earlier floor; a stair leads only to a later one")
+    if (!Number.isInteger(to) || to >= floors.length)
+      throw refuse(`which the site does not have (it builds ${floors.length})`)
+    if (entered.has(to)) throw refuse("which another stair already enters")
+    if (depthOf(to) === depthOf(from)) throw refuse(`which lies at the same depth (${depthOf(to)})`)
+    entered.add(to)
+    if (leavesWalk) {
+      offWalk.add(to)
+      floors[to].exitOrStaircase = "none"
     }
+    const climbs = depthOf(to) < depthOf(from)
+    floors[to].entrance = climbs ? { stairId, goes: "down" } : { stairId }
+    return climbs ? { stairId, goes: "up" } : { stairId }
   }
+  for (let fi = 0; fi < floors.length; fi++) {
+    const floor = floors[fi]
+    for (const section of floor.sideSections) {
+      if (typeof section.end !== "object") continue
+      const to = links.sectionTargets?.get(section.end.stairId) ?? fi + 1
+      unwired.delete(section.end.stairId)
+      section.end = link(fi, to, section.end.stairId, true)
+    }
+    const mainId = stairIdAt({ ...site, floorIndex: fi, path: "main" })
+    const authored = links.toFloor?.[fi]
+    if (authored !== undefined) floor.exitOrStaircase = link(fi, authored, mainId, offWalk.has(fi))
+    else if (!offWalk.has(fi) && floor.exitOrStaircase !== "none" && fi + 1 < floors.length && !entered.has(fi + 1))
+      floor.exitOrStaircase = link(fi, fi + 1, mainId, false)
+  }
+  // Only a floor's own top-level sections take a stair; a target named anywhere else would be lost without a word.
+  if (unwired.size > 0)
+    throw new Error(
+      `buildSite: journey=${site.journeyId} pyramid=${site.pyramidIndex + 1}: stair ${[...unwired].join(", ")} names a floor but is no floor's own side section, so it leads nowhere`
+    )
 }
 
 // ── Pyramid site construction ─────────────────────────────────────────────────
@@ -236,6 +309,8 @@ export type BuildSiteContext<TExtra extends string = never> = {
   sideTheme?: string
   sideDecorations?: DecorationKind[]
   sideWallDecorations?: WallDecorationKind[]
+  /** The rooms a spec may name, parsed. Defaults to the designed rooms under src/game/rooms. */
+  catalogue?: Readonly<Record<string, Prefab>>
 }
 
 // Lays `floorLocks` over floors the auto build made: the targeted floor gains its locks and the binding resolved
@@ -280,7 +355,17 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     sideTheme,
     sideDecorations,
     sideWallDecorations,
+    catalogue,
   } = ctx
+  // A name is looked up when a floor names it; with no catalogue handed in, the designed rooms are read then.
+  const lookupRoom = (name: string) => catalogueRoom(name, catalogue)
+  // The rooms the site names for every floor it builds without a list of its own, checked against that floor's
+  // difficulty where the floor is built.
+  const siteRoomsAt = (difficulty: Difficulty, label: string) =>
+    resolveFloorRooms(constraint.rooms, {}, lookupRoom, {
+      difficulty,
+      label: `journey=${journeyId} pyramid=${i + 1} ${label}`,
+    })
 
   // The end of a path that authors no reward is an open loot slot, unless it is lootless.
   const unauthoredEnd = (loot: false | undefined): TreasureReward | undefined =>
@@ -299,6 +384,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     // already understands it.
     const floors = constraint.floors as (FloorConstraint<TExtra> | null)[]
     const floorConfigs: FloorConfig[] = []
+    const sectionTargets = new Map<string, number>()
     for (let fi = 0; fi < floors.length; fi++) {
       const fc = floors[fi] ?? {}
       const floorPP = typeof fc.pathPuzzles === "number" ? fc.pathPuzzles : pp
@@ -314,6 +400,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         // than every floor of it repeating one roll.
         journeyId: `${journeyId}:${i}:floor${fi}`,
         floor: { journeyId, pyramidIndex: i, floorIndex: fi },
+        stairTargets: sectionTargets,
         constraintSections: floorSections,
         loot: floorLoot,
         // Floor-level declared side/hidden paths. Authored per-floor (fc.*); no pyramid/tier
@@ -327,6 +414,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         sideTheme,
         sideDecorations,
         sideWallDecorations,
+        lookupRoom,
       })
       const floorStraightness = fc.corridorStraightness ?? resolveCorridorStraightness(constraint, journeyId, i)
       const floorPacking = fc.packing ?? resolvePacking(constraint, journeyId, i)
@@ -360,6 +448,13 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           // Resolve this floor's authored `nodes` selectors → per-node encounter overrides (§G).
           encountersByIndex: resolveNodeSelectors(fc.nodes, floorPP),
           activitiesByIndex: resolveNodeActivities(fc.nodes, floorPP),
+          chambersByIndex: resolveNodeChambers(fc.nodes, floorPP),
+          chambers: fc.chambers ?? constraint.chambers,
+          // A floor's own list replaces the site's, the way `chambers` does.
+          ...resolveFloorRooms(fc.rooms ?? constraint.rooms, resolveNodeRooms(fc.nodes, floorPP), lookupRoom, {
+            difficulty: floorDiff,
+            label: `journey=${journeyId} pyramid=${i + 1} floor=${fi}`,
+          }),
           difficultiesByIndex: resolveNodeDifficulties(fc.nodes, floorPP),
           loot: floorLoot,
           lootByIndex: resolveNodeLoot(fc.nodes, floorPP),
@@ -397,7 +492,15 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         })
       )
     }
-    wireSideSectionStaircases(floorConfigs, { journeyId, pyramidIndex: i })
+    wireSideSectionStaircases(
+      floorConfigs,
+      { journeyId, pyramidIndex: i },
+      {
+        toFloor: floors.map(fc => fc?.toFloor),
+        depth: floors.map(fc => fc?.depth),
+        sectionTargets,
+      }
+    )
     initPuzzleChains(floorConfigs)
     return { floors: floorConfigs }
   }
@@ -429,6 +532,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             sideSections: [],
             mainEndReward: unauthoredEnd(constraint.loot),
             loot: constraint.loot,
+            chambers: constraint.chambers,
+            ...siteRoomsAt(difficulty, "floor"),
             encounter: constraint.encounter,
             // The junctions the site asks every floor of it to carve, and what stands in them.
             forks: constraint.forks,
@@ -480,6 +585,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         sideTheme,
         sideDecorations,
         sideWallDecorations,
+        lookupRoom,
         declaredSidePaths: constraint.sidePaths,
         declaredHiddenPaths: constraint.hiddenPaths,
       })
@@ -514,6 +620,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           wallDecorations: constraint.wallDecorations,
           corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
           packing: resolvePacking(constraint, journeyId, i),
+          chambers: constraint.chambers,
+          ...siteRoomsAt(difficulty, "floor"),
           seed: constraint.seed,
           sealed: resolveSealed(constraint),
         })
@@ -584,6 +692,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             pathPuzzles: wing.floorPP,
             difficulty: wing.difficulty,
             sideSections: [],
+            chambers: constraint.chambers,
+            ...siteRoomsAt(wing.difficulty, "wing"),
             entrance: { stairId: wingStairId },
             // A wing is off the main path: its way out is the stair it came down.
             exitOrStaircase: "none",
@@ -617,7 +727,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
 
       // Ward paths: a single tomb-key gated side section with one fragment reward — cheaper
       // return-content than a whole wing. With wardPathTrapped, the earlier-half pyramids trap
-      // their ward paths so the return trip costs consumables (raising their value).
+      // their ward paths so the return trip costs health (raising their value).
       const trapWardPath = (constraint.wardPathTrapped ?? false) && i < Math.ceil(levelCount / 2)
       lastMain.sideSections = [
         ...lastMain.sideSections,
@@ -663,6 +773,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     sideTheme,
     sideDecorations,
     sideWallDecorations,
+    lookupRoom,
     declaredSidePaths: constraint.sidePaths,
     declaredHiddenPaths: constraint.hiddenPaths,
   })
@@ -696,6 +807,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     wallDecorations: constraint.wallDecorations,
     corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
     packing: resolvePacking(constraint, journeyId, i),
+    chambers: constraint.chambers,
+    ...siteRoomsAt(difficulty, "floor"),
     seed: constraint.seed,
     sealed: resolveSealed(constraint),
   })

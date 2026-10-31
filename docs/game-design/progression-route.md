@@ -32,17 +32,17 @@ wizard    Ra's Solar Journey → Secrets of the Sphinx → Chamber of Ma'at → 
 The tomb is where the game hands out capability; pyramids hand out collectables. Floor 1 of each tier's
 first tomb is always the tier-unlock.
 
-| Tomb                       | Floors and what they give                                                                    |
-| -------------------------- | -------------------------------------------------------------------------------------------- |
-| Forgotten Merchant's Cache | tier-unlock · **compass L1** · pack-mule · max-health                                        |
-| Noble's Hidden Vault       | tier-unlock · — · — · — · max-health · max-health                                            |
-| High Priest's Treasury     | tier-unlock · location-key → Inner Sanctum · trap-insight · armor                            |
-| Inner Sanctum              | **consumable-detector L1** · — · trap-insight · max-health                                   |
-| Pharaoh's Secret Hoard     | tier-unlock · location-key → Hall of Osiris · — · **compass L2** · armor                     |
-| Hall of Osiris             | consumable-detector L2 · **scribes-eye L1** · **compass L3** · max-health · **detection L1** |
-| Vault of the Gods          | — · location-key → Realm · **detection L2** · —                                              |
-| Realm of Cosmic Forces     | consumable-detector L3 · location-key → Throne · detection L3 · scribes-eye L2               |
-| Throne of Eternity         | — · scribes-eye L3 · max-health · **detection L4**                                           |
+| Tomb                       | Floors and what they give                                                |
+| -------------------------- | ------------------------------------------------------------------------ |
+| Forgotten Merchant's Cache | tier-unlock · **compass L1** · pack-mule · max-health                    |
+| Noble's Hidden Vault       | tier-unlock · — · — · — · max-health · max-health                        |
+| High Priest's Treasury     | tier-unlock · location-key → Inner Sanctum · trap-insight · armor        |
+| Inner Sanctum              | — · — · trap-insight · max-health                                        |
+| Pharaoh's Secret Hoard     | tier-unlock · location-key → Hall of Osiris · — · **compass L2** · armor |
+| Hall of Osiris             | — · **scribes-eye L1** · **compass L3** · max-health · **detection L1**  |
+| Vault of the Gods          | — · location-key → Realm · **detection L2** · —                          |
+| Realm of Cosmic Forces     | — · location-key → Throne · detection L3 · scribes-eye L2                |
+| Throne of Eternity         | — · scribes-eye L3 · max-health · **detection L4**                       |
 
 ## Four things this shows
 

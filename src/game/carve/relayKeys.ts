@@ -1,7 +1,7 @@
 import { shuffle } from "../random"
 import type { KeyColor, SideSection } from "../siteTypes"
 import { nid } from "./ids"
-import { doorsShutting } from "./sections"
+import { doorsShutting, isFreeEnd } from "./sections"
 import { pass } from "./state"
 import type { Cell, Chain, SectionGroup } from "./state"
 
@@ -9,7 +9,7 @@ import type { Cell, Chain, SectionGroup } from "./state"
 const LAID_CHAIN_IDX = 10000
 
 /**
- * THE KEY CHAIN, and every carved path off the main walk as a chain. Only FREE (no endReward) treasure-end
+ * THE KEY CHAIN, and every carved path off the main walk as a chain. Only FREE (no reward, no loot end) treasure-end
  * gated sections can safely relay the next key onward — one that already carries its own authored reward
  * must be a chain LEAF (receives a key, never grants one), the same "never overwrite an authored reward"
  * rule the ungated key host keeps. Staircase-end sections are always leaves too (terminal, no relay). The
@@ -52,7 +52,7 @@ export const relayKeys = pass("relayKeys", ["branches", "lay", "rand"], ["keys"]
         colors.push(gate.color ?? "blue")
         hostColors.set(hostIdx, colors)
 
-        if (!sideSections[idx].endReward) {
+        if (isFreeEnd(sideSections[idx])) {
           const group = groupOf(idx)
           if (group) {
             hostIdx = idx
@@ -87,6 +87,7 @@ export const relayKeys = pass("relayKeys", ["branches", "lay", "rand"], ["keys"]
         section,
         cells: group.cells,
         attachedAt: group.attachedAt,
+        ...(group.via ? { via: group.via } : {}),
         positional,
         idx: group.sectionIdx,
         doors: doorsShutting(section, positional, []),

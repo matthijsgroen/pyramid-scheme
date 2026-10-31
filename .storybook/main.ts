@@ -8,6 +8,7 @@ const config: StorybookConfig = {
     { directory: "../src/ui/atoms", titlePrefix: "UI/Atoms" },
     { directory: "../src/ui/molecules", titlePrefix: "UI/Molecules" },
     { directory: "../src/ui/organisms", titlePrefix: "UI/Organisms" },
+    { directory: "../src/ui/principles", titlePrefix: "Design" },
     { directory: "../src/app", titlePrefix: "App" },
     { directory: "../src/mods", titlePrefix: "Mods" },
   ],

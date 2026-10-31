@@ -129,15 +129,23 @@ place under two words; so are `scribe` and `papyrus`. Author the role and the qu
 
 ## 3. Sprawl — the broad floor
 
-`packing` is how much floor a level is given for the rooms it has to hold; above 1 the layout spreads out
-rather than packing tight. The tiers set it as a chance rather than a fact: **expert, master and wizard
-carry `packingChance: 0.25` at `packingWhenHit: 1.6`**, and starter and junior carry none, so the first two
-tiers never sprawl at all.
+`packing` is how much floor a level is given for the rooms it has to hold; above the default 0.1 the layout spreads
+out rather than packing tight. The tiers set it as a chance rather than a fact: **expert, master and wizard
+carry `packingChance: 0.25` at `packingWhenHit: 0.16`**, and starter and junior carry none, so the first two
+tiers never sprawl at all. Junior authors `packing: 0.2` on the whole tier instead, one widening above the
+default 0.1, so its floors have the free corridor its pass-through chambers stand on.
 
-Two places author it outright. `expert_4` gives its 2nd and 4th pyramids `packing: 2` — the tier that first
+Two places author it outright. `expert_4` gives its 2nd and 4th pyramids `packing: 0.2` — the tier that first
 brings floor keys onto the open main path, and a broad floor is somewhere to hide a key. And a tomb
 resolves the roll once for the whole site, so a tomb comes out sprawling on every floor or on none, where a
 pyramid picks up a floor or two.
+
+Packing is an intention the layout search prefers, never a refusal. A baked pin below its authored packing is
+searched again. The bake tries every seed at the authored packing first, then raises it in small steps, closest first, and last takes the runtime's own carve; a floor that
+only carves at a raised packing or on that last carve ships, as long as it meets the hard layout criteria (it carves,
+its locks walk sound and hold a puzzle on the way, no dead region, no bare stub). A floor no layout can satisfy fails
+the bake on the criterion, never on its packing. So "sprawl" here is what the author asked for; the baked floor can be
+broader, never tighter.
 
 ## 4. Starter
 
@@ -205,12 +213,12 @@ would be a second ambience, colder than night and lit from one side rather than 
 
 ## 6. Expert
 
-| Journey                          | Pyr | Rooms | Sects | Sprawl             | Wears | Its story asks for                   | If restricted to it  |
-| -------------------------------- | --- | ----- | ----- | ------------------ | ----- | ------------------------------------ | -------------------- |
-| `expert_1` Valley of the Kings   | 4   | 84    | 37    | 2/7                | —     | `funerary` · necropolis · torchlight | 6.2× — over the bar  |
-| `expert_2` Karnak Temple Complex | 4   | 83    | 35    | 1/6                | —     | hypostyle columns · solar · festival | no role fits         |
-| `expert_3` Nile Delta Expedition | 5   | 107   | 42    | 1/7                | —     | `water` · delta marsh · crocodile    | 7.0× — over the bar  |
-| `expert_4` Pyramid of Djoser     | 5   | 99    | 41    | 2/7 (`packing: 2`) | —     | `trade` · terraces · building site   | 10.3× — over the bar |
+| Journey                          | Pyr | Rooms | Sects | Sprawl               | Wears | Its story asks for                   | If restricted to it  |
+| -------------------------------- | --- | ----- | ----- | -------------------- | ----- | ------------------------------------ | -------------------- |
+| `expert_1` Valley of the Kings   | 4   | 84    | 37    | 2/7                  | —     | `funerary` · necropolis · torchlight | 6.2× — over the bar  |
+| `expert_2` Karnak Temple Complex | 4   | 83    | 35    | 1/6                  | —     | hypostyle columns · solar · festival | no role fits         |
+| `expert_3` Nile Delta Expedition | 5   | 107   | 42    | 1/7                  | —     | `water` · delta marsh · crocodile    | 7.0× — over the bar  |
+| `expert_4` Pyramid of Djoser     | 5   | 99    | 41    | 2/7 (`packing: 0.2`) | —     | `trade` · terraces · building site   | 10.3× — over the bar |
 
 | Tomb                                          | Floors | Rooms | Sprawl | Wears | What its story asks for |
 | --------------------------------------------- | ------ | ----- | ------ | ----- | ----------------------- |

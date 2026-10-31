@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest"
+import { assignCorridors, eligibleCorridors } from "./corridorSidePaths"
 import { expandFloorLocks } from "./floorLocks"
 import type { PlacedLock } from "./floorLocks"
 import {
@@ -37,10 +38,11 @@ const planOf = (locks: PlacedLock[]): LockPlan => {
 }
 
 const FREE = new Map<string, RegionAppetite>()
-const WANTS = { content: [] as Array<"puzzle" | "reward">, appetite: FREE }
+const NONE = new Map<string, number>()
+const WANTS = { content: [] as Array<"puzzle" | "reward">, appetite: FREE, corridorRooms: NONE }
 
 const seated = (plan: LockPlan, seed: number, content: Array<"puzzle" | "reward"> = []): LaidFloor => {
-  const toLay = planToLay(plan, { content, appetite: FREE })
+  const toLay = planToLay(plan, { content, appetite: FREE, corridorRooms: NONE })
   const result = layLockPlan(toLay, { seed, n: startingGridSize(toLay) })
   if (!result.ok) throw new Error("did not lay")
   return seatLaidFloor(plan, result.laid)
@@ -69,11 +71,27 @@ describe("the plan the carve asks to be laid", () => {
   it("gives the route a spare node for each piece of the floor's own content", () => {
     const original = planOf([{ lock: leverLock() }])
     const spare = (content: Array<"puzzle" | "reward">) =>
-      planToLay(original, { content, appetite: FREE })
+      planToLay(original, { content, appetite: FREE, corridorRooms: NONE })
         .regions.filter(region => original.route.slice(1, -1).includes(region.id))
         .reduce((sum, region) => sum + region.minNodes - region.seats.length, 0)
     expect(spare([])).toBeLessThan(3)
     expect(spare(["puzzle", "puzzle", "reward"])).toBeGreaterThanOrEqual(3)
+  })
+
+  it("planToLay lays an assigned corridor long enough for its section's rooms", () => {
+    const original = planOf([{ lock: leverLock() }])
+    const bare = planToLay(original, WANTS)
+    const [assigned, other] = original.corridors.map(corridor => corridor.id)
+    const sized = planToLay(original, { ...WANTS, corridorRooms: new Map([[assigned, 3]]) })
+    const minimum = (plan: LockPlan, id: string) => plan.corridors.find(corridor => corridor.id === id)!.minNodes
+    expect(minimum(sized, assigned)).toBe(minimum(bare, assigned) + 3)
+    expect(minimum(sized, other)).toBe(minimum(bare, other))
+    for (const seed of SEEDS) {
+      const result = layLockPlan(sized, { seed, n: startingGridSize(sized) })
+      if (!result.ok) throw new Error("did not lay")
+      const laid = result.laid.corridors.find(corridor => corridor.id === assigned)!
+      expect(laid.nodes.length).toBeGreaterThanOrEqual(minimum(bare, assigned) + 3)
+    }
   })
 
   it("puts that room only in regions whose appetite takes the content", () => {
@@ -83,7 +101,7 @@ describe("the plan the carve asks to be laid", () => {
       ["lever.hall", "puzzles"],
       ["lever.landing", "reward"],
     ])
-    const grown = planToLay(original, { content: ["puzzle", "puzzle", "puzzle"], appetite })
+    const grown = planToLay(original, { content: ["puzzle", "puzzle", "puzzle"], appetite, corridorRooms: NONE })
     const minimum = (id: string) => grown.regions.find(region => region.id === id)!.minNodes
     expect(minimum("lever.foyer")).toBe(1)
     expect(minimum("lever.hall")).toBeGreaterThan(1)
@@ -247,6 +265,7 @@ const straight = (labels: string[]) => {
     junctions: [],
     drops: [],
     seatDemand: new Map<string, number>(),
+    stretches: new Map<string, string[]>(),
   }
 }
 
@@ -336,6 +355,74 @@ describe("the floor's side sections filled into the laid nodes", () => {
   })
 })
 
+describe("a side section assigned to a lock corridor", { timeout: 60_000 }, () => {
+  const kinds: Array<"puzzle" | "reward"> = ["puzzle", "puzzle", "reward"]
+  // The section and the corridor it is assigned to, laid long enough for it, with a plain section beside it.
+  const laidWith = (plan: LockPlan, corridor: string, seed: number) => {
+    const toLay = planToLay(plan, { content: [], appetite: FREE, corridorRooms: new Map([[corridor, kinds.length]]) })
+    const result = layLockPlan(toLay, { seed, n: startingGridSize(toLay) })
+    if (!result.ok) return undefined
+    const floor = seatLaidFloor(plan, result.laid)
+    const filled = fillLaidFloor(
+      floor,
+      new Set(),
+      [
+        { section: 0, kinds: ["puzzle", "reward"] },
+        { section: 1, kinds, corridor },
+      ],
+      FREE
+    )
+    if (!("placed" in filled)) throw new Error(`missing ${JSON.stringify(filled.missing)}`)
+    return { floor, cells: filled.placed.find(place => place.section === 1)!.cells }
+  }
+  const leverPlan = () => planOf([{ lock: leverLock() }])
+  const assignedTo = (plan: LockPlan) =>
+    assignCorridors(eligibleCorridors(plan, FREE), [{ section: 1, kinds }], FREE, plan)[0].corridor
+
+  it("a section assigned to a corridor stands wholly on that corridor's nodes", () => {
+    const plan = leverPlan()
+    const corridor = assignedTo(plan)
+    let laid = 0
+    for (const seed of SEEDS) {
+      const found = laidWith(plan, corridor, seed)
+      if (!found) continue
+      laid++
+      const nodes = found.floor.stretches.get(`corridor:${corridor}`)!
+      expect(found.cells).toHaveLength(kinds.length)
+      for (const cell of found.cells) expect(nodes).toContain(cell)
+    }
+    expect(laid).toBeGreaterThanOrEqual(6)
+  })
+
+  it("its puzzles come before its chest along the walk", () => {
+    const plan = leverPlan()
+    const corridor = assignedTo(plan)
+    for (const seed of SEEDS) {
+      const found = laidWith(plan, corridor, seed)
+      if (!found) continue
+      const depths = found.cells.map(cell => found.floor.depth.get(cell)!)
+      expect(depths).toEqual([...depths].sort((a, b) => a - b))
+      expect(new Set(depths).size).toBe(depths.length)
+    }
+  })
+
+  it("a corridor whose gate is aligned center holds rooms on both sides of it", () => {
+    const plan = planOf([{ lock: freeRegions(parseLock("in --[A]-- hall\nhall -- out\nA toggle @in", "mid").lock) }])
+    const corridor = plan.corridors.find(found => found.barriers.length > 0)!.id
+    let laid = 0
+    for (const seed of SEEDS) {
+      const found = laidWith(plan, corridor, seed)
+      if (!found) continue
+      laid++
+      const door = found.floor.depth.get([...found.floor.gateDoor.values()][0])!
+      const depths = found.cells.map(cell => found.floor.depth.get(cell)!)
+      expect(depths.some(depth => depth < door)).toBe(true)
+      expect(depths.some(depth => depth > door)).toBe(true)
+    }
+    expect(laid).toBeGreaterThanOrEqual(6)
+  })
+})
+
 describe("the stretch the carve lengthens when the laid nodes cannot take the content", () => {
   const region = (id: string, onRoute: boolean) => ({ id, onRoute, seats: [], minNodes: 1 })
   const corridor = (from: string, to: string, onRoute: boolean) => ({
@@ -422,6 +509,11 @@ describe("the stretch the carve lengthens when the laid nodes cannot take the co
     const found = lengtheningCandidates(stepped, laid(FLAT), puzzle, new Map())
     expect(ids(found)).not.toContain("corridor:B>C")
     expect(ids(found)).toContain("region:C")
+  })
+
+  it("a room missing from a corridor section asks to lengthen that corridor only", () => {
+    const found = lengtheningCandidates(plan, laid(FLAT), [{ kind: "puzzle", open: false, corridor: "A>B" }], new Map())
+    expect(ids(found)).toEqual(["corridor:A>B"])
   })
 
   it("asks the lay for the laid length of a stretch plus the nodes wanted, and no other stretch for more", () => {

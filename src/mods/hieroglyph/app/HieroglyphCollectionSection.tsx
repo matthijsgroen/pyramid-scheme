@@ -27,7 +27,9 @@ const CategoryGridSection: FC<{
   onSelect: CollectionSectionProps["onSelect"]
   inventory: Record<string, number | undefined>
   hieroglyphFragments: Record<string, number>
-}> = ({ category, selectedItem, onSelect, inventory, hieroglyphFragments }) => {
+  isNew: CollectionSectionProps["isNew"]
+  newLabel: string
+}> = ({ category, selectedItem, onSelect, inventory, hieroglyphFragments, isNew, newLabel }) => {
   const { t } = useTranslation("common")
   const { hieroglyphProgress } = useHieroglyphProgress()
   const items = useInventoryCategory(category)
@@ -57,6 +59,7 @@ const CategoryGridSection: FC<{
               symbol={item.symbol}
               difficulty={itemLevel}
               progress={{ found: fragmentsFound, required }}
+              newLabel={isCollected && isNew(item.id) ? newLabel : undefined}
               selected={selectedItem?.id === item.id}
               onClick={() => onSelect({ ...item, difficulty: itemLevel })}
             />
@@ -116,7 +119,12 @@ const HuntBar: FC<{
   )
 }
 
-export const HieroglyphCollectionSection: FC<CollectionSectionProps> = ({ selectedItem, onSelect }) => {
+export const HieroglyphCollectionSection: FC<CollectionSectionProps> = ({
+  selectedItem,
+  onSelect,
+  isNew,
+  newLabel,
+}) => {
   const { inventory } = useInventory()
   const { hieroglyphFragments } = useHieroglyphProgress()
   return (
@@ -130,6 +138,8 @@ export const HieroglyphCollectionSection: FC<CollectionSectionProps> = ({ select
           onSelect={onSelect}
           inventory={inventory}
           hieroglyphFragments={hieroglyphFragments}
+          isNew={isNew}
+          newLabel={newLabel}
         />
       ))}
     </>

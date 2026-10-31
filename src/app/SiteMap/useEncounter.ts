@@ -22,7 +22,7 @@ type EncounterArgs = {
   grid: FloorGrid | null
   ownedKeys: ReadonlySet<string>
   /** Called with whatever loot the solved room held — the offer itself is the reward topic's job. */
-  onReward: (reward: TreasureReward, address: string, keyColors?: readonly KeyColor[]) => void
+  onReward: (reward: TreasureReward, keyColors?: readonly KeyColor[]) => void
 }
 
 export type Encounter = {
@@ -177,7 +177,7 @@ export const useEncounter = ({
         reward.type === "tombKey" && cell?.type === "room"
           ? (cell.keyColors ?? (cell.keyColor ? [cell.keyColor] : undefined))
           : undefined
-      onReward(reward, address, keyColors)
+      onReward(reward, keyColors)
     },
     [grid, journeys, currentFloor, onReward, clearPuzzleState]
   )

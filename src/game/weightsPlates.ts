@@ -2,7 +2,7 @@ import { hashString } from "@/support/hashString"
 import { holeOf } from "./lockAuthoring"
 import { compileWeights } from "./mechanics/weights"
 import type { WeightsControl } from "./obstacles"
-import { isCandidate, standOnCorridor } from "./sequenceTiles"
+import { isCandidate, latticeNode, standOnCorridor, type IsNode } from "./sequenceTiles"
 import type { GridCell } from "./siteTypes"
 
 type Place = [number, number]
@@ -27,7 +27,8 @@ export const placeWeights = (
   onMainPath: ReadonlySet<string>,
   salt: string,
   reserved: ReadonlySet<string> = new Set(),
-  holes: ReadonlyMap<string, Place> = new Map()
+  holes: ReadonlyMap<string, Place> = new Map(),
+  isNode: IsNode = latticeNode
 ): { plate: string } | undefined => {
   const taken = new Set<string>()
   const placed: { demand: WeightsDemand; at: Map<string, Place> }[] = []
@@ -37,7 +38,7 @@ export const placeWeights = (
       const candidates: Place[] = []
       for (let r = 0; r < cells.length; r++)
         for (let c = 0; c < cells[r].length; c++)
-          if (!taken.has(`${r},${c}`) && !reserved.has(`${r},${c}`) && isCandidate(cells[r][c], r, c, plate.in))
+          if (!taken.has(`${r},${c}`) && !reserved.has(`${r},${c}`) && isCandidate(cells[r][c], r, c, plate.in, isNode))
             candidates.push([r, c])
       const rank = ([r, c]: Place) => hashString(`${salt}|plate|${plate.id}|${r},${c}`)
       const onRoute = ([r, c]: Place) => Number(onMainPath.has(`${r},${c}`))

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { reachableFrom, validateJourney, validateSite } from "./siteValidator"
+import { armDoor, nodeBeyond, reachableFrom, validateJourney, validateSite } from "./siteValidator"
 import type { CellState, CorridorCell, Direction, FloorGrid, GridCell, RoomCell } from "./siteTypes"
 
 // ─── Grid builders ────────────────────────────────────────────────────────────
@@ -284,6 +284,105 @@ describe(validateSite, () => {
     expect(validateSite(grid)).toEqual({ valid: true })
   })
 
+  // A lock's control is a room the player has to stand in to work it, so a branch ending at one is worth walking.
+  const lever: RoomCell = {
+    type: "room",
+    roomType: "encounter",
+    dirs: new Set(["n"]),
+    state: "reachable",
+    mechanism: { states: ["left", "right"], initial: "left", returnsToInitial: true, positions: [] },
+  }
+  const mechanismRoom = (extra: Partial<RoomCell>): RoomCell => ({
+    type: "room",
+    roomType: "encounter",
+    dirs: new Set(["n"]),
+    state: "reachable",
+    ...extra,
+  })
+  it.each<[string, RoomCell]>([
+    ["a lever", lever],
+    [
+      "a plate",
+      mechanismRoom({ plate: { id: "made.up" }, worksMechanism: { mechanismId: "made.stones", transition: 0 } }),
+    ],
+    [
+      "a sequence tile",
+      mechanismRoom({
+        sequenceTile: { id: "made.Sun", step: 0, glyph: 1, entrance: "made.court" },
+        worksMechanism: { mechanismId: "made.Sun", transition: 0 },
+      }),
+    ],
+    ["a pipe hole", mechanismRoom({ pipeHole: { pipe: "made.pipe", region: "made.east" } })],
+    [
+      "a room working a mechanism elsewhere",
+      mechanismRoom({ worksMechanism: { mechanismId: "made.x", transition: 0 } }),
+    ],
+  ])("noAllBlandFork: passes when a fork's only other branch ends at %s", (_name, cell) => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("fork", ["w", "e", "s"])],
+        [0, 2, room("puzzle", ["w"])],
+        [1, 1, cell],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    const result = validateSite(grid)
+    expect(result.valid ? [] : result.reasons.filter(r => r.type === "allBlandFork")).toEqual([])
+  })
+
+  it("noAllBlandFork: fails when a fork's branches lead to untagged rooms that work nothing", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("fork", ["w", "e", "s"])],
+        [0, 2, room("puzzle", ["w"])],
+        [1, 1, mechanismRoom({})],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    const result = validateSite(grid)
+    expect(result.valid ? [] : result.reasons.filter(r => r.type === "allBlandFork")).toEqual([
+      { type: "allBlandFork", forkPos: [0, 1] },
+    ])
+  })
+
+  it("noAllBlandFork: walks through a pass-through chamber to what lies beyond it", () => {
+    const chamber: RoomCell = { type: "room", roomType: "chamber", dirs: new Set(["n", "s"]), state: "reachable" }
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("fork", ["w", "e", "s"])],
+        [0, 2, room("puzzle", ["w"])],
+        [1, 1, chamber],
+        [2, 1, room("treasure", ["n"], { reward: { type: "money", amount: 1 } })],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(validateSite(grid)).toEqual({ valid: true })
+  })
+
+  it("noAllBlandFork: a branch holding only a chamber that ends in nothing is still bland", () => {
+    const chamber: RoomCell = { type: "room", roomType: "chamber", dirs: new Set(["n"]), state: "reachable" }
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("fork", ["w", "e", "s"])],
+        [0, 2, room("puzzle", ["w"])],
+        [1, 1, chamber],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    const result = validateSite(grid)
+    expect(result.valid ? [] : result.reasons.filter(r => r.type === "allBlandFork")).toEqual([
+      { type: "allBlandFork", forkPos: [0, 1] },
+    ])
+  })
+
   it("keyBeforeGate: tomb-key gate is not validated (key lives off-floor)", () => {
     // tomb-key gate with no matching key on this floor — should still pass
     const grid = buildGrid(
@@ -388,6 +487,54 @@ describe(validateSite, () => {
 
 // ─── reachableFrom: requiredKeyIds (a tableau needing several hieroglyphs complete) ───────
 
+describe(nodeBeyond, () => {
+  it("follows a way out round its bends to the room it leads to", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("fork", ["e"])],
+        [0, 1, corridor(["w", "e"])],
+        [0, 2, corridor(["w", "s"])],
+        [1, 2, corridor(["n", "e"])],
+        [1, 3, switchGate(["w"], "k")],
+      ],
+      [0, 0],
+      [1, 3]
+    )
+    expect(nodeBeyond(grid, [0, 0], "e")).toEqual([1, 3])
+  })
+
+  it("walks straight through a junction it meets", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("fork", ["e"])],
+        [0, 1, corridor(["w", "e", "s"])],
+        [0, 2, switchGate(["w"], "k")],
+        [1, 1, corridor(["n"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(nodeBeyond(grid, [0, 0], "e")).toEqual([0, 2])
+  })
+})
+
+describe(armDoor, () => {
+  it("finds the door past a sequence tile the way out reaches round a bend", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("fork", ["e"])],
+        [0, 1, corridor(["w", "s"])],
+        [1, 1, room("puzzle", ["n", "e"], { sequenceTile: { id: "s", step: 0, glyph: 0, entrance: "start" } })],
+        [1, 2, corridor(["w", "e"])],
+        [1, 3, switchGate(["w"], "k")],
+      ],
+      [0, 0],
+      [1, 3]
+    )
+    expect(armDoor(grid, [0, 0], "e")).toEqual([1, 3])
+  })
+})
+
 describe(reachableFrom, () => {
   it("blocks a room needing several keys until all of them are owned", () => {
     const grid = buildGrid(
@@ -440,7 +587,7 @@ describe(reachableFrom, () => {
       [0, 2]
     )
     const blockedRequirements = new Set<string>()
-    const reachable = reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements)
+    const reachable = reachableFrom(grid, [0, 0], new Set(), { blockedRequirements })
     expect(reachable.has("0,2")).toBe(false)
     expect(blockedRequirements.size).toBe(0)
   })
@@ -456,7 +603,7 @@ describe(reachableFrom, () => {
       [0, 2]
     )
     const blockedRequirements = new Set<string>()
-    const reachable = reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements)
+    const reachable = reachableFrom(grid, [0, 0], new Set(), { blockedRequirements })
     expect(reachable.has("0,2")).toBe(false)
     expect(blockedRequirements).toEqual(new Set(["authored:east"]))
   })
@@ -474,7 +621,7 @@ describe(reachableFrom, () => {
       [0, 2]
     )
     const blockedRequirements = new Set<string>()
-    const reachable = reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements)
+    const reachable = reachableFrom(grid, [0, 0], new Set(), { blockedRequirements })
     expect(reachable.has("0,2")).toBe(false)
     expect(blockedRequirements.size).toBe(0)
   })
@@ -493,7 +640,7 @@ describe(reachableFrom, () => {
       [0, 0],
       [0, 2]
     )
-    expect(reachableFrom(grid, [0, 0], new Set(), undefined, undefined, true).has("0,2")).toBe(true)
+    expect(reachableFrom(grid, [0, 0], new Set(), { authoredKeysHeld: true }).has("0,2")).toBe(true)
   })
 
   it("authoredKeysHeld walks through an authored gate asking for SEVERAL keys", () => {
@@ -506,7 +653,7 @@ describe(reachableFrom, () => {
       [0, 0],
       [0, 2]
     )
-    expect(reachableFrom(grid, [0, 0], new Set(), undefined, undefined, true).has("0,2")).toBe(true)
+    expect(reachableFrom(grid, [0, 0], new Set(), { authoredKeysHeld: true }).has("0,2")).toBe(true)
   })
 
   it("authoredKeysHeld leaves an UNAUTHORED gate shut, so it opens doors rather than all of them", () => {
@@ -520,8 +667,26 @@ describe(reachableFrom, () => {
       [0, 2]
     )
     const blockedRequirements = new Set<string>()
-    expect(reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements, true).has("0,2")).toBe(false)
+    expect(reachableFrom(grid, [0, 0], new Set(), { blockedRequirements, authoredKeysHeld: true }).has("0,2")).toBe(
+      false
+    )
     expect(blockedRequirements).toEqual(new Set(["tomb:ward"]))
+  })
+
+  it("walks a hidden cell by default, and leaves it and what lies past it out when hiddenOpen is false", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, { ...corridor(["w", "e"]), hidden: true }],
+        [0, 2, room("treasure", ["w"], { hidden: true })],
+      ],
+      [0, 0],
+      [0, 0]
+    )
+    expect(reachableFrom(grid, [0, 0]).has("0,2")).toBe(true)
+    const shut = reachableFrom(grid, [0, 0], new Set(), { hiddenOpen: false })
+    expect(shut.has("0,1")).toBe(false)
+    expect(shut.has("0,2")).toBe(false)
   })
 })
 

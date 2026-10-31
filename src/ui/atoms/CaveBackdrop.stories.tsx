@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { CaveBackdrop, CaveMouth, cavernFloor } from "./CaveBackdrop"
 import { DesertBackdrop } from "./DesertBackdrop"
-import { PyramidDisplay } from "@/app/PyramidLevel/PyramidDisplay"
+import { Level } from "@/app/PyramidLevel/Level"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 import { journeys } from "@/data/journeys"
 import { generateJourneyLevel } from "@/game/generateJourneyLevel"
@@ -65,13 +65,7 @@ export const Cavern: StoryObj<{ difficulty: (typeof difficulties)[number] }> = {
               >
                 <div className={`absolute inset-0 flex justify-center ${cavernFloor}`}>
                   {level && (
-                    <PyramidDisplay
-                      levelNr={2}
-                      pyramid={level.pyramid}
-                      decorationOffset={0}
-                      dayTime="afternoon"
-                      values={{}}
-                    />
+                    <Level content={level} dayTime="afternoon" decorated={false} grounded interactive={false} />
                   )}
                 </div>
               </div>

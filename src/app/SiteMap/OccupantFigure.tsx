@@ -17,14 +17,14 @@ const GHOST_OPACITY = 0.7
 /**
  * Somebody standing in a room, in cell-local units around the spot they stand on — the explorer's own
  * frame, feet on the floor line. A painted figure gets the explorer's foot shadow; a stand-in bust does
- * not, having no feet to cast one.
+ * not, having no feet to cast one. The dead fade in: one stands there once their scene has been heard.
  */
 export const OccupantFigure = ({ occupant }: { occupant: RoomOccupant }) => {
   const sprite = occupant.kind === "sprite"
   const w = sprite ? CHAR_W : BUST_W
   const h = sprite ? CHAR_H : BUST_H
   return (
-    <>
+    <div className={occupant.translucent ? "animate-fade-in" : "contents"}>
       {sprite && <FootShadow />}
       <div
         data-occupant={occupant.id}
@@ -45,6 +45,6 @@ export const OccupantFigure = ({ occupant }: { occupant: RoomOccupant }) => {
           pointerEvents: "none",
         }}
       />
-    </>
+    </div>
   )
 }

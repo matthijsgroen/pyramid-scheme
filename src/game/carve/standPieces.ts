@@ -1,6 +1,6 @@
 import { hashString } from "@/support/hashString"
 import { switchAddress } from "../seeds/boardIndex"
-import { placeSequences } from "../sequenceTiles"
+import { latticeNode, placeSequences, type IsNode } from "../sequenceTiles"
 import { placeWeights } from "../weightsPlates"
 import { keyOf } from "./derive"
 import { gateKeyOf, obstacleMode } from "./ids"
@@ -11,18 +11,28 @@ import type { CarveState, FloorPrep, Refusal } from "./state"
 /** What standing the pieces reads beyond the grid: the route, and every reserved junction's ways out. */
 export type PiecesState = Pick<Required<CarveState>, "maze" | "switchWays" | "pipeHoles">
 
+/** Where on the grid a piece may stand: which cells are its nodes, and nodes kept for something else. */
+export type PiecesGround = { isNode: IsNode; kept: ReadonlySet<string> }
+
+const LATTICE_GROUND: PiecesGround = { isNode: latticeNode, kept: new Set() }
+
 /**
  * THE PIECES A WALK STEPS ON, STOOD ON THE RENDERED GRID: sequence tiles, then plates. The one write after
  * `render`, because where a piece may stand is read off the walk the grid draws — every way into a region,
  * through its doors and down its drops — which no pass holds. Neither moves a wall: a piece turns a bare
  * corridor node into a room. A switch's way out is never one, whether or not a switch shuts it.
  */
-export const standPieces = (prep: FloorPrep, state: PiecesState, grid: WritableGrid): Refusal | void => {
+export const standPieces = (
+  prep: FloorPrep,
+  state: PiecesState,
+  grid: WritableGrid,
+  ground: PiecesGround = LATTICE_GROUND
+): Refusal | void => {
   const { siteId, floorRef } = prep.input
   const { authored } = prep.config
   const { allocation, sequenceSigns } = prep.marks
   const { sequences, weights } = prep.mechanisms
-  const shutWays = () => new Set(state.switchWays.flatMap(ways => ways.map(({ cell }) => cell)))
+  const shutWays = () => new Set([...state.switchWays.flatMap(ways => ways.map(({ cell }) => cell)), ...ground.kept])
   const gateOf = (id: string) => {
     const mode = obstacleMode(authored, id)
     return { gateKeyId: gateKeyOf(floorRef, id), ...(mode ? { mode } : {}) }
@@ -50,7 +60,8 @@ export const standPieces = (prep: FloorPrep, state: PiecesState, grid: WritableG
         gates: sequence.opens.done.map(gateOf),
         doorKey: gateKeyOf(floorRef, sequence.resetAt),
       })),
-      shutWays()
+      shutWays(),
+      ground.isNode
     )
     if (unplaced) return { retry: [{ type: "sequenceTileNotPlaced", ...unplaced }] }
     const tileDuplicate = duplicateSlot(grid)
@@ -68,7 +79,8 @@ export const standPieces = (prep: FloorPrep, state: PiecesState, grid: WritableG
       new Set(state.maze.mainPath.map(keyOf)),
       siteId,
       shutWays(),
-      holes
+      holes,
+      ground.isNode
     )
     if (unplaced) return { retry: [{ type: "plateNotPlaced", ...unplaced }] }
     const plateDuplicate = duplicateSlot(grid)

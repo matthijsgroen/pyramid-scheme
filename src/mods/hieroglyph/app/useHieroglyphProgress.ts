@@ -36,6 +36,8 @@ export type HieroglyphProgressAPI = {
   completedHieroglyphKeys: ReadonlySet<string>
   // hieroglyphId → count of distinct pieces found (for the collection/detector views).
   hieroglyphFragments: Record<string, number>
+  // True once the mod's own save has been read.
+  loaded: boolean
   compassLevel: number
   // The hunted hieroglyph (set from the Collection picker, §3C); null = not hunting.
   compassTarget: string | null
@@ -43,7 +45,7 @@ export type HieroglyphProgressAPI = {
 }
 
 export const useHieroglyphProgress = (): HieroglyphProgressAPI => {
-  const [state, setState] = useModState<HieroglyphState>("hieroglyph", INITIAL)
+  const [state, setState, loaded] = useModState<HieroglyphState>("hieroglyph", INITIAL)
   // Derived from the treasures held, not stored alongside the fragments — see game/perkTotals.ts.
   const compassLevel = perkLevel(useMergedEarnedPerks(), "compass", COMPASS_CAP)
 
@@ -73,9 +75,10 @@ export const useHieroglyphProgress = (): HieroglyphProgressAPI => {
           .map(f => f.split(":")[0])
           .reduce((m, id) => m.set(id, (m.get(id) ?? 0) + 1), new Map<string, number>())
       ),
+      loaded,
       compassLevel,
       compassTarget: state.compassTarget ?? null,
       setCompassTarget: hieroglyphId => setState(prev => ({ ...prev, compassTarget: hieroglyphId })),
     }
-  }, [state, setState, compassLevel])
+  }, [state, setState, compassLevel, loaded])
 }

@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Designed rooms on the starter floors.
+- Rooms keep their full shape
+- The explorer walks around what stands in a room; the cave before the starter tomb has a basin in its crossing.
+- New art for the starter pyramids.
+- The camp: your base, which you build out with what you find.
+- A new look: the camp is your home screen, with all journeys in one list and the collection in tabs.
+- Higher difficulties have puzzles on their floors: levers, torches, ziplines, stone pipes and more.
+- A new healing system: hearts refill at the camp, and waterskins heal on the spot.
+- A storyline, with Fez, the explorer and a ghost in every tomb.
+- Every treasure tomb is hidden in a cave, with its pyramid in a sunlit cavern below.
+- Side paths run through a lock's corridors; the Sphinx is read from inside, through a cave behind the ward gate.
+- Designed rooms in the starter pyramids.
+- Saved games start over this release.
+- The game left open during an update reloads into the new version instead of crashing.
 - Every treasure tomb is now hidden in a cave before its sunlit cavern; the starter tomb's cave is behind a lever lock.
 - The old skeleton in the cave lies across two floor cells.
 - The cave floor has worn, rounded edges instead of square ones, and its back walls end round against the side walls.

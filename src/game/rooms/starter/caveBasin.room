@@ -1,0 +1,15 @@
+// designed by: Claude
+// starter. A crossing in the cave: the basin stands in the middle and the ways go around it.
+room caveBasin
+tier starter
+mirror
+
+layout
+# # d # #
+# . . . #
+d . b s d
+# . . . #
+# # d # #
+
+b floor basin
+s stop

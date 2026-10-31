@@ -1,33 +1,52 @@
-import type { SiteConfig } from "./types"
+import type { FragmentSlotReward, SiteConfig, TreasureReward } from "./types"
 import type { Slot } from "./slots"
 import type { CappedCurrency } from "./placeFragments"
+import type { GateWalk } from "./gateWalk"
 
 // The loot placement primitive (docs/mods/distribution-primitive-design.md). A Distribution
 // claims loot slots by a footprint (how many), an eligibility filter (which), and a rank
 // (priority among eligible — composed from distribution.ts's pipe/rankBy/preferThenRelax);
 // CORE allocates the slots, the MOD fills them — so core never rolls a variant or knows a
 // currency's meaning. Capped currencies are the degenerate exact-footprint case (min === max);
-// the dynamic distributions (trap consumables, shop money economy) are flexible.
+// the dynamic distributions (owned by mods, e.g. the shop's money economy) are flexible.
 export type Footprint = { min: number; max: number }
+
+/**
+ * What a distribution marked `fillsLast` places by: the strict gate walk over the world as it stands, with a fresh
+ * placeholder (the slot's `sentinel`) in every slot it was handed, so a ground listing a placeholder among its rewards
+ * has reached that slot's room; and which rewards are keys.
+ */
+export type FillContext = {
+  walk: GateWalk
+  isKey: (reward: TreasureReward) => boolean
+}
 
 export type Distribution = {
   id: string
   // How many slots core should hand this distribution. Exact (min === max) for a fixed total.
   footprint: (allConfigs: Record<string, SiteConfig[]>) => Footprint
   // Which slots core may allocate to it (default: any). The encounter↔loot join lives here —
-  // e.g. consumables filter on `slot.rewardPriority > 0 && tier >= expert`; the shop takes any
+  // e.g. a mod's distribution may filter on `slot.rewardPriority > 0 && tier >= expert`; the shop takes any
   // loot-eligible (`rewardPriority > 0`) slot.
   eligible?: (slot: Slot) => boolean
-  // Priority among eligible slots when contended (default: natural order).
-  rank?: (candidates: readonly Slot[]) => Slot[]
-  // Core hands the mod its allocated slots (+ the whole world, e.g. so the shop can size its money
-  // budget from the authored shop prices); the mod bakes rewards, owns variants/rarity/completeness,
+  // Priority among eligible slots when contended (default: natural order). Handed the whole world too, for a
+  // distribution whose quota is read off what the world holds (a count per tier of some encounter).
+  rank?: (candidates: readonly Slot[], allConfigs: Record<string, SiteConfig[]>) => Slot[]
+  // Core hands the mod its allocated slots (+ the whole world, e.g. so the shop can price the stock its money must
+  // cover); the mod bakes rewards, owns variants/rarity/completeness,
   // and clears any claimed-but-unused slot to empty (`assign(undefined)`). Core does not inspect it.
-  fill: (allocatedSlots: Slot[], allConfigs: Record<string, SiteConfig[]>) => void
+  // A distribution marked `fillsLast` is also handed a FillContext when the caller can build one.
+  fill: (allocatedSlots: Slot[], allConfigs: Record<string, SiteConfig[]>, ctx?: FillContext) => void
+  // Fills after every distribution without the flag, whatever the registration order: a distribution whose fill
+  // reads what the others placed (money that must cover the stock of every ground) marks itself last. Each of its
+  // slots holds a fresh placeholder while it fills, and the fill clears every placeholder it does not fill.
+  fillsLast?: true
 }
 
-// Allocate `available` slots to each distribution (footprint + eligibility + rank), remove the
-// taken slots from `available`, and hand them to the mod's fill. Hard-fails if a distribution's
+// Allocate `available` slots to each distribution (footprint + eligibility + rank), those marked `fillsLast`
+// after all the others, remove the taken slots from `available`, and hand them to the mod's fill. A distribution marked
+// `fillsLast` finds a fresh placeholder in each of its slots, and `context` is built only after they stand, so the walk
+// it carries sees the world the earlier fills left and lists each placeholder its grounds reach. Hard-fails if a distribution's
 // `min` can't be met — capped/required loot must fully place (keys-and-locks-solver.md,
 // "Exhausted relaxation is a build failure").
 //
@@ -46,7 +65,8 @@ export const allocateDistributions = (
   available: Set<Slot>,
   distributions: readonly Distribution[],
   allConfigs: Record<string, SiteConfig[]>,
-  emptyFraction = 0
+  emptyFraction = 0,
+  context?: () => FillContext
 ): void => {
   if (emptyFraction > 0) {
     // Lowest-priority loot-eligible slots first (puzzle before chest), so the reserved-empty share
@@ -56,13 +76,14 @@ export const allocateDistributions = (
       .sort((a, b) => a.rewardPriority - b.rewardPriority)
     for (const slot of eligible.slice(0, Math.round(eligible.length * emptyFraction))) available.delete(slot)
   }
-  for (const dist of distributions) {
+  const ordered = [...distributions.filter(d => !d.fillsLast), ...distributions.filter(d => d.fillsLast)]
+  for (const dist of ordered) {
     const { min, max } = dist.footprint(allConfigs)
     // Priority order is the default; dist.rank refines within it (Array.sort is stable).
     const eligible = [...available]
       .filter(s => dist.eligible?.(s) ?? true)
       .sort((a, b) => b.rewardPriority - a.rewardPriority)
-    const ranked = dist.rank ? dist.rank(eligible) : eligible
+    const ranked = dist.rank ? dist.rank(eligible, allConfigs) : eligible
     const take = ranked.slice(0, max)
     if (take.length < min) {
       throw new Error(
@@ -71,7 +92,16 @@ export const allocateDistributions = (
       )
     }
     for (const slot of take) available.delete(slot)
-    dist.fill(take, allConfigs)
+    if (!dist.fillsLast) {
+      dist.fill(take, allConfigs)
+      continue
+    }
+    for (const slot of take) {
+      const placeholder: FragmentSlotReward = { type: "fragmentSlot" }
+      slot.assign(placeholder)
+      slot.sentinel = placeholder
+    }
+    dist.fill(take, allConfigs, context?.())
   }
 }
 

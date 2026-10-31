@@ -16,9 +16,8 @@ type Props = {
   onToggle: () => void
 }
 
-// The one detector control in the HUD row. Every detector the player owns used to have its own button
-// here; with three of them beside the key ring, the hearts, the supplies and the balance, the row ran
-// out of phone. This opens and closes the readout, and the choice of WHICH detector lives inside it
+// The one detector control in the HUD row. Beside the key ring, the hearts and the balance there is
+// room for one button, not one per detector. This opens and closes the readout, and the choice of WHICH detector lives inside it
 // (DetectorToggles), next to the results that change with it.
 //
 // A detector keeps running with the readout closed, so the map is not covered while it reads. The dot

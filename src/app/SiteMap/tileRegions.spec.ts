@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
-import type { CellState, Difficulty } from "@/game/siteTypes"
+import type { CellState, Difficulty, FloorGrid, GridCell, RoomCell } from "@/game/siteTypes"
+import { allFloorRects, buildRoomClaims, tileRegionsFor } from "./roomClaims"
 import { ALL_STATES, buildTileRegions, faceShadowRects, rectsToPath } from "./tileRegions"
 import type { FloorAt, OpenBetween, Rect, StateGroups, TileRegions } from "./tileRegions"
 import { CELL, SIDE_W, WALL_H, cellLeft, cellTop } from "./mapScale"
@@ -282,5 +283,54 @@ describe("path building", () => {
 
   it("puts a face's shadow on the floor in front of it", () => {
     expect(faceShadowRects([[0, 0, 10, 6]], 4)).toEqual([[0, 6, 10, 4]])
+  })
+})
+
+describe("a prefab room", () => {
+  const room = (prefabRoom?: RoomCell["prefabRoom"]): RoomCell => ({
+    type: "room",
+    roomType: "fork",
+    dirs: new Set(["e"]),
+    state: "completed",
+    ...(prefabRoom ? { prefabRoom } : {}),
+  })
+  const floorWith = (cells: FloorGrid["cells"]): FloorGrid => ({
+    siteId: "site",
+    rows: cells.length,
+    cols: cells[0].length,
+    entrancePos: [0, 0],
+    exitPos: [0, 0],
+    staircases: {},
+    cells,
+  })
+  const empty: GridCell = { type: "empty" }
+  const arm: GridCell = { type: "corridor", dirs: new Set(["w"]), state: "completed" }
+  const rows = (node: RoomCell): FloorGrid =>
+    floorWith([
+      [empty, empty, empty, empty],
+      [empty, empty, empty, empty],
+      [node, arm, empty, empty],
+      [empty, empty, empty, empty],
+    ])
+
+  it("draws as one floor with no partition inside it", () => {
+    const rect = { top: 1, left: 0, rows: 2, cols: 2 }
+    const grid = rows(
+      room({
+        name: "hall",
+        layout: 0,
+        mirrored: false,
+        rect,
+        stop: [1, 1],
+        objects: [{ kind: "basin", layer: "floor", top: 1, left: 0, rows: 1, cols: 1 }],
+        blocked: ["1,0"],
+        doors: [[2, 2]],
+      })
+    )
+    const floor = allFloorRects(tileRegionsFor(grid, buildRoomClaims(grid)))
+    expect(has(floor, westGap(1, 1))).toBe(true)
+    expect(has(floor, westGap(2, 1))).toBe(true)
+    expect(has(floor, northGap(2, 0))).toBe(true)
+    expect(has(floor, northGap(2, 1))).toBe(true)
   })
 })

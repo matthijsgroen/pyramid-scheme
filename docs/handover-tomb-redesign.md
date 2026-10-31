@@ -47,7 +47,7 @@ and the hardest floor-lock combinations.
 1. **Story lines for the hooks**: entering the cave, the pillar of light in the cave, arriving at the cavern.
 2. **The loot economy, decided before the starter release** (spec, "Outside this spec"): mosaic piece counts,
    health drops, inventory use, and (decided: the cave ends in a chest, the cavern puzzles keep loot slots).
-3. **Paint the art queue** (`yarn repaint`, "Cave and cavern" in `docs/instructions/repaint-queue.md`): the
+3. **Paint the cave art** — done: the
    cave-mouth and cavern exteriors, the `cave` floor, wall face, threshold and encounter wall.
 4. **The other tiers' caves, caverns and locks**, each with its own release.
 5. Playtest items are in `docs/playtest-backlog.md`, "The tomb: cave and cavern".

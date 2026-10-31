@@ -84,6 +84,7 @@ export const wizardRules: Rule[] = [
   // "master but more of everything" shape that made half of wizard's chests loose change.
   tier("wizard")
     .set({
+      chambers: 3, // pass-through chambers per floor: dressed rooms the corridor runs through
       mainFloors: 2,
       wardWings: 1,
       wardPaths: 2,
@@ -184,6 +185,7 @@ export const wizardRules: Rule[] = [
   ...["wizard_treasure_tomb", "wizard_treasure_tomb_b", "wizard_treasure_tomb_c"].map(id => tombCave(id, "wizard", 3)),
 
   tomb("wizard_treasure_tomb", {
+    chambers: 0, // the tier's pass-through chambers are for its pyramids; a tomb runs tableau to tableau
     encounter: "tomb-puzzle",
     difficulty: "wizard",
     floorCount: 4,
@@ -205,7 +207,8 @@ export const wizardRules: Rule[] = [
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         // Beside it, the reed leaf: the one sign in the catalogue that spells rather than names, and
         // the last thing the Sphinx wants. This floor's own treasure is wizard_a_1, the key to the
-        // gate it is read behind — so the Vault of the Gods hands over both halves of the ending.
+        // gate the Sphinx stair stands behind, so the Vault of the Gods hands over both halves of the
+        // ending.
         // The preference is exact (`hieroglyph:s1`) and this is the only slot in the world carrying
         // it; hieroglyphCurrency's tier filter plus that preference is what pins it here.
         sideSections: [
@@ -231,6 +234,7 @@ export const wizardRules: Rule[] = [
     ],
   }),
   tomb("wizard_treasure_tomb_b", {
+    chambers: 0, // the tier's pass-through chambers are for its pyramids; a tomb runs tableau to tableau
     encounter: "tomb-puzzle",
     difficulty: "wizard",
     floorCount: 4,
@@ -270,6 +274,7 @@ export const wizardRules: Rule[] = [
     ],
   }),
   tomb("wizard_treasure_tomb_c", {
+    chambers: 0, // the tier's pass-through chambers are for its pyramids; a tomb runs tableau to tableau
     encounter: "tomb-puzzle",
     difficulty: "wizard",
     floorCount: 4,

@@ -48,7 +48,7 @@ export type TierPalette = {
 export const tierPalette: Record<Tileset, TierPalette> = {
   // A merchant's storehouse: pale warm limestone underfoot, red ochre and turquoise as its colour
   // (docs/game-design/visual-direction.md). The floor and wall tokens are the repainted floor's and wall face's;
-  // the prop tokens move with the props' repaint.
+  // `prop` is the mean of the repainted props.
   starter: {
     bed: "#bfae8c",
     slab: "#d8c8a8",
@@ -64,24 +64,26 @@ export const tierPalette: Record<Tileset, TierPalette> = {
     shade: "rgba(21,17,12,0.3)",
     faceNight: 0.55,
     lamp: 0.3,
-    prop: "#a49781",
+    prop: "#694935",
     propDark: "#5c5347",
     outline: "#15110c",
   },
+  // A nobleman's painted house: gold-ochre sandstone flagstones under a dark red-brown mural frieze, copper
+  // and verdigris as its colour (docs/game-design/visual-direction.md). The floor and wall tokens are the
+  // repainted floor's and wall face's.
   junior: {
-    bed: "#b08a5c",
-    slab: "#c39c68",
-    slabHi: "#cfa974",
-    slabLo: "#b8925f",
-    joint: "#4a3520",
+    bed: "#9a724c",
+    slab: "#bb9060",
+    slabHi: "#c09664",
+    slabLo: "#b28458",
+    joint: "#735536",
     accent: METALS.junior.accent,
-    wall: "#8f6a3f",
+    wall: "#734931",
     wallTop: "#b58a55",
-    wallBase: "#4a3520",
-    // The shallowest of the five, and sandstone gives the day's heat back all night: the warmest dark
-    // in the game, and the highest alpha, because its slabs are also the palest.
-    shade: "rgba(36,23,8,0.66)",
-    faceNight: 0.14,
+    wallBase: "#432416",
+    // Rooms are lit, as the merchant's are: the night is a light hand in the rank's own near-black.
+    shade: "rgba(36,23,8,0.3)",
+    faceNight: 0.45,
     lamp: 1,
     prop: "#e0c193",
     propDark: "#9c7442",
@@ -126,18 +128,20 @@ export const tierPalette: Record<Tileset, TierPalette> = {
     propDark: "#8a6a24",
     outline: "#141210",
   },
+  // The gods: a still floor holding a dimmed crimson-and-purple nebula and its stars, emerald and gold on the walls
+  // and props. The floor tokens are the repainted floor's.
   wizard: {
-    bed: "#4e7268",
-    slab: "#5a8074",
-    slabHi: "#658c80",
-    slabLo: "#537668",
-    joint: "#22423a",
+    bed: "#211a32",
+    slab: "#3a213d",
+    slabHi: "#4f2843",
+    slabLo: "#2a1d38",
+    joint: "#14172e",
     accent: METALS.wizard.accent,
     wall: "#3a6155",
     wallTop: "#4f7c6d",
     wallBase: "#1d3830",
-    // Verdigris and standing water. Not the absence of a lamp — the colour the place already is.
-    shade: "rgba(15,35,29,0.61)",
+    // A dark floor: the night is a light hand in the sky's own near-black, so the nebula keeps its colour.
+    shade: "rgba(20,23,46,0.25)",
     faceNight: 0.45,
     lamp: 1,
     prop: "#8fd9bd",
@@ -164,6 +168,25 @@ export const tierPalette: Record<Tileset, TierPalette> = {
     prop: "#d8d2c4",
     propDark: "#9c968a",
     outline: "#1a1612",
+  },
+  // The Sphinx's inside: smooth warm limestone slabs crossed by gold horizon bands, lamplit and swept clean. The
+  // floor tokens are the repainted floor's; no rank's stone, so it borrows no rank's metal either.
+  sphinx: {
+    bed: "#907658",
+    slab: "#a58664",
+    slabHi: "#aa8b67",
+    slabLo: "#9b7e5f",
+    joint: "#7d603c",
+    accent: METALS.starter.accent,
+    wall: "#b9a179",
+    wallTop: "#d8c49c",
+    wallBase: "#5e4c36",
+    shade: "rgba(42,33,23,0.4)",
+    faceNight: 0,
+    lamp: 1,
+    prop: "#d8c49c",
+    propDark: "#a39a86",
+    outline: "#2a2117",
   },
 }
 

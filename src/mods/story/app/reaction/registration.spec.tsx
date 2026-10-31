@@ -25,7 +25,7 @@ describe("the story mod, as the app loads it", () => {
       ),
     })
 
-    result.current({ kind: "siteLeft", journeyId: "starter_treasure_tomb" })
+    result.current({ kind: "siteLeft", journeyId: "starter_treasure_tomb", lastLevel: true })
 
     expect(showConversation).toHaveBeenCalledWith("bond.starterTomb", undefined, { story: true })
   })

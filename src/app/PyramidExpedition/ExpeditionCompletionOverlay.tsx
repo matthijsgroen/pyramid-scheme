@@ -8,10 +8,9 @@ import { FezContext } from "../fez/context"
 
 export const ExpeditionCompletionOverlay: FC<{
   onJourneyComplete?: () => void
-  onStartJourney?: (journeyId: string) => void
   newPyramidJourneyId?: string
   activeJourney: CombinedJourneyState
-}> = ({ onJourneyComplete, onStartJourney, newPyramidJourneyId, activeJourney }) => {
+}> = ({ onJourneyComplete, newPyramidJourneyId, activeJourney }) => {
   const { t } = useTranslation("common")
   const { getJourney } = useJourneys()
   const { lock } = useMergedJourneyContributions()
@@ -54,22 +53,6 @@ export const ExpeditionCompletionOverlay: FC<{
           </span>
         )}
         <div className="mt-2 flex flex-col gap-2">
-          {newPyramidJourneyId && (
-            <button
-              className="rounded bg-amber-500 px-4 py-2 font-semibold text-white hover:bg-amber-600"
-              onClick={() => onStartJourney?.(newPyramidJourneyId)}
-            >
-              {t("ui.startJourney", { name: newPyramidJourneyName })}
-            </button>
-          )}
-          {newTombJourneyId && (
-            <button
-              className="rounded bg-stone-600 px-4 py-2 font-semibold text-white hover:bg-stone-700"
-              onClick={() => onStartJourney?.(newTombJourneyId)}
-            >
-              {t("ui.startJourney", { name: newTombJourneyName })}
-            </button>
-          )}
           <button className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600" onClick={onJourneyComplete}>
             {t("ui.goBackToBase")}
           </button>

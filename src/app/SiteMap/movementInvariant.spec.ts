@@ -61,14 +61,17 @@ import { encodeEdge } from "./edgeId"
 import {
   AXES,
   KINDS,
+  PREFAB_FORK,
   addressed,
   corridorPiece,
   dropGrid,
   floorFrom,
+  prefabForkFloor,
   roomPiece,
   type Piece,
 } from "./floorFixtures.testing"
 import { ONE_WAY_RUN_CELLS } from "@/game/siteAssembler"
+import { roomDoors } from "@/game/roomShape"
 // Populates the family registry, the same side effect every other assembled-floor spec relies on.
 import "@/mods/registerModApps"
 
@@ -291,7 +294,6 @@ const buildHarness = (
         journeyData,
       }),
       getPurchasedShopSlots: () => new Set<string>(),
-      getSkippedConsumables: () => new Set<string>(),
       ...patch,
     } as unknown as JourneyAPI
 
@@ -332,7 +334,6 @@ const buildHarness = (
           if (cell && cell.type !== "empty" && address)
             journeys.markCellExplored(cell.sectionHash ?? "", encodeEdge(0, r, c), address)
         }),
-      onSkippedConsumable: () => {},
       onExitReached: () => {},
     })
     return { ...assembled, onCellClick: nav.onCellClick, prompt: nav.prompt }
@@ -350,12 +351,15 @@ const STEP_BUDGET = 500
  * out with its own violation rather than hanging, so a floor whose branching runs away is a red test
  * rather than a stuck one.
  */
-const walkFloor = async (grid: FloorGrid): Promise<{ violations: string[]; steps: number }> => {
+const walkFloor = async (
+  grid: FloorGrid
+): Promise<{ violations: string[]; steps: number; stood: ReadonlySet<string> }> => {
   const store = makeStore()
   const harness = buildHarness(grid, store)
   const hook = renderHook(harness.useHook)
 
   const visited = new Set<string>()
+  const stood = new Set<string>()
   const violations: string[] = []
   let steps = 0
   // Both position fields, not just `positionKey`: `standingKey` is the live cell — a bend included —
@@ -379,6 +383,9 @@ const walkFloor = async (grid: FloorGrid): Promise<{ violations: string[]; steps
       violations.push("floor did not carve")
       return
     }
+    grid.cells.forEach((row, r) =>
+      row.forEach((cell, c) => cell.type !== "empty" && cell.state === "completed" && stood.add(`${r},${c}`))
+    )
     const here = sig() + `@${explorerPos[0]},${explorerPos[1]}`
     if (visited.has(here)) return
     visited.add(here)
@@ -423,7 +430,7 @@ const walkFloor = async (grid: FloorGrid): Promise<{ violations: string[]; steps
   } finally {
     vi.useRealTimers()
   }
-  return { violations, steps }
+  return { violations, steps, stood }
 }
 
 // THE FIXTURES. One mechanic each, drawn by hand. `E` is the entrance, `R` a room, `F` a fork, `.` a
@@ -503,9 +510,9 @@ const cornerAtLaunch = floorFrom(["E.R", `  .${ZIPLINE}.`, `${pad}R`], DROP)
 const cornerAtLanding = floorFrom([`${pad}E`, `R.${ZIPLINE}.`, `${pad}R`], DROP)
 const gateAndDrop = floorFrom([`E.Y.A.R${ZIPLINE}R.R`], { ...DROP, Y: lever(leverOpening("a")), A: gate("a") })
 
-// `minSteps` sits just under each fixture's measured step count (109, 33, 93, 75, 90, 13 and 21), so a walk
+// `minSteps` sits just under each fixture's measured step count (109, 33, 93, 75, 90, 13, 21 and 110), so a walk
 // that stalls early is red rather than quietly shorter.
-type Fixture = { name: string; grid: FloorGrid; minSteps: number }
+type Fixture = { name: string; grid: FloorGrid; minSteps: number; mustReach?: readonly (readonly [number, number])[] }
 
 const fixtures: Fixture[] = [
   { name: "a plain corridor with corners and a room, no mechanism", grid: plainCorridors, minSteps: 100 },
@@ -517,6 +524,12 @@ const fixtures: Fixture[] = [
   { name: "a corner beside a drop's launch", grid: cornerAtLaunch, minSteps: 4 },
   { name: "a corner beside a drop's landing", grid: cornerAtLanding, minSteps: 4 },
   { name: "a gate and a one-way drop on one floor", grid: gateAndDrop, minSteps: 18 },
+  {
+    name: "a fork laid over by a prefab room, walked through and round",
+    grid: prefabForkFloor(),
+    minSteps: 108,
+    mustReach: roomDoors(prefabForkFloor(), ...PREFAB_FORK).map(door => door.at),
+  },
 ]
 
 // A drop stood at from its landing, in every shape the drop takes (axis × what stands at each end).
@@ -532,10 +545,11 @@ const dropShapes = AXES.flatMap(axis =>
 )
 
 describe("the movement invariant — offers match walkability, and taking one moves the explorer", () => {
-  it.each(fixtures)("holds across every reachable state of $name", async ({ grid, minSteps }) => {
-    const { violations, steps } = await walkFloor(grid)
+  it.each(fixtures)("holds across every reachable state of $name", async ({ grid, minSteps, mustReach = [] }) => {
+    const { violations, steps, stood } = await walkFloor(grid)
 
     expect(violations).toEqual([])
+    expect(mustReach.filter(([r, c]) => !stood.has(`${r},${c}`))).toEqual([])
     expect(steps).toBeGreaterThan(minSteps) // a walk this short would prove nothing was exercised
   })
 
@@ -755,7 +769,7 @@ describe("a gate a control owns is decided by its control alone", () => {
   }
   const drawnBars = (grid: FloorGrid, positions: Record<string, string>): string[] => {
     const seen = revealAll(grid)
-    return nodeSpritesFor(seen, buildRoomClaims(seen), "expert", undefined, new Map(Object.entries(positions)), 0)
+    return nodeSpritesFor(seen, buildRoomClaims(seen), "expert", new Map(Object.entries(positions)), 0)
       .map(sprite => sprite.key)
       .filter(key => key.startsWith("wall:") || key.startsWith("gate:"))
   }

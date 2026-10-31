@@ -1,0 +1,19 @@
+// designed by: Claude
+// starter. A storeroom at the end of the way: a jar rack or a shelf on the north wall, the chest kept beside it.
+room storeroom
+tier starter
+activity storage
+mirror
+
+layout
+# n d # #
+# w . c #
+d s . . d
+# . . . #
+# d d d #
+
+stock = jarRack | shelf
+w wall stock
+n wallItem? niche
+c chest
+s stop

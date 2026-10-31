@@ -1,10 +1,12 @@
 import type { ActivityId } from "../game/activities"
+import type { Prefab } from "../game/prefabTypes"
 import type {
   DecorationKind,
   ForkDemand,
   HandleSide,
   Patron,
   SiteCondition,
+  StairLink,
   WallDecorationKind,
 } from "../game/siteTypes"
 import type { PlacedContainer } from "../game/regions"
@@ -34,7 +36,7 @@ export type SubSection = {
   difficulty: Difficulty
   /** The tileset this path is drawn in. Mirrors game/siteTypes.ts. */
   tileset?: Tileset
-  end: "treasure" | "staircase" | { stairId: string }
+  end: "treasure" | "staircase" | StairLink
   gate?:
     | {
         type: "floor-key"
@@ -49,6 +51,8 @@ export type SubSection = {
       }
     | { type: "tomb-key"; wardKeyId: string }
   endReward?: TreasureReward
+  /** A loot end placement left empty. Mirrors game/siteTypes.ts. */
+  lootEnd?: true
   rewards?: (TreasureReward | undefined)[]
   hidden?: boolean
   /** Isolates this section's cells from leftover maze edges, so a compact layout can't merge a shortcut around it. */
@@ -62,6 +66,12 @@ export type SubSection = {
   encountersByIndex?: Record<number, string | string[]>
   /** Per-node authored activity, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
   activitiesByIndex?: Record<number, ActivityId>
+  /** Per-node pass-through chamber, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
+  chambersByIndex?: Record<number, ActivityId | true>
+  /** The designed rooms this names, the counted ones and the pinned ones. Mirrors game/siteTypes.ts. */
+  prefabs?: Record<string, Prefab>
+  prefabPlacements?: { room: string; min: number; max: number; central: number }[]
+  prefabsByIndex?: Record<number, string>
   /** Per-node difficulty, resolved from `nodes` selectors: a room builds at `difficultiesByIndex[k] ?? difficulty`
    * (see roomDifficulty). Mirrors game/siteTypes.ts. */
   difficultiesByIndex?: Record<number, Difficulty>
@@ -95,8 +105,8 @@ export type FloorConfig = {
   /** The tileset this floor is drawn in. Mirrors game/siteTypes.ts. */
   tileset?: Tileset
   end: "treasure"
-  exitOrStaircase: "exit" | "none" | "staircase" | { stairId: string }
-  entrance?: "stairhead" | { stairId: string }
+  exitOrStaircase: "exit" | "none" | "staircase" | StairLink
+  entrance?: "stairhead" | StairLink
   sideSections: SideSection[]
   mainEndReward?: TreasureReward
   rewards?: (TreasureReward | undefined)[]
@@ -107,6 +117,14 @@ export type FloorConfig = {
   encountersByIndex?: Record<number, string | string[]>
   /** Per-node authored activity for the main path, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
   activitiesByIndex?: Record<number, ActivityId>
+  /** Per-node pass-through chamber on the main path, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
+  chambersByIndex?: Record<number, ActivityId | true>
+  /** How many pass-through chambers the main path holds in all. Mirrors game/siteTypes.ts. */
+  chambers?: number
+  /** The designed rooms this names, the counted ones and the pinned ones. Mirrors game/siteTypes.ts. */
+  prefabs?: Record<string, Prefab>
+  prefabPlacements?: { room: string; min: number; max: number; central: number }[]
+  prefabsByIndex?: Record<number, string>
   /** Per-node difficulty for the main path, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
   difficultiesByIndex?: Record<number, Difficulty>
   /** `false` keeps generated loot out of this floor. Mirrors game/siteTypes.ts. */
@@ -115,6 +133,11 @@ export type FloorConfig = {
   lootByIndex?: Record<number, false>
   corridorStraightness?: number
   packing?: number
+  /** The top-level side sections, by index, that hang outside the floor's lock as branches. Written by the layout
+   * search. Mirrors game/siteTypes.ts. */
+  outsideLock?: number[]
+  /** A lock corridor may carry two side sections. Written by the layout search. Mirrors game/siteTypes.ts. */
+  corridorsTakeTwo?: true
   /** The seed this floor carves at, in place of the one its address derives. Read inside the assembler, so
    * every entry point that carves the floor (the hook, stair travel, the scanner, the bake) agrees. Baked
    * from a search that found a seed carving soundly on the first attempt. */

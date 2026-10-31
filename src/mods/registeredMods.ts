@@ -5,6 +5,9 @@ import type { Distribution } from "@/worldGen/slotAllocator"
 import type { ShopStockAssignment } from "@/worldGen/shopStock"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { WebActivatorReward } from "@/worldGen/webPlacement"
+import { collectLootTotals, type LootTotal } from "@/worldGen/lootReport"
+import type { GateWalk } from "@/worldGen/gateWalk"
+import type { SiteConfig } from "@/worldGen/types"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { OneWayRealisationMeta, ResolveOneWayRealisation } from "@/game/oneWayRealisation"
 import type { PassageRealisationMeta, ResolvePassageRealisation } from "@/game/passageRealisation"
@@ -14,6 +17,7 @@ import { puzzleMod } from "./puzzle"
 import { mosaicMod } from "./mosaic"
 import { hieroglyphMod } from "./hieroglyph"
 import { trapMod } from "./trap"
+import { campMod } from "./camp"
 import { shopMod } from "./shop"
 import { tombTreasureMod } from "./tombTreasure"
 import { storyMod } from "./story"
@@ -29,6 +33,7 @@ export const REGISTERED_MODS: ModDescriptor[] = [
   mosaicMod,
   hieroglyphMod,
   trapMod,
+  campMod,
   shopMod,
   tombTreasureMod,
   storyMod,
@@ -76,10 +81,10 @@ export const MOD_PASSAGE_REALISATIONS: PassageRealisationMeta[] = REGISTERED_MOD
 export const resolvePassageRealisation: ResolvePassageRealisation = id =>
   id === undefined ? undefined : MOD_PASSAGE_REALISATIONS.find(realisation => realisation.id === id)
 
-// Every dynamic-loot distribution all enabled mods contribute, in registry order (trap consumables
-// before the shop money economy — consumables claim their expert+ puzzle slots first, then the shop
-// takes what's left). A distribution drops when its mod leaves REGISTERED_MODS: shop off → no
-// money/junk, trap off → no consumables.
+// Every dynamic-loot distribution all enabled mods contribute. The fixed quantities fill in registry order
+// (waterskins and Fez's waterskins, then camp finds and parts), and the shop's money is marked `fillsLast`, so it
+// fills what's left and its budget reads the stock they put in the shops. A distribution drops when its mod leaves REGISTERED_MODS: shop off → no money/junk,
+// camp off → no camp loot, trap off → no waterskins.
 export const DYNAMIC_DISTRIBUTIONS: Distribution[] = REGISTERED_MODS.flatMap(m => m.dynamicDistributions ?? [])
 
 // Every mod's shop-stock placements, in registry order (so a shop shared by several currencies
@@ -87,6 +92,13 @@ export const DYNAMIC_DISTRIBUTIONS: Distribution[] = REGISTERED_MODS.flatMap(m =
 // a currency mod off → its shop pieces vanish (fall back to the free-world spread), shop off → no
 // shops resolve so the assignments no-op. Injected into buildConfigs by scripts/generateWorld.ts.
 export const MOD_SHOP_STOCK: ShopStockAssignment[] = REGISTERED_MODS.flatMap(m => m.shopStock ?? [])
+
+// Refuses the build when any mod reports a problem with its own authored tables, every problem named with its mod.
+// Run before anything is placed, so a world is never built on an unsound table. A mod off reports nothing.
+export const refuseModAuthoringProblems = (mods: readonly ModDescriptor[] = REGISTERED_MODS): void => {
+  const problems = mods.flatMap(m => (m.authoringProblems?.() ?? []).map(problem => `${m.id}: ${problem}`))
+  if (problems.length > 0) throw new Error(`mod authoring refused: ${problems.join("; ")}`)
+}
 
 // Every post-build world validator any registered mod contributes (e.g. the shop economy guard),
 // run last in buildConfigs over the whole grown world. A validator drops with its mod.
@@ -96,20 +108,44 @@ export const MOD_WORLD_VALIDATORS: WorldValidator[] = REGISTERED_MODS.flatMap(m 
 
 // Every mod's reachability support (§E), merged into one — the currency-specific facts core
 // reachability must not name (tomb-key harvest, tomb map-piece entry lock, tier-unlock ladder).
-// Each hook tries every contributing mod and takes the first defined answer; with no contributor
-// (or a mod toggled off) it returns undefined, so core reachability falls back to "no lock" —
-// generic and mod-agnostic. Injected into buildConfigs by scripts/generateWorld.ts.
-const REACHABILITY_SUPPORTS: ReachabilitySupport[] = REGISTERED_MODS.flatMap(m =>
-  m.reachabilitySupport ? [m.reachabilitySupport] : []
-)
+// A single-answer hook (a threshold, a reward's bucket) takes the first contributor's defined
+// answer. The gates concatenate in registry order instead: every mod's entry locks and tier groups
+// all stand, so a gate holds every mod's requirement (AND across mods, OR within one group). An empty
+// group offers no bucket to hold, so it would lock its tier for good; it is dropped as no requirement. With
+// no contributor (or a mod toggled off) a hook answers nothing, so core reachability falls back to
+// "no lock" — generic and mod-agnostic. The hidden requirement is one fact for the whole world, so a second mod
+// naming one is a build error rather than a silent pick.
 const firstDefined = <T>(values: (T | undefined)[]): T | undefined => values.find(v => v !== undefined)
+const oneHiddenRequirement = (supports: readonly ReachabilitySupport[]): ReachabilitySupport["hiddenRequirement"] => {
+  const named = supports.flatMap(s => (s.hiddenRequirement ? [s.hiddenRequirement] : []))
+  if (named.length > 1)
+    throw new Error(`mergeReachabilitySupports: ${named.length} supports name a hidden requirement; one may.`)
+  return named[0]
+}
+export const mergeReachabilitySupports = (
+  supports: readonly ReachabilitySupport[]
+): Pick<
+  ReachabilitySupport,
+  | "thresholdFor"
+  | "bucketForReward"
+  | "alsoHarvests"
+  | "factsForCount"
+  | "journeyEntryLocks"
+  | "tierUnlockGroups"
+  | "hiddenRequirement"
+> => ({
+  hiddenRequirement: oneHiddenRequirement(supports),
+  thresholdFor: bucket => firstDefined(supports.map(s => s.thresholdFor?.(bucket))),
+  bucketForReward: reward => firstDefined(supports.map(s => s.bucketForReward?.(reward))),
+  alsoHarvests: reward => supports.flatMap(s => s.alsoHarvests?.(reward) ?? []),
+  factsForCount: (bucket, count) => supports.flatMap(s => s.factsForCount?.(bucket, count) ?? []),
+  journeyEntryLocks: journeyId => supports.flatMap(s => s.journeyEntryLocks?.(journeyId) ?? []),
+  tierUnlockGroups: tier => supports.flatMap(s => (s.tierUnlockGroups?.(tier) ?? []).filter(group => group.length > 0)),
+})
+
+// Injected into buildConfigs by scripts/generateWorld.ts.
 export const MOD_REACHABILITY_SUPPORT: ReachabilitySupport = {
-  thresholdFor: bucket => firstDefined(REACHABILITY_SUPPORTS.map(s => s.thresholdFor?.(bucket))),
-  bucketForReward: reward => firstDefined(REACHABILITY_SUPPORTS.map(s => s.bucketForReward?.(reward))),
-  alsoHarvests: reward => REACHABILITY_SUPPORTS.flatMap(s => s.alsoHarvests?.(reward) ?? []),
-  factsForCount: (bucket, count) => REACHABILITY_SUPPORTS.flatMap(s => s.factsForCount?.(bucket, count) ?? []),
-  journeyEntryLock: journeyId => firstDefined(REACHABILITY_SUPPORTS.map(s => s.journeyEntryLock?.(journeyId))),
-  tierUnlockBucket: tier => firstDefined(REACHABILITY_SUPPORTS.map(s => s.tierUnlockBucket?.(tier))),
+  ...mergeReachabilitySupports(REGISTERED_MODS.flatMap(m => (m.reachabilitySupport ? [m.reachabilitySupport] : []))),
   resolveOneWay: resolveOneWayRealisation,
   resolveRegionBarrier: resolveRegionBarrierRealisation,
   resolvePassage: resolvePassageRealisation,
@@ -133,6 +169,11 @@ export const MOD_RESERVED_TREASURE_INDICES: ((tombId: string) => number[]) | und
 export const MOD_WEB_ACTIVATOR: WebActivatorReward | undefined = REGISTERED_MODS.map(m => m.webActivator).find(
   r => r !== undefined
 )
+
+// Every registered mod's loot-report rows, in registry order. A mod off reports nothing, so the report names
+// only currencies the build knows. Each is handed the gate walk over the same world. Read by `yarn loot-report`.
+export const MOD_LOOT_TOTALS = (configs: Record<string, SiteConfig[]>, walk: GateWalk): LootTotal[] =>
+  collectLootTotals(REGISTERED_MODS, configs, walk)
 
 // Is a mod enabled? The single toggle point the app side consults (Base.tsx, registerCurrencies)
 // so a mod's screen + currency-meta drop out together when it leaves REGISTERED_MODS.

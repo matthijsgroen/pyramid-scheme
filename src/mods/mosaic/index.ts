@@ -1,4 +1,5 @@
 import type { ModDescriptor } from "../modDescriptor"
+import { mosaicLootTotals } from "./game/lootTotals"
 import { MOSAIC_CURRENCIES, MOSAIC_CURRENCY_METAS, mosaicBucket } from "./game/mosaicCurrency"
 import { mosaicReachabilityValidator } from "./game/mosaicReachability"
 
@@ -25,4 +26,5 @@ export const mosaicMod: ModDescriptor = {
     { journeyId: "expert_treasure_tomb", prefers: mosaicBucket("expert") },
     { journeyId: "master_treasure_tomb", prefers: mosaicBucket("master") },
   ],
+  lootTotals: mosaicLootTotals,
 }

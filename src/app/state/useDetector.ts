@@ -1,13 +1,11 @@
-import { useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { useGameStorage } from "@/support/useGameStorage"
-import { generatedWorldConfigs } from "@/data/generatedWorld"
-import type { DetectorMode, CompassAccess, CompassHit, ConsumableResult } from "@/game/siteTypes"
-import type { JourneyAPI } from "./useJourneys"
+import type { DetectorMode, CompassAccess, CompassHit } from "@/game/siteTypes"
 import { useMergedCompassScanner } from "@/app/SiteMap/detectorScanners"
 import { useCompassTarget } from "@/app/SiteMap/compassTarget"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
-import { floorOfAddress } from "@/app/SiteMap/cellIdentity"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "@/worldGen/data"
+import { useMergedGateNeeds } from "@/app/pages/gateNeeds"
 import { isTierUnlocked } from "@/app/pages/journeyAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"
 
@@ -20,7 +18,6 @@ export type DetectorAPI = {
   setDetector: (mode: DetectorMode) => void
   setReadoutOpen: (open: boolean) => void
   compassResults: CompassHit[]
-  consumableResults: ConsumableResult[]
 }
 
 // journeyId → its tier, and which journeys are tombs. Same derivation as placeFragments' own
@@ -35,13 +32,14 @@ const TOMB_JOURNEY_IDS = new Set(TOMB_JOURNEYS.map(j => j.id))
 // which outranks a cost we can't evaluate.
 const accessOf = (
   hit: { journeyId: string; wardKeys?: readonly string[]; hidden?: boolean; inShop?: boolean },
-  heldKeys: ReadonlySet<string>
+  heldKeys: ReadonlySet<string>,
+  gateOpen: (tier: Difficulty) => boolean
 ): { access: CompassAccess; missingKeys?: readonly string[] } => {
   const missingKeys = (hit.wardKeys ?? []).filter(k => !heldKeys.has(k))
   if (missingKeys.length > 0) return { access: "locked", missingKeys }
-  // Same gate the Travel screen uses, including tiers this release doesn't ship yet.
+  // Same gate the all-journeys list uses, including tiers this release doesn't ship yet.
   const tier = JOURNEY_TIER[hit.journeyId] as Difficulty | undefined
-  if (tier && !isTierUnlocked(tier, heldKeys)) return { access: "locked" }
+  if (tier && !isTierUnlocked(tier, heldKeys, gateOpen)) return { access: "locked" }
   if (hit.hidden) return { access: "hidden" }
   // Entering a tomb costs map pieces and shop stock costs money; neither is modelled here, so say
   // "don't know" rather than implying the piece is there for the taking.
@@ -49,12 +47,7 @@ const accessOf = (
   return { access: "open" }
 }
 
-/** `resolveCell` turns a cell address into a coordinate, and only the caller holding an assembled
- * floor can: pass one to place hits on the floor the player is standing on. */
-export const useDetector = (
-  journeys: JourneyAPI,
-  resolveCell?: (journeyId: string, address: string) => { row: number; col: number } | undefined
-): DetectorAPI => {
+export const useDetector = (): DetectorAPI => {
   // Two separate things, deliberately: which detector is running, and whether its readout is on
   // screen. The readout is a card over the map, so the player wants it shut most of the time — while
   // the detector keeps reading, reported by the pulsing dot beside its button. Results below stay
@@ -69,6 +62,8 @@ export const useDetector = (
   const compassTarget = useCompassTarget()
   const scanCompass = useMergedCompassScanner()
   const heldKeys = useMergedHeldKeys()
+  const gateNeeds = useMergedGateNeeds()
+  const gateOpen = useCallback((tier: Difficulty) => gateNeeds.open({ tier }, heldKeys), [gateNeeds, heldKeys])
 
   // Compass scanning is mod-owned (each mod registers a scanner for its own reward type via
   // detectorScanners); core just runs the merged scanner for the current target, then resolves each
@@ -77,26 +72,10 @@ export const useDetector = (
   const compassResults = useMemo<CompassHit[]>(
     () =>
       activeDetector === "compass" && compassTarget
-        ? scanCompass(compassTarget).map(hit => ({ ...hit, ...accessOf(hit, heldKeys) }))
+        ? scanCompass(compassTarget).map(hit => ({ ...hit, ...accessOf(hit, heldKeys, gateOpen) }))
         : [],
-    [activeDetector, compassTarget, scanCompass, heldKeys]
+    [activeDetector, compassTarget, scanCompass, heldKeys, gateOpen]
   )
-
-  const consumableResults = useMemo((): ConsumableResult[] => {
-    if (activeDetector !== "consumable") return []
-    // The addresses of chests whose consumable was left behind because the pack was full — every
-    // journey's, so the player knows where to go back to, not just this one's.
-    const results: ConsumableResult[] = []
-    for (const [journeyId] of Object.entries(generatedWorldConfigs)) {
-      for (const address of journeys.getSkippedConsumables(journeyId)) {
-        // The floor is in the address, so the panel can narrow the readout by level (§7.2). The
-        // coordinate is not: it belongs to a carve, and only the floor on screen has one assembled.
-        // L3 therefore names a cell for a chest on this floor and stops at the floor for the rest.
-        results.push({ journeyId, address, floorIdx: floorOfAddress(address), cell: resolveCell?.(journeyId, address) })
-      }
-    }
-    return results
-  }, [activeDetector, journeys, resolveCell])
 
   return {
     activeDetector,
@@ -105,6 +84,5 @@ export const useDetector = (
     setDetector: setActiveDetector,
     setReadoutOpen,
     compassResults,
-    consumableResults,
   }
 }

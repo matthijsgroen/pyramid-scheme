@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest"
 import { expandFloorLocks } from "./floorLocks"
 import type { PlacedLock } from "./floorLocks"
-import { layLockPlan, startingGridSize } from "./layLocks"
+import { keepLayOutcomes, layLockPlan, startingGridSize } from "./layLocks"
+import type { RoomShape } from "./layLocks"
 import { planLockFloor } from "./lockPlan"
 import type { LockPlan } from "./lockPlan"
 import type { FloorConfig } from "./siteTypes"
@@ -53,10 +54,105 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
       expect(laidSeeds.length).toBeGreaterThanOrEqual(minimum)
     })
 
+  // A MADE-UP ROOM: a 3x3 inside with its node in one corner and a door on its west and its south wall.
+  it("holds a lay with a designed room to the same claims, its floor's joins read as passages", () => {
+    const shape: RoomShape = {
+      h: 3,
+      w: 3,
+      pt: 0,
+      pl: 0,
+      anchor: [0, 0],
+      ports: [
+        { node: [0, 0], door: [0, -1], out: [0, -2] },
+        { node: [2, 0], door: [3, 0], out: [4, 0] },
+      ],
+    }
+    const plan = FIXTURES.lever()
+    const ends = (id: string) => plan.corridors.filter(corridor => corridor.from === id || corridor.to === id).length
+    const room = plan.regions.find(
+      region =>
+        region.owner !== undefined &&
+        region.answersTo === undefined &&
+        region.seats.every(seat => seat.for === "control" || seat.for === "door") &&
+        plan.drops.every(drop => drop.launch !== region.id && drop.landing !== region.id) &&
+        plan.junctions.every(junction => junction.region !== region.id) &&
+        ends(region.id) === 2
+    )!
+    const roomed = SEEDS.slice(0, 10).flatMap(seed => {
+      const result = layLockPlan(plan, {
+        seed,
+        n: startingGridSize(plan),
+        blocks: [{ region: room.id, room: "made-up", shapes: [shape] }],
+      })
+      if (!result.ok) return []
+      expectLaidPlan(plan, result.laid)
+      return result.laid.blocks ? [seed] : []
+    })
+    expect(roomed.length).toBeGreaterThan(0)
+  })
+
+  it("never lays a junction one node from the exit or another junction where the two can never merge", () => {
+    const plan = FIXTURES.mirrorFork()
+    const at = (key: string) => key.split(",").map(Number)
+    for (const seed of SEEDS) {
+      const result = layLockPlan(plan, { seed, n: startingGridSize(plan) })
+      if (!result.ok) continue
+      const { route, junctions, regions } = result.laid
+      const regionOf = (key: string) => regions.find(region => region.nodes.includes(key))?.id
+      const exit = route[route.length - 1]
+      for (const junction of junctions) {
+        const [r1, c1] = at(junction.cell)
+        const [r2, c2] = at(exit)
+        if (Math.max(Math.abs(r1 - r2), Math.abs(c1 - c2)) !== 2) continue
+        const toExit = r2 < r1 ? "n" : r2 > r1 ? "s" : c2 < c1 ? "w" : "e"
+        if (r1 !== r2 && c1 !== c2) expect(regionOf(junction.cell)).toBe(regionOf(exit))
+        else expect(junction.exits).toContain(toExit)
+      }
+    }
+  })
+
   it("lays the same floor for the same seed", () => {
     const plan = FIXTURES.mirrorFork()
     const lay = () => layLockPlan(plan, { seed: 7, n: startingGridSize(plan) })
     expect(lay()).toEqual(lay())
+  })
+
+  it("lays the same floor from kept outcomes after a caller changed the one it was handed", () => {
+    const plan = FIXTURES.sluice()
+    keepLayOutcomes(64)
+    try {
+      const first = layLockPlan(plan, { seed: 3, n: startingGridSize(plan) })
+      const kept = structuredClone(first)
+      if (first.ok) first.laid.route.push("99,99")
+      else first.refusal.part.id = "changed"
+      expect(layLockPlan(plan, { seed: 3, n: startingGridSize(plan) })).toEqual(kept)
+    } finally {
+      keepLayOutcomes(0)
+    }
+  })
+
+  it("lays from kept outcomes, from any starting grid, the floor a lay that keeps none lays", () => {
+    const plan = FIXTURES.mirrorFork()
+    const asked = startingGridSize(plan)
+    const fresh = (n: number, seed: number) => {
+      keepLayOutcomes(0)
+      return layLockPlan(plan, { seed, n })
+    }
+    keepLayOutcomes(256)
+    try {
+      for (const seed of SEEDS.slice(0, 12)) {
+        const grown = layLockPlan(plan, { seed, n: asked })
+        const larger = grown.ok ? grown.laid.n : asked + 2
+        keepLayOutcomes(256)
+        layLockPlan(plan, { seed, n: asked })
+        const fromKept = layLockPlan(plan, { seed, n: larger })
+        expect(fromKept).toEqual(fresh(larger, seed))
+        expect(grown).toEqual(fresh(asked, seed))
+        keepLayOutcomes(256)
+      }
+    } finally {
+      keepLayOutcomes(0)
+    }
   })
 
   it("lays different floors for different seeds", () => {
@@ -166,6 +262,7 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
     const plan = planToLay(planOf([{ lock: freeRegions(parseLock(ROUND_THE_HUB, "hub").lock) }], STONES), {
       content: [],
       appetite: new Map(),
+      corridorRooms: new Map(),
     })
     const laidSeeds = SEEDS.slice(0, 10).flatMap(seed => {
       const result = layLockPlan(plan, { seed, n: startingGridSize(plan) })
@@ -182,6 +279,7 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
     const plan = planToLay(planOf([{ lock: freeRegions(parseLock(TWO_DROPS, "twoDrops").lock) }]), {
       content: ["puzzle", "puzzle", "reward"],
       appetite: new Map(),
+      corridorRooms: new Map(),
     })
     const laidSeeds = SEEDS.slice(0, 10).flatMap(seed => {
       const result = layLockPlan(plan, { seed, n: startingGridSize(plan) })
@@ -195,7 +293,11 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
 
 describe("laying corridors that share a pair, and corridors that fall", { timeout: 120_000 }, () => {
   const planFor = (text: string, name: string) =>
-    planToLay(planOf([{ lock: freeRegions(parseLock(text, name).lock) }]), { content: [], appetite: new Map() })
+    planToLay(planOf([{ lock: freeRegions(parseLock(text, name).lock) }]), {
+      content: [],
+      appetite: new Map(),
+      corridorRooms: new Map(),
+    })
   const nodesOf = (laid: { regions: { id: string; nodes: string[] }[] }, id: string) =>
     laid.regions.find(region => region.id === id)!.nodes
   const layAll = (plan: ReturnType<typeof planFor>) =>

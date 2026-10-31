@@ -41,9 +41,9 @@ export const assemblerFor = (journeyId: string): AssembleFor => {
 }
 
 /**
- * Re-keys a save's per-cell state — exploration, position, disarmed traps, bought stock, skipped
- * consumables — from grid coordinates onto cell addresses, once, on the first launch that has this
- * code (docs/game-design/world-stability.md).
+ * Re-keys a save's per-cell state — exploration, position, bought stock, found corridors — from grid
+ * coordinates onto cell addresses, once, on the first launch that has this code
+ * (docs/game-design/world-stability.md).
  *
  * IT HAS TO RUN BEFORE ANY FLOOR MOVES. A coordinate only means something against the carve it was
  * written against, so the translation reads the floors while this release still produces the old ones.

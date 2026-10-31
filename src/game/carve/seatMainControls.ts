@@ -1,3 +1,4 @@
+import { besideRoomSeat } from "../laidFloor"
 import { absorbedCell, gateIndices } from "./derive"
 import { pass } from "./state"
 import type { Shortfall } from "./state"
@@ -72,7 +73,9 @@ export const seatMainControls = pass(
         !doors.has(mi) &&
         !junctions.has(mi) &&
         !absorbed.has(cellKeyAt(mi)) &&
-        !laid?.thresholds.has(cellKeyAt(mi))
+        !laid?.thresholds.has(cellKeyAt(mi)) &&
+        !laid?.bare.has(cellKeyAt(mi)) &&
+        !(laid !== undefined && besideRoomSeat(laid, control.in, cellKeyAt(mi)))
 
       let index: number | undefined
       for (let mi = 1; mi < mainPath.length - 1; mi++) {

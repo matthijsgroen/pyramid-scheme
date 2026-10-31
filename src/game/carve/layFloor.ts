@@ -9,6 +9,7 @@ import {
 } from "../laidFloor"
 import type { LengtheningChoice } from "../laidFloor"
 import { spreadContentIndices } from "./grid"
+import { blockAsks } from "./reserveRooms"
 import { pass } from "./state"
 
 // What separates the lay of one attempt from the next.
@@ -22,7 +23,8 @@ const MAX_LENGTHENINGS = 12
  * has its own stream, so a floor without locks draws exactly what it always drew.
  *
  * THE FLOOR'S OWN CONTENT IS FILLED INTO WHAT IS LAID, and where the laid stretches are too short for it the
- * plan asks the lay for more nodes on the cheapest stretch and lays again, rather than growing a branch.
+ * plan asks the lay for more nodes on the cheapest stretch and lays again, rather than growing a branch. A side
+ * section assigned to a corridor stands wholly on it; a fill that seats one of its rooms elsewhere is refused.
  *
  * Every lay that holds grows the grid, and the next attempt starts from it even when this one refuses.
  */
@@ -38,8 +40,10 @@ export const layFloor = pass("layFloor", ["rung", "attempt"], ["lay", "laidN"], 
   let n = state.rung.n
   let lengthPlan = layPlan
   const lengthened: LengtheningChoice[] = []
+  const blocks = blockAsks(prep, state.attempt)
+  const rooms = new Set(blocks.map(({ region }) => region))
   for (;;) {
-    const result = layLockPlan(lengthPlan, { seed: seed + state.attempt * LAY_SEED_STRIDE, n })
+    const result = layLockPlan(lengthPlan, { seed: seed + state.attempt * LAY_SEED_STRIDE, n, blocks })
     if (!result.ok) return { retry: [{ type: "lockNotLaid", ...result.refusal }] }
     n = result.laid.n
     state.laidN = n
@@ -65,7 +69,10 @@ export const layFloor = pass("layFloor", ["rung", "attempt"], ["lay", "laidN"], 
     if (onMain === undefined) return { retry: [] }
     const filled = fillLaidFloor(
       seated,
-      new Set([...onMain, ...kept].map(step => `${seated.route[step][0]},${seated.route[step][1]}`)),
+      new Set([
+        ...[...onMain, ...kept].map(step => `${seated.route[step][0]},${seated.route[step][1]}`),
+        ...seated.bare,
+      ]),
       absorbedDemands,
       appetiteOfRegion
     )
@@ -76,7 +83,10 @@ export const layFloor = pass("layFloor", ["rung", "attempt"], ["lay", "laidN"], 
       state.lay = { laid: answered, mainSteps: onMain }
       return
     }
-    const considered = lengtheningCandidates(lengthPlan, seated, filled.missing, appetiteOfRegion)
+    // A region laid as a designed room is the room's size, never lengthened.
+    const considered = lengtheningCandidates(lengthPlan, seated, filled.missing, appetiteOfRegion).filter(
+      candidate => candidate.kind !== "region" || !rooms.has(candidate.id)
+    )
     const [cheapest] = considered
     if (cheapest === undefined || lengthened.length >= MAX_LENGTHENINGS)
       return { retry: [{ type: "contentNotLaid", kinds: filled.missing.map(({ kind }) => kind) }] }

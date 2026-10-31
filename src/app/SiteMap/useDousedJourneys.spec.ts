@@ -192,7 +192,6 @@ const play = (found: ReturnType<typeof carved>, save: ReturnType<typeof store>) 
       grid: revealed(found.grid),
       explorerPos: found.grid.entrancePos,
       onEncounter: () => {},
-      onSkippedConsumable: () => {},
       onExitReached: () => {},
     })
   })

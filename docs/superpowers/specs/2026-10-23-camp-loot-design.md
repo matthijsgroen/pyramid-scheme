@@ -1,6 +1,7 @@
 # Camp loot — where the camp comes from
 
-Status: design, approved direction · not implemented
+Status: design, approved direction · sources 1–2, growth and healing built; the animals (§3), the per-gate
+guard and the recomputed economy are not built yet
 Date: 2026-10-23
 Builds on: `docs/game-design/camp.md` (replaces its "Camp loot" find model and its "Slot conversion"),
 `docs/game-design/shop-mechanic.md`, `docs/superpowers/specs/2026-10-23-camp-scene-design.md`

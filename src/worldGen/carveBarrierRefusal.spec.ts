@@ -47,7 +47,7 @@ const withHolder = (grid: FloorGrid, at: { r: number; c: number }, returnsToInit
   ),
 })
 
-const accepted = (grid: FloorGrid) => refusal({ success: true, grid, attempt: 0 })
+const accepted = (grid: FloorGrid) => refusal({ success: true, grid, attempt: 0 }, anyOuterDoorFloor())
 
 describe("a floor the player can be shut in on between two barriers is refused before it is baked", () => {
   const carved = SEEDS.flatMap(seed => {

@@ -10,7 +10,7 @@ import { passageArtUrl, passageTile } from "./passageArt"
 import { buildRoomClaims } from "./roomClaims"
 import { nodeSpritesFor, SiteMapView } from "./SiteMapView"
 import { cellCenter, CELL } from "./mapScale"
-import { sharedTileUrl } from "./tileAssets"
+import { mechanismTileUrl } from "./tileAssets"
 import "@/mods/registerModApps"
 
 const SEEDS = Array.from({ length: 60 }, (_, n) => n)
@@ -39,19 +39,19 @@ describe("a passage's tile", () => {
     expect(passageTile(crack(["n", "s"], "lava"))).toBeUndefined()
   })
 
-  it("is the shared painting, the same at every rank", () => {
-    expect(passageArtUrl(crack(["n", "s"]))).toBe(sharedTileUrl("narrowAcross"))
+  it("is the painting of the tileset's mechanism style", () => {
+    expect(passageArtUrl(crack(["n", "s"]), "cave")).toBe(mechanismTileUrl("cave", "narrowAcross"))
   })
 })
 
 describe("a passage on the map", () => {
   const grid = revealAll(carveLockFloor(parseLock(CRACK, "stones").lock, PASSAGE_BINDING, SEEDS))
   const [r, c] = passageAt(grid)
-  const sprites = nodeSpritesFor(grid, buildRoomClaims(grid), "expert", undefined, new Map(), 0)
+  const sprites = nodeSpritesFor(grid, buildRoomClaims(grid), "expert", new Map(), 0)
 
   it("is drawn as its wall, in its own cell, and as no gate's leaf", () => {
     const wall = sprites.find(sprite => sprite.key === `passage:${r},${c}`)
-    expect(wall?.url).toBe(passageArtUrl(grid.cells[r][c] as RoomCell))
+    expect(wall?.url).toBe(passageArtUrl(grid.cells[r][c] as RoomCell, "expert"))
     expect(sprites.filter(sprite => sprite.key === `gate:${r},${c}` || sprite.key === `wall:${r},${c}`)).toEqual([])
   })
 
@@ -71,7 +71,7 @@ describe("a passage no registered mod paints", () => {
       )
     ),
   }
-  const sprites = nodeSpritesFor(grid, buildRoomClaims(grid), "expert", undefined, new Map(), 0)
+  const sprites = nodeSpritesFor(grid, buildRoomClaims(grid), "expert", new Map(), 0)
 
   it("is drawn as the shut gate it is to the walk", () => {
     expect(sprites.map(sprite => sprite.key)).toContain(`wall:${r},${c}`)

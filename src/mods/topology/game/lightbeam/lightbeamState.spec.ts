@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
-import { isLit } from "./beam"
+import { DIR, isLit, pieceOnFixed, pieceOptions, SLASH, type LightbeamPuzzleData } from "./beam"
 import { generateLightbeam } from "./generateLightbeam"
-import { createLightbeamState, cycleLightbeamPiece, pieceMoved } from "./lightbeamState"
+import { createLightbeamState, cycleLightbeamPiece, pieceMoved, type LightbeamState } from "./lightbeamState"
 
 // Three bends, which is the family's floor: two binary pieces have no honest opening to draw, since every
 // start is then either lit, one tap from lit, or the same one tap on both.
@@ -43,5 +43,41 @@ describe("lightbeamState", () => {
       while (state.states[piece] !== puzzle.solution[piece]) state = cycleLightbeamPiece(state, puzzle, piece)
     })
     expect(isLit(puzzle, state.states)).toBe(true)
+  })
+})
+
+describe("a sliding track crossing a wall", () => {
+  const board: LightbeamPuzzleData = {
+    size: 5,
+    sun: { at: { row: 0, col: 0 }, facing: DIR.down },
+    shrine: { row: 4, col: 4 },
+    fixed: [{ kind: "wall", at: { row: 2, col: 2 } }],
+    movable: [
+      {
+        kind: "slidingMirror",
+        angle: SLASH,
+        stops: [
+          { row: 2, col: 1 },
+          { row: 2, col: 2 },
+          { row: 2, col: 3 },
+        ],
+      },
+    ],
+  }
+
+  it("is a board the generator's gate refuses", () => {
+    expect(pieceOnFixed(board)).toBe(true)
+    expect(pieceOnFixed({ ...board, fixed: [{ kind: "wall", at: { row: 3, col: 2 } }] })).toBe(false)
+  })
+
+  it("offers no stop on the wall", () => {
+    expect(pieceOptions(board, 0)).toEqual([0, 2])
+  })
+
+  it("a tap slides the mirror past the wall, never onto it", () => {
+    const start: LightbeamState = { states: [0] }
+    const once = cycleLightbeamPiece(start, board, 0)
+    expect(once.states).toEqual([2])
+    expect(cycleLightbeamPiece(once, board, 0).states).toEqual([0])
   })
 })

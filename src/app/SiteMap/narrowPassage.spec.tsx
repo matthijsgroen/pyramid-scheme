@@ -124,7 +124,6 @@ describe("a crossing under way", () => {
       markCellExplored: vi.fn(),
       updatePosition: vi.fn(),
       getPurchasedShopSlots: () => new Set<string>(),
-      getSkippedConsumables: () => new Set<string>(),
       getMechanismStates: vi.fn(() => new Map<string, string>()),
       setMechanismState: vi.fn(),
     } as unknown as JourneyAPI
@@ -139,7 +138,6 @@ describe("a crossing under way", () => {
         grid,
         explorerPos: near,
         onEncounter: () => {},
-        onSkippedConsumable: () => {},
         onExitReached: () => {},
         playTraversal: play,
       })

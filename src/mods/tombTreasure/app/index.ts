@@ -1,4 +1,6 @@
-import { useMemo } from "react"
+import { useModState } from "@/app/state/useModState"
+import { use, useMemo } from "react"
+import { FezContext } from "@/app/fez/context"
 import { useTranslation } from "react-i18next"
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
 import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
@@ -12,6 +14,7 @@ import { treasureDisplayByKeyId } from "../game/treasures"
 import { useTombTreasureProgress } from "./useTombTreasureProgress"
 import { registerTombTreasureRewardDisplay } from "./rewardDisplay"
 import { TombTreasureCollectionSection } from "./TombTreasureCollectionSection"
+import { useTombTreasureTab } from "./collectionTab"
 import { mapPieceSchema, tombKeySchema } from "./rewardSchemas"
 import { registerDevGrants } from "@/app/dev/devActionContributions"
 import { TOMB_PERK_IDS } from "@/data/treasurePerks"
@@ -29,6 +32,7 @@ if (isModEnabled("tomb-treasure")) {
   registerRewardSchema("tombKey", tombKeySchema)
   registerRewardContribution(() => {
     const tomb = useTombTreasureProgress()
+    const fez = use(FezContext)
     return {
       effects: {
         mapPiece: (reward, { journeyId }) => {
@@ -44,9 +48,19 @@ if (isModEnabled("tomb-treasure")) {
           tomb.addTombKey(keyId)
         },
       },
+      // Told once each: what a piece is, and the moment a map is whole and its tomb opens.
+      seen: {
+        mapPiece: reward => {
+          const { found, required } = tomb.mapPieceProgress(mapPieceSchema.parse(reward).tombId)
+          fez.showConversation(found >= required ? "mapComplete" : "mapPiece")
+        },
+      },
     }
   })
-  registerHeldKeysProvider(() => useTombTreasureProgress().tombKeyIds)
+  registerHeldKeysProvider(
+    () => useTombTreasureProgress().tombKeyIds,
+    () => useModState("tomb-treasure", {})[2]
+  )
   // Every perk the player has earned, derived from the treasures they hold. This mod owns the perk
   // TABLE, so it owns the fold from key id → perk; the owning mods (trap, hieroglyph, puzzle, core)
   // read the merged list and take their own. Toggling this mod off empties the list, which correctly
@@ -67,7 +81,13 @@ if (isModEnabled("tomb-treasure")) {
   // The 5 per-difficulty treasure groups. Ordered first (before hieroglyph=20 / shop=30) — ward
   // treasures are the most valuable collectibles (ward keys + their perks). "Collected" = own the
   // tombKey; drops out of the Collection screen when the mod is off.
-  registerCollectionSection({ id: "tomb-treasure", order: 10, Component: TombTreasureCollectionSection })
+  registerCollectionSection({
+    id: "tomb-treasure",
+    order: 10,
+    Component: TombTreasureCollectionSection,
+    useTab: useTombTreasureTab,
+    details: true,
+  })
 
   // The cheat menu's tomb grants — this mod's state, so this mod hands them out.
   // A tomb is a journey locked with map pieces: off the map until its first piece, a locked card

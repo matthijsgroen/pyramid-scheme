@@ -13,8 +13,6 @@ describe("hashStr", () => {
   })
 })
 
-// (rollConsumable moved to the trap mod — see src/mods/trap/game/consumableTypes.spec.ts)
-
 // ── hintToReward / specToReward ─────────────────────────────────────────────────
 
 describe("hintToReward", () => {

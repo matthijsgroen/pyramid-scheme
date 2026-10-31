@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
+import { pinsFrom } from "@/mods/buildWorldConfigs"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { SiteConfig } from "@/game/siteTypes"
 import { buildConfigs } from "@/worldGen/configBuilder"
@@ -67,7 +68,9 @@ const build = () => {
     MOD_RESERVED_TREASURE_INDICES,
     familyIsTrap,
     REGISTERED_MOD_IDS,
-    resolveEncounterMeta
+    resolveEncounterMeta,
+    undefined,
+    { pickLayout: pinsFrom(generatedWorldConfigs) }
   )
   assignFragmentPieceIndices(configs)
   return configs
@@ -184,22 +187,8 @@ describe("registering a new puzzle family is a no-op for the authored world", ()
     expect(ids.indexOf(NEW_FAMILY.id)).toBeLessThan(ids.length - 1)
   })
 
-  // The bake raises a floor's `packing` to the smallest value that carves it, and the build alone has not
-  // run the bake; the shipped value is laid over each floor so the build is compared like for like.
-  const withBakedPacking = (world: World): World => {
-    const copy = structuredClone(world) as unknown as Record<string, { packing?: number }[][]>
-    for (const [journeyId, levels] of Object.entries(copy))
-      levels.forEach((floors, level) =>
-        floors.forEach((floor, index) => {
-          const baked = (generatedWorldConfigs as unknown as typeof copy)[journeyId]?.[level]?.[index]?.packing
-          if (baked !== undefined) floor.packing = baked
-        })
-      )
-    return copy as unknown as World
-  }
-
   it("the baseline build is the shipped world: every tier hashes to tierFingerprints.json", () => {
-    const actual = fingerprints(withBakedPacking(before))
+    const actual = fingerprints(before)
     expect(difficulties.map(tier => actual[tier].hash)).toEqual(difficulties.map(tier => expected[tier].hash))
   })
 

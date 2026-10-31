@@ -7,6 +7,7 @@ import { encodeEdge } from "@/app/SiteMap/edgeId"
 import { isModEnabled } from "@/mods/registeredMods"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { findPath, revealAll } from "@/game/gridNavigation"
+import { roomPlaceOf } from "@/game/roomShape"
 import { persistentInteriorSeed } from "@/game/siteSeed"
 import { STORY_ROOMS, storyRoomPlace, type StoryRoom } from "../game/storyRooms"
 
@@ -16,11 +17,13 @@ export type StoryRoomLanding = {
   walkedOnto?: { sectionHash: string; cellId: string }
 }
 
+const IN_ROOM = new Set<string | undefined>(["inner", "node"])
+
 /**
  * Where a jump to `room` stands the explorer: on its doorstep, the corridor cell the walk from the floor's entrance
- * crosses last before the room, written down explored. A tap on the room then walks in and plays it the way play
- * does. Stood in the room itself he is on unexplored ground, which nothing walks from; and marking the ROOM explored
- * would read as solved and open the way past it.
+ * crosses last before the room (a designed room's door, its floor taking no tap), written down explored. A tap on
+ * the room then walks in and plays it the way play does. Stood in the room itself he is on unexplored ground, which
+ * nothing walks from; and marking the ROOM explored would read as solved and open the way past it.
  */
 export const storyRoomLanding = (room: StoryRoom): StoryRoomLanding => {
   const sites = generatedWorldConfigs[room.journeyId] ?? []
@@ -37,7 +40,10 @@ export const storyRoomLanding = (room: StoryRoom): StoryRoomLanding => {
   const at = carved.success ? findByAddress(carved.grid, floor, address) : null
   if (!carved.success || !at) return { levelNr, address }
   const route = findPath(revealAll(carved.grid), carved.grid.entrancePos, at)
-  const doorstep = route.at(-2)
+  const doorstep = route
+    .slice(0, -1)
+    .reverse()
+    .find(([r, c]) => !IN_ROOM.has(roomPlaceOf(carved.grid, r, c)))
   const cell = doorstep && carved.grid.cells[doorstep[0]][doorstep[1]]
   const doorstepAddress = doorstep && cellAddress(carved.grid, floor, doorstep[0], doorstep[1])
   if (cell?.type !== "corridor" || !doorstepAddress) return { levelNr, address }

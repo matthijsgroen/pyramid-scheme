@@ -7,8 +7,8 @@ Branch `tomb/cave-and-cavern` (worktree `prickly-gila`), built on `story-and-art
 ## The cave art, done
 
 Floor, wall face, sill, encounter wall, nine props (basin, pillar, rubblePile, pit, crystal, brazier, stalagmite,
-puddle, bones) and two wall items (roots, stalactites) are painted and imported. Every recipe is in
-`docs/instructions/repaint-queue.md` under "Cave and cavern".
+puddle, bones) and two wall items (roots, stalactites) are painted and imported; their masters are in
+`art/masters/`, and their prompts left the repaint queue as they landed.
 
 - **Value rules** (`docs/game-design/visual-direction.md`, "Light and dark floors"): the cave floor is dark (L\* 27),
   so the wall face and props are LIT and pale. `yarn rank-colour` prints a cave row. The wall face passes (−27.5,
@@ -18,7 +18,7 @@ puddle, bones) and two wall items (roots, stalactites) are painted and imported.
 - **Repainting a prop lighter**: attach the accepted prop itself (`art/masters/props/cave/<kind>-dark.webp`) with
   "THIS VERY OBJECT … change only its values". Works far better than a fresh roll.
 - **Generator quirks and their fixes**: shadow comes back MAGENTA → `art/deshadow.sh <render> clean.png
-  <kind>-shadow.png`, import with `--seat=… --seat-opacity=0.55`. Floor reference copied into the picture → cut the
+<kind>-shadow.png`, import with `--seat=… --seat-opacity=0.55`. Floor reference copied into the picture → cut the
   object out by difference against the reference (bones' Prepare line). A band instead of a square (floor, wall
   face) → the Prepare lines stack/lay copies and `make-seamless`.
 - **Props can cover several cells** (`DECORATION_FOOTPRINT` in `src/game/siteTypes.ts`: cols × rows, `tall`);

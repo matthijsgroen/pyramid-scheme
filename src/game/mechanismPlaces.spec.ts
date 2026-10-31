@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest"
-import { floorLock } from "./floorLock"
+import { floorLock, regionsOf } from "./floorLock"
 import { reachableStates, type LockSpec } from "./lockWalk"
 import { mechanismWorkedAt, mechanismAddress } from "./mechanismDoors"
 import { cellAddress } from "./cellAddress"
+import type { FloorGrid } from "./siteTypes"
+import { gateKey } from "./testSupport/handleFixtures"
 import { leverAt, leverFloor, roomBeyondDoorOf, withRemoteMove } from "./testSupport/remoteMechanismFixtures"
 
 const LEVER = (grid: ReturnType<typeof leverFloor>) => {
@@ -10,10 +12,32 @@ const LEVER = (grid: ReturnType<typeof leverFloor>) => {
   return `handle ${r},${c}`
 }
 
-const visited = (spec: LockSpec) => {
+/** Each region of the lever floor by what it is: the lever's own ground, the vault and the pocket, and their doors. */
+const regionNames = (grid: FloorGrid): Map<string, string> => {
+  const { of } = regionsOf(grid)
+  const regionOf = ([r, c]: readonly [number, number]) => of.get(`${r},${c}`)!
+  const doorOf = (section: string) => {
+    const r = grid.cells.findIndex(row =>
+      row.some(cell => cell.type === "room" && cell.requiredKeyId === gateKey(section))
+    )
+    const c = grid.cells[r].findIndex(cell => cell.type === "room" && cell.requiredKeyId === gateKey(section))
+    return regionOf([r, c])
+  }
+  return new Map([
+    [regionOf(leverAt(grid)), "home"],
+    [regionOf(roomBeyondDoorOf(grid, "vault")), "vault"],
+    [regionOf(roomBeyondDoorOf(grid, "pocket")), "pocket"],
+    [doorOf("vault"), "vault door"],
+    [doorOf("pocket"), "pocket door"],
+  ])
+}
+
+/** Where the walk stood, by name, with the side the lever stood on. */
+const visited = (grid: FloorGrid, spec: LockSpec) => {
   const walk = reachableStates(spec)
   if (walk === "tooLarge") throw new Error("too large")
-  return walk.order.map(s => `${s.region} ${Object.values(s.config).join()}`).sort()
+  const names = regionNames(grid)
+  return walk.order.map(s => `${names.get(s.region) ?? s.region} ${Object.values(s.config).join()}`).sort()
 }
 
 describe("a mechanism's moves made in several places", () => {
@@ -43,13 +67,14 @@ describe("a mechanism's moves made in several places", () => {
   })
 
   it("throws the lever right from anywhere when its move stands at home", () => {
-    expect(visited(floorLock(leverFloor())!)).toEqual([
-      "at 0,10 right",
-      "at 2,0 left",
-      "at 2,0 right",
-      "at 8,4 left",
-      "door 4,10 right",
-      "door 8,10 left",
+    const grid = leverFloor()
+    expect(visited(grid, floorLock(grid)!)).toEqual([
+      "home left",
+      "home right",
+      "pocket door right",
+      "pocket right",
+      "vault door left",
+      "vault left",
     ])
   })
 
@@ -58,18 +83,20 @@ describe("a mechanism's moves made in several places", () => {
     const placed = withRemoteMove(grid, { to: "right", at: roomBeyondDoorOf(grid, "vault") })
     // Right is reached with the player standing in the vault, and never at the lever: the way back out
     // is the vault's own door, which only the left side opens.
-    expect(visited(floorLock(placed)!)).toEqual(["at 2,0 left", "at 8,4 left", "at 8,4 right", "door 8,10 left"])
+    expect(visited(grid, floorLock(placed)!)).toEqual(["home left", "vault door left", "vault left", "vault right"])
   })
 
   it("never throws the lever right when the move is placed where only right opens the way", () => {
     const grid = leverFloor()
     const placed = withRemoteMove(grid, { to: "right", at: roomBeyondDoorOf(grid, "pocket") })
-    expect(visited(floorLock(placed)!)).toEqual(["at 2,0 left", "at 8,4 left", "door 8,10 left"])
+    expect(visited(grid, floorLock(placed)!)).toEqual(["home left", "vault door left", "vault left"])
   })
 
   it("refuses a place that is no ground the walk can stand on", () => {
     const grid = leverFloor()
-    expect(() => floorLock(withRemoteMove(grid, { to: "right", at: [0, 1] }))).toThrow(
+    const r = grid.cells.findIndex(row => row.some(cell => cell.type === "empty"))
+    const c = grid.cells[r].findIndex(cell => cell.type === "empty")
+    expect(() => floorLock(withRemoteMove(grid, { to: "right", at: [r, c] }))).toThrow(
       /no ground the walk can stand on/
     )
   })

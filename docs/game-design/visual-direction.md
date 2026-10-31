@@ -85,7 +85,7 @@ the ground art and move with each rank's surface repaint. Three things read it:
 - the interface — `DifficultyPill`, the journey card, the ward gates
 
 The separate green → purple **rank** scale (`difficultyRank`) is retired: difficulty has one colour
-meaning, its metal, so the player learns on the travel screen that gold is harder than copper and
+meaning, its metal, so the player learns in the journey list that gold is harder than copper and
 recognises it inside. Text on a metal pill holds 4.5:1, silver and gold included.
 
 ## What changes in the brief

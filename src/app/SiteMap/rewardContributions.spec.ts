@@ -4,13 +4,14 @@ import type { TreasureReward } from "@/game/siteTypes"
 
 const money: TreasureReward = { type: "money", amount: 5 }
 const frag: TreasureReward = { type: "hieroglyphFragment", hieroglyphId: "ra", pieceIndex: 0 }
-const consumable: TreasureReward = { type: "consumable", consumable: "bandage" }
 
-describe("mergeContributions — skip vs canAccept are independent", () => {
-  it("canAccept = AND across contributions (any one refuses)", () => {
-    const merged = mergeContributions([{ canAccept: r => r.type !== "consumable" }, { canAccept: () => true }])
-    expect(merged.canAccept(money)).toBe(true)
-    expect(merged.canAccept(consumable)).toBe(false) // trap-style refuse-for-now
+describe("mergeContributions", () => {
+  it("merges effects by reward type", () => {
+    const onMoney = () => {}
+    const onFrag = () => {}
+    const merged = mergeContributions([{ effects: { money: onMoney } }, { effects: { hieroglyphFragment: onFrag } }])
+    expect(merged.effects.money).toBe(onMoney)
+    expect(merged.effects.hieroglyphFragment).toBe(onFrag)
   })
 
   it("skip = OR across contributions (any one silently ignores)", () => {
@@ -19,18 +20,12 @@ describe("mergeContributions — skip vs canAccept are independent", () => {
     expect(merged.skip(money)).toBe(false)
   })
 
-  it("an owned fragment SKIPS, it does not read as a refusal (the regression guard)", () => {
-    // Hieroglyph contributes skip (owned → nothing to do), NOT canAccept=false (which core would
-    // treat as a 'pack full, come back' popup + markConsumableSkipped). The two must stay distinct.
-    const hieroglyph = { skip: (r: TreasureReward) => r.type === "hieroglyphFragment" }
-    const merged = mergeContributions([hieroglyph])
-    expect(merged.skip(frag)).toBe(true)
-    expect(merged.canAccept(frag)).toBe(true) // NOT refused — core silently ignores it instead
+  it("has no refusal path: the merge carries only effects, seen and skip", () => {
+    expect(Object.keys(mergeContributions([{ skip: () => false }])).sort()).toEqual(["effects", "seen", "skip"])
   })
 
-  it("no contributions → accepts everything, skips nothing", () => {
+  it("no contributions → skips nothing", () => {
     const merged = mergeContributions([])
-    expect(merged.canAccept(money)).toBe(true)
     expect(merged.skip(money)).toBe(false)
   })
 })

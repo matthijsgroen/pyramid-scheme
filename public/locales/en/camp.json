@@ -1,0 +1,254 @@
+{
+  "spots": {
+    "fire": "Campfire",
+    "sleeping": "Sleeping place",
+    "water": "Water place",
+    "cooking": "Cooking place",
+    "donkey": "Donkey place",
+    "camel": "Camel place",
+    "mapTable": "Map table",
+    "palmGarden": "Palm garden",
+    "ibisPond": "Ibis pond",
+    "lookout": "Lookout",
+    "godStatues": "God statues",
+    "starCanopy": "Star canopy"
+  },
+  "finds": {
+    "pot": "Cooking pot",
+    "seatCushions": "Seat cushions",
+    "reedMat": "Reed mat",
+    "blanket": "Blanket",
+    "tentRug": "Tent rug",
+    "tentFlag": "Tent flag",
+    "gourd": "Gourd",
+    "jar": "Jar",
+    "secondJar": "Second jar",
+    "spiceRack": "Spice rack",
+    "breadBoard": "Bread board",
+    "compass": "Compass",
+    "starMap": "Star map",
+    "scrollCase": "Scroll case",
+    "astrolabe": "Astrolabe",
+    "reedGlobe": "Reed globe",
+    "seed": "Palm seed",
+    "secondPalm": "Palm seed",
+    "figTree": "Fig seed",
+    "papyrus": "Papyrus root",
+    "reeds": "Reed cutting",
+    "lotus": "Lotus tuber",
+    "flag": "Lookout flag",
+    "thoth": "Thoth statuette",
+    "bastet": "Bastet statuette",
+    "anubis": "Anubis statuette",
+    "ra": "Ra statuette",
+    "cloth": "Star cloth"
+  },
+  "structures": {
+    "stoneRing": "Stone ring",
+    "fire": "Fire",
+    "cookingStones": "Cooking stones",
+    "seatingStones": "Seating stones",
+    "clayOven": "Clay oven",
+    "windbreak": "Windbreak",
+    "tent": "Tent",
+    "secondTent": "Second tent",
+    "pavilion": "Pavilion",
+    "well": "Well",
+    "wellPulley": "Pulley well",
+    "tripod": "Tripod",
+    "breadOven": "Bread oven",
+    "dryingRack": "Drying rack",
+    "feast": "Feast",
+    "table": "Map table",
+    "lotusPlanter": "Lotus planter",
+    "edgeStones": "Pond edge",
+    "post": "Lookout post",
+    "platform": "Lookout platform",
+    "ladder": "Ladder",
+    "roof": "Roof",
+    "signalFire": "Signal fire",
+    "poles": "Canopy masts",
+    "stars": "Stars",
+    "planets": "Planets"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Field stones",
+      "sandBed": "Sand bed"
+    },
+    "fire": {
+      "tinder": "Tinder",
+      "acaciaLogs": "Acacia logs"
+    },
+    "cookingStones": {
+      "flatStone": "Flat stone",
+      "supportStones": "Support stones"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Smooth boulders",
+      "sandstoneBlock": "Sandstone block",
+      "hewnSlab": "Hewn slab"
+    },
+    "clayOven": {
+      "ovenFloor": "Oven floor",
+      "firebricks": "Firebricks",
+      "smokeHole": "Smoke hole",
+      "copperGrate": "Copper grate"
+    },
+    "windbreak": {
+      "reedBundles": "Reed bundles",
+      "stakes": "Wooden stakes"
+    },
+    "tent": {
+      "tentPoles": "Tent poles",
+      "wovenCloth": "Woven cloth",
+      "tentPegs": "Tent pegs"
+    },
+    "secondTent": {
+      "largeCloth": "Large tent cloth",
+      "ridgePole": "Ridge pole",
+      "guyRopes": "Guy ropes",
+      "woolFloor": "Wool ground cloth"
+    },
+    "pavilion": {
+      "pavilionPosts": "Pavilion posts",
+      "linenCanopy": "Linen canopy",
+      "hangingCurtains": "Curtains",
+      "woolRugs": "Wool rugs",
+      "woodenFloor": "Wooden floor"
+    },
+    "well": {
+      "wellStones": "Well stones",
+      "rope": "Long rope",
+      "bucket": "Bucket",
+      "windlass": "Windlass"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Pulley wheel",
+      "frame": "Support frame",
+      "hoistRope": "Hoisting rope",
+      "counterweight": "Counterweight",
+      "leatherBucket": "Leather bucket"
+    },
+    "tripod": {
+      "tripodPoles": "Three poles",
+      "binding": "Binding rope",
+      "hook": "Bronze hook"
+    },
+    "breadOven": {
+      "mudBricks": "Mud bricks",
+      "clayPlaster": "Clay plaster",
+      "ovenLid": "Oven lid"
+    },
+    "dryingRack": {
+      "rackPoles": "Rack poles",
+      "crossbar": "Crossbar",
+      "wickerTray": "Wickerwork tray",
+      "cords": "Hanging cords"
+    },
+    "feast": {
+      "lowTable": "Low table",
+      "breadBaskets": "Bread baskets",
+      "roastDuck": "Roast duck",
+      "beerJars": "Beer jars",
+      "fruitBowl": "Fruit bowl"
+    },
+    "table": {
+      "tableTop": "Table top",
+      "trestles": "Trestles",
+      "leatherStraps": "Leather straps"
+    },
+    "lotusPlanter": {
+      "clayTub": "Clay trough",
+      "nileSilt": "Nile silt",
+      "waterJar": "Water jar",
+      "lotusTubers": "Lotus tubers",
+      "stoneRim": "Stone rim"
+    },
+    "edgeStones": {
+      "riverStones": "River stones",
+      "clayBedding": "Clay bedding",
+      "gravel": "Gravel",
+      "boundaryStakes": "Boundary stakes"
+    },
+    "post": {
+      "postTrunk": "Palm trunk",
+      "footStones": "Foundation stones",
+      "wedges": "Wedges",
+      "braces": "Braces"
+    },
+    "platform": {
+      "platformBeams": "Support beams",
+      "platformPlanks": "Planks",
+      "lashingRope": "Lashing rope",
+      "edgeRail": "Railing"
+    },
+    "ladder": {
+      "ladderRails": "Ladder rails",
+      "rungs": "Rungs",
+      "groundPegs": "Ground pegs",
+      "leatherLoops": "Leather loops"
+    },
+    "roof": {
+      "roofPoles": "Roof poles",
+      "thatch": "Palm thatch",
+      "clayLayer": "Clay layer",
+      "bindingGrass": "Binding grass"
+    },
+    "signalFire": {
+      "fireBasin": "Fire basin",
+      "pitch": "Pitch",
+      "dryBrushwood": "Dry brushwood",
+      "flint": "Flint",
+      "bellows": "Bellows"
+    },
+    "poles": {
+      "masts": "Masts",
+      "cornerStones": "Corner stones",
+      "stayLines": "Stay lines",
+      "bigPegs": "Large pegs",
+      "poleSockets": "Pole sockets"
+    },
+    "stars": {
+      "goldLeaf": "Gold leaf",
+      "needleThread": "Needle and thread",
+      "indigoDye": "Indigo dye",
+      "chalk": "Chalk",
+      "stencils": "Stencils"
+    },
+    "planets": {
+      "ochre": "Ochre",
+      "copperDiscs": "Copper discs",
+      "lapisPowder": "Lapis powder",
+      "hangingLoops": "Hanging loops",
+      "dividers": "Dividers"
+    }
+  },
+  "collection": {
+    "title": "Structures",
+    "progress": "{{found}} of {{total}}",
+    "built": "built",
+    "unknownPart": "???",
+    "open": "Show parts",
+    "close": "Hide parts"
+  },
+  "reward": {
+    "find": "Camp find",
+    "part": "Part",
+    "progress": "{{name}} · {{found}} of {{total}}"
+  },
+  "haul": {
+    "new": "New in your camp",
+    "parts_one": "{{name}} · {{count}} part",
+    "parts_other": "{{name}} · {{count}} parts"
+  },
+  "arrivals": {
+    "donkey": "Your donkey is in the camp",
+    "cart": "Your cart is in the camp",
+    "camel": "Your camel is in the camp",
+    "secondDonkey": "Your second donkey is in the camp",
+    "secondCamel": "Your second camel is in the camp",
+    "sturdyCart": "Your sturdier cart is in the camp",
+    "caravanBanner": "Your caravan banner hangs in the camp"
+  }
+}

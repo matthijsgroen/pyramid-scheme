@@ -1,7 +1,8 @@
 import { gateKeyOf } from "./ids"
 import { keyOf } from "./derive"
 import { makePkey } from "./grid"
-import { MAIN_SECTION_ADDRESS } from "./sections"
+import { roomJoins } from "./reserveRooms"
+import { doorsShutting, MAIN_SECTION_ADDRESS } from "./sections"
 import { pass } from "./state"
 import type { Cell } from "./state"
 
@@ -29,87 +30,105 @@ import type { Cell } from "./state"
  * gates that seam. Kept apart rather than folded into `behind` for that reason: merging them would make an
  * UNGATED seam look, to the drop check, like a real door nothing has been earned toward.
  */
-export const isolate = pass("isolate", ["maze", "keys", "labels", "lay"], ["doors"], (prep, state) => {
-  const { mainIsolated } = prep.hashes
-  const { regionDoors, regionSeamDoors } = prep.layout
-  const { n: N, mainPath } = state.maze
-  const { chains } = state.keys
-  const laid = state.lay?.laid
-  const pkey = makePkey(N)
-  const intended = new Set<string>()
-  const gated = new Set<string>()
-  const behind = new Map<string, Set<string>>()
-  const needsDoor = (cellKey: string, door: string) => behind.set(cellKey, (behind.get(cellKey) ?? new Set()).add(door))
-  const seamGated = new Set<string>()
-  const seamBehind = new Map<string, Set<string>>()
-  const needsSeamDoor = (cellKey: string, door: string) =>
-    seamBehind.set(cellKey, (seamBehind.get(cellKey) ?? new Set()).add(door))
-  const markChain = ([pr, pc]: Cell, cells: readonly Cell[]) => {
-    for (const [r, c] of cells) {
-      intended.add(pkey(pr, pc, r, c))
-      ;[pr, pc] = [r, c]
-    }
-  }
-  for (let mi = 0; mi < mainPath.length - 1; mi++) {
-    const [r, c] = mainPath[mi]
-    const [nr, nc] = mainPath[mi + 1]
-    intended.add(pkey(r, c, nr, nc))
-  }
-  // Isolation: cut a stretch off from the leftover maze edges, so no stray tree edge lets a player step past
-  // what guards it. A gate asks for it, and `sealed` asks for it on an ordinary visible path — which is how a
-  // trap gets it too: world-gen writes `sealed` on the section it gives a trap to (placeEncounters), so nothing
-  // here has to read an encounter to lay out a floor. A chain stands behind its own door AND every ancestor's,
-  // each written only where it exists: reaching it means going through the parent either way, so a chain with
-  // no gate of its own is no further in than its parent is.
-  //
-  // A chain's doors are named once (`doorsShutting`) because the section hash records exactly whether there
-  // are any, so hash and layout cannot drift apart: a floor forgets a run's progress only when its corridors
-  // really changed.
-  //
-  // Every consecutive main-path edge is already `intended` above, so isolating the main path only blocks
-  // *extra* leftover edges that would merge a shortcut around a puzzle room.
-  if (mainIsolated)
-    for (const cell of mainPath) {
-      gated.add(keyOf(cell))
-      needsDoor(keyOf(cell), MAIN_SECTION_ADDRESS)
-    }
-  // The ways a lock laid are walked ways, every one of them.
-  for (const key of laid?.passages ?? []) intended.add(key)
-  // Ground a stray maze edge may not leave: a path hung off laid ground answers to the ground it hangs from.
-  const ground = new Map<string, string>(laid?.ground)
-  for (const chain of chains) {
-    if (laid && !chain.laid) {
-      const hangsFrom = ground.get(keyOf(chain.attachedAt))
-      if (hangsFrom !== undefined) for (const cell of chain.cells) ground.set(keyOf(cell), hangsFrom)
-    }
-    markChain(chain.attachedAt, chain.cells)
-    if (chain.doors.length === 0) continue
-    for (const cell of chain.cells) {
-      gated.add(keyOf(cell))
-      for (const door of chain.doors) needsDoor(keyOf(cell), door)
-    }
-  }
-
-  // A CELL IN A GATED REGION STANDS BEHIND EVERY OBSTACLE BOUNDING IT, written into the same map the authored
-  // gates and traps use — so a one-way falling into a gated region, a stray tree edge beside one and the fog
-  // are all answered by one notion of "what must be earned to stand here". Read off the settled labels (main
-  // path AND chains, a chain inheriting its host's region), so a chain grown inside a gated region is gated
-  // with it.
-  if (regionDoors)
-    for (const [cellKey, region] of state.labels.region)
-      for (const id of regionDoors.get(region) ?? []) {
-        gated.add(cellKey)
-        needsDoor(cellKey, gateKeyOf(prep.input.floorRef, id))
+export const isolate = pass(
+  "isolate",
+  ["maze", "keys", "labels", "lay"],
+  ["doors"],
+  (prep, state) => {
+    const { mainIsolated } = prep.hashes
+    const { regionDoors, regionSeamDoors } = prep.layout
+    const { n: N, mainPath } = state.maze
+    const { chains } = state.keys
+    const laid = state.lay?.laid
+    const pkey = makePkey(N)
+    // A hop across a designed room's floor is walked, but is no maze edge.
+    const joins = roomJoins(state.blocks ?? [], N)
+    const intended = new Set<string>()
+    const gated = new Set<string>()
+    const behind = new Map<string, Set<string>>()
+    const needsDoor = (cellKey: string, door: string) =>
+      behind.set(cellKey, (behind.get(cellKey) ?? new Set()).add(door))
+    const seamGated = new Set<string>()
+    const seamBehind = new Map<string, Set<string>>()
+    const needsSeamDoor = (cellKey: string, door: string) =>
+      seamBehind.set(cellKey, (seamBehind.get(cellKey) ?? new Set()).add(door))
+    const markChain = ([pr, pc]: Cell, cells: readonly Cell[]) => {
+      for (const [r, c] of cells) {
+        if (!joins.has(pkey(pr, pc, r, c))) intended.add(pkey(pr, pc, r, c))
+        ;[pr, pc] = [r, c]
       }
-  // THE STRUCTURAL TWIN OF THE MARKING ABOVE — every connection `regionLayout` declares stands in for an
-  // obstacle here, gated or not, so `edgeAllowed`'s bypass check reserves the same stray edges whether or not
-  // the topology mod is in the build.
-  if (regionSeamDoors)
-    for (const [cellKey, region] of state.labels.region)
-      for (const id of regionSeamDoors.get(region) ?? []) {
-        seamGated.add(cellKey)
-        needsSeamDoor(cellKey, id)
+    }
+    for (let mi = 0; mi < mainPath.length - 1; mi++) {
+      const [r, c] = mainPath[mi]
+      const [nr, nc] = mainPath[mi + 1]
+      if (!joins.has(pkey(r, c, nr, nc))) intended.add(pkey(r, c, nr, nc))
+    }
+    // Isolation: cut a stretch off from the leftover maze edges, so no stray tree edge lets a player step past
+    // what guards it. A gate asks for it, and `sealed` asks for it on an ordinary visible path — which is how a
+    // trap gets it too: world-gen writes `sealed` on the section it gives a trap to (placeEncounters), so nothing
+    // here has to read an encounter to lay out a floor. A chain stands behind its own door AND every ancestor's,
+    // each written only where it exists: reaching it means going through the parent either way, so a chain with
+    // no gate of its own is no further in than its parent is.
+    //
+    // A chain's doors are named once (`doorsShutting`) because the section hash records exactly whether there
+    // are any, so hash and layout cannot drift apart: a floor forgets a run's progress only when its corridors
+    // really changed.
+    //
+    // Every consecutive main-path edge is already `intended` above, so isolating the main path only blocks
+    // *extra* leftover edges that would merge a shortcut around a puzzle room.
+    if (mainIsolated)
+      for (const cell of mainPath) {
+        gated.add(keyOf(cell))
+        needsDoor(keyOf(cell), MAIN_SECTION_ADDRESS)
       }
+    // The ways a lock laid are walked ways, every one of them.
+    for (const key of laid?.passages ?? []) intended.add(key)
+    // Ground a stray maze edge may not leave: a path hung off laid ground answers to the ground it hangs from.
+    const ground = new Map<string, string>(laid?.ground)
+    for (const chain of chains) {
+      if (laid && !chain.laid) {
+        const hangsFrom = ground.get(keyOf(chain.attachedAt))
+        if (hangsFrom !== undefined) for (const cell of chain.cells) ground.set(keyOf(cell), hangsFrom)
+      }
+      markChain(chain.attachedAt, [...(chain.via ?? []), ...chain.cells])
+      if (chain.doors.length === 0) continue
+      for (const cell of chain.cells) {
+        gated.add(keyOf(cell))
+        for (const door of chain.doors) needsDoor(keyOf(cell), door)
+      }
+    }
+    // A sealed section filled into laid nodes stands behind its own seal as a sealed chain does: only the lay's
+    // passages, all of them intended, reach its rooms.
+    for (const { section, cells } of laid?.absorbed ?? []) {
+      const doors = doorsShutting(prep.sections.sideSections[section], `s${section}`, [])
+      for (const cellKey of cells) {
+        if (doors.length > 0) gated.add(cellKey)
+        for (const door of doors) needsDoor(cellKey, door)
+      }
+    }
 
-  state.doors = { intended, gated, behind, ground, seamGated, seamBehind }
-})
+    // A CELL IN A GATED REGION STANDS BEHIND EVERY OBSTACLE BOUNDING IT, written into the same map the authored
+    // gates and traps use — so a one-way falling into a gated region, a stray tree edge beside one and the fog
+    // are all answered by one notion of "what must be earned to stand here". Read off the settled labels (main
+    // path AND chains, a chain inheriting its host's region), so a chain grown inside a gated region is gated
+    // with it.
+    if (regionDoors)
+      for (const [cellKey, region] of state.labels.region)
+        for (const id of regionDoors.get(region) ?? []) {
+          gated.add(cellKey)
+          needsDoor(cellKey, gateKeyOf(prep.input.floorRef, id))
+        }
+    // THE STRUCTURAL TWIN OF THE MARKING ABOVE — every connection `regionLayout` declares stands in for an
+    // obstacle here, gated or not, so `edgeAllowed`'s bypass check reserves the same stray edges whether or not
+    // the topology mod is in the build.
+    if (regionSeamDoors)
+      for (const [cellKey, region] of state.labels.region)
+        for (const id of regionSeamDoors.get(region) ?? []) {
+          seamGated.add(cellKey)
+          needsSeamDoor(cellKey, id)
+        }
+
+    state.doors = { intended, gated, behind, ground, seamGated, seamBehind }
+  },
+  ["blocks"]
+)

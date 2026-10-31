@@ -1,4 +1,6 @@
 import { beforeAll, describe, expect, it } from "vitest"
+import { pinsFrom } from "../mods/buildWorldConfigs"
+import { generatedWorldConfigs } from "../data/generatedWorld"
 import { buildConfigs } from "./configBuilder"
 import type { SiteConfig } from "./types"
 import type { FloorConfig as GameFloorConfig } from "../game/siteTypes"
@@ -44,7 +46,9 @@ beforeAll(() => {
     MOD_RESERVED_TREASURE_INDICES,
     familyIsTrap,
     REGISTERED_MOD_IDS,
-    resolveEncounterMeta
+    resolveEncounterMeta,
+    undefined,
+    { pickLayout: pinsFrom(generatedWorldConfigs) }
   )
 }, 180_000)
 

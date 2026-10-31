@@ -36,13 +36,17 @@ export const workerEngine = (): WebEngine => {
     if (data.error !== undefined) asked?.reject(new Error(data.error))
     else asked?.resolve(data.answer as never)
   }
-  // A worker that fails to load or throws outside a message answers nothing: every question waiting is told why.
+  // A worker that fails to load or throws outside a message answers nothing, then or later: every question waiting,
+  // and every one asked after, is told why. A tab opened before a deploy asks for a worker file that deploy removed.
+  let failed: Error | undefined
   worker.onerror = event => {
-    for (const asked of waiting.values()) asked.reject(new Error(event.message || "the web worker failed"))
+    failed = new Error(event.message || "the web worker did not load: reload the page")
+    for (const asked of waiting.values()) asked.reject(failed)
     waiting.clear()
   }
   const ask = <T>(request: WebWorkerAsk) =>
     new Promise<T>((resolve, reject) => {
+      if (failed) return reject(failed)
       const id = next++
       waiting.set(id, { resolve, reject })
       worker.postMessage({ ...request, id })

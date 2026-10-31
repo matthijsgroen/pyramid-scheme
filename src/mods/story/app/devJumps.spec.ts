@@ -10,6 +10,7 @@ import {
 } from "@/app/SiteMap/cellIdentity"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { walkableFrom } from "@/game/gridNavigation"
+import { roomDoors } from "@/game/roomShape"
 import { persistentInteriorSeed } from "@/game/siteSeed"
 import { STORY_ROOMS, storyRoomPlace } from "../game/storyRooms"
 import { storyRoomLanding } from "./devJumps"
@@ -29,7 +30,7 @@ const carve = (journeyId: string, levelNr: number, floor: number) => {
 
 describe("a develop-mode jump to an authored story room", () => {
   it.each(STORY_ROOMS.map(room => [room.label, room] as const))(
-    "%s stands the explorer on explored ground one step from the room, which is walkable",
+    "%s stands the explorer on explored ground one step from the room, or at its door, which is walkable",
     (_label, room) => {
       const { levelNr, address: roomAddress } = storyRoomPlace(room, generatedWorldConfigs[room.journeyId] ?? [])
       expect(roomAddress).not.toBeNull()
@@ -43,7 +44,9 @@ describe("a develop-mode jump to an authored story room", () => {
       const roomAt = findByAddress(grid, floor, roomAddress!)!
       expect(grid.cells[roomAt[0]][roomAt[1]]).toMatchObject({ type: "room", family: room.encounter })
       const standAt = findByAddress(grid, floor, landing.address!)!
-      expect(Math.abs(standAt[0] - roomAt[0]) + Math.abs(standAt[1] - roomAt[1])).toBe(1)
+      const doors = roomDoors(grid, roomAt[0], roomAt[1]).map(({ at: [r, c] }) => `${r},${c}`)
+      const besideRoom = Math.abs(standAt[0] - roomAt[0]) + Math.abs(standAt[1] - roomAt[1]) === 1
+      expect(besideRoom || doors.includes(`${standAt[0]},${standAt[1]}`)).toBe(true)
 
       const explored = applyExplored(grid, floor, {
         [sectionOfAddress(landing.address!)]: [keyOfAddress(landing.address!)],

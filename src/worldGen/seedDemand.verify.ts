@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from "vitest"
-import { buildWorldConfigs } from "@/mods/buildWorldConfigs"
+import { buildWorldConfigs, pinsFrom } from "@/mods/buildWorldConfigs"
+import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { ALL_FAMILY_META } from "@/mods/allFamilyMeta"
 import { configHash } from "@/game/seeds/configHash"
 import { FORK_SHAPES } from "@/game/forkShape"
@@ -10,7 +11,7 @@ import type { SiteConfig } from "./types"
 let world: Record<string, SiteConfig[]>
 
 beforeAll(() => {
-  world = buildWorldConfigs(0)
+  world = buildWorldConfigs(0, { pickLayout: pinsFrom(generatedWorldConfigs) })
 }, 180_000)
 
 const hashOf = (familyId: string, difficulty: string, forkShape: string) => {

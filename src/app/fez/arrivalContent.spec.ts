@@ -15,7 +15,19 @@ import { PORTRAITS } from "./portraits"
 const scenes = (locale: string): Record<string, Record<string, Record<string, string>>> => {
   const doc = JSON.parse(readFileSync(join("public/locales", locale, "fez.json"), "utf8"))
   // Every group a beat can live in, plus "end", which is one scene rather than a group of them.
-  const entries = ["arrival", "meeting", "tomb", "bond", "reading", "altar"].flatMap(group =>
+  const entries = [
+    "arrival",
+    "meeting",
+    "tomb",
+    "bond",
+    "reading",
+    "altar",
+    "cave",
+    "pillar",
+    "cavern",
+    "camp",
+    "animal",
+  ].flatMap(group =>
     Object.entries(doc[group] ?? {}).map(([id, lines]) => [`${group}.${id}`, lines] as [string, unknown])
   )
   if (doc.end) entries.push(["end", doc.end])

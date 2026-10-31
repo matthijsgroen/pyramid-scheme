@@ -42,6 +42,39 @@ export type LaidDrop = {
   landingCell: CellKey
 }
 
+/** A DESIGNED ROOM'S SHAPE ON THE LATTICE, in cell offsets from its inside's top-left: the inside's size, the parity
+ * of that top-left, the cell its node stands on, and its ports, each a door place with the node a way through it
+ * arrives at and the first node past the ring. The room's own floor joins every port's node to the anchor. */
+export type RoomShape = {
+  h: number
+  w: number
+  pt: number
+  pl: number
+  anchor: readonly [number, number]
+  ports: ReadonlyArray<{
+    node: readonly [number, number]
+    door: readonly [number, number]
+    out: readonly [number, number]
+  }>
+}
+
+/** A region the floor asks to be laid as a designed room, and the shapes the room may take. */
+export type BlockAsk = { region: string; room: string; shapes: readonly RoomShape[] }
+
+/** A REGION LAID AS A DESIGNED ROOM: the shape it took (an index into its ask's shapes) with its inside's top-left at
+ * `top`,`left`, the node it stands on, every node its rect and ring hold, and the nodes of the ports its ways take,
+ * joined to `anchor` through the room's floor. */
+export type LaidBlock = {
+  region: string
+  room: string
+  shape: number
+  top: number
+  left: number
+  anchor: CellKey
+  nodes: CellKey[]
+  joined: CellKey[]
+}
+
 /**
  * THE PLAN OF A LOCK FLOOR, LAID ON A LATTICE OF `n` x `n` CELLS: pre-claimed structure the carve grows around.
  * `route` is the whole top-level route, entrance to exit, as one path of nodes. `claimed` is every node cell
@@ -58,6 +91,11 @@ export type LaidLocks = {
   claimed: CellKey[]
   held: CellKey[]
   passages: string[]
+  /** The hops a designed room's floor makes, from its anchor to a port's node, as pair keys like `passages`: no
+   * passage of the lattice joins them. */
+  joins: string[]
+  /** The regions laid as designed rooms; absent where the floor asks none. */
+  blocks?: LaidBlock[]
 }
 
 /** The part of the plan the search could not place, the furthest it got before running out of room. */
@@ -71,6 +109,8 @@ export type LayOptions = {
   n: number
   /** The largest grid the layout may grow to. */
   ceiling?: number
+  /** The regions laid as designed rooms. */
+  blocks?: readonly BlockAsk[]
 }
 
 /**
@@ -114,6 +154,10 @@ const MAX_EXTRA_PER_REGION = 2
 const WALKS_PER_ANCHOR = 3
 const PATHS_PER_LENGTH = 2
 const DETOUR_HOPS = 4
+// How many placements of a designed room one search tries for its region, best first.
+const BLOCK_OPTIONS = 60
+/** How many of a region's ways beyond its room's doors branch off a porch: the porch's two free sides. */
+export const PORCH_WAYS = 2
 
 const DIRS: Array<[number, number, Direction]> = [
   [-1, 0, "n"],
@@ -122,6 +166,14 @@ const DIRS: Array<[number, number, Direction]> = [
   [0, -1, "w"],
 ]
 const opposite = (d: number) => (d + 2) % 4
+
+/** Every ordered pick of `count` different items of `items`. */
+const arrangements = <T>(items: readonly T[], count: number): T[][] =>
+  count === 0
+    ? [[]]
+    : items.flatMap((item, i) =>
+        arrangements([...items.slice(0, i), ...items.slice(i + 1)], count - 1).map(rest => [item, ...rest])
+      )
 
 type Part = LayRefusal["part"]
 type Step = { part: Part; run: (next: () => boolean) => boolean }
@@ -134,7 +186,8 @@ const search = (
   n: number,
   rand: () => number,
   extraNodes: number,
-  dropsAhead = false
+  dropsAhead = false,
+  blockAsks: readonly BlockAsk[] = []
 ): { laid?: LaidLocks; deepest: number; parts: Part[] } => {
   const M = (n + 1) / 2
   const coords = (i: number): [number, number] => [Math.floor(i / M), i % M]
@@ -163,6 +216,11 @@ const search = (
   const junctionAt = new Map<string, number>()
   const corridorPath = new Map<string, number[]>()
   const dropAt = new Map<string, DropAt>()
+  const blockAt = new Map<string, LaidBlock>()
+  // A room's ways: the node each of its corridors arrives at, keyed `corridor|region`; and how many of a room's
+  // nodes, from its first, are the walk through it.
+  const portEnd = new Map<string, number>()
+  const walkLength = new Map<string, number>()
   const trail: Array<() => void> = []
   let extraLeft = extraNodes
   let work = 0
@@ -242,6 +300,8 @@ const search = (
   }
 
   const attachNodes = (corridor: PlanCorridor, region: string, isFrom: boolean): number[] => {
+    const end = portEnd.get(`${corridor.id}|${region}`)
+    if (end !== undefined) return [end]
     const nodes = regionNodes.get(region)!
     const ia = routeIndex.get(corridor.from)
     const ib = routeIndex.get(corridor.to)
@@ -257,7 +317,144 @@ const search = (
   const steps: Step[] = []
   const placed = new Set<string>()
 
+  /**
+   * A REGION LAID AS A DESIGNED ROOM: the room's rect and ring on free nodes, its anchor the region's, and one port for
+   * each of the region's corridors, the corridor arriving at the port's node. The anchor and those ports' nodes are
+   * the region's, joined through the room's own floor and never by a passage; every side of them but each port's way
+   * out is taken and the room's other nodes are held, so nothing reaches into the room but by its ports. Its nodes
+   * list the walk through it first: in by the port the route (or the way in) arrives by, over the anchor, out by the
+   * port the route leaves by. A region with more ways than the room has doors takes a porch past the door of its way in
+   * or out: that door's node one step out and the node past it, the region's, linked straight on from the door; the
+   * ways the room has no door for branch off the porch's far node, the only node of the region with free sides.
+   */
+  const blockStep = (region: PlanRegion, ask: BlockAsk): Step => ({
+    part: { kind: "region", id: region.id },
+    run: next => {
+      const ways = corridorsOf(region.id)
+      const otherOf = (corridor: PlanCorridor) => (corridor.from === region.id ? corridor.to : corridor.from)
+      const at = routeIndex.get(region.id)
+      const enters = ways.find(corridor =>
+        at === undefined
+          ? placed.has(otherOf(corridor))
+          : corridor.onRoute && routeIndex.get(otherOf(corridor)) === at - 1
+      )
+      const leaves =
+        at === undefined
+          ? undefined
+          : ways.find(corridor => corridor.onRoute && routeIndex.get(otherOf(corridor)) === at + 1)
+      const ordered = [
+        ...(enters ? [enters] : []),
+        ...(leaves ? [leaves] : []),
+        ...ways.filter(corridor => corridor !== enters && corridor !== leaves),
+      ]
+      if (ordered.length === 0) return false
+      const nodeAt = (r: number, c: number) =>
+        r < 0 || c < 0 || r >= n || c >= n || r % 2 !== 0 || c % 2 !== 0 ? -1 : idOf(r / 2, c / 2)
+      type Port = { node: number; out: number; dir: number }
+      type Porch = { p: number; out: number; at: number }
+      type Option = { score: number; anchor: number; held: number[]; ports: Port[]; block: LaidBlock; porch?: Porch }
+      const options: Option[] = []
+      // A room uses as many of its doors as the region has ways: a porch carries only what no door of it can.
+      const doors = Math.min(ordered.length, Math.max(...ask.shapes.map(shape => shape.ports.length)))
+      ask.shapes.forEach((shape, index) => {
+        const k = Math.min(ordered.length, shape.ports.length)
+        const extra = ordered.length - k
+        if (k < doors || k < Math.min(ordered.length, 2) || extra > PORCH_WAYS) return
+        for (let top = 1; top + shape.h <= n - 1; top++) {
+          if (top % 2 !== shape.pt) continue
+          for (let left = 1; left + shape.w <= n - 1; left++) {
+            if (left % 2 !== shape.pl) continue
+            const all: number[] = []
+            for (let r = top - 1; r <= top + shape.h; r++)
+              for (let c = left - 1; c <= left + shape.w; c++) if (r % 2 === 0 && c % 2 === 0) all.push(nodeAt(r, c))
+            if (all.some(node => node < 0 || occupied.has(node))) continue
+            const anchor = nodeAt(top + shape.anchor[0], left + shape.anchor[1])
+            const ports = shape.ports.flatMap(({ node: [ni, nj], out: [oi, oj] }): Port[] => {
+              const node = nodeAt(top + ni, left + nj)
+              const out = nodeAt(top + oi, left + oj)
+              return out < 0 ? [] : [{ node, out, dir: dirBetween(node, out) }]
+            })
+            for (const pick of arrangements(ports, k)) {
+              // Two ways share no port's node but the anchor.
+              const joined = pick.map(port => port.node).filter(node => node !== anchor)
+              if (new Set(joined).size !== joined.length) continue
+              const porches: Array<Porch | undefined> =
+                extra === 0
+                  ? [undefined]
+                  : pick.flatMap((port, p): Porch[] => {
+                      // On the walk through, so the porch is route and never a roomless stub of the region.
+                      if (p !== 0 && ordered[p] !== leaves) return []
+                      const at = step(port.out, port.dir)
+                      return at < 0 || occupied.has(port.out) || occupied.has(at) ? [] : [{ p, out: port.out, at }]
+                    })
+              for (const porch of porches) {
+                let score = rand()
+                const fits = pick.every((port, w) => {
+                  const other = otherOf(ordered[w])
+                  const end = porch?.p === w ? porch.at : port.out
+                  const owner = occupied.get(port.out)
+                  if (owner !== undefined && owner !== other) return false
+                  if (placed.has(other)) score += Math.min(...regionNodes.get(other)!.map(node => distance(end, node)))
+                  return true
+                })
+                if (!fits) continue
+                const held = all.filter(node => node !== anchor && !joined.includes(node))
+                const block: LaidBlock = {
+                  region: region.id,
+                  room: ask.room,
+                  shape: index,
+                  top,
+                  left,
+                  anchor: cell(anchor),
+                  nodes: all.map(cell),
+                  joined: joined.map(cell),
+                }
+                options.push({ score, anchor, held, ports: pick, block, ...(porch ? { porch } : {}) })
+              }
+            }
+          }
+        }
+      })
+      options.sort((a, b) => a.score - b.score)
+      for (const { anchor, held, ports, block, porch } of options.slice(0, BLOCK_OPTIONS)) {
+        if (spent()) return false
+        const mark = trail.length
+        const nodes = [...new Set([anchor, ...ports.map(port => port.node)])]
+        nodes.forEach(node => claim(node, region.id))
+        held.forEach(node => claim(node, `block:${region.id}`))
+        const outward = new Set(ports.map(port => port.node * 4 + port.dir))
+        for (const node of nodes)
+          for (let d = 0; d < 4; d++) if (sideFree(node, d) && !outward.has(node * 4 + d)) takeSide(node, d)
+        ports.forEach((port, w) =>
+          record(portEnd, `${ordered[w].id}|${region.id}`, porch?.p === w ? porch.at : port.node)
+        )
+        if (porch) {
+          const { node, dir } = ports[porch.p]
+          claim(porch.out, region.id)
+          claim(porch.at, region.id)
+          link(node, dir)
+          link(porch.out, dir)
+          for (let d = 0; d < 4; d++) if (sideFree(porch.out, d)) takeSide(porch.out, d)
+        }
+        const out = leaves && leaves !== ordered[0] ? [ports[ordered.indexOf(leaves)].node] : []
+        const walk = [...new Set([ports[0].node, anchor, ...out])]
+        if (porch?.p === 0) walk.unshift(porch.at, porch.out)
+        else if (porch) walk.push(porch.out, porch.at)
+        record(regionNodes, region.id, [...walk, ...nodes.filter(node => !walk.includes(node))])
+        record(walkLength, region.id, walk.length)
+        record(blockAt, region.id, block)
+        placed.add(region.id)
+        trail.push(() => placed.delete(region.id))
+        if (next()) return true
+        undoTo(mark)
+      }
+      return false
+    },
+  })
+
   const regionStep = (region: PlanRegion, pin: { drop: string; other: string } | undefined): Step => {
+    const ask = blockAsks.find(candidate => candidate.region === region.id)
+    if (ask) return blockStep(region, ask)
     const entrance = region.id === plan.route[0]
     const junction = junctionOf.get(region.id)
     const ownsOnward =
@@ -494,6 +691,14 @@ const search = (
     return x < y ? `${x}-${y}` : `${y}-${x}`
   }
 
+  const cellPair = (a: CellKey, b: CellKey) => {
+    const [x, y] = [a, b].map(key => {
+      const [r, c] = key.split(",").map(Number)
+      return r * n + c
+    })
+    return x < y ? `${x}-${y}` : `${y}-${x}`
+  }
+
   const snapshot = (): LaidLocks => {
     const interior = (path: number[]) => path.slice(1, -1)
     const cellsOf = (path: number[]) =>
@@ -525,7 +730,7 @@ const search = (
       return { id: region.id, nodes: (entry === nodes[nodes.length - 1] ? [...nodes].reverse() : nodes).map(cell) }
     })
     const route = plan.route.flatMap((id, i) => {
-      const nodes = regionNodes.get(id)!
+      const nodes = regionNodes.get(id)!.slice(0, walkLength.get(id))
       const next = plan.route[i + 1]
       if (next === undefined) return nodes.map(cell)
       const corridor = plan.corridors.find(
@@ -577,11 +782,13 @@ const search = (
       junctions,
       drops,
       claimed: [...occupied.entries()]
-        .filter(([, owner]) => !owner.startsWith("run:"))
+        .filter(([, owner]) => !owner.startsWith("run:") && !owner.startsWith("block:"))
         .map(([i]) => cell(i))
         .sort(),
       held: drops.flatMap(drop => [drop.launchCell, ...drop.run, drop.landingCell]).sort(),
       passages: passages.map(([a, b]) => pkey(a, b)).sort(),
+      joins: [...blockAt.values()].flatMap(block => block.joined.map(node => cellPair(block.anchor, node))).sort(),
+      ...(blockAt.size > 0 ? { blocks: [...blockAt.values()] } : {}),
     }
   }
 
@@ -641,32 +848,98 @@ const search = (
   return { laid, deepest, parts: steps.map(entry => entry.part) }
 }
 
+/** What one grid's searches decided: the laid floor, or how far the furthest search got. */
+type GridOutcome = { laid?: LaidLocks; furthest?: Part }
+
+let gridOutcomesKept = 0
+const gridOutcomes = new Map<string, GridOutcome>()
+
+/**
+ * THE LAY IS A PURE FUNCTION OF (plan, seed, grid), and the bake's layout search asks it the same question many times
+ * over: every packing of one seed lays the same plan with the same seed, only from a different starting grid. With
+ * `limit` above 0 each grid's outcome is kept, up to `limit` of them, and read back; 0 (the default, as play runs)
+ * keeps none and forgets what was kept.
+ */
+export const keepLayOutcomes = (limit: number) => {
+  gridOutcomesKept = limit
+  gridOutcomes.clear()
+}
+const remembered = (key: string, decide: () => GridOutcome): GridOutcome => {
+  if (gridOutcomesKept <= 0) return decide()
+  const known = gridOutcomes.get(key)
+  if (known) return known
+  const outcome = decide()
+  if (gridOutcomes.size >= gridOutcomesKept) gridOutcomes.delete(gridOutcomes.keys().next().value!)
+  gridOutcomes.set(key, outcome)
+  return outcome
+}
+/**
+ * Whether two rooms the lay places that claim floor (the route's exit and every junction) stand one node apart where
+ * they can never merge: ortho with no way between them, or diagonal across two regions. The carve keeps such rooms
+ * apart (hangBranches), so a restart lays again rather than hand the carve a floor it must refuse.
+ */
+const crowdsAClaim = (laid: LaidLocks): boolean => {
+  const regionOf = (key: CellKey) => laid.regions.find(region => region.nodes.includes(key))?.id
+  const claims = [
+    { cell: laid.route[laid.route.length - 1], exits: [] as Direction[] },
+    ...laid.junctions.map(({ cell, exits }) => ({ cell, exits })),
+  ]
+  const DIR_OF: Record<string, Direction> = { "-2,0": "n", "2,0": "s", "0,-2": "w", "0,2": "e" }
+  return claims.some((a, i) =>
+    claims.slice(i + 1).some(b => {
+      const [r1, c1] = a.cell.split(",").map(Number)
+      const [r2, c2] = b.cell.split(",").map(Number)
+      const [dr, dc] = [r2 - r1, c2 - c1]
+      if (Math.max(Math.abs(dr), Math.abs(dc)) !== 2) return false
+      if (dr === 0 || dc === 0)
+        return !a.exits.includes(DIR_OF[`${dr},${dc}`]) && !b.exits.includes(DIR_OF[`${-dr},${-dc}`])
+      return regionOf(a.cell) !== regionOf(b.cell)
+    })
+  )
+}
+
+/** A kept laid floor is handed out as a copy, so no caller can change what is kept. */
+const handOut = (laid: LaidLocks): LayResult => ({ ok: true, laid: structuredClone(laid) })
+
 /**
  * LAYS A LOCK PLAN ON THE NODE LATTICE: the route first, then each off-route region beside one already laid,
  * a drop's two ends exactly its straight reach apart, a junction's exits the corridors laid out of it. The
  * carve decides every length: stretches take the nodes they need beyond their minimum, corridors the
  * hops, shortest first, and the grid grows from `n` until the plan fits or the ceiling refuses it by name.
  */
-export const layLockPlan = (plan: LockPlan, { seed, n, ceiling = LAY_GRID_CEILING }: LayOptions): LayResult => {
+export const layLockPlan = (
+  plan: LockPlan,
+  { seed, n, ceiling = LAY_GRID_CEILING, blocks = [] }: LayOptions
+): LayResult => {
+  const planKey = gridOutcomesKept > 0 ? JSON.stringify(blocks.length > 0 ? [plan, blocks] : plan) : ""
   let refusal: LayRefusal | undefined
   for (let grid = n; grid <= Math.max(n, ceiling); grid += GRID_STEP) {
-    let furthest = { deepest: -1, part: undefined as Part | undefined }
-    for (let extra = 0; extra <= MAX_EXTRA_NODES; extra++)
-      for (let restart = 0; restart < RESTARTS; restart++) {
-        const rand = mulberry32(seed + grid * 7919 + extra * 104729 + restart * 15485863)
-        const { laid, deepest, parts } = search(plan, grid, rand, extra)
-        if (laid) return { ok: true, laid }
-        if (deepest > furthest.deepest) furthest = { deepest, part: parts[deepest] }
-      }
-    refusal = { part: furthest.part ?? { kind: "region", id: plan.route[0] }, grid }
+    const { laid, furthest } = remembered(`${seed}|${grid}|${planKey}`, () => {
+      let furthest = { deepest: -1, part: undefined as Part | undefined }
+      for (let extra = 0; extra <= MAX_EXTRA_NODES; extra++)
+        for (let restart = 0; restart < RESTARTS; restart++) {
+          const rand = mulberry32(seed + grid * 7919 + extra * 104729 + restart * 15485863)
+          const { laid, deepest, parts } = search(plan, grid, rand, extra, false, blocks)
+          if (laid && !crowdsAClaim(laid)) return { laid }
+          if (deepest > furthest.deepest) furthest = { deepest, part: parts[deepest] }
+        }
+      return { furthest: furthest.part }
+    })
+    if (laid) return handOut(laid)
+    refusal = { part: furthest ? { ...furthest } : { kind: "region", id: plan.route[0] }, grid }
   }
   // Only a plan no search laid is searched again with its drops looked ahead to, so every plan that lays without
   // it lays as it always has. The look-ahead cuts dead branches early, so one search per grid is enough.
   if (plan.drops.length > 0)
-    for (let grid = n; grid <= Math.max(n, ceiling); grid += GRID_STEP)
-      for (let extra = 0; extra <= MAX_EXTRA_NODES; extra++) {
-        const { laid } = search(plan, grid, mulberry32(seed + grid * 7919 + extra * 104729), extra, true)
-        if (laid) return { ok: true, laid }
-      }
+    for (let grid = n; grid <= Math.max(n, ceiling); grid += GRID_STEP) {
+      const { laid } = remembered(`${seed}|${grid}|ahead|${planKey}`, () => {
+        for (let extra = 0; extra <= MAX_EXTRA_NODES; extra++) {
+          const { laid } = search(plan, grid, mulberry32(seed + grid * 7919 + extra * 104729), extra, true, blocks)
+          if (laid) return { laid }
+        }
+        return {}
+      })
+      if (laid) return handOut(laid)
+    }
   return { ok: false, refusal: refusal! }
 }

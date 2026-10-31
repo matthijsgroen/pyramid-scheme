@@ -1,7 +1,6 @@
 import { useState } from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { TapHint } from "./TapHint"
-import { JourneyPathView } from "./JourneyPathView"
 
 const meta = {
   component: TapHint,
@@ -18,17 +17,11 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-/** The travel screen's map card before any journey: the first place the hand points. */
+/** A plain made-up target: the hand sits over whatever it wraps. */
 const MapCard = ({ onClick }: { onClick: () => void }) => (
-  <JourneyPathView
-    label="Plan Expedition"
-    inJourney={false}
-    levelCount={5}
-    levelNr={1}
-    journeyLength="long"
-    exterior="pyramid"
-    onClick={onClick}
-  />
+  <button type="button" onClick={onClick} className="w-full rounded-xl bg-amber-100 p-4 font-bold">
+    Plan Expedition
+  </button>
 )
 
 export const OverItsTarget: Story = {

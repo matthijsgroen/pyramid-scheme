@@ -36,8 +36,7 @@ design in `distribution-primitive-design.md`.
   that every subset ships.
 - **What stays closed vs. open in the type system:** keep `Tier`, `GateType`,
   `KeyColor` as closed literal unions (core structure). Open only _family ids_ and
-  _currency ids_ (mods coin them) — `TreasureReward` is `{ type: string } &
-Record<string, unknown>`, validated per-type by owner-registered zod schemas at
+  _currency ids_ (mods coin them) — `TreasureReward` is `{ type: string } & Record<string, unknown>`, validated per-type by owner-registered zod schemas at
   boot. Prefer a codegen'd union over bare `string` where exhaustiveness matters.
   Don't open everything: the boundary is "what mods extend," nothing more.
 
@@ -45,11 +44,11 @@ Record<string, unknown>`, validated per-type by owner-registered zod schemas at
 
 A mechanic is a state machine the player drives; how it looks and is operated is its realisation.
 
-| Owner | What | Where |
-| --- | --- | --- |
-| **core** | the control kinds: toggle, activator, sequence, fork-switch, one-way, weights, unladen. Each is a `MechanicKind` plug-in holding what it needs of the carve, its compile rule and its refusals. | `src/game/mechanics/` (registry: `CORE_MECHANICS`, `resolveMechanicKind`) |
-| **core** | the authoring: `obstacles`, `controls`, `barrierOrder`, `oneWays`, `handles`, `forks: [{ in }]` | `FloorConfig` |
-| **mod** (topology today) | the realisation bound to a kind: the handle and torch families, the lightbeam switch, the zipline, water and sand, the stone plate, the narrow passage, the gate face | `families`, `oneWayRealisations`, `regionBarrierRealisations`, `passageRealisations` of the descriptor |
+| Owner                    | What                                                                                                                                                                                            | Where                                                                                                  |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **core**                 | the control kinds: toggle, activator, sequence, fork-switch, one-way, weights, unladen. Each is a `MechanicKind` plug-in holding what it needs of the carve, its compile rule and its refusals. | `src/game/mechanics/` (registry: `CORE_MECHANICS`, `resolveMechanicKind`)                              |
+| **core**                 | the authoring: `obstacles`, `controls`, `barrierOrder`, `oneWays`, `handles`, `forks: [{ in }]`                                                                                                 | `FloorConfig`                                                                                          |
+| **mod** (topology today) | the realisation bound to a kind: the handle and torch families, the lightbeam switch, the zipline, water and sand, the stone plate, the narrow passage, the gate face                           | `families`, `oneWayRealisations`, `regionBarrierRealisations`, `passageRealisations` of the descriptor |
 
 `lockCompile` and `topologyFaults` read kinds through the registry, not through a branch per kind: a kind
 removed from it is refused with `unknownControlKind`, one added is honoured. The carve reads core authoring
@@ -95,19 +94,19 @@ world-gen scripts can import it. Fields, each optional, added as a mod needs one
   worklist.
 - `families` — encounter-family metadata (`FamilyMeta`).
 - `currencyMeta` — ledger display/ownership metadata (`CurrencyMeta`), one or many.
-- `consumables` — a `ConsumableSpec` for the dynamic loot pass.
+- `dynamicDistributions` — the mod's dynamic loot pass (trap's waterskins, shop's money and junk).
 
 `REGISTERED_MODS` in `registeredMods.ts` is the list. It flattens the descriptors
 into `CAPPED_CURRENCIES`, `CURRENCY_DISTRIBUTIONS`, `MOD_FAMILY_META`,
-`CONSUMABLES`, and exposes `isModEnabled(id)`. Removing an entry drops every
+`DYNAMIC_DISTRIBUTIONS`, and exposes `isModEnabled(id)`. Removing an entry drops every
 contribution together — the mechanism behind invariant 1.
 
 ### World-gen injection
 
 `src/worldGen` cannot import `src/mods`. `scripts/generateWorld.ts` is the
 sanctioned crossing point: it reads the aggregated contributions and passes them
-into `buildConfigs` → `placeFragments`, which take currencies / capped / a
-consumable spec as parameters. Core holds no mod-specific numbers.
+into `buildConfigs` → `placeFragments`, which take currencies / capped /
+distributions as parameters. Core holds no mod-specific numbers.
 
 ### Ledger + currency registry
 
@@ -178,12 +177,10 @@ Two seams, so core never sees a mod's state:
   optional `apply(reward, ctx)` for effects on CORE state only (`ctx` =
   `progression`, `inventory`, `journeyId` — no mod state).
 - `rewardContributions.ts` — a mod registers a HOOK returning its reward `effects`
-  (state writes reading the mod's own hooks) + an optional `canAccept` (e.g. a full
-  consumable pack refuses one). `useMergedRewardContributions` merges every
-  contribution in a stable order.
+  (state writes reading the mod's own hooks) (e.g. trap's waterskin heals on pickup).
+  `useMergedRewardContributions` merges every contribution in a stable order.
 
-`useApplyReward` runs the core handler's `apply` plus the merged mod effects; the
-site-map screen uses `canAccept` for the pack-full pickup guard. One claim seam,
+`useApplyReward` runs the core handler's `apply` plus the merged mod effects. One claim seam,
 shared by chest claims, puzzle-solve rewards, and shop purchases — core names no mod.
 
 ### Perks — contribution seam
@@ -202,11 +199,11 @@ arrives without its perk. `registerPerkContribution(() => ({ describe }))` remai
 the Collection's bonus label: `describe(perk)` returns the first owner's translated
 label (undefined if none). Payload is an open descriptor `{ type, level? }` — each mod
 coins its own perk ids, no shared union. Perk MEANING lives with its owner: trap owns
-max-health / armor / trap-insight / pack-mule / consumable-detector (`useTrapProgress`),
+max-health / armor / trap-insight / pack-mule (`useTrapProgress`),
 hieroglyph owns compass, core owns only
 corridor-detection (`mods/core/app/index.ts`). Detector levels read
 through a parallel merged accessor `useMergedDetectorLevels()`
-(`src/app/SiteMap/detectorLevels.ts`: compass←hieroglyph, supplies←trap, corridor←core)
+(`src/app/SiteMap/detectorLevels.ts`: compass←hieroglyph, corridor←core)
 and the compass hunt target through `useCompassTarget()`
 (`src/app/SiteMap/compassTarget.ts`), so `DetectorPanel` names no mod. The old
 `perkRegistry` / `registerPerks` (registered at boot, never read) are deleted. Full
@@ -227,7 +224,7 @@ position). Passes run in a fixed order:
 3. **Dynamic** — the mod-owned distributions fill the rest through
    `allocateDistributions`, which offers loot-eligible slots in **reward-priority**
    order — chests before puzzles; each `Slot.rewardPriority` comes from its
-   encounter family. Trap consumables take expert+ puzzle slots; the shop's
+   encounter family. Trap waterskins take expert+ puzzle slots; the shop's
    money+junk take what remains, chests first. Each provider places its own
    count; the lowest-priority leftovers stay empty.
 
@@ -240,18 +237,26 @@ the reward). Core allocates; the mod fills — it never rolls a variant.
 `src/app/state/useModState.ts` is a generic persisted slice keyed per mod
 (`pyramid-scheme-mod-<id>`), independent of core `ProgressionState`. A mod's
 Component uses it for state that is neither a ledger currency nor a perk (e.g. a
-reveal-animation counter, a health + consumable pack).
+reveal-animation counter, a health meter).
 
-### Screens, HUD widgets, collection sections
+### Mod entrances, HUD widgets, collection sections
 
-Three parallel component registries a mod pushes into, so core UI iterates and
+Three parallel registries a mod pushes into, so core UI iterates and
 names no mod:
 
-- `src/app/pages/screenRegistry.ts` — full-screen pages; `Base.tsx` renders the
-  registered screens (e.g. the mosaic screen) beside core's Travel/Collection.
-- `src/app/SiteMap/hudRegistry.ts` — site-map HUD widgets, ordered; `SiteMapScreen`
-  renders them (e.g. the trap health + consumable widget).
-- `src/app/pages/collectionSectionRegistry.ts` — Collection-screen sections.
+- `src/app/home/modEntrances.ts` — a mod claims the camp window with a label and a
+  screen; `Base.tsx` opens that screen as a popup (e.g. the mosaic window).
+- `src/app/SiteMap/hudRegistry.ts` — HUD widgets, ordered; `SiteMapScreen` and the
+  camp HUD in `Base.tsx` render them (e.g. the trap health widget, the shop's coins).
+- `src/app/pages/collectionSectionRegistry.ts` — Collection-screen sections, each a
+  Verzameling tab with its own NIEUW count.
+
+The camp home has its own seams in `src/app/home/`, the same way: `haulLines.ts` (a
+mod sums its rewards on the coming-home screen), `homeTags.ts` (facts a mod reports
+about the homecoming, which the story matches), `homeHooks.ts` (effects run when the
+home shows), `campFoundSource.ts` (what the scene draws), and in
+`src/app/homecomingRegistry.ts` the homecoming effects and the coming-home panels
+(e.g. trap's rest panel).
 
 Each contributed component reads its own mod state via hooks, so core imports none
 of them. A mod registers these in its app entrypoint (below).
@@ -273,7 +278,7 @@ Three distinct phases; mod contributions enter at a different seam in each.
 ### Build time — `yarn generate-world` (offline, once)
 
 1. `scripts/generateWorld.ts` reads the aggregates from `registeredMods.ts`
-   (`ALL_CURRENCY_DISTRIBUTIONS`, `CAPPED_CURRENCIES`, `CONSUMABLES`,
+   (`ALL_CURRENCY_DISTRIBUTIONS`, `CAPPED_CURRENCIES`, `DYNAMIC_DISTRIBUTIONS`,
    `resolveKeyRequirements`) — the only place mod contributions cross into
    world-gen.
 2. `buildConfigs` (`configBuilder.ts`): the DSL specs (`src/worldGen/spec/*`)
@@ -310,8 +315,9 @@ registries are populated; a mod absent from `REGISTERED_MODS` registered nothing
    absence pass-through resolves the room instead.
 4. On solve/claim: `useApplyReward` runs the core handler's `apply` (core state)
    plus the merged mod reward effects (each closing over its own mod state) — so a
-   consumable's `addConsumable` happens without core knowing trap exists.
-5. State changes persist through `useGameStorage` / `useModState` — core state
+   waterskin's heal happens without core knowing trap exists.
+5. Coming home — the back button, a finished journey, a revisit that ends on the map, backing out of an interior — runs the generic `homecomingRegistry`; trap registers a handler that refills hearts, and core does not know what a mod does on coming home.
+6. State changes persist through `useGameStorage` / `useModState` — core state
    under its key, each mod's state under `pyramid-scheme-mod-<id>`.
 
 ## The mods
@@ -346,12 +352,10 @@ plugins.
 
 The hazard mechanic, and everything that spends health — including the `crocodile`
 capstone, a puzzle whose wrong step bites (crocodile.md §6). Descriptor: the
-`arithmetic-reflex` family, a `consumables`
-`ConsumableSpec` (density + rarity + expert+-only eligibility), and `currencyMeta`
+`arithmetic-reflex` family, the waterskin distribution (expert+ puzzle slots only), and `currencyMeta`
 for `health`. App: the challenge component, `TrapFamilyShell` (the warning/attempt/
-disarm lifecycle), and `useTrapProgress` — the mod-owned health + consumable-pack
-state (`useModState`) with its damage/heal/carry-cap methods. Health and
-consumables are trap's alone.
+disarm lifecycle), and `useTrapProgress` — the mod-owned health
+state (`useModState`) with its damage/heal methods. Health, the waterskin that heals it and the refill on coming home are trap's alone.
 
 ### shop (`src/mods/shop`)
 
@@ -359,11 +363,20 @@ The money economy: the Fez shop encounter family (`fez-shop`), where junk sells
 for money and money buys stock. Shop-owned money + junk placement + the economy
 guard are the sell/buy sides of one mechanic. A shop is a node with
 `rewardCapacity` 6: the currency mods place stock into its `rewards[]` on the
-`slot.encounter === "fez-shop"` join (`shopStock`), trap fills the leftovers with
-finite consumables, and the shop prices every slot (`shop/game/pricing.ts`) — the
+`slot.encounter === "fez-shop"` join (`shopStock`), a stock slot holding no priced item stays empty, and the shop prices every slot (`shop/game/pricing.ts`) — the
 mods stay money-blind. Stock is finite (no restock): the economy guard proves
 `income ≥ total buyable`, so a player who buys everything can still afford every
 progression-gating piece — unlimited stock would break that guarantee.
+
+### camp (`src/mods/camp`)
+
+The camp's loot and saved state. Descriptor: the `campLoot` dynamic distribution (found items `campFind`
+and structure parts `campPart`, each on puzzle slots of its step's tier; never gating) and `lootTotals`.
+App: the camp save (`useCampProgress`, `useModState("camp")`: finds, parts per structure, grown steps),
+growth on coming home (`registerHomecoming`), the found state the scene draws (`registerCampFoundSource`),
+its haul lines, its home tags for the story (`camp.found`, `camp.structureDone`) and the Constructies
+section of the Verzameling. Off: the slots it took go back to the shop, the scene shows only the fixed
+chest, window and fire, and the Verzameling has no Constructies.
 
 ### tombTreasure (`src/mods/tombTreasure`)
 

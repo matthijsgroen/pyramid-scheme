@@ -29,7 +29,7 @@ export const PROCESSION_META: FamilyMeta = {
     trade: ["trade"],
   },
   themes: ["default", "funerary", "cosmos", "water", "trade"],
-  minTier: "starter",
+  minTier: "junior",
   icon: "⏳",
   color: "teal",
   rewardPriority: 60, // a puzzle room like any other — fills once treasure's guaranteed slots are spoken for

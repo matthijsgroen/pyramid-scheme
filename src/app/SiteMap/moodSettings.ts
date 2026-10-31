@@ -104,6 +104,12 @@ const RANK_MOOD: Record<Tileset, Mood> = {
     drift: { count: 24, size: 0.8, fill: "#a8b0b8", opacity: 0.45, seconds: 16 },
     beam: 0.05,
   },
+  // Warm, dim and still: lamplight, no daylight shaft, almost nothing moving in the air.
+  sphinx: {
+    tint: { fill: "#3a2c18", opacity: 0.2 },
+    drift: { count: 10, size: 0.7, fill: "#e0c898", opacity: 0.4, seconds: 22 },
+    beam: 0,
+  },
 }
 
 // The hours a floor can author (`theme` in the DSL). Each replaces only the keys it names, so a night

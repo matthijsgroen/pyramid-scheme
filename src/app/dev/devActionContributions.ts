@@ -1,6 +1,11 @@
 // What a mod hands the dev cheat menu. A grant, not a button: core renders it and also runs every
 // one of them for "Unlock everything", so it never holds the list of what everything means.
-export type DevGrant = { label: string; grant: () => void }
+export type DevGrant = {
+  label: string
+  grant: () => void
+  /** False for a grant that only plays something to look at: "Unlock everything" skips it, and it closes the menu. */
+  inUnlockEverything?: boolean
+}
 
 export type UseDevGrants = () => readonly DevGrant[]
 

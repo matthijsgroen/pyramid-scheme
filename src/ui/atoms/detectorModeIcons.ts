@@ -5,6 +5,5 @@ import type { DetectorMode } from "@/game/siteTypes"
 // file that also exports constants breaks fast refresh.
 export const MODE_ICON: Record<Exclude<DetectorMode, null>, string> = {
   compass: "🧭",
-  consumable: "🎒",
   hiddenPassageway: "👁",
 }

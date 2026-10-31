@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useMemo, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { cellAddress } from "./cellIdentity"
 import { storedAtCell } from "@/game/cellAddress"
@@ -7,19 +7,22 @@ import { headingOf, passageCrossing } from "@/game/passages"
 import { isSpent as mechanismIsSpent, throwMechanism } from "@/game/mechanismDoors"
 import { walkedSteps, walkPresses } from "@/game/sequencePlay"
 import { isCarrying, stoneMoveAt, type StoneMoveKind } from "@/game/stonePlay"
-import type { FloorGrid, MechanismRecord, ObstacleKind, RoomCell, SiteConfig, TreasureReward } from "@/game/siteTypes"
+import type { FloorGrid, MechanismRecord, ObstacleKind, RoomCell, SiteConfig } from "@/game/siteTypes"
 import { useTimeout } from "@/support/useTimeout"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { encodeEdge } from "./edgeId"
 import { actsOnArrival, staysOpen } from "./nodeKinds"
 import { buildOfferContext, clickTargetAt } from "./clickTargets"
 import { buildRoomClaims } from "./roomClaims"
+import { walkPoints, walkSteps } from "./roomWalk"
+import { standingOffset } from "./standingSpot"
 import { stairPeerPosition } from "./stairTravel"
 import { crossAtOnce, type PlayTraversal, type Traversal } from "./obstacleTraversal"
 import type { ResolveOneWayRealisation } from "@/game/oneWayRealisation"
 import { resolveOneWayRealisation } from "@/mods/allOneWayRealisations"
 import type { ResolvePassageRealisation } from "@/game/passageRealisation"
 import { resolvePassageRealisation } from "@/mods/allPassageRealisations"
+import type { OpensOnArrival } from "./roomArrivals"
 
 type NavigationArgs = {
   journeys: JourneyAPI
@@ -31,8 +34,6 @@ type NavigationArgs = {
   explorerPos: readonly [number, number]
   /** A room to open, once the explorer has walked there. */
   onEncounter: (pos: readonly [number, number], freshArrival: boolean) => void
-  /** Re-entering a chest whose consumable was left behind when the pack was full. */
-  onSkippedConsumable: (reward: TreasureReward, address: string) => void
   /** The explorer has stepped into an exit chamber. */
   onExitReached: () => void
   /** Plays a span the player takes (see obstacleTraversal.ts). Settles when the traversal is over. */
@@ -41,6 +42,8 @@ type NavigationArgs = {
   resolveOneWay?: ResolveOneWayRealisation
   /** Says what the passage a gate was dressed as declares: its prompt. Every passage takes empty hands. */
   resolvePassage?: ResolvePassageRealisation
+  /** A finished room that still opens by itself when walked into (roomArrivals.ts). */
+  opensOnArrival?: OpensOnArrival
 }
 
 /**
@@ -84,6 +87,8 @@ export type SiteNavigation = {
   explorerHidden: boolean
 }
 
+const opensNever: OpensOnArrival = () => false
+
 // What a tap on the map does: walk there, and — for a room that reopens, a shop, a staircase or the way
 // out — offer what is there rather than take it. Walking somewhere and acting on what you find are two
 // acts, so the walk ends with a prompt beside the explorer and the player decides.
@@ -97,11 +102,11 @@ export const useSiteNavigation = ({
   grid,
   explorerPos,
   onEncounter,
-  onSkippedConsumable,
   onExitReached,
   playTraversal = crossAtOnce,
   resolveOneWay = resolveOneWayRealisation,
   resolvePassage = resolvePassageRealisation,
+  opensOnArrival = opensNever,
 }: NavigationArgs): SiteNavigation => {
   const [scheduleArrival] = useTimeout()
   const [prompt, setPrompt] = useState<ArrivalPrompt | null>(null)
@@ -138,10 +143,15 @@ export const useSiteNavigation = ({
     []
   )
 
+  const claims = useMemo(() => grid && buildRoomClaims(grid), [grid])
+  // Counted as the explorer walks it: a corridor cell is one step, a stretch round a room's centre piece its length.
   const walkDelay = useCallback(
-    (row: number, col: number) =>
-      grid ? Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100 : 0,
-    [grid, explorerPos]
+    (row: number, col: number) => {
+      if (!grid || !claims) return 0
+      const standAt = (r: number, c: number) => standingOffset(grid, claims, r, c)
+      return walkSteps(walkPoints(grid, findPath(grid, explorerPos, [row, col]), standAt)) * 120 + 100
+    },
+    [grid, claims, explorerPos]
   )
   // A STONE NEVER LEAVES ITS FLOOR, and every one-way and every passage takes empty hands: a carrying walk ends where
   // the player stands and says why, instead of offering the way on.
@@ -361,11 +371,16 @@ export const useSiteNavigation = ({
         return
       }
 
-      // Completed cells just reposition the player, except three that reopen: a room whose family
-      // says it stays re-enterable, a shop with unbought stock, and an unfitted consumable.
+      // Completed cells just reposition the player, except those that reopen: a room with something in it
+      // not yet shown opens by itself, as a room never entered does; a room whose family says it stays
+      // re-enterable, and a shop with unbought stock, offer it.
       if (cell.state === "completed") {
         const alreadyStandingHere = explorerPos[0] === row && explorerPos[1] === col
         goHere()
+        if (cell.type === "room" && opensOnArrival(cell)) {
+          scheduleArrival(walkDelay(row, col), () => onEncounter([row, col], !alreadyStandingHere))
+          return
+        }
         // A family that hands over one of several things it holds, one per visit — see `staysOpen`.
         const familyStaysOpen = cell.type === "room" && staysOpen(cell) && !(actsOnArrival(cell) && isSpent(cell))
         const shopHasUnclaimedStock =
@@ -387,15 +402,6 @@ export const useSiteNavigation = ({
               familyId
             )
           )
-          return
-        }
-        if (
-          cell.type === "room" &&
-          cell.reward?.type === "consumable" &&
-          journeys.getSkippedConsumables(journeyId).has(address)
-        ) {
-          const reward = cell.reward
-          scheduleArrival(walkDelay(row, col), () => onSkippedConsumable(reward, address))
         }
         return
       }
@@ -415,8 +421,8 @@ export const useSiteNavigation = ({
       // the re-entry block above: a switch says its rooms stay re-enterable, and offers its board again.
       //
       // What a fork HOLDS decides only whether a screen opens on arrival: the junction opens none, the
-      // encounter standing in it does.
-      if (cell.roomType === "fork") {
+      // encounter standing in it does. A pass-through chamber holds nothing, and is written down the same way.
+      if (cell.roomType === "fork" || cell.roomType === "chamber") {
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
         if (cell.family !== undefined) scheduleArrival(walkDelay(row, col), () => onEncounter([row, col], true))
@@ -463,12 +469,12 @@ export const useSiteNavigation = ({
       seed,
       siteConfig,
       onEncounter,
-      onSkippedConsumable,
       onExitReached,
       offer,
       takeSpan,
       resolveOneWay,
       resolvePassage,
+      opensOnArrival,
     ]
   )
 

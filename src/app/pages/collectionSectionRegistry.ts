@@ -6,6 +6,8 @@ import type { Difficulty } from "@/data/difficultyLevels"
 export type CollectionItem = {
   id: string
   symbol: string
+  // Art the tile shows instead of the symbol, when the section has some.
+  imageUrl?: string
   name: string
   description: string
   effectDescription?: string
@@ -21,6 +23,20 @@ export type CollectionItem = {
 export type CollectionSectionProps = {
   selectedItem: CollectionItem | null
   onSelect: (item: CollectionItem) => void
+  // Whether an item of this section is new to the player, and the label its badge carries.
+  isNew: (id: string) => boolean
+  newLabel: string
+}
+
+// What a section declares to be a tab: its label in the mod's own words, whether it has anything to
+// show, the ids it can mark new (only things the player holds, never what is still locked or unknown)
+// and whether its own save has been read. A section is only seeded once it is loaded, so an empty list
+// from a save still on its way never counts as "nothing held".
+export type CollectionTab = {
+  label: string
+  shown: boolean
+  ids: readonly string[]
+  loaded: boolean
 }
 
 // A Collection section contributed by a mod (app-side). Mirrors the family plugin registry:
@@ -30,6 +46,11 @@ export type CollectionSectionEntry = {
   id: string
   order: number
   Component: FC<CollectionSectionProps>
+  // A hook, called every render in registry order (fixed at module load).
+  useTab: () => CollectionTab
+  // The section's tiles open the shared detail panel when tapped. Unset: the section shows everything
+  // itself, and no detail panel stands under it.
+  details?: boolean
 }
 
 const registry = new Map<string, CollectionSectionEntry>()
@@ -38,3 +59,5 @@ export const registerCollectionSection = (entry: CollectionSectionEntry) => regi
 
 export const collectionSections = (): CollectionSectionEntry[] =>
   [...registry.values()].sort((a, b) => a.order - b.order)
+
+export const clearCollectionSections = () => registry.clear()

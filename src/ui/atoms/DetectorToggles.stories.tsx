@@ -6,9 +6,8 @@ const meta = {
   args: {
     activeDetector: null,
     compassLevel: 0,
-    consumableDetectorLevel: 0,
     detectionLevel: 0,
-    titles: { compass: "Compass", consumable: "Consumable detector", hiddenPassageway: "Hidden passageways" },
+    titles: { compass: "Compass", hiddenPassageway: "Hidden passageways" },
     onSetDetector: () => {},
   },
 } satisfies Meta<typeof DetectorToggles>
@@ -23,11 +22,11 @@ export const CompassOnly: Story = {
   args: { compassLevel: 1 },
 }
 
-export const AllThree: Story = {
-  args: { compassLevel: 1, consumableDetectorLevel: 1, detectionLevel: 1 },
+export const Both: Story = {
+  args: { compassLevel: 1, detectionLevel: 1 },
 }
 
 // The active mode is highlighted, and tapping it again switches back off.
 export const CompassActive: Story = {
-  args: { compassLevel: 1, consumableDetectorLevel: 1, detectionLevel: 1, activeDetector: "compass" },
+  args: { compassLevel: 1, detectionLevel: 1, activeDetector: "compass" },
 }

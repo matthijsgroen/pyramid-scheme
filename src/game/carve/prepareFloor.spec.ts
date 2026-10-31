@@ -10,6 +10,11 @@ import type { ResolveEncounter } from "../siteAssembler"
 import type { FloorConfig, SideSection } from "../siteTypes"
 import type { PlacedContainer } from "../regions"
 import type { StatefulControl } from "../obstacles"
+import { expandFloorLocks } from "../floorLocks"
+import { planLockFloor } from "../lockPlan"
+import type { LockPlan } from "../lockPlan"
+import { leverLock } from "../testSupport/floorLockFixtures"
+import { BINDING } from "../testSupport/lockFixtures"
 const plain = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
   pathPuzzles: 1,
   difficulty: "starter",
@@ -271,6 +276,107 @@ describe("prepareFloor", () => {
         ungatedIdxs: [1],
       })
     })
+  })
+})
+
+describe("a lock floor's side sections", () => {
+  // A made-up floor standing the lever lock, prepared the way assembleFloor prepares it.
+  const lockFloor = (more: Partial<FloorConfig> = {}, planned: (plan: LockPlan) => LockPlan = plan => plan) => {
+    const expanded = expandFloorLocks(
+      plain({ difficulty: "expert", realisations: BINDING, locks: [{ lock: leverLock() }], ...more })
+    )
+    if (!expanded.ok) throw new Error(JSON.stringify(expanded.reasons))
+    const result = prepareFloor("site", expanded.config, 7, {}, planned(planLockFloor(expanded)!))
+    if (!result.ok) throw new Error(JSON.stringify(result.reasons))
+    return result.prep.sections
+  }
+  // The plan's corridors with both ends in the lock: the only ones a side path may stand on.
+  const insideCorridors = (plan: LockPlan) => {
+    const owned = new Set(plan.regions.flatMap(region => (region.owner === undefined ? [] : [region.id])))
+    return plan.corridors.filter(corridor => owned.has(corridor.from) && owned.has(corridor.to))
+  }
+  const assigned = (sections: ReturnType<typeof lockFloor>) =>
+    sections.absorbedDemands.flatMap(({ section, corridor }) => (corridor === undefined ? [] : [section]))
+
+  it("an open side section on a lock floor is assigned a corridor", () => {
+    const sections = lockFloor({ sideSections: [section({ pathPuzzles: 1 })] })
+    expect(sections.corridorAssignments).toEqual([{ section: 0, corridor: expect.any(String) }])
+    expect(sections.absorbedDemands).toEqual([
+      { section: 0, kinds: ["puzzle", "reward"], corridor: sections.corridorAssignments[0].corridor },
+    ])
+    expect(sections.branchSections).toEqual([])
+  })
+
+  it("a sealed side section is assigned a corridor", () => {
+    const sections = lockFloor({ sideSections: [section(), section({ sealed: true })] })
+    expect(assigned(sections)).toEqual([0, 1])
+    expect(sections.branchSections).toEqual([])
+  })
+
+  it("a gated, a hidden, a keyed, a nested, a lever-holding, a one-way-named and a stair-ended section are never assigned", () => {
+    const floors: { name: string; more: Partial<FloorConfig>; never: number }[] = [
+      { name: "gated", more: { sideSections: [section({ gate: { type: "floor-key" } }), section()] }, never: 0 },
+      { name: "hidden", more: { sideSections: [section({ hidden: true })] }, never: 0 },
+      { name: "keyed", more: { sideSections: [section(), section({ gate: { type: "floor-key" } })] }, never: 0 },
+      { name: "nested", more: { sideSections: [section({ sideSections: [section()] })] }, never: 0 },
+      {
+        name: "lever-holding",
+        more: { sideSections: [section(), section()], handles: [{ in: "s0", left: ["s1"], right: [] }] },
+        never: 0,
+      },
+      {
+        name: "one-way-named",
+        more: { sideSections: [section(), section()], oneWays: [{ from: "s0", to: "s1" }] },
+        never: 0,
+      },
+      { name: "stair-ended", more: { sideSections: [section({ end: "staircase" })] }, never: 0 },
+    ]
+    for (const { name, more, never } of floors) {
+      // A plain section beside it, so a floor that assigns nothing at all cannot pass.
+      const plainIdx = more.sideSections!.length
+      const sections = lockFloor({ ...more, sideSections: [...more.sideSections!, section()] })
+      expect(assigned(sections), name).toContain(plainIdx)
+      expect(assigned(sections), name).not.toContain(never)
+      expect(
+        sections.corridorAssignments.map(({ section }) => section),
+        name
+      ).not.toContain(never)
+    }
+  })
+
+  it("a section named in outsideLock hangs as a branch, open or sealed", () => {
+    const sections = lockFloor({ sideSections: [section(), section({ sealed: true }), section()], outsideLock: [0, 1] })
+    expect(assigned(sections)).toEqual([2])
+    expect(sections.branchSections).toEqual([0, 1])
+  })
+
+  it("every authored side section is either a corridor demand or a branch: none is lost", () => {
+    const four = [section({ pathPuzzles: 2 }), section({ sealed: true }), section(), section({ pathPuzzles: 1 })]
+    const floors: { name: string; more: Partial<FloorConfig>; planned?: (plan: LockPlan) => LockPlan }[] = [
+      { name: "no eligible corridor", more: { sideSections: four }, planned: plan => ({ ...plan, corridors: [] }) },
+      {
+        name: "one eligible corridor",
+        more: { sideSections: four },
+        planned: plan => ({ ...plan, corridors: insideCorridors(plan).slice(0, 1) }),
+      },
+      { name: "more corridors than sections", more: { sideSections: four.slice(0, 2) } },
+      { name: "every section outside the lock", more: { sideSections: four, outsideLock: [0, 1, 2, 3] } },
+    ]
+    for (const { name, more, planned } of floors) {
+      const sections = lockFloor(more, planned)
+      const authored = more.sideSections!.map((_, i) => i)
+      const placed = [...assigned(sections), ...sections.branchSections].sort((a, b) => a - b)
+      expect(placed, name).toEqual(authored)
+    }
+    expect(assigned(lockFloor({ sideSections: four }, plan => ({ ...plan, corridors: [] })))).toEqual([])
+    expect(
+      new Set(
+        lockFloor({ sideSections: four }, plan => ({
+          ...plan,
+          corridors: insideCorridors(plan).slice(0, 1),
+        })).corridorAssignments.map(({ corridor }) => corridor)
+      ).size
+    ).toBe(1)
   })
 })
 

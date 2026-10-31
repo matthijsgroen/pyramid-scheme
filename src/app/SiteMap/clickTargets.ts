@@ -1,5 +1,6 @@
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
+import { roomPlaceOf } from "@/game/roomShape"
 import { dropEndsOf, walkableFrom } from "@/game/gridNavigation"
 import { passageCrossing } from "@/game/passages"
 import {
@@ -10,6 +11,7 @@ import {
   type CorridorRunTarget,
 } from "./corridorRuns"
 import { litClaimOwner, type RoomClaims } from "./roomClaims"
+import { shapeKindFor } from "./nodeKinds"
 
 /**
  * WHAT A TAP ON A CELL DOES — the one rule, in one place.
@@ -45,10 +47,12 @@ const corridorOffer = (
   cell: { state: string; dirs: ReadonlySet<never> | ReadonlySet<string> },
   target: readonly [number, number],
   runTarget: CorridorRunTarget | undefined,
-  ctx: OfferContext
+  ctx: OfferContext,
+  roomStop = false
 ): readonly [number, number] | null => {
   if (!ctx.canWalkTo(target[0], target[1])) return null
-  const corner = isCorridorCorner(cell.dirs as Parameters<typeof isCorridorCorner>[0])
+  // A door of a designed room in use, and the room's node, are stops whatever their shape.
+  const corner = roomStop || isCorridorCorner(cell.dirs as Parameters<typeof isCorridorCorner>[0])
   const stoppingPoint = cell.state === "reachable" || cell.state === "completed"
   // A drop's launch and landing are stopping points whatever their shape: the player must be able to walk
   // to either from its own side.
@@ -67,6 +71,10 @@ export const clickTargetAt = (
   ctx: OfferContext
 ): readonly [number, number] | null => {
   const cell = cellAt(grid, r, c)
+  // A designed room's own floor is walked by the room, never stopped on: its ways meet it at its doors.
+  const place = roomPlaceOf(grid, r, c)
+  if (place === "inner") return null
+  const roomStop = place === "door" || place === "node"
   const runTarget = cell.type === "corridor" ? ctx.runTargets.get(`${r},${c}`) : undefined
   const target = runTarget ? ([runTarget.row, runTarget.col] as const) : ([r, c] as const)
 
@@ -75,11 +83,11 @@ export const clickTargetAt = (
   // walkable and offers nothing. Checked first, exactly as the renderer does — a claimed cell never
   // reaches the fogged guard below.
   if (litClaimOwner(grid, claims, r, c)) {
-    return cell.type === "corridor" ? corridorOffer(cell, target, runTarget, ctx) : null
+    return cell.type === "corridor" ? corridorOffer(cell, target, runTarget, ctx, roomStop) : null
   }
 
   if (cell.type === "empty" || cell.state === "fogged") return null
-  if (cell.type === "corridor") return corridorOffer(cell, target, runTarget, ctx)
+  if (cell.type === "corridor") return corridorOffer(cell, target, runTarget, ctx, roomStop)
 
   // A NARROW PASSAGE IS OFFERED AS ITSELF while a side of it is ground the player can walk to. The tap walks him to
   // that side and offers the crossing there (`useSiteNavigation`); he never stands in it, so this is the one offer
@@ -128,7 +136,14 @@ export const markerAt = (
 ): OfferMarker | null => {
   if (!offer) return null
   const cell = cellAt(grid, r, c)
-  if (cell.type !== "corridor") return { kind: "node" }
+  if (cell.type !== "corridor") {
+    // A bare junction right beside the player is the next step of the way he is standing in, so it
+    // points there; a room that holds something keeps its own marker.
+    const step = ctx.nearCells.get(`${r},${c}`)
+    return step && cell.type === "room" && shapeKindFor(grid, r, c, cell) === "fork"
+      ? { kind: "arrow", dir: step }
+      : { kind: "node" }
+  }
   const runTarget = ctx.runTargets.get(`${r},${c}`)
   if (runTarget) return { kind: "arrow", dir: runTarget.dir }
   // A launch or landing is a stopping point wherever it is, but an arrow appears only AROUND THE PLAYER:

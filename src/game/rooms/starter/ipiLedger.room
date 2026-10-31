@@ -1,0 +1,19 @@
+// designed by: Claude
+// starter. Ipi's room in his tomb: his scribe's desk and his jars on the north wall, Ipi in front of them, north of the place you stop.
+room ipiLedger
+tier starter
+activity ledger
+mirror
+
+layout
+# t # d # n #
+# k . . . j #
+d . . . . . d
+# . . s . . #
+# # # d # # #
+
+k wall scribeDesk
+j wall jarRack
+t wallItem tallyBoard
+n wallItem? niche
+s stop

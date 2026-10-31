@@ -1,13 +1,15 @@
 import { describe, expect, it } from "vitest"
-import type { Difficulty } from "@/data/difficultyLevels"
+import { difficulties, difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import { puzzleSeeds } from "@/data/puzzleSeeds"
 import { configHash } from "@/game/seeds/configHash"
 import { generateProcession, gradeProcession } from "./generateProcession"
 import { PROCESSION_CONFIG } from "./processionConfig"
-import { countArrangements, requiredRung, RUNGS } from "./solveProcession"
+import { PROCESSION_META } from "./meta"
+import { countArrangements, requiredRung, RUNGS, type Rung } from "./solveProcession"
 import { createProcessionState, processionSolved, type ProcessionPuzzle } from "./procession"
 
-const TIERS = ["starter", "junior", "expert", "master", "wizard"] as const
+// The tiers the world deals procession boards at, so the tiers with shipped seeds.
+const TIERS = difficulties.filter(tier => difficultyCompare(tier, PROCESSION_META.minTier ?? "starter") >= 0)
 
 /**
  * The board a room is dealt, built the way play time builds it: the shipped seed, one attempt, no loop
@@ -27,7 +29,10 @@ describe("rolling a day", () => {
     const puzzle = shipped(tier)
     const grade = gradeProcession(puzzle, options)
     expect(grade, `${tier} board misses its own gate`).not.toBeNull()
-    expect(grade!.deepest).toBe(options.minRung)
+    // The rung it needs is one its tier asks for: a range at the debut tier, one rung everywhere else.
+    const deepest = RUNGS.indexOf(grade!.deepest as Rung)
+    expect(deepest).toBeGreaterThanOrEqual(RUNGS.indexOf(options.minRung))
+    expect(deepest).toBeLessThanOrEqual(RUNGS.indexOf(options.maxRung))
     expect(puzzle.bars).toHaveLength(options.bars)
     expect(puzzle.ticks).toBe(options.ticks)
     expect(puzzle.bars.every(bar => bar.len >= options.minLen && bar.len <= options.maxLen)).toBe(true)

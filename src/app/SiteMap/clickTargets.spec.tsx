@@ -8,8 +8,9 @@ import { buildRoomClaims } from "./roomClaims"
 import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { CELL, cellCenter } from "./mapScale"
+import { roomDoors, roomPlaceOf } from "@/game/roomShape"
 import { DIR_MOVES } from "./corridorRuns"
-import { AXES, DROP_AT, dropGrid, obstacleIndexes } from "./floorFixtures.testing"
+import { AXES, DROP_AT, PREFAB_FORK, dropGrid, obstacleIndexes, prefabForkFloor } from "./floorFixtures.testing"
 
 // jsdom has no scrollTo; the map scrolls itself to the explorer on mount.
 Element.prototype.scrollTo = Element.prototype.scrollTo ?? (() => {})
@@ -246,6 +247,31 @@ describe("what the map offers", () => {
       expect(unwalkable).toEqual([])
     })
   }
+})
+
+describe("a room laid over a fork", () => {
+  const grid = revealAll(prefabForkFloor({}, true))
+  const { rect } = (
+    grid.cells[PREFAB_FORK[0]][PREFAB_FORK[1]] as {
+      prefabRoom: { rect: { top: number; left: number; rows: number; cols: number } }
+    }
+  ).prefabRoom
+  const inner: [number, number][] = []
+  for (let r = rect.top; r < rect.top + rect.rows; r++)
+    for (let c = rect.left; c < rect.left + rect.cols; c++) if (roomPlaceOf(grid, r, c) === "inner") inner.push([r, c])
+
+  it("a room's floor offers no stop, its doors and node do", () => {
+    const claims = buildRoomClaims(grid)
+    for (const freeWalk of [false, true]) {
+      const ctx = offerContextFrom(grid, grid.entrancePos, { freeWalk })
+      expect(inner.length).toBeGreaterThan(0)
+      for (const [r, c] of inner) expect(clickTargetAt(grid, claims, r, c, ctx), `${r},${c}`).toBeNull()
+    }
+    const ctx = offerContextFrom(grid, grid.entrancePos, { freeWalk: false })
+    const doors = roomDoors(grid, ...PREFAB_FORK)
+    expect(doors).toHaveLength(4)
+    for (const { at } of doors) expect(clickTargetAt(grid, claims, at[0], at[1], ctx), `${at}`).toEqual(at)
+  })
 })
 
 // The corridor detector's own hint is a marker on the cell BESIDE a hidden passage: masking erases the
@@ -503,5 +529,33 @@ describe("the map in mid-glide taps what the one builder offers", () => {
     expect(walkableFrom(grid, live)).toEqual(walkableFrom(grid, settled))
     expect(tapped).toEqual(offered)
     expect(offered).not.toEqual(atRest(settled))
+  })
+})
+
+describe("a bare junction beside the player", () => {
+  it("points the way to it with an arrow, from every corridor cell next to one", () => {
+    let checked = 0
+    for (const name of FLOOR_NAMES) {
+      const result = assembleFloor(`${name}:0`, FLOORS[name], 7)
+      if (!result.success) throw new Error("assembly failed")
+      const grid = revealAll(result.grid)
+      const claims = buildRoomClaims(grid)
+      grid.cells.forEach((row, r) =>
+        row.forEach((cell, c) => {
+          if (cell.type !== "corridor") return
+          const ctx = offerContextFrom(grid, [r, c], {})
+          for (const dir of cell.dirs) {
+            const [nr, nc] = [r + DIR_MOVES[dir][0], c + DIR_MOVES[dir][1]]
+            const next = grid.cells[nr]?.[nc]
+            if (next?.type !== "room" || next.roomType !== "fork" || next.family !== undefined) continue
+            const marker = markerAt(grid, claims, nr, nc, ctx)
+            if (!marker) continue
+            expect(marker).toEqual({ kind: "arrow", dir })
+            checked++
+          }
+        })
+      )
+    }
+    expect(checked).toBeGreaterThan(0)
   })
 })

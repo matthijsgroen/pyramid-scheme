@@ -15,12 +15,12 @@ import { ART_IMAGE_RENDERING, sharedTileUrl, tileUrl } from "./tileAssets"
 import { tierPalette } from "./tileMaterials"
 import "@/mods/registerModApps"
 
-// The standing torch is one painting, shared by every rank (`tiles/default/`), unlit and lit. The sheet
-// stages the two tiles by hand on two ranks' floors, the explorer beside them for scale, because a
-// generation that looks fine at 2000px can still turn to mud at 56 (`PropSheet.stories.tsx`'s `Chamber`,
-// as `Lever.stories.tsx` reuses it). `OnTheFloor` is the map itself: a carved floor with one torch, drawn
-// unlit and lit by `SiteMapView`, where the lit one lays its pool on the floor and is cut with no shadow.
-// The two tiles share one frame, so swapping them on a cell must change only the flame.
+// The standing torch is one painting, shared (`tiles/default/`) unless a mechanism style paints its own
+// (`MECHANISM_STYLE`), unlit and lit. The sheet stages the two tiles by hand on two ranks' floors, the explorer beside
+// them for scale, because a generation that looks fine at 2000px can still turn to mud at 56 (`PropSheet.stories.tsx`'s
+// `Chamber`, as `Lever.stories.tsx` reuses it). `OnTheFloor` is the map itself: a carved floor with one torch, drawn
+// unlit and lit by `SiteMapView`, where the lit one lays its pool on the floor and is cut with no shadow. The two tiles
+// share one frame, so swapping them on a cell must change only the flame.
 
 const EXPLORER_W = 40
 const EXPLORER_H = 70

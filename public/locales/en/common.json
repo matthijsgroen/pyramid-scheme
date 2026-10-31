@@ -1,5 +1,16 @@
 {
   "language": "English",
+  "saveUnreadable": {
+    "title": "Your progress can't be loaded",
+    "body": "The browser won't hand over your saved game right now. Your save isn't gone: reload the page to try again.",
+    "banner": "Progress isn't being saved. Tap to reload.",
+    "reload": "Reload",
+    "continue": "Play on without saving",
+    "reset": "Start over (delete save)",
+    "confirmReset": "This deletes your whole save, and it can't be undone. Start over?",
+    "confirmResetYes": "Yes, delete my save",
+    "confirmResetNo": "No, go back"
+  },
   "difficulty": {
     "starter": "Starter",
     "junior": "Junior",
@@ -34,7 +45,7 @@
     "description": "Description",
     "expedition": "Expedition",
     "expeditionCompleted": "Expedition Completed!",
-    "goBackToBase": "Go back to base",
+    "goBackToBase": "Back to camp",
     "backArrow": "←",
     "back": "← Back",
     "floor": "Floor {{number}}",
@@ -55,19 +66,10 @@
     "blocked": {
       "carrying": "Cannot pass with a stone"
     },
-    "travel": "Travel",
-    "chooseYourJourney": "Choose Your Expedition",
     "backToMap": "Back to map",
-    "startAdventure": "Start your adventure by exploring pyramids.",
     "continueExploration": "Continue your exploration of the pyramids.",
-    "continueExpedition": "Continue Expedition",
     "startExpedition": "Start Expedition",
-    "planExpedition": "Plan Expedition",
-    "revisitExpedition": "Revisit — pick a pyramid",
-    "revisitTomb": "Revisit — re-enter the tomb",
-    "or": "Or",
     "webBuriedPercent": "Still {{percent}}% buried",
-    "selectAnotherExpedition": "Select another expedition",
     "interruptExpedition": "Interrupt expedition",
     "confirmInterruptExpedition": "Are you sure you want to interrupt this expedition? Expedition progress will be kept, but level progress will be lost!",
     "cancel": "Cancel",
@@ -78,7 +80,6 @@
     "clearGameData": "Clear game data",
     "confirmClearGameData": "This permanently deletes all progress, items, and explored pyramids. This cannot be undone.",
     "disableTutorials": "Disable tutorials",
-    "progressLevel": "In Progress",
     "treasureTomb": "Treasure Location",
     "requiresMapPieces": "Requires map pieces",
     "mapPieces": "Map Pieces",
@@ -95,7 +96,6 @@
     "newTombUnlocked": "A new tomb is now unlocked",
     "tierComingSoonTitle": "{{tier}} expeditions are on their way",
     "tierComingSoon": "You hold the key, but the {{tier}} pyramids are still being built. They arrive in a later update — until then, your key opens more of the pyramids you already know.",
-    "startJourney": "Start {{name}}",
     "answerNow": "The answer is: ",
     "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
     "saveVersion": "· save v{{saveVersion}}",
@@ -115,10 +115,8 @@
     "canAttempt": "You can attempt to pass through.",
     "tooWeak": "Dangerously weak — a failed attempt will leave you with nothing.",
     "attempt": "Attempt the trap",
-    "heal": "Use a bandage",
-    "fullHeal": "Use oil (full heal)",
-    "disable": "Disable trap",
-    "turnAround": "Turn around"
+    "turnAround": "Turn around",
+    "rested": "Rested by the fire — fit again"
   },
   "gate": {
     "title": "🔒 Locked Gate",
@@ -156,13 +154,8 @@
     "hieroglyphsDescription": "Sacred symbols inscribed on the walls of this chamber. Their meaning adds to your growing knowledge of the ancient world.",
     "mosaicPiece": "Mosaic Piece",
     "mosaicPieceDescription": "A gleaming glass tile, one fragment of a great mosaic. Set it beside the others and the hidden image slowly comes to light.",
-    "consumable": {
-      "bandage": "Bandage",
-      "oil": "Healing Oil",
-      "trapTool": "Trap Disabler"
-    },
-    "consumableFull": "Pack is full — {{item}} left behind",
-    "packFull": "Pack full"
+    "waterskin": "Waterskin",
+    "waterskinDescription": "Cool water. You drink it on the spot and feel your wounds ease."
   },
   "loot": {
     "youFound": "You found",
@@ -180,8 +173,50 @@
     "soldOut": "Sold out",
     "dismiss": "Leave",
     "rareItems": "Rare Finds",
-    "supplies": "Supplies",
-    "sellSection": "Trinkets to sell"
+    "sellSection": "Trinkets to sell",
+    "haul": {
+      "coins_one": "+{{count}} coin",
+      "coins_other": "+{{count}} coins",
+      "note": "Loose coins on the way"
+    }
+  },
+  "purchases": {
+    "donkey": {
+      "name": "Donkey",
+      "need": "You need a donkey",
+      "opens": "Carries your gear. With it you can set out on the Expert journeys."
+    },
+    "cart": {
+      "name": "Cart",
+      "need": "You need a cart",
+      "opens": "The whole camp fits on it. With it you can set out on the Master journeys."
+    },
+    "camel": {
+      "name": "Camel",
+      "need": "You need a camel",
+      "opens": "Walks for days without water. It takes you to the Inner Sanctum."
+    },
+    "secondDonkey": {
+      "name": "Second donkey",
+      "need": "You need a second donkey",
+      "opens": "Even more to carry with. With it you can set out on the Wizard journeys."
+    },
+    "secondCamel": {
+      "name": "Second camel",
+      "need": "You need a second camel",
+      "opens": "Two camels carry enough water for the Hall of Osiris."
+    },
+    "sturdyCart": {
+      "name": "Sturdier cart",
+      "need": "You need a sturdier cart",
+      "opens": "Won't break, not even on the way to the Realm of Cosmic Forces."
+    },
+    "caravanBanner": {
+      "name": "Caravan banner",
+      "opens": "Opens nothing. Just for fun."
+    },
+    "hint": "Fez sells one in {{place}}",
+    "devGrant": "Buy every animal"
   },
   "level": {
     "completed": "Level Completed!"
@@ -196,10 +231,29 @@
       "expert": "Letting the Sun In",
       "master": "The Green King",
       "wizard": "The Feather and the Heart"
+    },
+    "entrance": {
+      "title": "Mosaic",
+      "label": "Mosaic {{found}}/{{total}}"
+    },
+    "haul": {
+      "pieces_one": "{{count}} mosaic piece",
+      "pieces_other": "{{count}} mosaic pieces",
+      "note": "For the stained-glass window"
     }
   },
   "collection": {
-    "title": "Collection",
+    "tabs": {
+      "treasures": "Treasures",
+      "hieroglyphs": "Hieroglyphs",
+      "stories": "Stories",
+      "junk": "Trinkets"
+    },
+    "tabsLabel": "What you have collected",
+    "tabNew_one": "{{label}} · {{count}} new",
+    "tabNew_other": "{{label}} · {{count}} new",
+    "empty": "Your chest is still empty",
+    "newLabel": "NEW",
     "clickForDetails": "Tap a tile for details",
     "categories": {
       "deities": "🏺 Deities",
@@ -220,11 +274,9 @@
   },
   "detector": {
     "compassTitle": "Compass",
-    "consumableTitle": "Consumable detector",
     "corridorTitle": "Hidden passageways",
     "pickTarget": "Pick a hieroglyph to hunt in your Collection",
     "allCollected": "All pieces collected",
-    "noSkippedChests": "No skipped chests",
     "more": "+{{count}} more",
     "corridorNearby": "A hidden corridor is close by",
     "corridorOnFloor": "A hidden corridor waits on this floor",
@@ -1360,7 +1412,6 @@
   "story": {
     "invitation": "Talk",
     "log": {
-      "title": "What we have been told",
       "empty": "Nothing yet. Fez will have plenty to say."
     },
     "speaker": {
@@ -1379,7 +1430,7 @@
       "cannot": "You do not know the sign that belongs here. Not yet."
     },
     "sphinx": {
-      "wrong": "The writing at the base, where the sand keeps shifting off. Two signs still cut clean, and a space where the third was.",
+      "wrong": "The same writing as outside, but the sand never reached it here. Two signs still cut clean, and a space where the third was.",
       "fixed": "That is the whole of it.",
       "pick": "Put the sign you are carrying into the space.",
       "cannot": "Two signs you know, and a space you cannot fill. Not yet.",
@@ -1398,7 +1449,12 @@
     },
     "doorOpen": "{{way}} way out: open",
     "doorShut": "{{way}} way out: shut",
-    "way": { "n": "Northern", "e": "Eastern", "s": "Southern", "w": "Western" }
+    "way": {
+      "n": "Northern",
+      "e": "Eastern",
+      "s": "Southern",
+      "w": "Western"
+    }
   },
   "handle": {
     "name": "The Lever",
@@ -1490,10 +1546,157 @@
     "legendPins": "● lever · ■ key · small = side section"
   },
   "camp": {
+    "title": "Camp",
+    "continue": {
+      "heading": "Current expedition",
+      "setOff": "Set off",
+      "pyramid": "Pyramid {{level}} of {{count}} · {{tier}}",
+      "tomb": "Tomb · {{tier}}",
+      "empty": "Everything is open on your map"
+    },
+    "hint_one": "{{count}} old journey has something new to discover",
+    "hint_other": "{{count}} old journeys have something new to discover",
+    "comingHome": {
+      "title": "Back at camp",
+      "haulTitle": "Your haul from this trip",
+      "new": "NEW",
+      "unpack": "Unpack",
+      "toCamp": "To the camp"
+    },
+    "chapter": {
+      "subtitle": "New chapter",
+      "title": "A new pyramid looms",
+      "body": "{{tier}} journeys are open. Catch your breath at camp and set off when you are ready.",
+      "journeyNote": "First {{tier}} journey",
+      "later": "Later"
+    },
+    "close": "Close",
     "entrance": {
       "collection": "Collection",
       "mosaic": "Mosaic",
       "journeys": "All journeys"
     }
+  },
+  "home": {
+    "haul": {
+      "times": "×{{count}}"
+    }
+  },
+  "journeys": {
+    "tierNeed": "Find this treasure",
+    "tierProgress": "{{done}} of {{total}} done",
+    "tierLockedName": "{{tier}} journeys",
+    "toggleTier": "Show or hide the {{tier}} journeys",
+    "now": "NOW",
+    "newDot": "Something new to discover",
+    "noteCurrentPyramid": "In progress · pyramid {{level}} of {{count}}",
+    "noteCurrentTomb": "In progress · in the tomb",
+    "noteFinished": "Finished",
+    "noteFinishedNews": "Finished · something new to discover",
+    "noteOpen": "Not visited yet",
+    "noteResumePyramid": "Started before · pyramid {{level}} of {{count}}",
+    "noteResumeTomb": "Started before · in the tomb",
+    "needProgress": "{{unit}}: {{found}} of {{required}}",
+    "showStops": "Show the sites of {{name}}",
+    "stopPyramid": "Pyramid",
+    "stopTomb": "Site"
+  },
+  "newVersion": {
+    "title": "A new version!",
+    "name": "The game has changed a lot",
+    "body": "So your journey starts over. New tombs, finds and a camp to build are waiting."
+  },
+  "devPrefabPreview": {
+    "firstDoor": "To the first door",
+    "stop": "To the stop",
+    "secondDoor": "To the second door",
+    "doorsInUse_one": "{{count}} door in use",
+    "doorsInUse_other": "{{count}} doors in use",
+    "walled": "{{count}} walled"
+  },
+  "devRoomEditor": {
+    "title": "Room editor",
+    "open": "Room editor",
+    "close": "Close",
+    "tier": "Tier",
+    "catalogue": "Open a room",
+    "notation": "Room notation",
+    "copyLink": "Copy link",
+    "copyText": "Copy text",
+    "copied": "Copied",
+    "failed": "Could not copy to the clipboard",
+    "palette": "Palette",
+    "unpainted": "not painted yet",
+    "layout": "Layout",
+    "mirrored": "(mirrored)",
+    "fill_one": "Fill ({{count}} choice)",
+    "fill_other": "Fill ({{count}} choices)",
+    "fromDoor": "Walk from",
+    "toDoor": "Walk to",
+    "automatic": "Automatic",
+    "direction": {
+      "n": "North door",
+      "e": "East door",
+      "s": "South door",
+      "w": "West door"
+    },
+    "checks": "Checks",
+    "sound": "The room passes its checks",
+    "tierDisagrees": "The header says tier {{header}}, drawn here in {{picked}}",
+    "undo": "Undo",
+    "drawing": "Drawing",
+    "tool": {
+      "select": "Select",
+      "wall": "Wall",
+      "floor": "Floor",
+      "door": "Door place",
+      "stop": "Stop",
+      "chest": "Chest",
+      "portal": "Portal",
+      "mechanism": "Mechanism",
+      "erase": "Erase",
+      "copy": "Draw {{letter}}"
+    },
+    "againstWall": "Dropped props stand against the north wall",
+    "dropHint": "Drag a palette entry onto a cell; it takes its own footprint",
+    "newLayout": "New layout name",
+    "addLayout": "Copy as layout",
+    "inspector": {
+      "title": "Place {{letter}}",
+      "optional": "Optional",
+      "kinds": "Kinds",
+      "counted": "Fill only some",
+      "take": "Take",
+      "of": "of",
+      "per": "per",
+      "perNone": "each on its own",
+      "drawAnother": "Draw another",
+      "close": "Close"
+    },
+    "refused": {
+      "notFree": "Not on free floor inside the room",
+      "wallRow": "A wall place stands on the first row inside the north wall",
+      "northWall": "A wall item hangs on the north wall",
+      "floorOnRing": "The outer ring takes walls and door places only",
+      "doorInside": "A door place stands on the outer ring",
+      "keepStop": "The stop stays: set it elsewhere to move it",
+      "noLetter": "Every letter is taken",
+      "layoutName": "Give the layout a name no other layout has",
+      "notation": "The notation refuses it: {{message}}"
+    },
+    "layer": {
+      "wall": "against the wall",
+      "floor": "floor",
+      "ground": "ground",
+      "wallItem": "wall item"
+    },
+    "cell": "Cell {{row}},{{col}}: {{what}}",
+    "cellWhat": {
+      "wall": "wall",
+      "floor": "free floor",
+      "door": "door place",
+      "place": "{{letter}}, {{kinds}}"
+    },
+    "rewrites": "Drawing rewrites the text: every comment moves to the top"
   }
 }

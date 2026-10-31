@@ -92,7 +92,10 @@ export const juniorRules: Rule[] = [
   }),
 
   tier("junior")
-    .set({})
+    // Two pass-through chambers on every floor of a junior pyramid: dressed rooms the corridor runs through.
+    // Packing one widening above the default (the carve's ladder doubles it), so the walk has the free nodes
+    // they stand on.
+    .set({ chambers: 2, packing: 0.2 })
     .sidePaths("medium")
     .settings(JUNIOR_FRAGMENT_PATH)
     // One VISIBLE mosaic per pyramid: the corridor detector isn't earned until the master tier, so
@@ -204,6 +207,7 @@ export const juniorRules: Rule[] = [
   tombCave("junior_treasure_tomb", "junior", 1),
 
   tomb("junior_treasure_tomb", {
+    chambers: 0, // the tier's pass-through chambers are for its pyramids; a tomb runs tableau to tableau
     encounter: "tomb-puzzle",
     difficulty: "junior",
     floorCount: 6,
@@ -229,8 +233,8 @@ export const juniorRules: Rule[] = [
           // Her wall, in the room after she asks: she says "fix it" and the next door along is it.
           { where: TOMB_ROOMS_PER_FLOOR.junior + 3, encounter: "reading" },
         ],
-        // Fez shop — a 6-slot stock node, filled by the mods (currency pieces + consumables).
-        // Empty until resolveShopStock + the consumable fill land; the shop mods own its content.
+        // Fez shop — a 6-slot stock node, filled by the mods (currency pieces).
+        // Empty until resolveShopStock lands; the shop mods own its content.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       {

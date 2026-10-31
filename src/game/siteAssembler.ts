@@ -5,6 +5,7 @@ import type { ResolveRegionBarrierRealisation } from "./regionBarrierRealisation
 import type { LaidFloor } from "./laidFloor"
 import type { ResolveBoardIndex } from "./seeds/boardIndex"
 import type { FamilyMeta } from "./families/familyMeta"
+import type { DecorationKind, PropFootprint } from "./siteTypes"
 
 export { defaultResolveEncounter }
 export { DEFAULT_PACKING, ONE_WAY_RUN_CELLS, oneWayRunCells } from "./carveConstants"
@@ -28,6 +29,8 @@ export type EncounterResolution = {
   ownerMod?: string
   /** What a sequence realisation says about its tiles and door (FamilyMeta.sequence). */
   sequence?: FamilyMeta["sequence"]
+  /** Somebody stands in the room (FamilyMeta.actor). */
+  actor?: true
 }
 export type ResolveEncounter = (encounter: string | string[] | undefined, defaultTag: string) => EncounterResolution
 
@@ -46,6 +49,7 @@ export const encounterFromMeta = (meta: FamilyMeta | undefined, fallback: string
     ownerMod: meta.ownerMod,
     ...(meta.reEnterable ? { reEnterable: true } : {}),
     ...(meta.sequence ? { sequence: meta.sequence } : {}),
+    ...(meta.actor ? { actor: true as const } : {}),
   }
 }
 
@@ -79,6 +83,9 @@ export type AssembleFloorKeyRequirements = {
   /** Says which passage a gate empty hands alone open is dressed as. Production passes the registry's; absent
    * (stories, specs, the builder) the fallback accepts any named one. One no registered mod declares leaves a door. */
   resolvePassage?: ResolvePassageRealisation
+  /** How much floor each prop kind covers. Absent (production, stories) the shipped table answers; a spec injects
+   * stand-in footprints here. */
+  propFootprint?: (kind: DecorationKind) => PropFootprint
   /** How many attempts the floor may take, at most ASSEMBLY_ATTEMPTS. The bake's seed search asks for 1:
    * it wants a seed that carves at the authored `packing`, and a seed that only carves after the ladder
    * widened the grid is one it has to reject, so it must not pay for the climb to learn that. */

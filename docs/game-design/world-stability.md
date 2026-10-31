@@ -34,9 +34,9 @@ This means a world rebuild can freely change _which_ chest holds a given fragmen
 
 ---
 
-## Consumables
+## Waterskins
 
-Consumables (health pickups, etc.) are always re-lootable. The gate is inventory space, not a "looted" flag. No tracking needed. If the world adds or removes a consumable chest, nothing in player state needs to change.
+A waterskin is drunk the moment it is opened and nothing remembers it: no "looted" flag, no count. If the world adds or removes a waterskin, nothing in player state needs to change.
 
 ---
 

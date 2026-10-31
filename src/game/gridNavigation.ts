@@ -1,4 +1,5 @@
 import type { FloorGrid, GridCell, Direction, CellState, TombKeyReward, CorridorCell, ObstacleKind } from "./siteTypes"
+import { roomPlaceOf } from "./roomShape"
 
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 const opposite: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
@@ -156,11 +157,15 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
       // Straight-through: corridor continues in the same direction we arrived from, no branches.
       // Anything else (corner, T-junction, dead end) is a blind spot the player must click to reveal.
       // A straight names the way back as well as the way onward.
+      // A designed room's door in use is where a way meets the room, and its node stands for the room: both are
+      // stops. The room's own floor is seen through, every way, as one stop's ground.
+      const place = roomPlaceOf(grid, r, c)
       const isStraight =
         fromDir !== null &&
-        neighbor.dirs.size === 2 &&
-        neighbor.dirs.has(fromDir) &&
-        neighbor.dirs.has(opposite[fromDir])
+        place !== "door" &&
+        place !== "node" &&
+        (place === "inner" ||
+          (neighbor.dirs.size === 2 && neighbor.dirs.has(fromDir) && neighbor.dirs.has(opposite[fromDir])))
       if (isStraight) {
         if (neighbor.state === "fogged") {
           newCells[r][c] = { ...neighbor, state: "visible" }
@@ -287,6 +292,28 @@ export const walkableFrom = (grid: FloorGrid, from: readonly [number, number]): 
   return seen
 }
 
+/** Walking distance from `from` to every cell it reaches, keyed "r,c". Structure only (dirs and bounds):
+ * a carve-time measure of the layout, so ground still in the dark counts. */
+export const distancesFrom = (grid: FloorGrid, from: readonly [number, number]): ReadonlyMap<string, number> => {
+  const dist = new Map<string, number>([[`${from[0]},${from[1]}`, 0]])
+  const queue: Array<readonly [number, number]> = [from]
+  for (let i = 0; i < queue.length; i++) {
+    const [r, c] = queue[i]
+    const cell = grid.cells[r]?.[c]
+    if (!cell || cell.type === "empty") continue
+    for (const d of cell.dirs) {
+      const nr = r + MOVES[d][0],
+        nc = c + MOVES[d][1]
+      const key = `${nr},${nc}`
+      const neighbor = grid.cells[nr]?.[nc]
+      if (dist.has(key) || !neighbor || neighbor.type === "empty") continue
+      dist.set(key, dist.get(`${r},${c}`)! + 1)
+      queue.push([nr, nc])
+    }
+  }
+  return dist
+}
+
 export const revealAll = (grid: FloorGrid): FloorGrid => {
   const newCells = grid.cells.map(row =>
     row.map(cell => {
@@ -386,13 +413,15 @@ export const renderAscii = (grid: FloorGrid): string => {
       const base =
         cell.roomType === "fork"
           ? "f"
-          : cell.roomType === "portal"
-            ? isEntrance
-              ? "e"
-              : cell.stairId
-                ? "s"
-                : "x"
-            : (cell.tags?.map(t => tagLetters[t]).find(Boolean) ?? "?")
+          : cell.roomType === "chamber"
+            ? "c"
+            : cell.roomType === "portal"
+              ? isEntrance
+                ? "e"
+                : cell.stairId
+                  ? "s"
+                  : "x"
+              : (cell.tags?.map(t => tagLetters[t]).find(Boolean) ?? "?")
       line += upper ? base.toUpperCase() : base
     }
     rows.push(line)

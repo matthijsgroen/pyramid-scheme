@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { generateFile } from "./serializer"
 import type { SiteConfig } from "./types"
+import { parsePrefab } from "../game/prefabNotation"
 
 // Regression test for a real bug: serializeSideSection hand-enumerates fields and silently
 // dropped `rewards` (a shop's stock array) and nested `sideSections` — round-tripping a
@@ -18,6 +19,8 @@ describe("generateFile — serializeSideSection field coverage", () => {
       sealed: true,
       theme: "night",
       activitiesByIndex: { 0: "ledger" },
+      chambersByIndex: { 0: true, 1: "ledger" },
+      chambers: 3,
       sideSections: [
         {
           pathPuzzles: 1,
@@ -26,10 +29,11 @@ describe("generateFile — serializeSideSection field coverage", () => {
           end: "treasure",
           theme: "day",
           endReward: { type: "mosaicPiece" },
-          rewards: [{ type: "mosaicPiece" }, { type: "consumable", consumable: "oil" }],
+          rewards: [{ type: "mosaicPiece" }, { type: "money", amount: 7 }],
           sealed: true,
           encounter: "tableau",
           activitiesByIndex: { 0: "selling" },
+          chambersByIndex: { 0: "storage" },
           sideSections: [{ pathPuzzles: 0, difficulty: "junior", end: "treasure", endReward: { type: "mosaicPiece" } }],
         },
       ],
@@ -45,7 +49,7 @@ describe("generateFile — serializeSideSection field coverage", () => {
 
   it("keeps a rewards (shop stock) array on a serialized side section", () => {
     expect(output).toContain("rewards: [")
-    expect(output).toContain('consumable: "oil"')
+    expect(output).toContain("amount: 7")
   })
 
   it("keeps a nested sideSections array", () => {
@@ -75,10 +79,53 @@ describe("generateFile — serializeSideSection field coverage", () => {
     expect(output).toContain('activitiesByIndex: { 0: "ledger" }')
     expect(output).toContain('activitiesByIndex: { 0: "selling" }')
   })
+
+  it("keeps a floor's chambers and a side section's chamber in the bake", () => {
+    expect(output).toContain('chambersByIndex: { 0: true, 1: "ledger" }')
+    expect(output).toContain("chambers: 3")
+    expect(output).toContain('chambersByIndex: { 0: "storage" }')
+  })
 })
 
 // A switch is authored on the floor and read back out of the baked file; a field the serializer does
 // not emit is a feature the world was built without, with nothing failing to say so.
+describe("generateFile — a designed room survives the bake", () => {
+  const hall = parsePrefab("tier junior\nlayout\n# # # # #\n# . . . #\n# . s . #\n# . . . #\n# # d # #\ns stop", "hall")
+  const placement = { room: "hall", min: 1, max: 2, central: 0.5 }
+  const withRooms = {
+    prefabs: { hall },
+    prefabPlacements: [placement],
+    prefabsByIndex: { 0: "hall" },
+  }
+  const output = generateFile({
+    j: [
+      [
+        {
+          pathPuzzles: 1,
+          difficulty: "junior",
+          end: "treasure",
+          exitOrStaircase: "exit",
+          ...withRooms,
+          sideSections: [{ pathPuzzles: 1, difficulty: "junior", end: "treasure", ...withRooms }],
+        },
+      ],
+    ],
+  })
+
+  it("emits the prefab, its placements and its pins on both a floor and a section", () => {
+    expect(output.split(`prefabs: ${JSON.stringify({ hall })}`)).toHaveLength(3)
+    expect(output.split(`prefabPlacements: ${JSON.stringify([placement])}`)).toHaveLength(3)
+    expect(output.split('prefabsByIndex: { 0: "hall" }')).toHaveLength(3)
+  })
+
+  it("emits nothing for a floor with no room", () => {
+    const bare = generateFile({
+      j: [[{ pathPuzzles: 1, difficulty: "junior", end: "treasure", exitOrStaircase: "exit", sideSections: [] }]],
+    })
+    expect(bare).not.toContain("prefab")
+  })
+})
+
 describe("generateFile — a switch fork survives the bake", () => {
   const output = generateFile({
     test_journey: [
@@ -421,6 +468,34 @@ describe("generateFile — every term of a gate survives the bake", () => {
   })
 })
 
+describe("generateFile — where the side paths stand survives the bake", () => {
+  const floor = (outsideLock?: number[]) => ({
+    pathPuzzles: 1,
+    difficulty: "junior" as const,
+    end: "treasure" as const,
+    exitOrStaircase: "exit" as const,
+    sideSections: [],
+    ...(outsideLock ? { outsideLock } : {}),
+  })
+
+  it("outsideLock is written and read back", () => {
+    const emitted = generateFile({ testJourney: [[floor([1, 3])]] })
+    const line = emitted.match(/outsideLock: (.*),$/m)
+    expect(line && JSON.parse(line[1])).toEqual([1, 3])
+  })
+
+  it("corridorsTakeTwo is written", () => {
+    expect(generateFile({ testJourney: [[{ ...floor(), corridorsTakeTwo: true as const }]] })).toContain(
+      "corridorsTakeTwo: true,"
+    )
+  })
+
+  it("a floor with every side path inside its lock carries no outsideLock", () => {
+    expect(generateFile({ testJourney: [[floor([])]] })).not.toContain("outsideLock")
+    expect(generateFile({ testJourney: [[floor()]] })).not.toContain("outsideLock")
+  })
+})
+
 describe("generateFile — the web survives the bake", () => {
   it("writes a reward carrying a list, and a floor's web doors, so both read back", () => {
     const floor = {
@@ -437,5 +512,39 @@ describe("generateFile — the web survives the bake", () => {
       `mainEndReward: { type: "webActivator", name: "sun", look: "lever", pots: ["w3","w1p3"] }`
     )
     expect(emitted).toContain(`webDoors: [{"key":"web:w3#1","at":{"seam":2}}]`)
+  })
+})
+
+describe("generateFile — which way a stair runs survives the bake", () => {
+  const floor = (goes: boolean) => ({
+    pathPuzzles: 1,
+    difficulty: "wizard" as const,
+    end: "treasure" as const,
+    entrance: { stairId: "in", ...(goes ? { goes: "down" as const } : {}) },
+    exitOrStaircase: { stairId: "out", ...(goes ? { goes: "up" as const } : {}) },
+    sideSections: [
+      {
+        pathPuzzles: 0,
+        difficulty: "wizard" as const,
+        end: { stairId: "side", ...(goes ? { goes: "up" as const } : {}) },
+      },
+    ],
+  })
+  const link = (emitted: string, field: string) => {
+    const found = emitted.match(new RegExp(`${field}: \\{ stairId: "(\\w+)"(?:, goes: "(\\w+)")? \\}`))
+    return found && { stairId: found[1], ...(found[2] ? { goes: found[2] } : {}) }
+  }
+
+  it("`goes` is written and read back", () => {
+    const emitted = generateFile({ testJourney: [[floor(true)]] })
+    expect(link(emitted, "entrance")).toEqual({ stairId: "in", goes: "down" })
+    expect(link(emitted, "exitOrStaircase")).toEqual({ stairId: "out", goes: "up" })
+    expect(link(emitted, "end")).toEqual({ stairId: "side", goes: "up" })
+  })
+
+  it("a stair running the default way writes no `goes`", () => {
+    const emitted = generateFile({ testJourney: [[floor(false)]] })
+    expect(emitted).not.toContain("goes")
+    expect(link(emitted, "exitOrStaircase")).toEqual({ stairId: "out" })
   })
 })

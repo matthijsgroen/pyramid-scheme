@@ -2,6 +2,9 @@ import type { SiteConfig, SubSection, Tier, TreasureReward, FragmentSlotReward }
 import type { Difficulty } from "../data/difficultyLevels"
 import { capabilitiesFor } from "./capabilities"
 import type { FloorRef } from "./reachability"
+import { defaultResolveEncounter } from "../game/encounterFallback"
+import { endsInShopBy } from "./shopStock"
+import type { ResolveEncounter } from "../game/siteAssembler"
 
 // A candidate reward-placement site, tagged with the floor it lives on so a distribution
 // rule can be filtered down to only the currently-reachable ones (see
@@ -12,13 +15,16 @@ export type Slot = {
   ref: FloorRef
   journeyId: string
   tier: Tier
-  /** Ward keys already gating this slot (its own side section's tomb-key gate, if any) —
-   * empty means ungated. Used by a currency's own distribution rule (e.g. hieroglyph
-   * fragments preferring slots behind a specific tomb run's ward keys). */
+  /** Ward keys already gating this slot (its section's and sub-section's tomb-key gates, for an end and a puzzle
+   * alike) — empty means ungated. Used by a currency's own distribution rule (e.g. hieroglyph fragments preferring
+   * slots behind a specific tomb run's ward keys, camp loot taking ungated rooms first). */
   wardKeys: readonly string[]
   /** True for an explicit `fragmentSlot` sentinel (always eligible); false for an open,
    * not-yet-rewarded tomb-key gate (eligible only until something else claims it). */
   isPlaceholder: boolean
+  /** The placeholder standing in the slot's room until it is filled: a walk that lists it among its reached rewards
+   * has reached the room itself, not only the floor around it. An open tomb-key gate's end is given one here. */
+  sentinel?: FragmentSlotReward
   /** Soft authored placement preference (a bucket id, e.g. `mapPiece:starter_treasure_tomb`)
    * — a ranking boost for that currency, not an exclusive claim. See
    * docs/game-design/keys-and-locks-solver.md, "A slot's authored placement preference is a
@@ -26,7 +32,7 @@ export type Slot = {
   preference?: string
   /** `"end"` = a path-end reward (fragmentSlot / open ward gate) — the only slots the gating
    * worklist and capped pass touch. `"puzzle"` = a puzzle-chain position — filler-only, seen
-   * exclusively by the dynamic loot pass (money/consumables). */
+   * exclusively by the dynamic loot pass (mod-owned distributions). */
   kind: "end" | "puzzle"
   /** True when this slot lives in a hidden (discovery-gated) section — a hidden corridor is an
    * OPTIONAL loot pocket (docs/mods/collection-and-detector-design.md §7.3): structurally
@@ -61,19 +67,37 @@ export type Slot = {
 // dynamic loot rather than crashing.
 export type FamilyPriorityFor = (encounter: string | string[] | undefined, defaultTag: string) => number
 
+// A path end that held a loot slot when the layout was picked stays a loot end once placement is done, filled or
+// left empty, so the carve reads the same free ends after placement as before it.
+const fillLootEnd =
+  (section: SubSection) =>
+  (reward: TreasureReward | undefined): void => {
+    section.endReward = reward
+    if (reward === undefined) section.lootEnd = true
+    else delete section.lootEnd
+  }
+
+// The ward keys a section's own tomb-key gate asks for: none when it has no such gate.
+const tombKeysOf = (section: SubSection): string[] =>
+  section.gate?.type === "tomb-key" ? [section.gate.wardKeyId] : []
+
 // Every fragmentSlot sentinel and open (unrewarded) tomb-key gate across every site that
 // opts into the emitFragmentSlots capability — the same eligibility fragments.ts's own
 // collectSlots used, now with each slot's own FloorRef attached.
 export const collectSlots = (
   allConfigs: Record<string, SiteConfig[]>,
-  familyPriorityFor: FamilyPriorityFor = () => 0
+  familyPriorityFor: FamilyPriorityFor = () => 0,
+  resolveEncounter: ResolveEncounter = defaultResolveEncounter
 ): Slot[] => {
   const slots: Slot[] = []
-  // Every emitted end slot is a treasure-chest path end (shop ends resolve to fez-shop with their
-  // own stock and are never fragmentSlot sentinels, so they aren't collected here) → chest
-  // reward priority (100). Resolved through
-  // the injected lookup rather than hardcoded, so a mod set that redefines "treasure" still wins.
+  // Every emitted end slot is a treasure-chest path end → chest reward priority (100). Resolved
+  // through the injected lookup rather than hardcoded, so a mod set that redefines "treasure" still wins.
   const chestWeight = familyPriorityFor(undefined, "treasure")
+  // A section whose encounter resolves to the shop ends in a shop room, which shows its stock and
+  // never its endReward (carve/roomSpecs.ts endRoomSpec asks the same question). So its end is no
+  // slot. Its placeholder is cleared before the layout is picked (shopStock.ts clearShopEnds), and
+  // nothing here writes to it.
+  const endsInShop = endsInShopBy(resolveEncounter)
 
   for (const [journeyId, siteConfigs] of Object.entries(allConfigs)) {
     if (!capabilitiesFor(journeyId)?.emitFragmentSlots) continue
@@ -89,7 +113,8 @@ export const collectSlots = (
       isPlaceholder: boolean,
       preference: string | undefined,
       hidden: boolean,
-      assign: (r: TreasureReward | undefined) => void
+      assign: (r: TreasureReward | undefined) => void,
+      sentinel?: FragmentSlotReward
     ) =>
       slots.push({
         ref,
@@ -97,6 +122,7 @@ export const collectSlots = (
         tier: difficulty as Tier,
         wardKeys,
         isPlaceholder,
+        ...(sentinel ? { sentinel } : {}),
         preference,
         kind: "end",
         rewardPriority: chestWeight,
@@ -107,7 +133,7 @@ export const collectSlots = (
     siteConfigs.forEach((floors, levelIndex) => {
       // Puzzle-chain slots: one per position of every `rewards` array initPuzzleChains
       // (buildSite) created, walked in that same order (floor main path → each side section →
-      // its sub-sections) so the dynamic loot pass replays money/consumable placement per site
+      // its sub-sections) so the dynamic loot pass replays dynamic-loot placement per site
       // deterministically. Tagged `kind:"puzzle"` + a per-site `puzzleSeq`; the gating worklist
       // and capped pass skip them (they were never reward-slot candidates — only filler is).
       const siteId = `${journeyId}:${levelIndex}`
@@ -130,7 +156,8 @@ export const collectSlots = (
         },
         encounter: string | string[] | undefined,
         encountersByIndex: Record<number, string | string[]> | undefined,
-        hidden: boolean
+        hidden: boolean,
+        wardKeys: string[]
       ) => {
         if (!rewards) return
         rewards.forEach((rw, i) => {
@@ -150,14 +177,15 @@ export const collectSlots = (
           // A reward-array entry that's a fragmentSlot sentinel is a currency placeholder (a shop's
           // stock slot the mods tagged for their currency) — it needs the capped/gating fill, which
           // only touch `kind:"end"`. So emit it as an end slot (placeholder + its prefers tag), not a
-          // puzzle-chain filler slot. Empty entries stay puzzle-kind (dynamic loot / consumable fill).
+          // puzzle-chain filler slot. Empty entries stay puzzle-kind (dynamic loot fill).
           const frag = rw?.type === "fragmentSlot" ? (rw as FragmentSlotReward) : undefined
           slots.push({
             ref,
             journeyId,
             tier: chain.difficulty as Tier,
-            wardKeys: [],
+            wardKeys,
             isPlaceholder: frag !== undefined,
+            ...(frag ? { sentinel: frag } : {}),
             ...(frag?.prefers ? { preference: frag.prefers } : {}),
             kind: frag ? "end" : "puzzle",
             ...(frag ? {} : { siteId, puzzleSeq: puzzleSeq++ }),
@@ -172,12 +200,24 @@ export const collectSlots = (
       }
       floors.forEach((floor, floorIndex) => {
         const pRef: FloorRef = { journeyId, levelIndex, floorIndex }
-        emitPuzzle(floor.rewards, pRef, floor, floor.encounter, floor.encountersByIndex, false)
+        emitPuzzle(floor.rewards, pRef, floor, floor.encounter, floor.encountersByIndex, false, [])
         for (const section of floor.sideSections) {
           const secHidden = !!section.hidden
-          emitPuzzle(section.rewards, pRef, section, section.encounter, section.encountersByIndex, secHidden)
+          const secWardKeys = tombKeysOf(section)
+          emitPuzzle(
+            section.rewards,
+            pRef,
+            section,
+            section.encounter,
+            section.encountersByIndex,
+            secHidden,
+            secWardKeys
+          )
           for (const sub of section.sideSections ?? [])
-            emitPuzzle(sub.rewards, pRef, sub, sub.encounter, sub.encountersByIndex, secHidden || !!sub.hidden)
+            emitPuzzle(sub.rewards, pRef, sub, sub.encounter, sub.encountersByIndex, secHidden || !!sub.hidden, [
+              ...secWardKeys,
+              ...tombKeysOf(sub),
+            ])
         }
       })
 
@@ -185,9 +225,19 @@ export const collectSlots = (
         const ref: FloorRef = { journeyId, levelIndex, floorIndex }
         if (floor.mainEndReward?.type === "fragmentSlot") {
           const f = floor
-          addSlot(ref, floor.difficulty, [], true, (floor.mainEndReward as FragmentSlotReward).prefers, false, r => {
-            f.mainEndReward = r
-          })
+          const sentinel = floor.mainEndReward as FragmentSlotReward
+          addSlot(
+            ref,
+            floor.difficulty,
+            [],
+            true,
+            sentinel.prefers,
+            false,
+            r => {
+              f.mainEndReward = r
+            },
+            sentinel
+          )
         }
         for (const section of floor.sideSections) {
           const sWardKeys = section.gate?.type === "tomb-key" ? [section.gate.wardKeyId] : []
@@ -199,8 +249,9 @@ export const collectSlots = (
           // `end: "treasure"` section can actually display/grant a reward at runtime. An open
           // tomb-key gate leading to a stairhead must never be handed to a currency as a fillable
           // slot — the reward would be silently dropped, capping that currency one instance short.
-          const rewardCapable = section.end === "treasure"
-          if (section.endReward?.type === "fragmentSlot") {
+          const shopEnd = endsInShop(section)
+          const rewardCapable = section.end === "treasure" && !shopEnd
+          if (!shopEnd && section.endReward?.type === "fragmentSlot") {
             const s = section
             addSlot(
               ref,
@@ -209,21 +260,34 @@ export const collectSlots = (
               true,
               (section.endReward as FragmentSlotReward).prefers,
               secHidden,
-              r => {
-                s.endReward = r
-              }
+              fillLootEnd(s),
+              section.endReward as FragmentSlotReward
             )
           } else if (section.gate?.type === "tomb-key" && !section.endReward && rewardCapable) {
             const s = section
-            addSlot(ref, section.difficulty, sWardKeys, false, undefined, secHidden, r => {
-              s.endReward = r
-            })
+            // An open gate's end holds a placeholder too while placement runs, so the walk can tell its room reached
+            // from its floor reached. Filled or cleared like every slot, so none survives placement.
+            const sentinel: FragmentSlotReward = { type: "fragmentSlot" }
+            s.endReward = sentinel
+            addSlot(
+              ref,
+              section.difficulty,
+              sWardKeys,
+              false,
+              undefined,
+              secHidden,
+              r => {
+                s.endReward = r
+              },
+              sentinel
+            )
           }
           for (const sub of section.sideSections ?? []) {
             const subWardKeys = [...sWardKeys, ...(sub.gate?.type === "tomb-key" ? [sub.gate.wardKeyId] : [])]
             const subHidden = secHidden || !!sub.hidden
-            const subRewardCapable = sub.end === "treasure"
-            if (sub.endReward?.type === "fragmentSlot") {
+            const subShopEnd = endsInShop(sub)
+            const subRewardCapable = sub.end === "treasure" && !subShopEnd
+            if (!subShopEnd && sub.endReward?.type === "fragmentSlot") {
               const ss = sub
               addSlot(
                 ref,
@@ -232,15 +296,25 @@ export const collectSlots = (
                 true,
                 (sub.endReward as FragmentSlotReward).prefers,
                 subHidden,
-                r => {
-                  ss.endReward = r
-                }
+                fillLootEnd(ss),
+                sub.endReward as FragmentSlotReward
               )
             } else if (sub.gate?.type === "tomb-key" && !sub.endReward && subRewardCapable) {
               const ss = sub
-              addSlot(ref, sub.difficulty, subWardKeys, false, undefined, subHidden, r => {
-                ss.endReward = r
-              })
+              const sentinel: FragmentSlotReward = { type: "fragmentSlot" }
+              ss.endReward = sentinel
+              addSlot(
+                ref,
+                sub.difficulty,
+                subWardKeys,
+                false,
+                undefined,
+                subHidden,
+                r => {
+                  ss.endReward = r
+                },
+                sentinel
+              )
             }
           }
         }

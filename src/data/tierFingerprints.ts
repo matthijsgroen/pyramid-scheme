@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto"
-import type { SiteConfig } from "@/game/siteTypes"
+import type { FloorGrid, SiteConfig } from "@/game/siteTypes"
 import { difficulties, type Difficulty } from "./difficultyLevels"
 
 type FingerprintJourney = { id: string; difficulty: Difficulty }
@@ -18,6 +18,14 @@ export const stableStringify = (value: unknown): string => {
   }
   return JSON.stringify(value) ?? "null"
 }
+
+// A carved floor's identity: its whole grid, every `Set` (a cell's `dirs`) written as a sorted array
+// because `stableStringify` would write a `Set` as `{}`. sha256, first 16 hex characters.
+export const carvedFloorDigest = (grid: FloorGrid): string =>
+  createHash("sha256")
+    .update(stableStringify(JSON.parse(JSON.stringify(grid, (_key, v) => (v instanceof Set ? [...v].sort() : v)))))
+    .digest("hex")
+    .slice(0, 16)
 
 // The fields that record WHICH puzzle family stands in a room, and nothing else: `encounter` (a
 // section's or floor's family) and `encountersByIndex` (the same, per room). They are the output of

@@ -156,7 +156,6 @@ export const sequenceHarness = (
           journeyData: [journeyData(JOURNEY)],
         }),
         getPurchasedShopSlots: () => new Set<string>(),
-        getSkippedConsumables: () => new Set<string>(),
       } as unknown as JourneyAPI
       const mechanismStates = useMechanismStates(journeys, JOURNEY)
       const sequenceReads = useSequenceReads(journeys, JOURNEY)
@@ -189,7 +188,6 @@ export const sequenceHarness = (
           if (cell && cell.type !== "empty" && address)
             journeys.markCellExplored(cell.sectionHash ?? "", encodeEdge(0, r, c), address)
         },
-        onSkippedConsumable: () => {},
         onExitReached: () => {},
         ...(resolveOneWay ? { resolveOneWay } : {}),
       })

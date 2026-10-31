@@ -35,6 +35,8 @@ export const PyramidDisplay: FC<{
   levelNr: number
   pyramid: Pyramid
   decorationOffset?: number
+  // False where the board stands somewhere a desert animal or palm has no place (a cave).
+  decorated?: boolean
   values: Record<string, number | undefined>
   completed?: boolean
   dayTime?: DayNightCycleStep
@@ -51,6 +53,7 @@ export const PyramidDisplay: FC<{
   onAnswer,
   levelNr,
   decorationOffset = 0,
+  decorated = true,
   dayTime = "afternoon",
   entranceBlockId,
   interactive = true,
@@ -157,39 +160,41 @@ export const PyramidDisplay: FC<{
           )}
         />
       </div>
-      <div
-        className={clsx(
-          dayTime === "night" && "brightness-50 saturate-80",
-          dayTime === "morning" && "brightness-40 saturate-125",
-          dayTime === "evening" && "brightness-20 saturate-125",
-          "absolute bottom-0 -z-10 pb-5 text-5xl",
-          position === "right" && "right-0",
-          position === "right-mirror" && "right-0 rotate-y-180",
-          position === "left" && "left-[-10%]",
-          position === "left-mirror" && "left-[-10%] rotate-y-180"
-        )}
-      >
-        {decorationEmoji[decorationNumber % decorationEmoji.length]}
-        <span
+      {decorated && (
+        <div
           className={clsx(
-            "absolute inline-block origin-bottom rotate-x-180 opacity-20 brightness-0",
-            dayTime === "morning" && "bottom-6 scale-y-100",
-            dayTime === "afternoon" && "bottom-6 scale-y-45",
-            dayTime === "night" && "bottom-6 scale-y-25",
-            dayTime === "evening" && "bottom-6 scale-y-50",
-            dayTime !== "afternoon" && position === "right" && "-skew-x-45",
-            dayTime !== "afternoon" && position === "right-mirror" && "skew-x-45",
-            dayTime !== "afternoon" && position === "left" && "skew-x-45",
-            dayTime !== "afternoon" && position === "left-mirror" && "-skew-x-45",
+            dayTime === "night" && "brightness-50 saturate-80",
+            dayTime === "morning" && "brightness-40 saturate-125",
+            dayTime === "evening" && "brightness-20 saturate-125",
+            "absolute bottom-0 -z-10 pb-5 text-5xl",
             position === "right" && "right-0",
-            position === "right-mirror" && "right-0",
+            position === "right-mirror" && "right-0 rotate-y-180",
             position === "left" && "left-[-10%]",
-            position === "left-mirror" && "left-[-10%]"
+            position === "left-mirror" && "left-[-10%] rotate-y-180"
           )}
         >
           {decorationEmoji[decorationNumber % decorationEmoji.length]}
-        </span>
-      </div>
+          <span
+            className={clsx(
+              "absolute inline-block origin-bottom rotate-x-180 opacity-20 brightness-0",
+              dayTime === "morning" && "bottom-6 scale-y-100",
+              dayTime === "afternoon" && "bottom-6 scale-y-45",
+              dayTime === "night" && "bottom-6 scale-y-25",
+              dayTime === "evening" && "bottom-6 scale-y-50",
+              dayTime !== "afternoon" && position === "right" && "-skew-x-45",
+              dayTime !== "afternoon" && position === "right-mirror" && "skew-x-45",
+              dayTime !== "afternoon" && position === "left" && "skew-x-45",
+              dayTime !== "afternoon" && position === "left-mirror" && "-skew-x-45",
+              position === "right" && "right-0",
+              position === "right-mirror" && "right-0",
+              position === "left" && "left-[-10%]",
+              position === "left-mirror" && "left-[-10%]"
+            )}
+          >
+            {decorationEmoji[decorationNumber % decorationEmoji.length]}
+          </span>
+        </div>
+      )}
     </div>
   )
 }

@@ -45,3 +45,20 @@ describe("the slot of a switch's door", () => {
     expect(legacyCellSlot(grid, 0, 0)).toBe("x?")
   })
 })
+
+describe("the slot of a pass-through chamber", () => {
+  const chamber = (ordinal: string): RoomCell => ({
+    type: "room",
+    roomType: "chamber",
+    dirs: new Set(["e", "w"]),
+    state: "fogged",
+    sectionAddress: "main",
+    ordinal,
+  })
+
+  it("is none, so two chambers of one section never collide on a name", () => {
+    const grid = gridOf(chamber("3"), chamber("9"))
+    expect([cellSlot(grid, 0, 0), cellSlot(grid, 0, 1)]).toEqual([null, null])
+    expect(legacyCellSlot(grid, 0, 0)).toBeNull()
+  })
+})

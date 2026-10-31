@@ -16,7 +16,7 @@ type Props = {
   /**
    * Heart size in pixels. Defaults to the 24 the trap warning screen wants, where the row is a focal
    * element with the screen to itself. The in-run HUD passes something smaller: at full max-health
-   * this is six hearts sharing one line with the key ring, the supplies and the coin balance.
+   * this is six hearts sharing one line with the key ring and the coin balance.
    */
   size?: number
 }

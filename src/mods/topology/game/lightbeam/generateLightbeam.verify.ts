@@ -9,6 +9,8 @@ import {
   isLit,
   opposite,
   pieceCells,
+  pieceOccupant,
+  pieceOnFixed,
   pieceOptions,
   reflect,
   restingState,
@@ -21,6 +23,7 @@ import { generateLightbeam, reachableDeviations, type LightbeamOptions } from ".
 import { routeIsUnique, type LightbeamGate } from "./generateLightbeam"
 import { LIGHTBEAM_CONFIG } from "./lightbeamConfig"
 import { solveLightbeamByTechniques } from "./techniques"
+import { createLightbeamState, cycleLightbeamPiece, type LightbeamState } from "./lightbeamState"
 
 type Board = ReturnType<typeof generateLightbeam>
 
@@ -1044,6 +1047,33 @@ describe("traps", () => {
       const solve = solveLightbeamByTechniques(board, board.techniqueCap)
       expect(solve.settled).toBe(true)
       expect(solve.used.has("wiringDead")).toBe(true)
+    }
+  })
+})
+
+describe.each(difficulties)("stone and pieces at %s", difficulty => {
+  const { size, ...options } = LIGHTBEAM_CONFIG[difficulty]
+
+  it("never lays a track or a turning mirror on a fixed wall or mirror, over forty seeds", () => {
+    for (let seed = 1; seed <= 40; seed++) expect(pieceOnFixed(generateLightbeam(size, seed, options))).toBe(false)
+  })
+
+  it("no tap sequence from the opening stands a piece on a fixed cell", () => {
+    for (let seed = 1; seed <= 10; seed++) {
+      const board = generateLightbeam(size, seed, options)
+      const fixed = new Set(board.fixed.map(piece => cellKey(piece.at)))
+      const seen = new Set<string>()
+      const queue = [createLightbeamState(board)]
+      while (queue.length && seen.size < 5_000) {
+        const state = queue.shift() as LightbeamState
+        const key = state.states.join(",")
+        if (seen.has(key)) continue
+        seen.add(key)
+        board.movable.forEach((piece, index) =>
+          expect(fixed.has(cellKey(pieceOccupant(piece, state.states[index]).at))).toBe(false)
+        )
+        board.movable.forEach((_, index) => queue.push(cycleLightbeamPiece(state, board, index)))
+      }
     }
   })
 })

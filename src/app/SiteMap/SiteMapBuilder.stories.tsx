@@ -1,7 +1,10 @@
 import { useMemo, useState } from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
+import { generatedWorldConfigs } from "../../data/generatedWorld"
+import { worldFloorCarve } from "../../mods/carveWorldFloor"
 import { assembleFloor } from "../../game/siteAssembler"
 import { completeCell, getCell } from "../../game/gridNavigation"
+import { parsePrefab } from "../../game/prefabNotation"
 import type { Difficulty, FloorConfig, FloorGrid, GateConfig, SideSection, SiteConfig } from "../../game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 
@@ -81,7 +84,7 @@ const SiteMapBuilder = ({
     packing,
   }
 
-  const result = assembleFloor("builder", config, seed)
+  const result = assembleFloor("builder", config, seed, undefined, {})
   if (!result.success) {
     return (
       <div className="p-4 font-mono text-sm text-red-400">
@@ -393,4 +396,154 @@ export const TwoFloorLayout: StoryObj = {
     />
   ),
   parameters: { layout: "centered" },
+}
+
+// ── A designed room reserved before the maze is dug ──────────────────────────
+
+// A made-up pillared hall, 7 wide and 5 deep inside, with door places on every side.
+const PILLARED_HALL = parsePrefab(
+  `room hall
+tier starter
+layout
+# # # d # # d # #
+# . . . . . . . #
+# . p . p . p . #
+d . . . . . s . d
+# . p . p . p . #
+# . . . . . . . #
+# # # d # # d # #
+p floor pillar
+s stop`,
+  "hall"
+)
+
+const HallHubView = ({ seed }: { seed: number }) => {
+  const config: FloorConfig = {
+    pathPuzzles: 1,
+    difficulty: "starter",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [
+      { pathPuzzles: 1, difficulty: "starter", end: "treasure" },
+      { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+      { pathPuzzles: 1, difficulty: "starter", end: "treasure", gate: { type: "tomb-key", wardKeyId: "starter_a_1" } },
+    ],
+    prefabs: { hall: PILLARED_HALL },
+    prefabPlacements: [{ room: "hall", min: 1, max: 1, central: 1 }],
+  }
+  const result = assembleFloor("builder", config, seed, undefined, {})
+  if (!result.success)
+    return <div className="p-4 font-mono text-sm text-red-400">Assembly failed: {JSON.stringify(result.reasons)}</div>
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <span className="font-mono text-xs text-stone-400">
+        seed {seed} · {result.grid.rows}×{result.grid.cols} · attempt {result.attempt}
+      </span>
+      <SiteMapView grid={result.grid} revealAllCells className="max-h-[85vh] max-w-[95vw]" />
+    </div>
+  )
+}
+
+/** A floor whose main path runs through a pillared hall in its middle, the side paths branching off the hall. */
+export const HallHub: StoryObj<typeof HallHubView> = {
+  render: args => <HallHubView {...args} />,
+  args: { seed: 7 },
+  argTypes: { seed: { control: { type: "number" } } },
+  parameters: { layout: "fullscreen" },
+}
+
+// ── A shipped floor ────────────────────────────────────────────────────────────
+
+const SHIPPED_FLOORS = Object.entries(generatedWorldConfigs).flatMap(([journeyId, levels]) =>
+  levels.flatMap((floors, level) => floors.map((_, floorIndex) => `${journeyId}#${level + 1}#${floorIndex}`))
+)
+
+/** A floor of the baked world, carved at the seed play carves it at. */
+const ShippedFloorView = ({ floor }: { floor: string }) => {
+  const [journeyId, levelNr, floorIndex] = floor.split("#")
+  const result = useMemo(() => {
+    const config = generatedWorldConfigs[journeyId]?.[Number(levelNr) - 1]?.[Number(floorIndex)]
+    if (!config) return undefined
+    return worldFloorCarve(journeyId, Number(levelNr), Number(floorIndex)).carve(config)
+  }, [journeyId, levelNr, floorIndex])
+  if (!result) return <div className="p-4 font-mono text-sm text-red-400">No floor {floor}</div>
+  if (!result.success)
+    return <div className="p-4 font-mono text-sm text-red-400">Assembly failed: {JSON.stringify(result.reasons)}</div>
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <span className="font-mono text-xs text-stone-400">
+        {floor} · {result.grid.rows}×{result.grid.cols}
+      </span>
+      <SiteMapView grid={result.grid} revealAllCells className="max-h-[85vh] max-w-[95vw]" />
+    </div>
+  )
+}
+
+export const ShippedFloor: StoryObj<typeof ShippedFloorView> = {
+  render: args => <ShippedFloorView {...args} />,
+  args: { floor: "starter_1#1#0" },
+  argTypes: {
+    floor: { control: "select", options: SHIPPED_FLOORS },
+  },
+  parameters: { layout: "fullscreen" },
+}
+
+// ── A lock region laid as a designed room ──────────────────────────────────────
+
+// A made-up shrine, 5 by 5 inside, a door place on every side and its lever's place in a corner.
+const SHRINE = parsePrefab(
+  `room shrine
+tier starter
+layout
+# # # d # # #
+# m . . . . #
+# . . . . . #
+d . . . . . d
+# . . . . . #
+# . . . . s #
+# # # d # # #
+m mechanism
+s stop`,
+  "shrine"
+)
+
+// The tomb's lock floors: caveLevers, pitStair, throwItBack.
+const LOCK_FLOORS = ["starter_treasure_tomb#1#0", "starter_treasure_tomb#2#1", "starter_treasure_tomb#2#3"]
+
+/** A shipped lock floor carved with the made-up shrine asked into the lock region nearest `central` along its route. */
+const LockRegionRoomView = ({ floor, central }: { floor: string; central: number }) => {
+  const [journeyId, levelNr, floorIndex] = floor.split("#")
+  const result = useMemo(() => {
+    const config = generatedWorldConfigs[journeyId]?.[Number(levelNr) - 1]?.[Number(floorIndex)]
+    if (!config) return undefined
+    const asked: FloorConfig = {
+      ...config,
+      prefabs: { ...config.prefabs, shrine: SHRINE },
+      prefabPlacements: [{ room: "shrine", min: 1, max: 1, central }],
+    }
+    return worldFloorCarve(journeyId, Number(levelNr), Number(floorIndex)).carve(asked)
+  }, [journeyId, levelNr, floorIndex, central])
+  if (!result) return <div className="p-4 font-mono text-sm text-red-400">No floor {floor}</div>
+  if (!result.success)
+    return <div className="p-4 font-mono text-sm text-red-400">Assembly failed: {JSON.stringify(result.reasons)}</div>
+  const shrine = result.grid.cells.flat().find(cell => cell.type !== "empty" && cell.prefabRoom?.name === "shrine")
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <span className="font-mono text-xs text-stone-400">
+        {floor} · {result.grid.rows}×{result.grid.cols} · attempt {result.attempt} · shrine in{" "}
+        {shrine && shrine.type !== "empty" ? shrine.region : "no region"}
+      </span>
+      <SiteMapView grid={result.grid} revealAllCells className="max-h-[85vh] max-w-[95vw]" />
+    </div>
+  )
+}
+
+export const LockRegionRoom: StoryObj<typeof LockRegionRoomView> = {
+  render: args => <LockRegionRoomView {...args} />,
+  args: { floor: LOCK_FLOORS[0], central: 1 },
+  argTypes: {
+    floor: { control: "select", options: LOCK_FLOORS },
+    central: { control: { type: "range", min: 0, max: 1, step: 0.25 } },
+  },
+  parameters: { layout: "fullscreen" },
 }

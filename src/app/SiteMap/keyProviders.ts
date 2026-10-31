@@ -8,9 +8,27 @@ import { useMemo } from "react"
 // see docs/mods/app-plugins-design.md.
 export type UseHeldKeys = () => ReadonlySet<string>
 
-const registry: UseHeldKeys[] = []
+// A provider's keys read from its own saved state, so they start empty until that state is read. A provider
+// that does so also says when it has: `useLoaded`. One that has no wait leaves it out.
+export type UseHeldKeysLoaded = () => boolean
 
-export const registerHeldKeysProvider = (useKeys: UseHeldKeys) => registry.push(useKeys)
+const registry: UseHeldKeys[] = []
+const loadedRegistry: UseHeldKeysLoaded[] = []
+
+export const registerHeldKeysProvider = (useKeys: UseHeldKeys, useLoaded?: UseHeldKeysLoaded) => {
+  registry.push(useKeys)
+  if (useLoaded) loadedRegistry.push(useLoaded)
+}
+
+// True once every provider that has to read saved state has read it: what the held keys say is final.
+export const useHeldKeysLoaded = (): boolean => {
+  let loaded = true
+  for (const useLoaded of loadedRegistry) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks -- stable registry order; see above
+    loaded = useLoaded() && loaded
+  }
+  return loaded
+}
 
 // Calls each provider hook in a fixed order (the registry is populated once at module load — each
 // mod's app entrypoint pushes exactly once — so the hooks run in the same order every render,

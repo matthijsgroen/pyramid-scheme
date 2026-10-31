@@ -8,7 +8,7 @@ export type TranslatedJourney = Journey & {
   lengthLabel: string
   timeLabel?: string
   // Tombs only: where their map leads, phrased so it doesn't name the tomb. Shown while the map is
-  // still in pieces (the locked tile on Travel, the map-piece reward popup).
+  // still in pieces (the locked row in the all-journeys list, the map-piece reward popup).
   mapHint?: string
 }
 

@@ -6,7 +6,7 @@ import { registerRewardSchema } from "./rewardSchemas"
 // EFFECT is a reward contribution (rewardContributions.ts), the SYNCHRONOUS text/emoji is a
 // rewardHandler, and the rich popup content is a display registration (rewardDisplayRegistry.tsx).
 // mapPiece/tombKey moved to the tomb-treasure mod (src/mods/tombTreasure/app); mosaicPiece,
-// hieroglyphFragment, money, sellable, consumable each live in their own mod.
+// hieroglyphFragment, money and sellable each live in their own mod.
 //
 // The one exception below is `fragmentSlot`: it's the world-gen placement SENTINEL, not a mod
 // reward — it never survives serialization into the app (placeFragments clears any leftover), so

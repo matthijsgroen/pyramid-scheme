@@ -76,7 +76,7 @@ describe("where a dressed room's prop stands", () => {
     expect(buildRoomClaims(grid).decorationAt.size).toBe(0)
   })
 
-  it("stands a story room's prop beside it in the corridor, its authored activity making it a chamber", () => {
+  it("an authored activity on a corridor stop gives it no floor", () => {
     const story: GridCell = {
       type: "room",
       roomType: "encounter",
@@ -100,7 +100,33 @@ describe("where a dressed room's prop stands", () => {
         [empty, empty, empty, empty, empty],
       ],
     }
-    expect([...buildRoomClaims(grid).decorationAt.values()]).toEqual(["shelf"])
+    expect(buildRoomClaims(grid).decorationAt.size).toBe(0)
+  })
+
+  // A portal on the map's bottom row with passages above every free cell of its floor.
+  const underPassages = (portal: Partial<RoomCell>): FloorGrid => ({
+    siteId: "site",
+    rows: 2,
+    cols: 3,
+    entrancePos: [0, 0],
+    exitPos: [1, 1],
+    staircases: portal.stairId ? { [portal.stairId]: [1, 1] } : {},
+    cells: [
+      [corridor(["e"]), corridor(["e", "w", "s"]), corridor(["w"])],
+      [
+        empty,
+        { type: "room", roomType: "portal", dirs: new Set<Direction>(["n"]), state, decoration: "pillar", ...portal },
+        empty,
+      ],
+    ],
+  })
+
+  it("stands no prop in a stairhead where the only floor for it has floor behind it", () => {
+    expect(buildRoomClaims(underPassages({ stairId: "down" })).decorationAt.size).toBe(0)
+  })
+
+  it("still stands a way out's prop with floor behind it, a dead end nobody walks past", () => {
+    expect([...buildRoomClaims(underPassages({})).decorationAt.values()]).toEqual(["pillar"])
   })
 
   it("never stands a stairhead's prop on the stair's own cell", () => {
@@ -130,5 +156,43 @@ describe("where a dressed room's prop stands", () => {
     const decorationAt = buildRoomClaims(grid).decorationAt
     expect([...decorationAt.values()]).toContain("jarRack")
     expect(decorationAt.has("2,1")).toBe(false)
+  })
+})
+
+describe("two rooms on diagonal nodes", () => {
+  const fork = (dirs: Direction[], sectionAddress = "main"): GridCell => ({
+    type: "room",
+    roomType: "fork",
+    dirs: new Set(dirs),
+    state,
+    sectionAddress,
+  })
+  const passage = (dirs: Direction[]): GridCell => ({
+    type: "corridor",
+    dirs: new Set(dirs),
+    state,
+    sectionAddress: "main",
+  })
+  // Two forks a corner node joins, the corner the L the player walks between them.
+  const cornered = (lowerSection: string): FloorGrid => ({
+    siteId: "site",
+    rows: 3,
+    cols: 3,
+    entrancePos: [0, 0],
+    exitPos: [2, 2],
+    staircases: {},
+    cells: [
+      [fork(["e"]), passage(["e", "w"]), passage(["w", "s"])],
+      [empty, empty, passage(["n", "s"])],
+      [empty, empty, fork(["n"], lowerSection)],
+    ],
+  })
+
+  it("opens the pillar they share to both where they merge", () => {
+    expect(buildRoomClaims(cornered("main")).joinedOwners).toContain("0,0|2,2")
+  })
+
+  it("keeps the pillar walled where they stand in two sections", () => {
+    expect(buildRoomClaims(cornered("s0")).joinedOwners).not.toContain("0,0|2,2")
   })
 })

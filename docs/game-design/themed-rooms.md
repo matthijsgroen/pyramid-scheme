@@ -45,11 +45,33 @@ skin):
 - Untagged kinds (rubble, pillar, mat) stay filler that fits anywhere.
 - **`PROP_ROLES` is derived from the activities**, so there is one list, not two that drift.
 
-Junior and up get their own activities when their rank is repainted — the list in the story review session:
-banquet, dressing room, household shrine, garden court (junior); purification, offering, sanctuary, House of
-Life, star-watching (expert); treasury, audience, burial chamber, armoury (master); the weighing of the heart,
-Nut's sky, the sun barque, the primordial waters (wizard). **Weighing returns at the end**: goods in the
-merchant's storehouse, the heart before the gods — the same scale.
+Junior and up get their own activities when their rank is repainted. **The count grows by one per rank**, as the
+floors grow (designer, 2026-10-27): starter 5, junior 6, expert 7, master 8, wizard 9. The lists as they stand:
+purification, offering, sanctuary, House of Life, star-watching (expert); treasury, audience, burial chamber,
+armoury (master); the weighing of the heart, Nut's sky, the sun barque, the primordial waters (wizard) — each
+filled to its count at its repaint. **Weighing returns at the end**: goods in the merchant's storehouse, the heart
+before the gods — the same scale.
+
+### Junior — a nobleman's house
+
+Decided 2026-10-27. A New Kingdom noble kept no room for art: the art is the house, murals on every wall, so it is
+junior's ground and not an activity. Music belongs to the banquet. A reception hall is left to the ranks above, where the priest, the pharaoh and the gods each
+receive in their own way (one activity, each rank's own dressing); the bakery-brewery gives the house more of its
+own character.
+
+| Activity         | Props                                                                        | Wall                       |
+| ---------------- | ---------------------------------------------------------------------------- | -------------------------- |
+| banquet          | **banquetTable** (bread, fruit, wine jars), **harp**, jarRack (wine)         | hanging (a banquet frieze) |
+| dressing room    | **dressingTable** (copper mirror, kohl pots), **wigStand**, shelf (perfume)  | sconce (a mirror)          |
+| household shrine | shrine (Bes, Taweret), offeringTable (flowers), lamp                         | stela (a false door)       |
+| garden court     | basin (a lotus pool, copper rim), **pottedTree**, pillar (lotus column), mat | —                          |
+| bedroom          | **bed** (lion legs), **headrest**, chestProp (linen)                         | —                          |
+| bakery-brewery   | **grindstone**, **breadOven**, jarRack (beer)                                | —                          |
+
+Footprints (`DECORATION_FOOTPRINTS`): banquetTable, bed and the lotus pool 2×1; harp and pottedTree 1×1 with
+`tall: 1`; the rest 1×1. A kind stands in a room's middle only on a sized or floor place of a designed room the DSL
+lays over it (a prefab, `placePrefabs.ts`): the banquet table and the pool stand where its file draws them, the player
+walking round them. Every other kind stands against the north wall.
 
 ## 2. Who has the room: one purpose, by precedence
 
@@ -64,9 +86,11 @@ merchant's storehouse, the heart before the gods — the same scale.
 Two layers lie **over** any purpose rather than beside it: the site's **condition** (overgrowth, flooding —
 an overlay, exists) and a **ward pocket**, which is dressed in the rank it belongs to (exists).
 
-**Story rooms borrow an activity's set** so a scene has a place on the floor without new art: Fez's meeting on
-`starter_1` floor 0 is **selling** (he is the merchant who overpaid for a map), Ipi's tomb room is **ledger**.
-A scene that needs a thing of its own (the Sphinx inscription) gets its own prop — rare.
+**Story rooms are pinned prefabs** (`nodes: [{ room }]`): a scene happens in one designed room, dressed from an
+activity's kinds, with an `actor` place for its figure beside the stop. Fez's meeting on `starter_1` floor 0 is
+`fezStall`, a **selling** room (he is the merchant who overpaid for a map); Ipi's tomb room is `ipiLedger`, a
+**ledger** room among his jars. A scene that needs a thing of its own (the Sphinx inscription) gets its own prop —
+rare.
 
 ## 3. The carve dresses every chamber
 
@@ -76,6 +100,10 @@ A scene that needs a thing of its own (the Sphinx inscription) gets its own prop
   map. Puzzles stand in corridors and carry no prop; the entrance claims no floor and is bare. Props stay **out
   of the node's cell**, so a tap is never blocked.
 - Lead plus companion both come from the room's activity; the companion odds stay as they are.
+- **A prefab room dresses itself.** Where the DSL lays a designed room over a chamber (`rooms` on a floor or a
+  pyramid, `src/game/rooms/<tier>/*.room`), the file's places choose its props and wall items, not the activity's
+  pool. Starter names one room per activity (`STARTER_ROOMS` in `src/worldGen/spec/starter.ts`): the storeroom at
+  the ends of a floor, the packing room and the ledger room between, the weighing and selling rooms in its middle.
 - Changing the pools re-bakes `generatedWorld.ts` and the tier fingerprint; saves and runs are untouched
   (`world-spec-stability.md`: decorations are free fields).
 - **No rotation.** One sprite per prop, against the north wall. Facing other walls would cost 2–4 drawings per

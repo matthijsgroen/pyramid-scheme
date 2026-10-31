@@ -166,10 +166,14 @@ describe.each(FLOORS)("forced steps over $name", ({ make, minSound }) => {
       let kept = 0
       for (const grid of grids) {
         const walk = walkFloorLock(grid)!
-        const refused = refusal({ success: true, grid, attempt: 0 })
+        const refused = refusal({ success: true, grid, attempt: 0 }, make())
         if (walk.sound) {
           kept++
-          expect(refused).toBeNull()
+          // A sound walk is refused only for the next criterion: a placed lock on a floor holding no puzzle room at
+          // all has none on its way either.
+          const puzzleRooms = grid.cells.flat().filter(cell => cell.type === "room" && cell.pathIndex !== undefined)
+          const lockWithNothing = (make().locks?.length ?? 0) > 0 && puzzleRooms.length === 0
+          expect(refused?.criterion ?? null).toBe(lockWithNothing ? "lock holds an encounter" : null)
         } else expect(refused?.criterion).toBe("lock walks sound")
       }
       expect(kept).toBeGreaterThan(0)
@@ -276,7 +280,7 @@ describe("a floor on which no walk keeps the order", () => {
       const grid = carveLockFloor(freeRegions(lock), BINDING)
       const walk = walkFloorLock(grid)
       expect(walk && !walk.sound && walk.failure.type).toBe("goalUnreachable")
-      const refused = refusal({ success: true, grid, attempt: 0 })
+      const refused = refusal({ success: true, grid, attempt: 0 }, { locks: [{ lock: freeRegions(lock) }] })
       expect(refused?.criterion).toBe("lock walks sound")
       expect(refused?.detail).toContain("sequence order.P")
     },

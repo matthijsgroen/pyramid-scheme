@@ -1,5 +1,16 @@
 {
   "language": "Nederlands",
+  "saveUnreadable": {
+    "title": "Je voortgang kan niet geladen worden",
+    "body": "De browser geeft je opgeslagen spel nu niet vrij. Je save is niet weg: herlaad de pagina om het opnieuw te proberen.",
+    "banner": "Voortgang wordt niet opgeslagen. Tik om te herladen.",
+    "reload": "Herlaad",
+    "continue": "Speel verder zonder opslaan",
+    "reset": "Begin opnieuw (save wissen)",
+    "confirmReset": "Dit wist je hele save, en dat kan niet ongedaan worden. Opnieuw beginnen?",
+    "confirmResetYes": "Ja, wis mijn save",
+    "confirmResetNo": "Nee, terug"
+  },
   "difficulty": {
     "starter": "Beginner",
     "junior": "Junior",
@@ -34,7 +45,7 @@
     "description": "Beschrijving",
     "expedition": "Expeditie",
     "expeditionCompleted": "Expeditie Voltooid!",
-    "goBackToBase": "Terug naar basis",
+    "goBackToBase": "Terug naar het kamp",
     "backArrow": "←",
     "back": "← Terug",
     "floor": "Verdieping {{number}}",
@@ -55,19 +66,10 @@
     "blocked": {
       "carrying": "Niet te passeren met een steen"
     },
-    "travel": "Reizen",
-    "chooseYourJourney": "Kies je Expeditie",
     "backToMap": "Terug naar kaart",
-    "startAdventure": "Begin je avontuur door piramides te verkennen.",
     "continueExploration": "Ga door met het verkennen van de piramides.",
-    "continueExpedition": "Ga door met Expeditie",
     "startExpedition": "Start Expeditie",
-    "planExpedition": "Plan Expeditie",
-    "revisitExpedition": "Opnieuw bezoeken — kies een piramide",
-    "revisitTomb": "Opnieuw bezoeken — betreed de tombe",
-    "or": "Of",
     "webBuriedPercent": "Nog voor {{percent}}% bedolven",
-    "selectAnotherExpedition": "Selecteer een andere expeditie",
     "interruptExpedition": "Onderbreek expeditie",
     "confirmInterruptExpedition": "Weet je zeker dat je deze expeditie wilt onderbreken? Expeditie voortgang wordt bewaard, maar niveau voortgang gaat verloren!",
     "cancel": "Annuleren",
@@ -78,7 +80,6 @@
     "clearGameData": "Spelgegevens wissen",
     "confirmClearGameData": "Dit verwijdert permanent alle voortgang, items en verkende piramides. Dit kan niet ongedaan worden gemaakt.",
     "disableTutorials": "Tutorials uitschakelen",
-    "progressLevel": "Voortgang",
     "treasureTomb": "Schatlokatie",
     "requiresMapPieces": "Vereist kaartdelen",
     "mapPieces": "Kaartdelen",
@@ -95,7 +96,6 @@
     "newTombUnlocked": "Een nieuwe tombe is nu ontgrendeld",
     "tierComingSoonTitle": "{{tier}}-expedities zijn onderweg",
     "tierComingSoon": "Je hebt de sleutel, maar aan de {{tier}}-piramides wordt nog gebouwd. Ze komen in een latere update — tot die tijd opent je sleutel meer van de piramides die je al kent.",
-    "startJourney": "Start {{name}}",
     "answerNow": "Het antwoord is: ",
     "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
     "saveVersion": "· opslag v{{saveVersion}}",
@@ -115,10 +115,8 @@
     "canAttempt": "Je kunt proberen door te gaan.",
     "tooWeak": "Gevaarlijk zwak — een mislukte poging laat je met niets achter.",
     "attempt": "Val proberen",
-    "heal": "Gebruik verband",
-    "fullHeal": "Gebruik olie (volledig herstel)",
-    "disable": "Val uitschakelen",
-    "turnAround": "Omdraaien"
+    "turnAround": "Omdraaien",
+    "rested": "Uitgerust bij het vuur — weer helemaal fit"
   },
   "gate": {
     "title": "🔒 Gesloten Poort",
@@ -156,13 +154,8 @@
     "hieroglyphsDescription": "Heilige symbolen gegraveerd in de wanden van deze kamer. Hun betekenis vergroot je kennis van de oude wereld.",
     "mosaicPiece": "Mozaïekstuk",
     "mosaicPieceDescription": "Een glanzende glazen tegel, één stukje van een groot mozaïek. Leg het bij de andere en het verborgen beeld komt langzaam tot leven.",
-    "consumable": {
-      "bandage": "Verband",
-      "oil": "Genezende Olie",
-      "trapTool": "Valuitschakelaar"
-    },
-    "consumableFull": "Rugzak vol — {{item}} achtergelaten",
-    "packFull": "Rugzak vol"
+    "waterskin": "Waterzak",
+    "waterskinDescription": "Koel water. Je drinkt hem meteen leeg en voelt je wonden minder pijn doen."
   },
   "loot": {
     "youFound": "Je hebt gevonden",
@@ -180,8 +173,50 @@
     "soldOut": "Uitverkocht",
     "dismiss": "Vertrekken",
     "rareItems": "Zeldzame Vondsten",
-    "supplies": "Benodigdheden",
-    "sellSection": "Snuisterijen verkopen"
+    "sellSection": "Snuisterijen verkopen",
+    "haul": {
+      "coins_one": "+{{count}} munt",
+      "coins_other": "+{{count}} munten",
+      "note": "Losse munten onderweg"
+    }
+  },
+  "purchases": {
+    "donkey": {
+      "name": "Ezel",
+      "need": "Je hebt een ezel nodig",
+      "opens": "Draagt je spullen. Daarmee kun je de Expert-tochten op."
+    },
+    "cart": {
+      "name": "Kar",
+      "need": "Je hebt een kar nodig",
+      "opens": "Daar past het hele kamp op. Daarmee kun je de Meester-tochten op."
+    },
+    "camel": {
+      "name": "Kameel",
+      "need": "Je hebt een kameel nodig",
+      "opens": "Loopt dagen zonder water. Daarmee kom je bij het Binnenste Heiligdom."
+    },
+    "secondDonkey": {
+      "name": "Tweede ezel",
+      "need": "Je hebt een tweede ezel nodig",
+      "opens": "Nog meer sjouwkracht. Daarmee kun je de Tovenaar-tochten op."
+    },
+    "secondCamel": {
+      "name": "Tweede kameel",
+      "need": "Je hebt een tweede kameel nodig",
+      "opens": "Twee kamelen dragen genoeg water voor de Hal van Osiris."
+    },
+    "sturdyCart": {
+      "name": "Stevigere kar",
+      "need": "Je hebt een stevigere kar nodig",
+      "opens": "Breekt niet, ook niet op weg naar het Rijk der Kosmische Krachten."
+    },
+    "caravanBanner": {
+      "name": "Karavaanvaandel",
+      "opens": "Opent niks. Gewoon omdat hij mooi is."
+    },
+    "hint": "Fez verkoopt er een in {{place}}",
+    "devGrant": "Koop alle dieren"
   },
   "level": {
     "completed": "Niveau Voltooid!"
@@ -196,10 +231,29 @@
       "expert": "Het Licht Binnenlaten",
       "master": "De Groene Koning",
       "wizard": "De Veer en het Hart"
+    },
+    "entrance": {
+      "title": "Mozaïek",
+      "label": "Mozaïek {{found}}/{{total}}"
+    },
+    "haul": {
+      "pieces_one": "{{count}} mozaïekstukje",
+      "pieces_other": "{{count}} mozaïekstukjes",
+      "note": "Naar het glas-in-loodraam"
     }
   },
   "collection": {
-    "title": "Collectie",
+    "tabs": {
+      "treasures": "Schatten",
+      "hieroglyphs": "Hiërogliefen",
+      "stories": "Verhalen",
+      "junk": "Snuisterijen"
+    },
+    "tabsLabel": "Wat je verzameld hebt",
+    "tabNew_one": "{{label}} · {{count}} nieuw",
+    "tabNew_other": "{{label}} · {{count}} nieuw",
+    "empty": "Je kist is nog leeg",
+    "newLabel": "NIEUW",
     "clickForDetails": "Tik op een tegel voor details",
     "categories": {
       "deities": "🏺 Goden",
@@ -220,11 +274,9 @@
   },
   "detector": {
     "compassTitle": "Kompas",
-    "consumableTitle": "Voorraaddetector",
     "corridorTitle": "Verborgen gangen",
     "pickTarget": "Kies een hiëroglief om op te jagen in je collectie",
     "allCollected": "Alle stukken verzameld",
-    "noSkippedChests": "Geen overgeslagen kisten",
     "more": "+{{count}} meer",
     "corridorNearby": "Een verborgen gang is vlakbij",
     "corridorOnFloor": "Een verborgen gang wacht op deze verdieping",
@@ -1360,7 +1412,6 @@
   "story": {
     "invitation": "Praat",
     "log": {
-      "title": "Wat ons verteld is",
       "empty": "Nog niets. Fez gaat vast genoeg zeggen."
     },
     "speaker": {
@@ -1379,7 +1430,7 @@
       "cannot": "Je kent het teken dat hier hoort nog niet."
     },
     "sphinx": {
-      "wrong": "Het schrift onderaan, waar het zand steeds vanaf waait. Twee tekens nog scherp gehakt, en een lege plek waar het derde stond.",
+      "wrong": "Hetzelfde schrift als buiten, maar hier is het zand er nooit bij gekomen. Twee tekens nog scherp gehakt, en een lege plek waar het derde stond.",
       "fixed": "Dat is het, in zijn geheel.",
       "pick": "Zet het teken dat je bij je hebt in de lege plek.",
       "cannot": "Twee tekens die je kent, en een plek die je niet kunt vullen. Nog niet.",
@@ -1398,7 +1449,12 @@
     },
     "doorOpen": "{{way}} doorgang: open",
     "doorShut": "{{way}} doorgang: dicht",
-    "way": { "n": "Noordelijke", "e": "Oostelijke", "s": "Zuidelijke", "w": "Westelijke" }
+    "way": {
+      "n": "Noordelijke",
+      "e": "Oostelijke",
+      "s": "Zuidelijke",
+      "w": "Westelijke"
+    }
   },
   "handle": {
     "name": "De Hendel",
@@ -1490,10 +1546,157 @@
     "legendPins": "● hendel · ■ sleutel · klein = zijgang"
   },
   "camp": {
+    "title": "Kamp",
+    "continue": {
+      "heading": "Huidige expeditie",
+      "setOff": "Op pad",
+      "pyramid": "Piramide {{level}} van {{count}} · {{tier}}",
+      "tomb": "Graftombe · {{tier}}",
+      "empty": "Alles staat open op je kaart"
+    },
+    "hint_one": "{{count}} oude reis heeft iets nieuws te ontdekken",
+    "hint_other": "{{count}} oude reizen hebben iets nieuws te ontdekken",
+    "comingHome": {
+      "title": "Terug in het kamp",
+      "haulTitle": "Je buit van deze tocht",
+      "new": "NIEUW",
+      "unpack": "Uitpakken",
+      "toCamp": "Naar het kamp"
+    },
+    "chapter": {
+      "subtitle": "Nieuw hoofdstuk",
+      "title": "Er doemt een nieuwe piramide op",
+      "body": "{{tier}}-reizen staan open. Kom op adem in het kamp en ga op pad als je er klaar voor bent.",
+      "journeyNote": "Eerste {{tier}}-reis",
+      "later": "Later"
+    },
+    "close": "Sluiten",
     "entrance": {
       "collection": "Verzameling",
       "mosaic": "Mozaïek",
       "journeys": "Alle reizen"
     }
+  },
+  "home": {
+    "haul": {
+      "times": "×{{count}}"
+    }
+  },
+  "journeys": {
+    "tierNeed": "Vind deze schat",
+    "tierProgress": "{{done}} van {{total}} klaar",
+    "tierLockedName": "{{tier}}-reizen",
+    "toggleTier": "Toon of verberg de {{tier}}-reizen",
+    "now": "NU",
+    "newDot": "Iets nieuws te ontdekken",
+    "noteCurrentPyramid": "Bezig · piramide {{level}} van {{count}}",
+    "noteCurrentTomb": "Bezig · in de graftombe",
+    "noteFinished": "Voltooid",
+    "noteFinishedNews": "Voltooid · iets nieuws te ontdekken",
+    "noteOpen": "Nog niet geweest",
+    "noteResumePyramid": "Eerder begonnen · piramide {{level}} van {{count}}",
+    "noteResumeTomb": "Eerder begonnen · in de graftombe",
+    "needProgress": "{{unit}}: {{found}} van {{required}}",
+    "showStops": "Toon de plekken van {{name}}",
+    "stopPyramid": "Piramide",
+    "stopTomb": "Plek"
+  },
+  "newVersion": {
+    "title": "Een nieuwe versie!",
+    "name": "Het spel is flink veranderd",
+    "body": "Daarom begint je reis opnieuw. Er wachten nieuwe tombes, vondsten en een kamp om op te bouwen."
+  },
+  "devPrefabPreview": {
+    "firstDoor": "Naar de eerste deur",
+    "stop": "Naar de stopplek",
+    "secondDoor": "Naar de tweede deur",
+    "doorsInUse_one": "{{count}} deur in gebruik",
+    "doorsInUse_other": "{{count}} deuren in gebruik",
+    "walled": "{{count}} dichtgemetseld"
+  },
+  "devRoomEditor": {
+    "title": "Kamer-editor",
+    "open": "Kamer-editor",
+    "close": "Sluiten",
+    "tier": "Niveau",
+    "catalogue": "Open een kamer",
+    "notation": "Kamernotatie",
+    "copyLink": "Link kopiëren",
+    "copyText": "Tekst kopiëren",
+    "copied": "Gekopieerd",
+    "failed": "Kopiëren naar het klembord mislukt",
+    "palette": "Palet",
+    "unpainted": "nog niet getekend",
+    "layout": "Indeling",
+    "mirrored": "(gespiegeld)",
+    "fill_one": "Invulling ({{count}} keuze)",
+    "fill_other": "Invulling ({{count}} keuzes)",
+    "fromDoor": "Loop van",
+    "toDoor": "Loop naar",
+    "automatic": "Automatisch",
+    "direction": {
+      "n": "Noorddeur",
+      "e": "Oostdeur",
+      "s": "Zuiddeur",
+      "w": "Westdeur"
+    },
+    "checks": "Controles",
+    "sound": "De kamer doorstaat de controles",
+    "tierDisagrees": "De kop zegt niveau {{header}}, hier getekend in {{picked}}",
+    "undo": "Ongedaan maken",
+    "drawing": "Tekening",
+    "tool": {
+      "select": "Kiezen",
+      "wall": "Muur",
+      "floor": "Vloer",
+      "door": "Deurplek",
+      "stop": "Stopplek",
+      "chest": "Kist",
+      "portal": "Portaal",
+      "mechanism": "Mechaniek",
+      "erase": "Wissen",
+      "copy": "Teken {{letter}}"
+    },
+    "againstWall": "Neergezette voorwerpen staan tegen de noordmuur",
+    "dropHint": "Sleep een paletvak op een vakje; het neemt zijn eigen maat",
+    "newLayout": "Naam nieuwe indeling",
+    "addLayout": "Kopieer als indeling",
+    "inspector": {
+      "title": "Plek {{letter}}",
+      "optional": "Optioneel",
+      "kinds": "Soorten",
+      "counted": "Vul er maar enkele",
+      "take": "Neem",
+      "of": "van",
+      "per": "per",
+      "perNone": "elk op zich",
+      "drawAnother": "Nog een tekenen",
+      "close": "Sluiten"
+    },
+    "refused": {
+      "notFree": "Niet op vrije vloer binnen de kamer",
+      "wallRow": "Een muurplek staat op de eerste rij binnen de noordmuur",
+      "northWall": "Een muurvoorwerp hangt aan de noordmuur",
+      "floorOnRing": "Op de buitenrand horen alleen muren en deurplekken",
+      "doorInside": "Een deurplek staat op de buitenrand",
+      "keepStop": "De stopplek blijft: zet hem ergens anders neer om hem te verplaatsen",
+      "noLetter": "Alle letters zijn al gebruikt",
+      "layoutName": "Geef de indeling een naam die nog geen andere indeling heeft",
+      "notation": "De notatie weigert het: {{message}}"
+    },
+    "layer": {
+      "wall": "tegen de muur",
+      "floor": "vloer",
+      "ground": "grond",
+      "wallItem": "muurvoorwerp"
+    },
+    "cell": "Vakje {{row}},{{col}}: {{what}}",
+    "cellWhat": {
+      "wall": "muur",
+      "floor": "vrije vloer",
+      "door": "deurplek",
+      "place": "{{letter}}, {{kinds}}"
+    },
+    "rewrites": "Tekenen herschrijft de tekst: elk commentaar gaat naar boven"
   }
 }

@@ -56,15 +56,19 @@ export const controlAtIndex = (
 
 /**
  * Every junction a branch hangs from, in the order the rooms are written: the route's, then a laid chain's,
- * then a laid junction whose only side arm closes a loop and so hangs no chain of its own.
+ * then a laid junction whose only side arm closes a loop and so hangs no chain of its own. A designed room's ports are
+ * no forks: its ways part on its own floor, at its anchor.
  */
 export const forkPositions = (state: Pick<Required<CarveState>, "branches" | "lay">): ReadonlySet<string> => {
   const laid = state.lay?.laid
-  return new Set([
-    ...state.branches.groups.map(g => keyOf(g.attachedAt)),
-    ...(laid?.chains ?? []).flatMap(chain => (chain.attachedAt ? [keyOf(chain.attachedAt)] : [])),
-    ...(laid?.junctions ?? []).map(junction => junction.cell),
-  ])
+  const roomFloor = new Set((laid?.blocks ?? []).flatMap(block => block.nodes.filter(node => node !== block.anchor)))
+  return new Set(
+    [
+      ...state.branches.groups.map(g => keyOf(g.attachedAt)),
+      ...(laid?.chains ?? []).flatMap(chain => (chain.attachedAt ? [keyOf(chain.attachedAt)] : [])),
+      ...(laid?.junctions ?? []).map(junction => junction.cell),
+    ].filter(key => !roomFloor.has(key))
+  )
 }
 
 /** The region-barrier door a lock laid on each cell, by the cell it stands on. */

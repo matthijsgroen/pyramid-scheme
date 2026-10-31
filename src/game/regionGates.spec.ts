@@ -316,9 +316,9 @@ const cellAt = (grid: FloorGrid, requiredKeyId: string): string => {
 // a genuine second way into "vault" (one not merely the seam's own connector cell reported under its
 // own coordinate — connectors take their `region` tag from whichever endpoint node sorts lower, so the
 // seam sometimes surfaces one cell over from the gate room itself; that is not a second entrance). With
-// the registration restored, 0 of 60 seeds leaked. Seed 4 is pinned because it is clean either way: with
-// the registration in place `waysIn` is exactly the gate room, and with it removed `waysIn` gains
-// "10,7" — two full node-widths from the gate room, so not the seam connector.
+// the registration restored, 0 of 60 seeds leaked. Seed 15 is pinned because `waysIn` reads exactly the gate
+// room there, and it fails under broken code: with `crossesNoDoor` forced to `return true` the carve moves and
+// `waysIn` reads "1,8" instead of the gate room at "0,8".
 const bigGatedFloor = (): FloorConfig => ({
   pathPuzzles: 10,
   difficulty: "starter",
@@ -343,7 +343,7 @@ const bigGatedFloor = (): FloorConfig => ({
     },
   ],
 })
-const PINNED_SEED = 4
+const PINNED_SEED = 15
 
 describe("what a gated region shuts off", () => {
   it("has exactly one way in, and it is the gate room", () => {
@@ -380,15 +380,14 @@ const bigTwoGatesFloor = (): FloorConfig => ({
 })
 // hall sits between two gates, so ONE of its two boundary connectors always reads as "hall" under
 // `waysIn`'s own "whichever endpoint sorts lower" convention (see the comment above bigGatedFloor) —
-// swept seeds 0-99: vault clean 44/100, hall clean 0/100, in this fixture and in `twoGatesFloor()`'s
-// smaller one alike. That is a limitation of reading a boundary off a corridor's `region` tag, not of
-// the carve, and it cannot be dodged by seed choice. Checking vault alone still proves the guard this
-// test exists for: a rejoin crossing hall's {gA} into vault's {gA,gB} can only ever surface as an
-// extra vault entrance, which this would catch. Seed 6 is one of the 44 clean ones, and — like seed 4
-// above — it is pinned because it demonstrably leaks under broken code, not because it happened to be
-// green: with `crossesNoDoor` forced to `return true`, `waysIn(grid, "vault")` gains "12,2" alongside
-// the gate room at "12,0".
-const PINNED_SEED_TWO_GATES = 6
+// swept seeds 0-39: vault clean 15/40 in this fixture. That is a limitation of reading a boundary off a
+// corridor's `region` tag, not of the carve, and it cannot be dodged by seed choice. Checking vault alone
+// still proves the guard this test exists for: a rejoin crossing hall's {gA} into vault's {gA,gB} can only
+// ever surface as an extra vault entrance, which this would catch. Seed 82 is a clean one, and — like seed 4
+// above — it is pinned because it demonstrably leaks under broken code, not because it happened to be green:
+// with `crossesNoDoor` forced to `return true`, `waysIn(grid, "vault")` gains "7,2", "7,4" and "8,1"
+// alongside the gate room at "8,0".
+const PINNED_SEED_TWO_GATES = 82
 
 describe("two gated regions in sequence", () => {
   it("gives the far region exactly one way in, and it is its own gate room", () => {

@@ -12,7 +12,7 @@ type RecorderArgs = {
   grid: FloorGrid | null
 }
 
-// Persists the per-floor "still stuff to find here" summary the Travel marker reads. The pure
+// Persists the per-floor "still stuff to find here" summary the journeys list reads. The pure
 // classification (loot nodes / key-gated nodes / fogged corridors, keys-and-gates only, no mod names)
 // lives in floorExploration.ts and is unit-tested there.
 //

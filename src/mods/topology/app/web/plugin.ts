@@ -1,3 +1,4 @@
+import { useModState } from "@/app/state/useModState"
 import { z } from "zod"
 import { registerHeldKeysProvider } from "@/app/SiteMap/keyProviders"
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
@@ -43,7 +44,10 @@ if (isModEnabled("topology")) {
     const { pull } = useWebPulled(WORLD_ACTIVATORS)
     return { effects: { [WEB_ACTIVATOR]: reward => pull(webActivatorSchema.parse(reward).name) } }
   })
-  registerHeldKeysProvider(() => useWebPulled(WORLD_ACTIVATORS).heldKeys)
+  registerHeldKeysProvider(
+    () => useWebPulled(WORLD_ACTIVATORS).heldKeys,
+    () => useModState("topology", {})[2]
+  )
   // A pyramid whose exit waits on sand is buried on the travel map; the journey's card counts the levers pulled.
   registerJourneyContribution(() => {
     const { heldKeys } = useWebPulled(WORLD_ACTIVATORS)

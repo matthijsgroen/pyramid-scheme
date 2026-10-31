@@ -7,6 +7,8 @@ import { revealMaskStyle } from "@/ui/atoms/revealMask"
 
 type HieroglyphTileProps = {
   symbol?: string
+  /** A painted picture standing where the glyph would; the symbol still picks the stone's chipped edge. */
+  imageUrl?: string
   difficulty?: Difficulty
   size?: "sm" | "md" | "lg"
   selected?: boolean
@@ -78,6 +80,7 @@ const shadowTexture = `
 
 export const HieroglyphTile: FC<HieroglyphTileProps> = ({
   symbol,
+  imageUrl,
   difficulty,
   size = "md",
   selected = false,
@@ -215,7 +218,10 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
         {/* Stone surface with hieroglyph — while fragments are still missing, the always-visible
             white overlay above carries the glyph instead, so this doesn't double up with it under
             the reveal sweep. */}
-        {!fragmentProgress && (
+        {!fragmentProgress && imageUrl && (
+          <img src={imageUrl} alt="" draggable={false} className="relative size-full object-contain p-1 select-none" />
+        )}
+        {!fragmentProgress && !imageUrl && (
           <span
             className="relative flex size-full items-center justify-center font-mono select-none"
             style={{

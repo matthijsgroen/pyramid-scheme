@@ -1,3 +1,4 @@
+import { useModState } from "@/app/state/useModState"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
@@ -23,9 +24,8 @@ import { HIEROGLYPH_REQUIRED } from "../game/hieroglyphData"
 // hieroglyph's app entrypoint (side-effect): the tableau family plugin + the Collection section
 // (both self-gated in their own files), plus the gated reward/detector registrations:
 // - the reward contribution: a fragment pickup adds to the mod's own collection (effect), and an
-//   already-collected fragment is SILENTLY skipped (skip, not canAccept — you own it, nothing to
-//   do; it's not a "come back later" refusal like a full consumable pack) — both read the mod's
-//   own state, so core never names `hieroglyphFragment`.
+//   already-collected fragment is SILENTLY skipped (you own it, nothing to do) — both read the
+//   mod's own state, so core never names `hieroglyphFragment`.
 // - the compass detector scanner: finds uncollected fragment locations for a target hieroglyph.
 if (isModEnabled("hieroglyph")) {
   registerHieroglyphRewardDisplay()
@@ -68,7 +68,10 @@ if (isModEnabled("hieroglyph")) {
   // Completed hieroglyphs are held keys (`hieroglyph:${id}`), so a tableau the player can now solve
   // reads as unlocked content on the travel screen — same seam the tomb-treasure mod uses for ward
   // keys. Core never learns these are hieroglyphs; a tableau node just exposes them as requiredKeyIds.
-  registerHeldKeysProvider(() => useHieroglyphProgress().completedHieroglyphKeys)
+  registerHeldKeysProvider(
+    () => useHieroglyphProgress().completedHieroglyphKeys,
+    () => useModState("hieroglyph", {})[2]
+  )
 
   // Without every hieroglyph, jumping to a late tomb hits a wall of unfillable tableau formulas.
   registerDevGrants(() => {

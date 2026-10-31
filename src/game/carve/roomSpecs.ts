@@ -1,7 +1,7 @@
 import { DEFAULT_CONTROL_ROLE } from "../encounterFallback"
 import { roomDifficulty, roomTileset } from "../roomDifficulty"
 import type { EncounterResolution } from "../siteAssembler"
-import type { KeyColor, MechanismRecord, SideSection, SubSection } from "../siteTypes"
+import type { KeyColor, MechanismRecord, SideSection, StairGoes, StairLink, SubSection } from "../siteTypes"
 import type { StatefulControl } from "../obstacles"
 import { torchRecord } from "../mechanics/torch"
 import { gateKeyOf, nid, stairOnThisFloor } from "./ids"
@@ -100,6 +100,7 @@ export const puzzleRoomSpec = (
   const { resolveEncounter, resolveKeyRequirements, resolveBoardIndex, floorRef } = prep.input
   const reward = section.rewards?.[pi]
   const authoredActivity = section.activitiesByIndex?.[pi]
+  const pinnedPrefab = section.prefabsByIndex?.[pi]
   const override = section.encountersByIndex?.[pi]
   const family =
     override !== undefined ? resolveEncounter(override, "puzzle") : resolveEncounter(section.encounter, "puzzle")
@@ -129,8 +130,14 @@ export const puzzleRoomSpec = (
     ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
     ...(reward ? { reward } : {}),
     ...(authoredActivity ? { authoredActivity } : {}),
+    ...(pinnedPrefab ? { pinnedPrefab } : {}),
   }
 }
+
+/** Which way a stairhead runs: its link's `goes`, else the default for where it stands (a floor's entrance goes up,
+ * every other stair down). */
+export const stairGoesOf = (link: string | StairLink | undefined, byDefault: StairGoes): StairGoes =>
+  (typeof link === "object" ? link.goes : undefined) ?? byDefault
 
 /** A side section's last room: the chest handing out keys it hosts, a stairhead, a shop or its end reward. */
 export const endRoomSpec = (
@@ -153,7 +160,7 @@ export const endRoomSpec = (
   if (section.end === "staircase" || typeof section.end === "object") {
     const stairId =
       typeof section.end === "object" ? section.end.stairId : stairOnThisFloor(prep.input.floorRef, positional)
-    return { roomType: "portal", stairId }
+    return { roomType: "portal", stairId, stairGoes: stairGoesOf(section.end, "down") }
   }
   // A shop is a chain whose resolved encounter is fez-shop (a pathPuzzles:0 node — no chain of
   // its own, so `encounter` describes this end node). It renders its `rewards[]` as buyable

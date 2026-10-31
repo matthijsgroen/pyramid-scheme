@@ -17,12 +17,7 @@
   },
   "expeditionCompleted": "Gefeliciteerd met het voltooien van de expeditie!",
   "expeditionCompleted2": "Een nieuwe expeditie is nu beschikbaar.",
-  "collectionIntro": "Tijdens onze expedities hebben we enkele items gevonden!",
-  "collectionIntro2": "Je kunt ze nader inspecteren op je Collectie scherm.",
-  "collectionIntro3": "Veeg/scroll naar rechts om je collectie te zien.",
 
-  "tombIntro": "Daar! De verborgen tombe! We hebben hem echt gevonden!",
-  "tombIntro2": "En misschien ligt er wel een schat. Misschien!",
 
   "tombTutorial": "Ooh, tekst! Kunnen we dat lezen? Met de hiërogliefen die we gevonden hebben… misschien!",
   "tombTutorial2": "Kijk nou, sommen met tekens erin! Zie je die lege plekjes? Daar gaan de hiërogliefen in. Die van jou, hieronder.",
@@ -44,12 +39,15 @@
   "tombLoot": "Wauw, onze eerste schat! Goed bezig!",
   "mapPiece": "Kijk! DÁT is pas een kaart. Echt oud! Meer waard dan die van ons samen!",
   "mapPiece2": "Maar het is maar een stukje, hè. Elke expeditie hier in de buurt verbergt er één, en samen wijzen ze naar een tombe.",
+  "mapComplete": "Hij is heel! Kijk dan, alle stukjes passen precies.",
+  "mapComplete2": "Daar, waar alle lijnen samenkomen. Daar ligt een tombe.",
+  "mapComplete3": "Hij staat nu bij onze reizen. Gaan we kijken?",
   "mapPiece3": "Hou maar bij in de lijst met expedities hoeveel we er hebben. Ik tel in elk geval mee!",
 
   "mosaicIntro": "Ooh, gekleurd glas! Kijk hoe dat glinstert — DÁT gooi je niet weg!",
   "mosaicIntro2": "Het hoort bij een plaatje. Een heel raam vol glas, en elk stukje dat we vinden brengt er weer wat van terug.",
-  "mosaicIntro3": "Dat raam staat rechts van de kaart, voorbij onze collectie. Zet de stukjes daar in — ik wil het zien!",
-  "mosaicReminder": "Psst! Die glazen stukjes rammelen nog steeds in onze tas. Het raam staat net voorbij de collectie — zullen we ze erin zetten?",
+  "mosaicIntro3": "Heb jij geen kamp ergens? Neem ze mee, dan zetten we ze daar in elkaar. Ik wil zien wat het wordt!",
+  "mosaicReminder": "Psst! Die glazen stukjes rammelen nog steeds in onze tas. Zullen we ze in het raam in het kamp zetten?",
 
   "mosaicStarter": "Een kat in de deuropening, en een slang die er haastig vandoor gaat. Dat was een schaaltje melk waard.",
   "mosaicStarter2": "Egyptenaren waren dol op katten, precies hierom — die doodden de slangen en de ratten die in het graan kwamen.",
@@ -79,7 +77,7 @@
   "shopFirstVisit2": "Alles op deze toonbank heb ik ergens vandaan gedragen. Die daar komt van twee graven terug.",
 
   "shopArrival": "Ah, mijn kraam! Even uitstallen wat ik onderweg heb opgepikt.",
-  "shopArrival2": "Zeldzame vondsten kosten het meest, maar ik heb ook alledaagse spullen — en ik betaal je voor snuisterijen die je meedraagt.",
+  "shopArrival2": "Zeldzame vondsten kosten het meest, maar ik betaal je voor snuisterijen die je meedraagt.",
   "arrival": {
     "starter_1": {
       "1": { "explorer": "Kijk, daar achter! De Sfinx!" },
@@ -359,6 +357,337 @@
       "1": { "fez": "Even stilstaan. Kijk eens wat we allemaal uit die piramides omhoog hebben gedragen." },
       "2": { "explorer": "Het is een afbeelding." },
       "3": { "fez": "Het is de hele tijd al een afbeelding geweest." }
+    }
+  },
+
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Een grot! Op de kaart stond een kelderdeur, en dit is een hele heuvel!" },
+      "2": { "fez": "Slimme vent. Je voorraad in een heuvel verstoppen, daar komt geen dief op." },
+      "3": { "explorer": "Wij wel." },
+      "4": { "fez": "Wij zijn geen dieven. Wij zijn klanten. Héle late klanten." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Hier moet het zijn. Henut! Die van de elf deben lapis!" },
+      "2": { "fez": "Wat denk je, mogen we een procentje houden als we het innen?" },
+      "3": { "explorer": "Je hebt nog niks geïnd." },
+      "4": { "fez": "Ik reken alvast." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Dus hier zit die priester van Henut. Onuitstaanbaar, zei ze." },
+      "2": { "fez": "Wat denk jij, moeten we iets meenemen? Bloemen?" },
+      "3": { "explorer": "Hij is dood." },
+      "4": { "fez": "Juist daarom. Je wilt toch een goeie eerste indruk maken." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Hier mocht alleen de hogepriester naar binnen. En nu wij!" },
+      "2": { "explorer": "Mogen wij dat?" },
+      "3": { "fez": "Er staat niemand bij de deur om nee te zeggen." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Kijk, hier houdt de kaart gewoon op. Zand, en dan niks meer." },
+      "2": { "explorer": "Dan zitten we goed." },
+      "3": { "fez": "Dat bedoel ik nou. Daar word ik juist zenuwachtig van." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "De hal van Osiris! Groen, natuurlijk. Omdat hij elk jaar terugkomt, net als het graan." },
+      "2": { "explorer": "Dat wist je altijd al." },
+      "3": { "fez": "Altijd al." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "fez": "De voorraadkamer van de goden! Wat sla je op als je al alles hebt?" },
+      "2": { "explorer": "Wat mensen je brengen." },
+      "3": { "fez": "…Ja. Dat zal het zijn." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Rijk der Kosmische Krachten. Zo, zo." },
+      "2": { "fez": "Als ik iets moest verkopen dat niks voorstelde, zou ik het ook zo noemen." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Ik heb ineens het gevoel dat ik iets fout heb gedaan." },
+      "2": { "explorer": "Wat dan?" },
+      "3": { "fez": "Weet ik niet. Dat is nou juist het ergste." }
+    }
+  },
+
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Al die hendels en deuren, voor één kelder!" },
+      "2": { "fez": "Dan ligt er wat goeds, hoor. Niemand doet zoveel moeite voor rommel." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Pff. Die deuren waren heel wat lastiger dan bij Ipi." },
+      "2": { "fez": "Tja. Mevrouw had natuurlijk geld." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Hè hè, eindelijk! Die grot wilde ons er echt niet in hebben." },
+      "2": { "explorer": "Dat was ook de bedoeling, denk ik." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Psst… Waarom fluister ik eigenlijk?" },
+      "2": { "explorer": "Geen idee. Ik doe het ook." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Pfoe. Mijn staart trilt nog van die laatste deur." },
+      "2": { "fez": "Een koning die z'n spullen zó opbergt… die wil ze echt niet kwijt." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Zie je wel. Zit je maar lang genoeg onder de grond, dan kom je vanzelf weer boven." },
+      "2": { "explorer": "Is dat ook van Osiris?" },
+      "3": { "fez": "Nee, die is van mij." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "fez": "Zulke deuren… daar waren we vroeger gewoon voor omgedraaid." },
+      "2": { "explorer": "Nu niet meer." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Drie verdiepingen grot, en dán pas de voordeur." },
+      "2": { "explorer": "Dan is het vast de moeite waard." },
+      "3": { "fez": "Dat zeggen ze altijd. En dan is het een kruik." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Laatste stuk donker. Dat voel ik gewoon." },
+      "2": { "explorer": "Dat zei je bij de vorige ook." },
+      "3": { "fez": "En toen had ik bijna gelijk." }
+    }
+  },
+
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Kijk dan! Een piramide, onder de grond! Voor een handelaar!" },
+      "2": { "fez": "Die heeft óf heel goed verdiend, óf heel goed afgedongen." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Kijk die punt eens glimmen in de zon! Echt goud, wedden?" },
+      "2": { "explorer": "In een gat in de grond. Voor wie glimt dat dan?" },
+      "3": { "fez": "Voor haar. Zo'n type is het, dat zie je zo." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Hm. Mag je eigenlijk iets verkopen wat al van een god is?" },
+      "2": { "explorer": "Vraag het de god." },
+      "3": { "fez": "Liever niet." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Zou die priester weten dat we hier rondlopen?" },
+      "2": { "explorer": "Hij houdt niks bij. Dat zou onprofessioneel zijn." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Kijk hem staan, helemaal alleen in de zon. Mooi, hè?" },
+      "2": { "fez": "Zullen we gewoon een tekening maken en weer gaan?" },
+      "3": { "explorer": "Je kunt niet tekenen." },
+      "4": { "fez": "…Nee. Naar binnen dan maar." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Wie daarin ligt, rekent erop dat hij terugkomt. Dat is hier de afspraak." },
+      "2": { "explorer": "Hoe lang wacht hij al?" },
+      "3": { "fez": "Lang. Maar dat hoort bij het vak, hè. Dood zijn is vooral wachten." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "explorer": "Wauw." },
+      "2": { "fez": "Ja." },
+      "3": { "fez": "Soms valt er gewoon niks meer bij te zeggen, hè." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Zie je die vlek zon op de piramide? Daar kun je zo de tijd op aflezen." },
+      "2": { "explorer": "Hoe laat is het dan?" },
+      "3": { "fez": "…Middag. Zo ongeveer. Ik ben geen klok, hè." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Daar is hij. Alle lijnen op die kaart komen hier uit." },
+      "2": { "explorer": "Dan is dit het eind." },
+      "3": { "fez": "Van de kaart, ja. Raar. Ik dacht dat dat beter zou voelen." }
+    }
+  },
+
+  "camp": {
+    "firstHome": {
+      "1": { "fez": "Is dít je kamp? Een vuurtje en een kist?" },
+      "2": { "explorer": "Ons kamp." },
+      "3": { "fez": "Ons. Goed. Dan wil ik wel het plekje vlak bij het vuur." },
+      "4": { "fez": "Ik ben nou eenmaal een hagedis. Als het mij uitkomt." }
+    },
+    "homeHaul": {
+      "1": { "fez": "Uitpakken! Het mooiste stuk van de hele reis." },
+      "2": { "explorer": "Mooier dan de piramide?" },
+      "3": { "fez": "Die piramide is niet van ons. Dit wel." }
+    },
+    "homeEmpty": {
+      "1": { "explorer": "Lege handen." },
+      "2": { "fez": "Nou en? We hebben gelopen. Dat telt ook." },
+      "3": { "explorer": "Waarvoor?" },
+      "4": { "fez": "Voor mijn benen. Die zijn heel kort, hè." }
+    },
+    "rested": {
+      "1": { "fez": "Zo. Gaat het weer een beetje?" },
+      "2": { "explorer": "Het was maar een schrammetje." },
+      "3": { "fez": "Ik heb niet eens gekeken. En toch moest ik even zitten." }
+    },
+    "chapterJunior": {
+      "1": { "fez": "Nou, dat hebben we mooi gedaan. Volgende!" },
+      "2": { "explorer": "Zo makkelijk ging het niet." },
+      "3": { "fez": "Achteraf wel. Achteraf gaat alles makkelijk." }
+    },
+    "chapterExpert": {
+      "1": { "fez": "Daar verderop zitten valstrikken. Echte, die bijten." },
+      "2": { "fez": "Raak je gewond? Dan lopen we gewoon terug. Thuis knap je wel weer op." },
+      "3": { "explorer": "En jij dan?" },
+      "4": { "fez": "Ik loop achter je. Daar is het veiliger." }
+    },
+    "chapterMaster": {
+      "1": { "fez": "Vier piramides, daarginds. Weet je nog, toen er maar één stond?" },
+      "2": { "explorer": "Zo lang is dat niet geleden." },
+      "3": { "fez": "Nee. Toch voelt het zo." }
+    },
+    "chapterWizard": {
+      "1": { "fez": "Moet je die laatste zien. Met een gouden punt!" },
+      "2": { "fez": "Die gaat ons wat kosten. De laatste kost altijd het meest." },
+      "3": { "explorer": "Wat dan?" },
+      "4": { "fez": "…Weet ik eigenlijk niet meer." }
+    },
+    "firstFind": {
+      "1": { "fez": "Kijk eens, het staat er alsof het er altijd al stond!" },
+      "2": { "fez": "Ik krijg zin om er een prijskaartje aan te hangen." },
+      "3": { "explorer": "Niet doen." },
+      "4": { "fez": "Nee, nee. Thuis verkoop je niks. Dat weet ik heus." }
+    },
+    "structureDone": {
+      "1": { "fez": "Het is af! Alle stukjes zitten erin!" },
+      "2": { "explorer": "Zelf gebouwd." },
+      "3": { "fez": "Nou ja. Ik heb vooral gewezen." }
+    }
+  },
+
+  "animal": {
+    "forSale": {
+      "1": { "fez": "Kijk eens wat ik in de kraam heb! Vanaf nu verkoop ik ook vervoer." },
+      "2": { "explorer": "Het staat te kauwen." },
+      "3": { "fez": "Dat zit bij de prijs in." }
+    },
+    "boughtDonkey": {
+      "1": { "fez": "Verkocht! Eén ezel. Koppig, maar hij draagt alles." },
+      "2": { "explorer": "Waar is hij dan?" },
+      "3": { "fez": "Al op weg naar huis. Hij loopt liever zonder ons." }
+    },
+    "blockedDonkey": {
+      "1": { "fez": "Zo ver lopen wij niet, met al die spullen. Daar hoort een ezel bij." },
+      "2": { "fez": "En wie heeft er eentje staan? Ik. In mijn kraam bij Henut." }
+    },
+    "throughDonkey": {
+      "1": { "explorer": "Hij wil wel." },
+      "2": { "fez": "Vandaag. Morgen hebben we het er weer over." }
+    },
+    "arrivesDonkey": {
+      "1": { "fez": "Daar staat hij! Hij was er eerder dan wij." },
+      "2": { "explorer": "Het vuur heeft hij ook al gevonden." },
+      "3": { "fez": "Mijn plekje. Nou ja. Hij was eerst." }
+    },
+    "boughtCart": {
+      "1": { "fez": "Een kar! Twee wielen, en ze rammelen bijna niet." },
+      "2": { "explorer": "Bijna?" },
+      "3": { "fez": "Dat rammelen krijg je er gratis bij." }
+    },
+    "blockedCart": {
+      "1": { "fez": "De ezel draagt geen tas meer. Ik heb het hem gevraagd." },
+      "2": { "fez": "Een kar, dat hebben we nodig. Ik heb er een in mijn kraam, bij de hogepriester." }
+    },
+    "throughCart": {
+      "1": { "explorer": "Hoor je dat?" },
+      "2": { "fez": "Dat is de kar. Hij zingt een beetje." },
+      "3": { "explorer": "De hele weg?" }
+    },
+    "arrivesCart": {
+      "1": { "fez": "Een kar bij ons kamp! Nu zien we eruit alsof we ergens heen gaan." },
+      "2": { "explorer": "We gaan ook ergens heen." },
+      "3": { "fez": "Ja, maar nu ziet iedereen het." }
+    },
+    "boughtCamel": {
+      "1": { "fez": "Een kameel! Die loopt dagen zonder water. Ik niet, hoor." },
+      "2": { "explorer": "Hij kijkt naar je." },
+      "3": { "fez": "Op me neer. Kamelen kijken altijd op je neer." }
+    },
+    "blockedCamel": {
+      "1": { "fez": "Het Binnenste Heiligdom? Daar komen we te voet nooit." },
+      "2": { "fez": "Toevallig heb ik een kameel. In mijn kraam, bij de hogepriester." }
+    },
+    "throughCamel": {
+      "1": { "fez": "Hij knielt! Voor mij!" },
+      "2": { "explorer": "Om op te stappen." },
+      "3": { "fez": "Laat me nou even." }
+    },
+    "arrivesCamel": {
+      "1": { "fez": "Daar staat hij. Hij doet alsof het kamp van hem is." },
+      "2": { "explorer": "En de ezel?" },
+      "3": { "fez": "Die doet alsof hij hem niet ziet. Net als ik." }
+    },
+    "boughtSecondDonkey": {
+      "1": { "fez": "Nog een ezel! Dan heeft de eerste eindelijk iemand om mee te praten." },
+      "2": { "explorer": "Praten?" },
+      "3": { "fez": "Balken. Dat is praten, maar harder." }
+    },
+    "blockedSecondDonkey": {
+      "1": { "fez": "De ezel wil niet verder. Niet alleen, zegt hij." },
+      "2": { "explorer": "Zegt hij dat?" },
+      "3": { "fez": "Ik versta ezel. Hij wil een maatje, en bij de farao heb ik er een in de kraam." }
+    },
+    "throughSecondDonkey": {
+      "1": { "fez": "Hoor ze! Ze balken om het hardst." },
+      "2": { "explorer": "Wie wint er?" },
+      "3": { "fez": "Wij niet. Wij moeten het aanhoren." }
+    },
+    "arrivesSecondDonkey": {
+      "1": { "fez": "Kijk ze nou staan. Alsof ze elkaar al jaren kennen." },
+      "2": { "explorer": "Net als wij." },
+      "3": { "fez": "Wij balken minder." }
+    },
+    "boughtSecondCamel": {
+      "1": { "fez": "Nog een kameel. Ja. Ik vind ze ook niet aardig." },
+      "2": { "fez": "Maar deze kijkt tenminste vriendelijk." },
+      "3": { "explorer": "Hij kijkt naar je fez." }
+    },
+    "blockedSecondCamel": {
+      "1": { "fez": "De Hal van Osiris. Met één kameel komen we daar niet." },
+      "2": { "fez": "Gelukkig heb ik er nog een, bij de farao in de kraam. Mijn allerlaatste." },
+      "3": { "explorer": "Dat zeg je altijd." }
+    },
+    "throughSecondCamel": {
+      "1": { "fez": "Hij eet aan mijn fez!" },
+      "2": { "explorer": "Een vriendelijke kameel." },
+      "3": { "fez": "Té vriendelijk." }
+    },
+    "arrivesSecondCamel": {
+      "1": { "fez": "Twee kamelen. Nu kijken ze met z'n tweeën op me neer." },
+      "2": { "explorer": "Ga dan bij de ezels staan." },
+      "3": { "fez": "Daar sta ik al." }
+    },
+    "boughtSturdyCart": {
+      "1": { "fez": "Een stevigere kar. Deze zingt niet onderweg." },
+      "2": { "explorer": "Er staan bloemen op geschilderd." },
+      "3": { "fez": "Voor de stevigheid." }
+    },
+    "blockedSturdyCart": {
+      "1": { "fez": "Daar komt die ouwe kar niet heel aan. Daar wil ik iets stevigers voor." },
+      "2": { "fez": "Er staat er een in mijn kraam, in de Kluis van de Goden. Niet om de verf, hoor." }
+    },
+    "throughSturdyCart": {
+      "1": { "explorer": "Geen gerammel." },
+      "2": { "fez": "Zie je wel? Stevigheid." },
+      "3": { "explorer": "En de bloemen?" },
+      "4": { "fez": "Die helpen ook een beetje." }
+    },
+    "arrivesSturdyCart": {
+      "1": { "fez": "Moet je zien hoe hij glimt!" },
+      "2": { "explorer": "Mooier dan nodig." },
+      "3": { "fez": "Ja. Ik heb hem ook niet om de stevigheid verkocht." }
+    },
+    "boughtCaravanBanner": {
+      "1": { "fez": "Een vaandel. Ik moet eerlijk zijn: hij opent niks." },
+      "2": { "explorer": "Wat doet hij dan?" },
+      "3": { "fez": "Wapperen. Heel mooi wapperen." }
+    },
+    "arrivesCaravanBanner": {
+      "1": { "fez": "Kijk hem wapperen! Boven ons eigen kamp!" },
+      "2": { "explorer": "Hij opent nog steeds niks." },
+      "3": { "fez": "Nee. Dat hoeft ook niet." }
     }
   },
 

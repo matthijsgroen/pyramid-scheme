@@ -15,7 +15,12 @@ import { useTreasurePerkLabel } from "./useTreasurePerkLabel"
 // `describe` (the owning mod's i18n), a tier-unlock/location-key described here, `none` blank.
 // Registered app-side gated on the mod (see ./index), so it drops out when tomb-treasure is off.
 
-export const TombTreasureCollectionSection: FC<CollectionSectionProps> = ({ selectedItem, onSelect }) => {
+export const TombTreasureCollectionSection: FC<CollectionSectionProps> = ({
+  selectedItem,
+  onSelect,
+  isNew,
+  newLabel,
+}) => {
   const { t } = useTranslation(["common", "treasures"])
   const { tombKeyIds } = useTombTreasureProgress()
   const bonusFor = useTreasurePerkLabel()
@@ -38,6 +43,7 @@ export const TombTreasureCollectionSection: FC<CollectionSectionProps> = ({ sele
                   <CollectibleSlot
                     key={treasure.id}
                     state={collected ? "collected" : "empty"}
+                    newLabel={collected && isNew(treasure.id) ? newLabel : undefined}
                     symbol={treasure.symbol}
                     difficulty={difficulty}
                     selected={selectedItem?.id === treasure.id}

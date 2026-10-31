@@ -8,6 +8,7 @@ import { strandedFromHome } from "../wayHome"
 import { gateKeyOf } from "./ids"
 import { renderGround, renderShut } from "./render"
 import type { RenderState, WritableGrid } from "./render"
+import { openRoomFloor, type ReservedBlock } from "./reserveRooms"
 import { MAIN_SECTION_ADDRESS } from "./sections"
 import type { FloorPrep, Refusal } from "./state"
 
@@ -37,17 +38,24 @@ export const duplicateSlot = (grid: FloorGrid): Refusal | undefined => {
 /**
  * THE CHECKS THAT READ THE RENDERED GRID, writing no cell: the carve with its reserved junctions open and with
  * them all shut, no two rooms of a section under one name, what each region will take, and the carve against
- * its layout. The first two read views of their own, rendered from the same decisions.
+ * its layout. The first two read views of their own, rendered from the same decisions, every designed room's floor
+ * open in them as it is in the grid.
  */
-export const validate = (prep: FloorPrep, state: RenderState, grid: WritableGrid): Refusal | void => {
+export const validate = (
+  prep: FloorPrep,
+  state: RenderState,
+  grid: WritableGrid,
+  blocks: readonly ReservedBlock[] = []
+): Refusal | void => {
   const { floorRef } = prep.input
-  const ground = renderGround(prep, state)
+  const opened = (view: FloorGrid) => blocks.reduce(openRoomFloor, view)
+  const ground = opened(renderGround(prep, state))
 
   // A CARVE HAS TO SURVIVE ITS RESERVED JUNCTIONS BEING CLOSED, AND SURVIVE THEM BEING OPEN — neither asked of
   // `switches`, so a mod being absent cannot change which attempt is kept. Each is a view of its own: the grid
   // itself shuts only the junctions a switch stands in.
   if (!validateSite(ground).valid) return { retry: [] }
-  if (!validateSite(renderShut(prep, state)).valid) return { retry: [] }
+  if (!validateSite(opened(renderShut(prep, state))).valid) return { retry: [] }
 
   // EVERY ROOM A PLAYER CAN WALK INTO WALKS HOME AGAIN. A site has one exit, and re-entering puts the player back
   // where they stood, so a room with no way back to the exit, or to the stair up off the main path, ends the run.
