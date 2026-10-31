@@ -517,13 +517,24 @@ describe("dressing by purpose", () => {
     expect(TRADE.props).toContain(room.decoration)
   })
 
-  it("dresses a story room standing in the corridor, which the authored activity makes a chamber", () => {
+  it("an authored activity on a corridor stop gives it no floor", () => {
     const room = dressed({ authored: { "0,2": "ledger" } })("0,2")
+    expect(room).not.toHaveProperty("decoration")
+    expect(room).not.toHaveProperty("wallDecoration")
+    expect(room).not.toHaveProperty("activity")
+  })
+
+  it("an authored activity dresses a room the node already is", () => {
+    const room = dressed({ passThrough: true, authored: { "0,2": "ledger" } })("0,2")
     expect(room).toMatchObject({ activity: "ledger", decoration: "shelf" })
   })
 
   it("dresses from the authored activity's own props where the pool holds none of them", () => {
-    const room = dressed({ pools: { props: ["basketStack"], wall: [] }, authored: { "0,2": "ledger" } })("0,2")
+    const room = dressed({
+      pools: { props: ["basketStack"], wall: [] },
+      passThrough: true,
+      authored: { "0,2": "ledger" },
+    })("0,2")
     expect(room.activity).toBe("ledger")
     expect(["scribeDesk", "shelf"]).toContain(room.decoration)
   })

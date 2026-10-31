@@ -31,10 +31,8 @@ const gapsBetween = (nodes: readonly string[], at: readonly number[]): Gap[] =>
  * door, threshold, drop, stair, fork, switch or pipe hole, and none of a lock region a mechanic will stand its seats
  * in. It runs after every pass that seats something on a node, so none of them has to know chambers exist.
  *
- * No chamber stands where its 3×3 meets another room that claims floor by its shape (a fork, a portal, a dead
- * end, another chamber): two claims would contest a diagonal. A puzzle that claims floor only for the activity a
- * story authored on it does not count, so authoring a story moves no chamber; where the two meet, the map's claim
- * rule settles the diagonal. A chamber whose activity is left to the carve stands only where its section's pool
+ * No chamber stands where its 3×3 meets another room that claims floor (a fork, a portal, a dead end, another
+ * chamber): two claims would contest a diagonal. A chamber whose activity is left to the carve stands only where its section's pool
  * holds a prop, since a chamber is always dressed and a section authored with no props has nothing to dress it with.
  * A turn or a horizontal comes before a vertical, whose corridor
  * crosses the north row a prop stands against. Ties break by hash, never by `rand()`, so no other draw moves.

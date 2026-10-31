@@ -23,6 +23,11 @@ describe("isChamber", () => {
     expect(isChamber({ roomType: "chamber", dirs: new Set<Direction>(["e", "w"]) }, "fork")).toBe(true)
   })
 
+  it("an authored activity on a corridor stop gives it no floor", () => {
+    const stop = { roomType: "encounter" as const, dirs: new Set<Direction>(["e", "w"]), authoredActivity: "ledger" }
+    expect(isChamber(stop, "room")).toBe(false)
+  })
+
   it("leaves a puzzle standing where a branch hangs off it a stop in the corridor", () => {
     expect(isChamber({ roomType: "encounter", dirs: new Set<Direction>(["n", "e", "s"]) }, "puzzle")).toBe(false)
   })
@@ -52,7 +57,6 @@ describe("claimsFloorAt", () => {
         const expected =
           cell.roomType === "fork" ||
           cell.roomType === "chamber" ||
-          cell.authoredActivity !== undefined ||
           (cell.roomType === "portal" && cell.dirs.size > 1) ||
           (deadEnd && (!!treasureLike || (cell.roomType === "portal" && !isEntrance)))
         expect(claimsFloorAt(grid, r, c)).toBe(expected)

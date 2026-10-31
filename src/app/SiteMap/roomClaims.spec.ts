@@ -76,7 +76,7 @@ describe("where a dressed room's prop stands", () => {
     expect(buildRoomClaims(grid).decorationAt.size).toBe(0)
   })
 
-  it("stands a story room's prop beside it in the corridor, its authored activity making it a chamber", () => {
+  it("an authored activity on a corridor stop gives it no floor", () => {
     const story: GridCell = {
       type: "room",
       roomType: "encounter",
@@ -100,7 +100,7 @@ describe("where a dressed room's prop stands", () => {
         [empty, empty, empty, empty, empty],
       ],
     }
-    expect([...buildRoomClaims(grid).decorationAt.values()]).toEqual(["shelf"])
+    expect(buildRoomClaims(grid).decorationAt.size).toBe(0)
   })
 
   // A portal on the map's bottom row with passages above every free cell of its floor.

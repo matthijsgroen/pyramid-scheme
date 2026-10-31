@@ -64,7 +64,7 @@ export const portalKindOf = (
 /**
  * A CHAMBER claims the floor around it on the map; every other room is a stop in a 1-wide corridor. Every
  * fork is one, whatever stands in it, and every pass-through chamber, and so is a dead end that holds treasure or is a stairhead or the
- * exit, and so is a room a story authored an activity for, wherever it stands: a scene needs its set. A
+ * exit. An activity a story authors on a node only dresses the room the node already is; it never makes one. A
  * portal with more than one way out is one too: the carve may hang a side section off the floor's entrance,
  * and a stair or door the player can leave two ways stands in a room that forks, never in a corridor. `kind`
  * is the shape the room is drawn as.
@@ -72,10 +72,9 @@ export const portalKindOf = (
  * It lives in the DOMAIN because the renderer claims the floor by it and the carve dresses by it: a prop
  * recorded on a room that claims no floor is a prop nobody can see.
  */
-export const isChamber = (cell: Pick<RoomCell, "roomType" | "dirs" | "authoredActivity">, kind: string): boolean =>
+export const isChamber = (cell: Pick<RoomCell, "roomType" | "dirs">, kind: string): boolean =>
   cell.roomType === "fork" ||
   cell.roomType === "chamber" ||
-  cell.authoredActivity !== undefined ||
   (cell.roomType === "portal" && cell.dirs.size > 1) ||
   ((kind === "treasure" || kind === "stairhead" || kind === "exit") && cell.dirs.size === 1)
 
@@ -86,19 +85,7 @@ export const isChamber = (cell: Pick<RoomCell, "roomType" | "dirs" | "authoredAc
  */
 export const claimsFloorAt = (grid: FloorGrid, r: number, c: number): boolean => {
   const cell = cellAt(grid, r, c)
-  return cell.type === "room" && claimsFloorAs(grid, r, c, cell)
-}
-
-/**
- * Whether the room at (r, c) claims floor by its shape alone: as `claimsFloorAt`, read as if no story authored an
- * activity on it. What the carve decides by, so authoring a story moves nothing on the floor.
- */
-export const claimsFloorByShapeAt = (grid: FloorGrid, r: number, c: number): boolean => {
-  const cell = cellAt(grid, r, c)
-  return cell.type === "room" && claimsFloorAs(grid, r, c, { ...cell, authoredActivity: undefined })
-}
-
-const claimsFloorAs = (grid: FloorGrid, r: number, c: number, cell: RoomCell): boolean => {
+  if (cell.type !== "room") return false
   const treasureLike =
     cell.roomType === "encounter" && (cell.tags?.includes("treasure") === true || cell.tags?.includes("shop") === true)
   const kind = cell.roomType === "portal" ? portalKindOf(grid, r, c, cell) : treasureLike ? "treasure" : "room"
@@ -152,14 +139,13 @@ export const roomsMerge = (
 
 /**
  * The first two rooms that claim floor one node apart and do not merge, in scan order: one of them would lose part
- * of its 3×3 to the other. A designed room is left out, as its ring is kept clear when it is laid. Rooms are read by
- * their shape (`claimsFloorByShapeAt`), so a story's activity never refuses a carve; a corner in `shut` is read as
- * `roomsMerge` reads it.
+ * of its 3×3 to the other. A designed room is left out, as its ring is kept clear when it is laid. A corner in `shut`
+ * is read as `roomsMerge` reads it.
  */
 export const bittenRooms = (grid: FloorGrid, shut: ReadonlySet<string> = new Set()): [string, string] | undefined => {
   const claims = (r: number, c: number) => {
     const cell = cellAt(grid, r, c)
-    return cell.type === "room" && !cell.prefabRoom && claimsFloorByShapeAt(grid, r, c)
+    return cell.type === "room" && !cell.prefabRoom && claimsFloorAt(grid, r, c)
   }
   for (let r = 0; r < grid.rows; r++)
     for (let c = 0; c < grid.cols; c++) {

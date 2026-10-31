@@ -357,8 +357,8 @@ export type RoomCell = {
   /** What the room is for (activities.ts): its props and wall item come from this activity. Unset on a
    * room some other purpose has, or on a rank whose pool furnishes no activity. */
   activity?: ActivityId
-  /** The activity a story authored for this room (`nodes: [{ activity }]`). It wins over every other purpose,
-   * and it makes the room a chamber even where it stands in a corridor (`isChamber`): a scene needs its set. */
+  /** The activity a story authored for this room (`nodes: [{ activity }]`). It wins over every other purpose
+   * where the node is a room; it never makes one, so a corridor stop that carries it stays a stop. */
   authoredActivity?: ActivityId
   /** The designed room a story pinned to this room (`nodes: [{ room }]`): a key of the floor's `prefabs`. */
   pinnedPrefab?: string
