@@ -1,9 +1,10 @@
-import { useCallback, useMemo, useState, type FC } from "react"
+import { useCallback, useState, type FC } from "react"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
+import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import {
   brokenMarks,
@@ -43,8 +44,9 @@ export const ProcessionPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
   const [state, setState] = usePuzzleState(() => createProcessionState(puzzle), puzzle)
   const [focus, setFocus] = useState<number | undefined>()
 
-  const [asked, setAsked] = useState(false)
-  const hint = useMemo(() => (asked ? buildProcessionHint(puzzle, state) : undefined), [asked, puzzle, state])
+  // As it was when the player asked, and built only then. It names one slide, so a slide ends it and
+  // selecting a bar only looks.
+  const { hint, freeze, drop } = useFrozenHint(() => buildProcessionHint(puzzle, state))
 
   const finished = processionSolved(puzzle, state)
   const celebration = useCelebration(finished, 1)
@@ -67,7 +69,8 @@ export const ProcessionPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
         setFocus(undefined)
       }}
       hint={hintText}
-      onHintRevealed={() => setAsked(true)}
+      onHintRevealed={freeze}
+      onHintHidden={drop}
       idleMs={hintIdleDelay(difficulty)}
       title={t(`procession.name.${skin.name}`)}
       goal={t(`procession.goal.${skin.name}`)}
@@ -81,7 +84,7 @@ export const ProcessionPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
           broken={brokenMarks(puzzle, state)}
           focus={focus}
           onFocus={mark => {
-            reportInput()
+            reportInput("look")
             setFocus(mark)
           }}
           hintBar={hintVisible ? hint?.bar : undefined}

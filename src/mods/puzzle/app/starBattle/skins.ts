@@ -1,7 +1,9 @@
+import { isRegionless, type StarBattlePuzzle } from "@/mods/puzzle/game/starBattle/starBattle"
 import { STAR_BATTLE_META } from "@/mods/puzzle/game/starBattle/meta"
+import { REGIONLESS_BATTLE_META } from "@/mods/puzzle/game/starBattle/regionlessMeta"
 import { faceFor, withAmbience } from "../faceFor"
 import type { FC } from "react"
-import { Farmstead, Star } from "./glyphs"
+import { Cat, Farmstead, Lotus, MarketStall, OilLamp, Star } from "./glyphs"
 
 /**
  * What each of this mechanic's places looks like, and how a room works out which place it is.
@@ -31,6 +33,11 @@ export type StarBattleSkin = {
   name: string
   /** The token this place's sentences put in their glyph slot, so a hint can say the thing rather than name it. */
   token: string
+  /**
+   * A wall cell: raised stone that nothing can stand on. Every skin carries one, but only a board with
+   * `walls` draws it.
+   */
+  stone: string
   /** A square the player may still use, and one a placed answer has already ruled out. */
   cell: string
   spent: string
@@ -75,6 +82,7 @@ const SKINS: Record<string, StarBattleSkin> = {
   default: {
     name: "default",
     token: "⭐",
+    stone: "bg-stone-600",
     cell: "bg-stone-800",
     spent: "bg-stone-900",
     wall: "rgb(253 230 138 / 0.85)",
@@ -111,6 +119,7 @@ const SKINS: Record<string, StarBattleSkin> = {
   fields: {
     name: "fields",
     token: "🛖",
+    stone: "bg-[#8a7a5a]",
     // Tilled earth, and the ruled-out square is ground already in somebody's shadow.
     cell: "bg-[#e0c896]",
     spent: "bg-[#c9ac74]",
@@ -132,18 +141,122 @@ const SKINS: Record<string, StarBattleSkin> = {
 }
 
 /**
+ * What a regionless board wears, one dress per kind of room. Walls are raised blocks that nothing can stand on,
+ * so each skin's `stone` is the thing that place is built of, lit from the top left so it reads as standing up
+ * out of the ground rather than as a darker square. There is no boundary stroke: a regionless board draws only
+ * its rim.
+ *
+ * `name` is what the copy is keyed on (it must not collide with a region skin's name), and the table key is
+ * what `REGIONLESS_BATTLE_META.faces` names.
+ */
+const LIT = "shadow-[inset_3px_3px_0_rgba(255,255,255,0.3),inset_-3px_-3px_0_rgba(0,0,0,0.4)]"
+
+export const REGIONLESS_SKINS: Record<string, StarBattleSkin> = {
+  /**
+   * **Oil lamps on a dark temple floor** — the plain dress, worn by light rooms and by some rooms with no role of their own. The
+   * ground is dark so a lamp is the brightest thing on it and a spent square is simply unlit; the answer is
+   * warm amber and the walls are cool stone blocks, so piece and wall differ in hue as well as in shape.
+   */
+  default: {
+    name: "lamps",
+    token: "🪔",
+    stone: `bg-slate-500 ${LIT}`,
+    cell: "bg-stone-800",
+    spent: "bg-stone-900",
+    wall: "rgb(120 113 108 / 0.9)",
+    seam: "rgb(120 113 108 / 0.5)",
+    Glyph: OilLamp,
+    answer: "text-amber-300",
+    dark: "text-stone-500",
+    hatch: "rgba(252,211,77,0.45)",
+    evidence: "ring-sky-300/60",
+    focus: "ring-amber-300",
+    conflict: "ring-red-500/80",
+    // A lamp catching: light only, no swell, since a lamp stands on the floor rather than hanging in the sky.
+    celebrate: "animate-flare",
+  },
+  /**
+   * **Stalls in a market square** — daylight on packed earth. The stall is dark red-brown against pale dust, and
+   * the houses are warm plastered blocks around the square.
+   */
+  market: {
+    name: "market",
+    token: "🏪",
+    stone: `bg-[#b98a66] ${LIT}`,
+    cell: "bg-[#ecd9b0]",
+    spent: "bg-[#d8c08c]",
+    wall: "rgb(120 53 15 / 0.8)",
+    seam: "rgb(120 90 40 / 0.4)",
+    Glyph: MarketStall,
+    answer: "text-red-900",
+    dark: "text-stone-700/70",
+    hatch: "rgba(120,53,15,0.4)",
+    evidence: "ring-sky-800/70",
+    focus: "ring-red-950",
+    conflict: "ring-red-800",
+    // A stall opening for the day: a flash of light, no swell.
+    celebrate: "animate-flare",
+  },
+  /**
+   * **Lotus on a pond** — dark green water, the flower a pale pink so it is the brightest thing on it, and rocks
+   * as grey-brown islets standing out of the water.
+   */
+  lotus: {
+    name: "lotus",
+    token: "🪷",
+    stone: `bg-stone-500 ${LIT}`,
+    cell: "bg-teal-900",
+    spent: "bg-teal-950",
+    wall: "rgb(94 234 212 / 0.6)",
+    seam: "rgb(94 234 212 / 0.25)",
+    Glyph: Lotus,
+    answer: "text-pink-200",
+    dark: "text-teal-300/60",
+    hatch: "rgba(251,207,232,0.45)",
+    evidence: "ring-sky-300/60",
+    focus: "ring-pink-300",
+    conflict: "ring-red-400/90",
+    // A flower opening: it swells as it brightens.
+    celebrate: "animate-bloom",
+  },
+  /**
+   * **Cats on a temple floor** — warm sunlit flagstones, the cat dark against them, and pale pillars. The
+   * celebration is the flare: a cat does not leap, it stretches into the sun.
+   */
+  cats: {
+    name: "cats",
+    token: "🐈",
+    stone: `bg-stone-300 ${LIT}`,
+    cell: "bg-[#efe0b8]",
+    spent: "bg-[#dcc794]",
+    wall: "rgb(120 113 108 / 0.9)",
+    seam: "rgb(146 100 40 / 0.35)",
+    Glyph: Cat,
+    answer: "text-stone-800",
+    dark: "text-stone-600/70",
+    hatch: "rgba(120,53,15,0.4)",
+    evidence: "ring-sky-800/70",
+    focus: "ring-amber-900",
+    conflict: "ring-red-800",
+    celebrate: "animate-flare",
+  },
+}
+
+/**
  * Which place this room is, resolved the same way every family resolves it (`app/faceFor.ts`).
  *
  * The map itself lives on this family's `FamilyMeta`, where world-gen can read it too
  * (`docs/instructions/puzzle-screens.md` §2).
  */
 export const skinFor = (
+  puzzle: StarBattlePuzzle,
   role: string | string[] | undefined,
   theme: string | undefined,
   board = 0,
   room?: string
-): StarBattleSkin =>
-  withAmbience(
-    SKINS[faceFor(STAR_BATTLE_META.faces, role, theme, Object.keys(SKINS), board, room)] ?? SKINS.default,
-    theme
-  )
+): StarBattleSkin => {
+  const regionless = isRegionless(puzzle)
+  const skins = regionless ? REGIONLESS_SKINS : SKINS
+  const meta = regionless ? REGIONLESS_BATTLE_META : STAR_BATTLE_META
+  return withAmbience(skins[faceFor(meta.faces, role, theme, Object.keys(skins), board, room)] ?? skins.default, theme)
+}

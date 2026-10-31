@@ -6,11 +6,12 @@ import { useTranslation } from "react-i18next"
 //
 // Worded per place, not per mechanic (§1.1): the no-touching rule is one sentence over a sky and another
 // over farmland, where what it means is that two households would be drawing on the same well.
-export const StarBattleRules: FC<{ skin: string }> = ({ skin }) => {
+export const StarBattleRules: FC<{ skin: string; walls: boolean }> = ({ skin, walls }) => {
   const { t } = useTranslation("common")
   return (
     <ul className="list-disc space-y-1 pl-4">
       <li>{t(`starBattle.rules.${skin}.touch`)}</li>
+      {walls && <li>{t(`starBattle.rules.${skin}.walls`)}</li>}
       <li>{t(`starBattle.rules.${skin}.enter`)}</li>
     </ul>
   )

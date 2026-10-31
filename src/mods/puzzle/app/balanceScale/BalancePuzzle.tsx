@@ -4,11 +4,13 @@ import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
-import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
+import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
+import { hintIdleDelay, type InputEffect } from "@/mods/core/app/useHintAvailability"
 import { computeBalanceLines, isBalanceSolved } from "@/mods/puzzle/game/balanceScale/balanceStatus"
 import {
   applySwap,
   createBalanceState,
+  type BalanceState,
   removeNote,
   selectGlyph,
   setWeight,
@@ -54,10 +56,13 @@ export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room
   // things off both pans would do the puzzle's own arithmetic (design doc §5).
   const moves = { cancelling: puzzle.cancelling !== false, swapping: techniqueCap === "swap" }
 
-  const hint = useMemo(
+  // Derived on every change: whether there is a hint at all is what shows the button. What the player is
+  // shown is the one from the moment they asked, held until a move changes a weight or a note.
+  const available = useMemo(
     () => buildBalanceHint(board, state.values, state.notes, solution, techniqueCap),
     [board, state.values, state.notes, solution, techniqueCap]
   )
+  const { hint, freeze, drop } = useFrozenHint(() => available)
 
   /**
    * The scales settle one at a time before the shell is told, top to bottom.
@@ -78,6 +83,13 @@ export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room
   // so the offer can never survive the board changing underneath it.
   const sources = useMemo(() => swapSources(board, state), [board, state])
 
+  // A tap that only arms a piece for a swap, or does nothing, leaves every weight and note as it was, and
+  // that is no reason to take a hint down.
+  const apply = (reportInput: (effect: InputEffect) => void, next: BalanceState) => {
+    reportInput(next.values === state.values && next.notes === state.notes ? "look" : "move")
+    setState(next)
+  }
+
   return (
     <PuzzleFamilyShell
       onSolved={onSolved}
@@ -87,7 +99,9 @@ export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room
       // **The hint names a piece by the symbol the board is drawing**, so it goes through the face too. A
       // sentence that typed the generator's own glyph while the board drew this room's would be pointing at
       // something not on screen — the trap sudoku's signs already paid for.
-      hint={hint && t(`balance.hint.${hint.key}`, symbolise(hint.params, skin.symbol))}
+      hint={(available ?? hint) && (() => hint && t(`balance.hint.${hint.key}`, symbolise(hint.params, skin.symbol)))}
+      onHintRevealed={freeze}
+      onHintHidden={drop}
       idleMs={hintIdleDelay(difficulty)}
       title={t(`balance.name.${skin.name}`)}
       goal={t(`balance.goal.${skin.name}`)}
@@ -121,18 +135,16 @@ export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room
           }
           onSelectGlyph={glyph => {
             if (finished) return // the board is finishing; nothing may change under the celebration
-            reportInput()
+            reportInput("look")
             setState(prev => selectGlyph(prev, glyph))
           }}
           onPickWeight={value => {
             if (finished) return
-            reportInput()
-            setState(prev => setWeight(prev, glyphs, value))
+            apply(reportInput, setWeight(state, glyphs, value))
           }}
           onTapPiece={(ref, pan, index) => {
             if (finished) return
-            reportInput()
-            setState(prev => tapPiece(prev, board, ref, pan, index))
+            apply(reportInput, tapPiece(state, board, ref, pan, index))
           }}
           onTapRow={ref => {
             if (finished) return
@@ -140,13 +152,11 @@ export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room
               candidate => candidate.ref.kind === ref.kind && candidate.ref.index === ref.index
             )
             if (!source) return
-            reportInput()
-            setState(prev => applySwap(prev, source.note))
+            apply(reportInput, applySwap(state, source.note))
           }}
           onRemoveNote={index => {
             if (finished) return
-            reportInput()
-            setState(prev => removeNote(prev, index))
+            apply(reportInput, removeNote(state, index))
           }}
         />
       )}

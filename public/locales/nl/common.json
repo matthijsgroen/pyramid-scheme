@@ -651,6 +651,26 @@
       "fields": {
         "touch": "Twee boerderijen mogen elkaar nooit raken — ook niet met een punt. Zo dicht bij elkaar delen ze één put.",
         "enter": "Tik een akker om die af te strepen, tik weer voor een boerderij, en nog eens om het te wissen."
+      },
+      "lamps": {
+        "touch": "Twee olielampen mogen nooit naast elkaar staan — ook niet schuin. Hun lichtkringen overlappen dan, en de olie is verspild.",
+        "walls": "De grijze stenen blokken horen bij de vloer: er kan niets op staan, en het is geen vakje.",
+        "enter": "Tik een tegel om die af te strepen, tik weer voor een olielamp, en nog eens om het te wissen."
+      },
+      "market": {
+        "touch": "Twee kramen mogen nooit naast elkaar staan — ook niet schuin. Concurrenten staan nooit naast elkaar.",
+        "walls": "De huizen horen bij het plein: daar kan niemand een kraam neerzetten, en het is geen plek.",
+        "enter": "Tik een plek om die af te strepen, tik weer voor een kraam, en nog eens om het te wissen."
+      },
+      "lotus": {
+        "touch": "Twee lotussen mogen nooit naast elkaar drijven — ook niet schuin. Elke bloem heeft open water om zich heen nodig.",
+        "walls": "De rotsen steken boven de vijver uit: er kan niets op drijven, en het is geen vakje.",
+        "enter": "Tik een stukje water om het af te strepen, tik weer voor een lotus, en nog eens om het te wissen."
+      },
+      "cats": {
+        "touch": "Twee katten mogen nooit naast elkaar slapen — ook niet schuin. Elke kat houdt zijn eigen plekje zon.",
+        "walls": "De pilaren dragen de tempel: er kan geen kat op slapen, en het is geen vakje.",
+        "enter": "Tik een tegel om die af te strepen, tik weer voor een kat, en nog eens om het te wissen."
       }
     },
     "hint": {
@@ -751,23 +771,241 @@
           "place_one": "Zet een {{token}} op de gearceerde akker.",
           "place_other": "Zet een {{token}} op elke gearceerde akker."
         }
+      },
+      "lamps": {
+        "mistake": "Dit teken kan niet kloppen.",
+        "touch": "Hier een {{token}}, en geen enkele olielamp mag ernaast staan — ook niet schuin.",
+        "groupFull.row_one": "Deze rij heeft zijn olielamp al.",
+        "groupFull.col_one": "Deze kolom heeft zijn olielamp al.",
+        "groupFull.row_other": "Deze rij heeft zijn {{count}} olielampen al.",
+        "groupFull.col_other": "Deze kolom heeft zijn {{count}} olielampen al.",
+        "groupTight.row_one": "Deze rij heeft nog één tegel over.",
+        "groupTight.row_other": "Deze rij heeft nog {{count}} tegels over.",
+        "groupTight.col_one": "Deze kolom heeft nog één tegel over.",
+        "groupTight.col_other": "Deze kolom heeft nog {{count}} tegels over.",
+        "onlyWay.row_one": "Tussen de stenen blokken is er in deze rij nog maar één vakje voor een olielamp.",
+        "onlyWay.col_one": "Tussen de stenen blokken is er in deze kolom nog maar één vakje voor een olielamp.",
+        "onlyWay.row_other": "Er is maar één manier om {{count}} olielampen in deze rij te zetten.",
+        "onlyWay.col_other": "Er is maar één manier om {{count}} olielampen in deze kolom te zetten.",
+        "everyWay.row_one": "Waar de olielamp van deze rij ook staat, hij staat altijd hier.",
+        "everyWay.col_one": "Waar de olielamp van deze kolom ook staat, hij staat altijd hier.",
+        "everyWay.row_other": "Waar de {{count}} olielampen van deze rij ook staan, één staat altijd hier.",
+        "everyWay.col_other": "Waar de {{count}} olielampen van deze kolom ook staan, één staat altijd hier.",
+        "lineBlock.rowsToCols": "De gemarkeerde rijen hebben hun olielampen in de vakjes van die kolommen, dus die kolommen hebben er niets over.",
+        "lineBlock.colsToRows": "De gemarkeerde kolommen hebben hun olielampen in de vakjes van die rijen, dus die rijen hebben er niets over.",
+        "wouldStrand.row": "Met een olielamp hier houdt de gemarkeerde rij geen plek meer over.",
+        "wouldStrand.col": "Met een olielamp hier houdt de gemarkeerde kolom geen plek meer over.",
+        "action": {
+          "ruleOut_one": "Streep het gearceerde vakje af.",
+          "ruleOut_other": "Streep de gearceerde vakjes af.",
+          "place_one": "Zet een olielamp in het gearceerde vakje.",
+          "place_other": "Zet een olielamp in elk gearceerd vakje."
+        }
+      },
+      "market": {
+        "mistake": "Dit teken kan niet kloppen.",
+        "touch": "Hier een {{token}}, en geen enkele kraam mag ernaast staan — ook niet schuin.",
+        "groupFull.row_one": "Deze rij heeft zijn kraam al.",
+        "groupFull.col_one": "Deze kolom heeft zijn kraam al.",
+        "groupFull.row_other": "Deze rij heeft zijn {{count}} kramen al.",
+        "groupFull.col_other": "Deze kolom heeft zijn {{count}} kramen al.",
+        "groupTight.row_one": "Deze rij heeft nog één plek over.",
+        "groupTight.row_other": "Deze rij heeft nog {{count}} plekken over.",
+        "groupTight.col_one": "Deze kolom heeft nog één plek over.",
+        "groupTight.col_other": "Deze kolom heeft nog {{count}} plekken over.",
+        "onlyWay.row_one": "Tussen de huizen is er in deze rij nog maar één vakje voor een kraam.",
+        "onlyWay.col_one": "Tussen de huizen is er in deze kolom nog maar één vakje voor een kraam.",
+        "onlyWay.row_other": "Er is maar één manier om {{count}} kramen in deze rij te zetten.",
+        "onlyWay.col_other": "Er is maar één manier om {{count}} kramen in deze kolom te zetten.",
+        "everyWay.row_one": "Waar de kraam van deze rij ook staat, hij staat altijd hier.",
+        "everyWay.col_one": "Waar de kraam van deze kolom ook staat, hij staat altijd hier.",
+        "everyWay.row_other": "Waar de {{count}} kramen van deze rij ook staan, één staat altijd hier.",
+        "everyWay.col_other": "Waar de {{count}} kramen van deze kolom ook staan, één staat altijd hier.",
+        "lineBlock.rowsToCols": "De gemarkeerde rijen hebben hun kramen in de vakjes van die kolommen, dus die kolommen hebben er niets over.",
+        "lineBlock.colsToRows": "De gemarkeerde kolommen hebben hun kramen in de vakjes van die rijen, dus die rijen hebben er niets over.",
+        "wouldStrand.row": "Met een kraam hier houdt de gemarkeerde rij geen plek meer over.",
+        "wouldStrand.col": "Met een kraam hier houdt de gemarkeerde kolom geen plek meer over.",
+        "action": {
+          "ruleOut_one": "Streep het gearceerde vakje af.",
+          "ruleOut_other": "Streep de gearceerde vakjes af.",
+          "place_one": "Zet een kraam in het gearceerde vakje.",
+          "place_other": "Zet een kraam in elk gearceerd vakje."
+        }
+      },
+      "lotus": {
+        "mistake": "Dit teken kan niet kloppen.",
+        "touch": "Hier een {{token}}, en geen enkele lotus mag ernaast drijven — ook niet schuin.",
+        "groupFull.row_one": "Deze rij heeft zijn lotus al.",
+        "groupFull.col_one": "Deze kolom heeft zijn lotus al.",
+        "groupFull.row_other": "Deze rij heeft zijn {{count}} lotussen al.",
+        "groupFull.col_other": "Deze kolom heeft zijn {{count}} lotussen al.",
+        "groupTight.row_one": "Deze rij heeft nog één stukje water over.",
+        "groupTight.row_other": "Deze rij heeft nog {{count}} stukjes water over.",
+        "groupTight.col_one": "Deze kolom heeft nog één stukje water over.",
+        "groupTight.col_other": "Deze kolom heeft nog {{count}} stukjes water over.",
+        "onlyWay.row_one": "Tussen de rotsen is er in deze rij nog maar één vakje voor een lotus.",
+        "onlyWay.col_one": "Tussen de rotsen is er in deze kolom nog maar één vakje voor een lotus.",
+        "onlyWay.row_other": "Er is maar één manier om {{count}} lotussen in deze rij te zetten.",
+        "onlyWay.col_other": "Er is maar één manier om {{count}} lotussen in deze kolom te zetten.",
+        "everyWay.row_one": "Waar de lotus van deze rij ook staat, hij staat altijd hier.",
+        "everyWay.col_one": "Waar de lotus van deze kolom ook staat, hij staat altijd hier.",
+        "everyWay.row_other": "Waar de {{count}} lotussen van deze rij ook staan, één staat altijd hier.",
+        "everyWay.col_other": "Waar de {{count}} lotussen van deze kolom ook staan, één staat altijd hier.",
+        "lineBlock.rowsToCols": "De gemarkeerde rijen hebben hun lotussen in de vakjes van die kolommen, dus die kolommen hebben er niets over.",
+        "lineBlock.colsToRows": "De gemarkeerde kolommen hebben hun lotussen in de vakjes van die rijen, dus die rijen hebben er niets over.",
+        "wouldStrand.row": "Met een lotus hier houdt de gemarkeerde rij geen plek meer over.",
+        "wouldStrand.col": "Met een lotus hier houdt de gemarkeerde kolom geen plek meer over.",
+        "action": {
+          "ruleOut_one": "Streep het gearceerde vakje af.",
+          "ruleOut_other": "Streep de gearceerde vakjes af.",
+          "place_one": "Zet een lotus in het gearceerde vakje.",
+          "place_other": "Zet een lotus in elk gearceerd vakje."
+        }
+      },
+      "cats": {
+        "mistake": "Dit teken kan niet kloppen.",
+        "touch": "Hier een {{token}}, en geen enkele kat mag ernaast slapen — ook niet schuin.",
+        "groupFull.row_one": "Deze rij heeft zijn kat al.",
+        "groupFull.col_one": "Deze kolom heeft zijn kat al.",
+        "groupFull.row_other": "Deze rij heeft zijn {{count}} katten al.",
+        "groupFull.col_other": "Deze kolom heeft zijn {{count}} katten al.",
+        "groupTight.row_one": "Deze rij heeft nog één tegel over.",
+        "groupTight.row_other": "Deze rij heeft nog {{count}} tegels over.",
+        "groupTight.col_one": "Deze kolom heeft nog één tegel over.",
+        "groupTight.col_other": "Deze kolom heeft nog {{count}} tegels over.",
+        "onlyWay.row_one": "Tussen de pilaren is er in deze rij nog maar één vakje voor een kat.",
+        "onlyWay.col_one": "Tussen de pilaren is er in deze kolom nog maar één vakje voor een kat.",
+        "onlyWay.row_other": "Er is maar één manier om {{count}} katten in deze rij te zetten.",
+        "onlyWay.col_other": "Er is maar één manier om {{count}} katten in deze kolom te zetten.",
+        "everyWay.row_one": "Waar de kat van deze rij ook staat, hij staat altijd hier.",
+        "everyWay.col_one": "Waar de kat van deze kolom ook staat, hij staat altijd hier.",
+        "everyWay.row_other": "Waar de {{count}} katten van deze rij ook staan, één staat altijd hier.",
+        "everyWay.col_other": "Waar de {{count}} katten van deze kolom ook staan, één staat altijd hier.",
+        "lineBlock.rowsToCols": "De gemarkeerde rijen hebben hun katten in de vakjes van die kolommen, dus die kolommen hebben er niets over.",
+        "lineBlock.colsToRows": "De gemarkeerde kolommen hebben hun katten in de vakjes van die rijen, dus die rijen hebben er niets over.",
+        "wouldStrand.row": "Met een kat hier houdt de gemarkeerde rij geen plek meer over.",
+        "wouldStrand.col": "Met een kat hier houdt de gemarkeerde kolom geen plek meer over.",
+        "action": {
+          "ruleOut_one": "Streep het gearceerde vakje af.",
+          "ruleOut_other": "Streep de gearceerde vakjes af.",
+          "place_one": "Zet een kat in het gearceerde vakje.",
+          "place_other": "Zet een kat in elk gearceerd vakje."
+        }
       }
     },
     "quota": {
       "default": "Per rij, kolom en gebied",
-      "fields": "Per rij, kolom en stuk land"
+      "fields": "Per rij, kolom en stuk land",
+      "lamps": "Per rij en kolom",
+      "market": "Per rij en kolom",
+      "lotus": "Per rij en kolom",
+      "cats": "Per rij en kolom"
     },
     "goal": {
       "default_one": "Elke rij, elke kolom en elk gebied heeft precies één ster.",
       "default_other": "Elke rij, elke kolom en elk gebied heeft precies {{count}} sterren.",
       "fields_one": "Elke rij, elke kolom en elk stuk land heeft precies één boerderij.",
-      "fields_other": "Elke rij, elke kolom en elk stuk land heeft precies {{count}} boerderijen."
+      "fields_other": "Elke rij, elke kolom en elk stuk land heeft precies {{count}} boerderijen.",
+      "lamps": "Elke rij en elke kolom heeft precies één olielamp.",
+      "market": "Elke rij en elke kolom heeft precies één marktkraam.",
+      "lotus": "Elke rij en elke kolom heeft precies één lotus.",
+      "cats": "Elke rij en elke kolom heeft precies één kat."
     },
     "name": {
       "default": "Sterren Apart",
       "fields": "Boerderijen",
       "twinDefault": "Tweelingsterren",
-      "twinFields": "Dubbele Boerderijen"
+      "twinFields": "Dubbele Boerderijen",
+      "lamps": "Olielampen",
+      "market": "Marktkramen",
+      "lotus": "Lotusvijver",
+      "cats": "Tempelkatten"
+    }
+  },
+  "pairPuzzle": {
+    "name": {
+      "mummies": "Mummierust",
+      "beetles": "Mestkevers"
+    },
+    "goal": {
+      "mummies": "Elke sarcofaag krijgt één mummie naast zich, en elke rij en kolom bevat precies zoveel mummies als ernaast staat.",
+      "beetles": "Elke mestbal krijgt één kever naast zich, en elke rij en kolom bevat precies zoveel kevers als ernaast staat."
+    },
+    "rules": {
+      "mummies": {
+        "pair": "Bij elke sarcofaag rust precies één mummie, direct erboven, eronder, links of rechts ervan, en elke mummie rust naast een eigen sarcofaag.",
+        "count": "Het getal naast een rij of kolom zegt hoeveel mummies erin liggen. Het wordt groen als de lijn precies dat aantal heeft, en rood als het niet meer kan kloppen.",
+        "touch": "Geen twee mummies mogen naast elkaar liggen — hoeken tellen mee.",
+        "enter": "Tik een vakje aan om het uit te sluiten, nog eens om er een mummie neer te leggen, en nog eens om het te wissen. Sleep over vakjes om een reeks uit te sluiten. Sarcofagen zijn niet aan te tikken."
+      },
+      "beetles": {
+        "pair": "Bij elke mestbal staat precies één kever, direct erboven, eronder, links of rechts ervan, en elke kever staat naast een eigen bal om te rollen.",
+        "count": "Het getal naast een rij of kolom zegt hoeveel kevers erin staan. Het wordt groen als de lijn precies dat aantal heeft, en rood als het niet meer kan kloppen.",
+        "touch": "Geen twee kevers mogen naast elkaar staan — hoeken tellen mee.",
+        "enter": "Tik een vakje aan om het uit te sluiten, nog eens om er een kever neer te zetten, en nog eens om het te wissen. Sleep over vakjes om een reeks uit te sluiten. Mestballen zijn niet aan te tikken."
+      }
+    },
+    "hint": {
+      "mummies": {
+        "mistake": "Deze markering kan niet kloppen.",
+        "touch": "Deze mummie ligt er, dus er mag er geen naast liggen — hoeken tellen mee.",
+        "zeroLine.row": "In deze rij ligt geen mummie, dus de hele rij is leeg.",
+        "zeroLine.col": "In deze kolom ligt geen mummie, dus de hele kolom is leeg.",
+        "noAnchor": "Naast deze vakjes staat geen sarcofaag, dus hier kan geen mummie rusten.",
+        "lineFull.row_one": "Deze rij heeft haar mummie al.",
+        "lineFull.row_other": "Deze rij heeft haar {{count}} mummies al.",
+        "lineFull.col_one": "Deze kolom heeft zijn mummie al.",
+        "lineFull.col_other": "Deze kolom heeft zijn {{count}} mummies al.",
+        "lineTight.row_one": "Deze rij heeft nog maar één vakje over voor haar mummie.",
+        "lineTight.row_other": "Deze rij heeft nog precies {{count}} vakjes over voor haar {{count}} mummies.",
+        "lineTight.col_one": "Deze kolom heeft nog maar één vakje over voor zijn mummie.",
+        "lineTight.col_other": "Deze kolom heeft nog precies {{count}} vakjes over voor zijn {{count}} mummies.",
+        "onlyWay": "Naast deze sarcofaag is nog maar één vakje over voor zijn mummie.",
+        "claimed": "Deze sarcofaag heeft zijn mummie al, dus de vakjes ernaast die geen andere sarcofaag kan gebruiken blijven leeg.",
+        "lineBlock.rowsToCols_one": "De gemarkeerde rijen hebben één mummie meer dan hun eigen sarcofagen kunnen leveren, dus die komt van een sarcofaag net buiten de rijen.",
+        "lineBlock.rowsToCols_other": "De gemarkeerde rijen hebben {{count}} mummies meer dan hun eigen sarcofagen kunnen leveren, dus die komen van sarcofagen net buiten de rijen.",
+        "lineBlock.colsToRows_one": "De gemarkeerde kolommen hebben één mummie meer dan hun eigen sarcofagen kunnen leveren, dus die komt van een sarcofaag net buiten de kolommen.",
+        "lineBlock.colsToRows_other": "De gemarkeerde kolommen hebben {{count}} mummies meer dan hun eigen sarcofagen kunnen leveren, dus die komen van sarcofagen net buiten de kolommen.",
+        "wouldStrand.row": "Een mummie hier laat de gemarkeerde rij zonder ruimte voor de mummies die nog moeten komen.",
+        "wouldStrand.col": "Een mummie hier laat de gemarkeerde kolom zonder ruimte voor de mummies die nog moeten komen.",
+        "wouldStrand.anchor": "Een mummie hier laat de gemarkeerde sarcofaag zonder vakje ernaast voor zijn eigen mummie.",
+        "action": {
+          "ruleOut_one": "Sluit het gearceerde vakje uit.",
+          "ruleOut_other": "Sluit de gearceerde vakjes uit.",
+          "place_one": "Leg een mummie op het gearceerde vakje.",
+          "place_other": "Leg een mummie op elk gearceerd vakje."
+        }
+      },
+      "beetles": {
+        "mistake": "Deze markering kan niet kloppen.",
+        "touch": "Deze kever staat er, dus er mag er geen naast staan — hoeken tellen mee.",
+        "zeroLine.row": "In deze rij staat geen kever, dus de hele rij is leeg.",
+        "zeroLine.col": "In deze kolom staat geen kever, dus de hele kolom is leeg.",
+        "noAnchor": "Naast deze vakjes ligt geen mestbal, dus hier kan geen kever staan.",
+        "lineFull.row_one": "Deze rij heeft haar kever al.",
+        "lineFull.row_other": "Deze rij heeft haar {{count}} kevers al.",
+        "lineFull.col_one": "Deze kolom heeft zijn kever al.",
+        "lineFull.col_other": "Deze kolom heeft zijn {{count}} kevers al.",
+        "lineTight.row_one": "Deze rij heeft nog maar één vakje over voor haar kever.",
+        "lineTight.row_other": "Deze rij heeft nog precies {{count}} vakjes over voor haar {{count}} kevers.",
+        "lineTight.col_one": "Deze kolom heeft nog maar één vakje over voor zijn kever.",
+        "lineTight.col_other": "Deze kolom heeft nog precies {{count}} vakjes over voor zijn {{count}} kevers.",
+        "onlyWay": "Naast deze mestbal is nog maar één vakje over voor zijn kever.",
+        "claimed": "Deze mestbal heeft zijn kever al, dus de vakjes ernaast die geen andere bal kan gebruiken blijven leeg.",
+        "lineBlock.rowsToCols_one": "De gemarkeerde rijen hebben één kever meer dan hun eigen mestballen kunnen leveren, dus die komt van een bal net buiten de rijen.",
+        "lineBlock.rowsToCols_other": "De gemarkeerde rijen hebben {{count}} kevers meer dan hun eigen mestballen kunnen leveren, dus die komen van ballen net buiten de rijen.",
+        "lineBlock.colsToRows_one": "De gemarkeerde kolommen hebben één kever meer dan hun eigen mestballen kunnen leveren, dus die komt van een bal net buiten de kolommen.",
+        "lineBlock.colsToRows_other": "De gemarkeerde kolommen hebben {{count}} kevers meer dan hun eigen mestballen kunnen leveren, dus die komen van ballen net buiten de kolommen.",
+        "wouldStrand.row": "Een kever hier laat de gemarkeerde rij zonder ruimte voor de kevers die nog moeten komen.",
+        "wouldStrand.col": "Een kever hier laat de gemarkeerde kolom zonder ruimte voor de kevers die nog moeten komen.",
+        "wouldStrand.anchor": "Een kever hier laat de gemarkeerde mestbal zonder vakje ernaast voor zijn eigen kever.",
+        "action": {
+          "ruleOut_one": "Sluit het gearceerde vakje uit.",
+          "ruleOut_other": "Sluit de gearceerde vakjes uit.",
+          "place_one": "Zet een kever op het gearceerde vakje.",
+          "place_other": "Zet een kever op elk gearceerd vakje."
+        }
+      }
     }
   },
   "rushHour": {

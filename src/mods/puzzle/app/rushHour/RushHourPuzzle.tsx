@@ -1,9 +1,10 @@
-import { useCallback, useMemo, useState, type FC } from "react"
+import { useCallback, type FC } from "react"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
+import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import {
   createRushHourState,
@@ -44,9 +45,11 @@ export const RushHourPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, roo
   const [past, setPast] = usePuzzleState<RushHourState[]>(() => [createRushHourState(puzzle)], puzzle)
   const state = past[past.length - 1]
 
-  /** Whether the player has asked for a hint, which is what gates the search (§4). */
-  const [asked, setAsked] = useState(false)
-  const hint = useMemo(() => (asked ? buildRushHourHint(puzzle, state) : undefined), [asked, puzzle, state])
+  /**
+   * The hint as it was when the player asked, which is also what gates the search: nothing is built
+   * before the ask. It names one slide and any slide ends it, so it is never rebuilt while it is shown.
+   */
+  const { hint, freeze, drop } = useFrozenHint(() => buildRushHourHint(puzzle, state))
 
   /**
    * The player's piece drives out before the shell is told.
@@ -75,7 +78,8 @@ export const RushHourPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, roo
         enabled: past.length > 1 && !finished,
       }}
       hint={hintText}
-      onHintRevealed={() => setAsked(true)}
+      onHintRevealed={freeze}
+      onHintHidden={drop}
       idleMs={hintIdleDelay(difficulty)}
       title={t(`rushHour.name.${skin.name}`)}
       goal={t(`rushHour.goal.${skin.name}`)}

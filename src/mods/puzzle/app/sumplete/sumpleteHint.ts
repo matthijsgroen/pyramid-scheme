@@ -21,6 +21,8 @@ export type SumpleteHint = {
    * else has to go" left the player working out which numbers that was.
    */
   action?: { key: "strike" | "keep"; count: number }
+  /** The mark each numbered cell has to hold ("row,col"); empty for a mistake, which has no move to carry out. */
+  targets: ReadonlyMap<string, "strike" | "keep">
 }
 
 const key = (row: number, col: number) => `${row},${col}`
@@ -53,6 +55,7 @@ const asHint = (step: SumpleteStep): SumpleteHint => ({
   line: { kind: step.line, index: step.index },
   // Every step here decides one way or the other for all of its cells, so the move is the first one's.
   action: { key: step.decisions[0].mark === "keep" ? "keep" : "strike", count: step.decisions.length },
+  targets: new Map(step.decisions.map(decision => [key(decision.row, decision.col), decision.mark])),
 })
 
 /**
@@ -74,7 +77,8 @@ export const buildSumpleteHint = (
   const mistake = firstMistake(marks, solution)
   // A wrong mark has no move to offer: the way out is the player's to find, and naming it would be naming
   // the answer.
-  if (mistake) return { key: "mistake", params: {}, cells: new Set([key(mistake.row, mistake.col)]) }
+  if (mistake)
+    return { key: "mistake", params: {}, cells: new Set([key(mistake.row, mistake.col)]), targets: new Map() }
 
   const step = nextStep(puzzle, marks, cap)
   return step && asHint(step)

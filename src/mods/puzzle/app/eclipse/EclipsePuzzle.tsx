@@ -1,16 +1,19 @@
-import { useCallback, useMemo, useState, type FC } from "react"
+import { useCallback, type FC } from "react"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
+import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
+import { classifyItemMove, cycleDecision, openItems, openFocus } from "@/mods/core/app/markMoveEffect"
 import {
   canUndoEclipse,
   createEclipseState,
   cycleEclipseCell,
   eclipseSolved,
   undoEclipse,
+  type Mark,
 } from "@/mods/puzzle/game/eclipse/eclipse"
 import type { EclipsePuzzleWithAnswer } from "@/mods/puzzle/game/eclipse/generateEclipse"
 import { buildEclipseHint } from "./eclipseHint"
@@ -26,23 +29,18 @@ type Props = {
   onCancel: () => void
 }
 
+/** The tap cycle (cycleEclipseCell): a moon is reached through a sun. */
+const CYCLE: readonly (Mark | undefined)[] = [undefined, "sun", "moon"]
+
 export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const [state, setState] = usePuzzleState(() => createEclipseState(puzzle), puzzle)
 
-  /**
-   * Whether the player has asked for a hint, which is what gates deriving one.
-   *
-   * A hint reads the board, and the top rung enumerates every legal filling of every line. Derived as the
-   * board changed, that lands on **every tap** for a string nobody asked to read — the same cost lightbeam
-   * paid for once and stopped paying.
-   */
-  const [asked, setAsked] = useState(false)
-
-  const hint = useMemo(
-    () => (asked ? buildEclipseHint(puzzle, state, puzzle.solution) : undefined),
-    [asked, puzzle, state]
-  )
+  // A hint reads the board, and the top rung enumerates every legal filling of every line: derived only once
+  // asked for, and held as it was until a move ends it, so one that names several squares keeps naming them.
+  const { hint, freeze, drop } = useFrozenHint(() => buildEclipseHint(puzzle, state, puzzle.solution))
+  const decisions = new Map([...(hint?.targets ?? [])].map(([cell, target]) => [cell, cycleDecision(CYCLE, target)]))
+  const open = hint ? openItems(hint.decided, decisions, cell => state.marks[cell]) : undefined
 
   /**
    * The board finishes itself before the shell is told, as one diagonal sweep across it.
@@ -83,7 +81,8 @@ export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, 
       // wrong reading — which is the mistake a board read the wrong way round produces.
       undo={{ onPress: () => setState(undoEclipse(state)), enabled: canUndoEclipse(state) && !finished }}
       hint={hintText}
-      onHintRevealed={() => setAsked(true)}
+      onHintRevealed={freeze}
+      onHintHidden={drop}
       idleMs={hintIdleDelay(difficulty)}
       title={t("eclipse.name")}
       goal={t("eclipse.goal")}
@@ -95,13 +94,24 @@ export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, 
           state={state}
           theme={theme}
           highlighted={hintVisible ? hint?.cells : undefined}
-          decided={hintVisible ? hint?.decided : undefined}
-          focus={hintVisible ? hint?.focus : undefined}
+          decided={hintVisible ? open : undefined}
+          focus={hintVisible && hint && open ? openFocus(hint.focus, open) : undefined}
           wave={wave}
           onTapCell={cell => {
             if (finished) return // the board is finishing; nothing may change under the celebration
-            reportInput()
-            setState(cycleEclipseCell(puzzle, state, cell))
+            const next = cycleEclipseCell(puzzle, state, cell)
+            reportInput(
+              hint
+                ? classifyItemMove(
+                    hint.decided,
+                    decisions,
+                    next.marks[cell] === state.marks[cell] ? [] : [cell],
+                    item => state.marks[item],
+                    item => next.marks[item]
+                  )
+                : "move"
+            )
+            setState(next)
           }}
         />
       )}

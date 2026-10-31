@@ -651,6 +651,26 @@
       "fields": {
         "touch": "No two farmsteads may touch — corners count. That close, they would share one well.",
         "enter": "Tap a plot to rule it out, tap again to raise a farmstead, once more to clear it."
+      },
+      "lamps": {
+        "touch": "No two oil lamps may stand next to each other — corners count. Their pools of light would overlap, and the oil would be wasted.",
+        "walls": "The grey stone blocks are part of the floor: nothing can stand on one, and it is not a square.",
+        "enter": "Tap a flagstone to rule it out, tap again to set an oil lamp there, once more to clear it."
+      },
+      "market": {
+        "touch": "No two stalls may stand next to each other — corners count. Rivals never set up side by side.",
+        "walls": "The houses are part of the square: nobody can set up a stall in one, and it is not a spot.",
+        "enter": "Tap a spot to rule it out, tap again to set up a stall there, once more to clear it."
+      },
+      "lotus": {
+        "touch": "No two lotuses may float next to each other — corners count. Each flower needs open water around it.",
+        "walls": "The rocks stick up out of the pond: nothing can float on one, and it is not a square.",
+        "enter": "Tap a patch of water to rule it out, tap again to float a lotus there, once more to clear it."
+      },
+      "cats": {
+        "touch": "No two cats may sleep next to each other — corners count. Each cat keeps its own patch of sun.",
+        "walls": "The pillars hold up the temple: no cat can sleep on one, and it is not a square.",
+        "enter": "Tap a flagstone to rule it out, tap again to lay a cat there, once more to clear it."
       }
     },
     "hint": {
@@ -751,23 +771,241 @@
           "place_one": "Raise a {{token}} on the hatched plot.",
           "place_other": "Raise a {{token}} on each hatched plot."
         }
+      },
+      "lamps": {
+        "mistake": "This mark cannot be right.",
+        "touch": "A {{token}} here, and no oil lamp may stand next to another — corners count.",
+        "groupFull.row_one": "This row already has its oil lamp.",
+        "groupFull.col_one": "This column already has its oil lamp.",
+        "groupFull.row_other": "This row already has its {{count}} oil lamps.",
+        "groupFull.col_other": "This column already has its {{count}} oil lamps.",
+        "groupTight.row_one": "This row is down to one flagstone.",
+        "groupTight.row_other": "This row is down to {{count}} flagstones.",
+        "groupTight.col_one": "This column is down to one flagstone.",
+        "groupTight.col_other": "This column is down to {{count}} flagstones.",
+        "onlyWay.row_one": "Between the stone blocks, there is only one square left in this row for an oil lamp.",
+        "onlyWay.col_one": "Between the stone blocks, there is only one square left in this column for an oil lamp.",
+        "onlyWay.row_other": "There is only one way to fit {{count}} oil lamps in this row.",
+        "onlyWay.col_other": "There is only one way to fit {{count}} oil lamps in this column.",
+        "everyWay.row_one": "Wherever this row's oil lamp goes, it is always here.",
+        "everyWay.col_one": "Wherever this column's oil lamp goes, it is always here.",
+        "everyWay.row_other": "Wherever this row's {{count}} oil lamps go, one is always here.",
+        "everyWay.col_other": "Wherever this column's {{count}} oil lamps go, one is always here.",
+        "lineBlock.rowsToCols": "The marked rows keep their oil lamps in the squares of those columns, so those columns have none to spare.",
+        "lineBlock.colsToRows": "The marked columns keep their oil lamps in the squares of those rows, so those rows have none to spare.",
+        "wouldStrand.row": "An oil lamp here would leave the marked row nowhere to go.",
+        "wouldStrand.col": "An oil lamp here would leave the marked column nowhere to go.",
+        "action": {
+          "ruleOut_one": "Rule out the hatched square.",
+          "ruleOut_other": "Rule out the hatched squares.",
+          "place_one": "Put an oil lamp in the hatched square.",
+          "place_other": "Put an oil lamp in each hatched square."
+        }
+      },
+      "market": {
+        "mistake": "This mark cannot be right.",
+        "touch": "A {{token}} here, and no stall may stand next to another — corners count.",
+        "groupFull.row_one": "This row already has its stall.",
+        "groupFull.col_one": "This column already has its stall.",
+        "groupFull.row_other": "This row already has its {{count}} stalls.",
+        "groupFull.col_other": "This column already has its {{count}} stalls.",
+        "groupTight.row_one": "This row is down to one spot.",
+        "groupTight.row_other": "This row is down to {{count}} spots.",
+        "groupTight.col_one": "This column is down to one spot.",
+        "groupTight.col_other": "This column is down to {{count}} spots.",
+        "onlyWay.row_one": "Between the houses, there is only one square left in this row for a stall.",
+        "onlyWay.col_one": "Between the houses, there is only one square left in this column for a stall.",
+        "onlyWay.row_other": "There is only one way to fit {{count}} stalls in this row.",
+        "onlyWay.col_other": "There is only one way to fit {{count}} stalls in this column.",
+        "everyWay.row_one": "Wherever this row's stall goes, it is always here.",
+        "everyWay.col_one": "Wherever this column's stall goes, it is always here.",
+        "everyWay.row_other": "Wherever this row's {{count}} stalls go, one is always here.",
+        "everyWay.col_other": "Wherever this column's {{count}} stalls go, one is always here.",
+        "lineBlock.rowsToCols": "The marked rows keep their stalls in the squares of those columns, so those columns have none to spare.",
+        "lineBlock.colsToRows": "The marked columns keep their stalls in the squares of those rows, so those rows have none to spare.",
+        "wouldStrand.row": "A stall here would leave the marked row nowhere to go.",
+        "wouldStrand.col": "A stall here would leave the marked column nowhere to go.",
+        "action": {
+          "ruleOut_one": "Rule out the hatched square.",
+          "ruleOut_other": "Rule out the hatched squares.",
+          "place_one": "Put a stall in the hatched square.",
+          "place_other": "Put a stall in each hatched square."
+        }
+      },
+      "lotus": {
+        "mistake": "This mark cannot be right.",
+        "touch": "A {{token}} here, and no lotus may float next to another — corners count.",
+        "groupFull.row_one": "This row already has its lotus.",
+        "groupFull.col_one": "This column already has its lotus.",
+        "groupFull.row_other": "This row already has its {{count}} lotuses.",
+        "groupFull.col_other": "This column already has its {{count}} lotuses.",
+        "groupTight.row_one": "This row is down to one patch of water.",
+        "groupTight.row_other": "This row is down to {{count}} patches of water.",
+        "groupTight.col_one": "This column is down to one patch of water.",
+        "groupTight.col_other": "This column is down to {{count}} patches of water.",
+        "onlyWay.row_one": "Between the rocks, there is only one square left in this row for a lotus.",
+        "onlyWay.col_one": "Between the rocks, there is only one square left in this column for a lotus.",
+        "onlyWay.row_other": "There is only one way to fit {{count}} lotuses in this row.",
+        "onlyWay.col_other": "There is only one way to fit {{count}} lotuses in this column.",
+        "everyWay.row_one": "Wherever this row's lotus goes, it is always here.",
+        "everyWay.col_one": "Wherever this column's lotus goes, it is always here.",
+        "everyWay.row_other": "Wherever this row's {{count}} lotuses go, one is always here.",
+        "everyWay.col_other": "Wherever this column's {{count}} lotuses go, one is always here.",
+        "lineBlock.rowsToCols": "The marked rows keep their lotuses in the squares of those columns, so those columns have none to spare.",
+        "lineBlock.colsToRows": "The marked columns keep their lotuses in the squares of those rows, so those rows have none to spare.",
+        "wouldStrand.row": "A lotus here would leave the marked row nowhere to go.",
+        "wouldStrand.col": "A lotus here would leave the marked column nowhere to go.",
+        "action": {
+          "ruleOut_one": "Rule out the hatched square.",
+          "ruleOut_other": "Rule out the hatched squares.",
+          "place_one": "Put a lotus in the hatched square.",
+          "place_other": "Put a lotus in each hatched square."
+        }
+      },
+      "cats": {
+        "mistake": "This mark cannot be right.",
+        "touch": "A {{token}} here, and no cat may sleep next to another — corners count.",
+        "groupFull.row_one": "This row already has its cat.",
+        "groupFull.col_one": "This column already has its cat.",
+        "groupFull.row_other": "This row already has its {{count}} cats.",
+        "groupFull.col_other": "This column already has its {{count}} cats.",
+        "groupTight.row_one": "This row is down to one flagstone.",
+        "groupTight.row_other": "This row is down to {{count}} flagstones.",
+        "groupTight.col_one": "This column is down to one flagstone.",
+        "groupTight.col_other": "This column is down to {{count}} flagstones.",
+        "onlyWay.row_one": "Between the pillars, there is only one square left in this row for a cat.",
+        "onlyWay.col_one": "Between the pillars, there is only one square left in this column for a cat.",
+        "onlyWay.row_other": "There is only one way to fit {{count}} cats in this row.",
+        "onlyWay.col_other": "There is only one way to fit {{count}} cats in this column.",
+        "everyWay.row_one": "Wherever this row's cat goes, it is always here.",
+        "everyWay.col_one": "Wherever this column's cat goes, it is always here.",
+        "everyWay.row_other": "Wherever this row's {{count}} cats go, one is always here.",
+        "everyWay.col_other": "Wherever this column's {{count}} cats go, one is always here.",
+        "lineBlock.rowsToCols": "The marked rows keep their cats in the squares of those columns, so those columns have none to spare.",
+        "lineBlock.colsToRows": "The marked columns keep their cats in the squares of those rows, so those rows have none to spare.",
+        "wouldStrand.row": "A cat here would leave the marked row nowhere to go.",
+        "wouldStrand.col": "A cat here would leave the marked column nowhere to go.",
+        "action": {
+          "ruleOut_one": "Rule out the hatched square.",
+          "ruleOut_other": "Rule out the hatched squares.",
+          "place_one": "Put a cat in the hatched square.",
+          "place_other": "Put a cat in each hatched square."
+        }
       }
     },
     "quota": {
       "default": "Per row, column and region",
-      "fields": "Per row, column and holding"
+      "fields": "Per row, column and holding",
+      "lamps": "Per row and column",
+      "market": "Per row and column",
+      "lotus": "Per row and column",
+      "cats": "Per row and column"
     },
     "goal": {
       "default_one": "Every row, every column and every region holds exactly one star.",
       "default_other": "Every row, every column and every region holds exactly {{count}} stars.",
       "fields_one": "Every row, every column and every holding has exactly one farmstead.",
-      "fields_other": "Every row, every column and every holding has exactly {{count}} farmsteads."
+      "fields_other": "Every row, every column and every holding has exactly {{count}} farmsteads.",
+      "lamps": "Every row and every column holds exactly one oil lamp.",
+      "market": "Every row and every column holds exactly one market stall.",
+      "lotus": "Every row and every column holds exactly one lotus.",
+      "cats": "Every row and every column holds exactly one cat."
     },
     "name": {
       "default": "Stars Apart",
       "fields": "Farmsteads",
       "twinDefault": "Twin Stars",
-      "twinFields": "Twin Farmsteads"
+      "twinFields": "Twin Farmsteads",
+      "lamps": "Oil Lamps",
+      "market": "Market Stalls",
+      "lotus": "Lotus Pond",
+      "cats": "Temple Cats"
+    }
+  },
+  "pairPuzzle": {
+    "name": {
+      "mummies": "Mummy Rest",
+      "beetles": "Dung Beetles"
+    },
+    "goal": {
+      "mummies": "Every sarcophagus gets one mummy beside it, and every row and column holds exactly the number of mummies printed beside it.",
+      "beetles": "Every dung ball gets one beetle beside it, and every row and column holds exactly the number of beetles printed beside it."
+    },
+    "rules": {
+      "mummies": {
+        "pair": "Each sarcophagus has one mummy resting directly above, below, left or right of it, and every mummy rests beside a sarcophagus of its own.",
+        "count": "The number beside a row or column says how many mummies it holds. It turns green when the line holds exactly that many, and red when it cannot be met.",
+        "touch": "No two mummies may stand next to each other — corners count.",
+        "enter": "Tap a square to rule it out, tap again to lay a mummy there, once more to clear it. Drag across squares to rule out a run. Sarcophagi cannot be tapped."
+      },
+      "beetles": {
+        "pair": "Each dung ball has one beetle directly above, below, left or right of it, and every beetle stands beside a ball of its own to roll.",
+        "count": "The number beside a row or column says how many beetles it holds. It turns green when the line holds exactly that many, and red when it cannot be met.",
+        "touch": "No two beetles may stand next to each other — corners count.",
+        "enter": "Tap a square to rule it out, tap again to put a beetle there, once more to clear it. Drag across squares to rule out a run. Dung balls cannot be tapped."
+      }
+    },
+    "hint": {
+      "mummies": {
+        "mistake": "This mark cannot be right.",
+        "touch": "This mummy is down, so no other may stand next to it — corners count.",
+        "zeroLine.row": "This row holds no mummies, so all of it is empty.",
+        "zeroLine.col": "This column holds no mummies, so all of it is empty.",
+        "noAnchor": "These squares have no sarcophagus beside them, so no mummy can rest here.",
+        "lineFull.row_one": "This row already has its mummy.",
+        "lineFull.row_other": "This row already has its {{count}} mummies.",
+        "lineFull.col_one": "This column already has its mummy.",
+        "lineFull.col_other": "This column already has its {{count}} mummies.",
+        "lineTight.row_one": "This row is down to one square for its mummy.",
+        "lineTight.row_other": "This row is down to exactly {{count}} squares for its {{count}} mummies.",
+        "lineTight.col_one": "This column is down to one square for its mummy.",
+        "lineTight.col_other": "This column is down to exactly {{count}} squares for its {{count}} mummies.",
+        "onlyWay": "This sarcophagus has only one square left beside it for its mummy.",
+        "claimed": "This sarcophagus already has its mummy, so the squares beside it that no other sarcophagus can use stay empty.",
+        "lineBlock.rowsToCols_one": "The marked rows hold one more mummy than their own sarcophagi can give, so it comes from a sarcophagus just outside them.",
+        "lineBlock.rowsToCols_other": "The marked rows hold {{count}} more mummies than their own sarcophagi can give, so they come from sarcophagi just outside them.",
+        "lineBlock.colsToRows_one": "The marked columns hold one more mummy than their own sarcophagi can give, so it comes from a sarcophagus just outside them.",
+        "lineBlock.colsToRows_other": "The marked columns hold {{count}} more mummies than their own sarcophagi can give, so they come from sarcophagi just outside them.",
+        "wouldStrand.row": "A mummy here would leave the marked row without room for the mummies it still owes.",
+        "wouldStrand.col": "A mummy here would leave the marked column without room for the mummies it still owes.",
+        "wouldStrand.anchor": "A mummy here would leave the marked sarcophagus with no square beside it for its own.",
+        "action": {
+          "ruleOut_one": "Rule out the hatched square.",
+          "ruleOut_other": "Rule out the hatched squares.",
+          "place_one": "Lay a mummy on the hatched square.",
+          "place_other": "Lay a mummy on each hatched square."
+        }
+      },
+      "beetles": {
+        "mistake": "This mark cannot be right.",
+        "touch": "This beetle is down, so no other may stand next to it — corners count.",
+        "zeroLine.row": "This row holds no beetles, so all of it is empty.",
+        "zeroLine.col": "This column holds no beetles, so all of it is empty.",
+        "noAnchor": "These squares have no dung ball beside them, so no beetle can stand here.",
+        "lineFull.row_one": "This row already has its beetle.",
+        "lineFull.row_other": "This row already has its {{count}} beetles.",
+        "lineFull.col_one": "This column already has its beetle.",
+        "lineFull.col_other": "This column already has its {{count}} beetles.",
+        "lineTight.row_one": "This row is down to one square for its beetle.",
+        "lineTight.row_other": "This row is down to exactly {{count}} squares for its {{count}} beetles.",
+        "lineTight.col_one": "This column is down to one square for its beetle.",
+        "lineTight.col_other": "This column is down to exactly {{count}} squares for its {{count}} beetles.",
+        "onlyWay": "This dung ball has only one square left beside it for its beetle.",
+        "claimed": "This dung ball already has its beetle, so the squares beside it that no other ball can use stay empty.",
+        "lineBlock.rowsToCols_one": "The marked rows hold one more beetle than their own dung balls can give, so it comes from a ball just outside them.",
+        "lineBlock.rowsToCols_other": "The marked rows hold {{count}} more beetles than their own dung balls can give, so they come from balls just outside them.",
+        "lineBlock.colsToRows_one": "The marked columns hold one more beetle than their own dung balls can give, so it comes from a ball just outside them.",
+        "lineBlock.colsToRows_other": "The marked columns hold {{count}} more beetles than their own dung balls can give, so they come from balls just outside them.",
+        "wouldStrand.row": "A beetle here would leave the marked row without room for the beetles it still owes.",
+        "wouldStrand.col": "A beetle here would leave the marked column without room for the beetles it still owes.",
+        "wouldStrand.anchor": "A beetle here would leave the marked dung ball with no square beside it for its own beetle.",
+        "action": {
+          "ruleOut_one": "Rule out the hatched square.",
+          "ruleOut_other": "Rule out the hatched squares.",
+          "place_one": "Put a beetle on the hatched square.",
+          "place_other": "Put a beetle on each hatched square."
+        }
+      }
     }
   },
   "rushHour": {

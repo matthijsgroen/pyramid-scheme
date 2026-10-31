@@ -1,13 +1,15 @@
 import { describe, expect, it } from "vitest"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { cellAt, type StarBattlePuzzle } from "./starBattle"
+import { blankMarks, cellAt, type StarBattlePuzzle } from "./starBattle"
 import { puzzleSeeds } from "@/data/puzzleSeeds"
 import { configHash } from "@/game/seeds/configHash"
 import { STAR_BATTLE_CONFIG } from "./starBattleConfig"
 import { TWIN_STARS_CONFIG } from "./twinStars"
 import { generateStarBattle, techniquesUpTo } from "./generateStarBattle"
 import {
+  ladderOf,
   nextStarBattleStep,
+  REGIONLESS_TECHNIQUES,
   solveStarBattleByTechniques,
   STAR_BATTLE_TECHNIQUES,
   techniqueRank,
@@ -132,7 +134,7 @@ describe("star battle techniques", () => {
 describe("the ladder", () => {
   it("lists every rung exactly once, in rank order", () => {
     expect(new Set(STAR_BATTLE_TECHNIQUES).size).toBe(STAR_BATTLE_TECHNIQUES.length)
-    expect(STAR_BATTLE_TECHNIQUES.map(techniqueRank)).toEqual(STAR_BATTLE_TECHNIQUES.map((_unused, at) => at))
+    expect(STAR_BATTLE_TECHNIQUES.map(id => techniqueRank(id))).toEqual(STAR_BATTLE_TECHNIQUES.map((_unused, at) => at))
   })
 
   /**
@@ -162,5 +164,44 @@ describe("the ladder", () => {
       }
     }
     expect([...seen].sort()).toEqual([...STAR_BATTLE_TECHNIQUES].sort())
+  })
+})
+
+describe("lineBlock", () => {
+  /** Rows 0 and 1 can only hold their stars in columns 2 and 3; every other square of those rows is a wall. */
+  const walled = (): StarBattlePuzzle => ({
+    size: 6,
+    quota: 1,
+    walls: Array.from({ length: 36 }, (_unused, cell) => cell < 12 && ![2, 3].includes(cell % 6)),
+  })
+
+  it("rules out the columns' other squares when two rows live inside two columns", () => {
+    const board = walled()
+    const step = nextStarBattleStep(board, blankMarks(board), ["lineBlock"])
+    expect(step?.technique).toBe("lineBlock")
+    expect(step?.variant).toBe("rowsToCols")
+    expect(step?.count).toBe(2)
+    expect(step?.decisions.every(d => d.mark === "dark")).toBe(true)
+    const expected = [2, 3, 4, 5].flatMap(row => [cellAt(6, row, 2), cellAt(6, row, 3)])
+    expect(step?.decisions.map(d => d.cell).sort((a, b) => a - b)).toEqual(expected)
+  })
+
+  it("reads columns into rows the same way", () => {
+    const board = walled()
+    const transposed: StarBattlePuzzle = {
+      ...board,
+      walls: board.walls!.map((_unused, cell) => board.walls![(cell % 6) * 6 + Math.floor(cell / 6)]),
+    }
+    const step = nextStarBattleStep(transposed, blankMarks(transposed), ["lineBlock"])
+    expect(step?.variant).toBe("colsToRows")
+  })
+
+  it("star battle's ladder never contains lineBlock", () => {
+    expect(STAR_BATTLE_TECHNIQUES).not.toContain("lineBlock")
+  })
+
+  it("a walled board runs the regionless ladder and a plain one the star battle ladder", () => {
+    expect(ladderOf(walled())).toBe(REGIONLESS_TECHNIQUES)
+    expect(ladderOf(bands(5))).toBe(STAR_BATTLE_TECHNIQUES)
   })
 })

@@ -1,0 +1,161 @@
+/**
+ * The pair puzzle board: pieces placed beside printed anchors under two counts and one adjacency rule.
+ *
+ * Cells are addressed by a single index, `row * size + col`, as in star battle. The answer is the piece
+ * positions alone; which piece belongs to which anchor is never shown, only checked.
+ */
+import { cols, neighboursOf, orthogonalOf, rows } from "../starBattle/starBattle"
+
+/** What a player writes in a square. `empty` is their own bookkeeping — the answer is the pieces alone. */
+export type PairMark = "piece" | "empty"
+
+export type PairPuzzle = {
+  size: number
+  /** Cells that print an anchor. Never marked; every anchor owns exactly one piece next to it. */
+  anchors: readonly boolean[]
+  rowCounts: readonly number[]
+  colCounts: readonly number[]
+}
+
+export type PairMarks = {
+  marks: readonly (PairMark | undefined)[]
+}
+
+export type PairState = PairMarks & {
+  /** Boards this one replaced, oldest first — the undo stack. */
+  past: readonly (readonly (PairMark | undefined)[])[]
+}
+
+export type LineStatus = "open" | "met" | "broken"
+
+const UNDO_LIMIT = 200
+
+export const createPairState = (puzzle: PairPuzzle): PairState => ({
+  marks: new Array(puzzle.size * puzzle.size).fill(undefined),
+  past: [],
+})
+
+/** What a tap does: empty → "empty" → "piece" → empty. Anchors are not the player's to mark. */
+export const cyclePairCell = (state: PairState, cell: number, puzzle: PairPuzzle): PairState => {
+  if (puzzle.anchors[cell]) return state
+  const next = state.marks[cell] === undefined ? "empty" : state.marks[cell] === "empty" ? "piece" : undefined
+  return {
+    marks: state.marks.map((mark, index) => (index === cell ? next : mark)),
+    past: [...state.past, state.marks].slice(-UNDO_LIMIT),
+  }
+}
+
+/** Marks a run of open cells "empty" in one undo step; cells already marked are left as they are. */
+export const sweepPairCells = (state: PairState, cells: readonly number[], puzzle: PairPuzzle): PairState => {
+  const ruling = cells.filter(cell => !state.marks[cell] && !puzzle.anchors[cell])
+  if (!ruling.length) return state
+  return {
+    marks: state.marks.map((mark, index) => (ruling.includes(index) ? "empty" : mark)),
+    past: [...state.past, state.marks].slice(-UNDO_LIMIT),
+  }
+}
+
+export const undoPair = (state: PairState): PairState => {
+  const previous = state.past.at(-1)
+  return previous ? { marks: previous, past: state.past.slice(0, -1) } : state
+}
+
+export const canUndoPair = (state: PairState): boolean => state.past.length > 0
+
+const anchorCells = (puzzle: PairPuzzle): number[] => puzzle.anchors.flatMap((a, cell) => (a ? [cell] : []))
+
+/**
+ * One way to deal the pieces out one to an anchor, as piece → anchor: bipartite matching, each piece beside
+ * its own anchor and every anchor used once. Undefined when there is none. Counts alone cannot tell, because
+ * two pieces may crowd one anchor. Where several pairings exist this is one of them: a board's answer is
+ * where the pieces stand, never which anchor each one belongs to.
+ */
+export const pairingOf = (puzzle: PairPuzzle, pieces: readonly boolean[]): Map<number, number> | undefined => {
+  const pieceCells = pieces.flatMap((p, cell) => (p ? [cell] : []))
+  const anchors = anchorCells(puzzle)
+  if (pieceCells.length !== anchors.length) return undefined
+  const owner = new Map<number, number>()
+  const assign = (piece: number, seen: Set<number>): boolean =>
+    orthogonalOf(puzzle.size, piece).some(anchor => {
+      if (!puzzle.anchors[anchor] || seen.has(anchor)) return false
+      seen.add(anchor)
+      const held = owner.get(anchor)
+      if (held !== undefined && !assign(held, seen)) return false
+      owner.set(anchor, piece)
+      return true
+    })
+  if (!pieceCells.every(piece => assign(piece, new Set()))) return undefined
+  return new Map([...owner].map(([anchor, piece]) => [piece, anchor]))
+}
+
+export const hasPerfectPairing = (puzzle: PairPuzzle, pieces: readonly boolean[]): boolean =>
+  pairingOf(puzzle, pieces) !== undefined
+
+const lineOf = (puzzle: PairPuzzle, marks: PairMarks["marks"], cells: number[], count: number): LineStatus => {
+  const pieces = cells.filter(cell => marks[cell] === "piece").length
+  const reachable = cells.filter(cell => !marks[cell] && !puzzle.anchors[cell]).length
+  if (pieces > count || pieces + reachable < count) return "broken"
+  return pieces === count ? "met" : "open"
+}
+
+export const lineStatus = (
+  puzzle: PairPuzzle,
+  marks: PairMarks["marks"]
+): { rows: LineStatus[]; cols: LineStatus[] } => ({
+  rows: rows(puzzle.size).map((cells, row) => lineOf(puzzle, marks, cells, puzzle.rowCounts[row])),
+  cols: cols(puzzle.size).map((cells, col) => lineOf(puzzle, marks, cells, puzzle.colCounts[col])),
+})
+
+/**
+ * Every piece the board can already prove wrong: touching another piece, standing beside no anchor, or
+ * sitting in a line that holds more than it owes. An unfinished line is not a fault.
+ */
+export const pairConflicts = (puzzle: PairPuzzle, state: PairMarks): Set<number> => {
+  const { size } = puzzle
+  const { marks } = state
+  const pieces = marks.flatMap((mark, cell) => (mark === "piece" ? [cell] : []))
+  const bad = new Set<number>()
+  pieces.forEach(cell => {
+    if (neighboursOf(size, cell).some(at => marks[at] === "piece")) bad.add(cell)
+    if (!orthogonalOf(size, cell).some(at => puzzle.anchors[at])) bad.add(cell)
+  })
+  const overfull = (cells: number[], count: number) => {
+    const held = cells.filter(cell => marks[cell] === "piece")
+    if (held.length > count) held.forEach(cell => bad.add(cell))
+  }
+  rows(size).forEach((cells, row) => overfull(cells, puzzle.rowCounts[row]))
+  cols(size).forEach((cells, col) => overfull(cells, puzzle.colCounts[col]))
+  return bad
+}
+
+/** A finished board: counts exact, no conflicts, and the pieces deal out to the anchors one each. */
+export const pairSolved = (puzzle: PairPuzzle, state: PairMarks): boolean => {
+  const { size } = puzzle
+  const { marks } = state
+  const held = (cells: number[]) => cells.filter(cell => marks[cell] === "piece").length
+  return (
+    rows(size).every((cells, row) => held(cells) === puzzle.rowCounts[row]) &&
+    cols(size).every((cells, col) => held(cells) === puzzle.colCounts[col]) &&
+    pairConflicts(puzzle, state).size === 0 &&
+    hasPerfectPairing(
+      puzzle,
+      marks.map(mark => mark === "piece")
+    )
+  )
+}
+
+/** The eight neighbours of each piece, shown as spent rather than written; anchors and cells the player already marked are never included. */
+export const ruledOutByPieces = (puzzle: PairPuzzle, marks: PairMarks["marks"]): Set<number> =>
+  new Set(
+    marks
+      .flatMap((mark, cell) => (mark === "piece" ? neighboursOf(puzzle.size, cell) : []))
+      .filter(at => !puzzle.anchors[at] && !marks[at])
+  )
+
+/** The first mark contradicting the answer, wrong `empty` included: it stalls a board as thoroughly. */
+export const firstPairMistake = (marks: PairMarks["marks"], solution: readonly boolean[]): number | undefined => {
+  const wrong = marks.findIndex(
+    (mark, cell) => (mark === "piece" && !solution[cell]) || (mark === "empty" && solution[cell])
+  )
+  return wrong === -1 ? undefined : wrong
+}
