@@ -316,9 +316,9 @@ const cellAt = (grid: FloorGrid, requiredKeyId: string): string => {
 // a genuine second way into "vault" (one not merely the seam's own connector cell reported under its
 // own coordinate — connectors take their `region` tag from whichever endpoint node sorts lower, so the
 // seam sometimes surfaces one cell over from the gate room itself; that is not a second entrance). With
-// the registration restored, 0 of 60 seeds leaked. Seed 4 is pinned because it is clean either way: with
-// the registration in place `waysIn` is exactly the gate room, and with it removed `waysIn` gains
-// "10,7" — two full node-widths from the gate room, so not the seam connector.
+// the registration restored, 0 of 60 seeds leaked. Seed 15 is pinned because `waysIn` reads exactly the gate
+// room there, and it fails under broken code: with `crossesNoDoor` forced to `return true` the carve moves and
+// `waysIn` reads "1,8" instead of the gate room at "0,8".
 const bigGatedFloor = (): FloorConfig => ({
   pathPuzzles: 10,
   difficulty: "starter",
@@ -343,7 +343,7 @@ const bigGatedFloor = (): FloorConfig => ({
     },
   ],
 })
-const PINNED_SEED = 4
+const PINNED_SEED = 15
 
 describe("what a gated region shuts off", () => {
   it("has exactly one way in, and it is the gate room", () => {

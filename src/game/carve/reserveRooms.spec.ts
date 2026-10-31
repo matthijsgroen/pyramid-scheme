@@ -62,7 +62,7 @@ const roomsOf = (grid: FloorGrid) =>
   )
 
 const SEEDS = 40
-const HUB_FORK_SEEDS = 35
+const HUB_FORK_SEEDS = 36
 
 const hubFloor = plainFloor({
   pathPuzzles: 1,

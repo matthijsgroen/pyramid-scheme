@@ -104,13 +104,13 @@ export const hangBranches = pass(
     const zone = blockZone(blocks)
     const cellKey = ([r, c]: Cell) => `${r},${c}`
     // NO TWO ROOMS THAT CLAIM FLOOR STAND ONE NODE APART UNLESS THEY MERGE: their 3×3s share cells, and a shared cell
-    // two rooms do not both open onto bites one of them. The entrance, the exit, a chain's end and every node a chain
-    // hangs off (a fork) claim floor; a chain's end and a fork are placed only where every claimer on a near node is
-    // joined to it: by a passage, or, for two rooms of one section, by a corner node both open onto (roomsMerge).
-    // Rooms of two sections are never joined diagonally. Where a chain fits nowhere under the rule it is placed
-    // crowded, and the attempt's backstop (finishAttempt) decides.
+    // two rooms do not both open onto bites one of them. The exit, a chain's end and every node a chain hangs off
+    // (a fork, the entrance too once one does) claim floor; a chain's end and a fork are placed only where every
+    // claimer on a near node is joined to it: by a passage, or, for two rooms of one section, by a corner node both
+    // open onto (roomsMerge). Rooms of two sections are never joined diagonally. Where a chain fits nowhere under the
+    // rule it is placed crowded, and the attempt's backstop (finishAttempt) decides.
     const labelAt = new Map<string, string>(mainPath.map((cell, pi) => [cellKey(cell), `main/${stepRegion[pi] ?? ""}`]))
-    const claimers = new Set<string>([cellKey(mainPath[0]), cellKey(mainPath[mainPath.length - 1])])
+    const claimers = new Set<string>([cellKey(mainPath[mainPath.length - 1])])
     // The fork a chain is being hung off while its first node is chosen: a claimer, though not yet one on the floor.
     let attachingAt: string | undefined
     // The section label of the chain being placed.

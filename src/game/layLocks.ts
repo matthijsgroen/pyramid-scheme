@@ -824,6 +824,31 @@ const remembered = (key: string, decide: () => GridOutcome): GridOutcome => {
   gridOutcomes.set(key, outcome)
   return outcome
 }
+/**
+ * Whether two rooms the lay places that claim floor (the route's exit and every junction) stand one node apart where
+ * they can never merge: ortho with no way between them, or diagonal across two regions. The carve keeps such rooms
+ * apart (hangBranches), so a restart lays again rather than hand the carve a floor it must refuse.
+ */
+const crowdsAClaim = (laid: LaidLocks): boolean => {
+  const regionOf = (key: CellKey) => laid.regions.find(region => region.nodes.includes(key))?.id
+  const claims = [
+    { cell: laid.route[laid.route.length - 1], exits: [] as Direction[] },
+    ...laid.junctions.map(({ cell, exits }) => ({ cell, exits })),
+  ]
+  const DIR_OF: Record<string, Direction> = { "-2,0": "n", "2,0": "s", "0,-2": "w", "0,2": "e" }
+  return claims.some((a, i) =>
+    claims.slice(i + 1).some(b => {
+      const [r1, c1] = a.cell.split(",").map(Number)
+      const [r2, c2] = b.cell.split(",").map(Number)
+      const [dr, dc] = [r2 - r1, c2 - c1]
+      if (Math.max(Math.abs(dr), Math.abs(dc)) !== 2) return false
+      if (dr === 0 || dc === 0)
+        return !a.exits.includes(DIR_OF[`${dr},${dc}`]) && !b.exits.includes(DIR_OF[`${-dr},${-dc}`])
+      return regionOf(a.cell) !== regionOf(b.cell)
+    })
+  )
+}
+
 /** A kept laid floor is handed out as a copy, so no caller can change what is kept. */
 const handOut = (laid: LaidLocks): LayResult => ({ ok: true, laid: structuredClone(laid) })
 
@@ -846,7 +871,7 @@ export const layLockPlan = (
         for (let restart = 0; restart < RESTARTS; restart++) {
           const rand = mulberry32(seed + grid * 7919 + extra * 104729 + restart * 15485863)
           const { laid, deepest, parts } = search(plan, grid, rand, extra, false, blocks)
-          if (laid) return { laid }
+          if (laid && !crowdsAClaim(laid)) return { laid }
           if (deepest > furthest.deepest) furthest = { deepest, part: parts[deepest] }
         }
       return { furthest: furthest.part }

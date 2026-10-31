@@ -2356,9 +2356,9 @@ describe("nothing on the map is rasterised at the size of the map", () => {
     const areas = Array.from(container.querySelectorAll<HTMLElement>("[style*='clip-path']")).map(
       el => (parseFloat(el.style.width) || 0) * (parseFloat(el.style.height) || 0)
     )
-    // A room and its headroom stays within an 8×8 block of cells whatever the floor's size; the map is the thing
-    // to stay away from.
-    expect(Math.max(...areas)).toBeLessThan(8 * 8 * CELL * CELL)
+    // A room and its headroom stays within 42 cells (a tenth of the 13×13 floor this was first measured on), whatever
+    // the floor's size; the map itself is the thing to stay away from.
+    expect(Math.max(...areas)).toBeLessThan(42 * CELL * CELL)
     // And all of them together stay under the map, so no floor can be paid for many times over.
     expect(areas.reduce((a, b) => a + b, 0) / mapPx).toBeLessThan(1)
   })

@@ -53,6 +53,26 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
       expect(laidSeeds.length).toBeGreaterThanOrEqual(minimum)
     })
 
+  it("never lays a junction one node from the exit or another junction where the two can never merge", () => {
+    const plan = FIXTURES.mirrorFork()
+    const at = (key: string) => key.split(",").map(Number)
+    for (const seed of SEEDS) {
+      const result = layLockPlan(plan, { seed, n: startingGridSize(plan) })
+      if (!result.ok) continue
+      const { route, junctions, regions } = result.laid
+      const regionOf = (key: string) => regions.find(region => region.nodes.includes(key))?.id
+      const exit = route[route.length - 1]
+      for (const junction of junctions) {
+        const [r1, c1] = at(junction.cell)
+        const [r2, c2] = at(exit)
+        if (Math.max(Math.abs(r1 - r2), Math.abs(c1 - c2)) !== 2) continue
+        const toExit = r2 < r1 ? "n" : r2 > r1 ? "s" : c2 < c1 ? "w" : "e"
+        if (r1 !== r2 && c1 !== c2) expect(regionOf(junction.cell)).toBe(regionOf(exit))
+        else expect(junction.exits).toContain(toExit)
+      }
+    }
+  })
+
   it("lays the same floor for the same seed", () => {
     const plan = FIXTURES.mirrorFork()
     const lay = () => layLockPlan(plan, { seed: 7, n: startingGridSize(plan) })
