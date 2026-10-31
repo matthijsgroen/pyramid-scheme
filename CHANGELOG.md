@@ -136,16 +136,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Twin stars hints can now say that a pair has to include a square whichever way round it goes.
 - Sudoku boards now come in three kinds: ordinary ones, ones where a whole value is missing from the start, and ones whose given squares mirror each other.
 - About one puzzle room in three now shows a different face of its puzzle — a scribe's register, a granary, a waterworks — instead of the plain board.
-- New art for the starter pyramids.
-- The camp: your base, which you build out with what you find.
-- A new look: the camp is your home screen, with all journeys in one list and the collection in tabs.
-- Higher difficulties have puzzles on their floors: levers, torches, ziplines, stone pipes and more.
-- A new healing system: hearts refill at the camp, and waterskins heal on the spot.
-- A storyline, with Fez, the explorer and a ghost in every tomb.
-- Every treasure tomb is hidden in a cave, with its pyramid in a sunlit cavern below.
-- Side paths run through a lock's corridors; the Sphinx is read from inside, through a cave behind the ward gate.
-- Saved games start over this release.
-- The game left open during an update reloads into the new version instead of crashing.
 - A hint stays on screen while you carry it out.
 
 ## 0.44.0 - 2026-09-18
