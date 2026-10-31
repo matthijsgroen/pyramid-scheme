@@ -28,6 +28,8 @@ export type EclipseHint = {
    */
   decided: ReadonlySet<number>
   action: { key: "fill" | "fillMixed"; mark?: string; count: number } | undefined
+  /** The mark each decided square has to hold; empty for a mistake, which has no move to carry out. */
+  targets: ReadonlyMap<number, Mark>
   /** The square the reason is ABOUT, drawn apart from its evidence — "this square" has to be one square. */
   focus?: number
   /** Signs the reason points at, so "these two must match" has something to point to. */
@@ -60,6 +62,7 @@ export const buildEclipseHint = (
       cells: new Set([mistake]),
       decided: new Set([mistake]),
       action: undefined,
+      targets: new Map(),
       focus: mistake,
       links: new Set(),
     }
@@ -78,6 +81,7 @@ export const buildEclipseHint = (
   return {
     key: stepKey(step),
     decided: new Set(step.decisions.map(decision => decision.cell)),
+    targets: new Map(step.decisions.map(decision => [decision.cell, decision.mark])),
     action:
       marks.size === 1
         ? { key: "fill", mark: GLYPH[only], count: step.decisions.length }

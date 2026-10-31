@@ -7,6 +7,7 @@ import {
   boundsFromLines,
   CONSTELLATION_HINT_ORDER,
   nextConstellationStep,
+  type ConstellationDecision,
   type ConstellationStep,
 } from "@/mods/puzzle/game/constellation/techniques"
 
@@ -29,6 +30,8 @@ export type ConstellationHint = {
    * is the ceiling landing on one — a line may stand there, but never a second.
    */
   action: { key: "draw" | "refuse" | "refuseDouble"; count: number } | undefined
+  /** The line count each decided pair is held to; empty for a mistake, which has no move to carry out. */
+  bounds: readonly ConstellationDecision[]
 }
 
 /** What the step's bounds are asking the player to do about them. */
@@ -65,6 +68,7 @@ export const buildConstellationHint = (
       focus: mistake,
       stars: new Set(),
       action: undefined,
+      bounds: [],
     }
 
   const allowed = techniquesUpTo(puzzle.techniqueCap)
@@ -81,5 +85,6 @@ export const buildConstellationHint = (
     focus: step.decisions[0]?.pair ?? step.pairs[0],
     stars: new Set(step.stars),
     action: moveFor(step),
+    bounds: step.decisions,
   }
 }

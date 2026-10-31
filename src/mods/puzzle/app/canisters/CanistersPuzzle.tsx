@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
+import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import type { CanistersPuzzle as CanistersPuzzleData } from "@/mods/puzzle/game/canisters/canisters"
 import {
@@ -62,6 +63,10 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, ro
     return hint.claim ? `${goal} ${t("canisters.hint.claim")}` : goal
   }, [puzzle, state.volumes, left, wanted, t])
 
+  // The words from the moment the player asked: they name an amount for the board as it stood, so they
+  // are kept while the player picks up a canister and ended by a pour or a claim.
+  const { hint: frozen, freeze, drop } = useFrozenHint(() => hintText)
+
   // One tick a leg: what the player measured lights in the order it was claimed, which is the board saying
   // back what was done rather than a generic flourish (puzzle-screens.md §3).
   const celebration = useCelebration(solved, puzzle.targets.length)
@@ -75,7 +80,9 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, ro
       // Undo gives the MOVE back as well as the pour (`undoPour`), so on this board it is the way out of a
       // budget spent on a wrong reading — not merely a convenience.
       undo={{ onPress: () => setState(undoPour), enabled: canUndoPour(state) && !solved }}
-      hint={hintText}
+      hint={() => frozen}
+      onHintRevealed={freeze}
+      onHintHidden={drop}
       idleMs={hintIdleDelay(difficulty)}
       title={t(`canisters.name.${skin.name}`)}
       // **The goal says what the board is for; the amount lives above the board.** Naming the number here
@@ -108,12 +115,15 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, ro
             }
             skin={skin}
             onHold={canister => {
-              reportInput()
+              reportInput("look")
               setState(current => holdCanister(current, canister))
             }}
             onPour={to => {
-              reportInput()
-              setState(current => pourInto(current, puzzle, to))
+              // A pour the board refuses (nothing to move, budget spent) only changes what is held, so a
+              // hint stays through it.
+              const next = pourInto(state, puzzle, to)
+              reportInput(next.volumes === state.volumes ? "look" : "move")
+              setState(next)
             }}
             onClaim={canister => {
               reportInput()

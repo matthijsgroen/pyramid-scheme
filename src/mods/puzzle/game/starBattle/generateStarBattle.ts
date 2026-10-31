@@ -105,8 +105,10 @@ export type StarBattleOptions = {
  */
 const MAX_ATTEMPTS = 20_000
 
-export const techniquesUpTo = (cap: StarBattleTechniqueId): StarBattleTechniqueId[] =>
-  STAR_BATTLE_TECHNIQUES.filter(id => techniqueRank(id) <= techniqueRank(cap))
+export const techniquesUpTo = (
+  cap: StarBattleTechniqueId,
+  ladder: readonly StarBattleTechniqueId[] = STAR_BATTLE_TECHNIQUES
+): StarBattleTechniqueId[] => ladder.filter(id => techniqueRank(id, ladder) <= techniqueRank(cap, ladder))
 
 /**
  * A legal star set: `quota` to a row, `quota` to a column, no two touching. Drawn by backtracking down the
@@ -120,7 +122,7 @@ export const techniquesUpTo = (cap: StarBattleTechniqueId): StarBattleTechniqueI
  * drawn as a random COMBINATION rather than a random sequence — the same pair reached two ways is one draw,
  * not two.
  */
-const starSet = (size: number, quota: number, random: () => number): number[] | undefined => {
+export const starSet = (size: number, quota: number, random: () => number): number[] | undefined => {
   const placed: number[] = []
   const inColumn = new Array(size).fill(0)
   const fill = (row: number): boolean => {
@@ -326,7 +328,7 @@ const growRegions = (
   return regions
 }
 
-const settles = (puzzle: StarBattlePuzzle, allowed: StarBattleTechniqueId[], solution: readonly boolean[]) => {
+export const settles = (puzzle: StarBattlePuzzle, allowed: StarBattleTechniqueId[], solution: readonly boolean[]) => {
   const result = solveStarBattleByTechniques(puzzle, allowed)
   return result.settled && result.marks.every((mark, cell) => (mark === "star") === solution[cell]) ? result : undefined
 }
@@ -341,13 +343,13 @@ const settles = (puzzle: StarBattlePuzzle, allowed: StarBattleTechniqueId[], sol
  * runs anywhere in this family.
  */
 // How many times the tier's own rungs fired. A board is kept on this, and a near miss ranked by it.
-const demandedRungs = (
+export const demandedRungs = (
   steps: readonly { technique: StarBattleTechniqueId }[],
   requires: readonly StarBattleTechniqueId[]
 ) => steps.filter(step => requires.includes(step.technique)).length
 
 // The gate itself, named once so the loop below and `grade` cannot come to disagree about it.
-const meetsDemand = (
+export const meetsDemand = (
   steps: readonly { technique: StarBattleTechniqueId }[],
   requires: readonly StarBattleTechniqueId[],
   requiresCount: number
@@ -362,7 +364,7 @@ const noRegionOnALine = (puzzle: StarBattlePuzzle) =>
   )
 
 /** How long the board makes the player eliminate before the first star lands. */
-const firstStarStep = (steps: readonly { decisions: readonly { mark: string }[] }[]) =>
+export const firstStarStep = (steps: readonly { decisions: readonly { mark: string }[] }[]) =>
   steps.findIndex(step => step.decisions.some(decision => decision.mark === "star"))
 
 // Every gate a board is kept on beyond "the ladder settles it", in one place so the loop and `grade` cannot

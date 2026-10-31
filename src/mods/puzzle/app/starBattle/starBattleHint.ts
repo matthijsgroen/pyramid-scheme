@@ -1,6 +1,11 @@
-import { firstStarBattleMistake, type StarBattleMarks } from "@/mods/puzzle/game/starBattle/starBattle"
+import {
+  blankMarks,
+  firstStarBattleMistake,
+  ruledOutByStars,
+  type StarBattleMarks,
+} from "@/mods/puzzle/game/starBattle/starBattle"
 import { techniquesUpTo, type StarBattlePuzzleWithAnswer } from "@/mods/puzzle/game/starBattle/generateStarBattle"
-import { nextStarBattleStep, stepFocus, type StarBattleStep } from "@/mods/puzzle/game/starBattle/techniques"
+import { ladderOf, nextStarBattleStep, stepFocus, type StarBattleStep } from "@/mods/puzzle/game/starBattle/techniques"
 
 export type StarBattleHint = {
   /** Translation key under `starBattle.hint.<place>` — the REASON, on its own line. */
@@ -67,7 +72,11 @@ export const buildStarBattleHint = (
       focus: mistake,
     }
 
-  const step = nextStarBattleStep(puzzle, [...state.marks], techniquesUpTo(puzzle.techniqueCap))
+  // The squares around a star are drawn as spent (`ruledOutByStars`), so the hint reasons from them as ruled
+  // out too: the adjacency rule is the screen's bookkeeping, never a move the player is asked to make.
+  const marks = blankMarks(puzzle).map((blank, cell) => state.marks[cell] ?? blank)
+  for (const spent of ruledOutByStars(puzzle, marks)) marks[spent] = "dark"
+  const step = nextStarBattleStep(puzzle, marks, techniquesUpTo(puzzle.techniqueCap, ladderOf(puzzle)))
   if (!step) return undefined
   return {
     key: stepKey(step),

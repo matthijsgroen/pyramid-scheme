@@ -18,6 +18,9 @@ export const HINT_IDLE_MS_BY_TIER: Record<Difficulty, number> = {
   wizard: 90000,
 }
 
+/** What a player input does to a revealed hint: "move" ends it, "follows" carries it out, "look" changes no board value. */
+export type InputEffect = "move" | "follows" | "look"
+
 export const hintIdleDelay = (difficulty?: Difficulty): number => HINT_IDLE_MS_BY_TIER[difficulty ?? "starter"]
 
 /**
@@ -37,12 +40,17 @@ export const useHintAvailability = (idleMs: number = HINT_IDLE_MS) => {
   const restartIdle = useCallback(() => scheduleIdle(idleMs, () => setNudging(true)), [scheduleIdle, idleMs])
   useEffect(restartIdle, [restartIdle])
 
-  // Any player move ends the hint: the highlighted cells describe a board state that no longer holds.
-  const reportInput = useCallback(() => {
-    setRevealed(false)
-    setNudging(false)
-    restartIdle()
-  }, [restartIdle])
+  // A move that does not follow the hint ends it: the highlighted cells describe a board state that no
+  // longer holds. A move that carries the hint out, and looking at the board, leave it up. Every input
+  // counts as activity, so the nudge clears and the idle wait restarts.
+  const reportInput = useCallback(
+    (effect: InputEffect = "move") => {
+      if (effect === "move") setRevealed(false)
+      setNudging(false)
+      restartIdle()
+    },
+    [restartIdle]
+  )
 
   const reveal = useCallback(() => {
     setRevealed(true)

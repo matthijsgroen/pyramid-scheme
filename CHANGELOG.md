@@ -136,6 +136,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Twin stars hints can now say that a pair has to include a square whichever way round it goes.
 - Sudoku boards now come in three kinds: ordinary ones, ones where a whole value is missing from the start, and ones whose given squares mirror each other.
 - About one puzzle room in three now shows a different face of its puzzle — a scribe's register, a granary, a waterworks — instead of the plain board.
+- A hint stays on screen while you carry it out.
 
 ## 0.44.0 - 2026-09-18
 

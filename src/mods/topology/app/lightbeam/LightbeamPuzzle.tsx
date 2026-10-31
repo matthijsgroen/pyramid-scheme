@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, type FC } from "react"
+import { useCallback, type FC } from "react"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import { LightbeamBoard } from "@/mods/topology/app/lightbeam/LightbeamBoard"
@@ -9,6 +9,7 @@ import type { LightbeamPuzzle as LightbeamPuzzleData } from "@/mods/topology/gam
 import { createLightbeamState, cycleLightbeamPiece } from "@/mods/topology/game/lightbeam/lightbeamState"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { useCelebration } from "@/mods/core/app/useCelebration"
+import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"
 
@@ -17,6 +18,15 @@ type Props = {
   difficulty?: Difficulty
   onSolved: () => void
   onCancel: () => void
+}
+
+const stepsCache = new WeakMap<LightbeamPuzzleData, ReturnType<typeof lightbeamHintSteps>>()
+const stepsFor = (puzzle: LightbeamPuzzleData) => {
+  const known = stepsCache.get(puzzle)
+  if (known) return known
+  const steps = lightbeamHintSteps(puzzle)
+  stepsCache.set(puzzle, steps)
+  return steps
 }
 
 // One gesture and no undo, which is the whole control scheme: a tap cycles a piece, and tapping round
@@ -39,39 +49,14 @@ export const LightbeamPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
    */
   const celebration = useCelebration(solved, 16)
 
-  /**
-   * Whether the player has asked for a hint, which is what gates deriving one.
-   *
-   * A hint is a full solve, and the top tier's solve enumerates tens of thousands of configurations. Derived as
-   * the board changed, that cost landed on **every tap** — the board took the tap and then sat there, for a
-   * string nobody had asked to read. Measured at the time: 185ms a tap against 19ms.
-   *
-   * Never cleared, and it costs nothing to leave set: the solve does not read the board, so a move can neither
-   * make it stale nor trigger another one. The shell hides the hint itself on the next input.
-   */
-  const [asked, setAsked] = useState(false)
-
-  // The solve, kept for the life of the board. It is a pure function of the puzzle, so the first hint pays for
-  // every hint after it — 618ms once at the top tier rather than 618ms a press.
-  const steps = useMemo(() => (asked ? lightbeamHintSteps(puzzle) : undefined), [asked, puzzle])
-
-  // Which of those reasons is worth saying, which does depend on the board and costs nothing.
-  const hint = useMemo(
-    () => (steps ? pickLightbeamHint(puzzle, steps, state.states) : undefined),
-    [puzzle, steps, state]
-  )
+  // The solve is a pure function of the puzzle and a full solve of the top tier costs ~600ms, so it is kept
+  // per puzzle and paid for by the first hint only. Nothing is solved before the player asks: deriving a
+  // hint as the board changed cost 185ms a tap against 19ms.
+  const { hint, freeze, drop } = useFrozenHint(() => pickLightbeamHint(puzzle, stepsFor(puzzle), state.states))
 
   // A function rather than a string, so the shell only reaches for the text once the hint is on screen — and so
   // the button is offered before there is anything to say (see `PuzzleFamilyShell`'s `hint`).
   const hintText = useCallback(() => hint && t(`lightbeam.hint.${hint.key}`), [hint, t])
-
-  const cycle = useCallback(
-    (piece: number) => {
-      if (solved) return // the light is on its way to the shrine; nothing may move under it
-      setState(prev => cycleLightbeamPiece(prev, puzzle, piece))
-    },
-    [puzzle, solved, setState]
-  )
 
   return (
     <PuzzleFamilyShell
@@ -80,7 +65,8 @@ export const LightbeamPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
       solved={celebration.done}
       onReset={() => setState(createLightbeamState(puzzle))}
       hint={solved ? undefined : hintText}
-      onHintRevealed={() => setAsked(true)}
+      onHintRevealed={freeze}
+      onHintHidden={drop}
       idleMs={hintIdleDelay(difficulty)}
       title={t("lightbeam.name")}
       goal={t("lightbeam.goal")}
@@ -94,8 +80,11 @@ export const LightbeamPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
           litBeam={hintVisible ? hint?.beam : undefined}
           surge={celebration.progress}
           onCycle={piece => {
-            reportInput()
-            cycle(piece)
+            if (solved) return // the light is on its way to the shrine; nothing may move under it
+            // A piece with a single way to stand cycles back onto itself: nothing changed, so it is a look.
+            const next = cycleLightbeamPiece(state, puzzle, piece)
+            reportInput(next.states[piece] === state.states[piece] ? "look" : "move")
+            setState(next)
           }}
         />
       )}

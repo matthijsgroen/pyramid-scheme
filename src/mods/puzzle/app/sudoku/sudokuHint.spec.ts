@@ -69,4 +69,54 @@ describe("the next thing to say to the player", () => {
     const hint = buildSudokuHint(gentle, gentle.givens, noNotes(), gentle.solution, gentle.techniqueCap)
     expect(hint?.key).toBe("nakedSingle")
   })
+
+  describe("what each square is asked for", () => {
+    it("maps the placed square to the value to write", () => {
+      const { row, col } = anEmptySquare()
+      const notes = noNotes()
+      notes[row][col] = [board.solution[row][col]]
+      const hint = buildSudokuHint(board, start(), notes, board.solution, board.techniqueCap)
+      expect(hint?.targets).toEqual(new Map([[sudokuCellKey(row, col), [board.solution[row][col]]]]))
+    })
+
+    it("maps every square a pointing step rules out to the value to rub out of it", () => {
+      // A hand-made board with nothing written: pencilled notes keep the 1 out of the lower squares of the top-left
+      // chamber, so its 1 can only sit in the top row, and the rest of that row cannot hold one.
+      const solution = [
+        [1, 2, 3, 4, 5, 6],
+        [3, 4, 5, 6, 1, 2],
+        [5, 6, 1, 2, 3, 4],
+        [2, 1, 4, 3, 6, 5],
+        [4, 3, 6, 5, 2, 1],
+        [6, 5, 2, 1, 4, 3],
+      ]
+      const hand = { size: 6, boxWidth: 2, boxHeight: 3, givens: solution.map(row => row.map(() => undefined)) }
+      const notes = noNotes()
+      for (const [row, col] of [
+        [1, 0],
+        [1, 1],
+        [2, 0],
+        [2, 1],
+      ])
+        notes[row][col] = [2, 3, 4, 5, 6]
+
+      const hint = buildSudokuHint(hand, hand.givens, notes, solution, "boxLine")
+      expect(hint?.key).toBe("pointing.row")
+      expect(hint?.targets).toEqual(
+        new Map([
+          ["0,2", [1]],
+          ["0,3", [1]],
+          ["0,4", [1]],
+          ["0,5", [1]],
+        ])
+      )
+    })
+
+    it("has no targets for a mistake", () => {
+      const { row, col } = anEmptySquare()
+      const values = start()
+      values[row][col] = (board.solution[row][col] % 6) + 1
+      expect(buildSudokuHint(board, values, noNotes(), board.solution, board.techniqueCap)?.targets).toBeUndefined()
+    })
+  })
 })

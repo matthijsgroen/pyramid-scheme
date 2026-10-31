@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import { afterEach, describe, expect, it } from "vitest"
-import { cleanup, render } from "@testing-library/react"
+import { afterEach, describe, expect, it, vi } from "vitest"
+import { cleanup, fireEvent, render } from "@testing-library/react"
 import type { StarBattlePuzzle } from "@/mods/puzzle/game/starBattle/starBattle"
 import { skinFor } from "./skins"
 import { StarBattleBoard } from "./StarBattleBoard"
@@ -16,7 +16,7 @@ const wallPath = () => {
     <StarBattleBoard
       puzzle={puzzle}
       state={{ marks: new Array(4).fill(undefined) }}
-      skin={skinFor(undefined, undefined)}
+      skin={skinFor(puzzle, undefined, undefined)}
       onTapCell={() => undefined}
       onSweepCells={() => undefined}
     />
@@ -60,7 +60,7 @@ describe("StarBattleBoard walls", () => {
       <StarBattleBoard
         puzzle={puzzle}
         state={{ marks: ["star", "dark", "dark", "star"] }}
-        skin={skinFor(undefined, undefined)}
+        skin={skinFor(puzzle, undefined, undefined)}
         onTapCell={() => undefined}
         onSweepCells={() => undefined}
       />
@@ -79,12 +79,55 @@ describe("StarBattleBoard walls", () => {
       <StarBattleBoard
         puzzle={puzzle}
         state={{ marks: new Array(4).fill(undefined) }}
-        skin={skinFor(undefined, undefined)}
+        skin={skinFor(puzzle, undefined, undefined)}
         onTapCell={() => undefined}
         onSweepCells={() => undefined}
       />
     )
     // Without this the stroke is measured in board-widths, so the walls thicken with the board.
     expect(container.querySelector("svg path")?.getAttribute("vector-effect")).toBe("non-scaling-stroke")
+  })
+})
+
+describe("StarBattleBoard on a walled board", () => {
+  // Wall in the middle of the top row; the cell beside it is open.
+  const walled: StarBattlePuzzle = {
+    size: 3,
+    quota: 1,
+    walls: [false, true, false, false, false, false, false, false, false],
+  }
+  const renderWalled = (onTapCell = vi.fn()) => {
+    const view = render(
+      <StarBattleBoard
+        puzzle={walled}
+        state={{ marks: new Array(9).fill(undefined) }}
+        skin={skinFor(walled, undefined, undefined)}
+        onTapCell={onTapCell}
+        onSweepCells={() => undefined}
+      />
+    )
+    return { ...view, onTapCell }
+  }
+
+  it("draws a wall cell as stone and not as a button", () => {
+    const { container } = renderWalled()
+    expect(container.querySelectorAll("button")).toHaveLength(8)
+    const stone = skinFor(walled, undefined, undefined).stone
+    expect(container.querySelectorAll(`.${stone.split(" ")[0]}`).length).toBeGreaterThan(0)
+    expect(container.querySelector("[data-wall]")?.className).toContain(stone.split(" ")[0])
+  })
+
+  it("still takes a tap on the cell next to a wall", () => {
+    const { container, onTapCell } = renderWalled()
+    fireEvent.click(container.querySelectorAll("button")[0])
+    expect(onTapCell).toHaveBeenCalledWith(0)
+  })
+
+  it("draws no region boundaries when there are no regions, only the rim", () => {
+    const { container } = renderWalled()
+    const d = container.querySelector("svg path")?.getAttribute("d") ?? ""
+    expect(d).toContain("M0 0h1")
+    expect(d).not.toContain("M1 1h1")
+    expect(d).not.toContain("M1 0v1")
   })
 })
