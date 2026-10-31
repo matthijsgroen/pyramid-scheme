@@ -1,5 +1,4 @@
 import { hashString } from "@/support/hashString"
-import { oneWayRuns } from "../gridNavigation"
 import { blockedCells, fillsOf, placeBlobs, variantsOf, type Variant } from "../prefabChecks"
 import type { PlaceDef, PlaceKind, Prefab, SpecialPlace } from "../prefabTypes"
 import { cellAt, claimsFloorAt } from "../roomFootprint"
@@ -16,8 +15,7 @@ import type {
   SubSection,
 } from "../siteTypes"
 import type { WebDoorFault } from "../webDoors"
-import { centrality } from "./centrality"
-import { NODE_STEP, OPPOSITE } from "./grid"
+import { OPPOSITE } from "./grid"
 import { childSectionsOf } from "./sections"
 import type { FloorPrep, Refusal } from "./state"
 
@@ -42,17 +40,8 @@ export const absorbable = (cell: GridCell, dir: Direction): boolean =>
   cell.dirs.has(dir) &&
   cell.dirs.has(OPPOSITE[dir])
 
-/** What a room holds that a prefab must have a place for; `nothing` fits every prefab. */
+/** What a room holds that a prefab has a place for; `nothing` has none. */
 type Holds = "nothing" | "chest" | "portal" | "mechanism"
-
-const isDoor = (cell: RoomCell): boolean =>
-  cell.requiredKeyId !== undefined ||
-  cell.requiredKeyIds !== undefined ||
-  cell.gateVariant !== undefined ||
-  cell.tags?.includes("gate") === true ||
-  cell.regionBarrier !== undefined ||
-  cell.passage !== undefined ||
-  cell.webDoor !== undefined
 
 const holdsOf = (cell: GridCell): Holds => {
   if (cell.type !== "room") return "nothing"
@@ -69,54 +58,11 @@ const holdsOf = (cell: GridCell): Holds => {
   return "nothing"
 }
 
-/** A dead end with nothing in it: a node in sight with one way out, a corridor's end or a room where no encounter,
- * loot, stair, mechanism or door stands and no story or pin is authored. */
-const emptyDeadEnd = (cell: GridCell, r: number, c: number): boolean => {
-  if (cell.type === "empty" || cell.dirs.size !== 1 || cell.hidden) return false
-  if (r % NODE_STEP !== 0 || c % NODE_STEP !== 0) return false
-  if (cell.type === "corridor") return cell.obstacle === undefined && cell.openGate === undefined
-  return (
-    cell.roomType !== "portal" &&
-    cell.family === undefined &&
-    !cell.tags?.length &&
-    cell.reward === undefined &&
-    cell.stock === undefined &&
-    cell.stairId === undefined &&
-    cell.authoredActivity === undefined &&
-    cell.pinnedPrefab === undefined &&
-    holdsOf(cell) === "nothing" &&
-    !isDoor(cell)
-  )
-}
-
-/** A room whose content is stood on, so its node is where he stands: a plate, a pipe's hole, a sequence tile. */
-const stoodOn = (cell: RoomCell): boolean =>
-  cell.plate !== undefined || cell.pipeHole !== undefined || cell.sequenceTile !== undefined
-
-/** What a room a placement may take holds, or undefined where no placement takes it: the entrance, a room that
- * claims no floor (a puzzle stop) unless it is an empty dead end, a story's or the god's room, a door, a room whose
- * content is stood on, and any encounter but a chest. */
-const takeableHolds = (grid: FloorGrid, r: number, c: number): Holds | undefined => {
-  const cell = cellAt(grid, r, c)
-  if (cell.type === "empty" || cell.prefabRoom) return undefined
-  if (r === grid.entrancePos[0] && c === grid.entrancePos[1]) return undefined
-  if (emptyDeadEnd(cell, r, c)) return "nothing"
-  if (cell.type !== "room" || cell.pinnedPrefab !== undefined) return undefined
-  if (!claimsFloorAt(grid, r, c) || cell.authoredActivity !== undefined || cell.patronRoom) return undefined
-  if (isDoor(cell) || stoodOn(cell)) return undefined
-  const holds = holdsOf(cell)
-  if (holds === "nothing" && cell.family !== undefined) return undefined
-  return holds
-}
-
 const placeFor: Record<Exclude<Holds, "nothing">, SpecialPlace> = {
   chest: "chest",
   portal: "portal",
   mechanism: "mechanism",
 }
-
-const takes = (prefab: Prefab, holds: Holds): boolean =>
-  holds === "nothing" || Object.values(prefab.specials).includes(placeFor[holds])
 
 type Fit = { variant: Variant; rect: CellRect; doors: Partial<Record<Direction, Cell>>; absorbed: number }
 
@@ -314,50 +260,6 @@ export const fitPrefab = (
 const variantTie = (siteId: string, r: number, c: number, variant: Variant): number =>
   hashString(`${siteId}|prefab|${r},${c}|${variant.layout}${variant.mirrored ? "m" : ""}`)
 
-/** Whether a door place stands on the side of the room's ring that a way out in `dir` leaves through. */
-const ringHasDoor = (variant: Variant, dir: Direction): boolean => {
-  const { cells } = variant
-  const edge = {
-    n: [...cells[0]],
-    s: [...cells[cells.length - 1]],
-    w: cells.map(row => row[0]),
-    e: cells.map(row => row[row.length - 1]),
-  }[dir]
-  return edge.includes("d")
-}
-
-/** Every variant with a door place on each side the node leaves by, the hash-first leading. */
-const candidatesFor = (prefab: Prefab, siteId: string, r: number, c: number, dirs: ReadonlySet<Direction>) =>
-  variantsOf(prefab)
-    .filter(variant => [...dirs].every(dir => ringHasDoor(variant, dir)))
-    .map(variant => ({ variant, tie: variantTie(siteId, r, c, variant) }))
-    .sort((a, b) => a.tie - b.tie)
-
-/** Where a node stands in a variant, ring included: its size, the node's cell and the door place each way out
- * leaves by, every offset from the variant's top-left. */
-export type PrefabSeat = { rows: number; cols: number; node: Cell; doors: Partial<Record<Direction, Cell>> }
-
-/** The first free inside cell of `variant` in reading order from which each of `dirs` runs straight to a door place
- * on the ring, as its seat; undefined where no cell lines up with a door place on every side. */
-export const seatOf = (variant: Variant, dirs: ReadonlySet<Direction>): PrefabSeat | undefined => {
-  const { cells } = variant
-  const rows = cells.length
-  const cols = cells[0].length
-  for (let i = 1; i < rows - 1; i++)
-    for (let j = 1; j < cols - 1; j++) {
-      if (cells[i][j] !== ".") continue
-      const doors: Partial<Record<Direction, Cell>> = {}
-      for (const dir of dirs) {
-        const [dr, dc] = STEP[dir]
-        let [di, dj] = [i + dr, j + dc]
-        while (di > 0 && di < rows - 1 && dj > 0 && dj < cols - 1) [di, dj] = [di + dr, dj + dc]
-        if (cells[di][dj] === "d") doors[dir] = [di, dj]
-      }
-      if (Object.keys(doors).length === dirs.size) return { rows, cols, node: [i, j], doors }
-    }
-  return undefined
-}
-
 /** A prefab chosen for the node at `cell`: which variant (layout and mirror) and, by hand, which fill. */
 export type PrefabChoice = { cell: Cell; name: string; layout: number; mirrored: boolean; pick: PrefabPick }
 
@@ -431,13 +333,6 @@ const chosenVariant = (prep: FloorPrep, choice: PrefabChoice): { prefab: Prefab;
   return { prefab, variant }
 }
 
-/** Where the chosen room's node stands in its variant, leaving by `dirs` (`seatOf`). */
-export const seatOfChoice = (prep: FloorPrep, choice: PrefabChoice, dirs: ReadonlySet<Direction>): PrefabSeat => {
-  const seat = seatOf(chosenVariant(prep, choice).variant, dirs)
-  if (!seat) throw new Error(`[carve] room ${choice.name} was chosen at ${choice.cell.join(",")} with no seat`)
-  return seat
-}
-
 /** Every designed room the floor and its sections name, by name. */
 const prefabsOf = (config: FloorConfig): Readonly<Record<string, Prefab>> => {
   const named: Record<string, Prefab> = { ...config.prefabs }
@@ -474,32 +369,6 @@ export const webDoorInPrefab = (before: FloorGrid, after: FloorGrid): WebDoorFau
   return undefined
 }
 
-/** The nodes a placement may take, nearest its `central` first: rooms whose contents the prefab has a place for
- * (`takeableHolds`), the hash breaking ties. `taken` are nodes already given a prefab. */
-const rankedNodes = (
-  prep: FloorPrep,
-  grid: FloorGrid,
-  rooms: readonly Cell[],
-  central: ReadonlyMap<string, number>,
-  taken: ReadonlySet<string>,
-  prefab: Prefab,
-  wanted: number
-): Cell[] =>
-  rooms
-    .filter(([r, c]) => {
-      if (taken.has(`${r},${c}`)) return false
-      const holds = takeableHolds(grid, r, c)
-      return holds !== undefined && takes(prefab, holds)
-    })
-    .map(([r, c]) => ({
-      r,
-      c,
-      off: Math.abs((central.get(`${r},${c}`) ?? 0) - wanted),
-      tie: hashString(`${prep.input.siteId}|prefabRank|${prefab.name}|${r},${c}`),
-    }))
-    .sort((a, b) => a.off - b.off || a.tie - b.tie || a.r - b.r || a.c - b.c)
-    .map(({ r, c }): Cell => [r, c])
-
 const pinnedOf = (grid: FloorGrid): Array<{ r: number; c: number; name: string }> => {
   const pinned: Array<{ r: number; c: number; name: string }> = []
   grid.cells.forEach((row, r) =>
@@ -511,14 +380,6 @@ const pinnedOf = (grid: FloorGrid): Array<{ r: number; c: number; name: string }
   return pinned
 }
 
-const roomsOf = (grid: FloorGrid): Cell[] => {
-  const rooms: Cell[] = []
-  grid.cells.forEach((row, r) =>
-    row.forEach((cell, c) => (claimsFloorAt(grid, r, c) || emptyDeadEnd(cell, r, c)) && rooms.push([r, c]))
-  )
-  return rooms
-}
-
 const prefabNamedIn =
   (config: FloorConfig) =>
   (name: string): Prefab => {
@@ -526,74 +387,6 @@ const prefabNamedIn =
     if (!prefab) throw new Error(`[carve] room ${name} is named but the floor carries no such prefab`)
     return prefab
   }
-
-/** The choice for the node at r,c: its first variant by hash with a seat, a free cell lined up with a door place on
- * every side the node leaves by (`seatOf`). */
-const choiceAt = (prep: FloorPrep, grid: FloorGrid, [r, c]: Cell, prefab: Prefab): PrefabChoice | undefined => {
-  const cell = cellAt(grid, r, c)
-  if (cell.type === "empty") return undefined
-  const first = candidatesFor(prefab, prep.input.siteId, r, c, cell.dirs).find(
-    ({ variant }) => seatOf(variant, cell.dirs) !== undefined
-  )
-  return first && choiceOf(prefab, [r, c], first.variant)
-}
-
-/** The nodes a drop leaves or lands beside: its way runs straight from the node, which no designed room holds. */
-const dropEnds = (grid: FloorGrid): Set<string> =>
-  new Set(
-    oneWayRuns(grid).flatMap(({ launch, landing, dir }) => {
-      const [dr, dc] = STEP[dir]
-      return [`${launch[0] - dr},${launch[1] - dc}`, `${landing[0] + dr},${landing[1] + dc}`]
-    })
-  )
-
-/**
- * WHICH DESIGNED ROOM EACH NODE GETS, from the graph alone: no test of the space around a node. A node a drop leaves
- * or lands beside, or one of `held` (a piece's), holds none. Pinned rooms first, each on its own node, and one with no
- * variant seating the node's ways out refuses the attempt; then each placement in the order the floor names them,
- * over the nodes it may take (`rankedNodes`) that have such a variant, nearest its `central` first, up to `max`;
- * fewer than `min` refuses the attempt.
- */
-export const choosePrefabs = (
-  prep: FloorPrep,
-  grid: FloorGrid,
-  held: ReadonlySet<string> = new Set()
-): Refusal | PrefabChoice[] => {
-  const placements = prep.config.config.prefabPlacements ?? []
-  const prefabNamed = prefabNamedIn(prep.config.config)
-  const chosen: PrefabChoice[] = []
-  const drops = dropEnds(grid)
-  const taken = new Set<string>([...drops, ...held])
-  for (const { r, c, name } of pinnedOf(grid)) {
-    const at = `${r},${c}`
-    const why = drops.has(at)
-      ? `its node ${at} is a drop's end`
-      : held.has(at)
-        ? `its node ${at} holds a piece`
-        : undefined
-    const choice = why ? undefined : choiceAt(prep, grid, [r, c], prefabNamed(name))
-    if (!choice)
-      return { retry: [{ type: "prefabsNotPlaced", room: name, wanted: 1, placed: 0, ...(why ? { why } : {}) }] }
-    chosen.push(choice)
-    taken.add(`${r},${c}`)
-  }
-  const rooms = roomsOf(grid)
-  const central = centrality(grid, rooms)
-  for (const { room: name, min, max, central: wanted } of placements) {
-    const prefab = prefabNamed(name)
-    let placed = 0
-    for (const node of rankedNodes(prep, grid, rooms, central, taken, prefab, wanted)) {
-      if (placed === max) break
-      const choice = choiceAt(prep, grid, node, prefab)
-      if (!choice) continue
-      chosen.push(choice)
-      taken.add(`${node[0]},${node[1]}`)
-      placed++
-    }
-    if (placed < min) return { retry: [{ type: "prefabsNotPlaced", room: name, wanted: min, placed }] }
-  }
-  return chosen
-}
 
 /**
  * THE PINNED ROOMS LAID OVER THE FINISHED CARVE: each stands on its own node, and one that fits nowhere refuses the
