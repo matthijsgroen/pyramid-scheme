@@ -1,4 +1,5 @@
 import { forkPositions, freeWaysOut, keyOf, nodeExitsOf, rooms, routeStepOf } from "./derive"
+import { blockNodes } from "./reserveRooms"
 import { pass } from "./state"
 
 /**
@@ -8,7 +9,8 @@ import { pass } from "./state"
  *
  * The narrowest junction that still answers each demand, widest demand first, so a wide demand is never left
  * with a junction too narrow for it. Two reserved junctions never share a way out: one boundary closed twice is
- * two doors in one doorway.
+ * two doors in one doorway. A node a room holds is never one: its ways out run through the room's ring, which a
+ * switch's door may not stand in.
  *
  * A `{ in }` FORK'S JUNCTION IS THE ONE LAID FOR IT, and is held out of the rest: it is proven to exit by exactly
  * its seams — every way out of it that is not the main path is the first cell of a chain it was laid for — and a
@@ -24,7 +26,7 @@ import { pass } from "./state"
  */
 export const reserveJunctions = pass(
   "reserveJunctions",
-  ["maze", "junctions", "keys", "labels", "lay", "branches", "doors", "mainRooms", "chainRooms"],
+  ["maze", "junctions", "keys", "labels", "lay", "branches", "doors", "mainRooms", "chainRooms", "blocks"],
   ["forks"],
   (prep, state) => {
     const { forkIns, forkDemands } = prep.forks
@@ -35,7 +37,8 @@ export const reserveJunctions = pass(
     const exitsOf = nodeExitsOf(state)
     const waysOut = freeWaysOut(state)
     const positions = forkPositions(state)
-    const isFork = (pk: string) => roomAt.get(pk)?.roomType === "fork"
+    const held = blockNodes(state.blocks)
+    const isFork = (pk: string) => roomAt.get(pk)?.roomType === "fork" && !held.has(pk)
 
     const inFork = new Set<string>()
     const claimedWaysOut = new Set<string>()

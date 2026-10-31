@@ -61,6 +61,7 @@ const roomsOf = (grid: FloorGrid) =>
   )
 
 const SEEDS = 40
+const HUB_FORK_SEEDS = 36
 
 const hubFloor = plainFloor({
   pathPuzzles: 1,
@@ -144,6 +145,18 @@ describe("reserveRooms", () => {
     expect(
       carves.filter(({ bare, switched }) => JSON.stringify(bare) !== JSON.stringify(switched)).map(({ seed }) => seed)
     ).toEqual([])
+  })
+
+  it("a hub room leaves the floor its forks: the demand carves on most seeds, with a switch in them or without", () => {
+    const seeds = Array.from({ length: SEEDS }, (_, i) => i + 1)
+    for (const exits of [2, 3]) {
+      const forked = { ...hubFloor, forks: [{ exits, count: 1 }] }
+      const carves = (config: FloorConfig) => seeds.filter(seed => assembleAt("site", config, seed).success).length
+      const bare = carves(forked)
+      const switched = carves({ ...forked, switches: ONE_SWITCH })
+      expect(bare, `exits ${exits}`).toBeGreaterThanOrEqual(HUB_FORK_SEEDS)
+      expect(switched, `exits ${exits} switched`).toBeGreaterThanOrEqual(HUB_FORK_SEEDS)
+    }
   })
 
   it("the same seed carves the same reserved floor twice", () => {
@@ -247,7 +260,7 @@ s stop`,
     expect(roomAsks(prepOf(laneFloor(0))).filter(ask => "central" in ask.at)).toHaveLength(0)
   })
 
-  it("a room no ask reserves is still asked for after the dig, so a min it cannot meet refuses naming it", () => {
+  it("a room no ask reserves is not laid after the dig, so a min it cannot meet refuses naming it", () => {
     const result = assembleFloor(
       "site",
       plainFloor({ prefabs: { hall: HALL }, prefabPlacements: [{ room: "hall", min: 1, max: 1, central: 0 }] }),
@@ -256,5 +269,15 @@ s stop`,
     expect(result.success).toBe(false)
     if (result.success) return
     expect(result.reasons).toContainEqual(expect.objectContaining({ type: "prefabsNotPlaced", room: "hall" }))
+  })
+
+  it("a placement nothing reserves is never laid over the finished carve, whatever else reserved", () => {
+    const optional = plainFloor({
+      prefabs: { hall: HALL },
+      prefabPlacements: [{ room: "hall", min: 0, max: 1, central: 0 }],
+    })
+    const result = assembleFloor("site", optional, 7)
+    expect(result.success).toBe(true)
+    if (result.success) expect(roomsOf(result.grid)).toEqual([])
   })
 })

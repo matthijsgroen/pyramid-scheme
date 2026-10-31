@@ -479,6 +479,12 @@ export const hangBranches = pass(
     )
     const shuffledMainZoneCandidates = scoreCandidates(mainZoneCandidates)
 
+    // The groups the rooms take are the last ones, so the floor's bare `forks` keep a group each (one per demand the
+    // junction groups do not hold) and a room never eats the side paths a fork is made of.
+    const looseGroups = hubGroups.length - forkIns.length - junctionGroups.length
+    const bareDemands = Math.max(0, prep.forks.forkDemands.length - junctionGroups.length)
+    const hubEligibleFrom = Math.max(0, looseGroups - Math.max(hubs.length, looseGroups - bareDemands))
+
     let forkShort: number | undefined
     outer: for (const [groupIdx, group] of hubGroups.entries()) {
       let hubCell: [number, number] | null = null
@@ -486,11 +492,15 @@ export const hangBranches = pass(
       const junctionCell = groupIdx < forkIns.length ? mainPath[junctionIdxOf[groupIdx]] : undefined
       const holdsJunction = groupIdx >= forkIns.length && groupIdx < forkIns.length + junctionGroups.length
       // The rooms on the main path come first, this group's own before the others, while they have a ray free.
-      const ownHub = hubs[groupIdx - forkIns.length - junctionGroups.length]
+      const looseIdx = groupIdx - forkIns.length - junctionGroups.length
+      const mayHub = looseIdx >= hubEligibleFrom
+      const ownHub = mayHub ? hubs[looseIdx - hubEligibleFrom] : undefined
       const roomsFirst = (): Array<[number, number]> =>
-        [...(ownHub ? [ownHub] : []), ...hubs.filter(hub => hub !== ownHub)]
-          .filter(hub => freeRays(hub).length > 0)
-          .map(hub => hub.anchor)
+        !mayHub
+          ? []
+          : [...(ownHub ? [ownHub] : []), ...hubs.filter(hub => hub !== ownHub)]
+              .filter(hub => freeRays(hub).length > 0)
+              .map(hub => hub.anchor)
 
       for (const si of group) {
         // Try the shared hub first (if this group already has one), then this group's own

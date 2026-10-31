@@ -17,7 +17,7 @@ import { carveFloor } from "./carveFloor"
 import { LATTICE_ENGINE } from "./engines"
 import { finish } from "./finish"
 import { TAIL_READS } from "./passes"
-import { choosePrefabs, fitPrefab, placePrefabs, stampPrefab, webDoorInPrefab } from "./placePrefabs"
+import { choosePrefabs, fitPrefab, placePrefabs, seatOfChoice, stampPrefab, webDoorInPrefab } from "./placePrefabs"
 import { render } from "./render"
 import { requireReads, type Finish, type FloorPrep } from "./state"
 import { standPieces } from "./standPieces"
@@ -135,6 +135,23 @@ const prepFor = (config: Partial<FloorConfig>, siteId = "site"): FloorPrep =>
 const placing = (room: string, min: number, max: number, central = 0.5) => ({
   prefabPlacements: [{ room, min, max, central }],
 })
+/** The chosen rooms stamped over a carve, each over the inside its seat gives: what a reserved block draws. */
+const layPlacements = (prep: FloorPrep, grid: FloorGrid): ReturnType<typeof placePrefabs> => {
+  const chosen = choosePrefabs(prep, grid)
+  if ("retry" in chosen || "fatal" in chosen) return chosen
+  return chosen.reduce((working, choice) => {
+    const [r, c] = choice.cell
+    const cell = working.cells[r][c]
+    if (cell.type === "empty") return working
+    const { rows, cols, node } = seatOfChoice(prep, choice, cell.dirs)
+    return stampPrefab(
+      working,
+      choice,
+      { top: r - node[0] + 1, left: c - node[1] + 1, rows: rows - 2, cols: cols - 2 },
+      prep
+    )
+  }, grid)
+}
 const placed = (result: ReturnType<typeof placePrefabs>): FloorGrid => {
   if ("retry" in result || "fatal" in result) throw new Error(JSON.stringify(result))
   return result
@@ -284,7 +301,7 @@ s stop`)
   })
 })
 
-describe("placePrefabs", () => {
+describe("placements, stamped as a reservation draws them", () => {
   it("takes a lever's room by its mechanism place, never a room whose content is stood on", () => {
     const mill = prefab(`room mill
 layout
@@ -297,7 +314,7 @@ s stop`)
     const at = (fork: Partial<RoomCell>) =>
       prefabRooms(
         placed(
-          placePrefabs(
+          layPlacements(
             prepFor({ ...placing("mill", 0, 9), prefabs: { ...PREFABS, mill } }),
             floorFrom(TWO_FORKS, { "4,4": fork, "4,12": fork })
           )
@@ -316,9 +333,9 @@ s stop`)
 
   it("takes a chest room only with a chest place, and puts the chest's art there", () => {
     const grid = floorFrom(CHEST_FLOOR)
-    const halls = prefabRooms(placed(placePrefabs(prepFor(placing("hall", 0, 9)), grid)))
+    const halls = prefabRooms(placed(layPlacements(prepFor(placing("hall", 0, 9)), grid)))
     expect(halls.map(({ r, c }) => `${r},${c}`)).toEqual(["4,4"])
-    const vaults = prefabRooms(placed(placePrefabs(prepFor(placing("vault", 1, 9)), grid)))
+    const vaults = prefabRooms(placed(layPlacements(prepFor(placing("vault", 1, 9)), grid)))
     expect(vaults.length).toBeGreaterThan(0)
     for (const { r, c, room } of vaults) {
       expect((grid.cells[r][c] as RoomCell).tags).toContain("treasure")
@@ -329,32 +346,32 @@ s stop`)
   it("central 1 takes the fork, central 0 the far dead end", () => {
     const grid = floorFrom(LONG_ARM)
     const at = (central: number) =>
-      prefabRooms(placed(placePrefabs(prepFor(placing("den", 1, 1, central)), grid))).map(({ r, c }) => `${r},${c}`)
+      prefabRooms(placed(layPlacements(prepFor(placing("den", 1, 1, central)), grid))).map(({ r, c }) => `${r},${c}`)
     expect(at(1)).toEqual(["4,6"])
     expect(at(0)).toEqual(["4,18"])
   })
 
   it("central 0 takes the empty dead end of a long branch", () => {
     const grid = floorFrom(LONG_ARM.map((row, r) => (r === 4 ? "E.....F............  " : row)))
-    const rooms = prefabRooms(placed(placePrefabs(prepFor(placing("hall", 1, 1, 0)), grid)))
+    const rooms = prefabRooms(placed(layPlacements(prepFor(placing("hall", 1, 1, 0)), grid)))
     expect(rooms.map(({ r, c }) => `${r},${c}`)).toEqual(["4,18"])
     expect(grid.cells[4][18].type).toBe("corridor")
     expect(rooms[0].room.doors).toEqual({ w: [4, 17] })
   })
 
   it("leaves a dead end holding loot to a prefab with a chest place", () => {
-    const rooms = prefabRooms(placed(placePrefabs(prepFor(placing("hall", 1, 1, 0)), floorFrom(LONG_ARM))))
+    const rooms = prefabRooms(placed(layPlacements(prepFor(placing("hall", 1, 1, 0)), floorFrom(LONG_ARM))))
     expect(rooms.map(({ r, c }) => `${r},${c}`)).toEqual(["4,6"])
   })
 
   it("places up to max", () => {
     const grid = floorFrom(TWO_FORKS)
-    expect(prefabRooms(placed(placePrefabs(prepFor(placing("hall", 0, 1)), grid)))).toHaveLength(1)
-    expect(prefabRooms(placed(placePrefabs(prepFor(placing("hall", 0, 9)), grid)))).toHaveLength(2)
+    expect(prefabRooms(placed(layPlacements(prepFor(placing("hall", 0, 1)), grid)))).toHaveLength(1)
+    expect(prefabRooms(placed(layPlacements(prepFor(placing("hall", 0, 9)), grid)))).toHaveLength(2)
   })
 
   it("retries with prefabsNotPlaced when fewer than min fit", () => {
-    expect(placePrefabs(prepFor(placing("hall", 3, 3)), floorFrom(TWO_FORKS))).toEqual({
+    expect(layPlacements(prepFor(placing("hall", 3, 3)), floorFrom(TWO_FORKS))).toEqual({
       retry: [{ type: "prefabsNotPlaced", room: "hall", wanted: 3, placed: 2 }],
     })
   })
@@ -364,7 +381,7 @@ s stop`)
       TWO_FORKS.map((row, r) => (r === 4 ? "E...F...P...F...T" : row)),
       { "4,4": { authoredActivity: "storage" } }
     )
-    const rooms = prefabRooms(placed(placePrefabs(prepFor(placing("hall", 0, 9)), grid)))
+    const rooms = prefabRooms(placed(layPlacements(prepFor(placing("hall", 0, 9)), grid)))
     expect(rooms.map(({ r, c }) => `${r},${c}`)).toEqual(["4,12"])
   })
 
@@ -383,7 +400,7 @@ s stop`)
 
   it("takes the place of the room's dressing, keeping its type, dirs and contents", () => {
     const grid = floorFrom(CROSS, { "4,4": { decoration: "pillar", wallDecoration: "niche", activity: "storage" } })
-    const fork = placed(placePrefabs(prepFor(placing("hall", 1, 1)), grid)).cells[4][4] as RoomCell
+    const fork = placed(layPlacements(prepFor(placing("hall", 1, 1)), grid)).cells[4][4] as RoomCell
     expect(fork.prefabRoom?.name).toBe("hall")
     expect(fork).toMatchObject({ type: "room", roomType: "fork", dirs: new Set(["n", "s", "e", "w"]) })
     expect(fork.decoration).toBeUndefined()
@@ -394,8 +411,8 @@ s stop`)
   it("the same site and floor place and fill identically twice; two storerooms on one floor fill differently", () => {
     const grid = floorFrom(["                       ", "E.....C.......C.......T", "                       "])
     const prep = prepFor(placing("store", 2, 2))
-    const first = placed(placePrefabs(prep, grid))
-    expect(placed(placePrefabs(prep, grid))).toEqual(first)
+    const first = placed(layPlacements(prep, grid))
+    expect(placed(layPlacements(prep, grid))).toEqual(first)
     const fills = prefabRooms(first).map(({ room }) =>
       room.objects.map(({ kind, top, left }) => `${kind}@${top - room.rect.top},${left - room.rect.left}`).join(" ")
     )
@@ -406,7 +423,7 @@ s stop`)
 
 describe("webDoorInPrefab", () => {
   it("faults a web door laid inside a designed room, never one on its ring", () => {
-    const before = placed(placePrefabs(prepFor(placing("wideHall", 1, 1)), floorFrom(WIDE_CROSS)))
+    const before = placed(layPlacements(prepFor(placing("wideHall", 1, 1)), floorFrom(WIDE_CROSS)))
     const doorAt = (r: number, c: number): FloorGrid => ({
       ...before,
       cells: before.cells.map((row, rr) =>

@@ -596,40 +596,22 @@ export const choosePrefabs = (
 }
 
 /**
- * THE DESIGNED ROOMS LAID OVER THE FINISHED CARVE. The nodes `choosePrefabs` ranks, except that a node the room does
- * not fit over (`bestFit`) is passed by for the next in rank: pinned rooms first, one that fits nowhere refuses the
- * attempt; then each placement up to `max`; fewer than `min` refuses the attempt. Each fit is stamped
- * (`stampPrefab`). A floor that names none is handed back as it came. Where the floor's rooms `reserved` their
- * blocks before the maze was dug (reserveRooms.ts), its placements are theirs and a room already drawn is passed by.
+ * THE PINNED ROOMS LAID OVER THE FINISHED CARVE: each stands on its own node, and one that fits nowhere refuses the
+ * attempt. Each fit is stamped (`stampPrefab`). A floor with none is handed back as it came. The floor's
+ * `prefabPlacements` are never laid here: a placement is a room that reserved its block before the maze was dug
+ * (reserveRooms.ts), or it is not carved.
  */
-export const placePrefabs = (prep: FloorPrep, grid: FloorGrid, reserved = false): Refusal | FloorGrid => {
+export const placePrefabs = (prep: FloorPrep, grid: FloorGrid): Refusal | FloorGrid => {
   const { siteId } = prep.input
-  const placements = reserved ? [] : (prep.config.config.prefabPlacements ?? [])
   const pinned = pinnedOf(grid)
-  if (placements.length === 0 && pinned.length === 0) return grid
+  if (pinned.length === 0) return grid
   const prefabNamed = prefabNamedIn(prep.config.config)
   let working = grid
-  const lay = (r: number, c: number, prefab: Prefab): boolean => {
-    const fit = bestFit(working, r, c, prefab, siteId)
-    if (!fit) return false
-    working = stampPrefab(working, choiceOf(prefab, [r, c], fit.variant), fit.rect, prep)
-    return true
-  }
-
-  for (const { r, c, name } of pinned)
-    if (!lay(r, c, prefabNamed(name)))
-      return { retry: [{ type: "prefabsNotPlaced", room: name, wanted: 1, placed: 0 }] }
-
-  const rooms = roomsOf(grid)
-  const central = centrality(grid, rooms)
-  for (const { room: name, min, max, central: wanted } of placements) {
+  for (const { r, c, name } of pinned) {
     const prefab = prefabNamed(name)
-    let placed = 0
-    for (const [r, c] of rankedNodes(prep, working, rooms, central, new Set(), prefab, wanted)) {
-      if (placed === max) break
-      if (lay(r, c, prefab)) placed++
-    }
-    if (placed < min) return { retry: [{ type: "prefabsNotPlaced", room: name, wanted: min, placed }] }
+    const fit = bestFit(working, r, c, prefab, siteId)
+    if (!fit) return { retry: [{ type: "prefabsNotPlaced", room: name, wanted: 1, placed: 0 }] }
+    working = stampPrefab(working, choiceOf(prefab, [r, c], fit.variant), fit.rect, prep)
   }
   return working
 }
