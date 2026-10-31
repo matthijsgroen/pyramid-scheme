@@ -5,7 +5,8 @@ import type { FloorConfig, FloorGrid, GridCell, PrefabRoom, RoomCell, SideSectio
 import { assembleFloor } from "./assembleFloor"
 import { ONE_SWITCH, assembleAt, plainFloor, prepOf } from "./carveFixtures"
 
-import { ringFault, roomAsks, type ReservedBlock } from "./reserveRooms"
+import type { LockPlan, PlanRegion } from "../lockPlan"
+import { ringFault, roomAsks, roomTakesRegion, shapesOf, type ReservedBlock } from "./reserveRooms"
 
 const HALL = parsePrefab(
   `room hall
@@ -279,5 +280,234 @@ s stop`,
     const result = assembleFloor("site", optional, 7)
     expect(result.success).toBe(true)
     if (result.success) expect(roomsOf(result.grid)).toEqual([])
+  })
+})
+
+describe("the placement rules a reservation keeps", () => {
+  const MILL = parsePrefab(
+    `room mill
+tier starter
+layout
+# # # # #
+# m . . #
+d . . s #
+# # # # #
+m mechanism
+s stop`,
+    "mill"
+  )
+  const BARE_MILL = parsePrefab(
+    `room mill
+tier starter
+layout
+# # # # #
+# . . . #
+d . . s #
+# # # # #
+s stop`,
+    "mill"
+  )
+  const plan = (extra: Partial<LockPlan> = {}) =>
+    ({
+      drops: [],
+      junctions: [],
+      corridors: [{ id: "c", from: "den", to: "out", onRoute: true, barriers: [], minNodes: 0 }],
+      ...extra,
+    }) as unknown as LockPlan
+  const region = (seats: PlanRegion["seats"]): PlanRegion => ({
+    id: "den",
+    owner: "lock",
+    onRoute: true,
+    seats,
+    minNodes: 1,
+  })
+  const lever: PlanRegion["seats"] = [{ for: "control", control: "lever" }]
+
+  const sidesFloor = (
+    prefabs: FloorConfig["prefabs"],
+    placement: { room: string; max: number; central: number; min?: number }
+  ) =>
+    plainFloor({
+      pathPuzzles: 1,
+      sideSections: [side(), side(), side()],
+      prefabs,
+      prefabPlacements: [{ min: 0, ...placement }],
+    })
+  const DEN = parsePrefab(
+    `room den
+tier starter
+layout
+# # # d # # d # #
+# . . . . . . . #
+# . p . p . c . #
+d . . . . . s . d
+# . p . p . p . #
+# . . . . . . . #
+# # # d # # d # #
+p floor pillar
+c chest
+s stop`,
+    "den"
+  )
+  const asksOf = (config: FloorConfig, seed = 1) => roomAsks(prepOf(config, seed))
+
+  it("a lever's region is taken only by a room with a mechanism place, never one whose content is stood on", () => {
+    expect(roomTakesRegion(plan(), region(lever), MILL)).toBe(true)
+    expect(roomTakesRegion(plan(), region(lever), BARE_MILL)).toBe(false)
+    const stoodOn: Record<string, PlanRegion["seats"]> = {
+      "sequence tile": [{ for: "tile", control: "q", step: 0 }],
+      "sequence threshold": [{ for: "threshold", control: "q", step: 0 }],
+      junction: [{ for: "junction", control: "j" }],
+    }
+    for (const [what, seats] of Object.entries(stoodOn))
+      expect(roomTakesRegion(plan(), region(seats), MILL), what).toBe(false)
+    expect(roomTakesRegion(plan(), region([...lever, ...lever]), MILL), "two controls").toBe(false)
+  })
+
+  it("a side path's treasure end is asked only by a room with a chest place", () => {
+    const sectionAsks = (room: string, prefab: FloorConfig["prefabs"]) =>
+      asksOf(sidesFloor(prefab, { room, max: 3, central: 0 })).filter(ask => "section" in ask.at)
+    expect(sectionAsks("hall", { hall: HALL })).toEqual([])
+    expect(sectionAsks("vault", { vault: VAULT }).length).toBeGreaterThan(0)
+  })
+
+  it("a chest room puts the chest's art on its chest place", () => {
+    const [vault] = roomsOf(carved(sidesFloor({ vault: VAULT }, { room: "vault", min: 1, max: 1, central: 0 })))
+    expect(vault.cell).toMatchObject({ roomType: "encounter" })
+    expect((vault.cell as RoomCell).tags).toContain("treasure")
+    expect(vault.room.nodeArt).toEqual([vault.room.rect.top + 2, vault.room.rect.left + 2])
+  })
+
+  it("central 1 asks the hub on the main path, central 0 the far dead end", () => {
+    const where = (central: number) =>
+      asksOf(sidesFloor({ den: DEN }, { room: "den", max: 1, central })).map(ask => Object.keys(ask.at)[0])
+    expect(where(1)).toEqual(["central"])
+    expect(where(0)).toEqual(["section"])
+    const [hub] = roomsOf(carved(sidesFloor({ den: DEN }, { room: "den", min: 1, max: 1, central: 1 })))
+    expect((hub.cell as RoomCell).roomType).toBe("fork")
+  })
+
+  it("a dead end no room has a place for is never asked, whatever central says", () => {
+    for (const central of [0, 1]) {
+      const asks = asksOf(sidesFloor({ hall: HALL }, { room: "hall", max: 3, central }))
+      expect(asks.filter(ask => "section" in ask.at)).toEqual([])
+    }
+  })
+
+  it("a placement stops at max", () => {
+    const count = (max: number) => asksOf(sidesFloor({ vault: VAULT }, { room: "vault", max, central: 0 })).length
+    expect(count(1)).toBe(1)
+    expect(count(2)).toBe(2)
+    expect(count(9)).toBeLessThanOrEqual(3)
+    const grid = carved(sidesFloor({ vault: VAULT }, { room: "vault", max: 2, central: 0 }))
+    expect(roomsOf(grid).length).toBeLessThanOrEqual(2)
+  })
+
+  it("the entrance and a story room are never taken by a placement, and a puzzle stop only by its pin", () => {
+    const config = plainFloor({
+      pathPuzzles: 3,
+      sideSections: [side(), side(), side()],
+      prefabs: { hall: HALL, vault: VAULT },
+      prefabPlacements: [
+        { room: "hall", min: 0, max: 9, central: 1 },
+        { room: "vault", min: 0, max: 9, central: 0 },
+      ],
+      activitiesByIndex: { 1: "storage" },
+    })
+    let rooms = 0
+    for (let seed = 1; seed <= 12; seed++) {
+      const result = assembleFloor("site", config, seed)
+      if (!result.success) continue
+      const { grid } = result
+      const [er, ec] = grid.entrancePos
+      expect(
+        roomsOf(grid).map(({ r, c }) => `${r},${c}`),
+        `seed ${seed}`
+      ).not.toContain(`${er},${ec}`)
+      for (const { cell } of roomsOf(grid)) {
+        rooms++
+        const room = cell as RoomCell
+        expect(room.authoredActivity, `seed ${seed}`).toBeUndefined()
+        const stop = room.roomType === "encounter" && room.pathIndex !== undefined && !room.tags?.includes("treasure")
+        expect(stop, `seed ${seed}`).toBe(false)
+      }
+    }
+    expect(rooms).toBeGreaterThan(0)
+  })
+
+  it("a side path whose seam is a drop is never asked", () => {
+    const prep = prepOf(sidesFloor({ vault: VAULT }, { room: "vault", max: 3, central: 0 }))
+    const dropped = { ...prep, layout: { ...prep.layout, dropSeams: new Map([[0, {}]]) } } as unknown as typeof prep
+    const sections = (asks: ReturnType<typeof roomAsks>) =>
+      asks.flatMap(ask => ("section" in ask.at ? [ask.at.section] : []))
+    expect(sections(roomAsks(prep))).toContain(0)
+    expect(sections(roomAsks(dropped))).not.toContain(0)
+  })
+
+  it("a lock's drop region is never taken by a room", () => {
+    const launching = plan({ drops: [{ id: "d", launch: "den", landing: "x" }] })
+    const landing = plan({ drops: [{ id: "d", launch: "x", landing: "den" }] })
+    expect(roomTakesRegion(launching, region(lever), MILL)).toBe(false)
+    expect(roomTakesRegion(landing, region(lever), MILL)).toBe(false)
+  })
+
+  it("a room whose door places meet no one free way is never reserved, and a pinned one refuses naming it", () => {
+    const skew = parsePrefab(
+      `room skew
+tier starter
+layout
+# # # # #
+d . . . #
+# . . s #
+# . . . d
+# # # # #
+s stop`,
+      "skew"
+    )
+    expect(shapesOf(skew).every(shape => shape.rays.length < 2)).toBe(true)
+    const result = assembleFloor(
+      "site",
+      plainFloor({ pathPuzzles: 2, prefabs: { skew }, prefabsByIndex: { 1: "skew" } }),
+      7
+    )
+    expect(result.success).toBe(false)
+    if (result.success) return
+    expect(result.reasons).toContainEqual(expect.objectContaining({ type: "prefabsNotPlaced", room: "skew" }))
+  })
+
+  it("the same site places and fills identically twice; two storerooms on one floor fill differently", () => {
+    const store = parsePrefab(
+      `room store
+tier starter
+layout
+# # # d # # #
+# . . . . . #
+# p . p . p #
+d . . c . . #
+# p . p . p #
+# s . . . . #
+# # # # # # #
+p floor? pillar 2 of 6
+c chest
+s stop`,
+      "store"
+    )
+    const config = sidesFloor({ store }, { room: "store", min: 2, max: 2, central: 0 })
+    const fills = (grid: FloorGrid) =>
+      roomsOf(grid).map(({ room }) =>
+        room.objects.map(({ kind, top, left }) => `${kind}@${top - room.rect.top},${left - room.rect.left}`).join(" ")
+      )
+    let two = 0
+    for (let seed = 1; seed <= 12; seed++) {
+      const first = assembleFloor("site", config, seed)
+      if (!first.success) continue
+      const again = assembleFloor("site", config, seed)
+      expect(again.success && fills(again.grid)).toEqual(fills(first.grid))
+      const [a, b] = fills(first.grid)
+      if (b === undefined) continue
+      two++
+      expect(a, `seed ${seed}`).not.toEqual(b)
+    }
+    expect(two).toBeGreaterThan(0)
   })
 })
