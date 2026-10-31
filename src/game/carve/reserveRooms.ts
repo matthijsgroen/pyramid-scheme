@@ -763,7 +763,7 @@ export const croppedToBox = (grid: FloorGrid): FloorGrid => {
       ...(room.nodeArt ? { nodeArt: at(room.nodeArt) } : {}),
       objects: room.objects.map(object => ({ ...object, top: object.top - dr, left: object.left - dc })),
       blocked: room.blocked.map(atKey),
-      doors: Object.fromEntries(Object.entries(room.doors).map(([dir, door]) => [dir, at(door)])),
+      doors: room.doors.map(at),
     }
     if (cell.type === "corridor") return prefabRoom ? { ...cell, prefabRoom } : cell
     const mechanism = cell.mechanism && {

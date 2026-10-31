@@ -31,16 +31,39 @@ export const prefabRoomCells = (grid: FloorGrid): ReadonlyMap<string, string> =>
   return owners
 }
 
-/** Where each way out of a prefab room leaves its rect: the cell inside the door place that way out uses. */
-export const roomDoors = (
-  grid: FloorGrid,
-  r: number,
-  c: number
-): Partial<Record<Direction, readonly [number, number]>> => {
-  const room = prefabRoomAt(grid, r, c)
-  if (!room) return {}
-  const doors: Partial<Record<Direction, readonly [number, number]>> = {}
-  for (const [dir, [dr, dc]] of Object.entries(room.doors) as [Direction, readonly [number, number]][])
-    doors[dir] = [dr - STEP[dir][0], dc - STEP[dir][1]]
+/** How the walk sees a cell of a prefab room: `inner` is floor the room's own walk crosses and nobody stops on, its
+ * `node` stands for the room, a `door` place in use is where a way meets it. Undefined for any other cell. */
+export const roomPlaceOf = (grid: FloorGrid, r: number, c: number): "inner" | "node" | "door" | undefined => {
+  const key = `${r},${c}`
+  const owner = prefabRoomCells(grid).get(key)
+  if (owner !== undefined) return owner === key ? "node" : "inner"
+  return roomDoorCells(grid).has(key) ? "door" : undefined
+}
+
+const doorsCached = new WeakMap<FloorGrid, ReadonlySet<string>>()
+const roomDoorCells = (grid: FloorGrid): ReadonlySet<string> => {
+  const known = doorsCached.get(grid)
+  if (known) return known
+  const doors = new Set<string>()
+  for (const row of grid.cells)
+    for (const cell of row)
+      if (cell.type !== "empty" && cell.prefabRoom) for (const [r, c] of cell.prefabRoom.doors) doors.add(`${r},${c}`)
+  doorsCached.set(grid, doors)
   return doors
+}
+
+/** The side of `rect` a door place on its ring stands on. */
+export const sideOf = (rect: CellRect, [r, c]: readonly [number, number]): Direction =>
+  r < rect.top ? "n" : r >= rect.top + rect.rows ? "s" : c < rect.left ? "w" : "e"
+
+export type RoomDoor = { at: readonly [number, number]; side: Direction; inside: readonly [number, number] }
+
+/** Where each way out of a prefab room leaves its rect: the door place on the ring, its side, and the cell inside it. */
+export const roomDoors = (grid: FloorGrid, r: number, c: number): RoomDoor[] => {
+  const room = prefabRoomAt(grid, r, c)
+  if (!room) return []
+  return room.doors.map(at => {
+    const side = sideOf(room.rect, at)
+    return { at, side, inside: [at[0] - STEP[side][0], at[1] - STEP[side][1]] }
+  })
 }

@@ -1,7 +1,7 @@
 import { fitPrefab } from "@/game/carve/placePrefabs"
 import { fillsOf, variantsOf } from "@/game/prefabChecks"
 import type { Prefab } from "@/game/prefabTypes"
-import { STEP } from "@/game/roomShape"
+import { STEP, sideOf } from "@/game/roomShape"
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { floorFromPieces } from "./floorFrom"
 
@@ -93,17 +93,17 @@ export const prefabPreviewFloor = (prefab: Prefab, variant = 0, fill = 0): Prefa
     const cellsOut = floor.cells.map(row => [...row])
     cellsOut[r][c] = { ...node, prefabRoom }
     const outside = Object.fromEntries(
-      Object.entries(prefabRoom.doors).map(([dir, [dr, dc]]) => [
-        dir,
-        [dr + STEP[dir as Direction][0], dc + STEP[dir as Direction][1]] as Cell,
-      ])
+      prefabRoom.doors.map(([dr, dc]) => {
+        const dir = sideOf(prefabRoom.rect, [dr, dc])
+        return [dir, [dr + STEP[dir][0], dc + STEP[dir][1]] as Cell]
+      })
     )
     return {
       grid: { ...floor, difficulty: prefab.tier, cells: cellsOut },
       node: [r, c],
       stop: prefabRoom.stop,
       doors: outside,
-      unusedDoors: doorCount - Object.keys(prefabRoom.doors).length,
+      unusedDoors: doorCount - prefabRoom.doors.length,
     }
   }
   throw new Error(`${prefab.name} fits no node of its variant ${variant}`)

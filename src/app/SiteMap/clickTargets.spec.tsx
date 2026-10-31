@@ -8,8 +8,9 @@ import { buildRoomClaims } from "./roomClaims"
 import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { CELL, cellCenter } from "./mapScale"
+import { roomDoors, roomPlaceOf } from "@/game/roomShape"
 import { DIR_MOVES } from "./corridorRuns"
-import { AXES, DROP_AT, dropGrid, obstacleIndexes } from "./floorFixtures.testing"
+import { AXES, DROP_AT, PREFAB_FORK, dropGrid, obstacleIndexes, prefabForkFloor } from "./floorFixtures.testing"
 
 // jsdom has no scrollTo; the map scrolls itself to the explorer on mount.
 Element.prototype.scrollTo = Element.prototype.scrollTo ?? (() => {})
@@ -246,6 +247,31 @@ describe("what the map offers", () => {
       expect(unwalkable).toEqual([])
     })
   }
+})
+
+describe("a room laid over a fork", () => {
+  const grid = revealAll(prefabForkFloor({}, true))
+  const { rect } = (
+    grid.cells[PREFAB_FORK[0]][PREFAB_FORK[1]] as {
+      prefabRoom: { rect: { top: number; left: number; rows: number; cols: number } }
+    }
+  ).prefabRoom
+  const inner: [number, number][] = []
+  for (let r = rect.top; r < rect.top + rect.rows; r++)
+    for (let c = rect.left; c < rect.left + rect.cols; c++) if (roomPlaceOf(grid, r, c) === "inner") inner.push([r, c])
+
+  it("a room's floor offers no stop, its doors and node do", () => {
+    const claims = buildRoomClaims(grid)
+    for (const freeWalk of [false, true]) {
+      const ctx = offerContextFrom(grid, grid.entrancePos, { freeWalk })
+      expect(inner.length).toBeGreaterThan(0)
+      for (const [r, c] of inner) expect(clickTargetAt(grid, claims, r, c, ctx), `${r},${c}`).toBeNull()
+    }
+    const ctx = offerContextFrom(grid, grid.entrancePos, { freeWalk: false })
+    const doors = roomDoors(grid, ...PREFAB_FORK)
+    expect(doors).toHaveLength(4)
+    for (const { at } of doors) expect(clickTargetAt(grid, claims, at[0], at[1], ctx), `${at}`).toEqual(at)
+  })
 })
 
 // The corridor detector's own hint is a marker on the cell BESIDE a hidden passage: masking erases the

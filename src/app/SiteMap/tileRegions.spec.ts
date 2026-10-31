@@ -324,7 +324,7 @@ describe("a prefab room", () => {
         stop: [1, 1],
         objects: [{ kind: "basin", layer: "floor", top: 1, left: 0, rows: 1, cols: 1 }],
         blocked: ["1,0"],
-        doors: { e: [2, 2] },
+        doors: [[2, 2]],
       })
     )
     const floor = allFloorRects(tileRegionsFor(grid, buildRoomClaims(grid)))

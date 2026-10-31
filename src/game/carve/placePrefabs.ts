@@ -64,7 +64,7 @@ const placeFor: Record<Exclude<Holds, "nothing">, SpecialPlace> = {
   mechanism: "mechanism",
 }
 
-type Fit = { variant: Variant; rect: CellRect; doors: Partial<Record<Direction, Cell>>; absorbed: number }
+type Fit = { variant: Variant; rect: CellRect; doors: Cell[]; absorbed: number }
 
 /**
  * The prefab's variant over the node at r,c, its node at the variant's inside cell i,j, or undefined: each way out
@@ -85,7 +85,7 @@ const fitAt = (
   if (rect.top < 0 || rect.left < 0 || rect.top + rect.rows > grid.rows || rect.left + rect.cols > grid.cols)
     return undefined
   const own = new Set([`${r},${c}`])
-  const doors: Partial<Record<Direction, Cell>> = {}
+  const doors: Cell[] = []
   let absorbed = 0
   for (const dir of dirs) {
     const [dr, dc] = STEP[dir]
@@ -99,7 +99,7 @@ const fitAt = (
     const out = cellAt(grid, r + dr * k, c + dc * k)
     if (out.type !== "corridor" || out.hidden || out.obstacle !== undefined) return undefined
     own.add(`${r + dr * k},${c + dc * k}`)
-    doors[dir] = [r + dr * k, c + dc * k]
+    doors.push([r + dr * k, c + dc * k])
   }
   const ring = ringed(rect)
   for (let rr = ring.top; rr < ring.top + ring.rows; rr++)
@@ -193,7 +193,7 @@ const furnish = (
     })
   }
   const blocked = new Set([...blockedCells(variant, prefab, standing)].map(keyAt))
-  const used = new Set(Object.values(doors).map(door => door.join(",")))
+  const used = new Set(doors.map(door => door.join(",")))
   const special = new Map<SpecialPlace, Cell>()
   variant.cells.forEach((row, i) =>
     [...row].forEach((ch, j) => {
@@ -282,26 +282,15 @@ const choiceOf = (prefab: Prefab, cell: Cell, variant: Variant): PrefabChoice =>
   pick: {},
 })
 
-/** The door cells of `variant` laid at `rect` over the node at r,c: each way out runs straight to the first cell
- * past the rect, which must be a door place. */
-const doorsAt = (
-  variant: Variant,
-  rect: CellRect,
-  r: number,
-  c: number,
-  dirs: ReadonlySet<Direction>
-): Partial<Record<Direction, Cell>> => {
-  const i = r - rect.top + 1
-  const j = c - rect.left + 1
-  const doors: Partial<Record<Direction, Cell>> = {}
-  for (const dir of dirs) {
-    const [dr, dc] = STEP[dir]
-    let k = 1
-    while (inRect(rect, r + dr * k, c + dc * k)) k++
-    if (variant.cells[i + dr * k]?.[j + dc * k] !== "d")
-      throw new Error(`[carve] room at ${r},${c} has no door place ${dir} of its node`)
-    doors[dir] = [r + dr * k, c + dc * k]
-  }
+/** The door places of `variant` laid at `rect` that the carve crossed: each one on the ring that is floor. */
+const doorsAt = (grid: FloorGrid, variant: Variant, rect: CellRect): Cell[] => {
+  const doors: Cell[] = []
+  variant.cells.forEach((row, i) =>
+    [...row].forEach((ch, j) => {
+      const at: Cell = [rect.top + i - 1, rect.left + j - 1]
+      if (ch === "d" && cellAt(grid, at[0], at[1]).type !== "empty") doors.push(at)
+    })
+  )
   return doors
 }
 
@@ -328,7 +317,7 @@ export const stampPrefab = (grid: FloorGrid, choice: PrefabChoice, rect: CellRec
   const { prefab, variant } = chosenVariant(prep, choice)
   const node = cellAt(grid, r, c)
   if (node.type === "empty") throw new Error(`[carve] room ${choice.name} is stamped on void at ${r},${c}`)
-  const doors = doorsAt(variant, rect, r, c, node.dirs)
+  const doors = doorsAt(grid, variant, rect)
   const room = furnish(grid, r, c, prefab, { variant, rect, doors, absorbed: 0 }, prep.input.siteId, choice.pick)
   const laid = laidOver(node, prefab, room)
   return {

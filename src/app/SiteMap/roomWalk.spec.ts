@@ -8,6 +8,7 @@ import {
   PREFAB_PILLARS,
   edgePrefabFloor,
   fitForkFloor,
+  floorFrom,
   prefabForkFloor,
 } from "./floorFixtures.testing"
 import { markerCell, roomPath, roomStop, stepsBetween, walkPoints, walkSteps } from "./roomWalk"
@@ -222,6 +223,54 @@ describe("a walk through a prefab room", () => {
   })
 })
 
+describe("a walk between two doors of a room goes round what stands in its middle", () => {
+  // A 3x3 room whose node stands under a pillar in its centre, ways out west and east.
+  const centre: Cell = [2, 4]
+  const bare = floorFrom(["", "", "E...G...R", "", ""], {
+    G: dirs => ({ type: "room", roomType: "fork", dirs: new Set(dirs), state: "fogged" }),
+  })
+  const grid: FloorGrid = (() => {
+    const cells = bare.cells.map(row => [...row])
+    cells[2][4] = {
+      ...(cells[2][4] as Extract<GridCell, { type: "room" }>),
+      prefabRoom: {
+        name: "cross",
+        layout: 0,
+        mirrored: false,
+        rect: { top: 1, left: 3, rows: 3, cols: 3 },
+        stop: [3, 3],
+        objects: [{ kind: "pillar", layer: "floor", top: 2, left: 4, rows: 1, cols: 1 }],
+        blocked: ["2,4"],
+        doors: [
+          [2, 2],
+          [2, 6],
+        ],
+      },
+    }
+    return { ...bare, cells }
+  })()
+
+  it("stays inside the rect and never comes within the centre cell", () => {
+    const route: Cell[] = [
+      [2, 1],
+      [2, 2],
+      [2, 3],
+      [2, 4],
+      [2, 5],
+      [2, 6],
+      [2, 7],
+    ]
+    const points = walkPoints(grid, route, none)
+    const room = points.filter(p => p.inRoom)
+    expect(room.length).toBeGreaterThan(2)
+    for (const p of room) {
+      expect(p.x).toBeGreaterThanOrEqual(cellCenter(2, 3).cx - 1e-6)
+      expect(p.x).toBeLessThanOrEqual(cellCenter(2, 5).cx + 1e-6)
+    }
+    points.slice(1).forEach((p, i) => expect(cuts(points[i], p, [centre]), `${i}`).toBe(false))
+  })
+})
+
 describe("a walk through a room fit for somebody", () => {
   it("the room walk never steps on the actor cell of a fit room", () => {
     const grid = fitForkFloor()
@@ -292,7 +341,13 @@ describe("a walk through a prefab room whose node stands next to its ring", () =
   })
 
   it("leaves a door it stands next to from the node itself, and meets the room at the prefab's stop", () => {
-    expect(roomDoors(tFork, ...EDGE_NODE.T)).toEqual({ s: [3, 3], w: [3, 3], e: [3, 6] })
+    expect(roomDoors(tFork, ...EDGE_NODE.T).map(door => [door.side, door.inside])).toEqual(
+      expect.arrayContaining([
+        ["s", [3, 3]],
+        ["w", [3, 3]],
+        ["e", [3, 6]],
+      ])
+    )
     expect(roomStop(tFork, ...EDGE_NODE.T)).toEqual([1, 6])
   })
 })

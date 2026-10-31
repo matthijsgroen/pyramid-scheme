@@ -2841,30 +2841,25 @@ describe("SiteMapView — a prefab room", () => {
     expect(onClick).toHaveBeenCalledWith(...PREFAB_FORK)
   })
 
-  it("draws the run arrow of an absorbed arm at the room's door", () => {
+  it("an absorbed arm offers nothing; the room's door it leads to is a stop", () => {
     const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} explorerPos={PREFAB_FORK} />)
     for (const [arm, door] of [
       [
         [4, 5],
-        [4, 3],
+        [4, 2],
       ],
       [
         [4, 7],
-        [4, 9],
+        [4, 10],
       ],
       [
         [5, 6],
-        [6, 6],
+        [7, 6],
       ],
     ] as const) {
+      expect(markerAtCentre(container, arm), `${arm}`).toHaveLength(0)
       expect(
-        markerAtCentre(container, arm).some(
-          el => !el.querySelector("[data-shape-kind]") && el.querySelector("polygon")
-        ),
-        `${arm}`
-      ).toBe(false)
-      expect(
-        markerAtCentre(container, door).some(el => el.querySelector("polygon")),
+        markerAtCentre(container, door).some(el => el.querySelector("circle")),
         `${door}`
       ).toBe(true)
     }

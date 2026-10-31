@@ -60,7 +60,7 @@ s stop`)
     const west = preview.doors.w!
     const cell = preview.grid.cells[west[0]][west[1]]
     expect(cell.type).toBe("corridor")
-    expect(roomAt(preview).doors.w).toEqual([west[0], west[1] + 1])
+    expect(roomAt(preview).doors).toContainEqual([west[0], west[1] + 1])
   })
 
   it("lays the mirrored variant the other way round", () => {

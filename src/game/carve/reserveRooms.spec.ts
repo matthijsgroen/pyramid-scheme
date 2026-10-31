@@ -78,10 +78,8 @@ describe("reserveRooms", () => {
     expect(hall.room.name).toBe("hall")
     expect(hall.cell).toMatchObject({ type: "room", pathIndex: 1, pinnedPrefab: "hall" })
     expect(hall.cell.dirs.size).toBe(2)
-    for (const dir of hall.cell.dirs) {
-      const [r, c] = hall.room.doors[dir]!
-      expect(grid.cells[r][c].type).toBe("corridor")
-    }
+    expect(hall.room.doors).toHaveLength(2)
+    for (const [r, c] of hall.room.doors) expect(grid.cells[r][c].type).toBe("corridor")
   })
 
   it("a side path's end room carries the path's reward and gate", () => {
@@ -113,7 +111,7 @@ describe("reserveRooms", () => {
       expect(fork.roomType).toBe("fork")
       expect(fork.exits?.filter(exit => exit.kind === "main")).toHaveLength(2)
       expect(fork.exits?.filter(exit => exit.kind === "side").length).toBeGreaterThan(0)
-      expect(Object.keys(hall.room.doors).sort()).toEqual(fork.exits?.map(exit => exit.dir).sort())
+      expect(hall.room.doors).toHaveLength(fork.exits!.length)
     }
   })
 

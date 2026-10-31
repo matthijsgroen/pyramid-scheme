@@ -190,7 +190,7 @@ describe("a prefab room", () => {
     stop: [1, 1],
     objects,
     blocked: [],
-    doors: {},
+    doors: [],
   })
   const basin = { kind: "basin", layer: "floor", top: 3, left: 1, rows: 1, cols: 2 } as const
   // The node at 2,2 is laid over by a 5x2 rect, taller than its ring, that swallowed its west arm cell 2,1; a second

@@ -252,8 +252,8 @@ export type PrefabRoom = {
   objects: readonly PrefabObject[]
   /** "r,c" the walk may not cross: the ring's walls, unused door places and what blocks inside. */
   blocked: readonly string[]
-  /** The door places in use, on the ring, by the way out each serves. */
-  doors: Partial<Record<Direction, Cell>>
+  /** The door places in use, on the ring: one for each way the carve crossed it by, however many. */
+  doors: readonly Cell[]
 }
 
 export type RoomCell = {

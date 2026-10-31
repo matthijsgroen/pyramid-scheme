@@ -1,4 +1,5 @@
 import type { FloorGrid, GridCell, Direction, CellState, TombKeyReward, CorridorCell, ObstacleKind } from "./siteTypes"
+import { roomPlaceOf } from "./roomShape"
 
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 const opposite: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
@@ -156,8 +157,10 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
       // Straight-through: corridor continues in the same direction we arrived from, no branches.
       // Anything else (corner, T-junction, dead end) is a blind spot the player must click to reveal.
       // A straight names the way back as well as the way onward.
+      // A designed room's door in use is where a way meets the room, so it is a stop too.
       const isStraight =
         fromDir !== null &&
+        roomPlaceOf(grid, r, c) !== "door" &&
         neighbor.dirs.size === 2 &&
         neighbor.dirs.has(fromDir) &&
         neighbor.dirs.has(opposite[fromDir])

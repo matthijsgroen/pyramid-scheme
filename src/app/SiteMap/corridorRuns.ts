@@ -1,6 +1,7 @@
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
 import { isSealedWayOut } from "@/game/gridNavigation"
+import { roomPlaceOf } from "@/game/roomShape"
 
 // Corridor geometry: which cells are corners, and where a straight run of corridor ends. Pure grid
 // reading with no React and no drawing in it, so the map's click rules (`clickTargets.ts`) and the
@@ -46,7 +47,10 @@ const findCorridorRunTarget = (
       if (isSealedWayOut(cell) && cell.state !== "fogged") return before && { at: before, shut: true }
       return cell.state === "reachable" || cell.state === "completed" ? { at: [r, c], shut: false } : null
     }
-    if (isCorridorCorner(cell.dirs)) {
+    // A designed room's door in use ends a run; its own floor is walked by the room and ends none.
+    const place = roomPlaceOf(grid, r, c)
+    if (place === "inner") return null
+    if (place === "door" || isCorridorCorner(cell.dirs)) {
       return cell.state === "reachable" || cell.state === "completed" ? { at: [r, c], shut: false } : null
     }
     if (cell.state !== "visible" && cell.state !== "reachable" && cell.state !== "completed") return null

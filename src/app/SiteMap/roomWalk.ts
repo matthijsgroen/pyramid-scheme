@@ -1,10 +1,11 @@
-import { STEP, inRect, prefabRoomAt, prefabRoomCells, roomDoors } from "@/game/roomShape"
+import { STEP, inRect, prefabRoomAt, prefabRoomCells, roomDoors, type RoomDoor } from "@/game/roomShape"
 import type { Direction, FloorGrid, PrefabRoom } from "@/game/siteTypes"
 import { COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import type { StandingOffset } from "./standingSpot"
 
 export type WalkPoint = { x: number; y: number; inRoom?: true }
-export type RoomEnd = { door: Direction } | "stop"
+/** A door by the side it stands on (the first there) or by its place on the ring, or the room's stop. */
+export type RoomEnd = { door: Direction } | { doorAt: Cell } | "stop"
 
 type Cell = readonly [number, number]
 
@@ -16,12 +17,15 @@ const centreOf = ([r, c]: Cell): WalkPoint => {
 /** The cell a prefab room's node is drawn and met at: the prefab's stop. */
 export const roomStop = (grid: FloorGrid, r: number, c: number): Cell | undefined => prefabRoomAt(grid, r, c)?.stop
 
-/** The cells of a room's arms inside its rect, from the node to each door, the node's own included. */
+/** The cells of a room's straight arms inside its rect, from the node to each door in line with it, the node's own
+ * included. */
 const armCells = (grid: FloorGrid, [r, c]: Cell): Set<string> => {
   const cells = new Set([`${r},${c}`])
-  for (const [dir, door] of Object.entries(roomDoors(grid, r, c)) as [Direction, Cell][]) {
+  for (const door of roomDoors(grid, r, c)) {
+    const dir = door.side
+    if (STEP[dir][0] === 0 ? door.inside[0] !== r : door.inside[1] !== c) continue
     const [dr, dc] = STEP[dir]
-    for (let at: Cell = [r, c]; at[0] !== door[0] || at[1] !== door[1];) {
+    for (let at: Cell = [r, c]; at[0] !== door.inside[0] || at[1] !== door.inside[1];) {
       at = [at[0] + dr, at[1] + dc]
       cells.add(`${at[0]},${at[1]}`)
     }
@@ -37,6 +41,11 @@ const freeCells = (grid: FloorGrid, node: Cell, room: PrefabRoom): Set<string> =
   const { top, left, rows, cols } = room.rect
   for (let r = top; r < top + rows; r++)
     for (let c = left; c < left + cols; c++) if (!blocked.has(`${r},${c}`)) free.add(`${r},${c}`)
+  // What stands in the room's middle is walked round, whether or not a straight arm leads through it.
+  for (const object of room.objects)
+    if (object.layer !== "ground")
+      for (let r = object.top; r < object.top + object.rows; r++)
+        for (let c = object.left; c < object.left + object.cols; c++) free.delete(`${r},${c}`)
   if (room.actor) free.delete(keyOf(room.actor))
   return free
 }
@@ -138,7 +147,13 @@ export const roomPath = (grid: FloorGrid, node: Cell, from: RoomEnd, to: RoomEnd
   const room = prefabRoomAt(grid, node[0], node[1])
   if (!room) return []
   const doors = roomDoors(grid, node[0], node[1])
-  const endCell = (end: RoomEnd): Cell => (end === "stop" ? room.stop : (doors[end.door] ?? node))
+  const endCell = (end: RoomEnd): Cell =>
+    end === "stop"
+      ? room.stop
+      : (("door" in end
+          ? doors.find(door => door.side === end.door)
+          : doors.find(door => keyOf(door.at) === keyOf(end.doorAt))
+        )?.inside ?? node)
   const a = endCell(from)
   const b = endCell(to)
   const inRoom = (cell: Cell): WalkPoint => ({ ...centreOf(cell), inRoom: true })
@@ -150,16 +165,21 @@ export const roomPath = (grid: FloorGrid, node: Cell, from: RoomEnd, to: RoomEnd
   return [inRoom(a), inRoom(b)]
 }
 
-/** The direction of the arm whose straight run inside the room holds this cell. */
-const armOf = (grid: FloorGrid, node: Cell, at: Cell): Direction | undefined => {
+/** The door whose straight arm from the node holds this cell. */
+const armOf = (grid: FloorGrid, node: Cell, at: Cell): RoomDoor | undefined => {
   const room = prefabRoomAt(grid, node[0], node[1])
   if (!room) return undefined
-  for (const dir of Object.keys(roomDoors(grid, node[0], node[1])) as Direction[]) {
-    const [dr, dc] = STEP[dir]
+  for (const door of roomDoors(grid, node[0], node[1])) {
+    const [dr, dc] = STEP[door.side]
     let cell: Cell = node
     while (inRect(room.rect, cell[0] + dr, cell[1] + dc)) {
       cell = [cell[0] + dr, cell[1] + dc]
-      if (cell[0] === at[0] && cell[1] === at[1]) return dir
+      if (keyOf(cell) === keyOf(at) && keyOf(cell) === keyOf(door.inside)) return door
+      if (keyOf(cell) === keyOf(door.inside)) break
+      if (keyOf(cell) === keyOf(at)) {
+        const inLine = dr === 0 ? door.inside[0] === node[0] : door.inside[1] === node[1]
+        if (inLine) return door
+      }
     }
   }
   return undefined
@@ -170,16 +190,12 @@ const nodeOf = (grid: FloorGrid, at: Cell): Cell | undefined => {
   return key ? (key.split(",").map(Number) as unknown as Cell) : undefined
 }
 
-const stepDir = (from: Cell, to: Cell): Direction | undefined =>
-  (Object.keys(STEP) as Direction[]).find(dir => from[0] + STEP[dir][0] === to[0] && from[1] + STEP[dir][1] === to[1])
-
-/** The door a route crosses stepping from `outside` to `inside` the room: the side it steps over, a node on the rect's
- * edge being its own door. A hop that is no single step falls back to the arm `inside` stands on. */
-const endFor = (grid: FloorGrid, node: Cell, inside: Cell, outside: Cell): RoomEnd => {
-  const step = stepDir(inside, outside)
-  if (step && roomDoors(grid, node[0], node[1])[step]) return { door: step }
-  const door = armOf(grid, node, inside)
-  return door ? { door } : "stop"
+/** The door a route crosses stepping from `outside` to `inside` the room: the door place nearest `outside`. */
+const endFor = (grid: FloorGrid, node: Cell, _inside: Cell, outside: Cell): RoomEnd => {
+  const doors = roomDoors(grid, node[0], node[1])
+  const far = (door: RoomDoor) => Math.abs(door.at[0] - outside[0]) + Math.abs(door.at[1] - outside[1])
+  const door = [...doors].sort((a, b) => far(a) - far(b))[0]
+  return door ? { doorAt: door.at } : "stop"
 }
 
 /** The pixel points the explorer walks for a route: cell centres (a wide corridor's on its centre line), the first and last at their standing spots, each stretch
@@ -231,6 +247,5 @@ export const markerCell = (grid: FloorGrid, r: number, c: number): Cell => {
   const node = nodeOf(grid, [r, c])
   if (!node) return [r, c]
   if (node[0] === r && node[1] === c) return roomStop(grid, r, c) ?? [r, c]
-  const dir = armOf(grid, node, [r, c])
-  return (dir && roomDoors(grid, node[0], node[1])[dir]) || [r, c]
+  return armOf(grid, node, [r, c])?.inside ?? [r, c]
 }

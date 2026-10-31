@@ -28,7 +28,10 @@ describe(lessonOrderFaults, () => {
       stop: [1, 2],
       objects: [],
       blocked: [],
-      doors: { w: [0, 0], e: [0, 4] },
+      doors: [
+        [0, 0],
+        [0, 4],
+      ],
     }
     expect(lessonOrderFaults(floor(["E-R-D-x", "|", "|   L", "+---+"], { prefabRoom }))).toEqual([
       "gate G: its control stands in the ring of the prefab room at 0,2 on the way to its door",

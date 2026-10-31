@@ -85,7 +85,7 @@ describe("a lock region laid as a designed room", { timeout: 120_000 }, () => {
       const { cell, room } = shrineOf(grid)
       expect(cell.region).toBe("made.hub")
       expect(cell.dirs.size).toBe(4)
-      expect(Object.keys(room.doors).sort()).toEqual(["e", "n", "s", "w"])
+      expect(room.doors).toHaveLength(4)
       expect(walkFloorLock(grid)).toEqual({ sound: true, states: expect.any(Number) })
     }
   })

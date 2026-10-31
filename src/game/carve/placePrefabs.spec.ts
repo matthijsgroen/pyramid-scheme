@@ -201,7 +201,12 @@ describe("fitPrefab", () => {
     expect(room).toMatchObject({
       name: "hall",
       rect: { top: 3, left: 3, rows: 3, cols: 3 },
-      doors: { n: [2, 4], s: [6, 4], w: [4, 2], e: [4, 6] },
+      doors: expect.arrayContaining([
+        [2, 4],
+        [6, 4],
+        [4, 2],
+        [4, 6],
+      ]),
       stop: [5, 5],
       objects: [{ kind: "pillar", layer: "floor", top: 3, left: 3, rows: 1, cols: 1 }],
     })
@@ -216,7 +221,14 @@ describe("fitPrefab", () => {
   it("draws unused door places as wall", () => {
     const threeArms = CROSS.map((row, r) => (r === 4 ? "E...F    " : row))
     const room = fitPrefab(floorFrom(threeArms), 4, 4, HALL, "site")
-    expect(room?.doors).toEqual({ n: [2, 4], s: [6, 4], w: [4, 2] })
+    expect(room?.doors).toEqual(
+      expect.arrayContaining([
+        [2, 4],
+        [6, 4],
+        [4, 2],
+      ])
+    )
+    expect(room?.doors).toHaveLength(3)
     expect(room?.blocked).toContain("4,6")
   })
 
@@ -350,7 +362,16 @@ describe("stampPrefab", () => {
       expect.objectContaining({
         r: 4,
         c: 4,
-        room: expect.objectContaining({ name: "hall", rect, doors: { n: [2, 4], s: [6, 4], w: [4, 2], e: [4, 6] } }),
+        room: expect.objectContaining({
+          name: "hall",
+          rect,
+          doors: expect.arrayContaining([
+            [2, 4],
+            [6, 4],
+            [4, 2],
+            [4, 6],
+          ]),
+        }),
       }),
     ])
     expect(prefabRooms(grid)).toEqual([])

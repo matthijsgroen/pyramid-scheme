@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { prefabRoomCells, roomDoors } from "./roomShape"
+import { prefabRoomCells, roomDoors, roomPlaceOf } from "./roomShape"
 import type { Direction, FloorGrid, GridCell } from "./siteTypes"
 
 const corridor = (...dirs: Direction[]): GridCell => ({ type: "corridor", dirs: new Set(dirs), state: "fogged" })
@@ -21,7 +21,11 @@ const grid = (): FloorGrid => {
         stop: [3, 4],
         objects: [],
         blocked: [],
-        doors: { n: [0, 4], e: [2, 6], w: [2, 1] },
+        doors: [
+          [0, 4],
+          [2, 6],
+          [2, 1],
+        ],
       },
     },
     "2,0": corridor("e", "w"),
@@ -54,8 +58,28 @@ describe("roomShape", () => {
     for (let r = 1; r <= 3; r++) for (let c = 2; c <= 5; c++) expect(cells.get(`${r},${c}`)).toBe("2,4")
     expect(cells.has("2,6")).toBe(false)
     expect(prefabRoomCells(floor)).toBe(cells)
-    expect(roomDoors(floor, 2, 4)).toEqual({ n: [1, 4], e: [2, 5], w: [2, 2] })
-    expect(roomDoors(floor, 2, 6)).toEqual({})
+    expect(roomDoors(floor, 2, 4).map(door => door.inside)).toEqual([
+      [1, 4],
+      [2, 5],
+      [2, 2],
+    ])
+    expect(roomDoors(floor, 2, 6)).toEqual([])
+  })
+
+  it("names a room's floor, node and doors in use", () => {
+    const floor = grid()
+    expect(roomPlaceOf(floor, 2, 4)).toBe("node")
+    expect(roomPlaceOf(floor, 1, 3)).toBe("inner")
+    expect(roomPlaceOf(floor, 3, 5)).toBe("inner")
+    expect(roomPlaceOf(floor, 0, 4)).toBe("door")
+    expect(roomPlaceOf(floor, 2, 1)).toBe("door")
+    expect(roomPlaceOf(floor, 2, 6)).toBe("door")
+    expect(roomPlaceOf(floor, 4, 4)).toBeUndefined()
+    expect(roomDoors(floor, 2, 4).map(door => door.inside)).toEqual([
+      [1, 4],
+      [2, 5],
+      [2, 2],
+    ])
   })
 
   it("maps the rect of a prefab laid over a corridor's end to that corridor", () => {
@@ -73,7 +97,7 @@ describe("roomShape", () => {
         stop: [0, 3],
         objects: [],
         blocked: [],
-        doors: {},
+        doors: [],
       },
     }
     expect(prefabRoomCells(floor).get("0,3")).toBe("0,4")
