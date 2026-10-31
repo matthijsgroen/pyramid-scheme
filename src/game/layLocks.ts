@@ -156,6 +156,8 @@ const PATHS_PER_LENGTH = 2
 const DETOUR_HOPS = 4
 // How many placements of a designed room one search tries for its region, best first.
 const BLOCK_OPTIONS = 60
+/** How many of a region's ways beyond its room's doors branch off a porch: the porch's two free sides. */
+export const PORCH_WAYS = 2
 
 const DIRS: Array<[number, number, Direction]> = [
   [-1, 0, "n"],
@@ -321,7 +323,9 @@ const search = (
    * the region's, joined through the room's own floor and never by a passage; every side of them but each port's way
    * out is taken and the room's other nodes are held, so nothing reaches into the room but by its ports. Its nodes
    * list the walk through it first: in by the port the route (or the way in) arrives by, over the anchor, out by the
-   * port the route leaves by.
+   * port the route leaves by. A region with more ways than the room has doors takes a porch past the door of its way in
+   * or out: that door's node one step out and the node past it, the region's, linked straight on from the door; the
+   * ways the room has no door for branch off the porch's far node, the only node of the region with free sides.
    */
   const blockStep = (region: PlanRegion, ask: BlockAsk): Step => ({
     part: { kind: "region", id: region.id },
@@ -347,10 +351,15 @@ const search = (
       const nodeAt = (r: number, c: number) =>
         r < 0 || c < 0 || r >= n || c >= n || r % 2 !== 0 || c % 2 !== 0 ? -1 : idOf(r / 2, c / 2)
       type Port = { node: number; out: number; dir: number }
-      type Option = { score: number; anchor: number; held: number[]; ports: Port[]; block: LaidBlock }
+      type Porch = { p: number; out: number; at: number }
+      type Option = { score: number; anchor: number; held: number[]; ports: Port[]; block: LaidBlock; porch?: Porch }
       const options: Option[] = []
+      // A room uses as many of its doors as the region has ways: a porch carries only what no door of it can.
+      const doors = Math.min(ordered.length, Math.max(...ask.shapes.map(shape => shape.ports.length)))
       ask.shapes.forEach((shape, index) => {
-        if (shape.ports.length < ordered.length) return
+        const k = Math.min(ordered.length, shape.ports.length)
+        const extra = ordered.length - k
+        if (k < doors || k < Math.min(ordered.length, 2) || extra > PORCH_WAYS) return
         for (let top = 1; top + shape.h <= n - 1; top++) {
           if (top % 2 !== shape.pt) continue
           for (let left = 1; left + shape.w <= n - 1; left++) {
@@ -365,38 +374,49 @@ const search = (
               const out = nodeAt(top + oi, left + oj)
               return out < 0 ? [] : [{ node, out, dir: dirBetween(node, out) }]
             })
-            for (const pick of arrangements(ports, ordered.length)) {
+            for (const pick of arrangements(ports, k)) {
               // Two ways share no port's node but the anchor.
               const joined = pick.map(port => port.node).filter(node => node !== anchor)
               if (new Set(joined).size !== joined.length) continue
-              let score = rand()
-              const fits = pick.every((port, k) => {
-                const other = otherOf(ordered[k])
-                const owner = occupied.get(port.out)
-                if (owner !== undefined && owner !== other) return false
-                if (placed.has(other))
-                  score += Math.min(...regionNodes.get(other)!.map(node => distance(port.out, node)))
-                return true
-              })
-              if (!fits) continue
-              const held = all.filter(node => node !== anchor && !joined.includes(node))
-              const block: LaidBlock = {
-                region: region.id,
-                room: ask.room,
-                shape: index,
-                top,
-                left,
-                anchor: cell(anchor),
-                nodes: all.map(cell),
-                joined: joined.map(cell),
+              const porches: Array<Porch | undefined> =
+                extra === 0
+                  ? [undefined]
+                  : pick.flatMap((port, p): Porch[] => {
+                      // On the walk through, so the porch is route and never a roomless stub of the region.
+                      if (p !== 0 && ordered[p] !== leaves) return []
+                      const at = step(port.out, port.dir)
+                      return at < 0 || occupied.has(port.out) || occupied.has(at) ? [] : [{ p, out: port.out, at }]
+                    })
+              for (const porch of porches) {
+                let score = rand()
+                const fits = pick.every((port, w) => {
+                  const other = otherOf(ordered[w])
+                  const end = porch?.p === w ? porch.at : port.out
+                  const owner = occupied.get(port.out)
+                  if (owner !== undefined && owner !== other) return false
+                  if (placed.has(other)) score += Math.min(...regionNodes.get(other)!.map(node => distance(end, node)))
+                  return true
+                })
+                if (!fits) continue
+                const held = all.filter(node => node !== anchor && !joined.includes(node))
+                const block: LaidBlock = {
+                  region: region.id,
+                  room: ask.room,
+                  shape: index,
+                  top,
+                  left,
+                  anchor: cell(anchor),
+                  nodes: all.map(cell),
+                  joined: joined.map(cell),
+                }
+                options.push({ score, anchor, held, ports: pick, block, ...(porch ? { porch } : {}) })
               }
-              options.push({ score, anchor, held, ports: pick, block })
             }
           }
         }
       })
       options.sort((a, b) => a.score - b.score)
-      for (const { anchor, held, ports, block } of options.slice(0, BLOCK_OPTIONS)) {
+      for (const { anchor, held, ports, block, porch } of options.slice(0, BLOCK_OPTIONS)) {
         if (spent()) return false
         const mark = trail.length
         const nodes = [...new Set([anchor, ...ports.map(port => port.node)])]
@@ -405,9 +425,21 @@ const search = (
         const outward = new Set(ports.map(port => port.node * 4 + port.dir))
         for (const node of nodes)
           for (let d = 0; d < 4; d++) if (sideFree(node, d) && !outward.has(node * 4 + d)) takeSide(node, d)
-        ports.forEach((port, k) => record(rayEnd, `${ordered[k].id}|${region.id}`, port.node))
+        ports.forEach((port, w) =>
+          record(rayEnd, `${ordered[w].id}|${region.id}`, porch?.p === w ? porch.at : port.node)
+        )
+        if (porch) {
+          const { node, dir } = ports[porch.p]
+          claim(porch.out, region.id)
+          claim(porch.at, region.id)
+          link(node, dir)
+          link(porch.out, dir)
+          for (let d = 0; d < 4; d++) if (sideFree(porch.out, d)) takeSide(porch.out, d)
+        }
         const out = leaves && leaves !== ordered[0] ? [ports[ordered.indexOf(leaves)].node] : []
         const walk = [...new Set([ports[0].node, anchor, ...out])]
+        if (porch?.p === 0) walk.unshift(porch.at, porch.out)
+        else if (porch) walk.push(porch.out, porch.at)
         record(regionNodes, region.id, [...walk, ...nodes.filter(node => !walk.includes(node))])
         record(walkLength, region.id, walk.length)
         record(blockAt, region.id, block)

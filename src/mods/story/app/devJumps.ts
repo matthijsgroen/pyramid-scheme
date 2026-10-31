@@ -17,13 +17,14 @@ export type StoryRoomLanding = {
   walkedOnto?: { sectionHash: string; cellId: string }
 }
 
+const IN_ROOM = new Set<string | undefined>(["inner", "node"])
+
 /**
  * Where a jump to `room` stands the explorer: on its doorstep, the corridor cell the walk from the floor's entrance
  * crosses last before the room (a designed room's door, its floor taking no tap), written down explored. A tap on
- * the room then walks in and plays it the way play does. Stood in the room itself he is on unexplored ground, which nothing walks from; and marking the ROOM explored
- * would read as solved and open the way past it.
+ * the room then walks in and plays it the way play does. Stood in the room itself he is on unexplored ground, which
+ * nothing walks from; and marking the ROOM explored would read as solved and open the way past it.
  */
-const IN_ROOM = new Set<string | undefined>(["inner", "node"])
 
 export const storyRoomLanding = (room: StoryRoom): StoryRoomLanding => {
   const sites = generatedWorldConfigs[room.journeyId] ?? []

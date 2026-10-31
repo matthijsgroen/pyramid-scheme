@@ -4,10 +4,12 @@ import { freeRegions } from "../lockAuthoring"
 import { parseLock } from "../lockNotation"
 import { parsePrefab } from "../prefabNotation"
 import { roomPlaceOf } from "../roomShape"
+import { roomlessRouteStubs } from "../routeStubs"
 import type { FloorConfig, FloorGrid, PrefabRoom, RoomCell } from "../siteTypes"
 import { BINDING } from "../testSupport/lockFixtures"
 import { assembleFloor } from "./assembleFloor"
 import { prepOf } from "./carveFixtures"
+import { meets, ringed } from "./placePrefabs"
 import { roomAsks } from "./reserveRooms"
 
 // A made-up shrine, 5 by 5 inside, a door place on every side and its lever's place in a corner.
@@ -118,6 +120,32 @@ describe("a lock region laid as a designed room", { timeout: 120_000 }, () => {
         }
       expect(walkFloorLock(grid)).toEqual({ sound: true, states: expect.any(Number) })
       expect(room.doors).toHaveLength(4)
+    }
+  })
+
+  it("a five-way region takes a four-door room, the fifth way branching off a porch past one door", () => {
+    const FIVE_WAY_HUB = "in -- hub\nhub -- out\nhub -- a\nhub -- b\nhub -[A]- c\nA toggle @a"
+    for (const seed of SEEDS) {
+      const grid = carved(lockFloor(FIVE_WAY_HUB, 1, "crossing", CROSSING), seed)
+      const { cell, room } = roomNamed(grid, "crossing")
+      expect(cell.region).toBe("made.hub")
+      expect(room.doors).toHaveLength(4)
+      const ring = ringed(room.rect)
+      const [sr, sc] = room.stop
+      const porch = grid.cells.flatMap((row, r) =>
+        row.flatMap((other, c) =>
+          other.type !== "empty" &&
+          other.region === "made.hub" &&
+          (r - sr) % 2 === 0 &&
+          (c - sc) % 2 === 0 &&
+          !meets({ top: r - 1, left: c - 1, rows: 3, cols: 3 }, ring)
+            ? [[r, c]]
+            : []
+        )
+      )
+      expect(porch.length, `seed ${seed}`).toBeGreaterThan(0)
+      expect(walkFloorLock(grid)).toEqual({ sound: true, states: expect.any(Number) })
+      expect(roomlessRouteStubs(grid)).toEqual([])
     }
   })
 

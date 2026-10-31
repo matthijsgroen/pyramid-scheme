@@ -1,4 +1,4 @@
-import type { BlockAsk } from "../layLocks"
+import { PORCH_WAYS, type BlockAsk } from "../layLocks"
 import type { LockPlan, PlanRegion } from "../lockPlan"
 import { variantsOf } from "../prefabChecks"
 import type { Prefab, SpecialPlace } from "../prefabTypes"
@@ -36,14 +36,13 @@ export type ReservedBlock = {
  * (where it hangs from one), and its cells up to and including the block's anchor. */
 export type Spine = { attachedAt: Cell; via: Cell[]; cells: Cell[] }
 
-/** The ways walked to and through the blocks before the maze is grown around them. `joins` are the hops of those
- * walks a room's own floor makes, from a port's node to its anchor: no passage of the lattice. */
+/** The ways walked to and through the blocks before the maze is grown around them. A hop of those walks
+ * a room's own floor makes, from a port's node to its anchor, is no passage of the lattice (`roomJoins`). */
 export type ReservedWalk = {
   entrance: Cell
   mainPath: Cell[]
   spines: ReadonlyMap<number, Spine>
   passages: ReadonlySet<string>
-  joins: ReadonlyArray<[Cell, Cell]>
 }
 
 /** A way into a room: its door place on the ring, the node the way arrives at (the door place itself where the ring
@@ -269,7 +268,11 @@ export const roomTakesRegion = (plan: LockPlan, region: PlanRegion, prefab: Pref
   const mechanisms = Object.values(prefab.specials).filter(place => place === "mechanism").length
   if (controls > Math.min(1, mechanisms)) return false
   const ways = plan.corridors.filter(corridor => corridor.from === region.id || corridor.to === region.id).length
-  return ways > 0 && shapesOf(prefab).some(shape => shape.ports.length >= ways)
+  // The ways the room has no door for branch off a porch past the door of its way in or out (layLocks.ts).
+  return (
+    ways > 0 &&
+    shapesOf(prefab).some(shape => shape.ports.length + PORCH_WAYS >= ways && shape.ports.length >= Math.min(ways, 2))
+  )
 }
 
 /** How central a lock's region lies along the lock's route: an off-route region by the route region it hangs off. */
@@ -423,7 +426,7 @@ export const blockAsks = (prep: FloorPrep, attempt: number): BlockAsk[] => {
  * ending in one are walked to them first: from an edge entrance through each main block in turn, in by one port, over
  * its anchor and out by another, to an end the rung's distance along; then each side path from a hub's free port, or
  * else from a bare main-path node, to the block at its end. A walk crosses a room from a port's node to its anchor
- * over the room's own floor (`joins`), never by a passage. Each block is placed where its walk lands nearest the
+ * over the room's own floor (`roomJoins`), never by a passage. Each block is placed where its walk lands nearest the
  * length it wants, its ring clear of every other block's. A pinned room that finds no place refuses the attempt, as
  * does a placement whose `min` is not met; the others are left out. A floor that asks none draws nothing. On a lock
  * floor the lay places the rooms in their regions (`blockAsks`) and they are read off it here, drawing nothing.
@@ -712,17 +715,16 @@ export const reserveRooms = pass(
     // A hop between two nodes of one block crosses its room's floor: a join, never a passage.
     const pkey = makePkey(n)
     const passages = new Set<string>()
-    const joins: Array<[Cell, Cell]> = []
     const link = (cells: Cell[]) =>
       cells.slice(1).forEach((cell, i) => {
         const from = cells[i]
-        if (blocks.some(({ nodes }) => nodes.has(keyOf(from)) && nodes.has(keyOf(cell)))) joins.push([from, cell])
-        else passages.add(pkey(from[0], from[1], cell[0], cell[1]))
+        if (blocks.some(({ nodes }) => nodes.has(keyOf(from)) && nodes.has(keyOf(cell)))) return
+        passages.add(pkey(from[0], from[1], cell[0], cell[1]))
       })
     link(path)
     for (const { attachedAt, via, cells } of spines.values()) link([attachedAt, ...via, ...cells])
     state.blocks = blocks
-    state.walks = { entrance, mainPath: path, spines, passages, joins }
+    state.walks = { entrance, mainPath: path, spines, passages }
   }
 )
 
