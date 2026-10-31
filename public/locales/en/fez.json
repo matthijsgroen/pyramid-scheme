@@ -20,12 +20,7 @@
   },
   "expeditionCompleted": "Congratulations on completing the expedition!",
   "expeditionCompleted2": "A new expedition is now available.",
-  "collectionIntro": "During our expeditions we found some items!",
-  "collectionIntro2": "You can inspect them in your Collection screen.",
-  "collectionIntro3": "Swipe/scroll the screen to the right to see your collection.",
 
-  "tombIntro": "There! The hidden tomb! We actually found it!",
-  "tombIntro2": "And maybe there's treasure in there. Maybe!",
 
   "tombTutorial": "Ooh, writing! Can we read it? With the hieroglyphs we've found… maybe!",
   "tombTutorial2": "Look at that, sums with signs in them! See those empty slots? The hieroglyphs go in there. Yours, down below.",
@@ -47,12 +42,15 @@
   "tombLoot": "Wow, our first treasure! Well done!",
   "mapPiece": "Look! Now THAT is a map. Properly old! Worth more than both of ours put together!",
   "mapPiece2": "Only a piece of one, mind. Every expedition round here hides one, and together they point to a tomb.",
+  "mapComplete": "It's whole! Look, every piece fits just right.",
+  "mapComplete2": "There, where all the lines meet. That's where a tomb lies.",
+  "mapComplete3": "It's in our journeys now. Shall we go and look?",
   "mapPiece3": "Keep count on the expedition list. I certainly will!",
 
   "mosaicIntro": "Ooh, coloured glass! Look at it catch the light — nobody throws THAT away!",
   "mosaicIntro2": "It's one piece of a picture. A whole window of glass, and every piece we find brings a bit of it back.",
-  "mosaicIntro3": "The window is off to the right of the map, past our collection. Set the pieces in there — I want to see it!",
-  "mosaicReminder": "Psst! Those glass pieces are still rattling around in our bag. The window's just past the collection — shall we set them in?",
+  "mosaicIntro3": "Haven't you got a camp somewhere? Take them along and we'll piece them together there. I want to see what it makes!",
+  "mosaicReminder": "Psst! Those glass pieces are still rattling around in our bag. Shall we set them in the window at the camp?",
 
   "mosaicStarter": "A cat in the doorway, and a snake leaving in a hurry. That was worth a bowl of milk.",
   "mosaicStarter2": "Egyptians loved cats for exactly this — they killed the snakes and the rats that got into the grain.",
@@ -82,7 +80,7 @@
   "shopFirstVisit2": "Everything on this counter I carried out of somewhere. That one came from two tombs back.",
 
   "shopArrival": "Ah, my stall! Let me lay out what I've picked up along the way.",
-  "shopArrival2": "Rare finds cost the most, but I've also got everyday supplies — and I'll pay you for any trinkets you're carrying.",
+  "shopArrival2": "Rare finds cost the most, but I'll pay you for any trinkets you're carrying.",
   "arrival": {
     "starter_1": {
       "1": { "explorer": "Look, back there! The Sphinx!" },
@@ -352,6 +350,337 @@
       "1": { "fez": "Stop a moment. Look at what we have been carrying up out of those pyramids." },
       "2": { "explorer": "It is a picture." },
       "3": { "fez": "It has been a picture the whole time." }
+    }
+  },
+
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "A cave! The map showed a cellar door, and this is a whole hill!" },
+      "2": { "fez": "Clever fellow. Hide your stock inside a hill — no thief would think of that." },
+      "3": { "explorer": "We did." },
+      "4": { "fez": "We're not thieves. We're customers. Very late customers." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "This must be it. Henut! Eleven deben of lapis, that one!" },
+      "2": { "fez": "What do you reckon — do we get a cut if we collect?" },
+      "3": { "explorer": "You haven't collected anything." },
+      "4": { "fez": "I like to work it out early." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "So this is where Henut's priest is. Insufferable, she said." },
+      "2": { "fez": "What do you think, should we bring something? Flowers?" },
+      "3": { "explorer": "He's dead." },
+      "4": { "fez": "All the more reason. You want to make a good first impression." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Only the high priest was allowed in here. And now us!" },
+      "2": { "explorer": "Are we allowed?" },
+      "3": { "fez": "There's nobody on the door to say no." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Look, the map just stops here. Sand, and then nothing." },
+      "2": { "explorer": "Then we're in the right place." },
+      "3": { "fez": "That's what I mean. That's exactly what makes me nervous." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "The hall of Osiris! Green, of course. Because he comes back every year, like the grain." },
+      "2": { "explorer": "You always knew that." },
+      "3": { "fez": "Always." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "fez": "The gods' own storeroom! What do you keep when you already have everything?" },
+      "2": { "explorer": "Whatever people bring you." },
+      "3": { "fez": "…Yes. That'll be it." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Realm of Cosmic Forces. Well, well." },
+      "2": { "fez": "If I had something to sell that was nothing much, that's what I'd call it too." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "I've suddenly got this feeling I've done something wrong." },
+      "2": { "explorer": "Like what?" },
+      "3": { "fez": "No idea. That's the worst part." }
+    }
+  },
+
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "All those levers and doors, for one cellar!" },
+      "2": { "fez": "Then there's something good down there. Nobody goes to that much trouble over rubbish." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Phew. Those doors were a lot fussier than Ipi's." },
+      "2": { "fez": "Well. Madam had money, of course." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Phew, at last! That cave really did not want us in." },
+      "2": { "explorer": "I think that was the idea." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Psst… why am I whispering?" },
+      "2": { "explorer": "No idea. I'm doing it too." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Whew. My tail's still shaking from that last door." },
+      "2": { "fez": "A king who locks his things away like that… he really doesn't want to lose them." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "See? Stay under the ground long enough, and up you come again." },
+      "2": { "explorer": "Is that Osiris as well?" },
+      "3": { "fez": "No, that one's mine." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "fez": "Doors like those… once, we'd have just turned round." },
+      "2": { "explorer": "Not any more." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Three floors of cave, and only then the front door." },
+      "2": { "explorer": "Must be worth it, then." },
+      "3": { "fez": "That's what they always say. And then it's a jar." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Last stretch of dark. I can feel it." },
+      "2": { "explorer": "You said that at the last one." },
+      "3": { "fez": "And I was nearly right." }
+    }
+  },
+
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Look at that! A pyramid, underground! For a merchant!" },
+      "2": { "fez": "He either earned very well, or haggled very well." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Look at the tip shining in the sun! Real gold, I bet." },
+      "2": { "explorer": "Down a hole in the ground. Who's it shining for?" },
+      "3": { "fez": "Her. You can tell the type." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Hm. Are you actually allowed to sell something that already belongs to a god?" },
+      "2": { "explorer": "Ask the god." },
+      "3": { "fez": "I'd rather not." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Do you think that priest knows we're wandering about in here?" },
+      "2": { "explorer": "He doesn't keep count. It would be unprofessional." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Look at it, all alone in the sun. Lovely, isn't it?" },
+      "2": { "fez": "Shall we just do a drawing and go?" },
+      "3": { "explorer": "You can't draw." },
+      "4": { "fez": "…No. In we go, then." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Whoever's in there is counting on coming back. That's the deal round here." },
+      "2": { "explorer": "How long has he been waiting?" },
+      "3": { "fez": "A long time. Comes with the job, though. Being dead is mostly waiting." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "explorer": "Wow." },
+      "2": { "fez": "Yes." },
+      "3": { "fez": "Sometimes there's just nothing left to say, is there." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "See that patch of sun on the pyramid? You could tell the time by it." },
+      "2": { "explorer": "What time is it, then?" },
+      "3": { "fez": "…Afternoon. Roughly. I'm not a clock." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "There it is. Every line on that map ends up here." },
+      "2": { "explorer": "Then this is the end." },
+      "3": { "fez": "Of the map, yes. Funny. I thought that would feel better." }
+    }
+  },
+
+  "camp": {
+    "firstHome": {
+      "1": { "fez": "This is your camp? A fire and a chest?" },
+      "2": { "explorer": "Our camp." },
+      "3": { "fez": "Ours. Right. Then I'm having the spot by the fire." },
+      "4": { "fez": "I am a lizard, after all. When it suits me." }
+    },
+    "homeHaul": {
+      "1": { "fez": "Unpacking! Best bit of the whole trip." },
+      "2": { "explorer": "Better than the pyramid?" },
+      "3": { "fez": "The pyramid isn't ours. This is." }
+    },
+    "homeEmpty": {
+      "1": { "explorer": "Empty-handed." },
+      "2": { "fez": "So? We walked. That counts too." },
+      "3": { "explorer": "Towards what?" },
+      "4": { "fez": "My legs. They're very short, you know." }
+    },
+    "rested": {
+      "1": { "fez": "There. Feeling a bit better?" },
+      "2": { "explorer": "It was only a scratch." },
+      "3": { "fez": "I didn't even look. And I still had to sit down." }
+    },
+    "chapterJunior": {
+      "1": { "fez": "Well, that went nicely. Next!" },
+      "2": { "explorer": "It wasn't that easy." },
+      "3": { "fez": "It is now. Everything's easy afterwards." }
+    },
+    "chapterExpert": {
+      "1": { "fez": "Out there they've got traps. Real ones. They bite." },
+      "2": { "fez": "Get hurt? Then we just walk back. You'll mend at home." },
+      "3": { "explorer": "What about you?" },
+      "4": { "fez": "I'll walk behind you. It's safer there." }
+    },
+    "chapterMaster": {
+      "1": { "fez": "Four pyramids out there. Remember when there was just the one?" },
+      "2": { "explorer": "That wasn't so long ago." },
+      "3": { "fez": "No. Feels it, though." }
+    },
+    "chapterWizard": {
+      "1": { "fez": "Look at the last one. Golden tip and all!" },
+      "2": { "fez": "That one'll cost us. The last one always does." },
+      "3": { "explorer": "Cost us what?" },
+      "4": { "fez": "…I'm not sure any more." }
+    },
+    "firstFind": {
+      "1": { "fez": "Look at that — like it's always been there!" },
+      "2": { "fez": "I've got this itch to hang a price tag on it." },
+      "3": { "explorer": "Don't." },
+      "4": { "fez": "No, no. You don't sell from home. I know that." }
+    },
+    "structureDone": {
+      "1": { "fez": "It's done! Every last bit's in!" },
+      "2": { "explorer": "All our own work." },
+      "3": { "fez": "Well. I mostly pointed." }
+    }
+  },
+
+  "animal": {
+    "forSale": {
+      "1": { "fez": "Look what's at the stall! I do transport now." },
+      "2": { "explorer": "It's chewing." },
+      "3": { "fez": "That's included in the price." }
+    },
+    "boughtDonkey": {
+      "1": { "fez": "Sold! One donkey. Stubborn, but he'll carry anything." },
+      "2": { "explorer": "So where is he?" },
+      "3": { "fez": "Already on his way home. He'd rather walk without us." }
+    },
+    "blockedDonkey": {
+      "1": { "fez": "We're not walking that far with all this stuff. That takes a donkey." },
+      "2": { "fez": "And guess who has one? Me. At my stall in Henut's vault." }
+    },
+    "throughDonkey": {
+      "1": { "explorer": "He's willing." },
+      "2": { "fez": "Today. Ask him again tomorrow." }
+    },
+    "arrivesDonkey": {
+      "1": { "fez": "There he is! Got here before us." },
+      "2": { "explorer": "Found the fire, too." },
+      "3": { "fez": "My spot. Well. He was first." }
+    },
+    "boughtCart": {
+      "1": { "fez": "A cart! Two wheels, and they hardly rattle." },
+      "2": { "explorer": "Hardly?" },
+      "3": { "fez": "The rattle comes free." }
+    },
+    "blockedCart": {
+      "1": { "fez": "The donkey won't take another bag. I asked him." },
+      "2": { "fez": "A cart, that's what we need. There's one at my stall, at the high priest's." }
+    },
+    "throughCart": {
+      "1": { "explorer": "Hear that?" },
+      "2": { "fez": "That's the cart. It sings a bit." },
+      "3": { "explorer": "All the way?" }
+    },
+    "arrivesCart": {
+      "1": { "fez": "A cart at our camp! Now we look like we're going somewhere." },
+      "2": { "explorer": "We are going somewhere." },
+      "3": { "fez": "Yes, but now everyone can tell." }
+    },
+    "boughtCamel": {
+      "1": { "fez": "A camel! Goes for days without water. I don't, mind you." },
+      "2": { "explorer": "He's looking at you." },
+      "3": { "fez": "Down at me. Camels always look down at you." }
+    },
+    "blockedCamel": {
+      "1": { "fez": "The Inner Sanctum? We'll never get there on foot." },
+      "2": { "fez": "As luck would have it, I have a camel. At my stall, at the high priest's." }
+    },
+    "throughCamel": {
+      "1": { "fez": "He's kneeling! For me!" },
+      "2": { "explorer": "So we can climb on." },
+      "3": { "fez": "Let me have this." }
+    },
+    "arrivesCamel": {
+      "1": { "fez": "There he is. Acting like the camp's his." },
+      "2": { "explorer": "And the donkey?" },
+      "3": { "fez": "Pretending not to see him. Same as me." }
+    },
+    "boughtSecondDonkey": {
+      "1": { "fez": "Another donkey! Now the first one has someone to talk to." },
+      "2": { "explorer": "Talk?" },
+      "3": { "fez": "Bray. It's talking, only louder." }
+    },
+    "blockedSecondDonkey": {
+      "1": { "fez": "The donkey won't go on. Not alone, he says." },
+      "2": { "explorer": "He said that?" },
+      "3": { "fez": "I speak donkey. He wants a pal, and I've got one at my stall in the pharaoh's hoard." }
+    },
+    "throughSecondDonkey": {
+      "1": { "fez": "Listen to them! Each one louder than the other." },
+      "2": { "explorer": "Who's winning?" },
+      "3": { "fez": "Not us. We have to listen to it." }
+    },
+    "arrivesSecondDonkey": {
+      "1": { "fez": "Look at them. Like they've known each other for years." },
+      "2": { "explorer": "Like us." },
+      "3": { "fez": "We bray less." }
+    },
+    "boughtSecondCamel": {
+      "1": { "fez": "Another camel. Yes. I don't like them either." },
+      "2": { "fez": "But this one at least looks friendly." },
+      "3": { "explorer": "He's looking at your fez." }
+    },
+    "blockedSecondCamel": {
+      "1": { "fez": "The Hall of Osiris. One camel won't get us there." },
+      "2": { "fez": "Luckily I've got another, at my stall in the pharaoh's hoard. My very last one." },
+      "3": { "explorer": "You always say that." }
+    },
+    "throughSecondCamel": {
+      "1": { "fez": "He's eating my fez!" },
+      "2": { "explorer": "A friendly camel." },
+      "3": { "fez": "Too friendly." }
+    },
+    "arrivesSecondCamel": {
+      "1": { "fez": "Two camels. Now they both look down on me." },
+      "2": { "explorer": "Go and stand with the donkeys, then." },
+      "3": { "fez": "I already am." }
+    },
+    "boughtSturdyCart": {
+      "1": { "fez": "A sturdier cart. This one doesn't sing on the road." },
+      "2": { "explorer": "There are flowers painted on it." },
+      "3": { "fez": "For sturdiness." }
+    },
+    "blockedSturdyCart": {
+      "1": { "fez": "The old cart won't get there in one piece. That wants something sturdier." },
+      "2": { "fez": "There's one at my stall in the Vault of the Gods. Not for the paint, mind." }
+    },
+    "throughSturdyCart": {
+      "1": { "explorer": "No rattle." },
+      "2": { "fez": "See? Sturdiness." },
+      "3": { "explorer": "And the flowers?" },
+      "4": { "fez": "They help a bit too." }
+    },
+    "arrivesSturdyCart": {
+      "1": { "fez": "Look at it shine!" },
+      "2": { "explorer": "Prettier than it needs to be." },
+      "3": { "fez": "Yes. I didn't sell it for the sturdiness either." }
+    },
+    "boughtCaravanBanner": {
+      "1": { "fez": "A banner. I'll be honest: it opens nothing." },
+      "2": { "explorer": "What does it do, then?" },
+      "3": { "fez": "It flaps. Beautifully." }
+    },
+    "arrivesCaravanBanner": {
+      "1": { "fez": "Look at it flap! Over our own camp!" },
+      "2": { "explorer": "Still opens nothing." },
+      "3": { "fez": "No. It doesn't have to." }
     }
   },
 

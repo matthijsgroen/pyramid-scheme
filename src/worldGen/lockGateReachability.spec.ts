@@ -143,7 +143,10 @@ describe("a door a mechanism and a floor key both own", () => {
   it("takes the mechanism's say as given, yet still asks for the floor key", () => {
     const grid = carve()
     const blocked = new Set<string>()
-    const reached = reachableFrom(grid, grid.entrancePos, new Set(), undefined, blocked, false, mechanismGatesOf(grid))
+    const reached = reachableFrom(grid, grid.entrancePos, new Set(), {
+      blockedRequirements: blocked,
+      mechanismGates: mechanismGatesOf(grid),
+    })
 
     expect(vaultReached(grid, reached)).toBe(false)
     expect([...blocked]).toEqual([floorKeyOf(grid)])
@@ -151,43 +154,25 @@ describe("a door a mechanism and a floor key both own", () => {
 
   it("opens the vault once the floor key is held", () => {
     const grid = carve()
-    const reached = reachableFrom(
-      grid,
-      grid.entrancePos,
-      new Set([floorKeyOf(grid)]),
-      undefined,
-      undefined,
-      false,
-      mechanismGatesOf(grid)
-    )
+    const reached = reachableFrom(grid, grid.entrancePos, new Set([floorKeyOf(grid)]), {
+      mechanismGates: mechanismGatesOf(grid),
+    })
 
     expect(vaultReached(grid, reached)).toBe(true)
   })
 
   it("needs no floor key when the door is any-owned, the mechanism alone being enough", () => {
     const grid = carve("any")
-    const reached = reachableFrom(
-      grid,
-      grid.entrancePos,
-      new Set(),
-      undefined,
-      undefined,
-      false,
-      mechanismGatesOf(grid)
-    )
+    const reached = reachableFrom(grid, grid.entrancePos, new Set(), { mechanismGates: mechanismGatesOf(grid) })
 
     expect(vaultReached(grid, reached)).toBe(true)
   })
 
   it("finds the floor's own key chest, so the fixed point opens the vault", () => {
     const grid = carve()
-    const { reachable, blockedRequirements } = collectReachableKeys(
-      grid,
-      grid.entrancePos,
-      new Set(),
-      false,
-      mechanismGatesOf(grid)
-    )
+    const { reachable, blockedRequirements } = collectReachableKeys(grid, grid.entrancePos, new Set(), {
+      mechanismGates: mechanismGatesOf(grid),
+    })
 
     expect(vaultReached(grid, reachable)).toBe(true)
     expect([...blockedRequirements]).toEqual([])

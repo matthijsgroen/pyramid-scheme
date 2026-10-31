@@ -18,13 +18,15 @@ import { buildSite } from "./buildSite"
 import { assignEncounters, type EncounterAllocator, type FamilyCapacityFor, type IsTrapFamily } from "./placeEncounters"
 import { dropUnownedAuthoring } from "./modOwnedAuthoring"
 import { dressByRole } from "./dressingRoles"
-import { placeShopStock, type ShopStockAssignment } from "./shopStock"
+import { clearShopEnds, placeShopStock, trimEmptyStock, type ShopStockAssignment } from "./shopStock"
 import { placeFragments } from "./placeFragments"
 import type { CurrencyDistribution, CappedCurrency } from "./placeFragments"
 import type { ReachabilitySupport } from "./reachability"
 import type { Distribution } from "./slotAllocator"
 import type { FamilyPriorityFor } from "./slots"
 import type { ResolveEncounter, ResolveKeyRequirements } from "../game/siteAssembler"
+import { defaultResolveEncounter } from "../game/encounterFallback"
+import { prefabArtValidator } from "./prefabArtValidator"
 import { validateRewardCounts, type WorldValidator } from "./validate"
 import { capabilitiesFor } from "./capabilities"
 import { clearUncollectedSlots } from "./slots"
@@ -95,8 +97,6 @@ const planFor = (journeys: readonly JourneyDef[], spec: typeof worldSpec): Pyram
       }
     })
   )
-
-const buildPlan = (): PyramidPlan[] => planFor(PYRAMID_JOURNEYS, worldSpec)
 
 // ── Phase 4: Build SiteConfigs from plan ──────────────────────────────────────
 
@@ -305,10 +305,27 @@ export const buildTombConfigsFor = (
   return configs
 }
 
-const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<string, SiteConfig[]> =>
-  buildTombConfigsFor(TOMB_JOURNEYS, worldSpec, resolveTombTreasure)
-
 // ── Main entry point ──────────────────────────────────────────────────────────
+
+/** The authoring a world is built from: its pyramid journeys, its tombs and the rules over both. */
+export type AuthoredWorld = {
+  journeys: readonly JourneyDef[]
+  tombs: readonly TombJourneyDef[]
+  spec: typeof worldSpec
+}
+const AUTHORED_WORLD: AuthoredWorld = { journeys: PYRAMID_JOURNEYS, tombs: TOMB_JOURNEYS, spec: worldSpec }
+
+/** Writes `seed` and `packing` on every floor of the structural world: the layout every later pass, and play,
+ * carves. */
+export type PickLayout = (configs: Record<string, SiteConfig[]>) => void
+
+export type BuildConfigsOptions = {
+  /** Picks every floor's layout once the world's structure is final and before any loot is placed. Absent, the
+   * floors keep whatever `seed` and `packing` their authoring carries. */
+  pickLayout?: PickLayout
+  /** The authoring to build; the shipped world's by default. */
+  world?: AuthoredWorld
+}
 
 // `resolveKeyRequirements`/`currencies` default to a no-op resolver and no currencies —
 // src/worldGen/ can't import src/mods/'s real resolver or mod-owned currencies directly
@@ -350,16 +367,18 @@ export const buildConfigs = (
   // Places the tier's web on the built world (webPlacement.ts): its doors on the authoring and its activators in reward
   // slots, before the worklist places the currencies, so they keep out of those slots and the solver reads the doors.
   // Absent (no web, or no mod realising one) the world is built without.
-  placeWorldWeb?: (configs: Record<string, SiteConfig[]>) => void
+  placeWorldWeb?: (configs: Record<string, SiteConfig[]>) => void,
+  { pickLayout, world = AUTHORED_WORLD }: BuildConfigsOptions = {}
 ): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
-  const plan = buildPlan()
+  const plan = planFor(world.journeys, world.spec)
 
   // Phase 2: Build SiteConfigs for pyramids (fragmentSlot sentinels in place)
   const pyramidConfigs = buildSiteConfigs(plan, reservedTreasureIndices)
 
-  // Phase 3: Build tomb site configs
-  const tombConfigs = buildTombConfigs(resolveTombTreasure)
+  // Phase 3: Build tomb site configs. A tomb's treasures are resolved here, so they are structure: they stand
+  // before the layout is picked, and no later pass places them.
+  const tombConfigs = buildTombConfigsFor(world.tombs, world.spec, resolveTombTreasure)
 
   const builtConfigs = { ...pyramidConfigs, ...tombConfigs }
 
@@ -394,14 +413,25 @@ export const buildConfigs = (
 
   // Phase 3.6: mods place their shop-stock sentinels into resolved shops (after encounters resolve
   // + stock arrays seed, before slot collection fills them). Core names no currency here.
-  placeShopStock(allConfigs, shopStock)
+  placeShopStock(allConfigs, shopStock, resolveEncounter ?? defaultResolveEncounter)
+  // A shop sells what was assigned to it and has no empty stock slot.
+  trimEmptyStock(allConfigs, resolveEncounter ?? defaultResolveEncounter)
+  // Whether an end holds a reward decides which ends may host a floor key, so a shop end's placeholder is
+  // cleared here, as structure, and never by the placement below.
+  clearShopEnds(allConfigs, resolveEncounter ?? defaultResolveEncounter)
 
-  // Phase 3.65: the tier's web, laid on the world the passes above built.
+  // Phase 3.62: THE LAYOUT IS PICKED BEFORE THE LOOT. Every pass above shapes the floors; every pass below only
+  // fills them. The layout (`seed` + `packing`) is picked here, on the finished structure, so the web is read
+  // on, and placement's reachability walks, the floors the player walks. Nothing below may move a wall: the
+  // bake carves the final world again and refuses one that moved (layoutCheck.ts).
+  pickLayout?.(allConfigs)
+
+  // Phase 3.65: the tier's web, laid on the floors at their picked layout.
   placeWorldWeb?.(allConfigs)
 
   // Phase 4: Worklist-driven currency placement (docs/game-design/keys-and-locks-solver.md)
   // — assigns fragmentSlot positions per registered currency, fills the remainder with junk loot
-  const reachableRewards = placeFragments(
+  const { reachableRewards, walk } = placeFragments(
     allConfigs,
     currencies,
     resolveKeyRequirements,
@@ -426,8 +456,9 @@ export const buildConfigs = (
   // M" from validateRewardCounts. They drop out with their mod, so core names none.
   // `reachableRewards` is placeFragments' final permissive walk: every reward a player can ever
   // get to, hidden pockets and authored-key doors included. A mod counts its own kind in there to
-  // hold its collection's target count; one that only reads the configs ignores it.
-  for (const validate of worldValidators) validate(allConfigs, reachableRewards)
+  // hold its collection's target count; one that only reads the configs ignores it. `walk` is the
+  // strict gate walk over the same finished world: what lies before a gate.
+  for (const validate of [prefabArtValidator, ...worldValidators]) validate(allConfigs, reachableRewards, walk)
 
   const expectedCurrencyRewards = currencies.reduce((sum, c) => sum + (c.expectedTotal?.() ?? 0), 0)
   const isCurrencyReward = (r: TreasureReward) => currencies.some(c => c.bucketForReward?.(r) !== undefined)

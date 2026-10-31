@@ -453,7 +453,6 @@ const harness = (name: string) => {
         journeyData: [makeJourneyData(JOURNEY)],
       }),
       getPurchasedShopSlots: () => new Set<string>(),
-      getSkippedConsumables: () => new Set<string>(),
     } as unknown as JourneyAPI
     const assembled = useAssembledFloor(
       JOURNEY,
@@ -483,7 +482,6 @@ const harness = (name: string) => {
         if (cell && cell.type !== "empty" && address)
           journeys.markCellExplored(cell.sectionHash ?? "", encodeEdge(0, r, c), address)
       },
-      onSkippedConsumable: () => {},
       onExitReached: () => {},
     })
     return { ...assembled, ...nav, journeys }

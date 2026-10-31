@@ -71,7 +71,7 @@ export const strandedFromHome = (grid: FloorGrid): Pos[] => {
       for (const id of cell.requiredKeyIds ?? []) allKeys.add(id)
       for (const exit of cell.exits ?? []) if (exit.gateKeyId) allKeys.add(exit.gateKeyId)
     }
-  const walk = (from: Pos) => reachableFrom(grid, from, allKeys, undefined, undefined, true)
+  const walk = (from: Pos) => reachableFrom(grid, from, allKeys, { authoredKeysHeld: true })
   const homeKeys = home.map(([r, c]) => `${r},${c}`)
   const reached = walk(grid.entrancePos)
   const undirected = everyWayWalksBack(grid)

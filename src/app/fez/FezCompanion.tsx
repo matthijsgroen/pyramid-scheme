@@ -26,7 +26,7 @@ export const FezCompanion: React.FC<{
       showConversation: (
         conversationId: string,
         onComplete?: (result: FezConversationResult) => void,
-        options?: { forceReplay?: boolean; story?: boolean }
+        options?: { forceReplay?: boolean; story?: boolean; unrecorded?: boolean }
       ) => {
         if (!loaded) {
           return onComplete?.("not-loaded")
@@ -44,9 +44,10 @@ export const FezCompanion: React.FC<{
         const entry = {
           conversation: conversationId,
           onComplete: (result: FezConversationResult) => {
-            // A conversation dropped because Fez is not met yet stays unheard, so it can play once he is.
+            // A conversation dropped because Fez is not met yet stays unheard, so it can play once he is;
+            // an unrecorded one is a preview and leaves the save as it was.
             const recorded =
-              result === "unmet"
+              result === "unmet" || options?.unrecorded
                 ? Promise.resolve(latestGameValue<Record<string, boolean>>("conversations") ?? {})
                 : setConversations(prev => ({ ...prev, [conversationId]: true }))
             recorded.then(v => {

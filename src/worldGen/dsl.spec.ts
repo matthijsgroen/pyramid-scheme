@@ -3,12 +3,17 @@ import {
   global,
   tier,
   journey,
+  resolveFloorRooms,
   resolveNodeActivities,
+  resolveNodeChambers,
+  resolveNodeRooms,
   resolveNodeSelectors,
+  withRoomDefaults,
   wardPath,
   wardChest,
   wardWing,
 } from "./dsl"
+import { parsePrefab } from "../game/prefabNotation"
 
 // ── Node selectors → per-index encounter overrides (§G) ───────────────────────
 
@@ -21,6 +26,70 @@ describe("resolveNodeActivities", () => {
 
   it("skips a selector that authors no activity", () => {
     expect(resolveNodeActivities([{ where: "last", encounter: "conversation" }], 4)).toEqual({})
+  })
+})
+
+describe("resolveNodeRooms", () => {
+  it("resolves a pinned room to its 0-based node index, 1-based `where` like an activity", () => {
+    expect(
+      resolveNodeRooms(
+        [
+          { where: "last", room: "hall" },
+          { where: 1, room: "nook" },
+        ],
+        4
+      )
+    ).toEqual({
+      3: "hall",
+      0: "nook",
+    })
+  })
+
+  it("skips a selector that pins no room", () => {
+    expect(resolveNodeRooms([{ where: "last", encounter: "conversation" }], 4)).toEqual({})
+  })
+})
+
+describe("resolveFloorRooms", () => {
+  it("bakes a room without its comments or how its lists are spelled", () => {
+    const listed =
+      "// designed by: someone\n// a note\ntier junior\nlayout\n# # # #\n# s g #\n# # d #\ns stop\nkit = pillar | statue\ng floor kit"
+    const plain =
+      "// designed by: someone\ntier junior\nlayout\n# # # #\n# s g #\n# # d #\ns stop\ng floor pillar | statue"
+    const baked = (text: string) =>
+      resolveFloorRooms([{ room: "hall" }], {}, name => parsePrefab(text, name), { difficulty: "junior", label: "f" })
+    expect(JSON.stringify(baked(listed).prefabs)).toBe(JSON.stringify(baked(plain).prefabs))
+  })
+})
+
+describe("withRoomDefaults", () => {
+  it("defaults min 0, max to min or else 1, central to the middle of the walk", () => {
+    expect(withRoomDefaults({ room: "a" })).toEqual({ room: "a", min: 0, max: 1, central: 0.5 })
+    expect(withRoomDefaults({ room: "a", min: 2 })).toEqual({ room: "a", min: 2, max: 2, central: 0.5 })
+    expect(withRoomDefaults({ room: "a", min: 1, max: 3, central: 0 })).toEqual({
+      room: "a",
+      min: 1,
+      max: 3,
+      central: 0,
+    })
+  })
+})
+
+describe("resolveNodeChambers", () => {
+  it("resolves a chamber after each selected node, an activity or the carve's pick", () => {
+    expect(
+      resolveNodeChambers(
+        [
+          { where: { every: 2 }, chamberAfter: true },
+          { where: 3, chamberAfter: "ledger" },
+        ],
+        4
+      )
+    ).toEqual({ 0: true, 2: "ledger" })
+  })
+
+  it("skips a selector that authors no chamber", () => {
+    expect(resolveNodeChambers([{ where: "last", activity: "ledger" }], 4)).toEqual({})
   })
 })
 

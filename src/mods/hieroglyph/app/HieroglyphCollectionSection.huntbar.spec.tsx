@@ -39,7 +39,9 @@ describe("hieroglyph hunt bar (compass target picker)", () => {
   it("is absent when the compass is not unlocked", () => {
     compassLevel = 0
     compassTarget = null
-    render(<HieroglyphCollectionSection selectedItem={selected} onSelect={() => {}} />)
+    render(
+      <HieroglyphCollectionSection selectedItem={selected} onSelect={() => {}} isNew={() => false} newLabel="NEW" />
+    )
     expect(screen.queryByText("detector.huntAction")).toBeNull()
     expect(screen.queryByText("detector.huntHint")).toBeNull()
   })
@@ -48,7 +50,9 @@ describe("hieroglyph hunt bar (compass target picker)", () => {
     compassLevel = 1
     compassTarget = null
     setCompassTarget.mockClear()
-    render(<HieroglyphCollectionSection selectedItem={selected} onSelect={() => {}} />)
+    render(
+      <HieroglyphCollectionSection selectedItem={selected} onSelect={() => {}} isNew={() => false} newLabel="NEW" />
+    )
     const hunt = screen.getByText("detector.huntAction")
     fireEvent.click(hunt)
     expect(setCompassTarget).toHaveBeenCalledWith(hieroglyph.id)
@@ -62,7 +66,14 @@ describe("hieroglyph hunt bar (compass target picker)", () => {
 // affordance must appear. Mirrors Collection.tsx, which owns selectedItem as state and feeds it back.
 const CollectionHarness: FC = () => {
   const [selectedItem, setSelectedItem] = useState<CollectionSectionProps["selectedItem"]>(null)
-  return <HieroglyphCollectionSection selectedItem={selectedItem} onSelect={setSelectedItem} />
+  return (
+    <HieroglyphCollectionSection
+      selectedItem={selectedItem}
+      onSelect={setSelectedItem}
+      isNew={() => false}
+      newLabel="NEW"
+    />
+  )
 }
 
 describe("picking a hunt target from the Collection grid", () => {

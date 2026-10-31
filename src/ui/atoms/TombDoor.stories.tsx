@@ -5,7 +5,7 @@ const meta = {
   component: TombDoor,
   parameters: { layout: "centered" },
   argTypes: {
-    wall: { control: "select", options: ["starter", "junior", "expert", "master", "wizard", "cave"] },
+    wall: { control: "select", options: ["starter", "junior", "expert", "master", "wizard", "cave", "sphinx"] },
     open: { control: "boolean" },
   },
 } satisfies Meta<typeof TombDoor>
@@ -72,6 +72,18 @@ export const Open: Story = {
 
 export const Cave: Story = {
   args: { wall: "cave", children: doorContent },
+  decorators: [
+    Story => (
+      <div className="size-48">
+        <Story />
+      </div>
+    ),
+  ],
+}
+
+// No sphinx.webp until the panel is painted: the door shows the card colour.
+export const Sphinx: Story = {
+  args: { wall: "sphinx", children: doorContent },
   decorators: [
     Story => (
       <div className="size-48">

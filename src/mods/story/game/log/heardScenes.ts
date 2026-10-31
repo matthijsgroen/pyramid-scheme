@@ -48,7 +48,12 @@ export const ALL_SCENES: Scene[] = TIERS.flatMap(tier => [
     }),
   ...TOMB_STRUCTURES.filter(tomb => tomb.tier === tier).flatMap(tomb => {
     const id = sceneFor(tomb.id)
-    return id ? [{ id, journeyId: tomb.id, parts: [id, ...(CONTINUES[id] ?? [])] }] : []
+    return [
+      ...["cave", "pillar", "cavern"]
+        .map(area => `${area}.${tomb.id}`)
+        .map(beat => ({ id: beat, journeyId: tomb.id, parts: [beat] })),
+      ...(id ? [{ id, journeyId: tomb.id, parts: [id, ...(CONTINUES[id] ?? [])] }] : []),
+    ]
   }),
 ])
 

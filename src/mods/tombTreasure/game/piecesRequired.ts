@@ -8,5 +8,5 @@ export const TOMB_PIECES_REQUIRED: Record<string, number> = Object.fromEntries(
 )
 
 // Falls back to the most common authored threshold for an unknown tomb, so a caller never divides
-// by zero (matches the fallback the Travel screen already used).
+// by zero.
 export const piecesRequiredFor = (tombId: string): number => TOMB_PIECES_REQUIRED[tombId] ?? 4

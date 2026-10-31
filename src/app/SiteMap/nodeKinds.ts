@@ -54,6 +54,9 @@ export const shapeKindFor = (grid: FloorGrid, r: number, c: number, cell: ShapeC
   if (cell.roomType === "fork") {
     return cell.family !== undefined && getFamilyPlugin(cell.family) !== undefined ? "switch" : "fork"
   }
+  // A pass-through chamber holds nothing to enter or solve: it is walked through as a bare junction is, and wears
+  // its shape.
+  if (cell.roomType === "chamber") return "fork"
   if (cell.roomType === "portal") return portalKindOf(grid, r, c, cell)
   // A sequence tile, a stone's plate and a pipe's hole are ground stepped on, whatever else their cell says; the home
   // plate's record makes it no mechanism room.

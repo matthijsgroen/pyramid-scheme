@@ -10,6 +10,7 @@ import {
   type CorridorRunTarget,
 } from "./corridorRuns"
 import { litClaimOwner, type RoomClaims } from "./roomClaims"
+import { shapeKindFor } from "./nodeKinds"
 
 /**
  * WHAT A TAP ON A CELL DOES — the one rule, in one place.
@@ -128,7 +129,14 @@ export const markerAt = (
 ): OfferMarker | null => {
   if (!offer) return null
   const cell = cellAt(grid, r, c)
-  if (cell.type !== "corridor") return { kind: "node" }
+  if (cell.type !== "corridor") {
+    // A bare junction right beside the player is the next step of the way he is standing in, so it
+    // points there; a room that holds something keeps its own marker.
+    const step = ctx.nearCells.get(`${r},${c}`)
+    return step && cell.type === "room" && shapeKindFor(grid, r, c, cell) === "fork"
+      ? { kind: "arrow", dir: step }
+      : { kind: "node" }
+  }
   const runTarget = ctx.runTargets.get(`${r},${c}`)
   if (runTarget) return { kind: "arrow", dir: runTarget.dir }
   // A launch or landing is a stopping point wherever it is, but an arrow appears only AROUND THE PLAYER:

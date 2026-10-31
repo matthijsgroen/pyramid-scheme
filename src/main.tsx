@@ -6,11 +6,18 @@ import "@/app/state/registerCurrencies"
 import "@/app/SiteMap/registerRewardHandlers"
 import App from "@/App.tsx"
 import { CrashBoundary } from "@/app/CrashBoundary"
+import { settleSaveEpoch } from "@/app/saveEpoch"
+import { reloadOnStaleChunk } from "@/app/reloadOnStaleChunk"
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <CrashBoundary>
-      <App />
-    </CrashBoundary>
-  </StrictMode>
+reloadOnStaleChunk()
+
+// Before the first render: every hook reads the save on mount, and must read the settled one.
+void settleSaveEpoch().then(newVersion =>
+  createRoot(document.getElementById("root")!).render(
+    <StrictMode>
+      <CrashBoundary>
+        <App newVersion={newVersion} />
+      </CrashBoundary>
+    </StrictMode>
+  )
 )

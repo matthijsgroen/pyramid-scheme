@@ -1,4 +1,4 @@
-import type { FloorGrid, ValidationReason, ValidationResult, TombKeyReward } from "./siteTypes"
+import type { Direction, FloorGrid, ValidationReason, ValidationResult, TombKeyReward } from "./siteTypes"
 import type { DoorMode } from "./doorOpen"
 import { oneWayRuns } from "./gridNavigation"
 
@@ -23,14 +23,21 @@ const MOVES: Record<string, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 
 // `mechanismGates` names the gate keys a mechanism standing on this floor owns, with how that gate folds its
 // owners: the walk counts the mechanism's say as given (the floor's lock walk is sound, so it can be operated),
 // and a door under `any` needs nothing else, while one under `all` still needs every floor key it lists.
+// `hiddenOpen` says whether a hidden cell is ground: true (the default) walks hidden sections like any other, false
+// leaves every hidden cell out, as a player who cannot find hidden corridors sees the floor.
+export type WalkOptions = {
+  blockedPos?: Pos
+  blockedRequirements?: Set<string>
+  authoredKeysHeld?: boolean
+  mechanismGates?: ReadonlyMap<string, DoorMode>
+  hiddenOpen?: boolean
+}
+
 export const reachableFrom = (
   grid: FloorGrid,
   startPos: Pos,
   ownedKeys: ReadonlySet<string> = new Set(),
-  blockedPos?: Pos,
-  blockedRequirements?: Set<string>,
-  authoredKeysHeld = false,
-  mechanismGates?: ReadonlyMap<string, DoorMode>
+  { blockedPos, blockedRequirements, authoredKeysHeld = false, mechanismGates, hiddenOpen = true }: WalkOptions = {}
 ): Set<string> => {
   const [sr, sc] = startPos
   const startKey = posKey(sr, sc)
@@ -44,6 +51,9 @@ export const reachableFrom = (
   for (const run of oneWayRuns(grid))
     landingsOf.set(posKey(...run.launch), [...(landingsOf.get(posKey(...run.launch)) ?? []), run.landing])
 
+  const shutHidden = (cell: FloorGrid["cells"][number][number] | undefined) =>
+    !hiddenOpen && (cell?.type === "room" || cell?.type === "corridor") && !!cell.hidden
+
   while (queue.length > 0) {
     const [r, c] = queue.shift()!
     const cell = grid.cells[r]?.[c]
@@ -52,7 +62,8 @@ export const reachableFrom = (
     for (const landing of landingsOf.get(posKey(r, c)) ?? [])
       if (
         !visited.has(posKey(...landing)) &&
-        !(blockedPos && landing[0] === blockedPos[0] && landing[1] === blockedPos[1])
+        !(blockedPos && landing[0] === blockedPos[0] && landing[1] === blockedPos[1]) &&
+        !shutHidden(grid.cells[landing[0]]?.[landing[1]])
       ) {
         visited.add(posKey(...landing))
         queue.push(landing)
@@ -69,7 +80,7 @@ export const reachableFrom = (
       if (blockedPos && nr === blockedPos[0] && nc === blockedPos[1]) continue
 
       const ncell = grid.cells[nr]?.[nc]
-      if (!ncell || ncell.type === "empty") continue
+      if (!ncell || ncell.type === "empty" || shutHidden(ncell)) continue
 
       // Gate: only passable if we own the key(s). requiredKeyId/requiredKeyIds alone are
       // the signal — any encounter can carry a key requirement (a gate's only job; a
@@ -122,29 +133,25 @@ export const reachableFrom = (
 // ones (a room's own tombKey reward opening its own further gate — pyramid-interior-
 // design.md §8, "the treasure IS the key"). Exported for src/worldGen/reachability.ts's
 // coarse graph, which needs the same fixed point across a whole multi-floor site.
-// `authoredKeysHeld` passes straight to `reachableFrom` — see there for what the permissive
-// bracket opens.
+// The walk options pass straight to `reachableFrom` — see there for what the permissive bracket and
+// `hiddenOpen` open. The `withheld` key is never collected, even standing in reach: the gate walk asks
+// what lies before a gate, so the key that opens it must stay unheld.
+export type KeyWalkOptions = Pick<WalkOptions, "authoredKeysHeld" | "mechanismGates" | "hiddenOpen"> & {
+  withheld?: string
+}
+
 export const collectReachableKeys = (
   grid: FloorGrid,
   startPos: Pos,
   initialKeys: ReadonlySet<string> = new Set(),
-  authoredKeysHeld = false,
-  mechanismGates?: ReadonlyMap<string, DoorMode>
+  { withheld, ...walkOptions }: KeyWalkOptions = {}
 ): { reachable: Set<string>; keys: Set<string>; blockedRequirements: Set<string> } => {
   const collectedKeys = new Set(initialKeys)
   // Fresh set per pass — only the FINAL (post-fixed-point) pass's blocked requirements are
   // genuine discovered locks; an earlier pass's block may have been resolved by a tombKey
   // this same floor's fixed point went on to collect.
   let blockedRequirements = new Set<string>()
-  let reachable = reachableFrom(
-    grid,
-    startPos,
-    collectedKeys,
-    undefined,
-    blockedRequirements,
-    authoredKeysHeld,
-    mechanismGates
-  )
+  let reachable = reachableFrom(grid, startPos, collectedKeys, { ...walkOptions, blockedRequirements })
   let changed = true
   while (changed) {
     changed = false
@@ -155,6 +162,7 @@ export const collectReachableKeys = (
           cell.type === "room" &&
           cell.reward?.type === "tombKey" &&
           reachable.has(posKey(r, c)) &&
+          (cell.reward as TombKeyReward).keyId !== withheld &&
           !collectedKeys.has((cell.reward as TombKeyReward).keyId)
         ) {
           collectedKeys.add((cell.reward as TombKeyReward).keyId)
@@ -164,44 +172,45 @@ export const collectReachableKeys = (
     }
     if (changed) {
       blockedRequirements = new Set<string>()
-      reachable = reachableFrom(
-        grid,
-        startPos,
-        collectedKeys,
-        undefined,
-        blockedRequirements,
-        authoredKeysHeld,
-        mechanismGates
-      )
+      reachable = reachableFrom(grid, startPos, collectedKeys, { ...walkOptions, blockedRequirements })
     }
   }
   return { reachable, keys: collectedKeys, blockedRequirements }
 }
 
+const BACK: Record<string, string> = { n: "s", s: "n", e: "w", w: "e" }
+
 // The room one of a fork's ways out leads to. A fork names its exits by compass point, and what stands
-// down one is the next ROOM along it, with the connector cells between them walked straight through —
-// nodes sit two cells apart on an assembled floor, and directly adjacent on a hand-built one.
-export const nodeBeyond = (grid: FloorGrid, from: Pos, dir: string): Pos | undefined => {
-  const [dr, dc] = MOVES[dir]
-  let [r, c] = [from[0] + dr, from[1] + dc]
-  while (r >= 0 && r < grid.rows && c >= 0 && c < grid.cols) {
+// down one is the next ROOM along it, with the corridor cells between them walked through: straight on
+// where the corridor runs on, round the bend where it turns and has no other way. Nodes sit two cells
+// apart on a lattice floor, a corridor of any length and shape apart on an embedded one, and directly
+// adjacent on a hand-built one.
+export const nodeBeyond = (grid: FloorGrid, from: Pos, dir: string): Pos | undefined =>
+  arrivalBeyond(grid, from, dir)?.at
+
+/** The room `nodeBeyond` reaches, and the heading the walk arrives on it with. */
+const arrivalBeyond = (grid: FloorGrid, from: Pos, dir: string): { at: Pos; heading: Direction } | undefined => {
+  let heading = dir as Direction
+  let [r, c] = [from[0] + MOVES[heading][0], from[1] + MOVES[heading][1]]
+  for (let steps = 0; steps < grid.rows * grid.cols && r >= 0 && r < grid.rows && c >= 0 && c < grid.cols; steps++) {
     const cell = grid.cells[r][c]
-    if (cell.type === "room") return [r, c]
+    if (cell.type === "room") return { at: [r, c], heading }
     if (cell.type !== "corridor") return undefined
-    ;[r, c] = [r + dr, c + dc]
+    const bend = [...cell.dirs].filter(way => way !== BACK[heading])
+    if (!cell.dirs.has(heading) && cell.dirs.size === 2 && bend.length === 1) heading = bend[0]
+    ;[r, c] = [r + MOVES[heading][0], c + MOVES[heading][1]]
   }
   return undefined
 }
 
-const BACK: Record<string, string> = { n: "s", s: "n", e: "w", w: "e" }
-
 // The door a gated way out of a fork stands on: the next room along it, or, when that room is a sequence tile (a step
 // in the fork's own region stands its tile as the room's first cell, inside the door), the room past the tile.
 export const armDoor = (grid: FloorGrid, from: Pos, dir: string): Pos | undefined => {
-  const next = nodeBeyond(grid, from, dir)
+  const arrival = arrivalBeyond(grid, from, dir)
+  const next = arrival?.at
   const cell = next && grid.cells[next[0]][next[1]]
   if (!next || cell?.type !== "room" || cell.sequenceTile === undefined) return next
-  const onward = [...cell.dirs].filter(way => way !== BACK[dir])
+  const onward = [...cell.dirs].filter(way => way !== BACK[arrival.heading])
   return onward.length === 1 ? nodeBeyond(grid, next, onward[0]) : undefined
 }
 
@@ -256,7 +265,7 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
   for (const { switchPos, gatePos } of switchGates) {
     // Starting in the switch is standing in it, so a walk out of the entrance is already through it.
     if (switchPos[0] === grid.entrancePos[0] && switchPos[1] === grid.entrancePos[1]) continue
-    const withoutSwitch = reachableFrom(grid, grid.entrancePos, allKeyIds, switchPos)
+    const withoutSwitch = reachableFrom(grid, grid.entrancePos, allKeyIds, { blockedPos: switchPos })
     if (withoutSwitch.has(posKey(gatePos[0], gatePos[1])))
       reasons.push({ type: "switchGateNotBehindSwitch", switchPos, gatePos })
   }
@@ -317,9 +326,17 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
               (bcell.tags?.includes("puzzle") || bcell.tags?.includes("tomb-puzzle") || bcell.tags?.includes("trap"))
             // A door is something to reach whatever it wears: a lock's own doors carry no tags until their face.
             const isGate = bcell.tags?.includes("gate") || bcell.requiredKeyId !== undefined
-            if (isGate || bcell.roomType === "portal" || isTreasureLike) hasInteresting = true
-            else if (isPuzzleLike || bcell.roomType === "fork") {
-              // traverse through puzzles/forks to find what's at the end of the branch
+            // A lock's control (lever, plate, sequence tile, pipe hole, or a room working one) is a room the
+            // player has to stand in, so it is worth reaching too.
+            const isMechanism =
+              bcell.mechanism !== undefined ||
+              bcell.worksMechanism !== undefined ||
+              bcell.plate !== undefined ||
+              bcell.sequenceTile !== undefined ||
+              bcell.pipeHole !== undefined
+            if (isGate || isMechanism || bcell.roomType === "portal" || isTreasureLike) hasInteresting = true
+            else if (isPuzzleLike || bcell.roomType === "fork" || bcell.roomType === "chamber") {
+              // traverse through puzzles, forks and chambers to find what's at the end of the branch
               for (const d of bcell.dirs) {
                 const [dr, dc] = MOVES[d as string]
                 bfsQueue.push([br + dr, bc + dc])

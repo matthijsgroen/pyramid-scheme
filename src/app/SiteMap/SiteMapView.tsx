@@ -5,13 +5,14 @@ import type {
   Direction,
   FloorGrid,
   Patron,
+  StairGoes,
   Tileset,
   WallDecorationKind,
 } from "../../game/siteTypes"
-import { decorationFootprint } from "../../game/siteTypes"
+import { DECORATION_KINDS, WALL_DECORATION_KINDS, decorationFootprint } from "../../game/siteTypes"
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { isSealedWayOut, oneWayRuns, revealAll } from "../../game/gridNavigation"
-import { ExplorerDot, LightPool } from "./ExplorerDot"
+import { CHAR_H, CHAR_W, ExplorerDot, FOOT_LIFT, LightPool } from "./ExplorerDot"
 import { RiderSprite, ZiplineRider } from "./ZiplineRider"
 import { poseFor, type RidePoses } from "./ridePoses"
 import type { Ride } from "./useZiplineRide"
@@ -52,10 +53,13 @@ import {
   tileUrl,
   tileVariants,
   sharedTileUrl,
+  mechanismTileOrPlaceholder,
+  mechanismTileUrl,
 } from "./tileAssets"
 import { storedAtCell } from "@/game/cellAddress"
 import { tileStatusAt } from "@/game/sequencePlay"
 import { explorerWeight, holeLookAt, isCarrying, plateLookAt, type ExplorerWeight } from "@/game/stonePlay"
+import type { MechanismStyle } from "./mechanismStyle"
 import { passageArtUrl } from "./passageArt"
 import { PLATE_TILE } from "./plateArt"
 import { PIPE_HOLE_TILE } from "./pipeHoleArt"
@@ -64,7 +68,7 @@ import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { MapNotice } from "@/ui/atoms/MapNotice"
 import { MarkArtBadge } from "./mark"
 import { getRewardHandler } from "./rewardHandlerRegistry"
-import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge, ReplayBadge } from "./nodeShapes"
+import { CompletedBadge, NodeBadge, NodeShape, ReplayBadge } from "./nodeShapes"
 import { FloorShade, LitPlaces } from "./torchlight"
 import {
   SEATING_PASS,
@@ -94,7 +98,9 @@ import {
   tileRegionsFor,
   type RoomClaims,
 } from "./roomClaims"
-import { occupantOffset, standingOffset } from "./standingSpot"
+import { occupantOffset, prefabArtOffset, standingOffset } from "./standingSpot"
+import { markerCell, walkPoints, type WalkPoint } from "./roomWalk"
+import { prefabRoomAt, prefabRoomCells } from "@/game/roomShape"
 import { OccupantFigure } from "./OccupantFigure"
 import type { ReplaysAt } from "./roomReplays"
 import type { OccupantOf } from "./roomOccupants"
@@ -131,10 +137,10 @@ type Props = {
   /** A narrow passage being squeezed through, drawn the way it is crossed (`SqueezeWay`); the explorer is hidden meanwhile. */
   squeeze?: Squeeze | null
   /** Current floor index. Keys the explorer dot so a floor switch remounts it (instant snap to the
-   * new floor's entrance) instead of animating a walk from the previous floor's coordinates. */
+   * new floor's entrance) instead of animating a walk from the previous floor's coordinates, and tells a
+   * floor switch from a barrier opening, so no cover of the floor left is kept to fade over the new one.
+   * A caller that switches floors passes it. */
   currentFloor?: number
-  /** "row,col" keys of completed treasure cells with a reward still waiting to be picked up */
-  pendingCells?: ReadonlySet<string>
   /** Keys the player already holds — used only to color a gate as locked/unlocked on the map. */
   ownedKeys?: ReadonlySet<string>
   /** Every mechanism's current position on this journey, keyed by its cell address — the same map
@@ -150,6 +156,8 @@ type Props = {
   occupantOf?: OccupantOf
   /** A finished room that plays again when walked back into (roomReplays), wearing the replay symbol. */
   replaysAt?: ReplaysAt
+  /** Draws every mechanism piece in this style instead of its tileset's (`MECHANISM_STYLE`): a review sheet's. */
+  mechanismStyle?: MechanismStyle
   className?: string
 }
 
@@ -255,12 +263,33 @@ const leverArmTransform = (angleDeg: number): string =>
 
 const NO_STATES: ReadonlyMap<string, string> = new Map()
 
+/** Whether an object would hide the explorer: he is behind its floor line and his figure, along the stretch he is on,
+ * overlaps the box its sprite is drawn in. */
+const hides = (
+  frame: { x: number; y: number; w: number; baseY: number },
+  { at, to = at }: { at: WalkPoint; to?: WalkPoint }
+): boolean => {
+  const feet = at.y + CELL / 2 - FOOT_LIFT
+  return (
+    at.y + CELL / 2 < frame.baseY &&
+    feet > frame.y &&
+    feet - CHAR_H < frame.baseY &&
+    Math.max(at.x, to.x) + CHAR_W / 2 > frame.x &&
+    Math.min(at.x, to.x) - CHAR_W / 2 < frame.x + frame.w
+  )
+}
+
+// `stairGoes` decides the flight's direction; the entrance position is only the fallback for a cell carrying none.
+const stairClimbs = (grid: Pick<FloorGrid, "entrancePos">, cell: { stairGoes?: StairGoes }, r: number, c: number) =>
+  cell.stairGoes ? cell.stairGoes === "up" : r === grid.entrancePos[0] && c === grid.entrancePos[1]
+
 /** Every node's own furniture on one floor, in map space — chests beside treasure rooms, flights at
  * stairheads. See `NodeSprite` for why this is a list and not a child of each node's own `<g>`.
  *
  * A SHOP wears the treasure marker and gets no chest: his goods are a market stall rather than a sealed
- * chest, and drawing one would say the wrong thing about a room you buy from. A stairhead at the floor's
- * own `entrancePos` is the way back UP (pyramid-interior-design.md: a stairhead descends), and absent
+ * chest, and drawing one would say the wrong thing about a room you buy from. A stairhead's `stairGoes`
+ * decides its flight's direction; the floor's own `entrancePos` is only the fallback, the way back UP
+ * (pyramid-interior-design.md: a stairhead descends). Absent
  * art simply yields nothing, leaving the vector marker to carry the node as it always did.
  */
 // eslint-disable-next-line react-refresh/only-export-components -- pure function over the grid, exported so tests can assert on sprites
@@ -268,7 +297,6 @@ export const nodeSpritesFor = (
   grid: FloorGrid,
   claims: RoomClaims,
   floorTier: Tileset,
-  pendingCells?: ReadonlySet<string>,
   /** Every mechanism's current position, and which floor this is — together the address a lever's own
    * state is stored under (`cellAddress`, `mechanismDoors.ts`). Absent for callers with no journey yet
    * (a story, a hand-built test grid): every control then draws at its own `initial` position. */
@@ -277,7 +305,9 @@ export const nodeSpritesFor = (
   /** Where the explorer stands once his walk has settled, for the plate he presses; unset while he walks. */
   standingAt?: readonly [number, number],
   /** What the explorer's weight moves while he stands on a plate: drawn so, never walked so. */
-  weight?: ExplorerWeight
+  weight?: ExplorerWeight,
+  /** Draws every mechanism piece in this style instead of its tileset's (`MECHANISM_STYLE`). */
+  mechanismStyle?: MechanismStyle
 ): NodeSprite[] => {
   // Which cells belong to each room: the room's own, plus everything it claimed.
   const footprints = new Map<string, string[]>()
@@ -325,16 +355,16 @@ export const nodeSpritesFor = (
   // A DROP IS PLACED BY THE CARVE'S SHAPE, NOT DRESSED: its obstacle is the ONE_WAY_RUN_CELLS cells the
   // carve reserved between a launch and a landing, and the art is drawn across all of them — every one is
   // in the footprint, so nothing else stands under it. It is a node sprite, never a `DecorationKind`, so
-  // no dressing pool can name it. `tileUrl` and not `tileOrPlaceholder`: an obstacle with no painted art
-  // keeps the plain corridor it always drew rather than a stand-in. The obstacle reveals as
-  // one, so its last cell being fogged means all of it is.
+  // no dressing pool can name it. `mechanismTileUrl` and not `mechanismTileOrPlaceholder`: an obstacle with no
+  // painted art keeps the plain corridor it always drew rather than a stand-in. The obstacle reveals as one, so its
+  // last cell being fogged means all of it is.
   for (const run of oneWayRuns(grid)) {
     const [lr, lc] = run.cells[run.cells.length - 1]
     const end = grid.cells[lr][lc]
     if (end.type !== "corridor") continue
     const art = DROP_ART[run.dir]
     const { x, y, w, h } = dropFrame(run.cells, run.dir)
-    const dropUrl = art && tileUrl(cellTileset(end, grid, floorTier), art.name)
+    const dropUrl = art && mechanismTileUrl(cellTileset(end, grid, floorTier), art.name, mechanismStyle)
     if (!art || !dropUrl || end.state === "fogged") continue
     out.push({
       footprint: clipCells(run.cells.map(([r, c]) => `${r},${c}`)),
@@ -388,7 +418,9 @@ export const nodeSpritesFor = (
       const beyond = approach?.get(`${r + mr},${c + mc}`)
       return beyond?.[0] === r && beyond?.[1] === c
     })
-    const [dr, dc] = sealed ? DIR_MOVES[sealed] : [r - ar, c - ac]
+    // A WAY A SWITCH SHUT CANNOT BE STOOD ON: the walk halts on the cell before it, so its bars hang
+    // on that seam, across the way the player came, right in front of where he stops.
+    const [dr, dc] = wall ? [ar - r, ac - c] : sealed ? DIR_MOVES[sealed] : [r - ar, c - ac]
 
     // A GATE IS AIMED BY WHICH ONE IS DRAWN, the same as a flight. Shutting a way walked ACROSS, the
     // grille's own plane is the y-z one and this projection draws that as a line, so `-side` is a
@@ -397,9 +429,9 @@ export const nodeSpritesFor = (
     // real oblique view and a rotation is not (`NodeSprite`).
     const name = `${open ? "gate-open" : "gate"}${dc !== 0 ? "-side" : ""}`
     const url =
-      tileOrPlaceholder(tier, name) ??
-      tileOrPlaceholder(tier, open ? "gate-open" : "gate") ??
-      (open ? tileOrPlaceholder(tier, "gate") : undefined)
+      mechanismTileOrPlaceholder(tier, name, mechanismStyle) ??
+      mechanismTileOrPlaceholder(tier, open ? "gate-open" : "gate", mechanismStyle) ??
+      (open ? mechanismTileOrPlaceholder(tier, "gate", mechanismStyle) : undefined)
     if (!url) return
 
     // THE BARS STAND ON THE SILL. Wherever one rank's stone meets another's across a way the player
@@ -473,21 +505,20 @@ export const nodeSpritesFor = (
         const leverUrls =
           rewardArt?.kind === "lever"
             ? (["back", "arm", "front"] as const).map(
-                piece => tileUrl(tier, rewardArt.tiles[piece]) ?? tileUrl(tier, rewardArt.stand[piece])
+                piece =>
+                  mechanismTileUrl(tier, rewardArt.tiles[piece], mechanismStyle) ??
+                  mechanismTileUrl(tier, rewardArt.stand[piece], mechanismStyle)
               )
             : undefined
         if (!url && !leverUrls) continue
-        const { dx, dy } = nodeArtOffset(cell.dirs)
+        const { dx, dy } = prefabArtOffset(grid, r, c) ?? nodeArtOffset(cell.dirs)
         const placed = {
           x: cx + dx - CELL / 2,
           y: cy + dy + CELL / 2 - PROP_H,
           mirrored: false,
-          // A reward left behind because the pack was full is still there to come back for: that chest
-          // stays full, and wears the `!` rather than the ✓. A chest whose family keeps its room open
-          // wears neither, and is not dimmed: the ✓ and the fade are the pair that say emptied.
-          ...(cell.state === "completed" && !staysOpen(cell)
-            ? { badge: pendingCells?.has(`${r},${c}`) ? ("pending" as const) : ("taken" as const) }
-            : {}),
+          // A chest whose family keeps its room open wears no ✓ and is not dimmed: the ✓ and the fade are
+          // the pair that say emptied.
+          ...(cell.state === "completed" && !staysOpen(cell) ? { badge: "taken" as const } : {}),
           ...(rewardArt?.mark ? { mark: rewardArt.mark } : {}),
         }
         if (leverUrls) {
@@ -511,7 +542,8 @@ export const nodeSpritesFor = (
         // for a stair's cresset.
         const url = tileOrPlaceholder(tier, "exit")
         if (!url) continue
-        const { cx: ex, cy: ey } = cellCenter(r, c)
+        const art = prefabArtOffset(grid, r, c) ?? { dx: 0, dy: 0 }
+        const [ex, ey] = [cx + art.dx, cy + art.dy]
         out.push({
           footprint,
           key: `exit:${r},${c}`,
@@ -523,9 +555,10 @@ export const nodeSpritesFor = (
         })
       } else if (kind === "gate" && cell.passage) {
         // A NARROW PASSAGE IS A WALL STANDING IN ITS OWN CELL, a crack in it: drawn in the cell-wide prop frame like a
-        // plate, never hung on a seam like a gate's leaf, and the same at every rank. Nobody stands in it; it fades
-        // while the explorer waits on the cell behind it. Unpainted, it is drawn as the shut gate it is to the walk.
-        const url = passageArtUrl(cell)
+        // plate, never hung on a seam like a gate's leaf, in the cell's mechanism style (`MECHANISM_STYLE`). Nobody
+        // stands in it; it fades while the explorer waits on the cell behind it. Unpainted, it is drawn as the shut
+        // gate it is to the walk.
+        const url = passageArtUrl(cell, tier, mechanismStyle)
         if (url)
           out.push({
             footprint,
@@ -546,18 +579,18 @@ export const nodeSpritesFor = (
           wall: isSealedWayOut(cell),
         })
       } else if (drawingOf(cell)?.art === "lever") {
-        // BLOCKED UNTIL ALL THREE TILES EXIST, AND NEVER PLACEHOLDER: `tileUrl`, not `tileOrPlaceholder`
-        // — a stand-in dome with no arm to swing would draw a lie, and the superseded single-piece
-        // `leverLeft`/`leverRight` tiles are not reached for either. A rank with only some of the three
-        // painted draws none of them, leaving the room's own marker to carry it, same as an unpainted
-        // stairhead or exit above.
-        const back = tileUrl(tier, "leverBaseBack")
-        const arm = tileUrl(tier, "leverArm")
-        const front = tileUrl(tier, "leverBaseFront")
+        // BLOCKED UNTIL ALL THREE TILES EXIST, AND NEVER PLACEHOLDER: `mechanismTileUrl`, not
+        // `mechanismTileOrPlaceholder` — a stand-in dome with no arm to swing would draw a lie, and the superseded
+        // single-piece `leverLeft`/`leverRight` tiles are not reached for either. A rank with only some of the three
+        // painted draws none of them, leaving the room's own marker to carry it, same as an unpainted stairhead or exit
+        // above.
+        const back = mechanismTileUrl(tier, "leverBaseBack", mechanismStyle)
+        const arm = mechanismTileUrl(tier, "leverArm", mechanismStyle)
+        const front = mechanismTileUrl(tier, "leverBaseFront", mechanismStyle)
         if (!back || !arm || !front) continue
         // Stepped off its own doorways exactly as a chest is (`nodeArtOffset`): a lever is a cell's
         // worth of furniture like any other, not a doorway fitting.
-        const { dx, dy } = nodeArtOffset(cell.dirs)
+        const { dx, dy } = prefabArtOffset(grid, r, c) ?? nodeArtOffset(cell.dirs)
         // THE CONTROL'S CURRENT POSITION, NOT ALWAYS ITS INITIAL ONE: the same address `openDoorsFor`
         // reads a saved position off, falling back to the mechanism's own `initial` for the same reason
         // it does — a save with no entry yet is standing wherever the floor was authored to start it.
@@ -580,14 +613,14 @@ export const nodeSpritesFor = (
           armStack: { armUrl: arm, frontUrl: front, angleDeg },
         })
       } else if (drawingOf(cell)?.art === "standingTorch") {
-        // ONE SHARED PAINTING, lit or not by the control's own position. A lit torch is NOT eased back the way
-        // an emptied chest is: the flame is what says it is used, and a see-through post over its own pool of
-        // light reads as a ghost. Its marker still wears the ✓. The lit tile is imported with no seat shadow,
-        // because the pool laid at its foot lights the floor that shadow would have fallen on.
+        // ONE PAINTING IN THE CELL'S MECHANISM STYLE, lit or not by the control's own position. A lit torch is NOT
+        // eased back the way an emptied chest is: the flame is what says it is used, and a see-through post over its
+        // own pool of light reads as a ghost. Its marker still wears the ✓. The lit tile is imported with no seat
+        // shadow, because the pool laid at its foot lights the floor that shadow would have fallen on.
         const spent = isSpentAt(grid, floorIndex, r, c, cell, mechanismStates)
-        const url = sharedTileUrl(spent ? "torchLit" : "torchUnlit")
+        const url = mechanismTileUrl(tier, spent ? "torchLit" : "torchUnlit", mechanismStyle)
         if (!url) continue
-        const { dx, dy } = nodeArtOffset(cell.dirs)
+        const { dx, dy } = prefabArtOffset(grid, r, c) ?? nodeArtOffset(cell.dirs)
         const x = cx + dx - CELL / 2
         const floorLine = cy + dy + CELL / 2
         out.push({
@@ -602,10 +635,10 @@ export const nodeSpritesFor = (
         })
       } else if (cell.plate) {
         // A PLATE IS FLAT ON THE FLOOR, drawn in the cell-wide prop frame like an exit, in the look its stones and
-        // the explorer's weight give it now. The shared painting, never a rank's: a plate is the same at every rank.
+        // the explorer's weight give it now. Drawn in the cell's mechanism style (`MECHANISM_STYLE`).
         const standing = standingAt !== undefined && standingAt[0] === r && standingAt[1] === c
         const look = plateLookAt(grid, floorIndex, r, c, mechanismStates ?? NO_STATES, standing)
-        const url = look && sharedTileUrl(PLATE_TILE[look])
+        const url = look && mechanismTileUrl(tier, PLATE_TILE[look], mechanismStyle)
         if (!url) continue
         out.push({
           footprint,
@@ -617,9 +650,9 @@ export const nodeSpritesFor = (
         })
       } else if (cell.pipeHole) {
         // A PIPE'S HOLE IS IN THE BACK WALL of its node, drawn on the wall band above the floor square in the look
-        // its stones give it. The shared painting, never a rank's.
+        // its stones give it, in the cell's mechanism style.
         const look = holeLookAt(grid, floorIndex, r, c, mechanismStates ?? NO_STATES)
-        const url = look && sharedTileUrl(PIPE_HOLE_TILE[look])
+        const url = look && mechanismTileUrl(tier, PIPE_HOLE_TILE[look], mechanismStyle)
         if (!url) continue
         out.push({
           footprint,
@@ -632,7 +665,7 @@ export const nodeSpritesFor = (
           mirrored: false,
         })
       } else if (kind === "stairhead") {
-        const goesUp = r === grid.entrancePos[0] && c === grid.entrancePos[1]
+        const goesUp = stairClimbs(grid, cell, r, c)
         // A FLIGHT IS AIMED BY WHICH ONE IS DRAWN, not by turning one. Descending, it can only come
         // TOWARD the viewer — receding, the rise subtracts what the going adds and the treads collapse
         // into one band — so a stairhead entered from the side takes the flight that walks across X
@@ -663,6 +696,8 @@ export const nodeSpritesFor = (
         // east drew its torch on the right and lit the floor on the left.
         const flameOnRight = side !== undefined
         const flameDx = (flameOnRight === mirrored ? -1 : 1) * STAIR_FLAME_DX
+        const art = prefabArtOffset(grid, r, c) ?? { dx: 0, dy: 0 }
+        const [sx, sy] = [cx + art.dx, cy + art.dy]
         out.push({
           // ONLY THE DESCENDING FLIGHTS CARRY A CRESSET. A shaft is a hole in the floor and needs a
           // flame at its lip to read as one; the climbing flights are lit by the room they stand in and
@@ -673,16 +708,16 @@ export const nodeSpritesFor = (
             ? {}
             : {
                 light: {
-                  x: cx + flameDx,
-                  y: cy - CELL * 0.1,
+                  x: sx + flameDx,
+                  y: sy - CELL * 0.1,
                   r: LAMP_POOL_RADIUS,
                 },
               }),
           footprint,
           key: `stair:${r},${c}`,
           url,
-          x: cx - CELL / 2,
-          y: cy + CELL / 2 - PROP_H,
+          x: sx - CELL / 2,
+          y: sy + CELL / 2 - PROP_H,
           mirrored,
         })
       }
@@ -727,6 +762,7 @@ const Decoration = ({
   seed,
   patron,
   frame,
+  flip,
 }: {
   kind: DecorationKind
   tier: Tileset
@@ -734,6 +770,8 @@ const Decoration = ({
   patron?: Patron
   /** The sprite's box relative to the anchor cell's centre (`propFrame`), spanning the whole footprint. */
   frame: { x: number; y: number; w: number; h: number }
+  /** Drawn mirrored left to right: a ground object in a mirrored prefab room. */
+  flip?: boolean
 }) => {
   // A PATRON BEATS A VARIANT. Both choose a drawing, and where a site names a god that choice is
   // authored rather than positional — a dedicated tomb whose statues varied by cell would be saying two
@@ -758,6 +796,7 @@ const Decoration = ({
           h={frame.h}
           stretch={false}
           filter={STANDING_RELIEF[tier]}
+          mirrored={flip}
         />
       ) : (
         <DecorationGlyph kind={kind} />
@@ -765,6 +804,100 @@ const Decoration = ({
     </>
   )
 }
+
+type PropFrame = { x: number; y: number; w: number; h: number; baseY: number }
+
+/** A prop drawn at its anchor cell: a box with no size of its own, standing at the middle of the cell, so what is
+ * inside it is drawn in cell-local units, the way it was inside a `<g transform>`. */
+const PropAt = ({
+  at,
+  frame,
+  prefab,
+  faded,
+  ...decoration
+}: {
+  /** The anchor cell's key. */
+  at: string
+  kind: DecorationKind
+  tier: Tileset
+  patron?: Patron
+  seed: string
+  frame: PropFrame
+  flip?: boolean
+  /** One of a prefab room's objects. */
+  prefab?: boolean
+  faded?: boolean
+}) => {
+  const [r, c] = at.split(",").map(Number)
+  const { cx, cy } = cellCenter(r, c)
+  return (
+    <div
+      {...(prefab ? { "data-prefab-object": at } : {})}
+      style={{
+        position: "absolute",
+        left: cx,
+        top: cy,
+        width: 0,
+        height: 0,
+        ...(faded ? { opacity: OCCLUDER_FADE } : {}),
+      }}
+    >
+      <Decoration {...decoration} frame={{ x: frame.x - cx, y: frame.y - cy, w: frame.w, h: frame.h }} />
+    </div>
+  )
+}
+
+type PrefabProp = {
+  /** The anchor cell's key. */
+  at: string
+  layer: "floor" | "wall" | "ground"
+  kind: DecorationKind
+  tier: Tileset
+  frame: PropFrame
+  flip?: boolean
+}
+
+/** One of a prefab room's objects, marked so a test can find it. */
+const PrefabPropAt = ({ prop, grid, faded }: { prop: PrefabProp; grid: FloorGrid; faded?: boolean }) => (
+  <PropAt
+    at={prop.at}
+    kind={prop.kind}
+    tier={prop.tier}
+    patron={grid.patron}
+    seed={`${grid.siteId}:${prop.at}`}
+    frame={prop.frame}
+    flip={prop.flip}
+    prefab
+    faded={faded}
+  />
+)
+
+const isDecorationKind = (kind: string): kind is DecorationKind =>
+  (DECORATION_KINDS as readonly string[]).includes(kind)
+
+/** What stands in each lit prefab room, from the room's own objects and nothing else, each spanning the cells the
+ * carve gave it. Wall items hang with the rest (`wallItemsFor`). */
+const prefabPropsFor = (grid: FloorGrid, floorTier: Tileset): PrefabProp[] =>
+  [...new Set(prefabRoomCells(grid).values())].flatMap(owner => {
+    const [r, c] = owner.split(",").map(Number)
+    const cell = cellAt(grid, r, c)
+    if (cell.type === "empty" || cell.state === "fogged" || !cell.prefabRoom) return []
+    const tier = cellTileset(cell, grid, floorTier)
+    return cell.prefabRoom.objects.flatMap(({ kind, layer, top, left, rows, cols, flip }): PrefabProp[] =>
+      layer === "wallItem" || !isDecorationKind(kind)
+        ? []
+        : [
+            {
+              at: `${top},${left}`,
+              layer,
+              kind,
+              tier,
+              frame: propFrame(top, left, { ...decorationFootprint(kind), rows, cols }),
+              ...(flip ? { flip } : {}),
+            },
+          ]
+    )
+  })
 
 /** GROUND: blown sand, or a mat of grass, drawn over the floor and clipped to it.
  *
@@ -961,6 +1094,19 @@ export const wallItemsFor = (grid: FloorGrid, claims: RoomClaims, ownedKeys?: Re
     else claimedByOwner.set(ownerKey, [cellKey])
   }
   const items: WallItem[] = []
+  // A prefab room's wall items hang where its file puts them, on the ring's north wall: in the face band of the cell
+  // below.
+  for (const owner of new Set(prefabRoomCells(grid).values())) {
+    const [r, c] = owner.split(",").map(Number)
+    const room = prefabRoomAt(grid, r, c)
+    for (const { kind, layer, top, left } of room?.objects ?? []) {
+      if (layer !== "wallItem" || top !== room!.rect.top - 1) continue
+      if (!(WALL_DECORATION_KINDS as readonly string[]).includes(kind)) continue
+      const at = floorAt(top + 1, left)
+      if (typeof at === "string") continue
+      items.push({ row: top + 1, col: left, kind: kind as WallDecorationKind, tier: at.tier, state: at.state })
+    }
+  }
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
@@ -1323,13 +1469,13 @@ export const SiteMapView = ({
   rideFrame,
   squeeze,
   currentFloor,
-  pendingCells,
   ownedKeys,
   mechanismStates,
   prompt,
   notice,
   occupantOf,
   replaysAt,
+  mechanismStyle,
   className,
 }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
@@ -1359,6 +1505,10 @@ export const SiteMapView = ({
   // destination, so the old markers no longer apply), and don't show the new ones at the
   // far end until the dot actually arrives there rather than while it's still gliding.
   const [settledExplorerPos, setSettledExplorerPos] = useState(explorerPos)
+  // The room point he last set out from on a walk under way, and the point that stretch heads for; cleared once he
+  // sets out from a corridor point and on arrival.
+  const [roomStretch, setRoomStretch] = useState<{ at: WalkPoint; to?: WalkPoint } | null>(null)
+  const onWaypoint = useCallback((at: WalkPoint | null, to?: WalkPoint) => setRoomStretch(at ? { at, to } : null), [])
   const isTraveling = !!(
     explorerPos &&
     settledExplorerPos &&
@@ -1378,13 +1528,13 @@ export const SiteMapView = ({
         grid,
         claims,
         tier,
-        pendingCells,
         mechanismStates,
         currentFloor ?? 0,
         isTraveling ? undefined : settledExplorerPos,
-        weight
+        weight,
+        mechanismStyle
       ),
-    [grid, claims, tier, pendingCells, mechanismStates, currentFloor, isTraveling, settledExplorerPos, weight]
+    [grid, claims, tier, mechanismStates, currentFloor, isTraveling, settledExplorerPos, weight, mechanismStyle]
   )
   const drawnPlates = useMemo(
     () =>
@@ -1400,6 +1550,40 @@ export const SiteMapView = ({
   // The walkable floor, as rectangles: what a layer cut to the floor is cut to. The sand is the only one
   // left — everything else that used to share the map-wide clip now carries its own shape.
   const floorRects = useMemo(() => allFloorRects(regions), [regions])
+
+  const standAt = useCallback((r: number, c: number) => standingOffset(grid, claims, r, c), [grid, claims])
+  const pointOf = useCallback(
+    ([r, c]: readonly [number, number]): WalkPoint => {
+      const { cx, cy } = cellCenter(r, c)
+      const { dx, dy } = standAt(r, c)
+      return { x: cx + dx, y: cy + dy }
+    },
+    [standAt]
+  )
+  const movedMarkers = useMemo(() => {
+    const moved = new Map<string, readonly [number, number]>()
+    for (const key of prefabRoomCells(grid).keys()) {
+      const [r, c] = key.split(",").map(Number)
+      moved.set(key, markerCell(grid, r, c))
+    }
+    return moved
+  }, [grid])
+  // What stands in the lit prefab rooms, each with its frame, wall items aside (`wallItemsFor`).
+  const prefabProps = useMemo(() => prefabPropsFor(grid, tier), [grid, tier])
+  // The stretch an object is judged against: the room stretch he is walking, else the spot he set out from until he
+  // reaches one, else where he stands. A floor with no object standing up needs none.
+  const fadeStretch = useMemo(
+    () =>
+      !prefabProps.some(prop => prop.layer !== "ground")
+        ? null
+        : (roomStretch ??
+          (isTraveling && settledExplorerPos
+            ? { at: pointOf(settledExplorerPos) }
+            : explorerPos
+              ? { at: pointOf(explorerPos) }
+              : null)),
+    [prefabProps, roomStretch, isTraveling, settledExplorerPos, explorerPos, pointOf]
+  )
 
   // Everything that stands on this floor, in one list: a room's furniture and a node's own, each with
   // the line it stands on. Split at the explorer's own floor line so he is drawn in the middle.
@@ -1484,9 +1668,7 @@ export const SiteMapView = ({
           )}
           {/* ON THE CHEST, NOT ON THE MARKER: the marker's own ✓ is behind the sprite. Sat on the lid,
               where the eye already is. */}
-          {sprite.badge && (
-            <NodeBadge kind={sprite.badge} x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.62} />
-          )}
+          {sprite.badge && <NodeBadge x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.62} />}
           {sprite.mark && (
             <MarkArtBadge mark={sprite.mark} x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.16} />
           )}
@@ -1497,24 +1679,36 @@ export const SiteMapView = ({
       const [r, c] = cellKey.split(",").map(Number)
       const owner = litClaimOwner(grid, claims, r, c)
       if (!owner) continue
-      const { cx, cy } = cellCenter(r, c)
-      // A prop bigger than a cell spans its footprint from the anchor and sorts by its bottom row.
       const frame = propFrame(r, c, decorationFootprint(kind))
       sprites.push({
         key: `prop:${cellKey}`,
         baseY: frame.baseY,
         node: (
-          // A box with no size of its own, standing at the middle of the cell: what is inside it is then
-          // drawn in cell-local units, the way it was inside a `<g transform>`.
-          <div key={`prop:${cellKey}`} style={{ position: "absolute", left: cx, top: cy, width: 0, height: 0 }}>
-            <Decoration
-              kind={kind}
-              tier={cellTileset(owner, grid, tier)}
-              patron={grid.patron}
-              seed={`${grid.siteId}:${cellKey}`}
-              frame={{ x: frame.x - cx, y: frame.y - cy, w: frame.w, h: frame.h }}
-            />
-          </div>
+          <PropAt
+            key={`prop:${cellKey}`}
+            at={cellKey}
+            kind={kind}
+            tier={cellTileset(owner, grid, tier)}
+            patron={grid.patron}
+            seed={`${grid.siteId}:${cellKey}`}
+            frame={frame}
+          />
+        ),
+      })
+    }
+    // A prefab room's object fades while it would hide him; one walked over lies under him (`underfoot`).
+    for (const prop of prefabProps) {
+      if (prop.layer === "ground") continue
+      sprites.push({
+        key: `prefab:${prop.at}`,
+        baseY: prop.frame.baseY,
+        node: (
+          <PrefabPropAt
+            key={`prefab:${prop.at}`}
+            prop={prop}
+            grid={grid}
+            faded={!!fadeStretch && hides(prop.frame, fadeStretch)}
+          />
         ),
       })
     }
@@ -1541,17 +1735,35 @@ export const SiteMapView = ({
         })
       )
     return sprites.sort((a, b) => a.baseY - b.baseY)
-  }, [grid, claims, tier, nodeSprites, explorerPos, squeeze, occupantOf])
+  }, [grid, claims, tier, nodeSprites, explorerPos, squeeze, occupantOf, prefabProps, fadeStretch])
+  // What lies on a prefab room's floor and is walked over: under everything that stands, him included.
+  const underfoot = useMemo(
+    (): StandingSprite[] =>
+      prefabProps
+        .filter(prop => prop.layer === "ground")
+        .map(prop => ({
+          key: `prefab:${prop.at}`,
+          baseY: prop.frame.baseY,
+          node: <PrefabPropAt key={`prefab:${prop.at}`} prop={prop} grid={grid} />,
+        })),
+    [prefabProps, grid]
+  )
 
   // The line the player stands on. A sprite lower than it is nearer the viewer and is drawn after him;
   // one level with it loses the tie, because the actor belongs in front of the furniture he shares a
   // floor line with — UNLESS that furniture is the room he is standing at (`atExplorer`), which wins
   // the tie instead: a lever the player is stood on has to stay visible while he works it, not vanish
   // behind him.
-  const standAt = useCallback((r: number, c: number) => standingOffset(grid, claims, r, c), [grid, claims])
-  const explorerBaseY = explorerPos
-    ? cellCenter(explorerPos[0], explorerPos[1]).cy + standAt(explorerPos[0], explorerPos[1]).dy + CELL / 2
-    : Infinity
+  // While a room walk is under way, the line of the room point he last set out from.
+  const explorerBaseY = roomStretch
+    ? roomStretch.at.y + CELL / 2
+    : explorerPos
+      ? pointOf(explorerPos).y + CELL / 2
+      : Infinity
+  const waypointsOf = useCallback(
+    (route: ReadonlyArray<readonly [number, number]>) => walkPoints(grid, route, standAt),
+    [grid, standAt]
+  )
   // A GATE IS DRAWN WITH THE ARCHWAYS, after everything else, for the archway's own reason: it is a
   // thing in the world rather than a decal, so the player walks BEHIND it, and it is hung in the wall
   // band where an arch is — sorted by its floor line among the furniture it came out UNDER the doorway
@@ -1867,8 +2079,11 @@ export const SiteMapView = ({
               return Array.from({ length: grid.cols + 2 }, (_, ci) => {
                 const c = ci - 1
                 const cell = cellAt(grid, r, c)
-                const { cx, cy } = cellCenter(r, c)
                 const cellKey = `${r},${c}`
+                // A prefab room's node is drawn on its stop and an arm it absorbed at its door; the tap stays the cell's own.
+                const moved = movedMarkers.get(cellKey)
+                const centre = cellCenter(...(moved ?? [r, c]))
+                const { cx, cy } = centre
                 const claimOwner = litClaimOwner(grid, claims, r, c)
 
                 // A cell claimed by a neighboring room — genuine void (including one step
@@ -1931,26 +2146,17 @@ export const SiteMapView = ({
                 const isCompleted =
                   (state === "completed" && !staysOpen(cell) && !cell.sequenceTile && !cell.plate && !cell.pipeHole) ||
                   spent
-                // Only ever a pending-loot marker for a treasure room with a consumable reward — this
-                // guards against stale coordinates in pendingCells (e.g. left over from before a site
-                // was regenerated) painting the badge onto whatever room now occupies that cell.
                 const shapeKind = shapeKindFor(grid, r, c, cell)
                 // Portals (entrance/stairhead/exit) are transitions, not tasks — they can't be
                 // "completed", so they never get the completed dim or the ✓ badge even though the
                 // entrance is always marked explored (useAssembledFloor) and used staircases complete.
                 const isPortal = shapeKind === "entrance" || shapeKind === "stairhead" || shapeKind === "exit"
-                const isPending =
-                  isCompleted &&
-                  shapeKind === "treasure" &&
-                  cell.reward?.type === "consumable" &&
-                  (pendingCells?.has(`${r},${c}`) ?? false)
                 const offer = clickTargetAt(grid, claims, r, c, offerContext)
                 // A fogged room never reaches here — the loop above draws unlit cells — so no guard is
                 // needed to keep a chest out of the dark.
                 const hasChest = shapeKind === "treasure" && !cell.tags?.includes("shop")
-                // A stairhead at the floor's own entrance is the way back UP; any other descends.
                 const isStair = shapeKind === "stairhead"
-                const goesUp = isStair && r === grid.entrancePos[0] && c === grid.entrancePos[1]
+                const goesUp = isStair && stairClimbs(grid, cell, r, c)
                 const hasStair =
                   isStair && !!tileOrPlaceholder(cellTileset(cell, grid, tier), goesUp ? "stair-up" : "stair-down")
                 // A DRAWN EXIT LOSES ITS MARKER for the stairhead's reason: the art IS the node, and unlike
@@ -1960,13 +2166,15 @@ export const SiteMapView = ({
                 // A PAINTED PLATE IS THE NODE, as a flight is: the vector slab underneath has nothing more to say.
                 const hasPlate = drawnPlates.has(`plate:${r},${c}`)
                 // A STANDING TORCH IS THE NODE, as a plate is: the flame square under it would put a second torch on the tile.
-                const hasTorch = drawingOf(cell)?.art === "standingTorch" && !!sharedTileUrl("torchUnlit")
+                const hasTorch =
+                  drawingOf(cell)?.art === "standingTorch" &&
+                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "torchUnlit", mechanismStyle)
                 // A PAINTED LEVER IS THE NODE, as a torch is: the marker square under it would put a second lever on the tile.
                 const hasLever =
                   drawingOf(cell)?.art === "lever" &&
-                  !!tileUrl(cellTileset(cell, grid, tier), "leverBaseBack") &&
-                  !!tileUrl(cellTileset(cell, grid, tier), "leverArm") &&
-                  !!tileUrl(cellTileset(cell, grid, tier), "leverBaseFront")
+                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "leverBaseBack", mechanismStyle) &&
+                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "leverArm", mechanismStyle) &&
+                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "leverBaseFront", mechanismStyle)
                 const roomR = nodeRadius[shapeKind]
                 // A WAY A SWITCH SHUT IS A WALL, AND A WALL WEARS NO NODE. The bars standing in its doorway
                 // already say the way is closed; a gate marker on top of them offers a second reading — a
@@ -1994,7 +2202,7 @@ export const SiteMapView = ({
                         opacity={
                           sealedWay || hasStair || hasExit || hasPlate || hasTorch || hasLever
                             ? 0
-                            : isCompleted && !isPending && !isPortal
+                            : isCompleted && !isPortal
                               ? 0.45
                               : hasChest
                                 ? NODE_OVER_ART_OPACITY
@@ -2010,6 +2218,8 @@ export const SiteMapView = ({
                           difficulty={wardKeyDifficulty(cell.requiredKeyId)}
                           icon={familyIconOf(cell)}
                           mark={cell.mark}
+                          tileset={cellTileset(cell, grid, tier)}
+                          mechanismStyle={mechanismStyle}
                           plate={
                             cell.sequenceTile && plateStatus
                               ? { glyph: cell.sequenceTile.glyph, status: plateStatus }
@@ -2022,11 +2232,7 @@ export const SiteMapView = ({
                       {replaysAt?.(cell) ? (
                         <ReplayBadge r={roomR} />
                       ) : (
-                        isCompleted &&
-                        !isPortal &&
-                        !hasChest &&
-                        shapeKind !== "fork" &&
-                        (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)
+                        isCompleted && !isPortal && !hasChest && shapeKind !== "fork" && <CompletedBadge r={roomR} />
                       )}
                     </MarkerCell>
                   </Fragment>
@@ -2045,6 +2251,7 @@ export const SiteMapView = ({
               carries a clip is laid out as a full-map layer with the art placed by background-position,
               which is why the footprint path needs no translating (see `Sprite`). */}
             <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+              <StandingLayer sprites={underfoot} />
               {/* The floor light first, so everything standing is standing IN it. */}
               {standing.map(s2 =>
                 s2.light ? <LightPool key={`light:${s2.key}`} r={s2.light.r} cx={s2.light.x} cy={s2.light.y} /> : null
@@ -2058,8 +2265,13 @@ export const SiteMapView = ({
                   grid={grid}
                   pos={explorerPos}
                   carrying={carrying}
-                  onArrive={() => setSettledExplorerPos(explorerPos)}
+                  onArrive={() => {
+                    setSettledExplorerPos(explorerPos)
+                    setRoomStretch(null)
+                  }}
                   standAt={standAt}
+                  waypointsOf={waypointsOf}
+                  onWaypoint={onWaypoint}
                 />
               )}
               {ride &&

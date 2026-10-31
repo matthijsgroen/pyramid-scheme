@@ -1,0 +1,19 @@
+// designed by: Claude
+// starter. The scribe's room: a desk and a shelf of rolls on the north wall, the tally board above them.
+room ledgerRoom
+tier starter
+activity ledger
+mirror
+
+layout
+# t d n #
+# k . h #
+d s . . d
+# . . . #
+# d d d #
+
+k wall scribeDesk
+h wall? shelf
+t wallItem tallyBoard
+n wallItem? niche
+s stop

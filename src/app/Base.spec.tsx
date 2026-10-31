@@ -1,0 +1,467 @@
+// @vitest-environment jsdom
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react"
+import { useState, type ReactNode } from "react"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { DevelopContext } from "@/contexts/DevelopMode"
+import { FezContext } from "@/app/fez/context"
+import type { Reaction } from "@/app/reactions/reactionContributions"
+import { clearGameData, latestGameValue, writeGameData } from "@/support/useGameStorage"
+
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string, vars?: Record<string, unknown>) => [key, ...(vars ? Object.values(vars) : [])].join(" "),
+    i18n: { language: "en" },
+  }),
+}))
+
+// No mod registers anything in this spec: the home must stand on core alone.
+vi.mock("@/mods/registerModApps", () => ({}))
+
+const journeys = [
+  { id: "a", name: "Journey A", difficulty: "starter", difficultyLabel: "Starter", levelCount: 3, exterior: "pyramid" },
+  { id: "b", name: "Journey B", difficulty: "starter", difficultyLabel: "Starter", levelCount: 2, exterior: "pyramid" },
+]
+let activeJourneyId: string | undefined
+let available = new Set<string>()
+let progress: Record<string, { inProgress: boolean; completionCount: number; levelNr: number }> = {}
+let unexplored = new Set<number>()
+const startJourney = vi.fn()
+
+vi.mock("@/app/translations/useJourneyTranslations", () => ({ useJourneyTranslations: () => journeys }))
+vi.mock("@/app/state/useJourneys", () => ({
+  useJourneys: () => ({
+    activeJourneyId,
+    startJourney,
+    getJourney: (id: string) => progress[id],
+    getUnexploredLevels: () => unexplored,
+  }),
+}))
+vi.mock("@/app/pages/useAvailableJourneyIds", () => ({ useAvailableJourneyIds: () => available }))
+vi.mock("@/app/pages/journeyContributions", () => ({
+  useMergedJourneyContributions: () => ({ lock: () => undefined, hidden: () => false }),
+}))
+let keysLoaded = true
+let setKeysLoaded: (loaded: boolean) => void = () => {}
+vi.mock("@/app/SiteMap/keyProviders", () => ({
+  useMergedHeldKeys: () => new Set<string>(),
+  useHeldKeysLoaded: () => {
+    const [loaded, set] = useState(keysLoaded)
+    setKeysLoaded = set
+    return loaded
+  },
+}))
+let chapter = "starter"
+vi.mock("@/app/pages/journeyAvailability", () => ({ currentChapter: () => chapter }))
+vi.mock("@/app/state/useTapHint", () => ({ useTapHint: () => [false, () => {}] }))
+vi.mock("@/app/home/useElementSize", () => ({ useElementSize: () => [() => {}, { width: 400, height: 800 }] }))
+vi.mock("@/app/dev/LockEditorHost", () => ({ LockEditorHost: () => null }))
+vi.mock("@/app/pages/AllJourneysPage", () => ({ AllJourneys: () => <div>journeys content</div> }))
+vi.mock("@/app/pages/Collection", () => ({ CollectionPage: () => <div>collection content</div> }))
+vi.mock("@/app/SettingsModal", () => ({
+  SettingsModal: ({ isOpen }: { isOpen: boolean }) => (isOpen ? <div data-testid="settings" /> : null),
+}))
+vi.mock("@/ui/atoms/CampScene", () => ({
+  CampScene: ({
+    entrances,
+  }: {
+    entrances?: Record<string, { label: string; badge?: number; onOpen: () => void } | undefined>
+  }) => (
+    <div data-testid="scene">
+      {Object.entries(entrances ?? {}).map(([spot, e]) =>
+        e ? (
+          <button
+            key={spot}
+            aria-label={e.badge === undefined ? e.label : `${e.label} (${e.badge})`}
+            onClick={e.onOpen}
+          >
+            {e.label}
+          </button>
+        ) : null
+      )}
+    </div>
+  ),
+}))
+
+const { Base } = await import("./Base")
+const { registerReactionContribution } = await import("@/app/reactions/reactionContributions")
+const { registerHomeTags } = await import("@/app/home/homeTags")
+const { registerHaulLines } = await import("@/app/home/haulLines")
+const { registerModEntrance } = await import("@/app/home/modEntrances")
+const { clearCollectionSections, registerCollectionSection } = await import("@/app/pages/collectionSectionRegistry")
+
+const reported: Reaction[] = []
+registerReactionContribution(() => reaction => reported.push(reaction))
+// A made-up tag source that reads a save: `setTagsLoaded` stands in for that read landing.
+let tagsLoaded = true
+let setTagsLoaded: (loaded: boolean) => void = () => {}
+registerHomeTags(() => {
+  const [loaded, set] = useState(tagsLoaded)
+  setTagsLoaded = set
+  return { tags: loaded ? ["made-up-tag"] : [], loaded }
+})
+const homeShown = () => reported.filter(r => r.kind === "homeShown")
+
+const stubDesktop = (desktop: boolean) =>
+  vi.stubGlobal("matchMedia", (query: string) => ({
+    matches: desktop,
+    media: query,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+  }))
+
+const Develop = ({ children }: { children: ReactNode }) => {
+  const [isDevelopMode, setDevelopMode] = useState(false)
+  return <DevelopContext.Provider value={{ isDevelopMode, setDevelopMode }}>{children}</DevelopContext.Provider>
+}
+
+const Arrival = ({ startGame, cameHome }: { startGame: () => void; cameHome: boolean }) => {
+  const [arriving, setArriving] = useState(cameHome)
+  return <Base startGame={startGame} cameHome={arriving} onArrived={() => setArriving(false)} />
+}
+
+const renderBase = (startGame = vi.fn(), cameHome = false, speaking = false) => {
+  render(
+    <Develop>
+      <FezContext.Provider value={{ showConversation: () => {}, speaking }}>
+        <Arrival startGame={startGame} cameHome={cameHome} />
+      </FezContext.Provider>
+    </Develop>
+  )
+  return startGame
+}
+
+beforeEach(async () => {
+  reported.length = 0
+  await clearGameData()
+  clearCollectionSections()
+  chapter = "starter"
+  keysLoaded = true
+  tagsLoaded = true
+  stubDesktop(false)
+  activeJourneyId = undefined
+  available = new Set(["a", "b"])
+  progress = {}
+  unexplored = new Set()
+  startJourney.mockReset()
+})
+afterEach(() => {
+  cleanup()
+  vi.unstubAllGlobals()
+})
+
+describe(Base, () => {
+  it("renders the scene, the card and the chest, which opens the collection until Escape", () => {
+    renderBase()
+
+    expect(screen.getByTestId("scene")).toBeTruthy()
+    expect(screen.getByText("camp.continue.heading")).toBeTruthy()
+    fireEvent.click(screen.getByText("camp.entrance.collection"))
+    expect(screen.getByRole("dialog", { name: "camp.entrance.collection" })).toBeTruthy()
+    expect(screen.getByText("collection content")).toBeTruthy()
+
+    fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" })
+    expect(screen.queryByRole("dialog")).toBeNull()
+  })
+
+  describe("the chest's badge", () => {
+    const section = (ids: string[], shown = true) =>
+      registerCollectionSection({
+        id: "made-up",
+        order: 1,
+        Component: () => null,
+        useTab: () => ({ label: "Made-up", shown, ids, loaded: true }),
+      })
+    const seen = (ids: string[]) => writeGameData({ collectionSeen: { version: 1, seen: { "made-up": ids } } })
+
+    it("carries the count of what is new", async () => {
+      section(["x", "y"])
+      await seen(["x"])
+      renderBase()
+
+      expect(await screen.findByRole("button", { name: "camp.entrance.collection (1)" })).toBeTruthy()
+    })
+
+    it("has no badge when nothing is new, or when the tab is not shown", async () => {
+      section(["x"])
+      await seen(["x"])
+      renderBase()
+      await act(async () => new Promise(resolve => setTimeout(resolve, 20)))
+      expect(screen.getByRole("button", { name: "camp.entrance.collection" })).toBeTruthy()
+
+      cleanup()
+      clearCollectionSections()
+      section(["x", "y"], false)
+      renderBase()
+      await act(async () => new Promise(resolve => setTimeout(resolve, 20)))
+      expect(screen.getByRole("button", { name: "camp.entrance.collection" })).toBeTruthy()
+    })
+  })
+
+  it("continues a journey in progress without starting one", async () => {
+    activeJourneyId = "b"
+    progress = { b: { inProgress: true, completionCount: 0, levelNr: 2 } }
+    const startGame = renderBase()
+
+    await act(async () => fireEvent.click(screen.getByText("camp.continue.setOff")))
+
+    expect(startJourney).not.toHaveBeenCalled()
+    expect(startGame).toHaveBeenCalled()
+  })
+
+  it("starts the offered journey, then sets off, when none is in progress", async () => {
+    const order: string[] = []
+    startJourney.mockImplementation(async () => order.push("start"))
+    const startGame = renderBase(vi.fn(() => order.push("game")))
+
+    await act(async () => fireEvent.click(screen.getByText("camp.continue.setOff")))
+
+    expect(startJourney).toHaveBeenCalledWith(journeys[0])
+    expect(startGame).toHaveBeenCalled()
+    expect(order).toEqual(["start", "game"])
+  })
+
+  it("hides the camp's entrances while someone speaks", () => {
+    renderBase(vi.fn(), false, true)
+    expect(screen.queryByText("camp.entrance.collection")).toBeNull()
+  })
+
+  it("opens the journeys as a dialog on a phone", () => {
+    renderBase()
+    expect(screen.queryByText("journeys content")).toBeNull()
+
+    fireEvent.click(screen.getByText("camp.entrance.journeys"))
+
+    expect(screen.getByRole("dialog", { name: "camp.entrance.journeys" })).toBeTruthy()
+    expect(screen.getByText("journeys content")).toBeTruthy()
+  })
+
+  it("shows the journeys in the page on desktop, with no map entrance", () => {
+    stubDesktop(true)
+    renderBase()
+
+    expect(screen.getByText("journeys content")).toBeTruthy()
+    expect(screen.queryByText("camp.entrance.journeys")).toBeNull()
+    expect(screen.queryByRole("dialog")).toBeNull()
+  })
+
+  it("shows a registered window entrance and opens its screen in a dialog", () => {
+    registerModEntrance({
+      id: "made-up",
+      object: "window",
+      useLabel: () => ({ label: "Made-up window", badge: 2 }),
+      Screen: () => <div>made-up screen</div>,
+      title: () => "Made-up title",
+    })
+    renderBase()
+
+    fireEvent.click(screen.getByText("Made-up window"))
+
+    expect(screen.getByRole("dialog", { name: "Made-up title" })).toBeTruthy()
+    expect(screen.getByText("made-up screen")).toBeTruthy()
+  })
+
+  it("opens settings from the gear and turns develop mode on after seven title taps", () => {
+    renderBase()
+    expect(screen.queryByTestId("settings")).toBeNull()
+    expect(screen.queryByText("DEV")).toBeNull()
+
+    fireEvent.click(screen.getByLabelText("ui.settings"))
+    expect(screen.getByTestId("settings")).toBeTruthy()
+
+    for (let i = 0; i < 7; i++) fireEvent.click(screen.getByText("camp.title"))
+    expect(screen.getByText("DEV")).toBeTruthy()
+  })
+
+  describe("coming home and the new chapter", () => {
+    it("shows the coming-home screen over the camp after a journey, and none otherwise", async () => {
+      renderBase(vi.fn(), true)
+      expect(await screen.findByText("camp.comingHome.title")).toBeTruthy()
+      expect(screen.getByTestId("scene")).toBeTruthy()
+
+      await act(async () => fireEvent.click(screen.getByText("camp.comingHome.toCamp")))
+      expect(screen.queryByText("camp.comingHome.title")).toBeNull()
+    })
+
+    it("has no button on the discover hint on desktop, where the journeys are in the page", () => {
+      stubDesktop(true)
+      progress = { a: { inProgress: false, completionCount: 1, levelNr: 1 } }
+      unexplored = new Set([2])
+      renderBase()
+      expect(screen.getByText("camp.hint 1").closest("button")).toBeNull()
+    })
+
+    it("shows no coming-home screen on a plain visit", () => {
+      renderBase()
+      expect(screen.queryByText("camp.comingHome.title")).toBeNull()
+    })
+
+    it("announces a tier reached after the record once Uitpakken is done, and marks it on close", async () => {
+      await writeGameData({ homecoming: { version: 1, haul: [], chapter: "starter" } })
+      chapter = "expert"
+      renderBase(vi.fn(), true)
+      await screen.findByText("camp.comingHome.title")
+      expect(screen.queryByText("camp.chapter.title")).toBeNull()
+
+      await act(async () => fireEvent.click(screen.getByText("camp.comingHome.toCamp")))
+      expect(await screen.findByText("camp.chapter.title")).toBeTruthy()
+
+      await act(async () => fireEvent.click(screen.getByText("camp.chapter.later")))
+      expect(screen.queryByText("camp.chapter.title")).toBeNull()
+      expect(latestGameValue("homecoming")).toEqual({ version: 1, haul: [], chapter: "expert" })
+    })
+
+    it("records and announces nothing until the held keys are read", async () => {
+      chapter = "expert"
+      keysLoaded = false
+      renderBase()
+      await new Promise(r => setTimeout(r, 50))
+      expect(latestGameValue("homecoming")).toEqual({ version: 1, haul: [] })
+      expect(screen.queryByText("camp.chapter.title")).toBeNull()
+      await act(async () => setKeysLoaded(true))
+      await vi.waitFor(() => expect(latestGameValue("homecoming")).toEqual({ version: 1, haul: [], chapter: "expert" }))
+      expect(screen.queryByText("camp.chapter.title")).toBeNull()
+    })
+
+    it("stores the current chapter silently for a save without a record", async () => {
+      chapter = "expert"
+      renderBase()
+
+      await vi.waitFor(() => expect(latestGameValue("homecoming")).toEqual({ version: 1, haul: [], chapter: "expert" }))
+      expect(screen.queryByText("camp.chapter.title")).toBeNull()
+    })
+  })
+})
+
+describe("reporting the home", () => {
+  it("reports a plain visit once, with the tags and no arrival", async () => {
+    renderBase()
+
+    await vi.waitFor(() => expect(homeShown()).toHaveLength(1))
+    await act(async () => {})
+    expect(homeShown()).toEqual([{ kind: "homeShown", arrived: undefined, tags: ["made-up-tag"] }])
+  })
+
+  it("reports nothing behind the coming-home screen, then one arrival with the haul shown", async () => {
+    registerHaulLines(() => ({
+      bead: rewards => [{ key: "beads", visual: null, title: `${rewards.length} beads` }],
+    }))
+    await writeGameData({ homecoming: { version: 1, haul: [{ type: "bead", name: "blue" }] } })
+    renderBase(vi.fn(), true)
+    await screen.findByText("camp.comingHome.unpack")
+    expect(homeShown()).toEqual([])
+
+    await act(async () => fireEvent.click(screen.getByText("camp.comingHome.unpack")))
+
+    expect(homeShown()).toEqual([{ kind: "homeShown", arrived: { haul: true }, tags: ["made-up-tag"] }])
+  })
+
+  it("reports an arrival with no haul when the screen showed no line", async () => {
+    renderBase(vi.fn(), true)
+    await screen.findByText("camp.comingHome.toCamp")
+
+    await act(async () => fireEvent.click(screen.getByText("camp.comingHome.toCamp")))
+
+    expect(homeShown()).toEqual([{ kind: "homeShown", arrived: { haul: false }, tags: ["made-up-tag"] }])
+  })
+
+  it("reports nothing while a chapter card is up, and the showing once it is closed", async () => {
+    await writeGameData({ homecoming: { version: 1, haul: [], chapter: "starter" } })
+    chapter = "expert"
+    renderBase()
+    await screen.findByText("camp.chapter.title")
+    expect(homeShown()).toEqual([])
+
+    await act(async () => fireEvent.click(screen.getByText("camp.chapter.later")))
+
+    expect(homeShown()).toHaveLength(1)
+  })
+
+  it("holds the showing until every tag source has read its save", async () => {
+    tagsLoaded = false
+    renderBase()
+    await screen.findByTestId("scene")
+    await act(async () => {})
+    expect(homeShown()).toEqual([])
+
+    await act(async () => setTagsLoaded(true))
+
+    expect(homeShown()).toEqual([{ kind: "homeShown", arrived: undefined, tags: ["made-up-tag"] }])
+  })
+
+  it("keeps the arrival for a showing held back by a tag source", async () => {
+    tagsLoaded = false
+    renderBase(vi.fn(), true)
+    const toCamp = await screen.findByText("camp.comingHome.toCamp")
+    await act(async () => fireEvent.click(toCamp))
+    expect(homeShown()).toEqual([])
+
+    await act(async () => setTagsLoaded(true))
+
+    expect(homeShown()).toEqual([{ kind: "homeShown", arrived: { haul: false }, tags: ["made-up-tag"] }])
+  })
+
+  it("forgets the arrival: a later showing is not one", async () => {
+    renderBase(vi.fn(), true)
+    const toCamp = await screen.findByText("camp.comingHome.toCamp")
+    await act(async () => fireEvent.click(toCamp))
+    reported.length = 0
+    cleanup()
+
+    renderBase()
+
+    await vi.waitFor(() => expect(homeShown()).toHaveLength(1))
+    expect(homeShown()[0]).toMatchObject({ arrived: undefined })
+  })
+})
+
+describe("home hooks", () => {
+  it("runs a registered hook when the camp shows, not behind the coming-home screen", async () => {
+    vi.resetModules()
+    const { registerHomeHook } = await import("@/app/home/homeHooks")
+    const { Base: FreshBase } = await import("./Base")
+    const { FezContext: FreshFez } = await import("@/app/fez/context")
+    const ran = vi.fn()
+    registerHomeHook(() => ran())
+    const Page = ({ cameHome }: { cameHome: boolean }) => {
+      const [arriving, setArriving] = useState(cameHome)
+      return <FreshBase startGame={() => {}} cameHome={arriving} onArrived={() => setArriving(false)} />
+    }
+    render(
+      <Develop>
+        <FreshFez.Provider value={{ showConversation: () => {} }}>
+          <Page cameHome />
+        </FreshFez.Provider>
+      </Develop>
+    )
+    await screen.findByText("camp.comingHome.toCamp")
+    expect(ran).not.toHaveBeenCalled()
+
+    await act(async () => fireEvent.click(screen.getByText("camp.comingHome.toCamp")))
+    expect(ran).toHaveBeenCalled()
+  })
+  it("runs a hook once, and only after the new-chapter card is closed", async () => {
+    vi.resetModules()
+    await writeGameData({ homecoming: { version: 1, haul: [], chapter: "starter" } })
+    chapter = "expert"
+    const { registerHomeHook } = await import("@/app/home/homeHooks")
+    const { Base: FreshBase } = await import("./Base")
+    const { FezContext: FreshFez } = await import("@/app/fez/context")
+    const ran = vi.fn()
+    registerHomeHook(() => ran())
+    render(
+      <Develop>
+        <FreshFez.Provider value={{ showConversation: () => {} }}>
+          <FreshBase startGame={() => {}} />
+        </FreshFez.Provider>
+      </Develop>
+    )
+    await screen.findByText("camp.chapter.title")
+    expect(ran).not.toHaveBeenCalled()
+
+    await act(async () => fireEvent.click(screen.getByText("camp.chapter.later")))
+    expect(ran).toHaveBeenCalled()
+    const runsAfterClose = ran.mock.calls.length
+    await act(async () => {})
+    expect(ran.mock.calls.length).toBe(runsAfterClose)
+  })
+})

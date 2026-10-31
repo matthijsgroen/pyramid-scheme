@@ -1,8 +1,13 @@
 import { describe, expect, it } from "vitest"
-import { buildFloor, buildSite, wireStaircases } from "./buildSite"
-import type { FloorConfig } from "./types"
-import type { PyramidConstraint } from "./dsl"
+import { buildFloor, buildSite, wireSideSectionStaircases, wireStaircases } from "./buildSite"
+import type { FloorConfig, SideSection } from "./types"
+import { wardWing, type PyramidConstraint } from "./dsl"
 import { collectSlots } from "./slots"
+import { parsePrefab } from "../game/prefabNotation"
+
+// Made-up rooms, so nothing here reads the real catalogue.
+const roomText = (tier: string) => `tier ${tier}\nlayout\n# # # # #\n# . . . #\n# . s . #\n# . . . #\n# # d # #\ns stop`
+const catalogue = { hall: parsePrefab(roomText("starter"), "hall"), nook: parsePrefab(roomText("starter"), "nook") }
 
 describe("buildFloor", () => {
   it("defaults to an exiting floor with no main reward (the caller/site decides the chest)", () => {
@@ -55,6 +60,124 @@ describe("wireStaircases", () => {
     wireStaircases(floors, { journeyId: "j", pyramidIndex: 4 })
     expect(floors[0].exitOrStaircase).toBe("exit")
     expect(floors[0].entrance).toBeUndefined()
+  })
+})
+
+describe("wireSideSectionStaircases", () => {
+  const site = { journeyId: "j", pyramidIndex: 0 }
+  const floor = (...sideSections: SideSection[]): FloorConfig =>
+    buildFloor({ pathPuzzles: 1, difficulty: "starter", sideSections })
+  const stair = (stairId: string): SideSection => ({ pathPuzzles: 0, difficulty: "starter", end: { stairId } })
+  const base = { pathPuzzles: 1, difficulty: "starter", end: "treasure" } as const
+
+  describe("a site naming no target and no depth wires exactly as before", () => {
+    it("a main chain walks down floor by floor to one exit", () => {
+      const floors = [floor(), floor(), floor()]
+      wireSideSectionStaircases(floors, site)
+      expect(floors).toEqual([
+        { ...base, sideSections: [], exitOrStaircase: { stairId: "j:p0:f0:main" } },
+        {
+          ...base,
+          sideSections: [],
+          entrance: { stairId: "j:p0:f0:main" },
+          exitOrStaircase: { stairId: "j:p0:f1:main" },
+        },
+        { ...base, sideSections: [], entrance: { stairId: "j:p0:f1:main" }, exitOrStaircase: "exit" },
+      ])
+    })
+
+    it("a ward stair off floor 0 enters a floor with no way out of its own", () => {
+      const floors = [floor(stair("w")), floor(), floor()]
+      wireSideSectionStaircases(floors, site)
+      expect(floors).toEqual([
+        { ...base, sideSections: [stair("w")], exitOrStaircase: "exit" },
+        { ...base, sideSections: [], entrance: { stairId: "w" }, exitOrStaircase: "none" },
+        { ...base, sideSections: [], exitOrStaircase: "exit" },
+      ])
+    })
+
+    it("a tomb-like chain of side stairs enters each floor by the one before", () => {
+      const floors = [floor(stair("a")), floor(stair("b")), floor()]
+      wireSideSectionStaircases(floors, site)
+      expect(floors).toEqual([
+        { ...base, sideSections: [stair("a")], exitOrStaircase: "exit" },
+        { ...base, sideSections: [stair("b")], entrance: { stairId: "a" }, exitOrStaircase: "none" },
+        { ...base, sideSections: [], entrance: { stairId: "b" }, exitOrStaircase: "none" },
+      ])
+    })
+  })
+
+  it("two stair sections on one floor enter the floors they name", () => {
+    const floors = [floor(stair("a"), stair("b")), floor(), floor()]
+    wireSideSectionStaircases(floors, site, { sectionTargets: new Map([["b", 2]]) })
+    expect(floors[1]).toMatchObject({ entrance: { stairId: "a" }, exitOrStaircase: "none" })
+    expect(floors[2]).toMatchObject({ entrance: { stairId: "b" }, exitOrStaircase: "none" })
+    expect(floors[0].exitOrStaircase).toBe("exit")
+  })
+
+  it("a floor reached by a side stair may climb by its main path to a later floor", () => {
+    const floors = [floor(stair("w")), floor(), floor()]
+    wireSideSectionStaircases(floors, site, { toFloor: [undefined, 2] })
+    expect(floors[0].exitOrStaircase).toBe("exit")
+    expect(floors[1]).toMatchObject({ entrance: { stairId: "w" }, exitOrStaircase: { stairId: "j:p0:f1:main" } })
+    expect(floors[2]).toMatchObject({ entrance: { stairId: "j:p0:f1:main" }, exitOrStaircase: "none" })
+  })
+
+  it("an off-walk floor's own toFloor keeps its stair, wherever its chain enters it from", () => {
+    // Side stair 0 → 1, main 1 → 2, main 2 → 3: each off-walk floor names its way on and keeps it.
+    const floors = [floor(stair("w")), floor(), floor(), floor()]
+    wireSideSectionStaircases(floors, site, { toFloor: [undefined, 2, 3] })
+    expect(floors[1].exitOrStaircase).toEqual({ stairId: "j:p0:f1:main" })
+    expect(floors[2]).toMatchObject({
+      entrance: { stairId: "j:p0:f1:main" },
+      exitOrStaircase: { stairId: "j:p0:f2:main" },
+    })
+    expect(floors[3]).toMatchObject({ entrance: { stairId: "j:p0:f2:main" }, exitOrStaircase: "none" })
+    expect(floors[0].exitOrStaircase).toBe("exit")
+  })
+
+  it("a stair to a shallower floor goes up, and the floor it enters is entered going down", () => {
+    // Down a side stair, along a deep floor, up by its main path into a floor that lies between the two.
+    const floors = [floor(stair("w")), floor(), floor()]
+    wireSideSectionStaircases(floors, site, { toFloor: [undefined, 2], depth: [0, 2, 1] })
+    expect(floors[0].sideSections[0].end).toEqual({ stairId: "w" })
+    expect(floors[1].entrance).toEqual({ stairId: "w" })
+    expect(floors[1].exitOrStaircase).toEqual({ stairId: "j:p0:f1:main", goes: "up" })
+    expect(floors[2].entrance).toEqual({ stairId: "j:p0:f1:main", goes: "down" })
+
+    const climbing = [floor(stair("up")), floor()]
+    wireSideSectionStaircases(climbing, site, { depth: [1, 0] })
+    expect(climbing[0].sideSections[0].end).toEqual({ stairId: "up", goes: "up" })
+    expect(climbing[1].entrance).toEqual({ stairId: "up", goes: "down" })
+  })
+
+  it.each([
+    ["an earlier index", [floor(), floor(stair("w"))], { sectionTargets: new Map([["w", 0]]) }, /floor=1: .*earlier/],
+    ["itself", [floor(stair("w")), floor()], { sectionTargets: new Map([["w", 0]]) }, /floor=0: .*its own floor/],
+    [
+      "a floor already entered",
+      [floor(stair("a"), stair("b")), floor()],
+      {},
+      /floor=0: stair b leads to floor 1, which another stair already enters/,
+    ],
+    ["no floor", [floor(stair("w")), floor()], { sectionTargets: new Map([["w", 5]]) }, /floor=0: .*does not have/],
+    ["an equal depth", [floor(), floor()], { depth: [0, 0] }, /floor=0: .*same depth/],
+  ])("a stair to %s is refused, naming where", (_label, floors, links, message) => {
+    let error: unknown
+    try {
+      wireSideSectionStaircases(floors, site, links)
+    } catch (e) {
+      error = e
+    }
+    expect(String(error)).toMatch(/journey=j pyramid=1 floor=/)
+    expect(String(error)).toMatch(message)
+  })
+
+  it("a target named by a section that is no floor's own stair is refused", () => {
+    const floors = [floor({ ...stair("top"), sideSections: [stair("deeper")] }), floor()]
+    expect(() => wireSideSectionStaircases(floors, site, { sectionTargets: new Map([["deeper", 1]]) })).toThrow(
+      /journey=j pyramid=1: stair deeper names a floor/
+    )
   })
 })
 
@@ -112,6 +235,126 @@ describe("buildSite", () => {
     expect(floors[1].activitiesByIndex).toEqual({ 1: "ledger" })
     // Non-last floor's own reward, not the site-level fallback (which never runs here).
     expect(floors[0].mainEndReward).not.toEqual({ type: "fragmentSlot" })
+  })
+
+  it("authored floors[] branch: a floor's chambers come from its own nodes and count, else the site's count", () => {
+    const { floors } = buildSite({
+      ...baseCtx,
+      constraint: {
+        chambers: 2,
+        floors: [
+          { pathPuzzles: 2, chambers: 3, nodes: [{ where: 1, chamberAfter: "ledger" }] },
+          { pathPuzzles: 2, sideSections: [{ pathPuzzles: 2, nodes: [{ where: "last", chamberAfter: true }] }] },
+        ],
+      },
+    })
+    expect([floors[0].chambers, floors[0].chambersByIndex]).toEqual([3, { 0: "ledger" }])
+    expect([floors[1].chambers, floors[1].chambersByIndex]).toEqual([2, undefined])
+    expect(floors[1].sideSections[0].chambersByIndex).toEqual({ 1: true })
+  })
+
+  it("a floor's rooms and pinned nodes carry the parsed prefabs, with placement defaults filled in", () => {
+    const { floors } = buildSite({
+      ...baseCtx,
+      catalogue,
+      constraint: {
+        rooms: [{ room: "nook" }],
+        floors: [
+          { pathPuzzles: 2, rooms: [{ room: "hall", min: 2 }], nodes: [{ where: 1, room: "nook" }] },
+          { pathPuzzles: 2, sideSections: [{ pathPuzzles: 2, nodes: [{ where: "last", room: "hall" }] }] },
+        ],
+      },
+    })
+    expect(floors[0].prefabPlacements).toEqual([{ room: "hall", min: 2, max: 2, central: 0.5 }])
+    expect(floors[0].prefabsByIndex).toEqual({ 0: "nook" })
+    expect(Object.keys(floors[0].prefabs ?? {}).sort()).toEqual(["hall", "nook"])
+    expect(floors[0].prefabs?.hall).toBe(catalogue.hall)
+    expect(floors[1].prefabPlacements).toEqual([{ room: "nook", min: 0, max: 1, central: 0.5 }])
+    expect(floors[1].sideSections[0].prefabsByIndex).toEqual({ 1: "hall" })
+    expect(floors[1].sideSections[0].prefabs).toEqual({ hall: catalogue.hall })
+  })
+
+  it("an auto-built pyramid's floors hold the site's rooms", () => {
+    const { floors } = buildSite({ ...baseCtx, catalogue, constraint: { rooms: [{ room: "hall", max: 2 }] } })
+    expect(floors[0].prefabPlacements).toEqual([{ room: "hall", min: 0, max: 2, central: 0.5 }])
+  })
+
+  describe("a room's tier is the difficulty of the floor that names it", () => {
+    const junior = { ...catalogue, hall: parsePrefab(roomText("junior"), "hall") }
+    const refused = (constraint: PyramidConstraint) => () => buildSite({ ...baseCtx, catalogue: junior, constraint })
+
+    it("refuses a count on a floor of another difficulty, naming journey, floor, room and both tiers", () => {
+      expect(refused({ floors: [{ pathPuzzles: 1 }, { pathPuzzles: 1, rooms: [{ room: "hall" }] }] })).toThrow(
+        /journey=j1 pyramid=1 floor=1: room hall is tier junior but the difficulty there is starter/
+      )
+    })
+
+    it("refuses a pinned node and a section's pin the same way", () => {
+      expect(refused({ floors: [{ pathPuzzles: 1, nodes: [{ where: 1, room: "hall" }] }] })).toThrow(
+        /floor=0: room hall/
+      )
+      expect(
+        refused({
+          floors: [{ pathPuzzles: 1, sideSections: [{ pathPuzzles: 1, nodes: [{ where: 1, room: "hall" }] }] }],
+        })
+      ).toThrow(/floor=0 section=s0: room hall is tier junior but the difficulty there is starter/)
+    })
+
+    it("refuses a site's rooms on an auto-built floor of another difficulty", () => {
+      expect(refused({ rooms: [{ room: "hall" }] })).toThrow(/room hall is tier junior/)
+    })
+
+    it("refuses a site's rooms on a wing built at another difficulty, with no exception for wings", () => {
+      const wing = wardWing({ tomb: "starter_treasure_tomb", index: 0, tier: "junior" })
+      expect(refused({ mainFloors: 1, wardWings: [wing], rooms: [{ room: "nook" }] })).toThrow(
+        /wing: room nook is tier starter but the difficulty there is junior/
+      )
+    })
+
+    it("accepts a room of the floor's own difficulty on every floor, wings included", () => {
+      const wing = wardWing({ tomb: "starter_treasure_tomb", index: 0, tier: "starter" })
+      expect(refused({ mainFloors: 1, wardWings: [wing], rooms: [{ room: "nook" }] })).not.toThrow()
+    })
+  })
+
+  it("declares no prefab field on a floor that names no room", () => {
+    const { floors } = buildSite({ ...baseCtx, constraint: { floors: [{ pathPuzzles: 2 }] } })
+    for (const field of ["prefabs", "prefabPlacements", "prefabsByIndex"]) expect(floors[0]).not.toHaveProperty(field)
+  })
+
+  it("declares no chamber on a floor that neither it nor its site asks for", () => {
+    const { floors } = buildSite({ ...baseCtx, constraint: { floors: [{ pathPuzzles: 2 }] } })
+    expect(floors[0]).not.toHaveProperty("chambers")
+    expect(floors[0]).not.toHaveProperty("chambersByIndex")
+  })
+
+  it("auto-built pyramid: every floor carries the site's chamber count", () => {
+    const { floors } = buildSite({ ...baseCtx, constraint: { chambers: 2 } })
+    expect(floors.map(floor => floor.chambers)).toEqual(floors.map(() => 2))
+  })
+
+  it("authored floors[] branch: a stair section and a main path lead to the floors they name, climbing by depth", () => {
+    const { floors } = buildSite({
+      ...baseCtx,
+      constraint: {
+        floors: [
+          { pathPuzzles: 1, sideSections: [{ end: "staircase", toFloor: 2 }] },
+          { pathPuzzles: 1 },
+          { pathPuzzles: 1, toFloor: 3, depth: 4 },
+          { pathPuzzles: 1, depth: 3 },
+        ],
+      },
+    })
+    const sectionStair = floors[0].sideSections[0].end
+    expect(sectionStair).toEqual({ stairId: "j1:p0:f0:s0" })
+    expect(floors[0].exitOrStaircase).toEqual({ stairId: "j1:p0:f0:main" })
+    expect(floors[1].entrance).toEqual({ stairId: "j1:p0:f0:main" })
+    expect(floors[1].exitOrStaircase).toBe("exit")
+    expect(floors[2].entrance).toEqual({ stairId: "j1:p0:f0:s0" })
+    expect(floors[2].exitOrStaircase).toEqual({ stairId: "j1:p0:f2:main", goes: "up" })
+    expect(floors[3].entrance).toEqual({ stairId: "j1:p0:f2:main", goes: "down" })
+    // Reached only through the side stair, so the site's one exit stays on floor 1.
+    expect(floors[3].exitOrStaircase).toBe("none")
   })
 
   it("auto multi-floor branch: mainFloors > 1 chains floors via wireStaircases, non-last floor gets a real reward slot", () => {

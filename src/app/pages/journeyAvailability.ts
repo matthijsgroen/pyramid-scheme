@@ -1,6 +1,7 @@
 import { difficulties, isDifficultyReleased, isFreeOrderDifficulty, type Difficulty } from "@/data/difficultyLevels"
 import { TIER_UNLOCK_PERK_IDS } from "@/data/treasurePerks"
 import type { Journey } from "@/data/journeys"
+import type { JourneyNeed } from "./allJourneys"
 
 // Which expeditions the player may pick, and why.
 //
@@ -14,26 +15,40 @@ import type { Journey } from "@/data/journeys"
 // them one at a time: its first as soon as the tier is, each later one when the pyramid before it
 // has been completed.
 
-const holdsTierKey = (difficulty: Difficulty, heldKeys: ReadonlySet<string>): boolean => {
+export const holdsTierKey = (difficulty: Difficulty, heldKeys: ReadonlySet<string>): boolean => {
   // The first tier has no entry key — nothing gates the start of the game.
   const keys = TIER_UNLOCK_PERK_IDS[difficulty]
   if (!keys) return true
   return keys.some(keyId => heldKeys.has(keyId))
 }
 
-export const isTierUnlocked = (difficulty: Difficulty, heldKeys: ReadonlySet<string>): boolean =>
-  isDifficultyReleased(difficulty) && holdsTierKey(difficulty, heldKeys)
+// `gateOpen` is what a mod's other needs on the tier say (gateNeeds); no need means open.
+export const isTierUnlocked = (
+  difficulty: Difficulty,
+  heldKeys: ReadonlySet<string>,
+  gateOpen: (tier: Difficulty) => boolean
+): boolean => isDifficultyReleased(difficulty) && holdsTierKey(difficulty, heldKeys) && gateOpen(difficulty)
 
-// The player earned the key to a tier this release doesn't ship yet — they've reached the end of
-// the content and should be told more is coming, not left wondering why nothing opened.
-export const comingSoonDifficulty = (heldKeys: ReadonlySet<string>): Difficulty | undefined =>
-  difficulties.find(d => !isDifficultyReleased(d) && holdsTierKey(d, heldKeys))
+// The chapter the player is in: the last tier, in order, that is open to them. The first tier is always
+// open, so a player holding no key is in it.
+export const currentChapter = (heldKeys: ReadonlySet<string>, gateOpen: (tier: Difficulty) => boolean): Difficulty =>
+  [...difficulties].reverse().find(d => isTierUnlocked(d, heldKeys, gateOpen)) ?? difficulties[0]
+
+// The player earned the key to a tier this release doesn't ship yet, and meets every other need on it
+// (`gateOpen`) — they've reached the end of the content and should be told more is coming, not left
+// wondering why nothing opened. A tier still shut by another need is not promised.
+export const comingSoonDifficulty = (
+  heldKeys: ReadonlySet<string>,
+  gateOpen: (tier: Difficulty) => boolean
+): Difficulty | undefined =>
+  difficulties.find(d => !isDifficultyReleased(d) && holdsTierKey(d, heldKeys) && gateOpen(d))
 
 export const availablePyramidJourneyIds = (
   journeys: readonly Journey[],
   heldKeys: ReadonlySet<string>,
   isCompleted: (journeyId: string) => boolean,
-  isFreeOrder: (difficulty: Difficulty) => boolean = isFreeOrderDifficulty
+  isFreeOrder: (difficulty: Difficulty) => boolean = isFreeOrderDifficulty,
+  gateOpen: (tier: Difficulty) => boolean
 ): ReadonlySet<string> => {
   const available = new Set<string>()
   const previousInTier = new Map<Difficulty, Journey>()
@@ -42,7 +57,7 @@ export const availablePyramidJourneyIds = (
     if (journey.entryLock) continue
     const previous = previousInTier.get(journey.difficulty)
     previousInTier.set(journey.difficulty, journey)
-    if (!isTierUnlocked(journey.difficulty, heldKeys)) continue
+    if (!isTierUnlocked(journey.difficulty, heldKeys, gateOpen)) continue
     if (!previous || isFreeOrder(journey.difficulty) || isCompleted(previous.id)) available.add(journey.id)
   }
   return available
@@ -57,13 +72,14 @@ export const nextPyramidJourneyId = (
   journeyId: string,
   heldKeys: ReadonlySet<string>,
   isCompleted: (journeyId: string) => boolean = () => false,
-  isFreeOrder: (difficulty: Difficulty) => boolean = isFreeOrderDifficulty
+  isFreeOrder: (difficulty: Difficulty) => boolean = isFreeOrderDifficulty,
+  gateOpen: (tier: Difficulty) => boolean
 ): string | undefined => {
   const index = journeys.findIndex(j => j.id === journeyId)
   if (index === -1) return undefined
   const current = journeys[index]
   if (isFreeOrder(current.difficulty)) {
-    if (!isTierUnlocked(current.difficulty, heldKeys)) return undefined
+    if (!isTierUnlocked(current.difficulty, heldKeys, gateOpen)) return undefined
     const others = journeys.filter(j => !j.entryLock && j.difficulty === current.difficulty && j.id !== journeyId)
     const split = others.findIndex(j => journeys.indexOf(j) > index)
     const ordered = split === -1 ? others : [...others.slice(split), ...others.slice(0, split)]
@@ -71,5 +87,23 @@ export const nextPyramidJourneyId = (
   }
   const next = journeys[index + 1]
   if (!next || next.entryLock) return undefined
-  return isTierUnlocked(next.difficulty, heldKeys) ? next.id : undefined
+  return isTierUnlocked(next.difficulty, heldKeys, gateOpen) ? next.id : undefined
+}
+
+// What stands between the player and a tier: one of its unlock treasures. The tomb gives its floors
+// in order, so the first floor's treasure is always the one found first and the only one shown, lit
+// when held. A tier with no unlock treasures has nothing to find.
+export const tierKeyNeed = (
+  tier: Difficulty,
+  heldKeys: ReadonlySet<string>,
+  display: (keyId: string) => { symbol: string } | undefined,
+  label: string
+): JourneyNeed | undefined => {
+  const keys = TIER_UNLOCK_PERK_IDS[tier]
+  if (!keys || keys.length === 0) return undefined
+  const symbols = keys.slice(0, 1).flatMap(keyId => {
+    const shown = display(keyId)
+    return shown ? [{ symbol: shown.symbol, held: heldKeys.has(keyId) }] : []
+  })
+  return { key: `tier:${tier}`, label, symbols }
 }

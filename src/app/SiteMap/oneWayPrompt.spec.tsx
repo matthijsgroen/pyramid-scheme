@@ -61,7 +61,6 @@ const standAt = (grid: FloorGrid, run: ReturnType<typeof oneWayRuns>[number]) =>
     markCellExplored: vi.fn(),
     updatePosition: vi.fn(),
     getPurchasedShopSlots: () => new Set<string>(),
-    getSkippedConsumables: () => new Set<string>(),
     getMechanismStates: vi.fn(() => new Map<string, string>()),
     setMechanismState: vi.fn(),
   } as unknown as JourneyAPI
@@ -78,7 +77,6 @@ const standAt = (grid: FloorGrid, run: ReturnType<typeof oneWayRuns>[number]) =>
       grid,
       explorerPos: fromNode,
       onEncounter: vi.fn(),
-      onSkippedConsumable: vi.fn(),
       onExitReached: vi.fn(),
       playTraversal,
       resolveOneWay: resolveWithRope,

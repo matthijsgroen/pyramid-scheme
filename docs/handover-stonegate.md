@@ -192,7 +192,7 @@ than before, so a half-solved switch comes back on a new board (fine before rele
 
 The preview build of this branch is https://matthijsgroen.github.io/pyramid-scheme-preview/ (`.github/workflows/preview.yml`
 pushes the build output to the `pyramid-scheme-preview` repo; its saves use their own store). In develop mode
-(7 taps on the title) the Travel screen has a "Lock editor": type a lock, see `yarn lock`'s checks and the drawing,
+(7 taps on the camp's "Kamp" title) settings have a "Lock editor": type a lock, see `yarn lock`'s checks and the drawing,
 "Carve and play" it, and "Copy link" to share it (the lock text rides in the URL).
 
 ## Waiting on the designer

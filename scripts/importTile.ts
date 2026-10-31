@@ -15,9 +15,9 @@
  *   --key=#ff00ff    background colour to make transparent (default magenta). --key=none to skip.
  *   --tolerance=60   how far from that colour still counts as background (0-441, default 60)
  *   --filter=nearest keep hard pixel edges. --filter=smooth for painted art (default: nearest)
- *   --repeat=1.4     fit the art N times across the slot instead of once, for a megatile whose subject
- *                    came back too big. Fractional is the point — a whole number makes the repeat
- *                    visible. Run `make-seamless` on the SOURCE first, or the grid shows its own seams.
+ *   --repeat=2       fit the art N times across the slot instead of once, for a megatile whose subject
+ *                    came back too big. A whole number: the slot is tiled again on the map, and only whole
+ *                    copies meet their neighbour. Run `make-seamless` on the SOURCE first.
  *   --headroom=0.25  squeeze the art into the LOWER part of the slot and leave the rest clear. On a FACE
  *                    the cap is painted the wall's own top colour, because a face IS the wall; on any
  *                    other slot it is left transparent, so the wall behind a hanging thing still shows.
@@ -62,6 +62,9 @@
  *                    allowed, as it would eat an object's transparency.
  *   --flatten=0.5    blend toward the material the slot is made of — the rank's slab for a floor, its wall
  *                    for a face — so a surface sits behind the props. Toward the palette, not toward grey.
+ *   --stars=14       lift every point brighter than its own surroundings by more than N (luminance) toward
+ *                    white, after the resize: the fine stars a generator paints at 2048 average away at
+ *                    896, and a global lift would blow a bright pocket of cloud out with them.
  *   --trim           trim the keyed background away and scale the object to fill the slot, keeping its
  *                    aspect. For a WALL item, whose frame IS its placement: a return with air round the
  *                    object leaves that air in the band and reads as a sticker stuck on the wall.
@@ -322,6 +325,20 @@ const SHADOW_FLOOR = 70
  *
  * Returns RGBA where alpha is the mask, which is what `dest-in` wants.
  */
+/** Lifts each pixel brighter than its blurred surroundings by more than `margin` toward white. */
+export const liftPoints = async (png: Buffer, margin: number): Promise<Buffer> => {
+  const { data, info } = await sharp(png).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  const around = await sharp(png).ensureAlpha().blur(5).raw().toBuffer()
+  const lum = (d: Uint8Array, i: number) => d[i] * 0.3 + d[i + 1] * 0.59 + d[i + 2] * 0.11
+  for (let i = 0; i < data.length; i += 4) {
+    const over = lum(data, i) - lum(around, i)
+    if (over <= margin) continue
+    const f = (Math.min(1, (over - margin) / 40) * 0.8 + 0.2) * 0.85
+    for (let c = 0; c < 3; c++) data[i + c] = Math.round(data[i + c] + (255 - data[i + c]) * f)
+  }
+  return sharp(data, { raw: info }).png({ compressionLevel: 9 }).toBuffer()
+}
+
 export const growMask = ({
   mask,
   maskChannels,
@@ -614,6 +631,12 @@ const main = async (): Promise<void> => {
   mkdirSync(dir, { recursive: true })
   const out = join(dir, `${name}.png`)
   const repeat = Number(arg("repeat", "1"))
+  if (!Number.isInteger(repeat) || repeat < 1) {
+    console.error(
+      `--repeat=${arg("repeat", "1")}: a whole number. The map tiles this slot again, so a cut copy meets a whole one at every seam.`
+    )
+    process.exit(1)
+  }
   const tileW = Math.round(w / repeat)
   // A face repeats HORIZONTALLY only, the same axis `make-seamless --axis=x` works on: its bands are
   // registered top to bottom and stacking a second copy under them would draw two walls. It is also the
@@ -631,10 +654,8 @@ const main = async (): Promise<void> => {
   // One tile, or a grid of a smaller copy. A generator draws a floor's subject at whatever scale it likes
   // and cannot be talked down reliably; shrinking and repeating is the one lever that needs no re-roll.
   //
-  // `repeat` is fractional on purpose. A whole number is what makes a repeat VISIBLE — at 2 the megatile
-  // is four identical quarters and the eye finds them at once. At 1.4 the copies run off the edge and are
-  // cropped, so no two are the same, and because the source is already seamless (run `make-seamless` on
-  // it first) the crop still tiles.
+  // `repeat` is whole. The map lays this slot edge to edge, so a copy cut off at the slot's edge would meet
+  // the next slot's first copy mid-stone; whole copies of a seamless source meet as the source does.
   const across = Math.ceil(w / tileW)
   const down = Math.ceil(h / tileH)
   const tiles =
@@ -692,12 +713,14 @@ const main = async (): Promise<void> => {
       create: { width: w, height: h, channels: 4 as const, background: { r: wr, g: wg, b: wb, alpha: flatten } },
     },
   }
-  const rendered = await sharp(laid)
+  const washed = await sharp(laid)
     // `atop` keeps the destination's alpha, so the wash lands on the art and NOT on the hole through it.
     // An arch is the first slot with real transparency, and a plain overlay filled its doorway with stone.
     .composite(flatten > 0 ? [{ ...wash, blend: "atop" as const }] : [])
     .png({ compressionLevel: 9 })
     .toBuffer()
+  const stars = Number(arg("stars", "0"))
+  const rendered = stars > 0 ? await liftPoints(washed, stars) : washed
 
   // ONLY WRITE WHAT CHANGED. `art/rebuild.sh` re-imports all 190 tiles to prove no geometry change has
   // silently invalidated a master, and the proof it wants is that the BYTES come back the same — which

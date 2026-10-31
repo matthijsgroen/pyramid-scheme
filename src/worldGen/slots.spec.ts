@@ -62,6 +62,40 @@ describe(collectSlots, () => {
     expect(slots[0]).toMatchObject({ wardKeys: ["some-key"], isPlaceholder: false })
   })
 
+  it("a puzzle slot behind a tomb-key gate carries the ward keys of its section and sub-section", () => {
+    const site: SiteConfig = [
+      {
+        pathPuzzles: 1,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        rewards: [undefined],
+        sideSections: [
+          {
+            pathPuzzles: 1,
+            difficulty: "starter",
+            end: "treasure",
+            endReward: { type: "money", amount: 1 },
+            gate: { type: "tomb-key", wardKeyId: "outer" },
+            rewards: [undefined],
+            sideSections: [
+              {
+                pathPuzzles: 1,
+                difficulty: "starter",
+                end: "treasure",
+                endReward: { type: "money", amount: 1 },
+                gate: { type: "tomb-key", wardKeyId: "inner" },
+                rewards: [undefined],
+              },
+            ],
+          },
+        ],
+      },
+    ]
+    const puzzles = collectSlots({ starter_1: [site] }).filter(s => s.kind === "puzzle")
+    expect(puzzles.map(s => s.wardKeys)).toEqual([[], ["outer"], ["outer", "inner"]])
+  })
+
   it("assign() mutates the underlying config in place", () => {
     const site = siteWithFragmentSlot()
     const slots = collectSlots({ starter_1: [site] })
@@ -135,5 +169,99 @@ describe("collectSlots on a chain with node difficulties", () => {
     const puzzles = collectSlots({ starter_1: [site] }).filter(s => s.kind === "puzzle")
     expect(puzzles.length).toBeGreaterThan(0)
     expect(puzzles.map(s => s.tier)).toEqual(puzzles.map(() => "starter"))
+  })
+})
+
+describe("collectSlots on a shop's end", () => {
+  const siteWithShopAndPlainEnd = (): SiteConfig => [
+    {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        {
+          pathPuzzles: 0,
+          difficulty: "starter",
+          end: "treasure",
+          encounter: "fez-shop",
+          endReward: { type: "fragmentSlot" },
+          rewards: [{ type: "fragmentSlot", prefers: "made-up-bucket" }, undefined],
+        },
+        { pathPuzzles: 0, difficulty: "starter", end: "treasure", endReward: { type: "fragmentSlot" } },
+      ],
+    },
+  ]
+
+  it("collectSlots skips a shop end and clears nothing", () => {
+    const site = siteWithShopAndPlainEnd()
+    const ends = collectSlots({ starter_1: [site] }).filter(s => s.kind === "end" && s.encounter === undefined)
+    expect(ends).toHaveLength(1)
+    ends[0].assign({ type: "mosaicPiece", tier: "starter" })
+    expect(site[0].sideSections[0].endReward).toEqual({ type: "fragmentSlot" })
+    expect(site[0].sideSections[1].endReward).toEqual({ type: "mosaicPiece", tier: "starter" })
+  })
+
+  it("still offers the shop's tagged stock sentinel", () => {
+    const stock = collectSlots({ starter_1: [siteWithShopAndPlainEnd()] }).filter(
+      s => s.kind === "end" && s.encounter === "fez-shop"
+    )
+    expect(stock).toHaveLength(1)
+    expect(stock[0]).toMatchObject({ kind: "end", preference: "made-up-bucket" })
+  })
+
+  it("never offers an open tomb-key gate whose end is a shop", () => {
+    const site: SiteConfig = [
+      {
+        pathPuzzles: 1,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        sideSections: [
+          {
+            pathPuzzles: 0,
+            difficulty: "starter",
+            end: "treasure",
+            encounter: "fez-shop",
+            gate: { type: "tomb-key", wardKeyId: "some-key" },
+          },
+        ],
+      },
+    ]
+    expect(collectSlots({ starter_1: [site] })).toEqual([])
+  })
+
+  it("asks the injected resolver which encounter is the shop", () => {
+    const site = siteWithShopAndPlainEnd()
+    site[0].sideSections[0].encounter = "made-up-stall"
+    site[0].sideSections[0].rewards = []
+    const resolve = (encounter: string | string[] | undefined, tag: string) => {
+      const id = (Array.isArray(encounter) ? encounter[0] : encounter) ?? tag
+      return { familyId: id === "made-up-stall" ? "fez-shop" : id, tags: [], ownerMod: "made-up" }
+    }
+    expect(collectSlots({ starter_1: [site] }, () => 0, resolve).filter(s => s.kind === "end")).toHaveLength(1)
+  })
+})
+
+describe("collectSlots on a side path's loot end", () => {
+  const siteWithLootEnd = (): SiteConfig => [
+    {
+      ...siteWithFragmentSlot()[0],
+      mainEndReward: undefined,
+      sideSections: [{ pathPuzzles: 0, difficulty: "starter", end: "treasure", endReward: { type: "fragmentSlot" } }],
+    },
+  ]
+
+  it("keeps an end it leaves empty a loot end", () => {
+    const site = siteWithLootEnd()
+    collectSlots({ starter_1: [site] })[0].assign(undefined)
+    expect(site[0].sideSections[0]).toMatchObject({ lootEnd: true })
+    expect(site[0].sideSections[0].endReward).toBeUndefined()
+  })
+
+  it("marks nothing on an end it fills", () => {
+    const site = siteWithLootEnd()
+    collectSlots({ starter_1: [site] })[0].assign({ type: "money", amount: 1 })
+    expect(site[0].sideSections[0].lootEnd).toBeUndefined()
   })
 })

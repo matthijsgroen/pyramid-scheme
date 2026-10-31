@@ -1,85 +1,114 @@
-import type { SideSection, SiteConfig, SubSection, TreasureReward } from "@/worldGen/types"
+import type { SiteConfig, SubSection, TreasureReward } from "@/worldGen/types"
 import type { WorldValidator } from "@/worldGen/validate"
+import type { GateWalk } from "@/worldGen/gateWalk"
+import { reachableGrounds } from "@/worldGen/grounds"
 import { sellValueForItemId } from "@/data/sellables"
-import { moneyRewardSchema, sellableRewardSchema } from "./rewardSchemas"
+import { moneyRewardSchema, purchaseRewardSchema, sellableRewardSchema } from "./rewardSchemas"
 import { priceFor } from "./pricing"
+import { PURCHASES, type PurchaseTable } from "./purchases"
+import { moneyLedger, rewardName, type MoneyRow } from "./moneyLedger"
 
-// Σ of the shop-priced value of every baked shop stock item across the world (currency pieces +
-// finite consumables), each priced by the shop's own priceFor. The shop's money economy needs the
-// player to be able to afford all of it — it's the floor the loot budget targets (see loot.ts) and
-// the number the economy guard checks income against. One walk, one source, shared by both so they
-// can never drift. (Finite stock is what keeps this bounded, so the guard can guarantee every
-// progression piece stays affordable — docs/mods/ARCHITECTURE.md (shop mod).)
-export const totalBuyable = (allConfigs: Record<string, SiteConfig[]>): number => {
-  let sum = 0
+/** Coins a reward brings in: a money drop's amount, a sellable's sell value, nothing for anything else. */
+export const incomeOf = (reward: TreasureReward): number => {
+  if (reward.type === "money") return moneyRewardSchema.parse(reward).amount
+  if (reward.type === "sellable") return sellValueForItemId(sellableRewardSchema.parse(reward).itemId)
+  return 0
+}
+
+/**
+ * The price of each piece of stock, by the piece itself: a walk lists the very objects the configs hold, and a piece's
+ * price depends on its shop's tier. Asked for a piece no shop of the configs sells, it throws: pricing that at 0 would
+ * pass a ground the player cannot pay for.
+ */
+export const stockPrices = (
+  allConfigs: Record<string, SiteConfig[]>,
+  purchases: PurchaseTable = PURCHASES
+): ((reward: TreasureReward) => number) => {
+  const prices = new Map<TreasureReward, number>()
   const tally = (s: SubSection) => {
     if (s.encounter !== "fez-shop") return
-    for (const r of s.rewards ?? []) if (r) sum += priceFor(r, s.difficulty)
+    for (const r of s.rewards ?? []) if (r) prices.set(r, priceFor(r, s.difficulty, purchases))
   }
-  for (const siteConfigs of Object.values(allConfigs)) {
-    for (const floors of siteConfigs) {
-      for (const floor of floors) {
+  for (const siteConfigs of Object.values(allConfigs))
+    for (const floors of siteConfigs)
+      for (const floor of floors)
         for (const s of floor.sideSections) {
           tally(s)
           for (const sub of s.sideSections ?? []) tally(sub)
         }
-      }
-    }
+  return reward => {
+    const price = prices.get(reward)
+    if (price === undefined)
+      throw new Error(`[worldSpec] Shop economy guard: ${rewardName(reward)} is for sale in no shop.`)
+    return price
   }
-  return sum
 }
 
-// Economy guard: Σ(all shop prices, rares + one full consumable restock per shop) ≤
-// Σ(all guaranteed income — puzzle-solve money + junk sell value).
-// Global cumulative, not per-tier — shops are revisitable, so backtracking makes any
-// order affordable; only the world-wide totals matter. Throws at build, not at runtime.
-// Shop-owned: injected as the shop mod's worldValidator, so the check drops out when shop
-// leaves REGISTERED_MODS. This is a hand-walked, shop-specific version of a more general
-// "dependency read as guard" mechanism docs/mods/ARCHITECTURE.md describes — not generalizing
-// yet; a pointer for whoever does.
-export const runEconomyGuard = (allConfigs: Record<string, SiteConfig[]>): void => {
-  let guaranteedIncome = 0
-
-  // Income = every placed money coin + every junk item's sell value, wherever it sits. The shop's
-  // money economy mixes both across end AND puzzle slots (junk = packaged money), so both reward
-  // types count in both positions — not the old "sellables in chests, money in puzzles" split.
-  const addReward = (r: TreasureReward | undefined) => {
-    if (r?.type === "money") guaranteedIncome += moneyRewardSchema.parse(r).amount
-    else if (r?.type === "sellable") guaranteedIncome += sellValueForItemId(sellableRewardSchema.parse(r).itemId)
-  }
-  const tallySubSection = (s: SubSection) => {
-    addReward(s.endReward)
-    for (const r of s.rewards ?? []) addReward(r)
-  }
-  const walkSection = (s: SideSection) => {
-    tallySubSection(s)
-    for (const sub of s.sideSections ?? []) tallySubSection(sub)
-  }
-
-  for (const siteConfigs of Object.values(allConfigs)) {
-    for (const floors of siteConfigs) {
-      for (const floor of floors) {
-        addReward(floor.mainEndReward)
-        for (const r of floor.rewards ?? []) addReward(r)
-        for (const s of floor.sideSections) walkSection(s)
-      }
+/** A purchase stocked twice, or in no shop the strict walk reaches. Where its shop lies against its gate is the worklist's. */
+export const purchasePlacementProblems = (walk: GateWalk, purchases: PurchaseTable = PURCHASES): string[] => {
+  const stocked = new Map<string, number>()
+  for (const reward of walk().rewards)
+    if (reward.type === "purchase") {
+      const { id } = purchaseRewardSchema.parse(reward)
+      stocked.set(id, (stocked.get(id) ?? 0) + 1)
     }
-  }
+  return purchases.flatMap(({ id }) => {
+    const count = stocked.get(id) ?? 0
+    if (count === 0) return [`purchase ${id} is in no shop the walk reaches`]
+    if (count > 1) return [`purchase ${id} is stocked ${count} times`]
+    return []
+  })
+}
 
-  const buyable = totalBuyable(allConfigs)
-  if (buyable > guaranteedIncome) {
+// Past this many walk states the world has too many ways to buy its keys to check, and the build is refused.
+export const GROUND_CAP = 4096
+
+/** One money row per ground a player can stand in, or how many walk states the enumeration saw before the cap. */
+export const groundLedger = (
+  allConfigs: Record<string, SiteConfig[]>,
+  walk: GateWalk,
+  { purchases = PURCHASES, cap = GROUND_CAP }: { purchases?: PurchaseTable; cap?: number } = {}
+): { rows: MoneyRow[] } | { overCap: number } => {
+  const found = reachableGrounds(walk, { isKey: walk.isKey, cap })
+  if (!("grounds" in found)) return found
+  return { rows: moneyLedger(found.grounds, stockPrices(allConfigs, purchases), incomeOf) }
+}
+
+// Economy guard: in every ground a player can stand in (grounds.ts), the money lying there covers everything for sale
+// there. A player stuck with an unbought key has then spent at most what that ground sells less the key's price, so
+// every key stays affordable whatever was bought first. The last ground holds every key: it is the whole world.
+// Throws at build, not at runtime. Shop-owned: injected as the shop mod's worldValidator, so the check drops out when
+// shop leaves REGISTERED_MODS.
+export const runEconomyGuard = (
+  allConfigs: Record<string, SiteConfig[]>,
+  _reachable: readonly TreasureReward[],
+  walk: GateWalk,
+  options: { purchases?: PurchaseTable; cap?: number } = {}
+): void => {
+  const problems = purchasePlacementProblems(walk, options.purchases)
+  if (problems.length > 0) throw new Error(`[worldSpec] Shop economy guard failed: ${problems.join("; ")}.`)
+  const ledger = groundLedger(allConfigs, walk, options)
+  if (!("rows" in ledger))
     throw new Error(
-      `[worldSpec] Shop economy guard failed: total buyable shop stock (${buyable}) ` +
-        `exceeds guaranteed income (${guaranteedIncome}).`
+      `[worldSpec] Shop economy guard failed: more than ${options.cap ?? GROUND_CAP} ways to stand in the world ` +
+        `(${ledger.overCap} walk states seen).`
     )
-  }
+  const short = ledger.rows.filter(row => row.margin < 0)
+  if (short.length > 0)
+    throw new Error(
+      `[worldSpec] Shop economy guard failed: ${short
+        .map(
+          row => `with ${row.label} bought, income ${row.income} is short of buyable ${row.buyable} by ${-row.margin}`
+        )
+        .join("; ")}.`
+    )
 }
 
-// The guard is a global balance check — it can't pass until the whole world is grown, so it
+// The guard checks the finished world — it can't pass until the whole world is grown, so it
 // blocks mid-exercise regeneration during world authoring. SKIP_ECONOMY_GUARD lets an author
 // iterate + inspect (yarn world-info) with structural validation still on; the real
 // generate-world for commit must run without it. ponytail: env escape hatch, not a config knob.
-export const shopEconomyGuard: WorldValidator = allConfigs => {
+export const shopEconomyGuard: WorldValidator = (allConfigs, reachable, walk) => {
   if (process.env.SKIP_ECONOMY_GUARD) return
-  runEconomyGuard(allConfigs)
+  runEconomyGuard(allConfigs, reachable, walk)
 }

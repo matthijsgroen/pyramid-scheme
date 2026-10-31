@@ -6,8 +6,9 @@ import type { AssembleFloorKeyRequirements, ResolveEncounter } from "../siteAsse
 import type { AssemblerResult, FloorConfig } from "../siteTypes"
 import { layWebDoors, WEB_SAND_REALISATION, webSandKindRefusals } from "../webDoors"
 import { carveFloor } from "./carveFloor"
+import { CARVE_ENGINE, type Engine } from "./engines"
 import { gateKeyOf } from "./ids"
-import { finishAttempt, PASSES } from "./passes"
+import { webDoorInPrefab } from "./placePrefabs"
 import { prepareFloor } from "./prepareFloor"
 import { CARVE_FAMILY_QUERIES } from "../encounterFallback"
 
@@ -18,7 +19,8 @@ export const assembleFloor = (
   authoredConfig: FloorConfig,
   addressSeed: number,
   resolveEncounter: ResolveEncounter = defaultResolveEncounter,
-  keyRequirements: AssembleFloorKeyRequirements = {}
+  keyRequirements: AssembleFloorKeyRequirements = {},
+  options: { engine?: Engine } = {}
 ): AssemblerResult => {
   const expanded = expandFloorLocks(authoredConfig)
   if (!expanded.ok) return { success: false, reasons: expanded.reasons }
@@ -33,7 +35,7 @@ export const assembleFloor = (
       answerStubs
     )
     return prepared.ok
-      ? carveFloor(prepared.prep, PASSES, finishAttempt)
+      ? carveFloor(prepared.prep, options.engine ?? CARVE_ENGINE)
       : { success: false, reasons: prepared.reasons }
   }
   // A carve leaving a route region's stub with no room is carved again with such stubs answering to the region their
@@ -57,5 +59,9 @@ export const assembleFloor = (
   const gateTags = resolveEncounter(CARVE_FAMILY_QUERIES.keyGate, CARVE_FAMILY_QUERIES.keyGate).tags
   const marked = authoredConfig.webMarks ? { ...nested.grid, webMarks: authoredConfig.webMarks } : nested.grid
   const laid = layWebDoors(marked, doors, gates, gateTags, id => gateKeyOf(floorRef, id))
-  return laid.ok ? { ...nested, grid: laid.grid } : { success: false, reasons: [laid.fault] }
+  if (!laid.ok) return { success: false, reasons: [laid.fault] }
+  // A designed room's walls are drawn round its own arms: a web door standing inside one is a fault, as an unseated
+  // door is.
+  const inside = webDoorInPrefab(marked, laid.grid)
+  return inside ? { success: false, reasons: [inside] } : { ...nested, grid: laid.grid }
 }

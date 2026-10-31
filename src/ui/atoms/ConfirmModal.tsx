@@ -1,4 +1,5 @@
 import { type FC, type ReactNode } from "react"
+import { closeOnEscape, focusOnMount } from "@/ui/atoms/dialogFocus"
 
 type ConfirmModalProps = {
   isOpen: boolean
@@ -29,7 +30,15 @@ export const ConfirmModal: FC<ConfirmModalProps> = ({
       <div className="absolute inset-0 bg-black/50" onClick={onCancel} />
 
       {/* Modal */}
-      <div className="relative z-10 mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+      <div
+        ref={focusOnMount}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        tabIndex={-1}
+        onKeyDown={closeOnEscape(onCancel)}
+        className="relative z-10 mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl outline-none"
+      >
         <h2 className="mb-4 text-xl font-bold text-gray-900">{title}</h2>
 
         <div className="mb-6 text-gray-700">{typeof message === "string" ? <p>{message}</p> : message}</div>

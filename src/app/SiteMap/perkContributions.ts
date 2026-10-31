@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 
 // Perk payload: an open descriptor a mod matches by its own type strings (same open rule as
-// TreasureReward). `level` is present on tiered perks (compass/detection/consumable-detector/…),
+// TreasureReward). `level` is present on tiered perks (compass/detection/…),
 // absent on stacking ones (armor/max-health/…). No shared union — each mod coins its perk ids.
 export type Perk = { type: string; level?: number }
 

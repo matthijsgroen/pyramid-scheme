@@ -1,0 +1,75 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SiteMapView — a prefab room > draws a room with no prefab exactly as before 1`] = `
+[
+  {
+    "explorer": "378,308",
+    "markers": [
+      "350px,112px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><g data-shape-kind="puzzle" opacity="1"><rect x="-20.16" y="-20.16" width="40.32" height="40.32" rx="2" fill="#1a2a10" stroke="#507030" stroke-width="1.5"></rect><circle cx="-16.16" cy="-16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="16.16" cy="-16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="-16.16" cy="16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="16.16" cy="16.16" r="2" fill="#507030" opacity="0.7"></circle><g fill="#90c060"><rect x="-8" y="-8" width="6" height="6" rx="1"></rect><rect x="2" y="-8" width="6" height="6" rx="1"></rect><rect x="-8" y="2" width="6" height="6" rx="1"></rect><rect x="2" y="2" width="6" height="6" rx="1"></rect></g></g></svg>",
+      "350px,196px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><polygon points="0,-7.3919999999999995 7.3919999999999995,7.3919999999999995 -7.3919999999999995,7.3919999999999995" fill="#ffd766" stroke="#161009" stroke-width="2" stroke-linejoin="round" transform="rotate(0)"></polygon></svg>",
+      "70px,280px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><g data-shape-kind="entrance" opacity="1"><path d="M -19.040000000000003,19.040000000000003 L -19.040000000000003,0 A 19.040000000000003,19.040000000000003 0 0,1 19.040000000000003,0 L 19.040000000000003,19.040000000000003 Z" fill="#2a2010" stroke="#d0a840" stroke-width="1.5"></path><polygon points="0,-15.040000000000003 5,0 3,0 3,15.040000000000003 -3,15.040000000000003 -3,0 -5,0" fill="#d0a840"></polygon></g></svg>",
+      "280px,280px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><polygon points="0,-7.3919999999999995 7.3919999999999995,7.3919999999999995 -7.3919999999999995,7.3919999999999995" fill="#ffd766" stroke="#161009" stroke-width="2" stroke-linejoin="round" transform="rotate(270)"></polygon></svg>",
+      "350px,280px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><g data-shape-kind="fork" opacity="1"><polygon points="0,-8.96 8.96,0 0,8.96 -8.96,0" fill="#1e160e" stroke="#5a4a30" stroke-width="1.5"></polygon></g></svg>",
+      "420px,280px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><polygon points="0,-7.3919999999999995 7.3919999999999995,7.3919999999999995 -7.3919999999999995,7.3919999999999995" fill="#ffd766" stroke="#161009" stroke-width="2" stroke-linejoin="round" transform="rotate(90)"></polygon></svg>",
+      "560px,280px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><g data-shape-kind="puzzle" opacity="1"><rect x="-20.16" y="-20.16" width="40.32" height="40.32" rx="2" fill="#1a2a10" stroke="#507030" stroke-width="1.5"></rect><circle cx="-16.16" cy="-16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="16.16" cy="-16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="-16.16" cy="16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="16.16" cy="16.16" r="2" fill="#507030" opacity="0.7"></circle><g fill="#90c060"><rect x="-8" y="-8" width="6" height="6" rx="1"></rect><rect x="2" y="-8" width="6" height="6" rx="1"></rect><rect x="-8" y="2" width="6" height="6" rx="1"></rect><rect x="2" y="2" width="6" height="6" rx="1"></rect></g></g></svg>",
+      "350px,364px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><polygon points="0,-7.3919999999999995 7.3919999999999995,7.3919999999999995 -7.3919999999999995,7.3919999999999995" fill="#ffd766" stroke="#161009" stroke-width="2" stroke-linejoin="round" transform="rotate(180)"></polygon></svg>",
+      "350px,532px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><g data-shape-kind="puzzle" opacity="1"><rect x="-20.16" y="-20.16" width="40.32" height="40.32" rx="2" fill="#1a2a10" stroke="#507030" stroke-width="1.5"></rect><circle cx="-16.16" cy="-16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="16.16" cy="-16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="-16.16" cy="16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="16.16" cy="16.16" r="2" fill="#507030" opacity="0.7"></circle><g fill="#90c060"><rect x="-8" y="-8" width="6" height="6" rx="1"></rect><rect x="2" y="-8" width="6" height="6" rx="1"></rect><rect x="-8" y="2" width="6" height="6" rx="1"></rect><rect x="2" y="2" width="6" height="6" rx="1"></rect></g></g></svg>",
+    ],
+    "order": [
+      "explorer",
+    ],
+    "sprites": [
+      "/src/assets/tiles/default/sand.png {"x":322,"y":45.16411590394566,"w":112,"h":189.6717681921087} ",
+      "/src/assets/tiles/expert/rubbleSpill.png {"x":350,"y":168,"w":56,"h":84} ",
+      "/src/assets/tiles/expert/rubbleSpill.png {"x":210,"y":252,"w":56,"h":84} ",
+      "/src/assets/tiles/expert/basin.png {"x":-28,"y":-56,"w":56,"h":84} ",
+      "/src/assets/tiles/expert/arch.png {"x":336,"y":157,"w":84,"h":49} 1",
+      "/src/assets/tiles/expert/arch.png {"x":336,"y":409,"w":84,"h":49} 1",
+    ],
+  },
+  {
+    "explorer": "378,140",
+    "markers": [
+      "350px,112px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><g data-shape-kind="puzzle" opacity="1"><rect x="-20.16" y="-20.16" width="40.32" height="40.32" rx="2" fill="#1a2a10" stroke="#507030" stroke-width="1.5"></rect><circle cx="-16.16" cy="-16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="16.16" cy="-16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="-16.16" cy="16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="16.16" cy="16.16" r="2" fill="#507030" opacity="0.7"></circle><g fill="#90c060"><rect x="-8" y="-8" width="6" height="6" rx="1"></rect><rect x="2" y="-8" width="6" height="6" rx="1"></rect><rect x="-8" y="2" width="6" height="6" rx="1"></rect><rect x="2" y="2" width="6" height="6" rx="1"></rect></g></g></svg>",
+      "350px,196px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><polygon points="0,-7.3919999999999995 7.3919999999999995,7.3919999999999995 -7.3919999999999995,7.3919999999999995" fill="#ffd766" stroke="#161009" stroke-width="2" stroke-linejoin="round" transform="rotate(180)"></polygon></svg>",
+      "70px,280px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><g data-shape-kind="entrance" opacity="1"><path d="M -19.040000000000003,19.040000000000003 L -19.040000000000003,0 A 19.040000000000003,19.040000000000003 0 0,1 19.040000000000003,0 L 19.040000000000003,19.040000000000003 Z" fill="#2a2010" stroke="#d0a840" stroke-width="1.5"></path><polygon points="0,-15.040000000000003 5,0 3,0 3,15.040000000000003 -3,15.040000000000003 -3,0 -5,0" fill="#d0a840"></polygon></g></svg>",
+      "350px,280px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><g data-shape-kind="fork" opacity="1"><polygon points="0,-8.96 8.96,0 0,8.96 -8.96,0" fill="#1e160e" stroke="#5a4a30" stroke-width="1.5"></polygon></g></svg>",
+      "560px,280px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><g data-shape-kind="puzzle" opacity="1"><rect x="-20.16" y="-20.16" width="40.32" height="40.32" rx="2" fill="#1a2a10" stroke="#507030" stroke-width="1.5"></rect><circle cx="-16.16" cy="-16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="16.16" cy="-16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="-16.16" cy="16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="16.16" cy="16.16" r="2" fill="#507030" opacity="0.7"></circle><g fill="#90c060"><rect x="-8" y="-8" width="6" height="6" rx="1"></rect><rect x="2" y="-8" width="6" height="6" rx="1"></rect><rect x="-8" y="2" width="6" height="6" rx="1"></rect><rect x="2" y="2" width="6" height="6" rx="1"></rect></g></g></svg>",
+      "350px,532px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><g data-shape-kind="puzzle" opacity="1"><rect x="-20.16" y="-20.16" width="40.32" height="40.32" rx="2" fill="#1a2a10" stroke="#507030" stroke-width="1.5"></rect><circle cx="-16.16" cy="-16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="16.16" cy="-16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="-16.16" cy="16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="16.16" cy="16.16" r="2" fill="#507030" opacity="0.7"></circle><g fill="#90c060"><rect x="-8" y="-8" width="6" height="6" rx="1"></rect><rect x="2" y="-8" width="6" height="6" rx="1"></rect><rect x="-8" y="2" width="6" height="6" rx="1"></rect><rect x="2" y="2" width="6" height="6" rx="1"></rect></g></g></svg>",
+    ],
+    "order": [
+      "explorer",
+    ],
+    "sprites": [
+      "/src/assets/tiles/default/sand.png {"x":322,"y":45.16411590394566,"w":112,"h":189.6717681921087} ",
+      "/src/assets/tiles/expert/rubbleSpill.png {"x":350,"y":168,"w":56,"h":84} ",
+      "/src/assets/tiles/expert/rubbleSpill.png {"x":210,"y":252,"w":56,"h":84} ",
+      "/src/assets/tiles/expert/basin.png {"x":-28,"y":-56,"w":56,"h":84} ",
+      "/src/assets/tiles/expert/arch.png {"x":336,"y":157,"w":84,"h":49} 0.35",
+      "/src/assets/tiles/expert/arch.png {"x":336,"y":409,"w":84,"h":49} 1",
+    ],
+  },
+  {
+    "explorer": "98,308",
+    "markers": [
+      "350px,112px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><g data-shape-kind="puzzle" opacity="1"><rect x="-20.16" y="-20.16" width="40.32" height="40.32" rx="2" fill="#1a2a10" stroke="#507030" stroke-width="1.5"></rect><circle cx="-16.16" cy="-16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="16.16" cy="-16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="-16.16" cy="16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="16.16" cy="16.16" r="2" fill="#507030" opacity="0.7"></circle><g fill="#90c060"><rect x="-8" y="-8" width="6" height="6" rx="1"></rect><rect x="2" y="-8" width="6" height="6" rx="1"></rect><rect x="-8" y="2" width="6" height="6" rx="1"></rect><rect x="2" y="2" width="6" height="6" rx="1"></rect></g></g></svg>",
+      "70px,280px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><g data-shape-kind="entrance" opacity="1"><path d="M -19.040000000000003,19.040000000000003 L -19.040000000000003,0 A 19.040000000000003,19.040000000000003 0 0,1 19.040000000000003,0 L 19.040000000000003,19.040000000000003 Z" fill="#2a2010" stroke="#d0a840" stroke-width="1.5"></path><polygon points="0,-15.040000000000003 5,0 3,0 3,15.040000000000003 -3,15.040000000000003 -3,0 -5,0" fill="#d0a840"></polygon></g></svg>",
+      "140px,280px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><polygon points="0,-7.3919999999999995 7.3919999999999995,7.3919999999999995 -7.3919999999999995,7.3919999999999995" fill="#ffd766" stroke="#161009" stroke-width="2" stroke-linejoin="round" transform="rotate(90)"></polygon></svg>",
+      "350px,280px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><g data-shape-kind="fork" opacity="1"><polygon points="0,-8.96 8.96,0 0,8.96 -8.96,0" fill="#1e160e" stroke="#5a4a30" stroke-width="1.5"></polygon></g></svg>",
+      "560px,280px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><g data-shape-kind="puzzle" opacity="1"><rect x="-20.16" y="-20.16" width="40.32" height="40.32" rx="2" fill="#1a2a10" stroke="#507030" stroke-width="1.5"></rect><circle cx="-16.16" cy="-16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="16.16" cy="-16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="-16.16" cy="16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="16.16" cy="16.16" r="2" fill="#507030" opacity="0.7"></circle><g fill="#90c060"><rect x="-8" y="-8" width="6" height="6" rx="1"></rect><rect x="2" y="-8" width="6" height="6" rx="1"></rect><rect x="-8" y="2" width="6" height="6" rx="1"></rect><rect x="2" y="2" width="6" height="6" rx="1"></rect></g></g></svg>",
+      "350px,532px,pointer <svg aria-hidden="true" viewBox="-28 -28 56 56" style="position: absolute; inset: 0px; width: 100%; height: 100%; overflow: visible;"><g data-shape-kind="puzzle" opacity="1"><rect x="-20.16" y="-20.16" width="40.32" height="40.32" rx="2" fill="#1a2a10" stroke="#507030" stroke-width="1.5"></rect><circle cx="-16.16" cy="-16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="16.16" cy="-16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="-16.16" cy="16.16" r="2" fill="#507030" opacity="0.7"></circle><circle cx="16.16" cy="16.16" r="2" fill="#507030" opacity="0.7"></circle><g fill="#90c060"><rect x="-8" y="-8" width="6" height="6" rx="1"></rect><rect x="2" y="-8" width="6" height="6" rx="1"></rect><rect x="-8" y="2" width="6" height="6" rx="1"></rect><rect x="2" y="2" width="6" height="6" rx="1"></rect></g></g></svg>",
+    ],
+    "order": [
+      "explorer",
+    ],
+    "sprites": [
+      "/src/assets/tiles/default/sand.png {"x":322,"y":45.16411590394566,"w":112,"h":189.6717681921087} ",
+      "/src/assets/tiles/expert/rubbleSpill.png {"x":350,"y":168,"w":56,"h":84} ",
+      "/src/assets/tiles/expert/rubbleSpill.png {"x":210,"y":252,"w":56,"h":84} ",
+      "/src/assets/tiles/expert/basin.png {"x":-28,"y":-56,"w":56,"h":84} ",
+      "/src/assets/tiles/expert/arch.png {"x":336,"y":157,"w":84,"h":49} 1",
+      "/src/assets/tiles/expert/arch.png {"x":336,"y":409,"w":84,"h":49} 1",
+    ],
+  },
+]
+`;

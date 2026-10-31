@@ -15,7 +15,7 @@ const SEEDS = Array.from({ length: 6 }, (_, n) => (n + 1) * 7919)
 const verdicts = (make: () => FloorConfig) =>
   SEEDS.flatMap(seed => {
     const result = assembleFloor("test", make(), seed)
-    return result.success ? [refusal({ ...result, attempt: 0 })] : []
+    return result.success ? [refusal({ ...result, attempt: 0 }, make())] : []
   })
 
 describe("the bake's verdict on a floor with a region barrier", () => {

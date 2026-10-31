@@ -39,10 +39,8 @@ type Props = {
   soldOutLabel: string
   sellLabel: string
   rareItemsLabel: string
-  suppliesLabel: string
   sellSectionLabel: string
   rareItems: ShopBuyItem[]
-  consumables: ShopBuyItem[]
   sellables: ShopSellItem[]
   onBuy: (id: string) => void
   onSell: (id: string) => void
@@ -59,10 +57,8 @@ export const FezShop: FC<Props> = ({
   soldOutLabel,
   sellLabel,
   rareItemsLabel,
-  suppliesLabel,
   sellSectionLabel,
   rareItems,
-  consumables,
   sellables,
   onBuy,
   onSell,
@@ -117,26 +113,6 @@ export const FezShop: FC<Props> = ({
               affordable={item.affordable}
               soldOut={item.soldOut}
               featured={item.featured}
-              buyLabel={buyLabel}
-              soldOutLabel={soldOutLabel}
-              onBuy={() => onBuy(item.id)}
-            />
-          ))}
-        </div>
-      )}
-
-      {consumables.length > 0 && (
-        <div className="mt-4 flex flex-col gap-2">
-          <p className="text-xs font-bold tracking-wide text-amber-400 uppercase">{suppliesLabel}</p>
-          {consumables.map(item => (
-            <ShopItemCard
-              key={item.id}
-              itemName={item.itemName}
-              itemDescription={item.itemDescription}
-              icon={item.icon}
-              price={item.price}
-              affordable={item.affordable}
-              soldOut={item.soldOut}
               buyLabel={buyLabel}
               soldOutLabel={soldOutLabel}
               onBuy={() => onBuy(item.id)}

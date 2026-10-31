@@ -1,4 +1,5 @@
 import type { ModDescriptor } from "../modDescriptor"
+import { hieroglyphLootTotals } from "./game/lootTotals"
 import { HIEROGLYPH_CURRENCY, HIEROGLYPH_CURRENCY_META } from "./game/hieroglyphCurrency"
 import { TABLEAU_META } from "./game/meta"
 import { hieroglyphCoverageValidator } from "./game/fragmentFinalize"
@@ -29,4 +30,5 @@ export const hieroglyphMod: ModDescriptor = {
     { journeyId: "expert_treasure_tomb_b", prefers: "hieroglyph" },
     { journeyId: "master_treasure_tomb", prefers: "hieroglyph" },
   ],
+  lootTotals: hieroglyphLootTotals,
 }

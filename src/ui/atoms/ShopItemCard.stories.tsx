@@ -4,9 +4,9 @@ import { ShopItemCard } from "./ShopItemCard"
 const meta = {
   component: ShopItemCard,
   args: {
-    itemName: "Bandage",
-    itemDescription: "Restores a bit of health.",
-    icon: "🩹",
+    itemName: "Mosaic Tile",
+    itemDescription: "A glass tile for the mosaic.",
+    icon: "🧩",
     price: 10,
     affordable: true,
     buyLabel: "Buy",

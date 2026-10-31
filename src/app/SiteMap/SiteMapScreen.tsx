@@ -1,4 +1,4 @@
-import { use, useCallback, useMemo } from "react"
+import { use, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { getOwnedKeys } from "@/game/gridNavigation"
 import { concealShutGround } from "@/game/concealment"
@@ -13,10 +13,10 @@ import { SiteMapView } from "./SiteMapView"
 import { useAssembledFloor } from "./useAssembledFloor"
 import { useDousedJourneys } from "./useDousedJourneys"
 import { floorOfPosition } from "./stairTravel"
-import { findByAddress, floorOfAddress } from "./cellIdentity"
 import { useFloorExplorationRecorder } from "./useFloorExplorationRecorder"
 import { useEncounter } from "./useEncounter"
 import { useRewardOffer } from "./useRewardOffer"
+import { useHomeSave } from "@/app/home/useHomeSave"
 import { useSiteExit } from "./useSiteExit"
 import { useCrossing } from "./useCrossing"
 import { useNoticeLabel, usePromptLabel } from "./usePromptLabel"
@@ -36,6 +36,7 @@ import { useMergedRewardContributions } from "@/app/SiteMap/rewardContributions"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { useMergedRoomOccupants } from "@/app/SiteMap/roomOccupants"
 import { useMergedRoomReplays } from "@/app/SiteMap/roomReplays"
+import { useMergedRoomArrivals } from "@/app/SiteMap/roomArrivals"
 import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { useDetectorReadout } from "@/app/SiteMap/useDetectorReadout"
 import { useMergedReactions } from "@/app/reactions/reactionContributions"
@@ -57,11 +58,24 @@ type Props = {
    * tells its sites apart. */
   levelIndex: number
   seed: number
+  /** The level's authored exterior, handed on to what is reported at the exit. */
+  exterior?: string
+  /** The level is the journey's last. */
+  lastLevel: boolean
   onSiteComplete: () => void
   onCancel: () => void
 }
 
-export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteComplete, onCancel }: Props) => {
+export const SiteMapScreen = ({
+  journeyId,
+  siteConfig,
+  levelIndex,
+  seed,
+  exterior,
+  lastLevel,
+  onSiteComplete,
+  onCancel,
+}: Props) => {
   const { t } = useTranslation(["common", "inventory", "sellables"])
   const journeys = useJourneys()
   const progression = useProgression()
@@ -72,7 +86,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   const wardKeys = useMergedHeldKeys()
   const occupantOf = useMergedRoomOccupants(journeyId)
   const replaysAt = useMergedRoomReplays(journeyId)
-  // Detector levels come from the owning mods (compass←hieroglyph, supplies←trap, corridor←core) via
+  const opensOnArrival = useMergedRoomArrivals(journeyId)
+  // Detector levels come from the owning mods (compass←hieroglyph, corridor←core) via
   // the merged accessor — core names no mod.
   const detectorLevels = useMergedDetectorLevels()
   const readout = useDetectorReadout(detectorLevels)
@@ -105,18 +120,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   // Every mechanism write on this floor goes through here, so a flood's douse is saved with the move that caused it.
   const floorJourneys = useDousedJourneys({ journeys, journeyId, floor: baseGrid, currentFloor, heldKeys })
 
-  // Where a stored address sits on the floor the player is looking at. Only this floor is assembled,
-  // so a hit anywhere else resolves to nothing and its readout stops at the floor (see ConsumableResult).
-  const resolveCell = useCallback(
-    (hitJourneyId: string, address: string) => {
-      if (!grid || hitJourneyId !== journeyId) return undefined
-      const at = findByAddress(grid, currentFloor, address)
-      return at ? { row: at[0], col: at[1] } : undefined
-    },
-    [grid, journeyId, currentFloor]
-  )
-
-  const detector = useDetector(journeys, resolveCell)
+  const detector = useDetector()
 
   const corridors = useCorridorDetection({
     journeys,
@@ -165,23 +169,12 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
 
   useFloorExplorationRecorder({ journeys, journeyId, levelNr: levelIndex + 1, currentFloor, grid })
 
-  // The chests on THIS floor still holding a consumable the player had no room for, as the coordinates
-  // the map draws badges at — resolved from their addresses against the floor as it is carved now.
-  const pendingConsumableCells = useMemo(() => {
-    const result = new Set<string>()
-    if (!grid) return result
-    for (const address of journeys.getSkippedConsumables(journeyId)) {
-      if (floorOfAddress(address) !== currentFloor) continue
-      const at = findByAddress(grid, currentFloor, address)
-      if (at) result.add(`${at[0]},${at[1]}`)
-    }
-    return result
-  }, [journeys, journeyId, currentFloor, grid])
-
   // Applies a claimed reward to game state; whether it reaches the player at all is useRewardOffer's.
   const applyReward = useApplyReward(progression, inventory, journeyId)
   const react = useMergedReactions()
-  const rewardOffer = useRewardOffer({ journeys, rewardContributions, applyReward })
+  // A reward taken from the popup joins the haul the player brings home.
+  const { addToHaul } = useHomeSave()
+  const rewardOffer = useRewardOffer({ rewardContributions, applyReward, onTaken: addToHaul })
 
   const encounter = useEncounter({
     journeys: floorJourneys,
@@ -207,11 +200,11 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     grid,
     explorerPos,
     onEncounter: encounter.open,
-    onSkippedConsumable: rewardOffer.offerSkipped,
     onExitReached: exit.arrived,
     playTraversal,
+    opensOnArrival,
   })
-  useExitIntro(prompt?.kind, use(FezContext).showConversation)
+  useExitIntro(prompt?.kind, use(FezContext).showConversation, { journeyId, levelNr: levelIndex + 1, exterior })
 
   const promptLabel = usePromptLabel()
   const promptCell = prompt?.kind === "room" ? grid?.cells[prompt.at[0]]?.[prompt.at[1]] : undefined
@@ -237,7 +230,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           ride={ride}
           squeeze={squeeze}
           currentFloor={currentFloor}
-          pendingCells={pendingConsumableCells}
           ownedKeys={ownedKeys}
           mechanismStates={mechanismStates}
           prompt={prompt && { label: promptLabel(prompt, replaysAtPrompt), at: prompt.at, onTake: prompt.take }}
@@ -254,13 +246,11 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           labels={readout.labels}
           activeDetector={detector.readoutOpen ? detector.activeDetector : null}
           compassLevel={detectorLevels.compass}
-          consumableDetectorLevel={detectorLevels.supplies}
           detectionLevel={detectorLevels.corridor}
           compassTarget={detector.compassTarget}
           compassTargetLabel={readout.compassTargetLabel}
           journeyName={readout.journeyName}
           compassResults={detector.compassResults}
-          consumableResults={detector.consumableResults}
           detectorTitles={readout.titles}
           onSetDetector={mode => {
             detector.setDetector(mode)
@@ -274,7 +264,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
         />
         {/* pointer-events-auto: opts this row back into hit-testing inside SiteHudBar's
             non-hit-testing band (the detector toggles and mod widgets below are clickable). */}
-        {/* Wraps rather than clipping: with every detector, a full key ring, six hearts, the supplies
+        {/* Wraps rather than clipping: with every detector, a full key ring, six hearts
             and the balance, this row outgrows a phone even after folding the detectors into one
             button — and an overflowing row pushed the coin balance off-screen entirely. */}
         <div className="pointer-events-auto flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
@@ -303,7 +293,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
             heldLabel={color => t("common:keys.heldTitle", { key: t(`common:keys.${color}`) })}
             neededLabel={color => t("common:keys.neededTitle", { key: t(`common:keys.${color}`) })}
           />
-          {/* Mod-contributed HUD widgets (trap's health + consumables, shop's balance) — core names none. */}
+          {/* Mod-contributed HUD widgets — core names none. */}
           {hudWidgets().map(({ id, Component }) => (
             <Component key={id} />
           ))}
@@ -317,7 +307,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           onComplete={() => {
             // Walking out is a move too: the beat that belongs to a place the player has finished
             // with cannot fire inside it, because inside it they have not finished.
-            react({ kind: "siteLeft", journeyId })
+            react({ kind: "siteLeft", journeyId, lastLevel })
             onSiteComplete()
           }}
         />

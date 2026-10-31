@@ -8,6 +8,7 @@ import { prepareFloor } from "./prepareFloor"
 import { render, renderShut } from "./render"
 import type { RenderState } from "./render"
 import { validate } from "./validate"
+import { dirsOf } from "../testSupport/modOff"
 import { assembleFloor } from "./assembleFloor"
 import type { Cell, DressingPools, OneWayEdge, RoomSpec } from "./state"
 import { ACTIVITIES, activitiesFor, type ActivityId } from "../activities"
@@ -15,7 +16,9 @@ import {
   DECORATION_KINDS,
   decorationFootprint,
   isSingleCell,
+  type DecorationKind,
   type Direction,
+  type PropFootprint,
   type FloorConfig,
   type FloorGrid,
   type GridCell,
@@ -68,13 +71,13 @@ describe("render", () => {
       },
       mainRooms,
       chainRooms: new Map(),
-      switchDoors: new Map(),
       drops,
       forks: { reserved: [], inFork: new Set<string>(), switchesPlaced: 0 },
       switchWays: [],
       switchRooms: new Map(),
       forkSwitchRooms: new Map(),
       pipeHoles,
+      chambers: new Map(),
     })
   }
 
@@ -151,6 +154,7 @@ describe("a reserved junction", () => {
     switchWays: [[{ dir: "s" as const, cell: "2,2", gateKeyId: "switch:way" }]],
     forkSwitchRooms: new Map(),
     pipeHoles: new Map(),
+    chambers: new Map(),
     switchRooms: new Map(switchesPlaced > 0 ? [["0,2", { family: "sumplete", mechanismId: "switch:0" }]] : []),
   })
 
@@ -168,6 +172,32 @@ describe("a reserved junction", () => {
   it("leaves it open where no switch stands in it, and shuts it in the view the carve is checked against", () => {
     expect(render(prep, junctionState(0)).cells[2][2]).toMatchObject({ type: "corridor" })
     expect(renderShut(prep, junctionState(0)).cells[2][2]).toMatchObject({ requiredKeyId: "switch:way" })
+  })
+
+  // The junction's two ways out, 2,2 and the exit 0,4, meet again at 2,4 by a leftover edge 2,2–2,4 beside
+  // gated ground; the switch's doors stand each way's ground behind its own door.
+  it("keeps every wall where it stands with no switch when a switch's ways out meet again", () => {
+    const looped = (switchesPlaced: number) => {
+      const base = junctionState(switchesPlaced)
+      return {
+        ...base,
+        maze: { ...base.maze, passages: new Set([...passages, pkey(0, 4, 2, 4), pkey(2, 2, 2, 4)]) },
+        branches: { ...base.branches, used: new Set([...base.branches.used, "2,4"]) },
+        doors: {
+          ...base.doors,
+          intended: new Set([...passages, pkey(0, 4, 2, 4)]),
+          gated: new Set(["2,2"]),
+        },
+        switchDoors:
+          switchesPlaced > 0
+            ? new Map([
+                ["2,2", new Set(["door 2,2"])],
+                ["2,4", new Set(["door 0,4"])],
+              ])
+            : new Map(),
+      }
+    }
+    expect(dirsOf(render(prep, looped(1)))).toBe(dirsOf(render(prep, looped(0))))
   })
 })
 
@@ -301,6 +331,9 @@ describe("dressing by purpose", () => {
     patron?: FloorConfig["patron"]
     switchAtJunction?: boolean
     authored?: Record<string, ActivityId>
+    pinned?: Record<string, string>
+    propFootprint?: (kind: DecorationKind) => PropFootprint
+    passThrough?: boolean
   }
   const dressed = ({
     pools = TRADE,
@@ -309,12 +342,22 @@ describe("dressing by purpose", () => {
     patron,
     switchAtJunction = false,
     authored = {},
+    pinned = {},
+    propFootprint,
+    passThrough = false,
   }: Setup = {}) => {
     const withAuthored = (entries: [string, RoomSpec][]) =>
       new Map<string, RoomSpec>(
-        entries.map(([pk, spec]) => [pk, authored[pk] ? { ...spec, authoredActivity: authored[pk] } : spec])
+        entries.map(([pk, spec]) => [
+          pk,
+          {
+            ...spec,
+            ...(authored[pk] ? { authoredActivity: authored[pk] } : {}),
+            ...(pinned[pk] ? { pinnedPrefab: pinned[pk] } : {}),
+          },
+        ])
       )
-    const prep = prepOf(plainFloor(patron ? { patron } : {}))
+    const prep = prepOf(plainFloor(patron ? { patron } : {}), 1, propFootprint ? { propFootprint } : {})
     const labels = noLabels()
     for (const node of nodes) labels.dressing.set(node, pools)
     if (stairPools) labels.dressing.set("0,6", stairPools)
@@ -341,7 +384,7 @@ describe("dressing by purpose", () => {
       },
       mainRooms: withAuthored([
         ["0,0", { roomType: "portal" }],
-        ["0,2", { roomType: "encounter", family: "sumplete" }],
+        ["0,2", passThrough ? { roomType: "chamber" } : { roomType: "encounter", family: "sumplete" }],
         ["0,4", { roomType: "fork" }],
         ["0,6", { roomType: "portal", stairId: "down" }],
       ]),
@@ -350,13 +393,13 @@ describe("dressing by purpose", () => {
         ["2,2", { roomType: "encounter", family: "keyGate", requiredKeyId: "ward", gateVariant: "tomb-key" }],
         ["4,2", { roomType: "encounter", family: "sumplete" }],
       ]),
-      switchDoors: new Map(),
       drops: [],
       forks: { reserved: [], inFork: new Set<string>(), switchesPlaced: 0 },
       switchWays: [],
       switchRooms: new Map(switchAtJunction ? [["0,4", { family: "sumplete", mechanismId: "switch:0" }]] : []),
       forkSwitchRooms: new Map(),
       pipeHoles: new Map(),
+      chambers: new Map(),
     })
     return (pk: string) => {
       const [r, c] = pk.split(",").map(Number)
@@ -495,6 +538,13 @@ describe("dressing by purpose", () => {
     const junction = dressed({ pools, patron: "anubis", authored: { "0,4": "ledger" } })("0,4")
     expect(junction).toMatchObject({ activity: "ledger", decoration: "shelf" })
     expect(junction).not.toHaveProperty("patronRoom")
+  })
+
+  it("keeps the god off a room a designed room is pinned to", () => {
+    const pools: DressingPools = { props: ["statue", "shelf", "rubblePile"], wall: ["stela", "niche"] }
+    const at = dressed({ pools, patron: "anubis", pinned: { "0,4": "hall" } })
+    expect(at("0,4")).not.toHaveProperty("patronRoom")
+    expect(at("2,4")).toMatchObject({ decoration: "statue", patronRoom: true })
   })
 
   it("dresses the same site the same way every time", () => {

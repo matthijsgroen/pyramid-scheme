@@ -94,6 +94,10 @@ the original bug, arriving through the migration's own front door. So the reshap
    bump: that resets everyone, including the players this whole migration exists to protect. It is
    per-save, and the stamp is what decides.
 
+The camp release already resets every save from before it, at launch, and tells the player so
+(`src/app/saveEpoch.ts`, `SAVE_EPOCH`). Every save since carries `saveEpoch`; the reset above only has
+to tell those saves apart by `cellKeyVersion`.
+
 `cellKeyVersion` outlives the re-key it was built for: after this release nothing re-keys anything, but
 the stamp is still the exact record of which saves came through, which is what the reset reads. Every
 save carries it — journeys with nothing explored are stamped too, precisely so "has not walked into a

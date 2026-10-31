@@ -2,9 +2,9 @@ import type { Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import { isWebKey } from "@/game/floorLock"
 
-// The per-floor "still stuff to find here" summary that drives the Travel marker. Computed from an
-// assembled floor grid (cheap, done while the player is inside the site) and persisted so the travel
-// screen reads it without re-assembling. Knowledge is only "keys and gates", no mod names.
+// The per-floor "still stuff to find here" summary that drives the new-things marker on journeys. Computed from an
+// assembled floor grid (cheap, done while the player is inside the site) and persisted so the journeys
+// list reads it without re-assembling. Knowledge is only "keys and gates", no mod names.
 //
 // Content the player would come back for is either a LOOT-BEARING node (its family draws from the
 // reward pool — FamilyMeta.rewardPriority > 0, so treasure/puzzle count and gate/trap/shop/tableau

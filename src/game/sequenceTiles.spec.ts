@@ -96,6 +96,13 @@ describe("placeSequences", () => {
     })
   })
 
+  it("stands a tile on the first node the floor names on the way in, wherever it lies", () => {
+    const grid = draw(HUB, hubRegions)
+    const onSeven = (r: number, c: number) => r === 0 && c === 7
+    expect(placeSequences(grid.cells as GridCell[][], grid, [plates("east")], new Set(), onSeven)).toBeUndefined()
+    expect(tileCells(grid).map(({ at }) => at)).toEqual([[0, 7]])
+  })
+
   it("refuses a step whose room an earlier step names, since one crossing would step on both", () => {
     const grid = draw(HUB, hubRegions)
     expect(placeSequences(grid.cells as GridCell[][], grid, [plates("hub", "east", "hub")])).toEqual({

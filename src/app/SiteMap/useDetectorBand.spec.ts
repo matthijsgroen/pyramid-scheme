@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { renderHook } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
-import type { CompassHit, ConsumableResult, DetectorMode, FloorGrid, GridCell } from "@/game/siteTypes"
+import type { CompassHit, DetectorMode, FloorGrid, GridCell } from "@/game/siteTypes"
 import type { DetectorAPI } from "@/app/state/useDetector"
 import type { CorridorDetection } from "./useCorridorDetection"
 import { useDetectorBand } from "./useDetectorBand"
@@ -29,32 +29,22 @@ const compassHit = (over: Partial<CompassHit> = {}): CompassHit =>
     ...over,
   }) as CompassHit
 
-const consumableHit = (over: Partial<ConsumableResult> = {}): ConsumableResult => ({
-  journeyId: "j1",
-  address: "s#0/1@rencounter",
-  floorIdx: 0,
-  cell: { row: 0, col: 1 },
-  ...over,
-})
-
 const band = (
   activeDetector: DetectorMode,
   over: {
-    levels?: Partial<{ compass: number; supplies: number; corridor: number }>
+    levels?: Partial<{ compass: number; corridor: number }>
     corridors?: Partial<CorridorDetection>
     compassResults?: CompassHit[]
-    consumableResults?: ConsumableResult[]
   } = {}
 ) => {
   const detector = {
     activeDetector,
     compassResults: over.compassResults ?? [],
-    consumableResults: over.consumableResults ?? [],
   } as unknown as DetectorAPI
   const { result } = renderHook(() =>
     useDetectorBand({
       detector,
-      levels: { compass: 3, supplies: 3, corridor: 3, ...over.levels },
+      levels: { compass: 3, corridor: 3, ...over.levels },
       corridors: { nearby: false, onThisFloor: false, onOtherFloor: false, ...over.corridors },
       grid,
       explorerPos: [0, 0],
@@ -91,10 +81,6 @@ describe("useDetectorBand", () => {
   it("gives a mid-level compass the floor but never the exact cell", () => {
     const hits = [compassHit({ cell: { row: 0, col: 1 } })]
     expect(band("compass", { levels: { compass: 2 }, compassResults: hits })).toBe("floor")
-  })
-
-  it("reads a skipped chest a few steps away as close", () => {
-    expect(band("consumable", { consumableResults: [consumableHit()] })).toBe("near")
   })
 
   it("folds the corridor detector's own scopes straight onto the dot", () => {

@@ -9,11 +9,12 @@ import { SqueezeFigure } from "./SqueezeRider"
 import { ART_IMAGE_RENDERING, tileUrl } from "./tileAssets"
 import { tierPalette } from "./tileMaterials"
 
-// The narrow passage is one painting per orientation, shared by every rank (`tiles/default/`): `narrowAcross`, the
-// wall's face across a north-south way, and `narrowAlong`, its top across an east-west way. The map draws it in the
-// passage's own cell (`nodeSpritesFor`); the explorer waits on the cell either side and squeezes through the crack
-// (`SqueezeRider`). Staged on a 3x3 patch of two ranks' floors at map scale, zoomed as a whole: the explorer on both
-// sides of each wall (the wall faded while he stands behind it, as the map fades it), then the squeezing poses.
+// The narrow passage is one painting per orientation, shared (`tiles/default/`) unless a mechanism style paints its own
+// (`MECHANISM_STYLE`): `narrowAcross`, the wall's face across a north-south way, and `narrowAlong`, its top across an
+// east-west way. The map draws it in the passage's own cell (`nodeSpritesFor`); the explorer waits on the cell either
+// side and squeezes through the crack (`SqueezeRider`). Staged on a 3x3 patch of two ranks' floors at map scale, zoomed
+// as a whole: the explorer on both sides of each wall (the wall faded while he stands behind it, as the map fades it),
+// then the squeezing poses.
 
 type Explorer = { at: readonly [number, number]; facing: Direction }
 type Ways = readonly [Direction, Direction]
@@ -79,8 +80,8 @@ const Patch: FC<{ tier: "starter" | "expert"; zoom: number; children: ReactNode;
   )
 }
 
-const Wall: FC<{ ways: Ways; faded: boolean }> = ({ ways, faded }) => {
-  const src = passageArtUrl(passageCell(ways))
+const Wall: FC<{ tier: "starter" | "expert"; ways: Ways; faded: boolean }> = ({ tier, ways, faded }) => {
+  const src = passageArtUrl(passageCell(ways), tier)
   const name = passageTile(passageCell(ways))
   const { x, y } = centre([1, 1])
   return src ? (
@@ -127,7 +128,7 @@ const PassageSheet: FC<{ zoom: number }> = ({ zoom }) => (
           {STAGES.map(({ name, ways, explorer, behind }) => (
             <Patch key={name} tier={tier} zoom={zoom} caption={name}>
               {behind && <Standing {...explorer} />}
-              <Wall ways={ways} faded={behind} />
+              <Wall tier={tier} ways={ways} faded={behind} />
               {!behind && <Standing {...explorer} />}
             </Patch>
           ))}
@@ -136,7 +137,7 @@ const PassageSheet: FC<{ zoom: number }> = ({ zoom }) => (
         <div className="flex flex-wrap gap-4">
           {(["n", "s", "e", "w"] as const).map(dir => (
             <Patch key={dir} tier={tier} zoom={zoom} caption={`squeezing ${dir}`}>
-              <Wall ways={dir === "n" || dir === "s" ? NORTH_SOUTH : EAST_WEST} faded={false} />
+              <Wall tier={tier} ways={dir === "n" || dir === "s" ? NORTH_SOUTH : EAST_WEST} faded={false} />
               <Squeezing dir={dir} />
             </Patch>
           ))}

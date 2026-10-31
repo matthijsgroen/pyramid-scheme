@@ -7,7 +7,7 @@ import { piecesRequiredFor } from "../game/piecesRequired"
 // the mod's own slice (useModState key `pyramid-scheme-mod-tomb-treasure`).
 //   - tombKeys: ward + location keys the player has earned from tomb treasures (opens pyramid
 //     ward floors + drives tier unlock; read for gate satisfaction via the held-keys seam).
-//   - discoveredTombs: tombs visible on the Travel screen — the first of each tier from the start,
+//   - discoveredTombs: tombs visible in the all-journeys list — the first of each tier from the start,
 //     secondary tombs revealed on their first map piece.
 //   - collectedMapPieces: per-tomb count of map pieces found (unlocks a tomb's entry).
 //   - mapPieceJourneys: pyramid journeys whose map-piece chest has been opened (inventory-as-truth
@@ -40,6 +40,8 @@ export type TombTreasureProgressAPI = {
   hasTombKey: (treasureId: string) => boolean
   addTombKey: (treasureId: string) => void
   tombKeyIds: ReadonlySet<string>
+  // True once the mod's own save has been read, so a list still on its way is not taken for nothing held.
+  loaded: boolean
   isTombDiscovered: (tombJourneyId: string) => boolean
   discoverTomb: (tombJourneyId: string) => void
   collectMapPiece: (tombId: string) => void
@@ -51,13 +53,14 @@ export type TombTreasureProgressAPI = {
 }
 
 export const useTombTreasureProgress = (): TombTreasureProgressAPI => {
-  const [state, setState] = useModState<TombTreasureState>("tomb-treasure", INITIAL)
+  const [state, setState, loaded] = useModState<TombTreasureState>("tomb-treasure", INITIAL)
 
   return useMemo(
     () => ({
       hasTombKey: treasureId => !!state.tombKeys[treasureId],
       addTombKey: treasureId => setState(prev => ({ ...prev, tombKeys: { ...prev.tombKeys, [treasureId]: true } })),
       tombKeyIds: new Set(Object.keys(state.tombKeys)),
+      loaded,
       isTombDiscovered: tombJourneyId => state.discoveredTombs.includes(tombJourneyId),
       discoverTomb: tombJourneyId =>
         setState(prev => ({
@@ -92,6 +95,6 @@ export const useTombTreasureProgress = (): TombTreasureProgressAPI => {
             : { ...prev, mapPieceJourneys: [...(prev.mapPieceJourneys ?? []), journeyId] }
         ),
     }),
-    [state, setState]
+    [state, setState, loaded]
   )
 }

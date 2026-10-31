@@ -1,4 +1,5 @@
 import type { FloorConfig, SideSection, SiteConfig, TreasureReward } from "./types"
+import type { StairLink } from "@/game/siteTypes"
 import type { PlacedContainer } from "@/game/regions"
 import { isForkSwitch, isSequence, isWeights, type Control, type GateTerms, type Obstacle } from "@/game/obstacles"
 import { WORLD_SEED } from "./data"
@@ -56,6 +57,14 @@ const serializeGate = (g: NonNullable<SideSection["gate"]>): string =>
     .map(([k, v]) => `${k}: ${serializeValue(v)}`)
     .join(", ")} }`
 
+// Per-node chambers: `{ 0: true, 2: "ledger" }` — `true` leaves the activity to the carve.
+const serializeChambersByIndex = (m: Record<number, string | true>): string =>
+  `{ ${Object.keys(m)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .map(k => `${k}: ${JSON.stringify(m[k])}`)
+    .join(", ")} }`
+
 const serializeLootByIndex = (m: Record<number, false>): string =>
   `{ ${Object.keys(m)
     .map(Number)
@@ -63,13 +72,18 @@ const serializeLootByIndex = (m: Record<number, false>): string =>
     .map(k => `${k}: false`)
     .join(", ")} }`
 
+// A stair's link: its id, and which way it runs only where that is not the default.
+const serializeStairLink = (link: StairLink): string =>
+  `{ stairId: "${link.stairId}"${link.goes ? `, goes: "${link.goes}"` : ""} }`
+
 const serializeSideSection = (s: SideSection): string => {
-  const endStr = typeof s.end === "object" ? `{ stairId: "${s.end.stairId}" }` : `"${s.end}"`
+  const endStr = typeof s.end === "object" ? serializeStairLink(s.end) : `"${s.end}"`
   const parts = [`pathPuzzles: ${s.pathPuzzles}`, `difficulty: "${s.difficulty}"`, `end: ${endStr}`]
   if (s.tileset !== undefined) parts.splice(2, 0, `tileset: "${s.tileset}"`)
   if (s.label !== undefined) parts.unshift(`label: ${JSON.stringify(s.label)}`)
   if (s.gate) parts.push(`gate: ${serializeGate(s.gate)}`)
   if (s.endReward) parts.push(`endReward: ${serializeReward(s.endReward)}`)
+  if (s.lootEnd) parts.push(`lootEnd: true`)
   if (s.rewards?.length) parts.push(`rewards: ${serializePuzzleRewards(s.rewards)}`)
   if (s.hidden) parts.push(`hidden: true`)
   if (s.sealed) parts.push(`sealed: true`)
@@ -83,6 +97,12 @@ const serializeSideSection = (s: SideSection): string => {
     parts.push(`encountersByIndex: ${serializeEncountersByIndex(s.encountersByIndex)}`)
   if (s.activitiesByIndex && Object.keys(s.activitiesByIndex).length)
     parts.push(`activitiesByIndex: ${serializeEncountersByIndex(s.activitiesByIndex)}`)
+  if (s.chambersByIndex && Object.keys(s.chambersByIndex).length)
+    parts.push(`chambersByIndex: ${serializeChambersByIndex(s.chambersByIndex)}`)
+  if (s.prefabs && Object.keys(s.prefabs).length) parts.push(`prefabs: ${JSON.stringify(s.prefabs)}`)
+  if (s.prefabPlacements?.length) parts.push(`prefabPlacements: ${JSON.stringify(s.prefabPlacements)}`)
+  if (s.prefabsByIndex && Object.keys(s.prefabsByIndex).length)
+    parts.push(`prefabsByIndex: ${serializeEncountersByIndex(s.prefabsByIndex)}`)
   if (s.difficultiesByIndex && Object.keys(s.difficultiesByIndex).length)
     parts.push(`difficultiesByIndex: ${serializeEncountersByIndex(s.difficultiesByIndex)}`)
   if (s.loot === false) parts.push(`loot: false`)
@@ -182,10 +202,10 @@ const floorFieldEmitters: {
   tileset: v => `tileset: "${v}"`,
   end: () => `end: "treasure"`,
   exitOrStaircase: v =>
-    typeof v === "object" ? `exitOrStaircase: { stairId: "${v.stairId}" }` : `exitOrStaircase: "${v}"`,
+    typeof v === "object" ? `exitOrStaircase: ${serializeStairLink(v)}` : `exitOrStaircase: "${v}"`,
   sideSections: v =>
     `sideSections: ${v.length === 0 ? "[]" : `[\n${v.map(s => `      ${serializeSideSection(s)}`).join(",\n")},\n    ]`}`,
-  entrance: v => `entrance: ${typeof v === "object" ? `{ stairId: "${v.stairId}" }` : `"${v}"`}`,
+  entrance: v => `entrance: ${typeof v === "object" ? serializeStairLink(v) : `"${v}"`}`,
   encounter: v => `encounter: ${serializeEncounter(v)}`,
   encounterArgs: v => `encounterArgs: ${JSON.stringify(v)}`,
   theme: v => `theme: ${JSON.stringify(v)}`,
@@ -196,11 +216,18 @@ const floorFieldEmitters: {
   role: v => `role: ${serializeEncounter(v)}`,
   encountersByIndex: v => (Object.keys(v).length ? `encountersByIndex: ${serializeEncountersByIndex(v)}` : null),
   activitiesByIndex: v => (Object.keys(v).length ? `activitiesByIndex: ${serializeEncountersByIndex(v)}` : null),
+  chambersByIndex: v => (Object.keys(v).length ? `chambersByIndex: ${serializeChambersByIndex(v)}` : null),
+  chambers: v => (v ? `chambers: ${v}` : null),
+  prefabs: v => (Object.keys(v).length ? `prefabs: ${JSON.stringify(v)}` : null),
+  prefabPlacements: v => (v.length ? `prefabPlacements: ${JSON.stringify(v)}` : null),
+  prefabsByIndex: v => (Object.keys(v).length ? `prefabsByIndex: ${serializeEncountersByIndex(v)}` : null),
   difficultiesByIndex: v => (Object.keys(v).length ? `difficultiesByIndex: ${serializeEncountersByIndex(v)}` : null),
   loot: () => `loot: false`,
   lootByIndex: v => (Object.keys(v).length ? `lootByIndex: ${serializeLootByIndex(v)}` : null),
   corridorStraightness: v => `corridorStraightness: ${v}`,
   packing: v => `packing: ${v}`,
+  outsideLock: v => (v.length ? `outsideLock: ${JSON.stringify(v)}` : null),
+  corridorsTakeTwo: () => `corridorsTakeTwo: true`,
   seed: v => `seed: ${v}`,
   sealed: v => (v ? `sealed: true` : null),
   mainEndReward: v => `mainEndReward: ${serializeReward(v)}`,

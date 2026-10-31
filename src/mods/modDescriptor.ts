@@ -5,6 +5,9 @@ import type { Distribution } from "@/worldGen/slotAllocator"
 import type { ShopStockAssignment } from "@/worldGen/shopStock"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { WebActivatorReward } from "@/worldGen/webPlacement"
+import type { LootTotal } from "@/worldGen/lootReport"
+import type { GateWalk } from "@/worldGen/gateWalk"
+import type { SiteConfig } from "@/worldGen/types"
 import type { CurrencyMeta } from "@/game/ledger/currencyRegistry"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { OneWayRealisationMeta } from "@/game/oneWayRealisation"
@@ -45,8 +48,8 @@ export type ModDescriptor = {
   currencyMeta?: CurrencyMeta | CurrencyMeta[]
   // Dynamic-loot distributions this mod owns (the unified loot primitive): each claims slots by
   // footprint/eligibility/rank and fills them itself (owns variants/rarity/completeness) — e.g.
-  // trap consumables, the shop money economy. Drops when the mod leaves REGISTERED_MODS (trap off
-  // → no consumables; shop off → no money/junk, leftover chests fall empty). See
+  // trap waterskins, the shop money economy. Drops when the mod leaves REGISTERED_MODS (trap off
+  // → no waterskins; shop off → no money/junk, leftover chests fall empty). See
   // docs/mods/distribution-primitive-design.md.
   dynamicDistributions?: Distribution[]
   // Post-build world validator (e.g. the shop economy guard) — a global balance check run over
@@ -65,6 +68,9 @@ export type ModDescriptor = {
   // tier/discovery machinery). Injected into buildConfigs so a pyramid's ward wings skip them
   // without core reading perk types. Drops with the mod (nothing reserved). One provider expected.
   reservedTreasureIndices?: (tombId: string) => number[]
+  // What is wrong with this mod's own authored tables, one line each. The build refuses on any before it places
+  // anything (buildWorldConfigs), naming the mod; the app never asks, so it loads whatever the tables say.
+  authoringProblems?: () => string[]
   // This mod's shop-stock placements: sell specific currency pieces at specific shops (by
   // journeyId + nth). Each drops a fragmentSlot sentinel the capped/gating pass fills, so the piece
   // is moved out of the free-world spread into the shop. Drops with the mod (shop off → shops fall
@@ -73,4 +79,8 @@ export type ModDescriptor = {
   // The reward a web activator (a sand lever, a web key) stands as. A tier's web is placed only where a registered mod
   // gives one, so the web drops with its mod: no doors, no activators, every slot left to the loot passes.
   webActivator?: WebActivatorReward
+  // This mod's own placed-against-needed counts for `yarn loot-report`, one row per figure it can state.
+  // Drops with the mod, so core reports no currency it does not know. `walk` is the gate walk over the same world
+  // (gateWalk.ts), for a row that weighs what lies before a gate; a row that doesn't ignores it.
+  lootTotals?: (configs: Record<string, SiteConfig[]>, walk: GateWalk) => LootTotal[]
 }

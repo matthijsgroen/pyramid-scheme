@@ -107,10 +107,23 @@ export const restingState = (puzzle: LightbeamPuzzleData, piece: number): number
   return 0
 }
 
+const fixedCells = (puzzle: LightbeamPuzzleData): Set<string> => new Set(puzzle.fixed.map(piece => cellKey(piece.at)))
+
+/** A movable piece never shares a cell with a fixed one, so a state that would stand it on one is no option. */
 export const pieceOptions = (puzzle: LightbeamPuzzleData, piece: number): number[] => {
   const resting = restingState(puzzle, piece)
   if (resting !== undefined) return [resting]
-  return Array.from({ length: pieceStateCount(puzzle.movable[piece]) }, (_, state) => state)
+  const fixed = fixedCells(puzzle)
+  const movable = puzzle.movable[piece]
+  return Array.from({ length: pieceStateCount(movable) }, (_, state) => state).filter(
+    state => !fixed.has(cellKey(pieceOccupant(movable, state).at))
+  )
+}
+
+/** Whether some state of some movable piece would stand it on a fixed wall or mirror. */
+export const pieceOnFixed = (puzzle: LightbeamPuzzleData): boolean => {
+  const fixed = fixedCells(puzzle)
+  return puzzle.movable.some(piece => pieceCells(piece).some(at => fixed.has(cellKey(at))))
 }
 
 /** Every piece's options, in board order. */

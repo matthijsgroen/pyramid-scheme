@@ -53,8 +53,6 @@ const rewardLabel = (r: TreasureReward): string => {
       return "Mosaic Piece"
     case "mapPiece":
       return `Map Piece → ${r.tombId}`
-    case "consumable":
-      return `Consumable: ${r.consumable}`
     case "fragmentSlot":
       return "Fragment Slot (unassigned)"
     case "money":
@@ -77,8 +75,6 @@ const rewardColor = (r: TreasureReward): string => {
       return "text-cyan-300"
     case "mapPiece":
       return "text-green-300"
-    case "consumable":
-      return "text-orange-300"
     case "fragmentSlot":
       return "text-stone-400"
     case "money":
@@ -93,13 +89,65 @@ const rewardColor = (r: TreasureReward): string => {
 // ---------------------------------------------------------------------------
 // Puzzle/chest breakdown for a floor
 // ---------------------------------------------------------------------------
-const FloorDetail = ({ floor, active }: { floor: FloorConfig; active: boolean }) => {
+// The stairs on a floor: the one it is entered by and the ones leaving it (the main path's, each stair branch's), with
+// the floor the stair's peer stands on (the shared stairId pairs them) and which way the flight runs from here: a
+// link's `goes`, else up for an entrance and down for every other stair.
+type StairOut = { from: string; to?: number; goes: "up" | "down" }
+const stairsOf = (floor: FloorConfig, index: number, floors: readonly FloorConfig[]): StairOut[] => {
+  const peer = (stairId: string) =>
+    floors.findIndex(other => typeof other.entrance === "object" && other.entrance.stairId === stairId)
+  const out = (from: string, link: FloorConfig["exitOrStaircase"] | FloorConfig["sideSections"][number]["end"]) => {
+    if (link === "staircase") return [{ from, to: index + 1, goes: "down" as const }]
+    if (typeof link !== "object") return []
+    const to = peer(link.stairId)
+    return [{ from, to: to === -1 ? undefined : to, goes: link.goes ?? ("down" as const) }]
+  }
+  const linksOut = (other: FloorConfig) => [other.exitOrStaircase, ...other.sideSections.map(section => section.end)]
+  const source = (stairId: string) =>
+    floors.findIndex(other => linksOut(other).some(link => typeof link === "object" && link.stairId === stairId))
+  const entrance = (): StairOut[] => {
+    if (floor.entrance === "stairhead") return [{ from: "entrance", to: index - 1, goes: "up" }]
+    if (typeof floor.entrance !== "object") return []
+    const from = source(floor.entrance.stairId)
+    return [{ from: "entrance", to: from === -1 ? undefined : from, goes: floor.entrance.goes ?? "up" }]
+  }
+  return [
+    ...entrance(),
+    ...out("main path", floor.exitOrStaircase),
+    ...floor.sideSections.flatMap((section, si) => out(`branch ${si + 1}`, section.end)),
+  ]
+}
+
+const FloorDetail = ({
+  floor,
+  active,
+  stairs,
+}: {
+  floor: FloorConfig
+  active: boolean
+  stairs: readonly StairOut[]
+}) => {
   return (
     <div className={`mb-3 text-xs ${active ? "text-stone-200" : "text-stone-600"}`}>
       <div className="mb-1 flex gap-2">
         <span className="font-semibold text-stone-400">{floor.encounter ?? "sumplete"}</span>
         <span className="text-stone-500">{floor.difficulty}</span>
       </div>
+      <div className="mb-1 text-stone-500">dressing: {floor.tileset ?? `${floor.difficulty} (tier)`}</div>
+      {floor.locks?.map(placed => (
+        <div key={placed.as ?? placed.lock.name} className="mb-1 text-violet-300">
+          🔒 {placed.lock.name}
+          {placed.as ? ` as ${placed.as}` : ""}
+          {placed.inside ? ` in ${placed.inside.instance}` : ""}
+          {placed.web ? " · web" : ""}
+        </div>
+      ))}
+      {floor.outsideLock?.length ? (
+        <div className="mb-1 text-violet-400">
+          outside the lock: {floor.outsideLock.map(si => `branch ${si + 1}`).join(", ")}
+        </div>
+      ) : null}
+      {floor.corridorsTakeTwo && <div className="mb-1 text-violet-400">a corridor takes two side paths</div>}
       <div>
         {Array.from({ length: floor.pathPuzzles }, (_, i) => {
           const reward = floor.rewards?.[i]
@@ -123,6 +171,13 @@ const FloorDetail = ({ floor, active }: { floor: FloorConfig; active: boolean })
               {s.gate ? ` [${s.gate.type}]` : ""}: {s.pathPuzzles} puzzles
             </span>
             {s.endReward && <span className={`ml-1 ${rewardColor(s.endReward)}`}>→ {rewardLabel(s.endReward)}</span>}
+          </div>
+        ))}
+        {floor.exitOrStaircase === "exit" && <div className="mt-1 text-sky-300">⇥ site exit (main path)</div>}
+        {stairs.map(stair => (
+          <div key={stair.from} className="mt-1 text-sky-300">
+            {stair.goes === "up" ? "↑" : "↓"} stair {stair.goes} ({stair.from}) →{" "}
+            {stair.to === undefined ? "unpaired" : `Floor ${stair.to + 1}`}
           </div>
         ))}
       </div>
@@ -286,6 +341,7 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
             grid={grid}
             onCellClick={handleClick}
             explorerPos={pos}
+            currentFloor={currentFloor}
             revealAllCells={revealAll}
             freeWalk={revealAll}
           />
@@ -322,7 +378,11 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
                   Floor {fi + 1}
                 </div>
               )}
-              <FloorDetail floor={floor} active={fi === currentFloor || siteConfig.length === 1} />
+              <FloorDetail
+                floor={floor}
+                active={fi === currentFloor || siteConfig.length === 1}
+                stairs={stairsOf(floor, fi, siteConfig)}
+              />
             </div>
           ))}
         </div>

@@ -1,65 +1,62 @@
 # Camp — home base, healing and camp loot
 
-Status: design direction · not implemented  
-Date: 2026-10-23  
-Sketches and impressions: [Kamp schetsen canvas](https://claude.ai/artifact/TJWJCGKWWPbmQUPgT6BwVp) (private to the owner)  
-See also: `pyramid-interior-design.md §11` (traps and health), `shop-mechanic.md` (economy guard),
-`loot-distribution.md`
+Status: built, except the animals (bought at Fez, they open the next tier or an optional tomb), which wait on
+the designer's loot-placement decision (`docs/review-camp-release.md`)  
+Date: 2026-10-23, current as of 2026-10-25  
+Sketches: [`docs/design/camp-sketches/`](../design/camp-sketches/README.md)  
+See also: [`camp loot spec`](../superpowers/specs/2026-10-23-camp-loot-design.md) (what the player finds and how
+the camp grows), `pyramid-interior-design.md §11` (traps and health), `shop-mechanic.md` (economy guard),
+`docs/mods/ARCHITECTURE.md` (the `camp` mod), `docs/loot-report.md` (what lies where)
 
 ---
 
 ## Why
 
-Traps were meant to feel dangerous. That brought in health, then consumables to heal, then a carry cap
-so consumables would not trivialise traps, then `pack-mule` and the consumable detector to soften the
-cap. The result is a lot of machinery whose most visible effect is a bad moment: opening a chest,
-finding a bandage and having to leave it behind because the pack is full.
-
-The danger only needs to exist **within one trip** ("one heart left — push on or turn back?"). A
-shortage carried across sessions adds frustration, and a way to get stuck, without adding tension.
+Traps are meant to feel dangerous, but a shortage carried across sessions adds frustration, and a way to
+get stuck, without adding tension. The danger only needs to exist **within one trip** ("one heart left —
+push on or turn back?"). Nothing the player finds is ever left behind for want of room.
 
 ## Decisions
 
 ### 1. Health restores at camp
 
-- Health refills to max when the player leaves a site and returns to camp.
+- Hearts refill to full on every coming home: at a journey's end and when leaving mid-journey.
 - Inside a site, damage stays damage: the push-on-or-turn-back choice is unchanged.
 - Getting stuck is impossible: walking out is always enough to heal.
-- Trap paths stay optional side branches, as today.
+- Trap paths stay optional side branches.
 
-### 2. No consumable pack
+### 2. No pack
 
-- Bandage, oil and trapTool as carried items go away, together with the carry cap and "left behind"
-  chests.
-- Where healing is still found inside a site it is a **waterskin**: it heals on pickup when hurt, and
-  stays in the chest at full health. It is never carried, so leaving it is not a loss.
-- `pack-mule` (`starter_a_3`) and consumable detector L1–L3 need new perks (open, see below).
-- The shop loses its consumable stock; money needs a different steady sink (open).
+- Nothing is carried for later: no supplies, no carry cap, no chest left half-emptied.
+- Healing inside a site is a **waterskin** (expert and up, on puzzle slots): picked up, it heals one heart
+  if one is missing (two with `pack-mule`), and is used up either way.
+- The supplies detector does not exist; the three treasures on its old levels carry no perk.
 
-### 3. The travel screen becomes the camp
+### 3. The camp is the home screen
 
 One fixed camp, the home screen between trips. It never moves, so travelling back to an earlier tier is
 always one tap.
 
-- **"Op pad" (set off)** is the big button: it continues the current journey, which covers most
-  visits.
-- **"Alle reizen" (all journeys)** opens one flat list in a popup. Tiers are only headings, newest first;
-  completed tiers collapse to one line with a dot when something new is reachable there. There is no
-  "pick a difficulty first" step.
-- **Everything opens as a popup over the camp**, nothing hides behind a sliding sheet. On desktop the
-  journey list stays as an always-visible side panel.
-- **Objects in the camp are entrances**, each with a visible label and a badge:
-  - the **chest** opens the collection (hieroglyphs, treasures);
-  - the **stained-glass window** is the mosaic. It stands in the camp so the main goal is always in sight;
-  - the **map table** can open "Alle reizen".
-- **Coming home** is a moment: rest by the fire (hearts fill), then unpack the haul. New camp items
-  are placed in the scene where the player can see them land.
+- **"Op pad" (set off)** on the "Verder met" card continues the current journey, else the first open one of
+  the highest tier.
+- **"Alle reizen" (all journeys)** is one flat list: tiers are headings, newest first; a finished tier
+  folds to one line with a dot when something new is reachable there; a locked journey or tier says what it
+  needs. On a phone it is a popup, on desktop (from 1024 px) a side panel always in view.
+- **Everything opens as a popup over the camp.** Settings sit behind a gear in the HUD (developer mode: 7
+  taps on the "Kamp" title, its tools inside settings).
+- **Objects in the camp are entrances**: the **chest** opens the Verzameling (tabs, NIEUW marks, a badge
+  with the number of new items; the story log is one of its tabs); the **stained-glass window** opens the
+  mosaic; the **map table** opens Alle reizen on a phone. The fire is not an entrance.
+- **Coming home** is a moment: the fire, the hearts refilled, the haul found since the last homecoming,
+  then **Uitpakken**. An empty haul shows only the fire and the hearts. Nothing chains into the next
+  journey.
+- In the camp Fez and the explorer talk together; Fez sells nothing there.
 
 ### 4. Chapters live on the horizon
 
-Each tier is a pyramid on the horizon. A new tier = a new pyramid appears, and the camera zooms out one
-step to reveal fresh empty ground for that tier's camp spots. The camp itself never changes material or
-style per tier.
+Each tier is a pyramid on the horizon. A new tier shows a new-chapter card over the camp, the new pyramid
+appears, and the camera zooms out one step to reveal fresh ground for that tier's camp spots. The camp
+itself never changes material or style per tier.
 
 - Beginner: camera close to the fire, one pyramid.
 - Each new chapter: zoom out one step, one more pyramid.
@@ -70,10 +67,13 @@ slots.
 
 ## Camp loot
 
-Camp items are a new tier-bound filler currency. Every find adds one step to one spot in the camp.
+The camp grows from what the player finds, as the loot spec sets out: **28 found items** (one find, one
+object in the camp, in any order), **26 structures** built from **99 parts** (a structure stands once all
+its parts are found; started ones show in the Verzameling's Constructies tab), a few steps that grow by
+themselves on the next homecoming, and the **animals and carts** bought from Fez in his tomb shops (not
+built yet). Camp loot lies on puzzle slots of its own tier and never gates anything.
 
-**12 spots that keep growing.** A spot appears in one tier and gains additions in every later tier. 73
-finds in total, scaled to the loot space each tier has.
+**12 spots that keep growing.** A spot appears in one tier and gains additions in every later tier:
 
 | Spot           | Beginner                         | Junior                          | Expert               | Master                            | Wizard                         |
 | -------------- | -------------------------------- | ------------------------------- | -------------------- | --------------------------------- | ------------------------------ |
@@ -89,58 +89,21 @@ finds in total, scaled to the loot space each tier has.
 | Lookout tower  | —                                | —                               | —                    | post, platform, ladder, roof      | flag, signal fire              |
 | God statues    | —                                | —                               | —                    | —                                 | Thoth, Bastet, Anubis, Ra      |
 | Star canopy    | —                                | —                               | —                    | —                                 | poles, cloth, stars, planets   |
-| **Finds**      | **8**                            | **10**                          | **14**               | **19**                            | **22**                         |
 
 The chest, the mosaic window and the campfire's glow are fixed from the start: they anchor the camp
 as home even when it is nearly empty.
 
 The full camp fits a portrait phone screen in three rows of depth (about 60 px per spot). The scene
-fills the whole screen as background; hearts and coins sit in the sky, "Op pad" floats at the bottom.
+fills the whole screen as background; hearts and coins sit in the HUD, the "Verder met" card floats at
+the bottom.
 
 ### Art budget
 
 12 objects, each drawn in its final state and built up in layers for the earlier steps, plus the
-chest, the window and the horizon. The canvas holds AI impressions of all five tier end states (Gemini,
-for direction only, not production art).
-
-## Slot conversion
-
-Current world (`scripts/worldInfo.ts`, `src/data/generatedWorld.ts`, counted by the **section**
-difficulty a reward sits in):
-
-| Section tier | Consumables | Money drops | Sellables | Mosaic | Fragments |
-| ------------ | ----------- | ----------- | --------- | ------ | --------- |
-| Beginner     | 3           | 78          | 6         | 33     | 19        |
-| Junior       | 4           | 92          | 20        | 43     | 36        |
-| Expert       | 55          | 97          | 20        | 51     | 65        |
-| Master       | 63          | 106         | 20        | 59     | 94        |
-| Wizard       | 60          | 139         | 19        | 66     | 82        |
-
-Consumables only really exist from expert sections up (the 14 in starter journeys sit behind expert
-and master ward wings). So:
-
-- **Beginner and junior** camp finds (8 + 10) come mostly from money slots. Those coins move into
-  the remaining money drops, so the money total and the shop guard in `src/worldGen/validate.ts` do not
-  change.
-- **Expert, master and wizard** camp finds (14 + 19 + 22) come from consumable slots. Roughly 60 of
-  the remaining consumable slots become waterskins on and after trap paths. The rest become money,
-  which only raises income and keeps the guard satisfied.
-- Fragments, mosaic, map pieces, tomb keys and sellables are unchanged.
-
-### New areas (tomb redesign)
-
-The starter tomb's new cave and cavern (`tomb/cave-and-cavern`) should carry loot so the puzzles added
-there reward something. Camp items fit: their count is flexible, so extra beginner slots add camp
-steps without touching the fixed currency totals.
-
-### Money drops
-
-512 money drops average 2 coins each, which barely reads as a find. Merging them into fewer, larger
-drops with the same total keeps the shop guard intact.
+chest, the window and the horizon. A spot without art stays bare ground; nothing ships as a stand-in.
 
 ## Open
 
-- New perks for `pack-mule` and consumable detector L1–L3.
-- A steady money sink once the shop no longer sells consumables.
-- Whether the "coming home" screen shows on every return or only when something new was brought back.
+- The animals as gates and the economy around them (sinks = rare items + purchases), which wait on the
+  designer's loot-placement decision.
 - Exact camera framing per chapter.

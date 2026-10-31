@@ -34,7 +34,9 @@ export const PROCESSION_CONFIG: Record<Difficulty, ProcessionOptions> = {
     maxSplits: 0,
   },
   // `apart` and `together` arrive, read on lengths alone: one order of a pair does not fit in the day, so
-  // the pair settles without anybody supposing anything. 13.3% of seeds, 4–5 marks.
+  // the pair settles without anybody supposing anything. Junior is where procession debuts (its minTier), so
+  // its pool also holds boards that settle on the squeeze alone, the rung a player meets first: about one in
+  // seven of the seeds it keeps. 15.6% of seeds, 4–5 marks.
   junior: {
     ticks: 10,
     bars: 4,
@@ -42,7 +44,7 @@ export const PROCESSION_CONFIG: Record<Difficulty, ProcessionOptions> = {
     maxLen: 3,
     maxGap: 3,
     kinds: ["pin", "link", "before", "apart", "together", "span"],
-    minRung: "apart",
+    minRung: "squeeze",
     maxRung: "apart",
     minSplits: 0,
     maxSplits: 0,

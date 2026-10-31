@@ -15,7 +15,7 @@ export const ECLIPSE_META: FamilyMeta = {
     sky: ["default"],
     light: ["default"],
   },
-  minTier: "starter",
+  minTier: "junior",
   // The skins this family has (docs/instructions/puzzle-screens.md §2): the default sun-and-moon pair, and
   // star-and-dark-sky for a site authored `theme: "night"`. Listed so the puzzle lab can offer both.
   themes: ["default", "night"],

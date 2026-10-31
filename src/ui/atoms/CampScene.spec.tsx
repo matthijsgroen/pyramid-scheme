@@ -59,7 +59,7 @@ const firelit: CampCatalogue = {
 
 type SceneProps = Omit<ComponentProps<typeof CampScene>, "width" | "height"> & { width?: number; height?: number }
 const Scene = ({ width = 390, height = 844, ...props }: SceneProps) => (
-  <CampScene width={width} height={height} {...props} />
+  <CampScene width={width} height={height} standIns {...props} />
 )
 
 describe("CampScene", () => {
@@ -272,6 +272,69 @@ describe("CampScene", () => {
       expect(twinkling).toBeGreaterThan(0)
       expect(twinkling).toBeLessThanOrEqual(10)
       expect(container.querySelectorAll(".camp-star").length).toBeGreaterThan(twinkling)
+    })
+  })
+
+  describe("a piece whose art is owed", () => {
+    const owed: CampCatalogue = {
+      spots: [
+        {
+          id: "mapTable",
+          x: 0,
+          y: 1,
+          frame: 1,
+          footprint: 0.8,
+          steps: [{ chapter: "starter", pieces: [piece("table")] }],
+        },
+      ],
+      fixed: [
+        { id: "chest", x: -1, y: 1, frame: 1, footprint: 0.8, piece: piece("chest") },
+        { id: "campfire", x: 0, y: 0, frame: 1, footprint: 0.8, piece: piece("flame", { lights: [fireLight] }) },
+      ],
+    }
+    const entrances = {
+      chest: { label: "Collection", onOpen: noop },
+      mapTable: { label: "Journeys", onOpen: noop },
+    }
+
+    it("is left bare without standIns", () => {
+      art.set("chest", { url: "/chest.webp" })
+      const { container } = render(
+        <Scene
+          standIns={false}
+          chapter="starter"
+          found={{ mapTable: ["table"] }}
+          catalogue={owed}
+          entrances={entrances}
+        />
+      )
+      expect(container.querySelector(".camp-standin")).toBeNull()
+      expect(screen.queryByText("table")).toBeNull()
+      expect(container.querySelectorAll(".camp-glow")).toHaveLength(0)
+    })
+
+    it("offers no entrance for it without standIns", () => {
+      art.set("chest", { url: "/chest.webp" })
+      render(
+        <Scene
+          standIns={false}
+          chapter="starter"
+          found={{ mapTable: ["table"] }}
+          catalogue={owed}
+          entrances={entrances}
+        />
+      )
+      expect(screen.getByRole("button", { name: "Collection" })).toBeTruthy()
+      expect(screen.queryByRole("button", { name: "Journeys" })).toBeNull()
+    })
+
+    it("draws the stand-in with standIns", () => {
+      const { container } = render(
+        <Scene chapter="starter" found={{ mapTable: ["table"] }} catalogue={owed} entrances={entrances} />
+      )
+      expect(screen.getByText("table")).toBeTruthy()
+      expect(container.querySelector(".camp-standin")).not.toBeNull()
+      expect(screen.getByRole("button", { name: "Journeys" })).toBeTruthy()
     })
   })
 })

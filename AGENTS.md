@@ -99,6 +99,7 @@ yarn lint         # ESLint (Tailwind class order; --max-warnings pins the warn b
 yarn betterer     # The ratcheted guards — fails on a new occurrence, per file
 yarn betterer:update # Record a guard's new, lower state after fixing occurrences
 yarn build        # Production build
+yarn loot-report  # The loot in the baked world against demand, writes docs/loot-report.md
 yarn storybook    # Component docs at http://localhost:6006
 ```
 
@@ -255,6 +256,7 @@ Deeper design docs live in `docs/`:
 | [`docs/game-design/keys-and-locks-solver.md`](docs/game-design/keys-and-locks-solver.md)     | **Built** — the reachability solver (`reachability.ts`, `constraintResolver.ts`) and its per-currency key placement rules; the node-type collapse landed with it (`RoomType` is portal/fork/encounter, a gate being an encounter family)                                         |
 | [`docs/game-design/shop-mechanic.md`](docs/game-design/shop-mechanic.md)                     | Fez shop: placement, stock, pricing, money economy guard, sellables                                                                                                                                                                                                              |
 | [`docs/instructions/map-rendering.md`](docs/instructions/map-rendering.md)                   | **Read before changing how the site map draws** — the map is HTML layers, why (the measurements), the clip/depth/tap rules, and how to measure a change to it                                                                                                                    |
+| [`docs/instructions/room-prefabs.md`](docs/instructions/room-prefabs.md)                     | Designed rooms as `.room` files in `src/game/rooms/<tier>/` — the notation, the prefab check, `yarn room`                                                                                                                                                                        |
 | [`docs/instructions/prop-pipeline.md`](docs/instructions/prop-pipeline.md)                   | **Read before drawing a map tile** — the laws of the projection, then the five steps from deciding what an object is to importing it                                                                                                                                             |
 | [`docs/instructions/repaint-queue.md`](docs/instructions/repaint-queue.md)                   | Every prompt still owed to the image generator, with its attachments and its import line                                                                                                                                                                                         |
 | [`docs/instructions/art-tasks.md`](docs/instructions/art-tasks.md)                           | The art ledger — what each remaining gap is waiting on, which a census cannot know                                                                                                                                                                                               |

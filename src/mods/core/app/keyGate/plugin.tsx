@@ -5,6 +5,7 @@ import { KEY_GATE_META } from "@/mods/core/game/keyGate/meta"
 import { wardKeyDifficulty } from "@/data/difficultyLevels"
 import { useMergedKeyDisplay } from "@/app/SiteMap/keyProviders"
 import { KeyIcon } from "@/ui/atoms/KeyIcon"
+import { doorArt } from "./doorArt"
 
 type KeyGatePuzzle = { satisfied: boolean }
 
@@ -31,9 +32,11 @@ const KeyGateComponent: FamilyPlugin["Component"] = ({ puzzle, ctx, onSolved, on
   // see RoomCell.keyIsAuthored) has no chest to wear a badge, so naming a colour would send the player
   // hunting a key that grows nowhere on this floor. The colourless line below is what such a door says.
   const gateColor = ctx.gateVariant === "floor-key" ? ctx.keyColor : undefined
+  const door = doorArt(wardDifficulty)
   return (
-    <div className="fixed inset-0 z-30 flex flex-col items-center justify-center gap-6 bg-black/85">
+    <div className="flex flex-col items-center gap-6 py-6">
       <p className="font-pyramid text-2xl text-amber-300">{t("gate.title")}</p>
+      {door && <img src={door} alt="" draggable={false} className="w-3/5 select-none" />}
       {wardDifficulty && (
         <p className="max-w-xs text-center text-sm text-stone-400 italic">
           {t(`gate.wardDescription.${wardDifficulty}`)}

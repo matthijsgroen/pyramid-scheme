@@ -53,6 +53,8 @@ export const reasonsOf = (memory: ShortfallMemory): AssemblerReason[] => {
     sequenceTileNotPlaced,
     plateNotPlaced,
     pipeHoleNotPlaced,
+    chambersNotSeated,
+    prefabsNotPlaced,
     controlPuzzleUndisplaceable,
     carveDisagreement,
     regionWillNotTake,
@@ -81,6 +83,8 @@ export const reasonsOf = (memory: ShortfallMemory): AssemblerReason[] => {
     ...(sequenceTileNotPlaced ? [sequenceTileNotPlaced] : []),
     ...(plateNotPlaced ? [plateNotPlaced] : []),
     ...(pipeHoleNotPlaced ? [pipeHoleNotPlaced] : []),
+    ...(chambersNotSeated ? [chambersNotSeated] : []),
+    ...(prefabsNotPlaced ? [prefabsNotPlaced] : []),
     ...(controlPuzzleUndisplaceable ? [controlPuzzleUndisplaceable] : []),
     ...(carveDisagreement?.faults ?? []),
     ...(regionWillNotTake?.mismatch.map(({ region, kind }) => ({ type: "regionWillNotTake" as const, region, kind })) ??

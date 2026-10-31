@@ -9,6 +9,8 @@ import { registerFezMeeting } from "@/app/fez/fezMeeting"
 import { useGameStorage } from "@/support/useGameStorage"
 import { registerRoomOccupants } from "@/app/SiteMap/roomOccupants"
 import { registerRoomReplays } from "@/app/SiteMap/roomReplays"
+import { registerRoomArrivals } from "@/app/SiteMap/roomArrivals"
+import { useConversationArrivals } from "./arrivals"
 import { useGhostOccupants } from "./ghostOccupants"
 import { useConversationReplays } from "./replays"
 
@@ -60,4 +62,5 @@ if (isModEnabled("story")) {
   })
   registerRoomOccupants(useGhostOccupants)
   registerRoomReplays(useConversationReplays)
+  registerRoomArrivals(useConversationArrivals)
 }

@@ -111,12 +111,12 @@ describe("useEncounter", () => {
     expect(hook.result.current.isOpen).toBe(false)
   })
 
-  it("hands a solved room's loot on for offering, keyed to the room it came from", () => {
-    const { hook, onReward } = setup([{ ...emptyRoom, reward: { type: "consumable", itemId: "bandage" } }])
+  it("hands a solved room's loot on for offering", () => {
+    const { hook, onReward } = setup([{ ...emptyRoom, reward: { type: "money", amount: 5 } }])
 
     act(() => hook.result.current.open([0, 0], true))
 
-    expect(onReward).toHaveBeenCalledWith({ type: "consumable", itemId: "bandage" }, ROOM_ADDRESS, undefined)
+    expect(onReward).toHaveBeenCalledWith({ type: "money", amount: 5 }, undefined)
   })
 
   it("says which key a coloured chest held, so the reveal names the door it opens", () => {
@@ -124,17 +124,15 @@ describe("useEncounter", () => {
 
     act(() => hook.result.current.open([0, 0], true))
 
-    expect(onReward.mock.calls[0][2]).toEqual(["blue"])
+    expect(onReward.mock.calls[0][1]).toEqual(["blue"])
   })
 
   it("doesn't announce a key for a coloured chest holding something else", () => {
-    const { hook, onReward } = setup([
-      { ...emptyRoom, reward: { type: "consumable", itemId: "bandage" }, keyColor: "blue" },
-    ])
+    const { hook, onReward } = setup([{ ...emptyRoom, reward: { type: "money", amount: 5 }, keyColor: "blue" }])
 
     act(() => hook.result.current.open([0, 0], true))
 
-    expect(onReward.mock.calls[0][2]).toBeUndefined()
+    expect(onReward.mock.calls[0][1]).toBeUndefined()
   })
 
   // A section authored at its own tier is the point of authoring it: a starter pocket on a wizard
@@ -158,9 +156,7 @@ describe("useEncounter", () => {
   // A room its family keeps re-enterable is solved again on every visit, and the loot it held was
   // handed over on the visit that finished it.
   it("offers no second helping of loot in a room already finished", () => {
-    const { hook, onReward } = setup([
-      { ...emptyRoom, state: "completed", reward: { type: "consumable", itemId: "bandage" } },
-    ])
+    const { hook, onReward } = setup([{ ...emptyRoom, state: "completed", reward: { type: "money", amount: 5 } }])
 
     act(() => hook.result.current.open([0, 0], true))
 

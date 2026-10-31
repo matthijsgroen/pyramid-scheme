@@ -1,5 +1,6 @@
 import { homedir } from "os"
 import { join } from "path"
+import { campRoots } from "./importCamp"
 
 export type Entry = {
   key: string
@@ -29,7 +30,7 @@ export const parse = (md: string): Entry[] =>
     // An entry ends where its section does: the next `## ` intro names files that are not its attachments.
     .map(block => block.split(/^## /m)[0])
     .flatMap(block => {
-      const key = /`([a-z]+\/[A-Za-z0-9-]+)`/.exec(block)?.[1]
+      const key = /`([a-z]+\/[A-Za-z0-9_-]+)`/.exec(block)?.[1]
       const prompt = /```\n([\s\S]*?)\n```/.exec(block)?.[1]
       if (!key || !prompt) return []
       // A render in `~/tile-previews`, or a master kept in the repo (an edit of a painted tile attaches that).
@@ -42,6 +43,13 @@ export const parse = (md: string): Entry[] =>
         .map(m => m[1])
         .filter(path => !outputs.includes(path))
         .map(path => path.replace(/^~/, homedir()))
+      // A camp icon names its own folder and name: `yarn import-camp <file> --out-dir=<dir> --name=<id>`.
+      const camp = importLine?.startsWith("yarn import-camp ")
+        ? {
+            name: /--name=(\S+)/.exec(importLine)?.[1],
+            ...campRoots(/--out-dir=(\S+)/.exec(importLine)?.[1]),
+          }
+        : undefined
       return [
         {
           key,
@@ -49,9 +57,11 @@ export const parse = (md: string): Entry[] =>
           attachments,
           prompt,
           // A whole-wall panel is not a map tile: it lands as the rank's tableau wall.
-          out: importLine?.startsWith("yarn import-panel ")
-            ? join("src/assets/tombWall", `${/--tier=(\w+)/.exec(importLine)?.[1]}.webp`)
-            : join("src/assets/tiles", key.split("/")[0], `${key.split("/")[1]}.png`),
+          out: camp?.name
+            ? join(camp.outRoot, `${camp.name}.webp`)
+            : importLine?.startsWith("yarn import-panel ")
+              ? join("src/assets/tombWall", `${/--tier=(\w+)/.exec(importLine)?.[1]}.webp`)
+              : join("src/assets/tiles", key.split("/")[0], `${key.split("/")[1]}.png`),
           importedBy:
             importLine ?? `yarn import-tile <file> --tier=${key.split("/")[0]} --name=${key.split("/")[1]} --slot=prop`,
           importScript,

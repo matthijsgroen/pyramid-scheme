@@ -93,6 +93,10 @@ const needsFloorKeyHost = (s: SubSection): boolean => s.gate?.type === "floor-ke
  */
 export const GROWN_KEY_HOST = { pathPuzzles: 0, difficulty: "starter", end: "treasure" } as const
 
+/** An end with nothing of its own to give: no reward, and not a loot end. A loot end stays one whether or not
+ * placement put loot in it, so what placement does never changes which ends are free, and never moves a wall. */
+export const isFreeEnd = (s: SubSection): boolean => !s.endReward && !s.lootEnd
+
 /**
  * Whether one level of a floor owes a key a home it does not already have.
  *
@@ -107,7 +111,7 @@ export const GROWN_KEY_HOST = { pathPuzzles: 0, difficulty: "starter", end: "tre
  * section never satisfies a key-holder requirement at any depth.
  */
 export const owesAKeyHost = (eligible: readonly SubSection[]): boolean =>
-  eligible.some(needsFloorKeyHost) && !eligible.some(s => !s.gate && !s.endReward)
+  eligible.some(needsFloorKeyHost) && !eligible.some(s => !s.gate && isFreeEnd(s))
 
 /** Which of one level's sections hold a floor-key gate owing a key, and which are free to host one.
  * A hidden section is never free capacity: its cells are masked until the player finds them, so a key
@@ -116,7 +120,7 @@ export const keyHostIdxs = (sections: readonly SubSection[]) => ({
   gatedIdxs: sections.map((_, i) => i).filter(i => needsFloorKeyHost(sections[i])),
   ungatedIdxs: sections
     .map((_, i) => i)
-    .filter(i => !sections[i].gate && !sections[i].endReward && !sections[i].hidden),
+    .filter(i => !sections[i].gate && isFreeEnd(sections[i]) && !sections[i].hidden),
 })
 
 /** The sections a handle drives carry its gate, so the rest of the carve meets an ordinary authored

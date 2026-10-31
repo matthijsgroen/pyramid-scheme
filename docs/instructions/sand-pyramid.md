@@ -225,10 +225,11 @@ of a region) and which side section hangs first after a percentage are the carve
 the baked floor and pins them by authored name: a section by its address, a lock corridor or region by the
 lock's own region names. A section is not given a label for it: a label may not imitate a positional address
 (`src/game/carve/sections.ts`), so "a label equal to its current address" is refused by the carve. Instead the
-bake places the web on the floors at their last pins, then reads it again on the floors the search pinned, and
-refuses the bake, naming each line, when anything landed elsewhere; the report says where each landed. A web
-floor the search re-stamps is built again on its new pin before that check (`bakeOnSettledPins`), so the pins the
-bake writes are the ones the web was placed on, and the next bake starts from them.
+bake picks every floor's layout before the web is placed (`pickLayout`), places the web on the floors at those
+pins, then carves the finished world afresh and reads the web again on it, refusing the bake, naming each line,
+when anything landed elsewhere (`placementMoved`); the report says where each landed. A web floor is asked the
+carve criteria again once its doors stand on it. A lock taking inputs from outside its floor cannot carve before
+the web binds them, so the bake refuses it by name when its floor's layout is picked.
 
 ### The worked example
 
@@ -554,7 +555,7 @@ authored data on the tier, set for wizard.
   markers its door carries.
 - **Web marks:** a glyph set disjoint from `MARK_GLYPHS`, on a sand ground in a cartouche.
 
-**Art tasks, for `docs/instructions/art-tasks.md` (default-tier art, the same at every difficulty):**
+**Art tasks, for `docs/instructions/art-tasks.md` (shared art; a mechanism style may repaint the lever):**
 
 > **sandLever** — not the floor lever: a heavy stone post, a sun-disc or star-chart head instead of the plain
 > handle, a channel of sand running from its base into the floor. Two poses: set (head up, channel full) and
@@ -642,7 +643,7 @@ carries at most 16 activators.
 | Keys / save   | `webPulled` in topology mod state; a held-keys provider deriving named and counted keys                       | `src/mods/topology/app/`, `src/app/SiteMap/keyProviders.ts`                                                                                                          |
 | World-gen DSL | seam gates, added lock owners and region barriers, activators as rewards, sections pinned by label, web bound | `src/worldGen/dsl.ts`, `src/worldGen/rewards.ts`, `src/worldGen/buildSite.ts`, `src/game/carve/chainRooms.ts`, `src/game/layLocks.ts`, `src/worldGen/spec/wizard.ts` |
 | World solver  | web keys as positional keys; counted stops; the order inside a journey; agreement with the web walk           | `src/worldGen/reachability.ts`, `src/worldGen/placeFragments.ts`, topology mod descriptor                                                                            |
-| Map / travel  | buried node, pulse on the current node, the card's buried percentage; `blockingKeys` counts web doors                | `src/ui/atoms/JourneyPathView.tsx`, `src/ui/organisms/JourneyCard.tsx`, `src/app/pages/Travel.tsx`, `src/app/SiteMap/floorExploration.ts`                            |
+| Map / travel  | buried node, pulse on the current node, the card's buried percentage; `blockingKeys` counts web doors                | `src/ui/atoms/JourneyPathView.tsx`, `src/ui/organisms/JourneyCard.tsx`, `src/app/pages/AllJourneysPage.tsx`, `src/app/SiteMap/floorExploration.ts`                            |
 | Site map art  | sand lever, web sand, web seal and key, web marks beside floor markers                                        | `src/app/SiteMap/SiteMapView.tsx`, `src/game/mark.ts`, `src/assets/tiles/default/`, `art/masters/props/default/`                                                     |
 | Story         | the buried-journey arrival is wizard_3's arrival; the clearing beat; wizard arrivals in any order             | `docs/game-design/story/`, `public/locales/*/story*.json`                                                                                                            |
 | i18n          | buried node label, lever and seal prompts                                                                     | `public/locales/en/`, `public/locales/nl/`                                                                                                                           |

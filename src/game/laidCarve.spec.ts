@@ -225,6 +225,12 @@ const FIXTURES: Record<string, Fixture> = {
     sound: true,
     minimum: 30,
   },
+  "a lock whose regions have appetites and a key-hosting side path of one puzzle": {
+    floor: floorOf([{ lock: hungryLock() }], { sideSections: [path(1), path(0, { gate: { type: "floor-key" } })] }),
+    registry: true,
+    sound: true,
+    minimum: 30,
+  },
   "lever with ungated side paths": {
     floor: floorOf([{ lock: leverLock() }], { sideSections: UNGATED }),
     registry: true,
@@ -533,35 +539,38 @@ describe("a gated side path of a laid floor stays a branch off laid ground", { t
 })
 
 describe("the carve lengthens the cheapest stretch when the laid nodes cannot take a side path", () => {
-  const withPath = () => carvedOf("a lock whose regions have appetites and a side path of one puzzle")
+  // The key host is spread over open ground rather than given a corridor, so only lengthening the entrance seats it.
+  const withPath = () => carvedOf("a lock whose regions have appetites and a key-hosting side path of one puzzle")
 
   it("lengthens nothing for a floor whose content the laid nodes take", () => {
     for (const { laid } of carvedOf("a lock whose regions have appetites")) expect(laid.lengthened).toEqual([])
   })
 
-  it("lengthens the corridor from the entrance to the foyer by two nodes for a side path of one puzzle and a chest", () => {
+  it("lengthens the open entrance by two nodes for a key-hosting side path of one puzzle and a chest", () => {
     for (const { laid } of withPath())
-      expect(laid.lengthened[0]).toMatchObject({ kind: "corridor", id: "entrance>lever.foyer", nodes: 2 })
+      expect(laid.lengthened[0]).toMatchObject({ kind: "region", id: "entrance", nodes: 2 })
   })
 
-  it("stands the side path's rooms on the nodes of the corridor it lengthened", () => {
+  it("stands the side path's rooms on the nodes of the stretch it lengthened", () => {
     for (const { laid } of withPath()) {
-      const corridor = new Set(laid.stretches.get("corridor:entrance>lever.foyer"))
-      expect(laid.absorbed[0].cells.some(cell => corridor.has(cell))).toBe(true)
+      const entrance = new Set(laid.stretches.get("region:entrance"))
+      expect(laid.absorbed[0].cells.some(cell => entrance.has(cell))).toBe(true)
     }
   })
 
   it("chooses the stretch whose cost is least of every stretch it weighed", () => {
-    for (const { laid } of withPath())
-      for (const choice of laid.lengthened) {
-        const [first, ...rest] = choice.considered
-        expect(first).toMatchObject({ kind: choice.kind, id: choice.id, nodes: choice.nodes })
-        expect(rest.length).toBeGreaterThan(0)
-        for (const other of rest) {
-          const worse = first.cost.findIndex((part, i) => part !== other.cost[i])
-          expect(worse < 0 || first.cost[worse] < other.cost[worse]).toBe(true)
-        }
+    const choices = [...withPath(), ...carvedOf("a lock whose regions have appetites and a side path of one puzzle")]
+      .flatMap(({ laid }) => laid.lengthened)
+      .filter(choice => choice.considered.length > 1)
+    expect(choices.length).toBeGreaterThan(0)
+    for (const choice of choices) {
+      const [first, ...rest] = choice.considered
+      expect(first).toMatchObject({ kind: choice.kind, id: choice.id, nodes: choice.nodes })
+      for (const other of rest) {
+        const worse = first.cost.findIndex((part, i) => part !== other.cost[i])
+        expect(worse < 0 || first.cost[worse] < other.cost[worse]).toBe(true)
       }
+    }
   })
 })
 

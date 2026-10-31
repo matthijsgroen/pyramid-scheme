@@ -103,6 +103,32 @@ describe("where a dressed room's prop stands", () => {
     expect([...buildRoomClaims(grid).decorationAt.values()]).toEqual(["shelf"])
   })
 
+  // A portal on the map's bottom row with passages above every free cell of its floor.
+  const underPassages = (portal: Partial<RoomCell>): FloorGrid => ({
+    siteId: "site",
+    rows: 2,
+    cols: 3,
+    entrancePos: [0, 0],
+    exitPos: [1, 1],
+    staircases: portal.stairId ? { [portal.stairId]: [1, 1] } : {},
+    cells: [
+      [corridor(["e"]), corridor(["e", "w", "s"]), corridor(["w"])],
+      [
+        empty,
+        { type: "room", roomType: "portal", dirs: new Set<Direction>(["n"]), state, decoration: "pillar", ...portal },
+        empty,
+      ],
+    ],
+  })
+
+  it("stands no prop in a stairhead where the only floor for it has floor behind it", () => {
+    expect(buildRoomClaims(underPassages({ stairId: "down" })).decorationAt.size).toBe(0)
+  })
+
+  it("still stands a way out's prop with floor behind it, a dead end nobody walks past", () => {
+    expect([...buildRoomClaims(underPassages({})).decorationAt.values()]).toEqual(["pillar"])
+  })
+
   it("never stands a stairhead's prop on the stair's own cell", () => {
     const stairhead: GridCell = {
       type: "room",

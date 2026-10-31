@@ -25,7 +25,7 @@ export type FamilyContext = {
   /** Where this room is drawn in the carve that is on screen — for anything about the here and now. */
   edgeId: string
   /** WHICH ROOM THIS IS, as `${sectionHash}#${floor}/${slot}` (cellIdentity.ts). A family
-   * that remembers anything per room — a bought shop slot, a disarmed trap, a half-finished board —
+   * that remembers anything per room — a bought shop slot, a half-finished board —
    * files it under this, because the coordinate above moves when the floor is carved again. */
   address: string
   /** The address this room had before a mechanism's slot named the mechanism (`legacyCellAddress`), for
@@ -61,9 +61,9 @@ export type FamilyContext = {
   // falls back to indexing the list by the room's own hash.
   boardIndex?: number
   encounterArgs?: unknown
-  // A shop node's stock: the reward slots the mods placed into this node's `rewards[]` (currency
-  // pieces + consumables). The fez-shop family renders these as its buyable list. Entries may be
-  // undefined (unfilled slots). Distinct from the single `reward` a plain chest/puzzle-solve grants.
+  // A shop node's stock: the reward slots the mods placed into this node's `rewards[]`. The fez-shop
+  // family renders these as its buyable list. Entries may be undefined (unfilled slots). Distinct from
+  // the single `reward` a plain chest/puzzle-solve grants.
   stock?: (TreasureReward | undefined)[]
   // key-gate's own precondition: which key this room needs, and whether the player
   // already holds it (local-floor tomb keys ∪ ward keys owned entering the site).

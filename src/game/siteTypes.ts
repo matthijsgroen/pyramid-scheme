@@ -8,8 +8,11 @@ import type { GateFace } from "./gateFace"
 import type { LockNesting, LockNestingFault, PlacedLock } from "./floorLocks"
 import type { LockFault, RealisationBinding } from "./lockCompile"
 import type { ActivityId } from "./activities"
+import type { PlaceKind, PlaceLayer, Prefab } from "./prefabTypes"
 import type { WebDoorPlacement } from "./webDoors"
-export type RoomType = "portal" | "fork" | "encounter"
+/** `chamber` is a pass-through room on a path: a corridor node widened into a room that serves an activity, holding
+ * no encounter and answering to no slot. */
+export type RoomType = "portal" | "fork" | "encounter" | "chamber"
 // OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
 // core enumerates no reward/currency id. A reward is a `type` tag plus arbitrary payload fields the
 // owning mod defines. Validated at load against per-type zod schemas registered by the mods
@@ -80,6 +83,8 @@ export type CorridorCell = {
    * the door, open, in the mark and colour it wore shut. Derived from the mechanism's position each
    * time the floor is read and never stored. */
   openGate?: OpenGate
+  /** The designed room laid over this corridor's dead end (carve/placePrefabs.ts). */
+  prefabRoom?: PrefabRoom
 }
 /** What an open gate keeps of the room it was: the fields that say it is a gate and whose. */
 export type OpenGate = Pick<
@@ -140,7 +145,13 @@ export type DecorationKind = (typeof DECORATION_KINDS)[number]
  * extra height above the normal prop frame, for art that stands higher than a face band. The anchor is the
  * north-west cell; every cell of the footprint must be the room's own free floor for the prop to stand.
  */
-export type PropFootprint = { cols: number; rows: number; tall: number }
+export type PropFootprint = {
+  cols: number
+  rows: number
+  tall: number
+  /** Marks a kind drawn on the floor under the player and walked over; it fits only a prefab's ground place. */
+  ground?: true
+}
 export const SINGLE_CELL: PropFootprint = { cols: 1, rows: 1, tall: 0 }
 /** The kinds bigger than one cell. Every kind not listed is `SINGLE_CELL`. */
 export const DECORATION_FOOTPRINTS: Partial<Record<DecorationKind, PropFootprint>> = {
@@ -208,6 +219,41 @@ export type SiteCondition = { kind: ConditionKind; amount: number }
  */
 export const PATRONS = ["anubis", "horus", "sobek", "bastet", "maat", "ra", "sekhmet", "thoth", "osiris"] as const
 export type Patron = (typeof PATRONS)[number]
+/** A rectangle of grid cells: `rows` south and `cols` east of its north-west cell. */
+export type CellRect = { top: number; left: number; rows: number; cols: number }
+/** One object standing in a prefab room, in absolute grid cells; `flip` draws a mirrored room's ground object
+ * mirrored. */
+export type PrefabObject = {
+  kind: PlaceKind
+  layer: PlaceLayer
+  top: number
+  left: number
+  rows: number
+  cols: number
+  flip?: true
+}
+type Cell = readonly [number, number]
+/** A designed room laid over a room node (carve/placePrefabs.ts), in absolute grid cells. */
+export type PrefabRoom = {
+  /** The prefab's name: a key of the floor's `prefabs`. */
+  name: string
+  /** Which of the prefab's layouts, and whether mirrored left to right. */
+  layout: number
+  mirrored: boolean
+  /** The inside of the ring. */
+  rect: CellRect
+  stop: Cell
+  actor?: Cell
+  /** Where the room's chest, portal or mechanism stands: the prefab's place for it. */
+  nodeArt?: Cell
+  /** What stands, after the fill. */
+  objects: readonly PrefabObject[]
+  /** "r,c" the walk may not cross: the ring's walls, unused door places and what blocks inside. */
+  blocked: readonly string[]
+  /** The door places in use, on the ring, by the way out each serves. */
+  doors: Partial<Record<Direction, Cell>>
+}
+
 export type RoomCell = {
   type: "room"
   roomType: RoomType
@@ -238,8 +284,8 @@ export type RoomCell = {
   ordinal?: string
   hidden?: boolean
   reward?: TreasureReward
-  /** A shop node's stock: up to `rewardCapacity` reward slots (currency pieces + consumables) the
-   * mods placed into the section's `rewards[]`. The shop family renders these as its buyable list;
+  /** A shop node's stock: up to `rewardCapacity` reward slots (currency pieces) the mods
+   * placed into the section's `rewards[]`. The shop family renders these as its buyable list;
    * each is priced by the shop and claimed per (node, index). Entries may be undefined (unfilled). */
   stock?: (TreasureReward | undefined)[]
   requiredKeyId?: string
@@ -298,11 +344,15 @@ export type RoomCell = {
   // (siteValidator.ts, SiteMapView.tsx) classify a room without knowing family ids itself.
   tags?: string[]
   stairId?: string
+  /** Which way a stairhead's flight runs from this room: its link's `goes`, else that link's default. */
+  stairGoes?: StairGoes
   decoration?: DecorationKind
   /** The single-cell kind this room stands instead when `decoration` covers more than one cell and the
    * room has no free floor that shape (roomClaims.ts). Picked from the same pool by the same hash, so the
    * map never has to know the pool. Unset when `decoration` is single-cell or the pool has no such kind. */
   decorationFallback?: DecorationKind
+  /** The designed room laid over this node; it is this room's dressing. */
+  prefabRoom?: PrefabRoom
   wallDecoration?: WallDecorationKind
   /** What the room is for (activities.ts): its props and wall item come from this activity. Unset on a
    * room some other purpose has, or on a rank whose pool furnishes no activity. */
@@ -310,6 +360,8 @@ export type RoomCell = {
   /** The activity a story authored for this room (`nodes: [{ activity }]`). It wins over every other purpose,
    * and it makes the room a chamber even where it stands in a corridor (`isChamber`): a scene needs its set. */
   authoredActivity?: ActivityId
+  /** The designed room a story pinned to this room (`nodes: [{ room }]`): a key of the floor's `prefabs`. */
+  pinnedPrefab?: string
   /**
    * THE GOD'S ROOM on a dedicated floor: the biggest chamber, dressed with a statue of him and paired.
    *
@@ -533,7 +585,12 @@ export type { Difficulty } from "@/data/difficultyLevels"
 import type { Difficulty } from "@/data/difficultyLevels"
 /** What a floor, path or room is DRAWN in: its tiles, palette, mood and encounter wall. A rank is the stone
  * built for that difficulty; `cave` is a set of its own. Apart from `difficulty`, which picks the board. */
-export type Tileset = Difficulty | "cave"
+export type Tileset = Difficulty | "cave" | "sphinx"
+/** Which way a stair runs from where it stands. */
+export type StairGoes = "up" | "down"
+/** A stairhead's link to its peer on another floor: the shared `stairId` pairs the two. `goes` is written only where
+ * it differs from the default (a floor's entrance goes up, every other stair down); it is drawn and moves nothing. */
+export type StairLink = { stairId: string; goes?: StairGoes }
 export type SubSection = {
   /** The authored name for this path, if it has one — what a save files its cells under, in place of
    * the positional `s0`/`s0.1`. See SideSectionConstraint.label and cellIdentity.ts. */
@@ -542,9 +599,11 @@ export type SubSection = {
   difficulty: Difficulty
   /** The tileset this path is drawn in, in place of the floor's tileset or its own `difficulty`. */
   tileset?: Tileset
-  end: "treasure" | "staircase" | { stairId: string }
+  end: "treasure" | "staircase" | StairLink
   gate?: GateConfig
   endReward?: TreasureReward
+  /** A loot end placement left empty. It stays a loot end, so the carve never takes it for a free end to put a key in. */
+  lootEnd?: true
   rewards?: (TreasureReward | undefined)[]
   hidden?: boolean
   /** Isolates this section's cells from leftover maze edges, so a compact layout can't merge a shortcut around it. */
@@ -560,6 +619,16 @@ export type SubSection = {
   encountersByIndex?: Record<number, string | string[]>
   /** Per-node authored activity: 0-based room index → the activity that room is dressed for. */
   activitiesByIndex?: Record<number, ActivityId>
+  /** Per-node pass-through chamber: 0-based room index → a chamber in the gap after that room, dressed for the named
+   * activity, or for one the carve picks where `true`. */
+  chambersByIndex?: Record<number, ActivityId | true>
+  /** Every designed room the section names, parsed, keyed by name: the baked world carries them. */
+  prefabs?: Record<string, Prefab>
+  /** The counted designed rooms the section holds, every field filled in. `min` are required, `max` allowed; `central`
+   * is how deep into the walk they lean (0 the ends, 1 the middle). */
+  prefabPlacements?: { room: string; min: number; max: number; central: number }[]
+  /** Per-node designed room: 0-based room index → the name of the prefab that room is. */
+  prefabsByIndex?: Record<number, string>
   /** Per-node difficulty: 0-based room index → the tier that room builds at, else the section's `difficulty`. */
   difficultiesByIndex?: Record<number, Difficulty>
   /** `false` keeps generated loot out of this section's puzzle rooms (and its unauthored end); authored rewards stay. */
@@ -598,9 +667,9 @@ export type FloorConfig = {
   /** The tileset this floor is drawn in, in place of its `difficulty`; its paths inherit it. */
   tileset?: Tileset
   end: "treasure"
-  exitOrStaircase: "exit" | "none" | "staircase" | { stairId: string }
-  /** If set, the entrance room becomes an up-stairhead with this stairId. */
-  entrance?: "stairhead" | { stairId: string }
+  exitOrStaircase: "exit" | "none" | "staircase" | StairLink
+  /** If set, the entrance room becomes a stairhead with this stairId, going up unless its link says otherwise. */
+  entrance?: "stairhead" | StairLink
   sideSections: SideSection[]
   /** Pool of decoration kinds the main path's rooms are dressed from. */
   decorations?: DecorationKind[]
@@ -704,6 +773,12 @@ export type FloorConfig = {
    * `regionLayout`, `obstacles`, `controls`, `forks` and `barrierOrder` where the floor is assembled, so a
    * floor authoring `locks` may not author those itself: the contradiction is refused by name. */
   locks?: PlacedLock[]
+  /** The top-level side sections, by index, that hang outside the floor's lock as branches instead of standing on
+   * one of its corridors: the ones no layout of the lock fits. Written by the layout search, never by hand. */
+  outsideLock?: number[]
+  /** A corridor of the floor's lock may carry two side sections instead of one: set only where no layout fits even
+   * with every side path outside the lock. Written by the layout search, never by hand. */
+  corridorsTakeTwo?: true
   /** THE WEB'S DOORS ON GROUND NO LOCK OWNS, each asking for its `web:` key (src/game/webDoors.ts): laid on the
    * finished carve, so they move no wall, and left off it where no registered mod realises web sand. Placed by the
    * bake from the tier's web (docs/instructions/sand-pyramid.md). */
@@ -736,6 +811,19 @@ export type FloorConfig = {
   encountersByIndex?: Record<number, string | string[]>
   /** Per-node authored activity for the main path: 0-based room index → the activity that room is dressed for. */
   activitiesByIndex?: Record<number, ActivityId>
+  /** Per-node pass-through chamber on the main path: 0-based room index → a chamber in the gap after that room, dressed
+   * for the named activity, or for one the carve picks where `true`. */
+  chambersByIndex?: Record<number, ActivityId | true>
+  /** How many pass-through chambers the floor asks for, `chambersByIndex` among them. An intent: the carve seats
+   * as many as have room, the main path's gaps first, then its side paths, and never refuses the floor for the rest. */
+  chambers?: number
+  /** Every designed room the floor names, parsed, keyed by name: the baked world carries them. */
+  prefabs?: Record<string, Prefab>
+  /** The counted designed rooms the floor holds, every field filled in. `min` are required, `max` allowed; `central`
+   * is how deep into the walk they lean (0 the ends, 1 the middle). */
+  prefabPlacements?: { room: string; min: number; max: number; central: number }[]
+  /** Per-node designed room: 0-based room index → the name of the prefab that room is. */
+  prefabsByIndex?: Record<number, string>
   /** Per-node difficulty for the main path: 0-based room index → the tier that room builds at, else `difficulty`. */
   difficultiesByIndex?: Record<number, Difficulty>
   /** `false` keeps generated loot out of this floor's main-path puzzle rooms (and its unauthored end); authored rewards stay. */
@@ -930,6 +1018,13 @@ export type AssemblerReason =
   | { type: "plateNotPlaced"; plate: string }
   /** No carve found a back-walled bare node for a pipe's hole in its region. `hole` is the first left without one. */
   | { type: "pipeHoleNotPlaced"; hole: string }
+  /** A path's chambers authored after a puzzle found no free node in that puzzle's gap: `address` is the path,
+   * `seated` how many of them one attempt found room for. See FloorConfig.chambersByIndex. */
+  | { type: "chambersNotSeated"; address: string; wanted: number; seated: number }
+  /** Fewer of a designed room fitted the floor than its `min`: `room` is the prefab, `placed` how many one attempt
+   * fitted. A pinned room that fits nowhere wants 1, and `why` says what its node holds instead of the room, where
+   * something does. See FloorConfig.prefabPlacements. */
+  | { type: "prefabsNotPlaced"; room: string; wanted: number; placed: number; why?: string }
   /** The floor's mechanics (and sequence tiles) need more distinct glyphs than the six a mark can wear,
    * so a mark would be shared. `ids` are the ones left without a glyph, in authoring order. */
   | { type: "marksExhausted"; ids: string[] }
@@ -999,7 +1094,7 @@ export type AssemblerResult = { success: true; grid: FloorGrid; attempt: number 
 
 // ── Detector types ────────────────────────────────────────────────────────────
 
-export type DetectorMode = "compass" | "consumable" | "hiddenPassageway" | null
+export type DetectorMode = "compass" | "hiddenPassageway" | null
 
 // `cell` (row,col within the floor) is resolved only at compass level 3 — it needs a floor
 // assembly the lower levels don't pay for. See collection-and-detector-design.md §7.2.
@@ -1036,13 +1131,3 @@ export type CompassAccess = "open" | "locked" | "hidden" | "unknown"
 
 // A compass hit with its access verdict resolved against what the player currently holds.
 export type CompassHit = CompassResult & { access: CompassAccess; missingKeys?: readonly string[] }
-
-// A chest whose consumable was left behind, so the supplies detector can narrow its readout by level
-// (§7.2): L1 pyramid, L2 +floor, L3 +cell. `floorIdx` reads straight off the address; `cell` needs an
-// assembled floor to say where that address landed, so it is only there for the floor on screen.
-export type ConsumableResult = {
-  journeyId: string
-  address: string
-  floorIdx: number
-  cell?: { row: number; col: number }
-}

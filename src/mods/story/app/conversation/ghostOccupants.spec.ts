@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { ghostOccupant } from "./ghostOccupants"
+import { ghostOccupant, heardGhostOccupant } from "./ghostOccupants"
 
 const lines: Record<string, true> = { "x.1.ipi": true, "x.2.fez": true, "y.1.fez": true }
 const hasLine = (key: string) => lines[key] === true
@@ -21,5 +21,15 @@ describe(ghostOccupant, () => {
   it("shows nobody where only the living speak, or nothing is played", () => {
     expect(ghostOccupant("y", hasLine, unpainted)).toBeUndefined()
     expect(ghostOccupant(undefined, hasLine, unpainted)).toBeUndefined()
+  })
+})
+
+describe(heardGhostOccupant, () => {
+  it("stands nobody in the room until its scene has been heard", () => {
+    expect(heardGhostOccupant("x", {}, hasLine, unpainted)).toBeUndefined()
+  })
+
+  it("stands the ghost there once the scene has been heard", () => {
+    expect(heardGhostOccupant("x", { x: true }, hasLine, unpainted)).toMatchObject({ id: "ipi" })
   })
 })

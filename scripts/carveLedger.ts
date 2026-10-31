@@ -1,18 +1,31 @@
 import { createHash } from "crypto"
-import { existsSync, readFileSync } from "fs"
+import { existsSync, readFileSync, writeFileSync } from "fs"
 import { dirname, join, resolve } from "path"
 import { fileURLToPath } from "url"
+import type { LayoutNotFound, SidePathStage } from "../src/worldGen/carveSeedSearch"
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")
 export const LEDGER_PATH = join(root, "src/data/carveLedger.json")
 
-/** Floors the search tried and could not satisfy, by `journey#level#floor`. An entry holds only while its
- * `hash` still equals what the floor hashes to now, so a floor is skipped exactly as long as nothing that
- * could change the outcome has changed. */
-export type CarveLedger = Record<string, { hash: string; refusal: string }>
+/** What the search decided for a floor, by `journey#level#floor`, held only while its `hash` still equals what the
+ * floor hashes to now, so a decision stands exactly as long as nothing that could change it has changed.
+ * - `notFound`: the bounded search found no layout; the floor is not searched again.
+ * - `sidePaths`: the layout was found only at this later side-path stage (more side paths outside the lock, or two to
+ *   a corridor). Its hash covers the authoring alone (`stageHolds`): the pin is verified with it, and once the
+ *   authoring moves the floor is searched again from the most preferred stage, so it can take its side paths back. */
+export type CarveLedgerEntry =
+  | { kind: "notFound"; hash: string; result: LayoutNotFound }
+  | { kind: "sidePaths"; hash: string; sidePaths: SidePathStage }
+export type CarveLedger = Record<string, CarveLedgerEntry | undefined>
 
 export const readLedger = (): CarveLedger =>
   existsSync(LEDGER_PATH) ? JSON.parse(readFileSync(LEDGER_PATH, "utf8")) : {}
+
+export const writeLedger = (ledger: CarveLedger) =>
+  writeFileSync(
+    LEDGER_PATH,
+    JSON.stringify(Object.fromEntries(Object.entries(ledger).sort(([a], [b]) => a.localeCompare(b))), null, 2) + "\n"
+  )
 
 // The baked world is the search's own output, so it cannot be an input to what the search decides.
 const OUTPUTS = new Set([join(root, "src/data/generatedWorld.ts"), LEDGER_PATH])

@@ -604,4 +604,9 @@ describe("renderAscii", () => {
     expect(drawn.trim()).toBe("·─")
     expect(drawn).not.toContain("←")
   })
+
+  it("draws a pass-through chamber as a room of its own kind", () => {
+    const chamber: GridCell = { type: "room", roomType: "chamber", dirs: new Set(["e", "w"]), state: "reachable" }
+    expect(renderAscii(gridOf([[chamber]])).trim()).toBe("C")
+  })
 })

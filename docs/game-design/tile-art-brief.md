@@ -10,17 +10,18 @@ fifth rank from costing as much to draw as the first.
 
 ## The contract
 
-| Slot            | File                         | Size         | Anchor                                                                |
-| --------------- | ---------------------------- | ------------ | --------------------------------------------------------------------- |
-| Floor megatile  | `tiles/<rank>/floor.png`     | 448×448      | tiles both ways, world-aligned. `yarn make-seamless`                  |
-| Wall face       | `tiles/<rank>/wall-face.png` | 448×56       | tiles horizontally only; **shown at 448×28** — see below              |
-| Threshold sill  | `tiles/<rank>/threshold.png` | 56×12        | laid across the way through, at a rank seam                           |
-| Archway         | `tiles/<rank>/arch.png`      | 84×56        | middle transparent; jambs in the outer 14px each side                 |
-| Chamber prop    | `tiles/<rank>/<kind>.png`    | 56×84        | **bottom-anchored**; the top 28 is headroom, used only by tall things |
-| Multi-cell prop | `tiles/<rank>/<kind>.png`    | 126×84 (2×1) | as a prop, spanning its footprint: see below                          |
-| Wall item       | `tiles/<rank>/<kind>.png`    | 56×28        | painted on the face band                                              |
-| Floor scatter   | `tiles/<rank>/<kind>.png`    | 56×84        | flat on the floor, soft-edged; the PROP box, bottom-anchored          |
-| Shared          | `tiles/default/<name>.png`   | varies       | not a rank: the explorer, the scarab                                  |
+| Slot            | File                                 | Size         | Anchor                                                                |
+| --------------- | ------------------------------------ | ------------ | --------------------------------------------------------------------- |
+| Floor megatile  | `tiles/<rank>/floor.png`             | 448×448      | tiles both ways, world-aligned. `yarn make-seamless`                  |
+| Wall face       | `tiles/<rank>/wall-face.png`         | 448×56       | tiles horizontally only; **shown at 448×28** — see below              |
+| Threshold sill  | `tiles/<rank>/threshold.png`         | 56×12        | laid across the way through, at a rank seam                           |
+| Archway         | `tiles/<rank>/arch.png`              | 84×56        | middle transparent; jambs in the outer 14px each side                 |
+| Chamber prop    | `tiles/<rank>/<kind>.png`            | 56×84        | **bottom-anchored**; the top 28 is headroom, used only by tall things |
+| Multi-cell prop | `tiles/<rank>/<kind>.png`            | 126×84 (2×1) | as a prop, spanning its footprint: see below                          |
+| Wall item       | `tiles/<rank>/<kind>.png`            | 56×28        | painted on the face band                                              |
+| Floor scatter   | `tiles/<rank>/<kind>.png`            | 56×84        | flat on the floor, soft-edged; the PROP box, bottom-anchored          |
+| Shared          | `tiles/default/<name>.png`           | varies       | not a rank: the explorer, the scarab                                  |
+| Mechanism piece | `tiles/mechanism/<style>/<name>.png` | as its slot  | a lever, torch, plate, gate…: shared in `tiles/default/`, see below   |
 
 **A multi-cell prop covers `cols` × `rows` cells and stands `tall` cells higher** (the kind's
 `DECORATION_FOOTPRINTS` entry): 56 + 70 per extra column wide, 84 + 84 per extra row + 56 per `tall` high.
@@ -41,6 +42,13 @@ Fixed regardless of style: transparent background, an outline where a shape meet
 shadow under anything standing (that is what makes an object sit ON the ground in a top-down view, in any
 medium), and the megatiles tiling. A missing file falls back to `default/`, then to a placeholder glyph — so
 this list can land one file at a time and nothing breaks while it is half-drawn.
+
+**A mechanism piece is the same object on every floor, drawn in a STYLE.** The lever, torch, plate, pipe hole,
+sequence tile, gate, narrow passage, drop and sand lever are shared art in `tiles/default/`; a style repaints a
+piece so it reads on the floors that use it — a bone lever and a bone pillar on the cave's dark rock. Each tileset
+draws in one style (`MECHANISM_STYLE` in `src/app/SiteMap/mechanismStyle.ts`): `default`, `light`, `dark` or the
+nested `light/bone`. A piece resolves deepest style first and falls back one segment at a time — `light/bone`,
+then `light`, then `default`, then the placeholder — so a style needs only the pieces it changes.
 
 ## The camera — one angle for the whole set
 
@@ -403,7 +411,26 @@ tileset is its skin, so the shared kinds are the same slots as every rank's.
 
 `puddle` and `bones` are authored in the pool like `mat`, and are flat, so they draw on the lower part of the
 prop box; `bones` lies across two cells, and a room with no two free cells side by side stands a one-cell
-kind from its pool instead. The prompts are in `docs/instructions/repaint-queue.md`, "Cave and cavern".
+kind from its pool instead. Their masters are in `art/masters/`.
+
+## 4b. The Sphinx tileset
+
+`sphinx` is a tileset, not a rank: the inside of the Great Sphinx draws from `tiles/sphinx/`, warm, dim and still,
+lamplit with no daylight shaft. It is cut from the plateau's own bedrock, layered limestone swept clean of the sand
+that buries the outside, so nothing in it is laid: no slabs, no bricks, no joints. It has the four surfaces:
+
+| Surface            | Slot        | What it is                                                               |
+| ------------------ | ----------- | ------------------------------------------------------------------------ |
+| **floor**          | floor tile  | bedrock dressed flat, chisel strokes one way, soft strata, a little sand |
+| **wall face**      | face band   | the same rock cut straight down, soft layers worn back, hard ones proud  |
+| **threshold**      | sill        | a low step left standing in the living rock, worn by feet                |
+| **encounter wall** | whole panel | the rock wall with one broad rectangle dressed smooth, left plain        |
+
+Palette: floor `#8a7556`, wall `#b9a179` with top `#d8c49c` and shadow `#5e4c36`, outline `#2a2117`. The
+inscription itself is drawn by the reading encounter over the dressed rectangle, never painted into the wall, so
+the panel prompt forbids signs, carving and figures. The prompts are in `docs/instructions/repaint-queue.md`
+("The Sphinx — four"). Until they are painted the floor draws placeholder tiles and an encounter shows the card
+colour.
 
 ## 5. What has to be built for §3–§4
 

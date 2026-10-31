@@ -22,6 +22,7 @@ let earned: Perk[] = []
 vi.mock("@/app/SiteMap/perkContributions", () => ({ useMergedEarnedPerks: () => earned }))
 
 const { useTrapProgress } = await import("./useTrapProgress")
+const { trapDamage } = await import("@/mods/trap/game/trapHealth")
 
 // The trap-owned perks (§8.0.1) are derived from the treasures held, so holding the treasure IS
 // holding the perk — there is no grant to miss, and no banked number that can drift from it.
@@ -30,8 +31,8 @@ describe("trap perks derived from the treasures held", () => {
     earned = [{ type: "compass", level: 3 }]
     const { result } = renderHook(() => useTrapProgress())
     expect(result.current.maxHealth).toBe(6)
-    expect(result.current.consumableCarryCap).toBe(2)
-    expect(result.current.consumableDetectorLevel).toBe(0)
+    expect(result.current.armorStacks).toBe(0)
+    expect(result.current.trapInsightStacks).toBe(0)
   })
 
   it("max-health raises the cap by ½ heart per treasure carrying it", () => {
@@ -55,19 +56,17 @@ describe("trap perks derived from the treasures held", () => {
     expect(result.current.armorStacks).toBe(1)
   })
 
-  it("pack-mule raises the consumable carry cap to 4", () => {
-    earned = [{ type: "pack-mule" }]
-    const { result } = renderHook(() => useTrapProgress())
-    expect(result.current.consumableCarryCap).toBe(4)
-  })
+  it("a hit costs the trap damage, less with armor", async () => {
+    earned = []
+    const bare = renderHook(() => useTrapProgress())
+    await act(async () => bare.result.current.takeTrapDamage())
+    const bareLoss = 6 - bare.result.current.currentHealth
+    expect(bareLoss).toBe(trapDamage(0))
 
-  it("takes the best consumable-detector level, so a lower one never demotes you", () => {
-    earned = [
-      { type: "consumable-detector", level: 3 },
-      { type: "consumable-detector", level: 1 },
-    ]
-    const { result } = renderHook(() => useTrapProgress())
-    expect(result.current.consumableDetectorLevel).toBe(3)
+    earned = [{ type: "armor" }]
+    const armored = renderHook(() => useTrapProgress())
+    await act(async () => armored.result.current.takeTrapDamage())
+    expect(6 - armored.result.current.currentHealth).toBe(trapDamage(1))
   })
 
   it("ignores perks it does not own", () => {
@@ -84,7 +83,6 @@ describe("trap perks derived from the treasures held", () => {
     earned = [{ type: "max-health" }, { type: "max-health" }]
     const { result, rerender } = renderHook(() => useTrapProgress())
     expect(result.current.maxHealth).toBe(8)
-    await act(async () => result.current.useConsumable("oil")) // no oil held; health stays at its start
     expect(result.current.currentHealth).toBe(6)
 
     // The perk table is retuned and those treasures no longer carry max-health.
@@ -92,5 +90,35 @@ describe("trap perks derived from the treasures held", () => {
     rerender()
     expect(result.current.maxHealth).toBe(6)
     expect(result.current.currentHealth).toBeLessThanOrEqual(6)
+  })
+})
+
+describe("drinking a waterskin", () => {
+  it("restores one heart after trap hits", async () => {
+    earned = []
+    const { result } = renderHook(() => useTrapProgress())
+    await act(async () => result.current.takeTrapDamage())
+    await act(async () => result.current.takeTrapDamage())
+    expect(result.current.currentHealth).toBe(2)
+    await act(async () => result.current.drinkWaterskin())
+    expect(result.current.currentHealth).toBe(4)
+  })
+
+  it("restores two hearts while a treasure carrying pack-mule is held", async () => {
+    earned = [{ type: "pack-mule" }]
+    const { result } = renderHook(() => useTrapProgress())
+    await act(async () => result.current.takeTrapDamage())
+    await act(async () => result.current.takeTrapDamage())
+    expect(result.current.currentHealth).toBe(2)
+    await act(async () => result.current.drinkWaterskin())
+    expect(result.current.currentHealth).toBe(6)
+  })
+
+  it("changes nothing at full health", async () => {
+    earned = [{ type: "pack-mule" }]
+    const { result } = renderHook(() => useTrapProgress())
+    expect(result.current.currentHealth).toBe(result.current.maxHealth)
+    await act(async () => result.current.drinkWaterskin())
+    expect(result.current.currentHealth).toBe(result.current.maxHealth)
   })
 })

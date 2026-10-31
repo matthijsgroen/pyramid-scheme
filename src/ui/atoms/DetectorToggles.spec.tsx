@@ -7,9 +7,8 @@ afterEach(cleanup)
 
 const props = {
   activeDetector: null,
-  titles: { compass: "Compass", consumable: "Supplies", hiddenPassageway: "Corridors" },
+  titles: { compass: "Compass", hiddenPassageway: "Corridors" },
   compassLevel: 0,
-  consumableDetectorLevel: 0,
   detectionLevel: 0,
   onSetDetector: () => {},
 }
@@ -25,14 +24,12 @@ describe("DetectorToggles visibility", () => {
   it("shows only the unlocked detectors", () => {
     render(<DetectorToggles {...props} compassLevel={1} />)
     expect(screen.getByTitle("Compass")).toBeTruthy()
-    expect(screen.queryByTitle("Supplies")).toBeNull()
     expect(screen.queryByTitle("Corridors")).toBeNull()
   })
 
-  it("shows all three when all are unlocked", () => {
-    render(<DetectorToggles {...props} compassLevel={1} consumableDetectorLevel={2} detectionLevel={3} />)
+  it("shows both when both are unlocked", () => {
+    render(<DetectorToggles {...props} compassLevel={1} detectionLevel={3} />)
     expect(screen.getByTitle("Compass")).toBeTruthy()
-    expect(screen.getByTitle("Supplies")).toBeTruthy()
     expect(screen.getByTitle("Corridors")).toBeTruthy()
   })
 })

@@ -59,12 +59,11 @@ so a provider reads whatever state it owns without core learning what that state
 
 Core registers the actions that belong to the map itself — a staircase's transit, the way out, and a
 switch room's reopen, which reads `FamilyMeta` rather than any mod id. A mod registers its own: the
-trap mod owns the consumable a player had no room to carry.
+shop mod owns the stock a player has bought.
 
 This is the same shape as the owned-key sources and held-key providers that already exist, and it
 earns its place for one reason beyond tidiness: it is what stops core naming a mod's concepts.
-`useSiteNavigation` currently reaches into `cell.stock` with the shop's purchased slots and into
-`reward.type === "consumable"` with the trap mod's skipped list. Both leave.
+`useSiteNavigation` currently reaches into `cell.stock` with the shop's purchased slots, which leaves.
 
 ## What the player sees
 

@@ -16,7 +16,6 @@ const meta = {
         unknown: "Might not be reachable yet — it's inside a tomb or for sale",
       },
       more: count => `+${count} more`,
-      noSkippedChests: "No skipped chests",
       corridorNearby: "A hidden corridor is close by",
       corridorNoneNearby: "No hidden corridor close by",
       corridorOnFloor: "A hidden corridor waits on this floor",
@@ -26,11 +25,9 @@ const meta = {
     },
     activeDetector: null,
     compassLevel: 0,
-    consumableDetectorLevel: 0,
     detectionLevel: 0,
     compassTarget: null,
     compassResults: [],
-    consumableResults: [],
     journeyName: (id: string) => ({ starter_1: "Sphinx Dawn", starter_2: "Papyrus Route" })[id] ?? id,
     compassTargetLabel: () => "𓎗",
   },
@@ -82,12 +79,6 @@ const COMPASS_HITS: CompassHit[] = [
   },
 ]
 
-const CONSUMABLE_HITS = [
-  { journeyId: "starter_1", address: "s#0/4@rencounter", floorIdx: 0, cell: { row: 3, col: 4 } },
-  { journeyId: "starter_1", address: "s#0/5@rencounter", floorIdx: 0, cell: { row: 5, col: 1 } },
-  { journeyId: "junior_1", address: "s#1/2@rencounter", floorIdx: 1, cell: { row: 2, col: 5 } },
-]
-
 // L1 collapses every hit to its pyramid (one line per journey).
 export const CompassLevel1: Story = {
   args: { compassLevel: 1, activeDetector: "compass", compassTarget: "p10", compassResults: COMPASS_HITS },
@@ -98,18 +89,9 @@ export const CompassLevel3: Story = {
   args: { compassLevel: 3, activeDetector: "compass", compassTarget: "p10", compassResults: COMPASS_HITS },
 }
 
-export const ConsumableLevel1: Story = {
-  args: { consumableDetectorLevel: 1, activeDetector: "consumable", consumableResults: CONSUMABLE_HITS },
-}
-
-export const ConsumableLevel3: Story = {
-  args: { consumableDetectorLevel: 3, activeDetector: "consumable", consumableResults: CONSUMABLE_HITS },
-}
-
 export const AllModes: Story = {
   args: {
     compassLevel: 2,
-    consumableDetectorLevel: 2,
     detectionLevel: 2,
     activeDetector: "hiddenPassageway",
   },

@@ -26,8 +26,6 @@ export const TUTORIAL_LINES: Record<string, PoseChat[]> = {
   pyramidIntro: asExplorer(pose(["pyramidIntro", "pyramidIntro2"])),
   levelCompleted: pose("pointUp", ["levelCompleted"]),
   expeditionCompleted: pose("glassesPoint", ["expeditionCompleted", "expeditionCompleted2"]),
-  collectionIntro: pose(["collectionIntro", "collectionIntro2", "collectionIntro3"]),
-  tombIntro: pose(["tombIntro"], "pointUp", ["tombIntro2"]),
   // The writing is only talked about once the tableau is on screen.
   tombTutorial: pose(["tombTutorial", "tombTutorial2", "tombTutorial3"], "pointUp", ["tombTutorial4"]),
   hieroglyphUnlock: pose(["hieroglyphUnlock"], "pointUp", ["hieroglyphUnlock2"]),
@@ -36,6 +34,7 @@ export const TUTORIAL_LINES: Record<string, PoseChat[]> = {
   notEnoughHieroglyphs: pose(["notEnoughHieroglyphs"], "pointUp", ["notEnoughHieroglyphs2"]),
   tombLoot: pose("glassesPoint", ["tombLoot"]),
   mapPiece: pose(["mapPiece", "mapPiece2"], "pointUp", ["mapPiece3"]),
+  mapComplete: pose(["mapComplete", "mapComplete2"], "pointUp", ["mapComplete3"]),
   pyramidBlockedBlocks: pose(
     ["pyramidBlockedBlocks", "pyramidBlockedBlocks2", "pyramidBlockedBlocks3"],
     "glassesPoint",

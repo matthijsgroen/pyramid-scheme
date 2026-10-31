@@ -76,3 +76,6 @@ export const LESSONS = parsedAll(LESSON_TEXTS)
 /** A lock by any name it answers to. */
 export const findLockEntry = (name: string): LockEntry | undefined =>
   LOCK_ENTRIES.find(entry => lockAliases(entry).includes(name))
+
+/** Whether the lock going by `name` is one of the single-mechanic lessons. */
+export const isLessonLock = (name: string): boolean => findLockEntry(name)?.lesson === true

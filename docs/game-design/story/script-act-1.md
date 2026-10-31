@@ -90,8 +90,8 @@ the map they both overpaid for, the fez nobody explains, and Fez knowing what th
 **Fez knows too much about the Sphinx** — the first of one tell an act (`cast.md`). It reads as a
 merchant showing off, and it is not.
 
-After the meeting the tutorials are his: `levelCompleted`, `mapPiece*`, `pyramidBlockedBlocks*`,
-`tombIntro*` and `tombTutorial*` — in the same voice, and the ones that carry a rule say all of it.
+After the meeting the tutorials are his: `levelCompleted`, `mapPiece*`, `mapComplete*`, `pyramidBlockedBlocks*`
+and `tombTutorial*` — in the same voice, and the ones that carry a rule say all of it.
 
 ## `starter_2` — Papyrus Merchant's Route · the paper trail
 

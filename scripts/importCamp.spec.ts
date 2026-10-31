@@ -3,7 +3,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync } from "fs"
 import { tmpdir } from "os"
 import { join } from "path"
 import sharp from "sharp"
-import { importCamp } from "./importCamp"
+import { campRoots, importCamp } from "./importCamp"
 
 let dir = ""
 beforeEach(() => {
@@ -196,5 +196,32 @@ describe("importCamp", () => {
 
     const feet = JSON.parse(readFileSync(join(dir, "assets", "feet.json"), "utf8"))
     expect(feet.chest).toBeCloseTo(250 / 400, 2)
+  })
+})
+
+describe("campRoots", () => {
+  it("defaults to the camp folder and its masters", () => {
+    expect(campRoots()).toEqual({ outRoot: "src/assets/camp", masterRoot: "art/masters/camp", icon: false })
+  })
+  it("keeps the master under the same sub-folder as the shipped file", () => {
+    expect(campRoots("src/assets/camp/parts/")).toEqual({
+      outRoot: "src/assets/camp/parts",
+      masterRoot: "art/masters/camp/parts",
+      icon: true,
+    })
+  })
+  it("keeps the master in a folder of its own name for a folder outside the camp's", () => {
+    expect(campRoots("src/assets/sellables")).toEqual({
+      outRoot: "src/assets/sellables",
+      masterRoot: "art/masters/camp/sellables",
+      icon: true,
+    })
+  })
+})
+
+describe("importCamp as an icon", () => {
+  it("writes no contact shadow", async () => {
+    const { shadow } = await importCamp({ ...options(await magentaWithRedSquare()), icon: true })
+    expect(shadow).toBeUndefined()
   })
 })

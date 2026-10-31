@@ -1,27 +1,30 @@
 import type { SiteConfig, Tier, TreasureReward } from "./types"
-import type { AssemblerResult, FloorConfig as GameFloorConfig } from "../game/siteTypes"
+import type { AssemblerResult, FloorConfig as GameFloorConfig, FloorGrid } from "../game/siteTypes"
 import type { ResolveEncounter, ResolveKeyRequirements } from "../game/siteAssembler"
 import { assembleFloor, defaultResolveEncounter } from "../game/siteAssembler"
 import type { ResolveOneWayRealisation } from "../game/oneWayRealisation"
 import type { ResolvePassageRealisation } from "../game/passageRealisation"
 import type { ResolveRegionBarrierRealisation } from "../game/regionBarrierRealisation"
-import { collectReachableKeys } from "../game/siteValidator"
+import { collectReachableKeys, reachableFrom } from "../game/siteValidator"
 import { mechanismGatesOf } from "../game/mechanismDoors"
-import { hashString } from "../support/hashString"
+import { floorAssemblySeed, persistentInteriorSeed } from "../game/siteSeed"
 
 // Every piece of currency knowledge reachability needs, injected by the caller (placeFragments,
-// which assembles it from the registered mod currencies + the tomb-treasure mod's reachability
-// support). Reachability itself names NO currency — not map pieces, not tomb keys, not the tier
-// ladder. All four hooks default to "not mine" so a caller with no mods (or a test) still works:
-// an unknown bucket thresholds at 1, an unrecognized reward harvests nothing, a journey has no
-// entry lock, a tier has no unlock lock (so everything is reachable).
-//   - thresholdFor:     a bucket's gate threshold (held count that satisfies it).
-//   - bucketForReward:  which bucket a harvestable reward feeds (a mod maps its own reward type).
-//   - journeyEntryLock: the (bucket, threshold) that gates ENTERING a journey — e.g. a tomb needs
-//                       N of the map-piece currency. undefined = no currency lock (pyramids).
-//   - tierUnlockBucket: the buckets whose possession unlocks a difficulty tier globally (the
-//                       ladder) — holding ANY ONE of them is enough. undefined/empty = that tier
-//                       has no lock (e.g. the first tier).
+// which assembles it from the registered mod currencies + every mod's reachability support).
+// Reachability itself names NO currency — not map pieces, not tomb keys, not the tier ladder.
+// Every hook defaults to "not mine" so a caller with no mods (or a test) still works: an unknown
+// bucket thresholds at 1, an unrecognized reward harvests nothing, a journey has no entry lock,
+// a tier has no unlock group (so everything is reachable).
+//   - thresholdFor:      a bucket's gate threshold (held count that satisfies it).
+//   - bucketForReward:   which bucket a harvestable reward feeds (a mod maps its own reward type).
+//   - journeyEntryLocks: the (bucket, threshold) pairs that gate ENTERING a journey — e.g. a tomb
+//                        needs N of the map-piece currency. Every lock must hold: each mod adds its
+//                        own requirement, and no mod's lock stands in for another's. Empty = open.
+//   - tierUnlockGroups:  the groups of buckets that unlock a difficulty tier globally (the ladder).
+//                        AND across groups, OR within a group: every group needs one held bucket,
+//                        so a mod offers alternatives within its own group but never waives another
+//                        mod's. No groups = that tier has no lock (e.g. the first tier).
+export type JourneyEntryLock = { bucket: string; threshold: number }
 export type ReachabilitySupport = {
   thresholdFor?: (bucket: string) => number | undefined
   /** Binds each one-way to its realisation, so a floor binding none is refused here as it is in play. */
@@ -35,10 +38,27 @@ export type ReachabilitySupport = {
   alsoHarvests?: (reward: TreasureReward) => string[]
   /** Facts a held count stands for besides its bucket: a pot holding n of its levers holds each of its first n stops. */
   factsForCount?: (bucket: string, count: number) => string[]
-  journeyEntryLock?: (journeyId: string) => { bucket: string; threshold: number } | undefined
-  tierUnlockBucket?: (tier: Tier) => string[] | undefined
+  journeyEntryLocks?: (journeyId: string) => readonly JourneyEntryLock[]
+  tierUnlockGroups?: (tier: Tier) => readonly (readonly string[])[]
+  /**
+   * The fact a hidden section needs: its cells are ground to the strict walk only while this fact is held, and a
+   * walk that stops at one discovers the fact as a lock. Absent, nothing can reveal a hidden section in play, so
+   * the strict walk never enters one and discovers no lock for it. The permissive walk always walks them open: it
+   * answers what is ever obtainable.
+   */
+  hiddenRequirement?: () => string
 }
 const noSupport: ReachabilitySupport = {}
+
+/** How a walk treats what it reaches, beyond which facts it holds. */
+export type ReachOptions = {
+  /**
+   * Which pieces of a reached shop's stock count as held. Absent, every piece does the moment its shop is reached. Given,
+   * a piece it refuses is listed as stock and never harvested, and stock stays out of the reached rewards: the walk
+   * a player stands in who has bought only some of what is for sale.
+   */
+  stockHeld?: (reward: TreasureReward) => boolean
+}
 
 // No default resolver here — this module stays within src/worldGen/'s own dependency rules
 // (data/, game/ only) same as assembleFloor itself never importing the real resolveEncounter.
@@ -59,7 +79,7 @@ const noKeyRequirements: ResolveKeyRequirements = () => undefined
 // journey's entry threshold — reduces to one check: held count of bucket X >= that bucket's
 // own threshold. The thresholds are all mod-supplied (`support.thresholdFor`): tomb-keys/
 // tier-unlock perks default to 1 (own it once, done); hieroglyphs threshold at their fragment
-// count; a journey's entry threshold rides `journeyEntryLock`, not this map. `OwnedCounts` is
+// count; a journey's entry thresholds ride `journeyEntryLocks`, not this map. `OwnedCounts` is
 // the one input type this whole module takes; `deriveOwnedFacts` is the one place raw counts
 // become the booleans the fine per-floor BFS (siteValidator.ts, genuinely unchanged — every
 // room-level check there is threshold-1 by contract) actually consumes.
@@ -86,10 +106,11 @@ export type FloorRef = SiteRef & { floorIndex: number }
 
 export const floorKey = (ref: FloorRef): string => `${ref.journeyId}#${ref.levelIndex}#${ref.floorIndex}`
 
-// Reachability only depends on gate/key structure, which the FloorConfig DSL fixes
-// regardless of seed — the maze shape assembleFloor rolls per seed doesn't change which
-// keys gate which transitions. Any deterministic seed is a representative instance.
-const defaultSeedFor = (ref: SiteRef): number => hashString(`${ref.journeyId}:${ref.levelIndex}`)
+// The seed a floor that carries no `seed` of its own is carved at: floor 0's seed at the address, the seed play
+// carves an unstamped floor at (floor i adds i). Every floor of a built world carries the seed its layout was
+// picked at (configBuilder.ts, `pickLayout`), and that pin is what the walk carves.
+const defaultSeedFor = (ref: SiteRef): number =>
+  floorAssemblySeed(persistentInteriorSeed(ref.journeyId), ref.levelIndex + 1, 0)
 
 // Grid topology (gate/key structure, room layout) depends only on (siteId, floorIndex,
 // seed), never on which keys are currently owned — assembleFloor is deterministic given
@@ -119,14 +140,79 @@ export type SiteReachability = {
   // (keys-and-locks-solver.md, "Structure, then loot": the wish was always in the
   // structure, this is the walk noticing it isn't satisfiable yet).
   discoveredLocks: ReadonlySet<string>
+  /** The floors each discovered lock stands on: the floor whose walk ran into it. */
+  lockFloors: ReadonlyMap<string, ReadonlySet<number>>
   // Every reward sitting in this site's reachable rooms, verbatim and un-bucketed — a room's own
   // `reward` plus each piece of a shop's `stock`. `harvestedCounts` above answers "which locks does
   // the walk now satisfy", so it only sees rewards some currency claims a bucket for; this answers
   // "how much of a thing is out there at all", which is what a collection's target count is
   // measured against. Core reads no reward type here — a consumer counts its own.
   reachableRewards: readonly TreasureReward[]
+  /** Every piece of stock in this site's reachable shops, held or not. */
+  reachableStock: readonly TreasureReward[]
   /** Whether the site's way out is reached: the exit of the floor its main path leaves by. */
   exit: boolean
+}
+
+const isHidden = (grid: FloorGrid, at: string): boolean => {
+  const [r, c] = at.split(",").map(Number)
+  const cell = grid.cells[r][c]
+  return (cell.type === "room" || cell.type === "corridor") && !!cell.hidden
+}
+
+/** What carving a floor for a walk needs besides the floor itself. */
+export type FloorCarve = {
+  resolveRequirements?: ResolveKeyRequirements
+  cache?: FloorAssemblyCache
+  support?: ReachabilitySupport
+  resolveEncounter?: ResolveEncounter
+}
+
+/**
+ * One floor of a site, carved as play carves it: at its layout's pin where it carries one, under the journey id. The
+ * cache is keyed on the seed and packing carved at, so a floor re-pinned between two calls is never read off the old
+ * carve. A floor that will not assemble is a data bug, never an unreachable floor, so it throws.
+ */
+export const carveSiteFloor = (
+  ref: SiteRef,
+  site: SiteConfig,
+  i: number,
+  seed: number = defaultSeedFor(ref),
+  {
+    resolveRequirements = noKeyRequirements,
+    cache,
+    support = noSupport,
+    resolveEncounter = defaultResolveEncounter,
+  }: FloorCarve = {}
+): Extract<AssemblerResult, { success: true }> => {
+  const siteId = `${ref.journeyId}:${ref.levelIndex}`
+  // worldGen's FloorConfig (this module's SiteConfig type) is a slightly looser mirror
+  // of game/siteTypes.ts's — real authored data only ever assigns values the stricter
+  // type accepts too, so this cast is safe (see the two files' own "mirrors" comments).
+  const floorSeed = site[i].seed ?? seed + i
+  const cacheKey = `${siteId}#${i}#${floorSeed}#${site[i].packing ?? ""}`
+  let result = cache?.get(cacheKey)
+  if (!result) {
+    // Carved under the journey id, as play and the bake carve it: ids and hashes inside the floor derive from it.
+    result = assembleFloor(ref.journeyId, site[i] as GameFloorConfig, floorSeed, resolveEncounter, {
+      resolveKeyRequirements: resolveRequirements,
+      floorRef: { journeyId: ref.journeyId, levelIndex: ref.levelIndex, floorIndex: i },
+      ...(support.resolveOneWay ? { resolveOneWay: support.resolveOneWay } : {}),
+      ...(support.resolveRegionBarrier ? { resolveRegionBarrier: support.resolveRegionBarrier } : {}),
+      ...(support.resolvePassage ? { resolvePassage: support.resolvePassage } : {}),
+    })
+    cache?.set(cacheKey, result)
+  }
+  // A floor carrying its layout's pin is carved here as the runtime carves it; one carrying none is carved at
+  // the seed its address gives it, the one play carves it at.
+  if (!result.success) {
+    throw new Error(
+      `Floor ${floorKey({ ...ref, floorIndex: i })} cannot be assembled (seed ${floorSeed}): ${JSON.stringify(
+        result.reasons
+      )}`
+    )
+  }
+  return result
 }
 
 // Reachable floor indices within one site, given already-held facts (plus any tombKey
@@ -151,66 +237,74 @@ export const reachableFloorsInSite = (
   resolveEncounter: ResolveEncounter = defaultResolveEncounter,
   // The permissive bracket (siteValidator.ts's `reachableFrom`): authored doors stand open, so the
   // walk answers "is this ever obtainable" rather than "is it open right now".
-  authoredKeysHeld = false
+  authoredKeysHeld = false,
+  // A fact the walk never holds, not even from a key standing in reach on this site (the gate walk).
+  withheld?: string,
+  { stockHeld }: ReachOptions = {}
 ): SiteReachability => {
-  const siteId = `${ref.journeyId}:${ref.levelIndex}`
   const reachable = new Set<number>([0])
   let keys = new Set(ownedFacts)
+  if (withheld !== undefined) keys.delete(withheld)
   const harvestedCounts = new Map<string, number>()
   const harvest = (id: string) => harvestedCounts.set(id, (harvestedCounts.get(id) ?? 0) + 1)
   const discoveredLocks = new Set<string>()
+  const lockFloors = new Map<string, Set<number>>()
+  const discover = (id: string, floorIndex: number) => {
+    discoveredLocks.add(id)
+    lockFloors.set(id, (lockFloors.get(id) ?? new Set()).add(floorIndex))
+  }
   const reachableRewards: TreasureReward[] = []
+  const reachableStock: TreasureReward[] = []
+  const harvestBuckets = (reward: TreasureReward) => {
+    const bucket = support.bucketForReward?.(reward)
+    if (bucket) harvest(bucket)
+    for (const also of support.alsoHarvests?.(reward) ?? []) harvest(also)
+  }
+  const harvestReward = (reward: TreasureReward) => {
+    harvestBuckets(reward)
+    reachableRewards.push(reward)
+  }
+  const harvestStock = (reward: TreasureReward) => {
+    reachableStock.push(reward)
+    if (!stockHeld) harvestReward(reward)
+    else if (stockHeld(reward)) harvestBuckets(reward)
+  }
   const exitFloor = site.findIndex(floor => floor.exitOrStaircase === "exit")
   let exit = false
+  const hiddenRequirement = support.hiddenRequirement?.()
 
   for (let i = 0; i < site.length; i++) {
     if (!reachable.has(i)) continue
 
-    // worldGen's FloorConfig (this module's SiteConfig type) is a slightly looser mirror
-    // of game/siteTypes.ts's — real authored data only ever assigns values the stricter
-    // type accepts too, so this cast is safe (see the two files' own "mirrors" comments).
-    const cacheKey = `${siteId}#${i}#${seed + i}`
-    let result = cache?.get(cacheKey)
-    if (!result) {
-      result = assembleFloor(siteId, site[i] as GameFloorConfig, seed + i, resolveEncounter, {
-        resolveKeyRequirements: resolveRequirements,
-        floorRef: { journeyId: ref.journeyId, levelIndex: ref.levelIndex, floorIndex: i },
-        ...(support.resolveOneWay ? { resolveOneWay: support.resolveOneWay } : {}),
-        ...(support.resolveRegionBarrier ? { resolveRegionBarrier: support.resolveRegionBarrier } : {}),
-        ...(support.resolvePassage ? { resolvePassage: support.resolvePassage } : {}),
-      })
-      cache?.set(cacheKey, result)
-    }
-    // A floor that won't assemble used to be skipped silently, which quietly reclassified it as
-    // unreachable: generation then placed no content behind it and reported nothing, so
-    // unenterable floors shipped unnoticed. It's a data bug, so say so and stop. Note this
-    // assembles at `defaultSeedFor`, NOT the seed the runtime uses (game/siteSeed.ts) — a floor
-    // passing here says nothing about what players get, which is what worldFloorAssembly.verify.ts
-    // is for.
-    if (!result.success) {
-      throw new Error(
-        `Floor ${floorKey({ ...ref, floorIndex: i })} cannot be assembled (seed ${seed + i}): ${JSON.stringify(
-          result.reasons
-        )}`
-      )
-    }
+    // The floor the player walks; one that won't assemble stops the walk rather than place nothing behind it.
+    const result = carveSiteFloor(ref, site, i, seed, { resolveRequirements, cache, support, resolveEncounter })
 
+    const hiddenOpen = authoredKeysHeld || (hiddenRequirement !== undefined && keys.has(hiddenRequirement))
+    const mechanismGates = mechanismGatesOf(result.grid)
     const {
       keys: expandedKeys,
       reachable: reachableHere,
       blockedRequirements,
-    } = collectReachableKeys(
-      result.grid,
-      result.grid.entrancePos,
-      keys,
+    } = collectReachableKeys(result.grid, result.grid.entrancePos, keys, {
       authoredKeysHeld,
-      mechanismGatesOf(result.grid)
-    )
+      mechanismGates,
+      withheld,
+      hiddenOpen,
+    })
     keys = expandedKeys
+    // The hidden requirement is a lock here when holding it would let this walk onto a hidden cell.
+    if (
+      !hiddenOpen &&
+      hiddenRequirement !== undefined &&
+      [...reachableFrom(result.grid, result.grid.entrancePos, keys, { mechanismGates })].some(
+        at => isHidden(result.grid, at) && !reachableHere.has(at)
+      )
+    )
+      discover(hiddenRequirement, i)
     if (i === exitFloor && reachableHere.has(`${result.grid.exitPos[0]},${result.grid.exitPos[1]}`)) exit = true
     // A gate a mechanism of this floor owns is never blocking here (the walk takes the floor's own lock as
     // sound), so only a key gate, or a floor key such a gate also lists, is a lock the worklist can see.
-    for (const id of blockedRequirements) discoveredLocks.add(id)
+    for (const id of blockedRequirements) discover(id, i)
 
     for (let r = 0; r < result.grid.rows; r++) {
       for (let c = 0; c < result.grid.cols; c++) {
@@ -221,15 +315,12 @@ export const reachableFloorsInSite = (
         // hieroglyph fragment → hieroglyph:<id>). Core names none.
         //
         // A room's own reward and every piece of a shop's stock are both loot standing in a
-        // reachable room, so both land in `reachableRewards`. Only harvesting reads buckets;
-        // that list stays raw for whoever counts its own kind.
-        if (cell.reward) {
-          const bucket = support.bucketForReward?.(cell.reward)
-          if (bucket) harvest(bucket)
-          for (const also of support.alsoHarvests?.(cell.reward) ?? []) harvest(also)
-          reachableRewards.push(cell.reward)
-        }
-        for (const stocked of cell.stock ?? []) if (stocked) reachableRewards.push(stocked)
+        // reachable room. A stock piece counts as held the moment its shop is reached, unless the
+        // caller says which pieces are held (`stockHeld`): whether the player can afford one is the
+        // economy guard's question (it owns money), not this walk's. Only harvesting reads buckets;
+        // the rewards and stock lists stay raw for whoever counts its own kind.
+        if (cell.reward) harvestReward(cell.reward)
+        for (const stocked of cell.stock ?? []) if (stocked) harvestStock(stocked)
       }
     }
 
@@ -246,7 +337,7 @@ export const reachableFloorsInSite = (
     }
   }
 
-  return { floors: reachable, harvestedCounts, discoveredLocks, reachableRewards, exit }
+  return { floors: reachable, harvestedCounts, discoveredLocks, lockFloors, reachableRewards, reachableStock, exit }
 }
 
 /**
@@ -261,18 +352,23 @@ export const isOrderedJourney = (sites: readonly SiteConfig[]): boolean =>
     )
   )
 
-// Global scope: a tier is unlocked when it has no unlock locks (e.g. the first tier), or when ANY
-// ONE of the mod-supplied unlock buckets for it is held — so a player who finds just one of a
-// tier's several unlock treasures already has full entry, same as when there was only ever one.
-// Core names no specific tier-unlock key — the ladder is `support.tierUnlockBucket`'s data (see
-// ReachabilitySupport).
-export const isTierUnlocked = (tier: Tier, ownedFacts: ReadonlySet<string>, support: ReachabilitySupport): boolean => {
-  const buckets = support.tierUnlockBucket?.(tier)
-  return !buckets?.length || buckets.some(b => ownedFacts.has(b))
-}
+// Global scope: a tier is unlocked when every one of its mod-supplied groups has a held bucket.
+// AND across groups (each contributing mod's requirement must hold), OR within a group (a player
+// who finds any one of a tomb's several unlock treasures has that requirement met). No groups
+// (e.g. the first tier) = open. Core names no specific tier-unlock key — the ladder is
+// `support.tierUnlockGroups`'s data (see ReachabilitySupport).
+export const unmetTierGroups = (
+  tier: Tier,
+  ownedFacts: ReadonlySet<string>,
+  support: ReachabilitySupport
+): (readonly string[])[] =>
+  (support.tierUnlockGroups?.(tier) ?? []).filter(group => !group.some(b => ownedFacts.has(b)))
+
+export const isTierUnlocked = (tier: Tier, ownedFacts: ReadonlySet<string>, support: ReachabilitySupport): boolean =>
+  unmetTierGroups(tier, ownedFacts, support).length === 0
 
 // A journey carries only its tier; whether entering it needs a currency threshold (a tomb's map
-// pieces) is `support.journeyEntryLock`'s data, not a field here — core names no currency.
+// pieces) is `support.journeyEntryLocks`'s data, not a field here — core names no currency.
 export type JourneyMeta = { tier: Tier }
 
 export type ReachabilityResult = {
@@ -287,15 +383,24 @@ export type ReachabilityResult = {
   // tableau requirement, or a journey-scoped piecesRequired shortfall for a tomb whose tier
   // is unlocked but isn't enterable yet. The worklist's queue is seeded and grown from this.
   discoveredLocks: ReadonlySet<string>
+  /** Where each discovered lock stands: `<journey> level <n> floor <f>`, or `<journey> entrance` for an entry lock. */
+  discoveredAt: ReadonlyMap<string, readonly string[]>
   // Every reward standing in the reachable area this call computed, across every journey — see
   // SiteReachability.reachableRewards. A collection's target count is checked against this: a
   // count of a kind, not a count of the locks it opens.
   reachableRewards: readonly TreasureReward[]
+  /** Every piece of stock in the reachable shops, held or not. */
+  reachableStock: readonly TreasureReward[]
   /** The sites whose way out is reached, as `${journeyId}#${levelIndex}`. */
   exitsReached: ReadonlySet<string>
+  /** The journeys walked: tier open and every entry lock held. */
+  enteredJourneys: ReadonlySet<string>
+  /** The walked sites with a way out the walk never reaches, as `<journey> level <n>`. */
+  sitesNeverLeft: readonly string[]
 }
 
-const ALL_TIERS: Tier[] = ["starter", "junior", "expert", "master", "wizard"]
+// The tiers bottom to top: the ladder a player climbs, each tier opened from the one below.
+export const TIER_LADDER: readonly Tier[] = ["starter", "junior", "expert", "master", "wizard"]
 
 // The whole-world pass: every reachable floor of every enterable journey's sites, all
 // against the SAME shared `ownedCounts` snapshot — which is exactly what lets a key earned
@@ -314,30 +419,46 @@ export const computeReachability = (
   support: ReachabilitySupport = noSupport,
   resolveEncounter: ResolveEncounter = defaultResolveEncounter,
   // The permissive bracket, passed down to every site's walk — see reachableFloorsInSite.
-  authoredKeysHeld = false
+  authoredKeysHeld = false,
+  // A fact never held this call, whatever the counts or the sites' own keys say (the gate walk).
+  withheld?: string,
+  options: ReachOptions = {}
 ): ReachabilityResult => {
   const ownedFacts = deriveOwnedFacts(ownedCounts, support)
-  const unlockedTiers = new Set(ALL_TIERS.filter(t => isTierUnlocked(t, ownedFacts, support)))
+  if (withheld !== undefined) ownedFacts.delete(withheld)
+  const enteredJourneys = new Set<string>()
+  const unlockedTiers = new Set(TIER_LADDER.filter(t => isTierUnlocked(t, ownedFacts, support)))
   const reachableFloors = new Set<string>()
   const harvestedCounts = new Map<string, number>()
   const addHarvested = (id: string, count: number) => harvestedCounts.set(id, (harvestedCounts.get(id) ?? 0) + count)
   const discoveredLocks = new Set<string>()
+  const discoveredAt = new Map<string, string[]>()
+  const discoverAt = (id: string, place: string) => {
+    discoveredLocks.add(id)
+    discoveredAt.set(id, [...(discoveredAt.get(id) ?? []), place])
+  }
   const reachableRewards: TreasureReward[] = []
+  const reachableStock: TreasureReward[] = []
   const exitsReached = new Set<string>()
+  const sitesNeverLeft: string[] = []
 
   for (const [journeyId, sites] of Object.entries(allConfigs)) {
     const meta = journeyMeta[journeyId]
     if (!meta) continue
     if (!isTierUnlocked(meta.tier, ownedFacts, support)) continue // tier itself not reached yet — not a frontier lock here
-    // Journey-scoped entry lock (mod-supplied): e.g. a tomb needs N of the map-piece currency.
-    // Tier reached but the threshold unmet → a genuine discovered lock, distinct from a
-    // room-scoped requiredKeyId. Pyramids have no entry lock (undefined) and always pass.
-    const entryLock = support.journeyEntryLock?.(journeyId)
-    if (entryLock && (ownedCounts.get(entryLock.bucket) ?? 0) < entryLock.threshold) {
-      discoveredLocks.add(entryLock.bucket)
+    // Journey-scoped entry locks (mod-supplied): e.g. a tomb needs N of the map-piece currency.
+    // Every lock must hold. Tier reached but a threshold unmet → a genuine discovered lock, distinct
+    // from a room-scoped requiredKeyId; each unmet one is discovered, so the worklist sees them all
+    // at once. A journey with no entry locks (a pyramid) always passes.
+    const unmetEntry = (support.journeyEntryLocks?.(journeyId) ?? []).filter(
+      lock => (ownedCounts.get(lock.bucket) ?? 0) < lock.threshold
+    )
+    if (unmetEntry.length > 0) {
+      for (const lock of unmetEntry) discoverAt(lock.bucket, `${journeyId} entrance`)
       continue
     }
 
+    enteredJourneys.add(journeyId)
     const ordered = isOrderedJourney(sites)
     let open = true
     sites.forEach((site, levelIndex) => {
@@ -352,16 +473,33 @@ export const computeReachability = (
         cache,
         support,
         resolveEncounter,
-        authoredKeysHeld
+        authoredKeysHeld,
+        withheld,
+        options
       )
       for (const floorIndex of siteResult.floors) reachableFloors.add(floorKey({ ...ref, floorIndex }))
       for (const [id, count] of siteResult.harvestedCounts) addHarvested(id, count)
-      for (const id of siteResult.discoveredLocks) discoveredLocks.add(id)
+      for (const [id, floors] of siteResult.lockFloors)
+        for (const floorIndex of floors) discoverAt(id, `${journeyId} level ${levelIndex + 1} floor ${floorIndex}`)
       reachableRewards.push(...siteResult.reachableRewards)
+      reachableStock.push(...siteResult.reachableStock)
       if (siteResult.exit) exitsReached.add(`${journeyId}#${levelIndex}`)
+      else if (site.some(floor => floor.exitOrStaircase === "exit"))
+        sitesNeverLeft.push(`${journeyId} level ${levelIndex + 1}`)
       if (ordered && !siteResult.exit) open = false
     })
   }
 
-  return { reachableFloors, unlockedTiers, harvestedCounts, discoveredLocks, reachableRewards, exitsReached }
+  return {
+    reachableFloors,
+    unlockedTiers,
+    harvestedCounts,
+    discoveredLocks,
+    discoveredAt,
+    reachableRewards,
+    reachableStock,
+    exitsReached,
+    enteredJourneys,
+    sitesNeverLeft,
+  }
 }

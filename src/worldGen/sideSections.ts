@@ -5,7 +5,22 @@ import { TIER_UNLOCK_PERK_IDS } from "../data/treasurePerks"
 import { hashStr, pathEndToReward, specToGate } from "./rewards"
 import { stairIdAt, type StairAddress } from "../game/stairAddress"
 import type { KeyColor, PathEntry, RewardSpec, SideIntensity, SideSectionConstraint } from "./dsl"
-import { resolveNodeActivities, resolveNodeDifficulties, resolveNodeLoot, resolveNodeSelectors } from "./dsl"
+import {
+  resolveNodeActivities,
+  resolveNodeChambers,
+  resolveNodeDifficulties,
+  resolveFloorRooms,
+  resolveNodeLoot,
+  resolveNodeRooms,
+  resolveNodeSelectors,
+} from "./dsl"
+import type { Prefab } from "../game/prefabTypes"
+
+/** Looks a designed room up by name; refuses when the caller handed none. */
+export type RoomLookup = (name: string) => Prefab
+const noRooms: RoomLookup = name => {
+  throw new Error(`room ${name} is pinned but no room catalogue was handed to buildSideSections`)
+}
 
 const ALL_KEY_COLORS: KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
 
@@ -47,7 +62,9 @@ const buildDslSection = <TExtra extends string>(
   floor: FloorStairAddress,
   path: string,
   parentLoot: false | undefined,
-  parentTileset: Tileset | undefined
+  parentTileset: Tileset | undefined,
+  stairTargets: Map<string, number> | undefined,
+  lookupRoom: RoomLookup
 ): SideSection => {
   const gate = specToGate(cs.gate)
   const sectionDifficulty = cs.difficulty ?? difficulty
@@ -62,9 +79,12 @@ const buildDslSection = <TExtra extends string>(
     floor,
     `${path}.`,
     loot,
-    tileset
+    tileset,
+    stairTargets,
+    lookupRoom
   )
   const end = cs.end === "staircase" ? { stairId: stairIdAt({ ...floor, path }) } : ("treasure" as const)
+  if (end !== "treasure" && cs.toFloor !== undefined) stairTargets?.set(end.stairId, cs.toFloor)
   // A treasure end with no authored reward and no gate is a plain loot slot — default it to the
   // untagged `treasure` slot (filled by whatever's spare) — unless the section is lootless, where it holds
   // nothing. A gated end already becomes a slot via its open gate (collectSlots); a staircase end bears no reward.
@@ -79,6 +99,11 @@ const buildDslSection = <TExtra extends string>(
   // on any path, not just the main path (§G).
   const encountersByIndex = resolveNodeSelectors(cs.nodes, pathPuzzles)
   const activitiesByIndex = resolveNodeActivities(cs.nodes, pathPuzzles)
+  const chambersByIndex = resolveNodeChambers(cs.nodes, pathPuzzles)
+  const rooms = resolveFloorRooms(undefined, resolveNodeRooms(cs.nodes, pathPuzzles), lookupRoom, {
+    difficulty: sectionDifficulty,
+    label: `journey=${floor.journeyId} pyramid=${floor.pyramidIndex + 1} floor=${floor.floorIndex} section=${path}`,
+  })
   const difficultiesByIndex = resolveNodeDifficulties(cs.nodes, pathPuzzles)
   const lootByIndex = resolveNodeLoot(cs.nodes, pathPuzzles)
   return {
@@ -97,6 +122,8 @@ const buildDslSection = <TExtra extends string>(
     ...(cs.encounter !== undefined ? { encounter: cs.encounter } : {}),
     ...(Object.keys(encountersByIndex).length ? { encountersByIndex } : {}),
     ...(Object.keys(activitiesByIndex).length ? { activitiesByIndex } : {}),
+    ...(Object.keys(chambersByIndex).length ? { chambersByIndex } : {}),
+    ...rooms,
     ...(Object.keys(difficultiesByIndex).length ? { difficultiesByIndex } : {}),
     ...(loot === false ? { loot } : {}),
     ...(Object.keys(lootByIndex).length ? { lootByIndex } : {}),
@@ -117,10 +144,22 @@ const buildDslSections = <TExtra extends string>(
   pathPrefix: string,
   parentLoot: false | undefined,
   parentTileset: Tileset | undefined,
+  stairTargets: Map<string, number> | undefined,
+  lookupRoom: RoomLookup,
   startIndex = 0
 ): SideSection[] =>
   (constraintSections ?? []).map((cs, i) =>
-    buildDslSection(cs, difficulty, resolveReward, floor, `${pathPrefix}${startIndex + i}`, parentLoot, parentTileset)
+    buildDslSection(
+      cs,
+      difficulty,
+      resolveReward,
+      floor,
+      `${pathPrefix}${startIndex + i}`,
+      parentLoot,
+      parentTileset,
+      stairTargets,
+      lookupRoom
+    )
   )
 
 export type BuildSideSectionsOptions<TExtra extends string = never> = {
@@ -137,6 +176,9 @@ export type BuildSideSectionsOptions<TExtra extends string = never> = {
   journeyId: string
   /** Where this floor sits, for the ids its stairheads take (game/stairAddress.ts). */
   floor: FloorStairAddress
+  /** Filled with each authored stair's id → the floor index its `toFloor` names, for the stair wiring
+   * (buildSite.ts's wireSideSectionStaircases). A stair naming no floor is left out: it leads to the next one. */
+  stairTargets?: Map<string, number>
   constraintSections?: SideSectionConstraint<TExtra>[]
   /** `false` when the floor these sections hang off is lootless; they inherit it unless they say otherwise. */
   loot?: false
@@ -160,6 +202,8 @@ export type BuildSideSectionsOptions<TExtra extends string = never> = {
   sideTheme?: string
   sideDecorations?: DecorationKind[]
   sideWallDecorations?: WallDecorationKind[]
+  /** Parses a room a section pins by name; needed only where one does. */
+  lookupRoom?: RoomLookup
   /** Pyramid-only: prepends a hardcoded mapPiece branch pointing at this tier's tomb. */
   hasMapPieceBranch?: boolean
   /** Pyramid-only: prepends a hardcoded tier-unlock ward-key gate. */
@@ -211,6 +255,7 @@ export const buildSideSections = <TExtra extends string = never>(
     resolveReward,
     journeyId,
     floor,
+    stairTargets,
     constraintSections,
     loot,
     hasMapPieceBranch,
@@ -225,6 +270,7 @@ export const buildSideSections = <TExtra extends string = never>(
     sideTheme,
     sideDecorations,
     sideWallDecorations,
+    lookupRoom = noRooms,
   } = opts
 
   const sections: SideSection[] = []
@@ -251,7 +297,18 @@ export const buildSideSections = <TExtra extends string = never>(
   }
 
   sections.push(
-    ...buildDslSections(constraintSections, difficulty, resolveReward, floor, "s", loot, undefined, sections.length)
+    ...buildDslSections(
+      constraintSections,
+      difficulty,
+      resolveReward,
+      floor,
+      "s",
+      loot,
+      undefined,
+      stairTargets,
+      lookupRoom,
+      sections.length
+    )
   )
 
   const colorCount = Math.min(keyColors ?? 1, 5)

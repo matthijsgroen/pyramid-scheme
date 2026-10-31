@@ -9,6 +9,7 @@ import {
   familyOrdinals,
   puzzleRoomSpec,
   regionBarrierDoorSpec,
+  stairGoesOf,
 } from "./roomSpecs"
 import { MAIN_SECTION_ADDRESS } from "./sections"
 import { pass } from "./state"
@@ -72,7 +73,7 @@ export const mainRooms = pass(
         if (config.entrance) {
           const stairId =
             typeof config.entrance === "object" ? config.entrance.stairId : stairOnThisFloor(floorRef, "entrance")
-          rooms.set(key, { roomType: "portal", stairId })
+          rooms.set(key, { roomType: "portal", stairId, stairGoes: stairGoesOf(config.entrance, "up") })
         } else rooms.set(key, { roomType: "portal" })
       } else if (mi === goal) {
         if (!goalIsChest) return
@@ -110,6 +111,7 @@ export const mainRooms = pass(
           override !== undefined ? resolveEncounter(override, "puzzle") : resolveEncounter(config.encounter, "puzzle")
         const reward = config.rewards?.[k]
         const authoredActivity = config.activitiesByIndex?.[k]
+        const pinnedPrefab = config.prefabsByIndex?.[k]
         const familyOrdinal = mainOrdinalOf(family.familyId)
         const requiredKeyIds = resolveKeyRequirements(family.familyId, {
           ...floorRef,
@@ -135,20 +137,22 @@ export const mainRooms = pass(
           ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
           ...(authoredActivity ? { authoredActivity } : {}),
+          ...(pinnedPrefab ? { pinnedPrefab } : {}),
         })
       }
     })
 
     // Corridor cells that are branch junctions become fork nodes too. A junction that already holds a main-path
-    // room stays that room: the carve is free to hang a side section off the entrance, off a puzzle or off the
-    // goal chest, and none of those is a place the player chooses a way out from.
+    // room stays that room. The carve may hang a side section off a puzzle, off the goal chest or off the
+    // entrance, never off the exit. An entrance a branch hangs off keeps its portal spec (its stair or its door),
+    // and the map draws it as a chamber that forks (`isChamber`), not as a stop in a corridor.
     for (const key of forkPositions(state)) if (!rooms.has(key)) rooms.set(key, { roomType: "fork" })
 
     if (config.exitOrStaircase === "exit") rooms.set(keyOf(exit), { roomType: "portal" })
     else if (config.exitOrStaircase !== "none") {
       const stairId =
         typeof config.exitOrStaircase === "object" ? config.exitOrStaircase.stairId : stairOnThisFloor(floorRef, "main")
-      rooms.set(keyOf(exit), { roomType: "portal", stairId })
+      rooms.set(keyOf(exit), { roomType: "portal", stairId, stairGoes: stairGoesOf(config.exitOrStaircase, "down") })
     }
 
     state.mainRooms = rooms

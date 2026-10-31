@@ -57,8 +57,9 @@ const starterEcho = () => wardChest({ tomb: "starter_treasure_tomb", index: 0, p
 // open junk corridors the economy needs — master is the biggest tier and generated no income.
 const MASTER_SIDE_PATHS: PathEntry[] = [
   { density: "medium", pathPuzzles: 1, end: "fragment" },
-  // Open junk corridor — the shop income master was missing.
-  { density: "low", pathPuzzles: 2, end: "junk" },
+  // Open trap corridor, like expert's: master's trap count sits between expert's and wizard's and the
+  // waterskins follow it. Its income still comes from the junk end.
+  { density: "low", pathPuzzles: 3, end: "junk", encounter: "trap" },
   // Multi-color floor-key path (colors rotate through keyColorsRange below).
   { density: "low", pathPuzzles: 1, end: "fragment", gate: "floor-key" },
 ]
@@ -101,9 +102,10 @@ export const masterRules: Rule[] = [
   }),
 
   tier("master").set({
+    chambers: 3, // pass-through chambers per floor: dressed rooms the corridor runs through
     wardWings: 1,
     wardPaths: 1,
-    wardPathTrapped: true, // hazardous returns — revisiting ward paths costs consumables
+    wardPathTrapped: true, // hazardous returns — revisiting ward paths costs health
     keyDensity: "medium",
     keyColorsRange: { min: 2, max: 3 }, // multi-color floor keys (expert had 1 color)
     sharedKeyChance: 0.4,
@@ -195,6 +197,7 @@ export const masterRules: Rule[] = [
   ...["master_treasure_tomb", "master_treasure_tomb_b"].map(id => tombCave(id, "master", 2)),
 
   tomb("master_treasure_tomb", {
+    chambers: 0, // the tier's pass-through chambers are for its pyramids; a tomb runs tableau to tableau
     encounter: "tomb-puzzle",
     difficulty: "master",
     floorCount: 5,
@@ -239,6 +242,7 @@ export const masterRules: Rule[] = [
     ],
   }),
   tomb("master_treasure_tomb_b", {
+    chambers: 0, // the tier's pass-through chambers are for its pyramids; a tomb runs tableau to tableau
     encounter: "tomb-puzzle",
     difficulty: "master",
     floorCount: 5,

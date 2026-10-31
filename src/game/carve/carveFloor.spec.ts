@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import type { FloorConfig, FloorGrid } from "../siteTypes"
 import { carveFloor } from "./carveFloor"
+import { LATTICE_ENGINE, type Engine } from "./engines"
 import { prepareFloor } from "./prepareFloor"
 import { pass } from "./state"
 import type { CarveState, Finish, Rung } from "./state"
@@ -19,17 +20,18 @@ const prep = (() => {
 })()
 
 const grid = { rows: 1, cols: 1 } as FloorGrid
+const engineOf = (passes: Engine["passes"], finish: Finish): Engine => ({ ...LATTICE_ENGINE, passes, finish })
 const refuse: Finish = () => ({ retry: [] })
 
 describe("the attempt loop", () => {
   it("hands back the grid of the first attempt that finishes one", () => {
     const finishAtThree: Finish = (_, state) => (state.attempt === 3 ? grid : { retry: [] })
-    expect(carveFloor(prep, [], finishAtThree)).toEqual({ success: true, grid, attempt: 3 })
+    expect(carveFloor(prep, engineOf([], finishAtThree))).toEqual({ success: true, grid, attempt: 3 })
   })
 
   it("names what the attempts came up short on once the budget is spent", () => {
     const short = pass("short", [], [], () => ({ retry: [{ type: "controlNotSeated", ids: ["lever"] }] }))
-    expect(carveFloor(prep, [short], refuse)).toEqual({
+    expect(carveFloor(prep, engineOf([short], refuse))).toEqual({
       success: false,
       reasons: [{ type: "controlNotSeated", ids: ["lever"] }, { type: "layoutNotFound" }],
     })
@@ -41,7 +43,7 @@ describe("the attempt loop", () => {
       attempts.push(state.attempt)
       return { fatal: [{ type: "duplicateCellSlot", slot: "x" }] }
     })
-    expect(carveFloor(prep, [fatal], refuse)).toEqual({
+    expect(carveFloor(prep, engineOf([fatal], refuse))).toEqual({
       success: false,
       reasons: [{ type: "duplicateCellSlot", slot: "x" }],
     })
@@ -55,7 +57,7 @@ describe("the attempt loop", () => {
       return { retry: [] }
     })
     const second = pass("second", [], [], () => void ran.push("second"))
-    carveFloor({ ...prep, input: { ...prep.input, maxAttempts: 1 } }, [first, second], refuse)
+    carveFloor({ ...prep, input: { ...prep.input, maxAttempts: 1 } }, engineOf([first, second], refuse))
     expect(ran).toEqual(["first"])
   })
 
@@ -66,7 +68,7 @@ describe("the attempt loop", () => {
       state.laidN = 41
       return { retry: [] }
     })
-    carveFloor({ ...prep, input: { ...prep.input, maxAttempts: 2 } }, [lay], refuse)
+    carveFloor({ ...prep, input: { ...prep.input, maxAttempts: 2 } }, engineOf([lay], refuse))
     expect(rungs[1].n).toBe(41)
   })
 
@@ -76,7 +78,7 @@ describe("the attempt loop", () => {
       seen.push(Object.keys(state) as (keyof CarveState)[])
       state.laidN = 9
     })
-    carveFloor({ ...prep, input: { ...prep.input, maxAttempts: 2 } }, [look], refuse)
+    carveFloor({ ...prep, input: { ...prep.input, maxAttempts: 2 } }, engineOf([look], refuse))
     expect(seen).toEqual([
       ["attempt", "rung", "rand"],
       ["attempt", "rung", "rand"],
@@ -85,6 +87,6 @@ describe("the attempt loop", () => {
 
   it("refuses to run a pass reading what no earlier pass wrote", () => {
     const reader = pass("reader", ["maze"], [], () => undefined)
-    expect(() => carveFloor(prep, [reader], refuse)).toThrow("reader reads maze")
+    expect(() => carveFloor(prep, engineOf([reader], refuse))).toThrow("reader reads maze")
   })
 })

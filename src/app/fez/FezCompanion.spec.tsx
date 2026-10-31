@@ -47,9 +47,22 @@ const { registerFezMeeting } = await import("./fezMeeting")
 
 registerFezMeeting({ conversation: "meeting.here", journeyId: "here" })
 
-const Ask = ({ id, story, onDone }: { id: string; story?: boolean; onDone: (r: string) => void }) => {
+const Ask = ({
+  id,
+  story,
+  unrecorded,
+  onDone,
+}: {
+  id: string
+  story?: boolean
+  unrecorded?: boolean
+  onDone: (r: string) => void
+}) => {
   const { showConversation } = use(FezContext)
-  useEffect(() => showConversation(id, onDone, { story }), [id, story, onDone, showConversation])
+  useEffect(
+    () => showConversation(id, onDone, { story, unrecorded, forceReplay: unrecorded }),
+    [id, story, unrecorded, onDone, showConversation]
+  )
   return null
 }
 
@@ -194,5 +207,26 @@ describe("whether Fez is met", () => {
     store.conversations = { "meeting.here": true }
     show()
     expect(screen.getByText("met")).toBeTruthy()
+  })
+})
+
+describe("an unrecorded conversation", () => {
+  it("plays through and leaves the heard save untouched", async () => {
+    store.conversations = { "meeting.here": true }
+    const onDone = vi.fn()
+    render(
+      <FezCompanion journeyProgress={() => ({ levelNr: 1, completionCount: 0 })}>
+        <Ask id="musing" story unrecorded onDone={onDone} />
+      </FezCompanion>
+    )
+    await act(async () => void vi.advanceTimersByTime(100))
+    expect(speakers().join()).toMatch(/explorer/i)
+    for (let i = 0; i < 200 && !onDone.mock.calls.length; i++) {
+      await act(async () => void vi.advanceTimersByTime(500))
+      document.querySelectorAll<HTMLElement>(".fixed.inset-0").forEach(el => el.click())
+    }
+
+    expect(onDone).toHaveBeenCalled()
+    expect(heard()).toEqual({ "meeting.here": true })
   })
 })

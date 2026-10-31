@@ -2,7 +2,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { renderHook, act } from "@testing-library/react"
 import type { CompassResult } from "@/game/siteTypes"
-import type { JourneyAPI } from "./useJourneys"
 
 // Whether a compass hit is actually collectable right now. The scanner reports the gates it walked
 // past; this layer decides, against the keys the player holds, which of them are in the way.
@@ -32,8 +31,6 @@ registerHeldKeysProvider(() => new Set(held))
 
 const { useDetector } = await import("./useDetector")
 
-const journeys = { getSkippedConsumables: () => [] } as unknown as JourneyAPI
-
 const hit = (over: Partial<CompassResult> = {}): CompassResult => ({
   journeyId: "starter_1",
   levelIdx: 0,
@@ -44,7 +41,7 @@ const hit = (over: Partial<CompassResult> = {}): CompassResult => ({
 })
 
 const accessOf = () => {
-  const { result } = renderHook(() => useDetector(journeys))
+  const { result } = renderHook(() => useDetector())
   act(() => result.current.setDetector("compass"))
   return result.current.compassResults[0]
 }

@@ -44,7 +44,7 @@ entrypoint (only the app imports it):
 
 ```
 src/mods/<id>/index.ts   game descriptor (React-free): currencies, family metas,
-                         consumables → REGISTERED_MODS → world-gen.
+                         distributions → REGISTERED_MODS → world-gen.
 src/mods/<id>/app.tsx    app registration (React, side-effect): registers this
                          mod's family plugins, screen, HUD widgets, reward
                          effects, and collection section into core registries.
@@ -67,14 +67,14 @@ array entry), and its `registerModApps` import. Core is untouched.
 
 ## The app registries (generic, core-owned, name no mod)
 
-| Registry           | A mod registers                     | Core renders/uses                                        |
-| ------------------ | ----------------------------------- | -------------------------------------------------------- |
-| family             | `{ meta, generate, Component }`     | the family for an encounter tag                          |
-| collection section | a section `Component`               | all sections on the Collection screen                    |
-| screen             | `{ id, navLabel, icon, Component }` | the nav + routes iterate registered screens              |
-| HUD widget         | a HUD `Component` (+ order)         | the site-map HUD row renders registered widgets in order |
+| Registry           | A mod registers                        | Core renders/uses                                                                                        |
+| ------------------ | -------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| family             | `{ meta, generate, Component }`        | the family for an encounter tag                                                                          |
+| collection section | a section `Component`                  | all sections on the Collection screen                                                                    |
+| screen             | `{ id, navLabel, icon, Component }`    | the nav + routes iterate registered screens                                                              |
+| HUD widget         | a HUD `Component` (+ order)            | the site-map HUD row renders registered widgets in order                                                 |
 | journey-card slot  | a `Component` taking the journey state | every travel-screen journey card renders each slot, which shows nothing for a journey it has nothing for |
-| reward effect      | the effect for a reward `type`      | dispatched when that reward is claimed (mod-populated)   |
+| reward effect      | the effect for a reward `type`         | dispatched when that reward is claimed (mod-populated)                                                   |
 
 Screens and HUD widgets are plain React components: each uses its own hooks
 internally (mosaic screen calls `useMosaicProgress`; the trap HUD widget calls
@@ -88,8 +88,7 @@ A reward handler is `apply(reward, ctx)` — a plain function, so it cannot call
 leak). Two clean options:
 
 - **A (recommended): mod-contributed effect hooks.** A mod registers a hook that
-  returns its reward effects, e.g. `registerRewardEffects(() => { const trap =
-useTrapProgress(); return { consumable: r => trap.addConsumable(r.consumable) } })`.
+  returns its reward effects, e.g. `registerRewardEffects(() => { const trap = useTrapProgress(); return { waterskin: () => trap.heal(1) } })`.
   The site-map screen calls `useModRewardEffects()`, which iterates the registry
   and invokes each contributed hook in a **stable order** (the registry is
   populated at module load, so the order is fixed — rules-of-hooks safe), merging

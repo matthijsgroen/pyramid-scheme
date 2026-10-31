@@ -8,7 +8,8 @@ import { ALL_STATES } from "./tileRegions"
 // A floor is not all one tier. starter_1's ward-chest teasers are authored at junior on purpose
 // (spec/starter.ts), so its first floor is starter stone with a junior pocket gated behind a junior
 // key — and walking through that gate has to say so, in the material. The same floor also holds the
-// Sphinx, whose pocket is wizard: the last stone in the game, cut into the first pyramid.
+// stair down to the Sphinx, whose corridor is wizard: the last stone in the game, cut into the first
+// pyramid.
 const starterFloorOne = () => {
   const floor = generatedWorldConfigs["starter_1"]?.flat()[0]
   if (!floor) throw new Error("no starter_1 floor to read")

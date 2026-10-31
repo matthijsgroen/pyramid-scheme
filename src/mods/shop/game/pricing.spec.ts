@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest"
-import { priceFor, CONSUMABLE_PRICES } from "./pricing"
+import { difficulties, type Difficulty } from "@/data/difficultyLevels"
+import type { SideSection, SiteConfig, TreasureReward } from "@/worldGen/types"
+import { stockPrices } from "./economyGuard"
+import { priceFor } from "./pricing"
+import { purchaseFact, type PurchaseTable } from "./purchases"
 
 describe("priceFor", () => {
   it("scales fragment price by the shop's tier", () => {
@@ -15,15 +19,60 @@ describe("priceFor", () => {
     expect(priceFor({ type: "mapPiece", tombId: "x" }, "junior")).toBe(1000)
   })
 
-  it("prices consumables by kind", () => {
-    expect(priceFor({ type: "consumable", consumable: "bandage" }, "junior")).toBe(CONSUMABLE_PRICES.bandage)
-    expect(priceFor({ type: "consumable", consumable: "oil" }, "junior")).toBe(CONSUMABLE_PRICES.oil)
-    expect(priceFor({ type: "consumable", consumable: "trapTool" }, "junior")).toBe(CONSUMABLE_PRICES.trapTool)
-  })
-
   it("returns 0 for a reward type it doesn't price (money/sellable/unknown)", () => {
     expect(priceFor({ type: "money", amount: 5 }, "junior")).toBe(0)
     expect(priceFor({ type: "sellable", itemId: "x" }, "junior")).toBe(0)
-    expect(priceFor({ type: "consumable", consumable: "unknown" }, "junior")).toBe(0)
+  })
+
+  const table: PurchaseTable = [
+    { id: "made-up-mule", fact: purchaseFact("made-up-mule"), price: 123, soldAt: { journeyId: "made-up-tomb" } },
+  ]
+
+  it("prices a purchase at its table price at every tier", () => {
+    for (const tier of difficulties) expect(priceFor({ type: "purchase", id: "made-up-mule" }, tier, table)).toBe(123)
+  })
+
+  it("prices a purchase the table does not list at 0", () => {
+    expect(priceFor({ type: "purchase", id: "made-up-yak" }, "expert", table)).toBe(0)
+  })
+})
+
+describe("waterskin stock", () => {
+  it("prices a waterskin by the shop's tier, from expert up", () => {
+    const [expert, master, wizard] = (["expert", "master", "wizard"] as const).map(tier =>
+      priceFor({ type: "waterskin" }, tier)
+    )
+    expect(expert).toBeGreaterThan(0)
+    expect(master).toBeGreaterThan(expert)
+    expect(wizard).toBeGreaterThan(master)
+  })
+
+  it("a tomb shop's waterskin is priced by the tier of the shop that sells it", () => {
+    const skin = (): TreasureReward => ({ type: "waterskin" })
+    const [inMaster, inWizard] = [skin(), skin()]
+    const shop = (difficulty: Difficulty, stock: TreasureReward): SideSection => ({
+      pathPuzzles: 0,
+      difficulty,
+      end: "treasure",
+      encounter: "fez-shop",
+      rewards: [stock],
+    })
+    const configs: Record<string, SiteConfig[]> = {
+      "made-up-tomb": [
+        [
+          {
+            pathPuzzles: 1,
+            difficulty: "master",
+            end: "treasure",
+            exitOrStaircase: "exit",
+            sideSections: [shop("master", inMaster), shop("wizard", inWizard)],
+          },
+        ],
+      ],
+    }
+    const price = stockPrices(configs, [])
+    expect(price(inMaster)).toBe(priceFor(skin(), "master"))
+    expect(price(inWizard)).toBe(priceFor(skin(), "wizard"))
+    expect(price(inWizard)).toBeGreaterThan(price(inMaster))
   })
 })

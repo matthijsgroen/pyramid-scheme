@@ -5,12 +5,14 @@ import {
   createFloorAssemblyCache,
   deriveOwnedFacts,
   floorKey,
-  type JourneyMeta,
+  unmetTierGroups,
+  TIER_LADDER,
   type ReachabilitySupport,
 } from "./reachability"
 import { collectSlots, type Slot, type FamilyPriorityFor } from "./slots"
 import { allocateDistributions, cappedToDistribution, type Distribution } from "./slotAllocator"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
+import { journeyMetaFor, makeGateWalk, type GateWalk } from "./gateWalk"
 
 // Worklist-driven, reachability-gated currency placement — the concrete engine this
 // backlog item's solver was built for. See docs/game-design/keys-and-locks-solver.md,
@@ -103,25 +105,48 @@ export type CappedCurrency = {
   rank: (candidates: readonly Slot[]) => Slot[]
 }
 
-// Each journey carries only its tier — whether entering it needs a currency threshold (a tomb's
-// map pieces) is the injected `reachabilitySupport.journeyEntryLock`'s data, so core names no
-// currency and reads no per-tomb count here.
-const buildJourneyMeta = (): Record<string, JourneyMeta> => {
-  const meta: Record<string, JourneyMeta> = {}
-  for (const j of PYRAMID_JOURNEYS) meta[j.id] = { tier: j.tier }
-  for (const j of TOMB_JOURNEYS) meta[j.id] = { tier: j.tier }
-  return meta
+// Currency knowledge reachability needs but must not import (it's mod-agnostic): each registered
+// currency supplies its own gate threshold + reward→bucket harvest, merged with the mod-injected
+// `support` (the tomb-treasure mod's tomb-key harvest, the tomb journey-entry lock, and the
+// tier-unlock ladder). A currency's answer comes before the support's. Core names no currency. Every other field of
+// the support rides along unchanged (the realisation resolvers among them, so every walk carves as play does).
+export const mergeReachabilitySupport = (
+  currencies: readonly CurrencyDistribution[],
+  support: ReachabilitySupport
+): ReachabilitySupport => ({
+  ...support,
+  thresholdFor: (bucket: string) =>
+    currencies.find(c => c.ownsBucket(bucket))?.thresholdFor?.(bucket) ?? support.thresholdFor?.(bucket),
+  bucketForReward: (reward: TreasureReward) => {
+    for (const c of currencies) {
+      const b = c.bucketForReward?.(reward)
+      if (b) return b
+    }
+    return support.bucketForReward?.(reward)
+  },
+  alsoHarvests: support.alsoHarvests,
+  factsForCount: support.factsForCount,
+  journeyEntryLocks: support.journeyEntryLocks,
+  tierUnlockGroups: support.tierUnlockGroups,
+  hiddenRequirement: support.hiddenRequirement,
+})
+
+export type PlacedWorld = {
+  /** Every reward standing in reachable ground once placement is finished, in the permissive bracket. */
+  reachableRewards: readonly TreasureReward[]
+  /** The strict gate walk over the finished world. */
+  walk: GateWalk
 }
 
 // Mutates allConfigs in place: places gating currencies (reachability worklist) then capped
 // currencies (allocator) into path-end slots, then hands every remaining slot to the dynamic-loot
-// distributions (allocateDistributions — the mod-owned money/junk/consumable Distributions).
+// distributions (allocateDistributions — the mod-owned dynamic-loot Distributions).
 // Throws (does not warn) if a demand has no reachable slot once every relaxation rung is exhausted
 // — docs/game-design/keys-and-locks-solver.md, "Exhausted relaxation is a build failure, not a warning".
 //
 // Returns every reward standing in reachable ground once placement is finished, walked in the
 // permissive bracket (see the final pass at the bottom) — what a collection's target count is
-// checked against.
+// checked against — and the strict gate walk over that same finished world (gateWalk.ts).
 export const placeFragments = (
   allConfigs: Record<string, SiteConfig[]>,
   currencies: readonly CurrencyDistribution[],
@@ -137,10 +162,12 @@ export const placeFragments = (
   // callers with no mods) falls back to reachability.ts's own default, which never claims
   // reEnterable for anyone.
   resolveEncounter?: ResolveEncounter
-): readonly TreasureReward[] => {
-  const slots = collectSlots(allConfigs, familyPriorityFor)
+): PlacedWorld => {
+  const slots = collectSlots(allConfigs, familyPriorityFor, resolveEncounter)
   const available = new Set(slots)
-  const journeyMeta = buildJourneyMeta()
+  // Each journey carries only its tier — whether entering it needs a currency threshold (a tomb's
+  // map pieces) is the injected support's data, so core reads no per-tomb count here.
+  const journeyMeta = journeyMetaFor(PYRAMID_JOURNEYS, TOMB_JOURNEYS)
 
   const ownedCounts = new Map<string, number>()
   // One cache for this whole placement run — grid topology never changes as ownedCounts
@@ -148,38 +175,19 @@ export const placeFragments = (
   // so every one of this loop's many computeReachability calls reuses the same assembled
   // grids instead of re-running maze generation for every reachable floor every time.
   const assemblyCache = createFloorAssemblyCache()
-  // A second cache for the permissive final pass, which runs after the filler passes have written
-  // rewards into floors `assemblyCache` still holds pre-filler copies of. Authored doors stand open
-  // only there, so the two caches also never mix walks under different gating.
-  const permissiveCache = createFloorAssemblyCache()
+  // A second cache for the finished world, filled only after the filler passes have written rewards
+  // into floors `assemblyCache` still holds pre-filler copies of. The permissive final pass and the
+  // strict gate walk share it: an assembled grid does not depend on the bracket it is walked in.
+  const finishedCache = createFloorAssemblyCache()
   let authoredKeysHeld = false
-  // Currency knowledge reachability needs but must not import (it's mod-agnostic): each
-  // registered currency supplies its own gate threshold + reward→bucket harvest, merged with the
-  // mod-injected `reachabilitySupport` (the tomb-treasure mod's tomb-key harvest, the tomb
-  // journey-entry lock, and the tier-unlock ladder). Built here, where the injected `currencies`
-  // + support are in scope, and threaded into every reachability call. Core names no currency.
-  const support: ReachabilitySupport = {
-    thresholdFor: (bucket: string) =>
-      currencies.find(c => c.ownsBucket(bucket))?.thresholdFor?.(bucket) ?? reachabilitySupport.thresholdFor?.(bucket),
-    bucketForReward: (reward: TreasureReward) => {
-      for (const c of currencies) {
-        const b = c.bucketForReward?.(reward)
-        if (b) return b
-      }
-      return reachabilitySupport.bucketForReward?.(reward)
-    },
-    alsoHarvests: reachabilitySupport.alsoHarvests,
-    factsForCount: reachabilitySupport.factsForCount,
-    journeyEntryLock: reachabilitySupport.journeyEntryLock,
-    tierUnlockBucket: reachabilitySupport.tierUnlockBucket,
-  }
+  const support = mergeReachabilitySupport(currencies, reachabilitySupport)
   const computeReach = () =>
     computeReachability(
       allConfigs,
       journeyMeta,
       ownedCounts,
       resolveRequirements,
-      authoredKeysHeld ? permissiveCache : assemblyCache,
+      authoredKeysHeld ? finishedCache : assemblyCache,
       support,
       resolveEncounter,
       authoredKeysHeld
@@ -210,16 +218,61 @@ export const placeFragments = (
   // from whatever's discovered blocking right now, grown after every placement as newly
   // reachable frontier reveals further locks. `queued` prevents duplicate enqueue; `satisfied`
   // prevents re-processing a bucket a later recompute still (harmlessly) reports as discovered.
-  const queue: string[] = [...reach.discoveredLocks]
-  const queued = new Set(queue)
+  // `gateOf` keeps where each bucket was found blocking, for the refusal of one that cannot be placed.
+  const queue: string[] = []
+  const queued = new Set<string>()
   const satisfied = new Set<string>()
+  const gateOf = new Map<string, string>()
+  const enqueue = (id: string, gate?: string): void => {
+    if (satisfied.has(id) || queued.has(id)) return
+    queue.push(id)
+    queued.add(id)
+    if (gate !== undefined) gateOf.set(id, gate)
+  }
 
   const enqueueNewLocks = (): void => {
-    for (const id of reach.discoveredLocks) {
-      if (satisfied.has(id) || queued.has(id)) continue
-      queue.push(id)
-      queued.add(id)
+    for (const id of reach.discoveredLocks) enqueue(id, reach.discoveredAt.get(id)?.join(", "))
+  }
+  enqueueNewLocks()
+
+  // A locked tier is a lock too once every tier below it is open: its gate is then the frontier. Each of its unmet
+  // groups whose bucket a currency owns is enqueued, one bucket per group (holding any one meets the group). A tier
+  // further up is not the frontier yet, so its buckets wait; one no currency owns is resolved by the harvest or refused
+  // by the locked-tier guard below.
+  const enqueueFrontierTier = (): void => {
+    const frontier = TIER_LADDER.find(tier => !reach.unlockedTiers.has(tier))
+    if (!frontier) return
+    for (const group of unmetTierGroups(frontier, deriveOwnedFacts(ownedCounts, support), support)) {
+      const owned = group.find(bucket => currencies.some(c => c.ownsBucket(bucket)))
+      if (owned !== undefined) enqueue(owned, `tier ${frontier}`)
     }
+  }
+
+  // The tiers a journey of this world sits in that are still locked, each with the groups it still needs; undefined
+  // when every one is open. A journey with no tier is never walked at all, so it is refused rather than left out.
+  const lockedTiersProblem = (): string | undefined => {
+    const ownedFacts = deriveOwnedFacts(ownedCounts, support)
+    const walkedTiers = new Set(
+      Object.keys(allConfigs).map(journeyId => {
+        const meta = journeyMeta[journeyId]
+        if (!meta)
+          throw new Error(
+            `placeFragments: journey ${journeyId} is in the world but in no journey list, so has no tier.`
+          )
+        return meta.tier
+      })
+    )
+    const lockedTiers = [...walkedTiers].filter(tier => !reach.unlockedTiers.has(tier))
+    if (lockedTiers.length === 0) return undefined
+    const named = lockedTiers
+      .map(
+        tier =>
+          `${tier} (needs one of each: ${unmetTierGroups(tier, ownedFacts, support)
+            .map(group => `[${group.join(" | ")}]`)
+            .join(", ")})`
+      )
+      .join("; ")
+    return `world not fully solvable — tier(s) still locked after placement: ${named}`
   }
 
   // Drains `queue` to empty, placing each bucket's demand and growing the queue as newly
@@ -227,7 +280,31 @@ export const placeFragments = (
   // (settleHarvest). Called twice: once for the discovery-driven walk below, once more for
   // the completion pass after it (see `allBuckets` on CurrencyDistribution) — a second call
   // is a no-op if the first one already discovered and placed everything, which today it does.
+  //
+  // A bucket with too few reachable slots waits in `waiting` with its refusal, and goes back to the head of the queue
+  // after the next placement. Once the queue is empty, the frontier tier's buckets join it; when nothing joins, the
+  // waiting buckets are tried again if anything was placed since their last try, and all of them are refused if
+  // nothing was. Every retry follows a placement, so the drain ends.
+  const waiting = new Map<string, string>()
+  let placedSinceRetry = false
   const drain = (): void => {
+    for (;;) {
+      drainQueue()
+      enqueueFrontierTier()
+      if (queue.length > 0) continue
+      if (waiting.size === 0) return
+      if (!placedSinceRetry) {
+        // Every waiting bucket is named, since the first may only be stuck behind another; a tier left locked leads,
+        // as its unmet groups say most about why nothing more was reached.
+        const locked = lockedTiersProblem()
+        throw new Error([...(locked ? [`placeFragments: ${locked}`] : []), ...waiting.values()].join("; "))
+      }
+      placedSinceRetry = false
+      queue.push(...waiting.keys())
+      waiting.clear()
+    }
+  }
+  const drainQueue = (): void => {
     while (queue.length > 0) {
       const bucket = queue.shift()!
       queued.delete(bucket)
@@ -262,12 +339,17 @@ export const placeFragments = (
         // forever. The doc's contract is explicit (keys-and-locks-solver.md: "a key is never placed
         // outside the reachable area"; "place ward key → pocket reachable → THEN place the required
         // piece") — a harvested tomb-key sits in ownedFacts, so once earned the pocket opens legitly.
+        //
+        // A placeholder's own room must be reached too, not only its floor: a room behind a lock of that
+        // same floor (a tableau needing this very piece) would hold the piece the lock waits on.
         const ownedFacts = deriveOwnedFacts(ownedCounts, support)
+        const reachedRooms = new Set(reach.reachableRewards)
         const eligible = (s: Slot) =>
           s.kind === "end" &&
           !s.hidden &&
           available.has(s) &&
           reach.reachableFloors.has(floorKey(s.ref)) &&
+          (s.sentinel === undefined || reachedRooms.has(s.sentinel)) &&
           s.wardKeys.every(k => ownedFacts.has(k)) &&
           (s.encounter !== "fez-shop" || s.preference === undefined || currency.ownsBucket(s.preference))
         // Soft-avoid slots an author tagged for a FILLER bucket — one no gating currency claims, i.e.
@@ -290,24 +372,38 @@ export const placeFragments = (
           (a, b) => reservedForFiller(a) - reservedForFiller(b)
         )
 
+        // Too few slots reached yet: the bucket waits (still counted as queued) while the rest of the queue grows the
+        // reach, and is refused only once nothing more can be placed.
+        if (ranked.length < needed) {
+          const gate = gateOf.get(bucket)
+          waiting.set(
+            bucket,
+            `placeFragments: ${demand.instanceId} (${bucket}) unplaceable — ${needed - ranked.length} instance(s) with no reachable slot` +
+              (gate === undefined
+                ? " (no gate on it was reached; its currency lists it for the completion pass)"
+                : ` before its gate (${gate})`)
+          )
+          queued.add(bucket)
+          continue
+        }
+
         for (const slot of ranked) {
           if (needed <= 0) break
           slot.assign(currency.toReward(demand.instanceId))
           available.delete(slot)
           needed--
         }
-
-        if (needed > 0) {
-          throw new Error(
-            `placeFragments: ${demand.instanceId} (${bucket}) unplaceable — ${needed} instance(s) with no reachable slot`
-          )
-        }
       }
 
       satisfied.add(bucket)
       ownedCounts.set(bucket, demand.totalRequired)
+      placedSinceRetry = true
       reach = computeReach()
       settleHarvest()
+      // The buckets waiting were found blocking first, so they are tried again first: a placement may have reached
+      // their slots, and the gate they wait on must open before the walk goes on past it.
+      queue.unshift(...waiting.keys())
+      waiting.clear()
       enqueueNewLocks()
     }
   }
@@ -322,13 +418,7 @@ export const placeFragments = (
   // already `satisfied` is skipped), so it can only move the world TOWARD full coverage, never
   // away from it — and it's the reason `allBuckets` must return every id a currency's own
   // `expectedTotal` counts, so the two agree by construction instead of by luck.
-  for (const currency of currencies) {
-    for (const bucket of currency.allBuckets?.() ?? []) {
-      if (satisfied.has(bucket) || queued.has(bucket)) continue
-      queue.push(bucket)
-      queued.add(bucket)
-    }
-  }
+  for (const currency of currencies) for (const bucket of currency.allBuckets?.() ?? []) enqueue(bucket)
   drain()
 
   // Winnability guard (keys-and-locks-solver.md, "nothing can progress = hard-fail"): once the
@@ -347,6 +437,13 @@ export const placeFragments = (
         `or a required key sits behind the gate it opens.`
     )
   }
+  // The same invariant at global scope: every tier a journey of this world sits in must be open
+  // once placement is done. A locked tier's journeys are never walked, so their locks are never
+  // discovered — the sweep above cannot see a tier whose unlock bucket no one places (a mod's
+  // group whose currency was never placed, or whose treasures all sit beyond the tier itself).
+  // A journey with no tier is never walked at all, so it is refused rather than left out.
+  const locked = lockedTiersProblem()
+  if (locked) throw new Error(`placeFragments: ${locked}.`)
 
   // A slot an author tagged for a gating currency (e.g. `endReward: "hieroglyph"`), if that
   // currency's own demand never claimed it, gracefully falls back to a top-priority capped-currency
@@ -370,16 +467,30 @@ export const placeFragments = (
   // exact-footprint Distribution (spread across still-available slots in its own rank order, up
   // to its total), which HARD-FAILS if short — capped loot must fully place (keys-and-locks-
   // solver.md, "Exhausted relaxation is a build failure"). A shortfall means author more loot-
-  // bearing capacity in the DSL (docs/mods/TARGET.md rule 2). Money/junk/consumables join this
+  // bearing capacity in the DSL (docs/mods/TARGET.md rule 2). Mod-owned dynamic loot joins this
   // allocator as flexible-footprint distributions in later steps (distribution-primitive-design.md).
   allocateDistributions(available, capped.map(cappedToDistribution), allConfigs)
 
-  // Phase 5: dynamic loot — the mod-owned distributions (trap consumables, shop money economy)
+  // Phase 5: dynamic loot — the mod-owned distributions (owned by mods, e.g. the shop's money economy)
   // claim priority-ordered eligible slots (chest 100 before puzzle 60) and fill them themselves;
-  // `emptyFraction` reserves a share empty up front so found loot stays meaningful. Each drops
-  // with its mod (shop off → no money/junk; trap off → no consumables). See slotAllocator.ts +
+  // `emptyFraction` reserves a share empty up front so found loot stays meaningful. The fixed quantities fill
+  // first and a distribution marked `fillsLast` (one sized from what the others placed) after them. Each drops
+  // with its mod (mod off → its distribution places nothing). See slotAllocator.ts +
   // docs/mods/distribution-primitive-design.md.
-  allocateDistributions(available, dynamicDistributions, allConfigs, emptyFraction)
+  //
+  // A last fill places by the strict gate walk over the world as it stands, its placeholders in their slots. Its cache
+  // is fresh: `assemblyCache` holds grids from before the fills, which list none of the placeholders.
+  allocateDistributions(available, dynamicDistributions, allConfigs, emptyFraction, () => {
+    const lastWalk = makeGateWalk({
+      configs: allConfigs,
+      journeyMeta,
+      support,
+      resolveRequirements,
+      resolveEncounter,
+      cache: createFloorAssemblyCache(),
+    })
+    return { walk: lastWalk, isKey: lastWalk.isKey }
+  })
 
   // Every slot no distribution claimed (reserved-empty, weight-0, or budget left over) is an empty
   // path end — clear the fragmentSlot sentinels so none reaches the serializer.
@@ -397,5 +508,14 @@ export const placeFragments = (
   authoredKeysHeld = true
   reach = computeReach()
   settleHarvest()
-  return reach.reachableRewards
+  // The gate walk starts from empty hands on every call, so it shares only the finished grids.
+  const walk = makeGateWalk({
+    configs: allConfigs,
+    journeyMeta,
+    support,
+    resolveRequirements,
+    resolveEncounter,
+    cache: finishedCache,
+  })
+  return { reachableRewards: reach.reachableRewards, walk }
 }

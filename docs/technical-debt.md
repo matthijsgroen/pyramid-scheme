@@ -78,6 +78,19 @@ Prioritize by blast radius, not by count:
 
 ---
 
+## A buy from Fez writes two saves
+
+Buying a stock slot writes the reward to its owner's save (a purchase to the shop's own store,
+a fragment to hieroglyph's, a map piece to tomb-treasure's), takes the money from the progression
+save and marks the slot sold in the journeys save. These are separate stores with separate async
+writes, so no buy is one transaction. `buyStockSlot` applies the reward before it takes the money,
+so a write that fails after the reward is applied gives the piece away for free and never takes
+money for nothing. A failure between the reward and the sold-out mark still leaves the slot for
+sale. That is harmless for a purchase, which is skipped once it is recorded. Closing the gap
+needs one save write across stores, or a pending-buy record that is replayed on load.
+
+---
+
 ## Resolved
 
 The `src/data/use*Translations.ts` layer violation, the `src/game/` ↔ `formulas.ts`

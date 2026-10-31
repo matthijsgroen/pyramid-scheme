@@ -15,7 +15,11 @@ import { sealWaysOut } from "./useAssembledFloor"
 import { useFloorExplorationRecorder } from "./useFloorExplorationRecorder"
 import { SiteMapView } from "./SiteMapView"
 
-vi.mock("react-i18next", () => ({ useTranslation: () => ({ t: (key: string) => key }) }))
+// One t for every render, as react-i18next gives: hooks memoise on it.
+vi.mock("react-i18next", () => {
+  const t = (key: string) => key
+  return { useTranslation: () => ({ t }) }
+})
 
 let grid: FloorGrid
 let explorerPos: readonly [number, number]
@@ -91,6 +95,7 @@ describe("a shut barrier's concealment is a drawing matter only", () => {
         siteConfig={[config]}
         levelIndex={0}
         seed={1}
+        lastLevel={false}
         onSiteComplete={() => {}}
         onCancel={() => {}}
       />

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
-import { growMask } from "./importTile"
+import sharp from "sharp"
+import { growMask, liftPoints } from "./importTile"
 
 /** A 5x1 strip: one mask pixel at x=0, then four outside it. */
 const strip = (artLums: number[], radius: number) => {
@@ -51,5 +52,27 @@ describe("growMask", () => {
     }
     const out = growMask({ mask, maskChannels: 4, art, artChannels: 4, width, height: 1, radius: 1 })
     expect(out[1 * 4 + 3] > 128).toBe(false)
+  })
+})
+
+describe("liftPoints", () => {
+  const field = async (points: [number, number, number][]) => {
+    const size = 40
+    const raw = Buffer.alloc(size * size * 4)
+    for (let i = 0; i < size * size; i++) raw.set([40, 30, 60, 255], i * 4)
+    for (const [x, y, l] of points) raw.set([l, l, l, 255], (y * size + x) * 4)
+    const png = await sharp(raw, { raw: { width: size, height: size, channels: 4 } })
+      .png()
+      .toBuffer()
+    const out = await sharp(await liftPoints(png, 14))
+      .raw()
+      .toBuffer()
+    return (x: number, y: number) => out[(y * size + x) * 4]
+  }
+
+  it("lifts a star toward white and leaves the dark around it", async () => {
+    const at = await field([[20, 20, 120]])
+    expect(at(20, 20)).toBeGreaterThan(200)
+    expect(at(5, 5)).toBe(40)
   })
 })

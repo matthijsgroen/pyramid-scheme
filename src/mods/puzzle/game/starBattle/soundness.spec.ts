@@ -45,10 +45,14 @@ const AGREEMENT: { name: string; options: StarBattleOptions }[] = [
  *
  * A listed seed graded on its FIRST attempt, so `attempts: 1` pays for one draw instead of the search
  * loop — seconds to half a minute a board at the top tiers. What that loop costs is the generator's claim
- * to answer; a rung reads the board it is handed and never asks what finding it took.
+ * to answer; a rung reads the board it is handed and never asks what finding it took. A tier the family
+ * does not ship at lists no seeds, so its boards are searched from its settings.
  */
-const boards = (options: StarBattleOptions, count: number) =>
-  (puzzleSeeds[configHash(options)] ?? []).slice(0, count).map(seed => generateStarBattle(seed, options, 1))
+const boards = (options: StarBattleOptions, count: number) => {
+  const listed = puzzleSeeds[configHash(options)] ?? []
+  if (listed.length === 0) return Array.from({ length: count }, (_unused, at) => generateStarBattle(at + 1, options))
+  return listed.slice(0, count).map(seed => generateStarBattle(seed, options, 1))
+}
 
 /** A state a player could actually be in: some of the answer's stars, and some correct dark marks. */
 const playerState = (board: StarBattlePuzzleWithAnswer, random: () => number): Marks => {

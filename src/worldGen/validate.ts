@@ -7,8 +7,11 @@ import { doorBoardsOf, switchFamilies } from "@/game/seeds/enumerateConfigs"
 import type { FloorConfig as GameFloorConfig, FloorGrid as AssembledFloor } from "@/game/siteTypes"
 import { walkFloorLock, describeFloorWalkFailure, deadFloorRegions } from "@/game/floorLockWalk"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
-import { WORLD_TARGETS } from "./worldSpec"
+import { WORLD_TARGETS } from "./worldTargets"
 import { capabilitiesFor, type SiteCapabilities } from "./capabilities"
+import type { GateWalk } from "./gateWalk"
+import type { JourneyMeta } from "./reachability"
+import type { Distribution } from "./slotAllocator"
 
 const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_JOURNEYS.map(j => j.id)])
 
@@ -19,10 +22,46 @@ const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_J
 // `reachableRewards` is every reward a player can ever get to, from placeFragments' final
 // permissive walk — a mod counts its own kind in there to hold its collection's target count. A
 // validator that only reads the authored configs ignores the second argument.
+//
+// `walk` answers what lies before a gate: `walk(fact)` is the ground a player reaches from empty
+// hands with that fact never held (strict bracket, over the finished world), `walk()` the whole
+// world as the strict walk sees it. A validator weighing a gate (income before it against what is
+// buyable before it) reads it; one that doesn't ignores the third argument.
 export type WorldValidator = (
   configs: Record<string, SiteConfig[]>,
-  reachableRewards: readonly TreasureReward[]
+  reachableRewards: readonly TreasureReward[],
+  walk: GateWalk
 ) => void
+
+/**
+ * WHERE A PLAYER GETS STUCK, read off the strict walk over a finished world from empty hands: one line for each journey
+ * it never enters, each site of an entered journey whose way out it never reaches, each tier of the world it leaves locked, and each lock it still runs into, with where that lock
+ * stands. The walk carves rooms as play does, so a key the configs list but no room shows (a shop's end, say) counts as
+ * missing here. No line means every journey is entered, every tier opens and no lock blocks.
+ */
+export const stuckPoints = (walk: GateWalk, journeyMeta: Record<string, JourneyMeta>): string[] => {
+  const { enteredJourneys, unlockedTiers, sitesNeverLeft, blockingAt, lockedTierNeeds } = walk()
+  const entranceNeeds = (journeyId: string) =>
+    [...blockingAt].filter(([, places]) => places.includes(`${journeyId} entrance`)).map(([bucket]) => bucket)
+  const unentered = Object.entries(journeyMeta)
+    .filter(([journeyId]) => !enteredJourneys.has(journeyId))
+    .map(([journeyId, { tier }]) => {
+      const needs = entranceNeeds(journeyId)
+      const why = !unlockedTiers.has(tier)
+        ? ": its tier stays locked"
+        : needs.length > 0
+          ? `: its entrance needs ${needs.join(", ")}`
+          : ""
+      return `journey ${journeyId} (${tier}) is never entered${why}`
+    })
+  const neverLeft = sitesNeverLeft.map(site => `journey ${site} is never left: its way out is not reached`)
+  const locked = [...lockedTierNeeds].map(
+    ([tier, groups]) =>
+      `tier ${tier} stays locked: none held of ${groups.map(group => `[${group.join(" | ")}]`).join(", ")}`
+  )
+  const blocking = [...blockingAt].map(([bucket, places]) => `lock ${bucket} still blocks at ${places.join("; ")}`)
+  return [...unentered, ...neverLeft, ...locked, ...blocking]
+}
 
 // Throws if: a non-last floor is set to exit, a mapPiece references an unknown journey ID,
 // the total mapPiece count drifts from WORLD_TARGETS, or the count of placed gating-currency
@@ -141,7 +180,32 @@ export const validateRewardCounts = (
 // end with no `endReward` is exactly how an author offers a section as a floor-key host: the
 // assembler hands it a key, and the room the player opens is not empty at all. Only the assembled
 // room knows the difference.
-export type EmptyChest = { journeyId: string; levelNr: number; floorIndex: number; row: number; col: number }
+//
+// Only a world with a filler (a distribution marked `fillsLast`, which takes every chest the others
+// leave) owes every chest loot. Without one, the chests nothing else claims stand empty by design.
+//
+// `place` is the section the chest ends, in words an author reads off the spec: "main", "side n" for
+// the n-th path off the main one, "side n.m" for that path's m-th sub path (both counted from 1, in the
+// order the floor lists them), or the section's own label where it has one.
+export type EmptyChest = {
+  journeyId: string
+  levelNr: number
+  floorIndex: number
+  row: number
+  col: number
+  place: string
+}
+
+const placeOf = (sectionAddress: string | undefined): string => {
+  const address = sectionAddress ?? "main"
+  const positional = /^s(\d+(?:\.\d+)?)$/.exec(address)
+  return positional
+    ? `side ${positional[1]
+        .split(".")
+        .map(n => Number(n) + 1)
+        .join(".")}`
+    : address
+}
 
 export const findEmptyChests = (
   configs: Record<string, SiteConfig[]>,
@@ -150,8 +214,10 @@ export const findEmptyChests = (
     floor: SiteConfig[number],
     levelNr: number,
     floorIndex: number
-  ) => AssembledFloor | null
+  ) => AssembledFloor | null,
+  distributions: readonly Pick<Distribution, "fillsLast">[]
 ): EmptyChest[] => {
+  if (!distributions.some(d => d.fillsLast)) return []
   const empties: EmptyChest[] = []
   for (const [journeyId, sites] of Object.entries(configs)) {
     // A site outside the loot economy grows no reward slot at all (capabilities.ts), so every chest
@@ -168,7 +234,14 @@ export const findEmptyChests = (
             // A key host holds a key rather than a reward, and a shop holds stock.
             if (cell.reward || cell.keyColor || cell.keyColors?.length) return
             if ((cell.stock ?? []).some(Boolean)) return
-            empties.push({ journeyId, levelNr: siteIdx + 1, floorIndex, row: r, col: c })
+            empties.push({
+              journeyId,
+              levelNr: siteIdx + 1,
+              floorIndex,
+              row: r,
+              col: c,
+              place: placeOf(cell.sectionAddress),
+            })
           })
         )
       })

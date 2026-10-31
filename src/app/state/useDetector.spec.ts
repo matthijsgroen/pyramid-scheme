@@ -2,7 +2,6 @@
 import { describe, it, expect, vi } from "vitest"
 import { renderHook, act } from "@testing-library/react"
 import { useDetector } from "./useDetector"
-import type { JourneyAPI } from "./useJourneys"
 
 // ── Minimal world stub ────────────────────────────────────────────────────────
 // Compass scanning is mod-owned now (each mod registers a scanner via detectorScanners); this
@@ -28,21 +27,16 @@ vi.mock("@/support/useGameStorage", async () => {
   }
 })
 
-// ── Stub factories ────────────────────────────────────────────────────────────
-
-const makeJourneys = (skipped: Record<string, string[]> = {}): JourneyAPI =>
-  ({ getSkippedConsumables: (id: string) => skipped[id] ?? [] }) as unknown as JourneyAPI
-
 // ── activeDetector state ──────────────────────────────────────────────────────
 
 describe("activeDetector", () => {
   it("starts as null", () => {
-    const { result } = renderHook(() => useDetector(makeJourneys()))
+    const { result } = renderHook(() => useDetector())
     expect(result.current.activeDetector).toBeNull()
   })
 
   it("setDetector updates the mode", () => {
-    const { result } = renderHook(() => useDetector(makeJourneys()))
+    const { result } = renderHook(() => useDetector())
     act(() => result.current.setDetector("compass"))
     expect(result.current.activeDetector).toBe("compass")
   })
@@ -50,13 +44,13 @@ describe("activeDetector", () => {
   // SiteMapScreen is remounted on every site entry, so component state would switch the detector
   // off each time the player walks into another pyramid — it has to be persisted.
   it("keeps the running detector outside the screen that started it", () => {
-    renderHook(() => useDetector(makeJourneys()))
+    renderHook(() => useDetector())
     expect(storageKeys).toContain("activeDetector")
   })
 
   it("setDetector to null clears the mode", () => {
-    const { result } = renderHook(() => useDetector(makeJourneys()))
-    act(() => result.current.setDetector("consumable"))
+    const { result } = renderHook(() => useDetector())
+    act(() => result.current.setDetector("hiddenPassageway"))
     act(() => result.current.setDetector(null))
     expect(result.current.activeDetector).toBeNull()
   })
@@ -66,55 +60,15 @@ describe("activeDetector", () => {
 
 describe("compassResults", () => {
   it("returns [] when mode is not compass", () => {
-    const { result } = renderHook(() => useDetector(makeJourneys()))
+    const { result } = renderHook(() => useDetector())
     expect(result.current.compassResults).toHaveLength(0)
   })
 
   it("returns [] when compass active but no target set (no mod owns the target seam here)", () => {
-    const { result } = renderHook(() => useDetector(makeJourneys()))
+    const { result } = renderHook(() => useDetector())
     act(() => result.current.setDetector("compass"))
     // No fragment mod imported → compassTarget seam yields null → nothing to scan.
     expect(result.current.compassTarget).toBeNull()
     expect(result.current.compassResults).toHaveLength(0)
-  })
-})
-
-// ── consumableResults ─────────────────────────────────────────────────────────
-
-describe("consumableResults", () => {
-  it("returns [] when mode is not consumable", () => {
-    const journeys = makeJourneys({ starter_1: ["edge-abc"] })
-    const { result } = renderHook(() => useDetector(journeys))
-    expect(result.current.consumableResults).toHaveLength(0)
-  })
-
-  it("reads the floor straight off the address, and leaves the cell to whoever has that floor built", () => {
-    const journeys = makeJourneys({ starter_1: ["sec#1/p2", "sec#0/xtreasure-chest"] })
-    const { result } = renderHook(() => useDetector(journeys))
-    act(() => result.current.setDetector("consumable"))
-    expect(result.current.consumableResults).toHaveLength(2)
-    // No resolver passed: the floor is known, the coordinate is not, and the readout narrows to the
-    // floor rather than inventing a cell (§7.2).
-    expect(result.current.consumableResults[0]).toEqual({
-      journeyId: "starter_1",
-      address: "sec#1/p2",
-      floorIdx: 1,
-      cell: undefined,
-    })
-  })
-
-  it("places a hit on the cell a caller can resolve, for the floor it has assembled", () => {
-    const journeys = makeJourneys({ starter_1: ["sec#1/p2"] })
-    const resolveCell = (_journeyId: string, address: string) =>
-      address === "sec#1/p2" ? { row: 2, col: 3 } : undefined
-    const { result } = renderHook(() => useDetector(journeys, resolveCell))
-    act(() => result.current.setDetector("consumable"))
-    expect(result.current.consumableResults[0].cell).toEqual({ row: 2, col: 3 })
-  })
-
-  it("returns [] when no consumables were skipped", () => {
-    const { result } = renderHook(() => useDetector(makeJourneys()))
-    act(() => result.current.setDetector("consumable"))
-    expect(result.current.consumableResults).toHaveLength(0)
   })
 })

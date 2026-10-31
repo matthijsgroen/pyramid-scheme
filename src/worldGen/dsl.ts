@@ -1,5 +1,7 @@
 import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
 import type { ActivityId } from "../game/activities"
+import type { Prefab } from "../game/prefabTypes"
+import { bakedPrefab } from "../game/prefabNotation"
 import type { DecorationKind, HandleSide, Patron, SiteCondition, Tileset, WallDecorationKind } from "../game/siteTypes"
 import type { PlacedContainer } from "../game/regions"
 import type { BarrierOrder, Control, Obstacle } from "@/game/obstacles"
@@ -75,6 +77,51 @@ export type NodeSelector = {
   difficulty?: Difficulty
   /** `false` keeps generated loot out of this room. Authored rewards are never touched. */
   loot?: false
+  /** A pass-through chamber in the gap after the selected room: a corridor node widened into a room dressed for
+   * this activity, or for one the carve picks where `true`. The room itself stays where it is. */
+  chamberAfter?: ActivityId | true
+  /** A designed room (a `.room` file's name) this node is pinned to. The room's tier is this floor's difficulty. */
+  room?: string
+}
+
+/** How many of a named room a floor holds, and where. `min` of them are required, up to `max` allowed (default
+ * `min`, else 1); `central` says how deep into the walk they lean: 0 = the ends, 1 = the middle (default 0.5). */
+export type RoomPlacement = { room: string; min?: number; max?: number; central?: number }
+
+/** A placement with its defaults filled in. */
+export const withRoomDefaults = (p: RoomPlacement): Required<RoomPlacement> => {
+  const min = p.min ?? 0
+  return { room: p.room, min, max: p.max ?? (min || 1), central: p.central ?? 0.5 }
+}
+
+/** A spec naming a room where it cannot stand; the bake prints it and stops. */
+export class RoomFault extends Error {}
+
+/** A floor's rooms, resolved: every prefab it names (parsed by `lookup`, so the baked world carries them), the
+ * placements with their defaults, and the pinned ones by node index. Only what is non-empty is present. */
+export const resolveFloorRooms = (
+  placements: RoomPlacement[] | undefined,
+  pinned: Record<number, string>,
+  lookup: (name: string) => Prefab,
+  /** Where the rooms are named: a room's tier is the difficulty of the floor or section that names it. */
+  at: { difficulty: Difficulty; label: string }
+): {
+  prefabs?: Record<string, Prefab>
+  prefabPlacements?: Required<RoomPlacement>[]
+  prefabsByIndex?: Record<number, string>
+} => {
+  const names = [...(placements ?? []).map(p => p.room), ...Object.values(pinned)]
+  const prefabs = Object.fromEntries([...new Set(names)].map(name => [name, bakedPrefab(lookup(name))]))
+  for (const prefab of Object.values(prefabs))
+    if (prefab.tier !== at.difficulty)
+      throw new RoomFault(
+        `${at.label}: room ${prefab.name} is tier ${prefab.tier} but the difficulty there is ${at.difficulty}`
+      )
+  return {
+    ...(names.length ? { prefabs } : {}),
+    ...(placements?.length ? { prefabPlacements: placements.map(withRoomDefaults) } : {}),
+    ...(Object.keys(pinned).length ? { prefabsByIndex: pinned } : {}),
+  }
 }
 
 /** Expand `nodes` selectors against a path's node `count` into a sparse 0-based index → encounter
@@ -97,6 +144,16 @@ export const resolveNodeDifficulties = (nodes: NodeSelector[] | undefined, count
 /** Expand `nodes` selectors into a sparse 0-based index → `false` map of the rooms kept free of generated loot. */
 export const resolveNodeLoot = (nodes: NodeSelector[] | undefined, count: number): Record<number, false> =>
   resolveNodeField(nodes, count, sel => sel.loot)
+
+/** Expand `nodes` selectors into a sparse 0-based index → the chamber that stands after that room. */
+export const resolveNodeChambers = (
+  nodes: NodeSelector[] | undefined,
+  count: number
+): Record<number, ActivityId | true> => resolveNodeField(nodes, count, sel => sel.chamberAfter)
+
+/** Expand `nodes` selectors into a sparse 0-based index → pinned room name map. */
+export const resolveNodeRooms = (nodes: NodeSelector[] | undefined, count: number): Record<number, string> =>
+  resolveNodeField(nodes, count, sel => sel.room)
 
 const resolveNodeField = <T>(
   nodes: NodeSelector[] | undefined,
@@ -174,6 +231,9 @@ export type SideSectionConstraint<TExtra extends string = never> = {
   wallDecorations?: WallDecorationKind[]
   /** "staircase" ends the path at a stairhead into the next floor instead of a treasure room. */
   end?: "treasure" | "staircase"
+  /** The index of the floor a "staircase" end leads to; unset, the next floor. Always a later floor of the same site,
+   * entered by no other stair. Read only with `end: "staircase"`. Structural. */
+  toFloor?: number
   /** Invisible without the Detection perk. */
   hidden?: boolean
   /** Isolates this section's cells from leftover maze edges in a compact layout, so a
@@ -185,6 +245,13 @@ export type SideSectionConstraint<TExtra extends string = never> = {
 export type FloorConstraint<TExtra extends string = never> = {
   pathPuzzles?: PathPuzzlesPreset | number
   difficulty?: Difficulty
+  /** The index of the floor this floor's main path ends in a stair to, in place of an exit. Unset, the main path
+   * stairs to the next floor when no other stair enters that floor, as a floor on the main walk always has. Always a
+   * later floor of the same site, entered by no other stair. Structural. */
+  toFloor?: number
+  /** How far down this floor lies; unset, its index. A larger depth is further down, so a stair to a shallower floor
+   * climbs. Two floors a stair joins never lie at one depth. Structural: it decides which way each stair runs. */
+  depth?: number
   /** What this floor and its paths are drawn in, apart from the `difficulty` its boards are built at. Unset
    * inherits the site's, else the floor is drawn in its `difficulty`. */
   tileset?: Tileset
@@ -197,6 +264,12 @@ export type FloorConstraint<TExtra extends string = never> = {
    * puzzle chain (e.g. `{ where: "last", encounter: "capstone" }` for the crocodile capstone). See
    * NodeSelector. Replaces the old hardcoded last-main-puzzle special case. */
   nodes?: NodeSelector[]
+  /** How many pass-through chambers this floor's main path holds in all, its `chamberAfter` ones among them; the
+   * carve spreads the rest over the gaps between its puzzles. Unset inherits the site's. */
+  chambers?: number
+  /** The designed rooms this floor's main path holds, by `.room` name. Unset inherits the site's; a floor's own list
+   * replaces it. Structural. */
+  rooms?: RoomPlacement[]
   /** WHAT THE CARVE MUST PROVIDE: `count` junctions with at least `exits` ways out free to be closed
    * — the main path onward and the side paths off the junction, never the way back, never one
    * something else already stands in, never one into a hidden branch. A carve offering fewer is
@@ -293,8 +366,6 @@ export type FloorConstraint<TExtra extends string = never> = {
   sidePaths?: PathEntry[]
   /** Declared hidden side paths (hidden: true) — invisible without Detection perk. */
   hiddenPaths?: PathEntry[]
-  /** Integer weights for consumable type selection. Higher = more frequent. */
-  consumableRates?: { bandage: number; oil: number; trapTool: number }
 }
 
 /** One authored ward wing: a gated staircase to a bonus floor at `difficulty`, keyed to a
@@ -427,6 +498,11 @@ export type PyramidConstraint = {
   packingChance?: number
   /** packing used on a packingChance hit. Default 1.6. */
   packingWhenHit?: number
+  /** How many pass-through chambers every floor's main path holds, unless a floor names its own — see
+   * FloorConstraint.chambers. Never defaulted: a floor declares none unless this or the floor says so. */
+  chambers?: number
+  /** The designed rooms every floor's main path holds, unless a floor names its own — see FloorConstraint.rooms. */
+  rooms?: RoomPlacement[]
   /** Isolates the main path's cells from leftover maze edges in a compact layout, so a
    * shortcut can't merge around a main-path puzzle room. Per-floor `sealed` overrides this. */
   sealed?: boolean
@@ -452,14 +528,12 @@ export type PyramidConstraint = {
    * wardWings (allocated after them). */
   wardPaths?: number
   /** Trap the ward paths in this journey's earlier-half pyramids, so the return trip costs
-   * consumables. Only affects wardPaths (a floor's main path has no trap model). */
+   * health. Only affects wardPaths (a floor's main path has no trap model). */
   wardPathTrapped?: boolean
   /** Declared visible side paths — each entry adds paths of that density with the given reward. */
   sidePaths?: PathEntry[]
   /** Declared hidden side paths (hidden: true) — invisible without Detection perk. */
   hiddenPaths?: PathEntry[]
-  /** Integer weights for consumable type selection. Higher = more frequent. */
-  consumableRates?: { bandage: number; oil: number; trapTool: number }
   /** Number of floors of a tomb level. Overrides the value in TOMB_STRUCTURES. */
   floorCount?: number
 }
@@ -649,7 +723,7 @@ export const sidePath = (opts: PathOpts = {}): SideSectionConstraint => {
 const wardKeyTier = (tombId: string, index: number): Difficulty | undefined =>
   wardKeyDifficulty(TOMB_PERK_IDS[tombId]?.[index])
 
-/** A side path gated by a ward key (tomb treasure), ending in a stairhead to the next floor. */
+/** A side path gated by a ward key (tomb treasure), ending in a stairhead to the next floor, or to `toFloor`. */
 export const wardPath = (opts: PathOpts & { tomb: string; index: number }): SideSectionConstraint => {
   const { puzzles, tier, tomb: tombId, index, ...rest } = opts
   const resolvedTier = tier ?? wardKeyTier(tombId, index)

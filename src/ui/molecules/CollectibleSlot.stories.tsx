@@ -21,3 +21,10 @@ export const CollectedSelected: Story = {
 export const CollectedWithCount: Story = {
   args: { state: "collected", symbol: "𓂀", difficulty: "junior", count: 7 },
 }
+// Not seen yet: the accent border and NIEUW on the corner.
+export const CollectedNew: Story = {
+  args: { state: "collected", symbol: "𓂀", difficulty: "junior", newLabel: "NIEUW" },
+}
+export const PartialNew: Story = {
+  args: { state: "partial", symbol: "𓂀", difficulty: "expert", progress: { found: 1, required: 3 }, newLabel: "NIEUW" },
+}

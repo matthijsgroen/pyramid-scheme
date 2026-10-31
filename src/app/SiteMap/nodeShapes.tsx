@@ -1,7 +1,8 @@
-import type { CellState, GateVariant, KeyColor } from "@/game/siteTypes"
+import type { CellState, GateVariant, KeyColor, Tileset } from "@/game/siteTypes"
+import type { MechanismStyle } from "./mechanismStyle"
 import type { TileStatus } from "@/game/sequence"
 import { sequenceTileLook } from "./sequenceTileLook"
-import { ART_IMAGE_RENDERING, sharedTileUrl } from "./tileAssets"
+import { ART_IMAGE_RENDERING, mechanismTileUrl } from "./tileAssets"
 import { type Difficulty, difficulties } from "@/data/difficultyLevels"
 import { METALS } from "@/ui/tokens/metalPalette"
 import { keyColorHex } from "@/ui/tokens/keyColors"
@@ -65,28 +66,18 @@ export const ReplayBadge = ({ r }: { r: number }) => (
   </g>
 )
 
-// A treasure that couldn't be picked up (inventory was full) — still waiting to be looted
-export const PendingLootBadge = ({ r }: { r: number }) => (
-  <g transform={`translate(${r - 7}, ${r - 7})`}>
-    <circle r={7} fill="#2a1e08" stroke="#d0a840" strokeWidth={1.5} />
-    <text textAnchor="middle" dominantBaseline="central" fontSize={9} fill="#f0c860" style={{ userSelect: "none" }}>
-      !
-    </text>
-  </g>
-)
-
 /** A node's badge, worn by the ART rather than by the marker: a chest stands over its own marker, so the
  * ✓ that says the room is done goes on the chest's lid where the eye already is.
  *
  * Its own little inline `<svg>` inside the HTML layer — the badges are icons, and static vector costs
  * nothing (docs/instructions/map-rendering.md, "The markers"). Placed by its CENTRE, in map units. */
-export const NodeBadge = ({ kind, x, y }: { kind: "taken" | "pending"; x: number; y: number }) => (
+export const NodeBadge = ({ x, y }: { x: number; y: number }) => (
   <svg
     aria-hidden="true"
     viewBox="-7 -7 14 14"
     style={{ position: "absolute", left: x - 7, top: y - 7, width: 14, height: 14, overflow: "visible" }}
   >
-    {kind === "pending" ? <PendingLootBadge r={7} /> : <CompletedBadge r={7} />}
+    <CompletedBadge r={7} />
   </svg>
 )
 
@@ -106,6 +97,10 @@ export type ShapeProps = {
   plate?: { glyph: number; status: TileStatus }
   // The icon of the family standing in the room (FamilyMeta.icon), drawn by a "mechanism" marker.
   icon?: string
+  // The tileset the cell is drawn in, which picks the mechanism style a painted piece is drawn in (MECHANISM_STYLE).
+  tileset?: Tileset
+  // Draws the painted piece in this mechanism style instead of the tileset's (`SiteMapView`'s `mechanismStyle`).
+  mechanismStyle?: MechanismStyle
 }
 
 // The painted tile is drawn in the prop frame a flush thing is seated in (`nodeSpritesFor`'s plate), so it
@@ -116,12 +111,12 @@ const TILE_TOP_Y = 10.5
 const FLOOR_SQUASH = 40 / 56
 const GLYPH_OUTLINE = "#2b2116"
 
-/** A sequence tile: one shared painting for every glyph and state, the glyph drawn on its top face in the
- * glyph's state colour (`sequenceTileLook`). Without the painting, a vector slab stands in. */
-const SequenceTileShape = ({ plate }: ShapeProps) => {
+/** A sequence tile: one painting in the cell's mechanism style for every glyph and state, the glyph drawn on its top
+ * face in the glyph's state colour (`sequenceTileLook`). Without the painting, a vector slab stands in. */
+const SequenceTileShape = ({ plate, tileset, mechanismStyle }: ShapeProps) => {
   const r = NODE_RADIUS_PUZZLE
   const status = plate?.status ?? "unwalked"
-  const url = sharedTileUrl("sequenceTile")
+  const url = mechanismTileUrl(tileset ?? "starter", "sequenceTile", mechanismStyle)
   return (
     <g data-plate={plate?.glyph} data-status={status}>
       {url ? (
@@ -476,8 +471,10 @@ export const NodeShape = ({
   mark,
   plate,
   icon,
+  tileset,
+  mechanismStyle,
 }: ShapeProps & { type: ShapeKind }) => {
-  const p = { state, gateVariant, keyColor, keyColors, difficulty, mark, plate, icon }
+  const p = { state, gateVariant, keyColor, keyColors, difficulty, mark, plate, icon, tileset, mechanismStyle }
   switch (type) {
     case "entrance":
       return <EntranceShape {...p} />

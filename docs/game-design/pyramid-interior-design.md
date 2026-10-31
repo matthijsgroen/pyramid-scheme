@@ -31,15 +31,14 @@ The game has two distinct site types. Their loot is strictly separated — nothi
 | Hieroglyph fragment | 273 total (matrix by tier × section)        | Side path end rewards first; main path chests as overflow              |
 | Seal key            | Local only                                  | One chest per pyramid; opens one sealed gate within that same site     |
 | Ward gate           | 36 total                                    | Branch endpoint; leads to stairhead → new floor                        |
-| Consumable          | ~147 total                                  | Normal chests; used to heal or bypass traps                            |
+| Waterskin           | Expert tier and up, on puzzle rooms         | Puzzle rewards, never chests; drunk on pickup to heal one heart        |
 
 **Loot priority order:**
 
 1. Side path end rewards → hieroglyph fragments (primary delivery)
 2. Trap-gated side path end rewards → mosaic tiles or deep map pieces (see §11)
 3. Main path chests → mosaic tiles (filler; count floats with world geometry)
-4. Main path chests → consumables (mummy bandages, healing oils, trap tools)
-5. Main path chests → fragment overflow (if too many authored side paths claim fragments)
+4. Main path chests → fragment overflow (if too many authored side paths claim fragments)
 
 World builder warns when side paths exceed available fragment slots.
 
@@ -82,16 +81,16 @@ loot-table detail, not the node taxonomy.
 
 The interior is a node graph. Every room is one of:
 
-| Node type     | Role                      | Loot / effect                                                               |
-| ------------- | ------------------------- | --------------------------------------------------------------------------- |
-| `puzzle`      | Math puzzle               | Opens the next corridor on solve                                            |
-| `fork`        | Free branch point         | Reveals branch corridors ahead                                              |
-| `treasure`    | Chest room                | Gives hieroglyph fragment, mosaic tiles, map piece, seal key, or consumable |
-| `gate (seal)` | Locked door (local)       | Opens when the seal key from this site is collected                         |
-| `gate (ward)` | Locked door (cross-site)  | Opens when player holds the specific tomb treasure                          |
-| `stairhead`   | Floor transition          | Descends to the next floor                                                  |
-| `exit`        | Leave the pyramid         | The site's one way out, at its main path's end; ends the interior visit     |
-| `trap`        | Timed challenge (expert+) | Requires passing a time-based math encounter to mark as completed           |
+| Node type     | Role                      | Loot / effect                                                           |
+| ------------- | ------------------------- | ----------------------------------------------------------------------- |
+| `puzzle`      | Math puzzle               | Opens the next corridor on solve                                        |
+| `fork`        | Free branch point         | Reveals branch corridors ahead                                          |
+| `treasure`    | Chest room                | Gives hieroglyph fragment, mosaic tiles, map piece, or seal key         |
+| `gate (seal)` | Locked door (local)       | Opens when the seal key from this site is collected                     |
+| `gate (ward)` | Locked door (cross-site)  | Opens when player holds the specific tomb treasure                      |
+| `stairhead`   | Floor transition          | Descends to the next floor                                              |
+| `exit`        | Leave the pyramid         | The site's one way out, at its main path's end; ends the interior visit |
+| `trap`        | Timed challenge (expert+) | Requires passing a time-based math encounter to mark as completed       |
 
 **Trap rooms** are a room type — same navigation as puzzle rooms, but the encounter is time-based (arithmetic reflex) rather than a grid puzzle. Displayed on the map with a **skull icon**. No warning node is needed; the skull provides the visual signal before the player commits to entering.
 
@@ -264,6 +263,17 @@ by the exit. Every room a player can walk into has to walk back to that way home
 
 Every ward gate leads to exactly one stairhead. The stairhead is on the other side. The floor is the reward — each new floor has its own puzzle rooms, branch endpoints, loot, and potentially another ward gate.
 
+### A stair names its floor and its direction
+
+A stair side path and a floor's main path may name the floor index their stair leads to (`toFloor`); without it a
+stair leads to the next floor, and a main path on the main walk stairs on only when no other stair enters that floor
+(`wireSideSectionStaircases` in `src/worldGen/buildSite.ts`). A stair always leads to a later floor index, never to
+its own floor or one already entered, so the reachability walk visits floors in index order. A floor may author its
+`depth` (default its index): a stair climbs when it leads to a shallower floor, and that direction is stamped on the
+link (`goes`) and on the stairhead cell (`stairGoes`), so the map draws a flight going up or down. `goes` is drawn
+only and stays out of the section hashes. starter_1's ward stair to the Sphinx uses both: down from floor 0 to
+floors 2 and 3, the cave on floor 4, then up through floor 5 into the Sphinx on floor 6.
+
 ### Map pieces on deep floors
 
 Floors don't just contain hieroglyph fragments and mosaic tiles — they can contain map pieces for later tombs in the tier. A pyramid in the expert tier might have:
@@ -382,8 +392,7 @@ tiers' tombs share its shape without locks (last bullet).
 - **Level 2, the cavern.** Exterior: a sunlit cavern with the pyramid standing in it, in front of a
   junior-sized board (`levels[1] = { exterior: "cavern" }`). Inside, the tomb proper as described below: four
   floors in the starter tileset, each with its two tableaus, its treasure and its ward key. Between the two
-  tableaus of every floor stands **one junior puzzle** (`nodes: [{ where: 2, encounter: "puzzle", difficulty:
-"junior", loot: false }]`), drawn on the floor's own walls; floor 1 ends with Ipi's room after the second
+  tableaus of every floor stands **one junior puzzle** (`nodes: [{ where: 2, encounter: "puzzle", difficulty: "junior", loot: false }]`), drawn on the floor's own walls; floor 1 ends with Ipi's room after the second
   tableau. A completed tomb resumes at the cavern.
 - **Floor locks in the cavern**: `pitStair` on floor 2 (junior weight) and `throwItBack` on floor 4 (the
   capstone, expert weight), each standing between the floor's entrance and its tableaus
@@ -544,10 +553,10 @@ Surface side path breakdown: 20 journeys × 2 special pyramids (3+6 branches) + 
 | Mosaic tiles         | 298      | Chests + main end rewards                           |
 | Map pieces           | 36       | Side path endpoints (20 surface + 16 deep floors)   |
 | Seal / floor keys    | ~40      | Chest slots (local mechanic, 1 per branchy pyramid) |
-| Consumables          | ~147     | Chests — mummy bandages, healing oils, trap tools   |
+| Waterskins           | by tier  | Puzzle rooms on expert and up (not chests)          |
 | **Total assigned**   | **~795** |                                                     |
 
-The ~823-slot supply comfortably covers the ~795 slots of demand; the surplus is flex chest capacity. Consumables (trap system, §11) fill the bulk of the otherwise-empty chest slots.
+The ~823-slot supply comfortably covers the ~795 slots of demand; the surplus is flex chest capacity. Money and sellables (the shop economy) fill the otherwise-empty chest slots; waterskins (trap system, §11) fill expert-and-up puzzle rooms.
 
 ## 11. Trap system
 
@@ -556,7 +565,7 @@ The ~823-slot supply comfortably covers the ~795 slots of demand; the surplus is
 Traps appear on **authored side branches** at expert difficulty and above. They are a **room type** (`"trap"`) — the same navigation model as puzzle rooms, but with a time-based encounter instead of a grid puzzle. The main spine is always trap-free; the player can always backtrack to the exit regardless of health.
 
 ```
-[fork] ── [trap 💀] ── [treasure: mosaic / consumable]
+[fork] ── [trap 💀] ── [treasure: mosaic / map piece]
 ```
 
 Trap rooms display a **skull icon** on the site map. The skull is the player's visual signal — no separate warning node is needed.
@@ -579,39 +588,30 @@ Health is stored in **half-hearts**. Players start with **3 hearts (6 half-heart
 
 **Trap damage:** 1 full heart (2 half-hearts) per failed attempt. Armor reduces this by 1 half-heart per stack (max 2 stacks, so minimum damage with full armor is 1 half-heart).
 
-**Health floor: 1 half-heart.** Health never reaches zero — there is no death screen. At 1 half-heart the player is blocked from all trap rooms until they heal. The player must prioritise finding consumables to restore health.
+**Health floor: 1 half-heart.** Health never reaches zero — there is no death screen. At 1 half-heart the player is blocked from all trap rooms until they heal. Hearts refill in full on every return to base (the camp), and a waterskin found on an expert-and-up puzzle room heals one heart on the spot.
 
 **`canAttemptTrap()`** = `currentHealth > 1` (more than 1 half-heart remaining).
 
-**Health persists across sessions.** The "never truly stuck" guarantee comes from world design — main spines are always trap-free and always lead toward healing consumables.
+**Health persists across sessions.** The "never truly stuck" guarantee comes from world design — main spines are always trap-free and never need health to follow.
 
-No time-based regen. The primary recovery mechanic is backtracking to find chests.
+No time-based regen. Recovery is going home: every return to base refills hearts, so a trap is a risk taken for the loot behind it, never a lock on the way out.
 
 ### Loot behind traps
 
 Trap endpoints hold only high-value optional loot:
 
-| Loot type            | Notes                                                           |
-| -------------------- | --------------------------------------------------------------- |
-| Mosaic tiles         | Most common trap reward — desirable but never blocking          |
-| Consumables          | Bandages, oils, trap tools — a self-sustaining risk/reward loop |
-| Deep tomb map pieces | A subset; some later-tomb map pieces require taking a risk      |
+| Loot type            | Notes                                                      |
+| -------------------- | ---------------------------------------------------------- |
+| Mosaic tiles         | Most common trap reward — desirable but never blocking     |
+| Deep tomb map pieces | A subset; some later-tomb map pieces require taking a risk |
 
 Trap endpoints **never** hold hieroglyph fragments, seal keys, or ward gates — those must stay accessible without health cost.
 
 ### Mitigating traps
 
-Two layers of mitigation: **consumables** (tactical, found in chests) and **permanent upgrades** (strategic, from tomb treasures):
+Two layers of mitigation: **waterskins** (tactical, found on the way) and **permanent upgrades** (strategic, from tomb treasures):
 
-**Consumables** — found in normal pyramid chests:
-
-| Item          | Effect                                                              | Rarity   |
-| ------------- | ------------------------------------------------------------------- | -------- |
-| Mummy bandage | Restore 1 full heart (2 half-hearts)                                | Common   |
-| Healing oil   | Restore to full health                                              | Rare     |
-| Trap tool     | Permanently disable a trapped corridor — becomes freely traversable | Uncommon |
-
-The trap tool does not bypass the question — it removes the trap entirely for that corridor. Once used, the corridor is open forever.
+**Waterskins** — a puzzle-room reward on expert and up, spread evenly over expert, master and wizard. Opening one heals one heart (two half-hearts) on the spot; the pack-mule perk doubles that to two hearts. Health is capped at the maximum, and a waterskin found at full health is drunk all the same: it is never offered again and nothing remembers it. There is nothing to carry, so no inventory cap and no trap tool: a trap is beaten or walked away from.
 
 **Permanent upgrades** — granted by tomb treasures (see §1):
 
@@ -621,7 +621,7 @@ The trap tool does not bypass the question — it removes the trap entirely for 
 | Armor / protection  | Failed traps deal less damage      |
 | Trap insight        | More time to answer trap questions |
 
-Consumables fill the 147 previously unassigned reward slots (see §10). Permanent upgrades come from tomb treasures — no extra slots needed.
+Permanent upgrades come from tomb treasures — no extra slots needed.
 
 ### Difficulty gating
 
@@ -646,7 +646,6 @@ Consumables fill the 147 previously unassigned reward slots (see §10). Permanen
 | Total treasures         | 40          | 36 ward keys + 4 location keys                                                                                   |
 | Pyramid floors unlocked | 36          | One per ward key treasure                                                                                        |
 | Map pieces in the world | 36          | 20 primary (1 per pyramid journey) + 16 secondary (4 per secondary tomb: expert_b, master_b, wizard_b, wizard_c) |
-| Consumables             | ~147        | Mummy bandages, healing oils, trap tools — in normal chests                                                      |
 | Mosaic tiles            | 298 (fixed) | Main path chest filler                                                                                           |
 
 ---
@@ -689,7 +688,7 @@ Tier unlock is no longer a single shared key: each tomb's first 4 treasures (`TI
 |               | 12  | Location key → Expert B | Unlocks master difficulty (journey 2)                    |
 |               | 13  | Ward key                | Trap insight +1s · unlocks master difficulty (journey 3) |
 |               | 14  | Ward key                | Armor · unlocks master difficulty (journey 4)            |
-| **Expert B**  | 15  | Ward key                | Consumable detector L1                                   |
+| **Expert B**  | 15  | Ward key                | —                                                        |
 |               | 16  | Ward key                | —                                                        |
 |               | 17  | Ward key                | Trap insight +1s                                         |
 |               | 18  | Ward key                | Max health +½ ♥                                          |
@@ -698,7 +697,7 @@ Tier unlock is no longer a single shared key: each tomb's first 4 treasures (`TI
 |               | 21  | Ward key                | Unlocks wizard difficulty (journey 3)                    |
 |               | 22  | Ward key                | Compass L2 · unlocks wizard difficulty (journey 4)       |
 |               | 23  | Ward key                | Armor                                                    |
-| **Master B**  | 24  | Ward key                | Consumable detector L2                                   |
+| **Master B**  | 24  | Ward key                | —                                                        |
 |               | 25  | Ward key                | Scribe's Eye L1                                          |
 |               | 26  | Ward key                | Compass L3                                               |
 |               | 27  | Ward key                | Max health +½ ♥                                          |
@@ -707,7 +706,7 @@ Tier unlock is no longer a single shared key: each tomb's first 4 treasures (`TI
 |               | 30  | Location key → Wizard B | —                                                        |
 |               | 31  | Ward key                | Detection L2                                             |
 |               | 32  | Ward key                | —                                                        |
-| **Wizard B**  | 33  | Ward key                | Consumable detector L3                                   |
+| **Wizard B**  | 33  | Ward key                | —                                                        |
 |               | 34  | Location key → Wizard C | —                                                        |
 |               | 35  | Ward key                | Detection L3                                             |
 |               | 36  | Ward key                | Scribe's Eye L2                                          |
@@ -722,13 +721,12 @@ Tier unlock is no longer a single shared key: each tomb's first 4 treasures (`TI
 
 ### The detector slot
 
-Three perks share a single **active detector slot** — only one can be active at a time. The player switches modes depending on what they need:
+Two perks share a single **active detector slot** — only one can be active at a time. The player switches modes depending on what they need:
 
-| Mode              | Perk required            | What it tracks                                                     |
-| ----------------- | ------------------------ | ------------------------------------------------------------------ |
-| Compass           | Compass L1–3             | One chosen hieroglyph fragment                                     |
-| Consumable        | Consumable detector L1–3 | Nearest consumable chest (skipped-but-full-inventory chests first) |
-| Hidden passageway | Detection L2–4           | Undiscovered hidden corridors                                      |
+| Mode              | Perk required  | What it tracks                 |
+| ----------------- | -------------- | ------------------------------ |
+| Compass           | Compass L1–3   | One chosen hieroglyph fragment |
+| Hidden passageway | Detection L2–4 | Undiscovered hidden corridors  |
 
 **Detection L1 is passive and always-on** — hidden corridors pulse when the player is adjacent, regardless of the active detector mode. L2–4 (floor/pyramid/journey markers) require active selection.
 
@@ -736,16 +734,15 @@ Three perks share a single **active detector slot** — only one can be active a
 
 ### Perk reference
 
-| Perk                    | Levels | Effect per level                                                                                                                                                                                                                                                                | Implementation notes                                                                                                                                                                                                                                                            |
-| ----------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Tier unlock**         | —      | Unlocks entry to the next difficulty tier                                                                                                                                                                                                                                       | Triggered on collecting ANY ONE of treasures #1–4 of starter/junior/expert/master first-tomb (`TIER_UNLOCK_PERK_IDS`); each of those 4 also pairs to one specific journey of the next tier, so which one you find determines which journey's own ward-gated bonus content opens |
-| **Max health +½ ♥**     | —      | Adds 1 half-heart to max health. Base = 6 half-hearts (3 hearts); max = 12 half-hearts (6 hearts) across all 6 upgrades                                                                                                                                                         | Stored as `maxHealth` integer (half-hearts). Display as full/half hearts                                                                                                                                                                                                        |
-| **Armor**               | —      | Reduces trap damage by 1 half-heart per stack. Stack 1: trap hit costs 1½ hearts. Stack 2: trap hit costs 1 heart. Cannot reduce below 1 half-heart                                                                                                                             | Stored as `armorStacks` (0–2). Applied at damage calculation                                                                                                                                                                                                                    |
-| **Trap insight**        | —      | Adds +1s to every trap encounter time limit per stack. Stack 1: +1s. Stack 2: +2s total                                                                                                                                                                                         | Stored as `trapInsightStacks` (0–2). Applied in `TRAP_TIME_LIMITS_SECONDS` lookup                                                                                                                                                                                               |
-| **Pack mule**           | 1      | Increases consumable carry capacity from 2 to 4 slots                                                                                                                                                                                                                           | Default cap = 2. After upgrade cap = 4. Stored as `packMuleLevel` (0–1). Cap = `packMuleLevel === 1 ? 4 : 2`                                                                                                                                                                    |
-| **Compass**             | L1–3   | **L1:** Journey map marks which pyramid holds a fragment for the tracked hieroglyph · **L2:** Proximity signal while navigating inside the pyramid · **L3:** Exact path to the fragment chest                                                                                   | Active detector mode. Player selects a partial hieroglyph to track. Points to one accessible chest only (filtered against current ward keys). State: `compassLevel` (0–3), `activeDetector`, `compassTarget` hieroglyph id                                                      |
-| **Consumable detector** | L1–3   | **L1:** Journey map marks pyramids containing consumable chests · **L2:** Proximity signal inside the pyramid · **L3:** Exact path to nearest consumable chest                                                                                                                  | Active detector mode. Prioritises chests the player visited but could not carry (inventory full) over unvisited chests. State: `consumableDetectorLevel` (0–3), `activeDetector`                                                                                                |
-| **Detection**           | L1–4   | **L1 (passive):** Hidden corridor entrances pulse when player is adjacent · **L2:** Floor indicator — a hidden path exists on this floor · **L3:** Pyramid marker — secrets in this pyramid · **L4:** Journey list marker — shows which journeys have undiscovered hidden paths | L1 always-on passive; L2–4 are active detector modes. Hidden corridors: `hidden: true` edge attribute. State: `detectionLevel` (0–4), `activeDetector`                                                                                                                          |
+| Perk                | Levels | Effect per level                                                                                                                                                                                                                                                                | Implementation notes                                                                                                                                                                                                                                                            |
+| ------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tier unlock**     | —      | Unlocks entry to the next difficulty tier                                                                                                                                                                                                                                       | Triggered on collecting ANY ONE of treasures #1–4 of starter/junior/expert/master first-tomb (`TIER_UNLOCK_PERK_IDS`); each of those 4 also pairs to one specific journey of the next tier, so which one you find determines which journey's own ward-gated bonus content opens |
+| **Max health +½ ♥** | —      | Adds 1 half-heart to max health. Base = 6 half-hearts (3 hearts); max = 12 half-hearts (6 hearts) across all 6 upgrades                                                                                                                                                         | Stored as `maxHealth` integer (half-hearts). Display as full/half hearts                                                                                                                                                                                                        |
+| **Armor**           | —      | Reduces trap damage by 1 half-heart per stack. Stack 1: trap hit costs 1½ hearts. Stack 2: trap hit costs 1 heart. Cannot reduce below 1 half-heart                                                                                                                             | Stored as `armorStacks` (0–2). Applied at damage calculation                                                                                                                                                                                                                    |
+| **Trap insight**    | —      | Adds +1s to every trap encounter time limit per stack. Stack 1: +1s. Stack 2: +2s total                                                                                                                                                                                         | Stored as `trapInsightStacks` (0–2). Applied in `TRAP_TIME_LIMITS_SECONDS` lookup                                                                                                                                                                                               |
+| **Pack mule**       | 1      | A waterskin heals two hearts instead of one                                                                                                                                                                                                                                     | Stored as `packMuleLevel` (0–1). Read when a waterskin is opened                                                                                                                                                                                                                |
+| **Compass**         | L1–3   | **L1:** Journey map marks which pyramid holds a fragment for the tracked hieroglyph · **L2:** Proximity signal while navigating inside the pyramid · **L3:** Exact path to the fragment chest                                                                                   | Active detector mode. Player selects a partial hieroglyph to track. Points to one accessible chest only (filtered against current ward keys). State: `compassLevel` (0–3), `activeDetector`, `compassTarget` hieroglyph id                                                      |
+| **Detection**       | L1–4   | **L1 (passive):** Hidden corridor entrances pulse when player is adjacent · **L2:** Floor indicator — a hidden path exists on this floor · **L3:** Pyramid marker — secrets in this pyramid · **L4:** Journey list marker — shows which journeys have undiscovered hidden paths | L1 always-on passive; L2–4 are active detector modes. Hidden corridors: `hidden: true` edge attribute. State: `detectionLevel` (0–4), `activeDetector`                                                                                                                          |
 
 ---
 

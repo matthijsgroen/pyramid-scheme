@@ -15,6 +15,7 @@ import type {
   FloorConfig,
   KeyColor,
   MechanismRecord,
+  PropFootprint,
   RoomCell,
   SideSection,
   SubSection,
@@ -34,6 +35,7 @@ import type {
   ForkSwitchControl,
 } from "../obstacles"
 import type { ContentKind, RegionAppetite, SideChain } from "../regions"
+import type { CorridorAssignment } from "../corridorSidePaths"
 import type { AbsorbedDemand, LaidFloor } from "../laidFloor"
 import type { LockPlan } from "../lockPlan"
 import type { CarveFault } from "../carveAgreement"
@@ -41,6 +43,7 @@ import type { ResolveBoardIndex } from "../seeds/boardIndex"
 import type { ResolveOneWayRealisation } from "../oneWayRealisation"
 import type { ResolveRegionBarrierRealisation } from "../regionBarrierRealisation"
 import type { ResolvePassageRealisation } from "../passageRealisation"
+import type { ReservedBlock, ReservedWalk } from "./reserveRooms"
 
 /** A grid position, row then column. */
 export type Cell = [number, number]
@@ -79,6 +82,8 @@ export type Chain = {
   section: SideSection | SubSection
   cells: Cell[]
   attachedAt: Cell
+  /** The door nodes of the designed room it leaves, between `attachedAt` and its first cell; absent off a plain node. */
+  via?: Cell[]
   /** Where it sits among its siblings: `s0`, `s0.1`. */
   positional: string
   /** Its own index, and its parent's where it has one — what the section hash is keyed on. */
@@ -103,7 +108,7 @@ export type SwitchWay = { dir: Direction; cell: string; gateKeyId: string }
 export type ForkSwitchRoom = { room: Partial<RoomSpec>; gateKeyByDir: ReadonlyMap<Direction, string> }
 
 /** A top-level side section hung off the route: the cells it took and the route cell it hangs from. */
-export type SectionGroup = { sectionIdx: number; cells: Cell[]; attachedAt: Cell }
+export type SectionGroup = { sectionIdx: number; cells: Cell[]; attachedAt: Cell; via?: Cell[] }
 
 /** A room as a pass decides it; the renderer adds what the grid alone knows. */
 export type RoomSpec = Omit<RoomCell, "type" | "dirs" | "state" | "sectionHash" | "legacySectionHash" | "hidden">
@@ -148,6 +153,7 @@ export type FloorPrep = Readonly<{
     resolveOneWay: ResolveOneWayRealisation
     resolveRegionBarrier: ResolveRegionBarrierRealisation
     resolvePassage: ResolvePassageRealisation
+    propFootprint: (kind: DecorationKind) => PropFootprint
   }>
   config: Readonly<{
     /** The floor with its handles' gates on it. */
@@ -226,6 +232,11 @@ export type FloorPrep = Readonly<{
     contentSections: ReadonlySet<number>
     junctionSections: readonly number[]
     absorbedDemands: readonly AbsorbedDemand[]
+    /** The side sections, in authored order, offered a corridor of the lock, `outsideLock` or not. */
+    corridorCandidates: readonly number[]
+    /** The lock corridor each side section standing in the lock is assigned; a section not named hangs as a branch
+     * or, as the floor-key host, is spread over the laid nodes. */
+    corridorAssignments: readonly CorridorAssignment[]
     appetiteOfRegion: ReadonlyMap<string, RegionAppetite>
     branchSections: readonly number[]
     hubGroupSize: number
@@ -289,6 +300,10 @@ export type CarveState = {
   rung: Rung
   /** The attempt's one stream: every pass that draws, draws from it in pass order. */
   rand: () => number
+  /** The designed rooms that claimed their block of nodes before the maze was dug; empty where the floor names none. */
+  blocks?: readonly ReservedBlock[]
+  /** The main path and the side paths walked to and through those blocks; null where no block was reserved. */
+  walks?: ReservedWalk | null
   /** The grid the lay grew to, written even when the lay refuses: the next rung starts from it. */
   laidN?: number
   /** The lock the floor lays and the route steps its content takes; null where the floor lays none. */
@@ -340,6 +355,8 @@ export type CarveState = {
   drops?: OneWayEdge[]
   /** The node each pipe's hole stands on, by the hole's id (`pipe@region`); empty on a floor without a pipe. */
   pipeHoles?: ReadonlyMap<string, { cell: string }>
+  /** Each pass-through chamber's room, by the node it widened; empty on a floor that declares none. */
+  chambers?: ReadonlyMap<string, RoomSpec>
 }
 
 type ReasonOf<T extends AssemblerReason["type"]> = Extract<AssemblerReason, { type: T }>
@@ -359,6 +376,8 @@ export type Shortfall =
   | ReasonOf<"sequenceTileNotPlaced">
   | ReasonOf<"plateNotPlaced">
   | ReasonOf<"pipeHoleNotPlaced">
+  | ReasonOf<"chambersNotSeated">
+  | ReasonOf<"prefabsNotPlaced">
   | { type: "regionWillNotTake"; mismatch: { region: string; kind: ContentKind }[] }
   | { type: "carveDisagreement"; faults: CarveFault[] }
   | ReasonOf<"lockNotLaid">
@@ -371,13 +390,16 @@ export type Shortfall =
 export type Refusal = { retry: readonly Shortfall[] } | { fatal: AssemblerFailure["reasons"] }
 
 /** The state a pass sees: what it reads, present and read-only, and what it writes. */
-type PassState<R extends keyof CarveState, W extends keyof CarveState> = Readonly<Pick<Required<CarveState>, R>> &
+type PassState<R extends keyof CarveState, W extends keyof CarveState, O extends keyof CarveState = never> = Readonly<
+  Pick<Required<CarveState>, R>
+> &
+  Readonly<Pick<CarveState, O>> &
   Pick<CarveState, W>
 
 /** One step of an attempt: decides from prep and what earlier passes wrote, writes its own keys or refuses. */
-export type Pass<R extends keyof CarveState, W extends keyof CarveState> = (
+export type Pass<R extends keyof CarveState, W extends keyof CarveState, O extends keyof CarveState = never> = (
   prep: FloorPrep,
-  state: PassState<R, W>
+  state: PassState<R, W, O>
 ) => Refusal | void
 
 /** A pass as the loop runs it, with the keys it reads and writes named so the order can be checked. */
@@ -385,6 +407,8 @@ export type PassEntry = {
   name: string
   reads: readonly (keyof CarveState)[]
   writes: readonly (keyof CarveState)[]
+  /** Keys it reads when present and does without when absent. */
+  optionalReads: readonly (keyof CarveState)[]
   run: (prep: FloorPrep, state: CarveState) => Refusal | void
 }
 
@@ -404,22 +428,24 @@ export const requireReads = <K extends keyof CarveState>(
  * that an earlier pass already wrote, and a key it leaves unwritten after it did not refuse, are mistakes in
  * the passes, so each throws. A pass with nothing to write says so with an explicit null or no-op value. The
  * keys are taken from the lists alone, so a pass whose own type reads or writes a key its lists leave out does
- * not compile.
+ * not compile. `optionalReads` are keys the pass may find absent, which the guard leaves alone.
  */
-export const pass = <R extends keyof CarveState, W extends keyof CarveState>(
+export const pass = <R extends keyof CarveState, W extends keyof CarveState, O extends keyof CarveState = never>(
   name: string,
   reads: readonly R[],
   writes: readonly W[],
-  run: Pass<NoInfer<R>, NoInfer<W>>
+  run: Pass<NoInfer<R>, NoInfer<W>, NoInfer<O>>,
+  optionalReads: readonly O[] = []
 ): PassEntry => ({
   name,
   reads,
   writes,
+  optionalReads,
   run: (prep, state) => {
     requireReads(name, reads, state)
     for (const key of writes)
       if (state[key] !== undefined) throw new Error(`[carve] ${name} writes ${key}, which an earlier pass wrote`)
-    const refusal = run(prep, state as PassState<R, W>)
+    const refusal = run(prep, state as PassState<R, W, O>)
     if (refusal) return refusal
     for (const key of writes) if (state[key] === undefined) throw new Error(`[carve] ${name} did not write ${key}`)
   },

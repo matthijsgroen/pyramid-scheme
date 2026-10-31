@@ -505,3 +505,31 @@ describe("the map in mid-glide taps what the one builder offers", () => {
     expect(offered).not.toEqual(atRest(settled))
   })
 })
+
+describe("a bare junction beside the player", () => {
+  it("points the way to it with an arrow, from every corridor cell next to one", () => {
+    let checked = 0
+    for (const name of FLOOR_NAMES) {
+      const result = assembleFloor(`${name}:0`, FLOORS[name], 7)
+      if (!result.success) throw new Error("assembly failed")
+      const grid = revealAll(result.grid)
+      const claims = buildRoomClaims(grid)
+      grid.cells.forEach((row, r) =>
+        row.forEach((cell, c) => {
+          if (cell.type !== "corridor") return
+          const ctx = offerContextFrom(grid, [r, c], {})
+          for (const dir of cell.dirs) {
+            const [nr, nc] = [r + DIR_MOVES[dir][0], c + DIR_MOVES[dir][1]]
+            const next = grid.cells[nr]?.[nc]
+            if (next?.type !== "room" || next.roomType !== "fork" || next.family !== undefined) continue
+            const marker = markerAt(grid, claims, nr, nc, ctx)
+            if (!marker) continue
+            expect(marker).toEqual({ kind: "arrow", dir })
+            checked++
+          }
+        })
+      )
+    }
+    expect(checked).toBeGreaterThan(0)
+  })
+})

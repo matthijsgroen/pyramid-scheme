@@ -173,3 +173,36 @@ describe("an entry's attachments", () => {
     expect(parse(md)[0].attachments).toEqual(["art/masters/surfaces/starter-floor.webp"])
   })
 })
+
+describe("a collection icon's entry", () => {
+  const md = [
+    "### `sellable/sell_stone_1` — Chipped Ostracon",
+    "**Attach:** `art/masters/camp/chest.webp`",
+    "```\nsellable prompt\n```",
+    "**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_stone_1`",
+    "### `part/well-rope` — Long rope",
+    "**Attach:** `art/masters/camp/chest.webp`, `art/masters/camp/well.webp`",
+    "```\npart prompt\n```",
+    "**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=well-rope`",
+  ].join("\n")
+
+  it("keys may hold an underscore, and the attachments are the masters named", () => {
+    const [sellable, part] = parse(md)
+    expect(sellable.key).toBe("sellable/sell_stone_1")
+    expect(sellable.prompt).toBe("sellable prompt")
+    expect(sellable.attachments).toEqual(["art/masters/camp/chest.webp"])
+    expect(part.key).toBe("part/well-rope")
+    expect(part.attachments).toEqual(["art/masters/camp/chest.webp", "art/masters/camp/well.webp"])
+  })
+
+  it("lands under the Import line's --out-dir, named by --name", () => {
+    const [sellable, part] = parse(md)
+    expect(sellable.out).toBe("src/assets/sellables/sell_stone_1.webp")
+    expect(part.out).toBe("src/assets/camp/parts/well-rope.webp")
+  })
+
+  it("lands in the camp folder when the Import line names no --out-dir", () => {
+    const [e] = parse("### `part/x-y` — y\n```\np\n```\n**Import:** `yarn import-camp <file> --name=x-y`")
+    expect(e.out).toBe("src/assets/camp/x-y.webp")
+  })
+})

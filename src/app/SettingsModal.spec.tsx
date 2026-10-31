@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render, cleanup, fireEvent } from "@testing-library/react"
+import { render, cleanup, fireEvent, screen } from "@testing-library/react"
 import { describe, expect, it, vi, afterEach } from "vitest"
 
 // `language` stands in for i18n's own current language, so a test can move it the way
@@ -26,7 +26,19 @@ vi.mock("@/support/useGameStorage", () => ({
   clearGameData: vi.fn(),
 }))
 
+// Heavy dev tools stand in as markers: what is pinned is which ones the dialog shows, not how they work.
+vi.mock("@/app/dev/PuzzleLab", () => ({ PuzzleLab: () => <div data-testid="puzzle-lab" /> }))
+vi.mock("@/app/dev/SaveTransfer", () => ({ SaveTransfer: () => <div data-testid="save-transfer" /> }))
+vi.mock("@/app/dev/useDevActions", () => ({ useDevActions: () => [] }))
+vi.mock("@/app/translations/useJourneyTranslations", () => ({ useJourneyTranslations: () => [] }))
+const startJourney = vi.fn()
+vi.mock("@/app/state/useJourneys", async importOriginal => ({
+  ...(await importOriginal<typeof import("@/app/state/useJourneys")>()),
+  useJourneys: () => ({ startJourney }),
+}))
+
 const { SettingsModal } = await import("./SettingsModal")
+const { DevelopContext } = await import("@/contexts/DevelopMode")
 
 const selectIn = (container: HTMLElement) => container.querySelector<HTMLSelectElement>("#language-select")!
 
@@ -43,19 +55,19 @@ afterEach(() => {
 describe("SettingsModal language selection", () => {
   it("shows the language i18n is actually using, not a copy made when it mounted", () => {
     language = "nl"
-    const { container } = render(<SettingsModal isOpen onClose={() => {}} />)
+    const { container } = render(<SettingsModal isOpen onClose={() => {}} startGame={() => {}} />)
     expect(selectIn(container).value).toBe("nl")
   })
 
   it("hands the choice to i18n and reads the result back on the next render", () => {
-    const { container, rerender } = render(<SettingsModal isOpen onClose={() => {}} />)
+    const { container, rerender } = render(<SettingsModal isOpen onClose={() => {}} startGame={() => {}} />)
     expect(selectIn(container).value).toBe("en")
 
     fireEvent.change(selectIn(container), { target: { value: "nl" } })
     expect(changeLanguage).toHaveBeenCalledWith("nl")
 
     // No local copy to keep in step: the next render simply reflects i18n's new language.
-    rerender(<SettingsModal isOpen onClose={() => {}} />)
+    rerender(<SettingsModal isOpen onClose={() => {}} startGame={() => {}} />)
     expect(selectIn(container).value).toBe("nl")
   })
 })
@@ -68,7 +80,7 @@ describe("the save version beside the app version", () => {
   const footerOf = (container: HTMLElement) => container.textContent ?? ""
 
   it("shows the current version when there is nothing stored to migrate", () => {
-    const { container } = render(<SettingsModal isOpen onClose={vi.fn()} />)
+    const { container } = render(<SettingsModal isOpen onClose={vi.fn()} startGame={vi.fn()} />)
 
     expect(footerOf(container)).toContain("ui.saveVersion 3")
   })
@@ -76,7 +88,7 @@ describe("the save version beside the app version", () => {
   it("shows the lowest version across the saves, because one left behind is the one that matters", () => {
     stored = { journeys: [{ cellKeyVersion: 3 }, { cellKeyVersion: 2 }, { cellKeyVersion: 3 }] }
 
-    const { container } = render(<SettingsModal isOpen onClose={vi.fn()} />)
+    const { container } = render(<SettingsModal isOpen onClose={vi.fn()} startGame={vi.fn()} />)
 
     expect(footerOf(container)).toContain("ui.saveVersion 2")
   })
@@ -84,7 +96,7 @@ describe("the save version beside the app version", () => {
   it("reads an unstamped save as 0, so a save that never migrated says so", () => {
     stored = { journeys: [{ cellKeyVersion: 3 }, {}] }
 
-    const { container } = render(<SettingsModal isOpen onClose={vi.fn()} />)
+    const { container } = render(<SettingsModal isOpen onClose={vi.fn()} startGame={vi.fn()} />)
 
     expect(footerOf(container)).toContain("ui.saveVersion 0")
   })
@@ -94,9 +106,61 @@ describe("the save version beside the app version", () => {
   it("says nothing until storage has actually been read", () => {
     stored = { journeys: [{ cellKeyVersion: 0 }], loaded: false }
 
-    const { container } = render(<SettingsModal isOpen onClose={vi.fn()} />)
+    const { container } = render(<SettingsModal isOpen onClose={vi.fn()} startGame={vi.fn()} />)
 
     expect(footerOf(container)).not.toContain("ui.saveVersion")
     expect(footerOf(container)).toContain("ui.footer")
+  })
+})
+
+describe("the developer block", () => {
+  const renderIn = (isDevelopMode: boolean) =>
+    render(
+      <DevelopContext.Provider value={{ isDevelopMode, setDevelopMode: () => {} }}>
+        <SettingsModal isOpen onClose={vi.fn()} startGame={vi.fn()} />
+      </DevelopContext.Provider>
+    )
+
+  it("shows no dev tool outside develop mode", () => {
+    const { container } = renderIn(false)
+
+    expect(container.textContent).not.toContain("Playtesting tools")
+    expect(container.textContent).not.toContain("devLockEditor.open")
+    expect(screen.queryByTestId("puzzle-lab")).toBeNull()
+    expect(screen.queryByTestId("save-transfer")).toBeNull()
+  })
+
+  it("shows the playtesting panel, lock editor button and lab in develop mode", () => {
+    const { container } = renderIn(true)
+
+    expect(container.textContent).toContain("Playtesting tools")
+    expect(container.textContent).toContain("devLockEditor.open")
+    expect(screen.getByTestId("puzzle-lab")).toBeTruthy()
+    expect(screen.getByTestId("save-transfer")).toBeTruthy()
+  })
+})
+
+describe("SettingsModal as a dialog", () => {
+  it("is a modal dialog that Escape closes", () => {
+    const onClose = vi.fn()
+    render(<SettingsModal isOpen onClose={onClose} startGame={() => {}} />)
+    const dialog = screen.getByRole("dialog", { name: "ui.settings" })
+    expect(dialog.getAttribute("aria-modal")).toBe("true")
+    fireEvent.keyDown(dialog, { key: "Escape" })
+    expect(onClose).toHaveBeenCalledOnce()
+  })
+
+  it("mounts the playtesting tools only while open in develop mode", () => {
+    const withDevelop = (isOpen: boolean, isDevelopMode: boolean) => (
+      <DevelopContext.Provider value={{ isDevelopMode, setDevelopMode: () => {} }}>
+        <SettingsModal isOpen={isOpen} onClose={() => {}} startGame={() => {}} />
+      </DevelopContext.Provider>
+    )
+    const { rerender } = render(withDevelop(true, false))
+    expect(screen.queryByTestId("puzzle-lab")).toBeNull()
+    rerender(withDevelop(true, true))
+    expect(screen.getByTestId("puzzle-lab")).toBeTruthy()
+    rerender(withDevelop(false, true))
+    expect(screen.queryByTestId("puzzle-lab")).toBeNull()
   })
 })

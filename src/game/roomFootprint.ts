@@ -63,8 +63,10 @@ export const portalKindOf = (
 
 /**
  * A CHAMBER claims the floor around it on the map; every other room is a stop in a 1-wide corridor. Every
- * junction is one, whatever stands in it, and so is a dead end that holds treasure or is a stairhead or the
- * exit, and so is a room a story authored an activity for, wherever it stands: a scene needs its set. `kind`
+ * fork is one, whatever stands in it, and every pass-through chamber, and so is a dead end that holds treasure or is a stairhead or the
+ * exit, and so is a room a story authored an activity for, wherever it stands: a scene needs its set. A
+ * portal with more than one way out is one too: the carve may hang a side section off the floor's entrance,
+ * and a stair or door the player can leave two ways stands in a room that forks, never in a corridor. `kind`
  * is the shape the room is drawn as.
  *
  * It lives in the DOMAIN because the renderer claims the floor by it and the carve dresses by it: a prop
@@ -72,5 +74,21 @@ export const portalKindOf = (
  */
 export const isChamber = (cell: Pick<RoomCell, "roomType" | "dirs" | "authoredActivity">, kind: string): boolean =>
   cell.roomType === "fork" ||
+  cell.roomType === "chamber" ||
   cell.authoredActivity !== undefined ||
+  (cell.roomType === "portal" && cell.dirs.size > 1) ||
   ((kind === "treasure" || kind === "stairhead" || kind === "exit") && cell.dirs.size === 1)
+
+/**
+ * Whether the room at (r, c) claims floor on the map: the rule the renderer dresses by and the map grows rooms
+ * by, read off the cell. A portal is the kind its place makes it, a treasure or shop encounter is a
+ * `"treasure"`, anything else a `"room"`.
+ */
+export const claimsFloorAt = (grid: FloorGrid, r: number, c: number): boolean => {
+  const cell = cellAt(grid, r, c)
+  if (cell.type !== "room") return false
+  const treasureLike =
+    cell.roomType === "encounter" && (cell.tags?.includes("treasure") === true || cell.tags?.includes("shop") === true)
+  const kind = cell.roomType === "portal" ? portalKindOf(grid, r, c, cell) : treasureLike ? "treasure" : "room"
+  return isChamber(cell, kind)
+}

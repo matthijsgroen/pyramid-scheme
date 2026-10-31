@@ -29,6 +29,10 @@ describe("what shape a room draws as", () => {
     expect(shapeKindFor(grid, 1, 1, { roomType: "fork" })).toBe("fork")
   })
 
+  it("draws a pass-through chamber as a bare junction: there is nothing in it to enter", () => {
+    expect(shapeKindFor(grid, 1, 1, { roomType: "chamber" })).toBe("fork")
+  })
+
   // A junction that carries a board asks something of the player before a way on opens, and one drawn
   // as the plain puzzle room is indistinguishable both from a room that merely holds a puzzle and —
   // since a re-enterable room wears no ✓ and takes no dim — from a room nobody has ever walked into.
@@ -110,5 +114,9 @@ describe("what a junction's footprint takes", () => {
 
   it("takes exactly the same cells for a junction carrying a board", () => {
     expect(claimsAround(withBoard)).toEqual(claimsAround(bare))
+  })
+
+  it("takes exactly the same cells for a pass-through chamber", () => {
+    expect(claimsAround({ ...bare, roomType: "chamber" })).toEqual(claimsAround(bare))
   })
 })

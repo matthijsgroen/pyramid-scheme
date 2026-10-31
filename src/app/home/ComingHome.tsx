@@ -1,0 +1,51 @@
+import { useTranslation } from "react-i18next"
+import { homecomingPanels } from "@/app/homecomingRegistry"
+import { useHaulLines } from "@/app/home/haulLines"
+import { useHomeSave } from "@/app/home/useHomeSave"
+import { campArt } from "@/ui/atoms/campScene/campArt"
+import { ComingHomeScreen } from "@/ui/organisms/ComingHomeScreen"
+
+const fireUrl = campArt("campfire")?.url
+
+// Coming home: the fire, what the mods say about resting, and the haul since the last unpacking. The
+// button is the only thing that empties the haul, so a trip's loot is never lost to a reload.
+export type Arrival = { haul: boolean; tags: readonly string[] }
+
+export const ComingHome = ({ onDone }: { onDone: (arrival: Arrival) => void }) => {
+  const { t } = useTranslation("common")
+  const { haul, clearHaul, loaded } = useHomeSave()
+  const lines = useHaulLines(haul)
+
+  const unpack = async () => {
+    await clearHaul()
+    onDone({
+      haul: lines.some(line => !line.news),
+      tags: lines.flatMap(line => (line.tag ? [line.tag] : [])),
+    })
+  }
+
+  // Only a haul the screen shows is emptied: leaving past one the player never saw (not read yet, or of a
+  // type nothing draws) keeps it for the next time.
+  const shown = lines.length > 0
+  if (!loaded) return null
+
+  return (
+    <ComingHomeScreen
+      title={t("camp.comingHome.title")}
+      fire={fireUrl && <img src={fireUrl} alt="" className="h-full object-contain" />}
+      rest={homecomingPanels().map(({ id, Component }) => (
+        <Component key={id} />
+      ))}
+      haulTitle={t("camp.comingHome.haulTitle")}
+      lines={lines.map(({ key, visual, title, note, isNew }) => ({
+        key,
+        visual,
+        title,
+        note,
+        badge: isNew ? t("camp.comingHome.new") : undefined,
+      }))}
+      buttonLabel={shown ? t("camp.comingHome.unpack") : t("camp.comingHome.toCamp")}
+      onDone={shown ? unpack : () => onDone({ haul: false, tags: [] })}
+    />
+  )
+}

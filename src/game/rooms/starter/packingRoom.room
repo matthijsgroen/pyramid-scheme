@@ -1,0 +1,17 @@
+// designed by: Claude
+// starter. A packing room on the way through: a basket stack and a bale against the north wall, the floor kept clear.
+room packingRoom
+tier starter
+activity packing
+mirror
+
+layout
+# # d # #
+# g . g #
+d s . . d
+# . . . #
+# d d d #
+
+goods = basketStack | bales
+g floor goods
+s stop

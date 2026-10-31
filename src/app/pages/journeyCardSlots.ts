@@ -1,7 +1,7 @@
 import type { FC } from "react"
 import type { CombinedJourneyState } from "@/app/state/useJourneys"
 
-// Mods contribute extra content inside a journey's card on the travel screen (the tableau
+// Mods contribute extra content inside a journey's card in the all-journeys list (the tableau
 // inventory preview, say). Core renders every registered slot on every card it draws and names no
 // mod; a slot is handed the journey's state and decides for itself whether it has anything to show,
 // returning null when it doesn't. Same shape as the site-map HUD registry — see

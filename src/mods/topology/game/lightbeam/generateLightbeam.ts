@@ -5,6 +5,7 @@ import {
   directionStep,
   DIRECTIONS,
   pieceCells,
+  pieceOnFixed,
   pieceOccupant,
   pieceStateCount,
   insideGrid,
@@ -165,6 +166,8 @@ export type LightbeamGate =
   /** The trap was decoration — the board stayed a puzzle without it. */
   | "trapIdle"
   | "piecesTouch"
+  /** A movable piece could stand on a fixed wall or mirror. */
+  | "pieceOnFixed"
   | "answerDark"
   | "notUnique"
   | "notSettled"
@@ -659,7 +662,9 @@ const corridorDies = (
       continue
     }
 
-    if (!board.goldenCells.has(key)) stone.push(at)
+    // A cell a sliding piece can stop on reads empty while that piece is decided elsewhere, but stone there
+    // would share the cell with the piece in its other states.
+    if (!board.goldenCells.has(key) && !board.occupancy.has(key)) stone.push(at)
     at = stepCell(at, travel)
   }
 }
@@ -1655,6 +1660,10 @@ const attemptAuthored = (
     fixed: draft.fixed,
     movable: draft.movable,
     ...(draft.nodes.length ? { nodes: draft.nodes, wirings: draft.wirings } : {}),
+  }
+  if (pieceOnFixed(puzzle)) {
+    reject?.("pieceOnFixed")
+    return undefined
   }
   if (!isLit(puzzle, draft.solution)) {
     reject?.("answerDark")

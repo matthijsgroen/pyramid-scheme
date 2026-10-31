@@ -1,14 +1,14 @@
 // @vitest-environment jsdom
-import { render, fireEvent, screen } from "@testing-library/react"
-import { describe, expect, it, vi } from "vitest"
-import { SiteMapView, approachCells, cornerRocksFor } from "./SiteMapView"
+import { act, render, fireEvent, screen } from "@testing-library/react"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { SiteMapView, approachCells, cornerRocksFor, nodeSpritesFor, wallItemsFor } from "./SiteMapView"
 import { allFloorRects, buildRoomClaims, tileRegionsFor } from "./roomClaims"
 import { grassMatsFor } from "./floorScatter"
 import { footprintPath } from "./tileRegions"
 import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY } from "./nodeArt"
 import { ExplorerFigure } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
-import { ARCH_H, ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
+import { ARCH_H, ARCH_RISE, CELL, PROP_H, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
 import { ALL_STATES } from "./tileRegions"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
 import { tierPalette } from "./tileMaterials"
@@ -24,12 +24,28 @@ import type {
   RoomCell,
   Tileset,
 } from "@/game/siteTypes"
+import { DECORATION_FOOTPRINTS } from "@/game/siteTypes"
 import { assembleFloor } from "@/game/siteAssembler"
 import { registerFamily } from "@/app/families/familyRegistry"
 import "@/mods/registerModApps"
 import { floorWithHandle } from "@/game/testSupport/handleFixtures"
 import { cellAddress } from "@/game/cellAddress"
-import { AXES, DROP_AT, dropGrid, obstacleIndexes } from "./floorFixtures.testing"
+import {
+  AXES,
+  DROP_AT,
+  PREFAB_CHEST,
+  PREFAB_FORK,
+  PREFAB_PORCH,
+  dropGrid,
+  floorFrom,
+  prefabChestFloor,
+  prefabForkFloor,
+  prefabPorchFloor,
+  obstacleIndexes,
+} from "./floorFixtures.testing"
+import { revealAll } from "@/game/gridNavigation"
+import { roomStop } from "./roomWalk"
+import { OCCLUDER_FADE } from "./htmlLayers"
 import { CHAMBER_SCALE, GROWTH_POOLS, growthTile } from "./moodSettings"
 import { sharedTileUrl } from "./tileAssets"
 import { STANDING_RELIEF, lampStrength } from "./lighting"
@@ -1957,6 +1973,25 @@ describe("a staircase is drawn as the flight it is", () => {
     expect(onClick).toHaveBeenCalledWith(0, 1)
   })
 
+  it("a stair marked up at a floor's main end draws the climbing flight and no cresset", () => {
+    const marked = (stairGoes?: "up" | "down") => {
+      const grid = makeGrid([
+        [empty, { ...portal("reachable", "s1"), ...(stairGoes ? { stairGoes } : {}) } as GridCell, empty],
+        [empty, corridor("completed", false), empty],
+      ])
+      return { ...grid, entrancePos: [1, 1] as const }
+    }
+    const pools = (container: HTMLElement) => container.querySelectorAll("[data-light-pool]").length
+
+    const down = render(<SiteMapView grid={marked()} revealAllCells />).container
+    expect(urlOf(stairsIn(down)[0])).toContain("stair-down")
+    expect(pools(down)).toBeGreaterThan(0)
+
+    const up = render(<SiteMapView grid={marked("up")} revealAllCells />).container
+    expect(urlOf(stairsIn(up)[0])).toContain("stair-up")
+    expect(pools(up)).toBe(0)
+  })
+
   it("draws the same flight at a rank with no stair art of its own", () => {
     // The flights live in `tiles/default/`, the way the explorer and the sand do, so a rank that has
     // painted none of its own still shows one: `tileUrl` falls back <tier>/<name> to default/<name>.
@@ -2251,13 +2286,6 @@ describe("an emptied chest says so", () => {
     const { container } = render(<SiteMapView grid={gridWith("reachable")} />)
     expect(chestIn(container)?.style.opacity).toBe("")
     expect(ticks(container)).toHaveLength(0)
-  })
-
-  it("keeps a chest whose reward would not fit full, and badges it as waiting", () => {
-    const { container } = render(<SiteMapView grid={gridWith("completed")} pendingCells={new Set(["1,1"])} />)
-    expect(chestIn(container)?.style.opacity).toBe("")
-    expect(ticks(container)).toHaveLength(0)
-    expect(Array.from(container.querySelectorAll("text")).filter(el => el.textContent === "!")).toHaveLength(1)
   })
 })
 
@@ -2746,5 +2774,203 @@ describe("SiteMapView — the notice", () => {
     expect(region.textContent).toBe("Cannot pass with a stone")
     rerender(<SiteMapView grid={grid} notice={null} />)
     expect(region.textContent).toBe("")
+  })
+})
+
+describe("SiteMapView — a prefab room", () => {
+  const FRAME_MS = 10
+  const handFrames = () => {
+    let queue: FrameRequestCallback[] = []
+    let now = 0
+    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => queue.push(cb))
+    vi.stubGlobal("cancelAnimationFrame", () => void (queue = []))
+    const frame = () => {
+      const due = queue
+      queue = []
+      now += FRAME_MS
+      act(() => due.forEach(cb => cb(now)))
+    }
+    return { frame, pending: () => queue.length > 0 }
+  }
+  afterEach(() => vi.unstubAllGlobals())
+
+  const grid = revealAll(prefabForkFloor({}, true))
+  const stop = roomStop(grid, ...PREFAB_FORK)!
+  const markerAtCentre = (container: HTMLElement, [r, c]: readonly [number, number]) =>
+    Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).filter(
+      el =>
+        parseFloat(el.style.left) + CELL / 2 === cellCenter(r, c).cx &&
+        parseFloat(el.style.top) + CELL / 2 === cellCenter(r, c).cy
+    )
+  // The east pillar, which the stop stands in front of.
+  const PILLAR = [5, 8] as const
+  const pillar = (container: HTMLElement) =>
+    container.querySelector<HTMLElement>(`[data-prefab-object="${PILLAR[0]},${PILLAR[1]}"]`)!
+  const explorer = (container: HTMLElement) => container.querySelector<HTMLElement>("[data-explorer]")!
+  const explorerAt = (container: HTMLElement) => explorer(container).getAttribute("data-at")!.split(",").map(Number)
+  const floorLine = cellTop(PILLAR[0]) + CELL
+  const behind = (container: HTMLElement) =>
+    !!(explorer(container).compareDocumentPosition(pillar(container)) & Node.DOCUMENT_POSITION_FOLLOWING)
+
+  const walk = (from: readonly [number, number], to: readonly [number, number]) => {
+    const view = render(<SiteMapView grid={grid} explorerPos={from} />)
+    const frames = handFrames()
+    view.rerender(<SiteMapView grid={grid} explorerPos={to} />)
+    const seen: { x: number; y: number; behind: boolean; faded: boolean }[] = []
+    while (frames.pending()) {
+      frames.frame()
+      const [x, y] = explorerAt(view.container)
+      seen.push({
+        x,
+        y,
+        behind: behind(view.container),
+        faded: pillar(view.container).style.opacity === `${OCCLUDER_FADE}`,
+      })
+    }
+    return { ...view, seen }
+  }
+
+  it("draws a prefab room's node marker on its stop, and a tap there walks to the room", () => {
+    const onClick = vi.fn()
+    const { container } = render(<SiteMapView grid={grid} onCellClick={onClick} explorerPos={[4, 0]} />)
+    const fork = markerAtCentre(container, stop).find(el => el.querySelector("[data-shape-kind='fork']"))
+    expect(fork).toBeDefined()
+    expect(markerAtCentre(container, PREFAB_FORK)).toHaveLength(0)
+    fireEvent.click(fork!)
+    expect(onClick).toHaveBeenCalledWith(...PREFAB_FORK)
+  })
+
+  it("draws the run arrow of an absorbed arm at the room's door", () => {
+    const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} explorerPos={PREFAB_FORK} />)
+    for (const [arm, door] of [
+      [
+        [4, 5],
+        [4, 3],
+      ],
+      [
+        [4, 7],
+        [4, 9],
+      ],
+      [
+        [5, 6],
+        [6, 6],
+      ],
+    ] as const) {
+      expect(
+        markerAtCentre(container, arm).some(
+          el => !el.querySelector("[data-shape-kind]") && el.querySelector("polygon")
+        ),
+        `${arm}`
+      ).toBe(false)
+      expect(
+        markerAtCentre(container, door).some(el => el.querySelector("polygon")),
+        `${door}`
+      ).toBe(true)
+    }
+  })
+
+  it("sorts the explorer against a pillar by the waypoint he last passed", () => {
+    // From the room north of the hall to the stop, which stands in front of the east pillar: in the hall and north of the
+    // pillar he is behind it.
+    const { seen } = walk([0, 6], PREFAB_FORK)
+    const north = seen.filter(at => at.y >= cellCenter(3, 0).cy && at.y + CELL / 2 < floorLine)
+    expect(north.length).toBeGreaterThan(0)
+    for (const at of north) expect(at.behind, `${at.x},${at.y}`).toBe(true)
+    expect(seen.at(-1)).toMatchObject({ x: cellCenter(...stop).cx, y: cellCenter(...stop).cy, behind: false })
+  })
+
+  const fadedWhere = (pos: readonly [number, number]) => {
+    const { container, unmount } = render(<SiteMapView grid={grid} explorerPos={pos} />)
+    const faded = pillar(container).style.opacity === `${OCCLUDER_FADE}`
+    unmount()
+    return faded
+  }
+  const standingSpots = [[0, 6], PREFAB_FORK, [4, 0], [9, 6], [4, 12]] as const
+
+  it("never fades a flat object, which cannot hide him from anywhere", () => {
+    for (const pos of standingSpots) expect(fadedWhere(pos), `${pos}`).toBe(false)
+    expect(walk([4, 12], [0, 6]).seen.some(at => at.faded)).toBe(false)
+  })
+
+  describe("an object standing a cell tall", () => {
+    const flat = DECORATION_FOOTPRINTS.pillar
+    beforeEach(() => void (DECORATION_FOOTPRINTS.pillar = { cols: 1, rows: 1, tall: 1 }))
+    afterEach(() => void (DECORATION_FOOTPRINTS.pillar = flat))
+
+    it("fades the object while the explorer is behind it, and only then", () => {
+      // The room at 0,6 is north of the pillar but beyond a wall, out of its reach.
+      for (const pos of standingSpots) expect(fadedWhere(pos), `${pos}`).toBe(false)
+      // From the east room past the back of the pillar to the north door.
+      const { seen } = walk([4, 12], [0, 6])
+      expect(seen.some(at => at.faded)).toBe(true)
+      for (const at of seen.filter(at => at.faded)) expect(at.y + CELL / 2, `${at.x},${at.y}`).toBeLessThan(floorLine)
+      expect(seen.at(-1)?.faded).toBe(false)
+    })
+  })
+
+  it("draws a room with no prefab exactly as before", () => {
+    const plain = revealAll(
+      floorFrom(["    R", "    .", "E...G..R", "    .", "    .", "    R"], {
+        G: dirs => ({ type: "room", roomType: "fork", dirs: new Set(dirs), state: "fogged", decoration: "basin" }),
+      })
+    )
+    const digest = (container: HTMLElement) => ({
+      markers: Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).map(
+        el => `${el.style.left},${el.style.top},${el.style.cursor} ${el.innerHTML}`
+      ),
+      sprites: spritesIn(container).map(el => `${urlOf(el)} ${JSON.stringify(boxOf(el))} ${el.style.opacity}`),
+      explorer: explorer(container).getAttribute("data-at"),
+      order: Array.from(container.querySelectorAll<HTMLElement>("[data-explorer], [data-node-sprite]")).map(
+        el => el.getAttribute("data-node-sprite") ?? "explorer"
+      ),
+    })
+    const standing = [
+      [2, 4],
+      [0, 4],
+      [2, 0],
+    ].map(pos => {
+      const { container, unmount } = render(
+        <SiteMapView grid={plain} onCellClick={() => {}} explorerPos={pos as unknown as readonly [number, number]} />
+      )
+      const seen = digest(container)
+      unmount()
+      return seen
+    })
+    expect(standing).toMatchSnapshot()
+  })
+
+  it("a fogged prefab room draws no object", () => {
+    const lit = render(<SiteMapView grid={grid} explorerPos={[4, 0]} />)
+    expect(
+      Array.from(lit.container.querySelectorAll("[data-prefab-object]")).map(el =>
+        el.getAttribute("data-prefab-object")
+      )
+    ).toEqual(expect.arrayContaining(["3,3", "5,4", "5,8"]))
+    lit.unmount()
+    const fogged = render(<SiteMapView grid={prefabForkFloor({}, true)} explorerPos={[4, 0]} />)
+    expect(fogged.container.querySelector("[data-prefab-object]")).toBeNull()
+  })
+
+  it("hangs a prefab room's wall item on its ring's north wall", () => {
+    const items = wallItemsFor(grid, buildRoomClaims(grid))
+    expect(items).toContainEqual(expect.objectContaining({ row: 3, col: 4, kind: "niche" }))
+  })
+
+  it("a mirrored room's ground steps draw flipped, under the explorer", () => {
+    const porch = revealAll(prefabPorchFloor())
+    const { container } = render(<SiteMapView grid={porch} explorerPos={PREFAB_PORCH} />)
+    const mat = container.querySelector<HTMLElement>('[data-prefab-object="1,5"]')!
+    const [sprite] = spritesIn(mat)
+    expect(sprite.style.transform).toContain("scaleX(-1)")
+    expect(explorer(container).compareDocumentPosition(mat) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy()
+  })
+
+  it("the chest art stands on its place", () => {
+    const vault = revealAll(prefabChestFloor())
+    const chest = nodeSpritesFor(vault, buildRoomClaims(vault), "expert").find(
+      sprite => sprite.key === `chest:${PREFAB_CHEST[0]},${PREFAB_CHEST[1]}`
+    )!
+    expect(chest.x).toBe(cellCenter(1, 5).cx - CELL / 2)
+    expect(chest.y).toBe(cellCenter(1, 5).cy + CELL / 2 - PROP_H)
   })
 })

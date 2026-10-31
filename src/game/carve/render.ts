@@ -2,7 +2,7 @@ import { hashString } from "@/support/hashString"
 import { oneWayRunCells } from "../carveConstants"
 import { ACTIVITIES } from "../activities"
 import { activitiesServing, rolesOfProp, rolesOfWallItem } from "../dressingTags"
-import { footprintSize, isChamber, portalKindOf } from "../roomFootprint"
+import { claimsFloorAt, footprintSize } from "../roomFootprint"
 import type {
   CorridorCell,
   DecorationKind,
@@ -12,7 +12,7 @@ import type {
   RoomCell,
   WallDecorationKind,
 } from "../siteTypes"
-import { MECHANISM_AT_REST, decorationFootprint, isSingleCell } from "../siteTypes"
+import { MECHANISM_AT_REST, isSingleCell } from "../siteTypes"
 import { holeRegion } from "../mechanics/weights"
 import { standOnCorridor } from "../sequenceTiles"
 import { edgeAllowed, forkPositions, rooms, routeStepOf } from "./derive"
@@ -41,13 +41,13 @@ export type RenderState = Pick<
   | "labels"
   | "mainRooms"
   | "chainRooms"
-  | "switchDoors"
   | "drops"
   | "forks"
   | "switchWays"
   | "switchRooms"
   | "forkSwitchRooms"
   | "pipeHoles"
+  | "chambers"
 >
 
 /**
@@ -68,6 +68,8 @@ const wallSuiting = (pool: WallDecorationKind[], prop: DecorationKind | undefine
  * its launch, run and landing; then the entrance opens and the chambers are dressed. It decides
  * nothing a pass could: what it reads back off the grid (a node's `dirs` for a drop's join and a room's
  * footprint for its dressing) is what it itself just wrote. The carve is checked against this view open.
+ * Its edges ask the authored doors only, never a switch's: what `forks` reserved is carved the same whether or
+ * not a mod stands a switch in it.
  */
 export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid => {
   const { siteId } = prep.input
@@ -78,8 +80,8 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
   const [exR, exC] = exit
   const { used } = state.branches
   const labels = state.labels
-  const roomSpecs = rooms(state)
-  const allowed = edgeAllowed(state, state.switchDoors)
+  const roomSpecs: ReadonlyMap<string, RoomSpec> = new Map([...rooms(state), ...state.chambers])
+  const allowed = edgeAllowed(state)
   const forks = forkPositions(state)
   const stepOf = routeStepOf(state.maze)
 
@@ -274,18 +276,18 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
 
   // A DEDICATED FLOOR SHOWS ITS GOD AT LEAST ONCE, in the chamber it is organised around: a fork first, then the
   // biggest room by the floor it draws (`footprintSize`, the renderer's own claim rule), hash breaking ties. Never
-  // a portal or a mechanism's room, and only a room whose own pool can carry a patron.
+  // a portal, a mechanism's room or a story's room, and only a room whose own pool can carry a patron.
+  const claimGrid: FloorGrid = {
+    cells: cells2D,
+    rows: N,
+    cols: N,
+    entrancePos: [entR, entC],
+    exitPos: [exR, exC],
+    siteId,
+    staircases: {},
+  }
   const patronRooms = new Set<string>()
   if (config.patron !== undefined && PATRON_PER_FLOOR > 0) {
-    const claimGrid: FloorGrid = {
-      cells: cells2D,
-      rows: N,
-      cols: N,
-      entrancePos: [entR, entC],
-      exitPos: [exR, exC],
-      siteId,
-      staircases: {},
-    }
     const rowCol = (pk: string): [number, number] => {
       const [r, c] = pk.split(",").map(Number)
       return [r, c]
@@ -298,6 +300,8 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
     const eligible = [...new Set([...forks, ...endpointPositions])]
       .filter(pk => (labels.dressing.get(pk)?.props ?? []).some(k => PATRON_KINDS.has(k)))
       .filter(pk => roomSpecs.get(pk)?.authoredActivity === undefined)
+      // A designed room pinned here is its own dressing (placePrefabs.ts): the god would lose his room to it.
+      .filter(pk => roomSpecs.get(pk)?.pinnedPrefab === undefined)
       .filter(pk => {
         const spec = roomSpecs.get(pk)
         const [r, c] = rowCol(pk)
@@ -314,17 +318,9 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
     for (const pk of eligible.slice(0, PATRON_PER_FLOOR)) patronRooms.add(pk)
   }
 
-  const chamberAt = (pk: string, spec: RoomSpec): boolean => {
+  const chamberAt = (pk: string): boolean => {
     const [r, c] = pk.split(",").map(Number)
-    const cell = cells2D[r][c]
-    if (cell.type !== "room") return false
-    const kind =
-      spec.roomType === "portal"
-        ? portalKindOf({ entrancePos: [entR, entC] }, r, c, spec)
-        : isTreasureLike(spec)
-          ? "treasure"
-          : "room"
-    return isChamber(cell, kind)
+    return claimsFloorAt(claimGrid, r, c)
   }
   const fromPoolOrOwn = <T>(pool: readonly T[] | undefined, own: readonly T[]): readonly T[] => {
     const shared = pool?.filter(k => own.includes(k)) ?? []
@@ -333,7 +329,7 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
   for (const [pk, spec] of roomSpecs) {
     const isPatron = patronRooms.has(pk)
     const authored = ACTIVITIES.find(a => a.id === spec.authoredActivity)
-    if (!chamberAt(pk, spec)) continue
+    if (!chamberAt(pk)) continue
     if (!authored && (isMechanism(pk, spec) || (!isPatron && isTreasureLike(spec)))) continue
     const pools = labels.dressing.get(pk)
     const activity =
@@ -365,9 +361,9 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
     // A prop bigger than a cell may find no floor its shape on the map (roomClaims.ts), so it carries the
     // single-cell kind to stand instead, from the same pool by its own salt: no other pick moves.
     const decorationFallback =
-      decoration && !isSingleCell(decorationFootprint(decoration))
+      decoration && !isSingleCell(prep.input.propFootprint(decoration))
         ? pickDressing(
-            propPool?.filter(k => isSingleCell(decorationFootprint(k)) && !(k === "pit" && besideStair)),
+            propPool?.filter(k => isSingleCell(prep.input.propFootprint(k)) && !(k === "pit" && besideStair)),
             pk,
             "decoration:single-cell"
           )

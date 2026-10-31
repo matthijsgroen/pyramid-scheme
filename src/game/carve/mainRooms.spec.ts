@@ -12,6 +12,7 @@ import {
 import { forkPositions, keyOf, routeStepOf } from "./derive"
 import { assembleFloor } from "./assembleFloor"
 import type { FloorConfig, RoomCell } from "../siteTypes"
+import { isChamber, portalKindOf } from "../roomFootprint"
 describe("mainRooms", () => {
   const carvedWith = (exitOrStaircase: "exit" | "staircase") => {
     const prep = prepOf(
@@ -35,6 +36,17 @@ describe("mainRooms", () => {
     expect(at(0)).toEqual({ roomType: "portal" })
     expect(placed.slice(0, -1).map(step => at(step)?.pathIndex)).toEqual([0, 1])
     expect(at(goal)?.family).toBe("treasure-chest")
+  })
+
+  it("pins the room a story named to the puzzle at that index, and no other", () => {
+    const state = firstCarved(
+      prepOf(plainFloor({ pathPuzzles: 2, exitOrStaircase: "exit", prefabsByIndex: { 1: "hall" } }))
+    )
+    const pinned = [...state.mainRooms!.values()].filter(room => room.pathIndex !== undefined)
+    expect(pinned.map(room => [room.pathIndex, room.pinnedPrefab])).toEqual([
+      [0, undefined],
+      [1, "hall"],
+    ])
   })
 
   describe("the goal of a floor with no main-end reward", () => {
@@ -251,5 +263,53 @@ describe("carved through assembleFloor", () => {
       expect(exitCell.type).toBe("room")
       if (exitCell.type === "room") expect(exitCell.stairId).toBeDefined()
     }
+  })
+})
+
+describe("an entrance a side section hangs off", () => {
+  const config: FloorConfig = {
+    pathPuzzles: 2,
+    difficulty: "starter",
+    end: "treasure",
+    exitOrStaircase: "staircase",
+    entrance: { stairId: "made-up:f1:up" },
+    sideSections: [
+      { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+      { pathPuzzles: 1, difficulty: "starter", end: "treasure" },
+    ],
+  }
+  const carves = Array.from({ length: 20 }, (_, seed) => assembleFloor("made-up", config, seed)).flatMap(result =>
+    result.success ? [result.grid] : []
+  )
+  const roomAt = (grid: (typeof carves)[number], [r, c]: readonly [number, number]) => {
+    const cell = grid.cells[r][c]
+    if (cell.type !== "room") throw new Error("no room")
+    return { cell, kind: portalKindOf(grid, r, c, cell) }
+  }
+  const forked = carves.filter(grid => roomAt(grid, grid.entrancePos).cell.dirs.size > 1)
+  const single = carves.filter(grid => roomAt(grid, grid.entrancePos).cell.dirs.size === 1)
+
+  it("is a chamber that still carries its stair", () => {
+    expect(forked.length).toBeGreaterThan(0)
+    for (const grid of forked) {
+      const { cell, kind } = roomAt(grid, grid.entrancePos)
+      expect(cell).toMatchObject({ roomType: "portal", stairId: "made-up:f1:up", stairGoes: "up" })
+      expect(grid.staircases["made-up:f1:up"]).toEqual(grid.entrancePos)
+      expect(kind).toBe("stairhead")
+      expect(isChamber(cell, kind)).toBe(true)
+    }
+  })
+
+  it("leaves an entrance with one way out a dead-end stairhead", () => {
+    expect(single.length).toBeGreaterThan(0)
+    for (const grid of single) {
+      const { cell, kind } = roomAt(grid, grid.entrancePos)
+      expect(cell).toMatchObject({ roomType: "portal", stairId: "made-up:f1:up" })
+      expect(isChamber(cell, kind)).toBe(true)
+    }
+  })
+
+  it("never forks the exit", () => {
+    for (const grid of carves) expect(roomAt(grid, grid.exitPos).cell.dirs.size).toBe(1)
   })
 })

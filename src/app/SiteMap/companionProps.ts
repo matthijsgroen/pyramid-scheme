@@ -72,7 +72,8 @@ export const companionsFor = (
  *
  * `free` is the room's cells with the icon cell and the first prop already removed, in the caller's own
  * order; `pick` chooses among them for the kind chosen, so the caller keeps its wall-behind preference and
- * its footprint rule. A kind `pick` finds no room for (undefined) is left out.
+ * its footprint rule. A kind `pick` finds no room for (undefined) is left out. `pair` is true for the god's
+ * second statue, which the room's statement needs; any other companion is extra.
  */
 export const companionFor = (
   siteId: string,
@@ -84,10 +85,10 @@ export const companionFor = (
     activity?: ActivityId
   }[],
   hasArt: (kind: DecorationKind) => boolean,
-  pick: (free: readonly string[], kind: DecorationKind) => string | undefined
+  pick: (free: readonly string[], kind: DecorationKind, pair: boolean) => string | undefined
 ): ReadonlyMap<string, DecorationKind> => {
-  const place = (free: readonly string[], kind: DecorationKind, out: Map<string, DecorationKind>) => {
-    const at = pick(free, kind)
+  const place = (free: readonly string[], kind: DecorationKind, out: Map<string, DecorationKind>, pair = false) => {
+    const at = pick(free, kind, pair)
     if (at !== undefined) out.set(at, kind)
   }
   const out = new Map<string, DecorationKind>()
@@ -109,7 +110,7 @@ export const companionFor = (
     // Everywhere else the rules stand: the activity's props (or else the same purpose), never the leader
     // again, one room in three.
     if (shrine) {
-      if (hasArt(leader)) place(free, leader, out)
+      if (hasArt(leader)) place(free, leader, out, true)
       continue
     }
     if (hashUnit(siteId, `companion-room:${ownerKey}`, 0) > SHARE) continue

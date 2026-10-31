@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest"
-import { difficulties } from "@/data/difficultyLevels"
+import { difficulties, difficultyCompare } from "@/data/difficultyLevels"
 import { puzzleSeeds } from "@/data/puzzleSeeds"
 import { configHash } from "@/game/seeds/configHash"
 import { gradeProcession } from "./generateProcession"
 import type { ProcessionPuzzle } from "./procession"
 import { doorVariant, PROCESSION_CONFIG, processionOptions } from "./processionConfig"
+import { PROCESSION_META } from "./meta"
 
 const chain = { ...PROCESSION_CONFIG.starter, minRung: "chain", maxRung: "chain", minSplits: 0, maxSplits: 0 } as const
 
@@ -35,6 +36,13 @@ describe("a door's board", () => {
 
   it.each(difficulties)("leaves the %s room's bucket where its seeds are listed", tier => {
     expect(configHash(processionOptions(tier))).toBe(configHash(PROCESSION_CONFIG[tier]))
-    expect(puzzleSeeds[configHash(processionOptions(tier))]?.length).toBeGreaterThan(0)
   })
+
+  // The world deals procession boards from its minTier up, so only those tiers have listed seeds.
+  it.each(difficulties.filter(tier => difficultyCompare(tier, PROCESSION_META.minTier ?? "starter") >= 0))(
+    "lists seeds for the %s room's bucket",
+    tier => {
+      expect(puzzleSeeds[configHash(processionOptions(tier))]?.length).toBeGreaterThan(0)
+    }
+  )
 })

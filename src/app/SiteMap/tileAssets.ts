@@ -1,17 +1,19 @@
 import type { Tileset } from "@/game/siteTypes"
+import { type MechanismStyle, mechanismFolders, mechanismStyleOf } from "./mechanismStyle"
 
 // Every tile is one file, the filename is the key, and a missing one simply resolves to undefined
 // so the caller can fall back (docs/game-design/spritesheet-renderer-prep.md, "The art itself").
 // The glob means adding art is dropping a PNG in — no manifest to keep by hand.
-const urls = import.meta.glob("../../assets/tiles/*/*.png", {
-  eager: true,
-  query: "?url",
-  import: "default",
-}) as Record<string, string>
+// Mechanism styles nest (`mechanism/light/bone/`), so their folders are globbed a level deeper than a tileset's.
+const urls = {
+  ...import.meta.glob("../../assets/tiles/*/*.png", { eager: true, query: "?url", import: "default" }),
+  ...import.meta.glob("../../assets/tiles/mechanism/**/*.png", { eager: true, query: "?url", import: "default" }),
+} as Record<string, string>
 
+/** Every tile by `<folder>/<name>`, the folder being everything between `tiles/` and the file. */
 const byTier = new Map<string, string>()
 for (const [path, url] of Object.entries(urls)) {
-  const match = /\/tiles\/([^/]+)\/([^/]+)\.png$/.exec(path)
+  const match = /\/tiles\/(.+)\/([^/]+)\.png$/.exec(path)
   if (match) byTier.set(`${match[1]}/${match[2]}`, url)
 }
 
@@ -115,6 +117,35 @@ export const patronTileUrl = (tier: Tileset, name: string, patron?: string): str
  */
 export const ART_IMAGE_RENDERING = "auto"
 
+/** A mechanism piece's drawing in a file map keyed `<folder>/<name>`: the first folder of the style's chain that
+ * holds it (`mechanismFolders`), so the deepest style wins and `default` is last; with `standIn`, the placeholder
+ * after that. Undefined when none draws it. */
+export const mechanismTileIn = (
+  files: ReadonlyMap<string, string>,
+  style: string,
+  name: string,
+  standIn = false
+): string | undefined =>
+  [...mechanismFolders(style), ...(standIn ? ["placeholder"] : [])]
+    .map(folder => files.get(`${folder}/${name}`))
+    .find(url => url !== undefined)
+
+/**
+ * A MECHANISM PIECE'S PAINTING for a cell drawn in `tileset`: the tileset's style (`MECHANISM_STYLE`) and the
+ * styles above it, down to the shared `tiles/default/` drawing. Undefined when nothing paints it, for a piece
+ * that must not stand in a placeholder (a lever with no arm, a drop) — `mechanismTileOrPlaceholder` otherwise.
+ * `style` draws it in that style instead of the tileset's, for a review sheet comparing styles on one floor.
+ */
+export const mechanismTileUrl = (tileset: Tileset, name: string, style?: MechanismStyle): string | undefined =>
+  mechanismTileIn(byTier, mechanismStyleOf(tileset, style), name)
+
+/** What to DRAW for a mechanism piece: its style chain's painting, or the stand-in. */
+export const mechanismTileOrPlaceholder = (
+  tileset: Tileset,
+  name: string,
+  style?: MechanismStyle
+): string | undefined => mechanismTileIn(byTier, mechanismStyleOf(tileset, style), name, true)
+
 /** Art that is the same in every tomb, from `tiles/default/`. The explorer is one person walking down
  * five ranks of tomb, not a fifth of a set — a rank dresses the place, never the player. */
 export const sharedTileUrl = (name: string): string | undefined => byTier.get(`default/${name}`) ?? placeholderUrl(name)
@@ -136,3 +167,12 @@ export const sharedTileFrames = (prefix: string): string[] => {
   const single = byTier.get(`default/${prefix}`)
   return single ? [single] : []
 }
+
+/** Every file one art folder holds (`default`, `placeholder`, a tileset or a `mechanism/<style>`) and none of
+ * the folders nested in it, in a stable order: what a floor drawn there can ask the map for, so it can be fetched
+ * before the floor is shown. */
+export const tilesetFolderUrls = (folder: string): string[] =>
+  [...byTier.entries()]
+    .filter(([key]) => key.slice(0, key.lastIndexOf("/")) === folder)
+    .map(([, url]) => url)
+    .sort()

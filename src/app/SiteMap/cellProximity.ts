@@ -11,7 +11,7 @@ const MOVES: Record<Direction, readonly [number, number]> = { n: [-1, 0], s: [1,
 // Is the player within `maxSteps` of any of `targets` — cells keyed "row,col"?
 //
 // Used for every detector's "close by" reading: the corridor detector passes the junctions bordering
-// corridors still hidden, the compass and supplies detectors pass the cells their hits sit in.
+// corridors still hidden, the compass detector passes the cells its hits sit in.
 //
 // Deliberately its own bounded search rather than findPath: findPath answers "draw me a route" and
 // falls back to a synthetic `[from, to]` when there is no route at all, which reads as exactly one

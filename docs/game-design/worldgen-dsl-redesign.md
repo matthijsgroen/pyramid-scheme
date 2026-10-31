@@ -24,7 +24,7 @@ The DSL's authorable surface splits into four layers, each with its own kind of 
 | Layer          | Concerns                                                                                      | Status                                                                               |
 | -------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | **Structure**  | puzzle/path/chest/gate counts and shapes                                                      | Designed, mostly shipped                                                             |
-| **Loot**       | which reward goes where — hieroglyphs, map pieces, consumables, mosaic pieces, tomb treasures | Designed for the fragment/rank mechanism; one known bug and one dead type still open |
+| **Loot**       | which reward goes where — hieroglyphs, map pieces, mosaic pieces, tomb treasures | Designed for the fragment/rank mechanism; one dead type still open |
 | **Population** | which puzzle/trap family fills a room, and at what difficulty                                 | Designed, not implemented                                                            |
 | **Decoration** | tile/decoration/effect visual pools                                                           | Designed, not implemented                                                            |
 
@@ -60,7 +60,7 @@ Every "how much / how many" field in the DSL should resolve to one of these, cho
 
 3. **`keyDensity`** _(designed, not yet shipped)_. Stays an enum-to-fraction mapping (`DENSITY_FRACTION`), but gets a literal number (0–1) escape hatch alongside it. No `SampleRange` involved — it's a fraction, not a count, so sampling doesn't apply.
 
-4. **`mosaicPathPuzzles`** _(designed, not yet shipped)_. Today's mosaic side-path puzzle count is `Math.round(mainPathPuzzles / 3)` with zero override — the last remaining count in the DSL with no opt-in at all. Gets a plain literal-number override, same mechanical shape as every other `pathPuzzles` field, defaulting to the `/3` formula when unset. Placed conceptually next to `consumableDensity`/`consumableRates` in the type (it's Loot-adjacent — governs a side path that exists to deliver mosaic-piece loot — but mechanically it's just another literal count, not a new abstraction).
+4. **`mosaicPathPuzzles`** _(designed, not yet shipped)_. Today's mosaic side-path puzzle count is `Math.round(mainPathPuzzles / 3)` with zero override — the last remaining count in the DSL with no opt-in at all. Gets a plain literal-number override, same mechanical shape as every other `pathPuzzles` field, defaulting to the `/3` formula when unset. Placed conceptually next to the other Loot knobs in the type (it's Loot-adjacent — governs a side path that exists to deliver mosaic-piece loot — but mechanically it's just another literal count, not a new abstraction).
 
 5. **`packing`** _(shipped)_. There was no author knob for overall map tightness at all — only `corridorStraightness`, which governs corridor _shape_ (windy vs. straight), not how long the walk is. History: an earlier "packed" layout clustered main-path content right after the entrance, leaving a long unused corridor tail to the exit (fixed in `d7d6644`, refined in `7d7aa4d`/#94 by spreading content evenly across the whole path). That fix is kept as-is — it's a placement-order concern, distinct from what `packing` addresses.
 
@@ -80,7 +80,7 @@ Every "how much / how many" field in the DSL should resolve to one of these, cho
 
 Every reward type uses one of three placement modes:
 
-- **No global target** — pure local proportion or fallback, no world-wide count to hit. E.g. consumables (`consumableDensity`/`consumableRates`), the generic "hieroglyphs" filler reward.
+- **No global target** — pure local proportion or fallback, no world-wide count to hit. E.g. the generic "hieroglyphs" filler reward.
 - **Fixed total, explicit + validated** — the author places every instance by hand (because the reward carries an identity only the author can supply, e.g. a map piece's `tombId`); a validator throws if the world-wide sum doesn't match the target (`validateRewardCounts`, `WORLD_TARGETS.mapPieceRewards`).
 - **Fixed total, engine-assigned** — the reward is anonymous at authoring time (which specific piece/symbol it resolves to is decided downstream); the engine auto-fills placement to hit the target, optionally around some explicit declarations (mosaic pieces via `computeMosaicPaths`, hieroglyph fragments via `assignFragments`).
 
@@ -123,7 +123,6 @@ The redesign replaces this with a constraint solver: for every rank, every requi
 
 ### Deferred (identified, not solved by this design)
 
-- **`consumableRates` inconsistency** — it's honored by `buildChestRewards` but silently ignored by `pathEndToReward`'s consumable branch and `assignFragments`'s fallback fill, which both hardcode their own split. This is a bug to fix (make it consistent everywhere), not a design question — no redesign needed, just wiring.
 - **Dead `PathPuzzlesPreset` type** — delete once the pathPuzzles literal/range shipped work is confirmed stable; nothing currently resolves it and it's misleading to leave in the type.
 
 ---
@@ -132,7 +131,7 @@ The redesign replaces this with a constraint solver: for every rank, every requi
 
 ### Family selection is a weighted pool, not a magic array
 
-**Problem:** `puzzleFamily?: PuzzleFamily | PuzzleFamily[]` accepts an array today, but nothing anywhere samples from it — it's dead syntax. Meanwhile `consumableRates: {bandage, oil, trapTool}` already establishes the right shape for "mix of categorical options" elsewhere in this same DSL.
+**Problem:** `puzzleFamily?: PuzzleFamily | PuzzleFamily[]` accepts an array today, but nothing anywhere samples from it — it's dead syntax. Meanwhile `end: "treasure" | "staircase"` already establishes the right shape for a categorical option elsewhere in this same DSL.
 
 **Decision:** reuse that shape instead of inventing a new one. `puzzleFamily` becomes:
 
@@ -352,7 +351,6 @@ All four layers and the builder syntax are now designed. Implement in small pass
 - `SideIntensity` → `SampleRange` unification
 - `keyDensity` literal override
 - `mosaicPathPuzzles` literal override
-- `consumableRates` consistency fix
 - delete dead `PathPuzzlesPreset`
 - `rank` concept + tomb-side authoring
 - pyramid-side `rankPools` declarations + solver-based fragment assignment + build-time validator error; widen `PathSettingsBuilder.settings()` to accept `rankPools` so the fluent `sidePaths` chain stays interchangeable with raw literals
@@ -373,7 +371,6 @@ All four layers and the builder syntax are now designed. Implement in small pass
 | `SideIntensity` → `SampleRange` unification                     | Designed, not implemented                                    |
 | `keyDensity` literal override                                   | Designed, not implemented                                    |
 | `mosaicPathPuzzles` literal override                            | Designed, not implemented                                    |
-| `consumableRates` consistency fix                               | Shipped (`dsl.ts`, `spec/global.ts`)                         |
 | Dead `PathPuzzlesPreset` removal                                | Identified, not implemented                                  |
 | `rank` / `rankPools` / solver-based fragment assignment         | Designed, not implemented                                    |
 | `puzzleFamily` weight-map + tag selection + non-tomb wiring fix | Designed, not implemented                                    |

@@ -1,9 +1,10 @@
 import type { ResolvePassageRealisation } from "@/game/passageRealisation"
-import type { RoomCell } from "@/game/siteTypes"
+import type { RoomCell, Tileset } from "@/game/siteTypes"
 import { resolvePassageRealisation } from "@/mods/allPassageRealisations"
-import { sharedTileUrl } from "./tileAssets"
+import type { MechanismStyle } from "./mechanismStyle"
+import { mechanismTileUrl } from "./tileAssets"
 
-/** The shared tile a passage is drawn with: its realisation's wall across a way running north-south, and along one
+/** The tile a passage is drawn with: its realisation's wall across a way running north-south, and along one
  * running east-west. A passage at a corner shows its face, as one across does. Undefined where the realisation
  * declares no art, or no registered mod declares it. */
 export const passageTile = (
@@ -15,8 +16,8 @@ export const passageTile = (
   return cell.dirs.has("n") || cell.dirs.has("s") ? art.across : art.along
 }
 
-/** The passage's painting, shared by every rank. */
-export const passageArtUrl = (cell: RoomCell): string | undefined => {
+/** The passage's painting in the mechanism style of the tileset the cell is drawn in, or in `style`. */
+export const passageArtUrl = (cell: RoomCell, tileset: Tileset, style?: MechanismStyle): string | undefined => {
   const name = passageTile(cell)
-  return name === undefined ? undefined : sharedTileUrl(name)
+  return name === undefined ? undefined : mechanismTileUrl(tileset, name, style)
 }

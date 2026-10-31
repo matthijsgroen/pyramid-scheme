@@ -7,12 +7,12 @@ import { ExplorerFigure } from "./ExplorerDot"
 import { plateLookOf } from "@/game/stonePlay"
 import { PLATE_TILE } from "./plateArt"
 
-// The pressure plate is one painting, shared by every rank (`tiles/default/`), in three looks: raised
-// (`plate`), pressed (`plateDown`, the explorer standing on it) and pressed with a limestone block on it
-// (`plateStone`). The map draws it (`nodeSpritesFor`); this story stages it the way the map does, on two
-// ranks' floors, the explorer beside it for scale, because a generation that looks fine at 2000px can
-// still turn to mud at 56 (`PropSheet.stories.tsx`'s `Chamber`, as `Lever.stories.tsx` reuses it).
-// The tiles share one frame, so swapping them on a cell must change only the slab and the stone.
+// The pressure plate is one painting, shared (`tiles/default/`) unless a mechanism style paints its own
+// (`MECHANISM_STYLE`), in three looks: raised (`plate`), pressed (`plateDown`, the explorer standing on it) and pressed
+// with a limestone block on it (`plateStone`). The map draws it (`nodeSpritesFor`); this story stages it the way the
+// map does, on two ranks' floors, the explorer beside it for scale, because a generation that looks fine at 2000px can
+// still turn to mud at 56 (`PropSheet.stories.tsx`'s `Chamber`, as `Lever.stories.tsx` reuses it). The tiles share one
+// frame, so swapping them on a cell must change only the slab and the stone.
 
 const EXPLORER_W = 40
 const EXPLORER_H = 70

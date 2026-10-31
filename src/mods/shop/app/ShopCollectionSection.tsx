@@ -6,13 +6,14 @@ import { difficultyByMaterialTier } from "@/data/materialTiers"
 import { CategoryGrid } from "@/ui/atoms/CategoryGrid"
 import { CollectionSection } from "@/ui/atoms/CollectionSection"
 import { CollectibleSlot } from "@/ui/molecules/CollectibleSlot"
+import { sellableArt } from "./sellableArt"
 import type { CollectionSectionProps } from "@/app/pages/collectionSectionRegistry"
 
 // The shop mod's Collection contribution: the "junk" category of loose sellables, each shown as an
 // empty / collected slot. Registered app-side and gated on the mod (see ./index), so it drops out
 // of the shared Collection screen when shop is off — matching the world-gen side that places no
 // junk when shop is off.
-export const ShopCollectionSection: FC<CollectionSectionProps> = ({ selectedItem, onSelect }) => {
+export const ShopCollectionSection: FC<CollectionSectionProps> = ({ selectedItem, onSelect, isNew, newLabel }) => {
   const { t } = useTranslation(["common", "sellables"])
   const { inventory } = useInventory()
 
@@ -28,13 +29,16 @@ export const ShopCollectionSection: FC<CollectionSectionProps> = ({ selectedItem
             key={item.id}
             state={inventory[item.id] !== undefined ? "collected" : "empty"}
             count={inventory[item.id]}
+            newLabel={inventory[item.id] !== undefined && isNew(item.id) ? newLabel : undefined}
             symbol={item.symbol}
+            imageUrl={sellableArt(item.id)}
             difficulty={difficultyByMaterialTier[item.tier]}
             selected={selectedItem?.id === item.id}
             onClick={() =>
               onSelect({
                 id: item.id,
                 symbol: item.symbol,
+                imageUrl: sellableArt(item.id),
                 // The detail panel shows whatever difficulty the item carries, so the tier's is it.
                 difficulty: difficultyByMaterialTier[item.tier],
                 name: t(`${item.id}.name`, { ns: "sellables" }),

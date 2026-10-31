@@ -2,6 +2,7 @@ import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { HieroglyphTile } from "./HieroglyphTile"
 import { Badge } from "@/ui/atoms/Badge"
+import { NewBadge } from "@/ui/atoms/NewBadge"
 
 // One cell in a Collection category grid, in one of three states:
 // - "empty"     — not found yet: recessed "?" placeholder. Not clickable: there's nothing to show,
@@ -18,18 +19,33 @@ import { Badge } from "@/ui/atoms/Badge"
 type CollectibleSlotProps = {
   state: "empty" | "partial" | "collected"
   symbol?: string
+  imageUrl?: string
   difficulty?: Difficulty
   progress?: { found: number; required: number }
   count?: number
+  /** The not-yet-seen label ("NIEUW"): an accent border and a badge on the corner, read with the slot. */
+  newLabel?: string
   selected?: boolean
   onClick?: () => void
   size?: "sm" | "md" | "lg"
   className?: string
 }
 
-export const CollectibleSlot: FC<CollectibleSlotProps> = ({
+export const CollectibleSlot: FC<CollectibleSlotProps> = props => {
+  const slot = <SlotBody {...props} />
+  if (!props.newLabel || props.state === "empty") return slot
+  return (
+    <div className="relative inline-block w-fit rounded-[10px] border-2 border-camp-accent p-0.5">
+      {slot}
+      <NewBadge label={props.newLabel} className="absolute -top-1.5 -right-1.5" />
+    </div>
+  )
+}
+
+const SlotBody: FC<CollectibleSlotProps> = ({
   state,
   symbol,
+  imageUrl,
   difficulty,
   progress,
   count,
@@ -58,6 +74,7 @@ export const CollectibleSlot: FC<CollectibleSlotProps> = ({
   const tile = (
     <HieroglyphTile
       symbol={symbol}
+      imageUrl={imageUrl}
       difficulty={difficulty}
       selected={selected}
       onClick={onClick}

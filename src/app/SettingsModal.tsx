@@ -1,9 +1,20 @@
-import { type FC, useState } from "react"
+import { type FC, type KeyboardEvent, use, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { version } from "@/../package.json"
 import { clearGameData, useGameStorage } from "@/support/useGameStorage"
 import { CELL_KEY_VERSION, type StoredJourneyStateV3 } from "@/app/state/useJourneys"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
+import { closeOnEscape, focusOnMount, trapTab } from "@/ui/atoms/dialogFocus"
+import { DevelopContext } from "@/contexts/DevelopMode"
+import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
+import { DevPanel } from "@/ui/molecules/DevPanel"
+import { useDevActions } from "@/app/dev/useDevActions"
+import { PuzzleLab } from "@/app/dev/PuzzleLab"
+import { SaveTransfer } from "@/app/dev/SaveTransfer"
+import { START_LOCK, encodeLockHash } from "@/app/dev/lockEditorUrl"
+import { START_ROOM, encodeRoomHash } from "@/app/dev/roomEditorUrl"
+import { useJourneys } from "@/app/state/useJourneys"
+import { useJourneyTranslations } from "@/app/translations/useJourneyTranslations"
 
 // Module constant, not an inline literal: a fresh array every render makes useOfflineStorage look
 // like it has a different default each time (same reason useJourneys keeps one).
@@ -12,12 +23,53 @@ const NO_JOURNEYS: StoredJourneyStateV3[] = []
 type SettingsModalProps = {
   isOpen: boolean
   onClose: () => void
+  // Opens the expedition after a dev jump or journey start.
+  startGame: () => void
 }
 
-export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
+// The playtesting tools: mounted only while the dialog is open in develop mode, so their hooks cost
+// nothing the rest of the time.
+const DevTools: FC<{ startGame: () => void; onClose: () => void }> = ({ startGame, onClose }) => {
+  const { t } = useTranslation("common")
+  const { startJourney } = useJourneys()
+  const journeyList = useJourneyTranslations()
+  const devActions = useDevActions(startGame, onClose)
+  const shopTombJourney = journeyList.find(j => j.id === "junior_treasure_tomb")
+  return (
+    <div className="mt-6 space-y-4 rounded-lg bg-stone-900 p-3">
+      {shopTombJourney && (
+        <div className="flex justify-center">
+          <DeveloperButton
+            onClick={async () => {
+              await startJourney(shopTombJourney)
+              startGame()
+            }}
+            label="Jump to Shop Tomb"
+          />
+        </div>
+      )}
+      <DevPanel title="Playtesting tools (every journey is pickable in develop mode)" actions={devActions} />
+      <SaveTransfer />
+      <div className="flex justify-center gap-2">
+        <DeveloperButton
+          onClick={() => (window.location.hash = encodeLockHash(START_LOCK))}
+          label={t("devLockEditor.open")}
+        />
+        <DeveloperButton
+          onClick={() => (window.location.hash = encodeRoomHash(START_ROOM))}
+          label={t("devRoomEditor.open")}
+        />
+      </div>
+      <PuzzleLab />
+    </div>
+  )
+}
+
+export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, startGame }) => {
   const { t, i18n } = useTranslation("common")
   const [showClearConfirm, setShowClearConfirm] = useState(false)
   const [tutorialsEnabled, setTutorialsEnabled] = useGameStorage<boolean>("tutorialsEnabled", true)
+  const { isDevelopMode } = use(DevelopContext)
   const [journeys, , journeysLoaded] = useGameStorage<StoredJourneyStateV3[]>("journeys", NO_JOURNEYS)
 
   // WHICH KEY FORMAT THIS SAVE IS ON, shown beside the app version so a player can read it out and the
@@ -35,9 +87,8 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     window.location.reload()
   }
 
-  // The chosen language IS i18n's language — read it, don't mirror it. This used to be local state
-  // kept in step by an effect, which meant every language change rendered twice (once for the state,
-  // once for useTranslation's own re-render) and the two could disagree in between.
+  // The chosen language IS i18n's language: read it, don't mirror it, so a change renders once and
+  // the select can never disagree with it.
   const selectedLanguage = i18n.language
 
   const handleLanguageChange = (language: string) => {
@@ -46,6 +97,12 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
 
   const handleClose = () => {
     onClose()
+  }
+
+  const escape = closeOnEscape(handleClose)
+  const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    escape(event)
+    trapTab(event)
   }
 
   if (!isOpen) return null
@@ -64,9 +121,19 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
       <div className="absolute inset-0 bg-black/50" onClick={handleClose} />
 
       {/* Modal */}
-      <div className="relative z-10 mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+      <div
+        ref={focusOnMount}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="settings-title"
+        tabIndex={-1}
+        onKeyDown={onKeyDown}
+        className="relative z-10 mx-4 max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-lg bg-white p-6 shadow-xl outline-none"
+      >
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900">{t("ui.settings")}</h2>
+          <h2 id="settings-title" className="text-xl font-bold text-gray-900">
+            {t("ui.settings")}
+          </h2>
           <button onClick={handleClose} className="text-gray-400 hover:text-gray-600" aria-label={t("ui.close")}>
             <svg className="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -115,6 +182,8 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             </button>
           </div>
         </div>
+
+        {isDevelopMode && <DevTools startGame={startGame} onClose={handleClose} />}
 
         <div className="mt-6 flex items-center justify-end gap-4">
           <div className="text-sm text-gray-500">

@@ -2,13 +2,21 @@
 import { createElement, useState } from "react"
 import { renderHook, render, act } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import type { CellState, Direction, FloorGrid, GridCell, MechanismRecord, SiteConfig } from "@/game/siteTypes"
+import type { CellState, Direction, FloorGrid, GridCell, MechanismRecord, RoomCell, SiteConfig } from "@/game/siteTypes"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { registerFamily } from "@/app/families/familyRegistry"
-import { getCell } from "@/game/gridNavigation"
+import { getCell, revealAll } from "@/game/gridNavigation"
 import { cellAddress } from "./cellIdentity"
 import { encodeEdge } from "./edgeId"
-import { AXES, DROP_AT, addressed, dropGrid, obstacleIndexes } from "./floorFixtures.testing"
+import {
+  AXES,
+  DROP_AT,
+  EDGE_NODE,
+  addressed,
+  dropGrid,
+  edgePrefabFloor,
+  obstacleIndexes,
+} from "./floorFixtures.testing"
 import { cellCenter } from "./mapScale"
 import { useSiteNavigation } from "./useSiteNavigation"
 import { SiteMapView } from "./SiteMapView"
@@ -133,6 +141,7 @@ const bareFork: GridCell = {
   ordinal: "1",
 }
 const switchRoom: GridCell = { ...bareFork, family: "sumplete", tags: ["puzzle"] }
+const chamber: GridCell = { ...bareFork, roomType: "chamber" }
 const fogged: GridCell = {
   type: "corridor",
   dirs: new Set(["w"]),
@@ -225,17 +234,15 @@ const twoFloors: SiteConfig = [
   },
 ]
 
-const setup = (cells: GridCell[], skipped: string[] = [], config: SiteConfig = siteConfig) => {
+const setup = (cells: GridCell[], config: SiteConfig = siteConfig, opensOnArrival?: (cell: RoomCell) => boolean) => {
   const journeys = {
     markCellExplored: vi.fn(),
     updatePosition: vi.fn(),
     getPurchasedShopSlots: () => new Set<string>(),
-    getSkippedConsumables: () => new Set(skipped),
     getMechanismStates: vi.fn(() => new Map<string, string>()),
     setMechanismState: vi.fn(),
   } as unknown as JourneyAPI
   const onEncounter = vi.fn()
-  const onSkippedConsumable = vi.fn()
   const onExitReached = vi.fn()
   // THE EXPLORER'S POSITION IS A PROP, AND A TEST THAT WALKS HIM HAS TO MOVE IT. The hook offers from
   // where it is told he stands, so leaving it at the way in while the test taps on across the floor asks
@@ -251,13 +258,13 @@ const setup = (cells: GridCell[], skipped: string[] = [], config: SiteConfig = s
         grid: gridOf(cells),
         explorerPos: pos,
         onEncounter,
-        onSkippedConsumable,
         onExitReached,
+        opensOnArrival,
       }),
     { initialProps: { pos: [0, 0] as readonly [number, number] } }
   )
   const standAt = (row: number, col: number) => hook.rerender({ pos: [row, col] as readonly [number, number] })
-  return { hook, journeys, onEncounter, onSkippedConsumable, onExitReached, standAt }
+  return { hook, journeys, onEncounter, onExitReached, standAt }
 }
 
 // Anything "on arrival" waits out the walk; the tests jump past it.
@@ -324,6 +331,16 @@ describe("useSiteNavigation", () => {
     expect(onEncounter).not.toHaveBeenCalled()
   })
 
+  it("writes down a pass-through chamber by standing in it, and opens nothing", () => {
+    const { hook, journeys, onEncounter } = setup([entrance, chamber])
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+
+    expect(journeys.markCellExplored).toHaveBeenCalledWith(SECTION, "0:0,1", CORRIDOR_AT_1)
+    expect(onEncounter).not.toHaveBeenCalled()
+  })
+
   // A switch is a junction with a puzzle standing in it: what the room HOLDS decides what arriving
   // does, not what type of room it is.
   it("opens the encounter of a junction that carries one", () => {
@@ -361,6 +378,39 @@ describe("useSiteNavigation", () => {
 
     act(() => promptOf(hook).take())
     expect(onEncounter).toHaveBeenCalledWith([0, 1], true)
+  })
+
+  // From the entrance into the L chamber: three cells, but the walk is five steps, on through the room to its stop.
+  it("offers a prefab room's prompt after the room walk, not the cell count", () => {
+    const lit = revealAll(edgePrefabFloor("L", { family: RETURNABLE_FAMILY }))
+    const [nr, nc] = EDGE_NODE.L
+    const grid: FloorGrid = {
+      ...lit,
+      cells: lit.cells.map((row, r) =>
+        row.map((cell, c): GridCell => (r === nr && c === nc ? ({ ...cell, state: "completed" } as GridCell) : cell))
+      ),
+    }
+    const { journeys } = setup([entrance])
+    const hook = renderHook(() =>
+      useSiteNavigation({
+        journeys,
+        journeyId: "j1",
+        siteConfig,
+        seed: 1,
+        currentFloor: 0,
+        grid,
+        explorerPos: [0, 2],
+        onEncounter: vi.fn(),
+        onExitReached: vi.fn(),
+      })
+    )
+
+    act(() => hook.result.current.onCellClick(...EDGE_NODE.L))
+    act(() => void vi.advanceTimersByTime(5 * 120 + 100 - 1))
+    expect(hook.result.current.prompt).toBeNull()
+    act(() => void vi.advanceTimersByTime(1))
+
+    expect(promptOf(hook)).toMatchObject({ kind: "room", at: [...EDGE_NODE.L], familyId: RETURNABLE_FAMILY })
   })
 
   // A gate's bars are drawn across the FAR side of its own square, so the square is ground the player
@@ -450,7 +500,7 @@ describe("useSiteNavigation", () => {
   })
 
   it("offers the stairs on arrival rather than taking the player off the floor", () => {
-    const { hook, journeys } = setup([entrance, stairRoom], [], twoFloors)
+    const { hook, journeys } = setup([entrance, stairRoom], twoFloors)
 
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
@@ -461,7 +511,7 @@ describe("useSiteNavigation", () => {
   })
 
   it("moves to the peer floor when the stairs prompt is taken", () => {
-    const { hook, journeys } = setup([entrance, stairRoom], [], twoFloors)
+    const { hook, journeys } = setup([entrance, stairRoom], twoFloors)
 
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
@@ -474,11 +524,7 @@ describe("useSiteNavigation", () => {
   })
 
   it("drops the stairs prompt when the player walks off the stairhead, staying on the floor", () => {
-    const { hook, journeys, standAt } = setup(
-      [entrance, corridor, { ...stairRoom, dirs: new Set(["w"]) }],
-      [],
-      twoFloors
-    )
+    const { hook, journeys, standAt } = setup([entrance, corridor, { ...stairRoom, dirs: new Set(["w"]) }], twoFloors)
 
     act(() => hook.result.current.onCellClick(0, 2))
     arrive()
@@ -502,7 +548,7 @@ describe("useSiteNavigation", () => {
     expect(onEncounter).not.toHaveBeenCalled()
   })
 
-  // The sibling of the two reopen cases below, and the one a whole mechanic rests on: a door that hands
+  // The sibling of the shop reopen case below, and the one a whole mechanic rests on: a door that hands
   // over one of the two keys it holds is a door the player has to be able to walk back into.
   it("offers the way back into a completed room whose family says it stays re-enterable", () => {
     const { hook, onEncounter } = setup([entrance, { ...puzzleRoom, family: RETURNABLE_FAMILY, state: "completed" }])
@@ -515,6 +561,35 @@ describe("useSiteNavigation", () => {
 
     act(() => promptOf(hook).take())
     expect(onEncounter).toHaveBeenCalledWith([0, 1], true)
+  })
+
+  it("opens a completed re-enterable room on arrival while it holds something not yet shown", () => {
+    const { hook, journeys, onEncounter } = setup(
+      [entrance, { ...puzzleRoom, family: RETURNABLE_FAMILY, state: "completed" }],
+      siteConfig,
+      () => true
+    )
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+
+    expect(onEncounter).toHaveBeenCalledWith([0, 1], true)
+    expect(hook.result.current.prompt).toBeNull()
+    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", PUZZLE_AT_1, "0:0,1")
+  })
+
+  it("offers the way back in again once the room has nothing left unshown", () => {
+    const { hook, onEncounter } = setup(
+      [entrance, { ...puzzleRoom, family: RETURNABLE_FAMILY, state: "completed" }],
+      siteConfig,
+      () => false
+    )
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+
+    expect(promptOf(hook)).toMatchObject({ kind: "room", at: [0, 1] })
+    expect(onEncounter).not.toHaveBeenCalled()
   })
 
   it("drops a re-enterable room's prompt when the player walks off it, opening nothing", () => {
@@ -536,23 +611,24 @@ describe("useSiteNavigation", () => {
     expect(onEncounter).not.toHaveBeenCalled()
   })
 
-  it("reopens a completed chest whose consumable was left behind, once the player is back at it", () => {
-    const reward = { type: "consumable", itemId: "bandage" }
-    const { hook, onSkippedConsumable } = setup(
-      [entrance, { ...puzzleRoom, state: "completed", reward }],
-      [PUZZLE_AT_1]
-    )
+  it("repositions the player on a completed chest that held a waterskin, offering nothing", () => {
+    const { hook, journeys, onEncounter } = setup([
+      entrance,
+      { ...puzzleRoom, state: "completed", reward: { type: "waterskin" } },
+    ])
 
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
 
-    expect(onSkippedConsumable).toHaveBeenCalledWith(reward, PUZZLE_AT_1)
+    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", PUZZLE_AT_1, "0:0,1")
+    expect(hook.result.current.prompt).toBeNull()
+    expect(onEncounter).not.toHaveBeenCalled()
   })
 
   it("offers the stall of a completed shop that still has unbought stock", () => {
     const { hook, onEncounter } = setup([
       entrance,
-      { ...puzzleRoom, state: "completed", stock: [{ type: "consumable", itemId: "bandage" }] },
+      { ...puzzleRoom, state: "completed", stock: [{ type: "money", amount: 5 }] },
     ])
 
     act(() => hook.result.current.onCellClick(0, 1))
@@ -683,7 +759,6 @@ describe("useSiteNavigation taking a span", () => {
       markCellExplored: vi.fn(),
       updatePosition: vi.fn(),
       getPurchasedShopSlots: () => new Set<string>(),
-      getSkippedConsumables: () => new Set<string>(),
       getMechanismStates: vi.fn(() => new Map<string, string>()),
       setMechanismState: vi.fn(),
     } as unknown as JourneyAPI
@@ -709,7 +784,6 @@ describe("useSiteNavigation taking a span", () => {
         grid: floor,
         explorerPos: at(DROP_AT.fromNode),
         onEncounter: vi.fn(),
-        onSkippedConsumable: vi.fn(),
         onExitReached: vi.fn(),
         playTraversal,
       })
@@ -825,7 +899,6 @@ describe("useSiteNavigation taking a span", () => {
         if (address === landingAddress) setPos(landing)
       }),
       getPurchasedShopSlots: () => new Set<string>(),
-      getSkippedConsumables: () => new Set<string>(),
       getMechanismStates: vi.fn(() => new Map<string, string>()),
       setMechanismState: vi.fn(),
     } as unknown as JourneyAPI
@@ -842,7 +915,6 @@ describe("useSiteNavigation taking a span", () => {
         grid: floor,
         explorerPos: pos,
         onEncounter: vi.fn(),
-        onSkippedConsumable: vi.fn(),
         onExitReached: vi.fn(),
         playTraversal: crossAtOnce,
       })

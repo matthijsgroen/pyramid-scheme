@@ -12,15 +12,14 @@ import { ALL_SELLABLES, SELLABLES_BY_TIER } from "@/data/sellables"
 //   priority) hold none of that same loot. So an empty chest WHILE a puzzle bears the chest-first
 //   loot (junk) means priority order broke or a provider misbehaved.
 //
-// Empty chests as such are legitimate: the shop's money economy places a FIXED money-equivalent
-// total (what its stock costs, loot.ts), so once that budget is spent the remaining chests are
-// empty by design. Two kinds of puzzle-slot loot are exempt because they never compete for a
-// chest: trap consumables (`kind: "puzzle"` eligibility only), and the shop's PUZZLE_COIN_SHARE —
-// a slice of the budget deliberately withheld from chests so solving a puzzle still pays out.
+// The bake refuses an empty chest (findEmptyChests); the shop's money fill (loot.ts) is what keeps them full. It places
+// junk ground by ground until each ground's money covers what its shops sell, and gives every chest no ground needs a
+// little loose change. Two kinds of puzzle-slot loot are exempt because they never compete for a chest: mod loot that is
+// eligible for `kind: "puzzle"` slots only, and the fill's loose change on puzzle solves, laid before the grounds so
+// solving a puzzle still pays out.
 //
-// This is the check that was missing: the suite verified reward COUNTS (golden guard), which
-// TARGET.md §35 says is explicitly NOT the acceptance gate. Counts stayed green while empty chests
-// shipped. An invariant over the generated world catches that drift; golden counts never will.
+// Reward COUNTS (the golden guard) are not the acceptance gate, as TARGET.md §35 says: counts stay green while empty
+// chests ship. An invariant over the generated world catches that drift.
 
 // A treasure chest = a path end authored `end: "treasure"` that is meant to hold loot. A fez-shop
 // section also authors `end: "treasure"`, but there the SHOP is the treasure (its stock lives in

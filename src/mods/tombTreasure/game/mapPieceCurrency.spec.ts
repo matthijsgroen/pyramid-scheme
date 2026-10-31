@@ -20,7 +20,7 @@ describe("MAP_PIECE_CURRENCY.rank — shop stock move", () => {
 
   it("ranks a shop slot tagged for this tomb ahead of pyramid branch slots", () => {
     // The regression this guards: without a shop boost, both pyramid slots win the two instances
-    // and the shop sentinel is left unfilled (trap backfills a consumable), so the authored map-piece
+    // and the shop sentinel is left unfilled (nothing backfills it), so the authored map-piece
     // sale silently vanishes. The shop slot must sort first so one instance MOVES into the shop.
     const pyramidA = slot({ journeyId: "pyr_a", preference: "mapPiece:wizard_treasure_tomb_c", encounter: undefined })
     const pyramidB = slot({ journeyId: "pyr_b", preference: "mapPiece:wizard_treasure_tomb_c", encounter: undefined })

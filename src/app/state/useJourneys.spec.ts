@@ -802,16 +802,14 @@ describe("re-keying bookkeeping", () => {
       exploredCells: { "1:abc": ["0/p7"] },
       positionKey: "abc#0/p7",
       standingKey: null,
-      disabledTraps: ["1:abc#0/p2"],
-      skippedConsumables: [],
-      purchasedStock: [],
+      purchasedStock: ["1:abc#0/p2!0"],
       knownHiddenCorridors: [],
       foundHiddenCorridors: [],
     })
 
     expect(state[0].exploredCells).toEqual({ "1:abc": ["0/p7"] })
     expect(state[0].positionKey).toBe("abc#0/p7")
-    expect(state[0].disabledTraps).toEqual(["1:abc#0/p2"])
+    expect(state[0].purchasedStock).toEqual(["1:abc#0/p2!0"])
     // Stamped, so the next launch leaves it alone — and the coordinates stay as the archive.
     expect(state[0].cellKeyVersion).toBe(3)
     expect(state[0].exploredSections).toEqual({ "1:abc": ["0:3,4"] })
@@ -908,8 +906,6 @@ describe("the re-laid pyramids step", () => {
       exploredCells: { "2:main": ["0/p0", "0/p2"] },
       positionKey: "main#0/p2",
       standingKey: null,
-      disabledTraps: [],
-      skippedConsumables: [],
       purchasedStock: [],
       knownHiddenCorridors: [],
       foundHiddenCorridors: [],

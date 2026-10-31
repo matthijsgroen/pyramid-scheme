@@ -140,10 +140,17 @@ describe("no encounter can move a wall", () => {
 describe("what a world-spec setting may and may not move", () => {
   const sampled = () => allFloors().filter((_, i) => i % 3 === 0)
 
-  const shape = (g: FloorGrid) =>
+  // Every cell's type and dirs: the corridors, doors and rooms as the carve laid them.
+  const bareShape = (g: FloorGrid) =>
     JSON.stringify(
       g.cells.map(row => row.map(c => (c.type === "empty" ? "." : `${c.type[0]}${[...c.dirs].sort().join("")}`)))
     )
+  // A prefab room's rectangle is part of the drawn walls: laying one moves them and no cell's type or dirs.
+  const shape = (g: FloorGrid) =>
+    JSON.stringify([
+      bareShape(g),
+      g.cells.map(row => row.map(c => (c.type !== "empty" && c.prefabRoom ? c.prefabRoom.rect : null))),
+    ])
   const sectionHashes = (g: FloorGrid) =>
     JSON.stringify(
       [
@@ -173,6 +180,7 @@ describe("what a world-spec setting may and may not move", () => {
   const compare = (mutate: (c: FloorConfig) => FloorConfig) => {
     const wallsMoved: string[] = []
     const reshapedWithoutRehashing: string[] = []
+    const dirsMoved: string[] = []
     for (const floor of sampled()) {
       const opts = {
         resolveKeyRequirements,
@@ -190,9 +198,10 @@ describe("what a world-spec setting may and may not move", () => {
       if (!before.success || !after.success) continue
       if (shape(before.grid) === shape(after.grid)) continue
       wallsMoved.push(floor.label)
+      if (bareShape(before.grid) !== bareShape(after.grid)) dirsMoved.push(floor.label)
       if (sectionHashes(before.grid) === sectionHashes(after.grid)) reshapedWithoutRehashing.push(floor.label)
     }
-    return { wallsMoved, reshapedWithoutRehashing }
+    return { wallsMoved, reshapedWithoutRehashing, dirsMoved }
   }
 
   // Rule 1 — content, dressing and key assignment are not the shape of the place.
@@ -217,26 +226,21 @@ describe("what a world-spec setting may and may not move", () => {
         }),
     ],
     [
-      "the decoration pool",
+      "the wall items a room hangs",
       c =>
         edited(c, n => {
-          if (n.decorations) n.decorations = ["rubblePile"]
-          if (n.wallDecorations) n.wallDecorations = ["niche"]
-        }),
-    ],
-    [
-      "the activity a room is dressed for",
-      c =>
-        edited(c, n => {
-          if (n.decorations) n.decorations = ["scale", "basketStack", "scribeDesk"]
           if (n.wallDecorations) n.wallDecorations = ["tallyBoard"]
         }),
     ],
     [
-      "the activity a story authored for a room",
+      "which way a stair runs",
       c =>
-        edited(c, n => {
-          if ((n.pathPuzzles as number) > 0) n.activitiesByIndex = { 0: "ledger" }
+        edited(c, (n, isFloor) => {
+          const climbing = (link: unknown) => (link && typeof link === "object" ? { ...link, goes: "up" } : link)
+          if (isFloor) {
+            n.entrance = climbing(n.entrance)
+            n.exitOrStaircase = climbing(n.exitOrStaircase)
+          } else n.end = climbing(n.end)
         }),
     ],
     [
@@ -265,11 +269,51 @@ describe("what a world-spec setting may and may not move", () => {
     120_000
   )
 
+  // Rule 1b — the dressing a room is given moves no cell's type or dirs, so section hashes hold by design:
+  // every cell's type and dirs must stay identical on every floor.
+  const DRESSING: Array<[string, (c: FloorConfig) => FloorConfig]> = [
+    [
+      "the decoration pool",
+      c =>
+        edited(c, n => {
+          if (n.decorations) n.decorations = ["rubblePile"]
+        }),
+    ],
+    [
+      "the activity a room is dressed for",
+      c =>
+        edited(c, n => {
+          if (n.decorations) n.decorations = ["scale", "basketStack", "scribeDesk"]
+        }),
+    ],
+    [
+      "the activity a story authored for a room",
+      c =>
+        edited(c, n => {
+          if ((n.pathPuzzles as number) > 0) n.activitiesByIndex = { 0: "ledger" }
+        }),
+    ],
+  ]
+
+  it.each(DRESSING)(
+    "%s moves no cell's type or dirs",
+    (_label, mutate) => {
+      const { dirsMoved } = compare(mutate)
+      expect(
+        dirsMoved,
+        `${dirsMoved.length} floor(s) changed a cell's type or dirs:\n${dirsMoved.slice(0, 5).join("\n")}`
+      ).toEqual([])
+    },
+    120_000
+  )
+
   // Rule 2 — these are all allowed to re-carve, but never silently.
   const STRUCTURAL: Array<[string, (c: FloorConfig) => FloorConfig]> = [
     ["pathPuzzles", c => ({ ...structuredClone(c), pathPuzzles: c.pathPuzzles + 1 })],
     ["packing", c => ({ ...structuredClone(c), packing: (c.packing ?? 1) + 0.5 })],
     ["corridorStraightness", c => ({ ...structuredClone(c), corridorStraightness: 0.2 })],
+    ["outsideLock", c => ({ ...structuredClone(c), outsideLock: c.sideSections.map((_, i) => i) })],
+    ["corridorsTakeTwo", c => ({ ...structuredClone(c), corridorsTakeTwo: true })],
     ["difficulty", c => ({ ...structuredClone(c), difficulty: c.difficulty === "wizard" ? "starter" : "wizard" })],
     [
       "sealed",
@@ -506,4 +550,30 @@ describe("a room marked explored on arrival holds no reward", () => {
       expect(room.reward, `${room.where} is marked explored on arrival yet carries a reward`).toBeUndefined()
     }
   }, 60_000)
+})
+
+// A floor's chamber count is an intent seated without a draw: it never refuses an attempt and moves no other
+// decision, so at the seed and packing the bake pinned a floor at, its walls are the walls it lays with no count.
+describe("a floor's chamber count moves no wall at the pinned layout", () => {
+  const walls = (g: FloorGrid) =>
+    JSON.stringify(g.cells.map(row => row.map(c => (c.type === "empty" ? "." : [...c.dirs].sort().join("")))))
+
+  it("lays every floor that asks for chambers with the walls it lays without the count", () => {
+    const counted = allFloors().filter(floor => (floor.config.chambers ?? 0) > 0)
+    expect(counted.length).toBeGreaterThan(0)
+
+    const moved = counted.flatMap(floor => {
+      const opts = {
+        resolveKeyRequirements,
+        floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
+      }
+      const { chambers: _count, ...uncounted } = floor.config
+      const withThem = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, opts)
+      const without = assembleFloor(floor.journeyId, uncounted, floor.seed, resolveEncounter, opts)
+      if (!withThem.success || !without.success) return [`${floor.label}: does not assemble`]
+      return walls(withThem.grid) === walls(without.grid) ? [] : [`${floor.label}: walls moved`]
+    })
+
+    expect(moved, `${moved.length} floor(s):\n${moved.slice(0, 10).join("\n")}`).toEqual([])
+  }, 120_000)
 })

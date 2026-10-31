@@ -86,6 +86,75 @@ body {
   /* The tiles and the locks set their glyphs in mono; the hieroglyph face has to lead that stack too,
      or `font-mono` would override the one inherited from the document and draw a box again. */
   --font-mono: "Hieroglyphs", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* The camp's UI colours, sampled from the camp art: docs/design/camp-palette.md has where each comes from
+     and the contrast each pairing holds. Paper is the tent canvas, ink its shadows, ochre the terracotta of
+     the fire and the reed mats, faience the starter rank's turquoise, night the sky, ember the fire's glow. */
+  --color-parchment-50: #fff8ea;
+  --color-parchment-100: #f4ead5;
+  --color-parchment-200: #e9dcbf;
+  --color-parchment-300: #d6c4a0;
+  --color-parchment-400: #b8a584;
+
+  --color-ink-500: #7b5b3a;
+  --color-ink-600: #5c4a36;
+  --color-ink-700: #4a3b2a;
+  --color-ink-800: #3a2e22;
+  --color-ink-900: #2b2118;
+
+  --color-ochre-100: #f5d9c7;
+  --color-ochre-300: #d58b56;
+  --color-ochre-400: #c25e30;
+  --color-ochre-500: #a3401a;
+  --color-ochre-600: #8a3515;
+  --color-ochre-700: #6e2a12;
+  --color-ochre-800: #451d19;
+
+  --color-faience-100: #cde8e4;
+  --color-faience-300: #7fc4c0;
+  --color-faience-500: #2e8a88;
+  --color-faience-600: #23706f;
+  --color-faience-700: #1c5a5c;
+
+  --color-night-200: #c9cfe2;
+  --color-night-600: #475481;
+  --color-night-700: #3a4566;
+  --color-night-800: #27304a;
+  --color-night-900: #1b2236;
+  --color-night-950: #0f1733;
+
+  --color-ember-200: #ffe3a8;
+  --color-ember-300: #ffd27a;
+  --color-ember-400: #eab54b;
+  --color-ember-500: #e0a526;
+  --color-ember-600: #b87f14;
+  --color-ember-700: #855a0c;
+
+  /* The same colours by the job they do in the camp UI. */
+  --color-camp-paper: var(--color-parchment-100);
+  --color-camp-card: var(--color-parchment-50);
+  --color-camp-chip: var(--color-parchment-200);
+  --color-camp-rule: var(--color-parchment-300);
+  --color-camp-dashed: var(--color-parchment-400);
+  --color-camp-ink: var(--color-ink-900);
+  --color-camp-ink-soft: var(--color-ink-700);
+  --color-camp-label: var(--color-ink-600);
+  --color-camp-muted: var(--color-ink-500);
+  --color-camp-accent: var(--color-ochre-500);
+  --color-camp-accent-hover: var(--color-ochre-600);
+  --color-camp-on-accent: var(--color-parchment-50);
+  --color-camp-select: var(--color-faience-700);
+  --color-camp-night: var(--color-night-800);
+  --color-camp-night-deep: var(--color-night-900);
+  --color-camp-on-night: var(--color-night-200);
+  --color-camp-glow: var(--color-ember-500);
+  /* The see-through panel over the scene: a warm tint at 55% where the backdrop blurs and glows, 92% where it
+     cannot; its edge catches the light. */
+  --color-camp-glass-tint: #efd9b0;
+  --color-camp-glass: color-mix(in srgb, var(--color-camp-glass-tint) 55%, transparent);
+  --color-camp-glass-solid: color-mix(in srgb, var(--color-camp-glass-tint) 92%, transparent);
+  --color-camp-glass-edge: rgb(255 255 255 / 0.45);
+
   --animate-fade-in: fade-in 1s forwards ease-in-out;
   @keyframes fade-in {
     0% {
@@ -621,10 +690,160 @@ body {
     }
   }
 
+  /* ── The camp's own motion ─────────────────────────────────────────────────────────────────────
+     Everything that moves in `CampScene`. The keyframes hold plain numbers, or a variable the element
+     sets for itself (its strength, its font-size as a rise), so each animation stays on the compositor
+     and one definition serves every light, star and ember. Reduced motion is `motion-reduce:animate-none`
+     at the point of use. */
+
+  /* Half a second after the scene mounts it flags itself settled, and only a settled scene fades its
+     pieces (`--camp-settled`, registered below). */
+  --animate-camp-settle: camp-settle 1ms 0.5s forwards;
+  @keyframes camp-settle {
+    to {
+      --camp-settled: 1;
+    }
+  }
+
+  --animate-camp-twinkle: camp-twinkle 4s ease-in-out infinite;
+  @keyframes camp-twinkle {
+    0%,
+    100% {
+      opacity: 0.8;
+      scale: 1;
+    }
+    50% {
+      opacity: 0.1;
+      scale: 0.6;
+    }
+    70% {
+      opacity: 1;
+      scale: 1.3;
+    }
+  }
+
+  /* On the same 2.9s loop and delay as its fire glow's strength: shadow and shade deepen as the fire flares. */
+  --animate-camp-strength-flicker: camp-strength-flicker 2.9s ease-in-out infinite;
+  @keyframes camp-strength-flicker {
+    0%,
+    100% {
+      opacity: var(--camp-strength, 0.3);
+    }
+    30% {
+      opacity: calc(var(--camp-strength, 0.3) * 0.86);
+    }
+    60% {
+      opacity: calc(var(--camp-strength, 0.3) * 1.08);
+    }
+  }
+
+  /* A burning piece with a second frame shows one frame at a time: B for 0.24s, then A for 0.33s. The two
+     unequal holds give about 3.5 Hz without a regular beat. */
+  --animate-camp-frame-a: camp-frame-a 0.57s step-end infinite;
+  @keyframes camp-frame-a {
+    0% {
+      opacity: 0;
+    }
+    42%,
+    100% {
+      opacity: 1;
+    }
+  }
+  --animate-camp-frame-b: camp-frame-b 0.57s step-end infinite;
+  @keyframes camp-frame-b {
+    0% {
+      opacity: 1;
+    }
+    42%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  /* A spark rising from a fire. Its font-size is how far it rises, so the keyframes hold plain em lengths. */
+  --animate-camp-ember: camp-ember 3s ease-out infinite;
+  @keyframes camp-ember {
+    0% {
+      opacity: 0;
+      transform: translate(0, 0) scale(1);
+    }
+    15% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translate(0.25em, -1em) scale(0.4);
+    }
+  }
+  --animate-camp-ember-left: camp-ember-left 3s ease-out infinite;
+  @keyframes camp-ember-left {
+    0% {
+      opacity: 0;
+      transform: translate(0, 0) scale(1);
+    }
+    15% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-0.25em, -1em) scale(0.4);
+    }
+  }
+
+  /* Two loops with unrelated lengths, so a fire never repeats the same flicker in step. */
+  --animate-camp-flicker: camp-flicker-size 1.7s ease-in-out infinite, camp-flicker-strength 2.9s ease-in-out infinite;
+  @keyframes camp-flicker-size {
+    0%,
+    100% {
+      scale: 1;
+    }
+    25% {
+      scale: 1.05;
+    }
+    55% {
+      scale: 0.96;
+    }
+    80% {
+      scale: 1.03;
+    }
+  }
+  @keyframes camp-flicker-strength {
+    0%,
+    100% {
+      opacity: var(--camp-glow-strength, 1);
+    }
+    30% {
+      opacity: calc(var(--camp-glow-strength, 1) * 0.86);
+    }
+    60% {
+      opacity: calc(var(--camp-glow-strength, 1) * 1.08);
+    }
+  }
+
+  --animate-camp-breathe: camp-breathe 6s ease-in-out infinite;
+  @keyframes camp-breathe {
+    0%,
+    100% {
+      scale: 0.97;
+    }
+    50% {
+      scale: 1.03;
+    }
+  }
+
   --spacing-safe-top: env(safe-area-inset-top);
   --spacing-safe-bottom: env(safe-area-inset-bottom);
   --spacing-safe-left: env(safe-area-inset-left);
   --spacing-safe-right: env(safe-area-inset-right);
+}
+
+/* A settled camp scene fades the pieces a later step changes; the opening it mounts with just stands there.
+   A container style query reads the flag, because transition properties may not depend on an animated
+   value directly. A browser without style queries shows no fade at all. */
+@property --camp-settled {
+  syntax: "<integer>";
+  inherits: true;
+  initial-value: 0;
 }
 
 /*

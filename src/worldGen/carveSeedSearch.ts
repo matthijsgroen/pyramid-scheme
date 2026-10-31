@@ -1,40 +1,68 @@
 import { walkFloorLock, describeFloorWalkFailure, deadFloorRegions } from "@/game/floorLockWalk"
-import type { AssemblerResult, FloorGrid } from "@/game/siteTypes"
+import { lockGroundUnfed, lockWithoutPuzzle } from "@/game/lockPuzzles"
+import type { AssemblerReason, AssemblerResult, FloorConfig, FloorGrid } from "@/game/siteTypes"
+import type { CorridorAssignment } from "@/game/corridorSidePaths"
 import { roomlessRouteStubs } from "@/game/routeStubs"
+import { lessonOrderFaults } from "@/game/lessonOrder"
+import { isLessonLock } from "@/game/lockCatalogue"
 
-/** The checks a seed must pass, in the order they are asked. A seed that fails one is never asked the next. */
-export const CARVE_CRITERIA = [
+/** What every picked layout meets, in the order they are asked; a carve that fails one is never asked the next.
+ * Packing and the carve's attempt are no criteria: they order the search (`searchCarvePair`). */
+export const HARD_CRITERIA = [
   "carves",
-  "attempt 0",
   "lock walks sound",
+  "lock holds an encounter",
   "no dead region",
   "every stub holds a room",
+  "lesson shows its door first",
 ] as const
-export type CarveCriterion = (typeof CARVE_CRITERIA)[number]
+export type HardCriterion = (typeof HARD_CRITERIA)[number]
+export type CarveRefusal = { criterion: HardCriterion; detail: string }
 
-export type CarvePairFound = {
-  found: true
+/** The authoring a criterion is answered in, named in a failure so the author knows where to look. */
+export const AUTHORING_FIELD: Record<HardCriterion, string> = {
+  carves: "the floor's content or its locks",
+  "lock walks sound": "locks",
+  "lock holds an encounter":
+    "where the lock stands (a lock placed before the floor's content, lockBeforeFloorContent), its regions' `takes`, or pathPuzzles and sideSections (any puzzle, trap, chest or shop on the lock's way counts)",
+  "no dead region": "locks",
+  "every stub holds a room": "sideSections or locks",
+  "lesson shows its door first": "locks",
+}
+
+/** A layout that meets every hard criterion. `laddered`: it carves only on the runtime ladder, past attempt 0. */
+export type LayoutFound = {
+  kind: "found"
   seed: number
   /** The `packing` that carved: the authored one, or the smallest raised one that carved. */
   packing: number
+  laddered: boolean
   grid: FloorGrid
-  /** How far past the base seed the search went at the final packing: 0 means no stamped seed. */
+  /** How far past the base seed the pinned seed lies: 0 is the address's own seed. */
   offset: number
-  /** What the authored `packing` at the base seed failed, or null when it passed: the measure of how
-   * many floors carve only on a widened grid and a doubled `packing` nobody authored ("attempt 0"). */
-  baseRefusal: CarveCriterion | null
+  /** Where the floor's side paths stand: the stage of `sidePathStages` that carved. */
+  sidePaths: SidePathStage
 }
-export type CarvePairMissing = {
-  found: false
-  /** The last criterion any pair reached, so the failure names what could never be satisfied. */
-  hardest: CarveCriterion
+/** The bounded search met no candidate: the furthest criterion any candidate reached, and how often each refused. */
+export type LayoutNotFound = {
+  kind: "notFound"
+  hardest: HardCriterion
   detail: string
-  tried: number
-  /** The largest `packing` asked for. */
-  reached: number
-  /** What the authored `packing` at the base seed failed; see CarvePairFound. */
-  baseRefusal: CarveCriterion | null
+  counts: Partial<Record<HardCriterion, number>>
+  seeds: number
+  packings: number
+  /** How many side-path stages were searched (`sidePathStages`). */
+  stages: number
 }
+/** The authoring cannot meet a criterion at any seed, decided before any carve (layoutFeasibility.ts). */
+export type LayoutInfeasible = {
+  kind: "infeasible"
+  criterion: HardCriterion
+  detail: string
+  /** Every infeasibility the authoring has, the first of which is `criterion`. */
+  all: CarveRefusal[]
+}
+export type LayoutResult = LayoutFound | LayoutNotFound | LayoutInfeasible
 
 /** Stamped seeds live in [0, 2^32). An address seed is `generateNewSeed`'s up to 1e16, past
  * `Number.MAX_SAFE_INTEGER`, and `floorAssemblySeed` adds to it, so a stamped `base + offset` could round to
@@ -49,18 +77,24 @@ export const seedAtOffset = (base: number, offset: number): number =>
 
 export { roomlessRouteStubs }
 
-/** Why `result` is not acceptable, or null when it is. */
-export const refusal = (result: AssemblerResult): { criterion: CarveCriterion; detail: string } | null => {
+/** Which hard criterion `result` misses, or null when it meets them all. `floor` is the authoring carved: its locks'
+ * region appetites are part of "lock holds an encounter". */
+export const refusal = (result: AssemblerResult, floor: Pick<FloorConfig, "locks">): CarveRefusal | null => {
   if (!result.success) return { criterion: "carves", detail: JSON.stringify(result.reasons) }
-  if (result.attempt > 0)
-    return { criterion: "attempt 0", detail: `carved only on attempt ${result.attempt}, past the authored packing` }
   const walk = walkFloorLock(result.grid)
   if (!walk) return null
   if (!walk.sound) return { criterion: "lock walks sound", detail: describeFloorWalkFailure(walk.failure) }
+  const unfed = [
+    ...lockWithoutPuzzle(result.grid, floor).map(lock => `lock ${lock} has no encounter on its way`),
+    ...lockGroundUnfed(result.grid, floor),
+  ]
+  if (unfed.length > 0) return { criterion: "lock holds an encounter", detail: unfed.join(", ") }
   const dead = deadFloorRegions(result.grid)
   if (dead.length > 0) return { criterion: "no dead region", detail: dead.join(", ") }
   const bare = roomlessRouteStubs(result.grid)
   if (bare.length > 0) return { criterion: "every stub holds a room", detail: bare.join(", ") }
+  const misordered = floor.locks?.some(({ lock }) => isLessonLock(lock.name)) ? lessonOrderFaults(result.grid) : []
+  if (misordered.length > 0) return { criterion: "lesson shows its door first", detail: misordered.join(", ") }
   return null
 }
 
@@ -73,86 +107,248 @@ export const PACKING_STEP = 0.02
 export const packingAtRung = (authored: number, rung: number, step: number = PACKING_STEP): number =>
   Math.round((authored + rung * step) * 1e6) / 1e6
 
+/** Every packing the search asks, closest to the authored one first: the authored value, then each step up to
+ * `ceiling`. A packing authored above the ceiling is asked at its own value only. */
+export const packingsFor = (authored: number, ceiling: number, step: number = PACKING_STEP): number[] => {
+  const packings = [authored]
+  for (let rung = 1; packingAtRung(authored, rung, step) <= ceiling; rung++)
+    packings.push(packingAtRung(authored, rung, step))
+  return packings
+}
+
+/** Where a lock floor's side paths stand: `outsideLock` hang outside the lock as branches, every other one the lock's
+ * corridors take stands on one, two to a corridor only with `corridorsTakeTwo`. */
+export type SidePathStage = { outsideLock: number[]; corridorsTakeTwo?: true }
+
+/** Every side path the lock's corridors take, one to a corridor. */
+export const ALL_INSIDE: SidePathStage = { outsideLock: [] }
+
+const ascending = (sections: Iterable<number>) => [...sections].sort((a, b) => a - b)
+
+/**
+ * WHERE THE SIDE PATHS STAND, MOST PREFERRED FIRST. `candidates` are the sections offered a lock corridor, in authored
+ * order; `single` and `double` are their assignment at one and at two sections a corridor.
+ * - One to a corridor: a section past the corridors that take it hangs outside the lock from the first stage on; each
+ *   next stage moves the last authored section still inside out as well, until none is inside.
+ * - Only then two to a corridor, the same way, for as long as a corridor still holds two: once none does, the stage is
+ *   one already asked.
+ * Moving the last authored section out leaves every earlier one on its corridor, since sections are paired in
+ * authored order.
+ */
+export const sidePathStages = (
+  candidates: readonly number[],
+  single: readonly CorridorAssignment[],
+  double: readonly CorridorAssignment[]
+): SidePathStage[] => {
+  const stagesOf = (assigned: readonly CorridorAssignment[], twoAllowed: boolean): SidePathStage[] => {
+    const inside = assigned.map(({ section }) => section)
+    const overflow = candidates.filter(section => !inside.includes(section))
+    const stages: SidePathStage[] = []
+    for (let moved = 0; moved <= inside.length; moved++) {
+      const staying = assigned.slice(0, inside.length - moved)
+      const outsideLock = ascending([...overflow, ...inside.slice(inside.length - moved)])
+      if (!twoAllowed) stages.push({ outsideLock })
+      else if (new Set(staying.map(({ corridor }) => corridor)).size < staying.length)
+        stages.push({ outsideLock, corridorsTakeTwo: true })
+      else break
+    }
+    return stages
+  }
+  return [...stagesOf(single, false), ...stagesOf(double, true)]
+}
+
+/** Carves the floor at `seed` and `packing` within `attempts` attempts, its side paths standing as `sidePaths` says. */
+export type CarveAssemble = (
+  seed: number,
+  packing: number,
+  attempts: number,
+  sidePaths: SidePathStage
+) => AssemblerResult
+
 export type CarvePairOptions = {
   /** The `packing` the author wrote (or the assembler's default when none was written). */
   authoredPacking: number
   /** The most `packing` a sweep may ask for. */
   ceiling: number
-  /** Seeds past the base tried at each packing. */
+  /** Seeds tried at each packing: offsets 0 … seedBudget-1 from the base. */
   seedBudget: number
-  /** Attempts the authored packing's base seed is given, so its refusal can say "attempt 0". */
+  /** The attempts the runtime ladder gives a floor: the last candidate's. */
   fullLadder: number
   step?: number
+  /** Which hard criterion a carve misses: `refusal` against the floor carved. */
+  judge: (result: AssemblerResult) => CarveRefusal | null
+  /** Where the side paths may stand, most preferred first (`sidePathStages`); a floor with no lock asks one. */
+  stages: SidePathStage[]
 }
 
+const offsetOf = (base: number, seed: number) =>
+  seed === base ? 0 : (seed - (base % STAMPED_SEED_RANGE) + STAMPED_SEED_RANGE) % STAMPED_SEED_RANGE
+
 /**
- * Whether one already-chosen (packing, seed) pair still satisfies every criterion: a single one-attempt
- * carve, where finding a pair costs thousands. `baseRefusal` is what the authored packing at the base
- * seed fails given the whole ladder, so a verified pin reports the same figure a search would.
- * Null means the pair no longer holds and the floor is to be searched afresh.
+ * Whether an already-pinned (seed, packing, side paths) still meets every hard criterion, in one carve where finding
+ * a pair costs thousands. A pin at the base seed and the authored packing is carved as the runtime carves it, ladder
+ * and all, so a laddered floor is verified rather than searched again; any other pin is carved on one attempt, which
+ * is the attempt the runtime's carve at it settles on. The pin is carved with its own side paths. Null means the
+ * floor is to be searched afresh.
  */
 export const verifyCarvePair = (
   base: number,
-  pair: { seed: number; packing: number },
-  assemble: (seed: number, packing: number, attempts: number) => AssemblerResult,
-  { authoredPacking, fullLadder }: Pick<CarvePairOptions, "authoredPacking" | "fullLadder">
-): CarvePairFound | null => {
-  const result = assemble(pair.seed, pair.packing, 1)
-  if (refusal(result) || !result.success) return null
-  const baseRefusal = refusal(assemble(base, authoredPacking, fullLadder))?.criterion ?? null
-  const offset =
-    pair.seed === base ? 0 : (pair.seed - (base % STAMPED_SEED_RANGE) + STAMPED_SEED_RANGE) % STAMPED_SEED_RANGE
-  return { found: true, seed: pair.seed, packing: pair.packing, grid: result.grid, offset, baseRefusal }
+  pair: { seed: number; packing: number; sidePaths?: SidePathStage },
+  assemble: CarveAssemble,
+  { authoredPacking, fullLadder, judge }: Pick<CarvePairOptions, "authoredPacking" | "fullLadder" | "judge">
+): LayoutFound | null => {
+  const atBase = pair.seed === base && pair.packing === authoredPacking
+  const sidePaths = pair.sidePaths ?? ALL_INSIDE
+  const result = assemble(pair.seed, pair.packing, atBase ? fullLadder : 1, sidePaths)
+  if (!result.success || (!atBase && result.attempt > 0) || judge(result)) return null
+  return {
+    kind: "found",
+    seed: pair.seed,
+    packing: pair.packing,
+    laddered: result.attempt > 0,
+    grid: result.grid,
+    offset: offsetOf(base, pair.seed),
+    sidePaths,
+  }
 }
 
 /**
- * The first (packing, seed) pair that carves a floor on the assembler's first attempt, walks sound and
- * leaves no dead region. The carve-versus-authoring check is part of carving: a carve that disagrees with
- * its layout is refused inside the assembler, so it surfaces here as a failed attempt.
+ * THE LAYOUT CLOSEST TO WHAT THE AUTHOR WROTE THAT MEETS EVERY HARD CRITERION. Packing is the author's intention,
+ * never a requirement, so it orders the candidates and refuses none: every seed at the authored packing, then each
+ * raised packing closest first, each candidate one attempt; then, last, the runtime ladder carve at the base seed,
+ * which widens the grid as play would. The first candidate meeting every hard criterion is pinned. One that only the
+ * ladder carves is `laddered`; the ladder carve is judged like any other, so no fallback ships a floor unchecked.
  *
- * Packing is the OUTER loop and seeds the inner: a seed is free to move and a packing is the author's
- * intent, so every seed at the authored packing is spent before the packing rises one step, and the
- * packing that is baked is the smallest that any seed carves at.
+ * Packing is the OUTER loop and seeds the inner: a seed is free to move and a packing is the author's intent, so
+ * every seed at the authored packing is spent before the packing rises one step. `assemble(seed, packing, attempts,
+ * sidePaths)` carves the floor within `attempts` attempts; a carve that disagrees with its layout is refused inside
+ * it.
  *
- * Finding a pair is expensive and verifying one is cheap, so the search runs at bake time and the
- * runtime carves the baked pair once. Each try is ONE attempt, so a pair that only carves after the
- * ladder widened the grid costs a single carve to reject. `assemble(seed, packing, attempts)` carves the
- * floor within `attempts` attempts.
+ * WHERE THE SIDE PATHS STAND is the outermost preference: each of `stages` (`sidePathStages`) asks every candidate,
+ * and the next is asked only when none met every hard criterion. A stage moves side paths between a lock corridor and
+ * a branch outside the lock, never off the floor, so it refuses nothing and loses no section: with every stage spent
+ * the floor is not found.
  */
 export const searchCarvePair = (
   base: number,
-  assemble: (seed: number, packing: number, attempts: number) => AssemblerResult,
-  { authoredPacking, ceiling, seedBudget, fullLadder, step = PACKING_STEP }: CarvePairOptions
-): CarvePairFound | CarvePairMissing => {
+  assemble: CarveAssemble,
+  { authoredPacking, ceiling, seedBudget, fullLadder, step = PACKING_STEP, judge, stages }: CarvePairOptions
+): LayoutFound | LayoutNotFound => {
+  const counts: Partial<Record<HardCriterion, number>> = {}
   let hardest = 0
   let detail = ""
-  let tried = 0
-  let reached = authoredPacking
-  let baseRefusal: CarveCriterion | null = null
-  for (let rung = 0; ; rung++) {
-    const packing = packingAtRung(authoredPacking, rung, step)
-    if (rung > 0 && packing > ceiling) break
-    reached = packing
-    for (let offset = 0; offset <= seedBudget; offset++) {
-      const seed = seedAtOffset(base, offset)
-      // Only the authored packing's base seed is carved with the whole ladder, so its refusal can say
-      // "attempt 0" (it carves, but late) rather than only "carves"; every other try is one attempt.
-      const first = rung === 0 && offset === 0
-      const laddered = assemble(seed, packing, first ? fullLadder : 1)
-      tried++
-      if (first) baseRefusal = refusal(laddered)?.criterion ?? null
-      // The ladder's answer names how the floor carves today; what it says about the PAIR is one attempt's.
-      const result = first && laddered.success && laddered.attempt > 0 ? assemble(seed, packing, 1) : laddered
-      const refused = refusal(result)
-      if (!refused && result.success) return { found: true, seed, packing, grid: result.grid, offset, baseRefusal }
-      if (refused) {
-        const rank = CARVE_CRITERIA.indexOf(refused.criterion)
-        if (rank >= hardest) {
-          hardest = rank
-          detail = refused.detail
-        }
+  const accepts = (result: AssemblerResult): boolean => {
+    const refused =
+      judge(result) ??
+      (result.success ? null : { criterion: "carves" as const, detail: JSON.stringify(result.reasons) })
+    if (!refused) return true
+    counts[refused.criterion] = (counts[refused.criterion] ?? 0) + 1
+    const rank = HARD_CRITERIA.indexOf(refused.criterion)
+    if (rank >= hardest) {
+      hardest = rank
+      detail = refused.detail
+    }
+    return false
+  }
+  const packings = packingsFor(authoredPacking, ceiling, step)
+  const searchStage = (sidePaths: SidePathStage): LayoutFound | null => {
+    for (const packing of packings) {
+      for (let offset = 0; offset < seedBudget; offset++) {
+        const seed = seedAtOffset(base, offset)
+        const result = assemble(seed, packing, 1, sidePaths)
+        if (!accepts(result) || !result.success) continue
+        return { kind: "found", seed, packing, laddered: false, grid: result.grid, offset, sidePaths }
       }
     }
+    const ladder = assemble(base, authoredPacking, fullLadder, sidePaths)
+    if (accepts(ladder) && ladder.success)
+      return {
+        kind: "found",
+        seed: base,
+        packing: authoredPacking,
+        laddered: true,
+        grid: ladder.grid,
+        offset: 0,
+        sidePaths,
+      }
+    return null
   }
-  return { found: false, hardest: CARVE_CRITERIA[hardest], detail, tried, reached, baseRefusal }
+  const asked = stages.length > 0 ? stages : [ALL_INSIDE]
+  for (const sidePaths of asked) {
+    const found = searchStage(sidePaths)
+    if (found) return found
+  }
+  return {
+    kind: "notFound",
+    hardest: HARD_CRITERIA[hardest],
+    detail,
+    counts,
+    seeds: seedBudget,
+    packings: packings.length,
+    stages: asked.length,
+  }
+}
+
+/** A found layout without its grid: what a search run apart from the bake hands back, to be carved again there. */
+export type LayoutPin = Omit<LayoutFound, "grid">
+
+/**
+ * WHAT SEARCHING THE STAGES IN TURN DECIDES, from each stage searched on its own (`searchCarvePair` given that one
+ * stage): the first stage in order that found a layout; or, when none did, the refusals of them all, the hardest
+ * criterion any reached and the detail of the last carve that reached it. A stage left unsearched (null) is one a
+ * stage before it already decided.
+ */
+export const mergeStageSearches = (
+  searched: ReadonlyArray<LayoutPin | LayoutNotFound | null>
+): LayoutPin | LayoutNotFound => {
+  let merged: LayoutNotFound | undefined
+  for (const result of searched) {
+    if (result === null) continue
+    if (result.kind === "found") return result
+    if (!merged) {
+      merged = { ...result, counts: { ...result.counts }, stages: 1 }
+      continue
+    }
+    // In the order the stage met them, so the counts read as they would had the stages been searched in one run.
+    for (const [criterion, count] of Object.entries(result.counts) as Array<[HardCriterion, number]>)
+      merged.counts[criterion] = (merged.counts[criterion] ?? 0) + count
+    if (HARD_CRITERIA.indexOf(result.hardest) >= HARD_CRITERIA.indexOf(merged.hardest)) {
+      merged.hardest = result.hardest
+      merged.detail = result.detail
+    }
+    merged.stages++
+  }
+  if (!merged) throw new Error("no stage was searched")
+  return merged
+}
+
+/** The designed room a carve's reasons (a "carves" refusal's detail) name as placed fewer times than its min. */
+const prefabShortfall = (detail: string): Extract<AssemblerReason, { type: "prefabsNotPlaced" }> | undefined => {
+  try {
+    const reasons: unknown = JSON.parse(detail)
+    return Array.isArray(reasons)
+      ? (reasons as AssemblerReason[]).find(
+          (reason): reason is Extract<AssemblerReason, { type: "prefabsNotPlaced" }> =>
+            reason.type === "prefabsNotPlaced"
+        )
+      : undefined
+  } catch {
+    return undefined
+  }
+}
+
+/** The bake's line for a floor no layout was picked for. */
+export const describeLayoutFailure = (where: string, result: LayoutNotFound | LayoutInfeasible): string => {
+  if (result.kind === "infeasible")
+    return result.all.map(({ criterion, detail }) => `${where}: infeasible — ${criterion}: ${detail}`).join("\n")
+  const short = result.hardest === "carves" ? prefabShortfall(result.detail) : undefined
+  // A designed room short of its min is named first; the search's line follows, with every other reason it kept.
+  const room = short ? `room ${short.room} placed ${short.placed} of min ${short.wanted}; ` : ""
+  const counts = HARD_CRITERIA.flatMap(criterion =>
+    result.counts[criterion] ? [`${criterion} ${result.counts[criterion]}`] : []
+  ).join(", ")
+  const stages = result.stages > 1 ? `, at each of ${result.stages} side-path stages,` : ""
+  return `${where}: ${room}no layout in ${result.seeds} seeds × ${result.packings} packings and the ladder${stages} meets "${
+    result.hardest
+  }" (${counts}) — change ${AUTHORING_FIELD[result.hardest]} or raise the budget; ${result.detail}`
 }

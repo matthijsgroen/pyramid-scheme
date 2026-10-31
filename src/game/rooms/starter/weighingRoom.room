@@ -1,0 +1,18 @@
+// designed by: Claude
+// starter. The weighing room: the weights on their table by the wall, the scale standing free beside it.
+room weighingRoom
+tier starter
+activity weighing
+mirror
+
+layout
+# t d # #
+# w . x #
+d . . s d
+# . . . #
+# d d d #
+
+w wall weightsTable
+x floor scale
+t wallItem? tallyBoard
+s stop

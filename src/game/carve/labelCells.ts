@@ -75,8 +75,11 @@ export const labelCells = pass("labelCells", ["maze", "regions", "keys", "lay"],
   })
 
   let laidOrdinal = 0
-  for (const { section, cells, positional, idx, parentIdx, doors, hidden, attachedAt, laid: laidChain } of state.keys
-    .chains) {
+  for (const { section, cells, positional, idx, parentIdx, doors, hidden, attachedAt, via, laid: laidChain } of state
+    .keys.chains) {
+    // A door node a chain leaves its hub room by stands in the hub's section, named by the chain it leads to, so a
+    // switch shutting two of a hub's doors names each door apart.
+    via?.forEach((cell, i) => labels.ordinal.set(keyOf(cell), `via:${positional}#${i}`))
     // A stretch the lock laid takes its labels, its address and its hash from the regions it crosses, so a
     // re-carve that moves the stretch moves nothing a save was filed under.
     if (laid && laidChain) {

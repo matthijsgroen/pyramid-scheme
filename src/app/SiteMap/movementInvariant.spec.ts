@@ -65,6 +65,7 @@ import {
   corridorPiece,
   dropGrid,
   floorFrom,
+  prefabForkFloor,
   roomPiece,
   type Piece,
 } from "./floorFixtures.testing"
@@ -291,7 +292,6 @@ const buildHarness = (
         journeyData,
       }),
       getPurchasedShopSlots: () => new Set<string>(),
-      getSkippedConsumables: () => new Set<string>(),
       ...patch,
     } as unknown as JourneyAPI
 
@@ -332,7 +332,6 @@ const buildHarness = (
           if (cell && cell.type !== "empty" && address)
             journeys.markCellExplored(cell.sectionHash ?? "", encodeEdge(0, r, c), address)
         }),
-      onSkippedConsumable: () => {},
       onExitReached: () => {},
     })
     return { ...assembled, onCellClick: nav.onCellClick, prompt: nav.prompt }
@@ -503,7 +502,7 @@ const cornerAtLaunch = floorFrom(["E.R", `  .${ZIPLINE}.`, `${pad}R`], DROP)
 const cornerAtLanding = floorFrom([`${pad}E`, `R.${ZIPLINE}.`, `${pad}R`], DROP)
 const gateAndDrop = floorFrom([`E.Y.A.R${ZIPLINE}R.R`], { ...DROP, Y: lever(leverOpening("a")), A: gate("a") })
 
-// `minSteps` sits just under each fixture's measured step count (109, 33, 93, 75, 90, 13 and 21), so a walk
+// `minSteps` sits just under each fixture's measured step count (109, 33, 93, 75, 90, 13, 21 and 39), so a walk
 // that stalls early is red rather than quietly shorter.
 type Fixture = { name: string; grid: FloorGrid; minSteps: number }
 
@@ -517,6 +516,7 @@ const fixtures: Fixture[] = [
   { name: "a corner beside a drop's launch", grid: cornerAtLaunch, minSteps: 4 },
   { name: "a corner beside a drop's landing", grid: cornerAtLanding, minSteps: 4 },
   { name: "a gate and a one-way drop on one floor", grid: gateAndDrop, minSteps: 18 },
+  { name: "a fork laid over by a prefab room, walked through and round", grid: prefabForkFloor(), minSteps: 35 },
 ]
 
 // A drop stood at from its landing, in every shape the drop takes (axis × what stands at each end).
@@ -755,7 +755,7 @@ describe("a gate a control owns is decided by its control alone", () => {
   }
   const drawnBars = (grid: FloorGrid, positions: Record<string, string>): string[] => {
     const seen = revealAll(grid)
-    return nodeSpritesFor(seen, buildRoomClaims(seen), "expert", undefined, new Map(Object.entries(positions)), 0)
+    return nodeSpritesFor(seen, buildRoomClaims(seen), "expert", new Map(Object.entries(positions)), 0)
       .map(sprite => sprite.key)
       .filter(key => key.startsWith("wall:") || key.startsWith("gate:"))
   }

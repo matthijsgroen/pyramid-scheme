@@ -3,15 +3,15 @@ import { planLockFloor } from "../lockPlan"
 import { mulberry32 } from "../random"
 import { carveFloor } from "./carveFloor"
 import { firstRung } from "./ladder"
-import { PASSES } from "./passes"
+import { LATTICE_ENGINE } from "./engines"
 import { prepareFloor } from "./prepareFloor"
 import { assembleFloor } from "./assembleFloor"
 import { defaultResolveEncounter } from "../siteAssembler"
-import type { FloorConfig, FloorGrid, Direction, RoomCell } from "../siteTypes"
+import type { FloorConfig, FloorGrid, Direction, GridCell, RoomCell } from "../siteTypes"
 import type { StatefulControl } from "../obstacles"
 import type { PlacedContainer, RegionGraph } from "../regions"
 import type { CarveState, Cell, CellLabels, FloorPrep } from "./state"
-import type { ResolveEncounter } from "../siteAssembler"
+import type { AssembleFloorKeyRequirements, ResolveEncounter } from "../siteAssembler"
 /** A plain floor's config, with what a test sets on it. */
 export const plainFloor = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
   pathPuzzles: 1,
@@ -23,10 +23,10 @@ export const plainFloor = (overrides: Partial<FloorConfig> = {}): FloorConfig =>
 })
 
 /** The prep of a floor, its locks expanded and planned as `assembleFloor` does; throws where it refuses. */
-export const prepOf = (config: FloorConfig, seed = 1): FloorPrep => {
+export const prepOf = (config: FloorConfig, seed = 1, requirements: AssembleFloorKeyRequirements = {}): FloorPrep => {
   const expanded = expandFloorLocks(config)
   if (!expanded.ok) throw new Error(JSON.stringify(expanded.reasons))
-  const result = prepareFloor("site", expanded.config, seed, {}, planLockFloor(expanded))
+  const result = prepareFloor("site", expanded.config, seed, requirements, planLockFloor(expanded))
   if (!result.ok) throw new Error(JSON.stringify(result.reasons))
   return result.prep
 }
@@ -72,9 +72,12 @@ export const straightWalk = (steps: number) => {
 /** The state of the first attempt, climbing the ladder as the loop does, whose every pass holds. */
 export const firstCarved = (prep: FloorPrep): CarveState => {
   let carved: CarveState | undefined
-  carveFloor(prep, PASSES, (_, state) => {
-    carved ??= state
-    return { rows: 0, cols: 0 } as unknown as FloorGrid
+  carveFloor(prep, {
+    ...LATTICE_ENGINE,
+    finish: (_, state) => {
+      carved ??= state
+      return { rows: 0, cols: 0 } as unknown as FloorGrid
+    },
   })
   if (!carved) throw new Error("no attempt got through every pass")
   return carved
@@ -149,6 +152,18 @@ export const basicConfig = (): FloorConfig => ({
   end: "treasure",
   exitOrStaircase: "exit",
   sideSections: [],
+})
+
+/** A long main path with room between its puzzles for pass-through chambers, dressed from a made-up pool. */
+export const chamberFloor = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
+  pathPuzzles: 3,
+  difficulty: "junior",
+  end: "treasure",
+  exitOrStaircase: "exit",
+  sideSections: [],
+  packing: 3,
+  decorations: ["scale", "weightsTable", "pillar"],
+  ...overrides,
 })
 
 export const firstPyramid = (): FloorConfig => ({
@@ -268,3 +283,50 @@ export const offRouteDoubleBackConfig = (): FloorConfig => ({
     },
   ],
 })
+
+const SKETCH_MOVES: Record<Direction, Cell> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+const SKETCH_DIRS = Object.keys(SKETCH_MOVES) as Direction[]
+const SKETCH_BACK: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
+/** What each letter of a drawn sketch stands for; `.` is a corridor. */
+const SKETCH_ROOMS: Record<string, Partial<RoomCell>> = {
+  E: { roomType: "portal" },
+  R: { roomType: "encounter", family: "sumplete" },
+  P: { roomType: "encounter", family: "sumplete" },
+  F: { roomType: "fork" },
+  T: { roomType: "encounter", family: "treasure-chest", tags: ["treasure"] },
+  S: { roomType: "encounter", family: "sumplete", sectionAddress: "main" },
+}
+const SKETCH_RUNS: Record<string, Direction> = { ">": "e", v: "s" }
+
+/**
+ * A sketch drawn as text, each cell open toward every drawn neighbour and filed under its own section and ordinal; the
+ * first `E` is the entrance and the last the exit. A drop is `L`, run cells (`>` east, `v` south) and `D`: the launch
+ * opens back to its node only, the landing on to its node only, and the run cells open nowhere.
+ */
+export const drawnSketch = (rows: string[]): FloorGrid => {
+  const cols = Math.max(...rows.map(row => row.length))
+  const ch = (r: number, c: number) => rows[r]?.[c] ?? " "
+  const portals: Cell[] = []
+  const runDir = (r: number, c: number) =>
+    SKETCH_DIRS.find(d => SKETCH_RUNS[ch(r + SKETCH_MOVES[d][0], c + SKETCH_MOVES[d][1])] !== undefined) as Direction
+  const cells = rows.map((_, r) =>
+    Array.from({ length: cols }, (_, c): GridCell => {
+      const at = ch(r, c)
+      if (at === " ") return { type: "empty" }
+      const label = { state: "fogged" as const, ordinal: `${r},${c}`, sectionAddress: `s${r},${c}` }
+      const drawn = SKETCH_DIRS.filter(d => ch(r + SKETCH_MOVES[d][0], c + SKETCH_MOVES[d][1]) !== " ")
+      if (SKETCH_RUNS[at])
+        return { type: "corridor", dirs: new Set(), obstacle: { dir: SKETCH_RUNS[at], kind: "zipline" }, ...label }
+      if (at === "L" || at === "D") return { type: "corridor", dirs: new Set([SKETCH_BACK[runDir(r, c)]]), ...label }
+      if (at === "E") portals.push([r, c])
+      const dirs = new Set(
+        drawn.filter(d => SKETCH_RUNS[ch(r + SKETCH_MOVES[d][0], c + SKETCH_MOVES[d][1])] === undefined)
+      )
+      if (at === ".") return { type: "corridor", dirs, ...label }
+      return { type: "room", dirs, ...label, ...SKETCH_ROOMS[at] } as RoomCell
+    })
+  )
+  const entrancePos = portals[0] ?? [0, 0]
+  const exitPos = portals[portals.length - 1] ?? entrancePos
+  return { siteId: "site", rows: rows.length, cols, entrancePos, exitPos, staircases: {}, cells }
+}

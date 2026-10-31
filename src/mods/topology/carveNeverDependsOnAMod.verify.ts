@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it } from "vitest"
+import { pinsFrom } from "@/mods/buildWorldConfigs"
 import { buildConfigs } from "@/worldGen/configBuilder"
 import type { FloorConfig as WorldFloor, SiteConfig } from "@/worldGen/types"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "@/mods/allCurrencyDistributions"
@@ -56,7 +57,9 @@ const build = (modIds: ReadonlySet<string>, resolveEncounter: typeof TOPOLOGY_ON
     MOD_RESERVED_TREASURE_INDICES,
     familyIsTrap,
     modIds,
-    resolveEncounter
+    resolveEncounter,
+    undefined,
+    { pickLayout: pinsFrom(generatedWorldConfigs) }
   )
 
 const OPPOSITE = { n: "s", s: "n", e: "w", w: "e" } as const

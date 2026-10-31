@@ -32,8 +32,24 @@ const holdChest = (index: number) => wardChest({ tomb: "starter_treasure_tomb", 
 // Cycled per pyramid ordinal so no pyramid stacks two chests behind the identical key.
 const HOLD_CYCLE = [1, 2, 0, 1]
 
+// The cave's look on one floor of a built pyramid: the fields of CAVE_DRESSING a floor takes.
+const { tileset, decorations, wallDecorations, corridorStraightness } = CAVE_DRESSING
+const CAVE_FLOOR = { tileset, decorations, wallDecorations, corridorStraightness }
+
 // The tier + 1 step inside the cavern: a junior puzzle as the second room, after the first tableau.
 const juniorBetweenTableaus = { where: 2, encounter: "puzzle", difficulty: "junior" } as const
+
+// The merchant's house as designed rooms: the stores at the far ends of a floor, the counter and the scale in its
+// middle, the packing and the books between (docs/game-design/themed-rooms.md). A floor drawn at another difficulty
+// names none, since a room is dressed in the tier it is drawn for.
+const STARTER_ROOMS = [
+  { room: "storeroom", min: 0, max: 2, central: 0 },
+  { room: "packingRoom", min: 0, max: 2, central: 0.3 },
+  { room: "ledgerRoom", min: 0, max: 2, central: 0.6 },
+  { room: "weighingRoom", min: 0, max: 2, central: 0.8 },
+  { room: "sellingRoom", min: 0, max: 2, central: 1 },
+]
+const NO_ROOMS = { rooms: [] }
 
 export const starterRules: Rule[] = [
   // a merchant's house of trade: scales and weights, baskets and bales, a counter, a scribe's desk,
@@ -82,6 +98,7 @@ export const starterRules: Rule[] = [
   ...["starter_1", "starter_2", "starter_3", "starter_4"].map(jid =>
     journey(jid).pyramid("first", { mainEndReward: "mapPiece" })
   ),
+  ...["starter_1", "starter_2", "starter_3", "starter_4"].map(jid => journey(jid, { rooms: STARTER_ROOMS })),
 
   // starter_1 — the whole game's onboarding. Pyramid 1: the map piece + a gentle ward path into
   // the starter tomb (see the deadlock fix below). Pyramid 2: one main puzzle, its chests from
@@ -103,7 +120,7 @@ export const starterRules: Rule[] = [
       // (docs/game-design/world-spec-stability.md). LAST, as in starter_treasure_tomb below, so the
       // rooms ahead of him keep their place along the path.
       pathPuzzles: 1,
-      nodes: [{ where: "last", encounter: "conversation", activity: "selling" }],
+      nodes: [{ where: "last", encounter: "conversation", activity: "selling", room: "fezStall" }],
       sideSections: [
         // Shares the starter→junior tier-unlock key — narratively you need it anyway.
         wardPath({ puzzles: 1, tomb: "starter_treasure_tomb", index: 0 }),
@@ -114,22 +131,53 @@ export const starterRules: Rule[] = [
         // slot beyond the gating pass's fixed demand, so the capped mosaic pass fills it. Without it
         // the first mosaic sits on the hidden path above, invisible until the master-tier detector.
         sidePath({ endReward: "mosaicPiece" }),
-        // The Sphinx inscription, and the end of the game. Sealed and visible in the first hour,
-        // opened in the last by wizard_a_1 out of the Vault of the Gods — so the writing nobody
-        // could read is read in the place it was first seen, rather than somewhere that merely
-        // shares its name. The reading encounter is the room itself, not what guards it.
-        wardChest({
-          tomb: "wizard_treasure_tomb",
-          index: 0,
-          puzzles: 1,
-          nodes: [{ where: "first", encounter: "reading" }],
-        }),
+        // The stair to the Sphinx, and the end of the game. Sealed and visible in the first hour,
+        // opened in the last by wizard_a_1 out of the Vault of the Gods. It goes down into a cave and
+        // then up into the Sphinx itself, where the writing first seen outside is read clear of the
+        // sand. The stair carries no puzzle: the cave below carries them.
+        wardPath({ tomb: "wizard_treasure_tomb", index: 0, toFloor: 2 }),
       ],
     })
     .floor(1, {
       mainEndReward: "mosaicPiece",
       pathPuzzles: 2,
       sideSections: [sidePath({ puzzles: 1 })],
+    })
+    // The tunnel to the Sphinx: two short wizard floors down, the cave with its long corridor of
+    // puzzles, a small cave climbing back up, and the Sphinx: five puzzles that carry no loot, then
+    // the reading as the floor's last room.
+    .floor(2, { difficulty: "wizard", ...NO_ROOMS, pathPuzzles: 2, depth: 1, toFloor: 3, sideSections: [] })
+    .floor(3, { difficulty: "wizard", ...NO_ROOMS, pathPuzzles: 2, depth: 2, toFloor: 4, sideSections: [] })
+    .floor(4, {
+      ...CAVE_FLOOR,
+      ...NO_ROOMS,
+      difficulty: "wizard",
+      pathPuzzles: 7,
+      encounter: "puzzle",
+      depth: 3,
+      toFloor: 5,
+      sideSections: [],
+    })
+    .floor(5, {
+      ...CAVE_FLOOR,
+      ...NO_ROOMS,
+      difficulty: "wizard",
+      pathPuzzles: 1,
+      depth: 2,
+      toFloor: 6,
+      sideSections: [],
+    })
+    .floor(6, {
+      ...NO_ROOMS,
+      tileset: "sphinx",
+      difficulty: "wizard",
+      pathPuzzles: 6,
+      nodes: [
+        { where: { every: 1 }, loot: false },
+        { where: "last", encounter: "reading" },
+      ],
+      depth: 1,
+      sideSections: [],
     }),
 
   journey("starter_1")
@@ -174,6 +222,7 @@ export const starterRules: Rule[] = [
       mainEndReward: "mosaicPiece",
       pathPuzzles: 2,
       difficulty: "junior",
+      ...NO_ROOMS,
       sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 4, encounter: "trap", endReward: "mosaicPiece" })],
     }),
 
@@ -189,6 +238,7 @@ export const starterRules: Rule[] = [
     .floor(1, {
       pathPuzzles: 3,
       difficulty: "expert",
+      ...NO_ROOMS,
       sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 2, encounter: "trap", endReward: "mosaicPiece" })],
     }),
 
@@ -246,7 +296,10 @@ export const starterRules: Rule[] = [
         mainEndReward: "tombTreasure",
         encounterArgs: { runNr: 1 },
         pathPuzzles: TOMB_ROOMS_PER_FLOOR.starter + 2,
-        nodes: [juniorBetweenTableaus, { where: "last", encounter: "conversation", activity: "ledger" }],
+        nodes: [
+          juniorBetweenTableaus,
+          { where: "last", encounter: "conversation", activity: "ledger", room: "ipiLedger" },
+        ],
       },
       {
         mainEndReward: "tombTreasure",

@@ -12,6 +12,7 @@ import {
   puzzleRoomSpec,
   regionBarrierDoorSpec,
 } from "./roomSpecs"
+import { blockNodes } from "./reserveRooms"
 import { pass } from "./state"
 import type { RoomSpec, Shortfall } from "./state"
 
@@ -37,6 +38,7 @@ export const chainRooms = pass(
     const laid = state.lay?.laid
     const absorbed = absorbedCell(state.lay)
     const doorAt = regionDoorAt(state.lay)
+    const held = blockNodes(state.blocks)
     const rooms = new Map<string, RoomSpec>()
     // AN OFF-ROUTE CONTROL'S OWN SEATING, found chain by chain as each one's own content is placed — a control's
     // region may sit on any chain, so this is bookkeeping shared across every chain, checked complete only once
@@ -51,8 +53,11 @@ export const chainRooms = pass(
       barrierDoorCells.set(id, [...(barrierDoorCells.get(id) ?? []), keyOf(mainPath[step])])
 
     for (const { section, cells, positional, idx, parentIdx, keyNodeId, keyHostColors, laid: laidChain } of chains) {
+      // The door nodes of a designed room the chain ends in hold nothing: `last` is the first of them, or the end room.
+      let last = cells.length - 1
+      while (last > 0 && held.has(keyOf(cells[last - 1]))) last -= 1
       // A stretch a lock laid ends where the lock does, so it holds no end room and may seat on its last node.
-      const seatable = laidChain ? cells.length : cells.length - 1
+      const seatable = laidChain ? cells.length : last
       const laidDoorIdx = new Set(laidChain ? cells.flatMap((cell, i) => (doorAt.has(keyOf(cell)) ? [i] : [])) : [])
       const isFloorKeyGate = section.gate?.type === "floor-key"
       const isTombKeyGate = section.gate?.type === "tomb-key"
@@ -124,7 +129,7 @@ export const chainRooms = pass(
       // main-path gate advances the main path's content: the room there is the gate's, not content's, whichever
       // authoring vocabulary put it there. Never past `cells.length - 1`, the chain's own end room, reserved
       // unconditionally below (`checkChainsSeated` already refused an attempt where a gate would have landed there).
-      while (chainGateIndices.has(contentStart) && contentStart < cells.length - 1) contentStart += 1
+      while (chainGateIndices.has(contentStart) && contentStart < last) contentStart += 1
 
       // A lever stands at the head of its chain, past whatever gate guards the way in: the player reaches it
       // before the content, and throwing it is a walk back out rather than a room solved deeper in. A gate
@@ -133,11 +138,11 @@ export const chainRooms = pass(
       // same way the main path's own search excludes the main path's lever.
       let leverIndexInChain = -1
       if (leverRooms(leverAtPositional, positional) === 1) {
-        if (contentStart >= cells.length - 1) return { retry: [] }
+        if (contentStart >= last) return { retry: [] }
         leverIndexInChain = contentStart
         rooms.set(keyOf(cells[contentStart]), leverSpec(prep, positional))
         contentStart += 1
-        while (chainGateIndices.has(contentStart) && contentStart < cells.length - 1) contentStart += 1
+        while (chainGateIndices.has(contentStart) && contentStart < last) contentStart += 1
       }
 
       // Intermediate nodes (puzzles/traps) — spread across whatever room `paddedChainLength` gave this chain (see
@@ -150,10 +155,10 @@ export const chainRooms = pass(
       // room only where a gate leaves fewer free cells than this chain's own `pathPuzzles` asks for, in which case
       // this attempt retries the same way a main-path shortfall does — a wider chain (`chainPacking`) may fit both.
       const contentIndices: number[] = []
-      for (const wanted of spreadContentIndices(section.pathPuzzles, contentStart, cells.length)) {
+      for (const wanted of spreadContentIndices(section.pathPuzzles, contentStart, last + 1)) {
         let index = wanted
-        while (index < cells.length - 1 && (chainGateIndices.has(index) || contentIndices.includes(index))) index += 1
-        if (index >= cells.length - 1) break
+        while (index < last && (chainGateIndices.has(index) || contentIndices.includes(index))) index += 1
+        if (index >= last) break
         contentIndices.push(index)
       }
       if (contentIndices.length < section.pathPuzzles) return { retry: [] }
@@ -175,6 +180,7 @@ export const chainRooms = pass(
           !laidDoorIdx.has(i) &&
           !absorbed.has(keyOf(cells[i])) &&
           !laid?.thresholds.has(keyOf(cells[i])) &&
+          !laid?.bare.has(keyOf(cells[i])) &&
           i !== leverIndexInChain &&
           !takenByChainControl.has(i)
 
@@ -234,7 +240,7 @@ export const chainRooms = pass(
               const cell = step - 1
               return (
                 cell >= (claimedHead ? 1 : 0) &&
-                cell < cells.length - 1 &&
+                cell < last &&
                 !chainGateIndices.has(cell) &&
                 !contentIndices.includes(cell) &&
                 cell !== leverIndexInChain &&
@@ -286,5 +292,6 @@ export const chainRooms = pass(
     if (unhosted) return { retry: [{ type: "regionBarrierNotSeated", id: unhosted.id, region: unhosted.at.region }] }
 
     state.chainRooms = rooms
-  }
+  },
+  ["blocks"]
 )

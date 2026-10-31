@@ -3,7 +3,7 @@ import { difficulties } from "@/data/difficultyLevels"
 import { LIGHTBEAM_CONFIG, resolveLightbeamOptions } from "./lightbeamConfig"
 import { reachableDeviations, LIGHTBEAM_MODES, type LightbeamPuzzle } from "./generateLightbeam"
 import { routeIsUnique } from "./lightbeamGeometry"
-import { allPieceOptions, cellKey, isLit, pieceCells, restingState, traceBeam } from "./beam"
+import { allPieceOptions, cellKey, isLit, pieceCells, pieceOnFixed, restingState, traceBeam } from "./beam"
 import { solveLightbeamByTechniques } from "./techniques"
 import { FIXTURE, FIXTURE_SEEDS } from "./boards.fixture"
 
@@ -45,6 +45,10 @@ describe.each(difficulties)("at %s", tier => {
 
   it("carries at least the family's floor of three tappable pieces", () => {
     for (const board of boards) expect(tappable(board)).toBeGreaterThanOrEqual(3)
+  })
+
+  it("stands no movable piece on a fixed wall or mirror", () => {
+    for (const board of boards) expect(pieceOnFixed(board)).toBe(false)
   })
 
   it("records its modes in canonical order", () => {

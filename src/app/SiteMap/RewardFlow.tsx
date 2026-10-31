@@ -12,7 +12,6 @@ import type { TFn } from "./rewardHandlerRegistry"
 type Props = {
   pendingReward: {
     reward: TreasureReward
-    consumableFull?: boolean
     /** Set when the chest held this floor's key(s) — core chrome, see floorKeyDisplay below. */
     keyColors?: readonly KeyColor[]
     onCollect: () => void
@@ -21,9 +20,8 @@ type Props = {
 }
 
 // A floor key is a structural, floor-local thing core itself places (carve/relayKeys.ts), and its colour
-// lives on the chest cell rather than in the reward payload — so core owns this popup content, the
-// same way it owns the pack-full chrome below. Without it a found floor key read as a generic "Tomb
-// Key" with no hint of which door it opens.
+// lives on the chest cell rather than in the reward payload — so core owns this popup content. Without
+// it a found floor key would read as a generic "Tomb Key" with no hint of which door it opens.
 const floorKeyDisplay = (colors: readonly KeyColor[], t: TFn): RewardDisplay => ({
   rarity: "rare",
   itemName: colors.length === 1 ? t(`keys.${colors[0]}`) : t("keys.bundle"),
@@ -54,7 +52,7 @@ export const RewardFlow: FC<Props> = ({ pendingReward, onDismiss }) => {
 
   if (!pendingReward) return null
 
-  const { reward, consumableFull, keyColors } = pendingReward
+  const { reward, keyColors } = pendingReward
 
   const handleDismiss = () => {
     setShowLoot(false)
@@ -78,30 +76,17 @@ export const RewardFlow: FC<Props> = ({ pendingReward, onDismiss }) => {
     <>
       {!showLoot && <div className="fixed inset-0 z-30 bg-black/85" />}
 
-      {/* consumableFull is core chrome: a claim refused because the pack is full — the reward is
-          shown dimmed with a "pack full" label, not collected (onCollect was a no-op). */}
-      {consumableFull ? (
-        <LootPopup
-          isOpen={showLoot}
-          itemName={t("chest.consumableFull", { item: display.itemName })}
-          itemComponent={<span className="opacity-50">{display.ItemVisual}</span>}
-          onDismiss={handleDismiss}
-          youFoundLabel={t("chest.packFull")}
-          clickToContinueLabel={t("loot.clickToContinue")}
-        />
-      ) : (
-        <LootPopup
-          isOpen={showLoot}
-          itemName={display.itemName}
-          itemDescription={display.itemDescription}
-          itemEffectDescription={display.itemEffectDescription}
-          rarity={display.rarity}
-          itemComponent={display.ItemVisual}
-          onDismiss={handleDismiss}
-          youFoundLabel={t("loot.youFound")}
-          clickToContinueLabel={t("loot.clickToContinue")}
-        />
-      )}
+      <LootPopup
+        isOpen={showLoot}
+        itemName={display.itemName}
+        itemDescription={display.itemDescription}
+        itemEffectDescription={display.itemEffectDescription}
+        rarity={display.rarity}
+        itemComponent={display.ItemVisual}
+        onDismiss={handleDismiss}
+        youFoundLabel={t("loot.youFound")}
+        clickToContinueLabel={t("loot.clickToContinue")}
+      />
     </>
   )
 }
