@@ -157,13 +157,15 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
       // Straight-through: corridor continues in the same direction we arrived from, no branches.
       // Anything else (corner, T-junction, dead end) is a blind spot the player must click to reveal.
       // A straight names the way back as well as the way onward.
-      // A designed room's door in use is where a way meets the room, so it is a stop too.
+      // A designed room's door in use is where a way meets the room, and its node stands for the room: both are
+      // stops. The room's own floor is seen through, every way, as one stop's ground.
+      const place = roomPlaceOf(grid, r, c)
       const isStraight =
         fromDir !== null &&
-        roomPlaceOf(grid, r, c) !== "door" &&
-        neighbor.dirs.size === 2 &&
-        neighbor.dirs.has(fromDir) &&
-        neighbor.dirs.has(opposite[fromDir])
+        place !== "door" &&
+        place !== "node" &&
+        (place === "inner" ||
+          (neighbor.dirs.size === 2 && neighbor.dirs.has(fromDir) && neighbor.dirs.has(opposite[fromDir])))
       if (isStraight) {
         if (neighbor.state === "fogged") {
           newCells[r][c] = { ...neighbor, state: "visible" }

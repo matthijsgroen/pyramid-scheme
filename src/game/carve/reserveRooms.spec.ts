@@ -3,7 +3,8 @@ import { carvedFloorDigest } from "@/data/tierFingerprints"
 import { parsePrefab } from "../prefabNotation"
 import type { Direction, FloorConfig, FloorGrid, GridCell, PrefabRoom, RoomCell, SideSection } from "../siteTypes"
 import { assembleFloor } from "./assembleFloor"
-import { ONE_SWITCH, assembleAt, plainFloor, prepOf } from "./carveFixtures"
+import { revealAll, walkableFrom } from "../gridNavigation"
+import { ONE_SWITCH, assembleAt, firstCarved, plainFloor, prepOf } from "./carveFixtures"
 
 import type { LockPlan, PlanRegion } from "../lockPlan"
 import { ringFault, roomAsks, roomTakesRegion, shapesOf, type ReservedBlock } from "./reserveRooms"
@@ -77,7 +78,6 @@ describe("reserveRooms", () => {
     const [hall] = roomsOf(grid)
     expect(hall.room.name).toBe("hall")
     expect(hall.cell).toMatchObject({ type: "room", pathIndex: 1, pinnedPrefab: "hall" })
-    expect(hall.cell.dirs.size).toBe(2)
     expect(hall.room.doors).toHaveLength(2)
     for (const [r, c] of hall.room.doors) expect(grid.cells[r][c].type).toBe("corridor")
   })
@@ -107,11 +107,8 @@ describe("reserveRooms", () => {
   it("side paths branch off a central hall through the door places the main path leaves free", () => {
     for (const seed of [1, 2, 3, 4, 5]) {
       const [hall] = roomsOf(carved(hubFloor, seed))
-      const fork = hall.cell as RoomCell
-      expect(fork.roomType).toBe("fork")
-      expect(fork.exits?.filter(exit => exit.kind === "main")).toHaveLength(2)
-      expect(fork.exits?.filter(exit => exit.kind === "side").length).toBeGreaterThan(0)
-      expect(hall.room.doors).toHaveLength(fork.exits!.length)
+      expect((hall.cell as RoomCell).roomType).toBe("fork")
+      expect(hall.room.doors.length, `seed ${seed}`).toBeGreaterThanOrEqual(3)
     }
   })
 
@@ -191,7 +188,7 @@ describe("ringFault", () => {
     mirrored: false,
     rect: { top: 2, left: 2, rows: 3, cols: 3 },
     anchor: [2, 2],
-    rays: [],
+    ports: [],
     nodes: new Set(["2,2", "2,4", "4,2", "4,4"]),
     on: { main: 1 },
   }
@@ -464,28 +461,28 @@ s stop`,
     expect(roomTakesRegion(landing, region(lever), MILL)).toBe(false)
   })
 
-  it("a room whose door places meet no one free way is never reserved, and a pinned one refuses naming it", () => {
-    const skew = parsePrefab(
-      `room skew
+  it("a room whose two door places sit on neighbouring columns never offers two ports, and a pinned one refuses naming it", () => {
+    const pair = parsePrefab(
+      `room pair
 tier starter
 layout
-# # # # #
-d . . . #
+# d d # #
+# . . . #
 # . . s #
-# . . . d
+# . . . #
 # # # # #
 s stop`,
-      "skew"
+      "pair"
     )
-    expect(shapesOf(skew).every(shape => shape.rays.length < 2)).toBe(true)
+    expect(shapesOf(pair).every(shape => shape.ports.length < 2)).toBe(true)
     const result = assembleFloor(
       "site",
-      plainFloor({ pathPuzzles: 2, prefabs: { skew }, prefabsByIndex: { 1: "skew" } }),
+      plainFloor({ pathPuzzles: 2, prefabs: { pair }, prefabsByIndex: { 1: "pair" } }),
       7
     )
     expect(result.success).toBe(false)
     if (result.success) return
-    expect(result.reasons).toContainEqual(expect.objectContaining({ type: "prefabsNotPlaced", room: "skew" }))
+    expect(result.reasons).toContainEqual(expect.objectContaining({ type: "prefabsNotPlaced", room: "pair" }))
   })
 
   it("the same site places and fills identically twice; two storerooms on one floor fill differently", () => {
@@ -522,5 +519,75 @@ s stop`,
       expect(a, `seed ${seed}`).not.toEqual(b)
     }
     expect(two).toBeGreaterThan(0)
+  })
+})
+
+describe("a room joined through its own floor", () => {
+  const CROSSING = parsePrefab(
+    `room crossing
+tier starter
+layout
+# # d # #
+# . . . #
+d . b s d
+# . . . #
+# # d # #
+b floor basin
+s stop`,
+    "crossing"
+  )
+
+  it("a 3x3 room with a door in the middle of each wall and a prop on its centre offers four ports at one parity", () => {
+    const shapes = shapesOf(CROSSING)
+    expect(shapes.some(shape => shape.ports.length === 4 && shape.pt === 1 && shape.pl === 1)).toBe(true)
+    const crossing = shapes.find(shape => shape.ports.length === 4 && shape.pt === 1 && shape.pl === 1)!
+    expect(crossing.anchor).toEqual([1, 1])
+    expect(crossing.bare).toBe(false)
+  })
+
+  it("a hub room never offers the port the main path took to a side path", () => {
+    let hubs = 0
+    for (const seed of [1, 2, 3, 4, 5, 6]) {
+      const state = firstCarved(prepOf(hubFloor, seed))
+      const onPath = new Set(state.walks!.mainPath.map(([r, c]) => `${r},${c}`))
+      for (const block of state.blocks!.filter(({ on }) => "main" in on)) {
+        hubs++
+        const anchor = `${block.anchor[0]},${block.anchor[1]}`
+        const mainPorts = block.ports.filter(
+          ({ node, out }) =>
+            (`${node[0]},${node[1]}` !== anchor && onPath.has(`${node[0]},${node[1]}`)) ||
+            onPath.has(`${out[0]},${out[1]}`)
+        )
+        expect(mainPorts, `seed ${seed}`).toHaveLength(2)
+        const taken = new Set(
+          mainPorts.flatMap(({ node, out }) => [node, out].map(([r, c]) => `${r},${c}`)).filter(key => key !== anchor)
+        )
+        const sides = [
+          ...state.walks!.spines.values(),
+          ...state.branches!.groups.map(({ attachedAt, via, cells }) => ({ attachedAt, via: via ?? [], cells })),
+        ].filter(({ attachedAt: [r, c] }) => `${r},${c}` === anchor)
+        for (const { via, cells } of sides)
+          for (const [r, c] of [...via, cells[0]]) expect(taken.has(`${r},${c}`), `seed ${seed}`).toBe(false)
+      }
+    }
+    expect(hubs).toBeGreaterThan(0)
+  })
+
+  it("a room opens and walks whether its port nodes sit on the ring or just inside", () => {
+    const config = plainFloor({ pathPuzzles: 2, prefabs: { crossing: CROSSING }, prefabsByIndex: { 1: "crossing" } })
+    const seen = new Set<string>()
+    for (let seed = 1; seed <= 30; seed++) {
+      const result = assembleFloor("site", config, seed)
+      if (!result.success) continue
+      const { grid } = result
+      const [crossing] = roomsOf(grid)
+      const onRing = crossing.room.doors.every(([r, c]) => r % 2 === 0 && c % 2 === 0)
+      seen.add(onRing ? "ring" : "inside")
+      const walkable = walkableFrom(revealAll(grid), grid.entrancePos)
+      expect(crossing.room.doors.length, `seed ${seed}`).toBe(2)
+      for (const [r, c] of crossing.room.doors) expect(walkable.has(`${r},${c}`), `seed ${seed}`).toBe(true)
+      expect(walkable.has(`${crossing.r},${crossing.c}`), `seed ${seed}`).toBe(true)
+    }
+    expect([...seen].sort()).toEqual(["inside", "ring"])
   })
 })

@@ -43,22 +43,27 @@ export type LaidDrop = {
 }
 
 /** A DESIGNED ROOM'S SHAPE ON THE LATTICE, in cell offsets from its inside's top-left: the inside's size, the parity
- * of that top-left, the cell its node stands on, and its straight ways, each from that node through a door place to
- * the first node past the ring. */
+ * of that top-left, the cell its node stands on, and its ports, each a door place with the node a way through it
+ * arrives at and the first node past the ring. The room's own floor joins every port's node to the anchor. */
 export type RoomShape = {
   h: number
   w: number
   pt: number
   pl: number
   anchor: readonly [number, number]
-  rays: ReadonlyArray<ReadonlyArray<readonly [number, number]>>
+  ports: ReadonlyArray<{
+    node: readonly [number, number]
+    door: readonly [number, number]
+    out: readonly [number, number]
+  }>
 }
 
 /** A region the floor asks to be laid as a designed room, and the shapes the room may take. */
 export type BlockAsk = { region: string; room: string; shapes: readonly RoomShape[] }
 
 /** A REGION LAID AS A DESIGNED ROOM: the shape it took (an index into its ask's shapes) with its inside's top-left at
- * `top`,`left`, the node it stands on, and every node its rect and ring hold. */
+ * `top`,`left`, the node it stands on, every node its rect and ring hold, and the nodes of the ports its ways take,
+ * joined to `anchor` through the room's floor. */
 export type LaidBlock = {
   region: string
   room: string
@@ -67,6 +72,7 @@ export type LaidBlock = {
   left: number
   anchor: CellKey
   nodes: CellKey[]
+  joined: CellKey[]
 }
 
 /**
@@ -85,6 +91,9 @@ export type LaidLocks = {
   claimed: CellKey[]
   held: CellKey[]
   passages: string[]
+  /** The hops a designed room's floor makes, from its anchor to a port's node, as pair keys like `passages`: no
+   * passage of the lattice joins them. */
+  joins: string[]
   /** The regions laid as designed rooms; absent where the floor asks none. */
   blocks?: LaidBlock[]
 }
@@ -307,11 +316,12 @@ const search = (
   const placed = new Set<string>()
 
   /**
-   * A REGION LAID AS A DESIGNED ROOM: the room's rect and ring on free nodes, the room's node the region's, and one
-   * ray through a door place for each of the region's corridors, the corridor arriving at the end of its own ray.
-   * Every other side of the region's nodes is taken and the room's other nodes are held, so nothing reaches into the
-   * room but along its rays. Its nodes list the walk through it first: in by the ray the route (or the way in)
-   * arrives by, over the room's node, out by the ray the route leaves by.
+   * A REGION LAID AS A DESIGNED ROOM: the room's rect and ring on free nodes, its anchor the region's, and one port for
+   * each of the region's corridors, the corridor arriving at the port's node. The anchor and those ports' nodes are
+   * the region's, joined through the room's own floor and never by a passage; every side of them but each port's way
+   * out is taken and the room's other nodes are held, so nothing reaches into the room but by its ports. Its nodes
+   * list the walk through it first: in by the port the route (or the way in) arrives by, over the anchor, out by the
+   * port the route leaves by.
    */
   const blockStep = (region: PlanRegion, ask: BlockAsk): Step => ({
     part: { kind: "region", id: region.id },
@@ -336,11 +346,11 @@ const search = (
       if (ordered.length === 0) return false
       const nodeAt = (r: number, c: number) =>
         r < 0 || c < 0 || r >= n || c >= n || r % 2 !== 0 || c % 2 !== 0 ? -1 : idOf(r / 2, c / 2)
-      type Ray = { inner: number[]; out: number; dir: number }
-      type Option = { score: number; anchor: number; held: number[]; rays: Ray[]; block: LaidBlock }
+      type Port = { node: number; out: number; dir: number }
+      type Option = { score: number; anchor: number; held: number[]; ports: Port[]; block: LaidBlock }
       const options: Option[] = []
       ask.shapes.forEach((shape, index) => {
-        if (shape.rays.length < ordered.length) return
+        if (shape.ports.length < ordered.length) return
         for (let top = 1; top + shape.h <= n - 1; top++) {
           if (top % 2 !== shape.pt) continue
           for (let left = 1; left + shape.w <= n - 1; left++) {
@@ -350,23 +360,26 @@ const search = (
               for (let c = left - 1; c <= left + shape.w; c++) if (r % 2 === 0 && c % 2 === 0) all.push(nodeAt(r, c))
             if (all.some(node => node < 0 || occupied.has(node))) continue
             const anchor = nodeAt(top + shape.anchor[0], left + shape.anchor[1])
-            const rays = shape.rays.flatMap((ray): Ray[] => {
-              const nodes = ray.map(([i, j]) => nodeAt(top + i, left + j))
-              const out = nodes[nodes.length - 1]
-              return out < 0 ? [] : [{ inner: nodes.slice(1, -1), out, dir: dirBetween(nodes[nodes.length - 2], out) }]
+            const ports = shape.ports.flatMap(({ node: [ni, nj], out: [oi, oj] }): Port[] => {
+              const node = nodeAt(top + ni, left + nj)
+              const out = nodeAt(top + oi, left + oj)
+              return out < 0 ? [] : [{ node, out, dir: dirBetween(node, out) }]
             })
-            for (const pick of arrangements(rays, ordered.length)) {
+            for (const pick of arrangements(ports, ordered.length)) {
+              // Two ways share no port's node but the anchor.
+              const joined = pick.map(port => port.node).filter(node => node !== anchor)
+              if (new Set(joined).size !== joined.length) continue
               let score = rand()
-              const fits = pick.every((ray, k) => {
+              const fits = pick.every((port, k) => {
                 const other = otherOf(ordered[k])
-                const owner = occupied.get(ray.out)
+                const owner = occupied.get(port.out)
                 if (owner !== undefined && owner !== other) return false
                 if (placed.has(other))
-                  score += Math.min(...regionNodes.get(other)!.map(node => distance(ray.out, node)))
+                  score += Math.min(...regionNodes.get(other)!.map(node => distance(port.out, node)))
                 return true
               })
               if (!fits) continue
-              const held = all.filter(node => node !== anchor && !pick.some(ray => ray.inner.includes(node)))
+              const held = all.filter(node => node !== anchor && !joined.includes(node))
               const block: LaidBlock = {
                 region: region.id,
                 room: ask.room,
@@ -375,31 +388,26 @@ const search = (
                 left,
                 anchor: cell(anchor),
                 nodes: all.map(cell),
+                joined: joined.map(cell),
               }
-              options.push({ score, anchor, held, rays: pick, block })
+              options.push({ score, anchor, held, ports: pick, block })
             }
           }
         }
       })
       options.sort((a, b) => a.score - b.score)
-      for (const { anchor, held, rays, block } of options.slice(0, BLOCK_OPTIONS)) {
+      for (const { anchor, held, ports, block } of options.slice(0, BLOCK_OPTIONS)) {
         if (spent()) return false
         const mark = trail.length
-        const nodes = [anchor, ...rays.flatMap(ray => ray.inner)]
+        const nodes = [...new Set([anchor, ...ports.map(port => port.node)])]
         nodes.forEach(node => claim(node, region.id))
         held.forEach(node => claim(node, `block:${region.id}`))
-        for (const ray of rays) {
-          const line = [anchor, ...ray.inner]
-          for (let i = 0; i + 1 < line.length; i++) link(line[i], dirBetween(line[i], line[i + 1]))
-        }
-        const outward = new Set(rays.map(ray => (ray.inner[ray.inner.length - 1] ?? anchor) * 4 + ray.dir))
+        const outward = new Set(ports.map(port => port.node * 4 + port.dir))
         for (const node of nodes)
           for (let d = 0; d < 4; d++) if (sideFree(node, d) && !outward.has(node * 4 + d)) takeSide(node, d)
-        rays.forEach((ray, k) =>
-          record(rayEnd, `${ordered[k].id}|${region.id}`, ray.inner[ray.inner.length - 1] ?? anchor)
-        )
-        const out = leaves && leaves !== ordered[0] ? rays[ordered.indexOf(leaves)].inner : []
-        const walk = [...[...rays[0].inner].reverse(), anchor, ...out]
+        ports.forEach((port, k) => record(rayEnd, `${ordered[k].id}|${region.id}`, port.node))
+        const out = leaves && leaves !== ordered[0] ? [ports[ordered.indexOf(leaves)].node] : []
+        const walk = [...new Set([ports[0].node, anchor, ...out])]
         record(regionNodes, region.id, [...walk, ...nodes.filter(node => !walk.includes(node))])
         record(walkLength, region.id, walk.length)
         record(blockAt, region.id, block)
@@ -651,6 +659,14 @@ const search = (
     return x < y ? `${x}-${y}` : `${y}-${x}`
   }
 
+  const cellPair = (a: CellKey, b: CellKey) => {
+    const [x, y] = [a, b].map(key => {
+      const [r, c] = key.split(",").map(Number)
+      return r * n + c
+    })
+    return x < y ? `${x}-${y}` : `${y}-${x}`
+  }
+
   const snapshot = (): LaidLocks => {
     const interior = (path: number[]) => path.slice(1, -1)
     const cellsOf = (path: number[]) =>
@@ -739,6 +755,7 @@ const search = (
         .sort(),
       held: drops.flatMap(drop => [drop.launchCell, ...drop.run, drop.landingCell]).sort(),
       passages: passages.map(([a, b]) => pkey(a, b)).sort(),
+      joins: [...blockAt.values()].flatMap(block => block.joined.map(node => cellPair(block.anchor, node))).sort(),
       ...(blockAt.size > 0 ? { blocks: [...blockAt.values()] } : {}),
     }
   }

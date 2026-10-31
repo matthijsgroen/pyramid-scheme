@@ -100,7 +100,7 @@ export const finishAttempt: Finish = (prep, state) => {
   const grid = stampBlocks(prep, blocks, render(prep, decided)) as WritableGrid
   const shut = new Set(decided.switchWays.flat().map(({ cell }) => cell))
   const refusal =
-    validate(prep, decided, grid) ??
+    validate(prep, decided, grid, blocks) ??
     standPieces(prep, decided, grid) ??
     (blocks.length ? ringFault(grid, blocks, shut) : undefined)
   if (refusal) return refusal

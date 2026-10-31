@@ -3,6 +3,7 @@ import { walkFloorLock } from "../floorLockWalk"
 import { freeRegions } from "../lockAuthoring"
 import { parseLock } from "../lockNotation"
 import { parsePrefab } from "../prefabNotation"
+import { roomPlaceOf } from "../roomShape"
 import type { FloorConfig, FloorGrid, PrefabRoom, RoomCell } from "../siteTypes"
 import { BINDING } from "../testSupport/lockFixtures"
 import { assembleFloor } from "./assembleFloor"
@@ -26,7 +27,22 @@ s stop`,
   "shrine"
 )
 
-const lockFloor = (text: string, central = 1): FloorConfig => ({
+// A made-up crossing, 3 by 3 inside, a basin on its centre and a door place in the middle of every wall.
+const CROSSING = parsePrefab(
+  `room crossing
+tier starter
+layout
+# # d # #
+# . . . #
+d . b s d
+# . . . #
+# # d # #
+b floor basin
+s stop`,
+  "crossing"
+)
+
+const lockFloor = (text: string, central = 1, room = "shrine", prefab = SHRINE): FloorConfig => ({
   pathPuzzles: 0,
   difficulty: "starter",
   end: "treasure",
@@ -34,8 +50,8 @@ const lockFloor = (text: string, central = 1): FloorConfig => ({
   sideSections: [],
   locks: [{ lock: freeRegions(parseLock(text, "made").lock) }],
   realisations: BINDING,
-  prefabs: { shrine: SHRINE },
-  prefabPlacements: [{ room: "shrine", min: 1, max: 1, central }],
+  prefabs: { [room]: prefab },
+  prefabPlacements: [{ room, min: 1, max: 1, central }],
 })
 
 const LEVER_IN_HALL = "in -- hall\nhall -[A]- out\nA toggle @hall"
@@ -47,16 +63,17 @@ const carved = (config: FloorConfig, seed: number): FloorGrid => {
   return result.grid
 }
 
-const shrineOf = (grid: FloorGrid) => {
+const roomNamed = (grid: FloorGrid, name: string) => {
   const [found] = grid.cells.flatMap((row, r) =>
     row.flatMap((cell, c) =>
-      cell.type === "room" && cell.prefabRoom?.name === "shrine"
+      cell.type !== "empty" && cell.prefabRoom?.name === name
         ? [{ r, c, cell: cell as RoomCell, room: cell.prefabRoom as PrefabRoom }]
         : []
     )
   )
   return found
 }
+const shrineOf = (grid: FloorGrid) => roomNamed(grid, "shrine")
 
 const SEEDS = [3, 11, 29]
 
@@ -84,9 +101,23 @@ describe("a lock region laid as a designed room", { timeout: 120_000 }, () => {
       const grid = carved(lockFloor(FOUR_WAY_HUB), seed)
       const { cell, room } = shrineOf(grid)
       expect(cell.region).toBe("made.hub")
-      expect(cell.dirs.size).toBe(4)
       expect(room.doors).toHaveLength(4)
       expect(walkFloorLock(grid)).toEqual({ sound: true, states: expect.any(Number) })
+    }
+  })
+
+  it("a room joins its doors through its own floor: no lattice passage runs inside it", () => {
+    for (const seed of SEEDS) {
+      const grid = carved(lockFloor(FOUR_WAY_HUB, 1, "crossing", CROSSING), seed)
+      const { room } = roomNamed(grid, "crossing")
+      const { top, left, rows, cols } = room.rect
+      for (let r = top; r < top + rows; r++)
+        for (let c = left; c < left + cols; c++) {
+          expect(grid.cells[r][c].type, `seed ${seed} ${r},${c}`).not.toBe("empty")
+          expect(["inner", "node"], `seed ${seed} ${r},${c}`).toContain(roomPlaceOf(grid, r, c))
+        }
+      expect(walkFloorLock(grid)).toEqual({ sound: true, states: expect.any(Number) })
+      expect(room.doors).toHaveLength(4)
     }
   })
 

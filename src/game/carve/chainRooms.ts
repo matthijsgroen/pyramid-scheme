@@ -1,4 +1,5 @@
 import type { KeyColor } from "../siteTypes"
+import { besideRoomSeat } from "../laidFloor"
 import { seatBarrierDoors } from "../obstacles"
 import { absorbedCell, keyOf, regionDoorAt } from "./derive"
 import { spreadContentIndices } from "./grid"
@@ -181,6 +182,7 @@ export const chainRooms = pass(
           !absorbed.has(keyOf(cells[i])) &&
           !laid?.thresholds.has(keyOf(cells[i])) &&
           !laid?.bare.has(keyOf(cells[i])) &&
+          !(laid !== undefined && besideRoomSeat(laid, control.in, keyOf(cells[i]))) &&
           i !== leverIndexInChain &&
           !takenByChainControl.has(i)
 

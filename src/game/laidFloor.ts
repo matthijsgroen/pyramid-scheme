@@ -310,7 +310,9 @@ export type LaidFloor = {
   drops: LaidDrop[]
   held: CellKey[]
   passages: string[]
-  /** Walk distance from the way in, over the laid passages, of every laid node. */
+  /** The hops a designed room's floor makes from its anchor to a port's node (LaidLocks.joins). */
+  joins: string[]
+  /** Walk distance from the way in, over the laid passages and joins, of every laid node. */
   depth: Map<CellKey, number>
   /** The nodes the way in reaches without opening a door. */
   open: Set<CellKey>
@@ -327,9 +329,10 @@ const decodePassage = (key: string, n: number): [CellKey, CellKey] => {
   return [`${Math.floor(x / n)},${x % n}`, `${Math.floor(y / n)},${y % n}`]
 }
 
-const neighboursOf = (passages: readonly string[], n: number): Map<CellKey, CellKey[]> => {
+/** Every laid node's neighbours: over a passage, or across a designed room's floor (`joins`). */
+const neighboursOf = (passages: readonly string[], joins: readonly string[], n: number): Map<CellKey, CellKey[]> => {
   const neighbours = new Map<CellKey, CellKey[]>()
-  for (const key of passages) {
+  for (const key of [...passages, ...joins]) {
     const [a, b] = decodePassage(key, n)
     neighbours.set(a, [...(neighbours.get(a) ?? []), b])
     neighbours.set(b, [...(neighbours.get(b) ?? []), a])
@@ -364,6 +367,11 @@ const groundOf = (
   }
   return ground
 }
+
+/** Whether `key` is a node of `region` other than its room's anchor, where the region is laid as a designed room: the
+ * region's control stands on the room's own place for it, never on a node beside the room. */
+export const besideRoomSeat = (floor: Pick<LaidFloor, "blocks">, region: string | undefined, key: CellKey): boolean =>
+  floor.blocks.some(block => block.region === region && block.anchor !== key)
 
 /** READS THE LAID STRUCTURE INTO THE FORM THE CARVE SEATS ROOMS ON. Pure: no draw is made, so one laid plan always reads the same way. */
 export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
@@ -428,7 +436,7 @@ export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
     }
   })
 
-  const neighbours = neighboursOf(laid.passages, laid.n)
+  const neighbours = neighboursOf(laid.passages, laid.joins, laid.n)
 
   const depth = new Map<CellKey, number>([[laid.route[0], 0]])
   const queue = [laid.route[0]]
@@ -510,6 +518,7 @@ export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
     drops: laid.drops,
     held: laid.held,
     passages: laid.passages,
+    joins: laid.joins,
     depth,
     open,
     stretches: new Map([
@@ -820,5 +829,5 @@ export const answerBareStubs = (
     if (covered && takes) for (const [key, to] of answers) label.set(key, to)
   }
   if ([...label].every(([key, of]) => floor.label.get(key) === of)) return floor
-  return { ...floor, label, ground: groundOf(label, floor.doors, neighboursOf(floor.passages, floor.n)) }
+  return { ...floor, label, ground: groundOf(label, floor.doors, neighboursOf(floor.passages, floor.joins, floor.n)) }
 }

@@ -150,8 +150,8 @@ const growMazeAround = (N: number, laid: LaidFloor, rand: () => number, steer: S
 }
 
 // Grows the maze around the ways walked to the reserved blocks: every walked node is a root, taken in a shuffled
-// order after the hubs' doors, and the DFS steps onto any node no walk and no block holds. A block is entered and left only along the
-// rays its walks took, so nothing is dug through a ring.
+// order after the hubs' doors, and the DFS steps onto any node no walk and no block holds. A block is entered and left only by
+// the ports its walks took, so nothing is dug through a ring.
 const growAroundBlocks = (
   N: number,
   walks: ReservedWalk,
@@ -167,13 +167,14 @@ const growAroundBlocks = (
   const visited = new Set<string>([...held, ...walkedKeys])
   const arrivedVia = new Map<string, [number, number]>()
   const lastTurnAt = new Map<string, number>()
-  // A room on the main path is a hub: the node past each of its free rays roots a maze of its own, grown first, for
+  // A room on the main path is a hub: the node past each of its free ports roots a maze of its own, grown first, for
   // a side path to leave the room by.
   const doors = blocks
     .filter(({ on }) => "main" in on)
-    .flatMap(({ rays }) => rays)
-    .filter(ray => ray.slice(1, -1).every(([r, c]) => !walkedKeys.has(`${r},${c}`)))
-    .map(ray => ray[ray.length - 1])
+    .flatMap(({ anchor, ports }) =>
+      ports.filter(({ node: [r, c] }) => (r === anchor[0] && c === anchor[1]) || !walkedKeys.has(`${r},${c}`))
+    )
+    .map(({ out }) => out)
     .filter(([r, c]) => !visited.has(`${r},${c}`))
   for (const [r, c] of doors) visited.add(`${r},${c}`)
   const stack: Array<[number, number]> = [

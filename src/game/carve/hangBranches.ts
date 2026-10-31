@@ -63,7 +63,7 @@ const extendPath = (
  *
  * A RESERVED ROOM IS A HUB: a side path walked to a block at its end is hung as walked, and every room on the main
  * path is offered to the side paths before any bare node, the most central first, each leaving by one of the room's
- * free rays. No branch point stands in a block or close enough for its room to reach into a ring, and no chain's end
+ * free ports. No branch point stands in a block or close enough for its room to reach into a ring, and no chain's end
  * or branch point stands one node from another room that claims floor unless the two merge. A room the floor
  * placed on the main path that no side path branches off refuses the attempt.
  */
@@ -210,11 +210,11 @@ export const hangBranches = pass(
         ([nr, nc]) => nr >= 0 && nr < N && nc >= 0 && nc < N && !usedCells.has(`${nr},${nc}`)
       )
 
-    /** The rays of a room no walk has taken, whose node past the ring is free. */
-    const freeRays = (block: ReservedBlock) =>
-      block.rays.filter(
-        ray =>
-          ray.slice(1, -1).every(cell => !doorsTaken.has(cellKey(cell))) && !usedCells.has(cellKey(ray[ray.length - 1]))
+    /** The ports of a room no walk has taken: its node (where it is not the anchor) and its node past the ring free. */
+    const freePorts = (block: ReservedBlock) =>
+      block.ports.filter(
+        ({ node, out }) =>
+          (cellKey(node) === cellKey(block.anchor) || !doorsTaken.has(cellKey(node))) && !usedCells.has(cellKey(out))
       )
 
     const branchCandidates: Array<[number, number]> = []
@@ -246,7 +246,7 @@ export const hangBranches = pass(
       const [pr, pc] = mainPath[pi]
       if (forkJunctionIdx.has(pi) || laid?.reserved.has(pi)) continue
       const hub = hubAt.get(`${pr},${pc}`)
-      if (hub ? freeRays(hub).length === 0 : zone.has(`${pr},${pc}`) || rawFreeNeighbors(pr, pc).length === 0) continue
+      if (hub ? freePorts(hub).length === 0 : zone.has(`${pr},${pc}`) || rawFreeNeighbors(pr, pc).length === 0) continue
       branchCandidates.push([pr, pc])
       if (pi < goalIndex && !regionSeamIndices.has(pi)) mainZoneCandidates.push([pr, pc])
     }
@@ -367,15 +367,15 @@ export const hangBranches = pass(
     }
 
     /**
-     * Hangs a chain off a reserved room through one of its free rays: the ray's door nodes lead to its node past the
-     * ring, where the chain starts and walks on through whatever is still empty.
+     * Hangs a chain off a reserved room through one of its free ports: the room's floor joins the anchor to the port's
+     * node, a passage leads on to its node past the ring, where the chain starts and walks on through whatever is still
+     * empty.
      */
     const attachAtHub = (
       block: ReservedBlock,
       needed: number
     ): { cells: Array<[number, number]>; attachedAt: [number, number]; via: Cell[] } | null => {
-      for (const ray of shuffle(freeRays(block), rand)) {
-        const out = ray[ray.length - 1]
+      for (const { node, out } of shuffle(freePorts(block), rand)) {
         if (needed === 1 && !mayEnd(out[0], out[1])) continue
         usedCells.add(cellKey(out))
         const rest = extendPath(
@@ -393,11 +393,9 @@ export const hangBranches = pass(
           continue
         }
         rest.forEach(cell => usedCells.add(cellKey(cell)))
-        ray.slice(1).forEach(([r, c], i) => {
-          const key = pkey(ray[i][0], ray[i][1], r, c)
-          if (!hasPassage(key)) carved.add(key)
-        })
-        const via = ray.slice(1, -1)
+        const key = pkey(node[0], node[1], out[0], out[1])
+        if (!hasPassage(key)) carved.add(key)
+        const via = cellKey(node) === cellKey(block.anchor) ? [] : [node]
         for (const cell of via) doorsTaken.add(cellKey(cell))
         return { cells: [out, ...rest], attachedAt: block.anchor, via }
       }
@@ -540,7 +538,7 @@ export const hangBranches = pass(
         !mayHub
           ? []
           : [...(ownHub ? [ownHub] : []), ...hubs.filter(hub => hub !== ownHub)]
-              .filter(hub => freeRays(hub).length > 0)
+              .filter(hub => freePorts(hub).length > 0)
               .map(hub => hub.anchor)
 
       for (const si of group) {

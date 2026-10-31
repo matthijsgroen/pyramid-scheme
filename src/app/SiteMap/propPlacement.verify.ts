@@ -3,6 +3,7 @@ import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
 import { revealAll } from "@/game/gridNavigation"
 import { portalKindOf } from "@/game/roomFootprint"
+import { prefabRoomAt, prefabRoomCells } from "@/game/roomShape"
 import type { FloorGrid } from "@/game/siteTypes"
 import { buildRoomClaims } from "./roomClaims"
 import { wallItemsFor } from "./SiteMapView"
@@ -64,7 +65,8 @@ describe("authored decoration pools reach real rooms", () => {
 describe("props stay out of the way", () => {
   // A prop stands in the room, never in the way through it. A claimed CORRIDOR is a real passage —
   // the approach to a gate, absorbed into the junction's footprint — and anchoring on the first claim
-  // of any kind put 6 props in 142 down the middle of a walkway, for the player to walk through.
+  // of any kind put 6 props in 142 down the middle of a walkway, for the player to walk through. A designed room's
+  // floor is walked by the room's own walk, which goes round every cell the room blocks.
   it("never stands a prop on a cell the player walks", () => {
     const walkedOn: string[] = []
     let props = 0
@@ -73,9 +75,16 @@ describe("props stay out of the way", () => {
       levels.flat().forEach((floor, i) => {
         const result = assembleFloor(`${siteId}:${i}`, floor, 7)
         if (!result.success) return
+        const roomBlocked = new Set(
+          [...new Set(prefabRoomCells(result.grid).values())].flatMap(owner => {
+            const [r, c] = owner.split(",").map(Number)
+            return prefabRoomAt(result.grid, r, c)?.blocked ?? []
+          })
+        )
         // Every cell a prop covers, not only its anchor: a wide prop stands on all of them.
         for (const key of buildRoomClaims(result.grid).decorationCells) {
           props++
+          if (roomBlocked.has(key)) continue
           const [r, c] = key.split(",").map(Number)
           // A claim may reach one cell outside the grid; anything off-grid is void by definition.
           const cell = result.grid.cells[r]?.[c] ?? { type: "empty" as const }

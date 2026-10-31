@@ -4,7 +4,8 @@ import { variantsOf } from "../prefabChecks"
 import type { Prefab, SpecialPlace } from "../prefabTypes"
 import { shuffle } from "../random"
 import { claimsFloorAt } from "../roomFootprint"
-import type { CellRect, FloorGrid, GridCell, SideSection } from "../siteTypes"
+import { inRect } from "../roomShape"
+import type { CellRect, CorridorCell, Direction, FloorGrid, GridCell, SideSection } from "../siteTypes"
 import { DIRS2, NODE_STEP, edgeNodes, makePkey, spreadContentIndices } from "./grid"
 import { chainRoomCount, paddedChainLength } from "./ids"
 import { meets, ringed, stampPrefab, type PrefabChoice } from "./placePrefabs"
@@ -13,9 +14,10 @@ import type { Cell, FloorPrep, Refusal } from "./state"
 
 /**
  * A DESIGNED ROOM'S BLOCK OF LATTICE NODES, claimed before the maze is dug: its prefab rect (ring included) laid on
- * the lattice, the node it stands on (`anchor`) and the straight ways out of it (`rays`), each running from the
- * anchor through a door place to the first node past the ring. `on` is where the floor's graph holds it: a step of
- * the main path (`pin` naming the main-path puzzle it is pinned to), a side path's end, or a lock's region.
+ * the lattice, the node it stands on (`anchor`) and its ports, each a door place in its ring with the node the way
+ * through it arrives at and the first node past the ring. A port's node is joined to the anchor through the room's own
+ * floor, never by a lattice passage. `on` is where the floor's graph holds it: a step of the main path (`pin` naming
+ * the main-path puzzle it is pinned to), a side path's end, or a lock's region.
  */
 export type ReservedBlock = {
   room: string
@@ -25,7 +27,7 @@ export type ReservedBlock = {
   mirrored: boolean
   rect: CellRect
   anchor: Cell
-  rays: Cell[][]
+  ports: Port[]
   nodes: ReadonlySet<string>
   on: { main: number; pin?: number } | { section: number } | { region: string }
 }
@@ -34,19 +36,22 @@ export type ReservedBlock = {
  * (where it hangs from one), and its cells up to and including the block's anchor. */
 export type Spine = { attachedAt: Cell; via: Cell[]; cells: Cell[] }
 
-/** The ways walked to and through the blocks before the maze is grown around them. */
+/** The ways walked to and through the blocks before the maze is grown around them. `joins` are the hops of those
+ * walks a room's own floor makes, from a port's node to its anchor: no passage of the lattice. */
 export type ReservedWalk = {
   entrance: Cell
   mainPath: Cell[]
   spines: ReadonlyMap<number, Spine>
   passages: ReadonlySet<string>
+  joins: ReadonlyArray<[Cell, Cell]>
 }
 
-type Dir = "n" | "e" | "s" | "w"
-const STEP: Record<Dir, Cell> = { n: [-1, 0], e: [0, 1], s: [1, 0], w: [0, -1] }
+/** A way into a room: its door place on the ring, the node the way arrives at (the door place itself where the ring
+ * runs along a line of nodes, else the inside cell next to it) and the first node past the ring. */
+export type Port = { node: Cell; door: Cell; out: Cell }
 
-/** A variant at one parity of the lattice: its inside size, the anchor and its rays as offsets from the inside's
- * top-left, and how many nodes the rect and ring hold. */
+/** A variant at one parity of the lattice: its inside size, the anchor and its ports as offsets from the inside's
+ * top-left, whether the anchor stands on bare floor, and how many nodes the rect and ring hold. */
 type Shape = {
   variant: number
   layout: number
@@ -56,15 +61,14 @@ type Shape = {
   pt: number
   pl: number
   anchor: Cell
-  rays: Cell[][]
+  bare: boolean
+  ports: Port[]
   nodes: number
 }
 
 const keyOf = ([r, c]: Cell) => `${r},${c}`
 const cellOf = (key: string): Cell => key.split(",").map(Number) as Cell
-
-const walkable = (prefab: Prefab, ch: string): boolean =>
-  ch === "." || prefab.specials[ch] === "stop" || prefab.places[ch]?.layer === "ground"
+const sameCell = (a: Cell, b: Cell) => a[0] === b[0] && a[1] === b[1]
 
 const lineNodes = (parity: number, size: number) => {
   let count = 0
@@ -72,10 +76,13 @@ const lineNodes = (parity: number, size: number) => {
   return count
 }
 
+const even = (k: number) => k % 2 === 0
+
 const shapeCache = new WeakMap<Prefab, Shape[]>()
 
-/** Every anchor and rays a prefab offers on the lattice, the most ways out first: an anchor is a free inside cell on
- * a node, a ray runs from it over walkable cells straight to a door place on the ring. */
+/** Every anchor and ports a prefab offers on the lattice, the most ports first. A port is a door place on a line of
+ * nodes; the room's own floor joins every port to the anchor (prefabChecks proves it does), whatever stands between.
+ * The anchor is an inside node on bare floor, or, where the parity leaves none, any inside node. */
 export const shapesOf = (prefab: Prefab): Shape[] => {
   const cached = shapeCache.get(prefab)
   if (cached) return cached
@@ -84,63 +91,60 @@ export const shapesOf = (prefab: Prefab): Shape[] => {
     const { cells } = variant
     const h = cells.length - 2
     const w = cells[0].length - 2
-    const inside = (i: number, j: number) => i >= 0 && i < h && j >= 0 && j < w
+    const at = (i: number, j: number) => cells[i + 1][j + 1]
     for (const pt of [0, 1])
-      for (const pl of [0, 1])
-        for (let i = 0; i < h; i++)
-          for (let j = 0; j < w; j++) {
-            if ((pt + i) % 2 !== 0 || (pl + j) % 2 !== 0 || cells[i + 1][j + 1] !== ".") continue
-            const rays: Cell[][] = []
-            for (const dir of ["n", "e", "s", "w"] as Dir[]) {
-              const [dr, dc] = STEP[dir]
-              let [ri, rj] = [i + dr, j + dc]
-              let open = true
-              for (; inside(ri, rj); ri += dr, rj += dc) if (!walkable(prefab, cells[ri + 1][rj + 1])) open = false
-              if (!open || cells[ri + 1][rj + 1] !== "d") continue
-              const ray: Cell[] = [[i, j]]
-              for (let [ni, nj] = [i, j]; ni >= -1 && ni <= h && nj >= -1 && nj <= w;) {
-                ni += dr * NODE_STEP
-                nj += dc * NODE_STEP
-                ray.push([ni, nj])
-              }
-              rays.push(ray)
-            }
-            if (rays.length === 0) continue
-            const nodes = lineNodes(pt, h) * lineNodes(pl, w)
-            shapes.push({
-              variant: index,
-              layout: variant.layout,
-              mirrored: variant.mirrored,
-              h,
-              w,
-              pt,
-              pl,
-              anchor: [i, j],
-              rays,
-              nodes,
-            })
+      for (const pl of [0, 1]) {
+        const ports: Port[] = []
+        for (let i = -1; i <= h; i++)
+          for (let j = -1; j <= w; j++) {
+            const across = i === -1 || i === h
+            const along = j === -1 || j === w
+            if (across === along || at(i, j) !== "d") continue
+            const [dr, dc] = across ? [i === -1 ? -1 : 1, 0] : [0, j === -1 ? -1 : 1]
+            if (!even(across ? pl + j : pt + i)) continue
+            const onNode = even(across ? pt + i : pl + j)
+            const node: Cell = onNode ? [i, j] : [i - dr, j - dc]
+            ports.push({ node, door: [i, j], out: [node[0] + dr * NODE_STEP, node[1] + dc * NODE_STEP] })
           }
+        if (ports.length === 0) continue
+        const inside: Cell[] = []
+        for (let i = 0; i < h; i++) for (let j = 0; j < w; j++) if (even(pt + i) && even(pl + j)) inside.push([i, j])
+        const bare = inside.filter(([i, j]) => at(i, j) === ".")
+        const nodes = lineNodes(pt, h) * lineNodes(pl, w)
+        for (const anchor of bare.length > 0 ? bare : inside)
+          shapes.push({
+            variant: index,
+            layout: variant.layout,
+            mirrored: variant.mirrored,
+            h,
+            w,
+            pt,
+            pl,
+            anchor,
+            bare: at(anchor[0], anchor[1]) === ".",
+            ports,
+            nodes,
+          })
+      }
   })
-  const sorted = shapes.sort((a, b) => b.rays.length - a.rays.length)
+  const sorted = shapes.sort((a, b) => b.ports.length - a.ports.length)
   shapeCache.set(prefab, sorted)
   return sorted
 }
 
-/** The shape laid with its inside's top-left at top,left: its rays that stay on the grid and every node it holds;
- * undefined where its rect or ring leaves the grid. */
+/** The shape laid with its inside's top-left at top,left: its ports whose node past the ring stays on the grid and
+ * every node it holds; undefined where its rect or ring leaves the grid. */
 const placeShape = (n: number, shape: Shape, top: number, left: number) => {
   if (top - 1 < 0 || left - 1 < 0 || top + shape.h > n - 1 || left + shape.w > n - 1) return undefined
   const nodes = new Set<string>()
   for (let r = top - 1; r <= top + shape.h; r++)
     for (let c = left - 1; c <= left + shape.w; c++) if (r % 2 === 0 && c % 2 === 0) nodes.add(`${r},${c}`)
-  const rays = shape.rays
-    .map(ray => ray.map(([i, j]): Cell => [top + i, left + j]))
-    .filter(ray => {
-      const [r, c] = ray[ray.length - 1]
-      return r >= 0 && r < n && c >= 0 && c < n
-    })
+  const shift = ([i, j]: Cell): Cell => [top + i, left + j]
+  const ports = shape.ports
+    .map(({ node, door, out }) => ({ node: shift(node), door: shift(door), out: shift(out) }))
+    .filter(({ out: [r, c] }) => r >= 0 && r < n && c >= 0 && c < n)
   const rect = { top, left, rows: shape.h, cols: shape.w }
-  return { rect, anchor: [top + shape.anchor[0], left + shape.anchor[1]] as Cell, rays, nodes }
+  return { rect, anchor: shift(shape.anchor), ports, nodes }
 }
 
 const grownBy = (r: CellRect, by: number): CellRect => ({
@@ -159,6 +163,13 @@ export const blockZone = (blocks: readonly Pick<ReservedBlock, "rect">[]): Reado
       for (let c = near.left; c < near.left + near.cols; c++) if (r % 2 === 0 && c % 2 === 0) zone.add(`${r},${c}`)
   }
   return zone
+}
+
+/** Every hop a block's own floor makes, from its anchor to each of its ports' nodes, as pair keys on an `n`-wide grid:
+ * a walk crosses them, the lattice joins them by no passage. */
+export const roomJoins = (blocks: readonly ReservedBlock[], n: number): ReadonlySet<string> => {
+  const pkey = makePkey(n)
+  return new Set(blocks.flatMap(({ anchor: [ar, ac], ports }) => ports.map(({ node: [r, c] }) => pkey(ar, ac, r, c))))
 }
 
 /** Every node some block holds. */
@@ -258,7 +269,7 @@ export const roomTakesRegion = (plan: LockPlan, region: PlanRegion, prefab: Pref
   const mechanisms = Object.values(prefab.specials).filter(place => place === "mechanism").length
   if (controls > Math.min(1, mechanisms)) return false
   const ways = plan.corridors.filter(corridor => corridor.from === region.id || corridor.to === region.id).length
-  return ways > 0 && shapesOf(prefab).some(shape => shape.rays.length >= ways)
+  return ways > 0 && shapesOf(prefab).some(shape => shape.ports.length >= ways)
 }
 
 /** How central a lock's region lies along the lock's route: an off-route region by the route region it hangs off. */
@@ -312,7 +323,7 @@ export const roomAsks = (prep: FloorPrep): RoomAsk[] => {
     const prefab = config.prefabs?.[room]
     if (!prefab) return
     const places = Object.values(prefab.specials)
-    const hubDoors = shapesOf(prefab).some(shape => shape.rays.length >= 3)
+    const hubDoors = shapesOf(prefab).some(shape => shape.ports.length >= 3)
     for (let k = 0; k < max; k++) {
       const end = ends.find(si => !taken.has(si) && places.includes(endHolds(sideSections[si])))
       const endFits = end !== undefined && hubs <= hubRoom(taken.size + 1)
@@ -375,11 +386,17 @@ const HUB_WAY_WEIGHT = 3
 const SIDE_OPTIONS = 10
 const SIDE_STARTS = 8
 
+/** The hops from a port's node past the ring to the anchor: one to the port's node, one more to the anchor beyond it. */
+const hopsIn = (anchor: Cell, port: Port) => (sameCell(port.node, anchor) ? 1 : 2)
+
+/** The nodes a walk steps on coming in by a port, from its node to the anchor. */
+const portIn = (anchor: Cell, port: Port): Cell[] => (sameCell(port.node, anchor) ? [anchor] : [port.node, anchor])
+
 type Laid = Omit<ReservedBlock, "on" | "room" | "prefab" | "variant" | "mirrored"> & { shape: Shape }
 
 const blockFrom = (
   room: string,
-  { shape, rect, anchor, rays, nodes }: Laid,
+  { shape, rect, anchor, ports, nodes }: Laid,
   on: ReservedBlock["on"]
 ): ReservedBlock => ({
   room,
@@ -388,7 +405,7 @@ const blockFrom = (
   mirrored: shape.mirrored,
   rect,
   anchor,
-  rays,
+  ports,
   nodes,
   on,
 })
@@ -403,9 +420,10 @@ export const blockAsks = (prep: FloorPrep, attempt: number): BlockAsk[] => {
 
 /**
  * THE DESIGNED ROOMS CLAIM THEIR BLOCKS BEFORE THE MAZE IS DUG (`roomAsks`), and the main path and the side paths
- * ending in one are walked to them first: from an edge entrance through each main block in turn, in by one ray, over
- * its anchor and out by another, to an end the rung's distance along; then each side path from a hub's free ray, or
- * else from a bare main-path node, to the block at its end. Each block is placed where its walk lands nearest the
+ * ending in one are walked to them first: from an edge entrance through each main block in turn, in by one port, over
+ * its anchor and out by another, to an end the rung's distance along; then each side path from a hub's free port, or
+ * else from a bare main-path node, to the block at its end. A walk crosses a room from a port's node to its anchor
+ * over the room's own floor (`joins`), never by a passage. Each block is placed where its walk lands nearest the
  * length it wants, its ring clear of every other block's. A pinned room that finds no place refuses the attempt, as
  * does a placement whose `min` is not met; the others are left out. A floor that asks none draws nothing. On a lock
  * floor the lay places the rooms in their regions (`blockAsks`) and they are read off it here, drawing nothing.
@@ -452,43 +470,64 @@ export const reserveRooms = pass(
     const free = (key: string) => !taken.has(key)
     const clearOf = (rect: CellRect) => blocks.every(other => !meets(grownBy(rect, 2), grownBy(other.rect, 1)))
 
-    /** Every placement of `room` reachable from `from` over free nodes by one of its rays, best scored first, each
-     * score jittered by a draw; `ways` is how many rays it needs. */
+    /** The `keep` best placements of `room` reachable from `from` over free nodes by one of its ports, best scored
+     * first, each score jittered by a draw; `ways` is how many ports it needs. A score reads the steps to the port's
+     * node past the ring, the hops from there to the anchor and how many ports the placement has. */
     const options = (
       room: string,
       from: Cell,
-      score: (steps: number, ray: Cell[], rays: number) => number,
-      ways: number
-    ) =>
-      placements(room, from, ways, (steps, ray, rays) => score(steps, ray, rays) + rand() * 0.9).sort(
-        (a, b) => a.score - b.score
-      )
+      score: (steps: number, hops: number, ports: number) => number,
+      ways: number,
+      keep: number
+    ) => placements(room, from, ways, (steps, hops, ports) => score(steps, hops, ports) + rand() * 0.9, false, keep)
     /** Whether `room` still has a placement reachable from `from`, drawing nothing. */
     const canStand = (room: string, from: Cell, ways: number) => placements(room, from, ways, () => 0, true).length > 0
     const placements = (
       room: string,
       from: Cell,
       ways: number,
-      score: (steps: number, ray: Cell[], rays: number) => number,
-      first = false
+      score: (steps: number, hops: number, ports: number) => number,
+      first = false,
+      keep = Infinity
     ) => {
       const shapes = shapesOf(prefabs[room])
       const reach = walkMap(n, from, free)
+      // The best `keep` so far, best first; a placement scored as an earlier one goes after it.
       const found: Array<{ laid: Laid; entry: number; score: number }> = []
+      const consider = (laid: Omit<Laid, "shape">, shape: Shape, entry: number, scored: number) => {
+        if (found.length >= keep && scored >= found[found.length - 1].score) return
+        let at = found.length
+        while (at > 0 && found[at - 1].score > scored) at--
+        found.splice(at, 0, { laid: { ...laid, shape }, entry, score: scored })
+        if (found.length > keep) found.pop()
+      }
+      // Shapes that differ only by their anchor lay the same rect, ports and nodes: each is laid and checked once.
+      const fits = new Map<string, ReturnType<typeof placeShape> | null>()
       for (const shape of shapes) {
-        if (shape.rays.length < ways) continue
+        if (shape.ports.length < ways) continue
         for (let top = 1; top + shape.h <= n - 1; top++) {
           if (top % 2 !== shape.pt) continue
           for (let left = 1; left + shape.w <= n - 1; left++) {
             if (left % 2 !== shape.pl) continue
-            const placed = placeShape(n, shape, top, left)
-            if (!placed || placed.rays.length < ways || !clearOf(placed.rect)) continue
-            if ([...placed.nodes].some(node => taken.has(node))) continue
-            placed.rays.forEach((ray, entry) => {
-              const out = keyOf(ray[ray.length - 1])
+            const at = `${shape.variant}|${shape.pt}|${shape.pl}|${top}|${left}`
+            if (!fits.has(at)) {
+              const laid = placeShape(n, shape, top, left)
+              const ok =
+                laid !== undefined &&
+                laid.ports.length >= ways &&
+                clearOf(laid.rect) &&
+                [...laid.nodes].every(node => !taken.has(node))
+              fits.set(at, ok ? laid : null)
+            }
+            const fit = fits.get(at)
+            if (!fit) continue
+            const placed = { ...fit, anchor: [top + shape.anchor[0], left + shape.anchor[1]] as Cell }
+            placed.ports.forEach((port, entry) => {
+              const out = keyOf(port.out)
               const walk = reach.best.get(out)
               if (!walk || taken.has(out)) return
-              found.push({ laid: { ...placed, shape }, entry, score: score(walk.steps, ray, placed.rays.length) })
+              const hops = hopsIn(placed.anchor, port)
+              consider(placed, shape, entry, score(walk.steps, hops, placed.ports.length))
             })
             if (first && found.length > 0) return found
           }
@@ -497,16 +536,17 @@ export const reserveRooms = pass(
       return found
     }
 
-    /** Walks `into` on from `from` to the block's entry ray and along it to the anchor, claiming the block. */
+    /** Walks `into` on from `from` to the node past the block's entry port and in by it to the anchor, claiming the
+     * block. */
     const walkInto = (into: Cell[], from: Cell, laid: Laid, entry: number): boolean => {
-      const ray = laid.rays[entry]
-      const out = ray[ray.length - 1]
+      const port = laid.ports[entry]
+      const out = port.out
       const reach = walkMap(n, from, key => free(key) && !laid.nodes.has(key))
       if (!reach.best.has(keyOf(out))) return false
       const walk = reach.pathTo(out).slice(1)
       for (const cell of walk) taken.add(keyOf(cell))
       for (const node of laid.nodes) taken.add(node)
-      into.push(...walk, ...[...ray].reverse().slice(1))
+      into.push(...walk, ...portIn(laid.anchor, port))
       return true
     }
 
@@ -543,10 +583,10 @@ export const reserveRooms = pass(
         ...sides.map(side => ({ ask: side, ways: 1 })),
       ]
       // A hub leans to the shapes with the most ways out: every one the main path leaves free is a side path's.
-      const score = (steps: number, ray: Cell[], rays: number) =>
-        Math.abs(steps + ray.length - 1 - want) + (pin === undefined ? HUB_WAY_WEIGHT * (4 - rays) : 0)
+      const score = (steps: number, hops: number, ports: number) =>
+        Math.abs(steps + hops - want) + (pin === undefined ? HUB_WAY_WEIGHT * (4 - Math.min(4, ports)) : 0)
       let laidHere = false
-      for (const option of options(ask.room, cur, score, waysOf(pin)).slice(0, MAIN_OPTIONS)) {
+      for (const option of options(ask.room, cur, score, waysOf(pin), MAIN_OPTIONS)) {
         const pathBefore = path.length
         const takenBefore = new Set(taken)
         const undo = () => {
@@ -559,18 +599,26 @@ export const reserveRooms = pass(
           continue
         }
         const anchorStep = path.length - 1
+        const { anchor } = option.laid
+        const onPath = new Set(path.map(keyOf))
         const exits = shuffle(
-          option.laid.rays.filter((ray, i) => i !== option.entry && !taken.has(keyOf(ray[ray.length - 1]))),
+          option.laid.ports.filter(
+            (port, i) =>
+              i !== option.entry &&
+              !taken.has(keyOf(port.out)) &&
+              (sameCell(port.node, anchor) || !onPath.has(keyOf(port.node)))
+          ),
           rand
         )
-          .map(ray => ({ ray, room: walkMap(n, ray[ray.length - 1], free).best.size }))
+          .map(port => ({ port, room: walkMap(n, port.out, free).best.size }))
           .sort((a, b) => b.room - a.room)
         if (exits.length === 0 || exits[0].room < 2) {
           undo()
           continue
         }
-        for (const cell of exits[0].ray.slice(1)) taken.add(keyOf(cell))
-        path.push(...exits[0].ray.slice(1))
+        const out = [...portIn(anchor, exits[0].port)].reverse().slice(1)
+        for (const cell of out) taken.add(keyOf(cell))
+        path.push(...out)
         const end = path[path.length - 1]
         blocks.push(blockOf(ask, option.laid, { main: anchorStep, ...(pin !== undefined ? { pin } : {}) }))
         if (!later.every(({ ask, ways }) => canStand(ask.room, end, ways))) {
@@ -601,7 +649,7 @@ export const reserveRooms = pass(
       path.push(...walk)
     }
 
-    // THE SIDE PATHS ENDING IN A BLOCK, each from a hub's free ray (the most central hub first) or a bare main node.
+    // THE SIDE PATHS ENDING IN A BLOCK, each from a hub's free port (the most central hub first) or a bare main node.
     const spines = new Map<number, Spine>()
     const spreadOnPath = spreadContentIndices(contentCount, 1, path.length)
     const goal = spreadOnPath[spreadOnPath.length - 1] ?? path.length - 1
@@ -619,10 +667,10 @@ export const reserveRooms = pass(
         .map(block => ({ block, central: centralityOf((block.on as { main: number }).main, path.length) }))
         .sort((a, b) => b.central - a.central)
         .flatMap(({ block }) =>
-          block.rays
-            .filter(ray => ray.every((cell, i) => i === 0 || !doorsWalked.has(keyOf(cell))))
-            .filter(ray => !taken.has(keyOf(ray[ray.length - 1])))
-            .map(ray => ({ attachedAt: block.anchor, via: ray.slice(1, -1), from: ray[ray.length - 1] }))
+          block.ports
+            .filter(({ node }) => sameCell(node, block.anchor) || !doorsWalked.has(keyOf(node)))
+            .filter(({ out }) => !doorsWalked.has(keyOf(out)) && !taken.has(keyOf(out)))
+            .map(port => ({ attachedAt: block.anchor, via: portIn(block.anchor, port).slice(0, -1), from: port.out }))
         )
       const nodeStarts = shuffle(
         path.slice(1, Math.max(1, goal)).filter(cell => !near.has(keyOf(cell))),
@@ -633,9 +681,9 @@ export const reserveRooms = pass(
         const fromHub = start.from !== start.attachedAt
         const wasFree = !taken.has(keyOf(start.from))
         if (fromHub) taken.add(keyOf(start.from))
-        const score = (steps: number, ray: Cell[]) =>
-          Math.abs((fromHub ? steps + 1 : steps) + ray.length - 1 - (needed + ray.length - 2))
-        for (const option of options(ask.room, start.from, score, 1).slice(0, SIDE_OPTIONS)) {
+        const score = (steps: number, hops: number) =>
+          Math.abs((fromHub ? steps + 1 : steps) + hops - (needed + hops - 1))
+        for (const option of options(ask.room, start.from, score, 1, SIDE_OPTIONS)) {
           const takenBefore = new Set(taken)
           const cells: Cell[] = fromHub ? [start.from] : []
           if (!walkInto(cells, start.from, option.laid, option.entry)) {
@@ -661,20 +709,74 @@ export const reserveRooms = pass(
       if (placed < min) return refused(room, min, placed)
     }
 
+    // A hop between two nodes of one block crosses its room's floor: a join, never a passage.
     const pkey = makePkey(n)
     const passages = new Set<string>()
+    const joins: Array<[Cell, Cell]> = []
     const link = (cells: Cell[]) =>
-      cells.slice(1).forEach((cell, i) => passages.add(pkey(cells[i][0], cells[i][1], cell[0], cell[1])))
+      cells.slice(1).forEach((cell, i) => {
+        const from = cells[i]
+        if (blocks.some(({ nodes }) => nodes.has(keyOf(from)) && nodes.has(keyOf(cell)))) joins.push([from, cell])
+        else passages.add(pkey(from[0], from[1], cell[0], cell[1]))
+      })
     link(path)
     for (const { attachedAt, via, cells } of spines.values()) link([attachedAt, ...via, ...cells])
     state.blocks = blocks
-    state.walks = { entrance, mainPath: path, spines, passages }
+    state.walks = { entrance, mainPath: path, spines, passages, joins }
   }
 )
 
-/** Each block's room drawn over its anchor, at its rect. */
+const SIDES: ReadonlyArray<[number, number, Direction]> = [
+  [-1, 0, "n"],
+  [0, 1, "e"],
+  [1, 0, "s"],
+  [0, -1, "w"],
+]
+
+/**
+ * A ROOM'S OWN FLOOR, OPEN: every cell of its rect, and every door place a way crosses (one the carve drew), is floor
+ * joined to its neighbours within the rect and to its door. The anchor keeps its type and contents and gains the
+ * ways, and so does a door, a stop of the corridor it ends that a save files by its own name; every other cell is a
+ * corridor of the anchor's section and region.
+ */
+export const openRoomFloor = (grid: FloorGrid, block: ReservedBlock): FloorGrid => {
+  const { rect } = block
+  const [ar, ac] = block.anchor
+  const node = grid.cells[ar][ac]
+  if (node.type === "empty") throw new Error(`[carve] room ${block.room} has no node at ${ar},${ac}`)
+  const doors = new Set(
+    block.ports.flatMap(({ door: [r, c] }) => (grid.cells[r]?.[c]?.type !== "empty" ? [`${r},${c}`] : []))
+  )
+  const floor = (r: number, c: number) => inRect(rect, r, c) || doors.has(`${r},${c}`)
+  const ground: Omit<CorridorCell, "dirs"> = {
+    type: "corridor",
+    state: node.state,
+    ...(node.difficulty ? { difficulty: node.difficulty } : {}),
+    ...(node.tileset ? { tileset: node.tileset } : {}),
+    ...(node.sectionAddress !== undefined ? { sectionAddress: node.sectionAddress } : {}),
+    ...(node.region !== undefined ? { region: node.region } : {}),
+    ...(node.sectionHash !== undefined ? { sectionHash: node.sectionHash } : {}),
+    ...(node.legacySectionHash !== undefined ? { legacySectionHash: node.legacySectionHash } : {}),
+    ...(node.hidden ? { hidden: true } : {}),
+  }
+  const cells = grid.cells.map(row => [...row])
+  const ring = ringed(rect)
+  for (let r = ring.top; r < ring.top + ring.rows; r++)
+    for (let c = ring.left; c < ring.left + ring.cols; c++) {
+      if (!floor(r, c)) continue
+      const cell = cells[r][c]
+      const dirs = new Set<Direction>(cell.type === "empty" ? [] : cell.dirs)
+      for (const [dr, dc, d] of SIDES)
+        if (floor(r + dr, c + dc) && (inRect(rect, r, c) || inRect(rect, r + dr, c + dc))) dirs.add(d)
+      const keeps = cell.type !== "empty" && ((r === ar && c === ac) || !inRect(rect, r, c))
+      cells[r][c] = keeps ? { ...cell, dirs } : { ...ground, dirs }
+    }
+  return { ...grid, cells }
+}
+
+/** Each block's room drawn over its anchor, at its rect, its floor open. */
 export const stampBlocks = (prep: FloorPrep, blocks: readonly ReservedBlock[], grid: FloorGrid): FloorGrid =>
-  blocks.reduce((working, block) => stampPrefab(working, block.prefab, block.rect, prep), grid)
+  blocks.reduce((working, block) => stampPrefab(openRoomFloor(working, block), block.prefab, block.rect, prep), grid)
 
 const isDoorCell = (cell: GridCell): boolean =>
   cell.type === "corridor"

@@ -190,8 +190,8 @@ const nodeOf = (grid: FloorGrid, at: Cell): Cell | undefined => {
   return key ? (key.split(",").map(Number) as unknown as Cell) : undefined
 }
 
-/** The door a route crosses stepping from `outside` to `inside` the room: the door place nearest `outside`. */
-const endFor = (grid: FloorGrid, node: Cell, _inside: Cell, outside: Cell): RoomEnd => {
+/** The door a route crosses stepping into the room from `outside`: the door place nearest `outside`. */
+const endFor = (grid: FloorGrid, node: Cell, outside: Cell): RoomEnd => {
   const doors = roomDoors(grid, node[0], node[1])
   const far = (door: RoomDoor) => Math.abs(door.at[0] - outside[0]) + Math.abs(door.at[1] - outside[1])
   const door = [...doors].sort((a, b) => far(a) - far(b))[0]
@@ -217,8 +217,8 @@ export const walkPoints = (
         if (!next || next[0] !== node[0] || next[1] !== node[1]) break
         j++
       }
-      const from = i === 0 ? "stop" : endFor(grid, node, route[i], route[i - 1])
-      const to = j === route.length - 1 ? "stop" : endFor(grid, node, route[j], route[j + 1])
+      const from = i === 0 ? "stop" : endFor(grid, node, route[i - 1])
+      const to = j === route.length - 1 ? "stop" : endFor(grid, node, route[j + 1])
       points.push(...roomPath(grid, node, from, to))
       i = j + 1
       continue
