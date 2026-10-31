@@ -314,5 +314,5 @@ Copy under `pairPuzzle.*` (en + nl): `name.mummies` "Mummy Rest" / "Mummierust";
 
 - [ ] **Step 1:** `yarn verify` — expected: lint, types, all specs and betterer pass.
 - [ ] **Step 2:** `yarn verify-content` and `yarn verify-seeds` — pass.
-- [ ] **Step 3:** `git diff origin/camp/home-and-loot -- src/data/` — expected: empty (world, ledger, fingerprints, seeds untouched).
+- [ ] **Step 3:** `git diff origin/main -- src/data/` — expected: empty (world, ledger, fingerprints, seeds untouched).
 - [ ] **Step 4:** `grep -n "REGIONLESS\|PAIR_PUZZLE" src/mods/puzzle/index.ts` — expected: no match (lab-only).

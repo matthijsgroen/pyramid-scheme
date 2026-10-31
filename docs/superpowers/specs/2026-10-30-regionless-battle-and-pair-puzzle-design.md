@@ -182,7 +182,7 @@ position-only uniqueness.
 - Exact rung list after measuring.
 - SVG drawings for scarab, mummy and sarcophagus, and the sandstone floor palette.
 - Order of work. Suggested: regionless battle → pair puzzle.
-- This branch is forked from `camp/home-and-loot`, where the measurements were taken.
+- The branch is based on `main`; the tier measurements above come from `camp/home-and-loot` and are re-checked when the families join the bake.
 
 ## Follow-up (not this project)
 
