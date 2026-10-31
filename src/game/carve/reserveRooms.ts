@@ -3,7 +3,7 @@ import type { LockPlan, PlanRegion } from "../lockPlan"
 import { variantsOf } from "../prefabChecks"
 import type { Prefab, SpecialPlace } from "../prefabTypes"
 import { shuffle } from "../random"
-import { claimsFloorAt } from "../roomFootprint"
+import { claimsFloorByShapeAt } from "../roomFootprint"
 import type { CellRect, FloorGrid, GridCell, SideSection } from "../siteTypes"
 import { DIRS2, NODE_STEP, edgeNodes, makePkey, spreadContentIndices } from "./grid"
 import { chainRoomCount, paddedChainLength } from "./ids"
@@ -689,7 +689,8 @@ const isDoorCell = (cell: GridCell): boolean =>
 /**
  * A BLOCK'S RING IS ITS OWN: no room but its anchor's stands inside its rect or ring, no gate, no other room's 3×3
  * reaches into it, and no other block's ring meets it. Any of them refuses the attempt, naming the room. Every
- * `shut` cell counts as a gate whether or not a switch shuts it, so a mod being absent changes no refusal.
+ * `shut` cell counts as a gate whether or not a switch shuts it, so a mod being absent changes no refusal; a room
+ * reaches as far as its shape claims, so a story's activity changes none either.
  */
 export const ringFault = (
   grid: FloorGrid,
@@ -713,7 +714,7 @@ export const ringFault = (
       }
     for (let r = ring.top - 1; r <= ring.top + ring.rows; r++)
       for (let c = ring.left - 1; c <= ring.left + ring.cols; c++) {
-        if (anchors.has(`${r},${c}`) || !grid.cells[r]?.[c] || !claimsFloorAt(grid, r, c)) continue
+        if (anchors.has(`${r},${c}`) || !grid.cells[r]?.[c] || !claimsFloorByShapeAt(grid, r, c)) continue
         if (meets(ring, { top: r - 1, left: c - 1, rows: 3, cols: 3 }))
           return fault(block, `the room at ${r},${c} reaches into its ring`)
       }

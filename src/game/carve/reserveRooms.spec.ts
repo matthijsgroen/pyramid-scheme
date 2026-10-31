@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { carvedFloorDigest } from "@/data/tierFingerprints"
 import { parsePrefab } from "../prefabNotation"
-import type { FloorConfig, FloorGrid, GridCell, PrefabRoom, RoomCell, SideSection } from "../siteTypes"
+import type { Direction, FloorConfig, FloorGrid, GridCell, PrefabRoom, RoomCell, SideSection } from "../siteTypes"
 import { assembleFloor } from "./assembleFloor"
 import { ONE_SWITCH, assembleAt, plainFloor, prepOf } from "./carveFixtures"
 
@@ -117,6 +117,15 @@ describe("reserveRooms", () => {
     }
   })
 
+  it("the door nodes a side path leaves a hub by carry the hub's tier, as every drawn cell does", () => {
+    const untiered = [1, 2, 3, 4, 5, 6, 7, 8].flatMap(seed =>
+      carved(hubFloor, seed).cells.flatMap((row, r) =>
+        row.flatMap((cell, c) => (cell.type !== "empty" && !cell.difficulty ? [`${seed}: ${r},${c}`] : []))
+      )
+    )
+    expect(untiered).toEqual([])
+  })
+
   it("a floor whose min room never fits refuses naming the room", () => {
     const result = assembleFloor(
       "site",
@@ -225,6 +234,12 @@ describe("ringFault", () => {
     expect(ringFault(floor({ "2,6": room({ roomType: "fork", dirs: new Set(["e", "w", "s"]) }) }), [block])).toEqual({
       retry: [expect.objectContaining({ room: "den", why: "the room at 2,6 reaches into its ring" })],
     })
+  })
+
+  it("reads a room by its shape, so a story's activity on it refuses nothing", () => {
+    const puzzle = { dirs: new Set(["e", "w"]) as Set<Direction> }
+    expect(ringFault(floor({ "2,6": room(puzzle) }), [block])).toBeUndefined()
+    expect(ringFault(floor({ "2,6": room({ ...puzzle, authoredActivity: "storage" }) }), [block])).toBeUndefined()
   })
 
   it("two blocks whose rings meet refuse the attempt", () => {

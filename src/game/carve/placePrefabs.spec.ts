@@ -282,6 +282,15 @@ describe("pinned rooms", () => {
     })
   })
 
+  it("lays a designed room the same whether or not a story gave a room beside it an activity", () => {
+    const beside = WIDE_CROSS.map((row, r) => (r === 5 ? "E....F..P.T" : row))
+    const lay = (extra: Partial<RoomCell>) =>
+      placePrefabs(prepFor({}), floorFrom(beside, { "5,5": { pinnedPrefab: "hall" }, "5,8": extra }))
+    const plain = prefabRooms(placed(lay({})))
+    expect(plain.map(({ room }) => room.name)).toEqual(["hall"])
+    expect(prefabRooms(placed(lay({ authoredActivity: "storage" })))).toEqual(plain)
+  })
+
   it("takes the place of the room's dressing, keeping its type, dirs and contents", () => {
     const grid = floorFrom(CROSS, {
       "4,4": { pinnedPrefab: "hall", decoration: "pillar", wallDecoration: "niche", activity: "storage" },

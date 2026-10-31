@@ -1,7 +1,7 @@
 import { hashString } from "@/support/hashString"
 import { blockedCells, fillsOf, placeBlobs, variantsOf, type Variant } from "../prefabChecks"
 import type { PlaceDef, PlaceKind, Prefab, SpecialPlace } from "../prefabTypes"
-import { cellAt, claimsFloorAt } from "../roomFootprint"
+import { cellAt, claimsFloorByShapeAt } from "../roomFootprint"
 import { inRect, STEP } from "../roomShape"
 import type {
   CellRect,
@@ -109,13 +109,13 @@ const fitAt = (
   return { variant, rect, doors, absorbed }
 }
 
-/** Every other room's 3×3 that claims floor, and every prefab rect laid before, keeping r,c's own out. */
+/** Every other room's 3×3 that claims floor by its shape, and every prefab rect laid before, keeping r,c's own out. */
 const occupied = (grid: FloorGrid, r: number, c: number): CellRect[] =>
   grid.cells.flatMap((row, rr) =>
     row.flatMap((cell, cc): CellRect[] => {
       if (rr === r && cc === c) return []
       const taken: CellRect[] = []
-      if (claimsFloorAt(grid, rr, cc)) taken.push({ top: rr - 1, left: cc - 1, rows: 3, cols: 3 })
+      if (claimsFloorByShapeAt(grid, rr, cc)) taken.push({ top: rr - 1, left: cc - 1, rows: 3, cols: 3 })
       if (cell.type !== "empty" && cell.prefabRoom) taken.push(cell.prefabRoom.rect)
       return taken
     })
