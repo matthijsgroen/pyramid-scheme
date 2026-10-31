@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest"
 import { carvedFloorDigest } from "@/data/tierFingerprints"
+import { dirsOf } from "../testSupport/modOff"
 import { claimsFloorAt, roomsMerge } from "../roomFootprint"
 import { assembleFloor } from "../siteAssembler"
 import type { FloorConfig, FloorGrid, SideSection } from "../siteTypes"
-import { plainFloor } from "./carveFixtures"
+import { ONE_SWITCH, assembleAt, plainFloor } from "./carveFixtures"
 import { NEAR_NODES } from "./grid"
 
 const side = (overrides: Partial<SideSection> = {}): SideSection => ({
@@ -107,5 +108,26 @@ describe("rooms that claim floor are never bitten", { timeout: 120_000 }, () => 
     const [first, second] = twice.map(result => (result.success ? carvedFloorDigest(result.grid) : undefined))
     expect(first).toBeDefined()
     expect(second).toBe(first)
+  })
+})
+
+describe("a switch in a reserved junction", { timeout: 120_000 }, () => {
+  it("leaves the floor carved the same whether or not it stands there", () => {
+    const forked = plainFloor({
+      pathPuzzles: 3,
+      sideSections: [side(), side(), side({ pathPuzzles: 1 })],
+      forks: [{ exits: 2, count: 1 }],
+    })
+    const wallsOf = (config: FloorConfig, seed: number) => {
+      const result = assembleAt("whole-rooms", config, seed)
+      return result.success ? dirsOf(result.grid) : null
+    }
+    const carves = Array.from({ length: 40 }, (_, i) => ({
+      seed: i + 1,
+      bare: wallsOf(forked, i + 1),
+      switched: wallsOf({ ...forked, switches: ONE_SWITCH }, i + 1),
+    }))
+    expect(carves.filter(({ bare }) => bare !== null).length).toBeGreaterThan(30)
+    expect(carves.filter(({ bare, switched }) => bare !== switched).map(({ seed }) => seed)).toEqual([])
   })
 })

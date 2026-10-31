@@ -119,9 +119,18 @@ const LATER_NEAR_NODES: ReadonlyArray<readonly [number, number]> = [
  * Whether two rooms one node apart (ortho or diagonal) are one space on the map, so the cells their 3×3s share
  * belong to both. Two ortho rooms are when a passage joins them. Two diagonal rooms are when they stand in one
  * section, one region and are both hidden or both not, and an ungated corner node opens onto each: the shared
- * pillar is then the corner of the L the player walks anyway. Rooms of two sections never merge diagonally.
+ * pillar is then the corner of the L the player walks anyway. Rooms of two sections never merge diagonally. A corner
+ * in `shut` is a gate whether or not a door stands in it, so the carve reads a way a switch may shut the same with
+ * the switch there or not.
  */
-export const roomsMerge = (grid: FloorGrid, r: number, c: number, r2: number, c2: number): boolean => {
+export const roomsMerge = (
+  grid: FloorGrid,
+  r: number,
+  c: number,
+  r2: number,
+  c2: number,
+  shut: ReadonlySet<string> = new Set()
+): boolean => {
   const a = cellAt(grid, r, c)
   const b = cellAt(grid, r2, c2)
   if (a.type !== "room" || b.type !== "room") return false
@@ -132,7 +141,7 @@ export const roomsMerge = (grid: FloorGrid, r: number, c: number, r2: number, c2
   const viaCorner = (cr: number, cc: number) => {
     const corner = cellAt(grid, cr, cc)
     if (corner.type === "empty") return false
-    if (corner.type === "room" && corner.tags?.includes("gate")) return false
+    if (shut.has(`${cr},${cc}`) || (corner.type === "room" && corner.tags?.includes("gate"))) return false
     return (
       corner.dirs.has(STEP_DIR[`${Math.sign(r - cr)},${Math.sign(c - cc)}`]) &&
       corner.dirs.has(STEP_DIR[`${Math.sign(r2 - cr)},${Math.sign(c2 - cc)}`])
@@ -144,9 +153,10 @@ export const roomsMerge = (grid: FloorGrid, r: number, c: number, r2: number, c2
 /**
  * The first two rooms that claim floor one node apart and do not merge, in scan order: one of them would lose part
  * of its 3×3 to the other. A designed room is left out, as its ring is kept clear when it is laid. Rooms are read by
- * their shape (`claimsFloorByShapeAt`), so a story's activity never refuses a carve.
+ * their shape (`claimsFloorByShapeAt`), so a story's activity never refuses a carve; a corner in `shut` is read as
+ * `roomsMerge` reads it.
  */
-export const bittenRooms = (grid: FloorGrid): [string, string] | undefined => {
+export const bittenRooms = (grid: FloorGrid, shut: ReadonlySet<string> = new Set()): [string, string] | undefined => {
   const claims = (r: number, c: number) => {
     const cell = cellAt(grid, r, c)
     return cell.type === "room" && !cell.prefabRoom && claimsFloorByShapeAt(grid, r, c)
@@ -155,7 +165,7 @@ export const bittenRooms = (grid: FloorGrid): [string, string] | undefined => {
     for (let c = 0; c < grid.cols; c++) {
       if (!claims(r, c)) continue
       for (const [dr, dc] of LATER_NEAR_NODES)
-        if (claims(r + dr, c + dc) && !roomsMerge(grid, r, c, r + dr, c + dc))
+        if (claims(r + dr, c + dc) && !roomsMerge(grid, r, c, r + dr, c + dc, shut))
           return [`${r},${c}`, `${r + dr},${c + dc}`]
     }
   return undefined

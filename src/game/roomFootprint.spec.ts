@@ -105,6 +105,11 @@ describe("roomsMerge", () => {
     expect(roomsMerge(sketch(["F..", "  .", "  F"], { "2,2": "s0" }), 0, 0, 2, 2)).toBe(false)
   })
 
+  it("never merges two rooms through a corner a door may stand in, whether or not one stands there", () => {
+    expect(roomsMerge(sketch(["F..", "  .", "  F"]), 0, 0, 2, 2, new Set(["0,2"]))).toBe(false)
+    expect(roomsMerge(sketch(["F  ", ".  ", "..F"]), 0, 0, 2, 2, new Set(["0,2"]))).toBe(true)
+  })
+
   it("merges two ortho rooms a passage joins, and keeps two it does not apart", () => {
     expect(roomsMerge(sketch(["F.F"]), 0, 0, 0, 2)).toBe(true)
     expect(roomsMerge(sketch(["F F", ". .", "..."]), 0, 0, 0, 2)).toBe(false)
@@ -116,5 +121,10 @@ describe("bittenRooms", () => {
     expect(bittenRooms(sketch(["T T", ". .", "..."]))).toEqual(["0,0", "0,2"])
     expect(bittenRooms(sketch(["T  ", ".  ", "..T"]))).toBeUndefined()
     expect(bittenRooms(sketch(["F.F", ". .", "..."]))).toBeUndefined()
+  })
+
+  it("reads a corner a door may stand in as shut, so a door standing there or not refuses alike", () => {
+    expect(bittenRooms(sketch(["T..", "  .", "  T"]), new Set(["0,2"]))).toEqual(["0,0", "2,2"])
+    expect(bittenRooms(sketch(["T.G", "  .", "  T"]), new Set(["0,2"]))).toEqual(["0,0", "2,2"])
   })
 })
