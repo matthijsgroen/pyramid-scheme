@@ -4,7 +4,7 @@ import { appetiteAccepts } from "../regions"
 import type { ContentKind } from "../regions"
 import type { KeyColor, SideSection, SubSection } from "../siteTypes"
 import { absorbedCell, contentNow, gateIndices } from "./derive"
-import { CONNECTOR_DIRS, DIRS, DIRS2, NODE_STEP, OPPOSITE, makePkey } from "./grid"
+import { CONNECTOR_DIRS, DIRS, DIRS2, NEAR_NODES, NODE_STEP, OPPOSITE, makePkey } from "./grid"
 import { chainRoomCount, nid, paddedChainLength } from "./ids"
 import { blockNodes, blockZone, centralityOf, type ReservedBlock } from "./reserveRooms"
 import { childSectionsOf, doorsShutting } from "./sections"
@@ -63,7 +63,8 @@ const extendPath = (
  *
  * A RESERVED ROOM IS A HUB: a side path walked to a block at its end is hung as walked, and every room on the main
  * path is offered to the side paths before any bare node, the most central first, each leaving by one of the room's
- * free rays. No branch point stands in a block or close enough for its room to reach into a ring. A room the floor
+ * free rays. No branch point stands in a block or close enough for its room to reach into a ring, and no chain's end
+ * or branch point stands one node from another room that claims floor unless the two merge. A room the floor
  * placed on the main path that no side path branches off refuses the attempt.
  */
 export const hangBranches = pass(
@@ -102,8 +103,44 @@ export const hangBranches = pass(
     const held = blockNodes(blocks)
     const zone = blockZone(blocks)
     const cellKey = ([r, c]: Cell) => `${r},${c}`
-    // A chain's end room claims floor, so it never ends where its room would reach into a ring.
-    const mayEnd = blocks.length > 0 ? (r: number, c: number) => !zone.has(`${r},${c}`) : undefined
+    // NO TWO ROOMS THAT CLAIM FLOOR STAND ONE NODE APART UNLESS THEY MERGE: their 3×3s share cells, and a shared cell
+    // two rooms do not both open onto bites one of them. The entrance, the exit, a chain's end and every node a chain
+    // hangs off (a fork) claim floor; a chain's end and a fork are placed only where every claimer on a near node is
+    // joined to it: by a passage, or, for two rooms of one section, by a corner node both open onto (roomsMerge).
+    // Rooms of two sections are never joined diagonally. Where a chain fits nowhere under the rule it is placed
+    // crowded, and the attempt's backstop (finishAttempt) decides.
+    const labelAt = new Map<string, string>(mainPath.map((cell, pi) => [cellKey(cell), `main/${stepRegion[pi] ?? ""}`]))
+    const claimers = new Set<string>([cellKey(mainPath[0]), cellKey(mainPath[mainPath.length - 1])])
+    // The fork a chain is being hung off while its first node is chosen: a claimer, though not yet one on the floor.
+    let attachingAt: string | undefined
+    // The section label of the chain being placed.
+    let placing = ""
+    let strict = true
+    const crowded = (r: number, c: number, label: string): boolean =>
+      strict &&
+      NEAR_NODES.some(([dr, dc]) => {
+        const near = `${r + dr},${c + dc}`
+        if (!claimers.has(near) && near !== attachingAt) return false
+        if (dr === 0 || dc === 0) return !hasPassage(pkey(r, c, r + dr, c + dc))
+        const corner = (cr: number, cc: number) =>
+          hasPassage(pkey(r, c, cr, cc)) && hasPassage(pkey(cr, cc, r + dr, c + dc))
+        return labelAt.get(near) !== label || !(corner(r, c + dc) || corner(r + dr, c))
+      })
+    // A chain's end room never reaches into a ring, nor stands crowded.
+    const mayEnd = (r: number, c: number) => !zone.has(`${r},${c}`) && !crowded(r, c, placing)
+    const placeUncrowded = <T>(place: () => T | null): T | null => {
+      const placed = place()
+      if (placed !== null) return placed
+      strict = false
+      const crowdedPlace = place()
+      strict = true
+      return crowdedPlace
+    }
+    const claim = ({ cells, attachedAt }: { cells: Cell[]; attachedAt: Cell }, label: string) => {
+      for (const cell of cells) labelAt.set(cellKey(cell), label)
+      if (!hubAt.has(cellKey(attachedAt))) claimers.add(cellKey(attachedAt))
+      claimers.add(cellKey(cells[cells.length - 1]))
+    }
     const hubs = blocks
       .flatMap(block => ("main" in block.on ? [{ block, on: block.on }] : []))
       .sort(
@@ -272,12 +309,15 @@ export const hangBranches = pass(
       mayCarve: boolean
     ): { cells: Array<[number, number]>; attachedAt: [number, number]; via?: Cell[] } | null => {
       for (const [pcr, pcc] of candidates) {
+        attachingAt = undefined
         const hub = hubAt.get(`${pcr},${pcc}`)
         if (hub) {
           const attached = attachAtHub(hub, needed)
           if (attached) return attached
           continue
         }
+        if (!claimers.has(`${pcr},${pcc}`) && crowded(pcr, pcc, labelAt.get(`${pcr},${pcc}`) ?? "laid")) continue
+        attachingAt = `${pcr},${pcc}`
         let freeAdj = shuffle(
           neighbors(pcr, pcc).filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`)),
           rand
@@ -302,7 +342,7 @@ export const hangBranches = pass(
         }
         if (freeAdj.length === 0) continue
         for (const [startR, startC] of freeAdj) {
-          if (needed === 1 && mayEnd && !mayEnd(startR, startC)) continue
+          if (needed === 1 && !mayEnd(startR, startC)) continue
           usedCells.add(`${startR},${startC}`)
           const rest = extendPath(
             startR,
@@ -336,7 +376,7 @@ export const hangBranches = pass(
     ): { cells: Array<[number, number]>; attachedAt: [number, number]; via: Cell[] } | null => {
       for (const ray of shuffle(freeRays(block), rand)) {
         const out = ray[ray.length - 1]
-        if (needed === 1 && mayEnd && !mayEnd(out[0], out[1])) continue
+        if (needed === 1 && !mayEnd(out[0], out[1])) continue
         usedCells.add(cellKey(out))
         const rest = extendPath(
           out[0],
@@ -381,6 +421,7 @@ export const hangBranches = pass(
           !regionSeamIndices.has(pi) &&
           !forkJunctionIdx.has(pi)
       )
+      attachingAt = undefined
       for (const [ar, ac] of scoreCandidates(mouthNodes)) {
         for (const [dr, dc, d] of shuffle(CONNECTOR_DIRS, rand)) {
           const ur = dr / NODE_STEP,
@@ -530,7 +571,10 @@ export const hangBranches = pass(
           chainRoomCount(leverAtPositional, sideSections[si], `s${si}`)
         )
         const seam = prep.layout.dropSeams.get(si)
-        const attached = seam ? attachByDrop(seam, needed) : attachChain(candidateSources, needed, true)
+        placing = `s${si}`
+        const attached = placeUncrowded(() =>
+          seam ? attachByDrop(seam, needed) : attachChain(candidateSources, needed, true)
+        )
 
         if (attached === null) {
           failed = true
@@ -538,6 +582,7 @@ export const hangBranches = pass(
           break outer
         }
         sectionGroups.push({ sectionIdx: si, ...attached })
+        claim(attached, `s${si}`)
         if (!hubCell && !seam) hubCell = attached.attachedAt
       }
     }
@@ -584,12 +629,14 @@ export const hangBranches = pass(
         // and a layout that fits at all is worth a cycle. It is what unstuck that phase: by the time
         // sub-sections are placed, earlier chains have boxed the parent in, and one needing a single
         // free cell would fail the whole attempt with plenty of grid still empty one wall away.
-        const attached = attachChain(subBranchCandidates, subNeeded, rung.recovery)
+        placing = `s${group.sectionIdx}.${si}`
+        const attached = placeUncrowded(() => attachChain(subBranchCandidates, subNeeded, rung.recovery))
         if (attached === null) {
           failed = true
           break
         }
         placedSubs.push({ idx: si, ...attached })
+        claim(attached, placing)
       }
       if (failed) break
 

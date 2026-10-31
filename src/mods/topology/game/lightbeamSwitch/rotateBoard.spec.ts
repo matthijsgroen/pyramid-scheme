@@ -17,7 +17,7 @@ const SHRINES_PER_SWEEP =
   SHAPES.reduce((total, shape) => total + CANONICAL_WAYS_OUT[shape].length, 0) * TIERS.length * SEEDS.length
 const TURNED_SHRINES_PER_SWEEP = SHRINES_PER_SWEEP * QUARTER_TURNS.length
 // The layouts a real carve makes, which the sweep below is asserted against rather than trusted to find.
-const CARVED_LAYOUTS = ["en", "ens", "enw", "es", "ew", "ns", "nsw", "nw", "sw"]
+const CARVED_LAYOUTS = ["en", "ens", "enw", "es", "esw", "ew", "ns", "nsw", "nw", "sw"]
 
 const boards = new Map<string, LightbeamSwitchBoard>()
 const key = (shape: ForkShape, difficulty: Difficulty, seed: number, quarterTurns: QuarterTurns | "none") =>

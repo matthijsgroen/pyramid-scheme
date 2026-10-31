@@ -27,6 +27,17 @@ export const CONNECTOR_DIRS: Array<[number, number, Direction]> = [
   [0, -NODE_STEP, "w"],
 ]
 export const OPPOSITE: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
+/** The offsets of every node whose 3×3 meets a node's own: the four it may run to and the four diagonals. */
+export const NEAR_NODES: ReadonlyArray<readonly [number, number]> = [
+  [-NODE_STEP, -NODE_STEP],
+  [-NODE_STEP, 0],
+  [-NODE_STEP, NODE_STEP],
+  [0, -NODE_STEP],
+  [0, NODE_STEP],
+  [NODE_STEP, -NODE_STEP],
+  [NODE_STEP, 0],
+  [NODE_STEP, NODE_STEP],
+]
 
 /** The nodes on an `n`-wide grid's edge an entrance may stand on, in the order an entrance is drawn from. */
 export const edgeNodes = (n: number): Array<[number, number]> => {

@@ -378,6 +378,7 @@ export type Shortfall =
   | ReasonOf<"pipeHoleNotPlaced">
   | ReasonOf<"chambersNotSeated">
   | ReasonOf<"prefabsNotPlaced">
+  | ReasonOf<"roomsBite">
   | { type: "regionWillNotTake"; mismatch: { region: string; kind: ContentKind }[] }
   | { type: "carveDisagreement"; faults: CarveFault[] }
   | ReasonOf<"lockNotLaid">

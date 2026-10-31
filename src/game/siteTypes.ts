@@ -1025,6 +1025,9 @@ export type AssemblerReason =
    * fitted. A pinned room that fits nowhere wants 1, and `why` says what its node holds instead of the room, where
    * something does. See FloorConfig.prefabPlacements. */
   | { type: "prefabsNotPlaced"; room: string; wanted: number; placed: number; why?: string }
+  /** Two rooms that claim floor stood one node apart without merging, so one would bite the other's 3×3. `rooms`
+   * are their nodes, `r,c`, in scan order. See roomsMerge (roomFootprint.ts). */
+  | { type: "roomsBite"; rooms: [string, string] }
   /** The floor's mechanics (and sequence tiles) need more distinct glyphs than the six a mark can wear,
    * so a mark would be shared. `ids` are the ones left without a glyph, in authoring order. */
   | { type: "marksExhausted"; ids: string[] }

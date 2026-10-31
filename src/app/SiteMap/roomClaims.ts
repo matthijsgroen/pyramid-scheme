@@ -10,7 +10,7 @@ import {
   type Tileset,
 } from "@/game/siteTypes"
 import { prefabRoomAt, prefabRoomCells } from "@/game/roomShape"
-import { cellAt, isChamber, isClaimableNeighbor, portalKindOf } from "@/game/roomFootprint"
+import { cellAt, claimsFloorAt, isChamber, isClaimableNeighbor, portalKindOf, roomsMerge } from "@/game/roomFootprint"
 import { DIR_MOVES, OPPOSITE_DIR } from "./corridorRuns"
 import { buildTileRegions, type FloorAt, type Rect, type TileRegions } from "./tileRegions"
 import { CELL, SIDE_W } from "./mapScale"
@@ -42,6 +42,11 @@ const ORTHO_OFFSETS: ReadonlyArray<readonly [number, number]> = [
   [1, 0],
   [0, -1],
   [0, 1],
+]
+// The two diagonal nodes below a node, so each diagonal pair of rooms is looked at once.
+const DIAGONALS_BELOW: ReadonlyArray<readonly [number, number]> = [
+  [2, 2],
+  [2, -2],
 ]
 // Each diagonal offset paired with the two orthogonal offsets flanking it — a diagonal
 // only joins the claim if at least one flank "belongs" to the owner too (either also
@@ -400,6 +405,14 @@ export const buildRoomClaims = (
         ((here.type === "room" || here.type === "corridor") && here.dirs.has(dir)) ||
         ((there.type === "room" || there.type === "corridor") && there.dirs.has(OPPOSITE_DIR[dir]))
       if (open) joinedOwners.add([own, other].sort().join("|"))
+    }
+  }
+  // Two rooms on diagonal nodes that merge are one space too: the pillar they share opens to both.
+  for (const owner of new Set(claimedBy.values())) {
+    const [r, c] = owner.split(",").map(Number)
+    for (const [dr, dc] of DIAGONALS_BELOW) {
+      if (!claimsFloorAt(grid, r + dr, c + dc) || !roomsMerge(grid, r, c, r + dr, c + dc)) continue
+      joinedOwners.add([owner, `${r + dr},${c + dc}`].sort().join("|"))
     }
   }
 

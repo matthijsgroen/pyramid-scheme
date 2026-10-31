@@ -62,7 +62,7 @@ const roomsOf = (grid: FloorGrid) =>
   )
 
 const SEEDS = 40
-const HUB_FORK_SEEDS = 36
+const HUB_FORK_SEEDS = 35
 
 const hubFloor = plainFloor({
   pathPuzzles: 1,
@@ -164,14 +164,14 @@ describe("reserveRooms", () => {
     expect(carvedFloorDigest(carved(hubFloor, 11))).toBe(carvedFloorDigest(carved(hubFloor, 11)))
   })
 
-  it("a floor naming no prefab carves as before", () => {
-    const grid = carved(
-      plainFloor({
-        pathPuzzles: 2,
-        sideSections: [side({ pathPuzzles: 1 }), side({ gate: { type: "tomb-key", wardKeyId: "starter_a_1" } })],
-      })
+  it("a floor naming no prefab carves as one that knows of none", () => {
+    const floor = {
+      pathPuzzles: 2,
+      sideSections: [side({ pathPuzzles: 1 }), side({ gate: { type: "tomb-key" as const, wardKeyId: "starter_a_1" } })],
+    }
+    expect(carvedFloorDigest(carved(plainFloor({ ...floor, prefabs: { hall: HALL, vault: VAULT } })))).toBe(
+      carvedFloorDigest(carved(plainFloor(floor)))
     )
-    expect(carvedFloorDigest(grid)).toBe("b4c5fe50715aa838")
   })
 })
 

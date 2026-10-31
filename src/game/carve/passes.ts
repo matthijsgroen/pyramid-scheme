@@ -19,6 +19,7 @@ import type { RenderState, WritableGrid } from "./render"
 import { reserveJunctions } from "./reserveJunctions"
 import { croppedToBox, ringFault, stampBlocks } from "./reserveRooms"
 import { reserveRooms } from "./reserveRooms"
+import { bittenRooms } from "../roomFootprint"
 import { seatChainGates } from "./seatChainGates"
 import { seatGateRuns } from "./seatGateRuns"
 import { seatMainBarrierDoors } from "./seatMainBarrierDoors"
@@ -90,7 +91,8 @@ export const TAIL_READS = [
  * THE TAIL OF AN ATTEMPT, once every pass holds: render writes the grid from the decisions and the rooms that
  * reserved their blocks are drawn over their anchors, validate asks the grid's checks, the pieces a walk steps on
  * stand on it, every block's ring is checked clear, finish dresses the carve that passes them, the pinned rooms
- * are laid over its rooms, and a floor with blocks is cut to its box.
+ * are laid over its rooms, two rooms that claim floor one node apart and not merged refuse the attempt (the backstop
+ * of hangBranches' placement rule), and a floor with blocks is cut to its box.
  */
 export const finishAttempt: Finish = (prep, state) => {
   const decided = requireReads("render", TAIL_READS, state)
@@ -102,5 +104,8 @@ export const finishAttempt: Finish = (prep, state) => {
     (blocks.length ? ringFault(grid, blocks, new Set(decided.switchWays.flat().map(({ cell }) => cell))) : undefined)
   if (refusal) return refusal
   const laid = placePrefabs(prep, finish(prep, grid))
-  return blocks.length && !("retry" in laid) && !("fatal" in laid) ? croppedToBox(laid) : laid
+  if ("retry" in laid || "fatal" in laid) return laid
+  const bitten = bittenRooms(laid)
+  if (bitten) return { retry: [{ type: "roomsBite", rooms: bitten }] }
+  return blocks.length ? croppedToBox(laid) : laid
 }

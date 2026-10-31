@@ -115,13 +115,16 @@ describe("seatChambers", () => {
     }
   })
 
-  it("seats its chambers where it would without a story's activity on a puzzle, whatever claims a diagonal", () => {
+  it("seats its chambers where it would without a story's activity on a puzzle the carve leaves standing", () => {
     const storied = { 0: "weighing", 1: "weighing", 2: "weighing" } as const
     const SPREAD = [...SEEDS, 7, 8, 9, 10, 11, 12]
     const at = (grid: FloorGrid) => chambersOf(grid).map(({ r, c }) => `${r},${c}`)
+    const puzzles = (grid: FloorGrid) => [0, 1, 2].map(k => puzzleAt(grid, k)).map(({ r, c }) => `${r},${c}`)
     const nearStory = SPREAD.filter(seed => {
       const plain = carved(chamberFloor({ chambers: 3 }), seed)
       const story = carved(chamberFloor({ chambers: 3, activitiesByIndex: storied }), seed)
+      // A story room that would be bitten is carved again, so only a carve whose puzzles stand where they did compares.
+      if (puzzles(story).join() !== puzzles(plain).join()) return false
       expect(at(story)).toEqual(at(plain))
       return chambersOf(story).some(({ r, c }) =>
         [0, 1, 2].some(k => {

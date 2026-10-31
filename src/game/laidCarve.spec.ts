@@ -196,7 +196,7 @@ const FIXTURES: Record<string, Fixture> = {
     floor: floorOf([{ lock: wayOnLock() }], { pathPuzzles: 0 }),
     registry: true,
     sound: true,
-    minimum: 30,
+    minimum: 25,
   },
   "a sequence step in the board's region": {
     floor: floorOf([{ lock: stepInBoardLock() }], {
@@ -217,13 +217,13 @@ const FIXTURES: Record<string, Fixture> = {
     floor: floorOf([{ lock: hungryLock() }], { sideSections: [path(1), path(0)] }),
     registry: true,
     sound: true,
-    minimum: 20,
+    minimum: 18,
   },
   "a lock whose regions have appetites and a side path of one puzzle": {
     floor: floorOf([{ lock: hungryLock() }], { sideSections: [path(1)] }),
     registry: true,
     sound: true,
-    minimum: 30,
+    minimum: 20,
   },
   "a lock whose regions have appetites and a key-hosting side path of one puzzle": {
     floor: floorOf([{ lock: hungryLock() }], { sideSections: [path(1), path(0, { gate: { type: "floor-key" } })] }),

@@ -410,16 +410,14 @@ describe("useAssembledFloor — the high-water mark", () => {
   })
 
   it("leaves a section the save no longer matches entirely fogged", () => {
-    const { result } = renderHook(() =>
-      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, { "gone-section": ["0/p0", "0/p1"] }, null, 0, new Set())
-    )
-    const restored = result.current.grid!
-
-    const completed = restored.cells.flatMap((row, r) =>
-      row.flatMap((cell, c) => (cell.type !== "empty" && cell.state === "completed" ? [[r, c]] : []))
-    )
-    // Only the entrance, which is explored by standing in it.
-    expect(completed).toEqual([[...restored.entrancePos]])
+    const completedOf = (saved: Record<string, string[]>) => {
+      const { result } = renderHook(() => useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, saved, null, 0, new Set()))
+      return result.current.grid!.cells.flatMap((row, r) =>
+        row.flatMap((cell, c) => (cell.type !== "empty" && cell.state === "completed" ? [[r, c]] : []))
+      )
+    }
+    // Only what standing in the entrance explains, as on a floor never entered.
+    expect(completedOf({ "gone-section": ["0/p0", "0/p1"] })).toEqual(completedOf({}))
   })
 })
 

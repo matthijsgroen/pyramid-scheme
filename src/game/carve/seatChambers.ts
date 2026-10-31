@@ -2,6 +2,7 @@ import { hashString } from "@/support/hashString"
 import type { ActivityId } from "../activities"
 import type { Direction } from "../siteTypes"
 import { absorbedCell, contentNow, gateAtCell, keyOf, nodeExitsOf, regionDoorAt, rooms } from "./derive"
+import { NEAR_NODES } from "./grid"
 import { MAIN_SECTION_ADDRESS } from "./sections"
 import { pass } from "./state"
 import type { Cell, RoomSpec, Shortfall } from "./state"
@@ -11,18 +12,6 @@ type Gap = readonly string[]
 
 /** One side path's chambers as authored: its gaps in path order, the chamber after each puzzle, and all its nodes. */
 type SidePath = { address: string; gaps: readonly Gap[]; after: Record<number, ActivityId | true>; nodes: Gap }
-
-/** The offsets of every node whose 3×3 meets a node's own: the two the corridor runs to and the four diagonals. */
-const NEAR: ReadonlyArray<readonly [number, number]> = [
-  [-2, -2],
-  [-2, 0],
-  [-2, 2],
-  [0, -2],
-  [0, 2],
-  [2, -2],
-  [2, 0],
-  [2, 2],
-]
 
 /** Where `count` chambers spread over `gaps` gaps want to stand, evenly, the middle of each share first. */
 const spreadTargets = (count: number, gaps: number): number[] =>
@@ -141,7 +130,7 @@ export const seatChambers = pass(
     const free = (key: string): boolean => {
       if (taken.has(key) || chambers.has(key) || seatedRegion(key) || waysOut(key) !== 2) return false
       const [r, c] = key.split(",").map(Number)
-      return NEAR.every(([dr, dc]) => !claimsFloor(`${r + dr},${c + dc}`))
+      return NEAR_NODES.every(([dr, dc]) => !claimsFloor(`${r + dr},${c + dc}`))
     }
     const isVertical = (key: string) => {
       const dirs = dirsOf(key)

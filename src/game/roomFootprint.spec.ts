@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
-import { claimsFloorAt, isChamber } from "./roomFootprint"
+import { bittenRooms, claimsFloorAt, isChamber, roomsMerge } from "./roomFootprint"
 import { assembleAt, chamberFloor } from "./carve/carveFixtures"
-import type { Direction } from "./siteTypes"
+import type { Direction, FloorGrid, GridCell } from "./siteTypes"
 
 const portal = (...dirs: Direction[]) => ({ roomType: "portal" as const, dirs: new Set(dirs) })
 
@@ -60,5 +60,61 @@ describe("claimsFloorAt", () => {
       }
     expect(claims).toContain(true)
     expect(claims).toContain(false)
+  })
+})
+
+/**
+ * A grid drawn as text: `F` a fork, `T` a treasure dead end, `G` a gate room, `.` a corridor, each open toward every
+ * drawn neighbour. A cell's section is `main` unless `sections` names another for its `r,c`.
+ */
+const sketch = (rows: string[], sections: Record<string, string> = {}): FloorGrid => {
+  const cols = Math.max(...rows.map(row => row.length))
+  const drawn = (r: number, c: number) => (rows[r]?.[c] ?? " ") !== " "
+  const MOVES: [Direction, number, number][] = [
+    ["n", -1, 0],
+    ["s", 1, 0],
+    ["w", 0, -1],
+    ["e", 0, 1],
+  ]
+  const cells = rows.map((_, r) =>
+    Array.from({ length: cols }, (_, c): GridCell => {
+      const at = rows[r][c] ?? " "
+      if (at === " ") return { type: "empty" }
+      const dirs = new Set(MOVES.filter(([, dr, dc]) => drawn(r + dr, c + dc)).map(([dir]) => dir))
+      const base = { dirs, state: "fogged" as const, sectionAddress: sections[`${r},${c}`] ?? "main" }
+      if (at === ".") return { type: "corridor", ...base }
+      if (at === "F") return { type: "room", roomType: "fork", ...base }
+      if (at === "G") return { type: "room", roomType: "encounter", tags: ["gate"], ...base }
+      return { type: "room", roomType: "encounter", tags: ["treasure"], ...base }
+    })
+  )
+  return { siteId: "site", rows: rows.length, cols, entrancePos: [0, 0], exitPos: [0, 0], staircases: {}, cells }
+}
+
+describe("roomsMerge", () => {
+  it("diagonal same-section rooms merge through the pillar only when a corner joins them", () => {
+    expect(roomsMerge(sketch(["F..", "  .", "  F"]), 0, 0, 2, 2)).toBe(true)
+    expect(roomsMerge(sketch(["F  ", ".  ", "..F"]), 0, 0, 2, 2)).toBe(true)
+    // No corner node, a corner open to one of them only, and a gate in the corner.
+    expect(roomsMerge(sketch(["..F  ", "     ", "  F.."]), 0, 2, 2, 4)).toBe(false)
+    expect(roomsMerge(sketch(["..F..", "     ", "  F.."]), 0, 2, 2, 4)).toBe(false)
+    expect(roomsMerge(sketch(["F.G", "  .", "  F"]), 0, 0, 2, 2)).toBe(false)
+  })
+
+  it("never merges two rooms of different sections across a diagonal, whatever joins them", () => {
+    expect(roomsMerge(sketch(["F..", "  .", "  F"], { "2,2": "s0" }), 0, 0, 2, 2)).toBe(false)
+  })
+
+  it("merges two ortho rooms a passage joins, and keeps two it does not apart", () => {
+    expect(roomsMerge(sketch(["F.F"]), 0, 0, 0, 2)).toBe(true)
+    expect(roomsMerge(sketch(["F F", ". .", "..."]), 0, 0, 0, 2)).toBe(false)
+  })
+})
+
+describe("bittenRooms", () => {
+  it("names the two rooms that claim floor one node apart without merging", () => {
+    expect(bittenRooms(sketch(["T T", ". .", "..."]))).toEqual(["0,0", "0,2"])
+    expect(bittenRooms(sketch(["T  ", ".  ", "..T"]))).toBeUndefined()
+    expect(bittenRooms(sketch(["F.F", ". .", "..."]))).toBeUndefined()
   })
 })

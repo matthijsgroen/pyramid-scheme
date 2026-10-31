@@ -158,3 +158,41 @@ describe("where a dressed room's prop stands", () => {
     expect(decorationAt.has("2,1")).toBe(false)
   })
 })
+
+describe("two rooms on diagonal nodes", () => {
+  const fork = (dirs: Direction[], sectionAddress = "main"): GridCell => ({
+    type: "room",
+    roomType: "fork",
+    dirs: new Set(dirs),
+    state,
+    sectionAddress,
+  })
+  const passage = (dirs: Direction[]): GridCell => ({
+    type: "corridor",
+    dirs: new Set(dirs),
+    state,
+    sectionAddress: "main",
+  })
+  // Two forks a corner node joins, the corner the L the player walks between them.
+  const cornered = (lowerSection: string): FloorGrid => ({
+    siteId: "site",
+    rows: 3,
+    cols: 3,
+    entrancePos: [0, 0],
+    exitPos: [2, 2],
+    staircases: {},
+    cells: [
+      [fork(["e"]), passage(["e", "w"]), passage(["w", "s"])],
+      [empty, empty, passage(["n", "s"])],
+      [empty, empty, fork(["n"], lowerSection)],
+    ],
+  })
+
+  it("opens the pillar they share to both where they merge", () => {
+    expect(buildRoomClaims(cornered("main")).joinedOwners).toContain("0,0|2,2")
+  })
+
+  it("keeps the pillar walled where they stand in two sections", () => {
+    expect(buildRoomClaims(cornered("s0")).joinedOwners).not.toContain("0,0|2,2")
+  })
+})
