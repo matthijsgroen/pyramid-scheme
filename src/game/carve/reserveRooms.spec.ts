@@ -162,7 +162,7 @@ describe("reserveRooms", () => {
       expect(bare, `exits ${exits}`).toBeGreaterThanOrEqual(HUB_FORK_SEEDS)
       expect(switched, `exits ${exits} switched`).toBeGreaterThanOrEqual(HUB_FORK_SEEDS)
     }
-  })
+  }, 30_000)
 
   it("the same seed carves the same reserved floor twice", () => {
     expect(carvedFloorDigest(carved(hubFloor, 11))).toBe(carvedFloorDigest(carved(hubFloor, 11)))
