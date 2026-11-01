@@ -139,6 +139,8 @@ s stop`)
 const FORK_HALL = hall("# . . . . . s . #")
 // The same hall with its stop one cell west, bare floor north of it: fit for somebody.
 const FIT_HALL = hall("# . . . . s . . #")
+// The same hall with its stop just inside the south door.
+const DOOR_HALL = hall("# . . . s . . . #")
 
 /** A fork at `PREFAB_FORK` with arms west, east and south (and north to a room at 0,6 with `north`), laid over by a
  * made-up hall: rect rows 3-6, cols 3-9, its arms leaving by the door places at 4,2 (west), 4,10 (east), 7,6 (south)
@@ -168,6 +170,9 @@ export const prefabForkFloor = (fork: Partial<RoomCell> = {}, north = false): Fl
 /** `prefabForkFloor` laid over by the same hall with its stop where bare floor stands north of it. */
 export const fitForkFloor = (fork: Partial<RoomCell> = {}): FloorGrid =>
   laidOver(forkFloor(fork), PREFAB_FORK, FIT_HALL)
+/** `prefabForkFloor` laid over by the same hall with its stop at 6,6, just inside the south door. */
+export const doorStopForkFloor = (fork: Partial<RoomCell> = {}, north = false): FloorGrid =>
+  laidOver(forkFloor(fork, north), PREFAB_FORK, DOOR_HALL)
 
 /** Rooms whose node stands next to the ring, round a 2×1 skeleton. `L`: a chamber at 3,2 on the rect's north-west
  * corner (rows 3-5, cols 2-5), in by the north door place at 2,2 from the entrance at 0,2 and out east along row 3 by

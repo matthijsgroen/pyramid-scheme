@@ -1,16 +1,33 @@
 // @vitest-environment jsdom
-import { render, fireEvent } from "@testing-library/react"
+import { act, render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { assembleFloor } from "@/game/siteAssembler"
 import { completeCell, findPath, revealAll, walkableFrom } from "@/game/gridNavigation"
-import { buildOfferContext, clickTargetAt, markerAt, offerContextFrom, offeredTargets } from "./clickTargets"
+import {
+  buildOfferContext,
+  clickTargetAt,
+  markerAt,
+  offerContextFrom,
+  offeredTargets,
+  roomChoiceAt,
+} from "./clickTargets"
 import { buildRoomClaims } from "./roomClaims"
-import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
+import type { Direction, FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { CELL, cellCenter } from "./mapScale"
 import { roomDoors, roomPlaceOf } from "@/game/roomShape"
 import { DIR_MOVES } from "./corridorRuns"
-import { AXES, DROP_AT, PREFAB_FORK, dropGrid, obstacleIndexes, prefabForkFloor } from "./floorFixtures.testing"
+import {
+  AXES,
+  DROP_AT,
+  PREFAB_FORK,
+  doorStopForkFloor,
+  dropGrid,
+  obstacleIndexes,
+  prefabForkFloor,
+} from "./floorFixtures.testing"
+import { roomChoices } from "./roomChoices"
+import { ringDistance } from "./arrowRing"
 
 // jsdom has no scrollTo; the map scrolls itself to the explorer on mount.
 Element.prototype.scrollTo = Element.prototype.scrollTo ?? (() => {})
@@ -112,6 +129,23 @@ const clickEveryTarget = (grid: FloorGrid, at: readonly [number, number]) => {
   )
   for (const target of targets) fireEvent.click(target)
   return onCellClick.mock.calls as [number, number][]
+}
+
+const RING_STEP: Record<Direction, readonly [number, number]> = { n: [0, -1], e: [1, 0], s: [0, 1], w: [-1, 0] }
+/** Where an arrow of the ring around the explorer is drawn from his spot, as `x,y`. */
+const ringOffset = (dir: Direction) =>
+  `${Math.round(RING_STEP[dir][0] * ringDistance(dir))},${Math.round(RING_STEP[dir][1] * ringDistance(dir))}`
+/** The ring arrows on the map, as their offsets from the explorer's spot. */
+const ringOffsets = (container: HTMLElement) => {
+  const [x, y] = container.querySelector("[data-explorer]")!.getAttribute("data-at")!.split(",").map(Number)
+  return Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]"))
+    .filter(el => el.querySelector(":scope > svg > polygon"))
+    .map(el => {
+      const cx = parseFloat(el.style.left) + parseFloat(el.style.width) / 2
+      const cy = parseFloat(el.style.top) + parseFloat(el.style.height) / 2
+      return `${Math.round(cx - x)},${Math.round(cy - y)}`
+    })
+    .sort()
 }
 
 describe("what the map offers to click", () => {
@@ -271,6 +305,112 @@ describe("a room laid over a fork", () => {
     const doors = roomDoors(grid, ...PREFAB_FORK)
     expect(doors).toHaveLength(4)
     for (const { at } of doors) expect(clickTargetAt(grid, claims, at[0], at[1], ctx), `${at}`).toEqual(at)
+  })
+
+  it("a door beside the player points there, and a walked door far off draws nothing", () => {
+    const claims = buildRoomClaims(grid)
+    const [door] = roomDoors(grid, ...PREFAB_FORK).filter(({ side }) => side === "w")
+    const [r, c] = door.at
+    const beside = offerContextFrom(grid, [r, c - 1], {})
+    expect(markerAt(grid, claims, r, c, beside)).toEqual({ kind: "arrow", dir: "e" })
+    const walked = completeCell(grid, r, c)
+    const away = offerContextFrom(walked, grid.entrancePos, {})
+    expect(markerAt(walked, buildRoomClaims(walked), r, c, away)).toBeNull()
+  })
+
+  it("standing on a door, the step into the room points at its node", () => {
+    const claims = buildRoomClaims(grid)
+    const [door] = roomDoors(grid, ...PREFAB_FORK).filter(({ side }) => side === "w")
+    const [r, c] = door.at
+    const ctx = offerContextFrom(grid, door.at, {})
+    expect(clickTargetAt(grid, claims, r, c + 1, ctx)).toEqual(PREFAB_FORK)
+    expect(markerAt(grid, claims, r, c + 1, ctx)).toEqual({ kind: "arrow", dir: "e" })
+  })
+
+  it("standing in it, each choice's cell points its way and a tap there leads where it says", () => {
+    const claims = buildRoomClaims(grid)
+    for (const waypoint of [undefined, [6, 6] as const, PREFAB_FORK]) {
+      const ctx = offerContextFrom(grid, PREFAB_FORK, { waypoint })
+      const choices = roomChoices(grid, PREFAB_FORK, waypoint ?? [6, 8])
+      expect(choices.length).toBeGreaterThan(1)
+      for (const { arrowAt, dir, to } of choices) {
+        expect(clickTargetAt(grid, claims, ...arrowAt, ctx), `${arrowAt}`).toEqual(to.at)
+        expect(markerAt(grid, claims, ...arrowAt, ctx), `${arrowAt}`).toEqual({ kind: "arrow", dir })
+        expect(roomChoiceAt(ctx, PREFAB_FORK, ...arrowAt)).toEqual({ arrowAt, dir, to })
+        if (to.at[0] !== PREFAB_FORK[0] || to.at[1] !== PREFAB_FORK[1])
+          expect(roomChoiceAt(ctx, PREFAB_FORK, ...to.at)).toEqual({ arrowAt, dir, to })
+      }
+      // The steps round his cell are no arrows of their own: the room's floor is open every way.
+      const arrows = inner.filter(([r, c]) => markerAt(grid, claims, r, c, ctx)?.kind === "arrow")
+      expect(arrows.map(String).sort()).toEqual(
+        choices
+          .map(({ arrowAt }) => arrowAt)
+          .filter(([r, c]) => roomPlaceOf(grid, r, c) === "inner")
+          .map(String)
+          .sort()
+      )
+    }
+  })
+
+  it("a door a choice leads out by wears that choice's arrow and no second marker", () => {
+    const doorStop = revealAll(doorStopForkFloor({}, true))
+    const ctx = offerContextFrom(doorStop, PREFAB_FORK, {})
+    expect(markerAt(doorStop, buildRoomClaims(doorStop), 7, 6, ctx)).toEqual({ kind: "arrow", dir: "s" })
+    const { container } = render(<SiteMapView grid={doorStop} explorerPos={PREFAB_FORK} onCellClick={() => {}} />)
+    expect(ringOffsets(container)).toEqual([...ctx.choices.values()].map(({ dir }) => ringOffset(dir)).sort())
+    expect(ringOffsets(container)).toContain(ringOffset("s"))
+    const { cx, cy } = cellCenter(7, 6)
+    const onDoor = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).filter(
+      el =>
+        Math.abs(parseFloat(el.style.left) + parseFloat(el.style.width) / 2 - cx) < 1 &&
+        Math.abs(parseFloat(el.style.top) + parseFloat(el.style.height) / 2 - cy) < 1
+    )
+    expect(onDoor.filter(el => el.querySelector(":scope > svg > polygon"))).toHaveLength(0)
+  })
+
+  it("offers no choices while he walks between two spots of the room", () => {
+    const ctx = buildOfferContext(grid, {
+      walkFrom: PREFAB_FORK,
+      runFrom: PREFAB_FORK,
+      runsSuppressed: true,
+      freeWalk: false,
+      waypoint: [6, 6],
+    })
+    expect(ctx.choices.size).toBe(0)
+  })
+
+  it("draws a waypoint's arrows once he stands still on it, and none on the way", () => {
+    let frames: FrameRequestCallback[] = []
+    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => frames.push(cb))
+    vi.stubGlobal("cancelAnimationFrame", () => void (frames = []))
+    try {
+      const arrows = (container: HTMLElement) => ringOffsets(container)
+      const arrowsFrom = (standing: readonly [number, number]) =>
+        roomChoices(grid, PREFAB_FORK, standing)
+          .map(({ dir }) => ringOffset(dir))
+          .sort()
+      const view = (waypoint?: readonly [number, number]) => (
+        <SiteMapView grid={grid} explorerPos={PREFAB_FORK} waypoint={waypoint} onCellClick={() => {}} />
+      )
+      const { container, rerender } = render(view())
+      expect(arrows(container)).toEqual(arrowsFrom([6, 8]))
+
+      rerender(view([6, 6]))
+      let now = 0
+      let walking = 0
+      while (frames.length > 0) {
+        expect(arrows(container)).toEqual([])
+        const due = frames
+        frames = []
+        now += 50
+        act(() => due.forEach(cb => cb(now)))
+        walking++
+      }
+      expect(walking).toBeGreaterThan(1)
+      expect(arrows(container)).toEqual(arrowsFrom([6, 6]))
+    } finally {
+      vi.unstubAllGlobals()
+    }
   })
 })
 

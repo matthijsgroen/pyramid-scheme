@@ -53,7 +53,7 @@ import { useAssembledFloor } from "./useAssembledFloor"
 import { useMechanismStates } from "./useMechanismStates"
 import { useSiteNavigation } from "./useSiteNavigation"
 import { buildRoomClaims } from "./roomClaims"
-import { offeredTargets } from "./clickTargets"
+import { offerContextFrom, offeredTargets } from "./clickTargets"
 import { SiteMapView } from "./SiteMapView"
 import { CELL, cellCenter } from "./mapScale"
 import { isCorridorCorner } from "./corridorRuns"
@@ -71,7 +71,7 @@ import {
   type Piece,
 } from "./floorFixtures.testing"
 import { ONE_WAY_RUN_CELLS } from "@/game/siteAssembler"
-import { roomDoors } from "@/game/roomShape"
+import { prefabRoomAt, roomDoors, roomPlaceOf } from "@/game/roomShape"
 // Populates the family registry, the same side effect every other assembled-floor spec relies on.
 import "@/mods/registerModApps"
 
@@ -165,11 +165,15 @@ const offerViolations = (
  *
  * THE EXEMPTION IS A DECISION. A corner the player has already walked is drawn ground they can see, so
  * it needs no marker to be findable. */
-const markerViolations = (grid: FloorGrid, explorerPos: readonly [number, number]): string[] => {
+const markerViolations = (
+  grid: FloorGrid,
+  explorerPos: readonly [number, number],
+  waypoint?: readonly [number, number]
+): string[] => {
   // jsdom has no layout, so it has no `scrollTo`; the map centres on the explorer through it.
   Element.prototype.scrollTo ??= () => {}
   const exempt = new Set<string>()
-  // GROUND ALREADY WALKED NEEDS NO MARK, and that now covers a drop's ends as well as a corner: a map
+  // GROUND ALREADY WALKED NEEDS NO MARK, and that covers a drop's ends and a designed room's doors as well as a corner: a map
   // that keeps marking where the player has been fills up with his own history. It is a trade, and the
   // cost is named here rather than hidden — such a cell is still a tap, so it is a tap with nothing drawn
   // on it, which is the shape of a defect reported from play on 2026-10-01. What makes it bearable is
@@ -181,14 +185,16 @@ const markerViolations = (grid: FloorGrid, explorerPos: readonly [number, number
       if (
         cell.type === "corridor" &&
         cell.state === "completed" &&
-        (isCorridorCorner(cell.dirs) || dropEnds.has(`${r},${c}`))
+        (isCorridorCorner(cell.dirs) || dropEnds.has(`${r},${c}`) || roomPlaceOf(grid, r, c) === "door")
       ) {
         const { cx, cy } = cellCenter(r, c)
         exempt.add(`${cx - CELL / 2}px,${cy - CELL / 2}px`)
       }
     })
   )
-  const { container, unmount } = render(createElement(SiteMapView, { grid, explorerPos, onCellClick: () => {} }))
+  const { container, unmount } = render(
+    createElement(SiteMapView, { grid, explorerPos, waypoint, onCellClick: () => {} })
+  )
   try {
     return Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]"))
       .filter(cell => cell.style.cursor === "pointer" && (cell.querySelector("svg")?.childElementCount ?? 0) === 0)
@@ -215,7 +221,11 @@ type Store = {
 const makeStore = (): Store => ({ exploredCells: {}, positionKey: null, standingKey: null, mechanismStates: {} })
 
 type Harness = {
-  useHook: () => ReturnType<typeof useAssembledFloor> & { onCellClick: (r: number, c: number) => void; prompt: unknown }
+  useHook: () => ReturnType<typeof useAssembledFloor> & {
+    onCellClick: (r: number, c: number) => void
+    prompt: unknown
+    waypoint: readonly [number, number] | undefined
+  }
 }
 
 // `createJourneysV3Api` reads and writes only what its own JourneyAPI surface needs, so the fixture
@@ -336,7 +346,7 @@ const buildHarness = (
         }),
       onExitReached: () => {},
     })
-    return { ...assembled, onCellClick: nav.onCellClick, prompt: nav.prompt }
+    return { ...assembled, onCellClick: nav.onCellClick, prompt: nav.prompt, waypoint: nav.waypoint }
   }
 
   return { useHook }
@@ -353,13 +363,14 @@ const STEP_BUDGET = 500
  */
 const walkFloor = async (
   grid: FloorGrid
-): Promise<{ violations: string[]; steps: number; stood: ReadonlySet<string> }> => {
+): Promise<{ violations: string[]; steps: number; stood: ReadonlySet<string>; waypoints: ReadonlySet<string> }> => {
   const store = makeStore()
   const harness = buildHarness(grid, store)
-  const hook = renderHook(harness.useHook)
+  let hook = renderHook(harness.useHook)
 
   const visited = new Set<string>()
   const stood = new Set<string>()
+  const waypoints = new Set<string>()
   const violations: string[] = []
   let steps = 0
   // Both position fields, not just `positionKey`: `standingKey` is the live cell — a bend included —
@@ -370,15 +381,24 @@ const walkFloor = async (
   const sig = () =>
     `${store.positionKey ?? "start"}|${store.standingKey ?? "start"}|${JSON.stringify(store.mechanismStates)}`
   const snapshot = () => ({ ...store })
+  const at = (cell: readonly [number, number] | undefined) => (cell ? `${cell[0]},${cell[1]}` : "")
+  // A WAYPOINT IS NEVER SAVED, so restoring the store leaves him on the room's stop: a fresh hook stands him there, and
+  // the taps that took him from the stop to the waypoint (`trail`) take him back.
+  const standAgain = (trail: readonly (readonly [number, number])[]) => {
+    hook.unmount()
+    hook = renderHook(harness.useHook)
+    for (const tap of trail) act(() => hook.result.current.onCellClick(tap[0], tap[1]))
+    hook.rerender()
+  }
 
-  const visit = async (): Promise<void> => {
+  const visit = async (trail: readonly (readonly [number, number])[] = []): Promise<void> => {
     steps++
     if (steps > STEP_BUDGET) {
       violations.push("step budget exceeded — the walk never settled")
       return
     }
     hook.rerender()
-    const { grid, explorerPos } = hook.result.current
+    const { grid, explorerPos, waypoint } = hook.result.current
     if (!grid) {
       violations.push("floor did not carve")
       return
@@ -386,29 +406,45 @@ const walkFloor = async (
     grid.cells.forEach((row, r) =>
       row.forEach((cell, c) => cell.type !== "empty" && cell.state === "completed" && stood.add(`${r},${c}`))
     )
-    const here = sig() + `@${explorerPos[0]},${explorerPos[1]}`
+    if (waypoint) waypoints.add(at(waypoint))
+    const here = sig() + `@${at(explorerPos)}~${at(waypoint)}`
     if (visited.has(here)) return
     visited.add(here)
 
     violations.push(...offerViolations(grid, explorerPos))
-    violations.push(...markerViolations(grid, explorerPos))
+    violations.push(...markerViolations(grid, explorerPos, waypoint))
 
     const claims = buildRoomClaims(grid)
-    const offers = offeredTargets(grid, claims, explorerPos)
-    for (const [, target] of offers) {
-      const targetSig = sig() + `@${target[0]},${target[1]}`
+    const offers = offeredTargets(grid, claims, explorerPos, { waypoint })
+    // A room choice's arrow is tapped as the map hands it on: as the arrow's own cell (`roomChoiceAt`).
+    const { choices } = offerContextFrom(grid, explorerPos, { waypoint })
+    for (const [key, target] of offers) {
+      const choice = choices.get(key)
+      const lands =
+        choice?.to.kind === "waypoint"
+          ? `${at(explorerPos)}~${at(target)}`
+          : choice?.to.kind === "stop"
+            ? `${at(explorerPos)}~`
+            : `${at(target)}~`
+      const targetSig = sig() + `@${lands}`
       if (visited.has(targetSig)) continue
+      const tap = choice ? choice.arrowAt : target
       const before = snapshot()
-      act(() => hook.result.current.onCellClick(target[0], target[1]))
+      act(() => hook.result.current.onCellClick(tap[0], tap[1]))
       hook.rerender()
-      const after = hook.result.current.explorerPos
-      if (after[0] !== target[0] || after[1] !== target[1]) {
+      const { explorerPos: after, waypoint: afterWaypoint } = hook.result.current
+      // In a designed room an offer can stand him on a waypoint, or back on the room's stop, without moving his cell.
+      const stoodOn = afterWaypoint ?? after
+      const backOnStop = !afterWaypoint && at(prefabRoomAt(grid, after[0], after[1])?.stop) === at(target)
+      if (at(stoodOn) !== at(target) && !backOnStop) {
         violations.push(
-          `clicked the offer at ${target[0]},${target[1]} from ${explorerPos} but the explorer is at ${after[0]},${after[1]}`
+          `clicked the offer at ${at(target)} from ${explorerPos}~${at(waypoint)} but the explorer is at ${at(after)}~${at(afterWaypoint)}`
         )
         Object.assign(store, before)
+        standAgain(trail)
         continue
       }
+      const nextTrail = afterWaypoint ? [...trail, tap] : []
       act(() => vi.advanceTimersByTime(5000))
       hook.rerender()
       const prompt = hook.result.current.prompt as { take: () => void } | null
@@ -418,9 +454,10 @@ const walkFloor = async (
         act(() => vi.advanceTimersByTime(5000))
         hook.rerender()
       }
-      await visit()
+      await visit(nextTrail)
       Object.assign(store, before)
       hook.rerender()
+      if (at(hook.result.current.waypoint) !== at(waypoint)) standAgain(trail)
     }
   }
 
@@ -430,7 +467,7 @@ const walkFloor = async (
   } finally {
     vi.useRealTimers()
   }
-  return { violations, steps, stood }
+  return { violations, steps, stood, waypoints }
 }
 
 // THE FIXTURES. One mechanic each, drawn by hand. `E` is the entrance, `R` a room, `F` a fork, `.` a
@@ -510,9 +547,16 @@ const cornerAtLaunch = floorFrom(["E.R", `  .${ZIPLINE}.`, `${pad}R`], DROP)
 const cornerAtLanding = floorFrom([`${pad}E`, `R.${ZIPLINE}.`, `${pad}R`], DROP)
 const gateAndDrop = floorFrom([`E.Y.A.R${ZIPLINE}R.R`], { ...DROP, Y: lever(leverOpening("a")), A: gate("a") })
 
-// `minSteps` sits just under each fixture's measured step count (109, 33, 93, 75, 90, 13, 21 and 110), so a walk
+// `minSteps` sits just under each fixture's measured step count (109, 33, 93, 75, 90, 13, 21, 153 and 327), so a walk
 // that stalls early is red rather than quietly shorter.
-type Fixture = { name: string; grid: FloorGrid; minSteps: number; mustReach?: readonly (readonly [number, number])[] }
+type Fixture = {
+  name: string
+  grid: FloorGrid
+  minSteps: number
+  mustReach?: readonly (readonly [number, number])[]
+  /** Waypoints of a designed room the walk must stand on. */
+  mustStandOn?: readonly string[]
+}
 
 const fixtures: Fixture[] = [
   { name: "a plain corridor with corners and a room, no mechanism", grid: plainCorridors, minSteps: 100 },
@@ -527,8 +571,16 @@ const fixtures: Fixture[] = [
   {
     name: "a fork laid over by a prefab room, walked through and round",
     grid: prefabForkFloor(),
-    minSteps: 108,
+    minSteps: 150,
     mustReach: roomDoors(prefabForkFloor(), ...PREFAB_FORK).map(door => door.at),
+    mustStandOn: ["6,6"],
+  },
+  {
+    name: "a four-way fork laid over by a prefab room whose node is a waypoint",
+    grid: prefabForkFloor({}, true),
+    minSteps: 320,
+    mustReach: roomDoors(prefabForkFloor({}, true), ...PREFAB_FORK).map(door => door.at),
+    mustStandOn: ["6,6", `${PREFAB_FORK[0]},${PREFAB_FORK[1]}`],
   },
 ]
 
@@ -545,13 +597,17 @@ const dropShapes = AXES.flatMap(axis =>
 )
 
 describe("the movement invariant — offers match walkability, and taking one moves the explorer", () => {
-  it.each(fixtures)("holds across every reachable state of $name", async ({ grid, minSteps, mustReach = [] }) => {
-    const { violations, steps, stood } = await walkFloor(grid)
+  it.each(fixtures)(
+    "holds across every reachable state of $name",
+    async ({ grid, minSteps, mustReach = [], mustStandOn = [] }) => {
+      const { violations, steps, stood, waypoints } = await walkFloor(grid)
 
-    expect(violations).toEqual([])
-    expect(mustReach.filter(([r, c]) => !stood.has(`${r},${c}`))).toEqual([])
-    expect(steps).toBeGreaterThan(minSteps) // a walk this short would prove nothing was exercised
-  })
+      expect(violations).toEqual([])
+      expect(mustReach.filter(([r, c]) => !stood.has(`${r},${c}`))).toEqual([])
+      expect(mustStandOn.filter(cell => !waypoints.has(cell))).toEqual([])
+      expect(steps).toBeGreaterThan(minSteps) // a walk this short would prove nothing was exercised
+    }
+  )
 
   it.each(dropShapes)("holds across every reachable state of $name", async ({ grid }) => {
     const { violations, steps } = await walkFloor(grid)

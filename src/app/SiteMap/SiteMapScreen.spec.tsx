@@ -2,7 +2,7 @@
 import { render, act, fireEvent, cleanup } from "@testing-library/react"
 import { describe, expect, it, vi, beforeAll, beforeEach, afterEach } from "vitest"
 import type { FloorConfig, FloorGrid, GridCell, KeyColor, RoomCell, TombKeyReward } from "@/game/siteTypes"
-import { CELL, cellCenter } from "./mapScale"
+import { cellCenter } from "./mapScale"
 import { clearGameData } from "@/support/useGameStorage"
 import { registerFamily, resolveEncounter } from "@/app/families/familyRegistry"
 import { registerHeldKeysProvider } from "@/app/SiteMap/keyProviders"
@@ -132,13 +132,9 @@ const settle = async () => {
   })
 }
 
-// A cell's own marker box, addressed by where SiteMapView puts it: a marker's box IS its cell.
-const nodeAt = (container: HTMLElement, col: number, row = 0) => {
-  const { cx, cy } = cellCenter(row, col)
-  return Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
-    el => parseFloat(el.style.left) === cx - CELL / 2 && parseFloat(el.style.top) === cy - CELL / 2
-  )!
-}
+// A cell's own marker box, addressed by the cell it belongs to.
+const nodeAt = (container: HTMLElement, col: number, row = 0) =>
+  container.querySelector<HTMLElement>(`[data-marker-at="${row},${col}"]`)!
 const exitNode = (container: HTMLElement) => nodeAt(container, 2)
 
 describe(SiteMapScreen, () => {

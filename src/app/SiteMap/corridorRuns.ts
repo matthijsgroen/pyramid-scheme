@@ -1,7 +1,7 @@
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
 import { isSealedWayOut } from "@/game/gridNavigation"
-import { roomPlaceOf } from "@/game/roomShape"
+import { prefabRoomCells, roomDoors, roomPlaceOf } from "@/game/roomShape"
 
 // Corridor geometry: which cells are corners, and where a straight run of corridor ends. Pure grid
 // reading with no React and no drawing in it, so the map's click rules (`clickTargets.ts`) and the
@@ -47,9 +47,19 @@ const findCorridorRunTarget = (
       if (isSealedWayOut(cell) && cell.state !== "fogged") return before && { at: before, shut: true }
       return cell.state === "reachable" || cell.state === "completed" ? { at: [r, c], shut: false } : null
     }
-    // A designed room's door in use ends a run; its own floor is walked by the room and ends none.
+    // A designed room's door in use ends a run. A step onto its own floor leads to its node, and out of its node to
+    // the door on that side: the room walks the rest.
     const place = roomPlaceOf(grid, r, c)
-    if (place === "inner") return null
+    if (place === "inner") {
+      const [nr, nc] = prefabRoomCells(grid).get(`${r},${c}`)!.split(",").map(Number)
+      const [fr, fc] = DIR_MOVES[OPPOSITE_DIR[fromDir]]
+      const leaving = r + fr === nr && c + fc === nc
+      const at = leaving ? roomDoors(grid, nr, nc).find(door => door.side === fromDir)?.at : ([nr, nc] as const)
+      const end = at && cellAt(grid, at[0], at[1])
+      return end && end.type !== "empty" && (end.state === "reachable" || end.state === "completed")
+        ? { at, shut: false }
+        : null
+    }
     if (place === "door" || isCorridorCorner(cell.dirs)) {
       return cell.state === "reachable" || cell.state === "completed" ? { at: [r, c], shut: false } : null
     }

@@ -12,7 +12,8 @@ import { useTimeout } from "@/support/useTimeout"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { encodeEdge } from "./edgeId"
 import { actsOnArrival, staysOpen } from "./nodeKinds"
-import { buildOfferContext, clickTargetAt } from "./clickTargets"
+import { buildOfferContext, clickTargetAt, roomChoiceAt } from "./clickTargets"
+import type { ExplorerPlace } from "./roomChoices"
 import { buildRoomClaims } from "./roomClaims"
 import { walkPoints, walkSteps } from "./roomWalk"
 import { standingOffset } from "./standingSpot"
@@ -85,6 +86,8 @@ export type SiteNavigation = {
   notice: BlockedNotice | null
   /** The explorer is out of sight, in the middle of a span: drawn nowhere until he lands. */
   explorerHidden: boolean
+  /** In a designed room, the waypoint he stands on when it is not the stop (`ExplorerPlace`). Never saved. */
+  waypoint: readonly [number, number] | undefined
 }
 
 const opensNever: OpensOnArrival = () => false
@@ -114,6 +117,13 @@ export const useSiteNavigation = ({
   const [explorerHidden, setExplorerHidden] = useState(false)
   // A ref beside the state: a tap in the same tick as taking the span must already see it under way.
   const traversing = useRef(false)
+  // A WAYPOINT HOLDS ONLY WHILE HE STANDS IN ITS ROOM: kept with the cell and floor it was taken at, so any other
+  // position (a walk out, a new floor, a reload) stands him on the stop or wherever the save says.
+  const [place, setPlace] = useState<(ExplorerPlace & { floor: number }) | null>(null)
+  const waypoint =
+    place && place.floor === currentFloor && place.pos[0] === explorerPos[0] && place.pos[1] === explorerPos[1]
+      ? place.waypoint
+      : undefined
 
   // Hangs an offer beside the explorer. Taking it clears it first, so nothing offers twice what the
   // player has already taken.
@@ -149,9 +159,9 @@ export const useSiteNavigation = ({
     (row: number, col: number) => {
       if (!grid || !claims) return 0
       const standAt = (r: number, c: number) => standingOffset(grid, claims, r, c)
-      return walkSteps(walkPoints(grid, findPath(grid, explorerPos, [row, col]), standAt)) * 120 + 100
+      return walkSteps(walkPoints(grid, findPath(grid, explorerPos, [row, col]), standAt, waypoint)) * 120 + 100
     },
-    [grid, claims, explorerPos]
+    [grid, claims, explorerPos, waypoint]
   )
   // A STONE NEVER LEAVES ITS FLOOR, and every one-way and every passage takes empty hands: a carrying walk ends where
   // the player stands and says why, instead of offering the way on.
@@ -190,13 +200,28 @@ export const useSiteNavigation = ({
       // ADMISSION AND TARGET ARE THE OFFER LAYER'S, asked, not re-derived: a tap the map does not offer
       // moves nobody, and one it offers acts on the cell it resolves to (a straight run's near cell is
       // its far end). Reckoned from where the explorer stands, in play (never the builder's freeWalk).
-      const target = clickTargetAt(
-        grid,
-        buildRoomClaims(grid),
-        tapRow,
-        tapCol,
-        buildOfferContext(grid, { walkFrom: explorerPos, runFrom: explorerPos, runsSuppressed: false, freeWalk: false })
-      )
+      const ctx = buildOfferContext(grid, {
+        walkFrom: explorerPos,
+        runFrom: explorerPos,
+        runsSuppressed: false,
+        freeWalk: false,
+        waypoint,
+      })
+      // A ROOM CHOICE NAMES WHERE IT LEADS. A waypoint is stood on and written nowhere; the stop is the room's node, and
+      // a door is walked to like any other.
+      const choice = roomChoiceAt(ctx, explorerPos, tapRow, tapCol)
+      if (choice?.to.kind === "waypoint") {
+        setPrompt(null)
+        setNotice(null)
+        setPlace({ floor: currentFloor, pos: explorerPos, waypoint: choice.to.at })
+        return
+      }
+      const target =
+        choice?.to.kind === "stop"
+          ? explorerPos
+          : choice
+            ? choice.to.at
+            : clickTargetAt(grid, buildRoomClaims(grid), tapRow, tapCol, ctx)
       if (!target) return
       const [row, col] = target
       const cell = getCell(grid, row, col)
@@ -206,6 +231,7 @@ export const useSiteNavigation = ({
       // turned away moved nobody, so it leaves the standing offer alone.
       setPrompt(null)
       setNotice(null)
+      setPlace(null)
 
       // WALKING TO A CELL: every sequence tile on the route is stood on, so each works as it is passed. The cell's
       // address is what every write about it is filed under; every cell the assembler draws carries one, so the
@@ -463,6 +489,7 @@ export const useSiteNavigation = ({
       journeyId,
       currentFloor,
       explorerPos,
+      waypoint,
       walkDelay,
       turnAway,
       scheduleArrival,
@@ -478,5 +505,5 @@ export const useSiteNavigation = ({
     ]
   )
 
-  return { onCellClick, prompt, notice, explorerHidden }
+  return { onCellClick, prompt, notice, explorerHidden, waypoint }
 }

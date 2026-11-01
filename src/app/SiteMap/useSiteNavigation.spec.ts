@@ -12,10 +12,12 @@ import {
   AXES,
   DROP_AT,
   EDGE_NODE,
+  PREFAB_FORK,
   addressed,
   dropGrid,
   edgePrefabFloor,
   obstacleIndexes,
+  prefabForkFloor,
 } from "./floorFixtures.testing"
 import { cellCenter } from "./mapScale"
 import { useSiteNavigation } from "./useSiteNavigation"
@@ -413,6 +415,81 @@ describe("useSiteNavigation", () => {
     act(() => void vi.advanceTimersByTime(1))
 
     expect(promptOf(hook)).toMatchObject({ kind: "room", at: [...EDGE_NODE.L], familyId: RETURNABLE_FAMILY })
+  })
+
+  describe("standing in a designed room", () => {
+    // The hall over the fork, its node done with and reopening: stop 6,8; from it the west arrow leads to the
+    // waypoint 6,6, and from there east leads back to the stop and south out by the door at 7,6.
+    const lit = revealAll(prefabForkFloor({ family: RETURNABLE_FAMILY }, true))
+    const grid: FloorGrid = {
+      ...lit,
+      cells: lit.cells.map((row, r) =>
+        row.map((cell, c): GridCell =>
+          r === PREFAB_FORK[0] && c === PREFAB_FORK[1] ? ({ ...cell, state: "completed" } as GridCell) : cell
+        )
+      ),
+    }
+    const inHall = () => {
+      const { journeys } = setup([entrance])
+      const hook = renderHook(
+        ({ pos }: { pos: readonly [number, number] }) =>
+          useSiteNavigation({
+            journeys,
+            journeyId: "j1",
+            siteConfig,
+            seed: 1,
+            currentFloor: 0,
+            grid,
+            explorerPos: pos,
+            onEncounter: vi.fn(),
+            onExitReached: vi.fn(),
+          }),
+        { initialProps: { pos: PREFAB_FORK as readonly [number, number] } }
+      )
+      return { hook, journeys }
+    }
+
+    it("stands him on a waypoint he taps the way to, and writes nothing down", () => {
+      const { hook, journeys } = inHall()
+      expect(hook.result.current.waypoint).toBeUndefined()
+
+      act(() => hook.result.current.onCellClick(6, 6))
+
+      expect(hook.result.current.waypoint).toEqual([6, 6])
+      expect(journeys.updatePosition).not.toHaveBeenCalled()
+      expect(journeys.markCellExplored).not.toHaveBeenCalled()
+    })
+
+    it("walks him back to the stop and offers the room there once the room's walk is over", () => {
+      const { hook } = inHall()
+      act(() => hook.result.current.onCellClick(6, 6))
+
+      act(() => hook.result.current.onCellClick(6, 8))
+      expect(hook.result.current.waypoint).toBeUndefined()
+      // Two steps from 6,6 to the stop.
+      act(() => void vi.advanceTimersByTime(2 * 120 + 100 - 1))
+      expect(hook.result.current.prompt).toBeNull()
+      act(() => void vi.advanceTimersByTime(1))
+      expect(promptOf(hook)).toMatchObject({ kind: "room", at: [...PREFAB_FORK] })
+    })
+
+    it("walks him out by a door from the waypoint, and the next position leaves the waypoint behind", () => {
+      const { hook, journeys } = inHall()
+      act(() => hook.result.current.onCellClick(6, 6))
+
+      act(() => hook.result.current.onCellClick(7, 6))
+      expect(journeys.updatePosition).toHaveBeenCalledWith("j1", expect.anything(), "0:7,6")
+      hook.rerender({ pos: [7, 6] })
+      expect(hook.result.current.waypoint).toBeUndefined()
+      hook.rerender({ pos: PREFAB_FORK })
+      expect(hook.result.current.waypoint).toBeUndefined()
+    })
+
+    it("ignores a tap on a waypoint no arrow from where he stands leads to", () => {
+      const { hook } = inHall()
+      act(() => hook.result.current.onCellClick(5, 6))
+      expect(hook.result.current.waypoint).toBeUndefined()
+    })
   })
 
   // A gate's bars are drawn across the FAR side of its own square, so the square is ground the player

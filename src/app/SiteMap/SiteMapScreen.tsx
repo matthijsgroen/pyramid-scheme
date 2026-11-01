@@ -191,7 +191,7 @@ export const SiteMapScreen = ({
 
   const { ride, squeeze, playTraversal } = useCrossing()
 
-  const { onCellClick, prompt, notice, explorerHidden } = useSiteNavigation({
+  const { onCellClick, prompt, notice, explorerHidden, waypoint } = useSiteNavigation({
     journeys: floorJourneys,
     journeyId,
     siteConfig,
@@ -226,6 +226,7 @@ export const SiteMapScreen = ({
           grid={drawnGrid ?? grid}
           onCellClick={onCellClick}
           explorerPos={explorerPos}
+          waypoint={waypoint}
           explorerHidden={explorerHidden}
           ride={ride}
           squeeze={squeeze}
