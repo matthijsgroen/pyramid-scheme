@@ -13,9 +13,16 @@ split, at automatic waypoints, so every choice keeps its own compass direction.
   in n-e-s-w order.
 - Group by first step. One destination: the arrow leads to it. Several: it leads to their last shared cell, a
   waypoint (the stop, when that is the shared cell).
-- The walk between stop, waypoint and door stays the any-angle `roomPath`.
-- Waypoints draw nothing; only arrows lead there. Saves keep doors and stop only: a reload on a waypoint stands on
+- Entering by a door (a run arrow into the room, or the step onto its node from a door) leads to the room's hub, a
+  waypoint: the free cell nearest the rect's centre; of several, the one fewest steps from the door he came in by, then
+  the first in reading order (`roomHub`). From the hub the choices are every door, the way back out among them, and
   the stop.
+- Where the hub is the stop, or only one choice leads on from the hub besides the way back out, entering walks
+  straight to that choice (an unsolved encounter: the ground past its other doors is dark, so only the stop is open).
+- A tap on the room's node from further off walks to the stop.
+- The walk between stop, waypoint and door stays the any-angle `roomPath`.
+- Waypoints, the hub among them, draw nothing; only arrows lead there. Saves keep doors and stop only: a reload on a
+  waypoint stands on the stop.
 
 ## The arrow ring
 

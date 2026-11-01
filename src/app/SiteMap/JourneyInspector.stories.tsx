@@ -9,7 +9,7 @@ import type { Journey } from "../../data/journeys"
 import { SiteMapView } from "./SiteMapView"
 import "@/mods/registerModApps"
 import { encodeEdge, decodeEdge } from "./edgeId"
-import { offerContextFrom, roomChoiceAt } from "./clickTargets"
+import { offerContextFrom, roomChoiceAt, roomEntryAt } from "./clickTargets"
 import type { ExplorerPlace } from "./roomChoices"
 import type { FloorConfig } from "../../game/siteTypes"
 
@@ -245,11 +245,20 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
     if (!grid) return
     // A ROOM'S ARROWS LEAD BY THE ROOM'S OWN RULE: on to a waypoint he stands on, back to the stop, or out by a door.
     // Reckoned on the grid the map draws: revealed, every door is open to him.
-    const ctx = offerContextFrom(revealAll ? revealGrid(grid) : grid, pos, { freeWalk: revealAll, waypoint })
+    const seen = revealAll ? revealGrid(grid) : grid
+    const ctx = offerContextFrom(seen, pos, { freeWalk: revealAll, waypoint })
     const choice = roomChoiceAt(ctx, pos, tapRow, tapCol)
     setPlace(choice?.to.kind === "waypoint" ? { pos, waypoint: choice.to.at } : null)
     if (choice?.to.kind === "waypoint") return
-    const [row, col] = choice?.to.kind === "stop" ? pos : choice ? choice.to.at : [tapRow, tapCol]
+    // Entering a room by a door stands him on its hub, or takes him straight on, as in play.
+    const entry = choice ? undefined : roomEntryAt(seen, ctx, pos, [tapRow, tapCol])
+    if (entry?.kind === "waypoint") {
+      setExplorerPos([tapRow, tapCol])
+      setPlace({ pos: [tapRow, tapCol], waypoint: entry.at })
+      return
+    }
+    const [row, col] =
+      choice?.to.kind === "stop" ? pos : choice ? choice.to.at : entry?.kind === "door" ? entry.at : [tapRow, tapCol]
     // REVEALED, THE MAP IS A WALKABLE EXHIBIT. Judging art means standing the explorer next to the
     // thing being judged — behind a chest, at the mouth of a stair — and the run itself is beside the
     // point with every room already open. So a click puts him on any floor cell, solves nothing and

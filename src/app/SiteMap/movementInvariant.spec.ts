@@ -53,17 +53,19 @@ import { useAssembledFloor } from "./useAssembledFloor"
 import { useMechanismStates } from "./useMechanismStates"
 import { useSiteNavigation } from "./useSiteNavigation"
 import { buildRoomClaims } from "./roomClaims"
-import { offerContextFrom, offeredTargets } from "./clickTargets"
+import { offerContextFrom, offeredTargets, roomEntryAt } from "./clickTargets"
 import { SiteMapView } from "./SiteMapView"
 import { CELL, cellCenter } from "./mapScale"
 import { isCorridorCorner } from "./corridorRuns"
 import { encodeEdge } from "./edgeId"
 import {
   AXES,
+  CROSSING_NODE,
   KINDS,
   PREFAB_FORK,
   addressed,
   corridorPiece,
+  crossingFloor,
   dropGrid,
   floorFrom,
   prefabForkFloor,
@@ -383,15 +385,18 @@ const walkFloor = async (
   const snapshot = () => ({ ...store })
   const at = (cell: readonly [number, number] | undefined) => (cell ? `${cell[0]},${cell[1]}` : "")
   // A WAYPOINT IS NEVER SAVED, so restoring the store leaves him on the room's stop: a fresh hook stands him there, and
-  // the taps that took him from the stop to the waypoint (`trail`) take him back.
-  const standAgain = (trail: readonly (readonly [number, number])[]) => {
+  // the taps that took him to the waypoint (`trail`) take him back, from the store they were first tapped in (on the
+  // stop, or outside the room for the tap that entered it at its hub).
+  type Trail = { base: Store; taps: (readonly [number, number])[] }
+  const standAgain = (trail: Trail | undefined) => {
+    if (trail) Object.assign(store, trail.base)
     hook.unmount()
     hook = renderHook(harness.useHook)
-    for (const tap of trail) act(() => hook.result.current.onCellClick(tap[0], tap[1]))
+    for (const tap of trail?.taps ?? []) act(() => hook.result.current.onCellClick(tap[0], tap[1]))
     hook.rerender()
   }
 
-  const visit = async (trail: readonly (readonly [number, number])[] = []): Promise<void> => {
+  const visit = async (trail?: Trail): Promise<void> => {
     steps++
     if (steps > STEP_BUDGET) {
       violations.push("step budget exceeded — the walk never settled")
@@ -417,15 +422,20 @@ const walkFloor = async (
     const claims = buildRoomClaims(grid)
     const offers = offeredTargets(grid, claims, explorerPos, { waypoint })
     // A room choice's arrow is tapped as the map hands it on: as the arrow's own cell (`roomChoiceAt`).
-    const { choices } = offerContextFrom(grid, explorerPos, { waypoint })
+    const ctx = offerContextFrom(grid, explorerPos, { waypoint })
     for (const [key, target] of offers) {
-      const choice = choices.get(key)
+      const choice = ctx.choices.get(key)
+      // Entering a designed room by a door stands him on its room cell at its hub, or takes him straight on.
+      const entry = choice ? undefined : roomEntryAt(grid, ctx, explorerPos, target)
+      const landing = entry?.kind === "waypoint" || entry?.kind === "door" ? entry.at : target
       const lands =
         choice?.to.kind === "waypoint"
           ? `${at(explorerPos)}~${at(target)}`
           : choice?.to.kind === "stop"
             ? `${at(explorerPos)}~`
-            : `${at(target)}~`
+            : entry?.kind === "waypoint"
+              ? `${at(target)}~${at(entry.at)}`
+              : `${at(landing)}~`
       const targetSig = sig() + `@${lands}`
       if (visited.has(targetSig)) continue
       const tap = choice ? choice.arrowAt : target
@@ -436,7 +446,8 @@ const walkFloor = async (
       // In a designed room an offer can stand him on a waypoint, or back on the room's stop, without moving his cell.
       const stoodOn = afterWaypoint ?? after
       const backOnStop = !afterWaypoint && at(prefabRoomAt(grid, after[0], after[1])?.stop) === at(target)
-      if (at(stoodOn) !== at(target) && !backOnStop) {
+      const outOfRoom = entry?.kind === "waypoint" && at(after) !== at(target)
+      if ((at(stoodOn) !== at(landing) && !backOnStop) || outOfRoom) {
         violations.push(
           `clicked the offer at ${at(target)} from ${explorerPos}~${at(waypoint)} but the explorer is at ${at(after)}~${at(afterWaypoint)}`
         )
@@ -444,7 +455,11 @@ const walkFloor = async (
         standAgain(trail)
         continue
       }
-      const nextTrail = afterWaypoint ? [...trail, tap] : []
+      const nextTrail: Trail | undefined = !afterWaypoint
+        ? undefined
+        : trail && at(after) === at(explorerPos)
+          ? { base: trail.base, taps: [...trail.taps, tap] }
+          : { base: before, taps: [tap] }
       act(() => vi.advanceTimersByTime(5000))
       hook.rerender()
       const prompt = hook.result.current.prompt as { take: () => void } | null
@@ -573,14 +588,21 @@ const fixtures: Fixture[] = [
     grid: prefabForkFloor(),
     minSteps: 150,
     mustReach: roomDoors(prefabForkFloor(), ...PREFAB_FORK).map(door => door.at),
-    mustStandOn: ["6,6"],
+    mustStandOn: ["6,6", "5,6", `${PREFAB_FORK[0]},${PREFAB_FORK[1]}`],
   },
   {
     name: "a four-way fork laid over by a prefab room whose node is a waypoint",
     grid: prefabForkFloor({}, true),
     minSteps: 320,
     mustReach: roomDoors(prefabForkFloor({}, true), ...PREFAB_FORK).map(door => door.at),
-    mustStandOn: ["6,6", `${PREFAB_FORK[0]},${PREFAB_FORK[1]}`],
+    mustStandOn: ["6,6", "5,6", `${PREFAB_FORK[0]},${PREFAB_FORK[1]}`],
+  },
+  {
+    name: "a crossing round a pillar, entered by each door at its hub",
+    grid: crossingFloor(),
+    minSteps: 100,
+    mustReach: roomDoors(crossingFloor(), ...CROSSING_NODE).map(door => door.at),
+    mustStandOn: ["3,6", "5,6", "4,5"],
   },
 ]
 

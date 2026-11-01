@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rooms keep their full shape
 - The explorer walks around what stands in a room; the cave before the starter tomb has a basin in its crossing.
 - In a designed room every way out has its own arrow; where routes split, an arrow leads to the spot they split at. The arrows sit just beside the explorer.
+- Walking into a designed room stops in its middle, where every way out is a choice, instead of at its far side.
 - New art for the starter pyramids.
 - The camp: your base, which you build out with what you find.
 - A new look: the camp is your home screen, with all journeys in one list and the collection in tabs.

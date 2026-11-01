@@ -52,9 +52,13 @@ type Props = {
   /** Where in its room the figure stands, off the node's centre (see `standingOffset`). The walk between
    * cells still runs centre to centre; only the spot it sets out from and the spot it stops at move. */
   standAt?: (r: number, c: number) => StandingOffset
-  /** The points a route is walked through, setting out from `fromWaypoint` when he stood on one. Without it: cell
-   * centres, the first and last at their standing spots. */
-  waypointsOf?: (route: Route, fromWaypoint?: readonly [number, number]) => WalkPoint[]
+  /** The points a route is walked through, setting out from `fromWaypoint` when he stood on one and coming to rest on
+   * `toWaypoint` when he stands on one. Without it: cell centres, the first and last at their standing spots. */
+  waypointsOf?: (
+    route: Route,
+    fromWaypoint?: readonly [number, number],
+    toWaypoint?: readonly [number, number]
+  ) => WalkPoint[]
   /** Fires with a room point and the point the segment heads for when a segment sets out from it, and with the point
    * he comes to rest on when that is a room point: once per room waypoint, never per frame. Fires with null when a
    * segment sets out from a corridor point straight after a room point: he has left the room. */
@@ -144,7 +148,7 @@ export const ExplorerDot = ({
     const waypoints = samePos
       ? roomPath(grid, pos, spot(fromWaypoint), spot(waypoint))
       : waypointsOf
-        ? waypointsOf(route, fromWaypoint)
+        ? waypointsOf(route, fromWaypoint, waypoint)
         : route.map((at, i) => (i === 0 || i === route.length - 1 ? toPixel(at) : throughPixel(at)))
     const dest = waypoints[waypoints.length - 1] ?? placePixel({ pos, waypoint })
 

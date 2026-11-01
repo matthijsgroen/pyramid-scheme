@@ -1,16 +1,18 @@
 import { describe, expect, it } from "vitest"
 import { revealAll } from "@/game/gridNavigation"
-import { STEP, prefabRoomAt, roomDoors } from "@/game/roomShape"
+import { STEP, prefabRoomAt, roomDoors, type RoomDoor } from "@/game/roomShape"
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import {
   EDGE_NODE,
+  CROSSING_NODE,
   PREFAB_FORK,
+  crossingFloor,
   doorStopForkFloor,
   edgePrefabFloor,
   fitForkFloor,
   prefabForkFloor,
 } from "./floorFixtures.testing"
-import { roomChoices, type RoomChoice, type RoomChoiceTo } from "./roomChoices"
+import { roomChoices, roomEntry, roomHub, type RoomChoice, type RoomChoiceTo } from "./roomChoices"
 import { freeCells } from "./roomWalk"
 
 type Cell = readonly [number, number]
@@ -53,6 +55,41 @@ describe("the choices standing in a designed room", () => {
     const choices = roomChoices(hall, PREFAB_FORK, PREFAB_FORK, door => door.side !== "n")
     expect(choices.map(({ to }) => to.at)).not.toContainEqual([2, 6])
     expect(choices).toHaveLength(3)
+  })
+})
+
+// The crossing: a pillar in its middle at 4,6 and the stop just east of it.
+const crossing = revealAll(crossingFloor())
+const doorOf = (grid: FloorGrid, node: Cell, side: Direction) =>
+  roomDoors(grid, ...node).find(door => door.side === side)!
+const crossingDoor = (side: Direction) => doorOf(crossing, CROSSING_NODE, side)
+
+describe("the hub entering a designed room leads to", () => {
+  it("is the free cell nearest the room's centre, of several the one nearest the door he came in by", () => {
+    expect(roomHub(crossing, CROSSING_NODE, crossingDoor("n"))).toEqual([3, 6])
+    expect(roomHub(crossing, CROSSING_NODE, crossingDoor("s"))).toEqual([5, 6])
+    expect(roomHub(crossing, CROSSING_NODE, crossingDoor("w"))).toEqual([4, 5])
+    expect(roomHub(hall, PREFAB_FORK, doorOf(hall, PREFAB_FORK, "s"))).toEqual([5, 6])
+    expect(roomHub(hall, PREFAB_FORK, doorOf(hall, PREFAB_FORK, "w"))).toEqual(PREFAB_FORK)
+  })
+
+  it("entering by a door stands him on it, the way back out among its choices", () => {
+    expect(roomEntry(crossing, CROSSING_NODE, crossingDoor("n"))).toEqual({ kind: "waypoint", at: [3, 6] })
+    expect(roomChoices(crossing, CROSSING_NODE, [3, 6])).toEqual([
+      { dir: "n", arrowAt: [2, 6], to: { kind: "door", at: [2, 6] } },
+      { dir: "e", arrowAt: [3, 7], to: { kind: "stop", at: [4, 7] } },
+      { dir: "w", arrowAt: [3, 5], to: { kind: "door", at: [4, 4] } },
+    ])
+  })
+
+  it("entering where only one choice leads on past the way back walks straight there", () => {
+    const onlyBack = (door: RoomDoor) => door.side === "n"
+    expect(roomEntry(crossing, CROSSING_NODE, crossingDoor("n"), onlyBack)).toEqual({ kind: "stop", at: [4, 7] })
+  })
+
+  it("entering where the hub is the stop ends on the stop", () => {
+    expect(roomHub(crossing, CROSSING_NODE, crossingDoor("e"))).toEqual(CROSSING_NODE)
+    expect(roomEntry(crossing, CROSSING_NODE, crossingDoor("e"))).toEqual({ kind: "stop", at: CROSSING_NODE })
   })
 })
 
@@ -136,6 +173,7 @@ describe("the choices read off distances", () => {
     ["the hall with its stop at a door", revealAll(doorStopForkFloor({}, true)), PREFAB_FORK],
     ["a chamber on its rect's corner", revealAll(edgePrefabFloor("L")), EDGE_NODE.L],
     ["a fork on its rect's corner", revealAll(edgePrefabFloor("T")), EDGE_NODE.T],
+    ["a crossing round a pillar", crossing, CROSSING_NODE],
   ]
 
   it.each(rooms)("are the ones listing every shortest path gives, from every free cell of %s", (_, grid, node) => {

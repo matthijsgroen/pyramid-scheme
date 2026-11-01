@@ -12,7 +12,7 @@ import { useTimeout } from "@/support/useTimeout"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { encodeEdge } from "./edgeId"
 import { actsOnArrival, staysOpen } from "./nodeKinds"
-import { buildOfferContext, clickTargetAt, roomChoiceAt } from "./clickTargets"
+import { buildOfferContext, clickTargetAt, roomChoiceAt, roomEntryAt } from "./clickTargets"
 import type { ExplorerPlace } from "./roomChoices"
 import { buildRoomClaims } from "./roomClaims"
 import { walkPoints, walkSteps } from "./roomWalk"
@@ -223,7 +223,9 @@ export const useSiteNavigation = ({
             ? choice.to.at
             : clickTargetAt(grid, buildRoomClaims(grid), tapRow, tapCol, ctx)
       if (!target) return
-      const [row, col] = target
+      // ENTERING A DESIGNED ROOM BY A DOOR LEADS TO ITS HUB, or straight on where only one way leads from there.
+      const entry = choice ? undefined : roomEntryAt(grid, ctx, explorerPos, target)
+      const [row, col] = entry?.kind === "door" ? entry.at : target
       const cell = getCell(grid, row, col)
       if (!cell || cell.type === "empty") return
 
@@ -249,6 +251,13 @@ export const useSiteNavigation = ({
         const edgeId = encodeEdge(currentFloor, r, c)
         const address = cellAddress(grid, currentFloor, r, c) ?? edgeId
         return { edgeId, address, goHere: () => journeys.updatePosition(journeyId, address, edgeId) }
+      }
+
+      // The hub is stood on and written nowhere, like any waypoint: what the room holds opens from its stop.
+      if (entry?.kind === "waypoint") {
+        walkTo(row, col).goHere()
+        setPlace({ floor: currentFloor, pos: [row, col], waypoint: entry.at })
+        return
       }
 
       // A NARROW PASSAGE IS NEVER GROUND. A tap on its wall walks the explorer to the side he can reach and offers the

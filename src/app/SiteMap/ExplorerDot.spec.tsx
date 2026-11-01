@@ -90,8 +90,11 @@ describe("ExplorerDot in a prefab room", () => {
   const grid = revealAll(prefabForkFloor())
   const claims = buildRoomClaims(grid)
   const standAt = (r: number, c: number) => standingOffset(grid, claims, r, c)
-  const waypointsOf = (route: ReadonlyArray<readonly [number, number]>, fromWaypoint?: readonly [number, number]) =>
-    walkPoints(grid, route, standAt, fromWaypoint)
+  const waypointsOf = (
+    route: ReadonlyArray<readonly [number, number]>,
+    fromWaypoint?: readonly [number, number],
+    toWaypoint?: readonly [number, number]
+  ) => walkPoints(grid, route, standAt, fromWaypoint, toWaypoint)
   const stop = roomStop(grid, ...PREFAB_FORK)!
   const stopAt = `${cellCenter(...stop).cx},${cellCenter(...stop).cy}`
   const inPiece = ([x, y]: number[]) =>
@@ -183,6 +186,14 @@ describe("ExplorerDot in a prefab room", () => {
     const out = walkTo([9, 6])
     expect(out.length).toBeGreaterThan(2 * (STEP_MS / FRAME_MS))
     expect(out.every(([x, y]) => x === cellCenter(6, 6).cx && y >= cellCenter(6, 6).cy)).toBe(true)
+  })
+
+  it("walks in by a door to the waypoint he comes to stand on, never by the stop", () => {
+    const { container, walkTo } = standing([9, 6])
+    const seen = walkTo(PREFAB_FORK, [5, 6])
+    expect(seen.length).toBeGreaterThan(2 * (STEP_MS / FRAME_MS))
+    expect(seen.every(([x]) => x === cellCenter(5, 6).cx)).toBe(true)
+    expect(at(container)).toEqual([cellCenter(5, 6).cx, cellCenter(5, 6).cy])
   })
 
   it("comes to rest at the room's stop when the room is the destination", () => {
