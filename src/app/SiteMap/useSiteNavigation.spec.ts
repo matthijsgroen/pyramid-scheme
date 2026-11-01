@@ -41,6 +41,23 @@ registerFamily({
   Component: () => null,
 })
 
+// A re-enterable room somebody stands in, so the walk goes round them.
+const ATTENDED_FAMILY = "stays-open-attended"
+registerFamily({
+  meta: {
+    id: ATTENDED_FAMILY,
+    ownerMod: "test",
+    tags: ["puzzle"],
+    icon: "",
+    color: "",
+    rewardPriority: 0,
+    reEnterable: true,
+    actor: true,
+  },
+  generate: () => null,
+  Component: () => null,
+})
+
 // A lever family (FamilyMeta.actsOnArrival) — its own room never opens a board at all; taking its
 // arrival prompt IS the throw.
 const LEVER_FAMILY = "acts-on-arrival"
@@ -384,7 +401,7 @@ describe("useSiteNavigation", () => {
 
   // From the entrance into the L chamber: three cells, but the walk is five steps, on through the room to its stop.
   it("offers a prefab room's prompt after the room walk, not the cell count", () => {
-    const lit = revealAll(edgePrefabFloor("L", { family: RETURNABLE_FAMILY }))
+    const lit = revealAll(edgePrefabFloor("L", { family: ATTENDED_FAMILY }))
     const [nr, nc] = EDGE_NODE.L
     const grid: FloorGrid = {
       ...lit,
@@ -414,7 +431,7 @@ describe("useSiteNavigation", () => {
     expect(hook.result.current.prompt).toBeNull()
     act(() => void vi.advanceTimersByTime(1))
 
-    expect(promptOf(hook)).toMatchObject({ kind: "room", at: [...EDGE_NODE.L], familyId: RETURNABLE_FAMILY })
+    expect(promptOf(hook)).toMatchObject({ kind: "room", at: [...EDGE_NODE.L], familyId: ATTENDED_FAMILY })
   })
 
   describe("standing in a designed room", () => {

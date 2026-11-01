@@ -1,5 +1,6 @@
 import { STEP, inRect, prefabRoomAt, prefabRoomCells, roomDoors, type RoomDoor } from "@/game/roomShape"
 import type { FloorGrid, PrefabRoom } from "@/game/siteTypes"
+import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import { COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import type { StandingOffset } from "./standingSpot"
 
@@ -34,7 +35,7 @@ const armCells = (grid: FloorGrid, [r, c]: Cell): Set<string> => {
 }
 
 /** The room's floor the walk may cross: its rect but what is blocked, its node and arms always, and never the cell
- * somebody stands on. */
+ * somebody stands on: the actor cell of a room whose family has somebody in it. */
 export const freeCells = (grid: FloorGrid, node: Cell, room: PrefabRoom): Set<string> => {
   const blocked = new Set(room.blocked)
   const free = armCells(grid, node)
@@ -46,7 +47,9 @@ export const freeCells = (grid: FloorGrid, node: Cell, room: PrefabRoom): Set<st
     if (object.layer !== "ground")
       for (let r = object.top; r < object.top + object.rows; r++)
         for (let c = object.left; c < object.left + object.cols; c++) free.delete(`${r},${c}`)
-  if (room.actor) free.delete(keyOf(room.actor))
+  const cell = grid.cells[node[0]]?.[node[1]]
+  const family = cell?.type === "room" ? cell.family : undefined
+  if (room.actor && family && getFamilyPlugin(family)?.meta.actor) free.delete(keyOf(room.actor))
   return free
 }
 
