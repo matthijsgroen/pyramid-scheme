@@ -81,7 +81,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- A hidden corridor shows no door or stub off a room until it is found, and finding it moves no rug or rubble.
 - On the map the explorer stands beside a stair instead of inside it, going up and going down.
 - The installed game no longer turns into the preview and asks to reload after every preview update.
 - How a tomb's tableau is worked is explained when the tableau is open, not on arrival.
