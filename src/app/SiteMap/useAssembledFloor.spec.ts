@@ -2,8 +2,8 @@
 import { renderHook } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
 import { assembleFloor } from "@/game/siteAssembler"
-import type { FloorGrid, FloorConfig, CorridorCell, RoomCell } from "@/game/siteTypes"
-import { useAssembledFloor } from "./useAssembledFloor"
+import type { Direction, FloorGrid, FloorConfig, CorridorCell, RoomCell } from "@/game/siteTypes"
+import { maskHiddenCells, useAssembledFloor } from "./useAssembledFloor"
 import { cellAddress, cellKey, cellSlot, walkPosition } from "./cellIdentity"
 // useAssembledFloor resolves families through the real registry — populate it, same as
 // SiteMapScreen.tsx does, so resolution doesn't silently fall back to untagged rooms.
@@ -42,10 +42,20 @@ const findGatewayToHidden = (
       if (!(cell.type === "room" || cell.type === "corridor") || !cell.hidden) continue
       for (const dir of cell.dirs) {
         const [dr, dc] = DIR_MOVE[dir]
-        const gatewayPos: [number, number] = [r + dr, c + dc]
-        const gateway = grid.cells[gatewayPos[0]]?.[gatewayPos[1]]
+        let gatewayPos: [number, number] = [r + dr, c + dc]
+        let gateway = grid.cells[gatewayPos[0]]?.[gatewayPos[1]]
         if (!gateway || (gateway.type !== "room" && gateway.type !== "corridor") || gateway.hidden) continue
-        const cameFrom = OPPOSITE_DIR[dir]
+        let cameFrom = OPPOSITE_DIR[dir]
+        // A plain corridor leading on only into the hidden cell hides with it: the gateway is where it starts.
+        while (gateway.type === "corridor" && gateway.dirs.size === 2) {
+          const on = [...gateway.dirs].find(d => d !== cameFrom)!
+          const next: [number, number] = [gatewayPos[0] + DIR_MOVE[on][0], gatewayPos[1] + DIR_MOVE[on][1]]
+          const cell = grid.cells[next[0]]?.[next[1]]
+          if (!cell || (cell.type !== "room" && cell.type !== "corridor")) break
+          gatewayPos = next
+          gateway = cell
+          cameFrom = OPPOSITE_DIR[on]
+        }
         const backDir = [...gateway.dirs].find(d => d !== cameFrom)
         if (!backDir) return { gatewayPos, predecessorPos: gatewayPos, predecessorCell: gateway }
         const [bdr, bdc] = DIR_MOVE[backDir]
@@ -136,23 +146,22 @@ describe("useAssembledFloor — hidden junctions", () => {
     expect(revealedCellShown).toBe(true)
   })
 
-  it("leaves the junction alone without a detector, so the player glides through unaware", () => {
+  it("walks the junction without a detector as if nothing were hidden there", () => {
     const assembled = assembleFloor(JOURNEY_ID, CONFIG, SEED)
     if (!assembled.success) throw new Error("assembly failed")
     const grid = assembled.grid
     const { gatewayPos, predecessorPos } = findGatewayToHidden(grid)
     const exploredSections = exploredAt(grid, predecessorPos)
-
-    const { result } = renderHook(() =>
-      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 0, new Set())
-    )
-
-    // Whether the cascade leaves it seen or walked is the carve's business. What must not happen is
-    // the stop: "reachable" is the state that puts a step under the player's finger, and without a
-    // detector there is nothing here to step to.
-    const gateway = result.current.grid?.cells[gatewayPos[0]]?.[gatewayPos[1]]
-    if (gateway?.type === "empty") throw new Error("expected a real cell at the gateway")
-    expect(gateway?.state).not.toBe("reachable")
+    const stateAt = (revealed: ReadonlySet<string>) => {
+      const { result } = renderHook(() =>
+        useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 0, revealed)
+      )
+      const cell = result.current.grid?.cells[gatewayPos[0]]?.[gatewayPos[1]]
+      return { state: cell?.type === "empty" ? undefined : cell?.state, hidden: result.current.hiddenSections }
+    }
+    const unaware = stateAt(new Set())
+    expect(unaware.hidden.size).toBeGreaterThan(0)
+    expect(unaware.state).toBe(stateAt(unaware.hidden).state)
   })
 
   /**
@@ -200,12 +209,8 @@ describe("useAssembledFloor — hidden junctions", () => {
   })
 
   // A gate the player can see says something is there, and a way out drawn on the board says the same.
-  // So an exit is pruned whenever the node it leads to is hidden — proven on a real carve rather than a
-  // hand-built grid, because a fork never actually stands directly beside a hidden cell (nodes sit two
-  // cells apart; the connector between a visible fork and a hidden node stays visible, so the fork's own
-  // `dirs` never move here). The exit still has to go, or the board draws a door into a branch nobody
-  // has found.
-  it("prunes a fork's exit toward a branch that hides, leaving its other exits and its own dirs alone", () => {
+  // So an exit is pruned whenever the node it leads to is hidden, and the connector to it hides with it.
+  it("prunes a fork's exit and its way toward a branch that hides, leaving its other exits alone", () => {
     const config: FloorConfig = {
       pathPuzzles: 2,
       difficulty: "expert",
@@ -249,7 +254,8 @@ describe("useAssembledFloor — hidden junctions", () => {
     const masked = result.current.grid?.cells[r]?.[c]
     if (masked?.type !== "room") throw new Error("expected the fork to survive masking as a room")
 
-    expect([...masked.dirs].sort()).toEqual([...rawCell.dirs].sort())
+    const toHidden = [...rawCell.dirs].filter(dir => leadsToHidden(raw.grid, r, c, dir))
+    expect([...masked.dirs].sort()).toEqual([...rawCell.dirs].filter(dir => !toHidden.includes(dir)).sort())
     expect(masked.exits?.length).toBe((rawCell.exits?.length ?? 0) - 1)
     expect(masked.exits?.some(exit => leadsToHidden(raw.grid, r, c, exit.dir))).toBe(false)
   })
@@ -579,5 +585,38 @@ describe("useAssembledFloor — the mark does not carry past a shut region gate"
       if (state === "empty") continue
       expect(state === "completed").toBe(at <= mark)
     }
+  })
+})
+
+describe("maskHiddenCells — a corridor leading only into hidden ground", () => {
+  const at = (dirs: Direction[], hidden = false, sectionAddress = "main"): CorridorCell => ({
+    type: "corridor",
+    dirs: new Set(dirs),
+    state: "visible",
+    sectionAddress,
+    ...(hidden ? { hidden: true } : {}),
+  })
+  // A crossing at 0,1 with ways west and south in sight; east a stub of two cells runs into a hidden section.
+  const grid: FloorGrid = {
+    siteId: "x",
+    rows: 2,
+    cols: 5,
+    entrancePos: [0, 0],
+    exitPos: [1, 1],
+    staircases: {},
+    cells: [
+      [at(["e"]), at(["w", "e", "s"]), at(["w", "e"]), at(["w", "e"]), at(["w"], true, "s1")],
+      [{ type: "empty" }, at(["n"]), { type: "empty" }, { type: "empty" }, { type: "empty" }],
+    ],
+  }
+
+  it("hides the stub with the section, up to the crossing", () => {
+    const { masked, hiddenJunctions } = maskHiddenCells(grid, new Set())
+    expect(masked.cells[0].map(cell => cell.type)).toEqual(["corridor", "corridor", "empty", "empty", "empty"])
+    expect(hiddenJunctions).toEqual(new Set(["0,1"]))
+  })
+
+  it("shows the stub again once the section is revealed", () => {
+    expect(maskHiddenCells(grid, new Set(["s1"])).masked.cells[0].every(cell => cell.type === "corridor")).toBe(true)
   })
 })

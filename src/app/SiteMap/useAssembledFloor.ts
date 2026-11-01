@@ -227,13 +227,11 @@ export const sealWaysOut = (grid: FloorGrid): FloorGrid => {
   return { ...grid, cells }
 }
 
-// Mask hidden cells: map to empty, strip dirs pointing into them from neighbours.
-// With detectionLevel >= 1: junction cells that were completed stay reachable so the
-// player can always navigate back and trigger the reveal.
+// Mask hidden cells: map to empty, strip dirs pointing into them from neighbours. Run on the floor's shape
+// before what has been explored, so the explored cascade walks only what the player can see.
 // revealedSections: authoring addresses whose hidden sections have been revealed by the player.
-const maskHiddenCells = (
+export const maskHiddenCells = (
   grid: FloorGrid,
-  detectionLevel: number,
   revealedSections: ReadonlySet<string>
 ): {
   masked: FloorGrid
@@ -258,15 +256,29 @@ const maskHiddenCells = (
     }
   }
 
+  // A plain corridor that leads on only into hidden ground hides with it: peeled back from the hidden end, one dead
+  // end at a time, so no stub hints at a way nobody has found.
+  for (let peeled = true; peeled;) {
+    peeled = false
+    for (let r = 0; r < grid.rows; r++)
+      for (let c = 0; c < grid.cols; c++) {
+        const cell = grid.cells[r][c]
+        if (cell.type !== "corridor" || cell.obstacle || hiddenPos.has(`${r},${c}`)) continue
+        const ways = [...cell.dirs].map(dir => `${r + DIR_MOVES[dir][0]},${c + DIR_MOVES[dir][1]}`)
+        const into = ways.find(key => hiddenPos.has(key))
+        if (into === undefined || ways.filter(key => !hiddenPos.has(key)).length !== 1) continue
+        hiddenPos.set(`${r},${c}`, hiddenPos.get(into)!)
+        peeled = true
+      }
+  }
+
   const junctionSections = new Map<string, ReadonlySet<string>>()
   if (hiddenPos.size === 0)
     return { masked: grid, hiddenJunctions: new Set(), hiddenSections: new Set(), junctionSections }
 
   const junctions = new Set<string>()
-  // An exit's node sits two grid cells out, past its own connector — and that connector stays visible
-  // even when the node beyond it is hidden (a connector is hidden only when both the nodes it joins
-  // are). So a fork's own `dirs` never lose that direction here, and an exit is pruned by checking the
-  // hidden set directly rather than by whether `dirs` moved.
+  // An exit's node sits two grid cells out, past its own connector, so an exit is pruned by checking the
+  // hidden set two cells out.
   const leadsToHidden = (r: number, c: number, dir: Direction): boolean => {
     const [dr, dc] = DIR_MOVES[dir]
     return hiddenPos.has(`${r + dr * 2},${c + dc * 2}`)
@@ -300,31 +312,18 @@ const maskHiddenCells = (
         }
 
         if (dirsChanged || exitsChanged) {
-          // With detector: force the junction reachable, whether the player is walking up to
-          // it for the first time ("visible" — completeCell treated it as a plain passthrough
-          // on the unmasked graph, since it had no idea one side led to a hidden dead end) or
-          // returning to it later ("completed"). Without a detector, leave the state alone —
-          // the player glides straight through the hidden gap, seeing nothing unusual.
-          const state =
-            dirsChanged && detectionLevel >= 1 && (cell.state === "completed" || cell.state === "visible")
-              ? "reachable"
-              : cell.state
           // Downgrade room → corridor if hidden dir removal leaves it as a passthrough corner. It is
           // still the same cell, so everything that NAMES it comes along: without the address and the
           // ordinal, a player standing on a downgraded room has nowhere to be written down.
           //
           // NEVER A ROOM THAT HOLDS SOMETHING. Rebuilt as a corridor it would shed its family, its tags
           // and its exits, and a corridor has no slot, so a switch's puzzle would vanish and its solved
-          // state would have nowhere to come back to. What reaches this today is only corridors: nodes
-          // sit two cells apart, so a room's grid neighbours are all connector cells, and a connector is
-          // hidden only when both the nodes it joins are — measured over the baked world, 2044 hidden
-          // cells and not one visible room beside any of them. The guard is what keeps that true if the
-          // masking ever widens.
+          // state would have nowhere to come back to. A room beside a peeled connector reaches this.
           if (cell.type === "room" && dirsChanged && newDirs.size <= 2 && cell.family === undefined) {
             return {
               type: "corridor",
               dirs: newDirs as ReadonlySet<Direction>,
-              state,
+              state: cell.state,
               sectionAddress: cell.sectionAddress,
               sectionHash: cell.sectionHash,
               legacySectionHash: cell.legacySectionHash,
@@ -334,7 +333,7 @@ const maskHiddenCells = (
               hidden: cell.hidden,
             }
           }
-          return { ...cell, dirs: newDirs as ReadonlySet<Direction>, state, ...(exits ? { exits } : {}) }
+          return { ...cell, dirs: newDirs as ReadonlySet<Direction>, ...(exits ? { exits } : {}) }
         }
       }
 
@@ -459,24 +458,45 @@ export const useAssembledFloor = (
     return { ...exploredCells, [section]: [...existing, key] }
   }, [carvedGrid, exploredCells, currentFloor])
 
+  const shown = useMemo(
+    () => (carvedGrid ? maskHiddenCells(carvedGrid, revealedSections ?? new Set()) : null),
+    [carvedGrid, revealedSections]
+  )
+
   const exploredGrid = useMemo(
-    () => (carvedGrid ? applyExplored(carvedGrid, currentFloor, effectiveExplored, openGateKeys) : null),
-    [carvedGrid, currentFloor, effectiveExplored, openGateKeys]
+    () => (shown ? applyExplored(shown.masked, currentFloor, effectiveExplored, openGateKeys) : null),
+    [shown, currentFloor, effectiveExplored, openGateKeys]
   )
 
   const { grid, hiddenJunctions, hiddenSections, junctionSections } = useMemo(() => {
     const empty = new Set<string>() as ReadonlySet<string>
     const emptyMap = new Map<string, ReadonlySet<string>>() as ReadonlyMap<string, ReadonlySet<string>>
-    if (!exploredGrid) return { grid: null, hiddenJunctions: empty, hiddenSections: empty, junctionSections: emptyMap }
-    const revealed = revealedSections ?? empty
-    const masked = maskHiddenCells(exploredGrid, detectionLevel, revealed)
+    if (!exploredGrid || !shown)
+      return { grid: null, hiddenJunctions: empty, hiddenSections: empty, junctionSections: emptyMap }
+    // With a detector a junction beside hidden ground is a stop, walked up to or come back to, so the player
+    // can always step back onto it and trigger the reveal. Without one he glides through, seeing nothing.
+    const stops = detectionLevel >= 1 ? shown.hiddenJunctions : empty
+    const marked = stops.size
+      ? {
+          ...exploredGrid,
+          cells: exploredGrid.cells.map((row, r) =>
+            row.map((cell, c): GridCell =>
+              stops.has(`${r},${c}`) &&
+              cell.type !== "empty" &&
+              (cell.state === "completed" || cell.state === "visible")
+                ? { ...cell, state: "reachable" }
+                : cell
+            )
+          ),
+        }
+      : exploredGrid
     return {
-      grid: masked.masked,
-      hiddenJunctions: masked.hiddenJunctions,
-      hiddenSections: masked.hiddenSections,
-      junctionSections: masked.junctionSections,
+      grid: marked,
+      hiddenJunctions: shown.hiddenJunctions,
+      hiddenSections: shown.hiddenSections,
+      junctionSections: shown.junctionSections,
     }
-  }, [exploredGrid, detectionLevel, revealedSections])
+  }, [exploredGrid, shown, detectionLevel])
 
   // Resolves one address against the MASKED grid, or null when it names nowhere to stand on THIS
   // carve — which is the right answer whether the address is stale (see explorerPos below) or the
