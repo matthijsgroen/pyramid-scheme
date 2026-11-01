@@ -1,6 +1,6 @@
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
-import { roomPlaceOf } from "@/game/roomShape"
+import { prefabRoomAt, roomPlaceOf } from "@/game/roomShape"
 import { dropEndsOf, walkableFrom } from "@/game/gridNavigation"
 import { passageCrossing } from "@/game/passages"
 import {
@@ -12,6 +12,7 @@ import {
 } from "./corridorRuns"
 import { litClaimOwner, type RoomClaims } from "./roomClaims"
 import { shapeKindFor } from "./nodeKinds"
+import { roomChoices, type RoomChoice } from "./roomChoices"
 
 /**
  * WHAT A TAP ON A CELL DOES — the one rule, in one place.
@@ -40,6 +41,9 @@ export type OfferContext = {
   canWalkTo: (row: number, col: number) => boolean
   /** The builder's free-roam mode: every cell is a target, walkability aside. */
   freeWalk: boolean
+  /** Standing in a designed room, its choices keyed by the cell each arrow stands on (`roomChoices`); empty elsewhere
+   * and while arrows are suppressed. */
+  choices: ReadonlyMap<string, RoomChoice>
 }
 
 /** A corridor's own rule, shared by the claimed and unclaimed branches — the same condition either way. */
@@ -70,6 +74,9 @@ export const clickTargetAt = (
   c: number,
   ctx: OfferContext
 ): readonly [number, number] | null => {
+  // A ROOM CHOICE IS ITS CELL'S ONE OFFER, whatever else stands there: a door it leads out by, the stop, or a waypoint.
+  const choice = ctx.choices.get(`${r},${c}`)
+  if (choice) return choice.to.at
   const cell = cellAt(grid, r, c)
   // A designed room's own floor is walked by the room, never stopped on: its ways meet it at its doors. Beside the
   // player, a step onto it is offered as the walk to the room's node.
@@ -136,6 +143,8 @@ export const markerAt = (
   offer: readonly [number, number] | null = clickTargetAt(grid, claims, r, c, ctx)
 ): OfferMarker | null => {
   if (!offer) return null
+  const choice = ctx.choices.get(`${r},${c}`)
+  if (choice) return { kind: "arrow", dir: choice.dir }
   const cell = cellAt(grid, r, c)
   if (cell.type !== "corridor") {
     // A bare junction right beside the player is the next step of the way he is standing in, so it
@@ -183,6 +192,10 @@ export const markerAt = (
  * - `runFrom`: where corridor-run arrows and a drop's arrow are reckoned from. Callers may pass a different cell than
  *   `walkFrom`; this builder does not reconcile them.
  * - `runsSuppressed`: no run arrows at all (the explorer is mid-glide).
+ * - `waypoint`: in a designed room, the waypoint he stands on at `runFrom` when it is not the stop.
+ *
+ * Standing in a designed room, the arrows around him are the room's choices: its floor is corridor open every way, so
+ * the steps around his cell say nothing about where its routes lead.
  */
 export const buildOfferContext = (
   grid: FloorGrid,
@@ -191,9 +204,24 @@ export const buildOfferContext = (
     runFrom: readonly [number, number] | undefined
     runsSuppressed: boolean
     freeWalk: boolean
+    waypoint?: readonly [number, number]
   }
 ): OfferContext => {
   const walkable = opts.walkFrom ? walkableFrom(grid, opts.walkFrom) : null
+  const canWalkTo = (row: number, col: number) => !walkable || walkable.has(`${row},${col}`)
+  const room = opts.runFrom && !opts.runsSuppressed ? prefabRoomAt(grid, ...opts.runFrom) : undefined
+  if (room && opts.runFrom) {
+    const node = opts.runFrom
+    const choices = roomChoices(grid, node, opts.waypoint ?? room.stop, door => canWalkTo(...door.at))
+    return {
+      runTargets: NO_RUN_TARGETS,
+      dropEnds: dropEndsOf(grid),
+      nearCells: new Map([[`${node[0]},${node[1]}`, null]]),
+      canWalkTo,
+      freeWalk: opts.freeWalk,
+      choices: new Map(choices.map(choice => [`${choice.arrowAt[0]},${choice.arrowAt[1]}`, choice])),
+    }
+  }
   return {
     runTargets: opts.runsSuppressed ? NO_RUN_TARGETS : corridorRunTargetsFrom(grid, opts.runFrom),
     dropEnds: dropEndsOf(grid),
@@ -202,18 +230,44 @@ export const buildOfferContext = (
         ? []
         : cellsAroundExplorer(grid, opts.runFrom).map(({ row, col, dir }) => [`${row},${col}`, dir])
     ),
-    canWalkTo: (row, col) => !walkable || walkable.has(`${row},${col}`),
+    canWalkTo,
     freeWalk: opts.freeWalk,
+    choices: NO_CHOICES,
   }
 }
 
-/** The context for a player standing still at `at`: walk and run arrows reckoned from the same cell. */
+const NO_CHOICES: ReadonlyMap<string, RoomChoice> = new Map()
+
+/**
+ * The room choice a tap at r,c takes, standing in the room whose node is `node`: the one whose arrow stands there, else
+ * the one leading there. The map hands an arrow's tap on as the arrow's own cell, since a waypoint can be the node's own
+ * cell; a tap leading to `node` itself is the room's own (its node is drawn on the stop), never a choice.
+ */
+export const roomChoiceAt = (
+  ctx: OfferContext,
+  node: readonly [number, number],
+  r: number,
+  c: number
+): RoomChoice | undefined =>
+  ctx.choices.get(`${r},${c}`) ??
+  (r === node[0] && c === node[1]
+    ? undefined
+    : [...ctx.choices.values()].find(({ to }) => to.at[0] === r && to.at[1] === c))
+
+/** The context for a player standing still at `at` (on `waypoint` in a designed room): walk and run arrows reckoned
+ * from the same cell. */
 export const offerContextFrom = (
   grid: FloorGrid,
   at: readonly [number, number] | undefined,
-  opts: { freeWalk?: boolean }
+  opts: { freeWalk?: boolean; waypoint?: readonly [number, number] }
 ): OfferContext =>
-  buildOfferContext(grid, { walkFrom: at, runFrom: at, runsSuppressed: false, freeWalk: opts.freeWalk ?? false })
+  buildOfferContext(grid, {
+    walkFrom: at,
+    runFrom: at,
+    runsSuppressed: false,
+    freeWalk: opts.freeWalk ?? false,
+    waypoint: opts.waypoint,
+  })
 
 /**
  * Everything the map offers from where the player stands, as `cell key → the cell a tap leads to`.
@@ -226,7 +280,7 @@ export const offeredTargets = (
   grid: FloorGrid,
   claims: RoomClaims,
   at: readonly [number, number] | undefined,
-  opts: { freeWalk?: boolean } = {}
+  opts: { freeWalk?: boolean; waypoint?: readonly [number, number] } = {}
 ): Map<string, readonly [number, number]> => {
   const ctx = offerContextFrom(grid, at, opts)
   const offers = new Map<string, readonly [number, number]>()

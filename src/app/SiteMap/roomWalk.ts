@@ -4,8 +4,8 @@ import { COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import type { StandingOffset } from "./standingSpot"
 
 export type WalkPoint = { x: number; y: number; inRoom?: true }
-/** A door by its place on the ring, or the room's stop. */
-export type RoomEnd = { doorAt: Cell } | "stop"
+/** A door by its place on the ring, a cell of the room's floor, or the room's stop. */
+export type RoomEnd = { doorAt: Cell } | { cell: Cell } | "stop"
 
 type Cell = readonly [number, number]
 
@@ -35,7 +35,7 @@ const armCells = (grid: FloorGrid, [r, c]: Cell): Set<string> => {
 
 /** The room's floor the walk may cross: its rect but what is blocked, its node and arms always, and never the cell
  * somebody stands on. */
-const freeCells = (grid: FloorGrid, node: Cell, room: PrefabRoom): Set<string> => {
+export const freeCells = (grid: FloorGrid, node: Cell, room: PrefabRoom): Set<string> => {
   const blocked = new Set(room.blocked)
   const free = armCells(grid, node)
   const { top, left, rows, cols } = room.rect
@@ -148,7 +148,11 @@ export const roomPath = (grid: FloorGrid, node: Cell, from: RoomEnd, to: RoomEnd
   if (!room) return []
   const doors = roomDoors(grid, node[0], node[1])
   const endCell = (end: RoomEnd): Cell =>
-    end === "stop" ? room.stop : (doors.find(door => keyOf(door.at) === keyOf(end.doorAt))?.inside ?? node)
+    end === "stop"
+      ? room.stop
+      : "cell" in end
+        ? end.cell
+        : (doors.find(door => keyOf(door.at) === keyOf(end.doorAt))?.inside ?? node)
   const a = endCell(from)
   const b = endCell(to)
   const inRoom = (cell: Cell): WalkPoint => ({ ...centreOf(cell), inRoom: true })
@@ -195,11 +199,12 @@ const endFor = (grid: FloorGrid, node: Cell, outside: Cell): RoomEnd => {
 
 /** The pixel points the explorer walks for a route: cell centres (a wide corridor's on its centre line), the first and last at their standing spots, each stretch
  * through a prefab room replaced by its walk round what stands in it. A route that starts or ends in a prefab room starts
- * or ends at its stop, the spot he stands on in it. */
+ * or ends at its stop, the spot he stands on in it, or starts at `fromWaypoint` when he sets out from one. */
 export const walkPoints = (
   grid: FloorGrid,
   route: ReadonlyArray<Cell>,
-  standAt: (r: number, c: number) => StandingOffset
+  standAt: (r: number, c: number) => StandingOffset,
+  fromWaypoint?: Cell
 ): WalkPoint[] => {
   const points: WalkPoint[] = []
   let i = 0
@@ -212,7 +217,7 @@ export const walkPoints = (
         if (!next || next[0] !== node[0] || next[1] !== node[1]) break
         j++
       }
-      const from = i === 0 ? "stop" : endFor(grid, node, route[i - 1])
+      const from: RoomEnd = i > 0 ? endFor(grid, node, route[i - 1]) : fromWaypoint ? { cell: fromWaypoint } : "stop"
       const to = j === route.length - 1 ? "stop" : endFor(grid, node, route[j + 1])
       points.push(...roomPath(grid, node, from, to))
       i = j + 1

@@ -129,7 +129,7 @@ const PlayedFloor: FC<{ config: FloorConfig; seed: number; base: FloorGrid }> = 
     onReward: () => {},
   })
   const { ride, squeeze, playTraversal } = useCrossing()
-  const { onCellClick, prompt, notice, explorerHidden } = useSiteNavigation({
+  const { onCellClick, prompt, notice, explorerHidden, waypoint } = useSiteNavigation({
     journeys: floorJourneys,
     journeyId: PLAYGROUND_JOURNEY,
     siteConfig: [config],
@@ -164,6 +164,7 @@ const PlayedFloor: FC<{ config: FloorConfig; seed: number; base: FloorGrid }> = 
           grid={drawnGrid ?? grid}
           onCellClick={onCellClick}
           explorerPos={explorerPos}
+          waypoint={waypoint}
           explorerHidden={explorerHidden}
           ride={ride}
           squeeze={squeeze}

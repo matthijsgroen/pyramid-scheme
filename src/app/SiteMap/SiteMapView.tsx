@@ -126,6 +126,8 @@ type Props = {
    * itself never sets it. */
   freeWalk?: boolean
   explorerPos?: readonly [number, number]
+  /** In a designed room, the waypoint the explorer stands on when it is not the stop (`ExplorerPlace`). */
+  waypoint?: readonly [number, number]
   /** The explorer is mid-span and drawn nowhere until he lands. */
   explorerHidden?: boolean
   /** A zipline being ridden: drawn as one slide beside the explorer, who is hidden meanwhile. */
@@ -1463,6 +1465,7 @@ export const SiteMapView = ({
   revealAllCells = false,
   freeWalk = false,
   explorerPos,
+  waypoint,
   explorerHidden = false,
   ride,
   ridePoses,
@@ -1505,6 +1508,8 @@ export const SiteMapView = ({
   // destination, so the old markers no longer apply), and don't show the new ones at the
   // far end until the dot actually arrives there rather than while it's still gliding.
   const [settledExplorerPos, setSettledExplorerPos] = useState(explorerPos)
+  // The waypoint he stood still on with it: walking between two spots of one room is travelling too.
+  const [settledWaypoint, setSettledWaypoint] = useState(waypoint)
   // The room point he last set out from on a walk under way, and the point that stretch heads for; cleared once he
   // sets out from a corridor point and on arrival.
   const [roomStretch, setRoomStretch] = useState<{ at: WalkPoint; to?: WalkPoint } | null>(null)
@@ -1512,7 +1517,10 @@ export const SiteMapView = ({
   const isTraveling = !!(
     explorerPos &&
     settledExplorerPos &&
-    (explorerPos[0] !== settledExplorerPos[0] || explorerPos[1] !== settledExplorerPos[1])
+    (explorerPos[0] !== settledExplorerPos[0] ||
+      explorerPos[1] !== settledExplorerPos[1] ||
+      waypoint?.[0] !== settledWaypoint?.[0] ||
+      waypoint?.[1] !== settledWaypoint?.[1])
   )
 
   const weight = useMemo(
@@ -1560,6 +1568,15 @@ export const SiteMapView = ({
     },
     [standAt]
   )
+  // Where he stands: on a waypoint, its cell's centre, as the room's walk puts him there.
+  const placePoint = useCallback(
+    (pos: readonly [number, number], at: readonly [number, number] | undefined): WalkPoint => {
+      if (!at) return pointOf(pos)
+      const { cx, cy } = cellCenter(at[0], at[1])
+      return { x: cx, y: cy }
+    },
+    [pointOf]
+  )
   const movedMarkers = useMemo(() => {
     const moved = new Map<string, readonly [number, number]>()
     for (const key of prefabRoomCells(grid).keys()) {
@@ -1578,11 +1595,11 @@ export const SiteMapView = ({
         ? null
         : (roomStretch ??
           (isTraveling && settledExplorerPos
-            ? { at: pointOf(settledExplorerPos) }
+            ? { at: placePoint(settledExplorerPos, settledWaypoint) }
             : explorerPos
-              ? { at: pointOf(explorerPos) }
+              ? { at: placePoint(explorerPos, waypoint) }
               : null)),
-    [prefabProps, roomStretch, isTraveling, settledExplorerPos, explorerPos, pointOf]
+    [prefabProps, roomStretch, isTraveling, settledExplorerPos, settledWaypoint, explorerPos, waypoint, placePoint]
   )
 
   // Everything that stands on this floor, in one list: a room's furniture and a node's own, each with
@@ -1758,10 +1775,11 @@ export const SiteMapView = ({
   const explorerBaseY = roomStretch
     ? roomStretch.at.y + CELL / 2
     : explorerPos
-      ? pointOf(explorerPos).y + CELL / 2
+      ? placePoint(explorerPos, waypoint).y + CELL / 2
       : Infinity
   const waypointsOf = useCallback(
-    (route: ReadonlyArray<readonly [number, number]>) => walkPoints(grid, route, standAt),
+    (route: ReadonlyArray<readonly [number, number]>, fromWaypoint?: readonly [number, number]) =>
+      walkPoints(grid, route, standAt, fromWaypoint),
     [grid, standAt]
   )
   // A GATE IS DRAWN WITH THE ARCHWAYS, after everything else, for the archway's own reason: it is a
@@ -1884,6 +1902,8 @@ export const SiteMapView = ({
   // and vanish while travelling. Whether both should follow one position is a design question.
   // A drop's arrow follows the SETTLED position like run arrows: arrows belong around the dot the player
   // sees, so mid-glide they are gone (the drop end draws a dot) rather than jumping to the destination.
+  // By value, so a fresh position tuple does not rebuild the offers.
+  const offerKey = [explorerPos, settledExplorerPos, settledWaypoint].map(cell => cell?.join(",")).join("|")
   const offerContext: OfferContext = useMemo(
     () =>
       buildOfferContext(grid, {
@@ -1891,9 +1911,10 @@ export const SiteMapView = ({
         runFrom: settledExplorerPos,
         runsSuppressed: isTraveling,
         freeWalk,
+        waypoint: settledWaypoint,
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [grid, explorerPos?.[0], explorerPos?.[1], settledExplorerPos?.[0], settledExplorerPos?.[1], isTraveling, freeWalk]
+    [grid, offerKey, isTraveling, freeWalk]
   )
 
   // Must be >= CELL: a fork/endpoint on the map's edge can claim one cell of "outside
@@ -2083,8 +2104,21 @@ export const SiteMapView = ({
                 // A prefab room's node is drawn on its stop and an arm it absorbed at its door; the tap stays the cell's own.
                 const moved = movedMarkers.get(cellKey)
                 const centre = cellCenter(...(moved ?? [r, c]))
-                const { cx, cy } = centre
+                // A room choice's arrow stands on its own cell, the first step of the way it points.
+                const choice = offerContext.choices.get(cellKey)
+                const { cx, cy } = choice ? cellCenter(r, c) : centre
                 const claimOwner = litClaimOwner(grid, claims, r, c)
+
+                // A ROOM CHOICE IS DRAWN WHATEVER ITS CELL IS: a room's floor the carve left bare is still the
+                // first step of a way. Its tap is handed on as its own cell (`roomChoiceAt`). A choice on the
+                // node's own cell is drawn with the node, below.
+                if (choice && cell.type !== "room") {
+                  return (
+                    <MarkerCell key={cellKey} cx={cx} cy={cy} onClick={onCellClick && (() => onCellClick(r, c))}>
+                      {drawCorridorMarker(markerAt(grid, claims, r, c, offerContext))}
+                    </MarkerCell>
+                  )
+                }
 
                 // A cell claimed by a neighboring room — genuine void (including one step
                 // outside the grid), or a corridor absorbed as a gate's approach or a
@@ -2186,10 +2220,16 @@ export const SiteMapView = ({
 
                 return (
                   <Fragment key={`${r},${c}`}>
+                    {/* A room choice on the node's own cell is its tap; the node stays drawn on its stop. */}
+                    {choice && (
+                      <MarkerCell cx={cx} cy={cy} onClick={onCellClick && (() => onCellClick(r, c))}>
+                        <RunTargetArrow dir={choice.dir} />
+                      </MarkerCell>
+                    )}
                     <MarkerCell
-                      cx={cx}
-                      cy={cy}
-                      onClick={offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
+                      cx={centre.cx}
+                      cy={centre.cy}
+                      onClick={!choice && offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
                     >
                       {/* A FLIGHT SAYS STAIRS BETTER THAN A MARKER DOES, so where one is drawn the marker
                         goes out entirely rather than merely easing back the way a chest's does. The
@@ -2264,9 +2304,11 @@ export const SiteMapView = ({
                   key={currentFloor}
                   grid={grid}
                   pos={explorerPos}
+                  waypoint={waypoint}
                   carrying={carrying}
                   onArrive={() => {
                     setSettledExplorerPos(explorerPos)
+                    setSettledWaypoint(waypoint)
                     setRoomStretch(null)
                   }}
                   standAt={standAt}

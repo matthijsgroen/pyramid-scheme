@@ -90,7 +90,8 @@ describe("ExplorerDot in a prefab room", () => {
   const grid = revealAll(prefabForkFloor())
   const claims = buildRoomClaims(grid)
   const standAt = (r: number, c: number) => standingOffset(grid, claims, r, c)
-  const waypointsOf = (route: ReadonlyArray<readonly [number, number]>) => walkPoints(grid, route, standAt)
+  const waypointsOf = (route: ReadonlyArray<readonly [number, number]>, fromWaypoint?: readonly [number, number]) =>
+    walkPoints(grid, route, standAt, fromWaypoint)
   const stop = roomStop(grid, ...PREFAB_FORK)!
   const stopAt = `${cellCenter(...stop).cx},${cellCenter(...stop).cy}`
   const inPiece = ([x, y]: number[]) =>
@@ -133,6 +134,55 @@ describe("ExplorerDot in a prefab room", () => {
     expect(seen.filter(inPiece)).toEqual([])
     expect(waypointsOf(findPath(grid, [4, 0], PREFAB_FORK)).filter(p => p.inRoom).length).toBeGreaterThan(2)
     expect(at(container).join(",")).toBe(stopAt)
+  })
+
+  const standing = (pos: readonly [number, number], waypoint?: readonly [number, number]) => {
+    const frames = handFrames()
+    const onArrive = vi.fn()
+    const dot = (to: readonly [number, number], spot?: readonly [number, number]) => (
+      <ExplorerDot
+        grid={grid}
+        pos={to}
+        waypoint={spot}
+        segmentDuration={STEP_MS}
+        standAt={standAt}
+        waypointsOf={waypointsOf}
+        onArrive={onArrive}
+      />
+    )
+    const view = render(dot(pos, waypoint))
+    onArrive.mockClear()
+    const walkTo = (to: readonly [number, number], spot?: readonly [number, number]) => {
+      view.rerender(dot(to, spot))
+      const seen: number[][] = []
+      while (!onArrive.mock.calls.length) {
+        frames.frame()
+        seen.push(at(view.container))
+      }
+      onArrive.mockClear()
+      return seen
+    }
+    return { container: view.container, walkTo }
+  }
+
+  it("walks from the stop to a waypoint round what stands in the room, arrives on it, and walks back", () => {
+    const { container, walkTo } = standing(PREFAB_FORK)
+    const there = walkTo(PREFAB_FORK, PREFAB_FORK)
+    expect(there.length).toBeGreaterThan(2 * (STEP_MS / FRAME_MS))
+    expect(there.filter(inPiece)).toEqual([])
+    expect(at(container)).toEqual([cellCenter(...PREFAB_FORK).cx, cellCenter(...PREFAB_FORK).cy])
+
+    const back = walkTo(PREFAB_FORK)
+    expect(back.length).toBeGreaterThan(2 * (STEP_MS / FRAME_MS))
+    expect(at(container).join(",")).toBe(stopAt)
+  })
+
+  it("sets out from the waypoint he stands on when he walks out of the room", () => {
+    const { walkTo } = standing(PREFAB_FORK, [6, 6])
+    // From 6,6 the south door is straight ahead: down the column, never by the stop.
+    const out = walkTo([9, 6])
+    expect(out.length).toBeGreaterThan(2 * (STEP_MS / FRAME_MS))
+    expect(out.every(([x, y]) => x === cellCenter(6, 6).cx && y >= cellCenter(6, 6).cy)).toBe(true)
   })
 
   it("comes to rest at the room's stop when the room is the destination", () => {

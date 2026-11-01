@@ -1,16 +1,32 @@
 // @vitest-environment jsdom
-import { render, fireEvent } from "@testing-library/react"
+import { act, render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { assembleFloor } from "@/game/siteAssembler"
 import { completeCell, findPath, revealAll, walkableFrom } from "@/game/gridNavigation"
-import { buildOfferContext, clickTargetAt, markerAt, offerContextFrom, offeredTargets } from "./clickTargets"
+import {
+  buildOfferContext,
+  clickTargetAt,
+  markerAt,
+  offerContextFrom,
+  offeredTargets,
+  roomChoiceAt,
+} from "./clickTargets"
 import { buildRoomClaims } from "./roomClaims"
 import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { CELL, cellCenter } from "./mapScale"
 import { roomDoors, roomPlaceOf } from "@/game/roomShape"
 import { DIR_MOVES } from "./corridorRuns"
-import { AXES, DROP_AT, PREFAB_FORK, dropGrid, obstacleIndexes, prefabForkFloor } from "./floorFixtures.testing"
+import {
+  AXES,
+  DROP_AT,
+  PREFAB_FORK,
+  doorStopForkFloor,
+  dropGrid,
+  obstacleIndexes,
+  prefabForkFloor,
+} from "./floorFixtures.testing"
+import { roomChoices } from "./roomChoices"
 
 // jsdom has no scrollTo; the map scrolls itself to the explorer on mount.
 Element.prototype.scrollTo = Element.prototype.scrollTo ?? (() => {})
@@ -293,14 +309,94 @@ describe("a room laid over a fork", () => {
     expect(markerAt(grid, claims, r, c + 1, ctx)).toEqual({ kind: "arrow", dir: "e" })
   })
 
-  it("standing on the node, each step out of it points at the door on that side", () => {
+  it("standing in it, each choice's cell points its way and a tap there leads where it says", () => {
     const claims = buildRoomClaims(grid)
-    const ctx = offerContextFrom(grid, PREFAB_FORK, {})
-    for (const { at, side } of roomDoors(grid, ...PREFAB_FORK)) {
-      const [dr, dc] = DIR_MOVES[side]
-      const [r, c] = [PREFAB_FORK[0] + dr, PREFAB_FORK[1] + dc]
-      expect(clickTargetAt(grid, claims, r, c, ctx), side).toEqual(at)
-      expect(markerAt(grid, claims, r, c, ctx), side).toEqual({ kind: "arrow", dir: side })
+    for (const waypoint of [undefined, [6, 6] as const, PREFAB_FORK]) {
+      const ctx = offerContextFrom(grid, PREFAB_FORK, { waypoint })
+      const choices = roomChoices(grid, PREFAB_FORK, waypoint ?? [6, 8])
+      expect(choices.length).toBeGreaterThan(1)
+      for (const { arrowAt, dir, to } of choices) {
+        expect(clickTargetAt(grid, claims, ...arrowAt, ctx), `${arrowAt}`).toEqual(to.at)
+        expect(markerAt(grid, claims, ...arrowAt, ctx), `${arrowAt}`).toEqual({ kind: "arrow", dir })
+        expect(roomChoiceAt(ctx, PREFAB_FORK, ...arrowAt)).toEqual({ arrowAt, dir, to })
+        if (to.at[0] !== PREFAB_FORK[0] || to.at[1] !== PREFAB_FORK[1])
+          expect(roomChoiceAt(ctx, PREFAB_FORK, ...to.at)).toEqual({ arrowAt, dir, to })
+      }
+      // The steps round his cell are no arrows of their own: the room's floor is open every way.
+      const arrows = inner.filter(([r, c]) => markerAt(grid, claims, r, c, ctx)?.kind === "arrow")
+      expect(arrows.map(String).sort()).toEqual(
+        choices
+          .map(({ arrowAt }) => arrowAt)
+          .filter(([r, c]) => roomPlaceOf(grid, r, c) === "inner")
+          .map(String)
+          .sort()
+      )
+    }
+  })
+
+  it("a door a choice leads out by wears that choice's arrow and no second marker", () => {
+    const doorStop = revealAll(doorStopForkFloor({}, true))
+    const ctx = offerContextFrom(doorStop, PREFAB_FORK, {})
+    expect(markerAt(doorStop, buildRoomClaims(doorStop), 7, 6, ctx)).toEqual({ kind: "arrow", dir: "s" })
+    const { container } = render(<SiteMapView grid={doorStop} explorerPos={PREFAB_FORK} onCellClick={() => {}} />)
+    const { cx, cy } = cellCenter(7, 6)
+    const onDoor = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).filter(
+      el => el.style.left === `${cx - CELL / 2}px` && el.style.top === `${cy - CELL / 2}px`
+    )
+    expect(onDoor).toHaveLength(1)
+    expect(onDoor[0].querySelector(":scope > svg > polygon")).not.toBeNull()
+  })
+
+  it("offers no choices while he walks between two spots of the room", () => {
+    const ctx = buildOfferContext(grid, {
+      walkFrom: PREFAB_FORK,
+      runFrom: PREFAB_FORK,
+      runsSuppressed: true,
+      freeWalk: false,
+      waypoint: [6, 6],
+    })
+    expect(ctx.choices.size).toBe(0)
+  })
+
+  it("draws a waypoint's arrows once he stands still on it, and none on the way", () => {
+    let frames: FrameRequestCallback[] = []
+    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => frames.push(cb))
+    vi.stubGlobal("cancelAnimationFrame", () => void (frames = []))
+    try {
+      const boxOf = ([r, c]: readonly [number, number]) => {
+        const { cx, cy } = cellCenter(r, c)
+        return `${cx - CELL / 2}px,${cy - CELL / 2}px`
+      }
+      const arrows = (container: HTMLElement) =>
+        Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]"))
+          .filter(el => el.querySelector(":scope > svg > polygon"))
+          .map(el => `${el.style.left},${el.style.top}`)
+          .sort()
+      const arrowsFrom = (standing: readonly [number, number]) =>
+        roomChoices(grid, PREFAB_FORK, standing)
+          .map(({ arrowAt }) => boxOf(arrowAt))
+          .sort()
+      const view = (waypoint?: readonly [number, number]) => (
+        <SiteMapView grid={grid} explorerPos={PREFAB_FORK} waypoint={waypoint} onCellClick={() => {}} />
+      )
+      const { container, rerender } = render(view())
+      expect(arrows(container)).toEqual(arrowsFrom([6, 8]))
+
+      rerender(view([6, 6]))
+      let now = 0
+      let walking = 0
+      while (frames.length > 0) {
+        expect(arrows(container)).toEqual([])
+        const due = frames
+        frames = []
+        now += 50
+        act(() => due.forEach(cb => cb(now)))
+        walking++
+      }
+      expect(walking).toBeGreaterThan(1)
+      expect(arrows(container)).toEqual(arrowsFrom([6, 6]))
+    } finally {
+      vi.unstubAllGlobals()
     }
   })
 })

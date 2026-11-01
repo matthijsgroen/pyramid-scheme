@@ -5,7 +5,8 @@ import { CELL, EXPLORER_DOT_RADIUS, cellCenter } from "./mapScale"
 import { sharedTileFrames } from "./tileAssets"
 import { tierPalette } from "./tileMaterials"
 import type { StandingOffset } from "./standingSpot"
-import { stepsBetween, type WalkPoint } from "./roomWalk"
+import { roomPath, stepsBetween, type RoomEnd, type WalkPoint } from "./roomWalk"
+import type { ExplorerPlace } from "./roomChoices"
 
 type Point = WalkPoint
 type Route = ReadonlyArray<readonly [number, number]>
@@ -38,6 +39,9 @@ const facingOf = (dx: number, dy: number): Direction =>
 type Props = {
   grid: FloorGrid
   pos: readonly [number, number]
+  /** In a designed room, the waypoint he stands on when it is not the stop. Between two spots of one room he walks the
+   * room's own walk, and arrives as anywhere else. */
+  waypoint?: readonly [number, number]
   /** Duration per grid-cell step in ms. Default 180 — and the walk cycle's frame rate follows it. */
   segmentDuration?: number
   color?: string
@@ -48,8 +52,9 @@ type Props = {
   /** Where in its room the figure stands, off the node's centre (see `standingOffset`). The walk between
    * cells still runs centre to centre; only the spot it sets out from and the spot it stops at move. */
   standAt?: (r: number, c: number) => StandingOffset
-  /** The points a route is walked through. Without it: cell centres, the first and last at their standing spots. */
-  waypointsOf?: (route: Route) => WalkPoint[]
+  /** The points a route is walked through, setting out from `fromWaypoint` when he stood on one. Without it: cell
+   * centres, the first and last at their standing spots. */
+  waypointsOf?: (route: Route, fromWaypoint?: readonly [number, number]) => WalkPoint[]
   /** Fires with a room point and the point the segment heads for when a segment sets out from it, and with the point
    * he comes to rest on when that is a room point: once per room waypoint, never per frame. Fires with null when a
    * segment sets out from a corridor point straight after a room point: he has left the room. */
@@ -59,6 +64,7 @@ type Props = {
 export const ExplorerDot = ({
   grid,
   pos,
+  waypoint,
   segmentDuration = 180,
   color = "#ffd060",
   carrying = false,
@@ -79,13 +85,16 @@ export const ExplorerDot = ({
     return { x: cx, y: cy }
   }
 
-  const [svgPos, setSvgPos] = useState<Point>(toPixel(pos))
+  // A waypoint is a spot in the room's walk: a cell centre, as `roomPath` walks it.
+  const placePixel = (place: ExplorerPlace): Point =>
+    place.waypoint ? throughPixel(place.waypoint) : toPixel(place.pos)
+  const [svgPos, setSvgPos] = useState<Point>(placePixel({ pos, waypoint }))
   // Facing the viewer at rest, which is how a character sprite is meant to be met.
   const [facing, setFacing] = useState<Direction>("s")
   // Whether the legs are cycling. Two renders per walk — one to start the CSS animation, one to stop it —
   // instead of one per animation frame.
   const [walking, setWalking] = useState(false)
-  const prevPosRef = useRef<readonly [number, number]>(pos)
+  const prevPlaceRef = useRef<ExplorerPlace>({ pos, waypoint })
   const animatingRef = useRef(false)
   const rafRef = useRef<number | null>(null)
   // ponytail: skip animation on first render so stale saved position doesn't slide into view
@@ -97,8 +106,10 @@ export const ExplorerDot = ({
   }
 
   useEffect(() => {
-    const from = prevPosRef.current
-    prevPosRef.current = pos
+    const { pos: from, waypoint: fromWaypoint } = prevPlaceRef.current
+    prevPlaceRef.current = { pos, waypoint }
+    const samePos = from[0] === pos[0] && from[1] === pos[1]
+    const sameSpot = samePos && fromWaypoint?.[0] === waypoint?.[0] && fromWaypoint?.[1] === waypoint?.[1]
     // Mark mounted on this effect's very first run, whether or not pos happens to have
     // changed by then — otherwise a `pos` that's still unchanged on mount leaves this flag
     // false, and the *next* real move (however much later) gets wrongly treated as the
@@ -109,29 +120,33 @@ export const ExplorerDot = ({
     // Standing where it already stands. On a REMOUNT that is still an arrival and has to be announced:
     // a new floor keys this component, so the dot begins life at its destination, and the map offers
     // nowhere to walk until it hears the dot has got there.
-    if (from[0] === pos[0] && from[1] === pos[1]) {
+    if (sameSpot) {
       if (isFirstRun) onArriveRef.current?.()
       return
     }
-    setFacing(facingOf(pos[1] - from[1], pos[0] - from[0]))
+    if (!samePos) setFacing(facingOf(pos[1] - from[1], pos[0] - from[0]))
 
     if (isFirstRun) {
-      setSvgPos(toPixel(pos))
+      setSvgPos(placePixel({ pos, waypoint }))
       onArriveRef.current?.()
       return
     }
 
-    const route = findPath(grid, from, pos)
+    // Between two spots of one room: the room's own walk.
+    const spot = (at: readonly [number, number] | undefined): RoomEnd => (at ? { cell: at } : "stop")
+    const route = samePos ? [] : findPath(grid, from, pos)
     // Nothing to walk along: appear there instead of sliding through the stone in between.
-    if (route.length === 0) {
+    if (!samePos && route.length === 0) {
       setSvgPos(toPixel(pos))
       onArriveRef.current?.()
       return
     }
-    const waypoints = waypointsOf
-      ? waypointsOf(route)
-      : route.map((at, i) => (i === 0 || i === route.length - 1 ? toPixel(at) : throughPixel(at)))
-    const dest = waypoints[waypoints.length - 1]
+    const waypoints = samePos
+      ? roomPath(grid, pos, spot(fromWaypoint), spot(waypoint))
+      : waypointsOf
+        ? waypointsOf(route, fromWaypoint)
+        : route.map((at, i) => (i === 0 || i === route.length - 1 ? toPixel(at) : throughPixel(at)))
+    const dest = waypoints[waypoints.length - 1] ?? placePixel({ pos, waypoint })
 
     // Snap if mid-glide
     if (animatingRef.current) {
@@ -203,7 +218,7 @@ export const ExplorerDot = ({
       setWalking(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pos[0], pos[1]])
+  }, [pos[0], pos[1], waypoint?.[0], waypoint?.[1]])
 
   // The box carries the position and has no size of its own, so the figure inside is drawn in cell-local
   // units around the middle of the cell — and a test can ask where the explorer is without caring whether

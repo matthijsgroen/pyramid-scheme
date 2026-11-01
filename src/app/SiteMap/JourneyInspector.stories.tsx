@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { assembleInspectedFloor } from "../../game/assembleInspectedFloor"
-import { completeCell, getCell } from "../../game/gridNavigation"
+import { completeCell, getCell, revealAll as revealGrid } from "../../game/gridNavigation"
 import type { FloorGrid, TreasureReward } from "../../game/siteTypes"
 import { generatedWorldConfigs } from "../../data/generatedWorld"
 import { journeys } from "../../data/journeys"
@@ -9,6 +9,8 @@ import type { Journey } from "../../data/journeys"
 import { SiteMapView } from "./SiteMapView"
 import "@/mods/registerModApps"
 import { encodeEdge, decodeEdge } from "./edgeId"
+import { offerContextFrom, roomChoiceAt } from "./clickTargets"
+import type { ExplorerPlace } from "./roomChoices"
 import type { FloorConfig } from "../../game/siteTypes"
 
 // ---------------------------------------------------------------------------
@@ -217,6 +219,7 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
   const [collected, setCollected] = useState<CollectedEntry[]>([])
   const [explorerPos, setExplorerPos] = useState<readonly [number, number] | null>(null)
   const [revealAll, setRevealAll] = useState(true)
+  const [place, setPlace] = useState<ExplorerPlace | null>(null)
 
   const floorConfig = siteConfig[Math.min(currentFloor, siteConfig.length - 1)]
 
@@ -236,8 +239,17 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
 
   const pos: readonly [number, number] = explorerPos ?? grid?.entrancePos ?? [0, 0]
 
-  const handleClick = (row: number, col: number) => {
+  const waypoint = place && place.pos[0] === pos[0] && place.pos[1] === pos[1] ? place.waypoint : undefined
+
+  const handleClick = (tapRow: number, tapCol: number) => {
     if (!grid) return
+    // A ROOM'S ARROWS LEAD BY THE ROOM'S OWN RULE: on to a waypoint he stands on, back to the stop, or out by a door.
+    // Reckoned on the grid the map draws: revealed, every door is open to him.
+    const ctx = offerContextFrom(revealAll ? revealGrid(grid) : grid, pos, { freeWalk: revealAll, waypoint })
+    const choice = roomChoiceAt(ctx, pos, tapRow, tapCol)
+    setPlace(choice?.to.kind === "waypoint" ? { pos, waypoint: choice.to.at } : null)
+    if (choice?.to.kind === "waypoint") return
+    const [row, col] = choice?.to.kind === "stop" ? pos : choice ? choice.to.at : [tapRow, tapCol]
     // REVEALED, THE MAP IS A WALKABLE EXHIBIT. Judging art means standing the explorer next to the
     // thing being judged — behind a chest, at the mouth of a stair — and the run itself is beside the
     // point with every room already open. So a click puts him on any floor cell, solves nothing and
@@ -341,6 +353,7 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
             grid={grid}
             onCellClick={handleClick}
             explorerPos={pos}
+            waypoint={waypoint}
             currentFloor={currentFloor}
             revealAllCells={revealAll}
             freeWalk={revealAll}
