@@ -6,7 +6,7 @@ import { CELL, MARKER_RADIUS } from "./mapScale"
 export const ARROW_RADIUS = MARKER_RADIUS * 1.2 + 1
 
 /** Space kept between an arrow and the figure beside it. */
-const FIGURE_GAP = 2
+const FIGURE_GAP = 10
 
 /** The prompt button's height (`MapActionPrompt`: one text-xs line, `py-1`, a border). */
 export const PROMPT_HEIGHT = 26
@@ -17,8 +17,7 @@ export const PROMPT_LIFT = CELL * 0.7
 const FIGURE_TOP = CELL / 2 - CHAR_H - FOOT_LIFT
 const FIGURE_BOTTOM = CELL / 2 - FOOT_LIFT
 
-/** How far from his standing spot an arrow is drawn, in the way it points: half a cell, further only as far as it
- * takes for the glyph to clear his figure. */
+/** How far from his standing spot an arrow is drawn, in the way it points: half a cell at least, with room between the glyph and his figure. */
 export const ringDistance = (dir: Direction): number => {
   const clear = (reach: number) => reach + ARROW_RADIUS + FIGURE_GAP
   const needed = dir === "n" ? clear(-FIGURE_TOP) : dir === "s" ? clear(FIGURE_BOTTOM) : clear(CHAR_W / 2)

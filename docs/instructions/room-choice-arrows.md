@@ -19,8 +19,8 @@ split, at automatic waypoints, so every choice keeps its own compass direction.
 
 ## The arrow ring
 
-- Arrows sit half a cell from the explorer's standing spot, in their direction, drawn clear of his figure. Their tap
-  areas may reach over him (he is never a tap target). Corridors and rooms alike.
+- Arrows sit at least half a cell from the explorer's standing spot, in their direction, with room between the glyph
+  and his figure. Their tap areas may reach over him (he is never a tap target). Corridors and rooms alike.
 - While the action prompt (`MapActionPrompt`) shows, the north arrow sits above the prompt.
 - Tap areas stay `MARKER_HIT`.
 

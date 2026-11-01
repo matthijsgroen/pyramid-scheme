@@ -24,9 +24,9 @@ describe("arrowRing", () => {
     expect(overlapsFigure(ringPoint(stand, dir))).toBe(false)
   })
 
-  it("draws the arrows that open sideways at half a cell", () => {
+  it("draws the arrows that open sideways a little past his figure, within a cell", () => {
     expect(ringPoint(stand, "e")).toEqual({ x: stand.x + ringDistance("e"), y: stand.y })
-    expect(ringDistance("e")).toBeLessThan(CELL * 0.6)
+    expect(ringDistance("e")).toBeLessThan(CELL * 0.75)
   })
 
   it("keeps the tap areas of the four arrows apart", () => {
