@@ -1,5 +1,6 @@
 import { STEP, inRect, prefabRoomAt, prefabRoomCells, roomDoors, type RoomDoor } from "@/game/roomShape"
 import type { FloorGrid, PrefabRoom } from "@/game/siteTypes"
+import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import { COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import type { StandingOffset } from "./standingSpot"
 
@@ -34,7 +35,7 @@ const armCells = (grid: FloorGrid, [r, c]: Cell): Set<string> => {
 }
 
 /** The room's floor the walk may cross: its rect but what is blocked, its node and arms always, and never the cell
- * somebody stands on. */
+ * somebody stands on: the actor cell of a room whose family has somebody in it. */
 export const freeCells = (grid: FloorGrid, node: Cell, room: PrefabRoom): Set<string> => {
   const blocked = new Set(room.blocked)
   const free = armCells(grid, node)
@@ -46,7 +47,9 @@ export const freeCells = (grid: FloorGrid, node: Cell, room: PrefabRoom): Set<st
     if (object.layer !== "ground")
       for (let r = object.top; r < object.top + object.rows; r++)
         for (let c = object.left; c < object.left + object.cols; c++) free.delete(`${r},${c}`)
-  if (room.actor) free.delete(keyOf(room.actor))
+  const cell = grid.cells[node[0]]?.[node[1]]
+  const family = cell?.type === "room" ? cell.family : undefined
+  if (room.actor && family && getFamilyPlugin(family)?.meta.actor) free.delete(keyOf(room.actor))
   return free
 }
 
@@ -189,22 +192,28 @@ const nodeOf = (grid: FloorGrid, at: Cell): Cell | undefined => {
   return key ? (key.split(",").map(Number) as unknown as Cell) : undefined
 }
 
-/** The door a route crosses stepping into the room from `outside`: the door place nearest `outside`. */
-const endFor = (grid: FloorGrid, node: Cell, outside: Cell): RoomEnd => {
+/** The door a route crosses stepping into the room at `node` from `outside`: the door place nearest `outside`. */
+export const doorFacing = (grid: FloorGrid, node: Cell, outside: Cell): RoomDoor | undefined => {
   const doors = roomDoors(grid, node[0], node[1])
   const far = (door: RoomDoor) => Math.abs(door.at[0] - outside[0]) + Math.abs(door.at[1] - outside[1])
-  const door = [...doors].sort((a, b) => far(a) - far(b))[0]
+  return [...doors].sort((a, b) => far(a) - far(b))[0]
+}
+
+const endFor = (grid: FloorGrid, node: Cell, outside: Cell): RoomEnd => {
+  const door = doorFacing(grid, node, outside)
   return door ? { doorAt: door.at } : "stop"
 }
 
 /** The pixel points the explorer walks for a route: cell centres (a wide corridor's on its centre line), the first and last at their standing spots, each stretch
  * through a prefab room replaced by its walk round what stands in it. A route that starts or ends in a prefab room starts
- * or ends at its stop, the spot he stands on in it, or starts at `fromWaypoint` when he sets out from one. */
+ * or ends at its stop, the spot he stands on in it, or at `fromWaypoint` / `toWaypoint` when he sets out from or comes
+ * to rest on one. */
 export const walkPoints = (
   grid: FloorGrid,
   route: ReadonlyArray<Cell>,
   standAt: (r: number, c: number) => StandingOffset,
-  fromWaypoint?: Cell
+  fromWaypoint?: Cell,
+  toWaypoint?: Cell
 ): WalkPoint[] => {
   const points: WalkPoint[] = []
   let i = 0
@@ -218,7 +227,8 @@ export const walkPoints = (
         j++
       }
       const from: RoomEnd = i > 0 ? endFor(grid, node, route[i - 1]) : fromWaypoint ? { cell: fromWaypoint } : "stop"
-      const to = j === route.length - 1 ? "stop" : endFor(grid, node, route[j + 1])
+      const to: RoomEnd =
+        j < route.length - 1 ? endFor(grid, node, route[j + 1]) : toWaypoint ? { cell: toWaypoint } : "stop"
       points.push(...roomPath(grid, node, from, to))
       i = j + 1
       continue

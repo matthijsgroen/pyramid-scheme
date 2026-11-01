@@ -1,7 +1,7 @@
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
-import { prefabRoomAt, roomPlaceOf } from "@/game/roomShape"
-import { dropEndsOf, walkableFrom } from "@/game/gridNavigation"
+import { prefabRoomAt, prefabRoomCells, roomPlaceOf } from "@/game/roomShape"
+import { dropEndsOf, findPath, walkableFrom } from "@/game/gridNavigation"
 import { passageCrossing } from "@/game/passages"
 import {
   NO_RUN_TARGETS,
@@ -12,7 +12,8 @@ import {
 } from "./corridorRuns"
 import { litClaimOwner, type RoomClaims } from "./roomClaims"
 import { shapeKindFor } from "./nodeKinds"
-import { roomChoices, type RoomChoice } from "./roomChoices"
+import { roomChoices, roomEntry, type RoomChoice, type RoomChoiceTo } from "./roomChoices"
+import { doorFacing } from "./roomWalk"
 
 /**
  * WHAT A TAP ON A CELL DOES — the one rule, in one place.
@@ -253,6 +254,29 @@ export const roomChoiceAt = (
   (r === node[0] && c === node[1]
     ? undefined
     : [...ctx.choices.values()].find(({ to }) => to.at[0] === r && to.at[1] === c))
+
+/**
+ * Where a tap leading to the designed room at `node` takes a player standing still at `from`: when an arrow around him
+ * leads into the room (a run into it, or the step onto its node from a door), he enters by the door his route crosses,
+ * and goes where `roomEntry` says. Undefined from further off and from inside the room: the tap walks him to its stop.
+ */
+export const roomEntryAt = (
+  grid: FloorGrid,
+  ctx: OfferContext,
+  from: readonly [number, number],
+  node: readonly [number, number]
+): RoomChoiceTo | undefined => {
+  if (roomPlaceOf(grid, node[0], node[1]) !== "node" || (from[0] === node[0] && from[1] === node[1])) return undefined
+  const besideHim =
+    ctx.nearCells.has(`${node[0]},${node[1]}`) ||
+    [...ctx.runTargets.values()].some(end => end.row === node[0] && end.col === node[1])
+  if (!besideHim) return undefined
+  const route = findPath(grid, from, node)
+  const owners = prefabRoomCells(grid)
+  const inRoom = route.findIndex(([r, c]) => owners.get(`${r},${c}`) === `${node[0]},${node[1]}`)
+  const door = inRoom > 0 ? doorFacing(grid, node, route[inRoom - 1]) : undefined
+  return door && roomEntry(grid, node, door, ({ at }) => ctx.canWalkTo(at[0], at[1]))
+}
 
 /** The context for a player standing still at `at` (on `waypoint` in a designed room): walk and run arrows reckoned
  * from the same cell. */

@@ -10,6 +10,7 @@ import {
   offerContextFrom,
   offeredTargets,
   roomChoiceAt,
+  roomEntryAt,
 } from "./clickTargets"
 import { buildRoomClaims } from "./roomClaims"
 import type { Direction, FloorConfig, FloorGrid } from "@/game/siteTypes"
@@ -19,8 +20,10 @@ import { roomDoors, roomPlaceOf } from "@/game/roomShape"
 import { DIR_MOVES } from "./corridorRuns"
 import {
   AXES,
+  CROSSING_NODE,
   DROP_AT,
   PREFAB_FORK,
+  crossingFloor,
   doorStopForkFloor,
   dropGrid,
   obstacleIndexes,
@@ -411,6 +414,41 @@ describe("a room laid over a fork", () => {
     } finally {
       vi.unstubAllGlobals()
     }
+  })
+})
+
+describe("entering a designed room", () => {
+  const grid = revealAll(crossingFloor())
+
+  it("by the arrow into it from a door leads to its hub, a tap on it from further off to its stop", () => {
+    const claims = buildRoomClaims(grid)
+    for (const [door, hub] of [
+      [
+        [4, 4],
+        [4, 5],
+      ],
+      [
+        [2, 6],
+        [3, 6],
+      ],
+      [
+        [6, 6],
+        [5, 6],
+      ],
+    ] as const) {
+      // The step in from the door, here the hub itself, is the arrow that walks him into the room.
+      const ctx = offerContextFrom(grid, door, {})
+      expect(clickTargetAt(grid, claims, hub[0], hub[1], ctx)).toEqual(CROSSING_NODE)
+      expect(roomEntryAt(grid, ctx, door, CROSSING_NODE)).toEqual({ kind: "waypoint", at: hub })
+    }
+    const far = offerContextFrom(grid, grid.entrancePos, {})
+    expect(clickTargetAt(grid, claims, ...CROSSING_NODE, far)).toEqual(CROSSING_NODE)
+    expect(roomEntryAt(grid, far, grid.entrancePos, CROSSING_NODE)).toBeUndefined()
+  })
+
+  it("by the door its hub is the stop of ends on the stop", () => {
+    const ctx = offerContextFrom(grid, [4, 8], {})
+    expect(roomEntryAt(grid, ctx, [4, 8], CROSSING_NODE)).toEqual({ kind: "stop", at: CROSSING_NODE })
   })
 })
 

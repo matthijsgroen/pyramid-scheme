@@ -144,6 +144,45 @@ export const roomChoices = (
   })
 }
 
+/**
+ * The room's hub, where entering it by `door` leads: of the free cells walked to from the door, the one nearest the
+ * room rect's centre; of several, the one fewest steps from the door, then the first in reading order. It draws nothing.
+ */
+export const roomHub = (grid: FloorGrid, node: Cell, door: RoomDoor): Cell | undefined => {
+  const room = prefabRoomAt(grid, node[0], node[1])
+  if (!room) return undefined
+  const { top, left, rows, cols } = room.rect
+  const centre = [top + (rows - 1) / 2, left + (cols - 1) / 2]
+  const fromDoor = distancesFrom(freeCells(grid, node, room), door.inside)
+  const score = (key: string): [number, number, number, number] => {
+    const [r, c] = key.split(",").map(Number)
+    return [(r - centre[0]) ** 2 + (c - centre[1]) ** 2, fromDoor.get(key)!, r, c]
+  }
+  const best = [...fromDoor.keys()]
+    .map(score)
+    .sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2] || a[3] - b[3])[0]
+  return best && [best[2], best[3]]
+}
+
+/**
+ * Where entering the room at `node` by `door` leads: its hub, as a waypoint. Where the hub is the stop, or only one
+ * choice leads on from the hub besides the way back out by `door`, it leads straight there instead.
+ */
+export const roomEntry = (
+  grid: FloorGrid,
+  node: Cell,
+  door: RoomDoor,
+  opens: (door: RoomDoor) => boolean = () => true
+): RoomChoiceTo | undefined => {
+  const room = prefabRoomAt(grid, node[0], node[1])
+  if (!room) return undefined
+  const stop: RoomChoiceTo = { kind: "stop", at: room.stop }
+  const hub = roomHub(grid, node, door)
+  if (!hub || same(hub, room.stop)) return stop
+  const onward = roomChoices(grid, node, hub, opens).filter(({ to }) => !(to.kind === "door" && same(to.at, door.at)))
+  return onward.length > 1 ? { kind: "waypoint", at: hub } : (onward[0]?.to ?? stop)
+}
+
 /** The room spot an explorer at `place` stands on: his waypoint, else the stop of the room at his cell. */
 export const standingSpot = (grid: FloorGrid, place: ExplorerPlace): Cell =>
   place.waypoint ?? prefabRoomAt(grid, place.pos[0], place.pos[1])?.stop ?? place.pos

@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { roomDoors } from "@/game/roomShape"
+import { registerFamily } from "@/app/families/familyRegistry"
 import type { FloorGrid, GridCell } from "@/game/siteTypes"
 import { CELL, COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import {
@@ -278,9 +279,29 @@ describe("a walk between two doors of a room goes round what stands in its middl
   })
 })
 
+// A made-up family with somebody standing in its room.
+const ACTOR_FAMILY = "somebody-here"
+registerFamily({
+  meta: { id: ACTOR_FAMILY, ownerMod: "test", tags: ["puzzle"], icon: "", color: "", rewardPriority: 0, actor: true },
+  generate: () => null,
+  Component: () => null,
+})
+
 describe("a walk through a room fit for somebody", () => {
-  it("the room walk never steps on the actor cell of a fit room", () => {
+  it("walks over the actor cell while nobody stands there", () => {
     const grid = fitForkFloor()
+    const stop = roomStop(grid, ...PREFAB_FORK)!
+    const actor: Cell = [stop[0] - 1, stop[1]]
+    const walks = (["w", "e", "s"] as const).flatMap(side =>
+      (["w", "e", "s"] as const).map(other =>
+        roomPath(grid, PREFAB_FORK, doorOn(grid, PREFAB_FORK, side), doorOn(grid, PREFAB_FORK, other))
+      )
+    )
+    expect(walks.some(walk => walk.slice(1).some((p, i) => cuts(walk[i], p, [actor])))).toBe(true)
+  })
+
+  it("the room walk never steps on the actor cell of a room somebody stands in", () => {
+    const grid = fitForkFloor({ family: ACTOR_FAMILY })
     const stop = roomStop(grid, ...PREFAB_FORK)!
     const actor: Cell = [stop[0] - 1, stop[1]]
     const cell = grid.cells[PREFAB_FORK[0]][PREFAB_FORK[1]]

@@ -80,6 +80,7 @@ Start with the writing-plans skill on `themed-rooms.md`, then subagent-driven ex
 | F1  | The reshape release steps in [instructions/world-reshape-release.md](instructions/world-reshape-release.md) — it resets saves |
 | F2  | `LAST_RELEASED_DIFFICULTY = "starter"` on the release                                                                         |
 | F3  | Changelog, and `docs/playtest-backlog.md` for whatever was not played                                                         |
+| F4  | Freeze guard: a carve fingerprint per floor a starter player can reach, and a test that fails when one changes                |
 
 ## How a session works
 

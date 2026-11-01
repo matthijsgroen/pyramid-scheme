@@ -1796,8 +1796,11 @@ export const SiteMapView = ({
       ? placePoint(explorerPos, waypoint).y + CELL / 2
       : Infinity
   const waypointsOf = useCallback(
-    (route: ReadonlyArray<readonly [number, number]>, fromWaypoint?: readonly [number, number]) =>
-      walkPoints(grid, route, standAt, fromWaypoint),
+    (
+      route: ReadonlyArray<readonly [number, number]>,
+      fromWaypoint?: readonly [number, number],
+      toWaypoint?: readonly [number, number]
+    ) => walkPoints(grid, route, standAt, fromWaypoint, toWaypoint),
     [grid, standAt]
   )
   // A GATE IS DRAWN WITH THE ARCHWAYS, after everything else, for the archway's own reason: it is a

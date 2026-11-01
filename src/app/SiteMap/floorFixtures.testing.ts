@@ -4,6 +4,7 @@ import type {
   Direction,
   FloorGrid,
   GridCell,
+  PrefabRoom,
   PropFootprint,
   RoomCell,
 } from "@/game/siteTypes"
@@ -173,6 +174,41 @@ export const fitForkFloor = (fork: Partial<RoomCell> = {}): FloorGrid =>
 /** `prefabForkFloor` laid over by the same hall with its stop at 6,6, just inside the south door. */
 export const doorStopForkFloor = (fork: Partial<RoomCell> = {}, north = false): FloorGrid =>
   laidOver(forkFloor(fork, north), PREFAB_FORK, DOOR_HALL)
+
+/** A made-up crossing laid by hand, as the room-first carve lays one: rect rows 3-5, cols 5-7, a pillar in its middle at
+ * 4,6 that its floor rings, and its node on the stop just east of the pillar at `CROSSING_NODE`; door places north 2,6,
+ * west 4,4, east 4,8 and south 6,6, each on to a room. The entrance is at 4,0. */
+export const CROSSING_NODE = [4, 7] as const
+export const crossingFloor = (node: Partial<RoomCell> = {}): FloorGrid => {
+  const grid = floorFrom(
+    ["      R", "      .", "      .", "     ...", "E..... G.....R", "     ...", "      .", "      .", "      R"],
+    { G: dirs => ({ type: "room", roomType: "fork", dirs: new Set(dirs), state: "fogged", ...node }) }
+  )
+  const doors: [number, number][] = [
+    [2, 6],
+    [4, 4],
+    [4, 8],
+    [6, 6],
+  ]
+  const ring: string[] = []
+  for (let r = 2; r <= 6; r++)
+    for (let c = 4; c <= 8; c++)
+      if ((r === 2 || r === 6 || c === 4 || c === 8) && !doors.some(([dr, dc]) => dr === r && dc === c))
+        ring.push(`${r},${c}`)
+  const prefabRoom: PrefabRoom = {
+    name: "crossing",
+    layout: 0,
+    mirrored: false,
+    rect: { top: 3, left: 5, rows: 3, cols: 3 },
+    stop: CROSSING_NODE,
+    objects: [{ kind: "pillar", layer: "floor", top: 4, left: 6, rows: 1, cols: 1 }],
+    blocked: [...ring, "4,6"],
+    doors,
+  }
+  const cells = grid.cells.map(row => [...row])
+  cells[CROSSING_NODE[0]][CROSSING_NODE[1]] = { ...(cells[4][7] as RoomCell), prefabRoom }
+  return { ...grid, cells }
+}
 
 /** Rooms whose node stands next to the ring, round a 2×1 skeleton. `L`: a chamber at 3,2 on the rect's north-west
  * corner (rows 3-5, cols 2-5), in by the north door place at 2,2 from the entrance at 0,2 and out east along row 3 by
