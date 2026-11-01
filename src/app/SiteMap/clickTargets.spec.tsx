@@ -12,7 +12,7 @@ import {
   roomChoiceAt,
 } from "./clickTargets"
 import { buildRoomClaims } from "./roomClaims"
-import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
+import type { Direction, FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { CELL, cellCenter } from "./mapScale"
 import { roomDoors, roomPlaceOf } from "@/game/roomShape"
@@ -27,6 +27,7 @@ import {
   prefabForkFloor,
 } from "./floorFixtures.testing"
 import { roomChoices } from "./roomChoices"
+import { ringDistance } from "./arrowRing"
 
 // jsdom has no scrollTo; the map scrolls itself to the explorer on mount.
 Element.prototype.scrollTo = Element.prototype.scrollTo ?? (() => {})
@@ -128,6 +129,23 @@ const clickEveryTarget = (grid: FloorGrid, at: readonly [number, number]) => {
   )
   for (const target of targets) fireEvent.click(target)
   return onCellClick.mock.calls as [number, number][]
+}
+
+const RING_STEP: Record<Direction, readonly [number, number]> = { n: [0, -1], e: [1, 0], s: [0, 1], w: [-1, 0] }
+/** Where an arrow of the ring around the explorer is drawn from his spot, as `x,y`. */
+const ringOffset = (dir: Direction) =>
+  `${Math.round(RING_STEP[dir][0] * ringDistance(dir))},${Math.round(RING_STEP[dir][1] * ringDistance(dir))}`
+/** The ring arrows on the map, as their offsets from the explorer's spot. */
+const ringOffsets = (container: HTMLElement) => {
+  const [x, y] = container.querySelector("[data-explorer]")!.getAttribute("data-at")!.split(",").map(Number)
+  return Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]"))
+    .filter(el => el.querySelector(":scope > svg > polygon"))
+    .map(el => {
+      const cx = parseFloat(el.style.left) + parseFloat(el.style.width) / 2
+      const cy = parseFloat(el.style.top) + parseFloat(el.style.height) / 2
+      return `${Math.round(cx - x)},${Math.round(cy - y)}`
+    })
+    .sort()
 }
 
 describe("what the map offers to click", () => {
@@ -339,12 +357,15 @@ describe("a room laid over a fork", () => {
     const ctx = offerContextFrom(doorStop, PREFAB_FORK, {})
     expect(markerAt(doorStop, buildRoomClaims(doorStop), 7, 6, ctx)).toEqual({ kind: "arrow", dir: "s" })
     const { container } = render(<SiteMapView grid={doorStop} explorerPos={PREFAB_FORK} onCellClick={() => {}} />)
+    expect(ringOffsets(container)).toEqual([...ctx.choices.values()].map(({ dir }) => ringOffset(dir)).sort())
+    expect(ringOffsets(container)).toContain(ringOffset("s"))
     const { cx, cy } = cellCenter(7, 6)
     const onDoor = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).filter(
-      el => el.style.left === `${cx - CELL / 2}px` && el.style.top === `${cy - CELL / 2}px`
+      el =>
+        Math.abs(parseFloat(el.style.left) + parseFloat(el.style.width) / 2 - cx) < 1 &&
+        Math.abs(parseFloat(el.style.top) + parseFloat(el.style.height) / 2 - cy) < 1
     )
-    expect(onDoor).toHaveLength(1)
-    expect(onDoor[0].querySelector(":scope > svg > polygon")).not.toBeNull()
+    expect(onDoor.filter(el => el.querySelector(":scope > svg > polygon"))).toHaveLength(0)
   })
 
   it("offers no choices while he walks between two spots of the room", () => {
@@ -363,18 +384,10 @@ describe("a room laid over a fork", () => {
     vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => frames.push(cb))
     vi.stubGlobal("cancelAnimationFrame", () => void (frames = []))
     try {
-      const boxOf = ([r, c]: readonly [number, number]) => {
-        const { cx, cy } = cellCenter(r, c)
-        return `${cx - CELL / 2}px,${cy - CELL / 2}px`
-      }
-      const arrows = (container: HTMLElement) =>
-        Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]"))
-          .filter(el => el.querySelector(":scope > svg > polygon"))
-          .map(el => `${el.style.left},${el.style.top}`)
-          .sort()
+      const arrows = (container: HTMLElement) => ringOffsets(container)
       const arrowsFrom = (standing: readonly [number, number]) =>
         roomChoices(grid, PREFAB_FORK, standing)
-          .map(({ arrowAt }) => boxOf(arrowAt))
+          .map(({ dir }) => ringOffset(dir))
           .sort()
       const view = (waypoint?: readonly [number, number]) => (
         <SiteMapView grid={grid} explorerPos={PREFAB_FORK} waypoint={waypoint} onCellClick={() => {}} />

@@ -577,12 +577,8 @@ describe("SiteMapView — one-way drop", () => {
   const obstacle = obstacleIndexes.map(at)
   const cellKey = ([r, c]: readonly [number, number]) => `${r},${c}`
 
-  const findCell = (container: HTMLElement, [r, c]: readonly [number, number]) => {
-    const { cx, cy } = cellCenter(r, c)
-    return Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
-      el => parseFloat(el.style.left) === cx - CELL / 2 && parseFloat(el.style.top) === cy - CELL / 2
-    )
-  }
+  const findCell = (container: HTMLElement, [r, c]: readonly [number, number]) =>
+    container.querySelector<HTMLElement>(`[data-marker-at="${r},${c}"]`) ?? undefined
 
   it("attaches a tap to no cell of the obstacle, wherever the explorer stands", () => {
     for (const standing of every) {
@@ -792,11 +788,9 @@ describe("SiteMapView — long corridor click target", () => {
     return 0
   })
 
-  // A marker's box is the cell it belongs to, so it is found by where that box sits.
-  const findCell = (container: HTMLElement, cx: number, cy: number) =>
-    Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
-      el => parseFloat(el.style.left) === cx - CELL / 2 && parseFloat(el.style.top) === cy - CELL / 2
-    )
+  // A marker is found by the cell it belongs to, wherever it is drawn: an arrow beside the explorer is not on its cell.
+  const findCell = (container: HTMLElement, r: number, c: number) =>
+    container.querySelector<HTMLElement>(`[data-marker-at="${r},${c}"]`) ?? undefined
 
   it("puts a clickable target at the near end of a long visible corridor, routed to the far corner", () => {
     // fork(0,0) -- visible -- visible -- reachable corner(0,3). Only the corner has a real
@@ -811,7 +805,7 @@ describe("SiteMapView — long corridor click target", () => {
       ],
     ])
     const { container } = render(<SiteMapView grid={grid} onCellClick={onClick} explorerPos={[0, 0]} />)
-    const nearCell = findCell(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy)
+    const nearCell = findCell(container, 0, 1)
     expect(nearCell?.style.cursor).toBe("pointer")
     fireEvent.click(nearCell!)
     expect(onClick).toHaveBeenCalledWith(0, 3)
@@ -821,7 +815,7 @@ describe("SiteMapView — long corridor click target", () => {
     const onClick = vi.fn()
     const grid = makeGrid([[fork("completed", ["e"]), corridor("reachable", true)]])
     const { container } = render(<SiteMapView grid={grid} onCellClick={onClick} explorerPos={[0, 0]} />)
-    fireEvent.click(findCell(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy)!)
+    fireEvent.click(findCell(container, 0, 1)!)
     expect(onClick).toHaveBeenCalledWith(0, 1)
   })
 
@@ -830,7 +824,7 @@ describe("SiteMapView — long corridor click target", () => {
       [fork("completed", ["e"]), straightCorridor("visible", ["e", "w"]), straightCorridor("reachable", ["n", "e"])],
     ])
     const { container } = render(<SiteMapView grid={grid} explorerPos={[0, 0]} />)
-    const nearCell = findCell(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy)
+    const nearCell = findCell(container, 0, 1)
     expect(nearCell?.querySelector("polygon")).toBeTruthy()
     // No dot — only the invisible disc that catches the tap, which every marker carries.
     const circles = Array.from(nearCell?.querySelectorAll("circle") ?? [])
@@ -845,11 +839,11 @@ describe("SiteMapView — long corridor click target", () => {
       [fork("completed", ["e"]), straightCorridor("visible", ["e", "w"]), straightCorridor("reachable", ["n", "e"])],
     ])
     const { container, rerender } = render(<SiteMapView grid={grid} explorerPos={[0, 0]} />)
-    expect(findCell(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy)?.querySelector("polygon")).toBeTruthy()
+    expect(findCell(container, 0, 1)?.querySelector("polygon")).toBeTruthy()
 
     rerender(<SiteMapView grid={grid} explorerPos={[0, 2]} />)
     // Gone, and the box may be gone with it: a cell with nothing to draw and nothing to tap is not drawn.
-    expect(findCell(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy)?.querySelector("polygon")).toBeFalsy()
+    expect(findCell(container, 0, 1)?.querySelector("polygon")).toBeFalsy()
   })
 })
 
