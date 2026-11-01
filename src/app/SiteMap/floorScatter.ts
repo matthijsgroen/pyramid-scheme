@@ -41,6 +41,14 @@ export const DRIFT_KINDS: ReadonlySet<string> = new Set(["sand"])
 /** One drift of blown sand: where it lies, and how many CELLS it spans on each axis. */
 export type Drift = { row: number; col: number; w: number; h: number }
 
+/** A number in [0, 1) for one cell of this floor, the same whatever else the floor shows. */
+const unitAt = (grid: FloorGrid, salt: string, key: string): number => hashUnit(grid.siteId, `${salt}:${key}`, 0)
+
+/** The `n` cells of `keys` that rank first by their own hash: each cell's rank is its own, so a cell revealed
+ * elsewhere on the floor never moves what already lies here, short of taking the last place. */
+const pickCells = (grid: FloorGrid, salt: string, keys: readonly string[], n: number): string[] =>
+  [...keys].sort((a, b) => unitAt(grid, salt, a) - unitAt(grid, salt, b)).slice(0, n)
+
 /** Drifts to a floor, by walkable cells. Sparse on purpose — sand is weather, not furnishing. */
 const CELLS_PER_DRIFT = 26
 const MIN_DRIFTS = 1
@@ -93,17 +101,15 @@ export const driftsFor = (grid: FloorGrid, tier: Tileset): Drift[] => {
     }
   if (!walkable.length) return []
   const n = Math.min(MAX_DRIFTS, Math.max(MIN_DRIFTS, Math.round(walkable.length / CELLS_PER_DRIFT)))
-  return Array.from({ length: n }, (_, i) => {
-    const [row, col] = walkable[Math.floor(hashUnit(grid.siteId, "drift-cell", i) * walkable.length)]
-      .split(",")
-      .map(Number)
+  return pickCells(grid, "drift-cell", walkable, n).map(key => {
+    const [row, col] = key.split(",").map(Number)
     const across = runThrough(grid, row, col, 0, 1)
     const down = runThrough(grid, row, col, 1, 0)
     // 0.75 of the long run so the sand's own edge is inside the floor; the short run plus a cell so the
     // wall cuts it. Floored at 1.2 — a drift narrower than a cell is a stain again.
     const long = Math.max(1.2, Math.min(MAX_RUN, Math.max(across, down)) * 0.75)
     const short = Math.min(across, down) + 1
-    const stretch = 0.9 + hashUnit(grid.siteId, "drift-size", i) * 0.35
+    const stretch = 0.9 + unitAt(grid, "drift-size", key) * 0.35
     return across >= down ? { row, col, w: long * stretch, h: short } : { row, col, w: short, h: long * stretch }
   })
 }
@@ -137,15 +143,13 @@ export const grassMatsFor = (grid: FloorGrid, amount: number): Drift[] => {
     }
   if (!walkable.length) return []
   const n = Math.max(1, Math.round((walkable.length / CELLS_PER_MAT) * amount))
-  return Array.from({ length: n }, (_, i) => {
-    const [row, col] = walkable[Math.floor(hashUnit(grid.siteId, "grass-cell", i) * walkable.length)]
-      .split(",")
-      .map(Number)
+  return pickCells(grid, "grass-cell", walkable, n).map(key => {
+    const [row, col] = key.split(",").map(Number)
     // Squarer than a sand drift and smaller: a drift is a tongue blown along a run, a mat is a patch
     // that spread from where the water sat. Varied per mat so two overlapping ones do not read as one
     // shape stamped twice — the repeat is the only way a single texture gives itself away.
-    const w = 1.6 + hashUnit(grid.siteId, "grass-w", i) * 1.4
-    const h = 1.6 + hashUnit(grid.siteId, "grass-h", i) * 1.4
+    const w = 1.6 + unitAt(grid, "grass-w", key) * 1.4
+    const h = 1.6 + unitAt(grid, "grass-h", key) * 1.4
     return { row, col, w, h }
   })
 }
@@ -185,7 +189,8 @@ const PER_CHAMBER = 2
  *
  * Keyed off the floor's OWN shape and never off what has been revealed — the same trap `MapLife`
  * documents. A list that grows as the map is explored moves everything indexed into it, so a drift of
- * sand would crawl to another cell each time the player lit a new room.
+ * sand would crawl to another cell each time the player lit a new room. Each cell ranks by its own hash
+ * (`pickCells`), so a hidden corridor found elsewhere moves nothing already lying here.
  */
 export const scatterFor = (grid: FloorGrid, claims: RoomClaims): ReadonlyMap<string, ScatterKind> => {
   const out = new Map<string, ScatterKind>()
@@ -193,23 +198,19 @@ export const scatterFor = (grid: FloorGrid, claims: RoomClaims): ReadonlyMap<str
 
   // ── the chambers, each dressed on its own floor ──
   //
-  // Sorted, because the placement is indexed and Map order is insertion order: which chamber is
-  // "first" would otherwise depend on how the claims happened to be built.
   const footprints = new Map<string, string[]>()
   for (const [cellKey, ownerKey] of claims.claimedBy) {
     const list = footprints.get(ownerKey)
     if (list) list.push(cellKey)
     else footprints.set(ownerKey, [cellKey])
   }
-  for (const [c, [ownerKey, cells]] of [...footprints].sort(([a], [b]) => (a < b ? -1 : 1)).entries()) {
+  for (const [ownerKey, cells] of footprints) {
     // NOT the owner's own cell: that is where the room's icon goes — a puzzle's family, an exit's star
     // — and not a cell a prop stands on (`decorationCells`, every cell of its footprint). Dressing lies
     // on the floor AROUND what the room is for.
     const free = cells.filter(key => !claims.decorationCells.has(key) && key !== ownerKey)
-    for (let i = 0; i < PER_CHAMBER && free.length; i++) {
-      const key = free[Math.floor(hashUnit(grid.siteId, `chamber-cell-${c}`, i) * free.length)]
-      out.set(key, chamberKinds[Math.floor(hashUnit(grid.siteId, `chamber-kind-${c}`, i) * chamberKinds.length)])
-    }
+    for (const key of pickCells(grid, `chamber-cell-${ownerKey}`, free, PER_CHAMBER))
+      out.set(key, chamberKinds[Math.floor(unitAt(grid, "chamber-kind", key) * chamberKinds.length)])
   }
 
   // ── the passages ──
@@ -221,9 +222,7 @@ export const scatterFor = (grid: FloorGrid, claims: RoomClaims): ReadonlyMap<str
   }
   if (corridors.length === 0) return out
   const ground = Math.min(MAX_GROUND, Math.max(MIN_GROUND, Math.round(corridors.length / CELLS_PER_GROUND)))
-  for (let i = 0; i < ground; i++) {
-    const key = corridors[Math.floor(hashUnit(grid.siteId, "ground-cell", i) * corridors.length)]
-    out.set(key, GROUND_KINDS[Math.floor(hashUnit(grid.siteId, "ground-kind", i) * GROUND_KINDS.length)])
-  }
+  for (const key of pickCells(grid, "ground-cell", corridors, ground))
+    out.set(key, GROUND_KINDS[Math.floor(unitAt(grid, "ground-kind", key) * GROUND_KINDS.length)])
   return out
 }

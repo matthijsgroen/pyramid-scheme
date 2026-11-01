@@ -91,6 +91,22 @@ describe("floor scatter", () => {
     expect([...scatterOn("starter_1:0").scatter]).toEqual([...scatterOn("starter_1:0").scatter])
   })
 
+  it("leaves a chamber's dressing where it lay when another chamber is found on the floor", () => {
+    for (const siteId of Array.from({ length: 40 }, (_, i) => `found_${i}:0`)) {
+      const before = floor(siteId)
+      const after: FloorGrid = {
+        ...before,
+        cells: before.cells.map((row, r) =>
+          r === 0 ? [{ ...chamber, dirs: new Set<Direction>(["e"]) }, corridor(["w", "e"]), ...row.slice(2)] : row
+        ),
+      }
+      const claims = buildRoomClaims(before)
+      const inChamber = (grid: FloorGrid) =>
+        [...scatterFor(grid, buildRoomClaims(grid))].filter(([key]) => claims.claimedBy.has(key))
+      expect(inChamber(after)).toEqual(inChamber(before))
+    }
+  })
+
   it("lands somewhere else on a different floor", () => {
     expect([...scatterOn("starter_2:0").scatter]).not.toEqual([...scatterOn("starter_1:0").scatter])
   })

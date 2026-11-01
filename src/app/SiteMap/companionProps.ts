@@ -92,8 +92,8 @@ export const companionFor = (
     if (at !== undefined) out.set(at, kind)
   }
   const out = new Map<string, DecorationKind>()
-  // Sorted for the reason `scatterFor` sorts: the placement is indexed, and Map order is insertion order,
-  // so which room is "first" would otherwise depend on how the claims happened to be built.
+  // Sorted because the placement is indexed, and Map order is insertion order, so which room is "first"
+  // would otherwise depend on how the claims happened to be built.
   for (const { ownerKey, leader, free, shrine, activity } of [...rooms].sort((a, b) =>
     a.ownerKey < b.ownerKey ? -1 : 1
   )) {

@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react"
+import { maskHiddenCells } from "./useAssembledFloor"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { assembleInspectedFloor } from "../../game/assembleInspectedFloor"
 import { completeCell, getCell, revealAll as revealGrid } from "../../game/gridNavigation"
@@ -197,12 +198,14 @@ type Props = {
   tier: Tier
   /** Index within the tier (0-based) */
   journeyIndex: number
+  /** Masks hidden corridors as a player without a detector sees them. */
+  hideHidden?: boolean
   /** Which pyramid in the journey (1-based, up to levelCount) */
   pyramidNumber: number
   seed: number
 }
 
-const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed }: Props) => {
+const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed, hideHidden }: Props) => {
   const journeyList = journeyType === "tomb" ? tombsByTier[tier] : byTier[tier]
   const journey = journeyList[journeyIndex]
   if (!journey) return <div className="p-4 text-red-400">Journey not found</div>
@@ -232,10 +235,10 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
     [journey.id, pyramidSeed, currentFloor]
   )
 
-  const grid = useMemo(
-    () => (baseGrid ? applyEdges(baseGrid, currentFloor, solvedEdges) : null),
-    [baseGrid, currentFloor, solvedEdges]
-  )
+  const grid = useMemo(() => {
+    const edged = baseGrid ? applyEdges(baseGrid, currentFloor, solvedEdges) : null
+    return edged && hideHidden ? maskHiddenCells(edged, new Set()).masked : edged
+  }, [baseGrid, currentFloor, solvedEdges, hideHidden])
 
   const pos: readonly [number, number] = explorerPos ?? grid?.entrancePos ?? [0, 0]
 
@@ -471,6 +474,7 @@ export const Inspector: StoryObj<typeof meta> = {
     journeyIndex: 0,
     pyramidNumber: 1,
     seed: DEFAULT_SEED,
+    hideHidden: false,
   },
 }
 
