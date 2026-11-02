@@ -160,48 +160,6 @@ step across it. On a light rank that is a step darker than the floor; on a dark 
 face that comes back a third of 8:1 is laid three side by side first, as the Sphinx's are:
 `magick band.jpeg band.jpeg band.jpeg +append wide.png`.
 
-### `junior/threshold` — a sandstone step with a copper strip
-
-**Attach:** `art/masters/surfaces/junior-floor.webp` — the nobleman's NEW floor, as the style reference (paint `junior/floor` first)
-
-```
-FRAME: a wide strip, exactly 5 times as wide as it is tall, filling the frame edge to edge. Do not re-compose it square.
-
-Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
-Rank: a NOBLEMAN's tomb, built as his painted house — the second of five. Warm sandstone carrying murals,
-copper vessels gone green at the rim, lotus and papyrus, rosettes, a banquet frieze. Festive and colourful,
-a scented incense haze in the air.
-Lit evenly by lamplight and daylight together — every corner of the room is visible, nothing sinks into
-darkness.
-HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
-surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
-a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: floor #a87a52 / #b4865c / #9c704a on a #8a6040 bed, joints #4e3320,
-walls #6e4a30 with #9a7050 tops and #3a2416 at the base, copper #c8642c with light #f2b48a and shade
-#55210c, verdigris #4f9a86, painted red ochre #a8442a, Egyptian blue #2f6f8f.
-Every colour comes from that list. Nothing lighter than #e6c89a, nothing darker than #2a1a0e.
-Warm and clear, with real colour: the copper is saturated and reads from across the room. The STONE
-stays calm — the ground is quiet so the copper and the paint can stand out on it.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it — the palette above is the only source of colour.
-
-A single worn sandstone step seen from straight above, spanning the full width of a doorway, with no
-background.
-It is ONE band of stone across the whole width: a soft shadow along its far edge where it drops to the
-floor beyond, its own worn top surface across the middle, a soft shadow along its near edge. No object
-sits on it and nothing crosses it end to end except those two edges and one copper strip.
-The stone is the floor's own sandstone at #94683f — the same paving as the chamber, laid as one long
-block, a step darker than the floor either side of it, never lighter.
-Dished in the middle by feet, its ends a little crumbled. A thin strip of copper #c8642c set into the
-stone along its near edge, bright where it is still polished, gone verdigris green #4f9a86 at both ends
-where no foot reaches.
-Even lighting left to right, no hotspot, no vignette.
-```
-
-**Import:** `yarn import-tile art/masters/surfaces/junior-threshold.webp --tier=junior --name=threshold --slot=sill --filter=smooth --key=none`
-
 ### `expert/wall-face` — cool dressed stone in sunk-relief columns
 
 **Attach:** `art/masters/surfaces/expert-floor.webp` — the priest's NEW floor, as the style reference (paint `expert/floor` first)
