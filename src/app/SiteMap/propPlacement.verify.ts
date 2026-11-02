@@ -75,12 +75,16 @@ describe("props stay out of the way", () => {
       levels.flat().forEach((floor, i) => {
         const result = assembleFloor(`${siteId}:${i}`, floor, 7)
         if (!result.success) return
-        const roomBlocked = new Set(
-          [...new Set(prefabRoomCells(result.grid).values())].flatMap(owner => {
-            const [r, c] = owner.split(",").map(Number)
-            return prefabRoomAt(result.grid, r, c)?.blocked ?? []
-          })
-        )
+        const rooms = [...new Set(prefabRoomCells(result.grid).values())].map(owner => {
+          const [r, c] = owner.split(",").map(Number)
+          return prefabRoomAt(result.grid, r, c)
+        })
+        // A room's ground object lies flat and is walked over, so the cell it lies on is the room's to walk.
+        const onGround = rooms
+          .flatMap(room => room?.objects ?? [])
+          .filter(object => object.layer === "ground")
+          .map(({ top, left }) => `${top},${left}`)
+        const roomBlocked = new Set([...rooms.flatMap(room => room?.blocked ?? []), ...onGround])
         // Every cell a prop covers, not only its anchor: a wide prop stands on all of them.
         for (const key of buildRoomClaims(result.grid).decorationCells) {
           props++
