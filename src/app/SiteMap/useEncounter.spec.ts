@@ -240,3 +240,16 @@ describe("what a solved room reports", () => {
     expect(heard).toEqual([{ kind: "solved", tags: ["puzzle"], unaided: true, tier: "junior", journeyId: "j1" }])
   })
 })
+
+describe("the wall an encounter is met against", () => {
+  it("sets a ward's door against the stone this side of it, not the tier it guards", () => {
+    const corridor = (dirs: ("e" | "w")[]): GridCell => ({ type: "corridor", dirs: new Set(dirs), state: "reachable" })
+    const ward: GridCell = { ...stubRoom, dirs: new Set(["e", "w"]), tags: ["gate"], difficulty: "wizard" }
+    const beyond: GridCell = { ...corridor(["w"]), difficulty: "wizard" }
+    const { hook } = setup([corridor(["e"]), ward, beyond])
+
+    act(() => hook.result.current.open([0, 1], true))
+
+    expect(hook.result.current.ctx?.tileset).toBe("starter")
+  })
+})

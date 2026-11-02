@@ -564,7 +564,6 @@ export const cellFloorAt = (
 ): ReturnType<FloorAt> => {
   // The stone a cell is built of is its own SECTION's tier, not its floor's: a pocket gated behind a
   // junior key is junior stone inside a starter pyramid, and walking through the gate should say so.
-  const floorTierOf = floorTier(grid)
   // A GATE NOT YET OPENED WEARS THE PYRAMID'S OWN STONE. The pocket behind it keeps its authored tier —
   // that is the point of the material, and walking through says so — but the gate's own square is on
   // THIS side of the door, and paving it in the pocket's stone let the player read next tier's
@@ -573,9 +572,7 @@ export const cellFloorAt = (
   // THE SEAM IS AT THE WARD. Everything this side of one — the gate's own square included — is the
   // pyramid's own stone, and only what the gate guards is built of the tier it guards. That is one
   // crossing instead of three, and it lands where the bars are (`cellsThisSideOfAWard`).
-  const thisSide = cellsThisSideOfAWard(grid)
-  const tierOf = (cell: TilesetCell, row: number, col: number): Tileset =>
-    thisSide.has(`${row},${col}`) ? floorTierOf : cellTileset(cell, grid)
+  const tierOf = (cell: TilesetCell, row: number, col: number): Tileset => cellStone(grid, cell, row, col)
   const owner = litClaimOwner(grid, claims, r, c)
   // A claimed cell renders as part of its owner: same material, same state, one continuous chamber.
   // A claimed cell is grid VOID and so on no walk of the floor: it asks the question at its OWNER's
@@ -622,6 +619,10 @@ export const FACE_TOP = SIDE_W / 2
 // starter pyramid's ward-chest teaser is authored at a LATER tier on purpose (spec/starter.ts), so
 // room difficulties are the wrong thing to infer a floor's material from: a starter cellar came out
 // built of a pharaoh's granite. Per-room difficulty still dresses the room (props, light).
+/** The stone one cell is built of: the floor's own on this side of a ward, the gate included, else its own tileset. */
+export const cellStone = (grid: FloorGrid, cell: TilesetCell, row: number, col: number): Tileset =>
+  cellsThisSideOfAWard(grid).has(`${row},${col}`) ? floorTier(grid) : cellTileset(cell, grid)
+
 export const floorTier = (grid: FloorGrid): Tileset => grid.tileset ?? grid.difficulty ?? "starter"
 
 type TilesetCell = { tileset?: Tileset; difficulty?: Difficulty }
