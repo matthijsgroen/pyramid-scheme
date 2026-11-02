@@ -34,10 +34,10 @@ export const carvedFloorDigest = (grid: FloorGrid): string =>
 // are what the author asked for rather than what was dealt.
 export const FAMILY_RECORD_KEYS: ReadonlySet<string> = new Set(["encounter", "encountersByIndex"])
 
-// The carve pin (`seed`, `packing`) is the bake's output, written on every floor: it changes how a floor is
-// drawn, never its rooms, gates or loot, so re-pinning it must not read as a tier drifting. Removed beside
+// The carve pin (`seed`, `packing`, `sidePacking`) is the bake's output, written on every floor: it changes how a
+// floor is drawn, never its rooms, gates or loot, so re-pinning it must not read as a tier drifting. Removed beside
 // the family records at every depth.
-const SEARCHED_KEYS: ReadonlySet<string> = new Set(["seed", "packing"])
+const SEARCHED_KEYS: ReadonlySet<string> = new Set(["seed", "packing", "sidePacking"])
 
 // `value` with every family record removed at every depth.
 export const withoutFamilyRecords = (value: unknown): unknown => {

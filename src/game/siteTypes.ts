@@ -240,6 +240,8 @@ export type PrefabRoom = {
   /** Which of the prefab's layouts, and whether mirrored left to right. */
   layout: number
   mirrored: boolean
+  /** Which of the variant's fills it is furnished with. */
+  fill?: number
   /** The inside of the ring. */
   rect: CellRect
   stop: Cell
@@ -598,6 +600,9 @@ export type SubSection = {
    * the positional `s0`/`s0.1`. See SideSectionConstraint.label and cellIdentity.ts. */
   label?: string
   pathPuzzles: number
+  /** This path's length multiplier, relative to its content, in place of the one its parent path or floor names for
+   * side paths. Structural. */
+  packing?: number
   difficulty: Difficulty
   /** The tileset this path is drawn in, in place of the floor's tileset or its own `difficulty`. */
   tileset?: Tileset
@@ -836,6 +841,9 @@ export type FloorConfig = {
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
   packing?: number
+  /** Side-path length multiplier, relative to each path's content, for every side path writing no `packing` of its own.
+   * Defaults to `packing`. */
+  sidePacking?: number
   /** The seed this floor carves at, in place of the one its address derives. Read inside the assembler, so
    * every entry point that carves the floor (the hook, stair travel, the scanner, the bake) agrees. Baked
    * from a search that found a seed carving soundly on the first attempt. */

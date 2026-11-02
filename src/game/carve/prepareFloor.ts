@@ -918,6 +918,7 @@ export const prepareFloor = (
         straightBias: config.corridorStraightness ?? DEFAULT_STRAIGHT_BIAS,
         // The authored wish is where the ladder STARTS, not what it is held to.
         packing: config.packing ?? DEFAULT_PACKING,
+        sidePacking: config.sidePacking ?? config.packing ?? DEFAULT_PACKING,
       },
       hashes: {
         mainIsolated,

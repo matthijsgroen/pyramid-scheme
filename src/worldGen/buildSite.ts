@@ -127,6 +127,7 @@ export type BuildFloorOptions = {
   switches?: FloorConfig["switches"]
   corridorStraightness?: number
   packing?: number
+  sidePacking?: number
   seed?: number
   sealed?: boolean
   encounterArgs?: unknown
@@ -174,6 +175,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.lootByIndex && Object.keys(opts.lootByIndex).length ? { lootByIndex: opts.lootByIndex } : {}),
   ...(opts.corridorStraightness !== undefined ? { corridorStraightness: opts.corridorStraightness } : {}),
   ...(opts.packing !== undefined ? { packing: opts.packing } : {}),
+  ...(opts.sidePacking !== undefined ? { sidePacking: opts.sidePacking } : {}),
   ...(opts.seed !== undefined ? { seed: opts.seed } : {}),
   ...(opts.sealed ? { sealed: true } : {}),
   ...(opts.encounterArgs !== undefined ? { encounterArgs: opts.encounterArgs } : {}),
@@ -477,6 +479,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           switches: fc.switches ?? constraint.switches,
           corridorStraightness: floorStraightness,
           packing: floorPacking,
+          sidePacking: fc.sidePacking ?? constraint.sidePacking,
           seed: fc.seed,
           sealed: floorSealed,
           encounterArgs: fc.encounterArgs ?? constraint.encounterArgs,
@@ -620,6 +623,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           wallDecorations: constraint.wallDecorations,
           corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
           packing: resolvePacking(constraint, journeyId, i),
+          sidePacking: constraint.sidePacking,
           chambers: constraint.chambers,
           ...siteRoomsAt(difficulty, "floor"),
           seed: constraint.seed,
@@ -807,6 +811,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     wallDecorations: constraint.wallDecorations,
     corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
     packing: resolvePacking(constraint, journeyId, i),
+    sidePacking: constraint.sidePacking,
     chambers: constraint.chambers,
     ...siteRoomsAt(difficulty, "floor"),
     seed: constraint.seed,

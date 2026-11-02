@@ -87,6 +87,7 @@ const serializeSideSection = (s: SideSection): string => {
   if (s.rewards?.length) parts.push(`rewards: ${serializePuzzleRewards(s.rewards)}`)
   if (s.hidden) parts.push(`hidden: true`)
   if (s.sealed) parts.push(`sealed: true`)
+  if (s.packing !== undefined) parts.push(`packing: ${s.packing}`)
   if (s.encounter) parts.push(`encounter: ${serializeEncounter(s.encounter)}`)
   if (s.encounterArgs !== undefined) parts.push(`encounterArgs: ${JSON.stringify(s.encounterArgs)}`)
   if (s.theme) parts.push(`theme: ${JSON.stringify(s.theme)}`)
@@ -226,6 +227,7 @@ const floorFieldEmitters: {
   lootByIndex: v => (Object.keys(v).length ? `lootByIndex: ${serializeLootByIndex(v)}` : null),
   corridorStraightness: v => `corridorStraightness: ${v}`,
   packing: v => `packing: ${v}`,
+  sidePacking: v => `sidePacking: ${v}`,
   outsideLock: v => (v.length ? `outsideLock: ${JSON.stringify(v)}` : null),
   corridorsTakeTwo: () => `corridorsTakeTwo: true`,
   seed: v => `seed: ${v}`,

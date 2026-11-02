@@ -149,6 +149,24 @@ const fitFor = (prefab: Prefab): boolean => {
 /** A choice made by hand in place of the hash, for a preview: which variant of `variantsOf`, which fill of its fills. */
 export type PrefabPick = { variant?: number; fill?: number }
 
+/** The fill a room of `prefab` laid as `variant` takes: the hashed one, or where a room of the same on the floor already
+ * took it, the next one none has, so two rooms alike on one floor are furnished apart while there are fills to go round. */
+const freeFill = (grid: FloorGrid, prefab: Prefab, variant: Variant, hash: number, count: number): number => {
+  const taken = new Set(
+    grid.cells.flatMap(row =>
+      row.flatMap(cell => {
+        const room = cell.type === "empty" ? undefined : cell.prefabRoom
+        return room?.name === prefab.name && room.layout === variant.layout && room.mirrored === variant.mirrored
+          ? [room.fill]
+          : []
+      })
+    )
+  )
+  const first = hash % count
+  for (let step = 0; step < count; step++) if (!taken.has((first + step) % count)) return (first + step) % count
+  return first
+}
+
 const furnish = (
   grid: FloorGrid,
   r: number,
@@ -167,7 +185,9 @@ const furnish = (
   }
   const fills = fillsOf(variant, prefab)
   if (fills.length === 0) throw new Error(`[carve] room ${prefab.name} has no fill: its check faults`)
-  const fill = fills[(pick?.fill ?? hashString(`${siteId}:prefab:${pk}:fill`)) % fills.length]
+  const fillIndex =
+    pick?.fill ?? freeFill(grid, prefab, variant, hashString(`${siteId}:prefab:${pk}:fill`), fills.length)
+  const fill = fills[fillIndex % fills.length]
   const standing = new Map<string, true>()
   const objects: PrefabObject[] = []
   for (const blob of placeBlobs(variant, prefab)) {
@@ -211,6 +231,7 @@ const furnish = (
     name: prefab.name,
     layout: variant.layout,
     mirrored: variant.mirrored,
+    fill: fillIndex % fills.length,
     rect,
     stop,
     ...(actor ? { actor } : {}),

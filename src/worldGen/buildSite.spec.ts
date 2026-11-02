@@ -217,6 +217,21 @@ describe("buildSite", () => {
     expect(floors[1].mainEndReward).toEqual({ type: "fragmentSlot" })
   })
 
+  it("carries the side paths' packing: the pyramid's, a floor's own over it, and a path's own on that path", () => {
+    const { floors } = buildSite({
+      ...baseCtx,
+      constraint: {
+        sidePacking: 0.3,
+        floors: [
+          { pathPuzzles: 1, sideSections: [{ pathPuzzles: 1, packing: 0.6 }, { pathPuzzles: 1 }] },
+          { pathPuzzles: 1, sidePacking: 0.5 },
+        ],
+      } as PyramidConstraint,
+    })
+    expect(floors.map(floor => floor.sidePacking)).toEqual([0.3, 0.5])
+    expect(floors[0].sideSections.map(section => section.packing)).toEqual([0.6, undefined])
+  })
+
   it("authored floors[] branch: a floor's own mainEndReward/nodes/encounter override the site defaults — a tomb's self-gated shortcut", () => {
     const { floors } = buildSite<"tombTreasure">({
       ...baseCtx,

@@ -273,6 +273,7 @@ export const buildTombConfigsFor = (
         sideSections: [...authoredSections, ...shortcut],
         corridorStraightness: authored?.corridorStraightness ?? constraint.corridorStraightness,
         packing: authored?.packing ?? constraint.packing,
+        sidePacking: authored?.sidePacking ?? constraint.sidePacking,
         sealed: authored?.sealed ?? constraint.sealed,
         encounterArgs: authored?.encounterArgs ?? { runNr: i + 1 },
         theme: authored?.theme ?? constraint.theme,

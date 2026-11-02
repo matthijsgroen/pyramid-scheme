@@ -119,6 +119,7 @@ const buildDslSection = <TExtra extends string>(
     ...(cs.wallDecorations?.length ? { wallDecorations: cs.wallDecorations } : {}),
     ...(cs.hidden ? { hidden: true } : {}),
     ...(cs.sealed ? { sealed: true } : {}),
+    ...(cs.packing !== undefined ? { packing: cs.packing } : {}),
     ...(cs.encounter !== undefined ? { encounter: cs.encounter } : {}),
     ...(Object.keys(encountersByIndex).length ? { encountersByIndex } : {}),
     ...(Object.keys(activitiesByIndex).length ? { activitiesByIndex } : {}),
@@ -339,6 +340,7 @@ export const buildSideSections = <TExtra extends string = never>(
         ...(endReward ? { endReward } : {}),
         ...(gate ? { gate } : {}),
         ...(entry.encounter !== undefined ? { encounter: entry.encounter } : {}),
+        ...(entry.packing !== undefined ? { packing: entry.packing } : {}),
       })
     }
   })
@@ -353,6 +355,7 @@ export const buildSideSections = <TExtra extends string = never>(
         hidden: true,
         ...(endReward ? { endReward } : {}),
         ...(entry.encounter !== undefined ? { encounter: entry.encounter } : {}),
+        ...(entry.packing !== undefined ? { packing: entry.packing } : {}),
       })
     }
   })
