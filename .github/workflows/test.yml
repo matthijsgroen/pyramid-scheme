@@ -126,6 +126,8 @@ jobs:
         run: yarn lint
       - name: Run tests
         run: yarn test
+      - name: Starter floors carve as recorded
+        run: yarn starter-freeze
       - name: Check the ratcheted guards
         run: yarn betterer
       - name: yarn build
