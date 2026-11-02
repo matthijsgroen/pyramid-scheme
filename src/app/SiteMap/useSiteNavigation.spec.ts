@@ -496,6 +496,8 @@ describe("useSiteNavigation", () => {
 
       act(() => hook.result.current.onCellClick(7, 6))
       expect(journeys.updatePosition).toHaveBeenCalledWith("j1", expect.anything(), "0:7,6")
+      // The position lands a render later: until it does he still stands on the waypoint, so the walk out starts there.
+      expect(hook.result.current.waypoint).toEqual([6, 6])
       hook.rerender({ pos: [7, 6] })
       expect(hook.result.current.waypoint).toBeUndefined()
       hook.rerender({ pos: PREFAB_FORK })

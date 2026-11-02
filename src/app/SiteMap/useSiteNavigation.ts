@@ -120,6 +120,14 @@ export const useSiteNavigation = ({
   // A WAYPOINT HOLDS ONLY WHILE HE STANDS IN ITS ROOM: kept with the cell and floor it was taken at, so any other
   // position (a walk out, a new floor, a reload) stands him on the stop or wherever the save says.
   const [place, setPlace] = useState<(ExplorerPlace & { floor: number }) | null>(null)
+  // A walk's position is written a render after its tap, so the waypoint is left when the position moves, not at the
+  // tap: until then he still stands on it, and the walk out starts there.
+  const standingAt = `${currentFloor}:${explorerPos[0]},${explorerPos[1]}`
+  const [placeSeenAt, setPlaceSeenAt] = useState(standingAt)
+  if (placeSeenAt !== standingAt) {
+    setPlaceSeenAt(standingAt)
+    if (place && `${place.floor}:${place.pos[0]},${place.pos[1]}` !== standingAt) setPlace(null)
+  }
   const waypoint =
     place && place.floor === currentFloor && place.pos[0] === explorerPos[0] && place.pos[1] === explorerPos[1]
       ? place.waypoint
@@ -233,7 +241,8 @@ export const useSiteNavigation = ({
       // turned away moved nobody, so it leaves the standing offer alone.
       setPrompt(null)
       setNotice(null)
-      setPlace(null)
+      // Off a waypoint to his own cell is the walk back to the stop; any other cell leaves it when he gets there.
+      if (row === explorerPos[0] && col === explorerPos[1]) setPlace(null)
 
       // WALKING TO A CELL: every sequence tile on the route is stood on, so each works as it is passed. The cell's
       // address is what every write about it is filed under; every cell the assembler draws carries one, so the
