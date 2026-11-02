@@ -4,7 +4,7 @@ import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
 import { pinsFrom } from "./buildWorldConfigs"
 
 const floor = (
-  pin: Partial<Pick<FloorConfig, "seed" | "packing" | "outsideLock" | "corridorsTakeTwo">> = {}
+  pin: Partial<Pick<FloorConfig, "seed" | "packing" | "sidePacking" | "outsideLock" | "corridorsTakeTwo">> = {}
 ): FloorConfig => ({
   pathPuzzles: 1,
   difficulty: "starter",
@@ -15,10 +15,10 @@ const floor = (
 })
 
 describe(pinsFrom, () => {
-  it("pinsFrom copies seed and packing from the baked world onto every floor", () => {
+  it("pinsFrom copies seed, packing and side packing from the baked world onto every floor", () => {
     const baked: Record<string, SiteConfig[]> = {
       made_up: [
-        [floor({ seed: 11, packing: 0.4 }), floor({ seed: 12, packing: 0.6 })],
+        [floor({ seed: 11, packing: 0.4, sidePacking: 0.1 }), floor({ seed: 12, packing: 0.6 })],
         [floor({ seed: 21, packing: 1 })],
       ],
       other: [[floor({ seed: 31, packing: 0.5 })]],
@@ -29,7 +29,7 @@ describe(pinsFrom, () => {
     }
     pinsFrom(baked)(configs)
     const pins = (world: Record<string, SiteConfig[]>) =>
-      Object.values(world).map(sites => sites.map(site => site.map(f => [f.seed, f.packing])))
+      Object.values(world).map(sites => sites.map(site => site.map(f => [f.seed, f.packing, f.sidePacking])))
     expect(pins(configs)).toEqual(pins(baked))
   })
 
