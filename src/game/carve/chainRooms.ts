@@ -154,7 +154,7 @@ export const chainRooms = pass(
       // A GATE CELL AND A PUZZLE CANNOT BOTH STAND IN ONE CELL EITHER, same rule and same technique as the main
       // path's own content: forward to the next free node, so one layout always places the same way. Runs out of
       // room only where a gate leaves fewer free cells than this chain's own `pathPuzzles` asks for, in which case
-      // this attempt retries the same way a main-path shortfall does — a wider chain (`chainPacking`) may fit both.
+      // this attempt retries the same way a main-path shortfall does — another layout may fit both.
       const contentIndices: number[] = []
       for (const wanted of spreadContentIndices(section.pathPuzzles, contentStart, last + 1)) {
         let index = wanted
@@ -274,8 +274,8 @@ export const chainRooms = pass(
 
     // Two shortfalls, reported under the SAME names the main-path search uses — a control that matched no chain
     // node at all is `controlNotSeated`, one whose only candidate already held a puzzle with nowhere to move it is
-    // `controlPuzzleUndisplaceable` — kept apart the identical way, for the identical reason: a wider chain
-    // (`chainPacking`) rescues both, so both retry rather than refuse. Checked once every chain has had its turn,
+    // `controlPuzzleUndisplaceable` — kept apart the identical way, for the identical reason: another layout
+    // may rescue both, so both retry rather than refuse. Checked once every chain has had its turn,
     // since a control's own region may be seated on any one of them.
     if (chainControlSeated.size < offRouteControls.length) {
       const stillUnseated = offRouteControls.filter(({ control }) => !chainControlSeated.has(control.id))

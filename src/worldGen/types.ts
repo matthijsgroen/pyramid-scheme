@@ -57,6 +57,8 @@ export type SubSection = {
   hidden?: boolean
   /** Isolates this section's cells from leftover maze edges, so a compact layout can't merge a shortcut around it. */
   sealed?: boolean
+  /** This path's length multiplier. Mirrors game/siteTypes.ts. */
+  packing?: number
   /** Family/tag(s) for this section's own intermediate rooms — defaults to the "puzzle" tag
    * (sumplete) when unset. Never "crocodile" — that's a main-path-finale-only family. An
    * array means "any of these": the union of those tags' pools. Narrowing is a narrower tag's job. */
@@ -133,6 +135,7 @@ export type FloorConfig = {
   lootByIndex?: Record<number, false>
   corridorStraightness?: number
   packing?: number
+  sidePacking?: number
   /** The top-level side sections, by index, that hang outside the floor's lock as branches. Written by the layout
    * search. Mirrors game/siteTypes.ts. */
   outsideLock?: number[]

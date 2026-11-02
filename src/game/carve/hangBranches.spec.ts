@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { firstCarved, plainFloor, prepOf, DIR_MOVE, graphDistance, isPuzzleRoom, findRoom } from "./carveFixtures"
 import { makePkey } from "./grid"
-import { chainRoomCount, paddedChainLength } from "./ids"
+import { chainLength } from "./ids"
 import { assembleFloor } from "./assembleFloor"
 import { validateSite } from "../siteValidator"
 import type { SideSection, FloorConfig } from "../siteTypes"
@@ -34,12 +34,9 @@ describe("hangBranches", () => {
     expect(groups.map(g => g.sectionIdx).sort()).toEqual([0, 1, 2])
     for (const group of groups) {
       const positional = `s${group.sectionIdx}`
-      const rooms = chainRoomCount(
-        prep.mechanisms.leverAtPositional,
-        prep.sections.sideSections[group.sectionIdx],
-        positional
+      expect(group.cells).toHaveLength(
+        chainLength(prep, prep.sections.sideSections[group.sectionIdx], positional, state.rung)
       )
-      expect(group.cells).toHaveLength(paddedChainLength(state.rung.chainPacking, rooms))
       expect(walks(group)).toBe(true)
     }
   })

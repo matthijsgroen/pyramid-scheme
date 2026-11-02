@@ -22,18 +22,6 @@
       "corridorsTakeTwo": true
     }
   },
-  "expert_1#4#0": {
-    "kind": "sidePaths",
-    "hash": "b13bdd07a4fa74d01724fafa99a292591cc2348e",
-    "sidePaths": {
-      "outsideLock": [
-        4,
-        5,
-        6
-      ],
-      "corridorsTakeTwo": true
-    }
-  },
   "junior_4#2#0": {
     "kind": "sidePaths",
     "hash": "9fb49118c712b3c8f33fe086805779a8d141d233",
@@ -41,6 +29,18 @@
       "outsideLock": [
         2,
         3
+      ]
+    }
+  },
+  "junior_4#3#0": {
+    "kind": "sidePaths",
+    "hash": "057835fa211284ee6c5c77a78d3bfaaf35cb1f78",
+    "sidePaths": {
+      "outsideLock": [
+        3,
+        4,
+        5,
+        6
       ]
     }
   }

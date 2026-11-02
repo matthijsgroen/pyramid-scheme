@@ -253,8 +253,10 @@ export type FloorPrep = Readonly<{
     contentCount: number
     leverOnMain: boolean
     straightBias: number
-    /** The authored wish, where the ladder starts. */
+    /** The main path's authored wish, where the ladder starts. */
     packing: number
+    /** The side paths' authored wish, where a path writes none of its own: the floor's `sidePacking`, else `packing`. */
+    sidePacking: number
   }>
   hashes: Readonly<{
     mainIsolated: boolean
@@ -270,7 +272,11 @@ export type Rung = {
   startingN: number
   packing: number
   targetDistance: number
-  chainPacking: number
+  /** How much of their wish the side paths keep: 1 on every ordinary attempt, wound toward 0 by recovery. */
+  chainWind: number
+  /** The least packing a side path is carved at before the wind: 0 on every ordinary attempt; recovery lifts every
+   * side path to the roomiest wish first, so a path whose regions and gates need a longer chain finds one. */
+  chainFloor: number
   /** Past the frozen attempts: the grid is sized to the carve and side paths may carve into their parent. */
   recovery: boolean
 }

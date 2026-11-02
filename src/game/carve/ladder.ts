@@ -24,9 +24,9 @@ import type { FloorPrep, Rung } from "./state"
 //
 // Only a floor that has exhausted the budget — one nobody can enter, so there is no progress to
 // protect — enters recovery. Each attempt then sizes the grid to what the carve needs (`carvedCells`)
-// while winding `chainPacking` from `packing` down to 0, so the last attempt is the most permissive
-// shape this config can take. That is what makes the phase converge rather than reroll the same
-// too-tight puzzle.
+// while lifting the side paths to the roomiest wish and winding them down to none of it (`chainFloor`,
+// `chainWind`), so the last attempt is the most permissive shape this config can take. That is what makes
+// the phase converge rather than reroll the same too-tight puzzle.
 const RECOVERY_ATTEMPT = 30
 /** The most attempts a floor may take. */
 export const ASSEMBLY_ATTEMPTS = 60
@@ -56,7 +56,7 @@ export const firstRung = (prep: FloorPrep): Rung => {
     ),
     reservedNodeCount(prep)
   )
-  return { n: startingN, startingN, packing, targetDistance, chainPacking: packing, recovery: false }
+  return { n: startingN, startingN, packing, targetDistance, chainWind: 1, chainFloor: 0, recovery: false }
 }
 
 /** The rung `attempt` carves at, from the one the attempt before it carved at. */
@@ -68,20 +68,22 @@ export const climb = (prep: FloorPrep, attempt: number, rung: Rung): Rung => {
     const packing = rung.packing < PACKING_CEILING ? PACKING_CEILING : rung.packing
     const targetDistance = rung.packing < PACKING_CEILING ? distanceFor(prep, packing) : rung.targetDistance
     const steps = Math.max(1, ASSEMBLY_ATTEMPTS - RECOVERY_ATTEMPT - 1)
-    const chainPacking = (packing * (steps - (attempt - RECOVERY_ATTEMPT))) / steps
-    const n = Math.max(rung.startingN, deriveN(prep, { packing, targetDistance }, carvedCells(prep, chainPacking)))
-    return { ...rung, n, packing, targetDistance, chainPacking, recovery: true }
+    const chainWind = (steps - (attempt - RECOVERY_ATTEMPT)) / steps
+    const chains = { chainWind, chainFloor: PACKING_CEILING }
+    const n = Math.max(rung.startingN, deriveN(prep, { packing, targetDistance }, carvedCells(prep, chains)))
+    return { ...rung, n, packing, targetDistance, ...chains, recovery: true }
   }
   if (attempt === 0 || attempt % ATTEMPTS_PER_RUNG !== 0) return rung
   // Growing the grid cannot rescue a floor starved by its own packing: the main path is carved to
   // `targetDistance` however much room surrounds it, so branches that have nowhere to hang still
-  // have nowhere to hang. Widening the wish is the lever that moves, and the grid follows it
-  // through `deriveN` — up to the ceiling, past which the grid is the lever again.
+  // have nowhere to hang. Widening the main path's wish is the lever that moves: a longer walk is more places for a
+  // side path to hang. The side paths keep their own wish, since lengthening them with it eats the room it bought. The
+  // grid follows through `deriveN` — up to the ceiling, past which the grid is the lever again.
   if (attempt % ATTEMPTS_PER_WIDEN === 0 && rung.packing < PACKING_CEILING) {
     const packing = Math.min(rung.packing * PACKING_WIDEN, PACKING_CEILING)
     const targetDistance = distanceFor(prep, packing)
     const startingN = Math.max(rung.n, deriveN(prep, { packing, targetDistance }, prep.sizing.minCells))
-    return { ...rung, n: startingN, startingN, packing, targetDistance, chainPacking: packing }
+    return { ...rung, n: startingN, startingN, packing, targetDistance }
   }
   return { ...rung, n: rung.n + 2 }
 }

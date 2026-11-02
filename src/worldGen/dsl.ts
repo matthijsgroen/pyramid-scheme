@@ -26,6 +26,8 @@ export type PathEntry = {
   encounter?: string | string[]
   /** Lock this path behind a floor-key door. Color is drawn from the floor's keyColors rotation. */
   gate?: "floor-key"
+  /** This path's length multiplier, relative to its content, in place of the floor's `sidePacking`. */
+  packing?: number
   /** Chance [0-1], rolled per pyramid, that this entry emits at all. Omit = always. Use to
    * scatter (e.g. trapped) paths across only some pyramids instead of every one. */
   chance?: number
@@ -236,6 +238,9 @@ export type SideSectionConstraint<TExtra extends string = never> = {
   toFloor?: number
   /** Invisible without the Detection perk. */
   hidden?: boolean
+  /** This path's length multiplier, relative to its content, in place of the one its parent path or floor names for
+   * side paths. */
+  packing?: number
   /** Isolates this section's cells from leftover maze edges in a compact layout, so a
    * shortcut can't merge around it — same mechanism `gate`/an `encounter:"trap"` section
    * already gets for free. */
@@ -334,6 +339,9 @@ export type FloorConstraint<TExtra extends string = never> = {
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
   packing?: number
+  /** Side-path length multiplier, relative to each path's content, for every side path naming no `packing` of its own.
+   * Defaults to `packing`. */
+  sidePacking?: number
   /** The seed this floor carves at, in place of the one its address derives. Authored only where the floor
    * has no baked output to carry a searched seed; every other floor's seed is stamped by the bake. */
   seed?: number
@@ -491,6 +499,9 @@ export type PyramidConstraint = {
   windyStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
   packing?: number
+  /** Side-path length multiplier, relative to each path's content, for every side path naming no `packing` of its own.
+   * Defaults to `packing`. */
+  sidePacking?: number
   /** The seed the floor carves at, in place of the one its address derives. Authored only where the floor
    * has no baked output to carry a searched seed; every other floor's seed is stamped by the bake. */
   seed?: number

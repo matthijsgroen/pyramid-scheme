@@ -154,8 +154,13 @@ export const floorSearch = (journeyId: string, floor: FloorConfig, levelNr: numb
     ...(outsideLock.length > 0 ? { outsideLock } : {}),
     ...(corridorsTakeTwo ? { corridorsTakeTwo } : {}),
   })
+  // A raised packing lengthens the main path alone: the side paths keep the wish the author wrote.
+  const packed = (packing: number): Pick<FloorConfig, "packing" | "sidePacking"> =>
+    packing === authored
+      ? { packing: floor.packing, sidePacking: floor.sidePacking }
+      : { packing, sidePacking: floor.sidePacking ?? authored }
   const assembleAt = (seed: number, packing: number, maxAttempts: number, sidePaths: SidePathStage) =>
-    carve({ ...standing(sidePaths), seed, packing: packing === authored ? floor.packing : packing }, maxAttempts)
+    carve({ ...standing(sidePaths), seed, ...packed(packing) }, maxAttempts)
   const judge = (result: Parameters<typeof refusal>[0]) => refusal(result, floor as GameFloorConfig)
   const prepared = carve.prepare(authoring)
   const corridorsWith = (sidePaths: SidePathStage): CorridorAssignment[] => {
@@ -177,7 +182,7 @@ export const floorSearch = (journeyId: string, floor: FloorConfig, levelNr: numb
     judge,
     stages,
   }
-  return { base, authored, authoring, assembleAt, prepared, corridorsWith, stages, options }
+  return { base, authored, authoring, packed, assembleAt, prepared, corridorsWith, stages, options }
 }
 
 /** One stage of one floor searched on its own: what a search worker runs. A found pin is carved again by the picker
@@ -291,6 +296,8 @@ export const makeLayoutPicker = ({
       })
       floor.seed = result.seed
       floor.packing = result.packing
+      const { sidePacking } = search.packed(result.packing)
+      if (sidePacking !== undefined) floor.sidePacking = sidePacking
       if (result.sidePaths.outsideLock.length > 0) floor.outsideLock = result.sidePaths.outsideLock
       else delete floor.outsideLock
       if (result.sidePaths.corridorsTakeTwo) floor.corridorsTakeTwo = true

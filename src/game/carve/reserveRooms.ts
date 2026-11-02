@@ -7,7 +7,7 @@ import { claimsFloorAt } from "../roomFootprint"
 import { inRect } from "../roomShape"
 import type { CellRect, CorridorCell, Direction, FloorGrid, GridCell, SideSection } from "../siteTypes"
 import { DIRS2, NODE_STEP, edgeNodes, makePkey, spreadContentIndices } from "./grid"
-import { chainRoomCount, paddedChainLength } from "./ids"
+import { chainLength } from "./ids"
 import { meets, ringed, stampPrefab, type PrefabChoice } from "./placePrefabs"
 import { pass } from "./state"
 import type { Cell, FloorPrep, Refusal } from "./state"
@@ -658,10 +658,7 @@ export const reserveRooms = pass(
     for (const ask of sides) {
       if (!("section" in ask.at)) continue
       const si = ask.at.section
-      const needed = paddedChainLength(
-        rung.chainPacking,
-        chainRoomCount(prep.mechanisms.leverAtPositional, sideSections[si], `s${si}`)
-      )
+      const needed = chainLength(prep, sideSections[si], `s${si}`, rung)
       const near = blockZone(blocks)
       const hubStarts = blocks
         .filter(block => "main" in block.on)

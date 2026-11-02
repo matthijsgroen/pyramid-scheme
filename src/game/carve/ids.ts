@@ -85,31 +85,50 @@ export const distanceFor = (prep: Pick<FloorPrep, "sizing">, packing: number) =>
 // formula (not a separate, lighter-touch one) keeps one mental model for "how long is a walk"
 // everywhere in the DSL, main path or side path alike.
 //
-// `chainPacking` is `packing` for every ordinary attempt; the ladder's recovery winds it down, trading a
-// side path's cosmetic wandering for a layout that fits at all.
+// A chain's packing is its side path's wish, lifted to the rung's `chainFloor`, times its `chainWind`: the wish
+// itself on every ordinary attempt; the ladder's recovery lifts it to the roomiest wish and winds it down, trading
+// a side path's cosmetic wandering for a layout that fits at all.
 export const paddedChainLength = (chainPacking: number, contentCellsCount: number): number =>
   Math.max(contentCellsCount, Math.round(contentCellsCount * (1 + 5 * chainPacking)))
+
+/** A side path's wish: its own `packing`, else its parent path's, else the floor's side paths'. */
+export const chainPackingOf = (
+  prep: Pick<FloorPrep, "sizing">,
+  section: SideSection | SubSection,
+  parent?: SideSection
+): number => section.packing ?? parent?.packing ?? prep.sizing.sidePacking
+
+/** The cells a side path's chain is carved to on `rung`: its rooms at its wish, lifted and wound as the rung says. */
+export const chainLength = (
+  prep: Pick<FloorPrep, "sizing" | "mechanisms">,
+  section: SideSection | SubSection,
+  positional: string,
+  rung: Pick<Rung, "chainWind" | "chainFloor">,
+  parent?: SideSection
+): number =>
+  paddedChainLength(
+    Math.max(chainPackingOf(prep, section, parent), rung.chainFloor) * rung.chainWind,
+    chainRoomCount(prep.mechanisms.leverAtPositional, section, positional)
+  )
 
 // What the carve *actually* consumes, as opposed to `minCells`'s bare content count: every
 // side-section and sub-section chain is carved at its `paddedChainLength`, which is 6× its
 // content at packing=1 and 11× at packing=2. Sizing the grid off `minCells` undershoots badly on
 // floors with many side sections (expert and up), which only shuffle luck on a grown grid would
-// rescue. This is the honest figure, and it moves with `chainPacking`, so recovery re-sizes the grid
-// to whatever it has wound the chains down to rather than leaving a shrunken floor rattling around a
+// rescue. This is the honest figure, and it moves with the rung's chains, so recovery re-sizes the
+// grid to whatever it has wound the chains down to rather than leaving a shrunken floor rattling around a
 // huge grid.
 export const carvedCells = (
   prep: Pick<FloorPrep, "sizing" | "sections" | "mechanisms">,
-  chainPacking: number
+  rung: Pick<Rung, "chainWind" | "chainFloor">
 ): number => {
-  const { leverAtPositional } = prep.mechanisms
   return (
     prep.sizing.mainPathCells +
     prep.sizing.lockCells +
     prep.sections.sideSections.reduce((sum, sec, idx) => {
-      const secCells = paddedChainLength(chainPacking, chainRoomCount(leverAtPositional, sec, `s${idx}`))
+      const secCells = chainLength(prep, sec, `s${idx}`, rung)
       const subCells = (sec.sideSections ?? []).reduce(
-        (s2, sub, subIdx) =>
-          s2 + paddedChainLength(chainPacking, chainRoomCount(leverAtPositional, sub, `s${idx}.${subIdx}`)),
+        (s2, sub, subIdx) => s2 + chainLength(prep, sub, `s${idx}.${subIdx}`, rung, sec),
         0
       )
       return sum + secCells + subCells

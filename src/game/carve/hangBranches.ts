@@ -5,13 +5,17 @@ import type { ContentKind } from "../regions"
 import type { KeyColor, SideSection, SubSection } from "../siteTypes"
 import { absorbedCell, contentNow, gateIndices } from "./derive"
 import { CONNECTOR_DIRS, DIRS, DIRS2, NEAR_NODES, NODE_STEP, OPPOSITE, makePkey } from "./grid"
-import { chainRoomCount, nid, paddedChainLength } from "./ids"
+import { chainLength, nid } from "./ids"
 import { blockNodes, blockZone, centralityOf, type ReservedBlock } from "./reserveRooms"
 import { childSectionsOf, doorsShutting } from "./sections"
 import { pass } from "./state"
 import type { Cell, Chain, DropSeam, OneWayEdge, SectionGroup } from "./state"
 
-// Find a chain of `count` cells starting from (startR, startC),
+// How many cells past its wish a chain may run when nowhere at its wished length may hold its end room: a chain hung
+// off a room starts beside the room's ring and the rooms around it, where a short one finds no end it may take.
+const CHAIN_OVERRUN = 4
+
+// Find a chain of `count` cells starting from (startR, startC), or up to `overrun` more where none of `count` may end,
 // extending through available maze neighbors not in usedCells. The final cell in the
 // chain becomes a section/sub-section endpoint, which later wants a multi-cell footprint
 // (see the claiming pass in render) — so when a `scorer` is given, the last step
@@ -25,7 +29,8 @@ const extendPath = (
   usedCells: Set<string>,
   rand: () => number,
   scorer?: (r: number, c: number) => number,
-  mayEnd?: (r: number, c: number) => boolean
+  mayEnd?: (r: number, c: number) => boolean,
+  overrun = 0
 ): Array<[number, number]> | null => {
   if (count === 0) return []
   const result: Array<[number, number]> = []
@@ -53,7 +58,13 @@ const extendPath = (
     return false
   }
 
-  return dfs(startR, startC, count) ? result : null
+  for (let run = count; run <= count + overrun; run++) {
+    result.length = 0
+    tempUsed.clear()
+    for (const cell of usedCells) tempUsed.add(cell)
+    if (dfs(startR, startC, run)) return result
+  }
+  return null
 }
 
 /**
@@ -87,7 +98,6 @@ export const hangBranches = pass(
     const { siteId } = prep.input
     const { sideSections, appetiteOfRegion, branchSections, hubGroupSize, subSectionsOf } = prep.sections
     const { forkIns, forkGroups, junctionGroups } = prep.forks
-    const { leverAtPositional } = prep.mechanisms
     const { rand, rung } = state
     const { n: N, mainPath, passages } = state.maze
     const { stepRegion, seams: regionSeamIndices } = state.regions
@@ -386,7 +396,8 @@ export const hangBranches = pass(
           usedCells,
           rand,
           (r, c) => pocketSize([r, c], 8),
-          mayEnd
+          mayEnd,
+          CHAIN_OVERRUN
         )
         if (rest === null) {
           usedCells.delete(cellKey(out))
@@ -564,10 +575,7 @@ export const hangBranches = pass(
               )
             )
           : everywhere
-        const needed = paddedChainLength(
-          rung.chainPacking,
-          chainRoomCount(leverAtPositional, sideSections[si], `s${si}`)
-        )
+        const needed = chainLength(prep, sideSections[si], `s${si}`, rung)
         const seam = prep.layout.dropSeams.get(si)
         placing = `s${si}`
         const attached = placeUncrowded(() =>
@@ -619,10 +627,7 @@ export const hangBranches = pass(
       const placedSubs: Array<{ idx: number; cells: Cell[]; attachedAt: Cell }> = []
 
       for (let si = 0; si < subSects.length; si++) {
-        const subNeeded = paddedChainLength(
-          rung.chainPacking,
-          chainRoomCount(leverAtPositional, subSects[si], `s${group.sectionIdx}.${si}`)
-        )
+        const subNeeded = chainLength(prep, subSects[si], `s${group.sectionIdx}.${si}`, rung, parentSection)
         // Carving out of the parent chain is kept to recovery, where the frozen attempts are past
         // and a layout that fits at all is worth a cycle. It is what unstuck that phase: by the time
         // sub-sections are placed, earlier chains have boxed the parent in, and one needing a single

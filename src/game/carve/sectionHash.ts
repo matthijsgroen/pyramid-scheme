@@ -51,6 +51,7 @@ export const computeLegacySideSectionHash = (
         end: carvedLink(section.end),
         hidden: section.hidden,
         sealed: section.sealed,
+        packing: section.packing,
         encounter: section.encounter,
         gateType: section.gate?.type,
       })
@@ -62,6 +63,7 @@ export const computeLegacySideSectionHash = (
 // and re-carves the floor around it.
 const carveShape = (config: FloorConfig) => ({
   packing: config.packing,
+  sidePacking: config.sidePacking,
   corridorStraightness: config.corridorStraightness,
   outsideLock: config.outsideLock,
   corridorsTakeTwo: config.corridorsTakeTwo,

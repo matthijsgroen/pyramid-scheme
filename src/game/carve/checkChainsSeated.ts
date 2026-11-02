@@ -20,8 +20,8 @@ import { pass } from "./state"
  * A GATE AT A CHAIN'S OWN LAST CELL WOULD STAND WHERE THE END ROOM MUST — every chain reserves that cell
  * unconditionally, the same way the main path's own last index is reserved for the exit.
  *
- * All three are retried rather than refused: a wider chain, which `chainPacking` grows across the attempt
- * budget the same way `packing` grows the main path, may seat what this one did not.
+ * All three are retried rather than refused: another attempt, on a grown grid and a longer main path, may seat what
+ * this one did not.
  */
 export const checkChainsSeated = pass(
   "checkChainsSeated",
