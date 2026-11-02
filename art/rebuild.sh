@@ -347,6 +347,27 @@ if [ -f art/masters/props/starter/scribeDesk.webp ]; then
     --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 fi
 
+# The porters' clutter: a cart and a litter two cells wide (--cells=2x1, a 126x84 frame, so their renders
+# are landscape at its 3:2) and floor clutter walked over in one cell. The two wide ones are spun under 10
+# degrees, because a large spin turns a two-cell length into depth and depth is drawn as height. The clutter
+# lies flat, so its footprint is faint (`prim_mat`) and cast straight down. Sacking is --colour-cloth.
+# --scale on the cart: unscaled it lands 82 tall beside a 70-tall explorer.
+if [ -f art/masters/props/starter/cart.webp ]; then
+  scaffold cart --spin=-8 --width=672 --height=448 --colour=#9a6a3c --floor=#d8c8a8 --colour-cloth=#b08a5a
+  yarn import-tile art/masters/props/starter/cart.webp --tier=starter --name=cart --slot=prop --cells=2x1 \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.85
+fi
+if [ -f art/masters/props/starter/litter.webp ]; then
+  scaffold litter --spin=6 --width=672 --height=448 --colour=#9a6a3c --floor=#d8c8a8 --colour-cloth=#b08a5a
+  yarn import-tile art/masters/props/starter/litter.webp --tier=starter --name=litter --slot=prop --cells=2x1 \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/starter/floorClutter.webp ]; then
+  scaffold floorClutter --spin=18 --shadow=0.5 --sun=0 --colour=#9a6a3c --floor=#d8c8a8 --colour-cloth=#b08a5a
+  yarn import-tile art/masters/props/starter/floorClutter.webp --tier=starter --name=floorClutter --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+
 # shared — one desert blows into all five tombs
 #
 # Sand is the only tile whose SHAPE this repository generates. It is not an object: a drift has no

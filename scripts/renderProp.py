@@ -3913,6 +3913,199 @@ def prim_pipehole():
     return join_all()
 
 
+# THE STOREHOUSE'S CLUTTER — what the porters leave lying between the activities. Two of them are TWO CELLS
+# WIDE (`import-tile --cells=2x1`, a 126x84 frame), so they are long in X, the one axis the shear leaves
+# horizontal, and shallow in Y: a deep thing spun on a two-cell footprint is mostly top face and stops
+# fitting the frame. The third is walked over and lies flat in one cell.
+
+
+def _sack(x, y, z, w, d, h, part="cloth"):
+    """A full SACK standing on its base: a straight-sided body that swells a little toward the top, a
+    rounded shoulder, and its mouth gathered into a short tuft over a tie.
+
+    NOT A SPHERE WITH A NECK, which is what this was first and which drew as two wine jars: a round belly
+    on a narrow neck is the silhouette of a pot, whatever it is coloured. What says sack is the straight
+    side, the flat-ish shoulder and the tuft of cloth above the cord — a bunch, not a rim."""
+    sq = d / w
+    body = cone(w * 0.44, w * 0.50, h * 0.52, x=x, y=y, z=z + h * 0.26, verts=16)
+    body.scale = (1.0, sq, 1.0)
+    mark(body, part)
+    shoulder = dome(w * 0.50, h * 0.36, x=x, y=y, z=z + h * 0.51)
+    shoulder.scale = (1.0, sq, 1.0)
+    mark(shoulder, part)
+    mark(cone(w * 0.13, w * 0.07, h * 0.12, x=x, y=y, z=z + h * 0.86, verts=10), part)
+    mark(cyl(w * 0.09, h * 0.05, x=x, y=y, z=z + h * 0.91, verts=10), "timber")
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=10, ring_count=6, radius=1.0, location=(x + w * 0.02, y, z + h * 0.97))
+    tuft = bpy.context.object
+    tuft.scale = (w * 0.13, w * 0.09, h * 0.07)
+    mark(tuft, part)
+
+
+def _lying_sack(x, y, z, length, r, squash=0.70, part="cloth", tie_end=1):
+    """A sack laid on its side along X, its tied mouth at one end: a sphere stretched in X and flattened,
+    which is what a soft load does when it is laid down — it slumps, and a cylinder would read as a bolster."""
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=18, ring_count=10, radius=1.0, location=(0, 0, 0))
+    belly = bpy.context.object
+    belly.scale = (length / 2, r * 1.05, r * squash)
+    belly.location = (x, y, z + r * squash)
+    mark(belly, part)
+    # The gathered mouth, sticking out in X so it reads sideways (`prim_lamp`: nothing points at the viewer).
+    _lying(r * 0.28, r * 0.55, x + tie_end * (length / 2 + r * 0.12), y, z + r * squash * 1.05, part=part)
+    _lying(r * 0.33, r * 0.10, x + tie_end * (length / 2 - r * 0.02), y, z + r * squash * 1.05, part="timber")
+
+
+def prim_cart():
+    """A two-wheeled HAND CART set down on the floor, loaded: two sacks, a stoppered jar and a basket on a
+    railed bed, its shafts running out to the left with their tips resting on the floor.
+
+    Seen from the side, and that is the projection's gift to a cart: the axle runs in Y, so each wheel is a
+    disc in the x-z plane — the front plane, the one the shear leaves alone — and draws as a true circle.
+    The far wheel sits k*y higher behind the bed and shows as a rim above it, which is what says two wheels.
+
+    TIPPED FORWARD ON ITS SHAFTS, the way a two-wheeler parks: built level, then the whole mesh turned about
+    the axle until the shaft tips meet the floor. Level shafts would hover a hand above the paving along
+    their whole length and read as a bench.
+
+    The jar stands at the BACK RIGHT and tops everything behind it, for the far-edge rule; the sacks are the
+    bulk of the silhouette. Wheels are `timber`, darker than the bed, so the disc is not read as part of the
+    load."""
+    bed_l, bed_d, bed_z, bed_t = 1.30, 0.60, 0.42, 0.05
+    bx0 = -0.50  # the bed's front (left) end; it runs to bx0 + bed_l
+    axle_x, wheel_r = bx0 + bed_l * 0.55, 0.36
+    # The bed and its rails.
+    mark(box(bed_l, bed_d, bed_t, x=bx0 + bed_l / 2, z=bed_z + bed_t / 2), "body")
+    rail_h = 0.13
+    for sy in (-1, 1):
+        mark(box(bed_l, 0.04, rail_h, x=bx0 + bed_l / 2, y=sy * (bed_d / 2 - 0.02), z=bed_z + bed_t + rail_h / 2 - 0.01), "body")
+    for ex in (bx0 + 0.02, bx0 + bed_l - 0.02):
+        mark(box(0.04, bed_d, rail_h * 1.3, x=ex, z=bed_z + bed_t + rail_h * 0.65 - 0.01), "body")
+    # The axle, and a wheel on each end of it, each with a hub proud of its face.
+    axle = cyl(0.04, bed_d + 0.22, x=axle_x, z=wheel_r, verts=12)
+    axle.rotation_euler = (math.pi / 2, 0.0, 0.0)
+    mark(axle, "timber")
+    for sy in (-1, 1):
+        wheel = cyl(wheel_r, 0.07, x=axle_x, y=sy * (bed_d / 2 + 0.06), z=wheel_r, verts=28)
+        wheel.rotation_euler = (math.pi / 2, 0.0, 0.0)
+        mark(wheel, "timber")
+        hub = cyl(0.08, 0.06, x=axle_x, y=sy * (bed_d / 2 + 0.12), z=wheel_r, verts=14)
+        hub.rotation_euler = (math.pi / 2, 0.0, 0.0)
+        mark(hub, "body")
+    # The shafts: under the bed's sides and out past its front end, a handle's length of them bare.
+    shaft_y, shaft_r = bed_d / 2 - 0.06, 0.035
+    tip_x = bx0 - 0.95
+    for sy in (-1, 1):
+        mark(_lying(shaft_r, bed_l * 0.9 - tip_x + bx0, (tip_x + bx0 + bed_l * 0.9) / 2, sy * shaft_y, bed_z - shaft_r, verts=10), "body")
+    # The load: two sacks side by side, the jar at the back right, a basket in front of it.
+    lz = bed_z + bed_t - 0.01
+    _sack(bx0 + 0.27, 0.02, lz, 0.40, 0.36, 0.48)
+    _sack(bx0 + 0.62, -0.04, lz, 0.36, 0.34, 0.40)
+    jar(bx0 + 1.02, 0.09, 0.56, 0.13, z=lz, part="pottery")
+    _drum(0.12, 0.15, 0.16, bx0 + 1.06, lz, y=-0.15)
+    cart = join_all()
+    # Tip it forward about the axle until the shaft tips touch the floor where the wheels do.
+    tip_dx, tip_dz = tip_x - axle_x, (bed_z - 2 * shaft_r) - wheel_r
+    reach = math.hypot(tip_dx, tip_dz)
+    drop = math.asin(wheel_r / reach) - math.atan2(-tip_dz, -tip_dx)
+    pivot = Matrix.Translation((axle_x, 0.0, wheel_r))
+    cart.data.transform(pivot @ Matrix.Rotation(-drop, 4, "Y") @ pivot.inverted())
+    return cart
+
+
+def prim_litter():
+    """CARRYING POLES set down on the floor: two long poles along X, a load lashed on cross-bars between
+    them — a pair of sacks and a lidded basket — and the poles' bare ends reaching out either side, where
+    the porters' shoulders go.
+
+    THE POLES RUN IN X because X is the only horizontal: run in Y they are two vertical strokes under the
+    load. Two of them, a load's depth apart, draw as two horizontal bars — the near one low across the
+    bottom of the picture, the far one k*y higher behind the load — and both ends sticking out past the
+    load is the whole of what says "poles", not "a pallet".
+
+    The load sits on three cross-bars laid OVER the poles, and the poles lie on the floor. A load set down
+    on the paving with poles passing beside it would have no reason to be lashed to them, and painted rope
+    over nothing reads as decoration. Ropes are `timber`, the poles `body`."""
+    pole_l, pole_r, gap = 2.50, 0.04, 0.56
+    for sy in (-1, 1):
+        _lying(pole_r, pole_l, 0.0, sy * gap / 2, pole_r, verts=10, part="body")
+    bar_z = 2 * pole_r + 0.02
+    for x in (-0.46, 0.0, 0.46):
+        mark(box(0.06, gap + 0.12, 0.04, x=x, z=bar_z), "body")
+    # A reed mat laid over the bars, so the load rides on a bed and not on three sticks with daylight
+    # between them.
+    mark(box(1.06, gap + 0.04, 0.025, z=bar_z + 0.03), "body")
+    lz = bar_z + 0.04
+    r, sq = 0.20, 0.70
+    _lying_sack(-0.25, -0.02, lz, 0.56, r, squash=sq, tie_end=-1)
+    _lying_sack(0.25, 0.03, lz, 0.52, r * 0.94, squash=sq, tie_end=1)
+    # A squat lidded basket riding on the two sacks, a little back: it tops the load's far edge.
+    top = lz + 2 * r * sq - 0.05
+    _drum(0.16, 0.19, 0.13, 0.0, top, y=0.07)
+    mark(_drum(0.20, 0.20, 0.035, 0.0, top + 0.12, y=0.07), "body")
+    mark(cyl(0.03, 0.04, x=0.0, y=0.07, z=top + 0.165, verts=10), "body")
+    # The lashing: a cord round each sack's belly and its bed, proud of the cloth by more than a hairline
+    # (`prim_bales`' ties) — an ellipse the sack's own section, run along X like the sack.
+    for x, rr in ((-0.25, r), (0.25, r * 0.94)):
+        _lying(rr * sq * 1.10, 0.035, x, 0.0, lz + rr * sq, squash=1.05 / sq, verts=18, part="timber")
+    return join_all()
+
+
+def prim_floorclutter():
+    """What the porters leave on the floor, for the explorer to WALK OVER: a slumped half-empty sack with
+    its grain run out of it, three pot sherds, and a coil of rope. Nothing upright.
+
+    `prim_rubbleheap --contents=spill`'s problem and its answer: a flat thing on the floor has no silhouette
+    of its own, so the outline is spent OUTWARD — a sack, a spill, sherds and a coil spread across the cell
+    with a ragged edge — and every piece keeps a little height of its own, so it owns a front face and a
+    footprint. The sack is the tallest thing and it stands at the BACK, where z + k*y draws it highest; it is
+    still only a shin's height, because a heap in a passage is a wall.
+
+    The grain is a low cone run out of the sack's mouth and spreading forward. The rope is two tori, one on
+    the other, which is what makes a coil a coil rather than a ring. The sherds are `pottery`, rolled off
+    level, the curved shoulder of a jar left to the paint."""
+    # The sack, slumped and half empty: the grain left in it pooled at its bottom end, the rest of it lying
+    # flat — one long low body, fuller at its far end where a second lump sits INSIDE it. One round lump
+    # is a loaf; two side by side are two loaves.
+    for x, y, sx, sy, sz in ((-0.07, 0.12, 0.30, 0.16, 0.050), (-0.20, 0.15, 0.17, 0.15, 0.085)):
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=18, ring_count=10, radius=1.0, location=(0, 0, 0))
+        lump = bpy.context.object
+        lump.scale = (sx, sy, sz)
+        lump.location = (x, y, sz * 0.82)
+        mark(lump, "cloth")
+    # Its mouth: open, the empty cloth lying in a flat flap toward the spill — a wide thin sheet, rolled
+    # a little off level where it creases.
+    flap = box(0.15, 0.14, 0.020)
+    flap.rotation_euler = (math.radians(4), math.radians(-7), math.radians(-14))
+    flap.location = (0.19, 0.06, 0.020)
+    mark(flap, "cloth")
+    # The spill: run out of the mouth and fanning forward, overlapping low cones that thin to a ragged edge.
+    # One broad low fan carries the body of it; the small ones break its edge.
+    for x, y, r, h, sx in (
+        (0.32, -0.06, 0.15, 0.036, 1.25),
+        (0.22, -0.16, 0.06, 0.016, 1.0),
+        (0.46, -0.17, 0.055, 0.014, 1.0),
+        (0.50, 0.02, 0.045, 0.012, 1.0),
+    ):
+        bpy.ops.mesh.primitive_cone_add(vertices=14, radius1=r, radius2=0.0, depth=h, location=(x, y, h / 2))
+        heap = bpy.context.object
+        heap.scale = (sx, 0.80, 1.0)
+        mark(heap, "accent")
+    # Sherds: three-cornered prisms, which is the shape a pot breaks into, rolled off level where they fell.
+    for r, x, y, yaw, roll in ((0.085, -0.32, -0.20, 24, 6), (0.065, -0.10, -0.27, -41, -5), (0.055, 0.08, -0.30, 67, 7)):
+        piece = cyl(r, 0.022, verts=3)
+        piece.scale = (1.0, 0.75, 1.0)
+        piece.rotation_euler = (math.radians(roll * 0.5), math.radians(roll), math.radians(yaw))
+        # Resting on its low edge: lifted by what the roll drops that edge, and no more.
+        piece.location = (x, y, 0.011 + r * math.sin(math.radians(abs(roll))))
+        mark(piece, "pottery")
+    # The coil: two turns of rope flat on the floor at the left, and its loose end run out across the floor.
+    for i, (major, z) in enumerate(((0.11, 0.022), (0.085, 0.058))):
+        bpy.ops.mesh.primitive_torus_add(major_radius=major, minor_radius=0.024, major_segments=24, minor_segments=8,
+                                         location=(-0.50 + i * 0.01, 0.06, z))
+        mark(bpy.context.object, "timber")
+    mark(strung((-0.42, -0.04, 0.02), (-0.24, -0.10, 0.02), 0.042), "timber")
+    return join_all()
+
+
 PRIMITIVES.update(
     {
         "statue": prim_statue,
@@ -3956,6 +4149,9 @@ PRIMITIVES.update(
         "bales": prim_bales,
         "counter": prim_counter,
         "scribeDesk": prim_scribedesk,
+        "cart": prim_cart,
+        "litter": prim_litter,
+        "floorClutter": prim_floorclutter,
     }
 )
 

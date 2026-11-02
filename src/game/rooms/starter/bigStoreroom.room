@@ -1,0 +1,23 @@
+// designed by: Claude
+// starter. A big storeroom: a jar rack on the north wall, a loaded hand cart in the middle of the floor, the chest behind it.
+room bigStoreroom
+tier starter
+activity storage
+mirror
+
+layout
+# n # d # n #
+# w . x . . #
+d s . t t . d
+# g . . . c #
+# # d # # # #
+
+stock = jarRack | shelf
+goods = basketStack | bales
+w wall stock
+g floor goods
+t floor cart
+n wallItem? niche
+c chest
+x ground floorClutter
+s stop

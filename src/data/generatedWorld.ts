@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 336509128
+export const worldContentHash = 519633510
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -724,6 +724,22 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "puzzle",
         encountersByIndex: { 0: "rush-hour" },
         prefabs: {
+          bigStoreroom: {
+            name: "bigStoreroom",
+            tier: "starter",
+            activity: "storage",
+            mirror: true,
+            designedBy: "Claude",
+            layouts: [{ name: "", cells: ["#n#d#n#", "#w.x..#", "ds.tt.d", "#g...c#", "##d####"] }],
+            places: {
+              w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
+              g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
+              t: { letter: "t", layer: "floor", optional: false, kinds: ["cart"], cols: 2, rows: 1 },
+              n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
+              x: { letter: "x", layer: "ground", optional: false, kinds: ["floorClutter"], cols: 1, rows: 1 },
+            },
+            specials: { c: "chest", s: "stop" },
+          },
           storeroom: {
             name: "storeroom",
             tier: "starter",
@@ -793,6 +809,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         },
         prefabPlacements: [
+          { room: "bigStoreroom", min: 1, max: 1, central: 0 },
           { room: "storeroom", min: 0, max: 2, central: 0 },
           { room: "packingRoom", min: 0, max: 2, central: 0.3 },
           { room: "ledgerRoom", min: 0, max: 2, central: 0.6 },
@@ -969,6 +986,21 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "trade",
         encountersByIndex: { 0: "rush-hour" },
         prefabs: {
+          bigPackingRoom: {
+            name: "bigPackingRoom",
+            tier: "starter",
+            activity: "packing",
+            mirror: true,
+            designedBy: "Claude",
+            layouts: [{ name: "", cells: ["###d###", "#g...h#", "ds.x..d", "#.ll.g#", "#d##d##"] }],
+            places: {
+              g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
+              h: { letter: "h", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
+              l: { letter: "l", layer: "floor", optional: false, kinds: ["litter"], cols: 2, rows: 1 },
+              x: { letter: "x", layer: "ground", optional: false, kinds: ["floorClutter"], cols: 1, rows: 1 },
+            },
+            specials: { s: "stop" },
+          },
           storeroom: {
             name: "storeroom",
             tier: "starter",
@@ -1038,15 +1070,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         },
         prefabPlacements: [
+          { room: "bigPackingRoom", min: 1, max: 1, central: 0.3 },
           { room: "storeroom", min: 0, max: 2, central: 0 },
           { room: "packingRoom", min: 0, max: 2, central: 0.3 },
           { room: "ledgerRoom", min: 0, max: 2, central: 0.6 },
           { room: "weighingRoom", min: 0, max: 2, central: 0.8 },
           { room: "sellingRoom", min: 0, max: 2, central: 1 },
         ],
-        packing: 0.14,
+        packing: 0.12,
         sidePacking: 0.1,
-        seed: 3323337429,
+        seed: 3323337414,
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         rewards: [{ type: "campPart", structure: "windbreak", part: "stakes" }],
       },
@@ -1255,6 +1288,23 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "trade",
         encountersByIndex: { 0: "balance-scale" },
         prefabs: {
+          bigSellingRoom: {
+            name: "bigSellingRoom",
+            tier: "starter",
+            activity: "selling",
+            mirror: true,
+            designedBy: "Claude",
+            layouts: [{ name: "", cells: ["###d###", "#k..gh#", "ds..b.d", "#.e.x.#", "#d###d#"] }],
+            places: {
+              k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 },
+              g: { letter: "g", layer: "wall", optional: false, kinds: ["hanging", "offeringTable"], cols: 1, rows: 1 },
+              h: { letter: "h", layer: "wall", optional: true, kinds: ["hanging", "offeringTable"], cols: 1, rows: 1 },
+              b: { letter: "b", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
+              e: { letter: "e", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
+              x: { letter: "x", layer: "ground", optional: false, kinds: ["floorClutter"], cols: 1, rows: 1 },
+            },
+            specials: { s: "stop" },
+          },
           storeroom: {
             name: "storeroom",
             tier: "starter",
@@ -1324,6 +1374,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         },
         prefabPlacements: [
+          { room: "bigSellingRoom", min: 1, max: 1, central: 1 },
           { room: "storeroom", min: 0, max: 2, central: 0 },
           { room: "packingRoom", min: 0, max: 2, central: 0.3 },
           { room: "ledgerRoom", min: 0, max: 2, central: 0.6 },
@@ -1886,6 +1937,22 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "puzzle",
         encountersByIndex: { 0: "lightbeam", 1: "sudoku", 2: "balance-scale" },
         prefabs: {
+          bigStoreroom: {
+            name: "bigStoreroom",
+            tier: "starter",
+            activity: "storage",
+            mirror: true,
+            designedBy: "Claude",
+            layouts: [{ name: "", cells: ["#n#d#n#", "#w.x..#", "ds.tt.d", "#g...c#", "##d####"] }],
+            places: {
+              w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
+              g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
+              t: { letter: "t", layer: "floor", optional: false, kinds: ["cart"], cols: 2, rows: 1 },
+              n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
+              x: { letter: "x", layer: "ground", optional: false, kinds: ["floorClutter"], cols: 1, rows: 1 },
+            },
+            specials: { c: "chest", s: "stop" },
+          },
           storeroom: {
             name: "storeroom",
             tier: "starter",
@@ -1955,14 +2022,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         },
         prefabPlacements: [
+          { room: "bigStoreroom", min: 1, max: 1, central: 0 },
           { room: "storeroom", min: 0, max: 2, central: 0 },
           { room: "packingRoom", min: 0, max: 2, central: 0.3 },
           { room: "ledgerRoom", min: 0, max: 2, central: 0.6 },
           { room: "weighingRoom", min: 0, max: 2, central: 0.8 },
           { room: "sellingRoom", min: 0, max: 2, central: 1 },
         ],
-        packing: 0.1,
-        seed: 1354033020,
+        packing: 0.12,
+        sidePacking: 0.1,
+        seed: 1354033033,
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
         rewards: [
           { type: "campFind", step: "jar" },
@@ -2695,6 +2764,23 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "puzzle",
         encountersByIndex: { 0: "hidato", 1: "rush-hour" },
         prefabs: {
+          bigSellingRoom: {
+            name: "bigSellingRoom",
+            tier: "starter",
+            activity: "selling",
+            mirror: true,
+            designedBy: "Claude",
+            layouts: [{ name: "", cells: ["###d###", "#k..gh#", "ds..b.d", "#.e.x.#", "#d###d#"] }],
+            places: {
+              k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 },
+              g: { letter: "g", layer: "wall", optional: false, kinds: ["hanging", "offeringTable"], cols: 1, rows: 1 },
+              h: { letter: "h", layer: "wall", optional: true, kinds: ["hanging", "offeringTable"], cols: 1, rows: 1 },
+              b: { letter: "b", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
+              e: { letter: "e", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
+              x: { letter: "x", layer: "ground", optional: false, kinds: ["floorClutter"], cols: 1, rows: 1 },
+            },
+            specials: { s: "stop" },
+          },
           storeroom: {
             name: "storeroom",
             tier: "starter",
@@ -2764,6 +2850,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         },
         prefabPlacements: [
+          { room: "bigSellingRoom", min: 1, max: 1, central: 1 },
           { room: "storeroom", min: 0, max: 2, central: 0 },
           { room: "packingRoom", min: 0, max: 2, central: 0.3 },
           { room: "ledgerRoom", min: 0, max: 2, central: 0.6 },
@@ -3230,6 +3317,21 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "puzzle",
         encountersByIndex: { 0: "balance-scale", 1: "sudoku", 2: "rush-hour" },
         prefabs: {
+          bigPackingRoom: {
+            name: "bigPackingRoom",
+            tier: "starter",
+            activity: "packing",
+            mirror: true,
+            designedBy: "Claude",
+            layouts: [{ name: "", cells: ["###d###", "#g...h#", "ds.x..d", "#.ll.g#", "#d##d##"] }],
+            places: {
+              g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
+              h: { letter: "h", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
+              l: { letter: "l", layer: "floor", optional: false, kinds: ["litter"], cols: 2, rows: 1 },
+              x: { letter: "x", layer: "ground", optional: false, kinds: ["floorClutter"], cols: 1, rows: 1 },
+            },
+            specials: { s: "stop" },
+          },
           storeroom: {
             name: "storeroom",
             tier: "starter",
@@ -3299,6 +3401,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         },
         prefabPlacements: [
+          { room: "bigPackingRoom", min: 1, max: 1, central: 0.3 },
           { room: "storeroom", min: 0, max: 2, central: 0 },
           { room: "packingRoom", min: 0, max: 2, central: 0.3 },
           { room: "ledgerRoom", min: 0, max: 2, central: 0.6 },
@@ -3306,7 +3409,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { room: "sellingRoom", min: 0, max: 2, central: 1 },
         ],
         packing: 0.1,
-        seed: 3148170132,
+        seed: 3148170106,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a8", pieceIndex: 1 },
         rewards: [undefined, undefined, undefined],
       },

@@ -1,0 +1,20 @@
+// designed by: Claude
+// starter. A big packing room: a litter set down mid-floor, baskets and bales around it, to be walked round.
+room bigPackingRoom
+tier starter
+activity packing
+mirror
+
+layout
+# # # d # # #
+# g . . . h #
+d s . x . . d
+# . l l . g #
+# d # # d # #
+
+goods = basketStack | bales
+g floor goods
+h floor goods
+l floor litter
+x ground floorClutter
+s stop

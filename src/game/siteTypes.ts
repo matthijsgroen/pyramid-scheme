@@ -133,6 +133,9 @@ export const DECORATION_KINDS = [
   "bales",
   "counter",
   "scribeDesk",
+  "cart",
+  "litter",
+  "floorClutter",
   // The cave's own furniture (tileset `cave`). `puddle` and `bones` lie flat on the floor, like `mat`.
   "stalagmite",
   "puddle",
@@ -157,6 +160,12 @@ export const SINGLE_CELL: PropFootprint = { cols: 1, rows: 1, tall: 0 }
 export const DECORATION_FOOTPRINTS: Partial<Record<DecorationKind, PropFootprint>> = {
   // A skeleton lies at full length: two cells across, flat on the floor.
   bones: { cols: 2, rows: 1, tall: 0 },
+  // A hand cart stands on its two wheels and its shafts, two cells across.
+  cart: { cols: 2, rows: 1, tall: 0 },
+  // A litter lies set down on its two carrying poles, two cells across.
+  litter: { cols: 2, rows: 1, tall: 0 },
+  // Spilled sacking, sherds and rope, lying flat and walked over.
+  floorClutter: { cols: 1, rows: 1, tall: 0, ground: true },
 }
 export const decorationFootprint = (kind: DecorationKind): PropFootprint => DECORATION_FOOTPRINTS[kind] ?? SINGLE_CELL
 export const isSingleCell = ({ cols, rows }: PropFootprint): boolean => cols === 1 && rows === 1

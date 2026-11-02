@@ -50,6 +50,16 @@ const STARTER_ROOMS = [
   { room: "sellingRoom", min: 0, max: 2, central: 1 },
 ]
 const NO_ROOMS = { rooms: [] }
+// Where along the walk each big room leans, as its small one does.
+const BIG_ROOM_CENTRAL: Record<string, number> = { bigStoreroom: 0, bigPackingRoom: 0.3, bigSellingRoom: 1 }
+const BIG_ROOMS: [journeyId: string, level: number, room: string][] = [
+  ["starter_1", 2, "bigStoreroom"],
+  ["starter_2", 1, "bigPackingRoom"],
+  ["starter_2", 2, "bigSellingRoom"],
+  ["starter_3", 2, "bigStoreroom"],
+  ["starter_4", 1, "bigSellingRoom"],
+  ["starter_4", 3, "bigPackingRoom"],
+]
 
 export const starterRules: Rule[] = [
   // a merchant's house of trade: scales and weights, baskets and bales, a counter, a scribe's desk,
@@ -99,6 +109,13 @@ export const starterRules: Rule[] = [
     journey(jid).pyramid("first", { mainEndReward: "mapPiece" })
   ),
   ...["starter_1", "starter_2", "starter_3", "starter_4"].map(jid => journey(jid, { rooms: STARTER_ROOMS })),
+  // A big room on a few floors only, each kind on two, so it stays a find rather than the house's pattern. Listed
+  // first: the floor hands out its few room places in list order.
+  ...BIG_ROOMS.map(([jid, level, room]) =>
+    journey(jid).pyramid(level, {
+      rooms: [{ room, min: 1, max: 1, central: BIG_ROOM_CENTRAL[room] }, ...STARTER_ROOMS],
+    })
+  ),
 
   // starter_1 — the whole game's onboarding. Pyramid 1: the map piece + a gentle ward path into
   // the starter tomb (see the deadlock fix below). Pyramid 2: one main puzzle, its chests from
