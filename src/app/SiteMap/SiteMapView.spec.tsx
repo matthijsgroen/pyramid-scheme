@@ -2670,6 +2670,8 @@ describe("the lever's arm — three stacked sprites, thrown to the control's own
     if (!m) throw new Error(`no rotate() in transform: ${transform}`)
     return Number(m[1])
   }
+  // The arm turns rigidly, by the angle that lands its tip where a throw of `deg` lands it in the projection.
+  const turnedBy = (deg: number) => (Math.atan(((0.7 * 112) / 168) * Math.tan((deg * Math.PI) / 180)) * 180) / Math.PI
 
   it("stacks them back, arm, front — in that DOM order, which is depth order (map-rendering.md)", () => {
     // A test asserting only that three sprites exist would still pass with the arm drawn in front of
@@ -2703,7 +2705,7 @@ describe("the lever's arm — three stacked sprites, thrown to the control's own
           )}
         />
       )
-      expect(rotateDegOf(armTransformOf(container)), `state ${state}`).toBeCloseTo(angle, 5)
+      expect(rotateDegOf(armTransformOf(container)), `state ${state}`).toBeCloseTo(turnedBy(angle), 5)
     }
   })
 
@@ -2725,7 +2727,7 @@ describe("the lever's arm — three stacked sprites, thrown to the control's own
     )
     // "right" is index 1 of ["left", "right"], so +36° — the OPPOSITE of `initial`'s -36°, not merely
     // a changed transform.
-    expect(rotateDegOf(armTransformOf(container))).toBeCloseTo(36, 5)
+    expect(rotateDegOf(armTransformOf(container))).toBeCloseTo(turnedBy(36), 5)
   })
 
   // A lever on a straight NORTH-SOUTH passage has no free quarter to step its art into

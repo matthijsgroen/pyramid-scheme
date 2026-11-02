@@ -256,14 +256,13 @@ const LEVER_SHEAR_K = 0.7
 const LEVER_TILE_ASPECT = 112 / 168
 const LEVER_CORRECTION_S = LEVER_SHEAR_K * LEVER_TILE_ASPECT // ≈ 0.4667
 
-/** Undo the projection's vertical squash, rotate in the corrected space, and put the squash back —
- * `scaleY(1/s) rotate(θ) scaleY(s)`, composed about the shaft's own pivot (CSS applies these right to
- * left, so the squash goes on first and comes off last). A naive `rotate(θ)` alone puts the tip 10-13px
- * past the track's painted end at the full ±36° throw, measured against the real ±36° 3D geometry in
- * `Lever.stories.tsx`; this keeps it inside the rim instead — 65.8 of 112 at +36° and 46.2 at -36°,
- * against a track painted at 45-67, where the naive tip landed at 77.0 and 35.0. */
+/** The arm turns rigidly about the shaft's own pivot, by the angle that puts its tip where the projected
+ * throw puts it: `atan(s·tan θ)`. A naive `rotate(θ)` puts the tip 10-13px past the track's painted end at
+ * a ±36° throw, measured against the real 3D geometry in `Lever.stories.tsx`. Rigid, because a painted arm
+ * is a picture, not a model: squashing, rotating and unsquashing it would shear it, tipping its head
+ * further than its shaft — a bone's knob comes out skewed. */
 const leverArmTransform = (angleDeg: number): string =>
-  `scaleY(${1 / LEVER_CORRECTION_S}) rotate(${angleDeg}deg) scaleY(${LEVER_CORRECTION_S})`
+  `rotate(${(Math.atan(LEVER_CORRECTION_S * Math.tan((angleDeg * Math.PI) / 180)) * 180) / Math.PI}deg)`
 
 const NO_STATES: ReadonlyMap<string, string> = new Map()
 
