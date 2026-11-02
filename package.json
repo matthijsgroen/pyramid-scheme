@@ -48,7 +48,8 @@
     "make-arch": "tsx scripts/makeArch.ts",
     "render-prop": "${BLENDER:-/Applications/Blender.app/Contents/MacOS/Blender} -b -P scripts/renderProp.py --",
     "repaint": "tsx scripts/repaintPrompt.ts",
-    "verify": "yarn lint --fix && yarn check-types && vitest run && yarn betterer",
+    "verify": "yarn lint --fix && yarn check-types && vitest run && yarn starter-freeze && yarn betterer",
+    "starter-freeze": "vitest run --config vitest.verify.config.ts src/app/SiteMap/starterCarve.verify.ts",
     "betterer": "betterer --strict",
     "betterer:update": "betterer --update",
     "generate-boards": "tsx scripts/puzzleBoards.ts"
