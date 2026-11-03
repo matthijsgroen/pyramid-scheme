@@ -1994,48 +1994,6 @@ The merchant's three are MORE DRAWINGS of kinds he already has. The renderer pic
 in the rotation and at high clutter his floors stop repeating the same two. Each is a new `--contents`
 of the kind's own primitive, a different silhouette with the same language.
 
-### `starter/floorClutter-3` — a storage jar dropped and broken, lentils spilt
-
-**Attach:**
-
-1. `~/tile-previews/floorClutter-3-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a pointed STORAGE JAR that was dropped on a storehouse floor and broke in a few big pieces,
-all lying flat. The big rounded piece is the jar's LOWER HALF lying on its side, its pointed foot to the
-left and its broken edge facing us; the dark oval in that edge is its EMPTY INSIDE. At the back right
-lies the jar's NECK, broken off at the shoulder, with one HANDLE standing up as a loop. The two curved
-pieces at the front are SHERDS of its belly, lying hump up. The LENTILS that were in it have run out of
-the break in a low spreading heap.
-
-The jar is fired terracotta #c0612f, deepened to #7e3a1a, with a band of red ochre paint #b8452c round
-its belly, rubbed and chipped. Every BROKEN EDGE shows the raw clay, a little lighter and rougher than the
-fired face. Its inside, the dark oval, is deep umber #3a2a1c — a hollow, not a lid. The lentils are small
-and flat, orange-red #b8452c and #7e3a1a, heaped thickest at the break and thinning to a ragged edge.
-
-IT LIES ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
-whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
-than terracotta #c0612f. Every part nearest the floor is its darkest, deep umber #3a2a1c. Nothing on it
-is white, cream, bleached, pale straw or whitewash — a pale part vanishes into the floor.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold floorClutter --contents=amphora --spin=18 --shadow=0.5 --sun=0 --colour=#9a6a3c --floor=#d8c8a8 --colour-cloth=#b08a5a
-yarn import-tile art/masters/props/starter/floorClutter-3.webp --tier=starter --name=floorClutter-3 --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
 ### `starter/rubbleSpill-2` — a fallen run of mudbrick, snapped at one end
 
 **Attach:**
