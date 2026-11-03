@@ -1994,48 +1994,6 @@ The merchant's three are MORE DRAWINGS of kinds he already has. The renderer pic
 in the rotation and at high clutter his floors stop repeating the same two. Each is a new `--contents`
 of the kind's own primitive, a different silhouette with the same language.
 
-### `starter/floorClutter-2` — a reed basket knocked over, dates rolled out
-
-**Attach:**
-
-1. `~/tile-previews/floorClutter-2-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: what a porter left on a storehouse floor, lying flat — a coiled REED BASKET knocked over on
-its side, its open mouth facing us, the DATES that were in it rolled out across the floor, and its round
-LID fallen flat a little way off.
-
-The basket is coiled palm fibre, dark honey #9a6a3c, the coils running round it, crushed a little oval
-where it hit the floor, darker #5e3a1e in the creases and darkest #3a2a1c underneath. Its rim is a
-thicker band of darker plaited fibre #5e3a1e. The dark oval inside the rim is the basket's EMPTY INSIDE,
-deep umber #3a2a1c — it is a hole, not a lid. The lid is the same coiled fibre, with a small dark knob.
-
-The dates are glossy-looking but painted matte: dark brown-red #7e3a1a, some #5e3a1e, wrinkled, each a
-small oval, a low heap of them just outside the mouth and the rest scattered further, thinning out.
-
-IT LIES ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
-whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
-than terracotta #c0612f. Every part nearest the floor is its darkest, deep umber #3a2a1c. Nothing on it
-is white, cream, bleached, pale straw or whitewash — a pale part vanishes into the floor.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold floorClutter --contents=basket --spin=18 --shadow=0.5 --sun=0 --colour=#9a6a3c --floor=#d8c8a8 --colour-cloth=#b08a5a
-yarn import-tile art/masters/props/starter/floorClutter-2.webp --tier=starter --name=floorClutter-2 --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
 ### `starter/floorClutter-3` — a storage jar dropped and broken, lentils spilt
 
 **Attach:**
