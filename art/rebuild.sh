@@ -169,6 +169,11 @@ yarn import-tile art/masters/props/starter/basin.webp --tier=starter --name=basi
 scaffold rubblePile --contents=spill --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/rubbleSpill.webp --tier=starter --name=rubbleSpill --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.80 --saturation=1.0
+if [ -f art/masters/props/starter/rubbleSpill-2.webp ]; then
+  scaffold rubblePile --contents=course --floor=#d8c8a8
+  yarn import-tile art/masters/props/starter/rubbleSpill-2.webp --tier=starter --name=rubbleSpill-2 --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.80 --saturation=1.0
+fi
 
 # --spin=9 is the one thing geometry still owes it: a rug lying askew of the grid cannot be read as part
 # of the paving, where an axis-aligned one can. --shadow=0.5 keeps the footprint faint, since a slab at
@@ -365,6 +370,16 @@ fi
 if [ -f art/masters/props/starter/floorClutter.webp ]; then
   scaffold floorClutter --spin=18 --shadow=0.5 --sun=0 --colour=#9a6a3c --floor=#d8c8a8 --colour-cloth=#b08a5a
   yarn import-tile art/masters/props/starter/floorClutter.webp --tier=starter --name=floorClutter --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/starter/floorClutter-2.webp ]; then
+  scaffold floorClutter --contents=basket --spin=18 --shadow=0.5 --sun=0 --colour=#9a6a3c --floor=#d8c8a8 --colour-cloth=#b08a5a
+  yarn import-tile art/masters/props/starter/floorClutter-2.webp --tier=starter --name=floorClutter-2 --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/starter/floorClutter-3.webp ]; then
+  scaffold floorClutter --contents=amphora --spin=18 --shadow=0.5 --sun=0 --colour=#9a6a3c --floor=#d8c8a8 --colour-cloth=#b08a5a
+  yarn import-tile art/masters/props/starter/floorClutter-3.webp --tier=starter --name=floorClutter-3 --slot=prop \
     --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 fi
 
