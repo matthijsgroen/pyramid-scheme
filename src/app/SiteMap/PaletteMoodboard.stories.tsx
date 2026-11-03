@@ -224,3 +224,99 @@ export const FlatColours: StoryObj<typeof meta> = {
     </div>
   ),
 }
+
+// A PROPOSAL, SEEN: a small room and the corridor out of it in plain fills, the current palette beside a
+// proposed one, so a palette is judged by eye rather than by its hexes.
+type Look = Omit<Flat, "shade"> & { outline: string; shade: number }
+
+const lookOf = (tier: Tileset, patch: Partial<Look> = {}): Look => {
+  const p = tierPalette[tier]
+  return {
+    floor: p.slab,
+    face: p.wall,
+    top: p.wallTop,
+    mass: p.wallBase,
+    metal: p.accent,
+    faceNight: p.faceNight,
+    outline: p.outline,
+    shade: Number(/,\s*([\d.]+)\)$/.exec(p.shade)?.[1] ?? 0.3),
+    ...patch,
+  }
+}
+
+const RoomSketch = ({ look }: { look: Look }) => {
+  const u = CELL
+  const room = { x: u, y: u * 1.5, w: u * 4, h: u * 3 }
+  const corridor = { x: room.x + room.w, y: room.y + u, w: u * 3, h: u }
+  const walls = [
+    { x: room.x, y: room.y - WALL_H, w: room.w },
+    { x: corridor.x, y: corridor.y - WALL_H, w: corridor.w },
+  ]
+  const W2 = u * 9
+  const H2 = u * 5.5
+  return (
+    <svg width={W2} height={H2} className="block rounded">
+      <rect width={W2} height={H2} fill={look.mass} />
+      {walls.map((w, i) => (
+        <g key={i}>
+          <rect x={w.x} y={w.y - 6} width={w.w} height={6} fill={look.top} />
+          <rect x={w.x} y={w.y} width={w.w} height={WALL_H} fill={look.face} />
+          <rect x={w.x} y={w.y} width={w.w} height={WALL_H} fill={look.outline} opacity={look.faceNight} />
+        </g>
+      ))}
+      <rect x={room.x} y={room.y} width={room.w} height={room.h} fill={look.floor} />
+      <rect x={corridor.x} y={corridor.y} width={corridor.w} height={corridor.h} fill={look.floor} />
+      {/* Props in the rank's metal: a chest, a jar, a table. */}
+      <rect x={room.x + u * 0.4} y={room.y + u * 0.3} width={u * 0.8} height={u * 0.6} rx={4} fill={look.metal} />
+      <circle cx={room.x + u * 3.3} cy={room.y + u * 0.7} r={u * 0.3} fill={look.metal} />
+      <rect x={room.x + u * 1.5} y={room.y + u * 1.8} width={u * 1.2} height={u * 0.5} rx={3} fill={look.metal} />
+      <rect width={W2} height={H2} fill={look.outline} opacity={look.shade} />
+    </svg>
+  )
+}
+
+const Pair = ({
+  title,
+  now,
+  next,
+  labels = ["nu", "voorstel"],
+}: {
+  title: string
+  now: Look
+  next: Look
+  labels?: string[]
+}) => (
+  <div className="flex flex-col gap-2">
+    <h2 className="m-0 text-base font-bold text-white">{title}</h2>
+    <div className="flex flex-wrap gap-4">
+      {[
+        [labels[0], now],
+        [labels[1], next],
+      ].map(([label, look]) => (
+        <div key={label as string} className="flex flex-col gap-1 text-sm text-white/70">
+          {label as string}
+          <RoomSketch look={look as Look} />
+        </div>
+      ))}
+    </div>
+  </div>
+)
+
+export const Proposal: StoryObj<typeof meta> = {
+  render: () => (
+    <div className="flex min-h-screen flex-col gap-8 bg-neutral-900 p-6">
+      <Pair title="starter" now={lookOf("starter")} next={lookOf("starter", { faceNight: 0.45 })} />
+      <Pair
+        title="junior"
+        now={lookOf("junior")}
+        next={lookOf("junior", { floor: "#e2bb8e", face: "#c9895a", top: "#ecc898", mass: "#3a1c0e", faceNight: 0.4 })}
+      />
+      <Pair
+        title="voorstellen naast elkaar"
+        labels={["starter", "junior"]}
+        now={lookOf("starter", { faceNight: 0.45 })}
+        next={lookOf("junior", { floor: "#e2bb8e", face: "#c9895a", top: "#ecc898", mass: "#3a1c0e", faceNight: 0.4 })}
+      />
+    </div>
+  ),
+}
