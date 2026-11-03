@@ -166,6 +166,8 @@ export type FloorConfig = {
    * and copied onto every floor, exactly as `condition` is. */
   patron?: Patron
   condition?: SiteCondition
+  /** How much lies strewn on the floor — mirrors game/siteTypes.ts's FloorConfig.clutter. */
+  clutter?: number
   /** How many junctions this floor's carve must offer, and how many ways out each must leave free to
    * be closed — mirrors game/siteTypes.ts's FloorConfig.forks. */
   forks?: ForkDemand[]

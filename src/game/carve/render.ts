@@ -407,6 +407,7 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
     ...(config.theme !== undefined ? { theme: config.theme } : {}),
     ...(config.condition !== undefined ? { condition: config.condition } : {}),
     ...(config.patron !== undefined ? { patron: config.patron } : {}),
+    ...(config.clutter !== undefined ? { clutter: config.clutter } : {}),
     rows: N,
     cols: N,
     entrancePos: [entR, entC],

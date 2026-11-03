@@ -438,6 +438,12 @@ export type PyramidConstraint = {
    */
   condition?: SiteCondition
   /**
+   * How much lies strewn on the floor, 0-1: 0 is swept clean, 1 is a piece on every free cell of every
+   * room and passage. Set on a tier, a journey or a pyramid and carried onto every floor of the site.
+   * Purely drawn — a free field (docs/game-design/world-spec-stability.md).
+   */
+  clutter?: number
+  /**
    * Whose tomb this is — see Patron in game/siteTypes.ts.
    *
    * Authored on the PYRAMID beside `condition` and for the same reason: a dedication is a property of

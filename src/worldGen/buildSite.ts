@@ -137,6 +137,7 @@ export type BuildFloorOptions = {
   /** What has got into the site. Copied onto every floor, which is what makes it survive the climb. */
   condition?: SiteCondition
   patron?: Patron
+  clutter?: number
   wallDecorations?: WallDecorationKind[]
 }
 
@@ -155,6 +156,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.wallDecorations?.length ? { wallDecorations: opts.wallDecorations } : {}),
   ...(opts.condition ? { condition: opts.condition } : {}),
   ...(opts.patron ? { patron: opts.patron } : {}),
+  ...(opts.clutter !== undefined ? { clutter: opts.clutter } : {}),
   ...(opts.encountersByIndex && Object.keys(opts.encountersByIndex).length
     ? { encountersByIndex: opts.encountersByIndex }
     : {}),
@@ -492,6 +494,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           // rather than as weather. It is the site's, and every floor of it carries the same one.
           condition: constraint.condition,
           patron: constraint.patron,
+          clutter: constraint.clutter,
         })
       )
     }
@@ -559,6 +562,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             // pyramid was silently dropped — invisible until the first one was authored.
             condition: constraint.condition,
             patron: constraint.patron,
+            clutter: constraint.clutter,
             // The pools ride with them, and for the same reason: a fork is where a prop goes, so a floor
             // with no pool of its own dresses none of its junctions. Only the explicit-`floors` branch
             // passed these, which left every fork on every ordinary pyramid bare.
@@ -616,6 +620,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           tileset: constraint.tileset,
           condition: constraint.condition,
           patron: constraint.patron,
+          clutter: constraint.clutter,
           // The pools ride with them, and for the same reason: a fork is where a prop goes, so a floor
           // with no pool of its own dresses none of its junctions. Only the explicit-`floors` branch
           // passed these, which left every fork on every ordinary pyramid bare.
@@ -720,6 +725,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             tileset: constraint.tileset,
             condition: constraint.condition,
             patron: constraint.patron,
+            clutter: constraint.clutter,
             // The pools ride with them, and for the same reason: a fork is where a prop goes, so a floor
             // with no pool of its own dresses none of its junctions. Only the explicit-`floors` branch
             // passed these, which left every fork on every ordinary pyramid bare.
@@ -804,6 +810,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     tileset: constraint.tileset,
     condition: constraint.condition,
     patron: constraint.patron,
+    clutter: constraint.clutter,
     // The pools ride with them, and for the same reason: a fork is where a prop goes, so a floor
     // with no pool of its own dresses none of its junctions. Only the explicit-`floors` branch
     // passed these, which left every fork on every ordinary pyramid bare.

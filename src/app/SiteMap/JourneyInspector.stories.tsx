@@ -203,9 +203,11 @@ type Props = {
   /** Which pyramid in the journey (1-based, up to levelCount) */
   pyramidNumber: number
   seed: number
+  /** How much lies strewn on the floor, 0-1, in place of what the floor authors. */
+  clutter?: number
 }
 
-const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed, hideHidden }: Props) => {
+const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed, hideHidden, clutter }: Props) => {
   const journeyList = journeyType === "tomb" ? tombsByTier[tier] : byTier[tier]
   const journey = journeyList[journeyIndex]
   if (!journey) return <div className="p-4 text-red-400">Journey not found</div>
@@ -229,10 +231,10 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
   const baseGrid = useMemo(
     () => {
       const result = assembleInspectedFloor(journey.id, floorConfig, pyramidSeed, currentFloor)
-      return result.success ? result.grid : null
+      return result.success ? (clutter === undefined ? result.grid : { ...result.grid, clutter }) : null
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [journey.id, pyramidSeed, currentFloor]
+    [journey.id, pyramidSeed, currentFloor, clutter]
   )
 
   const grid = useMemo(() => {
@@ -463,6 +465,10 @@ const meta = {
       description: "Pyramid number within the journey (max depends on levelCount)",
     },
     seed: { control: { type: "number" } },
+    clutter: {
+      control: { type: "range", min: 0, max: 1, step: 0.05 },
+      description: "How much lies strewn on the floor: 0 swept clean, 1 a piece on every free cell",
+    },
   },
 } satisfies Meta<typeof JourneyInspector>
 
