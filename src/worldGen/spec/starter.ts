@@ -88,6 +88,7 @@ export const starterRules: Rule[] = [
     ],
     // a merchant hangs inventory: a niche of goods and the tally board beside it.
     wallDecorations: ["niche", "tallyBoard"],
+    clutter: 0.35,
   }),
 
   tier("starter")
@@ -299,6 +300,7 @@ export const starterRules: Rule[] = [
     difficulty: "starter",
     floorCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
+    clutter: 0, // Ipi kept his house secure and clean
     floors: [
       // Ipi is at the end of the first floor, in among his own jars — which is what "third shelf,
       // the jar with the chip out of it" is pointing at.
