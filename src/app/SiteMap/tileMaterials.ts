@@ -62,28 +62,29 @@ export const tierPalette: Record<Tileset, TierPalette> = {
     // The night is the lightest hand on the map, as master's is: rooms are lit and the torch is an
     // accent (docs/game-design/visual-direction.md). Its colour is the rank's own near-black.
     shade: "rgba(21,17,12,0.3)",
-    faceNight: 0.55,
+    faceNight: 0.45,
     lamp: 0.3,
     prop: "#694935",
     propDark: "#5c5347",
     outline: "#15110c",
   },
-  // A nobleman's painted house: gold-ochre sandstone flagstones under a dark red-brown mural frieze, copper
-  // and verdigris as its colour (docs/game-design/visual-direction.md). The floor and wall tokens are the
-  // repainted floor's and wall face's.
+  // A nobleman's painted house: light orange sandstone, about as light as the merchant's limestone and told
+  // apart by its hue and its finish — crisp, dressed, decorated — under a mid-tone painted plaster wall whose
+  // murals read, copper and verdigris as its colour (docs/game-design/visual-direction.md). Proposed in
+  // `Topology/Palette moodboard`; re-sample from the repaint once it lands.
   junior: {
-    bed: "#9a724c",
-    slab: "#bb9060",
-    slabHi: "#c09664",
-    slabLo: "#b28458",
-    joint: "#735536",
+    bed: "#c49a6c",
+    slab: "#e2bb8e",
+    slabHi: "#e8c498",
+    slabLo: "#d8b080",
+    joint: "#b88e60",
     accent: METALS.junior.accent,
-    wall: "#734931",
-    wallTop: "#b58a55",
-    wallBase: "#432416",
+    wall: "#c9895a",
+    wallTop: "#ecc898",
+    wallBase: "#3a1c0e",
     // Rooms are lit, as the merchant's are: the night is a light hand in the rank's own near-black.
     shade: "rgba(36,23,8,0.3)",
-    faceNight: 0.45,
+    faceNight: 0.4,
     lamp: 1,
     prop: "#e0c193",
     propDark: "#9c7442",

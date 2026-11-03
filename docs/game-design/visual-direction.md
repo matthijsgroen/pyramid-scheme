@@ -51,7 +51,7 @@ their colours are checked against the new grounds.
 | **master · gold**    | the pharaoh's galleries — ceremonial               | dark granite                                             | gold, as today                                       |
 | **wizard · emerald** | the gods — not of this world                       | deep night-green, calcite lit from beneath, a star field | glowing emerald, with gold                           |
 
-The lightness runs light-warm, mid-warm, light-cool, dark, deep-luminous: no two neighbouring ranks share
+The lightness runs light-warm, light-orange, light-cool, dark, deep-luminous: no two neighbouring ranks share
 both a lightness and a hue, so they stay apart on the map as well as in a screenshot.
 
 The metal ladder is the one `src/data/materialTiers.ts` already names (stone, bronze → copper, silver,
@@ -161,14 +161,15 @@ glowing on a dark one.
 | Rank             | Floor            | Wall face                              | Props and metal                      | Like            |
 | ---------------- | ---------------- | -------------------------------------- | ------------------------------------ | --------------- |
 | starter · stone  | light            | dark, in shadow                        | dark terracotta, ochre and turquoise | Moonlighter     |
-| junior · copper  | light-mid, warm  | dark, painted                          | copper, deep and saturated           | Moonlighter     |
+| junior · copper  | light, orange    | mid-tone, painted, its murals legible  | each in its own colours, copper trim | Moonlighter     |
 | expert · silver  | light, cool      | dark, cool                             | silver and lapis, deep shadows       | Moonlighter     |
 | master · gold    | **dark** granite | **light** — gilded, catching the light | gold, light and saturated            | Gungeon / Hades |
 | wizard · emerald | **dark**, night  | **light** — light leaking from joints  | emerald that glows                   | Hades           |
 | cave · no rank   | **dark** rock    | **light** — pale rock catching the torch | pale rock, crystals the lightest     | Gungeon         |
 
-The three light ranks are told apart by hue — warm limestone, copper, cool silver — and the two dark ones by
-their metal. Steps, measured by `yarn rank-colour`: **the wall face at least 25 L\* off the floor** (a light
+The three light ranks are told apart by hue — warm limestone, orange sandstone, cool silver — and by their
+finish: the merchant's stone is rough and cluttered, the nobleman's crisp, dressed and decorated. The two dark
+ones by their metal. Steps, measured by `yarn rank-colour`: **the wall face at least 25 L\* off the floor** (a light
 rank's face is shadowed to about 30 with `faceNight`) and **the props at least 25 L\* off it**, in either
 direction.
 
