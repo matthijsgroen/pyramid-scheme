@@ -381,6 +381,22 @@ s stop`,
     expect(sectionAsks("vault", { vault: VAULT }).length).toBeGreaterThan(0)
   })
 
+  it("a room is asked only where the section is of its own tier, on a side path's end or the main path", () => {
+    const tiered = (sideTier: SideSection["difficulty"], floorTier: FloorConfig["difficulty"], central: number) =>
+      asksOf(
+        plainFloor({
+          difficulty: floorTier,
+          pathPuzzles: 1,
+          sideSections: [side({ difficulty: sideTier }), side({ difficulty: sideTier }), side({ difficulty: sideTier })],
+          prefabs: { den: DEN },
+          prefabPlacements: [{ room: "den", min: 0, max: 3, central }],
+        })
+      )
+    expect(tiered("expert", "starter", 0).filter(ask => "section" in ask.at)).toEqual([])
+    expect(tiered("starter", "starter", 0).filter(ask => "section" in ask.at).length).toBeGreaterThan(0)
+    expect(tiered("starter", "junior", 1).filter(ask => "central" in ask.at)).toEqual([])
+  })
+
   it("a chest room puts the chest's art on its chest place", () => {
     const [vault] = roomsOf(carved(sidesFloor({ vault: VAULT }, { room: "vault", min: 1, max: 1, central: 0 })))
     expect(vault.cell).toMatchObject({ roomType: "encounter" })

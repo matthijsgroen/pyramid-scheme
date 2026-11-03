@@ -324,9 +324,14 @@ export const roomAsks = (prep: FloorPrep): RoomAsk[] => {
     const prefab = config.prefabs?.[room]
     if (!prefab) return
     const places = Object.values(prefab.specials)
-    const hubDoors = shapesOf(prefab).some(shape => shape.ports.length >= 3)
+    // A room is furnished for its own tier, so it stands only in a section of that tier: its props are that
+    // rank's art, and on another rank's stone they would not be drawn at all.
+    const ownTier = (tier: string | undefined) => (tier ?? config.difficulty) === prefab.tier
+    const hubDoors = shapesOf(prefab).some(shape => shape.ports.length >= 3) && ownTier(config.difficulty)
     for (let k = 0; k < max; k++) {
-      const end = ends.find(si => !taken.has(si) && places.includes(endHolds(sideSections[si])))
+      const end = ends.find(
+        si => !taken.has(si) && places.includes(endHolds(sideSections[si])) && ownTier(sideSections[si].difficulty)
+      )
       const endFits = end !== undefined && hubs <= hubRoom(taken.size + 1)
       const hubFits = hubDoors && hubs < hubRoom(taken.size)
       const place: Place | undefined =

@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 519633510
+export const worldContentHash = 533635980
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -730,7 +730,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "storage",
             mirror: true,
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#n#d#n#", "#w.x..#", "ds.tt.d", "#g...c#", "##d####"] }],
+            layouts: [{ name: "", cells: ["#n#d#n#", "#w.x..#", "ds.tt.d", "#c...g#", "##d####"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
@@ -1079,7 +1079,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         packing: 0.12,
         sidePacking: 0.1,
-        seed: 3323337414,
+        seed: 3323337427,
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         rewards: [{ type: "campPart", structure: "windbreak", part: "stakes" }],
       },
@@ -1943,7 +1943,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "storage",
             mirror: true,
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#n#d#n#", "#w.x..#", "ds.tt.d", "#g...c#", "##d####"] }],
+            layouts: [{ name: "", cells: ["#n#d#n#", "#w.x..#", "ds.tt.d", "#c...g#", "##d####"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
@@ -2031,7 +2031,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         packing: 0.12,
         sidePacking: 0.1,
-        seed: 1354033033,
+        seed: 1354033018,
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
         rewards: [
           { type: "campFind", step: "jar" },
@@ -3409,7 +3409,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { room: "sellingRoom", min: 0, max: 2, central: 1 },
         ],
         packing: 0.1,
-        seed: 3148170106,
+        seed: 3148170097,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a8", pieceIndex: 1 },
         rewards: [undefined, undefined, undefined],
       },
@@ -3458,7 +3458,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "starter",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_a_2" },
-            endReward: { type: "money", amount: 2 },
+            endReward: { type: "sellable", itemId: "sell_stone_3" },
             rewards: [undefined],
             encounter: "rush-hour",
             decorations: [
@@ -3520,7 +3520,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "starter",
             end: "treasure",
-            endReward: { type: "sellable", itemId: "sell_stone_3" },
+            endReward: { type: "money", amount: 2 },
             rewards: [undefined],
             encounter: "balance-scale",
             decorations: [

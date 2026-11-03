@@ -9,7 +9,7 @@ layout
 # n # d # n #
 # w . x . . #
 d s . t t . d
-# g . . . c #
+# c . . . g #
 # # d # # # #
 
 stock = jarRack | shelf
