@@ -224,6 +224,7 @@ export const SiteMapScreen = ({
       <div className="relative h-(--screen-height) w-screen">
         <SiteMapView
           grid={drawnGrid ?? grid}
+          dressedOn={baseGrid ?? undefined}
           onCellClick={onCellClick}
           explorerPos={explorerPos}
           waypoint={waypoint}

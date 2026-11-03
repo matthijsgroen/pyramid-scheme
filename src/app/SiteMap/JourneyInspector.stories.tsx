@@ -363,6 +363,7 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
         <div className="relative">
           <SiteMapView
             grid={grid}
+            dressedOn={baseGrid ?? undefined}
             onCellClick={handleClick}
             explorerPos={pos}
             waypoint={waypoint}

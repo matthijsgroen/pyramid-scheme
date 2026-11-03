@@ -118,6 +118,9 @@ import { MARKER_FILL, MARKER_OUTLINE } from "./markerColours"
 
 type Props = {
   grid: FloorGrid
+  /** The floor as carved, before a hidden way is masked or a door is opened: props and scatter are decided on it,
+   * so finding a passage or throwing a lever moves nothing that stands on the floor. Unset, `grid` is used. */
+  dressedOn?: FloorGrid
   onCellClick?: (row: number, col: number) => void
   revealAllCells?: boolean
   /** Every floor cell is a click target, corridors included, and the run rules are set aside.
@@ -285,6 +288,27 @@ const hides = (
 // `stairGoes` decides the flight's direction; the entrance position is only the fallback for a cell carrying none.
 const stairClimbs = (grid: Pick<FloorGrid, "entrancePos">, cell: { stairGoes?: StairGoes }, r: number, c: number) =>
   cell.stairGoes ? cell.stairGoes === "up" : r === grid.entrancePos[0] && c === grid.entrancePos[1]
+
+/** The claims this map draws by, and its scatter, with props and scatter decided on `dressedOn` (the floor as
+ * carved) where it is given: a masked passage or an opened door changes the drawn floor, never where things stand.
+ * Scatter lies only where this map shows floor, so a masked passage keeps its own for when it is found. */
+// eslint-disable-next-line react-refresh/only-export-components -- pure function over the grid, exported so tests can assert on it
+export const dressingFor = (
+  grid: FloorGrid,
+  dressedOn?: FloorGrid
+): { claims: RoomClaims; scatter: ReadonlyMap<string, ScatterKind> } => {
+  const view = buildRoomClaims(grid)
+  if (!dressedOn) return { claims: view, scatter: scatterFor(grid, view) }
+  const dressed = buildRoomClaims(dressedOn)
+  const shown = (key: string) => {
+    const [r, c] = key.split(",").map(Number)
+    return view.claimedBy.has(key) || cellAt(grid, r, c).type === "corridor"
+  }
+  return {
+    claims: { ...view, decorationAt: dressed.decorationAt, decorationCells: dressed.decorationCells },
+    scatter: new Map([...scatterFor(dressedOn, dressed)].filter(([key]) => shown(key))),
+  }
+}
 
 /** Every node's own furniture on one floor, in map space — chests beside treasure rooms, flights at
  * stairheads. See `NodeSprite` for why this is a list and not a child of each node's own `<g>`.
@@ -1478,6 +1502,7 @@ const MarkerCell = ({
 
 export const SiteMapView = ({
   grid: gridProp,
+  dressedOn,
   onCellClick,
   revealAllCells = false,
   freeWalk = false,
@@ -1499,7 +1524,7 @@ export const SiteMapView = ({
   className,
 }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
-  const claims = useMemo(() => buildRoomClaims(grid), [grid])
+  const { claims, scatter } = useMemo(() => dressingFor(grid, dressedOn), [grid, dressedOn])
   const tier = useMemo(() => floorTier(grid), [grid])
   const torchPlace = useMemo(
     () => new Set(explorerPos ? litPlaceCells(grid, claims, explorerPos) : []),
@@ -1904,7 +1929,6 @@ export const SiteMapView = ({
     [grid, claims, mood.beam, daylight]
   )
   // What is strewn on this floor. A function of the floor's shape and its id, so it never moves.
-  const scatter = useMemo(() => scatterFor(grid, claims), [grid, claims])
   const drifts = useMemo(() => driftsFor(grid, tier), [grid, tier])
   // The grass is the condition's own ground, so its coverage is the condition's own number.
   const grassMats = useMemo(
