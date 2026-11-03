@@ -29,6 +29,11 @@ edge is a change of value. What changes is colour and light.
 **Ground plus metal.** Every rank has a ground — its material, light or dark but calm — and a metal, which
 is saturated and lives in props, trim, inlay and lintels. Vividness is the contrast between the two.
 
+**A prop is its own thing first, the rank's metal second.** A merchant's sack is sacking, a statue is its
+stone, a basket is reed: each prop wears its own material's colours, so it reads at a glance as what it is.
+The rank's metal comes back as an accent on it — a band, a rim, an inlay — never as a tint over the whole
+set. A room whose props all share one hue reads as a copper or a silver haze, and the props stop speaking.
+
 **Rooms are lit; the torch is an accent.** The night wash is a light hand at every rank —
 starter, on pale limestone, at 0.3. The torch is a warm glow around the explorer rather than what makes a room visible. Shafts of
 daylight stay the brightest thing on a floor. Fog is unchanged: an undiscovered cell is still not drawn.
