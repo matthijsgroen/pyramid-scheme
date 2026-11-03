@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 533635980
+export const worldContentHash = 1119334326
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -730,7 +730,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "storage",
             mirror: true,
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#n#d#n#", "#w.x..#", "ds.tt.d", "#c...g#", "##d####"] }],
+            layouts: [{ name: "", cells: ["#n#d#n#", "#w.x..#", "#s.tt.d", "#c...g#", "##d####"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
@@ -992,7 +992,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "packing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["###d###", "#g...h#", "ds.x..d", "#.ll.g#", "#d##d##"] }],
+            layouts: [{ name: "", cells: ["###d###", "#g...h#", "#s.x..d", "#.ll.g#", "#d##d##"] }],
             places: {
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
               h: { letter: "h", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
@@ -1077,9 +1077,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { room: "weighingRoom", min: 0, max: 2, central: 0.8 },
           { room: "sellingRoom", min: 0, max: 2, central: 1 },
         ],
-        packing: 0.12,
-        sidePacking: 0.1,
-        seed: 3323337427,
+        packing: 0.1,
+        seed: 3323337457,
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         rewards: [{ type: "campPart", structure: "windbreak", part: "stakes" }],
       },
@@ -1294,7 +1293,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "selling",
             mirror: true,
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["###d###", "#k..gh#", "ds..b.d", "#.e.x.#", "#d###d#"] }],
+            layouts: [{ name: "", cells: ["###d###", "#k..gh#", "#s..b.d", "#.e.x.#", "#d###d#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "wall", optional: false, kinds: ["hanging", "offeringTable"], cols: 1, rows: 1 },
@@ -1943,7 +1942,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "storage",
             mirror: true,
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#n#d#n#", "#w.x..#", "ds.tt.d", "#c...g#", "##d####"] }],
+            layouts: [{ name: "", cells: ["#n#d#n#", "#w.x..#", "#s.tt.d", "#c...g#", "##d####"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
@@ -2029,9 +2028,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { room: "weighingRoom", min: 0, max: 2, central: 0.8 },
           { room: "sellingRoom", min: 0, max: 2, central: 1 },
         ],
-        packing: 0.12,
-        sidePacking: 0.1,
-        seed: 1354033018,
+        packing: 0.1,
+        seed: 1354033063,
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
         rewards: [
           { type: "campFind", step: "jar" },
@@ -2770,7 +2768,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "selling",
             mirror: true,
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["###d###", "#k..gh#", "ds..b.d", "#.e.x.#", "#d###d#"] }],
+            layouts: [{ name: "", cells: ["###d###", "#k..gh#", "#s..b.d", "#.e.x.#", "#d###d#"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "wall", optional: false, kinds: ["hanging", "offeringTable"], cols: 1, rows: 1 },
@@ -3323,7 +3321,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "packing",
             mirror: true,
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["###d###", "#g...h#", "ds.x..d", "#.ll.g#", "#d##d##"] }],
+            layouts: [{ name: "", cells: ["###d###", "#g...h#", "#s.x..d", "#.ll.g#", "#d##d##"] }],
             places: {
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
               h: { letter: "h", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
@@ -3409,7 +3407,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { room: "sellingRoom", min: 0, max: 2, central: 1 },
         ],
         packing: 0.1,
-        seed: 3148170097,
+        seed: 3148170098,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a8", pieceIndex: 1 },
         rewards: [undefined, undefined, undefined],
       },
