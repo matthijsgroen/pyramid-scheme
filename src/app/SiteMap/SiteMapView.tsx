@@ -1034,7 +1034,11 @@ const FloorScatter = ({
       const [or, oc] = (claims.claimedBy.get(cellKey) ?? cellKey).split(",").map(Number)
       const cell = cellAt(grid, or, oc)
       if (cell.type === "empty" || cell.state === "fogged") return null
-      const url = tileOrPlaceholder(tier, kind)
+      // EVERY DRAWING OF THE KIND, and either way round: a floor strewn at full clutter shows one picture
+      // a hundred times otherwise. Both picks come off the cell, so a piece never changes as the map is explored.
+      const variants = tileVariants(tier, kind)
+      const pick = hashString(`${grid.siteId}:${cellKey}:${kind}`)
+      const url = variants[pick % Math.max(1, variants.length)]
       if (!url) return null
       const { cx, cy } = cellCenter(r, c)
       // The same wash the floor under it takes, as BRIGHTNESS rather than as an overlay. `stateWash` is
@@ -1053,6 +1057,7 @@ const FloorScatter = ({
           h={PROP_H}
           stretch={false}
           filter={wash ? `brightness(${1 - wash.opacity})` : undefined}
+          mirrored={Math.floor(pick / 7) % 2 === 1}
         />
       )
     })}

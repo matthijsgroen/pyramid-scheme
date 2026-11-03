@@ -1780,6 +1780,18 @@ describe("what lies strewn on a room's floor", () => {
     ).toBe(true)
     expect(sprites(1) - sprites(0)).toBe(laid.size)
   })
+
+  it("lays some pieces mirrored, so a full floor is not one picture repeated", () => {
+    const long = makeGrid([
+      ...Array.from({ length: 12 }, () => [empty, corridor("completed", false), empty]),
+      [empty, chamber("completed"), empty],
+    ])
+    const full = { ...long, clutter: 1 }
+    const flips = spritesIn(render(<SiteMapView grid={full} explorerPos={[0, 1]} revealAllCells />).container)
+      .filter(el => /rubbleSpill|mat/.test(urlOf(el)))
+      .map(el => el.style.transform.includes("scaleX(-1)"))
+    expect(new Set(flips)).toEqual(new Set([true, false]))
+  })
 })
 
 describe("a prop that carries a flame lights the floor", () => {
