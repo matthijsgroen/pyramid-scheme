@@ -44,6 +44,8 @@ import {
   obstacleIndexes,
 } from "./floorFixtures.testing"
 import { revealAll } from "@/game/gridNavigation"
+import { cellAt } from "@/game/roomFootprint"
+import { scatterFor } from "./floorScatter"
 import { roomStop } from "./roomWalk"
 import { OCCLUDER_FADE } from "./htmlLayers"
 import { CHAMBER_SCALE, GROWTH_POOLS, growthTile } from "./moodSettings"
@@ -1756,6 +1758,27 @@ describe("a kind that lies on the floor still dresses a room", () => {
   it("draws it standing, the same as any other prop", () => {
     expect(propBoxes("mat")).toBe(propBoxes("statue"))
     expect(propBoxes("rubblePile")).toBe(propBoxes("statue"))
+  })
+})
+
+describe("what lies strewn on a room's floor", () => {
+  it("draws every piece the scatter lays, on the room's claimed floor too", () => {
+    const grid = (clutter: number): FloorGrid => ({
+      ...makeGrid([
+        [empty, corridor("completed", false), empty],
+        [empty, chamber("completed"), empty],
+        [empty, empty, empty],
+      ]),
+      clutter,
+    })
+    const sprites = (clutter: number) =>
+      spritesIn(render(<SiteMapView grid={grid(clutter)} explorerPos={[0, 1]} revealAllCells />).container).length
+    const full = grid(1)
+    const laid = scatterFor(full, buildRoomClaims(full))
+    expect(
+      [...laid.keys()].some(key => cellAt(full, ...(key.split(",").map(Number) as [number, number])).type === "empty")
+    ).toBe(true)
+    expect(sprites(1) - sprites(0)).toBe(laid.size)
   })
 })
 

@@ -1018,17 +1018,21 @@ const GroundCover = ({
  * A fogged cell draws nothing: sand in an unlit passage would be the one thing visible in it. */
 const FloorScatter = ({
   grid,
+  claims,
   scatter,
   tier,
 }: {
   grid: FloorGrid
+  claims: RoomClaims
   scatter: ReadonlyMap<string, ScatterKind>
   tier: Tileset
 }) => (
   <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
     {[...scatter].map(([cellKey, kind]) => {
       const [r, c] = cellKey.split(",").map(Number)
-      const cell = cellAt(grid, r, c)
+      // A room's floor is claimed void: it is lit and seen as its room is.
+      const [or, oc] = (claims.claimedBy.get(cellKey) ?? cellKey).split(",").map(Number)
+      const cell = cellAt(grid, or, oc)
       if (cell.type === "empty" || cell.state === "fogged") return null
       const url = tileOrPlaceholder(tier, kind)
       if (!url) return null
@@ -2112,7 +2116,7 @@ export const SiteMapView = ({
             />
             {/* Under everything else that stands or lies here: the rock is the wall's own foot. */}
             <CornerRocks rocks={cornerRocks} />
-            <FloorScatter grid={grid} scatter={scatter} tier={tier} />
+            <FloorScatter grid={grid} claims={claims} scatter={scatter} tier={tier} />
             <ArchShadows doorways={doorways} />
             <MapLife
               mood={mood}
