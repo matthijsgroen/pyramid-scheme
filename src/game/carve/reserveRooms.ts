@@ -1,7 +1,7 @@
 import { PORCH_WAYS, type BlockAsk } from "../layLocks"
 import type { LockPlan, PlanRegion } from "../lockPlan"
 import { variantsOf } from "../prefabChecks"
-import type { Prefab, SpecialPlace } from "../prefabTypes"
+import type { Prefab, RoomHolds } from "../prefabTypes"
 import { shuffle } from "../random"
 import { claimsFloorAt } from "../roomFootprint"
 import { inRect } from "../roomShape"
@@ -249,7 +249,7 @@ export type RoomAsk = {
   at: { pin: number } | { central: number } | { section: number } | { region: string }
 }
 
-const endHolds = (section: SideSection): SpecialPlace => (section.end === "treasure" ? "chest" : "portal")
+const endHolds = (section: SideSection): RoomHolds => (section.end === "treasure" ? "chest" : "portal")
 
 /**
  * WHETHER A DESIGNED ROOM MAY TAKE A LOCK'S REGION: the room has a door place for every way the region has and a
@@ -323,7 +323,7 @@ export const roomAsks = (prep: FloorPrep): RoomAsk[] => {
   placements.forEach(({ room, max, central }, placement) => {
     const prefab = config.prefabs?.[room]
     if (!prefab) return
-    const places = Object.values(prefab.specials)
+    const places = prefab.holds ?? []
     // A room is furnished for its own tier, so it stands only in a section of that tier: its props are that
     // rank's art, and on another rank's stone they would not be drawn at all.
     const ownTier = (tier: string | undefined) => (tier ?? config.difficulty) === prefab.tier

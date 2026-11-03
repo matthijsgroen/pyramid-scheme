@@ -90,23 +90,23 @@ d . . . s . d
 s stop`)
 
 const VAULT = prefab(`room vault
+holds chest
 layout
 # # # # #
-# c . . #
+# . . . #
 d . . s #
 # . . . #
 # # # # #
-c chest
 s stop`)
 
 const DEN = prefab(`room den
+holds chest
 layout
 # # d # #
-# c . . #
+# . . . #
 d . . . d
 # . . s #
 # # d # #
-c chest
 s stop`)
 
 const STORE = prefab(`room store

@@ -12,8 +12,8 @@ const room = (header: string, grid: string[], legend: string[]) =>
 
 describe("prefab variants and checks", () => {
   it("a declared place or special that is never drawn still reads, and the checks name it", () => {
-    const prefab = room("", ["# # d # #", "# s . . #", "# # # # #"], ["s stop", "w wall shelf", "c chest"])
-    expect(prefabFaults(prefab)).toEqual(['"w" is declared but never drawn', '"c" is declared but never drawn'])
+    const prefab = room("", ["# # d # #", "# s . . #", "# # # # #"], ["s stop", "w wall shelf", "m mechanism"])
+    expect(prefabFaults(prefab)).toEqual(['"w" is declared but never drawn', '"m" is declared but never drawn'])
   })
 
   it("mirrors doors, places and the stop", () => {
@@ -97,11 +97,11 @@ describe("prefab variants and checks", () => {
     expect(faults[0]).toContain("the stop at 1,1")
   })
 
-  it("refuses a chest whose every neighbour is filled", () => {
-    const prefab = room("", ["# # # # #", "# c g s #", "# # # d #"], ["c chest", "s stop", "g floor pillar"])
+  it("refuses a mechanism whose every neighbour is filled", () => {
+    const prefab = room("", ["# # # # #", "# m g s #", "# # # d #"], ["m mechanism", "s stop", "g floor pillar"])
     const faults = prefabFaults(prefab)
     expect(faults).toHaveLength(1)
-    expect(faults[0]).toContain(`chest "c"`)
+    expect(faults[0]).toContain(`mechanism "m"`)
   })
 
   it("refuses a group that cannot fill what it takes", () => {

@@ -58,11 +58,6 @@ const holdsOf = (cell: GridCell): Holds => {
   return "nothing"
 }
 
-const placeFor: Record<Exclude<Holds, "nothing">, SpecialPlace> = {
-  chest: "chest",
-  portal: "portal",
-  mechanism: "mechanism",
-}
 
 type Fit = { variant: Variant; rect: CellRect; doors: Cell[]; absorbed: number }
 
@@ -223,8 +218,8 @@ const furnish = (
       if (kind !== undefined && !special.has(kind)) special.set(kind, at(i, j))
     })
   )
-  const holds = holdsOf(cellAt(grid, r, c))
-  const nodeArt = holds === "nothing" ? undefined : special.get(placeFor[holds])
+  // A chest or a portal stands at the stop, as on a corridor node; only a mechanism has a place of its own.
+  const nodeArt = holdsOf(cellAt(grid, r, c)) === "mechanism" ? special.get("mechanism") : undefined
   const stop = special.get("stop") as Cell
   const actor = fitFor(prefab) ? actorCellOf(stop) : undefined
   return {

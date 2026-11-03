@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1119334326
+export const worldContentHash = 813779314
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -222,13 +222,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             tier: "starter",
             activity: "storage",
             mirror: true,
+            holds: ["chest"],
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
+            layouts: [{ name: "", cells: ["#nd##", "#w..#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
             },
-            specials: { c: "chest", s: "stop" },
+            specials: { s: "stop" },
           },
           packingRoom: {
             name: "packingRoom",
@@ -377,13 +378,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             tier: "starter",
             activity: "storage",
             mirror: true,
+            holds: ["chest"],
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
+            layouts: [{ name: "", cells: ["#nd##", "#w..#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
             },
-            specials: { c: "chest", s: "stop" },
+            specials: { s: "stop" },
           },
           packingRoom: {
             name: "packingRoom",
@@ -729,8 +731,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             tier: "starter",
             activity: "storage",
             mirror: true,
+            holds: ["chest"],
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#n#d#n#", "#w.x..#", "#s.tt.d", "#c...g#", "##d####"] }],
+            layouts: [{ name: "", cells: ["#n#d#n#", "#w.x..#", "#s.tt.d", "#....g#", "##d####"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
@@ -738,20 +741,21 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
               x: { letter: "x", layer: "ground", optional: false, kinds: ["floorClutter"], cols: 1, rows: 1 },
             },
-            specials: { c: "chest", s: "stop" },
+            specials: { s: "stop" },
           },
           storeroom: {
             name: "storeroom",
             tier: "starter",
             activity: "storage",
             mirror: true,
+            holds: ["chest"],
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
+            layouts: [{ name: "", cells: ["#nd##", "#w..#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
             },
-            specials: { c: "chest", s: "stop" },
+            specials: { s: "stop" },
           },
           packingRoom: {
             name: "packingRoom",
@@ -1006,13 +1010,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             tier: "starter",
             activity: "storage",
             mirror: true,
+            holds: ["chest"],
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
+            layouts: [{ name: "", cells: ["#nd##", "#w..#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
             },
-            specials: { c: "chest", s: "stop" },
+            specials: { s: "stop" },
           },
           packingRoom: {
             name: "packingRoom",
@@ -1309,13 +1314,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             tier: "starter",
             activity: "storage",
             mirror: true,
+            holds: ["chest"],
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
+            layouts: [{ name: "", cells: ["#nd##", "#w..#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
             },
-            specials: { c: "chest", s: "stop" },
+            specials: { s: "stop" },
           },
           packingRoom: {
             name: "packingRoom",
@@ -1673,13 +1679,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             tier: "starter",
             activity: "storage",
             mirror: true,
+            holds: ["chest"],
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
+            layouts: [{ name: "", cells: ["#nd##", "#w..#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
             },
-            specials: { c: "chest", s: "stop" },
+            specials: { s: "stop" },
           },
           packingRoom: {
             name: "packingRoom",
@@ -1941,8 +1948,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             tier: "starter",
             activity: "storage",
             mirror: true,
+            holds: ["chest"],
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#n#d#n#", "#w.x..#", "#s.tt.d", "#c...g#", "##d####"] }],
+            layouts: [{ name: "", cells: ["#n#d#n#", "#w.x..#", "#s.tt.d", "#....g#", "##d####"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               g: { letter: "g", layer: "floor", optional: false, kinds: ["basketStack", "bales"], cols: 1, rows: 1 },
@@ -1950,20 +1958,21 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
               x: { letter: "x", layer: "ground", optional: false, kinds: ["floorClutter"], cols: 1, rows: 1 },
             },
-            specials: { c: "chest", s: "stop" },
+            specials: { s: "stop" },
           },
           storeroom: {
             name: "storeroom",
             tier: "starter",
             activity: "storage",
             mirror: true,
+            holds: ["chest"],
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
+            layouts: [{ name: "", cells: ["#nd##", "#w..#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
             },
-            specials: { c: "chest", s: "stop" },
+            specials: { s: "stop" },
           },
           packingRoom: {
             name: "packingRoom",
@@ -2227,13 +2236,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             tier: "starter",
             activity: "storage",
             mirror: true,
+            holds: ["chest"],
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
+            layouts: [{ name: "", cells: ["#nd##", "#w..#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
             },
-            specials: { c: "chest", s: "stop" },
+            specials: { s: "stop" },
           },
           packingRoom: {
             name: "packingRoom",
@@ -2496,13 +2506,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             tier: "starter",
             activity: "storage",
             mirror: true,
+            holds: ["chest"],
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
+            layouts: [{ name: "", cells: ["#nd##", "#w..#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
             },
-            specials: { c: "chest", s: "stop" },
+            specials: { s: "stop" },
           },
           packingRoom: {
             name: "packingRoom",
@@ -2784,13 +2795,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             tier: "starter",
             activity: "storage",
             mirror: true,
+            holds: ["chest"],
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
+            layouts: [{ name: "", cells: ["#nd##", "#w..#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
             },
-            specials: { c: "chest", s: "stop" },
+            specials: { s: "stop" },
           },
           packingRoom: {
             name: "packingRoom",
@@ -3052,13 +3064,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             tier: "starter",
             activity: "storage",
             mirror: true,
+            holds: ["chest"],
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
+            layouts: [{ name: "", cells: ["#nd##", "#w..#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
             },
-            specials: { c: "chest", s: "stop" },
+            specials: { s: "stop" },
           },
           packingRoom: {
             name: "packingRoom",
@@ -3335,13 +3348,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             tier: "starter",
             activity: "storage",
             mirror: true,
+            holds: ["chest"],
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
+            layouts: [{ name: "", cells: ["#nd##", "#w..#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
             },
-            specials: { c: "chest", s: "stop" },
+            specials: { s: "stop" },
           },
           packingRoom: {
             name: "packingRoom",
@@ -3407,7 +3421,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { room: "sellingRoom", min: 0, max: 2, central: 1 },
         ],
         packing: 0.1,
-        seed: 3148170098,
+        seed: 3148170126,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a8", pieceIndex: 1 },
         rewards: [undefined, undefined, undefined],
       },
@@ -3456,7 +3470,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "starter",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_a_2" },
-            endReward: { type: "sellable", itemId: "sell_stone_3" },
+            endReward: { type: "money", amount: 2 },
             rewards: [undefined],
             encounter: "rush-hour",
             decorations: [
@@ -3487,7 +3501,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "starter",
             end: "treasure",
-            endReward: { type: "sellable", itemId: "sell_stone_1" },
+            endReward: { type: "money", amount: 2 },
             rewards: [undefined],
             encounter: "sudoku",
             decorations: [
@@ -3518,7 +3532,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "starter",
             end: "treasure",
-            endReward: { type: "money", amount: 2 },
+            endReward: { type: "sellable", itemId: "sell_stone_3" },
             rewards: [undefined],
             encounter: "balance-scale",
             decorations: [
@@ -3549,7 +3563,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "starter",
             end: "treasure",
-            endReward: { type: "money", amount: 2 },
+            endReward: { type: "sellable", itemId: "sell_stone_1" },
             rewards: [undefined],
             encounter: "sudoku",
             decorations: [
@@ -3639,13 +3653,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             tier: "starter",
             activity: "storage",
             mirror: true,
+            holds: ["chest"],
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#nd##", "#w.c#", "ds..d", "#...#", "#ddd#"] }],
+            layouts: [{ name: "", cells: ["#nd##", "#w..#", "ds..d", "#...#", "#ddd#"] }],
             places: {
               w: { letter: "w", layer: "wall", optional: false, kinds: ["jarRack", "shelf"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
             },
-            specials: { c: "chest", s: "stop" },
+            specials: { s: "stop" },
           },
           packingRoom: {
             name: "packingRoom",

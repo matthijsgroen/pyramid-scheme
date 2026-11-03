@@ -5,7 +5,7 @@ import { SiteMapView, approachCells, cornerRocksFor, nodeSpritesFor, wallItemsFo
 import { allFloorRects, buildRoomClaims, tileRegionsFor } from "./roomClaims"
 import { grassMatsFor } from "./floorScatter"
 import { footprintPath } from "./tileRegions"
-import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY } from "./nodeArt"
+import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY, nodeArtOffset } from "./nodeArt"
 import { ExplorerFigure } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
 import { ARCH_H, ARCH_RISE, CELL, PROP_H, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
@@ -2957,12 +2957,13 @@ describe("SiteMapView — a prefab room", () => {
     expect(explorer(container).compareDocumentPosition(mat) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy()
   })
 
-  it("the chest art stands on its place", () => {
+  it("the chest art stands at the stop, as on a corridor node", () => {
     const vault = revealAll(prefabChestFloor())
     const chest = nodeSpritesFor(vault, buildRoomClaims(vault), "expert").find(
       sprite => sprite.key === `chest:${PREFAB_CHEST[0]},${PREFAB_CHEST[1]}`
     )!
-    expect(chest.x).toBe(cellCenter(1, 5).cx - CELL / 2)
-    expect(chest.y).toBe(cellCenter(1, 5).cy + CELL / 2 - PROP_H)
+    const step = nodeArtOffset(undefined)
+    expect(chest.x).toBeCloseTo(cellCenter(2, 4).cx + step.dx - CELL / 2)
+    expect(chest.y).toBeCloseTo(cellCenter(2, 4).cy + step.dy + CELL / 2 - PROP_H)
   })
 })

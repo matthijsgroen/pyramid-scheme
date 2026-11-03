@@ -253,15 +253,15 @@ export const edgePrefabFloor = (shape: keyof typeof EDGE_NODE, node: Partial<Roo
   )
 
 /** A treasure room at `PREFAB_CHEST` at the end of the corridor from the entrance at 1,0, laid over by a made-up vault
- * whose chest place is 1,5 and stop 2,4. */
+ * whose stop is 2,4: the chest stands there. */
 export const PREFAB_CHEST = [1, 3] as const
 const VAULT = madeUpPrefab(`room vault
+holds chest
 layout
 # # # # #
-d . . c #
+d . . . #
 # . s . #
 # # # # #
-c chest
 s stop`)
 export const prefabChestFloor = (): FloorGrid =>
   laidOver(

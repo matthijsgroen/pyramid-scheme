@@ -31,6 +31,7 @@ export const printPrefab = (prefab: Prefab, { readAs }: { readAs?: string } = {}
     `tier ${prefab.tier}`,
     ...(prefab.activity ? [`activity ${prefab.activity}`] : []),
     ...(prefab.mirror ? ["mirror"] : []),
+    ...(prefab.holds ? [`holds ${prefab.holds.join(" ")}`] : []),
     ...Object.entries(lists).map(([name, kinds]) => `${name} = ${kinds.join(" | ")}`),
     ...prefab.layouts.flatMap(layout => [
       "",
