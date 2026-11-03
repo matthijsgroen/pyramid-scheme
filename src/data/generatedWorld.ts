@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1193195327
+export const worldContentHash = 693935930
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -22010,10 +22010,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "ledger",
             mirror: true,
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#t#d#n#", "#k...j#", "d.....d", "#..s..#", "###d###"] }],
+            layouts: [{ name: "", cells: ["#t###n#", "#kj.i.#", "d.....d", "#..s..#", "###d###"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["scribeDesk"], cols: 1, rows: 1 },
               j: { letter: "j", layer: "wall", optional: false, kinds: ["jarRack"], cols: 1, rows: 1 },
+              i: { letter: "i", layer: "wall", optional: false, kinds: ["jarRack"], cols: 1, rows: 1 },
               t: { letter: "t", layer: "wallItem", optional: false, kinds: ["tallyBoard"], cols: 1, rows: 1 },
               n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
             },
