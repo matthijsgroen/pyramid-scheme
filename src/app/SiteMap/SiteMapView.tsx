@@ -296,17 +296,40 @@ const stairClimbs = (grid: Pick<FloorGrid, "entrancePos">, cell: { stairGoes?: S
 export const dressingFor = (
   grid: FloorGrid,
   dressedOn?: FloorGrid
-): { claims: RoomClaims; scatter: ReadonlyMap<string, ScatterKind> } => {
+): {
+  claims: RoomClaims
+  scatter: ReadonlyMap<string, ScatterKind>
+  /** Where a roof has given way: drawn on the floor as carved, lit only where this map shows an uncovered cell. */
+  shafts: (chance: number, daylight: number) => string[]
+  /** The floor sand and grass are laid on, and `ground` keeps of them what lies on a cell this map shows. */
+  carved: FloorGrid
+  ground: (drifts: Drift[]) => Drift[]
+} => {
   const view = buildRoomClaims(grid)
-  if (!dressedOn) return { claims: view, scatter: scatterFor(grid, view) }
+  if (!dressedOn)
+    return {
+      claims: view,
+      scatter: scatterFor(grid, view),
+      shafts: (chance, daylight) => beamShafts(grid, view, chance, grid.siteId, daylight),
+      carved: grid,
+      ground: drifts => drifts,
+    }
   const dressed = buildRoomClaims(dressedOn)
   const shown = (key: string) => {
     const [r, c] = key.split(",").map(Number)
     return view.claimedBy.has(key) || cellAt(grid, r, c).type === "corridor"
   }
+  const seen = (r: number, c: number) => {
+    const cell = cellAt(grid, r, c)
+    return cell.type !== "empty" && cell.state !== "fogged"
+  }
   return {
     claims: { ...view, decorationAt: dressed.decorationAt, decorationCells: dressed.decorationCells },
     scatter: new Map([...scatterFor(dressedOn, dressed)].filter(([key]) => shown(key))),
+    shafts: (chance, daylight) =>
+      beamShafts(dressedOn, dressed, chance, grid.siteId, daylight, seen).filter(key => shown(key)),
+    carved: dressedOn,
+    ground: drifts => drifts.filter(({ row, col }) => shown(`${row},${col}`)),
   }
 }
 
@@ -1524,7 +1547,13 @@ export const SiteMapView = ({
   className,
 }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
-  const { claims, scatter } = useMemo(() => dressingFor(grid, dressedOn), [grid, dressedOn])
+  const {
+    claims,
+    scatter,
+    shafts: shaftsFor,
+    carved,
+    ground: groundFor,
+  } = useMemo(() => dressingFor(grid, dressedOn), [grid, dressedOn])
   const tier = useMemo(() => floorTier(grid), [grid])
   const torchPlace = useMemo(
     () => new Set(explorerPos ? litPlaceCells(grid, claims, explorerPos) : []),
@@ -1924,16 +1953,13 @@ export const SiteMapView = ({
   const daylight = mood.daylight ?? 0
   // Where a roof has given way, and what the explorer's own lamp is already lighting — a shaft hands over
   // to the lamp where the two fall on the same room (see `BeamLight`).
-  const shafts = useMemo(
-    () => beamShafts(grid, claims, mood.beam ?? 0, grid.siteId, daylight),
-    [grid, claims, mood.beam, daylight]
-  )
+  const shafts = useMemo(() => shaftsFor(mood.beam ?? 0, daylight), [shaftsFor, mood.beam, daylight])
   // What is strewn on this floor. A function of the floor's shape and its id, so it never moves.
-  const drifts = useMemo(() => driftsFor(grid, tier), [grid, tier])
+  const drifts = useMemo(() => groundFor(driftsFor(carved, tier)), [groundFor, carved, tier])
   // The grass is the condition's own ground, so its coverage is the condition's own number.
   const grassMats = useMemo(
-    () => (grid.condition?.kind === "overgrown" ? grassMatsFor(grid, grid.condition.amount) : []),
-    [grid]
+    () => (grid.condition?.kind === "overgrown" ? groundFor(grassMatsFor(carved, grid.condition.amount)) : []),
+    [grid.condition, groundFor, carved]
   )
   const archedGaps = useMemo(
     () =>

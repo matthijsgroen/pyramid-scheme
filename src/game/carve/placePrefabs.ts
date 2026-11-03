@@ -58,7 +58,6 @@ const holdsOf = (cell: GridCell): Holds => {
   return "nothing"
 }
 
-
 type Fit = { variant: Variant; rect: CellRect; doors: Cell[]; absorbed: number }
 
 /**

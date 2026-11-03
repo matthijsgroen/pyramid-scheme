@@ -243,7 +243,11 @@ describe("what a solved room reports", () => {
 
 describe("the wall an encounter is met against", () => {
   it("sets a ward's door against the stone this side of it, not the tier it guards", () => {
-    const corridor = (dirs: ("e" | "w")[]): CorridorCell => ({ type: "corridor", dirs: new Set(dirs), state: "reachable" })
+    const corridor = (dirs: ("e" | "w")[]): CorridorCell => ({
+      type: "corridor",
+      dirs: new Set(dirs),
+      state: "reachable",
+    })
     const ward: GridCell = { ...stubRoom, dirs: new Set(["e", "w"]), tags: ["gate"], difficulty: "wizard" }
     const beyond: GridCell = { ...corridor(["w"]), difficulty: "wizard" }
     const { hook } = setup([corridor(["e"]), ward, beyond])

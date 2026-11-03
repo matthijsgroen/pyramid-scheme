@@ -149,7 +149,7 @@ const corridorShafts = (
       const cell = grid.cells[row][col]
       if (cell.type !== "corridor") continue
       const roll = hashUnit(siteId, "beam-run", index++)
-      if (cell.state === "fogged" || roll >= chance) continue
+      if (roll >= chance) continue
       rolled.push({ cell: `${row},${col}`, roll })
     }
   }
@@ -182,7 +182,8 @@ const corridorShafts = (
  * cell of the footprint it gave way over, so a wide chamber does not always light from its owner's corner.
  *
  * A fogged place draws none, so a beam lights somewhere already discovered and reveals nothing the fog
- * holds back. The draw is indexed by the floor's OWN list of chambers and of corridor cells, which
+ * holds back. It is left out AFTER the draw and the cap, so lifting the fog or finding a hidden passage
+ * (`seen`) only ever adds the shafts that were already there, and never moves another. The draw is indexed by the floor's OWN list of chambers and of corridor cells, which
  * exploration never changes — indexing a list that grows moves everything in it (`MapMood`).
  */
 export const beamShafts = (
@@ -190,7 +191,11 @@ export const beamShafts = (
   claims: RoomClaims,
   chance: number,
   siteId: string,
-  daylight = 0
+  daylight = 0,
+  seen: (row: number, col: number) => boolean = (row, col) => {
+    const cell = cellAt(grid, row, col)
+    return cell.type !== "empty" && cell.state !== "fogged"
+  }
 ): string[] => {
   if (chance <= 0) return []
   const footprints = new Map<string, string[]>()
@@ -199,16 +204,13 @@ export const beamShafts = (
     footprint.push(cell)
     footprints.set(owner, footprint)
   }
-  const shafts: Array<{ cell: string; roll: number }> = []
+  const shafts: Array<{ cell: string; roll: number; owner: string }> = []
   const owners = [...footprints.keys()].sort()
   owners.forEach((owner, index) => {
     const footprint = footprints.get(owner) ?? []
     const odds = footprint.some(cell => claims.decorationAt.get(cell) === "statue") ? STATUE_ODDS : 1
     const roll = hashUnit(siteId, "beam", index)
     if (roll >= chance * odds) return
-    const [row, col] = owner.split(",").map(Number)
-    const room = cellAt(grid, row, col)
-    if (room.type === "empty" || room.state === "fogged") return
     // ON THE FLOOR, not in the margin. A claim may reach outside the grid — an entrance room's footprint
     // is mostly the strip beyond the edge — and a shaft landing there draws its rays and its pool in the
     // black beside the map, which reads as a light leak off the edge of the world.
@@ -217,19 +219,24 @@ export const beamShafts = (
       return r >= 0 && c >= 0 && r < grid.rows && c < grid.cols
     })
     if (inside.length === 0) return
-    shafts.push({ cell: inside[Math.floor(hashUnit(siteId, "beam-cell", index) * inside.length)], roll })
+    shafts.push({ cell: inside[Math.floor(hashUnit(siteId, "beam-cell", index) * inside.length)], roll, owner })
   })
   // A FEW, NEVER A ROOFLESS FLOOR. The odds are per chamber, so a big floor at a generous rank can break
   // a dozen roofs and the shaft stops being the thing you notice about the room it is in. The cap keeps
   // it an event: whichever rooms drew strongest get theirs, which is a fair way of choosing because the
   // draw is what the odds already decided by — taking the first few in cell order would hand every shaft
   // to the top-left corner of the map.
+  const isSeen = (key: string) => {
+    const [row, col] = key.split(",").map(Number)
+    return seen(row, col)
+  }
   return [
     ...shafts
       .sort((a, b) => a.roll - b.roll)
       .slice(0, MAX_SHAFTS)
+      .filter(({ owner }) => isSeen(owner))
       .map(({ cell }) => cell),
-    ...corridorShafts(grid, claims, chance, siteId, corridorShaftAllowance(daylight)),
+    ...corridorShafts(grid, claims, chance, siteId, corridorShaftAllowance(daylight)).filter(isSeen),
   ]
 }
 

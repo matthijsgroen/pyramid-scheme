@@ -78,7 +78,10 @@ describe("drawing a room", () => {
   })
 
   it("adds a mechanism as a special place of its own", () => {
-    expect(ok(editing.setSpecial(EMPTY, 0, 1, 1, "mechanism", footprintOf)).specials).toEqual({ s: "stop", a: "mechanism" })
+    expect(ok(editing.setSpecial(EMPTY, 0, 1, 1, "mechanism", footprintOf)).specials).toEqual({
+      s: "stop",
+      a: "mechanism",
+    })
   })
 
   it("writes a count group into the text", () => {

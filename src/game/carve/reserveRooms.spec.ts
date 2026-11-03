@@ -385,7 +385,11 @@ s stop`,
         plainFloor({
           difficulty: floorTier,
           pathPuzzles: 1,
-          sideSections: [side({ difficulty: sideTier }), side({ difficulty: sideTier }), side({ difficulty: sideTier })],
+          sideSections: [
+            side({ difficulty: sideTier }),
+            side({ difficulty: sideTier }),
+            side({ difficulty: sideTier }),
+          ],
           prefabs: { den: DEN },
           prefabPlacements: [{ room: "den", min: 0, max: 3, central }],
         })
