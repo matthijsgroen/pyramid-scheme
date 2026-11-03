@@ -117,3 +117,110 @@ const meta = {
 
 export default meta
 export const AllRanks: StoryObj<typeof meta> = {}
+
+// FLAT COLOURS: the same corridor in plain fills, so a palette is settled before anything is painted to it.
+// The numbers are L* after the night, as `yarn rank-colour` reads them; visual-direction.md wants the face at
+// least 25 off the floor, and the mass reads as a wall only when it is off the face as well.
+type Flat = { floor: string; face: string; top: string; mass: string; metal: string; faceNight: number; shade: number }
+
+const hexRgb = (hex: string) => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16))
+const mix = (a: number[], b: number[], t: number) => a.map((v, i) => v * (1 - t) + b[i] * t)
+const lStar = ([r, g, b]: number[]) => {
+  const lin = (v: number) => ((v /= 255) <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)
+  const y = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
+  return Math.round(y > 216 / 24389 ? 116 * Math.cbrt(y) - 16 : (24389 / 27) * y)
+}
+
+const FlatCard = ({ tier }: { tier: Tileset }) => {
+  const palette = tierPalette[tier]
+  const shadeAlpha = Number(/,\s*([\d.]+)\)$/.exec(palette.shade)?.[1] ?? 0.3)
+  const initial: Flat = {
+    floor: palette.slab,
+    face: palette.wall,
+    top: palette.wallTop,
+    mass: palette.wallBase,
+    metal: palette.accent,
+    faceNight: palette.faceNight,
+    shade: shadeAlpha,
+  }
+  const [flat, setFlat] = useState(initial)
+  const set = (patch: Partial<Flat>) => setFlat(f => ({ ...f, ...patch }))
+  const night = hexRgb(palette.outline)
+  const lit = (hex: string, extra = 0) => lStar(mix(mix(hexRgb(hex), night, extra), night, flat.shade))
+  const L = { floor: lit(flat.floor), face: lit(flat.face, flat.faceNight), mass: lit(flat.mass) }
+  const step = (a: number, b: number) => Math.abs(a - b)
+  const faceY = CELL
+  const floorY = faceY + WALL_H
+  const H = floorY + CELL * 2 + CELL
+  return (
+    <div className="flex flex-col gap-2 rounded bg-neutral-800 p-3 text-xs text-white/80">
+      <div className="flex items-baseline justify-between">
+        <span className="font-bold text-white">{tier}</span>
+        <button className="text-white/50 hover:text-white" onClick={() => setFlat(initial)}>
+          reset
+        </button>
+      </div>
+      <svg width={W} height={H} className="block">
+        <rect width={W} height={H} fill={flat.mass} />
+        <rect y={faceY - 6} width={W} height={6} fill={flat.top} />
+        <rect y={faceY} width={W} height={WALL_H} fill={flat.face} />
+        <rect y={faceY} width={W} height={WALL_H} fill={palette.outline} opacity={flat.faceNight} />
+        <rect y={floorY} width={W} height={CELL * 2} fill={flat.floor} />
+        <rect x={CELL * 2.5} y={floorY + CELL * 0.6} width={CELL} height={CELL * 0.8} rx={4} fill={flat.metal} />
+        <rect width={W} height={H} fill={palette.outline} opacity={flat.shade} />
+      </svg>
+      <div className="grid grid-cols-5 gap-1">
+        {(["floor", "face", "top", "mass", "metal"] as const).map(key => (
+          <label key={key} className="flex flex-col items-center gap-0.5">
+            <input type="color" value={flat[key]} onChange={e => set({ [key]: e.target.value })} />
+            {key}
+            <span className="font-mono text-white/50">{flat[key]}</span>
+          </label>
+        ))}
+      </div>
+      <label className="flex items-center gap-2">
+        faceNight {flat.faceNight.toFixed(2)}
+        <input
+          type="range"
+          min={0}
+          max={1}
+          step={0.05}
+          value={flat.faceNight}
+          onChange={e => set({ faceNight: Number(e.target.value) })}
+        />
+      </label>
+      <label className="flex items-center gap-2">
+        night {flat.shade.toFixed(2)}
+        <input
+          type="range"
+          min={0}
+          max={0.8}
+          step={0.05}
+          value={flat.shade}
+          onChange={e => set({ shade: Number(e.target.value) })}
+        />
+      </label>
+      <div className="font-mono">
+        L* floor {L.floor} · face {L.face} · mass {L.mass}
+        <br />
+        <span className={step(L.floor, L.face) >= 25 ? "text-green-400" : "text-red-400"}>
+          floor↔face {step(L.floor, L.face)}
+        </span>
+        {" · "}
+        <span className={step(L.face, L.mass) >= 10 ? "text-green-400" : "text-red-400"}>
+          face↔mass {step(L.face, L.mass)}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+export const FlatColours: StoryObj<typeof meta> = {
+  render: () => (
+    <div className="flex min-h-screen flex-wrap content-start gap-4 bg-neutral-900 p-4">
+      {TIERS.map(tier => (
+        <FlatCard key={tier} tier={tier} />
+      ))}
+    </div>
+  ),
+}
