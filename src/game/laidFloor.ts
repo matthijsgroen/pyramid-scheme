@@ -783,10 +783,10 @@ export const lengthenPlan = (plan: LockPlan, floor: Pick<LaidFloor, "stretches">
 /**
  * A ROUTE REGION'S STUB OFF THE ROUTE THAT WOULD HOLD NO ROOM ANSWERS TO THE REGION ITS CORRIDOR LEADS TO. A doorless
  * corridor is split halfway between its two regions, so a corridor from a route region to one off the route grows
- * the route region a stub. The rooms filled into it keep their own section, so a stub with a node no room took, no
- * door, tile, drop end or junction, and no mechanic's seat in its region would be a stretch of ground holding no room,
- * whose fog a re-carve loses. Where every such node lies on doorless corridors leading off the route, and their far
- * regions take the rooms filled into them, those corridors answer wholly to their far regions. Any other floor is
+ * the route region a stub. The rooms filled into it keep their own section, so a stub with no door, tile, drop end or
+ * junction can be a stretch of ground holding no room, whose fog a re-carve loses. Where every such node lies on
+ * doorless corridors leading off the route, and their far regions take the rooms filled into them, those corridors
+ * answer wholly to their far regions, and the region's mechanics' seats stand on its route nodes. Any other floor is
  * returned as it is.
  */
 export const answerBareStubs = (
@@ -812,7 +812,7 @@ export const answerBareStubs = (
   for (const region of new Set(floor.routeLabels)) {
     const stub = [...floor.label].flatMap(([key, of]) => (of === region && !routeKeys.has(key) ? [key] : []))
     if (stub.length === 0) continue
-    if (stub.some(key => roomed.has(key)) || (floor.seatDemand.get(region) ?? 0) > 0) continue
+    if (stub.some(key => roomed.has(key))) continue
     const answers = new Map<CellKey, string>()
     for (const corridor of plan.corridors) {
       const near = [corridor.from, corridor.to].find(end => labelOf(plan, end) === region)
