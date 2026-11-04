@@ -1,4 +1,4 @@
-import type { LockPlan, PlanCorridor, PlanRegion } from "./lockPlan"
+import type { LockPlan, PlanCorridor, PlanDrop, PlanRegion } from "./lockPlan"
 import { mulberry32, shuffle } from "./random"
 import { DEFAULT_PACKING, oneWayReach, oneWayRunCells } from "./carveConstants"
 import type { Direction } from "./siteTypes"
@@ -289,7 +289,8 @@ const search = (
     record(dropAt, id, { from, dir })
   }
 
-  // The order the parts are laid in: the route first, then each off-route region next to one already laid.
+  // The order the regions are reached in: the route first, then each off-route region by a corridor from one reached
+  // already. It orients a region from the way in; the search lays the parts in an order of its own (`pick`).
   const order: string[] = [...plan.route]
   const remaining = plan.regions.map(region => region.id).filter(id => !routeIndex.has(id))
   while (remaining.length > 0) {
@@ -314,7 +315,6 @@ const search = (
     return armIds.has(corridor.id) ? [junction] : nodes.filter(node => node !== junction)
   }
 
-  const steps: Step[] = []
   const placed = new Set<string>()
 
   /**
@@ -647,33 +647,6 @@ const search = (
     }
   }
 
-  const laidCorridors = new Set<string>()
-  const laidDrops = new Set<string>()
-  const pinnedDrops = new Set<string>()
-  const inOrder = new Set<string>()
-  for (const id of order) {
-    const region = regionById.get(id)!
-    const pinDrop = dropsOf(id).find(drop => inOrder.has(drop.launch === id ? drop.landing : drop.launch))
-    if (pinDrop) pinnedDrops.add(pinDrop.id)
-    inOrder.add(id)
-    steps.push(
-      regionStep(
-        region,
-        pinDrop ? { drop: pinDrop.id, other: pinDrop.launch === id ? pinDrop.landing : pinDrop.launch } : undefined
-      )
-    )
-    for (const drop of dropsOf(id))
-      if (!laidDrops.has(drop.id) && inOrder.has(drop.launch) && inOrder.has(drop.landing)) {
-        laidDrops.add(drop.id)
-        if (!pinnedDrops.has(drop.id)) steps.push(dropStep(drop.id))
-      }
-    for (const corridor of corridorsOf(id))
-      if (!laidCorridors.has(corridor.id) && inOrder.has(corridor.from) && inOrder.has(corridor.to)) {
-        laidCorridors.add(corridor.id)
-        steps.push(corridorStep(corridor))
-      }
-  }
-
   const cell = (i: number): CellKey => {
     const [u, v] = coords(i)
     return `${2 * u},${2 * v}`
@@ -834,18 +807,70 @@ const search = (
     return false
   }
 
+  const farOf = (drop: PlanDrop, region: string) => (drop.launch === region ? drop.landing : drop.launch)
+  // A region with a drop to a laid region stands at that drop's far end: the drop is laid with it.
+  const pinFor = (region: string) => {
+    const drop = dropsOf(region).find(candidate => placed.has(farOf(candidate, region)))
+    return drop ? { drop: drop.id, other: farOf(drop, region) } : undefined
+  }
+  // How many places a region pinned by a drop may stand, which is every place its step tries; unpinned, it may stand
+  // anywhere free.
+  const room = (region: string): number => {
+    const pin = pinFor(region)
+    if (!pin) return Infinity
+    let count = 0
+    for (const o of regionNodes.get(pin.other)!) {
+      if (o === junctionAt.get(pin.other)) continue
+      for (let d = 0; d < 4; d++) {
+        const t = stepBy(o, d, dropHops(d))
+        if (t >= 0 && !occupied.has(t) && dropFits(o, d)) count++
+      }
+    }
+    return count
+  }
+
+  /**
+   * THE NEXT PART TO LAY, CHOSEN AS THE SEARCH GOES, MOST CONSTRAINED FIRST: a drop or corridor whose two regions are
+   * laid; else the next route region; else the off-route region with the fewest places to stand, a region a drop pins
+   * before one only corridors reach, which is reached in order. A region a drop pins with no place left cuts the
+   * branch (null). Undefined: every part is laid. A drop fixes where a region stands and a corridor only bends to it,
+   * so a chain of drops laid in one fixed order meets its last link where it no longer fits.
+   */
+  const pick = (): Step | null | undefined => {
+    for (const drop of plan.drops)
+      if (placed.has(drop.launch) && placed.has(drop.landing) && !dropAt.has(drop.id)) return dropStep(drop.id)
+    for (const corridor of plan.corridors)
+      if (placed.has(corridor.from) && placed.has(corridor.to) && !corridorPath.has(corridor.id))
+        return corridorStep(corridor)
+    for (const id of plan.route) if (!placed.has(id)) return regionStep(regionById.get(id)!, pinFor(id))
+    let best: string | undefined
+    let fewest = Infinity
+    for (const id of order) {
+      if (placed.has(id)) continue
+      const here = room(id)
+      if (here === 0) return null
+      if (here < fewest) [best, fewest] = [id, here]
+    }
+    best ??= order.find(id => !placed.has(id))
+    return best === undefined ? undefined : regionStep(regionById.get(best)!, pinFor(best))
+  }
+
   let laid: LaidLocks | undefined
+  const parts: Part[] = []
   const run = (i: number): boolean => {
-    if (i === steps.length) {
+    const next = pick()
+    if (next === undefined) {
       laid = snapshot()
       return true
     }
+    if (next === null) return false
     deepest = Math.max(deepest, i)
+    parts[i] = next.part
     if (walledIn()) return false
-    return steps[i].run(() => run(i + 1))
+    return next.run(() => run(i + 1))
   }
   run(0)
-  return { laid, deepest, parts: steps.map(entry => entry.part) }
+  return { laid, deepest, parts }
 }
 
 /** What one grid's searches decided: the laid floor, or how far the furthest search got. */

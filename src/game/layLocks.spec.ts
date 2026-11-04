@@ -274,6 +274,25 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
   })
   // A MADE-UP LOCK, never a catalogue one. `out` is one node whose four sides are its two route corridors and its two
   // drops, so a lay that crowds one side is dead long before the drops are reached.
+  // A MADE-UP LOCK, never a catalogue one. Corridors reach `l` and `r` from `in`, and a chain of drops leads from `r`
+  // through `u` and `l` back to `in`: each drop fixes where its next region stands, so a lay that places `r` by its
+  // corridor before the chain has fixed it seldom lands the chain's last drop.
+  it("lays a chain of drops that closes back onto the route", () => {
+    const CHAIN =
+      "in -[Y]- l\nin -[Y]- r\nin -[S]- out\nl -[T]- t\nr >> u\nu >> l\nl >> in\nY fork @in\nT toggle @u\nS toggle @t"
+    const plan = planToLay(planOf([{ lock: freeRegions(parseLock(CHAIN, "chain").lock) }]), {
+      content: ["puzzle", "puzzle", "reward"],
+      appetite: new Map(),
+      corridorRooms: new Map(),
+    })
+    const laidSeeds = SEEDS.slice(0, 10).flatMap(seed => {
+      const result = layLockPlan(plan, { seed, n: startingGridSize(plan) })
+      if (!result.ok) return []
+      expectLaidPlan(plan, result.laid)
+      return [seed]
+    })
+    expect(laidSeeds).toHaveLength(10)
+  })
   it("lays a plan whose route region launches two drops from a node with no side to spare", () => {
     const TWO_DROPS = "in -[A]- p -[B]- q\nin -[C]- out\nout >> p\nout >> q\nA toggle @in\nB toggle @p\nC toggle @q"
     const plan = planToLay(planOf([{ lock: freeRegions(parseLock(TWO_DROPS, "twoDrops").lock) }]), {
