@@ -288,6 +288,10 @@ export type LaidFloor = {
   route: Cell[]
   routeLabels: string[]
   label: Map<CellKey, string>
+  /** The nodes a region stands on itself: its own and its corridors' halves on its side. A drop's ledge or landing
+   * answers to a region (`label`) but is its way across the drop, not its ground, so no piece of the lock stands on
+   * one. */
+  own: Set<CellKey>
   ground: Map<CellKey, string>
   gateDoor: Map<string, CellKey>
   regionDoors: LaidRegionDoor[]
@@ -377,6 +381,9 @@ export const besideRoomSeat = (floor: Pick<LaidFloor, "blocks">, region: string 
 export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
   const label = new Map<CellKey, string>()
   for (const region of laid.regions) for (const node of region.nodes) label.set(node, labelOf(plan, region.id))
+  const isOwn = (id: string) => plan.regions.find(region => region.id === id)?.answersTo === undefined
+  const own = new Set<CellKey>()
+  for (const region of laid.regions) if (isOwn(region.id)) for (const node of region.nodes) own.add(node)
 
   const gateDoor = new Map<string, CellKey>()
   const regionDoors: LaidRegionDoor[] = []
@@ -389,6 +396,10 @@ export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
     const labels = corridorLabels(plan, corridor, k)
     const { doors: at, thresholds } = corridorSeats(plan, corridor, k)
     laidCorridor.nodes.forEach((node, i) => label.set(node, labels[i]))
+    const { split } = corridorSeats(plan, corridor, k)
+    laidCorridor.nodes.forEach((node, i) => {
+      if (isOwn(i < split ? corridor.from : corridor.to)) own.add(node)
+    })
     if (thresholds.length > 0) for (const node of laidCorridor.nodes) thresholdCells.add(node)
     // An end with no node of its own for the tile leaves it to the region's node the corridor arrives at.
     const ends = thresholdsOnCorridor(plan, corridor, k)
@@ -500,6 +511,7 @@ export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
     route: laid.route.map(rc),
     routeLabels: laid.route.map(node => label.get(node)!),
     label,
+    own,
     ground,
     gateDoor,
     regionDoors,

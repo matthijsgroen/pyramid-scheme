@@ -1,6 +1,6 @@
 import { hashString } from "@/support/hashString"
 import { holeOf } from "../lockAuthoring"
-import { edgeAllowed, keyOf, rooms } from "./derive"
+import { edgeAllowed, keyOf, rooms, notOwnGround } from "./derive"
 import { CONNECTOR_DIRS } from "./grid"
 import { pass } from "./state"
 
@@ -26,6 +26,7 @@ export const placePipeHoles = pass(
     "forkSwitchRooms",
     "mainRooms",
     "chainRooms",
+    "keys",
   ],
   ["pipeHoles"],
   (prep, state) => {
@@ -50,6 +51,7 @@ export const placePipeHoles = pass(
       ...state.forkSwitchRooms.keys(),
       ...state.switchWays.flatMap(ways => ways.map(({ cell }) => cell)),
       ...state.drops.flatMap(drop => [drop.from, drop.to]),
+      ...notOwnGround(prep, state),
     ])
 
     // A node's ways out as the renderer will write them: to a used neighbour, over an allowed edge.

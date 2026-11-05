@@ -65,6 +65,7 @@ const placed = (weights: WeightsControl[], without: string[] = []) => {
   const state: CarveState = {
     ...freshState(prep),
     lay: null,
+    keys: { chains: [], hostColors: new Map() },
     maze: { n: 9, entrance: ROUTE[0], exit: ROUTE[4], mainPath: ROUTE, passages },
     branches: { used, groups: [], subChains: [], seamDrops: [], carved: new Set<string>() },
     labels,

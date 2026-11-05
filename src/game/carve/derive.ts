@@ -1,5 +1,5 @@
 import { crossesNoDoor } from "../obstacles"
-import type { Direction } from "../siteTypes"
+import type { Direction, GridCell } from "../siteTypes"
 import { CONNECTOR_DIRS, makePkey } from "./grid"
 import type { CarveState, Cell, FloorPrep, RoomSpec } from "./state"
 
@@ -11,6 +11,25 @@ export const routeStepOf = (maze: Pick<Required<CarveState>["maze"], "mainPath">
 
 /** A cell's key, `r,c`. */
 export const keyOf = ([r, c]: Cell) => `${r},${c}`
+
+/**
+ * A PIECE OF A LOCK STANDS ON ITS REGION'S OWN GROUND: a plate, a tile, a pipe's hole. Ground that only wears a
+ * region's label is not that: a side section grown from the region (behind a ward gate, say), or a drop's ledge or
+ * landing, the region's way across its drop. Solving a lock never leads down a side way or onto a drop's ledge.
+ * The cells that wear a region's label without being its ground; `lockPieceFaults` checks the finished grid.
+ */
+export const notOwnGround = (
+  prep: FloorPrep,
+  state: Pick<Required<CarveState>, "keys" | "lay" | "labels">
+): string[] =>
+  state.lay
+    ? [...state.labels.region.keys()].filter(key => !state.lay!.laid.own.has(key))
+    : state.keys.chains
+        .filter(
+          chain =>
+            !chain.laid && !(chain.parentIdx === undefined && prep.layout.chainRegionsBySectionIdx.has(chain.idx))
+        )
+        .flatMap(chain => chain.cells.map(keyOf))
 
 /** Where each main-path gate stands: on its seam, or where its run seated it, the run's word winning. */
 export const gateIndexOf = (state: Pick<Required<CarveState>, "seamGates" | "runGates">): ReadonlyMap<string, number> =>
@@ -188,4 +207,30 @@ export const freeWaysOut = (
       return !roomAt.has(neighborKey)
     })
   }
+}
+
+/** Every piece of a lock standing off its region's own ground (`notOwnGround`), named by cell: a carve that does not
+ * honour its lock's topology. None on a floor with no laid lock. */
+export const lockPieceFaults = (
+  prep: FloorPrep,
+  state: Pick<Required<CarveState>, "keys" | "lay" | "labels">,
+  cells: readonly (readonly GridCell[])[]
+): string[] => {
+  if (!state.lay) return []
+  const off = new Set(notOwnGround(prep, state))
+  return cells.flatMap((row, r) =>
+    row.flatMap((cell, c) => {
+      if (cell.type !== "room" || !off.has(`${r},${c}`)) return []
+      const piece = cell.plate
+        ? "plate"
+        : cell.sequenceTile
+          ? "tile"
+          : cell.pipeHole
+            ? "pipe hole"
+            : cell.mechanism
+              ? "control"
+              : undefined
+      return piece ? [`${piece} at ${r},${c} stands off ${state.labels.region.get(`${r},${c}`)}'s own ground`] : []
+    })
+  )
 }
