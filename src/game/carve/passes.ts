@@ -33,6 +33,7 @@ import { shutSwitchGround } from "./shutSwitchGround"
 import { validate } from "./validate"
 import { standForkSwitches } from "./standForkSwitches"
 import { standPieces } from "./standPieces"
+import type { PiecesState } from "./standPieces"
 import { lockPieceFaults } from "./derive"
 import { standSwitches } from "./standSwitches"
 
@@ -87,7 +88,7 @@ export const TAIL_READS = [
   "pipeHoles",
   "chambers",
   "keys",
-] as const satisfies readonly (keyof RenderState)[]
+] as const satisfies readonly (keyof RenderState | keyof PiecesState)[]
 
 /**
  * THE TAIL OF AN ATTEMPT, once every pass holds: render writes the grid from the decisions and the rooms that
