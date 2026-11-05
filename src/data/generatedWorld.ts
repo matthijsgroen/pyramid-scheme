@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1060172190
+export const worldContentHash = 1445345566
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -19243,7 +19243,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "wizard_b_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p13", pieceIndex: 3 },
-            rewards: [{ type: "sellable", itemId: "sell_divine_4" }],
+            rewards: [{ type: "sellable", itemId: "sell_divine_2" }],
             encounter: "rush-hour",
             decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
             wallDecorations: ["sconce", "wallShrine"],
@@ -19256,7 +19256,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "wizard_b_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a4", pieceIndex: 0 },
-            rewards: [{ type: "sellable", itemId: "sell_divine_2" }],
+            rewards: [{ type: "sellable", itemId: "sell_divine_4" }],
             encounter: "procession",
             decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
             wallDecorations: ["sconce", "wallShrine"],
