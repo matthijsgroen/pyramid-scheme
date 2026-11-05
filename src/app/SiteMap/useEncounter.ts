@@ -8,7 +8,7 @@ import { hashString } from "@/support/hashString"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { getFamilyPlugin, type FamilyContext, type FamilyPlugin } from "@/app/families/familyRegistry"
 import { encodeEdge } from "./edgeId"
-import { cellTileset } from "./roomClaims"
+import { cellStone } from "./roomClaims"
 import { useClearPuzzleState } from "@/mods/core/app/puzzleState"
 import { useMergedReactions, type SolveOutcome } from "@/app/reactions/reactionContributions"
 
@@ -83,7 +83,8 @@ export const useEncounter = ({
       // The tier this room's own section was authored at, falling back to the floor's for a cell that
       // carries none (see RoomCell.difficulty) — a starter pocket on a wizard floor serves starter boards.
       difficulty: (cell?.type === "room" ? cell.difficulty : undefined) ?? difficulty,
-      tileset: cellTileset(cell?.type === "room" ? cell : {}, grid, difficulty),
+      // The wall it is met against is the stone the map paves its square in: a ward is seen from this side.
+      tileset: cellStone(grid, cell?.type === "room" ? cell : {}, row, col),
       reward: cell?.type === "room" ? cell.reward : undefined,
       stock: cell?.type === "room" ? cell.stock : undefined,
       pathIndex: cell?.type === "room" ? cell.pathIndex : undefined,

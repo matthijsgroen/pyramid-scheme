@@ -15,7 +15,7 @@ import { hashUnit } from "@/support/hashString"
  * brief's §4 (docs/game-design/tile-art-brief.md) and resolve as `tiles/<tier>/<kind>.png`, so a rank
  * is a skin and not a new set of files.
  */
-export type ScatterKind = "sand" | "rubbleSpill" | "mat"
+export type ScatterKind = "sand" | "rubbleSpill" | "mat" | "floorClutter"
 
 /**
  * The kinds the scatter layer places — what blows in and falls, on the cells the player walks.
@@ -31,7 +31,7 @@ export type ScatterKind = "sand" | "rubbleSpill" | "mat"
  * LENGTH moves placements — a rename keeps the index. 698 pool entries renamed moved no room's prop.
  */
 
-export const FLOOR_KINDS: ReadonlySet<string> = new Set<ScatterKind>(["sand", "rubbleSpill", "mat"])
+export const FLOOR_KINDS: ReadonlySet<string> = new Set<ScatterKind>(["sand", "rubbleSpill", "mat", "floorClutter"])
 
 /** Scatter kinds drawn as DRIFTS rather than as cell-sized sprites — see `driftsFor`. Exported so a
  * sheet staging one stages it the way the map does: centred on the cell and sized in cells, not
@@ -173,16 +173,11 @@ const CHAMBER_KINDS: readonly ScatterKind[] = ["mat", "rubbleSpill"]
 // A cave is a place nobody furnished: its chambers get what falls, never what someone laid down.
 const UNFURNISHED: readonly ScatterKind[] = ["rubbleSpill"]
 
-/** One piece per this many corridor cells, within the bounds. Measured at 6.9 a floor when the divisor
- * was 7 and the cap 7 — which is to say every floor was at the cap, and a passage with something in
- * nearly every stretch of it stops reading as a passage. */
-const CELLS_PER_GROUND = 12
-const MIN_GROUND = 2
-const MAX_GROUND = 5
+// What a rank strews besides: the merchant's house is a store, and its floors are where the goods spill.
+const RANK_CLUTTER: Partial<Record<string, readonly ScatterKind[]>> = { starter: ["floorClutter"] }
 
-/** How many pieces a chamber is dressed with. Its floor is around nine cells, so two is a furnished
- * room and not a junk heap. */
-const PER_CHAMBER = 2
+/** The share of free cells that carry a piece where the floor authors no `clutter` of its own. */
+export const DEFAULT_CLUTTER = 0.15
 
 /**
  * Where the scatter lies on this floor, as `"row,col" -> kind`.
@@ -194,7 +189,12 @@ const PER_CHAMBER = 2
  */
 export const scatterFor = (grid: FloorGrid, claims: RoomClaims): ReadonlyMap<string, ScatterKind> => {
   const out = new Map<string, ScatterKind>()
-  const chamberKinds = grid.tileset === "cave" ? UNFURNISHED : CHAMBER_KINDS
+  // ONE SHARE FOR ROOMS AND PASSAGES: `clutter` is the fraction of free cells that carry a piece, so 0 is
+  // swept clean and 1 is a piece on every cell the explorer can walk past.
+  const share = grid.clutter ?? DEFAULT_CLUTTER
+  const extra = grid.tileset === "cave" ? [] : (RANK_CLUTTER[grid.tileset ?? grid.difficulty ?? ""] ?? [])
+  const chamberKinds = [...(grid.tileset === "cave" ? UNFURNISHED : CHAMBER_KINDS), ...extra]
+  const groundKinds = [...GROUND_KINDS, ...extra]
 
   // ── the chambers, each dressed on its own floor ──
   //
@@ -209,7 +209,7 @@ export const scatterFor = (grid: FloorGrid, claims: RoomClaims): ReadonlyMap<str
     // — and not a cell a prop stands on (`decorationCells`, every cell of its footprint). Dressing lies
     // on the floor AROUND what the room is for.
     const free = cells.filter(key => !claims.decorationCells.has(key) && key !== ownerKey)
-    for (const key of pickCells(grid, `chamber-cell-${ownerKey}`, free, PER_CHAMBER))
+    for (const key of pickCells(grid, `chamber-cell-${ownerKey}`, free, Math.round(free.length * share)))
       out.set(key, chamberKinds[Math.floor(unitAt(grid, "chamber-kind", key) * chamberKinds.length)])
   }
 
@@ -221,8 +221,7 @@ export const scatterFor = (grid: FloorGrid, claims: RoomClaims): ReadonlyMap<str
     }
   }
   if (corridors.length === 0) return out
-  const ground = Math.min(MAX_GROUND, Math.max(MIN_GROUND, Math.round(corridors.length / CELLS_PER_GROUND)))
-  for (const key of pickCells(grid, "ground-cell", corridors, ground))
-    out.set(key, GROUND_KINDS[Math.floor(unitAt(grid, "ground-kind", key) * GROUND_KINDS.length)])
+  for (const key of pickCells(grid, "ground-cell", corridors, Math.round(corridors.length * share)))
+    out.set(key, groundKinds[Math.floor(unitAt(grid, "ground-kind", key) * groundKinds.length)])
   return out
 }

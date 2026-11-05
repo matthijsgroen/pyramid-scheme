@@ -28,16 +28,16 @@ s stop`,
 const VAULT = parsePrefab(
   `room vault
 tier starter
+holds chest
 layout
 # # # d # # #
 # . . . . . #
 # . p . p . #
-d . . c . . d
+d . . . . . d
 # . p . p . #
 # s . . . . #
 # # # d # # #
 p floor pillar
-c chest
 s stop`,
   "vault"
 )
@@ -98,8 +98,6 @@ describe("reserveRooms", () => {
     const end = vault.cell as RoomCell
     expect(end).toMatchObject({ roomType: "encounter", reward, sectionAddress: "s0" })
     expect(end.tags).toContain("treasure")
-    const [ci, cj] = [3, 3]
-    expect(vault.room.nodeArt).toEqual([vault.room.rect.top + ci - 1, vault.room.rect.left + cj - 1])
     const gates = grid.cells.flat().filter((cell: GridCell) => cell.type === "room" && cell.gateVariant === "tomb-key")
     expect(gates).toEqual([expect.objectContaining({ sectionAddress: "s0", requiredKeyId: "starter_a_1" })])
   })
@@ -346,16 +344,16 @@ s stop`,
   const DEN = parsePrefab(
     `room den
 tier starter
+holds chest
 layout
 # # # d # # d # #
 # . . . . . . . #
-# . p . p . c . #
+# . p . p . . . #
 d . . . . . s . d
 # . p . p . p . #
 # . . . . . . . #
 # # # d # # d # #
 p floor pillar
-c chest
 s stop`,
     "den"
   )
@@ -381,11 +379,31 @@ s stop`,
     expect(sectionAsks("vault", { vault: VAULT }).length).toBeGreaterThan(0)
   })
 
-  it("a chest room puts the chest's art on its chest place", () => {
+  it("a room is asked only where the section is of its own tier, on a side path's end or the main path", () => {
+    const tiered = (sideTier: SideSection["difficulty"], floorTier: FloorConfig["difficulty"], central: number) =>
+      asksOf(
+        plainFloor({
+          difficulty: floorTier,
+          pathPuzzles: 1,
+          sideSections: [
+            side({ difficulty: sideTier }),
+            side({ difficulty: sideTier }),
+            side({ difficulty: sideTier }),
+          ],
+          prefabs: { den: DEN },
+          prefabPlacements: [{ room: "den", min: 0, max: 3, central }],
+        })
+      )
+    expect(tiered("expert", "starter", 0).filter(ask => "section" in ask.at)).toEqual([])
+    expect(tiered("starter", "starter", 0).filter(ask => "section" in ask.at).length).toBeGreaterThan(0)
+    expect(tiered("starter", "junior", 1).filter(ask => "central" in ask.at)).toEqual([])
+  })
+
+  it("a chest room has no art place of its own: the chest stands at its stop", () => {
     const [vault] = roomsOf(carved(sidesFloor({ vault: VAULT }, { room: "vault", min: 1, max: 1, central: 0 })))
     expect(vault.cell).toMatchObject({ roomType: "encounter" })
     expect((vault.cell as RoomCell).tags).toContain("treasure")
-    expect(vault.room.nodeArt).toEqual([vault.room.rect.top + 2, vault.room.rect.left + 2])
+    expect(vault.room.nodeArt).toBeUndefined()
   })
 
   it("central 1 asks the hub on the main path, central 0 the far dead end", () => {
@@ -489,16 +507,16 @@ s stop`,
     const store = parsePrefab(
       `room store
 tier starter
+holds chest
 layout
 # # # d # # #
 # . . . . . #
 # p . p . p #
-d . . c . . #
+d . . . . . #
 # p . p . p #
 # s . . . . #
 # # # # # # #
 p floor? pillar 2 of 6
-c chest
 s stop`,
       "store"
     )

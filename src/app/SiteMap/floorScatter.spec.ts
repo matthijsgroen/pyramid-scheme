@@ -21,9 +21,10 @@ const plumbing = { entrancePos: [0, 2] as const, exitPos: [4, 2] as const, stair
 
 /** A corridor running down the middle into a chamber at the bottom, with void either side for the
  * chamber to claim — so the floor has both a real footprint and a run of passage. */
-const floor = (siteId: string): FloorGrid => ({
+const floor = (siteId: string, clutter?: number): FloorGrid => ({
   ...plumbing,
   siteId,
+  ...(clutter !== undefined ? { clutter } : {}),
   rows: 6,
   cols: 5,
   cells: [
@@ -36,8 +37,8 @@ const floor = (siteId: string): FloorGrid => ({
   ],
 })
 
-const scatterOn = (siteId: string) => {
-  const grid = floor(siteId)
+const scatterOn = (siteId: string, clutter?: number) => {
+  const grid = floor(siteId, clutter)
   return { grid, claims: buildRoomClaims(grid), scatter: scatterFor(grid, buildRoomClaims(grid)) }
 }
 
@@ -74,7 +75,7 @@ describe("floor scatter", () => {
     // A mat is furnishing: it belongs in a room someone lived in, not in a corridor.
     let groundInCorridor = 0
     for (const siteId of Array.from({ length: 40 }, (_, i) => `passage_${i}:0`)) {
-      const { grid, claims, scatter } = scatterOn(siteId)
+      const { grid, claims, scatter } = scatterOn(siteId, 1)
       for (const [key, kind] of scatter) {
         const [r, c] = key.split(",").map(Number)
         if (grid.cells[r][c].type !== "corridor" || claims.claimedBy.has(key)) continue
@@ -83,6 +84,26 @@ describe("floor scatter", () => {
       }
     }
     expect(groundInCorridor).toBeGreaterThan(0)
+  })
+
+  it("lays nothing at clutter 0", () => {
+    expect([...scatterOn("clean:0", 0).scatter]).toEqual([])
+  })
+
+  it("lays a piece on every free cell at clutter 1", () => {
+    const { grid, claims, scatter } = scatterOn("full:0", 1)
+    const owners = new Set(claims.claimedBy.values())
+    const roomFloor = [...claims.claimedBy.keys()].filter(key => !claims.decorationCells.has(key) && !owners.has(key))
+    const passages = [0, 1, 2, 3].map(r => `${r},2`).filter(key => !claims.claimedBy.has(key))
+    expect(grid.cells[0][2].type).toBe("corridor")
+    expect([...scatter.keys()].sort()).toEqual([...roomFloor, ...passages].sort())
+  })
+
+  it("only adds pieces as clutter rises, and moves none", () => {
+    const less = scatterOn("rising:0", 0.3).scatter
+    const more = scatterOn("rising:0", 0.7).scatter
+    for (const [key, kind] of less) expect(more.get(key)).toBe(kind)
+    expect(more.size).toBeGreaterThan(less.size)
   })
 
   it("lands in the same places every time it is asked", () => {

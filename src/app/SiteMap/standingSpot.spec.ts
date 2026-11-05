@@ -127,10 +127,11 @@ describe("where the explorer stands in a prefab room", () => {
     expect(occupantOffset(plain, buildRoomClaims(plain), 1, 1)).not.toEqual({ dx: 0, dy: 0 })
   })
 
-  it("the chest art stands on its place", () => {
+  it("the chest art stands at the stop, stepped aside as on a corridor node", () => {
     const vault = prefabChestFloor()
-    expect(cellOf(PREFAB_CHEST, prefabArtOffset(vault, ...PREFAB_CHEST)!)).toEqual([1, 5])
-    expect(prefabArtOffset(grid, ...PREFAB_FORK)).toBeUndefined()
+    const stop = standingOffset(vault, buildRoomClaims(vault), ...PREFAB_CHEST)
+    const step = nodeArtOffset(undefined)
+    expect(prefabArtOffset(vault, ...PREFAB_CHEST)).toEqual({ dx: stop.dx + step.dx, dy: stop.dy + step.dy })
   })
 })
 

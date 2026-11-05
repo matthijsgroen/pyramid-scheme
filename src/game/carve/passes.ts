@@ -33,6 +33,8 @@ import { shutSwitchGround } from "./shutSwitchGround"
 import { validate } from "./validate"
 import { standForkSwitches } from "./standForkSwitches"
 import { standPieces } from "./standPieces"
+import type { PiecesState } from "./standPieces"
+import { lockPieceFaults } from "./derive"
 import { standSwitches } from "./standSwitches"
 
 /**
@@ -85,7 +87,8 @@ export const TAIL_READS = [
   "forkSwitchRooms",
   "pipeHoles",
   "chambers",
-] as const satisfies readonly (keyof RenderState)[]
+  "keys",
+] as const satisfies readonly (keyof RenderState | keyof PiecesState)[]
 
 /**
  * THE TAIL OF AN ATTEMPT, once every pass holds: render writes the grid from the decisions and the rooms that
@@ -104,6 +107,10 @@ export const finishAttempt: Finish = (prep, state) => {
     standPieces(prep, decided, grid) ??
     (blocks.length ? ringFault(grid, blocks, shut) : undefined)
   if (refusal) return refusal
+  // A LOCK'S TOPOLOGY IS NEVER LEFT UNHONOURED UNNOTICED: a piece off its region's own ground is a carve bug, not a
+  // bad seed, so it stops the carve rather than retrying it.
+  const offGround = lockPieceFaults(prep, decided, grid.cells)
+  if (offGround.length > 0) throw new Error(`[carve] ${prep.input.siteId}: ${offGround.join(", ")}`)
   const laid = placePrefabs(prep, finish(prep, grid))
   if ("retry" in laid || "fatal" in laid) return laid
   const bitten = bittenRooms(laid, shut)

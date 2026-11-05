@@ -85,9 +85,23 @@ describe("rooms that claim floor are never bitten", { timeout: 120_000 }, () => 
     expect(pairsOf(pair => pair.sameSection).length).toBeGreaterThan(0)
   })
 
+  it("a side path with no uncrowded end is hung where no room sure to claim floor bites it, not at the backstop", () => {
+    const bitesBeforeCarving = SEEDS.flatMap(seed => {
+      const carvedAt = assembleFloor("whole-rooms", FLOORS["four short side paths"], seed)
+      if (!carvedAt.success || carvedAt.attempt === 0) return []
+      const before = assembleFloor("whole-rooms", FLOORS["four short side paths"], seed, undefined, {
+        maxAttempts: carvedAt.attempt,
+      })
+      return before.success ? [] : before.reasons.filter(reason => reason.type === "roomsBite")
+    })
+    expect(bitesBeforeCarving).toEqual([])
+  })
+
   it("the backstop refuses a bitten room naming both rooms", () => {
     const refused = SEEDS.flatMap(seed => {
-      const result = assembleFloor("whole-rooms", FLOORS["four short side paths"], seed, undefined, { maxAttempts: 8 })
+      const result = assembleFloor("whole-rooms", FLOORS["a gated side path beside a longer one"], seed, undefined, {
+        maxAttempts: 8,
+      })
       return result.success ? [] : result.reasons.flatMap(reason => (reason.type === "roomsBite" ? [reason] : []))
     })
     expect(refused.length).toBeGreaterThan(0)
@@ -99,12 +113,13 @@ describe("rooms that claim floor are never bitten", { timeout: 120_000 }, () => 
   })
 
   it("a bitten floor carves the same twice", () => {
+    const floor = FLOORS["a gated side path beside a longer one"]
     const bitten = SEEDS.find(seed => {
-      const result = assembleFloor("whole-rooms", FLOORS["four short side paths"], seed, undefined, { maxAttempts: 8 })
+      const result = assembleFloor("whole-rooms", floor, seed, undefined, { maxAttempts: 8 })
       return !result.success && result.reasons.some(reason => reason.type === "roomsBite")
     })
     expect(bitten).toBeDefined()
-    const twice = [0, 1].map(() => assembleFloor("whole-rooms", FLOORS["four short side paths"], bitten!))
+    const twice = [0, 1].map(() => assembleFloor("whole-rooms", floor, bitten!))
     const [first, second] = twice.map(result => (result.success ? carvedFloorDigest(result.grid) : undefined))
     expect(first).toBeDefined()
     expect(second).toBe(first)

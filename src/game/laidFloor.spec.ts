@@ -587,10 +587,13 @@ describe("a route region's stub off the route with no room in it", () => {
     expect(answered.routeLabels).toEqual(floor.routeLabels)
   })
 
-  it("keeps the stub where a mechanic of its region may seat in it", () => {
+  it("answers even where a mechanic of its region seats, which stands on the region's route nodes", () => {
     const plan = nook("hall")
-    const floor = withStub(plan)
-    expect(answerBareStubs(plan, floor, [], FREE)).toBe(floor)
+    const nookRegion = plan.regions.find(region => region.id.endsWith("nook"))!.id
+    expect(STUB.map(key => answerBareStubs(plan, withStub(plan), [], FREE).label.get(key))).toEqual([
+      nookRegion,
+      nookRegion,
+    ])
   })
 
   it("keeps the stub where a door stands in it", () => {

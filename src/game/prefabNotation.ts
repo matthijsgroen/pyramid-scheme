@@ -4,7 +4,7 @@ import { difficulties } from "@/data/difficultyLevels"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { ACTIVITIES } from "./activities"
 import type { ActivityId } from "./activities"
-import type { PlaceDef, PlaceKind, PlaceLayer, Prefab, PrefabLayout, SpecialPlace } from "./prefabTypes"
+import type { PlaceDef, PlaceKind, PlaceLayer, Prefab, PrefabLayout, RoomHolds, SpecialPlace } from "./prefabTypes"
 import { DECORATION_KINDS, WALL_DECORATION_KINDS, decorationFootprint } from "./siteTypes"
 import type { DecorationKind, PropFootprint } from "./siteTypes"
 
@@ -14,6 +14,7 @@ THE HEADER
   tier master                   the tier it is dressed in
   activity storage              what the room is for (optional)
   mirror                        the carve may use it mirrored left to right (optional)
+  holds chest portal            what it can hold at its stop: chest, portal (optional)
 
 THE DRAWING
   layout [name]                 a drawn variant; the rows follow, one character per cell, a space between
@@ -27,7 +28,7 @@ THE LEGEND
   g floor? gift 3 of 4          ? makes it optional; "3 of 4": of the places of g, three are filled
   r floor? rubblePile 1 of 3 per q   one of three per place of q
   s stop                        where the player stands: exactly one per layout, inside
-  c chest   o portal   m mechanism    special places, inside; somebody stands north of the stop
+  m mechanism                   a mechanism's place, inside; somebody stands north of the stop
   gift = jarRack | basin        a named list of kinds, declared before the legend line that uses it
 
 COMMENTS
@@ -36,7 +37,8 @@ COMMENTS
 `.slice(1)
 
 const LAYERS: readonly PlaceLayer[] = ["wall", "floor", "ground", "wallItem"]
-const SPECIALS: readonly SpecialPlace[] = ["stop", "chest", "portal", "mechanism"]
+const SPECIALS: readonly SpecialPlace[] = ["stop", "mechanism"]
+const HOLDS: readonly RoomHolds[] = ["chest", "portal"]
 const FIXED = new Set(["#", "d", "."])
 const NAME = /^[A-Za-z_]\w*$/
 
@@ -124,6 +126,7 @@ export const parsePrefab = (
   let tier: Difficulty | undefined
   let activity: ActivityId | undefined
   let mirror = false
+  const holds: RoomHolds[] = []
   const lists = new Map<string, readonly string[]>()
   const drawn: { name: string; rows: string[]; n: number }[] = []
   const legend = new Map<string, Legend>()
@@ -147,6 +150,9 @@ export const parsePrefab = (
         ? (rest[0] as ActivityId)
         : fail(n, `unknown activity "${rest[0]}"`)
     else if (head === "mirror" && rest.length === 0) mirror = true
+    else if (head === "holds" && rest.length > 0)
+      for (const what of rest)
+        holds.push((HOLDS as readonly string[]).includes(what) ? (what as RoomHolds) : fail(n, `cannot hold "${what}"`))
     else if (head === "layout" && rest.length <= 1) {
       drawn.push({ name: rest[0] ?? "", rows: [], n })
       inLayout = true
@@ -287,6 +293,7 @@ export const parsePrefab = (
     tier: roomTier,
     activity,
     mirror,
+    ...(holds.length > 0 ? { holds } : {}),
     designedBy,
     ...(notes.length > 0 ? { notes } : {}),
     ...(lists.size > 0 ? { lists: Object.fromEntries(lists) } : {}),

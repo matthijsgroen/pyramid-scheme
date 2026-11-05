@@ -5,7 +5,7 @@ import { SiteMapView, approachCells, cornerRocksFor, nodeSpritesFor, wallItemsFo
 import { allFloorRects, buildRoomClaims, tileRegionsFor } from "./roomClaims"
 import { grassMatsFor } from "./floorScatter"
 import { footprintPath } from "./tileRegions"
-import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY } from "./nodeArt"
+import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY, nodeArtOffset } from "./nodeArt"
 import { ExplorerFigure } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
 import { ARCH_H, ARCH_RISE, CELL, PROP_H, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
@@ -44,6 +44,8 @@ import {
   obstacleIndexes,
 } from "./floorFixtures.testing"
 import { revealAll } from "@/game/gridNavigation"
+import { cellAt } from "@/game/roomFootprint"
+import { scatterFor } from "./floorScatter"
 import { roomStop } from "./roomWalk"
 import { OCCLUDER_FADE } from "./htmlLayers"
 import { CHAMBER_SCALE, GROWTH_POOLS, growthTile } from "./moodSettings"
@@ -1759,6 +1761,39 @@ describe("a kind that lies on the floor still dresses a room", () => {
   })
 })
 
+describe("what lies strewn on a room's floor", () => {
+  it("draws every piece the scatter lays, on the room's claimed floor too", () => {
+    const grid = (clutter: number): FloorGrid => ({
+      ...makeGrid([
+        [empty, corridor("completed", false), empty],
+        [empty, chamber("completed"), empty],
+        [empty, empty, empty],
+      ]),
+      clutter,
+    })
+    const sprites = (clutter: number) =>
+      spritesIn(render(<SiteMapView grid={grid(clutter)} explorerPos={[0, 1]} revealAllCells />).container).length
+    const full = grid(1)
+    const laid = scatterFor(full, buildRoomClaims(full))
+    expect(
+      [...laid.keys()].some(key => cellAt(full, ...(key.split(",").map(Number) as [number, number])).type === "empty")
+    ).toBe(true)
+    expect(sprites(1) - sprites(0)).toBe(laid.size)
+  })
+
+  it("lays some pieces mirrored, so a full floor is not one picture repeated", () => {
+    const long = makeGrid([
+      ...Array.from({ length: 12 }, () => [empty, corridor("completed", false), empty]),
+      [empty, chamber("completed"), empty],
+    ])
+    const full = { ...long, clutter: 1 }
+    const flips = spritesIn(render(<SiteMapView grid={full} explorerPos={[0, 1]} revealAllCells />).container)
+      .filter(el => /rubbleSpill|mat/.test(urlOf(el)))
+      .map(el => el.style.transform.includes("scaleX(-1)"))
+    expect(new Set(flips)).toEqual(new Set([true, false]))
+  })
+})
+
 describe("a prop that carries a flame lights the floor", () => {
   // One pool belongs to the explorer's torch; a lit prop adds a second. Counting them is what separates
   // "the lamp glows" from "the explorer is standing next to it".
@@ -2670,6 +2705,8 @@ describe("the lever's arm — three stacked sprites, thrown to the control's own
     if (!m) throw new Error(`no rotate() in transform: ${transform}`)
     return Number(m[1])
   }
+  // The arm turns rigidly, by the angle that lands its tip where a throw of `deg` lands it in the projection.
+  const turnedBy = (deg: number) => (Math.atan(((0.7 * 112) / 168) * Math.tan((deg * Math.PI) / 180)) * 180) / Math.PI
 
   it("stacks them back, arm, front — in that DOM order, which is depth order (map-rendering.md)", () => {
     // A test asserting only that three sprites exist would still pass with the arm drawn in front of
@@ -2703,7 +2740,7 @@ describe("the lever's arm — three stacked sprites, thrown to the control's own
           )}
         />
       )
-      expect(rotateDegOf(armTransformOf(container)), `state ${state}`).toBeCloseTo(angle, 5)
+      expect(rotateDegOf(armTransformOf(container)), `state ${state}`).toBeCloseTo(turnedBy(angle), 5)
     }
   })
 
@@ -2725,7 +2762,7 @@ describe("the lever's arm — three stacked sprites, thrown to the control's own
     )
     // "right" is index 1 of ["left", "right"], so +36° — the OPPOSITE of `initial`'s -36°, not merely
     // a changed transform.
-    expect(rotateDegOf(armTransformOf(container))).toBeCloseTo(36, 5)
+    expect(rotateDegOf(armTransformOf(container))).toBeCloseTo(turnedBy(36), 5)
   })
 
   // A lever on a straight NORTH-SOUTH passage has no free quarter to step its art into
@@ -2955,12 +2992,13 @@ describe("SiteMapView — a prefab room", () => {
     expect(explorer(container).compareDocumentPosition(mat) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy()
   })
 
-  it("the chest art stands on its place", () => {
+  it("the chest art stands at the stop, as on a corridor node", () => {
     const vault = revealAll(prefabChestFloor())
     const chest = nodeSpritesFor(vault, buildRoomClaims(vault), "expert").find(
       sprite => sprite.key === `chest:${PREFAB_CHEST[0]},${PREFAB_CHEST[1]}`
     )!
-    expect(chest.x).toBe(cellCenter(1, 5).cx - CELL / 2)
-    expect(chest.y).toBe(cellCenter(1, 5).cy + CELL / 2 - PROP_H)
+    const step = nodeArtOffset(undefined)
+    expect(chest.x).toBeCloseTo(cellCenter(2, 4).cx + step.dx - CELL / 2)
+    expect(chest.y).toBeCloseTo(cellCenter(2, 4).cy + step.dy + CELL / 2 - PROP_H)
   })
 })

@@ -425,22 +425,30 @@ const offFloor = (spec: LockSpec, id: MechanismId): boolean => {
 }
 
 /**
- * A LOCK MUST NOT LEAN ON A KEY EARNED OFF ITS FLOOR. The walk reads every such door open, which is the floor a
- * player holding the key walks; this asks the other side of it: with every one of them shut, each control of the
- * floor's own still stands somewhere a walk reaches. The first that does not, or undefined.
+ * A LOCK MUST NOT LEAN ON A KEY EARNED OFF ITS FLOOR: from its start to its end it is solved without one. The walk
+ * reads every such door open, which is the floor a player holding the key walks; this asks the other side of it:
+ * with every one inside a lock shut, each control of the floor's own still stands somewhere a walk reaches. A door
+ * on the floor's own ground (`outsideLocks`) stays open: one before a lock only keeps the player from reaching it.
+ * The first control that is not reached, or undefined.
  */
 export const leansOffFloor = (
   spec: LockSpec,
   maxStates = MAX_LOCK_STATES,
   options: WalkOptions = {}
 ): MechanismId | undefined => {
+  const open = new Set(spec.outsideLocks)
   const shut: LockSpec = {
     ...spec,
     mechanisms: Object.fromEntries(
       Object.entries(spec.mechanisms).map(([id, mechanism]) => [
         id,
         offFloor(spec, id)
-          ? { ...mechanism, opens: Object.fromEntries(mechanism.states.map(state => [state, []])) }
+          ? {
+              ...mechanism,
+              opens: Object.fromEntries(
+                mechanism.states.map(state => [state, (mechanism.opens[state] ?? []).filter(gate => open.has(gate))])
+              ),
+            }
           : mechanism,
       ])
     ),

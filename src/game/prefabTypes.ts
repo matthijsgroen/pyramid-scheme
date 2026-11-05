@@ -6,7 +6,9 @@ import type { DecorationKind, WallDecorationKind } from "./siteTypes"
 /** wall: stands against the north wall; floor: free-standing; ground: drawn under the player and walked over;
  * wallItem: hangs on a ring wall. */
 export type PlaceLayer = "wall" | "floor" | "ground" | "wallItem"
-export type SpecialPlace = "stop" | "chest" | "portal" | "mechanism"
+export type SpecialPlace = "stop" | "mechanism"
+/** What a room can hold at its stop: its art is drawn there, as on a corridor node. */
+export type RoomHolds = "chest" | "portal"
 export type PlaceKind = DecorationKind | WallDecorationKind | "patron"
 export type PlaceDef = {
   letter: string
@@ -31,6 +33,7 @@ export type Prefab = {
   tier: Difficulty
   activity?: ActivityId
   mirror: boolean
+  holds?: readonly RoomHolds[]
   designedBy?: string
   /** The file's comments other than its designed-by line, in the order written; printPrefab writes them at the top. */
   notes?: readonly string[]

@@ -42,9 +42,10 @@ reachable: the control stands off the obvious path, in a side room or behind the
 and come back. A lever beside its door, or in the room the player starts in, teaches nothing. `yarn lock`
 checks it ("every shut door is seen before its control"): from `in`, the door of each gate shut at the start
 is reached without entering a region any of its controls stands in. A board stands in its own junction, so it
-counts as no room to come to. It refuses a lesson (`src/game/locks/junior/lessons/`) and warns of any other lock. A
-carve that will not take a door-first lesson is fixed in the carve, or the lesson is not placed there; the
-order is never traded for carve convenience. The door's hall, where the side room branches off, must hold a room on its stretch off
+counts as no room to come to. It refuses a lesson (`src/game/locks/junior/lessons/`) and warns of any other lock. That check reads
+the lock's topology, the only place the order lives: the carve honours the topology and judges nothing more
+([engine-vs-content.md](engine-vs-content.md)). A lesson whose carve still shows the control first needs a
+better topology, never a carve rule. The door's hall, where the side room branches off, must hold a room on its stretch off
 the route, or its fog is lost on a re-carve: the bake picks a seed that gives it one ("every stub holds a room").
 
 One layer per site, never per floor (`floor-as-puzzle-brainstorm.md`): a site carries one lesson or one

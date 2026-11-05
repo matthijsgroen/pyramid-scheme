@@ -118,6 +118,9 @@ import { MARKER_FILL, MARKER_OUTLINE } from "./markerColours"
 
 type Props = {
   grid: FloorGrid
+  /** The floor as carved, before a hidden way is masked or a door is opened: props and scatter are decided on it,
+   * so finding a passage or throwing a lever moves nothing that stands on the floor. Unset, `grid` is used. */
+  dressedOn?: FloorGrid
   onCellClick?: (row: number, col: number) => void
   revealAllCells?: boolean
   /** Every floor cell is a click target, corridors included, and the run rules are set aside.
@@ -256,14 +259,13 @@ const LEVER_SHEAR_K = 0.7
 const LEVER_TILE_ASPECT = 112 / 168
 const LEVER_CORRECTION_S = LEVER_SHEAR_K * LEVER_TILE_ASPECT // ≈ 0.4667
 
-/** Undo the projection's vertical squash, rotate in the corrected space, and put the squash back —
- * `scaleY(1/s) rotate(θ) scaleY(s)`, composed about the shaft's own pivot (CSS applies these right to
- * left, so the squash goes on first and comes off last). A naive `rotate(θ)` alone puts the tip 10-13px
- * past the track's painted end at the full ±36° throw, measured against the real ±36° 3D geometry in
- * `Lever.stories.tsx`; this keeps it inside the rim instead — 65.8 of 112 at +36° and 46.2 at -36°,
- * against a track painted at 45-67, where the naive tip landed at 77.0 and 35.0. */
+/** The arm turns rigidly about the shaft's own pivot, by the angle that puts its tip where the projected
+ * throw puts it: `atan(s·tan θ)`. A naive `rotate(θ)` puts the tip 10-13px past the track's painted end at
+ * a ±36° throw, measured against the real 3D geometry in `Lever.stories.tsx`. Rigid, because a painted arm
+ * is a picture, not a model: squashing, rotating and unsquashing it would shear it, tipping its head
+ * further than its shaft — a bone's knob comes out skewed. */
 const leverArmTransform = (angleDeg: number): string =>
-  `scaleY(${1 / LEVER_CORRECTION_S}) rotate(${angleDeg}deg) scaleY(${LEVER_CORRECTION_S})`
+  `rotate(${(Math.atan(LEVER_CORRECTION_S * Math.tan((angleDeg * Math.PI) / 180)) * 180) / Math.PI}deg)`
 
 const NO_STATES: ReadonlyMap<string, string> = new Map()
 
@@ -286,6 +288,50 @@ const hides = (
 // `stairGoes` decides the flight's direction; the entrance position is only the fallback for a cell carrying none.
 const stairClimbs = (grid: Pick<FloorGrid, "entrancePos">, cell: { stairGoes?: StairGoes }, r: number, c: number) =>
   cell.stairGoes ? cell.stairGoes === "up" : r === grid.entrancePos[0] && c === grid.entrancePos[1]
+
+/** The claims this map draws by, and its scatter, with props and scatter decided on `dressedOn` (the floor as
+ * carved) where it is given: a masked passage or an opened door changes the drawn floor, never where things stand.
+ * Scatter lies only where this map shows floor, so a masked passage keeps its own for when it is found. */
+// eslint-disable-next-line react-refresh/only-export-components -- pure function over the grid, exported so tests can assert on it
+export const dressingFor = (
+  grid: FloorGrid,
+  dressedOn?: FloorGrid
+): {
+  claims: RoomClaims
+  scatter: ReadonlyMap<string, ScatterKind>
+  /** Where a roof has given way: drawn on the floor as carved, lit only where this map shows an uncovered cell. */
+  shafts: (chance: number, daylight: number) => string[]
+  /** The floor sand and grass are laid on, and `ground` keeps of them what lies on a cell this map shows. */
+  carved: FloorGrid
+  ground: (drifts: Drift[]) => Drift[]
+} => {
+  const view = buildRoomClaims(grid)
+  if (!dressedOn)
+    return {
+      claims: view,
+      scatter: scatterFor(grid, view),
+      shafts: (chance, daylight) => beamShafts(grid, view, chance, grid.siteId, daylight),
+      carved: grid,
+      ground: drifts => drifts,
+    }
+  const dressed = buildRoomClaims(dressedOn)
+  const shown = (key: string) => {
+    const [r, c] = key.split(",").map(Number)
+    return view.claimedBy.has(key) || cellAt(grid, r, c).type === "corridor"
+  }
+  const seen = (r: number, c: number) => {
+    const cell = cellAt(grid, r, c)
+    return cell.type !== "empty" && cell.state !== "fogged"
+  }
+  return {
+    claims: { ...view, decorationAt: dressed.decorationAt, decorationCells: dressed.decorationCells },
+    scatter: new Map([...scatterFor(dressedOn, dressed)].filter(([key]) => shown(key))),
+    shafts: (chance, daylight) =>
+      beamShafts(dressedOn, dressed, chance, grid.siteId, daylight, seen).filter(key => shown(key)),
+    carved: dressedOn,
+    ground: drifts => drifts.filter(({ row, col }) => shown(`${row},${col}`)),
+  }
+}
 
 /** Every node's own furniture on one floor, in map space — chests beside treasure rooms, flights at
  * stairheads. See `NodeSprite` for why this is a list and not a child of each node's own `<g>`.
@@ -972,19 +1018,27 @@ const GroundCover = ({
  * A fogged cell draws nothing: sand in an unlit passage would be the one thing visible in it. */
 const FloorScatter = ({
   grid,
+  claims,
   scatter,
   tier,
 }: {
   grid: FloorGrid
+  claims: RoomClaims
   scatter: ReadonlyMap<string, ScatterKind>
   tier: Tileset
 }) => (
   <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
     {[...scatter].map(([cellKey, kind]) => {
       const [r, c] = cellKey.split(",").map(Number)
-      const cell = cellAt(grid, r, c)
+      // A room's floor is claimed void: it is lit and seen as its room is.
+      const [or, oc] = (claims.claimedBy.get(cellKey) ?? cellKey).split(",").map(Number)
+      const cell = cellAt(grid, or, oc)
       if (cell.type === "empty" || cell.state === "fogged") return null
-      const url = tileOrPlaceholder(tier, kind)
+      // EVERY DRAWING OF THE KIND, and either way round: a floor strewn at full clutter shows one picture
+      // a hundred times otherwise. Both picks come off the cell, so a piece never changes as the map is explored.
+      const variants = tileVariants(tier, kind)
+      const pick = hashString(`${grid.siteId}:${cellKey}:${kind}`)
+      const url = variants[pick % Math.max(1, variants.length)]
       if (!url) return null
       const { cx, cy } = cellCenter(r, c)
       // The same wash the floor under it takes, as BRIGHTNESS rather than as an overlay. `stateWash` is
@@ -1003,6 +1057,7 @@ const FloorScatter = ({
           h={PROP_H}
           stretch={false}
           filter={wash ? `brightness(${1 - wash.opacity})` : undefined}
+          mirrored={Math.floor(pick / 7) % 2 === 1}
         />
       )
     })}
@@ -1479,6 +1534,7 @@ const MarkerCell = ({
 
 export const SiteMapView = ({
   grid: gridProp,
+  dressedOn,
   onCellClick,
   revealAllCells = false,
   freeWalk = false,
@@ -1500,7 +1556,13 @@ export const SiteMapView = ({
   className,
 }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
-  const claims = useMemo(() => buildRoomClaims(grid), [grid])
+  const {
+    claims,
+    scatter,
+    shafts: shaftsFor,
+    carved,
+    ground: groundFor,
+  } = useMemo(() => dressingFor(grid, dressedOn), [grid, dressedOn])
   const tier = useMemo(() => floorTier(grid), [grid])
   const torchPlace = useMemo(
     () => new Set(explorerPos ? litPlaceCells(grid, claims, explorerPos) : []),
@@ -1900,17 +1962,13 @@ export const SiteMapView = ({
   const daylight = mood.daylight ?? 0
   // Where a roof has given way, and what the explorer's own lamp is already lighting — a shaft hands over
   // to the lamp where the two fall on the same room (see `BeamLight`).
-  const shafts = useMemo(
-    () => beamShafts(grid, claims, mood.beam ?? 0, grid.siteId, daylight),
-    [grid, claims, mood.beam, daylight]
-  )
+  const shafts = useMemo(() => shaftsFor(mood.beam ?? 0, daylight), [shaftsFor, mood.beam, daylight])
   // What is strewn on this floor. A function of the floor's shape and its id, so it never moves.
-  const scatter = useMemo(() => scatterFor(grid, claims), [grid, claims])
-  const drifts = useMemo(() => driftsFor(grid, tier), [grid, tier])
+  const drifts = useMemo(() => groundFor(driftsFor(carved, tier)), [groundFor, carved, tier])
   // The grass is the condition's own ground, so its coverage is the condition's own number.
   const grassMats = useMemo(
-    () => (grid.condition?.kind === "overgrown" ? grassMatsFor(grid, grid.condition.amount) : []),
-    [grid]
+    () => (grid.condition?.kind === "overgrown" ? groundFor(grassMatsFor(carved, grid.condition.amount)) : []),
+    [grid.condition, groundFor, carved]
   )
   const archedGaps = useMemo(
     () =>
@@ -2063,7 +2121,7 @@ export const SiteMapView = ({
             />
             {/* Under everything else that stands or lies here: the rock is the wall's own foot. */}
             <CornerRocks rocks={cornerRocks} />
-            <FloorScatter grid={grid} scatter={scatter} tier={tier} />
+            <FloorScatter grid={grid} claims={claims} scatter={scatter} tier={tier} />
             <ArchShadows doorways={doorways} />
             <MapLife
               mood={mood}

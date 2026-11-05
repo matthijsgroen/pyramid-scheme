@@ -17,7 +17,7 @@ const STEPS = [
   [0, 1],
   [0, -1],
 ] as const
-const BLOCKING_SPECIALS = new Set(["chest", "portal", "mechanism"])
+const BLOCKING_SPECIALS = new Set(["mechanism"])
 
 const reversed = (row: string): string => [...row].reverse().join("")
 

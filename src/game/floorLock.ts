@@ -5,6 +5,7 @@ import { armDoor } from "./siteValidator"
 import { legalTargets, mechanismWorkedAt } from "./mechanismDoors"
 import { isObstacleCell, oneWayRuns } from "./gridNavigation"
 import { progressState } from "./sequence"
+import { FLOOR_ENTRANCE, FLOOR_EXIT } from "./floorLocks"
 
 type Pos = readonly [number, number]
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
@@ -243,6 +244,8 @@ export const floorLock = (grid: FloorGrid, { arriving }: FloorLockOptions = {}):
   const unopened = new Map<GateId, Set<string>>()
   /** The keys of a gate earned off this floor (`offFloorKeysOf`). */
   const offFloorKeys = new Map<GateId, Set<string>>()
+  /** Gates of doors standing on the floor's entrance or exit ground, outside every lock. */
+  const outsideLocks: GateId[] = []
   /** Which gates one door grew for one of its keys. Indexed by the DOOR, so a key id that collides
    * with another door's elsewhere on the floor cannot hand a switch a door that is not its own. */
   const gatesOfDoorKey = new Map<string, GateId[]>()
@@ -281,6 +284,8 @@ export const floorLock = (grid: FloorGrid, { arriving }: FloorLockOptions = {}):
           barrierGates.set(cell.regionBarrier.region, [...(barrierGates.get(cell.regionBarrier.region) ?? []), gateId])
         unopened.set(gateId, new Set(keyIds))
         offFloorKeys.set(gateId, new Set(offFloorKeysOf(cell)))
+        if (cell.type === "room" && (cell.region === FLOOR_ENTRANCE || cell.region === FLOOR_EXIT))
+          outsideLocks.push(gateId)
         if (ward) continue
         for (const keyId of keyIds) {
           gatesOfDoorKey.set(doorKey(doorRegion, keyId), [
@@ -475,6 +480,7 @@ export const floorLock = (grid: FloorGrid, { arriving }: FloorLockOptions = {}):
     ...(torches.length > 0 ? { torches } : {}),
     ...(crossings.length > 0 ? { crossings } : {}),
     ...(arrivals.length > 0 ? { arrivals } : {}),
+    ...(outsideLocks.length > 0 ? { outsideLocks } : {}),
     in: of.get(posKey(grid.entrancePos[0], grid.entrancePos[1]))!,
     out: of.get(posKey(grid.exitPos[0], grid.exitPos[1]))!,
   }

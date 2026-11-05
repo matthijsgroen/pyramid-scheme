@@ -1,0 +1,23 @@
+// designed by: Claude
+// starter. A big selling room: a counter and wares on the north wall, goods waiting in the middle of the floor.
+room bigSellingRoom
+tier starter
+activity selling
+mirror
+
+layout
+# # # d # # #
+# k . . g h #
+# s . . b . d
+# . e . x . #
+# d # # # d #
+
+wares = hanging | offeringTable
+goods = basketStack | bales
+k wall counter
+g wall wares
+h wall? wares
+b floor goods
+e floor goods
+x ground floorClutter
+s stop

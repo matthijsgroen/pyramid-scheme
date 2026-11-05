@@ -29,7 +29,7 @@ const extendPath = (
   usedCells: Set<string>,
   rand: () => number,
   scorer?: (r: number, c: number) => number,
-  mayEnd?: (r: number, c: number) => boolean,
+  mayEnd?: (r: number, c: number, from: [number, number]) => boolean,
   overrun = 0
 ): Array<[number, number]> | null => {
   if (count === 0) return []
@@ -39,7 +39,7 @@ const extendPath = (
   const dfs = (r: number, c: number, remaining: number): boolean => {
     if (remaining === 0) return true
     const free = neighbors(r, c).filter(
-      ([nr, nc]) => !tempUsed.has(`${nr},${nc}`) && (remaining > 1 || !mayEnd || mayEnd(nr, nc))
+      ([nr, nc]) => !tempUsed.has(`${nr},${nc}`) && (remaining > 1 || !mayEnd || mayEnd(nr, nc, [r, c]))
     )
     const nbrs =
       remaining === 1 && scorer
@@ -118,38 +118,61 @@ export const hangBranches = pass(
     // (a fork, the entrance too once one does) claim floor; a chain's end and a fork are placed only where every
     // claimer on a near node is joined to it: by a passage, or, for two rooms of one section, by a corner node both
     // open onto (roomsMerge). Rooms of two sections are never joined diagonally. Where a chain fits nowhere under the
-    // rule it is placed crowded, and the attempt's backstop (finishAttempt) decides.
+    // rule, the rule is read again against the rooms sure to claim floor, as the backstop (finishAttempt) will read
+    // them: the exit, a bare route node a chain hangs off, and a chain's end while it is a dead end. A node holding a
+    // puzzle is a stop in the corridor and an end a passage joins to a second used node is walked through, so neither
+    // is sure to claim, and the backstop decides them.
     const labelAt = new Map<string, string>(mainPath.map((cell, pi) => [cellKey(cell), `main/${stepRegion[pi] ?? ""}`]))
-    const claimers = new Set<string>([cellKey(mainPath[mainPath.length - 1])])
+    const exitKey = cellKey(mainPath[mainPath.length - 1])
+    const claimers = new Set<string>([exitKey])
+    const chainEnds = new Set<string>()
+    const mainStepAt = new Map<string, number>(mainPath.map((cell, pi) => [cellKey(cell), pi]))
+    const bareFork = (key: string) => {
+      const step = mainStepAt.get(key)
+      return step === 0 || (step !== undefined && bareRouteStep(step))
+    }
+    // How many used nodes a passage joins to a node, leaving out the one it is walked in from.
+    const joins = (key: string, from?: string) => {
+      const [r, c] = key.split(",").map(Number)
+      return DIRS2.filter(([dr, dc]) => {
+        const next = `${r + dr},${c + dc}`
+        return next !== from && usedCells.has(next) && hasPassage(pkey(r, c, r + dr, c + dc))
+      }).length
+    }
     // The fork a chain is being hung off while its first node is chosen: a claimer, though not yet one on the floor.
     let attachingAt: string | undefined
+    const surelyClaims = (key: string) =>
+      key === exitKey ||
+      (chainEnds.has(key) ? joins(key) <= 1 : (claimers.has(key) || key === attachingAt) && bareFork(key))
     // The section label of the chain being placed.
     let placing = ""
     let strict = true
+    const claimsNear = (near: string) => (strict ? claimers.has(near) || near === attachingAt : surelyClaims(near))
     const crowded = (r: number, c: number, label: string): boolean =>
-      strict &&
       NEAR_NODES.some(([dr, dc]) => {
         const near = `${r + dr},${c + dc}`
-        if (!claimers.has(near) && near !== attachingAt) return false
+        if (!claimsNear(near)) return false
         if (dr === 0 || dc === 0) return !hasPassage(pkey(r, c, r + dr, c + dc))
         const corner = (cr: number, cc: number) =>
           hasPassage(pkey(r, c, cr, cc)) && hasPassage(pkey(cr, cc, r + dr, c + dc))
         return labelAt.get(near) !== label || !(corner(r, c + dc) || corner(r + dr, c))
       })
     // A chain's end room never reaches into a ring, nor stands crowded.
-    const mayEnd = (r: number, c: number) => !zone.has(`${r},${c}`) && !crowded(r, c, placing)
+    const mayEnd = (r: number, c: number, from: Cell) =>
+      !zone.has(`${r},${c}`) && !((strict || joins(`${r},${c}`, cellKey(from)) === 0) && crowded(r, c, placing))
     const placeUncrowded = <T>(place: () => T | null): T | null => {
       const placed = place()
       if (placed !== null) return placed
       strict = false
-      const crowdedPlace = place()
+      const surePlace = place()
       strict = true
-      return crowdedPlace
+      return surePlace
     }
     const claim = ({ cells, attachedAt }: { cells: Cell[]; attachedAt: Cell }, label: string) => {
       for (const cell of cells) labelAt.set(cellKey(cell), label)
       if (!hubAt.has(cellKey(attachedAt))) claimers.add(cellKey(attachedAt))
       claimers.add(cellKey(cells[cells.length - 1]))
+      chainEnds.add(cellKey(cells[cells.length - 1]))
     }
     const hubs = blocks
       .flatMap(block => ("main" in block.on ? [{ block, on: block.on }] : []))
@@ -326,7 +349,8 @@ export const hangBranches = pass(
           if (attached) return attached
           continue
         }
-        if (!claimers.has(`${pcr},${pcc}`) && crowded(pcr, pcc, labelAt.get(`${pcr},${pcc}`) ?? "laid")) continue
+        const at = `${pcr},${pcc}`
+        if (!claimers.has(at) && (strict || bareFork(at)) && crowded(pcr, pcc, labelAt.get(at) ?? "laid")) continue
         attachingAt = `${pcr},${pcc}`
         let freeAdj = shuffle(
           neighbors(pcr, pcc).filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`)),
@@ -352,7 +376,7 @@ export const hangBranches = pass(
         }
         if (freeAdj.length === 0) continue
         for (const [startR, startC] of freeAdj) {
-          if (needed === 1 && !mayEnd(startR, startC)) continue
+          if (needed === 1 && !mayEnd(startR, startC, [pcr, pcc])) continue
           usedCells.add(`${startR},${startC}`)
           const rest = extendPath(
             startR,
@@ -386,7 +410,7 @@ export const hangBranches = pass(
       needed: number
     ): { cells: Array<[number, number]>; attachedAt: [number, number]; via: Cell[] } | null => {
       for (const { node, out } of shuffle(freePorts(block), rand)) {
-        if (needed === 1 && !mayEnd(out[0], out[1])) continue
+        if (needed === 1 && !mayEnd(out[0], out[1], node)) continue
         usedCells.add(cellKey(out))
         const rest = extendPath(
           out[0],

@@ -127,6 +127,8 @@ const validatePyramidConstraint = (c: PyramidConstraint, context: string): void 
     throw new Error(`[worldSpec] ${context}: floorDepth (${c.floorDepth}) > maxFloors (${c.maxFloors})`)
   if (c.minFloors !== undefined && c.floorDepth !== undefined && c.floorDepth < c.minFloors)
     throw new Error(`[worldSpec] ${context}: floorDepth (${c.floorDepth}) < minFloors (${c.minFloors})`)
+  if (c.clutter !== undefined && !(c.clutter >= 0 && c.clutter <= 1))
+    throw new Error(`[worldSpec] ${context}: clutter (${c.clutter}) is not between 0 and 1`)
 }
 
 // ── Resolution ────────────────────────────────────────────────────────────────

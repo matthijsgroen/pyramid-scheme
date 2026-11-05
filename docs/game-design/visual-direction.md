@@ -29,6 +29,11 @@ edge is a change of value. What changes is colour and light.
 **Ground plus metal.** Every rank has a ground — its material, light or dark but calm — and a metal, which
 is saturated and lives in props, trim, inlay and lintels. Vividness is the contrast between the two.
 
+**A prop is its own thing first, the rank's metal second.** A merchant's sack is sacking, a statue is its
+stone, a basket is reed: each prop wears its own material's colours, so it reads at a glance as what it is.
+The rank's metal comes back as an accent on it — a band, a rim, an inlay — never as a tint over the whole
+set. A room whose props all share one hue reads as a copper or a silver haze, and the props stop speaking.
+
 **Rooms are lit; the torch is an accent.** The night wash is a light hand at every rank —
 starter, on pale limestone, at 0.3. The torch is a warm glow around the explorer rather than what makes a room visible. Shafts of
 daylight stay the brightest thing on a floor. Fog is unchanged: an undiscovered cell is still not drawn.
@@ -46,7 +51,7 @@ their colours are checked against the new grounds.
 | **master · gold**    | the pharaoh's galleries — ceremonial               | dark granite                                             | gold, as today                                       |
 | **wizard · emerald** | the gods — not of this world                       | deep night-green, calcite lit from beneath, a star field | glowing emerald, with gold                           |
 
-The lightness runs light-warm, mid-warm, light-cool, dark, deep-luminous: no two neighbouring ranks share
+The lightness runs light-warm, light-orange, light-cool, dark, deep-luminous: no two neighbouring ranks share
 both a lightness and a hue, so they stay apart on the map as well as in a screenshot.
 
 The metal ladder is the one `src/data/materialTiers.ts` already names (stone, bronze → copper, silver,
@@ -156,14 +161,15 @@ glowing on a dark one.
 | Rank             | Floor            | Wall face                              | Props and metal                      | Like            |
 | ---------------- | ---------------- | -------------------------------------- | ------------------------------------ | --------------- |
 | starter · stone  | light            | dark, in shadow                        | dark terracotta, ochre and turquoise | Moonlighter     |
-| junior · copper  | light-mid, warm  | dark, painted                          | copper, deep and saturated           | Moonlighter     |
+| junior · copper  | light, orange    | mid-tone, painted, its murals legible  | each in its own colours, copper trim | Moonlighter     |
 | expert · silver  | light, cool      | dark, cool                             | silver and lapis, deep shadows       | Moonlighter     |
 | master · gold    | **dark** granite | **light** — gilded, catching the light | gold, light and saturated            | Gungeon / Hades |
 | wizard · emerald | **dark**, night  | **light** — light leaking from joints  | emerald that glows                   | Hades           |
 | cave · no rank   | **dark** rock    | **light** — pale rock catching the torch | pale rock, crystals the lightest     | Gungeon         |
 
-The three light ranks are told apart by hue — warm limestone, copper, cool silver — and the two dark ones by
-their metal. Steps, measured by `yarn rank-colour`: **the wall face at least 25 L\* off the floor** (a light
+The three light ranks are told apart by hue — warm limestone, orange sandstone, cool silver — and by their
+finish: the merchant's stone is rough and cluttered, the nobleman's crisp, dressed and decorated. The two dark
+ones by their metal. Steps, measured by `yarn rank-colour`: **the wall face at least 25 L\* off the floor** (a light
 rank's face is shadowed to about 30 with `faceNight`) and **the props at least 25 L\* off it**, in either
 direction.
 

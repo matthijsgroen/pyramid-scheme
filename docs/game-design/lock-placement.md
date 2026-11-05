@@ -227,19 +227,14 @@ A lock region may be corridors only, one room or several rooms; what it never do
 cross a puzzle's boundary. A region holding only corridors is still a region the player can stand in: "no dead
 region" holds for it like for any other.
 
-### A lock holds an encounter on its way
+### Every region gets what it takes
 
-A layout is accepted only if every lock holds an encounter on its way: on the lock's solving walk, from the first
-sight of its shut door to its last control, at least one encounter room (a puzzle, a trap, a chest or a shop) that is
-neither its control nor its door. "On the way" is judged per region on the shortest solving walk, so a room in a
-dead-end branch of a region the walk crosses counts. A region whose appetite asks for puzzles or a reward must hold
-one too. It is one of the bake's hard layout criteria (`HARD_CRITERIA` in `src/worldGen/carveSeedSearch.ts`). A floor
-with no content that may stand on lock ground (no main-path puzzle and no content section) is infeasible and fails the
-bake by name.
-
-A lock that stands before the floor's content (every region but its way out takes nothing, `lockBeforeFloorContent`)
-is exempt: it is a lesson in the lock alone. Every other criterion still holds for it. The starter tomb's level 2
-floors 1 (`pitStair`) and 3 (`throwItBack`) stand that way.
+A valid lock is one whose regions are all walkable and whose way leads from `in` to `out`: a lock of three regions and
+plain corridors, with no gate and no lever, is still valid. Whether a lock holds an encounter is the lock's to say,
+not the engine's ([engine-vs-content.md](engine-vs-content.md)): a region whose `takes` asks for puzzles or a reward
+holds one on the grid, and that is one of the bake's hard layout criteria (`HARD_CRITERIA` in
+`src/worldGen/carveSeedSearch.ts`). More regions asking than the floor has to give is infeasible and fails the bake by
+name.
 
 ## Proposal: one puzzle per floor
 

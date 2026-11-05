@@ -25,11 +25,16 @@ const prefabStop = (grid: FloorGrid, r: number, c: number) => {
   return roomStop(grid, nr, nc)
 }
 
-/** Where a prefab room's chest, portal or mechanism is drawn, relative to its node's centre: on the prefab's place
- * for it. Undefined where the room has none, and the art stands as its node decides. */
+/** Where a prefab room's chest, portal or mechanism is drawn, relative to its node's centre: a mechanism on the
+ * prefab's place for it, anything else at the stop, stepped aside as on a corridor node with no south door.
+ * Undefined outside a prefab room, where the art stands as its node decides. */
 export const prefabArtOffset = (grid: FloorGrid, r: number, c: number): StandingOffset | undefined => {
-  const art = prefabRoomAt(grid, r, c)?.nodeArt
-  return art && offsetTo(r, c, art)
+  const room = prefabRoomAt(grid, r, c)
+  if (!room) return undefined
+  if (room.nodeArt) return offsetTo(r, c, room.nodeArt)
+  const stop = offsetTo(r, c, room.stop)
+  const step = nodeArtOffset(undefined)
+  return { dx: stop.dx + step.dx, dy: stop.dy + step.dy }
 }
 
 // Beside it first, on the floor line the flight stands on; in front of it next; behind it last.

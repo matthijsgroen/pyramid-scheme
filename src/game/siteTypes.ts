@@ -133,6 +133,9 @@ export const DECORATION_KINDS = [
   "bales",
   "counter",
   "scribeDesk",
+  "cart",
+  "litter",
+  "floorClutter",
   // The cave's own furniture (tileset `cave`). `puddle` and `bones` lie flat on the floor, like `mat`.
   "stalagmite",
   "puddle",
@@ -157,6 +160,12 @@ export const SINGLE_CELL: PropFootprint = { cols: 1, rows: 1, tall: 0 }
 export const DECORATION_FOOTPRINTS: Partial<Record<DecorationKind, PropFootprint>> = {
   // A skeleton lies at full length: two cells across, flat on the floor.
   bones: { cols: 2, rows: 1, tall: 0 },
+  // A hand cart stands on its two wheels and its shafts, two cells across.
+  cart: { cols: 2, rows: 1, tall: 0 },
+  // A litter lies set down on its two carrying poles, two cells across.
+  litter: { cols: 2, rows: 1, tall: 0 },
+  // Spilled sacking, sherds and rope, lying flat and walked over.
+  floorClutter: { cols: 1, rows: 1, tall: 0, ground: true },
 }
 export const decorationFootprint = (kind: DecorationKind): PropFootprint => DECORATION_FOOTPRINTS[kind] ?? SINGLE_CELL
 export const isSingleCell = ({ cols, rows }: PropFootprint): boolean => cols === 1 && rows === 1
@@ -469,6 +478,8 @@ export type FloorGrid = {
   /** Whose tomb this is — see Patron. Authored once on the pyramid like `condition`, so every floor of
    * the climb is dedicated to the same god. Chooses a drawing and nothing else. */
   readonly patron?: Patron
+  /** How much lies strewn on this floor, 0-1 — see FloorConfig.clutter. */
+  readonly clutter?: number
   /** The hour this floor is at — its authored `theme` (docs/game-design/journeys.md §2: the role is the
    * place, the theme is the hour). The map reads it for its mood overlay and nothing else; a family reads
    * the same name off its own room to pick a skin. Optional: most floors author none and wear their
@@ -687,6 +698,8 @@ export type FloorConfig = {
   condition?: SiteCondition
   /** Whose tomb this is — see Patron. Authored once on the pyramid and copied onto every floor of it. */
   patron?: Patron
+  /** How much lies strewn on the floor, 0-1 (`scatterFor`): 0 swept clean, 1 a piece on every free cell. */
+  clutter?: number
   mainEndReward?: TreasureReward
   rewards?: (TreasureReward | undefined)[]
   /** Default family/tag(s) for this floor's main-path encounter rooms. An array means "any of these". */

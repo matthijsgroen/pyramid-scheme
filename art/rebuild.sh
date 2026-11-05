@@ -169,6 +169,11 @@ yarn import-tile art/masters/props/starter/basin.webp --tier=starter --name=basi
 scaffold rubblePile --contents=spill --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/rubbleSpill.webp --tier=starter --name=rubbleSpill --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.80 --saturation=1.0
+if [ -f art/masters/props/starter/rubbleSpill-2.webp ]; then
+  scaffold rubblePile --contents=course --floor=#d8c8a8
+  yarn import-tile art/masters/props/starter/rubbleSpill-2.webp --tier=starter --name=rubbleSpill-2 --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.80 --saturation=1.0
+fi
 
 # --spin=9 is the one thing geometry still owes it: a rug lying askew of the grid cannot be read as part
 # of the paving, where an axis-aligned one can. --shadow=0.5 keeps the footprint faint, since a slab at
@@ -344,6 +349,37 @@ fi
 if [ -f art/masters/props/starter/scribeDesk.webp ]; then
   scaffold scribeDesk --spin=5 --colour=#9a6a3c --floor=#d8c8a8 --colour-cloth=#8a4a2c
   yarn import-tile art/masters/props/starter/scribeDesk.webp --tier=starter --name=scribeDesk --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+
+# The porters' clutter: a cart and a litter two cells wide (--cells=2x1, a 126x84 frame, so their renders
+# are landscape at its 3:2) and floor clutter walked over in one cell. The two wide ones are spun under 10
+# degrees, because a large spin turns a two-cell length into depth and depth is drawn as height. The clutter
+# lies flat, so its footprint is faint (`prim_mat`) and cast straight down. Sacking is --colour-cloth.
+# --scale on the cart: unscaled it lands 82 tall beside a 70-tall explorer.
+if [ -f art/masters/props/starter/cart.webp ]; then
+  scaffold cart --spin=-8 --width=672 --height=448 --colour=#9a6a3c --floor=#d8c8a8 --colour-cloth=#b08a5a
+  yarn import-tile art/masters/props/starter/cart.webp --tier=starter --name=cart --slot=prop --cells=2x1 \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.85
+fi
+if [ -f art/masters/props/starter/litter.webp ]; then
+  scaffold litter --spin=6 --width=672 --height=448 --colour=#9a6a3c --floor=#d8c8a8 --colour-cloth=#b08a5a
+  yarn import-tile art/masters/props/starter/litter.webp --tier=starter --name=litter --slot=prop --cells=2x1 \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/starter/floorClutter.webp ]; then
+  scaffold floorClutter --spin=18 --shadow=0.5 --sun=0 --colour=#9a6a3c --floor=#d8c8a8 --colour-cloth=#b08a5a
+  yarn import-tile art/masters/props/starter/floorClutter.webp --tier=starter --name=floorClutter --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/starter/floorClutter-2.webp ]; then
+  scaffold floorClutter --contents=basket --spin=18 --shadow=0.5 --sun=0 --colour=#9a6a3c --floor=#d8c8a8 --colour-cloth=#b08a5a
+  yarn import-tile art/masters/props/starter/floorClutter-2.webp --tier=starter --name=floorClutter-2 --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/starter/floorClutter-3.webp ]; then
+  scaffold floorClutter --contents=amphora --spin=18 --shadow=0.5 --sun=0 --colour=#9a6a3c --floor=#d8c8a8 --colour-cloth=#b08a5a
+  yarn import-tile art/masters/props/starter/floorClutter-3.webp --tier=starter --name=floorClutter-3 --slot=prop \
     --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 fi
 

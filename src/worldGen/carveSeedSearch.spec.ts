@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { AssemblerResult, FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { assembleFloor, PACKING_CEILING } from "@/game/siteAssembler"
-import type { Lock } from "@/game/lockAuthoring"
-import { LOCK_ENTRIES } from "@/game/lockCatalogue"
-import { drawnFloor } from "@/game/testSupport/lessonOrderFixtures"
 import {
   packingAtRung,
   roomlessRouteStubs,
@@ -133,13 +130,14 @@ describe(searchCarvePair, () => {
       options({
         seedBudget: 2,
         ceiling: 0.12,
-        judge: result => (result.success ? { criterion: "lock holds an encounter", detail: "lever" } : judge(result)),
+        judge: result =>
+          result.success ? { criterion: "every region gets what it takes", detail: "lever" } : judge(result),
       })
     )
     expect(missing).toMatchObject({
       kind: "notFound",
-      hardest: "lock holds an encounter",
-      counts: { carves: 3, "lock holds an encounter": 2 },
+      hardest: "every region gets what it takes",
+      counts: { carves: 3, "every region gets what it takes": 2 },
     })
   })
 
@@ -447,7 +445,7 @@ describe(verifyCarvePair, () => {
   })
 
   it("rejects a pin whose carve misses a hard criterion", () => {
-    const unfed = () => ({ criterion: "lock holds an encounter" as const, detail: "lever" })
+    const unfed = () => ({ criterion: "every region gets what it takes" as const, detail: "lever" })
     expect(verifyCarvePair(100, { seed: 100, packing: 0.1 }, () => carvedAt(6), { ...ladder, judge: unfed })).toBeNull()
     expect(verifyCarvePair(100, { seed: 103, packing: 0.1 }, () => carvedAt(0), { ...ladder, judge: unfed })).toBeNull()
   })
@@ -502,31 +500,6 @@ describe(roomlessRouteStubs, () => {
       corridor("lock:l.path", "l.path")
     )
     expect(roomlessRouteStubs(grid)).toEqual([])
-  })
-})
-
-describe("a lesson's order on the carved floor", () => {
-  // A made-up lock under the name of whichever lesson the catalogue holds first, and one under a name no lock has.
-  const lockNamed = (name: string): Lock => ({
-    name,
-    regions: {},
-    connections: [],
-    gates: {},
-    mechanics: {},
-    in: "in",
-    out: "out",
-  })
-  const lesson = lockNamed(LOCK_ENTRIES.find(entry => entry.lesson)!.name)
-  const plain = lockNamed("madeUpLock")
-  const carved = (grid: FloorGrid): AssemblerResult => ({ success: true, grid, attempt: 0 })
-
-  it("refuses a lesson floor whose carve breaks the order, and only a lesson floor", () => {
-    const leverFirst = carved(drawnFloor(["E-L-D-x"]))
-    expect(refusal(leverFirst, { locks: [{ lock: lesson }] })).toMatchObject({
-      criterion: "lesson shows its door first",
-    })
-    expect(refusal(leverFirst, { locks: [{ lock: plain }] })).toBeNull()
-    expect(refusal(carved(drawnFloor(["E-+-D-x", "  |", "  L"])), { locks: [{ lock: lesson }] })).toBeNull()
   })
 })
 

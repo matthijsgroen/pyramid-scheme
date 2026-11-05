@@ -155,6 +155,19 @@ describe("where a shaft of daylight comes down", () => {
     expect(shaftsOf(grid, 1).length).toBeLessThanOrEqual(MAX_SHAFTS)
   })
 
+  it("hands no other room the shaft of a room that is out of sight", () => {
+    const grid = makeGrid([
+      Array.from({ length: 8 }, () => corridor(["s"])),
+      Array.from({ length: 8 }, () => chamber()),
+    ])
+    const claims = buildRoomClaims(grid)
+    const all = beamShafts(grid, claims, 1, grid.siteId)
+    const [gone] = all
+    const owner = claims.claimedBy.get(gone) ?? gone
+    const seen = (row: number, col: number) => `${row},${col}` !== owner
+    expect(beamShafts(grid, claims, 1, grid.siteId, 0, seen)).toEqual(all.slice(1))
+  })
+
   it("picks which rooms keep their shaft by the draw, not by where they sit on the floor", () => {
     // Taking the first few in cell order would put every shaft in the top-left corner of every map.
     const wide = (siteId: string) =>

@@ -213,6 +213,7 @@ const floorFieldEmitters: {
   decorations: v => (v.length ? `decorations: ${JSON.stringify(v)}` : null),
   condition: v => `condition: ${JSON.stringify(v)}`,
   patron: v => `patron: ${JSON.stringify(v)}`,
+  clutter: v => `clutter: ${v}`,
   wallDecorations: v => (v.length ? `wallDecorations: ${JSON.stringify(v)}` : null),
   role: v => `role: ${serializeEncounter(v)}`,
   encountersByIndex: v => (Object.keys(v).length ? `encountersByIndex: ${serializeEncountersByIndex(v)}` : null),

@@ -162,6 +162,7 @@ const PlayedFloor: FC<{ config: FloorConfig; seed: number; base: FloorGrid }> = 
       <div className="relative h-160 w-full">
         <SiteMapView
           grid={drawnGrid ?? grid}
+          dressedOn={baseGrid ?? undefined}
           onCellClick={onCellClick}
           explorerPos={explorerPos}
           waypoint={waypoint}

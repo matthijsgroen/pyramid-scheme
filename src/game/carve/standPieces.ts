@@ -2,14 +2,14 @@ import { hashString } from "@/support/hashString"
 import { switchAddress } from "../seeds/boardIndex"
 import { latticeNode, placeSequences, type IsNode } from "../sequenceTiles"
 import { placeWeights } from "../weightsPlates"
-import { keyOf } from "./derive"
+import { keyOf, notOwnGround } from "./derive"
 import { gateKeyOf, obstacleMode } from "./ids"
 import type { WritableGrid } from "./render"
 import { duplicateSlot } from "./validate"
 import type { CarveState, FloorPrep, Refusal } from "./state"
 
 /** What standing the pieces reads beyond the grid: the route, and every reserved junction's ways out. */
-export type PiecesState = Pick<Required<CarveState>, "maze" | "switchWays" | "pipeHoles">
+export type PiecesState = Pick<Required<CarveState>, "maze" | "switchWays" | "pipeHoles" | "keys" | "lay" | "labels">
 
 /** Where on the grid a piece may stand: which cells are its nodes, and nodes kept for something else. */
 export type PiecesGround = { isNode: IsNode; kept: ReadonlySet<string> }
@@ -32,7 +32,12 @@ export const standPieces = (
   const { authored } = prep.config
   const { allocation, sequenceSigns } = prep.marks
   const { sequences, weights } = prep.mechanisms
-  const shutWays = () => new Set([...state.switchWays.flatMap(ways => ways.map(({ cell }) => cell)), ...ground.kept])
+  const shutWays = () =>
+    new Set([
+      ...state.switchWays.flatMap(ways => ways.map(({ cell }) => cell)),
+      ...ground.kept,
+      ...notOwnGround(prep, state),
+    ])
   const gateOf = (id: string) => {
     const mode = obstacleMode(authored, id)
     return { gateKeyId: gateKeyOf(floorRef, id), ...(mode ? { mode } : {}) }
