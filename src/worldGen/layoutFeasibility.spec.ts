@@ -81,7 +81,7 @@ describe(layoutInfeasible, () => {
     }
     const config = floor({ pathPuzzles: 1, locks: [{ lock: hungry }] })
     const found = layoutInfeasible(config, prepared(config))
-    expect(found.map(f => f.criterion)).toEqual(["lock holds an encounter"])
+    expect(found.map(f => f.criterion)).toEqual(["every region gets what it takes"])
     expect(found[0].detail).toContain("lever.foyer")
   })
 })

@@ -1,5 +1,5 @@
 import { walkFloorLock, describeFloorWalkFailure, deadFloorRegions } from "@/game/floorLockWalk"
-import { lockGroundUnfed, lockWithoutPuzzle } from "@/game/lockPuzzles"
+import { lockGroundUnfed } from "@/game/lockPuzzles"
 import type { AssemblerReason, AssemblerResult, FloorConfig, FloorGrid } from "@/game/siteTypes"
 import type { CorridorAssignment } from "@/game/corridorSidePaths"
 import { roomlessRouteStubs } from "@/game/routeStubs"
@@ -9,7 +9,7 @@ import { roomlessRouteStubs } from "@/game/routeStubs"
 export const HARD_CRITERIA = [
   "carves",
   "lock walks sound",
-  "lock holds an encounter",
+  "every region gets what it takes",
   "no dead region",
   "every stub holds a room",
 ] as const
@@ -20,8 +20,8 @@ export type CarveRefusal = { criterion: HardCriterion; detail: string }
 export const AUTHORING_FIELD: Record<HardCriterion, string> = {
   carves: "the floor's content or its locks",
   "lock walks sound": "locks",
-  "lock holds an encounter":
-    "where the lock stands (a lock placed before the floor's content, lockBeforeFloorContent), its regions' `takes`, or pathPuzzles and sideSections (any puzzle, trap, chest or shop on the lock's way counts)",
+  "every region gets what it takes":
+    "its regions' `takes`, or pathPuzzles and sideSections (what the floor has to give them)",
   "no dead region": "locks",
   "every stub holds a room": "sideSections or locks",
 }
@@ -74,17 +74,14 @@ export const seedAtOffset = (base: number, offset: number): number =>
 export { roomlessRouteStubs }
 
 /** Which hard criterion `result` misses, or null when it meets them all. `floor` is the authoring carved: its locks'
- * region appetites are part of "lock holds an encounter". */
+ * region appetites are part of "every region gets what it takes". */
 export const refusal = (result: AssemblerResult, floor: Pick<FloorConfig, "locks">): CarveRefusal | null => {
   if (!result.success) return { criterion: "carves", detail: JSON.stringify(result.reasons) }
   const walk = walkFloorLock(result.grid)
   if (!walk) return null
   if (!walk.sound) return { criterion: "lock walks sound", detail: describeFloorWalkFailure(walk.failure) }
-  const unfed = [
-    ...lockWithoutPuzzle(result.grid, floor).map(lock => `lock ${lock} has no encounter on its way`),
-    ...lockGroundUnfed(result.grid, floor),
-  ]
-  if (unfed.length > 0) return { criterion: "lock holds an encounter", detail: unfed.join(", ") }
+  const unfed = lockGroundUnfed(result.grid, floor)
+  if (unfed.length > 0) return { criterion: "every region gets what it takes", detail: unfed.join(", ") }
   const dead = deadFloorRegions(result.grid)
   if (dead.length > 0) return { criterion: "no dead region", detail: dead.join(", ") }
   const bare = roomlessRouteStubs(result.grid)

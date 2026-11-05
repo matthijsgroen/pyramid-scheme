@@ -130,13 +130,14 @@ describe(searchCarvePair, () => {
       options({
         seedBudget: 2,
         ceiling: 0.12,
-        judge: result => (result.success ? { criterion: "lock holds an encounter", detail: "lever" } : judge(result)),
+        judge: result =>
+          result.success ? { criterion: "every region gets what it takes", detail: "lever" } : judge(result),
       })
     )
     expect(missing).toMatchObject({
       kind: "notFound",
-      hardest: "lock holds an encounter",
-      counts: { carves: 3, "lock holds an encounter": 2 },
+      hardest: "every region gets what it takes",
+      counts: { carves: 3, "every region gets what it takes": 2 },
     })
   })
 
@@ -444,7 +445,7 @@ describe(verifyCarvePair, () => {
   })
 
   it("rejects a pin whose carve misses a hard criterion", () => {
-    const unfed = () => ({ criterion: "lock holds an encounter" as const, detail: "lever" })
+    const unfed = () => ({ criterion: "every region gets what it takes" as const, detail: "lever" })
     expect(verifyCarvePair(100, { seed: 100, packing: 0.1 }, () => carvedAt(6), { ...ladder, judge: unfed })).toBeNull()
     expect(verifyCarvePair(100, { seed: 103, packing: 0.1 }, () => carvedAt(0), { ...ladder, judge: unfed })).toBeNull()
   })

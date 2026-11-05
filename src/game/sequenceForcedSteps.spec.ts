@@ -169,11 +169,7 @@ describe.each(FLOORS)("forced steps over $name", ({ make, minSound }) => {
         const refused = refusal({ success: true, grid, attempt: 0 }, make())
         if (walk.sound) {
           kept++
-          // A sound walk is refused only for the next criterion: a placed lock on a floor holding no puzzle room at
-          // all has none on its way either.
-          const puzzleRooms = grid.cells.flat().filter(cell => cell.type === "room" && cell.pathIndex !== undefined)
-          const lockWithNothing = (make().locks?.length ?? 0) > 0 && puzzleRooms.length === 0
-          expect(refused?.criterion ?? null).toBe(lockWithNothing ? "lock holds an encounter" : null)
+          expect(refused?.criterion ?? null).toBeNull()
         } else expect(refused?.criterion).toBe("lock walks sound")
       }
       expect(kept).toBeGreaterThan(0)

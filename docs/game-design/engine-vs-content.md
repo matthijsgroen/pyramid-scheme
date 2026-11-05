@@ -6,12 +6,14 @@ Four kinds of rule live in this project. Each has one owner and one place it is 
 | ----------------------- | ------------------------------------------ | -------- | ------------------------------------------------- |
 | Engine                  | What the engine guarantees for any content | Engine   | Bake judges, sweeps, unit tests (made-up content) |
 | Engine design thinking  | How the engine is built                    | Engine   | Review, betterer guards                           |
-| Content                 | What the designer makes                    | Designer | `yarn lock`, previews                             |
-| Content design thinking | What good content looks like               | Designer | Content tooling, warnings to the author           |
+| Content                 | What the designer makes                    | Designer | `yarn lock`, the lock, room and web editors       |
+| Content design thinking | What good content looks like               | Designer | The editors' checks, warnings to the author       |
 
 ## Engine
 
-The engine honours what content says, exactly, and promises nothing about what content does not say.
+The engine places any valid content, and honours what it says exactly; it never judges the quality of a room, a
+puzzle or a lock. A lock is valid when every region is walkable and its way leads from `in` to `out`: three regions
+joined by plain corridors, with no gate and no lever, is a valid lock.
 
 - A lock's topology is carved as written: its regions, doors, and where each control stands.
 - Every floor carves, and every lock floor can be finished (the lock walk).
@@ -42,6 +44,7 @@ Locks (`.lock`), designed rooms (`.room`), the floor and world DSL, puzzles, sto
 - **The engine never enforces content design thinking.** A carve that keeps the topology is right, even where the
   content idea behind it does not show.
 - Content design thinking is written into content: a lock's topology, a DSL knob, a room file.
-- Checking it is content tooling for the author (`yarn lock`, previews), never a bake refusal.
+- Checking it is content tooling for the author: `yarn lock` and the lock, room and web editors carry quality
+  criteria of their own, stricter than the engine's. Never a bake refusal.
 - Where content cannot express a wish, the engine gains a generic word for content to use, never a judgement of its
   own. A badly designed lock is fixed in the lock.

@@ -21,7 +21,6 @@ import type { FloorConfig as GameFloorConfig } from "../src/game/siteTypes"
 import type { FloorConfig, SiteConfig } from "../src/worldGen/types"
 import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
 import { worldFloorCarve } from "../src/mods/carveWorldFloor"
-import { unjudgedLocks } from "../src/game/lockPuzzles"
 import type { Cell } from "../src/game/carve/state"
 import type { Direction, FloorGrid } from "../src/game/siteTypes"
 import type { CorridorAssignment } from "../src/game/corridorSidePaths"
@@ -97,8 +96,6 @@ export type FloorPick = {
   packing: number
   offset: number
   laddered: boolean
-  /** Locks on the picked grid whose puzzle on the way could not be judged (`judgeLockPuzzles`). */
-  unjudged: string[]
   /** The side sections standing on a lock corridor, and on which. */
   corridors: CorridorAssignment[]
   /** Where the search stood the side paths: those outside the lock, and whether a corridor takes two. */
@@ -287,7 +284,6 @@ export const makeLayoutPicker = ({
         packing: result.packing,
         offset: result.offset,
         laddered: result.laddered,
-        unjudged: unjudgedLocks(result.grid, floor as GameFloorConfig),
         corridors: search.corridorsWith(result.sidePaths),
         sidePaths: result.sidePaths,
         rows: result.grid.rows,
@@ -353,11 +349,6 @@ export const printPicks = (picks: FloorPick[], stats: ReturnType<typeof makeLayo
   if (raised.length > 0) {
     console.log(`  Floors whose authored packing cannot carve (authored -> baked), to correct in the authoring:`)
     for (const f of raised) console.log(`    ${f.key}: ${f.authored} -> ${f.packing}`)
-  }
-  const unjudged = picks.filter(f => f.unjudged.length > 0)
-  if (unjudged.length > 0) {
-    console.log(`  Floors with a lock whose puzzle on the way could not be judged (no control tied to its ground):`)
-    for (const f of unjudged) console.log(`    ${f.key}: ${f.unjudged.join(", ")}`)
   }
   if (laddered.length > 0) {
     console.log(`  Floors that carve only on the ladder (accepted: they meet every hard criterion):`)
