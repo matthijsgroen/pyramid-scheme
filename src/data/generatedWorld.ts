@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 18737179
+export const worldContentHash = 1411921574
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -4651,7 +4651,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chambers: 2,
         packing: 0.2,
         outsideLock: [5],
-        seed: 458394293,
+        seed: 458394299,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art7", pieceIndex: 2 },
         rewards: [
           { type: "campFind", step: "secondJar" },
@@ -6117,7 +6117,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "sellable", itemId: "sell_bronze_1" },
+            endReward: { type: "sellable", itemId: "sell_bronze_3" },
             rewards: [undefined],
             encounter: "lightbeam",
             decorations: [
@@ -6143,7 +6143,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 0,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "sellable", itemId: "sell_bronze_3" },
+            endReward: { type: "sellable", itemId: "sell_bronze_1" },
             decorations: [
               "shelf",
               "jarRack",
@@ -6333,7 +6333,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "sellable", itemId: "sell_bronze_4" },
+            endReward: { type: "money", amount: 2 },
             rewards: [undefined],
             encounter: "star-battle",
             theme: "night",
@@ -6372,7 +6372,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 0,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "money", amount: 2 },
+            endReward: { type: "sellable", itemId: "sell_bronze_4" },
             encounter: "eclipse",
             theme: "night",
             decorations: ["lamp", "pillar", "brazier", "rubblePile", "mat"],
@@ -8144,10 +8144,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: ["funerary", "puzzle"],
         encountersByIndex: { 0: "hidato", 1: "canisters", 2: "sudoku", 3: "constellation", 4: "procession" },
         chambers: 3,
-        packing: 0.68,
+        packing: 0.28,
         sidePacking: 0.1,
         outsideLock: [3, 4, 5, 6],
-        seed: 3529644474,
+        seed: 3529644492,
         mainEndReward: { type: "mosaicPiece", tier: "expert" },
         rewards: [
           { type: "waterskin" },
@@ -10755,7 +10755,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 2,
             difficulty: "expert",
             end: "treasure",
-            endReward: { type: "sellable", itemId: "sell_silver_3" },
+            endReward: { type: "sellable", itemId: "sell_silver_1" },
             rewards: [undefined, undefined],
             encounter: "constellation",
             decorations: [
@@ -10781,7 +10781,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 2,
             difficulty: "expert",
             end: "treasure",
-            endReward: { type: "sellable", itemId: "sell_silver_1" },
+            endReward: { type: "sellable", itemId: "sell_silver_3" },
             rewards: [undefined, undefined],
             encounter: "canisters",
             decorations: [
@@ -10807,7 +10807,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 2,
             difficulty: "expert",
             end: "treasure",
-            endReward: { type: "sellable", itemId: "sell_silver_5" },
+            endReward: { type: "sellable", itemId: "sell_silver_1" },
             rewards: [undefined, undefined],
             encounter: "sumplete",
             decorations: [
@@ -10833,7 +10833,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 2,
             difficulty: "expert",
             end: "treasure",
-            endReward: { type: "sellable", itemId: "sell_silver_1" },
+            endReward: { type: "sellable", itemId: "sell_silver_5" },
             rewards: [undefined, undefined],
             encounter: "eclipse",
             decorations: [
@@ -11223,8 +11223,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "puzzle",
         encountersByIndex: { 0: "sumplete", 1: "eclipse", 2: "futoshiki", 3: "hidato" },
         chambers: 3,
-        packing: 0.58,
-        sidePacking: 0.1,
+        packing: 0.1,
         seed: 7907893988303841,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p12", pieceIndex: 3 },
         rewards: [{ type: "waterskin" }, { type: "waterskin" }, undefined, undefined],
@@ -12157,7 +12156,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 2,
             difficulty: "expert",
             end: "treasure",
-            endReward: { type: "sellable", itemId: "sell_silver_5" },
+            endReward: { type: "sellable", itemId: "sell_silver_4" },
             rewards: [undefined, undefined],
             encounter: "lightbeam",
             decorations: [
@@ -12183,7 +12182,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 2,
             difficulty: "expert",
             end: "treasure",
-            endReward: { type: "sellable", itemId: "sell_silver_2" },
+            endReward: { type: "money", amount: 1 },
             rewards: [undefined, undefined],
             encounter: "lightbeam",
             decorations: [
@@ -12209,7 +12208,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 2,
             difficulty: "expert",
             end: "treasure",
-            endReward: { type: "sellable", itemId: "sell_silver_4" },
+            endReward: { type: "sellable", itemId: "sell_silver_2" },
             rewards: [undefined, undefined],
             encounter: "twin-stars",
             decorations: [
@@ -12235,7 +12234,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 2,
             difficulty: "expert",
             end: "treasure",
-            endReward: { type: "money", amount: 1 },
+            endReward: { type: "sellable", itemId: "sell_silver_5" },
             rewards: [undefined, undefined],
             encounter: "eclipse",
             decorations: [

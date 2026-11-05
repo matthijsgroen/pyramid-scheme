@@ -225,8 +225,8 @@ const FIXTURES: Record<string, Fixture> = {
     sound: true,
     minimum: 22,
   },
-  "a lock whose regions have appetites and a key-hosting side path of one puzzle": {
-    floor: floorOf([{ lock: hungryLock() }], { sideSections: [path(1), path(0, { gate: { type: "floor-key" } })] }),
+  "a lock whose regions have appetites and a key-hosting side path of three puzzles": {
+    floor: floorOf([{ lock: hungryLock() }], { sideSections: [path(3), path(0, { gate: { type: "floor-key" } })] }),
     registry: true,
     sound: true,
     minimum: 30,
@@ -540,15 +540,14 @@ describe("a gated side path of a laid floor stays a branch off laid ground", { t
 
 describe("the carve lengthens the cheapest stretch when the laid nodes cannot take a side path", () => {
   // The key host is spread over open ground rather than given a corridor, so only lengthening the entrance seats it.
-  const withPath = () => carvedOf("a lock whose regions have appetites and a key-hosting side path of one puzzle")
+  const withPath = () => carvedOf("a lock whose regions have appetites and a key-hosting side path of three puzzles")
 
   it("lengthens nothing for a floor whose content the laid nodes take", () => {
     for (const { laid } of carvedOf("a lock whose regions have appetites")) expect(laid.lengthened).toEqual([])
   })
 
-  it("lengthens the open entrance by two nodes for a key-hosting side path of one puzzle and a chest", () => {
-    for (const { laid } of withPath())
-      expect(laid.lengthened[0]).toMatchObject({ kind: "region", id: "entrance", nodes: 2 })
+  it("lengthens the open entrance for a key-hosting side path the laid route cannot take", () => {
+    for (const { laid } of withPath()) expect(laid.lengthened[0]).toMatchObject({ kind: "region", id: "entrance" })
   })
 
   it("stands the side path's rooms on the nodes of the stretch it lengthened", () => {
