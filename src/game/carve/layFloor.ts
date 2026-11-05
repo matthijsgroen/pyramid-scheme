@@ -1,4 +1,5 @@
 import { layLockPlan } from "../layLocks"
+import type { LaidLocks } from "../layLocks"
 import {
   answerBareStubs,
   fillLaidFloor,
@@ -6,6 +7,7 @@ import {
   lengtheningCandidates,
   placeContentOnRoute,
   seatLaidFloor,
+  trimBareTails,
 } from "../laidFloor"
 import type { LengtheningChoice } from "../laidFloor"
 import type { LockPlan } from "../lockPlan"
@@ -79,40 +81,47 @@ export const layFloor = pass("layFloor", ["rung", "attempt"], ["lay", "laidN"], 
     if (!result.ok) return { retry: [{ type: "lockNotLaid", ...result.refusal }] }
     n = result.laid.n
     state.laidN = n
-    const seated = seatLaidFloor(plan, result.laid)
-    // Each junction `forks` holds keeps a route node inside its region (no seam) that no room takes.
-    const kept: number[] = []
-    for (let k = 0; k < junctionNodes; k++) {
-      const step = seated.route.findIndex(
-        (_, i) =>
-          i > 0 &&
-          i < seated.route.length - 1 &&
-          !seated.reserved.has(i) &&
-          !kept.includes(i) &&
-          seated.routeLabels[i] === seated.routeLabels[i - 1]
+    const seatAndFill = (laidLocks: LaidLocks) => {
+      const seated = seatLaidFloor(plan, laidLocks)
+      // Each junction `forks` holds keeps a route node inside its region (no seam) that no room takes.
+      const kept: number[] = []
+      for (let k = 0; k < junctionNodes; k++) {
+        const step = seated.route.findIndex(
+          (_, i) =>
+            i > 0 &&
+            i < seated.route.length - 1 &&
+            !seated.reserved.has(i) &&
+            !kept.includes(i) &&
+            seated.routeLabels[i] === seated.routeLabels[i - 1]
+        )
+        if (step >= 0) kept.push(step)
+      }
+      const onMain = placeContentOnRoute(
+        kept.length > 0 ? { ...seated, reserved: new Set([...seated.reserved, ...kept]) } : seated,
+        spreadContentIndices(contentCount, 1, seated.route.length),
+        { leverFirst: leverOnMain, appetite: appetiteOfRegion }
       )
-      if (step >= 0) kept.push(step)
-    }
-    const onMain = placeContentOnRoute(
-      kept.length > 0 ? { ...seated, reserved: new Set([...seated.reserved, ...kept]) } : seated,
-      spreadContentIndices(contentCount, 1, seated.route.length),
-      { leverFirst: leverOnMain, appetite: appetiteOfRegion }
-    )
-    if (onMain === undefined) return { retry: [] }
-    const filled = fillLaidFloor(
-      seated,
-      new Set([
+      if (onMain === undefined) return undefined
+      const taken = new Set([
         ...[...onMain, ...kept].map(step => `${seated.route[step][0]},${seated.route[step][1]}`),
         ...seated.bare,
-      ]),
-      absorbedDemands,
-      appetiteOfRegion
-    )
+      ])
+      return { seated, onMain, taken, filled: fillLaidFloor(seated, taken, absorbedDemands, appetiteOfRegion) }
+    }
+    const first = seatAndFill(result.laid)
+    if (first === undefined) return { retry: [] }
+    const { seated, filled } = first
     if ("placed" in filled) {
-      const laid = { ...seated, absorbed: filled.placed, lengthened }
+      // The walk past the last thing standing on it is cut back, and the cut floor seated and filled again.
+      const standing = new Set([...first.taken, ...filled.placed.flatMap(({ cells }) => cells)])
+      const trimmed = trimBareTails(plan, lengthPlan, result.laid, seated, standing)
+      const again = trimmed === result.laid ? undefined : seatAndFill(trimmed)
+      const chosen = again !== undefined && "placed" in again.filled ? again : first
+      const placed = "placed" in chosen.filled ? chosen.filled.placed : filled.placed
+      const laid = { ...chosen.seated, absorbed: placed, lengthened }
       const answered = answerStubs ? answerBareStubs(plan, laid, absorbedDemands, appetiteOfRegion) : laid
       onLaid?.(answered)
-      state.lay = { laid: answered, mainSteps: onMain }
+      state.lay = { laid: answered, mainSteps: chosen.onMain }
       return
     }
     // A region laid as a designed room is the room's size, never lengthened.

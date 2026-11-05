@@ -843,3 +843,112 @@ export const answerBareStubs = (
   if ([...label].every(([key, of]) => floor.label.get(key) === of)) return floor
   return { ...floor, label, ground: groundOf(label, floor.doors, neighboursOf(floor.passages, floor.joins, floor.n)) }
 }
+
+/**
+ * A LOCK'S WALK CUT BACK TO THE LAST THING STANDING ON IT. A dead-end node off the route that nothing takes — no
+ * door, tile, junction, drop end, room, designed room, or a node its region keeps for a mechanic's seat (the first
+ * ones by walk depth) — is dropped, and so on inward until something stands at the end. A region's last node is
+ * moved onto the corridor node before it, so the region keeps a node and the corridor its doors where they stood;
+ * neither stretch is cut below its plan's `minNodes`. Returns `laid` itself when nothing is cut.
+ */
+export const trimBareTails = (
+  plan: LockPlan,
+  layPlan: LockPlan,
+  laid: LaidLocks,
+  floor: LaidFloor,
+  taken: ReadonlySet<CellKey>
+): LaidLocks => {
+  const routeKeys = new Set(laid.route)
+  const used = new Set<CellKey>([
+    ...routeKeys,
+    ...taken,
+    ...floor.doors,
+    ...floor.thresholds,
+    ...floor.junctions.map(junction => junction.cell),
+    ...floor.drops.flatMap(drop => [drop.from, drop.to]),
+    ...floor.held,
+    ...floor.blocks.flatMap(block => [block.anchor, ...block.nodes, ...block.joined]),
+  ])
+  for (const [region, demand] of floor.seatDemand) {
+    if (demand <= 0) continue
+    const free = [...floor.label]
+      .filter(([key, of]) => of === region && !used.has(key))
+      .map(([key]) => key)
+      .sort((a, b) => (floor.depth.get(a) ?? 0) - (floor.depth.get(b) ?? 0) || (a < b ? -1 : 1))
+    for (const key of free.slice(0, demand)) used.add(key)
+  }
+  const nearJunction = new Set<CellKey>()
+  const neighbours = neighboursOf(laid.passages, laid.joins, laid.n)
+  for (const junction of floor.junctions) for (const next of neighbours.get(junction.cell) ?? []) nearJunction.add(next)
+
+  const regions = laid.regions.map(region => ({ ...region, nodes: [...region.nodes] }))
+  const corridors = laid.corridors.map(corridor => ({
+    ...corridor,
+    nodes: [...corridor.nodes],
+    cells: [...corridor.cells],
+  }))
+  const passages = new Set(laid.passages)
+  const claimed = new Set(laid.claimed)
+  const degree = (key: CellKey) => {
+    let count = 0
+    for (const pair of [...passages, ...laid.joins]) if (decodePassage(pair, laid.n).includes(key)) count++
+    return count
+  }
+  const unlink = (key: CellKey) => {
+    for (const pair of [...passages]) if (decodePassage(pair, laid.n).includes(key)) passages.delete(pair)
+    claimed.delete(key)
+  }
+  const minOf = (id: string) => layPlan.regions.find(region => region.id === id)?.minNodes ?? 1
+  const ends = (key: CellKey) => corridors.filter(corridor => corridor.start === key || corridor.end === key)
+
+  const cut = (leaf: CellKey): boolean => {
+    const region = regions.find(candidate => candidate.nodes.includes(leaf))
+    if (!region) return false
+    const touching = ends(leaf)
+    if (region.nodes.length > Math.max(1, minOf(region.id)) && touching.length === 0) {
+      region.nodes = region.nodes.filter(node => node !== leaf)
+      unlink(leaf)
+      return true
+    }
+    if (region.nodes.length !== 1 || touching.length !== 1) return false
+    const corridor = touching[0]
+    const atEnd = corridor.end === leaf
+    const k = corridor.nodes.length
+    const minNodes = layPlan.corridors.find(candidate => candidate.id === corridor.id)?.minNodes ?? 0
+    if (k === 0 || k - 1 < minNodes) return false
+    const planned = plan.corridors.find(candidate => candidate.id === corridor.id)!
+    const next = atEnd ? corridor.nodes[k - 1] : corridor.nodes[0]
+    if (floor.doors.has(next)) return false
+    if (labelOf(plan, region.id) !== floor.label.get(next)) return false
+    const before = corridorSeats(plan, planned, k)
+    const after = corridorSeats(plan, planned, k - 1)
+    if (before.thresholds.length > 0 || after.thresholds.length > 0) return false
+    const shift = atEnd ? 0 : 1
+    if (before.doors.join() !== after.doors.map(i => i + shift).join()) return false
+    const kept = atEnd ? corridor.nodes.slice(0, -1) : corridor.nodes.slice(1)
+    const labels = corridorLabels(plan, planned, k - 1)
+    if (kept.some((node, i) => floor.label.get(node) !== labels[i])) return false
+    region.nodes = [next]
+    corridor.nodes = kept
+    if (atEnd) {
+      corridor.end = next
+      corridor.cells = corridor.cells.slice(0, -2)
+    } else {
+      corridor.start = next
+      corridor.cells = corridor.cells.slice(2)
+    }
+    unlink(leaf)
+    return true
+  }
+
+  let changed = false
+  for (let again = true; again;) {
+    again = false
+    for (const key of [...claimed].sort()) {
+      if (used.has(key) || nearJunction.has(key) || degree(key) !== 1) continue
+      if (cut(key)) again = changed = true
+    }
+  }
+  if (!changed) return laid
+  return { ...laid, regions, corridors, passages: [...passages].sort(), claimed: [...claimed].sort() }
+}

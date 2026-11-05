@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest"
-import { BINDING, mirrorForkLock } from "../testSupport/lockFixtures"
+import { BINDING, mirrorForkLock, sluiceLock } from "../testSupport/lockFixtures"
+import { layLockPlan, type LaidLocks } from "../layLocks"
+import { seatLaidFloor, trimBareTails } from "../laidFloor"
 import { freshState, plainFloor, prepOf } from "./carveFixtures"
 import { layFloor, routeOfLength } from "./layFloor"
 import type { LockPlan } from "../lockPlan"
@@ -46,5 +48,34 @@ describe("routeOfLength", () => {
 
   it("lays a route the lock already makes long enough as planned", () => {
     expect(routeOfLength(plan, 6)).toBe(plan)
+  })
+})
+
+describe("trimBareTails", () => {
+  // A made-up sluice lock laid with nothing standing on it: every dead end off the route is bare.
+  const prep = prepOf(
+    plainFloor({ pathPuzzles: 0, difficulty: "expert", locks: [{ lock: sluiceLock() }], realisations: BINDING })
+  )
+  const { layPlan } = prep.sizing
+  const plan = prep.input.plan!
+  const lays = Array.from({ length: 10 }, (_, seed) =>
+    layLockPlan(layPlan!, { seed: seed + 1, n: freshState(prep).rung.n })
+  ).flatMap(result => (result.ok ? [result.laid] : []))
+  const trim = (laid: LaidLocks) => trimBareTails(plan, layPlan!, laid, seatLaidFloor(plan, laid), new Set())
+
+  it("cuts a lock's walk back off its bare dead ends, and leaves its route as laid", () => {
+    const cut = lays.filter(laid => trim(laid) !== laid)
+    expect(cut.length).toBeGreaterThan(0)
+    for (const laid of cut) {
+      expect(trim(laid).claimed.length).toBeLessThan(laid.claimed.length)
+      expect(trim(laid).route).toEqual(laid.route)
+    }
+  })
+
+  it("leaves nothing more to cut once cut", () => {
+    for (const laid of lays) {
+      const once = trim(laid)
+      expect(trim(once)).toBe(once)
+    }
   })
 })
