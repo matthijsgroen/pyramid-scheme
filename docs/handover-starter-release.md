@@ -25,6 +25,13 @@ State at handover (2026-10-18), all on PR #322 (`story-and-artstyle`):
 
 ## The queue
 
+**Status 2026-11-05.** Done: A1 (`yarn repaint --land`), A2 (the rank stories), B1–B3 and D (no starter entry is
+left in the repaint queue; `rubbleSpill` landed), C (activities, the six new props), E1–E4 (Fez's stall, Ipi's
+ledger room, the tap hint, the opening copy), F4 (the freeze guard, #339). Open: A3's three story-room jumps (the
+jump mechanism exists; the jumps are unchecked), B4 (optional), F1–F3 (the release itself). Since the queue was
+written the starter floors also gained a puzzle and a trap hidden path on every floor and a chest on every tomb
+floor, and the mosaic is cut four pieces per level, the starter register finished in plain sight.
+
 Owner **C** is Claude (run with subagents, one task per subagent with a review, per the user's preference);
 **U** is the user. Work top to bottom; tasks in one phase may run beside tasks in another when they touch
 different files.

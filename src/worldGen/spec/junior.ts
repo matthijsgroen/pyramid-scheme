@@ -51,8 +51,8 @@ const oldWorkings = () => sidePath({ puzzles: 1, tier: "starter", endReward: "ju
 // declaring it from the same constant keeps the two from ever disagreeing.
 const JUNIOR_FRAGMENT_PATH: PathSettings = { pathPuzzles: 1, end: "fragment" }
 const JUNIOR_VISIBLE_MOSAIC_PATH: PathSettings = { pathPuzzles: 0, end: "mosaic" }
-const JUNIOR_HIDDEN_MOSAIC_PATH: PathSettings = { pathPuzzles: 0, end: "mosaic" }
-const JUNIOR_HIDDEN_TRAP_PATH: PathSettings = { pathPuzzles: 2, end: "junk", encounter: "trap", chance: 0.4 }
+const JUNIOR_HIDDEN_MOSAIC_PATH: PathSettings = { pathPuzzles: 1, end: "mosaic" }
+const JUNIOR_HIDDEN_TRAP_PATH: PathSettings = { pathPuzzles: 2, end: "mosaic", encounter: "trap" }
 
 // The junction junior_2 pyramid 2's floor 0 holds open, and the board that stands in it. Two ways
 // out is the junction a carve nearly always offers; three is rare and four is never carved
@@ -103,9 +103,7 @@ export const juniorRules: Rule[] = [
     // surplus visible end slot the capped pass fills. See starter tier default.
     .sidePaths("low")
     .settings(JUNIOR_VISIBLE_MOSAIC_PATH)
-    // One plain-loot hidden mosaic in every pyramid; a trapped one in only ~40% (chance),
-    // so junior traps stay light and some hidden paths are just loot. The chance-gated path
-    // holds junk loot (uncounted budget) — `chance` + mosaic would misreserve the cap.
+    // On every floor one hidden path of puzzles and one of booby traps, each ending in glass or coins.
     .hiddenPaths("low")
     .settings(JUNIOR_HIDDEN_MOSAIC_PATH)
     .hiddenPaths("low")

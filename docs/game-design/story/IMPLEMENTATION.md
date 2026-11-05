@@ -310,7 +310,8 @@ what an id grants is mod data). Independent of any story decision:
 
 - **junior's four blank floors** — the only tier with no new verb, and where a new player decides to stay
 - **compass L2 out of master** — L1 is the second thing earned and does not improve for three tiers
-- **detection out of `master_b_5`** — hidden corridors are unfindable-by-tool for three and a half tiers
+- **detection at `master_a_5`** (the first master tomb) — hidden corridors stay unfindable-by-tool for three tiers;
+  every tier but starter keeps glass in them, so the starter register is the one finished before the detector
 
 Story-led placement (`../progression-route.md`) can refine which verb lands where later; these three are
 wrong on their own terms.

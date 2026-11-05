@@ -57,7 +57,7 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/app/state/useProgression.ts:555630573": [
       [5, 62, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/data/puzzleSeeds.ts:1004587569": [
+    "src/data/puzzleSeeds.ts:219783033": [
       [4, 58, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/game/dressingTags.ts:589999011": [
@@ -798,7 +798,7 @@ exports[`design doc references name a file, not a paragraph`] = {
       [118, 42, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [135, 34, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/puzzleSeeds.verify.ts:1878749965": [
+    "src/mods/puzzleSeeds.verify.ts:3992405429": [
       [10, 76, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [63, 81, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
@@ -817,7 +817,7 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/mods/tombTreasure/game/tombTreasureReward.ts:1164406257": [
       [5, 31, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/tombTreasure/game/treasurePerks.ts:4033614453": [
+    "src/mods/tombTreasure/game/treasurePerks.ts:234923573": [
       [2, 66, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/tombTreasure/index.ts:218452373": [
@@ -940,10 +940,10 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/ui/molecules/CollectibleSlot.tsx:622421176": [
       [11, 68, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/worldGen/buildSite.ts:133205917": [
-      [223, 62, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [348, 31, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [451, 93, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/worldGen/buildSite.ts:3529313818": [
+      [224, 62, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [349, 31, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [452, 93, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/worldGen/configBuilder.integration.verify.ts:4128136222": [
       [204, 7, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
@@ -951,8 +951,8 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/worldGen/dressingRoles.ts:3720599829": [
       [4, 58, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/worldGen/dsl.spec.ts:1270564825": [
-      [17, 54, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/worldGen/dsl.spec.ts:1209957168": [
+      [18, 54, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/worldGen/lootEconomyInvariants.verify.ts:1284098077": [
       [20, 78, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
@@ -988,8 +988,8 @@ exports[`design doc references name a file, not a paragraph`] = {
       [146, 51, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [246, 68, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/worldGen/spec/starter.ts:2271645100": [
-      [211, 35, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/worldGen/spec/starter.ts:3295564982": [
+      [215, 35, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/worldGen/validate.spec.ts:4002713251": [
       [157, 5, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],

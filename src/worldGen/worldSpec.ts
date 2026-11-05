@@ -5,6 +5,8 @@ import { juniorRules } from "./spec/junior"
 import { expertRules } from "./spec/expert"
 import { masterRules } from "./spec/master"
 import { wizardRules } from "./spec/wizard"
+import { starterWardRules } from "./spec/starterWards"
+import { withTombFloorChests } from "./spec/tombChests"
 
 /**
  * Declarative world-builder constraints.
@@ -12,11 +14,14 @@ import { wizardRules } from "./spec/wizard"
  * Within the same specificity level, later rules win.
  * Missing fields = builder decides.
  */
-export const worldSpec = rules([
-  ...globalRules,
-  ...starterRules,
-  ...juniorRules,
-  ...expertRules,
-  ...masterRules,
-  ...wizardRules,
-])
+export const worldSpec = rules(
+  withTombFloorChests([
+    ...globalRules,
+    ...starterRules,
+    ...juniorRules,
+    ...expertRules,
+    ...masterRules,
+    ...wizardRules,
+    ...starterWardRules,
+  ])
+)

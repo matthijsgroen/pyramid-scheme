@@ -46,14 +46,14 @@ export const TREASURE_PERKS: Record<string, TreasurePerk> = {
   master_a_2: { type: "location-key", tombId: "master_treasure_tomb_b" },
   master_a_3: { type: "none" },
   master_a_4: { type: "compass", level: 2 },
-  master_a_5: { type: "armor" },
+  master_a_5: { type: "detection", level: 1 },
 
   // Master B (5 floors)
   master_b_1: { type: "none" },
   master_b_2: { type: "none" },
   master_b_3: { type: "compass", level: 3 },
   master_b_4: { type: "max-health" },
-  master_b_5: { type: "detection", level: 1 },
+  master_b_5: { type: "armor" },
 
   // Wizard A (4 floors)
   wizard_a_1: { type: "none" },

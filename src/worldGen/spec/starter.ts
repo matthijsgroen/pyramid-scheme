@@ -101,8 +101,12 @@ export const starterRules: Rule[] = [
     // (fixed-demand) gating pass and the phase-3 capped pass fills it. Reachable = first contact.
     .sidePaths("low")
     .settings({ pathPuzzles: 0, end: "mosaic" })
+    // On every floor one hidden path of puzzles and one of booby traps. Starter glass never stands in one (the
+    // register is finished in plain sight), so they bear coins: come-back loot for a player who holds the detector.
     .hiddenPaths("low")
-    .settings({ pathPuzzles: 1, end: "mosaic" }),
+    .settings({ pathPuzzles: 1, end: "mosaic" })
+    .hiddenPaths("low")
+    .settings({ pathPuzzles: 2, end: "mosaic", encounter: "trap" }),
 
   // First pyramid of each starter journey is that journey's map-piece entry-point. Named per journey, so the
   // tomb's cave (its first level) is not one.

@@ -266,8 +266,8 @@ function regionToPoints(region: Region): string | null {
 // difficulty tier, the way an Egyptian tomb wall is read. A register is read left
 // to right, so its pieces are handed to that tier's levels in that order.
 // ---------------------------------------------------------------------------
-// Each game level reveals 2 mosaic pieces, so a journey's step count is levelCount * 2.
-const JOURNEY_LEVELS: Record<string, number> = Object.fromEntries(journeys.map(j => [j.id, j.levelCount * 2]))
+// Each game level reveals 4 mosaic pieces, so a journey's step count is levelCount * 4.
+const JOURNEY_LEVELS: Record<string, number> = Object.fromEntries(journeys.map(j => [j.id, j.levelCount * 4]))
 
 const TIER_NAMES = ["starter", "junior", "expert", "master", "wizard"]
 const TIER_JOURNEYS = TIER_NAMES.map(tier => journeys.map(j => j.id).filter(id => id.startsWith(`${tier}_`)))

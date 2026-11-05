@@ -696,12 +696,12 @@ Tier unlock is no longer a single shared key: each tomb's first 4 treasures (`TI
 |               | 20  | Location key → Master B | Unlocks wizard difficulty (journey 2)                    |
 |               | 21  | Ward key                | Unlocks wizard difficulty (journey 3)                    |
 |               | 22  | Ward key                | Compass L2 · unlocks wizard difficulty (journey 4)       |
-|               | 23  | Ward key                | Armor                                                    |
+|               | 23  | Ward key                | Detection L1                                             |
 | **Master B**  | 24  | Ward key                | —                                                        |
 |               | 25  | Ward key                | Scribe's Eye L1                                          |
 |               | 26  | Ward key                | Compass L3                                               |
 |               | 27  | Ward key                | Max health +½ ♥                                          |
-|               | 28  | Ward key                | Detection L1                                             |
+|               | 28  | Ward key                | Armor                                                    |
 | **Wizard A**  | 29  | Ward key                | —                                                        |
 |               | 30  | Location key → Wizard B | —                                                        |
 |               | 31  | Ward key                | Detection L2                                             |
