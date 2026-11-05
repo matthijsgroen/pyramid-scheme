@@ -318,8 +318,16 @@ export const maskHiddenCells = (
           //
           // NEVER A ROOM THAT HOLDS SOMETHING. Rebuilt as a corridor it would shed its family, its tags
           // and its exits, and a corridor has no slot, so a switch's puzzle would vanish and its solved
-          // state would have nowhere to come back to. A room beside a peeled connector reaches this.
-          if (cell.type === "room" && dirsChanged && newDirs.size <= 2 && cell.family === undefined) {
+          // state would have nowhere to come back to. A room beside a peeled connector reaches this. Nor a
+          // portal: the entrance, the exit and a stairhead are where the player arrives and leaves, so a hidden
+          // path hung off one must leave it a room.
+          if (
+            cell.type === "room" &&
+            dirsChanged &&
+            newDirs.size <= 2 &&
+            cell.family === undefined &&
+            cell.roomType !== "portal"
+          ) {
             return {
               type: "corridor",
               dirs: newDirs as ReadonlySet<Direction>,

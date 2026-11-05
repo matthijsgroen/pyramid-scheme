@@ -620,3 +620,39 @@ describe("maskHiddenCells — a corridor leading only into hidden ground", () =>
     expect(maskHiddenCells(grid, new Set(["s1"])).masked.cells[0].every(cell => cell.type === "corridor")).toBe(true)
   })
 })
+
+describe("maskHiddenCells — a hidden path hung off the entrance", () => {
+  const room = (dirs: Direction[], roomType: RoomCell["roomType"]): RoomCell =>
+    ({ type: "room", roomType, dirs: new Set(dirs), state: "visible", sectionAddress: "main" }) as RoomCell
+  const at = (dirs: Direction[], hidden = false): CorridorCell => ({
+    type: "corridor",
+    dirs: new Set(dirs),
+    state: "visible",
+    sectionAddress: hidden ? "s1" : "main",
+    ...(hidden ? { hidden: true } : {}),
+  })
+  // The entrance at 1,1 opens west, east and north; north is a hidden path.
+  const grid = (entrance: RoomCell): FloorGrid => ({
+    siteId: "x",
+    rows: 2,
+    cols: 3,
+    entrancePos: [1, 1],
+    exitPos: [1, 2],
+    staircases: {},
+    cells: [
+      [{ type: "empty" }, at(["s"], true), { type: "empty" }],
+      [at(["e"]), entrance, at(["w"])],
+    ],
+  })
+
+  it("keeps the entrance a room, so the player still stands somewhere and can leave", () => {
+    const masked = maskHiddenCells(grid(room(["n", "w", "e"], "portal")), new Set()).masked.cells[1][1]
+    expect(masked).toMatchObject({ type: "room", roomType: "portal", dirs: new Set(["w", "e"]) })
+  })
+
+  it("still reads a plain room left a passthrough as corridor", () => {
+    expect(maskHiddenCells(grid(room(["n", "w", "e"], "encounter")), new Set()).masked.cells[1][1].type).toBe(
+      "corridor"
+    )
+  })
+})
