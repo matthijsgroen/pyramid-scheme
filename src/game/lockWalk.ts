@@ -64,6 +64,9 @@ export type LockSpec = {
   /** MOVES MADE OFF THE FLOOR: an outside input (`outsideInput`) goes from `from` to `to` wherever the player stands,
    * so the walk offers it from every state. A key held from elsewhere only ever arrives. */
   arrivals?: { mechanism: MechanismId; from: StateId; to: StateId }[]
+  /** Gates opened off the floor that stand on the floor's own ground, outside every lock: the way to a lock or on from
+   * it, never part of one, so no lock leans on them (`leansOffFloor`). */
+  outsideLocks?: GateId[]
 }
 
 /** An outside input's two states: it starts missing and, once arrived, is held for good. */

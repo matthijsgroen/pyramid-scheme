@@ -66,6 +66,39 @@ describe("a door opened off the floor", () => {
     const walk = walkFloorLock(row([tableau, lever, leverDoor, {}]))
     expect(walk?.sound).toBe(false)
   })
+
+  it("lets a lock behind a tableau on the floor's own ground walk sound: the lock is solved from its start", () => {
+    const inLock = (room: Room): Room => ({ ...room, region: "madeUp.hall" })
+    const walk = walkFloorLock(row([{ ...tableau, region: "entrance" }, inLock(lever), inLock(leverDoor), {}]))
+    expect(walk?.sound).toBe(true)
+  })
+
+  it("lets a lock hold a side way behind a ward gate that no control of it stands past", () => {
+    const sideWard: Room = { ...ward, region: "madeUp.hall" }
+    const grid = row([lever, leverDoor, {}])
+    const [r, c] = [1, 2]
+    const cells = [grid.cells[0].map(cell => ({ ...cell })), grid.cells[0].map((): GridCell => ({ type: "empty" }))]
+    ;(cells[0][c] as RoomCell).dirs = new Set<Direction>(["e", "w", "s"])
+    cells[r][c] = {
+      type: "room",
+      roomType: "encounter",
+      dirs: new Set<Direction>(["n", "s"]),
+      state: "fogged",
+      sectionAddress: "w",
+      pathIndex: 9,
+      ...sideWard,
+    } as RoomCell
+    cells.push(grid.cells[0].map((): GridCell => ({ type: "empty" })))
+    cells[2][c] = {
+      type: "room",
+      roomType: "encounter",
+      dirs: new Set<Direction>(["n"]),
+      state: "fogged",
+      sectionAddress: "x",
+      pathIndex: 10,
+    } as RoomCell
+    expect(walkFloorLock({ ...grid, cells, rows: 3 })?.sound).toBe(true)
+  })
 })
 
 describe("a door no mechanism opens and no one earns off the floor", () => {
