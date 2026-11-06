@@ -80,28 +80,14 @@ Layout decides these, so they are regenerated in the same release, not assumed:
 
 **It is thrown away, deliberately, and in full.** Decided 2026-09-16.
 
-A player who never launched the capture release arrives here with coordinates and no current
-`cellKeyVersion`. Re-keying them now would translate those coordinates against the RESHAPED carve —
-the original bug, arriving through the migration's own front door. So the reshape release does not try:
+The release that ships the reshape resets **every** save from before it, at launch, and tells the player so
+(`src/app/saveEpoch.ts`, `SAVE_EPOCH`). The current release, 0.44.0, carries no `saveEpoch`, so nothing from
+before the reshape comes across: no save holds coordinates written against the old carve.
 
-1. Delete `exploredSections`, `position`, `sectionHash`, `legacySectionHash`, the re-key
-   (`migrateJourneyToCarveIndependent`) and the hook that runs it. The archive only means anything
-   while the carve it was written against is still the one the code produces; the moment the floors
-   move it is garbage. Repoint `floorExploration.ts` to `sectionAddress` first — it is the last
-   non-migration reader of the hash.
-2. On launch, **any save not carrying the current `cellKeyVersion` is reset in full** — journeys,
-   `pyramid-scheme-progression-v4`, `inventory-v2`, `levelAnswers`, `puzzleState`. Not a storage-version
-   bump: that resets everyone, including the players this whole migration exists to protect. It is
-   per-save, and the stamp is what decides.
-
-The camp release already resets every save from before it, at launch, and tells the player so
-(`src/app/saveEpoch.ts`, `SAVE_EPOCH`). Every save since carries `saveEpoch`; the reset above only has
-to tell those saves apart by `cellKeyVersion`.
-
-`cellKeyVersion` outlives the re-key it was built for: after this release nothing re-keys anything, but
-the stamp is still the exact record of which saves came through, which is what the reset reads. Every
-save carries it — journeys with nothing explored are stamped too, precisely so "has not walked into a
-pyramid yet" cannot read as "never migrated".
+That makes the archive dead weight, and it is gone: `exploredSections`, `position`, the re-key
+(`migrateJourneyToCarveIndependent`) and the hook that ran it, and `cellKeyVersion`, whose only job was to tell
+re-keyed saves apart. `floorExploration.ts` reads `sectionAddress`. A further change to the key format now costs a
+reset, and that is the accepted trade.
 
 **Why a full reset rather than a partial restore.** A partial restore is what opens the loot hole
 below: sections reset while progression is kept, so a per-tomb map-piece count and a money balance are
