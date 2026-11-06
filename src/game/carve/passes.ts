@@ -34,7 +34,7 @@ import { validate } from "./validate"
 import { standForkSwitches } from "./standForkSwitches"
 import { standPieces } from "./standPieces"
 import type { PiecesState } from "./standPieces"
-import { lockPieceFaults } from "./derive"
+import { keyOf, lockPieceFaults } from "./derive"
 import { standSwitches } from "./standSwitches"
 
 /**
@@ -100,7 +100,8 @@ export const TAIL_READS = [
 export const finishAttempt: Finish = (prep, state) => {
   const decided = requireReads("render", TAIL_READS, state)
   const blocks = state.blocks ?? []
-  const grid = stampBlocks(prep, blocks, render(prep, decided)) as WritableGrid
+  const roomAnchors = new Set(blocks.map(block => keyOf(block.anchor)))
+  const grid = stampBlocks(prep, blocks, render(prep, decided, roomAnchors)) as WritableGrid
   const shut = new Set(decided.switchWays.flat().map(({ cell }) => cell))
   const refusal =
     validate(prep, decided, grid, blocks) ??

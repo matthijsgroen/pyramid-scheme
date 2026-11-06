@@ -10,7 +10,7 @@ layout
 # n # d # n #
 # w . x . . #
 # s . t t . d
-# . . . . g #
+# p . . . g #
 # # d # # # #
 
 stock = jarRack | shelf
@@ -20,4 +20,5 @@ g floor goods
 t floor cart
 n wallItem? niche
 x ground floorClutter
+p floor? patron
 s stop
