@@ -7,10 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Every tomb floor has an extra chest.
+- Starter keys open treasure paths in the junior, expert and master pyramids.
+- The tomb ghosts stand in their rooms and say one line when you walk back in; a conversation room without one wears a replay symbol on the map and plays its scene again.
+- A tapping hand shows where to start on the travel screen, and in a conversation the explorer faces whoever he talks to.
+- A stone pipe in the walls carries a stone where you cannot: post it at one hole and take it out of the other.
+- A procession door: its tiles free the bars of a procession board, and solving it teaches the order to walk.
+- A junior pyramid's fork now has a mirror puzzle standing in it, and the way that stands open is the one you route the beam to. Change your mind and the other way opens as that one shuts. The fork and its doors wear one mark on the map.
+- The last pyramid of the Valley of the Kings opens on a mirror fork with ziplines: throw the levers, route the beam, and drop from ledge to ledge to get back.
+- Djoser's last pyramid opens on a stone lock: lift the stone off the altar, park one on a shelf, and squeeze through the narrow passage.
+- Junior and expert pyramids now teach one mechanism at a time: a lever, a torch, a zipline drop, a light board, or a stone on a plate; the expert pyramids after them combine those in a lock.
+- A torch is a switch you can only light, drawn as a flame. Once it burns there is no prompt to touch it again, and you walk past it like any other floor.
+- Taking a zipline plays the ride: the explorer slides across the gap instead of appearing on the far side.
+- Master and wizard expeditions stay closed until their content is ready; earning their key now says they are on their way.
+- Daylight now falls into some chambers through a hole in the roof, lighting the room and what stands in it without a torch.
+
 ### Changed
 
+- More hidden passages: every floor has one with puzzles and one with booby traps, ending in mosaic glass or coins.
+- The mosaic is cut into smaller pieces, four for every pyramid level. The starter panel can be finished without the hidden passage detector.
+- The hidden passage detector is found in the first master tomb instead of the second.
+- A temple shows its god on every floor: in the Temple of Bastet her statues stand in the trade rooms too.
 - Designed rooms on the starter floors.
-- Rooms keep their full shape
 - The explorer walks around what stands in a room; the cave before the starter tomb has a basin in its crossing.
 - In a designed room every way out has its own arrow; where routes split, an arrow leads to the spot they split at. The arrows sit just beside the explorer.
 - Walking into a designed room stops in its middle, where every way out is a choice, instead of at its far side.
@@ -22,7 +42,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A storyline, with Fez, the explorer and a ghost in every tomb.
 - Every treasure tomb is hidden in a cave, with its pyramid in a sunlit cavern below.
 - Side paths run through a lock's corridors; the Sphinx is read from inside, through a cave behind the ward gate.
-- Designed rooms in the starter pyramids.
 - Saved games start over this release.
 - The game left open during an update reloads into the new version instead of crashing.
 - Every treasure tomb is now hidden in a cave before its sunlit cavern; the starter tomb's cave is behind a lever lock.
@@ -71,13 +90,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Every tomb has somebody in it now, and they all want something.
 - Secrets of the Sphinx is now the Colossi of Memnon, a statue the world has been calling by the wrong name for two thousand years.
 - The explorer has a face: the placeholder is gone and the drawn portrait stands opposite Fez.
-
 - A story log: everything you have been told, to read back if you tapped through it.
 - Henut's name is spelled wrong on her own wall, and you can put it right — if you know the sign.
 - The rest of the script is written in: the friendship beats, the inscription as it becomes readable, the priest refusing a fake, and the last thing anybody says.
 - Fez explains the mosaic when you find your first piece, and now and then reminds you to set the ones you carry.
 - Fez notices how you play now, and says so five times in a whole game: a board solved cold, a trap survived by a hair, and what he will not put a price on.
 - The writing on the Sphinx can be read at last, back in the pyramid you started in, once the Vault of the Gods gives up its key and its last sign.
+- Saved expeditions start over this release. The way a site's rooms and doors are recorded has changed, and an old save cannot be read against the new one.
+- One wizard floor now has a short passage between two dead ends that used to stand apart. Both sit behind the same door, so it opens nothing you had not already earned.
+- Walking to a staircase, a shop, the way out or a room you can re-enter now leaves a button beside you to go in.
+- Pressing the button at the way out now leaves right away, instead of asking you to confirm a second time.
+- Pressing the button at a lever now throws it right away, instead of opening a screen to ask which way.
+- Overgrown pyramid floors are lit by their own daylight now, thick with plants, with shafts of sun falling into the corridors.
+- Pyramid corridors are much shorter. The walk from one puzzle to the next is about half what it was, and a starter floor a third.
+- Eclipse boards now come in three kinds: with signs, without signs, and ones that never make you compare two lines.
+- Star battle and twin stars boards no longer hand you a star to start with, and the hard ones ask you to rule squares out first.
+- Twin stars hints can now say that a pair has to include a square whichever way round it goes.
+- Sudoku boards now come in three kinds: ordinary ones, ones where a whole value is missing from the start, and ones whose given squares mirror each other.
+- About one puzzle room in three now shows a different face of its puzzle — a scribe's register, a granary, a waterworks — instead of the plain board.
+- A hint stays on screen while you carry it out.
 
 ### Fixed
 
@@ -97,22 +128,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The explorer no longer has white patches under an arm, behind the neck and beside the map.
 - The explorer stands at the opposite edge from Fez instead of just inside it.
 - Everyone who talks to Fez is now drawn waist-up, so their faces are the same size as his instead of a third of it.
-
-### Added
-
-- The tomb ghosts stand in their rooms and say one line when you walk back in; a conversation room without one wears a replay symbol on the map and plays its scene again.
-- A tapping hand shows where to start on the travel screen, and in a conversation the explorer faces whoever he talks to.
-- A stone pipe in the walls carries a stone where you cannot: post it at one hole and take it out of the other.
-- A procession door: its tiles free the bars of a procession board, and solving it teaches the order to walk.
-- A junior pyramid's fork now has a mirror puzzle standing in it, and the way that stands open is the one you route the beam to. Change your mind and the other way opens as that one shuts. The fork and its doors wear one mark on the map.
-- The last pyramid of the Valley of the Kings opens on a mirror fork with ziplines: throw the levers, route the beam, and drop from ledge to ledge to get back.
-- Djoser's last pyramid opens on a stone lock: lift the stone off the altar, park one on a shelf, and squeeze through the narrow passage.
-- Junior and expert pyramids now teach one mechanism at a time: a lever, a torch, a zipline drop, a light board, or a stone on a plate; the expert pyramids after them combine those in a lock.
-- A torch is a switch you can only light, drawn as a flame. Once it burns there is no prompt to touch it again, and you walk past it like any other floor.
-- Taking a zipline plays the ride: the explorer slides across the gap instead of appearing on the far side.
-
-### Fixed
-
 - Levers and ziplines are drawn at every difficulty, not only in expert pyramids.
 - A zipline's gap has a floor under it again, so the drop reads as a hole in the floor instead of hanging in the dark.
 - Pressing an arrow or a corner dot now walks you there. A corridor bend only lifted its fog before, and left you standing where you were.
@@ -132,27 +147,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A lever standing across a corridor no longer walls off everything past it.
 - A lever now stays visible while you're standing on it throwing it.
 - A mirror puzzle no longer crashes reopening a fork the game reshaped since you left it mid-turn.
-
-### Added
-
-- Master and wizard expeditions stay closed until their content is ready; earning their key now says they are on their way.
-- Daylight now falls into some chambers through a hole in the roof, lighting the room and what stands in it without a torch.
-
-### Changed
-
-- Saved expeditions start over this release. The way a site's rooms and doors are recorded has changed, and an old save cannot be read against the new one.
-- One wizard floor now has a short passage between two dead ends that used to stand apart. Both sit behind the same door, so it opens nothing you had not already earned.
-- Walking to a staircase, a shop, the way out or a room you can re-enter now leaves a button beside you to go in.
-- Pressing the button at the way out now leaves right away, instead of asking you to confirm a second time.
-- Pressing the button at a lever now throws it right away, instead of opening a screen to ask which way.
-- Overgrown pyramid floors are lit by their own daylight now, thick with plants, with shafts of sun falling into the corridors.
-- Pyramid corridors are much shorter. The walk from one puzzle to the next is about half what it was, and a starter floor a third.
-- Eclipse boards now come in three kinds: with signs, without signs, and ones that never make you compare two lines.
-- Star battle and twin stars boards no longer hand you a star to start with, and the hard ones ask you to rule squares out first.
-- Twin stars hints can now say that a pair has to include a square whichever way round it goes.
-- Sudoku boards now come in three kinds: ordinary ones, ones where a whole value is missing from the start, and ones whose given squares mirror each other.
-- About one puzzle room in three now shows a different face of its puzzle — a scribe's register, a granary, a waterworks — instead of the plain board.
-- A hint stays on screen while you carry it out.
 
 ## 0.44.0 - 2026-09-18
 
