@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react"
-import { maskHiddenCells } from "./useAssembledFloor"
+import { maskHiddenCells, maskWardCells } from "./useAssembledFloor"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { assembleInspectedFloor } from "../../game/assembleInspectedFloor"
 import { completeCell, getCell, revealAll as revealGrid } from "../../game/gridNavigation"
@@ -200,6 +200,8 @@ type Props = {
   journeyIndex: number
   /** Masks hidden corridors as a player without a detector sees them. */
   hideHidden?: boolean
+  /** Shuts every ward gate and masks what lies past it, as a player without ward keys sees the floor. */
+  hideWards?: boolean
   /** Which pyramid in the journey (1-based, up to levelCount) */
   pyramidNumber: number
   seed: number
@@ -207,7 +209,16 @@ type Props = {
   clutter?: number
 }
 
-const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed, hideHidden, clutter }: Props) => {
+const JourneyInspector = ({
+  journeyType,
+  tier,
+  journeyIndex,
+  pyramidNumber,
+  seed,
+  hideHidden,
+  hideWards,
+  clutter,
+}: Props) => {
   const journeyList = journeyType === "tomb" ? tombsByTier[tier] : byTier[tier]
   const journey = journeyList[journeyIndex]
   if (!journey) return <div className="p-4 text-red-400">Journey not found</div>
@@ -239,8 +250,9 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
 
   const grid = useMemo(() => {
     const edged = baseGrid ? applyEdges(baseGrid, currentFloor, solvedEdges) : null
-    return edged && hideHidden ? maskHiddenCells(edged, new Set()).masked : edged
-  }, [baseGrid, currentFloor, solvedEdges, hideHidden])
+    const unwarded = edged && hideWards ? maskWardCells(edged) : edged
+    return unwarded && hideHidden ? maskHiddenCells(unwarded, new Set()).masked : unwarded
+  }, [baseGrid, currentFloor, solvedEdges, hideHidden, hideWards])
 
   const pos: readonly [number, number] = explorerPos ?? grid?.entrancePos ?? [0, 0]
 
@@ -482,6 +494,7 @@ export const Inspector: StoryObj<typeof meta> = {
     pyramidNumber: 1,
     seed: DEFAULT_SEED,
     hideHidden: false,
+    hideWards: false,
   },
 }
 

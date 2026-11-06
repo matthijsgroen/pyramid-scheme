@@ -227,6 +227,35 @@ export const sealWaysOut = (grid: FloorGrid): FloorGrid => {
   return { ...grid, cells }
 }
 
+/** The floor as a player without ward keys sees it: every ward gate stands, and what only a ward gate leads to is
+ * masked the way an unfound hidden path is. */
+export const maskWardCells = (grid: FloorGrid): FloorGrid => {
+  const isWardGate = (cell: GridCell) => cell.type === "room" && cell.gateVariant === "tomb-key"
+  const reached = new Set<string>()
+  const queue: [number, number][] = [[grid.entrancePos[0], grid.entrancePos[1]]]
+  reached.add(`${queue[0][0]},${queue[0][1]}`)
+  while (queue.length > 0) {
+    const [r, c] = queue.shift()!
+    const cell = grid.cells[r][c]
+    if ((cell.type !== "room" && cell.type !== "corridor") || isWardGate(cell)) continue
+    for (const dir of cell.dirs) {
+      const [dr, dc] = DIR_MOVES[dir]
+      const key = `${r + dr},${c + dc}`
+      if (reached.has(key) || !grid.cells[r + dr]?.[c + dc]) continue
+      reached.add(key)
+      queue.push([r + dr, c + dc])
+    }
+  }
+  const cells = grid.cells.map((row, r) =>
+    row.map((cell, c): GridCell =>
+      (cell.type === "room" || cell.type === "corridor") && !reached.has(`${r},${c}`)
+        ? { ...cell, hidden: true, sectionAddress: cell.sectionAddress ?? "ward" }
+        : cell
+    )
+  )
+  return maskHiddenCells({ ...grid, cells }, new Set()).masked
+}
+
 // Mask hidden cells: map to empty, strip dirs pointing into them from neighbours. Run on the floor's shape
 // before what has been explored, so the explored cascade walks only what the player can see.
 // revealedSections: authoring addresses whose hidden sections have been revealed by the player.
