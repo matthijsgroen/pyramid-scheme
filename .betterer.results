@@ -27,7 +27,7 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/app/SiteMap/tileAssets.ts:2315541081": [
       [50, 24, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/app/SiteMap/useAssembledFloor.ts:869706210": [
+    "src/app/SiteMap/useAssembledFloor.ts:1345235689": [
       [242, 82, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/app/SiteMap/useCorridorDetection.ts:837024504": [

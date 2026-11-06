@@ -307,7 +307,7 @@ export const renderGround = (
       .filter(pk => roomSpecs.get(pk)?.authoredActivity === undefined)
       // A designed room pinned here is its own dressing (placePrefabs.ts): the god would lose his room to it. The
       // rooms a floor's list lays (`roomAnchors`) dress themselves too, and the god comes before an activity
-      // (themed-rooms.md §2), so he takes a chamber they leave free.
+      // (themed-rooms.md, who has the room), so he takes a chamber they leave free.
       .filter(pk => roomSpecs.get(pk)?.pinnedPrefab === undefined && !roomAnchors.has(pk))
       .filter(pk => {
         const spec = roomSpecs.get(pk)

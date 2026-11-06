@@ -5,7 +5,7 @@ import { allFloors, resolveKeyRequirements } from "./worldFloors.testing"
 import "@/mods/registerModApps"
 
 // A DEDICATED SITE SHOWS ITS GOD ON EVERY FLOOR: a pyramid floor of a patron's journey gives one chamber of its own
-// ground to the god, before any activity room (themed-rooms.md §2), so a temple of Bastet never has a floor without
+// ground to the god, before any activity room (themed-rooms.md: the god comes before an activity), so a temple of Bastet never has a floor without
 // her. A ward pocket of another rank does not count: it is dressed in that rank, where the god has no likeness.
 describe("the shipped world's patron floors", () => {
   const missing: string[] = []
