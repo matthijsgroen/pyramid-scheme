@@ -152,7 +152,7 @@ browser".
 - **Story beats.** The starter tomb: `tombIntro` then the cave beat at the mouth, the pillar beat at the cave's
   exit, the cavern beat on level 2, Ipi's afterword only after the cavern. At camp: `camp.firstHome`,
   `camp.homeHaul` / `camp.homeEmpty`, `camp.firstFind`. Settings (develop mode) plays every draft per area.
-- **Mosaic window.** "n van 252 stukjes", "k nieuw" and the bar once a piece is found; set them in by hand.
+- **Mosaic window.** "n van 416 stukjes", "k nieuw" and the bar once a piece is found; set them in by hand.
 - **A side path in a lock's corridor.** Heilige Ibis Migratie level 1 (`dropDown`): side paths s2–s4 stand on the
   lock's corridors. Walking between the lock's areas, do you meet a side path's puzzles and then its chest, with the
   lock's drop between them, and does it read as one walk rather than a detour? Piramide van Djoser level 4
@@ -163,3 +163,21 @@ browser".
   on "Floor 7". Does each flight run the way you go, does the passage feel deep, and does the reading inside the
   Sphinx land (the wall's copy still speaks of the sand)? The Sphinx's floor draws in placeholder colours until it
   is painted.
+
+## The starter release (#341)
+
+Play the starter journeys on a phone from a fresh save; develop mode for grants.
+
+- **Every floor can be left.** Tempel van Bastet level 2 and `starter_4` level 3: from the entrance there is a way on,
+  and nothing reads as a dead room. (A hidden path hung off the entrance turned it into a corridor.)
+- **Bastet on every floor.** All four Tempel van Bastet pyramids: a room with a pair of cat statues on the floor's own
+  stone, and in the smaller trade rooms a cat between the goods where their north door is not used. Do they read as
+  the temple's, not as clutter?
+- **Starter ward paths.** With a starter tomb key, the junior and expert pyramids show ward paths in starter stone,
+  ending in a chest. Is it clear these are worth a return?
+- **A chest on every tomb floor.** The starter tomb's cave and cavern floors each have one more side path with a
+  chest. Does the floor still read as tableau to tableau?
+- **The starter mosaic in plain sight.** Finish the starter journeys and their tomb without the detector: does the
+  starter panel fill completely? Each find is a smaller piece now (four per level); does it still feel like progress?
+- **Junior pockets on starter floors.** A junior ward path on a starter floor draws its empty surroundings as flat
+  brown blocks until the junior art is painted (art, not a carve fault): is it acceptable for the release?
