@@ -23,7 +23,7 @@ const labels: DetectorPanelLabels = {
   corridorOnFloor: "A hidden corridor waits on this floor",
   corridorNoneOnFloor: "No hidden corridor on this floor",
   corridorOtherFloor: "A hidden corridor waits on another floor",
-  corridorNoneInPyramid: "No hidden corridors found so far in this pyramid",
+  corridorNoneInPyramid: "No hidden corridor on another floor",
 }
 
 // This project doesn't enable RTL's automatic cleanup, so without this each test's markup stays
@@ -174,7 +174,7 @@ describe("DetectorPanel precision by level (§7.2)", () => {
     )
     expect(screen.getByText("No hidden corridor close by")).toBeTruthy()
     expect(screen.getByText("No hidden corridor on this floor")).toBeTruthy()
-    expect(screen.getByText("No hidden corridors found so far in this pyramid")).toBeTruthy()
+    expect(screen.getByText("No hidden corridor on another floor")).toBeTruthy()
   })
 
   it("answers each scope on its own, so a lead nearby does not imply one elsewhere", () => {
@@ -189,7 +189,7 @@ describe("DetectorPanel precision by level (§7.2)", () => {
     )
     expect(screen.getByText("A hidden corridor is close by")).toBeTruthy()
     expect(screen.getByText("A hidden corridor waits on this floor")).toBeTruthy()
-    expect(screen.getByText("No hidden corridors found so far in this pyramid")).toBeTruthy()
+    expect(screen.getByText("No hidden corridor on another floor")).toBeTruthy()
   })
 
   // The switcher carries the off switch now: a detector keeps running once the readout is shut, so

@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The camp: your home, which you build out with what you find on your travels.
 - A story: you meet Fez, travel with the explorer, and find somebody waiting in every tomb.
-- Hidden passages with puzzles and booby traps on every floor, worth coming back for.
+- Hidden passages with puzzles and booby traps on every floor, found and opened with the corridor detector.
 
 ### Changed
 

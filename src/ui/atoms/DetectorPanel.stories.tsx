@@ -23,7 +23,7 @@ const meta = {
       corridorOnFloor: "A hidden corridor waits on this floor",
       corridorNoneOnFloor: "No hidden corridor on this floor",
       corridorOtherFloor: "A hidden corridor waits on another floor",
-      corridorNoneInPyramid: "No hidden corridors found so far in this pyramid",
+      corridorNoneInPyramid: "No hidden corridor on another floor",
     },
     activeDetector: null,
     compassLevel: 0,
