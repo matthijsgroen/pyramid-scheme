@@ -11,6 +11,8 @@ export type DetectorPanelLabels = {
   access: Record<CompassAccess, string>
   more: (count: number) => string
   // The corridor ladder: each unlocked scope answers either way, so the readout is never silent.
+  corridorHere: string
+  revealCorridor: string
   corridorNearby: string
   corridorNoneNearby: string
   corridorOnFloor: string
@@ -41,6 +43,8 @@ type Props = {
   // player, L2 = anywhere on this floor, L3 = any other floor of this pyramid (L4 adds the marker on
   // the journey map). Each scope reports either way once unlocked.
   corridorNearby?: boolean
+  /** Standing at a hidden corridor's mouth: the readout offers to open it, and only then does it open. */
+  onRevealCorridor?: () => void
   floorHasHiddenCorridor?: boolean
   // Outstanding on floors OTHER than this one — and only floors already visited, so the L3 negative
   // says "none found so far" rather than claiming a pyramid is clean before it has been walked.
@@ -97,6 +101,7 @@ export const DetectorPanel: FC<Props> = ({
   detectorTitles,
   onSetDetector,
   corridorNearby = false,
+  onRevealCorridor,
   floorHasHiddenCorridor = false,
   hiddenCorridorOnOtherFloor = false,
 }) => {
@@ -157,6 +162,18 @@ export const DetectorPanel: FC<Props> = ({
         // that goes quiet reads as a broken detector, which is exactly how the old single-line
         // version came across: it only ever spoke up when it had news.
         <div className="text-stone-400">
+          {onRevealCorridor && (
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <p className="font-semibold text-amber-100">{labels.corridorHere}</p>
+              <button
+                onClick={onRevealCorridor}
+                className="animate-pulse rounded bg-amber-600 px-3 py-1 font-semibold text-amber-50 hover:bg-amber-500"
+                style={{ animationDuration: "1s" }}
+              >
+                {labels.revealCorridor}
+              </button>
+            </div>
+          )}
           <p className={corridorNearby ? "text-amber-200" : undefined}>
             {corridorNearby ? labels.corridorNearby : labels.corridorNoneNearby}
           </p>

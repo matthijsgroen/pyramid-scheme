@@ -51,6 +51,8 @@ export const useDetectorReadout = (levels: MergedDetectorLevels): DetectorReadou
         unknown: t("common:detector.access.unknown"),
       },
       more: count => t("common:detector.more", { count }),
+      corridorHere: t("common:detector.corridorHere"),
+      revealCorridor: t("common:detector.revealCorridor"),
       corridorNearby: t("common:detector.corridorNearby"),
       corridorNoneNearby: t("common:detector.corridorNoneNearby"),
       corridorOnFloor: t("common:detector.corridorOnFloor"),

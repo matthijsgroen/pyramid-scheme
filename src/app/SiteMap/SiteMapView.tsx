@@ -86,6 +86,7 @@ import { TileLayers } from "./tileLayers"
 import { regionBarrierCovers } from "@/game/regionBarrierCover"
 import { RegionBarrierCovers } from "./RegionBarrierCovers"
 import { useRegionBarrierCovers } from "./useRegionBarrierCovers"
+import { REVEAL_FADE_MS, useRevealWave } from "./useRevealWave"
 import { ARROW_RADIUS, PROMPT_LIFT, ringPoint } from "./arrowRing"
 import { buildOfferContext, clickTargetAt, markerAt, type OfferContext, type OfferMarker } from "./clickTargets"
 import {
@@ -1583,6 +1584,7 @@ export const SiteMapView = ({
     [grid, coverFrom[0], coverFrom[1]]
   )
   const barrierCovers = useRegionBarrierCovers(covers, `${grid.siteId}:${currentFloor ?? 0}`)
+  const revealing = useRevealWave(grid, `${grid.siteId}:${currentFloor ?? 0}`)
   // Corridor-run markers track the explorer dot's visual position, not the logical one:
   // hide them the instant a run target is clicked (the player has committed to a
   // destination, so the old markers no longer apply), and don't show the new ones at the
@@ -2165,6 +2167,24 @@ export const SiteMapView = ({
               standing={barrierCovers.standing}
               leaving={barrierCovers.leaving}
             />
+
+            {/* A CORRIDOR THE PLAYER JUST OPENED, still rock for a moment and coming out step by step from where they stand. */}
+            {revealing.map(({ at: [r, c], delay }) => (
+              <div
+                key={`reveal:${r},${c}`}
+                data-revealing={`${r},${c}`}
+                className="pointer-events-none absolute animate-corridor-reveal"
+                style={{
+                  left: cellLeft(c) - SIDE_W,
+                  top: cellTop(r) - WALL_H,
+                  width: CELL + 2 * SIDE_W,
+                  height: CELL + WALL_H + SIDE_W,
+                  background: tierPalette[tier].wallBase,
+                  animationDuration: `${REVEAL_FADE_MS}ms`,
+                  animationDelay: `${delay}ms`,
+                }}
+              />
+            ))}
 
             {/* The dark, and then the light in it: the place the explorer is standing is the hole the
               lamp burns in the shade, so it has to be laid over the shade rather than under it. */}

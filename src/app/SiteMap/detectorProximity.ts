@@ -5,12 +5,13 @@
 //   "pyramid"  somewhere else in this pyramid: slow pulse
 //   "floor"    on the floor the player is standing on: quicker
 //   "near"     within a few steps: fast
-export type ProximityBand = "none" | "pyramid" | "floor" | "near"
+export type ProximityBand = "none" | "pyramid" | "floor" | "near" | "here"
 
 export const PULSE_SECONDS: Record<Exclude<ProximityBand, "none">, number> = {
   pyramid: 2.6,
   floor: 1.2,
   near: 0.5,
+  here: 0.22,
 }
 
 /**
@@ -40,9 +41,16 @@ export const bandFromHits = (
  */
 export const corridorBand = (
   level: number,
-  { nearby, onThisFloor, onOtherFloor }: { nearby: boolean; onThisFloor: boolean; onOtherFloor: boolean }
+  {
+    here,
+    nearby,
+    onThisFloor,
+    onOtherFloor,
+  }: { here?: ReadonlySet<string>; nearby: boolean; onThisFloor: boolean; onOtherFloor: boolean }
 ): ProximityBand => {
   if (level <= 0) return "none"
+  // Standing at a corridor's mouth: the one reading the player can act on, so it shouts.
+  if (here && here.size > 0) return "here"
   if (nearby) return "near"
   if (level >= 2 && onThisFloor) return "floor"
   if (level >= 3 && onOtherFloor) return "pyramid"

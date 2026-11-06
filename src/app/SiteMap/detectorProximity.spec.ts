@@ -46,6 +46,12 @@ describe("corridorBand", () => {
     expect(corridorBand(0, { nearby: true, onThisFloor: true, onOtherFloor: true })).toBe("none")
   })
 
+  it("shouts at a corridor's mouth, above close-by", () => {
+    expect(corridorBand(1, { here: new Set(["h1"]), nearby: true, onThisFloor: true, onOtherFloor: false })).toBe(
+      "here"
+    )
+  })
+
   // Proximity is what L1 buys, so it reads at L1 — unlike the compass, whose L1 is pyramid-wide.
   it("reads close-by from L1", () => {
     expect(corridorBand(1, { nearby: true, onThisFloor: true, onOtherFloor: false })).toBe("near")

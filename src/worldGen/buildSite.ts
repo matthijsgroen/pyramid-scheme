@@ -18,6 +18,7 @@ import {
   resolveNodeChambers,
   resolveNodeDifficulties,
   resolveNodeLoot,
+  resolveNodeActors,
   resolveNodeSelectors,
 } from "./dsl"
 import { ONE_WAY_KIND, declaredBinding, regionBarrierBinding, resolveBinding } from "./realisationBinding"
@@ -114,6 +115,7 @@ export type BuildFloorOptions = {
   difficultiesByIndex?: FloorConfig["difficultiesByIndex"]
   loot?: FloorConfig["loot"]
   lootByIndex?: FloorConfig["lootByIndex"]
+  actorByIndex?: FloorConfig["actorByIndex"]
   forks?: FloorConfig["forks"]
   oneWays?: FloorConfig["oneWays"]
   oneWayRealisation?: FloorConfig["oneWayRealisation"]
@@ -176,6 +178,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
     : {}),
   ...(opts.loot === false ? { loot: false as const } : {}),
   ...(opts.lootByIndex && Object.keys(opts.lootByIndex).length ? { lootByIndex: opts.lootByIndex } : {}),
+  ...(opts.actorByIndex && Object.keys(opts.actorByIndex).length ? { actorByIndex: opts.actorByIndex } : {}),
   ...(opts.corridorStraightness !== undefined ? { corridorStraightness: opts.corridorStraightness } : {}),
   ...(opts.packing !== undefined ? { packing: opts.packing } : {}),
   ...(opts.sidePacking !== undefined ? { sidePacking: opts.sidePacking } : {}),
@@ -463,6 +466,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           difficultiesByIndex: resolveNodeDifficulties(fc.nodes, floorPP),
           loot: floorLoot,
           lootByIndex: resolveNodeLoot(fc.nodes, floorPP),
+          actorByIndex: resolveNodeActors(fc.nodes, floorPP),
           // A floor's own junctions win; otherwise the site's, the way `encounter` and `theme` resolve.
           forks: fc.forks ?? constraint.forks,
           oneWays: fc.oneWays ?? constraint.oneWays,

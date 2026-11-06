@@ -18,12 +18,14 @@ const BAND_COLOR: Record<Exclude<ProximityBand, "none">, string> = {
   pyramid: "bg-stone-400",
   floor: "bg-amber-300",
   near: "bg-amber-200",
+  here: "bg-amber-100",
 }
 
 const BAND_SIZE: Record<Exclude<ProximityBand, "none">, string> = {
   pyramid: "size-2",
   floor: "size-3",
   near: "size-4",
+  here: "size-5",
 }
 
 export const ProximityDot: FC<Props> = ({ band, label }) => {

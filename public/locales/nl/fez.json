@@ -727,6 +727,13 @@
       "4": { "explorer": "Genoteerd." }
     }
   },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": { "fez": "Ho. Daar zat net nog een muur." },
+      "2": { "explorer": "Daar zat een gang achter." },
+      "3": { "fez": "Al die jaren lopen mensen hier langs. Al die jaren!" }
+    }
+  },
 
   "reading": {
     "junior": {

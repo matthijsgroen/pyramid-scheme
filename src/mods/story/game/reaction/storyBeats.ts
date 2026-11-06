@@ -15,4 +15,5 @@ export const STORY_BEATS: ReadonlySet<string> = new Set([
   ...DRAFT_BEATS.structures,
   ...WIRED_ANIMAL_BEATS,
   ...BOND_BEATS,
+  "discovery.hiddenCorridor",
 ])

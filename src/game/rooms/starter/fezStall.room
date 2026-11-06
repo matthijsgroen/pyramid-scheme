@@ -1,4 +1,4 @@
-// designed by: Claude
+// designed by: Matthijs
 // starter. Fez's stall on the first floor: Fez at the north wall beside his counter, north of the place you stop.
 room fezStall
 tier starter
@@ -6,11 +6,14 @@ activity selling
 mirror
 
 layout
-# # d # #
-# . . k #
-d s . . d
-# . . . #
-# d d d #
+# # d c #
+# a . k #
+d . . s d
+# . b . #
+# d # d #
 
 k wall counter
 s stop
+b floor basketStack
+a floor scale
+c wallItem tallyBoard

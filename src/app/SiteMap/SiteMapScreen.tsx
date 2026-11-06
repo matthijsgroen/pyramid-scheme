@@ -172,6 +172,10 @@ export const SiteMapScreen = ({
   // Applies a claimed reward to game state; whether it reaches the player at all is useRewardOffer's.
   const applyReward = useApplyReward(progression, inventory, journeyId)
   const react = useMergedReactions()
+  const revealCorridor = () => {
+    corridors.reveal()
+    react({ kind: "corridorRevealed", journeyId })
+  }
   // A reward taken from the popup joins the haul the player brings home.
   const { addToHaul } = useHomeSave()
   const rewardOffer = useRewardOffer({ rewardContributions, applyReward, onTaken: addToHaul })
@@ -261,6 +265,7 @@ export const SiteMapScreen = ({
             if (!mode) detector.setReadoutOpen(false)
           }}
           corridorNearby={corridors.nearby}
+          onRevealCorridor={corridors.here.size > 0 ? revealCorridor : undefined}
           floorHasHiddenCorridor={corridors.onThisFloor}
           hiddenCorridorOnOtherFloor={corridors.onOtherFloor}
         />

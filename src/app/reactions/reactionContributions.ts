@@ -53,6 +53,8 @@ export type Reaction =
       tags: readonly string[]
     }
   | { kind: "chapterOpened"; tier: Difficulty }
+  /** The player opened a hidden corridor from the detector. */
+  | { kind: "corridorRevealed"; journeyId: string }
   | {
       /**
        * Alle reizen shows a locked tier or journey whose gate still has unmet needs. `unmet` holds the facts
