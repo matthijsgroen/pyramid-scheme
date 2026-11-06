@@ -90,6 +90,11 @@ describe("prefab variants and checks", () => {
     for (const fault of faults) expect(fault).toContain("layout #0, filled p@1,2")
   })
 
+  it("refuses a door behind a prop even when the door beside it is open", () => {
+    const prefab = room("", ["# # d # #", "# . s . #", "# p . . #", "# d d # #"], ["s stop", "p floor pillar"])
+    expect(prefabFaults(prefab).some(fault => fault.includes("door 0,2 and door 3,1"))).toBe(true)
+  })
+
   it("refuses a stop walled in by a filled optional place", () => {
     const prefab = room("", ["# # # # #", "# s g . #", "# # # d #"], ["s stop", "g floor? pillar"])
     const faults = prefabFaults(prefab)

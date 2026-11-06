@@ -185,10 +185,12 @@ const reachFrom = (
 ): Set<string> => {
   const rows = variant.cells.length
   const cols = variant.cells[0].length
-  const walkable = (r: number, c: number): boolean => {
+  const onRing = (r: number, c: number) => r === 0 || c === 0 || r === rows - 1 || c === cols - 1
+  // A door is entered straight from inside, never from the door beside it along the ring.
+  const walkable = (r: number, c: number, from: [number, number]): boolean => {
     if (r < 0 || c < 0 || r >= rows || c >= cols || blocked.has(`${r},${c}`)) return false
-    const ring = r === 0 || c === 0 || r === rows - 1 || c === cols - 1
-    return !ring || isDoorCell(prefab, variant.cells[r][c])
+    if (!onRing(r, c)) return true
+    return isDoorCell(prefab, variant.cells[r][c]) && !onRing(from[0], from[1])
   }
   const reached = new Set([`${start[0]},${start[1]}`])
   const stack = [start]
@@ -196,7 +198,7 @@ const reachFrom = (
     const [y, x] = stack.pop() as [number, number]
     for (const [dy, dx] of STEPS) {
       const key = `${y + dy},${x + dx}`
-      if (walkable(y + dy, x + dx) && !reached.has(key)) {
+      if (walkable(y + dy, x + dx, [y, x]) && !reached.has(key)) {
         reached.add(key)
         stack.push([y + dy, x + dx])
       }
