@@ -68,6 +68,7 @@
  *   --trim           trim the keyed background away and scale the object to fill the slot, keeping its
  *                    aspect. For a WALL item, whose frame IS its placement: a return with air round the
  *                    object leaves that air in the band and reads as a sticker stuck on the wall.
+ *   --lift=0.08      (prop) raise the object off the floor line by this fraction of its frame height.
  *   --no-trim        keep the frame as generated instead of re-seating the object on the floor line.
  *                    On an arch it skips the trim that discards everything around the timber.
  *   --cells=2x1      (prop) the prop covers COLS x ROWS cells, east across and south deep, so its slot is
@@ -529,7 +530,7 @@ const applyGamma = async (input: Buffer, exponent: number): Promise<Buffer> => {
     .toBuffer()
 }
 
-const seatOnFloorLine = async (img: sharp.Sharp, aspect: number, scale: number): Promise<sharp.Sharp> => {
+const seatOnFloorLine = async (img: sharp.Sharp, aspect: number, scale: number, lift: number): Promise<sharp.Sharp> => {
   // Encoded, not raw: `composite` needs an image it can parse, and a sharp instance built from a raw
   // buffer has no format of its own to fall back on.
   const trimmed = await img.trim({ threshold: 1 }).png().toBuffer({ resolveWithObject: true })
@@ -544,7 +545,13 @@ const seatOnFloorLine = async (img: sharp.Sharp, aspect: number, scale: number):
   const seated = await sharp({
     create: { width: frameW, height: frameH, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
   })
-    .composite([{ input: trimmed.data, left: Math.round((frameW - width) / 2), top: frameH - height }])
+    .composite([
+      {
+        input: trimmed.data,
+        left: Math.round((frameW - width) / 2),
+        top: Math.max(0, frameH - height - Math.round(frameH * lift)),
+      },
+    ])
     .png()
     .toBuffer()
   return sharp(seated)
@@ -604,7 +611,7 @@ const main = async (): Promise<void> => {
     img = sharp(ink.data)
   }
   if (seat && !tight && !process.argv.includes("--no-trim"))
-    img = await seatOnFloorLine(img, w / h, Number(arg("scale", "1")))
+    img = await seatOnFloorLine(img, w / h, Number(arg("scale", "1")), Number(arg("lift", "0")))
   // `--trim` is the positive of `--no-trim`, for the slots that never trim at all.
   //
   // A prop's frame is thrown away and its object re-seated; a WALL item's frame IS its placement, so a
