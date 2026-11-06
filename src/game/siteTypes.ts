@@ -653,6 +653,8 @@ export type SubSection = {
   loot?: false
   /** Per-node loot: 0-based room index → `false`, keeping generated loot out of that room alone. */
   lootByIndex?: Record<number, false>
+  /** Per-node somebody: 0-based room index → `false`, nobody standing in that room. */
+  actorByIndex?: Record<number, false>
   /** Pool of decoration kinds this section's rooms are dressed from. */
   decorations?: DecorationKind[]
   /** Pool of wall-item kinds for the same rooms, hung on a wall instead of standing on the floor. */
@@ -850,6 +852,8 @@ export type FloorConfig = {
   loot?: false
   /** Per-node loot for the main path: 0-based room index → `false`, keeping generated loot out of that room alone. */
   lootByIndex?: Record<number, false>
+  /** Per-node somebody: 0-based room index → `false`, nobody standing in that room. */
+  actorByIndex?: Record<number, false>
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65 (fairly straight); lower = more winding. */
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */

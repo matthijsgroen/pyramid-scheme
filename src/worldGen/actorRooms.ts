@@ -11,6 +11,7 @@ type Pinning = {
   encountersByIndex?: Record<number, string | string[]>
   prefabs?: Record<string, Prefab>
   prefabsByIndex?: Record<number, string>
+  actorByIndex?: Record<number, false>
 }
 type Section = Pinning & { sideSections?: Section[] }
 
@@ -18,7 +19,8 @@ const unfitIn = (section: Pinning, resolve: ResolveEncounter, where: string): st
   Object.entries(section.prefabsByIndex ?? {}).flatMap(([index, name]) => {
     const encounter = section.encountersByIndex?.[Number(index)] ?? section.encounter
     const prefab = section.prefabs?.[name]
-    if (!prefab || !resolve(encounter, "puzzle").actor || fitsActor(prefab)) return []
+    if (!prefab || section.actorByIndex?.[Number(index)] === false) return []
+    if (!resolve(encounter, "puzzle").actor || fitsActor(prefab)) return []
     return [
       `${where}#${Number(index) + 1}: room ${name} has no bare cell north of its stop off every walk for somebody`,
     ]

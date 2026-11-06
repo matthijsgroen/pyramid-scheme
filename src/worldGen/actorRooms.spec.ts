@@ -38,6 +38,16 @@ describe("rooms pinned to somebody", () => {
     )
   })
 
+  it("a node authored with nobody in it takes an unfit room", () => {
+    const configs = floorWith({
+      prefabs: { passage },
+      prefabsByIndex: { 2: "passage" },
+      encountersByIndex: { 2: "chat" },
+      actorByIndex: { 2: false },
+    })
+    expect(() => refuseUnfitActorRooms(configs, resolve)).not.toThrow()
+  })
+
   it("names a pinned room in a side section by its section", () => {
     const configs = floorWith({
       sideSections: [

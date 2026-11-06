@@ -109,6 +109,8 @@ const serializeSideSection = (s: SideSection): string => {
   if (s.loot === false) parts.push(`loot: false`)
   if (s.lootByIndex && Object.keys(s.lootByIndex).length)
     parts.push(`lootByIndex: ${serializeLootByIndex(s.lootByIndex)}`)
+  if (s.actorByIndex && Object.keys(s.actorByIndex).length)
+    parts.push(`actorByIndex: ${serializeLootByIndex(s.actorByIndex)}`)
   if (s.sideSections?.length)
     parts.push(`sideSections: [${s.sideSections.map(sub => serializeSideSection(sub as SideSection)).join(", ")}]`)
   return `{ ${parts.join(", ")} }`
@@ -226,6 +228,7 @@ const floorFieldEmitters: {
   difficultiesByIndex: v => (Object.keys(v).length ? `difficultiesByIndex: ${serializeEncountersByIndex(v)}` : null),
   loot: () => `loot: false`,
   lootByIndex: v => (Object.keys(v).length ? `lootByIndex: ${serializeLootByIndex(v)}` : null),
+  actorByIndex: v => (Object.keys(v).length ? `actorByIndex: ${serializeLootByIndex(v)}` : null),
   corridorStraightness: v => `corridorStraightness: ${v}`,
   packing: v => `packing: ${v}`,
   sidePacking: v => `sidePacking: ${v}`,

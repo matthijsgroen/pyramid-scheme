@@ -79,6 +79,8 @@ export type NodeSelector = {
   difficulty?: Difficulty
   /** `false` keeps generated loot out of this room. Authored rewards are never touched. */
   loot?: false
+  /** `false`: nobody stands in this room, whatever its encounter's family says, so its room needs no place for them. */
+  actor?: false
   /** A pass-through chamber in the gap after the selected room: a corridor node widened into a room dressed for
    * this activity, or for one the carve picks where `true`. The room itself stays where it is. */
   chamberAfter?: ActivityId | true
@@ -146,6 +148,10 @@ export const resolveNodeDifficulties = (nodes: NodeSelector[] | undefined, count
 /** Expand `nodes` selectors into a sparse 0-based index → `false` map of the rooms kept free of generated loot. */
 export const resolveNodeLoot = (nodes: NodeSelector[] | undefined, count: number): Record<number, false> =>
   resolveNodeField(nodes, count, sel => sel.loot)
+
+/** Expand `nodes` selectors into a sparse 0-based index → `false` map of the rooms nobody stands in. */
+export const resolveNodeActors = (nodes: NodeSelector[] | undefined, count: number): Record<number, false> =>
+  resolveNodeField(nodes, count, sel => sel.actor)
 
 /** Expand `nodes` selectors into a sparse 0-based index → the chamber that stands after that room. */
 export const resolveNodeChambers = (
