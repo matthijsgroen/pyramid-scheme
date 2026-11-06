@@ -27,8 +27,8 @@ const resolveKeyRequirements: ResolveKeyRequirements = (familyId, ctx) =>
   getFamilyPlugin(familyId)?.meta.resolveKeyRequirements?.(ctx)
 
 // Filed by the section's AUTHORING address, so re-authoring what is inside a section no longer makes
-// it a different section. There is no older address format to fall back to: a save still holding the
-// structural hashes is re-keyed from the coordinate archive before it is ever read (cellKeyVersion).
+// it a different section. There is no older address format to fall back to: a save from before this
+// key format is thrown away at launch (SAVE_EPOCH).
 // A save never calls a WALL explored. A way out a switch shut is not ground, so a key naming one is
 // a leftover from a floor where it could still be walked onto — and honouring it would carry the
 // section's high-water mark past the bars, which is the whole floor beyond them coming back lit.
@@ -227,6 +227,35 @@ export const sealWaysOut = (grid: FloorGrid): FloorGrid => {
   return { ...grid, cells }
 }
 
+/** The floor as a player without ward keys sees it: every ward gate stands, and what only a ward gate leads to is
+ * masked the way an unfound hidden path is. */
+export const maskWardCells = (grid: FloorGrid): FloorGrid => {
+  const isWardGate = (cell: GridCell) => cell.type === "room" && cell.gateVariant === "tomb-key"
+  const reached = new Set<string>()
+  const queue: [number, number][] = [[grid.entrancePos[0], grid.entrancePos[1]]]
+  reached.add(`${queue[0][0]},${queue[0][1]}`)
+  while (queue.length > 0) {
+    const [r, c] = queue.shift()!
+    const cell = grid.cells[r][c]
+    if ((cell.type !== "room" && cell.type !== "corridor") || isWardGate(cell)) continue
+    for (const dir of cell.dirs) {
+      const [dr, dc] = DIR_MOVES[dir]
+      const key = `${r + dr},${c + dc}`
+      if (reached.has(key) || !grid.cells[r + dr]?.[c + dc]) continue
+      reached.add(key)
+      queue.push([r + dr, c + dc])
+    }
+  }
+  const cells = grid.cells.map((row, r) =>
+    row.map((cell, c): GridCell =>
+      (cell.type === "room" || cell.type === "corridor") && !reached.has(`${r},${c}`)
+        ? { ...cell, hidden: true, sectionAddress: cell.sectionAddress ?? "ward" }
+        : cell
+    )
+  )
+  return maskHiddenCells({ ...grid, cells }, new Set()).masked
+}
+
 // Mask hidden cells: map to empty, strip dirs pointing into them from neighbours. Run on the floor's shape
 // before what has been explored, so the explored cascade walks only what the player can see.
 // revealedSections: authoring addresses whose hidden sections have been revealed by the player.
@@ -318,8 +347,16 @@ export const maskHiddenCells = (
           //
           // NEVER A ROOM THAT HOLDS SOMETHING. Rebuilt as a corridor it would shed its family, its tags
           // and its exits, and a corridor has no slot, so a switch's puzzle would vanish and its solved
-          // state would have nowhere to come back to. A room beside a peeled connector reaches this.
-          if (cell.type === "room" && dirsChanged && newDirs.size <= 2 && cell.family === undefined) {
+          // state would have nowhere to come back to. A room beside a peeled connector reaches this. Nor a
+          // portal: the entrance, the exit and a stairhead are where the player arrives and leaves, so a hidden
+          // path hung off one must leave it a room.
+          if (
+            cell.type === "room" &&
+            dirsChanged &&
+            newDirs.size <= 2 &&
+            cell.family === undefined &&
+            cell.roomType !== "portal"
+          ) {
             return {
               type: "corridor",
               dirs: newDirs as ReadonlySet<Direction>,

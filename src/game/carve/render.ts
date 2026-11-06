@@ -71,7 +71,11 @@ const wallSuiting = (pool: WallDecorationKind[], prop: DecorationKind | undefine
  * Its edges ask the authored doors only, never a switch's: what `forks` reserved is carved the same whether or
  * not a mod stands a switch in it.
  */
-export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid => {
+export const renderGround = (
+  prep: FloorPrep,
+  state: RenderState,
+  roomAnchors: ReadonlySet<string> = new Set()
+): WritableGrid => {
   const { siteId } = prep.input
   const { config } = prep.config
   const { mainSectionHash, legacyMainSectionHash } = prep.hashes
@@ -292,6 +296,7 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
       const [r, c] = pk.split(",").map(Number)
       return [r, c]
     }
+    const ownGround = (pk: string): boolean => (labels.difficulty.get(pk) ?? config.difficulty) === config.difficulty
     const isFork = (pk: string): boolean => {
       const [r, c] = rowCol(pk)
       const cell = cells2D[r][c]
@@ -300,16 +305,20 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
     const eligible = [...new Set([...forks, ...endpointPositions])]
       .filter(pk => (labels.dressing.get(pk)?.props ?? []).some(k => PATRON_KINDS.has(k)))
       .filter(pk => roomSpecs.get(pk)?.authoredActivity === undefined)
-      // A designed room pinned here is its own dressing (placePrefabs.ts): the god would lose his room to it.
-      .filter(pk => roomSpecs.get(pk)?.pinnedPrefab === undefined)
+      // A designed room pinned here is its own dressing (placePrefabs.ts): the god would lose his room to it. The
+      // rooms a floor's list lays (`roomAnchors`) dress themselves too, and the god comes before an activity
+      // (themed-rooms.md, who has the room), so he takes a chamber they leave free.
+      .filter(pk => roomSpecs.get(pk)?.pinnedPrefab === undefined && !roomAnchors.has(pk))
       .filter(pk => {
         const spec = roomSpecs.get(pk)
         const [r, c] = rowCol(pk)
         const cell = cells2D[r][c]
         return cell.type === "room" && cell.roomType !== "portal" && !(spec && isMechanism(pk, spec))
       })
+      // The floor's own ground first: a ward pocket is dressed in its own rank, where the god has no likeness.
       .sort(
         (a, b) =>
+          Number(ownGround(b)) - Number(ownGround(a)) ||
           Number(isFork(b)) - Number(isFork(a)) ||
           footprintSize(claimGrid, ...rowCol(b)) - footprintSize(claimGrid, ...rowCol(a)) ||
           hashString(`${siteId}:patronPick:${a}`) - hashString(`${siteId}:patronPick:${b}`) ||
@@ -513,8 +522,12 @@ export const renderShut = (prep: FloorPrep, state: RenderState): WritableGrid =>
  * tying each mechanism to its doors. A door nothing mints the key for is not a door, so a reserved junction with
  * no switch stays open.
  */
-export const render = (prep: FloorPrep, state: RenderState): WritableGrid => {
-  const grid = renderGround(prep, state)
+export const render = (
+  prep: FloorPrep,
+  state: RenderState,
+  roomAnchors: ReadonlySet<string> = new Set()
+): WritableGrid => {
+  const grid = renderGround(prep, state, roomAnchors)
   const cells = grid.cells
   shutJunctions(prep, state, cells, state.forks.switchesPlaced)
   for (const [pk, room] of state.switchRooms) {

@@ -3,7 +3,6 @@ import { registerDevJumps } from "@/app/dev/devActionContributions"
 import { useJourneys } from "@/app/state/useJourneys"
 import { assemblePlayedFloor } from "@/app/SiteMap/useAssembledFloor"
 import { cellAddress, findByAddress, floorOfAddress } from "@/app/SiteMap/cellIdentity"
-import { encodeEdge } from "@/app/SiteMap/edgeId"
 import { isModEnabled } from "@/mods/registeredMods"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { findPath, revealAll } from "@/game/gridNavigation"
@@ -14,7 +13,8 @@ import { STORY_ROOMS, storyRoomPlace, type StoryRoom } from "../game/storyRooms"
 export type StoryRoomLanding = {
   levelNr: number
   address: string | null
-  walkedOnto?: { sectionHash: string; cellId: string }
+  /** The landing is written down explored, as walking onto it would. */
+  walked?: boolean
 }
 
 const IN_ROOM = new Set<string | undefined>(["inner", "node"])
@@ -47,11 +47,7 @@ export const storyRoomLanding = (room: StoryRoom): StoryRoomLanding => {
   const cell = doorstep && carved.grid.cells[doorstep[0]][doorstep[1]]
   const doorstepAddress = doorstep && cellAddress(carved.grid, floor, doorstep[0], doorstep[1])
   if (cell?.type !== "corridor" || !doorstepAddress) return { levelNr, address }
-  return {
-    levelNr,
-    address: doorstepAddress,
-    walkedOnto: { sectionHash: cell.sectionHash ?? "", cellId: encodeEdge(floor, doorstep[0], doorstep[1]) },
-  }
+  return { levelNr, address: doorstepAddress, walked: true }
 }
 
 const useStoryJumps = () => {
@@ -61,8 +57,8 @@ const useStoryJumps = () => {
       STORY_ROOMS.map(room => ({
         label: room.label,
         jump: () => {
-          const { levelNr, address, walkedOnto } = storyRoomLanding(room)
-          return enterAt(room.journeyId, levelNr, address, walkedOnto)
+          const { levelNr, address, walked } = storyRoomLanding(room)
+          return enterAt(room.journeyId, levelNr, address, walked)
         },
       })),
     [enterAt]

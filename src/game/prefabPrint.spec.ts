@@ -44,6 +44,25 @@ describe("printPrefab", () => {
     expect(parse(printPrefab(hall))).toEqual(hall)
   })
 
+  it("prints a named door and a place standing unless it is used", () => {
+    const shrine = parse(`tier junior
+layout
+# # N # #
+# g p g #
+d s . . d
+# # # # #
+
+N door
+g floor pillar
+p floor? patron unless N
+s stop
+`)
+    const text = printPrefab(shrine)
+    expect(text).toContain("p floor? patron unless N")
+    expect(text).toContain("N door")
+    expect(parse(text)).toEqual(shrine)
+  })
+
   it("writes a named list by its name", () => {
     expect(printPrefab(parse(HALL))).toContain("g floor? gift | brazier 1 of 2 per p")
   })

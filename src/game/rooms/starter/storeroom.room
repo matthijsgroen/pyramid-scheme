@@ -8,7 +8,7 @@ holds chest
 
 layout
 # n d # #
-# w . . #
+# w . p #
 d s . . d
 # . . . #
 # d d d #
@@ -16,4 +16,5 @@ d s . . d
 stock = jarRack | shelf
 w wall stock
 n wallItem? niche
+p floor? patron
 s stop

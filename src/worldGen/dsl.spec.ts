@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest"
+import { resolvePyramidConstraint } from "./constraintResolver"
 import {
   global,
   tier,
@@ -307,6 +308,14 @@ describe("journey() builder", () => {
     expect(r.scope.level).toBe("journey-pyramid")
     const floors = (r.constraints as { floors?: unknown[] }).floors
     expect(floors?.[2]).toEqual({ difficulty: "junior" })
+  })
+
+  it("journey(id).pyramid(n, c) without a floor leaves another rule's authored floors standing", () => {
+    const authored = journey("made_up").pyramid(2).floor(0, { difficulty: "junior" })
+    const later = journey("made_up").pyramid(2, { wardPaths: 1 })
+    const resolved = resolvePyramidConstraint([authored, later], "made_up", "junior", 1, 3)
+    expect(resolved.floors?.[0]).toEqual({ difficulty: "junior" })
+    expect(resolved.wardPaths).toBe(1)
   })
 })
 

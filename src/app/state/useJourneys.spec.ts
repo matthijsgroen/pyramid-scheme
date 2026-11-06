@@ -2,7 +2,6 @@ import { describe, expect, it, vi } from "vitest"
 import { createJourneysV3Api, MECHANISM_AT_REST, type StoredJourneyStateV3 } from "./useJourneys"
 import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { journeys as allJourneys } from "@/data/journeys"
-import { migrateJourneyToCarveIndependent } from "@/app/SiteMap/cellIdentity"
 import { RELAID_FLOORS_VERSION } from "@/app/SiteMap/relaidPyramids"
 
 // completeJourney checks against knownJourneyIds (the real journey list), so we
@@ -27,8 +26,6 @@ const makeStoredJourney = (overrides: Partial<StoredJourneyStateV3> = {}): Store
   levelNr: 1,
   completionCount: 0,
   active: true,
-  exploredSections: {},
-  position: null,
   interiorLevelNr: null,
   ...overrides,
 })
@@ -43,7 +40,7 @@ const makeApi = (journeys: StoredJourneyStateV3[], setJourneys = vi.fn()) =>
 // ── markCellExplored ──────────────────────────────────────────────────────────
 
 describe("markCellExplored", () => {
-  it("stores the cell under the section hash key", () => {
+  it("stores the cell under its section's authoring address", () => {
     const stored = makeStoredJourney()
     let state = [stored]
     const api = createJourneysV3Api({
@@ -53,8 +50,8 @@ describe("markCellExplored", () => {
       },
       journeyData: [makeJourneyData(REAL_ID)],
     })
-    api.markCellExplored("abc123", "0:3,4")
-    expect(state[0].exploredSections["1:abc123"]).toContain("0:3,4")
+    api.markCellExplored("sec#0/p4")
+    expect(state[0].exploredCells?.["1:sec"]).toContain("0/p4")
   })
 
   it("keys by the level the caller was standing in, not the one the write lands on", () => {
@@ -70,9 +67,9 @@ describe("markCellExplored", () => {
       },
       journeyData: [makeJourneyData(REAL_ID)],
     })
-    api.markCellExplored("abc123", "0:3,4")
-    expect(state[0].exploredSections["1:abc123"]).toContain("0:3,4")
-    expect(state[0].exploredSections["2:abc123"]).toBeUndefined()
+    api.markCellExplored("sec#0/p4")
+    expect(state[0].exploredCells?.["1:sec"]).toContain("0/p4")
+    expect(state[0].exploredCells?.["2:sec"]).toBeUndefined()
   })
 
   it("deduplicates: calling twice does not double-store", () => {
@@ -85,9 +82,9 @@ describe("markCellExplored", () => {
       },
       journeyData: [makeJourneyData(REAL_ID)],
     })
-    api.markCellExplored("abc123", "0:1,2")
-    api.markCellExplored("abc123", "0:1,2")
-    expect(state[0].exploredSections["1:abc123"]).toHaveLength(1)
+    api.markCellExplored("sec#0/p2")
+    api.markCellExplored("sec#0/p2")
+    expect(state[0].exploredCells?.["1:sec"]).toHaveLength(1)
   })
 
   it("getExploredCells returns sections for the current level, with prefix stripped", () => {
@@ -116,39 +113,24 @@ describe("updatePosition", () => {
   }
 
   it("walking onto a place records it", () => {
-    const { state } = run(api => api.updatePosition(REAL_ID, "sec#0/p2", "0:1,2"))
+    const { state } = run(api => api.updatePosition(REAL_ID, "sec#0/p2"))
     expect(state[0].positionKey).toBe("sec#0/p2")
-    expect(state[0].position).toBe("0:1,2")
   })
 
   it("leaves the recorded position at the last place, not the bend just walked onto", () => {
-    const { state } = run(api => api.updatePosition(REAL_ID, "sec#0/~4", "0:1,3"), {
-      position: "0:1,2",
-      positionKey: "sec#0/p2",
-    })
+    const { state } = run(api => api.updatePosition(REAL_ID, "sec#0/~4"), { positionKey: "sec#0/p2" })
     expect(state[0].positionKey).toBe("sec#0/p2")
-    expect(state[0].position).toBe("0:1,2")
   })
 
   it("a player who has only stood on bends since entering resolves to the entrance (null)", () => {
     const { state } = run(
       api => {
-        api.updatePosition(REAL_ID, "sec#0/~1", "0:0,1")
-        api.updatePosition(REAL_ID, "sec#0/~2", "0:0,2")
+        api.updatePosition(REAL_ID, "sec#0/~1")
+        api.updatePosition(REAL_ID, "sec#0/~2")
       },
-      { position: null, positionKey: null }
+      { positionKey: null }
     )
     expect(state[0].positionKey).toBeNull()
-    expect(state[0].position).toBeNull()
-  })
-
-  it("keeps the raw archive and the address in step, even across an ignored bend", () => {
-    const { state } = run(api => {
-      api.updatePosition(REAL_ID, "sec#0/p2", "0:1,2")
-      api.updatePosition(REAL_ID, "sec#0/~5", "0:1,5")
-    })
-    expect(state[0].position).toBe("0:1,2")
-    expect(state[0].positionKey).toBe("sec#0/p2")
   })
 })
 
@@ -160,15 +142,7 @@ describe("standingKey clears wherever positionKey does", () => {
   // outranks `positionKey` in both readers. A sixth writer is caught the day it exists.
   const STALE = "sec#0/~4"
   const journey = allJourneys.find(j => j.id === REAL_ID)!
-  // The real migration's output, so the guard sees what the launch hands to setCarveIndependentState.
-  const carveState = migrateJourneyToCarveIndependent({ levelNr: 1, position: "0:1,2" }, () => null)
-  const argumentShapes: unknown[][] = [
-    [],
-    [REAL_ID, 2],
-    [journey],
-    [REAL_ID, carveState],
-    [REAL_ID, "sec#0/p9", "0:9,9"],
-  ]
+  const argumentShapes: unknown[][] = [[], [REAL_ID, 2], [journey], [REAL_ID, "sec#0/p9"]]
   const startingPoints = [1, journey.levelCount + 1]
 
   const probe = () => {
@@ -179,7 +153,7 @@ describe("standingKey clears wherever positionKey does", () => {
     for (const name of names) {
       for (const levelNr of startingPoints) {
         for (const args of argumentShapes) {
-          let state = [makeStoredJourney({ levelNr, position: "0:1,2", positionKey: "sec#0/p2", standingKey: STALE })]
+          let state = [makeStoredJourney({ levelNr, positionKey: "sec#0/p2", standingKey: STALE })]
           const api = createJourneysV3Api({
             journeys: state,
             setJourneys: updater => {
@@ -210,16 +184,12 @@ describe("standingKey clears wherever positionKey does", () => {
   })
 
   it("the writers it finds are the ones known, so a probe gone blind or a new writer is noticed", () => {
-    // setRepairedExploration is listed because the probe hands it a carve state, which it spreads; its
-    // own argument type carries no positionKey.
     expect([...probe().keys()].sort()).toEqual(
       [
         "completeJourney",
         "completeLevel",
         "enterAt",
-        "setCarveIndependentState",
         "setRelaidFloors",
-        "setRepairedExploration",
         "startJourney",
         "updatePosition",
         "visitLevel",
@@ -235,8 +205,8 @@ describe("completeJourney", () => {
     makeStoredJourney({
       levelNr: 5,
       completionCount: 0,
-      exploredSections: { sec1: ["0:1,2", "0:1,3"], sec2: ["0:2,2"], sec3: ["0:3,3"] },
-      position: "0:3,3",
+      exploredCells: { "5:sec1": ["0/p1", "0/p2"], "5:sec2": ["0/p0"] },
+      positionKey: "sec1#0/p2",
       active: true,
     })
 
@@ -268,7 +238,7 @@ describe("completeJourney", () => {
     expect(state[0].completionCount).toBe(1)
   })
 
-  it("preserves exploredSections so exploration is intact on revisit", () => {
+  it("preserves exploredCells so exploration is intact on revisit", () => {
     const stored = makeActiveJourney()
     let state = [stored]
     const api = createJourneysV3Api({
@@ -279,7 +249,7 @@ describe("completeJourney", () => {
       journeyData: [makeJourneyData(REAL_ID)],
     })
     api.completeJourney()
-    expect(state[0].exploredSections).toEqual(stored.exploredSections)
+    expect(state[0].exploredCells).toEqual(stored.exploredCells)
   })
 
   it("preserves levelNr so the player returns to where they left off", () => {
@@ -307,7 +277,7 @@ describe("completeJourney", () => {
       journeyData: [makeJourneyData(REAL_ID)],
     })
     api.completeJourney()
-    expect(state[0].position).toBeNull()
+    expect(state[0].positionKey).toBeNull()
   })
 })
 
@@ -747,109 +717,6 @@ describe("navigation mutators are awaitable", () => {
   })
 })
 
-// ── the ordinal backfill (docs/game-design/world-stability.md) ─────────────────
-
-describe("re-keying bookkeeping", () => {
-  it("offers a save that has coordinates but no ordinals", () => {
-    const api = makeApi([makeStoredJourney({ exploredSections: { "1:abc": ["0:3,4"] } })])
-
-    expect(api.journeysNeedingReKey().map(j => j.journeyId)).toEqual([REAL_ID])
-  })
-
-  // The key format has changed once already (the floor joined it). A save re-keyed under the old one
-  // is as wrong as an untranslated save, and the archive it was translated from is still there.
-  it("offers a save translated under an older key format", () => {
-    const api = makeApi([
-      makeStoredJourney({
-        exploredSections: { "1:abc": ["0:3,4"] },
-        exploredCells: { "1:abc": ["7@rfork"] },
-        cellKeyVersion: 2,
-      }),
-    ])
-
-    expect(api.journeysNeedingReKey().map(j => j.journeyId)).toEqual([REAL_ID])
-  })
-
-  it("picks up an unstamped save even with nothing to translate, so it ends up stamped", () => {
-    expect(
-      makeApi([makeStoredJourney()])
-        .journeysNeedingReKey()
-        .map(j => j.journeyId)
-    ).toEqual([REAL_ID])
-  })
-
-  it("counts an EMPTY result as migrated, so it is not retried on every launch", () => {
-    // A save whose every stored coordinate turned out to be stale translates to nothing. That is a
-    // finished migration, not an unstarted one — the stamp says so, not the contents.
-    const api = makeApi([
-      makeStoredJourney({ exploredSections: { "1:abc": ["0:3,4"] }, exploredCells: {}, cellKeyVersion: 3 }),
-    ])
-
-    expect(api.journeysNeedingReKey()).toEqual([])
-  })
-
-  it("writes the re-keyed state against the journey it came from", () => {
-    let state = [makeStoredJourney({ exploredSections: { "1:abc": ["0:3,4"] } })]
-    const api = createJourneysV3Api({
-      journeys: state,
-      setJourneys: updater => {
-        state = typeof updater === "function" ? updater(state) : updater
-      },
-      journeyData: [makeJourneyData(REAL_ID)],
-    })
-
-    api.setCarveIndependentState(REAL_ID, {
-      exploredCells: { "1:abc": ["0/p7"] },
-      positionKey: "abc#0/p7",
-      standingKey: null,
-      purchasedStock: ["1:abc#0/p2!0"],
-      knownHiddenCorridors: [],
-      foundHiddenCorridors: [],
-    })
-
-    expect(state[0].exploredCells).toEqual({ "1:abc": ["0/p7"] })
-    expect(state[0].positionKey).toBe("abc#0/p7")
-    expect(state[0].purchasedStock).toEqual(["1:abc#0/p2!0"])
-    // Stamped, so the next launch leaves it alone — and the coordinates stay as the archive.
-    expect(state[0].cellKeyVersion).toBe(3)
-    expect(state[0].exploredSections).toEqual({ "1:abc": ["0:3,4"] })
-  })
-})
-
-// ── the stamp as a watermark, which the reshape release reads ─────────────────
-
-describe("cellKeyVersion as a record of having been through this release", () => {
-  it("offers a save with nothing explored, so every save ends up stamped", () => {
-    // Not because there is anything to translate — there is not — but because the reshape decides
-    // whether a save can be carried across at all by this stamp, and "no pyramid walked yet" must not
-    // read the same as "never migrated".
-    const api = makeApi([makeStoredJourney({ exploredSections: {} })])
-
-    expect(api.journeysNeedingReKey().map(j => j.journeyId)).toEqual([REAL_ID])
-  })
-
-  it("starts a new journey already stamped", async () => {
-    let state: StoredJourneyStateV3[] = []
-    const api = createJourneysV3Api({
-      journeys: state,
-      setJourneys: updater => {
-        state = typeof updater === "function" ? updater(state) : updater
-      },
-      journeyData: [makeJourneyData(REAL_ID)],
-    })
-
-    await api.startJourney({ id: REAL_ID, levelCount: REAL_LEVEL_COUNT } as Parameters<typeof api.startJourney>[0])
-
-    expect(state[0].cellKeyVersion).toBe(3)
-  })
-
-  it("leaves a save that already carries the current stamp alone", () => {
-    const api = makeApi([makeStoredJourney({ cellKeyVersion: 3 })])
-
-    expect(api.journeysNeedingReKey()).toEqual([])
-  })
-})
-
 describe("the re-laid pyramids step", () => {
   const stateful = (stored: StoredJourneyStateV3) => {
     let state = [stored]
@@ -866,7 +733,6 @@ describe("the re-laid pyramids step", () => {
   const standing = makeStoredJourney({
     levelNr: 2,
     interiorLevelNr: 2,
-    position: "0:1,2",
     positionKey: "main#0/p2",
     standingKey: "main#0/~7",
     exploredCells: { "2:main": ["0/p0", "0/p2"] },
@@ -892,27 +758,10 @@ describe("the re-laid pyramids step", () => {
 
     expect(current()).toEqual({
       ...standing,
-      position: null,
       positionKey: null,
       standingKey: null,
       relaidFloorsVersion: RELAID_FLOORS_VERSION,
     })
-  })
-
-  it("forgets the place the re-key derived in the same launch", () => {
-    const { api, current } = stateful({ ...standing, positionKey: null, cellKeyVersion: undefined })
-
-    api.setCarveIndependentState(REAL_ID, {
-      exploredCells: { "2:main": ["0/p0", "0/p2"] },
-      positionKey: "main#0/p2",
-      standingKey: null,
-      purchasedStock: [],
-      knownHiddenCorridors: [],
-      foundHiddenCorridors: [],
-    })
-    api.setRelaidFloors(REAL_ID, true)
-
-    expect(current()).toMatchObject({ positionKey: null, position: null, standingKey: null, cellKeyVersion: 3 })
   })
 
   it("only stamps a save that stands elsewhere", () => {
@@ -955,7 +804,6 @@ describe("coming back to a pyramid from the travel map", () => {
   const insideTwo = makeStoredJourney({
     levelNr: 2,
     interiorLevelNr: 2,
-    position: "0:1,2",
     positionKey: "main#1/p2",
     standingKey: "main#1/~7",
   })
@@ -977,7 +825,7 @@ describe("coming back to a pyramid from the travel map", () => {
 
     await api.visitLevel(REAL_ID, 3)
 
-    expect(current()).toMatchObject({ levelNr: 3, position: null, positionKey: null, standingKey: null })
+    expect(current()).toMatchObject({ levelNr: 3, positionKey: null, standingKey: null })
   })
 
   it("starts a save that remembers no position, as an older save, at the entrance", async () => {
@@ -1005,7 +853,7 @@ describe("coming back to a pyramid from the travel map", () => {
     const { api, current } = stateful(insideTwo)
     await api.visitLevel(REAL_ID, 3)
     api.setInteriorLevel(REAL_ID, 3)
-    api.updatePosition(REAL_ID, "main#0/p1", "0:2,2")
+    api.updatePosition(REAL_ID, "main#0/p1")
     await api.visitLevel(REAL_ID, 4)
 
     api.setRelaidFloors(REAL_ID, false, [2, 4])
@@ -1067,14 +915,10 @@ describe("enterAt", () => {
   })
 
   it("writes the ground it stands the explorer on down explored, and resumes a corridor at no place", () => {
-    const [placed] = run([makeStoredJourney({ active: false })], REAL_ID, 2, "main#0/~3|4", {
-      sectionHash: "h",
-      cellId: "0:5,6",
-    })
+    const [placed] = run([makeStoredJourney({ active: false })], REAL_ID, 2, "main#0/~3|4", true)
 
     expect(placed).toMatchObject({ positionKey: null, standingKey: "main#0/~3|4" })
     expect(placed.exploredCells?.["2:main"]).toContain("0/~3|4")
-    expect(placed.exploredSections["2:h"]).toContain("0:5,6")
   })
 
   it("starts a journey that never was, and puts the active one down", () => {

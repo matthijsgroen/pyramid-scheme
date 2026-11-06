@@ -90,6 +90,11 @@ describe("prefab variants and checks", () => {
     for (const fault of faults) expect(fault).toContain("layout #0, filled p@1,2")
   })
 
+  it("refuses a door behind a prop even when the door beside it is open", () => {
+    const prefab = room("", ["# # d # #", "# . s . #", "# p . . #", "# d d # #"], ["s stop", "p floor pillar"])
+    expect(prefabFaults(prefab).some(fault => fault.includes("door 0,2 and door 3,1"))).toBe(true)
+  })
+
   it("refuses a stop walled in by a filled optional place", () => {
     const prefab = room("", ["# # # # #", "# s g . #", "# # # d #"], ["s stop", "g floor? pillar"])
     const faults = prefabFaults(prefab)
@@ -178,5 +183,31 @@ describe("a room fit for somebody", () => {
     expect(() => room("", ["# # d # #", "# a s . #", "# # # # #"], ["s stop", "a actor"])).toThrow(
       /neither a layer nor a special/
     )
+  })
+})
+
+describe("a place standing unless a named door is used", () => {
+  // A packing room's north door between two goods: the shrine between them shuts that door when it stands.
+  const shrine = (legend: string) =>
+    room("", ["# # N # #", "# g p g #", "d s . . d", "# # # # #"], ["N door", "s stop", "g floor bales", legend])
+
+  it("reads the door as a door and the place as standing only while it is unused", () => {
+    const prefab = shrine("p floor? statue unless N")
+    expect(prefab.specials.N).toBe("door")
+    expect(prefab.places.p.unless).toBe("N")
+    expect(prefabFaults(prefab)).toEqual([])
+  })
+
+  it("would cut its door off without the condition", () => {
+    expect(prefabFaults(shrine("p floor? statue")).some(fault => fault.includes("door 0,2"))).toBe(true)
+  })
+
+  it("refuses a condition on anything but a door, and on a place that must stand", () => {
+    expect(() => shrine("p floor? statue unless g")).toThrow(/names no door/)
+    expect(() => shrine("p floor statue unless N")).toThrow(/optional/)
+  })
+
+  it("keeps a named door on the ring", () => {
+    expect(() => room("", ["# # # # #", "d s N . d", "# # # # #"], ["N door", "s stop"])).toThrow(/inside the ring/)
   })
 })

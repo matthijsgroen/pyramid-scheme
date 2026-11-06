@@ -94,3 +94,28 @@ s stop`)
     expect(prefabChoices(HALL, 0).fills).toBe(1)
   })
 })
+
+describe("a place standing unless a named door is used", () => {
+  // The north door N is reached by a straight arm from the node, so the preview lays a corridor in through it.
+  const SHRINE = madeUpPrefab(`room shrine
+layout
+# # N # #
+# g p g #
+d . . s d
+# . . . #
+# # # # #
+N door
+g floor pillar
+p floor? pillar unless N
+s stop`)
+
+  it("leaves the place empty where a corridor comes in at its door", () => {
+    const { fills } = prefabChoices(SHRINE, 0)
+    expect(fills).toBeGreaterThan(1)
+    for (let fill = 0; fill < fills; fill++) {
+      const preview = prefabPreviewFloor(SHRINE, 0, fill)
+      expect(Object.keys(preview.doors)).toHaveLength(3)
+      expect(roomAt(preview).objects.filter(object => object.kind === "pillar")).toHaveLength(2)
+    }
+  })
+})

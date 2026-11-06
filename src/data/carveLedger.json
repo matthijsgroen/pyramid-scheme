@@ -1,46 +1,11 @@
 {
-  "expert_1#1#0": {
-    "kind": "sidePaths",
-    "hash": "da7705c0ee050c360c1f72503f5de7a963a462ab",
-    "sidePaths": {
-      "outsideLock": [
-        5,
-        6
-      ],
-      "corridorsTakeTwo": true
-    }
-  },
-  "expert_1#3#0": {
-    "kind": "sidePaths",
-    "hash": "a0d1ce2d12ef622f6445029a1ccdda8d557b279c",
-    "sidePaths": {
-      "outsideLock": [
-        4,
-        5,
-        6
-      ],
-      "corridorsTakeTwo": true
-    }
-  },
   "junior_4#2#0": {
     "kind": "sidePaths",
-    "hash": "9fb49118c712b3c8f33fe086805779a8d141d233",
+    "hash": "de11c05d4739bf4c4a6445a0e39b1578d209dee2",
     "sidePaths": {
       "outsideLock": [
         2,
         3
-      ]
-    }
-  },
-  "junior_4#3#0": {
-    "kind": "sidePaths",
-    "hash": "057835fa211284ee6c5c77a78d3bfaaf35cb1f78",
-    "sidePaths": {
-      "outsideLock": [
-        3,
-        4,
-        5,
-        6
       ]
     }
   }

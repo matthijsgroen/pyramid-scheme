@@ -3,7 +3,7 @@ import { useState } from "react"
 import type { FloorConfig } from "../../game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { useAssembledFloor } from "./useAssembledFloor"
-import { encodeEdge } from "./edgeId"
+import { cellAddress, keyOfAddress, sectionOfAddress } from "./cellIdentity"
 
 const SEED = 17
 const JOURNEY_ID = "hidden-story"
@@ -27,8 +27,8 @@ const config: FloorConfig = {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 const HiddenPassageDemo = ({ detectionLevel }: { detectionLevel: number }) => {
-  const [exploredSections, setExploredSections] = useState<Record<string, string[]>>({})
-  const [positionStr, setPositionStr] = useState<string | null>(null)
+  const [exploredCells, setExploredCells] = useState<Record<string, string[]>>({})
+  const [positionKey, setPositionKey] = useState<string | null>(null)
   const [revealedSections, setRevealedSections] = useState<ReadonlySet<string>>(new Set())
   const [mosaicFound, setMosaicFound] = useState(false)
 
@@ -37,8 +37,8 @@ const HiddenPassageDemo = ({ detectionLevel }: { detectionLevel: number }) => {
     config,
     SEED,
     0,
-    exploredSections,
-    positionStr,
+    exploredCells,
+    positionKey,
     detectionLevel,
     revealedSections
   )
@@ -52,20 +52,22 @@ const HiddenPassageDemo = ({ detectionLevel }: { detectionLevel: number }) => {
     if (!cell || cell.type === "empty") return
     if (cell.state !== "reachable" && cell.state !== "completed") return
 
-    const cellId = encodeEdge(0, row, col)
-    const sHash = cell.sectionHash ?? ""
+    const address = cellAddress(grid, 0, row, col)
+    if (!address) return
+    const section = sectionOfAddress(address)
+    const key = keyOfAddress(address)
 
     if (cell.state === "reachable") {
-      setExploredSections(prev => {
-        const existing = prev[sHash] ?? []
-        if (existing.includes(cellId)) return prev
-        return { ...prev, [sHash]: [...existing, cellId] }
+      setExploredCells(prev => {
+        const existing = prev[section] ?? []
+        if (existing.includes(key)) return prev
+        return { ...prev, [section]: [...existing, key] }
       })
       if (cell.type === "room" && cell.reward?.type === "mosaicPiece") {
         setMosaicFound(true)
       }
     }
-    setPositionStr(cellId)
+    setPositionKey(address)
   }
 
   const handleReveal = () => {
@@ -73,8 +75,8 @@ const HiddenPassageDemo = ({ detectionLevel }: { detectionLevel: number }) => {
   }
 
   const handleReset = () => {
-    setExploredSections({})
-    setPositionStr(null)
+    setExploredCells({})
+    setPositionKey(null)
     setRevealedSections(new Set())
     setMosaicFound(false)
   }

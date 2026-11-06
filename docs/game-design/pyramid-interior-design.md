@@ -696,12 +696,12 @@ Tier unlock is no longer a single shared key: each tomb's first 4 treasures (`TI
 |               | 20  | Location key → Master B | Unlocks wizard difficulty (journey 2)                    |
 |               | 21  | Ward key                | Unlocks wizard difficulty (journey 3)                    |
 |               | 22  | Ward key                | Compass L2 · unlocks wizard difficulty (journey 4)       |
-|               | 23  | Ward key                | Armor                                                    |
+|               | 23  | Ward key                | Detection L1                                             |
 | **Master B**  | 24  | Ward key                | —                                                        |
 |               | 25  | Ward key                | Scribe's Eye L1                                          |
 |               | 26  | Ward key                | Compass L3                                               |
 |               | 27  | Ward key                | Max health +½ ♥                                          |
-|               | 28  | Ward key                | Detection L1                                             |
+|               | 28  | Ward key                | Armor                                                    |
 | **Wizard A**  | 29  | Ward key                | —                                                        |
 |               | 30  | Location key → Wizard B | —                                                        |
 |               | 31  | Ward key                | Detection L2                                             |
@@ -728,7 +728,7 @@ Two perks share a single **active detector slot** — only one can be active at 
 | Compass           | Compass L1–3   | One chosen hieroglyph fragment |
 | Hidden passageway | Detection L2–4 | Undiscovered hidden corridors  |
 
-**Detection L1 is passive and always-on** — hidden corridors pulse when the player is adjacent, regardless of the active detector mode. L2–4 (floor/pyramid/journey markers) require active selection.
+**Every level reads only while the corridor detector is running.** L1 pulses as the player nears a hidden corridor and hardest at its mouth; there the readout offers to open it, and only the player's tap opens it — walking past a corridor, or standing at its mouth, opens nothing. The first one opened, Fez remarks on. L2–4 widen what it reads (floor/pyramid/journey markers).
 
 ---
 

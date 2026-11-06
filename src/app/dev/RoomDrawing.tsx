@@ -18,6 +18,8 @@ const PALETTE_LAYER = { floor: "prop", wall: "prop", ground: "ground", wallItem:
 const SPECIAL_LOOK: Record<SpecialPlace, string> = {
   stop: "bg-sky-500",
   mechanism: "bg-rose-500",
+  // A named door reads as a door, its letter on it.
+  door: "bg-amber-600",
 }
 
 type Props = {
@@ -51,7 +53,7 @@ export const RoomDrawing: FC<Props> = ({ prefab, layout, palette, onChange }) =>
   const whatIs = (ch: string): string => {
     if (ch === "#") return t("devRoomEditor.cellWhat.wall")
     if (ch === ".") return t("devRoomEditor.cellWhat.floor")
-    if (ch === "d") return t("devRoomEditor.cellWhat.door")
+    if (ch === "d" || prefab.specials[ch] === "door") return t("devRoomEditor.cellWhat.door")
     const special = prefab.specials[ch]
     const kinds = special ? t(`devRoomEditor.tool.${special}`) : (prefab.places[ch]?.kinds.join(" | ") ?? "")
     return t("devRoomEditor.cellWhat.place", { letter: ch, kinds })

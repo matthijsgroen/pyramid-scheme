@@ -43,7 +43,7 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
   // Always explored on arrival, regardless of whether anything gets bought — a shop room
   // is a claim point, not a challenge; reaching it is enough to unlock corridors past it.
   useEffect(() => {
-    journeys.markCellExplored(ctx.sectionHash, ctx.edgeId, ctx.address)
+    journeys.markCellExplored(ctx.address)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fires once per room instance
   }, [ctx.edgeId])
 

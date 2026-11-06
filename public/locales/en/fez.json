@@ -716,6 +716,13 @@
       "4": { "explorer": "Noted." }
     }
   },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": { "fez": "Whoa. That was a wall a second ago." },
+      "2": { "explorer": "There was a passage behind it." },
+      "3": { "fez": "All those years people walked right past it. All those years!" }
+    }
+  },
 
   "reading": {
     "junior": {

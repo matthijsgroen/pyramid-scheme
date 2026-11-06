@@ -107,7 +107,7 @@ describe("useEncounter", () => {
 
     act(() => hook.result.current.open([0, 0], true))
 
-    expect(journeys.markCellExplored).toHaveBeenCalledWith(SECTION, "0:0,0", ROOM_ADDRESS)
+    expect(journeys.markCellExplored).toHaveBeenCalledWith(ROOM_ADDRESS)
     expect(hook.result.current.isOpen).toBe(false)
   })
 

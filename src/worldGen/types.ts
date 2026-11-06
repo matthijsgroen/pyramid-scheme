@@ -81,6 +81,8 @@ export type SubSection = {
   loot?: false
   /** Per-node loot, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
   lootByIndex?: Record<number, false>
+  /** Per-node somebody, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
+  actorByIndex?: Record<number, false>
   /** Opaque payload for whichever family renders this section's rooms (e.g. a tableau's
    * `{runNr}`) — mirrors game/siteTypes.ts's SubSection.encounterArgs. */
   encounterArgs?: unknown
@@ -133,6 +135,8 @@ export type FloorConfig = {
   loot?: false
   /** Per-node loot for the main path, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
   lootByIndex?: Record<number, false>
+  /** Per-node somebody, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
+  actorByIndex?: Record<number, false>
   corridorStraightness?: number
   packing?: number
   sidePacking?: number

@@ -74,8 +74,8 @@ export const computeFloorExploration = (grid: FloorGrid): FloorExploration => {
   for (const row of grid.cells)
     for (const cell of row)
       if (cell.type === "room" && !cell.hidden && cell.gateVariant === "tomb-key" && cell.requiredKeyId) {
-        const h = cell.sectionHash ?? ""
-        ;(sectionGateKeys.get(h) ?? sectionGateKeys.set(h, new Set()).get(h)!).add(cell.requiredKeyId)
+        const section = cell.sectionAddress ?? ""
+        ;(sectionGateKeys.get(section) ?? sectionGateKeys.set(section, new Set()).get(section)!).add(cell.requiredKeyId)
       }
 
   const routeKeys = routeRequirements(grid)
@@ -83,8 +83,8 @@ export const computeFloorExploration = (grid: FloorGrid): FloorExploration => {
   let open = false
   const keySets: string[][] = []
   const seen = new Set<string>()
-  const addContent = (sectionHash: string, route: ReadonlySet<string>, ownKeys: readonly string[] = []) => {
-    const keys = new Set([...(sectionGateKeys.get(sectionHash) ?? []), ...ownKeys, ...route])
+  const addContent = (section: string, route: ReadonlySet<string>, ownKeys: readonly string[] = []) => {
+    const keys = new Set([...(sectionGateKeys.get(section) ?? []), ...ownKeys, ...route])
     if (keys.size === 0) {
       open = true
       return
@@ -103,9 +103,9 @@ export const computeFloorExploration = (grid: FloorGrid): FloorExploration => {
       // found. Those belong to the 👁 marker, not to this one.
       const route = routeKeys.get(`${r},${c}`)
       if (!route) return
-      const h = cell.sectionHash ?? ""
+      const section = cell.sectionAddress ?? ""
       if (cell.type === "corridor") {
-        if (cell.state === "fogged") addContent(h, route)
+        if (cell.state === "fogged") addContent(section, route)
         return
       }
       if (cell.state === "completed") return
@@ -113,7 +113,7 @@ export const computeFloorExploration = (grid: FloorGrid): FloorExploration => {
       // A web key a door lists beside its floor owner is a way in, not something the door holds: it asks for it on the
       // route (blockingKeys), never as content of its own.
       const ownKeys = (cell.requiredKeyIds ?? []).filter(id => !isWebKey(id))
-      if (priority > 0 || ownKeys.length > 0) addContent(h, route, ownKeys)
+      if (priority > 0 || ownKeys.length > 0) addContent(section, route, ownKeys)
     })
   )
 

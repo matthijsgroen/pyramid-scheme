@@ -16,7 +16,6 @@ import type { SequenceRead } from "@/game/sequenceReads"
 import { useSiteNavigation } from "./useSiteNavigation"
 import { buildRoomClaims } from "./roomClaims"
 import { offeredTargets } from "./clickTargets"
-import { encodeEdge } from "./edgeId"
 import type { ResolveOneWayRealisation } from "@/game/oneWayRealisation"
 
 // The real navigation hook, floor assembly and journeys API over one stored journey, so a spec plays a
@@ -128,9 +127,7 @@ export const sequenceHarness = (
     levelNr: 1,
     completionCount: 0,
     active: true,
-    exploredSections: {},
     exploredCells: store.exploredCells,
-    position: null,
     positionKey: store.positionKey,
     standingKey: store.standingKey,
     interiorLevelNr: null,
@@ -185,8 +182,7 @@ export const sequenceHarness = (
           encountered.push([r, c])
           const cell = assembled.grid?.cells[r]?.[c]
           const address = cell && cellAddress(assembled.grid!, 0, r, c)
-          if (cell && cell.type !== "empty" && address)
-            journeys.markCellExplored(cell.sectionHash ?? "", encodeEdge(0, r, c), address)
+          if (cell && cell.type !== "empty" && address) journeys.markCellExplored(address)
         },
         onExitReached: () => {},
         ...(resolveOneWay ? { resolveOneWay } : {}),

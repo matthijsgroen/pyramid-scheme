@@ -57,7 +57,6 @@ import { offerContextFrom, offeredTargets, roomEntryAt } from "./clickTargets"
 import { SiteMapView } from "./SiteMapView"
 import { CELL, cellCenter } from "./mapScale"
 import { isCorridorCorner } from "./corridorRuns"
-import { encodeEdge } from "./edgeId"
 import {
   AXES,
   CROSSING_NODE,
@@ -278,9 +277,7 @@ const buildHarness = (
     levelNr: 1,
     completionCount: 0,
     active: true,
-    exploredSections: {},
     exploredCells: store.exploredCells,
-    position: null,
     positionKey: store.positionKey,
     standingKey: store.standingKey,
     interiorLevelNr: null,
@@ -343,8 +340,7 @@ const buildHarness = (
         (([r, c]) => {
           const cell = assembled.grid?.cells[r]?.[c]
           const address = cell && cellAddress(assembled.grid!, 0, r, c)
-          if (cell && cell.type !== "empty" && address)
-            journeys.markCellExplored(cell.sectionHash ?? "", encodeEdge(0, r, c), address)
+          if (cell && cell.type !== "empty" && address) journeys.markCellExplored(address)
         }),
       onExitReached: () => {},
     })

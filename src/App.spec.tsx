@@ -14,7 +14,6 @@ vi.mock("@/app/state/useJourneys", () => ({
   }),
 }))
 vi.mock("@/app/homecomingRegistry", () => ({ useHomecoming: () => homecoming }))
-vi.mock("@/app/SiteMap/useCarveIndependentBackfill", () => ({ useCarveIndependentBackfill: () => {} }))
 vi.mock("@/app/SiteMap/useFloorExplorationBackfill", () => ({ useFloorExplorationBackfill: () => {} }))
 vi.mock("@/app/SiteMap/useMechanismSlotBackfill", () => ({ useMechanismSlotBackfill: () => {} }))
 vi.mock("@/app/SiteMap/useRelaidFloorsBackfill", () => ({ useRelaidFloorsBackfill: () => {} }))

@@ -98,7 +98,6 @@
     "tierComingSoon": "You hold the key, but the {{tier}} pyramids are still being built. They arrive in a later update — until then, your key opens more of the pyramids you already know.",
     "answerNow": "The answer is: ",
     "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
-    "saveVersion": "· save v{{saveVersion}}",
     "resetPuzzle": "Reset",
     "hint": "Hint",
     "undo": "Undo",
@@ -278,6 +277,8 @@
     "pickTarget": "Pick a hieroglyph to hunt in your Collection",
     "allCollected": "All pieces collected",
     "more": "+{{count}} more",
+    "corridorHere": "There is a hidden passage right here",
+    "revealCorridor": "Open it",
     "corridorNearby": "A hidden corridor is close by",
     "corridorOnFloor": "A hidden corridor waits on this floor",
     "hunting": "Hunting {{symbol}}",
@@ -294,13 +295,14 @@
     "corridorNoneNearby": "No hidden corridor close by",
     "corridorNoneOnFloor": "No hidden corridor on this floor",
     "corridorOtherFloor": "A hidden corridor waits on another floor",
-    "corridorNoneInPyramid": "No hidden corridors found so far in this pyramid",
+    "corridorNoneInPyramid": "No hidden corridor on another floor",
     "title": "Detector",
     "band": {
       "none": "Nothing detected",
       "pyramid": "Something in this pyramid",
       "floor": "Something on this floor",
-      "near": "Something close by"
+      "near": "Something close by",
+      "here": "Right here! Open the detector"
     }
   },
   "keys": {

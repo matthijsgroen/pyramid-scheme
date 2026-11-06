@@ -156,10 +156,7 @@ const standingInThisPyramid = async () => {
         levelNr: LEVEL_NR,
         completionCount: 0,
         active: true,
-        exploredSections: {},
-        position: null,
         interiorLevelNr: null,
-        cellKeyVersion: 3,
       },
     ],
   })

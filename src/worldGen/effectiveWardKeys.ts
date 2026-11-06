@@ -30,6 +30,8 @@ export type PlacedReward = {
   difficulty: Difficulty
   /** Every ward key gating the path to this reward, nearest-last. Empty = freely reachable. */
   wardKeys: string[]
+  /** In a hidden section, or below one: found only with the corridor detector. */
+  hidden: boolean
   reward: TreasureReward
 }
 
@@ -64,21 +66,27 @@ export const collectPlacedRewards = (configs: Record<string, SiteConfig[]>): Pla
         // each staircase, so a floor three ward gates deep inherits all three.
         const entryStair = stairIdOf(floor.entrance)
         const floorKeys = entryStair ? (keysByStair.get(entryStair) ?? []) : []
-        const at = (difficulty: Difficulty, wardKeys: string[], reward: TreasureReward | undefined) => {
-          if (reward) placed.push({ journeyId, levelIndex, floorIndex, difficulty, wardKeys, reward })
+        const at = (
+          difficulty: Difficulty,
+          wardKeys: string[],
+          hidden: boolean,
+          reward: TreasureReward | undefined
+        ) => {
+          if (reward) placed.push({ journeyId, levelIndex, floorIndex, difficulty, wardKeys, hidden, reward })
         }
 
-        at(floor.difficulty, floorKeys, floor.mainEndReward)
-        for (const r of floor.rewards ?? []) at(floor.difficulty, floorKeys, r)
+        at(floor.difficulty, floorKeys, false, floor.mainEndReward)
+        for (const r of floor.rewards ?? []) at(floor.difficulty, floorKeys, false, r)
 
-        const walk = (inherited: string[], section: SideSection): void => {
+        const walk = (inherited: string[], above: boolean, section: SideSection): void => {
           const key = gateKeyOf(section)
           const keys = key ? [...inherited, key] : inherited
-          at(section.difficulty, keys, section.endReward)
-          for (const r of section.rewards ?? []) at(section.difficulty, keys, r)
-          for (const sub of section.sideSections ?? []) walk(keys, sub)
+          const hidden = above || section.hidden === true
+          at(section.difficulty, keys, hidden, section.endReward)
+          for (const r of section.rewards ?? []) at(section.difficulty, keys, hidden, r)
+          for (const sub of section.sideSections ?? []) walk(keys, hidden, sub)
         }
-        for (const section of floor.sideSections) walk(floorKeys, section)
+        for (const section of floor.sideSections) walk(floorKeys, false, section)
       })
     })
   }

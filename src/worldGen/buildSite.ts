@@ -7,7 +7,8 @@ import { hashStr, hintToReward } from "./rewards"
 import { initPuzzleChains } from "./puzzleRewards"
 import { buildSideSections, type ResolveReward } from "./sideSections"
 import { stairIdAt } from "../game/stairAddress"
-import type { FloorConstraint, PyramidConstraint, RewardSpec } from "./dsl"
+import type { FloorConstraint, PyramidConstraint, RewardSpec, WardPathSpec } from "./dsl"
+import { wardKeyDifficulty } from "../data/difficultyLevels"
 import type { Prefab } from "../game/prefabTypes"
 import { catalogueRoom } from "../game/roomCatalogue"
 import {
@@ -17,6 +18,7 @@ import {
   resolveNodeChambers,
   resolveNodeDifficulties,
   resolveNodeLoot,
+  resolveNodeActors,
   resolveNodeSelectors,
 } from "./dsl"
 import { ONE_WAY_KIND, declaredBinding, regionBarrierBinding, resolveBinding } from "./realisationBinding"
@@ -113,6 +115,7 @@ export type BuildFloorOptions = {
   difficultiesByIndex?: FloorConfig["difficultiesByIndex"]
   loot?: FloorConfig["loot"]
   lootByIndex?: FloorConfig["lootByIndex"]
+  actorByIndex?: FloorConfig["actorByIndex"]
   forks?: FloorConfig["forks"]
   oneWays?: FloorConfig["oneWays"]
   oneWayRealisation?: FloorConfig["oneWayRealisation"]
@@ -175,6 +178,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
     : {}),
   ...(opts.loot === false ? { loot: false as const } : {}),
   ...(opts.lootByIndex && Object.keys(opts.lootByIndex).length ? { lootByIndex: opts.lootByIndex } : {}),
+  ...(opts.actorByIndex && Object.keys(opts.actorByIndex).length ? { actorByIndex: opts.actorByIndex } : {}),
   ...(opts.corridorStraightness !== undefined ? { corridorStraightness: opts.corridorStraightness } : {}),
   ...(opts.packing !== undefined ? { packing: opts.packing } : {}),
   ...(opts.sidePacking !== undefined ? { sidePacking: opts.sidePacking } : {}),
@@ -462,6 +466,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           difficultiesByIndex: resolveNodeDifficulties(fc.nodes, floorPP),
           loot: floorLoot,
           lootByIndex: resolveNodeLoot(fc.nodes, floorPP),
+          actorByIndex: resolveNodeActors(fc.nodes, floorPP),
           // A floor's own junctions win; otherwise the site's, the way `encounter` and `theme` resolve.
           forks: fc.forks ?? constraint.forks,
           oneWays: fc.oneWays ?? constraint.oneWays,
@@ -511,11 +516,32 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     return { floors: floorConfigs }
   }
 
+  // EVERY FLOOR OF A PYRAMID HOLDS ITS OWN HIDDEN PATHS, at that floor's difficulty: a deeper floor and a ward wing are
+  // as worth coming back to as the floor that carries the pyramid's side content. Each floor rolls its own.
+  const hiddenOn = (floorIndex: number, floorDifficulty: Difficulty): SideSection[] =>
+    buildSideSections({
+      tier,
+      difficulty: floorDifficulty,
+      resolveReward,
+      journeyId: `${journeyId}:floor${floorIndex}`,
+      floor: { journeyId, pyramidIndex: i, floorIndex },
+      pyramidIndex: i,
+      loot: constraint.loot,
+      declaredHiddenPaths: constraint.hiddenPaths,
+      sideEncounter,
+      sideEncounterArgs,
+      sideTheme,
+      sideDecorations,
+      sideWallDecorations,
+    })
+
   const wardWingsRaw = constraint.wardWings ?? GLOBAL_DEFAULTS.wardWings
   const wingSpecs = Array.isArray(wardWingsRaw) ? wardWingsRaw : null
   const wingCount = Array.isArray(wardWingsRaw) ? wardWingsRaw.length : wardWingsRaw
   const mainFloors = constraint.mainFloors ?? GLOBAL_DEFAULTS.mainFloors
-  const wardPaths = constraint.wardPaths ?? GLOBAL_DEFAULTS.wardPaths
+  const wardPathsRaw = constraint.wardPaths ?? GLOBAL_DEFAULTS.wardPaths
+  const pathSpecs = Array.isArray(wardPathsRaw) ? wardPathsRaw : null
+  const wardPaths = Array.isArray(wardPathsRaw) ? wardPathsRaw.length : wardPathsRaw
 
   if (mainFloors > 1 || wingCount > 0 || wardPaths > 0) {
     // Auto multi-floor: `mainFloors` plain main-path floors (only the last one carries the
@@ -535,7 +561,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           buildFloor({
             pathPuzzles: pp,
             difficulty,
-            sideSections: [],
+            sideSections: hiddenOn(fi, difficulty),
             mainEndReward: unauthoredEnd(constraint.loot),
             loot: constraint.loot,
             chambers: constraint.chambers,
@@ -646,8 +672,22 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       // authored (spec) wings bring their own keys, so only wardPaths needs free indices then.
       const uniformWingCount = wingSpecs ? 0 : wingCount
       const reserved = new Set(ctx.reservedTreasureIndices?.(tombId) ?? [])
-      const wardIndices = freeWardIndices(tombId, uniformWingCount + wardPaths, reserved)
-      const pathIndices = wardIndices.slice(uniformWingCount, uniformWingCount + wardPaths)
+      // A count is that many "own" paths: keyed from this tier's tomb at the pyramid's difficulty. An authored key opens
+      // a path at its own tier.
+      const pathEntries: WardPathSpec[] = pathSpecs ?? Array.from({ length: wardPaths }, () => "own" as const)
+      const ownCount = pathEntries.filter(s => s === "own").length
+      const wardIndices = freeWardIndices(tombId, uniformWingCount + ownCount, reserved)
+      const ownIndices = wardIndices.slice(uniformWingCount)
+      // An own path with no free key left in this tier's tomb is not laid, as a count beyond the free keys never was.
+      const pathDefs = pathEntries.flatMap(s => {
+        if (s === "own") {
+          const index = ownIndices.shift()
+          return index === undefined ? [] : [{ wardKeyId: TOMB_PERK_IDS[tombId][index], difficulty }]
+        }
+        const wardKeyId = TOMB_PERK_IDS[s.tomb]?.[s.index]
+        if (!wardKeyId) throw new Error(`buildSite: wardPath references unknown ward key ${s.tomb}[${s.index}]`)
+        return [{ wardKeyId, difficulty: wardKeyDifficulty(wardKeyId) ?? difficulty }]
+      })
       const lastMain = floorConfigs[floorConfigs.length - 1]
 
       // Ward wings: a whole ward-gated bonus floor, reached via a staircase side section.
@@ -700,7 +740,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           buildFloor({
             pathPuzzles: wing.floorPP,
             difficulty: wing.difficulty,
-            sideSections: [],
+            sideSections: hiddenOn(floorConfigs.length, wing.difficulty),
             chambers: constraint.chambers,
             ...siteRoomsAt(wing.difficulty, "wing"),
             entrance: { stairId: wingStairId },
@@ -741,14 +781,14 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       const trapWardPath = (constraint.wardPathTrapped ?? false) && i < Math.ceil(levelCount / 2)
       lastMain.sideSections = [
         ...lastMain.sideSections,
-        ...pathIndices.map(idx => ({
+        ...pathDefs.map(({ wardKeyId, difficulty }) => ({
           // Trapped ones run 2 rooms; an untrapped ward path stays a single loot-bearing room (a
           // trapped chain bears no loot, so only the trapped case is free to lengthen).
           pathPuzzles: trapWardPath ? 2 : 1,
           difficulty,
           end: "treasure" as const,
           endReward: { type: "fragmentSlot" as const },
-          gate: { type: "tomb-key" as const, wardKeyId: TOMB_PERK_IDS[tombId][idx] },
+          gate: { type: "tomb-key" as const, wardKeyId },
           // A trapped ward path stays a trap; an untrapped one wears the pyramid's theme.
           ...(trapWardPath ? { encounter: "trap" } : sideEncounter !== undefined ? { encounter: sideEncounter } : {}),
           // A trapped path keeps its own role but still wears the site’s skin: a skin decides nothing

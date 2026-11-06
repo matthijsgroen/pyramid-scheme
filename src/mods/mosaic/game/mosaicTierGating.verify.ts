@@ -3,7 +3,7 @@ import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { collectPlacedRewards } from "@/worldGen/effectiveWardKeys"
 import { difficulties, difficultyCompare, wardKeyDifficulty, type Difficulty } from "@/data/difficultyLevels"
 import type { TreasureReward } from "@/worldGen/types"
-import { MOSAIC_TIERS } from "./mosaicCurrency"
+import { MOSAIC_TIERS, REGISTERS_IN_PLAIN_SIGHT } from "./mosaicCurrency"
 
 // Mosaic glass must never show up easier-to-reach than the difficulty it belongs to. Two separate
 // promises, both of which have been broken in shipped builds:
@@ -81,5 +81,14 @@ describe("mosaic glass harder than its host journey stays behind an equally-hard
           `floor${p.floorIndex} guarded by [${p.wardKeys.join(", ") || "nothing"}]`
       )
     expect(leaks, `${leaks.length} early-tier leak(s): ${leaks.slice(0, 8).join("; ")}`).toEqual([])
+  })
+})
+
+describe("the starter register is finished in plain sight", () => {
+  it("holds no glass of a register in plain sight in a hidden path, so it is whole before the corridor detector", () => {
+    const hidden = glass
+      .filter(p => p.hidden && (REGISTERS_IN_PLAIN_SIGHT as readonly string[]).includes(p.tier))
+      .map(p => `${p.tier} glass hidden in ${p.journeyId} L${p.levelIndex} floor${p.floorIndex}`)
+    expect(hidden, hidden.slice(0, 8).join("; ")).toEqual([])
   })
 })

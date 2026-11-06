@@ -107,11 +107,11 @@ export const wizardRules: Rule[] = [
     // is a long walk for income, and wizard already carries the tier's trap weight in volume.
     .sidePaths("low")
     .settings({ pathPuzzles: 2, end: "junk", encounter: "trap" })
-    // Wizard is trap-heavy: trapped hidden mosaics, plus one plain-loot hidden.
+    // On every floor one hidden path of puzzles and one of booby traps, each ending in glass or coins.
     .hiddenPaths("low")
     .settings({ pathPuzzles: 2, end: "mosaic", encounter: "trap" })
     .hiddenPaths("low")
-    .settings({ pathPuzzles: 0, end: "mosaic" }),
+    .settings({ pathPuzzles: 1, end: "mosaic" }),
 
   // 3-level key-chain showcase on the 2nd pyramid of each wizard journey.
   ...["wizard_1", "wizard_2", "wizard_3", "wizard_4"].map(jid =>

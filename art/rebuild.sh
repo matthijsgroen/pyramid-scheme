@@ -324,7 +324,7 @@ yarn import-tile art/masters/props/starter/veil.webp --tier=starter --name=veil 
 if [ -f art/masters/props/starter/scale.webp ]; then
   scaffold scale --colour=#9a6a3c --floor=#d8c8a8
   yarn import-tile art/masters/props/starter/scale.webp --tier=starter --name=scale --slot=prop \
-    --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.8
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.8 --lift=0.08
 fi
 if [ -f art/masters/props/starter/weightsTable.webp ]; then
   scaffold weightsTable --spin=4 --colour=#9a6a3c --floor=#d8c8a8

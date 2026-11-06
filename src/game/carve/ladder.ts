@@ -19,7 +19,7 @@ import type { FloorPrep, Rung } from "./state"
 // rather than something floors rely on.
 //
 // Attempts 0..RECOVERY_ATTEMPT-1 are FROZEN. A pyramid interior is persistent and revisitable, its
-// stored exploredSections keyed to its layout, so re-sizing a floor that already assembles would
+// stored exploration keyed to its layout, so re-sizing a floor that already assembles would
 // silently invalidate progress on it.
 //
 // Only a floor that has exhausted the budget — one nobody can enter, so there is no progress to

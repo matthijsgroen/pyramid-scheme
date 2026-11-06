@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, afterEach } from "vitest"
-import { render, screen, cleanup } from "@testing-library/react"
+import { render, screen, cleanup, fireEvent } from "@testing-library/react"
 import type { CompassHit } from "@/game/siteTypes"
 import { DetectorPanel, type DetectorPanelLabels } from "./DetectorPanel"
 
@@ -16,12 +16,14 @@ const labels: DetectorPanelLabels = {
     unknown: "Access: unknown",
   },
   more: count => `+${count} more`,
+  corridorHere: "There is a hidden passage right here",
+  revealCorridor: "Open it",
   corridorNearby: "A hidden corridor is close by",
   corridorNoneNearby: "No hidden corridor close by",
   corridorOnFloor: "A hidden corridor waits on this floor",
   corridorNoneOnFloor: "No hidden corridor on this floor",
   corridorOtherFloor: "A hidden corridor waits on another floor",
-  corridorNoneInPyramid: "No hidden corridors found so far in this pyramid",
+  corridorNoneInPyramid: "No hidden corridor on another floor",
 }
 
 // This project doesn't enable RTL's automatic cleanup, so without this each test's markup stays
@@ -129,6 +131,16 @@ describe("DetectorPanel precision by level (§7.2)", () => {
     compassResults: [],
   }
 
+  it("offers to open a corridor only at its mouth, and opens it on the player's tap", () => {
+    let opened = 0
+    const { rerender } = render(<DetectorPanel {...corridorBase} detectionLevel={1} />)
+    expect(screen.queryByRole("button", { name: "Open it" })).toBeNull()
+
+    rerender(<DetectorPanel {...corridorBase} detectionLevel={1} onRevealCorridor={() => opened++} />)
+    fireEvent.click(screen.getByRole("button", { name: "Open it" }))
+    expect(opened).toBe(1)
+  })
+
   it("unlocks one scope per level, and says nothing about scopes still locked", () => {
     const found = {
       ...corridorBase,
@@ -162,7 +174,7 @@ describe("DetectorPanel precision by level (§7.2)", () => {
     )
     expect(screen.getByText("No hidden corridor close by")).toBeTruthy()
     expect(screen.getByText("No hidden corridor on this floor")).toBeTruthy()
-    expect(screen.getByText("No hidden corridors found so far in this pyramid")).toBeTruthy()
+    expect(screen.getByText("No hidden corridor on another floor")).toBeTruthy()
   })
 
   it("answers each scope on its own, so a lead nearby does not imply one elsewhere", () => {
@@ -177,7 +189,7 @@ describe("DetectorPanel precision by level (§7.2)", () => {
     )
     expect(screen.getByText("A hidden corridor is close by")).toBeTruthy()
     expect(screen.getByText("A hidden corridor waits on this floor")).toBeTruthy()
-    expect(screen.getByText("No hidden corridors found so far in this pyramid")).toBeTruthy()
+    expect(screen.getByText("No hidden corridor on another floor")).toBeTruthy()
   })
 
   // The switcher carries the off switch now: a detector keeps running once the readout is shut, so

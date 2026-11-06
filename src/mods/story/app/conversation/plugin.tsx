@@ -42,7 +42,7 @@ export const ConversationComponent: FamilyPlugin["Component"] = ({ ctx, journeys
   // Reaching it is the whole encounter, so the room counts as explored on arrival and the corridors
   // past it open whether the player listens to the end or taps through.
   useEffect(() => {
-    journeys.markCellExplored(ctx.sectionHash, ctx.edgeId, ctx.address)
+    journeys.markCellExplored(ctx.address)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fires once per room instance
   }, [ctx.edgeId])
 

@@ -50,3 +50,17 @@ describe("mosaic currencies", () => {
     expect(ranked.slice(1)).toEqual([untagged1, otherPool])
   })
 })
+
+describe("the starter register in plain sight", () => {
+  const pool = (tier: Tier) => MOSAIC_CURRENCIES.find(c => c.bucket === mosaicBucket(tier as never))!
+  const hidden = (tier: Tier): Slot => ({ ...slot(tier), hidden: true })
+
+  it("never takes a hidden slot for starter glass, so the panel is whole without the corridor detector", () => {
+    expect(pool("starter").eligible!(hidden("starter"))).toBe(false)
+    expect(pool("starter").eligible!(slot("starter"))).toBe(true)
+  })
+
+  it("lets every other register take a hidden slot of its own difficulty", () => {
+    for (const tier of MOSAIC_TIERS.filter(t => t !== "starter")) expect(pool(tier).eligible!(hidden(tier))).toBe(true)
+  })
+})

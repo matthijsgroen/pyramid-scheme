@@ -6,8 +6,8 @@ activity ledger
 mirror
 
 layout
-# t d n #
-# k . h #
+# t N n #
+# k p h #
 d s . . d
 # . . . #
 # d d d #
@@ -16,4 +16,6 @@ k wall scribeDesk
 h wall? shelf
 t wallItem tallyBoard
 n wallItem? niche
+N door
+p floor? patron unless N
 s stop

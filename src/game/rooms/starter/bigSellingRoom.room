@@ -7,7 +7,7 @@ mirror
 
 layout
 # # # d # # #
-# k . . g h #
+# k p . g h #
 # s . . b . d
 # . e . x . #
 # d # # # d #
@@ -20,4 +20,5 @@ h wall? wares
 b floor goods
 e floor goods
 x ground floorClutter
+p floor? patron
 s stop

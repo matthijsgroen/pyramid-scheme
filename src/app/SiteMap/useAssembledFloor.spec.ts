@@ -95,10 +95,10 @@ describe("useAssembledFloor — hidden junctions", () => {
     // "visible" while auto-revealing past it, rather than stopping there. Completing the
     // predecessor (not the gateway itself) reproduces that real play sequence.
     const { gatewayPos, predecessorPos } = findGatewayToHidden(grid)
-    const exploredSections = exploredAt(grid, predecessorPos)
+    const exploredCells = exploredAt(grid, predecessorPos)
 
     const { result } = renderHook(() =>
-      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 1, new Set())
+      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredCells, null, 1, new Set())
     )
 
     // The gateway the player is standing beside, not whichever junction comes first in the set: a
@@ -125,11 +125,11 @@ describe("useAssembledFloor — hidden junctions", () => {
     if (!assembled.success) throw new Error("assembly failed")
     const grid = assembled.grid
     const { predecessorPos } = findGatewayToHidden(grid)
-    const exploredSections = exploredAt(grid, predecessorPos)
+    const exploredCells = exploredAt(grid, predecessorPos)
 
     // First pass, unrevealed: learn which section the junction borders (what SiteMapScreen reveals).
     const { result: masked } = renderHook(() =>
-      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 1, new Set())
+      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredCells, null, 1, new Set())
     )
     const revealed = new Set(masked.current.hiddenSections)
     expect(revealed.size).toBeGreaterThan(0)
@@ -137,7 +137,7 @@ describe("useAssembledFloor — hidden junctions", () => {
     // Second pass, that section revealed: its cells are no longer masked to empty, and it's gone
     // from hiddenSections — the corridor is now part of the walkable grid.
     const { result } = renderHook(() =>
-      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 1, revealed)
+      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredCells, null, 1, revealed)
     )
     for (const h of revealed) expect(result.current.hiddenSections.has(h)).toBe(false)
     const revealedCellShown = result.current.grid!.cells.some(row =>
@@ -151,10 +151,10 @@ describe("useAssembledFloor — hidden junctions", () => {
     if (!assembled.success) throw new Error("assembly failed")
     const grid = assembled.grid
     const { gatewayPos, predecessorPos } = findGatewayToHidden(grid)
-    const exploredSections = exploredAt(grid, predecessorPos)
+    const exploredCells = exploredAt(grid, predecessorPos)
     const stateAt = (revealed: ReadonlySet<string>) => {
       const { result } = renderHook(() =>
-        useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 0, revealed)
+        useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredCells, null, 0, revealed)
       )
       const cell = result.current.grid?.cells[gatewayPos[0]]?.[gatewayPos[1]]
       return { state: cell?.type === "empty" ? undefined : cell?.state, hidden: result.current.hiddenSections }
@@ -618,5 +618,41 @@ describe("maskHiddenCells — a corridor leading only into hidden ground", () =>
 
   it("shows the stub again once the section is revealed", () => {
     expect(maskHiddenCells(grid, new Set(["s1"])).masked.cells[0].every(cell => cell.type === "corridor")).toBe(true)
+  })
+})
+
+describe("maskHiddenCells — a hidden path hung off the entrance", () => {
+  const room = (dirs: Direction[], roomType: RoomCell["roomType"]): RoomCell =>
+    ({ type: "room", roomType, dirs: new Set(dirs), state: "visible", sectionAddress: "main" }) as RoomCell
+  const at = (dirs: Direction[], hidden = false): CorridorCell => ({
+    type: "corridor",
+    dirs: new Set(dirs),
+    state: "visible",
+    sectionAddress: hidden ? "s1" : "main",
+    ...(hidden ? { hidden: true } : {}),
+  })
+  // The entrance at 1,1 opens west, east and north; north is a hidden path.
+  const grid = (entrance: RoomCell): FloorGrid => ({
+    siteId: "x",
+    rows: 2,
+    cols: 3,
+    entrancePos: [1, 1],
+    exitPos: [1, 2],
+    staircases: {},
+    cells: [
+      [{ type: "empty" }, at(["s"], true), { type: "empty" }],
+      [at(["e"]), entrance, at(["w"])],
+    ],
+  })
+
+  it("keeps the entrance a room, so the player still stands somewhere and can leave", () => {
+    const masked = maskHiddenCells(grid(room(["n", "w", "e"], "portal")), new Set()).masked.cells[1][1]
+    expect(masked).toMatchObject({ type: "room", roomType: "portal", dirs: new Set(["w", "e"]) })
+  })
+
+  it("still reads a plain room left a passthrough as corridor", () => {
+    expect(maskHiddenCells(grid(room(["n", "w", "e"], "encounter")), new Set()).masked.cells[1][1].type).toBe(
+      "corridor"
+    )
   })
 })

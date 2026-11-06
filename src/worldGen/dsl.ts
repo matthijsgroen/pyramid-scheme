@@ -79,6 +79,8 @@ export type NodeSelector = {
   difficulty?: Difficulty
   /** `false` keeps generated loot out of this room. Authored rewards are never touched. */
   loot?: false
+  /** `false`: nobody stands in this room, whatever its encounter's family says, so its room needs no place for them. */
+  actor?: false
   /** A pass-through chamber in the gap after the selected room: a corridor node widened into a room dressed for
    * this activity, or for one the carve picks where `true`. The room itself stays where it is. */
   chamberAfter?: ActivityId | true
@@ -146,6 +148,10 @@ export const resolveNodeDifficulties = (nodes: NodeSelector[] | undefined, count
 /** Expand `nodes` selectors into a sparse 0-based index → `false` map of the rooms kept free of generated loot. */
 export const resolveNodeLoot = (nodes: NodeSelector[] | undefined, count: number): Record<number, false> =>
   resolveNodeField(nodes, count, sel => sel.loot)
+
+/** Expand `nodes` selectors into a sparse 0-based index → `false` map of the rooms nobody stands in. */
+export const resolveNodeActors = (nodes: NodeSelector[] | undefined, count: number): Record<number, false> =>
+  resolveNodeField(nodes, count, sel => sel.actor)
 
 /** Expand `nodes` selectors into a sparse 0-based index → the chamber that stands after that room. */
 export const resolveNodeChambers = (
@@ -389,6 +395,10 @@ export type WardWingSpec = {
   endReward?: RewardHint
 }
 
+/** One authored ward path: a gated side path ending in a loot chest, keyed to a chosen tomb treasure
+ * (`tomb`/`index`) at that key's difficulty. Authored form of `wardPaths`. */
+export type WardPathSpec = { tomb: string; index: number } | "own"
+
 export type PyramidConstraint = {
   /** A bare number/preset is literal — applied as-is, everywhere it resolves. A range
    * interpolates linearly from `start` (the journey's first pyramid) to `end` (its last). */
@@ -542,8 +552,9 @@ export type PyramidConstraint = {
   wardWings?: number | WardWingSpec[]
   /** Ward-gated side paths off the last main floor — a single gated section with one reward,
    * not a whole bonus floor. Cheaper return-content; draws ward keys from the same pool as
-   * wardWings (allocated after them). */
-  wardPaths?: number
+   * wardWings (allocated after them). A `WardPathSpec[]` authors each path's key instead: a lower tier's
+   * key opens a path of that tier's difficulty, so it bears that tier's loot; `"own"` is one path keyed as a count's is. */
+  wardPaths?: number | WardPathSpec[]
   /** Trap the ward paths in this journey's earlier-half pyramids, so the return trip costs
    * health. Only affects wardPaths (a floor's main path has no trap model). */
   wardPathTrapped?: boolean
@@ -657,7 +668,11 @@ const makeFloorChain = (scope: RuleScope, c?: PyramidConstraint): FloorChainBuil
   const floors: (FloorConstraint | null)[] = []
   const chain: FloorChainBuilder = {
     scope,
-    constraints: { ...c, floors },
+    // `floors` rides only once a floor is authored: an empty list would still win over a pyramid's authored floors
+    // from another rule of the same scope, wiping them.
+    get constraints() {
+      return floors.length > 0 ? { ...c, floors } : { ...c }
+    },
     floor(n: number, fc: FloorConstraint): FloorChainBuilder {
       floors[n] = fc
       return chain

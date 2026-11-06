@@ -80,7 +80,7 @@ const tombFloor = () => floorFrom(["E.AB.C"], { A: tableau("a", "b"), B: tableau
 
 describe("computeFloorExploration", () => {
   // A floor with nothing walked yet is the "everything still to find" baseline the marker records as
-  // the player enters — the real recording path applies exploredSections on top.
+  // the player enters — the real recording path applies exploredCells on top.
 
   it("a pyramid floor: ungated content is open, ward chests become tomb-key bundles", () => {
     // An ungated chest west of the entrance; a ward to the east and another to the south, a chest
@@ -194,7 +194,7 @@ describe("computeFloorExploration", () => {
     const grid: FloorGrid = {
       ...drawn,
       cells: drawn.cells.map(row =>
-        row.map((cell, c) => (cell.type === "empty" ? cell : { ...cell, sectionHash: sectionOf(c) }))
+        row.map((cell, c) => (cell.type === "empty" ? cell : { ...cell, sectionAddress: sectionOf(c) }))
       ),
     }
     const authored = grid.cells

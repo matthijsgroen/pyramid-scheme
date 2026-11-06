@@ -48,37 +48,34 @@ describe("useCorridorDetection", () => {
     expect(registerHiddenCorridors).toHaveBeenCalledTimes(1)
   })
 
-  it("marks the corridor found when the player stands on the junction bordering it", () => {
+  const atMouth = { explorerPos: [2, 3] as const, junctionSections: new Map([["2,3", new Set(["h1", "h2"])]]) }
+
+  it("opens nothing by standing at a corridor's mouth", () => {
     const { api, markCorridorFound } = fakeJourneys()
 
-    renderHook(() =>
-      useCorridorDetection(
-        args({
-          journeys: api,
-          explorerPos: [2, 3],
-          junctionSections: new Map([["2,3", new Set(["h1"])]]),
-        })
-      )
-    )
-
-    expect(markCorridorFound).toHaveBeenCalledWith("h1")
-  })
-
-  it("finds nothing without the detector — the player glides past the junction unaware", () => {
-    const { api, markCorridorFound } = fakeJourneys()
-
-    renderHook(() =>
-      useCorridorDetection(
-        args({
-          journeys: api,
-          detectorLevel: 0,
-          explorerPos: [2, 3],
-          junctionSections: new Map([["2,3", new Set(["h1"])]]),
-        })
-      )
-    )
+    const { result } = renderHook(() => useCorridorDetection(args({ journeys: api, ...atMouth })))
 
     expect(markCorridorFound).not.toHaveBeenCalled()
+    expect([...result.current.here].sort()).toEqual(["h1", "h2"])
+  })
+
+  it("opens every unfound corridor at the mouth when the player reveals them", () => {
+    const { api, markCorridorFound } = fakeJourneys()
+
+    const { result } = renderHook(() =>
+      useCorridorDetection(args({ journeys: api, ...atMouth, foundCorridors: new Set(["h2"]) }))
+    )
+    result.current.reveal()
+
+    expect(markCorridorFound.mock.calls).toEqual([["h1"]])
+  })
+
+  it("offers nothing to open without the detector", () => {
+    const { api } = fakeJourneys()
+
+    const { result } = renderHook(() => useCorridorDetection(args({ journeys: api, ...atMouth, detectorLevel: 0 })))
+
+    expect(result.current.here.size).toBe(0)
   })
 
   it("reports this floor as holding a corridor only while one is still unnoticed", () => {

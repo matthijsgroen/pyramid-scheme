@@ -11,7 +11,7 @@ import "@/mods/registerModApps"
 const resolveKeyRequirements: ResolveKeyRequirements = (familyId, ctx) =>
   getFamilyPlugin(familyId)?.meta.resolveKeyRequirements?.(ctx)
 
-const gridFor = (journeyId: string, levelNr: number, floorIndex: number, seedOffset = 0): FloorGrid => {
+const carveAt = (journeyId: string, levelNr: number, floorIndex: number, seedOffset = 0) => {
   const journey = journeys.find(j => j.id === journeyId)!
   const site = journey.siteConfigs![levelNr - 1] ?? journey.siteConfigs![0]
   // The floor carries its own pinned seed, which wins over the address one, so the offset moves that.
@@ -28,8 +28,22 @@ const gridFor = (journeyId: string, levelNr: number, floorIndex: number, seedOff
       resolveBoardIndex: boardIndexesForFloor(journeyId, levelNr - 1, floorIndex),
     }
   )
-  if (!result.success) throw new Error(`${journeyId} L${levelNr} F${floorIndex} did not assemble`)
-  return result.grid
+  return result.success ? result.grid : undefined
+}
+
+const gridFor = (journeyId: string, levelNr: number, floorIndex: number, seedOffset = 0): FloorGrid => {
+  const grid = carveAt(journeyId, levelNr, floorIndex, seedOffset)
+  if (!grid) throw new Error(`${journeyId} L${levelNr} F${floorIndex} did not assemble`)
+  return grid
+}
+
+/** The floor carved at the first seed from `seedOffset` on that carves it: not every seed does. */
+const movedGridFor = (journeyId: string, levelNr: number, floorIndex: number, seedOffset: number): FloorGrid => {
+  for (let offset = seedOffset; offset < seedOffset + 40; offset++) {
+    const grid = carveAt(journeyId, levelNr, floorIndex, offset)
+    if (grid) return grid
+  }
+  throw new Error(`${journeyId} L${levelNr} F${floorIndex} carves at no seed from +${seedOffset}`)
 }
 
 const positions = (grid: FloorGrid) => grid.cells.flatMap((row, r) => row.map((_cell, c) => [r, c] as [number, number]))
@@ -44,10 +58,9 @@ const LEVEL = 3
 
 describe("a save survives the floor being carved somewhere else", () => {
   const before = gridFor(JOURNEY, LEVEL, 0)
-  // A seed twelve steps along (none between carves this floor): the corridors land elsewhere AND the
-  // walk comes out a different length, which is the move compaction will make on all 74 floors. Nothing
-  // authored changes.
-  const after = gridFor(JOURNEY, LEVEL, 0, 12)
+  // A seed twelve or more steps along, the first that carves: the corridors land elsewhere AND the walk comes out a
+  // different length, which is the move compaction will make on all 74 floors. Nothing authored changes.
+  const after = movedGridFor(JOURNEY, LEVEL, 0, 12)
 
   it("really did re-carve, and re-LENGTH — otherwise nothing below proves anything", () => {
     const drawn = (grid: FloorGrid) => grid.cells.flat().filter(cell => cell.type !== "empty").length

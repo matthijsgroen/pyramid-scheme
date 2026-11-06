@@ -98,7 +98,6 @@
     "tierComingSoon": "Je hebt de sleutel, maar aan de {{tier}}-piramides wordt nog gebouwd. Ze komen in een latere update — tot die tijd opent je sleutel meer van de piramides die je al kent.",
     "answerNow": "Het antwoord is: ",
     "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
-    "saveVersion": "· opslag v{{saveVersion}}",
     "resetPuzzle": "Opnieuw",
     "hint": "Hint",
     "undo": "Ongedaan",
@@ -279,6 +278,8 @@
     "allCollected": "Alle stukken verzameld",
     "more": "+{{count}} meer",
     "corridorNearby": "Een verborgen gang is vlakbij",
+    "corridorHere": "Hier zit een verborgen gang",
+    "revealCorridor": "Openmaken",
     "corridorOnFloor": "Een verborgen gang wacht op deze verdieping",
     "hunting": "Op jacht naar {{symbol}}",
     "huntStop": "Stop",
@@ -294,13 +295,14 @@
     "corridorNoneNearby": "Geen verborgen gang in de buurt",
     "corridorNoneOnFloor": "Geen verborgen gang op deze verdieping",
     "corridorOtherFloor": "Een verborgen gang wacht op een andere verdieping",
-    "corridorNoneInPyramid": "Nog geen verborgen gangen gevonden in deze piramide",
+    "corridorNoneInPyramid": "Geen verborgen gang op een andere verdieping",
     "title": "Detector",
     "band": {
       "none": "Niets gevonden",
       "pyramid": "Iets in deze piramide",
       "floor": "Iets op deze verdieping",
-      "near": "Iets dichtbij"
+      "near": "Iets dichtbij",
+      "here": "Hier! Open de detector"
     }
   },
   "keys": {

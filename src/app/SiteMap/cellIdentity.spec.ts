@@ -5,15 +5,7 @@ import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry
 import { journeys } from "@/data/journeys"
 import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
 import { boardIndexesForFloor } from "./boardIndexes"
-import {
-  cellAddress,
-  cellSlot,
-  isPlaceAddress,
-  migrateExploredToCells,
-  migrateJourneyToCarveIndependent,
-  cellKeysForFloor,
-  walkPosition,
-} from "./cellIdentity"
+import { cellAddress, cellSlot, isPlaceAddress, walkPosition } from "./cellIdentity"
 import "@/mods/registerModApps"
 
 const resolveKeyRequirements: ResolveKeyRequirements = (familyId, ctx) =>
@@ -37,21 +29,17 @@ const floorOf = (levelNr: number, floorIndex: number) => {
   return result.grid
 }
 
-/** A room on the floor, with everything needed to talk about it both ways. */
+/** A room on the floor: where it stands and what it is called. */
 const someRoom = (grid: ReturnType<typeof floorOf>, floor = 0, nth = 0) => {
   const found = grid.cells.flatMap((row, r) =>
     row.flatMap((_cell, c) => (cellSlot(grid, r, c) ? [[r, c] as [number, number]] : []))
   )[nth]
   const [r, c] = found
-  const cell = grid.cells[r][c]
   return {
     row: r,
     col: c,
     slot: cellSlot(grid, r, c)!,
     address: cellAddress(grid, floor, r, c)!,
-    // What the save files it under, and what the coordinate archive it is translated FROM was keyed by.
-    section: cell.type === "empty" ? "" : (cell.sectionAddress ?? ""),
-    sectionHash: cell.type === "empty" ? "" : (cell.sectionHash ?? ""),
   }
 }
 
@@ -150,122 +138,6 @@ describe("how far along the walk a cell sits", () => {
   })
 })
 
-describe("translating a save written in coordinates", () => {
-  it("keeps the room by its slot and the corridor by its carve-bound key", () => {
-    const grid = floorOf(3, 0)
-    const room = someRoom(grid)
-    const corridor = grid.cells.flatMap((row, r) =>
-      row.flatMap((cell, c) => (cell.type === "corridor" ? [{ r, c, hash: cell.sectionHash ?? "" }] : []))
-    )[0]
-
-    const translated = cellKeysForFloor(grid, 0, {
-      ...(corridor.hash === room.sectionHash ? {} : { [corridor.hash]: [`0:${corridor.r},${corridor.c}`] }),
-      [room.sectionHash]: [`0:${room.row},${room.col}`, `0:${corridor.r},${corridor.c}`],
-    })
-
-    // Both came across: the room under its authored slot, the corridor under `~ordinal`, which holds
-    // until the floor is re-carved and the high-water mark takes over. Matched by the archive's hash,
-    // filed under the authoring address.
-    expect(translated[room.section]).toContain(`0/${room.slot}`)
-    expect(
-      Object.values(translated)
-        .flat()
-        .filter(key => key.includes("/~"))
-    ).toHaveLength(1)
-  })
-
-  it("drops a coordinate whose section has been restructured since", () => {
-    const grid = floorOf(3, 0)
-    const room = someRoom(grid)
-
-    const translated = cellKeysForFloor(grid, 0, { "gone-section": [`0:${room.row},${room.col}`] })
-
-    expect(translated["gone-section"]).toBeUndefined()
-  })
-
-  it("assembles only the floors the save actually covers", () => {
-    const asked: string[] = []
-    const grid = floorOf(3, 0)
-    const room = someRoom(grid)
-
-    const migrated = migrateExploredToCells({ [`3:${room.sectionHash}`]: [`0:${room.row},${room.col}`] }, (l, f) => {
-      asked.push(`${l}:${f}`)
-      return l === 3 && f === 0 ? grid : null
-    })
-
-    expect(asked).toEqual(["3:0"])
-    expect(migrated[`3:${room.section}`]).toEqual([`0/${room.slot}`])
-  })
-
-  it("keeps the level in the key, so two levels of one journey do not bleed into each other", () => {
-    const grid = floorOf(3, 0)
-    const room = someRoom(grid)
-    const stored = `0:${room.row},${room.col}`
-
-    const migrated = migrateExploredToCells(
-      { [`3:${room.sectionHash}`]: [stored], [`4:${room.sectionHash}`]: [stored] },
-      (l, f) => (f === 0 && l === 3 ? grid : null)
-    )
-
-    expect(Object.keys(migrated)).toEqual([`3:${room.section}`])
-  })
-
-  it("re-keys a save written before the coordinate archive existed, instead of crashing the launch", () => {
-    // Every save with an old cellKeyVersion comes through here, including ones from before
-    // exploredSections was written at all. Nothing to translate is not the same as nothing to do.
-    const migrated = migrateJourneyToCarveIndependent({ levelNr: 1 }, () => null)
-
-    expect(migrated.exploredCells).toEqual({})
-    expect(migrated.positionKey).toBeNull()
-    expect(migrated.purchasedStock).toEqual([])
-  })
-
-  it("re-keys a whole save — position, stock and found corridors along with the rooms", () => {
-    const grid = floorOf(3, 0)
-    const room = someRoom(grid)
-    const other = someRoom(grid, 0, 1)
-    const at = (cell: { row: number; col: number }) => `0:${cell.row},${cell.col}`
-
-    const migrated = migrateJourneyToCarveIndependent(
-      {
-        levelNr: 3,
-        exploredSections: { [`3:${room.sectionHash}`]: [at(room)] },
-        position: at(other),
-        purchasedStock: [`${at(room)}#2`],
-        knownHiddenCorridors: [`3:${room.sectionHash}`],
-        foundHiddenCorridors: [`3:${room.sectionHash}`],
-      },
-      (l, f) => (l === 3 && f === 0 ? grid : null)
-    )
-
-    expect(migrated.exploredCells).toEqual({ [`3:${room.section}`]: [`0/${room.slot}`] })
-    expect(migrated.positionKey).toBe(other.address)
-    // The level goes on here, where exploration carries it in its own key.
-    expect(migrated.purchasedStock).toEqual([`3:${room.address}!2`])
-    expect(migrated.knownHiddenCorridors).toEqual([`3:${room.section}`])
-    expect(migrated.foundHiddenCorridors).toEqual([`3:${room.section}`])
-  })
-
-  it("translates nothing it cannot assemble, rather than guessing", () => {
-    const grid = floorOf(3, 0)
-    const room = someRoom(grid)
-
-    const migrated = migrateJourneyToCarveIndependent(
-      {
-        levelNr: 3,
-        exploredSections: { [`3:${room.sectionHash}`]: [`0:${room.row},${room.col}`] },
-        position: `0:${room.row},${room.col}`,
-        purchasedStock: [`0:${room.row},${room.col}#1`],
-      },
-      () => null
-    )
-
-    expect(migrated.exploredCells).toEqual({})
-    expect(migrated.positionKey).toBeNull()
-    expect(migrated.purchasedStock).toEqual([])
-  })
-})
-
 describe("the authoring address is the identity, not the structural hash", () => {
   // A wing floor, which no lock stands on: a laid lock's own sections are addressed by the lock, not by a side path.
   const grid = floorOf(3, 1)
@@ -319,33 +191,9 @@ describe("the authoring address is the identity, not the structural hash", () =>
     const hashesBefore = sections(grid, c => c.sectionHash ?? "")
     const hashesAfter = sections(result.grid, c => c.sectionHash ?? "")
 
-    // Every hash moved — which is what used to throw the run away.
+    // Every hash moved, so a save keyed by the hash would lose the run.
     expect([...hashesBefore].some(h => hashesAfter.has(h))).toBe(false)
     // Not one address did.
     expect([...addressesBefore].sort()).toEqual([...addressesAfter].sort())
-  })
-
-  // The archive is keyed by the hash the save was written under — including the pre-0.39 one — and the
-  // re-keying is the only thing that has to understand both. This is what the old-hash fallback in
-  // useAssembledFloor used to do at read time, moved to the one place that reads the archive.
-  it("re-keys a save filed under a superseded hash onto the section's address", () => {
-    const withMovedHash = grid.cells.flatMap((row, r) =>
-      row.flatMap((cell, c) =>
-        cell.type !== "empty" &&
-        cell.legacySectionHash &&
-        cell.legacySectionHash !== cell.sectionHash &&
-        cellSlot(grid, r, c)
-          ? [{ r, c, legacy: cell.legacySectionHash, address: cell.sectionAddress!, slot: cellSlot(grid, r, c)! }]
-          : []
-      )
-    )[0]
-    expect(withMovedHash, "no room whose hash actually moved").toBeTruthy()
-
-    const migrated = migrateExploredToCells(
-      { [`3:${withMovedHash.legacy}`]: [`0:${withMovedHash.r},${withMovedHash.c}`] },
-      (l, f) => (l === 3 && f === 0 ? grid : null)
-    )
-
-    expect(migrated[`3:${withMovedHash.address}`]).toEqual([`0/${withMovedHash.slot}`])
   })
 })

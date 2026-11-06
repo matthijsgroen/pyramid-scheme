@@ -9,7 +9,7 @@ import { hashString } from "@/support/hashString"
 // must go through here.
 
 // Persistent interiors (pyramids and tombs with a site config) are revisitable places: their
-// seed must never move, or a run's stored exploredSections stop matching the (now different)
+// seed must never move, or a run's stored explored cells stop matching the (now different)
 // layout. So it's derived from the journey id alone, at a fixed index — NOT from
 // completionCount, which is what a replayable exterior-only journey uses.
 export const persistentInteriorSeed = (journeyId: string): number => generateNewSeed(hashString(journeyId), 1)

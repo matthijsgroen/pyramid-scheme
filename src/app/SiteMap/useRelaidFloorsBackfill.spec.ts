@@ -12,8 +12,6 @@ const save = (journeyId: string, levelNr: number): StoredJourneyStateV3 => ({
   levelNr,
   completionCount: 0,
   active: true,
-  exploredSections: {},
-  position: null,
   positionKey: "main#0/p1",
   interiorLevelNr: levelNr,
 })

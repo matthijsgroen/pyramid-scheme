@@ -17,6 +17,10 @@ export type MosaicTier = (typeof MOSAIC_TIERS)[number]
 
 export const mosaicBucket = (tier: MosaicTier) => `mosaicPiece_${tier}`
 
+/** The registers a player finishes before the corridor detector: none of their glass stands in a hidden path, so the
+ * panel is whole from what is in plain sight. */
+export const REGISTERS_IN_PLAIN_SIGHT: readonly MosaicTier[] = ["starter"]
+
 // How many pieces each register holds — its tier's share of the reveal sequence. Derived, not
 // authored: the reveal is count-based per register (MosaicPage clamps to the tier's step count),
 // so a piece past its register's last step would reveal nothing.
@@ -41,7 +45,7 @@ export const MOSAIC_CURRENCIES: CappedCurrency[] = MOSAIC_TIERS.map(tier => ({
   totalRequired: () => MOSAIC_STEPS_BY_TIER[tier],
   // A register's glass comes out of paths of its own difficulty. Hard, not a preference: a
   // starter piece found on a wizard floor would fill the wrong panel.
-  eligible: slot => slot.tier === tier,
+  eligible: slot => slot.tier === tier && !(slot.hidden && REGISTERS_IN_PLAIN_SIGHT.includes(tier)),
   // Tagged slots first (the DSL's authored `prefers` hints), then everything else in natural
   // collection order — deterministic without an explicit sort. Mosaic is pure cosmetic filler,
   // so exact spread doesn't matter; refine here if placement aesthetics ever do.

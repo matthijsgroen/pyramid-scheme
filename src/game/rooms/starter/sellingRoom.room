@@ -6,8 +6,8 @@ activity selling
 mirror
 
 layout
-# # d # #
-# k . g #
+# # N # #
+# k p g #
 d s . . d
 # . . . #
 # d d d #
@@ -15,4 +15,6 @@ d s . . d
 wares = hanging | offeringTable
 k wall counter
 g wall? wares
+N door
+p floor? patron unless N
 s stop

@@ -9,8 +9,6 @@ const save = (overrides: Partial<StoredJourneyStateV3> = {}): StoredJourneyState
   levelNr: 2,
   completionCount: 0,
   active: true,
-  exploredSections: {},
-  position: "0:3,4",
   positionKey: "main#0/p3",
   standingKey: "main#0/~12",
   interiorLevelNr: 2,
@@ -26,10 +24,6 @@ describe("standsInRelaidPyramid", () => {
     expect(standsInRelaidPyramid(save({ positionKey: "s7#1/p0", standingKey: "s7#1/p0" }), RELAID)).toBe(true)
   })
 
-  it("holds for a save carrying only the coordinate archive, which the re-key turns into a place", () => {
-    expect(standsInRelaidPyramid(save({ positionKey: undefined, standingKey: undefined }), RELAID)).toBe(true)
-  })
-
   it("does not hold for another pyramid of the same journey", () => {
     expect(standsInRelaidPyramid(save({ levelNr: 3 }), RELAID)).toBe(false)
   })
@@ -39,7 +33,7 @@ describe("standsInRelaidPyramid", () => {
   })
 
   it("does not hold for a save standing nowhere yet, which has no place to forget", () => {
-    expect(standsInRelaidPyramid(save({ position: null, positionKey: null, standingKey: null }), RELAID)).toBe(false)
+    expect(standsInRelaidPyramid(save({ positionKey: null, standingKey: null }), RELAID)).toBe(false)
   })
 
   it("does not hold for a save already stamped with the version that re-laid the pyramid", () => {
