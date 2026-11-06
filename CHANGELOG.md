@@ -11,16 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The camp: your home, which you build out with what you find on your travels.
 - A story: you meet Fez, travel with the explorer, and find somebody waiting in every tomb.
-- Every treasure tomb lies in a cave, with its pyramid in a sunlit cavern below.
 - Hidden passages with puzzles and booby traps on every floor, worth coming back for.
 
 ### Changed
 
 - New art for the starter pyramids, with rooms furnished for what was done in them.
-- The explorer walks around what stands in a room.
 - Hearts refill at the camp, and waterskins heal on the spot.
-- The mosaic is cut into smaller pieces, and the starter panel can be finished without the hidden passage detector.
-- Pyramid corridors are much shorter.
 - Saved games start over with this release.
 
 ## 0.44.0 - 2026-09-18
