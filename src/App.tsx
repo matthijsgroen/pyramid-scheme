@@ -2,7 +2,6 @@ import { useState } from "react"
 import { PyramidExpedition } from "@/app/PyramidExpedition"
 import { Base } from "@/app/Base"
 import { useJourneys } from "@/app/state/useJourneys"
-import { useCarveIndependentBackfill } from "@/app/SiteMap/useCarveIndependentBackfill"
 import { useFloorExplorationBackfill } from "@/app/SiteMap/useFloorExplorationBackfill"
 import { useMechanismSlotBackfill } from "@/app/SiteMap/useMechanismSlotBackfill"
 import { useRelaidFloorsBackfill } from "@/app/SiteMap/useRelaidFloorsBackfill"
@@ -22,14 +21,12 @@ function App({ newVersion = false }: { newVersion?: boolean }) {
   const journeys = useJourneys()
   const comeHome = useHomecoming()
   const { activeJourneyId, getJourney, completeLevel, completeJourney } = journeys
-  // One-time, and it must happen in the release BEFORE any floor is reshaped — see the hook.
-  useCarveIndependentBackfill(journeys)
-  // Also one-time: floor summaries a save kept from a visit it never finished light pyramids that
+  // One-time: floor summaries a save kept from a visit it never finished light pyramids that
   // hold nothing, and the walk they provoke is the very thing they are meant to be deciding.
   useFloorExplorationBackfill(journeys)
-  // After the two above, because it merges into what they have just written.
+  // After the one above, because it merges into what it has just written.
   useMechanismSlotBackfill(journeys)
-  // Last, so a place the re-key derives for a save inside a re-laid pyramid is forgotten with the rest.
+  // Last, so the places it forgets are forgotten after every write above.
   useRelaidFloorsBackfill(journeys)
 
   const journeyInfo = activeJourneyId ? getJourney(activeJourneyId) : null

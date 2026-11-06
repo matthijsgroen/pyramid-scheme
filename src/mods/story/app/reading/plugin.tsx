@@ -56,7 +56,7 @@ export const ReadingComponent: FamilyPlugin["Component"] = ({ ctx, journeys, onC
   const wall: Wall | undefined = wallFor(ctx.journeyId)
 
   useEffect(() => {
-    journeys.markCellExplored(ctx.sectionHash, ctx.edgeId, ctx.address)
+    journeys.markCellExplored(ctx.address)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fires once per room instance
   }, [ctx.edgeId])
 

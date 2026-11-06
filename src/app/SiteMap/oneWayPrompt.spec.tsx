@@ -117,7 +117,7 @@ describe("every realisation of a one-way is taken through its declared prompt", 
           })
           expect(playTraversal).not.toHaveBeenCalled()
           const landing = cellAddress(grid, 0, run.landing[0], run.landing[1])
-          expect(journeys.updatePosition).not.toHaveBeenCalledWith("j1", landing, expect.anything())
+          expect(journeys.updatePosition).not.toHaveBeenCalledWith("j1", landing)
         }
       )
 
@@ -130,13 +130,13 @@ describe("every realisation of a one-way is taken through its declared prompt", 
           act(() => hook.result.current.onCellClick(run.launch[0], run.launch[1]))
           arrive()
 
-          expect(journeys.updatePosition).toHaveBeenLastCalledWith("j1", launch, expect.anything())
+          expect(journeys.updatePosition).toHaveBeenLastCalledWith("j1", launch)
           expect(playTraversal).not.toHaveBeenCalled()
 
           await act(async () => hook.result.current.prompt!.take())
 
           expect(playTraversal).toHaveBeenCalledOnce()
-          expect(journeys.updatePosition).toHaveBeenLastCalledWith("j1", landing, expect.anything())
+          expect(journeys.updatePosition).toHaveBeenLastCalledWith("j1", landing)
         }
       )
     })

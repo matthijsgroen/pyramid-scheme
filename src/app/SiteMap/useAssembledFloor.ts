@@ -27,8 +27,8 @@ const resolveKeyRequirements: ResolveKeyRequirements = (familyId, ctx) =>
   getFamilyPlugin(familyId)?.meta.resolveKeyRequirements?.(ctx)
 
 // Filed by the section's AUTHORING address, so re-authoring what is inside a section no longer makes
-// it a different section. There is no older address format to fall back to: a save still holding the
-// structural hashes is re-keyed from the coordinate archive before it is ever read (cellKeyVersion).
+// it a different section. There is no older address format to fall back to: a save from before this
+// key format is thrown away at launch (SAVE_EPOCH).
 // A save never calls a WALL explored. A way out a switch shut is not ground, so a key naming one is
 // a leftover from a floor where it could still be walked onto — and honouring it would carry the
 // section's high-water mark past the bars, which is the whole floor beyond them coming back lit.

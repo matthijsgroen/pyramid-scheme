@@ -98,7 +98,6 @@
     "tierComingSoon": "You hold the key, but the {{tier}} pyramids are still being built. They arrive in a later update — until then, your key opens more of the pyramids you already know.",
     "answerNow": "The answer is: ",
     "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
-    "saveVersion": "· save v{{saveVersion}}",
     "resetPuzzle": "Reset",
     "hint": "Hint",
     "undo": "Undo",

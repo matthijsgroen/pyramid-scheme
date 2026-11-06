@@ -6,7 +6,7 @@ import type { CellState, Direction, FloorGrid, GridCell, MechanismRecord, RoomCe
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { registerFamily } from "@/app/families/familyRegistry"
 import { getCell, revealAll } from "@/game/gridNavigation"
-import { cellAddress } from "./cellIdentity"
+import { cellAddress, floorOfAddress } from "./cellIdentity"
 import { encodeEdge } from "./edgeId"
 import {
   AXES,
@@ -315,8 +315,8 @@ describe("useSiteNavigation", () => {
 
     act(() => hook.result.current.onCellClick(0, 1))
 
-    expect(journeys.markCellExplored).toHaveBeenCalledWith(SECTION, "0:0,1", CORRIDOR_AT_1)
-    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", CORRIDOR_AT_1, "0:0,1")
+    expect(journeys.markCellExplored).toHaveBeenCalledWith(CORRIDOR_AT_1)
+    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", CORRIDOR_AT_1)
   })
 
   it("walks nowhere on a tap on an obstacle cell beside the landing, writing neither an exploration nor a position", () => {
@@ -346,7 +346,7 @@ describe("useSiteNavigation", () => {
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
 
-    expect(journeys.markCellExplored).toHaveBeenCalledWith(SECTION, "0:0,1", CORRIDOR_AT_1)
+    expect(journeys.markCellExplored).toHaveBeenCalledWith(CORRIDOR_AT_1)
     expect(onEncounter).not.toHaveBeenCalled()
   })
 
@@ -356,7 +356,7 @@ describe("useSiteNavigation", () => {
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
 
-    expect(journeys.markCellExplored).toHaveBeenCalledWith(SECTION, "0:0,1", CORRIDOR_AT_1)
+    expect(journeys.markCellExplored).toHaveBeenCalledWith(CORRIDOR_AT_1)
     expect(onEncounter).not.toHaveBeenCalled()
   })
 
@@ -380,7 +380,7 @@ describe("useSiteNavigation", () => {
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
 
-    expect(journeys.markCellExplored).toHaveBeenCalledWith(SECTION, "0:0,1", SWITCH_AT_1)
+    expect(journeys.markCellExplored).toHaveBeenCalledWith(SWITCH_AT_1)
   })
 
   // The consequence of that write: the room reads completed from the second visit on, so walking back
@@ -495,7 +495,7 @@ describe("useSiteNavigation", () => {
       act(() => hook.result.current.onCellClick(6, 6))
 
       act(() => hook.result.current.onCellClick(7, 6))
-      expect(journeys.updatePosition).toHaveBeenCalledWith("j1", expect.anything(), "0:7,6")
+      expect(journeys.updatePosition).toHaveBeenCalledWith("j1", cellAddress(grid, 0, 7, 6) ?? encodeEdge(0, 7, 6))
       // The position lands a render later: until it does he still stands on the waypoint, so the walk out starts there.
       expect(hook.result.current.waypoint).toEqual([6, 6])
       hook.rerender({ pos: [7, 6] })
@@ -517,7 +517,7 @@ describe("useSiteNavigation", () => {
     const { hook, journeys, onEncounter } = setup([entrance, corridor, gate()])
 
     act(() => hook.result.current.onCellClick(0, 2))
-    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", GATE_AT_2, "0:0,2")
+    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", GATE_AT_2)
 
     arrive()
     expect(onEncounter).toHaveBeenCalledWith([0, 2], true)
@@ -580,7 +580,7 @@ describe("useSiteNavigation", () => {
 
     act(() => hook.result.current.onCellClick(0, 1))
 
-    expect(journeys.markCellExplored).toHaveBeenCalledWith(SECTION, "0:0,1", EXIT_AT_1)
+    expect(journeys.markCellExplored).toHaveBeenCalledWith(EXIT_AT_1)
   })
 
   // Writing the exit down completes it, and a completed cell is otherwise only walked to. The way out
@@ -617,7 +617,7 @@ describe("useSiteNavigation", () => {
 
     const moves = vi.mocked(journeys.updatePosition).mock.calls
     expect(moves).toHaveLength(2)
-    expect(moves[1][2]).toMatch(/^1:/)
+    expect(floorOfAddress(moves[1][1])).toBe(1)
     expect(hook.result.current.prompt).toBeNull()
   })
 
@@ -633,7 +633,7 @@ describe("useSiteNavigation", () => {
     arrive()
 
     expect(hook.result.current.prompt).toBeNull()
-    expect(vi.mocked(journeys.updatePosition).mock.calls.every(call => call[2].startsWith("0:"))).toBe(true)
+    expect(vi.mocked(journeys.updatePosition).mock.calls.every(call => floorOfAddress(call[1]) === 0)).toBe(true)
   })
 
   it("repositions the player on a completed room without reopening it", () => {
@@ -642,7 +642,7 @@ describe("useSiteNavigation", () => {
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
 
-    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", PUZZLE_AT_1, "0:0,1")
+    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", PUZZLE_AT_1)
     expect(onEncounter).not.toHaveBeenCalled()
   })
 
@@ -673,7 +673,7 @@ describe("useSiteNavigation", () => {
 
     expect(onEncounter).toHaveBeenCalledWith([0, 1], true)
     expect(hook.result.current.prompt).toBeNull()
-    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", PUZZLE_AT_1, "0:0,1")
+    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", PUZZLE_AT_1)
   })
 
   it("offers the way back in again once the room has nothing left unshown", () => {
@@ -718,7 +718,7 @@ describe("useSiteNavigation", () => {
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
 
-    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", PUZZLE_AT_1, "0:0,1")
+    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", PUZZLE_AT_1)
     expect(hook.result.current.prompt).toBeNull()
     expect(onEncounter).not.toHaveBeenCalled()
   })
@@ -762,7 +762,7 @@ describe("a lever family (FamilyMeta.actsOnArrival) throws itself, never opening
 
     act(() => hook.result.current.onCellClick(0, 1))
 
-    expect(journeys.markCellExplored).toHaveBeenCalledExactlyOnceWith(SECTION, "0:0,1", LEVER_AT_1)
+    expect(journeys.markCellExplored).toHaveBeenCalledExactlyOnceWith(LEVER_AT_1)
     expect(journeys.setMechanismState).not.toHaveBeenCalled()
     arrive()
     expect(journeys.setMechanismState).not.toHaveBeenCalled()
@@ -937,21 +937,17 @@ describe("useSiteNavigation taking a span", () => {
   })
 
   it("hides the player, waits for the traversal, then shows them at the landing with the save agreeing", async () => {
-    const { hook, journeys, landing, landingAddress, events, settle, atLaunch } = dropSetup()
+    const { hook, journeys, landingAddress, events, settle, atLaunch } = dropSetup()
     atLaunch()
 
     act(() => promptOf(hook).take())
     expect(hook.result.current.explorerHidden).toBe(true)
-    expect(journeys.updatePosition).not.toHaveBeenCalledWith("j1", landingAddress, expect.anything())
+    expect(journeys.updatePosition).not.toHaveBeenCalledWith("j1", landingAddress)
 
     await act(async () => settle())
 
     expect(hook.result.current.explorerHidden).toBe(false)
-    expect(journeys.updatePosition).toHaveBeenLastCalledWith(
-      "j1",
-      landingAddress,
-      encodeEdge(0, landing[0], landing[1])
-    )
+    expect(journeys.updatePosition).toHaveBeenLastCalledWith("j1", landingAddress)
     // Hidden and committed before the traversal starts, shown only after the write: a player shown before
     // the landing is written would be drawn at the launch again for a frame.
     expect(events).toEqual(["player hidden", "traversal started", "landing written", "player shown"])

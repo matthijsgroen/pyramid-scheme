@@ -26,8 +26,6 @@ const store = () => {
       levelNr: 1,
       completionCount: 0,
       active: true,
-      exploredSections: {},
-      position: null,
       interiorLevelNr: null,
     },
   ]

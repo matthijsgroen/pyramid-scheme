@@ -30,8 +30,6 @@ const makeActiveJourney = (levelNr: number): CombinedJourneyState => ({
   levelNr,
   completionCount: 1,
   active: true,
-  exploredSections: {},
-  position: null,
   // null, so the screen shows the exterior board rather than restoring the interior
   interiorLevelNr: null,
   inProgress: true,

@@ -155,9 +155,8 @@ export const useEncounter = ({
       const [row, col] = pos
       const edgeId = encodeEdge(currentFloor, row, col)
       const cell = getCell(grid, row, col)
-      const sectionHash = cell && cell.type !== "empty" ? (cell.sectionHash ?? "") : ""
       const address = (grid && cellAddress(grid, currentFloor, row, col)) || edgeId
-      journeys.markCellExplored(sectionHash, edgeId, address)
+      journeys.markCellExplored(address)
       // The board is finished, so the moves that made it have nothing left to say, and a room walked back
       // into gets a fresh one. Unless those moves ARE the mechanism (FamilyMeta.stateIsTheMechanism):
       // there they say how the floor itself stands, and the room has to reopen on them.

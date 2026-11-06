@@ -8,16 +8,10 @@ import { persistentInteriorSeed } from "@/game/siteSeed"
 import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { hashString } from "@/support/hashString"
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
-import { isPlaceAddress, keyOfAddress, sectionOfAddress, type CarveIndependentState } from "@/app/SiteMap/cellIdentity"
+import { isPlaceAddress, keyOfAddress, sectionOfAddress } from "@/app/SiteMap/cellIdentity"
 import type { RepairedExploration } from "@/app/SiteMap/repairFloorExploration"
 import type { MechanismSlotBackfill } from "@/app/SiteMap/backfillMechanismSlots"
 import { RELAID_FLOORS_VERSION } from "@/app/SiteMap/relaidPyramids"
-
-/** Bumped whenever a stored cell key changes shape. 2 named cells by their authored slot and floor
- * rather than by their step along the carved walk. 3 named their SECTION by its authoring address
- * (`main`, `s0`, `s0.1`) rather than by a structural hash, which moved whenever the floor's own carve
- * knobs were retuned. See migrateJourneyToCarveIndependent. */
-export const CELL_KEY_VERSION = 3
 
 /** Bumped whenever stored floor summaries have to be re-derived from the floors themselves — because
  * the way they are computed changed, or because a release wrote wrong ones. 1 clears the summaries a
@@ -44,17 +38,10 @@ export type StoredJourneyStateV3 = {
 
   completionCount: number
   active: boolean
-  // keyed by sectionHash; cells explored in the site interior — persists across revisits
-  // stale entries (section hash no longer in world) are silently ignored on apply
-  exploredSections: Record<string, string[]>
-  /** The same exploration, keyed `${floor}/${slot}` inside each section — what a cell IS, not where the
-   *  carve put it (src/app/SiteMap/cellIdentity.ts). This is what the map restores from; the coordinates
-   *  above are kept only as the archive the re-keying reads, and go with the re-carve. */
+  /** Cells explored in the site interior, keyed `${levelNr}:${sectionAddress}` and inside it `${floor}/${slot}` —
+   *  what a cell IS, not where the carve put it (src/app/SiteMap/cellIdentity.ts). Persists across revisits;
+   *  this is what the map restores from. */
   exploredCells?: Record<string, string[]>
-  /** Which translation of this save's per-cell collections is stored, so a change to the key format
-   *  re-derives them from `exploredSections` instead of throwing a run away. Absent = coordinates only. */
-  cellKeyVersion?: number
-  position: string | null // "floor:row,col" or null (entrance) — the archive; positionKey is what is read
   /** The last authored place (src/game/cellSlot.ts) the player stood on, as a cell address
    *  (src/app/SiteMap/cellIdentity.ts). A bend or bare fork carries no slot and never overwrites this —
    *  walking one only, since entering, leaves it at null (entrance). */
@@ -70,8 +57,8 @@ export type StoredJourneyStateV3 = {
    *  longer has falls back to the entrance where the map resolves it (`useAssembledFloor`'s `explorerPos`). */
   pyramidPositions?: Record<string, PyramidPosition>
   interiorLevelNr: number | null // set when interior is open for a level; cleared on level advance
-  // Names cells by address — `${levelNr}:${sectionHash}#${floor}/${slot}` — so a re-carve moves the
-  // cell and takes the entry with it. See migrateJourneyToCarveIndependent.
+  // Names cells by address — `${levelNr}:${sectionAddress}#${floor}/${slot}` — so a re-carve moves the
+  // cell and takes the entry with it.
   purchasedStock?: string[] // `${address}!${stockIndex}` of shop slots already bought
   /** Which POSITION each mechanism on this site stands in, keyed `${levelNr}:${mechanismAddress}`.
    *
@@ -144,24 +131,16 @@ export type JourneyAPI = {
   visitLevel: (journeyId: string, levelNr: number) => Promise<unknown>
   /** Makes `journeyId` the active journey with site `levelNr`'s interior open and the explorer standing at
    *  `address` (null: the entrance), starting the journey if it never was. A develop-mode jump. With
-   *  `walkedOnto` the cell is written down explored, as walking onto it would, so he can move from it. */
-  enterAt: (
-    journeyId: string,
-    levelNr: number,
-    address: string | null,
-    walkedOnto?: { sectionHash: string; cellId: string }
-  ) => Promise<unknown>
+   *  `walked` the cell is written down explored, as walking onto it would, so he can move from it. */
+  enterAt: (journeyId: string, levelNr: number, address: string | null, walked?: boolean) => Promise<unknown>
   nextJourneySeed: (journeyId: string) => number
   getJourney: (journeyId: string) => CombinedJourneyState | undefined
   completeJourney: () => void
   cancelJourney: () => void
   completeLevel: () => void
   /** `address` is the cell read off the grid with `cellAddress` — it carries the authoring section the
-   * entry is filed under. `sectionHash` and `cellId` only key the coordinate archive beside it. */
-  markCellExplored: (sectionHash: string, cellId: string, address?: string | null) => void
-  /** Saves whose per-cell collections predate the current key format — see useCarveIndependentBackfill. */
-  journeysNeedingReKey: () => StoredJourneyStateV3[]
-  setCarveIndependentState: (journeyId: string, state: CarveIndependentState) => void
+   * entry is filed under. */
+  markCellExplored: (address: string) => void
   /** Saves whose floor summaries predate the current derivation — see useFloorExplorationBackfill. */
   journeysNeedingFloorRederive: () => StoredJourneyStateV3[]
   setRepairedExploration: (journeyId: string, repaired: RepairedExploration) => void
@@ -178,11 +157,11 @@ export type JourneyAPI = {
   /** Records `address` as the live cell the player is standing on (`standingKey`), and — unless it
    *  names a bend or bare fork, a cell with no slot (src/game/cellSlot.ts) — as `positionKey`, the
    *  place a save resumes at. */
-  updatePosition: (journeyId: string, address: string, nodeId: string) => void
+  updatePosition: (journeyId: string, address: string) => void
   /** `null` closes the interior, which happens when the player leaves it by the way out: the pyramid's remembered
    *  position is forgotten, so a return starts at the entrance. */
   setInteriorLevel: (journeyId: string, levelNr: number | null) => void
-  // The two shop members name a cell by its `${sectionHash}#${floor}/${slot}` address, which
+  // The two shop members name a cell by its `${sectionAddress}#${floor}/${slot}` address, which
   // the caller reads off the cell with `cellAddress`. The level is added here, as for exploration.
   markShopSlotPurchased: (address: string, stockIndex: number) => void
   getPurchasedShopSlots: (journeyId: string) => ReadonlySet<string>
@@ -226,31 +205,13 @@ export type JourneyAPI = {
 
 const knownJourneyIds = journeyData.map(j => j.id)
 
-/** `j` with one cell written down explored on level `levelNr`. Two keys, on purpose: exploration is filed by the
- * section's AUTHORING address, the coordinate archive beside it stays filed by the structural hash it was always
- * written under, so a later re-keying can still match it. Both go when the reshape drops the archive. */
-const withExplored = (
-  j: StoredJourneyStateV3,
-  levelNr: number,
-  sectionHash: string,
-  cellId: string,
-  address?: string | null
-): StoredJourneyStateV3 => {
-  const key = `${levelNr}:${sectionHash}`
-  const cellKey = address ? keyOfAddress(address) : undefined
-  const sectionKey = address ? `${levelNr}:${sectionOfAddress(address)}` : key
-  const coordinates = j.exploredSections[key] ?? []
+/** `j` with the cell at `address` written down explored on level `levelNr`, filed by its section's authoring address. */
+const withExplored = (j: StoredJourneyStateV3, levelNr: number, address: string): StoredJourneyStateV3 => {
+  const cellKey = keyOfAddress(address)
+  const sectionKey = `${levelNr}:${sectionOfAddress(address)}`
   const keys = j.exploredCells?.[sectionKey] ?? []
-  const haveCoordinate = coordinates.includes(cellId)
-  const haveKey = !cellKey || keys.includes(cellKey)
-  if (haveCoordinate && haveKey) return j
-  return {
-    ...j,
-    // The cell key is what the map restores from. The coordinate is written alongside it purely
-    // as the archive a re-keying reads (see `cellKeyVersion`), and goes when the floors move.
-    exploredSections: haveCoordinate ? j.exploredSections : { ...j.exploredSections, [key]: [...coordinates, cellId] },
-    ...(cellKey && !haveKey ? { exploredCells: { ...(j.exploredCells ?? {}), [sectionKey]: [...keys, cellKey] } } : {}),
-  }
+  if (keys.includes(cellKey)) return j
+  return { ...j, exploredCells: { ...(j.exploredCells ?? {}), [sectionKey]: [...keys, cellKey] } }
 }
 
 /** A level's entries of a level-keyed record, by the address under the level. */
@@ -266,7 +227,7 @@ const atLevelMap = (levelNr: number, entries: Record<string, string> | undefined
 /** The save standing where the player stood in pyramid `levelNr` when they last backed out of it, or at its entrance. */
 const standingIn = (j: StoredJourneyStateV3, levelNr: number) => {
   const back = j.pyramidPositions?.[levelNr]
-  return { position: null, positionKey: back?.positionKey ?? null, standingKey: back?.standingKey ?? null }
+  return { positionKey: back?.positionKey ?? null, standingKey: back?.standingKey ?? null }
 }
 
 /** The save leaving the pyramid it stands in for pyramid `levelNr`. Backed out of the interior to the map, where the
@@ -300,11 +261,8 @@ const freshJourney = (journeyId: string): StoredJourneyStateV3 => ({
   levelNr: 1,
   completionCount: 0,
   active: true,
-  exploredSections: {},
-  position: null,
   interiorLevelNr: null,
   // Born current: a journey started under this release has never been keyed any other way.
-  cellKeyVersion: CELL_KEY_VERSION,
   mechanismSlotVersion: MECHANISM_SLOT_VERSION,
   relaidFloorsVersion: RELAID_FLOORS_VERSION,
 })
@@ -370,7 +328,7 @@ export const createJourneysV3Api = ({
     if (!journeyInfo) return undefined
     const progressPercentage = Math.min(((journeyState.levelNr ?? 1) - 1) / journeyInfo.levelCount, 1)
     // Persistent interiors (pyramids and tombs) are revisitable sites — their seed must never
-    // move, or a completed run's exploredSections stop matching the (now different) layout.
+    // move, or a completed run's explored cells stop matching the (now different) layout.
     const randomSeed = isPersistentInterior(journeyInfo)
       ? persistentInteriorSeed(journeyId)
       : generateNewSeed(hashString(journeyId), journeyState.completionCount + 1)
@@ -413,15 +371,14 @@ export const createJourneysV3Api = ({
     return Promise.resolve(setJourneys(prev => [...prev, freshJourney(journey.id)]))
   }
 
-  const enterAt: JourneyAPI["enterAt"] = (journeyId, levelNr, address, walkedOnto) =>
+  const enterAt: JourneyAPI["enterAt"] = (journeyId, levelNr, address, walked) =>
     Promise.resolve(
       setJourneys(prev => {
         const placed = (j: StoredJourneyStateV3): StoredJourneyStateV3 => ({
-          ...(address && walkedOnto ? withExplored(j, levelNr, walkedOnto.sectionHash, walkedOnto.cellId, address) : j),
+          ...(address && walked ? withExplored(j, levelNr, address) : j),
           active: true,
           levelNr,
           interiorLevelNr: levelNr,
-          position: null,
           // A save resumes only at an authored place, as updatePosition files one; a corridor is only stood on.
           positionKey: address && isPlaceAddress(address) ? address : null,
           standingKey: address,
@@ -446,7 +403,6 @@ export const createJourneysV3Api = ({
               ...j,
               active: false,
               completionCount: capCompletionCount ? Math.max(j.completionCount, 1) : j.completionCount + 1,
-              position: null,
               positionKey: null,
               standingKey: null,
               interiorLevelNr: null,
@@ -488,7 +444,6 @@ export const createJourneysV3Api = ({
           ? {
               ...j,
               levelNr: j.levelNr + 1,
-              position: null,
               positionKey: null,
               standingKey: null,
               interiorLevelNr: null,
@@ -498,34 +453,14 @@ export const createJourneysV3Api = ({
     )
   }
 
-  const markCellExplored = (sectionHash: string, cellId: string, address?: string | null) => {
+  const markCellExplored = (address: string) => {
     if (!activeJourneyId) return
     const levelNr = levelOf(activeJourneyId)
-    setJourneys(prev =>
-      prev.map(j => (j.journeyId === activeJourneyId ? withExplored(j, levelNr, sectionHash, cellId, address) : j))
-    )
+    setJourneys(prev => prev.map(j => (j.journeyId === activeJourneyId ? withExplored(j, levelNr, address) : j)))
   }
 
-  // A save is behind whenever its per-cell collections were written under an older key format —
-  // coordinates only (no `cellKeyVersion` at all), or keys written under an earlier shape of the key.
-  // Every one of them is re-derived from `exploredSections`, which is why the coordinates are kept
-  // until the re-carve: they are the archive this reads.
-  //
-  // A journey with nothing explored is picked up too, and translates to nothing. That is the point:
-  // once this has run, EVERY save carries the current stamp, so `cellKeyVersion` is an exact record of
-  // whether a save has been through this release — which is what the reshape reads to decide whether a
-  // save can be carried across at all. A stamp that only landed on journeys with exploration would
-  // read "never migrated" for a player who simply had not walked into a pyramid yet.
-  const journeysNeedingReKey = () => journeys.filter(j => j.cellKeyVersion !== CELL_KEY_VERSION)
-
-  const setCarveIndependentState = (journeyId: string, state: CarveIndependentState) => {
-    setJourneys(prev =>
-      prev.map(j => (j.journeyId === journeyId ? { ...j, ...state, cellKeyVersion: CELL_KEY_VERSION } : j))
-    )
-  }
-
-  // Stamped on every journey, exploration or not, for the same reason the re-key is: the stamp is
-  // then an exact record of which saves have been through this release.
+  // Stamped on every journey, exploration or not: the stamp is then an exact record of which saves have
+  // been through this release.
   const journeysNeedingFloorRederive = () =>
     journeys.filter(j => j.floorExplorationVersion !== FLOOR_EXPLORATION_VERSION)
 
@@ -572,7 +507,7 @@ export const createJourneysV3Api = ({
         j.journeyId === journeyId
           ? {
               ...j,
-              ...(resumeAtEntrance ? { position: null, positionKey: null, standingKey: null } : {}),
+              ...(resumeAtEntrance ? { positionKey: null, standingKey: null } : {}),
               ...relaidLevels.reduce<Partial<StoredJourneyStateV3>>(
                 (kept, levelNr) => ({ ...kept, ...forgetting({ ...j, ...kept }, levelNr) }),
                 {}
@@ -596,18 +531,17 @@ export const createJourneysV3Api = ({
   }
 
   // `standingKey` is written unconditionally — it is the live cell, bends and bare forks included, that
-  // `useAssembledFloor` draws the explorer at. `position`/`positionKey` (the archive a save resumes at)
-  // keep their own guard, paired as they always were: only an address naming a place
-  // (src/game/cellSlot.ts) overwrites them, since a bend or bare fork has no authored name to resume at
-  // and leaves the last recorded place standing.
-  const updatePosition = (journeyId: string, address: string, nodeId: string) => {
+  // `useAssembledFloor` draws the explorer at. `positionKey` (the place a save resumes at) keeps its own
+  // guard: only an address naming a place (src/game/cellSlot.ts) overwrites it, since a bend or bare
+  // fork has no authored name to resume at and leaves the last recorded place standing.
+  const updatePosition = (journeyId: string, address: string) => {
     setJourneys(prev =>
       prev.map(j =>
         j.journeyId === journeyId
           ? {
               ...j,
               standingKey: address,
-              ...(isPlaceAddress(address) ? { position: nodeId, positionKey: address } : {}),
+              ...(isPlaceAddress(address) ? { positionKey: address } : {}),
             }
           : j
       )
@@ -781,7 +715,7 @@ export const createJourneysV3Api = ({
   }
 
   // `?? []` / `?? false` tolerate a floorExploration entry saved by an earlier build with a
-  // different shape (the field is loose persisted data, like exploredSections — stale/foreign
+  // different shape (the field is loose persisted data — stale/foreign
   // entries are ignored, not migrated, and never crash). A pre-shape entry simply reads as "nothing
   // here" until its floor is re-entered and re-recorded.
   const sig = (o: boolean | undefined, ks: string[][] | undefined) =>
@@ -845,8 +779,6 @@ export const createJourneysV3Api = ({
     cancelJourney,
     completeLevel,
     markCellExplored,
-    journeysNeedingReKey,
-    setCarveIndependentState,
     getExploredCells,
     updatePosition,
     setInteriorLevel,

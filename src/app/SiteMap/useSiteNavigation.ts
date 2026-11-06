@@ -194,8 +194,8 @@ export const useSiteNavigation = ({
       } finally {
         const edgeId = encodeEdge(currentFloor, row, col)
         const address = cellAddress(grid, currentFloor, row, col) ?? edgeId
-        journeys.markCellExplored(landing.sectionHash ?? "", edgeId, address)
-        journeys.updatePosition(journeyId, address, edgeId)
+        journeys.markCellExplored(address)
+        journeys.updatePosition(journeyId, address)
         setExplorerHidden(false)
         traversing.current = false
       }
@@ -259,7 +259,7 @@ export const useSiteNavigation = ({
         if (walked.length > 0) journeys.recordWalkedSteps(walked)
         const edgeId = encodeEdge(currentFloor, r, c)
         const address = cellAddress(grid, currentFloor, r, c) ?? edgeId
-        return { edgeId, address, goHere: () => journeys.updatePosition(journeyId, address, edgeId) }
+        return { address, goHere: () => journeys.updatePosition(journeyId, address) }
       }
 
       // The hub is stood on and written nowhere, like any waypoint: what the room holds opens from its stop.
@@ -285,7 +285,7 @@ export const useSiteNavigation = ({
         if (!crossing || !near || near.type === "empty") return
         const [nr, nc] = crossing.near
         const side = walkTo(nr, nc)
-        journeys.markCellExplored(near.sectionHash ?? "", side.edgeId, side.address)
+        journeys.markCellExplored(side.address)
         side.goHere()
         if (isCarrying(grid, currentFloor, journeys.getMechanismStates(journeyId))) return turnAway(nr, nc)
         const passage = resolvePassage(crossing.realisation)
@@ -302,11 +302,10 @@ export const useSiteNavigation = ({
         return
       }
 
-      const sectionHash = cell.sectionHash ?? ""
       const carrying = isCarrying(grid, currentFloor, journeys.getMechanismStates(journeyId))
       // WALKING ONTO A SEQUENCE TILE WORKS IT: no prompt, no screen, no stop beyond the step. Written now, beside the
       // position and the exploration, so a tile never reads walked for a step the position does not hold.
-      const { edgeId, address, goHere } = walkTo(row, col)
+      const { address, goHere } = walkTo(row, col)
 
       // THROWING IT IS THE WHOLE VISIT (FamilyMeta.actsOnArrival): no screen opens for it, so this is
       // where a lever's position gets written — the same call its old modal made (`setMechanismState`),
@@ -333,14 +332,14 @@ export const useSiteNavigation = ({
       //
       // The walk runs first either way; nothing happens until the explorer has actually got there.
       if (cell.type === "room" && cell.roomType === "portal" && cell.stairId) {
-        journeys.markCellExplored(sectionHash, edgeId, address)
+        journeys.markCellExplored(address)
         goHere()
         if (carrying) return turnAway(row, col)
         const stairId = cell.stairId
         scheduleArrival(walkDelay(row, col), () =>
           offer("stairs", row, col, () => {
             const peer = stairPeerPosition(journeyId, siteConfig, seed, stairId, currentFloor)
-            if (peer) journeys.updatePosition(journeyId, peer.address, encodeEdge(peer.floor, peer.pos[0], peer.pos[1]))
+            if (peer) journeys.updatePosition(journeyId, peer.address)
           })
         )
         return
@@ -357,7 +356,7 @@ export const useSiteNavigation = ({
         cell.roomType === "portal" &&
         (row !== grid.entrancePos[0] || col !== grid.entrancePos[1])
       ) {
-        journeys.markCellExplored(sectionHash, edgeId, address)
+        journeys.markCellExplored(address)
         goHere()
         if (carrying) return turnAway(row, col)
         scheduleArrival(walkDelay(row, col), () => offer("exit", row, col, onExitReached))
@@ -369,7 +368,7 @@ export const useSiteNavigation = ({
       // words come from what the span is (traversalInvitation), not from here.
       const span = cell.type === "corridor" ? dropLaunchedAt(grid, row, col) : undefined
       if (span) {
-        journeys.markCellExplored(sectionHash, edgeId, address)
+        journeys.markCellExplored(address)
         goHere()
         const traversal: Traversal = { kind: span.kind, from: span.launch, to: span.landing, dir: span.dir }
         // Every one-way takes only empty hands, as every walk of the lock does.
@@ -393,7 +392,7 @@ export const useSiteNavigation = ({
       // the post or the take the same way. The move is read again when the prompt is taken, so it is always the one
       // the floor allows then.
       if (cell.type === "room" && (cell.plate || cell.pipeHole)) {
-        journeys.markCellExplored(sectionHash, edgeId, address)
+        journeys.markCellExplored(address)
         goHere()
         const offered = stoneMoveAt(grid, currentFloor, row, col, journeys.getMechanismStates(journeyId))
         if (offered)
@@ -451,7 +450,7 @@ export const useSiteNavigation = ({
       }
 
       if (cell.type === "corridor") {
-        journeys.markCellExplored(sectionHash, edgeId, address)
+        journeys.markCellExplored(address)
         goHere()
         return
       }
@@ -467,12 +466,12 @@ export const useSiteNavigation = ({
       // What a fork HOLDS decides only whether a screen opens on arrival: the junction opens none, the
       // encounter standing in it does. A pass-through chamber holds nothing, and is written down the same way.
       if (cell.roomType === "fork" || cell.roomType === "chamber") {
-        journeys.markCellExplored(sectionHash, edgeId, address)
+        journeys.markCellExplored(address)
         goHere()
         if (cell.family !== undefined) scheduleArrival(walkDelay(row, col), () => onEncounter([row, col], true))
       } else if (cell.sequenceTile) {
         // A tile is ground: written down by standing on it, as a junction is, and nothing opens on it.
-        journeys.markCellExplored(sectionHash, edgeId, address)
+        journeys.markCellExplored(address)
         goHere()
       } else if (cell.roomType === "encounter") {
         // A GATE IS WALKED INTO LIKE ANY OTHER ROOM. Its bars are drawn across the FAR side of its own
@@ -484,7 +483,7 @@ export const useSiteNavigation = ({
         // that write is what lifts the fog past a lever astride the only way through (`walkableFrom`
         // refuses any cell still fogged), whether or not it is thrown. Whether a gate stands is the
         // lever's position alone, so walking past an unthrown one opens nothing.
-        if (actsOnArrival(cell)) journeys.markCellExplored(sectionHash, edgeId, address)
+        if (actsOnArrival(cell)) journeys.markCellExplored(address)
         goHere()
         if (actsOnArrival(cell)) {
           const familyId = cell.family
@@ -497,7 +496,7 @@ export const useSiteNavigation = ({
       } else if (cell.roomType === "portal") {
         // Staircases and the way out are answered by the guards above; what is left is this floor's
         // own entrance, which is only ever walked back onto.
-        journeys.markCellExplored(sectionHash, edgeId, address)
+        journeys.markCellExplored(address)
         goHere()
       }
     },

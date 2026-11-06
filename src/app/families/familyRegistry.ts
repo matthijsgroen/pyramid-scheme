@@ -24,7 +24,7 @@ export type FamilyContext = {
   levelNr: number
   /** Where this room is drawn in the carve that is on screen — for anything about the here and now. */
   edgeId: string
-  /** WHICH ROOM THIS IS, as `${sectionHash}#${floor}/${slot}` (cellIdentity.ts). A family
+  /** WHICH ROOM THIS IS, as `${sectionAddress}#${floor}/${slot}` (cellIdentity.ts). A family
    * that remembers anything per room — a bought shop slot, a half-finished board —
    * files it under this, because the coordinate above moves when the floor is carved again. */
   address: string

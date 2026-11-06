@@ -10,6 +10,7 @@ import type { JourneyAPI } from "@/app/state/useJourneys"
 import { buildRoomClaims } from "./roomClaims"
 import { offeredTargets } from "./clickTargets"
 import { encodeEdge } from "./edgeId"
+import { cellAddress } from "./cellIdentity"
 import { allFloors, resolveKeyRequirements } from "./worldFloors.testing"
 import { useSiteNavigation } from "./useSiteNavigation"
 
@@ -17,6 +18,9 @@ import { useSiteNavigation } from "./useSiteNavigation"
 // nothing; a tap it offers lands on the cell the offer resolves to. Walked on real carved floors,
 // revealed whole so every straight run the map never offers is there to be tapped.
 const SAMPLE_EVERY = 9
+
+/** What the hook writes for the cell it walks onto: its address, or its coordinate where the cell has none. */
+const writtenFor = (grid: FloorGrid, r: number, c: number) => cellAddress(grid, 0, r, c) ?? encodeEdge(0, r, c)
 
 const carve = (floor: ReturnType<typeof allFloors>[number]): FloorGrid | null => {
   const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
@@ -102,8 +106,8 @@ describe("a tap on a carved floor goes through the offer layer", () => {
           offered++
           if (target[0] !== r || target[1] !== c) redirected++
           const [landRow, landCol] = landingOf(grid, explorerPos, target)
-          const want = encodeEdge(0, landRow, landCol)
-          if (moved.length !== 1 || moved[0][2] !== want)
+          const want = writtenFor(grid, landRow, landCol)
+          if (moved.length !== 1 || moved[0][1] !== want)
             faults.push(`${floor.label}: the offer at ${r},${c} should land on ${want}, wrote ${JSON.stringify(moved)}`)
         }
       }
@@ -169,6 +173,6 @@ describe("the arrow up a corridor that ends at a door", () => {
     expect(target).toEqual([0, 3])
     act(() => hook.result.current.onCellClick(target![0], target![1]))
     act(() => void vi.runAllTimers())
-    expect(vi.mocked(journeys.updatePosition).mock.calls.map(call => call[2])).toEqual([encodeEdge(0, 0, 3)])
+    expect(vi.mocked(journeys.updatePosition).mock.calls.map(call => call[1])).toEqual([writtenFor(grid, 0, 3)])
   })
 })

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
 import type { JourneyAPI } from "@/app/state/useJourneys"
-import { assemblerFor } from "./useCarveIndependentBackfill"
+import { assemblerFor } from "./assemblerFor"
 import { repairFloorExploration } from "./repairFloorExploration"
 
 /**

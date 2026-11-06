@@ -33,13 +33,10 @@ export const relaidLevelsOf = (
  * the re-laid floor. A save standing nowhere yet has nothing to forget.
  */
 export const standsInRelaidPyramid = (
-  stored: Pick<
-    StoredJourneyStateV3,
-    "journeyId" | "levelNr" | "position" | "positionKey" | "standingKey" | "relaidFloorsVersion"
-  >,
+  stored: Pick<StoredJourneyStateV3, "journeyId" | "levelNr" | "positionKey" | "standingKey" | "relaidFloorsVersion">,
   relaid: readonly RelaidPyramid[]
 ): boolean =>
-  (stored.position ?? stored.positionKey ?? stored.standingKey ?? null) !== null &&
+  (stored.positionKey ?? stored.standingKey ?? null) !== null &&
   relaid.some(
     pyramid =>
       pyramid.since > (stored.relaidFloorsVersion ?? 0) &&

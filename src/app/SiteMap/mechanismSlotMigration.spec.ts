@@ -12,7 +12,6 @@ import { designerDoubleBack, forkSwitchFloorConfig } from "@/game/testSupport/fo
 import { handleFloorConfig } from "@/game/testSupport/handleFixtures"
 import { andDoorFloor, threeOwnerDoorFloor } from "@/game/testSupport/gateFaceFixtures"
 import { boardIndexesForFloor } from "./boardIndexes"
-import { encodeEdge } from "./edgeId"
 import { backfillMechanismSlots } from "./backfillMechanismSlots"
 import { applyExplored } from "./useAssembledFloor"
 import { cellKey, findByAddress } from "./cellIdentity"
@@ -132,8 +131,6 @@ const makeJourney = (overrides: Partial<StoredJourneyStateV3>): StoredJourneySta
   levelNr: 1,
   completionCount: 0,
   active: true,
-  exploredSections: {},
-  position: null,
   interiorLevelNr: null,
   ...overrides,
 })
@@ -171,7 +168,7 @@ describe("a mechanic's progress across a change of realisation", () => {
         const target = legalTargets(cell.mechanism!, cell.mechanism!.initial)[0]
         api().setMechanismState(address, target)
         written.set(cell.mechanismId!, target)
-        api().markCellExplored(cell.sectionHash ?? "", encodeEdge(0, r, c), address)
+        api().markCellExplored(address)
       }
 
       const states = api().getMechanismStates(scenario.journeyId)

@@ -95,10 +95,10 @@ describe("useAssembledFloor — hidden junctions", () => {
     // "visible" while auto-revealing past it, rather than stopping there. Completing the
     // predecessor (not the gateway itself) reproduces that real play sequence.
     const { gatewayPos, predecessorPos } = findGatewayToHidden(grid)
-    const exploredSections = exploredAt(grid, predecessorPos)
+    const exploredCells = exploredAt(grid, predecessorPos)
 
     const { result } = renderHook(() =>
-      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 1, new Set())
+      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredCells, null, 1, new Set())
     )
 
     // The gateway the player is standing beside, not whichever junction comes first in the set: a
@@ -125,11 +125,11 @@ describe("useAssembledFloor — hidden junctions", () => {
     if (!assembled.success) throw new Error("assembly failed")
     const grid = assembled.grid
     const { predecessorPos } = findGatewayToHidden(grid)
-    const exploredSections = exploredAt(grid, predecessorPos)
+    const exploredCells = exploredAt(grid, predecessorPos)
 
     // First pass, unrevealed: learn which section the junction borders (what SiteMapScreen reveals).
     const { result: masked } = renderHook(() =>
-      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 1, new Set())
+      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredCells, null, 1, new Set())
     )
     const revealed = new Set(masked.current.hiddenSections)
     expect(revealed.size).toBeGreaterThan(0)
@@ -137,7 +137,7 @@ describe("useAssembledFloor — hidden junctions", () => {
     // Second pass, that section revealed: its cells are no longer masked to empty, and it's gone
     // from hiddenSections — the corridor is now part of the walkable grid.
     const { result } = renderHook(() =>
-      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 1, revealed)
+      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredCells, null, 1, revealed)
     )
     for (const h of revealed) expect(result.current.hiddenSections.has(h)).toBe(false)
     const revealedCellShown = result.current.grid!.cells.some(row =>
@@ -151,10 +151,10 @@ describe("useAssembledFloor — hidden junctions", () => {
     if (!assembled.success) throw new Error("assembly failed")
     const grid = assembled.grid
     const { gatewayPos, predecessorPos } = findGatewayToHidden(grid)
-    const exploredSections = exploredAt(grid, predecessorPos)
+    const exploredCells = exploredAt(grid, predecessorPos)
     const stateAt = (revealed: ReadonlySet<string>) => {
       const { result } = renderHook(() =>
-        useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 0, revealed)
+        useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredCells, null, 0, revealed)
       )
       const cell = result.current.grid?.cells[gatewayPos[0]]?.[gatewayPos[1]]
       return { state: cell?.type === "empty" ? undefined : cell?.state, hidden: result.current.hiddenSections }

@@ -19,7 +19,6 @@ import { useSiteNavigation } from "./useSiteNavigation"
 import { SiteMapView } from "./SiteMapView"
 import { buildRoomClaims } from "./roomClaims"
 import { offeredTargets } from "./clickTargets"
-import { encodeEdge } from "./edgeId"
 import { CELL, cellCenter } from "./mapScale"
 import "@/mods/registerModApps"
 
@@ -203,9 +202,7 @@ const harness = (name: string) => {
     levelNr: 1,
     completionCount: 0,
     active: true,
-    exploredSections: {},
     exploredCells: store.exploredCells,
-    position: null,
     positionKey: store.positionKey,
     standingKey: store.standingKey,
     interiorLevelNr: null,
@@ -256,8 +253,7 @@ const harness = (name: string) => {
         encountered.push([r, c])
         const cell = assembled.grid?.cells[r]?.[c]
         const address = cell && cellAddress(assembled.grid!, 0, r, c)
-        if (cell && cell.type !== "empty" && address)
-          journeys.markCellExplored(cell.sectionHash ?? "", encodeEdge(0, r, c), address)
+        if (cell && cell.type !== "empty" && address) journeys.markCellExplored(address)
       },
       onExitReached: () => {},
     })
