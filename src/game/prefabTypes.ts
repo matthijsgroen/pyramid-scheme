@@ -6,7 +6,7 @@ import type { DecorationKind, WallDecorationKind } from "./siteTypes"
 /** wall: stands against the north wall; floor: free-standing; ground: drawn under the player and walked over;
  * wallItem: hangs on a ring wall. */
 export type PlaceLayer = "wall" | "floor" | "ground" | "wallItem"
-export type SpecialPlace = "stop" | "mechanism"
+export type SpecialPlace = "stop" | "mechanism" | "door"
 /** What a room can hold at its stop: its art is drawn there, as on a corridor node. */
 export type RoomHolds = "chest" | "portal"
 export type PlaceKind = DecorationKind | WallDecorationKind | "patron"
@@ -21,6 +21,8 @@ export type PlaceDef = {
   rows: number
   /** "3 of 4": take of; "1 of 3 per q": one per place of letter q. */
   group?: { take: number; of: number; per?: string }
+  /** The letter of a named door: the place stands only while no corridor comes in at that door. */
+  unless?: string
 }
 export type PrefabLayout = {
   /** "" for the first, "turned" and so on for a drawn variant. */
@@ -44,3 +46,7 @@ export type Prefab = {
   /** Letter to special. */
   specials: Readonly<Record<string, SpecialPlace>>
 }
+
+/** Whether a layout cell is a door place: a plain `d`, or a door named by a letter of the legend (`N door`). */
+export const isDoorCell = (prefab: Pick<Prefab, "specials">, ch: string): boolean =>
+  ch === "d" || prefab.specials[ch] === "door"

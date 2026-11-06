@@ -29,6 +29,8 @@ THE LEGEND
   r floor? rubblePile 1 of 3 per q   one of three per place of q
   s stop                        where the player stands: exactly one per layout, inside
   m mechanism                   a mechanism's place, inside; somebody stands north of the stop
+  N door                        a door place named by a letter, on the ring like d
+  p floor? patron unless N      stands only while no corridor comes in at door N, so the room holds together without it
   gift = jarRack | basin        a named list of kinds, declared before the legend line that uses it
 
 COMMENTS
@@ -37,7 +39,7 @@ COMMENTS
 `.slice(1)
 
 const LAYERS: readonly PlaceLayer[] = ["wall", "floor", "ground", "wallItem"]
-const SPECIALS: readonly SpecialPlace[] = ["stop", "mechanism"]
+const SPECIALS: readonly SpecialPlace[] = ["stop", "mechanism", "door"]
 const HOLDS: readonly RoomHolds[] = ["chest", "portal"]
 const FIXED = new Set(["#", "d", "."])
 const NAME = /^[A-Za-z_]\w*$/
@@ -174,6 +176,12 @@ export const parsePrefab = (
       }
       if (!(LAYERS as readonly string[]).includes(word)) fail(n, `"${rest[0] ?? ""}" is neither a layer nor a special`)
       let body = rest.slice(1).join(" ")
+      let unless: string | undefined
+      const conditional = body.match(/\s+unless (\S)$/)
+      if (conditional) {
+        unless = conditional[1]
+        body = body.slice(0, conditional.index)
+      }
       let group: PlaceDef["group"]
       const counted = body.match(/\s*\b(\d+) of (\d+)(?: per (\S))?$/)
       if (counted) {
@@ -194,6 +202,7 @@ export const parsePrefab = (
           optional: rest[0].endsWith("?"),
           kinds: kinds as PlaceKind[],
           ...(group ? { group } : {}),
+          ...(unless ? { unless } : {}),
         },
       })
     }
@@ -225,6 +234,10 @@ export const parsePrefab = (
           return
         }
         const entry = legend.get(ch) ?? fail(here, `"${ch}" is used but never declared`)
+        if ("special" in entry && entry.special === "door") {
+          if (!ring) fail(here, `door "${ch}" inside the ring`)
+          return
+        }
         const onRing = "place" in entry && entry.place.layer === "wallItem"
         if (onRing && !ring) fail(here, `wall item "${ch}" inside the ring`)
         if (onRing && r !== 0) fail(here, `wall item "${ch}" off the north wall`)
@@ -285,6 +298,13 @@ export const parsePrefab = (
     if (place.group && place.group.take > place.group.of)
       fail(entry.n, `cannot take ${place.group.take} of ${place.group.of}`)
     if (place.group?.per && !legend.has(place.group.per)) fail(entry.n, `"per ${place.group.per}" names no letter`)
+    if (place.unless) {
+      const door = legend.get(place.unless)
+      if (!door || !("special" in door) || door.special !== "door")
+        fail(entry.n, `"unless ${place.unless}" names no door`)
+      if (!place.optional)
+        fail(entry.n, `"${letter}" stands only unless a door is used, so it is optional: write "${place.layer}?"`)
+    }
     places[letter] = { ...place, ...size }
   }
 

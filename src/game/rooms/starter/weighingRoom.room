@@ -6,8 +6,8 @@ activity weighing
 mirror
 
 layout
-# t d # #
-# w . x #
+# t N # #
+# w p x #
 d . . s d
 # . . . #
 # d d d #
@@ -15,4 +15,6 @@ d . . s d
 w wall weightsTable
 x floor scale
 t wallItem? tallyBoard
+N door
+p floor? patron unless N
 s stop

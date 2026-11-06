@@ -1,6 +1,7 @@
 import { hashString } from "@/support/hashString"
 import { actorCellOf, blockedCells, fillsOf, fitsActor, placeBlobs, variantsOf, type Variant } from "../prefabChecks"
 import type { PlaceDef, PlaceKind, Prefab, SpecialPlace } from "../prefabTypes"
+import { isDoorCell } from "../prefabTypes"
 import { cellAt, claimsFloorAt } from "../roomFootprint"
 import { inRect, STEP } from "../roomShape"
 import type {
@@ -73,7 +74,8 @@ const fitAt = (
   variant: Variant,
   i: number,
   j: number,
-  others: readonly CellRect[]
+  others: readonly CellRect[],
+  prefab: Prefab
 ): Fit | undefined => {
   const rect = { top: r - i + 1, left: c - j + 1, rows: variant.cells.length - 2, cols: variant.cells[0].length - 2 }
   if (rect.top < 0 || rect.left < 0 || rect.top + rect.rows > grid.rows || rect.left + rect.cols > grid.cols)
@@ -89,7 +91,7 @@ const fitAt = (
       own.add(`${r + dr * k},${c + dc * k}`)
       absorbed++
     }
-    if (variant.cells[i + dr * k][j + dc * k] !== "d") return undefined
+    if (!isDoorCell(prefab, variant.cells[i + dr * k][j + dc * k])) return undefined
     const out = cellAt(grid, r + dr * k, c + dc * k)
     if (out.type !== "corridor" || out.hidden || out.obstacle !== undefined) return undefined
     own.add(`${r + dr * k},${c + dc * k}`)
@@ -182,12 +184,17 @@ const furnish = (
   const fillIndex =
     pick?.fill ?? freeFill(grid, prefab, variant, hashString(`${siteId}:prefab:${pk}:fill`), fills.length)
   const fill = fills[fillIndex % fills.length]
+  const used = new Set(doors.map(door => door.join(",")))
+  // A place standing "unless" a door stays empty where a corridor comes in at that door.
+  const doorUsed = (letter: string): boolean =>
+    variant.cells.some((row, i) => [...row].some((ch, j) => ch === letter && used.has(at(i, j).join(","))))
   const standing = new Map<string, true>()
   const objects: PrefabObject[] = []
   for (const blob of placeBlobs(variant, prefab)) {
     const blobKey = `${blob.top},${blob.left}`
     if (!fill.has(blobKey)) continue
     const place = prefab.places[blob.letter]
+    if (place.unless !== undefined && doorUsed(place.unless)) continue
     const kind = kindFor(
       place,
       hashString(`${siteId}:prefab:${pk}:${blob.letter}:${blobKey}`),
@@ -207,12 +214,11 @@ const furnish = (
     })
   }
   const blocked = new Set([...blockedCells(variant, prefab, standing)].map(keyAt))
-  const used = new Set(doors.map(door => door.join(",")))
   const special = new Map<SpecialPlace, Cell>()
   variant.cells.forEach((row, i) =>
     [...row].forEach((ch, j) => {
       const key = at(i, j).join(",")
-      if (ch === "d" && !used.has(key)) blocked.add(key)
+      if (isDoorCell(prefab, ch) && !used.has(key)) blocked.add(key)
       const kind = prefab.specials[ch]
       if (kind !== undefined && !special.has(kind)) special.set(kind, at(i, j))
     })
@@ -259,7 +265,7 @@ const bestFit = (
     variant.cells.forEach((row, i) =>
       [...row].forEach((ch, j) => {
         if (ch !== ".") return
-        const fit = fitAt(grid, r, c, cell.dirs, variant, i, j, others)
+        const fit = fitAt(grid, r, c, cell.dirs, variant, i, j, others, prefab)
         if (fit && (!best || (fit.absorbed - best.absorbed || tie - best.tie) < 0)) best = { ...fit, tie }
       })
     )
@@ -298,12 +304,12 @@ const choiceOf = (prefab: Prefab, cell: Cell, variant: Variant): PrefabChoice =>
 })
 
 /** The door places of `variant` laid at `rect` that the carve crossed: each one on the ring that is floor. */
-const doorsAt = (grid: FloorGrid, variant: Variant, rect: CellRect): Cell[] => {
+const doorsAt = (grid: FloorGrid, prefab: Prefab, variant: Variant, rect: CellRect): Cell[] => {
   const doors: Cell[] = []
   variant.cells.forEach((row, i) =>
     [...row].forEach((ch, j) => {
       const at: Cell = [rect.top + i - 1, rect.left + j - 1]
-      if (ch === "d" && cellAt(grid, at[0], at[1]).type !== "empty") doors.push(at)
+      if (isDoorCell(prefab, ch) && cellAt(grid, at[0], at[1]).type !== "empty") doors.push(at)
     })
   )
   return doors
@@ -332,7 +338,7 @@ export const stampPrefab = (grid: FloorGrid, choice: PrefabChoice, rect: CellRec
   const { prefab, variant } = chosenVariant(prep, choice)
   const node = cellAt(grid, r, c)
   if (node.type === "empty") throw new Error(`[carve] room ${choice.name} is stamped on void at ${r},${c}`)
-  const doors = doorsAt(grid, variant, rect)
+  const doors = doorsAt(grid, prefab, variant, rect)
   const room = furnish(grid, r, c, prefab, { variant, rect, doors, absorbed: 0 }, prep.input.siteId, choice.pick)
   const laid = laidOver(node, prefab, room)
   return {

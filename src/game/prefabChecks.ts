@@ -3,6 +3,7 @@
 // the cell north of its stop is bare and the room still walks with them standing there. Pure; the notation is read
 // by prefabNotation.ts.
 import type { PlaceDef, Prefab } from "./prefabTypes"
+import { isDoorCell } from "./prefabTypes"
 
 export type PlacedObject = { letter: string; top: number; left: number; rows: number; cols: number }
 export type Variant = { layout: number; mirrored: boolean; cells: readonly string[] }
@@ -176,13 +177,18 @@ export const blockedCells = (variant: Variant, prefab: Prefab, fill: Fill): Read
   return blocked
 }
 
-const reachFrom = (variant: Variant, blocked: ReadonlySet<string>, start: [number, number]): Set<string> => {
+const reachFrom = (
+  variant: Variant,
+  prefab: Prefab,
+  blocked: ReadonlySet<string>,
+  start: [number, number]
+): Set<string> => {
   const rows = variant.cells.length
   const cols = variant.cells[0].length
   const walkable = (r: number, c: number): boolean => {
     if (r < 0 || c < 0 || r >= rows || c >= cols || blocked.has(`${r},${c}`)) return false
     const ring = r === 0 || c === 0 || r === rows - 1 || c === cols - 1
-    return !ring || variant.cells[r][c] === "d"
+    return !ring || isDoorCell(prefab, variant.cells[r][c])
   }
   const reached = new Set([`${start[0]},${start[1]}`])
   const stack = [start]
@@ -212,15 +218,24 @@ const faultsOf = (
   variant: Variant,
   prefab: Prefab,
   fill: Fill,
-  doors: Doors,
+  allDoors: Doors,
   label: string,
   standing?: string
 ): string[] => {
   const blocked = new Set(blockedCells(variant, prefab, fill))
   if (standing) blocked.add(standing)
+  // A place standing "unless" a door is used stands only while that door is unused: its door is then no way in, and
+  // the room must hold together through the others.
+  const shut = new Set(
+    placeBlobs(variant, prefab)
+      .filter(blob => fill.has(keyOf(blob)))
+      .flatMap(blob => prefab.places[blob.letter].unless ?? [])
+  )
+  const doors = allDoors.filter(([r, c]) => !shut.has(variant.cells[r][c]))
+  for (const [r, c] of doorsOf(variant, prefab)) if (shut.has(variant.cells[r][c])) blocked.add(`${r},${c}`)
   const where = `${label}, filled ${filledNames(variant, prefab, fill)}`
   const faults: string[] = []
-  const reached = reachFrom(variant, blocked, doors[0])
+  const reached = reachFrom(variant, prefab, blocked, doors[0])
   const door = ([r, c]: [number, number]) => `door ${r},${c}`
   for (const other of doors.slice(1))
     if (!reached.has(`${other[0]},${other[1]}`))
@@ -250,9 +265,9 @@ const stopOf = (variant: Variant, prefab: Prefab): [number, number] | undefined 
   return undefined
 }
 
-const doorsOf = (variant: Variant): Doors => {
+const doorsOf = (variant: Variant, prefab: Prefab): Doors => {
   const doors: Doors = []
-  variant.cells.forEach((row, r) => [...row].forEach((ch, c) => ch === "d" && doors.push([r, c])))
+  variant.cells.forEach((row, r) => [...row].forEach((ch, c) => isDoorCell(prefab, ch) && doors.push([r, c])))
   return doors
 }
 
@@ -269,7 +284,7 @@ export const fitsActor = (prefab: Prefab): boolean =>
     if (r < 1 || variant.cells[r][c] !== ".") return false
     const plan = planFills(variant, prefab)
     if ("fault" in plan) return false
-    const doors = doorsOf(variant)
+    const doors = doorsOf(variant, prefab)
     if (doors.length === 0) return true
     return plan.fills.every(fill => faultsOf(variant, prefab, fill, doors, "", `${r},${c}`).length === 0)
   })
@@ -282,7 +297,7 @@ export const prefabFaults = (prefab: Prefab): string[] => [
   ...variantsOf(prefab).flatMap(variant => {
     const plan = planFills(variant, prefab)
     if ("fault" in plan) return [plan.fault]
-    const doors = doorsOf(variant)
+    const doors = doorsOf(variant, prefab)
     if (doors.length === 0) return []
     const label = labelOf(variant, prefab)
     return plan.fills.flatMap(fill => faultsOf(variant, prefab, fill, doors, label))

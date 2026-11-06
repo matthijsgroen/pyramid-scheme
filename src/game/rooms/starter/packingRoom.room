@@ -6,12 +6,14 @@ activity packing
 mirror
 
 layout
-# # d # #
-# g . g #
+# # N # #
+# g p g #
 d s . . d
 # . . . #
 # d d d #
 
 goods = basketStack | bales
 g floor goods
+N door
+p floor? patron unless N
 s stop

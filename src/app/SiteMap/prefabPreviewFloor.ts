@@ -1,6 +1,7 @@
 import { fitPrefab } from "@/game/carve/placePrefabs"
 import { fillsOf, variantsOf } from "@/game/prefabChecks"
 import type { Prefab } from "@/game/prefabTypes"
+import { isDoorCell } from "@/game/prefabTypes"
 import { STEP, sideOf } from "@/game/roomShape"
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { floorFromPieces } from "./floorFrom"
@@ -30,13 +31,13 @@ export const prefabChoices = (prefab: Prefab, variant: number): { variants: numb
 }
 
 /** The door places a straight arm from inside cell i,j reaches, by direction, as ring cells of the variant. */
-const armsFrom = (cells: readonly string[], i: number, j: number): Partial<Record<Direction, Cell>> => {
+const armsFrom = (prefab: Prefab, cells: readonly string[], i: number, j: number): Partial<Record<Direction, Cell>> => {
   const arms: Partial<Record<Direction, Cell>> = {}
   for (const dir of DIRS) {
     const [dr, dc] = STEP[dir]
     let [r, c] = [i + dr, j + dc]
     while (cells[r]?.[c] !== undefined && cells[r][c] !== "#" && !ring(cells, r, c)) [r, c] = [r + dr, c + dc]
-    if (cells[r]?.[c] === "d") arms[dir] = [r, c]
+    if (cells[r]?.[c] !== undefined && isDoorCell(prefab, cells[r][c])) arms[dir] = [r, c]
   }
   return arms
 }
@@ -56,11 +57,11 @@ export const prefabPreviewFloor = (prefab: Prefab, variant = 0, fill = 0): Prefa
   const candidates: { i: number; j: number; arms: Partial<Record<Direction, Cell>> }[] = []
   cells.forEach((row, i) =>
     [...row].forEach((ch, j) => {
-      if (ch === ".") candidates.push({ i, j, arms: armsFrom(cells, i, j) })
+      if (ch === ".") candidates.push({ i, j, arms: armsFrom(prefab, cells, i, j) })
     })
   )
   candidates.sort((a, b) => Object.keys(b.arms).length - Object.keys(a.arms).length)
-  const doorCount = cells.join("").split("d").length - 1
+  const doorCount = [...cells.join("")].filter(ch => isDoorCell(prefab, ch)).length
   for (const { i, j, arms } of candidates) {
     const rows = Array.from({ length: cells.length + 2 * MARGIN }, () => Array(cells[0].length + 2 * MARGIN).fill(" "))
     const at = (r: number, c: number): Cell => [MARGIN + r, MARGIN + c]

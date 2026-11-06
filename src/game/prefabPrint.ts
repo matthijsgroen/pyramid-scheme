@@ -17,7 +17,8 @@ const writtenKinds = (kinds: readonly string[], lists: Readonly<Record<string, r
 const placeLine = (place: PlaceDef, lists: Readonly<Record<string, readonly string[]>>): string => {
   const { group } = place
   const counted = group ? ` ${group.take} of ${group.of}${group.per ? ` per ${group.per}` : ""}` : ""
-  return `${place.letter} ${place.layer}${place.optional ? "?" : ""} ${writtenKinds(place.kinds, lists).join(" | ")}${counted}`
+  const unless = place.unless ? ` unless ${place.unless}` : ""
+  return `${place.letter} ${place.layer}${place.optional ? "?" : ""} ${writtenKinds(place.kinds, lists).join(" | ")}${counted}${unless}`
 }
 
 /** The text of a prefab; parsePrefab reads it back to the same prefab. `readAs` is the name the text will be read

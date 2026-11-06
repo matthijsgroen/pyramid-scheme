@@ -180,3 +180,29 @@ describe("a room fit for somebody", () => {
     )
   })
 })
+
+describe("a place standing unless a named door is used", () => {
+  // A packing room's north door between two goods: the shrine between them shuts that door when it stands.
+  const shrine = (legend: string) =>
+    room("", ["# # N # #", "# g p g #", "d s . . d", "# # # # #"], ["N door", "s stop", "g floor bales", legend])
+
+  it("reads the door as a door and the place as standing only while it is unused", () => {
+    const prefab = shrine("p floor? statue unless N")
+    expect(prefab.specials.N).toBe("door")
+    expect(prefab.places.p.unless).toBe("N")
+    expect(prefabFaults(prefab)).toEqual([])
+  })
+
+  it("would cut its door off without the condition", () => {
+    expect(prefabFaults(shrine("p floor? statue")).some(fault => fault.includes("door 0,2"))).toBe(true)
+  })
+
+  it("refuses a condition on anything but a door, and on a place that must stand", () => {
+    expect(() => shrine("p floor? statue unless g")).toThrow(/names no door/)
+    expect(() => shrine("p floor statue unless N")).toThrow(/optional/)
+  })
+
+  it("keeps a named door on the ring", () => {
+    expect(() => room("", ["# # # # #", "d s N . d", "# # # # #"], ["N door", "s stop"])).toThrow(/inside the ring/)
+  })
+})

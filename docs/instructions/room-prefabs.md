@@ -27,6 +27,8 @@ THE LEGEND
   r floor? rubblePile 1 of 3 per q   one of three per place of q
   s stop                        where the player stands: exactly one per layout, inside
   c chest   o portal   m mechanism    special places, inside; somebody stands north of the stop
+  N door                        a door place named by a letter, on the ring like d
+  p floor? patron unless N      stands only while no corridor comes in at door N; the room holds together without N while it stands
   gift = jarRack | basin        a named list of kinds, declared before the legend line that uses it
 
 COMMENTS
