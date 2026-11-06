@@ -8,13 +8,15 @@ mirror
 layout
 # t # # # n #
 # k j . i . #
-d . . . . . d
-# . . s . . #
+d . . s . . d
+# . . . b a #
 # # # d # # #
 
 k wall scribeDesk
 j wall jarRack
 i wall jarRack
 t wallItem tallyBoard
-n wallItem? niche
+n wallItem niche
 s stop
+a floor weightsTable
+b floor scale

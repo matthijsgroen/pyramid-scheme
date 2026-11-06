@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1418711622
+export const worldContentHash = 1352974922
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -296,9 +296,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             tier: "starter",
             activity: "selling",
             mirror: true,
-            designedBy: "Claude",
-            layouts: [{ name: "", cells: ["##d##", "#..k#", "ds..d", "#...#", "#ddd#"] }],
-            places: { k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 } },
+            designedBy: "Matthijs",
+            layouts: [{ name: "", cells: ["##dc#", "#a.k#", "d..sd", "#.b.#", "#d#d#"] }],
+            places: {
+              k: { letter: "k", layer: "wall", optional: false, kinds: ["counter"], cols: 1, rows: 1 },
+              b: { letter: "b", layer: "floor", optional: false, kinds: ["basketStack"], cols: 1, rows: 1 },
+              a: { letter: "a", layer: "floor", optional: false, kinds: ["scale"], cols: 1, rows: 1 },
+              c: { letter: "c", layer: "wallItem", optional: false, kinds: ["tallyBoard"], cols: 1, rows: 1 },
+            },
             specials: { s: "stop" },
           },
         },
@@ -310,6 +315,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { room: "sellingRoom", min: 0, max: 2, central: 1 },
         ],
         prefabsByIndex: { 0: "fezStall" },
+        actorByIndex: { 0: false },
         packing: 0.1,
         seed: 2975698674563320,
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
@@ -27232,13 +27238,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             activity: "ledger",
             mirror: true,
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#t###n#", "#kj.i.#", "d.....d", "#..s..#", "###d###"] }],
+            layouts: [{ name: "", cells: ["#t###n#", "#kj.i.#", "d..s..d", "#...ba#", "###d###"] }],
             places: {
               k: { letter: "k", layer: "wall", optional: false, kinds: ["scribeDesk"], cols: 1, rows: 1 },
               j: { letter: "j", layer: "wall", optional: false, kinds: ["jarRack"], cols: 1, rows: 1 },
               i: { letter: "i", layer: "wall", optional: false, kinds: ["jarRack"], cols: 1, rows: 1 },
               t: { letter: "t", layer: "wallItem", optional: false, kinds: ["tallyBoard"], cols: 1, rows: 1 },
-              n: { letter: "n", layer: "wallItem", optional: true, kinds: ["niche"], cols: 1, rows: 1 },
+              n: { letter: "n", layer: "wallItem", optional: false, kinds: ["niche"], cols: 1, rows: 1 },
+              a: { letter: "a", layer: "floor", optional: false, kinds: ["weightsTable"], cols: 1, rows: 1 },
+              b: { letter: "b", layer: "floor", optional: false, kinds: ["scale"], cols: 1, rows: 1 },
             },
             specials: { s: "stop" },
           },
