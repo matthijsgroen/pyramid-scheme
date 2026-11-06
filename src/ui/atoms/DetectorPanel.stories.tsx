@@ -16,6 +16,8 @@ const meta = {
         unknown: "Might not be reachable yet — it's inside a tomb or for sale",
       },
       more: count => `+${count} more`,
+      corridorHere: "There is a hidden passage right here",
+      revealCorridor: "Open it",
       corridorNearby: "A hidden corridor is close by",
       corridorNoneNearby: "No hidden corridor close by",
       corridorOnFloor: "A hidden corridor waits on this floor",

@@ -279,6 +279,8 @@
     "allCollected": "Alle stukken verzameld",
     "more": "+{{count}} meer",
     "corridorNearby": "Een verborgen gang is vlakbij",
+    "corridorHere": "Hier zit een verborgen gang",
+    "revealCorridor": "Openmaken",
     "corridorOnFloor": "Een verborgen gang wacht op deze verdieping",
     "hunting": "Op jacht naar {{symbol}}",
     "huntStop": "Stop",
@@ -300,7 +302,8 @@
       "none": "Niets gevonden",
       "pyramid": "Iets in deze piramide",
       "floor": "Iets op deze verdieping",
-      "near": "Iets dichtbij"
+      "near": "Iets dichtbij",
+      "here": "Hier! Open de detector"
     }
   },
   "keys": {

@@ -728,7 +728,7 @@ Two perks share a single **active detector slot** — only one can be active at 
 | Compass           | Compass L1–3   | One chosen hieroglyph fragment |
 | Hidden passageway | Detection L2–4 | Undiscovered hidden corridors  |
 
-**Detection L1 is passive and always-on** — hidden corridors pulse when the player is adjacent, regardless of the active detector mode. L2–4 (floor/pyramid/journey markers) require active selection.
+**Every level reads only while the corridor detector is running.** L1 pulses as the player nears a hidden corridor and hardest at its mouth; there the readout offers to open it, and only the player's tap opens it — walking past a corridor, or standing at its mouth, opens nothing. The first one opened, Fez remarks on. L2–4 widen what it reads (floor/pyramid/journey markers).
 
 ---
 

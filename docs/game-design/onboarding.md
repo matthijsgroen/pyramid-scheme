@@ -19,7 +19,6 @@ One-shot flags in `useProgression` (or a `useTutorials` slice), `seenTutorials: 
 
 - **Puzzle rules** — first encounter with each family (Sumplete, Tableau, Crocodile); explain win condition, skip on revisit.
 - **Traps** — first trap room: timed challenge, health cost on fail, blocked at 1 half-heart.
-- **Detector** — first time `detectionLevel >= 1`: suspicious corners stop the explorer.
 - **Hidden passages** — first reveal prompt: what a hidden passage is, that some hold rare loot.
 - **Ward keys / gated sections** — first gate: a ward key from a tomb unlocks it.
 - **Health and healing** — first waterskin: it heals a heart on the spot; hearts also refill at camp.

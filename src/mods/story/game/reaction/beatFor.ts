@@ -54,6 +54,8 @@ const candidates = (reaction: Reaction): (string | undefined)[] => {
       return reaction.lastLevel ? [ON_LEAVING[reaction.journeyId]] : []
     case "solved":
       return [solvedBeat(reaction)]
+    case "corridorRevealed":
+      return ["discovery.hiddenCorridor"]
     // The rest is told as the player comes home; the tag stays until the next homecoming, so a later showing
     // of the home is no rest.
     case "homeShown":

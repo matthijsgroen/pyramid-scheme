@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react"
+import { useCallback, useEffect, useMemo } from "react"
 import type { FloorGrid } from "@/game/siteTypes"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { isAnyCellWithinSteps } from "./cellProximity"
@@ -17,6 +17,10 @@ type CorridorDetectionArgs = {
 }
 
 export type CorridorDetection = {
+  /** The unfound corridors the player stands at the mouth of: what the detector may open from here. */
+  here: ReadonlySet<string>
+  /** Opens every corridor in `here`. The player's call, through the detector; standing there opens nothing. */
+  reveal: () => void
   /** L1: a lead within a few steps of where the player stands. */
   nearby: boolean
   /** L2: this floor still holds a corridor the player hasn't noticed. */
@@ -28,8 +32,8 @@ export type CorridorDetection = {
 // The corridor detector's world model (§7.2): which hidden corridors are known, which are found,
 // and what the readout says at each level.
 //
-// Known vs. found: every floor the player views makes its hidden corridors "known"; standing on a
-// hidden junction (detector-forced reachable at L1) marks the corridor it borders "found".
+// Known vs. found: every floor the player views makes its hidden corridors "known"; a corridor is "found" once
+// the player, standing on the junction it borders with the detector running, opens it from the detector.
 // Outstanding = known \ found is what the L2/L3 markers read.
 export const useCorridorDetection = ({
   journeys,
@@ -49,12 +53,18 @@ export const useCorridorDetection = ({
     // effect on the stable hash string (not journeys) is what stops a write loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hiddenSectionKey, journeyId, currentFloor])
-  useEffect(() => {
-    if (detectorLevel < 1) return
-    const bordered = junctionSections.get(`${explorerPos[0]},${explorerPos[1]}`)
-    if (bordered) for (const hash of bordered) journeys.markCorridorFound(hash)
+  const hereKey =
+    detectorLevel < 1
+      ? ""
+      : [...(junctionSections.get(`${explorerPos[0]},${explorerPos[1]}`) ?? [])]
+          .filter(h => !foundCorridors.has(h))
+          .sort()
+          .join(",")
+  const here = useMemo((): ReadonlySet<string> => new Set(hereKey ? hereKey.split(",") : []), [hereKey])
+  const reveal = useCallback(() => {
+    for (const hash of here) journeys.markCorridorFound(hash)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [explorerPos, junctionSections, detectorLevel])
+  }, [here])
 
   const onThisFloor = useMemo(
     () => [...hiddenSections].some(h => !foundCorridors.has(h)),
@@ -77,5 +87,5 @@ export const useCorridorDetection = ({
   )
   const onOtherFloor = journeys.getOutstandingHiddenCorridorCount(journeyId) - floorOutstanding > 0
 
-  return { nearby, onThisFloor, onOtherFloor }
+  return { here, reveal, nearby, onThisFloor, onOtherFloor }
 }

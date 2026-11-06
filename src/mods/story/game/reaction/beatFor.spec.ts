@@ -20,6 +20,10 @@ describe("what Fez is willing to remark on", () => {
     expect(beatFor(solved())).toBeUndefined()
   })
 
+  it("is there when the player opens a hidden corridor", () => {
+    expect(beatFor({ kind: "corridorRevealed", journeyId: "starter_1" })).toBe("discovery.hiddenCorridor")
+  })
+
   it("notices the first board finished without a hint", () => {
     expect(beatFor(solved({ unaided: true }))).toBe("bond.starter")
   })

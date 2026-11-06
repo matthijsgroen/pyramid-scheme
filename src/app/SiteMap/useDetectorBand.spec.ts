@@ -45,7 +45,14 @@ const band = (
     useDetectorBand({
       detector,
       levels: { compass: 3, corridor: 3, ...over.levels },
-      corridors: { nearby: false, onThisFloor: false, onOtherFloor: false, ...over.corridors },
+      corridors: {
+        here: new Set(),
+        reveal: () => {},
+        nearby: false,
+        onThisFloor: false,
+        onOtherFloor: false,
+        ...over.corridors,
+      },
       grid,
       explorerPos: [0, 0],
       journeyId: "j1",

@@ -278,6 +278,8 @@
     "pickTarget": "Pick a hieroglyph to hunt in your Collection",
     "allCollected": "All pieces collected",
     "more": "+{{count}} more",
+    "corridorHere": "There is a hidden passage right here",
+    "revealCorridor": "Open it",
     "corridorNearby": "A hidden corridor is close by",
     "corridorOnFloor": "A hidden corridor waits on this floor",
     "hunting": "Hunting {{symbol}}",
@@ -300,7 +302,8 @@
       "none": "Nothing detected",
       "pyramid": "Something in this pyramid",
       "floor": "Something on this floor",
-      "near": "Something close by"
+      "near": "Something close by",
+      "here": "Right here! Open the detector"
     }
   },
   "keys": {
