@@ -35,10 +35,10 @@ first tomb is always the tier-unlock.
 | Tomb                       | Floors and what they give                                                |
 | -------------------------- | ------------------------------------------------------------------------ |
 | Forgotten Merchant's Cache | tier-unlock · **compass L1** · pack-mule · max-health                    |
-| Noble's Hidden Vault       | tier-unlock · — · — · — · max-health · max-health                        |
+| Noble's Hidden Vault       | tier-unlock · — · **compass L2** · — · max-health · max-health           |
 | High Priest's Treasury     | tier-unlock · location-key → Inner Sanctum · trap-insight · armor        |
 | Inner Sanctum              | — · — · trap-insight · max-health                                        |
-| Pharaoh's Secret Hoard     | tier-unlock · location-key → Hall of Osiris · — · **compass L2** · armor |
+| Pharaoh's Secret Hoard     | tier-unlock · location-key → Hall of Osiris · — · — · armor              |
 | Hall of Osiris             | — · **scribes-eye L1** · **compass L3** · max-health · **detection L1**  |
 | Vault of the Gods          | — · location-key → Realm · **detection L2** · —                          |
 | Realm of Cosmic Forces     | — · location-key → Throne · detection L3 · scribes-eye L2                |
@@ -59,22 +59,17 @@ before then is found by walking into it.
 That is either a problem or the best-timed thing in the game, depending on `arc-offering-to-the-gods.md`:
 its hidden corridor sits in `master_2`, which is exactly when the tool to find one starts existing.
 
-**The compass has a three-tier hole.** L1 is the second thing the player ever earns; L2 does not arrive
-until the Pharaoh's Secret Hoard. So the fragment-finding aid the game teaches in hour two does not improve
-for most of the game.
-
-**Junior's tomb grants nothing but health.** Six floors: a tier-unlock, three blanks and two max-health.
-Mechanically it is the flattest stretch in the route, and it is the tier the story was going to use to
-teach what real looks like — which now has to carry that alone.
+**Junior's tomb grants one verb.** Six floors: a tier-unlock, two blanks, compass L2 on the third, and two
+max-health. Narrowing from _which pyramid_ to _which floor_ is junior's only new tool.
 
 ## Where the story sits on it
 
 | Tier    | Story beat (`main-path.md`)    | Mechanically that tier is…                                  |
 | ------- | ------------------------------ | ----------------------------------------------------------- |
 | starter | you cannot read it yet         | teaching, and handing out the compass                       |
-| junior  | what real looks like           | **empty** — health only                                     |
+| junior  | what real looks like           | compass L2, otherwise health                                |
 | expert  | the ask                        | traps and armour: the tier that starts pushing back         |
-| master  | the thing itself, and the fake | the capability tier — compass L2/L3, scribes-eye, detection |
+| master  | the thing itself, and the fake | the capability tier — compass L3, scribes-eye, detection    |
 | wizard  | announced, and read            | topping every detector out                                  |
 
 ## Reshuffling it to the story
@@ -107,10 +102,9 @@ solver.
 
 ### The two moves that matter
 
-**Compass L2 into junior.** Today L1 is the second thing the player ever earns and L2 does not arrive until
-the Pharaoh's Secret Hoard — the tool taught in hour two does not improve for three tiers. Junior is the
-act about telling one thing from another, and narrowing from _which pyramid_ to _which floor_ is that idea
-as a mechanic.
+**Compass L2 into junior** (done: `junior_a_3`). Junior is the act about telling one thing from another,
+and narrowing from _which pyramid_ to _which floor_ is that idea as a mechanic. Master gets nothing in its
+place.
 
 **Detection L1 out of Hall of Osiris and into junior or late expert.** It currently arrives on the fifth
 floor of master's second tomb, so hidden corridors are unfindable-by-tool for three and a half tiers and

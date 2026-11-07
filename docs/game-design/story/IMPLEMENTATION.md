@@ -308,8 +308,7 @@ character. Rename or rewrite; it is one string.
 `src/mods/tombTreasure/game/treasurePerks.ts`, one file, no world regeneration (key ids are core structure;
 what an id grants is mod data). Independent of any story decision:
 
-- **junior's four blank floors** — the only tier with no new verb, and where a new player decides to stay
-- **compass L2 out of master** — L1 is the second thing earned and does not improve for three tiers
+- **compass L2 in junior** (done, `junior_a_3`; master gets nothing in its place) — junior had no new verb, and L1 did not improve for three tiers
 - **detection at `master_a_5`** (the first master tomb) — hidden corridors stay unfindable-by-tool for three tiers;
   every tier but starter keeps glass in them, so the starter register is the one finished before the detector
 

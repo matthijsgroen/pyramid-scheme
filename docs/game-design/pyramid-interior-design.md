@@ -680,7 +680,7 @@ Tier unlock is no longer a single shared key: each tomb's first 4 treasures (`TI
 |               | 4   | Ward key                | Max health +½ ♥ · unlocks junior difficulty (journey 4)  |
 | **Junior A**  | 5   | Ward key                | Unlocks expert difficulty (journey 1)                    |
 |               | 6   | Ward key                | Unlocks expert difficulty (journey 2)                    |
-|               | 7   | Ward key                | Unlocks expert difficulty (journey 3)                    |
+|               | 7   | Ward key                | Compass L2 · unlocks expert difficulty (journey 3)       |
 |               | 8   | Ward key                | Unlocks expert difficulty (journey 4)                    |
 |               | 9   | Ward key                | Max health +½ ♥                                          |
 |               | 10  | Ward key                | Max health +½ ♥                                          |
@@ -695,7 +695,7 @@ Tier unlock is no longer a single shared key: each tomb's first 4 treasures (`TI
 | **Master A**  | 19  | Ward key                | Unlocks wizard difficulty (journey 1)                    |
 |               | 20  | Location key → Master B | Unlocks wizard difficulty (journey 2)                    |
 |               | 21  | Ward key                | Unlocks wizard difficulty (journey 3)                    |
-|               | 22  | Ward key                | Compass L2 · unlocks wizard difficulty (journey 4)       |
+|               | 22  | Ward key                | Unlocks wizard difficulty (journey 4)                    |
 |               | 23  | Ward key                | Detection L1                                             |
 | **Master B**  | 24  | Ward key                | —                                                        |
 |               | 25  | Ward key                | Scribe's Eye L1                                          |
