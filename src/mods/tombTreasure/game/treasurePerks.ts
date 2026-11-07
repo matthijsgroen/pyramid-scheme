@@ -24,7 +24,7 @@ export const TREASURE_PERKS: Record<string, TreasurePerk> = {
   // Junior A (6 floors)
   junior_a_1: { type: "tier-unlock", tier: "expert" },
   junior_a_2: { type: "none" },
-  junior_a_3: { type: "none" },
+  junior_a_3: { type: "compass", level: 2 },
   junior_a_4: { type: "none" },
   junior_a_5: { type: "max-health" },
   junior_a_6: { type: "max-health" },
@@ -45,7 +45,7 @@ export const TREASURE_PERKS: Record<string, TreasurePerk> = {
   master_a_1: { type: "tier-unlock", tier: "wizard" },
   master_a_2: { type: "location-key", tombId: "master_treasure_tomb_b" },
   master_a_3: { type: "none" },
-  master_a_4: { type: "compass", level: 2 },
+  master_a_4: { type: "none" },
   master_a_5: { type: "detection", level: 1 },
 
   // Master B (5 floors)
