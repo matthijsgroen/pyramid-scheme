@@ -449,20 +449,35 @@ export const CampScene = ({
   // A piece entrance may stand on a piece whose art is owed: its place is known, so it still takes taps.
   const owedTargets = new Set(pieceEntrances.flatMap(e => e.pieces))
   const hittable = [...pieces, ...bare.filter(p => owedTargets.has(p.piece.id))]
-  // A tag that would touch an earlier one goes above its entrance instead of below.
+  // Each tag takes the first clear place: below its entrance, above it, then slid sideways a half and a whole tag
+  // width, never off the scene. Small piece entrances choose first, so a big one's tag gives way to them. With no
+  // clear place a tag stays below.
+  const areas = entranceAreas(hittable, [...entranceSpots, ...pieceEntrances])
+  const pieceIds = new Set(pieceEntrances.map(e => e.id))
   const tagsSoFar: { x: number; y: number; width: number; height: number }[] = []
-  const entranceButtons = entranceAreas(hittable, [...entranceSpots, ...pieceEntrances]).map(area => {
-    const { label, badge, onOpen } = opens.get(area.id)!
-    const box = tagBox(label, tagSize)
-    const touches = (y: number) =>
-      tagsSoFar.some(
-        t => Math.abs(t.x - area.x) < (t.width + box.width) / 2 && Math.abs(t.y - y) < (t.height + box.height) / 2
+  const tagPlace = new Map<string, { above: boolean; shift: number }>()
+  for (const area of [...areas.filter(a => pieceIds.has(a.id)), ...areas.filter(a => !pieceIds.has(a.id))]) {
+    const box = tagBox(opens.get(area.id)!.label, tagSize)
+    const clear = (x: number, y: number) =>
+      x - box.width / 2 >= 0 &&
+      x + box.width / 2 <= width &&
+      !tagsSoFar.some(
+        t => Math.abs(t.x - x) < (t.width + box.width) / 2 && Math.abs(t.y - y) < (t.height + box.height) / 2
       )
     // Centres of the tag below and above the entrance; the area is centred on (x, y).
     const below = area.y + area.height / 2 + 4 + box.height / 2
     const overTop = area.y - area.height / 2 - 4 - box.height / 2
-    const above = touches(below) && !touches(overTop)
-    tagsSoFar.push({ ...box, x: area.x, y: above ? overTop : below })
+    const places = [0, -0.5, 0.5, -1, 1].flatMap(share => [
+      { above: false, shift: share * box.width },
+      { above: true, shift: share * box.width },
+    ])
+    const place = places.find(p => clear(area.x + p.shift, p.above ? overTop : below)) ?? places[0]
+    tagPlace.set(area.id, place)
+    tagsSoFar.push({ ...box, x: area.x + place.shift, y: place.above ? overTop : below })
+  }
+  const entranceButtons = areas.map(area => {
+    const { label, badge, onOpen } = opens.get(area.id)!
+    const { above, shift } = tagPlace.get(area.id)!
     return (
       <button
         key={area.id}
@@ -473,7 +488,10 @@ export const CampScene = ({
         style={{ left: area.x, top: area.y + area.height / 2, width: area.width, height: area.height }}
       >
         {badge !== undefined && <span className={ENTRANCE_BADGE}>{badge}</span>}
-        <span className={above ? ENTRANCE_TAG_ABOVE : ENTRANCE_TAG} style={{ fontSize: tagSize }}>
+        <span
+          className={above ? ENTRANCE_TAG_ABOVE : ENTRANCE_TAG}
+          style={{ fontSize: tagSize, transform: shift ? `translateX(${shift}px)` : undefined }}
+        >
           {label}
         </span>
       </button>

@@ -210,6 +210,7 @@ const detectorEntrances = {
   },
   pieceEntrances: [
     { id: "compass", pieces: ["compassOnMap", "compass"], label: "Compass", onOpen: action("open compass") },
+    { id: "corridor", pieces: ["corridorFinder"], label: "Corridor finder", onOpen: action("open corridor finder") },
   ],
 }
 

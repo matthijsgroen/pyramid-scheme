@@ -22,8 +22,8 @@ const TOWER_CAST = 0.45
 const SIGNAL = light(0.8, "255,160,60", "flicker", 0.8, 0, -0.85)
 /** The compass in its picture: the right end of the table top. */
 const COMPASS_ON_TABLE = { dx: 0.325, dy: -0.6, width: 0.11, height: 0.14 }
-/** The listening horn in its picture, by the table's left front leg; measured again when its art lands. */
-const CORRIDOR_FINDER = { dx: -0.33, dy: -0.04, width: 0.16, height: 0.22 }
+/** The listening horn in its picture, lying on its cloth by the table's left front leg. */
+const CORRIDOR_FINDER = { dx: -0.324, dy: -0.057, width: 0.277, height: 0.193 }
 const COMPASS_ON_MAP = { ...COMPASS_ON_TABLE, dx: COMPASS_ON_TABLE.dx + 0.055, dy: COMPASS_ON_TABLE.dy + 0.47 }
 
 type PieceOptions = Partial<
