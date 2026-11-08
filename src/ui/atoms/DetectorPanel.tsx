@@ -1,5 +1,6 @@
 import type { FC } from "react"
 import type { DetectorMode, CompassAccess, CompassHit } from "@/game/siteTypes"
+import { compassKey, compassLabel, uniqueBy } from "@/game/compassPrecision"
 import { DetectorToggles } from "./DetectorToggles"
 
 // Every string the readout can show. The counted/interpolated ones arrive as functions so the app
@@ -51,27 +52,6 @@ type Props = {
   hiddenCorridorOnOtherFloor?: boolean
 }
 
-const uniqueBy = <T,>(items: T[], key: (item: T) => string): T[] => {
-  const seen = new Set<string>()
-  return items.filter(item => {
-    const k = key(item)
-    if (seen.has(k)) return false
-    seen.add(k)
-    return true
-  })
-}
-
-// Precision narrows inward with level (§7.2): L1 pyramid, L2 +floor, L3 +exact cell. The key
-// collapses hits to the shown precision so lower levels don't list the same pyramid/floor twice —
-// L1 keys on the PYRAMID (journey + level), since a journey holds several and naming only the
-// journey would be a whole expedition rather than the "which pyramid" the design specifies.
-const compassKey = (r: CompassHit, level: number): string =>
-  level <= 1
-    ? `${r.journeyId}:${r.levelIdx}`
-    : level === 2
-      ? `${r.journeyId}:${r.levelIdx}:${r.floorIdx}`
-      : `${r.journeyId}:${r.levelIdx}:${r.floorIdx}:${r.cell?.row},${r.cell?.col}`
-
 // What each access verdict looks like. "open" shows nothing — a bare row means "nothing known in the
 // way", which is all the data supports; only the blockers get a badge. See CompassAccess.
 const ACCESS_ICON: Record<CompassAccess, string> = {
@@ -79,14 +59,6 @@ const ACCESS_ICON: Record<CompassAccess, string> = {
   locked: "🔒",
   hidden: "👁",
   unknown: "❓",
-}
-
-const compassLabel = (r: CompassHit, level: number, journeyName: (id: string) => string): string => {
-  // L#/F# keeps the shipped notation (# = pyramid, then floor); only the journey id → name changes.
-  const pyramid = `${journeyName(r.journeyId)} L${r.levelIdx + 1}`
-  if (level <= 1) return pyramid
-  const floor = `${pyramid} F${r.floorIdx + 1}`
-  return level >= 3 && r.cell ? `${floor} · (${r.cell.row},${r.cell.col})` : floor
 }
 
 export const DetectorPanel: FC<Props> = ({
