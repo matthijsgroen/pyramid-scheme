@@ -161,7 +161,7 @@ export const PartlyBuilt: Story = {
   },
 }
 
-/** Finds out of the painted order: a compass with no table waits in the chest, and the pot waits for the fire. */
+/** Finds out of the painted order: a scroll case with no table waits in the chest, and the pot waits for the fire. */
 export const FoundInAnyOrder: Story = {
   args: {
     chapter: "master",
@@ -170,7 +170,7 @@ export const FoundInAnyOrder: Story = {
       sleeping: ["reedMat", "tent", "tentFlag"],
       water: ["jar", "well"],
       cooking: ["tripod", "feast"],
-      mapTable: ["map", "compass", "starMap"],
+      mapTable: ["map", "scrollCase", "starMap"],
     },
   },
 }

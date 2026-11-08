@@ -83,7 +83,7 @@ built yet). Camp loot lies on puzzle slots of its own tier and never gates anyth
 | Cooking corner | —                                | tripod, spice rack, bread board | bread oven           | drying rack with fish             | feast                          |
 | Donkey         | —                                | halter, donkey, saddlebags      | cart with blanket    | second donkey                     | painted cart                   |
 | Camel          | —                                | —                               | rope, camel, saddle  | second camel, trough              | caravan banner                 |
-| Map table      | map (fixed)                      | —                               | table, compass       | star map, scroll case             | astrolabe, reed globe          |
+| Map table      | map (fixed)                      | —                               | table               | star map, scroll case             | astrolabe, reed globe          |
 | Palm garden    | —                                | —                               | seed, sprout, palm   | second palm, dates                | lotus planter, fig tree        |
 | Ibis pond      | —                                | —                               | —                    | edge stones, papyrus, reeds, ibis | lotus, second ibis             |
 | Lookout tower  | —                                | —                               | —                    | post, platform, ladder, roof      | flag, signal fire              |

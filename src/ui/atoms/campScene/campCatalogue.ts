@@ -144,9 +144,8 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       // The map on the ground opens "Alle reizen", so like every entrance it stands from the start.
       ["starter", "map", { base: true }],
       ["expert", "table", { base: true }],
-      ["expert", "compass"],
-      // The star cloth lies on the table under the map and the compass.
-      ["master", "starMap", { behind: "compass" }],
+      // The star cloth lies on the table under the map; the detectors stand in front of it.
+      ["master", "starMap"],
       ["master", "scrollCase"],
       ["wizard", "astrolabe", { on: "starMap" }],
       ["wizard", "reedGlobe"],

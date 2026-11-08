@@ -29,7 +29,7 @@ const ROOT = join(__dirname, "..")
 export type LayerSource = { with?: string; without?: string | null }
 
 export const LAYER_SOURCES: Record<string, LayerSource> = {
-  // The star cloth was painted under the compass, so its own edit (no compass) gives it whole, on the bare table.
+  // The star cloth was painted under a compass, so its own edit (no compass) gives it whole, on the bare table.
   starMap: { with: "starMap-cloth", without: "table" },
   // The well was painted behind the trough and the gourd; its own edit holds the well alone, whole.
   well: { with: "well-alone", without: null },
