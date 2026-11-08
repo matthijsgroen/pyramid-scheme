@@ -879,5 +879,6 @@ Attach: `art/masters/camp/ref-mapTable.webp`, `art/masters/camp/reedGlobe.webp`
 > [edit] Add this, and only this: a copper listening horn resting in a small wooden stand on the sand in front of
 > the table's left front leg. The stand is three short dark wooden legs with a ring on top; the horn sits in the
 > ring, its wide bell turned up and toward the viewer, its long narrow neck curling down to a small ear piece. Horn
-> and stand together about as tall as the table's legs. Dark, aged copper with a few brighter worn edges, so it
+> and stand together about half as tall as the table's legs: a small object beside the table, not a big one. It
+> stands clear of the leg and the hanging cloth, with sand all around it. Dark, aged copper with a few brighter worn edges, so it
 > reads clearly against the pale sand. Everything else stays exactly as it is.
