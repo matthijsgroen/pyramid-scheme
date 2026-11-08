@@ -1,4 +1,5 @@
 import type { Decorator, Meta, StoryObj } from "@storybook/react-vite"
+import { action } from "storybook/actions"
 import { fn } from "storybook/test"
 import { CampScene, type CampSceneProps } from "./CampScene"
 import { CAMP_CATALOGUE } from "./campScene/campCatalogue"
@@ -203,10 +204,12 @@ export const WithBadges: Story = {
 
 const detectorEntrances = {
   entrances: {
-    chest: { label: "Collection", onOpen: fn() },
-    mapTable: { label: "Journeys", onOpen: fn() },
+    chest: { label: "Collection", onOpen: action("open collection") },
+    mapTable: { label: "Journeys", onOpen: action("open journeys") },
   },
-  pieceEntrances: [{ id: "compass", pieces: ["compassOnMap", "compass"], label: "Compass", onOpen: fn() }],
+  pieceEntrances: [
+    { id: "compass", pieces: ["compassOnMap", "compass"], label: "Compass", onOpen: action("open compass") },
+  ],
 }
 
 /** Before the table stands, the compass lies by the map on the sand and takes its own taps. */
