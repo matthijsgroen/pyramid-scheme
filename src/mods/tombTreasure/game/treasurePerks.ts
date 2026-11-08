@@ -73,3 +73,14 @@ export const TREASURE_PERKS: Record<string, TreasurePerk> = {
   wizard_c_3: { type: "max-health" },
   wizard_c_4: { type: "detection" },
 }
+
+/** How far a detector part's detector is built once this part is counted: parts held plus this one, of all its parts. */
+export const detectorPartProgress = (
+  keyId: string,
+  held: (keyId: string) => boolean
+): { count: number; total: number } | undefined => {
+  const type = TREASURE_PERKS[keyId]?.type
+  if (type !== "compass" && type !== "detection") return undefined
+  const parts = Object.keys(TREASURE_PERKS).filter(id => TREASURE_PERKS[id].type === type)
+  return { count: parts.filter(id => id === keyId || held(id)).length, total: parts.length }
+}

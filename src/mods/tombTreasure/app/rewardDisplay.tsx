@@ -3,7 +3,7 @@ import { registerRewardDisplays, type RewardDisplayFn } from "@/app/SiteMap/rewa
 import { journeys } from "@/data/journeys"
 import { MapPieceIcon } from "@/ui/molecules/MapPieceIcon"
 import { treasureDisplayByKeyId } from "../game/treasures"
-import { TREASURE_PERKS } from "../game/treasurePerks"
+import { detectorPartProgress, TREASURE_PERKS } from "../game/treasurePerks"
 import { useTombTreasureProgress } from "./useTombTreasureProgress"
 import { useTreasurePerkLabel } from "./useTreasurePerkLabel"
 import { mapPieceSchema, tombKeySchema } from "./rewardSchemas"
@@ -47,8 +47,13 @@ export const registerTombTreasureRewardDisplay = () => {
 const tombName = (tombId: string) => journeys.find(j => j.id === tombId)?.name
 
 const useTombTreasureRewardDisplays = (): Partial<Record<string, RewardDisplayFn>> => {
-  const { mapPieceProgress } = useTombTreasureProgress()
+  const { mapPieceProgress, hasTombKey } = useTombTreasureProgress()
   const perkLabel = useTreasurePerkLabel()
+  // A detector part names how far the detector is built, this part counted whether or not it is held yet.
+  const effect = (keyId: string, t: (key: string, options?: Record<string, unknown>) => string) => {
+    const progress = detectorPartProgress(keyId, hasTombKey)
+    return progress ? `${perkLabel(keyId)} · ${t("perks.partOf", { ns: "treasures", ...progress })}` : perkLabel(keyId)
+  }
   return {
     // A tomb treasure's whole point is what it does for you, and that used to be readable only
     // later, in the Collection. The popup now carries the same perk line, worded identically.
@@ -62,7 +67,7 @@ const useTombTreasureRewardDisplays = (): Partial<Record<string, RewardDisplayFn
         return {
           rarity,
           itemName: t("chest.tombKey"),
-          itemEffectDescription: perkLabel(keyId),
+          itemEffectDescription: effect(keyId, t),
           ItemVisual: <span className="text-6xl">🗝</span>,
         }
       }
@@ -70,7 +75,7 @@ const useTombTreasureRewardDisplays = (): Partial<Record<string, RewardDisplayFn
         rarity,
         itemName: t(`${info.category}.${info.treasureId}.name`, { ns: "treasures" }),
         itemDescription: t(`${info.category}.${info.treasureId}.description`, { ns: "treasures" }),
-        itemEffectDescription: perkLabel(keyId),
+        itemEffectDescription: effect(keyId, t),
         ItemVisual: <span className="text-6xl">{info.symbol}</span>,
       }
     },

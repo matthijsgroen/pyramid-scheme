@@ -12,7 +12,8 @@
     "detection": "Corridor finder part",
     "tier-unlock": "Unlocks {{tier}} expeditions",
     "tier-coming-soon": "{{tier}} expeditions arrive in a later update",
-    "location-key": "Reveals another tomb"
+    "location-key": "Reveals another tomb",
+    "partOf": "{{count}} of {{total}}"
   },
   "tiers": {
     "stone": "Stone",

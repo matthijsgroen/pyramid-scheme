@@ -48,8 +48,8 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/app/state/useJourneys.spec.ts:1350813140": [
       [496, 54, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/app/state/useJourneys.ts:2304305897": [
-      [86, 24, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/app/state/useJourneys.ts:3133811361": [
+      [87, 24, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/app/state/useProgression.ts:555630573": [
       [5, 62, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
@@ -814,7 +814,7 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/mods/tombTreasure/game/tombTreasureReward.ts:1164406257": [
       [5, 31, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/tombTreasure/game/treasurePerks.ts:1190105737": [
+    "src/mods/tombTreasure/game/treasurePerks.ts:2344978557": [
       [2, 66, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/tombTreasure/index.ts:218452373": [

@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from "react"
+import { outstandingCorridorsByLevel } from "@/game/outstandingCorridors"
 import { useGameStorage } from "@/support/useGameStorage"
 import { journeys as journeyData, type Journey } from "@/data/journeys"
 import { generateNewSeed } from "@/game/random"
@@ -183,6 +184,8 @@ export type JourneyAPI = {
   markCorridorFound: (sectionAddress: string) => void
   getFoundHiddenCorridors: (journeyId: string) => ReadonlySet<string>
   getOutstandingHiddenCorridorCount: (journeyId: string) => number
+  /** The same corridors, counted per pyramid of the journey (by levelNr). */
+  getOutstandingHiddenCorridorsByLevel: (journeyId: string) => ReadonlyMap<number, number>
   registerFloorExploration: (
     journeyId: string,
     levelNr: number,
@@ -714,6 +717,11 @@ export const createJourneysV3Api = ({
     return (j.knownHiddenCorridors ?? []).filter(key => !found.has(key)).length
   }
 
+  const getOutstandingHiddenCorridorsByLevel = (journeyId: string): ReadonlyMap<number, number> => {
+    const j = journeys.find(j => j.journeyId === journeyId)
+    return outstandingCorridorsByLevel(j?.knownHiddenCorridors ?? [], j?.foundHiddenCorridors ?? [])
+  }
+
   // `?? []` / `?? false` tolerate a floorExploration entry saved by an earlier build with a
   // different shape (the field is loose persisted data — stale/foreign
   // entries are ignored, not migrated, and never crash). A pre-shape entry simply reads as "nothing
@@ -794,6 +802,7 @@ export const createJourneysV3Api = ({
     markCorridorFound,
     getFoundHiddenCorridors,
     getOutstandingHiddenCorridorCount,
+    getOutstandingHiddenCorridorsByLevel,
     registerFloorExploration,
     getUnexploredLevels,
     journeysNeedingFloorRederive,

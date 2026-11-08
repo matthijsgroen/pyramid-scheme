@@ -11,7 +11,7 @@ import journeysNl from "../../../../public/locales/nl/journeys.json"
 // Controlled map-piece progress — the branch under test is "how much of this tomb's map is held".
 let progress = { found: 1, required: 3 }
 vi.mock("./useTombTreasureProgress", () => ({
-  useTombTreasureProgress: () => ({ mapPieceProgress: () => progress }),
+  useTombTreasureProgress: () => ({ mapPieceProgress: () => progress, hasTombKey: () => false }),
 }))
 
 // Stands in for the perk line; its own wording is covered in useTreasurePerkLabel.spec.
@@ -133,7 +133,7 @@ describe("tomb-treasure reward display", () => {
     const display = tombKeyDisplay("starter_a_2")
     expect(display.itemName).toBe("merchantCache.t2.name")
     expect(display.itemDescription).toBe("merchantCache.t2.description")
-    expect(display.itemEffectDescription).toBe("perk:starter_a_2")
+    expect(display.itemEffectDescription).toContain("perk:starter_a_2")
   })
 
   it("marks a treasure that opens a tier or another tomb as legendary", () => {

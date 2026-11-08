@@ -24,5 +24,17 @@ type Story = StoryObj<typeof meta>
 export const TwoParts: Story = {}
 
 export const AllParts: Story = {
-  args: { parts: { held: 4, total: 4 }, partsLabel: "4 of 4 parts · hears other journeys", next: undefined },
+  args: {
+    parts: { held: 4, total: 4 },
+    partsLabel: "4 of 4 parts · hears other journeys",
+    next: undefined,
+    journeys: {
+      heading: "Where a corridor is still closed",
+      none: "No closed corridor in a journey you have been to.",
+      rows: [
+        { key: "a", label: "Temple of Bastet", detail: "Pyramid 2 · 2 corridors" },
+        { key: "b", label: "Sacred Ibis Migration", detail: "Pyramid 1 · 1 corridor" },
+      ],
+    },
+  },
 }

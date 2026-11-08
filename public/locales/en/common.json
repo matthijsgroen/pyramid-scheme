@@ -321,7 +321,12 @@
         "4": "hears other journeys"
       },
       "corridorInPyramid": "Inside a pyramid it listens for closed corridors.",
-      "corridorFarNext": "With all four parts it hears other journeys from camp."
+      "corridorFarNext": "With all four parts it hears other journeys from camp.",
+      "corridorWhere": "Where a corridor is still closed",
+      "corridorNone": "No closed corridor in a journey you have been to.",
+      "corridorPyramid": "Pyramid {{n}}",
+      "corridorCount_one": "{{count}} corridor",
+      "corridorCount_other": "{{count}} corridors"
     }
   },
   "keys": {

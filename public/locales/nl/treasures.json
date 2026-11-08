@@ -12,7 +12,8 @@
     "detection": "Gangenzoekeronderdeel",
     "tier-unlock": "Ontgrendelt {{tier}}-expedities",
     "tier-coming-soon": "{{tier}}-expedities komen in een latere update",
-    "location-key": "Onthult een andere tombe"
+    "location-key": "Onthult een andere tombe",
+    "partOf": "{{count}} van {{total}}"
   },
   "tiers": {
     "stone": "stenen",
