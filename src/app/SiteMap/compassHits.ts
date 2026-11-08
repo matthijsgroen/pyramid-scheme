@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react"
 import type { CompassAccess, CompassHit } from "@/game/siteTypes"
-import { useMergedCompassScanner } from "@/app/SiteMap/detectorScanners"
+import { type CompassScanOptions, useMergedCompassScanner } from "@/app/SiteMap/detectorScanners"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "@/worldGen/data"
 import { useMergedGateNeeds } from "@/app/pages/gateNeeds"
@@ -39,13 +39,14 @@ const accessOf = (
 // core runs the merged scanner, then resolves each hit's access against the keys the player holds —
 // the scanner reports gates, it can't judge them. `target` must stay a bare string for this memo to
 // hold; see compassTarget.ts. No target, no scan.
-export const useCompassHits = (target: string | null): CompassHit[] => {
+export const useCompassHits = (target: string | null, options?: CompassScanOptions): CompassHit[] => {
   const scanCompass = useMergedCompassScanner()
+  const cells = options?.cells
   const heldKeys = useMergedHeldKeys()
   const gateNeeds = useMergedGateNeeds()
   const gateOpen = useCallback((tier: Difficulty) => gateNeeds.open({ tier }, heldKeys), [gateNeeds, heldKeys])
   return useMemo(
-    () => (target ? scanCompass(target).map(hit => ({ ...hit, ...accessOf(hit, heldKeys, gateOpen) })) : []),
-    [target, scanCompass, heldKeys, gateOpen]
+    () => (target ? scanCompass(target, { cells }).map(hit => ({ ...hit, ...accessOf(hit, heldKeys, gateOpen) })) : []),
+    [target, cells, scanCompass, heldKeys, gateOpen]
   )
 }

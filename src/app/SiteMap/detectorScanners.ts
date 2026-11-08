@@ -6,7 +6,9 @@ import type { CompassResult } from "@/game/siteTypes"
 // function that, given a target id, yields the world locations still worth showing (e.g. a
 // hieroglyph's uncollected fragment pieces). Core merges every registered scanner and names no
 // reward type — the same seam shape as rewardContributions. See docs/mods/app-plugins-design.md.
-export type CompassScanner = (target: string) => CompassResult[]
+/** `cells: false` stops at the floor: no floor is assembled to find a piece's cell. */
+export type CompassScanOptions = { cells?: boolean }
+export type CompassScanner = (target: string, options?: CompassScanOptions) => CompassResult[]
 export type UseCompassScanner = () => CompassScanner
 
 const registry: UseCompassScanner[] = []
@@ -28,7 +30,7 @@ export const useMergedCompassScanner = (): CompassScanner => {
   // development artifact — a full reload clears it — and the durable fix would be registering by id,
   // the way the mod entrance registry does.
   return useMemo<CompassScanner>(
-    () => target => scanners.flatMap(scan => scan(target)),
+    () => (target, options) => scanners.flatMap(scan => scan(target, options)),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fixed-length list of stable scanners
     scanners
   )

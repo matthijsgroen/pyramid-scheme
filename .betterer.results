@@ -121,7 +121,7 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/mods/core/app/useHintAvailability.ts:3968299880": [
       [27, 39, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/hieroglyph/app/compassScanner.ts:1139810199": [
+    "src/mods/hieroglyph/app/compassScanner.ts:2147293546": [
       [101, 56, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/hieroglyph/app/useHieroglyphProgress.compass.spec.ts:4259672633": [

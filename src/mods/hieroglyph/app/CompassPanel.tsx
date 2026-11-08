@@ -43,10 +43,12 @@ export const CompassPanel: FC = () => {
       : []
   })
   const [picked, setPicked] = useState(() => glyphs.find(g => g.id === compassTarget)?.id ?? null)
-  const hits = useCompassHits(picked)
-  const rows = uniqueBy(hits, hit => compassKey(hit, compassLevel)).map(hit => ({
-    key: compassKey(hit, compassLevel),
-    label: compassLabel(hit, compassLevel, journeyName),
+  // Camp stops at the floor: a cell means nothing away from the map, and finding one assembles every floor.
+  const hits = useCompassHits(picked, { cells: false })
+  const shown = Math.min(compassLevel, 2)
+  const rows = uniqueBy(hits, hit => compassKey(hit, shown)).map(hit => ({
+    key: compassKey(hit, shown),
+    label: compassLabel(hit, shown, journeyName),
     access: hit.access,
   }))
 

@@ -154,8 +154,8 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["starter", "compassOnMap", { on: "map", art: "compass", dx: 0.055, dy: 0.47, hit: COMPASS_ON_MAP }],
       ["expert", "table", { base: true }],
       ["expert", "compass", { hit: COMPASS_ON_TABLE }],
-      // The corridor finder, once its first part is held: a listening horn on the sand by the table's front leg.
-      ["master", "corridorFinder", { hit: CORRIDOR_FINDER }],
+      // The corridor finder, once its first part is held, whatever the chapter: a listening horn on the sand, table or not.
+      ["starter", "corridorFinder", { on: [], hit: CORRIDOR_FINDER }],
       // The star cloth lies on the table under the map and the compass.
       ["master", "starMap", { behind: "compass" }],
       ["master", "scrollCase"],

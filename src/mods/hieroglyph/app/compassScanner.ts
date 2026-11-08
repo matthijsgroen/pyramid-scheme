@@ -1,7 +1,7 @@
 import { useCallback } from "react"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import type { CompassResult, FloorConfig, FloorGrid, TreasureReward } from "@/game/siteTypes"
-import type { CompassScanner } from "@/app/SiteMap/detectorScanners"
+import type { CompassScanner, CompassScanOptions } from "@/app/SiteMap/detectorScanners"
 import { assembleFloor } from "@/game/siteAssembler"
 import { resolveEncounter } from "@/app/families/familyRegistry"
 import { resolveOneWayRealisation } from "@/mods/allOneWayRealisations"
@@ -107,7 +107,7 @@ const floorSeed = (journeyId: string, levelIdx: number, floorIdx: number): numbe
 export const useHieroglyphCompassScanner = (): CompassScanner => {
   const { hasFragment, compassLevel } = useHieroglyphProgress()
   return useCallback(
-    (target: string): CompassResult[] => {
+    (target: string, options?: CompassScanOptions): CompassResult[] => {
       const results: CompassResult[] = []
       for (const [journeyId, levels] of Object.entries(generatedWorldConfigs)) {
         levels.forEach((floors, levelIdx) => {
@@ -117,7 +117,7 @@ export const useHieroglyphCompassScanner = (): CompassScanner => {
             // Assemble once per floor only at L3 (exact-cell precision); a failed assembly degrades
             // to floor-level (cell stays undefined) rather than dropping the hit.
             const grid =
-              compassLevel >= 3
+              compassLevel >= 3 && options?.cells !== false
                 ? (() => {
                     const r = assembleFloor(
                       journeyId,
