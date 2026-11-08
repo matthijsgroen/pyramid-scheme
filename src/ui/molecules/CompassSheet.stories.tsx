@@ -6,7 +6,7 @@ import { CompassSheet, type CompassSheetProps } from "./CompassSheet"
 const glyphs = [
   { id: "owl", symbol: "𓅓", progress: "1/3" },
   { id: "eye", symbol: "𓂀", progress: "2/4" },
-  { id: "beetle", symbol: "𓆣", progress: "0/2" },
+  { id: "beetle", symbol: "𓆣", progress: "1/2" },
   { id: "sun", symbol: "𓇳", progress: "1/2" },
   { id: "ankh", symbol: "𓋹", progress: "3/4" },
 ]
@@ -24,7 +24,7 @@ const meta = {
     parts: { held: 2, total: 3 },
     partsLabel: "2 of 3 parts · sees the floor",
     pickHeading: "What is the compass looking for?",
-    onlyIncomplete: "Only signs not yet complete.",
+    onlyIncomplete: "Only signs you have a piece of, until they are complete.",
     glyphs,
     picked: "owl",
     onPick: fn(),

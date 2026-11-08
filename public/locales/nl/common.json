@@ -308,12 +308,12 @@
         "3": "wijst de plek aan"
       },
       "pickHeading": "Waar zoekt het kompas naar?",
-      "onlyIncomplete": "Alleen tekens die nog niet compleet zijn.",
+      "onlyIncomplete": "Alleen tekens waarvan je al een stuk hebt, tot ze compleet zijn.",
       "whereHeading": "Waar de stukken van {{symbol}} liggen",
       "pickFirst": "Kies een teken om te zien waar de stukken liggen.",
       "follow": "Volg dit teken",
       "following": "Het kompas volgt dit teken",
-      "nothingToFind": "Alle tekens die je kunt bereiken zijn compleet.",
+      "nothingToFind": "Je hebt nog geen stuk van een teken dat niet compleet is.",
       "corridorReach": {
         "1": "hoort een gang vlakbij",
         "2": "hoort de hele verdieping",

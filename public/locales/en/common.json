@@ -308,12 +308,12 @@
         "3": "points out the spot"
       },
       "pickHeading": "What is the compass looking for?",
-      "onlyIncomplete": "Only signs not yet complete.",
+      "onlyIncomplete": "Only signs you have a piece of, until they are complete.",
       "whereHeading": "Where the pieces of {{symbol}} lie",
       "pickFirst": "Pick a sign to see where its pieces lie.",
       "follow": "Follow this sign",
       "following": "The compass follows this sign",
-      "nothingToFind": "Every sign you can reach is complete.",
+      "nothingToFind": "You have no piece yet of a sign that is not complete.",
       "corridorReach": {
         "1": "hears a corridor nearby",
         "2": "hears this whole floor",

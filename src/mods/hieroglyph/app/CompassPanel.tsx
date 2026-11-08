@@ -1,23 +1,18 @@
 import type { FC } from "react"
 import { useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { difficultyCompare } from "@/data/difficultyLevels"
 import { compassKey, compassLabel, uniqueBy } from "@/game/compassPrecision"
 import { useInventory } from "@/app/Inventory/useInventory"
-import { useMergedGateNeeds } from "@/app/pages/gateNeeds"
-import { currentChapter } from "@/app/pages/journeyAvailability"
 import { useCompassHits } from "@/app/SiteMap/compassHits"
-import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { useDetector } from "@/app/state/useDetector"
 import { useJourneyTranslations } from "@/app/translations/useJourneyTranslations"
 import { CompassSheet } from "@/ui/molecules/CompassSheet"
-import { getItemFirstLevel } from "../game/itemLevelLookup"
 import { HIEROGLYPH_SYMBOLS } from "./hieroglyphSymbols"
 import { COMPASS_CAP, useHieroglyphProgress } from "./useHieroglyphProgress"
+import { startedGlyphs } from "./startedGlyphs"
 
 /**
- * The compass's tab on the camp's Detectors screen. It offers the signs not yet complete from the chapters
- * reached, shows where the picked one's pieces lie at the compass's own precision, and follows it: the
+ * The compass's tab on the camp's Detectors screen. It offers the signs begun but not complete, shows where the picked one's pieces lie at the compass's own precision, and follows it: the
  * pyramid's compass readout then hunts that sign.
  */
 export const CompassPanel: FC = () => {
@@ -25,23 +20,13 @@ export const CompassPanel: FC = () => {
   const { compassLevel, compassTarget, setCompassTarget, hieroglyphProgress } = useHieroglyphProgress()
   const { inventory } = useInventory()
   const { setDetector } = useDetector()
-  const heldKeys = useMergedHeldKeys()
-  const gateNeeds = useMergedGateNeeds()
-  const chapter = currentChapter(heldKeys, tier => gateNeeds.open({ tier }, heldKeys))
   const journeys = useJourneyTranslations()
   const journeyName = useMemo(() => {
     const names = new Map(journeys.map(j => [j.id, j.name]))
     return (id: string) => names.get(id) ?? id
   }, [journeys])
 
-  const glyphs = Object.entries(HIEROGLYPH_SYMBOLS).flatMap(([id, symbol]) => {
-    const tier = getItemFirstLevel(id)
-    const { found, required } = hieroglyphProgress(id)
-    const complete = inventory[id] !== undefined || found >= required
-    return tier && difficultyCompare(tier, chapter) <= 0 && !complete
-      ? [{ id, symbol, progress: `${found}/${required}` }]
-      : []
-  })
+  const glyphs = startedGlyphs(HIEROGLYPH_SYMBOLS, hieroglyphProgress, id => inventory[id] !== undefined)
   const [picked, setPicked] = useState(() => glyphs.find(g => g.id === compassTarget)?.id ?? null)
   // Camp stops at the floor: a cell means nothing away from the map, and finding one assembles every floor.
   const hits = useCompassHits(picked, { cells: false })
