@@ -868,7 +868,7 @@ Attach: `art/masters/camp/starMap.webp`
 > [edit] Remove this, and only this: the round brass compass on the right end of the table. The dark-blue
 > cloth under it stays and continues where the compass stood, with its gold border.
 
-### 95. `camp/corridorFinder` — Layer source: the listening horn on its stand in front of the map table
+### 95. `camp/corridorFinder` — Layer source: the listening horn lying in front of the map table
 
 The corridor finder is a detector, not a find: it stands in front of the table from the player's first part,
 master onwards. Painted into the finished map table so it shares its light, then cut against it. Edit of
@@ -876,9 +876,9 @@ master onwards. Painted into the finished map table so it shares its light, then
 
 Attach: `art/masters/camp/ref-mapTable.webp`, `art/masters/camp/reedGlobe.webp`
 
-> [edit] Add this, and only this: a copper listening horn resting in a small wooden stand on the sand in front of
-> the table's left front leg. The stand is three short dark wooden legs with a ring on top; the horn sits in the
-> ring, its wide bell turned up and toward the viewer, its long narrow neck curling down to a small ear piece. Horn
-> and stand together about half as tall as the table's legs: a small object beside the table, not a big one. It
-> stands clear of the leg and the hanging cloth, with sand all around it. Dark, aged copper with a few brighter worn edges, so it
-> reads clearly against the pale sand. Everything else stays exactly as it is.
+> [edit] Add this, and only this: a copper listening horn lying on its side on a small folded cloth on the sand in
+> front of the table's left front leg. The horn rests flat on the cloth, its wide bell toward the viewer, its long
+> narrow neck curling back to a small ear piece; nothing holds it up, it simply lies there. Horn and cloth together
+> are a small object beside the table, about half as long as the table's legs are tall, clear of the leg and the
+> hanging cloth, with sand all around. No stool, no stand, no box. Dark, aged copper with a few brighter worn
+> edges, so it reads clearly against the pale sand. Everything else stays exactly as it is.
