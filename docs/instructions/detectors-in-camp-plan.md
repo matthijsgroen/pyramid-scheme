@@ -21,8 +21,10 @@ Approved sketch: https://claude.ai/artifact/UGrZyakcoW6ThD17R1Y5G9 (4 boards: ca
 2. **Solver.** In `reachabilitySupport.ts`, every detection treasure harvests `detector:corridor:1`. That is the only fact a hidden section needs. `detectorFactsFor` loses its level loop.
    - Expected bake result: `generatedWorld.ts` stays byte-identical. Verify with a baseline diff.
 3. **Camp items.**
-   - `CampScene` entrances get `compass` and `corridorFinder` next to `mapTable`. Each one shows only once its first part is held.
-   - Art: two props on the table via `yarn repaint` (designer). Until then, the entrance button draws a plain glyph.
+   - Each detector is its own tap target, one tap (chosen over a table menu, so they read as things in the camp). Desktop gets the same two targets; the map keeps no target there, since Alle reizen is a side panel.
+   - On a phone the table is about 110 px wide, too small for three 44 px targets. So the detectors stand on the sand in front of the table (free from starter to wizard), and the map's target covers only the map and table.
+   - `CampScene` entrances get `compass` and `corridorFinder`. Each shows only once its first part is held.
+   - Art: two ground props via `yarn repaint` (designer). Until then the entrance button draws a plain glyph.
 4. **Compass sheet** (new organism):
    - Grid of incomplete hieroglyphs.
    - Hit list per journey, at the precision of the current level.
