@@ -350,7 +350,10 @@ const Piece = ({ placed, lightIndex }: { placed: PlacedPiece; lightIndex: number
       <Fade visible={placed.visible}>
         <div
           className={`camp-piece camp-standin ${PIECE} ${STAND_IN}`}
-          style={{ ...style, fontSize: clamp(scale * 0.17, 8, 13) }}
+          style={{
+            ...(placed.hit ? boxOf({ ...placed, ...placed.hit }) : style),
+            fontSize: clamp(scale * 0.17, 8, 13),
+          }}
         >
           {piece.id}
         </div>
