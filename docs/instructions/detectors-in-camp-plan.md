@@ -7,12 +7,8 @@ Approved sketch: https://claude.ai/artifact/UGrZyakcoW6ThD17R1Y5G9 (4 boards: ca
 - **Two detectors, two items on the camp map table.** Compass and corridor finder each open their own sheet. The map itself stays the way into Alle reizen.
 - **A detector's level is the number of parts found.** Every compass or detection treasure is one part, in any order. Compass has 3 parts (starter, junior, master B), corridor finder 4 (master A, wizard A/B/C). Out-of-order finds are never wasted.
 - **The compass is aimed only from the camp sheet.** The HuntBar in Verzameling › Hiërogliefen goes away.
-- **Compass precision in camp is the same as in the pyramid.** L1 shows the pyramid, L2 the floor too, L3 "op de kaart". The lock and eye marks stay.
-- **Corridor finder in camp, only for visited journeys:**
-  - L1–2: only that a closed corridor exists somewhere.
-  - L3: which journeys.
-  - L4: also which pyramid, plus the count.
-  - The Alle reizen dot appears from L3 (it names a journey, so L3 is the first level that can).
+- **The two detectors run in opposite directions.** The compass goes from far to near: L1 shows the pyramid, L2 the floor too, L3 the cell ("op de kaart" in camp). The corridor finder goes from near to far: L1 nearby, L2 this floor, L3 another floor, L4 other journeys. The lock and eye marks stay on the compass.
+- **Corridor finder in camp.** Other journeys are the farthest scope, so they appear only at L4: which journeys (visited only), the pyramid, and the count. At L1–3 the camp sheet only says what the finder does inside a pyramid. The Alle reizen dot stays at L4.
 - **No arm button in camp.** The on/off switch stays in the pyramid readout; the camp sheet's bottom button just closes it.
 
 ## Changes
@@ -32,8 +28,7 @@ Approved sketch: https://claude.ai/artifact/UGrZyakcoW6ThD17R1Y5G9 (4 boards: ca
    - Hit list per journey, at the precision of the current level.
    - "Volg dit teken" sets the existing `compassTarget`.
    - Delete the HuntBar and `HieroglyphCollectionSection.huntbar.spec.tsx`.
-5. **Corridor finder sheet** (new organism): summary plus rows, by level.
-   - `AllJourneysPage.tsx`: change the `corridorDetectorLevel >= 4` check to `>= 3`.
+5. **Corridor finder sheet** (new organism): at L1–3 its in-pyramid scope; at L4 the journey rows. `AllJourneysPage.tsx` keeps its `>= 4` dot.
 6. **Part-found copy.** The treasure claim names "Kompasonderdeel · n van 3" / "Gangenzoekeronderdeel · n van 4" (nl and en).
 
 ## What the tests freeze
@@ -41,8 +36,7 @@ Approved sketch: https://claude.ai/artifact/UGrZyakcoW6ThD17R1Y5G9 (4 boards: ca
 - Detection held only from `wizard_c` reads as level 1; any two compass treasures read as level 2.
 - Every detection treasure harvests exactly `detector:corridor:1`.
 - Compass sheet (made-up glyphs and journeys): incomplete glyphs only; the precision text per level; picking a glyph and following it sets the target.
-- Corridor finder sheet: L1–2 show no journey; L3 shows journeys without a count; L4 shows pyramid and count; unvisited journeys never show.
-- Alle reizen dot at L3, not at L2.
+- Corridor finder sheet: L1–3 name no journey; L4 shows journey, pyramid and count; unvisited journeys never show.
 - Camp: no detector entrance before its first part.
 
 ## Slices
