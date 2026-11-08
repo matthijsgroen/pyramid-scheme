@@ -205,6 +205,7 @@ export const WithBadges: Story = {
 const detectorEntrances = {
   entrances: {
     chest: { label: "Collection", onOpen: action("open collection") },
+    window: { label: "Mosaic 61/252", onOpen: action("open mosaic") },
     mapTable: { label: "Journeys", onOpen: action("open journeys") },
   },
   pieceEntrances: [
