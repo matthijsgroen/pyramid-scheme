@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next"
 import { registerPerkContribution, useMergedEarnedPerks } from "@/app/SiteMap/perkContributions"
 import { registerDetectorLevel } from "@/app/SiteMap/detectorLevels"
-import { perkLevel } from "@/game/perkTotals"
+import { perkStacks } from "@/game/perkTotals"
 
 // core's app entrypoint (side-effect): the families every world needs, always registered.
 import "./treasureChest/plugin"
@@ -15,8 +15,7 @@ export const DETECTION_CAP = 4
 registerPerkContribution(() => {
   const { t } = useTranslation("treasures")
   return {
-    describe: perk =>
-      perk.type === "detection" ? { label: t("perks.detection", { level: perk.level ?? 1 }) } : undefined,
+    describe: perk => (perk.type === "detection" ? { label: t("perks.detection") } : undefined),
   }
 })
-registerDetectorLevel("corridor", () => perkLevel(useMergedEarnedPerks(), "detection", DETECTION_CAP))
+registerDetectorLevel("corridor", () => perkStacks(useMergedEarnedPerks(), "detection", DETECTION_CAP))

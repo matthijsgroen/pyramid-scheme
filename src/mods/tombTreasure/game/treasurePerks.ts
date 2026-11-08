@@ -7,24 +7,24 @@ export type TreasurePerk =
   | { type: "none" }
   | { type: "tier-unlock"; tier: "junior" | "expert" | "master" | "wizard" }
   | { type: "location-key"; tombId: string }
-  | { type: "compass"; level: 1 | 2 | 3 }
+  | { type: "compass" }
   | { type: "pack-mule" }
   | { type: "max-health" }
   | { type: "trap-insight" }
   | { type: "armor" }
-  | { type: "detection"; level: 1 | 2 | 3 | 4 }
+  | { type: "detection" }
 
 export const TREASURE_PERKS: Record<string, TreasurePerk> = {
   // Starter A (4 floors)
   starter_a_1: { type: "tier-unlock", tier: "junior" },
-  starter_a_2: { type: "compass", level: 1 },
+  starter_a_2: { type: "compass" },
   starter_a_3: { type: "pack-mule" },
   starter_a_4: { type: "max-health" },
 
   // Junior A (6 floors)
   junior_a_1: { type: "tier-unlock", tier: "expert" },
   junior_a_2: { type: "none" },
-  junior_a_3: { type: "compass", level: 2 },
+  junior_a_3: { type: "compass" },
   junior_a_4: { type: "none" },
   junior_a_5: { type: "max-health" },
   junior_a_6: { type: "max-health" },
@@ -46,30 +46,30 @@ export const TREASURE_PERKS: Record<string, TreasurePerk> = {
   master_a_2: { type: "location-key", tombId: "master_treasure_tomb_b" },
   master_a_3: { type: "none" },
   master_a_4: { type: "none" },
-  master_a_5: { type: "detection", level: 1 },
+  master_a_5: { type: "detection" },
 
   // Master B (5 floors)
   master_b_1: { type: "none" },
   master_b_2: { type: "none" },
-  master_b_3: { type: "compass", level: 3 },
+  master_b_3: { type: "compass" },
   master_b_4: { type: "max-health" },
   master_b_5: { type: "armor" },
 
   // Wizard A (4 floors)
   wizard_a_1: { type: "none" },
   wizard_a_2: { type: "location-key", tombId: "wizard_treasure_tomb_b" },
-  wizard_a_3: { type: "detection", level: 2 },
+  wizard_a_3: { type: "detection" },
   wizard_a_4: { type: "none" },
 
   // Wizard B (4 floors)
   wizard_b_1: { type: "none" },
   wizard_b_2: { type: "location-key", tombId: "wizard_treasure_tomb_c" },
-  wizard_b_3: { type: "detection", level: 3 },
+  wizard_b_3: { type: "detection" },
   wizard_b_4: { type: "none" },
 
   // Wizard C (4 floors)
   wizard_c_1: { type: "none" },
   wizard_c_2: { type: "none" },
   wizard_c_3: { type: "max-health" },
-  wizard_c_4: { type: "detection", level: 4 },
+  wizard_c_4: { type: "detection" },
 }

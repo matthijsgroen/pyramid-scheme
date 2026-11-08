@@ -26,12 +26,12 @@ describe("TOMB_TREASURE_REACHABILITY gates", () => {
 })
 
 describe("TOMB_TREASURE_REACHABILITY corridor detector", () => {
-  it("a level-2 detection treasure grants levels 1 and 2", () => {
-    expect(detectorFactsFor({ type: "detection", level: 2 })).toEqual(["detector:corridor:1", "detector:corridor:2"])
+  it("every detection treasure grants exactly level 1, in whatever order it is found", () => {
+    expect(detectorFactsFor({ type: "detection" })).toEqual(["detector:corridor:1"])
   })
 
   it("grants no detector fact for a perk that is not detection, or a key with no perk", () => {
-    expect(detectorFactsFor({ type: "compass", level: 2 })).toEqual([])
+    expect(detectorFactsFor({ type: "compass" })).toEqual([])
     expect(detectorFactsFor(undefined)).toEqual([])
     expect(TOMB_TREASURE_REACHABILITY.alsoHarvests?.({ type: "tombKey", keyId: "made-up-key" })).toEqual([])
   })

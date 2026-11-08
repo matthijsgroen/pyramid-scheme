@@ -28,7 +28,7 @@ const { trapDamage } = await import("@/mods/trap/game/trapHealth")
 // holding the perk — there is no grant to miss, and no banked number that can drift from it.
 describe("trap perks derived from the treasures held", () => {
   it("starts at the base values when no treasure carries a trap perk", () => {
-    earned = [{ type: "compass", level: 3 }]
+    earned = [{ type: "compass" }]
     const { result } = renderHook(() => useTrapProgress())
     expect(result.current.maxHealth).toBe(6)
     expect(result.current.armorStacks).toBe(0)
@@ -70,10 +70,7 @@ describe("trap perks derived from the treasures held", () => {
   })
 
   it("ignores perks it does not own", () => {
-    earned = [
-      { type: "compass", level: 3 },
-      { type: "detection", level: 4 },
-    ]
+    earned = [{ type: "compass" }, { type: "detection" }]
     const { result } = renderHook(() => useTrapProgress())
     expect(result.current.maxHealth).toBe(6)
     expect(result.current.armorStacks).toBe(0)

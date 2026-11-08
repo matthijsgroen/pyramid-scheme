@@ -7,8 +7,7 @@ import { renderHook } from "@testing-library/react"
 vi.mock("@/app/SiteMap/perkContributions", () => ({
   useMergedPerkContributions: () => ({
     grant: () => {},
-    describe: (perk: { type: string; level?: number }) =>
-      perk.type === "compass" ? { label: `owned compass ${perk.level}` } : undefined,
+    describe: (perk: { type: string }) => (perk.type === "compass" ? { label: "owned compass" } : undefined),
   }),
 }))
 
@@ -28,7 +27,7 @@ const labelFor = (keyId: string) => renderHook(() => useTreasurePerkLabel()).res
 
 describe(useTreasurePerkLabel, () => {
   it("lets the owning mod word its own perk", () => {
-    expect(labelFor("starter_a_2")).toBe("owned compass 1") // starter_a_2 = compass level 1
+    expect(labelFor("starter_a_2")).toBe("owned compass") // starter_a_2 = a compass part
   })
 
   it("names the tier a tier-unlock treasure opens", () => {

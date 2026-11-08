@@ -54,8 +54,7 @@ if (isModEnabled("hieroglyph")) {
   registerPerkContribution(() => {
     const { t } = useTranslation("treasures")
     return {
-      describe: perk =>
-        perk.type === "compass" ? { label: t("perks.compass", { level: perk.level ?? 1 }) } : undefined,
+      describe: perk => (perk.type === "compass" ? { label: t("perks.compass") } : undefined),
     }
   })
   registerDetectorLevel("compass", () => useHieroglyphProgress().compassLevel)

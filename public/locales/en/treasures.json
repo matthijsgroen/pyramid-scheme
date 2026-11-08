@@ -8,8 +8,8 @@
     "armor": "Reduces trap damage",
     "trap-insight": "+1s on timed traps",
     "pack-mule": "A waterskin heals two hearts",
-    "compass": "Fragment compass (Lv {{level}})",
-    "detection": "Hidden-corridor detector (Lv {{level}})",
+    "compass": "Compass part",
+    "detection": "Corridor finder part",
     "tier-unlock": "Unlocks {{tier}} expeditions",
     "tier-coming-soon": "{{tier}} expeditions arrive in a later update",
     "location-key": "Reveals another tomb"

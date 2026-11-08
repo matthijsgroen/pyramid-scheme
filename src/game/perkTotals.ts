@@ -10,16 +10,8 @@
 // this layer stays pure so the folds are testable with no React and no registry.
 export type PerkLike = { type: string; level?: number }
 
-// A TIERED perk (compass, detection) states the level it grants;
-// holding several means the best one wins, so re-earning a lower tier can never demote you.
-export const perkLevel = (perks: readonly PerkLike[], type: string, cap: number): number =>
-  Math.min(
-    cap,
-    perks.reduce((best, perk) => (perk.type === type ? Math.max(best, perk.level ?? 1) : best), 0)
-  )
-
-// A STACKING perk (max-health, armor, trap-insight, pack-mule) grants no level — each treasure
-// carrying it is worth one stack. Counting a SET of held treasures is what makes this safe: the
+// Every perk STACKS: each treasure carrying it is worth one stack. A detector (compass, detection)
+// is built from parts the same way, so its level is the parts held, found in any order. Counting a SET of held treasures is what makes this safe: the
 // old "+1 per grant" write inflated permanently if a claim was ever dispatched twice.
 export const perkStacks = (perks: readonly PerkLike[], type: string, cap: number): number =>
   Math.min(cap, perks.filter(perk => perk.type === type).length)
