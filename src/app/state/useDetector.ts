@@ -25,7 +25,7 @@ export const useDetector = (): DetectorAPI => {
   // also syncs every instance of this key, so a screen outside the site map reads the same reading.
   const [activeDetector, setActiveDetector] = useGameStorage<DetectorMode>("activeDetector", null)
   const [readoutOpen, setReadoutOpen] = useState(false)
-  // The hunt target is picked on Collection and owned by the fragment mod (§3C); core reads it via
+  // The hunt target is picked at the camp map table and owned by the fragment mod; core reads it via
   // the seam (null when no mod owns it) so a target survives navigation into a site.
   const compassTarget = useCompassTarget()
   // Scanned only while the compass runs: at level 3 a scan assembles every floor holding a piece.

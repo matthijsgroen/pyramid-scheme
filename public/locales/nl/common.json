@@ -273,18 +273,14 @@
   },
   "detector": {
     "compassTitle": "Kompas",
-    "corridorTitle": "Verborgen gangen",
-    "pickTarget": "Kies een hiëroglief om op te jagen in je collectie",
+    "corridorTitle": "Gangenzoeker",
+    "pickTarget": "Kies een hiëroglief bij de kaarttafel in het kamp",
     "allCollected": "Alle stukken verzameld",
     "more": "+{{count}} meer",
     "corridorNearby": "Een verborgen gang is vlakbij",
     "corridorHere": "Hier zit een verborgen gang",
     "revealCorridor": "Openmaken",
     "corridorOnFloor": "Een verborgen gang wacht op deze verdieping",
-    "hunting": "Op jacht naar {{symbol}}",
-    "huntStop": "Stop",
-    "huntHint": "Selecteer een niet-verzamelde hiëroglief en jaag erop met het kompas",
-    "huntAction": "Jaag op {{symbol}}",
     "lookingFor": "Op zoek naar {{symbol}}",
     "access": {
       "open": "Niets bekends houdt deze tegen",
@@ -303,6 +299,29 @@
       "floor": "Iets op deze verdieping",
       "near": "Iets dichtbij",
       "here": "Hier! Open de detector"
+    },
+    "camp": {
+      "parts": "{{count}} van {{total}} onderdelen",
+      "compassReach": {
+        "1": "ziet de piramide",
+        "2": "ziet de vloer",
+        "3": "wijst de plek aan"
+      },
+      "pickHeading": "Waar zoekt het kompas naar?",
+      "onlyIncomplete": "Alleen tekens die nog niet compleet zijn.",
+      "whereHeading": "Waar de stukken van {{symbol}} liggen",
+      "pickFirst": "Kies een teken om te zien waar de stukken liggen.",
+      "follow": "Volg dit teken",
+      "following": "Het kompas volgt dit teken",
+      "nothingToFind": "Alle tekens die je kunt bereiken zijn compleet.",
+      "corridorReach": {
+        "1": "hoort een gang vlakbij",
+        "2": "hoort de hele verdieping",
+        "3": "hoort ook de andere verdiepingen",
+        "4": "hoort ook andere reizen"
+      },
+      "corridorInPyramid": "In een piramide luistert hij naar dichte gangen.",
+      "corridorFarNext": "Met alle vier de onderdelen hoort hij vanuit het kamp ook andere reizen."
     }
   },
   "keys": {
@@ -1576,7 +1595,8 @@
     "entrance": {
       "collection": "Verzameling",
       "mosaic": "Mozaïek",
-      "journeys": "Alle reizen"
+      "journeys": "Alle reizen",
+      "detectors": "Detectors"
     }
   },
   "home": {

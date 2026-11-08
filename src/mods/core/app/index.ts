@@ -1,7 +1,10 @@
+import { createElement } from "react"
 import { useTranslation } from "react-i18next"
 import { registerPerkContribution, useMergedEarnedPerks } from "@/app/SiteMap/perkContributions"
 import { registerDetectorLevel } from "@/app/SiteMap/detectorLevels"
 import { perkStacks } from "@/game/perkTotals"
+import { registerDetectorScreen } from "@/app/home/detectorScreens"
+import { CorridorPanel } from "./CorridorPanel"
 
 // core's app entrypoint (side-effect): the families every world needs, always registered.
 import "./treasureChest/plugin"
@@ -19,3 +22,7 @@ registerPerkContribution(() => {
   }
 })
 registerDetectorLevel("corridor", () => perkStacks(useMergedEarnedPerks(), "detection", DETECTION_CAP))
+registerDetectorScreen("corridor", {
+  title: t => t("detector.corridorTitle"),
+  Screen: () => createElement(CorridorPanel, { cap: DETECTION_CAP }),
+})

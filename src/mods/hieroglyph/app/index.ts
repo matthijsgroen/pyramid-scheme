@@ -6,12 +6,14 @@ import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
 import { registerCompassScanner } from "@/app/SiteMap/detectorScanners"
 import { registerPerkContribution } from "@/app/SiteMap/perkContributions"
 import { registerDetectorLevel } from "@/app/SiteMap/detectorLevels"
+import { registerDetectorScreen } from "@/app/home/detectorScreens"
 import { registerCompassTarget, registerCompassTargetLabel } from "@/app/SiteMap/compassTarget"
 import { registerHeldKeysProvider } from "@/app/SiteMap/keyProviders"
 import { registerJourneyCardSlot } from "@/app/pages/journeyCardSlots"
 import { isModEnabled } from "@/mods/registeredMods"
 import { useHieroglyphProgress } from "./useHieroglyphProgress"
 import { useHieroglyphCompassScanner } from "./compassScanner"
+import { CompassPanel } from "./CompassPanel"
 import { registerHieroglyphRewardDisplay } from "./rewardDisplay"
 import { hieroglyphFragmentSchema } from "./rewardSchema"
 import { HIEROGLYPH_SYMBOLS } from "./hieroglyphSymbols"
@@ -58,6 +60,7 @@ if (isModEnabled("hieroglyph")) {
     }
   })
   registerDetectorLevel("compass", () => useHieroglyphProgress().compassLevel)
+  registerDetectorScreen("compass", { title: t => t("detector.compassTitle"), Screen: CompassPanel })
   // The hunt target is picked on the Collection screen and stored in the mod's own state;
   // core reads it through this seam to drive the in-run compass readout without naming the mod.
   registerCompassTarget(() => useHieroglyphProgress().compassTarget)

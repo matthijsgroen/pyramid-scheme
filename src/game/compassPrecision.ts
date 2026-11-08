@@ -10,7 +10,7 @@ export const uniqueBy = <T>(items: T[], key: (item: T) => string): T[] => {
   })
 }
 
-// Precision narrows inward with level (§7.2): L1 pyramid, L2 +floor, L3 +exact cell. The key
+// Precision narrows inward with level (collection-and-detector-design.md): L1 pyramid, L2 +floor, L3 +exact cell. The key
 // collapses hits to the shown precision so lower levels don't list the same pyramid/floor twice —
 // L1 keys on the PYRAMID (journey + level), since a journey holds several and naming only the
 // journey would be a whole expedition rather than the "which pyramid" the design specifies.

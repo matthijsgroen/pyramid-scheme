@@ -22,7 +22,7 @@ const hieroglyphRequired = hieroglyphRequiredRaw as Record<string, number>
 // compassTarget seam).
 type HieroglyphState = { collectedFragments: string[]; compassTarget: string | null } // fragment = "hieroglyphId:pieceIndex"
 
-const COMPASS_CAP = 3
+export const COMPASS_CAP = 3
 
 const INITIAL: HieroglyphState = { collectedFragments: [], compassTarget: null }
 
