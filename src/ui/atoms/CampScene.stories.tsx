@@ -200,3 +200,21 @@ export const WithBadges: Story = {
     },
   },
 }
+
+const detectorEntrances = {
+  entrances: {
+    chest: { label: "Collection", onOpen: fn() },
+    mapTable: { label: "Journeys", onOpen: fn() },
+  },
+  pieceEntrances: [{ id: "compass", pieces: ["compassOnMap", "compass"], label: "Compass", onOpen: fn() }],
+}
+
+/** Before the table stands, the compass lies by the map on the sand and takes its own taps. */
+export const CompassByTheMap: Story = {
+  args: { chapter: "junior", found: fullFound(CAMP_CATALOGUE, "junior"), ...detectorEntrances },
+}
+
+/** On the table: the map keeps the rest of it, the compass its right end. */
+export const CompassOnTheTable: Story = {
+  args: { chapter: "expert", found: fullFound(CAMP_CATALOGUE, "expert"), ...detectorEntrances },
+}

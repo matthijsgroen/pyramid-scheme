@@ -722,7 +722,7 @@ describe("entranceAreas", () => {
     ]) {
       const l = layout({ catalogue: crowded, width, height, chapter: "wizard", steps: { mapTable: 1 } })
       const areas = entranceAreas(l.pieces, ["chest", "window", "mapTable"])
-      expect(areas.map(a => a.spot)).toEqual(["chest", "window", "mapTable"])
+      expect(areas.map(a => a.id)).toEqual(["chest", "window", "mapTable"])
       expectUsable(areas)
     }
   })

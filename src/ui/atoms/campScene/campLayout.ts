@@ -48,6 +48,8 @@ export type PlacedPiece = {
   visible: boolean
   /** None for a hidden piece and for a piece that burns: its own fire lights the ground it would fall on. */
   shadow?: PlacedShadow
+  /** The object inside the picture, placed like the piece, when the piece names one (`CampPiece.hit`). */
+  hit?: { x: number; y: number; width: number; height: number }
 }
 
 export type PlacedGlow = {
@@ -374,6 +376,14 @@ export const layoutCamp = ({
         height: d.piece.height * px,
         visible: d.shown && !hidden.has(d.piece.id),
         frame: px,
+        ...(d.piece.hit && {
+          hit: {
+            x: x + d.piece.hit.dx * px,
+            y: y + d.piece.hit.dy * px,
+            width: d.piece.hit.width * px,
+            height: d.piece.hit.height * px,
+          },
+        }),
       }
     })
 
@@ -426,8 +436,11 @@ export const layoutCamp = ({
 /** The smallest hit area of an entrance, in CSS px, however small its art is drawn. */
 export const ENTRANCE_MIN = 44
 
-/** Centred on (x, y), in px. */
-export type EntranceArea = { spot: CampSpotId | CampFixedId; x: number; y: number; width: number; height: number }
+/** Centred on (x, y), in px. `id` is the spot's, or the piece entrance's. */
+export type EntranceArea = { id: string; x: number; y: number; width: number; height: number }
+
+/** A whole spot, or the named pieces of any spot (a detector on the map table). */
+export type EntranceTarget = CampSpotId | CampFixedId | { id: string; pieces: readonly string[] }
 
 const overlapOf = (a: EntranceArea, b: EntranceArea) => ({
   x: (a.width + b.width) / 2 - Math.abs(a.x - b.x),
@@ -435,14 +448,19 @@ const overlapOf = (a: EntranceArea, b: EntranceArea) => ({
 })
 
 /**
- * Hit areas for the given spots, in that order, each covering every visible piece its spot draws and at least
+ * Hit areas for the given targets, in that order, each covering every visible piece it names and at least
  * ENTRANCE_MIN square. Two that collide first shrink toward their own centre along the axis that overlaps
  * least, never below ENTRANCE_MIN; when that is not enough, they move apart horizontally. A spot that
  * draws nothing has no area.
  */
-export const entranceAreas = (pieces: PlacedPiece[], spots: readonly (CampSpotId | CampFixedId)[]): EntranceArea[] => {
-  const areas = spots.flatMap(spot => {
-    const own = pieces.filter(p => p.spot === spot && p.visible)
+export const entranceAreas = (pieces: PlacedPiece[], targets: readonly EntranceTarget[]): EntranceArea[] => {
+  // A piece named by a piece target is that target's alone, so its spot's own entrance leaves it out.
+  const claimed = new Set(targets.flatMap(t => (typeof t === "string" ? [] : t.pieces)))
+  const areas = targets.flatMap(target => {
+    const id = typeof target === "string" ? target : target.id
+    const named = (p: PlacedPiece) =>
+      typeof target === "string" ? p.spot === target && !claimed.has(p.piece.id) : target.pieces.includes(p.piece.id)
+    const own = pieces.filter(p => named(p) && p.visible).map(p => p.hit ?? p)
     if (own.length === 0) return []
     const left = Math.min(...own.map(p => p.x - p.width / 2))
     const right = Math.max(...own.map(p => p.x + p.width / 2))
@@ -450,7 +468,7 @@ export const entranceAreas = (pieces: PlacedPiece[], spots: readonly (CampSpotId
     const bottom = Math.max(...own.map(p => p.y))
     return [
       {
-        spot,
+        id,
         x: (left + right) / 2,
         y: (top + bottom) / 2,
         width: Math.max(ENTRANCE_MIN, right - left),

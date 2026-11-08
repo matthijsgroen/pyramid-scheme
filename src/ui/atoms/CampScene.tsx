@@ -25,6 +25,8 @@ export type CampSceneProps = {
   /** Room kept free of the camp. `right` is covered by a panel: the sky and sand run on under it, the camp does not. */
   insets?: { top: number; bottom: number; right?: number }
   entrances?: { chest?: CampEntrance; window?: CampEntrance; mapTable?: CampEntrance }
+  /** Entrances on named pieces rather than a whole spot. Each stands whether or not its piece's art has landed. */
+  pieceEntrances?: readonly (CampEntrance & { id: string; pieces: readonly string[] })[]
   catalogue?: CampCatalogue
   className?: string
   /**
@@ -151,10 +153,14 @@ const ENTRANCE = [
   "pointer-events-auto absolute flex [transform:translate(-50%,-100%)] cursor-pointer flex-col items-center justify-end",
   "border-0 bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e0b33f]",
 ].join(" ")
-const ENTRANCE_TAG = [
-  "translate-y-[calc(100%+4px)] rounded-[10px] border-[1.5px] border-[#2b2118] bg-[#fff6e2] px-[9px] py-[2px]",
+const TAG_LOOK = [
+  "rounded-[10px] border-[1.5px] border-[#2b2118] bg-[#fff6e2] px-[9px] py-[2px]",
   "font-extrabold whitespace-nowrap text-[#2b2118]",
 ].join(" ")
+const ENTRANCE_TAG = `translate-y-[calc(100%+4px)] ${TAG_LOOK}`
+const ENTRANCE_TAG_ABOVE = `absolute top-0 -translate-y-[calc(100%+4px)] ${TAG_LOOK}`
+/** A tag's size before it is drawn: wide enough to tell whether two would touch. */
+const tagBox = (label: string, size: number) => ({ width: label.length * size * 0.62 + 24, height: size + 10 })
 const ENTRANCE_BADGE = [
   "absolute top-0 right-0 box-border h-[20px] min-w-[20px] rounded-[10px] bg-[#a3401a] px-[4px]",
   "text-center text-[11px] leading-[20px] font-extrabold text-[#fff8ea]",
@@ -337,7 +343,7 @@ const Fade = ({ visible, children }: { visible: boolean; children: ReactNode }) 
 
 const Piece = ({ placed, lightIndex }: { placed: PlacedPiece; lightIndex: number }) => {
   const { piece, scale, shadow } = placed
-  const art = campArt(piece.id, placed.layer)
+  const art = campArt(piece.art ?? piece.id, placed.layer)
   const style: CSSProperties = boxOf(placed)
   if (!art)
     return (
@@ -359,7 +365,7 @@ const Piece = ({ placed, lightIndex }: { placed: PlacedPiece; lightIndex: number
           placed={placed}
           url={art.url}
           length={piece.cast}
-          foot={campFoot(piece.id) ?? 1}
+          foot={campFoot(piece.art ?? piece.id) ?? 1}
           delay={delay}
         />
       )}
@@ -406,6 +412,7 @@ export const CampScene = ({
   found,
   insets = NO_INSETS,
   entrances = {},
+  pieceEntrances = [],
   catalogue = CAMP_CATALOGUE,
   className,
   standIns = false,
@@ -416,7 +423,7 @@ export const CampScene = ({
   if (!layout) return <div className={rootClass} />
 
   const { unit: u, horizon } = layout
-  const bare = standIns ? [] : layout.pieces.filter(p => !campArt(p.piece.id, p.layer))
+  const bare = standIns ? [] : layout.pieces.filter(p => !campArt(p.piece.art ?? p.piece.id, p.layer))
   const pieces = layout.pieces.filter(p => !bare.includes(p))
   const glows = layout.glows.filter(g => !bare.some(p => g.key.startsWith(`${p.key}:`)))
   const stars = starField(width, horizon)
@@ -432,11 +439,30 @@ export const CampScene = ({
   const rootStyle = { "--camp-horizon": `${(horizon / height) * 100}%` } as CSSProperties
 
   const entranceSpots = (["chest", "window", "mapTable"] as const).filter(spot => entrances[spot])
-  const entranceButtons = entranceAreas(pieces, entranceSpots).map(area => {
-    const { label, badge, onOpen } = entrances[area.spot as (typeof entranceSpots)[number]]!
+  const opens = new Map<string, CampEntrance>([
+    ...entranceSpots.map(spot => [spot, entrances[spot]!] as const),
+    ...pieceEntrances.map(e => [e.id, e] as const),
+  ])
+  // A piece entrance may stand on a piece whose art is owed: its place is known, so it still takes taps.
+  const owedTargets = new Set(pieceEntrances.flatMap(e => e.pieces))
+  const hittable = [...pieces, ...bare.filter(p => owedTargets.has(p.piece.id))]
+  // A tag that would touch an earlier one goes above its entrance instead of below.
+  const tagsSoFar: { x: number; y: number; width: number; height: number }[] = []
+  const entranceButtons = entranceAreas(hittable, [...entranceSpots, ...pieceEntrances]).map(area => {
+    const { label, badge, onOpen } = opens.get(area.id)!
+    const box = tagBox(label, tagSize)
+    const touches = (y: number) =>
+      tagsSoFar.some(
+        t => Math.abs(t.x - area.x) < (t.width + box.width) / 2 && Math.abs(t.y - y) < (t.height + box.height) / 2
+      )
+    // Centres of the tag below and above the entrance; the area is centred on (x, y).
+    const below = area.y + area.height / 2 + 4 + box.height / 2
+    const overTop = area.y - area.height / 2 - 4 - box.height / 2
+    const above = touches(below) && !touches(overTop)
+    tagsSoFar.push({ ...box, x: area.x, y: above ? overTop : below })
     return (
       <button
-        key={area.spot}
+        key={area.id}
         type="button"
         className={ENTRANCE}
         aria-label={badge === undefined ? label : `${label} (${badge})`}
@@ -444,7 +470,7 @@ export const CampScene = ({
         style={{ left: area.x, top: area.y + area.height / 2, width: area.width, height: area.height }}
       >
         {badge !== undefined && <span className={ENTRANCE_BADGE}>{badge}</span>}
-        <span className={ENTRANCE_TAG} style={{ fontSize: tagSize }}>
+        <span className={above ? ENTRANCE_TAG_ABOVE : ENTRANCE_TAG} style={{ fontSize: tagSize }}>
           {label}
         </span>
       </button>
