@@ -275,7 +275,7 @@
     "compassTitle": "Compass",
     "corridorTitle": "Corridor finder",
     "pickTarget": "Pick a hieroglyph at the map table in camp",
-    "allCollected": "No piece within reach on a floor you have been to",
+    "allCollected": "No piece yet within reach in a pyramid you explored before",
     "more": "+{{count}} more",
     "corridorHere": "There is a hidden passage right here",
     "revealCorridor": "Open it",
@@ -314,7 +314,7 @@
       "follow": "Follow this sign",
       "following": "The compass follows this sign",
       "nothingToFind": "You have no piece yet of a sign that is not complete.",
-      "noneInReach": "No piece yet that you can take on a floor you have been to.",
+      "noneInReach": "No piece yet within reach in a pyramid you explored before.",
       "corridorReach": {
         "1": "hears a corridor nearby",
         "2": "hears this whole floor",
