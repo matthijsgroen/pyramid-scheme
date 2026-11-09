@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 21129735
+export const worldContentHash = 20733617
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -4221,22 +4221,21 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         encountersByIndex: { 0: "hidato", 1: "constellation" },
         chambers: 2,
         prefabs: {
-          banquetRoom: {
-            name: "banquetRoom",
+          bakeryWorks: {
+            name: "bakeryWorks",
             tier: "junior",
-            activity: "banquet",
+            activity: "bakeryBrewery",
             mirror: true,
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#d##d#", "#.hg.#", "d.tt.d", "#..s.#", "#d##d#"] }],
+            layouts: [{ name: "", cells: ["##d#d##", "#o...j#", "d..m..d", "#..s..#", "##d#d##"] }],
             places: {
-              h: { letter: "h", layer: "wall", optional: false, kinds: ["harp"], cols: 1, rows: 1 },
-              g: { letter: "g", layer: "wall", optional: false, kinds: ["hanging", "jarRack"], cols: 1, rows: 1 },
-              t: { letter: "t", layer: "floor", optional: false, kinds: ["banquetTable"], cols: 2, rows: 1 },
+              o: { letter: "o", layer: "wall", optional: false, kinds: ["breadOven"], cols: 1, rows: 1 },
+              j: { letter: "j", layer: "wall", optional: false, kinds: ["jarRack"], cols: 1, rows: 1 },
             },
-            specials: { s: "stop" },
+            specials: { m: "mechanism", s: "stop" },
           },
         },
-        prefabPlacements: [{ room: "banquetRoom", min: 0, max: 1, central: 0.8 }],
+        prefabPlacements: [{ room: "bakeryWorks", min: 0, max: 1, central: 0 }],
         packing: 0.2,
         seed: 3205065412912519,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art12", pieceIndex: 0 },
@@ -5853,6 +5852,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         encountersByIndex: { 0: "sudoku", 1: "procession", 2: "hidato", 3: "futoshiki" },
         chambers: 2,
         prefabs: {
+          quernRoom: {
+            name: "quernRoom",
+            tier: "junior",
+            activity: "bakeryBrewery",
+            mirror: true,
+            designedBy: "Claude",
+            layouts: [{ name: "", cells: ["#d###", "#..g#", "d.m.d", "#.s.#", "#d#d#"] }],
+            places: { g: { letter: "g", layer: "wall", optional: false, kinds: ["grindstone"], cols: 1, rows: 1 } },
+            specials: { m: "mechanism", s: "stop" },
+          },
           bedroom: {
             name: "bedroom",
             tier: "junior",
@@ -5884,6 +5893,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         },
         prefabPlacements: [
+          { room: "quernRoom", min: 0, max: 1, central: 0 },
           { room: "bedroom", min: 0, max: 1, central: 0.2 },
           { room: "dressingRoom", min: 0, max: 1, central: 0.3 },
         ],
@@ -6778,11 +6788,22 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             },
             specials: { s: "stop" },
           },
+          musicRoom: {
+            name: "musicRoom",
+            tier: "junior",
+            activity: "banquet",
+            mirror: true,
+            designedBy: "Claude",
+            layouts: [{ name: "", cells: ["###d#", "#h..#", "d.m.d", "#.s.#", "#d#d#"] }],
+            places: { h: { letter: "h", layer: "wall", optional: false, kinds: ["harp"], cols: 1, rows: 1 } },
+            specials: { m: "mechanism", s: "stop" },
+          },
         },
         prefabPlacements: [
           { room: "bedroom", min: 0, max: 1, central: 0.2 },
           { room: "dressingRoom", min: 0, max: 1, central: 0.3 },
           { room: "gardenCourt", min: 0, max: 1, central: 1 },
+          { room: "musicRoom", min: 0, max: 1, central: 0.8 },
         ],
         packing: 0.2,
         seed: 390963684767486,
@@ -8304,7 +8325,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "sellable", itemId: "sell_bronze_1" },
+            endReward: { type: "sellable", itemId: "sell_bronze_2" },
             rewards: [undefined],
             encounter: "eclipse",
             theme: "night",
@@ -8368,7 +8389,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 0,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "sellable", itemId: "sell_bronze_2" },
+            endReward: { type: "sellable", itemId: "sell_bronze_1" },
             encounter: "eclipse",
             theme: "night",
             decorations: [
@@ -8522,10 +8543,21 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             },
             specials: { s: "stop" },
           },
+          courtWorks: {
+            name: "courtWorks",
+            tier: "junior",
+            activity: "gardenCourt",
+            mirror: false,
+            designedBy: "Claude",
+            layouts: [{ name: "", cells: ["##d#d##", "#t...t#", "d..m..d", "#..s..#", "##d#d##"] }],
+            places: { t: { letter: "t", layer: "wall", optional: false, kinds: ["pottedTree"], cols: 1, rows: 1 } },
+            specials: { m: "mechanism", s: "stop" },
+          },
         },
         prefabPlacements: [
           { room: "bigBanquetHall", min: 0, max: 1, central: 0.8 },
           { room: "bedroom", min: 0, max: 1, central: 0.2 },
+          { room: "courtWorks", min: 0, max: 1, central: 1 },
         ],
         packing: 0.2,
         outsideLock: [4],
@@ -8802,9 +8834,25 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: ["light", "sky"],
         encountersByIndex: { 0: "constellation", 1: "twin-stars", 2: "lightbeam", 3: "eclipse" },
         chambers: 2,
+        prefabs: {
+          shrineWorks: {
+            name: "shrineWorks",
+            tier: "junior",
+            activity: "householdShrine",
+            mirror: false,
+            designedBy: "Claude",
+            layouts: [{ name: "", cells: ["#dfd#", "#.r.#", "d.m.d", "#.s.#", "#d#d#"] }],
+            places: {
+              r: { letter: "r", layer: "wall", optional: false, kinds: ["shrine"], cols: 1, rows: 1 },
+              f: { letter: "f", layer: "wallItem", optional: false, kinds: ["stela"], cols: 1, rows: 1 },
+            },
+            specials: { m: "mechanism", s: "stop" },
+          },
+        },
+        prefabPlacements: [{ room: "shrineWorks", min: 0, max: 1, central: 0.5 }],
         packing: 0.2,
         outsideLock: [2, 3],
-        seed: 625093919,
+        seed: 625093939,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d15", pieceIndex: 2 },
         rewards: [undefined, undefined, undefined, undefined],
         locks: [
@@ -9675,7 +9723,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "junior",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_a_4" },
-            endReward: { type: "sellable", itemId: "sell_bronze_5" },
+            endReward: { type: "money", amount: 2 },
             encounter: "twin-stars",
             theme: "night",
             decorations: [
@@ -9769,7 +9817,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "sellable", itemId: "sell_bronze_4" },
+            endReward: { type: "money", amount: 2 },
             rewards: [undefined],
             encounter: "lightbeam",
             theme: "night",
@@ -9801,7 +9849,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 0,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "money", amount: 2 },
+            endReward: { type: "sellable", itemId: "sell_bronze_4" },
             encounter: "eclipse",
             theme: "night",
             decorations: [
@@ -9963,44 +10011,24 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             },
             specials: { s: "stop" },
           },
-          banquetRoom: {
-            name: "banquetRoom",
+          musicRoom: {
+            name: "musicRoom",
             tier: "junior",
             activity: "banquet",
             mirror: true,
             designedBy: "Claude",
-            layouts: [{ name: "", cells: ["#d##d#", "#.hg.#", "d.tt.d", "#..s.#", "#d##d#"] }],
-            places: {
-              h: { letter: "h", layer: "wall", optional: false, kinds: ["harp"], cols: 1, rows: 1 },
-              g: { letter: "g", layer: "wall", optional: false, kinds: ["hanging", "jarRack"], cols: 1, rows: 1 },
-              t: { letter: "t", layer: "floor", optional: false, kinds: ["banquetTable"], cols: 2, rows: 1 },
-            },
-            specials: { s: "stop" },
-          },
-          shrineRoom: {
-            name: "shrineRoom",
-            tier: "junior",
-            activity: "householdShrine",
-            mirror: false,
-            designedBy: "Claude",
-            layouts: [{ name: "", cells: ["###f###", "#lorol#", "d.....d", "#..s..#", "#d#d#d#"] }],
-            places: {
-              r: { letter: "r", layer: "wall", optional: false, kinds: ["shrine"], cols: 1, rows: 1 },
-              o: { letter: "o", layer: "wall", optional: false, kinds: ["offeringTable"], cols: 1, rows: 1 },
-              l: { letter: "l", layer: "wall", optional: false, kinds: ["lamp"], cols: 1, rows: 1 },
-              f: { letter: "f", layer: "wallItem", optional: false, kinds: ["stela"], cols: 1, rows: 1 },
-            },
-            specials: { s: "stop" },
+            layouts: [{ name: "", cells: ["###d#", "#h..#", "d.m.d", "#.s.#", "#d#d#"] }],
+            places: { h: { letter: "h", layer: "wall", optional: false, kinds: ["harp"], cols: 1, rows: 1 } },
+            specials: { m: "mechanism", s: "stop" },
           },
         },
         prefabPlacements: [
           { room: "dressingRoom", min: 0, max: 1, central: 0.3 },
-          { room: "banquetRoom", min: 0, max: 1, central: 0.8 },
-          { room: "shrineRoom", min: 0, max: 1, central: 0.5 },
+          { room: "musicRoom", min: 0, max: 1, central: 0.8 },
         ],
         packing: 0.2,
         seed: 3907394367270177,
-        mainEndReward: { type: "money", amount: 2 },
+        mainEndReward: { type: "sellable", itemId: "sell_bronze_5" },
         rewards: [undefined, undefined, undefined, undefined, undefined],
         locks: [
           {
