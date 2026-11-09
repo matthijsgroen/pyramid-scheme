@@ -114,7 +114,7 @@ landed. `prop-pipeline.md` has the numbers.
 
 ---
 
-## Rank surfaces — twelve
+## Rank surfaces — ten
 
 The floor, the wall face and the sill of the four ranks above the merchant, in the character of
 [visual-direction.md](../game-design/visual-direction.md): ground plus metal, the floor darkening rank by rank
@@ -125,7 +125,7 @@ whose colours the prompt tells the model to ignore.
 
 | Rank             | Floor                                | Wall face                                      | Sill                                     |
 | ---------------- | ------------------------------------ | ---------------------------------------------- | ---------------------------------------- |
-| junior · copper  | light orange sandstone, `#e2bb8e`    | mid-tone, legible murals, ground `#c9895a`     | sandstone with a copper strip, `#c8955f` |
+| junior · copper  | light orange sandstone, `#e2a86f`    | mid-tone, legible murals, ground `#c9895a`     | sandstone with a copper strip, `#c59261` |
 | expert · silver  | light cool polished tiles, `#c9d0d6` | dark cool stone, sunk relief, ground `#7c8a98` | alabaster with a lapis line, `#b4bdc5`   |
 | master · gold    | **dark** granite, `#57534b`          | **light**, gilded relief, ground `#c4ad7c`     | red granite with a gold band, `#806a5e`  |
 | wizard · emerald | **dark** midnight nebula, `#161c38`  | **light**, calcite lit from behind, `#8fc4ab`  | green stone with a gold line, `#3f6b5c`  |
@@ -160,62 +160,11 @@ step across it. On a light rank that is a step darker than the floor; on a dark 
 face that comes back a third of 8:1 is laid three side by side first, as the Sphinx's are:
 `magick band.jpeg band.jpeg band.jpeg +append wide.png`.
 
-### `junior/floor` — large dressed orange sandstone flagstones
-
-**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard` → Proposal). Junior is now about as light as the merchant but orange, and tells itself apart by its finish: crisp, neat and decorated, where the merchant's storehouse is rough stone and clutter. On the old mid-tone red ground the wall had to be so dark that it sank into the mass around the corridors. The earlier rolls' lessons stay in the prompt: soft joints, few large square stones, the cave's slabless rock as the only attachment.
-
-**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's rock floor, for paint quality only: it has no slabs, so it hands the generator no layout to copy
-
-```
-FRAME: square, exactly 1:1. A seamless floor texture filling the whole frame. Do not re-compose it as a strip.
-
-Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
-Rank: a NOBLEMAN's tomb, built as his painted house — the second of five. Warm orange sandstone, precisely
-dressed and decorated: crisp, neat and ornamented, a great house kept in order. Copper vessels gone green at
-the rim, lotus and papyrus, rosettes, a banquet frieze. Festive and colourful.
-Lit evenly by lamplight and daylight together — every corner of the room is visible, nothing sinks into
-darkness.
-HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
-surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
-a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: floor #e2bb8e / #e8c498 / #d8b080 on a #c49a6c bed, joints #b88e60,
-walls #c9895a with #ecc898 tops and #3a1c0e at the base, copper #c8642c with light #f2b48a and shade
-#55210c, verdigris #4f9a86, painted red ochre #a8442a, Egyptian blue #2f6f8f, linen #efe4cc.
-Every colour comes from that list. Nothing on the floor lighter than #f0d0a4, nothing darker than #b08658 — the joints included.
-Warm and clear: a LIGHT, warm ORANGE sandstone, about as light as pale limestone but clearly orange, never
-beige, never grey, never red-brown. The stone stays calm so the copper and the paint can stand out on it.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture, nothing else.
-Do NOT take its colours, its layout or its subject from it — the palette above is the only source of colour.
-
-Seamless top-down floor texture, viewed straight down.
-Orange sandstone FLAGSTONES, LARGE and SQUARE, precisely dressed — the floor of a great house, not a
-storeroom. COUNT THEM: about 4 flagstones across the width of the image and 4 down, each a little more or
-less than a quarter of the frame, none exactly alike in size. Each row is shifted by about half a stone
-against the next. No small filler stones, no strips, no bricks: few, big, calm stones. Crisp square
-corners and straight, true edges — cut by a mason, not rounded, not broken.
-The slabs BUTT AGAINST EACH OTHER. The joint between two slabs is a fine, shallow GROOVE: a soft narrow
-shadow where the surface dips and rises again — modelled, never a drawn line, never black. No slab has a
-contour around it. At its deepest a groove is #b88e60, one quiet step under the slab.
-The slabs vary from slab to slab across #e8c498 and #d8b080 so the bond reads without the seams having to
-draw it. The surfaces are smooth and even, lightly polished by feet: hardly any cracks, no chips, no
-rubble — the opposite of a storeroom floor.
-A few of the slabs carry a small INCISED ROSETTE in the middle, cut shallow into the stone and in the
-stone's own values, about one slab in five, not in a grid. Two or three tiny verdigris #4f9a86 specks where
-a copper vessel was set down. No petals, no leaves, no loose objects, no painted pattern.
-It tiles, so NOTHING crosses the whole image: no crack, stain or scuff longer than an eighth of the frame,
-and no feature touching two edges. Spread evenly — no corner busier than another.
-Even lighting across the entire image, no hotspot, no vignette. Edge to edge texture.
-```
-
-**Import:** `yarn import-tile art/masters/surfaces/junior-floor.webp --tier=junior --name=floor --slot=floor --filter=smooth --key=none --repeat=2`
-
 ### `junior/wall-face` — a painted procession, legible, over a dado band
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). On the old dark red-brown plaster, with the night laid over the face, the murals and their figures could not be read, and the wall sank into the dark mass around the corridors. The plaster is now a mid-tone orange, a step under the new floor, and the figures are painted to stand off it.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). On the old dark red-brown plaster, with the night laid over the face, the murals and their figures could not be read, and the wall sank into the dark mass around the corridors. The plaster is now a mid-tone orange, a step under the new floor, and the figures are painted to stand off it.
 
-**Attach:** `art/masters/surfaces/junior-floor.webp` — the nobleman's NEW floor, as the style reference (paint `junior/floor` first)
+**Attach:** `art/masters/surfaces/junior-floor.webp` — the nobleman's floor, as the style reference
 
 ```
 FRAME: a wide strip, exactly 8 times as wide as it is tall. Do not crop it and do not re-compose it square.
@@ -230,7 +179,7 @@ HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fi
 surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
 a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: floor #e2bb8e / #e8c498 / #d8b080 on a #c49a6c bed, joints #b88e60,
+Palette, strictly: floor #e2a86f / #eab277 / #dca26b on a #cf9863 bed, joints #a9784c,
 walls #c9895a with #ecc898 tops and #3a1c0e at the base, copper #c8642c with light #f2b48a and shade
 #55210c, verdigris #4f9a86, painted red ochre #a8442a, Egyptian blue #2f6f8f, linen #efe4cc, hair and
 eyes #2a1a0e.
@@ -268,9 +217,9 @@ figures and puts the strip on the face twice.
 
 ### `junior/threshold` — a dressed sandstone step with a copper strip
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). The 2026-11-02 roll was liked, a dark step with a bright copper strip gone green at both ends; keep that, lighter, in the new orange stone, and crisp rather than crumbled.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). The 2026-11-02 roll was liked, a dark step with a bright copper strip gone green at both ends; keep that, lighter, in the new orange stone, and crisp rather than crumbled.
 
-**Attach:** `art/masters/surfaces/junior-floor.webp` — the nobleman's NEW floor, as the style reference (paint `junior/floor` first)
+**Attach:** `art/masters/surfaces/junior-floor.webp` — the nobleman's floor, as the style reference
 
 ```
 FRAME: a wide strip, exactly 5 times as wide as it is tall, filling the frame edge to edge. Do not re-compose it square.
@@ -285,7 +234,7 @@ HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fi
 surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
 a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: floor #e2bb8e / #e8c498 / #d8b080 on a #c49a6c bed, joints #b88e60,
+Palette, strictly: floor #e2a86f / #eab277 / #dca26b on a #cf9863 bed, joints #a9784c,
 walls #c9895a with #ecc898 tops and #3a1c0e at the base, copper #c8642c with light #f2b48a and shade
 #55210c, verdigris #4f9a86.
 Every colour comes from that list. Nothing lighter than #f2dcb4, nothing darker than #6a4630.
@@ -298,7 +247,7 @@ background.
 It is ONE band of stone across the whole width: a soft shadow along its far edge where it drops to the
 floor beyond, its own top surface across the middle, a soft shadow along its near edge. No object sits on
 it and nothing crosses it end to end except those two edges and one copper strip.
-The stone is the floor's own orange sandstone at #c8955f — the same paving as the chamber, laid as one long
+The stone is the floor's own orange sandstone at #c59261 — the same paving as the chamber, laid as one long
 block with crisp, true edges, a step darker than the floor either side of it, never lighter.
 Smoothly worn in the middle by feet, its ends square and whole. A thin strip of copper #c8642c set into the
 stone along its near edge, bright where it is still polished, gone verdigris green #4f9a86 at both ends
@@ -310,9 +259,9 @@ Even lighting left to right, no hotspot, no vignette.
 
 ### `junior/arch` — a dressed sandstone doorway with a painted lintel
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). The doorway is repainted against the new light orange floor, crisp and decorated where the merchant's is rough timber.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). The doorway is repainted against the new light orange floor, crisp and decorated where the merchant's is rough timber.
 
-**Attach:** `art/masters/surfaces/junior-floor.webp` — the nobleman's NEW floor, as the style reference (paint `junior/floor` first)
+**Attach:** `art/masters/surfaces/junior-floor.webp` — the nobleman's floor, as the style reference
 
 ```
 FRAME: landscape, exactly 2.7 times as wide as it is tall. Do not re-compose it square.
@@ -327,7 +276,7 @@ HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fi
 surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
 a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: stone #d8b080 lit, #9c7442 in shade, copper #c8642c with light #f2b48a and
+Palette, strictly: stone #d29c67 lit, #9c7442 in shade, copper #c8642c with light #f2b48a and
 shade #55210c, verdigris #4f9a86, painted red ochre #a8442a, Egyptian blue #2f6f8f, linen #efe4cc.
 Nothing lighter than #f2dcb4, nothing darker than #3a1c0e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
@@ -346,7 +295,7 @@ jambs, from under the lintel all the way down and off the bottom edge of the pic
 frame too, left of the left jamb, right of the right jamb, and above the lintel.
 Each jamb is about a sixth of the picture's width. The gap between them is the remaining two thirds.
 The stone is the floor's orange sandstone, a clear step DARKER than it so the doorway reads against the
-paving: #d8b080 in the light, #9c7442 in shadow. Crisp square arrises, true edges, cut by a mason.
+paving: #d29c67 in the light, #9c7442 in shadow. Crisp square arrises, true edges, cut by a mason.
 The front of the lintel carries a painted band: a row of rosettes in red ochre #a8442a and Egyptian blue
 #2f6f8f on linen #efe4cc, neat and fresh. A thin copper #c8642c strip runs along the lintel's lower edge,
 gone verdigris #4f9a86 at both ends — the only metal on it.
@@ -684,8 +633,8 @@ Even lighting left to right, no hotspot, no vignette.
 The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
 first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
 green. Copper is the rank's metal and comes back as a rim, a band or a hasp, gone verdigris, never as a
-tint over the set ([visual-direction.md](../game-design/visual-direction.md)). They wait on `junior/floor`:
-`junior-plain.png` is cut from that floor, and every scaffold's shadow is rendered against it.
+tint over the set ([visual-direction.md](../game-design/visual-direction.md)). `junior-plain.png` is cut
+from its floor, `art/masters/surfaces/junior-floor.webp`, and every scaffold's shadow is rendered against it.
 
 Each reuses the geometry its tile already ships with, so the scaffold lines are `art/rebuild.sh`'s with the
 new floor. The imports carry no `--brightness` or `--saturation`: those are measured against the new floor
@@ -698,7 +647,7 @@ potted tree stand a cell taller, so theirs is portrait two by five.
 
 ### `junior/pillar` — a sandstone palm column, painted capital
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -724,14 +673,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold palm --spin=22 --colour=#e0c193 --floor=#e2bb8e
+scaffold palm --spin=22 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/pillar.webp --tier=junior --name=pillar --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --mask-grow=100
 ```
 
 ### `junior/shelf` — a cedar linen press, folded linen
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -756,14 +705,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold shelf --contents=linen --spin=5 --colour=#e0c193 --floor=#e2bb8e
+scaffold shelf --contents=linen --spin=5 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/shelf.webp --tier=junior --name=shelf --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `junior/basin` — a copper ablution bowl on a cedar stand
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -788,14 +737,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold basin --contents=bowl --spin=14 --colour=#e0c193 --floor=#e2bb8e
+scaffold basin --contents=bowl --spin=14 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/basin.webp --tier=junior --name=basin --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `junior/hanging` — a linen hanging with a dyed border
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -820,14 +769,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold hanging --contents=linen --spin=38 --colour=#e0c193 --floor=#e2bb8e
+scaffold hanging --contents=linen --spin=38 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/hanging.webp --tier=junior --name=hanging --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `junior/offeringTable` — a laid table with bread, fruit and lotus
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -852,14 +801,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold market --contents=laid --spin=-16 --colour=#e0c193 --floor=#e2bb8e
+scaffold market --contents=laid --spin=-16 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/offeringTable.webp --tier=junior --name=offeringTable --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `junior/lamp` — a cedar lamp stand
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -884,14 +833,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold lamp --contents=stand --spin=8 --colour=#e0c193 --floor=#e2bb8e
+scaffold lamp --contents=stand --spin=8 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/lamp.webp --tier=junior --name=lamp --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `junior/chestProp` — a sealed cedar chest with a painted lid
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -915,14 +864,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold sealedChest --spin=-27 --colour=#e0c193 --floor=#e2bb8e
+scaffold sealedChest --spin=-27 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/chestProp.webp --tier=junior --name=chestProp --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `junior/shrine` — a painted false door with an offering table
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -947,14 +896,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#e2bb8e
+scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/shrine.webp --tier=junior --name=shrine --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `junior/mat` — a reed mat with a woven border
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -978,14 +927,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold mat --spin=9 --shadow=0.5 --colour=#e0c193 --floor=#e2bb8e
+scaffold mat --spin=9 --shadow=0.5 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/mat.webp --tier=junior --name=mat --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `junior/brazier` — a pottery brazier, burning
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -1009,14 +958,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold brazier --lit=1 --colour=#e0c193 --floor=#e2bb8e
+scaffold brazier --lit=1 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/brazier.webp --tier=junior --name=brazier --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.7
 ```
 
 ### `junior/rubblePile` — fallen painted plaster
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -1040,14 +989,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold rubblePile --contents=plaster --shadow=0.6 --colour=#e0c193 --floor=#e2bb8e
+scaffold rubblePile --contents=plaster --shadow=0.6 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/rubblePile.webp --tier=junior --name=rubblePile --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `junior/jarRack` — a cedar rack of painted pottery jars
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -1071,14 +1020,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold jarrack --colour=#e0c193 --floor=#e2bb8e
+scaffold jarrack --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/jarRack.webp --tier=junior --name=jarRack --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `junior/rubbleSpill` — a fan of plaster grit and painted flakes
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -1101,14 +1050,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold rubblePile --contents=spill --colour=#e0c193 --floor=#e2bb8e
+scaffold rubblePile --contents=spill --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/rubbleSpill.webp --tier=junior --name=rubbleSpill --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `junior/statue` — the nobleman's painted ka-statue, seated
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -1152,14 +1101,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold statue --contents=seated --spin=7 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#e2bb8e
+scaffold statue --contents=seated --spin=7 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/statue.webp --tier=junior --name=statue --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `junior/sarcophagus` — a painted anthropoid coffin
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -1201,14 +1150,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold statue --contents=mummiform --spin=11 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#e2bb8e
+scaffold statue --contents=mummiform --spin=11 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/sarcophagus.webp --tier=junior --name=sarcophagus --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `junior/shrine-anubis` — a false door with Anubis on its panel
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -1233,14 +1182,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#e2bb8e
+scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/shrine-anubis.webp --tier=junior --name=shrine-anubis --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `junior/statue-anubis` — Anubis couchant, black, on a painted chest
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -1281,14 +1230,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold statue --contents=couchant --spin=-22 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#e2bb8e
+scaffold statue --contents=couchant --spin=-22 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/statue-anubis.webp --tier=junior --name=statue-anubis --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `junior/shrine-thoth` — a false door with Thoth's ibis on its panel
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -1313,14 +1262,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#e2bb8e
+scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/shrine-thoth.webp --tier=junior --name=shrine-thoth --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `junior/statue-thoth` — Thoth seated, ibis-headed
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -1363,14 +1312,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold statue --contents=seated --spin=7 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#e2bb8e
+scaffold statue --contents=seated --spin=7 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/statue-thoth.webp --tier=junior --name=statue-thoth --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `junior/niche` — a lamp niche with a painted surround
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -1402,7 +1351,7 @@ yarn import-tile art/masters/props/junior/niche.webp --tier=junior --name=niche 
 
 ### `junior/sconce` — a copper wall bracket with a pottery lamp
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
@@ -1434,7 +1383,7 @@ yarn import-tile art/masters/props/junior/sconce.webp --tier=junior --name=sconc
 
 ### `junior/stela` — a painted limestone false-door stela
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:** `~/tile-previews/junior-plain.png` — the material reference. A flat item has no scaffold.
 
@@ -1454,7 +1403,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 
 ### `junior/tallyBoard` — a plastered household board, columns of hieroglyphs
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:** `~/tile-previews/junior-plain.png` — the material reference. A flat item has no scaffold.
 
@@ -1475,7 +1424,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 
 ### `junior/stela-anubis` — a limestone stela with Anubis
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:** `~/tile-previews/junior-plain.png` — the material reference. A flat item has no scaffold.
 
@@ -1495,7 +1444,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 
 ### `junior/stela-thoth` — a limestone stela with Thoth's ibis
 
-**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:** `~/tile-previews/junior-plain.png` — the material reference. A flat item has no scaffold.
 
@@ -1540,7 +1489,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold banquetTable --spin=-6 --width=672 --height=448 --colour=#e0c193 --floor=#e2bb8e
+scaffold banquetTable --spin=-6 --width=672 --height=448 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/banquetTable.webp --tier=junior --name=banquetTable --slot=prop \
   --cells=2x1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1572,7 +1521,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold harp --spin=4 --width=448 --height=1120 --colour=#e0c193 --floor=#e2bb8e
+scaffold harp --spin=4 --width=448 --height=1120 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/harp.webp --tier=junior --name=harp --slot=prop \
   --tall=1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1604,7 +1553,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold dressingTable --spin=4 --colour=#e0c193 --floor=#e2bb8e
+scaffold dressingTable --spin=4 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/dressingTable.webp --tier=junior --name=dressingTable --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1635,7 +1584,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold wigStand --spin=10 --colour=#e0c193 --floor=#e2bb8e
+scaffold wigStand --spin=10 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/wigStand.webp --tier=junior --name=wigStand --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1665,7 +1614,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold pottedTree --spin=12 --width=448 --height=1120 --colour=#e0c193 --floor=#e2bb8e
+scaffold pottedTree --spin=12 --width=448 --height=1120 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/pottedTree.webp --tier=junior --name=pottedTree --slot=prop \
   --tall=1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1697,7 +1646,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold bed --spin=5 --width=672 --height=448 --colour=#e0c193 --floor=#e2bb8e
+scaffold bed --spin=5 --width=672 --height=448 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/bed.webp --tier=junior --name=bed --slot=prop \
   --cells=2x1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1727,7 +1676,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold headrest --spin=6 --colour=#e0c193 --floor=#e2bb8e
+scaffold headrest --spin=6 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/headrest.webp --tier=junior --name=headrest --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.55
 ```
@@ -1758,7 +1707,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold grindstone --spin=6 --colour=#e0c193 --floor=#e2bb8e
+scaffold grindstone --spin=6 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/grindstone.webp --tier=junior --name=grindstone --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1789,7 +1738,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold breadOven --spin=14 --colour=#e0c193 --floor=#e2bb8e
+scaffold breadOven --spin=14 --colour=#e0c193 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/breadOven.webp --tier=junior --name=breadOven --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
