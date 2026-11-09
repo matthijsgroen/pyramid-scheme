@@ -11,8 +11,6 @@ const labels: DetectorPanelLabels = {
   allCollected: "All collected",
   access: {
     open: "Access: open",
-    locked: "Access: locked",
-    hidden: "Access: hidden",
     unknown: "Access: unknown",
   },
   more: count => `+${count} more`,
@@ -224,32 +222,19 @@ describe("DetectorPanel precision by level (§7.2)", () => {
   })
 })
 
-// The readout only marks what it can justify: a blocker it checked (🔒), one it can't evaluate (❓),
-// or discovery-gated content (👁). A hit with nothing known in the way carries NO badge — a bare row
-// must not be read as a promise that the piece is collectable.
+// The readout only marks what it can justify: a blocker it can't evaluate (❓). A hit with nothing known in the way
+// carries NO badge — a bare row must not be read as a promise that the piece is collectable.
 describe("DetectorPanel access marking", () => {
   const withAccess = (access: CompassHit["access"]) => [{ ...COMPASS[0], access }]
 
-  // Queried by tooltip rather than glyph — 👁 also labels a detector mode, so the title both keeps
-  // the assertion unambiguous and proves the explanation is wired up.
   it("leaves an unblocked hit unmarked", () => {
     renderCompass(1, withAccess("open"))
     expect(screen.getByText("Sphinx Dawn L1")).toBeTruthy()
     expect(screen.queryByTitle(/^Access: /)).toBeNull()
   })
 
-  it("flags a hit behind a key the player lacks", () => {
-    renderCompass(1, withAccess("locked"))
-    expect(screen.getByTitle("Access: locked").textContent).toContain("🔒")
-  })
-
   it("flags a hit whose reachability it cannot determine", () => {
     renderCompass(1, withAccess("unknown"))
     expect(screen.getByTitle("Access: unknown").textContent).toContain("❓")
-  })
-
-  it("flags a hit that needs the corridor detector", () => {
-    renderCompass(1, withAccess("hidden"))
-    expect(screen.getByTitle("Access: hidden").textContent).toContain("👁")
   })
 })

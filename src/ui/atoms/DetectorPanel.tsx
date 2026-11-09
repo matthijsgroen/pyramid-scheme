@@ -53,11 +53,9 @@ type Props = {
 }
 
 // What each access verdict looks like. "open" shows nothing — a bare row means "nothing known in the
-// way", which is all the data supports; only the blockers get a badge. See CompassAccess.
+// way", which is all the data supports; only a blocker it cannot evaluate gets a badge. See CompassAccess.
 const ACCESS_ICON: Record<CompassAccess, string> = {
   open: "",
-  locked: "🔒",
-  hidden: "👁",
   unknown: "❓",
 }
 
