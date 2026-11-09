@@ -2,7 +2,7 @@ import type { Tileset } from "@/game/siteTypes"
 import type { Prefab } from "@/game/prefabTypes"
 import type { WorldValidator } from "./validate"
 import type { FloorConfig, SubSection } from "./types"
-import { hasTileArt } from "./tileArt"
+import { hasStandIn, hasTileArt } from "./tileArt"
 
 type Section = Pick<SubSection, "label" | "prefabs" | "prefabPlacements" | "prefabsByIndex"> &
   Partial<Pick<SubSection, "tileset" | "difficulty">>
@@ -26,8 +26,10 @@ const kindsNeeded = (prefab: Prefab, patron: string | undefined): { kind: string
 }
 
 /**
- * Refuses a prefab whose listed kinds have no painted art in the tileset its floor is drawn in, so a floor never
- * shows a missing sprite. A patron statue is `statue-<patron>` where painted, else the plain `statue`.
+ * Refuses a prefab whose listed kinds have no art in the tileset its floor is drawn in, painted or a stand-in, so a
+ * floor never shows a missing sprite. A kind not yet painted draws its stand-in, as everywhere on the map, so a room
+ * can stand before its props are painted; which kinds still stand in is the art census's to say. A patron statue is
+ * `statue-<patron>` where painted, else the plain `statue`.
  */
 export const prefabArtValidator: WorldValidator = configs => {
   const missing: string[] = []
@@ -39,7 +41,9 @@ export const prefabArtValidator: WorldValidator = configs => {
       if (!prefab) continue
       for (const { kind, viaPatron } of kindsNeeded(prefab, floor.patron)) {
         const painted =
-          hasTileArt(tier, kind) || (viaPatron && !!floor.patron && hasTileArt(tier, `${kind}-${floor.patron}`))
+          hasTileArt(tier, kind) ||
+          hasStandIn(kind) ||
+          (viaPatron && !!floor.patron && hasTileArt(tier, `${kind}-${floor.patron}`))
         if (!painted) missing.push(`[worldSpec] Room prefab art missing: ${room} on ${where} needs ${kind} (${tier})`)
       }
     }
