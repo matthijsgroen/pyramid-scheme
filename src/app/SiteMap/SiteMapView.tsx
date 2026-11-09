@@ -1626,14 +1626,15 @@ export const SiteMapView = ({
   )
   const doorways = useMemo(() => doorwaysFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   // The place the explorer stands is drawn as current rather than done — see `drawnAsCurrent`. The wall
-  // over every arch is part of its run (see `buildTileRegions`).
+  // over every arch is part of its run (see `buildTileRegions`); a doorway whose tier has no arch art
+  // stands no arch, so it stays an opening in the wall with nothing over it.
   const regions = useMemo(
     () =>
       tileRegionsFor(
         drawnAsCurrent(grid, torchPlace),
         claims,
         ownedKeys,
-        new Set(doorways.map(({ row, col }) => `${row},${col}`))
+        new Set(doorways.filter(({ tier: at }) => tileOrPlaceholder(at, "arch")).map(({ row, col }) => `${row},${col}`))
       ),
     [grid, torchPlace, claims, ownedKeys, doorways]
   )

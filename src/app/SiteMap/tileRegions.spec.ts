@@ -401,6 +401,13 @@ describe("buildTileRegions — walls standing in front of floor", () => {
       expect(frontRuns(regions)[0].behind.has("0,1")).toBe(false)
     })
 
+    it("leaves a doorway with no arch standing in it an opening, with no wall over it", () => {
+      const regions = buildTileRegions(2, 3, twoRows, throughTheMiddle, "starter", () => false)
+
+      expect(across(regions, g => [g.wallFace, g.frontFace]).some(([, , , h]) => h === 0)).toBe(false)
+      expect(frontRuns(regions)).toHaveLength(2)
+    })
+
     it("caps nothing where no wall rises either side of it", () => {
       const open: OpenBetween = (r, c, dir) => dir === "e" || (dir === "s" && r === 0 && c === 1)
       const alone = gridOf({ "0,1": "reachable", "1,1": "reachable" })

@@ -150,6 +150,18 @@ describe("an arch in a wall standing in front of floor", () => {
     expect(pieces.some(piece => parseFloat(piece.style.height) === FACE_GROW)).toBe(true)
   })
 
+  it("leaves a doorway in a tier with no arch art an opening, with no wall over it", () => {
+    const { container } = render(
+      <SiteMapView grid={{ ...archBehindAWall(), tileset: "cave" }} explorerPos={[2, 2]} revealAllCells />
+    )
+    const pieces = drawnWalls(container).flatMap(wall =>
+      Array.from(wall.querySelectorAll<HTMLElement>("[data-front-piece]"))
+    )
+
+    expect(container.querySelector("[data-arch]")).toBeNull()
+    expect(pieces.some(piece => parseFloat(piece.style.height) === FACE_GROW)).toBe(false)
+  })
+
   it("fades with that wall", () => {
     const solid = render(<SiteMapView grid={archBehindAWall()} explorerPos={[2, 2]} revealAllCells />)
     expect(Number(archOf(solid.container).style.opacity)).toBe(1)
