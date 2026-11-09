@@ -6,6 +6,7 @@ import { resolvePyramidConstraint } from "./constraintResolver"
 import { journey, sidePath } from "./dsl"
 import type { PyramidConstraint, Rule } from "./dsl"
 import type { FloorConfig } from "./types"
+import { parsePrefab } from "../game/prefabNotation"
 
 const JOURNEY = "spec_floor_locks"
 const TIER = "expert"
@@ -24,6 +25,10 @@ const AUTO: PyramidConstraint = {
 
 const rulesFor = (c: PyramidConstraint): Rule[] => [journey(JOURNEY).pyramid(1, c)]
 
+// Made-up rooms, so nothing here reads the real catalogue: a hall of the pyramid's tier and a nook of another.
+const roomText = (tier: string) => `tier ${tier}\nlayout\n# # # # #\n# . . . #\n# . s . #\n# . . . #\n# # d # #\ns stop`
+const catalogue = { hall: parsePrefab(roomText(TIER), "hall"), nook: parsePrefab(roomText("junior"), "nook") }
+
 const build = (c: PyramidConstraint, extra: { hasMapPieceBranch?: boolean; hasWardGate?: boolean } = {}) =>
   buildSite({
     journeyId: JOURNEY,
@@ -38,6 +43,7 @@ const build = (c: PyramidConstraint, extra: { hasMapPieceBranch?: boolean; hasWa
     nextTier: null,
     resolveReward: () => undefined,
     resolveMainEndReward: () => ({ type: "mosaicPiece" }),
+    catalogue,
   }).floors
 
 const without = (floor: FloorConfig): Omit<FloorConfig, "locks" | "realisations"> => {
@@ -74,6 +80,35 @@ describe("floorLocks on an auto-built pyramid", () => {
     const floors = build({ ...AUTO, floorLocks: { 0: { locks: [{ lock: SLUICE }], packing: 0.15 } } })
 
     expect(floors.map(floor => floor.packing)).toEqual([0.15, plain[1].packing])
+  })
+
+  it("lays the overlay's rooms on the locked floor alone, so a ward wing at another difficulty keeps none", () => {
+    const floors = build({
+      ...AUTO,
+      floorLocks: { 0: { locks: [{ lock: SLUICE }], rooms: [{ room: "hall", max: 2 }] } },
+    })
+
+    expect(floors[0].prefabs).toEqual({ hall: catalogue.hall })
+    expect(floors[0].prefabPlacements).toEqual([{ room: "hall", min: 0, max: 2, central: 0.5 }])
+    expect("prefabPlacements" in floors[1]).toBe(false)
+  })
+
+  it("replaces the site's rooms on the locked floor with the overlay's", () => {
+    const floors = build({
+      ...AUTO,
+      wardWings: 0,
+      rooms: [{ room: "hall" }],
+      floorLocks: { 0: { locks: [{ lock: SLUICE }], rooms: [] } },
+    })
+
+    expect("prefabs" in floors[0]).toBe(false)
+    expect("prefabPlacements" in floors[0]).toBe(false)
+  })
+
+  it("refuses an overlay room of another tier than its floor, by floor", () => {
+    expect(() =>
+      build({ ...AUTO, floorLocks: { 0: { locks: [{ lock: SLUICE }], rooms: [{ room: "nook" }] } } })
+    ).toThrow("journey=spec_floor_locks pyramid=1 floor=0: room nook is tier junior but the difficulty there is expert")
   })
 
   it("carries the one-way in the binding alone, as an explicit floor does", () => {

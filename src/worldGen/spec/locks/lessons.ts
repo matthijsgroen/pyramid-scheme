@@ -28,7 +28,10 @@ export const lessonFloor = (lesson: PlacedLesson): Pick<FloorConstraint, "locks"
   realisations: LESSON_BINDINGS[lesson],
 })
 
-/** A lesson on the main floor of a pyramid the world builds on its own. */
-export const lessonOnMainFloor = (lesson: PlacedLesson): Pick<PyramidConstraint, "floorLocks"> => ({
-  floorLocks: { 0: lessonFloor(lesson) },
+/** A lesson on the main floor of a pyramid the world builds on its own, with that floor's own rooms where it names them. */
+export const lessonOnMainFloor = (
+  lesson: PlacedLesson,
+  floor: Pick<FloorConstraint, "rooms"> = {}
+): Pick<PyramidConstraint, "floorLocks"> => ({
+  floorLocks: { 0: { ...lessonFloor(lesson), ...floor } },
 })
