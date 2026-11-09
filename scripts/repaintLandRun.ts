@@ -40,17 +40,15 @@ const tileStats = (master: string, tier: string, slot: string | undefined) => {
   return lines.slice(last + 1).map(line => `tile-stats: ${line}`)
 }
 
-/** The 25 L* rule for what was just imported: a surface through the rank's row, an object through its own art. */
+/** The 25 L* rule for what was just imported: a floor through the rank's row, an object through its own art.
+ * A face is shown as painted and has no step to keep. */
 const rankRule = async (tier: Difficulty, name: string, slot: string | undefined) => {
   const { inputs, reports } = await measureAll()
-  console.table({ [tier]: rankRow(tier, inputs, reports) })
+  console.table({ [tier]: rankRow(tier, reports) })
   const v = verdict(reports[tier], reports.master)
   const round = (n: number) => Math.round(n * 10) / 10
-  if (slot === "face" || slot === "floor") {
-    const faults = v.faceStep ? [] : [`face step ${round(reports[tier].faceStep)} L* (wants ${MIN_STEP})`]
-    if (slot === "floor" && !v.prop) faults.push(`prop step ${round(reports[tier].prop)} L* (wants ${MIN_STEP})`)
-    return faults
-  }
+  if (slot === "face") return []
+  if (slot === "floor") return v.prop ? [] : [`prop step ${round(reports[tier].prop)} L* (wants ${MIN_STEP})`]
   if (!["prop", "wall", "arch"].includes(slot ?? "")) return []
   const step = measureRank({ ...inputs[tier], prop: await artMean(tier, name) }).prop
   console.log(`${name} stands ${round(step)} L* off the ${tier} floor after the night`)

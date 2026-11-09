@@ -25,15 +25,14 @@ export type TierPalette = {
    * It is the tier's own near-black (`outline`) at a light alpha: a wash is a scale plus an
    * added colour (`art × (1−a) + wash × a`), and a heavy one flattens the art's own modelling and drags
    * its hue toward the wash, so the night stays the lightest hand on the map and the rank keeps its own
-   * hue. `yarn rank-colour` measures the result per rank and solves `faceNight` for it. */
+   * hue. `yarn rank-colour` measures the result per rank. */
   shade: string
-  /** The extra helping of that night a VERTICAL face takes, over the floor's share.
+  /** How much darker than the floor's night this rank's wall face is drawn: the rank's near-black
+   * (`outline`) laid over the face at this opacity, 0 to show the face as painted.
    *
-   * A lamp is carried at floor level, so a wall takes its light at a glancing angle and the ground does
-   * not — without that the two planes sit within a step of each other and a room reads as a floorplan
-   * with a texture change rather than as a place with walls. On a light-floored rank it shadows the face 30 L* below
-   * the floor (`yarn rank-colour` solves it); a dark-floored rank lights its faces in the art instead and
-   * takes 0 here. */
+   * A look chosen per rank by eye, not a number solved for: the face's own dark base band and the shadow
+   * it throws on the floor already mark where a wall stands. The merchant's limestone walls stay a shade
+   * darker than its floor; the nobleman's murals are shown as painted. */
   faceNight: number
   /** How much of the full lamp (`LIT_STRENGTH`) this rank's torch burns at, 0–1. A lamp lifts a dark
    * room into view; in a rank whose night is already light it only bleaches the stone, so a lit rank
@@ -85,7 +84,7 @@ export const tierPalette: Record<Tileset, TierPalette> = {
     wallBase: "#381d0e",
     // Rooms are lit, as the merchant's are: the night is a light hand in the rank's own near-black.
     shade: "rgba(36,23,8,0.3)",
-    faceNight: 0.56,
+    faceNight: 0,
     lamp: 1,
     prop: "#e0c193",
     propDark: "#9c7442",

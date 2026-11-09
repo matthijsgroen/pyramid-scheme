@@ -147,10 +147,10 @@ it is the path `--land` writes the return to.
 placeholder art's tokens for the surfaces that have not landed (junior's floor and wall face have; master's
 granite is the exception, and the target here is the same stone). After a rank's floor and wall face land, the
 ground tokens — `bed`, `slab`, `slabHi`, `slabLo`, `joint`, `wall`, `wallTop`, `wallBase` — are re-sampled
-from the new art and `yarn rank-colour` is run: the wall face at least 25 L\* off the floor (`MIN_STEP`). Junior and expert are light floors, so their faces are shadowed
-below the floor and `faceNight` is re-solved for them; master and wizard are DARK floors, so the face and the
-props sit on the LIGHT side, the face art carries the step on its own, and `faceNight` goes toward 0 as the
-cave's does.
+from the new art and `yarn rank-colour` is run for the props. A wall face holds no L\* step against the floor:
+it is shown as painted, a cell tall at its own 8:1, and its dark base band and the shadow it throws on the floor
+mark the edge — so a face is painted with that base band, and judged by eye on a real floor. Whether a rank darkens
+its faces further is `faceNight`, a look chosen by eye per rank, never a number solved for.
 
 **A sill sits between the floor and the wall in value**, or it reads as a hole in the paving rather than a
 step across it. On a light rank that is a step darker than the floor; on a dark rank, a step lighter.
@@ -530,9 +530,9 @@ it, and no block different enough to be recognised twice in a row.
 Even lighting left to right, no hotspot, no vignette. Edge to edge texture.
 ```
 
-**Import:** `yarn import-tile art/masters/surfaces/wizard-wall-face.webp --tier=wizard --name=wall-face --slot=face --filter=smooth --key=none --headroom=0.14 --repeat=2`
+**Import:** `yarn import-tile art/masters/surfaces/wizard-wall-face.webp --tier=wizard --name=wall-face --slot=face --filter=smooth --key=none --headroom=0.14 --repeat=1`
 
-`--repeat=2`, the merchant's: a counted course of blocks comes back a size too big, as his bricks did.
+`--repeat=1`: a face is shown a cell tall at the 8:1 it is painted at, so the courses keep the size they were painted.
 
 ### `wizard/threshold` — a green stone step with a gold line
 
@@ -3258,7 +3258,7 @@ nothing else does. Even lighting.
 **Prepare:** the generator returns a band about a third of a face's 8:1. Lay three side by side and make it seamless along x; that band is the master, `art/masters/surfaces/sphinx-wall-face.webp`:
 `magick band.jpeg band.jpeg band.jpeg +append wide.png && yarn make-seamless --axis=x wide.png`
 
-**Import:** `yarn import-tile art/masters/surfaces/sphinx-wall-face.webp --tier=sphinx --name=wall-face --slot=face --filter=smooth --key=none --headroom=0.14 --repeat=1` (check the face against the floor with `yarn rank-colour` and set `--brightness` from it)
+**Import:** `yarn import-tile art/masters/surfaces/sphinx-wall-face.webp --tier=sphinx --name=wall-face --slot=face --filter=smooth --key=none --headroom=0.14 --repeat=1` (judge the face on a real floor; it is shown as painted)
 
 ### `sphinx/threshold` — a step cut in the Sphinx's bedrock
 

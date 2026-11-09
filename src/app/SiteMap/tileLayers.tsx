@@ -1,15 +1,26 @@
 import { Fragment, useMemo } from "react"
 import type { Tileset } from "@/game/siteTypes"
-import { CELL, SIDE_W, WALL_H } from "./mapScale"
+import { CELL, FACE_H, FACE_PATTERN_Y, ROW_PITCH, SIDE_W, WALL_H } from "./mapScale"
 import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
 import { tileUrl } from "./tileAssets"
 import { LightPoolDefs } from "./ExplorerDot"
-import { ALL_STATES, faceShadowRects, faceTopRects, rectsToPath, type Rect, type TileRegions } from "./tileRegions"
+import {
+  ALL_STATES,
+  faceShadowRects,
+  faceTopRects,
+  grownFaceRects,
+  rectsToPath,
+  type Rect,
+  type TileRegions,
+} from "./tileRegions"
 import { FACE_SHADOW, FACE_TOP } from "./roomClaims"
 import { floorGroups, floorOutline, wornFaceCorners } from "./floorOutline"
 
 /** Natural rock: its floor's outline is worn round rather than cut square (see floorOutline). */
 const wornEdges = (tier: Tileset) => tier === "cave"
+
+/** How wide one repeat of a floor or face pattern is on the map. */
+export const MEGATILE = CELL * 8
 
 // THE STONE ITSELF: floor, wall mass, faces, tops, sills, shadows and the state washes over them, as
 // merged paths rather than a shape per cell — a floor's whole masonry is 22 elements, and that is the
@@ -52,7 +63,7 @@ export const TileLayers = ({
    * arched sill is drawn in the arch's stone, so an opening is one material. */
   archedGaps?: ReadonlyMap<string, Tileset>
 }) => {
-  const mega = CELL * 8
+  const mega = MEGATILE
   // Every sill that an arch stands in, filed under the ARCH's tier rather than the tier being entered.
   // At a ward gate those differ, and one opening showing two ranks of stone is the reason the sill used to
   // be skipped here entirely.
@@ -77,7 +88,9 @@ export const TileLayers = ({
   const tiers = [...regions.keys()]
   // Every face and floor rect on the map, whatever its tier or light: where a worn wall's run ends is a question
   // about its neighbours, which need not share either.
-  const allFaces = [...regions.values()].flatMap(g => ALL_STATES.flatMap(s => g.wallFace[s]))
+  const allFaces = grownFaceRects(
+    [...regions.values()].flatMap(g => ALL_STATES.flatMap(s => [...g.wallFace[s], ...g.frontFace[s]]))
+  )
   const allFloorRects = [...regions.values()].flatMap(g =>
     ALL_STATES.flatMap(s => [...g.floorRoom[s], ...g.floorCorridor[s]])
   )
@@ -105,10 +118,17 @@ export const TileLayers = ({
                 </pattern>
               )}
               {face && (
-                // The face art is a cell tall; a face is WALL_H tall, so the pattern is scaled to that
-                // and repeats on it. Every face in the map then shows the same courses at the same height.
-                <pattern id={`face-${t}`} width={mega} height={WALL_H} patternUnits="userSpaceOnUse">
-                  <image href={face} width={mega} height={WALL_H} preserveAspectRatio="none" />
+                // The face art at its painted 8:1, FACE_H tall, once per row: the pattern repeats on the
+                // row pitch and starts where the first row's face does, so every face samples the art
+                // from its top whatever the pitch divides into.
+                <pattern
+                  id={`face-${t}`}
+                  y={FACE_PATTERN_Y}
+                  width={mega}
+                  height={ROW_PITCH}
+                  patternUnits="userSpaceOnUse"
+                >
+                  <image href={face} width={mega} height={FACE_H} preserveAspectRatio="none" />
                 </pattern>
               )}
               {sill && (
@@ -144,11 +164,14 @@ export const TileLayers = ({
             underneath only the outward half of the outline survives, which is the silhouette. */}
         <path d={allFloor} fill="none" stroke={tierPalette[tier].outline} strokeWidth={4} />
 
+        {/* THE GROUND FIRST, every tier and light of it, and only then the walls. A face rises
+            `FACE_GROW` above its gap over the cell north of it, and that cell may be any tier and any
+            light: drawn in one pass, a group painted later laid its floor or its rock over the top of a
+            wall drawn earlier. */}
         {tiers.map(t => {
           const palette = tierPalette[t]
           const groups = regions.get(t)!
           const floorFill = tileUrl(t, "floor") ? `url(#floor-${t})` : palette.slab
-          const faceFill = tileUrl(t, "wall-face") ? `url(#face-${t})` : palette.wall
           const hasSill = !!tileUrl(t, "threshold")
           // A gap between two ROWS is a cell wide; one between two columns is a side wall's thickness.
           const sillFill = ([, , w]: Rect) => (hasSill ? `url(#sill-${w === CELL ? "h" : "v"}-${t})` : palette.wallTop)
@@ -159,9 +182,11 @@ export const TileLayers = ({
                 const room = floorFills.get(`${t}:room:${state}`)!
                 const corridor = floorFills.get(`${t}:corridor:${state}`)!
                 const mass = rectsToPath(groups.wallMass[state])
-                const faces = rectsToPath(groups.wallFace[state])
-                const shadows = rectsToPath(faceShadowRects(groups.wallFace[state], FACE_SHADOW))
-                const tops = rectsToPath(faceTopRects(groups.wallFace[state], FACE_TOP))
+                // Every face's, a front run's too: the shadow lies on the floor in front of the wall,
+                // which is the edge that puts the wall above the ground, and nothing ever stands over it.
+                const shadows = rectsToPath(
+                  faceShadowRects([...groups.wallFace[state], ...groups.frontFace[state]], FACE_SHADOW)
+                )
                 // One sill per boundary, not one per cell state: it is masonry, not lighting. A sill under
                 // an arch is drawn with the ARCH's tier rather than this one, so it is handled below.
                 const thresholds = groups.threshold.filter(([x, y]) => !archedGaps?.has(`${x},${y}`))
@@ -181,19 +206,6 @@ export const TileLayers = ({
                         <path d={corridor} fill={corridorShade.fill} opacity={corridorShade.opacity} />
                       </>
                     )}
-                    {faces && <path d={faces} fill={faceFill} />}
-                    {/* A wall stands in less light than the ground does — a lamp is carried at floor
-                        level, so a vertical face takes it at a glancing angle. Without this the two
-                        planes land within a step of each other once the night is over both, and a room
-                        reads as a floorplan with a change of texture rather than as a place with walls.
-                        See `faceNight`: it is solved per rank to the same rendered step, because the
-                        art's own step runs from 6.8 to 22.7 and it is what the PLAYER sees that has to
-                        agree between the ranks. */}
-                    {faces && <path data-face-night="" d={faces} fill={palette.outline} opacity={palette.faceNight} />}
-                    {/* The wall's own top surface, in the stone the side walls and the wall mass already
-                        use. A face without it is a band of brick with nothing above it, and a wall stops
-                        reading as a solid thing. */}
-                    {tops && <path d={tops} fill={palette.wallBase} />}
                     {/* Laid over the floor of the gap it crosses, so a change of material reads as a
                         step between two places rather than a line where the art changes. */}
                     {/* One path per sill: each takes the pattern for the shape of gap it lies in. The sill
@@ -203,16 +215,49 @@ export const TileLayers = ({
                       [...thresholds, ...arched].map(rect => (
                         <path key={rect.join(",")} d={rectsToPath([rect])} fill={sillFill(rect)} opacity={0.9} />
                       ))}
-                    {shadows && <path d={shadows} fill={palette.outline} opacity={0.45} />}
+                    {shadows && <path data-face-shadow="" d={shadows} fill={palette.outline} opacity={0.45} />}
+                    {wash && <path d={room + corridor + mass + wornWash} fill={wash.fill} opacity={wash.opacity} />}
+                  </g>
+                )
+              })}
+            </g>
+          )
+        })}
+        {tiers.map(t => {
+          const palette = tierPalette[t]
+          const groups = regions.get(t)!
+          const faceFill = tileUrl(t, "wall-face") ? `url(#face-${t})` : palette.wall
+          return (
+            <g key={t}>
+              {ALL_STATES.map(state => {
+                const wash = stateWash[state]
+                const faces = rectsToPath(grownFaceRects(groups.wallFace[state]))
+                const tops = rectsToPath(faceTopRects(groups.wallFace[state], FACE_TOP))
+                if (!faces) return null
+                return (
+                  <g key={state}>
+                    {/* The face as it was painted: the art carries its own coping and its own dark base,
+                        and the shadow it throws on the floor in front marks the edge. A rank may draw its
+                        walls darker than that (`faceNight`), as a look. */}
+                    <path data-face="" d={faces} fill={faceFill} />
+                    {palette.faceNight > 0 && (
+                      <path data-face-night="" d={faces} fill={palette.outline} opacity={palette.faceNight} />
+                    )}
+                    {/* The wall's own top surface, in the stone the side walls and the wall mass already
+                        use: the crisp upper edge of the wall. */}
+                    {tops && <path d={tops} fill={palette.wallBase} />}
                     {wornEdges(t) && (
                       <path
-                        d={wornFaceCorners(groups.wallFace[state], allFaces, allFloorRects, WALL_H * 0.8)}
+                        d={wornFaceCorners(
+                          grownFaceRects(groups.wallFace[state]),
+                          allFaces,
+                          allFloorRects,
+                          WALL_H * 0.8
+                        )}
                         fill={palette.wallBase}
                       />
                     )}
-                    {wash && (
-                      <path d={room + corridor + faces + mass + wornWash} fill={wash.fill} opacity={wash.opacity} />
-                    )}
+                    {wash && <path d={faces} fill={wash.fill} opacity={wash.opacity} />}
                   </g>
                 )
               })}

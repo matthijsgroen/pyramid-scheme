@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { CELL, WALL_FACE_H, WALL_H, PROP_H } from "./mapScale"
+import { CELL, FACE_H, WALL_FACE_H, WALL_H, PROP_H } from "./mapScale"
 import { authoredKindsFor } from "./authoredKinds"
 import { DRIFT_KINDS } from "./floorScatter"
 import { ART_IMAGE_RENDERING, sharedTileUrl, tileUrl } from "./tileAssets"
@@ -44,7 +44,7 @@ const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; underfoo
   const explorer = tileUrl("starter", "explorer-s-1")
   // Where feet and bases land: one cell up from the bottom, so there is floor in FRONT of the object
   // as well as behind it.
-  const floorLine = (WALL_H + CELL) * zoom
+  const floorLine = (FACE_H + CELL) * zoom
   const propLeft = (CHAMBER_W * zoom) / 2 - CELL * zoom
   // SCATTER IS STAGED TWICE: once under the explorer's boots and once on its own, a cell or so to the
   // right. Both readings matter and neither substitutes for the other — with a boot on it you can tell
@@ -84,7 +84,8 @@ const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; underfoo
         className="absolute"
         style={{
           left: propLeft + dx,
-          top: 0,
+          // In the lower WALL_H of the face, as the map hangs it.
+          top: (FACE_H - WALL_H) * zoom,
           width: CELL * zoom,
           height: WALL_H * zoom,
           imageRendering: ART_IMAGE_RENDERING,
@@ -109,15 +110,15 @@ const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; underfoo
     <figure className="m-0 flex flex-col items-center gap-1">
       <div
         className="relative overflow-hidden"
-        style={{ width: stageW * zoom, height: (WALL_H + CHAMBER_H) * zoom, background: palette.slab }}
+        style={{ width: stageW * zoom, height: (FACE_H + CHAMBER_H) * zoom, background: palette.slab }}
       >
         {/* the wall band the prop's headroom overlaps, and which a wall item is painted onto */}
         <div
           className="absolute inset-x-0 top-0"
           style={{
-            height: WALL_H * zoom,
+            height: FACE_H * zoom,
             background: face ? `url(${face})` : palette.wall,
-            backgroundSize: `${CELL * 8 * zoom}px ${WALL_H * zoom}px`,
+            backgroundSize: `${CELL * 8 * zoom}px ${FACE_H * zoom}px`,
             imageRendering: ART_IMAGE_RENDERING,
           }}
         />
@@ -175,19 +176,19 @@ const GrowthRow: FC<{ tier: Difficulty; kind: string; zoom: number }> = ({ tier,
   const root = sharedTileUrl(`${kind}-wall`) ?? tuft
   const plant = sharedTileUrl(`${kind}-plant`) ?? tuft
   const w = CELL * 3
-  const floorLine = (WALL_H + CELL) * zoom
+  const floorLine = (FACE_H + CELL) * zoom
   return (
     <figure className="m-0 flex flex-col items-center gap-1">
       <div
         className="relative overflow-hidden"
-        style={{ width: w * zoom, height: (WALL_H + CELL * 2) * zoom, background: palette.slab }}
+        style={{ width: w * zoom, height: (FACE_H + CELL * 2) * zoom, background: palette.slab }}
       >
         <div
           className="absolute inset-x-0 top-0"
           style={{
-            height: WALL_H * zoom,
+            height: FACE_H * zoom,
             background: face ? `url(${face})` : palette.wall,
-            backgroundSize: `${CELL * 8 * zoom}px ${WALL_H * zoom}px`,
+            backgroundSize: `${CELL * 8 * zoom}px ${FACE_H * zoom}px`,
             imageRendering: ART_IMAGE_RENDERING,
           }}
         />
@@ -219,7 +220,7 @@ const GrowthRow: FC<{ tier: Difficulty; kind: string; zoom: number }> = ({ tier,
             className="absolute"
             style={{
               left: CELL * 1.15 * zoom,
-              top: (WALL_H - WALL_FACE_H) * zoom,
+              top: (FACE_H - WALL_FACE_H) * zoom,
               width: 26 * zoom,
               height: WALL_FACE_H * zoom,
             }}

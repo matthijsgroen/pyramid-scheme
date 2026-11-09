@@ -13,7 +13,7 @@ fifth rank from costing as much to draw as the first.
 | Slot            | File                                 | Size         | Anchor                                                                |
 | --------------- | ------------------------------------ | ------------ | --------------------------------------------------------------------- |
 | Floor megatile  | `tiles/<rank>/floor.png`             | 448×448      | tiles both ways, world-aligned. `yarn make-seamless`                  |
-| Wall face       | `tiles/<rank>/wall-face.png`         | 448×56       | tiles horizontally only; **shown at 448×28** — see below              |
+| Wall face       | `tiles/<rank>/wall-face.png`         | 448×56       | tiles horizontally only; shown at its own 8:1, a cell tall            |
 | Threshold sill  | `tiles/<rank>/threshold.png`         | 56×12        | laid across the way through, at a rank seam                           |
 | Archway         | `tiles/<rank>/arch.png`              | 84×56        | middle transparent; jambs in the outer 14px each side                 |
 | Chamber prop    | `tiles/<rank>/<kind>.png`            | 56×84        | **bottom-anchored**; the top 28 is headroom, used only by tall things |
@@ -28,11 +28,10 @@ fifth rank from costing as much to draw as the first.
 Bottom-anchored on its bottom row's floor line, its left edge on the anchor (north-west) cell's west edge.
 Import with `--cells=COLSxROWS --tall=N`.
 
-**A face is the one slot whose file is not the shape it is seen at.** The renderer draws a 448×56 face
-into a band `WALL_H` = 28 tall, so art drawn at 8:1 arrives on screen at 16:1 and every sign, brick and
-figure on it is twice as wide as it should be. Draw it at 8:1 anyway — a model handles that aspect and not
-16:1 — and import with `--repeat=2`, which on a face lays the art down twice ACROSS only. The file then
-holds art at twice its final width, and the renderer's squash puts it right.
+**A face is drawn a cell tall, at the 8:1 it is painted at.** Its gap between two rows is only 28, so the
+renderer grows the face upward over whatever lies north of the gap (`FACE_GROW`) and the whole 448×56 file
+shows unsquashed. Import with `--repeat=1`. Paint a dark base band along the bottom: with the shadow the
+face throws on the floor, that band is what marks where the wall stands.
 
 **The sizes above are MAP UNITS, not pixels.** A cell is 56 units; a painted file is drawn far larger and
 `import-tile` resizes it into the slot. Everything else in the table — which slot,

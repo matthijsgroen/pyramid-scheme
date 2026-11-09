@@ -8,7 +8,7 @@ import { footprintPath } from "./tileRegions"
 import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY, nodeArtOffset } from "./nodeArt"
 import { ExplorerFigure } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
-import { ARCH_H, ARCH_RISE, CELL, PROP_H, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
+import { ARCH_H, ARCH_RISE, CELL, FACE_H, PROP_H, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
 import { ALL_STATES } from "./tileRegions"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
 import { tierPalette } from "./tileMaterials"
@@ -1085,28 +1085,17 @@ describe("SiteMapView — the shade the lamp is read against", () => {
     expect(tierPalette.expert.shade).not.toBe(tierPalette.starter.shade)
   })
 
-  it("gives a wall face a helping of the night the floor does not take, so the two planes part", () => {
-    // A lamp is carried at floor level, so a vertical face takes it at a glancing angle. Without this
-    // the floor and the wall land within a step of each other once the night is over both, and the room
-    // reads as a floorplan with a change of texture rather than as a place with walls.
+  it("darkens a rank's wall face by that rank's own chosen night, in its own near-black", () => {
     const { container } = render(<SiteMapView grid={{ ...twoRooms(), difficulty: "expert" }} />)
-    const faceNight = container.querySelector<SVGElement>("[data-face-night]")!
+    const face = container.querySelector<SVGPathElement>("[data-face]")!
+    const faceNight = container.querySelector<SVGPathElement>("[data-face-night]")!
 
-    expect(faceNight).toBeDefined()
-    expect(tierPalette.expert.faceNight).toBeGreaterThan(0)
+    expect(faceNight.getAttribute("d")).toBe(face.getAttribute("d"))
+    expect(faceNight.getAttribute("fill")).toBe(tierPalette.expert.outline)
     expect(Number(faceNight.getAttribute("opacity"))).toBe(tierPalette.expert.faceNight)
     // Under the night itself: it deepens the face's own stone rather than lying over the whole picture.
     expect(depthOf(container, faceNight)).toBeLessThan(depthOf(container, shades(container)[0]))
   })
-
-  it("takes that helping from the rank's own near-black, so a cold rank's wall parts coldly", () => {
-    const { container } = render(<SiteMapView grid={{ ...twoRooms(), difficulty: "expert" }} />)
-    const faceNight = container.querySelector<SVGElement>("[data-face-night]")!
-
-    expect(faceNight.getAttribute("fill")).toBe(tierPalette.expert.outline)
-    expect(tierPalette.expert.outline).not.toBe(tierPalette.starter.outline)
-  })
-
   it("leaves the click markers out of the full pass, which is what they are read by", () => {
     // Washing the markers with the floor costs them most of their contrast against it. The full pass
     // goes under them; only the second, lighter pass — the one that seats the standing furniture in the
@@ -1466,14 +1455,14 @@ describe("the light falls in the same two passes the shade does", () => {
     expect(Number(lit(container, "standing").style.opacity)).toBeGreaterThan(0)
   })
 
-  it("reaches a wall band above every lit cell, so a prop is not sawn off at the floor line", () => {
+  it("reaches a whole wall face above every lit cell, so a prop is not sawn off at the floor line", () => {
     // A prop is bottom-anchored in its cell and a face band taller than it, and the explorer's head
     // clears their own cell too. Clipped to the floor squares, the standing pass lit a statue against the
     // room's north wall from the waist down and drew a hard line across it.
     const { container } = render(<SiteMapView grid={twoRooms()} explorerPos={[0, 0]} revealAllCells />)
     const topOf = (pass: "lit" | "standing") => parseFloat(lit(container, pass).style.top)
 
-    expect(topOf("standing")).toBe(topOf("lit") - WALL_H)
+    expect(topOf("standing")).toBe(topOf("lit") - FACE_H)
   })
 
   it("carries that band across the seams between cells, so the back wall has no unlit slits in it", () => {
@@ -1493,7 +1482,7 @@ describe("the light falls in the same two passes the shade does", () => {
       ...clipOf(lit(container, "standing")).matchAll(/M(-?[\d.]+)\s*(-?[\d.]+)\s*h\s*(-?[\d.]+)\s*v\s*(-?[\d.]+)/g),
     ].map(m => m.slice(1).map(Number) as [number, number, number, number])
     const bandTop = Math.min(...rects.map(([, y]) => y))
-    const band = rects.filter(([, y, , h]) => y === bandTop && h === WALL_H).sort(([a], [b]) => a - b)
+    const band = rects.filter(([, y, , h]) => y === bandTop && h === FACE_H).sort(([a], [b]) => a - b)
 
     expect(band.length).toBeGreaterThan(1)
     band.forEach(([x, , w], i) => {
