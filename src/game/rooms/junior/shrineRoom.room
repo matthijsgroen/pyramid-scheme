@@ -1,0 +1,18 @@
+// designed by: Claude
+// junior. The household shrine: Bes in his shrine under the false door, lamps and flowers either side, the stop in front.
+room shrineRoom
+tier junior
+activity householdShrine
+
+layout
+# # # f # # #
+# l o r o l #
+d . . . . . d
+# . . s . . #
+# d # d # d #
+
+r wall shrine
+o wall offeringTable
+l wall lamp
+f wallItem stela
+s stop

@@ -1,0 +1,18 @@
+// designed by: Claude
+// junior. The bedroom: the bed on its lion legs along the north wall, the headrest beside it.
+room bedroom
+tier junior
+activity bedroom
+mirror
+holds chest
+
+layout
+# d # # # #
+# . b b h #
+d . . . . d
+# . s . . #
+# # d # d #
+
+b wall bed
+h wall headrest
+s stop

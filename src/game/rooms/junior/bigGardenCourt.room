@@ -1,0 +1,20 @@
+// designed by: Claude
+// junior. A big garden court: the lotus pool in the middle of an open court, a lotus column between two potted trees on
+// the north wall.
+room bigGardenCourt
+tier junior
+activity gardenCourt
+
+layout
+# # d # d # #
+# t . c . t #
+d . . . . . d
+# . . b . . #
+d . . . . . d
+# . . s . . #
+# # d # d # #
+
+t wall pottedTree
+c wall pillar
+b floor basin
+s stop

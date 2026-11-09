@@ -1,0 +1,18 @@
+// designed by: Claude
+// junior. The banquet: the table laid in the middle of the floor, the harp and the frieze on the north wall.
+room banquetRoom
+tier junior
+activity banquet
+mirror
+
+layout
+# d # # d #
+# . h g . #
+d . t t . d
+# . . s . #
+# d # # d #
+
+h wall harp
+g wall hanging | jarRack
+t floor banquetTable
+s stop
