@@ -21,10 +21,16 @@ export const fadedRuns = (runs: readonly FrontRun[], cells: readonly string[]): 
   new Set(runs.filter(run => cells.some(cell => run.behind.has(cell))).map(run => run.key))
 
 /** Whether a sprite's box crosses a faded run: it is standing on that wall, and fades with it. */
-export const onFadedRun = (runs: readonly FrontRun[], faded: ReadonlySet<string>, [x, y, w, h]: Rect): boolean =>
-  runs.some(
-    ({ key, bounds: [bx, by, bw, bh] }) => faded.has(key) && x < bx + bw && x + w > bx && y < by + bh && y + h > by
-  )
+export const onFadedRun = (runs: readonly FrontRun[], faded: ReadonlySet<string>, box: Rect): boolean =>
+  runs.some(({ key, bounds }) => faded.has(key) && overlaps(box, bounds))
+
+const overlaps = ([x, y, w, h]: Rect, [bx, by, bw, bh]: Rect) => x < bx + bw && x + w > bx && y < by + bh && y + h > by
+
+/** The front runs a thing standing on the floor is BEHIND: it stands further back than the wall's own foot,
+ * so the wall is nearer the viewer, and its box reaches into that wall. One standing ON the foot line is
+ * hung on that wall, and one further forward stands in front of it. */
+export const wallsBehind = (runs: readonly FrontRun[], box: Rect, baseY: number): FrontRun[] =>
+  runs.filter(run => baseY < run.bounds[1] + run.bounds[3] && overlaps(box, run.bounds))
 
 /** The opacity of anything that fades with a wall, and the transition it fades on. */
 export const wallFade = (faded: boolean): { opacity: number; className: string } => ({

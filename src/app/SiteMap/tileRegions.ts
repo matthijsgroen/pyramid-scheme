@@ -144,7 +144,9 @@ export const buildTileRegions = (
   floorAt: FloorAt,
   openBetween: OpenBetween,
   /** What stone to use where no floor is in reach to say — the floor's own tier. */
-  fallbackTier: Tileset
+  fallbackTier: Tileset,
+  /** Whether the open gap north of this cell has an arch standing in it. */
+  arched: (row: number, col: number) => boolean = () => false
 ): TileRegions => {
   const regions: TileRegions = new Map()
   // Every face, held back until the whole floor is walked: whether a face stands in front of floor is a
@@ -235,6 +237,16 @@ export const buildTileRegions = (
         const groups = groupsFor(tierAt([r, c], [r - 1, c]))
         floorGroup(groups, here, north)[brightest(here.state, north.state)!].push(northGap)
         if (here.tier !== north.tier) groupsFor(here.tier).threshold.push(northGap)
+        // AN ARCH STANDS IN A FULL-HEIGHT WALL. The arch is drawn at its own height, lower than the face
+        // rising either side of it, so its gap carries a face with no height of its own: drawn grown, that
+        // is the wall above the arch, in the run's own stone and light, and it fades with the run.
+        if (arched(r, c))
+          faces.push({
+            groups,
+            state: brightest(here.state, north.state)!,
+            rect: [x, y - WALL_H, CELL, 0],
+            overFloor: true,
+          })
       } else if (isMouth([r - 1, c], [r, c], "s")) {
         // The mouth of an unexplored passage. Left black on purpose: that opening is how the map says
         // the way carries on past what has been explored.
@@ -330,6 +342,8 @@ export const buildTileRegions = (
     row.sort((a, b) => a.rect[0] - b.rect[0])
     let run: typeof faces = []
     const flush = () => {
+      // Above an arch only where the wall either side of it rises: in a run of its own it caps nothing.
+      if (run.every(f => f.rect[3] === 0)) run = []
       const front = run.some(f => f.overFloor)
       for (const f of run) (front ? f.groups.frontFace : f.groups.wallFace)[f.state].push(f.rect)
       run = []
@@ -374,9 +388,10 @@ export const boundsOf = (rects: readonly Rect[]): { x: number; y: number; w: num
 }
 
 /** The hard shadow a face throws onto the floor in front of it. In this idiom that shadow, not any
- * shading on the floor itself, is what puts the wall above the ground. */
+ * shading on the floor itself, is what puts the wall above the ground. The wall above an arch has no foot
+ * on the floor, so it throws none. */
 export const faceShadowRects = (faces: readonly Rect[], height: number): Rect[] =>
-  faces.map(([x, y, w, h]) => [x, y + h, w, height])
+  faces.filter(([, , , h]) => h > 0).map(([x, y, w, h]) => [x, y + h, w, height])
 
 /**
  * The strip along the TOP of a wall face: the wall's own top surface, seen from above.
@@ -400,7 +415,8 @@ export type FrontPiece = { rect: Rect; tier: Tileset; state: CellState }
  * A run of back wall that rises in front of floor, as one thing the renderer can fade.
  *
  * `behind` is every cell a face of the run rises over, so "is anyone behind this wall" is one lookup.
- * Corner pieces rise over the seam between two of those cells and add none of their own.
+ * Corner pieces rise over the seam between two of those cells and add none of their own, and the wall above
+ * an arch rises over the doorway, which the arch already fades for.
  */
 export type FrontRun = { key: string; pieces: FrontPiece[]; bounds: Rect; behind: ReadonlySet<string> }
 
@@ -421,7 +437,7 @@ export const frontRuns = (regions: TileRegions): FrontRun[] => {
     const box = boundsOf(grownFaceRects(run.map(p => p.rect)))
     const behind = new Set(
       run
-        .filter(p => p.rect[2] === CELL)
+        .filter(p => p.rect[2] === CELL && p.rect[3] > 0)
         .map(({ rect: [x, y] }) => `${(y - PAD_TOP) / ROW_PITCH - 1},${(x - PAD - SIDE_W) / COL_PITCH}`)
     )
     return { key: `${box.x},${box.y}`, pieces: run, bounds: [box.x, box.y, box.w, box.h], behind }

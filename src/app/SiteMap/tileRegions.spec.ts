@@ -373,6 +373,43 @@ describe("buildTileRegions — walls standing in front of floor", () => {
     expect(runs[0].bounds[1]).toBe(cellTop(1) - WALL_H - FACE_GROW)
   })
 
+  describe("an arch in the wall", () => {
+    // Row 1 is a corridor; row 0 holds a passage behind its north wall, joined to it through column 1,
+    // where an arch stands.
+    const throughTheMiddle: OpenBetween = (r, c, dir) => (dir === "e" && c < 2) || (dir === "s" && r === 0 && c === 1)
+    const twoRows = gridOf({
+      "0,0": "reachable",
+      "0,1": "reachable",
+      "0,2": "reachable",
+      "1,0": "reachable",
+      "1,1": "reachable",
+      "1,2": "reachable",
+    })
+    const capOver = (c: number): Rect => [cellLeft(c), cellTop(1) - WALL_H, CELL, 0]
+
+    it("stands in the run as a face with no height of its own, so the wall rises over it", () => {
+      const regions = buildTileRegions(2, 3, twoRows, throughTheMiddle, "starter", (r, c) => r === 1 && c === 1)
+
+      expect(has(inAnyState(of(regions, "starter").frontFace), capOver(1))).toBe(true)
+      expect(frontRuns(regions)).toHaveLength(1)
+    })
+
+    it("throws no shadow, and the cell under it is not behind the wall", () => {
+      const regions = buildTileRegions(2, 3, twoRows, throughTheMiddle, "starter", (r, c) => r === 1 && c === 1)
+
+      expect(faceShadowRects([capOver(1)], 7)).toEqual([])
+      expect(frontRuns(regions)[0].behind.has("0,1")).toBe(false)
+    })
+
+    it("caps nothing where no wall rises either side of it", () => {
+      const open: OpenBetween = (r, c, dir) => dir === "e" || (dir === "s" && r === 0 && c === 1)
+      const alone = gridOf({ "0,1": "reachable", "1,1": "reachable" })
+      const regions = buildTileRegions(2, 3, alone, open, "starter", (r, c) => r === 1 && c === 1)
+
+      expect(across(regions, g => [g.wallFace, g.frontFace]).some(([, , , h]) => h === 0)).toBe(false)
+    })
+  })
+
   it("draws a face FACE_GROW taller, upward, with its foot on the same floor line", () => {
     expect(grownFaceRects([northGap(1, 0)])).toEqual([
       [cellLeft(0), cellTop(1) - WALL_H - FACE_GROW, CELL, WALL_H + FACE_GROW],

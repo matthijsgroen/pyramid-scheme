@@ -1,11 +1,11 @@
-import type { CSSProperties } from "react"
+import type { CSSProperties, ReactNode } from "react"
 import { hexToRgb } from "@/support/colour"
-import { FACE_GROW, FACE_H, FACE_PATTERN_Y, ROW_PITCH } from "./mapScale"
+import { CELL, FACE_GROW, FACE_H, FACE_PATTERN_Y, ROW_PITCH } from "./mapScale"
 import { FACE_TOP } from "./roomClaims"
 import { tileUrl } from "./tileAssets"
 import { MEGATILE } from "./tileLayers"
 import { stateWash, tierPalette } from "./tileMaterials"
-import type { FrontRun } from "./tileRegions"
+import { grownFaceRects, rectsToPath, type FrontRun, type Rect } from "./tileRegions"
 import { wallFade } from "./wallFades"
 
 const washColour = ({ fill, opacity }: { fill: string; opacity: number }) =>
@@ -36,7 +36,7 @@ export const FrontWalls = ({ runs, faded }: { runs: readonly FrontRun[]; faded: 
           className={fade.className}
           style={{ position: "absolute", left: bx, top: by, width: bw, height: bh, opacity: fade.opacity }}
         >
-          {run.pieces.map(({ rect: [x, y, w], tier, state }) => {
+          {run.pieces.map(({ rect: [x, y, w, h], tier, state }) => {
             const top = y - FACE_GROW
             const palette = tierPalette[tier]
             const art = tileUrl(tier, "wall-face")
@@ -68,7 +68,7 @@ export const FrontWalls = ({ runs, faded }: { runs: readonly FrontRun[]; faded: 
               left: x - bx,
               top: top - by,
               width: w,
-              height: FACE_H,
+              height: h + FACE_GROW,
               backgroundImage: layers.map(l => l.image).join(", "),
               backgroundSize: layers.map(l => l.size).join(", "),
               backgroundPosition: layers.map(l => l.position ?? "0 0").join(", "),
@@ -81,3 +81,64 @@ export const FrontWalls = ({ runs, faded }: { runs: readonly FrontRun[]; faded: 
     })}
   </div>
 )
+
+/**
+ * SOMETHING STANDING BEHIND A FRONT WALL, drawn behind it.
+ *
+ * Everything standing is drawn over the front walls, so the explorer and what stands in front of a wall
+ * are never covered by one. What stands BEHIND a wall is cut where the wall is drawn instead, so the wall
+ * shows there, lit as the stone around it is. While that wall is faded the cut-away part shows again,
+ * over the faded wall, the way the explorer behind it does.
+ *
+ * Each part is a layer the size of the thing plus a cell's margin, never the size of the map (see
+ * `rectsToPath`).
+ */
+export const BehindWalls = ({
+  runs,
+  faded,
+  box: [x, y, w, h],
+  children,
+}: {
+  runs: readonly FrontRun[]
+  faded: ReadonlySet<string>
+  box: Rect
+  children: ReactNode
+}) => {
+  const outer: Rect = [x - CELL, y - CELL, w + 2 * CELL, h + 2 * CELL]
+  const origin = [outer[0], outer[1]] as const
+  const walls = runs.map(run => ({ run, rects: grownFaceRects(run.pieces.map(p => p.rect)) }))
+  const layer = (clip: string, style?: CSSProperties, className?: string) => (
+    <div
+      className={className}
+      style={{
+        position: "absolute",
+        left: outer[0],
+        top: outer[1],
+        width: outer[2],
+        height: outer[3],
+        clipPath: clip,
+        ...style,
+      }}
+    >
+      <div style={{ position: "absolute", left: -outer[0], top: -outer[1] }}>{children}</div>
+    </div>
+  )
+  const allWalls = rectsToPath(
+    walls.flatMap(({ rects }) => rects),
+    origin
+  )
+  return (
+    <div data-behind-wall="">
+      {layer(`path(evenodd, "${rectsToPath([outer], origin)}${allWalls}")`)}
+      {walls.map(({ run, rects }) => (
+        <div key={run.key} data-behind-faded={faded.has(run.key) ? "" : undefined}>
+          {layer(
+            `path("${rectsToPath(rects, origin)}")`,
+            { opacity: faded.has(run.key) ? 1 : 0 },
+            wallFade(false).className
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
