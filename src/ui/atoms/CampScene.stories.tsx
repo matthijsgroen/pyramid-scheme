@@ -206,20 +206,16 @@ const detectorEntrances = {
   entrances: {
     chest: { label: "Collection", onOpen: action("open collection") },
     window: { label: "Mosaic 61/252", onOpen: action("open mosaic") },
-    mapTable: { label: "Journeys", onOpen: action("open journeys") },
+    mapTable: { label: "Journeys", onOpen: action("open map table") },
   },
-  pieceEntrances: [
-    { id: "compass", pieces: ["compassOnMap", "compass"], label: "Compass", onOpen: action("open compass") },
-    { id: "corridor", pieces: ["corridorFinder"], label: "Corridor finder", onOpen: action("open corridor finder") },
-  ],
 }
 
-/** Before the table stands, the compass lies by the map on the sand and takes its own taps. */
+/** Before the table stands, the detectors lie by the map on the sand; the map's entrance covers them. */
 export const CompassByTheMap: Story = {
   args: { chapter: "junior", found: fullFound(CAMP_CATALOGUE, "junior"), ...detectorEntrances },
 }
 
-/** On the table: the map keeps the rest of it, the compass its right end. */
+/** On the table: one entrance for the table, the compass on it and the horn by its leg. */
 export const CompassOnTheTable: Story = {
   args: { chapter: "expert", found: fullFound(CAMP_CATALOGUE, "expert"), ...detectorEntrances },
 }

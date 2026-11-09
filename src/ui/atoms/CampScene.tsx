@@ -25,8 +25,6 @@ export type CampSceneProps = {
   /** Room kept free of the camp. `right` is covered by a panel: the sky and sand run on under it, the camp does not. */
   insets?: { top: number; bottom: number; right?: number }
   entrances?: { chest?: CampEntrance; window?: CampEntrance; mapTable?: CampEntrance }
-  /** Entrances on named pieces rather than a whole spot. Each stands whether or not its piece's art has landed. */
-  pieceEntrances?: readonly (CampEntrance & { id: string; pieces: readonly string[] })[]
   catalogue?: CampCatalogue
   className?: string
   /**
@@ -350,10 +348,7 @@ const Piece = ({ placed, lightIndex }: { placed: PlacedPiece; lightIndex: number
       <Fade visible={placed.visible}>
         <div
           className={`camp-piece camp-standin ${PIECE} ${STAND_IN}`}
-          style={{
-            ...(placed.hit ? boxOf({ ...placed, ...placed.hit }) : style),
-            fontSize: clamp(scale * 0.17, 8, 13),
-          }}
+          style={{ ...style, fontSize: clamp(scale * 0.17, 8, 13) }}
         >
           {piece.id}
         </div>
@@ -415,7 +410,6 @@ export const CampScene = ({
   found,
   insets = NO_INSETS,
   entrances = {},
-  pieceEntrances = [],
   catalogue = CAMP_CATALOGUE,
   className,
   standIns = false,
@@ -442,22 +436,13 @@ export const CampScene = ({
   const rootStyle = { "--camp-horizon": `${(horizon / height) * 100}%` } as CSSProperties
 
   const entranceSpots = (["chest", "window", "mapTable"] as const).filter(spot => entrances[spot])
-  const opens = new Map<string, CampEntrance>([
-    ...entranceSpots.map(spot => [spot, entrances[spot]!] as const),
-    ...pieceEntrances.map(e => [e.id, e] as const),
-  ])
-  // A piece entrance may stand on a piece whose art is owed: its place is known, so it still takes taps.
-  const owedTargets = new Set(pieceEntrances.flatMap(e => e.pieces))
-  const hittable = [...pieces, ...bare.filter(p => owedTargets.has(p.piece.id))]
   // Each tag takes the first clear place: below its entrance, above it, then slid sideways a half and a whole tag
-  // width, never off the scene. Small piece entrances choose first, so a big one's tag gives way to them. With no
-  // clear place a tag stays below.
-  const areas = entranceAreas(hittable, [...entranceSpots, ...pieceEntrances])
-  const pieceIds = new Set(pieceEntrances.map(e => e.id))
+  // width, never off the scene. With no clear place a tag stays below.
+  const areas = entranceAreas(pieces, entranceSpots)
   const tagsSoFar: { x: number; y: number; width: number; height: number }[] = []
   const tagPlace = new Map<string, { above: boolean; shift: number }>()
-  for (const area of [...areas.filter(a => pieceIds.has(a.id)), ...areas.filter(a => !pieceIds.has(a.id))]) {
-    const box = tagBox(opens.get(area.id)!.label, tagSize)
+  for (const area of areas) {
+    const box = tagBox(entrances[area.spot as (typeof entranceSpots)[number]]!.label, tagSize)
     const clear = (x: number, y: number) =>
       x - box.width / 2 >= 0 &&
       x + box.width / 2 <= width &&
@@ -472,15 +457,15 @@ export const CampScene = ({
       { above: true, shift: share * box.width },
     ])
     const place = places.find(p => clear(area.x + p.shift, p.above ? overTop : below)) ?? places[0]
-    tagPlace.set(area.id, place)
+    tagPlace.set(area.spot, place)
     tagsSoFar.push({ ...box, x: area.x + place.shift, y: place.above ? overTop : below })
   }
   const entranceButtons = areas.map(area => {
-    const { label, badge, onOpen } = opens.get(area.id)!
-    const { above, shift } = tagPlace.get(area.id)!
+    const { label, badge, onOpen } = entrances[area.spot as (typeof entranceSpots)[number]]!
+    const { above, shift } = tagPlace.get(area.spot)!
     return (
       <button
-        key={area.id}
+        key={area.spot}
         type="button"
         className={ENTRANCE}
         aria-label={badge === undefined ? label : `${label} (${badge})`}

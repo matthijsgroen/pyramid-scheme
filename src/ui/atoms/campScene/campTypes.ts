@@ -45,8 +45,6 @@ export type CampPiece = {
   cast?: number
   /** The art id when it is not the piece id: one picture drawn in two places. */
   art?: string
-  /** Where a small object stands inside its picture, same units as the piece: its entrance covers this, not the frame. */
-  hit?: { dx: number; dy: number; width: number; height: number }
 }
 
 /**

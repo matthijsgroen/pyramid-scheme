@@ -20,15 +20,8 @@ const OVEN = light(0.7, FIRE, "flicker", 0.8, 0.35, -0.62)
 /** The tower stands tall and alone, so it lays a long silhouette on the sand. */
 const TOWER_CAST = 0.45
 const SIGNAL = light(0.8, "255,160,60", "flicker", 0.8, 0, -0.85)
-/** The compass in its picture: the right end of the table top. */
-const COMPASS_ON_TABLE = { dx: 0.325, dy: -0.6, width: 0.11, height: 0.14 }
-/** The listening horn in its picture, lying on its cloth by the table's left front leg. */
-const CORRIDOR_FINDER = { dx: -0.324, dy: -0.057, width: 0.277, height: 0.193 }
-const COMPASS_ON_MAP = { ...COMPASS_ON_TABLE, dx: COMPASS_ON_TABLE.dx + 0.055, dy: COMPASS_ON_TABLE.dy + 0.47 }
 
-type PieceOptions = Partial<
-  Pick<CampPiece, "dx" | "dy" | "width" | "height" | "replaces" | "lights" | "cast" | "art" | "hit">
->
+type PieceOptions = Partial<Pick<CampPiece, "dx" | "dy" | "width" | "height" | "replaces" | "lights" | "cast" | "art">>
 
 const piece = (id: string, options: PieceOptions = {}): CampPiece => ({
   id,
@@ -39,7 +32,7 @@ const piece = (id: string, options: PieceOptions = {}): CampPiece => ({
   ...options,
 })
 
-type StepOptions = Pick<PieceOptions, "dx" | "dy" | "replaces" | "lights" | "cast" | "art" | "hit"> & {
+type StepOptions = Pick<PieceOptions, "dx" | "dy" | "replaces" | "lights" | "cast" | "art"> & {
   /** A base step in a layered spot: the whole spot as one picture, hiding the base before it. */
   base?: true
   /** Not a find: ground for the spot, there once anything else in it is found. */
@@ -148,14 +141,14 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["wizard", "caravanBanner"],
     ]),
     layered("mapTable", { x: 0.25, y: 1.3, frame: 1.67, footprint: 1.5 }, [
-      // The map on the ground opens "Alle reizen", so like every entrance it stands from the start.
+      // The map on the ground is the table's entrance, so like every entrance it stands from the start.
       ["starter", "map", { base: true }],
       // The compass detector, once its first part is held: one picture, by the map on the sand until the table stands.
-      ["starter", "compassOnMap", { on: "map", art: "compass", dx: 0.055, dy: 0.47, hit: COMPASS_ON_MAP }],
+      ["starter", "compassOnMap", { on: "map", art: "compass", dx: 0.055, dy: 0.47 }],
       ["expert", "table", { base: true }],
-      ["expert", "compass", { hit: COMPASS_ON_TABLE }],
+      ["expert", "compass"],
       // The corridor finder, once its first part is held, whatever the chapter: a listening horn on the sand, table or not.
-      ["starter", "corridorFinder", { on: [], hit: CORRIDOR_FINDER }],
+      ["starter", "corridorFinder", { on: [] }],
       // The star cloth lies on the table under the map and the compass.
       ["master", "starMap", { behind: "compass" }],
       ["master", "scrollCase"],

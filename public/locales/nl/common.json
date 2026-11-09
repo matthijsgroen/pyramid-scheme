@@ -1602,6 +1602,10 @@
       "mosaic": "Mozaïek",
       "journeys": "Alle reizen",
       "detectors": "Detectors"
+    },
+    "mapTable": {
+      "title": "Kaarttafel",
+      "journeys": "Reizen"
     }
   },
   "home": {
