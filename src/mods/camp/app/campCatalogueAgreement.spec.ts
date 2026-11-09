@@ -36,6 +36,10 @@ describe("campCatalogueMismatches", () => {
     expect(campCatalogueMismatches(table.slice(1), catalogue)).toEqual(['catalogue step "pot" has no table entry'])
   })
 
+  it("lets a catalogue step placed by another system go without a table entry", () => {
+    expect(campCatalogueMismatches(table.slice(1), catalogue, ["pot"])).toEqual([])
+  })
+
   it("names a table step the catalogue lacks", () => {
     expect(campCatalogueMismatches([...table, te("extra")], catalogue)).toEqual([
       'table step "extra" has no catalogue step',
