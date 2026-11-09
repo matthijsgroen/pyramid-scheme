@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Junior's rooms are a nobleman's house: a banquet, a dressing room, a household shrine, a garden court, a bedroom and a bakery.
 
+### Fixed
+
+- Standing in a room's doorway shows the arrow into the room again.
+
 ## 0.45.0 - 2026-11-09
 
 ### Added
