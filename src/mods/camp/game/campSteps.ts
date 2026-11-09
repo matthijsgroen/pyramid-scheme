@@ -209,7 +209,6 @@ export const CAMP_STEPS: CampStepTable = [
     ["caravanBanner", W, "purchase:caravanBanner", "caravanBanner"],
   ]),
   ...rows("mapTable", "found", [
-    ["compass", E],
     ["starMap", M],
     ["scrollCase", M],
     ["astrolabe", W],

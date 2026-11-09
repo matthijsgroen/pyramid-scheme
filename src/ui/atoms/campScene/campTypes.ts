@@ -43,6 +43,8 @@ export type CampPiece = {
   lights?: CampLight[]
   /** Opt-in: the piece lays its own silhouette on the sand, this share of its height long. */
   cast?: number
+  /** The art id when it is not the piece id: one picture drawn in two places. */
+  art?: string
 }
 
 /**

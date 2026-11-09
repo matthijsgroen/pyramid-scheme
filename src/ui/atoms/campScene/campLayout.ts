@@ -442,7 +442,11 @@ const overlapOf = (a: EntranceArea, b: EntranceArea) => ({
  */
 export const entranceAreas = (pieces: PlacedPiece[], spots: readonly (CampSpotId | CampFixedId)[]): EntranceArea[] => {
   const areas = spots.flatMap(spot => {
-    const own = pieces.filter(p => p.spot === spot && p.visible)
+    const shown = pieces.filter(p => p.spot === spot && p.visible)
+    // A layer sits on its spot's picture, so a base picture already covers it; one moved off the picture (a
+    // detector by the map) would stretch the area over empty sand. Layers count only while no base shows.
+    const bases = shown.filter(p => !p.layer)
+    const own = bases.length > 0 ? bases : shown
     if (own.length === 0) return []
     const left = Math.min(...own.map(p => p.x - p.width / 2))
     const right = Math.max(...own.map(p => p.x + p.width / 2))

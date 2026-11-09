@@ -87,6 +87,13 @@ const { registerReactionContribution } = await import("@/app/reactions/reactionC
 const { registerHomeTags } = await import("@/app/home/homeTags")
 const { registerHaulLines } = await import("@/app/home/haulLines")
 const { registerModEntrance } = await import("@/app/home/modEntrances")
+const { registerDetectorLevel } = await import("@/app/SiteMap/detectorLevels")
+const { registerDetectorScreen } = await import("@/app/home/detectorScreens")
+
+// A made-up detector: held while `corridorParts` is above 0.
+let corridorParts = 0
+registerDetectorLevel("corridor", () => corridorParts)
+registerDetectorScreen("corridor", { title: () => "Made-up finder", Screen: () => <div>finder content</div> })
 const { clearCollectionSections, registerCollectionSection } = await import("@/app/pages/collectionSectionRegistry")
 
 const reported: Reaction[] = []
@@ -143,6 +150,7 @@ beforeEach(async () => {
   progress = {}
   unexplored = new Set()
   startJourney.mockReset()
+  corridorParts = 0
 })
 afterEach(() => {
   cleanup()
@@ -242,6 +250,30 @@ describe(Base, () => {
     expect(screen.getByText("journeys content")).toBeTruthy()
     expect(screen.queryByText("camp.entrance.journeys")).toBeNull()
     expect(screen.queryByRole("dialog")).toBeNull()
+  })
+
+  it("opens the map table on its journeys, with a tab per detector held", () => {
+    corridorParts = 1
+    renderBase()
+
+    fireEvent.click(screen.getByText("camp.entrance.journeys"))
+
+    expect(screen.getByRole("dialog", { name: "camp.mapTable.title" })).toBeTruthy()
+    expect(screen.getByText("journeys content")).toBeTruthy()
+    fireEvent.click(screen.getByRole("tab", { name: "Made-up finder" }))
+    expect(screen.getByText("finder content")).toBeTruthy()
+  })
+
+  it("opens the map table on desktop only for its detectors, the journeys staying beside it", () => {
+    stubDesktop(true)
+    corridorParts = 1
+    renderBase()
+
+    fireEvent.click(screen.getByText("camp.entrance.detectors"))
+
+    const dialog = screen.getByRole("dialog", { name: "camp.entrance.detectors" })
+    expect(dialog.textContent).toContain("finder content")
+    expect(screen.queryByRole("tab")).toBeNull()
   })
 
   it("shows a registered window entrance and opens its screen in a dialog", () => {

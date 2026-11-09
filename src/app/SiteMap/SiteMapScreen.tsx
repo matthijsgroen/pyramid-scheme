@@ -255,7 +255,7 @@ export const SiteMapScreen = ({
           detectionLevel={detectorLevels.corridor}
           compassTarget={detector.compassTarget}
           compassTargetLabel={readout.compassTargetLabel}
-          journeyName={readout.journeyName}
+          hitLabel={readout.hitLabel}
           compassResults={detector.compassResults}
           detectorTitles={readout.titles}
           onSetDetector={mode => {

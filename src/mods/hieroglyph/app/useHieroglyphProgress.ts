@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { useModState } from "@/app/state/useModState"
 import { useMergedEarnedPerks } from "@/app/SiteMap/perkContributions"
-import { perkLevel } from "@/game/perkTotals"
+import { perkStacks } from "@/game/perkTotals"
 // The generated `hieroglyphRequired` is baked generically (core annotates no mod export), so TS
 // infers a literal shape — the mod owns the type: it's a per-hieroglyph piece-count lookup.
 import { hieroglyphRequired as hieroglyphRequiredRaw } from "@/data/generatedWorld"
@@ -22,7 +22,7 @@ const hieroglyphRequired = hieroglyphRequiredRaw as Record<string, number>
 // compassTarget seam).
 type HieroglyphState = { collectedFragments: string[]; compassTarget: string | null } // fragment = "hieroglyphId:pieceIndex"
 
-const COMPASS_CAP = 3
+export const COMPASS_CAP = 3
 
 const INITIAL: HieroglyphState = { collectedFragments: [], compassTarget: null }
 
@@ -47,7 +47,7 @@ export type HieroglyphProgressAPI = {
 export const useHieroglyphProgress = (): HieroglyphProgressAPI => {
   const [state, setState, loaded] = useModState<HieroglyphState>("hieroglyph", INITIAL)
   // Derived from the treasures held, not stored alongside the fragments — see game/perkTotals.ts.
-  const compassLevel = perkLevel(useMergedEarnedPerks(), "compass", COMPASS_CAP)
+  const compassLevel = perkStacks(useMergedEarnedPerks(), "compass", COMPASS_CAP)
 
   return useMemo(() => {
     const found = (id: string) => state.collectedFragments.filter(f => f.startsWith(`${id}:`)).length

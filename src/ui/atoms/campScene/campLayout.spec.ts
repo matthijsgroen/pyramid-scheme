@@ -740,6 +740,14 @@ describe("entranceAreas", () => {
     expect([area.width, area.height]).toEqual([200, 120])
     expect([area.x, area.y]).toEqual([big.x, big.y - 60])
   })
+
+  it("covers a spot's base pictures, not a layer moved off them", () => {
+    const base = { ...layout({ steps: {} }).pieces.find(p => p.spot === "chest")!, width: 100, height: 100 }
+    const moved = { ...base, layer: true, y: base.y + 300 }
+    const [area] = entranceAreas([base, moved], ["chest"])
+    expect(area.height).toBe(100)
+    expect(entranceAreas([moved], ["chest"])[0].y).toBe(moved.y - 50)
+  })
 })
 
 describe("fullFound", () => {

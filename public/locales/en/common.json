@@ -273,18 +273,14 @@
   },
   "detector": {
     "compassTitle": "Compass",
-    "corridorTitle": "Hidden passageways",
-    "pickTarget": "Pick a hieroglyph to hunt in your Collection",
-    "allCollected": "All pieces collected",
+    "corridorTitle": "Corridor finder",
+    "pickTarget": "Pick a hieroglyph at the map table in camp",
+    "allCollected": "No piece yet within reach in a pyramid you explored before",
     "more": "+{{count}} more",
     "corridorHere": "There is a hidden passage right here",
     "revealCorridor": "Open it",
     "corridorNearby": "A hidden corridor is close by",
     "corridorOnFloor": "A hidden corridor waits on this floor",
-    "hunting": "Hunting {{symbol}}",
-    "huntStop": "Stop",
-    "huntHint": "Select an uncollected hieroglyph, then hunt it with the compass",
-    "huntAction": "Hunt {{symbol}}",
     "lookingFor": "Looking for {{symbol}}",
     "access": {
       "open": "Nothing known blocking this one",
@@ -303,6 +299,35 @@
       "floor": "Something on this floor",
       "near": "Something close by",
       "here": "Right here! Open the detector"
+    },
+    "camp": {
+      "parts": "{{count}} of {{total}} parts",
+      "compassReach": {
+        "1": "sees the pyramid",
+        "2": "sees the floor",
+        "3": "points out the spot"
+      },
+      "pickHeading": "What is the compass looking for?",
+      "onlyIncomplete": "Only signs you have a piece of, until they are complete.",
+      "whereHeading": "Where the pieces of {{symbol}} lie",
+      "pickFirst": "Pick a sign to see where its pieces lie.",
+      "follow": "Follow this sign",
+      "following": "The compass follows this sign",
+      "nothingToFind": "You have no piece yet of a sign that is not complete.",
+      "noneInReach": "No piece yet within reach in a pyramid you explored before.",
+      "corridorReach": {
+        "1": "hears a corridor nearby",
+        "2": "hears this whole floor",
+        "3": "hears the other floors too",
+        "4": "hears other journeys"
+      },
+      "corridorInPyramid": "Inside a pyramid it listens for closed corridors.",
+      "corridorFarNext": "With all four parts it hears other journeys from camp.",
+      "corridorWhere": "Where a corridor is still closed",
+      "corridorNone": "No closed corridor in a journey you have been to.",
+      "pyramid": "Pyramid {{n}}",
+      "corridorCount_one": "{{count}} corridor",
+      "corridorCount_other": "{{count}} corridors"
     }
   },
   "keys": {
@@ -1576,7 +1601,12 @@
     "entrance": {
       "collection": "Collection",
       "mosaic": "Mosaic",
-      "journeys": "All journeys"
+      "journeys": "All journeys",
+      "detectors": "Detectors"
+    },
+    "mapTable": {
+      "title": "Map table",
+      "journeys": "Journeys"
     }
   },
   "home": {

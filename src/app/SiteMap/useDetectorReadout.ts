@@ -1,16 +1,16 @@
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
-import type { DetectorMode } from "@/game/siteTypes"
+import type { CompassHit, DetectorMode } from "@/game/siteTypes"
 import type { DetectorPanelLabels } from "@/ui/atoms/DetectorPanel"
 import type { MergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { useCompassTargetLabel } from "@/app/SiteMap/compassTarget"
-import { useJourneyTranslations } from "@/app/translations/useJourneyTranslations"
+import { useCompassHitLabel } from "@/app/SiteMap/compassHits"
 
 export type DetectorReadout = {
   labels: DetectorPanelLabels
   titles: Record<Exclude<DetectorMode, null>, string>
-  /** id → localized journey name, so a hit reads "Papyrus Merchant's Route 2" and not "starter_2". */
-  journeyName: (id: string) => string
+  /** A compass hit as a player reads it: journey, pyramid, floor. */
+  hitLabel: (hit: CompassHit, level: number) => string
   /** id → the hunted item's glyph; mod-owned, reached through the compass-target seam. */
   compassTargetLabel: (id: string) => string
   /** The detectors the player owns, in the order the switcher shows them. Empty = no HUD button. */
@@ -23,13 +23,7 @@ export type DetectorReadout = {
 export const useDetectorReadout = (levels: MergedDetectorLevels): DetectorReadout => {
   const { t } = useTranslation("common")
   const compassTargetLabel = useCompassTargetLabel()
-  // Called ONCE and reduced to a lookup: the per-id useJourneyTranslation is a hook, so it can't be
-  // called per result.
-  const translatedJourneys = useJourneyTranslations()
-  const journeyName = useMemo(() => {
-    const names: Record<string, string> = Object.fromEntries(translatedJourneys.map(j => [j.id, j.name]))
-    return (id: string) => names[id] ?? id
-  }, [translatedJourneys])
+  const hitLabel = useCompassHitLabel()
 
   const titles = useMemo(
     () => ({
@@ -72,5 +66,5 @@ export const useDetectorReadout = (levels: MergedDetectorLevels): DetectorReadou
     [levels.compass, levels.corridor]
   )
 
-  return { labels, titles, journeyName, compassTargetLabel, available }
+  return { labels, titles, hitLabel, compassTargetLabel, available }
 }

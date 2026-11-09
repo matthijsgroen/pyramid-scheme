@@ -25,6 +25,9 @@ import type { Arrival } from "@/app/home/ComingHome"
 import { NewChapter } from "@/app/home/NewChapter"
 import { useHomeSave } from "@/app/home/useHomeSave"
 import { useCampFound } from "@/app/home/campFoundSource"
+import { MapTableScreen, type MapTableTab } from "@/app/home/MapTableScreen"
+import { heldDetectors, withDetectors } from "@/app/home/detectorScreens"
+import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { continueJourney, entryOpen, newToDiscoverCount } from "@/app/home/continueJourney"
 import { useElementSize } from "@/app/home/useElementSize"
 import { useIsDesktop } from "@/app/home/useIsDesktop"
@@ -36,7 +39,7 @@ import { ContinueCard } from "@/ui/molecules/ContinueCard"
 import { CAMP_PANEL_WIDTH, CampHomeLayout } from "@/ui/organisms/CampHomeLayout"
 import { CampPopup } from "@/ui/organisms/CampPopup"
 
-type Popup = "collection" | "window" | "journeys"
+type Popup = "collection" | "window" | "mapTable"
 
 // Space kept between the card and the scene's lowest piece on a phone.
 const CARD_GAP = 16
@@ -83,7 +86,9 @@ export const Base = ({
   const [cardRef, card] = useElementSize()
   const heldKeys = useMergedHeldKeys()
   const keysLoaded = useHeldKeysLoaded()
-  const found = useCampFound()
+  const held = heldDetectors(useMergedDetectorLevels())
+  const found = withDetectors(useCampFound(), held)
+  const [tab, setTab] = useState<MapTableTab>("journeys")
   const gateNeeds = useMergedGateNeeds()
   const chapter = currentChapter(heldKeys, tier => gateNeeds.open({ tier }, heldKeys))
   const home = useHomeSave()
@@ -152,9 +157,19 @@ export const Base = ({
         badge: windowEntrance.badge,
         onOpen: () => setPopup("window"),
       },
-      mapTable: isDesktop ? undefined : { label: t("camp.entrance.journeys"), onOpen: () => setPopup("journeys") },
+      // On desktop the journeys stand beside the camp, so the table opens only for its detectors.
+      mapTable:
+        isDesktop && held.length === 0
+          ? undefined
+          : {
+              label: t(isDesktop ? "camp.entrance.detectors" : "camp.entrance.journeys"),
+              onOpen: () => {
+                setTab(isDesktop ? held[0] : "journeys")
+                setPopup("mapTable")
+              },
+            },
     }),
-    [t, windowEntrance, isDesktop, news.total]
+    [t, windowEntrance, isDesktop, news.total, held]
   )
 
   const continueCard = (
@@ -169,7 +184,12 @@ export const Base = ({
         toDiscover > 0
           ? {
               text: t("camp.hint", { count: toDiscover }),
-              onOpen: isDesktop ? undefined : () => setPopup("journeys"),
+              onOpen: isDesktop
+                ? undefined
+                : () => {
+                    setTab("journeys")
+                    setPopup("mapTable")
+                  },
             }
           : undefined
       }
@@ -181,7 +201,9 @@ export const Base = ({
   const popupTitle = {
     collection: t("camp.entrance.collection"),
     window: windowEntrance?.entrance.title(t) ?? "",
-    journeys: t("camp.entrance.journeys"),
+    mapTable: t(
+      isDesktop ? "camp.entrance.detectors" : held.length > 0 ? "camp.mapTable.title" : "camp.entrance.journeys"
+    ),
   }
   const WindowScreen = windowEntrance?.entrance.Screen
 
@@ -239,14 +261,24 @@ export const Base = ({
           title={popupTitle[popup]}
           closeLabel={t("camp.close")}
           onClose={closePopup}
-          fill={popup !== "journeys"}
+          // Tabs keep one height, so switching does not make the popup jump.
+          fill={popup !== "mapTable" || held.length > 0}
         >
           {popup === "collection" && <CollectionPage />}
           {popup === "window" && WindowScreen && <WindowScreen />}
-          {popup === "journeys" && (
-            <div className="p-4">
-              <AllJourneys startGame={startGame} />
-            </div>
+          {popup === "mapTable" && (
+            <MapTableScreen
+              journeys={
+                isDesktop ? undefined : (
+                  <div className="p-4">
+                    <AllJourneys startGame={startGame} />
+                  </div>
+                )
+              }
+              held={held}
+              selected={tab}
+              onSelect={setTab}
+            />
           )}
         </CampPopup>
       )}

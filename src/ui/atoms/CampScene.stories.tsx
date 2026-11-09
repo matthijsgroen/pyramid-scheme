@@ -1,4 +1,5 @@
 import type { Decorator, Meta, StoryObj } from "@storybook/react-vite"
+import { action } from "storybook/actions"
 import { fn } from "storybook/test"
 import { CampScene, type CampSceneProps } from "./CampScene"
 import { CAMP_CATALOGUE } from "./campScene/campCatalogue"
@@ -161,7 +162,7 @@ export const PartlyBuilt: Story = {
   },
 }
 
-/** Finds out of the painted order: a compass with no table waits in the chest, and the pot waits for the fire. */
+/** Finds out of the painted order: a scroll case with no table waits in the chest, and the pot waits for the fire. */
 export const FoundInAnyOrder: Story = {
   args: {
     chapter: "master",
@@ -170,7 +171,7 @@ export const FoundInAnyOrder: Story = {
       sleeping: ["reedMat", "tent", "tentFlag"],
       water: ["jar", "well"],
       cooking: ["tripod", "feast"],
-      mapTable: ["map", "compass", "starMap"],
+      mapTable: ["map", "scrollCase", "starMap"],
     },
   },
 }
@@ -199,4 +200,22 @@ export const WithBadges: Story = {
       mapTable: { label: "Journeys", onOpen: fn() },
     },
   },
+}
+
+const detectorEntrances = {
+  entrances: {
+    chest: { label: "Collection", onOpen: action("open collection") },
+    window: { label: "Mosaic 61/252", onOpen: action("open mosaic") },
+    mapTable: { label: "Journeys", onOpen: action("open map table") },
+  },
+}
+
+/** Before the table stands, the detectors lie by the map on the sand; the map's entrance covers them. */
+export const CompassByTheMap: Story = {
+  args: { chapter: "junior", found: fullFound(CAMP_CATALOGUE, "junior"), ...detectorEntrances },
+}
+
+/** On the table: one entrance for the table, the compass on it and the horn by its leg. */
+export const CompassOnTheTable: Story = {
+  args: { chapter: "expert", found: fullFound(CAMP_CATALOGUE, "expert"), ...detectorEntrances },
 }

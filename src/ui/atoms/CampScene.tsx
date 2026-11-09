@@ -151,10 +151,14 @@ const ENTRANCE = [
   "pointer-events-auto absolute flex [transform:translate(-50%,-100%)] cursor-pointer flex-col items-center justify-end",
   "border-0 bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e0b33f]",
 ].join(" ")
-const ENTRANCE_TAG = [
-  "translate-y-[calc(100%+4px)] rounded-[10px] border-[1.5px] border-[#2b2118] bg-[#fff6e2] px-[9px] py-[2px]",
+const TAG_LOOK = [
+  "rounded-[10px] border-[1.5px] border-[#2b2118] bg-[#fff6e2] px-[9px] py-[2px]",
   "font-extrabold whitespace-nowrap text-[#2b2118]",
 ].join(" ")
+const ENTRANCE_TAG = `translate-y-[calc(100%+4px)] ${TAG_LOOK}`
+const ENTRANCE_TAG_ABOVE = `absolute top-0 -translate-y-[calc(100%+4px)] ${TAG_LOOK}`
+/** A tag's size before it is drawn: wide enough to tell whether two would touch. */
+const tagBox = (label: string, size: number) => ({ width: label.length * size * 0.62 + 24, height: size + 10 })
 const ENTRANCE_BADGE = [
   "absolute top-0 right-0 box-border h-[20px] min-w-[20px] rounded-[10px] bg-[#a3401a] px-[4px]",
   "text-center text-[11px] leading-[20px] font-extrabold text-[#fff8ea]",
@@ -337,7 +341,7 @@ const Fade = ({ visible, children }: { visible: boolean; children: ReactNode }) 
 
 const Piece = ({ placed, lightIndex }: { placed: PlacedPiece; lightIndex: number }) => {
   const { piece, scale, shadow } = placed
-  const art = campArt(piece.id, placed.layer)
+  const art = campArt(piece.art ?? piece.id, placed.layer)
   const style: CSSProperties = boxOf(placed)
   if (!art)
     return (
@@ -359,7 +363,7 @@ const Piece = ({ placed, lightIndex }: { placed: PlacedPiece; lightIndex: number
           placed={placed}
           url={art.url}
           length={piece.cast}
-          foot={campFoot(piece.id) ?? 1}
+          foot={campFoot(piece.art ?? piece.id) ?? 1}
           delay={delay}
         />
       )}
@@ -416,7 +420,7 @@ export const CampScene = ({
   if (!layout) return <div className={rootClass} />
 
   const { unit: u, horizon } = layout
-  const bare = standIns ? [] : layout.pieces.filter(p => !campArt(p.piece.id, p.layer))
+  const bare = standIns ? [] : layout.pieces.filter(p => !campArt(p.piece.art ?? p.piece.id, p.layer))
   const pieces = layout.pieces.filter(p => !bare.includes(p))
   const glows = layout.glows.filter(g => !bare.some(p => g.key.startsWith(`${p.key}:`)))
   const stars = starField(width, horizon)
@@ -432,8 +436,33 @@ export const CampScene = ({
   const rootStyle = { "--camp-horizon": `${(horizon / height) * 100}%` } as CSSProperties
 
   const entranceSpots = (["chest", "window", "mapTable"] as const).filter(spot => entrances[spot])
-  const entranceButtons = entranceAreas(pieces, entranceSpots).map(area => {
+  // Each tag takes the first clear place: below its entrance, above it, then slid sideways a half and a whole tag
+  // width, never off the scene. With no clear place a tag stays below.
+  const areas = entranceAreas(pieces, entranceSpots)
+  const tagsSoFar: { x: number; y: number; width: number; height: number }[] = []
+  const tagPlace = new Map<string, { above: boolean; shift: number }>()
+  for (const area of areas) {
+    const box = tagBox(entrances[area.spot as (typeof entranceSpots)[number]]!.label, tagSize)
+    const clear = (x: number, y: number) =>
+      x - box.width / 2 >= 0 &&
+      x + box.width / 2 <= width &&
+      !tagsSoFar.some(
+        t => Math.abs(t.x - x) < (t.width + box.width) / 2 && Math.abs(t.y - y) < (t.height + box.height) / 2
+      )
+    // Centres of the tag below and above the entrance; the area is centred on (x, y).
+    const below = area.y + area.height / 2 + 4 + box.height / 2
+    const overTop = area.y - area.height / 2 - 4 - box.height / 2
+    const places = [0, -0.5, 0.5, -1, 1].flatMap(share => [
+      { above: false, shift: share * box.width },
+      { above: true, shift: share * box.width },
+    ])
+    const place = places.find(p => clear(area.x + p.shift, p.above ? overTop : below)) ?? places[0]
+    tagPlace.set(area.spot, place)
+    tagsSoFar.push({ ...box, x: area.x + place.shift, y: place.above ? overTop : below })
+  }
+  const entranceButtons = areas.map(area => {
     const { label, badge, onOpen } = entrances[area.spot as (typeof entranceSpots)[number]]!
+    const { above, shift } = tagPlace.get(area.spot)!
     return (
       <button
         key={area.spot}
@@ -444,7 +473,10 @@ export const CampScene = ({
         style={{ left: area.x, top: area.y + area.height / 2, width: area.width, height: area.height }}
       >
         {badge !== undefined && <span className={ENTRANCE_BADGE}>{badge}</span>}
-        <span className={ENTRANCE_TAG} style={{ fontSize: tagSize }}>
+        <span
+          className={above ? ENTRANCE_TAG_ABOVE : ENTRANCE_TAG}
+          style={{ fontSize: tagSize, transform: shift ? `translateX(${shift}px)` : undefined }}
+        >
           {label}
         </span>
       </button>

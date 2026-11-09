@@ -16,8 +16,8 @@ import { TREASURE_PERKS, type TreasurePerk } from "./treasurePerks"
 //   - tierUnlockGroups: the difficulty ladder — one group per tier, met when ANY ONE of the previous
 //     tomb's several tier-unlock treasures is held (the first tier has none). Core owns the tier
 //     concept and ANDs this group with any other mod's; the mod owns which keys unlock each.
-//   - alsoHarvests + hiddenRequirement: the corridor detector. A `detection` perk of level n holds
-//     `detector:corridor:<k>` for every k ≤ n, and a hidden section needs level 1, since level 1 is what
+//   - alsoHarvests + hiddenRequirement: the corridor detector. Every `detection` treasure is one part,
+//     so any one of them makes level 1 — and level 1 is all a hidden section needs, since it is what
 //     lets a player step onto a hidden junction (useCorridorDetection.ts).
 
 // Per-tomb map-piece entry threshold (./piecesRequired). A tomb needs this many map pieces to
@@ -27,7 +27,7 @@ const PIECES_REQUIRED = TOMB_PIECES_REQUIRED
 export const detectorFact = (level: number): string => `detector:corridor:${level}`
 
 export const detectorFactsFor = (perk: TreasurePerk | undefined): string[] =>
-  perk?.type === "detection" ? Array.from({ length: perk.level }, (_, i) => detectorFact(i + 1)) : []
+  perk?.type === "detection" ? [detectorFact(1)] : []
 
 export const TOMB_TREASURE_REACHABILITY: ReachabilitySupport = {
   bucketForReward: reward =>

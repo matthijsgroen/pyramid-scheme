@@ -30,9 +30,15 @@ const labels: DetectorPanelLabels = {
 // mounted and later queries match earlier renders (see CollectibleSlot.spec.tsx for the same guard).
 afterEach(cleanup)
 
-// Journey ids are internal; the panel is handed a lookup so the readout shows real names. Tests use
-// stand-ins to prove the substitution happens (the app passes localized names from journeys.json).
-const journeyName = (id: string) => ({ starter_1: "Sphinx Dawn" })[id] ?? id
+// The panel is handed how to name a hit; this stand-in writes every precision out so each test sees which one showed.
+const hitLabel = (r: CompassHit, level: number) =>
+  [
+    `${({ starter_1: "Sphinx Dawn" } as Record<string, string>)[r.journeyId] ?? r.journeyId} L${r.levelIdx + 1}`,
+    level >= 2 ? `F${r.floorIdx + 1}` : "",
+    level >= 3 && r.cell ? `· (${r.cell.row},${r.cell.col})` : "",
+  ]
+    .filter(Boolean)
+    .join(" ")
 const targetLabel = (id: string) => (id === "h1" ? "𓎗" : id)
 
 const COMPASS: CompassHit[] = [
@@ -65,7 +71,7 @@ const renderCompass = (compassLevel: number, compassResults: CompassHit[] = COMP
       detectionLevel={0}
       compassTarget="h1"
       compassTargetLabel={targetLabel}
-      journeyName={journeyName}
+      hitLabel={hitLabel}
       compassResults={compassResults}
     />
   )

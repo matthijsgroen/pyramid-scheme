@@ -3,8 +3,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest"
 import { renderHook, act } from "@testing-library/react"
 import type { CompassResult } from "@/game/siteTypes"
 
-// Whether a compass hit is actually collectable right now. The scanner reports the gates it walked
-// past; this layer decides, against the keys the player holds, which of them are in the way.
+// Whether a compass hit is collectable right now. The scanner reports the gates it walked past; this layer decides,
+// against the keys the player holds, which of them are in the way, and drops a piece that is out of reach.
 //
 // A separate file from useDetector.spec.ts on purpose: the seam registries are module-global, so
 // registering a target/scanner here would break that spec's "no mod registered → nothing to scan".
@@ -16,6 +16,11 @@ vi.mock("@/support/useGameStorage", async () => {
   const { useState } = await vi.importActual<typeof import("react")>("react")
   return { useGameStorage: (_key: string, initial: unknown) => useState(initial) }
 })
+
+// Every floor has been stood on, so only access decides what the compass keeps.
+vi.mock("@/app/state/useJourneys", () => ({
+  useJourneys: () => ({ getJourney: () => ({ floorExploration: { "1:0": { open: false, keySets: [] } } }) }),
+}))
 
 // starter_1 is a starter-tier pyramid (no tier-unlock requirement); junior_1 needs one of starter's
 // tomb treasures; junior_treasure_tomb is a tomb, whose entry cost this layer can't evaluate.
@@ -57,9 +62,9 @@ describe("compass hit access", () => {
     expect(accessOf().access).toBe("open")
   })
 
-  it("is locked when a gating ward key is not held, and reports which", () => {
+  it("drops a piece behind a ward key not held", () => {
     hits = [hit({ wardKeys: ["starter_a_1"] })]
-    expect(accessOf()).toMatchObject({ access: "locked", missingKeys: ["starter_a_1"] })
+    expect(accessOf()).toBeUndefined()
   })
 
   it("is open once that ward key is held", () => {
@@ -71,12 +76,12 @@ describe("compass hit access", () => {
   it("needs EVERY key of a nested gate chain, not just one", () => {
     hits = [hit({ wardKeys: ["starter_a_1", "starter_a_2"] })]
     held = ["starter_a_1"]
-    expect(accessOf()).toMatchObject({ access: "locked", missingKeys: ["starter_a_2"] })
+    expect(accessOf()).toBeUndefined()
   })
 
-  it("is locked when the piece's tier is not unlocked yet", () => {
+  it("drops a piece in a tier not unlocked yet", () => {
     hits = [hit({ journeyId: "junior_1" })]
-    expect(accessOf().access).toBe("locked")
+    expect(accessOf()).toBeUndefined()
   })
 
   it("is open in a locked-by-default tier once any of its unlock treasures is held", () => {
@@ -85,9 +90,9 @@ describe("compass hit access", () => {
     expect(accessOf().access).toBe("open")
   })
 
-  it("is hidden for a piece in a hidden corridor", () => {
+  it("drops a piece in a hidden corridor", () => {
     hits = [hit({ hidden: true })]
-    expect(accessOf().access).toBe("hidden")
+    expect(accessOf()).toBeUndefined()
   })
 
   // Cost, not a lock: the readout can't tell whether the player can afford or enter, so it says so
@@ -100,11 +105,5 @@ describe("compass hit access", () => {
   it("is unknown for a piece inside a tomb", () => {
     hits = [hit({ journeyId: "starter_treasure_tomb" })]
     expect(accessOf().access).toBe("unknown")
-  })
-
-  // Hardest blocker wins, so the readout names the thing that actually stops you first.
-  it("prefers locked over hidden when both apply", () => {
-    hits = [hit({ wardKeys: ["starter_a_1"], hidden: true })]
-    expect(accessOf().access).toBe("locked")
   })
 })

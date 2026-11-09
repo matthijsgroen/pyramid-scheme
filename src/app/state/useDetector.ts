@@ -1,13 +1,8 @@
-import { useCallback, useMemo, useState } from "react"
+import { useState } from "react"
 import { useGameStorage } from "@/support/useGameStorage"
-import type { DetectorMode, CompassAccess, CompassHit } from "@/game/siteTypes"
-import { useMergedCompassScanner } from "@/app/SiteMap/detectorScanners"
+import type { DetectorMode, CompassHit } from "@/game/siteTypes"
 import { useCompassTarget } from "@/app/SiteMap/compassTarget"
-import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
-import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "@/worldGen/data"
-import { useMergedGateNeeds } from "@/app/pages/gateNeeds"
-import { isTierUnlocked } from "@/app/pages/journeyAvailability"
-import type { Difficulty } from "@/data/difficultyLevels"
+import { useCompassHits } from "@/app/SiteMap/compassHits"
 
 export type DetectorAPI = {
   /** Which detector is RUNNING. Independent of whether the readout is showing. */
@@ -20,33 +15,6 @@ export type DetectorAPI = {
   compassResults: CompassHit[]
 }
 
-// journeyId → its tier, and which journeys are tombs. Same derivation as placeFragments' own
-// buildJourneyMeta; built once since the world is static.
-const JOURNEY_TIER: Record<string, string> = Object.fromEntries(
-  [...PYRAMID_JOURNEYS, ...TOMB_JOURNEYS].map(j => [j.id, j.tier])
-)
-const TOMB_JOURNEY_IDS = new Set(TOMB_JOURNEYS.map(j => j.id))
-
-// Can the player go get this piece right now? Only claims what's checkable — see CompassAccess.
-// Precedence runs hardest-blocker-first: an outright lock outranks needing the corridor detector,
-// which outranks a cost we can't evaluate.
-const accessOf = (
-  hit: { journeyId: string; wardKeys?: readonly string[]; hidden?: boolean; inShop?: boolean },
-  heldKeys: ReadonlySet<string>,
-  gateOpen: (tier: Difficulty) => boolean
-): { access: CompassAccess; missingKeys?: readonly string[] } => {
-  const missingKeys = (hit.wardKeys ?? []).filter(k => !heldKeys.has(k))
-  if (missingKeys.length > 0) return { access: "locked", missingKeys }
-  // Same gate the all-journeys list uses, including tiers this release doesn't ship yet.
-  const tier = JOURNEY_TIER[hit.journeyId] as Difficulty | undefined
-  if (tier && !isTierUnlocked(tier, heldKeys, gateOpen)) return { access: "locked" }
-  if (hit.hidden) return { access: "hidden" }
-  // Entering a tomb costs map pieces and shop stock costs money; neither is modelled here, so say
-  // "don't know" rather than implying the piece is there for the taking.
-  if (hit.inShop || TOMB_JOURNEY_IDS.has(hit.journeyId)) return { access: "unknown" }
-  return { access: "open" }
-}
-
 export const useDetector = (): DetectorAPI => {
   // Two separate things, deliberately: which detector is running, and whether its readout is on
   // screen. The readout is a card over the map, so the player wants it shut most of the time — while
@@ -57,25 +25,11 @@ export const useDetector = (): DetectorAPI => {
   // also syncs every instance of this key, so a screen outside the site map reads the same reading.
   const [activeDetector, setActiveDetector] = useGameStorage<DetectorMode>("activeDetector", null)
   const [readoutOpen, setReadoutOpen] = useState(false)
-  // The hunt target is picked on Collection and owned by the fragment mod (§3C); core reads it via
+  // The hunt target is picked at the camp map table and owned by the fragment mod; core reads it via
   // the seam (null when no mod owns it) so a target survives navigation into a site.
   const compassTarget = useCompassTarget()
-  const scanCompass = useMergedCompassScanner()
-  const heldKeys = useMergedHeldKeys()
-  const gateNeeds = useMergedGateNeeds()
-  const gateOpen = useCallback((tier: Difficulty) => gateNeeds.open({ tier }, heldKeys), [gateNeeds, heldKeys])
-
-  // Compass scanning is mod-owned (each mod registers a scanner for its own reward type via
-  // detectorScanners); core just runs the merged scanner for the current target, then resolves each
-  // hit's access against the keys the player holds — the scanner reports gates, it can't judge them.
-  // `compassTarget` must stay a bare string for this memo to hold; see compassTarget.ts.
-  const compassResults = useMemo<CompassHit[]>(
-    () =>
-      activeDetector === "compass" && compassTarget
-        ? scanCompass(compassTarget).map(hit => ({ ...hit, ...accessOf(hit, heldKeys, gateOpen) }))
-        : [],
-    [activeDetector, compassTarget, scanCompass, heldKeys, gateOpen]
-  )
+  // Scanned only while the compass runs: at level 3 a scan assembles every floor holding a piece.
+  const compassResults = useCompassHits(activeDetector === "compass" ? compassTarget : null)
 
   return {
     activeDetector,

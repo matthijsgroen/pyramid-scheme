@@ -5,7 +5,6 @@ import { useInventoryCategory } from "@/mods/hieroglyph/app/useInventoryTranslat
 import { getItemFirstLevel } from "../game/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { useHieroglyphProgress } from "./useHieroglyphProgress"
-import { HIEROGLYPH_SYMBOLS } from "./hieroglyphSymbols"
 import { difficulties } from "@/data/difficultyLevels"
 import { CategoryGrid } from "@/ui/atoms/CategoryGrid"
 import { CollectionSection } from "@/ui/atoms/CollectionSection"
@@ -70,55 +69,6 @@ const CategoryGridSection: FC<{
   )
 }
 
-// The hunt bar: the Collection is the compass's target picker. Shown only when the compass is
-// unlocked (compassLevel > 0) — with the mod off there's no fragment section at all, so the whole
-// affordance is absent. Selecting an uncollected hieroglyph offers "hunt it"; the active target
-// shows with a way to stop.
-const HuntBar: FC<{
-  selectedItem: CollectionSectionProps["selectedItem"]
-  inventory: Record<string, number | undefined>
-}> = ({ selectedItem, inventory }) => {
-  const { t } = useTranslation("common")
-  const { compassLevel, compassTarget, setCompassTarget, hieroglyphProgress } = useHieroglyphProgress()
-  if (compassLevel === 0) return null
-
-  const isHieroglyph = (id: string) => id in HIEROGLYPH_SYMBOLS
-  const isCollected = (id: string) => {
-    const { found, required } = hieroglyphProgress(id)
-    return inventory[id] !== undefined || found >= required
-  }
-  const huntable = selectedItem && isHieroglyph(selectedItem.id) && !isCollected(selectedItem.id) ? selectedItem : null
-
-  return (
-    <div className="flex items-center gap-2 rounded-lg bg-purple-900/80 px-3 py-2 text-sm text-purple-50">
-      <span className="text-lg">🧭</span>
-      {compassTarget ? (
-        <>
-          <span className="flex-1">
-            {t("detector.hunting", { symbol: HIEROGLYPH_SYMBOLS[compassTarget] ?? compassTarget })}
-          </span>
-          <button
-            onClick={() => setCompassTarget(null)}
-            className="rounded bg-purple-700 px-2 py-1 hover:bg-purple-600"
-          >
-            {t("detector.huntStop")}
-          </button>
-        </>
-      ) : (
-        <span className="flex-1 text-purple-200">{t("detector.huntHint")}</span>
-      )}
-      {huntable && huntable.id !== compassTarget && (
-        <button
-          onClick={() => setCompassTarget(huntable.id)}
-          className="rounded bg-amber-600 px-2 py-1 text-amber-50 hover:bg-amber-500"
-        >
-          {t("detector.huntAction", { symbol: huntable.symbol })}
-        </button>
-      )}
-    </div>
-  )
-}
-
 export const HieroglyphCollectionSection: FC<CollectionSectionProps> = ({
   selectedItem,
   onSelect,
@@ -129,7 +79,6 @@ export const HieroglyphCollectionSection: FC<CollectionSectionProps> = ({
   const { hieroglyphFragments } = useHieroglyphProgress()
   return (
     <>
-      <HuntBar selectedItem={selectedItem} inventory={inventory} />
       {CATEGORIES.map(category => (
         <CategoryGridSection
           key={category}

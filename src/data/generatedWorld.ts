@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1352974922
+export const worldContentHash = 997427764
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -9896,7 +9896,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         rewards: [
           { type: "waterskin" },
           { type: "waterskin" },
-          { type: "campFind", step: "compass" },
+          { type: "campFind", step: "seed" },
           { type: "money", amount: 2 },
         ],
         locks: [
@@ -10229,7 +10229,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         rewards: [
           { type: "waterskin" },
           { type: "waterskin" },
-          { type: "campFind", step: "seed" },
+          { type: "campPart", structure: "seatingStones", part: "sandstoneBlock" },
           { type: "money", amount: 3 },
           { type: "money", amount: 3 },
         ],
@@ -10565,7 +10565,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         rewards: [
           { type: "waterskin" },
           { type: "waterskin" },
-          { type: "campPart", structure: "seatingStones", part: "sandstoneBlock" },
+          { type: "campPart", structure: "breadOven", part: "clayPlaster" },
           { type: "money", amount: 3 },
           { type: "money", amount: 3 },
         ],
@@ -11019,7 +11019,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         rewards: [
           { type: "waterskin" },
           { type: "waterskin" },
-          { type: "campPart", structure: "breadOven", part: "clayPlaster" },
+          { type: "campPart", structure: "table", part: "trestles" },
           { type: "money", amount: 1 },
           { type: "money", amount: 2 },
           { type: "money", amount: 2 },
@@ -11414,7 +11414,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         rewards: [
           { type: "waterskin" },
           { type: "waterskin" },
-          { type: "campPart", structure: "table", part: "trestles" },
+          { type: "campPart", structure: "seatingStones", part: "hewnSlab" },
           { type: "money", amount: 3 },
           { type: "money", amount: 3 },
         ],
@@ -11696,7 +11696,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         rewards: [
           { type: "waterskin" },
           { type: "waterskin" },
-          { type: "campPart", structure: "seatingStones", part: "hewnSlab" },
+          { type: "campPart", structure: "breadOven", part: "ovenLid" },
           { type: "money", amount: 2 },
           { type: "money", amount: 2 },
           { type: "money", amount: 2 },
@@ -12045,7 +12045,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         rewards: [
           { type: "waterskin" },
           { type: "waterskin" },
-          { type: "campPart", structure: "breadOven", part: "ovenLid" },
+          { type: "campPart", structure: "table", part: "leatherStraps" },
           { type: "money", amount: 1 },
           { type: "money", amount: 2 },
           undefined,
@@ -12352,15 +12352,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 7816500863991682,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a5", pieceIndex: 3 },
-        rewards: [
-          { type: "waterskin" },
-          { type: "waterskin" },
-          { type: "campPart", structure: "table", part: "leatherStraps" },
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-        ],
+        rewards: [{ type: "waterskin" }, { type: "waterskin" }, undefined, undefined, undefined, undefined, undefined],
         locks: [
           {
             lock: {
