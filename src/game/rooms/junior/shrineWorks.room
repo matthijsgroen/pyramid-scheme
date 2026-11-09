@@ -1,0 +1,17 @@
+// designed by: Claude
+// junior. A shrine with the lever or torch before it: the shrine alone under its false door, the mechanism in front.
+room shrineWorks
+tier junior
+activity householdShrine
+
+layout
+# d f d #
+# . r . #
+d . m . d
+# . s . #
+# d # d #
+
+r wall shrine
+f wallItem stela
+m mechanism
+s stop

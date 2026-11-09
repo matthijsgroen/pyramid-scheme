@@ -1,0 +1,17 @@
+// designed by: Claude
+// junior. The banquet's music room, cleared for the lever or torch: the harp in one corner of the north wall.
+room musicRoom
+tier junior
+activity banquet
+mirror
+
+layout
+# # # d #
+# h . . #
+d . m . d
+# . s . #
+# d # d #
+
+h wall harp
+m mechanism
+s stop

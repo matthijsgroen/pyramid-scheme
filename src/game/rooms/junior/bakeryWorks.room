@@ -1,0 +1,19 @@
+// designed by: Claude
+// junior. The bakery's works: the lever or torch stands in the middle of the floor, the bread oven and the beer jars
+// keep to the corners of the north wall, out of its way.
+room bakeryWorks
+tier junior
+activity bakeryBrewery
+mirror
+
+layout
+# # d # d # #
+# o . . . j #
+d . . m . . d
+# . . s . . #
+# # d # d # #
+
+o wall breadOven
+j wall jarRack
+m mechanism
+s stop
