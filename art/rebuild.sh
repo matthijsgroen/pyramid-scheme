@@ -873,6 +873,58 @@ scaffold jarrack --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/masters/props/junior/jarRack.webp --tier=junior --name=jarRack --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.92
 
+# The nobleman's own kinds (themed-rooms.md, Junior): the banquet, the dressing room, the garden court, the
+# bedroom and the bakery. Each block runs once its master is in; until then the scaffold is in the repaint
+# queue. They are rendered over the rank's light orange floor. The banquet table and the bed are two cells
+# across (--cells=2x1, landscape at the 126x84 frame's 3:2) and spun under 10 degrees, because a large spin
+# turns a two-cell length into depth; the harp and the potted tree stand a cell taller (--tall=1, the 56x140
+# frame's 2:5). The headrest is a hand's height, so it is scaled well down.
+if [ -f art/masters/props/junior/banquetTable.webp ]; then
+  scaffold banquetTable --spin=-6 --width=672 --height=448 --colour=#e0c193 --floor=#e2bb8e
+  yarn import-tile art/masters/props/junior/banquetTable.webp --tier=junior --name=banquetTable --slot=prop \
+    --cells=2x1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/junior/harp.webp ]; then
+  scaffold harp --spin=4 --width=448 --height=1120 --colour=#e0c193 --floor=#e2bb8e
+  yarn import-tile art/masters/props/junior/harp.webp --tier=junior --name=harp --slot=prop \
+    --tall=1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/junior/dressingTable.webp ]; then
+  scaffold dressingTable --spin=4 --colour=#e0c193 --floor=#e2bb8e
+  yarn import-tile art/masters/props/junior/dressingTable.webp --tier=junior --name=dressingTable --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/junior/wigStand.webp ]; then
+  scaffold wigStand --spin=10 --colour=#e0c193 --floor=#e2bb8e
+  yarn import-tile art/masters/props/junior/wigStand.webp --tier=junior --name=wigStand --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/junior/pottedTree.webp ]; then
+  scaffold pottedTree --spin=12 --width=448 --height=1120 --colour=#e0c193 --floor=#e2bb8e
+  yarn import-tile art/masters/props/junior/pottedTree.webp --tier=junior --name=pottedTree --slot=prop \
+    --tall=1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/junior/bed.webp ]; then
+  scaffold bed --spin=5 --width=672 --height=448 --colour=#e0c193 --floor=#e2bb8e
+  yarn import-tile art/masters/props/junior/bed.webp --tier=junior --name=bed --slot=prop \
+    --cells=2x1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/junior/headrest.webp ]; then
+  scaffold headrest --spin=6 --colour=#e0c193 --floor=#e2bb8e
+  yarn import-tile art/masters/props/junior/headrest.webp --tier=junior --name=headrest --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.55
+fi
+if [ -f art/masters/props/junior/grindstone.webp ]; then
+  scaffold grindstone --spin=6 --colour=#e0c193 --floor=#e2bb8e
+  yarn import-tile art/masters/props/junior/grindstone.webp --tier=junior --name=grindstone --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/junior/breadOven.webp ]; then
+  scaffold breadOven --spin=14 --colour=#e0c193 --floor=#e2bb8e
+  yarn import-tile art/masters/props/junior/breadOven.webp --tier=junior --name=breadOven --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+
 # expert — the priest
 #
 # His three surfaces, re-rolled to the current standard, and the prompts are junior's with the priest's

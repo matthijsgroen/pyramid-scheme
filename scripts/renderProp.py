@@ -4321,6 +4321,252 @@ def _clutter_amphora():
     return join_all()
 
 
+# THE NOBLEMAN'S HOUSE (themed-rooms.md, Junior): nine kinds of his own, for the banquet, the dressing room,
+# the garden court, the bedroom and the bakery. Every cedar part is `timber`, so on the rank's pale floor the
+# scaffold already reads as dark worked wood; linen is `cloth`, fired clay `pottery`. Two parts are new to
+# them: `leaf` for the potted tree's crown and `fruit` for the banquet's bowl, each a colour nothing else in
+# the rank wears, so neither is read as more bread or more pottery.
+
+
+def _loaf(x, y, z, r, part="accent"):
+    """A round loaf lying on a surface: a squashed sphere, coarse for `prim_shelf`'s pots' reason."""
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=14, ring_count=8, radius=r, location=(x, y, z + r * 0.55))
+    loaf = bpy.context.object
+    loaf.scale = (1.25, 1.0, 0.55)
+    bpy.ops.object.transform_apply(scale=True)
+    return mark(loaf, part)
+
+
+def _segment(p0, p1, depth, thick, part):
+    """A bar from P0 to P1 in the x-z plane, `thick` across and `depth` deep, overlapping its neighbours by a
+    little at each end (`prim_mask`: a hairline is a gap). Built at the origin and turned, `turn`'s rule."""
+    (x0, z0), (x1, z1) = p0, p1
+    length = math.hypot(x1 - x0, z1 - z0) + thick * 0.5
+    bar = box(length, depth, thick)
+    return mark(turn(bar, -math.degrees(math.atan2(z1 - z0, x1 - x0)), "Y", (x0 + x1) / 2, 0.0, (z0 + z1) / 2), part)
+
+
+def prim_banquettable():
+    """The nobleman's BANQUET TABLE, two cells long: a low cedar table laid with a platter of loaves, a bowl
+    heaped with fruit, cups, and a stoppered wine jar in a ring stand at each end.
+
+    The JARS top the back edge, `prim_market`'s far-edge rule: under z + k*y the back of the tabletop is the
+    high boundary, and the jars standing over it are what let the platter, the bowl and the cups lie low.
+    Each stands in a ring for `prim_basin`'s reason — `jar()` tapers to a point."""
+    w, d, h = 2.00, 0.50, 0.40
+    _low_table(w, d, h, top_t=0.06, leg=0.07, part="timber")
+    for jx in (-0.80, 0.74):
+        mark(cyl(0.105, 0.045, x=jx, y=0.08, z=h + 0.022, verts=14), "pottery")
+        jar(jx, 0.08, 0.36, 0.105, z=h - 0.02, part="pottery")
+    mark(cyl(0.22, 0.026, x=-0.36, y=-0.02, z=h + 0.013, verts=20), "pottery")
+    for lx, ly, r in ((-0.46, 0.00, 0.085), (-0.28, -0.06, 0.08), (-0.34, 0.09, 0.075)):
+        _loaf(lx, ly, h + 0.02, r)
+    # The fruit bowl: a flared bowl with the heap standing over its rim, so it reads as full and not as a dish.
+    mark(cone(0.09, 0.16, 0.08, x=0.24, y=0.0, z=h + 0.04, verts=18), "pottery")
+    mark(dome(0.15, 0.12, x=0.24, y=0.0, z=h + 0.07), "fruit")
+    for fx, fz in ((0.16, 0.17), (0.31, 0.16), (0.24, 0.21)):
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=6, radius=0.05, location=(fx, -0.02, h + fz))
+        mark(bpy.context.object, "fruit")
+    for cx, cy in ((0.02, -0.10), (0.48, -0.10)):
+        mark(cone(0.035, 0.05, 0.08, x=cx, y=cy, z=h + 0.04, verts=12), "pottery")
+    return join_all()
+
+
+def prim_harp():
+    """A STANDING BOW HARP, one cell and a cell taller: a curved arm of cedar whose lower half thickens into
+    the sound box resting on the floor, and strings running from the neck above down to the box below.
+
+    BUILT IN THE X-Z PLANE, the front plane, which the shear leaves alone: the curve draws as a true curve and
+    the strings as true verticals. Turned in y it would collapse into a vertical stack (`prim_sconce`). The bow
+    opens to the right, so the strings span its mouth; thin and `nocast`, because they stand in the air."""
+    cx, cz, a, b = 0.30, 0.86, 0.52, 0.86
+    lo, hi, n = -78.0, 78.0, 16
+
+    def at(i):
+        th = math.radians(lo + (hi - lo) * i / n)
+        return (cx - a * math.cos(th), cz + b * math.sin(th))
+
+    pts = [at(i) for i in range(n + 1)]
+    for i in range(n):
+        t = i / (n - 1)
+        # Thickest at the foot: the sound box, which a harp's whole lower limb is.
+        _segment(pts[i], pts[i + 1], 0.12, 0.24 * (1 - t) + 0.06 * t, "timber")
+    # A carved head at the neck's end, and a foot block the box rests on. The foot is the LOWEST part, set
+    # under the thick end of the box: level with it, the box's slanted corner stood on the floor beside a
+    # plank that read as loose.
+    mark(box(0.10, 0.10, 0.12, x=pts[-1][0] + 0.02, z=pts[-1][1] + 0.03), "timber")
+    mark(box(0.34, 0.14, 0.10, x=pts[0][0] - 0.10, z=-0.09), "timber")
+    for i in range(7):
+        x = -0.08 + i * 0.04
+        th = math.acos((cx - x) / a)
+        z_up, z_lo = cz + b * math.sin(th) - 0.03, cz - b * math.sin(th) + 0.08
+        mark(cyl(0.008, z_up - z_lo, x=x, z=(z_up + z_lo) / 2, verts=6), nocast("cloth"))
+    return join_all()
+
+
+def prim_dressingtable():
+    """A DRESSING TABLE against the wall: a low cedar table with a copper mirror standing on its handle, two
+    kohl pots and an ointment jar.
+
+    The mirror is a DISC IN THE X-Z PLANE, so it draws as a true circle, and it stands tall enough to top the
+    back edge (`prim_market`) — the one piece that tells this from the laid table. The pots are pale stone and
+    pottery, small and lidded, standing in a row in front of it."""
+    w, d, h = 0.80, 0.34, 0.42
+    _low_table(w, d, h, part="timber")
+    mx, my = -0.18, 0.06
+    mark(box(0.12, 0.08, 0.03, x=mx, y=my, z=h + 0.015), "timber")
+    mark(cyl(0.022, 0.17, x=mx, y=my, z=h + 0.025 + 0.085, verts=10), "timber")
+    disc = cyl(0.15, 0.02, x=mx, y=my, z=h + 0.19 + 0.14, verts=28)
+    disc.rotation_euler = (math.pi / 2, 0.0, 0.0)
+    mark(disc, "metal")
+    for px, r, ph, part in ((0.06, 0.04, 0.10, "limestone"), (0.17, 0.035, 0.08, "pottery"), (0.28, 0.05, 0.12, "limestone")):
+        mark(cyl(r, ph, x=px, y=-0.04, z=h + ph / 2, verts=14), part)
+        mark(dome(r * 1.1, r * 0.7, x=px, y=-0.04, z=h + ph - 0.005), part)
+    return join_all()
+
+
+def prim_wigstand():
+    """A WIG STAND: a cedar post on a round foot, carrying a carved head with a long tripartite wig on it —
+    a crown of hair, a lappet down each side of a pale face, and the mass of it behind.
+
+    The lappets set the width, and the pale face between them is what says head and not knob: a wig on its
+    own at 56 units is a dark drop, and with a face framed in it it is a wig."""
+    foot = cyl(0.17, 0.05, z=0.025, verts=18)
+    foot.scale = (1.0, 0.7, 1.0)
+    bpy.ops.object.transform_apply(scale=True)
+    mark(foot, "timber")
+    # A short post, so the wig is most of the silhouette: on a tall one it drew as a knob on a pole.
+    mark(cyl(0.035, 0.55, z=0.05 + 0.275, verts=12), "timber")
+    # The face stands FORWARD of the lappets: level with them, they hid all but a sliver of it.
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=16, ring_count=8, radius=0.12, location=(0.0, -0.05, 0.74))
+    head = bpy.context.object
+    head.scale = (0.9, 1.0, 1.2)
+    bpy.ops.object.transform_apply(scale=True)
+    mark(head, "limestone")
+    mark(dome(0.17, 0.15, y=0.02, z=0.80), "figure")
+    for sx in (-1, 1):
+        mark(box(0.08, 0.08, 0.42, x=sx * 0.14, y=-0.01, z=0.66), "figure")
+    mark(box(0.30, 0.08, 0.40, y=0.07, z=0.66), "figure")
+    return join_all()
+
+
+def prim_pottedtree():
+    """A TREE IN A POT, one cell and a cell taller: a flared pottery pot with a rim, a short trunk, and a
+    crown of leaf clumps — the garden court's sycamore fig.
+
+    The crown is clumps rather than one ball, so its edge is lobed and reads as foliage; faceted for
+    `dome`'s reason. It is `nocast`, as the palm's fronds are: it stands in the air, and a flattened crown
+    would lay a dark disc on the floor beside the pot."""
+    mark(cone(0.16, 0.24, 0.42, z=0.21, verts=20), "pottery")
+    mark(cyl(0.255, 0.05, z=0.42, verts=20), "pottery")
+    # Earth inside the rim, darker and proud of it: in the pot's own colour the top read as a lid.
+    mark(cyl(0.215, 0.02, z=0.447, verts=20), "deep")
+    mark(cone(0.06, 0.04, 0.80, z=0.44 + 0.40, verts=10), "timber")
+    for x, z, r in ((0.0, 1.42, 0.30), (-0.26, 1.30, 0.22), (0.27, 1.28, 0.22), (-0.15, 1.62, 0.23), (0.17, 1.60, 0.22), (0.0, 1.80, 0.18)):
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=7, radius=r, location=(x, 0.0, z))
+        clump = bpy.context.object
+        clump.scale = (1.0, 0.7, 0.9)
+        bpy.ops.object.transform_apply(scale=True)
+        mark(clump, nocast("leaf"))
+    return join_all()
+
+
+def prim_bed():
+    """The nobleman's BED, two cells long: a cedar frame on four lion legs, sloping down from the head (right)
+    to a footboard at the foot (left), with a linen cover over it.
+
+    The paws point in X, toward the head, the way a lion bed's do — and X is the one axis that draws
+    sideways, so the paws read; pointed at the viewer they would be four stubs (`prim_lamp`). The slope and the
+    footboard are what say Egyptian bed and not bench."""
+    # Shallow and high: depth is drawn as height, so a deep bed is all linen top, and the legs are what say
+    # lion bed — at knee height they were stubs under a slab.
+    length, d, frame_t = 1.90, 0.50, 0.08
+    head_z, foot_z = 0.60, 0.46
+    slope = math.degrees(math.atan2(head_z - foot_z, length))
+    mid = (head_z + foot_z) / 2
+
+    def top_at(x):
+        return foot_z + (x + length / 2) / length * (head_z - foot_z)
+
+    mark(turn(box(length, d, frame_t), -slope, "Y", 0.0, 0.0, mid - frame_t / 2), "timber")
+    mark(turn(box(length - 0.08, d - 0.06, 0.07), -slope, "Y", 0.02, 0.0, mid + 0.025), "cloth")
+    fx = -length / 2 + 0.03
+    mark(box(0.06, d, 0.38, x=fx, z=top_at(fx) - frame_t + 0.19), "timber")
+    for lx in (-length / 2 + 0.12, length / 2 - 0.16):
+        leg_h = top_at(lx) - frame_t + 0.01
+        for sy in (-1, 1):
+            ly = sy * (d / 2 - 0.05)
+            # A haunch under the frame, a slim shin, and a paw on a drum, reaching toward the head.
+            mark(box(0.06, 0.06, leg_h, x=lx, y=ly, z=leg_h / 2), "timber")
+            mark(box(0.13, 0.07, 0.16, x=lx - 0.02, y=ly, z=leg_h - 0.09), "timber")
+            mark(cyl(0.05, 0.05, x=lx + 0.02, y=ly, z=0.025, verts=12), "timber")
+            mark(box(0.15, 0.07, 0.06, x=lx + 0.05, y=ly, z=0.08), "timber")
+    return join_all()
+
+
+def prim_headrest():
+    """A HEADREST: a curved cradle on a short column on a long foot, the Egyptian pillow.
+
+    The cradle is a crescent in the X-Z plane, which the shear draws as a true curve, so the one shape that
+    names the object survives. It is a hand's height, so its import is scaled well down."""
+    mark(box(0.30, 0.09, 0.03, z=0.015), "timber")
+    mark(box(0.07, 0.06, 0.15, z=0.03 + 0.075), "timber")
+    cz, a, b, n = 0.31, 0.17, 0.14, 10
+
+    def at(i):
+        th = math.radians(190 + 160 * i / n)
+        return (a * math.cos(th), cz + b * math.sin(th))
+
+    pts = [at(i) for i in range(n + 1)]
+    for i in range(n):
+        _segment(pts[i], pts[i + 1], 0.08, 0.04, "timber")
+    return join_all()
+
+
+def prim_grindstone():
+    """A SADDLE QUERN at its emplacement: a low plastered platform, the dark lower stone set on it sloping down
+    to the left, the pale handstone lying across it, a pottery bowl at the low end catching the flour and a
+    heap of grain at the back.
+
+    The handstone LIES ALONG X, the only horizontal (`_lying`), so it reads as a rolling bar on the slab.
+    The two stones are dark and pale so they are two things, not one lump."""
+    pw, pd, ph = 1.00, 0.40, 0.20
+    mark(box(pw, pd, ph, z=ph / 2), "body")
+    slope = 8.0
+    sx, sz = -0.02, ph + 0.04
+    mark(turn(box(0.56, 0.26, 0.08), -slope, "Y", sx, 0.0, sz), "stone")
+    hx = 0.02
+    stone_top = sz + 0.04 + (hx - sx) * math.tan(math.radians(slope))
+    _lying(0.05, 0.32, hx, -0.01, stone_top + 0.045, squash=0.85, part="limestone")
+    mark(cone(0.07, 0.10, 0.07, x=-0.41, y=-0.02, z=ph + 0.035, verts=16), "pottery")
+    mark(dome(0.085, 0.05, x=-0.41, y=-0.02, z=ph + 0.065), "cloth")
+    # The grain waits at the high end, BESIDE the stone: behind it, the slab hid all but its tip.
+    mark(cone(0.10, 0.0, 0.11, x=0.38, y=0.0, z=ph + 0.055, verts=16), "accent")
+    return join_all()
+
+
+def prim_breadoven():
+    """A BREAD OVEN: a clay cylinder narrowing a little to its rim, open at the top, with a stoke hole at its
+    foot, and a stack of conical bread moulds beside it.
+
+    Both openings are VOID and stand PROUD of the surface they cut — the altar's channel law — so the black
+    reads as a hole in the clay rather than vanishing into it. The moulds are one cone with a rim per mould,
+    which is how nested pots stack."""
+    oh, rb, rt = 0.80, 0.30, 0.24
+    mark(cone(rb, rt, oh, z=oh / 2, verts=22), "pottery")
+    mark(cyl(rt + 0.02, 0.06, z=oh, verts=22), "pottery")
+    mark(cyl(rt - 0.05, 0.02, z=oh + 0.035, verts=22), VOID)
+    hole_z = 0.13
+    r_at = rb - (rb - rt) * hole_z / oh
+    mark(box(0.16, 0.06, 0.15, y=-r_at, z=hole_z), VOID)
+    # Set against the oven's foot, overlapping it: a stack standing clear drew as a second object.
+    mx = rb + 0.08
+    mark(cone(0.11, 0.03, 0.34, x=mx, y=-0.04, z=0.17, verts=16), "pottery")
+    for zr in (0.04, 0.13, 0.22):
+        mark(cyl(0.11 - 0.08 * zr / 0.34 + 0.012, 0.025, x=mx, y=-0.04, z=zr, verts=16), "pottery")
+    return join_all()
+
+
 PRIMITIVES.update(
     {
         "statue": prim_statue,
@@ -4367,6 +4613,15 @@ PRIMITIVES.update(
         "cart": prim_cart,
         "litter": prim_litter,
         "floorClutter": prim_floorclutter,
+        "banquetTable": prim_banquettable,
+        "harp": prim_harp,
+        "dressingTable": prim_dressingtable,
+        "wigStand": prim_wigstand,
+        "pottedTree": prim_pottedtree,
+        "bed": prim_bed,
+        "headrest": prim_headrest,
+        "grindstone": prim_grindstone,
+        "breadOven": prim_breadoven,
     }
 )
 
@@ -4486,6 +4741,10 @@ PART_COLOURS = {
     # Hard dark stone worked small — a merchant's weights, haematite and basalt. Darker than any timber, so
     # a row of weights on a table is never read as loaves on it.
     "stone": "#4e4840",
+    # A potted tree's crown: leaf green, the one green part a prop has, so foliage is never read as stone.
+    "leaf": "#6b7a48",
+    # Fruit heaped in a bowl — figs and grapes, dark red, so a heap of it is never read as more bread.
+    "fruit": "#7a3b34",
     # NOCAST is not a colour: a part kept out of the footprint is still painted the rank's stone.
 }
 
