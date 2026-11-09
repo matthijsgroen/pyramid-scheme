@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Rītausma pie Sfinksas",
+    "description": "Lielā Sfinksa un raksti pie tās kājām, ko neviens dzīvs vairs nevar izlasīt. Karte saka: sāc šeit."
+  },
+  "starter_2": {
+    "name": "Papirusa tirgotāja ceļš",
+    "description": "Tirdzniecības ceļš gar Nīlu, kam abās pusēs tirgotāju noliktavas. Dažas tā arī netika iztukšotas."
+  },
+  "starter_3": {
+    "name": "Bastetes templis",
+    "description": "Bastetes templis. Kaķi šeit bija svēti, un ikgadējie svētki bija lielākie visā Ēģiptē — laivas, mūzika, viss kas."
+  },
+  "starter_4": {
+    "name": "Rakstvežu skola",
+    "description": "Rakstvežu skola, kur Ēģipte mācījās rakstīt. Klases vēl joprojām ir zem smiltīm."
+  },
+  "starter_treasure_tomb": {
+    "name": "Aizmirstā tirgotāja slēptuve",
+    "description": "Tirgotāja pagrabs, ne karaļa: krūkas sakrautas, aizzīmogotas un marķētas, un lejā nav neviena, kas par tām strīdētos.",
+    "mapHint": "Gabaliņā ieskicēts tirgus ceļš un pagraba durvis — tirgotāja slēptuve, nekas vairāk."
+  },
+  "junior_1": {
+    "name": "Svēto ibisu ceļš",
+    "description": "Purvaina zeme un ibisi, kas pa to brien. Ēģipte vēroja šos putnus: kad tie atgriežas, nāk plūdi."
+  },
+  "junior_2": {
+    "name": "Amatnieku ieleja",
+    "description": "Deir el-Medīna, kur dzīvoja kapu cēlēji. Viss, kas nonāca karaliskā kapā, vispirms tika darināts šeit, veidnēs."
+  },
+  "junior_3": {
+    "name": "Tota templis",
+    "description": "Tota templis. Viņš izgudroja rakstību, glabāja pierakstus un skaitīja — tieši to, ko mēs lielākoties esam darījuši."
+  },
+  "junior_4": {
+    "name": "Aleksandrijas bāka",
+    "description": "Aleksandrijas Fara. Augšā uguns, kas dega visu nakti, un jūrnieki atrada krastu jau dienas brauciena attālumā."
+  },
+  "junior_treasure_tomb": {
+    "name": "Dižciltīgās slēptā velve",
+    "description": "Dižciltīgas kundzes velve, apgleznota no grīdas līdz griestiem. Viņa nopirka labākās kopijas, kādas var nopirkt par naudu, un nekad to neteica skaļi.",
+    "mapHint": "Smalka tinte, zīmogs ar ģerboni stūrī — kāds no augstas kārtas gribēja, lai šo istabu aizmirst."
+  },
+  "expert_1": {
+    "name": "Karaļu ieleja",
+    "description": "Karaļu ieleja. Viņi beidza celt piramīdas un paslēpa karaļu kapus vienā ielejā, zem kalna, kas izskatās kā piramīda."
+  },
+  "expert_2": {
+    "name": "Karnakas tempļu komplekss",
+    "description": "Karnaka, ko papildināja divus tūkstošus gadu. Tikai lielajā zālē vien ir simt trīsdesmit četras kolonnas, un katra ir izgrebta."
+  },
+  "expert_3": {
+    "name": "Nīlas deltas ekspedīcija",
+    "description": "Vieta, kur Nīla sadalās un izplešas zaļumā. Sobeka zeme — papiruss, zivis un krokodili, kurus pielūdza un baroja."
+  },
+  "expert_4": {
+    "name": "Džosera piramīda",
+    "description": "Džosera pakāpienu piramīda, pirmā tik liela celtne no akmens. Viņa arhitektu Imhotepu vēlāk atcerējās kā dievu."
+  },
+  "expert_treasure_tomb": {
+    "name": "Augstā priestera dārgumu krātuve",
+    "description": "Augstā priestera dārgumu krātuve zem upuru grīdas. Viss, kas tur lejā, tika atdots dievam un nekad vairs netika iznests.",
+    "mapHint": "Līnijas iezīmē tempļa teritoriju un kāpnes, kas ved lejup zem tās upuru grīdas."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Iekšējā svētnīca",
+    "description": "Aizzīmogotā telpa tempļa sirdī. Augstais priesteris tur gāja reizi dienā, lai nomazgātu dievu un apģērbtu viņu.",
+    "mapHint": "Ejas ved garām tempļa velvēm līdz aizzīmogotām durvīm — tām garām tika tikai paši augstākie priesteri."
+  },
+  "master_1": {
+    "name": "Gīzas Lielā piramīda",
+    "description": "Lielā piramīda. Divdesmit gadi akmens, un blakus vesela pilsēta, kas baroja strādniekus ar maizi un alu."
+  },
+  "master_2": {
+    "name": "Mirušo grāmata",
+    "description": "Nevis viena grāmata, bet burvestību krājums, ko pārrakstīja pēc pasūtījuma. Lētākajās tavam vārdam bija atstāta tukša vieta."
+  },
+  "master_3": {
+    "name": "Faraonu lāsts",
+    "description": "Slaveno lāstu 1923. gadā izdomāja avīzes. Ēģiptieši savus kapus sargāja ar durvīm un papīriem."
+  },
+  "master_4": {
+    "name": "Nefertari kaps",
+    "description": "Nefertari kaps, visskaistāk apgleznotā telpa Ēģiptē. Krāsas tika samaltas no akmeņiem — azurīta, malahīta, okera."
+  },
+  "master_treasure_tomb": {
+    "name": "Faraona slepenā slēptuve",
+    "description": "Karaļa privātā slēptuve, tur, kur kartes padodas. Viss, kas kopā ar viņu nonāca zemē, vēl ir tur lejā.",
+    "mapHint": "Vienu malu iezīmē karalisks kartušs, un ceļš beidzas tālu prom zem klajām smiltīm."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Ozīrisa zāle",
+    "description": "Ozīrisa zāle. Plūdu un labības dievs — ko šeit noliek zem zemes, to gaida atpakaļ.",
+    "mapHint": "Zem karaliskajiem kambariem karte iet arvien dziļāk, līdz zālei, kas iezīmēta ar mirušo rituāliem."
+  },
+  "wizard_1": {
+    "name": "Ra saules ceļojums",
+    "description": "Saulrietā Ra noiet zem pasaules, un viņam jāšķērso divpadsmit tumsas stundas. Ēģipte pierakstīja, kas notiek katrā no tām."
+  },
+  "wizard_2": {
+    "name": "Memnona kolosi",
+    "description": "Divi sēdoši Amenhotepa III milži. Grieķi izlēma, ka tie ir kāds cits, un šis vārds palika divus tūkstošus gadu."
+  },
+  "wizard_3": {
+    "name": "Maatas kambaris",
+    "description": "Maatas kambaris. Viņa ir lietu kārtība, un viņas vienīgā strausa spalva ir tas, pret ko mēra visu pārējo."
+  },
+  "wizard_4": {
+    "name": "Mūžīgā piramīda",
+    "description": "Apšuvums bija no pulēta kaļķakmens, balts kā sāls, nostrādāts tik precīzi, ka tā mirdzumu varēja redzēt pat dienas gājiena attālumā."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Dievu velve",
+    "description": "Vieta, kur templis glabāja to, kas piederēja dieviem. Te nevienu nepieteica, ja viņam rokās nebija īstās lietas.",
+    "mapHint": "Neviena zīme uz šī gabaliņa nepieder mirstīgo pasaulei — lai ko tas rāda, to tur nolikuši dievi."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Kosmisko spēku valstība",
+    "description": "Pāri griestiem zvaigžņu kartes, apgleznotas tā, lai mirušie naktī varētu noteikt stundu. Šahtā vēl karājas kāda virve.",
+    "mapHint": "Aiz dievišķās velves līnijas sadalās zvaigžņu takās, kur dzīvības un haosa spēki glabājas kā relikvijas."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Mūžības tronis",
+    "description": "Viens krēsls vidū un četrdesmit divi tiesneši apkārt, un katrs uzdod jautājumu, uz kuru tev jāatbild „nē”.",
+    "mapHint": "Katra zvaigžņu taka uz šī gabaliņa satiekas pie viena krēsla pašā dievišķās valstības sirdī."
+  }
+}

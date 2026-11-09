@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Żerżaq l-oġġett fuq il-ġebla biex tiftaħha",
+    "alsoAvailable": "Hemm ukoll:"
+  },
+  "perks": {
+    "max-health": "+½ qalb aktar fis-saħħa tiegħek",
+    "armor": "In-nases iweġġgħuk inqas",
+    "trap-insight": "+1s fuq in-nases bil-ħin",
+    "pack-mule": "Qirba tal-ilma tfejjaq żewġ qlub",
+    "compass": "Biċċa mill-boxxla",
+    "detection": "Biċċa mis-sejjieb tal-kurituri",
+    "tier-unlock": "Jiftaħ il-vjaġġi tal-livell {{tier}}",
+    "tier-coming-soon": "Il-vjaġġi tal-livell {{tier}} ġejjin f'aġġornament ieħor",
+    "location-key": "Juri qabar ieħor",
+    "partOf": "{{count}} minn {{total}}"
+  },
+  "tiers": {
+    "stone": "Ġebel",
+    "bronze": "Bronż",
+    "silver": "Fidda",
+    "gold": "Deheb",
+    "divine": "Tal-allat"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Deben tal-Fidda",
+      "description": "Munita antika Eġizzjana tal-fidda li l-merkanti kienu jużaw biex jinnegozjaw max-xatt tan-Nil."
+    },
+    "t2": {
+      "name": "Romblu tal-Papiru",
+      "description": "Ir-romblu ta' merkant, b'kull triq tal-kummerċ u lista tal-merkanzija prezzjuża."
+    },
+    "t3": {
+      "name": "Moxt tal-Avorju",
+      "description": "Moxt tal-avorju minqux bir-reqqa, ħaġa ta' lussu miġjuba minn artijiet imbegħda."
+    },
+    "t4": {
+      "name": "Musbieħ taż-Żejt tal-Fuħħar",
+      "description": "Musbieħ taż-żejt sempliċi imma sabiħ, biex idawwal id-dar tal-merkant."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Brazzuletta tad-Deheb",
+      "description": "Brazzuletta tad-deheb mżejna b'ġebel prezzjuż, li kienu jilbsu n-nobbli tal-Eġittu."
+    },
+    "t6": {
+      "name": "Sejf Żgħir tar-Riti",
+      "description": "Stallett tar-riti b'manku bil-ġawhar, użat fiċ-ċerimonji tan-nobbli."
+    },
+    "t7": {
+      "name": "Skarabew tal-Ġada",
+      "description": "Amulett ta' skarabew tal-ġada li jħares, sinjal tat-twelid mill-ġdid u tal-ħajja ta' dejjem."
+    },
+    "t8": {
+      "name": "Ġarra Kanopika tal-Alabastru",
+      "description": "Ġarra sabiħa tal-alabastru biex iżżomm żjut u fwejjaħ prezzjużi."
+    },
+    "t9": {
+      "name": "Bastun tal-Ebanu",
+      "description": "Bastun tal-ebanu llustrat b'ankh tad-deheb fuq nett."
+    },
+    "t10": {
+      "name": "Ġiżirana tal-Lapis Lazuli",
+      "description": "Ġiżirana sabiħa ħafna magħmula minn ġebel rari tal-lapis lazuli, għażiża għas-sinjuri."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Ankh Qaddis",
+      "description": "Ankh tad-deheb li jfisser il-ħajja ta' dejjem, imbierek mill-qassisin tat-tempju."
+    },
+    "t12": {
+      "name": "Mera tar-Ram",
+      "description": "Mera tar-ram illustrata użata fir-riti tat-tindif."
+    },
+    "t13": {
+      "name": "Inċensier",
+      "description": "Inċensier tal-bronż imżejjen, użat fit-talb tat-tempju."
+    },
+    "t14": {
+      "name": "Kalċi tar-Riti",
+      "description": "Kalċi qaddis tal-fidda użat biex iferrgħu x-xorb bħala offerta lill-allat."
+    },
+    "t15": {
+      "name": "Mrewħa tar-Riti",
+      "description": "Mrewħa imżejna bir-rix, użata mill-qassisin fiċ-ċerimonji tat-tempju."
+    },
+    "t16": {
+      "name": "Kurunell tat-Talb",
+      "description": "Ħajta ta' żibeġ imbierka, użata biex taħseb fil-kwiet u titlob."
+    },
+    "t17": {
+      "name": "Reċipjent tal-Ilma Mbierek",
+      "description": "Reċipjent bl-ilma mbierek mill-bir qaddis tat-tempju."
+    },
+    "t18": {
+      "name": "Qanpiena tat-Tempju",
+      "description": "Qanpiena tal-bronż biex issejjaħ lin-nies għat-talb u tħabbar iċ-ċerimonji."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Is-Siġill tal-Fargħun",
+      "description": "Siġill antik tar-re bil-kartoċċ ta' fargħun minsi."
+    },
+    "t20": {
+      "name": "Ballun tal-Kristall",
+      "description": "Ballun tal-kristall misterjuż, jgħidu li juri dehriet tal-passat u tal-futur."
+    },
+    "t21": {
+      "name": "Lastra tal-Ġeroglifi",
+      "description": "Lastra antika tal-ġebel b'profeziji misterjużi miktuba bil-ġeroglifi."
+    },
+    "t22": {
+      "name": "Xettru tad-Deheb",
+      "description": "Xettru tad-deheb meraviljuż bl-għajn ta' Horus fuq nett."
+    },
+    "t23": {
+      "name": "Sikkina tal-Ossidjana",
+      "description": "Sikkina tar-riti tal-ossidjana, taqta' daqs xafra, użata f'riti antiki."
+    },
+    "t24": {
+      "name": "Biċċa Meteorit",
+      "description": "Biċċa minn meteorit qaddis, jemmnu li fiha l-qawwa tal-allat."
+    },
+    "t25": {
+      "name": "Boxxla Antika",
+      "description": "Għodda misterjuża biex issib it-triq, dejjem tipponta lejn teżori moħbija."
+    },
+    "t26": {
+      "name": "Kristall taż-Żmien",
+      "description": "Kristall leġġendarju li jiddi bil-qawwa ta' żminijiet li għaddew."
+    },
+    "t27": {
+      "name": "Maskra tar-Riti",
+      "description": "Maskra tad-deheb imżejna, li l-qassisin il-kbar kienu jilbsu fiċ-ċerimonji qaddisa."
+    },
+    "t28": {
+      "name": "Torċa tan-Nar ta' Dejjem",
+      "description": "Torċa li taqbad b'nar ta' dejjem, qatt ma ntfiet minn żminijiet antiki."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Il-Kuruna ta' Ra",
+      "description": "Il-kuruna leġġendarja ta' Ra, alla tax-xemx, li tixgħel bid-dawl u l-qawwa tal-allat."
+    },
+    "t30": {
+      "name": "Il-Bastun ta' Thoth",
+      "description": "Il-bastun tal-għerf ta' Thoth, alla tat-tagħlim, li fih is-sigrieti antiki kollha."
+    },
+    "t31": {
+      "name": "Ir-Rixa ta' Ma'at",
+      "description": "Ir-rixa qaddisa ta' Ma'at, alla mara tal-verità, użata biex jiżnu l-erwieħ wara l-mewt."
+    },
+    "t32": {
+      "name": "Id-Dmugħ ta' Isis",
+      "description": "Id-dmugħ ta' Isis li sar kristall, jgħidu li jagħti ħarsien għal dejjem."
+    },
+    "t33": {
+      "name": "Il-Qalb ta' Osiris",
+      "description": "Il-qalb ta' Osiris, sid id-dinja ta' taħt, li għadha tħabbat bil-ħajja."
+    },
+    "t34": {
+      "name": "Amulett tal-Għajn ta' Horus",
+      "description": "L-aqwa amulett li jħares, bil-qawwa sħiħa ta' Horus fih."
+    },
+    "t35": {
+      "name": "Is-Serp ta' Apep",
+      "description": "Biċċa marbuta mis-serp tal-kaos Apep, magħluqa f'reċipjent qaddis."
+    },
+    "t36": {
+      "name": "In-Nifs ta' Shu",
+      "description": "Flixkun żgħir bin-nifs ta' Shu, alla tal-arja, li jagħtik qawwa fuq ir-riħ."
+    },
+    "t37": {
+      "name": "Il-Qoxra ta' Sobek",
+      "description": "Qoxra waħda mill-alla kukkudrill Sobek, li tħarsek fl-ilma."
+    },
+    "t38": {
+      "name": "Statwa Gwardjana ta' Anubis",
+      "description": "Statwa żgħira ta' Anubis li tieħu l-ħajja biex tħares it-teżori ta' sidha."
+    },
+    "t39": {
+      "name": "Il-Ktieb tal-Mejtin",
+      "description": "Il-Ktieb tal-Mejtin sħiħ, bl-isħarijiet kollha meħtieġa għall-vjaġġ wara l-mewt."
+    },
+    "t40": {
+      "name": "Il-Ġebla tal-Quċċata tal-Piramida",
+      "description": "Il-ġebla tad-deheb fuq nett tal-Piramida l-Kbira, bil-qawwa tal-fargħuni kollha miġbura fiha."
+    }
+  }
+}

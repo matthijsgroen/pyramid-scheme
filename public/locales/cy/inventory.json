@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Brenin y duwiau a duw'r haul. Bob dydd mae'n hwylio ar draws yr awyr yn ei gwch haul."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Duw â phen jacal. Mae'n gofalu am y meirw ac am fymïo."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Duw'r awyr â phen hebog. Mae'n amddiffyn y pharoaid. Mab Osiris ac Isis."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "Duw â phen ibis. Duw doethineb, ysgrifennu a gwybodaeth. Mae'n cadw cofnodion y duwiau."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Duwies y gath. Mae hi'n dod â llawenydd ac yn cadw ysbrydion drwg draw."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Duw'r crocodeil. Duw afon Nîl, tir ffrwythlon a milwyr dewr."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Duw'r chwilen sgarab. Mae'n rholio'r haul ar draws yr awyr bob bore, fel dechrau newydd."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Duwies y gobra. Mae hi'n amddiffyn yr Aifft Isaf ac yn dangos grym y brenin."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "Duwies hud, mamau ac iacháu. Gwraig ffyddlon Osiris."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "Duw'r isfyd, marwolaeth a bywyd newydd. Ef sy'n barnu'r meirw."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "Duw anhrefn, stormydd a'r anialwch. Brawd a gelyn Osiris."
+    },
+    "d12": {
+      "name": "Nephthys",
+      "description": "Duwies galar. Mae hi'n gwarchod y meirw. Chwaer Isis."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Duw a greodd y byd drwy siarad. Mae'n helpu crefftwyr ac adeiladwyr."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Duwies y llew. Duwies rhyfel ac iacháu. Ffyrnig, ond gall wella salwch hefyd."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Duwies y fuwch. Duwies cariad, cerddoriaeth a mamau. Mae hi'n gofalu am y pharoaid."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Pharo",
+      "description": "Brenin yr Aifft. Roedd pobl yn credu ei fod yn dduw byw, rhwng pobl a'r duwiau."
+    },
+    "p2": {
+      "name": "Archoffeiriad",
+      "description": "Pennaeth y deml. Mae'n cynnal y defodau sanctaidd ac yn cadw trefn y duwiau."
+    },
+    "p3": {
+      "name": "Ysgrifennydd",
+      "description": "Rhywun sy'n gallu darllen ac ysgrifennu. Mae'n cadw'r cofnodion i gyd."
+    },
+    "p4": {
+      "name": "Pensaer",
+      "description": "Prif adeiladwr. Cynlluniodd byramidiau, temlau a chofebion i bara am byth."
+    },
+    "p5": {
+      "name": "Cadfridog",
+      "description": "Arweinydd y fyddin. Mae'n amddiffyn ffiniau'r Aifft."
+    },
+    "p6": {
+      "name": "Meddyg",
+      "description": "Iachawr. Mae'n defnyddio meddyginiaeth a swynion i wella pobl sâl."
+    },
+    "p7": {
+      "name": "Pêr-eneiniwr",
+      "description": "Crefftwr sanctaidd. Roedd yn paratoi rhywun ar gyfer y daith i'r byd nesaf."
+    },
+    "p8": {
+      "name": "Ffermwr",
+      "description": "Mae'n tyfu bwyd i'r Aifft i gyd, ar y tir ffrwythlon wrth afon Nîl."
+    },
+    "p9": {
+      "name": "Crefftwr",
+      "description": "Mae'n gwneud pethau hardd: gemwaith a chelf i'r cyfoethog ac i'r duwiau."
+    },
+    "p10": {
+      "name": "Masnachwr",
+      "description": "Mae'n dod â nwyddau arbennig o wledydd pell ar hyd y llwybrau masnach."
+    },
+    "p11": {
+      "name": "Fisir",
+      "description": "Prif weinidog y Pharo. Mae'n rhoi cyngor ac yn rhedeg y wlad."
+    },
+    "p12": {
+      "name": "Oracl",
+      "description": "Proffwyd sanctaidd. Mae'n deall negeseuon y duwiau ac yn dweud beth fydd yn digwydd."
+    },
+    "p13": {
+      "name": "Morwr",
+      "description": "Mae'n hwylio ar afon Nîl a'r môr. Hebddo, dim masnach a dim teithio."
+    },
+    "p14": {
+      "name": "Saer maen",
+      "description": "Gweithiwr cerrig. Mae'n naddu hieroglyffau ac yn codi cofebion mawr yr Aifft."
+    },
+    "p15": {
+      "name": "Gwarchodwr",
+      "description": "Mae'n gwarchod lleoedd sanctaidd a beddau, er mwyn i'r meirw gael gorffwys."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Hipopotamws",
+      "description": "Anifail cryf iawn yn afon Nîl. Roedd pawb yn ei ofni."
+    },
+    "a2": {
+      "name": "Llew",
+      "description": "Brenin yr anifeiliaid. Arwydd o rym y brenin a nerth y duwiau."
+    },
+    "a3": {
+      "name": "Eliffant",
+      "description": "Anifail anferth o'r de. Roedd pobl yn ei barchu am ei ddoethineb a'i gof da."
+    },
+    "a4": {
+      "name": "Gasél",
+      "description": "Anifail chwim a gosgeiddig o'r anialwch. Arwydd o gyflymder."
+    },
+    "a5": {
+      "name": "Mwnci",
+      "description": "Anifail clyfar, ffrind i Thoth. Mae'n glyfar ac yn ddrygionus."
+    },
+    "a6": {
+      "name": "Pysgodyn",
+      "description": "Anifeiliaid sanctaidd afon Nîl. Roedden nhw'n rhoi bwyd i bawb."
+    },
+    "a7": {
+      "name": "Gŵydd",
+      "description": "Aderyn sanctaidd corsydd y Nîl. Mae'n rhan o stori dechrau'r byd."
+    },
+    "a8": {
+      "name": "Gwenynen",
+      "description": "Arwydd yr Aifft Isaf a'r brenin. Mae'n gwneud mêl gwerthfawr."
+    },
+    "a9": {
+      "name": "Crwban",
+      "description": "Anifail hen a doeth. Mae'n cario pwysau'r byd ar ei gragen."
+    },
+    "a10": {
+      "name": "Broga",
+      "description": "Arwydd o fywyd newydd. Mae'n dod allan o lifogydd y Nîl."
+    },
+    "a11": {
+      "name": "Fwltur",
+      "description": "Aderyn sanctaidd yr Aifft Uchaf. Dyma ffurf y dduwies Nekhbet ar y ddaear."
+    },
+    "a12": {
+      "name": "Tylluan",
+      "description": "Heliwr doeth y nos. Mae'n gwarchod hen gyfrinachau."
+    },
+    "a13": {
+      "name": "Hwrdd",
+      "description": "Anifail sanctaidd Amun-Ra. Arwydd o rym ac arweinyddiaeth."
+    },
+    "a14": {
+      "name": "Jiráff",
+      "description": "Anifail tal o'r de. Gyda'i wddf hir, mae bron â chyrraedd yr awyr."
+    },
+    "a15": {
+      "name": "Jacal",
+      "description": "Anifail yr anialwch. Mae'n tywys y meirw i'r byd nesaf. Gwas Anubis."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Arwydd bywyd. Mae duwiau a pharoaid yn aml yn ei ddal."
+    },
+    "art2": {
+      "name": "Llygad Horus",
+      "description": "Arwydd o amddiffyn, grym ac iechyd da. Llygad duw'r awyr, Horus."
+    },
+    "art3": {
+      "name": "Sistrwm",
+      "description": "Offeryn cerdd sy'n ysgwyd. Roedd yn cael ei ganu yn y deml i'r dduwies Hathor."
+    },
+    "art4": {
+      "name": "Piler Djed",
+      "description": "Arwydd o gryfder a bywyd newydd. Mae'n perthyn i Osiris."
+    },
+    "art5": {
+      "name": "Cartouche",
+      "description": "Siâp hirgrwn gydag enw pharo ynddo mewn hieroglyffau. Mae'n cadw'r enw'n saff am byth."
+    },
+    "art6": {
+      "name": "Jar Ganopig",
+      "description": "Jar sanctaidd gyda phen gwarchodwr ar y caead. Roedd pedair ohonyn nhw'n sefyll o gwmpas arch, yn cadw llygad."
+    },
+    "art7": {
+      "name": "Teyrnwialen",
+      "description": "Ffon grym. Roedd duwiau a pharoaid yn ei chario i ddangos mai nhw oedd yn rheoli."
+    },
+    "art9": {
+      "name": "Pyramid",
+      "description": "Bedd am byth i'r pharoaid, a'r drws i'r byd nesaf."
+    },
+    "art10": {
+      "name": "Cwch Haul",
+      "description": "Cwch sanctaidd sy'n cario Ra, duw'r haul, ar draws yr awyr o'r wawr tan y machlud."
+    },
+    "art11": {
+      "name": "Obelisg",
+      "description": "Piler carreg tal gyda phyramid bach ar ei ben. Mae'n estyn at yr awyr i anrhydeddu'r duwiau."
+    },
+    "art12": {
+      "name": "Ffon Fugail a Ffust",
+      "description": "Pethau'r brenin. Maen nhw'n dangos bod y pharo'n fugail ac yn amddiffynnwr yr Aifft."
+    },
+    "art14": {
+      "name": "Blodyn Lotws",
+      "description": "Arwydd o fywyd newydd a'r haul. Mae'n tyfu'n lân allan o ddŵr mwdlyd y Nîl."
+    },
+    "art15": {
+      "name": "Coron Wraeus",
+      "description": "Coron y brenin gyda chobra arni. Roedd y cobra'n amddiffyn y pharo."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Deilen Gorsen",
+      "description": "Un gorsen, sy'n golygu'r sain i. Rho hi ar ôl enw duw ac fe gei di enw dyn: mae Horus yn troi'n Hori, un Horus."
+    }
+  }
+}

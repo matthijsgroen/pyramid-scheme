@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Rrëshqite sendin mbi gur që ta hapësh",
+    "alsoAvailable": "Ke edhe:"
+  },
+  "perks": {
+    "max-health": "+½ zemër më shumë jetë",
+    "armor": "Kurthet të dëmtojnë më pak",
+    "trap-insight": "+1 sek. te kurthet me kohë",
+    "pack-mule": "Një calik uji shëron dy zemra",
+    "compass": "Pjesë busulle",
+    "detection": "Pjesë e gjetësit të korridoreve",
+    "tier-unlock": "Hap ekspeditat e nivelit {{tier}}",
+    "tier-coming-soon": "Ekspeditat e nivelit {{tier}} vijnë në një përditësim të mëvonshëm",
+    "location-key": "Tregon një varr tjetër",
+    "partOf": "{{count}} nga {{total}}"
+  },
+  "tiers": {
+    "stone": "Gur",
+    "bronze": "Bronz",
+    "silver": "Argjend",
+    "gold": "Ar",
+    "divine": "Hyjnor"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Deben argjendi",
+      "description": "Një monedhë e lashtë egjiptiane prej argjendi. Tregtarët e përdornin për tregti përgjatë Nilit."
+    },
+    "t2": {
+      "name": "Rrotull papirusi",
+      "description": "Rrotulla e shënimeve të një tregtari, me rrugët e tregtisë dhe listat e ngarkesave të çmuara."
+    },
+    "t3": {
+      "name": "Krehër fildishi",
+      "description": "Një krehër fildishi i gdhendur me shumë kujdes. Një send luksi, i sjellë nga vende të largëta."
+    },
+    "t4": {
+      "name": "Llambë vaji prej balte",
+      "description": "Një llambë vaji e thjeshtë, por e bukur, që ndriçonte shtëpinë e tregtarit."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Byzylyk ari",
+      "description": "Një byzylyk ari plot zbukurime dhe gurë të çmuar, që e mbanin fisnikët egjiptianë."
+    },
+    "t6": {
+      "name": "Kamë ceremonish",
+      "description": "Një kamë me dorezë plot xhevahirë, që përdorej në ceremonitë e fisnikëve."
+    },
+    "t7": {
+      "name": "Skarabe nefriti",
+      "description": "Një hajmali mbrojtëse skarabe prej nefriti. Shenjë e rilindjes dhe e jetës së përjetshme."
+    },
+    "t8": {
+      "name": "Kavanoz alabastri",
+      "description": "Një kavanoz i bukur alabastri për të ruajtur vajra të çmuara dhe parfume."
+    },
+    "t9": {
+      "name": "Bastun abanozi",
+      "description": "Një bastun abanozi i lëmuar, me një ankh ari në majë."
+    },
+    "t10": {
+      "name": "Gjerdan lapis lazuli",
+      "description": "Një gjerdan i mrekullueshëm me gurë të rrallë lapis lazuli. Të pasurit e donin shumë."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Ankh i shenjtë",
+      "description": "Një ankh ari, shenja e jetës së përjetshme, i bekuar nga priftërinjtë e tempullit."
+    },
+    "t12": {
+      "name": "Pasqyrë bakri",
+      "description": "Një pasqyrë bakri e lëmuar, për ceremonitë e pastrimit."
+    },
+    "t13": {
+      "name": "Temjanicë",
+      "description": "Një temjanicë bronzi plot zbukurime, për ritet e lutjes në tempull."
+    },
+    "t14": {
+      "name": "Kupë rituali",
+      "description": "Një kupë e shenjtë argjendi, me të cilën derdhnin dhurata për perënditë."
+    },
+    "t15": {
+      "name": "Erashkë ceremonish",
+      "description": "Një erashkë me pupla plot zbukurime, që e përdornin priftërinjtë në ceremonitë e tempullit."
+    },
+    "t16": {
+      "name": "Rruaza lutjeje",
+      "description": "Një varg rruazash të bekuara, për lutje dhe për t'u qetësuar."
+    },
+    "t17": {
+      "name": "Enë me ujë të shenjtë",
+      "description": "Një enë me ujë të bekuar nga pusi i shenjtë i tempullit."
+    },
+    "t18": {
+      "name": "Zile tempulli",
+      "description": "Një zile bronzi që thërriste besimtarët për lutje dhe lajmëronte ceremonitë."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Vula e faraonit",
+      "description": "Një vulë e lashtë mbretërore me kartushin e një faraoni të harruar."
+    },
+    "t20": {
+      "name": "Sferë kristali",
+      "description": "Një sferë kristali misterioze. Thonë se tregon pamje nga e kaluara dhe e ardhmja."
+    },
+    "t21": {
+      "name": "Pllakë me hieroglifë",
+      "description": "Një pllakë e lashtë guri me parashikime misterioze të shkruara me hieroglifë."
+    },
+    "t22": {
+      "name": "Skeptër ari",
+      "description": "Një skeptër ari i mrekullueshëm, me syrin e Horusit në majë."
+    },
+    "t23": {
+      "name": "Thikë obsidiani",
+      "description": "Një thikë ceremonish prej obsidiani, e mprehtë si brisk, për ritet e lashta."
+    },
+    "t24": {
+      "name": "Copë meteoriti",
+      "description": "Një copë meteoriti të shenjtë. Besonin se kishte fuqi hyjnore brenda."
+    },
+    "t25": {
+      "name": "Busull e lashtë",
+      "description": "Një vegël misterioze lundrimi që tregon gjithmonë drejt thesareve të fshehura."
+    },
+    "t26": {
+      "name": "Kristali i kohës",
+      "description": "Një kristal legjendar që shkëlqen me fuqinë e kohëve të shkuara."
+    },
+    "t27": {
+      "name": "Maskë rituali",
+      "description": "Një maskë ari plot zbukurime, që e mbanin kryepriftërinjtë në ceremonitë e shenjta."
+    },
+    "t28": {
+      "name": "Pishtari i flakës së përjetshme",
+      "description": "Një pishtar me flakë të përjetshme, që nuk është shuar që nga kohët e lashta."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Kurora e Ras",
+      "description": "Kurora legjendare e Ras, perëndisë së diellit. Ajo rrezaton dritë dhe fuqi hyjnore."
+    },
+    "t30": {
+      "name": "Shkopi i Thothit",
+      "description": "Shkopi i mençurisë i Thothit, perëndisë së dijes. Brenda tij janë të gjitha sekretet e lashta."
+    },
+    "t31": {
+      "name": "Pendla e Maatit",
+      "description": "Pendla e shenjtë e Maatit, perëndeshës së së vërtetës. Me të peshonin shpirtrat në jetën e përtejme."
+    },
+    "t32": {
+      "name": "Lotët e Isis",
+      "description": "Lotët e perëndeshës Isis, të ngurtësuar si kristal. Thonë se japin mbrojtje të përjetshme."
+    },
+    "t33": {
+      "name": "Zemra e Osirisit",
+      "description": "Zemra e ruajtur e Osirisit, zotit të botës së nëndheshme. Ajo ende rreh me forcë jete."
+    },
+    "t34": {
+      "name": "Hajmalia e Syrit të Horusit",
+      "description": "Hajmalia mbrojtëse më e fortë, me gjithë fuqinë e Horusit brenda."
+    },
+    "t35": {
+      "name": "Gjarpri i Apepit",
+      "description": "Një copë e lidhur e Apepit, gjarprit të rrëmujës, e mbyllur në një enë të shenjtë."
+    },
+    "t36": {
+      "name": "Fryma e Shut",
+      "description": "Një shishe e vogël me frymën e Shut, perëndisë së ajrit. Ajo të jep fuqi mbi erërat."
+    },
+    "t37": {
+      "name": "Luspa e Sobekut",
+      "description": "Një luspë e vetme e Sobekut, perëndisë krokodil. Të mbron në ujë."
+    },
+    "t38": {
+      "name": "Statuja rojtare e Anubisit",
+      "description": "Një statujë e vogël e Anubisit që merr jetë për të ruajtur thesaret e të zotit."
+    },
+    "t39": {
+      "name": "Libri i të Vdekurve",
+      "description": "I gjithë Libri i të Vdekurve, me të gjitha magjitë për udhëtimin në jetën e përtejme."
+    },
+    "t40": {
+      "name": "Maja e piramidës",
+      "description": "Guri i artë në majë të Piramidës së Madhe, me fuqinë e mbledhur të të gjithë faraonëve."
+    }
+  }
+}

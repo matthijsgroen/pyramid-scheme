@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Dra gjenstanden over på steinen for å låse den opp",
+    "alsoAvailable": "Du har også:"
+  },
+  "perks": {
+    "max-health": "+½ hjerte ekstra på helsa di",
+    "armor": "Feller gjør mindre skade",
+    "trap-insight": "+1 s på feller med tid",
+    "pack-mule": "En vannsekk gir deg to hjerter",
+    "compass": "Del av kompasset",
+    "detection": "Del av gangfinneren",
+    "tier-unlock": "Låser opp {{tier}}-ekspedisjoner",
+    "tier-coming-soon": "{{tier}}-ekspedisjoner kommer i en senere oppdatering",
+    "location-key": "Viser deg en grav til",
+    "partOf": "{{count}} av {{total}}"
+  },
+  "tiers": {
+    "stone": "Stein",
+    "bronze": "Bronse",
+    "silver": "Sølv",
+    "gold": "Gull",
+    "divine": "Guddommelig"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Sølvdeben",
+      "description": "En gammel egyptisk sølvmynt som kjøpmenn brukte når de handlet langs Nilen."
+    },
+    "t2": {
+      "name": "Papyrusrull",
+      "description": "En kjøpmanns liste over handelsveier og dyrebar last."
+    },
+    "t3": {
+      "name": "Elfenbenskam",
+      "description": "En fint utskåret kam av elfenben. En luksusvare fra land langt borte."
+    },
+    "t4": {
+      "name": "Oljelampe av leire",
+      "description": "En enkel, men pen oljelampe som ga lys i rommene til kjøpmannen."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Gullarmbånd",
+      "description": "Et pyntet gullarmbånd med edelsteiner, båret av egyptiske adelsfolk."
+    },
+    "t6": {
+      "name": "Seremonidolk",
+      "description": "En dolk med edelsteiner på skaftet, brukt ved fine seremonier."
+    },
+    "t7": {
+      "name": "Jadeskarabé",
+      "description": "En beskyttende skarabé av jade, et tegn på nytt og evig liv."
+    },
+    "t8": {
+      "name": "Alabastkrukke",
+      "description": "En elegant krukke av alabast til dyre oljer og parfymer."
+    },
+    "t9": {
+      "name": "Spaserstokk av ibenholt",
+      "description": "En blankpolert stokk av ibenholt med et ankh-tegn av gull på toppen."
+    },
+    "t10": {
+      "name": "Halskjede av lapis lasuli",
+      "description": "Et nydelig halskjede av sjeldne lapis-lasuli-steiner. Rike folk var glade i det."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Hellig ankh",
+      "description": "Et ankh-tegn av gull som står for evig liv, velsignet av prestene i templet."
+    },
+    "t12": {
+      "name": "Kobberspeil",
+      "description": "Et blankt kobberspeil som ble brukt når prestene renset seg før seremonier."
+    },
+    "t13": {
+      "name": "Røkelseskar",
+      "description": "Et pyntet røkelseskar av bronse, brukt når folk ba til gudene i templet."
+    },
+    "t14": {
+      "name": "Rituelt beger",
+      "description": "Et hellig sølvbeger som drikkoffer til gudene ble helt fra."
+    },
+    "t15": {
+      "name": "Seremonivifte",
+      "description": "En pyntet fjærvifte som prestene brukte under seremonier i templet."
+    },
+    "t16": {
+      "name": "Bønneperler",
+      "description": "En snor med velsignede perler, brukt når man ba eller tenkte i stillhet."
+    },
+    "t17": {
+      "name": "Kar med hellig vann",
+      "description": "Et kar med velsignet vann fra den hellige brønnen i templet."
+    },
+    "t18": {
+      "name": "Tempelklokke",
+      "description": "En bronseklokke som kalte folk til bønn og varslet seremonier."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Faraoens segl",
+      "description": "Et gammelt kongesegl med kartusjen til en glemt farao."
+    },
+    "t20": {
+      "name": "Krystallkule",
+      "description": "En mystisk krystallkule. Folk sier den kan vise bilder fra fortiden og framtiden."
+    },
+    "t21": {
+      "name": "Hieroglyfplate",
+      "description": "En gammel steinplate med hemmelighetsfulle spådommer skrevet med hieroglyfer."
+    },
+    "t22": {
+      "name": "Gullsepter",
+      "description": "Et praktfullt gullsepter med Horusøyet på toppen."
+    },
+    "t23": {
+      "name": "Obsidiankniv",
+      "description": "En knivskarp seremonikniv av obsidian, brukt i gamle ritualer."
+    },
+    "t24": {
+      "name": "Meteorittbit",
+      "description": "En bit av en hellig meteoritt. Folk trodde det var gudekraft i den."
+    },
+    "t25": {
+      "name": "Eldgammelt kompass",
+      "description": "Et mystisk kompass som alltid peker mot skjulte skatter."
+    },
+    "t26": {
+      "name": "Tidskrystall",
+      "description": "En sagnomsust krystall som gløder med kraften fra svunne tider."
+    },
+    "t27": {
+      "name": "Rituell maske",
+      "description": "En pyntet gullmaske som øversteprestene bar under hellige seremonier."
+    },
+    "t28": {
+      "name": "Fakkel med evig flamme",
+      "description": "En fakkel med en flamme som har brent uten stopp helt siden oldtiden."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Ras krone",
+      "description": "Den sagnomsuste kronen til solguden Ra. Den stråler av gudelys og makt."
+    },
+    "t30": {
+      "name": "Thoths stav",
+      "description": "Visdomsstaven til Thoth, kunnskapens gud. Alle gamle hemmeligheter finnes i den."
+    },
+    "t31": {
+      "name": "Ma’ats fjær",
+      "description": "Den hellige fjæren til Ma’at, sannhetens gudinne. Med den ble sjelene veid i livet etter døden."
+    },
+    "t32": {
+      "name": "Isis’ tårer",
+      "description": "Størknede tårer fra gudinnen Isis. Folk sier de gir beskyttelse for alltid."
+    },
+    "t33": {
+      "name": "Osiris’ hjerte",
+      "description": "Hjertet til Osiris, herre over dødsriket. Det banker fortsatt av livskraft."
+    },
+    "t34": {
+      "name": "Horusøye-amulett",
+      "description": "Den aller sterkeste beskyttelsesamuletten, med hele kraften til Horus."
+    },
+    "t35": {
+      "name": "Apeps slange",
+      "description": "En bit av kaosslangen Apep, bundet fast og stengt inne i et hellig kar."
+    },
+    "t36": {
+      "name": "Shus pust",
+      "description": "En liten flaske med pusten til Shu, luftens gud. Den gir makt over vindene."
+    },
+    "t37": {
+      "name": "Sobeks skjell",
+      "description": "Ett enkelt skjell fra krokodilleguden Sobek. Det beskytter deg i vann."
+    },
+    "t38": {
+      "name": "Anubis-vokterstatue",
+      "description": "En liten statue av Anubis som blir levende for å vokte skattene til eieren sin."
+    },
+    "t39": {
+      "name": "De dødes bok",
+      "description": "Hele De dødes bok, med alle trylleformlene du trenger på reisen til livet etter døden."
+    },
+    "t40": {
+      "name": "Pyramidetopp",
+      "description": "Gulltoppen på Den store pyramiden, med samlet kraft fra alle faraoene."
+    }
+  }
+}

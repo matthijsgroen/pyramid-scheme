@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Taş",
+    "bronze": "Bronz",
+    "silver": "Gümüş",
+    "gold": "Altın",
+    "divine": "Kutsal"
+  },
+  "sell_stone_1": {
+    "name": "Kırık Çömlek Parçası",
+    "description": "Üzerine bir kâtibin alıştırma notları kazınmış kırık bir çömlek parçası. Harfler okunamayacak kadar silik."
+  },
+  "sell_stone_2": {
+    "name": "Çatlak Kil Testi",
+    "description": "Buğday ya da bira saklanan bir testi. Yüzyılların ağırlığıyla bir yanı çatlamış."
+  },
+  "sell_stone_3": {
+    "name": "Eskimiş Hasır Sandalet",
+    "description": "Papirüs sazından örülmüş. Çoktan unutulmuş bir işçi her gün yürüye yürüye tabanını incecik etmiş."
+  },
+  "sell_stone_4": {
+    "name": "Solmuş Keten Parçası",
+    "description": "Boyasız, yırtık bir keten şerit. Ölülerin etrafına sarılan cinsten. Ya da bir yelkeni yamamak için kullanılmış."
+  },
+  "sell_stone_5": {
+    "name": "Kırık Çakmaktaşı Bıçak",
+    "description": "Ucu kırılmış bir çakmaktaşı bıçak. Yapması ucuz, yenisini bulması daha da ucuz."
+  },
+  "sell_bronze_1": {
+    "name": "Eğri Bronz Muska",
+    "description": "Ucuz bir koruma muskası. Eğri dökülmüş ve hiç düzeltilmemiş."
+  },
+  "sell_bronze_2": {
+    "name": "Paslı Bronz Ayna",
+    "description": "Bir zamanlar yüzünü görebileceğin kadar parlakmış. Şimdi yaşlılıktan yeşil ve bulanık."
+  },
+  "sell_bronze_3": {
+    "name": "Mat Bronz Olta İğnesi",
+    "description": "Bir balıkçının aleti. Mezar mühürlenmeden çok önce Nil'de tekneden düşüp kaybolmuş."
+  },
+  "sell_bronze_4": {
+    "name": "Küçük Bronz Çan",
+    "description": "Bir tapınak kapısına ya da bir dansçının bileğine asılmak için yapılmış. Artık eskisi gibi güzel çalmıyor."
+  },
+  "sell_bronze_5": {
+    "name": "Kararmış Bronz Yüzük",
+    "description": "Sade bir halka. Çoktan toza dönmüş bir parmağa göre yapılmış."
+  },
+  "sell_silver_1": {
+    "name": "Kararmış Gümüş Ankh",
+    "description": "Hayatın işareti. Yer altında geçen yüzyıllar onu matlaştırmış."
+  },
+  "sell_silver_2": {
+    "name": "Gümüş Sürme Çubuğu",
+    "description": "Bir zamanlar zenginlerin gözlerine sürme çeken ince bir çubuk. Sürme çoktan kaybolmuş."
+  },
+  "sell_silver_3": {
+    "name": "Ezik Gümüş Kâse",
+    "description": "Küçük bir adak kâsesi. Üstündeki tavan sonunda çökünce bir yanı ezilmiş."
+  },
+  "sell_silver_4": {
+    "name": "Gümüş Saç Tokası",
+    "description": "Sade, süssüz bir toka. Bir zamanlar adı unutulmuş birinin saçını tutarmış."
+  },
+  "sell_silver_5": {
+    "name": "Eskimiş Gümüş Bilezik",
+    "description": "İnce bir gümüş bilezik, kopçası kırık. Bir soylu için fazla sade, bir işçi için fazla güzel."
+  },
+  "sell_gold_1": {
+    "name": "Küçük Altın Boncuk",
+    "description": "Bir mezar kolyesinden tek bir boncuk. Çok uzun zaman önce dağılmış."
+  },
+  "sell_gold_2": {
+    "name": "Altın Varak Parçası",
+    "description": "Bir heykelin yüzünden soyulmuş ince bir altın varak. Mezar hırsızları onu sen gelmeden yüzyıllar önce koparmış."
+  },
+  "sell_gold_3": {
+    "name": "İnce Altın Küpe",
+    "description": "Bir soylunun altını daha uzun yetsin diye dövülüp incecik yapılmış."
+  },
+  "sell_gold_4": {
+    "name": "Altın Benekli Parça",
+    "description": "Yaldızlı sıvadan kırık bir parça. Üstünde hâlâ gerçek altın benekleri var."
+  },
+  "sell_gold_5": {
+    "name": "Çentikli Altın Mühür Yüzüğü",
+    "description": "Bir mühür yüzüğü. Üstündeki yazı tanınmayacak kadar aşınmış. Kimin adını taşıyorsa, o unutulmuş."
+  },
+  "sell_divine_1": {
+    "name": "Solmuş Lapis Bok Böceği",
+    "description": "Değerli lapis lazuli taşından oyulmuş. Bir firavunun yeniden doğuşu için çok pahalıya getirtilmiş. Rengi yüzyıllar içinde solmuş."
+  },
+  "sell_divine_2": {
+    "name": "Akik Göz Muskası",
+    "description": "Kan kırmızısı akikten oyulmuş koruyucu bir göz. Öbür dünyada kötü şansı uzak tutsun diye yapılmış."
+  },
+  "sell_divine_3": {
+    "name": "Turkuaz Kakma Parçası",
+    "description": "Paramparça olmuş bir mozaikten tek bir taş. Bir zamanlar bir tapınak duvarındaki tanrı resminin parçasıymış."
+  },
+  "sell_divine_4": {
+    "name": "Kaymaktaşı Kavanoz Parçası",
+    "description": "Bir firavunun saklanan organları için yapılmış bir kavanozdan kırık bir parça. Ürkütücü bir iş için değerli bir taş."
+  },
+  "sell_divine_5": {
+    "name": "Obsidyen Tören Bıçağı",
+    "description": "Volkan camından yapılmış, törenler için bilenmiş bir bıçak. Savaş için değil, sadece tapınak için."
+  }
+}

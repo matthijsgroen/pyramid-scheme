@@ -1,0 +1,1730 @@
+{
+  "not-found": "Na vjen keq, biseda që kërkon nuk ekziston.",
+  "welcome": "Egjipti! Jam vërtet këtu.",
+  "welcome2": "Dhe kjo hartë… pagova shumë më tepër se ç'duhej për të. Le të jetë e saktë, të paktën.",
+  "welcome3": "Hajde. Të shohim ku është ai kryq.",
+  "pyramidIntro": "Në këta gurë ka numra. Dhe disa mungojnë…",
+  "pyramidIntro2": "Prit. Çdo gur është sa dy gurët poshtë tij bashkë! Po, edhe këtu!",
+  "pyramidBlockedBlocks": "Hej, çfarë është kjo? Ata blloqe janë të vulosur. Nuk e tregojnë numrin e tyre!",
+  "pyramidBlockedBlocks2": "S'ka gjë. Shiko blloqet përreth. Prej tyre mund ta gjesh.",
+  "pyramidBlockedBlocks3": "Vetëm se nuk mund ta shkruash. Atë numër do ta mbash në mend.",
+  "pyramidBlockedBlocks4": "Hajde, ke ardhur deri këtu. Ti mundesh!",
+  "levelCompleted": "Ha! Po hapet! Hajde, brenda.",
+  "exitPillar": {
+    "1": {
+      "fez": "Ha! Dritë dite! E sheh atë rreze drite? Ajo është dalja jonë. Hyr brenda, dhe këtu kemi mbaruar."
+    },
+    "2": {
+      "fez": "Ka gjithmonë vetëm një, në fund të korridorit kryesor. Kudo që të endemi, aty kthehemi."
+    },
+    "3": {
+      "explorer": "Një dalje. E mbaj mend."
+    }
+  },
+  "expeditionCompleted": "Urime që e mbarove ekspeditën!",
+  "expeditionCompleted2": "Tani ke një ekspeditë të re.",
+  "tombTutorial": "Oho, shkrim! A mund ta lexojmë? Me hieroglifët që kemi gjetur… ndoshta!",
+  "tombTutorial2": "Shiko, llogari me shenja brenda! I sheh ato vende bosh? Aty shkojnë hieroglifët. Të tutë, poshtë.",
+  "tombTutorial3": "Llogaritë e vogla të tregojnë kur një shenjë është e saktë. Kështu gjejmë cila shenjë shkon ku.",
+  "tombTutorial4": "I mbushe të gjitha? Atëherë del një bravë me numra. Llogaria e madhe është kodi, dhe pastaj varri hapet!",
+  "hieroglyphUnlock": "Kemi një send të veçantë. Me të mund të shkruajmë mbi një nga ata blloqe të vulosur!",
+  "hieroglyphUnlock2": "Prek një gur që ndriçon, pastaj tërhiqe sendin mbi të që ta hapësh. Një bllok për çdo piramidë.",
+  "errorHighlightTutorial": "Ai thesar që gjetëm ka një marifet të dobishëm. Po të shkruash një përgjigje të gabuar, një gabim do të ndriçojë i kuq!",
+  "errorHighlightTutorial2": "Ndriçon vetëm një bllok në një kohë, ndaj prapë është sfidë. Por të ndihmon ta ngushtosh kërkimin!",
+  "earlyFeedbackTutorial": "I sheh ata blloqe kontrolli? Bëhen të gjelbër ose të kuq ndërsa i mbush. Ta thonë menjëherë!",
+  "earlyFeedbackTutorial2": "Mbështetu tek ata kur zgjidh. Po u bë njëri i kuq, diçka aty pranë duhet ndrequr.",
+  "notEnoughHieroglyphs": "Gjithmonë mund ta ndalosh këtë ekspeditë duke u kthyer te ekrani i udhëtimit.",
+  "notEnoughHieroglyphs2": "Mund ta ndërpresim ekspeditën dhe të kërkojmë diku tjetër hieroglifët që na duhen ende.",
+  "tombLoot": "Uau, thesari ynë i parë! Të lumtë!",
+  "mapPiece": "Shiko! Kjo po që është hartë. E vjetër me të vërtetë! Vlen më shumë se të dyja tonat bashkë!",
+  "mapPiece2": "Vetëm një copë, ama. Çdo ekspeditë këtu rrotull fsheh një, dhe bashkë ato tregojnë një varr.",
+  "mapComplete": "U bë e plotë! Shiko, çdo copë puthitet në vend.",
+  "mapComplete2": "Atje, ku takohen të gjitha vijat. Aty ndodhet një varr.",
+  "mapComplete3": "Tani është te udhëtimet tona. Shkojmë ta shohim?",
+  "mapPiece3": "Mbaj numërimin te lista e ekspeditave. Unë me siguri do ta mbaj!",
+  "mosaicIntro": "Oho, xham me ngjyra! Shiko si e kap dritën. Këtë askush nuk e hedh!",
+  "mosaicIntro2": "Është një copë e një figure. Një dritare e tërë me xham, dhe çdo copë që gjejmë e kthen pak nga pak.",
+  "mosaicIntro3": "A nuk ke një kamp diku? Merri me vete dhe do t'i bashkojmë atje. Dua të shoh çfarë del!",
+  "mosaicReminder": "Pst! Ato copat e xhamit ende tringëllojnë në çantën tonë. T'i vendosim në dritaren e kampit?",
+  "mosaicStarter": "Një mace te dera, dhe një gjarpër që ikën me vrap. Kjo vlente një tas me qumësht.",
+  "mosaicStarter2": "Egjiptianët i donin macet pikërisht për këtë. Ato vrisnin gjarpërinjtë dhe minjtë që futeshin te gruri.",
+  "mosaicStarter3": "I donin aq shumë sa njërën e bënë perëndeshë. Bastet. Mbrojtësja e shtëpisë, e derës, e gjithë atyre që flenë pas saj.",
+  "mosaicJunior": "Shiko dorën e tij. Dikush po i tregon si ta mbajë penën.",
+  "mosaicJunior2": "Ai me kokë zogu është Thoth. Shkrimi, numërimi, mbajtja e shënimeve: të gjitha janë të tijat.",
+  "mosaicJunior3": "Ibisi që ndoqëm lart nëpër lumë? Ai është zogu i tij. Edhe çdo numër që kemi shkruar në një mur i përket atij.",
+  "mosaicExpert": "Ajo dritë nuk është rastësi. E ndërtuan gjithë sallën që drita të binte pikërisht atje, në mëngjesin e duhur.",
+  "mosaicExpert2": "Dielli është Amun-Ra. Ai i fshehuri, dhe drita që e sheh gjithkush. Të dyja njëherësh.",
+  "mosaicExpert3": "Kush e mat qiellin kaq saktë, mund të matë gjithçka. Gjithë këtë rrugë kemi zgjidhur llogaritë e tyre.",
+  "mosaicMaster": "Lëkurë e gjelbër, dhe grurë që i rritet drejt nga trupi. Kjo është me qëllim.",
+  "mosaicMaster2": "Osiris. E vranë, e bashkuan përsëri, dhe tani ai është ajo që kthehet çdo vit kur lumi përmbyt arat.",
+  "mosaicMaster3": "Këtu poshtë kjo është gjithë ideja: i vdekur nuk do të thotë i mbaruar. Mendim gazmor për një varr, apo jo?",
+  "mosaicWizard": "Një zemër nga njëra anë. Një pendë nga tjetra. Dhe janë në ekuilibër.",
+  "mosaicWizard2": "Penda është Maat: e vërteta, ekuilibri, si duhet të jenë gjërat. Po qe zemra më e rëndë se ajo pendë, nuk kalon nga dera.",
+  "mosaicWizard3": "Çakalli që mban peshoren është Anubis. Ai është ai që të sjell deri këtu.",
+  "mosaicFinale": "Qëndro pak mbrapa. Shiko çfarë kemi nxjerrë nga ato piramida.",
+  "mosaicFinale2": "Çdo copë është pjesë e tij, i atij që mban peshoren. Ai na ka parë gjatë gjithë rrugës.",
+  "mosaicFinale3": "Ky është shënimi i tij për ne. Dhe unë do të thosha që është në ekuilibër.",
+  "shopFirstVisit": "Ah, ja ku jemi. Tezga ime. E thashë që jam këtu për tregti.",
+  "shopFirstVisit2": "Gjithçka në këtë tezgë e kam nxjerrë nga diku. Ai atje erdhi nga dy varre më parë.",
+  "shopArrival": "Ah, tezga ime! Prit t'i shtroj ato që kam mbledhur rrugës.",
+  "shopArrival2": "Gjetjet e rralla kushtojnë më shumë, por unë të paguaj për çdo vogëlsirë që ke me vete.",
+  "arrival": {
+    "starter_1": {
+      "1": {
+        "explorer": "Shiko, atje prapa! Sfinksi!"
+      },
+      "2": {
+        "explorer": "Gjigant, edhe nga këtu."
+      },
+      "3": {
+        "explorer": "Thonë se nën putrat e tij ka shkrim. Që nuk e lexon dot askush."
+      },
+      "4": {
+        "explorer": "Më vonë. Së pari kjo piramidë!"
+      }
+    },
+    "starter_2": {
+      "1": {
+        "fez": "Ha! Më në fund diçka që e kuptoj. Gjithçka që shkonte lart nëpër Nil kalonte së pari këtej."
+      },
+      "2": {
+        "fez": "Dhe tregtarët shkruajnë gjithçka. Kush bleu çfarë, kush i detyrohej kujt, kush u vonua…"
+      },
+      "3": {
+        "explorer": "Kush u vonua?"
+      },
+      "4": {
+        "fez": "Sidomos kush u vonua!"
+      },
+      "5": {
+        "fez": "Tre mijë vjet. Mallrat kanë ikur, dhe faturat janë ende këtu. Tipike!"
+      }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Shiko ato dyer! Njerëzit vinin këtu të kërkonin mbrojtje. Dhe pastaj një derë si ajo mbetej e mbyllur."
+      },
+      "2": {
+        "explorer": "E mbyllur për kë?"
+      },
+      "3": {
+        "fez": "Për këdo që nuk e kërkoi me të mirë. Kryesisht për ne."
+      },
+      "4": {
+        "fez": "Çdo gjë e vulosur në këtë vend, dikush e vulosi dhe e kishte seriozisht. Shumë seriozisht."
+      },
+      "5": {
+        "fez": "Dhe macet! Këtu i adhuronin macet. Nuk mund t'i linin pa i përkëdhelur."
+      }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "Oh, ky më pëlqen. Këtu mësonin të shkruanin! Shenjë pas shenje, mbi poçe të thyer. Papirusi ishte shumë i shtrenjtë për fëmijët."
+      },
+      "2": {
+        "explorer": "Ushtroheshin mbi plehra?"
+      },
+      "3": {
+        "fez": "Mbi çfarë të kishte! Dhe po mësove mjaft nga këto, papritur një mur nuk është më thjesht zbukurim."
+      },
+      "4": {
+        "explorer": "Ai Sfinksi… dua ta shoh edhe një herë."
+      },
+      "5": {
+        "fez": "Jo ende. Së shpejti."
+      }
+    },
+    "junior_1": {
+      "1": {
+        "fez": "Ktheheshin çdo vit me përmbytjen, pothuajse në të njëjtën ditë."
+      },
+      "2": {
+        "fez": "Ndaj njerëzit filluan të numëronin ditët ndërmjet. Ja nga vjen kalendari: nga zogjtë."
+      },
+      "3": {
+        "explorer": "Zogjtë."
+      },
+      "4": {
+        "fez": "Zogj dhe letra. Gjithmonë janë zogj dhe letra."
+      }
+    },
+    "junior_2": {
+      "1": {
+        "fez": "Këtu i bënin të gjitha. Jo varret, por gjërat që futeshin brenda tyre."
+      },
+      "2": {
+        "fez": "Shiko kallëpet. I njëjti byzylyk, dyzet herë."
+      },
+      "3": {
+        "explorer": "Për dyzet njerëz?"
+      },
+      "4": {
+        "fez": "Për këdo që paguante. Një fisnik donte atë që kishte mbreti, me një çmim që fisniku e përballonte."
+      }
+    },
+    "junior_3": {
+      "1": {
+        "fez": "Thoth, ky këtu. Zoti i sekreteve dhe i magjisë, jam goxha i sigurt."
+      },
+      "2": {
+        "explorer": "Goxha."
+      },
+      "3": {
+        "fez": "Nëntëdhjetë për qind. Gjithsesi, shenjat që po mbledh ti janë të tijat."
+      }
+    },
+    "junior_4": {
+      "1": {
+        "fez": "Njëqind metra i lartë, dhe një zjarr në majë që nuk u shua kurrë."
+      },
+      "2": {
+        "fez": "Detarët e gjenin bregun nga një ditë larg. Më parë e gjenin duke u përplasur në të."
+      },
+      "3": {
+        "explorer": "Si e gjen gjë këtu pa një të tillë?"
+      },
+      "4": {
+        "fez": "Pyet dikë që ka qenë. Ky është gjithë zanati im."
+      }
+    },
+    "expert_1": {
+      "1": {
+        "fez": "Rreth gjashtëdhjetë varre të gdhendura në një luginë, dhe secili prej tyre u hap para se të vinim ne."
+      },
+      "2": {
+        "explorer": "Nga kush?"
+      },
+      "3": {
+        "fez": "Nga njerëz si ne, kryesisht. Më herët."
+      },
+      "4": {
+        "fez": "Çfarë mendon ti?"
+      },
+      "5": {
+        "explorer": "Që jemi vonë."
+      }
+    },
+    "expert_2": {
+      "1": {
+        "fez": "Amun-Ra. Dielli. I preferuari i të gjithëve, dhe e kupton pse. Shiko sa i madh është ky vend."
+      },
+      "2": {
+        "explorer": "Dy emra."
+      },
+      "3": {
+        "fez": "I njëjti zot, mendoj. Të preferuarve u vinin dy emra."
+      }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "I gjithë vendi është një vijë e gjelbër nga të dyja anët e një lumi, dhe pastaj këtu hapet e bëhet kështu."
+      },
+      "2": {
+        "fez": "Gjithçka rritet. Gjithçka edhe kafshon."
+      },
+      "3": {
+        "explorer": "Për cilën nga këto kemi ardhur?"
+      },
+      "4": {
+        "fez": "Shpresoja për asnjërën."
+      }
+    },
+    "expert_4": {
+      "1": {
+        "fez": "E para. Para kësaj, mbretërit shkonin nën një pllakë të sheshtë si gjithë të tjerët."
+      },
+      "2": {
+        "fez": "Dikush qëndroi këtu dhe mendoi: po sikur ta bëjmë atë, por gjashtë herë, lart."
+      },
+      "3": {
+        "explorer": "Dhe funksionoi?"
+      },
+      "4": {
+        "fez": "Ajo qëndron ende në këmbë, dhe ai jo. Varet ç'do të thuash."
+      }
+    },
+    "master_1": {
+      "1": {
+        "fez": "Dy milionë blloqe. Dikush i numëroi."
+      },
+      "2": {
+        "explorer": "Dikush i numëroi?"
+      },
+      "3": {
+        "fez": "Dikush numëron gjithmonë. Këtë e harrojnë njerëzit: gjithë kjo drejtohej nga nëpunës."
+      },
+      "4": {
+        "fez": "E bukur, apo jo? S'dua as ta mendoj si dukej lista e pagave."
+      }
+    },
+    "master_2": {
+      "1": {
+        "fez": "Udhëzime. Kjo është e gjitha: çfarë të thuash, me çfarë radhe, që udhëtimi të shkojë mirë."
+      },
+      "2": {
+        "explorer": "Një libër udhëzimesh."
+      },
+      "3": {
+        "fez": "Një libër udhëzimesh për të qenë i vdekur. Këta shkruanin gjithçka."
+      },
+      "4": {
+        "fez": "Gjë që, për atë që kërkojmë, është lajmi i parë i mirë gjithë javës."
+      }
+    },
+    "master_3": {
+      "1": {
+        "fez": "Ah. Kampi i dikujt."
+      },
+      "2": {
+        "explorer": "I ri?"
+      },
+      "3": {
+        "fez": "Pak a shumë. Ushqim në kanoçe dhe një kollë e keqe, me sa duket."
+      },
+      "4": {
+        "fez": "Ata hynë më thellë se kaq dhe nuk i morën plaçkat me vete."
+      },
+      "5": {
+        "explorer": "A u kthyen për to?"
+      },
+      "6": {
+        "fez": "…Le të vazhdojmë."
+      }
+    },
+    "master_4": {
+      "1": {
+        "fez": "Ja KJO është ajo që imitonin të tjerët. Shiko ngjyrat: tre mijë vjet dhe ende duken të njoma."
+      },
+      "2": {
+        "explorer": "Henut do të tërbohej."
+      },
+      "3": {
+        "fez": "Henut do të mbante shënime."
+      }
+    },
+    "wizard_1": {
+      "1": {
+        "fez": "Natën dielli shkon nën botë dhe del nga ana tjetër. Kjo është gjithë besimi."
+      },
+      "2": {
+        "fez": "Dymbëdhjetë orë në errësirë, me gjëra që i zënë rrugën, dhe dikush duhet ta çojë deri në fund."
+      },
+      "3": {
+        "explorer": "Pikërisht këtë po bëjmë ne."
+      },
+      "4": {
+        "fez": "Po përpiqesha të mos e thosha."
+      },
+      "5": {
+        "explorer": "Rëra ende po hyn."
+      },
+      "6": {
+        "fez": "Po hyn prej tre mijë vjetësh. Nuk ndalet, vetëm sillet në rreth."
+      },
+      "7": {
+        "fez": "Mbushet, kthehet, fillon nga e para. Njësoj si dielli."
+      }
+    },
+    "wizard_2": {
+      "1": {
+        "fez": "Dy të tillë, tetëmbëdhjetë metra të lartë, dhe të dy janë Amenhotepi."
+      },
+      "2": {
+        "fez": "Grekët i hodhën një sy dhe vendosën se ishte një hero i tyre. Memnoni. Emri mbeti për dy mijë vjet."
+      },
+      "3": {
+        "explorer": "Emri i kujt është shkruar mbi të?"
+      },
+      "4": {
+        "fez": "I vetë atij. I gdhendur në fron, ku ka qenë gjithmonë."
+      },
+      "5": {
+        "fez": "Askush nuk e lexoi."
+      },
+      "6": {
+        "fez": "Pas tërmetit, ai i veriut këndonte në agim. Një notë, çdo mëngjes, kur dielli ngrohte të çarën."
+      },
+      "7": {
+        "explorer": "Dhe tani?"
+      },
+      "8": {
+        "fez": "Një perandor e ndreqi. Që atëherë nuk ka nxjerrë më asnjë zë."
+      }
+    },
+    "wizard_3": {
+      "1": {
+        "fez": "Peshorja. Zemra nga njëra anë, penda nga tjetra. Pra fiton një zemër e mirë dhe e rëndë, me siguri."
+      },
+      "2": {
+        "explorer": "Nga shkon një gjë e rëndë?"
+      },
+      "3": {
+        "fez": "…Poshtë."
+      },
+      "4": {
+        "fez": "Oh."
+      },
+      "5": {
+        "fez": "E lehtë. E do të LEHTË."
+      }
+    },
+    "wizard_4": {
+      "1": {
+        "fez": "Guri i majës vihet i fundit dhe vihet prej ari, që gjithë piramida ta kapë dritën e parë."
+      },
+      "2": {
+        "explorer": "Për kë?"
+      },
+      "3": {
+        "fez": "Për këdo që shikon. Kjo ishte ideja. Nuk ishte kurrë për njeriun brenda."
+      }
+    }
+  },
+  "tomb": {
+    "starter": {
+      "1": {
+        "ipi": "Hej! Duart larg! Ajo është shtamba ime!"
+      },
+      "2": {
+        "fez": "…A tha diçka ajo shtambë?!"
+      },
+      "3": {
+        "ipi": "UNË thashë. Rafti i tretë, ajo me cepin e thyer. Ajo është e imja."
+      },
+      "4": {
+        "explorer": "Mirë, mirë! Nuk e prek. Kush je ti?"
+      },
+      "5": {
+        "ipi": "Ipi. Dyzet vjet mbajta librat e llogarive. Dyzet!"
+      },
+      "6": {
+        "fez": "Librat? Të kujt?"
+      },
+      "7": {
+        "ipi": "Të të gjithëve! Kush i detyrohej çfarë, deri te thesi i fundit i grurit."
+      },
+      "8": {
+        "ipi": "Ajo Henut, më në veri nga këtu? Njëmbëdhjetë deben lapis. S'i pagoi kurrë!"
+      },
+      "9": {
+        "explorer": "Dhe ende e mban mend, pas gjithë kësaj kohe?"
+      },
+      "10": {
+        "ipi": "Është shkruar! Një gjë e shkruar është një gjë që ndodhi."
+      },
+      "11": {
+        "ipi": "Vetëm ata Horitë… Hori varkëtari, Hori furrtari… dhe ai Hori TJETRI."
+      },
+      "12": {
+        "fez": "Kishe edhe mace? Të gjithë kishin mace, apo jo? Sa të ëmbla!"
+      },
+      "13": {
+        "ipi": "Të ëmbla? Ato ishin për grurin! E di sa të kushton një mi, gjatë një stine të tërë?"
+      },
+      "14": {
+        "fez": "…Oh. Po, po."
+      },
+      "15": {
+        "ipi": "Thuaji Henutës që të dërgoi Ipi. Kjo do t'ia prishë pasditen."
+      },
+      "16": {
+        "fez": "Më pëlqen ky!"
+      },
+      "17": {
+        "explorer": "Ty të pëlqen vetëm se ende i detyrohen para."
+      }
+    },
+    "junior": {
+      "1": {
+        "henut": "Më në fund. Ke ardhur për lapisin, me siguri. Supozoj që Ipi ende flet për lapisin."
+      },
+      "2": {
+        "explorer": "Po, flet."
+      },
+      "3": {
+        "henut": "Ishte xham. Xham i bukur. Ai e dinte."
+      },
+      "4": {
+        "fez": "…Edhe byzylyku ishte xham?"
+      },
+      "5": {
+        "henut": "Gjithçka këtu është imitimi më i mirë që mund të blinin paratë, djalosh, dhe çdo copë e zgjodha vetë."
+      },
+      "6": {
+        "henut": "Tani. Muri. Shenja e tretë: ai nuk është emri im. Ndonjë nxënës me daltë dhe pa mjeshtër mbi kokë."
+      },
+      "7": {
+        "henut": "Ti ke mësuar shenjat. E shoh. Ndreqe."
+      }
+    },
+    "juniorFixed": {
+      "1": {
+        "henut": "Ja. Tani do të jetë ende emri im edhe pas një mijë vjetësh."
+      },
+      "2": {
+        "explorer": "Ipi e shkroi saktë."
+      },
+      "3": {
+        "henut": "Ipi i shkruante të gjitha saktë. Ishte e vetmja gjë e mirë që kishte."
+      },
+      "4": {
+        "fez": "A ka rëndësi, këtu poshtë?"
+      },
+      "5": {
+        "henut": "Është e vetmja gjë që ka rëndësi."
+      },
+      "6": {
+        "fez": "Kishte një mur të tërë me Thoth atje lart. Zoti i sekreteve."
+      },
+      "7": {
+        "henut": "Thoth numëron. Thoth shkruan çfarë bëre, dhe mbetet e shkruar."
+      },
+      "8": {
+        "henut": "Sekrete i quajnë njerëzit llogaritë, kur nuk dinë t'i bëjnë."
+      },
+      "9": {
+        "henut": "Nëse vazhdon, dhe qartë që po vazhdon, në Karnak është një prift që u detyrohet të vdekurve një rit që nuk e bëri kurrë. Do të jetë i padurueshëm për këtë. Priftërinjtë janë të tillë."
+      },
+      "10": {
+        "henut": "…A jemi takuar ndonjëherë?"
+      },
+      "11": {
+        "fez": "Do ta mbaja mend."
+      },
+      "12": {
+        "henut": "Po. Edhe unë."
+      }
+    },
+    "expert": {
+      "1": {
+        "priest": "Ti nuk je ai që po pres."
+      },
+      "2": {
+        "explorer": "Kë po pret?"
+      },
+      "3": {
+        "priest": "Dikë me vulën. Duhej sjellë këtu, vënë atje, dhe të thuheshin fjalët mbi të. Asnjë nga këto tri gjëra nuk ka ndodhur."
+      },
+      "4": {
+        "fez": "…Sa kohë ke që pret?"
+      },
+      "5": {
+        "priest": "Nuk i numëroj. Do të ishte joprofesionale."
+      },
+      "6": {
+        "priest": "Një dhuratë e vërtetë është një gjë që një mbret e mbante në dorë kur u varros. Jo kopje. Jo diçka që i ngjan. Vetë sendi, me shenjën e tij."
+      },
+      "7": {
+        "priest": "Sille atë dhe do të paraqitesh. Sill çdo gjë tjetër dhe nuk do të paraqitesh."
+      },
+      "8": {
+        "explorer": "Të paraqitem para kujt?"
+      },
+      "9": {
+        "priest": "Do ta kuptosh. Të gjithë e kuptojnë, një ditë."
+      },
+      "10": {
+        "fez": "Ky e do shumë diellin. Gjithë ai Amun-Ra atje përpara."
+      },
+      "11": {
+        "priest": "Amun është i fshehuri. Ra është ai që e sheh gjithkush."
+      },
+      "12": {
+        "priest": "Janë i njëjti zot. Kjo nuk është rastësi, është gjithë ideja."
+      },
+      "13": {
+        "fez": "…Po. Sigurisht. E dija këtë."
+      },
+      "14": {
+        "explorer": "Nuk e dije."
+      },
+      "15": {
+        "fez": "Nuk e dija."
+      }
+    },
+    "expertB": {
+      "1": {
+        "fez": "Askush nuk ka hyrë këtu. As ne, as ata më parë, askush."
+      },
+      "2": {
+        "explorer": "Si e kupton?"
+      },
+      "3": {
+        "fez": "Sepse ka ende diçka brenda."
+      }
+    },
+    "master": {
+      "1": {
+        "pharaoh": "Mund të afrohesh. U afrove. Shumë mirë."
+      },
+      "2": {
+        "fez": "Madhëria juaj."
+      },
+      "3": {
+        "pharaoh": "Po."
+      },
+      "4": {
+        "explorer": "Na duhet vula jote."
+      },
+      "5": {
+        "pharaoh": "Kujt nuk i duhet. Imen e kanë marrë dy herë dhe nuk e kanë kthyer kurrë."
+      },
+      "6": {
+        "pharaoh": "Herën e dytë lanë një kopje. Një KOPJE. Në varrin TIM. Sikur unë të mos shikoja."
+      },
+      "7": {
+        "explorer": "A është kopja ende këtu?"
+      },
+      "8": {
+        "pharaoh": "Sigurisht që është ende këtu, nuk vlen asgjë. Rri në raft, aty ku duhet të ishte e vërteta, dhe është e gabuar."
+      },
+      "9": {
+        "pharaoh": "Merre po të duash. Çoja atij prifti. Shiko sa larg të çon."
+      },
+      "10": {
+        "fez": "…Po kënaqet me këtë."
+      },
+      "11": {
+        "pharaoh": "Po kaloj javën më të mirë në nëntëqind vjet."
+      },
+      "12": {
+        "fez": "Osiris atje në mur. Zoti i të vdekurve. Punë e zymtë."
+      },
+      "13": {
+        "pharaoh": "Ai është i GJELBËR, o kafshë qesharake."
+      },
+      "14": {
+        "pharaoh": "I gjelbër si një arë e përmbytur. E vranë dhe e bashkuan përsëri, dhe ai kthehet çdo vit, pa përjashtim."
+      },
+      "15": {
+        "pharaoh": "Këtu poshtë kjo nuk është e zymtë, është gjithë kuptimi. I vdekur nuk do të thotë i mbaruar."
+      }
+    },
+    "wizard": {
+      "1": {
+        "priest": "Vëre poshtë. Atje. Po."
+      },
+      "2": {
+        "priest": "…"
+      },
+      "3": {
+        "priest": "Kjo është hera e parë që e bëj. Kisha filluar të mendoja se e kisha harruar si bëhet."
+      },
+      "4": {
+        "explorer": "E kishe harruar?"
+      },
+      "5": {
+        "priest": "Plotësisht. M'u kujtua."
+      }
+    },
+    "wizardB": {
+      "1": {
+        "fez": "Litari i tyre. Ende i lidhur."
+      },
+      "2": {
+        "explorer": "Arritën deri këtu."
+      },
+      "3": {
+        "fez": "Më larg se kaq. Dhe pastaj u ngjitën përsëri lart."
+      },
+      "4": {
+        "explorer": "Ka një fletore."
+      },
+      "5": {
+        "fez": "Çfarë thotë?"
+      },
+      "6": {
+        "explorer": "Nuk e lexojmë dot shkrimin. U kthyem për vulën. Bëmë një më të mirë në vend të saj."
+      },
+      "7": {
+        "explorer": "Askush nuk u gënjye."
+      },
+      "8": {
+        "fez": "…E falsifikuan sepse nuk e lexonin dot për çfarë shërbente."
+      },
+      "9": {
+        "explorer": "Dhe pastaj shkuan në shtëpi."
+      }
+    },
+    "wizardC": {
+      "1": {
+        "fez": "Ndalu pak. Shiko çfarë kemi nxjerrë nga ato piramida."
+      },
+      "2": {
+        "explorer": "Është një figurë."
+      },
+      "3": {
+        "fez": "Ka qenë një figurë gjatë gjithë kohës."
+      }
+    }
+  },
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Një shpellë! Harta tregonte derën e një bodrumi, dhe kjo është një kodër e tërë!"
+      },
+      "2": {
+        "fez": "Djalë i zgjuar. Fshihe mallin brenda një kodre, asnjë hajdut nuk e mendon këtë."
+      },
+      "3": {
+        "explorer": "Ne e menduam."
+      },
+      "4": {
+        "fez": "Ne nuk jemi hajdutë. Jemi klientë. Klientë shumë të vonuar."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Duhet të jetë këtu. Henut! Njëmbëdhjetë deben lapis, ajo!"
+      },
+      "2": {
+        "fez": "Ç'thua, a marrim një pjesë po t'i mbledhim?"
+      },
+      "3": {
+        "explorer": "Ti nuk ke mbledhur asgjë."
+      },
+      "4": {
+        "fez": "Më pëlqen ta llogaris që herët."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Pra këtu është prifti i Henutës. I padurueshëm, tha ajo."
+      },
+      "2": {
+        "fez": "Ç'mendon, t'i çojmë diçka? Lule?"
+      },
+      "3": {
+        "explorer": "Ai ka vdekur."
+      },
+      "4": {
+        "fez": "Edhe më mirë. Do të lësh përshtypje të mirë herën e parë."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Këtu lejohej të hynte vetëm kryeprifti. Dhe tani ne!"
+      },
+      "2": {
+        "explorer": "A na lejohet?"
+      },
+      "3": {
+        "fez": "Nuk ka njeri te dera që të thotë jo."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Shiko, harta mbaron këtu. Rërë, dhe pastaj asgjë."
+      },
+      "2": {
+        "explorer": "Atëherë jemi në vendin e duhur."
+      },
+      "3": {
+        "fez": "Këtë them edhe unë. Pikërisht kjo më bën nervoz."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Salla e Osirisit! E gjelbër, sigurisht. Sepse ai kthehet çdo vit, si gruri."
+      },
+      "2": {
+        "explorer": "Ti e dije gjithmonë këtë."
+      },
+      "3": {
+        "fez": "Gjithmonë."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Depoja e vetë perëndive! Çfarë ruan kur i ke të gjitha?"
+      },
+      "2": {
+        "explorer": "Çfarëdo që të sjellin njerëzit."
+      },
+      "3": {
+        "fez": "…Po. Kjo do të jetë."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Mbretëria e forcave të qiellit. Shiko, shiko."
+      },
+      "2": {
+        "fez": "Po të kisha diçka për të shitur që nuk vlen shumë, edhe unë kështu do ta quaja."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Papritur më duket sikur kam bërë diçka gabim."
+      },
+      "2": {
+        "explorer": "Si çfarë?"
+      },
+      "3": {
+        "fez": "S'e kam idenë. Kjo është pjesa më e keqe."
+      }
+    }
+  },
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Gjithë ato leva dhe dyer, për një bodrum!"
+      },
+      "2": {
+        "fez": "Atëherë ka diçka të mirë atje poshtë. Askush nuk lodhet kaq shumë për plehra."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Uf. Ato dyer ishin shumë më të bezdisshme se të Ipit."
+      },
+      "2": {
+        "fez": "Epo. Zonja kishte para, sigurisht."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Uf, më në fund! Ajo shpellë vërtet nuk na donte brenda."
+      },
+      "2": {
+        "explorer": "Mendoj se kjo ishte ideja."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Pst… pse po pëshpëris?"
+      },
+      "2": {
+        "explorer": "S'e di. Edhe unë po pëshpëris."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Uh. Bishti im ende dridhet nga ajo dera e fundit."
+      },
+      "2": {
+        "fez": "Një mbret që i mbyll gjërat e veta kështu… vërtet nuk do t'i humbasë."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "E sheh? Rri mjaft gjatë nën tokë, dhe del përsëri lart."
+      },
+      "2": {
+        "explorer": "Edhe ai është Osiris?"
+      },
+      "3": {
+        "fez": "Jo, ai është imi."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Dyer si ato… dikur, do të ktheheshim mbrapa menjëherë."
+      },
+      "2": {
+        "explorer": "Jo më."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Tre kate shpellë, dhe vetëm pastaj dera e përparme."
+      },
+      "2": {
+        "explorer": "Atëherë duhet t'ia vlejë."
+      },
+      "3": {
+        "fez": "Kështu thonë gjithmonë. Dhe pastaj është një shtambë."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Copa e fundit e errësirës. E ndiej."
+      },
+      "2": {
+        "explorer": "Këtë e the edhe te i fundit."
+      },
+      "3": {
+        "fez": "Dhe gati sa nuk pata të drejtë."
+      }
+    }
+  },
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Shiko atë! Një piramidë nën tokë! Për një tregtar!"
+      },
+      "2": {
+        "fez": "Ose fitonte shumë mirë, ose bënte pazar shumë mirë."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Shiko si shkëlqen maja në diell! Ar i vërtetë, vë bast."
+      },
+      "2": {
+        "explorer": "Poshtë në një vrimë në tokë. Për kë shkëlqen?"
+      },
+      "3": {
+        "fez": "Për të. E njeh këtë lloj njeriu."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Hm. A lejohet vërtet të shesësh diçka që i përket tashmë një perëndie?"
+      },
+      "2": {
+        "explorer": "Pyete perëndinë."
+      },
+      "3": {
+        "fez": "Më mirë jo."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "A mendon se ai prift e di që po endemi këtu brenda?"
+      },
+      "2": {
+        "explorer": "Ai nuk numëron. Do të ishte joprofesionale."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Shikoje, krejt e vetme në diell. E bukur, apo jo?"
+      },
+      "2": {
+        "fez": "Ta vizatojmë thjesht dhe të ikim?"
+      },
+      "3": {
+        "explorer": "Ti nuk di të vizatosh."
+      },
+      "4": {
+        "fez": "…Jo. Atëherë, brenda."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Kushdo që është brenda shpreson të kthehet. Kjo është marrëveshja këtu."
+      },
+      "2": {
+        "explorer": "Sa kohë ka që pret?"
+      },
+      "3": {
+        "fez": "Shumë kohë. Por kjo vjen me punën. Të jesh i vdekur do të thotë kryesisht të presësh."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "explorer": "Uau."
+      },
+      "2": {
+        "fez": "Po."
+      },
+      "3": {
+        "fez": "Ndonjëherë thjesht nuk ka më çfarë të thuash, apo jo?"
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "E sheh atë njollë dielli mbi piramidë? Mund ta dish orën prej saj."
+      },
+      "2": {
+        "explorer": "Sa është ora, pra?"
+      },
+      "3": {
+        "fez": "…Pasdite. Afërsisht. Unë nuk jam orë."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Ja ku është. Çdo vijë e asaj harte mbaron këtu."
+      },
+      "2": {
+        "explorer": "Atëherë ky është fundi."
+      },
+      "3": {
+        "fez": "I hartës, po. E çuditshme. Mendoja se do të ndihesha më mirë."
+      }
+    }
+  },
+  "camp": {
+    "firstHome": {
+      "1": {
+        "fez": "Ky është kampi yt? Një zjarr dhe një sënduk?"
+      },
+      "2": {
+        "explorer": "Kampi ynë."
+      },
+      "3": {
+        "fez": "Yni. Mirë. Atëherë vendi pranë zjarrit është imi."
+      },
+      "4": {
+        "fez": "Në fund të fundit jam hardhucë. Kur më leverdis."
+      }
+    },
+    "homeHaul": {
+      "1": {
+        "fez": "Shpaketimi! Pjesa më e mirë e gjithë udhëtimit."
+      },
+      "2": {
+        "explorer": "Më e mirë se piramida?"
+      },
+      "3": {
+        "fez": "Piramida nuk është e jona. Kjo po."
+      }
+    },
+    "homeEmpty": {
+      "1": {
+        "explorer": "Duarbosh."
+      },
+      "2": {
+        "fez": "Edhe çfarë? Ecëm. Edhe kjo vlen."
+      },
+      "3": {
+        "explorer": "Drejt çfarë?"
+      },
+      "4": {
+        "fez": "Këmbëve të mia. Janë shumë të shkurtra, e di."
+      }
+    },
+    "rested": {
+      "1": {
+        "fez": "Ja. Je pak më mirë?"
+      },
+      "2": {
+        "explorer": "Ishte vetëm një gërvishtje."
+      },
+      "3": {
+        "fez": "As që e pashë. Dhe prapë m'u desh të ulesha."
+      }
+    },
+    "chapterJunior": {
+      "1": {
+        "fez": "Epo, kjo shkoi bukur. Tjetri!"
+      },
+      "2": {
+        "explorer": "Nuk ishte aq e lehtë."
+      },
+      "3": {
+        "fez": "Tani është. Pas faktit, gjithçka është e lehtë."
+      }
+    },
+    "chapterExpert": {
+      "1": {
+        "fez": "Atje kanë kurthe. Të vërteta. Kafshojnë."
+      },
+      "2": {
+        "fez": "U lëndove? Atëherë thjesht kthehemi në këmbë. Në shtëpi do të shërohesh."
+      },
+      "3": {
+        "explorer": "Po ti?"
+      },
+      "4": {
+        "fez": "Unë do të eci pas teje. Aty është më e sigurt."
+      }
+    },
+    "chapterMaster": {
+      "1": {
+        "fez": "Katër piramida atje. Të kujtohet kur ishte vetëm një?"
+      },
+      "2": {
+        "explorer": "Nuk ka shumë kohë që atëherë."
+      },
+      "3": {
+        "fez": "Jo. Por kështu duket."
+      }
+    },
+    "chapterWizard": {
+      "1": {
+        "fez": "Shiko të fundit. Me majë të artë dhe gjithçka!"
+      },
+      "2": {
+        "fez": "Ajo do të na kushtojë. E fundit gjithmonë kushton."
+      },
+      "3": {
+        "explorer": "Do të na kushtojë çfarë?"
+      },
+      "4": {
+        "fez": "…Nuk jam më i sigurt."
+      }
+    },
+    "firstFind": {
+      "1": {
+        "fez": "Shiko, sikur ka qenë gjithmonë aty!"
+      },
+      "2": {
+        "fez": "Më kruhen duart t'i vë një etiketë me çmim."
+      },
+      "3": {
+        "explorer": "Mos."
+      },
+      "4": {
+        "fez": "Jo, jo. Nga shtëpia nuk shet. Këtë e di."
+      }
+    },
+    "structureDone": {
+      "1": {
+        "fez": "U mbarua! Çdo pjesë është në vend!"
+      },
+      "2": {
+        "explorer": "E gjitha puna jonë."
+      },
+      "3": {
+        "fez": "Epo. Unë kryesisht tregova me gisht."
+      }
+    }
+  },
+  "animal": {
+    "forSale": {
+      "1": {
+        "fez": "Shiko çfarë ka te tezga! Tani bëj edhe transport."
+      },
+      "2": {
+        "explorer": "Po përtyp."
+      },
+      "3": {
+        "fez": "Kjo përfshihet në çmim."
+      }
+    },
+    "boughtDonkey": {
+      "1": {
+        "fez": "U shit! Një gomar. Kokëfortë, por mban çdo gjë."
+      },
+      "2": {
+        "explorer": "Po ku është?"
+      },
+      "3": {
+        "fez": "Ka nisur tashmë për në shtëpi. Preferon të ecë pa ne."
+      }
+    },
+    "blockedDonkey": {
+      "1": {
+        "fez": "Nuk ecim aq larg me gjithë këto plaçka. Për këtë duhet një gomar."
+      },
+      "2": {
+        "fez": "Dhe merr me mend kush ka një? Unë. Te tezga ime në thesarin e Henutës."
+      }
+    },
+    "throughDonkey": {
+      "1": {
+        "explorer": "Ai do."
+      },
+      "2": {
+        "fez": "Sot. Pyete prapë nesër."
+      }
+    },
+    "arrivesDonkey": {
+      "1": {
+        "fez": "Ja ku është! Arriti para nesh."
+      },
+      "2": {
+        "explorer": "E gjeti edhe zjarrin."
+      },
+      "3": {
+        "fez": "Vendin tim. Epo. Ai erdhi i pari."
+      }
+    },
+    "boughtCart": {
+      "1": {
+        "fez": "Një karrocë! Dy rrota, dhe mezi kërcasin."
+      },
+      "2": {
+        "explorer": "Mezi?"
+      },
+      "3": {
+        "fez": "Kërcitja është falas."
+      }
+    },
+    "blockedCart": {
+      "1": {
+        "fez": "Gomari nuk merr më asnjë çantë. E pyeta."
+      },
+      "2": {
+        "fez": "Një karrocë, kjo na duhet. Ka një te tezga ime, te kryeprifti."
+      }
+    },
+    "throughCart": {
+      "1": {
+        "explorer": "E dëgjon?"
+      },
+      "2": {
+        "fez": "Është karroca. Këndon pak."
+      },
+      "3": {
+        "explorer": "Gjithë rrugën?"
+      }
+    },
+    "arrivesCart": {
+      "1": {
+        "fez": "Një karrocë në kampin tonë! Tani dukemi sikur po shkojmë diku."
+      },
+      "2": {
+        "explorer": "Po shkojmë diku."
+      },
+      "3": {
+        "fez": "Po, por tani e shohin të gjithë."
+      }
+    },
+    "boughtCamel": {
+      "1": {
+        "fez": "Një deve! Ecën me ditë pa ujë. Unë jo, ta dish."
+      },
+      "2": {
+        "explorer": "Po të shikon."
+      },
+      "3": {
+        "fez": "Nga lart. Devetë të shikojnë gjithmonë nga lart."
+      }
+    },
+    "blockedCamel": {
+      "1": {
+        "fez": "Shenjtërorja e brendshme? Në këmbë nuk arrijmë kurrë atje."
+      },
+      "2": {
+        "fez": "Për fat, unë kam një deve. Te tezga ime, te kryeprifti."
+      }
+    },
+    "throughCamel": {
+      "1": {
+        "fez": "Po gjunjëzohet! Për mua!"
+      },
+      "2": {
+        "explorer": "Që të hipim ne."
+      },
+      "3": {
+        "fez": "Ma lër këtë kënaqësi."
+      }
+    },
+    "arrivesCamel": {
+      "1": {
+        "fez": "Ja ku është. Bën sikur kampi është i tij."
+      },
+      "2": {
+        "explorer": "Po gomari?"
+      },
+      "3": {
+        "fez": "Bën sikur nuk e sheh. Njësoj si unë."
+      }
+    },
+    "boughtSecondDonkey": {
+      "1": {
+        "fez": "Edhe një gomar! Tani i pari ka me kë të flasë."
+      },
+      "2": {
+        "explorer": "Të flasë?"
+      },
+      "3": {
+        "fez": "Të pëllasë. Është po ai muhabet, vetëm më me zë."
+      }
+    },
+    "blockedSecondDonkey": {
+      "1": {
+        "fez": "Gomari nuk do të vazhdojë. Jo vetëm, thotë."
+      },
+      "2": {
+        "explorer": "Ai e tha këtë?"
+      },
+      "3": {
+        "fez": "Unë e flas gomarçen. Do një shok, dhe unë kam një te tezga ime në thesarin e faraonit."
+      }
+    },
+    "throughSecondDonkey": {
+      "1": {
+        "fez": "Dëgjoji! Secili më me zë se tjetri."
+      },
+      "2": {
+        "explorer": "Kush po fiton?"
+      },
+      "3": {
+        "fez": "Jo ne. Ne duhet t'i dëgjojmë."
+      }
+    },
+    "arrivesSecondDonkey": {
+      "1": {
+        "fez": "Shikoji. Sikur njihen prej vitesh."
+      },
+      "2": {
+        "explorer": "Si ne."
+      },
+      "3": {
+        "fez": "Ne pëllasim më pak."
+      }
+    },
+    "boughtSecondCamel": {
+      "1": {
+        "fez": "Edhe një deve. Po. As mua nuk më pëlqejnë."
+      },
+      "2": {
+        "fez": "Por kjo të paktën duket e shoqërueshme."
+      },
+      "3": {
+        "explorer": "Po të shikon fesin."
+      }
+    },
+    "blockedSecondCamel": {
+      "1": {
+        "fez": "Salla e Osirisit. Me një deve nuk arrijmë atje."
+      },
+      "2": {
+        "fez": "Për fat kam edhe një, te tezga ime në thesarin e faraonit. E fundit fare."
+      },
+      "3": {
+        "explorer": "Gjithmonë këtë thua."
+      }
+    },
+    "throughSecondCamel": {
+      "1": {
+        "fez": "Po ma ha fesin!"
+      },
+      "2": {
+        "explorer": "Një deve e shoqërueshme."
+      },
+      "3": {
+        "fez": "Tepër e shoqërueshme."
+      }
+    },
+    "arrivesSecondCamel": {
+      "1": {
+        "fez": "Dy deve. Tani të dyja më shikojnë nga lart."
+      },
+      "2": {
+        "explorer": "Shko rri me gomarët, atëherë."
+      },
+      "3": {
+        "fez": "Aty jam tashmë."
+      }
+    },
+    "boughtSturdyCart": {
+      "1": {
+        "fez": "Një karrocë më e fortë. Kjo nuk këndon në rrugë."
+      },
+      "2": {
+        "explorer": "Ka lule të pikturuara mbi të."
+      },
+      "3": {
+        "fez": "Për forcë."
+      }
+    },
+    "blockedSturdyCart": {
+      "1": {
+        "fez": "Karroca e vjetër nuk arrin atje e plotë. Duhet diçka më e fortë."
+      },
+      "2": {
+        "fez": "Ka një te tezga ime në Thesarin e perëndive. Jo për bojën, ama."
+      }
+    },
+    "throughSturdyCart": {
+      "1": {
+        "explorer": "Asnjë kërcitje."
+      },
+      "2": {
+        "fez": "E sheh? Forcë."
+      },
+      "3": {
+        "explorer": "Po lulet?"
+      },
+      "4": {
+        "fez": "Ndihmojnë pak edhe ato."
+      }
+    },
+    "arrivesSturdyCart": {
+      "1": {
+        "fez": "Shiko si shkëlqen!"
+      },
+      "2": {
+        "explorer": "Më e bukur se ç'duhet."
+      },
+      "3": {
+        "fez": "Po. As unë nuk e shita për forcën."
+      }
+    },
+    "boughtCaravanBanner": {
+      "1": {
+        "fez": "Një flamur. Do të jem i sinqertë: nuk hap asgjë."
+      },
+      "2": {
+        "explorer": "Po çfarë bën, atëherë?"
+      },
+      "3": {
+        "fez": "Valëvitet. Bukur fare."
+      }
+    },
+    "arrivesCaravanBanner": {
+      "1": {
+        "fez": "Shiko si valëvitet! Mbi kampin tonë!"
+      },
+      "2": {
+        "explorer": "Prapë nuk hap asgjë."
+      },
+      "3": {
+        "fez": "Jo. Nuk ka pse."
+      }
+    }
+  },
+  "bond": {
+    "starter": {
+      "1": {
+        "fez": "Kjo ishte e shpejtë."
+      },
+      "2": {
+        "explorer": "Ishte një derë."
+      },
+      "3": {
+        "fez": "Mua do të më duhej një javë."
+      }
+    },
+    "starterTomb": {
+      "1": {
+        "fez": "Vetëm që ta dimë. Unë jam këtu për t'i rishitur gjërat. Po e them tani, sa është ende e vërtetë."
+      },
+      "2": {
+        "explorer": "E mbaj mend."
+      }
+    },
+    "junior": {
+      "1": {
+        "fez": "Heshte pak aty."
+      },
+      "2": {
+        "explorer": "Po numëroja."
+      },
+      "3": {
+        "fez": "E di. Kam parë njerëz që hamendësojnë. Ajo nuk ishte hamendësim."
+      }
+    },
+    "expert": {
+      "1": {
+        "fez": "Ishte afër."
+      },
+      "2": {
+        "explorer": "Shkoi mirë."
+      },
+      "3": {
+        "fez": "Ishte afër. Kam të drejtë ta them."
+      }
+    },
+    "master": {
+      "1": {
+        "fez": "Mund të ndalemi."
+      },
+      "2": {
+        "explorer": "Mund të ndalemi."
+      },
+      "3": {
+        "fez": "Po e them që të jetë thënë. Jo që ta bëjmë."
+      }
+    },
+    "wizard": {
+      "1": {
+        "explorer": "Sa vlen ky?"
+      },
+      "2": {
+        "fez": "…"
+      },
+      "3": {
+        "fez": "Këtij nuk do t'i vë çmim."
+      },
+      "4": {
+        "explorer": "E mbaj mend."
+      }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": {
+        "fez": "Oho. Ky ishte mur para një sekonde."
+      },
+      "2": {
+        "explorer": "Pas tij kishte një kalim."
+      },
+      "3": {
+        "fez": "Gjithë ato vite njerëzit kaluan pranë tij. Gjithë ato vite!"
+      }
+    }
+  },
+  "reading": {
+    "junior": {
+      "1": {
+        "explorer": "Këtu ka një rresht që tani di ta lexoj."
+      },
+      "2": {
+        "explorer": "U dhashë bukë të uriturve."
+      },
+      "3": {
+        "fez": "Bukë. Në një varr."
+      },
+      "4": {
+        "explorer": "Ishte edhe te i fundit. Nuk e dija që ishin fjalë."
+      }
+    },
+    "expert": {
+      "1": {
+        "explorer": "Rreshti i dytë. Ujë të eturve."
+      },
+      "2": {
+        "fez": "Bukë, dhe tani ujë. Dikush donte shumë që ta kujtonin si bujar."
+      },
+      "3": {
+        "explorer": "E kanë të gjithë. Çdo mur, çdo varr, të njëjtët dy rreshta."
+      },
+      "4": {
+        "fez": "Atëherë ose ishin të gjithë bujarë, ose kjo është ajo që duhet thënë."
+      },
+      "5": {
+        "explorer": "Ose kjo është ajo me të cilën i peshonin."
+      }
+    },
+    "master": {
+      "1": {
+        "explorer": "Rroba të zhveshurve. Rreshti i tretë."
+      },
+      "2": {
+        "fez": "Bukë, ujë, rroba. Është një listë gjërash që u dhanë."
+      },
+      "3": {
+        "explorer": "Në varrin e një njeriu që mori gjithçka me vete."
+      },
+      "4": {
+        "fez": "…Po. Këtë e kisha vënë re."
+      }
+    },
+    "sphinx": {
+      "1": {
+        "fez": "Përsëri aty ku filluam. Nuk ka lëvizur."
+      },
+      "2": {
+        "explorer": "Shkrimi është ende aty."
+      },
+      "3": {
+        "fez": "Di ta lexosh?"
+      },
+      "4": {
+        "explorer": "Një emër."
+      },
+      "5": {
+        "fez": "I kujt?"
+      },
+      "6": {
+        "explorer": "Yti."
+      },
+      "7": {
+        "fez": "…"
+      },
+      "8": {
+        "fez": "A je i sigurt?"
+      },
+      "9": {
+        "explorer": "Është shkruar."
+      },
+      "10": {
+        "fez": "Hm."
+      },
+      "11": {
+        "fez": "Hori."
+      },
+      "12": {
+        "fez": "Në çdo fshat të Egjiptit kishte një Hori."
+      },
+      "13": {
+        "fez": "Epo. Kjo e shpjegon fesin."
+      }
+    }
+  },
+  "altar": {
+    "refused": {
+      "1": {
+        "priest": "Jo."
+      },
+      "2": {
+        "explorer": "Ka shenjën e tij."
+      },
+      "3": {
+        "priest": "Ka një shenjë. Është shenjë shumë e mirë. E gdhendi dikush me vegla të shkëlqyera dhe pa asnjë punë këtu, dhe jo shumë kohë më parë."
+      },
+      "4": {
+        "priest": "Kam pritur tre mijë vjet. Nuk do të më gënjejnë në javën e fundit."
+      }
+    }
+  },
+  "meeting": {
+    "starter_1": {
+      "1": {
+        "voice": "Hej! Jo ATY! Shiko ku shkel!"
+      },
+      "2": {
+        "explorer": "Më fal! Nuk shoh asgjë! Ku je?"
+      },
+      "3": {
+        "fez": "Këtu poshtë! Po qëndron mbi mallin tim!"
+      },
+      "4": {
+        "explorer": "Një hardhucë?! Me fes?"
+      },
+      "5": {
+        "fez": "Një tregtar. Dhe çfarë ka fesi im?"
+      },
+      "6": {
+        "fez": "Edhe ti ke ardhur për piramidën, vë bast. Bleve hartë? E pagove shumë shtrenjtë?"
+      },
+      "7": {
+        "explorer": "SHUMË shtrenjtë."
+      },
+      "8": {
+        "fez": "Edhe unë. Pff."
+      },
+      "9": {
+        "explorer": "Shkrimi te Sfinksi… ti di ta lexosh?"
+      },
+      "10": {
+        "fez": "Jo. Askush nuk di më. Ajo bazë ka qenë dikur blu dhe e artë, ta dish."
+      },
+      "11": {
+        "explorer": "Si e di ti këtë?"
+      },
+      "12": {
+        "fez": "…E kam dëgjuar. Pra, çfarë kërkon ti këtu poshtë?"
+      },
+      "13": {
+        "explorer": "Diçka të bukur."
+      },
+      "14": {
+        "fez": "E bukura shitet! E di çfarë? Po vij me ty!"
+      },
+      "15": {
+        "explorer": "Çfarë? Me mua?"
+      },
+      "16": {
+        "fez": "Katër sy shohin më shumë se dy. Hajde, ajo piramidë po pret!"
+      }
+    }
+  },
+  "end": {
+    "1": {
+      "fez": "Ishte e bukur?"
+    },
+    "2": {
+      "explorer": "Shkon."
+    }
+  },
+  "revisit": {
+    "starter": {
+      "north1": {
+        "1": {
+          "ipi": "Ende këtu? Në veri! Henut! Njëmbëdhjetë deben!"
+        }
+      },
+      "north2": {
+        "1": {
+          "ipi": "Njëmbëdhjetë deben lapis. Henut. Në veri. Çfarë pret?"
+        }
+      },
+      "paid1": {
+        "1": {
+          "ipi": "Hë? Pagoi? …Jo. Sigurisht që jo."
+        }
+      },
+      "paid2": {
+        "1": {
+          "ipi": "Xham? XHAM? Këtu shkruan lapis. Pikërisht këtu. Lapis!"
+        }
+      },
+      "later1": {
+        "1": {
+          "ipi": "Prapë ti. Rafti i tretë, ajo me cepin e thyer, është ende e imja. Duart larg."
+        }
+      },
+      "later2": {
+        "1": {
+          "ipi": "Dyzet vjet libra llogarish, dhe asnjë nuk del. Asnjë!"
+        }
+      }
+    },
+    "junior": {
+      "wall1": {
+        "1": {
+          "henut": "Muri. Shenja e tretë. Ende nuk është emri im."
+        }
+      },
+      "wall2": {
+        "1": {
+          "henut": "Ti je ende këtu, dhe ajo patë është ende në murin tim. Ndreqe."
+        }
+      },
+      "priest1": {
+        "1": {
+          "henut": "Ende emri im. E kontrollova. Tani: Karnak, prifti. Shko."
+        }
+      },
+      "priest2": {
+        "1": {
+          "henut": "Karnak! Ai ka pritur mjaftueshëm. Shko dhe paraqitu."
+        }
+      },
+      "met1": {
+        "1": {
+          "henut": "Hë? I padurueshëm, apo jo? Ta thashë."
+        }
+      },
+      "later1": {
+        "1": {
+          "henut": "Xham, ende. Ende i bukur. Ende i zgjedhur nga unë."
+        }
+      }
+    },
+    "expert": {
+      "seal1": {
+        "1": {
+          "priest": "Vula. E sjellë këtu, e vënë poshtë, me fjalët e thëna mbi të. Do të pres."
+        }
+      },
+      "seal2": {
+        "1": {
+          "priest": "Ah. Prapë ti. Dhe ende pa vulë."
+        }
+      },
+      "king1": {
+        "1": {
+          "priest": "E ke parë mbretin. Mirë. Vetë sendi, ama, jo diçka që i ngjan."
+        }
+      },
+      "later1": {
+        "1": {
+          "priest": "Prapë ti. Nuk ka mbetur asgjë për të bërë këtu. Është shumë qetësuese."
+        }
+      }
+    },
+    "master": {
+      "priest1": {
+        "1": {
+          "pharaoh": "Ende këtu? Te prifti me atë kopje! Dua të dëgjoj si shkon."
+        }
+      },
+      "priest2": {
+        "1": {
+          "pharaoh": "Mund të afrohesh. Përsëri. E ka parë prifti?"
+        }
+      },
+      "rite1": {
+        "1": {
+          "pharaoh": "Pra më në fund e bëri ritin e tij. Mirë. Tani do të jetë i padurueshëm për këtë."
+        }
+      },
+      "later1": {
+        "1": {
+          "pharaoh": "Ende java më e mirë në nëntëqind vjet. Dhe vazhdon!"
+        }
+      }
+    },
+    "wizard": {
+      "later1": {
+        "1": {
+          "priest": "…Po. Ende e mbaj mend si bëhet. Mirë."
+        }
+      },
+      "later2": {
+        "1": {
+          "priest": "E vënë poshtë, me fjalët e thëna. U krye. Është një ndjenjë e çuditshme."
+        }
+      }
+    }
+  }
+}

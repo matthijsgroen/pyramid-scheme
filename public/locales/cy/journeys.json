@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Gwawr wrth y Sffincs",
+    "description": "Y Sffincs Mawr, a'r ysgrifen wrth ei draed nad oes neb byw yn gallu ei darllen. Mae'r map yn dweud: dechrau yma."
+  },
+  "starter_2": {
+    "name": "Llwybr y Masnachwr Papyrws",
+    "description": "Ffordd fasnach ar hyd y Nîl, gyda stordai'r masnachwyr bob ochr. Mae ambell un heb ei wagio erioed."
+  },
+  "starter_3": {
+    "name": "Teml Bastet",
+    "description": "Teml Bastet. Roedd y cathod yma'n sanctaidd, a'r ŵyl bob blwyddyn oedd y fwyaf yn yr Aifft — cychod, cerddoriaeth, y cwbl lot."
+  },
+  "starter_4": {
+    "name": "Ysgol yr Ysgrifenyddion",
+    "description": "Ysgol yr ysgrifenyddion, lle dysgodd yr Aifft ysgrifennu. Mae'r stafelloedd dosbarth yn dal o dan y tywod."
+  },
+  "starter_treasure_tomb": {
+    "name": "Storfa Gudd y Masnachwr",
+    "description": "Seler masnachwr, nid brenin: jariau wedi'u pentyrru, eu selio a'u labelu, a neb i lawr yno i ddadlau amdanyn nhw.",
+    "mapHint": "Mae'r darn papur yn dangos ffordd farchnad a drws seler — cuddfan masnachwr, dim byd mwy crand."
+  },
+  "junior_1": {
+    "name": "Taith yr Ibis Sanctaidd",
+    "description": "Tir corsiog, a'r ibis yn cerdded drwy'r dŵr. Roedd yr Aifft yn gwylio'r adar yma: pan maen nhw'n dod 'nôl, mae'r llifogydd ar y ffordd."
+  },
+  "junior_2": {
+    "name": "Dyffryn y Crefftwyr",
+    "description": "Deir el-Medina, lle roedd gwneuthurwyr y beddau'n byw. Cafodd popeth ar gyfer bedd brenin ei wneud yma gyntaf, mewn mowldiau."
+  },
+  "junior_3": {
+    "name": "Teml Thoth",
+    "description": "Teml Thoth. Fe ddyfeisiodd ysgrifennu, cadw'r cofnodion a gwneud y cyfrif — sef y rhan fwyaf o beth rydyn ni wedi bod yn ei wneud."
+  },
+  "junior_4": {
+    "name": "Goleudy Alecsandria",
+    "description": "Pharos Alecsandria. Tân ar y top yn llosgi drwy'r nos, a morwyr yn gweld yr arfordir o ddiwrnod o hwylio i ffwrdd."
+  },
+  "junior_treasure_tomb": {
+    "name": "Claddgell Gudd yr Uchelwraig",
+    "description": "Claddgell uchelwraig, wedi'i phaentio o'r llawr i'r nenfwd. Prynodd hi'r copïau gorau oedd ar gael, a ddwedodd hi ddim gair am hynny erioed.",
+    "mapHint": "Inc da, a sêl gydag arfbais yn y gornel — roedd rhywun pwysig eisiau i bawb anghofio'r stafell hon."
+  },
+  "expert_1": {
+    "name": "Dyffryn y Brenhinoedd",
+    "description": "Dyffryn y Brenhinoedd. Fe stopion nhw adeiladu pyramidiau a chuddio beddau'r brenhinoedd mewn un dyffryn, o dan gopa siâp pyramid."
+  },
+  "expert_2": {
+    "name": "Temlau Karnak",
+    "description": "Karnak, a gafodd ei adeiladu'n fwy ac yn fwy am ddwy fil o flynyddoedd. Mae gan y neuadd fawr ei hun gant tri deg pedwar o golofnau, a phob un wedi'i cherfio."
+  },
+  "expert_3": {
+    "name": "Taith i Ddelta'r Nîl",
+    "description": "Lle mae'r Nîl yn hollti ac yn lledu'n wyrdd. Gwlad Sobek — papyrws, pysgod, a chrocodeiliaid roedd pobl yn eu haddoli a'u bwydo."
+  },
+  "expert_4": {
+    "name": "Pyramid Djoser",
+    "description": "Pyramid grisiau Djoser, yr adeilad cyntaf mor fawr â hyn wedi'i wneud o garreg. Cafodd ei bensaer, Imhotep, ei gofio fel duw yn y diwedd."
+  },
+  "expert_treasure_tomb": {
+    "name": "Trysorfa'r Archoffeiriad",
+    "description": "Trysorfa archoffeiriad, o dan lawr y rhoddion. Cafodd popeth i lawr yno ei roi i dduw, a ddaeth dim byd allan eto.",
+    "mapHint": "Mae'r llinellau'n dangos tir teml, a grisiau'n mynd i lawr o dan lawr y rhoddion."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Y Cysegr Mewnol",
+    "description": "Y stafell wedi'i selio yng nghanol y deml. Roedd yr archoffeiriad yn mynd i mewn unwaith y dydd, i olchi'r duw a'i wisgo.",
+    "mapHint": "Mae coridorau'n mynd heibio i gelloedd y deml at ddrws wedi'i selio — dim ond yr offeiriaid uchaf aeth drwyddo."
+  },
+  "master_1": {
+    "name": "Pyramid Mawr Giza",
+    "description": "Y Pyramid Mawr. Ugain mlynedd o gerrig, a thref gyfan wrth ei ymyl yn bwydo'r gweithwyr â bara a chwrw."
+  },
+  "master_2": {
+    "name": "Llyfr y Meirw",
+    "description": "Nid un llyfr, ond casgliad o swynion wedi'u copïo i ti. Roedd gan y rhai rhad le gwag lle dylai dy enw di fynd."
+  },
+  "master_3": {
+    "name": "Melltith y Pharoaid",
+    "description": "Papurau newydd wnaeth ddyfeisio'r felltith enwog, yn 1923. Roedd yr Eifftiaid yn gwarchod eu beddau â drysau a gwaith papur."
+  },
+  "master_4": {
+    "name": "Bedd Nefertari",
+    "description": "Bedd Nefertari, y stafell sydd wedi'i phaentio orau yn yr Aifft. Cafodd y lliwiau eu malu o gerrig — aswrit, malachit, ocr."
+  },
+  "master_treasure_tomb": {
+    "name": "Celc Cyfrinachol y Pharo",
+    "description": "Celc preifat brenin, allan lle mae'r mapiau'n rhoi'r gorau iddi. Mae popeth aeth i'r ddaear gydag ef yn dal i lawr yno.",
+    "mapHint": "Mae cartouche brenin ar un ymyl, ac mae'r llwybr yn gorffen ymhell allan o dan dywod agored."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Neuadd Osiris",
+    "description": "Neuadd Osiris. Duw'r llifogydd a'r grawn — mae popeth sy'n mynd o dan y ddaear yma i fod i ddod 'nôl.",
+    "mapHint": "O dan stafelloedd y brenin mae'r map yn dal i fynd i lawr, i neuadd gydag arwyddion defodau'r meirw."
+  },
+  "wizard_1": {
+    "name": "Taith Haul Ra",
+    "description": "Mae Ra'n mynd o dan y byd adeg machlud ac mae ganddo ddeuddeg awr o dywyllwch i'w croesi. Ysgrifennodd yr Aifft beth sy'n digwydd ym mhob un."
+  },
+  "wizard_2": {
+    "name": "Cewri Memnon",
+    "description": "Dau gawr yn eistedd, cerfluniau Amenhotep III. Penderfynodd y Groegiaid mai rhywun arall oedden nhw, ac arhosodd yr enw hwnnw am ddwy fil o flynyddoedd."
+  },
+  "wizard_3": {
+    "name": "Siambr Ma'at",
+    "description": "Siambr Ma'at. Hi yw trefn pob peth, a'i hunig bluen estrys yw'r peth mae popeth arall yn cael ei fesur yn ei erbyn."
+  },
+  "wizard_4": {
+    "name": "Y Pyramid Tragwyddol",
+    "description": "Roedd y tu allan o galchfaen llyfn, gwyn fel halen, mor berffaith fel y gallet ti ei weld yn fflachio o ddiwrnod o gerdded i ffwrdd."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Claddgell y Duwiau",
+    "description": "Lle roedd y deml yn cadw pethau'r duwiau. Doedd neb yn cael dod i mewn heb y peth iawn yn ei ddwylo.",
+    "mapHint": "Does dim un tirnod ar y darn hwn yn perthyn i fyd pobl — beth bynnag mae'n ei ddangos, y duwiau a'i rhoddodd yno."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Teyrnas y Grymoedd Mawr",
+    "description": "Mapiau sêr ar draws y nenfwd, wedi'u paentio er mwyn i'r meirw wybod faint o'r gloch oedd hi yn y nos. Mae rhaff rhywun yn dal i hongian yn y siafft.",
+    "mapHint": "Heibio i gladdgell y duwiau mae'r llinellau'n troi'n llwybrau sêr, lle mae grymoedd bywyd ac anhrefn yn cael eu cadw fel creiriau."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Gorsedd Tragwyddoldeb",
+    "description": "Un sedd yn y canol a phedwar deg dau o farnwyr o'i chwmpas. Mae pob un yn gofyn cwestiwn, a rhaid i ti ateb 'na' i bob un.",
+    "mapHint": "Mae pob llwybr sêr ar y darn hwn yn dod at ei gilydd mewn un sedd yng nghanol teyrnas y duwiau."
+  }
+}

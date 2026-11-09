@@ -1,0 +1,1730 @@
+{
+  "not-found": "Því miður, samtalið sem þú leitar að er ekki til.",
+  "welcome": "Egyptaland! Ég er í alvörunni hérna.",
+  "welcome2": "Og þetta kort… ég borgaði allt of mikið fyrir það. Það verður að vera rétt.",
+  "welcome3": "Komdu. Sjáum hvar krossinn er.",
+  "pyramidIntro": "Það eru tölur á þessum steinum. Og sumar vantar…",
+  "pyramidIntro2": "Bíddu. Hver steinn er tveir steinarnir fyrir neðan hann, lagðir saman! Já, hér líka!",
+  "pyramidBlockedBlocks": "Hey, hvað er þetta? Þessir steinar eru innsiglaðir. Þeir vilja ekki sýna töluna sína!",
+  "pyramidBlockedBlocks2": "Skiptir ekki máli. Skoðaðu steinana í kring. Þú getur fundið hana út frá þeim.",
+  "pyramidBlockedBlocks3": "Þú getur bara ekki skrifað hana inn. Þú verður að muna töluna í kollinum.",
+  "pyramidBlockedBlocks4": "Komdu, þú hefur komist alla þessa leið. Þú getur þetta!",
+  "levelCompleted": "Ha! Það opnast! Komdu, inn með okkur.",
+  "exitPillar": {
+    "1": {
+      "fez": "Ha! Dagsbirta! Sérðu ljósgeislann? Þar er leiðin út. Stígðu inn í hann og þá erum við búin hér."
+    },
+    "2": {
+      "fez": "Það er alltaf bara ein, alveg við enda aðalgangsins. Hvert sem við flökkum annars, komum við alltaf aftur að henni."
+    },
+    "3": {
+      "explorer": "Ein leið út. Skilið."
+    }
+  },
+  "expeditionCompleted": "Til hamingju með að ljúka leiðangrinum!",
+  "expeditionCompleted2": "Nýr leiðangur er í boði.",
+  "tombTutorial": "Ó, letur! Getum við lesið það? Með myndtáknunum sem við höfum fundið… kannski!",
+  "tombTutorial2": "Sjáðu, dæmi með táknum í! Sérðu tómu hólfin? Myndtáknin fara þangað. Þín, hérna niðri.",
+  "tombTutorial3": "Litlu dæmin sýna þér hvenær tákn er rétt. Þannig finnum við hvaða tákn fer hvert.",
+  "tombTutorial4": "Allt útfyllt? Þá birtist talnalás. Stóra dæmið er kóðinn, og þá opnast grafhýsið!",
+  "hieroglyphUnlock": "Við erum með sérstakan grip. Með honum getum við skrifað á einn af innsigluðu steinunum!",
+  "hieroglyphUnlock2": "Ýttu á glóandi stein og dragðu svo gripinn á hann til að opna hann. Einn steinn í hverjum pýramída.",
+  "errorHighlightTutorial": "Fjársjóðurinn sem við fundum kann sniðugt bragð. Ef þú skrifar rangt svar glóir ein villa rauð!",
+  "errorHighlightTutorial2": "Bara einn steinn glóir í einu, svo þetta er enn áskorun. En það hjálpar að þrengja hringinn!",
+  "earlyFeedbackTutorial": "Sérðu prófsteinana? Þeir verða grænir eða rauðir um leið og þú fyllir í þá!",
+  "earlyFeedbackTutorial2": "Notaðu þá sem fasta punkta þegar þú leysir. Ef einn verður rauður þarf að laga eitthvað nálægt honum.",
+  "notEnoughHieroglyphs": "Þú getur alltaf hætt í þessum leiðangri með því að fara aftur á ferðaskjáinn.",
+  "notEnoughHieroglyphs2": "Við getum gert hlé á leiðangrinum og leitað annars staðar að myndtáknunum sem okkur vantar enn.",
+  "tombLoot": "Vá, fyrsti fjársjóðurinn okkar! Vel gert!",
+  "mapPiece": "Sjáðu! ÞETTA er sko kort. Almennilega gamalt! Meira virði en bæði kortin okkar til samans!",
+  "mapPiece2": "Bara bútur af því, samt. Hver leiðangur hérna felur einn, og saman vísa þeir á grafhýsi.",
+  "mapComplete": "Það er heilt! Sjáðu, hver bútur passar alveg.",
+  "mapComplete2": "Þarna, þar sem allar línurnar mætast. Þar liggur grafhýsi.",
+  "mapComplete3": "Það er komið í ferðirnar okkar. Eigum við að fara og kíkja?",
+  "mapPiece3": "Fylgstu með á leiðangralistanum. Það geri ég sko!",
+  "mosaicIntro": "Ó, litað gler! Sjáðu hvernig það grípur ljósið. ÞESSU hendir enginn!",
+  "mosaicIntro2": "Þetta er einn biti úr mynd. Heill gluggi úr gleri, og hver biti sem við finnum færir smá af honum aftur.",
+  "mosaicIntro3": "Áttu ekki búðir einhvers staðar? Tökum þá með og röðum þeim saman þar. Mig langar að sjá hvað kemur út!",
+  "mosaicReminder": "Pssst! Glerbitarnir glamra enn í pokanum okkar. Eigum við að setja þá í gluggann í búðunum?",
+  "mosaicStarter": "Köttur í dyragættinni og snákur sem flýtir sér burt. Þetta var mjólkurskálar virði.",
+  "mosaicStarter2": "Egyptar elskuðu ketti einmitt út af þessu. Þeir drápu snákana og rotturnar sem komust í kornið.",
+  "mosaicStarter3": "Þeir elskuðu þá svo mikið að þeir gerðu einn að gyðju. Bastet. Verndara heimilisins, dyranna og allra sem sofa fyrir innan.",
+  "mosaicJunior": "Sjáðu höndina á honum. Einhver er að sýna honum hvernig á að halda á pennanum.",
+  "mosaicJunior2": "Sá með fuglshöfuðið er Þót. Skrift, talning og skráning, allt er það hans.",
+  "mosaicJunior3": "Íbisinn sem við eltum upp með fljótinu? Það er fuglinn hans. Hver tala sem við höfum fyllt inn í vegg tilheyrir honum líka.",
+  "mosaicExpert": "Þetta ljós er engin heppni. Þeir byggðu allan salinn svo það myndi lenda einmitt þarna, á réttum morgni.",
+  "mosaicExpert2": "Sólin er Amon-Ra. Sá falni, og ljósið sem allir sjá. Hvort tveggja í einu.",
+  "mosaicExpert3": "Sá sem getur mælt himininn svona nákvæmlega getur mælt hvað sem er. Við höfum verið að leysa reikningsdæmin þeirra alla leiðina.",
+  "mosaicMaster": "Græn húð, og hveiti sem vex beint út úr honum. Það er viljandi.",
+  "mosaicMaster2": "Ósíris. Hann var drepinn og settur saman aftur, og nú er hann það sem kemur aftur á hverju ári þegar fljótið flæðir yfir akrana.",
+  "mosaicMaster3": "Hér niðri snýst allt um það: dauður er ekki búinn. Glaðleg hugsun í grafhýsi, er það ekki?",
+  "mosaicWizard": "Hjarta öðrum megin. Ein fjöður hinum megin. Og vogin er í jafnvægi.",
+  "mosaicWizard2": "Fjöðrin er Maat. Sannleikur, jafnvægi, eins og hlutirnir eiga að vera. Ef hjartað er þyngra en fjöðrin kemstu ekki inn um dyrnar.",
+  "mosaicWizard3": "Sjakalinn sem heldur voginni stöðugri er Anúbis. Það er hann sem fylgir þér hingað.",
+  "mosaicFinale": "Stígðu aðeins aftur. Sjáðu hvað við höfum borið upp úr þessum pýramídum.",
+  "mosaicFinale2": "Hver biti er hluti af honum, þeim sem heldur voginni stöðugri. Hann hefur fylgst með alla leiðina.",
+  "mosaicFinale3": "Þetta er það sem hann hefur skráð um okkur. Og ég myndi segja að það sé í jafnvægi.",
+  "shopFirstVisit": "Jæja, hér erum við. Básinn minn. Ég sagði jú að ég væri í þessu til að versla.",
+  "shopFirstVisit2": "Allt á þessu borði bar ég út úr einhverjum stað. Þetta þarna kom úr grafhýsi fyrir tveimur grafhýsum síðan.",
+  "shopArrival": "Ah, básinn minn! Leyfðu mér að raða fram því sem ég hef tínt upp á leiðinni.",
+  "shopArrival2": "Sjaldgæfir fundir kosta mest, en ég borga þér fyrir allt glingur sem þú ert með.",
+  "arrival": {
+    "starter_1": {
+      "1": {
+        "explorer": "Sjáðu, þarna! Sfinxinn!"
+      },
+      "2": {
+        "explorer": "Risastór, meira að segja héðan."
+      },
+      "3": {
+        "explorer": "Fólk segir að það sé letur undir loppunum á honum. Sem enginn getur lesið."
+      },
+      "4": {
+        "explorer": "Seinna. Fyrst þessi pýramídi!"
+      }
+    },
+    "starter_2": {
+      "1": {
+        "fez": "Ha! Loksins eitthvað sem ég skil. Allt sem fór upp eftir Níl kom fyrst hérna fram hjá."
+      },
+      "2": {
+        "fez": "Og kaupmenn skrifa ALLT niður. Hver keypti hvað, hver skuldaði hverjum, hver kom of seint…"
+      },
+      "3": {
+        "explorer": "Hver kom of seint?"
+      },
+      "4": {
+        "fez": "Sérstaklega hver kom of seint!"
+      },
+      "5": {
+        "fez": "Þrjú þúsund ár. Vörurnar eru horfnar en kvittanirnar eru hér enn. Dæmigert!"
+      }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Sjáðu þessar dyr! Fólk kom hingað til að biðja um vernd. Og svo var svona dyrum haldið lokuðum."
+      },
+      "2": {
+        "explorer": "Lokuðum fyrir hverjum?"
+      },
+      "3": {
+        "fez": "Öllum sem báðu ekki fallega. Aðallega okkur."
+      },
+      "4": {
+        "fez": "Allt sem er innsiglað í þessu landi innsiglaði einhver og meinti það. Meinti það í alvöru."
+      },
+      "5": {
+        "fez": "Og kettirnir! Fólk hérna dýrkaði ketti. Gat bara ekki látið þá í friði."
+      }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "Ó, þessi er góður. Hérna lærðu þau að skrifa! Tákn fyrir tákn, á brotnum leirpottum. Papýrus var allt of dýr fyrir krakka."
+      },
+      "2": {
+        "explorer": "Æfðu þau sig á rusli?"
+      },
+      "3": {
+        "fez": "Á því sem var til! Og ef þú lærir nógu mörg svona, þá er veggur allt í einu ekki bara skraut lengur."
+      },
+      "4": {
+        "explorer": "Þessi Sfinx… mig langar að skoða hann aftur."
+      },
+      "5": {
+        "fez": "Ekki strax. Bráðum."
+      }
+    },
+    "junior_1": {
+      "1": {
+        "fez": "Þeir komu aftur á hverju ári með flóðinu, næstum upp á dag."
+      },
+      "2": {
+        "fez": "Svo fólk fór að telja dagana á milli. Þaðan kemur dagatalið. Frá fuglum."
+      },
+      "3": {
+        "explorer": "Fuglum."
+      },
+      "4": {
+        "fez": "Fuglum og pappírsvinnu. Það eru alltaf fuglar og pappírsvinna."
+      }
+    },
+    "junior_2": {
+      "1": {
+        "fez": "Hérna bjuggu þau allt til. Ekki grafhýsin, heldur hlutina sem fóru í þau."
+      },
+      "2": {
+        "fez": "Sjáðu mótin. Sama armbandið, fjörutíu sinnum."
+      },
+      "3": {
+        "explorer": "Fyrir fjörutíu manns?"
+      },
+      "4": {
+        "fez": "Fyrir hvern sem gat borgað. Aðalsfólk vildi það sem konungurinn átti, á verði sem aðalsfólk réð við."
+      }
+    },
+    "junior_3": {
+      "1": {
+        "fez": "Þessi er Þót. Guð leyndarmála og galdra, held ég nokkuð örugglega."
+      },
+      "2": {
+        "explorer": "Nokkuð."
+      },
+      "3": {
+        "fez": "Níutíu prósent. Allavega, táknin sem þú hefur verið að safna eru hans."
+      }
+    },
+    "junior_4": {
+      "1": {
+        "fez": "Hundrað metrar á hæð, og eldur efst sem slokknaði aldrei."
+      },
+      "2": {
+        "fez": "Sjómenn fundu ströndina úr dagleiðar fjarlægð. Áður fundu þeir hana með því að sigla á hana."
+      },
+      "3": {
+        "explorer": "Hvernig finnur maður eitthvað hérna úti án vita?"
+      },
+      "4": {
+        "fez": "Maður spyr einhvern sem hefur komið þangað. Það er allt mitt starf."
+      }
+    },
+    "expert_1": {
+      "1": {
+        "fez": "Sextíu og eitthvað grafhýsi höggvin í einn dal, og hvert einasta var opnað áður en við komum."
+      },
+      "2": {
+        "explorer": "Af hverjum?"
+      },
+      "3": {
+        "fez": "Fólki eins og okkur, aðallega. Fyrr."
+      },
+      "4": {
+        "fez": "Hvað finnst þér um það?"
+      },
+      "5": {
+        "explorer": "Að við séum sein."
+      }
+    },
+    "expert_2": {
+      "1": {
+        "fez": "Amon-Ra. Sólin. Uppáhald allra, og maður skilur af hverju. Sjáðu bara hvað staðurinn er stór."
+      },
+      "2": {
+        "explorer": "Tvö nöfn."
+      },
+      "3": {
+        "fez": "Sami guðinn, held ég. Þeir tvöfölduðu þá vinsælu."
+      }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Allt landið er grænt strik sitt hvorum megin við eitt fljót, og svo opnast það hérna út í þetta."
+      },
+      "2": {
+        "fez": "Allt vex. Og allt bítur líka."
+      },
+      "3": {
+        "explorer": "Út af hvoru erum við hérna?"
+      },
+      "4": {
+        "fez": "Ég var eiginlega að vona hvorugu."
+      }
+    },
+    "expert_4": {
+      "1": {
+        "fez": "Sá fyrsti. Áður voru konungar grafnir undir flatri hellu eins og allir aðrir."
+      },
+      "2": {
+        "fez": "Einhver stóð hérna og hugsaði: hvað ef við gerum þetta, nema sex sinnum, upp á við?"
+      },
+      "3": {
+        "explorer": "Virkaði það?"
+      },
+      "4": {
+        "fez": "Pýramídinn stendur enn en kóngurinn ekki. Fer eftir því hvað þú átt við."
+      }
+    },
+    "master_1": {
+      "1": {
+        "fez": "Tvær milljónir steina. Einhver taldi."
+      },
+      "2": {
+        "explorer": "Taldi einhver?"
+      },
+      "3": {
+        "fez": "Einhver telur alltaf. Það er það sem fólk gleymir við þetta allt saman: skrifstofufólk stjórnaði þessu."
+      },
+      "4": {
+        "fez": "Fallegt, er það ekki? Ég vil ekki hugsa um hvernig launalistinn leit út."
+      }
+    },
+    "master_2": {
+      "1": {
+        "fez": "Leiðbeiningar. Það er allt og sumt. Hvað á að segja, í hvaða röð, svo ferðin gangi rétt."
+      },
+      "2": {
+        "explorer": "Handbók."
+      },
+      "3": {
+        "fez": "Handbók um hvernig á að vera dauður. Þau skrifuðu allt niður, þetta fólk."
+      },
+      "4": {
+        "fez": "Sem eru, miðað við það sem við leitum að, fyrstu góðu fréttir vikunnar."
+      }
+    },
+    "master_3": {
+      "1": {
+        "fez": "Ah. Búðir einhvers."
+      },
+      "2": {
+        "explorer": "Nýlegar?"
+      },
+      "3": {
+        "fez": "Nokkuð nýlegar. Niðursuðudósir og slæmur hósti, sýnist mér."
+      },
+      "4": {
+        "fez": "Þau fóru lengra inn en þetta og tóku ekki dótið sitt með."
+      },
+      "5": {
+        "explorer": "Komu þau aftur að sækja það?"
+      },
+      "6": {
+        "fez": "…Höldum bara áfram."
+      }
+    },
+    "master_4": {
+      "1": {
+        "fez": "ÞETTA er það sem hin voru að herma eftir. Sjáðu litina. Þrjú þúsund ár og það lítur út eins og það sé enn blautt."
+      },
+      "2": {
+        "explorer": "Henut yrði brjáluð."
+      },
+      "3": {
+        "fez": "Henut væri að skrifa hjá sér."
+      }
+    },
+    "wizard_1": {
+      "1": {
+        "fez": "Sólin fer undir heiminn á nóttunni og kemur upp hinum megin. Það er öll trúin."
+      },
+      "2": {
+        "fez": "Tólf klukkustundir í myrkri, með hindranir á leiðinni, og einhver verður að bera hana í gegn."
+      },
+      "3": {
+        "explorer": "Það er það sem við höfum verið að gera."
+      },
+      "4": {
+        "fez": "Ég var að reyna að segja það ekki."
+      },
+      "5": {
+        "explorer": "Sandurinn er enn að koma inn."
+      },
+      "6": {
+        "fez": "Hann hefur verið að koma inn í þrjú þúsund ár. Hann hættir ekki, hann fer bara í hring."
+      },
+      "7": {
+        "fez": "Fyllist, snýst við, byrjar aftur. Alveg eins og sólin."
+      }
+    },
+    "wizard_2": {
+      "1": {
+        "fez": "Tveir þeirra, átján metra háir, og báðir eru Amenhótep."
+      },
+      "2": {
+        "fez": "Grikkirnir litu einu sinni á þá og ákváðu að þetta væri hetja úr þeirra sögum. Memnon. Nafnið hélst í tvö þúsund ár."
+      },
+      "3": {
+        "explorer": "Hvaða nafn stendur á honum?"
+      },
+      "4": {
+        "fez": "Hans eigið. Höggvið í hásætið, þar sem það hefur alltaf verið."
+      },
+      "5": {
+        "fez": "Enginn las það."
+      },
+      "6": {
+        "fez": "Eftir jarðskjálftann söng sá nyrðri í dögun. Einn tónn, á hverjum morgni, þegar sólin hitaði sprunguna."
+      },
+      "7": {
+        "explorer": "En núna?"
+      },
+      "8": {
+        "fez": "Keisari lét gera við hann. Það hefur ekki heyrst múkk í honum síðan."
+      }
+    },
+    "wizard_3": {
+      "1": {
+        "fez": "Vogin. Hjarta öðrum megin, fjöður hinum megin. Svo gott og þungt hjarta vinnur, geri ég ráð fyrir."
+      },
+      "2": {
+        "explorer": "Í hvaða átt fer eitthvað þungt?"
+      },
+      "3": {
+        "fez": "…Niður."
+      },
+      "4": {
+        "fez": "Ó."
+      },
+      "5": {
+        "fez": "Létt. Þú vilt hafa það LÉTT."
+      }
+    },
+    "wizard_4": {
+      "1": {
+        "fez": "Toppsteinninn fer síðastur á og hann er úr gulli, svo allt saman grípur fyrstu morgunbirtuna."
+      },
+      "2": {
+        "explorer": "Fyrir hvern?"
+      },
+      "3": {
+        "fez": "Alla sem horfa. Það var málið. Þetta var aldrei fyrir manninn inni í honum."
+      }
+    }
+  },
+  "tomb": {
+    "starter": {
+      "1": {
+        "ipi": "Hey! Ekki snerta! Þetta er krukkan mín!"
+      },
+      "2": {
+        "fez": "…Sagði krukkan eitthvað?!"
+      },
+      "3": {
+        "ipi": "ÉG sagði eitthvað. Þriðja hilla, sú með skarðinu. Hún er mín."
+      },
+      "4": {
+        "explorer": "Allt í lagi, allt í lagi! Hún fær að vera. Hver ert þú?"
+      },
+      "5": {
+        "ipi": "Ipi. Í fjörutíu ár hélt ég bókhaldið. Fjörutíu!"
+      },
+      "6": {
+        "fez": "Bókhaldið? Hjá hverjum?"
+      },
+      "7": {
+        "ipi": "Öllum! Hver skuldaði hvað, niður í síðasta kornpokann."
+      },
+      "8": {
+        "ipi": "Hún Henut, hérna norðar? Ellefu deben af lapis. Borgaði aldrei!"
+      },
+      "9": {
+        "explorer": "Og þú manst það enn, eftir allan þennan tíma?"
+      },
+      "10": {
+        "ipi": "Það er skrifað niður! Það sem er skrifað niður, það gerðist."
+      },
+      "11": {
+        "ipi": "Nema þessir Horiar… Hori ferjumaður, Hori bakari… og þessi HINN Hori."
+      },
+      "12": {
+        "fez": "Áttirðu líka ketti? Allir áttu ketti, er það ekki? Litlar dúllur!"
+      },
+      "13": {
+        "ipi": "Dúllur? Þeir voru fyrir kornið! Veistu hvað ein rotta kostar þig yfir heilt tímabil?"
+      },
+      "14": {
+        "fez": "…Ó. Já, einmitt."
+      },
+      "15": {
+        "ipi": "Segðu Henut að Ipi hafi sent þig. Það eyðileggur daginn fyrir henni."
+      },
+      "16": {
+        "fez": "Mér líkar vel við hann!"
+      },
+      "17": {
+        "explorer": "Þér finnst bara gaman að hann eigi enn inni peninga."
+      }
+    },
+    "junior": {
+      "1": {
+        "henut": "Loksins. Þið eruð komin út af lapisnum. Ég geri ráð fyrir að Ipi sé enn að tuða um lapisinn."
+      },
+      "2": {
+        "explorer": "Hann er það."
+      },
+      "3": {
+        "henut": "Þetta var gler. Fallegt gler. Hann vissi það."
+      },
+      "4": {
+        "fez": "…Var armbandið líka úr gleri?"
+      },
+      "5": {
+        "henut": "Allt hér er besta eftirlíking sem hægt var að kaupa fyrir peninga, ungi maður, og ég valdi hvern einasta hlut sjálf."
+      },
+      "6": {
+        "henut": "Jæja. Veggurinn. Þriðja táknið, það er ekki nafnið mitt. Einhver lærlingur með meitil og enginn til að passa hann."
+      },
+      "7": {
+        "henut": "Þú hefur verið að læra táknin þín. Ég sé það. Lagaðu þetta."
+      }
+    },
+    "juniorFixed": {
+      "1": {
+        "henut": "Svona. Nú verður þetta enn nafnið mitt eftir þúsund ár."
+      },
+      "2": {
+        "explorer": "Ipi stafaði það rétt."
+      },
+      "3": {
+        "henut": "Ipi stafaði allt rétt. Það var það eina góða við hann."
+      },
+      "4": {
+        "fez": "Skiptir það máli, hérna niðri?"
+      },
+      "5": {
+        "henut": "Það er það eina sem skiptir máli."
+      },
+      "6": {
+        "fez": "Hún var með heilan vegg af Þót þarna uppi. Guð leyndarmálanna."
+      },
+      "7": {
+        "henut": "Þót telur. Þót skrifar niður það sem þú gerðir og það stendur skrifað."
+      },
+      "8": {
+        "henut": "Leyndarmál er það sem fólk kallar reikning þegar það kann hann ekki."
+      },
+      "9": {
+        "henut": "Ef þið ætlið áfram, og það ætlið þið greinilega, þá er prestur í Karnak sem skuldar hinum látnu athöfn sem hann gerði aldrei. Hann verður óþolandi út af því. Prestar eru það."
+      },
+      "10": {
+        "henut": "…Höfum við hist?"
+      },
+      "11": {
+        "fez": "Ég myndi muna það."
+      },
+      "12": {
+        "henut": "Já. Það myndi ég líka."
+      }
+    },
+    "expert": {
+      "1": {
+        "priest": "Þú ert ekki manneskjan sem ég á von á."
+      },
+      "2": {
+        "explorer": "Á hverjum áttu von?"
+      },
+      "3": {
+        "priest": "Einhverjum með innsiglið. Það átti að koma með það hingað, leggja það þarna niður og fara með orðin yfir því. Ekkert af þessu þrennu hefur gerst."
+      },
+      "4": {
+        "fez": "…Hvað hefurðu beðið lengi?"
+      },
+      "5": {
+        "priest": "Ég held ekki talningu. Það væri ófagmannlegt."
+      },
+      "6": {
+        "priest": "Almennileg fórn er hlutur sem konungur var grafinn með í höndunum. Ekki eftirlíking. Ekki mynd af honum. Hluturinn sjálfur, með merkinu hans á."
+      },
+      "7": {
+        "priest": "Komdu með hann og þá verður tilkynnt um þig. Komdu með eitthvað annað og þá verður það ekki gert."
+      },
+      "8": {
+        "explorer": "Tilkynnt hverjum?"
+      },
+      "9": {
+        "priest": "Þú munt vita það. Allir vita það á endanum."
+      },
+      "10": {
+        "fez": "Hann er voða hrifinn af sólinni, þessi. Allt þetta Amon-Ra fyrir utan."
+      },
+      "11": {
+        "priest": "Amon er sá falni. Ra er sá sem allir sjá."
+      },
+      "12": {
+        "priest": "Þeir eru sami guðinn. Það er engin tilviljun, það er einmitt hugmyndin."
+      },
+      "13": {
+        "fez": "…Einmitt. Já. Ég vissi það."
+      },
+      "14": {
+        "explorer": "Nei, það vissirðu ekki."
+      },
+      "15": {
+        "fez": "Nei, það vissi ég ekki."
+      }
+    },
+    "expertB": {
+      "1": {
+        "fez": "Enginn hefur komið hingað inn. Ekki við, ekki hin á undan okkur, enginn."
+      },
+      "2": {
+        "explorer": "Hvernig sérðu það?"
+      },
+      "3": {
+        "fez": "Af því að það er enn eitthvað hérna inni."
+      }
+    },
+    "master": {
+      "1": {
+        "pharaoh": "Þið megið nálgast. Þið hafið nálgast. Gott og vel."
+      },
+      "2": {
+        "fez": "Yðar hátign."
+      },
+      "3": {
+        "pharaoh": "Já."
+      },
+      "4": {
+        "explorer": "Við þurfum innsiglið þitt."
+      },
+      "5": {
+        "pharaoh": "Það þurfa allir. Mínu hefur verið stolið tvisvar og aldrei skilað."
+      },
+      "6": {
+        "pharaoh": "Í seinna skiptið skildu þeir eftir eftirlíkingu. EFTIRLÍKINGU. Í MÍNU grafhýsi. Eins og ég myndi ekki líta á hana."
+      },
+      "7": {
+        "explorer": "Er eftirlíkingin hérna enn?"
+      },
+      "8": {
+        "pharaoh": "Auðvitað er hún hér enn, hún er einskis virði. Hún er á hillunni þar sem það ekta ætti að vera, og er röng."
+      },
+      "9": {
+        "pharaoh": "Taktu hana ef þú vilt. Farðu með hana til prestsins. Sjáðu hvað hún kemur þér langt."
+      },
+      "10": {
+        "fez": "…Hann skemmtir sér konunglega."
+      },
+      "11": {
+        "pharaoh": "Þetta er besta vikan mín í níu hundruð ár."
+      },
+      "12": {
+        "fez": "Ósíris á veggnum þarna. Herra hinna dauðu. Drungalegt."
+      },
+      "13": {
+        "pharaoh": "Hann er GRÆNN, fáránlega dýrið þitt."
+      },
+      "14": {
+        "pharaoh": "Grænn eins og akur í flóði. Hann var drepinn og settur saman aftur, og hann kemur aftur á hverju einasta ári."
+      },
+      "15": {
+        "pharaoh": "Hér niðri er það ekki drungalegt, það er einmitt málið. Dauður er ekki búinn."
+      }
+    },
+    "wizard": {
+      "1": {
+        "priest": "Leggðu það niður. Þarna. Já."
+      },
+      "2": {
+        "priest": "…"
+      },
+      "3": {
+        "priest": "Þetta er í fyrsta sinn sem ég geri þetta. Ég var farinn að halda að ég hefði gleymt hvernig."
+      },
+      "4": {
+        "explorer": "Hafðirðu gleymt því?"
+      },
+      "5": {
+        "priest": "Algjörlega. Það kom aftur."
+      }
+    },
+    "wizardB": {
+      "1": {
+        "fez": "Reipið þeirra. Enn bundið fast."
+      },
+      "2": {
+        "explorer": "Þau komust svona langt."
+      },
+      "3": {
+        "fez": "Lengra en þetta. Og svo fóru þau aftur upp eftir því."
+      },
+      "4": {
+        "explorer": "Það er hérna minnisbók."
+      },
+      "5": {
+        "fez": "Hvað stendur í henni?"
+      },
+      "6": {
+        "explorer": "Get ekki lesið letrið. Kom aftur út af innsiglinu. Gerði betra í staðinn."
+      },
+      "7": {
+        "explorer": "Enginn lét blekkjast."
+      },
+      "8": {
+        "fez": "…Þau fölsuðu það af því að þau gátu ekki lesið til hvers það var."
+      },
+      "9": {
+        "explorer": "Og svo fóru þau heim."
+      }
+    },
+    "wizardC": {
+      "1": {
+        "fez": "Bíddu aðeins. Sjáðu hvað við höfum borið upp úr þessum pýramídum."
+      },
+      "2": {
+        "explorer": "Þetta er mynd."
+      },
+      "3": {
+        "fez": "Þetta hefur verið mynd allan tímann."
+      }
+    }
+  },
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Hellir! Kortið sýndi kjallaradyr, og þetta er heil hæð!"
+      },
+      "2": {
+        "fez": "Snjall náungi. Feldu vörurnar inni í hæð, það dettur engum þjófi í hug."
+      },
+      "3": {
+        "explorer": "Okkur datt það í hug."
+      },
+      "4": {
+        "fez": "Við erum ekki þjófar. Við erum viðskiptavinir. Mjög seinir viðskiptavinir."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Þetta hlýtur að vera staðurinn. Henut! Ellefu deben af lapis, hún!"
+      },
+      "2": {
+        "fez": "Hvað heldurðu, fáum við prósentur ef við rukkum hana?"
+      },
+      "3": {
+        "explorer": "Þú hefur ekki rukkað neitt."
+      },
+      "4": {
+        "fez": "Mér finnst gott að reikna það út snemma."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Svo hér er presturinn hennar Henut. Óþolandi, sagði hún."
+      },
+      "2": {
+        "fez": "Hvað finnst þér, eigum við að koma með eitthvað? Blóm?"
+      },
+      "3": {
+        "explorer": "Hann er dáinn."
+      },
+      "4": {
+        "fez": "Því meiri ástæða. Maður vill nú vekja góða fyrstu sýn."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Aðeins æðsti presturinn mátti koma hingað inn. Og nú við!"
+      },
+      "2": {
+        "explorer": "Megum við það?"
+      },
+      "3": {
+        "fez": "Það er enginn í dyrunum til að segja nei."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Sjáðu, kortið hættir bara hérna. Sandur, og svo ekkert."
+      },
+      "2": {
+        "explorer": "Þá erum við á réttum stað."
+      },
+      "3": {
+        "fez": "Það er einmitt það sem ég meina. Það er einmitt það sem gerir mig stressaðan."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Salur Ósíris! Grænn, auðvitað. Af því að hann kemur aftur á hverju ári, eins og kornið."
+      },
+      "2": {
+        "explorer": "Þú vissir það alltaf."
+      },
+      "3": {
+        "fez": "Alltaf."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Geymsla guðanna sjálfra! Hvað geymir maður þegar maður á allt nú þegar?"
+      },
+      "2": {
+        "explorer": "Það sem fólk færir manni."
+      },
+      "3": {
+        "fez": "…Já. Það hlýtur að vera það."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Ríki himinaflanna. Jæja, jæja."
+      },
+      "2": {
+        "fez": "Ef ég ætti eitthvað að selja sem væri lítið varið í, myndi ég líka kalla það þetta."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Ég fékk allt í einu á tilfinninguna að ég hafi gert eitthvað rangt."
+      },
+      "2": {
+        "explorer": "Eins og hvað?"
+      },
+      "3": {
+        "fez": "Ég hef ekki hugmynd. Það er það versta."
+      }
+    }
+  },
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Allar þessar stangir og dyr, fyrir einn kjallara!"
+      },
+      "2": {
+        "fez": "Þá er eitthvað gott þarna niðri. Enginn hefur svona mikið fyrir rusli."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Hjúkk. Þessar dyr voru miklu vandlátari en dyrnar hans Ipi."
+      },
+      "2": {
+        "fez": "Jæja. Frúin átti auðvitað peninga."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Hjúkk, loksins! Þessi hellir vildi sko ekki hleypa okkur inn."
+      },
+      "2": {
+        "explorer": "Ég held að það hafi verið hugmyndin."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Pssst… af hverju er ég að hvísla?"
+      },
+      "2": {
+        "explorer": "Ekki hugmynd. Ég geri það líka."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Úff. Halinn á mér skelfur enn eftir síðustu dyr."
+      },
+      "2": {
+        "fez": "Konungur sem læsir hlutina sína svona inni… hann vill sko ekki missa þá."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Sérðu? Ef maður er nógu lengi undir jörðinni kemur maður upp aftur."
+      },
+      "2": {
+        "explorer": "Er þetta líka Ósíris?"
+      },
+      "3": {
+        "fez": "Nei, þessi er minn."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Svona dyr… einu sinni hefðum við bara snúið við."
+      },
+      "2": {
+        "explorer": "Ekki lengur."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Þrjár hæðir af helli, og fyrst þá útidyrnar."
+      },
+      "2": {
+        "explorer": "Þá hlýtur það að vera þess virði."
+      },
+      "3": {
+        "fez": "Það segja þau alltaf. Og svo er það krukka."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Síðasti spölurinn í myrkrinu. Ég finn það."
+      },
+      "2": {
+        "explorer": "Þú sagðir þetta líka síðast."
+      },
+      "3": {
+        "fez": "Og ég hafði næstum rétt fyrir mér."
+      }
+    }
+  },
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Sjáðu þetta! Pýramídi, neðanjarðar! Fyrir kaupmann!"
+      },
+      "2": {
+        "fez": "Annaðhvort græddi hann mjög vel eða prúttaði mjög vel."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Sjáðu toppinn glampa í sólinni! Ekta gull, ég veðja."
+      },
+      "2": {
+        "explorer": "Ofan í holu í jörðinni. Fyrir hvern glampar hann?"
+      },
+      "3": {
+        "fez": "Hana. Maður þekkir týpuna."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Hm. Má maður eiginlega selja eitthvað sem guð á nú þegar?"
+      },
+      "2": {
+        "explorer": "Spurðu guðinn."
+      },
+      "3": {
+        "fez": "Ég vil helst ekki."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Heldurðu að presturinn viti að við séum að ráfa um hérna inni?"
+      },
+      "2": {
+        "explorer": "Hann heldur ekki talningu. Það væri ófagmannlegt."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Sjáðu hann, aleinn í sólinni. Fallegur, er það ekki?"
+      },
+      "2": {
+        "fez": "Eigum við ekki bara að teikna mynd og fara?"
+      },
+      "3": {
+        "explorer": "Þú kannt ekki að teikna."
+      },
+      "4": {
+        "fez": "…Nei. Inn með okkur, þá."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Sá sem liggur þarna inni treystir á að koma aftur. Það er samningurinn hérna."
+      },
+      "2": {
+        "explorer": "Hvað hefur hann beðið lengi?"
+      },
+      "3": {
+        "fez": "Lengi. En það fylgir starfinu. Að vera dauður er aðallega bið."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "explorer": "Vá."
+      },
+      "2": {
+        "fez": "Já."
+      },
+      "3": {
+        "fez": "Stundum er bara ekkert meira að segja, er það nokkuð?"
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Sérðu sólarblettinn á pýramídanum? Það mætti lesa klukkuna af honum."
+      },
+      "2": {
+        "explorer": "Hvað er klukkan þá?"
+      },
+      "3": {
+        "fez": "…Eftirmiðdagur. Svona nokkurn veginn. Ég er ekki klukka."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Þarna er hann. Allar línurnar á kortinu enda hér."
+      },
+      "2": {
+        "explorer": "Þá er þetta endirinn."
+      },
+      "3": {
+        "fez": "Á kortinu, já. Skrýtið. Ég hélt að það yrði betri tilfinning."
+      }
+    }
+  },
+  "camp": {
+    "firstHome": {
+      "1": {
+        "fez": "Eru þetta búðirnar þínar? Eldur og kista?"
+      },
+      "2": {
+        "explorer": "Búðirnar okkar."
+      },
+      "3": {
+        "fez": "Okkar. Einmitt. Þá tek ég plássið við eldinn."
+      },
+      "4": {
+        "fez": "Ég er nú einu sinni eðla. Þegar það hentar mér."
+      }
+    },
+    "homeHaul": {
+      "1": {
+        "fez": "Taka upp úr töskunum! Besti hluti ferðarinnar."
+      },
+      "2": {
+        "explorer": "Betri en pýramídinn?"
+      },
+      "3": {
+        "fez": "Pýramídinn er ekki okkar. Þetta er okkar."
+      }
+    },
+    "homeEmpty": {
+      "1": {
+        "explorer": "Tómhent."
+      },
+      "2": {
+        "fez": "Og hvað? Við gengum. Það telur líka."
+      },
+      "3": {
+        "explorer": "Telur fyrir hvað?"
+      },
+      "4": {
+        "fez": "Fæturna á mér. Þeir eru mjög stuttir, sko."
+      }
+    },
+    "rested": {
+      "1": {
+        "fez": "Svona. Líður þér aðeins betur?"
+      },
+      "2": {
+        "explorer": "Þetta var bara skráma."
+      },
+      "3": {
+        "fez": "Ég horfði ekki einu sinni. Og samt þurfti ég að setjast niður."
+      }
+    },
+    "chapterJunior": {
+      "1": {
+        "fez": "Jæja, þetta gekk vel. Næsti!"
+      },
+      "2": {
+        "explorer": "Þetta var ekki svo auðvelt."
+      },
+      "3": {
+        "fez": "Það er það núna. Allt er auðvelt eftir á."
+      }
+    },
+    "chapterExpert": {
+      "1": {
+        "fez": "Þarna úti eru gildrur. Alvöru gildrur. Þær bíta."
+      },
+      "2": {
+        "fez": "Meiðirðu þig? Þá göngum við bara til baka. Þú jafnar þig heima."
+      },
+      "3": {
+        "explorer": "En þú?"
+      },
+      "4": {
+        "fez": "Ég geng á eftir þér. Það er öruggara þar."
+      }
+    },
+    "chapterMaster": {
+      "1": {
+        "fez": "Fjórir pýramídar þarna úti. Manstu þegar það var bara einn?"
+      },
+      "2": {
+        "explorer": "Það er ekki svo langt síðan."
+      },
+      "3": {
+        "fez": "Nei. Samt líður manni þannig."
+      }
+    },
+    "chapterWizard": {
+      "1": {
+        "fez": "Sjáðu þann síðasta. Með gulltopp og allt!"
+      },
+      "2": {
+        "fez": "Hann á eftir að kosta okkur. Sá síðasti gerir það alltaf."
+      },
+      "3": {
+        "explorer": "Kosta okkur hvað?"
+      },
+      "4": {
+        "fez": "…Ég er ekki viss lengur."
+      }
+    },
+    "firstFind": {
+      "1": {
+        "fez": "Sjáðu þetta! Eins og það hafi alltaf verið þarna!"
+      },
+      "2": {
+        "fez": "Mig klæjar í puttana að hengja verðmiða á það."
+      },
+      "3": {
+        "explorer": "Ekki gera það."
+      },
+      "4": {
+        "fez": "Nei, nei. Maður selur ekki heimilið. Ég veit það."
+      }
+    },
+    "structureDone": {
+      "1": {
+        "fez": "Það er tilbúið! Hver einasti hluti er kominn!"
+      },
+      "2": {
+        "explorer": "Allt okkar eigið verk."
+      },
+      "3": {
+        "fez": "Tja. Ég benti aðallega."
+      }
+    }
+  },
+  "animal": {
+    "forSale": {
+      "1": {
+        "fez": "Sjáðu hvað er á básnum! Ég er kominn í flutninga."
+      },
+      "2": {
+        "explorer": "Hann er að jórtra."
+      },
+      "3": {
+        "fez": "Það er innifalið í verðinu."
+      }
+    },
+    "boughtDonkey": {
+      "1": {
+        "fez": "Seldur! Einn asni. Þrjóskur, en hann ber hvað sem er."
+      },
+      "2": {
+        "explorer": "Og hvar er hann?"
+      },
+      "3": {
+        "fez": "Þegar lagður af stað heim. Hann vill frekar ganga án okkar."
+      }
+    },
+    "blockedDonkey": {
+      "1": {
+        "fez": "Við göngum ekki svona langt með allt þetta dót. Til þess þarf asna."
+      },
+      "2": {
+        "fez": "Og giskaðu hver á einn? Ég. Á básnum mínum í hvelfingunni hennar Henut."
+      }
+    },
+    "throughDonkey": {
+      "1": {
+        "explorer": "Hann er viljugur."
+      },
+      "2": {
+        "fez": "Í dag. Spurðu hann aftur á morgun."
+      }
+    },
+    "arrivesDonkey": {
+      "1": {
+        "fez": "Þarna er hann! Kominn á undan okkur."
+      },
+      "2": {
+        "explorer": "Og búinn að finna eldinn."
+      },
+      "3": {
+        "fez": "Plássið mitt. Jæja. Hann var fyrstur."
+      }
+    },
+    "boughtCart": {
+      "1": {
+        "fez": "Kerra! Tvö hjól, og það skröltir varla í þeim."
+      },
+      "2": {
+        "explorer": "Varla?"
+      },
+      "3": {
+        "fez": "Skröltið fylgir frítt með."
+      }
+    },
+    "blockedCart": {
+      "1": {
+        "fez": "Asninn tekur ekki einn poka í viðbót. Ég spurði hann."
+      },
+      "2": {
+        "fez": "Kerra, það er það sem við þurfum. Það er ein á básnum mínum, hjá æðsta prestinum."
+      }
+    },
+    "throughCart": {
+      "1": {
+        "explorer": "Heyrirðu þetta?"
+      },
+      "2": {
+        "fez": "Þetta er kerran. Hún syngur svolítið."
+      },
+      "3": {
+        "explorer": "Alla leiðina?"
+      }
+    },
+    "arrivesCart": {
+      "1": {
+        "fez": "Kerra í búðunum okkar! Nú lítum við út fyrir að vera á leiðinni eitthvað."
+      },
+      "2": {
+        "explorer": "Við erum á leiðinni eitthvað."
+      },
+      "3": {
+        "fez": "Já, en nú sjá það allir."
+      }
+    },
+    "boughtCamel": {
+      "1": {
+        "fez": "Úlfaldi! Getur verið dögum saman án vatns. Ég get það ekki, sko."
+      },
+      "2": {
+        "explorer": "Hann horfir á þig."
+      },
+      "3": {
+        "fez": "Niður á mig. Úlfaldar horfa alltaf niður á mann."
+      }
+    },
+    "blockedCamel": {
+      "1": {
+        "fez": "Innsta helgidóminn? Þangað komumst við aldrei fótgangandi."
+      },
+      "2": {
+        "fez": "Svo heppilega vill til að ég á úlfalda. Á básnum mínum, hjá æðsta prestinum."
+      }
+    },
+    "throughCamel": {
+      "1": {
+        "fez": "Hann krýpur! Fyrir mig!"
+      },
+      "2": {
+        "explorer": "Svo við getum klifrað upp á hann."
+      },
+      "3": {
+        "fez": "Leyfðu mér að eiga þetta."
+      }
+    },
+    "arrivesCamel": {
+      "1": {
+        "fez": "Þarna er hann. Lætur eins og hann eigi búðirnar."
+      },
+      "2": {
+        "explorer": "En asninn?"
+      },
+      "3": {
+        "fez": "Þykist ekki sjá hann. Eins og ég."
+      }
+    },
+    "boughtSecondDonkey": {
+      "1": {
+        "fez": "Annar asni! Nú hefur sá fyrri einhvern til að tala við."
+      },
+      "2": {
+        "explorer": "Tala?"
+      },
+      "3": {
+        "fez": "Hrína. Það er að tala, bara hærra."
+      }
+    },
+    "blockedSecondDonkey": {
+      "1": {
+        "fez": "Asninn vill ekki halda áfram. Ekki einn, segir hann."
+      },
+      "2": {
+        "explorer": "Sagði hann það?"
+      },
+      "3": {
+        "fez": "Ég tala asnamál. Hann vill félaga, og ég á einn á básnum mínum í fjársjóði faraósins."
+      }
+    },
+    "throughSecondDonkey": {
+      "1": {
+        "fez": "Heyrðu í þeim! Hvor öðrum háværari."
+      },
+      "2": {
+        "explorer": "Hver er að vinna?"
+      },
+      "3": {
+        "fez": "Ekki við. Við þurfum að hlusta á þetta."
+      }
+    },
+    "arrivesSecondDonkey": {
+      "1": {
+        "fez": "Sjáðu þá. Eins og þeir hafi þekkst í mörg ár."
+      },
+      "2": {
+        "explorer": "Eins og við."
+      },
+      "3": {
+        "fez": "Við hrínum minna."
+      }
+    },
+    "boughtSecondCamel": {
+      "1": {
+        "fez": "Annar úlfaldi. Já. Mér líkar ekki heldur við þá."
+      },
+      "2": {
+        "fez": "En þessi lítur allavega út fyrir að vera vingjarnlegur."
+      },
+      "3": {
+        "explorer": "Hann er að horfa á fezinn þinn."
+      }
+    },
+    "blockedSecondCamel": {
+      "1": {
+        "fez": "Salur Ósíris. Einn úlfaldi kemur okkur ekki þangað."
+      },
+      "2": {
+        "fez": "Sem betur fer á ég annan, á básnum mínum í fjársjóði faraósins. Allra síðasta."
+      },
+      "3": {
+        "explorer": "Þú segir það alltaf."
+      }
+    },
+    "throughSecondCamel": {
+      "1": {
+        "fez": "Hann er að éta fezinn minn!"
+      },
+      "2": {
+        "explorer": "Vingjarnlegur úlfaldi."
+      },
+      "3": {
+        "fez": "Of vingjarnlegur."
+      }
+    },
+    "arrivesSecondCamel": {
+      "1": {
+        "fez": "Tveir úlfaldar. Nú horfa þeir báðir niður á mig."
+      },
+      "2": {
+        "explorer": "Farðu þá og stattu hjá ösnunum."
+      },
+      "3": {
+        "fez": "Ég geri það nú þegar."
+      }
+    },
+    "boughtSturdyCart": {
+      "1": {
+        "fez": "Sterkari kerra. Þessi syngur ekki á veginum."
+      },
+      "2": {
+        "explorer": "Það eru máluð blóm á henni."
+      },
+      "3": {
+        "fez": "Fyrir styrkinn."
+      }
+    },
+    "blockedSturdyCart": {
+      "1": {
+        "fez": "Gamla kerran kemst ekki þangað í heilu lagi. Til þess þarf eitthvað sterkara."
+      },
+      "2": {
+        "fez": "Það er ein á básnum mínum í Hvelfingu guðanna. Ekki út af málningunni, sko."
+      }
+    },
+    "throughSturdyCart": {
+      "1": {
+        "explorer": "Ekkert skrölt."
+      },
+      "2": {
+        "fez": "Sérðu? Styrkur."
+      },
+      "3": {
+        "explorer": "En blómin?"
+      },
+      "4": {
+        "fez": "Þau hjálpa líka smá."
+      }
+    },
+    "arrivesSturdyCart": {
+      "1": {
+        "fez": "Sjáðu hvað hún glansar!"
+      },
+      "2": {
+        "explorer": "Fallegri en hún þarf að vera."
+      },
+      "3": {
+        "fez": "Já. Ég seldi hana ekki heldur út af styrknum."
+      }
+    },
+    "boughtCaravanBanner": {
+      "1": {
+        "fez": "Fáni. Ég skal vera hreinskilinn: hann opnar ekki neitt."
+      },
+      "2": {
+        "explorer": "Hvað gerir hann þá?"
+      },
+      "3": {
+        "fez": "Hann blaktir. Fallega."
+      }
+    },
+    "arrivesCaravanBanner": {
+      "1": {
+        "fez": "Sjáðu hann blakta! Yfir okkar eigin búðum!"
+      },
+      "2": {
+        "explorer": "Opnar samt ekki neitt."
+      },
+      "3": {
+        "fez": "Nei. Hann þarf þess ekki."
+      }
+    }
+  },
+  "bond": {
+    "starter": {
+      "1": {
+        "fez": "Þetta var fljótt."
+      },
+      "2": {
+        "explorer": "Þetta var hurð."
+      },
+      "3": {
+        "fez": "Ég hefði verið viku að þessu."
+      }
+    },
+    "starterTomb": {
+      "1": {
+        "fez": "Bara svo það sé á hreinu. Ég er í þessu til að endurselja. Ég segi það núna, á meðan það er enn satt."
+      },
+      "2": {
+        "explorer": "Skilið."
+      }
+    },
+    "junior": {
+      "1": {
+        "fez": "Þú sagðir ekki orð þarna í smástund."
+      },
+      "2": {
+        "explorer": "Ég var að telja."
+      },
+      "3": {
+        "fez": "Ég veit. Ég hef séð fólk giska. Þetta var ekki gisk."
+      }
+    },
+    "expert": {
+      "1": {
+        "fez": "Þetta stóð tæpt."
+      },
+      "2": {
+        "explorer": "Þetta var allt í lagi."
+      },
+      "3": {
+        "fez": "Þetta stóð tæpt. Ég má alveg segja það."
+      }
+    },
+    "master": {
+      "1": {
+        "fez": "Við gætum hætt."
+      },
+      "2": {
+        "explorer": "Við gætum það."
+      },
+      "3": {
+        "fez": "Ég segi það svo það hafi verið sagt. Ekki svo við gerum það."
+      }
+    },
+    "wizard": {
+      "1": {
+        "explorer": "Hvað er þessi virði?"
+      },
+      "2": {
+        "fez": "…"
+      },
+      "3": {
+        "fez": "Ég ætla ekki að setja verð á þetta."
+      },
+      "4": {
+        "explorer": "Skilið."
+      }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": {
+        "fez": "Vá. Þetta var veggur fyrir sekúndu."
+      },
+      "2": {
+        "explorer": "Það var gangur á bak við hann."
+      },
+      "3": {
+        "fez": "Öll þessi ár gekk fólk beint fram hjá honum. Öll þessi ár!"
+      }
+    }
+  },
+  "reading": {
+    "junior": {
+      "1": {
+        "explorer": "Hérna er lína sem ég get lesið núna."
+      },
+      "2": {
+        "explorer": "Ég gaf þeim brauð sem voru svangir."
+      },
+      "3": {
+        "fez": "Brauð. Í grafhýsi."
+      },
+      "4": {
+        "explorer": "Þetta stóð líka í því síðasta. Ég vissi ekki að þetta væru orð."
+      }
+    },
+    "expert": {
+      "1": {
+        "explorer": "Önnur lína. Vatn handa þeim sem voru þyrstir."
+      },
+      "2": {
+        "fez": "Brauð, og nú vatn. Einhver vildi endilega að fólk myndi eftir honum sem gjafmildum."
+      },
+      "3": {
+        "explorer": "Allir hafa þetta. Hver veggur, hvert grafhýsi, sömu tvær línurnar."
+      },
+      "4": {
+        "fez": "Þá voru annaðhvort allir gjafmildir, eða þetta er það sem maður á að segja."
+      },
+      "5": {
+        "explorer": "Eða þetta er það sem þeir voru vegnir eftir."
+      }
+    },
+    "master": {
+      "1": {
+        "explorer": "Föt handa þeim sem voru naktir. Þriðja lína."
+      },
+      "2": {
+        "fez": "Brauð, vatn, föt. Þetta er listi yfir hluti sem voru gefnir."
+      },
+      "3": {
+        "explorer": "Í grafhýsi manns sem tók allt með sér."
+      },
+      "4": {
+        "fez": "…Já. Ég hafði tekið eftir því."
+      }
+    },
+    "sphinx": {
+      "1": {
+        "fez": "Aftur þar sem við byrjuðum. Hann hefur ekki hreyft sig."
+      },
+      "2": {
+        "explorer": "Letrið er hér enn."
+      },
+      "3": {
+        "fez": "Geturðu lesið það?"
+      },
+      "4": {
+        "explorer": "Nafn."
+      },
+      "5": {
+        "fez": "Hvers?"
+      },
+      "6": {
+        "explorer": "Þitt."
+      },
+      "7": {
+        "fez": "…"
+      },
+      "8": {
+        "fez": "Ertu viss?"
+      },
+      "9": {
+        "explorer": "Það er skrifað niður."
+      },
+      "10": {
+        "fez": "Ha."
+      },
+      "11": {
+        "fez": "Hori."
+      },
+      "12": {
+        "fez": "Það var Hori í hverju einasta þorpi í Egyptalandi."
+      },
+      "13": {
+        "fez": "Jæja. Það skýrir fezinn."
+      }
+    }
+  },
+  "altar": {
+    "refused": {
+      "1": {
+        "priest": "Nei."
+      },
+      "2": {
+        "explorer": "Það er merkið hans á þessu."
+      },
+      "3": {
+        "priest": "Það er merki á þessu. Mjög gott merki. Það var höggvið af einhverjum með frábær verkfæri sem átti ekkert erindi hingað, og það fyrir ekki svo löngu."
+      },
+      "4": {
+        "priest": "Ég hef beðið í þrjú þúsund ár. Ég læt ekki plata mig í síðustu vikunni."
+      }
+    }
+  },
+  "meeting": {
+    "starter_1": {
+      "1": {
+        "voice": "Hey! Ekki ÞARNA! Passaðu hvar þú stígur!"
+      },
+      "2": {
+        "explorer": "Fyrirgefðu! Ég sé ekki neitt! Hvar ertu?"
+      },
+      "3": {
+        "fez": "Hérna niðri! Þú stendur ofan í vörunum mínum!"
+      },
+      "4": {
+        "explorer": "Eðla?! Með fez?"
+      },
+      "5": {
+        "fez": "Kaupmaður. Og hvað er að fezinum mínum?"
+      },
+      "6": {
+        "fez": "Þú ert örugglega líka hérna út af pýramídanum. Keyptir kort? Borgaðir allt of mikið?"
+      },
+      "7": {
+        "explorer": "ALLT of mikið."
+      },
+      "8": {
+        "fez": "Ég líka. Pff."
+      },
+      "9": {
+        "explorer": "Letrið á Sfinxinum… getur þú lesið það?"
+      },
+      "10": {
+        "fez": "Nei. Enginn getur það lengur. Stallurinn var einu sinni blár og gylltur, skal ég segja þér."
+      },
+      "11": {
+        "explorer": "Hvernig veistu það?"
+      },
+      "12": {
+        "fez": "…Heyrði það. Jæja, hvað ert þú að leita að hérna?"
+      },
+      "13": {
+        "explorer": "Einhverju flottu."
+      },
+      "14": {
+        "fez": "Flott selst! Veistu hvað? Ég kem með þér!"
+      },
+      "15": {
+        "explorer": "Ha? Með mér?"
+      },
+      "16": {
+        "fez": "Betur sjá augu en auga. Komdu, pýramídinn bíður!"
+      }
+    }
+  },
+  "end": {
+    "1": {
+      "fez": "Var það flott?"
+    },
+    "2": {
+      "explorer": "Það sleppur."
+    }
+  },
+  "revisit": {
+    "starter": {
+      "north1": {
+        "1": {
+          "ipi": "Enn hérna? Norður! Henut! Ellefu deben!"
+        }
+      },
+      "north2": {
+        "1": {
+          "ipi": "Ellefu deben af lapis. Henut. Norður. Eftir hverju ertu að bíða?"
+        }
+      },
+      "paid1": {
+        "1": {
+          "ipi": "Nú? Borgaði hún? …Nei. Auðvitað ekki."
+        }
+      },
+      "paid2": {
+        "1": {
+          "ipi": "Gler? GLER? Hérna stendur lapis. Akkúrat hérna. Lapis!"
+        }
+      },
+      "later1": {
+        "1": {
+          "ipi": "Þú aftur. Þriðja hilla, sú með skarðinu, er enn mín. Ekki snerta."
+        }
+      },
+      "later2": {
+        "1": {
+          "ipi": "Fjörutíu ára bókhald, og ekki ein bók stemmir. Ekki ein!"
+        }
+      }
+    },
+    "junior": {
+      "wall1": {
+        "1": {
+          "henut": "Veggurinn. Þriðja táknið. Það er enn ekki nafnið mitt."
+        }
+      },
+      "wall2": {
+        "1": {
+          "henut": "Þú ert enn hérna, og þessi gæs er enn á veggnum mínum. Lagaðu þetta."
+        }
+      },
+      "priest1": {
+        "1": {
+          "henut": "Enn nafnið mitt. Ég athugaði. Jæja, Karnak, presturinn. Af stað með þig."
+        }
+      },
+      "priest2": {
+        "1": {
+          "henut": "Karnak! Hann hefur beðið nógu lengi. Farðu og láttu tilkynna þig."
+        }
+      },
+      "met1": {
+        "1": {
+          "henut": "Nú? Óþolandi, var hann það ekki? Ég sagði það."
+        }
+      },
+      "later1": {
+        "1": {
+          "henut": "Gler, enn. Enn fallegt. Enn valið af mér."
+        }
+      }
+    },
+    "expert": {
+      "seal1": {
+        "1": {
+          "priest": "Innsiglið. Komið með hingað, lagt niður, orðin sögð yfir því. Ég bíð."
+        }
+      },
+      "seal2": {
+        "1": {
+          "priest": "Ah. Þú aftur. Og enn ekkert innsigli."
+        }
+      },
+      "king1": {
+        "1": {
+          "priest": "Þú hefur hitt konunginn. Gott. Hluturinn sjálfur, mundu það. Ekki eftirlíking."
+        }
+      },
+      "later1": {
+        "1": {
+          "priest": "Þú aftur. Það er ekkert eftir að gera hérna. Það er mjög róandi."
+        }
+      }
+    },
+    "master": {
+      "priest1": {
+        "1": {
+          "pharaoh": "Enn hérna? Til prestsins með þessa eftirlíkingu! Mig langar að heyra hvernig fer."
+        }
+      },
+      "priest2": {
+        "1": {
+          "pharaoh": "Þið megið nálgast. Aftur. Hefur presturinn séð hana enn?"
+        }
+      },
+      "rite1": {
+        "1": {
+          "pharaoh": "Svo hann gerði loksins athöfnina sína. Gott. Nú verður hann óþolandi út af henni."
+        }
+      },
+      "later1": {
+        "1": {
+          "pharaoh": "Enn besta vikan í níu hundruð ár. Og hún heldur bara áfram!"
+        }
+      }
+    },
+    "wizard": {
+      "later1": {
+        "1": {
+          "priest": "…Já. Ég man enn hvernig. Gott."
+        }
+      },
+      "later2": {
+        "1": {
+          "priest": "Lagt niður, orðin sögð. Búið. Þetta er skrýtin tilfinning."
+        }
+      }
+    }
+  }
+}

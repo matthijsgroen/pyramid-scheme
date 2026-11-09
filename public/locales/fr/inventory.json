@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Râ",
+      "description": "Le roi des dieux et le maître du soleil. Chaque jour, il traverse le ciel dans sa barque."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Le dieu à tête de chacal, qui s’occupe des momies et de l’au-delà. Il protège les morts."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Le dieu du ciel à tête de faucon, qui protège les pharaons. C’est le fils d’Osiris et d’Isis."
+    },
+    "d4": {
+      "name": "Thot",
+      "description": "Le dieu à tête d’ibis, dieu de la sagesse et de l’écriture. Il note tout ce que font les dieux."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "La déesse chat de la protection et de la joie. Elle chasse les mauvais esprits."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Le dieu crocodile du Nil, de la fertilité et de la force des soldats."
+    },
+    "d7": {
+      "name": "Khépri",
+      "description": "Le dieu scarabée du renouveau. Il fait rouler le soleil dans le ciel, comme une boule."
+    },
+    "d8": {
+      "name": "Ouadjet",
+      "description": "La déesse cobra qui protège la Basse-Égypte. Elle est le signe du pouvoir des rois."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "La déesse de la magie, des mamans et de la guérison. C’est la femme d’Osiris."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "Le dieu du monde des morts, qui fait revivre. Il juge les morts."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "Le dieu du désordre, des tempêtes et du désert. Le frère et le rival d’Osiris."
+    },
+    "d12": {
+      "name": "Nephtys",
+      "description": "La déesse du deuil, qui protège les morts. C’est la sœur d’Isis."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Le dieu créateur, ami des artisans et des architectes. Il a créé le monde en parlant."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "La déesse lionne de la guerre et de la guérison. Féroce, mais elle sait guérir les maladies."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "La déesse vache de l’amour, de la musique et des mamans. Elle prend soin des pharaons."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Pharaon",
+      "description": "Le roi de l’Égypte. On le voyait comme un dieu vivant, entre les humains et les dieux."
+    },
+    "p2": {
+      "name": "Grand prêtre",
+      "description": "Le chef des temples. Il fait les rituels sacrés et garde l’ordre des dieux."
+    },
+    "p3": {
+      "name": "Scribe",
+      "description": "Quelqu’un qui sait lire et écrire. Il note tout et garde le savoir."
+    },
+    "p4": {
+      "name": "Architecte",
+      "description": "Le grand bâtisseur qui dessinait les pyramides, les temples et les monuments, pour toujours."
+    },
+    "p5": {
+      "name": "Général",
+      "description": "Le chef de l’armée, qui protège les frontières de l’Égypte et agrandit le royaume."
+    },
+    "p6": {
+      "name": "Médecin",
+      "description": "Un guérisseur qui mélange les remèdes et la magie pour soigner les malades."
+    },
+    "p7": {
+      "name": "Embaumeur",
+      "description": "L’artisan sacré qui préparait les morts pour leur voyage vers l’au-delà."
+    },
+    "p8": {
+      "name": "Paysan",
+      "description": "Il nourrit l’Égypte, en cultivant les terres fertiles au bord du Nil."
+    },
+    "p9": {
+      "name": "Artisan",
+      "description": "Un habile fabricant de beaux objets, de bijoux et d’œuvres d’art pour les nobles et les dieux."
+    },
+    "p10": {
+      "name": "Marchand",
+      "description": "Un commerçant qui rapportait des trésors de pays lointains, par les routes du commerce."
+    },
+    "p11": {
+      "name": "Vizir",
+      "description": "Le premier ministre et conseiller du pharaon. Il dirige le gouvernement."
+    },
+    "p12": {
+      "name": "Oracle",
+      "description": "Un prophète sacré qui comprend les messages des dieux et prédit l’avenir."
+    },
+    "p13": {
+      "name": "Marin",
+      "description": "Il navigue sur le Nil et sur la mer. Sans lui, pas de commerce ni de voyages."
+    },
+    "p14": {
+      "name": "Tailleur de pierre",
+      "description": "Il sculptait les hiéroglyphes et construisait les grands monuments de l’Égypte."
+    },
+    "p15": {
+      "name": "Gardien",
+      "description": "Il protège les lieux sacrés et les tombeaux, pour que les morts dorment en paix pour toujours."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Hippopotame",
+      "description": "Une bête puissante du Nil. On avait peur de sa force et il défend son coin de rivière."
+    },
+    "a2": {
+      "name": "Lion",
+      "description": "Le roi des animaux, signe du pouvoir des rois et de la force des dieux dans le désert."
+    },
+    "a3": {
+      "name": "Éléphant",
+      "description": "Un animal énorme venu des pays du sud, admiré pour sa sagesse et sa mémoire."
+    },
+    "a4": {
+      "name": "Gazelle",
+      "description": "Rapide et gracieuse, elle vit dans le désert. Elle est le signe de la vitesse et de l’élégance."
+    },
+    "a5": {
+      "name": "Singe",
+      "description": "Un animal malin, ami de Thot. Il est intelligent et un peu farceur."
+    },
+    "a6": {
+      "name": "Poisson",
+      "description": "Les animaux sacrés du Nil. Ils nourrissent les gens et sont des signes de fertilité."
+    },
+    "a7": {
+      "name": "Oie",
+      "description": "L’oiseau sacré des marais du Nil, lié à la naissance du monde et à l’âme."
+    },
+    "a8": {
+      "name": "Abeille",
+      "description": "Le signe de la Basse-Égypte et du pouvoir du roi. Elle fabrique du miel précieux."
+    },
+    "a9": {
+      "name": "Tortue",
+      "description": "Une très vieille bête pleine de sagesse, qui porte le poids du monde sur sa carapace."
+    },
+    "a10": {
+      "name": "Grenouille",
+      "description": "Le signe de la renaissance et de la fertilité. Elle sort des crues du Nil, qui donnent la vie."
+    },
+    "a11": {
+      "name": "Vautour",
+      "description": "L’oiseau sacré de la Haute-Égypte. C’est la forme sur terre de la déesse Nekhbet, qui protège."
+    },
+    "a12": {
+      "name": "Hibou",
+      "description": "Un sage chasseur de nuit, gardien des savoirs cachés et des vieux secrets."
+    },
+    "a13": {
+      "name": "Bélier",
+      "description": "L’animal sacré d’Amon-Râ, signe de la puissance des dieux et du commandement."
+    },
+    "a14": {
+      "name": "Girafe",
+      "description": "Grande et gracieuse, elle vient des pays du sud. Avec son long cou, elle touche presque le ciel."
+    },
+    "a15": {
+      "name": "Chacal",
+      "description": "Il rôde dans le désert et guide les morts vers l’au-delà. C’est le serviteur d’Anubis."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ânkh",
+      "description": "Le signe de la vie éternelle. Les dieux et les pharaons le tiennent souvent dans la main."
+    },
+    "art2": {
+      "name": "Œil d’Horus",
+      "description": "Le signe de la protection, du pouvoir et de la bonne santé, lié au dieu du ciel Horus."
+    },
+    "art3": {
+      "name": "Sistre",
+      "description": "Un instrument de musique qu’on secouait pendant les fêtes religieuses, lié à la déesse Hathor."
+    },
+    "art4": {
+      "name": "Pilier djed",
+      "description": "Le signe de la stabilité et du retour à la vie, souvent lié à Osiris."
+    },
+    "art5": {
+      "name": "Cartouche",
+      "description": "Un ovale avec le nom d’un pharaon écrit en hiéroglyphes dedans. Il protège son nom pour toujours."
+    },
+    "art6": {
+      "name": "Vase canope",
+      "description": "Un vase sacré avec une tête de gardien comme couvercle. Il y en avait quatre autour d’un cercueil, pour monter la garde."
+    },
+    "art7": {
+      "name": "Sceptre",
+      "description": "Le bâton du pouvoir, porté par les dieux et les pharaons pour montrer qu’ils commandent."
+    },
+    "art9": {
+      "name": "Pyramide",
+      "description": "Le tombeau éternel et la porte vers l’au-delà, construit pour que les pharaons y restent pour toujours."
+    },
+    "art10": {
+      "name": "Barque solaire",
+      "description": "Le bateau sacré qui porte le dieu soleil Râ à travers le ciel, du matin au soir."
+    },
+    "art11": {
+      "name": "Obélisque",
+      "description": "Un grand pilier de pierre avec une petite pyramide en haut. Il monte vers le ciel pour honorer les dieux."
+    },
+    "art12": {
+      "name": "Crosse et fléau",
+      "description": "Les objets du roi : le pharaon est comme un berger qui guide et protège l’Égypte."
+    },
+    "art14": {
+      "name": "Fleur de lotus",
+      "description": "Le signe de la renaissance et du soleil. Elle sort toute propre de l’eau boueuse du Nil."
+    },
+    "art15": {
+      "name": "Couronne à uræus",
+      "description": "La coiffe royale avec un cobra protecteur. Les pharaons la portaient pour que les dieux les protègent."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Feuille de roseau",
+      "description": "Un seul roseau, pour le son i. Ajouté au nom d’un dieu, il fait un nom d’homme : Horus devient Hori, celui d’Horus."
+    }
+  }
+}

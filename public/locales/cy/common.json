@@ -1,0 +1,2201 @@
+{
+  "language": "Cymraeg",
+  "saveUnreadable": {
+    "title": "Dydy dy gêm ddim yn gallu llwytho",
+    "body": "Dydy'r porwr ddim yn fodlon rhoi dy gêm wedi'i chadw i ni ar hyn o bryd. Dydy hi ddim wedi mynd: ail-lwytha'r dudalen i drio eto.",
+    "banner": "Dydy dy gêm ddim yn cael ei chadw. Tapia i ail-lwytho.",
+    "reload": "Ail-lwytho",
+    "continue": "Chwarae ymlaen heb gadw",
+    "reset": "Dechrau eto (dileu'r gêm)",
+    "confirmReset": "Bydd hyn yn dileu dy gêm i gyd, a does dim ffordd i'w chael hi 'nôl. Dechrau eto?",
+    "confirmResetYes": "Ie, dilea fy ngêm",
+    "confirmResetNo": "Na, 'nôl â fi"
+  },
+  "difficulty": {
+    "starter": "Dechreuwr",
+    "junior": "Iau",
+    "expert": "Arbenigwr",
+    "master": "Meistr",
+    "wizard": "Dewin"
+  },
+  "journeyLength": {
+    "short": "Byr",
+    "medium": "Canolig",
+    "long": "Hir"
+  },
+  "time": {
+    "morning": "Bore",
+    "afternoon": "Prynhawn",
+    "evening": "Noswaith",
+    "night": "Nos"
+  },
+  "tomb": {},
+  "ui": {
+    "level": "Lefel",
+    "symbols": "symbolau",
+    "journey": "Taith",
+    "tableau": "Tablo",
+    "difficulty": "Lefel anhawster",
+    "length": "Hyd",
+    "time": "Amser",
+    "requiredPrestige": "Lefel bri sydd ei hangen",
+    "rewards": "Gwobrau",
+    "coins": "Darnau arian",
+    "pieces": "Darnau",
+    "description": "Disgrifiad",
+    "expedition": "Taith",
+    "expeditionCompleted": "Taith wedi'i gorffen!",
+    "goBackToBase": "'Nôl i'r gwersyll",
+    "backArrow": "←",
+    "back": "← 'Nôl",
+    "floor": "Llawr {{number}}",
+    "enterSite": "Cama i mewn",
+    "prompt": {
+      "here": "Edrych yn fanwl",
+      "stairs": "Cymryd y grisiau",
+      "exit": "Gadael y lle yma",
+      "zipline": "Llithra ar y rhaff — does dim ffordd 'nôl",
+      "oneWay": "Croesa drosodd — does dim ffordd 'nôl",
+      "liftStone": "Codi'r garreg",
+      "setStone": "Rhoi'r garreg ar y plât",
+      "postStone": "Gwthio'r garreg drwy'r twll",
+      "takeStone": "Cymryd y garreg",
+      "squeeze": "Gwasgu drwodd",
+      "replay": "Chwarae eto"
+    },
+    "blocked": {
+      "carrying": "Alli di ddim mynd heibio gyda charreg"
+    },
+    "backToMap": "'Nôl i'r map",
+    "continueExploration": "Dal ati i archwilio'r pyramidiau.",
+    "startExpedition": "Dechrau'r daith",
+    "webBuriedPercent": "{{percent}}% o dan y tywod o hyd",
+    "interruptExpedition": "Stopio'r daith",
+    "confirmInterruptExpedition": "Wyt ti'n siŵr dy fod ti eisiau stopio'r daith yma? Byddi di'n cadw dy daith, ond byddi di'n colli beth wnest ti ar y lefel yma!",
+    "cancel": "Canslo",
+    "settings": "Gosodiadau",
+    "language": "Iaith",
+    "close": "Cau",
+    "done": "Wedi gorffen",
+    "clearGameData": "Dileu data'r gêm",
+    "confirmClearGameData": "Bydd hyn yn dileu popeth am byth: dy gynnydd, dy bethau a'r pyramidiau rwyt ti wedi'u harchwilio. Does dim ffordd i'w cael nhw 'nôl.",
+    "disableTutorials": "Diffodd y gwersi",
+    "treasureTomb": "Lle'r trysor",
+    "requiresMapPieces": "Angen darnau o fap",
+    "mapPieces": "Darnau o fap",
+    "completeExpeditionsToUnlock": "Gorffen teithiau i agor hwn",
+    "availableSymbols": "Symbolau sydd ar gael:",
+    "fragmentsNeeded": "{{found}}/{{required}} sydd eu hangen",
+    "howToPlay": "Sut i chwarae",
+    "puzzleComplete": "Yr ateb yw:",
+    "puzzleCompleted": "Pos wedi'i ddatrys",
+    "trapBlocked": "Does dim digon o iechyd gyda ti i drio'r trap yma",
+    "spiritsRejectCode": "Dydy'r ysbrydion ddim yn derbyn y cod yma",
+    "sacredSealBroken": "Mae'r sêl sanctaidd wedi torri",
+    "newExpeditionUnlocked": "Mae taith newydd ar agor nawr",
+    "newTombUnlocked": "Mae bedd newydd ar agor nawr",
+    "tierComingSoonTitle": "Mae teithiau {{tier}} ar y ffordd",
+    "tierComingSoon": "Mae'r allwedd gyda ti, ond mae'r pyramidiau {{tier}} yn dal i gael eu hadeiladu. Byddan nhw'n dod mewn diweddariad nes ymlaen — tan hynny, mae dy allwedd yn agor mwy o'r pyramidiau rwyt ti'n eu nabod yn barod.",
+    "answerNow": "Yr ateb yw: ",
+    "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "resetPuzzle": "Dechrau eto",
+    "hint": "Cliw",
+    "undo": "Dadwneud",
+    "erase": "Rhwbio allan",
+    "notes": "Nodiadau",
+    "solvedUnaided": "Wedi'i ddatrys heb un cliw",
+    "solvedWithHints_zero": "Wedi'i ddatrys gyda {{count}} o gliwiau",
+    "solvedWithHints_one": "Wedi'i ddatrys gydag {{count}} cliw",
+    "solvedWithHints_two": "Wedi'i ddatrys gyda {{count}} o gliwiau",
+    "solvedWithHints_few": "Wedi'i ddatrys gyda {{count}} o gliwiau",
+    "solvedWithHints_many": "Wedi'i ddatrys gyda {{count}} o gliwiau",
+    "solvedWithHints_other": "Wedi'i ddatrys gyda {{count}} o gliwiau",
+    "tapToContinue": "Tapia i fynd ymlaen",
+    "goal": "Nod"
+  },
+  "trap": {
+    "warning": "⚠ Coridor gyda thrap",
+    "canAttempt": "Galli di drio mynd drwodd.",
+    "tooWeak": "Rwyt ti'n wan iawn — os wyt ti'n methu, fydd dim ar ôl gyda ti.",
+    "attempt": "Trio'r trap",
+    "turnAround": "Troi 'nôl",
+    "rested": "Wedi gorffwys wrth y tân — yn iach eto"
+  },
+  "gate": {
+    "title": "🔒 Giât ar glo",
+    "locked": "Does dim yr allwedd iawn gyda ti eto.",
+    "markedWith": "Mae arwydd wedi'i dorri yn y drws:",
+    "unlocked": "Mae'r allwedd gyda ti.",
+    "pass": "Mynd drwodd",
+    "turnAround": "Troi 'nôl",
+    "wardDescription": {
+      "starter": "Mae sêl masnachwr yn cau'r ffordd — dim ond ei allwedd e sy'n gallu ei hagor.",
+      "junior": "Mae arfbais uchelwr yn cloi'r ffordd hon — dim ond ei allwedd e sy'n ei chodi.",
+      "expert": "Mae swyn teml archoffeiriad yn gwarchod y drws yma — rhaid cael yr allwedd sanctaidd i'w agor.",
+      "master": "Mae sêl frenhinol pharo yn cloi'r ffordd — dim ond allwedd y brenin sy'n ei thorri.",
+      "wizard": "Mae swyn y duwiau'n dal y giât yma — dim ond yr allwedd ddwyfol sy'n mynd heibio."
+    },
+    "needsKey": "Mae'r drws wedi'i farcio ar gyfer un allwedd:",
+    "lockedColor": "Dwyt ti ddim wedi ffeindio'r allwedd honno ar y llawr yma eto."
+  },
+  "chest": {
+    "tapToOpen": "Tapia i agor",
+    "money_zero": "{{count}} o ddarnau arian",
+    "money_one": "{{count}} darn arian",
+    "money_two": "{{count}} o ddarnau arian",
+    "money_few": "{{count}} o ddarnau arian",
+    "money_many": "{{count}} o ddarnau arian",
+    "money_other": "{{count}} o ddarnau arian",
+    "mapPiece": "Darn o fap",
+    "mapPieceDescription": "Darn bregus o fap i ryw le mae pawb wedi'i anghofio. Biti nad yw e'n agos at fod yn gyfan...",
+    "mapPieceProgress": "{{found}} o {{required}} darn o fap wedi'u casglu",
+    "mapPieceComplete": "Mae'r map yn gyfan — mae'n arwain at {{name}}.",
+    "hieroglyphFragment": "Darn o hieroglyff",
+    "fragmentProgress": "{{found}} o {{required}} darn wedi'u ffeindio",
+    "tombKey": "Allwedd y bedd",
+    "sandLever": "Lifer tywod",
+    "sandLeverDescription": "Rwyt ti'n ei dynnu ac mae'n aros i lawr. Yn bell i ffwrdd, mae tywod yn llifo i ffwrdd.",
+    "webKey": "Allwedd wedi'i selio",
+    "webKeyDescription": "Mae marc ar ei phen rwyt ti wedi'i weld ar ddrws wedi'i selio yn rhywle arall.",
+    "hieroglyphs": "Hen hieroglyffau",
+    "hieroglyphsDescription": "Symbolau sanctaidd wedi'u cerfio ar waliau'r siambr. Maen nhw'n dy helpu di i ddeall mwy am yr hen fyd.",
+    "mosaicPiece": "Darn o fosaig",
+    "mosaicPieceDescription": "Teilsen wydr sy'n disgleirio, un darn o fosaig mawr. Rho hi wrth ymyl y lleill ac mae'r llun cudd yn dod i'r golwg yn araf.",
+    "waterskin": "Croen dŵr",
+    "waterskinDescription": "Dŵr oer. Rwyt ti'n ei yfed yn syth ac mae dy friwiau'n teimlo'n well."
+  },
+  "loot": {
+    "youFound": "Fe ffeindiaist ti",
+    "expeditionReward": "Gwobr ychwanegol am orffen y daith",
+    "clickToContinue": "Tapia unrhyw le i fynd ymlaen"
+  },
+  "money": {
+    "label": "Darnau arian"
+  },
+  "shop": {
+    "title": "Stondin Fez",
+    "invitation": "Edrych ar y stondin",
+    "buy": "Prynu",
+    "sell": "Gwerthu",
+    "soldOut": "Wedi gwerthu i gyd",
+    "dismiss": "Gadael",
+    "rareItems": "Pethau prin",
+    "sellSection": "Trugareddau i'w gwerthu",
+    "haul": {
+      "coins_zero": "+{{count}} o ddarnau arian",
+      "coins_one": "+{{count}} darn arian",
+      "coins_two": "+{{count}} o ddarnau arian",
+      "coins_few": "+{{count}} o ddarnau arian",
+      "coins_many": "+{{count}} o ddarnau arian",
+      "coins_other": "+{{count}} o ddarnau arian",
+      "note": "Darnau arian rhydd ar y ffordd"
+    }
+  },
+  "purchases": {
+    "donkey": {
+      "name": "Asyn",
+      "need": "Mae angen asyn arnat ti",
+      "opens": "Mae'n cario dy stwff. Gydag e, galli di fynd ar y teithiau Arbenigwr."
+    },
+    "cart": {
+      "name": "Cert",
+      "need": "Mae angen cert arnat ti",
+      "opens": "Mae'r gwersyll cyfan yn ffitio arni. Gyda hi, galli di fynd ar y teithiau Meistr."
+    },
+    "camel": {
+      "name": "Camel",
+      "need": "Mae angen camel arnat ti",
+      "opens": "Mae'n cerdded am ddyddiau heb ddŵr. Mae'n mynd â ti i'r Cysegr Mewnol."
+    },
+    "secondDonkey": {
+      "name": "Ail asyn",
+      "need": "Mae angen ail asyn arnat ti",
+      "opens": "Mwy fyth i'w gario. Gydag e, galli di fynd ar y teithiau Dewin."
+    },
+    "secondCamel": {
+      "name": "Ail gamel",
+      "need": "Mae angen ail gamel arnat ti",
+      "opens": "Mae dau gamel yn cario digon o ddŵr ar gyfer Neuadd Osiris."
+    },
+    "sturdyCart": {
+      "name": "Cert gryfach",
+      "need": "Mae angen cert gryfach arnat ti",
+      "opens": "Fydd hi ddim yn torri, hyd yn oed ar y ffordd i Deyrnas y Grymoedd Mawr."
+    },
+    "caravanBanner": {
+      "name": "Baner y garafán",
+      "opens": "Dydy hi ddim yn agor dim byd. Jyst am hwyl."
+    },
+    "hint": "Mae Fez yn gwerthu un yn {{place}}",
+    "devGrant": "Prynu pob anifail"
+  },
+  "level": {
+    "completed": "Lefel wedi'i gorffen!"
+  },
+  "mosaic": {
+    "place_zero": "Gosod {{count}} o ddarnau",
+    "place_one": "Gosod {{count}} darn",
+    "place_two": "Gosod {{count}} o ddarnau",
+    "place_few": "Gosod {{count}} o ddarnau",
+    "place_many": "Gosod {{count}} o ddarnau",
+    "place_other": "Gosod {{count}} o ddarnau",
+    "placing": "Wrthi'n gosod…",
+    "panel": {
+      "starter": "Y Gwarchodwr wrth y Drws",
+      "junior": "Y Wers Gyntaf",
+      "expert": "Gadael yr Haul i Mewn",
+      "master": "Y Brenin Gwyrdd",
+      "wizard": "Y Bluen a'r Galon"
+    },
+    "entrance": {
+      "title": "Mosaig",
+      "label": "Mosaig {{found}}/{{total}}"
+    },
+    "haul": {
+      "pieces_zero": "{{count}} o ddarnau mosaig",
+      "pieces_one": "{{count}} darn o fosaig",
+      "pieces_two": "{{count}} o ddarnau mosaig",
+      "pieces_few": "{{count}} o ddarnau mosaig",
+      "pieces_many": "{{count}} o ddarnau mosaig",
+      "pieces_other": "{{count}} o ddarnau mosaig",
+      "note": "Ar gyfer y ffenest wydr lliw"
+    }
+  },
+  "collection": {
+    "tabs": {
+      "treasures": "Trysorau",
+      "hieroglyphs": "Hieroglyffau",
+      "stories": "Straeon",
+      "junk": "Trugareddau"
+    },
+    "tabsLabel": "Beth rwyt ti wedi'i gasglu",
+    "tabNew_zero": "{{label}} · {{count}} newydd",
+    "tabNew_one": "{{label}} · {{count}} newydd",
+    "tabNew_two": "{{label}} · {{count}} newydd",
+    "tabNew_few": "{{label}} · {{count}} newydd",
+    "tabNew_many": "{{label}} · {{count}} newydd",
+    "tabNew_other": "{{label}} · {{count}} newydd",
+    "empty": "Mae dy gist yn wag o hyd",
+    "newLabel": "NEWYDD",
+    "clickForDetails": "Tapia deilsen i weld mwy",
+    "categories": {
+      "deities": "🏺 Duwiau",
+      "professions": "⚱️ Swyddi",
+      "animals": "🐾 Anifeiliaid",
+      "artifacts": "💎 Arteffactau",
+      "treasures": "💰 Trysorau",
+      "junk": "🔷 Trugareddau",
+      "signs": "✍️ Arwyddion"
+    },
+    "treasureCategories": {
+      "merchantCache": "💰 Storfa'r Masnachwr",
+      "nobleVault": "👑 Claddgell yr Uchelwr",
+      "templeSecrets": "🏛️ Cyfrinachau'r Deml",
+      "ancientRelics": "🏺 Hen Greiriau",
+      "mythicalArtifacts": "✨ Trysorau'r Chwedlau"
+    }
+  },
+  "detector": {
+    "compassTitle": "Cwmpawd",
+    "corridorTitle": "Chwiliwr coridorau",
+    "pickTarget": "Dewisa hieroglyff wrth y bwrdd mapiau yn y gwersyll",
+    "allCollected": "Does dim darn o fewn cyrraedd eto mewn pyramid rwyt ti wedi'i archwilio o'r blaen",
+    "more": "+{{count}} arall",
+    "corridorHere": "Mae coridor cudd reit fan hyn",
+    "revealCorridor": "Agor hwn",
+    "corridorNearby": "Mae coridor cudd yn agos",
+    "corridorOnFloor": "Mae coridor cudd yn aros ar y llawr yma",
+    "lookingFor": "Yn chwilio am {{symbol}}",
+    "access": {
+      "open": "Does dim byd yn y ffordd, hyd y gwyddon ni",
+      "unknown": "Efallai nad wyt ti'n gallu ei gyrraedd eto — mae mewn bedd neu ar werth"
+    },
+    "corridorNoneNearby": "Does dim coridor cudd yn agos",
+    "corridorNoneOnFloor": "Does dim coridor cudd ar y llawr yma",
+    "corridorOtherFloor": "Mae coridor cudd yn aros ar lawr arall",
+    "corridorNoneInPyramid": "Does dim coridor cudd ar lawr arall",
+    "title": "Synhwyrydd",
+    "band": {
+      "none": "Dim byd i'w weld",
+      "pyramid": "Rhywbeth yn y pyramid yma",
+      "floor": "Rhywbeth ar y llawr yma",
+      "near": "Rhywbeth yn agos",
+      "here": "Reit fan hyn! Agor y synhwyrydd"
+    },
+    "camp": {
+      "parts": "{{count}} o {{total}} darn",
+      "compassReach": {
+        "1": "yn gweld y pyramid",
+        "2": "yn gweld y llawr",
+        "3": "yn dangos yr union le"
+      },
+      "pickHeading": "Am beth mae'r cwmpawd yn chwilio?",
+      "onlyIncomplete": "Dim ond arwyddion sydd gyda ti ddarn ohonyn nhw, nes eu bod nhw'n gyfan.",
+      "whereHeading": "Ble mae darnau {{symbol}}",
+      "pickFirst": "Dewisa arwydd i weld ble mae ei ddarnau.",
+      "follow": "Dilyn yr arwydd yma",
+      "following": "Mae'r cwmpawd yn dilyn yr arwydd yma",
+      "nothingToFind": "Does dim darn gyda ti eto o arwydd sydd ddim yn gyfan.",
+      "noneInReach": "Does dim darn o fewn cyrraedd eto mewn pyramid rwyt ti wedi'i archwilio o'r blaen.",
+      "corridorReach": {
+        "1": "yn clywed coridor gerllaw",
+        "2": "yn clywed y llawr cyfan",
+        "3": "yn clywed y lloriau eraill hefyd",
+        "4": "yn clywed teithiau eraill"
+      },
+      "corridorInPyramid": "Y tu mewn i byramid, mae'n gwrando am goridorau sydd ar gau.",
+      "corridorFarNext": "Gyda'r pedwar darn, mae'n clywed teithiau eraill o'r gwersyll.",
+      "corridorWhere": "Ble mae coridor ar gau o hyd",
+      "corridorNone": "Does dim coridor ar gau mewn taith rwyt ti wedi bod arni.",
+      "pyramid": "Pyramid {{n}}",
+      "corridorCount_zero": "{{count}} o goridorau",
+      "corridorCount_one": "{{count}} coridor",
+      "corridorCount_two": "{{count}} o goridorau",
+      "corridorCount_few": "{{count}} o goridorau",
+      "corridorCount_many": "{{count}} o goridorau",
+      "corridorCount_other": "{{count}} o goridorau"
+    }
+  },
+  "keys": {
+    "blue": "Allwedd las",
+    "red": "Allwedd goch",
+    "green": "Allwedd werdd",
+    "yellow": "Allwedd felen",
+    "purple": "Allwedd borffor",
+    "bundle": "Cylch o allweddi",
+    "foundDescription": "Mae'n agor y drysau sydd wedi'u marcio yn y lliw yma, ar y llawr yma.",
+    "heldTitle": "{{key}} — yn dy law",
+    "neededTitle": "{{key}} — dal ei hangen"
+  },
+  "balance": {
+    "rules": {
+      "tap": "Tapia lun isod, yna rhif. Tapia'r rhif eto i'w dynnu i ffwrdd.",
+      "same": "Mae llun yn pwyso'r un faint ar bob clorian.",
+      "cancel": "Tynna'r un peth oddi ar y ddwy ochr ac mae'r glorian yn dal yn wastad. Tapia ddarn wedi'i farcio i wneud hyn — mae beth sydd ar ôl yn aros fel rhes newydd.",
+      "swap": "Tapia lun sydd heb ddim byd tebyg gyferbyn ag e, yna rhes lle mae'r llun yna ar ei ben ei hun, i'w gyfnewid am werth y rhes honno."
+    },
+    "hint": {
+      "mistake": "Mae un o'r pwysau roist ti yn gwneud i glorian syrthio. Tynna fe i ffwrdd ac edrych eto.",
+      "alone": "Ar y rhes olau, {{glyph}} yw'r unig ddarn sydd heb rif arno. Gweithia mas faint mae'n bwyso.",
+      "equalShares": "Dim ond {{glyph}} sydd ar y rhes olau, yn erbyn rhif. Rhanna'r rhif yna rhyngddyn nhw.",
+      "difference": "Mae'r ddwy res olau yr un fath, heblaw am {{glyph}}. Cymhara nhw.",
+      "cancelGlyph": "Mae {{glyph}} ar ddwy ochr y rhes olau. Tapia un i'w dynnu oddi ar y ddwy ochr — mae'r rhes yn aros yn wastad.",
+      "cancelStones": "Mae rhifau plaen ar ddwy ochr y rhes olau. Tapia un i dynnu'r un faint oddi ar y ddwy ochr.",
+      "swap": "Mae un rhes olau yn dweud faint yw gwerth un {{glyph}} ar ei ben ei hun. Tapia'r {{glyph}} yn y rhes olau arall, yna tapia'r rhes honno."
+    },
+    "swap": {
+      "pick": "Tapia res olau i gyfnewid y {{glyph}} yma am y gwerth mae'r rhes honno'n ei ddweud.",
+      "none": "Does dim byd fan hyn yn dweud beth yw gwerth un {{glyph}} ar ei ben ei hun, a does dim byd gyferbyn ag e yn cyfateb."
+    },
+    "goal": {
+      "default": "Mae gan bob llun ei bwysau, ac mae pob clorian yn wastad.",
+      "weighing": "Mae pob arwydd yn ffeindio'i bwysau, ac mae pob clorian yn setlo'n wastad."
+    },
+    "name": {
+      "default": "Y Glorian",
+      "weighing": "Pwyso'r Galon"
+    }
+  },
+  "sumplete": {
+    "rules": {
+      "tap": "Tapia unwaith i groesi rhif allan, eto i'w farcio fel un sy'n aros, ac eto i'w glirio.",
+      "totals": "Y rhif bach o dan bob targed yw cyfanswm y llinell honno ar hyn o bryd."
+    },
+    "hint": {
+      "mistake": "Dydy un o'r marciau fan hyn ddim yn gallu bod yn iawn. Dadwna fe ac edrych eto.",
+      "tooBig": {
+        "row": "Mae angen {{deficit}} ar y rhes yma o hyd. Mae {{value}} yn fwy na hynny, felly all e ddim aros.",
+        "col": "Mae angen {{deficit}} ar y golofn yma o hyd. Mae {{value}} yn fwy na hynny, felly all e ddim aros."
+      },
+      "allStrike": {
+        "row": "Mae'r rhifau sy'n aros yn y rhes yma'n adio i'r targed yn barod, felly rhaid i bopeth arall fynd.",
+        "col": "Mae'r rhifau sy'n aros yn y golofn yma'n adio i'r targed yn barod, felly rhaid i bopeth arall fynd."
+      },
+      "allKeep": {
+        "row": "Mae'r rhes yma'n adio i'r targed yn barod — marcia'r rhifau yma fel rhai sy'n aros, er mwyn gweithio mas y colofnau sy'n mynd drwyddyn nhw.",
+        "col": "Mae'r golofn yma'n adio i'r targed yn barod — marcia'r rhifau yma fel rhai sy'n aros, er mwyn gweithio mas y rhesi sy'n mynd drwyddyn nhw."
+      },
+      "parityKeep": {
+        "row": "Mae angen {{deficit}} ar y rhes yma o hyd, sef odrif. {{value}} yw'r unig odrif sydd ar ôl, felly rhaid iddo aros.",
+        "col": "Mae angen {{deficit}} ar y golofn yma o hyd, sef odrif. {{value}} yw'r unig odrif sydd ar ôl, felly rhaid iddo aros."
+      },
+      "parityStrike": {
+        "row": "Mae angen {{deficit}} ar y rhes yma o hyd, sef eilrif. {{value}} yw'r unig odrif sydd ar ôl, felly rhaid iddo fynd.",
+        "col": "Mae angen {{deficit}} ar y golofn yma o hyd, sef eilrif. {{value}} yw'r unig odrif sydd ar ôl, felly rhaid iddo fynd."
+      },
+      "onlyCombination": {
+        "row": "Dim ond un set o rifau yn y rhes yma sy'n adio i {{deficit}}.",
+        "col": "Dim ond un set o rifau yn y golofn yma sy'n adio i {{deficit}}."
+      },
+      "inEveryCombinationKeep": {
+        "row": "Heb {{value}}, does dim set o'r rhifau eraill yn y rhes yma'n gwneud {{deficit}} — felly rhaid iddo aros.",
+        "col": "Heb {{value}}, does dim set o'r rhifau eraill yn y golofn yma'n gwneud {{deficit}} — felly rhaid iddo aros."
+      },
+      "inEveryCombinationStrike": {
+        "row": "Cadwa {{value}} a byddai angen {{remaining}} ar y rhes yma o hyd, a does dim un o'r rhifau eraill yn gallu gwneud hynny — felly rhaid iddo fynd.",
+        "col": "Cadwa {{value}} a byddai angen {{remaining}} ar y golofn yma o hyd, a does dim un o'r rhifau eraill yn gallu gwneud hynny — felly rhaid iddo fynd."
+      },
+      "tooBig.row": "Mae angen {{deficit}} ar y rhes yma o hyd, ac mae {{value}} yn fwy na hynny.",
+      "tooBig.col": "Mae angen {{deficit}} ar y golofn yma o hyd, ac mae {{value}} yn fwy na hynny.",
+      "allStrike.row": "Mae'r rhifau sy'n aros yn y rhes yma'n adio i'r targed yn barod.",
+      "allStrike.col": "Mae'r rhifau sy'n aros yn y golofn yma'n adio i'r targed yn barod.",
+      "allKeep.row": "Mae'r rhes yma'n adio i'r targed yn barod, felly galli di weithio mas y colofnau sy'n mynd drwyddi nesaf.",
+      "allKeep.col": "Mae'r golofn yma'n adio i'r targed yn barod, felly galli di weithio mas y rhesi sy'n mynd drwyddi nesaf.",
+      "parityKeep.row": "Mae angen {{deficit}} ar y rhes yma o hyd, sef odrif, a {{value}} yw'r unig odrif sydd ar ôl.",
+      "parityKeep.col": "Mae angen {{deficit}} ar y golofn yma o hyd, sef odrif, a {{value}} yw'r unig odrif sydd ar ôl.",
+      "parityStrike.row": "Mae angen {{deficit}} ar y rhes yma o hyd, sef eilrif, a {{value}} yw'r unig odrif sydd ar ôl.",
+      "parityStrike.col": "Mae angen {{deficit}} ar y golofn yma o hyd, sef eilrif, a {{value}} yw'r unig odrif sydd ar ôl.",
+      "onlyCombination.row": "Dim ond un set o rifau yn y rhes yma sy'n adio i {{deficit}}.",
+      "onlyCombination.col": "Dim ond un set o rifau yn y golofn yma sy'n adio i {{deficit}}.",
+      "inEveryCombinationKeep.row": "Heb {{value}}, does dim set o'r rhifau eraill yn y rhes yma'n gwneud {{deficit}}.",
+      "inEveryCombinationKeep.col": "Heb {{value}}, does dim set o'r rhifau eraill yn y golofn yma'n gwneud {{deficit}}.",
+      "inEveryCombinationStrike.row": "Cadwa {{value}} a byddai angen {{remaining}} ar y rhes yma o hyd, a does dim un o'r rhifau eraill yn gallu gwneud hynny.",
+      "inEveryCombinationStrike.col": "Cadwa {{value}} a byddai angen {{remaining}} ar y golofn yma o hyd, a does dim un o'r rhifau eraill yn gallu gwneud hynny.",
+      "action": {
+        "strike_zero": "Croesa'r rhifau streipiog allan.",
+        "strike_one": "Croesa'r rhif streipiog allan.",
+        "strike_two": "Croesa'r rhifau streipiog allan.",
+        "strike_few": "Croesa'r rhifau streipiog allan.",
+        "strike_many": "Croesa'r rhifau streipiog allan.",
+        "strike_other": "Croesa'r rhifau streipiog allan.",
+        "keep_zero": "Marcia'r rhifau streipiog fel rhai sy'n aros.",
+        "keep_one": "Marcia'r rhif streipiog fel un sy'n aros.",
+        "keep_two": "Marcia'r rhifau streipiog fel rhai sy'n aros.",
+        "keep_few": "Marcia'r rhifau streipiog fel rhai sy'n aros.",
+        "keep_many": "Marcia'r rhifau streipiog fel rhai sy'n aros.",
+        "keep_other": "Marcia'r rhifau streipiog fel rhai sy'n aros."
+      }
+    },
+    "goal": "Mae pob rhes a phob colofn yn adio i'r rhif wrth ei hymyl.",
+    "name": "Y Cyfrif"
+  },
+  "futoshiki": {
+    "rules": {
+      "signs": "Mae arwydd rhwng dau sgwâr yn pwyntio at y rhif lleiaf o'r ddau.",
+      "enter": "Tapia sgwâr, yna tapia rif. Mae'r un rhif eto yn ei dynnu allan.",
+      "notes": "Newidia i'r pensil i nodi'r rhifau allai fynd mewn sgwâr o hyd. Mae Dadwneud yn mynd â dy symudiad olaf 'nôl."
+    },
+    "hint": {
+      "mistake": {
+        "value": "Dydy un o'r rhifau fan hyn ddim yn gallu bod yn iawn. Tynna fe allan ac edrych eto.",
+        "note": "Mae nodiadau'r sgwâr yma wedi cau allan y rhif sy'n perthyn yma. Clira nhw a dechrau eto."
+      },
+      "nakedSingle": "Mae pob rhif arall wedi'i gymryd yn y rhes yma, yn y golofn yma, neu gan yr arwyddion — dim ond {{value}} sydd ar ôl i'r sgwâr yma.",
+      "hiddenSingle": {
+        "row": "Dydy {{value}} ddim yn ffitio mewn unrhyw sgwâr arall yn y rhes yma, felly fan hyn mae'n mynd.",
+        "col": "Dydy {{value}} ddim yn ffitio mewn unrhyw sgwâr arall yn y golofn yma, felly fan hyn mae'n mynd."
+      },
+      "signBound": {
+        "high": "Mae arwydd fan hyn yn pwyntio i ffwrdd at rif mwy, felly all y sgwâr yma ddim dal {{value}}.",
+        "low": "Mae arwydd fan hyn yn pwyntio at y sgwâr yma, felly rhaid i rywbeth fod yn llai nag e — all e ddim dal {{value}}."
+      },
+      "signVsValue": {
+        "less": "Mae'r arwydd yn dweud bod y sgwâr yma'n llai na'i gymydog, ac mae {{value}} yn y cymydog hwnnw.",
+        "greater": "Mae'r arwydd yn dweud bod y sgwâr yma'n fwy na'i gymydog, ac mae {{value}} yn y cymydog hwnnw."
+      },
+      "signChain": {
+        "high": "Dilyna'r arwyddion o'r sgwâr yma: rhaid i {{chain}} sgwâr yn olynol fod yn fwy na'r un cynt, felly all hwn ddim bod yn uwch na {{bound}}.",
+        "low": "Dilyna'r arwyddion i mewn i'r sgwâr yma: rhaid i {{chain}} sgwâr yn olynol fod yn llai na'r un cynt, felly all hwn ddim bod yn is na {{bound}}."
+      },
+      "signPair": {
+        "less": "Y rhif mwyaf all ei gymydog dros yr arwydd ei ddal o hyd yw {{value}}, a rhaid i'r sgwâr yma aros oddi tano.",
+        "greater": "Y rhif lleiaf all ei gymydog dros yr arwydd ei ddal o hyd yw {{value}}, a rhaid i'r sgwâr yma aros uwch ei ben."
+      },
+      "nakedPair": {
+        "row": "Dim ond {{first}} a {{second}} all fynd yn y ddau sgwâr yma, un ffordd neu'r llall, felly all dim sgwâr arall yn y rhes yma gael yr un o'r ddau.",
+        "col": "Dim ond {{first}} a {{second}} all fynd yn y ddau sgwâr yma, un ffordd neu'r llall, felly all dim sgwâr arall yn y golofn yma gael yr un o'r ddau."
+      },
+      "hiddenPair": {
+        "row": "Yn y rhes yma, dim ond yn y ddau sgwâr yma mae {{first}} a {{second}} yn ffitio, felly all dim byd arall fynd yn yr un ohonyn nhw.",
+        "col": "Yn y golofn yma, dim ond yn y ddau sgwâr yma mae {{first}} a {{second}} yn ffitio, felly all dim byd arall fynd yn yr un ohonyn nhw."
+      },
+      "xWing": {
+        "row": "Dim ond mewn dau sgwâr ym mhob un o'r ddwy res yma mae {{value}} yn ffitio, ac maen nhw yn yr un colofnau. Pa ffordd bynnag mae'n disgyn, mae'r ddwy golofn wedi'u llenwi — felly all {{value}} ddim mynd i unman arall ynddyn nhw.",
+        "col": "Dim ond mewn dau sgwâr ym mhob un o'r ddwy golofn yma mae {{value}} yn ffitio, ac maen nhw yn yr un rhesi. Pa ffordd bynnag mae'n disgyn, mae'r ddwy res wedi'u llenwi — felly all {{value}} ddim mynd i unman arall ynddyn nhw."
+      },
+      "nakedTriple": {
+        "row": "Dim ond {{first}}, {{second}} a {{third}} sydd yn y tri sgwâr yma rhyngddyn nhw, felly all dim sgwâr arall yn y rhes yma gymryd yr un o'r tri.",
+        "col": "Dim ond {{first}}, {{second}} a {{third}} sydd yn y tri sgwâr yma rhyngddyn nhw, felly all dim sgwâr arall yn y golofn yma gymryd yr un o'r tri."
+      },
+      "hiddenTriple": {
+        "row": "Yn y rhes yma, dim ond yn y tri sgwâr yma mae {{first}}, {{second}} a {{third}} yn ffitio, felly all dim byd arall fynd yn yr un ohonyn nhw.",
+        "col": "Yn y golofn yma, dim ond yn y tri sgwâr yma mae {{first}}, {{second}} a {{third}} yn ffitio, felly all dim byd arall fynd yn yr un ohonyn nhw."
+      }
+    },
+    "goal": "Mae pob rhes a phob colofn yn dangos pob rhif unwaith yn unig.",
+    "name": "Mwy a Llai"
+  },
+  "lightbeam": {
+    "rules": {
+      "mirrors": "Mae drych yn plygu'r golau oddi ar y naill ochr neu'r llall. Mae'r marciau bach o'i gwmpas yn dangos y ffyrdd eraill mae'n gallu gorwedd: mae'r rhan fwyaf yn troi'r golau chwarter tro, ac mae rhai'n troi llai na hynny ac yn ei anfon ar ongl.",
+      "walls": "Mae bloc o garreg yn llyncu'r golau. Felly hefyd ymyl y bwrdd.",
+      "tap": "Tapia ddarn i'w newid: mae drych yn troi, mae darn sy'n llithro yn symud i'w le nesaf. Mae ymyl wen yn golygu mai ti sy'n cael ei symud; mae popeth arall yn rhan o'r pos.",
+      "nodes": "Mae rhai cerrig wedi'u cysylltu â soced yn y llawr, a does dim tap yn eu symud nhw. Anfona'r golau ar draws y soced ac mae'r garreg yn llithro o'r ffordd."
+    },
+    "hint": {
+      "entryRun": "Dechrau lle mae'r golau'n mynd yn barod: mae'n rhedeg yn syth o'r ddisg nes ei fod yn cyrraedd y darn cyntaf rwyt ti'n gallu ei newid. Mae'r sgwariau yna'n cario'r golau beth bynnag rwyt ti'n ei wneud.",
+      "exitRun": "Edrych ar y gysegrfa. Dim ond un ochr ohoni sy'n gallu cael golau o gwbl — mae pob ffordd arall i mewn wedi'i chau neu'n wynebu oddi ar y bwrdd — felly rhaid i'r golau gyrraedd ar hyd y llinell honno.",
+      "wiringFires": {
+        "one": "Rhaid i'r golau groesi'r soced yna ar ei ffordd — rwyt ti wedi gweithio hynny mas yn barod. Mae ei chroesi hi'n tynnu'r garreg sydd wedi'i chysylltu â hi o'r ffordd, felly mae'r llwybr y tu hwnt yn agor.",
+        "all": "Mae'r garreg yna wedi'i chysylltu â mwy nag un soced, a dim ond pan mae'r golau wedi croesi pob un ohonyn nhw mae hi'n symud. Ffeindia ffordd i fynd â'r pelydr drwyddyn nhw i gyd."
+      },
+      "deadEnd": {
+        "wall": "Fel hyn, mae'r golau'n rhedeg yn syth i mewn i garreg heb ddim byd i'w achub. Felly all e ddim bod fel hyn.",
+        "disc": "Fel hyn, mae'r drych yn anfon y golau 'nôl y ffordd daeth e, yr holl ffordd i mewn i'r ddisg daeth e ohoni. Felly all e ddim bod fel hyn.",
+        "edge": "Fel hyn, mae'r golau'n rhedeg oddi ar ymyl y bwrdd heb ddim byd i'w ddal. Felly all e ddim bod fel hyn.",
+        "loop": "Fel hyn, dydy'r golau byth yn cyrraedd unman — mae'n mynd rownd a rownd am byth. Felly all e ddim bod fel hyn."
+      },
+      "feedsExit": {
+        "wall": "Gweithia 'nôl o'r gysegrfa. Fel hyn, does dim byd yn gallu dod â'r golau ar hyd yr unig linell sy'n ei chyrraedd — mae'n marw mewn carreg ar y ffordd.",
+        "disc": "Gweithia 'nôl o'r gysegrfa. Fel hyn, byddai'n rhaid i'r golau ddod allan o gefn tywyll y ddisg, a does dim golau'n dod o fan'na.",
+        "edge": "Gweithia 'nôl o'r gysegrfa. Fel hyn, byddai'n rhaid i'r golau ddod o'r tu allan i'r bwrdd i'w chyrraedd.",
+        "loop": "Gweithia 'nôl o'r gysegrfa. Fel hyn, mae'r golau ddylai ei chyrraedd yn mynd rownd a rownd am byth yn lle hynny."
+      },
+      "wiringDead": "Beth bynnag rwyt ti'n ei wneud, all y golau byth gyrraedd y soced yna — felly mae'r garreg sydd wedi'i chysylltu â hi'n aros yn union lle mae hi, a galli di ddarllen y llwybr heibio iddi.",
+      "neverReached": "Gad hwn fel y mae. All y golau ddim ei gyrraedd, sut bynnag mae'r gweddill wedi'u gosod, felly does dim ots beth rwyt ti'n ei wneud iddo fe.",
+      "onlySurvivor": "Tria bob ffordd o osod hwn, un ar ôl y llall, ac mae pob un ond un yn gadael y gysegrfa'n dywyll. Hwnnw yw'r ateb."
+    },
+    "goal": "Mae golau'r haul yn rhedeg o'r ddisg i'r gysegrfa.",
+    "name": "Pelydr Golau"
+  },
+  "eclipse": {
+    "rules": {
+      "triple": "Chei di byth dri o'r un peth yn olynol, ar draws nac i lawr.",
+      "copies": "Chaiff dim dwy res fod yr un fath, na dim dwy golofn chwaith.",
+      "signs": "Mae arwydd rhwng dau sgwâr yn dweud sut maen nhw'n cymharu: = am yr un peth, × am wahanol.",
+      "enter": "Tapia sgwâr i roi haul yno, tapia eto am leuad, tapia unwaith eto i'w wagio."
+    },
+    "hint": {
+      "mistake": "Dydy un o'r marciau yma ddim yn gallu bod yn iawn.",
+      "sign.same": "Mae = yn golygu yr un peth.",
+      "sign.different": "Mae × yn golygu gwahanol.",
+      "noTriple.pair": "Mae dau {{mark}} yn barod, a chei di byth dri yn olynol.",
+      "noTriple.sandwich": "Mae {{mark}} ar y ddwy ochr, a chei di byth dri yn olynol.",
+      "signPair": "Mae'r ddau yma'n cyfateb, ac mae'r {{mark}} yna'n sefyll wrth eu hymyl.",
+      "lineCount": "Mae gan y llinell yma ei {{count}} {{mark}} yn barod.",
+      "noCopy": "Y ffordd arall rownd, byddai'n gopi o'r llinell olau.",
+      "linePairing.sameNoRoom": "Dim ond {{count}} {{mark}} sydd ar ôl fan hyn, ac mae'r ddau yma'n cyfateb.",
+      "linePairing.differentTakesOne": "Mae'r parau × yn defnyddio'r {{mark}} sydd lle iddyn nhw yn y llinell yma.",
+      "loneMark": "Un {{mark}} ar ôl, a dim ond un sgwâr sy'n cadw tri {{other}} ar wahân.",
+      "squeeze.triple": "Byddai {{mark}} fan hyn yn gwneud y gweddill yn {{other}} — tri yn olynol.",
+      "squeeze.sign": "Byddai {{mark}} fan hyn yn gwneud y gweddill yn {{other}} — dydy arwydd ddim yn ffitio wedyn.",
+      "squeeze.copy": "Byddai {{mark}} fan hyn yn gwneud y gweddill yn {{other}} — mae'r llinell yn troi'n gopi.",
+      "action": {
+        "fill_zero": "Rho {{mark}} yn y sgwariau streipiog.",
+        "fill_one": "Rho {{mark}} yn y sgwâr streipiog.",
+        "fill_two": "Rho {{mark}} yn y sgwariau streipiog.",
+        "fill_few": "Rho {{mark}} yn y sgwariau streipiog.",
+        "fill_many": "Rho {{mark}} yn y sgwariau streipiog.",
+        "fill_other": "Rho {{mark}} yn y sgwariau streipiog.",
+        "fillMixed": "Llenwa'r sgwariau streipiog — dyma'r unig ffordd sy'n gweithio."
+      }
+    },
+    "goal": "Mae haul neu leuad ym mhob sgwâr, ac mae gan bob llinell yr un nifer o'r ddau.",
+    "name": "Haul a Lleuad"
+  },
+  "constellation": {
+    "rules": {
+      "default": {
+        "straight": "Mae llinellau golau'n rhedeg yn syth ar draws neu i lawr, o un seren i'r nesaf.",
+        "pair": "Gall dwy seren rannu dwy linell ar y mwyaf.",
+        "cross": "Dydy llinellau byth yn croesi, a byth yn mynd drwy seren.",
+        "enter": "Llusga o seren tuag at ei chymydog i dynnu llinell, eto am linell ddwbl, unwaith eto i'w chlirio."
+      },
+      "causeway": {
+        "straight": "Mae ffyrdd llusgo'n rhedeg yn syth ar draws neu i lawr, o un safle i'r nesaf.",
+        "pair": "Gall dau safle rannu dwy ffordd ar y mwyaf.",
+        "cross": "Dydy ffyrdd byth yn croesi, a byth yn mynd drwy safle.",
+        "enter": "Llusga o safle tuag at ei gymydog i osod ffordd, eto i'w gwneud yn ddwbl, unwaith eto i'w chodi."
+      },
+      "irrigation": {
+        "straight": "Mae sianeli'n rhedeg yn syth ar draws neu i lawr, o un basn i'r nesaf.",
+        "pair": "Gall dau fasn rannu dwy sianel ar y mwyaf.",
+        "cross": "Dydy sianeli byth yn croesi, a byth yn mynd drwy fasn.",
+        "enter": "Llusga o fasn tuag at ei gymydog i gloddio sianel, eto i'w lledu, unwaith eto i'w llenwi."
+      },
+      "ceiling": {
+        "straight": "Mae cortynnau'n rhedeg yn syth ar draws neu i lawr, o un seren i'r nesaf.",
+        "pair": "Gall dwy seren rannu dau gortyn ar y mwyaf.",
+        "cross": "Dydy cortynnau byth yn croesi, a byth yn mynd drwy seren.",
+        "enter": "Llusga o seren tuag at ei chymydog i osod cortyn, eto i'w wneud yn ddwbl, unwaith eto i'w godi."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Dydy un o'r llinellau yma ddim yn gallu bod yn iawn.",
+        "capacity": "{{count}} llinell, a dim ond jyst digon o ffyrdd allan.",
+        "settled": "Mae gan y {{count}} yma ei llinellau.",
+        "soleWayOut": "Dim ond un ffordd allan ar ôl, a {{count}} i'w tynnu o hyd.",
+        "crossed": "Byddai llinell fan'na'n croesi'r un yma.",
+        "atLeastOne": "{{count}} llinell, a dydy'r ffyrdd allan eraill ddim yn gallu cario pob un.",
+        "twinBlock.single": "Byddai cysylltu'r ddwy yna'n gwneud cytser o ddwy seren yn unig.",
+        "twinBlock.double": "Byddai ail linell fan'na'n gwneud cytser o ddwy seren yn unig.",
+        "isolation": "Byddai'r llinell yna'n cau'r {{count}} seren yma i ffwrdd o'r gweddill.",
+        "action": {
+          "draw_zero": "Tynna'r llinellau sydd wedi'u marcio.",
+          "draw_one": "Tynna'r llinell sydd wedi'i marcio.",
+          "draw_two": "Tynna'r llinellau sydd wedi'u marcio.",
+          "draw_few": "Tynna'r llinellau sydd wedi'u marcio.",
+          "draw_many": "Tynna'r llinellau sydd wedi'u marcio.",
+          "draw_other": "Tynna'r llinellau sydd wedi'u marcio.",
+          "refuse_zero": "Mae'r llinellau sydd wedi'u marcio'n aros heb eu tynnu.",
+          "refuse_one": "Mae'r llinell sydd wedi'i marcio'n aros heb ei thynnu.",
+          "refuse_two": "Mae'r llinellau sydd wedi'u marcio'n aros heb eu tynnu.",
+          "refuse_few": "Mae'r llinellau sydd wedi'u marcio'n aros heb eu tynnu.",
+          "refuse_many": "Mae'r llinellau sydd wedi'u marcio'n aros heb eu tynnu.",
+          "refuse_other": "Mae'r llinellau sydd wedi'u marcio'n aros heb eu tynnu.",
+          "refuseDouble": "Un llinell fan'na, a dim ail un."
+        }
+      },
+      "causeway": {
+        "mistake": "Dydy un o'r ffyrdd yma ddim yn gallu bod yn iawn.",
+        "capacity": "{{count}} ffordd, a dim ond jyst digon o ffyrdd allan.",
+        "settled": "Mae gan y {{count}} yma ei ffyrdd.",
+        "soleWayOut": "Dim ond un ffordd allan ar ôl, a {{count}} i'w gosod o hyd.",
+        "crossed": "Byddai ffordd fan'na'n croesi'r un yma.",
+        "atLeastOne": "{{count}} ffordd, a dydy'r ffyrdd allan eraill ddim yn gallu cario pob un.",
+        "twinBlock.single": "Byddai cysylltu'r ddau yna'n gwneud rhwydwaith o ddau safle yn unig.",
+        "twinBlock.double": "Byddai ail ffordd fan'na'n gwneud rhwydwaith o ddau safle yn unig.",
+        "isolation": "Byddai'r ffordd yna'n torri'r {{count}} safle yma i ffwrdd o'r gweddill.",
+        "action": {
+          "draw_zero": "Gosoda'r ffyrdd sydd wedi'u marcio.",
+          "draw_one": "Gosoda'r ffordd sydd wedi'i marcio.",
+          "draw_two": "Gosoda'r ffyrdd sydd wedi'u marcio.",
+          "draw_few": "Gosoda'r ffyrdd sydd wedi'u marcio.",
+          "draw_many": "Gosoda'r ffyrdd sydd wedi'u marcio.",
+          "draw_other": "Gosoda'r ffyrdd sydd wedi'u marcio.",
+          "refuse_zero": "Mae'r ffyrdd sydd wedi'u marcio'n aros heb eu hadeiladu.",
+          "refuse_one": "Mae'r ffordd sydd wedi'i marcio'n aros heb ei hadeiladu.",
+          "refuse_two": "Mae'r ffyrdd sydd wedi'u marcio'n aros heb eu hadeiladu.",
+          "refuse_few": "Mae'r ffyrdd sydd wedi'u marcio'n aros heb eu hadeiladu.",
+          "refuse_many": "Mae'r ffyrdd sydd wedi'u marcio'n aros heb eu hadeiladu.",
+          "refuse_other": "Mae'r ffyrdd sydd wedi'u marcio'n aros heb eu hadeiladu.",
+          "refuseDouble": "Un ffordd fan'na, a dim ail un."
+        }
+      },
+      "irrigation": {
+        "mistake": "Dydy un o'r sianeli yma ddim yn gallu bod yn iawn.",
+        "capacity": "{{count}} sianel, a dim ond jyst digon o ffyrdd allan.",
+        "settled": "Mae gan y {{count}} yma ei sianeli.",
+        "soleWayOut": "Dim ond un ffordd allan ar ôl, a {{count}} i'w cloddio o hyd.",
+        "crossed": "Byddai sianel fan'na'n croesi'r un yma.",
+        "atLeastOne": "{{count}} sianel, a dydy'r ffyrdd allan eraill ddim yn gallu cario pob un.",
+        "twinBlock.single": "Byddai cysylltu'r ddau yna'n gwneud system ddŵr o ddau fasn yn unig.",
+        "twinBlock.double": "Byddai ail sianel fan'na'n gwneud system ddŵr o ddau fasn yn unig.",
+        "isolation": "Byddai'r sianel yna'n torri'r {{count}} basn yma i ffwrdd o'r gweddill.",
+        "action": {
+          "draw_zero": "Cloddia'r sianeli sydd wedi'u marcio.",
+          "draw_one": "Cloddia'r sianel sydd wedi'i marcio.",
+          "draw_two": "Cloddia'r sianeli sydd wedi'u marcio.",
+          "draw_few": "Cloddia'r sianeli sydd wedi'u marcio.",
+          "draw_many": "Cloddia'r sianeli sydd wedi'u marcio.",
+          "draw_other": "Cloddia'r sianeli sydd wedi'u marcio.",
+          "refuse_zero": "Mae'r sianeli sydd wedi'u marcio'n aros heb eu cloddio.",
+          "refuse_one": "Mae'r sianel sydd wedi'i marcio'n aros heb ei chloddio.",
+          "refuse_two": "Mae'r sianeli sydd wedi'u marcio'n aros heb eu cloddio.",
+          "refuse_few": "Mae'r sianeli sydd wedi'u marcio'n aros heb eu cloddio.",
+          "refuse_many": "Mae'r sianeli sydd wedi'u marcio'n aros heb eu cloddio.",
+          "refuse_other": "Mae'r sianeli sydd wedi'u marcio'n aros heb eu cloddio.",
+          "refuseDouble": "Un sianel fan'na, a dim ail un."
+        }
+      },
+      "ceiling": {
+        "mistake": "Dydy un o'r cortynnau yma ddim yn gallu bod yn iawn.",
+        "capacity": "{{count}} cortyn, a dim ond jyst digon o ffyrdd allan.",
+        "settled": "Mae gan y {{count}} yma ei chortynnau.",
+        "soleWayOut": "Dim ond un ffordd allan ar ôl, a {{count}} i'w gosod o hyd.",
+        "crossed": "Byddai cortyn fan'na'n croesi'r un yma.",
+        "atLeastOne": "{{count}} cortyn, a dydy'r ffyrdd allan eraill ddim yn gallu cario pob un.",
+        "twinBlock.single": "Byddai cysylltu'r ddwy yna'n gwneud awyr wedi'i phaentio o ddwy seren yn unig.",
+        "twinBlock.double": "Byddai ail gortyn fan'na'n gwneud awyr wedi'i phaentio o ddwy seren yn unig.",
+        "isolation": "Byddai'r cortyn yna'n torri'r {{count}} seren yma i ffwrdd o'r gweddill.",
+        "action": {
+          "draw_zero": "Gosoda'r cortynnau sydd wedi'u marcio.",
+          "draw_one": "Gosoda'r cortyn sydd wedi'i farcio.",
+          "draw_two": "Gosoda'r cortynnau sydd wedi'u marcio.",
+          "draw_few": "Gosoda'r cortynnau sydd wedi'u marcio.",
+          "draw_many": "Gosoda'r cortynnau sydd wedi'u marcio.",
+          "draw_other": "Gosoda'r cortynnau sydd wedi'u marcio.",
+          "refuse_zero": "Mae'r cortynnau sydd wedi'u marcio'n aros heb eu gosod.",
+          "refuse_one": "Mae'r cortyn sydd wedi'i farcio'n aros heb ei osod.",
+          "refuse_two": "Mae'r cortynnau sydd wedi'u marcio'n aros heb eu gosod.",
+          "refuse_few": "Mae'r cortynnau sydd wedi'u marcio'n aros heb eu gosod.",
+          "refuse_many": "Mae'r cortynnau sydd wedi'u marcio'n aros heb eu gosod.",
+          "refuse_other": "Mae'r cortynnau sydd wedi'u marcio'n aros heb eu gosod.",
+          "refuseDouble": "Un cortyn fan'na, a dim ail un."
+        }
+      }
+    },
+    "goal": {
+      "default": "Mae pob seren mewn un cytser, wedi'i chysylltu gan gymaint o linellau golau ag mae ei rhif yn ei ddweud.",
+      "causeway": "Mae pob safle mewn un rhwydwaith ffyrdd, gyda chymaint o ffyrdd llusgo ag mae ei rif yn ei ddweud.",
+      "irrigation": "Mae pob basn yn rhan o un system ddŵr, gyda chymaint o sianeli ag mae ei rif yn ei ddweud.",
+      "ceiling": "Mae pob seren yn perthyn i un awyr wedi'i phaentio, wedi'i chlymu gan gymaint o gortynnau aur ag mae ei rhif yn ei ddweud."
+    },
+    "name": {
+      "default": "Map Sêr",
+      "causeway": "Sarn",
+      "irrigation": "System Ddŵr",
+      "ceiling": "Nenfwd wedi'i Baentio"
+    }
+  },
+  "starBattle": {
+    "rules": {
+      "default": {
+        "touch": "Chaiff dim dwy seren gyffwrdd — mae corneli'n cyfrif.",
+        "enter": "Tapia sgwâr i roi croes arno, tapia eto i roi seren yno, unwaith eto i'w glirio."
+      },
+      "fields": {
+        "touch": "Chaiff dim dwy fferm gyffwrdd — mae corneli'n cyfrif. Mor agos â hynny, bydden nhw'n rhannu un ffynnon.",
+        "enter": "Tapia lain i roi croes arni, tapia eto i godi fferm, unwaith eto i'w chlirio."
+      },
+      "lamps": {
+        "touch": "Chaiff dim dwy lamp olew sefyll wrth ymyl ei gilydd — mae corneli'n cyfrif. Byddai eu golau nhw'n cymysgu, a'r olew'n cael ei wastraffu.",
+        "walls": "Mae'r blociau cerrig llwyd yn rhan o'r llawr: does dim byd yn gallu sefyll arnyn nhw, a dydyn nhw ddim yn sgwariau.",
+        "enter": "Tapia lechen i roi croes arni, tapia eto i osod lamp olew yno, unwaith eto i'w chlirio."
+      },
+      "market": {
+        "touch": "Chaiff dim dwy stondin sefyll wrth ymyl ei gilydd — mae corneli'n cyfrif. Dydy gelynion byth yn gosod stondin ochr yn ochr.",
+        "walls": "Mae'r tai yn rhan o'r sgwâr: does neb yn gallu gosod stondin mewn tŷ, a dydy e ddim yn lle.",
+        "enter": "Tapia le i roi croes arno, tapia eto i osod stondin yno, unwaith eto i'w glirio."
+      },
+      "lotus": {
+        "touch": "Chaiff dim dau lotws arnofio wrth ymyl ei gilydd — mae corneli'n cyfrif. Mae angen dŵr agored o gwmpas pob blodyn.",
+        "walls": "Mae'r creigiau'n codi allan o'r pwll: does dim byd yn gallu arnofio arnyn nhw, a dydyn nhw ddim yn sgwariau.",
+        "enter": "Tapia ddarn o ddŵr i roi croes arno, tapia eto i roi lotws yno, unwaith eto i'w glirio."
+      },
+      "cats": {
+        "touch": "Chaiff dim dwy gath gysgu wrth ymyl ei gilydd — mae corneli'n cyfrif. Mae gan bob cath ei darn ei hun o haul.",
+        "walls": "Mae'r pileri'n dal y deml i fyny: does dim cath yn gallu cysgu arnyn nhw, a dydyn nhw ddim yn sgwariau.",
+        "enter": "Tapia lechen i roi croes arni, tapia eto i roi cath yno, unwaith eto i'w chlirio."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Dydy'r marc yma ddim yn gallu bod yn iawn.",
+        "touch": "{{token}} fan hyn, a chaiff dim byd gyffwrdd â {{token}}.",
+        "groupFull.row_zero": "Mae gan y rhes yma ei {{count}} {{token}} yn barod.",
+        "groupFull.row_one": "Mae gan y rhes yma ei {{token}} yn barod.",
+        "groupFull.row_two": "Mae gan y rhes yma ei {{count}} {{token}} yn barod.",
+        "groupFull.row_few": "Mae gan y rhes yma ei {{count}} {{token}} yn barod.",
+        "groupFull.row_many": "Mae gan y rhes yma ei {{count}} {{token}} yn barod.",
+        "groupFull.row_other": "Mae gan y rhes yma ei {{count}} {{token}} yn barod.",
+        "groupFull.col_zero": "Mae gan y golofn yma ei {{count}} {{token}} yn barod.",
+        "groupFull.col_one": "Mae gan y golofn yma ei {{token}} yn barod.",
+        "groupFull.col_two": "Mae gan y golofn yma ei {{count}} {{token}} yn barod.",
+        "groupFull.col_few": "Mae gan y golofn yma ei {{count}} {{token}} yn barod.",
+        "groupFull.col_many": "Mae gan y golofn yma ei {{count}} {{token}} yn barod.",
+        "groupFull.col_other": "Mae gan y golofn yma ei {{count}} {{token}} yn barod.",
+        "groupFull.region_zero": "Mae gan yr ardal yma ei {{count}} {{token}} yn barod.",
+        "groupFull.region_one": "Mae gan yr ardal yma ei {{token}} yn barod.",
+        "groupFull.region_two": "Mae gan yr ardal yma ei {{count}} {{token}} yn barod.",
+        "groupFull.region_few": "Mae gan yr ardal yma ei {{count}} {{token}} yn barod.",
+        "groupFull.region_many": "Mae gan yr ardal yma ei {{count}} {{token}} yn barod.",
+        "groupFull.region_other": "Mae gan yr ardal yma ei {{count}} {{token}} yn barod.",
+        "groupTight.row_zero": "Dim ond {{count}} sgwâr sydd ar ôl yn y rhes yma.",
+        "groupTight.row_one": "Dim ond un sgwâr sydd ar ôl yn y rhes yma.",
+        "groupTight.row_two": "Dim ond {{count}} sgwâr sydd ar ôl yn y rhes yma.",
+        "groupTight.row_few": "Dim ond {{count}} sgwâr sydd ar ôl yn y rhes yma.",
+        "groupTight.row_many": "Dim ond {{count}} sgwâr sydd ar ôl yn y rhes yma.",
+        "groupTight.row_other": "Dim ond {{count}} sgwâr sydd ar ôl yn y rhes yma.",
+        "groupTight.col_zero": "Dim ond {{count}} sgwâr sydd ar ôl yn y golofn yma.",
+        "groupTight.col_one": "Dim ond un sgwâr sydd ar ôl yn y golofn yma.",
+        "groupTight.col_two": "Dim ond {{count}} sgwâr sydd ar ôl yn y golofn yma.",
+        "groupTight.col_few": "Dim ond {{count}} sgwâr sydd ar ôl yn y golofn yma.",
+        "groupTight.col_many": "Dim ond {{count}} sgwâr sydd ar ôl yn y golofn yma.",
+        "groupTight.col_other": "Dim ond {{count}} sgwâr sydd ar ôl yn y golofn yma.",
+        "groupTight.region_zero": "Dim ond {{count}} sgwâr sydd ar ôl yn yr ardal yma.",
+        "groupTight.region_one": "Dim ond un sgwâr sydd ar ôl yn yr ardal yma.",
+        "groupTight.region_two": "Dim ond {{count}} sgwâr sydd ar ôl yn yr ardal yma.",
+        "groupTight.region_few": "Dim ond {{count}} sgwâr sydd ar ôl yn yr ardal yma.",
+        "groupTight.region_many": "Dim ond {{count}} sgwâr sydd ar ôl yn yr ardal yma.",
+        "groupTight.region_other": "Dim ond {{count}} sgwâr sydd ar ôl yn yr ardal yma.",
+        "onlyWay.row_zero": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} yn y rhes yma.",
+        "onlyWay.row_one": "Dim ond un ffordd sydd i ffitio {{token}} yn y rhes yma.",
+        "onlyWay.row_two": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} yn y rhes yma.",
+        "onlyWay.row_few": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} yn y rhes yma.",
+        "onlyWay.row_many": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} yn y rhes yma.",
+        "onlyWay.row_other": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} yn y rhes yma.",
+        "onlyWay.col_zero": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} yn y golofn yma.",
+        "onlyWay.col_one": "Dim ond un ffordd sydd i ffitio {{token}} yn y golofn yma.",
+        "onlyWay.col_two": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} yn y golofn yma.",
+        "onlyWay.col_few": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} yn y golofn yma.",
+        "onlyWay.col_many": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} yn y golofn yma.",
+        "onlyWay.col_other": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} yn y golofn yma.",
+        "onlyWay.region_zero": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} yn yr ardal yma.",
+        "onlyWay.region_one": "Dim ond un ffordd sydd i ffitio {{token}} yn yr ardal yma.",
+        "onlyWay.region_two": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} yn yr ardal yma.",
+        "onlyWay.region_few": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} yn yr ardal yma.",
+        "onlyWay.region_many": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} yn yr ardal yma.",
+        "onlyWay.region_other": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} yn yr ardal yma.",
+        "everyWay.row_zero": "Ble bynnag mae {{count}} {{token}} y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_one": "Ble bynnag mae {{token}} y rhes yma'n mynd, mae fan hyn bob tro.",
+        "everyWay.row_two": "Ble bynnag mae {{count}} {{token}} y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_few": "Ble bynnag mae {{count}} {{token}} y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_many": "Ble bynnag mae {{count}} {{token}} y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_other": "Ble bynnag mae {{count}} {{token}} y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_zero": "Ble bynnag mae {{count}} {{token}} y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_one": "Ble bynnag mae {{token}} y golofn yma'n mynd, mae fan hyn bob tro.",
+        "everyWay.col_two": "Ble bynnag mae {{count}} {{token}} y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_few": "Ble bynnag mae {{count}} {{token}} y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_many": "Ble bynnag mae {{count}} {{token}} y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_other": "Ble bynnag mae {{count}} {{token}} y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.region_zero": "Ble bynnag mae {{count}} {{token}} yr ardal yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.region_one": "Ble bynnag mae {{token}} yr ardal yma'n mynd, mae fan hyn bob tro.",
+        "everyWay.region_two": "Ble bynnag mae {{count}} {{token}} yr ardal yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.region_few": "Ble bynnag mae {{count}} {{token}} yr ardal yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.region_many": "Ble bynnag mae {{count}} {{token}} yr ardal yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.region_other": "Ble bynnag mae {{count}} {{token}} yr ardal yma'n mynd, mae un fan hyn bob tro.",
+        "regionLine.row_zero": "Rhaid i {{count}} {{token}} yr ardal wedi'i marcio ddod o'r rhes yna.",
+        "regionLine.row_one": "Rhaid i {{token}} yr ardal wedi'i marcio ddod o'r rhes yna.",
+        "regionLine.row_two": "Rhaid i {{count}} {{token}} yr ardal wedi'i marcio ddod o'r rhes yna.",
+        "regionLine.row_few": "Rhaid i {{count}} {{token}} yr ardal wedi'i marcio ddod o'r rhes yna.",
+        "regionLine.row_many": "Rhaid i {{count}} {{token}} yr ardal wedi'i marcio ddod o'r rhes yna.",
+        "regionLine.row_other": "Rhaid i {{count}} {{token}} yr ardal wedi'i marcio ddod o'r rhes yna.",
+        "regionLine.col_zero": "Rhaid i {{count}} {{token}} yr ardal wedi'i marcio ddod o'r golofn yna.",
+        "regionLine.col_one": "Rhaid i {{token}} yr ardal wedi'i marcio ddod o'r golofn yna.",
+        "regionLine.col_two": "Rhaid i {{count}} {{token}} yr ardal wedi'i marcio ddod o'r golofn yna.",
+        "regionLine.col_few": "Rhaid i {{count}} {{token}} yr ardal wedi'i marcio ddod o'r golofn yna.",
+        "regionLine.col_many": "Rhaid i {{count}} {{token}} yr ardal wedi'i marcio ddod o'r golofn yna.",
+        "regionLine.col_other": "Rhaid i {{count}} {{token}} yr ardal wedi'i marcio ddod o'r golofn yna.",
+        "lineRegion.row_zero": "Mae {{count}} {{token}} y rhes yna'n perthyn i'r ardal wedi'i marcio.",
+        "lineRegion.row_one": "Mae {{token}} y rhes yna'n perthyn i'r ardal wedi'i marcio.",
+        "lineRegion.row_two": "Mae {{count}} {{token}} y rhes yna'n perthyn i'r ardal wedi'i marcio.",
+        "lineRegion.row_few": "Mae {{count}} {{token}} y rhes yna'n perthyn i'r ardal wedi'i marcio.",
+        "lineRegion.row_many": "Mae {{count}} {{token}} y rhes yna'n perthyn i'r ardal wedi'i marcio.",
+        "lineRegion.row_other": "Mae {{count}} {{token}} y rhes yna'n perthyn i'r ardal wedi'i marcio.",
+        "lineRegion.col_zero": "Mae {{count}} {{token}} y golofn yna'n perthyn i'r ardal wedi'i marcio.",
+        "lineRegion.col_one": "Mae {{token}} y golofn yna'n perthyn i'r ardal wedi'i marcio.",
+        "lineRegion.col_two": "Mae {{count}} {{token}} y golofn yna'n perthyn i'r ardal wedi'i marcio.",
+        "lineRegion.col_few": "Mae {{count}} {{token}} y golofn yna'n perthyn i'r ardal wedi'i marcio.",
+        "lineRegion.col_many": "Mae {{count}} {{token}} y golofn yna'n perthyn i'r ardal wedi'i marcio.",
+        "lineRegion.col_other": "Mae {{count}} {{token}} y golofn yna'n perthyn i'r ardal wedi'i marcio.",
+        "spanning.toRows": "Mae'r ardaloedd wedi'u marcio'n llenwi'r {{count}} rhes yna rhyngddyn nhw.",
+        "spanning.toCols": "Mae'r ardaloedd wedi'u marcio'n llenwi'r {{count}} colofn yna rhyngddyn nhw.",
+        "spanning.fromRows": "Dim ond o'r ardaloedd yna mae'r rhesi wedi'u marcio'n gallu cael eu {{count}} {{token}}.",
+        "spanning.fromCols": "Dim ond o'r ardaloedd yna mae'r colofnau wedi'u marcio'n gallu cael eu {{count}} {{token}}.",
+        "wouldStrand.row": "Byddai {{token}} fan hyn yn gadael dim lle i sefyll yn y rhes wedi'i marcio.",
+        "wouldStrand.col": "Byddai {{token}} fan hyn yn gadael dim lle i sefyll yn y golofn wedi'i marcio.",
+        "wouldStrand.region": "Byddai {{token}} fan hyn yn gadael dim lle i sefyll yn yr ardal wedi'i marcio.",
+        "action": {
+          "ruleOut_zero": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_one": "Rho groes ar y sgwâr streipiog.",
+          "ruleOut_two": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_few": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_many": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_other": "Rho groes ar y sgwariau streipiog.",
+          "place_zero": "Rho {{token}} ym mhob sgwâr streipiog.",
+          "place_one": "Rho {{token}} yn y sgwâr streipiog.",
+          "place_two": "Rho {{token}} ym mhob sgwâr streipiog.",
+          "place_few": "Rho {{token}} ym mhob sgwâr streipiog.",
+          "place_many": "Rho {{token}} ym mhob sgwâr streipiog.",
+          "place_other": "Rho {{token}} ym mhob sgwâr streipiog."
+        }
+      },
+      "fields": {
+        "mistake": "Dydy'r marc yma ddim yn gallu bod yn iawn.",
+        "touch": "{{token}} fan hyn, a does dim llain mae'n ei chyffwrdd yn gallu dal un arall.",
+        "groupFull.row_zero": "Mae gan y rhes yma ei {{count}} {{token}} yn barod.",
+        "groupFull.row_one": "Mae'r rhes yma wedi'i ffermio'n barod.",
+        "groupFull.row_two": "Mae gan y rhes yma ei {{count}} {{token}} yn barod.",
+        "groupFull.row_few": "Mae gan y rhes yma ei {{count}} {{token}} yn barod.",
+        "groupFull.row_many": "Mae gan y rhes yma ei {{count}} {{token}} yn barod.",
+        "groupFull.row_other": "Mae gan y rhes yma ei {{count}} {{token}} yn barod.",
+        "groupFull.col_zero": "Mae gan y golofn yma ei {{count}} {{token}} yn barod.",
+        "groupFull.col_one": "Mae'r golofn yma wedi'i ffermio'n barod.",
+        "groupFull.col_two": "Mae gan y golofn yma ei {{count}} {{token}} yn barod.",
+        "groupFull.col_few": "Mae gan y golofn yma ei {{count}} {{token}} yn barod.",
+        "groupFull.col_many": "Mae gan y golofn yma ei {{count}} {{token}} yn barod.",
+        "groupFull.col_other": "Mae gan y golofn yma ei {{count}} {{token}} yn barod.",
+        "groupFull.region_zero": "Mae gan y tir yma ei {{count}} {{token}} yn barod.",
+        "groupFull.region_one": "Mae'r tir yma wedi'i ffermio'n barod.",
+        "groupFull.region_two": "Mae gan y tir yma ei {{count}} {{token}} yn barod.",
+        "groupFull.region_few": "Mae gan y tir yma ei {{count}} {{token}} yn barod.",
+        "groupFull.region_many": "Mae gan y tir yma ei {{count}} {{token}} yn barod.",
+        "groupFull.region_other": "Mae gan y tir yma ei {{count}} {{token}} yn barod.",
+        "groupTight.row_zero": "Dim ond {{count}} llain sydd ar ôl yn y rhes yma.",
+        "groupTight.row_one": "Dim ond un llain sydd ar ôl yn y rhes yma.",
+        "groupTight.row_two": "Dim ond {{count}} llain sydd ar ôl yn y rhes yma.",
+        "groupTight.row_few": "Dim ond {{count}} llain sydd ar ôl yn y rhes yma.",
+        "groupTight.row_many": "Dim ond {{count}} llain sydd ar ôl yn y rhes yma.",
+        "groupTight.row_other": "Dim ond {{count}} llain sydd ar ôl yn y rhes yma.",
+        "groupTight.col_zero": "Dim ond {{count}} llain sydd ar ôl yn y golofn yma.",
+        "groupTight.col_one": "Dim ond un llain sydd ar ôl yn y golofn yma.",
+        "groupTight.col_two": "Dim ond {{count}} llain sydd ar ôl yn y golofn yma.",
+        "groupTight.col_few": "Dim ond {{count}} llain sydd ar ôl yn y golofn yma.",
+        "groupTight.col_many": "Dim ond {{count}} llain sydd ar ôl yn y golofn yma.",
+        "groupTight.col_other": "Dim ond {{count}} llain sydd ar ôl yn y golofn yma.",
+        "groupTight.region_zero": "Dim ond {{count}} llain sydd ar ôl ar y tir yma.",
+        "groupTight.region_one": "Dim ond un llain sydd ar ôl ar y tir yma.",
+        "groupTight.region_two": "Dim ond {{count}} llain sydd ar ôl ar y tir yma.",
+        "groupTight.region_few": "Dim ond {{count}} llain sydd ar ôl ar y tir yma.",
+        "groupTight.region_many": "Dim ond {{count}} llain sydd ar ôl ar y tir yma.",
+        "groupTight.region_other": "Dim ond {{count}} llain sydd ar ôl ar y tir yma.",
+        "onlyWay.row_zero": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} ar hyd y rhes yma.",
+        "onlyWay.row_one": "Dim ond un llain sydd ar ôl i adeiladu arni yn y rhes yma.",
+        "onlyWay.row_two": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} ar hyd y rhes yma.",
+        "onlyWay.row_few": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} ar hyd y rhes yma.",
+        "onlyWay.row_many": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} ar hyd y rhes yma.",
+        "onlyWay.row_other": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} ar hyd y rhes yma.",
+        "onlyWay.col_zero": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} ar hyd y golofn yma.",
+        "onlyWay.col_one": "Dim ond un llain sydd ar ôl i adeiladu arni yn y golofn yma.",
+        "onlyWay.col_two": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} ar hyd y golofn yma.",
+        "onlyWay.col_few": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} ar hyd y golofn yma.",
+        "onlyWay.col_many": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} ar hyd y golofn yma.",
+        "onlyWay.col_other": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} ar hyd y golofn yma.",
+        "onlyWay.region_zero": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} ar y tir yma.",
+        "onlyWay.region_one": "Dim ond un llain sydd ar ôl i adeiladu arni ar y tir yma.",
+        "onlyWay.region_two": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} ar y tir yma.",
+        "onlyWay.region_few": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} ar y tir yma.",
+        "onlyWay.region_many": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} ar y tir yma.",
+        "onlyWay.region_other": "Dim ond un ffordd sydd i ffitio {{count}} {{token}} ar y tir yma.",
+        "everyWay.row_zero": "Sut bynnag mae'r rhes yma'n cael ei ffermio, mae un o'i {{count}} {{token}} yn sefyll fan hyn.",
+        "everyWay.row_one": "Sut bynnag mae'r rhes yma'n cael ei ffermio, mae ei {{token}} yn sefyll fan hyn.",
+        "everyWay.row_two": "Sut bynnag mae'r rhes yma'n cael ei ffermio, mae un o'i {{count}} {{token}} yn sefyll fan hyn.",
+        "everyWay.row_few": "Sut bynnag mae'r rhes yma'n cael ei ffermio, mae un o'i {{count}} {{token}} yn sefyll fan hyn.",
+        "everyWay.row_many": "Sut bynnag mae'r rhes yma'n cael ei ffermio, mae un o'i {{count}} {{token}} yn sefyll fan hyn.",
+        "everyWay.row_other": "Sut bynnag mae'r rhes yma'n cael ei ffermio, mae un o'i {{count}} {{token}} yn sefyll fan hyn.",
+        "everyWay.col_zero": "Sut bynnag mae'r golofn yma'n cael ei ffermio, mae un o'i {{count}} {{token}} yn sefyll fan hyn.",
+        "everyWay.col_one": "Sut bynnag mae'r golofn yma'n cael ei ffermio, mae ei {{token}} yn sefyll fan hyn.",
+        "everyWay.col_two": "Sut bynnag mae'r golofn yma'n cael ei ffermio, mae un o'i {{count}} {{token}} yn sefyll fan hyn.",
+        "everyWay.col_few": "Sut bynnag mae'r golofn yma'n cael ei ffermio, mae un o'i {{count}} {{token}} yn sefyll fan hyn.",
+        "everyWay.col_many": "Sut bynnag mae'r golofn yma'n cael ei ffermio, mae un o'i {{count}} {{token}} yn sefyll fan hyn.",
+        "everyWay.col_other": "Sut bynnag mae'r golofn yma'n cael ei ffermio, mae un o'i {{count}} {{token}} yn sefyll fan hyn.",
+        "everyWay.region_zero": "Sut bynnag mae'r tir yma'n cael ei ffermio, mae un o'i {{count}} {{token}} yn sefyll fan hyn.",
+        "everyWay.region_one": "Sut bynnag mae'r tir yma'n cael ei ffermio, mae ei {{token}} yn sefyll fan hyn.",
+        "everyWay.region_two": "Sut bynnag mae'r tir yma'n cael ei ffermio, mae un o'i {{count}} {{token}} yn sefyll fan hyn.",
+        "everyWay.region_few": "Sut bynnag mae'r tir yma'n cael ei ffermio, mae un o'i {{count}} {{token}} yn sefyll fan hyn.",
+        "everyWay.region_many": "Sut bynnag mae'r tir yma'n cael ei ffermio, mae un o'i {{count}} {{token}} yn sefyll fan hyn.",
+        "everyWay.region_other": "Sut bynnag mae'r tir yma'n cael ei ffermio, mae un o'i {{count}} {{token}} yn sefyll fan hyn.",
+        "regionLine.row_zero": "Rhaid i {{count}} {{token}} y tir wedi'i farcio ddod o'r rhes yna.",
+        "regionLine.row_one": "Rhaid i {{token}} y tir wedi'i farcio ddod o'r rhes yna.",
+        "regionLine.row_two": "Rhaid i {{count}} {{token}} y tir wedi'i farcio ddod o'r rhes yna.",
+        "regionLine.row_few": "Rhaid i {{count}} {{token}} y tir wedi'i farcio ddod o'r rhes yna.",
+        "regionLine.row_many": "Rhaid i {{count}} {{token}} y tir wedi'i farcio ddod o'r rhes yna.",
+        "regionLine.row_other": "Rhaid i {{count}} {{token}} y tir wedi'i farcio ddod o'r rhes yna.",
+        "regionLine.col_zero": "Rhaid i {{count}} {{token}} y tir wedi'i farcio ddod o'r golofn yna.",
+        "regionLine.col_one": "Rhaid i {{token}} y tir wedi'i farcio ddod o'r golofn yna.",
+        "regionLine.col_two": "Rhaid i {{count}} {{token}} y tir wedi'i farcio ddod o'r golofn yna.",
+        "regionLine.col_few": "Rhaid i {{count}} {{token}} y tir wedi'i farcio ddod o'r golofn yna.",
+        "regionLine.col_many": "Rhaid i {{count}} {{token}} y tir wedi'i farcio ddod o'r golofn yna.",
+        "regionLine.col_other": "Rhaid i {{count}} {{token}} y tir wedi'i farcio ddod o'r golofn yna.",
+        "lineRegion.row_zero": "Mae {{count}} {{token}} y rhes yna'n perthyn i'r tir wedi'i farcio.",
+        "lineRegion.row_one": "Mae {{token}} y rhes yna'n perthyn i'r tir wedi'i farcio.",
+        "lineRegion.row_two": "Mae {{count}} {{token}} y rhes yna'n perthyn i'r tir wedi'i farcio.",
+        "lineRegion.row_few": "Mae {{count}} {{token}} y rhes yna'n perthyn i'r tir wedi'i farcio.",
+        "lineRegion.row_many": "Mae {{count}} {{token}} y rhes yna'n perthyn i'r tir wedi'i farcio.",
+        "lineRegion.row_other": "Mae {{count}} {{token}} y rhes yna'n perthyn i'r tir wedi'i farcio.",
+        "lineRegion.col_zero": "Mae {{count}} {{token}} y golofn yna'n perthyn i'r tir wedi'i farcio.",
+        "lineRegion.col_one": "Mae {{token}} y golofn yna'n perthyn i'r tir wedi'i farcio.",
+        "lineRegion.col_two": "Mae {{count}} {{token}} y golofn yna'n perthyn i'r tir wedi'i farcio.",
+        "lineRegion.col_few": "Mae {{count}} {{token}} y golofn yna'n perthyn i'r tir wedi'i farcio.",
+        "lineRegion.col_many": "Mae {{count}} {{token}} y golofn yna'n perthyn i'r tir wedi'i farcio.",
+        "lineRegion.col_other": "Mae {{count}} {{token}} y golofn yna'n perthyn i'r tir wedi'i farcio.",
+        "spanning.toRows": "Mae'r darnau o dir wedi'u marcio'n llenwi'r {{count}} rhes yna rhyngddyn nhw.",
+        "spanning.toCols": "Mae'r darnau o dir wedi'u marcio'n llenwi'r {{count}} colofn yna rhyngddyn nhw.",
+        "spanning.fromRows": "Dim ond o'r darnau tir yna mae'r rhesi wedi'u marcio'n gallu cael eu {{count}} {{token}}.",
+        "spanning.fromCols": "Dim ond o'r darnau tir yna mae'r colofnau wedi'u marcio'n gallu cael eu {{count}} {{token}}.",
+        "wouldStrand.row": "Byddai {{token}} fan hyn yn gadael dim lle i adeiladu yn y rhes wedi'i marcio.",
+        "wouldStrand.col": "Byddai {{token}} fan hyn yn gadael dim lle i adeiladu yn y golofn wedi'i marcio.",
+        "wouldStrand.region": "Byddai {{token}} fan hyn yn gadael dim lle i adeiladu ar y tir wedi'i farcio.",
+        "action": {
+          "ruleOut_zero": "Rho groes ar y lleiniau streipiog.",
+          "ruleOut_one": "Rho groes ar y llain streipiog.",
+          "ruleOut_two": "Rho groes ar y lleiniau streipiog.",
+          "ruleOut_few": "Rho groes ar y lleiniau streipiog.",
+          "ruleOut_many": "Rho groes ar y lleiniau streipiog.",
+          "ruleOut_other": "Rho groes ar y lleiniau streipiog.",
+          "place_zero": "Coda {{token}} ar bob llain streipiog.",
+          "place_one": "Coda {{token}} ar y llain streipiog.",
+          "place_two": "Coda {{token}} ar bob llain streipiog.",
+          "place_few": "Coda {{token}} ar bob llain streipiog.",
+          "place_many": "Coda {{token}} ar bob llain streipiog.",
+          "place_other": "Coda {{token}} ar bob llain streipiog."
+        }
+      },
+      "lamps": {
+        "mistake": "Dydy'r marc yma ddim yn gallu bod yn iawn.",
+        "touch": "{{token}} fan hyn, a chaiff dim lamp olew sefyll wrth ymyl un arall — mae corneli'n cyfrif.",
+        "groupFull.row_zero": "Mae gan y rhes yma ei {{count}} lamp olew yn barod.",
+        "groupFull.row_one": "Mae gan y rhes yma ei lamp olew yn barod.",
+        "groupFull.row_two": "Mae gan y rhes yma ei {{count}} lamp olew yn barod.",
+        "groupFull.row_few": "Mae gan y rhes yma ei {{count}} lamp olew yn barod.",
+        "groupFull.row_many": "Mae gan y rhes yma ei {{count}} lamp olew yn barod.",
+        "groupFull.row_other": "Mae gan y rhes yma ei {{count}} lamp olew yn barod.",
+        "groupFull.col_zero": "Mae gan y golofn yma ei {{count}} lamp olew yn barod.",
+        "groupFull.col_one": "Mae gan y golofn yma ei lamp olew yn barod.",
+        "groupFull.col_two": "Mae gan y golofn yma ei {{count}} lamp olew yn barod.",
+        "groupFull.col_few": "Mae gan y golofn yma ei {{count}} lamp olew yn barod.",
+        "groupFull.col_many": "Mae gan y golofn yma ei {{count}} lamp olew yn barod.",
+        "groupFull.col_other": "Mae gan y golofn yma ei {{count}} lamp olew yn barod.",
+        "groupTight.row_zero": "Dim ond {{count}} llechen sydd ar ôl yn y rhes yma.",
+        "groupTight.row_one": "Dim ond un llechen sydd ar ôl yn y rhes yma.",
+        "groupTight.row_two": "Dim ond {{count}} llechen sydd ar ôl yn y rhes yma.",
+        "groupTight.row_few": "Dim ond {{count}} llechen sydd ar ôl yn y rhes yma.",
+        "groupTight.row_many": "Dim ond {{count}} llechen sydd ar ôl yn y rhes yma.",
+        "groupTight.row_other": "Dim ond {{count}} llechen sydd ar ôl yn y rhes yma.",
+        "groupTight.col_zero": "Dim ond {{count}} llechen sydd ar ôl yn y golofn yma.",
+        "groupTight.col_one": "Dim ond un llechen sydd ar ôl yn y golofn yma.",
+        "groupTight.col_two": "Dim ond {{count}} llechen sydd ar ôl yn y golofn yma.",
+        "groupTight.col_few": "Dim ond {{count}} llechen sydd ar ôl yn y golofn yma.",
+        "groupTight.col_many": "Dim ond {{count}} llechen sydd ar ôl yn y golofn yma.",
+        "groupTight.col_other": "Dim ond {{count}} llechen sydd ar ôl yn y golofn yma.",
+        "onlyWay.row_zero": "Dim ond un ffordd sydd i ffitio {{count}} lamp olew yn y rhes yma.",
+        "onlyWay.row_one": "Rhwng y blociau cerrig, dim ond un sgwâr sydd ar ôl yn y rhes yma i lamp olew.",
+        "onlyWay.row_two": "Dim ond un ffordd sydd i ffitio {{count}} lamp olew yn y rhes yma.",
+        "onlyWay.row_few": "Dim ond un ffordd sydd i ffitio {{count}} lamp olew yn y rhes yma.",
+        "onlyWay.row_many": "Dim ond un ffordd sydd i ffitio {{count}} lamp olew yn y rhes yma.",
+        "onlyWay.row_other": "Dim ond un ffordd sydd i ffitio {{count}} lamp olew yn y rhes yma.",
+        "onlyWay.col_zero": "Dim ond un ffordd sydd i ffitio {{count}} lamp olew yn y golofn yma.",
+        "onlyWay.col_one": "Rhwng y blociau cerrig, dim ond un sgwâr sydd ar ôl yn y golofn yma i lamp olew.",
+        "onlyWay.col_two": "Dim ond un ffordd sydd i ffitio {{count}} lamp olew yn y golofn yma.",
+        "onlyWay.col_few": "Dim ond un ffordd sydd i ffitio {{count}} lamp olew yn y golofn yma.",
+        "onlyWay.col_many": "Dim ond un ffordd sydd i ffitio {{count}} lamp olew yn y golofn yma.",
+        "onlyWay.col_other": "Dim ond un ffordd sydd i ffitio {{count}} lamp olew yn y golofn yma.",
+        "everyWay.row_zero": "Ble bynnag mae {{count}} lamp olew'r rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_one": "Ble bynnag mae lamp olew'r rhes yma'n mynd, mae fan hyn bob tro.",
+        "everyWay.row_two": "Ble bynnag mae {{count}} lamp olew'r rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_few": "Ble bynnag mae {{count}} lamp olew'r rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_many": "Ble bynnag mae {{count}} lamp olew'r rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_other": "Ble bynnag mae {{count}} lamp olew'r rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_zero": "Ble bynnag mae {{count}} lamp olew'r golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_one": "Ble bynnag mae lamp olew'r golofn yma'n mynd, mae fan hyn bob tro.",
+        "everyWay.col_two": "Ble bynnag mae {{count}} lamp olew'r golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_few": "Ble bynnag mae {{count}} lamp olew'r golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_many": "Ble bynnag mae {{count}} lamp olew'r golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_other": "Ble bynnag mae {{count}} lamp olew'r golofn yma'n mynd, mae un fan hyn bob tro.",
+        "lineBlock.rowsToCols": "Mae'r rhesi wedi'u marcio'n cadw eu lampau olew yn sgwariau'r colofnau yna, felly does dim un ar ôl i'r colofnau yna.",
+        "lineBlock.colsToRows": "Mae'r colofnau wedi'u marcio'n cadw eu lampau olew yn sgwariau'r rhesi yna, felly does dim un ar ôl i'r rhesi yna.",
+        "wouldStrand.row": "Byddai lamp olew fan hyn yn gadael dim lle i'r rhes wedi'i marcio.",
+        "wouldStrand.col": "Byddai lamp olew fan hyn yn gadael dim lle i'r golofn wedi'i marcio.",
+        "action": {
+          "ruleOut_zero": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_one": "Rho groes ar y sgwâr streipiog.",
+          "ruleOut_two": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_few": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_many": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_other": "Rho groes ar y sgwariau streipiog.",
+          "place_zero": "Rho lamp olew ym mhob sgwâr streipiog.",
+          "place_one": "Rho lamp olew yn y sgwâr streipiog.",
+          "place_two": "Rho lamp olew ym mhob sgwâr streipiog.",
+          "place_few": "Rho lamp olew ym mhob sgwâr streipiog.",
+          "place_many": "Rho lamp olew ym mhob sgwâr streipiog.",
+          "place_other": "Rho lamp olew ym mhob sgwâr streipiog."
+        }
+      },
+      "market": {
+        "mistake": "Dydy'r marc yma ddim yn gallu bod yn iawn.",
+        "touch": "{{token}} fan hyn, a chaiff dim stondin sefyll wrth ymyl un arall — mae corneli'n cyfrif.",
+        "groupFull.row_zero": "Mae gan y rhes yma ei {{count}} stondin yn barod.",
+        "groupFull.row_one": "Mae gan y rhes yma ei stondin yn barod.",
+        "groupFull.row_two": "Mae gan y rhes yma ei {{count}} stondin yn barod.",
+        "groupFull.row_few": "Mae gan y rhes yma ei {{count}} stondin yn barod.",
+        "groupFull.row_many": "Mae gan y rhes yma ei {{count}} stondin yn barod.",
+        "groupFull.row_other": "Mae gan y rhes yma ei {{count}} stondin yn barod.",
+        "groupFull.col_zero": "Mae gan y golofn yma ei {{count}} stondin yn barod.",
+        "groupFull.col_one": "Mae gan y golofn yma ei stondin yn barod.",
+        "groupFull.col_two": "Mae gan y golofn yma ei {{count}} stondin yn barod.",
+        "groupFull.col_few": "Mae gan y golofn yma ei {{count}} stondin yn barod.",
+        "groupFull.col_many": "Mae gan y golofn yma ei {{count}} stondin yn barod.",
+        "groupFull.col_other": "Mae gan y golofn yma ei {{count}} stondin yn barod.",
+        "groupTight.row_zero": "Dim ond {{count}} lle sydd ar ôl yn y rhes yma.",
+        "groupTight.row_one": "Dim ond un lle sydd ar ôl yn y rhes yma.",
+        "groupTight.row_two": "Dim ond {{count}} lle sydd ar ôl yn y rhes yma.",
+        "groupTight.row_few": "Dim ond {{count}} lle sydd ar ôl yn y rhes yma.",
+        "groupTight.row_many": "Dim ond {{count}} lle sydd ar ôl yn y rhes yma.",
+        "groupTight.row_other": "Dim ond {{count}} lle sydd ar ôl yn y rhes yma.",
+        "groupTight.col_zero": "Dim ond {{count}} lle sydd ar ôl yn y golofn yma.",
+        "groupTight.col_one": "Dim ond un lle sydd ar ôl yn y golofn yma.",
+        "groupTight.col_two": "Dim ond {{count}} lle sydd ar ôl yn y golofn yma.",
+        "groupTight.col_few": "Dim ond {{count}} lle sydd ar ôl yn y golofn yma.",
+        "groupTight.col_many": "Dim ond {{count}} lle sydd ar ôl yn y golofn yma.",
+        "groupTight.col_other": "Dim ond {{count}} lle sydd ar ôl yn y golofn yma.",
+        "onlyWay.row_zero": "Dim ond un ffordd sydd i ffitio {{count}} stondin yn y rhes yma.",
+        "onlyWay.row_one": "Rhwng y tai, dim ond un sgwâr sydd ar ôl yn y rhes yma i stondin.",
+        "onlyWay.row_two": "Dim ond un ffordd sydd i ffitio {{count}} stondin yn y rhes yma.",
+        "onlyWay.row_few": "Dim ond un ffordd sydd i ffitio {{count}} stondin yn y rhes yma.",
+        "onlyWay.row_many": "Dim ond un ffordd sydd i ffitio {{count}} stondin yn y rhes yma.",
+        "onlyWay.row_other": "Dim ond un ffordd sydd i ffitio {{count}} stondin yn y rhes yma.",
+        "onlyWay.col_zero": "Dim ond un ffordd sydd i ffitio {{count}} stondin yn y golofn yma.",
+        "onlyWay.col_one": "Rhwng y tai, dim ond un sgwâr sydd ar ôl yn y golofn yma i stondin.",
+        "onlyWay.col_two": "Dim ond un ffordd sydd i ffitio {{count}} stondin yn y golofn yma.",
+        "onlyWay.col_few": "Dim ond un ffordd sydd i ffitio {{count}} stondin yn y golofn yma.",
+        "onlyWay.col_many": "Dim ond un ffordd sydd i ffitio {{count}} stondin yn y golofn yma.",
+        "onlyWay.col_other": "Dim ond un ffordd sydd i ffitio {{count}} stondin yn y golofn yma.",
+        "everyWay.row_zero": "Ble bynnag mae {{count}} stondin y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_one": "Ble bynnag mae stondin y rhes yma'n mynd, mae fan hyn bob tro.",
+        "everyWay.row_two": "Ble bynnag mae {{count}} stondin y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_few": "Ble bynnag mae {{count}} stondin y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_many": "Ble bynnag mae {{count}} stondin y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_other": "Ble bynnag mae {{count}} stondin y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_zero": "Ble bynnag mae {{count}} stondin y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_one": "Ble bynnag mae stondin y golofn yma'n mynd, mae fan hyn bob tro.",
+        "everyWay.col_two": "Ble bynnag mae {{count}} stondin y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_few": "Ble bynnag mae {{count}} stondin y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_many": "Ble bynnag mae {{count}} stondin y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_other": "Ble bynnag mae {{count}} stondin y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "lineBlock.rowsToCols": "Mae'r rhesi wedi'u marcio'n cadw eu stondinau yn sgwariau'r colofnau yna, felly does dim un ar ôl i'r colofnau yna.",
+        "lineBlock.colsToRows": "Mae'r colofnau wedi'u marcio'n cadw eu stondinau yn sgwariau'r rhesi yna, felly does dim un ar ôl i'r rhesi yna.",
+        "wouldStrand.row": "Byddai stondin fan hyn yn gadael dim lle i'r rhes wedi'i marcio.",
+        "wouldStrand.col": "Byddai stondin fan hyn yn gadael dim lle i'r golofn wedi'i marcio.",
+        "action": {
+          "ruleOut_zero": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_one": "Rho groes ar y sgwâr streipiog.",
+          "ruleOut_two": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_few": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_many": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_other": "Rho groes ar y sgwariau streipiog.",
+          "place_zero": "Rho stondin ym mhob sgwâr streipiog.",
+          "place_one": "Rho stondin yn y sgwâr streipiog.",
+          "place_two": "Rho stondin ym mhob sgwâr streipiog.",
+          "place_few": "Rho stondin ym mhob sgwâr streipiog.",
+          "place_many": "Rho stondin ym mhob sgwâr streipiog.",
+          "place_other": "Rho stondin ym mhob sgwâr streipiog."
+        }
+      },
+      "lotus": {
+        "mistake": "Dydy'r marc yma ddim yn gallu bod yn iawn.",
+        "touch": "{{token}} fan hyn, a chaiff dim lotws arnofio wrth ymyl un arall — mae corneli'n cyfrif.",
+        "groupFull.row_zero": "Mae gan y rhes yma ei {{count}} lotws yn barod.",
+        "groupFull.row_one": "Mae gan y rhes yma ei lotws yn barod.",
+        "groupFull.row_two": "Mae gan y rhes yma ei {{count}} lotws yn barod.",
+        "groupFull.row_few": "Mae gan y rhes yma ei {{count}} lotws yn barod.",
+        "groupFull.row_many": "Mae gan y rhes yma ei {{count}} lotws yn barod.",
+        "groupFull.row_other": "Mae gan y rhes yma ei {{count}} lotws yn barod.",
+        "groupFull.col_zero": "Mae gan y golofn yma ei {{count}} lotws yn barod.",
+        "groupFull.col_one": "Mae gan y golofn yma ei lotws yn barod.",
+        "groupFull.col_two": "Mae gan y golofn yma ei {{count}} lotws yn barod.",
+        "groupFull.col_few": "Mae gan y golofn yma ei {{count}} lotws yn barod.",
+        "groupFull.col_many": "Mae gan y golofn yma ei {{count}} lotws yn barod.",
+        "groupFull.col_other": "Mae gan y golofn yma ei {{count}} lotws yn barod.",
+        "groupTight.row_zero": "Dim ond {{count}} darn o ddŵr sydd ar ôl yn y rhes yma.",
+        "groupTight.row_one": "Dim ond un darn o ddŵr sydd ar ôl yn y rhes yma.",
+        "groupTight.row_two": "Dim ond {{count}} darn o ddŵr sydd ar ôl yn y rhes yma.",
+        "groupTight.row_few": "Dim ond {{count}} darn o ddŵr sydd ar ôl yn y rhes yma.",
+        "groupTight.row_many": "Dim ond {{count}} darn o ddŵr sydd ar ôl yn y rhes yma.",
+        "groupTight.row_other": "Dim ond {{count}} darn o ddŵr sydd ar ôl yn y rhes yma.",
+        "groupTight.col_zero": "Dim ond {{count}} darn o ddŵr sydd ar ôl yn y golofn yma.",
+        "groupTight.col_one": "Dim ond un darn o ddŵr sydd ar ôl yn y golofn yma.",
+        "groupTight.col_two": "Dim ond {{count}} darn o ddŵr sydd ar ôl yn y golofn yma.",
+        "groupTight.col_few": "Dim ond {{count}} darn o ddŵr sydd ar ôl yn y golofn yma.",
+        "groupTight.col_many": "Dim ond {{count}} darn o ddŵr sydd ar ôl yn y golofn yma.",
+        "groupTight.col_other": "Dim ond {{count}} darn o ddŵr sydd ar ôl yn y golofn yma.",
+        "onlyWay.row_zero": "Dim ond un ffordd sydd i ffitio {{count}} lotws yn y rhes yma.",
+        "onlyWay.row_one": "Rhwng y creigiau, dim ond un sgwâr sydd ar ôl yn y rhes yma i lotws.",
+        "onlyWay.row_two": "Dim ond un ffordd sydd i ffitio {{count}} lotws yn y rhes yma.",
+        "onlyWay.row_few": "Dim ond un ffordd sydd i ffitio {{count}} lotws yn y rhes yma.",
+        "onlyWay.row_many": "Dim ond un ffordd sydd i ffitio {{count}} lotws yn y rhes yma.",
+        "onlyWay.row_other": "Dim ond un ffordd sydd i ffitio {{count}} lotws yn y rhes yma.",
+        "onlyWay.col_zero": "Dim ond un ffordd sydd i ffitio {{count}} lotws yn y golofn yma.",
+        "onlyWay.col_one": "Rhwng y creigiau, dim ond un sgwâr sydd ar ôl yn y golofn yma i lotws.",
+        "onlyWay.col_two": "Dim ond un ffordd sydd i ffitio {{count}} lotws yn y golofn yma.",
+        "onlyWay.col_few": "Dim ond un ffordd sydd i ffitio {{count}} lotws yn y golofn yma.",
+        "onlyWay.col_many": "Dim ond un ffordd sydd i ffitio {{count}} lotws yn y golofn yma.",
+        "onlyWay.col_other": "Dim ond un ffordd sydd i ffitio {{count}} lotws yn y golofn yma.",
+        "everyWay.row_zero": "Ble bynnag mae {{count}} lotws y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_one": "Ble bynnag mae lotws y rhes yma'n mynd, mae fan hyn bob tro.",
+        "everyWay.row_two": "Ble bynnag mae {{count}} lotws y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_few": "Ble bynnag mae {{count}} lotws y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_many": "Ble bynnag mae {{count}} lotws y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_other": "Ble bynnag mae {{count}} lotws y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_zero": "Ble bynnag mae {{count}} lotws y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_one": "Ble bynnag mae lotws y golofn yma'n mynd, mae fan hyn bob tro.",
+        "everyWay.col_two": "Ble bynnag mae {{count}} lotws y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_few": "Ble bynnag mae {{count}} lotws y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_many": "Ble bynnag mae {{count}} lotws y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_other": "Ble bynnag mae {{count}} lotws y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "lineBlock.rowsToCols": "Mae'r rhesi wedi'u marcio'n cadw eu blodau lotws yn sgwariau'r colofnau yna, felly does dim un ar ôl i'r colofnau yna.",
+        "lineBlock.colsToRows": "Mae'r colofnau wedi'u marcio'n cadw eu blodau lotws yn sgwariau'r rhesi yna, felly does dim un ar ôl i'r rhesi yna.",
+        "wouldStrand.row": "Byddai lotws fan hyn yn gadael dim lle i'r rhes wedi'i marcio.",
+        "wouldStrand.col": "Byddai lotws fan hyn yn gadael dim lle i'r golofn wedi'i marcio.",
+        "action": {
+          "ruleOut_zero": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_one": "Rho groes ar y sgwâr streipiog.",
+          "ruleOut_two": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_few": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_many": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_other": "Rho groes ar y sgwariau streipiog.",
+          "place_zero": "Rho lotws ym mhob sgwâr streipiog.",
+          "place_one": "Rho lotws yn y sgwâr streipiog.",
+          "place_two": "Rho lotws ym mhob sgwâr streipiog.",
+          "place_few": "Rho lotws ym mhob sgwâr streipiog.",
+          "place_many": "Rho lotws ym mhob sgwâr streipiog.",
+          "place_other": "Rho lotws ym mhob sgwâr streipiog."
+        }
+      },
+      "cats": {
+        "mistake": "Dydy'r marc yma ddim yn gallu bod yn iawn.",
+        "touch": "{{token}} fan hyn, a chaiff dim cath gysgu wrth ymyl un arall — mae corneli'n cyfrif.",
+        "groupFull.row_zero": "Mae gan y rhes yma ei {{count}} cath yn barod.",
+        "groupFull.row_one": "Mae gan y rhes yma ei chath yn barod.",
+        "groupFull.row_two": "Mae gan y rhes yma ei {{count}} cath yn barod.",
+        "groupFull.row_few": "Mae gan y rhes yma ei {{count}} cath yn barod.",
+        "groupFull.row_many": "Mae gan y rhes yma ei {{count}} cath yn barod.",
+        "groupFull.row_other": "Mae gan y rhes yma ei {{count}} cath yn barod.",
+        "groupFull.col_zero": "Mae gan y golofn yma ei {{count}} cath yn barod.",
+        "groupFull.col_one": "Mae gan y golofn yma ei chath yn barod.",
+        "groupFull.col_two": "Mae gan y golofn yma ei {{count}} cath yn barod.",
+        "groupFull.col_few": "Mae gan y golofn yma ei {{count}} cath yn barod.",
+        "groupFull.col_many": "Mae gan y golofn yma ei {{count}} cath yn barod.",
+        "groupFull.col_other": "Mae gan y golofn yma ei {{count}} cath yn barod.",
+        "groupTight.row_zero": "Dim ond {{count}} llechen sydd ar ôl yn y rhes yma.",
+        "groupTight.row_one": "Dim ond un llechen sydd ar ôl yn y rhes yma.",
+        "groupTight.row_two": "Dim ond {{count}} llechen sydd ar ôl yn y rhes yma.",
+        "groupTight.row_few": "Dim ond {{count}} llechen sydd ar ôl yn y rhes yma.",
+        "groupTight.row_many": "Dim ond {{count}} llechen sydd ar ôl yn y rhes yma.",
+        "groupTight.row_other": "Dim ond {{count}} llechen sydd ar ôl yn y rhes yma.",
+        "groupTight.col_zero": "Dim ond {{count}} llechen sydd ar ôl yn y golofn yma.",
+        "groupTight.col_one": "Dim ond un llechen sydd ar ôl yn y golofn yma.",
+        "groupTight.col_two": "Dim ond {{count}} llechen sydd ar ôl yn y golofn yma.",
+        "groupTight.col_few": "Dim ond {{count}} llechen sydd ar ôl yn y golofn yma.",
+        "groupTight.col_many": "Dim ond {{count}} llechen sydd ar ôl yn y golofn yma.",
+        "groupTight.col_other": "Dim ond {{count}} llechen sydd ar ôl yn y golofn yma.",
+        "onlyWay.row_zero": "Dim ond un ffordd sydd i ffitio {{count}} cath yn y rhes yma.",
+        "onlyWay.row_one": "Rhwng y pileri, dim ond un sgwâr sydd ar ôl yn y rhes yma i gath.",
+        "onlyWay.row_two": "Dim ond un ffordd sydd i ffitio {{count}} cath yn y rhes yma.",
+        "onlyWay.row_few": "Dim ond un ffordd sydd i ffitio {{count}} cath yn y rhes yma.",
+        "onlyWay.row_many": "Dim ond un ffordd sydd i ffitio {{count}} cath yn y rhes yma.",
+        "onlyWay.row_other": "Dim ond un ffordd sydd i ffitio {{count}} cath yn y rhes yma.",
+        "onlyWay.col_zero": "Dim ond un ffordd sydd i ffitio {{count}} cath yn y golofn yma.",
+        "onlyWay.col_one": "Rhwng y pileri, dim ond un sgwâr sydd ar ôl yn y golofn yma i gath.",
+        "onlyWay.col_two": "Dim ond un ffordd sydd i ffitio {{count}} cath yn y golofn yma.",
+        "onlyWay.col_few": "Dim ond un ffordd sydd i ffitio {{count}} cath yn y golofn yma.",
+        "onlyWay.col_many": "Dim ond un ffordd sydd i ffitio {{count}} cath yn y golofn yma.",
+        "onlyWay.col_other": "Dim ond un ffordd sydd i ffitio {{count}} cath yn y golofn yma.",
+        "everyWay.row_zero": "Ble bynnag mae {{count}} cath y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_one": "Ble bynnag mae cath y rhes yma'n mynd, mae hi fan hyn bob tro.",
+        "everyWay.row_two": "Ble bynnag mae {{count}} cath y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_few": "Ble bynnag mae {{count}} cath y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_many": "Ble bynnag mae {{count}} cath y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.row_other": "Ble bynnag mae {{count}} cath y rhes yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_zero": "Ble bynnag mae {{count}} cath y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_one": "Ble bynnag mae cath y golofn yma'n mynd, mae hi fan hyn bob tro.",
+        "everyWay.col_two": "Ble bynnag mae {{count}} cath y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_few": "Ble bynnag mae {{count}} cath y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_many": "Ble bynnag mae {{count}} cath y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "everyWay.col_other": "Ble bynnag mae {{count}} cath y golofn yma'n mynd, mae un fan hyn bob tro.",
+        "lineBlock.rowsToCols": "Mae'r rhesi wedi'u marcio'n cadw eu cathod yn sgwariau'r colofnau yna, felly does dim un ar ôl i'r colofnau yna.",
+        "lineBlock.colsToRows": "Mae'r colofnau wedi'u marcio'n cadw eu cathod yn sgwariau'r rhesi yna, felly does dim un ar ôl i'r rhesi yna.",
+        "wouldStrand.row": "Byddai cath fan hyn yn gadael dim lle i'r rhes wedi'i marcio.",
+        "wouldStrand.col": "Byddai cath fan hyn yn gadael dim lle i'r golofn wedi'i marcio.",
+        "action": {
+          "ruleOut_zero": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_one": "Rho groes ar y sgwâr streipiog.",
+          "ruleOut_two": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_few": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_many": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_other": "Rho groes ar y sgwariau streipiog.",
+          "place_zero": "Rho gath ym mhob sgwâr streipiog.",
+          "place_one": "Rho gath yn y sgwâr streipiog.",
+          "place_two": "Rho gath ym mhob sgwâr streipiog.",
+          "place_few": "Rho gath ym mhob sgwâr streipiog.",
+          "place_many": "Rho gath ym mhob sgwâr streipiog.",
+          "place_other": "Rho gath ym mhob sgwâr streipiog."
+        }
+      }
+    },
+    "quota": {
+      "default": "Ym mhob rhes, colofn ac ardal",
+      "fields": "Ym mhob rhes, colofn a darn o dir",
+      "lamps": "Ym mhob rhes a cholofn",
+      "market": "Ym mhob rhes a cholofn",
+      "lotus": "Ym mhob rhes a cholofn",
+      "cats": "Ym mhob rhes a cholofn"
+    },
+    "goal": {
+      "default_zero": "Mae {{count}} seren yn union ym mhob rhes, pob colofn a phob ardal.",
+      "default_one": "Mae un seren yn union ym mhob rhes, pob colofn a phob ardal.",
+      "default_two": "Mae {{count}} seren yn union ym mhob rhes, pob colofn a phob ardal.",
+      "default_few": "Mae {{count}} seren yn union ym mhob rhes, pob colofn a phob ardal.",
+      "default_many": "Mae {{count}} seren yn union ym mhob rhes, pob colofn a phob ardal.",
+      "default_other": "Mae {{count}} seren yn union ym mhob rhes, pob colofn a phob ardal.",
+      "fields_zero": "Mae {{count}} fferm yn union ym mhob rhes, pob colofn a phob darn o dir.",
+      "fields_one": "Mae un fferm yn union ym mhob rhes, pob colofn a phob darn o dir.",
+      "fields_two": "Mae {{count}} fferm yn union ym mhob rhes, pob colofn a phob darn o dir.",
+      "fields_few": "Mae {{count}} fferm yn union ym mhob rhes, pob colofn a phob darn o dir.",
+      "fields_many": "Mae {{count}} fferm yn union ym mhob rhes, pob colofn a phob darn o dir.",
+      "fields_other": "Mae {{count}} fferm yn union ym mhob rhes, pob colofn a phob darn o dir.",
+      "lamps": "Mae un lamp olew yn union ym mhob rhes a phob colofn.",
+      "market": "Mae un stondin yn union ym mhob rhes a phob colofn.",
+      "lotus": "Mae un lotws yn union ym mhob rhes a phob colofn.",
+      "cats": "Mae un gath yn union ym mhob rhes a phob colofn."
+    },
+    "name": {
+      "default": "Sêr ar Wahân",
+      "fields": "Ffermydd",
+      "twinDefault": "Sêr Gefeilliaid",
+      "twinFields": "Ffermydd Gefeilliaid",
+      "lamps": "Lampau Olew",
+      "market": "Stondinau'r Farchnad",
+      "lotus": "Pwll Lotws",
+      "cats": "Cathod y Deml"
+    }
+  },
+  "pairPuzzle": {
+    "name": {
+      "mummies": "Gorffwys y Mymis",
+      "beetles": "Chwilod Tail"
+    },
+    "goal": {
+      "mummies": "Mae un mymi wrth ymyl pob arch garreg, ac mae gan bob rhes a cholofn yr union nifer o fymis sydd wedi'i ysgrifennu wrth ei hymyl.",
+      "beetles": "Mae un chwilen wrth ymyl pob pelen dail, ac mae gan bob rhes a cholofn yr union nifer o chwilod sydd wedi'i ysgrifennu wrth ei hymyl."
+    },
+    "rules": {
+      "mummies": {
+        "pair": "Mae un mymi'n gorwedd yn union uwchben, o dan, i'r chwith neu i'r dde o bob arch garreg, ac mae pob mymi'n gorwedd wrth ymyl ei arch ei hun.",
+        "count": "Mae'r rhif wrth ymyl rhes neu golofn yn dweud faint o fymis sydd ynddi. Mae'n troi'n wyrdd pan mae'r union nifer yna yn y llinell, ac yn goch pan does dim ffordd i'w gael.",
+        "touch": "Chaiff dim dau fymi fod wrth ymyl ei gilydd — mae corneli'n cyfrif.",
+        "enter": "Tapia sgwâr i roi croes arno, tapia eto i roi mymi yno, unwaith eto i'w glirio. Llusga ar draws sgwariau i roi croes ar res ohonyn nhw. Alli di ddim tapio'r eirch."
+      },
+      "beetles": {
+        "pair": "Mae un chwilen yn union uwchben, o dan, i'r chwith neu i'r dde o bob pelen dail, ac mae pob chwilen yn sefyll wrth ymyl ei phelen ei hun i'w rholio.",
+        "count": "Mae'r rhif wrth ymyl rhes neu golofn yn dweud faint o chwilod sydd ynddi. Mae'n troi'n wyrdd pan mae'r union nifer yna yn y llinell, ac yn goch pan does dim ffordd i'w gael.",
+        "touch": "Chaiff dim dwy chwilen fod wrth ymyl ei gilydd — mae corneli'n cyfrif.",
+        "enter": "Tapia sgwâr i roi croes arno, tapia eto i roi chwilen yno, unwaith eto i'w glirio. Llusga ar draws sgwariau i roi croes ar res ohonyn nhw. Alli di ddim tapio'r peli tail."
+      }
+    },
+    "hint": {
+      "mummies": {
+        "mistake": "Dydy'r marc yma ddim yn gallu bod yn iawn.",
+        "touch": "Mae'r mymi yma i lawr, felly chaiff dim un arall fod wrth ei ymyl — mae corneli'n cyfrif.",
+        "zeroLine.row": "Does dim mymis yn y rhes yma, felly mae hi i gyd yn wag.",
+        "zeroLine.col": "Does dim mymis yn y golofn yma, felly mae hi i gyd yn wag.",
+        "noAnchor": "Does dim arch garreg wrth ymyl y sgwariau yma, felly all dim mymi orwedd fan hyn.",
+        "lineFull.row_zero": "Mae gan y rhes yma ei {{count}} mymi yn barod.",
+        "lineFull.row_one": "Mae gan y rhes yma ei mymi yn barod.",
+        "lineFull.row_two": "Mae gan y rhes yma ei {{count}} mymi yn barod.",
+        "lineFull.row_few": "Mae gan y rhes yma ei {{count}} mymi yn barod.",
+        "lineFull.row_many": "Mae gan y rhes yma ei {{count}} mymi yn barod.",
+        "lineFull.row_other": "Mae gan y rhes yma ei {{count}} mymi yn barod.",
+        "lineFull.col_zero": "Mae gan y golofn yma ei {{count}} mymi yn barod.",
+        "lineFull.col_one": "Mae gan y golofn yma ei mymi yn barod.",
+        "lineFull.col_two": "Mae gan y golofn yma ei {{count}} mymi yn barod.",
+        "lineFull.col_few": "Mae gan y golofn yma ei {{count}} mymi yn barod.",
+        "lineFull.col_many": "Mae gan y golofn yma ei {{count}} mymi yn barod.",
+        "lineFull.col_other": "Mae gan y golofn yma ei {{count}} mymi yn barod.",
+        "lineTight.row_zero": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y rhes yma i'w {{count}} mymi.",
+        "lineTight.row_one": "Dim ond un sgwâr sydd ar ôl yn y rhes yma i'w mymi.",
+        "lineTight.row_two": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y rhes yma i'w {{count}} mymi.",
+        "lineTight.row_few": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y rhes yma i'w {{count}} mymi.",
+        "lineTight.row_many": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y rhes yma i'w {{count}} mymi.",
+        "lineTight.row_other": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y rhes yma i'w {{count}} mymi.",
+        "lineTight.col_zero": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y golofn yma i'w {{count}} mymi.",
+        "lineTight.col_one": "Dim ond un sgwâr sydd ar ôl yn y golofn yma i'w mymi.",
+        "lineTight.col_two": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y golofn yma i'w {{count}} mymi.",
+        "lineTight.col_few": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y golofn yma i'w {{count}} mymi.",
+        "lineTight.col_many": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y golofn yma i'w {{count}} mymi.",
+        "lineTight.col_other": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y golofn yma i'w {{count}} mymi.",
+        "onlyWay": "Dim ond un sgwâr sydd ar ôl wrth ymyl yr arch yma i'w mymi.",
+        "claimed": "Mae gan yr arch yma ei mymi yn barod, felly mae'r sgwariau wrth ei hymyl nad oes arch arall yn gallu eu defnyddio yn aros yn wag.",
+        "lineBlock.rowsToCols_zero": "Mae gan y rhesi wedi'u marcio {{count}} mymi'n fwy nag mae eu heirch eu hunain yn gallu eu rhoi, felly maen nhw'n dod o eirch ychydig y tu allan iddyn nhw.",
+        "lineBlock.rowsToCols_one": "Mae gan y rhesi wedi'u marcio un mymi'n fwy nag mae eu heirch eu hunain yn gallu ei roi, felly mae'n dod o arch ychydig y tu allan iddyn nhw.",
+        "lineBlock.rowsToCols_two": "Mae gan y rhesi wedi'u marcio {{count}} mymi'n fwy nag mae eu heirch eu hunain yn gallu eu rhoi, felly maen nhw'n dod o eirch ychydig y tu allan iddyn nhw.",
+        "lineBlock.rowsToCols_few": "Mae gan y rhesi wedi'u marcio {{count}} mymi'n fwy nag mae eu heirch eu hunain yn gallu eu rhoi, felly maen nhw'n dod o eirch ychydig y tu allan iddyn nhw.",
+        "lineBlock.rowsToCols_many": "Mae gan y rhesi wedi'u marcio {{count}} mymi'n fwy nag mae eu heirch eu hunain yn gallu eu rhoi, felly maen nhw'n dod o eirch ychydig y tu allan iddyn nhw.",
+        "lineBlock.rowsToCols_other": "Mae gan y rhesi wedi'u marcio {{count}} mymi'n fwy nag mae eu heirch eu hunain yn gallu eu rhoi, felly maen nhw'n dod o eirch ychydig y tu allan iddyn nhw.",
+        "lineBlock.colsToRows_zero": "Mae gan y colofnau wedi'u marcio {{count}} mymi'n fwy nag mae eu heirch eu hunain yn gallu eu rhoi, felly maen nhw'n dod o eirch ychydig y tu allan iddyn nhw.",
+        "lineBlock.colsToRows_one": "Mae gan y colofnau wedi'u marcio un mymi'n fwy nag mae eu heirch eu hunain yn gallu ei roi, felly mae'n dod o arch ychydig y tu allan iddyn nhw.",
+        "lineBlock.colsToRows_two": "Mae gan y colofnau wedi'u marcio {{count}} mymi'n fwy nag mae eu heirch eu hunain yn gallu eu rhoi, felly maen nhw'n dod o eirch ychydig y tu allan iddyn nhw.",
+        "lineBlock.colsToRows_few": "Mae gan y colofnau wedi'u marcio {{count}} mymi'n fwy nag mae eu heirch eu hunain yn gallu eu rhoi, felly maen nhw'n dod o eirch ychydig y tu allan iddyn nhw.",
+        "lineBlock.colsToRows_many": "Mae gan y colofnau wedi'u marcio {{count}} mymi'n fwy nag mae eu heirch eu hunain yn gallu eu rhoi, felly maen nhw'n dod o eirch ychydig y tu allan iddyn nhw.",
+        "lineBlock.colsToRows_other": "Mae gan y colofnau wedi'u marcio {{count}} mymi'n fwy nag mae eu heirch eu hunain yn gallu eu rhoi, felly maen nhw'n dod o eirch ychydig y tu allan iddyn nhw.",
+        "wouldStrand.row": "Byddai mymi fan hyn yn gadael dim lle yn y rhes wedi'i marcio i'r mymis sydd eu hangen arni o hyd.",
+        "wouldStrand.col": "Byddai mymi fan hyn yn gadael dim lle yn y golofn wedi'i marcio i'r mymis sydd eu hangen arni o hyd.",
+        "wouldStrand.anchor": "Byddai mymi fan hyn yn gadael yr arch wedi'i marcio heb sgwâr wrth ei hymyl i'w mymi ei hun.",
+        "action": {
+          "ruleOut_zero": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_one": "Rho groes ar y sgwâr streipiog.",
+          "ruleOut_two": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_few": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_many": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_other": "Rho groes ar y sgwariau streipiog.",
+          "place_zero": "Gosoda fymi ar bob sgwâr streipiog.",
+          "place_one": "Gosoda fymi ar y sgwâr streipiog.",
+          "place_two": "Gosoda fymi ar bob sgwâr streipiog.",
+          "place_few": "Gosoda fymi ar bob sgwâr streipiog.",
+          "place_many": "Gosoda fymi ar bob sgwâr streipiog.",
+          "place_other": "Gosoda fymi ar bob sgwâr streipiog."
+        }
+      },
+      "beetles": {
+        "mistake": "Dydy'r marc yma ddim yn gallu bod yn iawn.",
+        "touch": "Mae'r chwilen yma i lawr, felly chaiff dim un arall fod wrth ei hymyl — mae corneli'n cyfrif.",
+        "zeroLine.row": "Does dim chwilod yn y rhes yma, felly mae hi i gyd yn wag.",
+        "zeroLine.col": "Does dim chwilod yn y golofn yma, felly mae hi i gyd yn wag.",
+        "noAnchor": "Does dim pelen dail wrth ymyl y sgwariau yma, felly all dim chwilen sefyll fan hyn.",
+        "lineFull.row_zero": "Mae gan y rhes yma ei {{count}} chwilen yn barod.",
+        "lineFull.row_one": "Mae gan y rhes yma ei chwilen yn barod.",
+        "lineFull.row_two": "Mae gan y rhes yma ei {{count}} chwilen yn barod.",
+        "lineFull.row_few": "Mae gan y rhes yma ei {{count}} chwilen yn barod.",
+        "lineFull.row_many": "Mae gan y rhes yma ei {{count}} chwilen yn barod.",
+        "lineFull.row_other": "Mae gan y rhes yma ei {{count}} chwilen yn barod.",
+        "lineFull.col_zero": "Mae gan y golofn yma ei {{count}} chwilen yn barod.",
+        "lineFull.col_one": "Mae gan y golofn yma ei chwilen yn barod.",
+        "lineFull.col_two": "Mae gan y golofn yma ei {{count}} chwilen yn barod.",
+        "lineFull.col_few": "Mae gan y golofn yma ei {{count}} chwilen yn barod.",
+        "lineFull.col_many": "Mae gan y golofn yma ei {{count}} chwilen yn barod.",
+        "lineFull.col_other": "Mae gan y golofn yma ei {{count}} chwilen yn barod.",
+        "lineTight.row_zero": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y rhes yma i'w {{count}} chwilen.",
+        "lineTight.row_one": "Dim ond un sgwâr sydd ar ôl yn y rhes yma i'w chwilen.",
+        "lineTight.row_two": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y rhes yma i'w {{count}} chwilen.",
+        "lineTight.row_few": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y rhes yma i'w {{count}} chwilen.",
+        "lineTight.row_many": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y rhes yma i'w {{count}} chwilen.",
+        "lineTight.row_other": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y rhes yma i'w {{count}} chwilen.",
+        "lineTight.col_zero": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y golofn yma i'w {{count}} chwilen.",
+        "lineTight.col_one": "Dim ond un sgwâr sydd ar ôl yn y golofn yma i'w chwilen.",
+        "lineTight.col_two": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y golofn yma i'w {{count}} chwilen.",
+        "lineTight.col_few": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y golofn yma i'w {{count}} chwilen.",
+        "lineTight.col_many": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y golofn yma i'w {{count}} chwilen.",
+        "lineTight.col_other": "Dim ond {{count}} sgwâr yn union sydd ar ôl yn y golofn yma i'w {{count}} chwilen.",
+        "onlyWay": "Dim ond un sgwâr sydd ar ôl wrth ymyl y belen dail yma i'w chwilen.",
+        "claimed": "Mae gan y belen dail yma ei chwilen yn barod, felly mae'r sgwariau wrth ei hymyl nad oes pelen arall yn gallu eu defnyddio yn aros yn wag.",
+        "lineBlock.rowsToCols_zero": "Mae gan y rhesi wedi'u marcio {{count}} chwilen yn fwy nag mae eu peli tail eu hunain yn gallu eu rhoi, felly maen nhw'n dod o beli ychydig y tu allan iddyn nhw.",
+        "lineBlock.rowsToCols_one": "Mae gan y rhesi wedi'u marcio un chwilen yn fwy nag mae eu peli tail eu hunain yn gallu ei rhoi, felly mae'n dod o belen ychydig y tu allan iddyn nhw.",
+        "lineBlock.rowsToCols_two": "Mae gan y rhesi wedi'u marcio {{count}} chwilen yn fwy nag mae eu peli tail eu hunain yn gallu eu rhoi, felly maen nhw'n dod o beli ychydig y tu allan iddyn nhw.",
+        "lineBlock.rowsToCols_few": "Mae gan y rhesi wedi'u marcio {{count}} chwilen yn fwy nag mae eu peli tail eu hunain yn gallu eu rhoi, felly maen nhw'n dod o beli ychydig y tu allan iddyn nhw.",
+        "lineBlock.rowsToCols_many": "Mae gan y rhesi wedi'u marcio {{count}} chwilen yn fwy nag mae eu peli tail eu hunain yn gallu eu rhoi, felly maen nhw'n dod o beli ychydig y tu allan iddyn nhw.",
+        "lineBlock.rowsToCols_other": "Mae gan y rhesi wedi'u marcio {{count}} chwilen yn fwy nag mae eu peli tail eu hunain yn gallu eu rhoi, felly maen nhw'n dod o beli ychydig y tu allan iddyn nhw.",
+        "lineBlock.colsToRows_zero": "Mae gan y colofnau wedi'u marcio {{count}} chwilen yn fwy nag mae eu peli tail eu hunain yn gallu eu rhoi, felly maen nhw'n dod o beli ychydig y tu allan iddyn nhw.",
+        "lineBlock.colsToRows_one": "Mae gan y colofnau wedi'u marcio un chwilen yn fwy nag mae eu peli tail eu hunain yn gallu ei rhoi, felly mae'n dod o belen ychydig y tu allan iddyn nhw.",
+        "lineBlock.colsToRows_two": "Mae gan y colofnau wedi'u marcio {{count}} chwilen yn fwy nag mae eu peli tail eu hunain yn gallu eu rhoi, felly maen nhw'n dod o beli ychydig y tu allan iddyn nhw.",
+        "lineBlock.colsToRows_few": "Mae gan y colofnau wedi'u marcio {{count}} chwilen yn fwy nag mae eu peli tail eu hunain yn gallu eu rhoi, felly maen nhw'n dod o beli ychydig y tu allan iddyn nhw.",
+        "lineBlock.colsToRows_many": "Mae gan y colofnau wedi'u marcio {{count}} chwilen yn fwy nag mae eu peli tail eu hunain yn gallu eu rhoi, felly maen nhw'n dod o beli ychydig y tu allan iddyn nhw.",
+        "lineBlock.colsToRows_other": "Mae gan y colofnau wedi'u marcio {{count}} chwilen yn fwy nag mae eu peli tail eu hunain yn gallu eu rhoi, felly maen nhw'n dod o beli ychydig y tu allan iddyn nhw.",
+        "wouldStrand.row": "Byddai chwilen fan hyn yn gadael dim lle yn y rhes wedi'i marcio i'r chwilod sydd eu hangen arni o hyd.",
+        "wouldStrand.col": "Byddai chwilen fan hyn yn gadael dim lle yn y golofn wedi'i marcio i'r chwilod sydd eu hangen arni o hyd.",
+        "wouldStrand.anchor": "Byddai chwilen fan hyn yn gadael y belen dail wedi'i marcio heb sgwâr wrth ei hymyl i'w chwilen ei hun.",
+        "action": {
+          "ruleOut_zero": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_one": "Rho groes ar y sgwâr streipiog.",
+          "ruleOut_two": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_few": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_many": "Rho groes ar y sgwariau streipiog.",
+          "ruleOut_other": "Rho groes ar y sgwariau streipiog.",
+          "place_zero": "Rho chwilen ar bob sgwâr streipiog.",
+          "place_one": "Rho chwilen ar y sgwâr streipiog.",
+          "place_two": "Rho chwilen ar bob sgwâr streipiog.",
+          "place_few": "Rho chwilen ar bob sgwâr streipiog.",
+          "place_many": "Rho chwilen ar bob sgwâr streipiog.",
+          "place_other": "Rho chwilen ar bob sgwâr streipiog."
+        }
+      }
+    }
+  },
+  "rushHour": {
+    "name": {
+      "default": "Y Rhwystr",
+      "market": "Y Lôn Gul"
+    },
+    "goal": {
+      "default": "Cael dy floc dy hun allan drwy'r bwlch ar y dde.",
+      "market": "Cael dy sled dy hun allan drwy'r bwlch ar ben y stryd."
+    },
+    "rules": {
+      "default": {
+        "lanes": "Dim ond ar hyd ei lôn ei hun mae bloc yn llithro — byth i'r ochr, byth oddi ar y bwrdd.",
+        "shove": "Llusga floc i'w wthio. Mae'n stopio lle mae rhywbeth yn y ffordd."
+      },
+      "market": {
+        "lanes": "Dim ond ar hyd y lôn mae'n sefyll ynddi mae sled yn llithro — byth i'r ochr, byth allan o'r stryd.",
+        "shove": "Llusga sled i'w gwthio. Mae'n stopio lle mae rhywbeth yn y ffordd."
+      }
+    },
+    "hint": {
+      "default": {
+        "drive": "Mae'r ffordd o'th flaen yn glir hyd fan'na.",
+        "back": "Fydd dim byd o'th flaen yn symud. Symud dy un di 'nôl o'r ffordd gyntaf.",
+        "clear": "Mae'r bloc yna'n sefyll ar draws dy lôn di.",
+        "room": "All dim byd symud nes bod hwnna'n symud.",
+        "push": {
+          "left": "Gwthia fe i'r chwith, hyd at y cylch.",
+          "right": "Gwthia fe i'r dde, hyd at y cylch.",
+          "up": "Gwthia fe i fyny, hyd at y cylch.",
+          "down": "Gwthia fe i lawr, hyd at y cylch."
+        }
+      },
+      "market": {
+        "drive": "Mae'r lôn o flaen dy un di'n glir hyd fan'na.",
+        "back": "Fydd dim byd o'th flaen yn symud. Symud dy sled dy hun 'nôl gyntaf.",
+        "clear": "Mae'r llwyth yna'n sefyll ar draws y lôn rwyt ti'n gadael ar hyd-ddi.",
+        "room": "All dim byd symud nes bod hwnna wedi'i symud.",
+        "push": {
+          "left": "Gwthia fe i'r chwith, hyd at y cylch.",
+          "right": "Gwthia fe i'r dde, hyd at y cylch.",
+          "up": "Gwthia fe i fyny'r stryd, hyd at y cylch.",
+          "down": "Gwthia fe i lawr y stryd, hyd at y cylch."
+        }
+      }
+    }
+  },
+  "hidato": {
+    "rules": {
+      "default": {
+        "given": "Mae'r rhifau sydd yn y diliau'n barod yn rhan o'r pos — maen nhw'n aros lle maen nhw.",
+        "enter": "Tapia rif i ddechrau'r llinell yno, yna tapia gell wag sy'n cyffwrdd i fynd ymlaen — neu llusga'n syth drwy'r celloedd mae'n mynd drwyddyn nhw.",
+        "back": "Tapia rif rwyt ti wedi'i osod a'i dapio eto i'w dynnu i ffwrdd, gyda phopeth sy'n hongian arno. Mae mynd â'r llinell ffordd wahanol allan o rif yn gwneud yr un peth. Mae Dadwneud yn mynd â dy symudiad olaf 'nôl."
+      },
+      "channel": {
+        "given": "Mae'r caeau sydd â rhif yn barod yn rhan o'r pos — maen nhw'n aros lle maen nhw.",
+        "enter": "Tapia gae gyda rhif i ddechrau'r dŵr yno, yna tapia gae sych wrth ei ymyl i gloddio ymlaen — neu llusga'n syth ar hyd y caeau mae'r sianel yn mynd drwyddyn nhw.",
+        "back": "Tapia gae rwyt ti wedi'i gloddio a'i dapio eto i'w lenwi, gydag unrhyw sianel sydd wedi'i thorri i ffwrdd ohono. Mae cloddio ffordd wahanol allan o gae yn gwneud yr un peth. Mae Dadwneud yn mynd â dy symudiad olaf 'nôl."
+      },
+      "scribe": {
+        "given": "Y ffigurau mewn inc coch yw rhai'r pos ei hun — maen nhw'n aros lle maen nhw.",
+        "enter": "Tapia ffigur i godi'r ysgrifbin yno, yna tapia le gwag wrth ei ymyl i ysgrifennu ymlaen — neu llusga'n syth ar hyd y llinell.",
+        "back": "Tapia ffigur rwyt ti wedi'i ysgrifennu a'i dapio eto i'w grafu i ffwrdd, gydag unrhyw linell sydd wedi'i thorri i ffwrdd ohono. Mae ysgrifennu ffordd wahanol allan o ffigur yn gwneud yr un peth. Mae Dadwneud yn mynd â dy symudiad olaf 'nôl."
+      },
+      "chambers": {
+        "given": "Cafodd y siambrau sydd â rhif yn barod eu torri gan yr adeiladwyr — maen nhw'n aros lle maen nhw.",
+        "enter": "Tapia siambr gyda rhif i ddechrau'r coridor yno, yna tapia siambr wedi'i selio wrth ei hymyl i dorri drwodd — neu llusga'n syth ar hyd y siambrau mae'r coridor yn mynd drwyddyn nhw.",
+        "back": "Tapia siambr rwyt ti wedi'i hagor a'i thapio eto i'w selio, gydag unrhyw goridor sydd wedi'i dorri i ffwrdd ohoni. Mae torri drwodd ffordd wahanol allan o siambr yn gwneud yr un peth. Mae Dadwneud yn mynd â dy symudiad olaf 'nôl."
+      }
+    },
+    "goal": {
+      "default": "Mae rhif ym mhob cell o'r diliau, o 1 i {{last}}, pob un mewn cell sy'n cyffwrdd â'r rhif cynt.",
+      "channel": "Mae un sianel yn dyfrio'r gwastadedd i gyd: mae pob cae'n cael ei dro, o 1 i {{last}}, pob un wedi'i gloddio wrth ymyl y cae cynt.",
+      "scribe": "Mae un llinell o ffigurau heb doriad yn croesi'r ddalen: mae ffigur ym mhob lle, o 1 i {{last}}, pob un wrth ymyl y ffigur cynt.",
+      "chambers": "Mae un coridor yn rhedeg drwy'r bedd i gyd: mae pob siambr yn cael ei hagor yn ei thro, o 1 i {{last}}, pob un wedi'i thorri drwodd o'r siambr gynt."
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": "Dydy un o'r rhifau yma ddim yn gallu bod yn iawn.",
+          "sandwich": "Dim ond un gell agored sydd rhwng y {{before}} a'r {{after}}.",
+          "neighbourForced": "Dim ond un gell agored sydd ar ôl wrth ymyl y {{from}}.",
+          "onlyCell": "Does unman arall ar ôl yn y diliau i'r {{value}}.",
+          "onlyValue": "Does dim rhif arall yn gallu cyrraedd y gell yma."
+        },
+        "action": {
+          "place": "Rho {{value}} yn y gell streipiog."
+        }
+      },
+      "channel": {
+        "reason": {
+          "mistake": "Dydy un o'r rhifau yma ddim yn gallu bod yn iawn.",
+          "sandwich": "Dim ond un cae sych sydd rhwng y {{before}} a'r {{after}}.",
+          "neighbourForced": "Dim ond un cae sych sydd ar ôl wrth ymyl y {{from}}.",
+          "onlyCell": "Does unman arall ar y gwastadedd yn gallu cymryd y {{value}}.",
+          "onlyValue": "Does dim rhif arall yn gallu cyrraedd y cae yma."
+        },
+        "action": {
+          "place": "Cloddia {{value}} yn y cae streipiog."
+        }
+      },
+      "scribe": {
+        "reason": {
+          "mistake": "Dydy un o'r ffigurau yma ddim yn gallu bod yn iawn.",
+          "sandwich": "Dim ond un lle gwag sydd rhwng y {{before}} a'r {{after}}.",
+          "neighbourForced": "Dim ond un lle gwag sydd ar ôl wrth ymyl y {{from}}.",
+          "onlyCell": "Does unman arall ar y ddalen yn gallu cymryd y {{value}}.",
+          "onlyValue": "Does dim ffigur arall yn gallu cyrraedd y lle yma."
+        },
+        "action": {
+          "place": "Ysgrifenna {{value}} yn y lle streipiog."
+        }
+      },
+      "chambers": {
+        "reason": {
+          "mistake": "Dydy un o'r rhifau yma ddim yn gallu bod yn iawn.",
+          "sandwich": "Dim ond un siambr wedi'i selio sydd rhwng y {{before}} a'r {{after}}.",
+          "neighbourForced": "Dim ond un siambr wedi'i selio sydd ar ôl wrth ymyl y {{from}}.",
+          "onlyCell": "Does unman arall yn y bedd yn gallu cymryd y {{value}}.",
+          "onlyValue": "Does dim rhif arall yn gallu cyrraedd y siambr yma."
+        },
+        "action": {
+          "place": "Agor {{value}} yn y siambr streipiog."
+        }
+      }
+    },
+    "name": {
+      "default": "Cwch Gwenyn",
+      "channel": "Y Sianel",
+      "scribe": "Dalen yr Ysgrifennydd",
+      "chambers": "Siambrau wedi'u Selio"
+    }
+  },
+  "sudoku": {
+    "rules": {
+      "default": {
+        "chambers": "Mae'r llinellau trwchus yn torri'r grid yn chwe siambr, dau sgwâr o led a thri o uchder.",
+        "given": "Mae'r rhifau sydd wedi'u cerfio'n barod yn rhan o'r pos — maen nhw'n aros lle maen nhw.",
+        "enter": "Tapia sgwâr, yna tapia rif. Mae'r un rhif eto yn ei dynnu allan.",
+        "notes": "Newidia i'r pensil i nodi'r rhifau allai fynd mewn sgwâr o hyd. Mae Dadwneud yn mynd â dy symudiad olaf 'nôl."
+      },
+      "papyrus": {
+        "chambers": "Mae'r llinellau trwchus yn rhannu'r ddalen yn chwe phanel, dau le o led a thri o uchder.",
+        "given": "Yr arwyddion mewn inc coch yw rhai'r pos ei hun — maen nhw'n aros lle maen nhw.",
+        "enter": "Tapia le, yna tapia arwydd. Mae'r un arwydd eto yn ei grafu i ffwrdd.",
+        "notes": "Cymer yr ysgrifbin brwyn i nodi'r arwyddion allai fynd mewn lle o hyd. Mae Dadwneud yn mynd â dy symudiad olaf 'nôl."
+      }
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": {
+            "value": "Dydy un o'r rhifau fan hyn ddim yn gallu bod yn iawn. Tynna fe allan ac edrych eto.",
+            "note": "Mae nodiadau'r sgwâr yma wedi cau allan y rhif sy'n perthyn yma. Clira nhw a dechrau eto."
+          },
+          "nakedSingle": "Mae rhes, colofn a siambr y sgwâr yma wedi cymryd pob rhif arall.",
+          "hiddenSingle": {
+            "row": "Dydy {{token}} ddim yn ffitio mewn unrhyw sgwâr arall yn y rhes yma.",
+            "col": "Dydy {{token}} ddim yn ffitio mewn unrhyw sgwâr arall yn y golofn yma.",
+            "box": "Dydy {{token}} ddim yn ffitio mewn unrhyw sgwâr arall yn y siambr yma."
+          },
+          "pointing": {
+            "row": "Y tu mewn i'r siambr wedi'i marcio, dim ond ar y rhes yma mae {{token}} yn gallu sefyll.",
+            "col": "Y tu mewn i'r siambr wedi'i marcio, dim ond yn y golofn yma mae {{token}} yn gallu sefyll."
+          },
+          "claiming": {
+            "row": "Ar hyd y rhes wedi'i marcio, dim ond y tu mewn i'r un siambr yma mae {{token}} yn ffitio.",
+            "col": "I lawr y golofn wedi'i marcio, dim ond y tu mewn i'r un siambr yma mae {{token}} yn ffitio."
+          }
+        },
+        "action": {
+          "place": "Rho {{token}} yn y sgwâr streipiog.",
+          "ruleOut_zero": "Croesa {{token}} allan o'r sgwariau streipiog.",
+          "ruleOut_one": "Croesa {{token}} allan o'r sgwâr streipiog.",
+          "ruleOut_two": "Croesa {{token}} allan o'r sgwariau streipiog.",
+          "ruleOut_few": "Croesa {{token}} allan o'r sgwariau streipiog.",
+          "ruleOut_many": "Croesa {{token}} allan o'r sgwariau streipiog.",
+          "ruleOut_other": "Croesa {{token}} allan o'r sgwariau streipiog."
+        }
+      },
+      "papyrus": {
+        "reason": {
+          "mistake": {
+            "value": "Dydy un o'r arwyddion yma ddim yn gallu bod yn iawn. Crafa fe i ffwrdd ac edrych eto.",
+            "note": "Mae marciau pensil y lle yma wedi cau allan yr arwydd sy'n perthyn yma. Rhwbia nhw allan a dechrau eto."
+          },
+          "nakedSingle": "Mae rhes, colofn a phanel y lle yma wedi cymryd pob arwydd arall.",
+          "hiddenSingle": {
+            "row": "Dydy {{token}} ddim yn ffitio mewn unrhyw le arall yn y rhes yma.",
+            "col": "Dydy {{token}} ddim yn ffitio mewn unrhyw le arall yn y golofn yma.",
+            "box": "Dydy {{token}} ddim yn ffitio mewn unrhyw le arall yn y panel yma."
+          },
+          "pointing": {
+            "row": "Y tu mewn i'r panel wedi'i farcio, dim ond ar y rhes yma mae {{token}} yn gallu sefyll.",
+            "col": "Y tu mewn i'r panel wedi'i farcio, dim ond yn y golofn yma mae {{token}} yn gallu sefyll."
+          },
+          "claiming": {
+            "row": "Ar hyd y rhes wedi'i marcio, dim ond y tu mewn i'r un panel yma mae {{token}} yn ffitio.",
+            "col": "I lawr y golofn wedi'i marcio, dim ond y tu mewn i'r un panel yma mae {{token}} yn ffitio."
+          }
+        },
+        "action": {
+          "place": "Ysgrifenna {{token}} mewn inc yn y lle streipiog.",
+          "ruleOut_zero": "Croesa {{token}} allan o'r lleoedd streipiog.",
+          "ruleOut_one": "Croesa {{token}} allan o'r lle streipiog.",
+          "ruleOut_two": "Croesa {{token}} allan o'r lleoedd streipiog.",
+          "ruleOut_few": "Croesa {{token}} allan o'r lleoedd streipiog.",
+          "ruleOut_many": "Croesa {{token}} allan o'r lleoedd streipiog.",
+          "ruleOut_other": "Croesa {{token}} allan o'r lleoedd streipiog."
+        }
+      }
+    },
+    "goal": {
+      "default": "Mae pob rhes, pob colofn a phob siambr yn dangos pob un o'r chwe rhif unwaith yn unig.",
+      "papyrus": "Mae pob rhes, pob colofn a phob panel yn cario pob un o'r chwe arwydd unwaith yn unig."
+    },
+    "name": {
+      "default": "Chwe Siambr",
+      "papyrus": "Cofrestr yr Ysgrifennydd"
+    }
+  },
+  "crocodile": {
+    "name": "Pwll y Crocodeil",
+    "goal": "Croesa'r pwll i'r lan bellaf.",
+    "rules": {
+      "want": "Mae pob crocodeil eisiau un ateb o'r rhes o gerrig y tu ôl iddo: y mwyaf, neu'r lleiaf.",
+      "mark": "Mae ei geg agored yn dweud pa un, ac felly hefyd yr arwydd wrth ei ymyl: mae > yn agor tuag at yr ateb mwyaf, < tuag at y lleiaf.",
+      "bite": "Cama ar unrhyw garreg arall ac mae'n cnoi: rwyt ti'n colli iechyd ac yn dechrau eto o'r lan agosaf."
+    },
+    "hint": {
+      "biggest": "Mae'r crocodeil yma eisiau'r ateb mwyaf. Hwnnw yw {{value}}.",
+      "smallest": "Mae'r crocodeil yma eisiau'r ateb lleiaf. Hwnnw yw {{value}}."
+    }
+  },
+  "canisters": {
+    "name": {
+      "default": "Y Caniau",
+      "grain": "Mesurau Grawn",
+      "oil": "Olew i'r Lampau",
+      "wine": "Seler y Masnachwr",
+      "natron": "Y Jariau Canopig",
+      "ink": "Yr Ystafell Ysgrifennu"
+    },
+    "goal": {
+      "default_zero": "Mesura bob swm sy'n cael ei ofyn yn ei dro, gan ddweud pa gan sy'n ei ddal cyn y nesaf.",
+      "default_one": "Mesura'r swm sy'n cael ei ofyn, a dwed pa gan sy'n ei ddal.",
+      "default_two": "Mesura bob swm sy'n cael ei ofyn yn ei dro, gan ddweud pa gan sy'n ei ddal cyn y nesaf.",
+      "default_few": "Mesura bob swm sy'n cael ei ofyn yn ei dro, gan ddweud pa gan sy'n ei ddal cyn y nesaf.",
+      "default_many": "Mesura bob swm sy'n cael ei ofyn yn ei dro, gan ddweud pa gan sy'n ei ddal cyn y nesaf.",
+      "default_other": "Mesura bob swm sy'n cael ei ofyn yn ei dro, gan ddweud pa gan sy'n ei ddal cyn y nesaf.",
+      "grain_zero": "Mesura bob swm o rawn yn ei dro, gan ddweud pa fesur sy'n ei ddal cyn y nesaf.",
+      "grain_one": "Mesura'r swm o rawn sy'n cael ei ofyn, a dwed pa fesur sy'n ei ddal.",
+      "grain_two": "Mesura bob swm o rawn yn ei dro, gan ddweud pa fesur sy'n ei ddal cyn y nesaf.",
+      "grain_few": "Mesura bob swm o rawn yn ei dro, gan ddweud pa fesur sy'n ei ddal cyn y nesaf.",
+      "grain_many": "Mesura bob swm o rawn yn ei dro, gan ddweud pa fesur sy'n ei ddal cyn y nesaf.",
+      "grain_other": "Mesura bob swm o rawn yn ei dro, gan ddweud pa fesur sy'n ei ddal cyn y nesaf.",
+      "oil_zero": "Mesura bob mesur o olew yn ei dro, gan ddweud pa jar sy'n ei ddal cyn y nesaf.",
+      "oil_one": "Mesura'r olew sy'n cael ei ofyn, a dwed pa jar sy'n ei ddal.",
+      "oil_two": "Mesura bob mesur o olew yn ei dro, gan ddweud pa jar sy'n ei ddal cyn y nesaf.",
+      "oil_few": "Mesura bob mesur o olew yn ei dro, gan ddweud pa jar sy'n ei ddal cyn y nesaf.",
+      "oil_many": "Mesura bob mesur o olew yn ei dro, gan ddweud pa jar sy'n ei ddal cyn y nesaf.",
+      "oil_other": "Mesura bob mesur o olew yn ei dro, gan ddweud pa jar sy'n ei ddal cyn y nesaf.",
+      "wine_zero": "Mesura bob mesur o win yn ei dro, gan ddweud pa amffora sy'n ei ddal cyn y nesaf.",
+      "wine_one": "Mesura'r gwin sy'n cael ei ofyn, a dwed pa amffora sy'n ei ddal.",
+      "wine_two": "Mesura bob mesur o win yn ei dro, gan ddweud pa amffora sy'n ei ddal cyn y nesaf.",
+      "wine_few": "Mesura bob mesur o win yn ei dro, gan ddweud pa amffora sy'n ei ddal cyn y nesaf.",
+      "wine_many": "Mesura bob mesur o win yn ei dro, gan ddweud pa amffora sy'n ei ddal cyn y nesaf.",
+      "wine_other": "Mesura bob mesur o win yn ei dro, gan ddweud pa amffora sy'n ei ddal cyn y nesaf.",
+      "natron_zero": "Mesura bob mesur o natron yn ei dro, gan ddweud pa jar sy'n ei ddal cyn y nesaf.",
+      "natron_one": "Mesura'r natron sy'n cael ei ofyn, a dwed pa jar sy'n ei ddal.",
+      "natron_two": "Mesura bob mesur o natron yn ei dro, gan ddweud pa jar sy'n ei ddal cyn y nesaf.",
+      "natron_few": "Mesura bob mesur o natron yn ei dro, gan ddweud pa jar sy'n ei ddal cyn y nesaf.",
+      "natron_many": "Mesura bob mesur o natron yn ei dro, gan ddweud pa jar sy'n ei ddal cyn y nesaf.",
+      "natron_other": "Mesura bob mesur o natron yn ei dro, gan ddweud pa jar sy'n ei ddal cyn y nesaf.",
+      "ink_zero": "Mesura bob mesur o inc yn ei dro, gan ddweud pa bot sy'n ei ddal cyn y nesaf.",
+      "ink_one": "Mesura'r inc sy'n cael ei ofyn, a dwed pa bot sy'n ei ddal.",
+      "ink_two": "Mesura bob mesur o inc yn ei dro, gan ddweud pa bot sy'n ei ddal cyn y nesaf.",
+      "ink_few": "Mesura bob mesur o inc yn ei dro, gan ddweud pa bot sy'n ei ddal cyn y nesaf.",
+      "ink_many": "Mesura bob mesur o inc yn ei dro, gan ddweud pa bot sy'n ei ddal cyn y nesaf.",
+      "ink_other": "Mesura bob mesur o inc yn ei dro, gan ddweud pa bot sy'n ei ddal cyn y nesaf."
+    },
+    "rules": {
+      "method": {
+        "sums": "Mae pob swm galli di ei wneud yn ddau rif ar y fainc wedi'u hadio neu eu tynnu: maint can, beth sydd ynddo, neu faint o le sydd ar ôl ynddo.",
+        "backwards": "Felly gweithia 'nôl o'r swm sy'n cael ei ofyn — pa ddau rif sy'n ei wneud, a sut wyt ti'n cael y ddau yna ar yr un pryd?"
+      },
+      "claim": "Pan mae'r swm gyda ti, tapia “hwn”. Mae dewis y llestr anghywir yn costio symudiad.",
+      "legs": "Yna'r swm nesaf, wedi'i fesur o beth bynnag sydd ar ôl yn y llestri.",
+      "default": {
+        "moves": "Tapia gan i'w godi, yna tapia un arall i dywallt iddo. Mae'r tywallt yn stopio pan mae'r cyntaf yn wag neu'r ail yn llawn.",
+        "contents": "Dyma'r holl ddŵr sydd — mae un can yn dechrau'n llawn, a does dim modd taflu dim i ffwrdd na nôl mwy.",
+        "levels": "Mae pob can yn dweud faint sydd ynddo, a faint mae'n ei ddal pan mae'n llawn."
+      },
+      "grain": {
+        "moves": "Tapia fesur i'w godi, yna tapia un arall i dywallt y grawn iddo. Mae'n stopio pan mae'r cyntaf yn wag neu'r ail yn llawn at yr ymyl.",
+        "contents": "Dyma'r holl rawn sydd — mae un mesur yn dechrau'n llawn, a does dim modd ysgubo dim i ffwrdd na nôl mwy o'r ysgubor.",
+        "levels": "Mae pob mesur yn dweud faint sydd ynddo, a faint mae'n ei ddal pan mae'n llawn at yr ymyl."
+      },
+      "oil": {
+        "moves": "Tapia jar i'w chodi, yna tapia un arall i dywallt iddi. Mae'r tywallt yn stopio pan mae'r gyntaf yn wag neu'r ail yn llawn.",
+        "contents": "Dyma'r holl olew sydd — mae un jar yn dechrau'n llawn, a does dim modd tywallt dim i ffwrdd na nôl mwy.",
+        "levels": "Mae pob jar yn dweud faint sydd ynddi, a faint mae'n ei ddal pan mae'n llawn."
+      },
+      "wine": {
+        "moves": "Tapia amffora i'w chodi, yna tapia un arall i dywallt iddi. Mae'r tywallt yn stopio pan mae'r gyntaf yn wag neu'r ail yn llawn.",
+        "contents": "Dyma'r holl win sydd — mae un amffora'n dechrau'n llawn, a does dim modd colli dim na nôl mwy o'r seler.",
+        "levels": "Mae pob amffora'n dweud faint sydd ynddi, a faint mae'n ei ddal pan mae'n llawn."
+      },
+      "natron": {
+        "moves": "Tapia jar i'w chodi, yna tapia un arall i dywallt y natron iddi. Mae'n stopio pan mae'r gyntaf yn wag neu'r ail yn llawn at y caead.",
+        "contents": "Dyma'r holl natron sydd — mae un jar yn dechrau'n llawn, a does dim modd ysgubo dim i ffwrdd na nôl mwy.",
+        "levels": "Mae pob jar yn dweud faint sydd ynddi, a faint mae'n ei ddal pan mae'n llawn at y caead."
+      },
+      "ink": {
+        "moves": "Tapia bot i'w godi, yna tapia un arall i dywallt iddo. Mae'r tywallt yn stopio pan mae'r cyntaf yn wag neu'r ail yn llawn.",
+        "contents": "Dyma'r holl inc sydd — mae un pot yn dechrau'n llawn, a does dim modd tywallt dim allan na gwneud inc newydd.",
+        "levels": "Mae pob pot yn dweud faint sydd ynddo, a faint mae'n ei ddal pan mae'n llawn."
+      }
+    },
+    "hint": {
+      "goal": {
+        "leftover": "Gweithio 'nôl: {{amount}} yw {{content}} gyda {{space}} wedi'i dynnu — can gyda {{content}} ynddo wedi'i dywallt i un gyda lle i {{space}}.",
+        "full": "Gweithio 'nôl: {{amount}} yw maint can, ac mae {{a}} a {{b}} gyda'i gilydd yn union hynny.",
+        "sum": "Gweithio 'nôl: {{amount}} yw {{a}} a {{b}} gyda'i gilydd."
+      },
+      "claim": "Un tywalltiad i ffwrdd yw hynna. Yna gweithia mas pa gan sy'n ei ddal.",
+      "stuck": "O fan hyn, does dim modd mesur {{target}} yn y symudiadau sydd ar ôl. Cymer dywalltiad 'nôl, neu dechrau'r bwrdd eto.",
+      "overBudget": "Does dim symudiadau ar ôl. Cymer un 'nôl, neu dechrau eto a ffeindio'r ffordd fyrrach.",
+      "next": {
+        "leftover": "Y swm cyn hynny: {{amount}} — {{content}} wedi'i dywallt i le i {{space}}.",
+        "full": "Y swm cyn hynny: can yn llawn ar {{amount}} — {{a}} a {{b}} gyda'i gilydd.",
+        "sum": "Y swm cyn hynny: {{amount}} — {{a}} a {{b}} gyda'i gilydd."
+      }
+    },
+    "movesLeft_zero": "{{count}} o symudiadau ar ôl",
+    "movesLeft_one": "{{count}} symudiad ar ôl",
+    "movesLeft_two": "{{count}} o symudiadau ar ôl",
+    "movesLeft_few": "{{count}} o symudiadau ar ôl",
+    "movesLeft_many": "{{count}} o symudiadau ar ôl",
+    "movesLeft_other": "{{count}} o symudiadau ar ôl",
+    "legs": "wedi mesur {{done}} o {{total}}",
+    "wanted": "Mesura",
+    "claim": "hwn",
+    "claimAria": "Dweud mai'r {{capacity}} sy'n dal y swm"
+  },
+  "procession": {
+    "name": {
+      "default": "Yr Oriau mewn Trefn",
+      "funerary": "Diwrnod yn Nyffryn y Gweithwyr",
+      "cosmos": "Croesi'r Nos",
+      "water": "Diwrnod y Llifogydd",
+      "trade": "Diwrnod wrth y Cei"
+    },
+    "goal": {
+      "default": "Llithra bob peth sy'n digwydd i'w awr, nes bod pob marc o dan y diwrnod yn iawn.",
+      "funerary": "Llithra bob tasg i'w hawr, nes bod pob marc o dan y diwrnod yn iawn.",
+      "cosmos": "Llithra bob golau i'w awr, nes bod pob marc o dan y nos yn iawn.",
+      "water": "Llithra bob tasg i'w hawr, nes bod pob marc o dan y diwrnod yn iawn.",
+      "trade": "Llithra bob tasg i'w hawr, nes bod pob marc o dan y diwrnod yn iawn."
+    },
+    "rules": {
+      "default": {
+        "lengths": "Mae pob rhes yn un peth sy'n digwydd, ac mae'n para mor hir ag mae ei far yn llydan. Pryd mae'n digwydd — dyna beth rwyt ti'n ei weithio mas.",
+        "marks": "Mae llinell o dan y diwrnod yn troi'n goch tra'i bod hi ddim yn iawn. Tapia un i roi cylch o gwmpas y rhesi mae hi'n sôn amdanyn nhw.",
+        "drag": "Llusga far ar hyd ei res ei hun. Dydy e byth yn gadael y diwrnod."
+      }
+    },
+    "hint": {
+      "default": {
+        "chain": "Mae lle'r rhes yna wedi'i benderfynu'n barod, ac mae hon yn dibynnu arni.",
+        "squeeze": "Dim ond hyn a hyn o'r diwrnod sydd ar ôl, a dyma'r cwbl sy'n ffitio.",
+        "apart": "Dydy'r ffordd arall rownd ddim yn ffitio yn y diwrnod.",
+        "split": "Tria fe'r ffordd arall rownd ac mae rhywbeth arall yn torri.",
+        "move": "Llusga'r bar sydd â chylch o'i gwmpas i'r marciau streipiog."
+      }
+    },
+    "events": {
+      "default": ["y tân", "cario'r dŵr", "y pobi", "y daith mewn cwch", "gyrru'r ychen", "gwylio'r nos"],
+      "funerary": ["y plastro", "tynnu'r grid", "y cerfio", "y paentio", "yr euro", "gosod y drws"],
+      "cosmos": ["taith yr haul", "codiad y seren", "gwylfa'r lleuad", "yr awyr agored", "y wawr", "troad y flwyddyn"],
+      "water": ["y llifogydd", "cloddio'r sianel", "llenwi'r basn", "dyfrio'r caeau", "y fferi", "y cynaeafu"],
+      "trade": ["trefnu'r nwyddau", "gwerthu'r bara", "gwerthu'r cwrw", "y fferi", "y cario", "y cyfrif"]
+    },
+    "marks": {
+      "default": {
+        "pin": "Mae {{a}} yn dechrau am awr {{tick}}.",
+        "handoff": "Mae {{a}} yn dechrau'r eiliad mae {{b}} wedi gorffen.",
+        "link_zero": "Mae {{a}} yn dechrau {{count}} awr ar ôl i {{b}} orffen.",
+        "link_one": "Mae {{a}} yn dechrau {{count}} awr ar ôl i {{b}} orffen.",
+        "link_two": "Mae {{a}} yn dechrau {{count}} awr ar ôl i {{b}} orffen.",
+        "link_few": "Mae {{a}} yn dechrau {{count}} awr ar ôl i {{b}} orffen.",
+        "link_many": "Mae {{a}} yn dechrau {{count}} awr ar ôl i {{b}} orffen.",
+        "link_other": "Mae {{a}} yn dechrau {{count}} awr ar ôl i {{b}} orffen.",
+        "before": "Mae {{a}} wedi gorffen cyn i {{b}} ddechrau.",
+        "apart": "Dydy {{a}} a {{b}} byth yn digwydd ar yr un pryd.",
+        "together": "Mae {{a}} a {{b}} yn digwydd ar yr un pryd am ychydig.",
+        "span_zero": "O'r dechrau cyntaf i'r diwedd olaf mae {{count}} awr.",
+        "span_one": "O'r dechrau cyntaf i'r diwedd olaf mae {{count}} awr.",
+        "span_two": "O'r dechrau cyntaf i'r diwedd olaf mae {{count}} awr.",
+        "span_few": "O'r dechrau cyntaf i'r diwedd olaf mae {{count}} awr.",
+        "span_many": "O'r dechrau cyntaf i'r diwedd olaf mae {{count}} awr.",
+        "span_other": "O'r dechrau cyntaf i'r diwedd olaf mae {{count}} awr."
+      }
+    },
+    "door": {
+      "title": "Drws yr Orymdaith",
+      "hint": "Mae pob teilsen rwyt ti'n camu arni yn rhyddhau ei gwaith. Rho'r diwrnod mewn trefn, yna cerdda ar y teils yn y drefn honno.",
+      "read": "Mae'r diwrnod wedi'i ddarllen. Cerdda ar ei deils yn y drefn yma, o'r cyntaf.",
+      "hintButton": "Cliw"
+    }
+  },
+  "story": {
+    "invitation": "Siarad",
+    "log": {
+      "empty": "Dim byd eto. Bydd gan Fez ddigon i'w ddweud."
+    },
+    "speaker": {
+      "fez": "Fez",
+      "explorer": "Ti",
+      "ipi": "Ipi",
+      "henut": "Henut",
+      "priest": "Yr offeiriad",
+      "pharaoh": "Y pharo",
+      "voice": "Llais"
+    },
+    "wall": {
+      "wrong": "Fe dorrodd rhywun y trydydd arwydd yn anghywir. Mae wedi bod yn anghywir ers tair mil o flynyddoedd.",
+      "fixed": "Dyna ei henw hi eto.",
+      "pick": "Rho'r arwydd iawn yn ei le.",
+      "cannot": "Dwyt ti ddim yn gwybod pa arwydd sy'n perthyn fan hyn. Ddim eto."
+    },
+    "sphinx": {
+      "wrong": "Yr un ysgrifen â'r tu allan, ond chyrhaeddodd y tywod ddim fan hyn. Dau arwydd yn dal yn glir, a bwlch lle roedd y trydydd.",
+      "fixed": "Dyna'r cwbl ohono.",
+      "pick": "Rho'r arwydd rwyt ti'n ei gario yn y bwlch.",
+      "cannot": "Dau arwydd rwyt ti'n eu nabod, a bwlch alli di ddim ei lenwi. Ddim eto.",
+      "gap": "Yr arwydd sydd ar goll"
+    }
+  },
+  "lightbeamSwitch": {
+    "name": "Y Golau sy'n Troi",
+    "invitation": "Troi'r drychau",
+    "goal": "Mae'r golau'n gorffwys mewn cysegrfa, ac mae'r ffordd allan oddi tani ar agor.",
+    "rules": {
+      "shrines": "Un ddisg o olau, a chysegrfa uwchben pob ffordd allan o'r groesffordd yma. Mae'r drychau ar y llawr yn gallu cario'r golau i unrhyw un ohonyn nhw.",
+      "doors": "Mae'r ffordd allan mae'r golau'n ei chyrraedd ar agor, a'r lleill ar gau. Un llwybr golau, un ffordd ymlaen.",
+      "returning": "Dwyt ti ddim yn colli dim drwy ddewis. Cerdda 'nôl i mewn pryd bynnag rwyt ti eisiau ac anfona'r golau ffordd arall — mae'r ffordd honno'n agor, ac mae hon yn cau.",
+      "tap": "Tapia ddrych i'w droi. Mae ei dapio eto yn ei roi 'nôl."
+    },
+    "doorOpen": "Ffordd allan {{way}}: ar agor",
+    "doorShut": "Ffordd allan {{way}}: ar gau",
+    "way": {
+      "n": "y gogledd",
+      "e": "y dwyrain",
+      "s": "y de",
+      "w": "y gorllewin"
+    }
+  },
+  "handle": {
+    "name": "Y Lifer",
+    "invitation": "Tynnu'r lifer",
+    "goal": "Mae'r lifer yn hongian un ffordd neu'r llall. Beth mae un ochr yn ei agor, mae'r llall yn ei gau.",
+    "left": "Ei dynnu i'r chwith",
+    "right": "Ei dynnu i'r dde"
+  },
+  "torch": {
+    "name": "Y Ffagl",
+    "invitation": "Cynnau'r ffagl",
+    "goal": "Ffagl heb ei chynnau. Unwaith mae hi'n llosgi, does dim modd ei diffodd eto.",
+    "lit": "Mae'r ffagl yn llosgi."
+  },
+  "gateFace": {
+    "title": "Drws sy'n Aros",
+    "hint": "Rhaid i bob arwydd losgi cyn i'r drws yma agor.",
+    "lit": "{{owner}}: wedi'i gynnau",
+    "unlit": "{{owner}}: ddim eto",
+    "owner": {
+      "torch": "Ffagl",
+      "handle": "Lifer",
+      "key": "Allwedd",
+      "web": "Arwydd o'r tywod",
+      "plateStone": "Carreg ar blât",
+      "plateEmpty": "Plât wedi'i adael yn wag",
+      "other": "Peiriant"
+    },
+    "orderHint": "Cerdda ar y teils yn y drefn yma.",
+    "reset": "Dechrau eto",
+    "spoiled": "Mae'r cyfan wedi'i sbwylio: cerddaist ti ar deilsen allan o drefn.",
+    "tile": {
+      "unwalked": "Cam {{step}}: heb gerdded arni eto",
+      "inOrder": "Cam {{step}}: wedi cerdded arni yn y drefn iawn",
+      "outOfOrder": "Cam {{step}}: wedi cerdded arni allan o drefn"
+    }
+  },
+  "devLockEditor": {
+    "syntax": "Cystrawen",
+    "example": "Enghraifft",
+    "useExample": "Defnyddio'r enghraifft",
+    "title": "Golygydd cloeon",
+    "notation": "Nodiant clo",
+    "checks": "Gwiriadau",
+    "drawing": "Llun",
+    "carveAndPlay": "Cerfio a chwarae",
+    "copyLink": "Copïo'r ddolen",
+    "copied": "Dolen wedi'i chopïo",
+    "failed": "Methu copïo; mae'r ddolen yn y bar cyfeiriad",
+    "backToEditor": "← Golygydd",
+    "close": "Cau",
+    "open": "Golygydd cloeon",
+    "modeLock": "Clo",
+    "modeWeb": "Gwe",
+    "webNotation": "Nodiant gwe",
+    "openWeb": "Agor gwe",
+    "checking": "Wrthi'n gwirio…",
+    "checkedIn": "wedi'i wirio mewn {{ms}} ms",
+    "worldCarved": "lloriau dewin wedi'u cerfio mewn {{ms}} ms, unwaith",
+    "simulation": "Tyniadau",
+    "noSimulation": "Dim byd i'w chwarae drwyddo nes bod pob lle yn y byd.",
+    "summary": "Crynodeb",
+    "stillBuried": "{{percent}}% o dan y tywod o hyd",
+    "nothingBuried": "Dim byd o dan y tywod",
+    "finishes": "yn gorffen",
+    "stopsAt": "yn stopio ar {{pct}}%",
+    "notOpenYet": "ddim ar agor eto",
+    "pullAll": "Tynnu popeth o fewn cyrraedd",
+    "reset": "Ailosod",
+    "progress": "{{reachable}} o fewn cyrraedd · {{pulled}} o {{total}} wedi'u cymryd",
+    "allTaken": "Popeth wedi'i dynnu a'i gymryd.",
+    "potFront": "{{pulled}} o {{total}} wedi'u tynnu · blaen ar {{pct}}%",
+    "potOpen": "{{pulled}} o {{total}} wedi'u tynnu · ar agor",
+    "keys": "Allweddi",
+    "keysNote": "mae pob un yn agor sêl",
+    "log": "Beth ddigwyddodd",
+    "logEmpty": "Dim byd wedi'i dynnu eto.",
+    "logPull": "yn tynnu {{name}} yn {{at}}",
+    "logTake": "yn cymryd {{name}} yn {{at}}",
+    "logFront": "blaen {{pot}} i {{pct}}%",
+    "logPotOpen": "{{pot}} ar agor",
+    "logSeal": "sêl yn {{at}} ar agor",
+    "logNew": "newydd: {{names}}",
+    "pullPin": "tynnu lifer {{name}}",
+    "takePin": "cymryd allwedd {{name}}",
+    "legendCleared": "wedi'i glirio",
+    "legendBuried": "o dan y tywod",
+    "legendSeal": "sêl",
+    "legendPins": "● lifer · ■ allwedd · bach = rhan ochr"
+  },
+  "camp": {
+    "title": "Gwersyll",
+    "continue": {
+      "heading": "Y daith nawr",
+      "setOff": "Cychwyn",
+      "pyramid": "Pyramid {{level}} o {{count}} · {{tier}}",
+      "tomb": "Bedd · {{tier}}",
+      "empty": "Mae popeth ar agor ar dy fap"
+    },
+    "hint_zero": "Mae gan {{count}} hen daith rywbeth newydd i'w ddarganfod",
+    "hint_one": "Mae gan {{count}} hen daith rywbeth newydd i'w ddarganfod",
+    "hint_two": "Mae gan {{count}} hen daith rywbeth newydd i'w ddarganfod",
+    "hint_few": "Mae gan {{count}} hen daith rywbeth newydd i'w ddarganfod",
+    "hint_many": "Mae gan {{count}} hen daith rywbeth newydd i'w ddarganfod",
+    "hint_other": "Mae gan {{count}} hen daith rywbeth newydd i'w ddarganfod",
+    "comingHome": {
+      "title": "'Nôl yn y gwersyll",
+      "haulTitle": "Beth ddest ti 'nôl o'r daith",
+      "new": "NEWYDD",
+      "unpack": "Dadbacio",
+      "toCamp": "I'r gwersyll"
+    },
+    "chapter": {
+      "subtitle": "Pennod newydd",
+      "title": "Mae pyramid newydd yn codi",
+      "body": "Mae teithiau {{tier}} ar agor. Cymer hoe yn y gwersyll a chychwyn pan wyt ti'n barod.",
+      "journeyNote": "Taith {{tier}} gyntaf",
+      "later": "Wedyn"
+    },
+    "close": "Cau",
+    "entrance": {
+      "collection": "Casgliad",
+      "mosaic": "Mosaig",
+      "journeys": "Pob taith",
+      "detectors": "Synwyryddion"
+    },
+    "mapTable": {
+      "title": "Bwrdd mapiau",
+      "journeys": "Teithiau"
+    }
+  },
+  "home": {
+    "haul": {
+      "times": "×{{count}}"
+    }
+  },
+  "journeys": {
+    "tierNeed": "Ffeindia'r trysor yma",
+    "tierProgress": "{{done}} o {{total}} wedi'u gwneud",
+    "tierLockedName": "Teithiau {{tier}}",
+    "toggleTier": "Dangos neu guddio'r teithiau {{tier}}",
+    "now": "NAWR",
+    "newDot": "Rhywbeth newydd i'w ddarganfod",
+    "noteCurrentPyramid": "Ar y gweill · pyramid {{level}} o {{count}}",
+    "noteCurrentTomb": "Ar y gweill · yn y bedd",
+    "noteFinished": "Wedi gorffen",
+    "noteFinishedNews": "Wedi gorffen · rhywbeth newydd i'w ddarganfod",
+    "noteOpen": "Heb fod yno eto",
+    "noteResumePyramid": "Wedi dechrau o'r blaen · pyramid {{level}} o {{count}}",
+    "noteResumeTomb": "Wedi dechrau o'r blaen · yn y bedd",
+    "needProgress": "{{unit}}: {{found}} o {{required}}",
+    "showStops": "Dangos llefydd {{name}}",
+    "stopPyramid": "Pyramid",
+    "stopTomb": "Safle"
+  },
+  "newVersion": {
+    "title": "Fersiwn newydd!",
+    "name": "Mae'r gêm wedi newid llawer",
+    "body": "Felly mae dy daith yn dechrau eto. Mae beddau newydd, trysorau a gwersyll i'w adeiladu yn aros amdanat ti."
+  },
+  "devPrefabPreview": {
+    "firstDoor": "I'r drws cyntaf",
+    "stop": "I'r stop",
+    "secondDoor": "I'r ail ddrws",
+    "doorsInUse_zero": "{{count}} drws yn cael eu defnyddio",
+    "doorsInUse_one": "{{count}} drws yn cael ei ddefnyddio",
+    "doorsInUse_two": "{{count}} drws yn cael eu defnyddio",
+    "doorsInUse_few": "{{count}} drws yn cael eu defnyddio",
+    "doorsInUse_many": "{{count}} drws yn cael eu defnyddio",
+    "doorsInUse_other": "{{count}} drws yn cael eu defnyddio",
+    "walled": "{{count}} wedi'u cau â wal"
+  },
+  "devRoomEditor": {
+    "title": "Golygydd stafelloedd",
+    "open": "Golygydd stafelloedd",
+    "close": "Cau",
+    "tier": "Lefel",
+    "catalogue": "Agor stafell",
+    "notation": "Nodiant stafell",
+    "copyLink": "Copïo'r ddolen",
+    "copyText": "Copïo'r testun",
+    "copied": "Wedi'i gopïo",
+    "failed": "Methu copïo i'r clipfwrdd",
+    "palette": "Palet",
+    "unpainted": "heb ei baentio eto",
+    "layout": "Cynllun",
+    "mirrored": "(wedi'i adlewyrchu)",
+    "fill_zero": "Llenwi ({{count}} dewis)",
+    "fill_one": "Llenwi ({{count}} dewis)",
+    "fill_two": "Llenwi ({{count}} dewis)",
+    "fill_few": "Llenwi ({{count}} dewis)",
+    "fill_many": "Llenwi ({{count}} dewis)",
+    "fill_other": "Llenwi ({{count}} dewis)",
+    "fromDoor": "Cerdded o",
+    "toDoor": "Cerdded i",
+    "automatic": "Awtomatig",
+    "direction": {
+      "n": "Drws y gogledd",
+      "e": "Drws y dwyrain",
+      "s": "Drws y de",
+      "w": "Drws y gorllewin"
+    },
+    "checks": "Gwiriadau",
+    "sound": "Mae'r stafell yn pasio ei gwiriadau",
+    "tierDisagrees": "Mae'r pennawd yn dweud lefel {{header}}, wedi'i thynnu yma yn {{picked}}",
+    "undo": "Dadwneud",
+    "drawing": "Llun",
+    "tool": {
+      "select": "Dewis",
+      "wall": "Wal",
+      "floor": "Llawr",
+      "door": "Lle drws",
+      "stop": "Stop",
+      "chest": "Cist",
+      "portal": "Porth",
+      "mechanism": "Peiriant",
+      "erase": "Rhwbio allan",
+      "copy": "Tynnu {{letter}}"
+    },
+    "againstWall": "Mae pethau sy'n cael eu gollwng yn sefyll yn erbyn y wal ogleddol",
+    "dropHint": "Llusga eitem o'r palet ar gell; mae'n cymryd ei maint ei hun",
+    "newLayout": "Enw'r cynllun newydd",
+    "addLayout": "Copïo fel cynllun",
+    "inspector": {
+      "title": "Lle {{letter}}",
+      "optional": "Dewisol",
+      "kinds": "Mathau",
+      "counted": "Llenwi rhai yn unig",
+      "take": "Cymryd",
+      "of": "o",
+      "per": "fesul",
+      "perNone": "pob un ar ei ben ei hun",
+      "drawAnother": "Tynnu un arall",
+      "close": "Cau"
+    },
+    "refused": {
+      "notFree": "Ddim ar lawr rhydd y tu mewn i'r stafell",
+      "wallRow": "Mae lle wal yn sefyll ar y rhes gyntaf y tu mewn i'r wal ogleddol",
+      "northWall": "Mae eitem wal yn hongian ar y wal ogleddol",
+      "floorOnRing": "Dim ond waliau a lleoedd drysau sy'n mynd ar y cylch allanol",
+      "doorInside": "Mae lle drws yn sefyll ar y cylch allanol",
+      "keepStop": "Mae'r stop yn aros: gosoda fe rywle arall i'w symud",
+      "noLetter": "Mae pob llythyren wedi'i chymryd",
+      "layoutName": "Rho enw i'r cynllun sydd gan ddim cynllun arall",
+      "notation": "Dydy'r nodiant ddim yn ei dderbyn: {{message}}"
+    },
+    "layer": {
+      "wall": "yn erbyn y wal",
+      "floor": "llawr",
+      "ground": "daear",
+      "wallItem": "eitem wal"
+    },
+    "cell": "Cell {{row}},{{col}}: {{what}}",
+    "cellWhat": {
+      "wall": "wal",
+      "floor": "llawr rhydd",
+      "door": "lle drws",
+      "place": "{{letter}}, {{kinds}}"
+    },
+    "rewrites": "Mae tynnu llun yn ailysgrifennu'r testun: mae pob sylw'n symud i'r top"
+  }
+}

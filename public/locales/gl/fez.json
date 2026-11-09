@@ -1,0 +1,1730 @@
+{
+  "not-found": "Vaia, a conversa que buscas non existe.",
+  "welcome": "Exipto! Estou aquí de verdade.",
+  "welcome2": "E este mapa… paguei moitísimo por el. Máis vale que estea ben.",
+  "welcome3": "Veña. Imos ver onde está esa cruz.",
+  "pyramidIntro": "Hai números nestas pedras. E faltan algúns…",
+  "pyramidIntro2": "Agarda. Cada pedra é a suma das dúas de debaixo! Si, aquí tamén!",
+  "pyramidBlockedBlocks": "Ei, e isto que é? Eses bloques están selados. Non amosan o seu número!",
+  "pyramidBlockedBlocks2": "Non pasa nada. Mira os bloques de arredor: con eles podes calculalo.",
+  "pyramidBlockedBlocks3": "Só que non o podes escribir. Ese número tes que lembralo na cabeza.",
+  "pyramidBlockedBlocks4": "Veña, xa chegaches moi lonxe. Ti podes!",
+  "levelCompleted": "Ha! Ábrese! Veña, para dentro.",
+  "exitPillar": {
+    "1": {
+      "fez": "Ha! Luz do día! Ves ese raio de luz? Por aí saímos. Métete dentro e xa rematamos aquí."
+    },
+    "2": {
+      "fez": "Só hai unha saída, sempre ao final do corredor principal. Por moito que deamos voltas, volvemos aquí."
+    },
+    "3": {
+      "explorer": "Unha saída. Apuntado."
+    }
+  },
+  "expeditionCompleted": "Parabéns! Completaches a expedición!",
+  "expeditionCompleted2": "Xa tes unha expedición nova.",
+  "tombTutorial": "Ooh, escritura! Saberemos lela? Cos xeroglíficos que atopamos… quizais!",
+  "tombTutorial2": "Mira, contas con símbolos dentro! Ves eses ocos baleiros? Aí van os xeroglíficos. Os teus, aí abaixo.",
+  "tombTutorial3": "As contas pequenas amosan cando un símbolo está ben. Así descubrimos que símbolo vai en cada sitio.",
+  "tombTutorial4": "Todo cuberto? Entón aparece un cadeado de números. A conta grande é o código… e a tumba ábrese!",
+  "hieroglyphUnlock": "Temos un obxecto especial: con el podemos escribir nun deses bloques selados!",
+  "hieroglyphUnlock2": "Toca unha pedra que brille e arrastra o obxecto ata ela para abrila. Un bloque por pirámide.",
+  "errorHighlightTutorial": "O tesouro que atopamos ten un truco moi útil: se pos unha resposta mala, un erro brilla en vermello!",
+  "errorHighlightTutorial2": "Só brilla un bloque de cada vez, así que segue sendo un reto. Pero axuda a saber onde mirar!",
+  "earlyFeedbackTutorial": "Ves eses bloques de control? Vólvense verdes ou vermellos mentres os enches. Así sabes ao momento!",
+  "earlyFeedbackTutorial2": "Úsaos como axuda mentres resolves. Se un se volve vermello, hai algo mal por alí preto.",
+  "notEnoughHieroglyphs": "Sempre podes parar esta expedición volvendo á pantalla de viaxe.",
+  "notEnoughHieroglyphs2": "Podemos deixar a expedición e buscar noutro sitio os xeroglíficos que aínda nos faltan.",
+  "tombLoot": "Hala, o noso primeiro tesouro! Moi ben!",
+  "mapPiece": "Mira! ISTO si que é un mapa. Vello de verdade! Vale máis ca os nosos dous xuntos!",
+  "mapPiece2": "Pero só é un anaco, eh. Cada expedición por aquí agocha un, e todos xuntos sinalan unha tumba.",
+  "mapComplete": "Xa está enteiro! Mira, todos os anacos encaixan perfectamente.",
+  "mapComplete2": "Alí, onde se xuntan todas as liñas. Alí hai unha tumba.",
+  "mapComplete3": "Xa está nas nosas viaxes. Imos ver?",
+  "mapPiece3": "Leva a conta na lista de expedicións. Eu, desde logo, vou contando!",
+  "mosaicIntro": "Ooh, vidro de cores! Mira como brilla coa luz. ISO non se tira!",
+  "mosaicIntro2": "É un anaco dun debuxo. Unha fiestra enteira de vidro, e cada anaco que atopamos devolve un pouquiño dela.",
+  "mosaicIntro3": "Ti non tiñas un campamento por aí? Levámolos e montámolos alí. Quero ver que sae!",
+  "mosaicReminder": "Psst! Eses anacos de vidro aínda van tintineando na bolsa. Poñémolos na fiestra do campamento?",
+  "mosaicStarter": "Un gato na porta, e unha serpe que escapa correndo. Iso ben valía unha cunca de leite.",
+  "mosaicStarter2": "Os exipcios adoraban os gatos xusto por isto: matan as serpes e os ratos que se metían no gran.",
+  "mosaicStarter3": "Querían tanto aos gatos que fixeron deusa a unha. Bastet. Protectora da casa, da porta, e de todos os que dormen detrás dela.",
+  "mosaicJunior": "Mira a súa man: alguén lle ensina a coller a pluma.",
+  "mosaicJunior2": "O da cabeza de paxaro é Thoth. Escribir, contar, levar os rexistros: todo iso é cousa súa.",
+  "mosaicJunior3": "O ibis que seguimos río arriba? Ese é o seu paxaro. Cada número que puxemos nunha parede tamén é del.",
+  "mosaicExpert": "Esa luz non é sorte. Construíron a sala enteira para que caese xusto aí, na mañá xusta.",
+  "mosaicExpert2": "O sol é Amón-Ra: o agochado, e tamén a luz que todos poden ver. As dúas cousas á vez.",
+  "mosaicExpert3": "Quen mide o ceo con tanta precisión, pode medir calquera cousa. Levamos todo o camiño resolvendo as súas contas.",
+  "mosaicMaster": "Pel verde, e trigo que lle sae do corpo. Iso está feito a propósito.",
+  "mosaicMaster2": "Osiris. Matárono, volvérono xuntar, e agora é o que volve cada ano cando o río enche os campos de auga.",
+  "mosaicMaster3": "Aquí abaixo esa é a idea: morto non quere dicir rematado. Que pensamento tan alegre para unha tumba, non?",
+  "mosaicWizard": "Un corazón nun lado. Unha pluma no outro. E están en equilibrio.",
+  "mosaicWizard2": "A pluma é Maat: a verdade, o equilibrio, como teñen que ser as cousas. Se o corazón pesa máis ca esa pluma, non pasas pola porta.",
+  "mosaicWizard3": "O chacal que suxeita a balanza é Anubis. El é quen te trae ata aquí.",
+  "mosaicFinale": "Dá un paso atrás un momento. Mira todo o que sacamos daquelas pirámides.",
+  "mosaicFinale2": "Cada anaco é parte del: o que suxeita a balanza. Estivo mirando todo o camiño.",
+  "mosaicFinale3": "Ese é o seu rexistro de nós. E eu diría que está en equilibrio.",
+  "shopFirstVisit": "Ah, xa chegamos. O meu posto. Xa che dixen que eu estaba nisto polo comercio.",
+  "shopFirstVisit2": "Todo o que hai neste mostrador saqueino de algún sitio. Iso de aí vén de dúas tumbas atrás.",
+  "shopArrival": "Ah, o meu posto! Déixame poñer o que fun collendo polo camiño.",
+  "shopArrival2": "As cousas raras son as máis caras, pero págoche calquera bagatela que leves enriba.",
+  "arrival": {
+    "starter_1": {
+      "1": {
+        "explorer": "Mira, alí atrás! A Esfinxe!"
+      },
+      "2": {
+        "explorer": "Enorme, mesmo desde aquí."
+      },
+      "3": {
+        "explorer": "Din que hai escritura debaixo das súas patas. Que ninguén sabe ler."
+      },
+      "4": {
+        "explorer": "Despois. Primeiro esta pirámide!"
+      }
+    },
+    "starter_2": {
+      "1": {
+        "fez": "Ha! Por fin algo que entendo. Todo o que subía polo Nilo pasaba primeiro por aquí."
+      },
+      "2": {
+        "fez": "E os mercadores apuntan todo. Quen mercou que, quen lle debía a quen, quen chegou tarde…"
+      },
+      "3": {
+        "explorer": "Quen chegou tarde?"
+      },
+      "4": {
+        "fez": "Sobre todo quen chegou tarde!"
+      },
+      "5": {
+        "fez": "Tres mil anos. As mercadorías desapareceron, e os recibos aínda están aquí. Típico!"
+      }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Mira esas portas! A xente viña aquí pedir protección. E logo unha porta así quedaba pechada."
+      },
+      "2": {
+        "explorer": "Pechada para quen?"
+      },
+      "3": {
+        "fez": "Para quen non pedise con educación. Para nós, vaia."
+      },
+      "4": {
+        "fez": "Todo o que está selado neste país, alguén o selou en serio. Moi en serio."
+      },
+      "5": {
+        "fez": "E os gatos! Aquí adoraban os gatos. Non paraban de facerlles mimos."
+      }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "Ai, este gústame. Aquí aprendían a escribir! Símbolo a símbolo, en anacos de potes rotos. O papiro era carísimo para os nenos."
+      },
+      "2": {
+        "explorer": "Practicaban no lixo?"
+      },
+      "3": {
+        "fez": "No que houbese! E cando aprendes abondo destes, de súpeto unha parede xa non é só decoración."
+      },
+      "4": {
+        "explorer": "Esa Esfinxe… quero volver mirala."
+      },
+      "5": {
+        "fez": "Aínda non. Axiña."
+      }
+    },
+    "junior_1": {
+      "1": {
+        "fez": "Volvían cada ano coa enchente, case o mesmo día."
+      },
+      "2": {
+        "fez": "Así que a xente empezou a contar os días entre unha volta e outra. De aí vén o calendario: dos paxaros."
+      },
+      "3": {
+        "explorer": "Dos paxaros."
+      },
+      "4": {
+        "fez": "Paxaros e papeis. Sempre son paxaros e papeis."
+      }
+    },
+    "junior_2": {
+      "1": {
+        "fez": "Aquí é onde o facían todo. As tumbas non: as cousas que ían dentro."
+      },
+      "2": {
+        "fez": "Mira os moldes. A mesma pulseira, corenta veces."
+      },
+      "3": {
+        "explorer": "Para corenta persoas?"
+      },
+      "4": {
+        "fez": "Para quen puidese pagala. Un nobre quería o mesmo que un rei, a un prezo que un nobre puidese pagar."
+      }
+    },
+    "junior_3": {
+      "1": {
+        "fez": "Este é Thoth. Deus dos segredos e da maxia, estou bastante seguro."
+      },
+      "2": {
+        "explorer": "Bastante."
+      },
+      "3": {
+        "fez": "Un noventa por cento. En fin: os símbolos que estás coleccionando son seus."
+      }
+    },
+    "junior_4": {
+      "1": {
+        "fez": "Cen metros de alto, e un lume no cumio que nunca se apagaba."
+      },
+      "2": {
+        "fez": "Os mariñeiros atopaban a costa desde un día de distancia. Antes atopábana chocando con ela."
+      },
+      "3": {
+        "explorer": "E como atopas algo por aquí sen un faro?"
+      },
+      "4": {
+        "fez": "Pregúntaslle a alguén que xa estivo. Ese é todo o meu oficio."
+      }
+    },
+    "expert_1": {
+      "1": {
+        "fez": "Unhas sesenta tumbas cavadas nun só val, e todas abertas antes de que chegásemos nós."
+      },
+      "2": {
+        "explorer": "Abertas por quen?"
+      },
+      "3": {
+        "fez": "Por xente coma nós, case sempre. Antes."
+      },
+      "4": {
+        "fez": "Que che parece?"
+      },
+      "5": {
+        "explorer": "Que chegamos tarde."
+      }
+    },
+    "expert_2": {
+      "1": {
+        "fez": "Amón-Ra. O sol. O favorito de todos, e xa ves por que: mira que tamaño ten isto."
+      },
+      "2": {
+        "explorer": "Dous nomes."
+      },
+      "3": {
+        "fez": "O mesmo deus, creo. Aos máis famosos poñíanlles dobre."
+      }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Todo o país é unha raia verde a cada lado dun río, e aquí ábrese e queda así."
+      },
+      "2": {
+        "fez": "Todo medra. E todo morde."
+      },
+      "3": {
+        "explorer": "E nós por cal das dúas vimos?"
+      },
+      "4": {
+        "fez": "Eu esperaba que por ningunha."
+      }
+    },
+    "expert_4": {
+      "1": {
+        "fez": "A primeira. Antes disto, os reis ían debaixo dunha lousa chá coma todo o mundo."
+      },
+      "2": {
+        "fez": "Alguén estivo aquí e pensou: e se facemos iso, pero seis veces, cara arriba?"
+      },
+      "3": {
+        "explorer": "E funcionou?"
+      },
+      "4": {
+        "fez": "Ela segue en pé e el non. Depende de como o mires."
+      }
+    },
+    "master_1": {
+      "1": {
+        "fez": "Dous millóns de bloques. Alguén os contou."
+      },
+      "2": {
+        "explorer": "Alguén os contou?"
+      },
+      "3": {
+        "fez": "Sempre hai alguén que conta. Iso é o que a xente esquece de todo isto: dirixíano escribáns."
+      },
+      "4": {
+        "fez": "Precioso, eh? Non quero nin pensar como serían as contas dos salarios."
+      }
+    },
+    "master_2": {
+      "1": {
+        "fez": "Instrucións. Iso é todo: que dicir, e en que orde, para que a viaxe saia ben."
+      },
+      "2": {
+        "explorer": "Un manual."
+      },
+      "3": {
+        "fez": "Un manual para estar morto. Esta xente apuntaba todo."
+      },
+      "4": {
+        "fez": "E iso, co que andamos buscando, é a primeira boa noticia en toda a semana."
+      }
+    },
+    "master_3": {
+      "1": {
+        "fez": "Ah. O campamento de alguén."
+      },
+      "2": {
+        "explorer": "É recente?"
+      },
+      "3": {
+        "fez": "Máis ou menos. Comida en lata e unha tose ruín, polo que se ve."
+      },
+      "4": {
+        "fez": "Entraron máis lonxe ca isto e non levaron as súas cousas."
+      },
+      "5": {
+        "explorer": "E volveron por elas?"
+      },
+      "6": {
+        "fez": "…Mellor sigamos andando."
+      }
+    },
+    "master_4": {
+      "1": {
+        "fez": "ISTO é o que os outros copiaban. Mira a cor: tres mil anos e aínda parece mollada."
+      },
+      "2": {
+        "explorer": "Henut poríase furiosa."
+      },
+      "3": {
+        "fez": "Henut poríase a tomar notas."
+      }
+    },
+    "wizard_1": {
+      "1": {
+        "fez": "De noite o sol métese debaixo do mundo e sae polo outro lado. Iso é todo o que crían."
+      },
+      "2": {
+        "fez": "Doce horas na escuridade, con cousas no camiño, e alguén ten que levalo ata o final."
+      },
+      "3": {
+        "explorer": "Iso é o que estivemos facendo nós."
+      },
+      "4": {
+        "fez": "Eu intentaba non dicilo."
+      },
+      "5": {
+        "explorer": "A area segue entrando."
+      },
+      "6": {
+        "fez": "Leva tres mil anos entrando. Non para, só dá voltas."
+      },
+      "7": {
+        "fez": "Énchese, dá a volta e volve empezar. Igual que o sol."
+      }
+    },
+    "wizard_2": {
+      "1": {
+        "fez": "Dous, de dezaoito metros de alto, e os dous son Amenhotep."
+      },
+      "2": {
+        "fez": "Os gregos botáronlles unha ollada e decidiron que era un heroe deles. Memnón. O nome quedou dous mil anos."
+      },
+      "3": {
+        "explorer": "E que nome pon?"
+      },
+      "4": {
+        "fez": "O seu. Tallado no trono, onde sempre estivo."
+      },
+      "5": {
+        "fez": "Ninguén o leu."
+      },
+      "6": {
+        "fez": "Despois do terremoto, o do norte cantaba ao amencer. Unha nota, cada mañá, cando o sol quentaba a greta."
+      },
+      "7": {
+        "explorer": "E agora?"
+      },
+      "8": {
+        "fez": "Un emperador mandouno arranxar. Desde entón non fai nin un son."
+      }
+    },
+    "wizard_3": {
+      "1": {
+        "fez": "A balanza. Corazón nun lado, pluma no outro… así que gaña un bo corazón ben pesado, supoño."
+      },
+      "2": {
+        "explorer": "E unha cousa pesada, cara a onde vai?"
+      },
+      "3": {
+        "fez": "…Cara abaixo."
+      },
+      "4": {
+        "fez": "Ah."
+      },
+      "5": {
+        "fez": "Lixeiro. Tes que querelo LIXEIRO."
+      }
+    },
+    "wizard_4": {
+      "1": {
+        "fez": "A pedra do cumio ponse a última e ponse de ouro, para que todo colla a primeira luz."
+      },
+      "2": {
+        "explorer": "Para quen?"
+      },
+      "3": {
+        "fez": "Para quen mirase. Esa era a idea: nunca foi para o home de dentro."
+      }
+    }
+  },
+  "tomb": {
+    "starter": {
+      "1": {
+        "ipi": "Eh! As mans quietas! Esa xerra é miña!"
+      },
+      "2": {
+        "fez": "…Esa xerra acaba de falar?!"
+      },
+      "3": {
+        "ipi": "Fun eu. Terceiro estante, a que ten o bocado roto. Esa é miña."
+      },
+      "4": {
+        "explorer": "Vale, vale! Queda aí. Quen es ti?"
+      },
+      "5": {
+        "ipi": "Ipi. Corenta anos levei as contas. Corenta!"
+      },
+      "6": {
+        "fez": "As contas? De quen?"
+      },
+      "7": {
+        "ipi": "De todo o mundo! Quen debía que, ata o último saco de gran."
+      },
+      "8": {
+        "ipi": "Esa Henut, aí ao norte? Once deben de lapislázuli. Nunca mos pagou!"
+      },
+      "9": {
+        "explorer": "E aínda te lembras diso, despois de tanto tempo?"
+      },
+      "10": {
+        "ipi": "Está escrito! O que está escrito, pasou."
+      },
+      "11": {
+        "ipi": "Só eses Horis… Hori o barqueiro, Hori o panadeiro… e aquel OUTRO Hori."
+      },
+      "12": {
+        "fez": "E tamén tiñas gatos? Todo o mundo tiña gatos, non? Que cousiñas tan riquiñas!"
+      },
+      "13": {
+        "ipi": "Riquiñas? Eran para o gran! Sabes canto che custa un rato nunha estación enteira?"
+      },
+      "14": {
+        "fez": "…Ah. Vale."
+      },
+      "15": {
+        "ipi": "Dille a Henut que te manda Ipi. Iso estragaralle a tarde."
+      },
+      "16": {
+        "fez": "Caeume ben!"
+      },
+      "17": {
+        "explorer": "A ti o que che gusta é que aínda lle deban cartos."
+      }
+    },
+    "junior": {
+      "1": {
+        "henut": "Por fin. Viñestes polo lapislázuli. Supoño que Ipi segue dándolle voltas ao lapislázuli."
+      },
+      "2": {
+        "explorer": "Segue."
+      },
+      "3": {
+        "henut": "Era vidro. Vidro precioso. El sabíao."
+      },
+      "4": {
+        "fez": "…A pulseira tamén era de vidro?"
+      },
+      "5": {
+        "henut": "Todo o que hai aquí é a mellor imitación que se podía mercar, rapaz, e escollín cada peza eu mesma."
+      },
+      "6": {
+        "henut": "Agora. A parede. O terceiro símbolo, ese non é o meu nome. Algún aprendiz cun cicel e sen ninguén que o vixiase."
+      },
+      "7": {
+        "henut": "Estiveches aprendendo os símbolos. Nótase. Arránxao."
+      }
+    },
+    "juniorFixed": {
+      "1": {
+        "henut": "Xa está. Agora seguirá sendo o meu nome dentro de mil anos."
+      },
+      "2": {
+        "explorer": "Ipi escribiuno ben."
+      },
+      "3": {
+        "henut": "Ipi escribía todo ben. Era a súa única virtude."
+      },
+      "4": {
+        "fez": "Importa iso, aquí abaixo?"
+      },
+      "5": {
+        "henut": "É o único que importa."
+      },
+      "6": {
+        "fez": "Alí arriba tiña unha parede enteira de Thoth. O deus dos segredos."
+      },
+      "7": {
+        "henut": "Thoth conta. Thoth apunta o que fixeches, e queda apuntado."
+      },
+      "8": {
+        "henut": "Segredos é como lle chama a xente ás contas cando non as sabe facer."
+      },
+      "9": {
+        "henut": "Se ides seguir, e está claro que si, hai un sacerdote en Karnak que lles debe aos mortos un servizo que nunca fixo. Vai estar insoportable con iso. Os sacerdotes sono."
+      },
+      "10": {
+        "henut": "…Coñecémonos?"
+      },
+      "11": {
+        "fez": "Lembraríame."
+      },
+      "12": {
+        "henut": "Si. E eu tamén."
+      }
+    },
+    "expert": {
+      "1": {
+        "priest": "Ti non es a persoa que estou esperando."
+      },
+      "2": {
+        "explorer": "E a quen esperas?"
+      },
+      "3": {
+        "priest": "A alguén co selo. Había que traelo aquí, poñelo aí e dicir as palabras sobre el. Ningunha desas tres cousas pasou."
+      },
+      "4": {
+        "fez": "…E canto tempo levas esperando?"
+      },
+      "5": {
+        "priest": "Non levo a conta. Non sería profesional."
+      },
+      "6": {
+        "priest": "Unha ofrenda de verdade é unha cousa que un rei levaba na man cando o enterraron. Non unha copia. Non algo que se pareza. A cousa mesma, coa súa marca."
+      },
+      "7": {
+        "priest": "Trae iso e serás anunciado. Trae outra cousa e non o serás."
+      },
+      "8": {
+        "explorer": "Anunciado a quen?"
+      },
+      "9": {
+        "priest": "Xa o saberás. Todo o mundo o sabe, máis tarde ou máis cedo."
+      },
+      "10": {
+        "fez": "A este gústalle moito o sol. Todo ese Amón-Ra aí fóra."
+      },
+      "11": {
+        "priest": "Amón é o agochado. Ra é o que todo o mundo pode ver."
+      },
+      "12": {
+        "priest": "Son o mesmo deus. Iso non é casualidade, é toda a idea."
+      },
+      "13": {
+        "fez": "…Claro. Si. Iso xa o sabía eu."
+      },
+      "14": {
+        "explorer": "Non o sabías."
+      },
+      "15": {
+        "fez": "Non o sabía."
+      }
+    },
+    "expertB": {
+      "1": {
+        "fez": "Aquí non entrou ninguén. Nin nós, nin os de antes, ninguén."
+      },
+      "2": {
+        "explorer": "Como o sabes?"
+      },
+      "3": {
+        "fez": "Porque aínda hai algo dentro."
+      }
+    },
+    "master": {
+      "1": {
+        "pharaoh": "Podes achegarte. Achegácheste. Moi ben."
+      },
+      "2": {
+        "fez": "Súa maxestade."
+      },
+      "3": {
+        "pharaoh": "Si."
+      },
+      "4": {
+        "explorer": "Necesitamos o teu selo."
+      },
+      "5": {
+        "pharaoh": "Coma todos. O meu levárono dúas veces e devolvérono ningunha."
+      },
+      "6": {
+        "pharaoh": "A segunda vez deixaron unha copia. Unha COPIA. Na MIÑA tumba. Coma se eu non fose mirar."
+      },
+      "7": {
+        "explorer": "E a copia aínda está aquí?"
+      },
+      "8": {
+        "pharaoh": "Pois claro que está aquí, non vale nada. Está no estante onde debería estar o de verdade, estando mal."
+      },
+      "9": {
+        "pharaoh": "Lévaa se queres. Lévalla a ese sacerdote. A ver ata onde chegas con ela."
+      },
+      "10": {
+        "fez": "…Está pasándoo en grande."
+      },
+      "11": {
+        "pharaoh": "É a mellor semana que teño en novecentos anos."
+      },
+      "12": {
+        "fez": "Aí na parede está Osiris. O señor dos mortos. Que cousa máis triste."
+      },
+      "13": {
+        "pharaoh": "É VERDE, animal ridículo."
+      },
+      "14": {
+        "pharaoh": "Verde coma un campo despois da enchente. Matárono, volvérono xuntar, e volve todos os anos sen faltar un."
+      },
+      "15": {
+        "pharaoh": "Aquí abaixo iso non é triste, é toda a idea. Morto non quere dicir rematado."
+      }
+    },
+    "wizard": {
+      "1": {
+        "priest": "Déixao aí. Aí. Iso é."
+      },
+      "2": {
+        "priest": "…"
+      },
+      "3": {
+        "priest": "É a primeira vez que fago isto. Xa empezaba a pensar que esquecera como se facía."
+      },
+      "4": {
+        "explorer": "E esquecéraso?"
+      },
+      "5": {
+        "priest": "Por completo. Volveu."
+      }
+    },
+    "wizardB": {
+      "1": {
+        "fez": "A súa corda. Aínda atada."
+      },
+      "2": {
+        "explorer": "Chegaron ata aquí."
+      },
+      "3": {
+        "fez": "Máis lonxe aínda. E despois volveron subir por ela."
+      },
+      "4": {
+        "explorer": "Hai un caderno."
+      },
+      "5": {
+        "fez": "Que pon?"
+      },
+      "6": {
+        "explorer": "Non sei ler a escritura. Volvemos polo selo. Fixemos un mellor."
+      },
+      "7": {
+        "explorer": "Non enganamos a ninguén."
+      },
+      "8": {
+        "fez": "…Falsificárono porque non sabían ler para que servía."
+      },
+      "9": {
+        "explorer": "E despois foron para casa."
+      }
+    },
+    "wizardC": {
+      "1": {
+        "fez": "Para un momento. Mira todo o que sacamos daquelas pirámides."
+      },
+      "2": {
+        "explorer": "É un debuxo."
+      },
+      "3": {
+        "fez": "Foi un debuxo todo o tempo."
+      }
+    }
+  },
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Unha cova! O mapa amosaba a porta dunha adega, e isto é un monte enteiro!"
+      },
+      "2": {
+        "fez": "Que listo. Gardar a mercadoría dentro dun monte: a ningún ladrón se lle ocorrería."
+      },
+      "3": {
+        "explorer": "A nós ocorréusenos."
+      },
+      "4": {
+        "fez": "Nós non somos ladróns. Somos clientes. Clientes que chegan moi tarde."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Ten que ser aquí. Henut! A dos once deben de lapislázuli!"
+      },
+      "2": {
+        "fez": "Que cres, levaremos unha parte se cobramos a débeda?"
+      },
+      "3": {
+        "explorer": "Ti aínda non cobraches nada."
+      },
+      "4": {
+        "fez": "Gústame facer as contas con tempo."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Así que aquí está o sacerdote de Henut. Insoportable, dixo ela."
+      },
+      "2": {
+        "fez": "Que pensas, levámoslle algo? Flores?"
+      },
+      "3": {
+        "explorer": "Está morto."
+      },
+      "4": {
+        "fez": "Por iso mesmo. Hai que dar unha boa primeira impresión."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Aquí só podía entrar o sumo sacerdote. E agora nós!"
+      },
+      "2": {
+        "explorer": "E podemos?"
+      },
+      "3": {
+        "fez": "Non hai ninguén na porta para dicir que non."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Mira, o mapa acaba aquí. Area, e despois nada."
+      },
+      "2": {
+        "explorer": "Entón estamos no sitio bo."
+      },
+      "3": {
+        "fez": "Iso digo eu. Iso é xusto o que me pon nervioso."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "A sala de Osiris! Verde, claro. Porque volve cada ano, coma o gran."
+      },
+      "2": {
+        "explorer": "Ti sempre o soubeches."
+      },
+      "3": {
+        "fez": "Sempre."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "O almacén dos propios deuses! Que gardas cando xa o tes todo?"
+      },
+      "2": {
+        "explorer": "O que che trae a xente."
+      },
+      "3": {
+        "fez": "…Si. Será iso."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Reino das forzas do cosmos. Vaia, vaia."
+      },
+      "2": {
+        "fez": "Se eu tivese algo para vender que non valese moito, tamén lle poría ese nome."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "De súpeto teño a sensación de que fixen algo mal."
+      },
+      "2": {
+        "explorer": "Como que?"
+      },
+      "3": {
+        "fez": "Nin idea. Iso é o peor."
+      }
+    }
+  },
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Tantas pancas e portas, para unha soa adega!"
+      },
+      "2": {
+        "fez": "Entón alí abaixo hai algo bo. Ninguén se molesta tanto por lixo."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Uf. Esas portas eran moito máis esixentes cas de Ipi."
+      },
+      "2": {
+        "fez": "Bueno. A señora tiña cartos, claro."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Uf, por fin! Esa cova non nos quería dentro para nada."
+      },
+      "2": {
+        "explorer": "Creo que esa era a idea."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Psst… por que estou falando baixiño?"
+      },
+      "2": {
+        "explorer": "Nin idea. Eu tamén o fago."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Uf. Aínda me treme o rabo pola última porta."
+      },
+      "2": {
+        "fez": "Un rei que pecha así as súas cousas… non quere perdelas por nada do mundo."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Ves? Quédaste baixo terra o tempo abondo, e volves saír."
+      },
+      "2": {
+        "explorer": "Iso tamén é Osiris?"
+      },
+      "3": {
+        "fez": "Non, iso é cousa miña."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Portas coma esas… antes teriamos dado a volta sen máis."
+      },
+      "2": {
+        "explorer": "Agora xa non."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Tres pisos de cova, e só entón a porta principal."
+      },
+      "2": {
+        "explorer": "Entón pagará a pena."
+      },
+      "3": {
+        "fez": "Iso din sempre. E logo é unha xerra."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "O último anaco de escuridade. Nótoo."
+      },
+      "2": {
+        "explorer": "Iso dixeches na anterior."
+      },
+      "3": {
+        "fez": "E case acertei."
+      }
+    }
+  },
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Mira iso! Unha pirámide baixo terra! Para un mercador!"
+      },
+      "2": {
+        "fez": "Ou gañaba moitísimo, ou regateaba moitísimo."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Mira como brilla a punta ao sol! Ouro de verdade, seguro."
+      },
+      "2": {
+        "explorer": "No fondo dun burato. Para quen brilla?"
+      },
+      "3": {
+        "fez": "Para ela. Xa se ve que tipo de muller era."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Hm. Pódese vender algo que xa é dun deus?"
+      },
+      "2": {
+        "explorer": "Pregúntallo ao deus."
+      },
+      "3": {
+        "fez": "Prefiro que non."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Cres que ese sacerdote sabe que andamos por aquí dentro?"
+      },
+      "2": {
+        "explorer": "El non leva a conta. Non sería profesional."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Olla para ela, soíña ao sol. Preciosa, eh?"
+      },
+      "2": {
+        "fez": "E se facemos un debuxo e marchamos?"
+      },
+      "3": {
+        "explorer": "Ti non sabes debuxar."
+      },
+      "4": {
+        "fez": "…Non. Pois para dentro."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Quen estea aí dentro conta con volver. Ese é o trato por aquí."
+      },
+      "2": {
+        "explorer": "E canto tempo leva esperando?"
+      },
+      "3": {
+        "fez": "Moito. Pero vai co traballo. Estar morto é case todo esperar."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "explorer": "Hala."
+      },
+      "2": {
+        "fez": "Si."
+      },
+      "3": {
+        "fez": "Ás veces xa non queda nada que dicir, verdade?"
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Ves esa mancha de sol na pirámide? Podías saber a hora por ela."
+      },
+      "2": {
+        "explorer": "E que hora é?"
+      },
+      "3": {
+        "fez": "…Pola tarde. Máis ou menos. Eu non son un reloxo."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Aí está. Todas as liñas do mapa acaban aquí."
+      },
+      "2": {
+        "explorer": "Entón este é o final."
+      },
+      "3": {
+        "fez": "Do mapa, si. Que curioso. Pensei que me sentiría mellor."
+      }
+    }
+  },
+  "camp": {
+    "firstHome": {
+      "1": {
+        "fez": "Este é o teu campamento? Un lume e un baúl?"
+      },
+      "2": {
+        "explorer": "O noso campamento."
+      },
+      "3": {
+        "fez": "O noso. Vale. Entón eu quedo co sitio xunto ao lume."
+      },
+      "4": {
+        "fez": "Ao fin e ao cabo son un lagarto. Cando me convén."
+      }
+    },
+    "homeHaul": {
+      "1": {
+        "fez": "A desempaquetar! O mellor de toda a viaxe."
+      },
+      "2": {
+        "explorer": "Mellor ca a pirámide?"
+      },
+      "3": {
+        "fez": "A pirámide non é nosa. Isto si."
+      }
+    },
+    "homeEmpty": {
+      "1": {
+        "explorer": "Coas mans baleiras."
+      },
+      "2": {
+        "fez": "E que? Camiñamos. Iso tamén conta."
+      },
+      "3": {
+        "explorer": "Cara a que?"
+      },
+      "4": {
+        "fez": "As miñas patas. Son moi curtiñas, sabes?"
+      }
+    },
+    "rested": {
+      "1": {
+        "fez": "Xa está. Séntelo un pouco mellor?"
+      },
+      "2": {
+        "explorer": "Só era un rabuñazo."
+      },
+      "3": {
+        "fez": "Eu nin mirei. E aínda así tiven que sentar."
+      }
+    },
+    "chapterJunior": {
+      "1": {
+        "fez": "Ben, iso saíu xenial. A seguinte!"
+      },
+      "2": {
+        "explorer": "Non foi tan fácil."
+      },
+      "3": {
+        "fez": "Agora si. Despois todo é fácil."
+      }
+    },
+    "chapterExpert": {
+      "1": {
+        "fez": "Por aí fóra hai trampas. De verdade. Morden."
+      },
+      "2": {
+        "fez": "Que te fas dano? Pois volvemos andando. Na casa cúraste."
+      },
+      "3": {
+        "explorer": "E ti?"
+      },
+      "4": {
+        "fez": "Eu vou detrás de ti. Alí é máis seguro."
+      }
+    },
+    "chapterMaster": {
+      "1": {
+        "fez": "Catro pirámides alí fóra. Lembras cando só había unha?"
+      },
+      "2": {
+        "explorer": "Non foi hai tanto."
+      },
+      "3": {
+        "fez": "Non. Pero parece."
+      }
+    },
+    "chapterWizard": {
+      "1": {
+        "fez": "Mira a última. Coa punta de ouro e todo!"
+      },
+      "2": {
+        "fez": "Esa vainos custar. A última sempre custa."
+      },
+      "3": {
+        "explorer": "Custar que?"
+      },
+      "4": {
+        "fez": "…Xa non estou seguro."
+      }
+    },
+    "firstFind": {
+      "1": {
+        "fez": "Mira iso! Coma se sempre estivese aí!"
+      },
+      "2": {
+        "fez": "Morro de ganas de poñerlle unha etiqueta co prezo."
+      },
+      "3": {
+        "explorer": "Nin se che ocorra."
+      },
+      "4": {
+        "fez": "Non, non. O da casa non se vende. Xa o sei."
+      }
+    },
+    "structureDone": {
+      "1": {
+        "fez": "Xa está! Non falta nin unha peza!"
+      },
+      "2": {
+        "explorer": "Todo feito por nós."
+      },
+      "3": {
+        "fez": "Bueno. Eu sobre todo sinalaba."
+      }
+    }
+  },
+  "animal": {
+    "forSale": {
+      "1": {
+        "fez": "Mira o que hai no posto! Agora fago transportes."
+      },
+      "2": {
+        "explorer": "Está mastigando."
+      },
+      "3": {
+        "fez": "Iso vai incluído no prezo."
+      }
+    },
+    "boughtDonkey": {
+      "1": {
+        "fez": "Vendido! Un burro. Teimudo, pero carga con todo."
+      },
+      "2": {
+        "explorer": "E onde está?"
+      },
+      "3": {
+        "fez": "Xa vai camiño da casa. Prefire andar sen nós."
+      }
+    },
+    "blockedDonkey": {
+      "1": {
+        "fez": "Non imos andar tan lonxe con todas estas cousas. Para iso fai falta un burro."
+      },
+      "2": {
+        "fez": "E adiviña quen ten un? Eu. No meu posto, na cámara de Henut."
+      }
+    },
+    "throughDonkey": {
+      "1": {
+        "explorer": "Quere vir."
+      },
+      "2": {
+        "fez": "Hoxe. Pregúntallo mañá outra vez."
+      }
+    },
+    "arrivesDonkey": {
+      "1": {
+        "fez": "Aí está! Chegou antes ca nós."
+      },
+      "2": {
+        "explorer": "E atopou o lume."
+      },
+      "3": {
+        "fez": "O meu sitio. Bueno. El chegou primeiro."
+      }
+    },
+    "boughtCart": {
+      "1": {
+        "fez": "Un carro! Dúas rodas, e case non renxen."
+      },
+      "2": {
+        "explorer": "Case?"
+      },
+      "3": {
+        "fez": "O renxer vai de agasallo."
+      }
+    },
+    "blockedCart": {
+      "1": {
+        "fez": "O burro non leva nin unha bolsa máis. Pregunteille."
+      },
+      "2": {
+        "fez": "Un carro, iso é o que nos fai falta. Hai un no meu posto, onde o sumo sacerdote."
+      }
+    },
+    "throughCart": {
+      "1": {
+        "explorer": "Oes iso?"
+      },
+      "2": {
+        "fez": "É o carro. Canta un pouquiño."
+      },
+      "3": {
+        "explorer": "Todo o camiño?"
+      }
+    },
+    "arrivesCart": {
+      "1": {
+        "fez": "Un carro no noso campamento! Agora parece que imos a algún sitio."
+      },
+      "2": {
+        "explorer": "É que imos a algún sitio."
+      },
+      "3": {
+        "fez": "Si, pero agora vese."
+      }
+    },
+    "boughtCamel": {
+      "1": {
+        "fez": "Un camelo! Aguanta días sen auga. Eu non, ollo."
+      },
+      "2": {
+        "explorer": "Está mirando para ti."
+      },
+      "3": {
+        "fez": "Mírame por riba do ombro. Os camelos sempre te miran por riba do ombro."
+      }
+    },
+    "blockedCamel": {
+      "1": {
+        "fez": "O Santuario interior? A pé non chegamos nunca."
+      },
+      "2": {
+        "fez": "Que casualidade, teño un camelo. No meu posto, onde o sumo sacerdote."
+      }
+    },
+    "throughCamel": {
+      "1": {
+        "fez": "Está axeonllándose! Por min!"
+      },
+      "2": {
+        "explorer": "Para que poidamos subir."
+      },
+      "3": {
+        "fez": "Déixame crelo."
+      }
+    },
+    "arrivesCamel": {
+      "1": {
+        "fez": "Aí está. Facendo coma se o campamento fose seu."
+      },
+      "2": {
+        "explorer": "E o burro?"
+      },
+      "3": {
+        "fez": "Fai coma que non o ve. Igual ca min."
+      }
+    },
+    "boughtSecondDonkey": {
+      "1": {
+        "fez": "Outro burro! Agora o primeiro ten con quen falar."
+      },
+      "2": {
+        "explorer": "Falar?"
+      },
+      "3": {
+        "fez": "Ornear. É falar, pero máis alto."
+      }
+    },
+    "blockedSecondDonkey": {
+      "1": {
+        "fez": "O burro non quere seguir. Só non, di."
+      },
+      "2": {
+        "explorer": "Iso dixo?"
+      },
+      "3": {
+        "fez": "Eu falo burro. Quere un compañeiro, e eu teño un no meu posto, no tesouro do faraón."
+      }
+    },
+    "throughSecondDonkey": {
+      "1": {
+        "fez": "Escóitaos! Cada un máis alto ca o outro."
+      },
+      "2": {
+        "explorer": "Quen gaña?"
+      },
+      "3": {
+        "fez": "Nós non. Temos que escoitalos."
+      }
+    },
+    "arrivesSecondDonkey": {
+      "1": {
+        "fez": "Míraos. Coma se se coñecesen de toda a vida."
+      },
+      "2": {
+        "explorer": "Coma nós."
+      },
+      "3": {
+        "fez": "Nós orneamos menos."
+      }
+    },
+    "boughtSecondCamel": {
+      "1": {
+        "fez": "Outro camelo. Si. A min tampouco me gustan."
+      },
+      "2": {
+        "fez": "Pero este polo menos parece simpático."
+      },
+      "3": {
+        "explorer": "Está mirando o teu fez."
+      }
+    },
+    "blockedSecondCamel": {
+      "1": {
+        "fez": "A sala de Osiris. Cun só camelo non chegamos."
+      },
+      "2": {
+        "fez": "Por sorte teño outro, no meu posto do tesouro do faraón. O último que me queda."
+      },
+      "3": {
+        "explorer": "Iso dis sempre."
+      }
+    },
+    "throughSecondCamel": {
+      "1": {
+        "fez": "Está comendo o meu fez!"
+      },
+      "2": {
+        "explorer": "Un camelo simpático."
+      },
+      "3": {
+        "fez": "Demasiado simpático."
+      }
+    },
+    "arrivesSecondCamel": {
+      "1": {
+        "fez": "Dous camelos. Agora mírame por riba do ombro os dous."
+      },
+      "2": {
+        "explorer": "Pois vai poñerte cos burros."
+      },
+      "3": {
+        "fez": "Xa estou."
+      }
+    },
+    "boughtSturdyCart": {
+      "1": {
+        "fez": "Un carro máis forte. Este non canta polo camiño."
+      },
+      "2": {
+        "explorer": "Ten flores pintadas."
+      },
+      "3": {
+        "fez": "Para que sexa máis forte."
+      }
+    },
+    "blockedSturdyCart": {
+      "1": {
+        "fez": "O carro vello non chega alí enteiro. Fai falta algo máis forte."
+      },
+      "2": {
+        "fez": "Hai un no meu posto da Bóveda dos deuses. E non é pola pintura, eh."
+      }
+    },
+    "throughSturdyCart": {
+      "1": {
+        "explorer": "Non renxe."
+      },
+      "2": {
+        "fez": "Ves? É forte."
+      },
+      "3": {
+        "explorer": "E as flores?"
+      },
+      "4": {
+        "fez": "Tamén axudan un pouco."
+      }
+    },
+    "arrivesSturdyCart": {
+      "1": {
+        "fez": "Mira como brilla!"
+      },
+      "2": {
+        "explorer": "Máis bonito do que fai falta."
+      },
+      "3": {
+        "fez": "Si. Eu tampouco o vendín por ser forte."
+      }
+    },
+    "boughtCaravanBanner": {
+      "1": {
+        "fez": "Un estandarte. Vouche ser sincero: non abre nada."
+      },
+      "2": {
+        "explorer": "E entón para que serve?"
+      },
+      "3": {
+        "fez": "Ondea. Preciosamente."
+      }
+    },
+    "arrivesCaravanBanner": {
+      "1": {
+        "fez": "Mira como ondea! Enriba do noso propio campamento!"
+      },
+      "2": {
+        "explorer": "Segue sen abrir nada."
+      },
+      "3": {
+        "fez": "Non. Nin lle fai falta."
+      }
+    }
+  },
+  "bond": {
+    "starter": {
+      "1": {
+        "fez": "Iso foi rápido."
+      },
+      "2": {
+        "explorer": "Era unha porta."
+      },
+      "3": {
+        "fez": "Eu tardaría unha semana."
+      }
+    },
+    "starterTomb": {
+      "1": {
+        "fez": "Para que quede claro. Eu estou nisto para revender. Dígoo agora, mentres aínda é verdade."
+      },
+      "2": {
+        "explorer": "Apuntado."
+      }
+    },
+    "junior": {
+      "1": {
+        "fez": "Quedaches calado un bo anaco."
+      },
+      "2": {
+        "explorer": "Estaba contando."
+      },
+      "3": {
+        "fez": "Xa o sei. Vin xente adiviñar. Iso non era adiviñar."
+      }
+    },
+    "expert": {
+      "1": {
+        "fez": "Iso estivo xusto."
+      },
+      "2": {
+        "explorer": "Foi ben."
+      },
+      "3": {
+        "fez": "Estivo xusto. Teño dereito a dicilo."
+      }
+    },
+    "master": {
+      "1": {
+        "fez": "Podiamos parar."
+      },
+      "2": {
+        "explorer": "Podiamos."
+      },
+      "3": {
+        "fez": "Dígoo para que quede dito. Non para facelo."
+      }
+    },
+    "wizard": {
+      "1": {
+        "explorer": "E isto canto vale?"
+      },
+      "2": {
+        "fez": "…"
+      },
+      "3": {
+        "fez": "A isto non lle vou poñer prezo."
+      },
+      "4": {
+        "explorer": "Apuntado."
+      }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": {
+        "fez": "Hala. Hai un segundo iso era unha parede."
+      },
+      "2": {
+        "explorer": "Detrás había un corredor."
+      },
+      "3": {
+        "fez": "Tantos anos pasando a xente por diante sen velo. Tantos anos!"
+      }
+    }
+  },
+  "reading": {
+    "junior": {
+      "1": {
+        "explorer": "Aquí hai unha liña que xa sei ler."
+      },
+      "2": {
+        "explorer": "Dei pan a quen tiña fame."
+      },
+      "3": {
+        "fez": "Pan. Nunha tumba."
+      },
+      "4": {
+        "explorer": "Tamén estaba na anterior. Non sabía que eran palabras."
+      }
+    },
+    "expert": {
+      "1": {
+        "explorer": "Segunda liña. Auga a quen tiña sede."
+      },
+      "2": {
+        "fez": "Pan, e agora auga. Alguén tiña moitas ganas de que o lembrasen como xeneroso."
+      },
+      "3": {
+        "explorer": "Teno todo o mundo. Cada parede, cada tumba, as mesmas dúas liñas."
+      },
+      "4": {
+        "fez": "Entón ou eran todos xenerosos, ou é o que se supón que tes que dicir."
+      },
+      "5": {
+        "explorer": "Ou é co que os medían."
+      }
+    },
+    "master": {
+      "1": {
+        "explorer": "Roupa a quen ía espido. Terceira liña."
+      },
+      "2": {
+        "fez": "Pan, auga, roupa. É unha lista de cousas que se regalaron."
+      },
+      "3": {
+        "explorer": "Na tumba dun home que levou todo con el."
+      },
+      "4": {
+        "fez": "…Si. Xa me decatara."
+      }
+    },
+    "sphinx": {
+      "1": {
+        "fez": "Volvemos onde empezamos. Non se moveu."
+      },
+      "2": {
+        "explorer": "A escritura aínda está aí."
+      },
+      "3": {
+        "fez": "Sabes lela?"
+      },
+      "4": {
+        "explorer": "Un nome."
+      },
+      "5": {
+        "fez": "De quen?"
+      },
+      "6": {
+        "explorer": "O teu."
+      },
+      "7": {
+        "fez": "…"
+      },
+      "8": {
+        "fez": "Estás seguro?"
+      },
+      "9": {
+        "explorer": "Está escrito."
+      },
+      "10": {
+        "fez": "Vaia."
+      },
+      "11": {
+        "fez": "Hori."
+      },
+      "12": {
+        "fez": "En cada aldea de Exipto había un Hori."
+      },
+      "13": {
+        "fez": "Bueno. Iso explica o fez."
+      }
+    }
+  },
+  "altar": {
+    "refused": {
+      "1": {
+        "priest": "Non."
+      },
+      "2": {
+        "explorer": "Ten a súa marca."
+      },
+      "3": {
+        "priest": "Ten unha marca. Unha marca moi boa. Tallouna alguén con ferramentas excelentes e nada que facer aquí, e non hai moito."
+      },
+      "4": {
+        "priest": "Levo tres mil anos esperando. Non me vas enganar na última semana."
+      }
+    }
+  },
+  "meeting": {
+    "starter_1": {
+      "1": {
+        "voice": "Eh! AÍ non! Mira por onde andas!"
+      },
+      "2": {
+        "explorer": "Perdón! Non vexo nada! Onde estás?"
+      },
+      "3": {
+        "fez": "Aquí abaixo! Estás pisando a miña mercadoría!"
+      },
+      "4": {
+        "explorer": "Un lagarto?! Cun fez?"
+      },
+      "5": {
+        "fez": "Un mercador. E que lle pasa ao meu fez?"
+      },
+      "6": {
+        "fez": "Ti tamén vés pola pirámide, seguro. Mercaches un mapa? Pagaches demasiado?"
+      },
+      "7": {
+        "explorer": "MOITÍSIMO."
+      },
+      "8": {
+        "fez": "Eu tamén. Pff."
+      },
+      "9": {
+        "explorer": "A escritura da Esfinxe… sabes lela?"
+      },
+      "10": {
+        "fez": "Non. Xa ninguén sabe. Esa base foi azul e dourada noutro tempo, sabes?"
+      },
+      "11": {
+        "explorer": "E ti como sabes iso?"
+      },
+      "12": {
+        "fez": "…Oíno por aí. E logo, que buscas ti aquí abaixo?"
+      },
+      "13": {
+        "explorer": "Algo bonito."
+      },
+      "14": {
+        "fez": "O bonito véndese ben! Sabes que? Vou contigo!"
+      },
+      "15": {
+        "explorer": "Que? Comigo?"
+      },
+      "16": {
+        "fez": "Catro ollos ven máis ca dous. Veña, que a pirámide agarda!"
+      }
+    }
+  },
+  "end": {
+    "1": {
+      "fez": "Era bonito?"
+    },
+    "2": {
+      "explorer": "Valerá."
+    }
+  },
+  "revisit": {
+    "starter": {
+      "north1": {
+        "1": {
+          "ipi": "Aínda aquí? Ao norte! Henut! Once deben!"
+        }
+      },
+      "north2": {
+        "1": {
+          "ipi": "Once deben de lapislázuli. Henut. Ao norte. A que esperas?"
+        }
+      },
+      "paid1": {
+        "1": {
+          "ipi": "E logo? Pagou? …Non. Claro que non."
+        }
+      },
+      "paid2": {
+        "1": {
+          "ipi": "Vidro? VIDRO? Aquí pon lapislázuli. Aquí mesmo. Lapislázuli!"
+        }
+      },
+      "later1": {
+        "1": {
+          "ipi": "Outra vez ti. Terceiro estante, a do bocado roto: segue sendo miña. As mans quietas."
+        }
+      },
+      "later2": {
+        "1": {
+          "ipi": "Corenta anos de contas, e ningunha cadra. Nin unha!"
+        }
+      }
+    },
+    "junior": {
+      "wall1": {
+        "1": {
+          "henut": "A parede. O terceiro símbolo. Segue sen ser o meu nome."
+        }
+      },
+      "wall2": {
+        "1": {
+          "henut": "Ti segues aquí, e ese ganso segue na miña parede. Arránxao."
+        }
+      },
+      "priest1": {
+        "1": {
+          "henut": "Segue sendo o meu nome. Comprobeino. E agora: Karnak, o sacerdote. Andando."
+        }
+      },
+      "priest2": {
+        "1": {
+          "henut": "Karnak! Xa esperou abondo. Vai e que te anuncien."
+        }
+      },
+      "met1": {
+        "1": {
+          "henut": "E logo? Insoportable, verdade? Xa vos dixen."
+        }
+      },
+      "later1": {
+        "1": {
+          "henut": "Vidro, aínda. Aínda precioso. Aínda escollido por min."
+        }
+      }
+    },
+    "expert": {
+      "seal1": {
+        "1": {
+          "priest": "O selo. Traelo aquí, poñelo aí, dicir as palabras sobre el. Esperarei."
+        }
+      },
+      "seal2": {
+        "1": {
+          "priest": "Ah. Ti outra vez. E aínda sen selo."
+        }
+      },
+      "king1": {
+        "1": {
+          "priest": "Xa viches o rei. Ben. A cousa mesma, ollo: non algo que se pareza."
+        }
+      },
+      "later1": {
+        "1": {
+          "priest": "Ti outra vez. Aquí xa non queda nada que facer. É moi relaxante."
+        }
+      }
+    },
+    "master": {
+      "priest1": {
+        "1": {
+          "pharaoh": "Aínda aquí? Vai onda o sacerdote con esa copia! Quero saber como sae."
+        }
+      },
+      "priest2": {
+        "1": {
+          "pharaoh": "Podes achegarte. Outra vez. Xa a viu o sacerdote?"
+        }
+      },
+      "rite1": {
+        "1": {
+          "pharaoh": "Así que por fin fixo o seu rito. Ben. Agora vai estar insoportable con iso."
+        }
+      },
+      "later1": {
+        "1": {
+          "pharaoh": "Segue sendo a mellor semana en novecentos anos. E non se acaba!"
+        }
+      }
+    },
+    "wizard": {
+      "later1": {
+        "1": {
+          "priest": "…Si. Aínda lembro como se fai. Ben."
+        }
+      },
+      "later2": {
+        "1": {
+          "priest": "Posto, e ditas as palabras. Feito. É unha sensación estraña."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Užstumk radinį ant akmens, kad jį atrakintum",
+    "alsoAvailable": "Dar galima:"
+  },
+  "perks": {
+    "max-health": "+½ širdelės prie tavo sveikatos ribos",
+    "armor": "Spąstai sužeidžia mažiau",
+    "trap-insight": "+1 s laikinuose spąstuose",
+    "pack-mule": "Vandens maišas išgydo dvi širdeles",
+    "compass": "Kompaso dalis",
+    "detection": "Koridorių ieškiklio dalis",
+    "tier-unlock": "Atrakina lygio „{{tier}}“ ekspedicijas",
+    "tier-coming-soon": "Lygio „{{tier}}“ ekspedicijos atsiras vėlesniame atnaujinime",
+    "location-key": "Parodo dar vieną kapą",
+    "partOf": "{{count}} iš {{total}}"
+  },
+  "tiers": {
+    "stone": "Akmuo",
+    "bronze": "Bronza",
+    "silver": "Sidabras",
+    "gold": "Auksas",
+    "divine": "Dieviška"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Sidabrinis debenas",
+      "description": "Senovės Egipto sidabrinė moneta. Ja pirkliai prekiavo palei Nilą."
+    },
+    "t2": {
+      "name": "Papiruso ritinys",
+      "description": "Pirklio užrašai: prekybos keliai ir brangių krovinių sąrašai."
+    },
+    "t3": {
+      "name": "Dramblio kaulo šukos",
+      "description": "Gražiai išdrožtos dramblio kaulo šukos, atgabentos iš tolimų kraštų."
+    },
+    "t4": {
+      "name": "Molinis aliejinis žibintas",
+      "description": "Paprastas, bet dailus žibintas, apšviesdavęs pirklio namus."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Auksinė apyrankė",
+      "description": "Puošni auksinė apyrankė su brangakmeniais. Tokias nešiojo Egipto didikai."
+    },
+    "t6": {
+      "name": "Apeigų durklas",
+      "description": "Durklas brangakmeniais puošta rankena, naudotas didikų apeigose."
+    },
+    "t7": {
+      "name": "Nefrito skarabėjas",
+      "description": "Apsauginis nefrito skarabėjas — atgimimo ir amžino gyvenimo ženklas."
+    },
+    "t8": {
+      "name": "Alebastro indas",
+      "description": "Dailus alebastro indas brangiems aliejams ir kvepalams laikyti."
+    },
+    "t9": {
+      "name": "Juodmedžio lazda",
+      "description": "Nušlifuota juodmedžio lazda su auksiniu anchu viršuje."
+    },
+    "t10": {
+      "name": "Lazurito vėrinys",
+      "description": "Nuostabus vėrinys iš retų lazurito akmenų. Turtuoliai jį labai brangino."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Šventasis anchas",
+      "description": "Auksinis anchas — amžino gyvenimo ženklas, palaimintas šventyklos žynių."
+    },
+    "t12": {
+      "name": "Varinis veidrodis",
+      "description": "Nušveistas varinis veidrodis apsivalymo apeigoms."
+    },
+    "t13": {
+      "name": "Smilkytuvas",
+      "description": "Puošnus bronzinis smilkytuvas šventyklos apeigoms."
+    },
+    "t14": {
+      "name": "Apeigų taurė",
+      "description": "Šventa sidabrinė taurė gėrimų aukoms dievams."
+    },
+    "t15": {
+      "name": "Apeigų vėduoklė",
+      "description": "Puošni plunksnų vėduoklė, kurią žyniai naudojo per apeigas."
+    },
+    "t16": {
+      "name": "Maldos karoliai",
+      "description": "Palaimintų karolių vėrinys maldai ir susikaupimui."
+    },
+    "t17": {
+      "name": "Šventinto vandens indas",
+      "description": "Indas su palaimintu vandeniu iš šventyklos šulinio."
+    },
+    "t18": {
+      "name": "Šventyklos varpas",
+      "description": "Bronzinis varpas, kviečiantis tikinčiuosius maldai ir skelbiantis apeigas."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Faraono antspaudas",
+      "description": "Senovinis karališkas antspaudas su pamiršto faraono kartušu."
+    },
+    "t20": {
+      "name": "Krištolo rutulys",
+      "description": "Paslaptingas krištolo rutulys. Sako, jame matyti praeitis ir ateitis."
+    },
+    "t21": {
+      "name": "Hieroglifų lentelė",
+      "description": "Senovinė akmens lentelė su paslaptingomis hieroglifų pranašystėmis."
+    },
+    "t22": {
+      "name": "Auksinis skeptras",
+      "description": "Nuostabus auksinis skeptras su Horo akimi viršuje."
+    },
+    "t23": {
+      "name": "Obsidiano peilis",
+      "description": "Aštrus kaip skustuvas obsidiano peilis senovės apeigoms."
+    },
+    "t24": {
+      "name": "Meteorito gabalas",
+      "description": "Šventojo meteorito gabalas. Tikima, kad jame slypi dievų galia."
+    },
+    "t25": {
+      "name": "Senovinis kompasas",
+      "description": "Paslaptingas prietaisas, kuris visada rodo į paslėptus lobius."
+    },
+    "t26": {
+      "name": "Laiko kristalas",
+      "description": "Legendinis kristalas, švytintis senų laikų galia."
+    },
+    "t27": {
+      "name": "Apeigų kaukė",
+      "description": "Puošni auksinė kaukė, kurią vyriausieji žyniai dėvėjo per šventas apeigas."
+    },
+    "t28": {
+      "name": "Amžinosios ugnies deglas",
+      "description": "Deglas, kurio ugnis neužgeso nuo senovės laikų."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Ra karūna",
+      "description": "Legendinė saulės dievo Ra karūna, spinduliuojanti dievišką šviesą ir galią."
+    },
+    "t30": {
+      "name": "Toto lazda",
+      "description": "Išminties lazda, priklausiusi Totui, žinių dievui. Joje slypi visos senovės paslaptys."
+    },
+    "t31": {
+      "name": "Maat plunksna",
+      "description": "Šventa tiesos deivės Maat plunksna. Ja pomirtiniame pasaulyje sverdavo sielas."
+    },
+    "t32": {
+      "name": "Izidės ašaros",
+      "description": "Sukietėjusios deivės Izidės ašaros. Sako, jos saugo amžinai."
+    },
+    "t33": {
+      "name": "Ozyrio širdis",
+      "description": "Išsaugota Ozyrio, požemio valdovo, širdis. Ji vis dar plaka gyvybės jėga."
+    },
+    "t34": {
+      "name": "Horo akies amuletas",
+      "description": "Galingiausias apsauginis amuletas su visa Horo galia."
+    },
+    "t35": {
+      "name": "Apepo gyvatė",
+      "description": "Surakintas chaoso gyvatės Apepo gabalėlis, uždarytas šventame inde."
+    },
+    "t36": {
+      "name": "Šu alsavimas",
+      "description": "Buteliukas su oro dievo Šu alsavimu. Jis duoda galią valdyti vėjus."
+    },
+    "t37": {
+      "name": "Sobeko žvynas",
+      "description": "Vienas krokodilo dievo Sobeko žvynas. Jis saugo vandenyje."
+    },
+    "t38": {
+      "name": "Anubio sargo statulėlė",
+      "description": "Maža Anubio statulėlė, kuri atgyja ir saugo savo šeimininko lobius."
+    },
+    "t39": {
+      "name": "Mirusiųjų knyga",
+      "description": "Visa Mirusiųjų knyga su visais užkeikimais kelionei į pomirtinį pasaulį."
+    },
+    "t40": {
+      "name": "Piramidės viršūnė",
+      "description": "Auksinė Didžiosios piramidės viršūnė, kurioje sukaupta visų faraonų galia."
+    }
+  }
+}

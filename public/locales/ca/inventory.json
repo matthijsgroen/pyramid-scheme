@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "El rei dels déus i senyor del sol. Cada dia travessa el cel amb la seva barca solar."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "El déu amb cap de xacal. Cuida les mòmies i protegeix els morts a l'altra vida."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "El déu del cel amb cap de falcó, protector dels faraons. És fill d'Osiris i d'Isis."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "El déu amb cap d'ibis. És el déu de la saviesa i de l'escriptura, i porta els registres dels déus."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "La deessa gata de la protecció i l'alegria. Defensa la gent dels mals esperits."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "El déu cocodril del riu Nil. Porta collites bones i força als soldats."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "El déu escarabat del renéixer. Cada matí fa rodolar el sol pel cel."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "La deessa cobra que protegeix el Baix Egipte. És un símbol del poder del rei."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "La deessa de la màgia, de les mares i de la curació. És l'esposa fidel d'Osiris."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "El déu del món dels morts i de tornar a la vida. Jutja els morts."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "El déu del caos, de les tempestes i del desert. És el germà i el rival d'Osiris."
+    },
+    "d12": {
+      "name": "Nephthys",
+      "description": "La deessa del dol, que protegeix els morts. És la germana d'Isis."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "El déu creador, patró dels artesans i dels arquitectes. Creava les coses dient-ne el nom."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "La deessa lleona de la guerra i de la curació. Ferotge, però també sap curar malalties."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "La deessa vaca de l'amor, de la música i de les mares. Cuidava els faraons."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Faraó",
+      "description": "El rei d'Egipte. La gent creia que era un déu vivent, un pont entre les persones i els déus."
+    },
+    "p2": {
+      "name": "Gran sacerdot",
+      "description": "El cap dels temples. Feia els rituals sagrats i mantenia l'ordre dels déus."
+    },
+    "p3": {
+      "name": "Escriba",
+      "description": "Algú que sabia llegir i escriure. Guardava els registres i el saber."
+    },
+    "p4": {
+      "name": "Arquitecte",
+      "description": "El mestre d'obres que dissenyava piràmides, temples i monuments per a l'eternitat."
+    },
+    "p5": {
+      "name": "General",
+      "description": "El cap de l'exèrcit. Protegia les fronteres d'Egipte i feia créixer l'imperi."
+    },
+    "p6": {
+      "name": "Metge",
+      "description": "Un curador que barrejava medicina i màgia per curar els malalts."
+    },
+    "p7": {
+      "name": "Embalsamador",
+      "description": "Un artesà sagrat que preparava els morts per al viatge a l'altra vida."
+    },
+    "p8": {
+      "name": "Pagès",
+      "description": "Feia créixer el menjar d'Egipte a les terres fèrtils del Nil, per alimentar tot el regne."
+    },
+    "p9": {
+      "name": "Artesà",
+      "description": "Algú molt traçut que feia objectes bonics, joies i obres d'art per a nobles i déus."
+    },
+    "p10": {
+      "name": "Mercader",
+      "description": "Un comerciant que portava coses estranyes de terres llunyanes per les rutes del comerç."
+    },
+    "p11": {
+      "name": "Visir",
+      "description": "El primer ministre i conseller del faraó. Vigilava que el govern funcionés."
+    },
+    "p12": {
+      "name": "Oracle",
+      "description": "Un profeta sagrat que entenia els missatges dels déus i deia què passaria."
+    },
+    "p13": {
+      "name": "Mariner",
+      "description": "Navegava pel Nil i pel Mediterrani. Sense ell no hi havia comerç ni transport."
+    },
+    "p14": {
+      "name": "Picapedrer",
+      "description": "Treballava la pedra: tallava jeroglífics i construïa els grans monuments d'Egipte."
+    },
+    "p15": {
+      "name": "Guardià",
+      "description": "Protegia els llocs sagrats i les tombes, perquè els morts descansessin per sempre."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Hipopòtam",
+      "description": "Una bèstia forta del riu Nil. Tothom li tenia por, perquè defensa molt el seu territori."
+    },
+    "a2": {
+      "name": "Lleó",
+      "description": "El rei dels animals, símbol del poder del rei i de la força dels déus al desert."
+    },
+    "a3": {
+      "name": "Elefant",
+      "description": "Un animal enorme de les terres del sud, admirat per la seva saviesa i la seva memòria."
+    },
+    "a4": {
+      "name": "Gasela",
+      "description": "Un animal del desert ràpid i elegant, símbol de velocitat."
+    },
+    "a5": {
+      "name": "Mona",
+      "description": "Un animal llest que anava amb Thoth. Representa la intel·ligència i les entremaliadures."
+    },
+    "a6": {
+      "name": "Peix",
+      "description": "Animals sagrats del Nil. Donaven menjar i eren símbol d'abundància."
+    },
+    "a7": {
+      "name": "Oca",
+      "description": "Un ocell sagrat dels aiguamolls del Nil, que surt a les històries de la creació del món."
+    },
+    "a8": {
+      "name": "Abella",
+      "description": "Símbol del Baix Egipte i del poder del rei. Fa una mel molt preuada."
+    },
+    "a9": {
+      "name": "Tortuga",
+      "description": "Un animal antic i savi que porta el pes del món a la closca."
+    },
+    "a10": {
+      "name": "Granota",
+      "description": "Símbol de tornar a néixer. Surt de les crescudes del Nil, que porten la vida."
+    },
+    "a11": {
+      "name": "Voltor",
+      "description": "Un ocell sagrat de l'Alt Egipte. És la forma a la terra de la deessa protectora Nekhbet."
+    },
+    "a12": {
+      "name": "Mussol",
+      "description": "Un caçador savi de la nit, guardià dels secrets amagats i antics."
+    },
+    "a13": {
+      "name": "Moltó",
+      "description": "L'animal sagrat d'Amon-Ra, símbol del poder dels déus."
+    },
+    "a14": {
+      "name": "Girafa",
+      "description": "Un animal alt i elegant de les terres del sud, que arriba al cel amb el seu coll llarg."
+    },
+    "a15": {
+      "name": "Xacal",
+      "description": "Un animal del desert que guia cap a l'altra vida. Serveix Anubis."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Símbol de la vida i de viure per sempre. Els déus i els faraons sovint en porten un a la mà."
+    },
+    "art2": {
+      "name": "Ull d'Horus",
+      "description": "Símbol de protecció, de poder i de bona salut. Va amb el déu del cel, Horus."
+    },
+    "art3": {
+      "name": "Sistre",
+      "description": "Un instrument musical per a les cerimònies, que va amb la deessa Hathor."
+    },
+    "art4": {
+      "name": "Pilar djed",
+      "description": "Símbol d'estabilitat i de tornar a la vida. Sovint va amb Osiris."
+    },
+    "art5": {
+      "name": "Cartutx",
+      "description": "Un oval amb el nom d'un faraó escrit en jeroglífics, per protegir-lo per sempre."
+    },
+    "art6": {
+      "name": "Vas canopi",
+      "description": "Un vas sagrat amb una tapa en forma de cap de guardià. N'hi havia quatre al voltant del taüt, vigilant."
+    },
+    "art7": {
+      "name": "Ceptre",
+      "description": "Un bastó de poder que porten els déus i els faraons per mostrar que manen."
+    },
+    "art9": {
+      "name": "Piràmide",
+      "description": "Una tomba eterna i porta a l'altra vida, feta per durar per sempre per als faraons."
+    },
+    "art10": {
+      "name": "Barca solar",
+      "description": "La barca sagrada que porta el déu del sol, Ra, pel cel, de l'alba fins al vespre."
+    },
+    "art11": {
+      "name": "Obelisc",
+      "description": "Un pilar de pedra alt amb una piràmide a dalt, que apunta al cel per honrar els déus."
+    },
+    "art12": {
+      "name": "Gaiato i flagell",
+      "description": "Els objectes del faraó que mostren que és el pastor i el protector d'Egipte."
+    },
+    "art14": {
+      "name": "Flor de lotus",
+      "description": "Símbol de tornar a néixer i del sol. Surt neta de les aigües fangoses del Nil."
+    },
+    "art15": {
+      "name": "Corona amb ureu",
+      "description": "Una corona reial amb una cobra protectora. Els faraons la portaven per tenir la protecció dels déus."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Fulla de canya",
+      "description": "Una sola canya, pel so i. Darrere el nom d'un déu, en fa el nom d'una persona: Horus es torna Hori, el d'Horus."
+    }
+  }
+}

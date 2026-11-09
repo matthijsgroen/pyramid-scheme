@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Jumalate kuningas ja päikese valitseja, kes sõidab iga päev oma päikesepaadiga üle taeva."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Šaakalipeaga jumal, kes hoolitseb muumiate ja teispoolsuse eest ning kaitseb surnuid."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Pistrikupeaga taevajumal ja vaaraode kaitsja, Osirise ja Isise poeg."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "Iibisepeaga tarkuse, kirja ja teadmiste jumal, kes peab jumalate raamatuid."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Kassijumalanna, kes toob rõõmu, kaitseb kodu ja ajab kurjad vaimud minema."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Niiluse krokodillijumal, kes annab viljakust ja sõjajõudu."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Skarabeusmardikast jumal, kes veeretab päikese üle taeva ja toob uue alguse."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Kobrajumalanna ja Alam-Egiptuse kaitsja, kuningliku võimu märk."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "Võlukunsti, emaduse ja tervendamise jumalanna, Osirise truu naine."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "Allilma, surma ja taasärkamise jumal, kes mõistab surnute üle kohut."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "Kaose, tormide ja kõrbe jumal, Osirise vend ja rivaal."
+    },
+    "d12": {
+      "name": "Nephthys",
+      "description": "Leinajumalanna, kes kaitseb surnuid, Isise õde."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Loojajumal ning käsitööliste ja ehitajate kaitsja, kes lõi maailma sõnadega."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Lõvijumalanna, kes käib sõjas ja ravib haigusi — äge kaitsja."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Lehmajumalanna, kes hoolitseb armastuse, muusika ja emaduse eest ning toidab vaaraosid."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Vaarao",
+      "description": "Egiptuse jumalik valitseja, keda peeti elavaks jumalaks ja sillaks inimeste ja jumalate vahel."
+    },
+    "p2": {
+      "name": "Ülempreester",
+      "description": "Templite peamine preester, kes teeb pühi rituaale ja hoiab jumalikku korda."
+    },
+    "p3": {
+      "name": "Kirjutaja",
+      "description": "Õpetatud inimene, kes oskas lugeda ja kirjutada ning hoidis kirjapandut ja teadmisi."
+    },
+    "p4": {
+      "name": "Arhitekt",
+      "description": "Meisterehitaja, kes kavandas püramiidid, templid ja mälestusmärgid igaveseks."
+    },
+    "p5": {
+      "name": "Väejuht",
+      "description": "Sõjaväe juht, kes kaitses Egiptuse piire ja laiendas riiki."
+    },
+    "p6": {
+      "name": "Arst",
+      "description": "Ravitseja, kes kasutas haigete aitamiseks nii arstitarkust kui ka võlukunsti."
+    },
+    "p7": {
+      "name": "Palsameerija",
+      "description": "Püha käsitööline, kes valmistas inimese ette teekonnaks teispoolsusesse."
+    },
+    "p8": {
+      "name": "Talupoeg",
+      "description": "Egiptuse toitja, kes harib Niiluse viljakaid kaldaid, et kogu riigil oleks süüa."
+    },
+    "p9": {
+      "name": "Käsitööline",
+      "description": "Osav meister, kes teeb ilusaid asju, ehteid ja kunsti aadlikele ja jumalatele."
+    },
+    "p10": {
+      "name": "Kaupmees",
+      "description": "Kaupleja, kes tõi kaubateid mööda kaugetelt maadelt imelikke asju."
+    },
+    "p11": {
+      "name": "Vesiir",
+      "description": "Vaarao peaminister ja nõuandja, kes juhtis riigi asju."
+    },
+    "p12": {
+      "name": "Oraakel",
+      "description": "Püha ennustaja, kes seletas jumalate sõnumeid ja ennustas tulevikku."
+    },
+    "p13": {
+      "name": "Meremees",
+      "description": "Niiluse ja Vahemere sõitja, keda oli vaja kaubanduseks ja vedudeks."
+    },
+    "p14": {
+      "name": "Kiviraidur",
+      "description": "Kivitööline, kes raius hieroglüüfe ja ehitas Egiptuse suuri mälestusmärke."
+    },
+    "p15": {
+      "name": "Valvur",
+      "description": "Pühade paikade ja hauakambrite kaitsja, kes hoolitseb, et surnud saaksid igavesti puhata."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Jõehobu",
+      "description": "Niiluse võimas jõeloom, keda kardeti tema jõu ja kurja iseloomu pärast."
+    },
+    "a2": {
+      "name": "Lõvi",
+      "description": "Loomade kuningas, kuningliku võimu ja jumaliku jõu märk kõrbes."
+    },
+    "a3": {
+      "name": "Elevant",
+      "description": "Hiiglaslik loom lõunamaadest, keda austati tema tarkuse ja hea mälu pärast."
+    },
+    "a4": {
+      "name": "Gasell",
+      "description": "Kiire ja graatsiline kõrbeelanik, kiiruse ja ilu märk."
+    },
+    "a5": {
+      "name": "Ahv",
+      "description": "Nutikas ahv, kes kuulub Thothi juurde ja tähendab tarkust ja vempe."
+    },
+    "a6": {
+      "name": "Kala",
+      "description": "Niiluse pühad loomad, kes andsid süüa ja olid viljakuse märk."
+    },
+    "a7": {
+      "name": "Hani",
+      "description": "Niiluse soode püha lind, kes on seotud maailma loomise ja hingega."
+    },
+    "a8": {
+      "name": "Mesilane",
+      "description": "Alam-Egiptuse ja kuningliku võimu märk, kes teeb kallist mett."
+    },
+    "a9": {
+      "name": "Kilpkonn",
+      "description": "Vana ja tark loom, kes kannab oma kilbil maailma raskust."
+    },
+    "a10": {
+      "name": "Konn",
+      "description": "Taassünni ja viljakuse märk, kes tuleb välja Niiluse eluandvast üleujutusest."
+    },
+    "a11": {
+      "name": "Raisakotkas",
+      "description": "Ülem-Egiptuse püha lind, kaitsejumalanna Nekhbeti maine kuju."
+    },
+    "a12": {
+      "name": "Öökull",
+      "description": "Tark öine kütt, peidetud teadmiste ja iidsete saladuste valvur."
+    },
+    "a13": {
+      "name": "Jäär",
+      "description": "Amon-Ra püha loom, jumaliku väe ja juhtimise märk."
+    },
+    "a14": {
+      "name": "Kaelkirjak",
+      "description": "Pikk ja graatsiline loom lõunamaadest, kes ulatub oma pika kaelaga peaaegu taevani."
+    },
+    "a15": {
+      "name": "Šaakal",
+      "description": "Kõrbe raipesööja ja teejuht teispoolsusesse, Anubise teener."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Elu ja surematuse märk, mida hoiavad sageli käes jumalad ja vaaraod."
+    },
+    "art2": {
+      "name": "Horuse silm",
+      "description": "Kaitse, kuningliku võimu ja hea tervise märk, mis kuulub taevajumal Horusele."
+    },
+    "art3": {
+      "name": "Sistrum",
+      "description": "Kõristi moodi pill, mida kasutati pühadel tseremooniatel jumalanna Hathori auks."
+    },
+    "art4": {
+      "name": "Djedi sammas",
+      "description": "Püsivuse ja taasärkamise märk, mis on sageli seotud Osirisega."
+    },
+    "art5": {
+      "name": "Kartušš",
+      "description": "Ovaalne raam, mille sees on vaarao nimi hieroglüüfidega, et tema nimi igavesti säiliks."
+    },
+    "art6": {
+      "name": "Kanoop",
+      "description": "Püha kann, mille kaaneks on valvuri pea — neli neist seisid sarkofaagi ümber ja pidasid valvet."
+    },
+    "art7": {
+      "name": "Valitsuskepp",
+      "description": "Võimu kepp, mida jumalad ja vaaraod kandsid jumaliku valitsemise märgiks."
+    },
+    "art9": {
+      "name": "Püramiid",
+      "description": "Igavene hauakamber ja värav teispoolsusesse, ehitatud vaaraodele igaveseks."
+    },
+    "art10": {
+      "name": "Päikesepaat",
+      "description": "Püha paat, mis kannab päikesejumal Ra'd koidust loojanguni üle taeva."
+    },
+    "art11": {
+      "name": "Obelisk",
+      "description": "Kõrge kivisammas, mille tipus on väike püramiid. See sirutub taeva poole jumalate auks."
+    },
+    "art12": {
+      "name": "Karjasekepp ja vits",
+      "description": "Kuninglikud märgid, mis näitavad, et vaarao on Egiptuse karjane ja kaitsja."
+    },
+    "art14": {
+      "name": "Lootoseõis",
+      "description": "Taassünni ja päikese märk, mis tõuseb Niiluse porisest veest puhtana."
+    },
+    "art15": {
+      "name": "Uraeuse kroon",
+      "description": "Kuninglik peakate kaitsva kobraga, mida vaaraod kandsid jumaliku kaitse saamiseks."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Pillirooleht",
+      "description": "Üksainus pilliroog, mis tähendab häälikut i. Kui see lisada jumala nimele, saab sellest mehe nimi: Horusest saab Hori, see, kes on Horuse oma."
+    }
+  }
+}

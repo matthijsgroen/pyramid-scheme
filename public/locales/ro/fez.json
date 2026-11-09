@@ -1,0 +1,842 @@
+{
+  "not-found": "Hopa, conversația pe care o cauți nu există.",
+  "welcome": "Egipt! Chiar sunt aici.",
+  "welcome2": "Și harta asta… am dat mult prea mulți bani pe ea. Sper să fie bună.",
+  "welcome3": "Haide. Să vedem unde e crucea aia.",
+
+  "pyramidIntro": "Pe pietrele astea sunt numere. Și lipsesc câteva…",
+  "pyramidIntro2": "Stai. Fiecare piatră e suma celor două de sub ea! Da — și aici!",
+
+  "pyramidBlockedBlocks": "Hei, ce-i asta? Blocurile alea sunt sigilate. Nu-și arată numărul!",
+  "pyramidBlockedBlocks2": "Nu-i nimic. Uită-te la blocurile din jur — din ele îl poți afla.",
+  "pyramidBlockedBlocks3": "Doar că nu-l poți scrie. Numărul ăla trebuie să-l ții minte.",
+  "pyramidBlockedBlocks4": "Haide, ai ajuns până aici. Poți s-o faci!",
+
+  "levelCompleted": "Ha! Se deschide! Hai, înăuntru.",
+  "exitPillar": {
+    "1": {
+      "fez": "Ha! Lumina zilei! Vezi raza aia de lumină? Pe acolo ieșim. Pășești în ea și gata, am terminat aici."
+    },
+    "2": { "fez": "E doar una, mereu chiar la capătul coridorului mare. Oriunde am hoinări, ne întoarcem la ea." },
+    "3": { "explorer": "O singură ieșire. Am notat." }
+  },
+  "expeditionCompleted": "Bravo, ai terminat expediția!",
+  "expeditionCompleted2": "Te așteaptă o expediție nouă.",
+
+  "tombTutorial": "Ooo, scris! Putem să-l citim? Cu hieroglifele pe care le-am găsit… poate!",
+  "tombTutorial2": "Ia uite, socoteli cu semne în ele! Vezi locurile goale? Acolo intră hieroglifele. Ale tale, de jos.",
+  "tombTutorial3": "Socotelile mici îți arată când un semn e pus bine. Așa aflăm care semn unde merge.",
+  "tombTutorial4": "Ai completat tot? Atunci apare un lacăt cu cifru. Socoteala mare e codul — și mormântul se deschide!",
+
+  "hieroglyphUnlock": "Avem un obiect special — cu el putem scrie pe unul dintre blocurile sigilate!",
+  "hieroglyphUnlock2": "Atinge o piatră care strălucește, apoi trage obiectul pe ea ca s-o deblochezi. Un bloc pe piramidă.",
+
+  "errorHighlightTutorial": "Comoara pe care am găsit-o are un truc tare — dacă scrii un răspuns greșit, o greșeală se aprinde roșu!",
+  "errorHighlightTutorial2": "Doar un bloc se aprinde odată, deci tot e greu. Dar te ajută să știi unde să cauți!",
+
+  "earlyFeedbackTutorial": "Vezi blocurile de control? Se fac verzi sau roșii pe măsură ce le completezi — afli pe loc!",
+  "earlyFeedbackTutorial2": "Sprijină-te pe ele când rezolvi. Dacă unul se face roșu, ceva de lângă el trebuie reparat.",
+
+  "notEnoughHieroglyphs": "Poți opri oricând expediția asta dacă te întorci la ecranul de călătorie.",
+  "notEnoughHieroglyphs2": "Putem întrerupe expediția ca să căutăm în altă parte hieroglifele care ne mai lipsesc.",
+
+  "tombLoot": "Uau, prima noastră comoară! Bravo!",
+  "mapPiece": "Uite! Asta DA hartă. Veche de-a binelea! Valorează mai mult decât amândouă ale noastre la un loc!",
+  "mapPiece2": "E doar o bucată, totuși. Fiecare expediție de pe aici ascunde una, și împreună arată spre un mormânt.",
+  "mapComplete": "E întreagă! Uite, toate bucățile se potrivesc perfect.",
+  "mapComplete2": "Acolo, unde se întâlnesc toate liniile. Acolo e un mormânt.",
+  "mapComplete3": "Acum e în călătoriile noastre. Mergem să vedem?",
+  "mapPiece3": "Ține socoteala în lista de expediții. Eu sigur o țin!",
+
+  "mosaicIntro": "Ooo, sticlă colorată! Uite cum prinde lumina — așa ceva nu arunci!",
+  "mosaicIntro2": "E o bucată dintr-o imagine. O fereastră întreagă de sticlă, și fiecare bucată găsită aduce înapoi o părticică din ea.",
+  "mosaicIntro3": "Tu n-ai o tabără pe undeva? Ia-le cu tine și le punem cap la cap acolo. Vreau să văd ce iese!",
+  "mosaicReminder": "Pst! Bucățile de sticlă încă zornăie în traista noastră. Le punem în fereastra din tabără?",
+
+  "mosaicStarter": "O pisică în prag și un șarpe care o ia la fugă. Asta merita un bol cu lapte.",
+  "mosaicStarter2": "Egiptenii iubeau pisicile tocmai pentru asta — prindeau șerpii și șobolanii care intrau în grâne.",
+  "mosaicStarter3": "Le iubeau atât de mult încât au făcut din una o zeiță. Bastet. Ocrotitoarea casei, a ușii și a tuturor celor care dorm în spatele ei.",
+
+  "mosaicJunior": "Uită-te la mâna lui — cineva îi arată cum să țină condeiul.",
+  "mosaicJunior2": "Cel cu cap de pasăre e Thot. Scrisul, număratul, ținutul socotelilor — toate sunt ale lui.",
+  "mosaicJunior3": "Ibisul pe care l-am urmărit pe râu? E pasărea lui. Și fiecare număr pe care l-am scris pe un zid e tot al lui.",
+
+  "mosaicExpert": "Lumina aia nu e noroc. Au construit toată sala ca să cadă exact acolo, în dimineața potrivită.",
+  "mosaicExpert2": "Soarele e Amon-Ra — cel ascuns și lumina pe care o vede toată lumea. Amândouă deodată.",
+  "mosaicExpert3": "Cine poate măsura cerul atât de exact poate măsura orice. Le-am tot rezolvat socotelile tot drumul.",
+
+  "mosaicMaster": "Piele verde și grâu care crește direct din el. E făcut special.",
+  "mosaicMaster2": "Osiris. A fost omorât și pus la loc bucată cu bucată, iar acum el e ce se întoarce în fiecare an, când râul inundă câmpurile.",
+  "mosaicMaster3": "Aici jos asta e toată ideea: mort nu înseamnă terminat. Ce gând vesel pentru un mormânt, nu?",
+
+  "mosaicWizard": "O inimă pe o parte. O pană pe cealaltă. Și stau în echilibru.",
+  "mosaicWizard2": "Pana e Maat — adevărul, echilibrul, felul în care ar trebui să fie lucrurile. Dacă inima e mai grea decât pana, nu treci de ușă.",
+  "mosaicWizard3": "Șacalul care ține cântarul e Anubis. El e cel care te aduce aici.",
+
+  "mosaicFinale": "Dă-te puțin înapoi. Uită-te la ce am tot scos din piramidele alea.",
+  "mosaicFinale2": "Fiecare bucată e o parte din el — cel care ține cântarul drept. Ne-a privit tot drumul.",
+  "mosaicFinale3": "Asta e socoteala lui despre noi. Și aș zice că iese la egalitate.",
+
+  "shopFirstVisit": "Aha, am ajuns. Taraba mea — doar ți-am zis că eu sunt aici pentru negoț.",
+  "shopFirstVisit2": "Tot ce e pe tejgheaua asta am cărat eu de undeva. Aia e de acum două morminte.",
+
+  "shopArrival": "Aha, taraba mea! Stai să întind ce am adunat pe drum.",
+  "shopArrival2": "Lucrurile rare costă cel mai mult, dar îți dau bani pe orice mărunțiș pe care îl cari.",
+  "arrival": {
+    "starter_1": {
+      "1": { "explorer": "Uite, acolo în spate! Sfinxul!" },
+      "2": { "explorer": "E uriaș, chiar și de aici." },
+      "3": { "explorer": "Se zice că sub labele lui e un scris. Pe care nu-l poate citi nimeni." },
+      "4": { "explorer": "Mai târziu. Întâi piramida asta!" }
+    },
+    "starter_2": {
+      "1": { "fez": "Ha! În sfârșit, ceva ce înțeleg. Tot ce urca pe Nil trecea întâi pe aici." },
+      "2": { "fez": "Și negustorii scriu tot. Cine ce a cumpărat, cine cui îi datora, cine a întârziat…" },
+      "3": { "explorer": "Cine a întârziat?" },
+      "4": { "fez": "Mai ales cine a întârziat!" },
+      "5": { "fez": "Trei mii de ani. Marfa a dispărut, dar chitanțele sunt tot aici. Tipic!" }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Uită-te la ușile alea! Oamenii veneau aici să ceară ocrotire. Și apoi o ușă ca asta rămânea închisă."
+      },
+      "2": { "explorer": "Închisă pentru cine?" },
+      "3": { "fez": "Pentru oricine nu cerea frumos. Adică mai ales pentru noi." },
+      "4": { "fez": "Tot ce e sigilat în țara asta, cineva l-a sigilat cu toată inima. Dar cu toată inima." },
+      "5": { "fez": "Și pisicile! Aici adorau pisicile. Nu se mai săturau să le mângâie." }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "Oo, asta îmi place. Aici au învățat să scrie! Semn cu semn, pe cioburi de oale — papirusul era mult prea scump pentru copii."
+      },
+      "2": { "explorer": "Exersau pe gunoaie?" },
+      "3": {
+        "fez": "Pe ce aveau! Și dacă înveți destule semne, deodată un zid nu mai e doar decor."
+      },
+      "4": { "explorer": "Sfinxul ăla… vreau să mă mai uit o dată la el." },
+      "5": { "fez": "Nu încă. Curând." }
+    },
+
+    "junior_1": {
+      "1": { "fez": "Se întorceau în fiecare an odată cu revărsarea, aproape în aceeași zi." },
+      "2": { "fez": "Așa că oamenii au început să numere zilele dintre ele. De aici vine calendarul — de la păsări." },
+      "3": { "explorer": "De la păsări." },
+      "4": { "fez": "Păsări și hârțoage. Mereu e vorba de păsări și hârțoage." }
+    },
+    "junior_2": {
+      "1": { "fez": "Aici au făcut totul. Nu mormintele — lucrurile care intrau în ele." },
+      "2": { "fez": "Uite tiparele. Aceeași brățară, de patruzeci de ori." },
+      "3": { "explorer": "Pentru patruzeci de oameni?" },
+      "4": {
+        "fez": "Pentru oricine putea plăti. Un nobil voia ce avea un rege, la un preț pe care și-l permitea un nobil."
+      }
+    },
+    "junior_3": {
+      "1": { "fez": "Ăsta e Thot. Zeul secretelor și al magiei, sunt destul de sigur." },
+      "2": { "explorer": "Destul de." },
+      "3": { "fez": "Nouăzeci la sută. Oricum — semnele pe care le tot aduni sunt ale lui." }
+    },
+    "junior_4": {
+      "1": { "fez": "O sută de metri înălțime și un foc în vârf care nu se stingea niciodată." },
+      "2": { "fez": "Marinarii găseau coasta de la o zi distanță. Înainte, o găseau intrând cu corabia în ea." },
+      "3": { "explorer": "Cum găsești ceva pe aici fără un far?" },
+      "4": { "fez": "Întrebi pe cineva care a mai fost. Asta e toată meseria mea." }
+    },
+
+    "expert_1": {
+      "1": {
+        "fez": "Vreo șaizeci de morminte săpate într-o singură vale, și toate au fost deschise înainte să ajungem noi."
+      },
+      "2": { "explorer": "De cine?" },
+      "3": { "fez": "De oameni ca noi, mai ales. Mai devreme." },
+      "4": { "fez": "Ce zici de asta?" },
+      "5": { "explorer": "Că am întârziat." }
+    },
+    "expert_2": {
+      "1": { "fez": "Amon-Ra. Soarele. Preferatul tuturor, și se vede de ce — uite cât de mare e locul ăsta." },
+      "2": { "explorer": "Două nume." },
+      "3": { "fez": "Același zeu, cred. Pe cei populari îi puneau în dublu." }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Toată țara e o dungă verde de o parte și de alta a unui singur râu, iar aici se deschide în asta."
+      },
+      "2": { "fez": "Totul crește. Și totul mușcă." },
+      "3": { "explorer": "Și noi pentru care am venit?" },
+      "4": { "fez": "Speram că pentru niciunul." }
+    },
+    "expert_4": {
+      "1": { "fez": "Prima piramidă. Înainte de asta, regii erau îngropați sub o lespede plată, ca toată lumea." },
+      "2": { "fez": "Cineva a stat aici și s-a gândit: dar dacă facem asta de șase ori, una peste alta?" },
+      "3": { "explorer": "Și a mers?" },
+      "4": { "fez": "Ea stă încă în picioare, el nu. Depinde ce înțelegi prin „a mers”." }
+    },
+
+    "master_1": {
+      "1": { "fez": "Două milioane de blocuri. Le-a numărat cineva." },
+      "2": { "explorer": "Le-a numărat cineva?" },
+      "3": { "fez": "Mereu numără cineva. Asta uită oamenii despre toate astea — totul era condus de funcționari." },
+      "4": { "fez": "Frumoasă, nu? Nici nu vreau să mă gândesc cum arăta lista de salarii." }
+    },
+    "master_2": {
+      "1": { "fez": "Instrucțiuni. Asta e tot — ce să spui și în ce ordine, ca drumul să meargă cum trebuie." },
+      "2": { "explorer": "Un manual." },
+      "3": { "fez": "Un manual pentru când ești mort. Ăștia scriau absolut tot." },
+      "4": { "fez": "Ceea ce, pentru ce căutăm noi, e prima veste bună de toată săptămâna." }
+    },
+    "master_3": {
+      "1": { "fez": "Ah. Tabăra cuiva." },
+      "2": { "explorer": "E nouă?" },
+      "3": { "fez": "Cam nouă. Conserve și o tuse urâtă, după cum arată." },
+      "4": { "fez": "Au mers mai departe de aici și nu și-au luat lucrurile cu ei." },
+      "5": { "explorer": "S-au mai întors după ele?" },
+      "6": { "fez": "…Hai să mergem mai departe." }
+    },
+    "master_4": {
+      "1": {
+        "fez": "Uite, PE ĂSTA încercau ceilalți să-l copieze. Uită-te la culori — trei mii de ani și par încă ude."
+      },
+      "2": { "explorer": "Henut ar fi furioasă." },
+      "3": { "fez": "Henut și-ar lua notițe." }
+    },
+
+    "wizard_1": {
+      "1": { "fez": "Noaptea, soarele coboară sub lume și răsare în partea cealaltă. Asta e toată credința." },
+      "2": {
+        "fez": "Douăsprezece ore în întuneric, cu tot felul de piedici, și cineva trebuie să-l care până la capăt."
+      },
+      "3": { "explorer": "Asta am făcut și noi." },
+      "4": { "fez": "Încercam să nu spun asta." },
+      "5": { "explorer": "Nisipul tot intră." },
+      "6": { "fez": "Intră de trei mii de ani. Nu se oprește, doar se învârte." },
+      "7": { "fez": "Se umple, se întoarce, o ia de la capăt. La fel ca soarele." }
+    },
+    "wizard_2": {
+      "1": { "fez": "Doi, înalți de optsprezece metri, și amândoi sunt Amenhotep." },
+      "2": {
+        "fez": "Grecii s-au uitat o dată și au hotărât că e un erou de-al lor. Memnon. Numele a rămas două mii de ani."
+      },
+      "3": { "explorer": "Al cui nume e scris pe el?" },
+      "4": { "fez": "Al lui. Săpat în tron, unde a fost dintotdeauna." },
+      "5": { "fez": "Nu l-a citit nimeni." },
+      "6": {
+        "fez": "După cutremur, cel dinspre nord cânta în zori. O notă, în fiecare dimineață, când soarele încălzea crăpătura."
+      },
+      "7": { "explorer": "Și acum?" },
+      "8": { "fez": "Un împărat a pus să-l repare. De atunci n-a mai scos niciun sunet." }
+    },
+    "wizard_3": {
+      "1": { "fez": "Cântarul. Inima pe o parte, pana pe cealaltă — deci câștigă o inimă bună și grea, presupun." },
+      "2": { "explorer": "Încotro merge un lucru greu?" },
+      "3": { "fez": "…În jos." },
+      "4": { "fez": "Oh." },
+      "5": { "fez": "Ușoară. O vrei UȘOARĂ." }
+    },
+    "wizard_4": {
+      "1": { "fez": "Vârful se pune ultimul și e din aur, ca toată piramida să prindă prima rază de lumină." },
+      "2": { "explorer": "Pentru cine?" },
+      "3": { "fez": "Pentru oricine se uită. Asta era ideea — n-a fost niciodată pentru omul dinăuntru." }
+    }
+  },
+
+  "tomb": {
+    "starter": {
+      "1": { "ipi": "Hei! Jos labele! Ăla e ulciorul meu!" },
+      "2": { "fez": "…Ulciorul ăla tocmai a zis ceva?!" },
+      "3": { "ipi": "EU am zis. Al treilea raft, ăla ciobit. Ăla e al meu." },
+      "4": { "explorer": "Bine, bine! Rămâne unde e. Cine ești?" },
+      "5": { "ipi": "Ipi. Patruzeci de ani am ținut socotelile. Patruzeci!" },
+      "6": { "fez": "Socotelile? Ale cui?" },
+      "7": { "ipi": "Ale tuturor! Cine cât datora, până la ultimul sac de grâne." },
+      "8": { "ipi": "Henut aia, mai sus spre nord? Unsprezece deben de lapis. Nu i-a plătit niciodată!" },
+      "9": { "explorer": "Și încă îți aduci aminte, după atâta vreme?" },
+      "10": { "ipi": "E scris! Ce e scris s-a întâmplat." },
+      "11": { "ipi": "Doar Horii ăia… Hori barcagiul, Hori brutarul… și celălalt Hori." },
+      "12": { "fez": "Aveai și pisici? Toată lumea avea pisici, nu? Ce scumpe sunt!" },
+      "13": { "ipi": "Scumpe? Erau pentru grâne! Știi cât te costă un singur șobolan, într-un sezon întreg?" },
+      "14": { "fez": "…A. Aha." },
+      "15": { "ipi": "Spune-i lui Henut că te trimite Ipi. Să-i strici după-amiaza." },
+      "16": { "fez": "Îmi place de el!" },
+      "17": { "explorer": "Îți place doar că încă i se datorează bani." }
+    },
+    "junior": {
+      "1": { "henut": "În sfârșit. Ați venit pentru lapis, presupun. Ipi tot mai bate câmpii cu lapisul ăla, nu?" },
+      "2": { "explorer": "Da." },
+      "3": { "henut": "Era sticlă. Sticlă frumoasă. Știa foarte bine." },
+      "4": { "fez": "…Și brățara era tot sticlă?" },
+      "5": {
+        "henut": "Tot ce e aici e cea mai bună imitație care se putea cumpăra cu bani, tinere, și fiecare bucată am ales-o eu."
+      },
+      "6": {
+        "henut": "Așa. Zidul. Al treilea semn — ăla nu e numele meu. Vreun ucenic cu o daltă și fără nimeni să-l supravegheze."
+      },
+      "7": { "henut": "Ți-ai învățat semnele. Se vede. Repară-l." }
+    },
+    "juniorFixed": {
+      "1": { "henut": "Gata. Acum o să fie tot numele meu și peste o mie de ani." },
+      "2": { "explorer": "Ipi l-a scris corect." },
+      "3": { "henut": "Ipi scria totul corect. Era singurul lucru bun la el." },
+      "4": { "fez": "Contează, aici jos?" },
+      "5": { "henut": "E singurul lucru care contează." },
+      "6": { "fez": "Avea un zid întreg cu Thot acolo sus. Zeul secretelor." },
+      "7": { "henut": "Thot numără. Thot scrie ce ai făcut și rămâne scris." },
+      "8": { "henut": "„Secrete” le spun oamenii socotelilor când nu știu să le facă." },
+      "9": {
+        "henut": "Dacă mergeți mai departe — și se vede că mergeți — e un preot la Karnak care le datorează morților o slujbă pe care n-a făcut-o niciodată. O să fie de nesuportat. Preoții așa sunt."
+      },
+      "10": { "henut": "…Ne cunoaștem?" },
+      "11": { "fez": "Mi-aș aminti." },
+      "12": { "henut": "Da. Și eu." }
+    },
+    "expert": {
+      "1": { "priest": "Nu sunteți cei pe care îi aștept." },
+      "2": { "explorer": "Pe cine așteptați?" },
+      "3": {
+        "priest": "Pe cineva cu sigiliul. Trebuia adus aici, pus acolo și rostite cuvintele peste el. Niciunul dintre aceste trei lucruri nu s-a întâmplat."
+      },
+      "4": { "fez": "…De cât timp așteptați?" },
+      "5": { "priest": "Nu țin socoteala. N-ar fi profesionist." },
+      "6": {
+        "priest": "O ofrandă adevărată e un lucru cu care a fost îngropat un rege. Nu o copie. Nu ceva care seamănă. Lucrul însuși, cu semnul lui pe el."
+      },
+      "7": { "priest": "Aduceți-l și veți fi anunțați. Aduceți altceva și nu veți fi." },
+      "8": { "explorer": "Anunțați cui?" },
+      "9": { "priest": "O să aflați. Toată lumea află, până la urmă." },
+      "10": { "fez": "Ăstuia îi place tare mult soarele. Tot Amon-Ra ăla de la intrare." },
+      "11": { "priest": "Amon e cel ascuns. Ra e cel pe care îl vede oricine." },
+      "12": { "priest": "Sunt același zeu. Nu e o întâmplare, asta e toată ideea." },
+      "13": { "fez": "…Da. Sigur. Știam asta." },
+      "14": { "explorer": "Nu știai." },
+      "15": { "fez": "Nu știam." }
+    },
+    "expertB": {
+      "1": { "fez": "Aici n-a mai intrat nimeni. Nici noi, nici cei dinainte, nimeni." },
+      "2": { "explorer": "De unde știi?" },
+      "3": { "fez": "Pentru că încă mai e ceva înăuntru." }
+    },
+    "master": {
+      "1": { "pharaoh": "Vă puteți apropia. V-ați apropiat. Foarte bine." },
+      "2": { "fez": "Măria Ta." },
+      "3": { "pharaoh": "Da." },
+      "4": { "explorer": "Avem nevoie de sigiliul tău." },
+      "5": { "pharaoh": "Toată lumea are. Al meu a fost luat de două ori și adus înapoi niciodată." },
+      "6": { "pharaoh": "A doua oară au lăsat o copie. O COPIE. În mormântul MEU. Ca și cum n-aș fi observat." },
+      "7": { "explorer": "Copia mai e aici?" },
+      "8": {
+        "pharaoh": "Sigur că mai e aici, nu valorează nimic. Stă pe raft, unde ar trebui să fie cel adevărat, și e greșită."
+      },
+      "9": { "pharaoh": "Luați-o, dacă vreți. Duceți-o preotului ăluia. Să vedem cât de departe ajungeți cu ea." },
+      "10": { "fez": "…Se distrează de minune." },
+      "11": { "pharaoh": "E cea mai bună săptămână din ultimii nouă sute de ani." },
+      "12": { "fez": "Osiris, acolo pe zid. Stăpânul morților — treabă sumbră." },
+      "13": { "pharaoh": "E VERDE, animal caraghios ce ești." },
+      "14": {
+        "pharaoh": "Verde ca un câmp inundat. A fost omorât și pus la loc bucată cu bucată, și se întoarce în fiecare an."
+      },
+      "15": { "pharaoh": "Aici jos asta nu e sumbru, asta e toată ideea. Mort nu înseamnă terminat." }
+    },
+    "wizard": {
+      "1": { "priest": "Puneți-l jos. Acolo. Da." },
+      "2": { "priest": "…" },
+      "3": { "priest": "E prima dată când fac asta. Începusem să cred că am uitat cum se face." },
+      "4": { "explorer": "Și uitaserăți?" },
+      "5": { "priest": "Complet. Mi-am adus aminte." }
+    },
+    "wizardB": {
+      "1": { "fez": "Frânghia lor. Încă legată." },
+      "2": { "explorer": "Au ajuns până aici." },
+      "3": { "fez": "Mai departe de atât. Și apoi s-au urcat înapoi pe ea." },
+      "4": { "explorer": "E un caiet aici." },
+      "5": { "fez": "Ce scrie în el?" },
+      "6": { "explorer": "Nu pot citi scrisul. Ne-am întors pentru sigiliu. Am făcut în schimb unul mai bun." },
+      "7": { "explorer": "Nu s-a lăsat nimeni păcălit." },
+      "8": { "fez": "…L-au falsificat pentru că nu știau să citească la ce folosea." },
+      "9": { "explorer": "Și apoi s-au dus acasă." }
+    },
+    "wizardC": {
+      "1": { "fez": "Stai o clipă. Uită-te la ce am tot scos din piramidele alea." },
+      "2": { "explorer": "E o imagine." },
+      "3": { "fez": "A fost o imagine tot timpul." }
+    }
+  },
+
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "O peșteră! Pe hartă era ușa unei pivnițe, și asta e un deal întreg!" },
+      "2": { "fez": "Isteț tip. Îți ascunzi marfa într-un deal — niciun hoț nu s-ar gândi la asta." },
+      "3": { "explorer": "Noi ne-am gândit." },
+      "4": { "fez": "Noi nu suntem hoți. Suntem clienți. Clienți care au întârziat foarte mult." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Aici trebuie să fie. Henut! Aia cu unsprezece deben de lapis!" },
+      "2": { "fez": "Ce zici — primim și noi o parte dacă recuperăm datoria?" },
+      "3": { "explorer": "N-ai recuperat nimic." },
+      "4": { "fez": "Îmi place să fac socoteala din timp." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Deci aici e preotul lui Henut. De nesuportat, a zis ea." },
+      "2": { "fez": "Ce zici, să-i ducem ceva? Flori?" },
+      "3": { "explorer": "E mort." },
+      "4": { "fez": "Cu atât mai mult. Vrei să faci o impresie bună de la început." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Doar marele preot avea voie aici. Și acum noi!" },
+      "2": { "explorer": "Avem voie?" },
+      "3": { "fez": "Nu e nimeni la ușă să zică nu." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Uite, harta se oprește pur și simplu aici. Nisip, și apoi nimic." },
+      "2": { "explorer": "Atunci suntem unde trebuie." },
+      "3": { "fez": "Asta zic și eu. Exact asta mă face să am emoții." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Sala lui Osiris! Verde, sigur. Pentru că se întoarce în fiecare an, ca grâul." },
+      "2": { "explorer": "Tu ai știut asta mereu." },
+      "3": { "fez": "Mereu." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "fez": "Cămara zeilor! Ce păstrezi când ai deja tot?" },
+      "2": { "explorer": "Ce îți aduc oamenii." },
+      "3": { "fez": "…Da. Asta trebuie să fie." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Tărâmul forțelor cerului. Ia te uită." },
+      "2": { "fez": "Dacă aș avea de vândut ceva care nu e mare lucru, și eu așa i-aș zice." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Am deodată senzația că am făcut ceva greșit." },
+      "2": { "explorer": "Cum ar fi?" },
+      "3": { "fez": "Habar n-am. Asta e partea cea mai rea." }
+    }
+  },
+
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Atâtea manete și uși, pentru o pivniță!" },
+      "2": { "fez": "Înseamnă că e ceva bun acolo jos. Nimeni nu se chinuie atât pentru niște vechituri." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Uf. Ușile alea au fost mult mai pretențioase decât ale lui Ipi." },
+      "2": { "fez": "Ei, doamna avea bani, firește." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Uf, în sfârșit! Peștera aia chiar nu voia să ne lase înăuntru." },
+      "2": { "explorer": "Cred că asta era ideea." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Pst… de ce șoptesc?" },
+      "2": { "explorer": "Habar n-am. Și eu șoptesc." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Fiu. Încă îmi tremură coada de la ultima ușă." },
+      "2": { "fez": "Un rege care își încuie lucrurile așa… chiar nu vrea să le piardă." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Vezi? Stai destul sub pământ și ieși iar la suprafață." },
+      "2": { "explorer": "Și ăsta e tot Osiris?" },
+      "3": { "fez": "Nu, asta e de la mine." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "fez": "Uși ca astea… cândva ne-am fi întors din drum." },
+      "2": { "explorer": "Acum nu mai." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Trei etaje de peșteră, și abia apoi ușa din față." },
+      "2": { "explorer": "Atunci sigur merită." },
+      "3": { "fez": "Asta zic toți. Și pe urmă e un ulcior." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Ultima bucată de întuneric. O simt." },
+      "2": { "explorer": "Asta ai zis și data trecută." },
+      "3": { "fez": "Și aproape am avut dreptate." }
+    }
+  },
+
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Ia uite! O piramidă, sub pământ! Pentru un negustor!" },
+      "2": { "fez": "Ori câștiga foarte bine, ori se tocmea foarte bine." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Uite cum strălucește vârful în soare! Aur adevărat, pun pariu." },
+      "2": { "explorer": "Într-o groapă în pământ. Pentru cine strălucește?" },
+      "3": { "fez": "Pentru ea. Se vede ce fel de om e." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Hm. Ai voie să vinzi ceva care e deja al unui zeu?" },
+      "2": { "explorer": "Întreabă-l pe zeu." },
+      "3": { "fez": "Mai bine nu." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Crezi că preotul știe că ne plimbăm pe aici?" },
+      "2": { "explorer": "El nu ține socoteala. N-ar fi profesionist." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Uite-o, singură-singurică în soare. Frumoasă, nu?" },
+      "2": { "fez": "Ce-ar fi să facem doar un desen și să plecăm?" },
+      "3": { "explorer": "Tu nu știi să desenezi." },
+      "4": { "fez": "…Nu. Atunci intrăm." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Cine e acolo înăuntru se bazează pe faptul că se va întoarce. Așa e înțelegerea pe aici." },
+      "2": { "explorer": "De cât timp așteaptă?" },
+      "3": { "fez": "De mult. Dar asta vine cu meseria. Să fii mort înseamnă mai ales să aștepți." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "explorer": "Uau." },
+      "2": { "fez": "Da." },
+      "3": { "fez": "Uneori pur și simplu nu mai ai nimic de zis, nu?" }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Vezi pata aia de soare pe piramidă? După ea ai putea spune cât e ceasul." },
+      "2": { "explorer": "Și cât e ceasul?" },
+      "3": { "fez": "…După-amiază. Cam așa. Nu sunt ceas." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Uite-o. Fiecare linie de pe hartă ajunge aici." },
+      "2": { "explorer": "Atunci ăsta e sfârșitul." },
+      "3": { "fez": "Al hărții, da. Ciudat. Credeam că o să mă simt mai bine." }
+    }
+  },
+
+  "camp": {
+    "firstHome": {
+      "1": { "fez": "Asta e tabăra ta? Un foc și un cufăr?" },
+      "2": { "explorer": "Tabăra noastră." },
+      "3": { "fez": "A noastră. Bine. Atunci eu iau locul de lângă foc." },
+      "4": { "fez": "Doar sunt șopârlă, la urma urmei. Când îmi convine." }
+    },
+    "homeHaul": {
+      "1": { "fez": "Despachetăm! Cea mai bună parte din toată călătoria." },
+      "2": { "explorer": "Mai bună decât piramida?" },
+      "3": { "fez": "Piramida nu e a noastră. Asta e." }
+    },
+    "homeEmpty": {
+      "1": { "explorer": "Cu mâna goală." },
+      "2": { "fez": "Și? Am mers pe jos. Și asta contează." },
+      "3": { "explorer": "Contează pentru ce?" },
+      "4": { "fez": "Pentru picioarele mele. Sunt foarte scurte, să știi." }
+    },
+    "rested": {
+      "1": { "fez": "Gata. Te simți un pic mai bine?" },
+      "2": { "explorer": "A fost doar o zgârietură." },
+      "3": { "fez": "Nici nu m-am uitat. Și tot a trebuit să mă așez." }
+    },
+    "chapterJunior": {
+      "1": { "fez": "Ei, a mers frumos. Următorul!" },
+      "2": { "explorer": "N-a fost chiar așa ușor." },
+      "3": { "fez": "Acum e. Totul e ușor după aceea." }
+    },
+    "chapterExpert": {
+      "1": { "fez": "Acolo au capcane. Adevărate. Mușcă." },
+      "2": { "fez": "Te rănești? Atunci ne întoarcem pe jos. Acasă te faci bine." },
+      "3": { "explorer": "Și tu?" },
+      "4": { "fez": "Eu merg în spatele tău. Acolo e mai sigur." }
+    },
+    "chapterMaster": {
+      "1": { "fez": "Patru piramide acolo. Îți amintești când era doar una?" },
+      "2": { "explorer": "N-a trecut chiar atât de mult." },
+      "3": { "fez": "Nu. Dar așa pare." }
+    },
+    "chapterWizard": {
+      "1": { "fez": "Uită-te la ultima. Cu vârf de aur și tot!" },
+      "2": { "fez": "Aia o să ne coste. Ultima te costă mereu." },
+      "3": { "explorer": "Ce o să ne coste?" },
+      "4": { "fez": "…Nu mai știu sigur." }
+    },
+    "firstFind": {
+      "1": { "fez": "Ia uite — de parcă a fost mereu acolo!" },
+      "2": { "fez": "Mă mănâncă mâna să-i pun o etichetă cu preț." },
+      "3": { "explorer": "Nu." },
+      "4": { "fez": "Nu, nu. De acasă nu vinzi. Știu asta." }
+    },
+    "structureDone": {
+      "1": { "fez": "E gata! Până la ultima bucată!" },
+      "2": { "explorer": "Toată munca noastră." },
+      "3": { "fez": "Ei. Eu mai mult am arătat cu degetul." }
+    }
+  },
+
+  "animal": {
+    "forSale": {
+      "1": { "fez": "Uite ce am la tarabă! Acum fac și transport." },
+      "2": { "explorer": "Mestecă." },
+      "3": { "fez": "E inclus în preț." }
+    },
+    "boughtDonkey": {
+      "1": { "fez": "Vândut! Un măgar. Încăpățânat, dar duce orice." },
+      "2": { "explorer": "Și unde e?" },
+      "3": { "fez": "E deja pe drum spre casă. Preferă să meargă fără noi." }
+    },
+    "blockedDonkey": {
+      "1": { "fez": "Nu mergem atât de departe cu toate lucrurile astea. Ne trebuie un măgar." },
+      "2": { "fez": "Și ghici cine are unul? Eu. La taraba mea din seiful lui Henut." }
+    },
+    "throughDonkey": {
+      "1": { "explorer": "E de acord." },
+      "2": { "fez": "Azi. Mai întreabă-l și mâine." }
+    },
+    "arrivesDonkey": {
+      "1": { "fez": "Uite-l! A ajuns înaintea noastră." },
+      "2": { "explorer": "A găsit și focul." },
+      "3": { "fez": "Locul meu. Ei. El a fost primul." }
+    },
+    "boughtCart": {
+      "1": { "fez": "O căruță! Două roți, și aproape că nu scârțâie." },
+      "2": { "explorer": "Aproape?" },
+      "3": { "fez": "Scârțâitul e gratis." }
+    },
+    "blockedCart": {
+      "1": { "fez": "Măgarul nu mai ia niciun sac. L-am întrebat." },
+      "2": { "fez": "O căruță, asta ne trebuie. Am una la taraba mea, la marele preot." }
+    },
+    "throughCart": {
+      "1": { "explorer": "Auzi?" },
+      "2": { "fez": "E căruța. Cântă puțin." },
+      "3": { "explorer": "Tot drumul?" }
+    },
+    "arrivesCart": {
+      "1": { "fez": "O căruță în tabăra noastră! Acum arătăm de parcă mergem undeva." },
+      "2": { "explorer": "Chiar mergem undeva." },
+      "3": { "fez": "Da, dar acum vede toată lumea." }
+    },
+    "boughtCamel": {
+      "1": { "fez": "O cămilă! Merge zile întregi fără apă. Eu nu, să știi." },
+      "2": { "explorer": "Se uită la tine." },
+      "3": { "fez": "De sus. Cămilele se uită mereu la tine de sus." }
+    },
+    "blockedCamel": {
+      "1": { "fez": "Sanctuarul ascuns? Pe jos n-ajungem niciodată acolo." },
+      "2": { "fez": "Ce noroc că am o cămilă. La taraba mea, la marele preot." }
+    },
+    "throughCamel": {
+      "1": { "fez": "Îngenunchează! Pentru mine!" },
+      "2": { "explorer": "Ca să ne urcăm pe ea." },
+      "3": { "fez": "Lasă-mă să mă bucur." }
+    },
+    "arrivesCamel": {
+      "1": { "fez": "Uite-o. Se poartă de parcă tabăra e a ei." },
+      "2": { "explorer": "Și măgarul?" },
+      "3": { "fez": "Se face că n-o vede. La fel ca mine." }
+    },
+    "boughtSecondDonkey": {
+      "1": { "fez": "Încă un măgar! Acum primul are cu cine să vorbească." },
+      "2": { "explorer": "Să vorbească?" },
+      "3": { "fez": "Să rage. E tot vorbit, doar mai tare." }
+    },
+    "blockedSecondDonkey": {
+      "1": { "fez": "Măgarul nu mai merge. Nu singur, zice." },
+      "2": { "explorer": "A zis asta?" },
+      "3": { "fez": "Eu vorbesc măgărește. Vrea un prieten, și am unul la taraba mea din comoara faraonului." }
+    },
+    "throughSecondDonkey": {
+      "1": { "fez": "Ascultă-i! Unul mai tare decât celălalt." },
+      "2": { "explorer": "Cine câștigă?" },
+      "3": { "fez": "Nu noi. Noi trebuie să-i ascultăm." }
+    },
+    "arrivesSecondDonkey": {
+      "1": { "fez": "Uită-te la ei. De parcă se cunosc de ani de zile." },
+      "2": { "explorer": "Ca noi." },
+      "3": { "fez": "Noi răgem mai puțin." }
+    },
+    "boughtSecondCamel": {
+      "1": { "fez": "Încă o cămilă. Da. Nici mie nu-mi plac." },
+      "2": { "fez": "Dar asta măcar pare prietenoasă." },
+      "3": { "explorer": "Se uită la fezul tău." }
+    },
+    "blockedSecondCamel": {
+      "1": { "fez": "Sala lui Osiris. Cu o singură cămilă nu ajungem acolo." },
+      "2": { "fez": "Noroc că mai am una, la taraba mea din comoara faraonului. Chiar ultima." },
+      "3": { "explorer": "Mereu zici asta." }
+    },
+    "throughSecondCamel": {
+      "1": { "fez": "Îmi mănâncă fezul!" },
+      "2": { "explorer": "O cămilă prietenoasă." },
+      "3": { "fez": "Prea prietenoasă." }
+    },
+    "arrivesSecondCamel": {
+      "1": { "fez": "Două cămile. Acum amândouă se uită la mine de sus." },
+      "2": { "explorer": "Du-te atunci lângă măgari." },
+      "3": { "fez": "Deja sunt." }
+    },
+    "boughtSturdyCart": {
+      "1": { "fez": "O căruță mai zdravănă. Asta nu cântă pe drum." },
+      "2": { "explorer": "Are flori pictate pe ea." },
+      "3": { "fez": "Pentru zdravănie." }
+    },
+    "blockedSturdyCart": {
+      "1": { "fez": "Căruța veche n-ajunge acolo întreagă. Ne trebuie ceva mai zdravăn." },
+      "2": { "fez": "Am una la taraba mea din Seiful zeilor. Nu pentru vopsea, să știi." }
+    },
+    "throughSturdyCart": {
+      "1": { "explorer": "Nu scârțâie." },
+      "2": { "fez": "Vezi? Zdravănie." },
+      "3": { "explorer": "Și florile?" },
+      "4": { "fez": "Și ele ajută un pic." }
+    },
+    "arrivesSturdyCart": {
+      "1": { "fez": "Uite cum strălucește!" },
+      "2": { "explorer": "Mai frumoasă decât ar trebui." },
+      "3": { "fez": "Da. Nici eu n-am vândut-o pentru zdravănie." }
+    },
+    "boughtCaravanBanner": {
+      "1": { "fez": "Un steag. Sincer să fiu: nu deschide nimic." },
+      "2": { "explorer": "Și atunci ce face?" },
+      "3": { "fez": "Flutură. Superb." }
+    },
+    "arrivesCaravanBanner": {
+      "1": { "fez": "Uite cum flutură! Deasupra taberei noastre!" },
+      "2": { "explorer": "Tot nu deschide nimic." },
+      "3": { "fez": "Nu. Nici nu trebuie." }
+    }
+  },
+
+  "bond": {
+    "starter": {
+      "1": { "fez": "Asta a fost repede." },
+      "2": { "explorer": "Era o ușă." },
+      "3": { "fez": "Mie mi-ar fi luat o săptămână." }
+    },
+    "starterTomb": {
+      "1": { "fez": "Ca să fie clar. Eu sunt aici ca să revând. O spun acum, cât încă e adevărat." },
+      "2": { "explorer": "Am notat." }
+    },
+    "junior": {
+      "1": { "fez": "Ai tăcut un pic acolo." },
+      "2": { "explorer": "Număram." },
+      "3": { "fez": "Știu. Am văzut oameni care ghicesc. Ăla nu era ghicit." }
+    },
+    "expert": {
+      "1": { "fez": "A fost la limită." },
+      "2": { "explorer": "A fost bine." },
+      "3": { "fez": "A fost la limită. Am voie să zic asta." }
+    },
+    "master": {
+      "1": { "fez": "Ne-am putea opri." },
+      "2": { "explorer": "Ne-am putea." },
+      "3": { "fez": "O zic doar ca să fie zisă. Nu ca s-o facem." }
+    },
+    "wizard": {
+      "1": { "explorer": "Cât valorează asta?" },
+      "2": { "fez": "…" },
+      "3": { "fez": "Pe asta nu-i pun preț." },
+      "4": { "explorer": "Am notat." }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": { "fez": "Uau. Acum o secundă aici era un zid." },
+      "2": { "explorer": "În spatele lui era un pasaj." },
+      "3": { "fez": "Atâția ani au trecut oamenii pe lângă el. Atâția ani!" }
+    }
+  },
+
+  "reading": {
+    "junior": {
+      "1": { "explorer": "Aici e un rând pe care acum îl pot citi." },
+      "2": { "explorer": "Am dat pâine celui flămând." },
+      "3": { "fez": "Pâine. Într-un mormânt." },
+      "4": { "explorer": "Era și în cel de dinainte. Nu știam că sunt cuvinte." }
+    },
+    "expert": {
+      "1": { "explorer": "Al doilea rând. Apă celui însetat." },
+      "2": { "fez": "Pâine, și acum apă. Cineva voia tare mult să fie ținut minte ca darnic." },
+      "3": { "explorer": "Toți îl au. Fiecare zid, fiecare mormânt, aceleași două rânduri." },
+      "4": { "fez": "Atunci ori erau toți darnici, ori asta e ce trebuia să spui." },
+      "5": { "explorer": "Sau asta e după care erau cântăriți." }
+    },
+    "master": {
+      "1": { "explorer": "Haine celui gol. Al treilea rând." },
+      "2": { "fez": "Pâine, apă, haine. E o listă de lucruri date altora." },
+      "3": { "explorer": "În mormântul unui om care a luat totul cu el." },
+      "4": { "fez": "…Da. Am observat și eu." }
+    },
+    "sphinx": {
+      "1": { "fez": "Înapoi de unde am pornit. Nu s-a clintit." },
+      "2": { "explorer": "Scrisul e tot acolo." },
+      "3": { "fez": "Poți să-l citești?" },
+      "4": { "explorer": "Un nume." },
+      "5": { "fez": "Al cui?" },
+      "6": { "explorer": "Al tău." },
+      "7": { "fez": "…" },
+      "8": { "fez": "Sigur?" },
+      "9": { "explorer": "E scris." },
+      "10": { "fez": "Hm." },
+      "11": { "fez": "Hori." },
+      "12": { "fez": "În fiecare sat din Egipt era câte un Hori." },
+      "13": { "fez": "Ei bine. Asta explică fezul." }
+    }
+  },
+
+  "altar": {
+    "refused": {
+      "1": { "priest": "Nu." },
+      "2": { "explorer": "Are semnul lui pe el." },
+      "3": {
+        "priest": "Are un semn. E un semn foarte bun. L-a tăiat cineva cu unelte excelente, care n-avea ce căuta aici, și nu demult."
+      },
+      "4": { "priest": "Aștept de trei mii de ani. Nu mă las păcălit tocmai în ultima săptămână." }
+    }
+  },
+
+  "meeting": {
+    "starter_1": {
+      "1": { "voice": "Hei! Nu ACOLO! Uită-te pe unde calci!" },
+      "2": { "explorer": "Scuze! Nu văd nimic! Unde ești?" },
+      "3": { "fez": "Aici jos! Ai călcat în marfa mea!" },
+      "4": { "explorer": "O șopârlă?! Cu fez?" },
+      "5": { "fez": "Un negustor. Și ce are fezul meu?" },
+      "6": { "fez": "Și tu ai venit pentru piramidă, pun pariu. Ai cumpărat o hartă? Ai dat mult prea mult pe ea?" },
+      "7": { "explorer": "MULT prea mult." },
+      "8": { "fez": "Și eu. Pff." },
+      "9": { "explorer": "Scrisul de pe Sfinx… tu poți să-l citești?" },
+      "10": { "fez": "Nu. Nimeni nu mai poate. Soclul ăla era cândva albastru cu auriu, să știi." },
+      "11": { "explorer": "De unde știi asta?" },
+      "12": { "fez": "…Am auzit. Zi, ce cauți tu pe aici?" },
+      "13": { "explorer": "Ceva tare." },
+      "14": { "fez": "Lucrurile tari se vând! Știi ce? Vin cu tine!" },
+      "15": { "explorer": "Ce? Cu mine?" },
+      "16": { "fez": "Doi văd mai mult decât unul. Hai, piramida aia ne așteaptă!" }
+    }
+  },
+
+  "end": {
+    "1": { "fez": "A fost tare?" },
+    "2": { "explorer": "Merge." }
+  },
+
+  "revisit": {
+    "starter": {
+      "north1": { "1": { "ipi": "Tot aici? La nord! Henut! Unsprezece deben!" } },
+      "north2": { "1": { "ipi": "Unsprezece deben de lapis. Henut. La nord. Ce mai aștepți?" } },
+      "paid1": { "1": { "ipi": "Ei? A plătit? …Nu. Sigur că nu." } },
+      "paid2": { "1": { "ipi": "Sticlă? STICLĂ? Aici scrie lapis. Chiar aici. Lapis!" } },
+      "later1": { "1": { "ipi": "Iar tu. Al treilea raft, ăla ciobit — tot al meu e. Jos labele." } },
+      "later2": { "1": { "ipi": "Patruzeci de ani de socoteli, și niciuna nu iese. Niciuna!" } }
+    },
+    "junior": {
+      "wall1": { "1": { "henut": "Zidul. Al treilea semn. Tot nu e numele meu." } },
+      "wall2": { "1": { "henut": "Tu ești tot aici, și gâsca aia e tot pe zidul meu. Repar-o." } },
+      "priest1": { "1": { "henut": "Tot numele meu. Am verificat. Acum — Karnak, preotul. Hai, du-te." } },
+      "priest2": { "1": { "henut": "La Karnak! A așteptat destul. Du-te, să te anunțe." } },
+      "met1": { "1": { "henut": "Ei? De nesuportat, nu-i așa? Ți-am zis." } },
+      "later1": { "1": { "henut": "Tot sticlă. Tot frumoasă. Tot aleasă de mine." } }
+    },
+    "expert": {
+      "seal1": { "1": { "priest": "Sigiliul. Adus aici, pus jos, rostite cuvintele peste el. Aștept." } },
+      "seal2": { "1": { "priest": "A. Iar voi. Și tot fără sigiliu." } },
+      "king1": { "1": { "priest": "L-ați văzut pe rege. Bine. Lucrul însuși, țineți minte — nu ceva care seamănă." } },
+      "later1": { "1": { "priest": "Iar voi. Nu mai e nimic de făcut aici. E foarte odihnitor." } }
+    },
+    "master": {
+      "priest1": { "1": { "pharaoh": "Tot aici? La preot cu copia aia! Vreau să aud cum a mers." } },
+      "priest2": { "1": { "pharaoh": "Vă puteți apropia. Din nou. A văzut-o preotul?" } },
+      "rite1": { "1": { "pharaoh": "Deci și-a făcut în sfârșit ritualul. Bine. Acum o să fie de nesuportat." } },
+      "later1": { "1": { "pharaoh": "Tot cea mai bună săptămână din ultimii nouă sute de ani. Și continuă!" } }
+    },
+    "wizard": {
+      "later1": { "1": { "priest": "…Da. Încă îmi amintesc cum se face. Bine." } },
+      "later2": { "1": { "priest": "Pus jos, rostite cuvintele. Gata. E o senzație ciudată." } }
+    }
+  }
+}

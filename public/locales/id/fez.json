@@ -1,0 +1,1730 @@
+{
+  "not-found": "Maaf, percakapan yang kamu cari tidak ada.",
+  "welcome": "Mesir! Aku benar-benar di sini.",
+  "welcome2": "Dan peta ini… aku bayar kemahalan. Semoga saja benar.",
+  "welcome3": "Ayo. Kita cari tanda silang itu.",
+  "pyramidIntro": "Ada angka di batu-batu ini. Tapi ada yang hilang…",
+  "pyramidIntro2": "Tunggu. Setiap batu itu jumlah dua batu di bawahnya! Ya, di sini juga!",
+  "pyramidBlockedBlocks": "Eh, apa ini? Balok-balok itu tersegel. Angkanya tidak mau kelihatan!",
+  "pyramidBlockedBlocks2": "Tidak apa-apa. Lihat balok di sekitarnya. Dari situ kamu bisa menebak angkanya.",
+  "pyramidBlockedBlocks3": "Cuma, kamu tidak bisa menulisnya. Angka itu harus kamu ingat sendiri.",
+  "pyramidBlockedBlocks4": "Ayo, kamu sudah sejauh ini. Kamu pasti bisa!",
+  "levelCompleted": "Ha! Terbuka! Ayo, masuk.",
+  "exitPillar": {
+    "1": {
+      "fez": "Ha! Cahaya matahari! Lihat sinar itu? Itu jalan keluar kita. Masuk ke situ, dan kita selesai di sini."
+    },
+    "2": {
+      "fez": "Selalu cuma satu, di ujung lorong utama. Ke mana pun kita jalan-jalan, kita kembali ke situ."
+    },
+    "3": {
+      "explorer": "Satu jalan keluar. Oke, kuingat."
+    }
+  },
+  "expeditionCompleted": "Selamat, ekspedisinya selesai!",
+  "expeditionCompleted2": "Ada ekspedisi baru yang bisa kamu mulai.",
+  "tombTutorial": "Ooh, tulisan! Bisa kita baca? Dengan hieroglif yang sudah kita temukan… mungkin bisa!",
+  "tombTutorial2": "Lihat, hitungan yang ada tandanya! Lihat kotak-kotak kosong itu? Hieroglif masuk ke situ. Punyamu, yang di bawah.",
+  "tombTutorial3": "Hitungan kecil memberi tahu kalau tandanya benar. Begitu kita tahu tanda mana masuk ke mana.",
+  "tombTutorial4": "Sudah terisi semua? Nanti muncul kunci angka. Hitungan besar itu kodenya, lalu makamnya terbuka!",
+  "hieroglyphUnlock": "Kita punya benda istimewa. Dengan benda ini kita bisa menulis di salah satu balok tersegel!",
+  "hieroglyphUnlock2": "Ketuk batu yang bersinar, lalu seret benda itu ke atasnya untuk membukanya. Satu balok per piramida.",
+  "errorHighlightTutorial": "Harta yang kita temukan itu punya trik keren. Kalau ada jawaban salah, satu kesalahan akan menyala merah!",
+  "errorHighlightTutorial2": "Cuma satu balok yang menyala setiap kali, jadi tetap menantang. Tapi itu membantu mencarinya!",
+  "earlyFeedbackTutorial": "Lihat balok-balok penanda itu? Mereka jadi hijau atau merah waktu kamu mengisinya. Langsung ketahuan!",
+  "earlyFeedbackTutorial2": "Pakai mereka sebagai pegangan. Kalau ada yang merah, berarti ada yang salah di dekatnya.",
+  "notEnoughHieroglyphs": "Kamu selalu bisa berhenti dari ekspedisi ini dengan kembali ke layar perjalanan.",
+  "notEnoughHieroglyphs2": "Kita bisa berhenti sebentar dan mencari hieroglif yang masih kurang di tempat lain.",
+  "tombLoot": "Wah, harta pertama kita! Hebat!",
+  "mapPiece": "Lihat! NAH, ini baru peta. Kuno sungguhan! Harganya lebih mahal dari peta kita berdua digabung!",
+  "mapPiece2": "Tapi cuma sepotong, ya. Setiap ekspedisi di sini menyembunyikan satu potong, dan kalau digabung, semuanya menunjuk ke sebuah makam.",
+  "mapComplete": "Lengkap! Lihat, setiap potongan pas sekali.",
+  "mapComplete2": "Di situ, tempat semua garis bertemu. Di situlah ada makam.",
+  "mapComplete3": "Sekarang makam itu ada di daftar perjalanan kita. Mau kita lihat?",
+  "mapPiece3": "Hitung terus di daftar ekspedisi. Aku sih pasti menghitung!",
+  "mosaicIntro": "Ooh, kaca berwarna! Lihat, kena cahaya berkilau. Barang begini tidak mungkin dibuang orang!",
+  "mosaicIntro2": "Ini satu potongan dari sebuah gambar. Satu jendela kaca utuh, dan setiap potongan yang kita temukan mengembalikan sedikit gambarnya.",
+  "mosaicIntro3": "Kamu punya perkemahan, kan? Bawa saja ke sana, nanti kita susun di sana. Aku penasaran gambarnya apa!",
+  "mosaicReminder": "Psst! Potongan kaca itu masih berkerincing di tas kita. Kita pasang di jendela di perkemahan, yuk?",
+  "mosaicStarter": "Seekor kucing di pintu, dan seekor ular yang buru-buru kabur. Kucing itu pantas dapat semangkuk susu.",
+  "mosaicStarter2": "Orang Mesir sayang kucing justru karena ini. Kucing membunuh ular dan tikus yang masuk ke gudang gandum.",
+  "mosaicStarter3": "Saking sayangnya, mereka menjadikan kucing seorang dewi. Bastet. Pelindung rumah, pintu, dan semua orang yang tidur di baliknya.",
+  "mosaicJunior": "Lihat tangannya. Ada yang mengajarinya cara memegang pena.",
+  "mosaicJunior2": "Yang berkepala burung itu Thoth. Menulis, berhitung, mencatat, semuanya urusan dia.",
+  "mosaicJunior3": "Burung ibis yang kita ikuti di sungai? Itu burungnya. Setiap angka yang kita isi di dinding juga miliknya.",
+  "mosaicExpert": "Cahaya itu bukan kebetulan. Mereka membangun seluruh aula supaya cahayanya jatuh tepat di situ, di pagi yang tepat.",
+  "mosaicExpert2": "Matahari itu Amun-Ra. Yang tersembunyi, dan cahaya yang bisa dilihat semua orang. Dua-duanya sekaligus.",
+  "mosaicExpert3": "Orang yang bisa mengukur langit setepat itu bisa mengukur apa saja. Dari tadi kita mengerjakan hitungan mereka.",
+  "mosaicMaster": "Kulitnya hijau, dan gandum tumbuh langsung dari tubuhnya. Itu disengaja.",
+  "mosaicMaster2": "Osiris. Dia dibunuh, lalu disatukan lagi, dan sekarang dialah yang kembali setiap tahun waktu sungai membanjiri ladang.",
+  "mosaicMaster3": "Di bawah sini, itulah intinya: mati bukan berarti selesai. Pikiran yang ceria untuk sebuah makam, ya?",
+  "mosaicWizard": "Sebuah jantung di satu sisi. Sehelai bulu di sisi lain. Dan timbangannya seimbang.",
+  "mosaicWizard2": "Bulu itu Ma'at. Kebenaran, keseimbangan, cara segala sesuatu seharusnya. Kalau jantungmu lebih berat dari bulu itu, kamu tidak boleh lewat pintunya.",
+  "mosaicWizard3": "Serigala yang memegangi timbangan itu Anubis. Dialah yang mengantarmu ke sini.",
+  "mosaicFinale": "Mundur sebentar. Lihat apa yang selama ini kita bawa keluar dari piramida-piramida itu.",
+  "mosaicFinale2": "Setiap potongan adalah bagian dari dia, yang memegangi timbangan. Dia memperhatikan kita sepanjang jalan.",
+  "mosaicFinale3": "Itu catatannya tentang kita. Dan menurutku, timbangannya seimbang.",
+  "shopFirstVisit": "Nah, ini dia. Lapakku. Aku kan sudah bilang, aku ikut demi dagang.",
+  "shopFirstVisit2": "Semua yang ada di meja ini kubawa keluar dari suatu tempat. Yang itu dari dua makam yang lalu.",
+  "shopArrival": "Ah, lapakku! Sebentar, kugelar dulu barang-barang yang kutemukan di jalan.",
+  "shopArrival2": "Barang langka paling mahal, tapi aku mau beli pernak-pernik apa pun yang kamu bawa.",
+  "arrival": {
+    "starter_1": {
+      "1": {
+        "explorer": "Lihat, di sana! Sphinx!"
+      },
+      "2": {
+        "explorer": "Besar sekali, padahal dari sini."
+      },
+      "3": {
+        "explorer": "Katanya ada tulisan di bawah kakinya. Yang tidak bisa dibaca siapa pun."
+      },
+      "4": {
+        "explorer": "Nanti saja. Piramida ini dulu!"
+      }
+    },
+    "starter_2": {
+      "1": {
+        "fez": "Ha! Akhirnya, sesuatu yang aku paham. Semua barang yang naik ke hulu Sungai Nil lewat sini dulu."
+      },
+      "2": {
+        "fez": "Dan pedagang mencatat semuanya. Siapa beli apa, siapa utang ke siapa, siapa yang terlambat…"
+      },
+      "3": {
+        "explorer": "Siapa yang terlambat?"
+      },
+      "4": {
+        "fez": "Terutama siapa yang terlambat!"
+      },
+      "5": {
+        "fez": "Tiga ribu tahun. Barangnya sudah hilang, tapi bonnya masih ada. Khas sekali!"
+      }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Lihat pintu-pintu itu! Orang datang ke sini untuk minta perlindungan. Lalu pintu seperti itu tetap tertutup."
+      },
+      "2": {
+        "explorer": "Tertutup untuk siapa?"
+      },
+      "3": {
+        "fez": "Untuk siapa saja yang tidak minta dengan sopan. Terutama kita."
+      },
+      "4": {
+        "fez": "Semua yang disegel di negeri ini, ada yang menyegelnya dengan sungguh-sungguh. Sungguh-sungguh sekali."
+      },
+      "5": {
+        "fez": "Dan kucing-kucingnya! Orang di sini cinta mati sama kucing. Tidak bisa berhenti mengelus-elus mereka."
+      }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "Oh, aku suka yang ini. Di sinilah mereka belajar menulis! Tanda demi tanda, di pecahan tembikar. Papirus terlalu mahal untuk anak-anak."
+      },
+      "2": {
+        "explorer": "Mereka latihan di sampah?"
+      },
+      "3": {
+        "fez": "Di apa saja yang ada! Kalau sudah hafal cukup banyak tanda, tiba-tiba dinding bukan cuma hiasan lagi."
+      },
+      "4": {
+        "explorer": "Sphinx itu… aku mau melihatnya lagi."
+      },
+      "5": {
+        "fez": "Belum. Sebentar lagi."
+      }
+    },
+    "junior_1": {
+      "1": {
+        "fez": "Mereka kembali setiap tahun bersama banjir, hampir pas di hari yang sama."
+      },
+      "2": {
+        "fez": "Jadi orang mulai menghitung hari di antaranya. Dari situlah kalender berasal. Dari burung."
+      },
+      "3": {
+        "explorer": "Burung."
+      },
+      "4": {
+        "fez": "Burung dan surat-surat. Selalu burung dan surat-surat."
+      }
+    },
+    "junior_2": {
+      "1": {
+        "fez": "Di sinilah mereka membuat semuanya. Bukan makamnya, tapi barang-barang di dalamnya."
+      },
+      "2": {
+        "fez": "Lihat cetakannya. Gelang yang sama, empat puluh kali."
+      },
+      "3": {
+        "explorer": "Untuk empat puluh orang?"
+      },
+      "4": {
+        "fez": "Untuk siapa saja yang bisa bayar. Bangsawan ingin punya barang seperti raja, dengan harga yang sanggup dibayar bangsawan."
+      }
+    },
+    "junior_3": {
+      "1": {
+        "fez": "Ini Thoth. Dewa rahasia dan sihir, kalau tidak salah."
+      },
+      "2": {
+        "explorer": "Kalau tidak salah."
+      },
+      "3": {
+        "fez": "Sembilan puluh persen yakin. Pokoknya, tanda-tanda yang kamu kumpulkan itu miliknya."
+      }
+    },
+    "junior_4": {
+      "1": {
+        "fez": "Tingginya seratus meter, dan di puncaknya ada api yang tidak pernah padam."
+      },
+      "2": {
+        "fez": "Pelaut bisa menemukan pantai dari jarak sehari. Sebelum ada mercusuar, mereka menemukannya dengan menabraknya."
+      },
+      "3": {
+        "explorer": "Bagaimana orang bisa menemukan sesuatu di sini tanpa mercusuar?"
+      },
+      "4": {
+        "fez": "Kamu tanya orang yang sudah pernah ke sana. Itulah seluruh pekerjaanku."
+      }
+    },
+    "expert_1": {
+      "1": {
+        "fez": "Enam puluhan makam dipahat di satu lembah, dan semuanya sudah dibuka sebelum kita sampai."
+      },
+      "2": {
+        "explorer": "Oleh siapa?"
+      },
+      "3": {
+        "fez": "Orang-orang seperti kita, kebanyakan. Cuma lebih dulu."
+      },
+      "4": {
+        "fez": "Menurutmu bagaimana?"
+      },
+      "5": {
+        "explorer": "Kita terlambat."
+      }
+    },
+    "expert_2": {
+      "1": {
+        "fez": "Amun-Ra. Matahari. Kesayangan semua orang, dan pantas saja. Lihat betapa besarnya tempat ini."
+      },
+      "2": {
+        "explorer": "Dua nama."
+      },
+      "3": {
+        "fez": "Dewa yang sama, kurasa. Yang terkenal mereka gandakan."
+      }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Seluruh negeri ini cuma garis hijau di kiri-kanan satu sungai, lalu di sini melebar jadi seperti ini."
+      },
+      "2": {
+        "fez": "Semuanya tumbuh. Semuanya juga menggigit."
+      },
+      "3": {
+        "explorer": "Kita ke sini untuk yang mana?"
+      },
+      "4": {
+        "fez": "Aku sih berharap bukan dua-duanya."
+      }
+    },
+    "expert_4": {
+      "1": {
+        "fez": "Yang pertama. Sebelum ini, raja dikubur di bawah lempeng datar, sama seperti orang lain."
+      },
+      "2": {
+        "fez": "Lalu ada yang berdiri di sini dan berpikir: bagaimana kalau kita tumpuk, enam kali, ke atas?"
+      },
+      "3": {
+        "explorer": "Berhasil?"
+      },
+      "4": {
+        "fez": "Bangunannya masih berdiri, orangnya tidak. Tergantung maksudmu."
+      }
+    },
+    "master_1": {
+      "1": {
+        "fez": "Dua juta balok. Ada yang menghitung."
+      },
+      "2": {
+        "explorer": "Ada yang menghitung?"
+      },
+      "3": {
+        "fez": "Selalu ada yang menghitung. Itu yang sering dilupakan orang: semua ini diatur oleh juru tulis."
+      },
+      "4": {
+        "fez": "Indah, ya? Aku tidak mau membayangkan daftar gaji para pekerjanya."
+      }
+    },
+    "master_2": {
+      "1": {
+        "fez": "Petunjuk. Cuma itu isinya. Apa yang harus diucapkan, urutannya bagaimana, supaya perjalanannya lancar."
+      },
+      "2": {
+        "explorer": "Buku panduan."
+      },
+      "3": {
+        "fez": "Buku panduan untuk jadi orang mati. Mereka ini mencatat semuanya."
+      },
+      "4": {
+        "fez": "Dan mengingat apa yang kita cari, itu kabar baik pertama minggu ini."
+      }
+    },
+    "master_3": {
+      "1": {
+        "fez": "Ah. Perkemahan seseorang."
+      },
+      "2": {
+        "explorer": "Baru?"
+      },
+      "3": {
+        "fez": "Lumayan baru. Makanan kaleng dan batuk parah, kelihatannya."
+      },
+      "4": {
+        "fez": "Mereka masuk lebih jauh dari sini, dan tidak membawa perlengkapan mereka."
+      },
+      "5": {
+        "explorer": "Mereka kembali untuk mengambilnya?"
+      },
+      "6": {
+        "fez": "…Ayo kita jalan terus."
+      }
+    },
+    "master_4": {
+      "1": {
+        "fez": "NAH, inilah yang ditiru yang lain. Lihat warnanya. Tiga ribu tahun, dan masih kelihatan seperti baru dicat."
+      },
+      "2": {
+        "explorer": "Henut pasti marah besar."
+      },
+      "3": {
+        "fez": "Henut pasti sibuk mencatat."
+      }
+    },
+    "wizard_1": {
+      "1": {
+        "fez": "Matahari turun ke bawah dunia di malam hari dan naik lagi di sisi lain. Itulah kepercayaannya."
+      },
+      "2": {
+        "fez": "Dua belas jam dalam gelap, banyak halangan, dan harus ada yang membawanya sampai lewat."
+      },
+      "3": {
+        "explorer": "Itu yang kita lakukan dari tadi."
+      },
+      "4": {
+        "fez": "Aku sudah berusaha tidak bilang begitu."
+      },
+      "5": {
+        "explorer": "Pasirnya masih terus masuk."
+      },
+      "6": {
+        "fez": "Sudah tiga ribu tahun pasir itu masuk. Tidak pernah berhenti, cuma berputar."
+      },
+      "7": {
+        "fez": "Penuh, terbalik, mulai lagi. Sama seperti matahari."
+      }
+    },
+    "wizard_2": {
+      "1": {
+        "fez": "Ada dua, tingginya delapan belas meter, dan dua-duanya Amenhotep."
+      },
+      "2": {
+        "fez": "Orang Yunani sekali lihat langsung memutuskan itu pahlawan mereka. Memnon. Nama itu melekat selama dua ribu tahun."
+      },
+      "3": {
+        "explorer": "Nama siapa yang tertulis di situ?"
+      },
+      "4": {
+        "fez": "Namanya sendiri. Dipahat di takhtanya, dari dulu sampai sekarang."
+      },
+      "5": {
+        "fez": "Tidak ada yang membacanya."
+      },
+      "6": {
+        "fez": "Setelah gempa, patung yang di utara bernyanyi waktu subuh. Satu nada, setiap pagi, waktu matahari menghangatkan retakannya."
+      },
+      "7": {
+        "explorer": "Dan sekarang?"
+      },
+      "8": {
+        "fez": "Seorang kaisar menyuruh orang memperbaikinya. Sejak itu patungnya diam saja."
+      }
+    },
+    "wizard_3": {
+      "1": {
+        "fez": "Timbangan. Jantung di satu sisi, bulu di sisi lain. Jadi jantung yang berat dan mantap yang menang, kan?"
+      },
+      "2": {
+        "explorer": "Benda berat itu ke mana jatuhnya?"
+      },
+      "3": {
+        "fez": "…Ke bawah."
+      },
+      "4": {
+        "fez": "Oh."
+      },
+      "5": {
+        "fez": "Ringan. Jantungnya harus RINGAN."
+      }
+    },
+    "wizard_4": {
+      "1": {
+        "fez": "Batu puncak dipasang paling akhir, dan dilapisi emas, supaya seluruh piramida menangkap cahaya pertama."
+      },
+      "2": {
+        "explorer": "Untuk siapa?"
+      },
+      "3": {
+        "fez": "Untuk siapa saja yang melihat. Justru itu intinya. Bukan untuk orang di dalamnya."
+      }
+    }
+  },
+  "tomb": {
+    "starter": {
+      "1": {
+        "ipi": "Hei! Jangan pegang! Itu kendiku!"
+      },
+      "2": {
+        "fez": "…Kendi itu barusan bicara?!"
+      },
+      "3": {
+        "ipi": "AKU yang bicara. Rak ketiga, yang gompal. Itu punyaku."
+      },
+      "4": {
+        "explorer": "Oke, oke! Tidak kami sentuh. Kamu siapa?"
+      },
+      "5": {
+        "ipi": "Ipi. Empat puluh tahun aku mengurus buku catatan. Empat puluh!"
+      },
+      "6": {
+        "fez": "Buku catatan? Punya siapa?"
+      },
+      "7": {
+        "ipi": "Punya semua orang! Siapa utang apa, sampai karung gandum terakhir."
+      },
+      "8": {
+        "ipi": "Si Henut, di utara sana? Sebelas deben lapis. Tidak pernah dibayar!"
+      },
+      "9": {
+        "explorer": "Dan kamu masih ingat, setelah sekian lama?"
+      },
+      "10": {
+        "ipi": "Ada catatannya! Yang sudah ditulis, berarti benar-benar terjadi."
+      },
+      "11": {
+        "ipi": "Cuma para Hori itu… Hori si tukang perahu, Hori si tukang roti… dan Hori yang SATU LAGI."
+      },
+      "12": {
+        "fez": "Kamu punya kucing juga? Semua orang punya kucing, kan? Lucu-lucu!"
+      },
+      "13": {
+        "ipi": "Lucu? Mereka untuk menjaga gandum! Kamu tahu berapa rugimu karena satu tikus, selama satu musim?"
+      },
+      "14": {
+        "fez": "…Oh. Iya juga."
+      },
+      "15": {
+        "ipi": "Bilang ke Henut, Ipi yang menyuruhmu. Pasti sorenya langsung rusak."
+      },
+      "16": {
+        "fez": "Aku suka dia!"
+      },
+      "17": {
+        "explorer": "Kamu cuma senang karena dia masih punya piutang."
+      }
+    },
+    "junior": {
+      "1": {
+        "henut": "Akhirnya. Kalian pasti datang soal lapis itu. Ipi pasti masih ribut soal lapis itu."
+      },
+      "2": {
+        "explorer": "Iya."
+      },
+      "3": {
+        "henut": "Itu kaca. Kaca yang indah. Dia tahu kok."
+      },
+      "4": {
+        "fez": "…Gelangnya juga kaca?"
+      },
+      "5": {
+        "henut": "Semua di sini tiruan terbaik yang bisa dibeli dengan uang, anak muda, dan setiap barang kupilih sendiri."
+      },
+      "6": {
+        "henut": "Nah. Dindingnya. Tanda ketiga, itu bukan namaku. Ulah murid tukang yang pegang pahat tanpa diawasi."
+      },
+      "7": {
+        "henut": "Kamu sudah belajar tanda-tanda. Kelihatan kok. Betulkan."
+      }
+    },
+    "juniorFixed": {
+      "1": {
+        "henut": "Nah. Sekarang seribu tahun lagi pun itu tetap namaku."
+      },
+      "2": {
+        "explorer": "Ipi menulisnya dengan benar."
+      },
+      "3": {
+        "henut": "Ipi menulis semuanya dengan benar. Cuma itu kelebihannya."
+      },
+      "4": {
+        "fez": "Memangnya penting, di bawah sini?"
+      },
+      "5": {
+        "henut": "Cuma itu yang penting."
+      },
+      "6": {
+        "fez": "Di atas sana dia punya satu dinding penuh Thoth. Dewa rahasia."
+      },
+      "7": {
+        "henut": "Thoth itu berhitung. Thoth mencatat apa yang kamu lakukan, dan catatan itu tidak hilang."
+      },
+      "8": {
+        "henut": "Rahasia itu cuma sebutan orang untuk berhitung, kalau mereka sendiri tidak bisa berhitung."
+      },
+      "9": {
+        "henut": "Kalau kalian mau lanjut, dan jelas kalian mau, ada seorang imam di Karnak yang masih berutang satu upacara pada orang mati. Dia pasti menyebalkan soal itu. Imam memang begitu."
+      },
+      "10": {
+        "henut": "…Kita pernah bertemu?"
+      },
+      "11": {
+        "fez": "Aku pasti ingat."
+      },
+      "12": {
+        "henut": "Ya. Aku juga."
+      }
+    },
+    "expert": {
+      "1": {
+        "priest": "Kalian bukan orang yang kutunggu."
+      },
+      "2": {
+        "explorer": "Siapa yang kamu tunggu?"
+      },
+      "3": {
+        "priest": "Seseorang yang membawa stempel. Stempel itu harus dibawa ke sini, diletakkan di sana, lalu didoakan. Belum satu pun dari tiga hal itu terjadi."
+      },
+      "4": {
+        "fez": "…Sudah berapa lama kamu menunggu?"
+      },
+      "5": {
+        "priest": "Aku tidak menghitung. Itu tidak pantas untuk seorang imam."
+      },
+      "6": {
+        "priest": "Persembahan yang benar adalah benda yang digenggam seorang raja waktu dia dikubur. Bukan tiruan. Bukan yang mirip. Benda aslinya, dengan tandanya."
+      },
+      "7": {
+        "priest": "Bawa itu, dan kalian akan diumumkan. Bawa yang lain, dan tidak akan."
+      },
+      "8": {
+        "explorer": "Diumumkan kepada siapa?"
+      },
+      "9": {
+        "priest": "Kalian akan tahu. Semua orang akhirnya tahu."
+      },
+      "10": {
+        "fez": "Dia ini suka sekali sama matahari. Lihat semua Amun-Ra di depan itu."
+      },
+      "11": {
+        "priest": "Amun adalah yang tersembunyi. Ra adalah yang bisa dilihat siapa saja."
+      },
+      "12": {
+        "priest": "Mereka dewa yang sama. Itu bukan kebetulan, justru itulah intinya."
+      },
+      "13": {
+        "fez": "…Oh. Ya. Aku sudah tahu kok."
+      },
+      "14": {
+        "explorer": "Kamu tidak tahu."
+      },
+      "15": {
+        "fez": "Aku tidak tahu."
+      }
+    },
+    "expertB": {
+      "1": {
+        "fez": "Belum ada yang pernah masuk ke sini. Bukan kita, bukan rombongan sebelumnya, tidak ada siapa-siapa."
+      },
+      "2": {
+        "explorer": "Dari mana kamu tahu?"
+      },
+      "3": {
+        "fez": "Karena masih ada isinya."
+      }
+    },
+    "master": {
+      "1": {
+        "pharaoh": "Kalian boleh mendekat. Kalian sudah mendekat. Baiklah."
+      },
+      "2": {
+        "fez": "Yang Mulia."
+      },
+      "3": {
+        "pharaoh": "Ya."
+      },
+      "4": {
+        "explorer": "Kami butuh stempelmu."
+      },
+      "5": {
+        "pharaoh": "Semua orang juga. Stempelku sudah dua kali dicuri dan tidak pernah dikembalikan."
+      },
+      "6": {
+        "pharaoh": "Yang kedua kali, mereka meninggalkan tiruan. TIRUAN. Di makamKU. Seolah-olah aku tidak akan melihat."
+      },
+      "7": {
+        "explorer": "Tiruannya masih di sini?"
+      },
+      "8": {
+        "pharaoh": "Tentu saja masih, barang itu tidak ada harganya. Ada di rak tempat yang asli seharusnya, sibuk jadi palsu."
+      },
+      "9": {
+        "pharaoh": "Ambil saja kalau mau. Bawa ke imam itu. Lihat sejauh mana itu membawamu."
+      },
+      "10": {
+        "fez": "…Dia menikmati ini."
+      },
+      "11": {
+        "pharaoh": "Ini minggu terbaikku dalam sembilan ratus tahun."
+      },
+      "12": {
+        "fez": "Itu Osiris di dinding. Penguasa orang mati. Seram, ya."
+      },
+      "13": {
+        "pharaoh": "Dia itu HIJAU, dasar kadal konyol."
+      },
+      "14": {
+        "pharaoh": "Hijau seperti sawah yang kebanjiran. Dia dibunuh dan disatukan lagi, dan dia kembali setiap tahun."
+      },
+      "15": {
+        "pharaoh": "Di bawah sini itu bukan seram, justru itulah intinya. Mati bukan berarti selesai."
+      }
+    },
+    "wizard": {
+      "1": {
+        "priest": "Letakkan. Di situ. Ya."
+      },
+      "2": {
+        "priest": "…"
+      },
+      "3": {
+        "priest": "Itu pertama kalinya aku melakukannya. Tadinya kukira aku sudah lupa caranya."
+      },
+      "4": {
+        "explorer": "Kamu lupa?"
+      },
+      "5": {
+        "priest": "Lupa sama sekali. Tapi ingat lagi."
+      }
+    },
+    "wizardB": {
+      "1": {
+        "fez": "Tali mereka. Masih terikat."
+      },
+      "2": {
+        "explorer": "Mereka sampai sejauh ini."
+      },
+      "3": {
+        "fez": "Lebih jauh lagi. Lalu mereka naik lagi lewat tali itu."
+      },
+      "4": {
+        "explorer": "Ada buku catatan."
+      },
+      "5": {
+        "fez": "Apa tulisannya?"
+      },
+      "6": {
+        "explorer": "Tidak bisa membaca tulisannya. Kembali untuk stempel. Membuat yang lebih bagus saja."
+      },
+      "7": {
+        "explorer": "Tidak ada yang tertipu."
+      },
+      "8": {
+        "fez": "…Mereka memalsukannya karena tidak bisa membaca untuk apa stempel itu."
+      },
+      "9": {
+        "explorer": "Lalu mereka pulang."
+      }
+    },
+    "wizardC": {
+      "1": {
+        "fez": "Berhenti sebentar. Lihat apa yang selama ini kita bawa keluar dari piramida-piramida itu."
+      },
+      "2": {
+        "explorer": "Itu gambar."
+      },
+      "3": {
+        "fez": "Dari awal itu memang gambar."
+      }
+    }
+  },
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Gua! Di peta cuma ada pintu gudang, dan ini satu bukit penuh!"
+      },
+      "2": {
+        "fez": "Pintar juga dia. Sembunyikan barang dagangan di dalam bukit. Tidak ada pencuri yang terpikir begitu."
+      },
+      "3": {
+        "explorer": "Kita terpikir."
+      },
+      "4": {
+        "fez": "Kita kan bukan pencuri. Kita pembeli. Pembeli yang sangat terlambat."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Pasti ini tempatnya. Henut! Si sebelas deben lapis itu!"
+      },
+      "2": {
+        "fez": "Menurutmu, kita dapat bagian kalau kita yang menagih?"
+      },
+      "3": {
+        "explorer": "Kamu belum menagih apa-apa."
+      },
+      "4": {
+        "fez": "Aku suka menghitung dari awal."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Jadi di sinilah imam yang Henut bilang itu. Menyebalkan, katanya."
+      },
+      "2": {
+        "fez": "Menurutmu kita bawa sesuatu? Bunga?"
+      },
+      "3": {
+        "explorer": "Dia sudah mati."
+      },
+      "4": {
+        "fez": "Justru itu. Kesan pertama itu penting."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Cuma imam besar yang boleh masuk ke sini. Dan sekarang kita!"
+      },
+      "2": {
+        "explorer": "Memangnya kita boleh?"
+      },
+      "3": {
+        "fez": "Tidak ada penjaga pintu yang melarang."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Lihat, petanya berhenti di sini. Pasir, lalu tidak ada apa-apa."
+      },
+      "2": {
+        "explorer": "Berarti kita di tempat yang benar."
+      },
+      "3": {
+        "fez": "Itu maksudku. Justru itu yang bikin aku deg-degan."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Aula Osiris! Hijau, tentu saja. Karena dia kembali setiap tahun, seperti gandum."
+      },
+      "2": {
+        "explorer": "Kamu memang selalu tahu itu."
+      },
+      "3": {
+        "fez": "Selalu."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Gudang milik para dewa sendiri! Apa yang kamu simpan kalau kamu sudah punya segalanya?"
+      },
+      "2": {
+        "explorer": "Apa pun yang dibawa orang untukmu."
+      },
+      "3": {
+        "fez": "…Iya. Pasti itu."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Alam Kekuatan Semesta. Wah, wah."
+      },
+      "2": {
+        "fez": "Kalau aku mau menjual barang yang biasa-biasa saja, aku juga akan memberinya nama begitu."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Tiba-tiba aku merasa sudah berbuat salah."
+      },
+      "2": {
+        "explorer": "Salah apa?"
+      },
+      "3": {
+        "fez": "Tidak tahu. Itu bagian paling parahnya."
+      }
+    }
+  },
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Tuas dan pintu sebanyak itu, cuma untuk satu gudang!"
+      },
+      "2": {
+        "fez": "Berarti ada barang bagus di bawah sana. Tidak ada yang mau repot begitu demi sampah."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Fiuh. Pintu-pintu itu jauh lebih rewel daripada punya Ipi."
+      },
+      "2": {
+        "fez": "Yah. Nyonya ini memang punya uang."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Fiuh, akhirnya! Gua itu benar-benar tidak mau kita masuk."
+      },
+      "2": {
+        "explorer": "Kurasa memang itu tujuannya."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Psst… kenapa aku berbisik?"
+      },
+      "2": {
+        "explorer": "Tidak tahu. Aku juga berbisik."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Fiuh. Ekorku masih gemetar gara-gara pintu terakhir tadi."
+      },
+      "2": {
+        "fez": "Raja yang mengunci barangnya seperti itu… dia benar-benar tidak mau kehilangan barangnya."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Lihat? Kalau cukup lama di bawah tanah, nanti kamu muncul lagi."
+      },
+      "2": {
+        "explorer": "Itu Osiris juga?"
+      },
+      "3": {
+        "fez": "Bukan, yang itu aku."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Pintu-pintu seperti itu… dulu kita pasti langsung putar balik."
+      },
+      "2": {
+        "explorer": "Sekarang tidak lagi."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Tiga lantai gua, baru ketemu pintu depannya."
+      },
+      "2": {
+        "explorer": "Berarti isinya pasti berharga."
+      },
+      "3": {
+        "fez": "Selalu begitu katanya. Lalu ternyata isinya kendi."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Bagian gelap terakhir. Aku bisa merasakannya."
+      },
+      "2": {
+        "explorer": "Kamu bilang begitu juga di tempat sebelumnya."
+      },
+      "3": {
+        "fez": "Dan aku hampir benar."
+      }
+    }
+  },
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Lihat itu! Piramida di bawah tanah! Untuk seorang pedagang!"
+      },
+      "2": {
+        "fez": "Entah dia untung besar, atau jago sekali menawar."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Lihat puncaknya berkilau kena matahari! Emas asli, pasti."
+      },
+      "2": {
+        "explorer": "Di dalam lubang di tanah. Berkilau untuk siapa?"
+      },
+      "3": {
+        "fez": "Untuk dia sendiri. Kelihatan kok orangnya seperti apa."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Hm. Sebenarnya boleh tidak menjual barang yang sudah jadi milik dewa?"
+      },
+      "2": {
+        "explorer": "Tanya saja dewanya."
+      },
+      "3": {
+        "fez": "Mending tidak usah."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Menurutmu imam itu tahu kita berkeliaran di sini?"
+      },
+      "2": {
+        "explorer": "Dia tidak menghitung. Itu tidak pantas untuk seorang imam."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Lihat, sendirian di bawah matahari. Cantik, ya?"
+      },
+      "2": {
+        "fez": "Bagaimana kalau kita gambar saja, lalu pergi?"
+      },
+      "3": {
+        "explorer": "Kamu tidak bisa menggambar."
+      },
+      "4": {
+        "fez": "…Iya. Ya sudah, kita masuk."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Siapa pun yang ada di dalam sana yakin dia akan kembali. Begitulah aturannya di sini."
+      },
+      "2": {
+        "explorer": "Sudah berapa lama dia menunggu?"
+      },
+      "3": {
+        "fez": "Lama sekali. Tapi memang begitu risikonya. Jadi orang mati itu kebanyakan menunggu."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "explorer": "Wah."
+      },
+      "2": {
+        "fez": "Iya."
+      },
+      "3": {
+        "fez": "Kadang memang tidak ada lagi yang bisa dikatakan, ya."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Lihat bercak matahari di piramida itu? Kamu bisa tahu jam berapa dari situ."
+      },
+      "2": {
+        "explorer": "Jadi sekarang jam berapa?"
+      },
+      "3": {
+        "fez": "…Sore. Kira-kira. Aku kan bukan jam."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Itu dia. Semua garis di peta itu berakhir di sini."
+      },
+      "2": {
+        "explorer": "Berarti ini akhirnya."
+      },
+      "3": {
+        "fez": "Akhir petanya, iya. Aneh. Kukira rasanya bakal lebih enak."
+      }
+    }
+  },
+  "camp": {
+    "firstHome": {
+      "1": {
+        "fez": "Ini perkemahanmu? Api unggun dan satu peti?"
+      },
+      "2": {
+        "explorer": "Perkemahan kita."
+      },
+      "3": {
+        "fez": "Kita. Oke. Kalau begitu aku ambil tempat di dekat api."
+      },
+      "4": {
+        "fez": "Aku kan kadal. Kalau lagi cocok."
+      }
+    },
+    "homeHaul": {
+      "1": {
+        "fez": "Bongkar barang! Bagian paling seru dari seluruh perjalanan."
+      },
+      "2": {
+        "explorer": "Lebih seru dari piramidanya?"
+      },
+      "3": {
+        "fez": "Piramida itu bukan punya kita. Ini punya kita."
+      }
+    },
+    "homeEmpty": {
+      "1": {
+        "explorer": "Pulang dengan tangan kosong."
+      },
+      "2": {
+        "fez": "Terus? Kita sudah jalan. Itu juga dihitung."
+      },
+      "3": {
+        "explorer": "Dihitung untuk apa?"
+      },
+      "4": {
+        "fez": "Untuk kakiku. Kakiku pendek sekali, tahu."
+      }
+    },
+    "rested": {
+      "1": {
+        "fez": "Nah. Sudah agak enakan?"
+      },
+      "2": {
+        "explorer": "Cuma lecet sedikit."
+      },
+      "3": {
+        "fez": "Aku bahkan tidak berani lihat. Tapi tetap saja aku harus duduk."
+      }
+    },
+    "chapterJunior": {
+      "1": {
+        "fez": "Wah, lancar juga. Berikutnya!"
+      },
+      "2": {
+        "explorer": "Tadi tidak segampang itu."
+      },
+      "3": {
+        "fez": "Sekarang sih gampang. Semuanya gampang kalau sudah lewat."
+      }
+    },
+    "chapterExpert": {
+      "1": {
+        "fez": "Di luar sana ada jebakan. Jebakan sungguhan. Bisa menggigit."
+      },
+      "2": {
+        "fez": "Terluka? Ya kita jalan pulang saja. Di rumah kamu sembuh lagi."
+      },
+      "3": {
+        "explorer": "Kalau kamu?"
+      },
+      "4": {
+        "fez": "Aku jalan di belakangmu. Lebih aman di situ."
+      }
+    },
+    "chapterMaster": {
+      "1": {
+        "fez": "Empat piramida di luar sana. Ingat waktu cuma ada satu?"
+      },
+      "2": {
+        "explorer": "Itu belum lama."
+      },
+      "3": {
+        "fez": "Memang. Tapi rasanya sudah lama."
+      }
+    },
+    "chapterWizard": {
+      "1": {
+        "fez": "Lihat yang terakhir. Puncaknya emas!"
+      },
+      "2": {
+        "fez": "Yang itu bakal mahal. Yang terakhir selalu mahal."
+      },
+      "3": {
+        "explorer": "Mahal bagaimana?"
+      },
+      "4": {
+        "fez": "…Aku juga sudah tidak yakin."
+      }
+    },
+    "firstFind": {
+      "1": {
+        "fez": "Lihat itu, seperti sudah dari dulu ada di situ!"
+      },
+      "2": {
+        "fez": "Tanganku gatal mau menempelkan label harga."
+      },
+      "3": {
+        "explorer": "Jangan."
+      },
+      "4": {
+        "fez": "Tidak, tidak. Barang di rumah tidak dijual. Aku tahu kok."
+      }
+    },
+    "structureDone": {
+      "1": {
+        "fez": "Jadi! Semua bagiannya sudah terpasang!"
+      },
+      "2": {
+        "explorer": "Hasil kerja kita sendiri."
+      },
+      "3": {
+        "fez": "Yah. Aku sih kebanyakan menunjuk-nunjuk."
+      }
+    }
+  },
+  "animal": {
+    "forSale": {
+      "1": {
+        "fez": "Lihat apa yang ada di lapak! Sekarang aku jualan angkutan juga."
+      },
+      "2": {
+        "explorer": "Dia lagi mengunyah."
+      },
+      "3": {
+        "fez": "Itu sudah termasuk harganya."
+      }
+    },
+    "boughtDonkey": {
+      "1": {
+        "fez": "Terjual! Satu keledai. Keras kepala, tapi mau membawa apa saja."
+      },
+      "2": {
+        "explorer": "Jadi, dia di mana?"
+      },
+      "3": {
+        "fez": "Sudah jalan pulang duluan. Dia lebih suka jalan tanpa kita."
+      }
+    },
+    "blockedDonkey": {
+      "1": {
+        "fez": "Kita tidak mungkin jalan sejauh itu bawa barang sebanyak ini. Kita butuh keledai."
+      },
+      "2": {
+        "fez": "Dan coba tebak siapa yang punya? Aku. Di lapakku di ruang rahasia Henut."
+      }
+    },
+    "throughDonkey": {
+      "1": {
+        "explorer": "Dia mau jalan."
+      },
+      "2": {
+        "fez": "Hari ini. Coba tanya lagi besok."
+      }
+    },
+    "arrivesDonkey": {
+      "1": {
+        "fez": "Itu dia! Sampai duluan."
+      },
+      "2": {
+        "explorer": "Dan sudah ketemu api unggunnya juga."
+      },
+      "3": {
+        "fez": "Tempatku. Yah. Dia yang duluan."
+      }
+    },
+    "boughtCart": {
+      "1": {
+        "fez": "Gerobak! Dua roda, dan hampir tidak berderak."
+      },
+      "2": {
+        "explorer": "Hampir?"
+      },
+      "3": {
+        "fez": "Bunyi deraknya gratis."
+      }
+    },
+    "blockedCart": {
+      "1": {
+        "fez": "Keledainya tidak mau bawa satu tas lagi. Sudah kutanya."
+      },
+      "2": {
+        "fez": "Kita butuh gerobak. Ada satu di lapakku, di tempat imam besar."
+      }
+    },
+    "throughCart": {
+      "1": {
+        "explorer": "Dengar itu?"
+      },
+      "2": {
+        "fez": "Itu gerobaknya. Dia agak suka bernyanyi."
+      },
+      "3": {
+        "explorer": "Sepanjang jalan?"
+      }
+    },
+    "arrivesCart": {
+      "1": {
+        "fez": "Gerobak di perkemahan kita! Sekarang kita kelihatan seperti mau pergi ke suatu tempat."
+      },
+      "2": {
+        "explorer": "Kita memang mau pergi ke suatu tempat."
+      },
+      "3": {
+        "fez": "Iya, tapi sekarang semua orang bisa lihat."
+      }
+    },
+    "boughtCamel": {
+      "1": {
+        "fez": "Unta! Tahan berhari-hari tanpa minum. Kalau aku sih tidak, ya."
+      },
+      "2": {
+        "explorer": "Dia melihatmu."
+      },
+      "3": {
+        "fez": "Dari atas. Unta selalu memandang rendah."
+      }
+    },
+    "blockedCamel": {
+      "1": {
+        "fez": "Ruang Paling Suci? Kita tidak bakal sampai ke sana kalau jalan kaki."
+      },
+      "2": {
+        "fez": "Kebetulan sekali, aku punya unta. Di lapakku, di tempat imam besar."
+      }
+    },
+    "throughCamel": {
+      "1": {
+        "fez": "Dia berlutut! Untukku!"
+      },
+      "2": {
+        "explorer": "Supaya kita bisa naik."
+      },
+      "3": {
+        "fez": "Biarkan aku senang sebentar."
+      }
+    },
+    "arrivesCamel": {
+      "1": {
+        "fez": "Itu dia. Gayanya seperti perkemahan ini miliknya."
+      },
+      "2": {
+        "explorer": "Dan keledainya?"
+      },
+      "3": {
+        "fez": "Pura-pura tidak lihat. Sama seperti aku."
+      }
+    },
+    "boughtSecondDonkey": {
+      "1": {
+        "fez": "Keledai lagi! Sekarang yang pertama punya teman ngobrol."
+      },
+      "2": {
+        "explorer": "Ngobrol?"
+      },
+      "3": {
+        "fez": "Meringkik. Itu ngobrol, cuma lebih keras."
+      }
+    },
+    "blockedSecondDonkey": {
+      "1": {
+        "fez": "Keledainya tidak mau jalan lagi. Tidak mau sendirian, katanya."
+      },
+      "2": {
+        "explorer": "Dia bilang begitu?"
+      },
+      "3": {
+        "fez": "Aku bisa bahasa keledai. Dia mau teman, dan aku punya satu di lapakku di harta firaun."
+      }
+    },
+    "throughSecondDonkey": {
+      "1": {
+        "fez": "Dengar mereka! Saling adu keras."
+      },
+      "2": {
+        "explorer": "Siapa yang menang?"
+      },
+      "3": {
+        "fez": "Bukan kita. Kita yang harus mendengarkan."
+      }
+    },
+    "arrivesSecondDonkey": {
+      "1": {
+        "fez": "Lihat mereka. Seperti sudah kenal bertahun-tahun."
+      },
+      "2": {
+        "explorer": "Seperti kita."
+      },
+      "3": {
+        "fez": "Kita lebih jarang meringkik."
+      }
+    },
+    "boughtSecondCamel": {
+      "1": {
+        "fez": "Unta lagi. Iya. Aku juga tidak suka mereka."
+      },
+      "2": {
+        "fez": "Tapi yang ini setidaknya kelihatan ramah."
+      },
+      "3": {
+        "explorer": "Dia melihat fez-mu."
+      }
+    },
+    "blockedSecondCamel": {
+      "1": {
+        "fez": "Aula Osiris. Satu unta tidak cukup untuk sampai ke sana."
+      },
+      "2": {
+        "fez": "Untung aku punya satu lagi, di lapakku di harta firaun. Yang paling terakhir."
+      },
+      "3": {
+        "explorer": "Kamu selalu bilang begitu."
+      }
+    },
+    "throughSecondCamel": {
+      "1": {
+        "fez": "Dia memakan fez-ku!"
+      },
+      "2": {
+        "explorer": "Unta yang ramah."
+      },
+      "3": {
+        "fez": "Terlalu ramah."
+      }
+    },
+    "arrivesSecondCamel": {
+      "1": {
+        "fez": "Dua unta. Sekarang dua-duanya memandang rendah padaku."
+      },
+      "2": {
+        "explorer": "Ya sudah, berdiri saja dekat keledai."
+      },
+      "3": {
+        "fez": "Sudah dari tadi."
+      }
+    },
+    "boughtSturdyCart": {
+      "1": {
+        "fez": "Gerobak yang lebih kuat. Yang ini tidak bernyanyi di jalan."
+      },
+      "2": {
+        "explorer": "Ada gambar bunganya."
+      },
+      "3": {
+        "fez": "Supaya lebih kuat."
+      }
+    },
+    "blockedSturdyCart": {
+      "1": {
+        "fez": "Gerobak lama tidak bakal sampai ke sana dengan utuh. Kita butuh yang lebih kuat."
+      },
+      "2": {
+        "fez": "Ada satu di lapakku di Ruang Harta Para Dewa. Bukan karena catnya, lho."
+      }
+    },
+    "throughSturdyCart": {
+      "1": {
+        "explorer": "Tidak berderak."
+      },
+      "2": {
+        "fez": "Lihat? Kuat."
+      },
+      "3": {
+        "explorer": "Dan bunganya?"
+      },
+      "4": {
+        "fez": "Itu juga sedikit membantu."
+      }
+    },
+    "arrivesSturdyCart": {
+      "1": {
+        "fez": "Lihat, mengilap!"
+      },
+      "2": {
+        "explorer": "Lebih cantik dari yang perlu."
+      },
+      "3": {
+        "fez": "Iya. Aku juga tidak menjualnya karena kuatnya."
+      }
+    },
+    "boughtCaravanBanner": {
+      "1": {
+        "fez": "Sebuah panji. Jujur saja: panji ini tidak membuka apa-apa."
+      },
+      "2": {
+        "explorer": "Terus gunanya apa?"
+      },
+      "3": {
+        "fez": "Berkibar. Indah sekali."
+      }
+    },
+    "arrivesCaravanBanner": {
+      "1": {
+        "fez": "Lihat dia berkibar! Di atas perkemahan kita sendiri!"
+      },
+      "2": {
+        "explorer": "Tetap tidak membuka apa-apa."
+      },
+      "3": {
+        "fez": "Memang. Tidak perlu juga."
+      }
+    }
+  },
+  "bond": {
+    "starter": {
+      "1": {
+        "fez": "Cepat juga."
+      },
+      "2": {
+        "explorer": "Itu cuma pintu."
+      },
+      "3": {
+        "fez": "Aku bisa butuh seminggu."
+      }
+    },
+    "starterTomb": {
+      "1": {
+        "fez": "Biar jelas, ya. Aku ikut demi dijual lagi. Kubilang sekarang, selagi itu masih benar."
+      },
+      "2": {
+        "explorer": "Oke, kuingat."
+      }
+    },
+    "junior": {
+      "1": {
+        "fez": "Tadi kamu diam sebentar."
+      },
+      "2": {
+        "explorer": "Aku sedang menghitung."
+      },
+      "3": {
+        "fez": "Aku tahu. Aku pernah lihat orang menebak-nebak. Itu tadi bukan menebak."
+      }
+    },
+    "expert": {
+      "1": {
+        "fez": "Tadi nyaris saja."
+      },
+      "2": {
+        "explorer": "Aman kok."
+      },
+      "3": {
+        "fez": "Nyaris. Aku boleh bilang begitu."
+      }
+    },
+    "master": {
+      "1": {
+        "fez": "Kita bisa berhenti."
+      },
+      "2": {
+        "explorer": "Bisa."
+      },
+      "3": {
+        "fez": "Aku bilang supaya sudah terucap. Bukan supaya kita lakukan."
+      }
+    },
+    "wizard": {
+      "1": {
+        "explorer": "Yang ini harganya berapa?"
+      },
+      "2": {
+        "fez": "…"
+      },
+      "3": {
+        "fez": "Yang ini tidak akan kuberi harga."
+      },
+      "4": {
+        "explorer": "Oke, kuingat."
+      }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": {
+        "fez": "Wah. Barusan itu masih dinding."
+      },
+      "2": {
+        "explorer": "Ada lorong di baliknya."
+      },
+      "3": {
+        "fez": "Bertahun-tahun orang lewat begitu saja. Bertahun-tahun!"
+      }
+    }
+  },
+  "reading": {
+    "junior": {
+      "1": {
+        "explorer": "Ada satu baris di sini yang sekarang bisa kubaca."
+      },
+      "2": {
+        "explorer": "Aku memberi roti kepada yang lapar."
+      },
+      "3": {
+        "fez": "Roti. Di makam."
+      },
+      "4": {
+        "explorer": "Di makam sebelumnya juga ada. Aku tidak tahu itu kata-kata."
+      }
+    },
+    "expert": {
+      "1": {
+        "explorer": "Baris kedua. Air kepada yang haus."
+      },
+      "2": {
+        "fez": "Roti, sekarang air. Ada yang ingin sekali dikenang sebagai orang dermawan."
+      },
+      "3": {
+        "explorer": "Semua orang punya kalimat itu. Setiap dinding, setiap makam, dua baris yang sama."
+      },
+      "4": {
+        "fez": "Berarti entah mereka semua dermawan, atau memang begitu yang seharusnya diucapkan."
+      },
+      "5": {
+        "explorer": "Atau itulah ukuran yang dipakai untuk menimbang mereka."
+      }
+    },
+    "master": {
+      "1": {
+        "explorer": "Pakaian kepada yang telanjang. Baris ketiga."
+      },
+      "2": {
+        "fez": "Roti, air, pakaian. Itu daftar barang yang diberikan."
+      },
+      "3": {
+        "explorer": "Di makam orang yang membawa semua barangnya."
+      },
+      "4": {
+        "fez": "…Iya. Aku juga sudah sadar."
+      }
+    },
+    "sphinx": {
+      "1": {
+        "fez": "Kembali ke tempat kita mulai. Dia tidak bergerak sedikit pun."
+      },
+      "2": {
+        "explorer": "Tulisannya masih ada."
+      },
+      "3": {
+        "fez": "Kamu bisa membacanya?"
+      },
+      "4": {
+        "explorer": "Sebuah nama."
+      },
+      "5": {
+        "fez": "Nama siapa?"
+      },
+      "6": {
+        "explorer": "Namamu."
+      },
+      "7": {
+        "fez": "…"
+      },
+      "8": {
+        "fez": "Kamu yakin?"
+      },
+      "9": {
+        "explorer": "Ada tulisannya."
+      },
+      "10": {
+        "fez": "Hah."
+      },
+      "11": {
+        "fez": "Hori."
+      },
+      "12": {
+        "fez": "Di setiap desa di Mesir ada seorang Hori."
+      },
+      "13": {
+        "fez": "Yah. Pantas saja ada fez-nya."
+      }
+    }
+  },
+  "altar": {
+    "refused": {
+      "1": {
+        "priest": "Tidak."
+      },
+      "2": {
+        "explorer": "Ada tanda raja di situ."
+      },
+      "3": {
+        "priest": "Ada tanda. Tandanya bagus sekali. Dipahat oleh orang yang punya alat hebat tapi tidak punya urusan di sini, dan belum lama."
+      },
+      "4": {
+        "priest": "Aku sudah menunggu tiga ribu tahun. Aku tidak mau dikelabui di minggu terakhirnya."
+      }
+    }
+  },
+  "meeting": {
+    "starter_1": {
+      "1": {
+        "voice": "Hei! Jangan DI SITU! Lihat-lihat kalau jalan!"
+      },
+      "2": {
+        "explorer": "Maaf! Aku tidak bisa lihat apa-apa! Kamu di mana?"
+      },
+      "3": {
+        "fez": "Di bawah sini! Kamu menginjak barang daganganku!"
+      },
+      "4": {
+        "explorer": "Kadal?! Pakai fez?"
+      },
+      "5": {
+        "fez": "Pedagang. Dan memangnya kenapa dengan fez-ku?"
+      },
+      "6": {
+        "fez": "Kamu pasti juga datang untuk piramida itu. Beli peta? Kemahalan?"
+      },
+      "7": {
+        "explorer": "Kemahalan BANGET."
+      },
+      "8": {
+        "fez": "Aku juga. Huh."
+      },
+      "9": {
+        "explorer": "Tulisan di Sphinx itu… kamu bisa membacanya?"
+      },
+      "10": {
+        "fez": "Tidak. Sudah tidak ada yang bisa. Padahal dulu alasnya biru dan emas, lho."
+      },
+      "11": {
+        "explorer": "Dari mana kamu tahu?"
+      },
+      "12": {
+        "fez": "…Dengar-dengar. Jadi, kamu cari apa di sini?"
+      },
+      "13": {
+        "explorer": "Sesuatu yang keren."
+      },
+      "14": {
+        "fez": "Yang keren laku dijual! Tahu tidak? Aku ikut kamu!"
+      },
+      "15": {
+        "explorer": "Apa? Ikut aku?"
+      },
+      "16": {
+        "fez": "Dua mata lebih baik dari satu. Ayo, piramida itu sudah menunggu!"
+      }
+    }
+  },
+  "end": {
+    "1": {
+      "fez": "Jadi, keren tidak?"
+    },
+    "2": {
+      "explorer": "Lumayan."
+    }
+  },
+  "revisit": {
+    "starter": {
+      "north1": {
+        "1": {
+          "ipi": "Masih di sini? Ke utara! Henut! Sebelas deben!"
+        }
+      },
+      "north2": {
+        "1": {
+          "ipi": "Sebelas deben lapis. Henut. Utara. Tunggu apa lagi?"
+        }
+      },
+      "paid1": {
+        "1": {
+          "ipi": "Jadi? Dia bayar? …Tidak. Tentu saja tidak."
+        }
+      },
+      "paid2": {
+        "1": {
+          "ipi": "Kaca? KACA? Di sini tertulis lapis. Di sini. Lapis!"
+        }
+      },
+      "later1": {
+        "1": {
+          "ipi": "Kamu lagi. Rak ketiga, yang gompal. Masih punyaku. Jangan pegang."
+        }
+      },
+      "later2": {
+        "1": {
+          "ipi": "Empat puluh tahun buku catatan, dan tidak ada satu pun yang cocok hitungannya. Tidak satu pun!"
+        }
+      }
+    },
+    "junior": {
+      "wall1": {
+        "1": {
+          "henut": "Dindingnya. Tanda ketiga. Masih bukan namaku."
+        }
+      },
+      "wall2": {
+        "1": {
+          "henut": "Kamu masih di sini, dan angsa itu masih di dindingku. Betulkan."
+        }
+      },
+      "priest1": {
+        "1": {
+          "henut": "Masih namaku. Sudah kuperiksa. Nah, Karnak, imam itu. Sana pergi."
+        }
+      },
+      "priest2": {
+        "1": {
+          "henut": "Karnak! Dia sudah cukup lama menunggu. Pergilah dan biarkan dirimu diumumkan."
+        }
+      },
+      "met1": {
+        "1": {
+          "henut": "Jadi? Menyebalkan, kan? Sudah kubilang."
+        }
+      },
+      "later1": {
+        "1": {
+          "henut": "Tetap kaca. Tetap indah. Tetap pilihanku."
+        }
+      }
+    },
+    "expert": {
+      "seal1": {
+        "1": {
+          "priest": "Stempelnya. Dibawa ke sini, diletakkan, didoakan. Aku akan menunggu."
+        }
+      },
+      "seal2": {
+        "1": {
+          "priest": "Ah. Kalian lagi. Dan masih tanpa stempel."
+        }
+      },
+      "king1": {
+        "1": {
+          "priest": "Kalian sudah bertemu raja. Bagus. Benda aslinya, ingat. Bukan yang mirip."
+        }
+      },
+      "later1": {
+        "1": {
+          "priest": "Kalian lagi. Tidak ada lagi yang perlu dikerjakan di sini. Tenang sekali rasanya."
+        }
+      }
+    },
+    "master": {
+      "priest1": {
+        "1": {
+          "pharaoh": "Masih di sini? Bawa tiruan itu ke imam! Aku mau dengar ceritanya."
+        }
+      },
+      "priest2": {
+        "1": {
+          "pharaoh": "Kalian boleh mendekat. Lagi. Imam itu sudah melihatnya?"
+        }
+      },
+      "rite1": {
+        "1": {
+          "pharaoh": "Jadi akhirnya dia melakukan upacaranya. Bagus. Sekarang dia pasti menyebalkan sekali soal itu."
+        }
+      },
+      "later1": {
+        "1": {
+          "pharaoh": "Masih minggu terbaik dalam sembilan ratus tahun. Dan belum selesai juga!"
+        }
+      }
+    },
+    "wizard": {
+      "later1": {
+        "1": {
+          "priest": "…Ya. Aku masih ingat caranya. Bagus."
+        }
+      },
+      "later2": {
+        "1": {
+          "priest": "Diletakkan, didoakan. Selesai. Rasanya aneh."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,256 @@
+{
+  "spots": {
+    "fire": "Tine champa",
+    "sleeping": "Áit chodlata",
+    "water": "Áit uisce",
+    "cooking": "Áit chócaireachta",
+    "donkey": "Áit an asail",
+    "camel": "Áit an chamaill",
+    "mapTable": "Bord na léarscáile",
+    "palmGarden": "Gairdín na gcrann pailme",
+    "ibisPond": "Lochán an íbis",
+    "lookout": "Áit faire",
+    "godStatues": "Dealbha na ndéithe",
+    "starCanopy": "Ceannbhrat na réaltaí"
+  },
+  "finds": {
+    "pot": "Pota cócaireachta",
+    "seatCushions": "Cúisíní suíocháin",
+    "reedMat": "Mata giolcach",
+    "blanket": "Blaincéad",
+    "tentRug": "Ruga pubaill",
+    "tentFlag": "Bratach pubaill",
+    "gourd": "Gurd",
+    "jar": "Próca",
+    "secondJar": "Dara próca",
+    "spiceRack": "Raca spíosraí",
+    "breadBoard": "Clár aráin",
+    "starMap": "Léarscáil réaltaí",
+    "scrollCase": "Cás scrolla",
+    "astrolabe": "Astraláib",
+    "reedGlobe": "Cruinneog ghiolcach",
+    "seed": "Síol pailme",
+    "secondPalm": "Síol pailme",
+    "figTree": "Síol fige",
+    "papyrus": "Fréamh phaipír",
+    "reeds": "Gearrthóg ghiolcach",
+    "lotus": "Tiúbar lóis",
+    "flag": "Bratach faire",
+    "thoth": "Deilbhín Thoth",
+    "bastet": "Deilbhín Bastet",
+    "anubis": "Deilbhín Anubis",
+    "ra": "Deilbhín Ra",
+    "cloth": "Éadach réaltaí"
+  },
+  "structures": {
+    "stoneRing": "Fáinne cloch",
+    "fire": "Tine",
+    "cookingStones": "Clocha cócaireachta",
+    "seatingStones": "Clocha suí",
+    "clayOven": "Oigheann cré",
+    "windbreak": "Fothain gaoithe",
+    "tent": "Puball",
+    "secondTent": "Dara puball",
+    "pavilion": "Pailliún",
+    "well": "Tobar",
+    "wellPulley": "Tobar le ulóg",
+    "tripod": "Tríchosach",
+    "breadOven": "Oigheann aráin",
+    "dryingRack": "Raca triomaithe",
+    "feast": "Féasta",
+    "table": "Bord na léarscáile",
+    "lotusPlanter": "Pota lóis",
+    "edgeStones": "Bruach an locháin",
+    "post": "Cuaille faire",
+    "platform": "Ardán faire",
+    "ladder": "Dréimire",
+    "roof": "Díon",
+    "signalFire": "Tine rabhaidh",
+    "poles": "Crainn an cheannbhrait",
+    "stars": "Réaltaí",
+    "planets": "Pláinéid"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Clocha páirce",
+      "sandBed": "Leaba ghainimh"
+    },
+    "fire": {
+      "tinder": "Ábhar adhainte",
+      "acaciaLogs": "Lomáin acáise"
+    },
+    "cookingStones": {
+      "flatStone": "Cloch leacht",
+      "supportStones": "Clocha taca"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Bolláin mhíne",
+      "sandstoneBlock": "Bloc gaineamhchloiche",
+      "hewnSlab": "Leac shnoite"
+    },
+    "clayOven": {
+      "ovenFloor": "Urlár an oighinn",
+      "firebricks": "Brící tine",
+      "smokeHole": "Poll deataigh",
+      "copperGrate": "Gráta copair"
+    },
+    "windbreak": {
+      "reedBundles": "Beartanna giolcach",
+      "stakes": "Sáiteáin adhmaid"
+    },
+    "tent": {
+      "tentPoles": "Cuaillí pubaill",
+      "wovenCloth": "Éadach fite",
+      "tentPegs": "Pionnaí pubaill"
+    },
+    "secondTent": {
+      "largeCloth": "Éadach mór pubaill",
+      "ridgePole": "Cuaille droma",
+      "guyRopes": "Rópaí teannta",
+      "woolFloor": "Éadach talún olla"
+    },
+    "pavilion": {
+      "pavilionPosts": "Cuaillí an phailliúin",
+      "linenCanopy": "Ceannbhrat línéadaigh",
+      "hangingCurtains": "Cuirtíní",
+      "woolRugs": "Rugaí olla",
+      "woodenFloor": "Urlár adhmaid"
+    },
+    "well": {
+      "wellStones": "Clocha an tobair",
+      "rope": "Rópa fada",
+      "bucket": "Buicéad",
+      "windlass": "Unlas"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Roth ulóige",
+      "frame": "Fráma taca",
+      "hoistRope": "Rópa tarraingthe",
+      "counterweight": "Frithmheáchan",
+      "leatherBucket": "Buicéad leathair"
+    },
+    "tripod": {
+      "tripodPoles": "Trí chuaille",
+      "binding": "Rópa ceangail",
+      "hook": "Duán cré-umha"
+    },
+    "breadOven": {
+      "mudBricks": "Brící láibe",
+      "clayPlaster": "Plástar cré",
+      "ovenLid": "Clúdach an oighinn"
+    },
+    "dryingRack": {
+      "rackPoles": "Cuaillí an raca",
+      "crossbar": "Trasnán",
+      "wickerTray": "Tráidire caolaigh",
+      "cords": "Corda crochta"
+    },
+    "feast": {
+      "lowTable": "Bord íseal",
+      "breadBaskets": "Ciseáin aráin",
+      "roastDuck": "Lacha rósta",
+      "beerJars": "Prócaí beorach",
+      "fruitBowl": "Babhla torthaí"
+    },
+    "table": {
+      "tableTop": "Barr an bhoird",
+      "trestles": "Tristéil",
+      "leatherStraps": "Strapaí leathair"
+    },
+    "lotusPlanter": {
+      "clayTub": "Umar cré",
+      "nileSilt": "Siolta na Níle",
+      "waterJar": "Próca uisce",
+      "lotusTubers": "Tiúbair lóis",
+      "stoneRim": "Imeall cloiche"
+    },
+    "edgeStones": {
+      "riverStones": "Clocha abhann",
+      "clayBedding": "Leaba chré",
+      "gravel": "Gairbhéal",
+      "boundaryStakes": "Sáiteáin teorann"
+    },
+    "post": {
+      "postTrunk": "Stoc pailme",
+      "footStones": "Clocha bunaidh",
+      "wedges": "Dingeacha",
+      "braces": "Taca"
+    },
+    "platform": {
+      "platformBeams": "Bíomaí taca",
+      "platformPlanks": "Cláir",
+      "lashingRope": "Rópa ceangail",
+      "edgeRail": "Ráille"
+    },
+    "ladder": {
+      "ladderRails": "Taobhanna an dréimire",
+      "rungs": "Runga",
+      "groundPegs": "Pionnaí talún",
+      "leatherLoops": "Lúba leathair"
+    },
+    "roof": {
+      "roofPoles": "Cuaillí an dín",
+      "thatch": "Tuí pailme",
+      "clayLayer": "Sraith chré",
+      "bindingGrass": "Féar ceangail"
+    },
+    "signalFire": {
+      "fireBasin": "Báisín tine",
+      "pitch": "Pic",
+      "dryBrushwood": "Brosna tirim",
+      "flint": "Breochloch",
+      "bellows": "Boilg"
+    },
+    "poles": {
+      "masts": "Crainn",
+      "cornerStones": "Clocha cúinne",
+      "stayLines": "Rópaí taca",
+      "bigPegs": "Pionnaí móra",
+      "poleSockets": "Soicéid cuaille"
+    },
+    "stars": {
+      "goldLeaf": "Duille óir",
+      "needleThread": "Snáthaid agus snáth",
+      "indigoDye": "Ruaim indeagó",
+      "chalk": "Cailc",
+      "stencils": "Stionsail"
+    },
+    "planets": {
+      "ochre": "Ócar",
+      "copperDiscs": "Dioscaí copair",
+      "lapisPowder": "Púdar lapis",
+      "hangingLoops": "Lúba crochta",
+      "dividers": "Roinnteoirí"
+    }
+  },
+  "collection": {
+    "title": "Foirgnimh",
+    "progress": "{{found}} as {{total}}",
+    "built": "tógtha",
+    "unknownPart": "???",
+    "open": "Taispeáin na páirteanna",
+    "close": "Folaigh na páirteanna"
+  },
+  "reward": {
+    "find": "Rud nua don champa",
+    "part": "Páirt",
+    "progress": "{{name}} · {{found}} as {{total}}"
+  },
+  "haul": {
+    "new": "Nua i do champa",
+    "parts_one": "{{name}} · {{count}} pháirt",
+    "parts_two": "{{name}} · {{count}} pháirt",
+    "parts_few": "{{name}} · {{count}} pháirt",
+    "parts_many": "{{name}} · {{count}} bpáirt",
+    "parts_other": "{{name}} · {{count}} páirt"
+  },
+  "arrivals": {
+    "donkey": "Tá d’asal sa champa",
+    "cart": "Tá do chairt sa champa",
+    "camel": "Tá do chamall sa champa",
+    "secondDonkey": "Tá do dhara hasal sa champa",
+    "secondCamel": "Tá do dhara camall sa champa",
+    "sturdyCart": "Tá do chairt níos láidre sa champa",
+    "caravanBanner": "Tá meirge do charbháin ar crochadh sa champa"
+  }
+}

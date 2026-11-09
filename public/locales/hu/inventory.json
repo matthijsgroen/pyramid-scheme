@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ré",
+      "description": "Az istenek királya és a nap ura. Minden nap végighajózik az égen a napbárkáján."
+    },
+    "d2": {
+      "name": "Anubisz",
+      "description": "Sakálfejű isten. Ő vigyáz a halottakra, és ő készíti fel őket a túlvilágra."
+    },
+    "d3": {
+      "name": "Hórusz",
+      "description": "Sólyomfejű égisten, a fáraók védelmezője. Ozirisz és Ízisz fia."
+    },
+    "d4": {
+      "name": "Thot",
+      "description": "Íbiszfejű isten. A bölcsesség, az írás és a tudás istene, ő őrzi az istenek feljegyzéseit."
+    },
+    "d5": {
+      "name": "Básztet",
+      "description": "Macskaistennő. Védelmet és örömöt hoz, és elűzi a gonosz szellemeket."
+    },
+    "d6": {
+      "name": "Szobek",
+      "description": "Krokodilisten. A Nílus, a termékenység és a bátor harcosok istene."
+    },
+    "d7": {
+      "name": "Hepri",
+      "description": "Szkarabeuszbogár-isten. Az újjászületés istene, aki végiggörgeti a napot az égen."
+    },
+    "d8": {
+      "name": "Uadzset",
+      "description": "Kobraistennő, Alsó-Egyiptom védelmezője. A királyi hatalom jele."
+    },
+    "d9": {
+      "name": "Ízisz",
+      "description": "A varázslat, az anyaság és a gyógyítás istennője. Ozirisz hűséges felesége."
+    },
+    "d10": {
+      "name": "Ozirisz",
+      "description": "Az alvilág istene. Ő ítél a halottak fölött, és ő az újjászületés istene is."
+    },
+    "d11": {
+      "name": "Széth",
+      "description": "A káosz, a viharok és a sivatag istene. Ozirisz testvére és ellenfele."
+    },
+    "d12": {
+      "name": "Nebethet",
+      "description": "A gyász istennője, aki a halottakat védi. Ízisz húga."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Teremtő isten, a kézművesek és építészek pártfogója. Kimondott szavakkal teremtett."
+    },
+    "d14": {
+      "name": "Szahmet",
+      "description": "Oroszlánistennő. A háború és a gyógyítás istennője, vad védelmező, aki betegségeket is gyógyít."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Tehénistennő. A szeretet, a zene és az anyaság istennője, a fáraók dajkája."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Fáraó",
+      "description": "Egyiptom isteni uralkodója. Élő istennek tartották, aki összeköti az embereket az istenekkel."
+    },
+    "p2": {
+      "name": "Főpap",
+      "description": "A templomok vezetője. Szent szertartásokat végez, és vigyáz az istenek rendjére."
+    },
+    "p3": {
+      "name": "Írnok",
+      "description": "Tudott írni és olvasni. Feljegyzéseket készített és őrizte a tudást."
+    },
+    "p4": {
+      "name": "Építész",
+      "description": "Építőmester, aki piramisokat, templomokat és emlékműveket tervezett az örökkévalóságnak."
+    },
+    "p5": {
+      "name": "Hadvezér",
+      "description": "Seregeket vezetett, hogy megvédje Egyiptom határait és nagyobbá tegye a birodalmat."
+    },
+    "p6": {
+      "name": "Orvos",
+      "description": "Gyógyító, aki orvosi tudással és varázslatokkal gyógyította a betegeket."
+    },
+    "p7": {
+      "name": "Balzsamozó",
+      "description": "Szent mesterember, aki felkészítette a halottakat a túlvilági útra."
+    },
+    "p8": {
+      "name": "Földműves",
+      "description": "Ő termeli Egyiptom ételét. A Nílus termékeny földjén dolgozik, hogy jusson mindenkinek."
+    },
+    "p9": {
+      "name": "Kézműves",
+      "description": "Ügyes mester, aki gyönyörű tárgyakat, ékszereket és műalkotásokat készít nemeseknek és isteneknek."
+    },
+    "p10": {
+      "name": "Kereskedő",
+      "description": "Messzi országokból hozott különleges árukat a kereskedelmi utakon."
+    },
+    "p11": {
+      "name": "Vezír",
+      "description": "A fáraó első minisztere és tanácsadója. Ő felügyeli az ország ügyeit."
+    },
+    "p12": {
+      "name": "Jós",
+      "description": "Szent jövendőmondó, aki megfejtette az istenek üzeneteit és megjósolta a jövőt."
+    },
+    "p13": {
+      "name": "Hajós",
+      "description": "A Níluson és a tengeren hajózott. Nélküle nem lett volna kereskedelem és szállítás."
+    },
+    "p14": {
+      "name": "Kőfaragó",
+      "description": "Hieroglifákat faragott kőbe, és felépítette Egyiptom nagy emlékműveit."
+    },
+    "p15": {
+      "name": "Őr",
+      "description": "Szent helyeket és sírokat véd, hogy a halottak örökké nyugodtan pihenhessenek."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Víziló",
+      "description": "A Nílus erős folyami állata. Mindenki félt tőle, mert erős és nem tűri, ha a területére lépnek."
+    },
+    "a2": {
+      "name": "Oroszlán",
+      "description": "Az állatok királya. A királyi hatalom és az isteni erő jele a sivatagban."
+    },
+    "a3": {
+      "name": "Elefánt",
+      "description": "Hatalmas állat a déli földekről. Tisztelték a bölcsességéért és a jó emlékezetéért."
+    },
+    "a4": {
+      "name": "Gazella",
+      "description": "Gyors és kecses sivatagi állat. A gyorsaság és a szépség jele."
+    },
+    "a5": {
+      "name": "Majom",
+      "description": "Okos állat, Thot isten kedvence. Az eszesség és a csínytevés jele."
+    },
+    "a6": {
+      "name": "Hal",
+      "description": "A Nílus szent állatai. Ételt adtak, és a termékenység jelei voltak."
+    },
+    "a7": {
+      "name": "Liba",
+      "description": "A nílusi mocsarak szent madara. A teremtésről és a lélekről szóló történetekben szerepel."
+    },
+    "a8": {
+      "name": "Méh",
+      "description": "Alsó-Egyiptom és a királyi hatalom jele. Ő készíti a drága mézet."
+    },
+    "a9": {
+      "name": "Teknős",
+      "description": "Ősi, bölcs állat, amely a páncélján hordja a világ súlyát."
+    },
+    "a10": {
+      "name": "Béka",
+      "description": "Az újjászületés és a termékenység jele. A Nílus életet hozó áradásából bukkan elő."
+    },
+    "a11": {
+      "name": "Keselyű",
+      "description": "Felső-Egyiptom szent madara. Nehbet védőistennő földi alakja."
+    },
+    "a12": {
+      "name": "Bagoly",
+      "description": "Bölcs éjszakai vadász. A rejtett tudás és az ősi titkok őrzője."
+    },
+    "a13": {
+      "name": "Kos",
+      "description": "Ámon-Ré szent állata. Az isteni hatalom és a vezetés jele."
+    },
+    "a14": {
+      "name": "Zsiráf",
+      "description": "Magas, kecses állat a déli földekről. Hosszú nyakával az égig ér."
+    },
+    "a15": {
+      "name": "Sakál",
+      "description": "Sivatagi dögevő, aki elvezet a túlvilágra. Anubisz szolgája."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Az élet és a halhatatlanság jele. Istenek és fáraók gyakran tartják a kezükben."
+    },
+    "art2": {
+      "name": "Hórusz szeme",
+      "description": "A védelem, a királyi hatalom és a jó egészség jele. Hórusz égistenhez tartozik."
+    },
+    "art3": {
+      "name": "Szisztrum",
+      "description": "Csörgő hangszer, amit szertartásokon használtak. Hathor istennőhöz tartozik."
+    },
+    "art4": {
+      "name": "Dzsed-oszlop",
+      "description": "A szilárdság és az újjászületés jele. Gyakran Ozirisszal kapcsolják össze."
+    },
+    "art5": {
+      "name": "Kartus",
+      "description": "Ovális keret, benne egy fáraó hieroglifákkal írt nevével. Örökre megvédi a nevét."
+    },
+    "art6": {
+      "name": "Kanópuszkorsó",
+      "description": "Szent korsó, a fedele egy őrző feje. Négy ilyen állt egy koporsó körül, és őrködött."
+    },
+    "art7": {
+      "name": "Jogar",
+      "description": "A hatalom pálcája. Istenek és fáraók hordták annak jeléül, hogy ők uralkodnak."
+    },
+    "art9": {
+      "name": "Piramis",
+      "description": "Örök sír és kapu a túlvilágra. Úgy építették, hogy a fáraóknak örökké megmaradjon."
+    },
+    "art10": {
+      "name": "Napbárka",
+      "description": "Szent hajó, amely hajnaltól alkonyig átviszi Ré napistent az égen."
+    },
+    "art11": {
+      "name": "Obeliszk",
+      "description": "Magas kőoszlop, a tetején kis piramissal. Az ég felé nyúlik, hogy az isteneket tisztelje."
+    },
+    "art12": {
+      "name": "Pásztorbot és korbács",
+      "description": "Királyi jelvények. Azt mutatják, hogy a fáraó Egyiptom pásztora és védelmezője."
+    },
+    "art14": {
+      "name": "Lótuszvirág",
+      "description": "Az újjászületés és a nap jele. Tisztán bukkan elő a Nílus sáros vizéből."
+    },
+    "art15": {
+      "name": "Ureuszkorona",
+      "description": "Királyi fejdísz egy védő kobrával. A fáraók viselték isteni védelemként."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Nádlevél",
+      "description": "Egyetlen nádszál, az i hangot jelenti. Ha egy isten neve mögé teszed, emberi név lesz belőle: Hórusz neve mellé téve lesz belőle Hori, vagyis „Hóruszé”."
+    }
+  }
+}

@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Tanrıların kralı ve güneşin efendisi. Her gün güneş kayığıyla gökyüzünü geçer."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Çakal başlı tanrı. Mumyaların ve öbür dünyanın tanrısıdır, ölüleri korur."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Şahin başlı gökyüzü tanrısı. Firavunları korur. Osiris ile Isis'in oğludur."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "İbis başlı tanrı. Bilgeliğin, yazının ve bilginin tanrısıdır. Tanrıların kayıtlarını tutar."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Kedi tanrıça. Korumanın, neşenin ve bereketin tanrıçasıdır. Kötü ruhları kovar."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Timsah tanrı. Nil Nehri'nin, bereketin ve askerlerin cesaretinin tanrısıdır."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Bok böceği tanrı. Yeniden doğuşun tanrısıdır. Güneşi gökyüzünde yuvarlar."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Kobra tanrıça. Aşağı Mısır'ı korur. Kralların gücünün işaretidir."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "Büyünün, anneliğin ve iyileşmenin tanrıçası. Osiris'in sadık eşidir."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "Yeraltı dünyasının, ölümün ve yeniden dirilişin tanrısı. Ölüleri yargılar."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "Kargaşanın, fırtınaların ve çölün tanrısı. Osiris'in kardeşi ve rakibidir."
+    },
+    "d12": {
+      "name": "Nephthys",
+      "description": "Yasın tanrıçası. Ölüleri korur. Isis'in kız kardeşidir."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Yaratıcı tanrı. Ustaların ve mimarların koruyucusudur. Her şeyi sözle yaratmıştır."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Aslan tanrıça. Savaşın ve iyileşmenin tanrıçasıdır. Korkusuz bir koruyucudur, hastalıkları iyileştirir."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "İnek tanrıça. Sevginin, müziğin ve anneliğin tanrıçasıdır. Firavunları besleyip büyütür."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Firavun",
+      "description": "Mısır'ın kutsal hükümdarı. Yaşayan bir tanrı sayılırdı, insanlarla tanrılar arasında bir köprüydü."
+    },
+    "p2": {
+      "name": "Başrahip",
+      "description": "Tapınakların en büyük din önderi. Kutsal törenleri yapar, tanrıların düzenini korurdu."
+    },
+    "p3": {
+      "name": "Kâtip",
+      "description": "Okuma yazma bilen eğitimli biri. Kayıtları ve bilgileri saklardı."
+    },
+    "p4": {
+      "name": "Mimar",
+      "description": "Usta yapıcı. Sonsuza dek duracak piramitler, tapınaklar ve anıtlar tasarlardı."
+    },
+    "p5": {
+      "name": "General",
+      "description": "Orduların komutanı. Mısır'ın sınırlarını korur, ülkeyi büyütürdü."
+    },
+    "p6": {
+      "name": "Hekim",
+      "description": "İyileştirici. Hastaları iyileştirmek için ilaç bilgisini büyüyle birleştirirdi."
+    },
+    "p7": {
+      "name": "Mumyacı",
+      "description": "Kutsal bir usta. Birini öbür dünyaya yolculuğa hazırlardı."
+    },
+    "p8": {
+      "name": "Çiftçi",
+      "description": "Mısır'ın yiyeceğini yetiştiren kişi. Ülkeyi doyurmak için Nil'in verimli topraklarında çalışırdı."
+    },
+    "p9": {
+      "name": "Zanaatkâr",
+      "description": "Becerikli bir usta. Soylular ve tanrılar için güzel eşyalar, takılar ve sanat eserleri yapardı."
+    },
+    "p10": {
+      "name": "Tüccar",
+      "description": "Ticaret yollarından uzak ülkelerin ilginç mallarını getiren satıcı."
+    },
+    "p11": {
+      "name": "Vezir",
+      "description": "Firavun'un baş yardımcısı ve danışmanı. Ülkenin işlerini yönetirdi."
+    },
+    "p12": {
+      "name": "Kâhin",
+      "description": "Kutsal bir bilici. Tanrıların mesajlarını açıklar, geleceği söylerdi."
+    },
+    "p13": {
+      "name": "Denizci",
+      "description": "Nil'de ve Akdeniz'de gemi süren kişi. Ticaret ve yolculuk için çok önemliydi."
+    },
+    "p14": {
+      "name": "Taş ustası",
+      "description": "Taşa hiyeroglif oyan ve Mısır'ın büyük anıtlarını yapan usta."
+    },
+    "p15": {
+      "name": "Bekçi",
+      "description": "Kutsal yerlerin ve mezarların koruyucusu. Ölülerin sonsuza dek huzur içinde uyumasını sağlardı."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Su aygırı",
+      "description": "Nil'in güçlü nehir hayvanı. Gücü ve yerini korumasıyla korkulurdu."
+    },
+    "a2": {
+      "name": "Aslan",
+      "description": "Hayvanların kralı. Çölde kral gücünün ve tanrısal kuvvetin işaretidir."
+    },
+    "a3": {
+      "name": "Fil",
+      "description": "Güney ülkelerinden gelen kocaman bir hayvan. Bilgeliği ve hafızasıyla saygı görürdü."
+    },
+    "a4": {
+      "name": "Ceylan",
+      "description": "Hızlı ve zarif bir çöl hayvanı. Hızın ve güzelliğin işaretidir."
+    },
+    "a5": {
+      "name": "Maymun",
+      "description": "Thoth ile bağlantılı akıllı hayvan. Zekâyı ve yaramazlığı temsil eder."
+    },
+    "a6": {
+      "name": "Balık",
+      "description": "Nil'in kutsal canlıları. İnsanlara yiyecek verir, bereketin işaretidir."
+    },
+    "a7": {
+      "name": "Kaz",
+      "description": "Nil bataklıklarının kutsal kuşu. Dünyanın yaratılışı ve ruhla ilgili hikâyelerde geçer."
+    },
+    "a8": {
+      "name": "Arı",
+      "description": "Aşağı Mısır'ın ve kral gücünün işareti. Değerli balı yapar."
+    },
+    "a9": {
+      "name": "Kaplumbağa",
+      "description": "Çok eski ve bilge bir canlı. Dünyanın yükünü kabuğunda taşır."
+    },
+    "a10": {
+      "name": "Kurbağa",
+      "description": "Yeniden doğuşun ve bereketin işareti. Nil'in hayat veren taşkınlarından çıkar."
+    },
+    "a11": {
+      "name": "Akbaba",
+      "description": "Yukarı Mısır'ın kutsal kuşu. Koruyucu tanrıça Nekhbet'in yeryüzündeki şeklidir."
+    },
+    "a12": {
+      "name": "Baykuş",
+      "description": "Bilge gece avcısı. Gizli bilgilerin ve eski sırların bekçisidir."
+    },
+    "a13": {
+      "name": "Koç",
+      "description": "Amun-Ra'nın kutsal hayvanı. Tanrısal gücün ve önderliğin işaretidir."
+    },
+    "a14": {
+      "name": "Zürafa",
+      "description": "Güney ülkelerinden gelen uzun boylu, zarif bir hayvan. Uzun boynuyla göklere uzanır."
+    },
+    "a15": {
+      "name": "Çakal",
+      "description": "Çölde leş arayan hayvan. Öbür dünyaya rehberlik eder, Anubis'in hizmetkârıdır."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Hayatın ve ölümsüzlüğün işareti. Tanrılar ve firavunlar onu sık sık elinde tutar."
+    },
+    "art2": {
+      "name": "Horus'un Gözü",
+      "description": "Korumanın, kral gücünün ve sağlığın işareti. Gökyüzü tanrısı Horus'a aittir."
+    },
+    "art3": {
+      "name": "Sistrum",
+      "description": "Kutsal törenlerde çalınan bir çıngırak. Tanrıça Hathor'a aittir."
+    },
+    "art4": {
+      "name": "Djed Sütunu",
+      "description": "Sağlamlığın ve yeniden dirilişin işareti. Genelde Osiris ile bağlantılıdır."
+    },
+    "art5": {
+      "name": "Kartuş",
+      "description": "İçinde bir firavunun hiyeroglifle yazılmış adı olan oval çerçeve. Adını sonsuza dek korur."
+    },
+    "art6": {
+      "name": "Kanopik Kavanoz",
+      "description": "Kapağı bir koruyucunun başı olan kutsal kavanoz. Bir tabutun çevresinde dört tanesi nöbet tutardı."
+    },
+    "art7": {
+      "name": "Asa",
+      "description": "Gücün ve yetkinin değneği. Tanrılar ve firavunlar onu tanrısal yönetimin işareti olarak taşırdı."
+    },
+    "art9": {
+      "name": "Piramit",
+      "description": "Sonsuz mezar ve öbür dünyanın kapısı. Firavunlar için sonsuza dek dayanacak şekilde yapıldı."
+    },
+    "art10": {
+      "name": "Güneş Kayığı",
+      "description": "Güneş tanrısı Ra'yı sabahtan akşama gökyüzünde taşıyan kutsal tekne."
+    },
+    "art11": {
+      "name": "Dikilitaş",
+      "description": "Tepesi küçük bir piramit olan uzun taş sütun. Tanrıları onurlandırmak için göğe uzanır."
+    },
+    "art12": {
+      "name": "Çoban Değneği ve Harman Döveni",
+      "description": "Kral eşyaları. Firavunun Mısır'ın çobanı ve koruyucusu olduğunu gösterir."
+    },
+    "art14": {
+      "name": "Nilüfer Çiçeği",
+      "description": "Yeniden doğuşun ve güneşin işareti. Nil'in çamurlu suyundan tertemiz çıkar."
+    },
+    "art15": {
+      "name": "Uraeus Tacı",
+      "description": "Üzerinde koruyucu bir kobra olan kral başlığı. Firavunlar onu tanrısal koruma için takardı."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Saz Yaprağı",
+      "description": "Tek bir saz, i sesini gösterir. Bir tanrının adının arkasına eklenince bir insan adı olur: Horus, Hori olur, yani Horus'un adamı."
+    }
+  }
+}

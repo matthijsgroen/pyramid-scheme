@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Is-sultan tal-allat u sid ix-xemx, ibaħħar mas-sema kollu kuljum fid-dgħajsa tax-xemx tiegħu."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Alla b'ras ta' xakall, alla tal-mummji u tal-ħajja ta' wara l-mewt, li jħares lill-mejtin."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Alla tas-sema b'ras ta' falkun, li jħares lill-fargħuni, iben Osiris u Isis."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "Alla b'ras ta' ibis, alla tal-għerf, tal-kitba u tat-tagħlim, li jżomm il-kotba tal-allat."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Alla mara qattusa, tal-ħarsien, tal-ferħ u tat-tfal, li tiddefendi kontra l-ispirti ħżiena."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Alla kukkudrill tax-xmara Nil, tal-ħsad tajjeb u tas-suldati qalbiena."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Alla skarabew tat-twelid mill-ġdid, li jroddol ix-xemx mas-sema."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Alla mara serp kobra, li tħares lill-Eġittu t'Isfel, sinjal tal-qawwa tar-re."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "Alla mara tal-maġija, tal-ommijiet u tal-fejqan, il-mara leali ta' Osiris."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "Alla tad-dinja ta' taħt, tal-mewt u tal-qawmien, l-imħallef tal-mejtin."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "Alla tal-kaos, tal-maltempati u tad-deżert, ħu u rivali ta' Osiris."
+    },
+    "d12": {
+      "name": "Nephthys",
+      "description": "Alla mara tan-niket u tal-ħarsien tal-mejtin, oħt Isis."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Alla li ħalaq id-dinja bil-kliem tiegħu, u li jħares lill-artiġjani u lill-periti."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Alla mara iljuna tal-gwerra u tal-fejqan, ħarsa qalila li setgħet tfejjaq il-mard."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Alla mara baqra tal-imħabba, tal-mużika u tal-ommijiet, li trabbi lill-fargħuni."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Fargħun",
+      "description": "Is-sultan tal-Eġittu, meqjus bħala alla ħaj u pont bejn il-bnedmin u l-allat."
+    },
+    "p2": {
+      "name": "Qassis il-Kbir",
+      "description": "Il-kap tat-tempji, li jagħmel ir-riti qaddisa u jżomm l-ordni tal-allat."
+    },
+    "p3": {
+      "name": "Skriba",
+      "description": "Persuna mgħallma li kienet taf taqra u tikteb, u żżomm ir-reġistri u t-tagħlim."
+    },
+    "p4": {
+      "name": "Perit",
+      "description": "Bennej kbir li ppjana piramidi, tempji u monumenti biex idumu għal dejjem."
+    },
+    "p5": {
+      "name": "Ġeneral",
+      "description": "Kap tal-armata li jmexxi s-suldati biex iħarsu l-fruntieri tal-Eġittu u jkabbru l-imperu."
+    },
+    "p6": {
+      "name": "Tabib",
+      "description": "Fejjieq li jgħaqqad il-mediċina mal-maġija biex ifejjaq lill-morda."
+    },
+    "p7": {
+      "name": "Imbalzmatur",
+      "description": "Artiġjan qaddis li jħejji lil xi ħadd għall-vjaġġ lejn il-ħajja ta' wara l-mewt."
+    },
+    "p8": {
+      "name": "Bidwi",
+      "description": "Dak li jagħti l-ikel lill-Eġittu, jaħdem l-art għammiela tan-Nil biex jitma' s-saltna."
+    },
+    "p9": {
+      "name": "Artiġjan",
+      "description": "Ħaddiem bravu li jagħmel affarijiet sbieħ, ġojjelli u arti għan-nobbli u l-allat."
+    },
+    "p10": {
+      "name": "Merkant",
+      "description": "Bejjiegħ li ġab affarijiet strambi minn artijiet imbegħda fuq it-toroq tal-kummerċ."
+    },
+    "p11": {
+      "name": "Viżir",
+      "description": "L-ewwel ministru u l-konsulent tal-Fargħun, li jieħu ħsieb il-gvern."
+    },
+    "p12": {
+      "name": "Orakolu",
+      "description": "Profeta qaddis li jifhem il-messaġġi tal-allat u jbassar il-futur."
+    },
+    "p13": {
+      "name": "Baħri",
+      "description": "Ibaħħar fuq in-Nil u l-Mediterran, meħtieġ għall-kummerċ u biex iġorr l-affarijiet."
+    },
+    "p14": {
+      "name": "Bennej",
+      "description": "Ħaddiem tal-ġebel li naqqax il-ġeroglifi u bena l-monumenti kbar tal-Eġittu."
+    },
+    "p15": {
+      "name": "Gwardjan",
+      "description": "Iħares il-postijiet qaddisa u l-oqbra, biex il-mejtin jistrieħu għal dejjem."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Ippopotamu",
+      "description": "Kreatura qawwija tax-xmara Nil, li jibżgħu minnha għas-saħħa tagħha u għax tiddefendi l-post tagħha."
+    },
+    "a2": {
+      "name": "Iljun",
+      "description": "Is-sultan tal-annimali, sinjal tal-qawwa tar-re u tas-saħħa tal-allat fid-deżert."
+    },
+    "a3": {
+      "name": "Iljunfant",
+      "description": "Kreatura kbira ħafna mill-artijiet tan-nofsinhar, meqjuma għall-għerf u l-memorja tagħha."
+    },
+    "a4": {
+      "name": "Gazzella",
+      "description": "Tgħix fid-deżert, mgħaġġla u ħelwa, sinjal tal-veloċità u tal-eleganza."
+    },
+    "a5": {
+      "name": "Xadina",
+      "description": "Annimal bil-għaqal marbut ma' Thoth, sinjal tal-intelliġenza u tal-qerq."
+    },
+    "a6": {
+      "name": "Ħuta",
+      "description": "Kreaturi qaddisa tan-Nil, li jagħtu l-ikel u huma sinjal tal-ħajja."
+    },
+    "a7": {
+      "name": "Wiżża",
+      "description": "Għasfur qaddis tal-bassasijiet tan-Nil, marbut mal-istejjer tal-ħolqien u mar-ruħ."
+    },
+    "a8": {
+      "name": "Naħla",
+      "description": "Sinjal tal-Eġittu t'Isfel u tal-awtorità tar-re, li tagħmel l-għasel prezzjuż."
+    },
+    "a9": {
+      "name": "Fekruna",
+      "description": "Kreatura antika u għaqlija, li ġġorr il-piż tad-dinja fuq il-qoxra tagħha."
+    },
+    "a10": {
+      "name": "Żrinġ",
+      "description": "Sinjal tat-twelid mill-ġdid u tal-ħajja, joħroġ mill-għargħar tan-Nil li jagħti l-ħajja."
+    },
+    "a11": {
+      "name": "Avultun",
+      "description": "Għasfur qaddis tal-Eġittu ta' Fuq, il-forma fuq l-art tal-alla mara Nekhbet li tħares."
+    },
+    "a12": {
+      "name": "Kokka",
+      "description": "Kaċċatur għaqli tal-lejl, li jħares it-tagħlim moħbi u s-sigrieti antiki."
+    },
+    "a13": {
+      "name": "Muntun",
+      "description": "Annimal qaddis ta' Amun-Ra, sinjal tal-qawwa tal-allat u tat-tmexxija."
+    },
+    "a14": {
+      "name": "Ġiraffa",
+      "description": "Kreatura għolja u ħelwa mill-artijiet tan-nofsinhar, li tilħaq is-sema b'għonqha twil."
+    },
+    "a15": {
+      "name": "Xakall",
+      "description": "Kiel il-karkassi tad-deżert u gwida lejn il-ħajja ta' wara l-mewt, qaddej ta' Anubis."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Sinjal tal-ħajja u tal-ħajja ta' dejjem, spiss f'idejn l-allat u l-fargħuni."
+    },
+    "art2": {
+      "name": "L-Għajn ta' Horus",
+      "description": "Sinjal tal-ħarsien, tal-qawwa tar-re u tas-saħħa tajba, marbut ma' Horus, alla tas-sema."
+    },
+    "art3": {
+      "name": "Sistru",
+      "description": "Strument tal-mużika użat fir-riti tat-tempju, marbut mal-alla mara Hathor."
+    },
+    "art4": {
+      "name": "Il-Pilastru Djed",
+      "description": "Sinjal li kollox jibqa' sod u tal-qawmien, spiss marbut ma' Osiris."
+    },
+    "art5": {
+      "name": "Kartoċċ",
+      "description": "Forma ovali li fiha l-isem ta' fargħun miktub bil-ġeroglifi, biex ismu jibqa' mħares għal dejjem."
+    },
+    "art6": {
+      "name": "Ġarra Kanopika",
+      "description": "Ġarra qaddisa b'ras ta' gwardjan bħala għatu — erbgħa minnhom kienu jkunu madwar it-tebut, iħarsu."
+    },
+    "art7": {
+      "name": "Xettru",
+      "description": "Virga tal-qawwa u tal-awtorità f'idejn l-allat u l-fargħuni, sinjal tal-ħakma tal-allat."
+    },
+    "art9": {
+      "name": "Piramida",
+      "description": "Qabar ta' dejjem u bieb lejn il-ħajja ta' wara l-mewt, mibni biex idum għal dejjem għall-fargħuni."
+    },
+    "art10": {
+      "name": "Id-Dgħajsa tax-Xemx",
+      "description": "Dgħajsa qaddisa li ġġorr lil Ra, alla tax-xemx, mas-sema mill-għodwa sa filgħaxija."
+    },
+    "art11": {
+      "name": "Obelisk",
+      "description": "Kolonna għolja tal-ġebel bi piramida fil-quċċata, titla' lejn is-sema biex tonora lill-allat."
+    },
+    "art12": {
+      "name": "Il-Ganċ u l-Frosta",
+      "description": "Sinjali tar-re li juru li l-fargħun huwa r-ragħaj u l-ħarsien tal-Eġittu."
+    },
+    "art14": {
+      "name": "Fjura tal-Lotu",
+      "description": "Sinjal tat-twelid mill-ġdid u tax-xemx, toħroġ nadifa mill-ilma mtajjen tan-Nil."
+    },
+    "art15": {
+      "name": "Il-Kuruna tal-Uraeus",
+      "description": "Kuruna tar-re bil-kobra li tħares, li l-fargħuni kienu jilbsu bħala ħarsien mill-allat."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Werqa tal-Qasab",
+      "description": "Qasba waħda, għall-ħoss i. Żidha ma' isem ta' alla u ssir isem ta' raġel: Horus isir Hori, dak ta' Horus."
+    }
+  }
+}

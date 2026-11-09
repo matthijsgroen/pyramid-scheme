@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Cloch",
+    "bronze": "Cré-umha",
+    "silver": "Airgead",
+    "gold": "Ór",
+    "divine": "Diaga"
+  },
+  "sell_stone_1": {
+    "name": "Ostracon Briste",
+    "description": "Blúire briste potaireachta, le nótaí cleachtaidh scríobhaí scríobtha air — tá na litreacha ró-fhann le léamh."
+  },
+  "sell_stone_2": {
+    "name": "Próca Cré Scoilte",
+    "description": "Próca stórála le haghaidh grán nó beoir, scoilte síos taobh amháin faoi mheáchan na gcéadta bliain."
+  },
+  "sell_stone_3": {
+    "name": "Cuaróg Ghiolcach Chaite",
+    "description": "Fite as giolcach phaipír, an bonn caite tanaí ag siúlóid laethúil oibrí éigin a bhfuil dearmad déanta air."
+  },
+  "sell_stone_4": {
+    "name": "Blúire Línéadaigh Tréigthe",
+    "description": "Stiall stróicthe de línéadach gan dath, an cineál a chastaí timpeall ar na mairbh — nó a d’úsáidtí le seol a dheisiú."
+  },
+  "sell_stone_5": {
+    "name": "Lann Bhreochloiche Bhriste",
+    "description": "Scian bhreochloiche, briste ag an mbarr. Saor le déanamh, níos saoire fós le cur ina háit."
+  },
+  "sell_bronze_1": {
+    "name": "Ainglín Cré-umha Lúbtha",
+    "description": "Briocht saor cosanta, teilgthe cam agus nár deisíodh riamh."
+  },
+  "sell_bronze_2": {
+    "name": "Scáthán Cré-umha Creimthe",
+    "description": "Bhí sé chomh snasta tráth go bhfeicfeá tú féin ann; anois tá sé scamallach glas le haois."
+  },
+  "sell_bronze_3": {
+    "name": "Duán Cré-umha Maol",
+    "description": "Uirlis iascaire, a cailleadh thar bord sa Níl i bhfad sular séalaíodh an tuama."
+  },
+  "sell_bronze_4": {
+    "name": "Clog Beag Cré-umha",
+    "description": "Bhí sé le crochadh ar dhoras teampaill nó ar rúitín damhsóra — ní bhuaileann sé i gceart a thuilleadh."
+  },
+  "sell_bronze_5": {
+    "name": "Fáinne Cré-umha Smálaithe",
+    "description": "Fáinne simplí, déanta do mhéar atá ina deannach le fada."
+  },
+  "sell_silver_1": {
+    "name": "Ankh Airgid Smálaithe",
+    "description": "Siombail na beatha, caite maol ag na céadta bliain faoin talamh."
+  },
+  "sell_silver_2": {
+    "name": "Slat Choil Airgid",
+    "description": "Slat chaol a d’úsáidtí tráth le súile na ndaoine saibhre a líniú — tá an kohl imithe le fada."
+  },
+  "sell_silver_3": {
+    "name": "Babhla Airgid Ionsaithe",
+    "description": "Babhla beag ofrála, brúite ar thaobh amháin nuair a thit an tsíleáil os a chionn sa deireadh."
+  },
+  "sell_silver_4": {
+    "name": "Biorán Gruaige Airgid",
+    "description": "Simplí agus gan mhaisiú, choinnigh sé siar gruaig duine éigin a bhfuil a ainm caillte."
+  },
+  "sell_silver_5": {
+    "name": "Bráisléad Airgid Caite",
+    "description": "Fáinne tanaí airgid, a bhfáiscín briste. Níl sé breá go leor d’uasal, ach tá sé ró-bhreá d’oibrí."
+  },
+  "sell_gold_1": {
+    "name": "Coirnín Beag Óir",
+    "description": "Coirnín amháin ó mhuince adhlactha, scaipthe fadó."
+  },
+  "sell_gold_2": {
+    "name": "Blúire Duille Óir",
+    "description": "Slis duille óir, scafa d’aghaidh deilbhe ag robálaithe tuamaí na céadta bliain sular tháinig tusa."
+  },
+  "sell_gold_3": {
+    "name": "Cluasfháinne Tanaí Óir",
+    "description": "Buailte tanaí le hór an uasail a shíneadh níos faide."
+  },
+  "sell_gold_4": {
+    "name": "Blúire Breac le hÓr",
+    "description": "Píosa briste de phlástar órga, cáithníní d’ór fíor fós greamaithe den dromchla."
+  },
+  "sell_gold_5": {
+    "name": "Fáinne Séala Óir Scealptha",
+    "description": "Fáinne séala, an greanadh caite go dtí nach n-aithneofá é — tá dearmad déanta ar an duine a bhí ainmnithe air."
+  },
+  "sell_divine_1": {
+    "name": "Scarab Lapis Tréigthe",
+    "description": "Snoite as lapis lazuli luachmhar, a tugadh isteach ar chostas mór d’athbhreith faró. Tá an dath tréigthe leis na céadta bliain."
+  },
+  "sell_divine_2": {
+    "name": "Ainglín Súile Cornailín",
+    "description": "Súil chosanta snoite as cornailín chomh dearg le fuil, le mí-ádh a choinneáil siar sa saol eile."
+  },
+  "sell_divine_3": {
+    "name": "Slis Tuircéise",
+    "description": "Tíle amháin ó mhósáic bhriste, a bhí tráth mar chuid de phictiúr dé ar bhalla teampaill."
+  },
+  "sell_divine_4": {
+    "name": "Blúire Próca Canópaigh Alabastair",
+    "description": "Píosa briste de phróca a bhí le horgáin faró a choinneáil — cloch luachmhar d’obair ghruama."
+  },
+  "sell_divine_5": {
+    "name": "Lann Deasghnátha Obsaidiain",
+    "description": "Gloine bholcánach, meilte go faobhar searmanais nach raibh riamh i gceist do chath — don teampall amháin."
+  }
+}

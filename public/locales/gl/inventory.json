@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Rei dos deuses e señor do sol. Cada día cruza o ceo na súa barca solar."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Deus con cabeza de chacal. Coida das momias, do máis alá e dos mortos."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Deus do ceo con cabeza de falcón. Protexe os faraóns. É fillo de Osiris e de Isis."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "Deus con cabeza de ibis. É o deus da sabedoría e da escritura, e garda os rexistros dos deuses."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Deusa gata. Trae protección e alegría, e afasta os malos espíritos."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Deus crocodilo do río Nilo. Trae colleitas boas e fai fortes os soldados."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Deus escaravello do renacer. Fai rodar o sol polo ceo."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Deusa cobra que protexe o Baixo Exipto. É o sinal do poder do rei."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "Deusa da maxia, das nais e da curación. É a esposa fiel de Osiris."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "Deus do mundo dos mortos e de volver á vida. Xulga os mortos."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "Deus do caos, das tormentas e do deserto. É irmán e rival de Osiris."
+    },
+    "d12": {
+      "name": "Nephthys",
+      "description": "Deusa do loito que protexe os mortos. É irmá de Isis."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Deus creador e patrón dos artesáns e dos arquitectos. Creou as cousas só con dicilas."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Deusa leoa da guerra e da curación. É feroz, pero tamén pode curar enfermidades."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Deusa vaca do amor, da música e das nais. Coida dos faraóns."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Faraón",
+      "description": "O rei de Exipto. A xente vía nel un deus vivo, unha ponte entre as persoas e os deuses."
+    },
+    "p2": {
+      "name": "Sumo sacerdote",
+      "description": "O xefe dos templos. Fai os rituais sagrados e mantén a orde dos deuses."
+    },
+    "p3": {
+      "name": "Escriba",
+      "description": "Alguén que sabía ler e escribir. Gardaba os rexistros e o saber."
+    },
+    "p4": {
+      "name": "Arquitecto",
+      "description": "Mestre construtor que deseñaba pirámides, templos e monumentos para sempre."
+    },
+    "p5": {
+      "name": "Xeneral",
+      "description": "Xefe do exército. Defendía as fronteiras de Exipto e facía medrar o imperio."
+    },
+    "p6": {
+      "name": "Médico",
+      "description": "Curandeiro que mesturaba medicina e maxia para curar os enfermos."
+    },
+    "p7": {
+      "name": "Embalsamador",
+      "description": "Artesán sagrado que preparaba os mortos para a viaxe ao máis alá."
+    },
+    "p8": {
+      "name": "Labrego",
+      "description": "Daba de comer a Exipto. Traballaba as terras fértiles á beira do Nilo para alimentar o reino."
+    },
+    "p9": {
+      "name": "Artesán",
+      "description": "Persoa moi hábil que facía obxectos fermosos, xoias e arte para nobres e deuses."
+    },
+    "p10": {
+      "name": "Mercador",
+      "description": "Comerciante que traía cousas raras de terras moi afastadas."
+    },
+    "p11": {
+      "name": "Visir",
+      "description": "O primeiro conselleiro do faraón. Dirixía o goberno do país."
+    },
+    "p12": {
+      "name": "Oráculo",
+      "description": "Adiviño sagrado que entendía as mensaxes dos deuses e anunciaba o futuro."
+    },
+    "p13": {
+      "name": "Mariñeiro",
+      "description": "Navegaba polo Nilo e polo mar Mediterráneo. Sen el non había comercio nin transporte."
+    },
+    "p14": {
+      "name": "Canteiro",
+      "description": "Traballador da pedra que tallaba xeroglíficos e construía os grandes monumentos de Exipto."
+    },
+    "p15": {
+      "name": "Gardián",
+      "description": "Protexía os lugares sagrados e as tumbas, para que os mortos descansasen para sempre."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Hipopótamo",
+      "description": "Animal forte do río Nilo. A xente tíñalle medo pola súa forza e porque defende o seu sitio."
+    },
+    "a2": {
+      "name": "León",
+      "description": "Rei dos animais. É o sinal do poder do rei e da forza dos deuses no deserto."
+    },
+    "a3": {
+      "name": "Elefante",
+      "description": "Animal enorme das terras do sur. Admirado pola súa intelixencia e a súa memoria."
+    },
+    "a4": {
+      "name": "Gacela",
+      "description": "Animal áxil e elegante do deserto. É o sinal da rapidez."
+    },
+    "a5": {
+      "name": "Mono",
+      "description": "Animal listo unido a Thoth. Representa a intelixencia e as trasnadas."
+    },
+    "a6": {
+      "name": "Peixe",
+      "description": "Animais sagrados do Nilo. Dan comida e son sinal de abundancia."
+    },
+    "a7": {
+      "name": "Ganso",
+      "description": "Ave sagrada das marismas do Nilo, unida ás historias da creación e á alma."
+    },
+    "a8": {
+      "name": "Abella",
+      "description": "Sinal do Baixo Exipto e do poder do rei. Fai o mel, que vale moito."
+    },
+    "a9": {
+      "name": "Tartaruga",
+      "description": "Animal antigo e sabio que leva o peso do mundo na súa cuncha."
+    },
+    "a10": {
+      "name": "Rá",
+      "description": "Sinal do renacer e da abundancia. Sae das enchentes do Nilo, que dan vida."
+    },
+    "a11": {
+      "name": "Voitre",
+      "description": "Ave sagrada do Alto Exipto. É a forma na terra da deusa protectora Nekhbet."
+    },
+    "a12": {
+      "name": "Moucho",
+      "description": "Sabio cazador da noite. Garda saberes agochados e segredos antigos."
+    },
+    "a13": {
+      "name": "Carneiro",
+      "description": "Animal sagrado de Amón-Ra. É o sinal do poder dos deuses e de saber guiar."
+    },
+    "a14": {
+      "name": "Xirafa",
+      "description": "Animal alto e elegante das terras do sur. Co seu pescozo longo case toca o ceo."
+    },
+    "a15": {
+      "name": "Chacal",
+      "description": "Animal do deserto que guía cara ao máis alá. É servidor de Anubis."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Sinal da vida eterna. Os deuses e os faraóns lévano moitas veces na man."
+    },
+    "art2": {
+      "name": "Ollo de Horus",
+      "description": "Sinal de protección, de poder real e de boa saúde. Pertence ao deus do ceo, Horus."
+    },
+    "art3": {
+      "name": "Sistro",
+      "description": "Instrumento musical das cerimonias sagradas. Pertence á deusa Hathor."
+    },
+    "art4": {
+      "name": "Piar Djed",
+      "description": "Sinal de firmeza e de volver á vida. Vai moitas veces unido a Osiris."
+    },
+    "art5": {
+      "name": "Cartucho",
+      "description": "Óvalo co nome dun faraón en xeroglíficos. Protexe o seu nome para sempre."
+    },
+    "art6": {
+      "name": "Vaso canopo",
+      "description": "Xerra sagrada cunha cabeza de gardián por tapa. Había catro arredor dun ataúde, vixiando."
+    },
+    "art7": {
+      "name": "Cetro",
+      "description": "Vara de poder que levan os deuses e os faraóns. Mostra que mandan por vontade dos deuses."
+    },
+    "art9": {
+      "name": "Pirámide",
+      "description": "Tumba eterna e porta ao máis alá. Construída para durar para sempre."
+    },
+    "art10": {
+      "name": "Barca solar",
+      "description": "Barca sagrada que leva o deus do sol, Ra, polo ceo desde o amencer ata o solpor."
+    },
+    "art11": {
+      "name": "Obelisco",
+      "description": "Columna alta de pedra cunha pirámide no cumio. Apunta ao ceo para honrar os deuses."
+    },
+    "art12": {
+      "name": "Caxato e mallo",
+      "description": "Insignias do faraón. Mostran que é o pastor e o protector de Exipto."
+    },
+    "art14": {
+      "name": "Flor de loto",
+      "description": "Sinal do renacer e do sol. Sae limpa das augas lamacentas do Nilo."
+    },
+    "art15": {
+      "name": "Coroa con ureo",
+      "description": "Coroa real coa cobra protectora. Os faraóns levábana para que os deuses os protexesen."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Folla de xunco",
+      "description": "Un só xunco, que soa como i. Se o pos detrás do nome dun deus, sae o nome dun home: Horus vólvese Hori, o de Horus."
+    }
+  }
+}

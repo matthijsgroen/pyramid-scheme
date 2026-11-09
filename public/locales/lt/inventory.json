@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Dievų karalius ir saulės valdovas. Kasdien jis plaukia per dangų savo saulės laivu."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Dievas šakalo galva. Jis rūpinasi mumijomis ir pomirtiniu pasauliu, saugo mirusiuosius."
+    },
+    "d3": {
+      "name": "Horas",
+      "description": "Dangaus dievas sakalo galva, faraonų globėjas. Ozyrio ir Izidės sūnus."
+    },
+    "d4": {
+      "name": "Totas",
+      "description": "Dievas ibiso galva. Išminties, rašto ir žinių dievas, saugantis dievų užrašus."
+    },
+    "d5": {
+      "name": "Bastetė",
+      "description": "Katės deivė. Apsaugos, džiaugsmo ir vaisingumo deivė, ginanti nuo piktųjų dvasių."
+    },
+    "d6": {
+      "name": "Sobekas",
+      "description": "Krokodilo dievas. Jis valdo Nilo upę, derlių ir karių drąsą."
+    },
+    "d7": {
+      "name": "Chepris",
+      "description": "Skarabėjo dievas. Atgimimo ir atsinaujinimo dievas, ridenantis saulę per dangų."
+    },
+    "d8": {
+      "name": "Vadžet",
+      "description": "Kobros deivė ir Žemutinio Egipto globėja, karališkos galios ženklas."
+    },
+    "d9": {
+      "name": "Izidė",
+      "description": "Burtų, motinystės ir gydymo deivė, ištikima Ozyrio žmona."
+    },
+    "d10": {
+      "name": "Ozyris",
+      "description": "Požemio, mirties ir prisikėlimo dievas, mirusiųjų teisėjas."
+    },
+    "d11": {
+      "name": "Setas",
+      "description": "Chaoso, audrų ir dykumos dievas, Ozyrio brolis ir varžovas."
+    },
+    "d12": {
+      "name": "Neftidė",
+      "description": "Gedulo deivė ir mirusiųjų saugotoja, Izidės sesuo."
+    },
+    "d13": {
+      "name": "Ptahas",
+      "description": "Kūrėjas dievas, meistrų ir architektų globėjas. Jis kūrė ištartu žodžiu."
+    },
+    "d14": {
+      "name": "Sechmetė",
+      "description": "Liūtės deivė. Karo ir gydymo deivė, narsi gynėja, galinti išgydyti ligas."
+    },
+    "d15": {
+      "name": "Hatora",
+      "description": "Karvės deivė. Meilės, muzikos ir motinystės deivė, faraonų maitintoja."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Faraonas",
+      "description": "Dieviškasis Egipto valdovas. Jį laikė gyvu dievu, tiltu tarp žmonių ir dievų."
+    },
+    "p2": {
+      "name": "Vyriausiasis žynys",
+      "description": "Svarbiausias šventyklos žynys. Jis atlieka šventas apeigas ir saugo dievų tvarką."
+    },
+    "p3": {
+      "name": "Raštininkas",
+      "description": "Mokytas žmogus, mokantis skaityti ir rašyti. Jis saugojo užrašus ir žinias."
+    },
+    "p4": {
+      "name": "Architektas",
+      "description": "Statybų meistras, kūręs piramides, šventyklas ir paminklus amžinybei."
+    },
+    "p5": {
+      "name": "Karvedys",
+      "description": "Kariuomenės vadas, saugojęs Egipto sienas ir plėtęs valstybę."
+    },
+    "p6": {
+      "name": "Gydytojas",
+      "description": "Gydytojas, kuris ligonius gydė ir vaistais, ir burtais."
+    },
+    "p7": {
+      "name": "Balzamuotojas",
+      "description": "Šventas meistras, ruošęs žmogų kelionei į pomirtinį pasaulį."
+    },
+    "p8": {
+      "name": "Ūkininkas",
+      "description": "Egipto maitintojas. Jis dirbo derlingą Nilo slėnį, kad visa šalis būtų soti."
+    },
+    "p9": {
+      "name": "Amatininkas",
+      "description": "Įgudęs meistras, kūręs gražius daiktus, papuošalus ir meno kūrinius didikams ir dievams."
+    },
+    "p10": {
+      "name": "Pirklys",
+      "description": "Prekeivis, prekybos keliais gabenęs keistas prekes iš tolimų kraštų."
+    },
+    "p11": {
+      "name": "Viziris",
+      "description": "Vyriausiasis faraono patarėjas, prižiūrėjęs, kaip valdoma šalis."
+    },
+    "p12": {
+      "name": "Orakulas",
+      "description": "Šventas pranašas, aiškinęs dievų žinias ir pranašavęs ateitį."
+    },
+    "p13": {
+      "name": "Jūreivis",
+      "description": "Plaukiojo Nilu ir jūra. Be jo nebūtų nei prekybos, nei kelionių."
+    },
+    "p14": {
+      "name": "Mūrininkas",
+      "description": "Akmens meistras, kalęs hieroglifus ir stačęs didžiuosius Egipto paminklus."
+    },
+    "p15": {
+      "name": "Sargas",
+      "description": "Šventų vietų ir kapų saugotojas, rūpinęsis amžinu mirusiųjų poilsiu."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Begemotas",
+      "description": "Galingas Nilo žvėris. Jo bijojo dėl jėgos ir dėl to, kad jis gina savo vietą."
+    },
+    "a2": {
+      "name": "Liūtas",
+      "description": "Žvėrių karalius, karališkos galios ir dievų stiprybės ženklas dykumoje."
+    },
+    "a3": {
+      "name": "Dramblys",
+      "description": "Milžiniškas gyvūnas iš pietų kraštų, gerbiamas už išmintį ir atmintį."
+    },
+    "a4": {
+      "name": "Gazelė",
+      "description": "Greita ir grakšti dykumos gyventoja, greičio ir grožio ženklas."
+    },
+    "a5": {
+      "name": "Beždžionė",
+      "description": "Gudri beždžionė, susijusi su Totu. Ji reiškia protą ir išdaigas."
+    },
+    "a6": {
+      "name": "Žuvis",
+      "description": "Šventi Nilo gyventojai. Jos maitino žmones ir buvo derliaus ženklas."
+    },
+    "a7": {
+      "name": "Žąsis",
+      "description": "Šventas Nilo pelkių paukštis, susijęs su pasaulio sukūrimu ir siela."
+    },
+    "a8": {
+      "name": "Bitė",
+      "description": "Žemutinio Egipto ir karališkos valdžios ženklas, brangaus medaus gamintoja."
+    },
+    "a9": {
+      "name": "Vėžlys",
+      "description": "Senas išmintingas gyvūnas, nešantis pasaulio svorį ant savo šarvo."
+    },
+    "a10": {
+      "name": "Varlė",
+      "description": "Atgimimo ir derliaus ženklas. Ji išnyra iš gyvybę nešančių Nilo potvynių."
+    },
+    "a11": {
+      "name": "Grifas",
+      "description": "Šventas Aukštutinio Egipto paukštis, žemiškas deivės globėjos Nechbetės pavidalas."
+    },
+    "a12": {
+      "name": "Pelėda",
+      "description": "Išmintinga nakties medžiotoja, slaptų žinių ir senovės paslapčių sergėtoja."
+    },
+    "a13": {
+      "name": "Avinas",
+      "description": "Šventas Amono-Ra gyvūnas, dieviškos galios ir vadovavimo ženklas."
+    },
+    "a14": {
+      "name": "Žirafa",
+      "description": "Aukšta ir grakšti būtybė iš pietų kraštų. Ilgu kaklu ji siekia dangų."
+    },
+    "a15": {
+      "name": "Šakalas",
+      "description": "Dykumos klajūnas ir vedlys į pomirtinį pasaulį, Anubio tarnas."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Anchas",
+      "description": "Gyvybės ir nemirtingumo ženklas. Jį dažnai laiko dievai ir faraonai."
+    },
+    "art2": {
+      "name": "Horo akis",
+      "description": "Apsaugos, karališkos galios ir sveikatos ženklas, susijęs su dangaus dievu Horu."
+    },
+    "art3": {
+      "name": "Sistras",
+      "description": "Muzikos instrumentas šventoms apeigoms, susijęs su deive Hatora."
+    },
+    "art4": {
+      "name": "Džedo stulpas",
+      "description": "Tvirtumo ir prisikėlimo ženklas, dažnai siejamas su Ozyriu."
+    },
+    "art5": {
+      "name": "Kartušas",
+      "description": "Ovalus rėmelis su faraono vardu hieroglifais. Jis amžinai saugo faraono vardą."
+    },
+    "art6": {
+      "name": "Kanopa",
+      "description": "Šventas indas, kurio dangtis yra sargo galva. Keturi tokie stovėdavo aplink karstą ir budėdavo."
+    },
+    "art7": {
+      "name": "Skeptras",
+      "description": "Galios ir valdžios lazda. Ją nešiojo dievai ir faraonai kaip dieviško valdymo ženklą."
+    },
+    "art9": {
+      "name": "Piramidė",
+      "description": "Amžinas kapas ir vartai į pomirtinį pasaulį, pastatytas faraonams stovėti amžinai."
+    },
+    "art10": {
+      "name": "Saulės laivas",
+      "description": "Šventas laivas, kuriuo saulės dievas Ra nuo aušros iki sutemų plaukia per dangų."
+    },
+    "art11": {
+      "name": "Obeliskas",
+      "description": "Aukštas akmens stulpas su piramidės smaigaliu, siekiantis dangų dievų garbei."
+    },
+    "art12": {
+      "name": "Lazda ir botagas",
+      "description": "Karališki ženklai: faraonas yra Egipto piemuo ir gynėjas."
+    },
+    "art14": {
+      "name": "Lotoso žiedas",
+      "description": "Atgimimo ir saulės ženklas. Jis išnyra švarus iš drumsto Nilo vandens."
+    },
+    "art15": {
+      "name": "Urėjaus karūna",
+      "description": "Karališkas galvos apdangalas su saugančia kobra. Faraonai jį nešiojo kaip dievų apsaugą."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Nendrės lapas",
+      "description": "Viena nendrė, kuri reiškia garsą i. Pridėk ją prie dievo vardo, ir gausi žmogaus vardą: Horas virsta Hori, „tas, kuris Horo“."
+    }
+  }
+}

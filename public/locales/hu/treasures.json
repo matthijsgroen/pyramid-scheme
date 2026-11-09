@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Csúsztasd a kincset a kőre, hogy kinyíljon",
+    "alsoAvailable": "Ezek is jók:"
+  },
+  "perks": {
+    "max-health": "+½ szív a legtöbb életedhez",
+    "armor": "Kisebbet sebeznek a csapdák",
+    "trap-insight": "+1 mp az időzített csapdáknál",
+    "pack-mule": "Egy vizestömlő két szívet gyógyít",
+    "compass": "Iránytű-darab",
+    "detection": "Folyosókereső-darab",
+    "tier-unlock": "{{tier}} expedíciókat nyit meg",
+    "tier-coming-soon": "{{tier}} expedíciók egy későbbi frissítésben jönnek",
+    "location-key": "Megmutat egy másik sírt",
+    "partOf": "{{count}} / {{total}}"
+  },
+  "tiers": {
+    "stone": "Kő",
+    "bronze": "Bronz",
+    "silver": "Ezüst",
+    "gold": "Arany",
+    "divine": "Isteni"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Ezüst deben",
+      "description": "Régi egyiptomi ezüstpénz. A kereskedők ezzel fizettek a Nílus mentén."
+    },
+    "t2": {
+      "name": "Papirusztekercs",
+      "description": "Egy kereskedő tekercse. Kereskedelmi utak és drága rakományok listája van rajta."
+    },
+    "t3": {
+      "name": "Elefántcsont fésű",
+      "description": "Gondosan kifaragott elefántcsont fésű. Drága holmi, messzi földről hozták."
+    },
+    "t4": {
+      "name": "Agyag olajlámpás",
+      "description": "Egyszerű, de szép olajlámpás. Ezzel világítottak a kereskedő házában."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Arany karkötő",
+      "description": "Díszes arany karkötő drágakövekkel. Egyiptomi nemesek viselték."
+    },
+    "t6": {
+      "name": "Díszes tőr",
+      "description": "Szertartási tőr ékköves markolattal. Nemesek ünnepein használták."
+    },
+    "t7": {
+      "name": "Jáde szkarabeusz",
+      "description": "Jádéból készült védőamulett. Az újjászületés és az örök élet jele."
+    },
+    "t8": {
+      "name": "Alabástrom kanópuszkorsó",
+      "description": "Elegáns alabástromkorsó. Drága olajokat és illatszereket tartottak benne."
+    },
+    "t9": {
+      "name": "Ébenfa sétabot",
+      "description": "Fényesre csiszolt ébenfa bot, a tetején arany ankh-jellel."
+    },
+    "t10": {
+      "name": "Lazúrkő nyaklánc",
+      "description": "Gyönyörű nyaklánc ritka lazúrkövekből. A gazdagok nagyon szerették."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Szent ankh",
+      "description": "Arany ankh, az örök élet jele. A templom papjai megáldották."
+    },
+    "t12": {
+      "name": "Réztükör",
+      "description": "Fényesre csiszolt réztükör. Tisztító szertartásokon használták."
+    },
+    "t13": {
+      "name": "Füstölőtartó",
+      "description": "Díszes bronz füstölőtartó. A templomi szertartásokon égettek benne illatos füstölőt."
+    },
+    "t14": {
+      "name": "Szertartási kehely",
+      "description": "Szent ezüstkehely. Ebből öntöttek italáldozatot az isteneknek."
+    },
+    "t15": {
+      "name": "Szertartási legyező",
+      "description": "Díszes tolllegyező. A papok használták a templomi ünnepeken."
+    },
+    "t16": {
+      "name": "Imagyöngyök",
+      "description": "Megáldott gyöngysor. Imádkozáshoz és elmélkedéshez használták."
+    },
+    "t17": {
+      "name": "Szenteltvíz-edény",
+      "description": "Edény, benne megáldott víz a templom szent kútjából."
+    },
+    "t18": {
+      "name": "Templomi harang",
+      "description": "Bronzharang. Imára hívta az embereket, és jelezte, ha szertartás kezdődött."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "A fáraó pecsétje",
+      "description": "Ősi királyi pecsét egy elfelejtett fáraó kartusával."
+    },
+    "t20": {
+      "name": "Kristálygömb",
+      "description": "Titokzatos kristálygömb. Azt mondják, megmutatja a múltat és a jövőt."
+    },
+    "t21": {
+      "name": "Hieroglifás kőtábla",
+      "description": "Ősi kőtábla, titokzatos hieroglifás jóslatokkal."
+    },
+    "t22": {
+      "name": "Arany jogar",
+      "description": "Csodás arany jogar, a tetején Hórusz szemével."
+    },
+    "t23": {
+      "name": "Obszidián kés",
+      "description": "Borotvaéles obszidián kés. Ősi szertartásokon használták."
+    },
+    "t24": {
+      "name": "Meteoritdarab",
+      "description": "Egy darab szent meteorit. Azt hitték, isteni erő lakik benne."
+    },
+    "t25": {
+      "name": "Ősi iránytű",
+      "description": "Titokzatos eszköz, amely mindig a rejtett kincsek felé mutat."
+    },
+    "t26": {
+      "name": "Időkristály",
+      "description": "Legendás kristály, amely a régmúlt idők erejével ragyog."
+    },
+    "t27": {
+      "name": "Szertartási maszk",
+      "description": "Díszes aranymaszk. A főpapok viselték a szent szertartásokon."
+    },
+    "t28": {
+      "name": "Örökláng fáklya",
+      "description": "Fáklya örök lánggal. Ősidők óta ég, és még soha nem aludt ki."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Ré koronája",
+      "description": "Ré napisten legendás koronája. Isteni fény és erő árad belőle."
+    },
+    "t30": {
+      "name": "Thot botja",
+      "description": "Thotnak, a tudás istenének bölcsességbotja. Minden ősi titkot rejt."
+    },
+    "t31": {
+      "name": "Maat tolla",
+      "description": "Maatnak, az igazság istennőjének szent tolla. A túlvilágon ezzel mérték meg a lelkeket."
+    },
+    "t32": {
+      "name": "Ízisz könnyei",
+      "description": "Ízisz istennő kristállyá vált könnyei. Azt mondják, örök védelmet adnak."
+    },
+    "t33": {
+      "name": "Ozirisz szíve",
+      "description": "Ozirisznak, az alvilág urának megőrzött szíve. Még mindig dobog benne az élet."
+    },
+    "t34": {
+      "name": "Hórusz szeme amulett",
+      "description": "A legerősebb védőamulett. Benne van Hórusz teljes ereje."
+    },
+    "t35": {
+      "name": "Apopisz kígyója",
+      "description": "Apopisz, a káoszkígyó egy darabja, egy szent edénybe zárva."
+    },
+    "t36": {
+      "name": "Su lehelete",
+      "description": "Kis üvegcse, benne Sunak, a levegő istenének lehelete. Aki birtokolja, parancsol a szeleknek."
+    },
+    "t37": {
+      "name": "Szobek pikkelye",
+      "description": "Egyetlen pikkely Szobek krokodilistentől. Megvéd a vízben."
+    },
+    "t38": {
+      "name": "Anubisz őrszobor",
+      "description": "Kis Anubisz-szobor, amely életre kel, hogy őrizze gazdája kincseit."
+    },
+    "t39": {
+      "name": "Halottak könyve",
+      "description": "A teljes Halottak könyve, benne minden varázsige, ami a túlvilági úthoz kell."
+    },
+    "t40": {
+      "name": "Piramiscsúcs",
+      "description": "A Nagy Piramis arany csúcsköve. Benne van az összes fáraó ereje."
+    }
+  }
+}

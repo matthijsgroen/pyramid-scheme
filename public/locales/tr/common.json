@@ -1,0 +1,1697 @@
+{
+  "language": "Türkçe",
+  "saveUnreadable": {
+    "title": "İlerlemen yüklenemiyor",
+    "body": "Tarayıcı kayıtlı oyununu şu an vermiyor. Kaydın silinmedi: tekrar denemek için sayfayı yenile.",
+    "banner": "İlerleme kaydedilmiyor. Yenilemek için dokun.",
+    "reload": "Yenile",
+    "continue": "Kaydetmeden oynamaya devam et",
+    "reset": "Baştan başla (kaydı sil)",
+    "confirmReset": "Bu, bütün kaydını siler ve geri alınamaz. Baştan başlansın mı?",
+    "confirmResetYes": "Evet, kaydımı sil",
+    "confirmResetNo": "Hayır, geri dön"
+  },
+  "difficulty": {
+    "starter": "Başlangıç",
+    "junior": "Çırak",
+    "expert": "Uzman",
+    "master": "Usta",
+    "wizard": "Dahi"
+  },
+  "journeyLength": {
+    "short": "Kısa",
+    "medium": "Orta",
+    "long": "Uzun"
+  },
+  "time": {
+    "morning": "Sabah",
+    "afternoon": "Öğleden sonra",
+    "evening": "Akşam",
+    "night": "Gece"
+  },
+  "tomb": {},
+  "ui": {
+    "level": "Seviye",
+    "symbols": "sembol",
+    "journey": "Yolculuk",
+    "tableau": "Tablo",
+    "difficulty": "Zorluk",
+    "length": "Uzunluk",
+    "time": "Süre",
+    "requiredPrestige": "Gereken Ün Seviyesi",
+    "rewards": "Ödüller",
+    "coins": "Sikkeler",
+    "pieces": "Parçalar",
+    "description": "Açıklama",
+    "expedition": "Keşif",
+    "expeditionCompleted": "Keşif Tamamlandı!",
+    "goBackToBase": "Kampa dön",
+    "backArrow": "←",
+    "back": "← Geri",
+    "floor": "{{number}}. Kat",
+    "enterSite": "İçeri gir",
+    "prompt": {
+      "here": "İncele",
+      "stairs": "Merdivenden geç",
+      "exit": "Buradan ayrıl",
+      "zipline": "İpten kay — geri dönüş yok",
+      "oneWay": "Karşıya geç — geri dönüş yok",
+      "liftStone": "Taşı kaldır",
+      "setStone": "Taşı levhanın üstüne koy",
+      "postStone": "Taşı içeri it",
+      "takeStone": "Taşı al",
+      "squeeze": "Sıkışarak geç",
+      "replay": "Yeniden oynat"
+    },
+    "blocked": {
+      "carrying": "Elinde taşla geçemezsin"
+    },
+    "backToMap": "Haritaya dön",
+    "continueExploration": "Piramitleri keşfetmeye devam et.",
+    "startExpedition": "Keşfe Başla",
+    "webBuriedPercent": "Hâlâ %{{percent}} gömülü",
+    "interruptExpedition": "Keşfe ara ver",
+    "confirmInterruptExpedition": "Bu keşfe ara vermek istediğine emin misin? Keşifteki ilerlemen kalır, ama bu seviyedeki ilerlemen silinir!",
+    "cancel": "Vazgeç",
+    "settings": "Ayarlar",
+    "language": "Dil",
+    "close": "Kapat",
+    "done": "Tamam",
+    "clearGameData": "Oyun verilerini sil",
+    "confirmClearGameData": "Bu, bütün ilerlemeyi, eşyaları ve keşfedilen piramitleri tamamen siler. Geri alınamaz.",
+    "disableTutorials": "Öğreticileri kapat",
+    "treasureTomb": "Hazine Yeri",
+    "requiresMapPieces": "Harita parçaları gerekiyor",
+    "mapPieces": "Harita Parçaları",
+    "completeExpeditionsToUnlock": "Açmak için keşifleri tamamla",
+    "availableSymbols": "Elindeki Semboller:",
+    "fragmentsNeeded": "{{found}}/{{required}} gerekli",
+    "howToPlay": "Nasıl oynanır",
+    "puzzleComplete": "Cevap:",
+    "puzzleCompleted": "Bulmaca Çözüldü",
+    "trapBlocked": "Bu tuzağı denemek için yeterince canın yok",
+    "spiritsRejectCode": "Ruhlar bu şifreyi kabul etmiyor",
+    "sacredSealBroken": "Kutsal mühür kırıldı",
+    "newExpeditionUnlocked": "Yeni bir keşif açıldı",
+    "newTombUnlocked": "Yeni bir mezar açıldı",
+    "tierComingSoonTitle": "{{tier}} keşifleri yolda",
+    "tierComingSoon": "Anahtar sende, ama {{tier}} piramitleri hâlâ yapılıyor. Sonraki bir güncellemede gelecekler. O zamana kadar anahtarın, zaten bildiğin piramitlerin daha fazla yerini açar.",
+    "answerNow": "Cevap: ",
+    "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "resetPuzzle": "Baştan",
+    "hint": "İpucu",
+    "undo": "Geri al",
+    "erase": "Sil",
+    "notes": "Notlar",
+    "solvedUnaided": "Tek bir ipucu bile almadan çözdün",
+    "solvedWithHints_one": "{{count}} ipucuyla çözdün",
+    "solvedWithHints_other": "{{count}} ipucuyla çözdün",
+    "tapToContinue": "Devam etmek için dokun",
+    "goal": "Hedef"
+  },
+  "trap": {
+    "warning": "⚠ Tuzaklı Koridor",
+    "canAttempt": "Geçmeyi deneyebilirsin.",
+    "tooWeak": "Tehlikeli derecede zayıfsın. Başaramazsan hiç canın kalmaz.",
+    "attempt": "Tuzağı dene",
+    "turnAround": "Geri dön",
+    "rested": "Ateşin başında dinlendin. Yeniden zinde!"
+  },
+  "gate": {
+    "title": "🔒 Kilitli Kapı",
+    "locked": "Doğru anahtar henüz sende değil.",
+    "markedWith": "Kapıya bir işaret oyulmuş:",
+    "unlocked": "Anahtar sende.",
+    "pass": "Geç",
+    "turnAround": "Geri dön",
+    "wardDescription": {
+      "starter": "Bu geçidi bir tüccar mührü kapatıyor. Onu sadece tüccarın koruma anahtarı açar.",
+      "junior": "Bu yolu bir soylunun arması kilitliyor. Onu sadece onun koruma anahtarı açar.",
+      "expert": "Bu kapıyı bir başrahibin tapınak koruması bekliyor. Onu kutsal anahtarı açmalı.",
+      "master": "Bu geçidi bir firavunun kral mührü bağlıyor. Onu sadece hükümdarın anahtarı kırar.",
+      "wizard": "Bu kapıyı tanrıların koruması tutuyor. Tanrısal anahtarından başka hiçbir şey geçemez."
+    },
+    "needsKey": "Kapıda tek bir anahtarın işareti var:",
+    "lockedColor": "O anahtarı bu katta henüz bulmadın."
+  },
+  "chest": {
+    "tapToOpen": "Açmak için dokun",
+    "money_one": "{{count}} sikke",
+    "money_other": "{{count}} sikke",
+    "mapPiece": "Harita Parçası",
+    "mapPieceDescription": "Çoktan unutulmuş bir yerin haritasından kırılgan bir parça. Ne yazık ki tamamlanmaktan çok uzak...",
+    "mapPieceProgress": "{{found}} / {{required}} harita parçası toplandı",
+    "mapPieceComplete": "Harita tamamlandı! Seni şuraya götürüyor: {{name}}.",
+    "hieroglyphFragment": "Hiyeroglif Parçası",
+    "fragmentProgress": "{{found}} / {{required}} parça bulundu",
+    "tombKey": "Mezar Anahtarı",
+    "sandLever": "Kum Kolu",
+    "sandLeverDescription": "Kolu çekiyorsun ve aşağıda kalıyor. Çok uzaklarda bir yerde kum akıp gidiyor.",
+    "webKey": "Mühür Anahtarı",
+    "webKeyDescription": "Başında, başka bir yerde mühürlü bir kapıda gördüğün bir işaret var.",
+    "hieroglyphs": "Eski Hiyeroglifler",
+    "hieroglyphsDescription": "Bu odanın duvarlarına kazınmış kutsal semboller. Anlamları, eski dünya hakkındaki bilgini artırıyor.",
+    "mosaicPiece": "Mozaik Parçası",
+    "mosaicPieceDescription": "Parıl parıl bir cam taş, büyük bir mozaiğin bir parçası. Onu ötekilerin yanına koy, saklı resim yavaş yavaş ortaya çıksın.",
+    "waterskin": "Su Tulumu",
+    "waterskinDescription": "Serin su. Hemen içiyorsun ve yaraların hafifliyor."
+  },
+  "loot": {
+    "youFound": "Buldun",
+    "expeditionReward": "Keşfi tamamladığın için ek ödül",
+    "clickToContinue": "Devam etmek için herhangi bir yere dokun"
+  },
+  "money": {
+    "label": "Sikke"
+  },
+  "shop": {
+    "title": "Fez'in Tezgâhı",
+    "invitation": "Tezgâha göz at",
+    "buy": "Al",
+    "sell": "Sat",
+    "soldOut": "Tükendi",
+    "dismiss": "Ayrıl",
+    "rareItems": "Nadir Buluntular",
+    "sellSection": "Satılacak ufak tefek",
+    "haul": {
+      "coins_one": "+{{count}} sikke",
+      "coins_other": "+{{count}} sikke",
+      "note": "Yolda bulunan bozukluklar"
+    }
+  },
+  "purchases": {
+    "donkey": {
+      "name": "Eşek",
+      "need": "Bir eşeğe ihtiyacın var",
+      "opens": "Eşyalarını taşır. Onunla Uzman yolculuklarına çıkabilirsin."
+    },
+    "cart": {
+      "name": "Araba",
+      "need": "Bir arabaya ihtiyacın var",
+      "opens": "Bütün kamp üstüne sığar. Onunla Usta yolculuklarına çıkabilirsin."
+    },
+    "camel": {
+      "name": "Deve",
+      "need": "Bir deveye ihtiyacın var",
+      "opens": "Günlerce susuz yürür. Seni En Kutsal Oda'ya götürür."
+    },
+    "secondDonkey": {
+      "name": "İkinci eşek",
+      "need": "İkinci bir eşeğe ihtiyacın var",
+      "opens": "Daha da çok yük taşınır. Onunla Dahi yolculuklarına çıkabilirsin."
+    },
+    "secondCamel": {
+      "name": "İkinci deve",
+      "need": "İkinci bir deveye ihtiyacın var",
+      "opens": "İki deve, Osiris'in Salonu'na yetecek kadar su taşır."
+    },
+    "sturdyCart": {
+      "name": "Daha sağlam araba",
+      "need": "Daha sağlam bir arabaya ihtiyacın var",
+      "opens": "Kırılmaz, Evrenin Güçleri Diyarı'na giderken bile."
+    },
+    "caravanBanner": {
+      "name": "Kervan sancağı",
+      "opens": "Hiçbir şey açmaz. Sadece güzel olduğu için."
+    },
+    "hint": "Fez'in tezgâhında bir tane var: {{place}}",
+    "devGrant": "Bütün hayvanları satın al"
+  },
+  "level": {
+    "completed": "Seviye Tamamlandı!"
+  },
+  "mosaic": {
+    "place_one": "{{count}} parçayı yerleştir",
+    "place_other": "{{count}} parçayı yerleştir",
+    "placing": "Yerleştiriliyor…",
+    "panel": {
+      "starter": "Kapıdaki Bekçi",
+      "junior": "İlk Ders",
+      "expert": "Güneşi İçeri Almak",
+      "master": "Yeşil Kral",
+      "wizard": "Tüy ve Kalp"
+    },
+    "entrance": {
+      "title": "Mozaik",
+      "label": "Mozaik {{found}}/{{total}}"
+    },
+    "haul": {
+      "pieces_one": "{{count}} mozaik parçası",
+      "pieces_other": "{{count}} mozaik parçası",
+      "note": "Vitray pencere için"
+    }
+  },
+  "collection": {
+    "tabs": {
+      "treasures": "Hazineler",
+      "hieroglyphs": "Hiyeroglifler",
+      "stories": "Hikâyeler",
+      "junk": "Ufak Tefek"
+    },
+    "tabsLabel": "Topladıkların",
+    "tabNew_one": "{{label}} · {{count}} yeni",
+    "tabNew_other": "{{label}} · {{count}} yeni",
+    "empty": "Sandığın hâlâ boş",
+    "newLabel": "YENİ",
+    "clickForDetails": "Ayrıntılar için bir karoya dokun",
+    "categories": {
+      "deities": "🏺 Tanrılar",
+      "professions": "⚱️ Meslekler",
+      "animals": "🐾 Hayvanlar",
+      "artifacts": "💎 Eserler",
+      "treasures": "💰 Hazineler",
+      "junk": "🔷 Ufak Tefek",
+      "signs": "✍️ İşaretler"
+    },
+    "treasureCategories": {
+      "merchantCache": "💰 Tüccar Zulası",
+      "nobleVault": "👑 Soylunun Odası",
+      "templeSecrets": "🏛️ Tapınak Sırları",
+      "ancientRelics": "🏺 Eski Kalıntılar",
+      "mythicalArtifacts": "✨ Efsanevi Eserler"
+    }
+  },
+  "detector": {
+    "compassTitle": "Pusula",
+    "corridorTitle": "Koridor bulucu",
+    "pickTarget": "Kamptaki harita masasında bir hiyeroglif seç",
+    "allCollected": "Daha önce keşfettiğin bir piramitte ulaşılabilecek bir parça henüz yok",
+    "more": "+{{count}} tane daha",
+    "corridorHere": "Tam burada gizli bir geçit var",
+    "revealCorridor": "Aç",
+    "corridorNearby": "Yakında gizli bir koridor var",
+    "corridorOnFloor": "Bu katta gizli bir koridor seni bekliyor",
+    "lookingFor": "{{symbol}} aranıyor",
+    "access": {
+      "open": "Önünde bilinen bir engel yok",
+      "unknown": "Henüz ulaşılamayabilir: bir mezarın içinde ya da satılık"
+    },
+    "corridorNoneNearby": "Yakında gizli koridor yok",
+    "corridorNoneOnFloor": "Bu katta gizli koridor yok",
+    "corridorOtherFloor": "Başka bir katta gizli bir koridor seni bekliyor",
+    "corridorNoneInPyramid": "Başka bir katta gizli koridor yok",
+    "title": "Dedektör",
+    "band": {
+      "none": "Hiçbir şey bulunamadı",
+      "pyramid": "Bu piramitte bir şey var",
+      "floor": "Bu katta bir şey var",
+      "near": "Yakında bir şey var",
+      "here": "Tam burada! Dedektörü aç"
+    },
+    "camp": {
+      "parts": "{{count}} / {{total}} parça",
+      "compassReach": {
+        "1": "piramidi görür",
+        "2": "katı görür",
+        "3": "yeri gösterir"
+      },
+      "pickHeading": "Pusula neyi arıyor?",
+      "onlyIncomplete": "Sadece bir parçasına sahip olduğun işaretler, tamamlanana kadar.",
+      "whereHeading": "{{symbol}} parçalarının yeri",
+      "pickFirst": "Parçalarının nerede olduğunu görmek için bir işaret seç.",
+      "follow": "Bu işareti izle",
+      "following": "Pusula bu işareti izliyor",
+      "nothingToFind": "Tamamlanmamış bir işaretin henüz hiçbir parçası sende yok.",
+      "noneInReach": "Daha önce keşfettiğin bir piramitte ulaşılabilecek bir parça henüz yok.",
+      "corridorReach": {
+        "1": "yakındaki bir koridoru duyar",
+        "2": "bütün katı duyar",
+        "3": "öbür katları da duyar",
+        "4": "başka yolculukları da duyar"
+      },
+      "corridorInPyramid": "Bir piramidin içinde kapalı koridorları dinler.",
+      "corridorFarNext": "Dört parçanın hepsiyle kamptan başka yolculukları da duyar.",
+      "corridorWhere": "Hâlâ kapalı bir koridorun olduğu yer",
+      "corridorNone": "Gittiğin yolculuklarda kapalı koridor yok.",
+      "pyramid": "Piramit {{n}}",
+      "corridorCount_one": "{{count}} koridor",
+      "corridorCount_other": "{{count}} koridor"
+    }
+  },
+  "keys": {
+    "blue": "Mavi anahtar",
+    "red": "Kırmızı anahtar",
+    "green": "Yeşil anahtar",
+    "yellow": "Sarı anahtar",
+    "purple": "Mor anahtar",
+    "bundle": "Bir anahtar destesi",
+    "foundDescription": "Bu katta, bu renkle işaretli kapıları açar.",
+    "heldTitle": "{{key}} — elinde",
+    "neededTitle": "{{key}} — hâlâ gerekli"
+  },
+  "balance": {
+    "rules": {
+      "tap": "Aşağıdan bir işarete, sonra bir sayıya dokun. Kaldırmak için o sayıya yeniden dokun.",
+      "same": "Bir işaret her terazide aynı ağırlıktadır.",
+      "cancel": "İki kefeden de aynı şeyi alırsan terazi dengede kalır. Bunun için işaretli bir parçaya dokun. Geriye kalan, yeni bir satır olarak saklanır.",
+      "swap": "Karşısında benzeri olmayan bir işarete dokun. Sonra o işaretin tek başına durduğu bir satıra dokun. Böylece işareti o satırın değeriyle değiştirirsin."
+    },
+    "hint": {
+      "mistake": "Verdiğin ağırlıklardan biri bir teraziyi bozuyor. Onu kaldır ve yeniden bak.",
+      "alone": "Işıklı satırda, üstünde sayı olmayan tek parça {{glyph}}. Ağırlığını hesapla.",
+      "equalShares": "Işıklı satırda bir sayının karşısında sadece {{glyph}} var. O sayıyı aralarında eşit paylaştır.",
+      "difference": "İki ışıklı satır, {{glyph}} dışında aynı. Onları karşılaştır.",
+      "cancelGlyph": "Işıklı satırın iki kefesinde de {{glyph}} var. İki taraftan da kaldırmak için birine dokun. Satır dengede kalır.",
+      "cancelStones": "Işıklı satırın iki kefesinde de düz sayılar var. İki taraftan da aynı miktarı almak için birine dokun.",
+      "swap": "Işıklı bir satır, tek bir {{glyph}} kaç eder, onu söylüyor. Öbür ışıklı satırdaki {{glyph}} işaretine dokun, sonra o satıra dokun."
+    },
+    "swap": {
+      "pick": "Bu {{glyph}} işaretini, bir satırın söylediği değerle değiştirmek için ışıklı bir satıra dokun.",
+      "none": "Burada tek bir {{glyph}} kaç eder, söyleyen bir şey yok. Karşısında da benzeri yok."
+    },
+    "goal": {
+      "default": "Her işaretin bir ağırlığı olsun ve her terazi dengede dursun.",
+      "weighing": "Her işaret ağırlığını bulsun ve her terazi dengeye gelsin."
+    },
+    "name": {
+      "default": "Terazi",
+      "weighing": "Kalbin Tartılması"
+    }
+  },
+  "sumplete": {
+    "rules": {
+      "tap": "Bir sayının üstünü çizmek için bir kez, tutmak için bir kez daha, temizlemek için bir kez daha dokun.",
+      "totals": "Her hedefin altındaki küçük sayı, o sıranın şu anki toplamıdır."
+    },
+    "hint": {
+      "mistake": "Buradaki işaretlerden biri doğru olamaz. Geri al ve yeniden bak.",
+      "tooBig": {
+        "row": "Bu satırın hâlâ {{deficit}} kadar eksiği var. {{value}} bundan büyük, o yüzden kalamaz.",
+        "col": "Bu sütunun hâlâ {{deficit}} kadar eksiği var. {{value}} bundan büyük, o yüzden kalamaz."
+      },
+      "allStrike": {
+        "row": "Bu satırda kalan sayılar zaten hedefi tutuyor. Yani geri kalan her şey gitmeli.",
+        "col": "Bu sütunda kalan sayılar zaten hedefi tutuyor. Yani geri kalan her şey gitmeli."
+      },
+      "allKeep": {
+        "row": "Bu satır zaten hedefi tutuyor. Bu sayıları kalacak olarak işaretle, böylece içlerinden geçen sütunları çözebilirsin.",
+        "col": "Bu sütun zaten hedefi tutuyor. Bu sayıları kalacak olarak işaretle, böylece içlerinden geçen satırları çözebilirsin."
+      },
+      "parityKeep": {
+        "row": "Bu satırın hâlâ {{deficit}} kadar eksiği var, bu bir tek sayı. Kalan sayılardan tek olan sadece {{value}}, o yüzden kalmalı.",
+        "col": "Bu sütunun hâlâ {{deficit}} kadar eksiği var, bu bir tek sayı. Kalan sayılardan tek olan sadece {{value}}, o yüzden kalmalı."
+      },
+      "parityStrike": {
+        "row": "Bu satırın hâlâ {{deficit}} kadar eksiği var, bu bir çift sayı. Kalan sayılardan tek olan sadece {{value}}, o yüzden gitmeli.",
+        "col": "Bu sütunun hâlâ {{deficit}} kadar eksiği var, bu bir çift sayı. Kalan sayılardan tek olan sadece {{value}}, o yüzden gitmeli."
+      },
+      "onlyCombination": {
+        "row": "Bu satırda toplamı {{deficit}} eden tek bir sayı grubu var.",
+        "col": "Bu sütunda toplamı {{deficit}} eden tek bir sayı grubu var."
+      },
+      "inEveryCombinationKeep": {
+        "row": "{{value}} olmadan bu satırdaki öbür sayılar {{deficit}} edemez. O yüzden kalmalı.",
+        "col": "{{value}} olmadan bu sütundaki öbür sayılar {{deficit}} edemez. O yüzden kalmalı."
+      },
+      "inEveryCombinationStrike": {
+        "row": "{{value}} kalırsa bu satıra hâlâ {{remaining}} gerekir. Buradaki öbür sayılar bunu yapamaz. O yüzden gitmeli.",
+        "col": "{{value}} kalırsa bu sütuna hâlâ {{remaining}} gerekir. Buradaki öbür sayılar bunu yapamaz. O yüzden gitmeli."
+      },
+      "tooBig.row": "Bu satırın hâlâ {{deficit}} kadar eksiği var ve {{value}} bundan büyük.",
+      "tooBig.col": "Bu sütunun hâlâ {{deficit}} kadar eksiği var ve {{value}} bundan büyük.",
+      "allStrike.row": "Bu satırda kalan sayılar zaten hedefi tutuyor.",
+      "allStrike.col": "Bu sütunda kalan sayılar zaten hedefi tutuyor.",
+      "allKeep.row": "Bu satır zaten hedefi tutuyor. Sırada içinden geçen sütunlar var.",
+      "allKeep.col": "Bu sütun zaten hedefi tutuyor. Sırada içinden geçen satırlar var.",
+      "parityKeep.row": "Bu satırın hâlâ {{deficit}} kadar eksiği var, bu bir tek sayı. Kalan sayılardan tek olan da sadece {{value}}.",
+      "parityKeep.col": "Bu sütunun hâlâ {{deficit}} kadar eksiği var, bu bir tek sayı. Kalan sayılardan tek olan da sadece {{value}}.",
+      "parityStrike.row": "Bu satırın hâlâ {{deficit}} kadar eksiği var, bu bir çift sayı. Kalan sayılardan tek olan da sadece {{value}}.",
+      "parityStrike.col": "Bu sütunun hâlâ {{deficit}} kadar eksiği var, bu bir çift sayı. Kalan sayılardan tek olan da sadece {{value}}.",
+      "onlyCombination.row": "Bu satırda toplamı {{deficit}} eden tek bir sayı grubu var.",
+      "onlyCombination.col": "Bu sütunda toplamı {{deficit}} eden tek bir sayı grubu var.",
+      "inEveryCombinationKeep.row": "{{value}} olmadan bu satırdaki öbür sayılar {{deficit}} edemez.",
+      "inEveryCombinationKeep.col": "{{value}} olmadan bu sütundaki öbür sayılar {{deficit}} edemez.",
+      "inEveryCombinationStrike.row": "{{value}} kalırsa bu satıra hâlâ {{remaining}} gerekir. Buradaki öbür sayılar bunu yapamaz.",
+      "inEveryCombinationStrike.col": "{{value}} kalırsa bu sütuna hâlâ {{remaining}} gerekir. Buradaki öbür sayılar bunu yapamaz.",
+      "action": {
+        "strike_one": "Taralı sayının üstünü çiz.",
+        "strike_other": "Taralı sayıların üstünü çiz.",
+        "keep_one": "Taralı sayıyı kalacak olarak işaretle.",
+        "keep_other": "Taralı sayıları kalacak olarak işaretle."
+      }
+    },
+    "goal": "Her satır ve her sütun, yanındaki sayıyı tutsun.",
+    "name": "Hesap Defteri"
+  },
+  "futoshiki": {
+    "rules": {
+      "signs": "İki kare arasındaki işaret, ikisinden küçük olan sayıyı gösterir.",
+      "enter": "Bir kareye, sonra bir sayıya dokun. Aynı sayıya yeniden dokunursan geri alınır.",
+      "notes": "Bir kareye hâlâ hangi sayıların girebileceğini not etmek için kaleme geç. Geri al, son hamleni geri alır."
+    },
+    "hint": {
+      "mistake": {
+        "value": "Buradaki sayılardan biri doğru olamaz. Onu sil ve yeniden bak.",
+        "note": "Bu karenin notları, buraya ait olan sayıyı dışarıda bırakmış. Notları temizle ve baştan başla."
+      },
+      "nakedSingle": "Öbür bütün sayılar bu satırda, bu sütunda ya da işaretler yüzünden zaten kullanılmış. Bu kare için sadece {{value}} kaldı.",
+      "hiddenSingle": {
+        "row": "{{value}} bu satırın başka hiçbir karesine uymuyor. Yani yeri burası.",
+        "col": "{{value}} bu sütunun başka hiçbir karesine uymuyor. Yani yeri burası."
+      },
+      "signBound": {
+        "high": "Buradaki bir işaret daha büyük bir sayıyı gösteriyor. O yüzden bu kareye {{value}} giremez.",
+        "low": "Buradaki bir işaret bu kareyi gösteriyor. Demek ki bir şey ondan küçük olmalı. Bu kareye {{value}} giremez."
+      },
+      "signVsValue": {
+        "less": "İşaret, bu karenin komşusundan küçük olduğunu söylüyor. O komşuda da {{value}} var.",
+        "greater": "İşaret, bu karenin komşusundan büyük olduğunu söylüyor. O komşuda da {{value}} var."
+      },
+      "signChain": {
+        "high": "Bu kareden işaretleri izle: art arda {{chain}} karenin her biri bir öncekinden büyük olmalı. O yüzden bu kare {{bound}} sayısından büyük olamaz.",
+        "low": "İşaretleri bu kareye kadar izle: art arda {{chain}} karenin her biri bir öncekinden küçük olmalı. O yüzden bu kare {{bound}} sayısından küçük olamaz."
+      },
+      "signPair": {
+        "less": "İşaretin öbür yanındaki komşuya girebilecek en büyük sayı {{value}}. Bu kare ondan küçük kalmalı.",
+        "greater": "İşaretin öbür yanındaki komşuya girebilecek en küçük sayı {{value}}. Bu kare ondan büyük kalmalı."
+      },
+      "nakedPair": {
+        "row": "Bu iki kareye sadece {{first}} ve {{second}} girebilir, şu ya da bu sırayla. O yüzden bu satırdaki başka hiçbir kareye bu ikisi giremez.",
+        "col": "Bu iki kareye sadece {{first}} ve {{second}} girebilir, şu ya da bu sırayla. O yüzden bu sütundaki başka hiçbir kareye bu ikisi giremez."
+      },
+      "hiddenPair": {
+        "row": "Bu satırda {{first}} ve {{second}} bu iki kareden başka hiçbir yere uymuyor. O yüzden bu iki kareye başka bir şey giremez.",
+        "col": "Bu sütunda {{first}} ve {{second}} bu iki kareden başka hiçbir yere uymuyor. O yüzden bu iki kareye başka bir şey giremez."
+      },
+      "xWing": {
+        "row": "{{value}}, bu iki satırın her birinde sadece iki kareye uyuyor ve bu kareler aynı sütunlarda. Hangi şekilde yerleşirse yerleşsin, iki sütun da dolu. O yüzden {{value}} bu sütunlarda başka bir yere giremez.",
+        "col": "{{value}}, bu iki sütunun her birinde sadece iki kareye uyuyor ve bu kareler aynı satırlarda. Hangi şekilde yerleşirse yerleşsin, iki satır da dolu. O yüzden {{value}} bu satırlarda başka bir yere giremez."
+      },
+      "nakedTriple": {
+        "row": "Bu üç kareye aralarında sadece {{first}}, {{second}} ve {{third}} girebilir. O yüzden bu satırdaki başka hiçbir kare bu üçünden birini alamaz.",
+        "col": "Bu üç kareye aralarında sadece {{first}}, {{second}} ve {{third}} girebilir. O yüzden bu sütundaki başka hiçbir kare bu üçünden birini alamaz."
+      },
+      "hiddenTriple": {
+        "row": "Bu satırda {{first}}, {{second}} ve {{third}} bu üç kareden başka hiçbir yere uymuyor. O yüzden bu karelere başka bir şey giremez.",
+        "col": "Bu sütunda {{first}}, {{second}} ve {{third}} bu üç kareden başka hiçbir yere uymuyor. O yüzden bu karelere başka bir şey giremez."
+      }
+    },
+    "goal": "Her satırda ve her sütunda her sayı tam bir kez olsun.",
+    "name": "Büyük ve Küçük"
+  },
+  "lightbeam": {
+    "rules": {
+      "mirrors": "Bir ayna, ışığı iki yüzünden de çevirir. Çevresindeki küçük işaretler, durabileceği öbür yönleri gösterir: çoğu ışığı çeyrek tur çevirir, bazıları daha az çevirir ve ışığı çapraz gönderir.",
+      "walls": "Bir taş blok ışığı yutar. Tahtanın kenarı da.",
+      "tap": "Bir parçayı değiştirmek için ona dokun: ayna döner, kayan parça bir sonraki yerine geçer. Beyaz kenarlı parçaları sen oynatabilirsin. Geri kalan her şey bulmacanın parçası.",
+      "nodes": "Bazı taşlar yerdeki bir yuvaya bağlıdır ve dokunarak oynatılamaz. Işığı yuvanın üstünden geçir, taş kenara kayar."
+    },
+    "hint": {
+      "entryRun": "Işığın zaten gittiği yerden başla: diskten çıkar ve değiştirebileceğin ilk parçaya kadar dümdüz gider. Ne yaparsan yap, o karelerden ışık geçer.",
+      "exitRun": "Mabede bak. Sadece bir yanı ışık alabilir. Öbür bütün yollar kapalı ya da tahtanın dışına bakıyor. Yani ışık o çizgiden gelmek zorunda.",
+      "wiringFires": {
+        "one": "Işık yolda o yuvanın üstünden geçmek zorunda, bunu zaten buldun. Yuvadan geçince bağlı olduğu taş kenara çekilir ve ötesindeki yol açılır.",
+        "all": "O taş birden fazla yuvaya bağlı ve ışık hepsinin üstünden geçmeden kımıldamaz. Işığı hepsinden geçirmenin bir yolunu bul."
+      },
+      "deadEnd": {
+        "wall": "Böyle durursa ışık dümdüz taşa çarpar ve onu kurtaracak bir şey kalmaz. Yani böyle duramaz.",
+        "disc": "Böyle durursa ayna ışığı geldiği yoldan geri, çıktığı diske kadar gönderir. Yani böyle duramaz.",
+        "edge": "Böyle durursa ışık tahtanın kenarından dışarı kaçar ve onu yakalayacak bir şey kalmaz. Yani böyle duramaz.",
+        "loop": "Böyle durursa ışık hiçbir yere varmaz, sonsuza dek döner durur. Yani böyle duramaz."
+      },
+      "feedsExit": {
+        "wall": "Mabetten geriye doğru düşün. Böyle durursa, ışığı mabede ulaşan tek çizgiden getirecek bir şey kalmaz. Işık yolda taşa çarpıp söner.",
+        "disc": "Mabetten geriye doğru düşün. Böyle durursa ışığın diskin karanlık arka yüzünden çıkması gerekir. Oradan hiç ışık çıkmaz.",
+        "edge": "Mabetten geriye doğru düşün. Böyle durursa ışığın mabede ulaşmak için tahtanın dışından gelmesi gerekir.",
+        "loop": "Mabetten geriye doğru düşün. Böyle durursa mabede gitmesi gereken ışık sonsuza dek döner durur."
+      },
+      "wiringDead": "Ne yaparsan yap, ışık o yuvaya asla ulaşamaz. Yani bağlı olduğu taş hiç kımıldamaz. Yolu onun yanından okuyabilirsin.",
+      "neverReached": "Buna dokunma. Geri kalanı nasıl durursa dursun ışık ona ulaşamaz. Yani onunla ne yaptığının hiç önemi yok.",
+      "onlySurvivor": "Bunun her yönünü sırayla dene. Biri dışında hepsi mabedi karanlıkta bırakıyor. Cevap o tek yön."
+    },
+    "goal": "Güneş ışığı diskten mabede ulaşsın.",
+    "name": "Işık Huzmesi"
+  },
+  "eclipse": {
+    "rules": {
+      "triple": "Aynı şeyden üç tane yan yana ya da alt alta asla olamaz.",
+      "copies": "İki satır birbirinin aynısı olamaz. İki sütun da.",
+      "signs": "İki kare arasındaki işaret onların nasıl olduğunu söyler: = aynı, × farklı demek.",
+      "enter": "Güneş koymak için bir kareye dokun, ay için bir daha dokun, boşaltmak için bir kez daha dokun."
+    },
+    "hint": {
+      "mistake": "Bu işaretlerden biri doğru olamaz.",
+      "sign.same": "= aynı demek.",
+      "sign.different": "× farklı demek.",
+      "noTriple.pair": "Zaten iki {{mark}} var ve üç tane yan yana asla olamaz.",
+      "noTriple.sandwich": "İki yanda da {{mark}} var ve üç tane yan yana asla olamaz.",
+      "signPair": "Bu ikisi aynı ve hemen yanlarında o {{mark}} duruyor.",
+      "lineCount": "Bu sırada zaten {{count}} tane {{mark}} var.",
+      "noCopy": "Öbür türlü olursa ışıklı sıranın aynısı olur.",
+      "linePairing.sameNoRoom": "Burada sadece {{count}} {{mark}} kaldı ve bu ikisi aynı.",
+      "linePairing.differentTakesOne": "× çiftleri, bu sıraya sığacak {{mark}} yerlerini dolduruyor.",
+      "loneMark": "Bir {{mark}} kaldı ve sadece bir kare üç {{other}} işaretini ayrı tutuyor.",
+      "squeeze.triple": "Buraya {{mark}} gelirse geri kalanı {{other}} olur: üç tane yan yana.",
+      "squeeze.sign": "Buraya {{mark}} gelirse geri kalanı {{other}} olur: bir işaret tutmaz.",
+      "squeeze.copy": "Buraya {{mark}} gelirse geri kalanı {{other}} olur: sıra başka bir sıranın aynısı olur.",
+      "action": {
+        "fill_one": "Taralı kareye {{mark}} koy.",
+        "fill_other": "Taralı karelere {{mark}} koy.",
+        "fillMixed": "Taralı kareleri doldur. İşe yarayan tek yol bu."
+      }
+    },
+    "goal": "Her karede bir güneş ya da bir ay olsun ve her sırada ikisinden eşit sayıda olsun.",
+    "name": "Güneş ve Ay"
+  },
+  "constellation": {
+    "rules": {
+      "default": {
+        "straight": "Işık çizgileri bir yıldızdan ötekine dümdüz yatay ya da dikey gider.",
+        "pair": "İki yıldız arasında en fazla iki çizgi olabilir.",
+        "cross": "Çizgiler asla kesişmez ve asla bir yıldızın içinden geçmez.",
+        "enter": "Çizgi çekmek için bir yıldızdan komşusuna doğru sürükle. Çift çizgi için bir daha, silmek için bir kez daha."
+      },
+      "causeway": {
+        "straight": "Taşıma yolları bir yapı yerinden ötekine dümdüz yatay ya da dikey gider.",
+        "pair": "İki yapı yeri arasında en fazla iki yol olabilir.",
+        "cross": "Yollar asla kesişmez ve asla bir yapı yerinin içinden geçmez.",
+        "enter": "Yol döşemek için bir yapı yerinden komşusuna doğru sürükle. Yolu ikiye çıkarmak için bir daha, sökmek için bir kez daha."
+      },
+      "irrigation": {
+        "straight": "Kanallar bir havuzdan ötekine dümdüz yatay ya da dikey gider.",
+        "pair": "İki havuz arasında en fazla iki kanal olabilir.",
+        "cross": "Kanallar asla kesişmez ve asla bir havuzun içinden geçmez.",
+        "enter": "Kanal kazmak için bir havuzdan komşusuna doğru sürükle. Genişletmek için bir daha, doldurmak için bir kez daha."
+      },
+      "ceiling": {
+        "straight": "İpler bir yıldızdan ötekine dümdüz yatay ya da dikey gider.",
+        "pair": "İki yıldız arasında en fazla iki ip olabilir.",
+        "cross": "İpler asla kesişmez ve asla bir yıldızın içinden geçmez.",
+        "enter": "İp germek için bir yıldızdan komşusuna doğru sürükle. İkiye çıkarmak için bir daha, kaldırmak için bir kez daha."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Bu çizgilerden biri doğru olamaz.",
+        "capacity": "{{count}} çizgi ve ancak yetecek kadar çıkış yolu var.",
+        "settled": "Bu {{count}}, çizgilerini almış.",
+        "soleWayOut": "Tek bir çıkış yolu kaldı ve hâlâ {{count}} çizgi çekilecek.",
+        "crossed": "Oraya çizilen bir çizgi bunu keser.",
+        "atLeastOne": "{{count}} çizgi var ve öbür çıkış yolları hepsini taşıyamaz.",
+        "twinBlock.single": "O ikisini birleştirirsen iki yıldızlık bir takımyıldız olur.",
+        "twinBlock.double": "Oraya ikinci bir çizgi çekersen iki yıldızlık bir takımyıldız olur.",
+        "isolation": "O çizgi bu {{count}} yıldızı öbürlerinden ayırıp kapatır.",
+        "action": {
+          "draw_one": "İşaretli çizgiyi çiz.",
+          "draw_other": "İşaretli çizgileri çiz.",
+          "refuse_one": "İşaretli çizgi çizilmeden kalır.",
+          "refuse_other": "İşaretli çizgiler çizilmeden kalır.",
+          "refuseDouble": "Orada bir çizgi olur, ikincisi olmaz."
+        }
+      },
+      "causeway": {
+        "mistake": "Bu yollardan biri doğru olamaz.",
+        "capacity": "{{count}} yol ve ancak yetecek kadar çıkış yolu var.",
+        "settled": "Bu {{count}}, yollarını almış.",
+        "soleWayOut": "Tek bir çıkış yolu kaldı ve hâlâ {{count}} yol döşenecek.",
+        "crossed": "Oraya döşenen bir yol bunu keser.",
+        "atLeastOne": "{{count}} yol var ve öbür çıkış yolları hepsini taşıyamaz.",
+        "twinBlock.single": "O ikisini birleştirirsen iki yerlik bir yol ağı olur.",
+        "twinBlock.double": "Oraya ikinci bir yol döşersen iki yerlik bir yol ağı olur.",
+        "isolation": "O yol bu {{count}} yapı yerini öbürlerinden koparır.",
+        "action": {
+          "draw_one": "İşaretli yolu döşe.",
+          "draw_other": "İşaretli yolları döşe.",
+          "refuse_one": "İşaretli yol yapılmadan kalır.",
+          "refuse_other": "İşaretli yollar yapılmadan kalır.",
+          "refuseDouble": "Orada bir yol olur, ikincisi olmaz."
+        }
+      },
+      "irrigation": {
+        "mistake": "Bu kanallardan biri doğru olamaz.",
+        "capacity": "{{count}} kanal ve ancak yetecek kadar çıkış yolu var.",
+        "settled": "Bu {{count}}, kanallarını almış.",
+        "soleWayOut": "Tek bir çıkış yolu kaldı ve hâlâ {{count}} kanal kazılacak.",
+        "crossed": "Oraya kazılan bir kanal bunu keser.",
+        "atLeastOne": "{{count}} kanal var ve öbür çıkış yolları hepsini taşıyamaz.",
+        "twinBlock.single": "O ikisini birleştirirsen iki havuzluk bir su düzeni olur.",
+        "twinBlock.double": "Oraya ikinci bir kanal kazarsan iki havuzluk bir su düzeni olur.",
+        "isolation": "O kanal bu {{count}} havuzu öbürlerinden koparır.",
+        "action": {
+          "draw_one": "İşaretli kanalı kaz.",
+          "draw_other": "İşaretli kanalları kaz.",
+          "refuse_one": "İşaretli kanal kazılmadan kalır.",
+          "refuse_other": "İşaretli kanallar kazılmadan kalır.",
+          "refuseDouble": "Orada bir kanal olur, ikincisi olmaz."
+        }
+      },
+      "ceiling": {
+        "mistake": "Bu iplerden biri doğru olamaz.",
+        "capacity": "{{count}} ip ve ancak yetecek kadar çıkış yolu var.",
+        "settled": "Bu {{count}}, iplerini almış.",
+        "soleWayOut": "Tek bir çıkış yolu kaldı ve hâlâ {{count}} ip gerilecek.",
+        "crossed": "Oraya gerilen bir ip bunu keser.",
+        "atLeastOne": "{{count}} ip var ve öbür çıkış yolları hepsini taşıyamaz.",
+        "twinBlock.single": "O ikisini birleştirirsen iki yıldızlık bir boyalı gök olur.",
+        "twinBlock.double": "Oraya ikinci bir ip gerersen iki yıldızlık bir boyalı gök olur.",
+        "isolation": "O ip bu {{count}} yıldızı öbürlerinden koparır.",
+        "action": {
+          "draw_one": "İşaretli ipi ger.",
+          "draw_other": "İşaretli ipleri ger.",
+          "refuse_one": "İşaretli ip gerilmeden kalır.",
+          "refuse_other": "İşaretli ipler gerilmeden kalır.",
+          "refuseDouble": "Orada bir ip olur, ikincisi olmaz."
+        }
+      }
+    },
+    "goal": {
+      "default": "Her yıldız tek bir takımyıldızda olsun ve sayısı kaç diyorsa o kadar ışık çizgisiyle bağlansın.",
+      "causeway": "Her yapı yeri tek bir yol ağında olsun ve sayısı kaç diyorsa o kadar taşıma yoluna bağlansın.",
+      "irrigation": "Her havuz tek bir su düzenine bağlansın ve sayısı kaç diyorsa o kadar kanaldan su alsın.",
+      "ceiling": "Her yıldız tek bir boyalı gökyüzüne ait olsun ve sayısı kaç diyorsa o kadar altın iple bağlansın."
+    },
+    "name": {
+      "default": "Yıldız Haritası",
+      "causeway": "Taş Yol",
+      "irrigation": "Su Kanalları",
+      "ceiling": "Boyalı Tavan"
+    }
+  },
+  "starBattle": {
+    "rules": {
+      "default": {
+        "touch": "İki yıldız birbirine değemez. Köşeler de sayılır.",
+        "enter": "Bir kareyi elemek için ona dokun, yıldız koymak için bir daha dokun, temizlemek için bir kez daha."
+      },
+      "fields": {
+        "touch": "İki çiftlik evi birbirine değemez. Köşeler de sayılır. O kadar yakın olurlarsa aynı kuyuyu paylaşmak zorunda kalırlar.",
+        "enter": "Bir tarlayı elemek için ona dokun, çiftlik evi kurmak için bir daha dokun, temizlemek için bir kez daha."
+      },
+      "lamps": {
+        "touch": "İki kandil yan yana duramaz. Köşeler de sayılır. Işıkları üst üste biner ve yağ boşa gider.",
+        "walls": "Gri taş bloklar zeminin bir parçası: üstlerine hiçbir şey konamaz ve kare sayılmazlar.",
+        "enter": "Bir taş döşemeyi elemek için ona dokun, oraya kandil koymak için bir daha dokun, temizlemek için bir kez daha."
+      },
+      "market": {
+        "touch": "İki tezgâh yan yana duramaz. Köşeler de sayılır. Rakipler asla yan yana kurulmaz.",
+        "walls": "Evler meydanın bir parçası: kimse içlerine tezgâh kuramaz ve yer sayılmazlar.",
+        "enter": "Bir yeri elemek için ona dokun, oraya tezgâh kurmak için bir daha dokun, temizlemek için bir kez daha."
+      },
+      "lotus": {
+        "touch": "İki nilüfer yan yana yüzemez. Köşeler de sayılır. Her çiçeğin çevresinde açık su olmalı.",
+        "walls": "Kayalar göletten dışarı çıkıyor: üstlerinde hiçbir şey yüzemez ve kare sayılmazlar.",
+        "enter": "Bir su parçasını elemek için ona dokun, oraya nilüfer koymak için bir daha dokun, temizlemek için bir kez daha."
+      },
+      "cats": {
+        "touch": "İki kedi yan yana uyuyamaz. Köşeler de sayılır. Her kedinin kendi güneşli köşesi vardır.",
+        "walls": "Sütunlar tapınağı ayakta tutuyor: üstlerinde hiçbir kedi uyuyamaz ve kare sayılmazlar.",
+        "enter": "Bir taş döşemeyi elemek için ona dokun, oraya kedi yatırmak için bir daha dokun, temizlemek için bir kez daha."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Bu işaret doğru olamaz.",
+        "touch": "Burada bir {{token}} var ve hiçbir şey bir {{token}} ile değemez.",
+        "groupFull.row_one": "Bu satırda gereken {{token}} zaten var.",
+        "groupFull.row_other": "Bu satırda gereken {{count}} {{token}} zaten var.",
+        "groupFull.col_one": "Bu sütunda gereken {{token}} zaten var.",
+        "groupFull.col_other": "Bu sütunda gereken {{count}} {{token}} zaten var.",
+        "groupFull.region_one": "Bu bölgede gereken {{token}} zaten var.",
+        "groupFull.region_other": "Bu bölgede gereken {{count}} {{token}} zaten var.",
+        "groupTight.row_one": "Bu satırda tek bir kare kaldı.",
+        "groupTight.row_other": "Bu satırda {{count}} kare kaldı.",
+        "groupTight.col_one": "Bu sütunda tek bir kare kaldı.",
+        "groupTight.col_other": "Bu sütunda {{count}} kare kaldı.",
+        "groupTight.region_one": "Bu bölgede tek bir kare kaldı.",
+        "groupTight.region_other": "Bu bölgede {{count}} kare kaldı.",
+        "onlyWay.row_one": "Bu satıra bir {{token}} sığdırmanın tek bir yolu var.",
+        "onlyWay.row_other": "Bu satıra {{count}} {{token}} sığdırmanın tek bir yolu var.",
+        "onlyWay.col_one": "Bu sütuna bir {{token}} sığdırmanın tek bir yolu var.",
+        "onlyWay.col_other": "Bu sütuna {{count}} {{token}} sığdırmanın tek bir yolu var.",
+        "onlyWay.region_one": "Bu bölgeye bir {{token}} sığdırmanın tek bir yolu var.",
+        "onlyWay.region_other": "Bu bölgeye {{count}} {{token}} sığdırmanın tek bir yolu var.",
+        "everyWay.row_one": "Bu satırın {{token}} nereye giderse gitsin, hep burada oluyor.",
+        "everyWay.row_other": "Bu satırın {{count}} {{token}} nereye giderse gitsin, biri hep burada oluyor.",
+        "everyWay.col_one": "Bu sütunun {{token}} nereye giderse gitsin, hep burada oluyor.",
+        "everyWay.col_other": "Bu sütunun {{count}} {{token}} nereye giderse gitsin, biri hep burada oluyor.",
+        "everyWay.region_one": "Bu bölgenin {{token}} nereye giderse gitsin, hep burada oluyor.",
+        "everyWay.region_other": "Bu bölgenin {{count}} {{token}} nereye giderse gitsin, biri hep burada oluyor.",
+        "regionLine.row_one": "İşaretli bölgenin {{token}} o satırdan gelmek zorunda.",
+        "regionLine.row_other": "İşaretli bölgenin {{count}} {{token}} o satırdan gelmek zorunda.",
+        "regionLine.col_one": "İşaretli bölgenin {{token}} o sütundan gelmek zorunda.",
+        "regionLine.col_other": "İşaretli bölgenin {{count}} {{token}} o sütundan gelmek zorunda.",
+        "lineRegion.row_one": "O satırın {{token}} işaretli bölgeye ait.",
+        "lineRegion.row_other": "O satırın {{count}} {{token}} işaretli bölgeye ait.",
+        "lineRegion.col_one": "O sütunun {{token}} işaretli bölgeye ait.",
+        "lineRegion.col_other": "O sütunun {{count}} {{token}} işaretli bölgeye ait.",
+        "spanning.toRows": "İşaretli bölgeler o {{count}} satırı aralarında dolduruyor.",
+        "spanning.toCols": "İşaretli bölgeler o {{count}} sütunu aralarında dolduruyor.",
+        "spanning.fromRows": "İşaretli satırlar {{count}} {{token}} işaretini sadece o bölgelerden alabilir.",
+        "spanning.fromCols": "İşaretli sütunlar {{count}} {{token}} işaretini sadece o bölgelerden alabilir.",
+        "wouldStrand.row": "Buraya bir {{token}} gelirse işaretli satırda koyacak yer kalmaz.",
+        "wouldStrand.col": "Buraya bir {{token}} gelirse işaretli sütunda koyacak yer kalmaz.",
+        "wouldStrand.region": "Buraya bir {{token}} gelirse işaretli bölgede koyacak yer kalmaz.",
+        "action": {
+          "ruleOut_one": "Taralı kareyi ele.",
+          "ruleOut_other": "Taralı kareleri ele.",
+          "place_one": "Taralı kareye bir {{token}} koy.",
+          "place_other": "Her taralı kareye bir {{token}} koy."
+        }
+      },
+      "fields": {
+        "mistake": "Bu işaret doğru olamaz.",
+        "touch": "Burada bir {{token}} var. Değdiği hiçbir tarlaya bir tane daha konamaz.",
+        "groupFull.row_one": "Bu satır zaten işlenmiş.",
+        "groupFull.row_other": "Bu satırda gereken {{count}} {{token}} zaten var.",
+        "groupFull.col_one": "Bu sütun zaten işlenmiş.",
+        "groupFull.col_other": "Bu sütunda gereken {{count}} {{token}} zaten var.",
+        "groupFull.region_one": "Bu arazi zaten işlenmiş.",
+        "groupFull.region_other": "Bu arazide gereken {{count}} {{token}} zaten var.",
+        "groupTight.row_one": "Bu satırda tek bir tarla kaldı.",
+        "groupTight.row_other": "Bu satırda {{count}} tarla kaldı.",
+        "groupTight.col_one": "Bu sütunda tek bir tarla kaldı.",
+        "groupTight.col_other": "Bu sütunda {{count}} tarla kaldı.",
+        "groupTight.region_one": "Bu arazide tek bir tarla kaldı.",
+        "groupTight.region_other": "Bu arazide {{count}} tarla kaldı.",
+        "onlyWay.row_one": "Bu satırda ev kurulabilecek tek bir tarla kaldı.",
+        "onlyWay.row_other": "Bu satıra {{count}} {{token}} sığdırmanın tek bir yolu var.",
+        "onlyWay.col_one": "Bu sütunda ev kurulabilecek tek bir tarla kaldı.",
+        "onlyWay.col_other": "Bu sütuna {{count}} {{token}} sığdırmanın tek bir yolu var.",
+        "onlyWay.region_one": "Bu arazide ev kurulabilecek tek bir tarla kaldı.",
+        "onlyWay.region_other": "Bu araziye {{count}} {{token}} sığdırmanın tek bir yolu var.",
+        "everyWay.row_one": "Bu satır nasıl işlenirse işlensin, {{token}} burada duruyor.",
+        "everyWay.row_other": "Bu satır nasıl işlenirse işlensin, {{count}} {{token}} içinden biri burada duruyor.",
+        "everyWay.col_one": "Bu sütun nasıl işlenirse işlensin, {{token}} burada duruyor.",
+        "everyWay.col_other": "Bu sütun nasıl işlenirse işlensin, {{count}} {{token}} içinden biri burada duruyor.",
+        "everyWay.region_one": "Bu arazi nasıl işlenirse işlensin, {{token}} burada duruyor.",
+        "everyWay.region_other": "Bu arazi nasıl işlenirse işlensin, {{count}} {{token}} içinden biri burada duruyor.",
+        "regionLine.row_one": "İşaretli arazinin {{token}} o satırdan gelmek zorunda.",
+        "regionLine.row_other": "İşaretli arazinin {{count}} {{token}} o satırdan gelmek zorunda.",
+        "regionLine.col_one": "İşaretli arazinin {{token}} o sütundan gelmek zorunda.",
+        "regionLine.col_other": "İşaretli arazinin {{count}} {{token}} o sütundan gelmek zorunda.",
+        "lineRegion.row_one": "O satırın {{token}} işaretli araziye ait.",
+        "lineRegion.row_other": "O satırın {{count}} {{token}} işaretli araziye ait.",
+        "lineRegion.col_one": "O sütunun {{token}} işaretli araziye ait.",
+        "lineRegion.col_other": "O sütunun {{count}} {{token}} işaretli araziye ait.",
+        "spanning.toRows": "İşaretli araziler o {{count}} satırı aralarında dolduruyor.",
+        "spanning.toCols": "İşaretli araziler o {{count}} sütunu aralarında dolduruyor.",
+        "spanning.fromRows": "İşaretli satırlar {{count}} {{token}} işaretini sadece o arazilerden alabilir.",
+        "spanning.fromCols": "İşaretli sütunlar {{count}} {{token}} işaretini sadece o arazilerden alabilir.",
+        "wouldStrand.row": "Buraya bir {{token}} gelirse işaretli satırda ev kuracak yer kalmaz.",
+        "wouldStrand.col": "Buraya bir {{token}} gelirse işaretli sütunda ev kuracak yer kalmaz.",
+        "wouldStrand.region": "Buraya bir {{token}} gelirse işaretli arazide ev kuracak yer kalmaz.",
+        "action": {
+          "ruleOut_one": "Taralı tarlayı ele.",
+          "ruleOut_other": "Taralı tarlaları ele.",
+          "place_one": "Taralı tarlaya bir {{token}} kur.",
+          "place_other": "Her taralı tarlaya bir {{token}} kur."
+        }
+      },
+      "lamps": {
+        "mistake": "Bu işaret doğru olamaz.",
+        "touch": "Burada bir {{token}} var ve hiçbir kandil bir başkasının yanında duramaz. Köşeler de sayılır.",
+        "groupFull.row_one": "Bu satırda gereken kandil zaten var.",
+        "groupFull.col_one": "Bu sütunda gereken kandil zaten var.",
+        "groupFull.row_other": "Bu satırda gereken {{count}} kandil zaten var.",
+        "groupFull.col_other": "Bu sütunda gereken {{count}} kandil zaten var.",
+        "groupTight.row_one": "Bu satırda tek bir taş döşeme kaldı.",
+        "groupTight.row_other": "Bu satırda {{count}} taş döşeme kaldı.",
+        "groupTight.col_one": "Bu sütunda tek bir taş döşeme kaldı.",
+        "groupTight.col_other": "Bu sütunda {{count}} taş döşeme kaldı.",
+        "onlyWay.row_one": "Taş blokların arasında, bu satırda bir kandil için tek bir kare kaldı.",
+        "onlyWay.col_one": "Taş blokların arasında, bu sütunda bir kandil için tek bir kare kaldı.",
+        "onlyWay.row_other": "Bu satıra {{count}} kandil sığdırmanın tek bir yolu var.",
+        "onlyWay.col_other": "Bu sütuna {{count}} kandil sığdırmanın tek bir yolu var.",
+        "everyWay.row_one": "Bu satırın kandili nereye giderse gitsin, hep burada oluyor.",
+        "everyWay.col_one": "Bu sütunun kandili nereye giderse gitsin, hep burada oluyor.",
+        "everyWay.row_other": "Bu satırın {{count}} kandil nereye giderse gitsin, biri hep burada oluyor.",
+        "everyWay.col_other": "Bu sütunun {{count}} kandil nereye giderse gitsin, biri hep burada oluyor.",
+        "lineBlock.rowsToCols": "İşaretli satırlar kandil işaretlerini o sütunların karelerinde tutuyor. Yani o sütunlarda başkasına yer kalmıyor.",
+        "lineBlock.colsToRows": "İşaretli sütunlar kandil işaretlerini o satırların karelerinde tutuyor. Yani o satırlarda başkasına yer kalmıyor.",
+        "wouldStrand.row": "Buraya bir kandil gelirse işaretli satırda koyacak yer kalmaz.",
+        "wouldStrand.col": "Buraya bir kandil gelirse işaretli sütunda koyacak yer kalmaz.",
+        "action": {
+          "ruleOut_one": "Taralı kareyi ele.",
+          "ruleOut_other": "Taralı kareleri ele.",
+          "place_one": "Taralı kareye bir kandil koy.",
+          "place_other": "Her taralı kareye bir kandil koy."
+        }
+      },
+      "market": {
+        "mistake": "Bu işaret doğru olamaz.",
+        "touch": "Burada bir {{token}} var ve hiçbir tezgâh bir başkasının yanında duramaz. Köşeler de sayılır.",
+        "groupFull.row_one": "Bu satırda gereken tezgâh zaten var.",
+        "groupFull.col_one": "Bu sütunda gereken tezgâh zaten var.",
+        "groupFull.row_other": "Bu satırda gereken {{count}} tezgâh zaten var.",
+        "groupFull.col_other": "Bu sütunda gereken {{count}} tezgâh zaten var.",
+        "groupTight.row_one": "Bu satırda tek bir yer kaldı.",
+        "groupTight.row_other": "Bu satırda {{count}} yer kaldı.",
+        "groupTight.col_one": "Bu sütunda tek bir yer kaldı.",
+        "groupTight.col_other": "Bu sütunda {{count}} yer kaldı.",
+        "onlyWay.row_one": "Evlerin arasında, bu satırda bir tezgâh için tek bir kare kaldı.",
+        "onlyWay.col_one": "Evlerin arasında, bu sütunda bir tezgâh için tek bir kare kaldı.",
+        "onlyWay.row_other": "Bu satıra {{count}} tezgâh sığdırmanın tek bir yolu var.",
+        "onlyWay.col_other": "Bu sütuna {{count}} tezgâh sığdırmanın tek bir yolu var.",
+        "everyWay.row_one": "Bu satırın tezgâhı nereye giderse gitsin, hep burada oluyor.",
+        "everyWay.col_one": "Bu sütunun tezgâhı nereye giderse gitsin, hep burada oluyor.",
+        "everyWay.row_other": "Bu satırın {{count}} tezgâh nereye giderse gitsin, biri hep burada oluyor.",
+        "everyWay.col_other": "Bu sütunun {{count}} tezgâh nereye giderse gitsin, biri hep burada oluyor.",
+        "lineBlock.rowsToCols": "İşaretli satırlar tezgâh işaretlerini o sütunların karelerinde tutuyor. Yani o sütunlarda başkasına yer kalmıyor.",
+        "lineBlock.colsToRows": "İşaretli sütunlar tezgâh işaretlerini o satırların karelerinde tutuyor. Yani o satırlarda başkasına yer kalmıyor.",
+        "wouldStrand.row": "Buraya bir tezgâh gelirse işaretli satırda koyacak yer kalmaz.",
+        "wouldStrand.col": "Buraya bir tezgâh gelirse işaretli sütunda koyacak yer kalmaz.",
+        "action": {
+          "ruleOut_one": "Taralı kareyi ele.",
+          "ruleOut_other": "Taralı kareleri ele.",
+          "place_one": "Taralı kareye bir tezgâh kur.",
+          "place_other": "Her taralı kareye bir tezgâh kur."
+        }
+      },
+      "lotus": {
+        "mistake": "Bu işaret doğru olamaz.",
+        "touch": "Burada bir {{token}} var ve hiçbir nilüfer bir başkasının yanında yüzemez. Köşeler de sayılır.",
+        "groupFull.row_one": "Bu satırda gereken nilüfer zaten var.",
+        "groupFull.col_one": "Bu sütunda gereken nilüfer zaten var.",
+        "groupFull.row_other": "Bu satırda gereken {{count}} nilüfer zaten var.",
+        "groupFull.col_other": "Bu sütunda gereken {{count}} nilüfer zaten var.",
+        "groupTight.row_one": "Bu satırda tek bir su parçası kaldı.",
+        "groupTight.row_other": "Bu satırda {{count}} su parçası kaldı.",
+        "groupTight.col_one": "Bu sütunda tek bir su parçası kaldı.",
+        "groupTight.col_other": "Bu sütunda {{count}} su parçası kaldı.",
+        "onlyWay.row_one": "Kayaların arasında, bu satırda bir nilüfer için tek bir kare kaldı.",
+        "onlyWay.col_one": "Kayaların arasında, bu sütunda bir nilüfer için tek bir kare kaldı.",
+        "onlyWay.row_other": "Bu satıra {{count}} nilüfer sığdırmanın tek bir yolu var.",
+        "onlyWay.col_other": "Bu sütuna {{count}} nilüfer sığdırmanın tek bir yolu var.",
+        "everyWay.row_one": "Bu satırın nilüferi nereye giderse gitsin, hep burada oluyor.",
+        "everyWay.col_one": "Bu sütunun nilüferi nereye giderse gitsin, hep burada oluyor.",
+        "everyWay.row_other": "Bu satırın {{count}} nilüfer nereye giderse gitsin, biri hep burada oluyor.",
+        "everyWay.col_other": "Bu sütunun {{count}} nilüfer nereye giderse gitsin, biri hep burada oluyor.",
+        "lineBlock.rowsToCols": "İşaretli satırlar nilüfer işaretlerini o sütunların karelerinde tutuyor. Yani o sütunlarda başkasına yer kalmıyor.",
+        "lineBlock.colsToRows": "İşaretli sütunlar nilüfer işaretlerini o satırların karelerinde tutuyor. Yani o satırlarda başkasına yer kalmıyor.",
+        "wouldStrand.row": "Buraya bir nilüfer gelirse işaretli satırda koyacak yer kalmaz.",
+        "wouldStrand.col": "Buraya bir nilüfer gelirse işaretli sütunda koyacak yer kalmaz.",
+        "action": {
+          "ruleOut_one": "Taralı kareyi ele.",
+          "ruleOut_other": "Taralı kareleri ele.",
+          "place_one": "Taralı kareye bir nilüfer koy.",
+          "place_other": "Her taralı kareye bir nilüfer koy."
+        }
+      },
+      "cats": {
+        "mistake": "Bu işaret doğru olamaz.",
+        "touch": "Burada bir {{token}} var ve hiçbir kedi bir başkasının yanında uyuyamaz. Köşeler de sayılır.",
+        "groupFull.row_one": "Bu satırda gereken kedi zaten var.",
+        "groupFull.col_one": "Bu sütunda gereken kedi zaten var.",
+        "groupFull.row_other": "Bu satırda gereken {{count}} kedi zaten var.",
+        "groupFull.col_other": "Bu sütunda gereken {{count}} kedi zaten var.",
+        "groupTight.row_one": "Bu satırda tek bir taş döşeme kaldı.",
+        "groupTight.row_other": "Bu satırda {{count}} taş döşeme kaldı.",
+        "groupTight.col_one": "Bu sütunda tek bir taş döşeme kaldı.",
+        "groupTight.col_other": "Bu sütunda {{count}} taş döşeme kaldı.",
+        "onlyWay.row_one": "Sütunların arasında, bu satırda bir kedi için tek bir kare kaldı.",
+        "onlyWay.col_one": "Sütunların arasında, bu sütunda bir kedi için tek bir kare kaldı.",
+        "onlyWay.row_other": "Bu satıra {{count}} kedi sığdırmanın tek bir yolu var.",
+        "onlyWay.col_other": "Bu sütuna {{count}} kedi sığdırmanın tek bir yolu var.",
+        "everyWay.row_one": "Bu satırın kedisi nereye giderse gitsin, hep burada oluyor.",
+        "everyWay.col_one": "Bu sütunun kedisi nereye giderse gitsin, hep burada oluyor.",
+        "everyWay.row_other": "Bu satırın {{count}} kedi nereye giderse gitsin, biri hep burada oluyor.",
+        "everyWay.col_other": "Bu sütunun {{count}} kedi nereye giderse gitsin, biri hep burada oluyor.",
+        "lineBlock.rowsToCols": "İşaretli satırlar kedi işaretlerini o sütunların karelerinde tutuyor. Yani o sütunlarda başkasına yer kalmıyor.",
+        "lineBlock.colsToRows": "İşaretli sütunlar kedi işaretlerini o satırların karelerinde tutuyor. Yani o satırlarda başkasına yer kalmıyor.",
+        "wouldStrand.row": "Buraya bir kedi gelirse işaretli satırda koyacak yer kalmaz.",
+        "wouldStrand.col": "Buraya bir kedi gelirse işaretli sütunda koyacak yer kalmaz.",
+        "action": {
+          "ruleOut_one": "Taralı kareyi ele.",
+          "ruleOut_other": "Taralı kareleri ele.",
+          "place_one": "Taralı kareye bir kedi yatır.",
+          "place_other": "Her taralı kareye bir kedi yatır."
+        }
+      }
+    },
+    "quota": {
+      "default": "Her satır, sütun ve bölge için",
+      "fields": "Her satır, sütun ve arazi için",
+      "lamps": "Her satır ve sütun için",
+      "market": "Her satır ve sütun için",
+      "lotus": "Her satır ve sütun için",
+      "cats": "Her satır ve sütun için"
+    },
+    "goal": {
+      "default_one": "Her satırda, her sütunda ve her bölgede tam bir yıldız olsun.",
+      "default_other": "Her satırda, her sütunda ve her bölgede tam {{count}} yıldız olsun.",
+      "fields_one": "Her satırda, her sütunda ve her arazide tam bir çiftlik evi olsun.",
+      "fields_other": "Her satırda, her sütunda ve her arazide tam {{count}} çiftlik evi olsun.",
+      "lamps": "Her satırda ve her sütunda tam bir kandil olsun.",
+      "market": "Her satırda ve her sütunda tam bir pazar tezgâhı olsun.",
+      "lotus": "Her satırda ve her sütunda tam bir nilüfer olsun.",
+      "cats": "Her satırda ve her sütunda tam bir kedi olsun."
+    },
+    "name": {
+      "default": "Ayrı Yıldızlar",
+      "fields": "Çiftlik Evleri",
+      "twinDefault": "İkiz Yıldızlar",
+      "twinFields": "İkiz Çiftlikler",
+      "lamps": "Kandiller",
+      "market": "Pazar Tezgâhları",
+      "lotus": "Nilüfer Göleti",
+      "cats": "Tapınak Kedileri"
+    }
+  },
+  "pairPuzzle": {
+    "name": {
+      "mummies": "Mumyaların Dinlenmesi",
+      "beetles": "Bok Böcekleri"
+    },
+    "goal": {
+      "mummies": "Her lahdin yanında bir mumya olsun. Her satırda ve sütunda da yanında yazan sayı kadar mumya olsun.",
+      "beetles": "Her gübre topunun yanında bir böcek olsun. Her satırda ve sütunda da yanında yazan sayı kadar böcek olsun."
+    },
+    "rules": {
+      "mummies": {
+        "pair": "Her lahdin hemen üstünde, altında, solunda ya da sağında bir mumya yatar. Her mumya da kendi lahdinin yanında yatar.",
+        "count": "Bir satırın ya da sütunun yanındaki sayı, orada kaç mumya olduğunu söyler. Sıra tam o kadar mumya tutunca yeşil olur, tutamayacaksa kırmızı olur.",
+        "touch": "İki mumya yan yana duramaz. Köşeler de sayılır.",
+        "enter": "Bir kareyi elemek için ona dokun, mumya yatırmak için bir daha dokun, temizlemek için bir kez daha. Bir sırayı elemek için kareler üstünde sürükle. Lahitlere dokunulamaz."
+      },
+      "beetles": {
+        "pair": "Her gübre topunun hemen üstünde, altında, solunda ya da sağında bir böcek durur. Her böcek de yuvarlayacağı kendi topunun yanında durur.",
+        "count": "Bir satırın ya da sütunun yanındaki sayı, orada kaç böcek olduğunu söyler. Sıra tam o kadar böcek tutunca yeşil olur, tutamayacaksa kırmızı olur.",
+        "touch": "İki böcek yan yana duramaz. Köşeler de sayılır.",
+        "enter": "Bir kareyi elemek için ona dokun, böcek koymak için bir daha dokun, temizlemek için bir kez daha. Bir sırayı elemek için kareler üstünde sürükle. Gübre toplarına dokunulamaz."
+      }
+    },
+    "hint": {
+      "mummies": {
+        "mistake": "Bu işaret doğru olamaz.",
+        "touch": "Bu mumya yerinde, yani yanında başka mumya duramaz. Köşeler de sayılır.",
+        "zeroLine.row": "Bu satırda hiç mumya yok, yani hepsi boş.",
+        "zeroLine.col": "Bu sütunda hiç mumya yok, yani hepsi boş.",
+        "noAnchor": "Bu karelerin yanında lahit yok, yani buraya mumya yatamaz.",
+        "lineFull.row_one": "Bu satırda gereken mumya zaten var.",
+        "lineFull.row_other": "Bu satırda gereken {{count}} mumya zaten var.",
+        "lineFull.col_one": "Bu sütunda gereken mumya zaten var.",
+        "lineFull.col_other": "Bu sütunda gereken {{count}} mumya zaten var.",
+        "lineTight.row_one": "Bu satırda mumya için tek bir kare kaldı.",
+        "lineTight.row_other": "Bu satırda {{count}} mumya için tam {{count}} kare kaldı.",
+        "lineTight.col_one": "Bu sütunda mumya için tek bir kare kaldı.",
+        "lineTight.col_other": "Bu sütunda {{count}} mumya için tam {{count}} kare kaldı.",
+        "onlyWay": "Bu lahdin yanında mumya için tek bir kare kaldı.",
+        "claimed": "Bu lahdin mumyası zaten yanında. Yanındaki, başka hiçbir lahit kullanamayan kareler boş kalır.",
+        "lineBlock.rowsToCols_one": "İşaretli satırlar, kendi lahitleri verebileceğinden bir mumya fazla tutuyor. Yani o mumya hemen dışlarındaki bir lahdin yanından geliyor.",
+        "lineBlock.rowsToCols_other": "İşaretli satırlar, kendi lahitleri verebileceğinden {{count}} mumya fazla tutuyor. Yani bunlar hemen dışlarındaki lahitlerin yanından geliyor.",
+        "lineBlock.colsToRows_one": "İşaretli sütunlar, kendi lahitleri verebileceğinden bir mumya fazla tutuyor. Yani o mumya hemen dışlarındaki bir lahdin yanından geliyor.",
+        "lineBlock.colsToRows_other": "İşaretli sütunlar, kendi lahitleri verebileceğinden {{count}} mumya fazla tutuyor. Yani bunlar hemen dışlarındaki lahitlerin yanından geliyor.",
+        "wouldStrand.row": "Buraya bir mumya gelirse, işaretli satırda hâlâ gereken mumya için yer kalmaz.",
+        "wouldStrand.col": "Buraya bir mumya gelirse, işaretli sütunda hâlâ gereken mumya için yer kalmaz.",
+        "wouldStrand.anchor": "Buraya bir mumya gelirse, işaretli lahdin yanında kendi mumyası için kare kalmaz.",
+        "action": {
+          "ruleOut_one": "Taralı kareyi ele.",
+          "ruleOut_other": "Taralı kareleri ele.",
+          "place_one": "Taralı kareye bir mumya yatır.",
+          "place_other": "Her taralı kareye bir mumya yatır."
+        }
+      },
+      "beetles": {
+        "mistake": "Bu işaret doğru olamaz.",
+        "touch": "Bu böcek yerinde, yani yanında başka böcek duramaz. Köşeler de sayılır.",
+        "zeroLine.row": "Bu satırda hiç böcek yok, yani hepsi boş.",
+        "zeroLine.col": "Bu sütunda hiç böcek yok, yani hepsi boş.",
+        "noAnchor": "Bu karelerin yanında gübre topu yok, yani buraya böcek duramaz.",
+        "lineFull.row_one": "Bu satırda gereken böcek zaten var.",
+        "lineFull.row_other": "Bu satırda gereken {{count}} böcek zaten var.",
+        "lineFull.col_one": "Bu sütunda gereken böcek zaten var.",
+        "lineFull.col_other": "Bu sütunda gereken {{count}} böcek zaten var.",
+        "lineTight.row_one": "Bu satırda böcek için tek bir kare kaldı.",
+        "lineTight.row_other": "Bu satırda {{count}} böcek için tam {{count}} kare kaldı.",
+        "lineTight.col_one": "Bu sütunda böcek için tek bir kare kaldı.",
+        "lineTight.col_other": "Bu sütunda {{count}} böcek için tam {{count}} kare kaldı.",
+        "onlyWay": "Bu gübre topunun yanında böcek için tek bir kare kaldı.",
+        "claimed": "Bu gübre topunun böceği zaten yanında. Yanındaki, başka hiçbir gübre topu kullanamayan kareler boş kalır.",
+        "lineBlock.rowsToCols_one": "İşaretli satırlar, kendi gübre topları verebileceğinden bir böcek fazla tutuyor. Yani o böcek hemen dışlarındaki bir gübre topunun yanından geliyor.",
+        "lineBlock.rowsToCols_other": "İşaretli satırlar, kendi gübre topları verebileceğinden {{count}} böcek fazla tutuyor. Yani bunlar hemen dışlarındaki gübre toplarının yanından geliyor.",
+        "lineBlock.colsToRows_one": "İşaretli sütunlar, kendi gübre topları verebileceğinden bir böcek fazla tutuyor. Yani o böcek hemen dışlarındaki bir gübre topunun yanından geliyor.",
+        "lineBlock.colsToRows_other": "İşaretli sütunlar, kendi gübre topları verebileceğinden {{count}} böcek fazla tutuyor. Yani bunlar hemen dışlarındaki gübre toplarının yanından geliyor.",
+        "wouldStrand.row": "Buraya bir böcek gelirse, işaretli satırda hâlâ gereken böcek için yer kalmaz.",
+        "wouldStrand.col": "Buraya bir böcek gelirse, işaretli sütunda hâlâ gereken böcek için yer kalmaz.",
+        "wouldStrand.anchor": "Buraya bir böcek gelirse, işaretli gübre topunun yanında kendi böceği için kare kalmaz.",
+        "action": {
+          "ruleOut_one": "Taralı kareyi ele.",
+          "ruleOut_other": "Taralı kareleri ele.",
+          "place_one": "Taralı kareye bir böcek koy.",
+          "place_other": "Her taralı kareye bir böcek koy."
+        }
+      }
+    }
+  },
+  "rushHour": {
+    "name": {
+      "default": "Engel",
+      "market": "Tıkalı Sokak"
+    },
+    "goal": {
+      "default": "Kendi bloğunu sağdaki boşluktan dışarı çıkar.",
+      "market": "Kendi kızağını sokağın sonundaki boşluktan dışarı çıkar."
+    },
+    "rules": {
+      "default": {
+        "lanes": "Bir blok sadece kendi yolunda kayar. Asla yana gitmez, asla tahtadan çıkmaz.",
+        "shove": "Bir bloğu itmek için sürükle. Önüne bir şey çıkınca durur."
+      },
+      "market": {
+        "lanes": "Bir kızak sadece durduğu yolda kayar. Asla yana gitmez, asla sokaktan çıkmaz.",
+        "shove": "Bir kızağı itmek için sürükle. Önüne bir şey çıkınca durur."
+      }
+    },
+    "hint": {
+      "default": {
+        "drive": "Önündeki yol oraya kadar açık.",
+        "back": "Öndeki hiçbir şey yerinden oynamıyor. Önce kendi bloğunu geri çek.",
+        "clear": "O blok kendi yolunun önünü kesiyor.",
+        "room": "O kımıldamadan hiçbir şey kımıldayamaz.",
+        "push": {
+          "left": "Onu halkaya kadar sola it.",
+          "right": "Onu halkaya kadar sağa it.",
+          "up": "Onu halkaya kadar yukarı it.",
+          "down": "Onu halkaya kadar aşağı it."
+        }
+      },
+      "market": {
+        "drive": "Senin yolunun önü oraya kadar açık.",
+        "back": "Öndeki hiçbir şey yerinden oynamıyor. Önce kendi kızağını geri çek.",
+        "clear": "O yük, çıkacağın yolun önünü kesiyor.",
+        "room": "O kaydırılmadan hiçbir şey kımıldayamaz.",
+        "push": {
+          "left": "Onu halkaya kadar sola it.",
+          "right": "Onu halkaya kadar sağa it.",
+          "up": "Onu halkaya kadar sokağın yukarısına it.",
+          "down": "Onu halkaya kadar sokağın aşağısına it."
+        }
+      }
+    }
+  },
+  "hidato": {
+    "rules": {
+      "default": {
+        "given": "Peteğin içindeki sayılar bulmacanın parçası. Yerlerinde kalırlar.",
+        "enter": "Diziyi oradan devam ettirmek için bir sayıya dokun. Sonra ona değen boş bir hücreye dokun. Ya da dizinin gideceği hücrelerin üstünden dümdüz sürükle.",
+        "back": "Kaldırmak için koyduğun bir sayıya dokun ve yeniden dokun. Ona bağlı kalan her şey de kalkar. Diziyi bir sayıdan başka yöne götürmek de aynı şeyi yapar. Geri al, son hamleni geri alır."
+      },
+      "channel": {
+        "given": "Zaten numaralı tarlalar bulmacanın parçası. Yerlerinde kalırlar.",
+        "enter": "Suyu oradan devam ettirmek için numaralı bir tarlaya dokun. Sonra yanındaki kuru bir tarlaya dokun ve kazmaya devam et. Ya da kanalın gideceği tarlaların üstünden dümdüz sürükle.",
+        "back": "Kazdığın bir tarlaya dokun ve yeniden dokun, toprak geri doldurulur. Ondan kopan kanal da doldurulur. Bir tarladan başka yöne kazmak da aynı şeyi yapar. Geri al, son hamleni geri alır."
+      },
+      "scribe": {
+        "given": "Kırmızı mürekkeple yazılmış sayılar bulmacanın kendi sayıları. Yerlerinde kalırlar.",
+        "enter": "Kalemi oradan almak için bir sayıya dokun. Sonra yanındaki boş bir yere dokun ve yazmaya devam et. Ya da çizgi boyunca dümdüz sürükle.",
+        "back": "Yazdığın bir sayıya dokun ve yeniden dokun, kazınıp silinir. Ondan kopan çizgi de silinir. Bir sayıdan başka yöne yazmak da aynı şeyi yapar. Geri al, son hamleni geri alır."
+      },
+      "chambers": {
+        "given": "Zaten numaralı odaları ustalar oymuş. Yerlerinde kalırlar.",
+        "enter": "Geçidi oradan devam ettirmek için numaralı bir odaya dokun. Sonra yanındaki mühürlü bir odaya dokun ve duvarı kır. Ya da geçidin gideceği odaların üstünden dümdüz sürükle.",
+        "back": "Açtığın bir odaya dokun ve yeniden dokun, yeniden mühürlenir. Ondan kopan geçit de mühürlenir. Bir odadan başka yöne kırmak da aynı şeyi yapar. Geri al, son hamleni geri alır."
+      }
+    },
+    "goal": {
+      "default": "Peteğin her hücresinde 1'den {{last}} sayısına kadar bir sayı olsun. Her sayı, kendinden önceki sayıya değen bir hücrede olsun.",
+      "channel": "Tek bir kanal bütün ovayı sulasın: her tarla sırasıyla, 1'den {{last}} sayısına kadar, bir önceki tarlanın yanına kazılsın.",
+      "scribe": "Kâğıdı kesintisiz tek bir sayı çizgisi geçsin: her yerde 1'den {{last}} sayısına kadar bir sayı olsun, her biri bir öncekinin yanında.",
+      "chambers": "Bütün mezarı tek bir geçit dolaşsın: her oda sırayla, 1'den {{last}} sayısına kadar, bir önceki odadan kırılarak açılsın."
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": "Bu sayılardan biri doğru olamaz.",
+          "sandwich": "{{before}} ile {{after}} arasında değdikleri tek bir boş hücre var.",
+          "neighbourForced": "{{from}} sayısının yanında tek bir boş hücre kaldı.",
+          "onlyCell": "Petekte {{value}} için başka yer kalmadı.",
+          "onlyValue": "Başka hiçbir sayı bu hücreye ulaşamaz."
+        },
+        "action": {
+          "place": "Taralı hücreye {{value}} yaz."
+        }
+      },
+      "channel": {
+        "reason": {
+          "mistake": "Bu sayılardan biri doğru olamaz.",
+          "sandwich": "{{before}} ile {{after}} arasında değdikleri tek bir kuru tarla var.",
+          "neighbourForced": "{{from}} tarlasının yanında tek bir kuru tarla kaldı.",
+          "onlyCell": "Ovada {{value}} için başka yer yok.",
+          "onlyValue": "Başka hiçbir sayı bu tarlaya ulaşamaz."
+        },
+        "action": {
+          "place": "Taralı tarlaya {{value}} kaz."
+        }
+      },
+      "scribe": {
+        "reason": {
+          "mistake": "Bu sayılardan biri doğru olamaz.",
+          "sandwich": "{{before}} ile {{after}} arasında değdikleri tek bir boş yer var.",
+          "neighbourForced": "{{from}} sayısının yanında tek bir boş yer kaldı.",
+          "onlyCell": "Kâğıtta {{value}} için başka yer yok.",
+          "onlyValue": "Başka hiçbir sayı bu yere ulaşamaz."
+        },
+        "action": {
+          "place": "Taralı yere {{value}} yaz."
+        }
+      },
+      "chambers": {
+        "reason": {
+          "mistake": "Bu sayılardan biri doğru olamaz.",
+          "sandwich": "{{before}} ile {{after}} arasında değdikleri tek bir mühürlü oda var.",
+          "neighbourForced": "{{from}} odasının yanında tek bir mühürlü oda kaldı.",
+          "onlyCell": "Mezarda {{value}} için başka yer yok.",
+          "onlyValue": "Başka hiçbir sayı bu odaya ulaşamaz."
+        },
+        "action": {
+          "place": "Taralı odada {{value}} aç."
+        }
+      }
+    },
+    "name": {
+      "default": "Arı Kovanı",
+      "channel": "Kanal",
+      "scribe": "Kâtibin Kâğıdı",
+      "chambers": "Mühürlü Odalar"
+    }
+  },
+  "sudoku": {
+    "rules": {
+      "default": {
+        "chambers": "Kalın çizgiler tabloyu altı odaya böler. Her oda iki kare geniş, üç kare uzun.",
+        "given": "Zaten oyulmuş sayılar bulmacanın parçası. Yerlerinde kalırlar.",
+        "enter": "Bir kareye, sonra bir sayıya dokun. Aynı sayıya yeniden dokunursan geri alınır.",
+        "notes": "Bir kareye hâlâ hangi sayıların girebileceğini not etmek için kaleme geç. Geri al, son hamleni geri alır."
+      },
+      "papyrus": {
+        "chambers": "Kalın çizgiler kâğıdı altı bölmeye ayırır. Her bölme iki yer geniş, üç yer uzun.",
+        "given": "Kırmızı mürekkeple yazılmış işaretler bulmacanın kendi işaretleri. Yerlerinde kalırlar.",
+        "enter": "Bir yere, sonra bir işarete dokun. Aynı işarete yeniden dokunursan kazınıp silinir.",
+        "notes": "Bir yere hâlâ hangi işaretlerin girebileceğini not etmek için saz kalemi al. Geri al, son hamleni geri alır."
+      }
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": {
+            "value": "Buradaki sayılardan biri doğru olamaz. Onu sil ve yeniden bak.",
+            "note": "Bu karenin notları, buraya ait olan sayıyı dışarıda bırakmış. Notları temizle ve baştan başla."
+          },
+          "nakedSingle": "Bu karenin satırı, sütunu ve odası öbür bütün sayıları almış.",
+          "hiddenSingle": {
+            "row": "{{token}} bu satırın başka hiçbir karesine uymuyor.",
+            "col": "{{token}} bu sütunun başka hiçbir karesine uymuyor.",
+            "box": "{{token}} bu odanın başka hiçbir karesine uymuyor."
+          },
+          "pointing": {
+            "row": "İşaretli odanın içinde {{token}} sadece bu satırda durabilir.",
+            "col": "İşaretli odanın içinde {{token}} sadece bu sütunda durabilir."
+          },
+          "claiming": {
+            "row": "İşaretli satır boyunca {{token}} sadece bu tek odanın içine uyuyor.",
+            "col": "İşaretli sütun boyunca {{token}} sadece bu tek odanın içine uyuyor."
+          }
+        },
+        "action": {
+          "place": "Taralı kareye {{token}} koy.",
+          "ruleOut_one": "Taralı karede {{token}} olamaz, onu ele.",
+          "ruleOut_other": "Taralı karelerde {{token}} olamaz, onu ele."
+        }
+      },
+      "papyrus": {
+        "reason": {
+          "mistake": {
+            "value": "Bu işaretlerden biri doğru olamaz. Onu kazı ve yeniden bak.",
+            "note": "Bu yerin kalem notları, buraya ait olan işareti dışarıda bırakmış. Onları sil ve baştan başla."
+          },
+          "nakedSingle": "Bu yerin satırı, sütunu ve bölmesi öbür bütün işaretleri almış.",
+          "hiddenSingle": {
+            "row": "{{token}} bu satırın başka hiçbir yerine uymuyor.",
+            "col": "{{token}} bu sütunun başka hiçbir yerine uymuyor.",
+            "box": "{{token}} bu bölmenin başka hiçbir yerine uymuyor."
+          },
+          "pointing": {
+            "row": "İşaretli bölmenin içinde {{token}} sadece bu satırda durabilir.",
+            "col": "İşaretli bölmenin içinde {{token}} sadece bu sütunda durabilir."
+          },
+          "claiming": {
+            "row": "İşaretli satır boyunca {{token}} sadece bu tek bölmenin içine uyuyor.",
+            "col": "İşaretli sütun boyunca {{token}} sadece bu tek bölmenin içine uyuyor."
+          }
+        },
+        "action": {
+          "place": "Taralı yere mürekkeple {{token}} yaz.",
+          "ruleOut_one": "Taralı yerde {{token}} olamaz, onu ele.",
+          "ruleOut_other": "Taralı yerlerde {{token}} olamaz, onu ele."
+        }
+      }
+    },
+    "goal": {
+      "default": "Her satırda, her sütunda ve her odada altı sayının her biri tam bir kez olsun.",
+      "papyrus": "Her satırda, her sütunda ve her bölmede altı işaretin her biri tam bir kez olsun."
+    },
+    "name": {
+      "default": "Altı Oda",
+      "papyrus": "Kâtibin Defteri"
+    }
+  },
+  "crocodile": {
+    "name": "Timsah Çukuru",
+    "goal": "Çukuru geçip karşı kıyıya var.",
+    "rules": {
+      "want": "Her timsah, arkasındaki taş sırasından tek bir cevap ister: en büyüğünü ya da en küçüğünü.",
+      "mark": "Açık ağzı hangisini istediğini söyler, yanındaki işaret de: > en büyük cevaba doğru açılır, < en küçüğe doğru.",
+      "bite": "Başka bir taşa basarsan ısırır: can kaybedersin ve yakın kıyıdan yeniden başlarsın."
+    },
+    "hint": {
+      "biggest": "Bu timsah en büyük cevabı istiyor. O da {{value}}.",
+      "smallest": "Bu timsah en küçük cevabı istiyor. O da {{value}}."
+    }
+  },
+  "canisters": {
+    "name": {
+      "default": "Kaplar",
+      "grain": "Buğday Ölçekleri",
+      "oil": "Kandil Yağı",
+      "wine": "Tüccarın Kileri",
+      "natron": "Kanopik Kavanozlar",
+      "ink": "Yazı Odası"
+    },
+    "goal": {
+      "default_one": "İstenen miktarı ölç ve hangi kabın onu tuttuğunu söyle.",
+      "default_other": "İstenen her miktarı sırayla ölç. Bir sonrakine geçmeden hangi kabın onu tuttuğunu söyle.",
+      "grain_one": "İstenen buğday miktarını ölç ve hangi ölçeğin onu tuttuğunu söyle.",
+      "grain_other": "Her buğday miktarını sırayla ölç. Bir sonrakine geçmeden hangi ölçeğin onu tuttuğunu söyle.",
+      "oil_one": "İstenen yağı ölç ve hangi testinin onu tuttuğunu söyle.",
+      "oil_other": "Her yağ ölçüsünü sırayla ölç. Bir sonrakine geçmeden hangi testinin onu tuttuğunu söyle.",
+      "wine_one": "İstenen şarabı ölç ve hangi amforanın onu tuttuğunu söyle.",
+      "wine_other": "Her şarap ölçüsünü sırayla ölç. Bir sonrakine geçmeden hangi amforanın onu tuttuğunu söyle.",
+      "natron_one": "İstenen natronu ölç ve hangi kavanozun onu tuttuğunu söyle.",
+      "natron_other": "Her natron ölçüsünü sırayla ölç. Bir sonrakine geçmeden hangi kavanozun onu tuttuğunu söyle.",
+      "ink_one": "İstenen mürekkebi ölç ve hangi hokkanın onu tuttuğunu söyle.",
+      "ink_other": "Her mürekkep ölçüsünü sırayla ölç. Bir sonrakine geçmeden hangi hokkanın onu tuttuğunu söyle."
+    },
+    "rules": {
+      "method": {
+        "sums": "Yapabileceğin her miktar, tezgâhtaki iki sayının toplamı ya da farkıdır: bir kabın büyüklüğü, içindeki miktar ya da kalan boş yer.",
+        "backwards": "O yüzden istenen miktardan geriye doğru düşün: hangi iki sayı onu yapar ve o ikisini aynı anda nasıl elde edersin?"
+      },
+      "claim": "Miktarı bulunca “bu” düğmesine dokun. Yanlış kabı söylersen bir hamle kaybedersin.",
+      "legs": "Sonra sıradaki miktar gelir. Kaplarda ne kaldıysa ondan ölçülür.",
+      "default": {
+        "moves": "Bir kabı almak için ona dokun, sonra içine dökmek için başka birine dokun. Döküş, ilki boşalınca ya da ikincisi dolunca durur.",
+        "contents": "Bütün su bu kadar. Bir kap dolu başlar. Hiçbiri dökülüp atılamaz ya da yeniden doldurulamaz.",
+        "levels": "Her kap içinde ne kadar olduğunu ve dolunca ne kadar aldığını gösterir."
+      },
+      "grain": {
+        "moves": "Bir ölçeği kaldırmak için ona dokun, sonra buğdayı içine boşaltmak için başka birine dokun. Boşaltma, ilki boşalınca ya da ikincisi ağzına kadar dolunca durur.",
+        "contents": "Bütün buğday bu kadar. Bir ölçek dolu başlar. Hiçbiri süpürülüp atılamaz ya da ambardan yeniden doldurulamaz.",
+        "levels": "Her ölçek içinde ne kadar olduğunu ve ağzına kadar dolunca ne kadar aldığını gösterir."
+      },
+      "oil": {
+        "moves": "Bir testiyi kaldırmak için ona dokun, sonra içine dökmek için başka birine dokun. Döküş, ilki boşalınca ya da ikincisi dolunca durur.",
+        "contents": "Bütün yağ bu kadar. Bir testi dolu başlar. Hiçbiri dökülüp atılamaz ya da yeniden doldurulamaz.",
+        "levels": "Her testi içinde ne kadar olduğunu ve dolunca ne kadar aldığını gösterir."
+      },
+      "wine": {
+        "moves": "Bir amforayı kaldırmak için ona dokun, sonra içine aktarmak için başka birine dokun. Aktarma, ilki boşalınca ya da ikincisi dolunca durur.",
+        "contents": "Bütün şarap bu kadar. Bir amfora dolu başlar. Hiçbiri dökülemez ya da kilerden yeniden doldurulamaz.",
+        "levels": "Her amfora içinde ne kadar olduğunu ve dolunca ne kadar aldığını gösterir."
+      },
+      "natron": {
+        "moves": "Bir kavanozu kaldırmak için ona dokun, sonra natronu içine boşaltmak için başka birine dokun. Boşaltma, ilki boşalınca ya da ikincisi kapağına kadar dolunca durur.",
+        "contents": "Bütün natron bu kadar. Bir kavanoz dolu başlar. Hiçbiri süpürülüp atılamaz ya da yeniden doldurulamaz.",
+        "levels": "Her kavanoz içinde ne kadar olduğunu ve kapağına kadar dolunca ne kadar aldığını gösterir."
+      },
+      "ink": {
+        "moves": "Bir hokkayı kaldırmak için ona dokun, sonra içine dökmek için başka birine dokun. Döküş, ilki boşalınca ya da ikincisi dolunca durur.",
+        "contents": "Bütün mürekkep bu kadar. Bir hokka dolu başlar. Hiçbiri boşaltılıp atılamaz ya da yeniden yapılamaz.",
+        "levels": "Her hokka içinde ne kadar olduğunu ve dolunca ne kadar aldığını gösterir."
+      }
+    },
+    "hint": {
+      "goal": {
+        "leftover": "Geriye doğru düşün: {{amount}}, {{content}} eksi {{space}} eder. Yani içinde {{content}} olan bir kap, {{space}} boş yeri olan bir kaba dökülür.",
+        "full": "Geriye doğru düşün: {{amount}} bir kabın büyüklüğü. {{a}} ile {{b}} toplanınca tam o kadar eder.",
+        "sum": "Geriye doğru düşün: {{amount}}, {{a}} ile {{b}} toplamıdır."
+      },
+      "claim": "Bir döküş kaldı. Sonra hangi kabın onu tuttuğunu bul.",
+      "stuck": "Buradan sonra kalan hamlelerle {{target}} artık ölçülemez. Bir döküşü geri al ya da tahtaya baştan başla.",
+      "overBudget": "Hiç hamlen kalmadı. Birini geri al ya da baştan başla ve daha kısa yolu bul.",
+      "next": {
+        "leftover": "Ondan önceki işlem: {{amount}}. {{content}}, {{space}} boş yeri olan bir kaba dökülür.",
+        "full": "Ondan önceki işlem: {{amount}} ile tam dolu duran bir kap. {{a}} ile {{b}} toplamı.",
+        "sum": "Ondan önceki işlem: {{amount}}. {{a}} ile {{b}} toplamı."
+      }
+    },
+    "movesLeft_one": "{{count}} hamle kaldı",
+    "movesLeft_other": "{{count}} hamle kaldı",
+    "legs": "{{done}} / {{total}} ölçüldü",
+    "wanted": "Ölç",
+    "claim": "bu",
+    "claimAria": "Miktarı {{capacity}} kabı tutuyor de"
+  },
+  "procession": {
+    "name": {
+      "default": "Sıralı Saatler",
+      "funerary": "İşçiler Vadisi'nde Bir Gün",
+      "cosmos": "Gecenin Geçişi",
+      "water": "Taşkın Günü",
+      "trade": "İskelede Bir Gün"
+    },
+    "goal": {
+      "default": "Olan her şeyi kendi saatine kaydır, ta ki günün altındaki bütün işaretler tutana kadar.",
+      "funerary": "Her işi kendi saatine kaydır, ta ki günün altındaki bütün işaretler tutana kadar.",
+      "cosmos": "Her ışığı kendi saatine kaydır, ta ki gecenin altındaki bütün işaretler tutana kadar.",
+      "water": "Her işi kendi saatine kaydır, ta ki günün altındaki bütün işaretler tutana kadar.",
+      "trade": "Her işi kendi saatine kaydır, ta ki günün altındaki bütün işaretler tutana kadar."
+    },
+    "rules": {
+      "default": {
+        "lengths": "Her satır olan bir şeydir. Çubuğu ne kadar genişse o kadar sürer. Ne zaman olduğunu sen bulursun.",
+        "marks": "Günün altındaki bir çizgi, tutmadığı sürece kırmızıdır. İlgili satırları halkayla göstermek için ona dokun.",
+        "drag": "Bir çubuğu kendi satırı boyunca sürükle. Asla günün dışına çıkmaz."
+      }
+    },
+    "hint": {
+      "default": {
+        "chain": "O satırın yeri zaten belli ve bu satır ona bağlı.",
+        "squeeze": "Günün kalanı bu kadar ve sığabilecek olan da tam bu.",
+        "apart": "Tersi güne sığmıyor.",
+        "split": "Tersini dene, başka bir şey bozulur.",
+        "move": "Halkalı çubuğu taralı çentiklerin üstüne sürükle."
+      }
+    },
+    "events": {
+      "default": ["ateş", "su taşıma", "ekmek pişirme", "tekne yolculuğu", "öküz sürme", "gece nöbeti"],
+      "funerary": ["sıva", "kareli çizim", "oyma", "boyama", "yaldızlama", "kapı takma"],
+      "cosmos": ["güneşin geçişi", "yıldızın doğuşu", "ayın nöbeti", "açık gökyüzü", "şafak", "dönen yıl"],
+      "water": ["taşkın", "kanal kazma", "havuz doldurma", "tarla sulama", "karşıya geçirme", "hasat"],
+      "trade": ["mal ayırma", "ekmek satışı", "bira satışı", "karşıya geçirme", "yük taşıma", "hesap"]
+    },
+    "marks": {
+      "default": {
+        "pin": "{{a}}, {{tick}}. saatte başlar.",
+        "handoff": "{{a}}, {{b}} biter bitmez başlar.",
+        "link_one": "{{a}}, {{b}} bittikten {{count}} saat sonra başlar.",
+        "link_other": "{{a}}, {{b}} bittikten {{count}} saat sonra başlar.",
+        "before": "{{a}}, {{b}} başlamadan önce biter.",
+        "apart": "{{a}} ile {{b}} asla aynı anda olmaz.",
+        "together": "{{a}} ile {{b}} bir süre aynı anda olur.",
+        "span_one": "İlk başlangıçtan son bitişe kadar {{count}} saat.",
+        "span_other": "İlk başlangıçtan son bitişe kadar {{count}} saat."
+      }
+    },
+    "door": {
+      "title": "Alay Kapısı",
+      "hint": "Bastığın her taş, kendi işini serbest bırakır. Günü sırala, sonra taşların üstünden o sırayla yürü.",
+      "read": "Gün okundu. Taşların üstünden bu sırayla yürü, ilkinden başla.",
+      "hintButton": "İpucu"
+    }
+  },
+  "story": {
+    "invitation": "Konuş",
+    "log": {
+      "empty": "Henüz bir şey yok. Fez'in söyleyecek çok şeyi olacak."
+    },
+    "speaker": {
+      "fez": "Fez",
+      "explorer": "Sen",
+      "ipi": "Ipi",
+      "henut": "Henut",
+      "priest": "Rahip",
+      "pharaoh": "Firavun",
+      "voice": "Bir ses"
+    },
+    "wall": {
+      "wrong": "Biri üçüncü işareti yanlış kazımış. Üç bin yıldır yanlış duruyor.",
+      "fixed": "İşte yine onun adı.",
+      "pick": "Doğru işareti yerine koy.",
+      "cannot": "Buraya ait olan işareti bilmiyorsun. Henüz değil."
+    },
+    "sphinx": {
+      "wrong": "Dışarıdakiyle aynı yazı, ama kum buraya hiç ulaşmamış. İki işaret hâlâ tertemiz duruyor, üçüncünün yeri boş.",
+      "fixed": "İşte hepsi bu.",
+      "pick": "Yanında taşıdığın işareti boşluğa koy.",
+      "cannot": "İki işareti biliyorsun, ama boşluğu dolduramıyorsun. Henüz değil.",
+      "gap": "Eksik işaret"
+    }
+  },
+  "lightbeamSwitch": {
+    "name": "Dönen Işık",
+    "invitation": "Aynaları çevir",
+    "goal": "Işık bir mabette dursun ve altındaki çıkış açık olsun.",
+    "rules": {
+      "shrines": "Bir ışık diski var ve bu kavşağın her çıkışının üstünde bir mabet var. Yerdeki aynalar ışığı herhangi birine taşıyabilir.",
+      "doors": "Işığın ulaştığı çıkış açık, öbürleri kapalı olur. Tek bir yol, tek bir çıkış.",
+      "returning": "Seçmekle hiçbir şey kaybetmezsin. İstediğin zaman geri gel ve ışığı başka yöne gönder. O yol açılır, bu yol kapanır.",
+      "tap": "Bir aynayı çevirmek için ona dokun. Yeniden dokunursan eski haline döner."
+    },
+    "doorOpen": "{{way}} çıkış: açık",
+    "doorShut": "{{way}} çıkış: kapalı",
+    "way": {
+      "n": "Kuzey",
+      "e": "Doğu",
+      "s": "Güney",
+      "w": "Batı"
+    }
+  },
+  "handle": {
+    "name": "Kol",
+    "invitation": "Kolu çek",
+    "goal": "Kol ya bir yana ya öbür yana durur. Bir yanın açtığını öbür yan kapatır.",
+    "left": "Sola çek",
+    "right": "Sağa çek"
+  },
+  "torch": {
+    "name": "Meşale",
+    "invitation": "Meşaleyi yak",
+    "goal": "Yanmayan bir meşale. Bir kez yanınca bir daha söndürülemez.",
+    "lit": "Meşale yanıyor."
+  },
+  "gateFace": {
+    "title": "Bekleyen Bir Kapı",
+    "hint": "Bu kapı açılmadan önce her işaret yanmalı.",
+    "lit": "{{owner}}: yandı",
+    "unlit": "{{owner}}: henüz değil",
+    "owner": {
+      "torch": "Meşale",
+      "handle": "Kol",
+      "key": "Anahtar",
+      "web": "Kumun bir işareti",
+      "plateStone": "Levhanın üstünde bir taş",
+      "plateEmpty": "Boş bırakılmış bir levha",
+      "other": "Düzenek"
+    },
+    "orderHint": "Taşların üstünden bu sırayla yürü.",
+    "reset": "Baştan başla",
+    "spoiled": "Bu deneme bozuldu: bir taşa sırası gelmeden basıldı.",
+    "tile": {
+      "unwalked": "Adım {{step}}: henüz basılmadı",
+      "inOrder": "Adım {{step}}: sırasında basıldı",
+      "outOfOrder": "Adım {{step}}: sırası gelmeden basıldı"
+    }
+  },
+  "devLockEditor": {
+    "syntax": "Söz dizimi",
+    "example": "Örnek",
+    "useExample": "Örneği kullan",
+    "title": "Kilit düzenleyici",
+    "notation": "Kilit yazımı",
+    "checks": "Kontroller",
+    "drawing": "Çizim",
+    "carveAndPlay": "Oy ve oyna",
+    "copyLink": "Bağlantıyı kopyala",
+    "copied": "Bağlantı kopyalandı",
+    "failed": "Kopyalanamadı; bağlantı adres çubuğunda",
+    "backToEditor": "← Düzenleyici",
+    "close": "Kapat",
+    "open": "Kilit düzenleyici",
+    "modeLock": "Kilit",
+    "modeWeb": "Ağ",
+    "webNotation": "Ağ yazımı",
+    "openWeb": "Bir ağ aç",
+    "checking": "Kontrol ediliyor…",
+    "checkedIn": "{{ms}} ms içinde kontrol edildi",
+    "worldCarved": "dahi katları {{ms}} ms içinde bir kez oyuldu",
+    "simulation": "Çekişler",
+    "noSimulation": "Her yer dünyada olana kadar oynanacak bir şey yok.",
+    "summary": "Özet",
+    "stillBuried": "Hâlâ %{{percent}} gömülü",
+    "nothingBuried": "Hiçbir şey gömülü değil",
+    "finishes": "bitiyor",
+    "stopsAt": "%{{pct}} noktasında duruyor",
+    "notOpenYet": "henüz açık değil",
+    "pullAll": "Ulaşılabilen her şeyi çek",
+    "reset": "Sıfırla",
+    "progress": "{{reachable}} ulaşılabilir · {{pulled}} / {{total}} alındı",
+    "allTaken": "Her şey çekildi ve alındı.",
+    "potFront": "{{pulled}} / {{total}} çekildi · ön %{{pct}}",
+    "potOpen": "{{pulled}} / {{total}} çekildi · açık",
+    "keys": "Anahtarlar",
+    "keysNote": "her biri bir mührü açar",
+    "log": "Ne oldu",
+    "logEmpty": "Henüz hiçbir şey çekilmedi.",
+    "logPull": "{{at}} içinde {{name}} çekiliyor",
+    "logTake": "{{at}} içinde {{name}} alınıyor",
+    "logFront": "{{pot}} önü %{{pct}} oldu",
+    "logPotOpen": "{{pot}} açık",
+    "logSeal": "{{at}} içindeki mühür açık",
+    "logNew": "yeni: {{names}}",
+    "pullPin": "{{name}} kolunu çek",
+    "takePin": "{{name}} anahtarını al",
+    "legendCleared": "temizlendi",
+    "legendBuried": "gömülü",
+    "legendSeal": "mühür",
+    "legendPins": "● kol · ■ anahtar · küçük = yan bölüm"
+  },
+  "camp": {
+    "title": "Kamp",
+    "continue": {
+      "heading": "Şimdiki keşif",
+      "setOff": "Yola çık",
+      "pyramid": "Piramit {{level}} / {{count}} · {{tier}}",
+      "tomb": "Mezar · {{tier}}",
+      "empty": "Haritandaki her yer açık"
+    },
+    "hint_one": "{{count}} eski yolculukta keşfedilecek yeni bir şey var",
+    "hint_other": "{{count}} eski yolculukta keşfedilecek yeni bir şey var",
+    "comingHome": {
+      "title": "Kampa döndün",
+      "haulTitle": "Bu yolculuktan getirdiklerin",
+      "new": "YENİ",
+      "unpack": "Eşyaları aç",
+      "toCamp": "Kampa git"
+    },
+    "chapter": {
+      "subtitle": "Yeni bölüm",
+      "title": "Yeni bir piramit beliriyor",
+      "body": "{{tier}} yolculukları açıldı. Kampta bir soluklan, hazır olunca yola çık.",
+      "journeyNote": "İlk {{tier}} yolculuğu",
+      "later": "Sonra"
+    },
+    "close": "Kapat",
+    "entrance": {
+      "collection": "Koleksiyon",
+      "mosaic": "Mozaik",
+      "journeys": "Bütün yolculuklar",
+      "detectors": "Dedektörler"
+    },
+    "mapTable": {
+      "title": "Harita masası",
+      "journeys": "Yolculuklar"
+    }
+  },
+  "home": {
+    "haul": {
+      "times": "×{{count}}"
+    }
+  },
+  "journeys": {
+    "tierNeed": "Bu hazineyi bul",
+    "tierProgress": "{{done}} / {{total}} tamam",
+    "tierLockedName": "{{tier}} yolculukları",
+    "toggleTier": "{{tier}} yolculuklarını göster ya da gizle",
+    "now": "ŞİMDİ",
+    "newDot": "Keşfedilecek yeni bir şey var",
+    "noteCurrentPyramid": "Devam ediyor · piramit {{level}} / {{count}}",
+    "noteCurrentTomb": "Devam ediyor · mezarda",
+    "noteFinished": "Bitti",
+    "noteFinishedNews": "Bitti · keşfedilecek yeni bir şey var",
+    "noteOpen": "Henüz gidilmedi",
+    "noteResumePyramid": "Daha önce başlandı · piramit {{level}} / {{count}}",
+    "noteResumeTomb": "Daha önce başlandı · mezarda",
+    "needProgress": "{{unit}}: {{found}} / {{required}}",
+    "showStops": "{{name}} yerlerini göster",
+    "stopPyramid": "Piramit",
+    "stopTomb": "Yer"
+  },
+  "newVersion": {
+    "title": "Yeni bir sürüm!",
+    "name": "Oyun çok değişti",
+    "body": "Bu yüzden yolculuğun baştan başlıyor. Yeni mezarlar, buluntular ve kurulacak bir kamp seni bekliyor."
+  },
+  "devPrefabPreview": {
+    "firstDoor": "İlk kapıya",
+    "stop": "Durağa",
+    "secondDoor": "İkinci kapıya",
+    "doorsInUse_one": "{{count}} kapı kullanımda",
+    "doorsInUse_other": "{{count}} kapı kullanımda",
+    "walled": "{{count}} duvarla kapalı"
+  },
+  "devRoomEditor": {
+    "title": "Oda düzenleyici",
+    "open": "Oda düzenleyici",
+    "close": "Kapat",
+    "tier": "Seviye",
+    "catalogue": "Bir oda aç",
+    "notation": "Oda yazımı",
+    "copyLink": "Bağlantıyı kopyala",
+    "copyText": "Metni kopyala",
+    "copied": "Kopyalandı",
+    "failed": "Panoya kopyalanamadı",
+    "palette": "Palet",
+    "unpainted": "henüz boyanmadı",
+    "layout": "Yerleşim",
+    "mirrored": "(aynalanmış)",
+    "fill_one": "Doldur ({{count}} seçenek)",
+    "fill_other": "Doldur ({{count}} seçenek)",
+    "fromDoor": "Buradan yürü",
+    "toDoor": "Buraya yürü",
+    "automatic": "Otomatik",
+    "direction": {
+      "n": "Kuzey kapısı",
+      "e": "Doğu kapısı",
+      "s": "Güney kapısı",
+      "w": "Batı kapısı"
+    },
+    "checks": "Kontroller",
+    "sound": "Oda kontrollerden geçiyor",
+    "tierDisagrees": "Başlıkta {{header}} seviyesi yazıyor, burada {{picked}} olarak çizildi",
+    "undo": "Geri al",
+    "drawing": "Çizim",
+    "tool": {
+      "select": "Seç",
+      "wall": "Duvar",
+      "floor": "Zemin",
+      "door": "Kapı yeri",
+      "stop": "Durak",
+      "chest": "Sandık",
+      "portal": "Geçit",
+      "mechanism": "Düzenek",
+      "erase": "Sil",
+      "copy": "{{letter}} çiz"
+    },
+    "againstWall": "Bırakılan eşyalar kuzey duvarına dayanır",
+    "dropHint": "Paletten bir öğeyi bir hücreye sürükle; kendi kapladığı alanı alır",
+    "newLayout": "Yeni yerleşim adı",
+    "addLayout": "Yerleşim olarak kopyala",
+    "inspector": {
+      "title": "{{letter}} yeri",
+      "optional": "İsteğe bağlı",
+      "kinds": "Türler",
+      "counted": "Sadece bazılarını doldur",
+      "take": "Al",
+      "of": "/",
+      "per": "başına",
+      "perNone": "her biri ayrı",
+      "drawAnother": "Bir tane daha çiz",
+      "close": "Kapat"
+    },
+    "refused": {
+      "notFree": "Odanın içinde boş zeminde değil",
+      "wallRow": "Duvar yeri, kuzey duvarının içindeki ilk sırada durur",
+      "northWall": "Duvar eşyası kuzey duvarına asılır",
+      "floorOnRing": "Dış halkaya sadece duvarlar ve kapı yerleri konur",
+      "doorInside": "Kapı yeri dış halkada durur",
+      "keepStop": "Durak kalır: taşımak için başka bir yere koy",
+      "noLetter": "Bütün harfler kullanılmış",
+      "layoutName": "Yerleşime başka hiçbir yerleşimde olmayan bir ad ver",
+      "notation": "Yazım bunu kabul etmiyor: {{message}}"
+    },
+    "layer": {
+      "wall": "duvara dayalı",
+      "floor": "zemin",
+      "ground": "toprak",
+      "wallItem": "duvar eşyası"
+    },
+    "cell": "Hücre {{row}},{{col}}: {{what}}",
+    "cellWhat": {
+      "wall": "duvar",
+      "floor": "boş zemin",
+      "door": "kapı yeri",
+      "place": "{{letter}}, {{kinds}}"
+    },
+    "rewrites": "Çizim metni yeniden yazar: bütün yorumlar en üste taşınır"
+  }
+}

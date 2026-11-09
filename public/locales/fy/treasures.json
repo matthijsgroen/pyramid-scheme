@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Skow it artefakt op 'e stien om it iepen te meitsjen",
+    "alsoAvailable": "Ek te krijen:"
+  },
+  "perks": {
+    "max-health": "+½ hert op dyn libbensmaksimum",
+    "armor": "Fâlstrikken dogge minder sear",
+    "trap-insight": "+1s by tiidfâlstrikken",
+    "pack-mule": "In wetterpûde makket twa herten better",
+    "compass": "Kompasûnderdiel",
+    "detection": "Ûnderdiel fan de gongesiker",
+    "tier-unlock": "Makket {{tier}}-ekspedysjes iepen",
+    "tier-coming-soon": "{{tier}}-ekspedysjes komme yn in lettere fernijing",
+    "location-key": "Lit in oar grêf sjen",
+    "partOf": "{{count}} fan {{total}}"
+  },
+  "tiers": {
+    "stone": "stiennen",
+    "bronze": "brûnzen",
+    "silver": "sulveren",
+    "gold": "gouden",
+    "divine": "godlike"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Sulveren Deben",
+      "description": "In âlde Egyptyske sulveren munt dy't hannelers brûkten foar de hannel lâns de Nyl."
+    },
+    "t2": {
+      "name": "Papyrusrol",
+      "description": "In hannelsrol mei hannelsrûtes en listen fan djoere lading."
+    },
+    "t3": {
+      "name": "Ivoaren Kaam",
+      "description": "In fyn snien ivoaren kaam, in djoer ding út fiere lannen."
+    },
+    "t4": {
+      "name": "Ierdewurken Oaljelampe",
+      "description": "In ienfâldige mar sierlike oaljelampe, om de hûzen fan de hannelers by te ljochtsjen."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Gouden Earmbân",
+      "description": "In sierlike gouden earmbân mei edelstiennen, droegen troch Egyptyske eallju."
+    },
+    "t6": {
+      "name": "Seremoniële Dolk",
+      "description": "In dolk mei in bewurke hânfetsel, brûkt by feesten fan de eallju."
+    },
+    "t7": {
+      "name": "Jade-skarabee",
+      "description": "In beskermjend amulet fan jade yn 'e foarm fan in skarabee, teken fan werberte en ivich libben."
+    },
+    "t8": {
+      "name": "Albasten Kanopyske Pot",
+      "description": "In sierlike pot fan albast om djoere oaljes en parfums yn te bewarjen."
+    },
+    "t9": {
+      "name": "Ebbenhouten Kuierstok",
+      "description": "In glânzjende kuierstok fan ebbenhout mei in gouden ankh boppe-op."
+    },
+    "t10": {
+      "name": "Lapis Lazuli-ketting",
+      "description": "In prachtige ketting fan seldsume lapis lazuli-stiennen, tige wurdearre troch de riken."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Hillige Ankh",
+      "description": "In gouden ankh, teken fan ivich libben, segene troch de timpelprysters."
+    },
+    "t12": {
+      "name": "Koperen Spegel",
+      "description": "In glânzjende koperen spegel, brûkt by hillige suveringsriten."
+    },
+    "t13": {
+      "name": "Wierookbrander",
+      "description": "In sierlike brûnzen wierookbrander, brûkt by de riten yn 'e timpel."
+    },
+    "t14": {
+      "name": "Hillige Bekker",
+      "description": "In hillige sulveren bekker om drinkoffers oan de goaden te jaan."
+    },
+    "t15": {
+      "name": "Seremoniële Waaier",
+      "description": "In sierlike waaier fan fearren, brûkt troch prysters by timpelfeesten."
+    },
+    "t16": {
+      "name": "Gebedskralen",
+      "description": "In snoer segene kralen om mei te bidden en stil te wurden."
+    },
+    "t17": {
+      "name": "Fet mei Hillich Wetter",
+      "description": "In fet mei segene wetter út 'e hillige timpelput."
+    },
+    "t18": {
+      "name": "Timpelklok",
+      "description": "In brûnzen klok om de minsken op te roppen foar it gebed en feesten oan te kundigjen."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Segel fan de Farao",
+      "description": "In âld keninklik segel mei de kartoesj fan in ferjitten farao."
+    },
+    "t20": {
+      "name": "Kristallen Bol",
+      "description": "In geheimsinnige kristallen bol dy't, sa sizze se, it ferline en de takomst sjen lit."
+    },
+    "t21": {
+      "name": "Stien mei Hiëroglyfen",
+      "description": "In âlde stiennen plaat mei geheimsinnige foarsizzingen yn hiëroglyfen."
+    },
+    "t22": {
+      "name": "Gouden Septer",
+      "description": "In prachtige gouden septer mei it each fan Horus boppe-op."
+    },
+    "t23": {
+      "name": "Obsidiaanen Mes",
+      "description": "In flymskerp mes fan obsidiaan, brûkt by âlde riten."
+    },
+    "t24": {
+      "name": "Stikje Meteoryt",
+      "description": "In stik hillige meteoryt dêr't, sa leauden se, godlike krêft yn sit."
+    },
+    "t25": {
+      "name": "Âld Kompas",
+      "description": "In geheimsinnich ark dat altyd nei ferburgen skatten wiist."
+    },
+    "t26": {
+      "name": "Tiidkristal",
+      "description": "In ferneamd kristal dat gloeit mei de krêft fan lang ferfleine tiden."
+    },
+    "t27": {
+      "name": "Hillich Masker",
+      "description": "In sierlik gouden masker dat de hegepryster droech by hillige feesten."
+    },
+    "t28": {
+      "name": "Fakkel fan it Ivige Fjoer",
+      "description": "In fakkel mei in flam dy't ivich baarnt en sûnt âlde tiden nea útgien is."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Kroan fan Ra",
+      "description": "De ferneamde kroan fan de sinnegod Ra, dy't godlik ljocht en krêft útstrielet."
+    },
+    "t30": {
+      "name": "Stêf fan Thoth",
+      "description": "De wiisheidsstêf fan Thoth, god fan kennis, mei alle âlde geheimen deryn."
+    },
+    "t31": {
+      "name": "Fear fan Ma'at",
+      "description": "De hillige fear fan Ma'at, goadinne fan de wierheid, brûkt om sielen te weagjen yn it hjirneimels."
+    },
+    "t32": {
+      "name": "Triennen fan Isis",
+      "description": "Triennen fan de goadinne Isis, hurd wurden ta kristal. Se soene dy foar altyd beskermje."
+    },
+    "t33": {
+      "name": "Hert fan Osiris",
+      "description": "It bewarre hert fan Osiris, hear fan de ûnderwrâld, dat noch kloppet fan libbenskrêft."
+    },
+    "t34": {
+      "name": "Amulet fan it Each fan Horus",
+      "description": "It sterkste beskermjende amulet, mei de folle krêft fan Horus."
+    },
+    "t35": {
+      "name": "Slang fan Apep",
+      "description": "In fêstbûn stikje fan de gaosslang Apep, opsletten yn in hillich fet."
+    },
+    "t36": {
+      "name": "Azem fan Shu",
+      "description": "In fleske mei de azem fan Shu, god fan de loft, dat macht jout oer de winen."
+    },
+    "t37": {
+      "name": "Skub fan Sobek",
+      "description": "Ien skub fan de krokodillegod Sobek, dy't dy beskermet yn it wetter."
+    },
+    "t38": {
+      "name": "Wachterbyld fan Anubis",
+      "description": "In lyts byld fan Anubis dat ta libben komt om de skatten fan syn eigener te bewekjen."
+    },
+    "t39": {
+      "name": "Boek fan de Deaden",
+      "description": "It folsleine Boek fan de Deaden, mei alle spreuken dy't je nedich binne foar de reis nei it hjirneimels."
+    },
+    "t40": {
+      "name": "Topstien fan de Piramide",
+      "description": "De gouden topstien fan de Grutte Piramide, mei de krêft fan alle farao's deryn."
+    }
+  }
+}

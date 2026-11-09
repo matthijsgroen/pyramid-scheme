@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Kámen",
+    "bronze": "Bronz",
+    "silver": "Stříbro",
+    "gold": "Zlato",
+    "divine": "Božské"
+  },
+  "sell_stone_1": {
+    "name": "Otlučený střep",
+    "description": "Rozbitý kousek hliněné nádoby, na kterém si písař zkoušel psát. Písmena jsou tak vybledlá, že se nedají přečíst."
+  },
+  "sell_stone_2": {
+    "name": "Prasklý hliněný džbán",
+    "description": "Džbán na obilí nebo pivo. Po staletích na jedné straně praskl."
+  },
+  "sell_stone_3": {
+    "name": "Ošlapaný rákosový sandál",
+    "description": "Upletený z rákosu papyru. Podrážku prošlapal nějaký dělník, na kterého už všichni zapomněli."
+  },
+  "sell_stone_4": {
+    "name": "Vybledlý kousek plátna",
+    "description": "Utržený pruh nebarveného lnu. Takovým se donekonečna ovinovali mrtví – nebo se jím záplatovala plachta."
+  },
+  "sell_stone_5": {
+    "name": "Zlomený pazourkový nůž",
+    "description": "Nůž otesaný z pazourku s ulomenou špičkou. Levně se udělá a ještě levněji nahradí."
+  },
+  "sell_bronze_1": {
+    "name": "Ohnutý bronzový amulet",
+    "description": "Levný ochranný přívěsek. Odlili ho nakřivo a už ho nikdo nespravil."
+  },
+  "sell_bronze_2": {
+    "name": "Zrezivělé bronzové zrcátko",
+    "description": "Kdysi bylo tak lesklé, že se v něm člověk viděl. Teď je zelené a zakalené stářím."
+  },
+  "sell_bronze_3": {
+    "name": "Tupý bronzový háček",
+    "description": "Rybářův háček, který spadl z lodi do Nilu dávno předtím, než hrobku zapečetili."
+  },
+  "sell_bronze_4": {
+    "name": "Malý bronzový zvoneček",
+    "description": "Visel na dveřích chrámu nebo na kotníku tanečnice. Už nezvoní čistě."
+  },
+  "sell_bronze_5": {
+    "name": "Zašlý bronzový prsten",
+    "description": "Obyčejný kroužek pro prst, který se už dávno rozpadl na prach."
+  },
+  "sell_silver_1": {
+    "name": "Zašlý stříbrný anch",
+    "description": "Znamení života, které staletí pod zemí úplně zmatnila."
+  },
+  "sell_silver_2": {
+    "name": "Stříbrná tyčinka na líčidlo",
+    "description": "Tenká tyčinka, kterou si bohatí malovali černé linky kolem očí. Barva je dávno pryč."
+  },
+  "sell_silver_3": {
+    "name": "Promáčknutá stříbrná miska",
+    "description": "Malá obětní miska, promáčknutá z jedné strany, když na ni nakonec spadl strop."
+  },
+  "sell_silver_4": {
+    "name": "Stříbrná sponka do vlasů",
+    "description": "Jednoduchá a bez ozdob. Držela vlasy někomu, jehož jméno se ztratilo."
+  },
+  "sell_silver_5": {
+    "name": "Ošoupaný stříbrný náramek",
+    "description": "Tenký stříbrný kroužek s rozbitou sponou. Na šlechtice moc obyčejný, na dělníka moc hezký."
+  },
+  "sell_gold_1": {
+    "name": "Malá zlatá korálka",
+    "description": "Jedna korálka z pohřebního náhrdelníku, který se dávno rozsypal."
+  },
+  "sell_gold_2": {
+    "name": "Kousek plátkového zlata",
+    "description": "Proužek plátkového zlata, který vykradači hrobů sloupli z tváře sochy dávno před tebou."
+  },
+  "sell_gold_3": {
+    "name": "Tenká zlatá náušnice",
+    "description": "Vytepaná do tenka, aby zlato šlechtice vystačilo na víc."
+  },
+  "sell_gold_4": {
+    "name": "Střep se zlatými tečkami",
+    "description": "Rozbitý kus pozlacené omítky. Na povrchu se pořád drží zrnka pravého zlata."
+  },
+  "sell_gold_5": {
+    "name": "Otlučený zlatý pečetní prsten",
+    "description": "Pečetní prsten s rytinou tak ošoupanou, že se nedá poznat. Na toho, komu patřil, se zapomnělo."
+  },
+  "sell_divine_1": {
+    "name": "Vybledlý lazuritový skarabeus",
+    "description": "Vyřezaný z drahého lazuritu, přivezeného z daleka kvůli znovuzrození faraona. Za ta staletí barva vybledla."
+  },
+  "sell_divine_2": {
+    "name": "Karneolový amulet s okem",
+    "description": "Ochranné oko z krvavě rudého karneolu. Mělo odhánět smůlu v posmrtném světě."
+  },
+  "sell_divine_3": {
+    "name": "Tyrkysový kamínek z mozaiky",
+    "description": "Jediný kamínek z rozbité mozaiky. Kdysi byl součástí obrazu boha na zdi chrámu."
+  },
+  "sell_divine_4": {
+    "name": "Alabastrový střep z kanopy",
+    "description": "Kus rozbitého džbánu, kam se ukládaly faraonovy vnitřnosti. Drahý kámen na dost strašidelnou práci."
+  },
+  "sell_divine_5": {
+    "name": "Obsidiánová obřadní čepel",
+    "description": "Sopečné sklo nabroušené k obřadům. Nikdy nebylo určené do boje – jen pro chrám."
+  }
+}

@@ -1,0 +1,253 @@
+{
+  "spots": {
+    "fire": "Kamp ateşi",
+    "sleeping": "Uyku yeri",
+    "water": "Su yeri",
+    "cooking": "Yemek yeri",
+    "donkey": "Eşek yeri",
+    "camel": "Deve yeri",
+    "mapTable": "Harita masası",
+    "palmGarden": "Palmiye bahçesi",
+    "ibisPond": "İbis göleti",
+    "lookout": "Gözetleme yeri",
+    "godStatues": "Tanrı heykelleri",
+    "starCanopy": "Yıldız çatısı"
+  },
+  "finds": {
+    "pot": "Tencere",
+    "seatCushions": "Minderler",
+    "reedMat": "Hasır",
+    "blanket": "Battaniye",
+    "tentRug": "Çadır kilimi",
+    "tentFlag": "Çadır bayrağı",
+    "gourd": "Su kabağı",
+    "jar": "Testi",
+    "secondJar": "İkinci testi",
+    "spiceRack": "Baharat rafı",
+    "breadBoard": "Ekmek tahtası",
+    "starMap": "Yıldız haritası",
+    "scrollCase": "Tomar kutusu",
+    "astrolabe": "Usturlap",
+    "reedGlobe": "Sazdan dünya küresi",
+    "seed": "Palmiye tohumu",
+    "secondPalm": "Palmiye tohumu",
+    "figTree": "İncir tohumu",
+    "papyrus": "Papirüs kökü",
+    "reeds": "Saz filizi",
+    "lotus": "Nilüfer yumrusu",
+    "flag": "Gözetleme bayrağı",
+    "thoth": "Thoth heykelciği",
+    "bastet": "Bastet heykelciği",
+    "anubis": "Anubis heykelciği",
+    "ra": "Ra heykelciği",
+    "cloth": "Yıldız bezi"
+  },
+  "structures": {
+    "stoneRing": "Taş halka",
+    "fire": "Ateş",
+    "cookingStones": "Pişirme taşları",
+    "seatingStones": "Oturma taşları",
+    "clayOven": "Kil fırın",
+    "windbreak": "Rüzgârlık",
+    "tent": "Çadır",
+    "secondTent": "İkinci çadır",
+    "pavilion": "Köşk",
+    "well": "Kuyu",
+    "wellPulley": "Makaralı kuyu",
+    "tripod": "Üç ayak",
+    "breadOven": "Ekmek fırını",
+    "dryingRack": "Kurutma askısı",
+    "feast": "Ziyafet",
+    "table": "Harita masası",
+    "lotusPlanter": "Nilüfer teknesi",
+    "edgeStones": "Gölet kenarı",
+    "post": "Gözetleme direği",
+    "platform": "Gözetleme kulesi",
+    "ladder": "Merdiven",
+    "roof": "Çatı",
+    "signalFire": "İşaret ateşi",
+    "poles": "Yıldız direkleri",
+    "stars": "Yıldızlar",
+    "planets": "Gezegenler"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Tarla taşları",
+      "sandBed": "Kum yatağı"
+    },
+    "fire": {
+      "tinder": "Çıra",
+      "acaciaLogs": "Akasya odunu"
+    },
+    "cookingStones": {
+      "flatStone": "Yassı taş",
+      "supportStones": "Destek taşları"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Pürüzsüz kayalar",
+      "sandstoneBlock": "Kumtaşı blok",
+      "hewnSlab": "Yontulmuş taş levha"
+    },
+    "clayOven": {
+      "ovenFloor": "Fırın tabanı",
+      "firebricks": "Ateş tuğlaları",
+      "smokeHole": "Duman deliği",
+      "copperGrate": "Bakır ızgara"
+    },
+    "windbreak": {
+      "reedBundles": "Saz demetleri",
+      "stakes": "Tahta kazıklar"
+    },
+    "tent": {
+      "tentPoles": "Çadır direkleri",
+      "wovenCloth": "Dokuma bez",
+      "tentPegs": "Çadır kazıkları"
+    },
+    "secondTent": {
+      "largeCloth": "Büyük çadır bezi",
+      "ridgePole": "Çatı direği",
+      "guyRopes": "Gergi ipleri",
+      "woolFloor": "Yün yer örtüsü"
+    },
+    "pavilion": {
+      "pavilionPosts": "Köşk direkleri",
+      "linenCanopy": "Keten tente",
+      "hangingCurtains": "Perdeler",
+      "woolRugs": "Yün kilimler",
+      "woodenFloor": "Tahta zemin"
+    },
+    "well": {
+      "wellStones": "Kuyu taşları",
+      "rope": "Uzun ip",
+      "bucket": "Kova",
+      "windlass": "Kuyu çıkrığı"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Makara",
+      "frame": "Taşıyıcı çerçeve",
+      "hoistRope": "Çekme ipi",
+      "counterweight": "Karşı ağırlık",
+      "leatherBucket": "Deri kova"
+    },
+    "tripod": {
+      "tripodPoles": "Üç sırık",
+      "binding": "Bağlama ipi",
+      "hook": "Bronz kanca"
+    },
+    "breadOven": {
+      "mudBricks": "Kerpiç tuğlalar",
+      "clayPlaster": "Kil sıva",
+      "ovenLid": "Fırın kapağı"
+    },
+    "dryingRack": {
+      "rackPoles": "Askı direkleri",
+      "crossbar": "Yatay sırık",
+      "wickerTray": "Hasır tepsi",
+      "cords": "Asma ipleri"
+    },
+    "feast": {
+      "lowTable": "Alçak masa",
+      "breadBaskets": "Ekmek sepetleri",
+      "roastDuck": "Kızarmış ördek",
+      "beerJars": "Bira testileri",
+      "fruitBowl": "Meyve kâsesi"
+    },
+    "table": {
+      "tableTop": "Masa tablası",
+      "trestles": "Masa ayakları",
+      "leatherStraps": "Deri kayışlar"
+    },
+    "lotusPlanter": {
+      "clayTub": "Kil tekne",
+      "nileSilt": "Nil çamuru",
+      "waterJar": "Su testisi",
+      "lotusTubers": "Nilüfer yumruları",
+      "stoneRim": "Taş kenar"
+    },
+    "edgeStones": {
+      "riverStones": "Dere taşları",
+      "clayBedding": "Kil yatak",
+      "gravel": "Çakıl",
+      "boundaryStakes": "Sınır kazıkları"
+    },
+    "post": {
+      "postTrunk": "Palmiye gövdesi",
+      "footStones": "Temel taşları",
+      "wedges": "Takozlar",
+      "braces": "Payandalar"
+    },
+    "platform": {
+      "platformBeams": "Taşıyıcı kirişler",
+      "platformPlanks": "Tahtalar",
+      "lashingRope": "Bağlama halatı",
+      "edgeRail": "Korkuluk"
+    },
+    "ladder": {
+      "ladderRails": "Merdiven yanları",
+      "rungs": "Basamaklar",
+      "groundPegs": "Yer kazıkları",
+      "leatherLoops": "Deri halkalar"
+    },
+    "roof": {
+      "roofPoles": "Çatı sırıkları",
+      "thatch": "Palmiye yaprakları",
+      "clayLayer": "Kil katmanı",
+      "bindingGrass": "Bağlama otu"
+    },
+    "signalFire": {
+      "fireBasin": "Ateş kâsesi",
+      "pitch": "Zift",
+      "dryBrushwood": "Kuru çalı",
+      "flint": "Çakmaktaşı",
+      "bellows": "Körük"
+    },
+    "poles": {
+      "masts": "Direkler",
+      "cornerStones": "Köşe taşları",
+      "stayLines": "Gergi halatları",
+      "bigPegs": "Büyük kazıklar",
+      "poleSockets": "Direk yuvaları"
+    },
+    "stars": {
+      "goldLeaf": "Altın varak",
+      "needleThread": "İğne iplik",
+      "indigoDye": "Çivit boyası",
+      "chalk": "Tebeşir",
+      "stencils": "Şablonlar"
+    },
+    "planets": {
+      "ochre": "Aşı boyası",
+      "copperDiscs": "Bakır diskler",
+      "lapisPowder": "Lapis tozu",
+      "hangingLoops": "Asma halkaları",
+      "dividers": "Pergel"
+    }
+  },
+  "collection": {
+    "title": "Yapılar",
+    "progress": "{{found}} / {{total}}",
+    "built": "yapıldı",
+    "unknownPart": "???",
+    "open": "Parçaları göster",
+    "close": "Parçaları gizle"
+  },
+  "reward": {
+    "find": "Kamp buluntusu",
+    "part": "Parça",
+    "progress": "{{name}} · {{found}} / {{total}}"
+  },
+  "haul": {
+    "new": "Kampında yeni",
+    "parts_one": "{{name}} · {{count}} parça",
+    "parts_other": "{{name}} · {{count}} parça"
+  },
+  "arrivals": {
+    "donkey": "Eşeğin kampta",
+    "cart": "Araban kampta",
+    "camel": "Deven kampta",
+    "secondDonkey": "İkinci eşeğin kampta",
+    "secondCamel": "İkinci deven kampta",
+    "sturdyCart": "Daha sağlam araban kampta",
+    "caravanBanner": "Kervan sancağın kampta dalgalanıyor"
+  }
+}

@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Král bohů a vládce slunce. Každý den pluje po nebi ve své sluneční lodi."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Bůh se šakalí hlavou. Stará se o mumie a o posmrtný svět a chrání mrtvé."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Bůh nebe se sokolí hlavou a ochránce faraonů. Je to syn Osirida a Isis."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "Bůh s hlavou ibise. Bůh moudrosti, písma a vědění, který zapisuje všechno, co bohové dělají."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Kočičí bohyně ochrany a radosti. Brání lidi před zlými duchy."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Krokodýlí bůh řeky Nilu. Přináší úrodu a dává sílu vojákům."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Bůh v podobě skarabea. Každé ráno valí slunce po nebi a přináší nový začátek."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Bohyně v podobě kobry a ochránkyně Dolního Egypta. Znamení královské moci."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "Bohyně kouzel, maminek a uzdravování. Věrná žena Osirida."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "Bůh podsvětí, smrti a znovuzrození. Soudí mrtvé."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "Bůh zmatku, bouří a pouště. Bratr a soupeř Osirida."
+    },
+    "d12": {
+      "name": "Nephthys",
+      "description": "Bohyně smutku, která chrání mrtvé. Sestra Isis."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Bůh, který stvořil svět svými slovy. Pomáhá řemeslníkům a stavitelům."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Lví bohyně války a uzdravování. Divoká ochránkyně, která umí léčit nemoci."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Kravská bohyně lásky, hudby a maminek. Pečovala o faraony."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Faraon",
+      "description": "Vládce Egypta. Lidé věřili, že je to živý bůh a most mezi lidmi a bohy."
+    },
+    "p2": {
+      "name": "Velekněz",
+      "description": "Nejvyšší kněz v chrámu. Koná posvátné obřady a dbá na pořádek, jaký chtějí bohové."
+    },
+    "p3": {
+      "name": "Písař",
+      "description": "Člověk, který uměl číst a psát. Zapisoval a uchovával vědění."
+    },
+    "p4": {
+      "name": "Architekt",
+      "description": "Mistr stavitel, který navrhoval pyramidy, chrámy a pomníky, aby vydržely navždy."
+    },
+    "p5": {
+      "name": "Generál",
+      "description": "Velitel vojska. Chránil hranice Egypta a rozšiřoval říši."
+    },
+    "p6": {
+      "name": "Lékař",
+      "description": "Léčitel, který uzdravoval nemocné bylinami, znalostmi i kouzly."
+    },
+    "p7": {
+      "name": "Balzamovač",
+      "description": "Posvátný řemeslník, který připravoval mrtvé na cestu do posmrtného světa."
+    },
+    "p8": {
+      "name": "Zemědělec",
+      "description": "Pěstoval jídlo pro celý Egypt na úrodné půdě u Nilu."
+    },
+    "p9": {
+      "name": "Řemeslník",
+      "description": "Šikovný tvůrce krásných věcí, šperků a uměleckých děl pro šlechtice a bohy."
+    },
+    "p10": {
+      "name": "Obchodník",
+      "description": "Kupec, který přivážel vzácné zboží z dalekých zemí."
+    },
+    "p11": {
+      "name": "Vezír",
+      "description": "Hlavní rádce faraona. Dohlížel na to, aby země dobře fungovala."
+    },
+    "p12": {
+      "name": "Věštec",
+      "description": "Posvátný prorok, který vykládal vzkazy bohů a předpovídal budoucnost."
+    },
+    "p13": {
+      "name": "Námořník",
+      "description": "Plavil se po Nilu i po moři. Bez něj by nebyl obchod ani doprava."
+    },
+    "p14": {
+      "name": "Kameník",
+      "description": "Tesal do kamene hieroglyfy a stavěl velké egyptské pomníky."
+    },
+    "p15": {
+      "name": "Strážce",
+      "description": "Chránil posvátná místa a hrobky, aby mrtví mohli navždy klidně spát."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Hroch",
+      "description": "Silné zvíře z řeky Nilu. Lidé se ho báli, protože je silný a hlídá si své místo."
+    },
+    "a2": {
+      "name": "Lev",
+      "description": "Král zvířat. Znamení královské moci a síly bohů v poušti."
+    },
+    "a3": {
+      "name": "Slon",
+      "description": "Obrovské zvíře z jižních zemí. Lidé ho ctili pro jeho moudrost a dobrou paměť."
+    },
+    "a4": {
+      "name": "Gazela",
+      "description": "Rychlá a ladná obyvatelka pouště. Znamení rychlosti a krásy."
+    },
+    "a5": {
+      "name": "Opice",
+      "description": "Chytré zvíře, které patří k bohu Thothovi. Znamená důvtip a taky lumpárny."
+    },
+    "a6": {
+      "name": "Ryba",
+      "description": "Posvátná zvířata z Nilu. Dávají jídlo a jsou znamením hojnosti."
+    },
+    "a7": {
+      "name": "Husa",
+      "description": "Posvátný pták z bažin u Nilu. Patří k příběhům o stvoření světa a o duši."
+    },
+    "a8": {
+      "name": "Včela",
+      "description": "Znamení Dolního Egypta a královské moci. Dělá vzácný med."
+    },
+    "a9": {
+      "name": "Želva",
+      "description": "Prastaré moudré zvíře, které nese na krunýři tíhu celého světa."
+    },
+    "a10": {
+      "name": "Žába",
+      "description": "Znamení nového života a hojnosti. Vylézá z vody, když se Nil rozvodní."
+    },
+    "a11": {
+      "name": "Sup",
+      "description": "Posvátný pták Horního Egypta. V jeho podobě chodila po zemi bohyně ochránkyně Nekhbet."
+    },
+    "a12": {
+      "name": "Sova",
+      "description": "Moudrá noční lovkyně, která hlídá skryté vědění a dávná tajemství."
+    },
+    "a13": {
+      "name": "Beran",
+      "description": "Posvátné zvíře boha Amun-Ra. Znamení síly bohů a vůdcovství."
+    },
+    "a14": {
+      "name": "Žirafa",
+      "description": "Vysoké a ladné zvíře z jižních zemí. Svým dlouhým krkem dosáhne až do nebe."
+    },
+    "a15": {
+      "name": "Šakal",
+      "description": "Pouštní mrchožrout a průvodce do posmrtného světa. Slouží bohu Anubisovi."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Anch",
+      "description": "Znamení života, který nikdy nekončí. Bohové a faraoni ho často drží v ruce."
+    },
+    "art2": {
+      "name": "Horovo oko",
+      "description": "Znamení ochrany, královské moci a zdraví. Patří k bohu nebe Horovi."
+    },
+    "art3": {
+      "name": "Sistrum",
+      "description": "Hudební nástroj, který chrastí při posvátných obřadech. Patří k bohyni Hathor."
+    },
+    "art4": {
+      "name": "Sloup džed",
+      "description": "Znamení pevnosti a znovuzrození. Často patří k bohu Osiridovi."
+    },
+    "art5": {
+      "name": "Kartuše",
+      "description": "Ovál, ve kterém je hieroglyfy napsané jméno faraona. Chrání jeho jméno navždy."
+    },
+    "art6": {
+      "name": "Kanopa",
+      "description": "Posvátný džbán s hlavou strážce místo víčka. Čtyři takové stály kolem rakve a hlídaly."
+    },
+    "art7": {
+      "name": "Žezlo",
+      "description": "Hůl moci, kterou nosí bohové a faraoni jako znamení, že vládnou."
+    },
+    "art9": {
+      "name": "Pyramida",
+      "description": "Věčná hrobka a brána do posmrtného světa. Faraoni ji stavěli, aby vydržela navždy."
+    },
+    "art10": {
+      "name": "Sluneční loď",
+      "description": "Posvátná loď, na které pluje bůh slunce Ra po nebi od rána do večera."
+    },
+    "art11": {
+      "name": "Obelisk",
+      "description": "Vysoký kamenný sloup se špičkou jako malá pyramida. Míří k nebi na počest bohů."
+    },
+    "art12": {
+      "name": "Berla a bič",
+      "description": "Královské odznaky. Ukazují, že faraon je pastýř a ochránce Egypta."
+    },
+    "art14": {
+      "name": "Lotosový květ",
+      "description": "Znamení znovuzrození a slunce. Vykvete čistý z bahnité vody Nilu."
+    },
+    "art15": {
+      "name": "Koruna s kobrou",
+      "description": "Královská pokrývka hlavy s kobrou, která faraona chrání."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Rákosový lístek",
+      "description": "Jeden rákos, který znamená hlásku i. Když ho přidáš ke jménu boha, vznikne jméno člověka: Horus se změní na Hori, „ten, kdo patří Horovi“."
+    }
+  }
+}

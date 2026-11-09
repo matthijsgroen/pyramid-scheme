@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Koit Sfinksi juures",
+    "description": "Suur Sfinks ja tema jalge ees kiri, mida keegi enam lugeda ei oska. Kaardi järgi algab kõik siit."
+  },
+  "starter_2": {
+    "name": "Papüürusekaupmehe tee",
+    "description": "Kaubatee mööda Niilust, ääres kaupmeeste laoruumid. Mõned neist pole kunagi tühjaks tehtud."
+  },
+  "starter_3": {
+    "name": "Basteti tempel",
+    "description": "Basteti tempel. Siinsed kassid olid pühad ja iga-aastane pidu oli kogu Egiptuse suurim — paadid, muusika, kõik."
+  },
+  "starter_4": {
+    "name": "Kirjutajate kool",
+    "description": "Kirjutajate kool, kus Egiptus kirjutama õppis. Klassiruumid on ikka veel liiva all."
+  },
+  "starter_treasure_tomb": {
+    "name": "Unustatud kaupmehe peidik",
+    "description": "Kaupmehe kelder, mitte kuninga oma: kannud virnas, pitseeritud ja sildiga, ja keegi all ei vaidle vastu.",
+    "mapHint": "Kaardijupil on turutee ja keldriuks — kaupmehe peidukoht, ei midagi uhkemat."
+  },
+  "junior_1": {
+    "name": "Pühade iibiste rändetee",
+    "description": "Sooala ja iibised, kes selles sumpavad. Egiptlased jälgisid neid linde: kui nad tagasi tulevad, tuleb üleujutus."
+  },
+  "junior_2": {
+    "name": "Meistrite org",
+    "description": "Deir el-Medina, kus elasid hauakambrite ehitajad. Kõik, mis kuninga hauda läks, tehti siin enne vormides valmis."
+  },
+  "junior_3": {
+    "name": "Thothi tempel",
+    "description": "Thothi tempel. Tema leiutas kirja, pidas arvet ja tegi arvutusi — umbes sedasama, mida meiegi teeme."
+  },
+  "junior_4": {
+    "name": "Aleksandria majakas",
+    "description": "Aleksandria Pharos. Tipus põles terve öö tuli ja meremehed nägid rannikut juba päeva teekonna kauguselt."
+  },
+  "junior_treasure_tomb": {
+    "name": "Aadliku salakamber",
+    "description": "Aadlidaami kamber, põrandast laeni maalitud. Ta ostis parimad koopiad, mida raha eest sai, ega öelnud seda kunagi kellelegi.",
+    "mapHint": "Peen tint ja nurgas vapiga pitser — keegi tähtis tahtis, et see tuba ununeks."
+  },
+  "expert_1": {
+    "name": "Kuningate org",
+    "description": "Kuningate org. Püramiide enam ei ehitatud, kuninglikud hauad peideti ühte orgu, püramiidikujulise mäetipu alla."
+  },
+  "expert_2": {
+    "name": "Karnaki templid",
+    "description": "Karnak, mida ehitati juurde kaks tuhat aastat. Ainuüksi suures saalis on sada kolmkümmend neli sammast ja igaühel on nikerdused."
+  },
+  "expert_3": {
+    "name": "Niiluse delta retk",
+    "description": "Seal, kus Niilus hargneb ja roheliselt laiali laotub. Sobeki maa — papüürus, kalad ja krokodillid, keda kummardati ja toideti."
+  },
+  "expert_4": {
+    "name": "Džoseri püramiid",
+    "description": "Džoseri astmikpüramiid, esimene nii suur ehitis kivist. Tema arhitekti Imhotepi hakati hiljem jumalana mäletama."
+  },
+  "expert_treasure_tomb": {
+    "name": "Ülempreestri varakamber",
+    "description": "Ülempreestri varakamber ohvripõranda all. Kõik, mis seal on, anti jumalale ja seda ei võetud enam kunagi välja.",
+    "mapHint": "Jooned näitavad templiala ja treppi, mis viib ohvripõranda alla."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Sisemine pühamu",
+    "description": "Pitseeritud tuba templi südames. Ülempreester käis seal kord päevas, et jumalat pesta ja riietada.",
+    "mapHint": "Käigud viivad mööda templi varakambritest pitseeritud ukseni — sealt said läbi ainult kõige kõrgemad preestrid."
+  },
+  "master_1": {
+    "name": "Giza suur püramiid",
+    "description": "Suur püramiid. Kakskümmend aastat kivi ja kõrval terve linn, kus töölisi toideti leiva ja õllega."
+  },
+  "master_2": {
+    "name": "Surnuteraamat",
+    "description": "Mitte üks raamat, vaid hulk loitse, mis kirjutati tellimise peale ümber. Odavamates jäeti sinu nime kohale tühi koht."
+  },
+  "master_3": {
+    "name": "Vaaraode needus",
+    "description": "Kuulsa needuse mõtlesid välja ajalehed aastal 1923. Egiptlased kaitsesid oma hauakambreid hoopis uste ja paberitega."
+  },
+  "master_4": {
+    "name": "Nefertari hauakamber",
+    "description": "Nefertari hauakamber, Egiptuse kõige ilusamini maalitud tuba. Värvid jahvatati kividest — asuriit, malahhiit, ooker."
+  },
+  "master_treasure_tomb": {
+    "name": "Vaarao salavaramu",
+    "description": "Kuninga isiklik varamu, seal, kus kaardid lõpevad. Mis iganes temaga maa alla läks, on ikka veel seal.",
+    "mapHint": "Ühes servas on kuninglik kartušš ja tee lõpeb kaugel lageda liiva all."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Osirise saal",
+    "description": "Osirise saal. Ta on üleujutuse ja vilja jumal — mis siin maa alla läheb, see peab ka tagasi tulema.",
+    "mapHint": "Kuninglike kambrite all läheb kaart aina sügavamale, saali, mis on märgitud surnute kommetega."
+  },
+  "wizard_1": {
+    "name": "Ra päikeseretk",
+    "description": "Ra laskub päikeseloojangul maailma alla ja peab läbima kaksteist pimedat tundi. Egiptlased kirjutasid üles, mis igal tunnil juhtub."
+  },
+  "wizard_2": {
+    "name": "Memnoni kolossid",
+    "description": "Amenhotep III kaks istuvat hiiglast. Kreeklased arvasid, et need on keegi teine, ja see nimi jäi külge kaheks tuhandeks aastaks."
+  },
+  "wizard_3": {
+    "name": "Ma'ati kamber",
+    "description": "Ma'ati kamber. Tema on asjade kord ja tema üksainus jaanalinnusulg on see, millega kõike muud mõõdetakse."
+  },
+  "wizard_4": {
+    "name": "Igavene püramiid",
+    "description": "Välissein oli lihvitud lubjakivist, valge nagu sool, ja nii täpselt tehtud, et selle sätendust nägi päeva teekonna kauguselt."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Jumalate varamu",
+    "description": "Siin hoidis tempel seda, mis kuulus jumalatele. Keegi ei pääsenud siia ilma õige asjata käes.",
+    "mapHint": "Ükski märk sellel kaardijupil ei kuulu inimeste maailma — mida see ka ei näitaks, jumalad panid selle sinna."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Taevajõudude riik",
+    "description": "Laes on tähekaardid, maalitud nii, et surnud saaksid öösel aega teada. Kellegi köis ripub ikka veel šahtis.",
+    "mapHint": "Jumalate varamu taga lähevad jooned tähteradadeks, kus elu ja kaose jõude hoitakse pühade asjadena."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Igaviku troon",
+    "description": "Keskel üks iste ja selle ümber nelikümmend kaks kohtunikku, kes kõik küsivad küsimuse, millele pead vastama „ei“.",
+    "mapHint": "Kõik tähterajad sellel kaardijupil jooksevad kokku ühe istme juurde jumalate riigi päris südames."
+  }
+}

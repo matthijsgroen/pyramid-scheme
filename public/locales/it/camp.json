@@ -1,0 +1,254 @@
+{
+  "spots": {
+    "fire": "Fuoco del campo",
+    "sleeping": "Posto per dormire",
+    "water": "Posto dell'acqua",
+    "cooking": "Posto per cucinare",
+    "donkey": "Posto dell'asino",
+    "camel": "Posto del cammello",
+    "mapTable": "Tavolo delle mappe",
+    "palmGarden": "Giardino di palme",
+    "ibisPond": "Stagno degli ibis",
+    "lookout": "Torretta di vedetta",
+    "godStatues": "Statue degli dèi",
+    "starCanopy": "Tetto di stelle"
+  },
+  "finds": {
+    "pot": "Pentola",
+    "seatCushions": "Cuscini",
+    "reedMat": "Stuoia di canne",
+    "blanket": "Coperta",
+    "tentRug": "Tappeto della tenda",
+    "tentFlag": "Bandierina della tenda",
+    "gourd": "Zucca da acqua",
+    "jar": "Brocca",
+    "secondJar": "Seconda brocca",
+    "spiceRack": "Scaffale delle spezie",
+    "breadBoard": "Tagliere del pane",
+    "starMap": "Mappa delle stelle",
+    "scrollCase": "Astuccio per rotoli",
+    "astrolabe": "Astrolabio",
+    "reedGlobe": "Mappamondo di canne",
+    "seed": "Seme di palma",
+    "secondPalm": "Seme di palma",
+    "figTree": "Seme di fico",
+    "papyrus": "Radice di papiro",
+    "reeds": "Talea di canna",
+    "lotus": "Tubero di loto",
+    "flag": "Bandiera di vedetta",
+    "thoth": "Statuina di Thoth",
+    "bastet": "Statuina di Bastet",
+    "anubis": "Statuina di Anubi",
+    "ra": "Statuina di Ra",
+    "cloth": "Telo delle stelle"
+  },
+  "structures": {
+    "stoneRing": "Cerchio di pietre",
+    "fire": "Fuoco",
+    "cookingStones": "Pietre per cucinare",
+    "seatingStones": "Pietre per sedersi",
+    "clayOven": "Forno di argilla",
+    "windbreak": "Paravento",
+    "tent": "Tenda",
+    "secondTent": "Seconda tenda",
+    "pavilion": "Padiglione",
+    "well": "Pozzo",
+    "wellPulley": "Pozzo con carrucola",
+    "tripod": "Treppiede",
+    "breadOven": "Forno del pane",
+    "dryingRack": "Stendino",
+    "feast": "Banchetto",
+    "table": "Tavolo delle mappe",
+    "lotusPlanter": "Vasca dei loti",
+    "edgeStones": "Bordo dello stagno",
+    "post": "Palo di vedetta",
+    "platform": "Piattaforma di vedetta",
+    "ladder": "Scala",
+    "roof": "Tetto",
+    "signalFire": "Fuoco di segnalazione",
+    "poles": "Pali delle stelle",
+    "stars": "Stelle",
+    "planets": "Pianeti"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Sassi dei campi",
+      "sandBed": "Letto di sabbia"
+    },
+    "fire": {
+      "tinder": "Esca per il fuoco",
+      "acaciaLogs": "Legna di acacia"
+    },
+    "cookingStones": {
+      "flatStone": "Pietra piatta",
+      "supportStones": "Pietre di sostegno"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Massi lisci",
+      "sandstoneBlock": "Blocco di arenaria",
+      "hewnSlab": "Lastra scolpita"
+    },
+    "clayOven": {
+      "ovenFloor": "Fondo del forno",
+      "firebricks": "Mattoni da fuoco",
+      "smokeHole": "Buco per il fumo",
+      "copperGrate": "Griglia di rame"
+    },
+    "windbreak": {
+      "reedBundles": "Fasci di canne",
+      "stakes": "Paletti di legno"
+    },
+    "tent": {
+      "tentPoles": "Pali della tenda",
+      "wovenCloth": "Tela intrecciata",
+      "tentPegs": "Picchetti"
+    },
+    "secondTent": {
+      "largeCloth": "Telo grande",
+      "ridgePole": "Trave del colmo",
+      "guyRopes": "Tiranti",
+      "woolFloor": "Tappeto di lana"
+    },
+    "pavilion": {
+      "pavilionPosts": "Pali del padiglione",
+      "linenCanopy": "Tetto di lino",
+      "hangingCurtains": "Tende",
+      "woolRugs": "Tappeti di lana",
+      "woodenFloor": "Pavimento di legno"
+    },
+    "well": {
+      "wellStones": "Pietre del pozzo",
+      "rope": "Corda lunga",
+      "bucket": "Secchio",
+      "windlass": "Argano"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Carrucola",
+      "frame": "Telaio di sostegno",
+      "hoistRope": "Corda per tirare su",
+      "counterweight": "Contrappeso",
+      "leatherBucket": "Secchio di cuoio"
+    },
+    "tripod": {
+      "tripodPoles": "Tre bastoni",
+      "binding": "Corda per legare",
+      "hook": "Gancio di bronzo"
+    },
+    "breadOven": {
+      "mudBricks": "Mattoni di fango",
+      "clayPlaster": "Intonaco di argilla",
+      "ovenLid": "Sportello del forno"
+    },
+    "dryingRack": {
+      "rackPoles": "Pali dello stendino",
+      "crossbar": "Traversa",
+      "wickerTray": "Vassoio di vimini",
+      "cords": "Cordicelle"
+    },
+    "feast": {
+      "lowTable": "Tavolo basso",
+      "breadBaskets": "Cesti del pane",
+      "roastDuck": "Anatra arrosto",
+      "beerJars": "Brocche di birra",
+      "fruitBowl": "Ciotola della frutta"
+    },
+    "table": {
+      "tableTop": "Piano del tavolo",
+      "trestles": "Cavalletti",
+      "leatherStraps": "Cinghie di cuoio"
+    },
+    "lotusPlanter": {
+      "clayTub": "Vasca di argilla",
+      "nileSilt": "Limo del Nilo",
+      "waterJar": "Brocca d'acqua",
+      "lotusTubers": "Tuberi di loto",
+      "stoneRim": "Bordo di pietra"
+    },
+    "edgeStones": {
+      "riverStones": "Sassi di fiume",
+      "clayBedding": "Letto di argilla",
+      "gravel": "Ghiaia",
+      "boundaryStakes": "Paletti di confine"
+    },
+    "post": {
+      "postTrunk": "Tronco di palma",
+      "footStones": "Pietre di base",
+      "wedges": "Cunei",
+      "braces": "Puntelli"
+    },
+    "platform": {
+      "platformBeams": "Travi di sostegno",
+      "platformPlanks": "Assi",
+      "lashingRope": "Corda per legare",
+      "edgeRail": "Ringhiera"
+    },
+    "ladder": {
+      "ladderRails": "Montanti della scala",
+      "rungs": "Pioli",
+      "groundPegs": "Picchetti da terra",
+      "leatherLoops": "Anelli di cuoio"
+    },
+    "roof": {
+      "roofPoles": "Travetti del tetto",
+      "thatch": "Foglie di palma",
+      "clayLayer": "Strato di argilla",
+      "bindingGrass": "Erba per legare"
+    },
+    "signalFire": {
+      "fireBasin": "Braciere",
+      "pitch": "Pece",
+      "dryBrushwood": "Sterpi secchi",
+      "flint": "Pietra focaia",
+      "bellows": "Mantice"
+    },
+    "poles": {
+      "masts": "Alberi",
+      "cornerStones": "Pietre d'angolo",
+      "stayLines": "Funi di sostegno",
+      "bigPegs": "Picchetti grandi",
+      "poleSockets": "Basi dei pali"
+    },
+    "stars": {
+      "goldLeaf": "Foglia d'oro",
+      "needleThread": "Ago e filo",
+      "indigoDye": "Tinta indaco",
+      "chalk": "Gesso",
+      "stencils": "Stampini"
+    },
+    "planets": {
+      "ochre": "Ocra",
+      "copperDiscs": "Dischi di rame",
+      "lapisPowder": "Polvere di lapislazzuli",
+      "hangingLoops": "Anellini per appendere",
+      "dividers": "Compasso"
+    }
+  },
+  "collection": {
+    "title": "Costruzioni",
+    "progress": "{{found}} su {{total}}",
+    "built": "costruito",
+    "unknownPart": "???",
+    "open": "Mostra i pezzi",
+    "close": "Nascondi i pezzi"
+  },
+  "reward": {
+    "find": "Scoperta per il campo",
+    "part": "Pezzo",
+    "progress": "{{name}} · {{found}} su {{total}}"
+  },
+  "haul": {
+    "new": "Novità nel tuo campo",
+    "parts_one": "{{name}} · {{count}} pezzo",
+    "parts_many": "{{name}} · {{count}} pezzi",
+    "parts_other": "{{name}} · {{count}} pezzi"
+  },
+  "arrivals": {
+    "donkey": "Il tuo asino è arrivato al campo",
+    "cart": "Il tuo carretto è arrivato al campo",
+    "camel": "Il tuo cammello è arrivato al campo",
+    "secondDonkey": "Il tuo secondo asino è arrivato al campo",
+    "secondCamel": "Il tuo secondo cammello è arrivato al campo",
+    "sturdyCart": "Il tuo carretto più robusto è arrivato al campo",
+    "caravanBanner": "Lo stendardo della tua carovana sventola al campo"
+  }
+}

@@ -188,3 +188,7 @@ Play the starter journeys on a phone from a fresh save; develop mode for grants.
   detector got better?
 - **Junior pockets on starter floors.** A junior ward path on a starter floor draws its empty surroundings as flat
   brown blocks until the junior art is painted (art, not a carve fault): is it acceptable for the release?
+
+## 42 languages
+
+- **Settings, pick a language** (try German, Finnish, Hungarian for long words; Russian and Greek for the Cyrillic and Greek headings once the display-font fallback is merged). Walk the camp, a pyramid floor, a puzzle and a story scene on a phone: does any label overflow its button or wrap badly? Native-reader notes per language: docs/translations/review-notes.md.

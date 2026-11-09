@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Przesuń przedmiot na kamień, żeby go otworzyć",
+    "alsoAvailable": "Pasują też:"
+  },
+  "perks": {
+    "max-health": "+½ serca do twojego zdrowia",
+    "armor": "Pułapki mniej ranią",
+    "trap-insight": "+1 s na pułapkach z czasem",
+    "pack-mule": "Bukłak leczy dwa serca",
+    "compass": "Część kompasu",
+    "detection": "Część wykrywacza korytarzy",
+    "tier-unlock": "Otwiera wyprawy na poziomie {{tier}}",
+    "tier-coming-soon": "Wyprawy na poziomie {{tier}} pojawią się w nowej wersji gry",
+    "location-key": "Pokazuje kolejny grobowiec",
+    "partOf": "{{count}} z {{total}}"
+  },
+  "tiers": {
+    "stone": "Kamień",
+    "bronze": "Brąz",
+    "silver": "Srebro",
+    "gold": "Złoto",
+    "divine": "Boskie"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Srebrny deben",
+      "description": "Dawna egipska srebrna moneta. Kupcy płacili nią w handlu na Nilu."
+    },
+    "t2": {
+      "name": "Zwój papirusu",
+      "description": "Zapiski kupca: szlaki handlowe i listy cennych ładunków."
+    },
+    "t3": {
+      "name": "Grzebień z kości słoniowej",
+      "description": "Pięknie rzeźbiony grzebień. Drogi przedmiot przywieziony z dalekich krajów."
+    },
+    "t4": {
+      "name": "Gliniana lampka oliwna",
+      "description": "Prosta, ale ładna lampka, która oświetlała dom kupca."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Złota bransoleta",
+      "description": "Bogato zdobiona złota bransoleta z drogimi kamieniami. Nosili ją egipscy szlachcice."
+    },
+    "t6": {
+      "name": "Obrzędowy sztylet",
+      "description": "Sztylet z rękojeścią wysadzaną klejnotami. Używano go podczas uroczystości szlachty."
+    },
+    "t7": {
+      "name": "Skarabeusz z jadeitu",
+      "description": "Amulet ochronny z jadeitu. Znak nowego życia i życia wiecznego."
+    },
+    "t8": {
+      "name": "Alabastrowy dzban",
+      "description": "Elegancki dzban z alabastru na drogie olejki i perfumy."
+    },
+    "t9": {
+      "name": "Hebanowa laska",
+      "description": "Wypolerowana laska z hebanu, ze złotym ankhem na czubku."
+    },
+    "t10": {
+      "name": "Naszyjnik z lapis lazuli",
+      "description": "Przepiękny naszyjnik z rzadkich kamieni lapis lazuli. Bogacze bardzo go cenili."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Święty ankh",
+      "description": "Złoty ankh, znak życia wiecznego, pobłogosławiony przez kapłanów świątyni."
+    },
+    "t12": {
+      "name": "Miedziane lustro",
+      "description": "Wypolerowane miedziane lustro do obrzędów oczyszczenia."
+    },
+    "t13": {
+      "name": "Kadzielnica",
+      "description": "Bogato zdobiona kadzielnica z brązu, używana w świątyni."
+    },
+    "t14": {
+      "name": "Obrzędowy kielich",
+      "description": "Święty srebrny kielich. Wylewano z niego napój w darze dla bogów."
+    },
+    "t15": {
+      "name": "Obrzędowy wachlarz",
+      "description": "Zdobny wachlarz z piór, którego kapłani używali podczas uroczystości."
+    },
+    "t16": {
+      "name": "Paciorki modlitewne",
+      "description": "Sznur pobłogosławionych paciorków do modlitwy i rozmyślania."
+    },
+    "t17": {
+      "name": "Naczynie ze świętą wodą",
+      "description": "Naczynie z pobłogosławioną wodą ze świętej studni świątyni."
+    },
+    "t18": {
+      "name": "Dzwon świątynny",
+      "description": "Dzwon z brązu. Wzywał ludzi do modlitwy i ogłaszał uroczystości."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Pieczęć faraona",
+      "description": "Dawna królewska pieczęć z kartuszem zapomnianego faraona."
+    },
+    "t20": {
+      "name": "Kryształowa kula",
+      "description": "Tajemnicza kryształowa kula. Podobno pokazuje obrazy z przeszłości i przyszłości."
+    },
+    "t21": {
+      "name": "Tablica z hieroglifami",
+      "description": "Dawna kamienna tablica z zagadkowymi przepowiedniami zapisanymi hieroglifami."
+    },
+    "t22": {
+      "name": "Złote berło",
+      "description": "Wspaniałe złote berło z Okiem Horusa na czubku."
+    },
+    "t23": {
+      "name": "Obsydianowy nóż",
+      "description": "Ostry jak brzytwa nóż z obsydianu, używany w dawnych obrzędach."
+    },
+    "t24": {
+      "name": "Kawałek meteorytu",
+      "description": "Kawałek świętego meteorytu. Wierzono, że jest w nim boska moc."
+    },
+    "t25": {
+      "name": "Dawny kompas",
+      "description": "Tajemniczy przyrząd, który zawsze wskazuje ukryte skarby."
+    },
+    "t26": {
+      "name": "Kryształ czasu",
+      "description": "Legendarny kryształ, który świeci mocą dawnych wieków."
+    },
+    "t27": {
+      "name": "Obrzędowa maska",
+      "description": "Bogato zdobiona złota maska, którą arcykapłani nosili podczas świętych uroczystości."
+    },
+    "t28": {
+      "name": "Pochodnia wiecznego ognia",
+      "description": "Pochodnia z ogniem, który nie zgasł od zamierzchłych czasów."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Korona Ra",
+      "description": "Legendarna korona boga słońca Ra, która promienieje boskim światłem i mocą."
+    },
+    "t30": {
+      "name": "Laska Thota",
+      "description": "Laska mądrości Thota, boga wiedzy. Kryje wszystkie dawne tajemnice."
+    },
+    "t31": {
+      "name": "Pióro Maat",
+      "description": "Święte pióro Maat, bogini prawdy. W zaświatach waży się nim dusze."
+    },
+    "t32": {
+      "name": "Łzy Izydy",
+      "description": "Łzy bogini Izydy zamienione w kryształ. Podobno chronią na zawsze."
+    },
+    "t33": {
+      "name": "Serce Ozyrysa",
+      "description": "Zachowane serce Ozyrysa, pana zaświatów. Wciąż bije siłą życia."
+    },
+    "t34": {
+      "name": "Amulet Oka Horusa",
+      "description": "Najpotężniejszy amulet ochronny, w którym jest cała moc Horusa."
+    },
+    "t35": {
+      "name": "Wąż Apopis",
+      "description": "Uwięziony kawałek węża chaosu Apopisa, zamknięty w świętym naczyniu."
+    },
+    "t36": {
+      "name": "Oddech Szu",
+      "description": "Flakonik z oddechem Szu, boga powietrza. Daje władzę nad wiatrami."
+    },
+    "t37": {
+      "name": "Łuska Sobka",
+      "description": "Jedna łuska boga-krokodyla Sobka. Chroni w wodzie."
+    },
+    "t38": {
+      "name": "Posążek strażnika Anubisa",
+      "description": "Mały posążek Anubisa, który ożywa, żeby pilnować skarbów właściciela."
+    },
+    "t39": {
+      "name": "Księga Umarłych",
+      "description": "Cała Księga Umarłych ze wszystkimi zaklęciami potrzebnymi w podróży w zaświaty."
+    },
+    "t40": {
+      "name": "Szczyt piramidy",
+      "description": "Złoty szczyt Wielkiej Piramidy, w którym zebrana jest moc wszystkich faraonów."
+    }
+  }
+}

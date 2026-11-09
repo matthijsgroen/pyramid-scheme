@@ -1,0 +1,858 @@
+{
+  "not-found": "Barkatu, bilatzen ari zaren elkarrizketa ez dago.",
+  "welcome": "Egipto! Benetan hemen nago.",
+  "welcome2": "Eta mapa hau… gehiegi ordaindu nuen. Zuzena izan dadila, behintzat.",
+  "welcome3": "Goazen. Ikus dezagun non dagoen gurutze hori.",
+
+  "pyramidIntro": "Harri hauetan zenbakiak daude. Eta batzuk falta dira…",
+  "pyramidIntro2": "Itxaron. Harri bakoitza azpiko bi harriak batuta da! Bai, hemen ere bai!",
+
+  "pyramidBlockedBlocks": "Ei, zer da hau? Bloke horiek itxita daude. Ez dute beren zenbakia erakusten!",
+  "pyramidBlockedBlocks2": "Ez da ezer. Begiratu inguruko blokeei: haietatik atera dezakezu.",
+  "pyramidBlockedBlocks3": "Baina ezin duzu idatzi. Zenbaki hori buruan gorde beharko duzu.",
+  "pyramidBlockedBlocks4": "Aurrera, hona arte iritsi zara. Zuk egin dezakezu!",
+
+  "levelCompleted": "Ha! Irekitzen ari da! Goazen, barrura.",
+  "exitPillar": {
+    "1": { "fez": "Ha! Eguzkia! Ikusten duzu argi-izpi hori? Hortik aterako gara. Sartu barruan, eta kito hemen." },
+    "2": {
+      "fez": "Bat bakarrik dago beti, korridore nagusiaren amaiera-amaieran. Nora joaten garela ere, hona itzultzen gara."
+    },
+    "3": { "explorer": "Irteera bat. Ados." }
+  },
+  "expeditionCompleted": "Zorionak, espedizioa amaitu duzu!",
+  "expeditionCompleted2": "Espedizio berri bat dago orain.",
+
+  "tombTutorial": "Oi, idazkia! Irakur dezakegu? Aurkitu ditugun hieroglifoekin… agian bai!",
+  "tombTutorial2": "Begira, batuketak ikurrekin! Ikusten dituzu hutsune horiek? Hor doaz hieroglifoak. Zureak, behean daudenak.",
+  "tombTutorial3": "Batuketa txikiek erakusten dute ikur bat noiz dagoen ondo. Horrela jakingo dugu zein ikur doan non.",
+  "tombTutorial4": "Dena beteta? Orduan zenbaki-giltzarrapo bat agertuko da. Batuketa handia da kodea, eta orduan hilobia irekiko da!",
+
+  "hieroglyphUnlock": "Altxor berezi bat dugu: horrekin itxitako bloke horietako batean idatz dezakegu!",
+  "hieroglyphUnlock2": "Ukitu dirdiratzen ari den harri bat, eta arrastatu altxorra haren gainera irekitzeko. Bloke bat piramide bakoitzeko.",
+
+  "errorHighlightTutorial": "Aurkitu dugun altxor horrek trikimailu bat du: erantzun oker bat idazten baduzu, akats bat gorriz dirdiratuko da!",
+  "errorHighlightTutorial2": "Bloke bakarra dirdiratzen da aldi berean, beraz oraindik ere erronka da. Baina laguntzen du!",
+
+  "earlyFeedbackTutorial": "Ikusten dituzu kontrol-bloke horiek? Berde edo gorri jartzen dira betetzen dituzun heinean. Berehala dakizu!",
+  "earlyFeedbackTutorial2": "Erabili itzulpuntu gisa ebazten ari zarenean. Bat gorri jartzen bada, inguruan zerbait konpondu behar da.",
+
+  "notEnoughHieroglyphs": "Espedizio hau beti gelditu dezakezu bidaien pantailara itzuliz.",
+  "notEnoughHieroglyphs2": "Espedizioa eten dezakegu, oraindik falta zaizkigun hieroglifoak beste nonbait bilatzeko.",
+
+  "tombLoot": "Ene, gure lehen altxorra! Oso ondo!",
+  "mapPiece": "Begira! HORI bai mapa. Benetan zaharra! Gure biak batera baino gehiago balio du!",
+  "mapPiece2": "Zati bat bakarrik da, e. Inguru honetako espedizio bakoitzak bat ezkutatzen du, eta guztiek batera hilobi bat erakusten dute.",
+  "mapComplete": "Osorik dago! Begira, zati guztiak primeran sartzen dira.",
+  "mapComplete2": "Hor, marra guztiak elkartzen diren lekuan. Hor dago hilobi bat.",
+  "mapComplete3": "Orain gure bidaietan dago. Joango gara begiratzera?",
+  "mapPiece3": "Espedizioen zerrendan kontatu zenbat ditugun. Nik behintzat kontatuko ditut!",
+
+  "mosaicIntro": "Oi, kolorezko beira! Begira nola dirdiratzen duen. HORI ez da zaborretara botatzen!",
+  "mosaicIntro2": "Irudi baten zati bat da. Leiho oso bat beiraz betea, eta aurkitzen dugun zati bakoitzak pixka bat itzultzen du.",
+  "mosaicIntro3": "Ez duzu kanpaleku bat nonbait? Eraman itzazu, eta han jarriko ditugu elkarrekin. Zer irteten den ikusi nahi dut!",
+  "mosaicReminder": "Pst! Beira-zati horiek oraindik gure zakuan dabiltza kalaka. Kanpalekuko leihoan jarriko ditugu?",
+
+  "mosaicStarter": "Katu bat atarian, eta suge bat presaka alde egiten. Horrek esne-katilu bat merezi zuen.",
+  "mosaicStarter2": "Egiptoarrek katuak maite zituzten horregatik hain zuzen: aleetan sartzen ziren sugeak eta arratoiak hiltzen zituzten.",
+  "mosaicStarter3": "Hainbeste maite zituzten, non bat jainkosa bihurtu zuten. Bastet. Etxearen babeslea, atearena, eta atzean lotan dagoen guztiena.",
+
+  "mosaicJunior": "Begira bere eskuari: norbait luma nola heldu erakusten ari zaio.",
+  "mosaicJunior2": "Txori-buruduna Thoth da. Idaztea, kontatzea, dena gordetzea: hori guztia berea da.",
+  "mosaicJunior3": "Ibaian gora jarraitu genuen ibisa? Bere txoria da. Horman idatzi dugun zenbaki bakoitza ere berea da.",
+
+  "mosaicExpert": "Argi hori ez da zortea. Areto osoa horrela eraiki zuten, argia hantxe eror zedin, goiz egokian.",
+  "mosaicExpert2": "Eguzkia Amun-Ra da: ezkutukoa, eta denok ikusten dugun argia. Biak batera.",
+  "mosaicExpert3": "Zerua hain zehatz neur dezakeenak edozer neur dezake. Bide osoan haien kalkuluak ebazten aritu gara.",
+
+  "mosaicMaster": "Azal berdea, eta garia beragandik zuzenean hazten. Hori nahita da.",
+  "mosaicMaster2": "Osiris. Hil egin zuten, eta berriz elkartu, eta orain urtero itzultzen dena da, ibaiak soroak urez betetzen dituenean.",
+  "mosaicMaster3": "Hemen behean, horixe da ideia guztia: hiltzea ez da amaiera. Pentsamendu alaia hilobi baterako, ezta?",
+
+  "mosaicWizard": "Bihotz bat alde batean. Luma bat bestean. Eta orekan daude.",
+  "mosaicWizard2": "Luma Ma'at da: egia, oreka, gauzak behar diren bezala. Bihotza luma hori baino astunagoa bada, ez zara atetik pasatzen.",
+  "mosaicWizard3": "Balantza geldi eusten duen txakala Anubis da. Bera da zu hona ekartzen zaituena.",
+
+  "mosaicFinale": "Gelditu une batez. Begira piramide horietatik zer ekarri dugun gora.",
+  "mosaicFinale2": "Zati bakoitza beraren parte da: balantza geldi eusten duenarena. Bide osoan begira egon da.",
+  "mosaicFinale3": "Hori da gutaz duen idazkia. Eta nik esango nuke orekan dagoela.",
+
+  "shopFirstVisit": "Ah, hemen gaude. Nire postua. Esan nizun salerosketarako nentorrela.",
+  "shopFirstVisit2": "Mostradore honetako guztia nonbaitetik ekarri dut. Hori duela bi hilobitik dator.",
+
+  "shopArrival": "Ah, nire postua! Utzi bidean jaso dudana erakusten.",
+  "shopArrival2": "Aurkikuntza arraroak dira garestienak, baina daramatzazun tramankulu guztiengatik ordainduko dizut.",
+  "arrival": {
+    "starter_1": {
+      "1": { "explorer": "Begira, han atzean! Esfingea!" },
+      "2": { "explorer": "Hemendik ere erraldoia da." },
+      "3": { "explorer": "Diotenez, idazki bat dago bere hanken azpian. Inork irakur ezin duena." },
+      "4": { "explorer": "Gero. Lehenik piramide hau!" }
+    },
+    "starter_2": {
+      "1": {
+        "fez": "Ha! Azkenean, ulertzen dudan zerbait. Niloan gora joaten zen guztia hemendik pasatzen zen lehenik."
+      },
+      "2": {
+        "fez": "Eta merkatariek dena idazten dute. Nork zer erosi zuen, nork nori zor zion, nor berandu iritsi zen…"
+      },
+      "3": { "explorer": "Nor iritsi zen berandu?" },
+      "4": { "fez": "Batez ere nor iritsi zen berandu!" },
+      "5": { "fez": "Hiru mila urte. Salgaiak desagertu dira, eta tiketak hemen daude oraindik. Tipikoa!" }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Begira ate horiei! Jendea hona etortzen zen babesa eskatzera. Eta gero, horrelako ate bat itxita geratzen zen."
+      },
+      "2": { "explorer": "Itxita, norentzat?" },
+      "3": { "fez": "Ondo eskatzen ez zuen edonorentzat. Guretzat, batez ere." },
+      "4": { "fez": "Herrialde honetan itxita dagoen guztia, norbaitek itxi zuen benetan. Benetan-benetan." },
+      "5": { "fez": "Eta katuak! Hemen katuak gurtzen zituzten. Ezin zituzten utzi bakean." }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "Oi, hau gustatzen zait. Hemen ikasten zuten idazten! Ikurrez ikur, eltze hautsien zatietan. Papiroa garestiegia zen haurrentzat."
+      },
+      "2": { "explorer": "Zaborretan ikasten zuten?" },
+      "3": {
+        "fez": "Zegoen edozertan! Eta nahikoa ikur ikasten badituzu, bat-batean horma bat ez da apaingarri bat gehiago."
+      },
+      "4": { "explorer": "Esfinge hori… berriz begiratu nahi diot." },
+      "5": { "fez": "Oraindik ez. Laster." }
+    },
+
+    "junior_1": {
+      "1": { "fez": "Urtero itzultzen ziren uholdearekin, ia egun berean." },
+      "2": { "fez": "Beraz, jendea tarteko egunak kontatzen hasi zen. Hortik dator egutegia: txorietatik." },
+      "3": { "explorer": "Txorietatik." },
+      "4": { "fez": "Txoriak eta paperak. Beti dira txoriak eta paperak." }
+    },
+    "junior_2": {
+      "1": { "fez": "Hemen egiten zuten dena. Ez hilobiak, haien barruan sartzen ziren gauzak baizik." },
+      "2": { "fez": "Begira moldeei. Eskumuturreko bera, berrogei aldiz." },
+      "3": { "explorer": "Berrogei pertsonarentzat?" },
+      "4": {
+        "fez": "Ordain zezakeen edonorentzat. Noble batek errege batek zuena nahi zuen, noble batek ordain zezakeen prezioan."
+      }
+    },
+    "junior_3": {
+      "1": { "fez": "Thoth, hau. Sekretuen eta magiaren jainkoa, ziur samar nago." },
+      "2": { "explorer": "Samar." },
+      "3": { "fez": "Ehuneko laurogeita hamar. Tira, biltzen ari zaren ikurrak bereak dira." }
+    },
+    "junior_4": {
+      "1": { "fez": "Laurogeita hamar metro baino gehiago, eta goian inoiz itzaltzen ez zen su bat." },
+      "2": { "fez": "Marinelek kosta aurkitzen zuten egun bateko bidetik. Lehenago, kontra jotzean aurkitzen zuten." },
+      "3": { "explorer": "Nola aurkitzen da ezer hemen, horrelakorik gabe?" },
+      "4": { "fez": "Han egon den norbaiti galdetzen diozu. Hori da nire lanbide osoa." }
+    },
+
+    "expert_1": {
+      "1": {
+        "fez": "Hirurogei hilobi baino gehiago haran bakar batean zulatuta, eta guztiak irekita zeuden gu iritsi baino lehen."
+      },
+      "2": { "explorer": "Nork ireki zituen?" },
+      "3": { "fez": "Gu bezalako jendeak, gehienetan. Lehenago." },
+      "4": { "fez": "Zer iruditzen zaizu?" },
+      "5": { "explorer": "Berandu gabiltzala." }
+    },
+    "expert_2": {
+      "1": { "fez": "Amun-Ra. Eguzkia. Denen gogokoena, eta ulertzekoa da: begira zein handia den lekua." },
+      "2": { "explorer": "Bi izen." },
+      "3": { "fez": "Jainko bera, uste dut. Ezagunenei beste izen bat gehitzen zieten." }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Herrialde osoa ibai bakar baten bi aldeetako marra berde bat da, eta hemen zabaldu egiten da, honela."
+      },
+      "2": { "fez": "Dena hazten da. Eta dena kosk egiten du." },
+      "3": { "explorer": "Eta horietako zeinengatik etorri gara?" },
+      "4": { "fez": "Bat ere ez izatea espero nuen, egia esan." }
+    },
+    "expert_4": {
+      "1": {
+        "fez": "Lehena. Honen aurretik, erregeak harlauza lau baten azpian lurperatzen zituzten, beste guztiak bezala."
+      },
+      "2": { "fez": "Norbait hemen egon zen eta pentsatu zuen: eta hori egiten badugu, baina sei aldiz, gorantz?" },
+      "3": { "explorer": "Ondo atera zen?" },
+      "4": { "fez": "Hura zutik dago oraindik, eta bera ez. Zer esan nahi duzunaren arabera." }
+    },
+
+    "master_1": {
+      "1": { "fez": "Bi milioi bloke. Norbaitek kontatu zituen." },
+      "2": { "explorer": "Norbaitek kontatu zituen?" },
+      "3": { "fez": "Beti dago norbait kontatzen. Hori ahazten zaio jendeari: idazkariek zuzentzen zuten dena." },
+      "4": { "fez": "Ederra, ezta? Ez dut pentsatu ere egin nahi soldaten zerrenda nolakoa zen." }
+    },
+    "master_2": {
+      "1": { "fez": "Argibideak. Hori besterik ez da: zer esan, eta zein ordenatan, bidaia ondo joan dadin." },
+      "2": { "explorer": "Eskuliburu bat." },
+      "3": { "fez": "Hilda egoteko eskuliburu bat. Dena idazten zuten, hauek." },
+      "4": { "fez": "Eta hori, bilatzen ari garena kontuan hartuta, aste osoko lehen berri ona da." }
+    },
+    "master_3": {
+      "1": { "fez": "Ah. Norbaiten kanpalekua." },
+      "2": { "explorer": "Berria?" },
+      "3": { "fez": "Nahiko berria. Lata-janaria eta eztul txarra, itxuraz." },
+      "4": { "fez": "Hemendik harago sartu ziren, eta ez zuten beren tresnarik eraman." },
+      "5": { "explorer": "Itzuli ziren haien bila?" },
+      "6": { "fez": "…Jarrai dezagun aurrera." }
+    },
+    "master_4": {
+      "1": {
+        "fez": "HAU da besteek imitatu nahi zutena. Begira koloreari: hiru mila urte, eta oraindik bustita dirudi."
+      },
+      "2": { "explorer": "Henut amorratuta egongo litzateke." },
+      "3": { "fez": "Henut oharrak hartzen egongo litzateke." }
+    },
+
+    "wizard_1": {
+      "1": {
+        "fez": "Eguzkia munduaren azpitik pasatzen da gauez, eta beste aldetik ateratzen da. Hori da sinesmen osoa."
+      },
+      "2": { "fez": "Hamabi ordu ilunpetan, oztopoz beteta, eta norbaitek eraman behar du alde batetik bestera." },
+      "3": { "explorer": "Hori da guk egiten duguna." },
+      "4": { "fez": "Ozen ez esaten saiatzen ari nintzen." },
+      "5": { "explorer": "Harea sartzen ari da oraindik." },
+      "6": { "fez": "Hiru mila urte daramatza sartzen. Ez da gelditzen, bueltaka dabil." },
+      "7": { "fez": "Bete, irauli, berriz hasi. Eguzkia bezala." }
+    },
+    "wizard_2": {
+      "1": { "fez": "Bi dira, hemezortzi metroko altuera, eta biak Amenhotep." },
+      "2": {
+        "fez": "Greziarrek behin begiratu, eta beren heroi bat zela erabaki zuten. Memnon. Izen hori bi mila urtez itsatsita geratu zen."
+      },
+      "3": { "explorer": "Noren izena dago idatzita?" },
+      "4": { "fez": "Berea. Tronuan zizelkatuta, beti egon den lekuan." },
+      "5": { "fez": "Inork ez zuen irakurri." },
+      "6": {
+        "fez": "Lurrikararen ondoren, iparraldekoak kantatu egiten zuen egunsentian. Nota bat, goizero, eguzkiak arraila berotzen zuenean."
+      },
+      "7": { "explorer": "Eta orain?" },
+      "8": { "fez": "Enperadore batek konponarazi zuen. Ordutik ez du soinurik egin." }
+    },
+    "wizard_3": {
+      "1": {
+        "fez": "Balantza. Bihotza alde batean, luma bestean. Beraz, bihotz on eta astun batek irabazten du, ezta?"
+      },
+      "2": { "explorer": "Gauza astun bat nora doa?" },
+      "3": { "fez": "…Behera." },
+      "4": { "fez": "Oh." },
+      "5": { "fez": "Arina. ARINA nahi duzu." }
+    },
+    "wizard_4": {
+      "1": { "fez": "Gailur-harria azkena jartzen da, eta urrezkoa da, piramide osoak lehen argia har dezan." },
+      "2": { "explorer": "Norentzat?" },
+      "3": { "fez": "Begiratzen duen edonorentzat. Hori zen kontua: ez zen inoiz barruko gizonarentzat." }
+    }
+  },
+
+  "tomb": {
+    "starter": {
+      "1": { "ipi": "Ei! Eskuak kanpora! Hori nire pitxerra da!" },
+      "2": { "fez": "…Pitxer horrek zerbait esan du?!" },
+      "3": { "ipi": "Ni izan naiz. Hirugarren apala, koska duena. Hori nirea da." },
+      "4": { "explorer": "Ados, ados! Bere lekuan geratuko da. Nor zara zu?" },
+      "5": { "ipi": "Ipi. Berrogei urte kontuak eramaten. Berrogei!" },
+      "6": { "fez": "Kontuak? Norenak?" },
+      "7": { "ipi": "Denenak! Nork zer zor zuen, azken gari-zakuraino." },
+      "8": { "ipi": "Henut hori, hemendik iparraldera? Hamaika deben lapislazuli. Inoiz ez zituen ordaindu!" },
+      "9": { "explorer": "Eta oraindik gogoratzen duzu, hainbeste denboraren ondoren?" },
+      "10": { "ipi": "Idatzita dago! Idatzita dagoena, gertatu egin zen." },
+      "11": { "ipi": "Hori izeneko horiek, ordea… Hori txalupagilea, Hori okina… eta beste Hori hura." },
+      "12": { "fez": "Katuak ere bazenituen? Denek zituzten katuak, ezta? Hain politak!" },
+      "13": { "ipi": "Politak? Aleentzat ziren! Badakizu zenbat kostatzen den arratoi bakar bat, urtaro oso batean?" },
+      "14": { "fez": "…Ah. Bai, noski." },
+      "15": { "ipi": "Esaiozu Henuti Ipik bidali zaituela. Horrek arratsaldea zapuztuko dio." },
+      "16": { "fez": "Gustatzen zait!" },
+      "17": { "explorer": "Oraindik dirua zor diotela gustatzen zaizu, besterik ez." }
+    },
+    "junior": {
+      "1": { "henut": "Azkenean. Lapislazuliagatik etorriko zinen. Ipi oraindik lapislazuliarekin ari da, ezta?" },
+      "2": { "explorer": "Bai, ari da." },
+      "3": { "henut": "Beira zen. Beira ederra. Berak bazekien." },
+      "4": { "fez": "…Eskumuturrekoa ere beira zen?" },
+      "5": {
+        "henut": "Hemengo guztia diruz eros zitekeen imitaziorik onena da, gazte, eta pieza bakoitza neronek aukeratu nuen."
+      },
+      "6": {
+        "henut": "Beno. Horma. Hirugarren ikurra ez da nire izena. Ikasle batek egina, zizelarekin eta inork zaindu gabe."
+      },
+      "7": { "henut": "Zure ikurrak ikasten aritu zara. Nabaritzen da. Konpondu ezazu." }
+    },
+    "juniorFixed": {
+      "1": { "henut": "Hara. Orain mila urte barru ere nire izena izango da." },
+      "2": { "explorer": "Ipik ondo idatzi zuen." },
+      "3": { "henut": "Ipik dena idazten zuen ondo. Horixe zen bere alde on bakarra." },
+      "4": { "fez": "Axola du, hemen behean?" },
+      "5": { "henut": "Axola duen gauza bakarra da." },
+      "6": { "fez": "Goian Thothez betetako horma oso bat zuen. Sekretuen jainkoa." },
+      "7": { "henut": "Thothek kontatu egiten du. Thothek zuk egindakoa idazten du, eta idatzita geratzen da." },
+      "8": { "henut": "Sekretuak: horrela deitzen diote jendeak kalkuluei, egiten ez dakitenean." },
+      "9": {
+        "henut": "Aurrera bazoaz, eta argi dago baietz, Karnaken apaiz bat dago, hildakoei egin ez zien zerbitzu bat zor diena. Jasanezina izango da horrekin. Apaizak horrelakoak dira."
+      },
+      "10": { "henut": "…Ezagutzen dugu elkar?" },
+      "11": { "fez": "Gogoratuko nuke." },
+      "12": { "henut": "Bai. Nik ere bai." }
+    },
+    "expert": {
+      "1": { "priest": "Ez zara nik espero dudan pertsona." },
+      "2": { "explorer": "Nor espero duzu, ba?" },
+      "3": {
+        "priest": "Zigilua duen norbait. Hona ekarri behar zen, hor utzi, eta haren gainean hitz egin. Hiru gauza horietako bat ere ez da gertatu."
+      },
+      "4": { "fez": "…Noiztik zaude itxaroten?" },
+      "5": { "priest": "Ez daramat konturik. Ez litzateke profesionala izango." },
+      "6": {
+        "priest": "Eskaintza egoki bat errege bat lurperatu zutenean eskuan zeukan gauza da. Ez kopia bat. Ez antzeko bat. Gauza bera, bere marka duela."
+      },
+      "7": { "priest": "Ekarri hori, eta iragarri egingo zaituzte. Ekarri beste edozer, eta ez." },
+      "8": { "explorer": "Iragarri, norengana?" },
+      "9": { "priest": "Jakingo duzu. Denek jakiten dute, azkenean." },
+      "10": { "fez": "Eguzkiarekin oso maitemindua dago, hau. Amun-Ra hori guztia kanpoan." },
+      "11": { "priest": "Amun ezkutukoa da. Ra edonork ikus dezakeena." },
+      "12": { "priest": "Jainko bera dira. Hori ez da kasualitatea, horixe da ideia osoa." },
+      "13": { "fez": "…Noski. Bai. Banekien." },
+      "14": { "explorer": "Ez zenekien." },
+      "15": { "fez": "Ez nekien." }
+    },
+    "expertB": {
+      "1": { "fez": "Hemen ez da inor sartu. Ez gu, ez lehengoak, inor ez." },
+      "2": { "explorer": "Nola dakizu?" },
+      "3": { "fez": "Oraindik zerbait dagoelako barruan." }
+    },
+    "master": {
+      "1": { "pharaoh": "Hurbil zaitezke. Hurbildu zara. Ondo da." },
+      "2": { "fez": "Maiestatea." },
+      "3": { "pharaoh": "Bai." },
+      "4": { "explorer": "Zure zigilua behar dugu." },
+      "5": { "pharaoh": "Denek behar dute. Nirea bi aldiz eraman dute, eta inoiz ez dute itzuli." },
+      "6": { "pharaoh": "Bigarren aldian kopia bat utzi zuten. KOPIA bat. NIRE hilobian. Begiratuko ez banu bezala." },
+      "7": { "explorer": "Kopia hemen dago oraindik?" },
+      "8": {
+        "pharaoh": "Noski hemen dagoela, ez du ezer balio. Benetakoa egon beharko litzatekeen apalean dago, oker egoten."
+      },
+      "9": { "pharaoh": "Eraman nahi baduzu. Eraman apaiz horri. Ikusi nora iristen zaren horrekin." },
+      "10": { "fez": "…Ondo pasatzen ari da." },
+      "11": { "pharaoh": "Bederatzirehun urteotako asterik onena da." },
+      "12": { "fez": "Osiris hor horman. Hildakoen jauna: gai goibela." },
+      "13": { "pharaoh": "BERDEA da, animalia barregarri hori." },
+      "14": {
+        "pharaoh": "Uholdepeko soro bat bezain berdea. Hil egin zuten, eta berriz elkartu, eta urtero-urtero itzultzen da."
+      },
+      "15": { "pharaoh": "Hemen behean hori ez da goibela, horixe da kontu osoa. Hiltzea ez da amaiera." }
+    },
+    "wizard": {
+      "1": { "priest": "Utzi hor. Hor. Bai." },
+      "2": { "priest": "…" },
+      "3": { "priest": "Hori egiten dudan lehen aldia da. Nola egiten zen ahaztu nuela pentsatzen hasia nintzen." },
+      "4": { "explorer": "Ahaztu zenuen?" },
+      "5": { "priest": "Erabat. Gogora etorri zait." }
+    },
+    "wizardB": {
+      "1": { "fez": "Haien soka. Oraindik lotuta." },
+      "2": { "explorer": "Hona arte iritsi ziren." },
+      "3": { "fez": "Hau baino harago. Eta gero sokatik gora itzuli ziren." },
+      "4": { "explorer": "Koaderno bat dago." },
+      "5": { "fez": "Zer dio?" },
+      "6": { "explorer": "Ezin dut idazkia irakurri. Zigiluaren bila itzuli gara. Hobea egin dugu, horren ordez." },
+      "7": { "explorer": "Inor ez zen engainatu." },
+      "8": { "fez": "…Faltsutu egin zuten, zertarako zen irakurtzen ez zekitelako." },
+      "9": { "explorer": "Eta gero etxera joan ziren." }
+    },
+    "wizardC": {
+      "1": { "fez": "Gelditu une batez. Begira piramide horietatik zer ekarri dugun gora." },
+      "2": { "explorer": "Irudi bat da." },
+      "3": { "fez": "Denbora guztian izan da irudi bat." }
+    }
+  },
+
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Kobazulo bat! Mapan soto-ate bat zegoen, eta hau muino oso bat da!" },
+      "2": {
+        "fez": "Mutil azkarra. Zure salgaiak muino batean ezkutatu: hori ez zaio lapur bati inoiz burura etorriko."
+      },
+      "3": { "explorer": "Guri bai." },
+      "4": { "fez": "Gu ez gara lapurrak. Bezeroak gara. Oso bezero berantiarrak." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Hau izan behar da. Henut! Hamaika deben lapislazuli zor dituen hori!" },
+      "2": { "fez": "Zer uste duzu, zati bat geratuko zaigu kobratzen baditugu?" },
+      "3": { "explorer": "Oraindik ez duzu ezer kobratu." },
+      "4": { "fez": "Kontuak aurretik egitea gustatzen zait." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Beraz, hemen dago Henuten apaiza. Jasanezina, esan zuen." },
+      "2": { "fez": "Zer uste duzu, zerbait ekarri beharko genuke? Loreak?" },
+      "3": { "explorer": "Hilda dago." },
+      "4": { "fez": "Arrazoi gehiago. Lehen inpresio ona eman nahi duzu, ezta?" }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Apaiz nagusia bakarrik sar zitekeen hona. Eta orain gu!" },
+      "2": { "explorer": "Guk sar gaitezke?" },
+      "3": { "fez": "Ez dago inor atean ezetz esateko." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Begira, mapa hemen amaitzen da. Harea, eta gero ezer ez." },
+      "2": { "explorer": "Orduan leku egokian gaude." },
+      "3": { "fez": "Horixe esan nahi dut. Horixe da urduri jartzen nauena." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Osirisen aretoa! Berdea, noski. Urtero itzultzen delako, garia bezala." },
+      "2": { "explorer": "Beti jakin duzu hori." },
+      "3": { "fez": "Beti." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "fez": "Jainkoen beraien biltegia! Zer gordetzen duzu dena baduzunean?" },
+      "2": { "explorer": "Jendeak ekartzen dizuna." },
+      "3": { "fez": "…Bai. Hori izango da." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Indar kosmikoen erresuma. Hara, hara." },
+      "2": { "fez": "Ezer gutxi balio duen zerbait saldu beharko banu, nik ere horrela deituko nioke." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Bat-batean, zerbait gaizki egin dudan sentsazioa daukat." },
+      "2": { "explorer": "Zer, adibidez?" },
+      "3": { "fez": "Ez dakit. Hori da okerrena." }
+    }
+  },
+
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Hainbeste palanka eta ate, soto bakar baterako!" },
+      "2": { "fez": "Orduan zerbait ona dago behean. Inork ez du hainbeste lan egiten zaborrarengatik." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Uf. Ate horiek Ipirenak baino askoz zailagoak ziren." },
+      "2": { "fez": "Tira. Andreak dirua zuen, noski." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Uf, azkenean! Kobazulo horrek ez gintuen barruan nahi, benetan." },
+      "2": { "explorer": "Hori zen asmoa, uste dut." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Pst… zergatik ari naiz xuxurlaka?" },
+      "2": { "explorer": "Ez dakit. Ni ere bai." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Uf. Buztana oraindik dardaraka daukat azken ate horrengatik." },
+      "2": { "fez": "Bere gauzak horrela gordetzen dituen errege bat… ez ditu galdu nahi, inola ere." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Ikusten? Egon lur azpian behar adina denbora, eta berriz aterako zara gora." },
+      "2": { "explorer": "Hori ere Osirisena da?" },
+      "3": { "fez": "Ez, hori nirea da." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "fez": "Horrelako ateak… lehen, buelta emango genion, besterik gabe." },
+      "2": { "explorer": "Orain ez." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Hiru solairu kobazulo, eta orduan bakarrik sarrerako atea." },
+      "2": { "explorer": "Merezi du, orduan." },
+      "3": { "fez": "Hori esaten dute beti. Eta gero pitxer bat da." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Iluntasunaren azken zatia. Sentitzen dut." },
+      "2": { "explorer": "Hori bera esan zenuen aurrekoan." },
+      "3": { "fez": "Eta ia arrazoia nuen." }
+    }
+  },
+
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Begira hori! Piramide bat, lur azpian! Merkatari batentzat!" },
+      "2": { "fez": "Edo oso ondo irabazten zuen, edo oso ondo egiten zituen tratuak." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Begira punta nola dirdiratzen duen eguzkitan! Benetako urrea, apustu egingo nuke." },
+      "2": { "explorer": "Lurreko zulo batean. Norentzat dirdiratzen du?" },
+      "3": { "fez": "Berarentzat. Nabari da nolakoa zen." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Hm. Saldu daiteke, egia esan, jainko batena den zerbait?" },
+      "2": { "explorer": "Galdetu jainkoari." },
+      "3": { "fez": "Nahiago ez." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Uste duzu apaiz horrek badakiela hemen gabiltzala?" },
+      "2": { "explorer": "Ez darama konturik. Ez litzateke profesionala izango." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Begira, bakar-bakarrik eguzkitan. Polita, ezta?" },
+      "2": { "fez": "Marrazki bat egin eta joango gara?" },
+      "3": { "explorer": "Ez dakizu marrazten." },
+      "4": { "fez": "…Ez. Barrura, orduan." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Hor barruan dagoenak itzultzea espero du. Hori da hemengo tratua." },
+      "2": { "explorer": "Noiztik dago itxaroten?" },
+      "3": { "fez": "Aspalditik. Baina lanaren parte da. Hilda egotea, batez ere, itxarotea da." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "explorer": "Ene." },
+      "2": { "fez": "Bai." },
+      "3": { "fez": "Batzuetan ez dago ezer gehiago esateko, ezta?" }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Ikusten duzu eguzki-orban hori piramidean? Ordua jakin zenezake horrekin." },
+      "2": { "explorer": "Zer ordu da, ba?" },
+      "3": { "fez": "…Arratsaldea. Gutxi gorabehera. Ez naiz erlojua." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Hor dago. Mapa horretako marra guztiak hona iristen dira." },
+      "2": { "explorer": "Orduan hau da amaiera." },
+      "3": { "fez": "Maparena, bai. Bitxia. Hobeto sentituko nintzela uste nuen." }
+    }
+  },
+
+  "camp": {
+    "firstHome": {
+      "1": { "fez": "Hau da zure kanpalekua? Su bat eta kutxa bat?" },
+      "2": { "explorer": "Gure kanpalekua." },
+      "3": { "fez": "Gurea. Ados. Orduan suaren ondoko lekua neretzat." },
+      "4": { "fez": "Muskerra naiz, azken finean. Komeni zaidanean." }
+    },
+    "homeHaul": {
+      "1": { "fez": "Zakuak hustu! Bidaia osoko zatirik onena." },
+      "2": { "explorer": "Piramidea baino hobea?" },
+      "3": { "fez": "Piramidea ez da gurea. Hau bai." }
+    },
+    "homeEmpty": {
+      "1": { "explorer": "Esku hutsik." },
+      "2": { "fez": "Eta zer? Ibili egin gara. Horrek ere balio du." },
+      "3": { "explorer": "Zertarako?" },
+      "4": { "fez": "Nire hanketarako. Oso laburrak dira, badakizu." }
+    },
+    "rested": {
+      "1": { "fez": "Hara. Hobeto pixka bat?" },
+      "2": { "explorer": "Urratu txiki bat besterik ez zen." },
+      "3": { "fez": "Ez nuen begiratu ere egin. Eta hala ere eseri egin behar izan nuen." }
+    },
+    "chapterJunior": {
+      "1": { "fez": "Beno, ondo atera da. Hurrengoa!" },
+      "2": { "explorer": "Ez zen hain erraza izan." },
+      "3": { "fez": "Orain bai. Ondoren, dena da erraza." }
+    },
+    "chapterExpert": {
+      "1": { "fez": "Han kanpoan tranpak daude. Benetakoak. Kosk egiten dute." },
+      "2": { "fez": "Min hartzen duzu? Orduan oinez itzuliko gara. Etxean sendatuko zara." },
+      "3": { "explorer": "Eta zu?" },
+      "4": { "fez": "Zure atzetik ibiliko naiz. Hor seguruago dago." }
+    },
+    "chapterMaster": {
+      "1": { "fez": "Lau piramide hor kanpoan. Gogoratzen duzu bakarra zegoenean?" },
+      "2": { "explorer": "Ez da hainbeste denbora." },
+      "3": { "fez": "Ez. Baina hala dirudi." }
+    },
+    "chapterWizard": {
+      "1": { "fez": "Begira azkenari. Urrezko punta eta guzti!" },
+      "2": { "fez": "Horrek garesti aterako zaigu. Azkenak beti da garestiena." },
+      "3": { "explorer": "Zer kostako zaigu?" },
+      "4": { "fez": "…Jada ez nago ziur." }
+    },
+    "firstFind": {
+      "1": { "fez": "Begira: beti hor egon izan balitz bezala!" },
+      "2": { "fez": "Prezio-etiketa bat zintzilikatzeko gogoa ematen dit." },
+      "3": { "explorer": "Ez egin." },
+      "4": { "fez": "Ez, ez. Etxetik ez da saltzen. Badakit hori." }
+    },
+    "structureDone": {
+      "1": { "fez": "Amaituta dago! Zati guztiak jarrita!" },
+      "2": { "explorer": "Guk geuk egina." },
+      "3": { "fez": "Tira. Nik, batez ere, hatzarekin seinalatu nuen." }
+    }
+  },
+
+  "animal": {
+    "forSale": {
+      "1": { "fez": "Begira zer dagoen postuan! Orain garraioa ere saltzen dut." },
+      "2": { "explorer": "Murtxikatzen ari da." },
+      "3": { "fez": "Hori prezioan sartuta dago." }
+    },
+    "boughtDonkey": {
+      "1": { "fez": "Salduta! Asto bat. Burugogorra, baina edozer eramaten du." },
+      "2": { "explorer": "Eta non dago?" },
+      "3": { "fez": "Etxerako bidean dagoeneko. Nahiago du gu gabe ibili." }
+    },
+    "blockedDonkey": {
+      "1": { "fez": "Ez gara hain urrun ibiliko gauza hauekin guztiekin. Horretarako asto bat behar da." },
+      "2": { "fez": "Eta asmatu nork duen bat? Nik. Nire postuan, Henuten gangan." }
+    },
+    "throughDonkey": {
+      "1": { "explorer": "Gogotsu dago." },
+      "2": { "fez": "Gaur. Galdetu iezaiozu bihar berriz." }
+    },
+    "arrivesDonkey": {
+      "1": { "fez": "Hor dago! Gu baino lehen iritsi da." },
+      "2": { "explorer": "Sua ere aurkitu du." },
+      "3": { "fez": "Nire lekua. Tira. Bera izan da lehena." }
+    },
+    "boughtCart": {
+      "1": { "fez": "Gurdi bat! Bi gurpil, eta ia ez dute kalakarik egiten." },
+      "2": { "explorer": "Ia?" },
+      "3": { "fez": "Kalaka doan da." }
+    },
+    "blockedCart": {
+      "1": { "fez": "Astoak ez du beste zaku bat eramango. Galdetu diot." },
+      "2": { "fez": "Gurdi bat, hori behar dugu. Badago bat nire postuan, apaiz nagusiarenean." }
+    },
+    "throughCart": {
+      "1": { "explorer": "Entzuten duzu?" },
+      "2": { "fez": "Gurdia da. Pixka bat kantatzen du." },
+      "3": { "explorer": "Bide osoan?" }
+    },
+    "arrivesCart": {
+      "1": { "fez": "Gurdi bat gure kanpalekuan! Orain nonbaitera goazela dirudi." },
+      "2": { "explorer": "Nonbaitera goaz." },
+      "3": { "fez": "Bai, baina orain denek dakite." }
+    },
+    "boughtCamel": {
+      "1": { "fez": "Gamelu bat! Egun askotan ibiltzen da urik gabe. Ni ez, e." },
+      "2": { "explorer": "Zuri begira dago." },
+      "3": { "fez": "Goitik behera. Gameluek beti goitik behera begiratzen dizute." }
+    },
+    "blockedCamel": {
+      "1": { "fez": "Santutegi barrena? Oinez ez gara inoiz iritsiko." },
+      "2": { "fez": "Zorionez, gamelu bat daukat. Nire postuan, apaiz nagusiarenean." }
+    },
+    "throughCamel": {
+      "1": { "fez": "Belaunikatu egin da! Niregatik!" },
+      "2": { "explorer": "Gu gainera igo gaitezen." },
+      "3": { "fez": "Utzi gozatzen." }
+    },
+    "arrivesCamel": {
+      "1": { "fez": "Hor dago. Kanpalekua berea balitz bezala." },
+      "2": { "explorer": "Eta astoa?" },
+      "3": { "fez": "Ikusten ez balu bezala egiten. Ni bezala." }
+    },
+    "boughtSecondDonkey": {
+      "1": { "fez": "Beste asto bat! Orain lehenengoak norekin hitz egin badu." },
+      "2": { "explorer": "Hitz egin?" },
+      "3": { "fez": "Arrantzaka. Hitz egitea da, baina ozenago." }
+    },
+    "blockedSecondDonkey": {
+      "1": { "fez": "Astoak ez du aurrera egingo. Bakarrik ez, dio." },
+      "2": { "explorer": "Hori esan du?" },
+      "3": { "fez": "Astoz badakit. Lagun bat nahi du, eta badut bat nire postuan, faraoiaren altxorrean." }
+    },
+    "throughSecondDonkey": {
+      "1": { "fez": "Entzun itzazu! Bata bestea baino ozenago." },
+      "2": { "explorer": "Nor ari da irabazten?" },
+      "3": { "fez": "Ez gu. Guk entzun egin behar dugu." }
+    },
+    "arrivesSecondDonkey": {
+      "1": { "fez": "Begira itzazu. Urteak daramatzate elkar ezagutzen, dirudienez." },
+      "2": { "explorer": "Gu bezala." },
+      "3": { "fez": "Guk arrantza gutxiago egiten dugu." }
+    },
+    "boughtSecondCamel": {
+      "1": { "fez": "Beste gamelu bat. Bai. Niri ere ez zaizkit gustatzen." },
+      "2": { "fez": "Baina honek, behintzat, lagunkoia dirudi." },
+      "3": { "explorer": "Zure txapelari begira dago." }
+    },
+    "blockedSecondCamel": {
+      "1": { "fez": "Osirisen aretoa. Gamelu bakar batekin ez gara iritsiko." },
+      "2": { "fez": "Zorionez, beste bat daukat, nire postuan, faraoiaren altxorrean. Azken-azkena." },
+      "3": { "explorer": "Beti esaten duzu hori." }
+    },
+    "throughSecondCamel": {
+      "1": { "fez": "Nire txapela jaten ari da!" },
+      "2": { "explorer": "Gamelu lagunkoia." },
+      "3": { "fez": "Lagunkoiegia." }
+    },
+    "arrivesSecondCamel": {
+      "1": { "fez": "Bi gamelu. Orain biek begiratzen didate goitik behera." },
+      "2": { "explorer": "Joan astoekin, orduan." },
+      "3": { "fez": "Haiekin nago dagoeneko." }
+    },
+    "boughtSturdyCart": {
+      "1": { "fez": "Gurdi sendoagoa. Honek ez du kantatzen bidean." },
+      "2": { "explorer": "Loreak margotuta ditu." },
+      "3": { "fez": "Sendotasunagatik." }
+    },
+    "blockedSturdyCart": {
+      "1": { "fez": "Gurdi zaharra ez da osorik iritsiko. Zerbait sendoagoa behar da." },
+      "2": { "fez": "Badago bat nire postuan, Jainkoen gangan. Ez margoagatik, e." }
+    },
+    "throughSturdyCart": {
+      "1": { "explorer": "Kalakarik ez." },
+      "2": { "fez": "Ikusten? Sendotasuna." },
+      "3": { "explorer": "Eta loreak?" },
+      "4": { "fez": "Haiek ere laguntzen dute pixka bat." }
+    },
+    "arrivesSturdyCart": {
+      "1": { "fez": "Begira nola dirdiratzen duen!" },
+      "2": { "explorer": "Behar baino politagoa." },
+      "3": { "fez": "Bai. Ez nuen sendotasunagatik saldu, ezta ere." }
+    },
+    "boughtCaravanBanner": {
+      "1": { "fez": "Bandera bat. Egia esango dizut: ez du ezer irekitzen." },
+      "2": { "explorer": "Zer egiten du, ba?" },
+      "3": { "fez": "Haizetan dabil. Oso ederki." }
+    },
+    "arrivesCaravanBanner": {
+      "1": { "fez": "Begira nola dabilen haizetan! Gure kanpalekuaren gainean!" },
+      "2": { "explorer": "Oraindik ez du ezer irekitzen." },
+      "3": { "fez": "Ez. Ez du behar." }
+    }
+  },
+
+  "bond": {
+    "starter": {
+      "1": { "fez": "Azkarra izan da." },
+      "2": { "explorer": "Ate bat zen." },
+      "3": { "fez": "Nik aste bat beharko nuke." }
+    },
+    "starterTomb": {
+      "1": { "fez": "Argi gera dadin. Gero saltzeko nabil honetan. Orain esaten dut, oraindik egia den bitartean." },
+      "2": { "explorer": "Ados." }
+    },
+    "junior": {
+      "1": { "fez": "Isilik geratu zara une batez." },
+      "2": { "explorer": "Kontatzen ari nintzen." },
+      "3": { "fez": "Badakit. Jendea asmatzen ikusi dut. Hori ez zen asmatzea." }
+    },
+    "expert": {
+      "1": { "fez": "Gutxigatik izan da." },
+      "2": { "explorer": "Ondo zegoen." },
+      "3": { "fez": "Gutxigatik izan da. Esan dezaket, ezta?" }
+    },
+    "master": {
+      "1": { "fez": "Gelditu gaitezke." },
+      "2": { "explorer": "Bai, gelditu gaitezke." },
+      "3": { "fez": "Esan dezadan esanda egon dadin. Ez egiteko." }
+    },
+    "wizard": {
+      "1": { "explorer": "Zenbat balio du honek?" },
+      "2": { "fez": "…" },
+      "3": { "fez": "Ez diot horri preziorik jarriko." },
+      "4": { "explorer": "Ados." }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": { "fez": "Ene. Hori horma bat zen orain dela segundo bat." },
+      "2": { "explorer": "Pasabide bat zegoen atzean." },
+      "3": { "fez": "Hainbeste urtetan jendea ondotik pasatu da. Hainbeste urtetan!" }
+    }
+  },
+
+  "reading": {
+    "junior": {
+      "1": { "explorer": "Hemen orain irakur dezakedan lerro bat dago." },
+      "2": { "explorer": "Ogia eman nien gose zirenei." },
+      "3": { "fez": "Ogia. Hilobi batean." },
+      "4": { "explorer": "Aurrekoan ere badago. Ez nekien hitzak zirenik." }
+    },
+    "expert": {
+      "1": { "explorer": "Bigarren lerroa. Ura egarri zirenei." },
+      "2": { "fez": "Ogia, eta orain ura. Norbaitek eskuzabal gisa gogoratua izan nahi zuen, benetan." },
+      "3": { "explorer": "Denek dute. Horma guztiek, hilobi guztiek, bi lerro berak." },
+      "4": { "fez": "Orduan, edo denak ziren eskuzabalak, edo hori da esan behar dena." },
+      "5": { "explorer": "Edo horrekin neurtzen zituzten." }
+    },
+    "master": {
+      "1": { "explorer": "Arropa biluzik zeudenei. Hirugarren lerroa." },
+      "2": { "fez": "Ogia, ura, arropa. Emandako gauzen zerrenda bat da." },
+      "3": { "explorer": "Dena berarekin eraman zuen gizon baten hilobian." },
+      "4": { "fez": "…Bai. Ohartu nintzen." }
+    },
+    "sphinx": {
+      "1": { "fez": "Hasi ginen lekura itzuli gara. Ez da mugitu." },
+      "2": { "explorer": "Idazkia hor dago oraindik." },
+      "3": { "fez": "Irakur dezakezu?" },
+      "4": { "explorer": "Izen bat." },
+      "5": { "fez": "Norena?" },
+      "6": { "explorer": "Zurea." },
+      "7": { "fez": "…" },
+      "8": { "fez": "Ziur zaude?" },
+      "9": { "explorer": "Idatzita dago." },
+      "10": { "fez": "Hara." },
+      "11": { "fez": "Hori." },
+      "12": { "fez": "Egiptoko herri guztietan zegoen Hori bat." },
+      "13": { "fez": "Tira. Horrek azaltzen du txapela." }
+    }
+  },
+
+  "altar": {
+    "refused": {
+      "1": { "priest": "Ez." },
+      "2": { "explorer": "Bere marka dauka." },
+      "3": {
+        "priest": "Marka bat dauka. Oso marka ona. Tresna bikainak zituen eta hemen zer eginik ez zuen norbaitek egin zuen, eta ez duela asko."
+      },
+      "4": { "priest": "Hiru mila urte daramatzat itxaroten. Ez didazu iruzurrik egingo azken astean." }
+    }
+  },
+
+  "meeting": {
+    "starter_1": {
+      "1": { "voice": "Ei! HOR ez! Begiratu non zabiltzan!" },
+      "2": { "explorer": "Barkatu! Ez dut ezer ikusten! Non zaude?" },
+      "3": { "fez": "Hemen behean! Nire salgaien gainean zaude!" },
+      "4": { "explorer": "Muskerra?! Fez txapelarekin?" },
+      "5": { "fez": "Merkataria. Eta zer du, ba, nire txapelak?" },
+      "6": { "fez": "Zu ere piramideagatik etorri zara, ezta? Mapa erosi duzu? Gehiegi ordaindu?" },
+      "7": { "explorer": "GEHIEGI-GEHIEGI." },
+      "8": { "fez": "Nik ere bai. Pfff." },
+      "9": { "explorer": "Esfingearen idazkia… irakur dezakezu?" },
+      "10": { "fez": "Ez. Inork ez, jada. Oinarri hori urdina eta urrezkoa zen garai batean, badakizu." },
+      "11": { "explorer": "Nola dakizu hori?" },
+      "12": { "fez": "…Entzun egin nuen. Eta, zer bilatzen duzu hemen?" },
+      "13": { "explorer": "Zerbait polita." },
+      "14": { "fez": "Polita ondo saltzen da! Badakizu zer? Zurekin noa!" },
+      "15": { "explorer": "Zer? Nirekin?" },
+      "16": { "fez": "Lau begik bik baino gehiago ikusten dute. Goazen, piramide hori zain dago!" }
+    }
+  },
+
+  "end": {
+    "1": { "fez": "Polita izan da?" },
+    "2": { "explorer": "Tira, ez dago gaizki." }
+  },
+
+  "revisit": {
+    "starter": {
+      "north1": { "1": { "ipi": "Oraindik hemen? Iparraldera! Henut! Hamaika deben!" } },
+      "north2": { "1": { "ipi": "Hamaika deben lapislazuli. Henut. Iparraldea. Zeren zain zaude?" } },
+      "paid1": { "1": { "ipi": "Eta? Ordaindu du? …Ez. Noski ezetz." } },
+      "paid2": { "1": { "ipi": "Beira? BEIRA? Hemen lapislazuli dio. Hementxe. Lapislazuli!" } },
+      "later1": { "1": { "ipi": "Zu berriz. Hirugarren apala, koska duena: oraindik nirea. Eskuak kanpora." } },
+      "later2": { "1": { "ipi": "Berrogei urteko kontuak, eta bat ere ez dago ondo. Bat ere ez!" } }
+    },
+    "junior": {
+      "wall1": { "1": { "henut": "Horma. Hirugarren ikurra. Oraindik ez da nire izena." } },
+      "wall2": {
+        "1": { "henut": "Hemen zaude oraindik, eta antzara hori nire horman dago oraindik. Konpondu ezazu." }
+      },
+      "priest1": { "1": { "henut": "Oraindik nire izena. Begiratu dut. Eta orain: Karnak, apaiza. Zoaz." } },
+      "priest2": { "1": { "henut": "Karnak! Nahikoa itxaron du. Zoaz eta utzi iragartzen." } },
+      "met1": { "1": { "henut": "Eta? Jasanezina, ezta? Esan nizun." } },
+      "later1": { "1": { "henut": "Beira, oraindik. Ederra, oraindik. Nik aukeratua, oraindik." } }
+    },
+    "expert": {
+      "seal1": { "1": { "priest": "Zigilua. Hona ekarria, hor utzia, haren gainean hitz eginda. Itxarongo dut." } },
+      "seal2": { "1": { "priest": "Ah. Zu berriz. Eta oraindik zigilurik gabe." } },
+      "king1": { "1": { "priest": "Erregea ikusi duzu. Ongi. Gauza bera, kontuz: ez antzeko bat." } },
+      "later1": { "1": { "priest": "Zu berriz. Hemen ez dago ezer gehiago egiteko. Oso lasaigarria da." } }
+    },
+    "master": {
+      "priest1": {
+        "1": { "pharaoh": "Oraindik hemen? Zoaz apaizarengana kopia horrekin! Nola amaitzen den entzun nahi dut." }
+      },
+      "priest2": { "1": { "pharaoh": "Hurbil zaitezke. Berriz. Apaizak ikusi du jada?" } },
+      "rite1": {
+        "1": { "pharaoh": "Beraz, azkenean egin du bere erritua. Ongi. Orain jasanezina izango da horrekin." }
+      },
+      "later1": { "1": { "pharaoh": "Oraindik bederatzirehun urteotako asterik onena. Eta jarraitzen du!" } }
+    },
+    "wizard": {
+      "later1": { "1": { "priest": "…Bai. Oraindik gogoratzen dut nola. Ongi." } },
+      "later2": { "1": { "priest": "Utzia, haren gainean hitz eginda. Eginda. Sentsazio arraroa da." } }
+    }
+  }
+}

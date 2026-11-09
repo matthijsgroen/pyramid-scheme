@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Kilidi açmak için eşyayı taşın üstüne kaydır",
+    "alsoAvailable": "Bunlar da var:"
+  },
+  "perks": {
+    "max-health": "Can sınırına +½ kalp",
+    "armor": "Tuzaklar daha az can götürür",
+    "trap-insight": "Süreli tuzaklarda +1 sn",
+    "pack-mule": "Bir su tulumu iki kalp iyileştirir",
+    "compass": "Pusula parçası",
+    "detection": "Koridor bulucu parçası",
+    "tier-unlock": "{{tier}} keşiflerini açar",
+    "tier-coming-soon": "{{tier}} keşifleri sonraki bir güncellemede gelecek",
+    "location-key": "Başka bir mezarı gösterir",
+    "partOf": "{{count}} / {{total}}"
+  },
+  "tiers": {
+    "stone": "Taş",
+    "bronze": "Bronz",
+    "silver": "Gümüş",
+    "gold": "Altın",
+    "divine": "Kutsal"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Gümüş Deben",
+      "description": "Eski Mısır'dan bir gümüş para. Tüccarlar Nil boyunca alışveriş yaparken kullanırdı."
+    },
+    "t2": {
+      "name": "Papirüs Tomarı",
+      "description": "Bir tüccarın kayıt tomarı. Ticaret yolları ve değerli yüklerin listesi yazılı."
+    },
+    "t3": {
+      "name": "Fildişi Tarak",
+      "description": "İnce ince oyulmuş fildişi bir tarak. Uzak ülkelerden getirilen pahalı bir eşya."
+    },
+    "t4": {
+      "name": "Toprak Kandil",
+      "description": "Sade ama zarif bir yağ kandili. Tüccarın odalarını aydınlatırdı."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Altın Bilezik",
+      "description": "Değerli taşlarla süslü, gösterişli bir altın bilezik. Mısırlı soylular takardı."
+    },
+    "t6": {
+      "name": "Tören Hançeri",
+      "description": "Sapı mücevherli bir hançer. Soyluların törenlerinde kullanılırdı."
+    },
+    "t7": {
+      "name": "Yeşim Bok Böceği",
+      "description": "Yeşim taşından koruyucu bir muska. Yeniden doğuşun ve sonsuz hayatın işareti."
+    },
+    "t8": {
+      "name": "Kaymaktaşı Kavanoz",
+      "description": "Zarif bir kaymaktaşı kavanoz. İçinde değerli yağlar ve kokular saklanırdı."
+    },
+    "t9": {
+      "name": "Abanoz Baston",
+      "description": "Cilalı abanozdan bir baston. Tepesinde altın bir ankh var."
+    },
+    "t10": {
+      "name": "Lapis Lazuli Kolye",
+      "description": "Nadir lapis lazuli taşlarından yapılmış göz alıcı bir kolye. Zenginler çok severdi."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Kutsal Ankh",
+      "description": "Sonsuz hayatı gösteren altın bir ankh. Tapınak rahipleri onu kutsamış."
+    },
+    "t12": {
+      "name": "Bakır Ayna",
+      "description": "Cilalı bir bakır ayna. Arınma törenlerinde kullanılırdı."
+    },
+    "t13": {
+      "name": "Buhurdan",
+      "description": "Süslü bir bronz tütsü kabı. Tapınaktaki dualarda yakılırdı."
+    },
+    "t14": {
+      "name": "Tören Kadehi",
+      "description": "Kutsal bir gümüş kadeh. Tanrılara içecek sunmak için kullanılırdı."
+    },
+    "t15": {
+      "name": "Tören Yelpazesi",
+      "description": "Tüylü, süslü bir yelpaze. Rahipler tapınak törenlerinde kullanırdı."
+    },
+    "t16": {
+      "name": "Dua Boncukları",
+      "description": "Kutsanmış dua boncuklarından bir dizi. Dua ederken ve düşünürken kullanılırdı."
+    },
+    "t17": {
+      "name": "Kutsal Su Kabı",
+      "description": "İçinde kutsal tapınak kuyusundan alınmış su olan bir kap."
+    },
+    "t18": {
+      "name": "Tapınak Çanı",
+      "description": "Bir bronz çan. İnsanları duaya çağırır, törenlerin başladığını duyururdu."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Firavun Mührü",
+      "description": "Eski bir kral mührü. Üstünde unutulmuş bir firavunun kartuşu var."
+    },
+    "t20": {
+      "name": "Kristal Küre",
+      "description": "Gizemli bir kristal küre. Geçmişi ve geleceği gösterdiği söylenir."
+    },
+    "t21": {
+      "name": "Hiyeroglif Tableti",
+      "description": "Eski bir taş tablet. Üstüne gizemli kehanetler hiyeroglifle yazılmış."
+    },
+    "t22": {
+      "name": "Altın Asa",
+      "description": "Muhteşem bir altın asa. Tepesinde Horus'un gözü var."
+    },
+    "t23": {
+      "name": "Obsidyen Bıçak",
+      "description": "Jilet gibi keskin, obsidyenden bir tören bıçağı. Eski törenlerde kullanılırdı."
+    },
+    "t24": {
+      "name": "Göktaşı Parçası",
+      "description": "Kutsal bir göktaşından bir parça. İçinde tanrısal bir güç olduğuna inanılır."
+    },
+    "t25": {
+      "name": "Eski Pusula",
+      "description": "Gizemli bir yön bulma aleti. Hep saklı hazineleri gösterir."
+    },
+    "t26": {
+      "name": "Zaman Kristali",
+      "description": "Efsanevi bir kristal. Geçmiş çağların gücüyle parlar."
+    },
+    "t27": {
+      "name": "Tören Maskesi",
+      "description": "Süslü bir altın maske. Başrahipler kutsal törenlerde takardı."
+    },
+    "t28": {
+      "name": "Sönmeyen Meşale",
+      "description": "Hiç sönmeyen bir alevle yanan meşale. Çok eski zamanlardan beri hiç sönmemiş."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Ra'nın Tacı",
+      "description": "Güneş tanrısı Ra'nın efsanevi tacı. Tanrısal ışık ve güç saçar."
+    },
+    "t30": {
+      "name": "Thoth'un Asası",
+      "description": "Bilgi tanrısı Thoth'un bilgelik asası. Bütün eski sırlar onda saklı."
+    },
+    "t31": {
+      "name": "Ma'at'ın Tüyü",
+      "description": "Doğruluk tanrıçası Ma'at'ın kutsal tüyü. Öbür dünyada ruhları tartmak için kullanılır."
+    },
+    "t32": {
+      "name": "Isis'in Gözyaşları",
+      "description": "Tanrıça Isis'in kristale dönmüş gözyaşları. Sonsuz koruma verdiği söylenir."
+    },
+    "t33": {
+      "name": "Osiris'in Kalbi",
+      "description": "Yeraltı dünyasının efendisi Osiris'in saklanmış kalbi. Hâlâ hayat gücüyle atıyor."
+    },
+    "t34": {
+      "name": "Horus'un Gözü Muskası",
+      "description": "En güçlü koruma muskası. İçinde Horus'un bütün gücü var."
+    },
+    "t35": {
+      "name": "Apep'in Yılanı",
+      "description": "Kargaşa yılanı Apep'ten bağlanmış bir parça. Kutsal bir kabın içine kapatılmış."
+    },
+    "t36": {
+      "name": "Shu'nun Nefesi",
+      "description": "Hava tanrısı Shu'nun nefesinin olduğu küçük bir şişe. Rüzgârlara söz geçirir."
+    },
+    "t37": {
+      "name": "Sobek'in Pulu",
+      "description": "Timsah tanrı Sobek'ten tek bir pul. Suda korur."
+    },
+    "t38": {
+      "name": "Bekçi Anubis Heykeli",
+      "description": "Küçük bir Anubis heykeli. Sahibinin hazinelerini korumak için canlanır."
+    },
+    "t39": {
+      "name": "Ölüler Kitabı",
+      "description": "Ölüler Kitabı'nın tamamı. Öbür dünya yolculuğu için gereken bütün büyüler içinde."
+    },
+    "t40": {
+      "name": "Piramit Tepe Taşı",
+      "description": "Büyük Piramit'in altın tepe taşı. Bütün firavunların gücü onda toplanmış."
+    }
+  }
+}

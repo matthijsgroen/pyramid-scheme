@@ -1,0 +1,1730 @@
+{
+  "not-found": "Üzgünüm, aradığın konuşma yok.",
+  "welcome": "Mısır! Gerçekten buradayım.",
+  "welcome2": "Bir de bu harita… Ona çok fazla para verdim. Umarım doğrudur.",
+  "welcome3": "Hadi. Şu çarpı nerede, bir bakalım.",
+  "pyramidIntro": "Bu taşların üstünde sayılar var. Bazıları da eksik…",
+  "pyramidIntro2": "Dur. Her taş, altındaki iki taşın toplamı! Evet, burada da!",
+  "pyramidBlockedBlocks": "Hey, bu da ne? Bu bloklar mühürlü. Sayılarını göstermiyorlar!",
+  "pyramidBlockedBlocks2": "Boş ver. Etrafındaki bloklara bak. Sayıyı onlardan bulabilirsin.",
+  "pyramidBlockedBlocks3": "Ama içine yazamazsın. O sayıyı aklında tutman gerekecek.",
+  "pyramidBlockedBlocks4": "Hadi, buraya kadar geldin. Sen bunu yaparsın!",
+  "levelCompleted": "Ha! Açılıyor! Hadi, içeri.",
+  "exitPillar": {
+    "1": {
+      "fez": "Ha! Gün ışığı! Şu ışık huzmesini görüyor musun? Dışarı çıkış yolumuz o. İçine adım at, burada işimiz bitsin."
+    },
+    "2": {
+      "fez": "Hep bir tane var, ana koridorun tam sonunda. Nerede dolaşırsak dolaşalım, buraya geri geliriz."
+    },
+    "3": {
+      "explorer": "Tek çıkış. Not ettim."
+    }
+  },
+  "expeditionCompleted": "Tebrikler, keşfi tamamladın!",
+  "expeditionCompleted2": "Yeni bir keşif açıldı.",
+  "tombTutorial": "Ooo, yazı! Okuyabilir miyiz? Bulduğumuz hiyerogliflerle… belki!",
+  "tombTutorial2": "Şuna bak, içinde işaretler olan toplama işlemleri! Şu boş yerleri görüyor musun? Hiyeroglifler oraya giriyor. Seninkiler, aşağıda.",
+  "tombTutorial3": "Küçük işlemler bir işaretin doğru yerde olup olmadığını gösterir. Hangi işaret nereye gidiyor, böyle buluruz.",
+  "tombTutorial4": "Hepsi doldu mu? O zaman bir şifreli kilit çıkar. Büyük işlem şifreyi verir. Sonra da mezar açılır!",
+  "hieroglyphUnlock": "Özel bir eşyamız var. Onunla o mühürlü bloklardan birine yazabiliriz!",
+  "hieroglyphUnlock2": "Parlayan bir taşa dokun, sonra eşyayı üstüne sürükle ve kilidini aç. Her piramitte bir blok.",
+  "errorHighlightTutorial": "Bulduğumuz o hazinenin işe yarar bir hilesi var. Yanlış bir cevap yazarsan, bir hata kırmızı parlar!",
+  "errorHighlightTutorial2": "Bir seferde sadece bir blok parlar, yani yine de zor. Ama hatayı aramayı kolaylaştırır!",
+  "earlyFeedbackTutorial": "Şu kontrol bloklarını görüyor musun? Sen doldurdukça yeşil ya da kırmızı olurlar. Hemen anlarsın!",
+  "earlyFeedbackTutorial2": "Çözerken onlara güven. Biri kırmızı olursa, yakınında düzeltilmesi gereken bir şey var.",
+  "notEnoughHieroglyphs": "Yolculuk ekranına dönerek bu keşfi her zaman bırakabilirsin.",
+  "notEnoughHieroglyphs2": "Keşfe ara verip eksik hiyeroglifleri başka yerde arayabiliriz.",
+  "tombLoot": "Vay, ilk hazinemiz! Aferin!",
+  "mapPiece": "Bak! İşte BU bir harita. Gerçekten eski! İkimizinkinden daha değerli!",
+  "mapPiece2": "Ama sadece bir parçası, ha. Buralardaki her keşifte bir tane saklı. Hepsi birlikte bir mezarı gösteriyor.",
+  "mapComplete": "Tamamlandı! Bak, bütün parçalar tam oturuyor.",
+  "mapComplete2": "Şurada, bütün çizgilerin buluştuğu yerde. Orada bir mezar var.",
+  "mapComplete3": "Artık yolculuklarımızın arasında. Gidip bakalım mı?",
+  "mapPiece3": "Kaç tane bulduğumuzu keşif listesinden takip et. Ben kesin sayacağım!",
+  "mosaicIntro": "Ooo, renkli cam! Bak nasıl parlıyor. BUNU kimse çöpe atmaz!",
+  "mosaicIntro2": "Bir resmin parçası bu. Koca bir cam pencere. Bulduğumuz her parça onun bir bölümünü geri getiriyor.",
+  "mosaicIntro3": "Senin bir yerlerde kampın yok mu? Parçaları oraya götür, orada birleştiririz. Ne çıkacak, çok merak ediyorum!",
+  "mosaicReminder": "Pişt! O cam parçaları hâlâ çantamızda tıngırdıyor. Kamptaki pencereye takalım mı?",
+  "mosaicStarter": "Kapıda bir kedi, bir de aceleyle kaçan bir yılan. Bir kâse sütü hak etti.",
+  "mosaicStarter2": "Mısırlılar kedileri tam da bunun için severdi. Kediler yılanları ve buğdaya dadanan fareleri yakalardı.",
+  "mosaicStarter3": "O kadar severlerdi ki birini tanrıça yaptılar: Bastet. Evin, kapının ve kapının ardında uyuyan herkesin koruyucusu.",
+  "mosaicJunior": "Eline bak. Biri ona kalemi nasıl tutacağını gösteriyor.",
+  "mosaicJunior2": "Kuş başlı olan Thoth. Yazmak, saymak, kayıt tutmak… Hepsi onun işi.",
+  "mosaicJunior3": "Nehir boyunca peşinden gittiğimiz ibis var ya? O, onun kuşu. Duvarlara yazdığımız her sayı da ona ait.",
+  "mosaicExpert": "O ışık şans eseri değil. Bütün salonu, ışık doğru sabah tam oraya düşsün diye yaptılar.",
+  "mosaicExpert2": "Güneş, Amun-Ra'dır. Hem saklı olan, hem de herkesin gördüğü ışık. İkisi birden.",
+  "mosaicExpert3": "Gökyüzünü bu kadar iyi ölçebilen biri her şeyi ölçebilir. Biz de bunca zamandır onların hesaplarını çözüyoruz.",
+  "mosaicMaster": "Yeşil bir ten ve içinden fışkıran buğday. Bu bilerek yapılmış.",
+  "mosaicMaster2": "Osiris. Öldürüldü, sonra parçaları birleştirildi. Şimdi her yıl nehir tarlaları basınca geri gelen şey o.",
+  "mosaicMaster3": "Burada bütün fikir bu: ölmek bitmek demek değil. Bir mezar için ne neşeli bir düşünce, değil mi?",
+  "mosaicWizard": "Bir yanda bir kalp. Öbür yanda tek bir tüy. Ve terazi dengede.",
+  "mosaicWizard2": "Tüy, Ma'at'tır. Doğruluk, denge, her şeyin olması gerektiği gibi olması. Kalbin o tüyden ağırsa, kapıdan geçemezsin.",
+  "mosaicWizard3": "Teraziyi tutan çakal Anubis. Seni buraya getiren de o.",
+  "mosaicFinale": "Bir dakika geri çekil. O piramitlerden yukarı neler taşıdığımıza bir bak.",
+  "mosaicFinale2": "Her parça onun bir parçası. Teraziyi tutanın. Bütün yol boyunca bizi izliyormuş.",
+  "mosaicFinale3": "Bu, onun bizim hakkımızda tuttuğu kayıt. Bana sorarsan, terazi dengede.",
+  "shopFirstVisit": "Ah, geldik. Benim tezgâhım. Ben bu işe ticaret için girdim demiştim, değil mi?",
+  "shopFirstVisit2": "Bu tezgâhtaki her şeyi bir yerlerden taşıyıp çıkardım. Şu, iki mezar önceden.",
+  "shopArrival": "Ah, tezgâhım! Yolda topladıklarımı bir sereyim.",
+  "shopArrival2": "Nadir buluntular en pahalısı. Ama yanında taşıdığın ufak tefek her şeye para veririm.",
+  "arrival": {
+    "starter_1": {
+      "1": {
+        "explorer": "Bak, şurada! Sfenks!"
+      },
+      "2": {
+        "explorer": "Buradan bile kocaman."
+      },
+      "3": {
+        "explorer": "Pençelerinin altında bir yazı varmış. Kimsenin okuyamadığı bir yazı."
+      },
+      "4": {
+        "explorer": "Sonra. Önce bu piramit!"
+      }
+    },
+    "starter_2": {
+      "1": {
+        "fez": "Ha! Sonunda anladığım bir şey. Nil'den yukarı giden her şey önce buradan geçerdi."
+      },
+      "2": {
+        "fez": "Tüccarlar da her şeyi yazar. Kim ne aldı, kim kime borçlu, kim geç kaldı…"
+      },
+      "3": {
+        "explorer": "Kim geç kaldı mı?"
+      },
+      "4": {
+        "fez": "Özellikle kim geç kaldı!"
+      },
+      "5": {
+        "fez": "Üç bin yıl. Mallar gitmiş, fişler hâlâ burada. Tam da beklediğim gibi!"
+      }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Şu kapılara bak! İnsanlar buraya korunmak için gelirdi. Ve böyle bir kapı kapalı kalırdı."
+      },
+      "2": {
+        "explorer": "Kime kapalı?"
+      },
+      "3": {
+        "fez": "Kibarca istemeyen herkese. Yani en çok bize."
+      },
+      "4": {
+        "fez": "Bu ülkede mühürlenen her şeyi biri ciddi ciddi mühürlemiş. Hem de çok ciddi."
+      },
+      "5": {
+        "fez": "Bir de kediler! Burada kedilere bayılırlardı. Sevmeye doyamazlardı."
+      }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "Ooo, burayı sevdim. Burada yazmayı öğrenirlerdi! İşaret işaret, kırık çömleklerin üstüne. Papirüs çocuklar için çok pahalıydı."
+      },
+      "2": {
+        "explorer": "Çöpün üstünde mi çalışırlardı?"
+      },
+      "3": {
+        "fez": "Ne bulurlarsa! Bunlardan yeterince öğrenirsen, bir duvar birden süs olmaktan çıkar."
+      },
+      "4": {
+        "explorer": "O Sfenks… Ona bir kez daha bakmak istiyorum."
+      },
+      "5": {
+        "fez": "Daha değil. Az sonra."
+      }
+    },
+    "junior_1": {
+      "1": {
+        "fez": "Her yıl taşkınla birlikte geri gelirlerdi, neredeyse aynı gün."
+      },
+      "2": {
+        "fez": "İnsanlar da aradaki günleri saymaya başladı. Takvim buradan çıktı: kuşlardan."
+      },
+      "3": {
+        "explorer": "Kuşlardan."
+      },
+      "4": {
+        "fez": "Kuşlar ve kâğıt işleri. Hep kuşlar ve kâğıt işleri."
+      }
+    },
+    "junior_2": {
+      "1": {
+        "fez": "Hepsini burada yaparlardı. Mezarları değil, mezarlara giren eşyaları."
+      },
+      "2": {
+        "fez": "Kalıplara bak. Aynı bilezik, kırk kere."
+      },
+      "3": {
+        "explorer": "Kırk kişi için mi?"
+      },
+      "4": {
+        "fez": "Parası olan herkes için. Bir soylu, kralın sahip olduğu şeyi isterdi, ama bir soylunun ödeyebileceği fiyata."
+      }
+    },
+    "junior_3": {
+      "1": {
+        "fez": "Bu Thoth. Sırların ve büyünün tanrısı. Galiba."
+      },
+      "2": {
+        "explorer": "Galiba mı?"
+      },
+      "3": {
+        "fez": "Yüzde doksan. Neyse, topladığın işaretler onun."
+      }
+    },
+    "junior_4": {
+      "1": {
+        "fez": "Doksan metreden uzun, tepesinde de hiç sönmeyen bir ateş."
+      },
+      "2": {
+        "fez": "Denizciler kıyıyı bir günlük yoldan bulurdu. Ondan önce kıyıyı ona çarparak bulurlardı."
+      },
+      "3": {
+        "explorer": "Böyle bir şey olmadan burada bir şey nasıl bulunur?"
+      },
+      "4": {
+        "fez": "Daha önce gitmiş birine sorarsın. Benim bütün mesleğim bu."
+      }
+    },
+    "expert_1": {
+      "1": {
+        "fez": "Tek bir vadiye oyulmuş altmıştan fazla mezar. Ve biz gelmeden hepsi tek tek açılmış."
+      },
+      "2": {
+        "explorer": "Kim açmış?"
+      },
+      "3": {
+        "fez": "Çoğunlukla bizim gibi insanlar. Daha önce."
+      },
+      "4": {
+        "fez": "Sen ne diyorsun?"
+      },
+      "5": {
+        "explorer": "Geç kaldık diyorum."
+      }
+    },
+    "expert_2": {
+      "1": {
+        "fez": "Amun-Ra. Güneş. Herkesin gözdesi. Nedenini görebilirsin, şu yerin büyüklüğüne bak!"
+      },
+      "2": {
+        "explorer": "İki isim."
+      },
+      "3": {
+        "fez": "Aynı tanrı bence. Sevilen tanrılara bir isim daha takarlardı."
+      }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Bütün ülke, tek bir nehrin iki yanında yeşil bir şerit. Burada da açılıp bu hale geliyor."
+      },
+      "2": {
+        "fez": "Her şey büyüyor. Her şey de ısırıyor."
+      },
+      "3": {
+        "explorer": "Biz hangisi için geldik?"
+      },
+      "4": {
+        "fez": "Açıkçası hiçbiri olmasın diye umuyordum."
+      }
+    },
+    "expert_4": {
+      "1": {
+        "fez": "İlk piramit. Bundan önce krallar da herkes gibi düz bir taşın altına gömülürdü."
+      },
+      "2": {
+        "fez": "Biri burada durup düşünmüş: ya bunu yapsak, ama altı kere, üst üste?"
+      },
+      "3": {
+        "explorer": "İşe yaradı mı?"
+      },
+      "4": {
+        "fez": "Piramit hâlâ ayakta, o değil. Neyi kastettiğine bağlı."
+      }
+    },
+    "master_1": {
+      "1": {
+        "fez": "İki milyon blok. Biri saymış."
+      },
+      "2": {
+        "explorer": "Biri mi saymış?"
+      },
+      "3": {
+        "fez": "Her zaman biri sayar. İnsanlar bunu hep unutur: bütün bu işi kâtipler yönetirdi."
+      },
+      "4": {
+        "fez": "Çok güzel, değil mi? İşçilerin maaş listesini düşünmek bile istemiyorum."
+      }
+    },
+    "master_2": {
+      "1": {
+        "fez": "Talimatlar. Hepsi bu: ne söyleyeceksin, hangi sırayla, yolculuk düzgün gitsin diye."
+      },
+      "2": {
+        "explorer": "Bir kullanma kılavuzu."
+      },
+      "3": {
+        "fez": "Ölü olmanın kullanma kılavuzu. Bu insanlar her şeyi ama her şeyi yazmış."
+      },
+      "4": {
+        "fez": "Biz ne aradığımızı düşünürsek, bu haftanın ilk iyi haberi."
+      }
+    },
+    "master_3": {
+      "1": {
+        "fez": "Ah. Birinin kampı."
+      },
+      "2": {
+        "explorer": "Yeni mi?"
+      },
+      "3": {
+        "fez": "Sayılır. Konserve yemek ve kötü bir öksürük, görünüşe bakılırsa."
+      },
+      "4": {
+        "fez": "Buradan daha içeri girmişler ve eşyalarını yanlarına almamışlar."
+      },
+      "5": {
+        "explorer": "Onları almaya geri geldiler mi?"
+      },
+      "6": {
+        "fez": "…Yürümeye devam edelim."
+      }
+    },
+    "master_4": {
+      "1": {
+        "fez": "İşte öbürlerinin taklit ettiği şey BU! Şu renge bak. Üç bin yıl geçmiş, hâlâ ıslak gibi duruyor."
+      },
+      "2": {
+        "explorer": "Henut çıldırırdı."
+      },
+      "3": {
+        "fez": "Henut not alırdı."
+      }
+    },
+    "wizard_1": {
+      "1": {
+        "fez": "Güneş gece dünyanın altından geçer ve öbür taraftan doğar. Bütün inanç bu."
+      },
+      "2": {
+        "fez": "Karanlıkta on iki saat, yolda bir sürü engel. Ve birinin onu karşıya taşıması gerekiyor."
+      },
+      "3": {
+        "explorer": "Biz de tam bunu yapıyoruz."
+      },
+      "4": {
+        "fez": "Bunu söylememeye çalışıyordum."
+      },
+      "5": {
+        "explorer": "Kum hâlâ içeri doluyor."
+      },
+      "6": {
+        "fez": "Üç bin yıldır doluyor. Durmuyor, sadece dönüp duruyor."
+      },
+      "7": {
+        "fez": "Dolar, döner, yeniden başlar. Tıpkı güneş gibi."
+      }
+    },
+    "wizard_2": {
+      "1": {
+        "fez": "İki tane, on sekiz metre boyunda. İkisi de Amenhotep."
+      },
+      "2": {
+        "fez": "Yunanlılar bir baktılar ve onu kendi kahramanları sandılar: Memnon. Bu ad iki bin yıl boyunca kaldı."
+      },
+      "3": {
+        "explorer": "Üstünde kimin adı yazıyor?"
+      },
+      "4": {
+        "fez": "Kendi adı. Tahtına oyulmuş, hep orada duruyordu."
+      },
+      "5": {
+        "fez": "Kimse okumadı."
+      },
+      "6": {
+        "fez": "Depremden sonra kuzeydeki heykel şafakta şarkı söylerdi. Her sabah güneş çatlağı ısıtınca tek bir ses."
+      },
+      "7": {
+        "explorer": "Ya şimdi?"
+      },
+      "8": {
+        "fez": "Bir imparator onu tamir ettirdi. O günden beri tek bir ses çıkarmadı."
+      }
+    },
+    "wizard_3": {
+      "1": {
+        "fez": "Terazi. Bir yanda kalp, öbür yanda tüy. Demek ki güzel, ağır bir kalp kazanır, herhalde."
+      },
+      "2": {
+        "explorer": "Ağır bir şey hangi yöne gider?"
+      },
+      "3": {
+        "fez": "…Aşağı."
+      },
+      "4": {
+        "fez": "Ah."
+      },
+      "5": {
+        "fez": "Hafif. Kalbin HAFİF olmalı."
+      }
+    },
+    "wizard_4": {
+      "1": {
+        "fez": "Tepe taşı en son konur ve altından olur. Böylece bütün piramit ilk ışığı yakalar."
+      },
+      "2": {
+        "explorer": "Kimin için?"
+      },
+      "3": {
+        "fez": "Bakan herkes için. Bütün mesele buydu. İçinde yatan adam için hiç olmadı."
+      }
+    }
+  },
+  "tomb": {
+    "starter": {
+      "1": {
+        "ipi": "Hey! Çek elini! O benim testim!"
+      },
+      "2": {
+        "fez": "…O testi az önce konuştu mu?!"
+      },
+      "3": {
+        "ipi": "Ben konuştum. Üçüncü raf, ağzı kırık olan. O benim."
+      },
+      "4": {
+        "explorer": "Tamam, tamam! Yerinde kalıyor. Sen kimsin?"
+      },
+      "5": {
+        "ipi": "Ipi. Kırk yıl hesap defterlerini tuttum. Kırk yıl!"
+      },
+      "6": {
+        "fez": "Defter mi? Kimin?"
+      },
+      "7": {
+        "ipi": "Herkesin! Kim kime ne borçlu, son buğday çuvalına kadar."
+      },
+      "8": {
+        "ipi": "Şu Henut var ya, buranın kuzeyinde? On bir deben lapis. Hiç ödemedi!"
+      },
+      "9": {
+        "explorer": "Bunca zaman sonra hâlâ hatırlıyor musun?"
+      },
+      "10": {
+        "ipi": "Yazılı ama! Yazılan bir şey, olmuş bir şeydir."
+      },
+      "11": {
+        "ipi": "Bir tek şu Horiler… Kayıkçı Hori, fırıncı Hori… bir de o öbür Hori."
+      },
+      "12": {
+        "fez": "Senin de kedilerin var mıydı? Herkesin kedisi vardı, değil mi? Tatlı şeyler!"
+      },
+      "13": {
+        "ipi": "Tatlı mı? Onlar buğday içindi! Bir farenin bütün bir mevsimde sana kaça patladığını biliyor musun?"
+      },
+      "14": {
+        "fez": "…Ha. Doğru."
+      },
+      "15": {
+        "ipi": "Henut'a seni Ipi'nin gönderdiğini söyle. Bütün gününü zehir eder."
+      },
+      "16": {
+        "fez": "Bu adamı sevdim!"
+      },
+      "17": {
+        "explorer": "Sen sadece hâlâ alacaklı olmasını seviyorsun."
+      }
+    },
+    "junior": {
+      "1": {
+        "henut": "Sonunda. Lapis için geldin herhalde. Ipi hâlâ o lapisten söz edip duruyordur."
+      },
+      "2": {
+        "explorer": "Ediyor."
+      },
+      "3": {
+        "henut": "O camdı. Çok güzel bir cam. O da biliyordu."
+      },
+      "4": {
+        "fez": "…Bilezik de mi camdı?"
+      },
+      "5": {
+        "henut": "Buradaki her şey paranın alabileceği en iyi taklittir, genç adam. Her parçasını da kendim seçtim."
+      },
+      "6": {
+        "henut": "Şimdi. Duvar. Baştan üçüncü işaret, o benim adım değil. Elinde keski, başında kimse olmayan bir çırağın işi."
+      },
+      "7": {
+        "henut": "İşaretlerini öğreniyorsun. Hemen anlaşılıyor. Düzelt şunu."
+      }
+    },
+    "juniorFixed": {
+      "1": {
+        "henut": "İşte. Artık bin yıl sonra da benim adım olacak."
+      },
+      "2": {
+        "explorer": "Ipi adını doğru yazmıştı."
+      },
+      "3": {
+        "henut": "Ipi her şeyi doğru yazardı. Tek iyi yanı buydu."
+      },
+      "4": {
+        "fez": "Burada, aşağıda bunun bir önemi var mı?"
+      },
+      "5": {
+        "henut": "Önemli olan tek şey bu."
+      },
+      "6": {
+        "fez": "Yukarıda koca bir duvar dolusu Thoth vardı. Sırların tanrısı."
+      },
+      "7": {
+        "henut": "Thoth sayar. Thoth ne yaptığını yazar ve o yazı kalır."
+      },
+      "8": {
+        "henut": "Sır dedikleri şey, insanların yapamadıkları hesaba verdikleri ad."
+      },
+      "9": {
+        "henut": "Yola devam ediyorsan, ki belli ki ediyorsun, Karnak'ta ölülere hiç yapmadığı bir hizmeti borçlu olan bir rahip var. Bu konuda çekilmez olacak. Rahipler öyledir."
+      },
+      "10": {
+        "henut": "…Biz tanışıyor muyuz?"
+      },
+      "11": {
+        "fez": "Tanışsaydık hatırlardım."
+      },
+      "12": {
+        "henut": "Evet. Ben de."
+      }
+    },
+    "expert": {
+      "1": {
+        "priest": "Beklediğim kişi siz değilsiniz."
+      },
+      "2": {
+        "explorer": "Kimi bekliyorsunuz?"
+      },
+      "3": {
+        "priest": "Mührü getirecek birini. Mühür buraya getirilecek, şuraya konacak ve üstüne dua okunacaktı. Bu üç şeyden hiçbiri olmadı."
+      },
+      "4": {
+        "fez": "…Ne zamandır bekliyorsunuz?"
+      },
+      "5": {
+        "priest": "Saymıyorum. Bu, işime yakışmaz."
+      },
+      "6": {
+        "priest": "Gerçek bir adak, bir kralın elinde tutarak gömüldüğü şeydir. Kopyası değil. Benzeri değil. Kendisi, üstünde onun işaretiyle."
+      },
+      "7": {
+        "priest": "Onu getirin, adınız duyurulur. Başka bir şey getirin, duyurulmaz."
+      },
+      "8": {
+        "explorer": "Kime duyurulur?"
+      },
+      "9": {
+        "priest": "Anlarsınız. Herkes eninde sonunda anlar."
+      },
+      "10": {
+        "fez": "Bu güneşe pek düşkün. Dışarıda bir sürü Amun-Ra vardı."
+      },
+      "11": {
+        "priest": "Amun saklı olandır. Ra herkesin görebildiğidir."
+      },
+      "12": {
+        "priest": "İkisi aynı tanrıdır. Bu bir tesadüf değil, bütün fikir budur."
+      },
+      "13": {
+        "fez": "…Doğru. Evet. Bunu biliyordum."
+      },
+      "14": {
+        "explorer": "Bilmiyordun."
+      },
+      "15": {
+        "fez": "Bilmiyordum."
+      }
+    },
+    "expertB": {
+      "1": {
+        "fez": "Buraya kimse girmemiş. Ne biz, ne öncekiler, hiç kimse."
+      },
+      "2": {
+        "explorer": "Nereden biliyorsun?"
+      },
+      "3": {
+        "fez": "Çünkü içinde hâlâ bir şey var."
+      }
+    },
+    "master": {
+      "1": {
+        "pharaoh": "Yaklaşabilirsiniz. Yaklaştınız. Pekâlâ."
+      },
+      "2": {
+        "fez": "Majesteleri."
+      },
+      "3": {
+        "pharaoh": "Evet."
+      },
+      "4": {
+        "explorer": "Mührünüze ihtiyacımız var."
+      },
+      "5": {
+        "pharaoh": "Herkesin var. Benimki iki kez alındı ve hiç geri getirilmedi."
+      },
+      "6": {
+        "pharaoh": "İkincisinde bir kopya bıraktılar. Bir KOPYA. BENİM mezarıma. Sanki bakmayacakmışım gibi."
+      },
+      "7": {
+        "explorer": "Kopya hâlâ burada mı?"
+      },
+      "8": {
+        "pharaoh": "Tabii ki burada, hiçbir değeri yok. Gerçeğinin durması gereken rafta duruyor ve yanlış olmaya devam ediyor."
+      },
+      "9": {
+        "pharaoh": "İsterseniz alın. O rahibe götürün. Bakalım sizi ne kadar ileri götürecek."
+      },
+      "10": {
+        "fez": "…Bundan keyif alıyor."
+      },
+      "11": {
+        "pharaoh": "Dokuz yüz yılın en güzel haftasını geçiriyorum."
+      },
+      "12": {
+        "fez": "Şu duvardaki Osiris. Ölülerin efendisi. Ürkütücü iş."
+      },
+      "13": {
+        "pharaoh": "O YEŞİL, seni gülünç hayvan."
+      },
+      "14": {
+        "pharaoh": "Su basmış bir tarla gibi yeşil. Öldürüldü, parçaları birleştirildi ve her yıl yeniden geri geliyor."
+      },
+      "15": {
+        "pharaoh": "Burada bu ürkütücü değil, bütün mesele bu. Ölmek bitmek değildir."
+      }
+    },
+    "wizard": {
+      "1": {
+        "priest": "Bırakın onu. Şuraya. Evet."
+      },
+      "2": {
+        "priest": "…"
+      },
+      "3": {
+        "priest": "Bunu ilk kez yapıyorum. Nasıl yapıldığını unuttuğumu düşünmeye başlamıştım."
+      },
+      "4": {
+        "explorer": "Unutmuş muydunuz?"
+      },
+      "5": {
+        "priest": "Tamamen. Geri geldi."
+      }
+    },
+    "wizardB": {
+      "1": {
+        "fez": "Onların ipi. Hâlâ bağlı."
+      },
+      "2": {
+        "explorer": "Buraya kadar gelmişler."
+      },
+      "3": {
+        "fez": "Daha da ileri. Sonra bu iple yukarı geri tırmanmışlar."
+      },
+      "4": {
+        "explorer": "Bir defter var."
+      },
+      "5": {
+        "fez": "Ne yazıyor?"
+      },
+      "6": {
+        "explorer": "Yazıyı okuyamıyoruz. Mühür için geri geldik. Onun yerine daha iyisini yaptık."
+      },
+      "7": {
+        "explorer": "Kimse kanmadı."
+      },
+      "8": {
+        "fez": "…Ne işe yaradığını okuyamadıkları için sahtesini yapmışlar."
+      },
+      "9": {
+        "explorer": "Sonra da evlerine dönmüşler."
+      }
+    },
+    "wizardC": {
+      "1": {
+        "fez": "Bir dakika dur. O piramitlerden yukarı neler taşıdığımıza bir bak."
+      },
+      "2": {
+        "explorer": "Bir resim."
+      },
+      "3": {
+        "fez": "Baştan beri bir resimmiş."
+      }
+    }
+  },
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Bir mağara! Haritada bir kiler kapısı vardı, bu ise koca bir tepe!"
+      },
+      "2": {
+        "fez": "Akıllı adammış. Malını bir tepenin içine sakla, hiçbir hırsızın aklına gelmez."
+      },
+      "3": {
+        "explorer": "Bizim aklımıza geldi."
+      },
+      "4": {
+        "fez": "Biz hırsız değiliz. Müşteriyiz. Çok çok geç kalmış müşteriler."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Burası olmalı. Henut! On bir deben lapisin sahibi!"
+      },
+      "2": {
+        "fez": "Ne dersin, borcu tahsil edersek biraz pay alır mıyız?"
+      },
+      "3": {
+        "explorer": "Daha hiçbir şey tahsil etmedin."
+      },
+      "4": {
+        "fez": "Hesabı önceden yapmayı severim."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Demek Henut'un rahibi burada. Çekilmez biri, demişti."
+      },
+      "2": {
+        "fez": "Ne dersin, bir şey götürelim mi? Çiçek mesela?"
+      },
+      "3": {
+        "explorer": "O ölü."
+      },
+      "4": {
+        "fez": "Daha da iyi ya. İlk izlenim önemlidir."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Buraya sadece başrahip girebilirdi. Bir de şimdi biz!"
+      },
+      "2": {
+        "explorer": "Bizim girmemize izin var mı?"
+      },
+      "3": {
+        "fez": "Kapıda \"hayır\" diyecek kimse yok."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Bak, harita burada birden bitiyor. Kum, sonra hiçbir şey."
+      },
+      "2": {
+        "explorer": "O zaman doğru yerdeyiz."
+      },
+      "3": {
+        "fez": "Ben de onu diyorum. Beni tam da bu tedirgin ediyor."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Osiris'in salonu! Yeşil, tabii ki. Çünkü her yıl buğday gibi geri geliyor."
+      },
+      "2": {
+        "explorer": "Bunu hep biliyordun."
+      },
+      "3": {
+        "fez": "Hep."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Tanrıların kendi kileri! Her şeyin varken ne saklarsın ki?"
+      },
+      "2": {
+        "explorer": "İnsanların sana getirdiklerini."
+      },
+      "3": {
+        "fez": "…Evet. Herhalde odur."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Evrenin Güçleri Diyarı. Vay vay."
+      },
+      "2": {
+        "fez": "Pek bir şeye benzemeyen bir malı satmam gerekse, ben de adını böyle koyardım."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Birden yanlış bir şey yapmışım gibi hissettim."
+      },
+      "2": {
+        "explorer": "Ne gibi?"
+      },
+      "3": {
+        "fez": "Hiçbir fikrim yok. İşin en kötü yanı da bu."
+      }
+    }
+  },
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Tek bir kiler için bunca kol ve kapı!"
+      },
+      "2": {
+        "fez": "Demek aşağıda güzel bir şey var. Kimse çöp için bu kadar uğraşmaz."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Of. Bu kapılar Ipi'ninkilerden çok daha nazlıydı."
+      },
+      "2": {
+        "fez": "Eh. Hanımefendinin parası vardı tabii."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Oh, sonunda! O mağara bizi gerçekten içeri almak istemedi."
+      },
+      "2": {
+        "explorer": "Bence amaç da buydu."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Pişt… Ben neden fısıldıyorum?"
+      },
+      "2": {
+        "explorer": "Bilmem. Ben de fısıldıyorum."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Ooof. O son kapıdan sonra kuyruğum hâlâ titriyor."
+      },
+      "2": {
+        "fez": "Eşyalarını böyle kilitleyen bir kral… Onları gerçekten kaybetmek istemiyor."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Gördün mü? Toprağın altında yeterince kalırsan, bir gün yeniden yukarı çıkarsın."
+      },
+      "2": {
+        "explorer": "Bu da mı Osiris'in sözü?"
+      },
+      "3": {
+        "fez": "Yok, bu benim."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Böyle kapılar… Eskiden olsa dönüp giderdik."
+      },
+      "2": {
+        "explorer": "Artık değil."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Üç kat mağara, ancak ondan sonra ön kapı."
+      },
+      "2": {
+        "explorer": "O zaman buna değer olmalı."
+      },
+      "3": {
+        "fez": "Hep öyle derler. Sonra bir testi çıkar."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Karanlığın son parçası. Hissediyorum."
+      },
+      "2": {
+        "explorer": "Bunu bir öncekinde de söylemiştin."
+      },
+      "3": {
+        "fez": "Neredeyse haklıydım ama."
+      }
+    }
+  },
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Şuna bak! Yerin altında bir piramit! Bir tüccar için!"
+      },
+      "2": {
+        "fez": "Ya çok iyi para kazanmış, ya da çok iyi pazarlık etmiş."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Bak, tepesi güneşte nasıl parlıyor! Gerçek altın, bahse girerim."
+      },
+      "2": {
+        "explorer": "Yerdeki bir çukurun dibinde. Kimin için parlıyor ki?"
+      },
+      "3": {
+        "fez": "Onun için. O tiplerden biri, hemen belli."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Hımm. Zaten bir tanrıya ait olan bir şeyi satmak serbest mi acaba?"
+      },
+      "2": {
+        "explorer": "Tanrıya sor."
+      },
+      "3": {
+        "fez": "Sormasam daha iyi."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Sence o rahip burada dolaştığımızı biliyor mu?"
+      },
+      "2": {
+        "explorer": "O saymıyor. İşine yakışmazmış."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Şuna bak, güneşte bir başına duruyor. Ne güzel, değil mi?"
+      },
+      "2": {
+        "fez": "Sadece bir resmini çizip gitsek mi?"
+      },
+      "3": {
+        "explorer": "Sen resim çizemezsin."
+      },
+      "4": {
+        "fez": "…Çizemem. Hadi içeri o zaman."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "İçeride kim yatıyorsa, geri döneceğine güveniyor. Buralarda anlaşma böyle."
+      },
+      "2": {
+        "explorer": "Ne zamandır bekliyor?"
+      },
+      "3": {
+        "fez": "Uzun zamandır. Ama işin doğası bu. Ölü olmak çoğunlukla beklemektir."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "explorer": "Vay."
+      },
+      "2": {
+        "fez": "Evet."
+      },
+      "3": {
+        "fez": "Bazen söyleyecek hiçbir şey kalmıyor, değil mi?"
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Piramidin üstündeki şu güneş lekesini görüyor musun? Ona bakıp saati söyleyebilirsin."
+      },
+      "2": {
+        "explorer": "Saat kaç o zaman?"
+      },
+      "3": {
+        "fez": "…Öğleden sonra. Aşağı yukarı. Saat değilim ki ben."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "İşte orada. Haritadaki bütün çizgiler buraya çıkıyor."
+      },
+      "2": {
+        "explorer": "O zaman burası son."
+      },
+      "3": {
+        "fez": "Haritanın sonu, evet. Garip. Daha iyi hissettireceğini sanıyordum."
+      }
+    }
+  },
+  "camp": {
+    "firstHome": {
+      "1": {
+        "fez": "Senin kampın bu mu? Bir ateş ve bir sandık?"
+      },
+      "2": {
+        "explorer": "Bizim kampımız."
+      },
+      "3": {
+        "fez": "Bizim. Tamam. O zaman ateşin yanındaki yer benim."
+      },
+      "4": {
+        "fez": "Ne de olsa ben bir kertenkeleyim. İşime geldiğinde."
+      }
+    },
+    "homeHaul": {
+      "1": {
+        "fez": "Eşyaları açma zamanı! Bütün yolculuğun en güzel kısmı."
+      },
+      "2": {
+        "explorer": "Piramitten daha mı güzel?"
+      },
+      "3": {
+        "fez": "Piramit bizim değil. Bunlar bizim."
+      }
+    },
+    "homeEmpty": {
+      "1": {
+        "explorer": "Eli boş döndük."
+      },
+      "2": {
+        "fez": "Ne olmuş? Yürüdük. O da sayılır."
+      },
+      "3": {
+        "explorer": "Ne için sayılır?"
+      },
+      "4": {
+        "fez": "Bacaklarım için. Çok kısalar, biliyorsun."
+      }
+    },
+    "rested": {
+      "1": {
+        "fez": "İşte. Biraz daha iyi misin?"
+      },
+      "2": {
+        "explorer": "Sadece bir çizikti."
+      },
+      "3": {
+        "fez": "Ben bakmadım bile. Yine de oturmam gerekti."
+      }
+    },
+    "chapterJunior": {
+      "1": {
+        "fez": "Eh, bu güzel geçti. Sıradaki!"
+      },
+      "2": {
+        "explorer": "O kadar da kolay değildi."
+      },
+      "3": {
+        "fez": "Şimdi kolay. Bittikten sonra her şey kolaydır."
+      }
+    },
+    "chapterExpert": {
+      "1": {
+        "fez": "Oralarda tuzaklar var. Gerçek tuzaklar. Isırırlar."
+      },
+      "2": {
+        "fez": "Yaralanırsan geri yürürüz, o kadar. Evde iyileşirsin."
+      },
+      "3": {
+        "explorer": "Ya sen?"
+      },
+      "4": {
+        "fez": "Ben arkandan yürürüm. Orası daha güvenli."
+      }
+    },
+    "chapterMaster": {
+      "1": {
+        "fez": "Orada dört piramit var. Bir tane olduğu zamanı hatırlıyor musun?"
+      },
+      "2": {
+        "explorer": "O kadar da uzun zaman önce değildi."
+      },
+      "3": {
+        "fez": "Değildi. Ama öyle geliyor."
+      }
+    },
+    "chapterWizard": {
+      "1": {
+        "fez": "Şu sonuncuya bak. Tepesi altın!"
+      },
+      "2": {
+        "fez": "O bize pahalıya patlayacak. Sonuncusu hep öyledir."
+      },
+      "3": {
+        "explorer": "Neye patlayacak?"
+      },
+      "4": {
+        "fez": "…Artık emin değilim."
+      }
+    },
+    "firstFind": {
+      "1": {
+        "fez": "Şuna bak, sanki hep oradaymış gibi!"
+      },
+      "2": {
+        "fez": "Üstüne bir fiyat etiketi asmak için içim gidiyor."
+      },
+      "3": {
+        "explorer": "Sakın."
+      },
+      "4": {
+        "fez": "Yok, yok. Evden satış yapılmaz. Biliyorum."
+      }
+    },
+    "structureDone": {
+      "1": {
+        "fez": "Bitti! Her parça yerinde!"
+      },
+      "2": {
+        "explorer": "Hepsini kendimiz yaptık."
+      },
+      "3": {
+        "fez": "Eh. Ben daha çok parmağımla gösterdim."
+      }
+    }
+  },
+  "animal": {
+    "forSale": {
+      "1": {
+        "fez": "Bak tezgâhta ne var! Artık taşımacılık da yapıyorum."
+      },
+      "2": {
+        "explorer": "Bir şey çiğniyor."
+      },
+      "3": {
+        "fez": "O da fiyata dahil."
+      }
+    },
+    "boughtDonkey": {
+      "1": {
+        "fez": "Satıldı! Bir eşek. İnatçıdır ama her şeyi taşır."
+      },
+      "2": {
+        "explorer": "Peki nerede?"
+      },
+      "3": {
+        "fez": "Eve doğru yola çıktı bile. Bizsiz yürümeyi tercih ediyor."
+      }
+    },
+    "blockedDonkey": {
+      "1": {
+        "fez": "Bu kadar eşyayla o kadar yol yürümeyiz. Bunun için bir eşek lazım."
+      },
+      "2": {
+        "fez": "Bil bakalım kimde var? Bende. Henut'un mezarındaki tezgâhımda."
+      }
+    },
+    "throughDonkey": {
+      "1": {
+        "explorer": "Gelmeye razı."
+      },
+      "2": {
+        "fez": "Bugün. Yarın bir daha sor."
+      }
+    },
+    "arrivesDonkey": {
+      "1": {
+        "fez": "İşte orada! Bizden önce gelmiş."
+      },
+      "2": {
+        "explorer": "Ateşi de bulmuş."
+      },
+      "3": {
+        "fez": "Benim yerim. Neyse. O önce geldi."
+      }
+    },
+    "boughtCart": {
+      "1": {
+        "fez": "Bir araba! İki tekerlekli, neredeyse hiç takırdamıyor."
+      },
+      "2": {
+        "explorer": "Neredeyse mi?"
+      },
+      "3": {
+        "fez": "Takırtı bedava."
+      }
+    },
+    "blockedCart": {
+      "1": {
+        "fez": "Eşek bir çanta daha taşımıyor. Kendisine sordum."
+      },
+      "2": {
+        "fez": "Bize bir araba lazım. Tezgâhımda bir tane var, başrahibin orada."
+      }
+    },
+    "throughCart": {
+      "1": {
+        "explorer": "Duyuyor musun?"
+      },
+      "2": {
+        "fez": "Araba o. Biraz şarkı söylüyor."
+      },
+      "3": {
+        "explorer": "Bütün yol boyunca mı?"
+      }
+    },
+    "arrivesCart": {
+      "1": {
+        "fez": "Kampımızda bir araba! Artık bir yere gidiyormuş gibi görünüyoruz."
+      },
+      "2": {
+        "explorer": "Zaten bir yere gidiyoruz."
+      },
+      "3": {
+        "fez": "Evet, ama artık herkes görüyor."
+      }
+    },
+    "boughtCamel": {
+      "1": {
+        "fez": "Bir deve! Günlerce susuz yürür. Ben yürüyemem ama, haberin olsun."
+      },
+      "2": {
+        "explorer": "Sana bakıyor."
+      },
+      "3": {
+        "fez": "Bana tepeden bakıyor. Develer herkese hep tepeden bakar."
+      }
+    },
+    "blockedCamel": {
+      "1": {
+        "fez": "En Kutsal Oda mı? Oraya yürüyerek asla varamayız."
+      },
+      "2": {
+        "fez": "Şans bu ya, bir devem var. Tezgâhımda, başrahibin orada."
+      }
+    },
+    "throughCamel": {
+      "1": {
+        "fez": "Diz çöktü! Benim için!"
+      },
+      "2": {
+        "explorer": "Üstüne binelim diye."
+      },
+      "3": {
+        "fez": "Bırak da tadını çıkarayım."
+      }
+    },
+    "arrivesCamel": {
+      "1": {
+        "fez": "İşte orada. Kamp onunmuş gibi davranıyor."
+      },
+      "2": {
+        "explorer": "Ya eşek?"
+      },
+      "3": {
+        "fez": "Onu görmüyormuş gibi yapıyor. Ben de öyle."
+      }
+    },
+    "boughtSecondDonkey": {
+      "1": {
+        "fez": "Bir eşek daha! Artık ilk eşeğin konuşacak birisi var."
+      },
+      "2": {
+        "explorer": "Konuşacak mı?"
+      },
+      "3": {
+        "fez": "Anırmak. Konuşmak gibi, sadece daha yüksek sesle."
+      }
+    },
+    "blockedSecondDonkey": {
+      "1": {
+        "fez": "Eşek devam etmiyor. Tek başına olmaz, diyor."
+      },
+      "2": {
+        "explorer": "Öyle mi dedi?"
+      },
+      "3": {
+        "fez": "Ben eşekçe bilirim. Bir arkadaş istiyor. Firavunun hazinesindeki tezgâhımda da bir tane var."
+      }
+    },
+    "throughSecondDonkey": {
+      "1": {
+        "fez": "Şunları dinle! Biri ötekinden daha yüksek sesle anırıyor."
+      },
+      "2": {
+        "explorer": "Kim kazanıyor?"
+      },
+      "3": {
+        "fez": "Biz değil. Dinlemek zorunda olan biziz."
+      }
+    },
+    "arrivesSecondDonkey": {
+      "1": {
+        "fez": "Şunlara bak. Sanki yıllardır tanışıyorlar."
+      },
+      "2": {
+        "explorer": "Bizim gibi."
+      },
+      "3": {
+        "fez": "Biz daha az anırıyoruz."
+      }
+    },
+    "boughtSecondCamel": {
+      "1": {
+        "fez": "Bir deve daha. Evet. Ben de onları sevmiyorum."
+      },
+      "2": {
+        "fez": "Ama hiç değilse bu dostça bakıyor."
+      },
+      "3": {
+        "explorer": "Fesine bakıyor."
+      }
+    },
+    "blockedSecondCamel": {
+      "1": {
+        "fez": "Osiris'in Salonu. Tek deveyle oraya varamayız."
+      },
+      "2": {
+        "fez": "Neyse ki bir tane daha var, firavunun hazinesindeki tezgâhımda. En son devem."
+      },
+      "3": {
+        "explorer": "Hep öyle diyorsun."
+      }
+    },
+    "throughSecondCamel": {
+      "1": {
+        "fez": "Fesimi yiyor!"
+      },
+      "2": {
+        "explorer": "Dost canlısı bir deve."
+      },
+      "3": {
+        "fez": "Fazla dost canlısı."
+      }
+    },
+    "arrivesSecondCamel": {
+      "1": {
+        "fez": "İki deve. Şimdi ikisi birden bana tepeden bakıyor."
+      },
+      "2": {
+        "explorer": "O zaman git eşeklerin yanında dur."
+      },
+      "3": {
+        "fez": "Zaten oradayım."
+      }
+    },
+    "boughtSturdyCart": {
+      "1": {
+        "fez": "Daha sağlam bir araba. Bu yolda şarkı söylemiyor."
+      },
+      "2": {
+        "explorer": "Üstüne çiçekler boyanmış."
+      },
+      "3": {
+        "fez": "Sağlamlık için."
+      }
+    },
+    "blockedSturdyCart": {
+      "1": {
+        "fez": "Eski araba oraya tek parça varamaz. Daha sağlam bir şey lazım."
+      },
+      "2": {
+        "fez": "Tanrıların Odası'ndaki tezgâhımda bir tane var. Boyası için değil ama, haberin olsun."
+      }
+    },
+    "throughSturdyCart": {
+      "1": {
+        "explorer": "Takırtı yok."
+      },
+      "2": {
+        "fez": "Gördün mü? Sağlamlık."
+      },
+      "3": {
+        "explorer": "Ya çiçekler?"
+      },
+      "4": {
+        "fez": "Onlar da biraz yardım ediyor."
+      }
+    },
+    "arrivesSturdyCart": {
+      "1": {
+        "fez": "Bak nasıl parlıyor!"
+      },
+      "2": {
+        "explorer": "Gerektiğinden daha güzel."
+      },
+      "3": {
+        "fez": "Evet. Ben de onu sağlamlığı için satmadım zaten."
+      }
+    },
+    "boughtCaravanBanner": {
+      "1": {
+        "fez": "Bir sancak. Dürüst olayım: hiçbir şey açmıyor."
+      },
+      "2": {
+        "explorer": "Peki ne işe yarıyor?"
+      },
+      "3": {
+        "fez": "Dalgalanıyor. Hem de çok güzel."
+      }
+    },
+    "arrivesCaravanBanner": {
+      "1": {
+        "fez": "Bak nasıl dalgalanıyor! Kendi kampımızın üstünde!"
+      },
+      "2": {
+        "explorer": "Hâlâ hiçbir şey açmıyor."
+      },
+      "3": {
+        "fez": "Açmıyor. Açması da gerekmiyor."
+      }
+    }
+  },
+  "bond": {
+    "starter": {
+      "1": {
+        "fez": "Ne çabuk oldu."
+      },
+      "2": {
+        "explorer": "Bir kapıydı sadece."
+      },
+      "3": {
+        "fez": "Ben bir haftada açardım."
+      }
+    },
+    "starterTomb": {
+      "1": {
+        "fez": "Baştan söyleyeyim. Ben bu işi satmak için yapıyorum. Hâlâ doğruyken şimdiden söylüyorum."
+      },
+      "2": {
+        "explorer": "Not ettim."
+      }
+    },
+    "junior": {
+      "1": {
+        "fez": "Orada bir süre sessiz kaldın."
+      },
+      "2": {
+        "explorer": "Sayıyordum."
+      },
+      "3": {
+        "fez": "Biliyorum. Tahmin eden insanlar gördüm. Bu tahmin değildi."
+      }
+    },
+    "expert": {
+      "1": {
+        "fez": "Kıl payı kurtulduk."
+      },
+      "2": {
+        "explorer": "Bir şey olmadı."
+      },
+      "3": {
+        "fez": "Kıl payıydı. Bunu söylemeye hakkım var."
+      }
+    },
+    "master": {
+      "1": {
+        "fez": "Bırakabiliriz."
+      },
+      "2": {
+        "explorer": "Bırakabiliriz."
+      },
+      "3": {
+        "fez": "Söylenmiş olsun diye söylüyorum. Yapalım diye değil."
+      }
+    },
+    "wizard": {
+      "1": {
+        "explorer": "Bu ne eder?"
+      },
+      "2": {
+        "fez": "…"
+      },
+      "3": {
+        "fez": "Buna fiyat biçmeyeceğim."
+      },
+      "4": {
+        "explorer": "Not ettim."
+      }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": {
+        "fez": "Vay. Bir saniye önce burası duvardı."
+      },
+      "2": {
+        "explorer": "Arkasında bir geçit varmış."
+      },
+      "3": {
+        "fez": "Bunca yıl insanlar hemen yanından geçip gitmiş. Bunca yıl!"
+      }
+    }
+  },
+  "reading": {
+    "junior": {
+      "1": {
+        "explorer": "Burada artık okuyabildiğim bir satır var."
+      },
+      "2": {
+        "explorer": "Açlara ekmek verdim."
+      },
+      "3": {
+        "fez": "Ekmek. Bir mezarda."
+      },
+      "4": {
+        "explorer": "Bir öncekinde de vardı. Bunun kelimeler olduğunu bilmiyordum."
+      }
+    },
+    "expert": {
+      "1": {
+        "explorer": "İkinci satır. Susuzlara su."
+      },
+      "2": {
+        "fez": "Ekmek, şimdi de su. Biri cömert biri olarak hatırlanmayı çok istemiş."
+      },
+      "3": {
+        "explorer": "Herkeste var. Her duvarda, her mezarda aynı iki satır."
+      },
+      "4": {
+        "fez": "O zaman ya hepsi cömertti, ya da söylenmesi gereken şey bu."
+      },
+      "5": {
+        "explorer": "Ya da tartıldıkları şey bu."
+      }
+    },
+    "master": {
+      "1": {
+        "explorer": "Çıplaklara giysi. Üçüncü satır."
+      },
+      "2": {
+        "fez": "Ekmek, su, giysi. Bu, verilip dağıtılan şeylerin bir listesi."
+      },
+      "3": {
+        "explorer": "Hem de her şeyi yanına alan bir adamın mezarında."
+      },
+      "4": {
+        "fez": "…Evet. Ben de fark etmiştim."
+      }
+    },
+    "sphinx": {
+      "1": {
+        "fez": "Başladığımız yere döndük. Hiç kımıldamamış."
+      },
+      "2": {
+        "explorer": "Yazı hâlâ orada."
+      },
+      "3": {
+        "fez": "Okuyabiliyor musun?"
+      },
+      "4": {
+        "explorer": "Bir isim."
+      },
+      "5": {
+        "fez": "Kimin?"
+      },
+      "6": {
+        "explorer": "Senin."
+      },
+      "7": {
+        "fez": "…"
+      },
+      "8": {
+        "fez": "Emin misin?"
+      },
+      "9": {
+        "explorer": "Yazıyor."
+      },
+      "10": {
+        "fez": "Hıh."
+      },
+      "11": {
+        "fez": "Hori."
+      },
+      "12": {
+        "fez": "Mısır'ın her köyünde bir Hori vardı."
+      },
+      "13": {
+        "fez": "Eh. Fes meselesi de böylece anlaşıldı."
+      }
+    }
+  },
+  "altar": {
+    "refused": {
+      "1": {
+        "priest": "Hayır."
+      },
+      "2": {
+        "explorer": "Üstünde onun işareti var."
+      },
+      "3": {
+        "priest": "Bir işaret var. Çok iyi bir işaret. Harika aletleri olan ve burada hiç işi olmayan biri kazımış onu. Hem de çok yakın zamanda."
+      },
+      "4": {
+        "priest": "Üç bin yıldır bekliyorum. Son haftasında beni oyalayamazsınız."
+      }
+    }
+  },
+  "meeting": {
+    "starter_1": {
+      "1": {
+        "voice": "Hey! Oraya DEĞİL! Nereye bastığına dikkat et!"
+      },
+      "2": {
+        "explorer": "Pardon! Hiçbir şey göremiyorum! Neredesin?"
+      },
+      "3": {
+        "fez": "Aşağıdayım! Mallarımın tam ortasında duruyorsun!"
+      },
+      "4": {
+        "explorer": "Bir kertenkele mi?! Fesli?"
+      },
+      "5": {
+        "fez": "Bir tüccar. Hem fesimin nesi varmış?"
+      },
+      "6": {
+        "fez": "Sen de piramit için geldin, değil mi? Harita aldın? Çok fazla para verdin?"
+      },
+      "7": {
+        "explorer": "ÇOK fazla."
+      },
+      "8": {
+        "fez": "Ben de. Off."
+      },
+      "9": {
+        "explorer": "Sfenks'in üstündeki yazı… Sen okuyabiliyor musun?"
+      },
+      "10": {
+        "fez": "Hayır. Artık kimse okuyamıyor. O kaide bir zamanlar mavi ve altın rengiymiş, biliyor musun?"
+      },
+      "11": {
+        "explorer": "Sen nereden biliyorsun?"
+      },
+      "12": {
+        "fez": "…Duydum. Söylesene, sen burada ne arıyorsun?"
+      },
+      "13": {
+        "explorer": "Güzel bir şey."
+      },
+      "14": {
+        "fez": "Güzel şeyler iyi satar! Biliyor musun? Seninle geliyorum!"
+      },
+      "15": {
+        "explorer": "Ne? Benimle mi?"
+      },
+      "16": {
+        "fez": "İki göz bir gözden iyidir. Hadi, piramit bekliyor!"
+      }
+    }
+  },
+  "end": {
+    "1": {
+      "fez": "Güzel miydi?"
+    },
+    "2": {
+      "explorer": "Fena değildi."
+    }
+  },
+  "revisit": {
+    "starter": {
+      "north1": {
+        "1": {
+          "ipi": "Hâlâ burada mısın? Kuzeye! Henut! On bir deben!"
+        }
+      },
+      "north2": {
+        "1": {
+          "ipi": "On bir deben lapis. Henut. Kuzey. Neyi bekliyorsun?"
+        }
+      },
+      "paid1": {
+        "1": {
+          "ipi": "Eee? Ödedi mi? …Hayır. Tabii ki ödemedi."
+        }
+      },
+      "paid2": {
+        "1": {
+          "ipi": "Cam mı? CAM MI? Burada lapis yazıyor. Tam şurada. Lapis!"
+        }
+      },
+      "later1": {
+        "1": {
+          "ipi": "Yine mi sen? Üçüncü raf, ağzı kırık olan, hâlâ benim. Çek elini."
+        }
+      },
+      "later2": {
+        "1": {
+          "ipi": "Kırk yıllık defterler ve bir tanesinin bile hesabı tutmuyor. Bir tanesinin bile!"
+        }
+      }
+    },
+    "junior": {
+      "wall1": {
+        "1": {
+          "henut": "Duvar. Üçüncü işaret. Hâlâ benim adım değil."
+        }
+      },
+      "wall2": {
+        "1": {
+          "henut": "Sen hâlâ buradasın, o kaz da hâlâ duvarımda. Düzelt şunu."
+        }
+      },
+      "priest1": {
+        "1": {
+          "henut": "Hâlâ benim adım. Kontrol ettim. Şimdi Karnak'a, rahibe. Hadi bakalım."
+        }
+      },
+      "priest2": {
+        "1": {
+          "henut": "Karnak! Yeterince bekledi. Git de adın duyurulsun."
+        }
+      },
+      "met1": {
+        "1": {
+          "henut": "Eee? Çekilmez biriydi, değil mi? Söylemiştim."
+        }
+      },
+      "later1": {
+        "1": {
+          "henut": "Hâlâ cam. Hâlâ çok güzel. Hâlâ benim seçtiğim."
+        }
+      }
+    },
+    "expert": {
+      "seal1": {
+        "1": {
+          "priest": "Mühür. Buraya getirilecek, konacak, üstüne dua okunacak. Beklerim."
+        }
+      },
+      "seal2": {
+        "1": {
+          "priest": "Ah. Yine siz. Ve hâlâ mühür yok."
+        }
+      },
+      "king1": {
+        "1": {
+          "priest": "Kralı gördünüz. Güzel. Kendisi ama, dikkat edin. Benzeri değil."
+        }
+      },
+      "later1": {
+        "1": {
+          "priest": "Yine siz. Burada yapacak bir şey kalmadı. Çok huzurlu."
+        }
+      }
+    },
+    "master": {
+      "priest1": {
+        "1": {
+          "pharaoh": "Hâlâ burada mısınız? O kopyayla rahibe gidin! Nasıl geçtiğini duymak istiyorum."
+        }
+      },
+      "priest2": {
+        "1": {
+          "pharaoh": "Yaklaşabilirsiniz. Yine. Rahip onu gördü mü?"
+        }
+      },
+      "rite1": {
+        "1": {
+          "pharaoh": "Demek sonunda törenini yaptı. Güzel. Şimdi de bununla övünüp duracak."
+        }
+      },
+      "later1": {
+        "1": {
+          "pharaoh": "Hâlâ dokuz yüz yılın en güzel haftası. Üstelik devam ediyor!"
+        }
+      }
+    },
+    "wizard": {
+      "later1": {
+        "1": {
+          "priest": "…Evet. Nasıl yapıldığını hâlâ hatırlıyorum. Güzel."
+        }
+      },
+      "later2": {
+        "1": {
+          "priest": "Kondu, üstüne dua okundu. Bitti. Garip bir duygu."
+        }
+      }
+    }
+  }
+}

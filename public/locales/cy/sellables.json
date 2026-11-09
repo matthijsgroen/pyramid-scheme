@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Carreg",
+    "bronze": "Efydd",
+    "silver": "Arian",
+    "gold": "Aur",
+    "divine": "Dwyfol"
+  },
+  "sell_stone_1": {
+    "name": "Darn Crochenwaith Crafog",
+    "description": "Darn o bot wedi torri. Roedd ysgrifennydd wedi ymarfer arno, ond mae'r llythrennau wedi pylu gormod i'w darllen."
+  },
+  "sell_stone_2": {
+    "name": "Jar Glai wedi Cracio",
+    "description": "Jar i gadw grawn neu gwrw. Mae wedi hollti i lawr un ochr ar ôl canrifoedd."
+  },
+  "sell_stone_3": {
+    "name": "Sandal Brwyn Treuliedig",
+    "description": "Wedi'i gwehyddu o frwyn papyrws. Mae'r gwadn yn denau ar ôl i ryw weithiwr gerdded arni bob dydd."
+  },
+  "sell_stone_4": {
+    "name": "Rhacsyn Lliain Pŵl",
+    "description": "Stribed o liain plaen wedi rhwygo. Y math oedd yn cael ei lapio o gwmpas y meirw — neu i drwsio hwyl cwch."
+  },
+  "sell_stone_5": {
+    "name": "Llafn Callestr wedi Torri",
+    "description": "Cyllell gallestr, wedi torri ar y blaen. Rhad i'w gwneud, rhatach i gael un newydd."
+  },
+  "sell_bronze_1": {
+    "name": "Swyn Efydd Cam",
+    "description": "Swyn rhad i'th gadw'n saff. Cafodd ei wneud yn gam, a does neb wedi'i drwsio."
+  },
+  "sell_bronze_2": {
+    "name": "Drych Efydd wedi Rhydu",
+    "description": "Roedd mor sgleiniog unwaith fel y gallet ti weld dy wyneb ynddo. Nawr mae'n wyrdd ac yn gymylog."
+  },
+  "sell_bronze_3": {
+    "name": "Bachyn Pysgota Efydd Di-sglein",
+    "description": "Bachyn pysgotwr. Syrthiodd i'r Nîl ymhell cyn i'r bedd gael ei gau."
+  },
+  "sell_bronze_4": {
+    "name": "Cloch Efydd Fach",
+    "description": "I hongian ar ddrws teml neu ar ffêr dawnsiwr. Dydy hi ddim yn canu'n iawn bellach."
+  },
+  "sell_bronze_5": {
+    "name": "Modrwy Efydd Ddi-sglein",
+    "description": "Modrwy blaen, i fys a drodd yn llwch amser maith yn ôl."
+  },
+  "sell_silver_1": {
+    "name": "Ankh Arian Di-sglein",
+    "description": "Arwydd bywyd. Mae wedi colli ei sglein ar ôl canrifoedd dan ddaear."
+  },
+  "sell_silver_2": {
+    "name": "Ffon Colur Arian",
+    "description": "Ffon fain i dynnu llinell ddu o gwmpas llygaid pobl gyfoethog. Mae'r colur wedi hen fynd."
+  },
+  "sell_silver_3": {
+    "name": "Powlen Arian â Tholc",
+    "description": "Powlen fach ar gyfer rhoddion. Cafodd ei gwasgu ar un ochr pan syrthiodd y to arni."
+  },
+  "sell_silver_4": {
+    "name": "Pin Gwallt Arian",
+    "description": "Syml a phlaen. Roedd yn dal gwallt rhywun nad oes neb yn cofio'i enw."
+  },
+  "sell_silver_5": {
+    "name": "Breichled Arian Dreuliedig",
+    "description": "Breichled arian denau, a'r clasb wedi torri. Dim digon crand i uchelwr, rhy grand i weithiwr."
+  },
+  "sell_gold_1": {
+    "name": "Glain Aur Bach",
+    "description": "Un glain o gadwyn bedd, a gafodd ei wasgaru amser maith yn ôl."
+  },
+  "sell_gold_2": {
+    "name": "Darn o Ddeilen Aur",
+    "description": "Darn tenau o ddeilen aur. Lladron beddau a'i pliciodd oddi ar wyneb cerflun, ganrifoedd cyn i ti gyrraedd."
+  },
+  "sell_gold_3": {
+    "name": "Clustdlws Aur Tenau",
+    "description": "Wedi'i guro'n denau iawn, er mwyn i aur yr uchelwr fynd ymhellach."
+  },
+  "sell_gold_4": {
+    "name": "Darn â Brychau Aur",
+    "description": "Darn o blastr wedi torri, gyda brychau o aur go iawn yn dal yn sownd arno."
+  },
+  "sell_gold_5": {
+    "name": "Modrwy Sêl Aur wedi Naddu",
+    "description": "Modrwy sêl. Mae'r llun arni wedi treulio'n llwyr — does neb yn cofio enw pwy oedd arni."
+  },
+  "sell_divine_1": {
+    "name": "Sgarab Lapis Pŵl",
+    "description": "Wedi'i gerfio o lapis lazuli drud, a ddaeth o bell ar gyfer bywyd newydd pharo. Mae'r lliw wedi pylu dros y canrifoedd."
+  },
+  "sell_divine_2": {
+    "name": "Swyn Llygad Carnelian",
+    "description": "Llygad wedi'i gerfio o garreg goch fel gwaed. Roedd i fod i gadw anlwc draw yn y byd nesaf."
+  },
+  "sell_divine_3": {
+    "name": "Darn Mosaig Gwyrddlas",
+    "description": "Un deilsen o fosaig wedi chwalu. Roedd unwaith yn rhan o lun duw ar wal teml."
+  },
+  "sell_divine_4": {
+    "name": "Darn Jar Ganopig Alabastr",
+    "description": "Darn o jar a oedd i fod i ddal tu mewn pharo — carreg werthfawr ar gyfer gwaith digon ych-a-fi."
+  },
+  "sell_divine_5": {
+    "name": "Llafn Defod Obsidian",
+    "description": "Gwydr o losgfynydd, wedi'i hogi ar gyfer y deml. Nid ar gyfer brwydro."
+  }
+}

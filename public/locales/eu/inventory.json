@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Jainkoen erregea eta eguzkiaren jauna. Egunero zeharkatzen du zerua bere eguzki-txalupan."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Txakal-buruko jainkoa. Mumiak eta heriotzaren ondoko bizitza zaintzen ditu, eta hildakoak babesten."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Belatz-buruko zeruko jainkoa eta faraoien babeslea. Osiris eta Isisen semea da."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "Ibis-buruko jakinduriaren, idazketaren eta ezagutzaren jainkoa. Jainkoen idazkiak gordetzen ditu."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Katu-jainkosa. Babesa, poza eta bizia ematen ditu, eta izpiritu gaiztoak uxatzen."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Nilo ibaiaren krokodilo-jainkoa. Emankortasuna eta borrokarako indarra ematen ditu."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Kakalardo-jainkoa. Berriz jaiotzea eta berritzea dakartza, eta eguzkia zeruan zehar bultzatzen du."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Kobra-jainkosa eta Behe Egiptoren babeslea. Erregeen boterearen ikurra da."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "Magiaren, amatasunaren eta sendaketaren jainkosa. Osirisen emazte leiala."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "Lur azpiko munduaren, heriotzaren eta berpizkundearen jainkoa. Hildakoen epailea da."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "Nahasmenaren, ekaitzen eta basamortuaren jainkoa. Osirisen anaia eta etsaia."
+    },
+    "d12": {
+      "name": "Nephthys",
+      "description": "Doluaren jainkosa eta hildakoen babeslea. Isisen ahizpa."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Jainko sortzailea, artisau eta arkitektoen zaindaria. Hitzaren bidez sortu zuen dena."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Lehoi-jainkosa, gerrarena eta sendaketarena. Babesle gogorra, gaixotasunak sendatzeko ahalmena du."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Behi-jainkosa, maitasunarena, musikarena eta amatasunarena. Faraoiak zaindu eta hazten zituen."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Faraoia",
+      "description": "Egiptoko errege jainkotiarra. Jainko bizitzat hartzen zuten, gizakien eta jainkoen arteko zubia."
+    },
+    "p2": {
+      "name": "Apaiz nagusia",
+      "description": "Tenpluetako buruzagi erlijiosoa. Errito sakratuak egiten zituen eta jainkoen ordena zaintzen."
+    },
+    "p3": {
+      "name": "Eskribaua",
+      "description": "Irakurtzen eta idazten zekien langilea. Idazkiak eta jakintza gordetzen zituen."
+    },
+    "p4": {
+      "name": "Arkitektoa",
+      "description": "Eraikitzaile maisua. Betiko iraungo zuten piramideak, tenpluak eta monumentuak diseinatzen zituen."
+    },
+    "p5": {
+      "name": "Jenerala",
+      "description": "Armadaren burua. Egiptoko mugak babesten eta inperioa handitzen zituen."
+    },
+    "p6": {
+      "name": "Sendagilea",
+      "description": "Sendatzailea. Medikuntza eta magia nahasten zituen gaixoak sendatzeko."
+    },
+    "p7": {
+      "name": "Baltsamatzailea",
+      "description": "Artisau sakratua. Hildakoak prestatzen zituen heriotzaren ondoko bidaiarako."
+    },
+    "p8": {
+      "name": "Nekazaria",
+      "description": "Egiptori janaria ematen zion. Niloko lur emankorrak lantzen zituen erresuma elikatzeko."
+    },
+    "p9": {
+      "name": "Artisaua",
+      "description": "Esku trebeko langilea. Gauza ederrak, bitxiak eta artelanak egiten zituen nobleentzat eta jainkoentzat."
+    },
+    "p10": {
+      "name": "Merkataria",
+      "description": "Saltzailea. Herrialde urrunetako gauza bitxiak ekartzen zituen merkataritza-bideetatik."
+    },
+    "p11": {
+      "name": "Bizirra",
+      "description": "Faraoiaren ministro nagusia eta aholkularia. Gobernuaren lana zuzentzen zuen."
+    },
+    "p12": {
+      "name": "Orakulua",
+      "description": "Profeta sakratua. Jainkoen mezuak ulertzen zituen eta etorkizuna iragartzen."
+    },
+    "p13": {
+      "name": "Marinela",
+      "description": "Niloko eta Mediterraneoko nabigatzailea. Ezinbestekoa zen merkataritzarako eta garraiorako."
+    },
+    "p14": {
+      "name": "Hargina",
+      "description": "Harriaren langilea. Hieroglifoak zizelkatzen zituen eta Egiptoko monumentu handiak eraiki."
+    },
+    "p15": {
+      "name": "Zaindaria",
+      "description": "Leku sakratuen eta hilobien babeslea. Hildakoen betiko atsedena zaintzen zuen."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Hipopotamoa",
+      "description": "Niloko ibai-piztia indartsua. Bere indarragatik eta bere lurraldea zaintzeagatik zioten beldurra."
+    },
+    "a2": {
+      "name": "Lehoia",
+      "description": "Piztien erregea. Basamortuan, erregeen boterearen eta jainkoen indarraren ikurra."
+    },
+    "a3": {
+      "name": "Elefantea",
+      "description": "Hegoaldeko lurretako animalia erraldoia. Bere jakinduriagatik eta oroimenagatik maite zuten."
+    },
+    "a4": {
+      "name": "Gazela",
+      "description": "Basamortuko animalia azkar eta dotorea. Abiaduraren eta edertasunaren ikurra."
+    },
+    "a5": {
+      "name": "Tximinoa",
+      "description": "Primate argia, Thothekin lotua. Adimena eta bihurrikeria adierazten ditu."
+    },
+    "a6": {
+      "name": "Arraina",
+      "description": "Niloko izaki sakratuak. Janaria ematen zuten eta emankortasunaren ikurrak ziren."
+    },
+    "a7": {
+      "name": "Antzara",
+      "description": "Niloko padurako txori sakratua. Munduaren sorrerarekin eta arimarekin lotua."
+    },
+    "a8": {
+      "name": "Erlea",
+      "description": "Behe Egiptoren eta erregeen boterearen ikurra. Ezti preziatua egiten du."
+    },
+    "a9": {
+      "name": "Dortoka",
+      "description": "Jakinduriaren izaki zaharra. Munduaren pisua darama bere oskolean."
+    },
+    "a10": {
+      "name": "Igela",
+      "description": "Berriz jaiotzearen eta emankortasunaren ikurra. Niloko uholde emankorretatik ateratzen da."
+    },
+    "a11": {
+      "name": "Saia",
+      "description": "Goi Egiptoko txori sakratua. Nekhbet jainkosa babeslearen lurreko itxura."
+    },
+    "a12": {
+      "name": "Hontza",
+      "description": "Gaueko ehiztari jakintsua. Jakintza ezkutuak eta sekretu zaharrak zaintzen ditu."
+    },
+    "a13": {
+      "name": "Aharia",
+      "description": "Amun-Raren animalia sakratua. Jainkoen boterearen eta buruzagitzaren ikurra."
+    },
+    "a14": {
+      "name": "Jirafa",
+      "description": "Hegoaldeko lurretako animalia luze eta dotorea. Lepo luzearekin zerura iristen da."
+    },
+    "a15": {
+      "name": "Txakala",
+      "description": "Basamortuko sarraskijalea eta heriotzaren ondoko bizitzarako gidaria. Anubisen morroia."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Bizitzaren eta hilezkortasunaren ikurra. Jainkoek eta faraoiek eskuan eraman ohi zuten."
+    },
+    "art2": {
+      "name": "Horusen begia",
+      "description": "Babesaren, erregeen boterearen eta osasun onaren ikurra, Horus zeruko jainkoarekin lotua."
+    },
+    "art3": {
+      "name": "Sistroa",
+      "description": "Zeremonia erlijiosoetan jotzen zen musika-tresna, Hathor jainkosarekin lotua."
+    },
+    "art4": {
+      "name": "Djed zutabea",
+      "description": "Sendotasunaren eta berpizkundearen ikurra, askotan Osirisekin lotua."
+    },
+    "art5": {
+      "name": "Kartutxoa",
+      "description": "Faraoi baten izena hieroglifoz duen obalo bat. Bere izena betiko babesten du."
+    },
+    "art6": {
+      "name": "Ontzi kanopikoa",
+      "description": "Ontzi sakratua, tapa gisa zaindari baten burua duena. Lau zeuden hilkutxa baten inguruan, zaintzan."
+    },
+    "art7": {
+      "name": "Zetroa",
+      "description": "Boterearen makila. Jainkoek eta faraoiek eramaten zuten, jainkoen agintearen ikur gisa."
+    },
+    "art9": {
+      "name": "Piramidea",
+      "description": "Betiko hilobia eta heriotzaren ondoko bizitzarako atea. Faraoientzat eraiki zuten, betiko irauteko."
+    },
+    "art10": {
+      "name": "Eguzki-txalupa",
+      "description": "Ra eguzki-jainkoa zeruan zehar eramaten duen txalupa sakratua, egunsentitik ilunabarrera."
+    },
+    "art11": {
+      "name": "Obeliskoa",
+      "description": "Harrizko zutabe altua, piramide txiki bat gainean duena. Zerurantz doa jainkoak ohoratzeko."
+    },
+    "art12": {
+      "name": "Makila kurbatua eta zigorra",
+      "description": "Erregeen ikurrak. Faraoia Egiptoko artzaina eta babeslea dela erakusten dute."
+    },
+    "art14": {
+      "name": "Loto-lorea",
+      "description": "Berriz jaiotzearen eta eguzkiaren ikurra. Niloko ur lohitsuetatik garbi-garbi ateratzen da."
+    },
+    "art15": {
+      "name": "Ureo koroa",
+      "description": "Kobra babeslea duen erregeen buruko apaingarria. Faraoiek janzten zuten jainkoen babes gisa."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Ihi-hostoa",
+      "description": "Ihi bakar bat, i soinuarena. Jainko baten izenari gehitzen badiozu, gizon baten izena egiten da: Horus Hori bihurtzen da, Horusena dena."
+    }
+  }
+}

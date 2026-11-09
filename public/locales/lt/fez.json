@@ -1,0 +1,1730 @@
+{
+  "not-found": "Atsiprašome, tokio pokalbio nėra.",
+  "welcome": "Egiptas! Aš tikrai čia.",
+  "welcome2": "O šitas žemėlapis… Sumokėjau už jį per daug. Geriau jau jis būtų teisingas.",
+  "welcome3": "Pirmyn. Pažiūrėkim, kur tas kryžiukas.",
+  "pyramidIntro": "Ant šitų akmenų yra skaičiai. O kai kurių trūksta…",
+  "pyramidIntro2": "Palauk. Kiekvienas akmuo yra dviejų akmenų po juo suma! Taip, ir čia!",
+  "pyramidBlockedBlocks": "Ei, kas čia? Tie blokai užantspauduoti. Jie neparodo savo skaičiaus!",
+  "pyramidBlockedBlocks2": "Nieko tokio. Pažiūrėk į blokus aplinkui — iš jų gali apskaičiuoti.",
+  "pyramidBlockedBlocks3": "Tik įrašyti negali. Tą skaičių teks laikyti galvoje.",
+  "pyramidBlockedBlocks4": "Nagi, juk jau tiek nuėjai. Tu gali!",
+  "levelCompleted": "Cha! Atsidaro! Eime vidun.",
+  "exitPillar": {
+    "1": {
+      "fez": "Cha! Dienos šviesa! Matai tą šviesos stulpą? Tai mūsų išėjimas. Įženk į jį, ir čia baigta."
+    },
+    "2": {
+      "fez": "Jis visada tik vienas, pačiame pagrindinio koridoriaus gale. Kad ir kur klaidžiotume, grįžtame prie jo."
+    },
+    "3": {
+      "explorer": "Vienas išėjimas. Supratau."
+    }
+  },
+  "expeditionCompleted": "Sveikiname, ekspedicija baigta!",
+  "expeditionCompleted2": "Laukia nauja ekspedicija.",
+  "tombTutorial": "Oho, užrašai! Ar galim juos perskaityti? Su rastais hieroglifais… gal!",
+  "tombTutorial2": "Žiūrėk, sudėties uždaviniai su ženklais! Matai tuščias vietas? Ten dedami hieroglifai. Tavieji, apačioje.",
+  "tombTutorial3": "Maži uždaviniai parodo, kai ženklas teisingas. Taip ir išsiaiškinsim, kuris ženklas kur.",
+  "tombTutorial4": "Viskas užpildyta? Tada atsiras skaičių spyna. Didžiojo uždavinio atsakymas yra kodas — ir kapas atsidarys!",
+  "hieroglyphUnlock": "Turime ypatingą radinį — juo galime rašyti ant vieno užantspauduoto bloko!",
+  "hieroglyphUnlock2": "Bakstelk į žibantį akmenį ir užtempk ant jo radinį, kad jį atrakintum. Vienas blokas vienoje piramidėje.",
+  "errorHighlightTutorial": "Mūsų rastas lobis turi gudrybę — įrašyk neteisingą atsakymą, ir viena klaida užsidegs raudonai!",
+  "errorHighlightTutorial2": "Vienu metu šviečia tik vienas blokas, tad vis tiek reikės pagalvoti. Bet lengviau surasti klaidą!",
+  "earlyFeedbackTutorial": "Matai tikrinimo blokus? Kol pildai, jie tampa žali arba raudoni — iškart matai!",
+  "earlyFeedbackTutorial2": "Remkis jais spręsdamas. Jei kuris pasidaro raudonas, kažką šalia reikia taisyti.",
+  "notEnoughHieroglyphs": "Šią ekspediciją gali bet kada sustabdyti, grįžęs į kelionių langą.",
+  "notEnoughHieroglyphs2": "Galime nutraukti ekspediciją ir paieškoti trūkstamų hieroglifų kitur.",
+  "tombLoot": "Oho, mūsų pirmas lobis! Šaunuolis!",
+  "mapPiece": "Žiūrėk! ŠTAI čia tai žemėlapis. Tikrai senas! Vertas daugiau nei abu mūsiškiai kartu!",
+  "mapPiece2": "Bet tai tik gabalėlis. Kiekvienoje čionykštėje ekspedicijoje paslėptas vienas, ir kartu jie rodo kelią į kapą.",
+  "mapComplete": "Jis sveikas! Žiūrėk, visi gabalėliai tinka tobulai.",
+  "mapComplete2": "Štai, kur susikerta visos linijos. Ten ir yra kapas.",
+  "mapComplete3": "Jis jau mūsų kelionių sąraše. Einam pažiūrėti?",
+  "mapPiece3": "Skaičiuok ekspedicijų sąraše. Aš tai tikrai skaičiuosiu!",
+  "mosaicIntro": "Oho, spalvotas stiklas! Žiūrėk, kaip žiba — TOKIO niekas neišmeta!",
+  "mosaicIntro2": "Tai paveikslo gabalėlis. Visas langas iš stiklo, ir kiekvienas rastas gabalėlis sugrąžina dalelę jo.",
+  "mosaicIntro3": "Ar tu neturi kur nors stovyklos? Pasiimk juos, ten ir sudėliosim. Noriu pamatyti, kas išeis!",
+  "mosaicReminder": "Pst! Tie stiklo gabalėliai vis dar barška mūsų krepšyje. Gal įstatom juos į langą stovykloje?",
+  "mosaicStarter": "Katė tarpdury, o gyvatė skubiai sprunka. Tai bent vertas pieno dubenėlio.",
+  "mosaicStarter2": "Egiptiečiai mylėjo kates būtent dėl to — jos gaudė gyvates ir žiurkes, kurios lįsdavo į grūdus.",
+  "mosaicStarter3": "Taip mylėjo, kad vieną net padarė deive. Bastetė. Namų, durų ir visų už jų miegančiųjų sergėtoja.",
+  "mosaicJunior": "Pažiūrėk į jo ranką — kažkas jam rodo, kaip laikyti plunksną.",
+  "mosaicJunior2": "Tas su paukščio galva yra Totas. Rašymas, skaičiavimas, užrašai — viskas jo.",
+  "mosaicJunior3": "Ibisas, kurį sekėme palei upę? Tai jo paukštis. Ir kiekvienas skaičius, kurį įrašėme sienose, irgi jo.",
+  "mosaicExpert": "Ta šviesa ne atsitiktinė. Jie pastatė visą salę taip, kad ji kristų būtent ten, tą vienintelį rytą.",
+  "mosaicExpert2": "Saulė yra Amonas-Ra — ir paslėptasis, ir šviesa, kurią visi mato. Abu iš karto.",
+  "mosaicExpert3": "Kas taip tiksliai išmatuoja dangų, tas išmatuos ką nori. O mes visą kelią sprendėme jų uždavinius.",
+  "mosaicMaster": "Žalia oda, o iš jo tiesiog auga kviečiai. Tai tyčia.",
+  "mosaicMaster2": "Ozyris. Jį nužudė, paskui vėl sudėjo, ir dabar jis sugrįžta kasmet, kai upė užlieja laukus.",
+  "mosaicMaster3": "Čia, apačioje, visa esmė tokia: mirtis — dar ne pabaiga. Linksma mintis kapui, ar ne?",
+  "mosaicWizard": "Vienoje pusėje širdis. Kitoje — viena plunksna. Ir svarstyklės lygios.",
+  "mosaicWizard2": "Plunksna yra Maat — tiesa, pusiausvyra, tvarka, kokia turi būti. Jei širdis sunkesnė už plunksną, pro duris nepraeisi.",
+  "mosaicWizard3": "Šakalas, laikantis svarstykles, yra Anubis. Jis tave čia ir atveda.",
+  "mosaicFinale": "Pasitrauk akimirkai. Pažiūrėk, ką mes visą laiką nešėme iš tų piramidžių.",
+  "mosaicFinale2": "Kiekvienas gabalėlis yra jo dalis — to, kuris laiko svarstykles. Jis stebėjo visą kelią.",
+  "mosaicFinale3": "Tai jo užrašai apie mus. Ir, mano galva, svarstyklės lygios.",
+  "shopFirstVisit": "A, štai ir atėjom. Mano prekystalis — sakiau gi, kad aš čia dėl prekybos.",
+  "shopFirstVisit2": "Viską ant šio prekystalio iš kažkur išnešiau pats. Štai šitas — dar iš užpraeito kapo.",
+  "shopArrival": "A, mano prekystalis! Tuoj išdėliosiu, ką pakeliui prisirinkau.",
+  "shopArrival2": "Reti radiniai brangiausi, bet aš nupirksiu ir bet kokius niekučius, kuriuos neši.",
+  "arrival": {
+    "starter_1": {
+      "1": {
+        "explorer": "Žiūrėk, ten toliau! Sfinksas!"
+      },
+      "2": {
+        "explorer": "Milžiniškas, net iš čia."
+      },
+      "3": {
+        "explorer": "Sako, po jo letenomis yra užrašas. Kurio niekas neperskaito."
+      },
+      "4": {
+        "explorer": "Vėliau. Pirma šita piramidė!"
+      }
+    },
+    "starter_2": {
+      "1": {
+        "fez": "Cha! Pagaliau kažkas, ką suprantu. Viskas, kas keliavo Nilu aukštyn, pirmiausia ėjo pro čia."
+      },
+      "2": {
+        "fez": "O pirkliai viską užsirašo. Kas ką pirko, kas kam skolingas, kas vėlavo…"
+      },
+      "3": {
+        "explorer": "Kas vėlavo?"
+      },
+      "4": {
+        "fez": "Ypač kas vėlavo!"
+      },
+      "5": {
+        "fez": "Trys tūkstančiai metų. Prekių nebėra, o čekiai vis dar čia. Kaip visada!"
+      }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Pažiūrėk į tas duris! Žmonės čia ateidavo prašyti apsaugos. O tokios durys likdavo uždarytos."
+      },
+      "2": {
+        "explorer": "Uždarytos kam?"
+      },
+      "3": {
+        "fez": "Visiems, kas neprašė gražiai. Daugiausia mums."
+      },
+      "4": {
+        "fez": "Viską, kas šitoje šalyje užantspauduota, kažkas užantspaudavo rimtai. Labai rimtai."
+      },
+      "5": {
+        "fez": "O katės! Čia jas dievino. Tiesiog negalėjo atsitraukti nuo jų."
+      }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "O, man čia patinka. Čia jie mokėsi rašyti! Ženklą po ženklo, ant puodų šukių — papirusas vaikams buvo per brangus."
+      },
+      "2": {
+        "explorer": "Jie mokėsi ant šiukšlių?"
+      },
+      "3": {
+        "fez": "Ant ko tik turėjo! O kai išmoksti pakankamai ženklų, siena staiga nebėra vien papuošimas."
+      },
+      "4": {
+        "explorer": "Tas Sfinksas… Noriu dar kartą į jį pažiūrėti."
+      },
+      "5": {
+        "fez": "Dar ne. Greitai."
+      }
+    },
+    "junior_1": {
+      "1": {
+        "fez": "Jie grįždavo kasmet kartu su potvyniu, beveik tą pačią dieną."
+      },
+      "2": {
+        "fez": "Tai žmonės ėmė skaičiuoti dienas tarp jų. Iš ten ir kalendorius — iš paukščių."
+      },
+      "3": {
+        "explorer": "Iš paukščių."
+      },
+      "4": {
+        "fez": "Paukščiai ir popieriai. Visada paukščiai ir popieriai."
+      }
+    },
+    "junior_2": {
+      "1": {
+        "fez": "Čia jie viską gamino. Ne kapus — daiktus, kurie į juos keliavo."
+      },
+      "2": {
+        "fez": "Pažiūrėk į formas. Ta pati apyrankė, keturiasdešimt kartų."
+      },
+      "3": {
+        "explorer": "Keturiasdešimčiai žmonių?"
+      },
+      "4": {
+        "fez": "Kiekvienam, kas galėjo sumokėti. Didikas norėjo to, ką turėjo karalius, tik už didikui įkandamą kainą."
+      }
+    },
+    "junior_3": {
+      "1": {
+        "fez": "Totas, šitas. Paslapčių ir burtų dievas, beveik tikrai."
+      },
+      "2": {
+        "explorer": "Beveik."
+      },
+      "3": {
+        "fez": "Devyniasdešimt procentų. Šiaip ar taip — ženklai, kuriuos renki, yra jo."
+      }
+    },
+    "junior_4": {
+      "1": {
+        "fez": "Šimto metrų aukščio, o viršuje ugnis, kuri niekada neužgesdavo."
+      },
+      "2": {
+        "fez": "Jūreiviai rasdavo krantą net iš dienos kelio. Anksčiau rasdavo jį tik į jį atsitrenkę."
+      },
+      "3": {
+        "explorer": "Kaip čia ką nors rasti be tokio?"
+      },
+      "4": {
+        "fez": "Paklausi to, kuris jau ten buvo. Tai ir yra visas mano darbas."
+      }
+    },
+    "expert_1": {
+      "1": {
+        "fez": "Šešiasdešimt su viršum kapų iškirsta viename slėnyje, ir visi iki vieno atidaryti dar prieš mums atvykstant."
+      },
+      "2": {
+        "explorer": "Kas juos atidarė?"
+      },
+      "3": {
+        "fez": "Daugiausia tokie kaip mes. Tik anksčiau."
+      },
+      "4": {
+        "fez": "Ką tu apie tai manai?"
+      },
+      "5": {
+        "explorer": "Kad mes pavėlavom."
+      }
+    },
+    "expert_2": {
+      "1": {
+        "fez": "Amonas-Ra. Saulė. Visų mėgstamiausias, ir aišku kodėl — pažiūrėk, kokia didelė vieta."
+      },
+      "2": {
+        "explorer": "Du vardai."
+      },
+      "3": {
+        "fez": "Tas pats dievas, manau. Populiariausiems jie pridėdavo dar vieną vardą."
+      }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Visa šalis — tai žalia juosta abipus vienos upės, o čia ji išsiplečia štai į tokį vaizdą."
+      },
+      "2": {
+        "fez": "Viskas auga. Ir viskas kandžiojasi."
+      },
+      "3": {
+        "explorer": "Dėl kurio iš jų mes čia?"
+      },
+      "4": {
+        "fez": "Aš tikėjausi, kad nė dėl vieno."
+      }
+    },
+    "expert_4": {
+      "1": {
+        "fez": "Pati pirmoji. Iki jos karaliai gulėdavo po plokščiu akmeniu, kaip ir visi."
+      },
+      "2": {
+        "fez": "Kažkas čia stovėjo ir pagalvojo: o jei taip padarytume, tik šešis kartus, vienas ant kito?"
+      },
+      "3": {
+        "explorer": "Ir pavyko?"
+      },
+      "4": {
+        "fez": "Ji tebestovi, o jis ne. Priklauso, ką turi galvoje."
+      }
+    },
+    "master_1": {
+      "1": {
+        "fez": "Du milijonai blokų. Kažkas suskaičiavo."
+      },
+      "2": {
+        "explorer": "Kažkas suskaičiavo?"
+      },
+      "3": {
+        "fez": "Kažkas visada skaičiuoja. Tą žmonės ir pamiršta — visa tai tvarkė raštininkai."
+      },
+      "4": {
+        "fez": "Gražu, ar ne? Nenoriu net galvoti, kaip atrodė algų sąrašas."
+      }
+    },
+    "master_2": {
+      "1": {
+        "fez": "Nurodymai. Tik tiek — ką sakyti ir kokia tvarka, kad kelionė vyktų kaip reikia."
+      },
+      "2": {
+        "explorer": "Instrukcija."
+      },
+      "3": {
+        "fez": "Instrukcija, kaip būti mirusiam. Šitie viską užsirašydavo."
+      },
+      "4": {
+        "fez": "O tai, žinant, ko mes ieškome, pirma gera žinia per visą savaitę."
+      }
+    },
+    "master_3": {
+      "1": {
+        "fez": "A. Kažkieno stovykla."
+      },
+      "2": {
+        "explorer": "Neseniai?"
+      },
+      "3": {
+        "fez": "Palyginti neseniai. Konservai ir bjaurus kosulys, sprendžiant iš visko."
+      },
+      "4": {
+        "fez": "Jie nuėjo toliau, o savo daiktų nepasiėmė."
+      },
+      "5": {
+        "explorer": "O jie grįžo jų pasiimti?"
+      },
+      "6": {
+        "fez": "…Eikim toliau."
+      }
+    },
+    "master_4": {
+      "1": {
+        "fez": "Štai KĄ kiti bandė pamėgdžioti. Pažiūrėk į spalvas — trys tūkstančiai metų, o atrodo, lyg dar šlapios."
+      },
+      "2": {
+        "explorer": "Henut būtų įsiutusi."
+      },
+      "3": {
+        "fez": "Henut užsirašinėtų."
+      }
+    },
+    "wizard_1": {
+      "1": {
+        "fez": "Naktį saulė nueina po pasauliu ir išlenda kitoje pusėje. Toks visas tikėjimas."
+      },
+      "2": {
+        "fez": "Dvylika valandų tamsoje, visokių kliūčių kelyje, ir kažkas turi ją pernešti."
+      },
+      "3": {
+        "explorer": "Tai juk mes tą ir darome."
+      },
+      "4": {
+        "fez": "Stengiausi to garsiai nesakyti."
+      },
+      "5": {
+        "explorer": "Smėlis vis dar byra vidun."
+      },
+      "6": {
+        "fez": "Jis byra jau tris tūkstančius metų. Jis nesiliauja, tik sukasi ratu."
+      },
+      "7": {
+        "fez": "Prisipildo, apsiverčia ir vėl iš pradžių. Kaip ir saulė."
+      }
+    },
+    "wizard_2": {
+      "1": {
+        "fez": "Du milžinai, aštuoniolikos metrų aukščio, ir abu — Amenhotepas."
+      },
+      "2": {
+        "fez": "Graikai tik pažiūrėjo ir nusprendė, kad tai jų didvyris. Memnonas. Tas vardas prilipo dviem tūkstančiams metų."
+      },
+      "3": {
+        "explorer": "Kieno vardas ant jų užrašytas?"
+      },
+      "4": {
+        "fez": "Jo paties. Iškaltas soste, kur buvo visada."
+      },
+      "5": {
+        "fez": "Niekas jo neperskaitė."
+      },
+      "6": {
+        "fez": "Po žemės drebėjimo šiaurinis milžinas auštant dainuodavo. Vieną garsą, kiekvieną rytą, kai saulė sušildydavo plyšį."
+      },
+      "7": {
+        "explorer": "O dabar?"
+      },
+      "8": {
+        "fez": "Vienas imperatorius liepė jį sutaisyti. Nuo tada jis nė karto nebeprabilo."
+      }
+    },
+    "wizard_3": {
+      "1": {
+        "fez": "Svarstyklės. Širdis vienoje pusėje, plunksna kitoje — tai gera sunki širdis turbūt laimi."
+      },
+      "2": {
+        "explorer": "O į kurią pusę leidžiasi sunkus daiktas?"
+      },
+      "3": {
+        "fez": "…Žemyn."
+      },
+      "4": {
+        "fez": "Oi."
+      },
+      "5": {
+        "fez": "Lengva. Širdis turi būti LENGVA."
+      }
+    },
+    "wizard_4": {
+      "1": {
+        "fez": "Viršūnės akmuo uždedamas paskutinis, ir jis auksinis, kad visa piramidė pirmoji pagautų ryto šviesą."
+      },
+      "2": {
+        "explorer": "Kam?"
+      },
+      "3": {
+        "fez": "Kiekvienam, kas žiūri. Tame ir esmė — tai niekada nebuvo skirta tam, kuris viduje."
+      }
+    }
+  },
+  "tomb": {
+    "starter": {
+      "1": {
+        "ipi": "Ei! Rankas šalin! Tai mano ąsotis!"
+      },
+      "2": {
+        "fez": "…Ar tas ąsotis ką tik prakalbo?!"
+      },
+      "3": {
+        "ipi": "Čia aš kalbu. Trečia lentyna, tas atskilęs. Tas mano."
+      },
+      "4": {
+        "explorer": "Gerai, gerai! Jis lieka vietoje. Kas tu toks?"
+      },
+      "5": {
+        "ipi": "Ipi. Keturiasdešimt metų vedžiau knygas. Keturiasdešimt!"
+      },
+      "6": {
+        "fez": "Knygas? Kieno?"
+      },
+      "7": {
+        "ipi": "Visų! Kas kiek skolingas, iki paskutinio grūdų maišo."
+      },
+      "8": {
+        "ipi": "Ta Henut, ten į šiaurę? Vienuolika debenų lazurito. Taip ir nesumokėjo!"
+      },
+      "9": {
+        "explorer": "Ir tu vis dar tai prisimeni, po tiek laiko?"
+      },
+      "10": {
+        "ipi": "Juk užrašyta! Kas užrašyta, tas tikrai buvo."
+      },
+      "11": {
+        "ipi": "Tik tie visi Hori… Hori valtininkas, Hori kepėjas… ir tas kitas Hori."
+      },
+      "12": {
+        "fez": "O jūs turėjot kačių? Juk visi turėjo kačių, ar ne? Tokie mieliukai!"
+      },
+      "13": {
+        "ipi": "Mieliukai? Jos buvo dėl grūdų! Ar žinai, kiek kainuoja viena žiurkė per visą sezoną?"
+      },
+      "14": {
+        "fez": "…A. Aišku."
+      },
+      "15": {
+        "ipi": "Pasakyk Henut, kad tave atsiuntė Ipi. Tai jai sugadins visą popietę."
+      },
+      "16": {
+        "fez": "Jis man patinka!"
+      },
+      "17": {
+        "explorer": "Tau tiesiog patinka, kad jam dar skolingi pinigų."
+      }
+    },
+    "junior": {
+      "1": {
+        "henut": "Pagaliau. Tu tikriausiai dėl lazurito. Ipi, žinoma, vis dar zyzia dėl to lazurito."
+      },
+      "2": {
+        "explorer": "Zyzia."
+      },
+      "3": {
+        "henut": "Tai buvo stiklas. Nuostabus stiklas. Jis puikiai žinojo."
+      },
+      "4": {
+        "fez": "…O apyrankė irgi buvo stiklinė?"
+      },
+      "5": {
+        "henut": "Viskas čia yra geriausios kopijos, kokias tik galima nusipirkti, jaunuoli, ir kiekvieną išsirinkau pati."
+      },
+      "6": {
+        "henut": "Na. Siena. Trečias ženklas — tai ne mano vardas. Kažkoks mokinukas su kaltu ir be priežiūros."
+      },
+      "7": {
+        "henut": "Tu mokeisi ženklų. Matau. Ištaisyk."
+      }
+    },
+    "juniorFixed": {
+      "1": {
+        "henut": "Štai. Dabar ir po tūkstančio metų čia bus mano vardas."
+      },
+      "2": {
+        "explorer": "Ipi jį parašė teisingai."
+      },
+      "3": {
+        "henut": "Ipi viską rašė teisingai. Tai vienintelis geras jo bruožas."
+      },
+      "4": {
+        "fez": "Ar tai svarbu, čia, apačioje?"
+      },
+      "5": {
+        "henut": "Tik tai ir svarbu."
+      },
+      "6": {
+        "fez": "Ji ten viršuje turėjo visą sieną su Totu. Paslapčių dievu."
+      },
+      "7": {
+        "henut": "Totas skaičiuoja. Totas užrašo, ką padarei, ir tai lieka užrašyta."
+      },
+      "8": {
+        "henut": "Paslaptimis žmonės vadina aritmetiką, kai patys nemoka skaičiuoti."
+      },
+      "9": {
+        "henut": "Jei keliausi toliau — o tu akivaizdžiai keliausi — Karnake yra žynys, kuris mirusiesiems skolingas apeigas, kurių taip ir neatliko. Jis bus nepakenčiamas. Žyniai visada tokie."
+      },
+      "10": {
+        "henut": "…Ar mes jau esame susitikę?"
+      },
+      "11": {
+        "fez": "Būčiau prisiminęs."
+      },
+      "12": {
+        "henut": "Taip. Aš irgi."
+      }
+    },
+    "expert": {
+      "1": {
+        "priest": "Jūs ne tas, kurio laukiu."
+      },
+      "2": {
+        "explorer": "O ko jūs laukiate?"
+      },
+      "3": {
+        "priest": "Žmogaus su antspaudu. Jį reikėjo atnešti čia, padėti ten ir ištarti žodžius. Neįvyko nė vienas iš tų trijų dalykų."
+      },
+      "4": {
+        "fez": "…O kiek laiko jūs jau laukiate?"
+      },
+      "5": {
+        "priest": "Neskaičiuoju. Tai būtų neprofesionalu."
+      },
+      "6": {
+        "priest": "Tikra auka yra daiktas, su kuriuo karalius buvo palaidotas. Ne kopija. Ne panašus daiktas. Tas pats daiktas, su jo ženklu."
+      },
+      "7": {
+        "priest": "Atneškite tai, ir apie jus praneš. Atneškite ką nors kita, ir nepraneš."
+      },
+      "8": {
+        "explorer": "Kam praneš?"
+      },
+      "9": {
+        "priest": "Sužinosite. Galiausiai visi sužino."
+      },
+      "10": {
+        "fez": "Šitas labai jau myli saulę. Visas tas Amonas-Ra prie įėjimo."
+      },
+      "11": {
+        "priest": "Amonas yra paslėptasis. Ra yra tas, kurį mato visi."
+      },
+      "12": {
+        "priest": "Tai tas pats dievas. Tai ne sutapimas, tai visa esmė."
+      },
+      "13": {
+        "fez": "…Aišku. Taip. Aš žinojau."
+      },
+      "14": {
+        "explorer": "Nežinojai."
+      },
+      "15": {
+        "fez": "Nežinojau."
+      }
+    },
+    "expertB": {
+      "1": {
+        "fez": "Čia niekas nebuvo. Nei mes, nei tie ankstesnieji, niekas."
+      },
+      "2": {
+        "explorer": "Iš kur žinai?"
+      },
+      "3": {
+        "fez": "Todėl, kad čia dar kažkas yra."
+      }
+    },
+    "master": {
+      "1": {
+        "pharaoh": "Galite prisiartinti. Jūs prisiartinote. Na gerai."
+      },
+      "2": {
+        "fez": "Jūsų didenybe."
+      },
+      "3": {
+        "pharaoh": "Taip."
+      },
+      "4": {
+        "explorer": "Mums reikia jūsų antspaudo."
+      },
+      "5": {
+        "pharaoh": "Jo reikia visiems. Mano antspaudą du kartus pasiėmė ir nė karto negrąžino."
+      },
+      "6": {
+        "pharaoh": "Antrą kartą paliko kopiją. KOPIJĄ. MANO kape. Lyg aš nepažiūrėčiau."
+      },
+      "7": {
+        "explorer": "Ar kopija vis dar čia?"
+      },
+      "8": {
+        "pharaoh": "Žinoma, kad čia, ji nieko neverta. Guli lentynoje, kur turėtų gulėti tikrasis, ir yra netikra."
+      },
+      "9": {
+        "pharaoh": "Imkite, jei norite. Nuneškite tam žyniui. Pažiūrėsim, kiek su ja nueisite."
+      },
+      "10": {
+        "fez": "…Jam tai patinka."
+      },
+      "11": {
+        "pharaoh": "Tai geriausia mano savaitė per devynis šimtus metų."
+      },
+      "12": {
+        "fez": "Ten ant sienos Ozyris. Mirusiųjų valdovas — niūrus reikalas."
+      },
+      "13": {
+        "pharaoh": "Jis ŽALIAS, tu juokingas gyvūne."
+      },
+      "14": {
+        "pharaoh": "Žalias kaip užlietas laukas. Jį nužudė, vėl sudėjo, ir jis sugrįžta kiekvienais metais."
+      },
+      "15": {
+        "pharaoh": "Čia, apačioje, tai ne niūru, tai visa esmė. Mirtis — dar ne pabaiga."
+      }
+    },
+    "wizard": {
+      "1": {
+        "priest": "Padėkite. Ten. Taip."
+      },
+      "2": {
+        "priest": "…"
+      },
+      "3": {
+        "priest": "Darau tai pirmą kartą. Jau pradėjau manyti, kad pamiršau, kaip."
+      },
+      "4": {
+        "explorer": "Ir pamiršote?"
+      },
+      "5": {
+        "priest": "Visiškai. Bet prisiminiau."
+      }
+    },
+    "wizardB": {
+      "1": {
+        "fez": "Jų virvė. Vis dar pririšta."
+      },
+      "2": {
+        "explorer": "Jie atėjo iki čia."
+      },
+      "3": {
+        "fez": "Toliau nei čia. O paskui ja užlipo atgal."
+      },
+      "4": {
+        "explorer": "Čia yra užrašų knygelė."
+      },
+      "5": {
+        "fez": "Ką ji sako?"
+      },
+      "6": {
+        "explorer": "Negaliu perskaityti rašto. Grįžom dėl antspaudo. Vietoj jo padarėm geresnį."
+      },
+      "7": {
+        "explorer": "Niekas nepatikėjo."
+      },
+      "8": {
+        "fez": "…Jie jį suklastojo, nes negalėjo perskaityti, kam jis skirtas."
+      },
+      "9": {
+        "explorer": "O tada išvažiavo namo."
+      }
+    },
+    "wizardC": {
+      "1": {
+        "fez": "Sustok akimirkai. Pažiūrėk, ką mes visą laiką nešėme iš tų piramidžių."
+      },
+      "2": {
+        "explorer": "Tai paveikslas."
+      },
+      "3": {
+        "fez": "Tai visą laiką buvo paveikslas."
+      }
+    }
+  },
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Ola! Žemėlapyje buvo rūsio durys, o čia visa kalva!"
+      },
+      "2": {
+        "fez": "Gudruolis. Paslėpk prekes kalvos viduje — joks vagis neprisigalvos."
+      },
+      "3": {
+        "explorer": "Mes prisigalvojom."
+      },
+      "4": {
+        "fez": "Mes ne vagys. Mes pirkėjai. Labai pavėlavę pirkėjai."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Tai turbūt čia. Henut! Ta, su vienuolika debenų lazurito!"
+      },
+      "2": {
+        "fez": "Kaip manai, ar gausim dalį, jei išieškosim skolą?"
+      },
+      "3": {
+        "explorer": "Tu nieko neišieškojai."
+      },
+      "4": {
+        "fez": "Mėgstu viską apskaičiuoti iš anksto."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Tai štai kur Henut žynys. Nepakenčiamas, sakė ji."
+      },
+      "2": {
+        "fez": "Kaip manai, ar atnešti ką nors? Gėlių?"
+      },
+      "3": {
+        "explorer": "Jis miręs."
+      },
+      "4": {
+        "fez": "Juo labiau. Pirmas įspūdis svarbus."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Čia galėjo įeiti tik vyriausiasis žynys. O dabar ir mes!"
+      },
+      "2": {
+        "explorer": "O mums galima?"
+      },
+      "3": {
+        "fez": "Prie durų nėra nė vieno, kas pasakytų „ne“."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Žiūrėk, žemėlapis čia tiesiog baigiasi. Smėlis, o paskui nieko."
+      },
+      "2": {
+        "explorer": "Vadinasi, esam teisingoje vietoje."
+      },
+      "3": {
+        "fez": "Būtent. Būtent tai mane ir neramina."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Ozyrio salė! Žalia, žinoma. Nes jis sugrįžta kasmet, kaip grūdai."
+      },
+      "2": {
+        "explorer": "Tu visada tai žinojai."
+      },
+      "3": {
+        "fez": "Visada."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Pačių dievų sandėlis! Ką laikyti, kai jau viską turi?"
+      },
+      "2": {
+        "explorer": "Tai, ką tau atneša žmonės."
+      },
+      "3": {
+        "fez": "…Taip. Tikriausiai."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Kosminių jėgų karalystė. Še tau."
+      },
+      "2": {
+        "fez": "Jei turėčiau parduoti kokį niekutį, irgi taip jį pavadinčiau."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Staiga man atrodo, kad kažką padariau ne taip."
+      },
+      "2": {
+        "explorer": "Pavyzdžiui?"
+      },
+      "3": {
+        "fez": "Neįsivaizduoju. Tai ir blogiausia."
+      }
+    }
+  },
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Tiek svirčių ir durų dėl vieno rūsio!"
+      },
+      "2": {
+        "fez": "Vadinasi, apačioje kažkas gero. Niekas taip nesivargina dėl šlamšto."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Uf. Tos durys buvo kur kas įnoringesnės nei Ipi."
+      },
+      "2": {
+        "fez": "Na. Ponia turėjo pinigų, aišku."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Uf, pagaliau! Ta ola tikrai nenorėjo mūsų įleisti."
+      },
+      "2": {
+        "explorer": "Manau, tokia ir buvo mintis."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Pst… kodėl aš šnibždu?"
+      },
+      "2": {
+        "explorer": "Nežinau. Aš irgi šnibždu."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Uch. Uodega dar dreba po tų paskutinių durų."
+      },
+      "2": {
+        "fez": "Karalius, kuris taip užrakina savo daiktus… tikrai nenori jų prarasti."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Matai? Pabūni po žeme pakankamai ilgai, ir vėl išlendi."
+      },
+      "2": {
+        "explorer": "Čia irgi apie Ozyrį?"
+      },
+      "3": {
+        "fez": "Ne, čia apie mane."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Tokios durys… Kadaise būtume tiesiog apsisukę."
+      },
+      "2": {
+        "explorer": "Bet ne dabar."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Trys olos aukštai, ir tik tada paradinės durys."
+      },
+      "2": {
+        "explorer": "Vadinasi, verta."
+      },
+      "3": {
+        "fez": "Taip visada sako. O paskui ten ąsotis."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Paskutinė tamsos atkarpa. Jaučiu."
+      },
+      "2": {
+        "explorer": "Tą patį sakei praėjusiame."
+      },
+      "3": {
+        "fez": "Ir beveik buvau teisus."
+      }
+    }
+  },
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Tik pažiūrėk! Piramidė po žeme! Pirkliui!"
+      },
+      "2": {
+        "fez": "Arba jis labai gerai uždirbo, arba labai gerai derėjosi."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Pažiūrėk, kaip viršūnė žiba saulėje! Tikras auksas, lažinuosi."
+      },
+      "2": {
+        "explorer": "Duobėje po žeme. Kam ji žiba?"
+      },
+      "3": {
+        "fez": "Jai pačiai. Iškart matyti, kokia ji."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Hm. Ar apskritai galima parduoti tai, kas jau priklauso dievui?"
+      },
+      "2": {
+        "explorer": "Paklausk dievo."
+      },
+      "3": {
+        "fez": "Geriau ne."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Kaip manai, ar tas žynys žino, kad mes čia vaikštinėjam?"
+      },
+      "2": {
+        "explorer": "Jis neskaičiuoja. Tai būtų neprofesionalu."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Pažiūrėk, kokia ji vieniša saulėje. Graži, ar ne?"
+      },
+      "2": {
+        "fez": "Gal tiesiog nupieškim ją ir eikim?"
+      },
+      "3": {
+        "explorer": "Tu nemoki piešti."
+      },
+      "4": {
+        "fez": "…Nemoku. Tai einam vidun."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Kas ten viduje, tikisi sugrįžti. Toks čia susitarimas."
+      },
+      "2": {
+        "explorer": "Kiek laiko jis jau laukia?"
+      },
+      "3": {
+        "fez": "Ilgai. Bet toks jau darbas. Būti mirusiam — tai daugiausia laukti."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "explorer": "Oho."
+      },
+      "2": {
+        "fez": "Taip."
+      },
+      "3": {
+        "fez": "Kartais tiesiog nebėra ką pasakyti, ar ne?"
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Matai tą saulės dėmę ant piramidės? Pagal ją galima pasakyti, kiek valandų."
+      },
+      "2": {
+        "explorer": "Tai kiek dabar valandų?"
+      },
+      "3": {
+        "fez": "…Popietė. Maždaug. Aš ne laikrodis."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Štai ji. Kiekviena to žemėlapio linija baigiasi čia."
+      },
+      "2": {
+        "explorer": "Vadinasi, tai pabaiga."
+      },
+      "3": {
+        "fez": "Žemėlapio — taip. Keista. Maniau, bus smagiau."
+      }
+    }
+  },
+  "camp": {
+    "firstHome": {
+      "1": {
+        "fez": "Čia tavo stovykla? Laužas ir skrynia?"
+      },
+      "2": {
+        "explorer": "Mūsų stovykla."
+      },
+      "3": {
+        "fez": "Mūsų. Gerai. Tada aš užimu vietą prie laužo."
+      },
+      "4": {
+        "fez": "Aš juk driežas. Kai man patogu."
+      }
+    },
+    "homeHaul": {
+      "1": {
+        "fez": "Išpakavimas! Geriausia visos kelionės dalis."
+      },
+      "2": {
+        "explorer": "Geriau nei piramidė?"
+      },
+      "3": {
+        "fez": "Piramidė ne mūsų. O šitai — mūsų."
+      }
+    },
+    "homeEmpty": {
+      "1": {
+        "explorer": "Tuščiomis rankomis."
+      },
+      "2": {
+        "fez": "Na ir kas? Mes ėjome. Tai irgi skaitosi."
+      },
+      "3": {
+        "explorer": "Kam?"
+      },
+      "4": {
+        "fez": "Mano kojoms. Jos labai trumpos, žinai."
+      }
+    },
+    "rested": {
+      "1": {
+        "fez": "Štai. Truputį geriau?"
+      },
+      "2": {
+        "explorer": "Tai buvo tik įbrėžimas."
+      },
+      "3": {
+        "fez": "Aš net nežiūrėjau. Ir vis tiek turėjau prisėsti."
+      }
+    },
+    "chapterJunior": {
+      "1": {
+        "fez": "Na, gražiai pavyko. Kitas!"
+      },
+      "2": {
+        "explorer": "Nebuvo taip lengva."
+      },
+      "3": {
+        "fez": "Dabar jau lengva. Po visko viskas atrodo lengva."
+      }
+    },
+    "chapterExpert": {
+      "1": {
+        "fez": "Ten toliau yra spąstų. Tikrų. Jie kandžiojasi."
+      },
+      "2": {
+        "fez": "Susižeidei? Tada tiesiog grįžtam. Namie pasveiksi."
+      },
+      "3": {
+        "explorer": "O tu?"
+      },
+      "4": {
+        "fez": "Aš eisiu už tavęs. Ten saugiau."
+      }
+    },
+    "chapterMaster": {
+      "1": {
+        "fez": "Ten jau keturios piramidės. Pameni, kai buvo tik viena?"
+      },
+      "2": {
+        "explorer": "Tai buvo ne taip seniai."
+      },
+      "3": {
+        "fez": "Ne. Bet atrodo, kad seniai."
+      }
+    },
+    "chapterWizard": {
+      "1": {
+        "fez": "Pažiūrėk į paskutinę. Net su auksine viršūne!"
+      },
+      "2": {
+        "fez": "Ši mums kainuos. Paskutinė visada kainuoja."
+      },
+      "3": {
+        "explorer": "Kainuos ką?"
+      },
+      "4": {
+        "fez": "…Jau nebežinau."
+      }
+    },
+    "firstFind": {
+      "1": {
+        "fez": "Pažiūrėk — lyg čia visada būtų stovėjęs!"
+      },
+      "2": {
+        "fez": "Man niežti rankas prikabinti jam kainą."
+      },
+      "3": {
+        "explorer": "Nereikia."
+      },
+      "4": {
+        "fez": "Ne, ne. Iš namų neparduodama. Žinau."
+      }
+    },
+    "structureDone": {
+      "1": {
+        "fez": "Baigta! Visos dalys savo vietose!"
+      },
+      "2": {
+        "explorer": "Viską padarėm patys."
+      },
+      "3": {
+        "fez": "Na. Aš daugiausia rodžiau pirštu."
+      }
+    }
+  },
+  "animal": {
+    "forSale": {
+      "1": {
+        "fez": "Pažiūrėk, kas prie prekystalio! Dabar aš verčiuosi ir vežimu."
+      },
+      "2": {
+        "explorer": "Jis kramto."
+      },
+      "3": {
+        "fez": "Įskaičiuota į kainą."
+      }
+    },
+    "boughtDonkey": {
+      "1": {
+        "fez": "Parduota! Vienas asilas. Užsispyręs, bet neš bet ką."
+      },
+      "2": {
+        "explorer": "Tai kur jis?"
+      },
+      "3": {
+        "fez": "Jau keliauja namo. Jis mieliau eina be mūsų."
+      }
+    },
+    "blockedDonkey": {
+      "1": {
+        "fez": "Su visu šituo turtu tiek toli neisim. Reikia asilo."
+      },
+      "2": {
+        "fez": "O spėk, kas jį turi? Aš. Savo prekystalyje, Henut lobyne."
+      }
+    },
+    "throughDonkey": {
+      "1": {
+        "explorer": "Jis sutinka."
+      },
+      "2": {
+        "fez": "Šiandien. Paklausk jo rytoj."
+      }
+    },
+    "arrivesDonkey": {
+      "1": {
+        "fez": "Štai ir jis! Atėjo pirmiau už mus."
+      },
+      "2": {
+        "explorer": "Ir laužą jau rado."
+      },
+      "3": {
+        "fez": "Mano vietą. Na. Jis buvo pirmas."
+      }
+    },
+    "boughtCart": {
+      "1": {
+        "fez": "Vežimas! Du ratai, ir beveik nebarška."
+      },
+      "2": {
+        "explorer": "Beveik?"
+      },
+      "3": {
+        "fez": "Barškėjimas — dovanų."
+      }
+    },
+    "blockedCart": {
+      "1": {
+        "fez": "Asilas daugiau maišų nebeneš. Klausiau jo."
+      },
+      "2": {
+        "fez": "Mums reikia vežimo. Vienas yra mano prekystalyje, pas vyriausiąjį žynį."
+      }
+    },
+    "throughCart": {
+      "1": {
+        "explorer": "Girdi?"
+      },
+      "2": {
+        "fez": "Tai vežimas. Jis truputį dainuoja."
+      },
+      "3": {
+        "explorer": "Visą kelią?"
+      }
+    },
+    "arrivesCart": {
+      "1": {
+        "fez": "Vežimas mūsų stovykloje! Dabar atrodom, lyg kažkur keliautume."
+      },
+      "2": {
+        "explorer": "Mes ir keliaujame."
+      },
+      "3": {
+        "fez": "Taip, bet dabar tai mato visi."
+      }
+    },
+    "boughtCamel": {
+      "1": {
+        "fez": "Kupranugaris! Išbūna be vandens kelias dienas. Aš tai ne."
+      },
+      "2": {
+        "explorer": "Jis į tave žiūri."
+      },
+      "3": {
+        "fez": "Iš aukšto. Kupranugariai visada žiūri iš aukšto."
+      }
+    },
+    "blockedCamel": {
+      "1": {
+        "fez": "Vidinė šventovė? Pėsčiomis ten niekada nenueisim."
+      },
+      "2": {
+        "fez": "Laimei, turiu kupranugarį. Savo prekystalyje, pas vyriausiąjį žynį."
+      }
+    },
+    "throughCamel": {
+      "1": {
+        "fez": "Jis atsiklaupė! Prieš mane!"
+      },
+      "2": {
+        "explorer": "Kad galėtume užlipti."
+      },
+      "3": {
+        "fez": "Leisk man pasidžiaugti."
+      }
+    },
+    "arrivesCamel": {
+      "1": {
+        "fez": "Štai ir jis. Elgiasi, lyg stovykla būtų jo."
+      },
+      "2": {
+        "explorer": "O asilas?"
+      },
+      "3": {
+        "fez": "Apsimeta, kad jo nemato. Kaip ir aš."
+      }
+    },
+    "boughtSecondDonkey": {
+      "1": {
+        "fez": "Dar vienas asilas! Dabar pirmasis turės su kuo pasikalbėti."
+      },
+      "2": {
+        "explorer": "Pasikalbėti?"
+      },
+      "3": {
+        "fez": "Pabliauti. Tai tas pats kaip kalbėti, tik garsiau."
+      }
+    },
+    "blockedSecondDonkey": {
+      "1": {
+        "fez": "Asilas toliau neis. Vienas neisiąs, sako."
+      },
+      "2": {
+        "explorer": "Jis taip pasakė?"
+      },
+      "3": {
+        "fez": "Aš moku asiliškai. Jis nori draugo, o aš turiu vieną savo prekystalyje, faraono lobyje."
+      }
+    },
+    "throughSecondDonkey": {
+      "1": {
+        "fez": "Paklausyk jų! Vienas garsiau už kitą."
+      },
+      "2": {
+        "explorer": "Kuris laimi?"
+      },
+      "3": {
+        "fez": "Tik ne mes. Mums tenka klausytis."
+      }
+    },
+    "arrivesSecondDonkey": {
+      "1": {
+        "fez": "Pažiūrėk į juos. Lyg pažįstami jau daug metų."
+      },
+      "2": {
+        "explorer": "Kaip mes."
+      },
+      "3": {
+        "fez": "Mes mažiau bliaunam."
+      }
+    },
+    "boughtSecondCamel": {
+      "1": {
+        "fez": "Dar vienas kupranugaris. Taip. Aš jų irgi nemėgstu."
+      },
+      "2": {
+        "fez": "Bet šitas bent atrodo draugiškas."
+      },
+      "3": {
+        "explorer": "Jis žiūri į tavo fesą."
+      }
+    },
+    "blockedSecondCamel": {
+      "1": {
+        "fez": "Ozyrio salė. Su vienu kupranugariu ten nenukeliausim."
+      },
+      "2": {
+        "fez": "Laimei, turiu dar vieną, savo prekystalyje faraono lobyje. Patį paskutinį."
+      },
+      "3": {
+        "explorer": "Tu visada taip sakai."
+      }
+    },
+    "throughSecondCamel": {
+      "1": {
+        "fez": "Jis valgo mano fesą!"
+      },
+      "2": {
+        "explorer": "Draugiškas kupranugaris."
+      },
+      "3": {
+        "fez": "Per daug draugiškas."
+      }
+    },
+    "arrivesSecondCamel": {
+      "1": {
+        "fez": "Du kupranugariai. Dabar abu žiūri į mane iš aukšto."
+      },
+      "2": {
+        "explorer": "Tai eik pastovėti prie asilų."
+      },
+      "3": {
+        "fez": "Aš jau ten."
+      }
+    },
+    "boughtSturdyCart": {
+      "1": {
+        "fez": "Tvirtesnis vežimas. Šitas kelyje nedainuoja."
+      },
+      "2": {
+        "explorer": "Ant jo nupieštos gėlės."
+      },
+      "3": {
+        "fez": "Dėl tvirtumo."
+      }
+    },
+    "blockedSturdyCart": {
+      "1": {
+        "fez": "Senas vežimas ten nenuvažiuos sveikas. Reikia ko nors tvirtesnio."
+      },
+      "2": {
+        "fez": "Vienas yra mano prekystalyje, Dievų lobyne. Ne dėl dažų, suprask."
+      }
+    },
+    "throughSturdyCart": {
+      "1": {
+        "explorer": "Nebarška."
+      },
+      "2": {
+        "fez": "Matai? Tvirtumas."
+      },
+      "3": {
+        "explorer": "O gėlės?"
+      },
+      "4": {
+        "fez": "Jos irgi truputį padeda."
+      }
+    },
+    "arrivesSturdyCart": {
+      "1": {
+        "fez": "Pažiūrėk, kaip blizga!"
+      },
+      "2": {
+        "explorer": "Gražesnis, nei reikia."
+      },
+      "3": {
+        "fez": "Taip. Aš jį ir pardaviau ne dėl tvirtumo."
+      }
+    },
+    "boughtCaravanBanner": {
+      "1": {
+        "fez": "Vėliava. Sakysiu atvirai: ji nieko neatrakina."
+      },
+      "2": {
+        "explorer": "Tai ką ji daro?"
+      },
+      "3": {
+        "fez": "Plazda. Gražiai."
+      }
+    },
+    "arrivesCaravanBanner": {
+      "1": {
+        "fez": "Pažiūrėk, kaip plazda! Virš mūsų pačių stovyklos!"
+      },
+      "2": {
+        "explorer": "Vis tiek nieko neatrakina."
+      },
+      "3": {
+        "fez": "Ne. Ir nereikia."
+      }
+    }
+  },
+  "bond": {
+    "starter": {
+      "1": {
+        "fez": "Greitai."
+      },
+      "2": {
+        "explorer": "Tai buvo tik durys."
+      },
+      "3": {
+        "fez": "Aš būčiau užtrukęs savaitę."
+      }
+    },
+    "starterTomb": {
+      "1": {
+        "fez": "Kad būtų aišku. Aš čia dėl perpardavimo. Sakau tai dabar, kol tai dar tiesa."
+      },
+      "2": {
+        "explorer": "Supratau."
+      }
+    },
+    "junior": {
+      "1": {
+        "fez": "Tu ten kurį laiką tylėjai."
+      },
+      "2": {
+        "explorer": "Skaičiavau."
+      },
+      "3": {
+        "fez": "Žinau. Esu matęs, kaip žmonės spėlioja. Tai nebuvo spėliojimas."
+      }
+    },
+    "expert": {
+      "1": {
+        "fez": "Buvo arti."
+      },
+      "2": {
+        "explorer": "Viskas buvo gerai."
+      },
+      "3": {
+        "fez": "Buvo arti. Man galima taip sakyti."
+      }
+    },
+    "master": {
+      "1": {
+        "fez": "Galėtume sustoti."
+      },
+      "2": {
+        "explorer": "Galėtume."
+      },
+      "3": {
+        "fez": "Sakau tai, kad būtų pasakyta. Ne tam, kad sustotume."
+      }
+    },
+    "wizard": {
+      "1": {
+        "explorer": "Kiek šitas vertas?"
+      },
+      "2": {
+        "fez": "…"
+      },
+      "3": {
+        "fez": "Šitam kainos nedėsiu."
+      },
+      "4": {
+        "explorer": "Supratau."
+      }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": {
+        "fez": "Oho. Čia ką tik buvo siena."
+      },
+      "2": {
+        "explorer": "Už jos buvo praėjimas."
+      },
+      "3": {
+        "fez": "Tiek metų žmonės ėjo pro šalį. Tiek metų!"
+      }
+    }
+  },
+  "reading": {
+    "junior": {
+      "1": {
+        "explorer": "Čia yra eilutė, kurią dabar galiu perskaityti."
+      },
+      "2": {
+        "explorer": "Daviau duonos alkaniems."
+      },
+      "3": {
+        "fez": "Duonos. Kape."
+      },
+      "4": {
+        "explorer": "Ji buvo ir praėjusiame. Nežinojau, kad tai žodžiai."
+      }
+    },
+    "expert": {
+      "1": {
+        "explorer": "Antra eilutė. Daviau vandens ištroškusiems."
+      },
+      "2": {
+        "fez": "Duona, o dabar vanduo. Kažkas labai norėjo, kad jį prisimintų kaip dosnų."
+      },
+      "3": {
+        "explorer": "Tai turi visi. Kiekviena siena, kiekvienas kapas, tos pačios dvi eilutės."
+      },
+      "4": {
+        "fez": "Tada arba visi buvo dosnūs, arba taip tiesiog reikia sakyti."
+      },
+      "5": {
+        "explorer": "Arba pagal tai juos ir svėrė."
+      }
+    },
+    "master": {
+      "1": {
+        "explorer": "Daviau drabužių neturintiems ką apsirengti. Trečia eilutė."
+      },
+      "2": {
+        "fez": "Duona, vanduo, drabužiai. Tai sąrašas dalykų, kuriuos atidavė kitiems."
+      },
+      "3": {
+        "explorer": "Kape žmogaus, kuris viską pasiėmė su savimi."
+      },
+      "4": {
+        "fez": "…Taip. Aš irgi pastebėjau."
+      }
+    },
+    "sphinx": {
+      "1": {
+        "fez": "Grįžom ten, kur pradėjom. Jis nė nepajudėjo."
+      },
+      "2": {
+        "explorer": "Užrašas vis dar čia."
+      },
+      "3": {
+        "fez": "Ar gali jį perskaityti?"
+      },
+      "4": {
+        "explorer": "Vardas."
+      },
+      "5": {
+        "fez": "Kieno?"
+      },
+      "6": {
+        "explorer": "Tavo."
+      },
+      "7": {
+        "fez": "…"
+      },
+      "8": {
+        "fez": "Tu tikras?"
+      },
+      "9": {
+        "explorer": "Taip užrašyta."
+      },
+      "10": {
+        "fez": "Hm."
+      },
+      "11": {
+        "fez": "Hori."
+      },
+      "12": {
+        "fez": "Kiekviename Egipto kaime buvo po Hori."
+      },
+      "13": {
+        "fez": "Na. Tada aišku, iš kur tas fesas."
+      }
+    }
+  },
+  "altar": {
+    "refused": {
+      "1": {
+        "priest": "Ne."
+      },
+      "2": {
+        "explorer": "Ant jo yra jo ženklas."
+      },
+      "3": {
+        "priest": "Ant jo yra ženklas. Labai geras ženklas. Jį išraižė kažkas su puikiais įrankiais, kam čia nebuvo ko daryti, ir visai neseniai."
+      },
+      "4": {
+        "priest": "Laukiu tris tūkstančius metų. Paskutinę savaitę manęs neapgausite."
+      }
+    }
+  },
+  "meeting": {
+    "starter_1": {
+      "1": {
+        "voice": "Ei! Ne ČIA! Žiūrėk, kur eini!"
+      },
+      "2": {
+        "explorer": "Atsiprašau! Nieko nematau! Kur tu?"
+      },
+      "3": {
+        "fez": "Čia, apačioje! Tu stovi ant mano prekių!"
+      },
+      "4": {
+        "explorer": "Driežas?! Su fesu?"
+      },
+      "5": {
+        "fez": "Pirklys. O kas negerai su mano fesu?"
+      },
+      "6": {
+        "fez": "Tu irgi dėl piramidės, lažinuosi. Nusipirkai žemėlapį? Permokėjai?"
+      },
+      "7": {
+        "explorer": "BAISIAI permokėjau."
+      },
+      "8": {
+        "fez": "Aš irgi. Pff."
+      },
+      "9": {
+        "explorer": "Užrašas ant Sfinkso… ar tu gali jį perskaityti?"
+      },
+      "10": {
+        "fez": "Ne. Jau niekas nebegali. Tas pagrindas kadaise buvo mėlynas ir auksinis, žinai."
+      },
+      "11": {
+        "explorer": "Iš kur tu žinai?"
+      },
+      "12": {
+        "fez": "…Girdėjau. Tai ko tu čia ieškai?"
+      },
+      "13": {
+        "explorer": "Ko nors šaunaus."
+      },
+      "14": {
+        "fez": "Šaunūs daiktai gerai parsiduoda! Žinai ką? Einu su tavim!"
+      },
+      "15": {
+        "explorer": "Ką? Su manim?"
+      },
+      "16": {
+        "fez": "Keturios akys mato daugiau nei dvi. Eime, piramidė laukia!"
+      }
+    }
+  },
+  "end": {
+    "1": {
+      "fez": "Na, ar buvo šaunu?"
+    },
+    "2": {
+      "explorer": "Sueis."
+    }
+  },
+  "revisit": {
+    "starter": {
+      "north1": {
+        "1": {
+          "ipi": "Vis dar čia? Į šiaurę! Henut! Vienuolika debenų!"
+        }
+      },
+      "north2": {
+        "1": {
+          "ipi": "Vienuolika debenų lazurito. Henut. Šiaurė. Ko lauki?"
+        }
+      },
+      "paid1": {
+        "1": {
+          "ipi": "Na? Ar sumokėjo? …Ne. Žinoma, kad ne."
+        }
+      },
+      "paid2": {
+        "1": {
+          "ipi": "Stiklas? STIKLAS? Čia parašyta „lazuritas“. Štai čia. Lazuritas!"
+        }
+      },
+      "later1": {
+        "1": {
+          "ipi": "Vėl tu. Trečia lentyna, atskilęs — vis dar mano. Rankas šalin."
+        }
+      },
+      "later2": {
+        "1": {
+          "ipi": "Keturiasdešimt metų knygų, ir nė vienos, kuri susivestų. Nė vienos!"
+        }
+      }
+    },
+    "junior": {
+      "wall1": {
+        "1": {
+          "henut": "Siena. Trečias ženklas. Tai vis dar ne mano vardas."
+        }
+      },
+      "wall2": {
+        "1": {
+          "henut": "Tu vis dar čia, ir ta žąsis vis dar ant mano sienos. Ištaisyk."
+        }
+      },
+      "priest1": {
+        "1": {
+          "henut": "Vis dar mano vardas. Patikrinau. O dabar — Karnakas, žynys. Keliauk."
+        }
+      },
+      "priest2": {
+        "1": {
+          "henut": "Į Karnaką! Jis laukė pakankamai ilgai. Eik, ir tegul apie tave praneša."
+        }
+      },
+      "met1": {
+        "1": {
+          "henut": "Na? Nepakenčiamas, ar ne? Sakiau gi."
+        }
+      },
+      "later1": {
+        "1": {
+          "henut": "Vis dar stiklas. Vis dar nuostabus. Vis dar mano išrinktas."
+        }
+      }
+    },
+    "expert": {
+      "seal1": {
+        "1": {
+          "priest": "Antspaudas. Atneštas čia, padėtas, žodžiai ištarti. Aš palauksiu."
+        }
+      },
+      "seal2": {
+        "1": {
+          "priest": "A. Vėl jūs. Ir vėl be antspaudo."
+        }
+      },
+      "king1": {
+        "1": {
+          "priest": "Matėte karalių. Gerai. Bet tik tas pats daiktas — ne panašus."
+        }
+      },
+      "later1": {
+        "1": {
+          "priest": "Vėl jūs. Čia nebėra ką veikti. Labai ramu."
+        }
+      }
+    },
+    "master": {
+      "priest1": {
+        "1": {
+          "pharaoh": "Vis dar čia? Pas žynį su ta kopija! Noriu išgirsti, kaip seksis."
+        }
+      },
+      "priest2": {
+        "1": {
+          "pharaoh": "Galite prisiartinti. Vėl. Ar žynys ją jau matė?"
+        }
+      },
+      "rite1": {
+        "1": {
+          "pharaoh": "Tai jis pagaliau atliko savo apeigas. Gerai. Dabar jis bus nepakenčiamas."
+        }
+      },
+      "later1": {
+        "1": {
+          "pharaoh": "Vis dar geriausia savaitė per devynis šimtus metų. Ir ji tęsiasi!"
+        }
+      }
+    },
+    "wizard": {
+      "later1": {
+        "1": {
+          "priest": "…Taip. Vis dar prisimenu, kaip. Gerai."
+        }
+      },
+      "later2": {
+        "1": {
+          "priest": "Padėta, žodžiai ištarti. Atlikta. Keistas jausmas."
+        }
+      }
+    }
+  }
+}
