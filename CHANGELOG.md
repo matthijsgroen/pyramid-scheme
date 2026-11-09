@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Junior's rooms are a nobleman's house: a banquet, a dressing room, a household shrine, a garden court, a bedroom and a bakery.
+- Junior's rooms are a nobleman's house, designed room by room: a banquet, a dressing room, a household shrine, a garden court, a bedroom and a bakery.
 
 ## 0.45.0 - 2026-11-09
 

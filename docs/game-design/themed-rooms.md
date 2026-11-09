@@ -109,6 +109,9 @@ rare.
   pyramid, `src/game/rooms/<tier>/*.room`), the file's places choose its props and wall items, not the activity's
   pool. Starter names one room per activity (`STARTER_ROOMS` in `src/worldGen/spec/starter.ts`): the storeroom at
   the ends of a floor, the packing room and the ledger room between, the weighing and selling rooms in its middle.
+  Junior names its rooms per main floor (`house` in `src/worldGen/spec/junior.ts`), since every one carries a lock and
+  a room stands in one of the lock's regions: the bakery and the private rooms lean to the ends, the shrine between,
+  the banquet and the garden court to the middle, a floor naming only the few its lock has room for.
 - Changing the pools re-bakes `generatedWorld.ts` and the tier fingerprint; saves and runs are untouched
   (`world-spec-stability.md`: decorations are free fields).
 - **No rotation.** One sprite per prop, against the north wall. Facing other walls would cost 2–4 drawings per
