@@ -1,6 +1,6 @@
 import type { FC } from "react"
 import type { DetectorMode, CompassAccess, CompassHit } from "@/game/siteTypes"
-import { compassKey, compassLabel, uniqueBy } from "@/game/compassPrecision"
+import { compassKey, uniqueBy } from "@/game/compassPrecision"
 import { DetectorToggles } from "./DetectorToggles"
 
 // Every string the readout can show. The counted/interpolated ones arrive as functions so the app
@@ -29,10 +29,10 @@ type Props = {
   detectionLevel: number // 0 = not unlocked
   // The hunted hieroglyph, picked on the Collection screen (§3C). null = nothing picked yet.
   compassTarget: string | null
-  // How to SHOW the target (id → glyph) and a journey (id → its localized name). Injected rather
-  // than looked up here: this is a presentational atom, and the target's meaning is mod-owned.
+  // How to SHOW the target (id → glyph) and a hit (journey, pyramid, floor). Injected rather than
+  // looked up here: this is a presentational atom, and the target's meaning is mod-owned.
   compassTargetLabel?: (id: string) => string
-  journeyName?: (journeyId: string) => string
+  hitLabel?: (hit: CompassHit, level: number) => string
   compassResults: CompassHit[]
   // Switching modes happens in here rather than in the HUD row — see DetectorButton. Passed through
   // to DetectorToggles. Shown whenever the readout is open, even with one detector owned: since a
@@ -68,7 +68,7 @@ export const DetectorPanel: FC<Props> = ({
   detectionLevel,
   compassTarget,
   compassTargetLabel = id => id,
-  journeyName = id => id,
+  hitLabel = hit => hit.journeyId,
   compassResults,
   detectorTitles,
   onSetDetector,
@@ -118,7 +118,7 @@ export const DetectorPanel: FC<Props> = ({
                   {shownCompass.slice(0, 3).map((r, i) => (
                     <div key={i} className="truncate text-amber-200">
                       {ACCESS_ICON[r.access] && <span title={labels.access[r.access]}>{ACCESS_ICON[r.access]} </span>}
-                      {compassLabel(r, compassLevel, journeyName)}
+                      {hitLabel(r, compassLevel)}
                     </div>
                   ))}
                   {shownCompass.length > 3 && <p className="text-stone-500">{labels.more(shownCompass.length - 3)}</p>}

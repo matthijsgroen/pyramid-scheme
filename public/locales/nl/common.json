@@ -324,7 +324,7 @@
       "corridorFarNext": "Met alle vier de onderdelen hoort hij vanuit het kamp ook andere reizen.",
       "corridorWhere": "Waar nog een gang dicht zit",
       "corridorNone": "Geen dichte gang in een reis waar je geweest bent.",
-      "corridorPyramid": "Piramide {{n}}",
+      "pyramid": "Piramide {{n}}",
       "corridorCount_one": "{{count}} gang",
       "corridorCount_other": "{{count}} gangen"
     }

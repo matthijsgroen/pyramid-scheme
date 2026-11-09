@@ -35,16 +35,21 @@ describe("useDetectorReadout", () => {
     expect(result.current.available).toEqual([])
   })
 
-  it("names a journey by its localized name, so a hit reads as a place and not an id", () => {
-    const { result } = renderHook(() => useDetectorReadout(levels({ compass: 1 })))
+  it("names a hit by journey, pyramid and floor, as far as the compass reaches", () => {
+    const { result } = renderHook(() => useDetectorReadout(levels({ compass: 2 })))
+    const hit = {
+      journeyId: "starter_2",
+      levelIdx: 1,
+      floorIdx: 0,
+      hieroglyphId: "h",
+      pieceIndex: 0,
+      access: "open" as const,
+    }
 
-    expect(result.current.journeyName("starter_2")).toBe("Papyrus Merchant's Route 2")
-  })
-
-  it("falls back to the raw id for a journey it has no name for, rather than showing nothing", () => {
-    const { result } = renderHook(() => useDetectorReadout(levels({ compass: 1 })))
-
-    expect(result.current.journeyName("unknown_journey")).toBe("unknown_journey")
+    expect(result.current.hitLabel(hit, 1)).toBe(`Papyrus Merchant's Route 2 · detector.camp.pyramid:{"n":2}`)
+    expect(result.current.hitLabel(hit, 2)).toBe(
+      `Papyrus Merchant's Route 2 · detector.camp.pyramid:{"n":2} · ui.floor:{"number":1}`
+    )
   })
 
   it("keeps counted labels as functions, so plural rules stay with the app layer", () => {

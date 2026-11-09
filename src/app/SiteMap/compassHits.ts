@@ -1,4 +1,6 @@
 import { useCallback, useMemo } from "react"
+import { useTranslation } from "react-i18next"
+import { useJourneyTranslations } from "@/app/translations/useJourneyTranslations"
 import type { CompassAccess, CompassHit } from "@/game/siteTypes"
 import { type CompassScanOptions, useMergedCompassScanner } from "@/app/SiteMap/detectorScanners"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
@@ -49,4 +51,25 @@ export const useCompassHits = (target: string | null, options?: CompassScanOptio
     () => (target ? scanCompass(target, { cells }).map(hit => ({ ...hit, ...accessOf(hit, heldKeys, gateOpen) })) : []),
     [target, cells, scanCompass, heldKeys, gateOpen]
   )
+}
+
+/**
+ * A hit as a player reads it, at the compass's precision: "Schrijversacademie · Piramide 2 · Verdieping 1". A tomb is
+ * one site, so it names no pyramid.
+ */
+export const useCompassHitLabel = (): ((hit: CompassHit, level: number) => string) => {
+  const { t } = useTranslation("common")
+  const journeys = useJourneyTranslations()
+  return useMemo(() => {
+    const names = new Map(journeys.map(j => [j.id, j.name]))
+    return (hit, level) =>
+      [
+        names.get(hit.journeyId) ?? hit.journeyId,
+        TOMB_JOURNEY_IDS.has(hit.journeyId) ? undefined : t("detector.camp.pyramid", { n: hit.levelIdx + 1 }),
+        level >= 2 ? t("ui.floor", { number: hit.floorIdx + 1 }) : undefined,
+        level >= 3 && hit.cell ? `(${hit.cell.row},${hit.cell.col})` : undefined,
+      ]
+        .filter(Boolean)
+        .join(" · ")
+  }, [t, journeys])
 }

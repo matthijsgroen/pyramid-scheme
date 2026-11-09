@@ -1,11 +1,10 @@
 import type { FC } from "react"
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import { useTranslation } from "react-i18next"
-import { compassKey, compassLabel, uniqueBy } from "@/game/compassPrecision"
+import { compassKey, uniqueBy } from "@/game/compassPrecision"
 import { useInventory } from "@/app/Inventory/useInventory"
-import { useCompassHits } from "@/app/SiteMap/compassHits"
+import { useCompassHitLabel, useCompassHits } from "@/app/SiteMap/compassHits"
 import { useDetector } from "@/app/state/useDetector"
-import { useJourneyTranslations } from "@/app/translations/useJourneyTranslations"
 import { CompassSheet } from "@/ui/molecules/CompassSheet"
 import { HIEROGLYPH_SYMBOLS } from "./hieroglyphSymbols"
 import { COMPASS_CAP, useHieroglyphProgress } from "./useHieroglyphProgress"
@@ -20,11 +19,7 @@ export const CompassPanel: FC = () => {
   const { compassLevel, compassTarget, setCompassTarget, hieroglyphProgress } = useHieroglyphProgress()
   const { inventory } = useInventory()
   const { setDetector } = useDetector()
-  const journeys = useJourneyTranslations()
-  const journeyName = useMemo(() => {
-    const names = new Map(journeys.map(j => [j.id, j.name]))
-    return (id: string) => names.get(id) ?? id
-  }, [journeys])
+  const hitLabel = useCompassHitLabel()
 
   const glyphs = startedGlyphs(HIEROGLYPH_SYMBOLS, hieroglyphProgress, id => inventory[id] !== undefined)
   const [picked, setPicked] = useState(() => glyphs.find(g => g.id === compassTarget)?.id ?? null)
@@ -33,14 +28,16 @@ export const CompassPanel: FC = () => {
   const shown = Math.min(compassLevel, 2)
   const rows = uniqueBy(hits, hit => compassKey(hit, shown)).map(hit => ({
     key: compassKey(hit, shown),
-    label: compassLabel(hit, shown, journeyName),
+    label: hitLabel(hit, shown),
     access: hit.access,
   }))
 
   return (
     <CompassSheet
       parts={{ held: compassLevel, total: COMPASS_CAP }}
-      partsLabel={`${t("detector.camp.parts", { count: compassLevel, total: COMPASS_CAP })} · ${t(`detector.camp.compassReach.${compassLevel}`)}`}
+      partsLabel={`${t("detector.camp.parts", { count: compassLevel, total: COMPASS_CAP })} · ${t(
+        `detector.camp.compassReach.${compassLevel}`
+      )}`}
       pickHeading={t("detector.camp.pickHeading")}
       onlyIncomplete={t("detector.camp.onlyIncomplete")}
       glyphs={glyphs}

@@ -24,7 +24,7 @@ export const CorridorPanel: FC<{ cap: number }> = ({ cap }) => {
             detail:
               journey.exterior === "tomb"
                 ? t("detector.camp.corridorCount", { count })
-                : `${t("detector.camp.corridorPyramid", { n: levelNr })} · ${t("detector.camp.corridorCount", { count })}`,
+                : `${t("detector.camp.pyramid", { n: levelNr })} · ${t("detector.camp.corridorCount", { count })}`,
           }))
         )
   return (

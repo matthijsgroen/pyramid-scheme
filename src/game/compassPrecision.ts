@@ -20,11 +20,3 @@ export const compassKey = (r: CompassHit, level: number): string =>
     : level === 2
       ? `${r.journeyId}:${r.levelIdx}:${r.floorIdx}`
       : `${r.journeyId}:${r.levelIdx}:${r.floorIdx}:${r.cell?.row},${r.cell?.col}`
-
-export const compassLabel = (r: CompassHit, level: number, journeyName: (id: string) => string): string => {
-  // L#/F# keeps the shipped notation (# = pyramid, then floor); only the journey id → name changes.
-  const pyramid = `${journeyName(r.journeyId)} L${r.levelIdx + 1}`
-  if (level <= 1) return pyramid
-  const floor = `${pyramid} F${r.floorIdx + 1}`
-  return level >= 3 && r.cell ? `${floor} · (${r.cell.row},${r.cell.col})` : floor
-}
