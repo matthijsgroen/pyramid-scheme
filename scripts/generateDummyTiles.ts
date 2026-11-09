@@ -17,7 +17,8 @@ import { fileURLToPath } from "url"
 import sharp from "sharp"
 import { stateWash, tierPalette } from "../src/app/SiteMap/tileMaterials"
 import { moodFor } from "../src/app/SiteMap/moodSettings"
-import { ARCH_H, ARCH_W, SIDE_W, WALL_H } from "../src/app/SiteMap/mapScale"
+import { ARCH_H, ARCH_W, SIDE_W, WALL_H, propFrameSize } from "../src/app/SiteMap/mapScale"
+import { DECORATION_KINDS, decorationFootprint, type DecorationKind } from "../src/game/siteTypes"
 import type { TierPalette } from "../src/app/SiteMap/tileMaterials"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -60,6 +61,15 @@ type Kind =
   | "bales"
   | "counter"
   | "scribeDesk"
+  | "banquetTable"
+  | "harp"
+  | "dressingTable"
+  | "wigStand"
+  | "pottedTree"
+  | "bed"
+  | "headrest"
+  | "grindstone"
+  | "breadOven"
   | "sand"
 
 // Every kind for every tier. A real art pass draws only what a rank's pool authors — a tier with no
@@ -98,6 +108,15 @@ const ALL_KINDS: Kind[] = [
   "bales",
   "counter",
   "scribeDesk",
+  "banquetTable",
+  "harp",
+  "dressingTable",
+  "wigStand",
+  "pottedTree",
+  "bed",
+  "headrest",
+  "grindstone",
+  "breadOven",
 ]
 
 // Deterministic jitter — the same tier always rasterises to the same bytes.
@@ -357,6 +376,55 @@ const shapes: Record<Kind, (p: Palette) => string> = {
     <path d="M 8 ${BASE - 18} L 48 ${BASE - 18} L 44 ${BASE - 26} L 12 ${BASE - 26} Z" fill="${p.prop}"/>
     <rect x="18" y="${BASE - 25}" width="18" height="6" fill="#efe6cf"/>
     <rect x="40" y="${BASE - 34}" width="2" height="10" fill="${p.accent}"/>`,
+  // The nobleman's house (themed-rooms.md, junior). A kind bigger than a cell is drawn across its whole
+  // frame (`propSvg`): the banquet table and the bed two cells wide, the harp and the tree a cell taller.
+  banquetTable: p => `
+    <rect x="8" y="${BASE - 20}" width="110" height="6" fill="${p.prop}"/>
+    ${[12, 58, 106].map(x => `<rect x="${x}" y="${BASE - 14}" width="6" height="14" fill="${p.propDark}"/>`).join("")}
+    <ellipse cx="26" cy="${BASE - 24}" rx="9" ry="4" fill="#efe6cf"/>
+    <circle cx="50" cy="${BASE - 25}" r="4" fill="${p.accent}"/>
+    <circle cx="58" cy="${BASE - 25}" r="4" fill="${p.accent}"/>
+    <rect x="76" y="${BASE - 34}" width="8" height="14" fill="${p.propDark}"/>
+    <rect x="92" y="${BASE - 32}" width="8" height="12" fill="${p.propDark}"/>`,
+  harp: p => `
+    <rect x="14" y="${BASE - 8}" width="28" height="8" fill="${p.propDark}"/>
+    <path d="M 18 ${BASE - 8} Q 8 ${BASE - 70} 38 ${BASE - 118} L 42 ${BASE - 112} Q 18 ${BASE - 66} 26 ${BASE - 8} Z" fill="${p.prop}"/>
+    ${[24, 30, 36].map((x, i) => `<rect x="${x}" y="${BASE - 100 + i * 18}" width="1" height="${92 - i * 18}" fill="${p.accent}"/>`).join("")}`,
+  dressingTable: p => `
+    <rect x="8" y="${BASE - 18}" width="40" height="5" fill="${p.prop}"/>
+    <rect x="11" y="${BASE - 13}" width="4" height="13" fill="${p.propDark}"/>
+    <rect x="41" y="${BASE - 13}" width="4" height="13" fill="${p.propDark}"/>
+    <rect x="17" y="${BASE - 30}" width="2" height="12" fill="${p.propDark}"/>
+    <circle cx="18" cy="${BASE - 36}" r="7" fill="${p.accent}"/>
+    <rect x="30" y="${BASE - 26}" width="5" height="8" fill="${p.propDark}"/>
+    <rect x="38" y="${BASE - 24}" width="5" height="6" fill="${p.propDark}"/>`,
+  wigStand: p => `
+    <rect x="20" y="${BASE - 6}" width="16" height="6" fill="${p.propDark}"/>
+    <rect x="26" y="${BASE - 30}" width="4" height="24" fill="${p.prop}"/>
+    <path d="M 16 ${BASE - 30} Q 28 ${BASE - 54} 40 ${BASE - 30} L 38 ${BASE - 22} L 18 ${BASE - 22} Z" fill="#2a1d14"/>`,
+  pottedTree: p => `
+    <path d="M 18 ${BASE - 22} L 38 ${BASE - 22} L 34 ${BASE} L 22 ${BASE} Z" fill="${p.propDark}"/>
+    <rect x="26" y="${BASE - 60}" width="4" height="38" fill="${p.prop}"/>
+    <circle cx="28" cy="${BASE - 82}" r="22" fill="#4f7a3a"/>
+    <circle cx="20" cy="${BASE - 70}" r="10" fill="#3e6630"/>
+    <circle cx="36" cy="${BASE - 72}" r="10" fill="#3e6630"/>`,
+  bed: p => `
+    <path d="M 8 ${BASE - 22} L 110 ${BASE - 16} L 110 ${BASE - 10} L 8 ${BASE - 16} Z" fill="${p.prop}"/>
+    <rect x="12" y="${BASE - 28}" width="80" height="8" fill="#efe6cf"/>
+    <rect x="108" y="${BASE - 34}" width="8" height="24" fill="${p.propDark}"/>
+    ${[12, 100].map(x => `<rect x="${x}" y="${BASE - 12}" width="6" height="12" fill="${p.accent}"/>`).join("")}`,
+  headrest: p => `
+    <rect x="18" y="${BASE - 4}" width="20" height="4" fill="${p.propDark}"/>
+    <rect x="25" y="${BASE - 16}" width="6" height="12" fill="${p.prop}"/>
+    <path d="M 14 ${BASE - 26} Q 28 ${BASE - 12} 42 ${BASE - 26} L 42 ${BASE - 20} Q 28 ${BASE - 8} 14 ${BASE - 20} Z" fill="${p.prop}"/>`,
+  grindstone: p => `
+    <path d="M 6 ${BASE} L 50 ${BASE} L 46 ${BASE - 14} L 10 ${BASE - 10} Z" fill="${p.propDark}"/>
+    <ellipse cx="30" cy="${BASE - 16}" rx="10" ry="5" fill="${p.prop}"/>
+    <ellipse cx="14" cy="${BASE - 4}" rx="5" ry="2" fill="#efe6cf"/>`,
+  breadOven: p => `
+    <path d="M 8 ${BASE} Q 8 ${BASE - 44} 28 ${BASE - 44} Q 48 ${BASE - 44} 48 ${BASE} Z" fill="${p.prop}"/>
+    <path d="M 20 ${BASE} Q 20 ${BASE - 18} 28 ${BASE - 18} Q 36 ${BASE - 18} 36 ${BASE} Z" fill="${p.outline}"/>
+    <ellipse cx="28" cy="${BASE - 4}" rx="6" ry="3" fill="${p.accent}"/>`,
   // Floor scatter, so it lies FLAT on the cell's floor line rather than standing up off it: a low
   // drift with a soft edge, wider than it is tall, and nothing above the line at all.
   sand: p => `
@@ -456,14 +524,21 @@ const propSvg = (p: Palette, kind: Kind): Buffer => {
            <stop offset="1" stop-color="${p.accent}" stop-opacity="0"/></radialGradient></defs>
          <circle cx="28" cy="${BASE - 26}" r="26" fill="url(#glow)"/>`
       : ""
+  // A kind bigger than a cell gets the frame the map draws it in, its floor line kept at the frame's foot.
+  const { w, h } = propSize(kind)
   return svg(
-    TILE,
-    PROP_H,
-    `${glow}
-     <rect x="12" y="${BASE - 2}" width="32" height="4" fill="${p.outline}" opacity="0.4"/>
-     <g stroke="${p.outline}" stroke-width="2" stroke-linejoin="round">${shapes[kind](p)}</g>`
+    w,
+    h,
+    `<g transform="translate(0 ${h - PROP_H})">${glow}
+     <rect x="12" y="${BASE - 2}" width="${w - 24}" height="4" fill="${p.outline}" opacity="0.4"/>
+     <g stroke="${p.outline}" stroke-width="2" stroke-linejoin="round">${shapes[kind](p)}</g></g>`
   )
 }
+
+const propSize = (kind: Kind): { w: number; h: number } =>
+  (DECORATION_KINDS as readonly string[]).includes(kind)
+    ? propFrameSize(decorationFootprint(kind as DecorationKind))
+    : { w: TILE, h: PROP_H }
 
 // ── The explorer ──────────────────────────────────────────────────────────────
 // One person walking down five ranks of tomb, so this art lives in tiles/default/ and is NOT per tier:
@@ -1090,7 +1165,7 @@ const main = async (): Promise<void> => {
     // file through tileUrl's `default/` fallback and every rank would go back to a cell-sized stain.
     for (const kind of ALL_KINDS) {
       if (kind === "sand") continue
-      await write(tier, kind, propSvg(p, kind), TILE, PROP_H)
+      await write(tier, kind, propSvg(p, kind), propSize(kind).w, propSize(kind).h)
     }
     for (const kind of WALL_KINDS) await write(tier, kind, wallItemSvg(p, kind), TILE, BAND)
     await write(tier, "arch", archSvg(p), ARCH_W, ARCH_H)

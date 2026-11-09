@@ -1,6 +1,7 @@
 import { hashString } from "@/support/hashString"
 import { oneWayRunCells } from "../carveConstants"
-import { ACTIVITIES } from "../activities"
+import { journeyTier } from "@/data/journeyStructure"
+import { ACTIVITIES, themeOf } from "../activities"
 import { activitiesServing, rolesOfProp, rolesOfWallItem } from "../dressingTags"
 import { claimsFloorAt, footprintSize } from "../roomFootprint"
 import type {
@@ -331,6 +332,8 @@ export const renderGround = (
     const [r, c] = pk.split(",").map(Number)
     return claimsFloorAt(claimGrid, r, c)
   }
+  // The pyramid's theme, not the section's difficulty: every section carries its pyramid's pool.
+  const theme = themeOf(journeyTier(siteId))
   const fromPoolOrOwn = <T>(pool: readonly T[] | undefined, own: readonly T[]): readonly T[] => {
     const shared = pool?.filter(k => own.includes(k)) ?? []
     return shared.length ? shared : own
@@ -343,7 +346,7 @@ export const renderGround = (
     const pools = labels.dressing.get(pk)
     const activity =
       authored ??
-      (isPatron ? undefined : pickDressing(activitiesServing(pools?.props ?? [], pools?.role), pk, "activity"))
+      (isPatron ? undefined : pickDressing(activitiesServing(pools?.props ?? [], pools?.role, theme), pk, "activity"))
     // The god's room draws from the god-bearing kinds, a statue first where the pool has one.
     const patronProps = pools?.props?.filter(k => PATRON_KINDS.has(k))
     const godProps = patronProps?.includes("statue") ? (["statue"] as DecorationKind[]) : patronProps

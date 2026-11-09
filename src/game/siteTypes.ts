@@ -133,6 +133,15 @@ export const DECORATION_KINDS = [
   "bales",
   "counter",
   "scribeDesk",
+  "banquetTable",
+  "harp",
+  "dressingTable",
+  "wigStand",
+  "pottedTree",
+  "bed",
+  "headrest",
+  "grindstone",
+  "breadOven",
   "cart",
   "litter",
   "floorClutter",
@@ -166,6 +175,13 @@ export const DECORATION_FOOTPRINTS: Partial<Record<DecorationKind, PropFootprint
   litter: { cols: 2, rows: 1, tall: 0 },
   // Spilled sacking, sherds and rope, lying flat and walked over.
   floorClutter: { cols: 1, rows: 1, tall: 0, ground: true },
+  // A long table laid for a feast, two cells across.
+  banquetTable: { cols: 2, rows: 1, tall: 0 },
+  // A bed on lion legs lies at full length, two cells across.
+  bed: { cols: 2, rows: 1, tall: 0 },
+  // A standing harp and a tree in its pot both rise a cell above the frame.
+  harp: { cols: 1, rows: 1, tall: 1 },
+  pottedTree: { cols: 1, rows: 1, tall: 1 },
 }
 export const decorationFootprint = (kind: DecorationKind): PropFootprint => DECORATION_FOOTPRINTS[kind] ?? SINGLE_CELL
 export const isSingleCell = ({ cols, rows }: PropFootprint): boolean => cols === 1 && rows === 1

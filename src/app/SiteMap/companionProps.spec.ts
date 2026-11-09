@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { DecorationKind } from "@/game/siteTypes"
+import { PROP_ROLES } from "@/game/dressingTags"
 import { companionFor, companionsFor } from "./companionProps"
 
 const all = () => true
@@ -14,10 +15,14 @@ const first = (free: readonly string[]) => free[0]
 
 describe("companionsFor", () => {
   it("offers only kinds that share a purpose with the leader", () => {
-    // offeringTable is trade/shop/funerary/judgement; shelf is trade; crystal is cosmos/sky/light.
+    const leaderRoles = PROP_ROLES.offeringTable ?? []
+    const shares = (kind: DecorationKind) => PROP_ROLES[kind]?.some(role => leaderRoles.includes(role)) === true
     const options = companionsFor("offeringTable", all)
     expect(options).toContain("shelf")
-    expect(options).not.toContain("crystal")
+    expect(options.every(shares)).toBe(true)
+    const tagged = Object.keys(PROP_ROLES) as DecorationKind[]
+    expect(tagged.some(kind => kind !== "offeringTable" && !shares(kind))).toBe(true)
+    for (const kind of tagged.filter(kind => !shares(kind))) expect(options).not.toContain(kind)
   })
 
   it("never offers the leader again", () => {
