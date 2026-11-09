@@ -46,6 +46,7 @@ export const CompassPanel: FC = () => {
       whereHeading={t("detector.camp.whereHeading", { symbol: picked ? HIEROGLYPH_SYMBOLS[picked] : "" })}
       pickFirst={t("detector.camp.pickFirst")}
       nothingToFind={t("detector.camp.nothingToFind")}
+      noneInReach={t("detector.camp.noneInReach")}
       rows={rows}
       accessLabels={{
         open: t("detector.access.open"),

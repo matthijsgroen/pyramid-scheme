@@ -275,7 +275,7 @@
     "compassTitle": "Kompas",
     "corridorTitle": "Gangenzoeker",
     "pickTarget": "Kies een hiëroglief bij de kaarttafel in het kamp",
-    "allCollected": "Alle stukken verzameld",
+    "allCollected": "Geen stuk binnen bereik op een verdieping waar je al was",
     "more": "+{{count}} meer",
     "corridorNearby": "Een verborgen gang is vlakbij",
     "corridorHere": "Hier zit een verborgen gang",
@@ -314,6 +314,7 @@
       "follow": "Volg dit teken",
       "following": "Het kompas volgt dit teken",
       "nothingToFind": "Je hebt nog geen stuk van een teken dat niet compleet is.",
+      "noneInReach": "Nog geen stuk dat je kunt pakken op een verdieping waar je al was.",
       "corridorReach": {
         "1": "hoort een gang vlakbij",
         "2": "hoort de hele verdieping",

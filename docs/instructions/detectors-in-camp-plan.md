@@ -13,7 +13,8 @@ Approved sketch: https://claude.ai/artifact/UGrZyakcoW6ThD17R1Y5G9 (4 boards: ca
 - **The two detectors run in opposite directions.**
   - The compass goes from far to near: L1 the pyramid, L2 the floor, L3 the cell. Camp stops at the floor: a cell means nothing away from the map, and finding one assembles every floor.
   - The corridor finder goes from near to far: L1 nearby, L2 this floor, L3 the other floors, L4 other journeys.
-- **The compass offers only signs begun.** These are signs with at least one piece found that are not yet complete. The lock and eye marks show what stands in the way.
+- **The compass offers only signs begun.** These are signs with at least one piece found that are not yet complete.
+- **The compass names only places the player knows.** A piece shows only when it can be taken now (no ward key missing, no hidden corridor, its tier open) and lies on a floor the player has stood on. A row reads "journey · Piramide n · Verdieping n"; a tomb names no pyramid. Same rule in camp and in the pyramid readout.
 - **The corridor finder names journeys only at L4.** It lists the journeys been to where a corridor is still closed, with pyramid and count. At L1–3 the camp tab only says what it does inside a pyramid. The Alle reizen dot stays at L4.
 - **No on/off switch in camp.** It stays in the pyramid readout. "Volg dit teken" sets the target and switches the compass on.
 

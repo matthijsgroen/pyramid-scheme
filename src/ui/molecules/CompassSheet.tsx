@@ -17,6 +17,8 @@ export type CompassSheetProps = {
   whereHeading: string
   pickFirst: string
   nothingToFind: string
+  /** Shown when the picked sign has no piece the player can reach on a floor they have been to. */
+  noneInReach: string
   rows: readonly CompassRow[]
   accessLabels: Record<CompassAccess, string>
   followLabel: string
@@ -40,6 +42,7 @@ export const CompassSheet: FC<CompassSheetProps> = ({
   whereHeading,
   pickFirst,
   nothingToFind,
+  noneInReach,
   rows,
   accessLabels,
   followLabel,
@@ -94,6 +97,7 @@ export const CompassSheet: FC<CompassSheetProps> = ({
           ) : (
             <>
               <h3 className="text-sm font-semibold">{whereHeading}</h3>
+              {rows.length === 0 && <p className="text-sm text-camp-muted">{noneInReach}</p>}
               <ul className="flex flex-col gap-2">
                 {rows.map(row => (
                   <li key={row.key} className="flex items-center gap-2 rounded-xl bg-camp-card px-3 py-2.5">

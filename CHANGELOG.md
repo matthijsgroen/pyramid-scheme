@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hidden passages with puzzles and booby traps on every floor, found and opened with the corridor detector.
 - Detectors are built from parts; every part you find makes them one step better, in any order.
 - The detectors stand at the camp map table and open as tabs beside the journeys; aim the compass there at a sign you have begun.
+- The compass only points at pieces you can reach, on floors you have been to, and names them in words.
 
 ### Changed
 

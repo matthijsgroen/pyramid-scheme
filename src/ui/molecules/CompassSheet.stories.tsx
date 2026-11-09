@@ -31,6 +31,7 @@ const meta = {
     whereHeading: "Where the pieces of 𓅓 lie",
     pickFirst: "Pick a sign to see where its pieces lie.",
     nothingToFind: "Every sign you can reach is complete.",
+    noneInReach: "No piece yet that you can take on a floor you have been to.",
     rows: [
       { key: "a", label: "Temple of Thoth L1 F2", access: "open" },
       { key: "b", label: "Lighthouse of Alexandria L2 F1", access: "locked" },
@@ -57,6 +58,8 @@ export const Picked: Story = {}
 export const Following: Story = { args: { following: true } }
 
 export const NothingPicked: Story = { args: { picked: null } }
+
+export const NoneInReach: Story = { args: { rows: [] } }
 
 export const AllComplete: Story = { args: { glyphs: [] } }
 

@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { useJourneyTranslations } from "@/app/translations/useJourneyTranslations"
+import { useJourneys } from "@/app/state/useJourneys"
 import type { CompassAccess, CompassHit } from "@/game/siteTypes"
 import { type CompassScanOptions, useMergedCompassScanner } from "@/app/SiteMap/detectorScanners"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
@@ -36,7 +37,8 @@ const accessOf = (
   return { access: "open" }
 }
 
-// Every uncollected piece of the target, each with whether the player can go get it now. Compass
+// Every uncollected piece of the target the player can go get now, on a floor they have stood on: the compass names
+// only places the player knows. A tomb's or a shop's piece counts, since that floor was reached. Compass
 // scanning is mod-owned (each mod registers a scanner for its own reward type via detectorScanners);
 // core runs the merged scanner, then resolves each hit's access against the keys the player holds —
 // the scanner reports gates, it can't judge them. `target` must stay a bare string for this memo to
@@ -47,10 +49,21 @@ export const useCompassHits = (target: string | null, options?: CompassScanOptio
   const heldKeys = useMergedHeldKeys()
   const gateNeeds = useMergedGateNeeds()
   const gateOpen = useCallback((tier: Difficulty) => gateNeeds.open({ tier }, heldKeys), [gateNeeds, heldKeys])
-  return useMemo(
+  const { getJourney } = useJourneys()
+  const hits = useMemo(
     () => (target ? scanCompass(target, { cells }).map(hit => ({ ...hit, ...accessOf(hit, heldKeys, gateOpen) })) : []),
     [target, cells, scanCompass, heldKeys, gateOpen]
   )
+  // One flag per hit, as a string, so the list below keeps its identity until a flag changes.
+  const kept = hits
+    .map(hit =>
+      (hit.access === "open" || hit.access === "unknown") &&
+      getJourney(hit.journeyId)?.floorExploration?.[`${hit.levelIdx + 1}:${hit.floorIdx}`] !== undefined
+        ? "1"
+        : "0"
+    )
+    .join("")
+  return useMemo(() => hits.filter((_, i) => kept[i] === "1"), [hits, kept])
 }
 
 /**

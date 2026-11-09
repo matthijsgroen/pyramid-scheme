@@ -17,6 +17,7 @@ const props = (overrides: Partial<CompassSheetProps> = {}): CompassSheetProps =>
   whereHeading: "where",
   pickFirst: "pick first",
   nothingToFind: "nothing",
+  noneInReach: "none in reach",
   rows: [
     { key: "a", label: "Thoth L1", access: "open" },
     { key: "b", label: "Karnak L2", access: "locked" },
