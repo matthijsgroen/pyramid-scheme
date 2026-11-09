@@ -18,23 +18,21 @@ const JOURNEY_TIER: Record<string, string> = Object.fromEntries(
 const TOMB_JOURNEY_IDS = new Set(TOMB_JOURNEYS.map(j => j.id))
 
 // Can the player go get this piece right now? Only claims what's checkable — see CompassAccess.
-// Precedence runs hardest-blocker-first: an outright lock outranks needing the corridor detector,
-// which outranks a cost we can't evaluate.
+// null when a checkable blocker is in the way: a ward key not held, a locked tier, a hidden corridor.
 const accessOf = (
   hit: { journeyId: string; wardKeys?: readonly string[]; hidden?: boolean; inShop?: boolean },
   heldKeys: ReadonlySet<string>,
   gateOpen: (tier: Difficulty) => boolean
-): { access: CompassAccess; missingKeys?: readonly string[] } => {
-  const missingKeys = (hit.wardKeys ?? []).filter(k => !heldKeys.has(k))
-  if (missingKeys.length > 0) return { access: "locked", missingKeys }
+): CompassAccess | null => {
+  if ((hit.wardKeys ?? []).some(k => !heldKeys.has(k))) return null
   // Same gate the all-journeys list uses, including tiers this release doesn't ship yet.
   const tier = JOURNEY_TIER[hit.journeyId] as Difficulty | undefined
-  if (tier && !isTierUnlocked(tier, heldKeys, gateOpen)) return { access: "locked" }
-  if (hit.hidden) return { access: "hidden" }
+  if (tier && !isTierUnlocked(tier, heldKeys, gateOpen)) return null
+  if (hit.hidden) return null
   // Entering a tomb costs map pieces and shop stock costs money; neither is modelled here, so say
   // "don't know" rather than implying the piece is there for the taking.
-  if (hit.inShop || TOMB_JOURNEY_IDS.has(hit.journeyId)) return { access: "unknown" }
-  return { access: "open" }
+  if (hit.inShop || TOMB_JOURNEY_IDS.has(hit.journeyId)) return "unknown"
+  return "open"
 }
 
 // Every uncollected piece of the target the player can go get now, on a floor they have stood on: the compass names
@@ -51,16 +49,19 @@ export const useCompassHits = (target: string | null, options?: CompassScanOptio
   const gateOpen = useCallback((tier: Difficulty) => gateNeeds.open({ tier }, heldKeys), [gateNeeds, heldKeys])
   const { getJourney } = useJourneys()
   const hits = useMemo(
-    () => (target ? scanCompass(target, { cells }).map(hit => ({ ...hit, ...accessOf(hit, heldKeys, gateOpen) })) : []),
+    () =>
+      target
+        ? scanCompass(target, { cells }).flatMap(hit => {
+            const access = accessOf(hit, heldKeys, gateOpen)
+            return access ? [{ ...hit, access }] : []
+          })
+        : [],
     [target, cells, scanCompass, heldKeys, gateOpen]
   )
   // One flag per hit, as a string, so the list below keeps its identity until a flag changes.
   const kept = hits
     .map(hit =>
-      (hit.access === "open" || hit.access === "unknown") &&
-      getJourney(hit.journeyId)?.floorExploration?.[`${hit.levelIdx + 1}:${hit.floorIdx}`] !== undefined
-        ? "1"
-        : "0"
+      getJourney(hit.journeyId)?.floorExploration?.[`${hit.levelIdx + 1}:${hit.floorIdx}`] !== undefined ? "1" : "0"
     )
     .join("")
   return useMemo(() => hits.filter((_, i) => kept[i] === "1"), [hits, kept])

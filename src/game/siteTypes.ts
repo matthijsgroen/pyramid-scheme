@@ -1150,14 +1150,11 @@ export type CompassResult = {
   inShop?: boolean
 }
 
-// Whether the player can actually go and collect a compass hit right now. The readout only models
-// some of what can block a piece, so this deliberately has a "don't know" value rather than
-// collapsing unknowns into "fine":
-// - "locked"  a checkable blocker IS in the way (a ward key not held, or the tier not unlocked)
-// - "hidden"  in a hidden corridor: needs the corridor detector or luck, not a key (§7.3)
+// Whether the player can actually go and collect a compass hit right now. A piece behind a checkable
+// blocker (a ward key not held, a locked tier, a hidden corridor) is never shown, so a shown hit is:
 // - "unknown" a blocker exists that this readout can't evaluate (tomb map-piece entry, shop price)
 // - "open"    nothing known is in the way — NOT a guarantee, just "we checked and found nothing"
-export type CompassAccess = "open" | "locked" | "hidden" | "unknown"
+export type CompassAccess = "open" | "unknown"
 
 // A compass hit with its access verdict resolved against what the player currently holds.
-export type CompassHit = CompassResult & { access: CompassAccess; missingKeys?: readonly string[] }
+export type CompassHit = CompassResult & { access: CompassAccess }
