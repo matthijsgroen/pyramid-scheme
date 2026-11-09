@@ -179,5 +179,12 @@ Play the starter journeys on a phone from a fresh save; develop mode for grants.
   chest. Does the floor still read as tableau to tableau?
 - **The starter mosaic in plain sight.** Finish the starter journeys and their tomb without the detector: does the
   starter panel fill completely? Each find is a smaller piece now (four per level); does it still feel like progress?
+- **The map table (#345).** One tap on the table opens Kaarttafel on Reizen, with Kompas and Gangenzoeker as tabs
+  once a part is held. Does the compass by the map, and the horn by the leg, read as part of the table?
+- **The compass in camp.** Pick a sign begun: the rows name journey, pyramid and floor, and list only pieces you can
+  take now on a floor you have stood on. With none, "Nog geen stuk bereikbaar in een eerder verkende piramide". Does
+  the list make you want to go back, or does it feel empty too often?
+- **Detector parts on the claim.** A compass or corridor finder part says "n van 3" / "n van 4". Is it clear the
+  detector got better?
 - **Junior pockets on starter floors.** A junior ward path on a starter floor draws its empty surroundings as flat
   brown blocks until the junior art is painted (art, not a carve fault): is it acceptable for the release?

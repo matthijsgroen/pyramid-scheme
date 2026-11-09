@@ -25,11 +25,10 @@ State at handover (2026-10-18), all on PR #322 (`story-and-artstyle`):
 
 ## The queue
 
-**Status 2026-11-05.** Done: A1 (`yarn repaint --land`), A2 (the rank stories), B1–B3 and D (no starter entry is
+**Status 2026-11-09.** Done: A1 (`yarn repaint --land`), A2 (the rank stories), B1–B3 and D (no starter entry is
 left in the repaint queue; `rubbleSpill` landed), C (activities, the six new props), E1–E4 (Fez's stall, Ipi's
-ledger room, the tap hint, the opening copy), F4 (the freeze guard, #339). Open: A3's three story-room jumps (the
-jump mechanism exists; the jumps are unchecked), B4 (optional), F1 (the save archive and its re-key go; the
-shuffle fix is in and `SAVE_EPOCH` resets every save from 0.44.0), and the release itself. F2 is set in
+ledger room, the tap hint, the opening copy), F4 (the freeze guard, #339), F1 (the save reset, tested by the user), and the detectors in camp (#344, #345). B4 is
+dropped: the starter wall reads well. Open: A3's three story-room jumps (the user checks them) and the release itself. F2 is set in
 `release.yml`; F3's changelog is consolidated and the playtest backlog has the starter release's entries. Since the queue was
 written the starter floors also gained a puzzle and a trap hidden path on every floor and a chest on every tomb
 floor, and the mosaic is cut four pieces per level, the starter register finished in plain sight.
