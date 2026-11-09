@@ -2,15 +2,20 @@ import type { CampStepTable } from "../game/campSteps"
 import type { CampCatalogue } from "@/ui/atoms/campScene/campTypes"
 
 // The ui catalogue keeps the art placement and each step's `chapter` (the camera's framing); the mod's
-// table is the source of a step's tier and source. This names every way the two have drifted apart.
-export const campCatalogueMismatches = (table: CampStepTable, catalogue: CampCatalogue): string[] => {
+// table is the source of a step's tier and source. Pieces another system stands in camp (the detectors)
+// have no table entry. This names every way the two have drifted apart.
+export const campCatalogueMismatches = (
+  table: CampStepTable,
+  catalogue: CampCatalogue,
+  placedElsewhere: readonly string[] = []
+): string[] => {
   const mismatches: string[] = []
   const inCatalogue = new Map(
     catalogue.spots.flatMap(spot => spot.steps.map(step => [step.pieces[0].id, { spot: spot.id, step }] as const))
   )
   const inTable = new Map(table.map(entry => [entry.id, entry]))
   for (const id of inCatalogue.keys())
-    if (!inTable.has(id)) mismatches.push(`catalogue step "${id}" has no table entry`)
+    if (!inTable.has(id) && !placedElsewhere.includes(id)) mismatches.push(`catalogue step "${id}" has no table entry`)
   for (const entry of table) {
     const found = inCatalogue.get(entry.id)
     if (!found) {
