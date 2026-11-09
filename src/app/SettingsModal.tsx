@@ -1,6 +1,7 @@
 import { type FC, type KeyboardEvent, use, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { version } from "@/../package.json"
+import { LANGUAGES } from "@/i18n/languages"
 import { clearGameData, useGameStorage } from "@/support/useGameStorage"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { closeOnEscape, focusOnMount, trapTab } from "@/ui/atoms/dialogFocus"
@@ -92,14 +93,6 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, startGa
 
   if (!isOpen) return null
 
-  const availableLanguages = ["en", "nl"] // Fallback to hardcoded languages
-
-  // Language display names
-  const languageNames: Record<string, string> = {
-    en: "English",
-    nl: "Nederlands",
-  }
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
@@ -138,9 +131,9 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, startGa
               onChange={e => handleLanguageChange(e.target.value)}
               className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
             >
-              {availableLanguages.map(lang => (
-                <option key={lang} value={lang}>
-                  {languageNames[lang] || lang}
+              {LANGUAGES.map(({ code, name }) => (
+                <option key={code} value={code} lang={code}>
+                  {name}
                 </option>
               ))}
             </select>
