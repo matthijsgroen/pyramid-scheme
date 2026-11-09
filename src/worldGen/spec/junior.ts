@@ -70,17 +70,24 @@ const switchBranch = () => sidePath({ puzzles: 1, endReward: "junk" })
 // junior pyramid carries a lock, so a room stands in one of its regions, the one nearest its `central` along the
 // lock's route. A lock leaves two or three regions a room may take, and two rooms in neighbouring regions crowd each
 // other out, so each floor names the few rooms its lock has room for, a room leaning elsewhere where its own region
-// leaves it no room. Named on the main floor only (`floorLocks`): a site-wide list would reach its ward wing, which
-// is drawn at another difficulty.
+// leaves it no room. A region holding the lock's lever or torch takes only a room with a mechanism place (the
+// bakery's works, the quern room, the music room, the court's and the shrine's works), each dressed so lightly that the
+// mechanism stays the thing the room is for. Named on the main floor only (`floorLocks`): a site-wide list would
+// reach its ward wing, which is drawn at another difficulty.
 const CENTRAL: Record<string, number> = {
   bakery: 0,
+  bakeryWorks: 0,
+  quernRoom: 0,
   bedroom: 0.2,
   dressingRoom: 0.3,
   shrineRoom: 0.5,
+  shrineWorks: 0.5,
   banquetRoom: 0.8,
   bigBanquetHall: 0.8,
+  musicRoom: 0.8,
   gardenCourt: 1,
   bigGardenCourt: 1,
+  courtWorks: 1,
 }
 const house = (...names: (string | [room: string, central: number])[]) => ({
   rooms: names.map(name => {
@@ -219,21 +226,24 @@ export const juniorRules: Rule[] = [
 
   // THE PLACEMENT: one lock per junior floor, as the adopted proposal says (docs/game-design/lock-placement.md). A journey
   // opens on lessons, each control alone, and the locks that combine them follow. Every region `free`.
-  journey("junior_1").pyramid(1, lessonOnMainFloor("dropDown", house("banquetRoom"))),
+  journey("junior_1").pyramid(1, lessonOnMainFloor("dropDown", house("bakeryWorks"))),
   journey("junior_1").pyramid(2, lessonOnMainFloor("leverOpensADoor", house("bedroom", "gardenCourt"))),
   journey("junior_1").pyramid(3, lessonOnMainFloor("boardPicksTheWay")),
   journey("junior_2").pyramid(1, lessonOnMainFloor("torch", house("dressingRoom", "shrineRoom", "bigGardenCourt"))),
-  journey("junior_2").pyramid(3, lessonOnMainFloor("waterMoves", house("bedroom", "dressingRoom"))),
+  journey("junior_2").pyramid(3, lessonOnMainFloor("waterMoves", house("quernRoom", "bedroom", "dressingRoom"))),
   journey("junior_2").pyramid(4, lockOnMainFloor("sluice", house(["bakery", 0.5]))),
-  journey("junior_3").pyramid(1, lessonOnMainFloor("doorWaitsForTwo", house("bedroom", "dressingRoom", "gardenCourt"))),
+  journey("junior_3").pyramid(
+    1,
+    lessonOnMainFloor("doorWaitsForTwo", house("bedroom", "dressingRoom", "gardenCourt", "musicRoom"))
+  ),
   journey("junior_3").pyramid(2, lockOnMainFloor("beforeYouJump", house(["bedroom", 0.5]))),
   journey("junior_3").pyramid(3, lockOnMainFloor("dropHome")),
   journey("junior_3").pyramid(4, lockOnMainFloor("cellar", house("dressingRoom"))),
-  journey("junior_4").pyramid(1, lessonOnMainFloor("stoneOnAPlate", house("bigBanquetHall", "bedroom"))),
-  journey("junior_4").pyramid(2, lockOnMainFloor("overlook")),
+  journey("junior_4").pyramid(1, lessonOnMainFloor("stoneOnAPlate", house("bigBanquetHall", "bedroom", "courtWorks"))),
+  journey("junior_4").pyramid(2, lockOnMainFloor("overlook", house("shrineWorks"))),
   journey("junior_4").pyramid(3, lockOnMainFloor("seesaw")),
   journey("junior_4").pyramid(4, lockOnMainFloor("lamplighter", house("shrineRoom"))),
-  journey("junior_4").pyramid(5, lockOnMainFloor("tide", house("dressingRoom", "banquetRoom", "shrineRoom"))),
+  journey("junior_4").pyramid(5, lockOnMainFloor("tide", house("dressingRoom", "musicRoom"))),
 
   // Each tomb's first level: the cave, one floor of junior puzzles on the way to the pillar.
   tombCave("junior_treasure_tomb", "junior", 1),
