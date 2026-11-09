@@ -69,7 +69,8 @@ const switchBranch = () => sidePath({ puzzles: 1, endReward: "junk" })
 const expertBetweenTableaus = { where: 2, encounter: "puzzle", difficulty: "expert" } as const
 
 export const juniorRules: Rule[] = [
-  // a nobleman's wing: a painted ka-statue, sealed chests, an ablution basin, linen and lamps.
+  // a nobleman's house: a banquet with its harp, a dressing table and wig stand, a bed and headrest, a lotus
+  // pool under a potted tree, the household shrine, a quern and a bread oven (activities.ts, junior's rooms).
   tier("junior", {
     difficulty: "junior",
     decorations: [
@@ -86,6 +87,15 @@ export const juniorRules: Rule[] = [
       "brazier",
       "rubblePile",
       "mat",
+      "banquetTable",
+      "harp",
+      "dressingTable",
+      "wigStand",
+      "pottedTree",
+      "bed",
+      "headrest",
+      "grindstone",
+      "breadOven",
     ],
     // a nobleman's wing: a false-door stela, a lamp niche, a bracket for the lamp.
     wallDecorations: ["stela", "niche", "sconce"],

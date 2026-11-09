@@ -488,6 +488,12 @@ describe("dressing by purpose", () => {
     expect(room.activity).toBe("storage")
   })
 
+  it("dresses a room whose pool holds a rank's house from that house's activities", () => {
+    const props = [...new Set(ACTIVITIES.flatMap(activity => activity.props))]
+    const room = dressed({ junctionPools: { props, wall: [] } })("0,4")
+    expect(activityOf(room.activity!)?.rank).toBeDefined()
+  })
+
   it("lets a role no place furnishes leave the pool's activities whole", () => {
     const room = dressed({ junctionPools: { props: ["basketStack"], wall: [], role: "puzzle" } })("0,4")
     expect(room.activity).toBe("packing")
@@ -565,7 +571,10 @@ describe("dressing by purpose", () => {
   })
 
   describe("a prop wider than one cell", () => {
-    const wide = DECORATION_KINDS.filter(kind => !isSingleCell(decorationFootprint(kind)))
+    // Kinds no activity lists, so the room's pick is the whole pool rather than one activity's share of it.
+    const wide = DECORATION_KINDS.filter(
+      kind => !isSingleCell(decorationFootprint(kind)) && !ACTIVITIES.some(activity => activity.props.includes(kind))
+    )
     const dressedRooms = (props: DressingPools["props"]) => {
       const at = dressed({ pools: { props, wall: [] } })
       return ["0,4", "0,6"].map(at).filter(room => room.decoration !== undefined)

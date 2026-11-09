@@ -73,6 +73,11 @@ Footprints (`DECORATION_FOOTPRINTS`): banquetTable, bed and the lotus pool 2×1;
 lays over it (a prefab, `placePrefabs.ts`): the banquet table and the pool stand where its file draws them, the player
 walking round them. Every other kind stands against the north wall.
 
+The house reuses silhouettes the merchant's pool also holds (a jar rack, a shelf, a shrine), so a pool alone cannot
+tell the two houses apart by them. A house is known by the kinds it brings (the bold ones, `HOUSE_KINDS` in
+`activities.ts`): a pool holding one is furnished by that house's activities only, any other pool by the shared five
+above. A junior side path in a merchant's pyramid carries his pool, so it stays his.
+
 ## 2. Who has the room: one purpose, by precedence
 
 | Precedence | Purpose         | What the room shows                                     |
