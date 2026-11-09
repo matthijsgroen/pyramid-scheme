@@ -22,10 +22,13 @@ import {
   AXES,
   CROSSING_NODE,
   DROP_AT,
+  EDGE_NODE,
   PREFAB_FORK,
   crossingFloor,
   doorStopForkFloor,
   dropGrid,
+  edgePrefabFloor,
+  forkFloor,
   obstacleIndexes,
   prefabForkFloor,
 } from "./floorFixtures.testing"
@@ -735,5 +738,37 @@ describe("a bare junction beside the player", () => {
       )
     }
     expect(checked).toBeGreaterThan(0)
+  })
+
+  it("draws that arrow on the map", () => {
+    const grid = revealAll(forkFloor())
+    const { container } = render(<SiteMapView grid={grid} explorerPos={[4, 5]} onCellClick={() => {}} />)
+    expect(ringOffsets(container)).toContain(ringOffset("e"))
+  })
+})
+
+describe("a designed room whose node stands just inside a door", () => {
+  const grid = revealAll(edgePrefabFloor("L", { roomType: "encounter", family: "sumplete" }))
+  const door = [2, 2] as const
+
+  it("points the step onto its node into the room, though the node is drawn on the stop", () => {
+    const ctx = offerContextFrom(grid, door, {})
+    expect(markerAt(grid, buildRoomClaims(grid), ...EDGE_NODE.L, ctx)).toEqual({ kind: "arrow", dir: "s" })
+  })
+
+  it("draws that arrow beside the player, and a tap on it walks into the room", () => {
+    const onCellClick = vi.fn()
+    const { container } = render(<SiteMapView grid={grid} explorerPos={door} onCellClick={onCellClick} />)
+    const [x, y] = container.querySelector("[data-explorer]")!.getAttribute("data-at")!.split(",").map(Number)
+    const south = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(el => {
+      const cx = parseFloat(el.style.left) + parseFloat(el.style.width) / 2
+      const cy = parseFloat(el.style.top) + parseFloat(el.style.height) / 2
+      return (
+        el.querySelector(":scope > svg > polygon") && `${Math.round(cx - x)},${Math.round(cy - y)}` === ringOffset("s")
+      )
+    })
+    expect(south).toBeDefined()
+    fireEvent.click(south!)
+    expect(onCellClick).toHaveBeenCalledWith(...EDGE_NODE.L)
   })
 })

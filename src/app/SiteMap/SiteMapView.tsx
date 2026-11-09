@@ -2347,20 +2347,26 @@ export const SiteMapView = ({
                 const sealedWay = isSealedWayOut(cell)
                 const locked = isLockedGate(cell, ownedKeys)
                 const displayState: CellState = locked && state === "reachable" ? "visible" : state
-                const choiceSpot = choice && markerSpot({ kind: "arrow", dir: choice.dir }, { cx, cy })
+                // The arrow a room's own cell wears beside the player (`markerAt`), drawn on its ring beside the node.
+                const arrow = markerAt(grid, claims, r, c, offerContext, offer)
+                const arrowSpot = arrow?.kind === "arrow" ? markerSpot(arrow, cellCenter(r, c)) : undefined
 
                 return (
                   <Fragment key={`${r},${c}`}>
-                    {/* A room choice on the node's own cell is its tap; the node stays drawn on its stop. */}
-                    {choice && choiceSpot && (
+                    {/* A room choice on the node's own cell is its tap, handed on as the cell; the node stays drawn
+                      on its stop. */}
+                    {arrow?.kind === "arrow" && arrowSpot && (
                       <MarkerCell
                         at={[r, c]}
-                        cx={choiceSpot.cx}
-                        cy={choiceSpot.cy}
-                        ring={choiceSpot.ring}
-                        onClick={onCellClick && (() => onCellClick(r, c))}
+                        cx={arrowSpot.cx}
+                        cy={arrowSpot.cy}
+                        ring={arrowSpot.ring}
+                        onClick={
+                          onCellClick &&
+                          (choice ? () => onCellClick(r, c) : offer ? () => onCellClick(offer[0], offer[1]) : undefined)
+                        }
                       >
-                        <RunTargetArrow dir={choice.dir} />
+                        <RunTargetArrow dir={arrow.dir} />
                       </MarkerCell>
                     )}
                     <MarkerCell
