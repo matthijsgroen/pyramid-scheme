@@ -70,14 +70,15 @@ export const tierPalette: Record<Tileset, TierPalette> = {
   },
   // A nobleman's painted house: light orange sandstone, about as light as the merchant's limestone and told
   // apart by its hue and its finish — crisp, dressed, decorated — under a mid-tone painted plaster wall whose
-  // murals read, copper and verdigris as its colour (docs/game-design/visual-direction.md). Proposed in
-  // `Topology/Palette moodboard`; re-sample from the repaint once it lands.
+  // murals read, copper and verdigris as its colour (docs/game-design/visual-direction.md). The floor tokens
+  // are the repainted floor's; the wall tokens and `prop` are the `Topology/Palette moodboard` proposal until
+  // the wall face and the props land.
   junior: {
-    bed: "#c49a6c",
-    slab: "#e2bb8e",
-    slabHi: "#e8c498",
-    slabLo: "#d8b080",
-    joint: "#b88e60",
+    bed: "#cf9863",
+    slab: "#e2a86f",
+    slabHi: "#eab277",
+    slabLo: "#dca26b",
+    joint: "#a9784c",
     accent: METALS.junior.accent,
     wall: "#c9895a",
     wallTop: "#ecc898",
