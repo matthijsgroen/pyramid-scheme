@@ -817,7 +817,7 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/mods/tombTreasure/game/tombTreasureReward.ts:1164406257": [
       [5, 31, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/tombTreasure/game/treasurePerks.ts:234923573": [
+    "src/mods/tombTreasure/game/treasurePerks.ts:4097294805": [
       [2, 66, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/tombTreasure/index.ts:218452373": [
