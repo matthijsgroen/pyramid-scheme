@@ -599,25 +599,6 @@ yarn import-tile art/masters/surfaces/overgrown-wall.webp --tier=default --name=
 yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name=overgrown-plant --slot=growth \
   --filter=smooth --saturation=1.0 --brightness=1.12
 
-# The nobleman's FLOOR, re-rolled to the current standard: this master is a return, where the one it
-# replaces was a post-processing copy whose flags could not be recovered (art/README).
-#
-# The master is stored AFTER `make-seamless`, because that pass is not reproducible from a flag list —
-# it rolls the source and lays its centre back over the seam cross. Storing the pre-seamless return
-# would make this line un-runnable.
-#
-# --repeat=1.6 and the reason matters for every surface after this one. The prompt asked for "sixteen
-# slabs across the width" and got about eight, so the shrink is what closes the gap. The FIRST attempt
-# asked for "a texture drawn at eight cells across" — a generator has no idea what a cell is — and came
-# back at brick scale needing --repeat=4.5, which multiplies every distinctive mark four or five times
-# and turned the brief's ochre banding into a lattice. Count the features, and forbid strong ones.
-#
-# --flatten=0.45: it is the ground the props stand on. At these numbers the tile measures #bc9667, lum
-# 156 warmth +84, against the tile it replaces at 156 and +86 — so every prop keeps its separation, 26
-# to 33 darker.
-yarn import-tile art/masters/surfaces/junior-floor.webp --tier=junior --name=floor --slot=floor \
-  --filter=smooth --key=none --repeat=1.6 --flatten=0.45
-
 # The nobleman's SILL, re-rolled. A sill is not a tiling texture and takes neither a slab count nor a
 # repeat: it is one band four times wider than it is tall, dished where feet cross it. No make-seamless
 # either — it butts against thresholds rather than tiling.
@@ -688,24 +669,12 @@ yarn import-tile art/masters/props/junior/sconce.webp --tier=junior --name=sconc
   --filter=smooth --mask="$OBJ" --headroom=0.18
 # junior — the nobleman
 
-# The nobleman's FLOOR, re-rolled to the current standard: this master is a return, where the one it
-# replaces was a post-processing copy whose flags could not be recovered (art/README).
-#
-# The master is stored AFTER `make-seamless`, because that pass is not reproducible from a flag list —
-# it rolls the source and lays its centre back over the seam cross. Storing the pre-seamless return
-# would make this line un-runnable.
-#
-# --repeat=1.6 and the reason matters for every surface after this one. The prompt asked for "sixteen
-# slabs across the width" and got about eight, so the shrink is what closes the gap. The FIRST attempt
-# asked for "a texture drawn at eight cells across" — a generator has no idea what a cell is — and came
-# back at brick scale needing --repeat=4.5, which multiplies every distinctive mark four or five times
-# and turned the brief's ochre banding into a lattice. Count the features, and forbid strong ones.
-#
-# --flatten=0.45: it is the ground the props stand on. At these numbers the tile measures #bc9667, lum
-# 156 warmth +84, against the tile it replaces at 156 and +86 — so every prop keeps its separation, 26
-# to 33 darker.
+# The nobleman's FLOOR: large dressed orange sandstone flagstones. The master is stored AFTER
+# `make-seamless`, because that pass is not reproducible from a flag list — it rolls the source and lays
+# its centre back over the seam cross. No --flatten: the floor sets the rank's palette, so
+# `tierPalette.junior`'s ground tokens are sampled from this tile rather than the tile pulled toward them.
 yarn import-tile art/masters/surfaces/junior-floor.webp --tier=junior --name=floor --slot=floor \
-  --filter=smooth --key=none --repeat=1.6 --flatten=0.45
+  --filter=smooth --key=none --repeat=2
 
 # The nobleman's SILL, re-rolled. A sill is not a tiling texture and takes neither a slab count nor a
 # repeat: it is one band four times wider than it is tall, dished where feet cross it. No make-seamless
@@ -880,47 +849,47 @@ yarn import-tile art/masters/props/junior/jarRack.webp --tier=junior --name=jarR
 # turns a two-cell length into depth; the harp and the potted tree stand a cell taller (--tall=1, the 56x140
 # frame's 2:5). The headrest is a hand's height, so it is scaled well down.
 if [ -f art/masters/props/junior/banquetTable.webp ]; then
-  scaffold banquetTable --spin=-6 --width=672 --height=448 --colour=#e0c193 --floor=#e2bb8e
+  scaffold banquetTable --spin=-6 --width=672 --height=448 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/banquetTable.webp --tier=junior --name=banquetTable --slot=prop \
     --cells=2x1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 fi
 if [ -f art/masters/props/junior/harp.webp ]; then
-  scaffold harp --spin=4 --width=448 --height=1120 --colour=#e0c193 --floor=#e2bb8e
+  scaffold harp --spin=4 --width=448 --height=1120 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/harp.webp --tier=junior --name=harp --slot=prop \
     --tall=1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 fi
 if [ -f art/masters/props/junior/dressingTable.webp ]; then
-  scaffold dressingTable --spin=4 --colour=#e0c193 --floor=#e2bb8e
+  scaffold dressingTable --spin=4 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/dressingTable.webp --tier=junior --name=dressingTable --slot=prop \
     --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 fi
 if [ -f art/masters/props/junior/wigStand.webp ]; then
-  scaffold wigStand --spin=10 --colour=#e0c193 --floor=#e2bb8e
+  scaffold wigStand --spin=10 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/wigStand.webp --tier=junior --name=wigStand --slot=prop \
     --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 fi
 if [ -f art/masters/props/junior/pottedTree.webp ]; then
-  scaffold pottedTree --spin=12 --width=448 --height=1120 --colour=#e0c193 --floor=#e2bb8e
+  scaffold pottedTree --spin=12 --width=448 --height=1120 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/pottedTree.webp --tier=junior --name=pottedTree --slot=prop \
     --tall=1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 fi
 if [ -f art/masters/props/junior/bed.webp ]; then
-  scaffold bed --spin=5 --width=672 --height=448 --colour=#e0c193 --floor=#e2bb8e
+  scaffold bed --spin=5 --width=672 --height=448 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/bed.webp --tier=junior --name=bed --slot=prop \
     --cells=2x1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 fi
 if [ -f art/masters/props/junior/headrest.webp ]; then
-  scaffold headrest --spin=6 --colour=#e0c193 --floor=#e2bb8e
+  scaffold headrest --spin=6 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/headrest.webp --tier=junior --name=headrest --slot=prop \
     --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.55
 fi
 if [ -f art/masters/props/junior/grindstone.webp ]; then
-  scaffold grindstone --spin=6 --colour=#e0c193 --floor=#e2bb8e
+  scaffold grindstone --spin=6 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/grindstone.webp --tier=junior --name=grindstone --slot=prop \
     --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 fi
 if [ -f art/masters/props/junior/breadOven.webp ]; then
-  scaffold breadOven --spin=14 --colour=#e0c193 --floor=#e2bb8e
+  scaffold breadOven --spin=14 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/breadOven.webp --tier=junior --name=breadOven --slot=prop \
     --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 fi
