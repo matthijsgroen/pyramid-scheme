@@ -160,10 +160,10 @@ Worktrees/branches here often start from a Warp script that generates a random p
 
 ## CI/CD Pipeline
 
-| Workflow      | Trigger             | What it does                                                                                      |
-| ------------- | ------------------- | ------------------------------------------------------------------------------------------------- |
-| `test.yml`    | Push / Pull Request | Type checks, lint, tests, build verification; posts version change notice on PRs                  |
-| `release.yml` | Manual dispatch     | Bumps `package.json` and `CHANGELOG.md` from the Unreleased section, then deploys to GitHub Pages |
+| Workflow      | Trigger                     | What it does                                                                                                             |
+| ------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `test.yml`    | Pull Request / push to main | Parallel jobs: lint; types + build + starter freeze + betterer; tests in four shards. Posts version change notice on PRs |
+| `release.yml` | Manual dispatch             | Bumps `package.json` and `CHANGELOG.md` from the Unreleased section, then deploys to GitHub Pages                        |
 
 Deploys only happen as part of a release — there is no separate deploy workflow.
 
