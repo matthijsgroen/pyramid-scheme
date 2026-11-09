@@ -11,7 +11,8 @@ import { validate } from "./validate"
 import { dirsOf } from "../testSupport/modOff"
 import { assembleFloor } from "./assembleFloor"
 import type { Cell, DressingPools, OneWayEdge, RoomSpec } from "./state"
-import { ACTIVITIES, activitiesFor, type ActivityId } from "../activities"
+import { ACTIVITIES, activitiesFor, themeOf, type ActivityId } from "../activities"
+import { PYRAMID_STRUCTURES } from "@/data/journeyStructure"
 import {
   DECORATION_KINDS,
   decorationFootprint,
@@ -334,6 +335,7 @@ describe("dressing by purpose", () => {
     pinned?: Record<string, string>
     propFootprint?: (kind: DecorationKind) => PropFootprint
     passThrough?: boolean
+    siteId?: string
   }
   const dressed = ({
     pools = TRADE,
@@ -345,6 +347,7 @@ describe("dressing by purpose", () => {
     pinned = {},
     propFootprint,
     passThrough = false,
+    siteId,
   }: Setup = {}) => {
     const withAuthored = (entries: [string, RoomSpec][]) =>
       new Map<string, RoomSpec>(
@@ -357,7 +360,8 @@ describe("dressing by purpose", () => {
           },
         ])
       )
-    const prep = prepOf(plainFloor(patron ? { patron } : {}), 1, propFootprint ? { propFootprint } : {})
+    const prepared = prepOf(plainFloor(patron ? { patron } : {}), 1, propFootprint ? { propFootprint } : {})
+    const prep = siteId ? { ...prepared, input: { ...prepared.input, siteId } } : prepared
     const labels = noLabels()
     for (const node of nodes) labels.dressing.set(node, pools)
     if (stairPools) labels.dressing.set("0,6", stairPools)
@@ -411,7 +415,7 @@ describe("dressing by purpose", () => {
   it("dresses a junction from one activity its pool furnishes", () => {
     const room = dressed()("0,4")
     expect(room.activity).toBeDefined()
-    expect(activitiesFor(TRADE.props ?? []).map(activity => activity.id)).toContain(room.activity)
+    expect(activitiesFor(TRADE.props ?? [], themeOf(undefined)).map(activity => activity.id)).toContain(room.activity)
     expect(activityOf(room.activity!)?.props).toContain(room.decoration)
   })
 
@@ -488,10 +492,13 @@ describe("dressing by purpose", () => {
     expect(room.activity).toBe("storage")
   })
 
-  it("dresses a room whose pool holds a rank's house from that house's activities", () => {
+  it("dresses a room from its pyramid's theme, though its pool holds another theme's props", () => {
     const props = [...new Set(ACTIVITIES.flatMap(activity => activity.props))]
-    const room = dressed({ junctionPools: { props, wall: [] } })("0,4")
-    expect(activityOf(room.activity!)?.rank).toBeDefined()
+    for (const theme of new Set(ACTIVITIES.map(activity => activity.theme))) {
+      const pyramid = PYRAMID_STRUCTURES.find(structure => structure.tier === theme)!
+      const room = dressed({ junctionPools: { props, wall: [] }, siteId: pyramid.id })("0,4")
+      expect(activityOf(room.activity!)?.theme, pyramid.id).toBe(theme)
+    }
   })
 
   it("lets a role no place furnishes leave the pool's activities whole", () => {

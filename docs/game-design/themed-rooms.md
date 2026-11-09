@@ -23,8 +23,8 @@ Missing: a level **below the role** — the activity a single room is for.
 
 ## 1. An activity is a small fixed set
 
-One table in `src/game/` beside `PROP_ROLES`, shared by every rank (a kind is a silhouette, the rank is its
-skin):
+One table in `src/game/` beside `PROP_ROLES`, each activity in one tier's theme (a kind is a silhouette, the rank
+is its skin). Starter's, the merchant's house:
 
 | Activity | Props                                            | Wall                                 | Roles                         |
 | -------- | ------------------------------------------------ | ------------------------------------ | ----------------------------- |
@@ -36,8 +36,7 @@ skin):
 
 **Bold** kinds are new (6). Rules:
 
-- A rank shows an activity only when it has that activity's props painted — each rank fills the list by what
-  exists, with no per-rank table.
+- A room shows an activity of its pyramid's theme only when its pool holds one of that activity's props.
 - A kind may serve several activities (a shelf stores and keeps the books).
 - **An activity matches its wing's role**: it is eligible only where its Roles meet the role the wing was
   authored for, so a funerary wing whose pool holds an offering table and a hanging is not a market. A wing with
@@ -73,10 +72,11 @@ Footprints (`DECORATION_FOOTPRINTS`): banquetTable, bed and the lotus pool 2×1;
 lays over it (a prefab, `placePrefabs.ts`): the banquet table and the pool stand where its file draws them, the player
 walking round them. Every other kind stands against the north wall.
 
-The house reuses silhouettes the merchant's pool also holds (a jar rack, a shelf, a shrine), so a pool alone cannot
-tell the two houses apart by them. A house is known by the kinds it brings (the bold ones, `HOUSE_KINDS` in
-`activities.ts`): a pool holding one is furnished by that house's activities only, any other pool by the shared five
-above. A junior side path in a merchant's pyramid carries his pool, so it stays his.
+**Every tier has its own theme**, and each activity belongs to one (`theme` in `activities.ts`): the five above are
+starter's, these six junior's. A theme may reuse kinds another theme has too (the nobleman's wine jars are the
+merchant's amphorae with a junior look), as long as the activity fits its tier. A room draws only on the activities of
+its **pyramid's** tier, whatever difficulty its section is played at: a junior side path in a merchant's pyramid carries
+his pool and stays his. A tier with no activities of its own yet wears the first themed tier's, starter's five.
 
 ## 2. Who has the room: one purpose, by precedence
 

@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest"
-import { ACTIVITIES, FILLER, HOUSE_KINDS, WALL_FILLER, activitiesFor, housesOf } from "./activities"
+import { difficulties } from "@/data/difficultyLevels"
+import { ACTIVITIES, FILLER, WALL_FILLER, activitiesFor, themeOf } from "./activities"
 import { PROP_ROLES, ROLE_ONLY, WALL_ITEM_ROLES } from "./dressingTags"
-import type { DecorationKind, Difficulty } from "./siteTypes"
+import type { DecorationKind } from "./siteTypes"
 
 describe("PROP_ROLES derived from ACTIVITIES", () => {
   it("gives every non-filler activity prop every role of every activity that lists it", () => {
@@ -29,12 +30,20 @@ describe("PROP_ROLES derived from ACTIVITIES", () => {
 })
 
 describe("activitiesFor", () => {
-  it("returns every activity with a prop in the pool, in table order", () => {
-    expect(activitiesFor(["shelf", "rubblePile"]).map(a => a.id)).toEqual(["storage", "ledger"])
+  it("returns every activity of the theme with a prop in the pool, in table order", () => {
+    expect(activitiesFor(["shelf", "rubblePile"], "starter").map(a => a.id)).toEqual(["storage", "ledger"])
   })
 
   it("returns nothing for a pool of filler only", () => {
-    expect(activitiesFor(["rubblePile"])).toEqual([])
+    expect(activitiesFor(["rubblePile"], "starter")).toEqual([])
+  })
+
+  it("returns only the theme's activities, though the pool holds other themes' props", () => {
+    const pool = [...new Set(ACTIVITIES.flatMap(activity => activity.props))]
+    for (const theme of new Set(ACTIVITIES.map(activity => activity.theme))) {
+      expect(activitiesFor(pool, theme).length, theme).toBeGreaterThan(0)
+      expect(activitiesFor(pool, theme).every(activity => activity.theme === theme)).toBe(true)
+    }
   })
 })
 
@@ -53,38 +62,15 @@ describe("WALL_ITEM_ROLES derived from ACTIVITIES", () => {
   })
 })
 
-describe("a rank's house", () => {
-  const houses = Object.entries(HOUSE_KINDS) as [Difficulty, readonly DecorationKind[]][]
-  const everyProp = [...new Set(ACTIVITIES.flatMap(activity => activity.props))]
-  const houseKinds = new Set(houses.flatMap(([, kinds]) => kinds))
+describe("themeOf", () => {
+  const themed = difficulties.filter(tier => ACTIVITIES.some(activity => activity.theme === tier))
 
-  it("brings kinds only its own activities list", () => {
-    for (const [rank, kinds] of houses)
-      for (const kind of kinds) {
-        const listing = ACTIVITIES.filter(activity => activity.props.includes(kind))
-        expect(listing.length, kind).toBeGreaterThan(0)
-        expect(
-          listing.every(activity => activity.rank === rank),
-          kind
-        ).toBe(true)
-      }
+  it("dresses a tier with activities of its own in its own theme", () => {
+    for (const tier of themed) expect(themeOf(tier)).toBe(tier)
   })
 
-  it("furnishes a pool holding one of its kinds with that rank's activities only", () => {
-    for (const [rank, kinds] of houses) {
-      const pool = [...everyProp.filter(kind => !houseKinds.has(kind)), kinds[0]]
-      expect(housesOf(pool)).toEqual([rank])
-      expect(activitiesFor(pool).length, rank).toBeGreaterThan(0)
-      expect(
-        activitiesFor(pool).every(activity => activity.rank === rank),
-        rank
-      ).toBe(true)
-    }
-  })
-
-  it("leaves a pool holding no house kind to the shared activities, though it holds props a house lists", () => {
-    const pool = everyProp.filter(kind => !houseKinds.has(kind))
-    expect(activitiesFor(pool).length).toBeGreaterThan(0)
-    expect(activitiesFor(pool).every(activity => activity.rank === undefined)).toBe(true)
+  it("dresses a tier with none of its own yet, or a site of no tier, in the first themed tier's", () => {
+    for (const tier of [...difficulties.filter(tier => !themed.includes(tier)), undefined])
+      expect(themeOf(tier), tier).toBe(themed[0])
   })
 })

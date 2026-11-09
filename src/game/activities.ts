@@ -1,12 +1,15 @@
+import { difficulties } from "@/data/difficultyLevels"
 import type { DecorationKind, Difficulty, WallDecorationKind } from "./siteTypes"
 
 /**
  * What a single room is FOR — the level below a wing's role (docs/game-design/themed-rooms.md, "An
  * activity is a small fixed set").
  *
- * A kind is a silhouette and the rank is its skin, so a rank shows an activity as soon as its pool holds one
- * of the activity's props. `PROP_ROLES` is derived from this table (`dressingTags.ts`), so the roles a prop
- * serves and the activities it furnishes cannot drift apart.
+ * Every tier has a theme of its own — the merchant's house, the nobleman's — and each activity belongs to one
+ * theme. A kind is a silhouette and the rank is its skin, so two themes may share a kind (the nobleman's wine jars
+ * are the merchant's amphorae with a junior look). A room shows an activity of its pyramid's theme as soon as its
+ * pool holds one of the activity's props. `PROP_ROLES` is derived from this table (`dressingTags.ts`), so the roles
+ * a prop serves and the activities it furnishes cannot drift apart.
  */
 export type ActivityId =
   | "weighing"
@@ -26,13 +29,8 @@ export type Activity = {
   props: readonly DecorationKind[]
   wall: readonly WallDecorationKind[]
   roles: readonly string[]
-  /**
-   * The rank whose house this is; none for the shared ones. A pool holding a kind of a rank's house
-   * (`HOUSE_KINDS`) is furnished by that rank's activities only, any other by the shared ones: a house reuses
-   * silhouettes other ranks' pools also hold (a jar rack, a shelf, a shrine), so those alone cannot tell the
-   * merchant's storeroom from the nobleman's banquet.
-   */
-  rank?: Difficulty
+  /** The tier whose theme this activity belongs to. */
+  theme: Difficulty
 }
 
 // `hanging` is a prop, never a wall item: the selling room's awning and the banquet's frieze. A room whose
@@ -42,47 +40,60 @@ export type Activity = {
 // (banquet, the dressing room by its mirror, the shrine's lamp) serve `light`, the open court `water` and
 // `sky`, the bedroom on the roof `sky`, the brewery `water`.
 export const ACTIVITIES: readonly Activity[] = [
-  { id: "weighing", props: ["scale", "weightsTable"], wall: ["tallyBoard"], roles: ["trade", "shop"] },
-  { id: "packing", props: ["basketStack", "bales"], wall: [], roles: ["trade", "logistics"] },
+  {
+    id: "weighing",
+    props: ["scale", "weightsTable"],
+    wall: ["tallyBoard"],
+    roles: ["trade", "shop"],
+    theme: "starter",
+  },
+  { id: "packing", props: ["basketStack", "bales"], wall: [], roles: ["trade", "logistics"], theme: "starter" },
   {
     id: "storage",
     props: ["jarRack", "shelf", "basin"],
     wall: ["niche"],
     roles: ["trade", "logistics", "agriculture"],
+    theme: "starter",
   },
-  { id: "selling", props: ["counter", "mat", "offeringTable", "hanging"], wall: [], roles: ["trade", "shop"] },
-  { id: "ledger", props: ["scribeDesk", "shelf"], wall: ["tallyBoard", "niche"], roles: ["trade", "scribe"] },
   {
-    id: "banquet",
-    props: ["banquetTable", "harp", "jarRack", "hanging"],
+    id: "selling",
+    props: ["counter", "mat", "offeringTable", "hanging"],
     wall: [],
-    roles: ["light"],
-    rank: "junior",
+    roles: ["trade", "shop"],
+    theme: "starter",
   },
+  {
+    id: "ledger",
+    props: ["scribeDesk", "shelf"],
+    wall: ["tallyBoard", "niche"],
+    roles: ["trade", "scribe"],
+    theme: "starter",
+  },
+  { id: "banquet", props: ["banquetTable", "harp", "jarRack", "hanging"], wall: [], roles: ["light"], theme: "junior" },
   {
     id: "dressingRoom",
     props: ["dressingTable", "wigStand", "shelf"],
     wall: ["sconce"],
     roles: ["light"],
-    rank: "junior",
+    theme: "junior",
   },
   {
     id: "householdShrine",
     props: ["shrine", "offeringTable", "lamp"],
     wall: ["stela"],
     roles: ["light"],
-    rank: "junior",
+    theme: "junior",
   },
   {
     id: "gardenCourt",
     props: ["basin", "pottedTree", "pillar", "mat"],
     wall: [],
     roles: ["water", "sky"],
-    rank: "junior",
+    theme: "junior",
   },
   // No linen chest beside the bed: a chest on the map means treasure you can open.
-  { id: "bedroom", props: ["bed", "headrest"], wall: [], roles: ["sky"], rank: "junior" },
-  { id: "bakeryBrewery", props: ["grindstone", "breadOven", "jarRack"], wall: [], roles: ["water"], rank: "junior" },
+  { id: "bedroom", props: ["bed", "headrest"], wall: [], roles: ["sky"], theme: "junior" },
+  { id: "bakeryBrewery", props: ["grindstone", "breadOven", "jarRack"], wall: [], roles: ["water"], theme: "junior" },
 ]
 
 /**
@@ -94,38 +105,16 @@ export const FILLER: ReadonlySet<DecorationKind> = new Set<DecorationKind>(["rub
 /** The wall items that hang anywhere: a sconce is a bracket any wall carries, whichever room lists it. */
 export const WALL_FILLER: ReadonlySet<WallDecorationKind> = new Set<WallDecorationKind>(["sconce"])
 
-/**
- * The kinds a rank's house brings, which no other rank's pool holds (themed-rooms.md's bold kinds). A pool holding
- * one is that rank's, whatever difficulty the section it dresses is played at: a junior side path in a merchant's
- * pyramid carries the merchant's pool and stays his.
- */
-export const HOUSE_KINDS: Partial<Record<Difficulty, readonly DecorationKind[]>> = {
-  junior: [
-    "banquetTable",
-    "harp",
-    "dressingTable",
-    "wigStand",
-    "pottedTree",
-    "bed",
-    "headrest",
-    "grindstone",
-    "breadOven",
-  ],
-}
-
-/** The ranks whose house `pool` holds a kind of. */
-export const housesOf = (pool: readonly DecorationKind[]): Difficulty[] =>
-  (Object.entries(HOUSE_KINDS) as [Difficulty, readonly DecorationKind[]][])
-    .filter(([, kinds]) => kinds.some(kind => pool.includes(kind)))
-    .map(([rank]) => rank)
+const THEMED: readonly Difficulty[] = difficulties.filter(tier => ACTIVITIES.some(a => a.theme === tier))
 
 /**
- * Activities with at least one prop in `pool`, in table order: the activities of the houses the pool holds, or the
- * shared ones where it holds none.
+ * The theme a pyramid of `tier` is dressed in: its tier's own, or, for a tier with no activities of its own yet
+ * (or a site of no tier), the first themed tier's. A section played at another difficulty carries its pyramid's
+ * pool, so it wears its pyramid's theme too.
  */
-export const activitiesFor = (pool: readonly DecorationKind[]): Activity[] => {
-  const houses = housesOf(pool)
-  return ACTIVITIES.filter(activity =>
-    houses.length > 0 ? activity.rank !== undefined && houses.includes(activity.rank) : activity.rank === undefined
-  ).filter(activity => activity.props.some(prop => pool.includes(prop)))
-}
+export const themeOf = (tier: Difficulty | undefined): Difficulty =>
+  tier !== undefined && THEMED.includes(tier) ? tier : THEMED[0]
+
+/** The activities of `theme` with at least one prop in `pool`, in table order. */
+export const activitiesFor = (pool: readonly DecorationKind[], theme: Difficulty): Activity[] =>
+  ACTIVITIES.filter(activity => activity.theme === theme && activity.props.some(prop => pool.includes(prop)))

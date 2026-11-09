@@ -47,3 +47,7 @@ export const TOMB_STRUCTURES: TombStructure[] = [
   { id: "wizard_treasure_tomb_b", tier: "wizard", floorCount: 4, levelCount: 2 },
   { id: "wizard_treasure_tomb_c", tier: "wizard", floorCount: 4, levelCount: 2 },
 ]
+
+/** The tier of the journey `id` names: a pyramid's or a tomb's. Undefined for a site no journey owns. */
+export const journeyTier = (id: string): JourneyTier | undefined =>
+  [...PYRAMID_STRUCTURES, ...TOMB_STRUCTURES].find(structure => structure.id === id)?.tier
