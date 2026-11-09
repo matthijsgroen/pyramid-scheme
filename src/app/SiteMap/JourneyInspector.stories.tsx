@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react"
-import { maskHiddenCells, maskWardCells } from "./useAssembledFloor"
+import { assemblePlayedFloor, maskHiddenCells, maskWardCells } from "./useAssembledFloor"
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { assembleInspectedFloor } from "../../game/assembleInspectedFloor"
 import { completeCell, getCell, revealAll as revealGrid } from "../../game/gridNavigation"
 import type { FloorGrid, TreasureReward } from "../../game/siteTypes"
 import { generatedWorldConfigs } from "../../data/generatedWorld"
@@ -241,11 +240,12 @@ const JourneyInspector = ({
 
   const baseGrid = useMemo(
     () => {
-      const result = assembleInspectedFloor(journey.id, floorConfig, pyramidSeed, currentFloor)
+      // Carved as play carves it, so every room, a designed one too, stands where the player meets it.
+      const result = assemblePlayedFloor(journey.id, floorConfig, pyramidSeed, currentFloor, clampedPyramidNumber - 1)
       return result.success ? (clutter === undefined ? result.grid : { ...result.grid, clutter }) : null
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [journey.id, pyramidSeed, currentFloor, clutter]
+    [journey.id, pyramidSeed, currentFloor, clampedPyramidNumber, clutter]
   )
 
   const grid = useMemo(() => {

@@ -49,8 +49,9 @@ vi.mock("@/data/generatedWorld", async importOriginal => {
   }
 })
 
-vi.mock("@/game/assembleInspectedFloor", () => ({
-  assembleInspectedFloor: (_journey: string, _config: unknown, _seed: number, floorIndex: number) => ({
+vi.mock("./useAssembledFloor", async importOriginal => ({
+  ...(await importOriginal<typeof import("./useAssembledFloor")>()),
+  assemblePlayedFloor: (_journey: string, _config: unknown, _seed: number, floorIndex: number) => ({
     success: true,
     grid: floors.grids[floorIndex],
   }),
