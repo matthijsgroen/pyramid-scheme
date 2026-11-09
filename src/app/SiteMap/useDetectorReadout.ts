@@ -40,8 +40,6 @@ export const useDetectorReadout = (levels: MergedDetectorLevels): DetectorReadou
       allCollected: t("common:detector.allCollected"),
       access: {
         open: t("common:detector.access.open"),
-        locked: t("common:detector.access.locked"),
-        hidden: t("common:detector.access.hidden"),
         unknown: t("common:detector.access.unknown"),
       },
       more: count => t("common:detector.more", { count }),

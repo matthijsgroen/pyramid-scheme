@@ -28,7 +28,7 @@ export type CompassSheetProps = {
 }
 
 // Only the blockers get a mark: a bare row means nothing known stands in the way.
-const ACCESS_MARK: Record<CompassAccess, string> = { open: "", locked: "🔒", hidden: "👁", unknown: "❓" }
+const ACCESS_MARK: Record<CompassAccess, string> = { open: "", unknown: "❓" }
 
 /** The compass at the camp's map table: pick a sign that is not complete, see where its pieces lie, follow it. */
 export const CompassSheet: FC<CompassSheetProps> = ({

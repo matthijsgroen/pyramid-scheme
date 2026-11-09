@@ -32,15 +32,9 @@ const meta = {
     pickFirst: "Pick a sign to see where its pieces lie.",
     nothingToFind: "Every sign you can reach is complete.",
     noneInReach: "No piece yet that you can take on a floor you have been to.",
-    rows: [
-      { key: "a", label: "Temple of Thoth L1 F2", access: "open" },
-      { key: "b", label: "Lighthouse of Alexandria L2 F1", access: "locked" },
-      { key: "c", label: "Valley of the Artisans L3 F2", access: "hidden" },
-    ],
+    rows: [{ key: "a", label: "Temple of Thoth L1 F2", access: "open" }],
     accessLabels: {
       open: "Nothing known in the way",
-      locked: "Locked",
-      hidden: "In a hidden corridor",
       unknown: "Maybe",
     },
     followLabel: "Follow this sign",

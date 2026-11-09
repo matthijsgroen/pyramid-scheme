@@ -20,9 +20,9 @@ const props = (overrides: Partial<CompassSheetProps> = {}): CompassSheetProps =>
   noneInReach: "none in reach",
   rows: [
     { key: "a", label: "Thoth L1", access: "open" },
-    { key: "b", label: "Karnak L2", access: "locked" },
+    { key: "b", label: "Karnak L2", access: "unknown" },
   ],
-  accessLabels: { open: "open", locked: "locked", hidden: "hidden", unknown: "unknown" },
+  accessLabels: { open: "open", unknown: "unknown" },
   followLabel: "follow",
   followingLabel: "following",
   following: false,
@@ -41,7 +41,7 @@ describe("CompassSheet", () => {
   it("lists where the picked sign lies, marking only what stands in the way", () => {
     render(<CompassSheet {...props()} />)
     expect(screen.getByText("Thoth L1")).toBeTruthy()
-    expect(screen.getByLabelText("locked")).toBeTruthy()
+    expect(screen.getByLabelText("unknown")).toBeTruthy()
     expect(screen.queryByLabelText("open")).toBeNull()
   })
 

@@ -11,8 +11,6 @@ const meta = {
       allCollected: "All pieces collected",
       access: {
         open: "Nothing known blocking this one",
-        locked: "Locked — you don't hold the key for this one yet",
-        hidden: "In a hidden corridor — needs the passageway detector",
         unknown: "Might not be reachable yet — it's inside a tomb or for sale",
       },
       more: count => `+${count} more`,
@@ -56,7 +54,7 @@ export const CompassNoTarget: Story = {
 }
 
 // One hit of each access verdict, so the stories show the full marker vocabulary (§7.2): reachable
-// (no badge), key-locked, and not-determinable.
+// (no badge) and not-determinable.
 const COMPASS_HITS: CompassHit[] = [
   {
     journeyId: "starter_1",
@@ -66,16 +64,6 @@ const COMPASS_HITS: CompassHit[] = [
     pieceIndex: 0,
     cell: { row: 3, col: 4 },
     access: "open",
-  },
-  {
-    journeyId: "starter_1",
-    levelIdx: 0,
-    floorIdx: 0,
-    hieroglyphId: "p10",
-    pieceIndex: 1,
-    cell: { row: 5, col: 2 },
-    access: "locked",
-    missingKeys: ["junior_a_1"],
   },
   {
     journeyId: "starter_2",

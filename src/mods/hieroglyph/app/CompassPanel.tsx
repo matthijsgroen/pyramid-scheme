@@ -50,8 +50,6 @@ export const CompassPanel: FC = () => {
       rows={rows}
       accessLabels={{
         open: t("detector.access.open"),
-        locked: t("detector.access.locked"),
-        hidden: t("detector.access.hidden"),
         unknown: t("detector.access.unknown"),
       }}
       followLabel={t("detector.camp.follow")}

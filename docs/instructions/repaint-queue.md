@@ -308,6 +308,57 @@ Even lighting left to right, no hotspot, no vignette.
 
 **Import:** `yarn import-tile art/masters/surfaces/junior-threshold.webp --tier=junior --name=threshold --slot=sill --filter=smooth --key=none`
 
+### `junior/arch` — a dressed sandstone doorway with a painted lintel
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). The doorway is repainted against the new light orange floor, crisp and decorated where the merchant's is rough timber.
+
+**Attach:** `art/masters/surfaces/junior-floor.webp` — the nobleman's NEW floor, as the style reference (paint `junior/floor` first)
+
+```
+FRAME: landscape, exactly 2.7 times as wide as it is tall. Do not re-compose it square.
+
+Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
+Rank: a NOBLEMAN's tomb, built as his painted house — the second of five. Warm orange sandstone, precisely
+dressed and decorated: crisp, neat and ornamented, a great house kept in order. Copper vessels gone green at
+the rim, lotus and papyrus, rosettes, a banquet frieze. Festive and colourful.
+Lit evenly by lamplight and daylight together — every corner of the room is visible, nothing sinks into
+darkness.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Palette, strictly: stone #d8b080 lit, #9c7442 in shade, copper #c8642c with light #f2b48a and
+shade #55210c, verdigris #4f9a86, painted red ochre #a8442a, Egyptian blue #2f6f8f, linen #efe4cc.
+Nothing lighter than #f2dcb4, nothing darker than #3a1c0e.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it — the palette above is the only source of colour.
+THE CAMERA: 30 degrees above the floor, looking slightly down. Depth going away from the viewer is
+squashed to HALF; height is barely squashed. A square stone block shows a top face a bit more than HALF
+as deep as the front of it is tall — a clear band, not a sliver. Verticals stay vertical, horizontals
+stay horizontal: an orthographic squash, never a vanishing point. Not isometric, not photographic.
+
+A free-standing stone doorway frame, alone on a flat magenta #ff00ff background. Nothing else in the
+picture: no wall, no floor, no ground, no shadow cast on the magenta.
+The frame is 2.7 times as wide as it is tall. Two dressed sandstone JAMBS, one at the left and one at the
+right, and a LINTEL lying across the top of them. THE MIDDLE IS EMPTY — flat magenta #ff00ff between the
+jambs, from under the lintel all the way down and off the bottom edge of the picture. Magenta OUTSIDE the
+frame too, left of the left jamb, right of the right jamb, and above the lintel.
+Each jamb is about a sixth of the picture's width. The gap between them is the remaining two thirds.
+The stone is the floor's orange sandstone, a clear step DARKER than it so the doorway reads against the
+paving: #d8b080 in the light, #9c7442 in shadow. Crisp square arrises, true edges, cut by a mason.
+The front of the lintel carries a painted band: a row of rosettes in red ochre #a8442a and Egyptian blue
+#2f6f8f on linen #efe4cc, neat and fresh. A thin copper #c8642c strip runs along the lintel's lower edge,
+gone verdigris #4f9a86 at both ends — the only metal on it.
+EVERY PIECE SHOWS ITS TOP. The lintel's whole upper face is visible as a band running the full width,
+lighter than its front. Each jamb shows the small top face where the lintel rests on it.
+The underside of the lintel, where it overhangs the opening, is in shadow, and so is the inner face of each
+jamb. That darker edge around the empty middle is what makes the gateway read as a way through.
+Even lighting left to right, no hotspot, no vignette.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/junior-arch.webp --tier=junior --name=arch --slot=arch --filter=smooth`
+
 ### `expert/wall-face` — cool dressed stone in sunk-relief columns
 
 **Attach:** `art/masters/surfaces/expert-floor.webp` — the priest's NEW floor, as the style reference (paint `expert/floor` first)
@@ -627,6 +678,835 @@ Even lighting left to right, no hotspot, no vignette.
 **Import:** `yarn import-tile art/masters/surfaces/wizard-threshold.webp --tier=wizard --name=threshold --slot=sill --filter=smooth --key=none`
 
 ---
+
+## Nobleman — twenty-five
+
+The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
+first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
+green. Copper is the rank's metal and comes back as a rim, a band or a hasp, gone verdigris, never as a
+tint over the set ([visual-direction.md](../game-design/visual-direction.md)). They wait on `junior/floor`:
+`junior-plain.png` is cut from that floor, and every scaffold's shadow is rendered against it.
+
+Each reuses the geometry its tile already ships with, so the scaffold lines are `art/rebuild.sh`'s with the
+new floor. The imports carry no `--brightness` or `--saturation`: those are measured against the new floor
+with `yarn tile-stats` once the return is in.
+
+### `junior/pillar` — a sandstone palm column, painted capital
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/palm-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a PALM COLUMN. The tall shaft is dressed orange sandstone, crisp and true; the spreading
+crown at its top is the CAPITAL, carved as palm fronds; the block under the shaft is its BASE.
+
+The shaft is the warm orange sandstone of the floor, a step darker so it stands off it, with a thin
+painted band below the capital in red ochre and Egyptian blue. The fronds are PAINTED GREEN, a fresh leaf
+green with blue-green ribs, each frond crisp at its tip. A thin copper ring binds the top of the shaft,
+gone verdigris at its edge.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold palm --spin=22 --colour=#e0c193 --floor=#e2bb8e
+yarn import-tile art/masters/props/junior/pillar.webp --tier=junior --name=pillar --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --mask-grow=100
+```
+
+### `junior/shelf` — a cedar linen press, folded linen
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/shelf-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a LINEN PRESS. The open frame is the CARCASS; the stacks on its shelves are folded LINEN;
+the small box on the top course is a MIRROR CASE.
+
+The carcass is reddish-brown CEDAR, oiled and smooth, its grain running along each board. The linen is
+clean white and cream, each fold crisp, one stack edged with a red ochre stripe and one with blue. The
+mirror case is painted wood with a copper clasp.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold shelf --contents=linen --spin=5 --colour=#e0c193 --floor=#e2bb8e
+yarn import-tile art/masters/props/junior/shelf.webp --tier=junior --name=shelf --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/basin` — a copper ablution bowl on a cedar stand
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/basin-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: an ablution BASIN. The three splayed legs and the drum they meet are the STAND; the open
+bowl above it is the BASIN; the disc inside it is WATER.
+
+The stand is dark oiled CEDAR, reddish-brown. The bowl is BEATEN COPPER — the one place this rank's metal
+is the object itself — warm orange-brown, hammer-marked, gone verdigris green at the rim and in a streak
+down the side. The water is a still clear blue-green surface, lighter at the rim, not a hole.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold basin --contents=bowl --spin=14 --colour=#e0c193 --floor=#e2bb8e
+yarn import-tile art/masters/props/junior/basin.webp --tier=junior --name=basin --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/hanging` — a linen hanging with a dyed border
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/hanging-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a LINEN HANGING. The two uprights are POSTS; the bar across their tops is the POLE; the
+cloth hanging from it is the LINEN; the marked band along its edge is the BORDER.
+
+The linen is fine bleached white, falling in soft even folds. The border is dyed in bands: red ochre,
+Egyptian blue and a thin leaf green, crisp and bright. The posts and pole are oiled cedar, reddish-brown,
+with small copper caps at the pole's ends.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold hanging --contents=linen --spin=38 --colour=#e0c193 --floor=#e2bb8e
+yarn import-tile art/masters/props/junior/hanging.webp --tier=junior --name=hanging --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/offeringTable` — a laid table with bread, fruit and lotus
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/market-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a LAID TABLE. The top and the legs are the TABLE; the domed shapes on it are LOAVES; the
+round shapes are FRUIT; the tall stoppered vessel standing in a ring is a WINE JAR.
+
+The table is pale sycamore wood, smooth and light brown. The loaves are baked golden-brown and floury,
+the fruit dark red figs and green-gold grapes, a few blue LOTUS flowers laid across them. The jar is red
+pottery with a painted band of blue and a mud stopper.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold market --contents=laid --spin=-16 --colour=#e0c193 --floor=#e2bb8e
+yarn import-tile art/masters/props/junior/offeringTable.webp --tier=junior --name=offeringTable --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/lamp` — a cedar lamp stand
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/lamp-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a LAMP STAND. The tall upright is the STAND; the foot is its BASE; the small vessel at the
+top is the LAMP, and the nub above it the FLAME.
+
+The stand is turned cedar, reddish-brown and oiled, with a painted ring in red ochre and blue near the
+top. The lamp is pale fired pottery, sooted at the lip; the flame a small warm orange tongue. A thin
+copper drip-tray under the lamp, gone green at its edge.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold lamp --contents=stand --spin=8 --colour=#e0c193 --floor=#e2bb8e
+yarn import-tile art/masters/props/junior/lamp.webp --tier=junior --name=lamp --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/chestProp` — a sealed cedar chest with a painted lid
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/sealedchest-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a sealed CHEST. The box is the BODY; the top is the LID; the knobs and cord are the SEAL.
+
+The body is reddish-brown CEDAR, its boards crisp and true. The lid carries a painted band of rosettes in
+red ochre, blue and white on a cream ground. The knobs are copper gone verdigris; the cord is pale linen
+string, sealed with a lump of grey clay.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold sealedChest --spin=-27 --colour=#e0c193 --floor=#e2bb8e
+yarn import-tile art/masters/props/junior/chestProp.webp --tier=junior --name=chestProp --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/shrine` — a painted false door with an offering table
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/falsedoor-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a FALSE DOOR with an OFFERING TABLE before it. The tall slab with its recessed frames is
+the false door; the low slab in front is the table.
+
+The false door is pale dressed limestone, cooler and lighter than the floor, its frames edged in red
+ochre and its recessed panel painted Egyptian blue, with neat columns of small dark hieroglyphs on the
+jambs. The table is the same limestone with two loaves and a blue lotus on it.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#e2bb8e
+yarn import-tile art/masters/props/junior/shrine.webp --tier=junior --name=shrine --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/mat` — a reed mat with a woven border
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/mat-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a MAT lying flat on the floor.
+
+Woven RUSH, a warm straw-green to golden colour, a step darker than the orange floor so it reads apart
+from it, the weave running in crisp even rows. A woven border in red ochre and dark blue runs round its
+edge.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold mat --spin=9 --shadow=0.5 --colour=#e0c193 --floor=#e2bb8e
+yarn import-tile art/masters/props/junior/mat.webp --tier=junior --name=mat --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/brazier` — a pottery brazier, burning
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/brazier-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a BRAZIER. The stand is the base; the open bowl on it holds the FIRE.
+
+The stand and bowl are red-brown fired POTTERY, with a painted black-and-cream band round the bowl and a
+thin copper rim gone green. Glowing coals in the bowl, deep orange and red, with a few small flames —
+light, not smoke.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold brazier --lit=1 --colour=#e0c193 --floor=#e2bb8e
+yarn import-tile art/masters/props/junior/brazier.webp --tier=junior --name=brazier --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.7
+```
+
+### `junior/rubblePile` — fallen painted plaster
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/rubblepile-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a heap of FALLEN PLASTER and the mudbrick behind it.
+
+The broken pieces are mud plaster, warm orange-tan, their faces still carrying fragments of painting —
+red ochre, Egyptian blue, a bit of leaf green — and their broken edges raw tan. Mudbrick chunks among
+them are darker brown. Fine pale dust between the pieces.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold rubblePile --contents=plaster --shadow=0.6 --colour=#e0c193 --floor=#e2bb8e
+yarn import-tile art/masters/props/junior/rubblePile.webp --tier=junior --name=rubblePile --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/jarRack` — a cedar rack of painted pottery jars
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/jarrack-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a JAR RACK. The frame is the RACK; the vessels standing in it are JARS.
+
+The rack is reddish-brown cedar. The jars are fired pottery, red-brown and buff, each with a painted
+collar of blue lotus petals, one glazed Egyptian blue; their mud stoppers are grey. A copper ladle hangs
+on the rack, gone green.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold jarrack --colour=#e0c193 --floor=#e2bb8e
+yarn import-tile art/masters/props/junior/jarRack.webp --tier=junior --name=jarRack --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/rubbleSpill` — a fan of plaster grit and painted flakes
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/rubblepile-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a SPILL of grit and broken plaster fanned across the floor.
+
+Tan and orange plaster crumbs, a few flat flakes still painted red ochre or blue, mudbrick grit darker
+brown, all a step darker than the orange floor so the spill reads against it.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold rubblePile --contents=spill --colour=#e0c193 --floor=#e2bb8e
+yarn import-tile art/masters/props/junior/rubbleSpill.webp --tier=junior --name=rubbleSpill --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/statue` — the nobleman's painted ka-statue, seated
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/statue-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a seated KA-STATUE of the nobleman, cut from one block of limestone. The upper marked part
+is the FIGURE; the block under it is the SEAT and PLINTH.
+
+IT IS A CARVED OBJECT AND NOT A PERSON. Block-carved: flat planes, hard arrises, the figure never
+leaves its block, nothing undercut. No anatomy is modelled. The figure is CLOTHED, no bare torso — bare
+painted flesh is what turns a statue into a cartoon character.
+
+PAINTED as his house is: a pleated white linen robe covering him from shoulders to shins, a black
+shoulder-length wig, a broad collar of blue, green and red bands. His face and hands are painted a warm
+red-brown and kept as flat planes. The seat and plinth are pale limestone with a band of small dark
+hieroglyphs along the front.
+
+THE REFERENCE IS A ROUGHED-OUT BLOCK, deliberately left fat. CHANGE, freely, and ONLY this: the contour
+of the figure, and only by CUTTING. CARVE INWARD ONLY — nothing may end up further left, right, higher or
+lower than the rough shape reaches.
+
+EVERYTHING ELSE IS FIXED:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them. It is not a photograph and not an isometric view.
+3. HE SITS, facing the viewer, hands on his knees.
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows. Do not swing it round, do not flatten it.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is. The figure is the marked upper part; the base is the lower part. Do not shrink the figure onto a taller base.
+
+You are re-carving a shape, not re-staging a photograph.
+
+ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF. Nothing is added below the plinth — no ground, no shadow, no floor.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=seated --spin=7 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#e2bb8e
+yarn import-tile art/masters/props/junior/statue.webp --tier=junior --name=statue --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/sarcophagus` — a painted anthropoid coffin
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/statue-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: an upright ANTHROPOID COFFIN, a wrapped figure carved in wood. The upper marked part is the
+COFFIN; the block under it is its BASE.
+
+It is a COFFIN AND NOT A BOX: carve the outline of a wrapped body — a rounded head, shoulders, a body
+tapering to the feet — out of the rough block. No anatomy beyond that outline.
+
+PAINTED on a warm yellow ground: a striped blue-and-black wig, a broad collar of red, blue and green
+bands across the chest, a column of dark hieroglyphs down the front. The face is a calm flat red-brown
+mask. The base is pale limestone.
+
+THE REFERENCE IS A ROUGHED-OUT BLOCK, deliberately left fat. CHANGE, freely, and ONLY this: the contour
+of the figure, and only by CUTTING. CARVE INWARD ONLY — nothing may end up further left, right, higher or
+lower than the rough shape reaches.
+
+EVERYTHING ELSE IS FIXED:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them. It is not a photograph and not an isometric view.
+3. IT STANDS upright, facing the viewer.
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows. Do not swing it round, do not flatten it.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is. The figure is the marked upper part; the base is the lower part. Do not shrink the figure onto a taller base.
+
+You are re-carving a shape, not re-staging a photograph.
+
+ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF. Nothing is added below the plinth — no ground, no shadow, no floor.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=mummiform --spin=11 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#e2bb8e
+yarn import-tile art/masters/props/junior/sarcophagus.webp --tier=junior --name=sarcophagus --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/shrine-anubis` — a false door with Anubis on its panel
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/falsedoor-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a FALSE DOOR with an OFFERING TABLE before it, dedicated to ANUBIS. The tall slab with its
+recessed frames is the false door; the low slab in front is the table.
+
+The false door is pale dressed limestone, its frames edged in red ochre. The recessed panel carries
+ANUBIS painted lying down: a BLACK JACKAL, long muzzle, two tall pointed ears, on a blue ground. The
+table is the same limestone with two loaves on it.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#e2bb8e
+yarn import-tile art/masters/props/junior/shrine-anubis.webp --tier=junior --name=shrine-anubis --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/statue-anubis` — Anubis couchant, black, on a painted chest
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/statue-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: ANUBIS as a jackal lying down on a chest. The upper marked part is the ANIMAL; the block
+under it is the CHEST it lies on.
+
+IT IS A CARVED OBJECT: block-carved, flat planes, the legs never leave the block.
+
+The jackal is painted matte BLACK: long muzzle, two tall pointed ears, a thin copper collar gone green at
+its knot — the one mark of metal. The chest under him is cedar, painted with a band of blue and red ochre
+rosettes on cream.
+
+THE REFERENCE IS A ROUGHED-OUT BLOCK, deliberately left fat. CHANGE, freely, and ONLY this: the contour
+of the figure, and only by CUTTING. CARVE INWARD ONLY — nothing may end up further left, right, higher or
+lower than the rough shape reaches.
+
+EVERYTHING ELSE IS FIXED:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them. It is not a photograph and not an isometric view.
+3. HE LIES with his forelegs stretched out in front, head raised, along the chest.
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows. Do not swing it round, do not flatten it.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is. The figure is the marked upper part; the base is the lower part. Do not shrink the figure onto a taller base.
+
+The animal is as big as the reference makes it.
+
+ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF. Nothing is added below the plinth — no ground, no shadow, no floor.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=couchant --spin=-22 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#e2bb8e
+yarn import-tile art/masters/props/junior/statue-anubis.webp --tier=junior --name=statue-anubis --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/shrine-thoth` — a false door with Thoth's ibis on its panel
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/falsedoor-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a FALSE DOOR with an OFFERING TABLE before it, dedicated to THOTH. The tall slab with its
+recessed frames is the false door; the low slab in front is the table.
+
+The false door is pale dressed limestone, its frames edged in red ochre. The recessed panel carries
+Thoth's IBIS painted standing: white body, black head and neck, a long curved down-swept beak, on a blue
+ground. The table is the same limestone with a scribe's palette and a blue lotus on it.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#e2bb8e
+yarn import-tile art/masters/props/junior/shrine-thoth.webp --tier=junior --name=shrine-thoth --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/statue-thoth` — Thoth seated, ibis-headed
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/statue-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a seated statue of THOTH, cut from one block of limestone. The upper marked part is the
+FIGURE; the block under it is the SEAT and PLINTH.
+
+IT IS A CARVED OBJECT AND NOT A PERSON. Block-carved: flat planes, hard arrises, the figure never
+leaves its block, nothing undercut. No anatomy is modelled. The figure is CLOTHED, no bare torso — bare
+painted flesh is what turns a statue into a cartoon character.
+
+His head is an IBIS head, black, with a long curved down-swept beak — the one mark that says who he is.
+He wears a pleated white kilt and a broad collar of blue, green and red bands that covers his shoulders.
+The seat and plinth are pale limestone with a band of small dark hieroglyphs along the front.
+
+THE REFERENCE IS A ROUGHED-OUT BLOCK, deliberately left fat. CHANGE, freely, and ONLY this: the contour
+of the figure, and only by CUTTING. CARVE INWARD ONLY — nothing may end up further left, right, higher or
+lower than the rough shape reaches.
+
+EVERYTHING ELSE IS FIXED:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them. It is not a photograph and not an isometric view.
+3. HE SITS, facing the viewer, hands on his knees.
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows. Do not swing it round, do not flatten it.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is. The figure is the marked upper part; the base is the lower part. Do not shrink the figure onto a taller base.
+
+You are re-carving a shape, not re-staging a photograph.
+
+ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF. Nothing is added below the plinth — no ground, no shadow, no floor.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=seated --spin=7 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#e2bb8e
+yarn import-tile art/masters/props/junior/statue-thoth.webp --tier=junior --name=statue-thoth --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/niche` — a lamp niche with a painted surround
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/niche-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a lamp niche. The frame around the opening is the SURROUND — jambs, lintel and sill; inside
+it stands a pottery LAMP, and the nub above it is the FLAME.
+
+The surround is painted plaster, crisp: a red ochre frame with a blue line inside it and a row of small
+rosettes along the lintel. The recess behind is in soft shade. The lamp is pale fired pottery, sooted at
+the lip, on a small copper dish gone green; the flame a small warm orange tongue.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold niche --contents=lamp --shear=0.5 --width=448 --height=224 --colour=#e0c193 --sun=0
+yarn import-tile art/masters/props/junior/niche.webp --tier=junior --name=niche --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
+```
+
+### `junior/sconce` — a copper wall bracket with a pottery lamp
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:**
+
+1. `~/tile-previews/sconce-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a sconce on a wall. The upright plate at the left is fixed to the WALL; the bar reaching right
+is the ARM; the diagonal below it is a BRACE; the small vessel at the arm's end is the LAMP, and the nub
+above it the FLAME.
+
+The bracket is COPPER, warm orange-brown, gone verdigris green along its edges and joints. The lamp is
+pale fired pottery, sooted at its lip; the flame a small warm orange tongue.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold sconce --shear=0.5 --width=448 --height=224 --margin=1.4 --colour=#e0c193 --sun=0
+yarn import-tile art/masters/props/junior/sconce.webp --tier=junior --name=sconce --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
+```
+
+### `junior/stela` — a painted limestone false-door stela
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:** `~/tile-previews/junior-plain.png` — the material reference. A flat item has no scaffold.
+
+```
+A single flat object, painted in flat matte gouache, on pure magenta #FF00FF. Landscape, exactly two units wide by one tall. Do not re-compose it into a square. ONE OBJECT, AND IT FILLS THE FRAME, reaching the left and right edges. The magenta fills the frame around it to its edges: there is no wall, no floor and no surface behind the object. Seen straight on, flat, no perspective.
+
+The object: a FALSE-DOOR STELA, a flat slab of dressed limestone with nested recessed frames.
+
+Pale, cool-cream limestone, crisp and clean, lighter than the orange plaster it will hang on. The frames
+are edged in red ochre; the central panel shows the nobleman seated at a table of loaves, painted in red
+ochre, Egyptian blue and black; columns of small dark hieroglyphs run down the jambs.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+**Import:** `yarn import-tile art/masters/props/junior/stela.webp --tier=junior --name=stela --slot=wall --filter=smooth --headroom=0.18`
+
+### `junior/tallyBoard` — a plastered household board, columns of hieroglyphs
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:** `~/tile-previews/junior-plain.png` — the material reference. A flat item has no scaffold.
+
+```
+A single flat object, painted in flat matte gouache, on pure magenta #FF00FF. Landscape, exactly two units wide by one tall. Do not re-compose it into a square. ONE OBJECT, AND IT FILLS THE FRAME, reaching the left and right edges. The magenta fills the frame around it to its edges: there is no wall, no floor and no surface behind the object. Seen straight on, flat, no perspective.
+
+The object: a household account BOARD, a flat wooden board coated in white plaster, with a narrow
+cedar frame.
+
+On the plaster, neat columns of small HIEROGLYPHS — birds, reeds, loaves, water lines — in black, with
+the column heads in red ochre. No modern writing, no letters, no numbers. A copper hanging ring at the top,
+gone green.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+**Import:** `yarn import-tile art/masters/props/junior/tallyBoard.webp --tier=junior --name=tallyBoard --slot=wall --filter=smooth --headroom=0.18`
+
+### `junior/stela-anubis` — a limestone stela with Anubis
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:** `~/tile-previews/junior-plain.png` — the material reference. A flat item has no scaffold.
+
+```
+A single flat object, painted in flat matte gouache, on pure magenta #FF00FF. Landscape, exactly two units wide by one tall. Do not re-compose it into a square. ONE OBJECT, AND IT FILLS THE FRAME, reaching the left and right edges. The magenta fills the frame around it to its edges: there is no wall, no floor and no surface behind the object. Seen straight on, flat, no perspective.
+
+The object: a round-topped STELA, a flat slab of dressed limestone.
+
+Pale, cool-cream limestone, crisp and clean. In its upper panel ANUBIS is painted lying down: a BLACK
+JACKAL, long muzzle, two tall pointed ears, on an Egyptian blue ground framed in red ochre. Below, columns
+of small dark hieroglyphs.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+**Import:** `yarn import-tile art/masters/props/junior/stela-anubis.webp --tier=junior --name=stela-anubis --slot=wall --filter=smooth --headroom=0.18`
+
+### `junior/stela-thoth` — a limestone stela with Thoth's ibis
+
+**Re-roll:** the rank's palette moved (2026-11-03, see `junior/floor`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+
+**Attach:** `~/tile-previews/junior-plain.png` — the material reference. A flat item has no scaffold.
+
+```
+A single flat object, painted in flat matte gouache, on pure magenta #FF00FF. Landscape, exactly two units wide by one tall. Do not re-compose it into a square. ONE OBJECT, AND IT FILLS THE FRAME, reaching the left and right edges. The magenta fills the frame around it to its edges: there is no wall, no floor and no surface behind the object. Seen straight on, flat, no perspective.
+
+The object: a round-topped STELA, a flat slab of dressed limestone.
+
+Pale, cool-cream limestone, crisp and clean. In its upper panel Thoth's IBIS is painted standing: white
+body, black head and neck, a long curved down-swept beak, on an Egyptian blue ground framed in red ochre.
+Below, columns of small dark hieroglyphs.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+**Import:** `yarn import-tile art/masters/props/junior/stela-thoth.webp --tier=junior --name=stela-thoth --slot=wall --filter=smooth --headroom=0.18 --trim`
 
 ## Priest — fifteen
 
