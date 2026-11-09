@@ -3,7 +3,7 @@ import { assembleFloor, type ResolveKeyRequirements } from "@/game/siteAssembler
 import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
 import { journeys } from "@/data/journeys"
 import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
-import type { FloorGrid } from "@/game/siteTypes"
+import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { boardIndexesForFloor } from "./boardIndexes"
 import { cellAddress, cellSlot, findByAddress, floorOfAddress } from "./cellIdentity"
 import "@/mods/registerModApps"
@@ -37,13 +37,32 @@ const gridFor = (journeyId: string, levelNr: number, floorIndex: number, seedOff
   return grid
 }
 
-/** The floor carved at the first seed from `seedOffset` on that carves it: not every seed does. */
-const movedGridFor = (journeyId: string, levelNr: number, floorIndex: number, seedOffset: number): FloorGrid => {
-  for (let offset = seedOffset; offset < seedOffset + 40; offset++) {
-    const grid = carveAt(journeyId, levelNr, floorIndex, offset)
-    if (grid) return grid
-  }
-  throw new Error(`${journeyId} L${levelNr} F${floorIndex} carves at no seed from +${seedOffset}`)
+// A made-up expert floor: a main path and six side paths, every room with a family, a board and a reward of its own.
+const SIDE_FAMILIES = ["sumplete", "eclipse", "rush-hour", "constellation", "sumplete", "eclipse"]
+const saveFloor = (): FloorConfig => ({
+  pathPuzzles: 3,
+  difficulty: "expert",
+  end: "treasure",
+  exitOrStaircase: "exit",
+  encounter: "constellation",
+  sideSections: SIDE_FAMILIES.map((encounter, i) => ({
+    pathPuzzles: 2,
+    difficulty: "expert" as const,
+    end: "treasure" as const,
+    encounter,
+    endReward: { type: "money" as const, amount: 10 + i },
+  })),
+})
+
+const SAVE_SITE = "site-save"
+const carveSaveFloor = (seed: number): FloorGrid => {
+  const result = assembleFloor(SAVE_SITE, { ...saveFloor(), seed }, seed, resolveEncounter, {
+    resolveKeyRequirements,
+    floorRef: { journeyId: SAVE_SITE, floorIndex: 0 },
+    resolveBoardIndex: (_familyId, { section, pathIndex }) => section.length * 10 + pathIndex,
+  })
+  if (!result.success) throw new Error(`the save floor did not carve at seed ${seed}`)
+  return result.grid
 }
 
 const positions = (grid: FloorGrid) => grid.cells.flatMap((row, r) => row.map((_cell, c) => [r, c] as [number, number]))
@@ -53,14 +72,13 @@ const sectionOf = (grid: FloorGrid, [r, c]: [number, number]) => {
   return cell.type === "empty" ? "" : (cell.sectionAddress ?? "")
 }
 
-const JOURNEY = "expert_1"
 const LEVEL = 3
 
 describe("a save survives the floor being carved somewhere else", () => {
-  const before = gridFor(JOURNEY, LEVEL, 0)
-  // A seed twelve or more steps along, the first that carves: the corridors land elsewhere AND the walk comes out a
-  // different length, which is the move compaction will make on all 74 floors. Nothing authored changes.
-  const after = movedGridFor(JOURNEY, LEVEL, 0, 12)
+  const before = carveSaveFloor(1)
+  // Another seed: the corridors land elsewhere AND the walk comes out a different length, which is the move
+  // compaction makes on every floor. Nothing authored changes.
+  const after = carveSaveFloor(13)
 
   it("really did re-carve, and re-LENGTH — otherwise nothing below proves anything", () => {
     const drawn = (grid: FloorGrid) => grid.cells.flat().filter(cell => cell.type !== "empty").length

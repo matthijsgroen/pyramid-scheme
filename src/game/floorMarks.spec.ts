@@ -1,16 +1,11 @@
 import { beforeAll, describe, expect, it } from "vitest"
-import { assembleFloor, defaultResolveEncounter } from "./siteAssembler"
-import type { ResolveEncounter } from "./siteAssembler"
+import { assembleFloor } from "./siteAssembler"
 import { MARK_GLYPHS } from "./mark"
 import type { Mark } from "./mark"
 import type { FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
-import { designerDoubleBack, forkSwitchFloorConfig } from "./testSupport/forkSwitchFixtures"
+import { designerDoubleBack } from "./testSupport/forkSwitchFixtures"
 import { handleFloorConfig } from "./testSupport/handleFixtures"
-
-const reEnterable: ResolveEncounter = (encounter, defaultTag) => ({
-  ...defaultResolveEncounter(encounter, defaultTag),
-  reEnterable: true,
-})
+import { LEVERS, MARK_FLOORS, carveMarkFloor, reEnterable, withSwitch } from "./testSupport/markFloors"
 
 const roomsOf = (grid: FloorGrid): RoomCell[] =>
   grid.cells.flat().filter((cell): cell is RoomCell => cell.type === "room")
@@ -27,52 +22,21 @@ const marksByMechanism = (grid: FloorGrid): Record<string, Mark | undefined> =>
   Object.fromEntries(mechanismRooms(grid).map(({ id, room }) => [id, room.mark]))
 
 type Carve = { seed: number; grid: FloorGrid }
-const carvesOf = (siteId: string, config: FloorConfig, resolver: ResolveEncounter, seeds = 60, want = 12): Carve[] => {
-  const carves: Carve[] = []
-  for (let seed = 1; seed <= seeds && carves.length < want; seed++) {
-    const result = assembleFloor(siteId, config, seed, resolver)
-    if (result.success) carves.push({ seed, grid: result.grid })
+
+// Each floor is carved at the seeds its search found (floorMarks.verify.ts holds that the search still finds them).
+const floors: { name: string; mechanics: number; carves: () => Carve[] }[] = MARK_FLOORS.map(floor => {
+  let carves: Carve[] | undefined
+  return {
+    name: floor.name,
+    mechanics: floor.mechanics,
+    carves: () =>
+      (carves ??= floor.carvingSeeds.map(seed => {
+        const grid = carveMarkFloor(floor, seed)
+        if (!grid) throw new Error(`${floor.name} no longer carves at seed ${seed}`)
+        return { seed, grid }
+      })),
   }
-  return carves
-}
-
-const LEVERS: NonNullable<FloorConfig["handles"]> = [
-  { in: "lever", left: ["vault"], right: ["pocket"] },
-  { in: "lever2", left: ["vault2"], right: ["pocket2"] },
-]
-
-const withSwitch = (config: FloorConfig): FloorConfig => ({
-  ...config,
-  forks: [{ exits: 2, count: 1 }],
-  switches: { encounter: "sumplete", min: 1, max: 1 },
 })
-
-const floors: { name: string; mechanics: number; carves: () => Carve[] }[] = (() => {
-  const cache = new Map<string, Carve[]>()
-  const once = (key: string, make: () => Carve[]) => () => {
-    if (!cache.has(key)) cache.set(key, make())
-    return cache.get(key)!
-  }
-  return [
-    {
-      name: "doubleBack with a fork and two toggles",
-      mechanics: 3,
-      carves: once("double", () => carvesOf("site-marks-double", designerDoubleBack(), reEnterable)),
-    },
-    {
-      name: "doubleBack with a fork-switch and two toggles",
-      mechanics: 3,
-      carves: once("fork", () => carvesOf("site-marks-fork", forkSwitchFloorConfig(), reEnterable)),
-    },
-    ...["a", "b", "c", "d"].map(suffix => ({
-      name: `two levers and a plain switch (${suffix})`,
-      mechanics: 3,
-      carves: once(`levers-${suffix}`, () =>
-        carvesOf(`site-marks-levers-${suffix}`, withSwitch(handleFloorConfig(...LEVERS)), reEnterable, 40, 4)
-      ),
-    })),
-  ]
-})()
 
 beforeAll(() => {
   for (const floor of floors) floor.carves()
