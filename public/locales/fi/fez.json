@@ -1,0 +1,1730 @@
+{
+  "not-found": "Hups, etsimääsi keskustelua ei ole olemassa.",
+  "welcome": "Egypti! Minä olen oikeasti täällä.",
+  "welcome2": "Ja tämä kartta… maksoin siitä aivan liikaa. Kunhan se nyt vain pitää paikkansa.",
+  "welcome3": "No niin. Katsotaan, missä se rasti on.",
+  "pyramidIntro": "Näissä kivissä on numeroita. Ja muutama puuttuu…",
+  "pyramidIntro2": "Hetkinen. Jokainen kivi on sen alla olevat kaksi yhteen laskettuna! Joo, täälläkin!",
+  "pyramidBlockedBlocks": "Hei, mikäs tämä on? Nuo palikat ovat sinetöityjä. Ne eivät näytä numeroaan!",
+  "pyramidBlockedBlocks2": "Ei se haittaa. Katso ympärillä olevia palikoita, niistä voit laskea sen.",
+  "pyramidBlockedBlocks3": "Et vain voi kirjoittaa sitä siihen. Se numero pitää muistaa päässä.",
+  "pyramidBlockedBlocks4": "Älä nyt, olet päässyt jo näin pitkälle. Sinä pystyt tähän!",
+  "levelCompleted": "Ha! Se aukeaa! Tule, mennään sisään.",
+  "exitPillar": {
+    "1": {
+      "fez": "Ha! Päivänvaloa! Näetkö tuon valokeilan? Siitä pääsemme ulos. Astu siihen, niin täällä on valmista."
+    },
+    "2": {
+      "fez": "Niitä on aina vain yksi, ihan pääkäytävän päässä. Kuljimme missä tahansa, tänne me palaamme."
+    },
+    "3": {
+      "explorer": "Yksi uloskäynti. Selvä."
+    }
+  },
+  "expeditionCompleted": "Onnittelut, retki on suoritettu!",
+  "expeditionCompleted2": "Uusi retki on nyt avattu.",
+  "tombTutorial": "Oho, kirjoitusta! Osaammekohan lukea sen? Niillä hieroglyfeillä, jotka olemme löytäneet… ehkä!",
+  "tombTutorial2": "Katso, laskuja, joissa on merkkejä! Näetkö nuo tyhjät kolot? Hieroglyfit menevät niihin. Sinun hieroglyfisi, tuolla alhaalla.",
+  "tombTutorial3": "Pienet laskut näyttävät, milloin merkki on oikein. Niin selvitämme, mikä merkki menee mihinkin.",
+  "tombTutorial4": "Kaikki täytetty? Sitten tulee numerolukko. Iso lasku on koodi, ja sitten hauta aukeaa!",
+  "hieroglyphUnlock": "Meillä on erityinen esine. Sillä voi kirjoittaa yhteen niistä sinetöidyistä palikoista!",
+  "hieroglyphUnlock2": "Napauta hohtavaa kiveä ja vedä esine sen päälle, niin se aukeaa. Yksi palikka pyramidia kohti.",
+  "errorHighlightTutorial": "Siinä aarteessa, jonka löysimme, on kätevä temppu: jos täytät väärän vastauksen, yksi virhe hehkuu punaisena!",
+  "errorHighlightTutorial2": "Vain yksi palikka hehkuu kerrallaan, joten se on yhä haastavaa. Mutta se auttaa rajaamaan!",
+  "earlyFeedbackTutorial": "Näetkö nuo tarkistuspalikat? Ne muuttuvat vihreiksi tai punaisiksi, kun täytät niitä. Näet heti, menikö oikein!",
+  "earlyFeedbackTutorial2": "Käytä niitä apuna, kun ratkaiset. Jos joku muuttuu punaiseksi, jotain sen lähellä pitää korjata.",
+  "notEnoughHieroglyphs": "Voit aina lopettaa tämän retken palaamalla matkanäkymään.",
+  "notEnoughHieroglyphs2": "Voimme keskeyttää retken ja etsiä muualta ne hieroglyfit, jotka vielä puuttuvat.",
+  "tombLoot": "Vau, ensimmäinen aarteemme! Hienosti tehty!",
+  "mapPiece": "Katso! TÄMÄ vasta on kartta. Oikeasti vanha! Arvokkaampi kuin meidän molempien kartat yhteensä!",
+  "mapPiece2": "Mutta se on vain pala, huomaa. Jokaisella retkellä täällä on piilossa yksi, ja yhdessä ne näyttävät tien hautaan.",
+  "mapComplete": "Se on kokonainen! Katso, kaikki palat sopivat juuri oikein.",
+  "mapComplete2": "Tuolla, missä kaikki viivat kohtaavat. Siellä on hauta.",
+  "mapComplete3": "Se on nyt matkoissamme. Mennäänkö katsomaan?",
+  "mapPiece3": "Pidä lukua retkilistassa. Minä ainakin pidän!",
+  "mosaicIntro": "Oho, värillistä lasia! Katso, miten se kimaltaa. Tuollaista EI heitetä pois!",
+  "mosaicIntro2": "Se on pala kuvaa. Kokonainen lasi-ikkuna, ja jokainen löytämämme pala tuo siitä vähän takaisin.",
+  "mosaicIntro3": "Eikö sinulla ole jossain leiri? Otetaan palat mukaan ja kootaan ne siellä. Haluan nähdä, mitä siitä tulee!",
+  "mosaicReminder": "Psst! Ne lasinpalat kolisevat yhä laukussamme. Pannaanko ne leirin ikkunaan?",
+  "mosaicStarter": "Kissa ovella ja käärme lähdössä kovaa vauhtia. Se oli kyllä maitokupin arvoinen.",
+  "mosaicStarter2": "Egyptiläiset rakastivat kissoja juuri tämän takia. Kissat tappoivat käärmeet ja rotat, jotka tulivat viljaan.",
+  "mosaicStarter3": "He rakastivat niitä niin paljon, että tekivät yhdestä jumalattaren. Bastet. Kodin, oven ja kaikkien oven takana nukkuvien suojelija.",
+  "mosaicJunior": "Katso hänen kättään. Joku näyttää hänelle, miten kynää pidetään.",
+  "mosaicJunior2": "Se lintupäinen on Thoth. Kirjoittaminen, laskeminen, kirjanpito: kaikki hänen juttujaan.",
+  "mosaicJunior3": "Se iibis, jota seurasimme jokea ylös? Se on hänen lintunsa. Jokainen numero, jonka olemme täyttäneet seinään, kuuluu myös hänelle.",
+  "mosaicExpert": "Tuo valo ei ole sattumaa. He rakensivat koko salin niin, että valo osuu juuri tuohon oikeana aamuna.",
+  "mosaicExpert2": "Aurinko on Amon-Ra. Hän on se piilossa oleva ja samalla se valo, jonka kaikki näkevät. Molemmat yhtä aikaa.",
+  "mosaicExpert3": "Joka osaa mitata taivaan noin tarkasti, osaa mitata mitä vain. Olemme koko matkan ratkoneet heidän laskujaan.",
+  "mosaicMaster": "Vihreä iho, ja vehnää kasvaa suoraan hänestä. Se on tarkoituksella.",
+  "mosaicMaster2": "Osiris. Hänet tapettiin ja koottiin takaisin, ja nyt hän on se, mikä palaa joka vuosi, kun joki tulvii pelloille.",
+  "mosaicMaster3": "Täällä alhaalla koko ajatus on se: kuollut ei ole valmis. Iloinen ajatus haudassa, vai mitä?",
+  "mosaicWizard": "Toisella puolella sydän. Toisella yksi sulka. Ja ne ovat tasapainossa.",
+  "mosaicWizard2": "Sulka on Ma'at: totuus, tasapaino, se miten asioiden kuuluu olla. Jos sydän on painavampi kuin sulka, ovesta ei pääse.",
+  "mosaicWizard3": "Sakaali, joka pitää vaakaa vakaana, on Anubis. Hän on se, joka saattaa sinut tänne.",
+  "mosaicFinale": "Astu hetkeksi taaksepäin. Katso, mitä olemme kantaneet ylös niistä pyramideista.",
+  "mosaicFinale2": "Jokainen pala on osa häntä, sitä joka pitää vaakaa vakaana. Hän on katsonut koko matkan.",
+  "mosaicFinale3": "Tuo on hänen kirjanpitonsa meistä. Ja minusta se on tasapainossa.",
+  "shopFirstVisit": "Kas, täällä ollaan. Minun kojuni. Sanoinhan, että olen mukana kaupan takia.",
+  "shopFirstVisit2": "Kaiken tällä tiskillä olen kantanut ulos jostain. Tuo tuli kahden haudan takaa.",
+  "shopArrival": "Ah, minun kojuni! Annas kun levitän esiin, mitä olen poiminut matkan varrelta.",
+  "shopArrival2": "Harvinaiset löydöt maksavat eniten, mutta minä maksan sinulle kaikista pikkuesineistä, joita kannat mukanasi.",
+  "arrival": {
+    "starter_1": {
+      "1": {
+        "explorer": "Katso, tuolla takana! Sfinksi!"
+      },
+      "2": {
+        "explorer": "Valtava, jopa täältä katsottuna."
+      },
+      "3": {
+        "explorer": "Sanotaan, että sen tassujen alla on kirjoitusta. Jota kukaan ei osaa lukea."
+      },
+      "4": {
+        "explorer": "Myöhemmin. Ensin tämä pyramidi!"
+      }
+    },
+    "starter_2": {
+      "1": {
+        "fez": "Ha! Vihdoinkin jotain, mitä minä ymmärrän. Kaikki, mikä meni Niiliä ylös, kulki ensin tästä ohi."
+      },
+      "2": {
+        "fez": "Ja kauppiaat kirjoittavat kaiken muistiin. Kuka osti mitä, kuka oli velkaa kenelle, kuka myöhästyi…"
+      },
+      "3": {
+        "explorer": "Kuka myöhästyi?"
+      },
+      "4": {
+        "fez": "Varsinkin kuka myöhästyi!"
+      },
+      "5": {
+        "fez": "Kolmetuhatta vuotta. Tavarat ovat poissa, mutta kuitit ovat yhä tallella. Tyypillistä!"
+      }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Katso noita ovia! Tänne tultiin pyytämään suojaa. Ja sitten tuollainen ovi pysyi kiinni."
+      },
+      "2": {
+        "explorer": "Kiinni keneltä?"
+      },
+      "3": {
+        "fez": "Kaikilta, jotka eivät pyytäneet kauniisti. Lähinnä meiltä."
+      },
+      "4": {
+        "fez": "Kaiken, mikä tässä maassa on sinetöity, joku sinetöi tosissaan. Ihan oikeasti tosissaan."
+      },
+      "5": {
+        "fez": "Ja kissat! Täällä kissoja palvottiin. Niitä ei vain voinut jättää rauhaan."
+      }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "Oi, tästä minä pidän. Täällä he oppivat kirjoittamaan! Merkki kerrallaan, ruukunpaloihin. Papyrus oli aivan liian kallista lapsille."
+      },
+      "2": {
+        "explorer": "He harjoittelivat roskiin?"
+      },
+      "3": {
+        "fez": "Mihin vain, mitä oli! Ja kun osaat näitä tarpeeksi, seinä ei yhtäkkiä olekaan enää pelkkä koriste."
+      },
+      "4": {
+        "explorer": "Se Sfinksi… haluan katsoa sitä vielä kerran."
+      },
+      "5": {
+        "fez": "Ei vielä. Pian."
+      }
+    },
+    "junior_1": {
+      "1": {
+        "fez": "Ne tulivat takaisin joka vuosi tulvan mukana, melkein samana päivänä."
+      },
+      "2": {
+        "fez": "Niinpä ihmiset alkoivat laskea päiviä siinä välissä. Siitä kalenteri on peräisin: linnuista."
+      },
+      "3": {
+        "explorer": "Linnuista."
+      },
+      "4": {
+        "fez": "Linnuista ja paperitöistä. Aina on kyse linnuista ja paperitöistä."
+      }
+    },
+    "junior_2": {
+      "1": {
+        "fez": "Täällä he tekivät kaiken. Eivät hautoja, vaan tavarat, jotka hautoihin pantiin."
+      },
+      "2": {
+        "fez": "Katso muotteja. Sama rannekoru, neljäkymmentä kertaa."
+      },
+      "3": {
+        "explorer": "Neljällekymmenelle ihmiselle?"
+      },
+      "4": {
+        "fez": "Kenelle tahansa, jolla oli varaa. Ylhäinen halusi saman kuin kuninkaalla oli, mutta ylhäisen hintaan."
+      }
+    },
+    "junior_3": {
+      "1": {
+        "fez": "Thoth, tämä. Salaisuuksien ja taikuuden jumala, olen melko varma."
+      },
+      "2": {
+        "explorer": "Melko."
+      },
+      "3": {
+        "fez": "Yhdeksänkymmentä prosenttia. No, kuitenkin: ne merkit, joita olet kerännyt, ovat hänen."
+      }
+    },
+    "junior_4": {
+      "1": {
+        "fez": "Lähes sata metriä korkea, ja huipulla tuli, joka ei koskaan sammunut."
+      },
+      "2": {
+        "fez": "Merimiehet löysivät rannikon päivän matkan päästä. Sitä ennen he löysivät sen törmäämällä siihen."
+      },
+      "3": {
+        "explorer": "Miten täällä löytää mitään ilman sellaista?"
+      },
+      "4": {
+        "fez": "Kysyt joltakulta, joka on käynyt siellä. Se on koko ammattini."
+      }
+    },
+    "expert_1": {
+      "1": {
+        "fez": "Kuutisenkymmentä hautaa hakattu yhteen laaksoon, ja ihan jokainen avattiin ennen kuin me ehdimme tänne."
+      },
+      "2": {
+        "explorer": "Kuka ne avasi?"
+      },
+      "3": {
+        "fez": "Meidän kaltaisemme, enimmäkseen. Aiemmin."
+      },
+      "4": {
+        "fez": "Mitä sinä siitä päättelet?"
+      },
+      "5": {
+        "explorer": "Että olemme myöhässä."
+      }
+    },
+    "expert_2": {
+      "1": {
+        "fez": "Amon-Ra. Aurinko. Kaikkien suosikki, ja ymmärtää kyllä miksi: katso, miten iso paikka!"
+      },
+      "2": {
+        "explorer": "Kaksi nimeä."
+      },
+      "3": {
+        "fez": "Sama jumala, luulen. Suosituille annettiin tuplanimi."
+      }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Koko maa on vihreä viiva yhden joen molemmin puolin, ja täällä se levittäytyy tällaiseksi."
+      },
+      "2": {
+        "fez": "Kaikki kasvaa. Kaikki myös puree."
+      },
+      "3": {
+        "explorer": "Kumman takia me olemme täällä?"
+      },
+      "4": {
+        "fez": "Toivoin oikeastaan, ettei kumpaakaan."
+      }
+    },
+    "expert_4": {
+      "1": {
+        "fez": "Ensimmäinen. Sitä ennen kuninkaat haudattiin litteän kivilaatan alle niin kuin kaikki muutkin."
+      },
+      "2": {
+        "fez": "Joku seisoi tässä ja mietti: entä jos tehdään sama, mutta kuusi kertaa, ylöspäin."
+      },
+      "3": {
+        "explorer": "Toimiko se?"
+      },
+      "4": {
+        "fez": "Se seisoo yhä, ja hän ei. Riippuu, mitä tarkoitat."
+      }
+    },
+    "master_1": {
+      "1": {
+        "fez": "Kaksi miljoonaa kivilohkaretta. Joku laski ne."
+      },
+      "2": {
+        "explorer": "Joku laski ne?"
+      },
+      "3": {
+        "fez": "Joku laskee aina. Sen ihmiset unohtavat: tätä kaikkea pyörittivät kirjurit."
+      },
+      "4": {
+        "fez": "Kaunis, eikö? En halua edes ajatella, miltä palkkalista näytti."
+      }
+    },
+    "master_2": {
+      "1": {
+        "fez": "Ohjeita. Sitä se vain on: mitä sanoa ja missä järjestyksessä, jotta matka menee oikein."
+      },
+      "2": {
+        "explorer": "Käyttöohje."
+      },
+      "3": {
+        "fez": "Käyttöohje kuolleena olemiseen. Nämä tyypit kirjoittivat kaiken muistiin."
+      },
+      "4": {
+        "fez": "Mikä on, kun mietitään mitä etsimme, viikon ensimmäinen hyvä uutinen."
+      }
+    },
+    "master_3": {
+      "1": {
+        "fez": "Ahaa. Jonkun leiri."
+      },
+      "2": {
+        "explorer": "Tuore?"
+      },
+      "3": {
+        "fez": "Melko tuore. Säilykeruokaa ja paha yskä, siltä näyttää."
+      },
+      "4": {
+        "fez": "He menivät tätä pidemmälle sisään, eivätkä ottaneet varusteitaan mukaan."
+      },
+      "5": {
+        "explorer": "Tulivatko he hakemaan ne?"
+      },
+      "6": {
+        "fez": "…Jatketaan matkaa."
+      }
+    },
+    "master_4": {
+      "1": {
+        "fez": "TÄTÄ muut yrittivät matkia. Katso tuota väriä: kolmetuhatta vuotta, ja se näyttää yhä märältä."
+      },
+      "2": {
+        "explorer": "Henut olisi raivoissaan."
+      },
+      "3": {
+        "fez": "Henut tekisi muistiinpanoja."
+      }
+    },
+    "wizard_1": {
+      "1": {
+        "fez": "Aurinko menee yöllä maailman alle ja nousee toiselta puolelta. Siinä koko usko."
+      },
+      "2": {
+        "fez": "Kaksitoista tuntia pimeässä, kaikenlaista tiellä, ja jonkun on kannettava se läpi."
+      },
+      "3": {
+        "explorer": "Sitähän me olemme tehneet."
+      },
+      "4": {
+        "fez": "Yritin olla sanomatta sitä ääneen."
+      },
+      "5": {
+        "explorer": "Hiekkaa tulee yhä sisään."
+      },
+      "6": {
+        "fez": "Sitä on tullut sisään kolmetuhatta vuotta. Se ei lopu, se vain kiertää."
+      },
+      "7": {
+        "fez": "Täyttyy, kääntyy, alkaa alusta. Ihan kuin aurinko."
+      }
+    },
+    "wizard_2": {
+      "1": {
+        "fez": "Kaksi kappaletta, kahdeksantoista metriä korkeita, ja molemmat Amenhotep."
+      },
+      "2": {
+        "fez": "Kreikkalaiset vilkaisivat kerran ja päättivät, että se on heidän sankarinsa. Memnon. Nimi jäi elämään kahdeksituhanneksi vuodeksi."
+      },
+      "3": {
+        "explorer": "Kenen nimi siinä on?"
+      },
+      "4": {
+        "fez": "Hänen omansa. Hakattu valtaistuimeen, jossa se on aina ollut."
+      },
+      "5": {
+        "fez": "Kukaan ei lukenut sitä."
+      },
+      "6": {
+        "fez": "Maanjäristyksen jälkeen pohjoisempi lauloi aamunkoitteessa. Yksi sävel joka aamu, kun aurinko lämmitti halkeamaa."
+      },
+      "7": {
+        "explorer": "Entä nyt?"
+      },
+      "8": {
+        "fez": "Eräs keisari korjautti sen. Sen jälkeen siitä ei ole kuulunut ääntäkään."
+      }
+    },
+    "wizard_3": {
+      "1": {
+        "fez": "Vaaka. Sydän toisella puolella, sulka toisella. Kunnon painava sydän siis voittaa, oletan."
+      },
+      "2": {
+        "explorer": "Mihin suuntaan painava asia menee?"
+      },
+      "3": {
+        "fez": "…Alas."
+      },
+      "4": {
+        "fez": "Ai."
+      },
+      "5": {
+        "fez": "Kevyt. Sen pitää olla KEVYT."
+      }
+    },
+    "wizard_4": {
+      "1": {
+        "fez": "Huippukivi pannaan viimeisenä ja se on kultaa, jotta koko rakennus nappaa aamun ensimmäisen valon."
+      },
+      "2": {
+        "explorer": "Kenen takia?"
+      },
+      "3": {
+        "fez": "Kaikkien katsojien. Siinä oli koko juju: se ei koskaan ollut sitä miestä varten, joka makasi sisällä."
+      }
+    }
+  },
+  "tomb": {
+    "starter": {
+      "1": {
+        "ipi": "Hei! Näpit irti! Tuo on minun ruukkuni!"
+      },
+      "2": {
+        "fez": "…Sanoiko tuo ruukku juuri jotain?!"
+      },
+      "3": {
+        "ipi": "Minä sen sanoin. Kolmas hylly, se jossa on lohkeama. Se on minun."
+      },
+      "4": {
+        "explorer": "Okei, okei! Se saa jäädä. Kuka sinä olet?"
+      },
+      "5": {
+        "ipi": "Ipi. Neljäkymmentä vuotta pidin kirjanpitoa. Neljäkymmentä!"
+      },
+      "6": {
+        "fez": "Kirjanpitoa? Kenen?"
+      },
+      "7": {
+        "ipi": "Kaikkien! Kuka oli velkaa mitä, viimeistä viljasäkkiä myöten."
+      },
+      "8": {
+        "ipi": "Se Henut, täältä pohjoiseen? Yksitoista debeniä lapista. Ei ikinä maksanut!"
+      },
+      "9": {
+        "explorer": "Ja sinä muistat sen vielä, kaiken tämän ajan jälkeen?"
+      },
+      "10": {
+        "ipi": "Se on kirjoitettu muistiin! Mikä on kirjoitettu, se on tapahtunut."
+      },
+      "11": {
+        "ipi": "Paitsi ne Horit… Hori lauttamies, Hori leipuri… ja se toinen Hori."
+      },
+      "12": {
+        "fez": "Oliko sinulla kissojakin? Kaikillahan oli kissoja? Ihania pikku otuksia!"
+      },
+      "13": {
+        "ipi": "Ihania? Ne olivat viljan takia! Tiedätkö, paljonko yksi rotta maksaa koko kauden aikana?"
+      },
+      "14": {
+        "fez": "…Ai. Niin tietysti."
+      },
+      "15": {
+        "ipi": "Kerro Henutille, että Ipi lähetti sinut. Se pilaa hänen iltapäivänsä."
+      },
+      "16": {
+        "fez": "Minä pidän hänestä!"
+      },
+      "17": {
+        "explorer": "Sinä pidät vain siitä, että hänelle ollaan yhä velkaa."
+      }
+    },
+    "junior": {
+      "1": {
+        "henut": "Vihdoinkin. Tulit varmaan sen lapiksen takia. Ipi jankuttaa siitä varmasti yhä."
+      },
+      "2": {
+        "explorer": "Jankuttaa."
+      },
+      "3": {
+        "henut": "Se oli lasia. Kaunista lasia. Hän tiesi sen kyllä."
+      },
+      "4": {
+        "fez": "…Oliko se rannekorukin lasia?"
+      },
+      "5": {
+        "henut": "Kaikki täällä on parasta jäljitelmää, mitä rahalla sai, nuori mies, ja minä valitsin jokaisen palan itse."
+      },
+      "6": {
+        "henut": "No niin. Seinä. Kolmas merkki: se ei ole minun nimeni. Joku oppipoika taltan kanssa, eikä kukaan valvomassa."
+      },
+      "7": {
+        "henut": "Olet opetellut merkkisi. Sen näkee heti. Korjaa se."
+      }
+    },
+    "juniorFixed": {
+      "1": {
+        "henut": "Kas noin. Nyt se on minun nimeni vielä tuhannen vuoden päästäkin."
+      },
+      "2": {
+        "explorer": "Ipi kirjoitti sen oikein."
+      },
+      "3": {
+        "henut": "Ipi kirjoitti kaiken oikein. Se oli hänen ainoa hyvä puolensa."
+      },
+      "4": {
+        "fez": "Onko sillä väliä, täällä alhaalla?"
+      },
+      "5": {
+        "henut": "Vain sillä on väliä."
+      },
+      "6": {
+        "fez": "Hänellä oli tuolla ylhäällä kokonainen seinä Thothia. Salaisuuksien jumala."
+      },
+      "7": {
+        "henut": "Thoth laskee. Thoth kirjoittaa muistiin, mitä teit, ja se pysyy kirjoitettuna."
+      },
+      "8": {
+        "henut": "Salaisuuksiksi ihmiset kutsuvat laskemista silloin, kun eivät itse osaa sitä."
+      },
+      "9": {
+        "henut": "Jos jatkat matkaa, ja selvästi jatkat, Karnakissa on pappi, joka on kuolleille velkaa palveluksen. Hän ei koskaan hoitanut sitä. Hän tulee olemaan siitä sietämätön. Papit ovat sellaisia."
+      },
+      "10": {
+        "henut": "…Olemmeko tavanneet?"
+      },
+      "11": {
+        "fez": "Muistaisin sen kyllä."
+      },
+      "12": {
+        "henut": "Niin. Niin minäkin."
+      }
+    },
+    "expert": {
+      "1": {
+        "priest": "Te ette ole se, jota odotan."
+      },
+      "2": {
+        "explorer": "Ketä te odotatte?"
+      },
+      "3": {
+        "priest": "Jotakuta, jolla on sinetti. Se piti tuoda tänne, laskea tuohon ja lausua sen ylle sanat. Yksikään niistä kolmesta ei ole tapahtunut."
+      },
+      "4": {
+        "fez": "…Kauanko olette odottanut?"
+      },
+      "5": {
+        "priest": "En pidä lukua. Se olisi epäammattimaista."
+      },
+      "6": {
+        "priest": "Kunnon uhrilahja on esine, joka kuninkaalla oli kädessään, kun hänet haudattiin. Ei kopio. Ei jäljitelmä. Se esine itse, hänen merkkinsä päällään."
+      },
+      "7": {
+        "priest": "Tuokaa se, niin teidät ilmoitetaan. Tuokaa jotain muuta, niin ei ilmoiteta."
+      },
+      "8": {
+        "explorer": "Ilmoitetaan kenelle?"
+      },
+      "9": {
+        "priest": "Sen te kyllä huomaatte. Kaikki huomaavat, lopulta."
+      },
+      "10": {
+        "fez": "Hän on kovin ihastunut aurinkoon, tämä. Kaikki se Amon-Ra tuolla edessä."
+      },
+      "11": {
+        "priest": "Amon on se piilossa oleva. Ra on se, jonka kuka tahansa näkee."
+      },
+      "12": {
+        "priest": "He ovat sama jumala. Se ei ole sattumaa, se on koko ajatus."
+      },
+      "13": {
+        "fez": "…Aivan. Niin. Tiesin sen kyllä."
+      },
+      "14": {
+        "explorer": "Et tiennyt."
+      },
+      "15": {
+        "fez": "En tiennyt."
+      }
+    },
+    "expertB": {
+      "1": {
+        "fez": "Täällä ei ole käynyt kukaan. Emme me, eivät ne aiemmat tyypit, ei kukaan."
+      },
+      "2": {
+        "explorer": "Mistä sen tietää?"
+      },
+      "3": {
+        "fez": "Koska täällä on vielä jotain jäljellä."
+      }
+    },
+    "master": {
+      "1": {
+        "pharaoh": "Saatte lähestyä. Te lähestyitte. Hyvä on."
+      },
+      "2": {
+        "fez": "Teidän majesteettinne."
+      },
+      "3": {
+        "pharaoh": "Niin."
+      },
+      "4": {
+        "explorer": "Tarvitsemme sinettinne."
+      },
+      "5": {
+        "pharaoh": "Niin tarvitsevat kaikki. Minun sinettini on viety kahdesti eikä palautettu kertaakaan."
+      },
+      "6": {
+        "pharaoh": "Toisella kerralla he jättivät kopion. KOPION. MINUN hautaani. Ikään kuin en katsoisi."
+      },
+      "7": {
+        "explorer": "Onko se kopio vielä täällä?"
+      },
+      "8": {
+        "pharaoh": "Tietysti se on vielä täällä, se on arvoton. Se on hyllyllä, jossa oikean pitäisi olla, ja on väärä."
+      },
+      "9": {
+        "pharaoh": "Ottakaa se vain. Viekää se sille papille. Katsotaan, miten pitkälle sillä pääsette."
+      },
+      "10": {
+        "fez": "…Hän nauttii tästä."
+      },
+      "11": {
+        "pharaoh": "Minulla on paras viikkoni yhdeksäänsataan vuoteen."
+      },
+      "12": {
+        "fez": "Tuolla seinällä on Osiris. Kuolleiden herra. Synkkää touhua."
+      },
+      "13": {
+        "pharaoh": "Hän on VIHREÄ, senkin naurettava otus."
+      },
+      "14": {
+        "pharaoh": "Vihreä kuin tulvan alla oleva pelto. Hänet tapettiin ja koottiin takaisin, ja hän palaa ihan joka vuosi."
+      },
+      "15": {
+        "pharaoh": "Täällä alhaalla se ei ole synkkää, se on koko juttu. Kuollut ei ole valmis."
+      }
+    },
+    "wizard": {
+      "1": {
+        "priest": "Laskekaa se tuohon. Siihen. Niin."
+      },
+      "2": {
+        "priest": "…"
+      },
+      "3": {
+        "priest": "Tein tuon ensimmäistä kertaa. Aloin jo luulla, että olin unohtanut miten."
+      },
+      "4": {
+        "explorer": "Olitteko?"
+      },
+      "5": {
+        "priest": "Täysin. Se palasi mieleen."
+      }
+    },
+    "wizardB": {
+      "1": {
+        "fez": "Heidän köytensä. Yhä solmittuna kiinni."
+      },
+      "2": {
+        "explorer": "He pääsivät tänne asti."
+      },
+      "3": {
+        "fez": "Pidemmällekin. Ja sitten he kiipesivät sitä pitkin takaisin ylös."
+      },
+      "4": {
+        "explorer": "Täällä on muistikirja."
+      },
+      "5": {
+        "fez": "Mitä siinä lukee?"
+      },
+      "6": {
+        "explorer": "En osaa lukea kirjoitusta. Tulin takaisin sinetin takia. Tein sitten paremman."
+      },
+      "7": {
+        "explorer": "Kukaan ei mennyt lankaan."
+      },
+      "8": {
+        "fez": "…He väärensivät sen, koska eivät osanneet lukea, mihin sitä tarvittiin."
+      },
+      "9": {
+        "explorer": "Ja sitten he lähtivät kotiin."
+      }
+    },
+    "wizardC": {
+      "1": {
+        "fez": "Pysähdy hetkeksi. Katso, mitä olemme kantaneet ylös niistä pyramideista."
+      },
+      "2": {
+        "explorer": "Se on kuva."
+      },
+      "3": {
+        "fez": "Se on ollut kuva koko ajan."
+      }
+    }
+  },
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Luola! Kartassa oli kellarin ovi, ja tämä on kokonainen mäki!"
+      },
+      "2": {
+        "fez": "Fiksu kaveri. Piilota varastosi mäen sisään, eikä yksikään varas keksi sitä."
+      },
+      "3": {
+        "explorer": "Me keksimme."
+      },
+      "4": {
+        "fez": "Emme me ole varkaita. Me olemme asiakkaita. Tosi myöhäisiä asiakkaita."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Täällä sen täytyy olla. Henut! Se yhdentoista lapisdebenin nainen!"
+      },
+      "2": {
+        "fez": "Mitä luulet, saammeko välityspalkkion, jos perimme velan?"
+      },
+      "3": {
+        "explorer": "Et ole perinyt vielä mitään."
+      },
+      "4": {
+        "fez": "Minä lasken mielelläni etukäteen."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Täällä siis on Henutin pappi. Sietämätön, hän sanoi."
+      },
+      "2": {
+        "fez": "Mitä luulet, pitäisikö viedä jotain? Kukkia?"
+      },
+      "3": {
+        "explorer": "Hän on kuollut."
+      },
+      "4": {
+        "fez": "Sitä suuremmalla syyllä. Haluathan tehdä hyvän ensivaikutelman."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Tänne sai tulla vain ylipappi. Ja nyt me!"
+      },
+      "2": {
+        "explorer": "Saammeko me?"
+      },
+      "3": {
+        "fez": "Ovella ei ole ketään sanomassa ei."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Katso, kartta vain loppuu tähän. Hiekkaa, ja sitten ei mitään."
+      },
+      "2": {
+        "explorer": "Sitten olemme oikeassa paikassa."
+      },
+      "3": {
+        "fez": "Sitä minä tarkoitan. Juuri se minua hermostuttaa."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Osiriksen sali! Vihreä, tietysti. Koska hän palaa joka vuosi, niin kuin vilja."
+      },
+      "2": {
+        "explorer": "Sinä tiesit sen aina."
+      },
+      "3": {
+        "fez": "Aina."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Jumalten oma varasto! Mitä sitä säilyttää, kun kaikki on jo?"
+      },
+      "2": {
+        "explorer": "Sitä, mitä ihmiset tuovat."
+      },
+      "3": {
+        "fez": "…Niin. Sitä se varmaan on."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Kosmisten voimien valtakunta. No jopas."
+      },
+      "2": {
+        "fez": "Jos minulla olisi myytävänä jotain ihan tavallista, antaisin sille kanssa tuollaisen nimen."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Minulle tuli yhtäkkiä sellainen tunne, että olen tehnyt jotain väärin."
+      },
+      "2": {
+        "explorer": "Kuten mitä?"
+      },
+      "3": {
+        "fez": "Ei aavistustakaan. Se tässä on pahinta."
+      }
+    }
+  },
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Kaikki nuo vivut ja ovet, yhden kellarin takia!"
+      },
+      "2": {
+        "fez": "Sitten siellä on jotain hyvää. Kukaan ei näe noin paljon vaivaa romun takia."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Huh. Nuo ovet olivat paljon hankalampia kuin Ipin ovet."
+      },
+      "2": {
+        "fez": "No. Rouvalla oli tietysti rahaa."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Huh, vihdoinkin! Se luola ei todellakaan halunnut päästää meitä sisään."
+      },
+      "2": {
+        "explorer": "Taisi olla tarkoituskin."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Psst… miksi minä kuiskaan?"
+      },
+      "2": {
+        "explorer": "Ei aavistustakaan. Minäkin kuiskaan."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Huhhuh. Häntäni tärisee vieläkin siitä viimeisestä ovesta."
+      },
+      "2": {
+        "fez": "Kuningas, joka lukitsee tavaransa noin… hän ei todellakaan halua menettää niitä."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Näetkö? Kun olet tarpeeksi kauan maan alla, nouset taas ylös."
+      },
+      "2": {
+        "explorer": "Onko tuokin Osiriksen?"
+      },
+      "3": {
+        "fez": "Ei, tuo on minun."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Tuollaiset ovet… joskus olisimme vain kääntyneet takaisin."
+      },
+      "2": {
+        "explorer": "Emme enää."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Kolme kerrosta luolaa, ja vasta sitten etuovi."
+      },
+      "2": {
+        "explorer": "Sitten sen täytyy olla sen arvoista."
+      },
+      "3": {
+        "fez": "Niin ne aina sanovat. Ja sitten se on ruukku."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Viimeinen pätkä pimeää. Minä tunnen sen."
+      },
+      "2": {
+        "explorer": "Sanoit noin edellisessäkin."
+      },
+      "3": {
+        "fez": "Ja olin melkein oikeassa."
+      }
+    }
+  },
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Katso tuota! Pyramidi, maan alla! Kauppiaalle!"
+      },
+      "2": {
+        "fez": "Hän joko tienasi tosi hyvin tai tinki tosi hyvin."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Katso, miten huippu kiiltää auringossa! Oikeaa kultaa, lyön vetoa."
+      },
+      "2": {
+        "explorer": "Kuopassa maan alla. Kenelle se kiiltää?"
+      },
+      "3": {
+        "fez": "Hänelle itselleen. Tunnistaa tyypin."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Hmm. Saako oikeastaan myydä jotain, mikä kuuluu jo jumalalle?"
+      },
+      "2": {
+        "explorer": "Kysy jumalalta."
+      },
+      "3": {
+        "fez": "Mieluummin en."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Luuletko, että se pappi tietää meidän kuljeskelevan täällä?"
+      },
+      "2": {
+        "explorer": "Hän ei pidä lukua. Se olisi epäammattimaista."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Katso sitä, ihan yksin auringossa. Kaunis, eikö?"
+      },
+      "2": {
+        "fez": "Piirretäänkö vain kuva ja lähdetään?"
+      },
+      "3": {
+        "explorer": "Et osaa piirtää."
+      },
+      "4": {
+        "fez": "…En. Sisään sitten."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Joka siellä makaa, aikoo tulla takaisin. Niin täällä on sovittu."
+      },
+      "2": {
+        "explorer": "Kauanko hän on odottanut?"
+      },
+      "3": {
+        "fez": "Kauan. Mutta se kuuluu työhön. Kuolleena oleminen on enimmäkseen odottamista."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "explorer": "Vau."
+      },
+      "2": {
+        "fez": "Niin."
+      },
+      "3": {
+        "fez": "Joskus ei vain ole enää mitään sanottavaa, vai mitä."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Näetkö tuon auringonläikän pyramidissa? Siitä voisi lukea kellonajan."
+      },
+      "2": {
+        "explorer": "Paljonko kello sitten on?"
+      },
+      "3": {
+        "fez": "…Iltapäivä. Suunnilleen. En ole mikään kello."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Siinä se on. Jokainen kartan viiva päättyy tänne."
+      },
+      "2": {
+        "explorer": "Sitten tämä on loppu."
+      },
+      "3": {
+        "fez": "Kartan loppu, niin. Hassua. Luulin, että se tuntuisi paremmalta."
+      }
+    }
+  },
+  "camp": {
+    "firstHome": {
+      "1": {
+        "fez": "Tämäkö on sinun leirisi? Nuotio ja arkku?"
+      },
+      "2": {
+        "explorer": "Meidän leirimme."
+      },
+      "3": {
+        "fez": "Meidän. Selvä. Sitten minä otan paikan nuotion vierestä."
+      },
+      "4": {
+        "fez": "Olen sentään lisko. Silloin kun se sopii minulle."
+      }
+    },
+    "homeHaul": {
+      "1": {
+        "fez": "Purkamaan! Koko matkan paras osa."
+      },
+      "2": {
+        "explorer": "Parempi kuin pyramidi?"
+      },
+      "3": {
+        "fez": "Pyramidi ei ole meidän. Tämä on."
+      }
+    },
+    "homeEmpty": {
+      "1": {
+        "explorer": "Tyhjin käsin."
+      },
+      "2": {
+        "fez": "Entä sitten? Me kävelimme. Sekin lasketaan."
+      },
+      "3": {
+        "explorer": "Mitä varten?"
+      },
+      "4": {
+        "fez": "Jalkojeni takia. Ne ovat tosi lyhyet, tiedäthän."
+      }
+    },
+    "rested": {
+      "1": {
+        "fez": "No niin. Tuntuuko vähän paremmalta?"
+      },
+      "2": {
+        "explorer": "Se oli vain naarmu."
+      },
+      "3": {
+        "fez": "En edes katsonut. Ja silti minun piti istua hetkeksi."
+      }
+    },
+    "chapterJunior": {
+      "1": {
+        "fez": "No, sepä meni kivasti. Seuraava!"
+      },
+      "2": {
+        "explorer": "Ei se ollut ihan niin helppoa."
+      },
+      "3": {
+        "fez": "Nyt on. Jälkeenpäin kaikki on helppoa."
+      }
+    },
+    "chapterExpert": {
+      "1": {
+        "fez": "Tuolla ulkona on ansoja. Oikeita. Ne puraisevat."
+      },
+      "2": {
+        "fez": "Satutitko itsesi? Sitten kävelemme vain takaisin. Kotona paranet."
+      },
+      "3": {
+        "explorer": "Entä sinä?"
+      },
+      "4": {
+        "fez": "Minä kävelen sinun takanasi. Siellä on turvallisempaa."
+      }
+    },
+    "chapterMaster": {
+      "1": {
+        "fez": "Neljä pyramidia tuolla. Muistatko, kun niitä oli vain yksi?"
+      },
+      "2": {
+        "explorer": "Siitä ei ole niin kauan."
+      },
+      "3": {
+        "fez": "Ei. Mutta siltä tuntuu."
+      }
+    },
+    "chapterWizard": {
+      "1": {
+        "fez": "Katso viimeistä. Kultainen huippukin!"
+      },
+      "2": {
+        "fez": "Tuo maksaa meille jotain. Viimeinen maksaa aina."
+      },
+      "3": {
+        "explorer": "Maksaa mitä?"
+      },
+      "4": {
+        "fez": "…En ole enää ihan varma."
+      }
+    },
+    "firstFind": {
+      "1": {
+        "fez": "Katso nyt, ihan kuin se olisi aina ollut siinä!"
+      },
+      "2": {
+        "fez": "Minua kutittaa ripustaa siihen hintalappu."
+      },
+      "3": {
+        "explorer": "Älä."
+      },
+      "4": {
+        "fez": "Ei, ei. Kotoa ei myydä. Tiedän sen kyllä."
+      }
+    },
+    "structureDone": {
+      "1": {
+        "fez": "Valmis! Ihan joka palanen on paikallaan!"
+      },
+      "2": {
+        "explorer": "Kaikki ihan itse tehty."
+      },
+      "3": {
+        "fez": "No. Minä lähinnä osoittelin."
+      }
+    }
+  },
+  "animal": {
+    "forSale": {
+      "1": {
+        "fez": "Katso, mitä kojussa on! Myyn nyt myös kyytejä."
+      },
+      "2": {
+        "explorer": "Se märehtii."
+      },
+      "3": {
+        "fez": "Se kuuluu hintaan."
+      }
+    },
+    "boughtDonkey": {
+      "1": {
+        "fez": "Myyty! Yksi aasi. Itsepäinen, mutta kantaa mitä vain."
+      },
+      "2": {
+        "explorer": "No missä hän on?"
+      },
+      "3": {
+        "fez": "Jo matkalla kotiin. Hän kävelee mieluummin ilman meitä."
+      }
+    },
+    "blockedDonkey": {
+      "1": {
+        "fez": "Emme me kävele noin pitkälle kaiken tämän tavaran kanssa. Siihen tarvitaan aasi."
+      },
+      "2": {
+        "fez": "Ja arvaa, kenellä on sellainen? Minulla. Kojussani Henutin holvissa."
+      }
+    },
+    "throughDonkey": {
+      "1": {
+        "explorer": "Hän suostuu."
+      },
+      "2": {
+        "fez": "Tänään. Kysy uudestaan huomenna."
+      }
+    },
+    "arrivesDonkey": {
+      "1": {
+        "fez": "Siinä hän on! Ehti tänne ennen meitä."
+      },
+      "2": {
+        "explorer": "Löysi nuotionkin."
+      },
+      "3": {
+        "fez": "Minun paikkani. No. Hän oli ensin."
+      }
+    },
+    "boughtCart": {
+      "1": {
+        "fez": "Kärryt! Kaksi pyörää, eivätkä ne juuri kolise."
+      },
+      "2": {
+        "explorer": "Juuri?"
+      },
+      "3": {
+        "fez": "Kolina tulee kaupan päälle."
+      }
+    },
+    "blockedCart": {
+      "1": {
+        "fez": "Aasi ei ota enää yhtään laukkua. Kysyin häneltä."
+      },
+      "2": {
+        "fez": "Kärryt, niitä me tarvitsemme. Minun kojussani on yhdet, ylipapin luona."
+      }
+    },
+    "throughCart": {
+      "1": {
+        "explorer": "Kuuletko?"
+      },
+      "2": {
+        "fez": "Se on kärryt. Ne laulavat vähän."
+      },
+      "3": {
+        "explorer": "Koko matkan?"
+      }
+    },
+    "arrivesCart": {
+      "1": {
+        "fez": "Kärryt meidän leirissämme! Nyt näytämme siltä, että olemme menossa jonnekin."
+      },
+      "2": {
+        "explorer": "Me olemme menossa jonnekin."
+      },
+      "3": {
+        "fez": "Niin, mutta nyt kaikki näkevät sen."
+      }
+    },
+    "boughtCamel": {
+      "1": {
+        "fez": "Kameli! Pärjää päiväkausia ilman vettä. Minä en, huomaa."
+      },
+      "2": {
+        "explorer": "Hän katsoo sinua."
+      },
+      "3": {
+        "fez": "Ylhäältä alas. Kamelit katsovat aina ylhäältä alas."
+      }
+    },
+    "blockedCamel": {
+      "1": {
+        "fez": "Sisin pyhäkkö? Sinne emme ikinä pääse jalan."
+      },
+      "2": {
+        "fez": "Sattumoisin minulla on kameli. Kojussani, ylipapin luona."
+      }
+    },
+    "throughCamel": {
+      "1": {
+        "fez": "Hän polvistuu! Minulle!"
+      },
+      "2": {
+        "explorer": "Jotta pääsemme selkään."
+      },
+      "3": {
+        "fez": "Anna minun nauttia tästä."
+      }
+    },
+    "arrivesCamel": {
+      "1": {
+        "fez": "Siinä hän on. Käyttäytyy kuin leiri olisi hänen."
+      },
+      "2": {
+        "explorer": "Entä aasi?"
+      },
+      "3": {
+        "fez": "Esittää, ettei näe häntä. Niin kuin minäkin."
+      }
+    },
+    "boughtSecondDonkey": {
+      "1": {
+        "fez": "Toinen aasi! Nyt ensimmäisellä on vihdoin juttuseuraa."
+      },
+      "2": {
+        "explorer": "Juttuseuraa?"
+      },
+      "3": {
+        "fez": "Iihaa. Se on juttelua, vain kovempaa."
+      }
+    },
+    "blockedSecondDonkey": {
+      "1": {
+        "fez": "Aasi ei jatka. Ei yksin, hän sanoo."
+      },
+      "2": {
+        "explorer": "Sanoiko hän niin?"
+      },
+      "3": {
+        "fez": "Minä puhun aasia. Hän haluaa kaverin, ja minulla on yksi kojussani faaraon aarteen luona."
+      }
+    },
+    "throughSecondDonkey": {
+      "1": {
+        "fez": "Kuuntele niitä! Kumpikin kovempaa kuin toinen."
+      },
+      "2": {
+        "explorer": "Kumpi voittaa?"
+      },
+      "3": {
+        "fez": "Emme me. Me joudumme kuuntelemaan."
+      }
+    },
+    "arrivesSecondDonkey": {
+      "1": {
+        "fez": "Katso niitä. Ihan kuin ne olisivat tunteneet toisensa vuosia."
+      },
+      "2": {
+        "explorer": "Niin kuin me."
+      },
+      "3": {
+        "fez": "Me iihaamme vähemmän."
+      }
+    },
+    "boughtSecondCamel": {
+      "1": {
+        "fez": "Toinen kameli. Niin. En minäkään pidä niistä."
+      },
+      "2": {
+        "fez": "Mutta tämä näyttää sentään ystävälliseltä."
+      },
+      "3": {
+        "explorer": "Hän katsoo fessiäsi."
+      }
+    },
+    "blockedSecondCamel": {
+      "1": {
+        "fez": "Osiriksen sali. Yhdellä kamelilla emme pääse sinne."
+      },
+      "2": {
+        "fez": "Onneksi minulla on toinen, kojussani faaraon aarteen luona. Ihan viimeiseni."
+      },
+      "3": {
+        "explorer": "Sanot aina noin."
+      }
+    },
+    "throughSecondCamel": {
+      "1": {
+        "fez": "Hän syö fessiäni!"
+      },
+      "2": {
+        "explorer": "Ystävällinen kameli."
+      },
+      "3": {
+        "fez": "Liian ystävällinen."
+      }
+    },
+    "arrivesSecondCamel": {
+      "1": {
+        "fez": "Kaksi kamelia. Nyt molemmat katsovat minua ylhäältä alas."
+      },
+      "2": {
+        "explorer": "Mene sitten aasien luo seisomaan."
+      },
+      "3": {
+        "fez": "Seison jo siellä."
+      }
+    },
+    "boughtSturdyCart": {
+      "1": {
+        "fez": "Tukevammat kärryt. Nämä eivät laula tiellä."
+      },
+      "2": {
+        "explorer": "Niihin on maalattu kukkia."
+      },
+      "3": {
+        "fez": "Tukevuuden vuoksi."
+      }
+    },
+    "blockedSturdyCart": {
+      "1": {
+        "fez": "Vanhat kärryt eivät pääse sinne ehjinä. Siihen tarvitaan jotain tukevampaa."
+      },
+      "2": {
+        "fez": "Kojussani Jumalten holvissa on yhdet. Eivätkä ne ole siellä maalin takia, huomaa."
+      }
+    },
+    "throughSturdyCart": {
+      "1": {
+        "explorer": "Ei kolinaa."
+      },
+      "2": {
+        "fez": "Näetkö? Tukevuutta."
+      },
+      "3": {
+        "explorer": "Entä kukat?"
+      },
+      "4": {
+        "fez": "Ne auttavat vähän nekin."
+      }
+    },
+    "arrivesSturdyCart": {
+      "1": {
+        "fez": "Katso, miten ne kiiltävät!"
+      },
+      "2": {
+        "explorer": "Kauniimmat kuin tarvitsisi."
+      },
+      "3": {
+        "fez": "Niin. En minä myynyt niitä tukevuuden takia."
+      }
+    },
+    "boughtCaravanBanner": {
+      "1": {
+        "fez": "Lippu. Rehellisesti sanottuna: se ei avaa mitään."
+      },
+      "2": {
+        "explorer": "Mitä se sitten tekee?"
+      },
+      "3": {
+        "fez": "Liehuu. Kauniisti."
+      }
+    },
+    "arrivesCaravanBanner": {
+      "1": {
+        "fez": "Katso, miten se liehuu! Meidän omassa leirissämme!"
+      },
+      "2": {
+        "explorer": "Ei se vieläkään avaa mitään."
+      },
+      "3": {
+        "fez": "Ei. Eikä sen tarvitsekaan."
+      }
+    }
+  },
+  "bond": {
+    "starter": {
+      "1": {
+        "fez": "Sepä kävi nopeasti."
+      },
+      "2": {
+        "explorer": "Se oli ovi."
+      },
+      "3": {
+        "fez": "Minulta olisi mennyt viikko."
+      }
+    },
+    "starterTomb": {
+      "1": {
+        "fez": "Ihan vain selvyyden vuoksi. Olen mukana jälleenmyynnin takia. Sanon sen nyt, kun se on vielä totta."
+      },
+      "2": {
+        "explorer": "Selvä."
+      }
+    },
+    "junior": {
+      "1": {
+        "fez": "Olit vähän aikaa ihan hiljaa."
+      },
+      "2": {
+        "explorer": "Minä laskin."
+      },
+      "3": {
+        "fez": "Tiedän. Olen nähnyt ihmisten arvaavan. Tuo ei ollut arvaamista."
+      }
+    },
+    "expert": {
+      "1": {
+        "fez": "Tuo oli täpärällä."
+      },
+      "2": {
+        "explorer": "Hyvin se meni."
+      },
+      "3": {
+        "fez": "Se oli täpärällä. Saan kai sanoa niin."
+      }
+    },
+    "master": {
+      "1": {
+        "fez": "Voisimme lopettaa."
+      },
+      "2": {
+        "explorer": "Voisimme."
+      },
+      "3": {
+        "fez": "Sanon sen, jotta se on sanottu. En siksi, että tekisimme niin."
+      }
+    },
+    "wizard": {
+      "1": {
+        "explorer": "Paljonko tämä on arvoinen?"
+      },
+      "2": {
+        "fez": "…"
+      },
+      "3": {
+        "fez": "Tuolle en pane hintaa."
+      },
+      "4": {
+        "explorer": "Selvä."
+      }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": {
+        "fez": "Vau. Tuossa oli seinä sekunti sitten."
+      },
+      "2": {
+        "explorer": "Sen takana oli käytävä."
+      },
+      "3": {
+        "fez": "Kaikki ne vuodet ihmiset kävelivät suoraan sen ohi. Kaikki ne vuodet!"
+      }
+    }
+  },
+  "reading": {
+    "junior": {
+      "1": {
+        "explorer": "Tässä on rivi, jonka osaan nyt lukea."
+      },
+      "2": {
+        "explorer": "Annoin leipää nälkäisille."
+      },
+      "3": {
+        "fez": "Leipää. Haudassa."
+      },
+      "4": {
+        "explorer": "Se oli edellisessäkin. En tiennyt, että ne olivat sanoja."
+      }
+    },
+    "expert": {
+      "1": {
+        "explorer": "Toinen rivi. Vettä janoisille."
+      },
+      "2": {
+        "fez": "Leipää, ja nyt vettä. Joku halusi kovasti, että hänet muistetaan anteliaana."
+      },
+      "3": {
+        "explorer": "Se on kaikilla. Joka seinässä, joka haudassa, samat kaksi riviä."
+      },
+      "4": {
+        "fez": "Sitten he olivat joko kaikki anteliaita, tai niin kuuluu vain sanoa."
+      },
+      "5": {
+        "explorer": "Tai sen mukaan heidät punnittiin."
+      }
+    },
+    "master": {
+      "1": {
+        "explorer": "Vaatteita alastomille. Kolmas rivi."
+      },
+      "2": {
+        "fez": "Leipää, vettä, vaatteita. Se on lista asioista, jotka annettiin pois."
+      },
+      "3": {
+        "explorer": "Sellaisen miehen haudassa, joka otti kaiken mukaansa."
+      },
+      "4": {
+        "fez": "…Niin. Huomasin sen minäkin."
+      }
+    },
+    "sphinx": {
+      "1": {
+        "fez": "Takaisin siellä, mistä aloitimme. Se ei ole liikahtanutkaan."
+      },
+      "2": {
+        "explorer": "Kirjoitus on yhä siinä."
+      },
+      "3": {
+        "fez": "Osaatko lukea sen?"
+      },
+      "4": {
+        "explorer": "Nimi."
+      },
+      "5": {
+        "fez": "Kenen?"
+      },
+      "6": {
+        "explorer": "Sinun."
+      },
+      "7": {
+        "fez": "…"
+      },
+      "8": {
+        "fez": "Oletko varma?"
+      },
+      "9": {
+        "explorer": "Se on kirjoitettu muistiin."
+      },
+      "10": {
+        "fez": "Hmm."
+      },
+      "11": {
+        "fez": "Hori."
+      },
+      "12": {
+        "fez": "Joka Egyptin kylässä oli yksi Hori."
+      },
+      "13": {
+        "fez": "No. Se selittää fessin."
+      }
+    }
+  },
+  "altar": {
+    "refused": {
+      "1": {
+        "priest": "Ei."
+      },
+      "2": {
+        "explorer": "Siinä on hänen merkkinsä."
+      },
+      "3": {
+        "priest": "Siinä on merkki. Se on oikein hyvä merkki. Sen kaiversi joku, jolla oli erinomaiset työkalut eikä mitään asiaa tänne, eikä siitä ole kauan."
+      },
+      "4": {
+        "priest": "Olen odottanut kolmetuhatta vuotta. En anna huijata itseäni sen viimeisellä viikolla."
+      }
+    }
+  },
+  "meeting": {
+    "starter_1": {
+      "1": {
+        "voice": "Hei! Ei SIIHEN! Katso eteesi!"
+      },
+      "2": {
+        "explorer": "Anteeksi! En näe mitään! Missä sinä olet?"
+      },
+      "3": {
+        "fez": "Täällä alhaalla! Seisot keskellä myyntitavaroitani!"
+      },
+      "4": {
+        "explorer": "Lisko?! Fessi päässä?"
+      },
+      "5": {
+        "fez": "Kauppias. Ja mikä vika minun fessissäni on?"
+      },
+      "6": {
+        "fez": "Sinäkin olet täällä pyramidin takia, lyön vetoa. Ostit kartan? Maksoit aivan liikaa?"
+      },
+      "7": {
+        "explorer": "IHAN liikaa."
+      },
+      "8": {
+        "fez": "Niin minäkin. Pöh."
+      },
+      "9": {
+        "explorer": "Se kirjoitus Sfinksissä… osaatko lukea sen?"
+      },
+      "10": {
+        "fez": "En. Kukaan ei enää osaa. Se jalusta oli joskus sininen ja kultainen, tiedätkö."
+      },
+      "11": {
+        "explorer": "Mistä sinä sen tiedät?"
+      },
+      "12": {
+        "fez": "…Kuulin. No, mitä sinä täältä etsit?"
+      },
+      "13": {
+        "explorer": "Jotain hienoa."
+      },
+      "14": {
+        "fez": "Hieno myy hyvin! Tiedätkö mitä? Minä tulen mukaasi!"
+      },
+      "15": {
+        "explorer": "Mitä? Minun mukaani?"
+      },
+      "16": {
+        "fez": "Kaksi näkee enemmän kuin yksi. Tule, se pyramidi odottaa!"
+      }
+    }
+  },
+  "end": {
+    "1": {
+      "fez": "Oliko se hienoa?"
+    },
+    "2": {
+      "explorer": "Menettelee."
+    }
+  },
+  "revisit": {
+    "starter": {
+      "north1": {
+        "1": {
+          "ipi": "Vieläkö täällä? Pohjoiseen! Henut! Yksitoista debeniä!"
+        }
+      },
+      "north2": {
+        "1": {
+          "ipi": "Yksitoista debeniä lapista. Henut. Pohjoinen. Mitä sinä odotat?"
+        }
+      },
+      "paid1": {
+        "1": {
+          "ipi": "No? Maksoiko hän? …Ei. Ei tietenkään."
+        }
+      },
+      "paid2": {
+        "1": {
+          "ipi": "Lasia? LASIA? Tässä lukee lapis. Ihan mustaa valkoisella. Lapis!"
+        }
+      },
+      "later1": {
+        "1": {
+          "ipi": "Sinä taas. Kolmas hylly, se lohjennut: yhä minun. Näpit irti."
+        }
+      },
+      "later2": {
+        "1": {
+          "ipi": "Neljäkymmentä vuotta kirjanpitoa, eikä yksikään kirja täsmää. Ei yksikään!"
+        }
+      }
+    },
+    "junior": {
+      "wall1": {
+        "1": {
+          "henut": "Seinä. Kolmas merkki. Se ei vieläkään ole minun nimeni."
+        }
+      },
+      "wall2": {
+        "1": {
+          "henut": "Sinä olet yhä täällä, ja se hanhi on yhä minun seinässäni. Korjaa se."
+        }
+      },
+      "priest1": {
+        "1": {
+          "henut": "Yhä minun nimeni. Tarkistin. No niin: Karnak, se pappi. Mene jo."
+        }
+      },
+      "priest2": {
+        "1": {
+          "henut": "Karnakiin! Hän on odottanut tarpeeksi kauan. Mene ja anna ilmoittaa itsesi."
+        }
+      },
+      "met1": {
+        "1": {
+          "henut": "No? Sietämätön, eikö? Minähän sanoin."
+        }
+      },
+      "later1": {
+        "1": {
+          "henut": "Lasia yhä. Yhä kaunista. Yhä minun valitsemaani."
+        }
+      }
+    },
+    "expert": {
+      "seal1": {
+        "1": {
+          "priest": "Sinetti. Tuotu tänne, laskettu alas, sanat lausuttu. Minä odotan."
+        }
+      },
+      "seal2": {
+        "1": {
+          "priest": "Ah. Te taas. Eikä vieläkään sinettiä."
+        }
+      },
+      "king1": {
+        "1": {
+          "priest": "Olette nähneet kuninkaan. Hyvä. Se esine itse, muistakaa, ei jäljitelmä."
+        }
+      },
+      "later1": {
+        "1": {
+          "priest": "Te taas. Täällä ei ole enää mitään tehtävää. Se on hyvin rauhoittavaa."
+        }
+      }
+    },
+    "master": {
+      "priest1": {
+        "1": {
+          "pharaoh": "Vieläkö täällä? Papin luo sen kopion kanssa! Haluan kuulla, miten käy."
+        }
+      },
+      "priest2": {
+        "1": {
+          "pharaoh": "Saatte lähestyä. Taas. Onko pappi jo nähnyt sen?"
+        }
+      },
+      "rite1": {
+        "1": {
+          "pharaoh": "Hän siis vihdoin hoiti menonsa. Hyvä. Nyt hän on siitä sietämätön."
+        }
+      },
+      "later1": {
+        "1": {
+          "pharaoh": "Yhä paras viikko yhdeksäänsataan vuoteen. Ja se vain jatkuu!"
+        }
+      }
+    },
+    "wizard": {
+      "later1": {
+        "1": {
+          "priest": "…Niin. Muistan yhä miten. Hyvä."
+        }
+      },
+      "later2": {
+        "1": {
+          "priest": "Laskettu alas, sanat lausuttu. Valmis. Se on outo tunne."
+        }
+      }
+    }
+  }
+}

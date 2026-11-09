@@ -1,0 +1,1858 @@
+{
+  "language": "Français",
+  "saveUnreadable": {
+    "title": "Impossible de charger ta partie",
+    "body": "Le navigateur ne veut pas donner ta partie sauvegardée pour le moment. Elle n’est pas perdue : recharge la page pour réessayer.",
+    "banner": "Ta partie n’est pas sauvegardée. Touche ici pour recharger.",
+    "reload": "Recharger",
+    "continue": "Continuer sans sauvegarder",
+    "reset": "Recommencer (effacer la sauvegarde)",
+    "confirmReset": "Ça efface toute ta sauvegarde, et on ne peut pas revenir en arrière. Tout recommencer ?",
+    "confirmResetYes": "Oui, efface ma sauvegarde",
+    "confirmResetNo": "Non, retour"
+  },
+  "difficulty": {
+    "starter": "Débutant",
+    "junior": "Junior",
+    "expert": "Expert",
+    "master": "Maître",
+    "wizard": "Génie"
+  },
+  "journeyLength": {
+    "short": "Court",
+    "medium": "Moyen",
+    "long": "Long"
+  },
+  "time": {
+    "morning": "Matin",
+    "afternoon": "Après-midi",
+    "evening": "Soir",
+    "night": "Nuit"
+  },
+  "tomb": {},
+  "ui": {
+    "level": "Niveau",
+    "symbols": "symboles",
+    "journey": "Voyage",
+    "tableau": "Tableau",
+    "difficulty": "Difficulté",
+    "length": "Longueur",
+    "time": "Moment",
+    "requiredPrestige": "Niveau de prestige demandé",
+    "rewards": "Récompenses",
+    "coins": "Pièces",
+    "pieces": "Morceaux",
+    "description": "Description",
+    "expedition": "Expédition",
+    "expeditionCompleted": "Expédition terminée !",
+    "goBackToBase": "Retour au camp",
+    "backArrow": "←",
+    "back": "← Retour",
+    "floor": "Étage {{number}}",
+    "enterSite": "Entrer",
+    "prompt": {
+      "here": "Fouiller",
+      "stairs": "Prendre l’escalier",
+      "exit": "Quitter cet endroit",
+      "zipline": "Glisser le long de la corde : pas de retour possible",
+      "oneWay": "Traverser : pas de retour possible",
+      "liftStone": "Soulever la pierre",
+      "setStone": "Poser la pierre sur la plaque",
+      "postStone": "Glisser la pierre dedans",
+      "takeStone": "Prendre la pierre",
+      "squeeze": "Se faufiler",
+      "replay": "Rejouer"
+    },
+    "blocked": {
+      "carrying": "Impossible de passer avec une pierre"
+    },
+    "backToMap": "Retour à la carte",
+    "continueExploration": "Continue à explorer les pyramides.",
+    "startExpedition": "Partir en expédition",
+    "webBuriedPercent": "Encore enfoui à {{percent}} %",
+    "interruptExpedition": "Arrêter l’expédition",
+    "confirmInterruptExpedition": "Tu veux vraiment arrêter cette expédition ? On garde ce que tu as fait dans l’expédition, mais tu perds ce que tu as fait dans ce niveau !",
+    "cancel": "Annuler",
+    "settings": "Réglages",
+    "language": "Langue",
+    "close": "Fermer",
+    "done": "Terminé",
+    "clearGameData": "Effacer les données du jeu",
+    "confirmClearGameData": "Ça efface pour toujours toute ta progression, tes objets et les pyramides explorées. On ne peut pas revenir en arrière.",
+    "disableTutorials": "Désactiver les explications",
+    "treasureTomb": "Lieu du trésor",
+    "requiresMapPieces": "Il faut des morceaux de carte",
+    "mapPieces": "Morceaux de carte",
+    "completeExpeditionsToUnlock": "Termine des expéditions pour le débloquer",
+    "availableSymbols": "Symboles disponibles :",
+    "fragmentsNeeded": "{{found}}/{{required}} nécessaires",
+    "howToPlay": "Comment jouer",
+    "puzzleComplete": "La réponse est :",
+    "puzzleCompleted": "Énigme résolue",
+    "trapBlocked": "Pas assez de vie pour tenter ce piège",
+    "spiritsRejectCode": "Les esprits refusent ce code",
+    "sacredSealBroken": "Le sceau sacré est brisé",
+    "newExpeditionUnlocked": "Une nouvelle expédition est débloquée",
+    "newTombUnlocked": "Un nouveau tombeau est débloqué",
+    "tierComingSoonTitle": "Les expéditions {{tier}} arrivent bientôt",
+    "tierComingSoon": "Tu as la clé, mais les pyramides {{tier}} sont encore en construction. Elles arrivent dans une prochaine mise à jour. En attendant, ta clé ouvre plus de pyramides que tu connais déjà.",
+    "answerNow": "La réponse est : ",
+    "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "resetPuzzle": "Recommencer",
+    "hint": "Indice",
+    "undo": "Annuler",
+    "erase": "Effacer",
+    "notes": "Notes",
+    "solvedUnaided": "Résolu sans aucun indice",
+    "solvedWithHints_one": "Résolu avec {{count}} indice",
+    "solvedWithHints_many": "Résolu avec {{count}} indices",
+    "solvedWithHints_other": "Résolu avec {{count}} indices",
+    "tapToContinue": "Touche pour continuer",
+    "goal": "But"
+  },
+  "trap": {
+    "warning": "⚠ Couloir piégé",
+    "canAttempt": "Tu peux essayer de passer.",
+    "tooWeak": "Tu es très faible : si tu rates, il ne te restera plus rien.",
+    "attempt": "Tenter le piège",
+    "turnAround": "Faire demi-tour",
+    "rested": "Une pause près du feu : te revoilà en forme"
+  },
+  "gate": {
+    "title": "🔒 Porte fermée",
+    "locked": "Tu n’as pas encore la bonne clé.",
+    "markedWith": "Un signe est gravé dans la porte :",
+    "unlocked": "Tu as la clé.",
+    "pass": "Passer",
+    "turnAround": "Faire demi-tour",
+    "wardDescription": {
+      "starter": "Le sceau d’un marchand bloque ce passage. Seule sa clé de garde peut l’ouvrir.",
+      "junior": "Le blason d’une noble ferme ce chemin. Seule sa clé de garde peut l’ouvrir.",
+      "expert": "La protection du temple d’un grand prêtre garde cette porte. Seule la clé sacrée peut l’ouvrir.",
+      "master": "Le sceau royal d’un pharaon ferme ce passage. Seule la clé du roi peut le briser.",
+      "wizard": "Une protection des dieux garde cette porte. Rien ne passe, sauf la clé divine."
+    },
+    "needsKey": "La porte est marquée pour une seule clé :",
+    "lockedColor": "Tu n’as pas encore trouvé cette clé à cet étage."
+  },
+  "chest": {
+    "tapToOpen": "Touche pour ouvrir",
+    "money_one": "{{count}} pièce",
+    "money_many": "{{count}} pièces",
+    "money_other": "{{count}} pièces",
+    "mapPiece": "Morceau de carte",
+    "mapPieceDescription": "Un vieux bout de carte tout fragile, qui mène à un endroit oublié depuis longtemps. Dommage qu’il en manque autant…",
+    "mapPieceProgress": "{{found}} morceaux de carte sur {{required}}",
+    "mapPieceComplete": "La carte est entière : elle mène à {{name}}.",
+    "hieroglyphFragment": "Fragment de hiéroglyphe",
+    "fragmentProgress": "{{found}} fragments trouvés sur {{required}}",
+    "tombKey": "Clé du tombeau",
+    "sandLever": "Levier à sable",
+    "sandLeverDescription": "Tu le tires et il reste en bas. Quelque part, très loin, du sable s’écoule.",
+    "webKey": "Clé scellée",
+    "webKeyDescription": "Sur sa tête, il y a un signe que tu as déjà vu sur une porte scellée, ailleurs.",
+    "hieroglyphs": "Hiéroglyphes anciens",
+    "hieroglyphsDescription": "Des signes sacrés gravés sur les murs de cette salle. Ce qu’ils veulent dire t’aide à mieux connaître le monde d’autrefois.",
+    "mosaicPiece": "Morceau de mosaïque",
+    "mosaicPieceDescription": "Un carreau de verre brillant, un petit morceau d’une grande mosaïque. Mets-le avec les autres, et l’image cachée apparaît petit à petit.",
+    "waterskin": "Outre d’eau",
+    "waterskinDescription": "De l’eau fraîche. Tu la bois tout de suite, et tes blessures font moins mal."
+  },
+  "loot": {
+    "youFound": "Tu as trouvé",
+    "expeditionReward": "Récompense en plus pour avoir terminé l’expédition",
+    "clickToContinue": "Touche n’importe où pour continuer"
+  },
+  "money": {
+    "label": "Pièces"
+  },
+  "shop": {
+    "title": "L’étal de Fez",
+    "invitation": "Regarder l’étal",
+    "buy": "Acheter",
+    "sell": "Vendre",
+    "soldOut": "Épuisé",
+    "dismiss": "Partir",
+    "rareItems": "Trouvailles rares",
+    "sellSection": "Bibelots à vendre",
+    "haul": {
+      "coins_one": "+{{count}} pièce",
+      "coins_many": "+{{count}} pièces",
+      "coins_other": "+{{count}} pièces",
+      "note": "Des pièces ramassées en chemin"
+    }
+  },
+  "purchases": {
+    "donkey": {
+      "name": "Âne",
+      "need": "Il te faut un âne",
+      "opens": "Il porte tes affaires. Avec lui, tu peux partir pour les voyages Expert."
+    },
+    "cart": {
+      "name": "Charrette",
+      "need": "Il te faut une charrette",
+      "opens": "Tout le camp tient dessus. Avec elle, tu peux partir pour les voyages Maître."
+    },
+    "camel": {
+      "name": "Chameau",
+      "need": "Il te faut un chameau",
+      "opens": "Il marche des jours sans eau. Il t’emmène jusqu’au sanctuaire secret."
+    },
+    "secondDonkey": {
+      "name": "Deuxième âne",
+      "need": "Il te faut un deuxième âne",
+      "opens": "Encore plus de bagages. Avec lui, tu peux partir pour les voyages Génie."
+    },
+    "secondCamel": {
+      "name": "Deuxième chameau",
+      "need": "Il te faut un deuxième chameau",
+      "opens": "Deux chameaux portent assez d’eau pour la salle d’Osiris."
+    },
+    "sturdyCart": {
+      "name": "Charrette plus solide",
+      "need": "Il te faut une charrette plus solide",
+      "opens": "Elle ne casse pas, même sur la route du royaume des forces du ciel."
+    },
+    "caravanBanner": {
+      "name": "Bannière de caravane",
+      "opens": "N’ouvre rien. Juste pour le plaisir."
+    },
+    "hint": "Fez en vend un à {{place}}",
+    "devGrant": "Acheter tous les animaux"
+  },
+  "level": {
+    "completed": "Niveau terminé !"
+  },
+  "mosaic": {
+    "place_one": "Placer {{count}} morceau",
+    "place_many": "Placer {{count}} morceaux",
+    "place_other": "Placer {{count}} morceaux",
+    "placing": "On place…",
+    "panel": {
+      "starter": "Le gardien de la porte",
+      "junior": "La première leçon",
+      "expert": "Faire entrer le soleil",
+      "master": "Le roi vert",
+      "wizard": "La plume et le cœur"
+    },
+    "entrance": {
+      "title": "Mosaïque",
+      "label": "Mosaïque {{found}}/{{total}}"
+    },
+    "haul": {
+      "pieces_one": "{{count}} morceau de mosaïque",
+      "pieces_many": "{{count}} morceaux de mosaïque",
+      "pieces_other": "{{count}} morceaux de mosaïque",
+      "note": "Pour le vitrail"
+    }
+  },
+  "collection": {
+    "tabs": {
+      "treasures": "Trésors",
+      "hieroglyphs": "Hiéroglyphes",
+      "stories": "Histoires",
+      "junk": "Bibelots"
+    },
+    "tabsLabel": "Ce que tu as collectionné",
+    "tabNew_one": "{{label}} · {{count}} nouveau",
+    "tabNew_many": "{{label}} · {{count}} nouveaux",
+    "tabNew_other": "{{label}} · {{count}} nouveaux",
+    "empty": "Ton coffre est encore vide",
+    "newLabel": "NOUVEAU",
+    "clickForDetails": "Touche une case pour en savoir plus",
+    "categories": {
+      "deities": "🏺 Dieux",
+      "professions": "⚱️ Métiers",
+      "animals": "🐾 Animaux",
+      "artifacts": "💎 Objets sacrés",
+      "treasures": "💰 Trésors",
+      "junk": "🔷 Bibelots",
+      "signs": "✍️ Signes"
+    },
+    "treasureCategories": {
+      "merchantCache": "💰 Cachette du marchand",
+      "nobleVault": "👑 Caveau de la noble",
+      "templeSecrets": "🏛️ Secrets du temple",
+      "ancientRelics": "🏺 Reliques anciennes",
+      "mythicalArtifacts": "✨ Objets de légende"
+    }
+  },
+  "detector": {
+    "compassTitle": "Boussole",
+    "corridorTitle": "Détecteur de couloirs",
+    "pickTarget": "Choisis un hiéroglyphe à la table des cartes, au camp",
+    "allCollected": "Aucun morceau à ta portée dans une pyramide que tu as déjà explorée",
+    "more": "+{{count}} de plus",
+    "corridorHere": "Il y a un passage secret juste ici",
+    "revealCorridor": "L’ouvrir",
+    "corridorNearby": "Un couloir secret est tout près",
+    "corridorOnFloor": "Un couloir secret t’attend à cet étage",
+    "lookingFor": "Tu cherches {{symbol}}",
+    "access": {
+      "open": "Rien de connu ne bloque celui-là",
+      "unknown": "Peut-être pas encore accessible : il est dans un tombeau ou il est à vendre"
+    },
+    "corridorNoneNearby": "Pas de couloir secret tout près",
+    "corridorNoneOnFloor": "Pas de couloir secret à cet étage",
+    "corridorOtherFloor": "Un couloir secret t’attend à un autre étage",
+    "corridorNoneInPyramid": "Pas de couloir secret à un autre étage",
+    "title": "Détecteur",
+    "band": {
+      "none": "Rien détecté",
+      "pyramid": "Quelque chose dans cette pyramide",
+      "floor": "Quelque chose à cet étage",
+      "near": "Quelque chose tout près",
+      "here": "Juste ici ! Ouvre le détecteur"
+    },
+    "camp": {
+      "parts": "{{count}} morceaux sur {{total}}",
+      "compassReach": {
+        "1": "voit la pyramide",
+        "2": "voit l’étage",
+        "3": "montre l’endroit exact"
+      },
+      "pickHeading": "Qu’est-ce que la boussole cherche ?",
+      "onlyIncomplete": "Seulement les signes dont tu as déjà un morceau, jusqu’à ce qu’ils soient complets.",
+      "whereHeading": "Où sont les morceaux de {{symbol}}",
+      "pickFirst": "Choisis un signe pour voir où sont ses morceaux.",
+      "follow": "Suivre ce signe",
+      "following": "La boussole suit ce signe",
+      "nothingToFind": "Tu n’as encore aucun morceau d’un signe pas complet.",
+      "noneInReach": "Aucun morceau à ta portée dans une pyramide que tu as déjà explorée.",
+      "corridorReach": {
+        "1": "entend un couloir tout près",
+        "2": "entend tout l’étage",
+        "3": "entend aussi les autres étages",
+        "4": "entend d’autres voyages"
+      },
+      "corridorInPyramid": "Dans une pyramide, il écoute les couloirs fermés.",
+      "corridorFarNext": "Avec ses quatre morceaux, il entend d’autres voyages depuis le camp.",
+      "corridorWhere": "Où un couloir est encore fermé",
+      "corridorNone": "Aucun couloir fermé dans un voyage que tu as déjà fait.",
+      "pyramid": "Pyramide {{n}}",
+      "corridorCount_one": "{{count}} couloir",
+      "corridorCount_many": "{{count}} couloirs",
+      "corridorCount_other": "{{count}} couloirs"
+    }
+  },
+  "keys": {
+    "blue": "Clé bleue",
+    "red": "Clé rouge",
+    "green": "Clé verte",
+    "yellow": "Clé jaune",
+    "purple": "Clé violette",
+    "bundle": "Un trousseau de clés",
+    "foundDescription": "Elle ouvre les portes de cette couleur, à cet étage.",
+    "heldTitle": "{{key}} : dans ta poche",
+    "neededTitle": "{{key}} : encore nécessaire"
+  },
+  "balance": {
+    "rules": {
+      "tap": "Touche un signe en bas, puis un nombre. Touche encore ce nombre pour l’enlever.",
+      "same": "Un signe pèse la même chose sur toutes les balances.",
+      "cancel": "Enlève la même chose des deux plateaux, et la balance reste en équilibre. Touche un morceau marqué pour le faire : ce qui reste s’ajoute en dessous, sur une nouvelle ligne.",
+      "swap": "Touche un signe qui n’a rien de pareil en face, puis une ligne où ce signe est tout seul, pour l’échanger contre ce que vaut cette ligne."
+    },
+    "hint": {
+      "mistake": "Un des poids que tu as donnés fait pencher une balance. Enlève-le et regarde encore.",
+      "alone": "Sur la ligne allumée, {{glyph}} est le seul morceau sans nombre. Calcule combien il pèse.",
+      "equalShares": "La ligne allumée n’a que des {{glyph}} en face d’un nombre. Partage ce nombre entre eux.",
+      "difference": "Les deux lignes allumées sont pareilles, sauf {{glyph}}. Compare-les.",
+      "cancelGlyph": "Les deux plateaux de la ligne allumée ont un {{glyph}}. Touches-en un pour l’enlever des deux côtés : la ligne reste en équilibre.",
+      "cancelStones": "Les deux plateaux de la ligne allumée ont des nombres simples. Touches-en un pour enlever la même quantité des deux côtés.",
+      "swap": "Une ligne allumée dit ce que vaut un seul {{glyph}}. Touche le {{glyph}} dans l’autre ligne allumée, puis touche cette ligne."
+    },
+    "swap": {
+      "pick": "Touche une ligne allumée pour échanger ce {{glyph}} contre ce que cette ligne dit qu’il vaut.",
+      "none": "Rien ici ne dit ce que vaut un seul {{glyph}}, et rien de pareil n’est en face."
+    },
+    "goal": {
+      "default": "Chaque signe a un poids, et chaque balance est en équilibre.",
+      "weighing": "Chaque signe trouve son poids, et chaque balance se met bien droite."
+    },
+    "name": {
+      "default": "La balance",
+      "weighing": "La pesée du cœur"
+    }
+  },
+  "sumplete": {
+    "rules": {
+      "tap": "Touche une fois pour barrer un nombre, encore une fois pour le garder, et encore une fois pour l’effacer.",
+      "totals": "Le petit nombre sous chaque objectif, c’est le total de cette ligne en ce moment."
+    },
+    "hint": {
+      "mistake": "Une des marques ici ne peut pas être juste. Annule-la et regarde encore.",
+      "tooBig": {
+        "row": "Il manque encore {{deficit}} à cette ligne. {{value}}, c’est plus grand que ça, donc il ne peut pas rester.",
+        "col": "Il manque encore {{deficit}} à cette colonne. {{value}}, c’est plus grand que ça, donc il ne peut pas rester."
+      },
+      "allStrike": {
+        "row": "Les nombres gardés dans cette ligne font déjà l’objectif, donc tous les autres doivent partir.",
+        "col": "Les nombres gardés dans cette colonne font déjà l’objectif, donc tous les autres doivent partir."
+      },
+      "allKeep": {
+        "row": "Cette ligne fait déjà son objectif. Marque ces nombres comme gardés, pour pouvoir calculer les colonnes qui passent par eux.",
+        "col": "Cette colonne fait déjà son objectif. Marque ces nombres comme gardés, pour pouvoir calculer les lignes qui passent par eux."
+      },
+      "parityKeep": {
+        "row": "Il manque encore {{deficit}} à cette ligne, un nombre impair. {{value}} est le seul nombre impair qui reste, donc il doit rester.",
+        "col": "Il manque encore {{deficit}} à cette colonne, un nombre impair. {{value}} est le seul nombre impair qui reste, donc il doit rester."
+      },
+      "parityStrike": {
+        "row": "Il manque encore {{deficit}} à cette ligne, un nombre pair. {{value}} est le seul nombre impair qui reste, donc il doit partir.",
+        "col": "Il manque encore {{deficit}} à cette colonne, un nombre pair. {{value}} est le seul nombre impair qui reste, donc il doit partir."
+      },
+      "onlyCombination": {
+        "row": "Dans cette ligne, un seul groupe de nombres fait {{deficit}}.",
+        "col": "Dans cette colonne, un seul groupe de nombres fait {{deficit}}."
+      },
+      "inEveryCombinationKeep": {
+        "row": "Sans {{value}}, aucun groupe des autres nombres de cette ligne ne fait {{deficit}}. Donc il doit rester.",
+        "col": "Sans {{value}}, aucun groupe des autres nombres de cette colonne ne fait {{deficit}}. Donc il doit rester."
+      },
+      "inEveryCombinationStrike": {
+        "row": "Si tu gardes {{value}}, il manquera encore {{remaining}} à cette ligne, et aucun des autres nombres ici ne peut le faire. Donc il doit partir.",
+        "col": "Si tu gardes {{value}}, il manquera encore {{remaining}} à cette colonne, et aucun des autres nombres ici ne peut le faire. Donc il doit partir."
+      },
+      "tooBig.row": "Il manque encore {{deficit}} à cette ligne, et {{value}} est plus grand que ça.",
+      "tooBig.col": "Il manque encore {{deficit}} à cette colonne, et {{value}} est plus grand que ça.",
+      "allStrike.row": "Les nombres gardés dans cette ligne font déjà l’objectif.",
+      "allStrike.col": "Les nombres gardés dans cette colonne font déjà l’objectif.",
+      "allKeep.row": "Cette ligne fait déjà son objectif, donc tu peux maintenant calculer les colonnes qui la traversent.",
+      "allKeep.col": "Cette colonne fait déjà son objectif, donc tu peux maintenant calculer les lignes qui la traversent.",
+      "parityKeep.row": "Il manque encore {{deficit}} à cette ligne, un nombre impair, et {{value}} est le seul nombre impair qui reste.",
+      "parityKeep.col": "Il manque encore {{deficit}} à cette colonne, un nombre impair, et {{value}} est le seul nombre impair qui reste.",
+      "parityStrike.row": "Il manque encore {{deficit}} à cette ligne, un nombre pair, et {{value}} est le seul nombre impair qui reste.",
+      "parityStrike.col": "Il manque encore {{deficit}} à cette colonne, un nombre pair, et {{value}} est le seul nombre impair qui reste.",
+      "onlyCombination.row": "Dans cette ligne, un seul groupe de nombres fait {{deficit}}.",
+      "onlyCombination.col": "Dans cette colonne, un seul groupe de nombres fait {{deficit}}.",
+      "inEveryCombinationKeep.row": "Sans {{value}}, aucun groupe des autres nombres de cette ligne ne fait {{deficit}}.",
+      "inEveryCombinationKeep.col": "Sans {{value}}, aucun groupe des autres nombres de cette colonne ne fait {{deficit}}.",
+      "inEveryCombinationStrike.row": "Si tu gardes {{value}}, il manquera encore {{remaining}} à cette ligne, et aucun des autres nombres ici ne peut le faire.",
+      "inEveryCombinationStrike.col": "Si tu gardes {{value}}, il manquera encore {{remaining}} à cette colonne, et aucun des autres nombres ici ne peut le faire.",
+      "action": {
+        "strike_one": "Barre le nombre hachuré.",
+        "strike_many": "Barre les nombres hachurés.",
+        "strike_other": "Barre les nombres hachurés.",
+        "keep_one": "Marque le nombre hachuré comme gardé.",
+        "keep_many": "Marque les nombres hachurés comme gardés.",
+        "keep_other": "Marque les nombres hachurés comme gardés."
+      }
+    },
+    "goal": "Chaque ligne et chaque colonne fait le nombre écrit à côté.",
+    "name": "Le compte"
+  },
+  "futoshiki": {
+    "rules": {
+      "signs": "Un signe entre deux cases pointe vers le plus petit des deux nombres.",
+      "enter": "Touche une case, puis un nombre. Le même nombre encore une fois l’enlève.",
+      "notes": "Prends le crayon pour noter les nombres qui peuvent encore aller dans une case. Annuler reprend ton dernier coup."
+    },
+    "hint": {
+      "mistake": {
+        "value": "Un des nombres ici ne peut pas être juste. Enlève-le et regarde encore.",
+        "note": "Les notes de cette case ont exclu le nombre qui va ici. Efface-les et recommence cette case."
+      },
+      "nakedSingle": "Tous les autres nombres sont déjà pris dans cette ligne, cette colonne ou par les signes. Il ne reste que {{value}} pour cette case.",
+      "hiddenSingle": {
+        "row": "{{value}} ne va dans aucune autre case de cette ligne, donc il va ici.",
+        "col": "{{value}} ne va dans aucune autre case de cette colonne, donc il va ici."
+      },
+      "signBound": {
+        "high": "Un signe ici pointe vers un nombre plus grand, donc cette case ne peut pas avoir {{value}}.",
+        "low": "Un signe ici pointe vers cette case, donc quelque chose doit être plus petit qu’elle. Elle ne peut pas avoir {{value}}."
+      },
+      "signVsValue": {
+        "less": "Le signe dit que cette case est plus petite que sa voisine, et cette voisine a {{value}}.",
+        "greater": "Le signe dit que cette case est plus grande que sa voisine, et cette voisine a {{value}}."
+      },
+      "signChain": {
+        "high": "Suis les signes depuis cette case : {{chain}} cases à la suite doivent être chacune plus grande que la précédente, donc celle-ci ne peut pas dépasser {{bound}}.",
+        "low": "Suis les signes jusqu’à cette case : {{chain}} cases à la suite doivent être chacune plus petite que la précédente, donc celle-ci ne peut pas être sous {{bound}}."
+      },
+      "signPair": {
+        "less": "Le plus grand nombre que peut encore avoir sa voisine, de l’autre côté du signe, c’est {{value}}. Cette case doit rester en dessous.",
+        "greater": "Le plus petit nombre que peut encore avoir sa voisine, de l’autre côté du signe, c’est {{value}}. Cette case doit rester au-dessus."
+      },
+      "nakedPair": {
+        "row": "Ces deux cases ne peuvent avoir que {{first}} et {{second}}, dans un sens ou dans l’autre. Donc aucune autre case de cette ligne ne peut avoir l’un des deux.",
+        "col": "Ces deux cases ne peuvent avoir que {{first}} et {{second}}, dans un sens ou dans l’autre. Donc aucune autre case de cette colonne ne peut avoir l’un des deux."
+      },
+      "hiddenPair": {
+        "row": "Dans cette ligne, {{first}} et {{second}} ne vont que dans ces deux cases. Donc rien d’autre ne peut y aller.",
+        "col": "Dans cette colonne, {{first}} et {{second}} ne vont que dans ces deux cases. Donc rien d’autre ne peut y aller."
+      },
+      "xWing": {
+        "row": "{{value}} ne va que dans deux cases de chacune de ces deux lignes, et elles sont dans les mêmes colonnes. Dans tous les cas, ces deux colonnes sont prises. Donc {{value}} ne peut aller nulle part ailleurs dans ces colonnes.",
+        "col": "{{value}} ne va que dans deux cases de chacune de ces deux colonnes, et elles sont dans les mêmes lignes. Dans tous les cas, ces deux lignes sont prises. Donc {{value}} ne peut aller nulle part ailleurs dans ces lignes."
+      },
+      "nakedTriple": {
+        "row": "Ces trois cases n’ont que {{first}}, {{second}} et {{third}} à elles trois. Donc aucune autre case de cette ligne ne peut avoir l’un des trois.",
+        "col": "Ces trois cases n’ont que {{first}}, {{second}} et {{third}} à elles trois. Donc aucune autre case de cette colonne ne peut avoir l’un des trois."
+      },
+      "hiddenTriple": {
+        "row": "Dans cette ligne, {{first}}, {{second}} et {{third}} ne vont que dans ces trois cases. Donc rien d’autre ne peut y aller.",
+        "col": "Dans cette colonne, {{first}}, {{second}} et {{third}} ne vont que dans ces trois cases. Donc rien d’autre ne peut y aller."
+      }
+    },
+    "goal": "Chaque ligne et chaque colonne montre chaque nombre une seule fois.",
+    "name": "Plus grand, plus petit"
+  },
+  "lightbeam": {
+    "rules": {
+      "mirrors": "Un miroir renvoie la lumière par ses deux faces. Les petits traits autour montrent les autres positions possibles : la plupart tournent la lumière d’un quart de tour, et certains un peu moins, pour l’envoyer en biais.",
+      "walls": "Un bloc de pierre avale la lumière. Le bord du plateau aussi.",
+      "tap": "Touche une pièce pour la changer : un miroir tourne, une pièce coulissante avance à sa place suivante. Un bord blanc veut dire que tu peux la bouger ; tout le reste fait partie de l’énigme.",
+      "nodes": "Certaines pierres sont reliées à une prise dans le sol, et toucher ne les fait pas bouger. Fais passer la lumière sur la prise, et la pierre glisse sur le côté."
+    },
+    "hint": {
+      "entryRun": "Commence là où la lumière va déjà : elle part tout droit du disque jusqu’à la première pièce que tu peux changer. Ces cases portent la lumière, quoi que tu fasses.",
+      "exitRun": "Regarde l’autel. Un seul de ses côtés peut être éclairé : tous les autres chemins sont bloqués ou sortent du plateau. Donc la lumière doit arriver par cette ligne.",
+      "wiringFires": {
+        "one": "La lumière doit passer sur cette prise en chemin : ça, tu l’as déjà trouvé. En passant dessus, elle fait glisser la pierre qui y est reliée, et le chemin derrière s’ouvre.",
+        "all": "Cette pierre est reliée à plusieurs prises, et elle ne bouge que quand la lumière est passée sur toutes. Trouve un chemin qui les touche toutes."
+      },
+      "deadEnd": {
+        "wall": "Placé comme ça, la lumière fonce droit dans la pierre, et plus rien ne peut la sauver. Donc il ne peut pas être placé comme ça.",
+        "disc": "Placé comme ça, le miroir renvoie la lumière d’où elle vient, jusque dans le disque. Donc il ne peut pas être placé comme ça.",
+        "edge": "Placé comme ça, la lumière sort du plateau, et plus rien ne peut la rattraper. Donc il ne peut pas être placé comme ça.",
+        "loop": "Placé comme ça, la lumière n’arrive nulle part : elle tourne en rond pour toujours. Donc il ne peut pas être placé comme ça."
+      },
+      "feedsExit": {
+        "wall": "Pars de l’autel et remonte. Placé comme ça, rien ne peut amener la lumière par la seule ligne qui y arrive : elle s’éteint dans la pierre en chemin.",
+        "disc": "Pars de l’autel et remonte. Placé comme ça, la lumière devrait sortir du dos sombre du disque, et aucune lumière ne sort de là.",
+        "edge": "Pars de l’autel et remonte. Placé comme ça, la lumière devrait venir de l’extérieur du plateau pour y arriver.",
+        "loop": "Pars de l’autel et remonte. Placé comme ça, la lumière qui devrait y arriver ne fait que tourner en rond pour toujours."
+      },
+      "wiringDead": "Quoi que tu fasses, la lumière ne peut jamais atteindre cette prise. Donc la pierre qui y est reliée reste exactement où elle est, et tu peux lire le chemin juste à côté.",
+      "neverReached": "Ne touche pas à celle-là. La lumière ne peut pas l’atteindre, peu importe le reste, donc ce que tu en fais ne change rien.",
+      "onlySurvivor": "Essaie chaque position de celle-ci, l’une après l’autre : toutes sauf une laissent l’autel dans le noir. Celle-là, c’est la réponse."
+    },
+    "goal": "La lumière du soleil va du disque jusqu’à l’autel.",
+    "name": "Rayon de lumière"
+  },
+  "eclipse": {
+    "rules": {
+      "triple": "Trois pareils à la suite, c’est interdit, en ligne comme en colonne.",
+      "copies": "Deux lignes ne peuvent pas être pareilles, et deux colonnes non plus.",
+      "signs": "Un signe entre deux cases dit comment elles sont : = pour pareil, × pour différent.",
+      "enter": "Touche une case pour y mettre un soleil, touche encore pour une lune, et encore une fois pour la vider."
+    },
+    "hint": {
+      "mistake": "Une de ces marques ne peut pas être juste.",
+      "sign.same": "= veut dire pareil.",
+      "sign.different": "× veut dire différent.",
+      "noTriple.pair": "Déjà deux {{mark}}, et trois à la suite, c’est interdit.",
+      "noTriple.sandwich": "{{mark}} des deux côtés, et trois à la suite, c’est interdit.",
+      "signPair": "Ces deux-là sont pareils, et ce {{mark}} est juste à côté.",
+      "lineCount": "Cette ligne a déjà ses {{count}} {{mark}}.",
+      "noCopy": "Dans l’autre sens, ce serait une copie de la ligne allumée.",
+      "linePairing.sameNoRoom": "Il ne reste que {{count}} {{mark}} ici, et ces deux-là sont pareils.",
+      "linePairing.differentTakesOne": "Les paires × prennent tous les {{mark}} qu’il y a de place pour cette ligne.",
+      "loneMark": "Plus qu’un {{mark}} à placer, et une seule case empêche trois {{other}} de se suivre.",
+      "squeeze.triple": "Un {{mark}} ici obligerait le reste à être {{other}} : trois à la suite.",
+      "squeeze.sign": "Un {{mark}} ici obligerait le reste à être {{other}} : un signe ne serait plus juste.",
+      "squeeze.copy": "Un {{mark}} ici obligerait le reste à être {{other}} : la ligne deviendrait une copie.",
+      "action": {
+        "fill_one": "Mets {{mark}} dans la case hachurée.",
+        "fill_many": "Mets {{mark}} dans les cases hachurées.",
+        "fill_other": "Mets {{mark}} dans les cases hachurées.",
+        "fillMixed": "Remplis les cases hachurées, de la seule façon qui marche."
+      }
+    },
+    "goal": "Chaque case a un soleil ou une lune, et chaque ligne a autant de l’un que de l’autre.",
+    "name": "Soleil et lune"
+  },
+  "constellation": {
+    "rules": {
+      "default": {
+        "straight": "Les lignes de lumière vont tout droit, en ligne ou en colonne, d’une étoile à la suivante.",
+        "pair": "Entre deux étoiles, il peut y avoir deux lignes au maximum.",
+        "cross": "Les lignes ne se croisent jamais, et ne passent jamais à travers une étoile.",
+        "enter": "Fais glisser d’une étoile vers sa voisine pour tracer une ligne, encore une fois pour une double, et encore une fois pour l’effacer."
+      },
+      "causeway": {
+        "straight": "Les routes de halage vont tout droit, en ligne ou en colonne, d’un chantier au suivant.",
+        "pair": "Entre deux chantiers, il peut y avoir deux routes au maximum.",
+        "cross": "Les routes ne se croisent jamais, et ne passent jamais à travers un chantier.",
+        "enter": "Fais glisser d’un chantier vers son voisin pour faire une route, encore une fois pour la doubler, et encore une fois pour la défaire."
+      },
+      "irrigation": {
+        "straight": "Les canaux vont tout droit, en ligne ou en colonne, d’un bassin au suivant.",
+        "pair": "Entre deux bassins, il peut y avoir deux canaux au maximum.",
+        "cross": "Les canaux ne se croisent jamais, et ne passent jamais à travers un bassin.",
+        "enter": "Fais glisser d’un bassin vers son voisin pour creuser un canal, encore une fois pour l’élargir, et encore une fois pour le reboucher."
+      },
+      "ceiling": {
+        "straight": "Les cordelettes vont tout droit, en ligne ou en colonne, d’une étoile à la suivante.",
+        "pair": "Entre deux étoiles, il peut y avoir deux cordelettes au maximum.",
+        "cross": "Les cordelettes ne se croisent jamais, et ne passent jamais à travers une étoile.",
+        "enter": "Fais glisser d’une étoile vers sa voisine pour poser une cordelette, encore une fois pour la doubler, et encore une fois pour l’enlever."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Une de ces lignes ne peut pas être juste.",
+        "capacity": "{{count}} lignes, et juste assez de sorties.",
+        "settled": "Ce {{count}} a toutes ses lignes.",
+        "soleWayOut": "Plus qu’une sortie, et encore {{count}} à tracer.",
+        "crossed": "Une ligne là croiserait celle-ci.",
+        "atLeastOne": "{{count}} lignes, et les autres sorties ne peuvent pas toutes les porter.",
+        "twinBlock.single": "Relier ces deux-là ferait une constellation de deux étoiles toute seule.",
+        "twinBlock.double": "Une deuxième ligne là ferait une constellation de deux étoiles toute seule.",
+        "isolation": "Cette ligne couperait ces {{count}} étoiles du reste.",
+        "action": {
+          "draw_one": "Trace la ligne marquée.",
+          "draw_many": "Trace les lignes marquées.",
+          "draw_other": "Trace les lignes marquées.",
+          "refuse_one": "La ligne marquée reste vide.",
+          "refuse_many": "Les lignes marquées restent vides.",
+          "refuse_other": "Les lignes marquées restent vides.",
+          "refuseDouble": "Une ligne là, mais pas de deuxième."
+        }
+      },
+      "causeway": {
+        "mistake": "Une de ces routes ne peut pas être juste.",
+        "capacity": "{{count}} routes, et juste assez de sorties.",
+        "settled": "Ce {{count}} a toutes ses routes.",
+        "soleWayOut": "Plus qu’une sortie, et encore {{count}} à faire.",
+        "crossed": "Une route là croiserait celle-ci.",
+        "atLeastOne": "{{count}} routes, et les autres sorties ne peuvent pas toutes les porter.",
+        "twinBlock.single": "Relier ces deux-là ferait un réseau de deux chantiers tout seul.",
+        "twinBlock.double": "Une deuxième route là ferait un réseau de deux chantiers tout seul.",
+        "isolation": "Cette route couperait ces {{count}} chantiers du reste.",
+        "action": {
+          "draw_one": "Fais la route marquée.",
+          "draw_many": "Fais les routes marquées.",
+          "draw_other": "Fais les routes marquées.",
+          "refuse_one": "La route marquée n’est pas construite.",
+          "refuse_many": "Les routes marquées ne sont pas construites.",
+          "refuse_other": "Les routes marquées ne sont pas construites.",
+          "refuseDouble": "Une route là, mais pas de deuxième."
+        }
+      },
+      "irrigation": {
+        "mistake": "Un de ces canaux ne peut pas être juste.",
+        "capacity": "{{count}} canaux, et juste assez de sorties.",
+        "settled": "Ce {{count}} a tous ses canaux.",
+        "soleWayOut": "Plus qu’une sortie, et encore {{count}} à creuser.",
+        "crossed": "Un canal là croiserait celui-ci.",
+        "atLeastOne": "{{count}} canaux, et les autres sorties ne peuvent pas tous les porter.",
+        "twinBlock.single": "Relier ces deux-là ferait un réseau de deux bassins tout seul.",
+        "twinBlock.double": "Un deuxième canal là ferait un réseau de deux bassins tout seul.",
+        "isolation": "Ce canal couperait ces {{count}} bassins du reste.",
+        "action": {
+          "draw_one": "Creuse le canal marqué.",
+          "draw_many": "Creuse les canaux marqués.",
+          "draw_other": "Creuse les canaux marqués.",
+          "refuse_one": "Le canal marqué n’est pas creusé.",
+          "refuse_many": "Les canaux marqués ne sont pas creusés.",
+          "refuse_other": "Les canaux marqués ne sont pas creusés.",
+          "refuseDouble": "Un canal là, mais pas de deuxième."
+        }
+      },
+      "ceiling": {
+        "mistake": "Une de ces cordelettes ne peut pas être juste.",
+        "capacity": "{{count}} cordelettes, et juste assez de sorties.",
+        "settled": "Ce {{count}} a toutes ses cordelettes.",
+        "soleWayOut": "Plus qu’une sortie, et encore {{count}} à poser.",
+        "crossed": "Une cordelette là croiserait celle-ci.",
+        "atLeastOne": "{{count}} cordelettes, et les autres sorties ne peuvent pas toutes les porter.",
+        "twinBlock.single": "Relier ces deux-là ferait un ciel peint de deux étoiles tout seul.",
+        "twinBlock.double": "Une deuxième cordelette là ferait un ciel peint de deux étoiles tout seul.",
+        "isolation": "Cette cordelette couperait ces {{count}} étoiles du reste.",
+        "action": {
+          "draw_one": "Pose la cordelette marquée.",
+          "draw_many": "Pose les cordelettes marquées.",
+          "draw_other": "Pose les cordelettes marquées.",
+          "refuse_one": "La cordelette marquée n’est pas posée.",
+          "refuse_many": "Les cordelettes marquées ne sont pas posées.",
+          "refuse_other": "Les cordelettes marquées ne sont pas posées.",
+          "refuseDouble": "Une cordelette là, mais pas de deuxième."
+        }
+      }
+    },
+    "goal": {
+      "default": "Chaque étoile fait partie d’une seule constellation, reliée par autant de lignes de lumière que son nombre l’indique.",
+      "causeway": "Chaque chantier fait partie d’un seul réseau de routes, avec autant de routes de halage que son nombre l’indique.",
+      "irrigation": "Chaque bassin fait partie d’un seul réseau d’eau, avec autant de canaux que son nombre l’indique.",
+      "ceiling": "Chaque étoile fait partie d’un seul ciel peint, attachée par autant de cordelettes d’or que son nombre l’indique."
+    },
+    "name": {
+      "default": "Carte du ciel",
+      "causeway": "La route de halage",
+      "irrigation": "Les canaux",
+      "ceiling": "Le plafond peint"
+    }
+  },
+  "starBattle": {
+    "rules": {
+      "default": {
+        "touch": "Deux étoiles ne peuvent jamais se toucher, même par un coin.",
+        "enter": "Touche une case pour l’exclure, touche encore pour y mettre une étoile, et encore une fois pour l’effacer."
+      },
+      "fields": {
+        "touch": "Deux fermes ne peuvent jamais se toucher, même par un coin. Si près, elles devraient partager un seul puits.",
+        "enter": "Touche une parcelle pour l’exclure, touche encore pour y bâtir une ferme, et encore une fois pour l’effacer."
+      },
+      "lamps": {
+        "touch": "Deux lampes à huile ne peuvent jamais être côte à côte, même en diagonale. Leurs cercles de lumière se mélangeraient, et on gaspillerait l’huile.",
+        "walls": "Les blocs de pierre gris font partie du sol : rien ne peut aller dessus, et ce ne sont pas des cases.",
+        "enter": "Touche une dalle pour l’exclure, touche encore pour y poser une lampe à huile, et encore une fois pour l’effacer."
+      },
+      "market": {
+        "touch": "Deux étals ne peuvent jamais être côte à côte, même en diagonale. Des marchands rivaux ne s’installent jamais l’un à côté de l’autre.",
+        "walls": "Les maisons font partie de la place : personne ne peut y installer un étal, et ce ne sont pas des emplacements.",
+        "enter": "Touche une place pour l’exclure, touche encore pour y installer un étal, et encore une fois pour l’effacer."
+      },
+      "lotus": {
+        "touch": "Deux lotus ne peuvent jamais flotter côte à côte, même en diagonale. Chaque fleur a besoin d’eau libre autour d’elle.",
+        "walls": "Les rochers dépassent de la mare : rien ne peut flotter dessus, et ce ne sont pas des cases.",
+        "enter": "Touche un coin d’eau pour l’exclure, touche encore pour y faire flotter un lotus, et encore une fois pour l’effacer."
+      },
+      "cats": {
+        "touch": "Deux chats ne peuvent jamais dormir côte à côte, même en diagonale. Chaque chat garde son petit coin de soleil.",
+        "walls": "Les piliers tiennent le temple : aucun chat ne peut dormir dessus, et ce ne sont pas des cases.",
+        "enter": "Touche une dalle pour l’exclure, touche encore pour y coucher un chat, et encore une fois pour l’effacer."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Cette marque ne peut pas être juste.",
+        "touch": "Une {{token}} ici, et rien ne peut toucher une {{token}}.",
+        "groupFull.row_one": "Cette ligne a déjà sa {{token}}.",
+        "groupFull.row_many": "Cette ligne a déjà ses {{count}} {{token}}.",
+        "groupFull.row_other": "Cette ligne a déjà ses {{count}} {{token}}.",
+        "groupFull.col_one": "Cette colonne a déjà sa {{token}}.",
+        "groupFull.col_many": "Cette colonne a déjà ses {{count}} {{token}}.",
+        "groupFull.col_other": "Cette colonne a déjà ses {{count}} {{token}}.",
+        "groupFull.region_one": "Cette zone a déjà sa {{token}}.",
+        "groupFull.region_many": "Cette zone a déjà ses {{count}} {{token}}.",
+        "groupFull.region_other": "Cette zone a déjà ses {{count}} {{token}}.",
+        "groupTight.row_one": "Il ne reste qu’une case dans cette ligne.",
+        "groupTight.row_many": "Il ne reste que {{count}} cases dans cette ligne.",
+        "groupTight.row_other": "Il ne reste que {{count}} cases dans cette ligne.",
+        "groupTight.col_one": "Il ne reste qu’une case dans cette colonne.",
+        "groupTight.col_many": "Il ne reste que {{count}} cases dans cette colonne.",
+        "groupTight.col_other": "Il ne reste que {{count}} cases dans cette colonne.",
+        "groupTight.region_one": "Il ne reste qu’une case dans cette zone.",
+        "groupTight.region_many": "Il ne reste que {{count}} cases dans cette zone.",
+        "groupTight.region_other": "Il ne reste que {{count}} cases dans cette zone.",
+        "onlyWay.row_one": "Il n’y a qu’une façon de mettre une {{token}} dans cette ligne.",
+        "onlyWay.row_many": "Il n’y a qu’une façon de mettre {{count}} {{token}} dans cette ligne.",
+        "onlyWay.row_other": "Il n’y a qu’une façon de mettre {{count}} {{token}} dans cette ligne.",
+        "onlyWay.col_one": "Il n’y a qu’une façon de mettre une {{token}} dans cette colonne.",
+        "onlyWay.col_many": "Il n’y a qu’une façon de mettre {{count}} {{token}} dans cette colonne.",
+        "onlyWay.col_other": "Il n’y a qu’une façon de mettre {{count}} {{token}} dans cette colonne.",
+        "onlyWay.region_one": "Il n’y a qu’une façon de mettre une {{token}} dans cette zone.",
+        "onlyWay.region_many": "Il n’y a qu’une façon de mettre {{count}} {{token}} dans cette zone.",
+        "onlyWay.region_other": "Il n’y a qu’une façon de mettre {{count}} {{token}} dans cette zone.",
+        "everyWay.row_one": "Peu importe comment tu remplis cette ligne, sa {{token}} est toujours ici.",
+        "everyWay.row_many": "Peu importe comment tu remplis cette ligne, une de ses {{count}} {{token}} est toujours ici.",
+        "everyWay.row_other": "Peu importe comment tu remplis cette ligne, une de ses {{count}} {{token}} est toujours ici.",
+        "everyWay.col_one": "Peu importe comment tu remplis cette colonne, sa {{token}} est toujours ici.",
+        "everyWay.col_many": "Peu importe comment tu remplis cette colonne, une de ses {{count}} {{token}} est toujours ici.",
+        "everyWay.col_other": "Peu importe comment tu remplis cette colonne, une de ses {{count}} {{token}} est toujours ici.",
+        "everyWay.region_one": "Peu importe comment tu remplis cette zone, sa {{token}} est toujours ici.",
+        "everyWay.region_many": "Peu importe comment tu remplis cette zone, une de ses {{count}} {{token}} est toujours ici.",
+        "everyWay.region_other": "Peu importe comment tu remplis cette zone, une de ses {{count}} {{token}} est toujours ici.",
+        "regionLine.row_one": "La {{token}} de la zone marquée doit venir de cette ligne.",
+        "regionLine.row_many": "Les {{count}} {{token}} de la zone marquée doivent venir de cette ligne.",
+        "regionLine.row_other": "Les {{count}} {{token}} de la zone marquée doivent venir de cette ligne.",
+        "regionLine.col_one": "La {{token}} de la zone marquée doit venir de cette colonne.",
+        "regionLine.col_many": "Les {{count}} {{token}} de la zone marquée doivent venir de cette colonne.",
+        "regionLine.col_other": "Les {{count}} {{token}} de la zone marquée doivent venir de cette colonne.",
+        "lineRegion.row_one": "La {{token}} de cette ligne fait partie de la zone marquée.",
+        "lineRegion.row_many": "Les {{count}} {{token}} de cette ligne font partie de la zone marquée.",
+        "lineRegion.row_other": "Les {{count}} {{token}} de cette ligne font partie de la zone marquée.",
+        "lineRegion.col_one": "La {{token}} de cette colonne fait partie de la zone marquée.",
+        "lineRegion.col_many": "Les {{count}} {{token}} de cette colonne font partie de la zone marquée.",
+        "lineRegion.col_other": "Les {{count}} {{token}} de cette colonne font partie de la zone marquée.",
+        "spanning.toRows": "À elles toutes, les zones marquées remplissent ces {{count}} lignes.",
+        "spanning.toCols": "À elles toutes, les zones marquées remplissent ces {{count}} colonnes.",
+        "spanning.fromRows": "Les lignes marquées ne peuvent prendre leurs {{count}} {{token}} que dans ces zones.",
+        "spanning.fromCols": "Les colonnes marquées ne peuvent prendre leurs {{count}} {{token}} que dans ces zones.",
+        "wouldStrand.row": "Avec {{token}} ici, la ligne marquée n’aurait plus aucune place.",
+        "wouldStrand.col": "Avec {{token}} ici, la colonne marquée n’aurait plus aucune place.",
+        "wouldStrand.region": "Avec {{token}} ici, la zone marquée n’aurait plus aucune place.",
+        "action": {
+          "ruleOut_one": "Exclus la case hachurée.",
+          "ruleOut_many": "Exclus les cases hachurées.",
+          "ruleOut_other": "Exclus les cases hachurées.",
+          "place_one": "Mets une {{token}} dans la case hachurée.",
+          "place_many": "Mets une {{token}} dans chaque case hachurée.",
+          "place_other": "Mets une {{token}} dans chaque case hachurée."
+        }
+      },
+      "fields": {
+        "mistake": "Cette marque ne peut pas être juste.",
+        "touch": "Avec {{token}} ici, aucune parcelle qui la touche ne peut en avoir une autre.",
+        "groupFull.row_one": "Cette ligne est déjà occupée.",
+        "groupFull.row_many": "Cette ligne a déjà ses {{count}} {{token}}.",
+        "groupFull.row_other": "Cette ligne a déjà ses {{count}} {{token}}.",
+        "groupFull.col_one": "Cette colonne est déjà occupée.",
+        "groupFull.col_many": "Cette colonne a déjà ses {{count}} {{token}}.",
+        "groupFull.col_other": "Cette colonne a déjà ses {{count}} {{token}}.",
+        "groupFull.region_one": "Ce terrain est déjà occupé.",
+        "groupFull.region_many": "Ce terrain a déjà ses {{count}} {{token}}.",
+        "groupFull.region_other": "Ce terrain a déjà ses {{count}} {{token}}.",
+        "groupTight.row_one": "Il ne reste qu’une parcelle dans cette ligne.",
+        "groupTight.row_many": "Il ne reste que {{count}} parcelles dans cette ligne.",
+        "groupTight.row_other": "Il ne reste que {{count}} parcelles dans cette ligne.",
+        "groupTight.col_one": "Il ne reste qu’une parcelle dans cette colonne.",
+        "groupTight.col_many": "Il ne reste que {{count}} parcelles dans cette colonne.",
+        "groupTight.col_other": "Il ne reste que {{count}} parcelles dans cette colonne.",
+        "groupTight.region_one": "Il ne reste qu’une parcelle sur ce terrain.",
+        "groupTight.region_many": "Il ne reste que {{count}} parcelles sur ce terrain.",
+        "groupTight.region_other": "Il ne reste que {{count}} parcelles sur ce terrain.",
+        "onlyWay.row_one": "Il ne reste qu’une parcelle où bâtir dans cette ligne.",
+        "onlyWay.row_many": "Il n’y a qu’une façon de mettre {{count}} {{token}} dans cette ligne.",
+        "onlyWay.row_other": "Il n’y a qu’une façon de mettre {{count}} {{token}} dans cette ligne.",
+        "onlyWay.col_one": "Il ne reste qu’une parcelle où bâtir dans cette colonne.",
+        "onlyWay.col_many": "Il n’y a qu’une façon de mettre {{count}} {{token}} dans cette colonne.",
+        "onlyWay.col_other": "Il n’y a qu’une façon de mettre {{count}} {{token}} dans cette colonne.",
+        "onlyWay.region_one": "Il ne reste qu’une parcelle où bâtir sur ce terrain.",
+        "onlyWay.region_many": "Il n’y a qu’une façon de mettre {{count}} {{token}} sur ce terrain.",
+        "onlyWay.region_other": "Il n’y a qu’une façon de mettre {{count}} {{token}} sur ce terrain.",
+        "everyWay.row_one": "Peu importe comment cette ligne est cultivée, sa {{token}} est ici.",
+        "everyWay.row_many": "Peu importe comment cette ligne est cultivée, une de ses {{count}} {{token}} est ici.",
+        "everyWay.row_other": "Peu importe comment cette ligne est cultivée, une de ses {{count}} {{token}} est ici.",
+        "everyWay.col_one": "Peu importe comment cette colonne est cultivée, sa {{token}} est ici.",
+        "everyWay.col_many": "Peu importe comment cette colonne est cultivée, une de ses {{count}} {{token}} est ici.",
+        "everyWay.col_other": "Peu importe comment cette colonne est cultivée, une de ses {{count}} {{token}} est ici.",
+        "everyWay.region_one": "Peu importe comment ce terrain est cultivé, sa {{token}} est ici.",
+        "everyWay.region_many": "Peu importe comment ce terrain est cultivé, une de ses {{count}} {{token}} est ici.",
+        "everyWay.region_other": "Peu importe comment ce terrain est cultivé, une de ses {{count}} {{token}} est ici.",
+        "regionLine.row_one": "La {{token}} du terrain marqué doit venir de cette ligne.",
+        "regionLine.row_many": "Les {{count}} {{token}} du terrain marqué doivent venir de cette ligne.",
+        "regionLine.row_other": "Les {{count}} {{token}} du terrain marqué doivent venir de cette ligne.",
+        "regionLine.col_one": "La {{token}} du terrain marqué doit venir de cette colonne.",
+        "regionLine.col_many": "Les {{count}} {{token}} du terrain marqué doivent venir de cette colonne.",
+        "regionLine.col_other": "Les {{count}} {{token}} du terrain marqué doivent venir de cette colonne.",
+        "lineRegion.row_one": "La {{token}} de cette ligne fait partie du terrain marqué.",
+        "lineRegion.row_many": "Les {{count}} {{token}} de cette ligne font partie du terrain marqué.",
+        "lineRegion.row_other": "Les {{count}} {{token}} de cette ligne font partie du terrain marqué.",
+        "lineRegion.col_one": "La {{token}} de cette colonne fait partie du terrain marqué.",
+        "lineRegion.col_many": "Les {{count}} {{token}} de cette colonne font partie du terrain marqué.",
+        "lineRegion.col_other": "Les {{count}} {{token}} de cette colonne font partie du terrain marqué.",
+        "spanning.toRows": "À eux tous, les terrains marqués remplissent ces {{count}} lignes.",
+        "spanning.toCols": "À eux tous, les terrains marqués remplissent ces {{count}} colonnes.",
+        "spanning.fromRows": "Les lignes marquées ne peuvent prendre leurs {{count}} {{token}} que sur ces terrains.",
+        "spanning.fromCols": "Les colonnes marquées ne peuvent prendre leurs {{count}} {{token}} que sur ces terrains.",
+        "wouldStrand.row": "Avec {{token}} ici, la ligne marquée n’aurait plus aucun endroit où bâtir.",
+        "wouldStrand.col": "Avec {{token}} ici, la colonne marquée n’aurait plus aucun endroit où bâtir.",
+        "wouldStrand.region": "Avec {{token}} ici, le terrain marqué n’aurait plus aucun endroit où bâtir.",
+        "action": {
+          "ruleOut_one": "Exclus la parcelle hachurée.",
+          "ruleOut_many": "Exclus les parcelles hachurées.",
+          "ruleOut_other": "Exclus les parcelles hachurées.",
+          "place_one": "Bâtis une {{token}} sur la parcelle hachurée.",
+          "place_many": "Bâtis une {{token}} sur chaque parcelle hachurée.",
+          "place_other": "Bâtis une {{token}} sur chaque parcelle hachurée."
+        }
+      },
+      "lamps": {
+        "mistake": "Cette marque ne peut pas être juste.",
+        "touch": "Avec {{token}} ici, aucune lampe à huile ne peut être à côté d’une autre, même en diagonale.",
+        "groupFull.row_one": "Cette ligne a déjà sa lampe à huile.",
+        "groupFull.row_many": "Cette ligne a déjà ses {{count}} lampes à huile.",
+        "groupFull.row_other": "Cette ligne a déjà ses {{count}} lampes à huile.",
+        "groupFull.col_one": "Cette colonne a déjà sa lampe à huile.",
+        "groupFull.col_many": "Cette colonne a déjà ses {{count}} lampes à huile.",
+        "groupFull.col_other": "Cette colonne a déjà ses {{count}} lampes à huile.",
+        "groupTight.row_one": "Il ne reste qu’une dalle dans cette ligne.",
+        "groupTight.row_many": "Il ne reste que {{count}} dalles dans cette ligne.",
+        "groupTight.row_other": "Il ne reste que {{count}} dalles dans cette ligne.",
+        "groupTight.col_one": "Il ne reste qu’une dalle dans cette colonne.",
+        "groupTight.col_many": "Il ne reste que {{count}} dalles dans cette colonne.",
+        "groupTight.col_other": "Il ne reste que {{count}} dalles dans cette colonne.",
+        "onlyWay.row_one": "Entre les blocs de pierre, il ne reste qu’une case dans cette ligne pour une lampe à huile.",
+        "onlyWay.row_many": "Il n’y a qu’une façon de mettre {{count}} lampes à huile dans cette ligne.",
+        "onlyWay.row_other": "Il n’y a qu’une façon de mettre {{count}} lampes à huile dans cette ligne.",
+        "onlyWay.col_one": "Entre les blocs de pierre, il ne reste qu’une case dans cette colonne pour une lampe à huile.",
+        "onlyWay.col_many": "Il n’y a qu’une façon de mettre {{count}} lampes à huile dans cette colonne.",
+        "onlyWay.col_other": "Il n’y a qu’une façon de mettre {{count}} lampes à huile dans cette colonne.",
+        "everyWay.row_one": "Peu importe où va la lampe à huile de cette ligne, elle est toujours ici.",
+        "everyWay.row_many": "Peu importe où vont les {{count}} lampes à huile de cette ligne, l’une d’elles est toujours ici.",
+        "everyWay.row_other": "Peu importe où vont les {{count}} lampes à huile de cette ligne, l’une d’elles est toujours ici.",
+        "everyWay.col_one": "Peu importe où va la lampe à huile de cette colonne, elle est toujours ici.",
+        "everyWay.col_many": "Peu importe où vont les {{count}} lampes à huile de cette colonne, l’une d’elles est toujours ici.",
+        "everyWay.col_other": "Peu importe où vont les {{count}} lampes à huile de cette colonne, l’une d’elles est toujours ici.",
+        "lineBlock.rowsToCols": "Les lignes marquées gardent leurs lampes à huile dans les cases de ces colonnes, donc ces colonnes n’en ont plus à donner.",
+        "lineBlock.colsToRows": "Les colonnes marquées gardent leurs lampes à huile dans les cases de ces lignes, donc ces lignes n’en ont plus à donner.",
+        "wouldStrand.row": "Une lampe à huile ici ne laisserait plus aucune place à la ligne marquée.",
+        "wouldStrand.col": "Une lampe à huile ici ne laisserait plus aucune place à la colonne marquée.",
+        "action": {
+          "ruleOut_one": "Exclus la case hachurée.",
+          "ruleOut_many": "Exclus les cases hachurées.",
+          "ruleOut_other": "Exclus les cases hachurées.",
+          "place_one": "Mets une lampe à huile dans la case hachurée.",
+          "place_many": "Mets une lampe à huile dans chaque case hachurée.",
+          "place_other": "Mets une lampe à huile dans chaque case hachurée."
+        }
+      },
+      "market": {
+        "mistake": "Cette marque ne peut pas être juste.",
+        "touch": "Avec {{token}} ici, aucun étal ne peut être à côté d’un autre, même en diagonale.",
+        "groupFull.row_one": "Cette ligne a déjà son étal.",
+        "groupFull.row_many": "Cette ligne a déjà ses {{count}} étals.",
+        "groupFull.row_other": "Cette ligne a déjà ses {{count}} étals.",
+        "groupFull.col_one": "Cette colonne a déjà son étal.",
+        "groupFull.col_many": "Cette colonne a déjà ses {{count}} étals.",
+        "groupFull.col_other": "Cette colonne a déjà ses {{count}} étals.",
+        "groupTight.row_one": "Il ne reste qu’une place dans cette ligne.",
+        "groupTight.row_many": "Il ne reste que {{count}} places dans cette ligne.",
+        "groupTight.row_other": "Il ne reste que {{count}} places dans cette ligne.",
+        "groupTight.col_one": "Il ne reste qu’une place dans cette colonne.",
+        "groupTight.col_many": "Il ne reste que {{count}} places dans cette colonne.",
+        "groupTight.col_other": "Il ne reste que {{count}} places dans cette colonne.",
+        "onlyWay.row_one": "Entre les maisons, il ne reste qu’une case dans cette ligne pour un étal.",
+        "onlyWay.row_many": "Il n’y a qu’une façon de mettre {{count}} étals dans cette ligne.",
+        "onlyWay.row_other": "Il n’y a qu’une façon de mettre {{count}} étals dans cette ligne.",
+        "onlyWay.col_one": "Entre les maisons, il ne reste qu’une case dans cette colonne pour un étal.",
+        "onlyWay.col_many": "Il n’y a qu’une façon de mettre {{count}} étals dans cette colonne.",
+        "onlyWay.col_other": "Il n’y a qu’une façon de mettre {{count}} étals dans cette colonne.",
+        "everyWay.row_one": "Peu importe où va le étal de cette ligne, il est toujours ici.",
+        "everyWay.row_many": "Peu importe où vont les {{count}} étals de cette ligne, l’un d’eux est toujours ici.",
+        "everyWay.row_other": "Peu importe où vont les {{count}} étals de cette ligne, l’un d’eux est toujours ici.",
+        "everyWay.col_one": "Peu importe où va le étal de cette colonne, il est toujours ici.",
+        "everyWay.col_many": "Peu importe où vont les {{count}} étals de cette colonne, l’un d’eux est toujours ici.",
+        "everyWay.col_other": "Peu importe où vont les {{count}} étals de cette colonne, l’un d’eux est toujours ici.",
+        "lineBlock.rowsToCols": "Les lignes marquées gardent leurs étals dans les cases de ces colonnes, donc ces colonnes n’en ont plus à donner.",
+        "lineBlock.colsToRows": "Les colonnes marquées gardent leurs étals dans les cases de ces lignes, donc ces lignes n’en ont plus à donner.",
+        "wouldStrand.row": "Un étal ici ne laisserait plus aucune place à la ligne marquée.",
+        "wouldStrand.col": "Un étal ici ne laisserait plus aucune place à la colonne marquée.",
+        "action": {
+          "ruleOut_one": "Exclus la case hachurée.",
+          "ruleOut_many": "Exclus les cases hachurées.",
+          "ruleOut_other": "Exclus les cases hachurées.",
+          "place_one": "Mets un étal dans la case hachurée.",
+          "place_many": "Mets un étal dans chaque case hachurée.",
+          "place_other": "Mets un étal dans chaque case hachurée."
+        }
+      },
+      "lotus": {
+        "mistake": "Cette marque ne peut pas être juste.",
+        "touch": "Avec {{token}} ici, aucun lotus ne peut flotter à côté d’un autre, même en diagonale.",
+        "groupFull.row_one": "Cette ligne a déjà son lotus.",
+        "groupFull.row_many": "Cette ligne a déjà ses {{count}} lotus.",
+        "groupFull.row_other": "Cette ligne a déjà ses {{count}} lotus.",
+        "groupFull.col_one": "Cette colonne a déjà son lotus.",
+        "groupFull.col_many": "Cette colonne a déjà ses {{count}} lotus.",
+        "groupFull.col_other": "Cette colonne a déjà ses {{count}} lotus.",
+        "groupTight.row_one": "Il ne reste qu’un coin d’eau dans cette ligne.",
+        "groupTight.row_many": "Il ne reste que {{count}} coins d’eau dans cette ligne.",
+        "groupTight.row_other": "Il ne reste que {{count}} coins d’eau dans cette ligne.",
+        "groupTight.col_one": "Il ne reste qu’un coin d’eau dans cette colonne.",
+        "groupTight.col_many": "Il ne reste que {{count}} coins d’eau dans cette colonne.",
+        "groupTight.col_other": "Il ne reste que {{count}} coins d’eau dans cette colonne.",
+        "onlyWay.row_one": "Entre les rochers, il ne reste qu’une case dans cette ligne pour un lotus.",
+        "onlyWay.row_many": "Il n’y a qu’une façon de mettre {{count}} lotus dans cette ligne.",
+        "onlyWay.row_other": "Il n’y a qu’une façon de mettre {{count}} lotus dans cette ligne.",
+        "onlyWay.col_one": "Entre les rochers, il ne reste qu’une case dans cette colonne pour un lotus.",
+        "onlyWay.col_many": "Il n’y a qu’une façon de mettre {{count}} lotus dans cette colonne.",
+        "onlyWay.col_other": "Il n’y a qu’une façon de mettre {{count}} lotus dans cette colonne.",
+        "everyWay.row_one": "Peu importe où va le lotus de cette ligne, il est toujours ici.",
+        "everyWay.row_many": "Peu importe où vont les {{count}} lotus de cette ligne, l’un d’eux est toujours ici.",
+        "everyWay.row_other": "Peu importe où vont les {{count}} lotus de cette ligne, l’un d’eux est toujours ici.",
+        "everyWay.col_one": "Peu importe où va le lotus de cette colonne, il est toujours ici.",
+        "everyWay.col_many": "Peu importe où vont les {{count}} lotus de cette colonne, l’un d’eux est toujours ici.",
+        "everyWay.col_other": "Peu importe où vont les {{count}} lotus de cette colonne, l’un d’eux est toujours ici.",
+        "lineBlock.rowsToCols": "Les lignes marquées gardent leurs lotus dans les cases de ces colonnes, donc ces colonnes n’en ont plus à donner.",
+        "lineBlock.colsToRows": "Les colonnes marquées gardent leurs lotus dans les cases de ces lignes, donc ces lignes n’en ont plus à donner.",
+        "wouldStrand.row": "Un lotus ici ne laisserait plus aucune place à la ligne marquée.",
+        "wouldStrand.col": "Un lotus ici ne laisserait plus aucune place à la colonne marquée.",
+        "action": {
+          "ruleOut_one": "Exclus la case hachurée.",
+          "ruleOut_many": "Exclus les cases hachurées.",
+          "ruleOut_other": "Exclus les cases hachurées.",
+          "place_one": "Mets un lotus dans la case hachurée.",
+          "place_many": "Mets un lotus dans chaque case hachurée.",
+          "place_other": "Mets un lotus dans chaque case hachurée."
+        }
+      },
+      "cats": {
+        "mistake": "Cette marque ne peut pas être juste.",
+        "touch": "Avec {{token}} ici, aucun chat ne peut dormir à côté d’un autre, même en diagonale.",
+        "groupFull.row_one": "Cette ligne a déjà son chat.",
+        "groupFull.row_many": "Cette ligne a déjà ses {{count}} chats.",
+        "groupFull.row_other": "Cette ligne a déjà ses {{count}} chats.",
+        "groupFull.col_one": "Cette colonne a déjà son chat.",
+        "groupFull.col_many": "Cette colonne a déjà ses {{count}} chats.",
+        "groupFull.col_other": "Cette colonne a déjà ses {{count}} chats.",
+        "groupTight.row_one": "Il ne reste qu’une dalle dans cette ligne.",
+        "groupTight.row_many": "Il ne reste que {{count}} dalles dans cette ligne.",
+        "groupTight.row_other": "Il ne reste que {{count}} dalles dans cette ligne.",
+        "groupTight.col_one": "Il ne reste qu’une dalle dans cette colonne.",
+        "groupTight.col_many": "Il ne reste que {{count}} dalles dans cette colonne.",
+        "groupTight.col_other": "Il ne reste que {{count}} dalles dans cette colonne.",
+        "onlyWay.row_one": "Entre les piliers, il ne reste qu’une case dans cette ligne pour un chat.",
+        "onlyWay.row_many": "Il n’y a qu’une façon de mettre {{count}} chats dans cette ligne.",
+        "onlyWay.row_other": "Il n’y a qu’une façon de mettre {{count}} chats dans cette ligne.",
+        "onlyWay.col_one": "Entre les piliers, il ne reste qu’une case dans cette colonne pour un chat.",
+        "onlyWay.col_many": "Il n’y a qu’une façon de mettre {{count}} chats dans cette colonne.",
+        "onlyWay.col_other": "Il n’y a qu’une façon de mettre {{count}} chats dans cette colonne.",
+        "everyWay.row_one": "Peu importe où va le chat de cette ligne, il est toujours ici.",
+        "everyWay.row_many": "Peu importe où vont les {{count}} chats de cette ligne, l’un d’eux est toujours ici.",
+        "everyWay.row_other": "Peu importe où vont les {{count}} chats de cette ligne, l’un d’eux est toujours ici.",
+        "everyWay.col_one": "Peu importe où va le chat de cette colonne, il est toujours ici.",
+        "everyWay.col_many": "Peu importe où vont les {{count}} chats de cette colonne, l’un d’eux est toujours ici.",
+        "everyWay.col_other": "Peu importe où vont les {{count}} chats de cette colonne, l’un d’eux est toujours ici.",
+        "lineBlock.rowsToCols": "Les lignes marquées gardent leurs chats dans les cases de ces colonnes, donc ces colonnes n’en ont plus à donner.",
+        "lineBlock.colsToRows": "Les colonnes marquées gardent leurs chats dans les cases de ces lignes, donc ces lignes n’en ont plus à donner.",
+        "wouldStrand.row": "Un chat ici ne laisserait plus aucune place à la ligne marquée.",
+        "wouldStrand.col": "Un chat ici ne laisserait plus aucune place à la colonne marquée.",
+        "action": {
+          "ruleOut_one": "Exclus la case hachurée.",
+          "ruleOut_many": "Exclus les cases hachurées.",
+          "ruleOut_other": "Exclus les cases hachurées.",
+          "place_one": "Mets un chat dans la case hachurée.",
+          "place_many": "Mets un chat dans chaque case hachurée.",
+          "place_other": "Mets un chat dans chaque case hachurée."
+        }
+      }
+    },
+    "quota": {
+      "default": "Par ligne, colonne et zone",
+      "fields": "Par ligne, colonne et terrain",
+      "lamps": "Par ligne et colonne",
+      "market": "Par ligne et colonne",
+      "lotus": "Par ligne et colonne",
+      "cats": "Par ligne et colonne"
+    },
+    "goal": {
+      "default_one": "Chaque ligne, chaque colonne et chaque zone a exactement une étoile.",
+      "default_many": "Chaque ligne, chaque colonne et chaque zone a exactement {{count}} étoiles.",
+      "default_other": "Chaque ligne, chaque colonne et chaque zone a exactement {{count}} étoiles.",
+      "fields_one": "Chaque ligne, chaque colonne et chaque terrain a exactement une ferme.",
+      "fields_many": "Chaque ligne, chaque colonne et chaque terrain a exactement {{count}} fermes.",
+      "fields_other": "Chaque ligne, chaque colonne et chaque terrain a exactement {{count}} fermes.",
+      "lamps": "Chaque ligne et chaque colonne a exactement une lampe à huile.",
+      "market": "Chaque ligne et chaque colonne a exactement un étal.",
+      "lotus": "Chaque ligne et chaque colonne a exactement un lotus.",
+      "cats": "Chaque ligne et chaque colonne a exactement un chat."
+    },
+    "name": {
+      "default": "Étoiles séparées",
+      "fields": "Les fermes",
+      "twinDefault": "Étoiles jumelles",
+      "twinFields": "Fermes jumelles",
+      "lamps": "Lampes à huile",
+      "market": "Le marché",
+      "lotus": "La mare aux lotus",
+      "cats": "Les chats du temple"
+    }
+  },
+  "pairPuzzle": {
+    "name": {
+      "mummies": "Le repos des momies",
+      "beetles": "Les bousiers"
+    },
+    "goal": {
+      "mummies": "Chaque sarcophage a une momie à côté de lui, et chaque ligne et colonne a exactement le nombre de momies écrit à côté.",
+      "beetles": "Chaque boule de bouse a un scarabée à côté d’elle, et chaque ligne et colonne a exactement le nombre de scarabées écrit à côté."
+    },
+    "rules": {
+      "mummies": {
+        "pair": "Chaque sarcophage a une momie juste au-dessus, en dessous, à gauche ou à droite, et chaque momie se repose à côté de son propre sarcophage.",
+        "count": "Le nombre à côté d’une ligne ou d’une colonne dit combien de momies elle a. Il devient vert quand la ligne en a exactement autant, et rouge quand ça ne peut plus marcher.",
+        "touch": "Deux momies ne peuvent jamais être côte à côte, même en diagonale.",
+        "enter": "Touche une case pour l’exclure, touche encore pour y coucher une momie, et encore une fois pour l’effacer. Fais glisser sur plusieurs cases pour les exclure d’un coup. On ne peut pas toucher les sarcophages."
+      },
+      "beetles": {
+        "pair": "Chaque boule de bouse a un scarabée juste au-dessus, en dessous, à gauche ou à droite, et chaque scarabée est à côté de sa propre boule à faire rouler.",
+        "count": "Le nombre à côté d’une ligne ou d’une colonne dit combien de scarabées elle a. Il devient vert quand la ligne en a exactement autant, et rouge quand ça ne peut plus marcher.",
+        "touch": "Deux scarabées ne peuvent jamais être côte à côte, même en diagonale.",
+        "enter": "Touche une case pour l’exclure, touche encore pour y mettre un scarabée, et encore une fois pour l’effacer. Fais glisser sur plusieurs cases pour les exclure d’un coup. On ne peut pas toucher les boules de bouse."
+      }
+    },
+    "hint": {
+      "mummies": {
+        "mistake": "Cette marque ne peut pas être juste.",
+        "touch": "Cette momie est posée, donc aucune autre ne peut être à côté, même en diagonale.",
+        "zeroLine.row": "Cette ligne n’a aucune momie, donc elle est toute vide.",
+        "zeroLine.col": "Cette colonne n’a aucune momie, donc elle est toute vide.",
+        "noAnchor": "Ces cases n’ont aucun sarcophage à côté, donc aucune momie ne peut se reposer ici.",
+        "lineFull.row_one": "Cette ligne a déjà sa momie.",
+        "lineFull.row_many": "Cette ligne a déjà ses {{count}} momies.",
+        "lineFull.row_other": "Cette ligne a déjà ses {{count}} momies.",
+        "lineFull.col_one": "Cette colonne a déjà sa momie.",
+        "lineFull.col_many": "Cette colonne a déjà ses {{count}} momies.",
+        "lineFull.col_other": "Cette colonne a déjà ses {{count}} momies.",
+        "lineTight.row_one": "Il ne reste qu’une case dans cette ligne pour sa momie.",
+        "lineTight.row_many": "Il reste exactement {{count}} cases dans cette ligne pour ses {{count}} momies.",
+        "lineTight.row_other": "Il reste exactement {{count}} cases dans cette ligne pour ses {{count}} momies.",
+        "lineTight.col_one": "Il ne reste qu’une case dans cette colonne pour sa momie.",
+        "lineTight.col_many": "Il reste exactement {{count}} cases dans cette colonne pour ses {{count}} momies.",
+        "lineTight.col_other": "Il reste exactement {{count}} cases dans cette colonne pour ses {{count}} momies.",
+        "onlyWay": "Ce sarcophage n’a plus qu’une case libre à côté de lui pour sa momie.",
+        "claimed": "Ce sarcophage a déjà sa momie, donc les cases à côté qu’aucun autre sarcophage ne peut utiliser restent vides.",
+        "lineBlock.rowsToCols_one": "Les lignes marquées ont une momie de plus que ce que leurs propres sarcophages peuvent donner, donc elle vient d’un sarcophage juste à côté.",
+        "lineBlock.rowsToCols_many": "Les lignes marquées ont {{count}} momies de plus que ce que leurs propres sarcophages peuvent donner, donc elles viennent de sarcophages juste à côté.",
+        "lineBlock.rowsToCols_other": "Les lignes marquées ont {{count}} momies de plus que ce que leurs propres sarcophages peuvent donner, donc elles viennent de sarcophages juste à côté.",
+        "lineBlock.colsToRows_one": "Les colonnes marquées ont une momie de plus que ce que leurs propres sarcophages peuvent donner, donc elle vient d’un sarcophage juste à côté.",
+        "lineBlock.colsToRows_many": "Les colonnes marquées ont {{count}} momies de plus que ce que leurs propres sarcophages peuvent donner, donc elles viennent de sarcophages juste à côté.",
+        "lineBlock.colsToRows_other": "Les colonnes marquées ont {{count}} momies de plus que ce que leurs propres sarcophages peuvent donner, donc elles viennent de sarcophages juste à côté.",
+        "wouldStrand.row": "Une momie ici ne laisserait plus de place à la ligne marquée pour les momies qu’il lui faut encore.",
+        "wouldStrand.col": "Une momie ici ne laisserait plus de place à la colonne marquée pour les momies qu’il lui faut encore.",
+        "wouldStrand.anchor": "Une momie ici ne laisserait plus aucune case au sarcophage marqué pour sa propre momie.",
+        "action": {
+          "ruleOut_one": "Exclus la case hachurée.",
+          "ruleOut_many": "Exclus les cases hachurées.",
+          "ruleOut_other": "Exclus les cases hachurées.",
+          "place_one": "Couche une momie sur la case hachurée.",
+          "place_many": "Couche une momie sur chaque case hachurée.",
+          "place_other": "Couche une momie sur chaque case hachurée."
+        }
+      },
+      "beetles": {
+        "mistake": "Cette marque ne peut pas être juste.",
+        "touch": "Ce scarabée est posé, donc aucun autre ne peut être à côté, même en diagonale.",
+        "zeroLine.row": "Cette ligne n’a aucun scarabée, donc elle est toute vide.",
+        "zeroLine.col": "Cette colonne n’a aucun scarabée, donc elle est toute vide.",
+        "noAnchor": "Ces cases n’ont aucune boule de bouse à côté, donc aucun scarabée ne peut être ici.",
+        "lineFull.row_one": "Cette ligne a déjà son scarabée.",
+        "lineFull.row_many": "Cette ligne a déjà ses {{count}} scarabées.",
+        "lineFull.row_other": "Cette ligne a déjà ses {{count}} scarabées.",
+        "lineFull.col_one": "Cette colonne a déjà son scarabée.",
+        "lineFull.col_many": "Cette colonne a déjà ses {{count}} scarabées.",
+        "lineFull.col_other": "Cette colonne a déjà ses {{count}} scarabées.",
+        "lineTight.row_one": "Il ne reste qu’une case dans cette ligne pour son scarabée.",
+        "lineTight.row_many": "Il reste exactement {{count}} cases dans cette ligne pour ses {{count}} scarabées.",
+        "lineTight.row_other": "Il reste exactement {{count}} cases dans cette ligne pour ses {{count}} scarabées.",
+        "lineTight.col_one": "Il ne reste qu’une case dans cette colonne pour son scarabée.",
+        "lineTight.col_many": "Il reste exactement {{count}} cases dans cette colonne pour ses {{count}} scarabées.",
+        "lineTight.col_other": "Il reste exactement {{count}} cases dans cette colonne pour ses {{count}} scarabées.",
+        "onlyWay": "Cette boule de bouse n’a plus qu’une case libre à côté d’elle pour son scarabée.",
+        "claimed": "Cette boule de bouse a déjà son scarabée, donc les cases à côté qu’aucune autre boule ne peut utiliser restent vides.",
+        "lineBlock.rowsToCols_one": "Les lignes marquées ont un scarabée de plus que ce que leurs propres boules peuvent donner, donc il vient d’une boule juste à côté.",
+        "lineBlock.rowsToCols_many": "Les lignes marquées ont {{count}} scarabées de plus que ce que leurs propres boules peuvent donner, donc ils viennent de boules juste à côté.",
+        "lineBlock.rowsToCols_other": "Les lignes marquées ont {{count}} scarabées de plus que ce que leurs propres boules peuvent donner, donc ils viennent de boules juste à côté.",
+        "lineBlock.colsToRows_one": "Les colonnes marquées ont un scarabée de plus que ce que leurs propres boules peuvent donner, donc il vient d’une boule juste à côté.",
+        "lineBlock.colsToRows_many": "Les colonnes marquées ont {{count}} scarabées de plus que ce que leurs propres boules peuvent donner, donc ils viennent de boules juste à côté.",
+        "lineBlock.colsToRows_other": "Les colonnes marquées ont {{count}} scarabées de plus que ce que leurs propres boules peuvent donner, donc ils viennent de boules juste à côté.",
+        "wouldStrand.row": "Un scarabée ici ne laisserait plus de place à la ligne marquée pour les scarabées qu’il lui faut encore.",
+        "wouldStrand.col": "Un scarabée ici ne laisserait plus de place à la colonne marquée pour les scarabées qu’il lui faut encore.",
+        "wouldStrand.anchor": "Un scarabée ici ne laisserait plus aucune case à la boule marquée pour son propre scarabée.",
+        "action": {
+          "ruleOut_one": "Exclus la case hachurée.",
+          "ruleOut_many": "Exclus les cases hachurées.",
+          "ruleOut_other": "Exclus les cases hachurées.",
+          "place_one": "Mets un scarabée sur la case hachurée.",
+          "place_many": "Mets un scarabée sur chaque case hachurée.",
+          "place_other": "Mets un scarabée sur chaque case hachurée."
+        }
+      }
+    }
+  },
+  "rushHour": {
+    "name": {
+      "default": "Le blocage",
+      "market": "La ruelle bouchée"
+    },
+    "goal": {
+      "default": "Fais sortir ton bloc par l’ouverture à droite.",
+      "market": "Fais sortir ton traîneau par l’ouverture au bout de la rue."
+    },
+    "rules": {
+      "default": {
+        "lanes": "Un bloc glisse seulement dans son couloir : jamais sur le côté, jamais hors du plateau.",
+        "shove": "Fais glisser un bloc pour le pousser. Il s’arrête quand quelque chose le bloque."
+      },
+      "market": {
+        "lanes": "Un traîneau glisse seulement dans le couloir où il est : jamais sur le côté, jamais hors de la rue.",
+        "shove": "Fais glisser un traîneau pour le pousser. Il s’arrête quand quelque chose le bloque."
+      }
+    },
+    "hint": {
+      "default": {
+        "drive": "Le chemin est libre jusque-là.",
+        "back": "Devant, rien ne bouge. Recule d’abord le tien.",
+        "clear": "Ce bloc est en travers de ton couloir.",
+        "room": "Rien ne peut bouger tant que celui-là n’a pas bougé.",
+        "push": {
+          "left": "Pousse-le à gauche, jusqu’au rond.",
+          "right": "Pousse-le à droite, jusqu’au rond.",
+          "up": "Pousse-le vers le haut, jusqu’au rond.",
+          "down": "Pousse-le vers le bas, jusqu’au rond."
+        }
+      },
+      "market": {
+        "drive": "Le couloir devant toi est libre jusque-là.",
+        "back": "Devant, rien ne bouge. Recule d’abord ton traîneau.",
+        "clear": "Ce chargement est en travers du couloir par où tu dois sortir.",
+        "room": "Rien ne peut bouger tant que celui-là est là.",
+        "push": {
+          "left": "Pousse-le à gauche, jusqu’au rond.",
+          "right": "Pousse-le à droite, jusqu’au rond.",
+          "up": "Pousse-le vers le haut de la rue, jusqu’au rond.",
+          "down": "Pousse-le vers le bas de la rue, jusqu’au rond."
+        }
+      }
+    }
+  },
+  "hidato": {
+    "rules": {
+      "default": {
+        "given": "Les nombres déjà dans les alvéoles font partie de l’énigme : ils ne bougent pas.",
+        "enter": "Touche un nombre pour reprendre la suite à partir de lui, puis touche une case vide qui le touche pour continuer. Ou fais glisser d’un coup sur les cases où passe la suite.",
+        "back": "Touche un nombre que tu as posé, puis touche-le encore pour l’enlever, avec tout ce qui ne tient plus qu’à lui. Faire partir la suite dans une autre direction fait pareil. Annuler reprend ton dernier coup."
+      },
+      "channel": {
+        "given": "Les champs qui ont déjà un nombre font partie de l’énigme : ils ne bougent pas.",
+        "enter": "Touche un champ avec un nombre pour reprendre l’eau à partir de lui, puis touche un champ sec à côté pour continuer à creuser. Ou fais glisser d’un coup sur les champs où passe le canal.",
+        "back": "Touche un champ que tu as creusé, puis touche-le encore pour le reboucher, avec tout le canal qui ne tient plus qu’à lui. Creuser dans une autre direction fait pareil. Annuler reprend ton dernier coup."
+      },
+      "scribe": {
+        "given": "Les chiffres écrits en rouge font partie de l’énigme : ils ne bougent pas.",
+        "enter": "Touche un chiffre pour reprendre le calame à partir de lui, puis touche une place vide à côté pour continuer à écrire. Ou fais glisser d’un coup le long de la ligne.",
+        "back": "Touche un chiffre que tu as écrit, puis touche-le encore pour le gratter, avec toute la ligne qui ne tient plus qu’à lui. Écrire dans une autre direction fait pareil. Annuler reprend ton dernier coup."
+      },
+      "chambers": {
+        "given": "Les salles qui ont déjà un nombre ont été creusées par les bâtisseurs : elles ne bougent pas.",
+        "enter": "Touche une salle avec un nombre pour reprendre le passage à partir d’elle, puis touche une salle fermée à côté pour percer le mur. Ou fais glisser d’un coup sur les salles où passe le passage.",
+        "back": "Touche une salle que tu as ouverte, puis touche-la encore pour la refermer, avec tout le passage qui ne tient plus qu’à elle. Percer dans une autre direction fait pareil. Annuler reprend ton dernier coup."
+      }
+    },
+    "goal": {
+      "default": "Chaque alvéole a un nombre, de 1 à {{last}}, et chaque nombre touche celui d’avant.",
+      "channel": "Un seul canal arrose toute la plaine : chaque champ a son tour, de 1 à {{last}}, et chacun est creusé à côté du champ d’avant.",
+      "scribe": "Une seule ligne de chiffres traverse la feuille sans s’arrêter : chaque place a un chiffre, de 1 à {{last}}, et chacun est à côté du chiffre d’avant.",
+      "chambers": "Un seul passage traverse tout le tombeau : chaque salle est ouverte à son tour, de 1 à {{last}}, et chacune est percée depuis la salle d’avant."
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": "Un de ces nombres ne peut pas être juste.",
+          "sandwich": "Le {{before}} et le {{after}} ne touchent qu’une seule case vide entre eux.",
+          "neighbourForced": "Le {{from}} n’a plus qu’une case vide à côté de lui.",
+          "onlyCell": "Il n’y a plus d’autre place dans les alvéoles pour le {{value}}.",
+          "onlyValue": "Aucun autre nombre ne peut arriver jusqu’à cette case."
+        },
+        "action": {
+          "place": "Mets {{value}} dans la case hachurée."
+        }
+      },
+      "channel": {
+        "reason": {
+          "mistake": "Un de ces nombres ne peut pas être juste.",
+          "sandwich": "Le {{before}} et le {{after}} ne touchent qu’un seul champ sec entre eux.",
+          "neighbourForced": "Il ne reste qu’un champ sec à côté du {{from}}.",
+          "onlyCell": "Aucun autre endroit de la plaine ne peut prendre le {{value}}.",
+          "onlyValue": "Aucun autre nombre ne peut arriver jusqu’à ce champ."
+        },
+        "action": {
+          "place": "Creuse {{value}} dans le champ hachuré."
+        }
+      },
+      "scribe": {
+        "reason": {
+          "mistake": "Un de ces chiffres ne peut pas être juste.",
+          "sandwich": "Le {{before}} et le {{after}} ne touchent qu’une seule place vide entre eux.",
+          "neighbourForced": "Il ne reste qu’une place vide à côté du {{from}}.",
+          "onlyCell": "Aucun autre endroit de la feuille ne peut prendre le {{value}}.",
+          "onlyValue": "Aucun autre chiffre ne peut arriver jusqu’à cette place."
+        },
+        "action": {
+          "place": "Écris {{value}} à la place hachurée."
+        }
+      },
+      "chambers": {
+        "reason": {
+          "mistake": "Un de ces nombres ne peut pas être juste.",
+          "sandwich": "Le {{before}} et le {{after}} ne touchent qu’une seule salle fermée entre eux.",
+          "neighbourForced": "Il ne reste qu’une salle fermée à côté du {{from}}.",
+          "onlyCell": "Aucun autre endroit du tombeau ne peut prendre le {{value}}.",
+          "onlyValue": "Aucun autre nombre ne peut arriver jusqu’à cette salle."
+        },
+        "action": {
+          "place": "Ouvre {{value}} dans la salle hachurée."
+        }
+      }
+    },
+    "name": {
+      "default": "La ruche",
+      "channel": "Le canal",
+      "scribe": "La feuille du scribe",
+      "chambers": "Les salles scellées"
+    }
+  },
+  "sudoku": {
+    "rules": {
+      "default": {
+        "chambers": "Les traits épais coupent la grille en six salles, de deux cases de large et trois de haut.",
+        "given": "Les nombres déjà gravés font partie de l’énigme : ils ne bougent pas.",
+        "enter": "Touche une case, puis un nombre. Le même nombre encore une fois l’enlève.",
+        "notes": "Prends le crayon pour noter les nombres qui peuvent encore aller dans une case. Annuler reprend ton dernier coup."
+      },
+      "papyrus": {
+        "chambers": "Les traits épais partagent la feuille en six cadres, de deux places de large et trois de haut.",
+        "given": "Les signes écrits à l’encre rouge font partie de l’énigme : ils ne bougent pas.",
+        "enter": "Touche une place, puis un signe. Le même signe encore une fois le gratte.",
+        "notes": "Prends le calame pour noter les signes qui peuvent encore aller à une place. Annuler reprend ton dernier coup."
+      }
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": {
+            "value": "Un des nombres ici ne peut pas être juste. Enlève-le et regarde encore.",
+            "note": "Les notes de cette case ont exclu le nombre qui va ici. Efface-les et recommence cette case."
+          },
+          "nakedSingle": "La ligne, la colonne et la salle de cette case ont déjà pris tous les autres nombres.",
+          "hiddenSingle": {
+            "row": "{{token}} ne va dans aucune autre case de cette ligne.",
+            "col": "{{token}} ne va dans aucune autre case de cette colonne.",
+            "box": "{{token}} ne va dans aucune autre case de cette salle."
+          },
+          "pointing": {
+            "row": "Dans la salle marquée, {{token}} ne peut aller que sur cette ligne.",
+            "col": "Dans la salle marquée, {{token}} ne peut aller que dans cette colonne."
+          },
+          "claiming": {
+            "row": "Sur la ligne marquée, {{token}} ne va que dans cette salle-là.",
+            "col": "Dans la colonne marquée, {{token}} ne va que dans cette salle-là."
+          }
+        },
+        "action": {
+          "place": "Mets {{token}} dans la case hachurée.",
+          "ruleOut_one": "Exclus {{token}} de la case hachurée.",
+          "ruleOut_many": "Exclus {{token}} des cases hachurées.",
+          "ruleOut_other": "Exclus {{token}} des cases hachurées."
+        }
+      },
+      "papyrus": {
+        "reason": {
+          "mistake": {
+            "value": "Un de ces signes ne peut pas être juste. Gratte-le et regarde encore.",
+            "note": "Les notes de cette place ont exclu le signe qui va ici. Efface-les et recommence cette place."
+          },
+          "nakedSingle": "La ligne, la colonne et le cadre de cette place ont déjà pris tous les autres signes.",
+          "hiddenSingle": {
+            "row": "{{token}} ne va à aucune autre place de cette ligne.",
+            "col": "{{token}} ne va à aucune autre place de cette colonne.",
+            "box": "{{token}} ne va à aucune autre place de ce cadre."
+          },
+          "pointing": {
+            "row": "Dans le cadre marqué, {{token}} ne peut aller que sur cette ligne.",
+            "col": "Dans le cadre marqué, {{token}} ne peut aller que dans cette colonne."
+          },
+          "claiming": {
+            "row": "Sur la ligne marquée, {{token}} ne va que dans ce cadre-là.",
+            "col": "Dans la colonne marquée, {{token}} ne va que dans ce cadre-là."
+          }
+        },
+        "action": {
+          "place": "Écris {{token}} à la place hachurée.",
+          "ruleOut_one": "Exclus {{token}} de la place hachurée.",
+          "ruleOut_many": "Exclus {{token}} des places hachurées.",
+          "ruleOut_other": "Exclus {{token}} des places hachurées."
+        }
+      }
+    },
+    "goal": {
+      "default": "Chaque ligne, chaque colonne et chaque salle montre chacun des six nombres une seule fois.",
+      "papyrus": "Chaque ligne, chaque colonne et chaque cadre montre chacun des six signes une seule fois."
+    },
+    "name": {
+      "default": "Six salles",
+      "papyrus": "Le registre du scribe"
+    }
+  },
+  "crocodile": {
+    "name": "La fosse aux crocodiles",
+    "goal": "Traverse la fosse jusqu’à l’autre rive.",
+    "rules": {
+      "want": "Chaque crocodile veut une réponse de la rangée de pierres derrière lui : la plus grande, ou la plus petite.",
+      "mark": "Sa gueule ouverte dit laquelle, et le signe à côté aussi : > s’ouvre vers la plus grande réponse, < vers la plus petite.",
+      "bite": "Si tu marches sur une autre pierre, il mord : tu perds de la vie et tu recommences depuis la rive."
+    },
+    "hint": {
+      "biggest": "Ce crocodile veut la plus grande réponse. C’est {{value}}.",
+      "smallest": "Ce crocodile veut la plus petite réponse. C’est {{value}}."
+    }
+  },
+  "canisters": {
+    "name": {
+      "default": "Les jarres",
+      "grain": "Les mesures à grain",
+      "oil": "De l’huile pour les lampes",
+      "wine": "La cave du marchand",
+      "natron": "Les vases canopes",
+      "ink": "La salle des scribes"
+    },
+    "goal": {
+      "default_one": "Mesure la quantité demandée, et dis quelle jarre la contient.",
+      "default_many": "Mesure chaque quantité demandée, l’une après l’autre, et dis quelle jarre la contient avant de passer à la suivante.",
+      "default_other": "Mesure chaque quantité demandée, l’une après l’autre, et dis quelle jarre la contient avant de passer à la suivante.",
+      "grain_one": "Mesure la quantité de grain demandée, et dis quelle mesure la contient.",
+      "grain_many": "Mesure chaque quantité de grain, l’une après l’autre, et dis quelle mesure la contient avant de passer à la suivante.",
+      "grain_other": "Mesure chaque quantité de grain, l’une après l’autre, et dis quelle mesure la contient avant de passer à la suivante.",
+      "oil_one": "Mesure l’huile demandée, et dis quelle jarre la contient.",
+      "oil_many": "Mesure chaque quantité d’huile, l’une après l’autre, et dis quelle jarre la contient avant de passer à la suivante.",
+      "oil_other": "Mesure chaque quantité d’huile, l’une après l’autre, et dis quelle jarre la contient avant de passer à la suivante.",
+      "wine_one": "Mesure le vin demandé, et dis quelle amphore le contient.",
+      "wine_many": "Mesure chaque quantité de vin, l’une après l’autre, et dis quelle amphore la contient avant de passer à la suivante.",
+      "wine_other": "Mesure chaque quantité de vin, l’une après l’autre, et dis quelle amphore la contient avant de passer à la suivante.",
+      "natron_one": "Mesure le natron demandé, et dis quel vase le contient.",
+      "natron_many": "Mesure chaque quantité de natron, l’une après l’autre, et dis quel vase la contient avant de passer à la suivante.",
+      "natron_other": "Mesure chaque quantité de natron, l’une après l’autre, et dis quel vase la contient avant de passer à la suivante.",
+      "ink_one": "Mesure l’encre demandée, et dis quel pot la contient.",
+      "ink_many": "Mesure chaque quantité d’encre, l’une après l’autre, et dis quel pot la contient avant de passer à la suivante.",
+      "ink_other": "Mesure chaque quantité d’encre, l’une après l’autre, et dis quel pot la contient avant de passer à la suivante."
+    },
+    "rules": {
+      "method": {
+        "sums": "Chaque quantité que tu peux faire, c’est deux nombres du banc additionnés ou soustraits : la taille d’une jarre, ce qu’il y a dedans, ou la place qui reste.",
+        "backwards": "Alors pars de la quantité demandée et remonte : quels deux nombres la font, et comment avoir ces deux-là en même temps ?"
+      },
+      "claim": "Quand tu as la quantité, touche « celle-ci ». Montrer le mauvais récipient coûte un coup.",
+      "legs": "Puis la quantité suivante, mesurée avec ce qui reste dans les récipients.",
+      "default": {
+        "moves": "Touche une jarre pour la prendre, puis touche une autre pour verser dedans. On arrête de verser quand la première est vide ou la deuxième pleine.",
+        "contents": "C’est toute l’eau qu’il y a : une jarre commence pleine, et on ne peut rien jeter ni rien ajouter.",
+        "levels": "Chaque jarre dit combien elle contient, et combien elle peut contenir quand elle est pleine."
+      },
+      "grain": {
+        "moves": "Touche une mesure pour la soulever, puis touche une autre pour y verser le grain. On arrête quand la première est vide ou la deuxième remplie jusqu’au bord.",
+        "contents": "C’est tout le grain qu’il y a : une mesure commence pleine, et on ne peut rien jeter ni rien ajouter du grenier.",
+        "levels": "Chaque mesure dit combien elle contient, et combien elle peut contenir jusqu’au bord."
+      },
+      "oil": {
+        "moves": "Touche une jarre pour la soulever, puis touche une autre pour verser dedans. On arrête de verser quand la première est vide ou la deuxième pleine.",
+        "contents": "C’est toute l’huile qu’il y a : une jarre commence pleine, et on ne peut rien jeter ni rien ajouter.",
+        "levels": "Chaque jarre dit combien elle contient, et combien elle peut contenir quand elle est pleine."
+      },
+      "wine": {
+        "moves": "Touche une amphore pour la soulever, puis touche une autre pour verser dedans. On arrête de verser quand la première est vide ou la deuxième pleine.",
+        "contents": "C’est tout le vin qu’il y a : une amphore commence pleine, et on ne peut rien renverser ni rien ajouter de la cave.",
+        "levels": "Chaque amphore dit combien elle contient, et combien elle peut contenir quand elle est pleine."
+      },
+      "natron": {
+        "moves": "Touche un vase pour le soulever, puis touche un autre pour y verser le natron. On arrête quand le premier est vide ou le deuxième rempli jusqu’au couvercle.",
+        "contents": "C’est tout le natron qu’il y a : un vase commence plein, et on ne peut rien jeter ni rien ajouter.",
+        "levels": "Chaque vase dit combien il contient, et combien il peut contenir jusqu’au couvercle."
+      },
+      "ink": {
+        "moves": "Touche un pot pour le soulever, puis touche un autre pour verser dedans. On arrête de verser quand le premier est vide ou le deuxième plein.",
+        "contents": "C’est toute l’encre qu’il y a : un pot commence plein, et on ne peut rien jeter ni en préparer d’autre.",
+        "levels": "Chaque pot dit combien il contient, et combien il peut contenir quand il est plein."
+      }
+    },
+    "hint": {
+      "goal": {
+        "leftover": "En remontant : {{amount}}, c’est {{content}} moins {{space}}. Une jarre avec {{content}} dedans, versée dans une jarre où il reste de la place pour {{space}}.",
+        "full": "En remontant : {{amount}}, c’est la taille d’une jarre, et {{a}} plus {{b}} font exactement ça.",
+        "sum": "En remontant : {{amount}}, c’est {{a}} plus {{b}}."
+      },
+      "claim": "Encore un seul versement. Ensuite, trouve quelle jarre la contient.",
+      "stuck": "À partir d’ici, tu ne peux plus mesurer {{target}} avec les coups qu’il te reste. Reprends un versement, ou recommence.",
+      "overBudget": "Tu n’as plus de coups. Reprends-en un, ou recommence et trouve le chemin plus court.",
+      "next": {
+        "leftover": "Le calcul d’avant : {{amount}}, c’est {{content}} versé dans une place pour {{space}}.",
+        "full": "Le calcul d’avant : une jarre pleine à {{amount}}, c’est {{a}} plus {{b}}.",
+        "sum": "Le calcul d’avant : {{amount}}, c’est {{a}} plus {{b}}."
+      }
+    },
+    "movesLeft_one": "encore {{count}} coup",
+    "movesLeft_many": "encore {{count}} coups",
+    "movesLeft_other": "encore {{count}} coups",
+    "legs": "{{done}} mesurées sur {{total}}",
+    "wanted": "À mesurer",
+    "claim": "celle-ci",
+    "claimAria": "Dire que le récipient de {{capacity}} contient la quantité"
+  },
+  "procession": {
+    "name": {
+      "default": "Les heures en ordre",
+      "funerary": "Une journée dans la vallée des artisans",
+      "cosmos": "La traversée de la nuit",
+      "water": "Le jour de la crue",
+      "trade": "Une journée sur le quai"
+    },
+    "goal": {
+      "default": "Fais glisser chaque chose qui se passe à son heure, jusqu’à ce que toutes les règles sous la journée soient respectées.",
+      "funerary": "Fais glisser chaque travail à son heure, jusqu’à ce que toutes les règles sous la journée soient respectées.",
+      "cosmos": "Fais glisser chaque lumière à son heure, jusqu’à ce que toutes les règles sous la nuit soient respectées.",
+      "water": "Fais glisser chaque travail à son heure, jusqu’à ce que toutes les règles sous la journée soient respectées.",
+      "trade": "Fais glisser chaque travail à son heure, jusqu’à ce que toutes les règles sous la journée soient respectées."
+    },
+    "rules": {
+      "default": {
+        "lengths": "Chaque ligne, c’est une chose qui se passe, et elle dure aussi longtemps que sa barre est large. Quand elle se passe, c’est à toi de trouver.",
+        "marks": "Une règle sous la journée devient rouge tant qu’elle n’est pas respectée. Touche-la pour entourer les lignes dont elle parle.",
+        "drag": "Fais glisser une barre le long de sa ligne. Elle ne sort jamais de la journée."
+      }
+    },
+    "hint": {
+      "default": {
+        "chain": "La place de cette ligne-là est déjà fixée, et celle-ci dépend d’elle.",
+        "squeeze": "Il ne reste pas beaucoup de journée, et c’est tout ce qui rentre.",
+        "apart": "Dans l’autre sens, ça ne rentre pas dans la journée.",
+        "split": "Essaie dans l’autre sens, et autre chose ne marche plus.",
+        "move": "Fais glisser la barre entourée sur les traits hachurés."
+      }
+    },
+    "events": {
+      "default": {
+        "0": "le feu",
+        "1": "la corvée d’eau",
+        "2": "la cuisson du pain",
+        "3": "la promenade en bateau",
+        "4": "la conduite des bœufs",
+        "5": "la garde de nuit"
+      },
+      "funerary": {
+        "0": "l’enduit",
+        "1": "le tracé de la grille",
+        "2": "la sculpture",
+        "3": "la peinture",
+        "4": "la dorure",
+        "5": "la pose de la porte"
+      },
+      "cosmos": {
+        "0": "la traversée du soleil",
+        "1": "le lever de l’étoile",
+        "2": "la veille de la lune",
+        "3": "le ciel ouvert",
+        "4": "l’aube",
+        "5": "le tour de l’année"
+      },
+      "water": {
+        "0": "la crue",
+        "1": "le creusage du canal",
+        "2": "le remplissage du bassin",
+        "3": "l’arrosage du champ",
+        "4": "la traversée en bac",
+        "5": "la moisson"
+      },
+      "trade": {
+        "0": "le tri des marchandises",
+        "1": "la vente du pain",
+        "2": "la vente de la bière",
+        "3": "la traversée en bac",
+        "4": "le transport des charges",
+        "5": "les comptes"
+      }
+    },
+    "marks": {
+      "default": {
+        "pin": "{{a}} commence à l’heure {{tick}}.",
+        "handoff": "{{a}} commence dès que {{b}} est fini.",
+        "link_one": "{{a}} commence {{count}} heure après la fin de {{b}}.",
+        "link_many": "{{a}} commence {{count}} heures après la fin de {{b}}.",
+        "link_other": "{{a}} commence {{count}} heures après la fin de {{b}}.",
+        "before": "{{a}} est fini avant que {{b}} commence.",
+        "apart": "{{a}} et {{b}} ne se passent jamais en même temps.",
+        "together": "{{a}} et {{b}} se passent un moment en même temps.",
+        "span_one": "Du premier début à la dernière fin, il y a {{count}} heure.",
+        "span_many": "Du premier début à la dernière fin, il y a {{count}} heures.",
+        "span_other": "Du premier début à la dernière fin, il y a {{count}} heures."
+      }
+    },
+    "door": {
+      "title": "La porte de la procession",
+      "hint": "Chaque dalle où tu marches libère sa tâche. Mets la journée en ordre, puis marche sur les dalles dans cet ordre.",
+      "read": "La journée est lue. Marche sur ses dalles dans cet ordre, en commençant par la première.",
+      "hintButton": "Indice"
+    }
+  },
+  "story": {
+    "invitation": "Parler",
+    "log": {
+      "empty": "Rien pour l’instant. Fez aura plein de choses à dire."
+    },
+    "speaker": {
+      "fez": "Fez",
+      "explorer": "Toi",
+      "ipi": "Ipi",
+      "henut": "Henut",
+      "priest": "Le prêtre",
+      "pharaoh": "Le pharaon",
+      "voice": "Une voix"
+    },
+    "wall": {
+      "wrong": "Quelqu’un a mal gravé le troisième signe. Il est faux depuis trois mille ans.",
+      "fixed": "C’est de nouveau son nom.",
+      "pick": "Mets le bon signe à sa place.",
+      "cannot": "Tu ne connais pas encore le signe qui va ici."
+    },
+    "sphinx": {
+      "wrong": "La même écriture que dehors, mais ici, le sable ne l’a jamais touchée. Deux signes encore bien nets, et une place vide où était le troisième.",
+      "fixed": "Voilà, c’est complet.",
+      "pick": "Mets le signe que tu portes dans la place vide.",
+      "cannot": "Deux signes que tu connais, et une place que tu ne peux pas remplir. Pas encore.",
+      "gap": "Le signe qui manque"
+    }
+  },
+  "lightbeamSwitch": {
+    "name": "La lumière qui tourne",
+    "invitation": "Tourner les miroirs",
+    "goal": "La lumière se pose dans un autel, et le passage en dessous s’ouvre.",
+    "rules": {
+      "shrines": "Un disque de lumière, et un autel au-dessus de chaque sortie de ce carrefour. Les miroirs au sol peuvent mener la lumière vers n’importe lequel.",
+      "doors": "La sortie que la lumière atteint s’ouvre, et les autres se ferment. Un chemin de lumière, une seule sortie.",
+      "returning": "Choisir ne te fait rien perdre. Reviens quand tu veux et envoie la lumière ailleurs : cette sortie-là s’ouvre, et celle-ci se ferme.",
+      "tap": "Touche un miroir pour le tourner. Touche-le encore pour le remettre."
+    },
+    "doorOpen": "Sortie {{way}} : ouverte",
+    "doorShut": "Sortie {{way}} : fermée",
+    "way": {
+      "n": "nord",
+      "e": "est",
+      "s": "sud",
+      "w": "ouest"
+    }
+  },
+  "handle": {
+    "name": "Le levier",
+    "invitation": "Tirer le levier",
+    "goal": "Le levier penche d’un côté ou de l’autre. Ce qu’un côté ouvre, l’autre le ferme.",
+    "left": "Vers la gauche",
+    "right": "Vers la droite"
+  },
+  "torch": {
+    "name": "La torche",
+    "invitation": "Allumer la torche",
+    "goal": "Une torche éteinte. Une fois allumée, on ne peut plus l’éteindre.",
+    "lit": "La torche brûle."
+  },
+  "gateFace": {
+    "title": "Une porte qui attend",
+    "hint": "Chaque signe doit briller avant que cette porte s’ouvre.",
+    "lit": "{{owner}} : allumé",
+    "unlit": "{{owner}} : pas encore",
+    "owner": {
+      "torch": "Torche",
+      "handle": "Levier",
+      "key": "Clé",
+      "web": "Un signe du sable",
+      "plateStone": "Une pierre sur une plaque",
+      "plateEmpty": "Une plaque restée vide",
+      "other": "Mécanisme"
+    },
+    "orderHint": "Marche sur les dalles dans cet ordre.",
+    "reset": "Recommencer",
+    "spoiled": "C’est raté : tu as marché sur une dalle dans le mauvais ordre.",
+    "tile": {
+      "unwalked": "Étape {{step}} : pas encore faite",
+      "inOrder": "Étape {{step}} : faite dans l’ordre",
+      "outOfOrder": "Étape {{step}} : faite dans le mauvais ordre"
+    }
+  },
+  "devLockEditor": {
+    "syntax": "Syntaxe",
+    "example": "Exemple",
+    "useExample": "Utiliser l’exemple",
+    "title": "Éditeur de serrures",
+    "notation": "Notation de la serrure",
+    "checks": "Vérifications",
+    "drawing": "Dessin",
+    "carveAndPlay": "Tailler et jouer",
+    "copyLink": "Copier le lien",
+    "copied": "Lien copié",
+    "failed": "Impossible de copier ; le lien est dans la barre d’adresse",
+    "backToEditor": "← Éditeur",
+    "close": "Fermer",
+    "open": "Éditeur de serrures",
+    "modeLock": "Serrure",
+    "modeWeb": "Réseau",
+    "webNotation": "Notation du réseau",
+    "openWeb": "Ouvrir un réseau",
+    "checking": "Vérification…",
+    "checkedIn": "vérifié en {{ms}} ms",
+    "worldCarved": "étages Génie taillés en {{ms}} ms, une seule fois",
+    "simulation": "Tirages",
+    "noSimulation": "Rien à simuler tant que chaque lieu n’existe pas dans le monde.",
+    "summary": "Résumé",
+    "stillBuried": "Encore enfoui à {{percent}} %",
+    "nothingBuried": "Rien d’enfoui",
+    "finishes": "se termine",
+    "stopsAt": "s’arrête à {{pct}} %",
+    "notOpenYet": "pas encore ouvert",
+    "pullAll": "Tirer tout ce qui est accessible",
+    "reset": "Réinitialiser",
+    "progress": "{{reachable}} accessibles · {{pulled}} pris sur {{total}}",
+    "allTaken": "Tout est tiré et pris.",
+    "potFront": "{{pulled}} tirés sur {{total}} · front à {{pct}} %",
+    "potOpen": "{{pulled}} tirés sur {{total}} · ouvert",
+    "keys": "Clés",
+    "keysNote": "chacune ouvre un sceau",
+    "log": "Ce qui s’est passé",
+    "logEmpty": "Rien de tiré pour l’instant.",
+    "logPull": "tire {{name}} dans {{at}}",
+    "logTake": "prend {{name}} dans {{at}}",
+    "logFront": "front de {{pot}} à {{pct}} %",
+    "logPotOpen": "{{pot}} ouvert",
+    "logSeal": "sceau dans {{at}} ouvert",
+    "logNew": "nouveau : {{names}}",
+    "pullPin": "tirer le levier {{name}}",
+    "takePin": "prendre la clé {{name}}",
+    "legendCleared": "dégagé",
+    "legendBuried": "enfoui",
+    "legendSeal": "sceau",
+    "legendPins": "● levier · ■ clé · petit = section latérale"
+  },
+  "camp": {
+    "title": "Camp",
+    "continue": {
+      "heading": "Expédition en cours",
+      "setOff": "En route",
+      "pyramid": "Pyramide {{level}} sur {{count}} · {{tier}}",
+      "tomb": "Tombeau · {{tier}}",
+      "empty": "Tout est ouvert sur ta carte"
+    },
+    "hint_one": "{{count}} ancien voyage a quelque chose de nouveau à découvrir",
+    "hint_many": "{{count}} anciens voyages ont quelque chose de nouveau à découvrir",
+    "hint_other": "{{count}} anciens voyages ont quelque chose de nouveau à découvrir",
+    "comingHome": {
+      "title": "De retour au camp",
+      "haulTitle": "Ce que tu rapportes de ce voyage",
+      "new": "NOUVEAU",
+      "unpack": "Déballer",
+      "toCamp": "Vers le camp"
+    },
+    "chapter": {
+      "subtitle": "Nouveau chapitre",
+      "title": "Une nouvelle pyramide apparaît",
+      "body": "Les voyages {{tier}} sont ouverts. Reprends ton souffle au camp et pars quand tu veux.",
+      "journeyNote": "Premier voyage {{tier}}",
+      "later": "Plus tard"
+    },
+    "close": "Fermer",
+    "entrance": {
+      "collection": "Collection",
+      "mosaic": "Mosaïque",
+      "journeys": "Tous les voyages",
+      "detectors": "Détecteurs"
+    },
+    "mapTable": {
+      "title": "Table des cartes",
+      "journeys": "Voyages"
+    }
+  },
+  "home": {
+    "haul": {
+      "times": "×{{count}}"
+    }
+  },
+  "journeys": {
+    "tierNeed": "Trouve ce trésor",
+    "tierProgress": "{{done}} sur {{total}} faits",
+    "tierLockedName": "Voyages {{tier}}",
+    "toggleTier": "Montrer ou cacher les voyages {{tier}}",
+    "now": "MAINTENANT",
+    "newDot": "Quelque chose de nouveau à découvrir",
+    "noteCurrentPyramid": "En cours · pyramide {{level}} sur {{count}}",
+    "noteCurrentTomb": "En cours · dans le tombeau",
+    "noteFinished": "Terminé",
+    "noteFinishedNews": "Terminé · quelque chose de nouveau à découvrir",
+    "noteOpen": "Pas encore visité",
+    "noteResumePyramid": "Déjà commencé · pyramide {{level}} sur {{count}}",
+    "noteResumeTomb": "Déjà commencé · dans le tombeau",
+    "needProgress": "{{unit}} : {{found}} sur {{required}}",
+    "showStops": "Montrer les lieux de {{name}}",
+    "stopPyramid": "Pyramide",
+    "stopTomb": "Lieu"
+  },
+  "newVersion": {
+    "title": "Une nouvelle version !",
+    "name": "Le jeu a beaucoup changé",
+    "body": "Alors ton voyage recommence. De nouveaux tombeaux, de nouvelles trouvailles et un camp à construire t’attendent."
+  },
+  "devPrefabPreview": {
+    "firstDoor": "Vers la première porte",
+    "stop": "Vers l’arrêt",
+    "secondDoor": "Vers la deuxième porte",
+    "doorsInUse_one": "{{count}} porte utilisée",
+    "doorsInUse_many": "{{count}} portes utilisées",
+    "doorsInUse_other": "{{count}} portes utilisées",
+    "walled": "{{count}} murées"
+  },
+  "devRoomEditor": {
+    "title": "Éditeur de salles",
+    "open": "Éditeur de salles",
+    "close": "Fermer",
+    "tier": "Niveau",
+    "catalogue": "Ouvrir une salle",
+    "notation": "Notation de la salle",
+    "copyLink": "Copier le lien",
+    "copyText": "Copier le texte",
+    "copied": "Copié",
+    "failed": "Impossible de copier dans le presse-papiers",
+    "palette": "Palette",
+    "unpainted": "pas encore dessiné",
+    "layout": "Disposition",
+    "mirrored": "(en miroir)",
+    "fill_one": "Remplissage ({{count}} choix)",
+    "fill_many": "Remplissage ({{count}} choix)",
+    "fill_other": "Remplissage ({{count}} choix)",
+    "fromDoor": "Marcher depuis",
+    "toDoor": "Marcher vers",
+    "automatic": "Automatique",
+    "direction": {
+      "n": "Porte nord",
+      "e": "Porte est",
+      "s": "Porte sud",
+      "w": "Porte ouest"
+    },
+    "checks": "Vérifications",
+    "sound": "La salle passe ses vérifications",
+    "tierDisagrees": "L’en-tête dit niveau {{header}}, dessiné ici en {{picked}}",
+    "undo": "Annuler",
+    "drawing": "Dessin",
+    "tool": {
+      "select": "Choisir",
+      "wall": "Mur",
+      "floor": "Sol",
+      "door": "Place de porte",
+      "stop": "Arrêt",
+      "chest": "Coffre",
+      "portal": "Portail",
+      "mechanism": "Mécanisme",
+      "erase": "Effacer",
+      "copy": "Dessiner {{letter}}"
+    },
+    "againstWall": "Les objets posés sont contre le mur nord",
+    "dropHint": "Fais glisser un élément de la palette sur une case ; il prend sa propre taille",
+    "newLayout": "Nom de la nouvelle disposition",
+    "addLayout": "Copier comme disposition",
+    "inspector": {
+      "title": "Place {{letter}}",
+      "optional": "Facultatif",
+      "kinds": "Types",
+      "counted": "N’en remplir que quelques-uns",
+      "take": "Prendre",
+      "of": "sur",
+      "per": "par",
+      "perNone": "chacun séparément",
+      "drawAnother": "En dessiner un autre",
+      "close": "Fermer"
+    },
+    "refused": {
+      "notFree": "Pas sur le sol libre dans la salle",
+      "wallRow": "Une place de mur est sur la première rangée contre le mur nord",
+      "northWall": "Un objet mural est accroché au mur nord",
+      "floorOnRing": "Le bord extérieur ne prend que des murs et des places de porte",
+      "doorInside": "Une place de porte est sur le bord extérieur",
+      "keepStop": "L’arrêt reste : pose-le ailleurs pour le déplacer",
+      "noLetter": "Toutes les lettres sont prises",
+      "layoutName": "Donne à la disposition un nom qu’aucune autre n’a",
+      "notation": "La notation le refuse : {{message}}"
+    },
+    "layer": {
+      "wall": "contre le mur",
+      "floor": "sol",
+      "ground": "terre",
+      "wallItem": "objet mural"
+    },
+    "cell": "Case {{row}},{{col}} : {{what}}",
+    "cellWhat": {
+      "wall": "mur",
+      "floor": "sol libre",
+      "door": "place de porte",
+      "place": "{{letter}}, {{kinds}}"
+    },
+    "rewrites": "Dessiner réécrit le texte : tous les commentaires vont en haut"
+  }
+}

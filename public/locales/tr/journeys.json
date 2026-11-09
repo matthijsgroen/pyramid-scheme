@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Sfenks'te Şafak",
+    "description": "Büyük Sfenks ve ayaklarının dibindeki yazı. Bugün yaşayan hiç kimse onu okuyamıyor. Harita diyor ki: buradan başla."
+  },
+  "starter_2": {
+    "name": "Papirüs Tüccarının Yolu",
+    "description": "Nil boyunca uzanan bir ticaret yolu. Kenarında tüccarların ambarları var. Birkaçı hiç boşaltılmamış."
+  },
+  "starter_3": {
+    "name": "Bastet Tapınağı",
+    "description": "Bastet'in tapınağı. Buradaki kediler kutsaldı. Her yıl yapılan bayram Mısır'ın en büyüğüydü: tekneler, müzik, her şey!"
+  },
+  "starter_4": {
+    "name": "Kâtipler Okulu",
+    "description": "Kâtiplerin okulu. Mısır yazmayı burada öğrendi. Sınıflar hâlâ kumun altında."
+  },
+  "starter_treasure_tomb": {
+    "name": "Unutulmuş Tüccar Zulası",
+    "description": "Bir kralın değil, bir tüccarın kileri: üst üste dizilmiş, mühürlenmiş, etiketlenmiş testiler. Aşağıda kavga edecek kimse de yok.",
+    "mapHint": "Bu parçada bir pazar yolu ve bir kiler kapısı çizili. Bir tüccarın saklandığı yer, daha fazlası değil."
+  },
+  "junior_1": {
+    "name": "Kutsal İbislerin Göçü",
+    "description": "Bataklık ülkesi ve içinde yürüyen ibisler. Mısırlılar bu kuşları izlerdi: onlar geri gelince, Nil taşacak demekti."
+  },
+  "junior_2": {
+    "name": "Ustalar Vadisi",
+    "description": "Deir el-Medina. Mezar yapan ustalar burada yaşardı. Bir kral mezarına giren her şey önce burada, kalıplarda yapılırdı."
+  },
+  "junior_3": {
+    "name": "Thoth Tapınağı",
+    "description": "Thoth'un tapınağı. Yazıyı o buldu, kayıtları o tuttu, hesapları o yaptı. Yani aşağı yukarı bizim yaptığımız şeyleri!"
+  },
+  "junior_4": {
+    "name": "İskenderiye Feneri",
+    "description": "İskenderiye'nin Pharos'u. Tepesinde bütün gece yanan bir ateş vardı. Denizciler kıyıyı bir günlük yoldan görürdü."
+  },
+  "junior_treasure_tomb": {
+    "name": "Soylunun Gizli Odası",
+    "description": "Soylu bir kadının yerden tavana boyanmış odası. Paranın alabileceği en güzel kopyaları almış, ama bunu hiç kimseye söylememiş.",
+    "mapHint": "İnce mürekkep, köşede armalı bir mühür. Önemli biri bu odanın unutulmasını istemiş."
+  },
+  "expert_1": {
+    "name": "Krallar Vadisi",
+    "description": "Krallar Vadisi. Piramit yapmayı bıraktılar ve kral mezarlarını tek bir vadiye sakladılar. Hem de piramit şeklinde bir tepenin altına."
+  },
+  "expert_2": {
+    "name": "Karnak Tapınakları",
+    "description": "Karnak'a iki bin yıl boyunca hep yeni şeyler eklendi. Sadece büyük salonda yüz otuz dört sütun var ve hepsi oymalı."
+  },
+  "expert_3": {
+    "name": "Nil Deltası Keşfi",
+    "description": "Nil'in kollara ayrılıp yeşil yeşil yayıldığı yer. Sobek'in ülkesi: papirüs, balık ve tapılıp beslenen timsahlar."
+  },
+  "expert_4": {
+    "name": "Djoser Piramidi",
+    "description": "Djoser'in basamaklı piramidi. Bu büyüklükte taştan yapılmış ilk yapı. Mimarı Imhotep sonunda bir tanrı gibi anıldı."
+  },
+  "expert_treasure_tomb": {
+    "name": "Başrahibin Hazinesi",
+    "description": "Bir başrahibin hazine odası, adak zemininin altında. Aşağıdaki her şey bir tanrıya verilmiş ve bir daha hiç çıkarılmamış.",
+    "mapHint": "Çizgiler bir tapınak alanını gösteriyor. Bir de adak zemininin altına inen bir merdiveni."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "En Kutsal Oda",
+    "description": "Tapınağın tam ortasındaki mühürlü oda. Başrahip buraya günde bir kez girerdi: tanrıyı yıkamak ve giydirmek için.",
+    "mapHint": "Koridorlar tapınak odalarının yanından mühürlü bir kapıya gidiyor. O kapıdan sadece en yüksek rahipler geçerdi."
+  },
+  "master_1": {
+    "name": "Büyük Giza Piramidi",
+    "description": "Büyük Piramit. Yirmi yıl boyunca taş taşındı. Yanında koca bir kasaba vardı, işçileri ekmekle ve birayla doyururdu."
+  },
+  "master_2": {
+    "name": "Ölüler Kitabı",
+    "description": "Tek bir kitap değil, sipariş üzerine yazılan bir büyü takımı. Ucuz olanlarda senin adının yazılacağı yer boş bırakılırdı."
+  },
+  "master_3": {
+    "name": "Firavunların Laneti",
+    "description": "O ünlü laneti 1923'te gazeteler uydurdu. Mısırlılar mezarlarını kapılarla ve bir sürü kâğıt işiyle korurdu."
+  },
+  "master_4": {
+    "name": "Nefertari'nin Mezarı",
+    "description": "Nefertari'nin mezarı, Mısır'ın en güzel boyanmış odası. Renkler taştan öğütülmüş: azurit, malakit, aşı boyası."
+  },
+  "master_treasure_tomb": {
+    "name": "Firavunun Gizli Hazinesi",
+    "description": "Bir kralın özel hazinesi, haritaların bittiği yerde. Onunla birlikte toprağa ne girdiyse hâlâ orada.",
+    "mapHint": "Bir kenarda bir kral kartuşu var. Yol çok uzakta, açık kumun altında bitiyor."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Osiris'in Salonu",
+    "description": "Osiris'in salonu. O, taşkının ve buğdayın tanrısıdır. Burada toprağın altına giren her şeyin geri gelmesi beklenir.",
+    "mapHint": "Kral odalarının altında harita hep aşağı iniyor. Ölüler için yapılan törenlerle süslenmiş bir salona kadar."
+  },
+  "wizard_1": {
+    "name": "Ra'nın Güneş Yolculuğu",
+    "description": "Ra gün batınca dünyanın altına iner ve on iki saatlik karanlığı geçmesi gerekir. Mısırlılar her saatte ne olduğunu yazmıştır."
+  },
+  "wizard_2": {
+    "name": "Memnon Heykelleri",
+    "description": "III. Amenhotep'in oturan iki dev heykeli. Yunanlılar onları başka biri sandı ve o ad iki bin yıl boyunca kaldı."
+  },
+  "wizard_3": {
+    "name": "Ma'at'ın Odası",
+    "description": "Ma'at'ın odası. O, her şeyin düzenidir. Onun tek devekuşu tüyü, her şeyin tartıldığı ölçüdür."
+  },
+  "wizard_4": {
+    "name": "Sonsuz Piramit",
+    "description": "Dışı tuz gibi beyaz, cilalı kireçtaşıydı. O kadar düzgün döşenmişti ki bir günlük yoldan parladığını görebilirdin."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Tanrıların Odası",
+    "description": "Tapınağın tanrılara ait şeyleri sakladığı yer. Elinde doğru şey olmadan kimse buraya alınmazdı.",
+    "mapHint": "Bu parçadaki hiçbir işaret insanların dünyasına ait değil. Ne gösteriyorsa, onu oraya tanrılar koymuş."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Evrenin Güçleri Diyarı",
+    "description": "Tavanda yıldız haritaları var. Ölüler gece saati okuyabilsin diye boyanmışlar. Kuyuda hâlâ birinin ipi asılı.",
+    "mapHint": "Tanrıların odasını geçince çizgiler yıldız yollarına ayrılıyor. Orada hayatın ve kargaşanın güçleri kutsal eşyalar olarak saklanıyor."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Sonsuzluk Tahtı",
+    "description": "Ortada tek bir koltuk, çevresinde kırk iki yargıç. Her biri bir soru sorar ve senin hepsine \"hayır\" demen gerekir.",
+    "mapHint": "Bu parçadaki bütün yıldız yolları tek bir koltukta buluşuyor, tanrılar diyarının tam ortasında."
+  }
+}

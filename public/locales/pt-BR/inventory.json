@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Rá",
+      "description": "Rei dos deuses e senhor do sol. Todo dia ele navega pelo céu no seu barco do sol."
+    },
+    "d2": {
+      "name": "Anúbis",
+      "description": "Deus com cabeça de chacal. Ele cuida das múmias, da vida depois da morte e protege os mortos."
+    },
+    "d3": {
+      "name": "Hórus",
+      "description": "Deus do céu com cabeça de falcão, protetor dos faraós. Filho de Osíris e Ísis."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "Deus com cabeça de íbis. Deus da sabedoria, da escrita e do saber, que guarda os registros dos deuses."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Deusa gata da proteção e da alegria. Ela afasta os espíritos maus."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Deus crocodilo do rio Nilo, da fartura e da coragem na guerra."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Deus besouro escaravelho do renascer. Ele rola o sol pelo céu."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Deusa cobra, protetora do Baixo Egito e sinal do poder dos reis."
+    },
+    "d9": {
+      "name": "Ísis",
+      "description": "Deusa da magia, das mães e da cura, esposa fiel de Osíris."
+    },
+    "d10": {
+      "name": "Osíris",
+      "description": "Deus do mundo dos mortos e do renascer, juiz dos mortos."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "Deus da bagunça, das tempestades e do deserto. Irmão e rival de Osíris."
+    },
+    "d12": {
+      "name": "Néftis",
+      "description": "Deusa do luto, que protege os mortos. Irmã de Ísis."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Deus criador e padroeiro dos artesãos e construtores. Ele criou as coisas só de falar o nome delas."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Deusa leoa da guerra e da cura. Uma protetora feroz que também sabia curar doenças."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Deusa vaca do amor, da música e das mães, que cuidava dos faraós."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Faraó",
+      "description": "O rei do Egito. Ele era visto como um deus vivo, uma ponte entre as pessoas e os deuses."
+    },
+    "p2": {
+      "name": "Sumo sacerdote",
+      "description": "O chefe dos templos. Fazia os rituais sagrados e mantinha a ordem dos deuses."
+    },
+    "p3": {
+      "name": "Escriba",
+      "description": "Alguém que sabia ler e escrever. Guardava os registros e o saber."
+    },
+    "p4": {
+      "name": "Arquiteto",
+      "description": "Mestre construtor que desenhava pirâmides, templos e monumentos feitos para durar para sempre."
+    },
+    "p5": {
+      "name": "General",
+      "description": "Chefe do exército, que protegia as fronteiras do Egito."
+    },
+    "p6": {
+      "name": "Médico",
+      "description": "Curandeiro que usava remédios e magia para curar os doentes."
+    },
+    "p7": {
+      "name": "Embalsamador",
+      "description": "Artesão sagrado que preparava alguém para a viagem até a vida depois da morte."
+    },
+    "p8": {
+      "name": "Agricultor",
+      "description": "Plantava a comida do Egito nas terras férteis à beira do Nilo, para alimentar o reino."
+    },
+    "p9": {
+      "name": "Artesão",
+      "description": "Fazia objetos lindos, joias e obras de arte para nobres e deuses."
+    },
+    "p10": {
+      "name": "Mercador",
+      "description": "Comerciante que trazia coisas raras de terras distantes."
+    },
+    "p11": {
+      "name": "Vizir",
+      "description": "O ajudante principal do faraó, que cuidava do governo."
+    },
+    "p12": {
+      "name": "Oráculo",
+      "description": "Profeta sagrado que entendia as mensagens dos deuses e previa o futuro."
+    },
+    "p13": {
+      "name": "Marinheiro",
+      "description": "Navegava pelo Nilo e pelo mar, levando gente e mercadorias."
+    },
+    "p14": {
+      "name": "Pedreiro",
+      "description": "Trabalhava a pedra, entalhava hieróglifos e construía os grandes monumentos do Egito."
+    },
+    "p15": {
+      "name": "Guardião",
+      "description": "Protegia lugares sagrados e tumbas, para que os mortos descansassem em paz para sempre."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Hipopótamo",
+      "description": "Bicho forte do rio Nilo, temido pela força e por defender o seu pedaço do rio."
+    },
+    "a2": {
+      "name": "Leão",
+      "description": "Rei dos animais, sinal do poder dos reis e da força dos deuses no deserto."
+    },
+    "a3": {
+      "name": "Elefante",
+      "description": "Animal enorme das terras do sul, admirado pela sabedoria e pela boa memória."
+    },
+    "a4": {
+      "name": "Gazela",
+      "description": "Moradora do deserto, rápida e elegante."
+    },
+    "a5": {
+      "name": "Macaco",
+      "description": "Bicho esperto ligado a Thoth. Representa a inteligência e as travessuras."
+    },
+    "a6": {
+      "name": "Peixe",
+      "description": "Animais sagrados do Nilo, que davam comida e eram sinal de fartura."
+    },
+    "a7": {
+      "name": "Ganso",
+      "description": "Ave sagrada dos pântanos do Nilo, ligada às histórias da criação do mundo e à alma."
+    },
+    "a8": {
+      "name": "Abelha",
+      "description": "Sinal do Baixo Egito e do poder do rei. Ela faz o mel precioso."
+    },
+    "a9": {
+      "name": "Tartaruga",
+      "description": "Bicho antigo e sábio, que leva o peso do mundo no casco."
+    },
+    "a10": {
+      "name": "Sapo",
+      "description": "Sinal de renascer e de fartura. Aparece quando o Nilo enche e traz vida."
+    },
+    "a11": {
+      "name": "Abutre",
+      "description": "Ave sagrada do Alto Egito, a forma na terra da deusa protetora Nekhbet."
+    },
+    "a12": {
+      "name": "Coruja",
+      "description": "Caçadora sábia da noite, que guarda saberes escondidos e segredos antigos."
+    },
+    "a13": {
+      "name": "Carneiro",
+      "description": "Animal sagrado de Amon-Rá, sinal do poder dos deuses e de liderança."
+    },
+    "a14": {
+      "name": "Girafa",
+      "description": "Bicho alto e elegante das terras do sul, que quase alcança o céu com o pescoço comprido."
+    },
+    "a15": {
+      "name": "Chacal",
+      "description": "Bicho do deserto que guia até a vida depois da morte. Servo de Anúbis."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Sinal da vida eterna. Os deuses e os faraós muitas vezes seguram um."
+    },
+    "art2": {
+      "name": "Olho de Hórus",
+      "description": "Sinal de proteção, de poder do rei e de boa saúde, ligado ao deus do céu Hórus."
+    },
+    "art3": {
+      "name": "Sistro",
+      "description": "Instrumento musical usado nas festas dos templos, ligado à deusa Hathor."
+    },
+    "art4": {
+      "name": "Pilar Djed",
+      "description": "Sinal de firmeza e de renascer, muitas vezes ligado a Osíris."
+    },
+    "art5": {
+      "name": "Cartucho",
+      "description": "Um oval com o nome de um faraó escrito em hieróglifos. Protege o nome dele para sempre."
+    },
+    "art6": {
+      "name": "Vaso canópico",
+      "description": "Vaso sagrado com a cabeça de um guardião na tampa. Quatro deles ficavam em volta de um caixão, de vigia."
+    },
+    "art7": {
+      "name": "Cetro",
+      "description": "Bastão de poder que os deuses e faraós carregavam para mostrar que mandavam."
+    },
+    "art9": {
+      "name": "Pirâmide",
+      "description": "Tumba eterna e porta para a vida depois da morte, feita para durar para sempre."
+    },
+    "art10": {
+      "name": "Barco do sol",
+      "description": "Barco sagrado que leva o deus do sol, Rá, pelo céu, do amanhecer ao anoitecer."
+    },
+    "art11": {
+      "name": "Obelisco",
+      "description": "Pilar alto de pedra com uma pontinha de pirâmide, apontando para o céu em honra dos deuses."
+    },
+    "art12": {
+      "name": "Cajado e mangual",
+      "description": "Objetos do faraó. Mostram que ele é o pastor e protetor do Egito."
+    },
+    "art14": {
+      "name": "Flor de lótus",
+      "description": "Sinal de renascer e do sol. Ela sai limpinha da água barrenta do Nilo."
+    },
+    "art15": {
+      "name": "Coroa com ureu",
+      "description": "Coroa do faraó com uma cobra protetora na frente, para a proteção dos deuses."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Folha de junco",
+      "description": "Um só junco, que vale o som i. Junte ele ao nome de um deus e vira nome de gente: Hórus vira Hori, o de Hórus."
+    }
+  }
+}

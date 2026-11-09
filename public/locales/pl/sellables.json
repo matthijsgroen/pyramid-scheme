@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Kamień",
+    "bronze": "Brąz",
+    "silver": "Srebro",
+    "gold": "Złoto",
+    "divine": "Boskie"
+  },
+  "sell_stone_1": {
+    "name": "Obtłuczona skorupa",
+    "description": "Kawałek rozbitego garnka. Pisarz ćwiczył na nim litery, ale są już tak blade, że nic nie da się przeczytać."
+  },
+  "sell_stone_2": {
+    "name": "Pęknięty gliniany dzban",
+    "description": "Dzban na zboże albo piwo. Przez setki lat pękł z jednej strony."
+  },
+  "sell_stone_3": {
+    "name": "Zdarty sandał z trzciny",
+    "description": "Upleciony z papirusu. Podeszwa jest cieniutka, bo jakiś robotnik chodził w nim codziennie, bardzo dawno temu."
+  },
+  "sell_stone_4": {
+    "name": "Wyblakły kawałek lnu",
+    "description": "Podarty pasek zwykłego lnu. Takim płótnem owijano zmarłych bez końca. Albo łatano nim żagle."
+  },
+  "sell_stone_5": {
+    "name": "Złamany krzemienny nóż",
+    "description": "Nóż z krzemienia z odłamanym czubkiem. Tani do zrobienia, jeszcze tańszy do wymiany."
+  },
+  "sell_bronze_1": {
+    "name": "Wygięty brązowy amulet",
+    "description": "Tani amulet na szczęście. Odlany krzywo i nikt go nigdy nie poprawił."
+  },
+  "sell_bronze_2": {
+    "name": "Zaśniedziałe brązowe lusterko",
+    "description": "Kiedyś tak błyszczało, że można było się w nim przejrzeć. Teraz jest zielone i mętne ze starości."
+  },
+  "sell_bronze_3": {
+    "name": "Tępy brązowy haczyk",
+    "description": "Haczyk rybaka. Wpadł do Nilu na długo przed zamknięciem grobowca."
+  },
+  "sell_bronze_4": {
+    "name": "Mały brązowy dzwoneczek",
+    "description": "Miał wisieć na drzwiach świątyni albo na kostce tancerki. Teraz dzwoni jakoś fałszywie."
+  },
+  "sell_bronze_5": {
+    "name": "Ciemny brązowy pierścionek",
+    "description": "Zwykła obrączka, na palec, który dawno zamienił się w proch."
+  },
+  "sell_silver_1": {
+    "name": "Ciemny srebrny ankh",
+    "description": "Znak życia, zmatowiały po setkach lat pod ziemią."
+  },
+  "sell_silver_2": {
+    "name": "Srebrny patyczek do kohlu",
+    "description": "Cienki pręcik, którym bogaci malowali sobie oczy. Czarnej farby dawno już nie ma."
+  },
+  "sell_silver_3": {
+    "name": "Wgnieciona srebrna miseczka",
+    "description": "Mała miseczka na dary. Zgniotła się z jednej strony, kiedy sufit w końcu się zawalił."
+  },
+  "sell_silver_4": {
+    "name": "Srebrna spinka do włosów",
+    "description": "Prosta, bez ozdób. Kiedyś przytrzymywała włosy kogoś, czyje imię zaginęło."
+  },
+  "sell_silver_5": {
+    "name": "Zdarta srebrna bransoletka",
+    "description": "Cienka srebrna obręcz z popsutym zapięciem. Za skromna dla szlachcica, za ładna dla robotnika."
+  },
+  "sell_gold_1": {
+    "name": "Mały złoty koralik",
+    "description": "Jeden koralik z naszyjnika zmarłego. Reszta rozsypała się dawno temu."
+  },
+  "sell_gold_2": {
+    "name": "Kawałek złotego płatka",
+    "description": "Skrawek złota zdrapany z twarzy posągu przez złodziei grobów, setki lat przed tobą."
+  },
+  "sell_gold_3": {
+    "name": "Cienki złoty kolczyk",
+    "description": "Wyklepany na cieniutko, żeby złota szlachcica starczyło na więcej."
+  },
+  "sell_gold_4": {
+    "name": "Skorupa ze złotymi plamkami",
+    "description": "Kawałek pozłacanego tynku. Wciąż trzymają się go plamki prawdziwego złota."
+  },
+  "sell_gold_5": {
+    "name": "Obtłuczony złoty sygnet",
+    "description": "Pierścień z pieczęcią. Wzór jest tak starty, że nikt już nie wie, do kogo należał."
+  },
+  "sell_divine_1": {
+    "name": "Wyblakły skarabeusz z lapisu",
+    "description": "Wyrzeźbiony z drogocennego lapis lazuli, sprowadzonego z daleka dla faraona. Przez wieki kolor wyblakł."
+  },
+  "sell_divine_2": {
+    "name": "Amulet-oko z karneolu",
+    "description": "Oko ochronne z czerwonego jak krew karneolu. Miało odpędzać pecha w zaświatach."
+  },
+  "sell_divine_3": {
+    "name": "Kawałek turkusowej mozaiki",
+    "description": "Jedna płytka z rozbitej mozaiki. Kiedyś była częścią obrazu boga na ścianie świątyni."
+  },
+  "sell_divine_4": {
+    "name": "Odłamek alabastrowego dzbana",
+    "description": "Kawałek dzbana, w którym trzymano narządy faraona. Drogi kamień do ponurej roboty."
+  },
+  "sell_divine_5": {
+    "name": "Obsydianowy nóż obrzędowy",
+    "description": "Szkło z wulkanu, naostrzone do obrzędów. Nigdy nie służyło do walki, tylko do świątyni."
+  }
+}

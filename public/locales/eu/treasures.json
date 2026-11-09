@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Irristatu altxorra harriaren gainera, hura irekitzeko",
+    "alsoAvailable": "Badaude, baita ere:"
+  },
+  "perks": {
+    "max-health": "+½ bihotz zure osasun-mugari",
+    "armor": "Tranpek min gutxiago egiten dute",
+    "trap-insight": "+1 s denbora duten tranpetan",
+    "pack-mule": "Ur-zahato batek bi bihotz sendatzen ditu",
+    "compass": "Iparrorratzaren zatia",
+    "detection": "Korridore-bilatzailearen zatia",
+    "tier-unlock": "{{tier}} mailako espedizioak irekitzen ditu",
+    "tier-coming-soon": "{{tier}} mailako espedizioak geroago iritsiko dira",
+    "location-key": "Beste hilobi bat erakusten du",
+    "partOf": "{{count}} / {{total}}"
+  },
+  "tiers": {
+    "stone": "Harria",
+    "bronze": "Brontzea",
+    "silver": "Zilarra",
+    "gold": "Urrea",
+    "divine": "Jainkotiarra"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Zilarrezko debena",
+      "description": "Antzinako Egiptoko zilarrezko txanpona. Merkatariek Niloaren ondoan erosteko eta saltzeko erabiltzen zuten."
+    },
+    "t2": {
+      "name": "Papiro-bilkaria",
+      "description": "Merkatari baten idazkia, merkataritza-bideak eta zama preziatuen zerrendak dituena."
+    },
+    "t3": {
+      "name": "Bolizko orrazia",
+      "description": "Bolizko orrazi landu-landua. Herrialde urrunetatik ekarritako luxuzko gauza."
+    },
+    "t4": {
+      "name": "Zeramikazko olio-lanpara",
+      "description": "Olio-lanpara xume baina dotorea, merkatariaren etxea argitzeko."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Urrezko eskumuturrekoa",
+      "description": "Harri preziatuz apaindutako urrezko eskumuturreko ederra. Egiptoko nobleek janzten zuten."
+    },
+    "t6": {
+      "name": "Zeremonietako daga",
+      "description": "Kirten bitxidun errito-daga, nobleen zeremonietan erabilia."
+    },
+    "t7": {
+      "name": "Jadezko kakalardoa",
+      "description": "Jadezko kakalardo-amuleto babeslea. Berriz jaiotzearen eta betiko bizitzaren ikurra."
+    },
+    "t8": {
+      "name": "Alabastrozko ontzi kanopikoa",
+      "description": "Alabastrozko ontzi dotorea, olio eta lurrin preziatuak gordetzeko."
+    },
+    "t9": {
+      "name": "Abanozko makila",
+      "description": "Abanozko makila leundua, gainean urrezko ankh bat duena."
+    },
+    "t10": {
+      "name": "Lapislazulizko lepokoa",
+      "description": "Lapislazuli arraroz egindako lepoko zoragarria. Aberatsek asko maite zuten."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Ankh sakratua",
+      "description": "Urrezko ankh bat, betiko bizitzaren ikurra. Tenpluko apaizek bedeinkatu zuten."
+    },
+    "t12": {
+      "name": "Kobrezko ispilua",
+      "description": "Kobrezko ispilu leundua, garbitze-zeremonietan erabilia."
+    },
+    "t13": {
+      "name": "Intsentsu-ontzia",
+      "description": "Brontzezko intsentsu-ontzi apaindua, tenpluko erritoetarako."
+    },
+    "t14": {
+      "name": "Errito-kopa",
+      "description": "Zilarrezko kopa sakratua, jainkoei edariak eskaintzeko."
+    },
+    "t15": {
+      "name": "Zeremonietako haizemailea",
+      "description": "Lumazko haizemaile apaindua. Apaizek tenpluko zeremonietan erabiltzen zuten."
+    },
+    "t16": {
+      "name": "Otoitz-aleak",
+      "description": "Bedeinkatutako otoitz-ale sorta, gogoetarako eta otoitzerako."
+    },
+    "t17": {
+      "name": "Ur bedeinkatuaren ontzia",
+      "description": "Tenpluko putzu sakratuko ur bedeinkatua duen ontzia."
+    },
+    "t18": {
+      "name": "Tenpluko kanpaia",
+      "description": "Brontzezko kanpaia, jendea otoitzera deitzeko eta zeremoniak iragartzeko."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Faraoiaren zigilua",
+      "description": "Erregeen zigilu zaharra, ahaztutako faraoi baten kartutxoa duena."
+    },
+    "t20": {
+      "name": "Kristalezko bola",
+      "description": "Kristalezko bola misteriotsua. Diotenez, iragana eta etorkizuna erakusten ditu."
+    },
+    "t21": {
+      "name": "Hieroglifo-taula",
+      "description": "Harrizko taula zaharra, hieroglifozko iragarpen misteriotsuz idatzia."
+    },
+    "t22": {
+      "name": "Urrezko zetroa",
+      "description": "Urrezko zetro zoragarria, gainean Horusen begia duena."
+    },
+    "t23": {
+      "name": "Obsidianazko labana",
+      "description": "Obsidianazko zeremonia-labana, labaina bezain zorrotza, antzinako erritoetan erabilia."
+    },
+    "t24": {
+      "name": "Meteorito-zatia",
+      "description": "Meteorito sakratuaren zati bat. Jainkoen indarra omen du barruan."
+    },
+    "t25": {
+      "name": "Iparrorratz zaharra",
+      "description": "Nabigatzeko tresna misteriotsua. Beti altxor ezkutuetara seinalatzen du."
+    },
+    "t26": {
+      "name": "Denboraren kristala",
+      "description": "Kristal ospetsua, aspaldiko garaien indarrarekin dirdiratzen duena."
+    },
+    "t27": {
+      "name": "Errito-maskara",
+      "description": "Urrezko maskara apaindua. Apaiz nagusiek zeremonia sakratuetan janzten zuten."
+    },
+    "t28": {
+      "name": "Betiko suaren zuzia",
+      "description": "Betiko suarekin erretzen den zuzia. Antzinatik ez da behin ere itzali."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Raren koroa",
+      "description": "Ra eguzki-jainkoaren koroa ospetsua. Jainkoen argia eta indarra zabaltzen ditu."
+    },
+    "t30": {
+      "name": "Thothen makila",
+      "description": "Thoth jakintzaren jainkoaren makila jakintsua. Antzinako sekretu guztiak ditu barruan."
+    },
+    "t31": {
+      "name": "Ma'aten luma",
+      "description": "Ma'at egiaren jainkosaren luma sakratua. Heriotzaren ondoren arimak pisatzeko erabiltzen zen."
+    },
+    "t32": {
+      "name": "Isisen malkoak",
+      "description": "Isis jainkosaren malko kristalizatuak. Diotenez, betiko babesa ematen dute."
+    },
+    "t33": {
+      "name": "Osirisen bihotza",
+      "description": "Osirisen bihotza, lur azpiko munduaren jaunarena. Oraindik bizi-indarrez taupaka ari da."
+    },
+    "t34": {
+      "name": "Horusen begiaren amuletoa",
+      "description": "Amuleto babesle gorena, Horusen indar osoa duena."
+    },
+    "t35": {
+      "name": "Apep sugea",
+      "description": "Apep nahasmenaren sugearen zati bat, ontzi sakratu batean itxita."
+    },
+    "t36": {
+      "name": "Shuren arnasa",
+      "description": "Shu airearen jainkoaren arnasa duen ontzitxoa. Haizeen gaineko indarra ematen du."
+    },
+    "t37": {
+      "name": "Sobeken ezkata",
+      "description": "Sobek krokodilo-jainkoaren ezkata bakar bat. Uretan babesten zaitu."
+    },
+    "t38": {
+      "name": "Anubis zaindariaren irudia",
+      "description": "Anubisen irudi txikia. Bizia hartzen du bere jabearen altxorrak zaintzeko."
+    },
+    "t39": {
+      "name": "Hildakoen liburua",
+      "description": "Hildakoen liburu osoa, heriotzaren ondoko bidaiarako behar diren sorginkeria guztiekin."
+    },
+    "t40": {
+      "name": "Piramidearen gailurra",
+      "description": "Piramide Handiaren urrezko gailur-harria. Faraoi guztien indarra du bilduta."
+    }
+  }
+}

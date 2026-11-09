@@ -1,0 +1,255 @@
+{
+  "spots": {
+    "fire": "Багаття",
+    "sleeping": "Місце для сну",
+    "water": "Місце для води",
+    "cooking": "Кухня",
+    "donkey": "Місце для віслюка",
+    "camel": "Місце для верблюда",
+    "mapTable": "Стіл із мапами",
+    "palmGarden": "Пальмовий сад",
+    "ibisPond": "Ставок ібісів",
+    "lookout": "Оглядова вежа",
+    "godStatues": "Статуї богів",
+    "starCanopy": "Зоряний намет"
+  },
+  "finds": {
+    "pot": "Казанок",
+    "seatCushions": "Подушки для сидіння",
+    "reedMat": "Очеретяний килимок",
+    "blanket": "Ковдра",
+    "tentRug": "Килимок для намету",
+    "tentFlag": "Прапорець для намету",
+    "gourd": "Гарбузова фляга",
+    "jar": "Глечик",
+    "secondJar": "Другий глечик",
+    "spiceRack": "Полиця для спецій",
+    "breadBoard": "Дошка для хліба",
+    "starMap": "Зоряна мапа",
+    "scrollCase": "Футляр для сувоїв",
+    "astrolabe": "Астролябія",
+    "reedGlobe": "Очеретяний глобус",
+    "seed": "Насінина пальми",
+    "secondPalm": "Насінина пальми",
+    "figTree": "Насінина інжиру",
+    "papyrus": "Корінь папірусу",
+    "reeds": "Паросток очерету",
+    "lotus": "Бульба лотоса",
+    "flag": "Прапор для вежі",
+    "thoth": "Статуетка Тота",
+    "bastet": "Статуетка Бастет",
+    "anubis": "Статуетка Анубіса",
+    "ra": "Статуетка Ра",
+    "cloth": "Зоряне полотно"
+  },
+  "structures": {
+    "stoneRing": "Кам'яне коло",
+    "fire": "Вогонь",
+    "cookingStones": "Камені для готування",
+    "seatingStones": "Камені для сидіння",
+    "clayOven": "Глиняна піч",
+    "windbreak": "Захист від вітру",
+    "tent": "Намет",
+    "secondTent": "Другий намет",
+    "pavilion": "Павільйон",
+    "well": "Криниця",
+    "wellPulley": "Криниця з блоком",
+    "tripod": "Тринога",
+    "breadOven": "Хлібна піч",
+    "dryingRack": "Сушарка",
+    "feast": "Бенкет",
+    "table": "Стіл із мапами",
+    "lotusPlanter": "Ящик для лотосів",
+    "edgeStones": "Береги ставка",
+    "post": "Оглядовий стовп",
+    "platform": "Оглядовий майданчик",
+    "ladder": "Драбина",
+    "roof": "Дах",
+    "signalFire": "Сигнальний вогонь",
+    "poles": "Зоряні щогли",
+    "stars": "Зорі",
+    "planets": "Планети"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Польові камені",
+      "sandBed": "Піщана основа"
+    },
+    "fire": {
+      "tinder": "Розпалка",
+      "acaciaLogs": "Акацієві поліна"
+    },
+    "cookingStones": {
+      "flatStone": "Плаский камінь",
+      "supportStones": "Камені-підпори"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Гладкі валуни",
+      "sandstoneBlock": "Брила пісковику",
+      "hewnSlab": "Тесана плита"
+    },
+    "clayOven": {
+      "ovenFloor": "Під печі",
+      "firebricks": "Вогнетривка цегла",
+      "smokeHole": "Димар",
+      "copperGrate": "Мідна решітка"
+    },
+    "windbreak": {
+      "reedBundles": "В'язки очерету",
+      "stakes": "Дерев'яні кілки"
+    },
+    "tent": {
+      "tentPoles": "Жердини для намету",
+      "wovenCloth": "Ткане полотно",
+      "tentPegs": "Кілочки для намету"
+    },
+    "secondTent": {
+      "largeCloth": "Велике полотно",
+      "ridgePole": "Верхня жердина",
+      "guyRopes": "Розтяжки",
+      "woolFloor": "Вовняна підстилка"
+    },
+    "pavilion": {
+      "pavilionPosts": "Стовпи павільйону",
+      "linenCanopy": "Лляний дах",
+      "hangingCurtains": "Завіски",
+      "woolRugs": "Вовняні килими",
+      "woodenFloor": "Дерев'яна підлога"
+    },
+    "well": {
+      "wellStones": "Камені для криниці",
+      "rope": "Довга мотузка",
+      "bucket": "Відро",
+      "windlass": "Ворот"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Колесо-блок",
+      "frame": "Опорна рама",
+      "hoistRope": "Мотузка для підйому",
+      "counterweight": "Противага",
+      "leatherBucket": "Шкіряне відро"
+    },
+    "tripod": {
+      "tripodPoles": "Три жердини",
+      "binding": "Мотузка для зв'язування",
+      "hook": "Бронзовий гачок"
+    },
+    "breadOven": {
+      "mudBricks": "Глиняна цегла",
+      "clayPlaster": "Глиняна обмазка",
+      "ovenLid": "Заслінка"
+    },
+    "dryingRack": {
+      "rackPoles": "Стовпці сушарки",
+      "crossbar": "Поперечина",
+      "wickerTray": "Плетена таця",
+      "cords": "Шнурки"
+    },
+    "feast": {
+      "lowTable": "Низький стіл",
+      "breadBaskets": "Кошики з хлібом",
+      "roastDuck": "Смажена качка",
+      "beerJars": "Глеки з пивом",
+      "fruitBowl": "Миска з фруктами"
+    },
+    "table": {
+      "tableTop": "Стільниця",
+      "trestles": "Козли",
+      "leatherStraps": "Шкіряні ремінці"
+    },
+    "lotusPlanter": {
+      "clayTub": "Глиняне корито",
+      "nileSilt": "Мул із Нілу",
+      "waterJar": "Глечик для води",
+      "lotusTubers": "Бульби лотоса",
+      "stoneRim": "Кам'яний край"
+    },
+    "edgeStones": {
+      "riverStones": "Річкові камені",
+      "clayBedding": "Глиняна основа",
+      "gravel": "Гравій",
+      "boundaryStakes": "Межові кілки"
+    },
+    "post": {
+      "postTrunk": "Стовбур пальми",
+      "footStones": "Камені фундаменту",
+      "wedges": "Клини",
+      "braces": "Підпори"
+    },
+    "platform": {
+      "platformBeams": "Опорні балки",
+      "platformPlanks": "Дошки",
+      "lashingRope": "Мотузка для кріплення",
+      "edgeRail": "Поруччя"
+    },
+    "ladder": {
+      "ladderRails": "Боковини драбини",
+      "rungs": "Щаблі",
+      "groundPegs": "Кілки в землю",
+      "leatherLoops": "Шкіряні петлі"
+    },
+    "roof": {
+      "roofPoles": "Жердини даху",
+      "thatch": "Пальмове листя",
+      "clayLayer": "Шар глини",
+      "bindingGrass": "Трава для в'язання"
+    },
+    "signalFire": {
+      "fireBasin": "Вогняна чаша",
+      "pitch": "Смола",
+      "dryBrushwood": "Сухий хмиз",
+      "flint": "Кремінь",
+      "bellows": "Ковальський міх"
+    },
+    "poles": {
+      "masts": "Щогли",
+      "cornerStones": "Кутові камені",
+      "stayLines": "Троси-розтяжки",
+      "bigPegs": "Великі кілки",
+      "poleSockets": "Гнізда для щогл"
+    },
+    "stars": {
+      "goldLeaf": "Сусальне золото",
+      "needleThread": "Голка й нитка",
+      "indigoDye": "Фарба індиго",
+      "chalk": "Крейда",
+      "stencils": "Трафарети"
+    },
+    "planets": {
+      "ochre": "Вохра",
+      "copperDiscs": "Мідні диски",
+      "lapisPowder": "Порошок лазуриту",
+      "hangingLoops": "Петельки",
+      "dividers": "Циркуль"
+    }
+  },
+  "collection": {
+    "title": "Споруди",
+    "progress": "{{found}} з {{total}}",
+    "built": "збудовано",
+    "unknownPart": "???",
+    "open": "Показати частини",
+    "close": "Сховати частини"
+  },
+  "reward": {
+    "find": "Знахідка для табору",
+    "part": "Частина",
+    "progress": "{{name}} · {{found}} з {{total}}"
+  },
+  "haul": {
+    "new": "Нове у твоєму таборі",
+    "parts_one": "{{name}} · {{count}} частина",
+    "parts_few": "{{name}} · {{count}} частини",
+    "parts_many": "{{name}} · {{count}} частин",
+    "parts_other": "{{name}} · {{count}} частини"
+  },
+  "arrivals": {
+    "donkey": "Твій віслюк уже в таборі",
+    "cart": "Твій візок уже в таборі",
+    "camel": "Твій верблюд уже в таборі",
+    "secondDonkey": "Твій другий віслюк уже в таборі",
+    "secondCamel": "Твій другий верблюд уже в таборі",
+    "sturdyCart": "Твій міцніший візок уже в таборі",
+    "caravanBanner": "Прапор твого каравану вже майорить у таборі"
+  }
+}

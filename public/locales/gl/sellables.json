@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Pedra",
+    "bronze": "Bronce",
+    "silver": "Prata",
+    "gold": "Ouro",
+    "divine": "Divino"
+  },
+  "sell_stone_1": {
+    "name": "Óstracon desportillado",
+    "description": "Un anaco de cerámica rota onde un escriba practicaba a letra. As letras están tan borrosas que non se poden ler."
+  },
+  "sell_stone_2": {
+    "name": "Xerra de barro rachada",
+    "description": "Unha xerra para gardar gran ou cervexa, rachada por un lado polo peso de moitos séculos."
+  },
+  "sell_stone_3": {
+    "name": "Sandalia de xunco gastada",
+    "description": "Tecida con xuncos de papiro. A sola está gastadísima de tanto camiñar algún traballador do que ninguén se lembra."
+  },
+  "sell_stone_4": {
+    "name": "Anaco de liño descolorido",
+    "description": "Unha tira rota de liño sen tinguir, das que se enrolaban sen fin arredor dos mortos. Ou que servía para remendar unha vela."
+  },
+  "sell_stone_5": {
+    "name": "Coitelo de pedernal roto",
+    "description": "Un coitelo de pedernal tallado, coa punta partida. Barato de facer, e aínda máis barato de cambiar."
+  },
+  "sell_bronze_1": {
+    "name": "Amuleto de bronce torto",
+    "description": "Un amuleto protector barato. Saíu torto e ninguén o arranxou."
+  },
+  "sell_bronze_2": {
+    "name": "Espello de bronce oxidado",
+    "description": "Antes brillaba tanto que te vías nel. Agora está verde e turbio polos anos."
+  },
+  "sell_bronze_3": {
+    "name": "Anzol de bronce sen brillo",
+    "description": "A ferramenta dun pescador, que lle caeu ao Nilo moito antes de pecharen a tumba."
+  },
+  "sell_bronze_4": {
+    "name": "Campaíña de bronce pequena",
+    "description": "Era para colgar na porta dun templo ou no nocello dunha bailarina. Xa non soa ben."
+  },
+  "sell_bronze_5": {
+    "name": "Anel de bronce sen brillo",
+    "description": "Un anel sinxelo, feito para un dedo que hai moito que é po."
+  },
+  "sell_silver_1": {
+    "name": "Ankh de prata sen brillo",
+    "description": "Un sinal da vida, gastado por séculos baixo terra."
+  },
+  "sell_silver_2": {
+    "name": "Pau de prata para o kohl",
+    "description": "Un pauciño fino para pintarlles os ollos aos ricos. O kohl hai moito que desapareceu."
+  },
+  "sell_silver_3": {
+    "name": "Cunca de prata abollada",
+    "description": "Unha cunca pequena para ofrendas, esmagada por un lado cando por fin caeu o teito de enriba."
+  },
+  "sell_silver_4": {
+    "name": "Gancho de prata para o pelo",
+    "description": "Sinxelo e sen adornos. Antes suxeitaba o pelo de alguén do que xa ninguén sabe o nome."
+  },
+  "sell_silver_5": {
+    "name": "Pulseira de prata gastada",
+    "description": "Unha pulseira fina de prata, co peche roto. Pouco fina para un nobre, demasiado fina para un traballador."
+  },
+  "sell_gold_1": {
+    "name": "Contiña de ouro pequena",
+    "description": "Unha conta dun colar de enterro, que se espallou hai moito tempo."
+  },
+  "sell_gold_2": {
+    "name": "Anaco de pan de ouro",
+    "description": "Unha lasca de pan de ouro, arrincada da cara dunha estatua por ladróns de tumbas séculos antes de que ti chegases."
+  },
+  "sell_gold_3": {
+    "name": "Pendente de ouro fino",
+    "description": "Martelado moi fino para que o ouro dun nobre dese para máis."
+  },
+  "sell_gold_4": {
+    "name": "Anaco con pingas de ouro",
+    "description": "Un anaco roto de estuco dourado, con pinguiñas de ouro de verdade aínda pegadas."
+  },
+  "sell_gold_5": {
+    "name": "Anel-selo de ouro desportillado",
+    "description": "Un anel para selar, co gravado tan gastado que xa non se recoñece. Ninguén lembra de quen era."
+  },
+  "sell_divine_1": {
+    "name": "Escaravello de lapislázuli descolorido",
+    "description": "Tallado en lapislázuli, unha pedra que se traía de moi lonxe e custaba moito, para o renacer dun faraón. A cor foise cos séculos."
+  },
+  "sell_divine_2": {
+    "name": "Amuleto do ollo de cornalina",
+    "description": "Un ollo protector tallado en cornalina, vermella coma o sangue, para afastar a mala sorte no máis alá."
+  },
+  "sell_divine_3": {
+    "name": "Pedriña de turquesa",
+    "description": "Unha soa peza dun mosaico esnaquizado. Antes formaba parte da cara dun deus na parede dun templo."
+  },
+  "sell_divine_4": {
+    "name": "Anaco de vaso canopo de alabastro",
+    "description": "Un anaco roto dunha xerra feita para gardar as vísceras dun faraón. Pedra preciosa para un traballo bastante noxento."
+  },
+  "sell_divine_5": {
+    "name": "Coitelo ritual de obsidiana",
+    "description": "Vidro de volcán, afiado para as cerimonias e nunca para a batalla. Só para o templo."
+  }
+}

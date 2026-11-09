@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Stein",
+    "bronze": "Bronse",
+    "silver": "Sølv",
+    "gold": "Gull",
+    "divine": "Guddommelig"
+  },
+  "sell_stone_1": {
+    "name": "Hakkete potteskår",
+    "description": "En bit av en knust krukke der en skriver øvde seg på å skrive. Bokstavene er for blasse til å leses."
+  },
+  "sell_stone_2": {
+    "name": "Sprukken leirkrukke",
+    "description": "En krukke til korn eller øl. Den har sprukket på den ene siden etter hundrevis av år."
+  },
+  "sell_stone_3": {
+    "name": "Utslitt sivsandal",
+    "description": "Flettet av papyrussiv. Sålen er slitt tynn av en arbeider som gikk i den hver dag for lenge siden."
+  },
+  "sell_stone_4": {
+    "name": "Falmet linfille",
+    "description": "En revet stripe ufarget lin, sånn som ble viklet rundt de døde – eller brukt til å lappe et seil."
+  },
+  "sell_stone_5": {
+    "name": "Knekt flintkniv",
+    "description": "En kniv av flintstein med avbrukket spiss. Billig å lage, enda billigere å bytte ut."
+  },
+  "sell_bronze_1": {
+    "name": "Bøyd bronseamulett",
+    "description": "En billig lykkeamulett som ble støpt skjev og aldri rettet opp."
+  },
+  "sell_bronze_2": {
+    "name": "Irret bronsespeil",
+    "description": "En gang så blankt at du kunne se deg selv i det. Nå er det grønt og grumsete av alder."
+  },
+  "sell_bronze_3": {
+    "name": "Sløv fiskekrok av bronse",
+    "description": "En fiskers krok som falt over bord i Nilen lenge før graven ble forseglet."
+  },
+  "sell_bronze_4": {
+    "name": "Liten bronsebjelle",
+    "description": "Den skulle henge på en tempeldør eller rundt ankelen til en danser – men nå klinger den falskt."
+  },
+  "sell_bronze_5": {
+    "name": "Matt bronsering",
+    "description": "En enkel ring, laget til en finger som for lengst er blitt til støv."
+  },
+  "sell_silver_1": {
+    "name": "Matt sølvankh",
+    "description": "Et tegn for liv, blitt matt av hundrevis av år under jorda."
+  },
+  "sell_silver_2": {
+    "name": "Sminkepinne av sølv",
+    "description": "En tynn pinne som rike folk brukte til å male streker rundt øynene. Sminken er borte for lengst."
+  },
+  "sell_silver_3": {
+    "name": "Bulkete sølvskål",
+    "description": "En liten offerskål som ble klemt flat på den ene siden da taket over den til slutt raste sammen."
+  },
+  "sell_silver_4": {
+    "name": "Hårnål av sølv",
+    "description": "Enkel og uten pynt. Den holdt en gang håret til noen som ingen husker navnet på."
+  },
+  "sell_silver_5": {
+    "name": "Slitt sølvarmbånd",
+    "description": "Et tynt sølvbånd med ødelagt lås. For enkelt for en adelsmann, for fint for en arbeider."
+  },
+  "sell_gold_1": {
+    "name": "Liten gullperle",
+    "description": "Én perle fra et halskjede som ble lagt i en grav. Resten ble spredt for lenge siden."
+  },
+  "sell_gold_2": {
+    "name": "Bit av bladgull",
+    "description": "En flik av bladgull, skrapt av ansiktet på en statue av gravrøvere hundrevis av år før du kom."
+  },
+  "sell_gold_3": {
+    "name": "Tynn gulløredobb",
+    "description": "Hamret tynn, så en adelsmann skulle få mer ut av gullet sitt."
+  },
+  "sell_gold_4": {
+    "name": "Skår med gullflekker",
+    "description": "En bit forgylt puss, med små flekker av ekte gull som fortsatt sitter fast."
+  },
+  "sell_gold_5": {
+    "name": "Skadet gullsignet",
+    "description": "En seglring der tegningen er slitt bort – ingen vet lenger hvem den tilhørte."
+  },
+  "sell_divine_1": {
+    "name": "Falmet lapisskarabé",
+    "description": "Skåret ut av dyrebar lapis lasuli, hentet langveisfra så en farao kunne bli født på nytt. Fargen har bleknet med årene."
+  },
+  "sell_divine_2": {
+    "name": "Øyeamulett av karneol",
+    "description": "Et beskyttende øye av blodrød karneol. Det skulle holde uflaks borte i livet etter døden."
+  },
+  "sell_divine_3": {
+    "name": "Turkisflis",
+    "description": "En enkelt flis fra en knust mosaikk. Den var en gang en del av et gudebilde på en tempelvegg."
+  },
+  "sell_divine_4": {
+    "name": "Alabastskår av kanopekrukke",
+    "description": "En bit av en krukke som skulle oppbevare innvollene til en farao – dyr stein til en guffen jobb."
+  },
+  "sell_divine_5": {
+    "name": "Rituell obsidiankniv",
+    "description": "Vulkansk glass, slipt til en seremonikniv. Den var aldri ment for kamp – bare for templet."
+  }
+}

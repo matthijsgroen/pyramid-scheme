@@ -1,0 +1,1949 @@
+{
+  "language": "Slovenčina",
+  "saveUnreadable": {
+    "title": "Tvoj postup sa nedá načítať",
+    "body": "Prehliadač ti teraz nechce dať uloženú hru. Tvoja hra nezmizla: načítaj stránku znova a skús to ešte raz.",
+    "banner": "Postup sa neukladá. Ťukni a načítaj znova.",
+    "reload": "Načítať znova",
+    "continue": "Hrať ďalej bez ukladania",
+    "reset": "Začať odznova (zmazať hru)",
+    "confirmReset": "Toto zmaže celú tvoju uloženú hru a už sa to nedá vrátiť. Začať odznova?",
+    "confirmResetYes": "Áno, zmazať moju hru",
+    "confirmResetNo": "Nie, späť"
+  },
+  "difficulty": {
+    "starter": "Začiatočník",
+    "junior": "Junior",
+    "expert": "Expert",
+    "master": "Majster",
+    "wizard": "Čarodejník"
+  },
+  "journeyLength": {
+    "short": "Krátka",
+    "medium": "Stredná",
+    "long": "Dlhá"
+  },
+  "time": {
+    "morning": "Ráno",
+    "afternoon": "Popoludnie",
+    "evening": "Večer",
+    "night": "Noc"
+  },
+  "tomb": {},
+  "ui": {
+    "level": "Úroveň",
+    "symbols": "znaky",
+    "journey": "Cesta",
+    "tableau": "Obraz",
+    "difficulty": "Obťažnosť",
+    "length": "Dĺžka",
+    "time": "Čas",
+    "requiredPrestige": "Potrebná úroveň slávy",
+    "rewards": "Odmeny",
+    "coins": "Mince",
+    "pieces": "Kúsky",
+    "description": "Popis",
+    "expedition": "Výprava",
+    "expeditionCompleted": "Výprava je hotová!",
+    "goBackToBase": "Späť do tábora",
+    "backArrow": "←",
+    "back": "← Späť",
+    "floor": "Poschodie {{number}}",
+    "enterSite": "Vojsť dnu",
+    "prompt": {
+      "here": "Preskúmať",
+      "stairs": "Ísť po schodoch",
+      "exit": "Odísť odtiaľto",
+      "zipline": "Zviezť sa po lane – späť sa už nedá",
+      "oneWay": "Prejsť na druhú stranu – späť sa už nedá",
+      "liftStone": "Zdvihnúť kameň",
+      "setStone": "Položiť kameň na dosku",
+      "postStone": "Vhodiť kameň",
+      "takeStone": "Vziať kameň",
+      "squeeze": "Pretlačiť sa",
+      "replay": "Hrať znova"
+    },
+    "blocked": {
+      "carrying": "S kameňom sa tadiaľto nedá prejsť"
+    },
+    "backToMap": "Späť na mapu",
+    "continueExploration": "Pokračuj v skúmaní pyramíd.",
+    "startExpedition": "Začať výpravu",
+    "webBuriedPercent": "Ešte {{percent}} % pod pieskom",
+    "interruptExpedition": "Prerušiť výpravu",
+    "confirmInterruptExpedition": "Naozaj chceš prerušiť túto výpravu? Postup na výprave ostane, ale postup v tejto úrovni sa stratí!",
+    "cancel": "Zrušiť",
+    "settings": "Nastavenia",
+    "language": "Jazyk",
+    "close": "Zavrieť",
+    "done": "Hotovo",
+    "clearGameData": "Zmazať herné údaje",
+    "confirmClearGameData": "Toto navždy zmaže celý postup, všetky predmety a preskúmané pyramídy. Už sa to nedá vrátiť.",
+    "disableTutorials": "Vypnúť návody",
+    "treasureTomb": "Miesto s pokladom",
+    "requiresMapPieces": "Treba kúsky mapy",
+    "mapPieces": "Kúsky mapy",
+    "completeExpeditionsToUnlock": "Dokonči výpravy a odomkne sa",
+    "availableSymbols": "Dostupné znaky:",
+    "fragmentsNeeded": "potrebné {{found}}/{{required}}",
+    "howToPlay": "Ako sa hrá",
+    "puzzleComplete": "Odpoveď je:",
+    "puzzleCompleted": "Hádanka vyriešená",
+    "trapBlocked": "Na túto pascu nemáš dosť zdravia",
+    "spiritsRejectCode": "Duchovia tento kód odmietajú",
+    "sacredSealBroken": "Posvätná pečať je zlomená",
+    "newExpeditionUnlocked": "Odomkla sa nová výprava",
+    "newTombUnlocked": "Odomkla sa nová hrobka",
+    "tierComingSoonTitle": "Výpravy úrovne {{tier}} sú na ceste",
+    "tierComingSoon": "Kľúč už máš, ale pyramídy úrovne {{tier}} sa ešte stavajú. Prídu v ďalšej aktualizácii – dovtedy ti kľúč otvorí ďalšie časti pyramíd, ktoré už poznáš.",
+    "answerNow": "Odpoveď je: ",
+    "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "resetPuzzle": "Odznova",
+    "hint": "Rada",
+    "undo": "Späť",
+    "erase": "Zmazať",
+    "notes": "Poznámky",
+    "solvedUnaided": "Vyriešené bez jedinej rady",
+    "solvedWithHints_one": "Vyriešené s {{count}} radou",
+    "solvedWithHints_few": "Vyriešené s {{count}} radami",
+    "solvedWithHints_many": "Vyriešené s {{count}} rady",
+    "solvedWithHints_other": "Vyriešené s {{count}} radami",
+    "tapToContinue": "Ťukni a pokračuj",
+    "goal": "Cieľ"
+  },
+  "trap": {
+    "warning": "⚠ Chodba s pascou",
+    "canAttempt": "Môžeš skúsiť prejsť.",
+    "tooWeak": "Máš nebezpečne málo síl – keď sa to nepodarí, neostane ti nič.",
+    "attempt": "Skúsiť pascu",
+    "turnAround": "Otočiť sa",
+    "rested": "Oddych pri ohni – zase plný síl"
+  },
+  "gate": {
+    "title": "🔒 Zamknutá brána",
+    "locked": "Ešte nemáš ten správny kľúč.",
+    "markedWith": "Do dverí je vyrytý znak:",
+    "unlocked": "Kľúč máš.",
+    "pass": "Prejsť",
+    "turnAround": "Otočiť sa",
+    "wardDescription": {
+      "starter": "Pečať obchodníka zatvára túto chodbu – otvorí ju len jeho strážny kľúč.",
+      "junior": "Erb šľachtica zamyká túto cestu – zdvihne ho len jeho strážny kľúč.",
+      "expert": "Chrámová stráž veľkňaza chráni tieto dvere – otvoriť ich musí posvätný kľúč.",
+      "master": "Kráľovská pečať faraóna zviera túto chodbu – zlomí ju len kľúč vládcu.",
+      "wizard": "Túto bránu drží stráž bohov – prejde len jej božský kľúč."
+    },
+    "needsKey": "Dvere sú označené pre jeden kľúč:",
+    "lockedColor": "Ten kľúč na tomto poschodí ešte nemáš."
+  },
+  "chest": {
+    "tapToOpen": "Ťukni a otvor",
+    "money_one": "{{count}} minca",
+    "money_few": "{{count}} mince",
+    "money_many": "{{count}} mince",
+    "money_other": "{{count}} mincí",
+    "mapPiece": "Kúsok mapy",
+    "mapPieceDescription": "Krehký útržok mapy k nejakému dávno zabudnutému miestu. Škoda, že ešte zďaleka nie je celá…",
+    "mapPieceProgress": "Máš {{found}} z {{required}} kúskov mapy",
+    "mapPieceComplete": "Mapa je celá – vedie do miesta {{name}}.",
+    "hieroglyphFragment": "Kúsok hieroglyfu",
+    "fragmentProgress": "Nájdených {{found}} z {{required}} kúskov",
+    "tombKey": "Kľúč od hrobky",
+    "sandLever": "Piesková páka",
+    "sandLeverDescription": "Potiahneš ju a ostane dole. Niekde ďaleko odteká piesok.",
+    "webKey": "Zapečatený kľúč",
+    "webKeyDescription": "Na hlave má znak, ktorý už poznáš zo zapečatených dverí niekde inde.",
+    "hieroglyphs": "Staré hieroglyfy",
+    "hieroglyphsDescription": "Posvätné znaky vyryté do stien tejto komnaty. Vďaka nim vieš o starom svete zase o kúsok viac.",
+    "mosaicPiece": "Kúsok mozaiky",
+    "mosaicPieceDescription": "Lesklé sklíčko, kúsok veľkej mozaiky. Polož ho k ostatným a skrytý obrázok sa pomaly objaví.",
+    "waterskin": "Mech s vodou",
+    "waterskinDescription": "Chladná voda. Hneď sa napiješ a rany prestanú bolieť."
+  },
+  "loot": {
+    "youFound": "Nájdené",
+    "expeditionReward": "Odmena navyše za dokončenú výpravu",
+    "clickToContinue": "Ťukni kamkoľvek a pokračuj"
+  },
+  "money": {
+    "label": "Mince"
+  },
+  "shop": {
+    "title": "Fezov stánok",
+    "invitation": "Pozrieť sa na stánok",
+    "buy": "Kúpiť",
+    "sell": "Predať",
+    "soldOut": "Vypredané",
+    "dismiss": "Odísť",
+    "rareItems": "Vzácne nálezy",
+    "sellSection": "Drobnosti na predaj",
+    "haul": {
+      "coins_one": "+{{count}} minca",
+      "coins_few": "+{{count}} mince",
+      "coins_many": "+{{count}} mince",
+      "coins_other": "+{{count}} mincí",
+      "note": "Mince nájdené po ceste"
+    }
+  },
+  "purchases": {
+    "donkey": {
+      "name": "Osol",
+      "need": "Potrebuješ osla",
+      "opens": "Nesie tvoje veci. S ním sa môžeš vydať na cesty úrovne Expert."
+    },
+    "cart": {
+      "name": "Vozík",
+      "need": "Potrebuješ vozík",
+      "opens": "Zmestí sa naň celý tábor. S ním sa môžeš vydať na cesty úrovne Majster."
+    },
+    "camel": {
+      "name": "Ťava",
+      "need": "Potrebuješ ťavu",
+      "opens": "Ide celé dni bez vody. Zavezie ťa do Najsvätejšej svätyne."
+    },
+    "secondDonkey": {
+      "name": "Druhý osol",
+      "need": "Potrebuješ druhého osla",
+      "opens": "Unesie ešte viac. S ním sa môžeš vydať na cesty úrovne Čarodejník."
+    },
+    "secondCamel": {
+      "name": "Druhá ťava",
+      "need": "Potrebuješ druhú ťavu",
+      "opens": "Dve ťavy unesú dosť vody až do Osirisovej siene."
+    },
+    "sturdyCart": {
+      "name": "Pevnejší vozík",
+      "need": "Potrebuješ pevnejší vozík",
+      "opens": "Nerozbije sa, ani na ceste do Ríše vesmírnych síl."
+    },
+    "caravanBanner": {
+      "name": "Vlajka karavány",
+      "opens": "Nič neotvorí. Len pre radosť."
+    },
+    "hint": "Kúpiš u Feza – {{place}}",
+    "devGrant": "Kúpiť všetky zvieratá"
+  },
+  "level": {
+    "completed": "Úroveň hotová!"
+  },
+  "mosaic": {
+    "place_one": "Polož {{count}} kúsok",
+    "place_few": "Polož {{count}} kúsky",
+    "place_many": "Polož {{count}} kúska",
+    "place_other": "Polož {{count}} kúskov",
+    "placing": "Kladiem…",
+    "panel": {
+      "starter": "Strážkyňa pri dverách",
+      "junior": "Prvá lekcia",
+      "expert": "Svetlo dnu",
+      "master": "Zelený kráľ",
+      "wizard": "Pero a srdce"
+    },
+    "entrance": {
+      "title": "Mozaika",
+      "label": "Mozaika {{found}}/{{total}}"
+    },
+    "haul": {
+      "pieces_one": "{{count}} kúsok mozaiky",
+      "pieces_few": "{{count}} kúsky mozaiky",
+      "pieces_many": "{{count}} kúska mozaiky",
+      "pieces_other": "{{count}} kúskov mozaiky",
+      "note": "Do farebného okna"
+    }
+  },
+  "collection": {
+    "tabs": {
+      "treasures": "Poklady",
+      "hieroglyphs": "Hieroglyfy",
+      "stories": "Príbehy",
+      "junk": "Drobnosti"
+    },
+    "tabsLabel": "Tvoja zbierka",
+    "tabNew_one": "{{label}} · {{count}} nový",
+    "tabNew_few": "{{label}} · {{count}} nové",
+    "tabNew_many": "{{label}} · {{count}} nového",
+    "tabNew_other": "{{label}} · {{count}} nových",
+    "empty": "Tvoja truhla je ešte prázdna",
+    "newLabel": "NOVÉ",
+    "clickForDetails": "Ťukni na dlaždicu a uvidíš viac",
+    "categories": {
+      "deities": "🏺 Bohovia",
+      "professions": "⚱️ Povolania",
+      "animals": "🐾 Zvieratá",
+      "artifacts": "💎 Predmety",
+      "treasures": "💰 Poklady",
+      "junk": "🔷 Drobnosti",
+      "signs": "✍️ Znaky"
+    },
+    "treasureCategories": {
+      "merchantCache": "💰 Skrýša obchodníka",
+      "nobleVault": "👑 Klenotnica šľachtičnej",
+      "templeSecrets": "🏛️ Tajomstvá chrámu",
+      "ancientRelics": "🏺 Staré relikvie",
+      "mythicalArtifacts": "✨ Bájne predmety"
+    }
+  },
+  "detector": {
+    "compassTitle": "Kompas",
+    "corridorTitle": "Hľadač chodieb",
+    "pickTarget": "Vyber si hieroglyf pri stole s mapami v tábore",
+    "allCollected": "V pyramídach, ktoré už poznáš, zatiaľ nie je žiadny kúsok na dosah",
+    "more": "+{{count}} ďalšie",
+    "corridorHere": "Presne tu je tajná chodba",
+    "revealCorridor": "Otvoriť ju",
+    "corridorNearby": "Blízko je tajná chodba",
+    "corridorOnFloor": "Na tomto poschodí čaká tajná chodba",
+    "lookingFor": "Hľadá sa {{symbol}}",
+    "access": {
+      "open": "Nevieme o ničom, čo by tomu bránilo",
+      "unknown": "Možno sa k nemu ešte nedostaneš – je v hrobke alebo na predaj"
+    },
+    "corridorNoneNearby": "Nablízku nie je žiadna tajná chodba",
+    "corridorNoneOnFloor": "Na tomto poschodí nie je žiadna tajná chodba",
+    "corridorOtherFloor": "Na inom poschodí čaká tajná chodba",
+    "corridorNoneInPyramid": "Na inom poschodí nie je žiadna tajná chodba",
+    "title": "Detektor",
+    "band": {
+      "none": "Nič sa nenašlo",
+      "pyramid": "Niečo je v tejto pyramíde",
+      "floor": "Niečo je na tomto poschodí",
+      "near": "Niečo je blízko",
+      "here": "Presne tu! Otvor detektor"
+    },
+    "camp": {
+      "parts": "{{count}} z {{total}} dielov",
+      "compassReach": {
+        "1": "vidí pyramídu",
+        "2": "vidí poschodie",
+        "3": "ukáže presné miesto"
+      },
+      "pickHeading": "Čo má kompas hľadať?",
+      "onlyIncomplete": "Len znaky, z ktorých máš kúsok, kým nie sú celé.",
+      "whereHeading": "Kde ležia kúsky znaku {{symbol}}",
+      "pickFirst": "Vyber znak a uvidíš, kde ležia jeho kúsky.",
+      "follow": "Sledovať tento znak",
+      "following": "Kompas sleduje tento znak",
+      "nothingToFind": "Ešte nemáš kúsok zo žiadneho znaku, ktorý nie je celý.",
+      "noneInReach": "V pyramídach, ktoré už poznáš, zatiaľ nie je žiadny kúsok na dosah.",
+      "corridorReach": {
+        "1": "počuje chodbu nablízku",
+        "2": "počuje celé toto poschodie",
+        "3": "počuje aj ostatné poschodia",
+        "4": "počuje aj iné cesty"
+      },
+      "corridorInPyramid": "V pyramíde načúva, kde sú zatvorené chodby.",
+      "corridorFarNext": "So všetkými štyrmi dielmi počuje z tábora aj iné cesty.",
+      "corridorWhere": "Kde je chodba ešte zatvorená",
+      "corridorNone": "Na cestách, ktoré už poznáš, nie je žiadna zatvorená chodba.",
+      "pyramid": "Pyramída {{n}}",
+      "corridorCount_one": "{{count}} chodba",
+      "corridorCount_few": "{{count}} chodby",
+      "corridorCount_many": "{{count}} chodby",
+      "corridorCount_other": "{{count}} chodieb"
+    }
+  },
+  "keys": {
+    "blue": "Modrý kľúč",
+    "red": "Červený kľúč",
+    "green": "Zelený kľúč",
+    "yellow": "Žltý kľúč",
+    "purple": "Fialový kľúč",
+    "bundle": "Zväzok kľúčov",
+    "foundDescription": "Otvára dvere označené touto farbou, na tomto poschodí.",
+    "heldTitle": "{{key}} – máš ho",
+    "neededTitle": "{{key}} – ešte chýba"
+  },
+  "balance": {
+    "rules": {
+      "tap": "Ťukni na znak dole a potom na číslo. Keď na to číslo ťukneš znova, odstrániš ho.",
+      "same": "Znak váži na každej váhe rovnako.",
+      "cancel": "Keď z oboch misiek zoberieš to isté, váha ostane v rovnováhe. Ťukni na označený kúsok – čo ostane, sa uloží ako nový riadok.",
+      "swap": "Ťukni na znak, oproti ktorému nie je nič také isté, a potom na riadok, kde ten znak stojí sám. Vymeníš ho za to, koľko ten riadok váži."
+    },
+    "hint": {
+      "mistake": "Jedna z tvojich váh preváži misku. Zober ju preč a pozri sa znova.",
+      "alone": "V rozsvietenom riadku je {{glyph}} jediný kúsok, ktorý ešte nemá číslo. Vypočítaj, koľko váži.",
+      "equalShares": "V rozsvietenom riadku je len {{glyph}} oproti číslu. Rozdeľ to číslo medzi ne rovnako.",
+      "difference": "Dva rozsvietené riadky sú rovnaké, okrem {{glyph}}. Porovnaj ich.",
+      "cancelGlyph": "Na oboch miskách rozsvieteného riadku je {{glyph}}. Ťukni naň a zoberieš ho z oboch strán – riadok ostane v rovnováhe.",
+      "cancelStones": "Na oboch miskách rozsvieteného riadku sú obyčajné čísla. Ťukni na jedno a zoberieš rovnako veľa z oboch strán.",
+      "swap": "Jeden rozsvietený riadok hovorí, koľko váži jeden samotný {{glyph}}. Ťukni na {{glyph}} v druhom rozsvietenom riadku a potom na ten riadok."
+    },
+    "swap": {
+      "pick": "Ťukni na rozsvietený riadok a vymeň tento {{glyph}} za to, koľko podľa toho riadku váži.",
+      "none": "Nič tu nehovorí, koľko váži jeden samotný {{glyph}}, a nič oproti nemu sa nezhoduje."
+    },
+    "goal": {
+      "default": "Každý znak má svoju váhu a každá váha je v rovnováhe.",
+      "weighing": "Každý znak nájde svoju váhu a každá váha sa ustáli rovno."
+    },
+    "name": {
+      "default": "Váhy",
+      "weighing": "Váženie srdca"
+    }
+  },
+  "sumplete": {
+    "rules": {
+      "tap": "Ťukni raz a číslo prečiarkneš, druhý raz ho označíš, že ostáva, tretí raz ho vymažeš.",
+      "totals": "Malé číslo pod každým cieľom ukazuje, koľko je súčet toho riadku práve teraz."
+    },
+    "hint": {
+      "mistake": "Jedna zo značiek tu nemôže byť správne. Vráť ju späť a pozri sa znova.",
+      "tooBig": {
+        "row": "Tomuto riadku ešte chýba {{deficit}}. {{value}} je viac, takže nemôže ostať.",
+        "col": "Tomuto stĺpcu ešte chýba {{deficit}}. {{value}} je viac, takže nemôže ostať."
+      },
+      "allStrike": {
+        "row": "Čísla, ktoré v tomto riadku ostávajú, už dávajú cieľ, takže všetko ostatné musí preč.",
+        "col": "Čísla, ktoré v tomto stĺpci ostávajú, už dávajú cieľ, takže všetko ostatné musí preč."
+      },
+      "allKeep": {
+        "row": "Tento riadok už dáva svoj cieľ – označ tieto čísla, že ostávajú, a vyriešiš aj stĺpce, ktoré cez ne idú.",
+        "col": "Tento stĺpec už dáva svoj cieľ – označ tieto čísla, že ostávajú, a vyriešiš aj riadky, ktoré cez ne idú."
+      },
+      "parityKeep": {
+        "row": "Tomuto riadku ešte chýba {{deficit}}, nepárne číslo. {{value}} je jediné nepárne číslo, čo ostalo, takže musí ostať.",
+        "col": "Tomuto stĺpcu ešte chýba {{deficit}}, nepárne číslo. {{value}} je jediné nepárne číslo, čo ostalo, takže musí ostať."
+      },
+      "parityStrike": {
+        "row": "Tomuto riadku ešte chýba {{deficit}}, párne číslo. {{value}} je jediné nepárne číslo, čo ostalo, takže musí preč.",
+        "col": "Tomuto stĺpcu ešte chýba {{deficit}}, párne číslo. {{value}} je jediné nepárne číslo, čo ostalo, takže musí preč."
+      },
+      "onlyCombination": {
+        "row": "Len jedna skupina čísel v tomto riadku dáva dokopy {{deficit}}.",
+        "col": "Len jedna skupina čísel v tomto stĺpci dáva dokopy {{deficit}}."
+      },
+      "inEveryCombinationKeep": {
+        "row": "Bez {{value}} žiadna skupina ostatných čísel v tomto riadku nedá {{deficit}} – takže musí ostať.",
+        "col": "Bez {{value}} žiadna skupina ostatných čísel v tomto stĺpci nedá {{deficit}} – takže musí ostať."
+      },
+      "inEveryCombinationStrike": {
+        "row": "Keby {{value}} ostalo, tomuto riadku by ešte chýbalo {{remaining}} a to žiadne iné čísla tu nedajú – takže musí preč.",
+        "col": "Keby {{value}} ostalo, tomuto stĺpcu by ešte chýbalo {{remaining}} a to žiadne iné čísla tu nedajú – takže musí preč."
+      },
+      "tooBig.row": "Tomuto riadku ešte chýba {{deficit}} a {{value}} je viac.",
+      "tooBig.col": "Tomuto stĺpcu ešte chýba {{deficit}} a {{value}} je viac.",
+      "allStrike.row": "Čísla, ktoré v tomto riadku ostávajú, už dávajú cieľ.",
+      "allStrike.col": "Čísla, ktoré v tomto stĺpci ostávajú, už dávajú cieľ.",
+      "allKeep.row": "Tento riadok už dáva svoj cieľ, takže teraz vyriešiš stĺpce, ktoré cez neho idú.",
+      "allKeep.col": "Tento stĺpec už dáva svoj cieľ, takže teraz vyriešiš riadky, ktoré cez neho idú.",
+      "parityKeep.row": "Tomuto riadku ešte chýba {{deficit}}, nepárne číslo, a {{value}} je jediné nepárne číslo, čo ostalo.",
+      "parityKeep.col": "Tomuto stĺpcu ešte chýba {{deficit}}, nepárne číslo, a {{value}} je jediné nepárne číslo, čo ostalo.",
+      "parityStrike.row": "Tomuto riadku ešte chýba {{deficit}}, párne číslo, a {{value}} je jediné nepárne číslo, čo ostalo.",
+      "parityStrike.col": "Tomuto stĺpcu ešte chýba {{deficit}}, párne číslo, a {{value}} je jediné nepárne číslo, čo ostalo.",
+      "onlyCombination.row": "Len jedna skupina čísel v tomto riadku dáva dokopy {{deficit}}.",
+      "onlyCombination.col": "Len jedna skupina čísel v tomto stĺpci dáva dokopy {{deficit}}.",
+      "inEveryCombinationKeep.row": "Bez {{value}} žiadna skupina ostatných čísel v tomto riadku nedá {{deficit}}.",
+      "inEveryCombinationKeep.col": "Bez {{value}} žiadna skupina ostatných čísel v tomto stĺpci nedá {{deficit}}.",
+      "inEveryCombinationStrike.row": "Keby {{value}} ostalo, tomuto riadku by ešte chýbalo {{remaining}} a to žiadne iné čísla tu nedajú.",
+      "inEveryCombinationStrike.col": "Keby {{value}} ostalo, tomuto stĺpcu by ešte chýbalo {{remaining}} a to žiadne iné čísla tu nedajú.",
+      "action": {
+        "strike_one": "Prečiarkni vyšrafované číslo.",
+        "strike_few": "Prečiarkni vyšrafované čísla.",
+        "strike_many": "Prečiarkni vyšrafované čísla.",
+        "strike_other": "Prečiarkni vyšrafované čísla.",
+        "keep_one": "Označ vyšrafované číslo, že ostáva.",
+        "keep_few": "Označ vyšrafované čísla, že ostávajú.",
+        "keep_many": "Označ vyšrafované čísla, že ostávajú.",
+        "keep_other": "Označ vyšrafované čísla, že ostávajú."
+      }
+    },
+    "goal": "Každý riadok a každý stĺpec dáva dokopy číslo, ktoré je pri ňom.",
+    "name": "Súčty"
+  },
+  "futoshiki": {
+    "rules": {
+      "signs": "Znak medzi dvoma políčkami ukazuje na menšie z dvoch čísel.",
+      "enter": "Ťukni na políčko a potom na číslo. To isté číslo ešte raz ho zase vymaže.",
+      "notes": "Prepni na ceruzku a zapíš si čísla, ktoré by ešte mohli byť v políčku. Tlačidlo Späť vráti tvoj posledný ťah."
+    },
+    "hint": {
+      "mistake": {
+        "value": "Jedno z čísel tu nemôže byť správne. Vymaž ho a pozri sa znova.",
+        "note": "Poznámky v tomto políčku vylúčili číslo, ktoré sem patrí. Vymaž ich a začni odznova."
+      },
+      "nakedSingle": "Všetky ostatné čísla sú už v tomto riadku, v tomto stĺpci alebo ich vylučujú znaky – pre toto políčko ostáva len {{value}}.",
+      "hiddenSingle": {
+        "row": "{{value}} sa nezmestí do žiadneho iného políčka v tomto riadku, takže patrí sem.",
+        "col": "{{value}} sa nezmestí do žiadneho iného políčka v tomto stĺpci, takže patrí sem."
+      },
+      "signBound": {
+        "high": "Znak tu ukazuje preč, k väčšiemu číslu, takže v tomto políčku nemôže byť {{value}}.",
+        "low": "Znak tu ukazuje na toto políčko, takže niečo musí byť menšie ako ono – nemôže v ňom byť {{value}}."
+      },
+      "signVsValue": {
+        "less": "Znak hovorí, že toto políčko je menšie ako jeho sused, a v susedovi je {{value}}.",
+        "greater": "Znak hovorí, že toto políčko je väčšie ako jeho sused, a v susedovi je {{value}}."
+      },
+      "signChain": {
+        "high": "Choď po znakoch od tohto políčka: počet políčok za sebou je {{chain}} a každé musí byť väčšie ako to pred ním, takže toto nemôže byť viac ako {{bound}}.",
+        "low": "Choď po znakoch do tohto políčka: počet políčok za sebou je {{chain}} a každé musí byť menšie ako to pred ním, takže toto nemôže byť menej ako {{bound}}."
+      },
+      "signPair": {
+        "less": "Najväčšie číslo, aké môže mať sused za znakom, je {{value}}, a toto políčko musí byť menšie.",
+        "greater": "Najmenšie číslo, aké môže mať sused za znakom, je {{value}}, a toto políčko musí byť väčšie."
+      },
+      "nakedPair": {
+        "row": "V týchto dvoch políčkach môže byť len {{first}} a {{second}}, v jednom alebo druhom poradí, takže žiadne iné políčko v tomto riadku nemôže mať ani jedno z nich.",
+        "col": "V týchto dvoch políčkach môže byť len {{first}} a {{second}}, v jednom alebo druhom poradí, takže žiadne iné políčko v tomto stĺpci nemôže mať ani jedno z nich."
+      },
+      "hiddenPair": {
+        "row": "V tomto riadku sa {{first}} a {{second}} zmestia len do týchto dvoch políčok, takže nič iné do nich nemôže ísť.",
+        "col": "V tomto stĺpci sa {{first}} a {{second}} zmestia len do týchto dvoch políčok, takže nič iné do nich nemôže ísť."
+      },
+      "xWing": {
+        "row": "{{value}} sa v každom z týchto dvoch riadkov zmestí len do dvoch políčok a tie stoja v rovnakých stĺpcoch. Nech to padne akokoľvek, oba stĺpce sú obsadené – takže {{value}} nemôže ísť nikam inam v nich.",
+        "col": "{{value}} sa v každom z týchto dvoch stĺpcov zmestí len do dvoch políčok a tie stoja v rovnakých riadkoch. Nech to padne akokoľvek, oba riadky sú obsadené – takže {{value}} nemôže ísť nikam inam v nich."
+      },
+      "nakedTriple": {
+        "row": "V týchto troch políčkach môžu byť spolu len {{first}}, {{second}} a {{third}}, takže žiadne iné políčko v tomto riadku nemôže mať ani jedno z nich.",
+        "col": "V týchto troch políčkach môžu byť spolu len {{first}}, {{second}} a {{third}}, takže žiadne iné políčko v tomto stĺpci nemôže mať ani jedno z nich."
+      },
+      "hiddenTriple": {
+        "row": "V tomto riadku sa {{first}}, {{second}} a {{third}} zmestia len do týchto troch políčok, takže nič iné do nich nemôže ísť.",
+        "col": "V tomto stĺpci sa {{first}}, {{second}} a {{third}} zmestia len do týchto troch políčok, takže nič iné do nich nemôže ísť."
+      }
+    },
+    "goal": "V každom riadku a v každom stĺpci je každé číslo presne raz.",
+    "name": "Väčšie a menšie"
+  },
+  "lightbeam": {
+    "rules": {
+      "mirrors": "Zrkadlo odrazí svetlo z ktorejkoľvek strany. Malé značky okolo neho ukazujú, ako inak môže ležať: väčšina otočí svetlo o štvrť kruhu a niektoré menej, takže ho pošlú šikmo.",
+      "walls": "Kamenný blok svetlo pohltí. Aj okraj hracej plochy.",
+      "tap": "Ťukni na kúsok a zmeň ho: zrkadlo sa otočí, posuvný kúsok sa presunie na ďalšie miesto. Biely okraj znamená, že s ním môžeš hýbať; všetko ostatné patrí k hádanke.",
+      "nodes": "Niektoré kamene sú spojené s otvorom v podlahe a ťuknutím sa nepohnú. Pošli svetlo cez otvor a kameň sa odsunie."
+    },
+    "hint": {
+      "entryRun": "Začni tam, kam svetlo už ide: beží rovno z kotúča, až kým nenarazí na prvý kúsok, ktorý môžeš zmeniť. Cez tie políčka svetlo ide, nech urobíš čokoľvek.",
+      "exitRun": "Pozri sa na svätyňu. Osvetliť sa dá len jedna jej strana – všetky ostatné cesty dnu sú zablokované alebo smerujú von z plochy –, takže svetlo musí prísť po tejto čiare.",
+      "wiringFires": {
+        "one": "Svetlo musí cestou prejsť cez ten otvor – to už vieš. Keď cez neho prejde, odtiahne spojený kameň z cesty a cesta za ním sa otvorí.",
+        "all": "Ten kameň je spojený s viacerými otvormi a pohne sa, až keď svetlo prejde cez všetky. Nájdi cestu, ako lúč prevedieš cez všetky."
+      },
+      "deadEnd": {
+        "wall": "Takto otočené pošle svetlo rovno do kameňa a nič ho už nezachráni. Takže takto byť nemôže.",
+        "disc": "Takto otočené pošle zrkadlo svetlo späť, odkiaľ prišlo, až do kotúča, z ktorého vyšlo. Takže takto byť nemôže.",
+        "edge": "Takto otočené pošle svetlo za okraj plochy a nič ho už nechytí. Takže takto byť nemôže.",
+        "loop": "Takto otočené sa svetlo nikam nedostane – donekonečna krúži. Takže takto byť nemôže."
+      },
+      "feedsExit": {
+        "wall": "Choď späť od svätyne. Takto otočené nič nedonesie svetlo po jedinej čiare, ktorá k nej vedie – cestou zhasne v kameni.",
+        "disc": "Choď späť od svätyne. Takto otočené by svetlo muselo vyjsť z tmavej zadnej strany kotúča a odtiaľ žiadne svetlo nejde.",
+        "edge": "Choď späť od svätyne. Takto otočené by svetlo muselo prísť spoza okraja plochy.",
+        "loop": "Choď späť od svätyne. Takto otočené by svetlo, ktoré k nej má dôjsť, len donekonečna krúžilo."
+      },
+      "wiringDead": "Nech urobíš čokoľvek, svetlo sa k tomu otvoru nikdy nedostane – takže spojený kameň ostane presne tam, kde je, a cestu môžeš čítať rovno popri ňom.",
+      "neverReached": "Toto nechaj tak. Svetlo sa k nemu nedostane, nech je zvyšok akokoľvek, takže nezáleží na tom, čo s ním urobíš.",
+      "onlySurvivor": "Skús postupne každú polohu tohto kúska a všetky okrem jednej nechajú svätyňu v tme. Tá jedna je odpoveď."
+    },
+    "goal": "Slnečné svetlo beží z kotúča do svätyne.",
+    "name": "Lúč svetla"
+  },
+  "eclipse": {
+    "rules": {
+      "triple": "Tri rovnaké za sebou nesmú byť nikdy, ani vodorovne, ani zvisle.",
+      "copies": "Žiadne dva riadky nesmú byť rovnaké a žiadne dva stĺpce tiež nie.",
+      "signs": "Znak medzi dvoma políčkami hovorí, aké sú: = rovnaké, × rôzne.",
+      "enter": "Ťukni na políčko a daj tam slnko, ťukni znova a bude tam mesiac, ešte raz a políčko bude prázdne."
+    },
+    "hint": {
+      "mistake": "Jedna z týchto značiek nemôže byť správne.",
+      "sign.same": "= znamená rovnaké.",
+      "sign.different": "× znamená rôzne.",
+      "noTriple.pair": "Už sú tu dva znaky {{mark}} a tri za sebou nesmú byť nikdy.",
+      "noTriple.sandwich": "{{mark}} je z oboch strán a tri za sebou nesmú byť nikdy.",
+      "signPair": "Tieto dva sú rovnaké a vedľa nich stojí {{mark}}.",
+      "lineCount": "V tomto rade je už dosť znakov {{mark}}: {{count}}.",
+      "noCopy": "Naopak by to bola kópia rozsvieteného radu.",
+      "linePairing.sameNoRoom": "Znakov {{mark}} tu ostáva už len {{count}} a tieto dva sú rovnaké.",
+      "linePairing.differentTakesOne": "Dvojice so znakom × minú všetky miesta pre {{mark}} v tomto rade.",
+      "loneMark": "Ostáva jeden {{mark}} a len jedno políčko oddelí tri {{other}}.",
+      "squeeze.triple": "{{mark}} tu by z ostatných urobil {{other}} – tri za sebou.",
+      "squeeze.sign": "{{mark}} tu by z ostatných urobil {{other}} – a jeden znak by prestal sedieť.",
+      "squeeze.copy": "{{mark}} tu by z ostatných urobil {{other}} – a rad by bol kópiou.",
+      "action": {
+        "fill_one": "Daj {{mark}} do vyšrafovaného políčka.",
+        "fill_few": "Daj {{mark}} do vyšrafovaných políčok.",
+        "fill_many": "Daj {{mark}} do vyšrafovaných políčok.",
+        "fill_other": "Daj {{mark}} do vyšrafovaných políčok.",
+        "fillMixed": "Vyplň vyšrafované políčka – len jedno poradie funguje."
+      }
+    },
+    "goal": "V každom políčku je slnko alebo mesiac a v každom rade je rovnako veľa jedného aj druhého.",
+    "name": "Slnko a mesiac"
+  },
+  "constellation": {
+    "rules": {
+      "default": {
+        "straight": "Čiary svetla idú rovno, vodorovne alebo zvisle, od jednej hviezdy k ďalšej.",
+        "pair": "Dve hviezdy môžu mať spolu najviac dve čiary.",
+        "cross": "Čiary sa nikdy nekrižujú a nikdy nejdú cez hviezdu.",
+        "enter": "Potiahni z hviezdy k susednej a nakreslíš čiaru, znova a bude dvojitá, ešte raz a zmizne."
+      },
+      "causeway": {
+        "straight": "Cesty na ťahanie kameňov idú rovno, vodorovne alebo zvisle, od jedného staveniska k ďalšiemu.",
+        "pair": "Dve staveniská môžu mať spolu najviac dve cesty.",
+        "cross": "Cesty sa nikdy nekrižujú a nikdy nejdú cez stavenisko.",
+        "enter": "Potiahni zo staveniska k susednému a postavíš cestu, znova a bude dvojitá, ešte raz a zbúraš ju."
+      },
+      "irrigation": {
+        "straight": "Kanály idú rovno, vodorovne alebo zvisle, od jednej nádrže k ďalšej.",
+        "pair": "Dve nádrže môžu mať spolu najviac dva kanály.",
+        "cross": "Kanály sa nikdy nekrižujú a nikdy nejdú cez nádrž.",
+        "enter": "Potiahni z nádrže k susednej a vykopeš kanál, znova a rozšíriš ho, ešte raz a zasypeš ho."
+      },
+      "ceiling": {
+        "straight": "Šnúry idú rovno, vodorovne alebo zvisle, od jednej hviezdy k ďalšej.",
+        "pair": "Dve hviezdy môžu mať spolu najviac dve šnúry.",
+        "cross": "Šnúry sa nikdy nekrižujú a nikdy nejdú cez hviezdu.",
+        "enter": "Potiahni z hviezdy k susednej a natiahneš šnúru, znova a bude dvojitá, ešte raz a zložíš ju."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Jedna z týchto čiar nemôže byť správne.",
+        "capacity": "Treba čiar: {{count}} – a ciest von je práve tak akurát.",
+        "settled": "Táto hviezda s číslom {{count}} už má všetky čiary.",
+        "soleWayOut": "Ostáva už len jedna cesta von a nakresliť treba ešte: {{count}}.",
+        "crossed": "Čiara tam by skrížila túto.",
+        "atLeastOne": "Treba čiar: {{count}} – a ostatné cesty von ich všetky neunesú.",
+        "twinBlock.single": "Spojenie týchto dvoch by vytvorilo súhvezdie len z dvoch hviezd.",
+        "twinBlock.double": "Druhá čiara tam by urobila súhvezdie len z dvoch hviezd.",
+        "isolation": "Tá čiara by tieto hviezdy (spolu {{count}}) odrezala od ostatných.",
+        "action": {
+          "draw_one": "Nakresli označenú čiaru.",
+          "draw_few": "Nakresli označené čiary.",
+          "draw_many": "Nakresli označené čiary.",
+          "draw_other": "Nakresli označené čiary.",
+          "refuse_one": "Označená čiara ostane nenakreslená.",
+          "refuse_few": "Označené čiary ostanú nenakreslené.",
+          "refuse_many": "Označené čiary ostanú nenakreslené.",
+          "refuse_other": "Označené čiary ostanú nenakreslené.",
+          "refuseDouble": "Tam jedna čiara, a druhá nie."
+        }
+      },
+      "causeway": {
+        "mistake": "Jedna z týchto ciest nemôže byť správne.",
+        "capacity": "Treba ciest: {{count}} – a ciest von je práve tak akurát.",
+        "settled": "Toto stavenisko s číslom {{count}} už má všetky cesty.",
+        "soleWayOut": "Ostáva už len jedna cesta von a postaviť treba ešte: {{count}}.",
+        "crossed": "Cesta tam by skrížila túto.",
+        "atLeastOne": "Treba ciest: {{count}} – a ostatné cesty von ich všetky neunesú.",
+        "twinBlock.single": "Spojenie týchto dvoch by vytvorilo sieť len z dvoch stavenísk.",
+        "twinBlock.double": "Druhá cesta tam by urobila sieť len z dvoch stavenísk.",
+        "isolation": "Tá cesta by tieto staveniská (spolu {{count}}) odrezala od ostatných.",
+        "action": {
+          "draw_one": "Postav označenú cestu.",
+          "draw_few": "Postav označené cesty.",
+          "draw_many": "Postav označené cesty.",
+          "draw_other": "Postav označené cesty.",
+          "refuse_one": "Označená cesta ostane nepostavená.",
+          "refuse_few": "Označené cesty ostanú nepostavené.",
+          "refuse_many": "Označené cesty ostanú nepostavené.",
+          "refuse_other": "Označené cesty ostanú nepostavené.",
+          "refuseDouble": "Tam jedna cesta, a druhá nie."
+        }
+      },
+      "irrigation": {
+        "mistake": "Jeden z týchto kanálov nemôže byť správne.",
+        "capacity": "Treba kanálov: {{count}} – a ciest von je práve tak akurát.",
+        "settled": "Táto nádrž s číslom {{count}} už má všetky kanály.",
+        "soleWayOut": "Ostáva už len jedna cesta von a vykopať treba ešte: {{count}}.",
+        "crossed": "Kanál tam by skrížil tento.",
+        "atLeastOne": "Treba kanálov: {{count}} – a ostatné cesty von ich všetky neunesú.",
+        "twinBlock.single": "Spojenie týchto dvoch by vytvorilo vodovod len z dvoch nádrží.",
+        "twinBlock.double": "Druhý kanál tam by urobil vodovod len z dvoch nádrží.",
+        "isolation": "Ten kanál by tieto nádrže (spolu {{count}}) odrezal od ostatných.",
+        "action": {
+          "draw_one": "Vykop označený kanál.",
+          "draw_few": "Vykop označené kanály.",
+          "draw_many": "Vykop označené kanály.",
+          "draw_other": "Vykop označené kanály.",
+          "refuse_one": "Označený kanál ostane nevykopaný.",
+          "refuse_few": "Označené kanály ostanú nevykopané.",
+          "refuse_many": "Označené kanály ostanú nevykopané.",
+          "refuse_other": "Označené kanály ostanú nevykopané.",
+          "refuseDouble": "Tam jeden kanál, a druhý nie."
+        }
+      },
+      "ceiling": {
+        "mistake": "Jedna z týchto šnúr nemôže byť správne.",
+        "capacity": "Treba šnúr: {{count}} – a ciest von je práve tak akurát.",
+        "settled": "Táto hviezda s číslom {{count}} už má všetky šnúry.",
+        "soleWayOut": "Ostáva už len jedna cesta von a natiahnuť treba ešte: {{count}}.",
+        "crossed": "Šnúra tam by skrížila túto.",
+        "atLeastOne": "Treba šnúr: {{count}} – a ostatné cesty von ich všetky neunesú.",
+        "twinBlock.single": "Spojenie týchto dvoch by vytvorilo maľované nebo len z dvoch hviezd.",
+        "twinBlock.double": "Druhá šnúra tam by urobila maľované nebo len z dvoch hviezd.",
+        "isolation": "Tá šnúra by tieto hviezdy (spolu {{count}}) odrezala od ostatných.",
+        "action": {
+          "draw_one": "Natiahni označenú šnúru.",
+          "draw_few": "Natiahni označené šnúry.",
+          "draw_many": "Natiahni označené šnúry.",
+          "draw_other": "Natiahni označené šnúry.",
+          "refuse_one": "Označená šnúra ostane nenatiahnutá.",
+          "refuse_few": "Označené šnúry ostanú nenatiahnuté.",
+          "refuse_many": "Označené šnúry ostanú nenatiahnuté.",
+          "refuse_other": "Označené šnúry ostanú nenatiahnuté.",
+          "refuseDouble": "Tam jedna šnúra, a druhá nie."
+        }
+      }
+    },
+    "goal": {
+      "default": "Každá hviezda patrí do jedného súhvezdia a vedie z nej toľko čiar svetla, koľko hovorí jej číslo.",
+      "causeway": "Každé stavenisko patrí do jednej siete ciest a vedie k nemu toľko ciest, koľko hovorí jeho číslo.",
+      "irrigation": "Každá nádrž patrí do jedného vodovodu a vedie do nej toľko kanálov, koľko hovorí jej číslo.",
+      "ceiling": "Každá hviezda patrí do jedného maľovaného neba a vedie z nej toľko zlatých šnúr, koľko hovorí jej číslo."
+    },
+    "name": {
+      "default": "Mapa hviezd",
+      "causeway": "Cesty na stavbu",
+      "irrigation": "Vodovod",
+      "ceiling": "Maľovaný strop"
+    }
+  },
+  "starBattle": {
+    "rules": {
+      "default": {
+        "touch": "Dve hviezdy sa nesmú dotýkať – ani rohmi.",
+        "enter": "Ťukni na políčko a vylúčiš ho, znova a dáš tam hviezdu, ešte raz a vymažeš ho."
+      },
+      "fields": {
+        "touch": "Dve farmy sa nesmú dotýkať – ani rohmi. Tak blízko by mali spolu len jednu studňu.",
+        "enter": "Ťukni na parcelu a vylúčiš ju, znova a postavíš farmu, ešte raz a vymažeš ju."
+      },
+      "lamps": {
+        "touch": "Dve olejové lampy nesmú stáť vedľa seba – ani rohmi. Ich svetlo by sa prekrývalo a olej by sa míňal zbytočne.",
+        "walls": "Sivé kamenné bloky sú súčasť podlahy: nič na nich nemôže stáť a nie sú to políčka.",
+        "enter": "Ťukni na dlaždicu a vylúčiš ju, znova a postavíš tam olejovú lampu, ešte raz a vymažeš ju."
+      },
+      "market": {
+        "touch": "Dva stánky nesmú stáť vedľa seba – ani rohmi. Súperi sa nikdy nepostavia hneď vedľa seba.",
+        "walls": "Domy sú súčasť námestia: nikto si v nich nemôže postaviť stánok a nie sú to miesta.",
+        "enter": "Ťukni na miesto a vylúčiš ho, znova a postavíš tam stánok, ešte raz a vymažeš ho."
+      },
+      "lotus": {
+        "touch": "Dva lotosy nesmú plávať vedľa seba – ani rohmi. Každý kvet potrebuje okolo seba voľnú vodu.",
+        "walls": "Skaly trčia z jazierka: nič na nich nemôže plávať a nie sú to políčka.",
+        "enter": "Ťukni na kúsok vody a vylúčiš ho, znova a pustíš tam lotos, ešte raz a vymažeš ho."
+      },
+      "cats": {
+        "touch": "Dve mačky nesmú spať vedľa seba – ani rohmi. Každá mačka má svoj vlastný kúsok slnka.",
+        "walls": "Stĺpy držia chrám: žiadna mačka na nich nemôže spať a nie sú to políčka.",
+        "enter": "Ťukni na dlaždicu a vylúčiš ju, znova a uložíš tam mačku, ešte raz a vymažeš ju."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Táto značka nemôže byť správne.",
+        "touch": "Je tu {{token}} a ničoho sa {{token}} nesmie dotýkať.",
+        "groupFull.row_one": "Tento riadok už má svoj {{token}}.",
+        "groupFull.row_few": "Tento riadok už má všetky {{token}}: {{count}}.",
+        "groupFull.row_many": "Tento riadok už má všetky {{token}}: {{count}}.",
+        "groupFull.row_other": "Tento riadok už má všetky {{token}}: {{count}}.",
+        "groupFull.col_one": "Tento stĺpec už má svoj {{token}}.",
+        "groupFull.col_few": "Tento stĺpec už má všetky {{token}}: {{count}}.",
+        "groupFull.col_many": "Tento stĺpec už má všetky {{token}}: {{count}}.",
+        "groupFull.col_other": "Tento stĺpec už má všetky {{token}}: {{count}}.",
+        "groupFull.region_one": "Táto oblasť už má svoj {{token}}.",
+        "groupFull.region_few": "Táto oblasť už má všetky {{token}}: {{count}}.",
+        "groupFull.region_many": "Táto oblasť už má všetky {{token}}: {{count}}.",
+        "groupFull.region_other": "Táto oblasť už má všetky {{token}}: {{count}}.",
+        "groupTight.row_one": "V tomto riadku ostáva už len jedno políčko.",
+        "groupTight.row_few": "V tomto riadku ostávajú už len {{count}} políčka.",
+        "groupTight.row_many": "V tomto riadku ostávajú už len {{count}} políčka.",
+        "groupTight.row_other": "V tomto riadku ostáva už len {{count}} políčok.",
+        "groupTight.col_one": "V tomto stĺpci ostáva už len jedno políčko.",
+        "groupTight.col_few": "V tomto stĺpci ostávajú už len {{count}} políčka.",
+        "groupTight.col_many": "V tomto stĺpci ostávajú už len {{count}} políčka.",
+        "groupTight.col_other": "V tomto stĺpci ostáva už len {{count}} políčok.",
+        "groupTight.region_one": "V tejto oblasti ostáva už len jedno políčko.",
+        "groupTight.region_few": "V tejto oblasti ostávajú už len {{count}} políčka.",
+        "groupTight.region_many": "V tejto oblasti ostávajú už len {{count}} políčka.",
+        "groupTight.region_other": "V tejto oblasti ostáva už len {{count}} políčok.",
+        "onlyWay.row_one": "{{token}} sa dá v tomto riadku umiestniť len jedným spôsobom.",
+        "onlyWay.row_few": "{{token}} ({{count}}) sa dajú v tomto riadku rozmiestniť len jedným spôsobom.",
+        "onlyWay.row_many": "{{token}} ({{count}}) sa dajú v tomto riadku rozmiestniť len jedným spôsobom.",
+        "onlyWay.row_other": "{{token}} ({{count}}) sa dajú v tomto riadku rozmiestniť len jedným spôsobom.",
+        "onlyWay.col_one": "{{token}} sa dá v tomto stĺpci umiestniť len jedným spôsobom.",
+        "onlyWay.col_few": "{{token}} ({{count}}) sa dajú v tomto stĺpci rozmiestniť len jedným spôsobom.",
+        "onlyWay.col_many": "{{token}} ({{count}}) sa dajú v tomto stĺpci rozmiestniť len jedným spôsobom.",
+        "onlyWay.col_other": "{{token}} ({{count}}) sa dajú v tomto stĺpci rozmiestniť len jedným spôsobom.",
+        "onlyWay.region_one": "{{token}} sa dá v tejto oblasti umiestniť len jedným spôsobom.",
+        "onlyWay.region_few": "{{token}} ({{count}}) sa dajú v tejto oblasti rozmiestniť len jedným spôsobom.",
+        "onlyWay.region_many": "{{token}} ({{count}}) sa dajú v tejto oblasti rozmiestniť len jedným spôsobom.",
+        "onlyWay.region_other": "{{token}} ({{count}}) sa dajú v tejto oblasti rozmiestniť len jedným spôsobom.",
+        "everyWay.row_one": "Nech dáš {{token}} tohto riadku kamkoľvek, vždy bude tu.",
+        "everyWay.row_few": "Nech dáš {{token}} tohto riadku ({{count}}) kamkoľvek, jeden bude vždy tu.",
+        "everyWay.row_many": "Nech dáš {{token}} tohto riadku ({{count}}) kamkoľvek, jeden bude vždy tu.",
+        "everyWay.row_other": "Nech dáš {{token}} tohto riadku ({{count}}) kamkoľvek, jeden bude vždy tu.",
+        "everyWay.col_one": "Nech dáš {{token}} tohto stĺpca kamkoľvek, vždy bude tu.",
+        "everyWay.col_few": "Nech dáš {{token}} tohto stĺpca ({{count}}) kamkoľvek, jeden bude vždy tu.",
+        "everyWay.col_many": "Nech dáš {{token}} tohto stĺpca ({{count}}) kamkoľvek, jeden bude vždy tu.",
+        "everyWay.col_other": "Nech dáš {{token}} tohto stĺpca ({{count}}) kamkoľvek, jeden bude vždy tu.",
+        "everyWay.region_one": "Nech dáš {{token}} tejto oblasti kamkoľvek, vždy bude tu.",
+        "everyWay.region_few": "Nech dáš {{token}} tejto oblasti ({{count}}) kamkoľvek, jeden bude vždy tu.",
+        "everyWay.region_many": "Nech dáš {{token}} tejto oblasti ({{count}}) kamkoľvek, jeden bude vždy tu.",
+        "everyWay.region_other": "Nech dáš {{token}} tejto oblasti ({{count}}) kamkoľvek, jeden bude vždy tu.",
+        "regionLine.row_one": "{{token}} označenej oblasti musí byť z toho riadku.",
+        "regionLine.row_few": "{{token}} označenej oblasti ({{count}}) musia byť z toho riadku.",
+        "regionLine.row_many": "{{token}} označenej oblasti ({{count}}) musia byť z toho riadku.",
+        "regionLine.row_other": "{{token}} označenej oblasti ({{count}}) musia byť z toho riadku.",
+        "regionLine.col_one": "{{token}} označenej oblasti musí byť z toho stĺpca.",
+        "regionLine.col_few": "{{token}} označenej oblasti ({{count}}) musia byť z toho stĺpca.",
+        "regionLine.col_many": "{{token}} označenej oblasti ({{count}}) musia byť z toho stĺpca.",
+        "regionLine.col_other": "{{token}} označenej oblasti ({{count}}) musia byť z toho stĺpca.",
+        "lineRegion.row_one": "{{token}} toho riadku patrí do označenej oblasti.",
+        "lineRegion.row_few": "{{token}} toho riadku ({{count}}) patria do označenej oblasti.",
+        "lineRegion.row_many": "{{token}} toho riadku ({{count}}) patria do označenej oblasti.",
+        "lineRegion.row_other": "{{token}} toho riadku ({{count}}) patria do označenej oblasti.",
+        "lineRegion.col_one": "{{token}} toho stĺpca patrí do označenej oblasti.",
+        "lineRegion.col_few": "{{token}} toho stĺpca ({{count}}) patria do označenej oblasti.",
+        "lineRegion.col_many": "{{token}} toho stĺpca ({{count}}) patria do označenej oblasti.",
+        "lineRegion.col_other": "{{token}} toho stĺpca ({{count}}) patria do označenej oblasti.",
+        "spanning.toRows": "Označené oblasti spolu zaplnia tie riadky (spolu {{count}}).",
+        "spanning.toCols": "Označené oblasti spolu zaplnia tie stĺpce (spolu {{count}}).",
+        "spanning.fromRows": "Označené riadky môžu vziať svoje {{token}} ({{count}}) len z tých oblastí.",
+        "spanning.fromCols": "Označené stĺpce môžu vziať svoje {{token}} ({{count}}) len z tých oblastí.",
+        "wouldStrand.row": "{{token}} tu by označenému riadku nenechal žiadne voľné miesto.",
+        "wouldStrand.col": "{{token}} tu by označenému stĺpcu nenechal žiadne voľné miesto.",
+        "wouldStrand.region": "{{token}} tu by označenej oblasti nenechal žiadne voľné miesto.",
+        "action": {
+          "ruleOut_one": "Vylúč vyšrafované políčko.",
+          "ruleOut_few": "Vylúč vyšrafované políčka.",
+          "ruleOut_many": "Vylúč vyšrafované políčka.",
+          "ruleOut_other": "Vylúč vyšrafované políčka.",
+          "place_one": "Daj {{token}} do vyšrafovaného políčka.",
+          "place_few": "Daj {{token}} do každého vyšrafovaného políčka.",
+          "place_many": "Daj {{token}} do každého vyšrafovaného políčka.",
+          "place_other": "Daj {{token}} do každého vyšrafovaného políčka."
+        }
+      },
+      "fields": {
+        "mistake": "Táto značka nemôže byť správne.",
+        "touch": "Je tu {{token}} a na žiadnej parcele, ktorej sa dotýka, už nemôže byť ďalšia.",
+        "groupFull.row_one": "Tento riadok je už obsadený.",
+        "groupFull.row_few": "Tento riadok už má všetky {{token}}: {{count}}.",
+        "groupFull.row_many": "Tento riadok už má všetky {{token}}: {{count}}.",
+        "groupFull.row_other": "Tento riadok už má všetky {{token}}: {{count}}.",
+        "groupFull.col_one": "Tento stĺpec je už obsadený.",
+        "groupFull.col_few": "Tento stĺpec už má všetky {{token}}: {{count}}.",
+        "groupFull.col_many": "Tento stĺpec už má všetky {{token}}: {{count}}.",
+        "groupFull.col_other": "Tento stĺpec už má všetky {{token}}: {{count}}.",
+        "groupFull.region_one": "Tento pozemok je už obsadený.",
+        "groupFull.region_few": "Tento pozemok už má všetky {{token}}: {{count}}.",
+        "groupFull.region_many": "Tento pozemok už má všetky {{token}}: {{count}}.",
+        "groupFull.region_other": "Tento pozemok už má všetky {{token}}: {{count}}.",
+        "groupTight.row_one": "V tomto riadku ostáva už len jedna parcela.",
+        "groupTight.row_few": "V tomto riadku ostávajú už len {{count}} parcely.",
+        "groupTight.row_many": "V tomto riadku ostávajú už len {{count}} parcely.",
+        "groupTight.row_other": "V tomto riadku ostáva už len {{count}} parciel.",
+        "groupTight.col_one": "V tomto stĺpci ostáva už len jedna parcela.",
+        "groupTight.col_few": "V tomto stĺpci ostávajú už len {{count}} parcely.",
+        "groupTight.col_many": "V tomto stĺpci ostávajú už len {{count}} parcely.",
+        "groupTight.col_other": "V tomto stĺpci ostáva už len {{count}} parciel.",
+        "groupTight.region_one": "Na tomto pozemku ostáva už len jedna parcela.",
+        "groupTight.region_few": "Na tomto pozemku ostávajú už len {{count}} parcely.",
+        "groupTight.region_many": "Na tomto pozemku ostávajú už len {{count}} parcely.",
+        "groupTight.region_other": "Na tomto pozemku ostáva už len {{count}} parciel.",
+        "onlyWay.row_one": "V tomto riadku ostáva len jedna parcela, kde sa dá stavať.",
+        "onlyWay.row_few": "{{token}} ({{count}}) sa dajú v tomto riadku rozmiestniť len jedným spôsobom.",
+        "onlyWay.row_many": "{{token}} ({{count}}) sa dajú v tomto riadku rozmiestniť len jedným spôsobom.",
+        "onlyWay.row_other": "{{token}} ({{count}}) sa dajú v tomto riadku rozmiestniť len jedným spôsobom.",
+        "onlyWay.col_one": "V tomto stĺpci ostáva len jedna parcela, kde sa dá stavať.",
+        "onlyWay.col_few": "{{token}} ({{count}}) sa dajú v tomto stĺpci rozmiestniť len jedným spôsobom.",
+        "onlyWay.col_many": "{{token}} ({{count}}) sa dajú v tomto stĺpci rozmiestniť len jedným spôsobom.",
+        "onlyWay.col_other": "{{token}} ({{count}}) sa dajú v tomto stĺpci rozmiestniť len jedným spôsobom.",
+        "onlyWay.region_one": "Na tomto pozemku ostáva len jedna parcela, kde sa dá stavať.",
+        "onlyWay.region_few": "{{token}} ({{count}}) sa dajú na tomto pozemku rozmiestniť len jedným spôsobom.",
+        "onlyWay.region_many": "{{token}} ({{count}}) sa dajú na tomto pozemku rozmiestniť len jedným spôsobom.",
+        "onlyWay.region_other": "{{token}} ({{count}}) sa dajú na tomto pozemku rozmiestniť len jedným spôsobom.",
+        "everyWay.row_one": "Nech staviaš v tomto riadku akokoľvek, jeho {{token}} stojí tu.",
+        "everyWay.row_few": "Nech staviaš v tomto riadku akokoľvek, jedna z jeho {{token}} ({{count}}) stojí tu.",
+        "everyWay.row_many": "Nech staviaš v tomto riadku akokoľvek, jedna z jeho {{token}} ({{count}}) stojí tu.",
+        "everyWay.row_other": "Nech staviaš v tomto riadku akokoľvek, jedna z jeho {{token}} ({{count}}) stojí tu.",
+        "everyWay.col_one": "Nech staviaš v tomto stĺpci akokoľvek, jeho {{token}} stojí tu.",
+        "everyWay.col_few": "Nech staviaš v tomto stĺpci akokoľvek, jedna z jeho {{token}} ({{count}}) stojí tu.",
+        "everyWay.col_many": "Nech staviaš v tomto stĺpci akokoľvek, jedna z jeho {{token}} ({{count}}) stojí tu.",
+        "everyWay.col_other": "Nech staviaš v tomto stĺpci akokoľvek, jedna z jeho {{token}} ({{count}}) stojí tu.",
+        "everyWay.region_one": "Nech staviaš na tomto pozemku akokoľvek, jeho {{token}} stojí tu.",
+        "everyWay.region_few": "Nech staviaš na tomto pozemku akokoľvek, jedna z jeho {{token}} ({{count}}) stojí tu.",
+        "everyWay.region_many": "Nech staviaš na tomto pozemku akokoľvek, jedna z jeho {{token}} ({{count}}) stojí tu.",
+        "everyWay.region_other": "Nech staviaš na tomto pozemku akokoľvek, jedna z jeho {{token}} ({{count}}) stojí tu.",
+        "regionLine.row_one": "{{token}} označeného pozemku musí byť z toho riadku.",
+        "regionLine.row_few": "{{token}} označeného pozemku ({{count}}) musia byť z toho riadku.",
+        "regionLine.row_many": "{{token}} označeného pozemku ({{count}}) musia byť z toho riadku.",
+        "regionLine.row_other": "{{token}} označeného pozemku ({{count}}) musia byť z toho riadku.",
+        "regionLine.col_one": "{{token}} označeného pozemku musí byť z toho stĺpca.",
+        "regionLine.col_few": "{{token}} označeného pozemku ({{count}}) musia byť z toho stĺpca.",
+        "regionLine.col_many": "{{token}} označeného pozemku ({{count}}) musia byť z toho stĺpca.",
+        "regionLine.col_other": "{{token}} označeného pozemku ({{count}}) musia byť z toho stĺpca.",
+        "lineRegion.row_one": "{{token}} toho riadku patrí k označenému pozemku.",
+        "lineRegion.row_few": "{{token}} toho riadku ({{count}}) patria k označenému pozemku.",
+        "lineRegion.row_many": "{{token}} toho riadku ({{count}}) patria k označenému pozemku.",
+        "lineRegion.row_other": "{{token}} toho riadku ({{count}}) patria k označenému pozemku.",
+        "lineRegion.col_one": "{{token}} toho stĺpca patrí k označenému pozemku.",
+        "lineRegion.col_few": "{{token}} toho stĺpca ({{count}}) patria k označenému pozemku.",
+        "lineRegion.col_many": "{{token}} toho stĺpca ({{count}}) patria k označenému pozemku.",
+        "lineRegion.col_other": "{{token}} toho stĺpca ({{count}}) patria k označenému pozemku.",
+        "spanning.toRows": "Označené pozemky spolu zaplnia tie riadky (spolu {{count}}).",
+        "spanning.toCols": "Označené pozemky spolu zaplnia tie stĺpce (spolu {{count}}).",
+        "spanning.fromRows": "Označené riadky môžu vziať svoje {{token}} ({{count}}) len z tých pozemkov.",
+        "spanning.fromCols": "Označené stĺpce môžu vziať svoje {{token}} ({{count}}) len z tých pozemkov.",
+        "wouldStrand.row": "{{token}} tu by označenému riadku nenechala žiadne miesto na stavbu.",
+        "wouldStrand.col": "{{token}} tu by označenému stĺpcu nenechala žiadne miesto na stavbu.",
+        "wouldStrand.region": "{{token}} tu by označenému pozemku nenechala žiadne miesto na stavbu.",
+        "action": {
+          "ruleOut_one": "Vylúč vyšrafovanú parcelu.",
+          "ruleOut_few": "Vylúč vyšrafované parcely.",
+          "ruleOut_many": "Vylúč vyšrafované parcely.",
+          "ruleOut_other": "Vylúč vyšrafované parcely.",
+          "place_one": "Postav {{token}} na vyšrafovanej parcele.",
+          "place_few": "Postav {{token}} na každej vyšrafovanej parcele.",
+          "place_many": "Postav {{token}} na každej vyšrafovanej parcele.",
+          "place_other": "Postav {{token}} na každej vyšrafovanej parcele."
+        }
+      },
+      "lamps": {
+        "mistake": "Táto značka nemôže byť správne.",
+        "touch": "Je tu {{token}} a dve olejové lampy nesmú stáť vedľa seba – ani rohmi.",
+        "groupFull.row_one": "Tento riadok už má svoju olejovú lampu.",
+        "groupFull.row_few": "Tento riadok už má všetky olejové lampy: {{count}}.",
+        "groupFull.row_many": "Tento riadok už má všetky olejové lampy: {{count}}.",
+        "groupFull.row_other": "Tento riadok už má všetky olejové lampy: {{count}}.",
+        "groupFull.col_one": "Tento stĺpec už má svoju olejovú lampu.",
+        "groupFull.col_few": "Tento stĺpec už má všetky olejové lampy: {{count}}.",
+        "groupFull.col_many": "Tento stĺpec už má všetky olejové lampy: {{count}}.",
+        "groupFull.col_other": "Tento stĺpec už má všetky olejové lampy: {{count}}.",
+        "groupTight.row_one": "V tomto riadku ostáva už len jedna dlaždica.",
+        "groupTight.row_few": "V tomto riadku ostávajú už len {{count}} dlaždice.",
+        "groupTight.row_many": "V tomto riadku ostávajú už len {{count}} dlaždice.",
+        "groupTight.row_other": "V tomto riadku ostáva už len {{count}} dlaždíc.",
+        "groupTight.col_one": "V tomto stĺpci ostáva už len jedna dlaždica.",
+        "groupTight.col_few": "V tomto stĺpci ostávajú už len {{count}} dlaždice.",
+        "groupTight.col_many": "V tomto stĺpci ostávajú už len {{count}} dlaždice.",
+        "groupTight.col_other": "V tomto stĺpci ostáva už len {{count}} dlaždíc.",
+        "onlyWay.row_one": "Medzi kamennými blokmi ostáva v tomto riadku len jedno políčko pre olejovú lampu.",
+        "onlyWay.row_few": "Olejové lampy ({{count}}) sa dajú v tomto riadku rozmiestniť len jedným spôsobom.",
+        "onlyWay.row_many": "Olejové lampy ({{count}}) sa dajú v tomto riadku rozmiestniť len jedným spôsobom.",
+        "onlyWay.row_other": "Olejové lampy ({{count}}) sa dajú v tomto riadku rozmiestniť len jedným spôsobom.",
+        "onlyWay.col_one": "Medzi kamennými blokmi ostáva v tomto stĺpci len jedno políčko pre olejovú lampu.",
+        "onlyWay.col_few": "Olejové lampy ({{count}}) sa dajú v tomto stĺpci rozmiestniť len jedným spôsobom.",
+        "onlyWay.col_many": "Olejové lampy ({{count}}) sa dajú v tomto stĺpci rozmiestniť len jedným spôsobom.",
+        "onlyWay.col_other": "Olejové lampy ({{count}}) sa dajú v tomto stĺpci rozmiestniť len jedným spôsobom.",
+        "everyWay.row_one": "Nech dáš olejovú lampu tohto riadku kamkoľvek, vždy bude tu.",
+        "everyWay.row_few": "Nech dáš olejové lampy tohto riadku ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.row_many": "Nech dáš olejové lampy tohto riadku ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.row_other": "Nech dáš olejové lampy tohto riadku ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.col_one": "Nech dáš olejovú lampu tohto stĺpca kamkoľvek, vždy bude tu.",
+        "everyWay.col_few": "Nech dáš olejové lampy tohto stĺpca ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.col_many": "Nech dáš olejové lampy tohto stĺpca ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.col_other": "Nech dáš olejové lampy tohto stĺpca ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "lineBlock.rowsToCols": "Označené riadky majú svoje olejové lampy v políčkach tých stĺpcov, takže tie stĺpce už nemajú žiadne navyše.",
+        "lineBlock.colsToRows": "Označené stĺpce majú svoje olejové lampy v políčkach tých riadkov, takže tie riadky už nemajú žiadne navyše.",
+        "wouldStrand.row": "Olejová lampa tu by označenému riadku nenechala žiadne voľné miesto.",
+        "wouldStrand.col": "Olejová lampa tu by označenému stĺpcu nenechala žiadne voľné miesto.",
+        "action": {
+          "ruleOut_one": "Vylúč vyšrafované políčko.",
+          "ruleOut_few": "Vylúč vyšrafované políčka.",
+          "ruleOut_many": "Vylúč vyšrafované políčka.",
+          "ruleOut_other": "Vylúč vyšrafované políčka.",
+          "place_one": "Daj olejovú lampu do vyšrafovaného políčka.",
+          "place_few": "Daj olejovú lampu do každého vyšrafovaného políčka.",
+          "place_many": "Daj olejovú lampu do každého vyšrafovaného políčka.",
+          "place_other": "Daj olejovú lampu do každého vyšrafovaného políčka."
+        }
+      },
+      "market": {
+        "mistake": "Táto značka nemôže byť správne.",
+        "touch": "Je tu {{token}} a dva stánky nesmú stáť vedľa seba – ani rohmi.",
+        "groupFull.row_one": "Tento riadok už má svoj stánok.",
+        "groupFull.row_few": "Tento riadok už má všetky stánky: {{count}}.",
+        "groupFull.row_many": "Tento riadok už má všetky stánky: {{count}}.",
+        "groupFull.row_other": "Tento riadok už má všetky stánky: {{count}}.",
+        "groupFull.col_one": "Tento stĺpec už má svoj stánok.",
+        "groupFull.col_few": "Tento stĺpec už má všetky stánky: {{count}}.",
+        "groupFull.col_many": "Tento stĺpec už má všetky stánky: {{count}}.",
+        "groupFull.col_other": "Tento stĺpec už má všetky stánky: {{count}}.",
+        "groupTight.row_one": "V tomto riadku ostáva už len jedno miesto.",
+        "groupTight.row_few": "V tomto riadku ostávajú už len {{count}} miesta.",
+        "groupTight.row_many": "V tomto riadku ostávajú už len {{count}} miesta.",
+        "groupTight.row_other": "V tomto riadku ostáva už len {{count}} miest.",
+        "groupTight.col_one": "V tomto stĺpci ostáva už len jedno miesto.",
+        "groupTight.col_few": "V tomto stĺpci ostávajú už len {{count}} miesta.",
+        "groupTight.col_many": "V tomto stĺpci ostávajú už len {{count}} miesta.",
+        "groupTight.col_other": "V tomto stĺpci ostáva už len {{count}} miest.",
+        "onlyWay.row_one": "Medzi domami ostáva v tomto riadku len jedno políčko pre stánok.",
+        "onlyWay.row_few": "Stánky ({{count}}) sa dajú v tomto riadku rozmiestniť len jedným spôsobom.",
+        "onlyWay.row_many": "Stánky ({{count}}) sa dajú v tomto riadku rozmiestniť len jedným spôsobom.",
+        "onlyWay.row_other": "Stánky ({{count}}) sa dajú v tomto riadku rozmiestniť len jedným spôsobom.",
+        "onlyWay.col_one": "Medzi domami ostáva v tomto stĺpci len jedno políčko pre stánok.",
+        "onlyWay.col_few": "Stánky ({{count}}) sa dajú v tomto stĺpci rozmiestniť len jedným spôsobom.",
+        "onlyWay.col_many": "Stánky ({{count}}) sa dajú v tomto stĺpci rozmiestniť len jedným spôsobom.",
+        "onlyWay.col_other": "Stánky ({{count}}) sa dajú v tomto stĺpci rozmiestniť len jedným spôsobom.",
+        "everyWay.row_one": "Nech dáš stánok tohto riadku kamkoľvek, vždy bude tu.",
+        "everyWay.row_few": "Nech dáš stánky tohto riadku ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.row_many": "Nech dáš stánky tohto riadku ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.row_other": "Nech dáš stánky tohto riadku ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.col_one": "Nech dáš stánok tohto stĺpca kamkoľvek, vždy bude tu.",
+        "everyWay.col_few": "Nech dáš stánky tohto stĺpca ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.col_many": "Nech dáš stánky tohto stĺpca ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.col_other": "Nech dáš stánky tohto stĺpca ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "lineBlock.rowsToCols": "Označené riadky majú svoje stánky v políčkach tých stĺpcov, takže tie stĺpce už nemajú žiadne navyše.",
+        "lineBlock.colsToRows": "Označené stĺpce majú svoje stánky v políčkach tých riadkov, takže tie riadky už nemajú žiadne navyše.",
+        "wouldStrand.row": "Stánok tu by označenému riadku nenechal žiadne voľné miesto.",
+        "wouldStrand.col": "Stánok tu by označenému stĺpcu nenechal žiadne voľné miesto.",
+        "action": {
+          "ruleOut_one": "Vylúč vyšrafované políčko.",
+          "ruleOut_few": "Vylúč vyšrafované políčka.",
+          "ruleOut_many": "Vylúč vyšrafované políčka.",
+          "ruleOut_other": "Vylúč vyšrafované políčka.",
+          "place_one": "Daj stánok do vyšrafovaného políčka.",
+          "place_few": "Daj stánok do každého vyšrafovaného políčka.",
+          "place_many": "Daj stánok do každého vyšrafovaného políčka.",
+          "place_other": "Daj stánok do každého vyšrafovaného políčka."
+        }
+      },
+      "lotus": {
+        "mistake": "Táto značka nemôže byť správne.",
+        "touch": "Je tu {{token}} a dva lotosy nesmú plávať vedľa seba – ani rohmi.",
+        "groupFull.row_one": "Tento riadok už má svoj lotos.",
+        "groupFull.row_few": "Tento riadok už má všetky lotosy: {{count}}.",
+        "groupFull.row_many": "Tento riadok už má všetky lotosy: {{count}}.",
+        "groupFull.row_other": "Tento riadok už má všetky lotosy: {{count}}.",
+        "groupFull.col_one": "Tento stĺpec už má svoj lotos.",
+        "groupFull.col_few": "Tento stĺpec už má všetky lotosy: {{count}}.",
+        "groupFull.col_many": "Tento stĺpec už má všetky lotosy: {{count}}.",
+        "groupFull.col_other": "Tento stĺpec už má všetky lotosy: {{count}}.",
+        "groupTight.row_one": "V tomto riadku ostáva už len jeden kúsok vody.",
+        "groupTight.row_few": "V tomto riadku ostávajú už len {{count}} kúsky vody.",
+        "groupTight.row_many": "V tomto riadku ostávajú už len {{count}} kúsky vody.",
+        "groupTight.row_other": "V tomto riadku ostáva už len {{count}} kúskov vody.",
+        "groupTight.col_one": "V tomto stĺpci ostáva už len jeden kúsok vody.",
+        "groupTight.col_few": "V tomto stĺpci ostávajú už len {{count}} kúsky vody.",
+        "groupTight.col_many": "V tomto stĺpci ostávajú už len {{count}} kúsky vody.",
+        "groupTight.col_other": "V tomto stĺpci ostáva už len {{count}} kúskov vody.",
+        "onlyWay.row_one": "Medzi skalami ostáva v tomto riadku len jedno políčko pre lotos.",
+        "onlyWay.row_few": "Lotosy ({{count}}) sa dajú v tomto riadku rozmiestniť len jedným spôsobom.",
+        "onlyWay.row_many": "Lotosy ({{count}}) sa dajú v tomto riadku rozmiestniť len jedným spôsobom.",
+        "onlyWay.row_other": "Lotosy ({{count}}) sa dajú v tomto riadku rozmiestniť len jedným spôsobom.",
+        "onlyWay.col_one": "Medzi skalami ostáva v tomto stĺpci len jedno políčko pre lotos.",
+        "onlyWay.col_few": "Lotosy ({{count}}) sa dajú v tomto stĺpci rozmiestniť len jedným spôsobom.",
+        "onlyWay.col_many": "Lotosy ({{count}}) sa dajú v tomto stĺpci rozmiestniť len jedným spôsobom.",
+        "onlyWay.col_other": "Lotosy ({{count}}) sa dajú v tomto stĺpci rozmiestniť len jedným spôsobom.",
+        "everyWay.row_one": "Nech dáš lotos tohto riadku kamkoľvek, vždy bude tu.",
+        "everyWay.row_few": "Nech dáš lotosy tohto riadku ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.row_many": "Nech dáš lotosy tohto riadku ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.row_other": "Nech dáš lotosy tohto riadku ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.col_one": "Nech dáš lotos tohto stĺpca kamkoľvek, vždy bude tu.",
+        "everyWay.col_few": "Nech dáš lotosy tohto stĺpca ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.col_many": "Nech dáš lotosy tohto stĺpca ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.col_other": "Nech dáš lotosy tohto stĺpca ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "lineBlock.rowsToCols": "Označené riadky majú svoje lotosy v políčkach tých stĺpcov, takže tie stĺpce už nemajú žiadne navyše.",
+        "lineBlock.colsToRows": "Označené stĺpce majú svoje lotosy v políčkach tých riadkov, takže tie riadky už nemajú žiadne navyše.",
+        "wouldStrand.row": "Lotos tu by označenému riadku nenechal žiadne voľné miesto.",
+        "wouldStrand.col": "Lotos tu by označenému stĺpcu nenechal žiadne voľné miesto.",
+        "action": {
+          "ruleOut_one": "Vylúč vyšrafované políčko.",
+          "ruleOut_few": "Vylúč vyšrafované políčka.",
+          "ruleOut_many": "Vylúč vyšrafované políčka.",
+          "ruleOut_other": "Vylúč vyšrafované políčka.",
+          "place_one": "Daj lotos do vyšrafovaného políčka.",
+          "place_few": "Daj lotos do každého vyšrafovaného políčka.",
+          "place_many": "Daj lotos do každého vyšrafovaného políčka.",
+          "place_other": "Daj lotos do každého vyšrafovaného políčka."
+        }
+      },
+      "cats": {
+        "mistake": "Táto značka nemôže byť správne.",
+        "touch": "Je tu {{token}} a dve mačky nesmú spať vedľa seba – ani rohmi.",
+        "groupFull.row_one": "Tento riadok už má svoju mačku.",
+        "groupFull.row_few": "Tento riadok už má všetky mačky: {{count}}.",
+        "groupFull.row_many": "Tento riadok už má všetky mačky: {{count}}.",
+        "groupFull.row_other": "Tento riadok už má všetky mačky: {{count}}.",
+        "groupFull.col_one": "Tento stĺpec už má svoju mačku.",
+        "groupFull.col_few": "Tento stĺpec už má všetky mačky: {{count}}.",
+        "groupFull.col_many": "Tento stĺpec už má všetky mačky: {{count}}.",
+        "groupFull.col_other": "Tento stĺpec už má všetky mačky: {{count}}.",
+        "groupTight.row_one": "V tomto riadku ostáva už len jedna dlaždica.",
+        "groupTight.row_few": "V tomto riadku ostávajú už len {{count}} dlaždice.",
+        "groupTight.row_many": "V tomto riadku ostávajú už len {{count}} dlaždice.",
+        "groupTight.row_other": "V tomto riadku ostáva už len {{count}} dlaždíc.",
+        "groupTight.col_one": "V tomto stĺpci ostáva už len jedna dlaždica.",
+        "groupTight.col_few": "V tomto stĺpci ostávajú už len {{count}} dlaždice.",
+        "groupTight.col_many": "V tomto stĺpci ostávajú už len {{count}} dlaždice.",
+        "groupTight.col_other": "V tomto stĺpci ostáva už len {{count}} dlaždíc.",
+        "onlyWay.row_one": "Medzi stĺpmi ostáva v tomto riadku len jedno políčko pre mačku.",
+        "onlyWay.row_few": "Mačky ({{count}}) sa dajú v tomto riadku rozmiestniť len jedným spôsobom.",
+        "onlyWay.row_many": "Mačky ({{count}}) sa dajú v tomto riadku rozmiestniť len jedným spôsobom.",
+        "onlyWay.row_other": "Mačky ({{count}}) sa dajú v tomto riadku rozmiestniť len jedným spôsobom.",
+        "onlyWay.col_one": "Medzi stĺpmi ostáva v tomto stĺpci len jedno políčko pre mačku.",
+        "onlyWay.col_few": "Mačky ({{count}}) sa dajú v tomto stĺpci rozmiestniť len jedným spôsobom.",
+        "onlyWay.col_many": "Mačky ({{count}}) sa dajú v tomto stĺpci rozmiestniť len jedným spôsobom.",
+        "onlyWay.col_other": "Mačky ({{count}}) sa dajú v tomto stĺpci rozmiestniť len jedným spôsobom.",
+        "everyWay.row_one": "Nech dáš mačku tohto riadku kamkoľvek, vždy bude tu.",
+        "everyWay.row_few": "Nech dáš mačky tohto riadku ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.row_many": "Nech dáš mačky tohto riadku ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.row_other": "Nech dáš mačky tohto riadku ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.col_one": "Nech dáš mačku tohto stĺpca kamkoľvek, vždy bude tu.",
+        "everyWay.col_few": "Nech dáš mačky tohto stĺpca ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.col_many": "Nech dáš mačky tohto stĺpca ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "everyWay.col_other": "Nech dáš mačky tohto stĺpca ({{count}}) kamkoľvek, jeden kus bude vždy tu.",
+        "lineBlock.rowsToCols": "Označené riadky majú svoje mačky v políčkach tých stĺpcov, takže tie stĺpce už nemajú žiadne navyše.",
+        "lineBlock.colsToRows": "Označené stĺpce majú svoje mačky v políčkach tých riadkov, takže tie riadky už nemajú žiadne navyše.",
+        "wouldStrand.row": "Mačka tu by označenému riadku nenechala žiadne voľné miesto.",
+        "wouldStrand.col": "Mačka tu by označenému stĺpcu nenechala žiadne voľné miesto.",
+        "action": {
+          "ruleOut_one": "Vylúč vyšrafované políčko.",
+          "ruleOut_few": "Vylúč vyšrafované políčka.",
+          "ruleOut_many": "Vylúč vyšrafované políčka.",
+          "ruleOut_other": "Vylúč vyšrafované políčka.",
+          "place_one": "Daj mačku do vyšrafovaného políčka.",
+          "place_few": "Daj mačku do každého vyšrafovaného políčka.",
+          "place_many": "Daj mačku do každého vyšrafovaného políčka.",
+          "place_other": "Daj mačku do každého vyšrafovaného políčka."
+        }
+      }
+    },
+    "quota": {
+      "default": "V každom riadku, stĺpci a oblasti",
+      "fields": "V každom riadku, stĺpci a pozemku",
+      "lamps": "V každom riadku a stĺpci",
+      "market": "V každom riadku a stĺpci",
+      "lotus": "V každom riadku a stĺpci",
+      "cats": "V každom riadku a stĺpci"
+    },
+    "goal": {
+      "default_one": "V každom riadku, každom stĺpci a každej oblasti je presne jedna hviezda.",
+      "default_few": "V každom riadku, každom stĺpci a každej oblasti sú presne {{count}} hviezdy.",
+      "default_many": "V každom riadku, každom stĺpci a každej oblasti sú presne {{count}} hviezdy.",
+      "default_other": "V každom riadku, každom stĺpci a každej oblasti je presne {{count}} hviezd.",
+      "fields_one": "V každom riadku, každom stĺpci a na každom pozemku je presne jedna farma.",
+      "fields_few": "V každom riadku, každom stĺpci a na každom pozemku sú presne {{count}} farmy.",
+      "fields_many": "V každom riadku, každom stĺpci a na každom pozemku sú presne {{count}} farmy.",
+      "fields_other": "V každom riadku, každom stĺpci a na každom pozemku je presne {{count}} fariem.",
+      "lamps": "V každom riadku a každom stĺpci je presne jedna olejová lampa.",
+      "market": "V každom riadku a každom stĺpci je presne jeden trhový stánok.",
+      "lotus": "V každom riadku a každom stĺpci je presne jeden lotos.",
+      "cats": "V každom riadku a každom stĺpci je presne jedna mačka."
+    },
+    "name": {
+      "default": "Hviezdy od seba",
+      "fields": "Farmy",
+      "twinDefault": "Dvojhviezdy",
+      "twinFields": "Dvojfarmy",
+      "lamps": "Olejové lampy",
+      "market": "Trhové stánky",
+      "lotus": "Lotosové jazierko",
+      "cats": "Chrámové mačky"
+    }
+  },
+  "pairPuzzle": {
+    "name": {
+      "mummies": "Odpočinok múmií",
+      "beetles": "Skarabeusy"
+    },
+    "goal": {
+      "mummies": "Každý sarkofág má vedľa seba jednu múmiu a v každom riadku a stĺpci je presne toľko múmií, koľko ukazuje číslo pri ňom.",
+      "beetles": "Každá guľôčka trusu má vedľa seba jedného chrobáka a v každom riadku a stĺpci je presne toľko chrobákov, koľko ukazuje číslo pri ňom."
+    },
+    "rules": {
+      "mummies": {
+        "pair": "Každý sarkofág má jednu múmiu, ktorá leží priamo nad ním, pod ním, vľavo alebo vpravo, a každá múmia leží pri svojom vlastnom sarkofágu.",
+        "count": "Číslo pri riadku alebo stĺpci hovorí, koľko je v ňom múmií. Zozelenie, keď ich je presne toľko, a sčervenie, keď sa to už nedá splniť.",
+        "touch": "Dve múmie nesmú byť vedľa seba – ani rohmi.",
+        "enter": "Ťukni na políčko a vylúčiš ho, znova a položíš tam múmiu, ešte raz a vymažeš ho. Potiahni cez viac políčok a vylúčiš ich všetky. Na sarkofágy sa ťukať nedá."
+      },
+      "beetles": {
+        "pair": "Každá guľôčka trusu má jedného chrobáka priamo nad ňou, pod ňou, vľavo alebo vpravo, a každý chrobák stojí pri svojej vlastnej guľôčke, ktorú kotúľa.",
+        "count": "Číslo pri riadku alebo stĺpci hovorí, koľko je v ňom chrobákov. Zozelenie, keď ich je presne toľko, a sčervenie, keď sa to už nedá splniť.",
+        "touch": "Dva chrobáky nesmú byť vedľa seba – ani rohmi.",
+        "enter": "Ťukni na políčko a vylúčiš ho, znova a dáš tam chrobáka, ešte raz a vymažeš ho. Potiahni cez viac políčok a vylúčiš ich všetky. Na guľôčky sa ťukať nedá."
+      }
+    },
+    "hint": {
+      "mummies": {
+        "mistake": "Táto značka nemôže byť správne.",
+        "touch": "Táto múmia už leží, takže vedľa nej nesmie byť iná – ani rohmi.",
+        "zeroLine.row": "V tomto riadku nie sú žiadne múmie, takže je celý prázdny.",
+        "zeroLine.col": "V tomto stĺpci nie sú žiadne múmie, takže je celý prázdny.",
+        "noAnchor": "Pri týchto políčkach nie je žiadny sarkofág, takže tu žiadna múmia nemôže ležať.",
+        "lineFull.row_one": "Tento riadok už má svoju múmiu.",
+        "lineFull.row_few": "Tento riadok už má všetky múmie: {{count}}.",
+        "lineFull.row_many": "Tento riadok už má všetky múmie: {{count}}.",
+        "lineFull.row_other": "Tento riadok už má všetky múmie: {{count}}.",
+        "lineFull.col_one": "Tento stĺpec už má svoju múmiu.",
+        "lineFull.col_few": "Tento stĺpec už má všetky múmie: {{count}}.",
+        "lineFull.col_many": "Tento stĺpec už má všetky múmie: {{count}}.",
+        "lineFull.col_other": "Tento stĺpec už má všetky múmie: {{count}}.",
+        "lineTight.row_one": "Tomuto riadku ostáva už len jedno políčko pre svoju múmiu.",
+        "lineTight.row_few": "Tomuto riadku ostávajú presne {{count}} políčka pre {{count}} múmie.",
+        "lineTight.row_many": "Tomuto riadku ostávajú presne {{count}} políčka pre {{count}} múmie.",
+        "lineTight.row_other": "Tomuto riadku ostáva presne {{count}} políčok pre {{count}} múmií.",
+        "lineTight.col_one": "Tomuto stĺpcu ostáva už len jedno políčko pre svoju múmiu.",
+        "lineTight.col_few": "Tomuto stĺpcu ostávajú presne {{count}} políčka pre {{count}} múmie.",
+        "lineTight.col_many": "Tomuto stĺpcu ostávajú presne {{count}} políčka pre {{count}} múmie.",
+        "lineTight.col_other": "Tomuto stĺpcu ostáva presne {{count}} políčok pre {{count}} múmií.",
+        "onlyWay": "Tento sarkofág má vedľa seba už len jedno voľné políčko pre svoju múmiu.",
+        "claimed": "Tento sarkofág už má svoju múmiu, takže políčka vedľa neho, ktoré nemôže použiť žiadny iný sarkofág, ostanú prázdne.",
+        "lineBlock.rowsToCols_one": "Označené riadky majú o jednu múmiu viac, než im dajú ich vlastné sarkofágy, takže príde z sarkofágu hneď vedľa nich.",
+        "lineBlock.rowsToCols_few": "Označené riadky majú o {{count}} múmie viac, než im dajú ich vlastné sarkofágy, takže prídu z sarkofágov hneď vedľa nich.",
+        "lineBlock.rowsToCols_many": "Označené riadky majú o {{count}} múmie viac, než im dajú ich vlastné sarkofágy, takže prídu z sarkofágov hneď vedľa nich.",
+        "lineBlock.rowsToCols_other": "Označené riadky majú o {{count}} múmie viac, než im dajú ich vlastné sarkofágy, takže prídu z sarkofágov hneď vedľa nich.",
+        "lineBlock.colsToRows_one": "Označené stĺpce majú o jednu múmiu viac, než im dajú ich vlastné sarkofágy, takže príde z sarkofágu hneď vedľa nich.",
+        "lineBlock.colsToRows_few": "Označené stĺpce majú o {{count}} múmie viac, než im dajú ich vlastné sarkofágy, takže prídu z sarkofágov hneď vedľa nich.",
+        "lineBlock.colsToRows_many": "Označené stĺpce majú o {{count}} múmie viac, než im dajú ich vlastné sarkofágy, takže prídu z sarkofágov hneď vedľa nich.",
+        "lineBlock.colsToRows_other": "Označené stĺpce majú o {{count}} múmie viac, než im dajú ich vlastné sarkofágy, takže prídu z sarkofágov hneď vedľa nich.",
+        "wouldStrand.row": "Múmia tu by označenému riadku nenechala miesto pre múmie, ktoré ešte potrebuje.",
+        "wouldStrand.col": "Múmia tu by označenému stĺpcu nenechala miesto pre múmie, ktoré ešte potrebuje.",
+        "wouldStrand.anchor": "Múmia tu by označenému sarkofágu nenechala žiadne políčko pre svoju múmiu.",
+        "action": {
+          "ruleOut_one": "Vylúč vyšrafované políčko.",
+          "ruleOut_few": "Vylúč vyšrafované políčka.",
+          "ruleOut_many": "Vylúč vyšrafované políčka.",
+          "ruleOut_other": "Vylúč vyšrafované políčka.",
+          "place_one": "Polož múmiu na vyšrafované políčko.",
+          "place_few": "Polož múmiu na každé vyšrafované políčko.",
+          "place_many": "Polož múmiu na každé vyšrafované políčko.",
+          "place_other": "Polož múmiu na každé vyšrafované políčko."
+        }
+      },
+      "beetles": {
+        "mistake": "Táto značka nemôže byť správne.",
+        "touch": "Tento chrobák už leží, takže vedľa neho nesmie byť iný – ani rohmi.",
+        "zeroLine.row": "V tomto riadku nie sú žiadne chrobáky, takže je celý prázdny.",
+        "zeroLine.col": "V tomto stĺpci nie sú žiadne chrobáky, takže je celý prázdny.",
+        "noAnchor": "Pri týchto políčkach nie je žiadna guľôčka trusu, takže tu žiadny chrobák nemôže stáť.",
+        "lineFull.row_one": "Tento riadok už má svojho chrobáka.",
+        "lineFull.row_few": "Tento riadok už má všetky chrobáky: {{count}}.",
+        "lineFull.row_many": "Tento riadok už má všetky chrobáky: {{count}}.",
+        "lineFull.row_other": "Tento riadok už má všetky chrobáky: {{count}}.",
+        "lineFull.col_one": "Tento stĺpec už má svojho chrobáka.",
+        "lineFull.col_few": "Tento stĺpec už má všetky chrobáky: {{count}}.",
+        "lineFull.col_many": "Tento stĺpec už má všetky chrobáky: {{count}}.",
+        "lineFull.col_other": "Tento stĺpec už má všetky chrobáky: {{count}}.",
+        "lineTight.row_one": "Tomuto riadku ostáva už len jedno políčko pre svojho chrobáka.",
+        "lineTight.row_few": "Tomuto riadku ostávajú presne {{count}} políčka pre {{count}} chrobáky.",
+        "lineTight.row_many": "Tomuto riadku ostávajú presne {{count}} políčka pre {{count}} chrobáky.",
+        "lineTight.row_other": "Tomuto riadku ostáva presne {{count}} políčok pre {{count}} chrobákov.",
+        "lineTight.col_one": "Tomuto stĺpcu ostáva už len jedno políčko pre svojho chrobáka.",
+        "lineTight.col_few": "Tomuto stĺpcu ostávajú presne {{count}} políčka pre {{count}} chrobáky.",
+        "lineTight.col_many": "Tomuto stĺpcu ostávajú presne {{count}} políčka pre {{count}} chrobáky.",
+        "lineTight.col_other": "Tomuto stĺpcu ostáva presne {{count}} políčok pre {{count}} chrobákov.",
+        "onlyWay": "Táto guľôčka trusu má vedľa seba už len jedno voľné políčko pre svojho chrobáka.",
+        "claimed": "Táto guľôčka trusu už má svojho chrobáka, takže políčka vedľa nej, ktoré nemôže použiť žiadna iná guľôčka, ostanú prázdne.",
+        "lineBlock.rowsToCols_one": "Označené riadky majú o jedného chrobáka viac, než im dajú ich vlastné guľôčky, takže príde z guľôčky hneď vedľa nich.",
+        "lineBlock.rowsToCols_few": "Označené riadky majú o {{count}} chrobáky viac, než im dajú ich vlastné guľôčky, takže prídu z guľôčok hneď vedľa nich.",
+        "lineBlock.rowsToCols_many": "Označené riadky majú o {{count}} chrobáky viac, než im dajú ich vlastné guľôčky, takže prídu z guľôčok hneď vedľa nich.",
+        "lineBlock.rowsToCols_other": "Označené riadky majú o {{count}} chrobáky viac, než im dajú ich vlastné guľôčky, takže prídu z guľôčok hneď vedľa nich.",
+        "lineBlock.colsToRows_one": "Označené stĺpce majú o jedného chrobáka viac, než im dajú ich vlastné guľôčky, takže príde z guľôčky hneď vedľa nich.",
+        "lineBlock.colsToRows_few": "Označené stĺpce majú o {{count}} chrobáky viac, než im dajú ich vlastné guľôčky, takže prídu z guľôčok hneď vedľa nich.",
+        "lineBlock.colsToRows_many": "Označené stĺpce majú o {{count}} chrobáky viac, než im dajú ich vlastné guľôčky, takže prídu z guľôčok hneď vedľa nich.",
+        "lineBlock.colsToRows_other": "Označené stĺpce majú o {{count}} chrobáky viac, než im dajú ich vlastné guľôčky, takže prídu z guľôčok hneď vedľa nich.",
+        "wouldStrand.row": "Chrobák tu by označenému riadku nenechal miesto pre chrobáky, ktoré ešte potrebuje.",
+        "wouldStrand.col": "Chrobák tu by označenému stĺpcu nenechal miesto pre chrobáky, ktoré ešte potrebuje.",
+        "wouldStrand.anchor": "Chrobák tu by označenej guľôčke nenechal žiadne políčko pre svojho chrobáka.",
+        "action": {
+          "ruleOut_one": "Vylúč vyšrafované políčko.",
+          "ruleOut_few": "Vylúč vyšrafované políčka.",
+          "ruleOut_many": "Vylúč vyšrafované políčka.",
+          "ruleOut_other": "Vylúč vyšrafované políčka.",
+          "place_one": "Daj chrobáka na vyšrafované políčko.",
+          "place_few": "Daj chrobáka na každé vyšrafované políčko.",
+          "place_many": "Daj chrobáka na každé vyšrafované políčko.",
+          "place_other": "Daj chrobáka na každé vyšrafované políčko."
+        }
+      }
+    }
+  },
+  "rushHour": {
+    "name": {
+      "default": "Blokáda",
+      "market": "Zatarasená ulička"
+    },
+    "goal": {
+      "default": "Dostaň svoj blok von cez medzeru vpravo.",
+      "market": "Vytlač svoje sane von cez medzeru na konci ulice."
+    },
+    "rules": {
+      "default": {
+        "lanes": "Blok sa posúva len po svojej dráhe – nikdy nabok, nikdy mimo plochy.",
+        "shove": "Potiahni blok a posunieš ho. Zastaví sa tam, kde mu niečo stojí v ceste."
+      },
+      "market": {
+        "lanes": "Sane sa posúvajú len po dráhe, na ktorej stoja – nikdy nabok, nikdy von z ulice.",
+        "shove": "Potiahni sane a posunieš ich. Zastavia sa tam, kde im niečo stojí v ceste."
+      }
+    },
+    "hint": {
+      "default": {
+        "drive": "Cesta vpred je voľná až potiaľto.",
+        "back": "Vpredu nič neustúpi. Najprv svoj blok vycúvaj z cesty.",
+        "clear": "Ten blok stojí naprieč tvojej dráhy.",
+        "room": "Nič sa nepohne, kým sa nepohne tento.",
+        "push": {
+          "left": "Posuň ho doľava, až po krúžok.",
+          "right": "Posuň ho doprava, až po krúžok.",
+          "up": "Posuň ho hore, až po krúžok.",
+          "down": "Posuň ho dole, až po krúžok."
+        }
+      },
+      "market": {
+        "drive": "Dráha pred tvojimi saňami je voľná až potiaľto.",
+        "back": "Vpredu nič neustúpi. Najprv vycúvaj so svojimi saňami.",
+        "clear": "Ten náklad stojí naprieč dráhy, ktorou odchádzaš.",
+        "room": "Nič sa nepohne, kým sa nepohne tento.",
+        "push": {
+          "left": "Posuň ho doľava, až po krúžok.",
+          "right": "Posuň ho doprava, až po krúžok.",
+          "up": "Posuň ho hore ulicou, až po krúžok.",
+          "down": "Posuň ho dole ulicou, až po krúžok."
+        }
+      }
+    }
+  },
+  "hidato": {
+    "rules": {
+      "default": {
+        "given": "Čísla, ktoré už sú v plástve, patria k hádanke – ostávajú na mieste.",
+        "enter": "Ťukni na číslo a pokračuj odtiaľ, potom ťukni na prázdnu bunku, ktorá sa ho dotýka – alebo potiahni prstom rovno cez bunky, kadiaľ rad ide.",
+        "back": "Ťukni na svoje číslo a ťukni naň znova – zmizne aj so všetkým, čo na ňom visí. Rovnako to urobí, keď rad z čísla povedieš inou cestou. Tlačidlo Späť vráti tvoj posledný ťah."
+      },
+      "channel": {
+        "given": "Polia, ktoré už majú číslo, patria k hádanke – ostávajú na mieste.",
+        "enter": "Ťukni na pole s číslom a pokračuj s vodou odtiaľ, potom ťukni na suché pole vedľa a kop ďalej – alebo potiahni prstom rovno po poliach, kadiaľ kanál ide.",
+        "back": "Ťukni na vykopané pole a ťukni naň znova – zasypeš ho aj s kanálom, ktorý od neho ostal odrezaný. Rovnako to urobí, keď z poľa budeš kopať inou cestou. Tlačidlo Späť vráti tvoj posledný ťah."
+      },
+      "scribe": {
+        "given": "Čísla napísané červeným atramentom patria k hádanke – ostávajú na mieste.",
+        "enter": "Ťukni na číslo a zober tam pero, potom ťukni na prázdne miesto vedľa a píš ďalej – alebo potiahni prstom rovno po riadku.",
+        "back": "Ťukni na svoje číslo a ťukni naň znova – zoškrabeš ho aj s riadkom, ktorý od neho ostal odrezaný. Rovnako to urobí, keď z čísla budeš písať inou cestou. Tlačidlo Späť vráti tvoj posledný ťah."
+      },
+      "chambers": {
+        "given": "Komnaty, ktoré už majú číslo, vytesali stavitelia – ostávajú na mieste.",
+        "enter": "Ťukni na komnatu s číslom a pokračuj v chodbe odtiaľ, potom ťukni na zapečatenú komnatu vedľa a prerazíš do nej – alebo potiahni prstom rovno po komnatách, kadiaľ chodba ide.",
+        "back": "Ťukni na otvorenú komnatu a ťukni na ňu znova – zapečatíš ju aj s chodbou, ktorá od nej ostala odrezaná. Rovnako to urobí, keď z komnaty prerazíš inou cestou. Tlačidlo Späť vráti tvoj posledný ťah."
+      }
+    },
+    "goal": {
+      "default": "V každej bunke plástu je číslo od 1 do {{last}} a každé je v bunke, ktorá sa dotýka čísla pred ním.",
+      "channel": "Jeden kanál zavlaží celú rovinu: každé pole príde na rad, od 1 do {{last}}, a každé je vykopané vedľa poľa pred ním.",
+      "scribe": "Jeden neprerušený rad čísel prejde celým listom: na každom mieste je číslo od 1 do {{last}} a každé je vedľa čísla pred ním.",
+      "chambers": "Jedna chodba prejde celou hrobkou: každá komnata sa otvorí po rade, od 1 do {{last}}, a do každej sa prerazí z komnaty pred ňou."
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": "Jedno z týchto čísel nemôže byť správne.",
+          "sandwich": "Čísla {{before}} a {{after}} sa dotýkajú len jednej voľnej bunky medzi sebou.",
+          "neighbourForced": "Číslo {{from}} má vedľa seba už len jednu voľnú bunku.",
+          "onlyCell": "Pre číslo {{value}} už v plástve nie je iné miesto.",
+          "onlyValue": "K tejto bunke sa nedostane žiadne iné číslo."
+        },
+        "action": {
+          "place": "Daj {{value}} do vyšrafovanej bunky."
+        }
+      },
+      "channel": {
+        "reason": {
+          "mistake": "Jedno z týchto čísel nemôže byť správne.",
+          "sandwich": "Čísla {{before}} a {{after}} sa dotýkajú len jedného suchého poľa medzi sebou.",
+          "neighbourForced": "Vedľa čísla {{from}} ostalo už len jedno suché pole.",
+          "onlyCell": "Pre číslo {{value}} už na rovine nie je iné miesto.",
+          "onlyValue": "K tomuto poľu sa nedostane žiadne iné číslo."
+        },
+        "action": {
+          "place": "Vykop {{value}} na vyšrafovanom poli."
+        }
+      },
+      "scribe": {
+        "reason": {
+          "mistake": "Jedno z týchto čísel nemôže byť správne.",
+          "sandwich": "Čísla {{before}} a {{after}} sa dotýkajú len jedného prázdneho miesta medzi sebou.",
+          "neighbourForced": "Vedľa čísla {{from}} ostalo už len jedno prázdne miesto.",
+          "onlyCell": "Pre číslo {{value}} už na liste nie je iné miesto.",
+          "onlyValue": "K tomuto miestu sa nedostane žiadne iné číslo."
+        },
+        "action": {
+          "place": "Napíš {{value}} na vyšrafované miesto."
+        }
+      },
+      "chambers": {
+        "reason": {
+          "mistake": "Jedno z týchto čísel nemôže byť správne.",
+          "sandwich": "Čísla {{before}} a {{after}} sa dotýkajú len jednej zapečatenej komnaty medzi sebou.",
+          "neighbourForced": "Vedľa čísla {{from}} ostala už len jedna zapečatená komnata.",
+          "onlyCell": "Pre číslo {{value}} už v hrobke nie je iné miesto.",
+          "onlyValue": "K tejto komnate sa nedostane žiadne iné číslo."
+        },
+        "action": {
+          "place": "Otvor {{value}} vo vyšrafovanej komnate."
+        }
+      }
+    },
+    "name": {
+      "default": "Úľ",
+      "channel": "Kanál",
+      "scribe": "Pisárov list",
+      "chambers": "Zapečatené komnaty"
+    }
+  },
+  "sudoku": {
+    "rules": {
+      "default": {
+        "chambers": "Hrubé čiary delia mriežku na šesť komôr, dve políčka široké a tri vysoké.",
+        "given": "Čísla, ktoré už sú vytesané, patria k hádanke – ostávajú na mieste.",
+        "enter": "Ťukni na políčko a potom na číslo. To isté číslo ešte raz ho zase vymaže.",
+        "notes": "Prepni na ceruzku a zapíš si čísla, ktoré by ešte mohli byť v políčku. Tlačidlo Späť vráti tvoj posledný ťah."
+      },
+      "papyrus": {
+        "chambers": "Hrubé čiary delia list na šesť polí, dve miesta široké a tri vysoké.",
+        "given": "Znaky napísané červeným atramentom patria k hádanke – ostávajú na mieste.",
+        "enter": "Ťukni na miesto a potom na znak. Ten istý znak ešte raz ho zoškrabe.",
+        "notes": "Zober trstinové pero a zapíš si znaky, ktoré by ešte mohli byť na mieste. Tlačidlo Späť vráti tvoj posledný ťah."
+      }
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": {
+            "value": "Jedno z čísel tu nemôže byť správne. Vymaž ho a pozri sa znova.",
+            "note": "Poznámky v tomto políčku vylúčili číslo, ktoré sem patrí. Vymaž ich a začni odznova."
+          },
+          "nakedSingle": "Riadok, stĺpec a komora tohto políčka už zabrali všetky ostatné čísla.",
+          "hiddenSingle": {
+            "row": "{{token}} sa nezmestí do žiadneho iného políčka v tomto riadku.",
+            "col": "{{token}} sa nezmestí do žiadneho iného políčka v tomto stĺpci.",
+            "box": "{{token}} sa nezmestí do žiadneho iného políčka v tejto komore."
+          },
+          "pointing": {
+            "row": "V označenej komore môže {{token}} stáť len v tomto riadku.",
+            "col": "V označenej komore môže {{token}} stáť len v tomto stĺpci."
+          },
+          "claiming": {
+            "row": "V označenom riadku sa {{token}} zmestí len do tejto jednej komory.",
+            "col": "V označenom stĺpci sa {{token}} zmestí len do tejto jednej komory."
+          }
+        },
+        "action": {
+          "place": "Daj {{token}} do vyšrafovaného políčka.",
+          "ruleOut_one": "Vylúč {{token}} z vyšrafovaného políčka.",
+          "ruleOut_few": "Vylúč {{token}} z vyšrafovaných políčok.",
+          "ruleOut_many": "Vylúč {{token}} z vyšrafovaných políčok.",
+          "ruleOut_other": "Vylúč {{token}} z vyšrafovaných políčok."
+        }
+      },
+      "papyrus": {
+        "reason": {
+          "mistake": {
+            "value": "Jeden z týchto znakov nemôže byť správne. Zoškrab ho a pozri sa znova.",
+            "note": "Poznámky na tomto mieste vylúčili znak, ktorý sem patrí. Zotri ich a začni odznova."
+          },
+          "nakedSingle": "Riadok, stĺpec a pole tohto miesta už zabrali všetky ostatné znaky.",
+          "hiddenSingle": {
+            "row": "{{token}} sa nezmestí na žiadne iné miesto v tomto riadku.",
+            "col": "{{token}} sa nezmestí na žiadne iné miesto v tomto stĺpci.",
+            "box": "{{token}} sa nezmestí na žiadne iné miesto v tomto poli."
+          },
+          "pointing": {
+            "row": "V označenom poli môže {{token}} stáť len v tomto riadku.",
+            "col": "V označenom poli môže {{token}} stáť len v tomto stĺpci."
+          },
+          "claiming": {
+            "row": "V označenom riadku sa {{token}} zmestí len do tohto jedného poľa.",
+            "col": "V označenom stĺpci sa {{token}} zmestí len do tohto jedného poľa."
+          }
+        },
+        "action": {
+          "place": "Napíš {{token}} na vyšrafované miesto.",
+          "ruleOut_one": "Vylúč {{token}} z vyšrafovaného miesta.",
+          "ruleOut_few": "Vylúč {{token}} z vyšrafovaných miest.",
+          "ruleOut_many": "Vylúč {{token}} z vyšrafovaných miest.",
+          "ruleOut_other": "Vylúč {{token}} z vyšrafovaných miest."
+        }
+      }
+    },
+    "goal": {
+      "default": "V každom riadku, každom stĺpci a každej komore je každé zo šiestich čísel presne raz.",
+      "papyrus": "V každom riadku, každom stĺpci a každom poli je každý zo šiestich znakov presne raz."
+    },
+    "name": {
+      "default": "Šesť komôr",
+      "papyrus": "Pisárov zápis"
+    }
+  },
+  "crocodile": {
+    "name": "Krokodília jama",
+    "goal": "Prejdi cez jamu na druhý breh.",
+    "rules": {
+      "want": "Každý krokodíl chce jednu odpoveď z radu kameňov za ním: najväčšiu alebo najmenšiu.",
+      "mark": "Ktorú, ukazuje jeho otvorená papuľa aj znak vedľa neho: > sa otvára k najväčšej odpovedi, < k najmenšej.",
+      "bite": "Keď stúpiš na iný kameň, hryzne: stratíš zdravie a začínaš znova od bližšieho brehu."
+    },
+    "hint": {
+      "biggest": "Tento krokodíl chce najväčšiu odpoveď. Tá je {{value}}.",
+      "smallest": "Tento krokodíl chce najmenšiu odpoveď. Tá je {{value}}."
+    }
+  },
+  "canisters": {
+    "name": {
+      "default": "Nádoby",
+      "grain": "Miery na obilie",
+      "oil": "Olej do lámp",
+      "wine": "Pivnica obchodníka",
+      "natron": "Kanopy",
+      "ink": "Pisáreň"
+    },
+    "goal": {
+      "default_one": "Odmeraj množstvo, ktoré treba, a povedz, ktorá nádoba ho má.",
+      "default_few": "Odmeraj postupne každé množstvo, ktoré treba, a vždy povedz, ktorá nádoba ho má, skôr ako prejdeš na ďalšie.",
+      "default_many": "Odmeraj postupne každé množstvo, ktoré treba, a vždy povedz, ktorá nádoba ho má, skôr ako prejdeš na ďalšie.",
+      "default_other": "Odmeraj postupne každé množstvo, ktoré treba, a vždy povedz, ktorá nádoba ho má, skôr ako prejdeš na ďalšie.",
+      "grain_one": "Odmeraj toľko obilia, koľko treba, a povedz, ktorá miera ho má.",
+      "grain_few": "Odmeraj postupne každé množstvo obilia a vždy povedz, ktorá miera ho má, skôr ako prejdeš na ďalšie.",
+      "grain_many": "Odmeraj postupne každé množstvo obilia a vždy povedz, ktorá miera ho má, skôr ako prejdeš na ďalšie.",
+      "grain_other": "Odmeraj postupne každé množstvo obilia a vždy povedz, ktorá miera ho má, skôr ako prejdeš na ďalšie.",
+      "oil_one": "Odmeraj toľko oleja, koľko treba, a povedz, ktorý džbán ho má.",
+      "oil_few": "Odmeraj postupne každé množstvo oleja a vždy povedz, ktorý džbán ho má, skôr ako prejdeš na ďalšie.",
+      "oil_many": "Odmeraj postupne každé množstvo oleja a vždy povedz, ktorý džbán ho má, skôr ako prejdeš na ďalšie.",
+      "oil_other": "Odmeraj postupne každé množstvo oleja a vždy povedz, ktorý džbán ho má, skôr ako prejdeš na ďalšie.",
+      "wine_one": "Odmeraj toľko vína, koľko treba, a povedz, ktorá amfora ho má.",
+      "wine_few": "Odmeraj postupne každé množstvo vína a vždy povedz, ktorá amfora ho má, skôr ako prejdeš na ďalšie.",
+      "wine_many": "Odmeraj postupne každé množstvo vína a vždy povedz, ktorá amfora ho má, skôr ako prejdeš na ďalšie.",
+      "wine_other": "Odmeraj postupne každé množstvo vína a vždy povedz, ktorá amfora ho má, skôr ako prejdeš na ďalšie.",
+      "natron_one": "Odmeraj toľko natrónu, koľko treba, a povedz, ktorý džbán ho má.",
+      "natron_few": "Odmeraj postupne každé množstvo natrónu a vždy povedz, ktorý džbán ho má, skôr ako prejdeš na ďalšie.",
+      "natron_many": "Odmeraj postupne každé množstvo natrónu a vždy povedz, ktorý džbán ho má, skôr ako prejdeš na ďalšie.",
+      "natron_other": "Odmeraj postupne každé množstvo natrónu a vždy povedz, ktorý džbán ho má, skôr ako prejdeš na ďalšie.",
+      "ink_one": "Odmeraj toľko atramentu, koľko treba, a povedz, ktorý kalamár ho má.",
+      "ink_few": "Odmeraj postupne každé množstvo atramentu a vždy povedz, ktorý kalamár ho má, skôr ako prejdeš na ďalšie.",
+      "ink_many": "Odmeraj postupne každé množstvo atramentu a vždy povedz, ktorý kalamár ho má, skôr ako prejdeš na ďalšie.",
+      "ink_other": "Odmeraj postupne každé množstvo atramentu a vždy povedz, ktorý kalamár ho má, skôr ako prejdeš na ďalšie."
+    },
+    "rules": {
+      "method": {
+        "sums": "Každé množstvo, ktoré vieš urobiť, sú dve čísla na lavici sčítané alebo odčítané: veľkosť nádoby, koľko je v nej, alebo koľko sa do nej ešte zmestí.",
+        "backwards": "Tak choď späť od množstva, ktoré treba – ktoré dve čísla ho dajú a ako dosiahneš, aby boli obe naraz?"
+      },
+      "claim": "Keď máš správne množstvo, ťukni na „táto“. Keď povieš zlú nádobu, stojí ťa to jeden ťah.",
+      "legs": "Potom ďalšie množstvo, odmerané z toho, čo v nádobách ostalo.",
+      "default": {
+        "moves": "Ťukni na nádobu a zdvihni ju, potom ťukni na inú a prelej do nej. Lievanie skončí, keď je prvá prázdna alebo druhá plná.",
+        "contents": "Toto je všetka voda – jedna nádoba je na začiatku plná a žiadnu nemôžeš vyliať ani doniesť novú.",
+        "levels": "Na každej nádobe je napísané, koľko je v nej a koľko sa do nej zmestí, keď je plná."
+      },
+      "grain": {
+        "moves": "Ťukni na mieru a zdvihni ju, potom ťukni na inú a nasyp do nej obilie. Sypanie skončí, keď je prvá prázdna alebo druhá plná po okraj.",
+        "contents": "Toto je všetko obilie – jedna miera je na začiatku plná a žiadne nemôžeš zmiesť ani doniesť zo sýpky.",
+        "levels": "Na každej miere je napísané, koľko je v nej a koľko sa do nej zmestí po okraj."
+      },
+      "oil": {
+        "moves": "Ťukni na džbán a zdvihni ho, potom ťukni na iný a prelej doň. Lievanie skončí, keď je prvý prázdny alebo druhý plný.",
+        "contents": "Toto je všetok olej – jeden džbán je na začiatku plný a žiadny olej nemôžeš vyliať ani načerpať nový.",
+        "levels": "Na každom džbáne je napísané, koľko je v ňom a koľko sa doň zmestí, keď je plný."
+      },
+      "wine": {
+        "moves": "Ťukni na amforu a zdvihni ju, potom ťukni na inú a prelej do nej. Prelievanie skončí, keď je prvá prázdna alebo druhá plná.",
+        "contents": "Toto je všetko víno – jedna amfora je na začiatku plná a žiadne víno nemôžeš rozliať ani doniesť z pivnice.",
+        "levels": "Na každej amfore je napísané, koľko je v nej a koľko sa do nej zmestí, keď je plná."
+      },
+      "natron": {
+        "moves": "Ťukni na džbán a zdvihni ho, potom ťukni na iný a nasyp doň natrón. Sypanie skončí, keď je prvý prázdny alebo druhý plný po viečko.",
+        "contents": "Toto je všetok natrón – jeden džbán je na začiatku plný a žiadny natrón nemôžeš zmiesť ani doniesť nový.",
+        "levels": "Na každom džbáne je napísané, koľko je v ňom a koľko sa doň zmestí po viečko."
+      },
+      "ink": {
+        "moves": "Ťukni na kalamár a zdvihni ho, potom ťukni na iný a prelej doň. Lievanie skončí, keď je prvý prázdny alebo druhý plný.",
+        "contents": "Toto je všetok atrament – jeden kalamár je na začiatku plný a žiadny atrament nemôžeš vyliať ani namiešať nový.",
+        "levels": "Na každom kalamári je napísané, koľko je v ňom a koľko sa doň zmestí, keď je plný."
+      }
+    },
+    "hint": {
+      "goal": {
+        "leftover": "Späť od cieľa: {{amount}} je {{content}} mínus {{space}} – nádoba s {{content}} preliata do nádoby, kde je miesto pre {{space}}.",
+        "full": "Späť od cieľa: {{amount}} je veľkosť jednej nádoby a {{a}} plus {{b}} je presne toľko.",
+        "sum": "Späť od cieľa: {{amount}} je {{a}} plus {{b}}."
+      },
+      "claim": "To je len jedno preliatie. Potom zisti, ktorá nádoba to má.",
+      "stuck": "Odtiaľto sa už {{target}} nedá odmerať s ťahmi, ktoré ti ostali. Vráť jedno preliatie alebo začni odznova.",
+      "overBudget": "Už ti neostali žiadne ťahy. Vráť jeden späť alebo začni odznova a nájdi kratšiu cestu.",
+      "next": {
+        "leftover": "Príklad pred tým: {{amount}} – {{content}} preliate do miesta pre {{space}}.",
+        "full": "Príklad pred tým: plná nádoba s {{amount}} – {{a}} plus {{b}}.",
+        "sum": "Príklad pred tým: {{amount}} – {{a}} plus {{b}}."
+      }
+    },
+    "movesLeft_one": "Ostáva {{count}} ťah",
+    "movesLeft_few": "Ostávajú {{count}} ťahy",
+    "movesLeft_many": "Ostávajú {{count}} ťahy",
+    "movesLeft_other": "Ostáva {{count}} ťahov",
+    "legs": "odmerané {{done}} z {{total}}",
+    "wanted": "Odmeraj",
+    "claim": "táto",
+    "claimAria": "Povedz, že {{capacity}} má to množstvo"
+  },
+  "procession": {
+    "name": {
+      "default": "Usporiadané hodiny",
+      "funerary": "Deň v údolí robotníkov",
+      "cosmos": "Cesta nocou",
+      "water": "Deň povodne",
+      "trade": "Deň v prístave"
+    },
+    "goal": {
+      "default": "Posuň každú udalosť na jej hodinu, kým neplatia všetky značky pod dňom.",
+      "funerary": "Posuň každú prácu na jej hodinu, kým neplatia všetky značky pod dňom.",
+      "cosmos": "Posuň každé svetlo na jeho hodinu, kým neplatia všetky značky pod nocou.",
+      "water": "Posuň každú prácu na jej hodinu, kým neplatia všetky značky pod dňom.",
+      "trade": "Posuň každú prácu na jej hodinu, kým neplatia všetky značky pod dňom."
+    },
+    "rules": {
+      "default": {
+        "lengths": "Každý riadok je jedna udalosť a trvá tak dlho, aký široký je jej pásik. Kedy sa stane, to musíš zistiť ty.",
+        "marks": "Riadok pod dňom je červený, kým neplatí. Ťukni naň a zakrúžkujú sa riadky, o ktorých hovorí.",
+        "drag": "Ťahaj pásik po jeho vlastnom riadku. Nikdy neopustí deň."
+      }
+    },
+    "hint": {
+      "default": {
+        "chain": "Miesto toho riadku je už pevné a tento visí na ňom.",
+        "squeeze": "Zo dňa ostáva už len toľko a toto je všetko, čo sa zmestí.",
+        "apart": "Naopak sa to do dňa nezmestí.",
+        "split": "Skús to naopak a pokazí sa niečo iné.",
+        "move": "Potiahni zakrúžkovaný pásik na vyšrafované čiarky."
+      }
+    },
+    "events": {
+      "default": ["oheň", "nosenie vody", "pečenie", "plavba loďou", "poháňanie volov", "nočná stráž"],
+      "funerary": ["omietanie", "kreslenie mriežky", "tesanie", "maľovanie", "zlátenie", "osadenie dverí"],
+      "cosmos": ["cesta slnka", "východ hviezdy", "stráž mesiaca", "jasná obloha", "úsvit", "otočenie roka"],
+      "water": ["povodeň", "kopanie kanála", "napúšťanie nádrže", "polievanie polí", "prevážanie", "žatva"],
+      "trade": ["triedenie tovaru", "predaj chleba", "predaj piva", "prevážanie", "ťahanie nákladu", "účtovanie"]
+    },
+    "marks": {
+      "default": {
+        "pin": "{{a}} – začína o hodine {{tick}}.",
+        "handoff": "{{a}} – začína hneď, ako sa skončí {{b}}.",
+        "link_one": "{{a}} – začína {{count}} hodinu po tom, ako sa skončí {{b}}.",
+        "link_few": "{{a}} – začína {{count}} hodiny po tom, ako sa skončí {{b}}.",
+        "link_many": "{{a}} – začína {{count}} hodiny po tom, ako sa skončí {{b}}.",
+        "link_other": "{{a}} – začína {{count}} hodín po tom, ako sa skončí {{b}}.",
+        "before": "{{a}} – skončí sa skôr, ako sa začne {{b}}.",
+        "apart": "{{a}} a {{b}} – nikdy nie naraz.",
+        "together": "{{a}} a {{b}} – chvíľu idú naraz.",
+        "span_one": "Od prvého začiatku po posledný koniec je {{count}} hodina.",
+        "span_few": "Od prvého začiatku po posledný koniec sú {{count}} hodiny.",
+        "span_many": "Od prvého začiatku po posledný koniec sú {{count}} hodiny.",
+        "span_other": "Od prvého začiatku po posledný koniec je {{count}} hodín."
+      }
+    },
+    "door": {
+      "title": "Dvere sprievodu",
+      "hint": "Každá dlaždica, na ktorú stúpiš, uvoľní svoju prácu. Usporiadaj deň a potom prejdi dlaždice v tom poradí.",
+      "read": "Deň je prečítaný. Prejdi jeho dlaždice v tomto poradí, od prvej.",
+      "hintButton": "Rada"
+    }
+  },
+  "story": {
+    "invitation": "Porozprávať sa",
+    "log": {
+      "empty": "Zatiaľ nič. Fez toho bude mať čo povedať."
+    },
+    "speaker": {
+      "fez": "Fez",
+      "explorer": "Ty",
+      "ipi": "Ipi",
+      "henut": "Henut",
+      "priest": "Kňaz",
+      "pharaoh": "Faraón",
+      "voice": "Hlas"
+    },
+    "wall": {
+      "wrong": "Niekto vytesal tretí znak zle. Je zle už tritisíc rokov.",
+      "fixed": "Zase je to jej meno.",
+      "pick": "Daj na jeho miesto správny znak.",
+      "cannot": "Znak, ktorý sem patrí, ešte nepoznáš. Zatiaľ."
+    },
+    "sphinx": {
+      "wrong": "To isté písmo ako vonku, ale piesok sem nikdy nedosiahol. Dva znaky sú stále čisto vytesané a tam, kde bol tretí, je medzera.",
+      "fixed": "To je celé.",
+      "pick": "Daj znak, ktorý nesieš, do medzery.",
+      "cannot": "Dva znaky poznáš a medzeru vyplniť nevieš. Zatiaľ.",
+      "gap": "Chýbajúci znak"
+    }
+  },
+  "lightbeamSwitch": {
+    "name": "Otáčavé svetlo",
+    "invitation": "Otoč zrkadlá",
+    "goal": "Svetlo svieti do svätyne a východ pod ňou je otvorený.",
+    "rules": {
+      "shrines": "Jeden kotúč svetla a nad každým východom z tejto križovatky svätyňa. Zrkadlá na podlahe dokážu doniesť svetlo ku ktorejkoľvek z nich.",
+      "doors": "Východ, kam svetlo dôjde, je otvorený, ostatné sú zatvorené. Jedna cesta svetla, jedna cesta ďalej.",
+      "returning": "Výberom nič nestratíš. Kedykoľvek sa môžeš vrátiť a poslať svetlo inam – tá cesta sa otvorí a táto zatvorí.",
+      "tap": "Ťukni na zrkadlo a otočíš ho. Ďalšie ťuknutie ho vráti späť."
+    },
+    "doorOpen": "{{way}} východ: otvorený",
+    "doorShut": "{{way}} východ: zatvorený",
+    "way": {
+      "n": "Severný",
+      "e": "Východný",
+      "s": "Južný",
+      "w": "Západný"
+    }
+  },
+  "handle": {
+    "name": "Páka",
+    "invitation": "Potiahni páku",
+    "goal": "Páka visí na jednu alebo na druhú stranu. Čo jedna strana otvorí, druhá zatvorí.",
+    "left": "Potiahni doľava",
+    "right": "Potiahni doprava"
+  },
+  "torch": {
+    "name": "Fakľa",
+    "invitation": "Zapáľ fakľu",
+    "goal": "Nezapálená fakľa. Keď raz horí, už sa nedá zahasiť.",
+    "lit": "Fakľa horí."
+  },
+  "gateFace": {
+    "title": "Dvere, ktoré čakajú",
+    "hint": "Každý znak musí horieť, inak sa tieto dvere neotvoria.",
+    "lit": "{{owner}}: horí",
+    "unlit": "{{owner}}: ešte nie",
+    "owner": {
+      "torch": "Fakľa",
+      "handle": "Páka",
+      "key": "Kľúč",
+      "web": "Znak piesku",
+      "plateStone": "Kameň na doske",
+      "plateEmpty": "Prázdna doska",
+      "other": "Mechanizmus"
+    },
+    "orderHint": "Prejdi dlaždice v tomto poradí.",
+    "reset": "Začať odznova",
+    "spoiled": "Pokazené: jedna dlaždica bola prejdená v zlom poradí.",
+    "tile": {
+      "unwalked": "Krok {{step}}: ešte neprejdený",
+      "inOrder": "Krok {{step}}: prejdený v správnom poradí",
+      "outOfOrder": "Krok {{step}}: prejdený v zlom poradí"
+    }
+  },
+  "devLockEditor": {
+    "syntax": "Syntax",
+    "example": "Príklad",
+    "useExample": "Použiť príklad",
+    "title": "Editor zámkov",
+    "notation": "Zápis zámku",
+    "checks": "Kontroly",
+    "drawing": "Nákres",
+    "carveAndPlay": "Vytesať a hrať",
+    "copyLink": "Kopírovať odkaz",
+    "copied": "Odkaz skopírovaný",
+    "failed": "Nepodarilo sa skopírovať; odkaz je v paneli s adresou",
+    "backToEditor": "← Editor",
+    "close": "Zavrieť",
+    "open": "Editor zámkov",
+    "modeLock": "Zámok",
+    "modeWeb": "Sieť",
+    "webNotation": "Zápis siete",
+    "openWeb": "Otvoriť sieť",
+    "checking": "Kontrolujem…",
+    "checkedIn": "skontrolované za {{ms}} ms",
+    "worldCarved": "poschodia úrovne Čarodejník vytesané za {{ms}} ms, raz",
+    "simulation": "Potiahnutia",
+    "noSimulation": "Nie je čo prehrať, kým nie je každé miesto vo svete.",
+    "summary": "Zhrnutie",
+    "stillBuried": "Ešte {{percent}} % pod pieskom",
+    "nothingBuried": "Nič nie je pod pieskom",
+    "finishes": "skončí",
+    "stopsAt": "zastaví na {{pct}} %",
+    "notOpenYet": "ešte neotvorené",
+    "pullAll": "Potiahnuť všetko na dosah",
+    "reset": "Odznova",
+    "progress": "{{reachable}} na dosah · {{pulled}} z {{total}} vzatých",
+    "allTaken": "Všetko potiahnuté a vzaté.",
+    "potFront": "{{pulled}} z {{total}} potiahnutých · predok na {{pct}} %",
+    "potOpen": "{{pulled}} z {{total}} potiahnutých · otvorené",
+    "keys": "Kľúče",
+    "keysNote": "každý otvorí jednu pečať",
+    "log": "Čo sa stalo",
+    "logEmpty": "Zatiaľ nič nepotiahnuté.",
+    "logPull": "potiahne {{name}} v {{at}}",
+    "logTake": "vezme {{name}} v {{at}}",
+    "logFront": "{{pot}} predok na {{pct}} %",
+    "logPotOpen": "{{pot}} otvorené",
+    "logSeal": "pečať v {{at}} otvorená",
+    "logNew": "nové: {{names}}",
+    "pullPin": "potiahnuť páku {{name}}",
+    "takePin": "vziať kľúč {{name}}",
+    "legendCleared": "vyčistené",
+    "legendBuried": "pod pieskom",
+    "legendSeal": "pečať",
+    "legendPins": "● páka · ■ kľúč · malé = bočná časť"
+  },
+  "camp": {
+    "title": "Tábor",
+    "continue": {
+      "heading": "Aktuálna výprava",
+      "setOff": "Vyraziť",
+      "pyramid": "Pyramída {{level}} z {{count}} · {{tier}}",
+      "tomb": "Hrobka · {{tier}}",
+      "empty": "Na tvojej mape je všetko otvorené"
+    },
+    "hint_one": "{{count}} stará cesta má niečo nové na objavenie",
+    "hint_few": "{{count}} staré cesty majú niečo nové na objavenie",
+    "hint_many": "{{count}} staré cesty majú niečo nové na objavenie",
+    "hint_other": "{{count}} starých ciest má niečo nové na objavenie",
+    "comingHome": {
+      "title": "Späť v tábore",
+      "haulTitle": "Úlovok z tejto cesty",
+      "new": "NOVÉ",
+      "unpack": "Vybaliť",
+      "toCamp": "Do tábora"
+    },
+    "chapter": {
+      "subtitle": "Nová kapitola",
+      "title": "Objavuje sa nová pyramída",
+      "body": "Cesty úrovne {{tier}} sú otvorené. Vydýchni si v tábore a vyraz, keď budeš chcieť.",
+      "journeyNote": "Prvá cesta úrovne {{tier}}",
+      "later": "Neskôr"
+    },
+    "close": "Zavrieť",
+    "entrance": {
+      "collection": "Zbierka",
+      "mosaic": "Mozaika",
+      "journeys": "Všetky cesty",
+      "detectors": "Detektory"
+    },
+    "mapTable": {
+      "title": "Stôl s mapami",
+      "journeys": "Cesty"
+    }
+  },
+  "home": {
+    "haul": {
+      "times": "×{{count}}"
+    }
+  },
+  "journeys": {
+    "tierNeed": "Nájdi tento poklad",
+    "tierProgress": "Hotovo {{done}} z {{total}}",
+    "tierLockedName": "Cesty úrovne {{tier}}",
+    "toggleTier": "Ukázať alebo skryť cesty úrovne {{tier}}",
+    "now": "TERAZ",
+    "newDot": "Niečo nové na objavenie",
+    "noteCurrentPyramid": "Prebieha · pyramída {{level}} z {{count}}",
+    "noteCurrentTomb": "Prebieha · v hrobke",
+    "noteFinished": "Hotovo",
+    "noteFinishedNews": "Hotovo · niečo nové na objavenie",
+    "noteOpen": "Ešte nenavštívené",
+    "noteResumePyramid": "Rozbehnuté · pyramída {{level}} z {{count}}",
+    "noteResumeTomb": "Rozbehnuté · v hrobke",
+    "needProgress": "{{unit}}: {{found}} z {{required}}",
+    "showStops": "Ukázať miesta cesty {{name}}",
+    "stopPyramid": "Pyramída",
+    "stopTomb": "Miesto"
+  },
+  "newVersion": {
+    "title": "Nová verzia!",
+    "name": "Hra sa veľmi zmenila",
+    "body": "Preto tvoja cesta začína odznova. Čakajú ťa nové hrobky, nálezy a tábor, ktorý si postavíš."
+  },
+  "devPrefabPreview": {
+    "firstDoor": "K prvým dverám",
+    "stop": "K zastávke",
+    "secondDoor": "K druhým dverám",
+    "doorsInUse_one": "{{count}} dvere sa používajú",
+    "doorsInUse_few": "{{count}} dvere sa používajú",
+    "doorsInUse_many": "{{count}} dvere sa používajú",
+    "doorsInUse_other": "{{count}} dverí sa používa",
+    "walled": "zamurované: {{count}}"
+  },
+  "devRoomEditor": {
+    "title": "Editor miestností",
+    "open": "Editor miestností",
+    "close": "Zavrieť",
+    "tier": "Úroveň",
+    "catalogue": "Otvoriť miestnosť",
+    "notation": "Zápis miestnosti",
+    "copyLink": "Kopírovať odkaz",
+    "copyText": "Kopírovať text",
+    "copied": "Skopírované",
+    "failed": "Nepodarilo sa skopírovať do schránky",
+    "palette": "Paleta",
+    "unpainted": "ešte nenamaľované",
+    "layout": "Rozloženie",
+    "mirrored": "(zrkadlovo)",
+    "fill_one": "Vyplniť ({{count}} možnosť)",
+    "fill_few": "Vyplniť ({{count}} možnosti)",
+    "fill_many": "Vyplniť ({{count}} možnosti)",
+    "fill_other": "Vyplniť ({{count}} možností)",
+    "fromDoor": "Ísť od",
+    "toDoor": "Ísť k",
+    "automatic": "Automaticky",
+    "direction": {
+      "n": "Severné dvere",
+      "e": "Východné dvere",
+      "s": "Južné dvere",
+      "w": "Západné dvere"
+    },
+    "checks": "Kontroly",
+    "sound": "Miestnosť prešla kontrolami",
+    "tierDisagrees": "Hlavička hovorí úroveň {{header}}, tu nakreslené v {{picked}}",
+    "undo": "Späť",
+    "drawing": "Nákres",
+    "tool": {
+      "select": "Vybrať",
+      "wall": "Stena",
+      "floor": "Podlaha",
+      "door": "Miesto pre dvere",
+      "stop": "Zastávka",
+      "chest": "Truhla",
+      "portal": "Portál",
+      "mechanism": "Mechanizmus",
+      "erase": "Zmazať",
+      "copy": "Kresliť {{letter}}"
+    },
+    "againstWall": "Položené predmety stoja pri severnej stene",
+    "dropHint": "Potiahni položku z palety na bunku; zaberie svoju vlastnú plochu",
+    "newLayout": "Názov nového rozloženia",
+    "addLayout": "Kopírovať ako rozloženie",
+    "inspector": {
+      "title": "Miesto {{letter}}",
+      "optional": "Nepovinné",
+      "kinds": "Druhy",
+      "counted": "Vyplniť len niektoré",
+      "take": "Vziať",
+      "of": "z",
+      "per": "na",
+      "perNone": "každé samostatne",
+      "drawAnother": "Nakresliť ďalšie",
+      "close": "Zavrieť"
+    },
+    "refused": {
+      "notFree": "Nie je na voľnej podlahe vnútri miestnosti",
+      "wallRow": "Miesto pri stene stojí v prvom rade vnútri severnej steny",
+      "northWall": "Predmet na stenu visí na severnej stene",
+      "floorOnRing": "Na vonkajší okruh patria len steny a miesta pre dvere",
+      "doorInside": "Miesto pre dvere stojí na vonkajšom okruhu",
+      "keepStop": "Zastávka ostáva: ak ju chceš presunúť, polož ju inde",
+      "noLetter": "Všetky písmená sú obsadené",
+      "layoutName": "Daj rozloženiu názov, ktorý nemá žiadne iné",
+      "notation": "Zápis to odmieta: {{message}}"
+    },
+    "layer": {
+      "wall": "pri stene",
+      "floor": "podlaha",
+      "ground": "zem",
+      "wallItem": "predmet na stenu"
+    },
+    "cell": "Bunka {{row}},{{col}}: {{what}}",
+    "cellWhat": {
+      "wall": "stena",
+      "floor": "voľná podlaha",
+      "door": "miesto pre dvere",
+      "place": "{{letter}}, {{kinds}}"
+    },
+    "rewrites": "Kreslenie prepíše text: všetky komentáre sa presunú navrch"
+  }
+}

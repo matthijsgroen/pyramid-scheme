@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Dievu karalis un saules valdnieks, kas katru dienu kuģo pāri debesīm savā saules laivā."
+    },
+    "d2": {
+      "name": "Anubiss",
+      "description": "Dievs ar šakāļa galvu, mumificēšanas un aizsaules dievs, mirušo sargs."
+    },
+    "d3": {
+      "name": "Horuss",
+      "description": "Debesu dievs ar piekūna galvu un faraonu sargs, Ozīrisa un Izīdas dēls."
+    },
+    "d4": {
+      "name": "Tots",
+      "description": "Dievs ar ibisa galvu, gudrības, rakstības un zināšanu dievs, dievišķo pierakstu glabātājs."
+    },
+    "d5": {
+      "name": "Bastete",
+      "description": "Kaķu dieviete, kas nes aizsardzību, prieku un auglību un sargā no ļauniem gariem."
+    },
+    "d6": {
+      "name": "Sobeks",
+      "description": "Krokodilu dievs, Nīlas upes, auglības un karavīru spēka dievs."
+    },
+    "d7": {
+      "name": "Hepri",
+      "description": "Skarabeja dievs, atdzimšanas un atjaunošanās dievs, kas ripina sauli pāri debesīm."
+    },
+    "d8": {
+      "name": "Vadžeta",
+      "description": "Kobras dieviete un Lejasēģiptes sargātāja, karaliskās varas simbols."
+    },
+    "d9": {
+      "name": "Izīda",
+      "description": "Maģijas, mātes mīlestības un dziedināšanas dieviete, Ozīrisa uzticamā sieva."
+    },
+    "d10": {
+      "name": "Ozīriss",
+      "description": "Pazemes, nāves un augšāmcelšanās dievs, mirušo tiesnesis."
+    },
+    "d11": {
+      "name": "Sets",
+      "description": "Haosa, vētru un tuksneša dievs, Ozīrisa brālis un sāncensis."
+    },
+    "d12": {
+      "name": "Neftida",
+      "description": "Sēru dieviete un mirušo sargātāja, Izīdas māsa."
+    },
+    "d13": {
+      "name": "Ptahs",
+      "description": "Radītājs dievs un amatnieku un būvmeistaru aizbildnis, kas radīja ar izrunātu vārdu."
+    },
+    "d14": {
+      "name": "Sehmeta",
+      "description": "Lauvas dieviete, kara un dziedināšanas dieviete, nikna sargātāja, kas spēj izārstēt slimības."
+    },
+    "d15": {
+      "name": "Hatora",
+      "description": "Govs dieviete, mīlestības, mūzikas un mātes dieviete, faraonu barotāja."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Faraons",
+      "description": "Ēģiptes dievišķais valdnieks, ko uzskatīja par dzīvu dievu un tiltu starp cilvēkiem un dieviem."
+    },
+    "p2": {
+      "name": "Augstais priesteris",
+      "description": "Tempļu galvenais garīgais vadītājs, kas veica svētos rituālus un uzturēja dievišķo kārtību."
+    },
+    "p3": {
+      "name": "Rakstvedis",
+      "description": "Izglītots cilvēks, kas prata lasīt un rakstīt, pierakstu un zināšanu glabātājs."
+    },
+    "p4": {
+      "name": "Arhitekts",
+      "description": "Būvmeistars, kas projektēja piramīdas, tempļus un pieminekļus mūžībai."
+    },
+    "p5": {
+      "name": "Karavadonis",
+      "description": "Karaspēka komandieris, kas veda armijas, lai sargātu Ēģiptes robežas un paplašinātu valsti."
+    },
+    "p6": {
+      "name": "Ārsts",
+      "description": "Dziednieks, kas apvienoja zināšanas par ārstēšanu ar maģiju, lai izārstētu slimos."
+    },
+    "p7": {
+      "name": "Balzamētājs",
+      "description": "Svēts amatnieks, kas sagatavoja cilvēku ceļojumam uz aizsauli."
+    },
+    "p8": {
+      "name": "Zemnieks",
+      "description": "Ēģiptes pārtikas gādātājs, kas apstrādāja auglīgos Nīlas palieņu laukus, lai pabarotu valsti."
+    },
+    "p9": {
+      "name": "Amatnieks",
+      "description": "Prasmīgs meistars, kas darināja skaistas lietas, rotaslietas un mākslas darbus dižciltīgajiem un dieviem."
+    },
+    "p10": {
+      "name": "Tirgotājs",
+      "description": "Tirgonis, kas pa tirdzniecības ceļiem veda eksotiskas preces no tālām zemēm."
+    },
+    "p11": {
+      "name": "Vezīrs",
+      "description": "Faraona galvenais ministrs un padomnieks, kas pārraudzīja valsts pārvaldi."
+    },
+    "p12": {
+      "name": "Orākuls",
+      "description": "Svēts pravietis, kas skaidroja dievu vēstījumus un pareģoja nākotni."
+    },
+    "p13": {
+      "name": "Jūrnieks",
+      "description": "Nīlas un Vidusjūras kuģotājs, ļoti svarīgs tirdzniecībai un pārvadājumiem."
+    },
+    "p14": {
+      "name": "Akmeņkalis",
+      "description": "Akmens strādnieks, kas kala hieroglifus un būvēja Ēģiptes lielos pieminekļus."
+    },
+    "p15": {
+      "name": "Sargs",
+      "description": "Svēto vietu un kapu sargs, kas gādāja par mirušo mūžīgo mieru."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Nīlzirgs",
+      "description": "Spēcīgs Nīlas upes zvērs, no kura baidījās tā spēka un niknuma dēļ."
+    },
+    "a2": {
+      "name": "Lauva",
+      "description": "Zvēru karalis, karaliskās varas un dievišķā spēka simbols tuksnesī."
+    },
+    "a3": {
+      "name": "Zilonis",
+      "description": "Milzīgs radījums no dienvidu zemēm, cienīts par savu gudrību un atmiņu."
+    },
+    "a4": {
+      "name": "Gazele",
+      "description": "Ātra un gracioza tuksneša iemītniece, ātruma un elegances simbols."
+    },
+    "a5": {
+      "name": "Pērtiķis",
+      "description": "Gudrs dzīvnieks, kas saistīts ar Totu un nozīmē prātu un nerātnības."
+    },
+    "a6": {
+      "name": "Zivs",
+      "description": "Svēti Nīlas radījumi, pārtikas devēji un auglības simboli."
+    },
+    "a7": {
+      "name": "Zoss",
+      "description": "Svēts Nīlas purvu putns, kas saistīts ar pasaules radīšanas mītiem un dvēseli."
+    },
+    "a8": {
+      "name": "Bite",
+      "description": "Lejasēģiptes un karaliskās varas simbols, vērtīgā medus radītāja."
+    },
+    "a9": {
+      "name": "Bruņurupucis",
+      "description": "Sens un gudrs radījums, kas nes pasaules smagumu uz savām bruņām."
+    },
+    "a10": {
+      "name": "Varde",
+      "description": "Atdzimšanas un auglības simbols, kas parādās no Nīlas dzīvi nesošajiem plūdiem."
+    },
+    "a11": {
+      "name": "Grifs",
+      "description": "Augšēģiptes svētais putns, sargātājas dievietes Nehbetas zemes veidols."
+    },
+    "a12": {
+      "name": "Pūce",
+      "description": "Gudra nakts medniece, apslēptu zināšanu un senu noslēpumu sargātāja."
+    },
+    "a13": {
+      "name": "Auns",
+      "description": "Amona-Ra svētais dzīvnieks, dievišķā spēka un vadības simbols."
+    },
+    "a14": {
+      "name": "Žirafe",
+      "description": "Gara un gracioza radība no dienvidu zemēm, kas ar savu garo kaklu sniedzas līdz debesīm."
+    },
+    "a15": {
+      "name": "Šakālis",
+      "description": "Tuksneša maitēdājs un ceļvedis uz aizsauli, Anubisa kalps."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Anhs",
+      "description": "Dzīvības un nemirstības simbols, ko bieži tur dievi un faraoni."
+    },
+    "art2": {
+      "name": "Horusa acs",
+      "description": "Aizsardzības, karaliskās varas un labas veselības simbols, saistīts ar debesu dievu Horusu."
+    },
+    "art3": {
+      "name": "Sistrs",
+      "description": "Mūzikas instruments, ko izmantoja reliģiskās ceremonijās, saistīts ar dievieti Hatoru."
+    },
+    "art4": {
+      "name": "Džeda stabs",
+      "description": "Stabilitātes un augšāmcelšanās simbols, bieži saistīts ar Ozīrisu."
+    },
+    "art5": {
+      "name": "Kartušs",
+      "description": "Ovāls rāmis ar faraona vārdu hieroglifos, kas uz mūžīgiem laikiem sargā viņa vārdu."
+    },
+    "art6": {
+      "name": "Kanopas trauks",
+      "description": "Svēts trauks, kura vāks ir sarga galva — četri tādi stāvēja ap zārku un turēja sardzi."
+    },
+    "art7": {
+      "name": "Scepteris",
+      "description": "Varas un autoritātes zizlis, ko nesa dievi un faraoni kā dievišķās valdīšanas simbolu."
+    },
+    "art9": {
+      "name": "Piramīda",
+      "description": "Mūžīgs kaps un vārti uz aizsauli, celti faraoniem, lai stāvētu mūžīgi."
+    },
+    "art10": {
+      "name": "Saules laiva",
+      "description": "Svēta laiva, kas ved saules dievu Ra pāri debesīm no rītausmas līdz rietam."
+    },
+    "art11": {
+      "name": "Obelisks",
+      "description": "Augsts akmens stabs ar piramīdu galā, kas sniedzas pret debesīm, lai godinātu dievus."
+    },
+    "art12": {
+      "name": "Gana spieķis un pātaga",
+      "description": "Karaliskās regālijas, kas rāda faraonu kā Ēģiptes ganu un sargātāju."
+    },
+    "art14": {
+      "name": "Lotosa zieds",
+      "description": "Atdzimšanas un saules simbols, kas tīrs iznirst no Nīlas dubļainajiem ūdeņiem."
+    },
+    "art15": {
+      "name": "Ureja kronis",
+      "description": "Karaliska galvassega ar sargājošu kobru, ko faraoni valkāja kā dievišķu aizsardzību."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Niedres lapa",
+      "description": "Viena niedre, kas apzīmē skaņu i. Pieliekot to dieva vārdam, sanāk vīrieša vārds: no Horusa kļūst Hori — Horusa cilvēks."
+    }
+  }
+}

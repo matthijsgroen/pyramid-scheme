@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Úsvit pri Sfinge",
+    "description": "Veľká Sfinga a nápis pri jej labách, ktorý dnes nikto nevie prečítať. Mapa hovorí: začni tu."
+  },
+  "starter_2": {
+    "name": "Cesta obchodníka s papyrusom",
+    "description": "Obchodná cesta pozdĺž Nílu plná skladov obchodníkov. Pár z nich nikto nikdy nevyprázdnil."
+  },
+  "starter_3": {
+    "name": "Chrám bohyne Bastet",
+    "description": "Chrám bohyne Bastet. Mačky tu boli posvätné a jej sviatok bol najväčší v Egypte – lode, hudba, všetko."
+  },
+  "starter_4": {
+    "name": "Škola pisárov",
+    "description": "Škola pisárov, kde sa Egypt učil písať. Triedy sú dodnes pod pieskom."
+  },
+  "starter_treasure_tomb": {
+    "name": "Zabudnutá skrýša obchodníka",
+    "description": "Pivnica obchodníka, nie kráľa: džbány na sebe, zapečatené a popísané. A nikto dole, kto by sa o ne hádal.",
+    "mapHint": "Útržok ukazuje trhovú cestu a dvere do pivnice – skrýšu obchodníka, nič veľkolepé."
+  },
+  "junior_1": {
+    "name": "Let posvätných ibisov",
+    "description": "Močiare a ibisy, ktoré sa nimi brodia. Egypťania tie vtáky sledovali: keď sa vrátia, príde povodeň."
+  },
+  "junior_2": {
+    "name": "Údolie remeselníkov",
+    "description": "Dér el-Medína, kde bývali tí, čo stavali hrobky. Všetko do kráľovského hrobu tu najprv odliali do foriem."
+  },
+  "junior_3": {
+    "name": "Chrám boha Thovta",
+    "description": "Thovtov chrám. Thovt vymyslel písmo, zapisoval všetko a počítal – a to je väčšina toho, čo sme robili aj my."
+  },
+  "junior_4": {
+    "name": "Maják v Alexandrii",
+    "description": "Maják Faros v Alexandrii. Hore celú noc horí oheň a námorníci vidia pobrežie už deň cesty od neho."
+  },
+  "junior_treasure_tomb": {
+    "name": "Skrytá klenotnica šľachtičnej",
+    "description": "Klenotnica jednej šľachtičnej, pomaľovaná od podlahy po strop. Kúpila si tie najlepšie kópie, aké sa dali, a nikdy sa nepriznala.",
+    "mapHint": "Jemný atrament a v rohu pečať s erbom – niekto vážený chcel, aby sa na túto miestnosť zabudlo."
+  },
+  "expert_1": {
+    "name": "Údolie kráľov",
+    "description": "Údolie kráľov. Prestali stavať pyramídy a kráľovské hrobky skryli do jedného údolia, pod vrch v tvare pyramídy."
+  },
+  "expert_2": {
+    "name": "Chrámy v Karnaku",
+    "description": "Karnak, ku ktorému dve tisíc rokov stále niečo pristavovali. Len veľká sieň má sto tridsaťštyri stĺpov a na každom sú rytiny."
+  },
+  "expert_3": {
+    "name": "Výprava do delty Nílu",
+    "description": "Tu sa Níl rozdeľuje a rozlieva do zelene. Sobekova krajina – papyrus, ryby a krokodíly, ktoré ľudia uctievali a kŕmili."
+  },
+  "expert_4": {
+    "name": "Džoserova pyramída",
+    "description": "Džoserova stupňovitá pyramída, prvá taká veľká stavba z kameňa. Jeho staviteľa Imhotepa si neskôr pamätali ako boha."
+  },
+  "expert_treasure_tomb": {
+    "name": "Pokladnica veľkňaza",
+    "description": "Pokladnica veľkňaza pod obetnou podlahou. Všetko tam dole dostal nejaký boh a už to nikdy nikto nevyniesol.",
+    "mapHint": "Čiary ukazujú okolie chrámu a schody, ktoré vedú dolu pod obetnú podlahu."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Najsvätejšia svätyňa",
+    "description": "Zapečatená miestnosť v srdci chrámu. Veľkňaz sem chodil raz za deň, aby boha umyl a obliekol.",
+    "mapHint": "Chodby vedú popri chrámových klenotniciach k zapečateným dverám – prešli nimi len najvyšší kňazi."
+  },
+  "master_1": {
+    "name": "Veľká pyramída v Gíze",
+    "description": "Veľká pyramída. Dvadsať rokov kameňa a vedľa celé mesto, ktoré kŕmilo robotníkov chlebom a pivom."
+  },
+  "master_2": {
+    "name": "Kniha mŕtvych",
+    "description": "Nie jedna kniha, ale zbierka zaklínadiel, prepísaných na objednávku. V lacnejších ostalo prázdne miesto tam, kde malo byť tvoje meno."
+  },
+  "master_3": {
+    "name": "Kliatba faraónov",
+    "description": "Slávnu kliatbu vymysleli noviny v roku 1923. Egypťania strážili hrobky dverami a papiermi."
+  },
+  "master_4": {
+    "name": "Nefertarina hrobka",
+    "description": "Hrobka kráľovnej Nefertari, najkrajšie pomaľovaná miestnosť v Egypte. Farby vyrobili z rozomletých kameňov – azuritu, malachitu, okru."
+  },
+  "master_treasure_tomb": {
+    "name": "Faraónov tajný poklad",
+    "description": "Súkromný poklad kráľa, tam, kde mapy končia. Čo s ním išlo pod zem, je tam dole dodnes.",
+    "mapHint": "Kráľovská kartuša na jednom okraji a cesta končí ďaleko pod holým pieskom."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Osirisova sieň",
+    "description": "Osirisova sieň. Boh povodne a obilia – čo tu ide pod zem, má sa to raz vrátiť.",
+    "mapHint": "Pod kráľovskými komnatami mapa klesá ďalej, do siene označenej obradmi za mŕtvych."
+  },
+  "wizard_1": {
+    "name": "Raova cesta za slnkom",
+    "description": "Ra pri západe slnka zíde pod svet a musí prejsť dvanásť hodín tmy. Egypťania zapísali, čo sa deje v každej z nich."
+  },
+  "wizard_2": {
+    "name": "Memnónove kolosy",
+    "description": "Dvaja sediaci obri kráľa Amenhotepa III. Gréci si mysleli, že je to niekto iný, a to meno sa ich držalo dvetisíc rokov."
+  },
+  "wizard_3": {
+    "name": "Komnata bohyne Maat",
+    "description": "Komnata bohyne Maat. Maat je poriadok sveta a jej jediné pštrosie pero je to, čím sa meria všetko ostatné."
+  },
+  "wizard_4": {
+    "name": "Večná pyramída",
+    "description": "Obklad bol z lešteného vápenca, biely ako soľ, taký presný, že sa leskol aj na deň cesty ďaleko."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Klenotnica bohov",
+    "description": "Tu chrám uchovával to, čo patrilo bohom. Nikoho sem nepustili bez tej správnej veci v rukách.",
+    "mapHint": "Nič na tomto útržku nepatrí do sveta ľudí – čokoľvek ukazuje, dali to tam bohovia."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Ríša vesmírnych síl",
+    "description": "Na strope mapy hviezd, namaľované, aby mŕtvi v noci vedeli, koľko je hodín. V šachte ešte visí niečie lano.",
+    "mapHint": "Za božskou klenotnicou sa čiary menia na hviezdne cesty, kde sa sily života a chaosu strážia ako relikvie."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Trón večnosti",
+    "description": "Jedno sedadlo v strede a okolo neho štyridsaťdva sudcov. Každý sa niečo spýta a ty máš odpovedať: nie.",
+    "mapHint": "Všetky hviezdne cesty na tomto útržku sa stretávajú pri jednom sedadle v samom srdci ríše bohov."
+  }
+}

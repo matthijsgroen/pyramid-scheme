@@ -1,0 +1,252 @@
+{
+  "spots": {
+    "fire": "Api unggun",
+    "sleeping": "Tempat tidur",
+    "water": "Tempat air",
+    "cooking": "Tempat masak",
+    "donkey": "Tempat keledai",
+    "camel": "Tempat unta",
+    "mapTable": "Meja peta",
+    "palmGarden": "Kebun palem",
+    "ibisPond": "Kolam ibis",
+    "lookout": "Menara pengintai",
+    "godStatues": "Patung dewa",
+    "starCanopy": "Atap bintang"
+  },
+  "finds": {
+    "pot": "Panci masak",
+    "seatCushions": "Bantal duduk",
+    "reedMat": "Tikar alang-alang",
+    "blanket": "Selimut",
+    "tentRug": "Karpet tenda",
+    "tentFlag": "Bendera tenda",
+    "gourd": "Labu air",
+    "jar": "Kendi",
+    "secondJar": "Kendi kedua",
+    "spiceRack": "Rak bumbu",
+    "breadBoard": "Papan roti",
+    "starMap": "Peta bintang",
+    "scrollCase": "Tabung gulungan",
+    "astrolabe": "Astrolab",
+    "reedGlobe": "Bola dunia anyaman",
+    "seed": "Biji palem",
+    "secondPalm": "Biji palem",
+    "figTree": "Biji ara",
+    "papyrus": "Akar papirus",
+    "reeds": "Stek alang-alang",
+    "lotus": "Umbi teratai",
+    "flag": "Bendera pengintai",
+    "thoth": "Patung kecil Thoth",
+    "bastet": "Patung kecil Bastet",
+    "anubis": "Patung kecil Anubis",
+    "ra": "Patung kecil Ra",
+    "cloth": "Kain bintang"
+  },
+  "structures": {
+    "stoneRing": "Lingkaran batu",
+    "fire": "Api",
+    "cookingStones": "Batu masak",
+    "seatingStones": "Batu duduk",
+    "clayOven": "Tungku tanah liat",
+    "windbreak": "Penahan angin",
+    "tent": "Tenda",
+    "secondTent": "Tenda kedua",
+    "pavilion": "Paviliun",
+    "well": "Sumur",
+    "wellPulley": "Sumur katrol",
+    "tripod": "Tiang berkaki tiga",
+    "breadOven": "Oven roti",
+    "dryingRack": "Rak jemur",
+    "feast": "Pesta makan",
+    "table": "Meja peta",
+    "lotusPlanter": "Bak teratai",
+    "edgeStones": "Tepi kolam",
+    "post": "Tiang pengintai",
+    "platform": "Panggung pengintai",
+    "ladder": "Tangga",
+    "roof": "Atap",
+    "signalFire": "Api isyarat",
+    "poles": "Tiang atap bintang",
+    "stars": "Bintang",
+    "planets": "Planet"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Batu ladang",
+      "sandBed": "Alas pasir"
+    },
+    "fire": {
+      "tinder": "Rabuk api",
+      "acaciaLogs": "Kayu akasia"
+    },
+    "cookingStones": {
+      "flatStone": "Batu datar",
+      "supportStones": "Batu penyangga"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Batu besar yang halus",
+      "sandstoneBlock": "Balok batu pasir",
+      "hewnSlab": "Lempeng batu pahat"
+    },
+    "clayOven": {
+      "ovenFloor": "Lantai tungku",
+      "firebricks": "Bata tahan api",
+      "smokeHole": "Lubang asap",
+      "copperGrate": "Jeruji tembaga"
+    },
+    "windbreak": {
+      "reedBundles": "Ikatan alang-alang",
+      "stakes": "Patok kayu"
+    },
+    "tent": {
+      "tentPoles": "Tiang tenda",
+      "wovenCloth": "Kain tenun",
+      "tentPegs": "Pasak tenda"
+    },
+    "secondTent": {
+      "largeCloth": "Kain tenda besar",
+      "ridgePole": "Tiang bubungan",
+      "guyRopes": "Tali tenda",
+      "woolFloor": "Alas wol"
+    },
+    "pavilion": {
+      "pavilionPosts": "Tiang paviliun",
+      "linenCanopy": "Atap linen",
+      "hangingCurtains": "Tirai",
+      "woolRugs": "Karpet wol",
+      "woodenFloor": "Lantai kayu"
+    },
+    "well": {
+      "wellStones": "Batu sumur",
+      "rope": "Tali panjang",
+      "bucket": "Ember",
+      "windlass": "Kerekan"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Roda katrol",
+      "frame": "Rangka penyangga",
+      "hoistRope": "Tali kerek",
+      "counterweight": "Pemberat",
+      "leatherBucket": "Ember kulit"
+    },
+    "tripod": {
+      "tripodPoles": "Tiga tiang",
+      "binding": "Tali pengikat",
+      "hook": "Kait perunggu"
+    },
+    "breadOven": {
+      "mudBricks": "Bata lumpur",
+      "clayPlaster": "Plester tanah liat",
+      "ovenLid": "Tutup oven"
+    },
+    "dryingRack": {
+      "rackPoles": "Tiang rak",
+      "crossbar": "Palang",
+      "wickerTray": "Nampan anyaman",
+      "cords": "Tali gantungan"
+    },
+    "feast": {
+      "lowTable": "Meja pendek",
+      "breadBaskets": "Keranjang roti",
+      "roastDuck": "Bebek panggang",
+      "beerJars": "Kendi minuman",
+      "fruitBowl": "Mangkuk buah"
+    },
+    "table": {
+      "tableTop": "Daun meja",
+      "trestles": "Kaki meja",
+      "leatherStraps": "Tali kulit"
+    },
+    "lotusPlanter": {
+      "clayTub": "Bak tanah liat",
+      "nileSilt": "Lumpur Sungai Nil",
+      "waterJar": "Kendi air",
+      "lotusTubers": "Umbi teratai",
+      "stoneRim": "Bibir batu"
+    },
+    "edgeStones": {
+      "riverStones": "Batu sungai",
+      "clayBedding": "Alas tanah liat",
+      "gravel": "Kerikil",
+      "boundaryStakes": "Patok batas"
+    },
+    "post": {
+      "postTrunk": "Batang palem",
+      "footStones": "Batu fondasi",
+      "wedges": "Baji",
+      "braces": "Penopang"
+    },
+    "platform": {
+      "platformBeams": "Balok penyangga",
+      "platformPlanks": "Papan",
+      "lashingRope": "Tali ikat",
+      "edgeRail": "Pagar pegangan"
+    },
+    "ladder": {
+      "ladderRails": "Sisi tangga",
+      "rungs": "Anak tangga",
+      "groundPegs": "Pasak tanah",
+      "leatherLoops": "Simpul kulit"
+    },
+    "roof": {
+      "roofPoles": "Tiang atap",
+      "thatch": "Atap daun palem",
+      "clayLayer": "Lapisan tanah liat",
+      "bindingGrass": "Rumput pengikat"
+    },
+    "signalFire": {
+      "fireBasin": "Wadah api",
+      "pitch": "Ter",
+      "dryBrushwood": "Ranting kering",
+      "flint": "Batu api",
+      "bellows": "Ubub"
+    },
+    "poles": {
+      "masts": "Tiang",
+      "cornerStones": "Batu sudut",
+      "stayLines": "Tali penahan",
+      "bigPegs": "Pasak besar",
+      "poleSockets": "Dudukan tiang"
+    },
+    "stars": {
+      "goldLeaf": "Daun emas",
+      "needleThread": "Jarum dan benang",
+      "indigoDye": "Pewarna nila",
+      "chalk": "Kapur",
+      "stencils": "Cetakan gambar"
+    },
+    "planets": {
+      "ochre": "Oker",
+      "copperDiscs": "Cakram tembaga",
+      "lapisPowder": "Bubuk lapis",
+      "hangingLoops": "Gantungan",
+      "dividers": "Jangka"
+    }
+  },
+  "collection": {
+    "title": "Bangunan",
+    "progress": "{{found}} dari {{total}}",
+    "built": "selesai dibangun",
+    "unknownPart": "???",
+    "open": "Lihat bagian",
+    "close": "Sembunyikan bagian"
+  },
+  "reward": {
+    "find": "Temuan perkemahan",
+    "part": "Bagian",
+    "progress": "{{name}} · {{found}} dari {{total}}"
+  },
+  "haul": {
+    "new": "Baru di perkemahanmu",
+    "parts_other": "{{name}} · {{count}} bagian"
+  },
+  "arrivals": {
+    "donkey": "Keledaimu sudah ada di perkemahan",
+    "cart": "Gerobakmu sudah ada di perkemahan",
+    "camel": "Untamu sudah ada di perkemahan",
+    "secondDonkey": "Keledai keduamu sudah ada di perkemahan",
+    "secondCamel": "Unta keduamu sudah ada di perkemahan",
+    "sturdyCart": "Gerobakmu yang lebih kuat sudah ada di perkemahan",
+    "caravanBanner": "Panji karavanmu berkibar di perkemahan"
+  }
+}

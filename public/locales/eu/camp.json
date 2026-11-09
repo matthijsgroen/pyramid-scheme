@@ -1,0 +1,253 @@
+{
+  "spots": {
+    "fire": "Kanpoko sua",
+    "sleeping": "Lo egiteko lekua",
+    "water": "Uraren lekua",
+    "cooking": "Sukaldeko lekua",
+    "donkey": "Astoaren lekua",
+    "camel": "Gameluaren lekua",
+    "mapTable": "Mapen mahaia",
+    "palmGarden": "Palmondo-baratza",
+    "ibisPond": "Ibisen urmaela",
+    "lookout": "Begiratokia",
+    "godStatues": "Jainkoen irudiak",
+    "starCanopy": "Izarren sabaia"
+  },
+  "finds": {
+    "pot": "Eltzea",
+    "seatCushions": "Eserlekuko kuxinak",
+    "reedMat": "Ihi-esterila",
+    "blanket": "Manta",
+    "tentRug": "Dendako alfonbra",
+    "tentFlag": "Dendako bandera",
+    "gourd": "Kalabaza",
+    "jar": "Pitxerra",
+    "secondJar": "Bigarren pitxerra",
+    "spiceRack": "Espezien apala",
+    "breadBoard": "Ogi-ohola",
+    "starMap": "Izar-mapa",
+    "scrollCase": "Pergamino-kutxa",
+    "astrolabe": "Astrolabioa",
+    "reedGlobe": "Ihizko mundu-bola",
+    "seed": "Palmondo-hazia",
+    "secondPalm": "Palmondo-hazia",
+    "figTree": "Piku-hazia",
+    "papyrus": "Papiro-sustraia",
+    "reeds": "Ihi-kimua",
+    "lotus": "Lotoaren tuberkulua",
+    "flag": "Begiratokiko bandera",
+    "thoth": "Thothen irudi txikia",
+    "bastet": "Bastet-en irudi txikia",
+    "anubis": "Anubisen irudi txikia",
+    "ra": "Raren irudi txikia",
+    "cloth": "Izar-oihala"
+  },
+  "structures": {
+    "stoneRing": "Harri-borobila",
+    "fire": "Sua",
+    "cookingStones": "Sukaldeko harriak",
+    "seatingStones": "Eserlekuko harriak",
+    "clayOven": "Buztinezko labea",
+    "windbreak": "Haize-babesa",
+    "tent": "Denda",
+    "secondTent": "Bigarren denda",
+    "pavilion": "Pabilioia",
+    "well": "Putzua",
+    "wellPulley": "Txirrikadun putzua",
+    "tripod": "Tripodea",
+    "breadOven": "Ogi-labea",
+    "dryingRack": "Lehortzeko apala",
+    "feast": "Jai-otordua",
+    "table": "Mapen mahaia",
+    "lotusPlanter": "Lotoen ontzia",
+    "edgeStones": "Urmaelaren ertza",
+    "post": "Begiratokiko zutoina",
+    "platform": "Begiratokiko plataforma",
+    "ladder": "Eskailera",
+    "roof": "Teilatua",
+    "signalFire": "Seinale-sua",
+    "poles": "Izarren mastak",
+    "stars": "Izarrak",
+    "planets": "Planetak"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Landako harriak",
+      "sandBed": "Harea-ohea"
+    },
+    "fire": {
+      "tinder": "Ardagaia",
+      "acaciaLogs": "Akazia-egurra"
+    },
+    "cookingStones": {
+      "flatStone": "Harri laua",
+      "supportStones": "Euskarri-harriak"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Harri leunak",
+      "sandstoneBlock": "Hareharri-blokea",
+      "hewnSlab": "Harlauza landua"
+    },
+    "clayOven": {
+      "ovenFloor": "Labearen zorua",
+      "firebricks": "Su-adreiluak",
+      "smokeHole": "Ke-zuloa",
+      "copperGrate": "Kobrezko parrilla"
+    },
+    "windbreak": {
+      "reedBundles": "Ihi-sortak",
+      "stakes": "Egurrezko hesolak"
+    },
+    "tent": {
+      "tentPoles": "Dendako makilak",
+      "wovenCloth": "Oihal ehundua",
+      "tentPegs": "Dendako ziriak"
+    },
+    "secondTent": {
+      "largeCloth": "Denda-oihal handia",
+      "ridgePole": "Gailur-habea",
+      "guyRopes": "Tentsio-sokak",
+      "woolFloor": "Artilezko lur-oihala"
+    },
+    "pavilion": {
+      "pavilionPosts": "Pabilioiaren zutoinak",
+      "linenCanopy": "Lihozko sabaia",
+      "hangingCurtains": "Gortinak",
+      "woolRugs": "Artilezko alfonbrak",
+      "woodenFloor": "Egurrezko zorua"
+    },
+    "well": {
+      "wellStones": "Putzuko harriak",
+      "rope": "Soka luzea",
+      "bucket": "Pertza",
+      "windlass": "Torno txikia"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Txirrika",
+      "frame": "Euskarri-egitura",
+      "hoistRope": "Igotzeko soka",
+      "counterweight": "Kontrapisua",
+      "leatherBucket": "Larruzko pertza"
+    },
+    "tripod": {
+      "tripodPoles": "Hiru makila",
+      "binding": "Lotzeko soka",
+      "hook": "Brontzezko kakoa"
+    },
+    "breadOven": {
+      "mudBricks": "Lokatz-adreiluak",
+      "clayPlaster": "Buztin-luzitua",
+      "ovenLid": "Labearen tapa"
+    },
+    "dryingRack": {
+      "rackPoles": "Apaleko makilak",
+      "crossbar": "Zeharkako makila",
+      "wickerTray": "Zumezko erretilua",
+      "cords": "Zintzilikatzeko sokak"
+    },
+    "feast": {
+      "lowTable": "Mahai baxua",
+      "breadBaskets": "Ogi-saskiak",
+      "roastDuck": "Ahate errea",
+      "beerJars": "Garagardo-pitxerrak",
+      "fruitBowl": "Fruta-ontzia"
+    },
+    "table": {
+      "tableTop": "Mahai-gaina",
+      "trestles": "Astoak",
+      "leatherStraps": "Larruzko uhalak"
+    },
+    "lotusPlanter": {
+      "clayTub": "Buztinezko aska",
+      "nileSilt": "Niloko lohia",
+      "waterJar": "Ur-pitxerra",
+      "lotusTubers": "Lotoaren tuberkuluak",
+      "stoneRim": "Harrizko ertza"
+    },
+    "edgeStones": {
+      "riverStones": "Ibai-harriak",
+      "clayBedding": "Buztin-ohea",
+      "gravel": "Legarra",
+      "boundaryStakes": "Muga-hesolak"
+    },
+    "post": {
+      "postTrunk": "Palmondo-enborra",
+      "footStones": "Oinarri-harriak",
+      "wedges": "Ziriak",
+      "braces": "Bermeak"
+    },
+    "platform": {
+      "platformBeams": "Euskarri-habeak",
+      "platformPlanks": "Oholak",
+      "lashingRope": "Lotzeko soka",
+      "edgeRail": "Barandak"
+    },
+    "ladder": {
+      "ladderRails": "Eskailera-hagak",
+      "rungs": "Mailak",
+      "groundPegs": "Lurreko ziriak",
+      "leatherLoops": "Larruzko begiztak"
+    },
+    "roof": {
+      "roofPoles": "Teilatuko makilak",
+      "thatch": "Palmondo-hostoak",
+      "clayLayer": "Buztin-geruza",
+      "bindingGrass": "Lotzeko belarra"
+    },
+    "signalFire": {
+      "fireBasin": "Su-ontzia",
+      "pitch": "Bika",
+      "dryBrushwood": "Sasi lehorra",
+      "flint": "Suharria",
+      "bellows": "Hauspoa"
+    },
+    "poles": {
+      "masts": "Mastak",
+      "cornerStones": "Izkina-harriak",
+      "stayLines": "Euskarri-sokak",
+      "bigPegs": "Ziri handiak",
+      "poleSockets": "Masten oinak"
+    },
+    "stars": {
+      "goldLeaf": "Urre-xafla",
+      "needleThread": "Orratza eta haria",
+      "indigoDye": "Indigo-tindua",
+      "chalk": "Klariona",
+      "stencils": "Txantiloiak"
+    },
+    "planets": {
+      "ochre": "Okrea",
+      "copperDiscs": "Kobrezko diskoak",
+      "lapisPowder": "Lapitz-hautsa",
+      "hangingLoops": "Zintzilikatzeko begiztak",
+      "dividers": "Konpasa"
+    }
+  },
+  "collection": {
+    "title": "Eraikinak",
+    "progress": "{{found}} / {{total}}",
+    "built": "eraikita",
+    "unknownPart": "???",
+    "open": "Zatiak erakutsi",
+    "close": "Zatiak ezkutatu"
+  },
+  "reward": {
+    "find": "Kanpalekurako aurkikuntza",
+    "part": "Zatia",
+    "progress": "{{name}} · {{found}} / {{total}}"
+  },
+  "haul": {
+    "new": "Berria zure kanpalekuan",
+    "parts_one": "{{name}} · zati bat",
+    "parts_other": "{{name}} · {{count}} zati"
+  },
+  "arrivals": {
+    "donkey": "Zure astoa kanpalekuan dago",
+    "cart": "Zure gurdia kanpalekuan dago",
+    "camel": "Zure gamelua kanpalekuan dago",
+    "secondDonkey": "Zure bigarren astoa kanpalekuan dago",
+    "secondCamel": "Zure bigarren gamelua kanpalekuan dago",
+    "sturdyCart": "Zure gurdi sendoagoa kanpalekuan dago",
+    "caravanBanner": "Zure karabanaren bandera kanpalekuan dago zintzilik"
+  }
+}

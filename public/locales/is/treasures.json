@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Renndu gripnum á steininn til að opna hann",
+    "alsoAvailable": "Einnig til:"
+  },
+  "perks": {
+    "max-health": "+½ hjarta við hámarksheilsuna þína",
+    "armor": "Gildrur meiða minna",
+    "trap-insight": "+1 sek. á tímagildrum",
+    "pack-mule": "Vatnsbelgur læknar tvö hjörtu",
+    "compass": "Hluti af áttavita",
+    "detection": "Hluti af gangaleitara",
+    "tier-unlock": "Opnar {{tier}}-leiðangra",
+    "tier-coming-soon": "{{tier}}-leiðangrar koma í seinni uppfærslu",
+    "location-key": "Sýnir annað grafhýsi",
+    "partOf": "{{count}} af {{total}}"
+  },
+  "tiers": {
+    "stone": "Steinn",
+    "bronze": "Brons",
+    "silver": "Silfur",
+    "gold": "Gull",
+    "divine": "Guðdómlegt"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Silfurdeben",
+      "description": "Forn egypsk silfurmynt sem kaupmenn notuðu í viðskiptum meðfram Níl."
+    },
+    "t2": {
+      "name": "Papýrusrolla",
+      "description": "Bókrolla kaupmanns með verslunarleiðum og lista yfir dýrmætan farm."
+    },
+    "t3": {
+      "name": "Fílabeinskambur",
+      "description": "Fínlega útskorinn kambur úr fílabeini, munaðarvara frá fjarlægum löndum."
+    },
+    "t4": {
+      "name": "Olíulampi úr leir",
+      "description": "Einfaldur en fallegur olíulampi sem lýsti upp híbýli kaupmannsins."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Gullarmband",
+      "description": "Skrautlegt gullarmband skreytt dýrmætum steinum, borið af egypskum aðalsmönnum."
+    },
+    "t6": {
+      "name": "Helgirýtingur",
+      "description": "Rýtingur með gimsteinaskeftu, notaður við athafnir aðalsins."
+    },
+    "t7": {
+      "name": "Jaðetordýfill",
+      "description": "Verndargripur úr jaði í laginu eins og tordýfill, tákn endurfæðingar og eilífs lífs."
+    },
+    "t8": {
+      "name": "Kanópukrukka úr alabastri",
+      "description": "Falleg alabasturskrukka fyrir dýrmætar olíur og ilmvötn."
+    },
+    "t9": {
+      "name": "Göngustafur úr íbenviði",
+      "description": "Fægður göngustafur úr íbenviði með gullnu ankh-tákni efst."
+    },
+    "t10": {
+      "name": "Hálsfesti úr lapis lazuli",
+      "description": "Glæsileg hálsfesti úr sjaldgæfum lapis lazuli steinum, sem ríkt fólk mat mikils."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Helgur ankh",
+      "description": "Gullið ankh-tákn eilífs lífs, blessað af prestum musterisins."
+    },
+    "t12": {
+      "name": "Koparspegill",
+      "description": "Fægður koparspegill sem var notaður við hreinsunarathafnir."
+    },
+    "t13": {
+      "name": "Reykelsisker",
+      "description": "Skrautlegt bronsker fyrir reykelsi, notað við helgihald í musterinu."
+    },
+    "t14": {
+      "name": "Helgibikar",
+      "description": "Helgur silfurbikar sem var notaður til að færa guðunum drykkjarfórnir."
+    },
+    "t15": {
+      "name": "Helgiblævængur",
+      "description": "Skrautlegur fjaðrablævængur sem prestar notuðu við athafnir í musterinu."
+    },
+    "t16": {
+      "name": "Bænaperlur",
+      "description": "Band af blessuðum bænaperlum, notað við íhugun og bænir."
+    },
+    "t17": {
+      "name": "Ker með helgu vatni",
+      "description": "Ker með blessuðu vatni úr helga brunni musterisins."
+    },
+    "t18": {
+      "name": "Musterisbjalla",
+      "description": "Bronsbjalla sem kallaði fólk til bæna og boðaði athafnir."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Innsigli faraós",
+      "description": "Fornt konunglegt innsigli með kartúsu gleymds faraós."
+    },
+    "t20": {
+      "name": "Kristalskúla",
+      "description": "Dularfull kristalskúla sem sögð er sýna myndir úr fortíð og framtíð."
+    },
+    "t21": {
+      "name": "Myndleturstafla",
+      "description": "Forn steintafla með dularfullum spádómum í myndletri."
+    },
+    "t22": {
+      "name": "Gullveldissproti",
+      "description": "Glæsilegur gullveldissproti með auga Hórusar efst."
+    },
+    "t23": {
+      "name": "Hrafntinnuhnífur",
+      "description": "Flugbeittur helgihnífur úr hrafntinnu, notaður við fornar athafnir."
+    },
+    "t24": {
+      "name": "Loftsteinsbrot",
+      "description": "Brot úr helgum loftsteini sem talið var geyma mátt guðanna."
+    },
+    "t25": {
+      "name": "Forn áttaviti",
+      "description": "Dularfullt leiðsögutæki sem bendir alltaf á falda fjársjóði."
+    },
+    "t26": {
+      "name": "Tímakristall",
+      "description": "Goðsagnakenndur kristall sem glóir af krafti liðinna alda."
+    },
+    "t27": {
+      "name": "Helgigríma",
+      "description": "Skrautleg gullgríma sem æðstu prestar báru við helgar athafnir."
+    },
+    "t28": {
+      "name": "Kyndill eilífa logans",
+      "description": "Kyndill sem logar með eilífum loga og hefur aldrei slokknað síðan í fornöld."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Kóróna Ra",
+      "description": "Goðsagnakennd kóróna sólguðsins Ra, sem geislar af guðdómlegu ljósi og mætti."
+    },
+    "t30": {
+      "name": "Stafur Þóts",
+      "description": "Viskustafur Þóts, guðs þekkingarinnar, sem geymir öll forn leyndarmál."
+    },
+    "t31": {
+      "name": "Fjöður Maat",
+      "description": "Helga fjöðrin hennar Maat, gyðju sannleikans, sem sálir eru vegnar á móti í lífinu eftir dauðann."
+    },
+    "t32": {
+      "name": "Tár Ísisar",
+      "description": "Kristölluð tár gyðjunnar Ísisar, sem sögð eru veita eilífa vernd."
+    },
+    "t33": {
+      "name": "Hjarta Ósíris",
+      "description": "Varðveitt hjarta Ósíris, herra undirheima, sem slær af lífskrafti."
+    },
+    "t34": {
+      "name": "Verndargripur Hórusarauga",
+      "description": "Besti verndargripur allra, sem geymir allan mátt Hórusar."
+    },
+    "t35": {
+      "name": "Slanga Apeps",
+      "description": "Bundið brot af óreiðuslöngunni Apep, lokað inni í helgu keri."
+    },
+    "t36": {
+      "name": "Andardráttur Sjú",
+      "description": "Lítil flaska með andardrætti Sjú, guðs loftsins, sem gefur vald yfir vindunum."
+    },
+    "t37": {
+      "name": "Hreistur Sóbeks",
+      "description": "Ein hreisturflaga af krókódílaguðinum Sóbek, sem verndar í vatni."
+    },
+    "t38": {
+      "name": "Varðstytta Anúbisar",
+      "description": "Lítil stytta af Anúbis sem lifnar við til að gæta fjársjóða eigandans."
+    },
+    "t39": {
+      "name": "Bók hinna dauðu",
+      "description": "Öll Bók hinna dauðu, með öllum galdraþulum sem þarf fyrir ferðina í líf eftir dauðann."
+    },
+    "t40": {
+      "name": "Toppsteinn pýramídans",
+      "description": "Gullni toppsteinninn af Pýramídanum mikla, sem geymir samanlagðan mátt allra faraóa."
+    }
+  }
+}

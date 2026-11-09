@@ -1,0 +1,255 @@
+{
+  "spots": {
+    "fire": "Táborák",
+    "sleeping": "Místo na spaní",
+    "water": "Místo s vodou",
+    "cooking": "Kuchyňka",
+    "donkey": "Místo pro osla",
+    "camel": "Místo pro velblouda",
+    "mapTable": "Stůl s mapami",
+    "palmGarden": "Palmová zahrada",
+    "ibisPond": "Rybníček ibisů",
+    "lookout": "Rozhledna",
+    "godStatues": "Sochy bohů",
+    "starCanopy": "Hvězdná střecha"
+  },
+  "finds": {
+    "pot": "Hrnec",
+    "seatCushions": "Polštáře na sezení",
+    "reedMat": "Rákosová rohož",
+    "blanket": "Deka",
+    "tentRug": "Koberec do stanu",
+    "tentFlag": "Vlajka na stan",
+    "gourd": "Tykev",
+    "jar": "Džbán",
+    "secondJar": "Druhý džbán",
+    "spiceRack": "Polička na koření",
+    "breadBoard": "Prkénko na chleba",
+    "starMap": "Mapa hvězd",
+    "scrollCase": "Pouzdro na svitky",
+    "astrolabe": "Astroláb",
+    "reedGlobe": "Rákosový glóbus",
+    "seed": "Semínko palmy",
+    "secondPalm": "Semínko palmy",
+    "figTree": "Semínko fíku",
+    "papyrus": "Kořen papyru",
+    "reeds": "Řízek rákosu",
+    "lotus": "Hlíza lotosu",
+    "flag": "Vlajka na rozhlednu",
+    "thoth": "Soška boha Thotha",
+    "bastet": "Soška bohyně Bastet",
+    "anubis": "Soška boha Anubise",
+    "ra": "Soška boha Ra",
+    "cloth": "Hvězdná látka"
+  },
+  "structures": {
+    "stoneRing": "Kruh z kamenů",
+    "fire": "Oheň",
+    "cookingStones": "Kameny na vaření",
+    "seatingStones": "Kameny na sezení",
+    "clayOven": "Hliněná pec",
+    "windbreak": "Zástěna proti větru",
+    "tent": "Stan",
+    "secondTent": "Druhý stan",
+    "pavilion": "Pavilon",
+    "well": "Studna",
+    "wellPulley": "Studna s kladkou",
+    "tripod": "Trojnožka",
+    "breadOven": "Pec na chleba",
+    "dryingRack": "Sušák",
+    "feast": "Hostina",
+    "table": "Stůl s mapami",
+    "lotusPlanter": "Truhlík s lotosem",
+    "edgeStones": "Okraj rybníčku",
+    "post": "Pozorovací sloup",
+    "platform": "Pozorovací plošina",
+    "ladder": "Žebřík",
+    "roof": "Střecha",
+    "signalFire": "Signální oheň",
+    "poles": "Hvězdné stožáry",
+    "stars": "Hvězdy",
+    "planets": "Planety"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Polní kameny",
+      "sandBed": "Písková vrstva"
+    },
+    "fire": {
+      "tinder": "Troud",
+      "acaciaLogs": "Akáciová polena"
+    },
+    "cookingStones": {
+      "flatStone": "Plochý kámen",
+      "supportStones": "Podpěrné kameny"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Hladké balvany",
+      "sandstoneBlock": "Pískovcový blok",
+      "hewnSlab": "Tesaná deska"
+    },
+    "clayOven": {
+      "ovenFloor": "Dno pece",
+      "firebricks": "Šamotové cihly",
+      "smokeHole": "Díra na kouř",
+      "copperGrate": "Měděný rošt"
+    },
+    "windbreak": {
+      "reedBundles": "Svazky rákosu",
+      "stakes": "Dřevěné kůly"
+    },
+    "tent": {
+      "tentPoles": "Tyče na stan",
+      "wovenCloth": "Tkaná látka",
+      "tentPegs": "Stanové kolíky"
+    },
+    "secondTent": {
+      "largeCloth": "Velká stanová plachta",
+      "ridgePole": "Hřebenová tyč",
+      "guyRopes": "Napínací lana",
+      "woolFloor": "Vlněná podlážka"
+    },
+    "pavilion": {
+      "pavilionPosts": "Sloupky pavilonu",
+      "linenCanopy": "Lněná stříška",
+      "hangingCurtains": "Závěsy",
+      "woolRugs": "Vlněné koberce",
+      "woodenFloor": "Dřevěná podlaha"
+    },
+    "well": {
+      "wellStones": "Kameny studny",
+      "rope": "Dlouhé lano",
+      "bucket": "Vědro",
+      "windlass": "Rumpál"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Kladka",
+      "frame": "Nosný rám",
+      "hoistRope": "Zvedací lano",
+      "counterweight": "Protizávaží",
+      "leatherBucket": "Kožené vědro"
+    },
+    "tripod": {
+      "tripodPoles": "Tři tyče",
+      "binding": "Provaz na svázání",
+      "hook": "Bronzový hák"
+    },
+    "breadOven": {
+      "mudBricks": "Hliněné cihly",
+      "clayPlaster": "Hliněná omítka",
+      "ovenLid": "Dvířka pece"
+    },
+    "dryingRack": {
+      "rackPoles": "Tyče sušáku",
+      "crossbar": "Příčka",
+      "wickerTray": "Proutěný tác",
+      "cords": "Šňůry na věšení"
+    },
+    "feast": {
+      "lowTable": "Nízký stůl",
+      "breadBaskets": "Košíky s chlebem",
+      "roastDuck": "Pečená kachna",
+      "beerJars": "Džbány piva",
+      "fruitBowl": "Mísa s ovocem"
+    },
+    "table": {
+      "tableTop": "Deska stolu",
+      "trestles": "Kozlíky",
+      "leatherStraps": "Kožené řemínky"
+    },
+    "lotusPlanter": {
+      "clayTub": "Hliněné koryto",
+      "nileSilt": "Bahno z Nilu",
+      "waterJar": "Džbán na vodu",
+      "lotusTubers": "Hlízy lotosu",
+      "stoneRim": "Kamenný okraj"
+    },
+    "edgeStones": {
+      "riverStones": "Říční kameny",
+      "clayBedding": "Hliněné lože",
+      "gravel": "Štěrk",
+      "boundaryStakes": "Hraniční kolíky"
+    },
+    "post": {
+      "postTrunk": "Kmen palmy",
+      "footStones": "Základové kameny",
+      "wedges": "Klíny",
+      "braces": "Vzpěry"
+    },
+    "platform": {
+      "platformBeams": "Nosné trámy",
+      "platformPlanks": "Prkna",
+      "lashingRope": "Vázací lano",
+      "edgeRail": "Zábradlí"
+    },
+    "ladder": {
+      "ladderRails": "Boky žebříku",
+      "rungs": "Příčky",
+      "groundPegs": "Zemní kolíky",
+      "leatherLoops": "Kožená očka"
+    },
+    "roof": {
+      "roofPoles": "Střešní tyče",
+      "thatch": "Palmové listí",
+      "clayLayer": "Vrstva hlíny",
+      "bindingGrass": "Tráva na vázání"
+    },
+    "signalFire": {
+      "fireBasin": "Ohniště",
+      "pitch": "Smůla",
+      "dryBrushwood": "Suché roští",
+      "flint": "Pazourek",
+      "bellows": "Měch"
+    },
+    "poles": {
+      "masts": "Stožáry",
+      "cornerStones": "Rohové kameny",
+      "stayLines": "Kotevní lana",
+      "bigPegs": "Velké kolíky",
+      "poleSockets": "Patky stožárů"
+    },
+    "stars": {
+      "goldLeaf": "Plátkové zlato",
+      "needleThread": "Jehla a nit",
+      "indigoDye": "Indigová barva",
+      "chalk": "Křída",
+      "stencils": "Šablony"
+    },
+    "planets": {
+      "ochre": "Okr",
+      "copperDiscs": "Měděné kotouče",
+      "lapisPowder": "Lazuritový prášek",
+      "hangingLoops": "Očka na pověšení",
+      "dividers": "Kružítko"
+    }
+  },
+  "collection": {
+    "title": "Stavby",
+    "progress": "{{found}} z {{total}}",
+    "built": "postaveno",
+    "unknownPart": "???",
+    "open": "Ukázat díly",
+    "close": "Skrýt díly"
+  },
+  "reward": {
+    "find": "Nález do tábora",
+    "part": "Díl",
+    "progress": "{{name}} · {{found}} z {{total}}"
+  },
+  "haul": {
+    "new": "Nové v tvém táboře",
+    "parts_one": "{{name}} · {{count}} díl",
+    "parts_few": "{{name}} · {{count}} díly",
+    "parts_many": "{{name}} · {{count}} dílu",
+    "parts_other": "{{name}} · {{count}} dílů"
+  },
+  "arrivals": {
+    "donkey": "Tvůj osel je v táboře",
+    "cart": "Tvůj vozík je v táboře",
+    "camel": "Tvůj velbloud je v táboře",
+    "secondDonkey": "Tvůj druhý osel je v táboře",
+    "secondCamel": "Tvůj druhý velbloud je v táboře",
+    "sturdyCart": "Tvůj pevnější vozík je v táboře",
+    "caravanBanner": "Prapor tvé karavany vlaje v táboře"
+  }
+}

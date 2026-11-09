@@ -1,0 +1,1730 @@
+{
+  "not-found": "Désolé, la conversation que tu cherches n’existe pas.",
+  "welcome": "L’Égypte ! J’y suis pour de vrai.",
+  "welcome2": "Et cette carte… je l’ai payée beaucoup trop cher. Elle a intérêt à être juste.",
+  "welcome3": "Allez. On va voir où est cette croix.",
+  "pyramidIntro": "Il y a des nombres sur ces pierres. Et il en manque quelques-uns…",
+  "pyramidIntro2": "Attends. Chaque pierre, c’est les deux du dessous additionnées ! Oui, ici aussi !",
+  "pyramidBlockedBlocks": "Hé, c’est quoi ça ? Ces blocs sont fermés. Ils ne montrent pas leur nombre !",
+  "pyramidBlockedBlocks2": "C’est pas grave. Regarde les blocs autour : avec eux, tu peux le calculer.",
+  "pyramidBlockedBlocks3": "Seulement, tu ne peux pas l’écrire dedans. Ce nombre, il faut le garder dans ta tête.",
+  "pyramidBlockedBlocks4": "Allez, tu as fait tout ce chemin. Tu peux le faire !",
+  "levelCompleted": "Ha ! Ça s’ouvre ! Viens, on entre.",
+  "exitPillar": {
+    "1": {
+      "fez": "Ha ! La lumière du jour ! Tu vois ce rayon de lumière ? C’est notre sortie. On entre dedans, et c’est fini ici."
+    },
+    "2": {
+      "fez": "Il n’y en a qu’un, toujours tout au bout du couloir principal. On peut se balader partout, on revient toujours ici."
+    },
+    "3": {
+      "explorer": "Une seule sortie. C’est noté."
+    }
+  },
+  "expeditionCompleted": "Bravo, tu as terminé l’expédition !",
+  "expeditionCompleted2": "Une nouvelle expédition t’attend.",
+  "tombTutorial": "Ooh, de l’écriture ! On peut la lire ? Avec les hiéroglyphes qu’on a trouvés… peut-être !",
+  "tombTutorial2": "Regarde ça, des calculs avec des signes dedans ! Tu vois les cases vides ? Les hiéroglyphes vont là-dedans. Les tiens, en bas.",
+  "tombTutorial3": "Les petits calculs te montrent quand un signe est bien placé. C’est comme ça qu’on trouve quel signe va où.",
+  "tombTutorial4": "Tout est rempli ? Alors un cadenas à chiffres apparaît. Le grand calcul, c’est le code. Et là, le tombeau s’ouvre !",
+  "hieroglyphUnlock": "On a un objet spécial : avec lui, on peut écrire sur un de ces blocs fermés !",
+  "hieroglyphUnlock2": "Touche une pierre qui brille, puis fais glisser l’objet dessus pour l’ouvrir. Un bloc par pyramide.",
+  "errorHighlightTutorial": "Le trésor qu’on a trouvé a un truc bien pratique : si tu mets une mauvaise réponse, une erreur s’allume en rouge !",
+  "errorHighlightTutorial2": "Un seul bloc s’allume à la fois, alors ça reste un défi. Mais ça aide à chercher au bon endroit !",
+  "earlyFeedbackTutorial": "Tu vois ces blocs de contrôle ? Ils deviennent verts ou rouges pendant que tu les remplis. Tu sais tout de suite !",
+  "earlyFeedbackTutorial2": "Sers-t’en comme repères pendant que tu cherches. Si un bloc devient rouge, il y a une erreur tout près.",
+  "notEnoughHieroglyphs": "Tu peux toujours arrêter cette expédition en retournant à l’écran du voyage.",
+  "notEnoughHieroglyphs2": "On peut faire une pause dans l’expédition pour aller chercher ailleurs les hiéroglyphes qui nous manquent.",
+  "tombLoot": "Waouh, notre premier trésor ! Bien joué !",
+  "mapPiece": "Regarde ! Ça, c’est une VRAIE carte. Vraiment vieille ! Elle vaut plus que nos deux cartes réunies !",
+  "mapPiece2": "Mais c’est juste un morceau, hein. Chaque expédition du coin en cache un, et ensemble, ils mènent à un tombeau.",
+  "mapComplete": "Elle est entière ! Regarde, tous les morceaux s’emboîtent parfaitement.",
+  "mapComplete2": "Là, où toutes les lignes se rejoignent. C’est là qu’il y a un tombeau.",
+  "mapComplete3": "Il est dans nos voyages maintenant. On va voir ?",
+  "mapPiece3": "Compte-les dans la liste des expéditions. Moi, je compte, c’est sûr !",
+  "mosaicIntro": "Ooh, du verre de couleur ! Regarde comme il brille. Ça, on ne le jette PAS !",
+  "mosaicIntro2": "C’est un morceau d’une image. Toute une fenêtre en verre, et chaque morceau qu’on trouve en fait revenir un bout.",
+  "mosaicIntro3": "Tu n’as pas un camp quelque part ? Emporte-les, on les assemblera là-bas. Je veux voir ce que ça donne !",
+  "mosaicReminder": "Psst ! Les morceaux de verre font toujours du bruit dans notre sac. On les met dans la fenêtre du camp ?",
+  "mosaicStarter": "Un chat sur le pas de la porte, et un serpent qui file en vitesse. Ça valait bien un bol de lait.",
+  "mosaicStarter2": "Les Égyptiens adoraient les chats pour ça : ils tuaient les serpents et les rats qui venaient dans le grain.",
+  "mosaicStarter3": "Ils les aimaient tellement qu’ils en ont fait une déesse. Bastet. Elle protège la maison, la porte, et tous ceux qui dorment derrière.",
+  "mosaicJunior": "Regarde sa main : quelqu’un lui montre comment tenir le stylet.",
+  "mosaicJunior2": "Celui avec la tête d’oiseau, c’est Thot. Écrire, compter, tout noter : c’est son travail.",
+  "mosaicJunior3": "L’ibis qu’on a suivi le long du fleuve ? C’est son oiseau. Et chaque nombre qu’on a mis dans un mur, c’est à lui aussi.",
+  "mosaicExpert": "Cette lumière, ce n’est pas un hasard. Ils ont construit toute la salle pour qu’elle tombe juste là, le bon matin.",
+  "mosaicExpert2": "Le soleil, c’est Amon-Râ : celui qui est caché, et la lumière que tout le monde voit. Les deux à la fois.",
+  "mosaicExpert3": "Quand on sait mesurer le ciel aussi bien, on sait tout mesurer. Depuis le début, on résout leurs calculs.",
+  "mosaicMaster": "La peau verte, et du blé qui pousse direct sur lui. C’est fait exprès.",
+  "mosaicMaster2": "Osiris. On l’a tué, puis on l’a recollé morceau par morceau. Et maintenant, il revient chaque année, quand le fleuve inonde les champs.",
+  "mosaicMaster3": "Ici en bas, c’est toute l’idée : mort, ce n’est pas fini. Joyeux, pour un tombeau, hein ?",
+  "mosaicWizard": "Un cœur d’un côté. Une plume de l’autre. Et ça tient en équilibre.",
+  "mosaicWizard2": "La plume, c’est Maât : la vérité, l’équilibre, les choses comme elles doivent être. Si ton cœur est plus lourd que la plume, tu ne passes pas la porte.",
+  "mosaicWizard3": "Le chacal qui tient la balance, c’est Anubis. C’est lui qui t’amène ici.",
+  "mosaicFinale": "Recule un peu. Regarde tout ce qu’on a remonté de ces pyramides.",
+  "mosaicFinale2": "Chaque morceau fait partie de lui : celui qui tient la balance. Il nous a regardés tout le long du chemin.",
+  "mosaicFinale3": "C’est ce qu’il a noté sur nous. Et à mon avis, la balance est juste.",
+  "shopFirstVisit": "Ah, nous y voilà. Mon étal ! Je te l’avais dit, moi, je suis là pour le commerce.",
+  "shopFirstVisit2": "Tout ce qui est sur ce comptoir, je l’ai sorti de quelque part. Celui-là vient d’il y a deux tombeaux.",
+  "shopArrival": "Ah, mon étal ! Laisse-moi sortir ce que j’ai ramassé en route.",
+  "shopArrival2": "Les trouvailles rares coûtent le plus cher, mais je te rachète tous les bibelots que tu portes.",
+  "arrival": {
+    "starter_1": {
+      "1": {
+        "explorer": "Regarde, là-bas ! Le Sphinx !"
+      },
+      "2": {
+        "explorer": "Énorme, même d’ici."
+      },
+      "3": {
+        "explorer": "On dit qu’il y a une écriture sous ses pattes. Que personne ne sait lire."
+      },
+      "4": {
+        "explorer": "Plus tard. D’abord, cette pyramide !"
+      }
+    },
+    "starter_2": {
+      "1": {
+        "fez": "Ha ! Enfin un truc que je comprends. Tout ce qui remontait le Nil passait d’abord par ici."
+      },
+      "2": {
+        "fez": "Et les marchands notent TOUT. Qui a acheté quoi, qui devait quoi à qui, qui était en retard…"
+      },
+      "3": {
+        "explorer": "Qui était en retard ?"
+      },
+      "4": {
+        "fez": "Surtout qui était en retard !"
+      },
+      "5": {
+        "fez": "Trois mille ans. Les marchandises ont disparu, et les tickets de caisse sont encore là. Typique !"
+      }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Regarde ces portes ! On venait ici pour demander de la protection. Et une porte comme ça restait fermée."
+      },
+      "2": {
+        "explorer": "Fermée pour qui ?"
+      },
+      "3": {
+        "fez": "Pour ceux qui ne demandaient pas gentiment. Surtout pour nous."
+      },
+      "4": {
+        "fez": "Dans ce pays, tout ce qui est scellé, quelqu’un l’a scellé pour de bon. Mais alors vraiment pour de bon."
+      },
+      "5": {
+        "fez": "Et les chats ! Ici, ils adoraient les chats. Ils ne pouvaient pas s’empêcher de les caresser."
+      }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "Oh, celle-là, je l’aime bien. C’est ici qu’ils apprenaient à écrire ! Signe par signe, sur des pots cassés. Le papyrus était bien trop cher pour les enfants."
+      },
+      "2": {
+        "explorer": "Ils s’entraînaient sur des déchets ?"
+      },
+      "3": {
+        "fez": "Sur ce qu’il y avait ! Et quand tu en connais assez, d’un coup, un mur n’est plus juste une décoration."
+      },
+      "4": {
+        "explorer": "Ce Sphinx… je veux le revoir."
+      },
+      "5": {
+        "fez": "Pas encore. Bientôt."
+      }
+    },
+    "junior_1": {
+      "1": {
+        "fez": "Ils revenaient chaque année avec la crue, presque au jour près."
+      },
+      "2": {
+        "fez": "Alors les gens ont compté les jours entre deux. C’est de là que vient le calendrier : des oiseaux."
+      },
+      "3": {
+        "explorer": "Des oiseaux."
+      },
+      "4": {
+        "fez": "Des oiseaux et de la paperasse. C’est toujours des oiseaux et de la paperasse."
+      }
+    },
+    "junior_2": {
+      "1": {
+        "fez": "C’est ici qu’ils fabriquaient tout. Pas les tombeaux : les choses qu’on mettait dedans."
+      },
+      "2": {
+        "fez": "Regarde les moules. Le même bracelet, quarante fois."
+      },
+      "3": {
+        "explorer": "Pour quarante personnes ?"
+      },
+      "4": {
+        "fez": "Pour tous ceux qui pouvaient payer. Un noble voulait ce qu’avait un roi, à un prix de noble."
+      }
+    },
+    "junior_3": {
+      "1": {
+        "fez": "Thot, celui-là. Le dieu des secrets et de la magie, j’en suis presque sûr."
+      },
+      "2": {
+        "explorer": "Presque."
+      },
+      "3": {
+        "fez": "À quatre-vingt-dix pour cent. Bref, les signes que tu ramasses, ce sont les siens."
+      }
+    },
+    "junior_4": {
+      "1": {
+        "fez": "Presque cent mètres de haut, et tout en haut, un feu qui ne s’éteignait jamais."
+      },
+      "2": {
+        "fez": "Les marins voyaient la côte à un jour de bateau. Avant, ils la trouvaient en rentrant dedans."
+      },
+      "3": {
+        "explorer": "Comment on trouve quelque chose ici, sans un truc comme ça ?"
+      },
+      "4": {
+        "fez": "On demande à quelqu’un qui y est déjà allé. C’est tout mon métier."
+      }
+    },
+    "expert_1": {
+      "1": {
+        "fez": "Plus de soixante tombes creusées dans une seule vallée, et toutes ouvertes avant qu’on arrive."
+      },
+      "2": {
+        "explorer": "Par qui ?"
+      },
+      "3": {
+        "fez": "Des gens comme nous, surtout. Avant nous."
+      },
+      "4": {
+        "fez": "Tu en penses quoi ?"
+      },
+      "5": {
+        "explorer": "Qu’on est en retard."
+      }
+    },
+    "expert_2": {
+      "1": {
+        "fez": "Amon-Râ. Le soleil. Le préféré de tout le monde, et tu vois pourquoi : regarde la taille de l’endroit !"
+      },
+      "2": {
+        "explorer": "Deux noms."
+      },
+      "3": {
+        "fez": "Le même dieu, je crois. Les dieux les plus aimés avaient droit à un nom en plus."
+      }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Tout le pays, c’est une bande verte de chaque côté d’un seul fleuve. Et ici, ça s’ouvre comme un éventail."
+      },
+      "2": {
+        "fez": "Tout pousse. Et tout mord, aussi."
+      },
+      "3": {
+        "explorer": "On est venus pour lequel des deux ?"
+      },
+      "4": {
+        "fez": "J’espérais un peu : aucun des deux."
+      }
+    },
+    "expert_4": {
+      "1": {
+        "fez": "La toute première. Avant, les rois étaient enterrés sous une dalle plate, comme tout le monde."
+      },
+      "2": {
+        "fez": "Quelqu’un s’est planté ici et s’est dit : et si on faisait pareil, mais six fois, vers le haut ?"
+      },
+      "3": {
+        "explorer": "Ça a marché ?"
+      },
+      "4": {
+        "fez": "Elle est toujours debout, et lui, non. Ça dépend de ce que tu veux dire."
+      }
+    },
+    "master_1": {
+      "1": {
+        "fez": "Deux millions de blocs. Quelqu’un les a comptés."
+      },
+      "2": {
+        "explorer": "Quelqu’un les a comptés ?"
+      },
+      "3": {
+        "fez": "Il y a toujours quelqu’un qui compte. C’est ce que les gens oublient : tout ça, c’était dirigé par des employés de bureau."
+      },
+      "4": {
+        "fez": "C’est beau, hein ? Je n’ose pas imaginer la liste des salaires."
+      }
+    },
+    "master_2": {
+      "1": {
+        "fez": "Un mode d’emploi. C’est tout : quoi dire, et dans quel ordre, pour que le voyage se passe bien."
+      },
+      "2": {
+        "explorer": "Une notice."
+      },
+      "3": {
+        "fez": "Une notice pour être mort. Ils notaient vraiment tout, ces gens-là."
+      },
+      "4": {
+        "fez": "Et vu ce qu’on cherche, c’est la première bonne nouvelle de la semaine."
+      }
+    },
+    "master_3": {
+      "1": {
+        "fez": "Ah. Le camp de quelqu’un."
+      },
+      "2": {
+        "explorer": "Récent ?"
+      },
+      "3": {
+        "fez": "Assez récent. Des boîtes de conserve et une vilaine toux, on dirait."
+      },
+      "4": {
+        "fez": "Ils sont allés plus loin, et ils ont laissé leurs affaires ici."
+      },
+      "5": {
+        "explorer": "Ils sont revenus les chercher ?"
+      },
+      "6": {
+        "fez": "…On continue."
+      }
+    },
+    "master_4": {
+      "1": {
+        "fez": "VOILÀ ce que les autres essayaient d’imiter. Regarde la couleur : trois mille ans, et on dirait que c’est encore frais."
+      },
+      "2": {
+        "explorer": "Henut serait furieuse."
+      },
+      "3": {
+        "fez": "Henut prendrait des notes."
+      }
+    },
+    "wizard_1": {
+      "1": {
+        "fez": "La nuit, le soleil passe sous le monde et ressort de l’autre côté. C’est ça, toute leur croyance."
+      },
+      "2": {
+        "fez": "Douze heures dans le noir, plein de choses sur le chemin, et quelqu’un doit le porter jusqu’au bout."
+      },
+      "3": {
+        "explorer": "C’est ce qu’on fait, nous."
+      },
+      "4": {
+        "fez": "J’essayais de ne pas le dire tout haut."
+      },
+      "5": {
+        "explorer": "Le sable entre toujours."
+      },
+      "6": {
+        "fez": "Il entre depuis trois mille ans. Il ne s’arrête pas, il tourne."
+      },
+      "7": {
+        "fez": "Ça se remplit, ça bascule, ça recommence. Comme le soleil."
+      }
+    },
+    "wizard_2": {
+      "1": {
+        "fez": "Deux géants, dix-huit mètres de haut, et les deux, c’est Amenhotep."
+      },
+      "2": {
+        "fez": "Les Grecs ont jeté un coup d’œil et ont décidé que c’était un de leurs héros. Memnon. Le nom est resté collé deux mille ans."
+      },
+      "3": {
+        "explorer": "Quel nom est écrit dessus ?"
+      },
+      "4": {
+        "fez": "Le sien. Gravé dans le trône, là où il a toujours été."
+      },
+      "5": {
+        "fez": "Personne ne l’a lu."
+      },
+      "6": {
+        "fez": "Après le tremblement de terre, celui du nord chantait au lever du soleil. Une note, chaque matin, quand le soleil chauffait la fissure."
+      },
+      "7": {
+        "explorer": "Et maintenant ?"
+      },
+      "8": {
+        "fez": "Un empereur l’a fait réparer. Depuis, il n’a plus fait un bruit."
+      }
+    },
+    "wizard_3": {
+      "1": {
+        "fez": "La balance. Le cœur d’un côté, la plume de l’autre. Donc un bon gros cœur bien lourd gagne, j’imagine."
+      },
+      "2": {
+        "explorer": "Une chose lourde, elle va de quel côté ?"
+      },
+      "3": {
+        "fez": "…Vers le bas."
+      },
+      "4": {
+        "fez": "Oh."
+      },
+      "5": {
+        "fez": "Léger. Il faut qu’il soit LÉGER."
+      }
+    },
+    "wizard_4": {
+      "1": {
+        "fez": "La pierre du sommet, on la pose en dernier, et elle est en or, pour que tout attrape la première lumière."
+      },
+      "2": {
+        "explorer": "Pour qui ?"
+      },
+      "3": {
+        "fez": "Pour tous ceux qui regardent. C’était ça l’idée : ce n’était jamais pour l’homme à l’intérieur."
+      }
+    }
+  },
+  "tomb": {
+    "starter": {
+      "1": {
+        "ipi": "Hé ! Pas touche ! C’est ma jarre !"
+      },
+      "2": {
+        "fez": "…Elle vient de parler, cette jarre ?!"
+      },
+      "3": {
+        "ipi": "C’était moi. Troisième étagère, celle qui est ébréchée. Celle-là, elle est à moi."
+      },
+      "4": {
+        "explorer": "D’accord, d’accord ! On n’y touche pas. Tu es qui ?"
+      },
+      "5": {
+        "ipi": "Ipi. Quarante ans que je tenais les comptes. Quarante !"
+      },
+      "6": {
+        "fez": "Les comptes ? De qui ?"
+      },
+      "7": {
+        "ipi": "De tout le monde ! Qui devait quoi, jusqu’au dernier sac de grain."
+      },
+      "8": {
+        "ipi": "Cette Henut, plus au nord ? Onze deben de lapis. Jamais payés !"
+      },
+      "9": {
+        "explorer": "Et tu t’en souviens encore, après tout ce temps ?"
+      },
+      "10": {
+        "ipi": "C’est écrit ! Ce qui est écrit, c’est ce qui s’est passé."
+      },
+      "11": {
+        "ipi": "Sauf ces Hori… Hori le batelier, Hori le boulanger… et cet AUTRE Hori."
+      },
+      "12": {
+        "fez": "Tu avais des chats aussi ? Tout le monde avait des chats, non ? Trop mignons !"
+      },
+      "13": {
+        "ipi": "Mignons ? Ils étaient là pour le grain ! Tu sais combien ça coûte, un seul rat, sur toute une saison ?"
+      },
+      "14": {
+        "fez": "…Ah. D’accord."
+      },
+      "15": {
+        "ipi": "Dis à Henut que c’est Ipi qui t’envoie. Ça va lui gâcher son après-midi."
+      },
+      "16": {
+        "fez": "Je l’aime bien, lui !"
+      },
+      "17": {
+        "explorer": "Tu aimes surtout qu’on lui doive encore de l’argent."
+      }
+    },
+    "junior": {
+      "1": {
+        "henut": "Enfin. Tu viens sûrement pour le lapis. J’imagine qu’Ipi radote encore à propos du lapis."
+      },
+      "2": {
+        "explorer": "Oui."
+      },
+      "3": {
+        "henut": "C’était du verre. Du très beau verre. Il le savait très bien."
+      },
+      "4": {
+        "fez": "…Et le bracelet, c’était du verre aussi ?"
+      },
+      "5": {
+        "henut": "Tout ici est la plus belle imitation qu’on pouvait acheter, jeune homme, et j’ai choisi chaque pièce moi-même."
+      },
+      "6": {
+        "henut": "Bon. Le mur. Le troisième signe : ce n’est pas mon nom. Un apprenti avec un burin, et personne pour le surveiller."
+      },
+      "7": {
+        "henut": "Tu as appris tes signes. Ça se voit. Répare ça."
+      }
+    },
+    "juniorFixed": {
+      "1": {
+        "henut": "Voilà. Comme ça, dans mille ans, ce sera toujours mon nom."
+      },
+      "2": {
+        "explorer": "Ipi l’écrivait bien, lui."
+      },
+      "3": {
+        "henut": "Ipi écrivait tout correctement. C’était sa seule qualité."
+      },
+      "4": {
+        "fez": "Ça compte, ici en bas ?"
+      },
+      "5": {
+        "henut": "C’est la seule chose qui compte."
+      },
+      "6": {
+        "fez": "Elle avait tout un mur de Thot, là-haut. Le dieu des secrets."
+      },
+      "7": {
+        "henut": "Thot compte. Thot note ce que tu as fait, et ça reste écrit."
+      },
+      "8": {
+        "henut": "Les secrets, c’est comme ça que les gens appellent le calcul quand ils ne savent pas le faire."
+      },
+      "9": {
+        "henut": "Si tu continues ta route (et c’est clair que oui), il y a un prêtre à Karnak qui doit aux morts une cérémonie qu’il n’a jamais faite. Il va être insupportable. Les prêtres le sont toujours."
+      },
+      "10": {
+        "henut": "…On se connaît ?"
+      },
+      "11": {
+        "fez": "Je m’en souviendrais."
+      },
+      "12": {
+        "henut": "Oui. Moi aussi."
+      }
+    },
+    "expert": {
+      "1": {
+        "priest": "Vous n’êtes pas la personne que j’attends."
+      },
+      "2": {
+        "explorer": "Vous attendez qui ?"
+      },
+      "3": {
+        "priest": "Quelqu’un avec le sceau. Il devait être apporté ici, posé là, et on devait prononcer les paroles. Aucune de ces trois choses n’est arrivée."
+      },
+      "4": {
+        "fez": "…Vous attendez depuis combien de temps ?"
+      },
+      "5": {
+        "priest": "Je ne compte pas. Ce ne serait pas professionnel."
+      },
+      "6": {
+        "priest": "Une vraie offrande, c’est un objet qu’un roi tenait quand on l’a enterré. Pas une copie. Pas une imitation. L’objet lui-même, avec sa marque dessus."
+      },
+      "7": {
+        "priest": "Apportez cela, et vous serez annoncés. Apportez autre chose, et vous ne le serez pas."
+      },
+      "8": {
+        "explorer": "Annoncés à qui ?"
+      },
+      "9": {
+        "priest": "Vous le saurez. Tout le monde le sait, un jour."
+      },
+      "10": {
+        "fez": "Il aime beaucoup le soleil, celui-là. Tout cet Amon-Râ devant l’entrée."
+      },
+      "11": {
+        "priest": "Amon est celui qui est caché. Râ est celui que tout le monde peut voir."
+      },
+      "12": {
+        "priest": "C’est le même dieu. Ce n’est pas un hasard, c’est toute l’idée."
+      },
+      "13": {
+        "fez": "…D’accord. Oui. Je le savais."
+      },
+      "14": {
+        "explorer": "Tu ne le savais pas."
+      },
+      "15": {
+        "fez": "Je ne le savais pas."
+      }
+    },
+    "expertB": {
+      "1": {
+        "fez": "Personne n’est jamais venu ici. Ni nous, ni ceux d’avant, personne."
+      },
+      "2": {
+        "explorer": "Comment tu le sais ?"
+      },
+      "3": {
+        "fez": "Parce qu’il y a encore quelque chose dedans."
+      }
+    },
+    "master": {
+      "1": {
+        "pharaoh": "Vous pouvez approcher. Vous avez approché. Très bien."
+      },
+      "2": {
+        "fez": "Votre Majesté."
+      },
+      "3": {
+        "pharaoh": "Oui."
+      },
+      "4": {
+        "explorer": "On a besoin de votre sceau."
+      },
+      "5": {
+        "pharaoh": "Comme tout le monde. Le mien a été emporté deux fois, et rapporté jamais."
+      },
+      "6": {
+        "pharaoh": "La deuxième fois, ils ont laissé une copie. Une COPIE. Dans MON tombeau. Comme si je n’allais pas regarder."
+      },
+      "7": {
+        "explorer": "La copie est toujours là ?"
+      },
+      "8": {
+        "pharaoh": "Bien sûr qu’elle est toujours là, elle ne vaut rien. Elle est sur l’étagère où devrait être le vrai, à être fausse."
+      },
+      "9": {
+        "pharaoh": "Prenez-la si vous voulez. Apportez-la à ce prêtre. On verra jusqu’où ça vous mène."
+      },
+      "10": {
+        "fez": "…Il s’amuse bien, là."
+      },
+      "11": {
+        "pharaoh": "Je passe ma meilleure semaine depuis neuf cents ans."
+      },
+      "12": {
+        "fez": "Osiris, là, sur le mur. Le seigneur des morts. Pas très gai, tout ça."
+      },
+      "13": {
+        "pharaoh": "Il est VERT, espèce de bestiole ridicule."
+      },
+      "14": {
+        "pharaoh": "Vert comme un champ inondé. On l’a tué, on l’a remis en un seul morceau, et il revient chaque année."
+      },
+      "15": {
+        "pharaoh": "Ici en bas, ce n’est pas triste, c’est tout l’intérêt. Mort, ce n’est pas fini."
+      }
+    },
+    "wizard": {
+      "1": {
+        "priest": "Posez-le. Là. Oui."
+      },
+      "2": {
+        "priest": "…"
+      },
+      "3": {
+        "priest": "C’est la première fois que je fais ça. Je commençais à croire que j’avais oublié comment."
+      },
+      "4": {
+        "explorer": "C’était le cas ?"
+      },
+      "5": {
+        "priest": "Complètement. C’est revenu."
+      }
+    },
+    "wizardB": {
+      "1": {
+        "fez": "Leur corde. Toujours attachée."
+      },
+      "2": {
+        "explorer": "Ils sont arrivés jusqu’ici."
+      },
+      "3": {
+        "fez": "Plus loin que ça. Et puis ils sont remontés par là."
+      },
+      "4": {
+        "explorer": "Il y a un carnet."
+      },
+      "5": {
+        "fez": "Qu’est-ce qu’il dit ?"
+      },
+      "6": {
+        "explorer": "Pas su lire l’écriture. Revenus pour le sceau. En avons fait un plus beau à la place."
+      },
+      "7": {
+        "explorer": "Personne ne s’est fait avoir."
+      },
+      "8": {
+        "fez": "…Ils l’ont copié parce qu’ils ne savaient pas lire à quoi il servait."
+      },
+      "9": {
+        "explorer": "Et puis ils sont rentrés chez eux."
+      }
+    },
+    "wizardC": {
+      "1": {
+        "fez": "Arrête-toi un moment. Regarde tout ce qu’on a remonté de ces pyramides."
+      },
+      "2": {
+        "explorer": "C’est une image."
+      },
+      "3": {
+        "fez": "Depuis le début, c’était une image."
+      }
+    }
+  },
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Une grotte ! La carte montrait une porte de cave, et c’est toute une colline !"
+      },
+      "2": {
+        "fez": "Malin, le bonhomme. Cacher ses réserves dans une colline : aucun voleur n’y penserait."
+      },
+      "3": {
+        "explorer": "Nous, si."
+      },
+      "4": {
+        "fez": "On n’est pas des voleurs. On est des clients. Des clients trèèès en retard."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Ça doit être ici. Henut ! Celle des onze deben de lapis !"
+      },
+      "2": {
+        "fez": "Tu crois qu’on touche une petite commission si on récupère l’argent ?"
+      },
+      "3": {
+        "explorer": "Tu n’as encore rien récupéré."
+      },
+      "4": {
+        "fez": "J’aime bien faire mes calculs en avance."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Alors c’est ici, le prêtre de Henut. Insupportable, elle a dit."
+      },
+      "2": {
+        "fez": "Tu crois qu’on devrait apporter quelque chose ? Des fleurs ?"
+      },
+      "3": {
+        "explorer": "Il est mort."
+      },
+      "4": {
+        "fez": "Raison de plus. Il faut faire bonne impression la première fois."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Seul le grand prêtre avait le droit d’entrer ici. Et maintenant, nous !"
+      },
+      "2": {
+        "explorer": "On a le droit ?"
+      },
+      "3": {
+        "fez": "Il n’y a personne à la porte pour dire non."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Regarde, la carte s’arrête ici. Du sable, et puis plus rien."
+      },
+      "2": {
+        "explorer": "Alors on est au bon endroit."
+      },
+      "3": {
+        "fez": "C’est bien ce que je dis. C’est justement ça qui me rend nerveux."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "La salle d’Osiris ! Verte, bien sûr. Parce qu’il revient chaque année, comme le blé."
+      },
+      "2": {
+        "explorer": "Tu l’as toujours su."
+      },
+      "3": {
+        "fez": "Toujours."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "La réserve des dieux eux-mêmes ! Qu’est-ce qu’on garde quand on a déjà tout ?"
+      },
+      "2": {
+        "explorer": "Ce que les gens t’apportent."
+      },
+      "3": {
+        "fez": "…Oui. Ça doit être ça."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Le royaume des forces du ciel. Tiens, tiens."
+      },
+      "2": {
+        "fez": "Si je devais vendre un truc qui ne vaut pas grand-chose, moi aussi, je l’appellerais comme ça."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "J’ai tout à coup l’impression d’avoir fait une bêtise."
+      },
+      "2": {
+        "explorer": "Laquelle ?"
+      },
+      "3": {
+        "fez": "Aucune idée. C’est ça le pire."
+      }
+    }
+  },
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Tous ces leviers et ces portes, pour une seule cave !"
+      },
+      "2": {
+        "fez": "Alors il y a quelque chose de bien là-dessous. Personne ne se donne autant de mal pour des cochonneries."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Ouf. Ces portes étaient bien plus compliquées que chez Ipi."
+      },
+      "2": {
+        "fez": "Bah. Madame avait de l’argent, forcément."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Ouf, enfin ! Cette grotte ne voulait vraiment pas de nous."
+      },
+      "2": {
+        "explorer": "Je crois que c’était le but."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Psst… pourquoi je chuchote, au fait ?"
+      },
+      "2": {
+        "explorer": "Aucune idée. Je le fais aussi."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Pfiou. Ma queue tremble encore à cause de la dernière porte."
+      },
+      "2": {
+        "fez": "Un roi qui range ses affaires comme ça… il ne veut vraiment pas les perdre."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Tu vois ? Reste assez longtemps sous terre, et tu finis par remonter."
+      },
+      "2": {
+        "explorer": "Ça aussi, c’est Osiris ?"
+      },
+      "3": {
+        "fez": "Non, ça, c’est de moi."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Des portes pareilles… avant, on aurait fait demi-tour."
+      },
+      "2": {
+        "explorer": "Plus maintenant."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Trois étages de grotte, et seulement après, la porte d’entrée."
+      },
+      "2": {
+        "explorer": "Ça doit valoir le coup, alors."
+      },
+      "3": {
+        "fez": "C’est ce qu’on dit toujours. Et après, c’est une jarre."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Le dernier bout de noir. Je le sens."
+      },
+      "2": {
+        "explorer": "Tu as dit ça la dernière fois."
+      },
+      "3": {
+        "fez": "Et j’avais presque raison."
+      }
+    }
+  },
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Regarde ça ! Une pyramide, sous la terre ! Pour un marchand !"
+      },
+      "2": {
+        "fez": "Soit il gagnait très bien sa vie, soit il marchandait très bien."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Regarde la pointe qui brille au soleil ! De l’or, du vrai, je parie."
+      },
+      "2": {
+        "explorer": "Au fond d’un trou. Elle brille pour qui ?"
+      },
+      "3": {
+        "fez": "Pour elle. On voit tout de suite le genre."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Hum. On a le droit de vendre un truc qui appartient déjà à un dieu ?"
+      },
+      "2": {
+        "explorer": "Demande au dieu."
+      },
+      "3": {
+        "fez": "Plutôt pas."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Tu crois que le prêtre sait qu’on se promène ici ?"
+      },
+      "2": {
+        "explorer": "Il ne compte pas. Ce ne serait pas professionnel."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Regarde-la, toute seule au soleil. Elle est belle, hein ?"
+      },
+      "2": {
+        "fez": "Et si on faisait juste un dessin et on repartait ?"
+      },
+      "3": {
+        "explorer": "Tu ne sais pas dessiner."
+      },
+      "4": {
+        "fez": "…Non. Bon, on entre, alors."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Celui qui est là-dedans compte bien revenir. C’est le marché, par ici."
+      },
+      "2": {
+        "explorer": "Il attend depuis combien de temps ?"
+      },
+      "3": {
+        "fez": "Longtemps. Mais ça fait partie du métier. Être mort, c’est surtout attendre."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "explorer": "Waouh."
+      },
+      "2": {
+        "fez": "Oui."
+      },
+      "3": {
+        "fez": "Parfois, il n’y a plus rien à dire, hein."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Tu vois la tache de soleil sur la pyramide ? On pourrait lire l’heure avec."
+      },
+      "2": {
+        "explorer": "Il est quelle heure, alors ?"
+      },
+      "3": {
+        "fez": "…L’après-midi. À peu près. Je ne suis pas une horloge, hein."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "La voilà. Toutes les lignes de la carte arrivent ici."
+      },
+      "2": {
+        "explorer": "Alors c’est la fin."
+      },
+      "3": {
+        "fez": "De la carte, oui. Bizarre. Je pensais que ça ferait plus plaisir."
+      }
+    }
+  },
+  "camp": {
+    "firstHome": {
+      "1": {
+        "fez": "C’est ÇA, ton camp ? Un feu et un coffre ?"
+      },
+      "2": {
+        "explorer": "Notre camp."
+      },
+      "3": {
+        "fez": "Notre camp. D’accord. Alors moi, je prends la place près du feu."
+      },
+      "4": {
+        "fez": "Je suis un lézard, après tout. Quand ça m’arrange."
+      }
+    },
+    "homeHaul": {
+      "1": {
+        "fez": "On déballe ! Le meilleur moment de tout le voyage."
+      },
+      "2": {
+        "explorer": "Mieux que la pyramide ?"
+      },
+      "3": {
+        "fez": "La pyramide n’est pas à nous. Ça, si."
+      }
+    },
+    "homeEmpty": {
+      "1": {
+        "explorer": "Les mains vides."
+      },
+      "2": {
+        "fez": "Et alors ? On a marché. Ça compte aussi."
+      },
+      "3": {
+        "explorer": "Ça compte pour quoi ?"
+      },
+      "4": {
+        "fez": "Pour mes pattes. Elles sont très courtes, tu sais."
+      }
+    },
+    "rested": {
+      "1": {
+        "fez": "Voilà. Ça va un peu mieux ?"
+      },
+      "2": {
+        "explorer": "C’était juste une égratignure."
+      },
+      "3": {
+        "fez": "Je n’ai même pas regardé. Et j’ai quand même dû m’asseoir."
+      }
+    },
+    "chapterJunior": {
+      "1": {
+        "fez": "Eh bien, on s’en est bien sortis. Au suivant !"
+      },
+      "2": {
+        "explorer": "Ce n’était pas si facile."
+      },
+      "3": {
+        "fez": "Maintenant, si. Après coup, tout est facile."
+      }
+    },
+    "chapterExpert": {
+      "1": {
+        "fez": "Là-bas, il y a des pièges. Des vrais. Ils mordent."
+      },
+      "2": {
+        "fez": "Tu te fais mal ? Alors on rentre, tout simplement. À la maison, tu te remettras."
+      },
+      "3": {
+        "explorer": "Et toi ?"
+      },
+      "4": {
+        "fez": "Moi, je marche derrière toi. C’est plus sûr."
+      }
+    },
+    "chapterMaster": {
+      "1": {
+        "fez": "Quatre pyramides, là-bas. Tu te souviens quand il n’y en avait qu’une ?"
+      },
+      "2": {
+        "explorer": "Ce n’est pas si vieux."
+      },
+      "3": {
+        "fez": "Non. Mais on dirait."
+      }
+    },
+    "chapterWizard": {
+      "1": {
+        "fez": "Regarde la dernière. Avec une pointe en or !"
+      },
+      "2": {
+        "fez": "Celle-là va nous coûter cher. La dernière coûte toujours le plus."
+      },
+      "3": {
+        "explorer": "Nous coûter quoi ?"
+      },
+      "4": {
+        "fez": "…Je ne sais plus trop."
+      }
+    },
+    "firstFind": {
+      "1": {
+        "fez": "Regarde ça, on dirait que ça a toujours été là !"
+      },
+      "2": {
+        "fez": "J’ai très envie d’y accrocher une étiquette de prix."
+      },
+      "3": {
+        "explorer": "Non."
+      },
+      "4": {
+        "fez": "Non, non. On ne vend pas ce qu’il y a chez soi. Je sais."
+      }
+    },
+    "structureDone": {
+      "1": {
+        "fez": "C’est fini ! Toutes les pièces sont en place !"
+      },
+      "2": {
+        "explorer": "Construit par nous."
+      },
+      "3": {
+        "fez": "Bon. Moi, j’ai surtout montré du doigt."
+      }
+    }
+  },
+  "animal": {
+    "forSale": {
+      "1": {
+        "fez": "Regarde ce qu’il y a à mon étal ! Maintenant, je vends aussi du transport."
+      },
+      "2": {
+        "explorer": "Il mâchouille."
+      },
+      "3": {
+        "fez": "C’est compris dans le prix."
+      }
+    },
+    "boughtDonkey": {
+      "1": {
+        "fez": "Vendu ! Un âne. Têtu, mais il porte tout."
+      },
+      "2": {
+        "explorer": "Il est où, alors ?"
+      },
+      "3": {
+        "fez": "Déjà en route pour le camp. Il préfère marcher sans nous."
+      }
+    },
+    "blockedDonkey": {
+      "1": {
+        "fez": "On ne va pas marcher aussi loin avec toutes ces affaires. Il nous faut un âne."
+      },
+      "2": {
+        "fez": "Et devine qui en a un ? Moi. À mon étal, dans le caveau de Henut."
+      }
+    },
+    "throughDonkey": {
+      "1": {
+        "explorer": "Il veut bien."
+      },
+      "2": {
+        "fez": "Aujourd’hui. Redemande-lui demain."
+      }
+    },
+    "arrivesDonkey": {
+      "1": {
+        "fez": "Le voilà ! Il est arrivé avant nous."
+      },
+      "2": {
+        "explorer": "Et il a trouvé le feu, aussi."
+      },
+      "3": {
+        "fez": "Ma place. Bon. Il était là le premier."
+      }
+    },
+    "boughtCart": {
+      "1": {
+        "fez": "Une charrette ! Deux roues, et elles ne grincent presque pas."
+      },
+      "2": {
+        "explorer": "Presque ?"
+      },
+      "3": {
+        "fez": "Le grincement est offert."
+      }
+    },
+    "blockedCart": {
+      "1": {
+        "fez": "L’âne ne veut pas porter un sac de plus. Je lui ai demandé."
+      },
+      "2": {
+        "fez": "Une charrette, voilà ce qu’il nous faut. Il y en a une à mon étal, chez le grand prêtre."
+      }
+    },
+    "throughCart": {
+      "1": {
+        "explorer": "Tu entends ?"
+      },
+      "2": {
+        "fez": "C’est la charrette. Elle chante un peu."
+      },
+      "3": {
+        "explorer": "Tout le chemin ?"
+      }
+    },
+    "arrivesCart": {
+      "1": {
+        "fez": "Une charrette à notre camp ! Maintenant, on a l’air d’aller quelque part."
+      },
+      "2": {
+        "explorer": "On va quelque part."
+      },
+      "3": {
+        "fez": "Oui, mais maintenant, tout le monde le voit."
+      }
+    },
+    "boughtCamel": {
+      "1": {
+        "fez": "Un chameau ! Il tient des jours sans eau. Moi pas, hein."
+      },
+      "2": {
+        "explorer": "Il te regarde."
+      },
+      "3": {
+        "fez": "Il me regarde de haut. Les chameaux te regardent toujours de haut."
+      }
+    },
+    "blockedCamel": {
+      "1": {
+        "fez": "Le sanctuaire secret ? On n’y arrivera jamais à pied."
+      },
+      "2": {
+        "fez": "Ça tombe bien, j’ai un chameau. À mon étal, chez le grand prêtre."
+      }
+    },
+    "throughCamel": {
+      "1": {
+        "fez": "Il se met à genoux ! Pour moi !"
+      },
+      "2": {
+        "explorer": "Pour qu’on monte dessus."
+      },
+      "3": {
+        "fez": "Laisse-moi en profiter."
+      }
+    },
+    "arrivesCamel": {
+      "1": {
+        "fez": "Le voilà. Il fait comme si le camp était à lui."
+      },
+      "2": {
+        "explorer": "Et l’âne ?"
+      },
+      "3": {
+        "fez": "Il fait semblant de ne pas le voir. Comme moi."
+      }
+    },
+    "boughtSecondDonkey": {
+      "1": {
+        "fez": "Encore un âne ! Comme ça, le premier a enfin quelqu’un à qui parler."
+      },
+      "2": {
+        "explorer": "Parler ?"
+      },
+      "3": {
+        "fez": "Braire. C’est parler, mais plus fort."
+      }
+    },
+    "blockedSecondDonkey": {
+      "1": {
+        "fez": "L’âne ne veut pas aller plus loin. Pas tout seul, il dit."
+      },
+      "2": {
+        "explorer": "Il a dit ça ?"
+      },
+      "3": {
+        "fez": "Je parle l’âne couramment. Il veut un copain, et j’en ai un à mon étal, dans le trésor du pharaon."
+      }
+    },
+    "throughSecondDonkey": {
+      "1": {
+        "fez": "Écoute-les ! C’est à celui qui braira le plus fort."
+      },
+      "2": {
+        "explorer": "Qui gagne ?"
+      },
+      "3": {
+        "fez": "Pas nous. Nous, on doit écouter."
+      }
+    },
+    "arrivesSecondDonkey": {
+      "1": {
+        "fez": "Regarde-les. On dirait qu’ils se connaissent depuis des années."
+      },
+      "2": {
+        "explorer": "Comme nous."
+      },
+      "3": {
+        "fez": "Nous, on brait moins."
+      }
+    },
+    "boughtSecondCamel": {
+      "1": {
+        "fez": "Encore un chameau. Oui. Moi non plus, je ne les aime pas."
+      },
+      "2": {
+        "fez": "Mais celui-là, au moins, il a l’air gentil."
+      },
+      "3": {
+        "explorer": "Il regarde ton fez."
+      }
+    },
+    "blockedSecondCamel": {
+      "1": {
+        "fez": "La salle d’Osiris. Avec un seul chameau, on n’y arrivera pas."
+      },
+      "2": {
+        "fez": "Heureusement, j’en ai un autre, à mon étal, dans le trésor du pharaon. Mon tout dernier."
+      },
+      "3": {
+        "explorer": "Tu dis toujours ça."
+      }
+    },
+    "throughSecondCamel": {
+      "1": {
+        "fez": "Il mange mon fez !"
+      },
+      "2": {
+        "explorer": "Un chameau gentil."
+      },
+      "3": {
+        "fez": "TROP gentil."
+      }
+    },
+    "arrivesSecondCamel": {
+      "1": {
+        "fez": "Deux chameaux. Maintenant, ils me regardent de haut à deux."
+      },
+      "2": {
+        "explorer": "Va te mettre avec les ânes, alors."
+      },
+      "3": {
+        "fez": "J’y suis déjà."
+      }
+    },
+    "boughtSturdyCart": {
+      "1": {
+        "fez": "Une charrette plus solide. Celle-là ne chante pas sur la route."
+      },
+      "2": {
+        "explorer": "Il y a des fleurs peintes dessus."
+      },
+      "3": {
+        "fez": "C’est pour la solidité."
+      }
+    },
+    "blockedSturdyCart": {
+      "1": {
+        "fez": "La vieille charrette n’arrivera pas là-bas en un seul morceau. Il faut quelque chose de plus solide."
+      },
+      "2": {
+        "fez": "Il y en a une à mon étal, dans le caveau des dieux. Pas pour la peinture, hein."
+      }
+    },
+    "throughSturdyCart": {
+      "1": {
+        "explorer": "Pas de grincement."
+      },
+      "2": {
+        "fez": "Tu vois ? La solidité."
+      },
+      "3": {
+        "explorer": "Et les fleurs ?"
+      },
+      "4": {
+        "fez": "Elles aident un peu aussi."
+      }
+    },
+    "arrivesSturdyCart": {
+      "1": {
+        "fez": "Regarde comme elle brille !"
+      },
+      "2": {
+        "explorer": "Plus jolie que nécessaire."
+      },
+      "3": {
+        "fez": "Oui. Je ne l’ai pas vendue pour la solidité non plus."
+      }
+    },
+    "boughtCaravanBanner": {
+      "1": {
+        "fez": "Une bannière. Je vais être honnête : elle n’ouvre rien."
+      },
+      "2": {
+        "explorer": "Elle sert à quoi, alors ?"
+      },
+      "3": {
+        "fez": "Elle flotte. Très joliment."
+      }
+    },
+    "arrivesCaravanBanner": {
+      "1": {
+        "fez": "Regarde-la flotter ! Au-dessus de notre camp à nous !"
+      },
+      "2": {
+        "explorer": "Elle n’ouvre toujours rien."
+      },
+      "3": {
+        "fez": "Non. Elle n’a pas besoin."
+      }
+    }
+  },
+  "bond": {
+    "starter": {
+      "1": {
+        "fez": "C’était rapide."
+      },
+      "2": {
+        "explorer": "C’était une porte."
+      },
+      "3": {
+        "fez": "Moi, j’aurais mis une semaine."
+      }
+    },
+    "starterTomb": {
+      "1": {
+        "fez": "Juste pour que ce soit clair, hein. Moi, je fais ça pour revendre. Je le dis maintenant, tant que c’est encore vrai."
+      },
+      "2": {
+        "explorer": "C’est noté."
+      }
+    },
+    "junior": {
+      "1": {
+        "fez": "Tu n’as plus rien dit, là."
+      },
+      "2": {
+        "explorer": "Je comptais."
+      },
+      "3": {
+        "fez": "Je sais. J’ai déjà vu des gens deviner. Ça, ce n’était pas deviner."
+      }
+    },
+    "expert": {
+      "1": {
+        "fez": "C’était juste."
+      },
+      "2": {
+        "explorer": "Ça allait."
+      },
+      "3": {
+        "fez": "C’était juste. J’ai bien le droit de le dire."
+      }
+    },
+    "master": {
+      "1": {
+        "fez": "On pourrait arrêter."
+      },
+      "2": {
+        "explorer": "On pourrait."
+      },
+      "3": {
+        "fez": "Je le dis pour que ce soit dit. Pas pour qu’on le fasse."
+      }
+    },
+    "wizard": {
+      "1": {
+        "explorer": "Ça vaut combien, ça ?"
+      },
+      "2": {
+        "fez": "…"
+      },
+      "3": {
+        "fez": "Là-dessus, je ne mettrai pas de prix."
+      },
+      "4": {
+        "explorer": "C’est noté."
+      }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": {
+        "fez": "Oh. Il y avait un mur là, il y a une seconde."
+      },
+      "2": {
+        "explorer": "Il y avait un passage derrière."
+      },
+      "3": {
+        "fez": "Pendant toutes ces années, les gens sont passés juste à côté. Toutes ces années !"
+      }
+    }
+  },
+  "reading": {
+    "junior": {
+      "1": {
+        "explorer": "Il y a une ligne ici que je sais lire maintenant."
+      },
+      "2": {
+        "explorer": "J’ai donné du pain à ceux qui avaient faim."
+      },
+      "3": {
+        "fez": "Du pain. Dans un tombeau."
+      },
+      "4": {
+        "explorer": "C’était aussi dans le dernier. Je ne savais pas que c’étaient des mots."
+      }
+    },
+    "expert": {
+      "1": {
+        "explorer": "Deuxième ligne. De l’eau à ceux qui avaient soif."
+      },
+      "2": {
+        "fez": "Du pain, et maintenant de l’eau. Quelqu’un voulait vraiment qu’on se souvienne de lui comme de quelqu’un de généreux."
+      },
+      "3": {
+        "explorer": "Tout le monde l’a. Chaque mur, chaque tombeau, les deux mêmes lignes."
+      },
+      "4": {
+        "fez": "Alors soit ils étaient tous généreux, soit c’est ce qu’il faut dire."
+      },
+      "5": {
+        "explorer": "Ou c’est sur ça qu’on les pesait."
+      }
+    },
+    "master": {
+      "1": {
+        "explorer": "Des habits à ceux qui n’en avaient pas. Troisième ligne."
+      },
+      "2": {
+        "fez": "Du pain, de l’eau, des habits. C’est une liste de choses données."
+      },
+      "3": {
+        "explorer": "Dans le tombeau d’un homme qui a tout emporté avec lui."
+      },
+      "4": {
+        "fez": "…Oui. Je l’avais remarqué."
+      }
+    },
+    "sphinx": {
+      "1": {
+        "fez": "Retour au point de départ. Il n’a pas bougé."
+      },
+      "2": {
+        "explorer": "L’écriture est toujours là."
+      },
+      "3": {
+        "fez": "Tu sais la lire ?"
+      },
+      "4": {
+        "explorer": "Un nom."
+      },
+      "5": {
+        "fez": "Le nom de qui ?"
+      },
+      "6": {
+        "explorer": "Le tien."
+      },
+      "7": {
+        "fez": "…"
+      },
+      "8": {
+        "fez": "C’est sûr ?"
+      },
+      "9": {
+        "explorer": "C’est écrit."
+      },
+      "10": {
+        "fez": "Hein."
+      },
+      "11": {
+        "fez": "Hori."
+      },
+      "12": {
+        "fez": "Il y avait un Hori dans chaque village d’Égypte."
+      },
+      "13": {
+        "fez": "Bon. Ça explique le fez."
+      }
+    }
+  },
+  "altar": {
+    "refused": {
+      "1": {
+        "priest": "Non."
+      },
+      "2": {
+        "explorer": "Il y a sa marque dessus."
+      },
+      "3": {
+        "priest": "Il y a une marque. C’est une très bonne marque. Elle a été gravée par quelqu’un avec d’excellents outils et rien à faire ici, et il n’y a pas longtemps."
+      },
+      "4": {
+        "priest": "J’attends depuis trois mille ans. Je ne vais pas me faire avoir pendant la dernière semaine."
+      }
+    }
+  },
+  "meeting": {
+    "starter_1": {
+      "1": {
+        "voice": "Hé ! Pas LÀ ! Regarde où tu mets les pieds !"
+      },
+      "2": {
+        "explorer": "Pardon ! Je ne vois rien ! Tu es où ?"
+      },
+      "3": {
+        "fez": "En bas ! Tu marches sur ma marchandise !"
+      },
+      "4": {
+        "explorer": "Un lézard ?! Avec un fez ?"
+      },
+      "5": {
+        "fez": "Un marchand. Et qu’est-ce qu’il a, mon fez ?"
+      },
+      "6": {
+        "fez": "Toi aussi, tu viens pour la pyramide, je parie. Tu as acheté une carte ? Beaucoup trop cher ?"
+      },
+      "7": {
+        "explorer": "BEAUCOUP trop cher."
+      },
+      "8": {
+        "fez": "Moi aussi. Pfff."
+      },
+      "9": {
+        "explorer": "L’écriture sur le Sphinx… tu sais la lire ?"
+      },
+      "10": {
+        "fez": "Non. Plus personne ne sait. Ce socle était bleu et or, autrefois, tu sais."
+      },
+      "11": {
+        "explorer": "Comment tu sais ça ?"
+      },
+      "12": {
+        "fez": "…On me l’a dit. Dis donc, tu cherches quoi, ici ?"
+      },
+      "13": {
+        "explorer": "Un truc chouette."
+      },
+      "14": {
+        "fez": "Le chouette, ça se vend bien ! Tu sais quoi ? Je viens avec toi !"
+      },
+      "15": {
+        "explorer": "Quoi ? Avec moi ?"
+      },
+      "16": {
+        "fez": "On voit mieux à deux. Allez, la pyramide nous attend !"
+      }
+    }
+  },
+  "end": {
+    "1": {
+      "fez": "Alors, c’était chouette ?"
+    },
+    "2": {
+      "explorer": "Ça peut aller."
+    }
+  },
+  "revisit": {
+    "starter": {
+      "north1": {
+        "1": {
+          "ipi": "Encore là ? Au nord ! Henut ! Onze deben !"
+        }
+      },
+      "north2": {
+        "1": {
+          "ipi": "Onze deben de lapis. Henut. Au nord. Qu’est-ce que tu attends ?"
+        }
+      },
+      "paid1": {
+        "1": {
+          "ipi": "Alors ? Elle a payé ? …Non. Évidemment."
+        }
+      },
+      "paid2": {
+        "1": {
+          "ipi": "Du verre ? DU VERRE ? C’est écrit lapis. Juste là. Lapis !"
+        }
+      },
+      "later1": {
+        "1": {
+          "ipi": "Encore toi. Troisième étagère, celle qui est ébréchée : toujours à moi. Pas touche."
+        }
+      },
+      "later2": {
+        "1": {
+          "ipi": "Quarante ans de comptes, et pas un seul qui tombe juste. Pas un seul !"
+        }
+      }
+    },
+    "junior": {
+      "wall1": {
+        "1": {
+          "henut": "Le mur. Le troisième signe. Ce n’est toujours pas mon nom."
+        }
+      },
+      "wall2": {
+        "1": {
+          "henut": "Tu es toujours là, et cette oie est toujours sur mon mur. Répare ça."
+        }
+      },
+      "priest1": {
+        "1": {
+          "henut": "C’est toujours mon nom. J’ai vérifié. Maintenant, Karnak, le prêtre. Allez, file."
+        }
+      },
+      "priest2": {
+        "1": {
+          "henut": "Karnak ! Il a assez attendu. Va te faire annoncer."
+        }
+      },
+      "met1": {
+        "1": {
+          "henut": "Alors ? Insupportable, non ? Je te l’avais dit."
+        }
+      },
+      "later1": {
+        "1": {
+          "henut": "Du verre, toujours. Toujours magnifique. Toujours choisi par moi."
+        }
+      }
+    },
+    "expert": {
+      "seal1": {
+        "1": {
+          "priest": "Le sceau. Apporté ici, posé, les paroles prononcées. J’attendrai."
+        }
+      },
+      "seal2": {
+        "1": {
+          "priest": "Ah. Encore vous. Et toujours pas de sceau."
+        }
+      },
+      "king1": {
+        "1": {
+          "priest": "Vous avez vu le roi. Bien. L’objet lui-même, attention, pas une imitation."
+        }
+      },
+      "later1": {
+        "1": {
+          "priest": "Encore vous. Il n’y a plus rien à faire ici. C’est très reposant."
+        }
+      }
+    },
+    "master": {
+      "priest1": {
+        "1": {
+          "pharaoh": "Encore là ? Allez voir ce prêtre avec la copie ! Je veux savoir comment ça se passe."
+        }
+      },
+      "priest2": {
+        "1": {
+          "pharaoh": "Vous pouvez approcher. Encore. Le prêtre l’a vue ?"
+        }
+      },
+      "rite1": {
+        "1": {
+          "pharaoh": "Alors il a enfin fait sa cérémonie. Bien. Maintenant, il va être insupportable avec ça."
+        }
+      },
+      "later1": {
+        "1": {
+          "pharaoh": "Toujours ma meilleure semaine depuis neuf cents ans. Et elle continue !"
+        }
+      }
+    },
+    "wizard": {
+      "later1": {
+        "1": {
+          "priest": "…Oui. Je sais encore comment faire. Bien."
+        }
+      },
+      "later2": {
+        "1": {
+          "priest": "Posé, les paroles prononcées. Terminé. C’est une drôle de sensation."
+        }
+      }
+    }
+  }
+}

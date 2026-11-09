@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Uzbīdi senlietu uz akmens, lai to atvērtu",
+    "alsoAvailable": "Vēl pieejams:"
+  },
+  "perks": {
+    "max-health": "+½ sirds tavam lielākajam spēkam",
+    "armor": "Lamatas nodara mazāk ļauna",
+    "trap-insight": "+1 s lamatās ar laiku",
+    "pack-mule": "Ūdens maiss dziedē divas sirdis",
+    "compass": "Kompasa daļa",
+    "detection": "Eju meklētāja daļa",
+    "tier-unlock": "Atver līmeņa „{{tier}}” ekspedīcijas",
+    "tier-coming-soon": "Līmeņa „{{tier}}” ekspedīcijas nāks kādā no nākamajiem atjauninājumiem",
+    "location-key": "Atklāj vēl vienu kapu",
+    "partOf": "{{count}} no {{total}}"
+  },
+  "tiers": {
+    "stone": "Akmens",
+    "bronze": "Bronza",
+    "silver": "Sudrabs",
+    "gold": "Zelts",
+    "divine": "Dievišķs"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Sudraba debens",
+      "description": "Sena ēģiptiešu sudraba monēta, ar ko tirgotāji tirgojās gar Nīlu."
+    },
+    "t2": {
+      "name": "Papirusa rullis",
+      "description": "Tirgotāja pierakstu rullis ar tirdzniecības ceļiem un vērtīgo kravu sarakstiem."
+    },
+    "t3": {
+      "name": "Ziloņkaula ķemme",
+      "description": "Smalki izgriezta ziloņkaula ķemme — greznība, atvesta no tālām zemēm."
+    },
+    "t4": {
+      "name": "Māla eļļas lampa",
+      "description": "Vienkārša, bet smuka eļļas lampa, ar ko apgaismoja tirgotāja mājokli."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Zelta aproce",
+      "description": "Grezna zelta aproce ar dārgakmeņiem, ko valkāja Ēģiptes dižciltīgie."
+    },
+    "t6": {
+      "name": "Svinīgais duncis",
+      "description": "Rituāla duncis ar dārgakmeņiem rotātu rokturi, ko izmantoja dižciltīgo ceremonijās."
+    },
+    "t7": {
+      "name": "Nefrīta skarabejs",
+      "description": "Sargājošs nefrīta skarabeja amulets, atdzimšanas un mūžīgās dzīves simbols."
+    },
+    "t8": {
+      "name": "Alabastra kanopas trauks",
+      "description": "Elegants alabastra trauks, kurā glabāja dārgas eļļas un smaržas."
+    },
+    "t9": {
+      "name": "Melnkoka spieķis",
+      "description": "Nopulēts melnkoka spieķis ar zelta anhu galā."
+    },
+    "t10": {
+      "name": "Lazurīta kaklarota",
+      "description": "Brīnišķīga kaklarota no retiem lazurīta akmeņiem, ko augstu vērtēja bagātnieki."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Svētais anhs",
+      "description": "Zelta anhs, kas nozīmē mūžīgu dzīvi, tempļa priesteru svētīts."
+    },
+    "t12": {
+      "name": "Vara spogulis",
+      "description": "Nopulēts vara spogulis, ko izmantoja rituālās attīrīšanās ceremonijās."
+    },
+    "t13": {
+      "name": "Vīraka kvēpināmais",
+      "description": "Grezns bronzas vīraka trauks, ko izmantoja tempļa dievkalpojumos."
+    },
+    "t14": {
+      "name": "Rituāla kauss",
+      "description": "Svēts sudraba kauss, no kura lēja dzērienu upurus dieviem."
+    },
+    "t15": {
+      "name": "Svinīgā vēdekle",
+      "description": "Grezna spalvu vēdekle, ko priesteri izmantoja tempļa ceremonijās."
+    },
+    "t16": {
+      "name": "Lūgšanu krelles",
+      "description": "Svētītu lūgšanu kreļļu virtene, ko izmantoja pārdomām un lūgšanām."
+    },
+    "t17": {
+      "name": "Svētā ūdens trauks",
+      "description": "Trauks ar svētītu ūdeni no tempļa svētās akas."
+    },
+    "t18": {
+      "name": "Tempļa zvans",
+      "description": "Bronzas zvans, kas sauca ticīgos uz lūgšanu un vēstīja par ceremonijām."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Faraona zīmogs",
+      "description": "Sens karaliskais zīmogs ar aizmirsta faraona kartušu."
+    },
+    "t20": {
+      "name": "Kristāla lode",
+      "description": "Noslēpumaina kristāla lode, kas, kā saka, rāda pagātnes un nākotnes ainas."
+    },
+    "t21": {
+      "name": "Hieroglifu plāksne",
+      "description": "Sena akmens plāksne ar noslēpumainiem pareģojumiem hieroglifos."
+    },
+    "t22": {
+      "name": "Zelta scepteris",
+      "description": "Lielisks zelta scepteris ar Horusa aci galā."
+    },
+    "t23": {
+      "name": "Obsidiāna nazis",
+      "description": "Ass kā bārdasnazis obsidiāna rituāla nazis, ko izmantoja senos rituālos."
+    },
+    "t24": {
+      "name": "Meteorīta gabals",
+      "description": "Svēta meteorīta gabals, kurā, kā ticēja, mīt dievišķs spēks."
+    },
+    "t25": {
+      "name": "Senais kompass",
+      "description": "Noslēpumaina ceļa rādītāja ierīce, kas vienmēr rāda uz apslēptiem dārgumiem."
+    },
+    "t26": {
+      "name": "Laika kristāls",
+      "description": "Leģendārs kristāls, kas mirdz ar senu laiku spēku."
+    },
+    "t27": {
+      "name": "Rituāla maska",
+      "description": "Grezna zelta maska, ko augstie priesteri valkāja svētajās ceremonijās."
+    },
+    "t28": {
+      "name": "Mūžīgās uguns lāpa",
+      "description": "Lāpa, kas deg ar mūžīgu liesmu un nav nodzisusi kopš seniem laikiem."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Ra kronis",
+      "description": "Saules dieva Ra leģendārais kronis, kas staro dievišķu gaismu un spēku."
+    },
+    "t30": {
+      "name": "Tota zizlis",
+      "description": "Zināšanu dieva Tota gudrības zizlis, kurā glabājas visi senie noslēpumi."
+    },
+    "t31": {
+      "name": "Maatas spalva",
+      "description": "Patiesības dievietes Maatas svētā spalva, ar ko aizsaulē svēra dvēseles."
+    },
+    "t32": {
+      "name": "Izīdas asaras",
+      "description": "Dievietes Izīdas sakristalizējušās asaras, kas, kā saka, dod mūžīgu aizsardzību."
+    },
+    "t33": {
+      "name": "Ozīrisa sirds",
+      "description": "Pazemes valdnieka Ozīrisa saglabātā sirds, kas pulsē ar dzīvības spēku."
+    },
+    "t34": {
+      "name": "Horusa acs amulets",
+      "description": "Pats spēcīgākais aizsargamulets, kurā ir viss Horusa spēks."
+    },
+    "t35": {
+      "name": "Apepa čūska",
+      "description": "Saistīts haosa čūskas Apepa gabals, ieslēgts svētā traukā."
+    },
+    "t36": {
+      "name": "Šu elpa",
+      "description": "Pudelīte ar gaisa dieva Šu elpu, kas dod varu pār vējiem."
+    },
+    "t37": {
+      "name": "Sobeka zvīņa",
+      "description": "Viena zvīņa no krokodilu dieva Sobeka, kas sargā ūdenī."
+    },
+    "t38": {
+      "name": "Anubisa sarga statuja",
+      "description": "Maza Anubisa statuja, kas atdzīvojas, lai sargātu sava saimnieka dārgumus."
+    },
+    "t39": {
+      "name": "Mirušo grāmata",
+      "description": "Pilna Mirušo grāmata ar visām burvestībām, kas vajadzīgas ceļojumam uz aizsauli."
+    },
+    "t40": {
+      "name": "Piramīdas virsotnes akmens",
+      "description": "Lielās piramīdas zelta virsotnes akmens, kurā sakrāts visu faraonu spēks."
+    }
+  }
+}

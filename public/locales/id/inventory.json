@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Raja para dewa dan penguasa matahari. Setiap hari dia berlayar melintasi langit dengan perahu mataharinya."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Dewa berkepala serigala, dewa mumi dan alam baka. Pelindung orang mati."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Dewa langit berkepala elang, pelindung para firaun. Anak Osiris dan Isis."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "Dewa berkepala ibis, dewa kebijaksanaan, tulisan, dan ilmu. Penyimpan catatan para dewa."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Dewi kucing, dewi perlindungan, kegembiraan, dan kesuburan. Pelindung dari roh jahat."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Dewa buaya Sungai Nil, dewa kesuburan dan kekuatan perang."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Dewa kumbang tinja, dewa kelahiran kembali. Dia menggulirkan matahari melintasi langit."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Dewi kobra dan pelindung Mesir Hilir. Lambang kekuasaan raja."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "Dewi sihir, para ibu, dan penyembuhan. Istri setia Osiris."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "Dewa dunia bawah, kematian, dan kebangkitan. Hakim orang mati."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "Dewa kekacauan, badai, dan gurun. Saudara sekaligus saingan Osiris."
+    },
+    "d12": {
+      "name": "Nephthys",
+      "description": "Dewi duka dan pelindung orang mati. Saudara perempuan Isis."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Dewa pencipta dan pelindung para perajin dan arsitek. Dia mencipta dengan kata-kata."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Dewi singa, dewi perang dan penyembuhan. Pelindung yang galak, yang juga bisa menyembuhkan penyakit."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Dewi sapi, dewi cinta, musik, dan para ibu. Pengasuh para firaun."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Firaun",
+      "description": "Penguasa Mesir. Orang menganggapnya dewa yang hidup, jembatan antara manusia dan para dewa."
+    },
+    "p2": {
+      "name": "Imam Besar",
+      "description": "Pemimpin kuil yang memimpin upacara suci dan menjaga aturan para dewa."
+    },
+    "p3": {
+      "name": "Juru Tulis",
+      "description": "Orang terpelajar yang bisa membaca dan menulis. Penyimpan catatan dan ilmu."
+    },
+    "p4": {
+      "name": "Arsitek",
+      "description": "Ahli bangunan yang merancang piramida, kuil, dan monumen untuk selamanya."
+    },
+    "p5": {
+      "name": "Jenderal",
+      "description": "Panglima yang memimpin pasukan untuk menjaga perbatasan Mesir dan memperluas kerajaan."
+    },
+    "p6": {
+      "name": "Tabib",
+      "description": "Penyembuh yang memakai ilmu pengobatan dan jampi-jampi untuk menyembuhkan orang sakit."
+    },
+    "p7": {
+      "name": "Pembalsam",
+      "description": "Perajin suci yang menyiapkan seseorang untuk perjalanan ke alam baka."
+    },
+    "p8": {
+      "name": "Petani",
+      "description": "Penyedia makanan untuk Mesir. Dia mengolah tanah subur di tepi Sungai Nil untuk memberi makan kerajaan."
+    },
+    "p9": {
+      "name": "Perajin",
+      "description": "Orang terampil yang membuat benda indah, perhiasan, dan karya seni untuk bangsawan dan dewa."
+    },
+    "p10": {
+      "name": "Pedagang",
+      "description": "Orang yang membawa barang-barang aneh dari negeri jauh lewat jalur dagang."
+    },
+    "p11": {
+      "name": "Wazir",
+      "description": "Menteri utama dan penasihat Firaun, yang mengurus pemerintahan."
+    },
+    "p12": {
+      "name": "Peramal",
+      "description": "Nabi suci yang mengartikan pesan para dewa dan meramal masa depan."
+    },
+    "p13": {
+      "name": "Pelaut",
+      "description": "Penjelajah Sungai Nil dan Laut Tengah. Sangat penting untuk berdagang dan mengangkut barang."
+    },
+    "p14": {
+      "name": "Tukang Batu",
+      "description": "Pekerja batu yang memahat hieroglif dan membangun monumen besar Mesir."
+    },
+    "p15": {
+      "name": "Penjaga",
+      "description": "Pelindung tempat suci dan makam, supaya orang mati bisa beristirahat selamanya."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Kuda Nil",
+      "description": "Hewan sungai yang kuat di Sungai Nil. Ditakuti karena tenaganya dan karena galak menjaga wilayahnya."
+    },
+    "a2": {
+      "name": "Singa",
+      "description": "Raja hutan, lambang kekuasaan raja dan kekuatan dewa di gurun."
+    },
+    "a3": {
+      "name": "Gajah",
+      "description": "Hewan raksasa dari negeri selatan, dihormati karena bijak dan ingatannya kuat."
+    },
+    "a4": {
+      "name": "Kijang",
+      "description": "Penghuni gurun yang cepat dan anggun. Lambang kecepatan dan keindahan."
+    },
+    "a5": {
+      "name": "Monyet",
+      "description": "Hewan cerdik yang dihubungkan dengan Thoth. Lambang kepintaran dan kejahilan."
+    },
+    "a6": {
+      "name": "Ikan",
+      "description": "Makhluk suci Sungai Nil, sumber makanan dan lambang kesuburan."
+    },
+    "a7": {
+      "name": "Angsa",
+      "description": "Burung suci dari rawa-rawa Sungai Nil, dihubungkan dengan kisah penciptaan dan jiwa."
+    },
+    "a8": {
+      "name": "Lebah",
+      "description": "Lambang Mesir Hilir dan kekuasaan raja, pembuat madu yang berharga."
+    },
+    "a9": {
+      "name": "Kura-kura",
+      "description": "Makhluk tua yang bijak, memikul beratnya dunia di atas tempurungnya."
+    },
+    "a10": {
+      "name": "Katak",
+      "description": "Lambang kelahiran kembali dan kesuburan, muncul dari banjir Sungai Nil yang memberi hidup."
+    },
+    "a11": {
+      "name": "Burung Nasar",
+      "description": "Burung suci Mesir Hulu, wujud di bumi dari dewi pelindung Nekhbet."
+    },
+    "a12": {
+      "name": "Burung Hantu",
+      "description": "Pemburu malam yang bijak, penjaga ilmu tersembunyi dan rahasia kuno."
+    },
+    "a13": {
+      "name": "Domba Jantan",
+      "description": "Hewan suci Amun-Ra, lambang kekuatan dewa dan kepemimpinan."
+    },
+    "a14": {
+      "name": "Jerapah",
+      "description": "Hewan tinggi dan anggun dari negeri selatan. Lehernya yang panjang seolah sampai ke langit."
+    },
+    "a15": {
+      "name": "Serigala",
+      "description": "Pemakan bangkai di gurun dan penunjuk jalan ke alam baka. Pelayan Anubis."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Lambang kehidupan dan hidup abadi. Sering dipegang para dewa dan firaun."
+    },
+    "art2": {
+      "name": "Mata Horus",
+      "description": "Lambang perlindungan, kekuasaan raja, dan kesehatan. Dihubungkan dengan dewa langit Horus."
+    },
+    "art3": {
+      "name": "Sistrum",
+      "description": "Alat musik untuk upacara suci, dihubungkan dengan Dewi Hathor."
+    },
+    "art4": {
+      "name": "Tiang Djed",
+      "description": "Lambang keteguhan dan kebangkitan, sering dihubungkan dengan Osiris."
+    },
+    "art5": {
+      "name": "Kartusy",
+      "description": "Bingkai lonjong berisi nama firaun dalam hieroglif, untuk melindungi namanya selamanya."
+    },
+    "art6": {
+      "name": "Guci Kanopik",
+      "description": "Guci suci dengan tutup berbentuk kepala penjaga. Empat guci berdiri di sekeliling peti mati, berjaga-jaga."
+    },
+    "art7": {
+      "name": "Tongkat Kerajaan",
+      "description": "Tongkat kekuasaan yang dibawa para dewa dan firaun, lambang pemerintahan ilahi."
+    },
+    "art9": {
+      "name": "Piramida",
+      "description": "Makam abadi dan gerbang ke alam baka, dibangun untuk para firaun supaya bertahan selamanya."
+    },
+    "art10": {
+      "name": "Perahu Matahari",
+      "description": "Perahu suci yang membawa dewa matahari Ra melintasi langit dari pagi sampai senja."
+    },
+    "art11": {
+      "name": "Obelisk",
+      "description": "Tiang batu tinggi dengan puncak berbentuk piramida, menjulang ke langit untuk menghormati para dewa."
+    },
+    "art12": {
+      "name": "Tongkat Gembala dan Cambuk",
+      "description": "Lambang kerajaan yang menunjukkan firaun sebagai gembala dan pelindung Mesir."
+    },
+    "art14": {
+      "name": "Bunga Teratai",
+      "description": "Lambang kelahiran kembali dan matahari. Tumbuh bersih dari air Sungai Nil yang berlumpur."
+    },
+    "art15": {
+      "name": "Mahkota Uraeus",
+      "description": "Hiasan kepala raja dengan kobra pelindung, dipakai firaun sebagai perlindungan dewa."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Daun Alang-alang",
+      "description": "Satu batang alang-alang, untuk bunyi i. Kalau ditambahkan ke nama dewa, jadilah nama manusia: Horus menjadi Hori, artinya dia milik Horus."
+    }
+  }
+}

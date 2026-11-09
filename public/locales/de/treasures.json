@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Schieb das Artefakt auf den Stein, um ihn zu öffnen",
+    "alsoAvailable": "Außerdem verfügbar:"
+  },
+  "perks": {
+    "max-health": "+½ Herz mehr Lebenskraft",
+    "armor": "Fallen machen weniger Schaden",
+    "trap-insight": "+1 s bei Fallen mit Zeitlimit",
+    "pack-mule": "Ein Wasserschlauch heilt zwei Herzen",
+    "compass": "Teil des Kompasses",
+    "detection": "Teil des Gangfinders",
+    "tier-unlock": "Öffnet Expeditionen der Stufe {{tier}}",
+    "tier-coming-soon": "Expeditionen der Stufe {{tier}} kommen in einem späteren Update",
+    "location-key": "Zeigt ein weiteres Grab",
+    "partOf": "{{count}} von {{total}}"
+  },
+  "tiers": {
+    "stone": "Stein",
+    "bronze": "Bronze",
+    "silver": "Silber",
+    "gold": "Gold",
+    "divine": "Göttlich"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Silber-Deben",
+      "description": "Eine alte ägyptische Silbermünze, mit der Händler am Nil bezahlten."
+    },
+    "t2": {
+      "name": "Papyrusrolle",
+      "description": "Die Liste eines Händlers mit Handelswegen und wertvollen Ladungen."
+    },
+    "t3": {
+      "name": "Elfenbeinkamm",
+      "description": "Ein fein geschnitzter Kamm aus Elfenbein, ein Luxusgut aus fernen Ländern."
+    },
+    "t4": {
+      "name": "Öllampe aus Ton",
+      "description": "Eine einfache, aber schöne Öllampe, die das Zimmer des Händlers erhellte."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Goldenes Armband",
+      "description": "Ein prächtiges goldenes Armband mit Edelsteinen, wie es vornehme Ägypter trugen."
+    },
+    "t6": {
+      "name": "Zeremoniendolch",
+      "description": "Ein Ritualdolch mit einem Griff voller Edelsteine, für feierliche Anlässe der Vornehmen."
+    },
+    "t7": {
+      "name": "Jade-Skarabäus",
+      "description": "Ein schützendes Amulett aus Jade in Form eines Skarabäus, Zeichen für Wiedergeburt und ewiges Leben."
+    },
+    "t8": {
+      "name": "Alabaster-Kanopenkrug",
+      "description": "Ein eleganter Krug aus Alabaster für kostbare Öle und Düfte."
+    },
+    "t9": {
+      "name": "Spazierstock aus Ebenholz",
+      "description": "Ein polierter Stock aus Ebenholz mit einem goldenen Anch obendrauf."
+    },
+    "t10": {
+      "name": "Lapislazuli-Kette",
+      "description": "Eine wunderschöne Kette aus seltenen Lapislazuli-Steinen, bei Reichen sehr begehrt."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Heiliges Anch",
+      "description": "Ein goldenes Anch, das für ewiges Leben steht, gesegnet von den Tempelpriestern."
+    },
+    "t12": {
+      "name": "Kupferspiegel",
+      "description": "Ein polierter Kupferspiegel für heilige Reinigungsfeiern."
+    },
+    "t13": {
+      "name": "Räuchergefäß",
+      "description": "Ein verziertes Räuchergefäß aus Bronze für Gebete im Tempel."
+    },
+    "t14": {
+      "name": "Ritualkelch",
+      "description": "Ein heiliger Silberkelch, aus dem man den Göttern Trankopfer darbrachte."
+    },
+    "t15": {
+      "name": "Zeremonienfächer",
+      "description": "Ein verzierter Federfächer, den Priester bei Tempelfeiern benutzten."
+    },
+    "t16": {
+      "name": "Gebetsperlen",
+      "description": "Eine Kette gesegneter Gebetsperlen zum Nachdenken und Beten."
+    },
+    "t17": {
+      "name": "Gefäß mit heiligem Wasser",
+      "description": "Ein Gefäß mit gesegnetem Wasser aus dem heiligen Tempelbrunnen."
+    },
+    "t18": {
+      "name": "Tempelglocke",
+      "description": "Eine Bronzeglocke, die die Gläubigen zum Gebet rief und Feiern ankündigte."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Siegel des Pharaos",
+      "description": "Ein uraltes Königssiegel mit der Kartusche eines vergessenen Pharaos."
+    },
+    "t20": {
+      "name": "Kristallkugel",
+      "description": "Eine geheimnisvolle Kristallkugel, die angeblich Bilder aus Vergangenheit und Zukunft zeigt."
+    },
+    "t21": {
+      "name": "Hieroglyphentafel",
+      "description": "Eine uralte Steintafel mit rätselhaften Weissagungen in Hieroglyphen."
+    },
+    "t22": {
+      "name": "Goldenes Zepter",
+      "description": "Ein prächtiges goldenes Zepter mit dem Horusauge an der Spitze."
+    },
+    "t23": {
+      "name": "Obsidianmesser",
+      "description": "Ein messerscharfes Zeremonienmesser aus Obsidian für uralte Rituale."
+    },
+    "t24": {
+      "name": "Meteoritenstück",
+      "description": "Ein Stück eines heiligen Meteoriten, in dem göttliche Kraft stecken soll."
+    },
+    "t25": {
+      "name": "Uralter Kompass",
+      "description": "Ein geheimnisvolles Gerät, das immer in Richtung verborgener Schätze zeigt."
+    },
+    "t26": {
+      "name": "Zeitkristall",
+      "description": "Ein sagenhafter Kristall, der mit der Kraft vergangener Zeiten leuchtet."
+    },
+    "t27": {
+      "name": "Ritualmaske",
+      "description": "Eine verzierte goldene Maske, die Hohepriester bei heiligen Feiern trugen."
+    },
+    "t28": {
+      "name": "Fackel der ewigen Flamme",
+      "description": "Eine Fackel mit einer ewigen Flamme, die seit uralten Zeiten nie erloschen ist."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Krone des Ra",
+      "description": "Die sagenhafte Krone des Sonnengottes Ra, die göttliches Licht und Macht ausstrahlt."
+    },
+    "t30": {
+      "name": "Stab des Thoth",
+      "description": "Der Weisheitsstab des Thoth, Gott des Wissens, in dem alle alten Geheimnisse stecken."
+    },
+    "t31": {
+      "name": "Feder der Ma'at",
+      "description": "Die heilige Feder der Ma'at, Göttin der Wahrheit. Mit ihr wurden im Jenseits die Seelen gewogen."
+    },
+    "t32": {
+      "name": "Tränen der Isis",
+      "description": "Zu Kristall gewordene Tränen der Göttin Isis, die ewigen Schutz schenken sollen."
+    },
+    "t33": {
+      "name": "Herz des Osiris",
+      "description": "Das aufbewahrte Herz des Osiris, Herr der Unterwelt, das voller Lebenskraft pocht."
+    },
+    "t34": {
+      "name": "Amulett des Horusauges",
+      "description": "Das stärkste Schutzamulett, in dem die ganze Kraft des Horus steckt."
+    },
+    "t35": {
+      "name": "Schlange des Apophis",
+      "description": "Ein gefesseltes Stück der Chaosschlange Apophis, eingeschlossen in einem heiligen Gefäß."
+    },
+    "t36": {
+      "name": "Atem des Schu",
+      "description": "Ein Fläschchen mit dem Atem des Schu, Gott der Luft, das Macht über die Winde gibt."
+    },
+    "t37": {
+      "name": "Schuppe des Sobek",
+      "description": "Eine einzelne Schuppe des Krokodilgottes Sobek, die im Wasser beschützt."
+    },
+    "t38": {
+      "name": "Anubis-Wächterstatue",
+      "description": "Eine kleine Anubis-Statue, die lebendig wird, um die Schätze ihres Besitzers zu bewachen."
+    },
+    "t39": {
+      "name": "Totenbuch",
+      "description": "Das vollständige Totenbuch mit allen Sprüchen, die man für die Reise ins Jenseits braucht."
+    },
+    "t40": {
+      "name": "Spitze der Pyramide",
+      "description": "Die goldene Spitze der Großen Pyramide, in der die gesammelte Kraft aller Pharaonen steckt."
+    }
+  }
+}

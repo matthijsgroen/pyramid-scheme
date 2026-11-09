@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Liu'uta esine kiven päälle avataksesi sen",
+    "alsoAvailable": "Myös saatavilla:"
+  },
+  "perks": {
+    "max-health": "+½ sydäntä lisää elämiisi",
+    "armor": "Ansat satuttavat vähemmän",
+    "trap-insight": "+1 s aikaa ajastetuissa ansoissa",
+    "pack-mule": "Vesileili parantaa kaksi sydäntä",
+    "compass": "Kompassin osa",
+    "detection": "Käytävänetsimen osa",
+    "tier-unlock": "Avaa {{tier}}-tason retket",
+    "tier-coming-soon": "{{tier}}-tason retket tulevat myöhemmässä päivityksessä",
+    "location-key": "Paljastaa toisen haudan",
+    "partOf": "{{count}}/{{total}}"
+  },
+  "tiers": {
+    "stone": "Kivi",
+    "bronze": "Pronssi",
+    "silver": "Hopea",
+    "gold": "Kulta",
+    "divine": "Jumalallinen"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Hopeadeben",
+      "description": "Muinaisen Egyptin hopearaha, jolla kauppiaat kävivät kauppaa Niilin varrella."
+    },
+    "t2": {
+      "name": "Papyruskäärö",
+      "description": "Kauppiaan muistiinpanot kauppareiteistä ja kallisarvoisista lasteista."
+    },
+    "t3": {
+      "name": "Norsunluukampa",
+      "description": "Taidokkaasti kaiverrettu norsunluinen kampa. Ylellisyystavaraa kaukaisista maista."
+    },
+    "t4": {
+      "name": "Saviöljylamppu",
+      "description": "Yksinkertainen mutta kaunis öljylamppu, joka valaisi kauppiaan asuntoa."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Kultarannekoru",
+      "description": "Koristeellinen kultarannekoru jalokivin. Egyptin ylhäiset käyttivät tällaisia."
+    },
+    "t6": {
+      "name": "Juhlatikari",
+      "description": "Tikari, jonka kahvassa on jalokiviä. Sitä käytettiin ylhäisten juhlamenoissa."
+    },
+    "t7": {
+      "name": "Jade-skarabeus",
+      "description": "Suojeleva jadeamuletti, uuden syntymän ja ikuisen elämän merkki."
+    },
+    "t8": {
+      "name": "Alabasterinen kanooppiruukku",
+      "description": "Kaunis alabasteriruukku kallisarvoisille öljyille ja hajusteille."
+    },
+    "t9": {
+      "name": "Eebenpuinen kävelykeppi",
+      "description": "Kiillotettu eebenpuinen keppi, jonka päässä on kultainen ankh."
+    },
+    "t10": {
+      "name": "Lapislatsulikaulakoru",
+      "description": "Upea kaulakoru harvinaisista lapislatsulikivistä. Rikkaat ihailivat sitä."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Pyhä ankh",
+      "description": "Kultainen ankh, ikuisen elämän merkki. Temppelin papit ovat siunanneet sen."
+    },
+    "t12": {
+      "name": "Kuparipeili",
+      "description": "Kiillotettu kuparipeili, jota käytettiin puhdistusmenoissa."
+    },
+    "t13": {
+      "name": "Suitsukeastia",
+      "description": "Koristeellinen pronssiastia, jossa poltettiin suitsukkeita temppelissä."
+    },
+    "t14": {
+      "name": "Pyhä malja",
+      "description": "Pyhä hopeamalja, josta kaadettiin juomauhreja jumalille."
+    },
+    "t15": {
+      "name": "Juhlaviuhka",
+      "description": "Koristeellinen sulkaviuhka, jota papit käyttivät temppelin juhlissa."
+    },
+    "t16": {
+      "name": "Rukoushelmet",
+      "description": "Siunattujen rukoushelmien nauha hiljentymiseen ja rukoukseen."
+    },
+    "t17": {
+      "name": "Pyhän veden astia",
+      "description": "Astia, jossa on siunattua vettä temppelin pyhästä kaivosta."
+    },
+    "t18": {
+      "name": "Temppelikello",
+      "description": "Pronssikello, joka kutsui ihmiset rukoilemaan ja kertoi juhlien alkavan."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Faaraon sinetti",
+      "description": "Vanha kuninkaallinen sinetti, jossa on unohdetun faaraon kartussi."
+    },
+    "t20": {
+      "name": "Kristallipallo",
+      "description": "Salaperäinen kristallipallo, jonka sanotaan näyttävän menneisyyttä ja tulevaisuutta."
+    },
+    "t21": {
+      "name": "Hieroglyfitaulu",
+      "description": "Vanha kivitaulu, johon on kaiverrettu salaperäisiä ennustuksia hieroglyfein."
+    },
+    "t22": {
+      "name": "Kultainen valtikka",
+      "description": "Upea kultainen valtikka, jonka päässä on Horuksen silmä."
+    },
+    "t23": {
+      "name": "Obsidiaaniveitsi",
+      "description": "Partaveitsen terävä obsidiaanista tehty veitsi ikivanhoihin pyhiin menoihin."
+    },
+    "t24": {
+      "name": "Meteoriitin pala",
+      "description": "Pala pyhää meteoriittia. Sen uskotaan sisältävän jumalten voimaa."
+    },
+    "t25": {
+      "name": "Ikivanha kompassi",
+      "description": "Salaperäinen suuntalaite, joka osoittaa aina kohti piilotettuja aarteita."
+    },
+    "t26": {
+      "name": "Ajan kristalli",
+      "description": "Tarunomainen kristalli, joka hehkuu menneiden aikojen voimalla."
+    },
+    "t27": {
+      "name": "Juhlanaamio",
+      "description": "Koristeellinen kultanaamio, jota ylipapit käyttivät pyhissä juhlissa."
+    },
+    "t28": {
+      "name": "Ikuisen liekin soihtu",
+      "description": "Soihtu, jonka liekki ei ole sammunut koskaan muinaisista ajoista asti."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Ran kruunu",
+      "description": "Aurinkojumala Ran tarunomainen kruunu, joka säteilee jumalten valoa ja voimaa."
+    },
+    "t30": {
+      "name": "Thothin sauva",
+      "description": "Tiedon jumala Thothin viisauden sauva. Siinä ovat kaikki muinaiset salaisuudet."
+    },
+    "t31": {
+      "name": "Ma'atin sulka",
+      "description": "Totuuden jumalatar Ma'atin pyhä sulka. Sillä punnittiin sielut tuonpuoleisessa."
+    },
+    "t32": {
+      "name": "Isiksen kyyneleet",
+      "description": "Jumalatar Isiksen kiteytyneet kyyneleet. Niiden sanotaan suojaavan ikuisesti."
+    },
+    "t33": {
+      "name": "Osiriksen sydän",
+      "description": "Manalan herran Osiriksen säilötty sydän, joka sykkii yhä elämän voimaa."
+    },
+    "t34": {
+      "name": "Horuksen silmä -amuletti",
+      "description": "Kaikkein vahvin suoja-amuletti, jossa on Horuksen koko voima."
+    },
+    "t35": {
+      "name": "Apepin käärme",
+      "description": "Pala sekasorron käärme Apepia, sidottuna pyhään astiaan."
+    },
+    "t36": {
+      "name": "Shun henkäys",
+      "description": "Pullo, jossa on ilman jumala Shun henkäys. Se antaa vallan tuuliin."
+    },
+    "t37": {
+      "name": "Sobekin suomu",
+      "description": "Yksi suomu krokotiilijumala Sobekista. Se suojaa vedessä."
+    },
+    "t38": {
+      "name": "Anubis-vartijapatsas",
+      "description": "Pieni Anubis-patsas, joka herää eloon vartioimaan omistajansa aarteita."
+    },
+    "t39": {
+      "name": "Kuolleiden kirja",
+      "description": "Koko Kuolleiden kirja, jossa ovat kaikki loitsut matkalle tuonpuoleiseen."
+    },
+    "t40": {
+      "name": "Pyramidin huippukivi",
+      "description": "Suuren pyramidin kultainen huippukivi, jossa on kaikkien faaraoiden voima yhdessä."
+    }
+  }
+}

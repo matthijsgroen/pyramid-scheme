@@ -1,0 +1,1732 @@
+{
+  "language": "Dansk",
+  "saveUnreadable": {
+    "title": "Dit spil kan ikke hentes",
+    "body": "Browseren vil ikke give os dit gemte spil lige nu. Dit spil er ikke væk: genindlæs siden for at prøve igen.",
+    "banner": "Dit spil bliver ikke gemt. Tryk for at genindlæse.",
+    "reload": "Genindlæs",
+    "continue": "Spil videre uden at gemme",
+    "reset": "Start forfra (slet gemt spil)",
+    "confirmReset": "Det sletter hele dit gemte spil, og det kan ikke fortrydes. Vil du starte forfra?",
+    "confirmResetYes": "Ja, slet mit spil",
+    "confirmResetNo": "Nej, gå tilbage"
+  },
+  "difficulty": {
+    "starter": "Begynder",
+    "junior": "Junior",
+    "expert": "Ekspert",
+    "master": "Mester",
+    "wizard": "Troldmand"
+  },
+  "journeyLength": {
+    "short": "Kort",
+    "medium": "Mellem",
+    "long": "Lang"
+  },
+  "time": {
+    "morning": "Morgen",
+    "afternoon": "Eftermiddag",
+    "evening": "Aften",
+    "night": "Nat"
+  },
+  "tomb": {},
+  "ui": {
+    "level": "Bane",
+    "symbols": "tegn",
+    "journey": "Rejse",
+    "tableau": "Tableau",
+    "difficulty": "Sværhedsgrad",
+    "length": "Længde",
+    "time": "Tid",
+    "requiredPrestige": "Krævet prestigeniveau",
+    "rewards": "Belønninger",
+    "coins": "Mønter",
+    "pieces": "Stykker",
+    "description": "Beskrivelse",
+    "expedition": "Ekspedition",
+    "expeditionCompleted": "Ekspedition klaret!",
+    "goBackToBase": "Tilbage til lejren",
+    "backArrow": "←",
+    "back": "← Tilbage",
+    "floor": "Etage {{number}}",
+    "enterSite": "Gå ind",
+    "prompt": {
+      "here": "Undersøg",
+      "stairs": "Tag trappen",
+      "exit": "Forlad stedet",
+      "zipline": "Glid ned ad rebet — der er ingen vej tilbage",
+      "oneWay": "Gå over — der er ingen vej tilbage",
+      "liftStone": "Løft stenen",
+      "setStone": "Læg stenen på pladen",
+      "postStone": "Skub stenen ind",
+      "takeStone": "Tag stenen",
+      "squeeze": "Mas dig igennem",
+      "replay": "Afspil igen"
+    },
+    "blocked": {
+      "carrying": "Du kan ikke komme forbi med en sten"
+    },
+    "backToMap": "Tilbage til kortet",
+    "continueExploration": "Fortsæt med at udforske pyramiderne.",
+    "startExpedition": "Start ekspedition",
+    "webBuriedPercent": "Stadig {{percent}} % begravet",
+    "interruptExpedition": "Afbryd ekspedition",
+    "confirmInterruptExpedition": "Vil du virkelig afbryde ekspeditionen? Det, du har klaret på ekspeditionen, bliver gemt, men banen, du er i gang med, går tabt!",
+    "cancel": "Annuller",
+    "settings": "Indstillinger",
+    "language": "Sprog",
+    "close": "Luk",
+    "done": "Færdig",
+    "clearGameData": "Slet spildata",
+    "confirmClearGameData": "Det sletter alt, hvad du har klaret, alle dine ting og alle de pyramider, du har udforsket. Det kan ikke fortrydes.",
+    "disableTutorials": "Slå vejledning fra",
+    "treasureTomb": "Skattested",
+    "requiresMapPieces": "Kræver kortstykker",
+    "mapPieces": "Kortstykker",
+    "completeExpeditionsToUnlock": "Klar ekspeditioner for at låse op",
+    "availableSymbols": "Tegn du har:",
+    "fragmentsNeeded": "{{found}}/{{required}} skal bruges",
+    "howToPlay": "Sådan spiller du",
+    "puzzleComplete": "Svaret er:",
+    "puzzleCompleted": "Opgave løst",
+    "trapBlocked": "Du har ikke nok liv til at prøve denne fælde",
+    "spiritsRejectCode": "Ånderne siger nej til denne kode",
+    "sacredSealBroken": "Det hellige segl er brudt",
+    "newExpeditionUnlocked": "En ny ekspedition er låst op",
+    "newTombUnlocked": "En ny grav er låst op",
+    "tierComingSoonTitle": "{{tier}}-ekspeditioner er på vej",
+    "tierComingSoon": "Du har nøglen, men {{tier}}-pyramiderne bliver stadig bygget. De kommer i en senere opdatering — indtil da åbner din nøgle flere af de pyramider, du allerede kender.",
+    "answerNow": "Svaret er: ",
+    "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "resetPuzzle": "Forfra",
+    "hint": "Hjælp",
+    "undo": "Fortryd",
+    "erase": "Slet",
+    "notes": "Noter",
+    "solvedUnaided": "Løst uden en eneste hjælp",
+    "solvedWithHints_one": "Løst med {{count}} hjælp",
+    "solvedWithHints_other": "Løst med {{count}} hjælp",
+    "tapToContinue": "Tryk for at fortsætte",
+    "goal": "Mål"
+  },
+  "trap": {
+    "warning": "⚠ Gang med fælde",
+    "canAttempt": "Du kan prøve at komme igennem.",
+    "tooWeak": "Farligt svag — går det galt, har du intet liv tilbage.",
+    "attempt": "Prøv fælden",
+    "turnAround": "Vend om",
+    "rested": "Hvilet ved bålet — frisk igen"
+  },
+  "gate": {
+    "title": "🔒 Låst port",
+    "locked": "Du har ikke den rigtige nøgle endnu.",
+    "markedWith": "Der er hugget et tegn i døren:",
+    "unlocked": "Du har nøglen.",
+    "pass": "Gå igennem",
+    "turnAround": "Vend om",
+    "wardDescription": {
+      "starter": "En købmands segl spærrer gangen — kun hans vogternøgle kan åbne den.",
+      "junior": "En adelsmands våbenskjold låser vejen — kun hans vogternøgle kan løfte det.",
+      "expert": "En ypperstepræsts tempelsegl vogter døren — kun den hellige nøgle kan åbne den.",
+      "master": "En faraos kongelige segl lukker gangen — kun herskerens nøgle kan bryde det.",
+      "wizard": "Et segl fra guderne holder porten — kun gudernes egen nøgle kommer forbi."
+    },
+    "needsKey": "Døren er mærket til én nøgle:",
+    "lockedColor": "Du har ikke fundet den nøgle på denne etage endnu."
+  },
+  "chest": {
+    "tapToOpen": "Tryk for at åbne",
+    "money_one": "{{count}} mønt",
+    "money_other": "{{count}} mønter",
+    "mapPiece": "Kortstykke",
+    "mapPieceDescription": "Et skrøbeligt stykke af et kort til et sted, der for længst er glemt. Ærgerligt, at det langtfra er helt…",
+    "mapPieceProgress": "{{found}} af {{required}} kortstykker fundet",
+    "mapPieceComplete": "Kortet er helt — det fører til {{name}}.",
+    "hieroglyphFragment": "Stykke af en hieroglyf",
+    "fragmentProgress": "{{found}} af {{required}} stykker fundet",
+    "tombKey": "Gravnøgle",
+    "sandLever": "Sandhåndtag",
+    "sandLeverDescription": "Du trækker i det, og det bliver nede. Et sted langt væk løber sand ud.",
+    "webKey": "Seglnøgle",
+    "webKeyDescription": "På hovedet sidder et mærke, du har set på en forseglet dør et andet sted.",
+    "hieroglyphs": "Gamle hieroglyffer",
+    "hieroglyphsDescription": "Hellige tegn hugget ind i væggene i dette kammer. Nu ved du lidt mere om den gamle verden.",
+    "mosaicPiece": "Mosaikstykke",
+    "mosaicPieceDescription": "En skinnende glasflise, et lille stykke af en stor mosaik. Læg den ved de andre, så kommer det skjulte billede langsomt frem.",
+    "waterskin": "Vandsæk",
+    "waterskinDescription": "Køligt vand. Du drikker det med det samme og mærker, at dine sår gør mindre ondt."
+  },
+  "loot": {
+    "youFound": "Du fandt",
+    "expeditionReward": "Ekstra belønning for at klare ekspeditionen",
+    "clickToContinue": "Tryk hvor som helst for at fortsætte"
+  },
+  "money": {
+    "label": "Mønter"
+  },
+  "shop": {
+    "title": "Fez' bod",
+    "invitation": "Kig på boden",
+    "buy": "Køb",
+    "sell": "Sælg",
+    "soldOut": "Udsolgt",
+    "dismiss": "Gå",
+    "rareItems": "Sjældne fund",
+    "sellSection": "Småting at sælge",
+    "haul": {
+      "coins_one": "+{{count}} mønt",
+      "coins_other": "+{{count}} mønter",
+      "note": "Løse mønter på vejen"
+    }
+  },
+  "purchases": {
+    "donkey": {
+      "name": "Æsel",
+      "need": "Du skal bruge et æsel",
+      "opens": "Bærer dine ting. Med det kan du tage på Ekspert-rejserne."
+    },
+    "cart": {
+      "name": "Vogn",
+      "need": "Du skal bruge en vogn",
+      "opens": "Hele lejren kan være på den. Med den kan du tage på Mester-rejserne."
+    },
+    "camel": {
+      "name": "Kamel",
+      "need": "Du skal bruge en kamel",
+      "opens": "Går i dagevis uden vand. Den bringer dig til Den inderste helligdom."
+    },
+    "secondDonkey": {
+      "name": "Andet æsel",
+      "need": "Du skal bruge et æsel mere",
+      "opens": "Endnu mere at bære med. Med det kan du tage på Troldmand-rejserne."
+    },
+    "secondCamel": {
+      "name": "Anden kamel",
+      "need": "Du skal bruge en kamel mere",
+      "opens": "To kameler bærer vand nok til Osiris' sal."
+    },
+    "sturdyCart": {
+      "name": "Stærkere vogn",
+      "need": "Du skal bruge en stærkere vogn",
+      "opens": "Går ikke i stykker, heller ikke på vejen til Himmelkræfternes rige."
+    },
+    "caravanBanner": {
+      "name": "Karavanebanner",
+      "opens": "Åbner ingenting. Bare for sjov."
+    },
+    "hint": "Fez sælger en i {{place}}",
+    "devGrant": "Køb alle dyr"
+  },
+  "level": {
+    "completed": "Bane klaret!"
+  },
+  "mosaic": {
+    "place_one": "Sæt {{count}} stykke på plads",
+    "place_other": "Sæt {{count}} stykker på plads",
+    "placing": "Sætter på plads…",
+    "panel": {
+      "starter": "Vogteren ved døren",
+      "junior": "Den første lektion",
+      "expert": "Solen lukkes ind",
+      "master": "Den grønne konge",
+      "wizard": "Fjeren og hjertet"
+    },
+    "entrance": {
+      "title": "Mosaik",
+      "label": "Mosaik {{found}}/{{total}}"
+    },
+    "haul": {
+      "pieces_one": "{{count}} mosaikstykke",
+      "pieces_other": "{{count}} mosaikstykker",
+      "note": "Til det farvede glasvindue"
+    }
+  },
+  "collection": {
+    "tabs": {
+      "treasures": "Skatte",
+      "hieroglyphs": "Hieroglyffer",
+      "stories": "Historier",
+      "junk": "Småting"
+    },
+    "tabsLabel": "Det, du har samlet",
+    "tabNew_one": "{{label}} · {{count}} ny",
+    "tabNew_other": "{{label}} · {{count}} nye",
+    "empty": "Din kiste er stadig tom",
+    "newLabel": "NY",
+    "clickForDetails": "Tryk på en flise for at se mere",
+    "categories": {
+      "deities": "🏺 Guder",
+      "professions": "⚱️ Erhverv",
+      "animals": "🐾 Dyr",
+      "artifacts": "💎 Genstande",
+      "treasures": "💰 Skatte",
+      "junk": "🔷 Småting",
+      "signs": "✍️ Tegn"
+    },
+    "treasureCategories": {
+      "merchantCache": "💰 Købmandens lager",
+      "nobleVault": "👑 Adelens hvælving",
+      "templeSecrets": "🏛️ Templets hemmeligheder",
+      "ancientRelics": "🏺 Gamle relikvier",
+      "mythicalArtifacts": "✨ Sagnomspundne genstande"
+    }
+  },
+  "detector": {
+    "compassTitle": "Kompas",
+    "corridorTitle": "Gangfinder",
+    "pickTarget": "Vælg en hieroglyf ved kortbordet i lejren",
+    "allCollected": "Intet stykke inden for rækkevidde i en pyramide, du har udforsket før",
+    "more": "+{{count}} mere",
+    "corridorHere": "Der er en skjult gang lige her",
+    "revealCorridor": "Åbn den",
+    "corridorNearby": "Der er en skjult gang tæt på",
+    "corridorOnFloor": "Der venter en skjult gang på denne etage",
+    "lookingFor": "Leder efter {{symbol}}",
+    "access": {
+      "open": "Intet kendt spærrer vejen til den her",
+      "unknown": "Kan måske ikke nås endnu — den ligger i en grav eller er til salg"
+    },
+    "corridorNoneNearby": "Ingen skjult gang tæt på",
+    "corridorNoneOnFloor": "Ingen skjult gang på denne etage",
+    "corridorOtherFloor": "Der venter en skjult gang på en anden etage",
+    "corridorNoneInPyramid": "Ingen skjult gang på en anden etage",
+    "title": "Detektor",
+    "band": {
+      "none": "Intet fundet",
+      "pyramid": "Noget i denne pyramide",
+      "floor": "Noget på denne etage",
+      "near": "Noget tæt på",
+      "here": "Lige her! Åbn detektoren"
+    },
+    "camp": {
+      "parts": "{{count}} af {{total}} dele",
+      "compassReach": {
+        "1": "ser pyramiden",
+        "2": "ser etagen",
+        "3": "peger på stedet"
+      },
+      "pickHeading": "Hvad leder kompasset efter?",
+      "onlyIncomplete": "Kun tegn, du har et stykke af, indtil de er hele.",
+      "whereHeading": "Hvor stykkerne af {{symbol}} ligger",
+      "pickFirst": "Vælg et tegn for at se, hvor stykkerne ligger.",
+      "follow": "Følg dette tegn",
+      "following": "Kompasset følger dette tegn",
+      "nothingToFind": "Du har endnu ikke et stykke af et tegn, der ikke er helt.",
+      "noneInReach": "Intet stykke inden for rækkevidde i en pyramide, du har udforsket før.",
+      "corridorReach": {
+        "1": "hører en gang tæt på",
+        "2": "hører hele etagen",
+        "3": "hører også de andre etager",
+        "4": "hører andre rejser"
+      },
+      "corridorInPyramid": "Inde i en pyramide lytter den efter lukkede gange.",
+      "corridorFarNext": "Med alle fire dele kan den høre andre rejser helt fra lejren.",
+      "corridorWhere": "Hvor en gang stadig er lukket",
+      "corridorNone": "Ingen lukket gang på en rejse, du har været på.",
+      "pyramid": "Pyramide {{n}}",
+      "corridorCount_one": "{{count}} gang",
+      "corridorCount_other": "{{count}} gange"
+    }
+  },
+  "keys": {
+    "blue": "Blå nøgle",
+    "red": "Rød nøgle",
+    "green": "Grøn nøgle",
+    "yellow": "Gul nøgle",
+    "purple": "Lilla nøgle",
+    "bundle": "Et nøgleknippe",
+    "foundDescription": "Den åbner dørene med denne farve, på denne etage.",
+    "heldTitle": "{{key}} — har du",
+    "neededTitle": "{{key}} — mangler stadig"
+  },
+  "balance": {
+    "rules": {
+      "tap": "Tryk på et tegn herunder og så på et tal. Tryk på tallet igen for at fjerne det.",
+      "same": "Et tegn vejer det samme på alle vægtene.",
+      "cancel": "Tager du det samme af begge skåle, er vægten stadig lige. Tryk på et markeret stykke for at gøre det — det, der er tilbage, bliver gemt som en ny række.",
+      "swap": "Tryk på et tegn, som intet ligner på den anden side, og så på en række, hvor det tegn står alene, for at bytte det for det, rækken er værd."
+    },
+    "hint": {
+      "mistake": "En af de vægte, du har givet, får en vægt til at tippe. Fjern den og kig igen.",
+      "alone": "I den oplyste række er {{glyph}} det eneste stykke uden et tal. Regn ud, hvad det vejer.",
+      "equalShares": "I den oplyste række er der kun {{glyph}} over for et tal. Del tallet ligeligt mellem dem.",
+      "difference": "De to oplyste rækker er ens, bortset fra {{glyph}}. Sammenlign dem.",
+      "cancelGlyph": "Begge skåle i den oplyste række har {{glyph}}. Tryk på én for at fjerne den fra begge sider — rækken er stadig lige.",
+      "cancelStones": "Begge skåle i den oplyste række har almindelige tal. Tryk på ét for at fjerne lige meget fra begge sider.",
+      "swap": "Én oplyst række viser, hvad én {{glyph}} er værd alene. Tryk på {{glyph}} i den anden oplyste række, og tryk så på den række."
+    },
+    "swap": {
+      "pick": "Tryk på en oplyst række for at bytte denne {{glyph}} for det, rækken siger, den er værd.",
+      "none": "Intet her viser, hvad én {{glyph}} er værd alene, og intet på den anden side passer."
+    },
+    "goal": {
+      "default": "Hvert tegn har en vægt, og hver vægt er i balance.",
+      "weighing": "Hvert tegn finder sin vægt, og hver vægt falder til ro."
+    },
+    "name": {
+      "default": "Vægt",
+      "weighing": "Vejningen af hjertet"
+    }
+  },
+  "sumplete": {
+    "rules": {
+      "tap": "Tryk én gang for at strege et tal ud, igen for at markere det som et, du beholder, og igen for at rydde det.",
+      "totals": "Det lille tal under hvert mål er det, linjen giver lagt sammen lige nu."
+    },
+    "hint": {
+      "mistake": "Et af mærkerne her kan ikke være rigtigt. Fortryd det og kig igen.",
+      "tooBig": {
+        "row": "Rækken mangler stadig {{deficit}}. {{value}} er større end det, så det kan ikke blive.",
+        "col": "Søjlen mangler stadig {{deficit}}. {{value}} er større end det, så det kan ikke blive."
+      },
+      "allStrike": {
+        "row": "De tal, der bliver i rækken, giver allerede målet, så alt det andet skal væk.",
+        "col": "De tal, der bliver i søjlen, giver allerede målet, så alt det andet skal væk."
+      },
+      "allKeep": {
+        "row": "Rækken giver allerede sit mål — markér tallene som nogle, der bliver, så kan du regne søjlerne igennem dem ud.",
+        "col": "Søjlen giver allerede sit mål — markér tallene som nogle, der bliver, så kan du regne rækkerne igennem dem ud."
+      },
+      "parityKeep": {
+        "row": "Rækken mangler stadig {{deficit}}, et ulige tal. {{value}} er det eneste ulige tal tilbage, så det skal blive.",
+        "col": "Søjlen mangler stadig {{deficit}}, et ulige tal. {{value}} er det eneste ulige tal tilbage, så det skal blive."
+      },
+      "parityStrike": {
+        "row": "Rækken mangler stadig {{deficit}}, et lige tal. {{value}} er det eneste ulige tal tilbage, så det skal væk.",
+        "col": "Søjlen mangler stadig {{deficit}}, et lige tal. {{value}} er det eneste ulige tal tilbage, så det skal væk."
+      },
+      "onlyCombination": {
+        "row": "Kun én samling tal i rækken giver {{deficit}}.",
+        "col": "Kun én samling tal i søjlen giver {{deficit}}."
+      },
+      "inEveryCombinationKeep": {
+        "row": "Uden {{value}} kan ingen af de andre tal i rækken give {{deficit}} — så det skal blive.",
+        "col": "Uden {{value}} kan ingen af de andre tal i søjlen give {{deficit}} — så det skal blive."
+      },
+      "inEveryCombinationStrike": {
+        "row": "Beholder du {{value}}, mangler rækken stadig {{remaining}}, og det kan ingen af de andre tal her give — så det skal væk.",
+        "col": "Beholder du {{value}}, mangler søjlen stadig {{remaining}}, og det kan ingen af de andre tal her give — så det skal væk."
+      },
+      "tooBig.row": "Rækken mangler stadig {{deficit}}, og {{value}} er større end det.",
+      "tooBig.col": "Søjlen mangler stadig {{deficit}}, og {{value}} er større end det.",
+      "allStrike.row": "De tal, der bliver i rækken, giver allerede målet.",
+      "allStrike.col": "De tal, der bliver i søjlen, giver allerede målet.",
+      "allKeep.row": "Rækken giver allerede sit mål, så nu kan du regne søjlerne igennem den ud.",
+      "allKeep.col": "Søjlen giver allerede sit mål, så nu kan du regne rækkerne igennem den ud.",
+      "parityKeep.row": "Rækken mangler stadig {{deficit}}, et ulige tal, og {{value}} er det eneste ulige tal tilbage.",
+      "parityKeep.col": "Søjlen mangler stadig {{deficit}}, et ulige tal, og {{value}} er det eneste ulige tal tilbage.",
+      "parityStrike.row": "Rækken mangler stadig {{deficit}}, et lige tal, og {{value}} er det eneste ulige tal tilbage.",
+      "parityStrike.col": "Søjlen mangler stadig {{deficit}}, et lige tal, og {{value}} er det eneste ulige tal tilbage.",
+      "onlyCombination.row": "Kun én samling tal i rækken giver {{deficit}}.",
+      "onlyCombination.col": "Kun én samling tal i søjlen giver {{deficit}}.",
+      "inEveryCombinationKeep.row": "Uden {{value}} kan ingen af de andre tal i rækken give {{deficit}}.",
+      "inEveryCombinationKeep.col": "Uden {{value}} kan ingen af de andre tal i søjlen give {{deficit}}.",
+      "inEveryCombinationStrike.row": "Beholder du {{value}}, mangler rækken stadig {{remaining}}, og det kan ingen af de andre tal her give.",
+      "inEveryCombinationStrike.col": "Beholder du {{value}}, mangler søjlen stadig {{remaining}}, og det kan ingen af de andre tal her give.",
+      "action": {
+        "strike_one": "Streg det skraverede tal ud.",
+        "strike_other": "Streg de skraverede tal ud.",
+        "keep_one": "Markér det skraverede tal som et, der bliver.",
+        "keep_other": "Markér de skraverede tal som nogle, der bliver."
+      }
+    },
+    "goal": "Hver række og hver søjle giver tallet ved siden af, når du lægger sammen.",
+    "name": "Optællingen"
+  },
+  "futoshiki": {
+    "rules": {
+      "signs": "Et tegn mellem to felter peger på det mindste af de to tal.",
+      "enter": "Tryk på et felt og så på et tal. Trykker du på det samme tal igen, forsvinder det.",
+      "notes": "Skift til blyanten for at skrive ned, hvilke tal der stadig kan stå i et felt. Fortryd tager dit sidste træk tilbage."
+    },
+    "hint": {
+      "mistake": {
+        "value": "Et af tallene her kan ikke være rigtigt. Fjern det og kig igen.",
+        "note": "Noterne i dette felt har udelukket det tal, der hører til her. Ryd dem og start forfra med feltet."
+      },
+      "nakedSingle": "Alle de andre tal er allerede brugt i rækken, i søjlen eller af tegnene — kun {{value}} er tilbage til dette felt.",
+      "hiddenSingle": {
+        "row": "{{value}} passer ikke i noget andet felt i rækken, så det skal stå her.",
+        "col": "{{value}} passer ikke i noget andet felt i søjlen, så det skal stå her."
+      },
+      "signBound": {
+        "high": "Et tegn her peger væk mod et større tal, så feltet kan ikke være {{value}}.",
+        "low": "Et tegn her peger på feltet, så noget skal være mindre end det — det kan ikke være {{value}}."
+      },
+      "signVsValue": {
+        "less": "Tegnet siger, at feltet er mindre end naboen, og naboen er {{value}}.",
+        "greater": "Tegnet siger, at feltet er større end naboen, og naboen er {{value}}."
+      },
+      "signChain": {
+        "high": "Følg tegnene fra dette felt: {{chain}} felter i træk skal hver være større end det før, så dette felt kan ikke være over {{bound}}.",
+        "low": "Følg tegnene ind til dette felt: {{chain}} felter i træk skal hver være mindre end det før, så dette felt kan ikke være under {{bound}}."
+      },
+      "signPair": {
+        "less": "Det største tal, naboen på den anden side af tegnet stadig kan være, er {{value}}, og dette felt skal blive under det.",
+        "greater": "Det mindste tal, naboen på den anden side af tegnet stadig kan være, er {{value}}, og dette felt skal blive over det."
+      },
+      "nakedPair": {
+        "row": "De to felter kan kun være {{first}} og {{second}}, i den ene eller den anden rækkefølge, så intet andet felt i rækken kan have nogen af dem.",
+        "col": "De to felter kan kun være {{first}} og {{second}}, i den ene eller den anden rækkefølge, så intet andet felt i søjlen kan have nogen af dem."
+      },
+      "hiddenPair": {
+        "row": "I denne række passer {{first}} og {{second}} kun i de to felter, så der kan ikke stå noget andet i dem.",
+        "col": "I denne søjle passer {{first}} og {{second}} kun i de to felter, så der kan ikke stå noget andet i dem."
+      },
+      "xWing": {
+        "row": "{{value}} passer kun i to felter i hver af de to rækker, og de står i de samme søjler. Lige meget hvordan det falder ud, er begge søjler optaget — så {{value}} kan ikke stå andre steder i dem.",
+        "col": "{{value}} passer kun i to felter i hver af de to søjler, og de står i de samme rækker. Lige meget hvordan det falder ud, er begge rækker optaget — så {{value}} kan ikke stå andre steder i dem."
+      },
+      "nakedTriple": {
+        "row": "De tre felter har tilsammen kun {{first}}, {{second}} og {{third}}, så intet andet felt i rækken kan få nogen af de tre.",
+        "col": "De tre felter har tilsammen kun {{first}}, {{second}} og {{third}}, så intet andet felt i søjlen kan få nogen af de tre."
+      },
+      "hiddenTriple": {
+        "row": "I denne række passer {{first}}, {{second}} og {{third}} kun i de tre felter, så der kan ikke stå noget andet i dem.",
+        "col": "I denne søjle passer {{first}}, {{second}} og {{third}} kun i de tre felter, så der kan ikke stå noget andet i dem."
+      }
+    },
+    "goal": "Hver række og hver søjle har hvert tal præcis én gang.",
+    "name": "Større og mindre"
+  },
+  "lightbeam": {
+    "rules": {
+      "mirrors": "Et spejl bøjer lyset fra begge sine sider. De små streger omkring det viser, hvordan det ellers kan ligge: de fleste drejer lyset en kvart omgang, og nogle drejer det lidt mindre og sender det skråt af sted.",
+      "walls": "En stenblok sluger lyset. Det gør kanten af brættet også.",
+      "tap": "Tryk på en brik for at ændre den: et spejl drejer, en glidebrik flytter til næste plads. En hvid kant betyder, at du må flytte den; alt andet hører til opgaven.",
+      "nodes": "Nogle sten er forbundet til et stik i gulvet, og ingen tryk kan flytte dem. Send lyset over stikket, så glider stenen til side."
+    },
+    "hint": {
+      "entryRun": "Start dér, hvor lyset allerede går: det løber lige ud fra skiven, indtil det rammer den første brik, du kan ændre. De felter får lys, lige meget hvad du gør.",
+      "exitRun": "Kig på helligdommen. Kun én side af den kan overhovedet blive oplyst — alle andre veje ind er spærret eller vender ud af brættet — så lyset skal komme ad den linje.",
+      "wiringFires": {
+        "one": "Lyset skal over det stik på vejen — det har du allerede regnet ud. Når det kommer over, trækker det stenen, den er forbundet til, væk, så vejen bagved bliver åben.",
+        "all": "Den sten er forbundet til mere end ét stik, og den flytter sig først, når lyset er gået over dem alle. Find en vej, der tager strålen gennem dem alle."
+      },
+      "deadEnd": {
+        "wall": "Står den sådan, løber lyset lige ind i sten, og intet kan redde det. Så kan den ikke stå sådan.",
+        "disc": "Står den sådan, sender spejlet lyset tilbage samme vej, helt ind i skiven, det kom fra. Så kan den ikke stå sådan.",
+        "edge": "Står den sådan, løber lyset ud over kanten af brættet, og intet kan fange det. Så kan den ikke stå sådan.",
+        "loop": "Står den sådan, kommer lyset aldrig nogen vegne — det kører rundt i ring for evigt. Så kan den ikke stå sådan."
+      },
+      "feedsExit": {
+        "wall": "Regn baglæns fra helligdommen. Står den sådan, kan intet bringe lyset ad den eneste linje, der når frem — det dør i sten på vejen.",
+        "disc": "Regn baglæns fra helligdommen. Står den sådan, skulle lyset komme fra skivens mørke bagside, og derfra kommer der intet lys.",
+        "edge": "Regn baglæns fra helligdommen. Står den sådan, skulle lyset komme udefra brættet for at nå frem.",
+        "loop": "Regn baglæns fra helligdommen. Står den sådan, kører det lys, der skulle nå frem, bare rundt i ring for evigt."
+      },
+      "wiringDead": "Lige meget hvad du gør, kan lyset aldrig nå det stik — så stenen, det er forbundet til, bliver præcis, hvor den er, og du kan læse vejen lige forbi den.",
+      "neverReached": "Lad den her være. Lyset kan ikke nå den, lige meget hvordan resten står, så det er lige meget, hvad du gør ved den.",
+      "onlySurvivor": "Prøv hver stilling af den her, én efter én: alle på nær én lader helligdommen være mørk. Den ene er svaret."
+    },
+    "goal": "Sollyset løber fra skiven til helligdommen.",
+    "name": "Lysstråle"
+  },
+  "eclipse": {
+    "rules": {
+      "triple": "Tre ens på stribe er aldrig tilladt, hverken vandret eller lodret.",
+      "copies": "To rækker må ikke være ens, og to søjler må heller ikke.",
+      "signs": "Et tegn mellem to felter siger, hvordan de passer sammen: = betyder ens, × betyder forskellige.",
+      "enter": "Tryk på et felt for at sætte en sol, tryk igen for en måne, og en gang til for at tømme det."
+    },
+    "hint": {
+      "mistake": "Et af disse mærker kan ikke være rigtigt.",
+      "sign.same": "= betyder ens.",
+      "sign.different": "× betyder forskellige.",
+      "noTriple.pair": "Allerede to {{mark}}, og tre på stribe er aldrig tilladt.",
+      "noTriple.sandwich": "{{mark}} på begge sider, og tre på stribe er aldrig tilladt.",
+      "signPair": "De to er ens, og den {{mark}} står ved siden af dem.",
+      "lineCount": "Denne linje har allerede sine {{count}} {{mark}}.",
+      "noCopy": "Omvendt ville det blive en kopi af den oplyste linje.",
+      "linePairing.sameNoRoom": "Kun {{count}} {{mark}} tilbage her, og de to er ens.",
+      "linePairing.differentTakesOne": "×-parrene bruger de {{mark}}, der er plads til i denne linje.",
+      "loneMark": "Én {{mark}} tilbage, og kun ét felt holder tre {{other}} fra hinanden.",
+      "squeeze.triple": "{{mark}} her ville gøre resten til {{other}} — tre på stribe.",
+      "squeeze.sign": "{{mark}} her ville gøre resten til {{other}} — så passer et tegn ikke længere.",
+      "squeeze.copy": "{{mark}} her ville gøre resten til {{other}} — så bliver linjen en kopi.",
+      "action": {
+        "fill_one": "Sæt {{mark}} i det skraverede felt.",
+        "fill_other": "Sæt {{mark}} i de skraverede felter.",
+        "fillMixed": "Udfyld de skraverede felter — det er den eneste måde, der passer."
+      }
+    },
+    "goal": "Hvert felt har en sol eller en måne, og hver linje har lige mange af hver.",
+    "name": "Sol og måne"
+  },
+  "constellation": {
+    "rules": {
+      "default": {
+        "straight": "Lyslinjer går lige, vandret eller lodret, fra én stjerne til den næste.",
+        "pair": "To stjerner kan højst dele to linjer.",
+        "cross": "Linjer krydser aldrig hinanden og går aldrig gennem en stjerne.",
+        "enter": "Træk fra en stjerne hen mod naboen for at tegne en linje, igen for en dobbelt, og en gang til for at fjerne den."
+      },
+      "causeway": {
+        "straight": "Slæbeveje går lige, vandret eller lodret, fra ét sted til det næste.",
+        "pair": "To steder kan højst dele to veje.",
+        "cross": "Veje krydser aldrig hinanden og går aldrig gennem et sted.",
+        "enter": "Træk fra et sted hen mod naboen for at lægge en vej, igen for at gøre den dobbelt, og en gang til for at rive den op."
+      },
+      "irrigation": {
+        "straight": "Kanaler går lige, vandret eller lodret, fra ét bassin til det næste.",
+        "pair": "To bassiner kan højst dele to kanaler.",
+        "cross": "Kanaler krydser aldrig hinanden og går aldrig gennem et bassin.",
+        "enter": "Træk fra et bassin hen mod naboen for at grave en kanal, igen for at gøre den bredere, og en gang til for at fylde den op."
+      },
+      "ceiling": {
+        "straight": "Snore går lige, vandret eller lodret, fra én stjerne til den næste.",
+        "pair": "To stjerner kan højst dele to snore.",
+        "cross": "Snore krydser aldrig hinanden og går aldrig gennem en stjerne.",
+        "enter": "Træk fra en stjerne hen mod naboen for at spænde en snor, igen for at gøre den dobbelt, og en gang til for at tage den af."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "En af disse linjer kan ikke være rigtig.",
+        "capacity": "{{count}} linjer, og lige præcis nok veje ud.",
+        "settled": "Dette {{count}}-tal har sine linjer.",
+        "soleWayOut": "Kun én vej ud tilbage, og {{count}} mangler stadig at blive tegnet.",
+        "crossed": "En linje dér ville krydse denne.",
+        "atLeastOne": "{{count}} linjer, og de andre veje ud kan ikke bære dem alle.",
+        "twinBlock.single": "Forbinder du de to, bliver det et stjernebillede med kun to.",
+        "twinBlock.double": "En linje mere dér ville gøre det til et stjernebillede med kun to.",
+        "isolation": "Den linje ville lukke de {{count}} stjerner af fra resten.",
+        "action": {
+          "draw_one": "Tegn den markerede linje.",
+          "draw_other": "Tegn de markerede linjer.",
+          "refuse_one": "Den markerede linje skal ikke tegnes.",
+          "refuse_other": "De markerede linjer skal ikke tegnes.",
+          "refuseDouble": "Én linje dér, og ikke to."
+        }
+      },
+      "causeway": {
+        "mistake": "En af disse veje kan ikke være rigtig.",
+        "capacity": "{{count}} veje, og lige præcis nok veje ud.",
+        "settled": "Dette {{count}}-tal har sine veje.",
+        "soleWayOut": "Kun én vej ud tilbage, og {{count}} mangler stadig at blive lagt.",
+        "crossed": "En vej dér ville krydse denne.",
+        "atLeastOne": "{{count}} veje, og de andre veje ud kan ikke bære dem alle.",
+        "twinBlock.single": "Forbinder du de to, bliver det et vejnet med kun to.",
+        "twinBlock.double": "En vej mere dér ville gøre det til et vejnet med kun to.",
+        "isolation": "Den vej ville skære de {{count}} steder af fra resten.",
+        "action": {
+          "draw_one": "Læg den markerede vej.",
+          "draw_other": "Læg de markerede veje.",
+          "refuse_one": "Den markerede vej skal ikke bygges.",
+          "refuse_other": "De markerede veje skal ikke bygges.",
+          "refuseDouble": "Én vej dér, og ikke to."
+        }
+      },
+      "irrigation": {
+        "mistake": "En af disse kanaler kan ikke være rigtig.",
+        "capacity": "{{count}} kanaler, og lige præcis nok veje ud.",
+        "settled": "Dette {{count}}-tal har sine kanaler.",
+        "soleWayOut": "Kun én vej ud tilbage, og {{count}} mangler stadig at blive gravet.",
+        "crossed": "En kanal dér ville krydse denne.",
+        "atLeastOne": "{{count}} kanaler, og de andre veje ud kan ikke bære dem alle.",
+        "twinBlock.single": "Forbinder du de to, bliver det et vandværk med kun to.",
+        "twinBlock.double": "En kanal mere dér ville gøre det til et vandværk med kun to.",
+        "isolation": "Den kanal ville skære de {{count}} bassiner af fra resten.",
+        "action": {
+          "draw_one": "Grav den markerede kanal.",
+          "draw_other": "Grav de markerede kanaler.",
+          "refuse_one": "Den markerede kanal skal ikke graves.",
+          "refuse_other": "De markerede kanaler skal ikke graves.",
+          "refuseDouble": "Én kanal dér, og ikke to."
+        }
+      },
+      "ceiling": {
+        "mistake": "En af disse snore kan ikke være rigtig.",
+        "capacity": "{{count}} snore, og lige præcis nok veje ud.",
+        "settled": "Dette {{count}}-tal har sine snore.",
+        "soleWayOut": "Kun én vej ud tilbage, og {{count}} mangler stadig at blive spændt.",
+        "crossed": "En snor dér ville krydse denne.",
+        "atLeastOne": "{{count}} snore, og de andre veje ud kan ikke bære dem alle.",
+        "twinBlock.single": "Forbinder du de to, bliver det en malet himmel med kun to.",
+        "twinBlock.double": "En snor mere dér ville gøre det til en malet himmel med kun to.",
+        "isolation": "Den snor ville skære de {{count}} stjerner af fra resten.",
+        "action": {
+          "draw_one": "Spænd den markerede snor.",
+          "draw_other": "Spænd de markerede snore.",
+          "refuse_one": "Den markerede snor skal ikke spændes.",
+          "refuse_other": "De markerede snore skal ikke spændes.",
+          "refuseDouble": "Én snor dér, og ikke to."
+        }
+      }
+    },
+    "goal": {
+      "default": "Hver stjerne hænger i ét stjernebillede, forbundet med lige så mange lyslinjer, som dens tal siger.",
+      "causeway": "Hvert sted hører til ét vejnet, med lige så mange slæbeveje, som dets tal siger.",
+      "irrigation": "Hvert bassin hører til ét vandværk, med lige så mange kanaler, som dets tal siger.",
+      "ceiling": "Hver stjerne hører til én malet himmel, bundet med lige så mange guldsnore, som dens tal siger."
+    },
+    "name": {
+      "default": "Stjernekort",
+      "causeway": "Slæbevej",
+      "irrigation": "Vandværk",
+      "ceiling": "Malet loft"
+    }
+  },
+  "starBattle": {
+    "rules": {
+      "default": {
+        "touch": "To stjerner må aldrig røre hinanden — heller ikke på skrå.",
+        "enter": "Tryk på et felt for at udelukke det, igen for at sætte en stjerne, og en gang til for at rydde det."
+      },
+      "fields": {
+        "touch": "To gårde må aldrig røre hinanden — heller ikke på skrå. Så tæt på hinanden skulle de dele én brønd.",
+        "enter": "Tryk på en mark for at udelukke den, igen for at bygge en gård, og en gang til for at rydde den."
+      },
+      "lamps": {
+        "touch": "To olielamper må aldrig stå ved siden af hinanden — heller ikke på skrå. Så ville deres lys overlappe, og olien ville være spildt.",
+        "walls": "De grå stenblokke er en del af gulvet: der kan ikke stå noget på dem, og de er ikke felter.",
+        "enter": "Tryk på en flise for at udelukke den, igen for at sætte en olielampe, og en gang til for at rydde den."
+      },
+      "market": {
+        "touch": "To boder må aldrig stå ved siden af hinanden — heller ikke på skrå. Konkurrenter stiller sig aldrig side om side.",
+        "walls": "Husene er en del af torvet: ingen kan stille en bod i dem, og de er ikke pladser.",
+        "enter": "Tryk på en plads for at udelukke den, igen for at stille en bod, og en gang til for at rydde den."
+      },
+      "lotus": {
+        "touch": "To lotusblomster må aldrig flyde ved siden af hinanden — heller ikke på skrå. Hver blomst skal have åbent vand omkring sig.",
+        "walls": "Klipperne stikker op af dammen: intet kan flyde på dem, og de er ikke felter.",
+        "enter": "Tryk på et stykke vand for at udelukke det, igen for at sætte en lotus, og en gang til for at rydde det."
+      },
+      "cats": {
+        "touch": "To katte må aldrig sove ved siden af hinanden — heller ikke på skrå. Hver kat vil have sin egen solplet.",
+        "walls": "Søjlerne holder templet oppe: ingen kat kan sove på dem, og de er ikke felter.",
+        "enter": "Tryk på en flise for at udelukke den, igen for at lægge en kat der, og en gang til for at rydde den."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Dette mærke kan ikke være rigtigt.",
+        "touch": "En {{token}} her, og intet må røre en {{token}}.",
+        "groupFull.row_one": "Rækken har allerede sin {{token}}.",
+        "groupFull.row_other": "Rækken har allerede sine {{count}} {{token}}.",
+        "groupFull.col_one": "Søjlen har allerede sin {{token}}.",
+        "groupFull.col_other": "Søjlen har allerede sine {{count}} {{token}}.",
+        "groupFull.region_one": "Området har allerede sin {{token}}.",
+        "groupFull.region_other": "Området har allerede sine {{count}} {{token}}.",
+        "groupTight.row_one": "Rækken har kun ét felt tilbage.",
+        "groupTight.row_other": "Rækken har kun {{count}} felter tilbage.",
+        "groupTight.col_one": "Søjlen har kun ét felt tilbage.",
+        "groupTight.col_other": "Søjlen har kun {{count}} felter tilbage.",
+        "groupTight.region_one": "Området har kun ét felt tilbage.",
+        "groupTight.region_other": "Området har kun {{count}} felter tilbage.",
+        "onlyWay.row_one": "Der er kun én måde at få plads til en {{token}} i rækken.",
+        "onlyWay.row_other": "Der er kun én måde at få plads til {{count}} {{token}} i rækken.",
+        "onlyWay.col_one": "Der er kun én måde at få plads til en {{token}} i søjlen.",
+        "onlyWay.col_other": "Der er kun én måde at få plads til {{count}} {{token}} i søjlen.",
+        "onlyWay.region_one": "Der er kun én måde at få plads til en {{token}} i området.",
+        "onlyWay.region_other": "Der er kun én måde at få plads til {{count}} {{token}} i området.",
+        "everyWay.row_one": "Lige meget hvor rækkens {{token}} står, så står den altid her.",
+        "everyWay.row_other": "Lige meget hvor rækkens {{count}} {{token}} står, så står en af dem altid her.",
+        "everyWay.col_one": "Lige meget hvor søjlens {{token}} står, så står den altid her.",
+        "everyWay.col_other": "Lige meget hvor søjlens {{count}} {{token}} står, så står en af dem altid her.",
+        "everyWay.region_one": "Lige meget hvor områdets {{token}} står, så står den altid her.",
+        "everyWay.region_other": "Lige meget hvor områdets {{count}} {{token}} står, så står en af dem altid her.",
+        "regionLine.row_one": "Det markerede områdes {{token}} skal stå i den række.",
+        "regionLine.row_other": "Det markerede områdes {{count}} {{token}} skal stå i den række.",
+        "regionLine.col_one": "Det markerede områdes {{token}} skal stå i den søjle.",
+        "regionLine.col_other": "Det markerede områdes {{count}} {{token}} skal stå i den søjle.",
+        "lineRegion.row_one": "Den rækkes {{token}} hører til det markerede område.",
+        "lineRegion.row_other": "Den rækkes {{count}} {{token}} hører til det markerede område.",
+        "lineRegion.col_one": "Den søjles {{token}} hører til det markerede område.",
+        "lineRegion.col_other": "Den søjles {{count}} {{token}} hører til det markerede område.",
+        "spanning.toRows": "De markerede områder fylder tilsammen de {{count}} rækker.",
+        "spanning.toCols": "De markerede områder fylder tilsammen de {{count}} søjler.",
+        "spanning.fromRows": "De markerede rækker kan kun få deres {{count}} {{token}} fra de områder.",
+        "spanning.fromCols": "De markerede søjler kan kun få deres {{count}} {{token}} fra de områder.",
+        "wouldStrand.row": "En {{token}} her ville ikke efterlade nogen plads i den markerede række.",
+        "wouldStrand.col": "En {{token}} her ville ikke efterlade nogen plads i den markerede søjle.",
+        "wouldStrand.region": "En {{token}} her ville ikke efterlade nogen plads i det markerede område.",
+        "action": {
+          "ruleOut_one": "Udeluk det skraverede felt.",
+          "ruleOut_other": "Udeluk de skraverede felter.",
+          "place_one": "Sæt en {{token}} i det skraverede felt.",
+          "place_other": "Sæt en {{token}} i hvert skraveret felt."
+        }
+      },
+      "fields": {
+        "mistake": "Dette mærke kan ikke være rigtigt.",
+        "touch": "En {{token}} her, og ingen mark, den rører, kan have en til.",
+        "groupFull.row_one": "Rækken er allerede dyrket.",
+        "groupFull.row_other": "Rækken har allerede sine {{count}} {{token}}.",
+        "groupFull.col_one": "Søjlen er allerede dyrket.",
+        "groupFull.col_other": "Søjlen har allerede sine {{count}} {{token}}.",
+        "groupFull.region_one": "Dette stykke land er allerede dyrket.",
+        "groupFull.region_other": "Dette stykke land har allerede sine {{count}} {{token}}.",
+        "groupTight.row_one": "Rækken har kun én mark tilbage.",
+        "groupTight.row_other": "Rækken har kun {{count}} marker tilbage.",
+        "groupTight.col_one": "Søjlen har kun én mark tilbage.",
+        "groupTight.col_other": "Søjlen har kun {{count}} marker tilbage.",
+        "groupTight.region_one": "Dette stykke land har kun én mark tilbage.",
+        "groupTight.region_other": "Dette stykke land har kun {{count}} marker tilbage.",
+        "onlyWay.row_one": "Der er kun én mark tilbage i rækken at bygge på.",
+        "onlyWay.row_other": "Der er kun én måde at få plads til {{count}} {{token}} i rækken.",
+        "onlyWay.col_one": "Der er kun én mark tilbage i søjlen at bygge på.",
+        "onlyWay.col_other": "Der er kun én måde at få plads til {{count}} {{token}} i søjlen.",
+        "onlyWay.region_one": "Der er kun én mark tilbage på dette stykke land at bygge på.",
+        "onlyWay.region_other": "Der er kun én måde at få plads til {{count}} {{token}} på dette stykke land.",
+        "everyWay.row_one": "Lige meget hvordan rækken bliver dyrket, står dens {{token}} her.",
+        "everyWay.row_other": "Lige meget hvordan rækken bliver dyrket, står en af dens {{count}} {{token}} her.",
+        "everyWay.col_one": "Lige meget hvordan søjlen bliver dyrket, står dens {{token}} her.",
+        "everyWay.col_other": "Lige meget hvordan søjlen bliver dyrket, står en af dens {{count}} {{token}} her.",
+        "everyWay.region_one": "Lige meget hvordan dette stykke land bliver dyrket, står dets {{token}} her.",
+        "everyWay.region_other": "Lige meget hvordan dette stykke land bliver dyrket, står en af dets {{count}} {{token}} her.",
+        "regionLine.row_one": "Det markerede stykke lands {{token}} skal stå i den række.",
+        "regionLine.row_other": "Det markerede stykke lands {{count}} {{token}} skal stå i den række.",
+        "regionLine.col_one": "Det markerede stykke lands {{token}} skal stå i den søjle.",
+        "regionLine.col_other": "Det markerede stykke lands {{count}} {{token}} skal stå i den søjle.",
+        "lineRegion.row_one": "Den rækkes {{token}} hører til det markerede stykke land.",
+        "lineRegion.row_other": "Den rækkes {{count}} {{token}} hører til det markerede stykke land.",
+        "lineRegion.col_one": "Den søjles {{token}} hører til det markerede stykke land.",
+        "lineRegion.col_other": "Den søjles {{count}} {{token}} hører til det markerede stykke land.",
+        "spanning.toRows": "De markerede stykker land fylder tilsammen de {{count}} rækker.",
+        "spanning.toCols": "De markerede stykker land fylder tilsammen de {{count}} søjler.",
+        "spanning.fromRows": "De markerede rækker kan kun få deres {{count}} {{token}} fra de stykker land.",
+        "spanning.fromCols": "De markerede søjler kan kun få deres {{count}} {{token}} fra de stykker land.",
+        "wouldStrand.row": "En {{token}} her ville ikke efterlade noget sted at bygge i den markerede række.",
+        "wouldStrand.col": "En {{token}} her ville ikke efterlade noget sted at bygge i den markerede søjle.",
+        "wouldStrand.region": "En {{token}} her ville ikke efterlade noget sted at bygge på det markerede stykke land.",
+        "action": {
+          "ruleOut_one": "Udeluk den skraverede mark.",
+          "ruleOut_other": "Udeluk de skraverede marker.",
+          "place_one": "Byg en {{token}} på den skraverede mark.",
+          "place_other": "Byg en {{token}} på hver skraveret mark."
+        }
+      },
+      "lamps": {
+        "mistake": "Dette mærke kan ikke være rigtigt.",
+        "touch": "En {{token}} her, og ingen olielampe må stå ved siden af en anden — heller ikke på skrå.",
+        "groupFull.row_one": "Rækken har allerede sin olielampe.",
+        "groupFull.col_one": "Søjlen har allerede sin olielampe.",
+        "groupFull.row_other": "Rækken har allerede sine {{count}} olielamper.",
+        "groupFull.col_other": "Søjlen har allerede sine {{count}} olielamper.",
+        "groupTight.row_one": "Rækken har kun én flise tilbage.",
+        "groupTight.row_other": "Rækken har kun {{count}} fliser tilbage.",
+        "groupTight.col_one": "Søjlen har kun én flise tilbage.",
+        "groupTight.col_other": "Søjlen har kun {{count}} fliser tilbage.",
+        "onlyWay.row_one": "Mellem stenblokkene er der kun ét felt tilbage i rækken til en olielampe.",
+        "onlyWay.col_one": "Mellem stenblokkene er der kun ét felt tilbage i søjlen til en olielampe.",
+        "onlyWay.row_other": "Der er kun én måde at få plads til {{count}} olielamper i rækken.",
+        "onlyWay.col_other": "Der er kun én måde at få plads til {{count}} olielamper i søjlen.",
+        "everyWay.row_one": "Lige meget hvor rækkens olielampe står, så står den altid her.",
+        "everyWay.col_one": "Lige meget hvor søjlens olielampe står, så står den altid her.",
+        "everyWay.row_other": "Lige meget hvor rækkens {{count}} olielamper står, så står en af dem altid her.",
+        "everyWay.col_other": "Lige meget hvor søjlens {{count}} olielamper står, så står en af dem altid her.",
+        "lineBlock.rowsToCols": "De markerede rækker har deres olielamper i felterne i de søjler, så de søjler har ingen tilovers.",
+        "lineBlock.colsToRows": "De markerede søjler har deres olielamper i felterne i de rækker, så de rækker har ingen tilovers.",
+        "wouldStrand.row": "En olielampe her ville ikke efterlade nogen plads i den markerede række.",
+        "wouldStrand.col": "En olielampe her ville ikke efterlade nogen plads i den markerede søjle.",
+        "action": {
+          "ruleOut_one": "Udeluk det skraverede felt.",
+          "ruleOut_other": "Udeluk de skraverede felter.",
+          "place_one": "Sæt en olielampe i det skraverede felt.",
+          "place_other": "Sæt en olielampe i hvert skraveret felt."
+        }
+      },
+      "market": {
+        "mistake": "Dette mærke kan ikke være rigtigt.",
+        "touch": "En {{token}} her, og ingen bod må stå ved siden af en anden — heller ikke på skrå.",
+        "groupFull.row_one": "Rækken har allerede sin bod.",
+        "groupFull.col_one": "Søjlen har allerede sin bod.",
+        "groupFull.row_other": "Rækken har allerede sine {{count}} boder.",
+        "groupFull.col_other": "Søjlen har allerede sine {{count}} boder.",
+        "groupTight.row_one": "Rækken har kun én plads tilbage.",
+        "groupTight.row_other": "Rækken har kun {{count}} pladser tilbage.",
+        "groupTight.col_one": "Søjlen har kun én plads tilbage.",
+        "groupTight.col_other": "Søjlen har kun {{count}} pladser tilbage.",
+        "onlyWay.row_one": "Mellem husene er der kun ét felt tilbage i rækken til en bod.",
+        "onlyWay.col_one": "Mellem husene er der kun ét felt tilbage i søjlen til en bod.",
+        "onlyWay.row_other": "Der er kun én måde at få plads til {{count}} boder i rækken.",
+        "onlyWay.col_other": "Der er kun én måde at få plads til {{count}} boder i søjlen.",
+        "everyWay.row_one": "Lige meget hvor rækkens bod står, så er den altid her.",
+        "everyWay.col_one": "Lige meget hvor søjlens bod står, så er den altid her.",
+        "everyWay.row_other": "Lige meget hvor rækkens {{count}} boder er, så er en af dem altid her.",
+        "everyWay.col_other": "Lige meget hvor søjlens {{count}} boder er, så er en af dem altid her.",
+        "lineBlock.rowsToCols": "De markerede rækker har deres boder i felterne i de søjler, så de søjler har ingen tilovers.",
+        "lineBlock.colsToRows": "De markerede søjler har deres boder i felterne i de rækker, så de rækker har ingen tilovers.",
+        "wouldStrand.row": "En bod her ville ikke efterlade nogen plads i den markerede række.",
+        "wouldStrand.col": "En bod her ville ikke efterlade nogen plads i den markerede søjle.",
+        "action": {
+          "ruleOut_one": "Udeluk det skraverede felt.",
+          "ruleOut_other": "Udeluk de skraverede felter.",
+          "place_one": "Stil en bod i det skraverede felt.",
+          "place_other": "Stil en bod i hvert skraveret felt."
+        }
+      },
+      "lotus": {
+        "mistake": "Dette mærke kan ikke være rigtigt.",
+        "touch": "En {{token}} her, og ingen lotus må flyde ved siden af en anden — heller ikke på skrå.",
+        "groupFull.row_one": "Rækken har allerede sin lotus.",
+        "groupFull.col_one": "Søjlen har allerede sin lotus.",
+        "groupFull.row_other": "Rækken har allerede sine {{count}} lotusblomster.",
+        "groupFull.col_other": "Søjlen har allerede sine {{count}} lotusblomster.",
+        "groupTight.row_one": "Rækken har kun ét stykke vand tilbage.",
+        "groupTight.row_other": "Rækken har kun {{count}} stykker vand tilbage.",
+        "groupTight.col_one": "Søjlen har kun ét stykke vand tilbage.",
+        "groupTight.col_other": "Søjlen har kun {{count}} stykker vand tilbage.",
+        "onlyWay.row_one": "Mellem klipperne er der kun ét felt tilbage i rækken til en lotus.",
+        "onlyWay.col_one": "Mellem klipperne er der kun ét felt tilbage i søjlen til en lotus.",
+        "onlyWay.row_other": "Der er kun én måde at få plads til {{count}} lotusblomster i rækken.",
+        "onlyWay.col_other": "Der er kun én måde at få plads til {{count}} lotusblomster i søjlen.",
+        "everyWay.row_one": "Lige meget hvor rækkens lotus flyder, så er den altid her.",
+        "everyWay.col_one": "Lige meget hvor søjlens lotus flyder, så er den altid her.",
+        "everyWay.row_other": "Lige meget hvor rækkens {{count}} lotusblomster er, så er en af dem altid her.",
+        "everyWay.col_other": "Lige meget hvor søjlens {{count}} lotusblomster er, så er en af dem altid her.",
+        "lineBlock.rowsToCols": "De markerede rækker har deres lotusblomster i felterne i de søjler, så de søjler har ingen tilovers.",
+        "lineBlock.colsToRows": "De markerede søjler har deres lotusblomster i felterne i de rækker, så de rækker har ingen tilovers.",
+        "wouldStrand.row": "En lotus her ville ikke efterlade nogen plads i den markerede række.",
+        "wouldStrand.col": "En lotus her ville ikke efterlade nogen plads i den markerede søjle.",
+        "action": {
+          "ruleOut_one": "Udeluk det skraverede felt.",
+          "ruleOut_other": "Udeluk de skraverede felter.",
+          "place_one": "Sæt en lotus i det skraverede felt.",
+          "place_other": "Sæt en lotus i hvert skraveret felt."
+        }
+      },
+      "cats": {
+        "mistake": "Dette mærke kan ikke være rigtigt.",
+        "touch": "En {{token}} her, og ingen kat må sove ved siden af en anden — heller ikke på skrå.",
+        "groupFull.row_one": "Rækken har allerede sin kat.",
+        "groupFull.col_one": "Søjlen har allerede sin kat.",
+        "groupFull.row_other": "Rækken har allerede sine {{count}} katte.",
+        "groupFull.col_other": "Søjlen har allerede sine {{count}} katte.",
+        "groupTight.row_one": "Rækken har kun én flise tilbage.",
+        "groupTight.row_other": "Rækken har kun {{count}} fliser tilbage.",
+        "groupTight.col_one": "Søjlen har kun én flise tilbage.",
+        "groupTight.col_other": "Søjlen har kun {{count}} fliser tilbage.",
+        "onlyWay.row_one": "Mellem søjlerne er der kun ét felt tilbage i rækken til en kat.",
+        "onlyWay.col_one": "Mellem søjlerne er der kun ét felt tilbage i søjlen til en kat.",
+        "onlyWay.row_other": "Der er kun én måde at få plads til {{count}} katte i rækken.",
+        "onlyWay.col_other": "Der er kun én måde at få plads til {{count}} katte i søjlen.",
+        "everyWay.row_one": "Lige meget hvor rækkens kat sover, så er den altid her.",
+        "everyWay.col_one": "Lige meget hvor søjlens kat sover, så er den altid her.",
+        "everyWay.row_other": "Lige meget hvor rækkens {{count}} katte er, så er en af dem altid her.",
+        "everyWay.col_other": "Lige meget hvor søjlens {{count}} katte er, så er en af dem altid her.",
+        "lineBlock.rowsToCols": "De markerede rækker har deres katte i felterne i de søjler, så de søjler har ingen tilovers.",
+        "lineBlock.colsToRows": "De markerede søjler har deres katte i felterne i de rækker, så de rækker har ingen tilovers.",
+        "wouldStrand.row": "En kat her ville ikke efterlade nogen plads i den markerede række.",
+        "wouldStrand.col": "En kat her ville ikke efterlade nogen plads i den markerede søjle.",
+        "action": {
+          "ruleOut_one": "Udeluk det skraverede felt.",
+          "ruleOut_other": "Udeluk de skraverede felter.",
+          "place_one": "Læg en kat i det skraverede felt.",
+          "place_other": "Læg en kat i hvert skraveret felt."
+        }
+      }
+    },
+    "quota": {
+      "default": "Pr. række, søjle og område",
+      "fields": "Pr. række, søjle og stykke land",
+      "lamps": "Pr. række og søjle",
+      "market": "Pr. række og søjle",
+      "lotus": "Pr. række og søjle",
+      "cats": "Pr. række og søjle"
+    },
+    "goal": {
+      "default_one": "Hver række, hver søjle og hvert område har præcis én stjerne.",
+      "default_other": "Hver række, hver søjle og hvert område har præcis {{count}} stjerner.",
+      "fields_one": "Hver række, hver søjle og hvert stykke land har præcis én gård.",
+      "fields_other": "Hver række, hver søjle og hvert stykke land har præcis {{count}} gårde.",
+      "lamps": "Hver række og hver søjle har præcis én olielampe.",
+      "market": "Hver række og hver søjle har præcis én markedsbod.",
+      "lotus": "Hver række og hver søjle har præcis én lotus.",
+      "cats": "Hver række og hver søjle har præcis én kat."
+    },
+    "name": {
+      "default": "Stjerner hver for sig",
+      "fields": "Gårde",
+      "twinDefault": "Tvillingestjerner",
+      "twinFields": "Dobbelte gårde",
+      "lamps": "Olielamper",
+      "market": "Markedsboder",
+      "lotus": "Lotusdam",
+      "cats": "Tempelkatte"
+    }
+  },
+  "pairPuzzle": {
+    "name": {
+      "mummies": "Mumiernes hvile",
+      "beetles": "Skarabæer"
+    },
+    "goal": {
+      "mummies": "Hver sarkofag får én mumie ved siden af sig, og hver række og søjle har præcis så mange mumier, som tallet ved siden af siger.",
+      "beetles": "Hver møgkugle får én bille ved siden af sig, og hver række og søjle har præcis så mange biller, som tallet ved siden af siger."
+    },
+    "rules": {
+      "mummies": {
+        "pair": "Ved hver sarkofag hviler præcis én mumie, lige over, under, til venstre eller til højre for den, og hver mumie hviler ved sin egen sarkofag.",
+        "count": "Tallet ved en række eller søjle siger, hvor mange mumier der er i den. Det bliver grønt, når linjen har præcis så mange, og rødt, når det ikke længere kan passe.",
+        "touch": "To mumier må aldrig ligge ved siden af hinanden — heller ikke på skrå.",
+        "enter": "Tryk på et felt for at udelukke det, igen for at lægge en mumie der, og en gang til for at rydde det. Træk hen over felter for at udelukke flere på én gang. Du kan ikke trykke på sarkofagerne."
+      },
+      "beetles": {
+        "pair": "Ved hver møgkugle står præcis én bille, lige over, under, til venstre eller til højre for den, og hver bille står ved sin egen kugle at rulle.",
+        "count": "Tallet ved en række eller søjle siger, hvor mange biller der er i den. Det bliver grønt, når linjen har præcis så mange, og rødt, når det ikke længere kan passe.",
+        "touch": "To biller må aldrig stå ved siden af hinanden — heller ikke på skrå.",
+        "enter": "Tryk på et felt for at udelukke det, igen for at sætte en bille der, og en gang til for at rydde det. Træk hen over felter for at udelukke flere på én gang. Du kan ikke trykke på møgkuglerne."
+      }
+    },
+    "hint": {
+      "mummies": {
+        "mistake": "Dette mærke kan ikke være rigtigt.",
+        "touch": "Her ligger en mumie, så ingen anden må ligge ved siden af den — heller ikke på skrå.",
+        "zeroLine.row": "Der er ingen mumier i denne række, så hele rækken er tom.",
+        "zeroLine.col": "Der er ingen mumier i denne søjle, så hele søjlen er tom.",
+        "noAnchor": "Der er ingen sarkofag ved siden af disse felter, så her kan ingen mumie ligge.",
+        "lineFull.row_one": "Rækken har allerede sin mumie.",
+        "lineFull.row_other": "Rækken har allerede sine {{count}} mumier.",
+        "lineFull.col_one": "Søjlen har allerede sin mumie.",
+        "lineFull.col_other": "Søjlen har allerede sine {{count}} mumier.",
+        "lineTight.row_one": "Rækken har kun ét felt tilbage til sin mumie.",
+        "lineTight.row_other": "Rækken har præcis {{count}} felter tilbage til sine {{count}} mumier.",
+        "lineTight.col_one": "Søjlen har kun ét felt tilbage til sin mumie.",
+        "lineTight.col_other": "Søjlen har præcis {{count}} felter tilbage til sine {{count}} mumier.",
+        "onlyWay": "Denne sarkofag har kun ét felt tilbage ved siden af sig til sin mumie.",
+        "claimed": "Denne sarkofag har allerede sin mumie, så de felter ved siden af den, som ingen anden sarkofag kan bruge, forbliver tomme.",
+        "lineBlock.rowsToCols_one": "De markerede rækker har én mumie mere, end deres egne sarkofager kan give, så den må komme fra en sarkofag lige uden for dem.",
+        "lineBlock.rowsToCols_other": "De markerede rækker har {{count}} mumier mere, end deres egne sarkofager kan give, så de må komme fra sarkofager lige uden for dem.",
+        "lineBlock.colsToRows_one": "De markerede søjler har én mumie mere, end deres egne sarkofager kan give, så den må komme fra en sarkofag lige uden for dem.",
+        "lineBlock.colsToRows_other": "De markerede søjler har {{count}} mumier mere, end deres egne sarkofager kan give, så de må komme fra sarkofager lige uden for dem.",
+        "wouldStrand.row": "En mumie her ville ikke efterlade plads i den markerede række til de mumier, den stadig mangler.",
+        "wouldStrand.col": "En mumie her ville ikke efterlade plads i den markerede søjle til de mumier, den stadig mangler.",
+        "wouldStrand.anchor": "En mumie her ville ikke efterlade noget felt ved siden af den markerede sarkofag til dens egen mumie.",
+        "action": {
+          "ruleOut_one": "Udeluk det skraverede felt.",
+          "ruleOut_other": "Udeluk de skraverede felter.",
+          "place_one": "Læg en mumie på det skraverede felt.",
+          "place_other": "Læg en mumie på hvert skraveret felt."
+        }
+      },
+      "beetles": {
+        "mistake": "Dette mærke kan ikke være rigtigt.",
+        "touch": "Her står en bille, så ingen anden må stå ved siden af den — heller ikke på skrå.",
+        "zeroLine.row": "Der er ingen biller i denne række, så hele rækken er tom.",
+        "zeroLine.col": "Der er ingen biller i denne søjle, så hele søjlen er tom.",
+        "noAnchor": "Der er ingen møgkugle ved siden af disse felter, så her kan ingen bille stå.",
+        "lineFull.row_one": "Rækken har allerede sin bille.",
+        "lineFull.row_other": "Rækken har allerede sine {{count}} biller.",
+        "lineFull.col_one": "Søjlen har allerede sin bille.",
+        "lineFull.col_other": "Søjlen har allerede sine {{count}} biller.",
+        "lineTight.row_one": "Rækken har kun ét felt tilbage til sin bille.",
+        "lineTight.row_other": "Rækken har præcis {{count}} felter tilbage til sine {{count}} biller.",
+        "lineTight.col_one": "Søjlen har kun ét felt tilbage til sin bille.",
+        "lineTight.col_other": "Søjlen har præcis {{count}} felter tilbage til sine {{count}} biller.",
+        "onlyWay": "Denne møgkugle har kun ét felt tilbage ved siden af sig til sin bille.",
+        "claimed": "Denne møgkugle har allerede sin bille, så de felter ved siden af den, som ingen anden møgkugle kan bruge, forbliver tomme.",
+        "lineBlock.rowsToCols_one": "De markerede rækker har én bille mere, end deres egne møgkugler kan give, så den må komme fra en møgkugle lige uden for dem.",
+        "lineBlock.rowsToCols_other": "De markerede rækker har {{count}} biller mere, end deres egne møgkugler kan give, så de må komme fra møgkugler lige uden for dem.",
+        "lineBlock.colsToRows_one": "De markerede søjler har én bille mere, end deres egne møgkugler kan give, så den må komme fra en møgkugle lige uden for dem.",
+        "lineBlock.colsToRows_other": "De markerede søjler har {{count}} biller mere, end deres egne møgkugler kan give, så de må komme fra møgkugler lige uden for dem.",
+        "wouldStrand.row": "En bille her ville ikke efterlade plads i den markerede række til de biller, den stadig mangler.",
+        "wouldStrand.col": "En bille her ville ikke efterlade plads i den markerede søjle til de biller, den stadig mangler.",
+        "wouldStrand.anchor": "En bille her ville ikke efterlade noget felt ved siden af den markerede møgkugle til dens egen bille.",
+        "action": {
+          "ruleOut_one": "Udeluk det skraverede felt.",
+          "ruleOut_other": "Udeluk de skraverede felter.",
+          "place_one": "Sæt en bille på det skraverede felt.",
+          "place_other": "Sæt en bille på hvert skraveret felt."
+        }
+      }
+    }
+  },
+  "rushHour": {
+    "name": {
+      "default": "Blokaden",
+      "market": "Den spærrede gyde"
+    },
+    "goal": {
+      "default": "Få din egen blok ud gennem åbningen til højre.",
+      "market": "Få din egen slæde ud gennem åbningen for enden af gaden."
+    },
+    "rules": {
+      "default": {
+        "lanes": "En blok kan kun glide i sin egen bane — aldrig til siden og aldrig ud af brættet.",
+        "shove": "Træk i en blok for at skubbe den. Den stopper, hvor noget er i vejen."
+      },
+      "market": {
+        "lanes": "En slæde kan kun glide i den bane, den står i — aldrig til siden og aldrig ud af gaden.",
+        "shove": "Træk i en slæde for at skubbe den. Den stopper, hvor noget er i vejen."
+      }
+    },
+    "hint": {
+      "default": {
+        "drive": "Vejen frem er fri så langt.",
+        "back": "Der er intet, der vil give sig foran. Træk din egen tilbage først.",
+        "clear": "Den blok står på tværs af din egen bane.",
+        "room": "Intet kan flytte sig, før den gør.",
+        "push": {
+          "left": "Skub den til venstre, helt hen til ringen.",
+          "right": "Skub den til højre, helt hen til ringen.",
+          "up": "Skub den op, helt hen til ringen.",
+          "down": "Skub den ned, helt hen til ringen."
+        }
+      },
+      "market": {
+        "drive": "Banen foran din er fri så langt.",
+        "back": "Der er intet, der vil give sig foran. Træk din egen slæde tilbage først.",
+        "clear": "Det læs står på tværs af den bane, du skal ud ad.",
+        "room": "Intet kan flytte sig, før den er flyttet.",
+        "push": {
+          "left": "Skub den til venstre, helt hen til ringen.",
+          "right": "Skub den til højre, helt hen til ringen.",
+          "up": "Skub den op ad gaden, helt hen til ringen.",
+          "down": "Skub den ned ad gaden, helt hen til ringen."
+        }
+      }
+    }
+  },
+  "hidato": {
+    "rules": {
+      "default": {
+        "given": "De tal, der allerede står i tavlen, hører til opgaven — de bliver, hvor de er.",
+        "enter": "Tryk på et tal for at fortsætte rækken derfra, og tryk så på et tomt felt ved siden af for at gå videre — eller træk lige gennem de felter, rækken skal gå igennem.",
+        "back": "Tryk på et tal, du selv har lagt, og tryk igen for at fjerne det, sammen med alt det, der hænger fast i det. At føre rækken en anden vej fra et tal gør det samme. Fortryd tager dit sidste træk tilbage."
+      },
+      "channel": {
+        "given": "De marker, der allerede har et tal, hører til opgaven — de bliver, hvor de er.",
+        "enter": "Tryk på en mark med et tal for at tage vandet derfra, og tryk så på en tør mark ved siden af for at grave videre — eller træk lige hen over de marker, kanalen skal løbe.",
+        "back": "Tryk på en mark, du har gravet, og tryk igen for at fylde den op, sammen med den kanal, der bliver skåret af fra den. At grave en anden vej fra en mark gør det samme. Fortryd tager dit sidste træk tilbage."
+      },
+      "scribe": {
+        "given": "Tegnene skrevet med rødt hører til opgaven — de bliver, hvor de er.",
+        "enter": "Tryk på et tegn for at tage sivpennen dér, og tryk så på en tom plads ved siden af for at skrive videre — eller træk lige hen ad linjen.",
+        "back": "Tryk på et tegn, du selv har skrevet, og tryk igen for at skrabe det af, sammen med den linje, der bliver skåret af fra det. At skrive en anden vej fra et tegn gør det samme. Fortryd tager dit sidste træk tilbage."
+      },
+      "chambers": {
+        "given": "De kamre, der allerede har et tal, blev hugget ud af bygmestrene — de bliver, hvor de er.",
+        "enter": "Tryk på et kammer med et tal for at fortsætte gangen derfra, og tryk så på et lukket kammer ved siden af for at bryde igennem — eller træk lige hen over de kamre, gangen skal gå igennem.",
+        "back": "Tryk på et kammer, du har åbnet, og tryk igen for at lukke det, sammen med den gang, der bliver skåret af fra det. At bryde igennem en anden vej fra et kammer gør det samme. Fortryd tager dit sidste træk tilbage."
+      }
+    },
+    "goal": {
+      "default": "Hvert felt i tavlen får et tal, fra 1 til {{last}}, og hvert tal ligger op ad tallet før.",
+      "channel": "Én kanal vander hele sletten: hver mark kommer på skift, fra 1 til {{last}}, og hver bliver gravet ved siden af marken før.",
+      "scribe": "Én ubrudt linje af tegn går hen over arket: hver plads får et tegn, fra 1 til {{last}}, og hvert står ved siden af tegnet før.",
+      "chambers": "Én gang løber gennem hele graven: hvert kammer bliver åbnet på skift, fra 1 til {{last}}, og hvert bliver brudt igennem fra kammeret før."
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": "Et af disse tal kan ikke være rigtigt.",
+          "sandwich": "{{before}} og {{after}} rører tilsammen kun ét tomt felt.",
+          "neighbourForced": "{{from}} har kun ét tomt felt tilbage ved siden af sig.",
+          "onlyCell": "Der er ikke andre steder i tavlen til {{value}}.",
+          "onlyValue": "Intet andet tal kan nå dette felt."
+        },
+        "action": {
+          "place": "Sæt {{value}} i det skraverede felt."
+        }
+      },
+      "channel": {
+        "reason": {
+          "mistake": "Et af disse tal kan ikke være rigtigt.",
+          "sandwich": "{{before}} og {{after}} rører tilsammen kun én tør mark.",
+          "neighbourForced": "Der er kun én tør mark tilbage ved siden af {{from}}.",
+          "onlyCell": "Der er ikke andre steder på sletten til {{value}}.",
+          "onlyValue": "Intet andet tal kan nå denne mark."
+        },
+        "action": {
+          "place": "Grav {{value}} i den skraverede mark."
+        }
+      },
+      "scribe": {
+        "reason": {
+          "mistake": "Et af disse tegn kan ikke være rigtigt.",
+          "sandwich": "{{before}} og {{after}} rører tilsammen kun én tom plads.",
+          "neighbourForced": "Der er kun én tom plads tilbage ved siden af {{from}}.",
+          "onlyCell": "Der er ikke andre steder på arket til {{value}}.",
+          "onlyValue": "Intet andet tegn kan nå denne plads."
+        },
+        "action": {
+          "place": "Skriv {{value}} på den skraverede plads."
+        }
+      },
+      "chambers": {
+        "reason": {
+          "mistake": "Et af disse tal kan ikke være rigtigt.",
+          "sandwich": "{{before}} og {{after}} rører tilsammen kun ét lukket kammer.",
+          "neighbourForced": "Der er kun ét lukket kammer tilbage ved siden af {{from}}.",
+          "onlyCell": "Der er ikke andre steder i graven til {{value}}.",
+          "onlyValue": "Intet andet tal kan nå dette kammer."
+        },
+        "action": {
+          "place": "Åbn {{value}} i det skraverede kammer."
+        }
+      }
+    },
+    "name": {
+      "default": "Bikube",
+      "channel": "Kanalen",
+      "scribe": "Skriverens ark",
+      "chambers": "Lukkede kamre"
+    }
+  },
+  "sudoku": {
+    "rules": {
+      "default": {
+        "chambers": "De tykke streger deler tavlen i seks kamre, to felter brede og tre høje.",
+        "given": "De tal, der allerede er hugget ind, hører til opgaven — de bliver, hvor de er.",
+        "enter": "Tryk på et felt og så på et tal. Trykker du på det samme tal igen, forsvinder det.",
+        "notes": "Skift til blyanten for at skrive ned, hvilke tal der stadig kan stå i et felt. Fortryd tager dit sidste træk tilbage."
+      },
+      "papyrus": {
+        "chambers": "De tykke streger deler arket i seks felter, to pladser brede og tre høje.",
+        "given": "Tegnene skrevet med rødt hører til opgaven — de bliver, hvor de er.",
+        "enter": "Tryk på en plads og så på et tegn. Trykker du på det samme tegn igen, skrabes det af.",
+        "notes": "Tag sivpennen for at skrive ned, hvilke tegn en plads stadig kan have. Fortryd tager dit sidste træk tilbage."
+      }
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": {
+            "value": "Et af tallene her kan ikke være rigtigt. Fjern det og kig igen.",
+            "note": "Noterne i dette felt har udelukket det tal, der hører til her. Ryd dem og start forfra med feltet."
+          },
+          "nakedSingle": "Feltets række, søjle og kammer har allerede brugt alle de andre tal.",
+          "hiddenSingle": {
+            "row": "{{token}} passer ikke i noget andet felt i rækken.",
+            "col": "{{token}} passer ikke i noget andet felt i søjlen.",
+            "box": "{{token}} passer ikke i noget andet felt i kammeret."
+          },
+          "pointing": {
+            "row": "Inde i det markerede kammer kan {{token}} kun stå i denne række.",
+            "col": "Inde i det markerede kammer kan {{token}} kun stå i denne søjle."
+          },
+          "claiming": {
+            "row": "Hen ad den markerede række passer {{token}} kun inde i dette ene kammer.",
+            "col": "Ned ad den markerede søjle passer {{token}} kun inde i dette ene kammer."
+          }
+        },
+        "action": {
+          "place": "Sæt {{token}} i det skraverede felt.",
+          "ruleOut_one": "Udeluk {{token}} i det skraverede felt.",
+          "ruleOut_other": "Udeluk {{token}} i de skraverede felter."
+        }
+      },
+      "papyrus": {
+        "reason": {
+          "mistake": {
+            "value": "Et af disse tegn kan ikke være rigtigt. Skrab det af og kig igen.",
+            "note": "Blyantsmærkerne på denne plads har udelukket det tegn, der hører til her. Visk dem ud og start forfra med pladsen."
+          },
+          "nakedSingle": "Pladsens række, søjle og felt har allerede brugt alle de andre tegn.",
+          "hiddenSingle": {
+            "row": "{{token}} passer ikke på nogen anden plads i rækken.",
+            "col": "{{token}} passer ikke på nogen anden plads i søjlen.",
+            "box": "{{token}} passer ikke på nogen anden plads i feltet."
+          },
+          "pointing": {
+            "row": "Inde i det markerede felt kan {{token}} kun stå i denne række.",
+            "col": "Inde i det markerede felt kan {{token}} kun stå i denne søjle."
+          },
+          "claiming": {
+            "row": "Hen ad den markerede række passer {{token}} kun inde i dette ene felt.",
+            "col": "Ned ad den markerede søjle passer {{token}} kun inde i dette ene felt."
+          }
+        },
+        "action": {
+          "place": "Skriv {{token}} på den skraverede plads.",
+          "ruleOut_one": "Udeluk {{token}} på den skraverede plads.",
+          "ruleOut_other": "Udeluk {{token}} på de skraverede pladser."
+        }
+      }
+    },
+    "goal": {
+      "default": "Hver række, hver søjle og hvert kammer har hvert af de seks tal præcis én gang.",
+      "papyrus": "Hver række, hver søjle og hvert felt har hvert af de seks tegn præcis én gang."
+    },
+    "name": {
+      "default": "Seks kamre",
+      "papyrus": "Skriverens register"
+    }
+  },
+  "crocodile": {
+    "name": "Krokodillegraven",
+    "goal": "Kom over graven til den anden bred.",
+    "rules": {
+      "want": "Hver krokodille vil have ét svar fra rækken af sten bag sig: det største eller det mindste.",
+      "mark": "Dens åbne gab viser hvilket, og det gør tegnet ved siden af også: > åbner sig mod det største svar, < mod det mindste.",
+      "bite": "Træder du på en anden sten, bider den: du mister liv og starter forfra ved den nære bred."
+    },
+    "hint": {
+      "biggest": "Denne krokodille vil have det største svar. Det er {{value}}.",
+      "smallest": "Denne krokodille vil have det mindste svar. Det er {{value}}."
+    }
+  },
+  "canisters": {
+    "name": {
+      "default": "Krukkerne",
+      "grain": "Kornmålene",
+      "oil": "Olie til lamperne",
+      "wine": "Købmandens kælder",
+      "natron": "Kanopekrukkerne",
+      "ink": "Skrivestuen"
+    },
+    "goal": {
+      "default_one": "Mål den mængde af, der bliver bedt om, og sig, hvilken krukke den er i.",
+      "default_other": "Mål hver mængde af, én ad gangen, og sig, hvilken krukke den er i, før du går videre.",
+      "grain_one": "Mål den mængde korn af, der bliver bedt om, og sig, hvilket mål den er i.",
+      "grain_other": "Mål hver mængde korn af, én ad gangen, og sig, hvilket mål den er i, før du går videre.",
+      "oil_one": "Mål den olie af, der bliver bedt om, og sig, hvilken krukke den er i.",
+      "oil_other": "Mål hver portion olie af, én ad gangen, og sig, hvilken krukke den er i, før du går videre.",
+      "wine_one": "Mål den vin af, der bliver bedt om, og sig, hvilken amfora den er i.",
+      "wine_other": "Mål hver portion vin af, én ad gangen, og sig, hvilken amfora den er i, før du går videre.",
+      "natron_one": "Mål det natron af, der bliver bedt om, og sig, hvilken krukke det er i.",
+      "natron_other": "Mål hver portion natron af, én ad gangen, og sig, hvilken krukke det er i, før du går videre.",
+      "ink_one": "Mål det blæk af, der bliver bedt om, og sig, hvilken krukke det er i.",
+      "ink_other": "Mål hver portion blæk af, én ad gangen, og sig, hvilken krukke det er i, før du går videre."
+    },
+    "rules": {
+      "method": {
+        "sums": "Hver mængde, du kan lave, er to tal på bænken lagt sammen eller trukket fra hinanden: en krukkes størrelse, hvad der er i den, eller den plads, der er tilbage.",
+        "backwards": "Så regn baglæns fra den mængde, der bliver bedt om — hvilke to tal giver den, og hvordan får du de to til at stå der på samme tid?"
+      },
+      "claim": "Når du har mængden, så tryk på “den her”. Peger du på den forkerte, koster det et træk.",
+      "legs": "Så den næste mængde, målt ud fra det, der er tilbage i krukkerne.",
+      "default": {
+        "moves": "Tryk på en krukke for at tage den op, og tryk så på en anden for at hælde over i den. Du stopper med at hælde, når den første er tom, eller den anden er fuld.",
+        "contents": "Det her er alt det vand, der er — én krukke starter fuld, og du kan hverken hælde noget ud eller hente mere.",
+        "levels": "På hver krukke står, hvor meget der er i den, og hvor meget der kan være i den, når den er fuld."
+      },
+      "grain": {
+        "moves": "Tryk på et mål for at løfte det, og tryk så på et andet for at hælde kornet i. Du stopper med at hælde, når det første er tomt, eller det andet er fyldt til kanten.",
+        "contents": "Det her er alt det korn, der er — ét mål starter fuldt, og du kan hverken feje noget væk eller hente mere fra kornkammeret.",
+        "levels": "På hvert mål står, hvor meget der er i det, og hvor meget der kan være i det, når det er fyldt til kanten."
+      },
+      "oil": {
+        "moves": "Tryk på en krukke for at løfte den, og tryk så på en anden for at hælde over i den. Du stopper med at hælde, når den første er tom, eller den anden er fuld.",
+        "contents": "Det her er al den olie, der er — én krukke starter fuld, og du kan hverken hælde noget ud eller hente mere.",
+        "levels": "På hver krukke står, hvor meget der er i den, og hvor meget der kan være i den, når den er fuld."
+      },
+      "wine": {
+        "moves": "Tryk på en amfora for at løfte den, og tryk så på en anden for at hælde over i den. Du stopper med at hælde, når den første er tom, eller den anden er fuld.",
+        "contents": "Det her er al den vin, der er — én amfora starter fuld, og du kan hverken spilde noget eller hente mere fra kælderen.",
+        "levels": "På hver amfora står, hvor meget der er i den, og hvor meget der kan være i den, når den er fuld."
+      },
+      "natron": {
+        "moves": "Tryk på en krukke for at løfte den, og tryk så på en anden for at hælde natronet i. Du stopper med at hælde, når den første er tom, eller den anden er fyldt op til låget.",
+        "contents": "Det her er alt det natron, der er — én krukke starter fuld, og du kan hverken feje noget væk eller hente mere.",
+        "levels": "På hver krukke står, hvor meget der er i den, og hvor meget der kan være i den, når den er fyldt op til låget."
+      },
+      "ink": {
+        "moves": "Tryk på en krukke for at løfte den, og tryk så på en anden for at hælde over i den. Du stopper med at hælde, når den første er tom, eller den anden er fuld.",
+        "contents": "Det her er alt det blæk, der er — én krukke starter fuld, og du kan hverken hælde noget ud eller lave nyt.",
+        "levels": "På hver krukke står, hvor meget der er i den, og hvor meget der kan være i den, når den er fuld."
+      }
+    },
+    "hint": {
+      "goal": {
+        "leftover": "Baglæns: {{amount}} er {{content}} minus {{space}} — en krukke med {{content}} i, hældt over i en krukke med plads til {{space}}.",
+        "full": "Baglæns: {{amount}} er en krukkes størrelse, og {{a}} og {{b}} lagt sammen giver præcis det.",
+        "sum": "Baglæns: {{amount}} er {{a}} og {{b}} lagt sammen."
+      },
+      "claim": "Der mangler kun én hældning. Find så ud af, hvilken krukke det er i.",
+      "stuck": "Herfra kan du ikke længere måle {{target}} af med de træk, du har tilbage. Tag en hældning tilbage, eller start forfra.",
+      "overBudget": "Du har ikke flere træk. Tag et tilbage, eller start forfra og find den kortere vej.",
+      "next": {
+        "leftover": "Regnestykket før det: {{amount}} — {{content}} hældt over i plads til {{space}}.",
+        "full": "Regnestykket før det: en krukke, der står fuld med {{amount}} — {{a}} og {{b}} lagt sammen.",
+        "sum": "Regnestykket før det: {{amount}} — {{a}} og {{b}} lagt sammen."
+      }
+    },
+    "movesLeft_one": "{{count}} træk tilbage",
+    "movesLeft_other": "{{count}} træk tilbage",
+    "legs": "{{done}} af {{total}} målt",
+    "wanted": "Mål af",
+    "claim": "den her",
+    "claimAria": "Sig, at {{capacity}} har mængden"
+  },
+  "procession": {
+    "name": {
+      "default": "Timerne i orden",
+      "funerary": "Dagen i Håndværkernes dal",
+      "cosmos": "Nattens rejse",
+      "water": "Oversvømmelsens dag",
+      "trade": "Dagen på kajen"
+    },
+    "goal": {
+      "default": "Skub alt, hvad der sker, hen til sin time, indtil alle mærkerne under dagen passer.",
+      "funerary": "Skub hver opgave hen til sin time, indtil alle mærkerne under dagen passer.",
+      "cosmos": "Skub hvert lys hen til sin time, indtil alle mærkerne under natten passer.",
+      "water": "Skub hver opgave hen til sin time, indtil alle mærkerne under dagen passer.",
+      "trade": "Skub hver opgave hen til sin time, indtil alle mærkerne under dagen passer."
+    },
+    "rules": {
+      "default": {
+        "lengths": "Hver række er én ting, der sker, og den varer lige så længe, som dens bjælke er bred. Hvornår den sker, er det, du skal finde ud af.",
+        "marks": "En linje under dagen bliver rød, så længe den ikke passer. Tryk på den for at sætte ring om de rækker, den handler om.",
+        "drag": "Træk en bjælke hen ad sin egen række. Den kommer aldrig uden for dagen."
+      }
+    },
+    "hint": {
+      "default": {
+        "chain": "Den rækkes plads ligger allerede fast, og denne hænger fast i den.",
+        "squeeze": "Der er kun så meget af dagen tilbage, og det her er alt, hvad der kan være der.",
+        "apart": "Omvendt kan det ikke være inden for dagen.",
+        "split": "Prøv det omvendt, så går noget andet i stykker.",
+        "move": "Træk bjælken med ring om hen på de skraverede streger."
+      }
+    },
+    "events": {
+      "default": {
+        "0": "bålet",
+        "1": "vandbæringen",
+        "2": "bagningen",
+        "3": "bådturen",
+        "4": "okse-drivningen",
+        "5": "nattevagten"
+      },
+      "funerary": {
+        "0": "pudsningen",
+        "1": "tegningen af gitteret",
+        "2": "udhugningen",
+        "3": "malingen",
+        "4": "forgyldningen",
+        "5": "isætningen af døren"
+      },
+      "cosmos": {
+        "0": "solens rejse",
+        "1": "stjernens opgang",
+        "2": "månens vagt",
+        "3": "den åbne himmel",
+        "4": "daggryet",
+        "5": "det skiftende år"
+      },
+      "water": {
+        "0": "oversvømmelsen",
+        "1": "gravningen af kanalen",
+        "2": "fyldningen af bassinet",
+        "3": "vandingen af marken",
+        "4": "færgningen",
+        "5": "høsten"
+      },
+      "trade": {
+        "0": "sorteringen af varerne",
+        "1": "brødsalget",
+        "2": "ølsalget",
+        "3": "færgningen",
+        "4": "slæbet",
+        "5": "optællingen"
+      }
+    },
+    "marks": {
+      "default": {
+        "pin": "{{a}} starter i time {{tick}}.",
+        "handoff": "{{a}} starter, lige når {{b}} er færdig.",
+        "link_one": "{{a}} starter {{count}} time efter, at {{b}} er færdig.",
+        "link_other": "{{a}} starter {{count}} timer efter, at {{b}} er færdig.",
+        "before": "{{a}} er færdig, før {{b}} starter.",
+        "apart": "{{a}} og {{b}} sker aldrig på samme tid.",
+        "together": "{{a}} og {{b}} sker på samme tid et stykke tid.",
+        "span_one": "Fra første start til sidste slut er der {{count}} time.",
+        "span_other": "Fra første start til sidste slut er der {{count}} timer."
+      }
+    },
+    "door": {
+      "title": "Optogsdøren",
+      "hint": "Hver flise, du træder på, sætter sin opgave fri. Sæt dagen i orden, og gå så på fliserne i den rækkefølge.",
+      "read": "Dagen er læst. Gå på fliserne i denne rækkefølge, fra den første.",
+      "hintButton": "Hjælp"
+    }
+  },
+  "story": {
+    "invitation": "Snak",
+    "log": {
+      "empty": "Intet endnu. Fez får nok masser at sige."
+    },
+    "speaker": {
+      "fez": "Fez",
+      "explorer": "Dig",
+      "ipi": "Ipi",
+      "henut": "Henut",
+      "priest": "Præsten",
+      "pharaoh": "Faraoen",
+      "voice": "En stemme"
+    },
+    "wall": {
+      "wrong": "Nogen har hugget det tredje tegn forkert. Det har været forkert i tre tusind år.",
+      "fixed": "Nu er det hendes navn igen.",
+      "pick": "Sæt det rigtige tegn på plads.",
+      "cannot": "Du kender ikke det tegn, der hører til her. Ikke endnu."
+    },
+    "sphinx": {
+      "wrong": "Den samme skrift som udenfor, men her nåede sandet aldrig hen. To tegn er stadig skarpt hugget, og der er et tomt hul, hvor det tredje stod.",
+      "fixed": "Så er det hele der.",
+      "pick": "Sæt det tegn, du har med, ind i det tomme hul.",
+      "cannot": "To tegn, du kender, og et hul, du ikke kan fylde. Ikke endnu.",
+      "gap": "Det manglende tegn"
+    }
+  },
+  "lightbeamSwitch": {
+    "name": "Det drejende lys",
+    "invitation": "Drej spejlene",
+    "goal": "Lyset hviler i en helligdom, og udgangen under den står åben.",
+    "rules": {
+      "shrines": "Én lysskive, og en helligdom over hver udgang fra dette kryds. Spejlene på gulvet kan føre lyset hen til hvilken som helst af dem.",
+      "doors": "Den udgang, lyset når, står åben, og de andre er lukkede. Én vej for lyset, én vej videre.",
+      "returning": "Du mister ikke noget ved at vælge. Gå ind igen, når du vil, og send lyset en anden vej — så åbner den, og denne her lukker.",
+      "tap": "Tryk på et spejl for at dreje det. Trykker du igen, drejer det tilbage."
+    },
+    "doorOpen": "{{way}} udgang: åben",
+    "doorShut": "{{way}} udgang: lukket",
+    "way": {
+      "n": "Nordlige",
+      "e": "Østlige",
+      "s": "Sydlige",
+      "w": "Vestlige"
+    }
+  },
+  "handle": {
+    "name": "Håndtaget",
+    "invitation": "Træk i håndtaget",
+    "goal": "Håndtaget står enten til den ene eller den anden side. Det, den ene side åbner, lukker den anden.",
+    "left": "Træk det til venstre",
+    "right": "Træk det til højre"
+  },
+  "torch": {
+    "name": "Faklen",
+    "invitation": "Tænd faklen",
+    "goal": "En fakkel, der ikke er tændt. Når den først brænder, kan den ikke slukkes igen.",
+    "lit": "Faklen brænder."
+  },
+  "gateFace": {
+    "title": "En dør, der venter",
+    "hint": "Hvert tegn skal brænde, før denne dør vil åbne sig.",
+    "lit": "{{owner}}: tændt",
+    "unlit": "{{owner}}: ikke endnu",
+    "owner": {
+      "torch": "Fakkel",
+      "handle": "Håndtag",
+      "key": "Nøgle",
+      "web": "Et tegn fra sandet",
+      "plateStone": "En sten på en plade",
+      "plateEmpty": "En tom plade",
+      "other": "Mekanisme"
+    },
+    "orderHint": "Gå på fliserne i denne rækkefølge.",
+    "reset": "Start forfra",
+    "spoiled": "Det gik galt: der blev trådt på en flise i den forkerte rækkefølge.",
+    "tile": {
+      "unwalked": "Trin {{step}}: ikke trådt på endnu",
+      "inOrder": "Trin {{step}}: trådt på i rigtig rækkefølge",
+      "outOfOrder": "Trin {{step}}: trådt på i forkert rækkefølge"
+    }
+  },
+  "devLockEditor": {
+    "syntax": "Syntaks",
+    "example": "Eksempel",
+    "useExample": "Brug eksempel",
+    "title": "Låseeditor",
+    "notation": "Låsenotation",
+    "checks": "Kontroller",
+    "drawing": "Tegning",
+    "carveAndPlay": "Hug ud og spil",
+    "copyLink": "Kopiér link",
+    "copied": "Link kopieret",
+    "failed": "Kunne ikke kopiere; linket står i adresselinjen",
+    "backToEditor": "← Editor",
+    "close": "Luk",
+    "open": "Låseeditor",
+    "modeLock": "Lås",
+    "modeWeb": "Net",
+    "webNotation": "Netnotation",
+    "openWeb": "Åbn et net",
+    "checking": "Kontrollerer…",
+    "checkedIn": "kontrolleret på {{ms}} ms",
+    "worldCarved": "Troldmand-etager hugget ud på {{ms}} ms, én gang",
+    "simulation": "Træk",
+    "noSimulation": "Intet at spille igennem, før hvert sted findes i verden.",
+    "summary": "Oversigt",
+    "stillBuried": "Stadig {{percent}} % begravet",
+    "nothingBuried": "Intet begravet",
+    "finishes": "bliver færdig",
+    "stopsAt": "stopper ved {{pct}} %",
+    "notOpenYet": "ikke åben endnu",
+    "pullAll": "Træk alt inden for rækkevidde",
+    "reset": "Forfra",
+    "progress": "{{reachable}} inden for rækkevidde · {{pulled}} af {{total}} taget",
+    "allTaken": "Alt er trukket og taget.",
+    "potFront": "{{pulled}} af {{total}} trukket · front ved {{pct}} %",
+    "potOpen": "{{pulled}} af {{total}} trukket · åben",
+    "keys": "Nøgler",
+    "keysNote": "hver åbner et segl",
+    "log": "Hvad der skete",
+    "logEmpty": "Intet trukket endnu.",
+    "logPull": "trækker {{name}} i {{at}}",
+    "logTake": "tager {{name}} i {{at}}",
+    "logFront": "{{pot}} front til {{pct}} %",
+    "logPotOpen": "{{pot}} åben",
+    "logSeal": "segl i {{at}} åbent",
+    "logNew": "nyt: {{names}}",
+    "pullPin": "træk håndtag {{name}}",
+    "takePin": "tag nøgle {{name}}",
+    "legendCleared": "fri",
+    "legendBuried": "begravet",
+    "legendSeal": "segl",
+    "legendPins": "● håndtag · ■ nøgle · lille = sidegang"
+  },
+  "camp": {
+    "title": "Lejr",
+    "continue": {
+      "heading": "Nuværende ekspedition",
+      "setOff": "Af sted",
+      "pyramid": "Pyramide {{level}} af {{count}} · {{tier}}",
+      "tomb": "Grav · {{tier}}",
+      "empty": "Alt er åbent på dit kort"
+    },
+    "hint_one": "{{count}} gammel rejse har noget nyt at opdage",
+    "hint_other": "{{count}} gamle rejser har noget nyt at opdage",
+    "comingHome": {
+      "title": "Tilbage i lejren",
+      "haulTitle": "Det, du fandt på denne tur",
+      "new": "NY",
+      "unpack": "Pak ud",
+      "toCamp": "Til lejren"
+    },
+    "chapter": {
+      "subtitle": "Nyt kapitel",
+      "title": "En ny pyramide dukker op",
+      "body": "{{tier}}-rejserne er åbne. Pust ud i lejren, og tag af sted, når du er klar.",
+      "journeyNote": "Første {{tier}}-rejse",
+      "later": "Senere"
+    },
+    "close": "Luk",
+    "entrance": {
+      "collection": "Samling",
+      "mosaic": "Mosaik",
+      "journeys": "Alle rejser",
+      "detectors": "Detektorer"
+    },
+    "mapTable": {
+      "title": "Kortbord",
+      "journeys": "Rejser"
+    }
+  },
+  "home": {
+    "haul": {
+      "times": "×{{count}}"
+    }
+  },
+  "journeys": {
+    "tierNeed": "Find denne skat",
+    "tierProgress": "{{done}} af {{total}} klaret",
+    "tierLockedName": "{{tier}}-rejser",
+    "toggleTier": "Vis eller skjul {{tier}}-rejserne",
+    "now": "NU",
+    "newDot": "Noget nyt at opdage",
+    "noteCurrentPyramid": "I gang · pyramide {{level}} af {{count}}",
+    "noteCurrentTomb": "I gang · i graven",
+    "noteFinished": "Klaret",
+    "noteFinishedNews": "Klaret · noget nyt at opdage",
+    "noteOpen": "Ikke besøgt endnu",
+    "noteResumePyramid": "Startet før · pyramide {{level}} af {{count}}",
+    "noteResumeTomb": "Startet før · i graven",
+    "needProgress": "{{unit}}: {{found}} af {{required}}",
+    "showStops": "Vis stederne i {{name}}",
+    "stopPyramid": "Pyramide",
+    "stopTomb": "Sted"
+  },
+  "newVersion": {
+    "title": "En ny version!",
+    "name": "Spillet er blevet meget anderledes",
+    "body": "Derfor starter din rejse forfra. Nye grave, nye fund og en lejr, du kan bygge, venter på dig."
+  },
+  "devPrefabPreview": {
+    "firstDoor": "Til den første dør",
+    "stop": "Til stoppestedet",
+    "secondDoor": "Til den anden dør",
+    "doorsInUse_one": "{{count}} dør i brug",
+    "doorsInUse_other": "{{count}} døre i brug",
+    "walled": "{{count}} muret til"
+  },
+  "devRoomEditor": {
+    "title": "Rumeditor",
+    "open": "Rumeditor",
+    "close": "Luk",
+    "tier": "Niveau",
+    "catalogue": "Åbn et rum",
+    "notation": "Rumnotation",
+    "copyLink": "Kopiér link",
+    "copyText": "Kopiér tekst",
+    "copied": "Kopieret",
+    "failed": "Kunne ikke kopiere til udklipsholderen",
+    "palette": "Palet",
+    "unpainted": "ikke malet endnu",
+    "layout": "Indretning",
+    "mirrored": "(spejlvendt)",
+    "fill_one": "Udfyldning ({{count}} valg)",
+    "fill_other": "Udfyldning ({{count}} valg)",
+    "fromDoor": "Gå fra",
+    "toDoor": "Gå til",
+    "automatic": "Automatisk",
+    "direction": {
+      "n": "Nordlig dør",
+      "e": "Østlig dør",
+      "s": "Sydlig dør",
+      "w": "Vestlig dør"
+    },
+    "checks": "Kontroller",
+    "sound": "Rummet består kontrollerne",
+    "tierDisagrees": "Hovedet siger niveau {{header}}, men her er det tegnet i {{picked}}",
+    "undo": "Fortryd",
+    "drawing": "Tegning",
+    "tool": {
+      "select": "Vælg",
+      "wall": "Mur",
+      "floor": "Gulv",
+      "door": "Dørplads",
+      "stop": "Stoppested",
+      "chest": "Kiste",
+      "portal": "Portal",
+      "mechanism": "Mekanisme",
+      "erase": "Slet",
+      "copy": "Tegn {{letter}}"
+    },
+    "againstWall": "Ting, der bliver sat ned, står op ad nordmuren",
+    "dropHint": "Træk et paletfelt hen på et felt; det fylder sin egen størrelse",
+    "newLayout": "Navn på ny indretning",
+    "addLayout": "Kopiér som indretning",
+    "inspector": {
+      "title": "Plads {{letter}}",
+      "optional": "Valgfri",
+      "kinds": "Slags",
+      "counted": "Fyld kun nogle",
+      "take": "Tag",
+      "of": "af",
+      "per": "pr.",
+      "perNone": "hver for sig",
+      "drawAnother": "Tegn en til",
+      "close": "Luk"
+    },
+    "refused": {
+      "notFree": "Ikke på frit gulv inde i rummet",
+      "wallRow": "En murplads står på første række inden for nordmuren",
+      "northWall": "En murting hænger på nordmuren",
+      "floorOnRing": "Yderkanten kan kun have mure og dørpladser",
+      "doorInside": "En dørplads står på yderkanten",
+      "keepStop": "Stoppestedet bliver: sæt det et andet sted for at flytte det",
+      "noLetter": "Alle bogstaver er brugt",
+      "layoutName": "Giv indretningen et navn, som ingen anden indretning har",
+      "notation": "Notationen afviser det: {{message}}"
+    },
+    "layer": {
+      "wall": "op ad muren",
+      "floor": "gulv",
+      "ground": "jord",
+      "wallItem": "murting"
+    },
+    "cell": "Felt {{row}},{{col}}: {{what}}",
+    "cellWhat": {
+      "wall": "mur",
+      "floor": "frit gulv",
+      "door": "dørplads",
+      "place": "{{letter}}, {{kinds}}"
+    },
+    "rewrites": "Når du tegner, bliver teksten skrevet om: alle kommentarer flyttes til toppen"
+  }
+}

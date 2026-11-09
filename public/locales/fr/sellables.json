@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Pierre",
+    "bronze": "Bronze",
+    "silver": "Argent",
+    "gold": "Or",
+    "divine": "Divin"
+  },
+  "sell_stone_1": {
+    "name": "Tesson ébréché",
+    "description": "Un morceau de poterie cassée où un scribe s’entraînait à écrire. Les lettres sont trop effacées pour être lues."
+  },
+  "sell_stone_2": {
+    "name": "Jarre fêlée",
+    "description": "Une jarre pour le grain ou la bière, fendue sur un côté par le poids des siècles."
+  },
+  "sell_stone_3": {
+    "name": "Sandale usée",
+    "description": "Tressée en papyrus. La semelle est toute fine : un ouvrier oublié a marché avec, jour après jour."
+  },
+  "sell_stone_4": {
+    "name": "Bout de lin délavé",
+    "description": "Une bande de lin déchirée, comme celles qu’on enroulait autour des momies. Ou pour réparer une voile."
+  },
+  "sell_stone_5": {
+    "name": "Lame de silex cassée",
+    "description": "Un couteau en silex, cassé au bout. Pas cher à faire, encore moins cher à remplacer."
+  },
+  "sell_bronze_1": {
+    "name": "Amulette tordue",
+    "description": "Un porte-bonheur bon marché, coulé de travers et jamais redressé."
+  },
+  "sell_bronze_2": {
+    "name": "Miroir rouillé",
+    "description": "Avant, il brillait assez pour qu’on s’y voie. Maintenant, il est tout vert et trouble."
+  },
+  "sell_bronze_3": {
+    "name": "Hameçon terne",
+    "description": "L’outil d’un pêcheur, tombé dans le Nil bien avant qu’on ferme le tombeau."
+  },
+  "sell_bronze_4": {
+    "name": "Petite clochette",
+    "description": "Faite pour pendre à une porte de temple ou à la cheville d’une danseuse. Elle sonne faux maintenant."
+  },
+  "sell_bronze_5": {
+    "name": "Bague en bronze terne",
+    "description": "Un simple anneau, pour un doigt qui est retourné en poussière depuis longtemps."
+  },
+  "sell_silver_1": {
+    "name": "Ânkh en argent terni",
+    "description": "Un symbole de la vie, devenu terne après des siècles sous terre."
+  },
+  "sell_silver_2": {
+    "name": "Bâtonnet à khôl",
+    "description": "Une fine tige en argent pour se maquiller les yeux chez les riches. Le khôl a disparu depuis longtemps."
+  },
+  "sell_silver_3": {
+    "name": "Bol en argent cabossé",
+    "description": "Un petit bol d’offrande, écrasé d’un côté le jour où le plafond s’est effondré."
+  },
+  "sell_silver_4": {
+    "name": "Épingle à cheveux",
+    "description": "Toute simple, en argent. Elle tenait les cheveux de quelqu’un dont on a oublié le nom."
+  },
+  "sell_silver_5": {
+    "name": "Bracelet en argent usé",
+    "description": "Un fin bracelet au fermoir cassé. Pas assez beau pour un noble, trop beau pour un ouvrier."
+  },
+  "sell_gold_1": {
+    "name": "Petite perle en or",
+    "description": "Une perle d’un collier funéraire, éparpillé il y a très longtemps."
+  },
+  "sell_gold_2": {
+    "name": "Morceau de feuille d’or",
+    "description": "Un éclat de feuille d’or, arraché au visage d’une statue par des pilleurs, des siècles avant toi."
+  },
+  "sell_gold_3": {
+    "name": "Fine boucle d’oreille",
+    "description": "L’or a été martelé très fin, pour qu’un noble en ait plus pour son argent."
+  },
+  "sell_gold_4": {
+    "name": "Éclat doré",
+    "description": "Un morceau de plâtre doré. Il y a encore de vraies paillettes d’or dessus."
+  },
+  "sell_gold_5": {
+    "name": "Chevalière ébréchée",
+    "description": "Une bague à sceau, si usée qu’on ne lit plus rien. Le nom qu’elle portait est oublié."
+  },
+  "sell_divine_1": {
+    "name": "Scarabée en lapis pâli",
+    "description": "Taillé dans du lapis-lazuli, venu de très loin et très cher, pour la renaissance d’un pharaon. Sa couleur a pâli avec les siècles."
+  },
+  "sell_divine_2": {
+    "name": "Œil en cornaline",
+    "description": "Un œil protecteur en cornaline rouge sang, pour chasser le malheur dans l’au-delà."
+  },
+  "sell_divine_3": {
+    "name": "Éclat de turquoise",
+    "description": "Un seul carreau d’une mosaïque brisée. Il faisait partie du portrait d’un dieu sur un mur de temple."
+  },
+  "sell_divine_4": {
+    "name": "Éclat de vase canope",
+    "description": "Un morceau d’un vase en albâtre qui gardait les organes d’un pharaon. Une belle pierre pour un drôle de travail."
+  },
+  "sell_divine_5": {
+    "name": "Lame d’obsidienne",
+    "description": "Du verre de volcan, poli en lame pour les cérémonies. Jamais pour la guerre, seulement pour le temple."
+  }
+}

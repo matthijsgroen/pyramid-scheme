@@ -1,0 +1,2103 @@
+{
+  "language": "Gaeilge",
+  "saveUnreadable": {
+    "title": "Ní féidir do dhul chun cinn a lódáil",
+    "body": "Ní thabharfaidh an brabhsálaí do chluiche sábháilte dúinn faoi láthair. Níl do shábháil caillte: athlódáil an leathanach le triail eile a bhaint as.",
+    "banner": "Níl do dhul chun cinn á shábháil. Tapáil le hathlódáil.",
+    "reload": "Athlódáil",
+    "continue": "Lean ort gan sábháil",
+    "reset": "Tosaigh as an nua (scrios an tsábháil)",
+    "confirmReset": "Scriosfaidh sé seo do shábháil ar fad, agus ní féidir é a chur ar ceal. An dtosóidh tú as an nua?",
+    "confirmResetYes": "Sea, scrios mo shábháil",
+    "confirmResetNo": "Ní hea, téigh ar ais"
+  },
+  "difficulty": {
+    "starter": "Tosaitheoir",
+    "junior": "Sóisear",
+    "expert": "Saineolaí",
+    "master": "Máistir",
+    "wizard": "Draoi"
+  },
+  "journeyLength": {
+    "short": "Gearr",
+    "medium": "Meánach",
+    "long": "Fada"
+  },
+  "time": {
+    "morning": "Maidin",
+    "afternoon": "Iarnóin",
+    "evening": "Tráthnóna",
+    "night": "Oíche"
+  },
+  "tomb": {},
+  "ui": {
+    "level": "Leibhéal",
+    "symbols": "siombailí",
+    "journey": "Turas",
+    "tableau": "Tablóid",
+    "difficulty": "Deacracht",
+    "length": "Fad",
+    "time": "Am",
+    "requiredPrestige": "Leibhéal gradaim atá ag teastáil",
+    "rewards": "Duaiseanna",
+    "coins": "Boinn",
+    "pieces": "Píosaí",
+    "description": "Cur síos",
+    "expedition": "Turas",
+    "expeditionCompleted": "Turas críochnaithe!",
+    "goBackToBase": "Ar ais go dtí an campa",
+    "backArrow": "←",
+    "back": "← Siar",
+    "floor": "Urlár {{number}}",
+    "enterSite": "Isteach leat",
+    "prompt": {
+      "here": "Fiosraigh",
+      "stairs": "Téigh ar an staighre",
+      "exit": "Fág an áit seo",
+      "zipline": "Sleamhnaigh síos an rópa — níl aon bhealach ar ais",
+      "oneWay": "Téigh trasna — níl aon bhealach ar ais",
+      "liftStone": "Tóg an chloch",
+      "setStone": "Cuir an chloch ar an bpláta",
+      "postStone": "Sáigh an chloch isteach",
+      "takeStone": "Tóg an chloch leat",
+      "squeeze": "Brúigh tríd",
+      "replay": "Imir arís"
+    },
+    "blocked": {
+      "carrying": "Ní féidir dul thart le cloch"
+    },
+    "backToMap": "Ar ais go dtí an léarscáil",
+    "continueExploration": "Lean ort ag fiosrú na bpirimidí.",
+    "startExpedition": "Tosaigh an turas",
+    "webBuriedPercent": "{{percent}}% fós faoin ngaineamh",
+    "interruptExpedition": "Stop an turas",
+    "confirmInterruptExpedition": "An bhfuil tú cinnte gur mian leat an turas seo a stopadh? Coinneofar do dhul chun cinn ar an turas, ach caillfear do dhul chun cinn sa leibhéal!",
+    "cancel": "Cealaigh",
+    "settings": "Socruithe",
+    "language": "Teanga",
+    "close": "Dún",
+    "done": "Déanta",
+    "clearGameData": "Glan sonraí an chluiche",
+    "confirmClearGameData": "Scriosfaidh sé seo do dhul chun cinn ar fad, gach rud atá agat agus gach pirimid a d’fhiosraigh tú. Ní féidir é seo a chur ar ceal.",
+    "disableTutorials": "Múch na ceachtanna",
+    "treasureTomb": "Áit an Stóir",
+    "requiresMapPieces": "Teastaíonn píosaí léarscáile",
+    "mapPieces": "Píosaí Léarscáile",
+    "completeExpeditionsToUnlock": "Críochnaigh turais lena oscailt",
+    "availableSymbols": "Siombailí ar fáil:",
+    "fragmentsNeeded": "{{found}}/{{required}} ag teastáil",
+    "howToPlay": "Conas imirt",
+    "puzzleComplete": "Is é an freagra:",
+    "puzzleCompleted": "Puzal réitithe",
+    "trapBlocked": "Níl go leor sláinte agat leis an ngaiste seo a thriail",
+    "spiritsRejectCode": "Ní ghlacann na spioraid leis an gcód seo",
+    "sacredSealBroken": "Tá an séala naofa briste",
+    "newExpeditionUnlocked": "Tá turas nua oscailte anois",
+    "newTombUnlocked": "Tá tuama nua oscailte anois",
+    "tierComingSoonTitle": "Tá turais {{tier}} ar a mbealach",
+    "tierComingSoon": "Tá an eochair agat, ach tá na pirimidí {{tier}} fós á dtógáil. Tiocfaidh siad i nuashonrú níos déanaí — go dtí sin, osclaíonn d’eochair níos mó de na pirimidí atá ar eolas agat cheana.",
+    "answerNow": "Is é an freagra: ",
+    "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "resetPuzzle": "Atosaigh",
+    "hint": "Leid",
+    "undo": "Cealaigh",
+    "erase": "Glan",
+    "notes": "Nótaí",
+    "solvedUnaided": "Réitithe gan leid ar bith",
+    "solvedWithHints_one": "Réitithe le {{count}} leid",
+    "solvedWithHints_two": "Réitithe le {{count}} leid",
+    "solvedWithHints_few": "Réitithe le {{count}} leid",
+    "solvedWithHints_many": "Réitithe le {{count}} leid",
+    "solvedWithHints_other": "Réitithe le {{count}} leid",
+    "tapToContinue": "Tapáil le leanúint ort",
+    "goal": "Sprioc"
+  },
+  "trap": {
+    "warning": "⚠ Pasáiste le Gaiste",
+    "canAttempt": "Is féidir leat triail a bhaint as dul tríd.",
+    "tooWeak": "Tá tú an-lag — má theipeann ort, ní bheidh faic fágtha agat.",
+    "attempt": "Triail an gaiste",
+    "turnAround": "Cas timpeall",
+    "rested": "Scíth cois tine — tá tú ar fónamh arís"
+  },
+  "gate": {
+    "title": "🔒 Geata faoi Ghlas",
+    "locked": "Níl an eochair cheart agat fós.",
+    "markedWith": "Tá comhartha gearrtha sa doras:",
+    "unlocked": "Tá an eochair agat.",
+    "pass": "Téigh tríd",
+    "turnAround": "Cas timpeall",
+    "wardDescription": {
+      "starter": "Tá séala ceannaí ag dúnadh an phasáiste seo — ní osclóidh ach a eochair chosanta é.",
+      "junior": "Tá suaitheantas uasail ag cur an bhealaigh seo faoi ghlas — ní ardóidh ach a eochair chosanta é.",
+      "expert": "Tá cosaint teampaill ard-sagairt ar an doras seo — caithfidh a eochair naofa é a oscailt.",
+      "master": "Tá séala ríoga faró ag ceangal an phasáiste seo — ní bhrisfidh ach eochair an rí é.",
+      "wizard": "Tá cosaint na ndéithe ar an ngeata seo — ní rachaidh aon rud thairis ach a eochair dhiaga."
+    },
+    "needsKey": "Tá an doras marcáilte d’eochair amháin:",
+    "lockedColor": "Níor aimsigh tú an eochair sin ar an urlár seo fós."
+  },
+  "chest": {
+    "tapToOpen": "Tapáil lena oscailt",
+    "money_one": "{{count}} bhonn",
+    "money_two": "{{count}} bhonn",
+    "money_few": "{{count}} bhonn",
+    "money_many": "{{count}} mbonn",
+    "money_other": "{{count}} bonn",
+    "mapPiece": "Píosa Léarscáile",
+    "mapPieceDescription": "Blúire briosc de léarscáil go háit éigin a bhfuil dearmad déanta uirthi le fada. Is mór an trua nach bhfuil sí in aice le bheith iomlán...",
+    "mapPieceProgress": "{{found}} as {{required}} píosa léarscáile bailithe",
+    "mapPieceComplete": "Tá an léarscáil iomlán — téann sí go {{name}}.",
+    "hieroglyphFragment": "Blúire Iairiglife",
+    "fragmentProgress": "{{found}} as {{required}} blúire aimsithe",
+    "tombKey": "Eochair an Tuama",
+    "sandLever": "Luamhán Gainimh",
+    "sandLeverDescription": "Tarraingíonn tú é agus fanann sé thíos. Áit éigin i bhfad uait, tá gaineamh ag sileadh ar shiúl.",
+    "webKey": "Eochair Shéalaithe",
+    "webKeyDescription": "Tá marc ar a ceann a chonaic tú ar dhoras séalaithe in áit eile.",
+    "hieroglyphs": "Iairiglifí Ársa",
+    "hieroglyphsDescription": "Siombailí naofa greanta ar bhallaí an tseomra seo. Cuireann a mbrí leis an eolas atá agat ar an seansaol.",
+    "mosaicPiece": "Píosa Mósáice",
+    "mosaicPieceDescription": "Tíle gloine ag lonrú, blúire amháin de mhósáic mhór. Cuir in aice leis na cinn eile é agus tiocfaidh an pictiúr folaithe chun solais de réir a chéile.",
+    "waterskin": "Craiceann Uisce",
+    "waterskinDescription": "Uisce fionnuar. Ólann tú ar an bpointe é agus mothaíonn tú do ghortuithe ag maolú."
+  },
+  "loot": {
+    "youFound": "D’aimsigh tú",
+    "expeditionReward": "Duais bhreise as an turas a chríochnú",
+    "clickToContinue": "Tapáil áit ar bith le leanúint ort"
+  },
+  "money": {
+    "label": "Boinn"
+  },
+  "shop": {
+    "title": "Stainnín Fez",
+    "invitation": "Féach ar an stainnín",
+    "buy": "Ceannaigh",
+    "sell": "Díol",
+    "soldOut": "Díolta amach",
+    "dismiss": "Imigh",
+    "rareItems": "Rudaí Annamha",
+    "sellSection": "Mionrudaí le díol",
+    "haul": {
+      "coins_one": "+{{count}} bhonn",
+      "coins_two": "+{{count}} bhonn",
+      "coins_few": "+{{count}} bhonn",
+      "coins_many": "+{{count}} mbonn",
+      "coins_other": "+{{count}} bonn",
+      "note": "Boinn scaoilte ar an mbealach"
+    }
+  },
+  "purchases": {
+    "donkey": {
+      "name": "Asal",
+      "need": "Teastaíonn asal uait",
+      "opens": "Iompraíonn sé do threalamh. Leis, is féidir leat imeacht ar na turais Saineolaí."
+    },
+    "cart": {
+      "name": "Cairt",
+      "need": "Teastaíonn cairt uait",
+      "opens": "Luíonn an campa ar fad uirthi. Léi, is féidir leat imeacht ar na turais Máistir."
+    },
+    "camel": {
+      "name": "Camall",
+      "need": "Teastaíonn camall uait",
+      "opens": "Siúlann sé laethanta gan uisce. Tugann sé chuig an Sanctóir Istigh thú."
+    },
+    "secondDonkey": {
+      "name": "Dara hasal",
+      "need": "Teastaíonn dara hasal uait",
+      "opens": "Níos mó fós le hiompar. Leis, is féidir leat imeacht ar na turais Draoi."
+    },
+    "secondCamel": {
+      "name": "Dara camall",
+      "need": "Teastaíonn dara camall uait",
+      "opens": "Iompraíonn dhá chamall go leor uisce do Halla Osiris."
+    },
+    "sturdyCart": {
+      "name": "Cairt níos láidre",
+      "need": "Teastaíonn cairt níos láidre uait",
+      "opens": "Ní bhrisfidh sí, fiú ar an mbealach go Ríocht na bhFórsaí Cosmacha."
+    },
+    "caravanBanner": {
+      "name": "Meirge carbháin",
+      "opens": "Ní osclaíonn sé faic. Le haghaidh spraoi amháin."
+    },
+    "hint": "Díolann Fez ceann anseo: {{place}}",
+    "devGrant": "Ceannaigh gach ainmhí"
+  },
+  "level": {
+    "completed": "Leibhéal críochnaithe!"
+  },
+  "mosaic": {
+    "place_one": "Cuir {{count}} phíosa isteach",
+    "place_two": "Cuir {{count}} phíosa isteach",
+    "place_few": "Cuir {{count}} phíosa isteach",
+    "place_many": "Cuir {{count}} bpíosa isteach",
+    "place_other": "Cuir {{count}} píosa isteach",
+    "placing": "Á gcur isteach…",
+    "panel": {
+      "starter": "An Garda ag an Doras",
+      "junior": "An Chéad Cheacht",
+      "expert": "An Ghrian a Ligean Isteach",
+      "master": "An Rí Glas",
+      "wizard": "An Cleite agus an Croí"
+    },
+    "entrance": {
+      "title": "Mósáic",
+      "label": "Mósáic {{found}}/{{total}}"
+    },
+    "haul": {
+      "pieces_one": "{{count}} phíosa mósáice",
+      "pieces_two": "{{count}} phíosa mósáice",
+      "pieces_few": "{{count}} phíosa mósáice",
+      "pieces_many": "{{count}} bpíosa mósáice",
+      "pieces_other": "{{count}} píosa mósáice",
+      "note": "Don fhuinneog ghloine dhaite"
+    }
+  },
+  "collection": {
+    "tabs": {
+      "treasures": "Seoda",
+      "hieroglyphs": "Iairiglifí",
+      "stories": "Scéalta",
+      "junk": "Mionrudaí"
+    },
+    "tabsLabel": "Na rudaí atá bailithe agat",
+    "tabNew_one": "{{label}} · {{count}} nua",
+    "tabNew_two": "{{label}} · {{count}} nua",
+    "tabNew_few": "{{label}} · {{count}} nua",
+    "tabNew_many": "{{label}} · {{count}} nua",
+    "tabNew_other": "{{label}} · {{count}} nua",
+    "empty": "Tá do chófra folamh fós",
+    "newLabel": "NUA",
+    "clickForDetails": "Tapáil tíl le tuilleadh eolais",
+    "categories": {
+      "deities": "🏺 Déithe",
+      "professions": "⚱️ Gairmeacha",
+      "animals": "🐾 Ainmhithe",
+      "artifacts": "💎 Déantáin",
+      "treasures": "💰 Seoda",
+      "junk": "🔷 Mionrudaí",
+      "signs": "✍️ Comharthaí"
+    },
+    "treasureCategories": {
+      "merchantCache": "💰 Stór an Cheannaí",
+      "nobleVault": "👑 Cuas an Uasail",
+      "templeSecrets": "🏛️ Rúin an Teampaill",
+      "ancientRelics": "🏺 Taisí Ársa",
+      "mythicalArtifacts": "✨ Déantáin Fhinscéalacha"
+    }
+  },
+  "detector": {
+    "compassTitle": "Compás",
+    "corridorTitle": "Aimsitheoir pasáistí",
+    "pickTarget": "Roghnaigh iairiglif ag bord na léarscáile sa champa",
+    "allCollected": "Níl píosa ar bith fós ar fáil i bpirimid a d’fhiosraigh tú cheana",
+    "more": "+{{count}} eile",
+    "corridorHere": "Tá pasáiste folaithe díreach anseo",
+    "revealCorridor": "Oscail é",
+    "corridorNearby": "Tá pasáiste folaithe in aice láimhe",
+    "corridorOnFloor": "Tá pasáiste folaithe ag fanacht ar an urlár seo",
+    "lookingFor": "Ag lorg {{symbol}}",
+    "access": {
+      "open": "Níl aon rud ar eolas ag cur bac air seo",
+      "unknown": "B’fhéidir nach féidir é a shroicheadh fós — tá sé i dtuama nó ar díol"
+    },
+    "corridorNoneNearby": "Níl pasáiste folaithe in aice láimhe",
+    "corridorNoneOnFloor": "Níl pasáiste folaithe ar an urlár seo",
+    "corridorOtherFloor": "Tá pasáiste folaithe ag fanacht ar urlár eile",
+    "corridorNoneInPyramid": "Níl pasáiste folaithe ar urlár eile",
+    "title": "Brathadóir",
+    "band": {
+      "none": "Faic aimsithe",
+      "pyramid": "Rud éigin sa phirimid seo",
+      "floor": "Rud éigin ar an urlár seo",
+      "near": "Rud éigin in aice láimhe",
+      "here": "Díreach anseo! Oscail an brathadóir"
+    },
+    "camp": {
+      "parts": "{{count}} as {{total}} páirt",
+      "compassReach": {
+        "1": "feiceann sé an phirimid",
+        "2": "feiceann sé an t-urlár",
+        "3": "taispeánann sé an áit"
+      },
+      "pickHeading": "Cad atá an compás ag lorg?",
+      "onlyIncomplete": "Ach comharthaí a bhfuil píosa díobh agat, go dtí go mbeidh siad iomlán.",
+      "whereHeading": "Cá bhfuil píosaí {{symbol}}",
+      "pickFirst": "Roghnaigh comhartha le feiceáil cá bhfuil a phíosaí.",
+      "follow": "Lean an comhartha seo",
+      "following": "Tá an compás ag leanúint an chomhartha seo",
+      "nothingToFind": "Níl píosa agat fós de chomhartha nach bhfuil iomlán.",
+      "noneInReach": "Níl píosa ar bith fós ar fáil i bpirimid a d’fhiosraigh tú cheana.",
+      "corridorReach": {
+        "1": "cloiseann sé pasáiste in aice láimhe",
+        "2": "cloiseann sé an t-urlár seo ar fad",
+        "3": "cloiseann sé na hurláir eile freisin",
+        "4": "cloiseann sé turais eile"
+      },
+      "corridorInPyramid": "Taobh istigh de phirimid éisteann sé le pasáistí dúnta.",
+      "corridorFarNext": "Leis na ceithre pháirt ar fad cloiseann sé turais eile ón gcampa.",
+      "corridorWhere": "Cá bhfuil pasáiste fós dúnta",
+      "corridorNone": "Níl pasáiste dúnta in aon turas a raibh tú air.",
+      "pyramid": "Pirimid {{n}}",
+      "corridorCount_one": "{{count}} phasáiste",
+      "corridorCount_two": "{{count}} phasáiste",
+      "corridorCount_few": "{{count}} phasáiste",
+      "corridorCount_many": "{{count}} bpasáiste",
+      "corridorCount_other": "{{count}} pasáiste"
+    }
+  },
+  "keys": {
+    "blue": "Eochair ghorm",
+    "red": "Eochair dhearg",
+    "green": "Eochair ghlas",
+    "yellow": "Eochair bhuí",
+    "purple": "Eochair chorcra",
+    "bundle": "Fáinne eochracha",
+    "foundDescription": "Osclaíonn sí na doirse atá marcáilte sa dath seo, ar an urlár seo.",
+    "heldTitle": "{{key}} — i do lámh",
+    "neededTitle": "{{key}} — fós ag teastáil"
+  },
+  "balance": {
+    "rules": {
+      "tap": "Tapáil glif thíos, ansin uimhir. Tapáil an uimhir sin arís lena baint.",
+      "same": "Tá an meáchan céanna ag glif ar gach meá.",
+      "cancel": "Bain an rud céanna den dá phláta agus fanann an mheá cothrom. Tapáil píosa marcáilte lena dhéanamh — coinnítear a bhfuil fágtha mar shraith nua.",
+      "swap": "Tapáil glif nach bhfuil a leithéid os a chomhair, ansin sraith ina bhfuil an glif sin leis féin, lena mhalartú ar luach na sraithe sin."
+    },
+    "hint": {
+      "mistake": "Cuireann ceann de na meáchain a thug tú meá as cothrom. Bain é agus féach arís.",
+      "alone": "Sa tsraith lasta, is é {{glyph}} an t-aon phíosa fágtha gan uimhir air. Oibrigh amach cé chomh trom is atá sé.",
+      "equalShares": "Níl sa tsraith lasta ach {{glyph}} in aghaidh uimhreach. Roinn an uimhir sin eatarthu.",
+      "difference": "Tá an dá shraith lasta mar an gcéanna ach amháin {{glyph}}. Cuir i gcomparáid iad.",
+      "cancelGlyph": "Tá {{glyph}} ar an dá phláta sa tsraith lasta. Tapáil ceann lena bhaint den dá thaobh — fanann an tsraith cothrom.",
+      "cancelStones": "Tá uimhreacha simplí ar an dá phláta sa tsraith lasta. Tapáil ceann leis an méid céanna a bhaint den dá thaobh.",
+      "swap": "Insíonn sraith lasta amháin cad is fiú {{glyph}} amháin leis féin. Tapáil an {{glyph}} sa tsraith lasta eile, ansin tapáil an tsraith sin."
+    },
+    "swap": {
+      "pick": "Tapáil sraith lasta leis an {{glyph}} seo a mhalartú ar an luach a deir an tsraith sin.",
+      "none": "Níl aon rud anseo a insíonn cad is fiú {{glyph}} amháin leis féin, agus níl aon rud os a chomhair a mheaitseálann."
+    },
+    "goal": {
+      "default": "Tá meáchan ag gach glif, agus tá gach meá cothrom.",
+      "weighing": "Aimsíonn gach comhartha a mheáchan, agus socraíonn gach meá cothrom."
+    },
+    "name": {
+      "default": "Meá Chothromaíochta",
+      "weighing": "Meá an Chroí"
+    }
+  },
+  "sumplete": {
+    "rules": {
+      "tap": "Tapáil uair amháin le huimhir a scriosadh amach, arís lena marcáil mar cheann a choinníonn tú, agus arís lena glanadh.",
+      "totals": "Is í an uimhir bheag faoi gach sprioc an tsuim atá sa líne sin faoi láthair."
+    },
+    "hint": {
+      "mistake": "Ní féidir le ceann de na marcanna anseo a bheith ceart. Cealaigh é agus féach arís.",
+      "tooBig": {
+        "row": "Tá {{deficit}} fós ag teastáil ón tsraith seo. Tá {{value}} níos mó ná sin, mar sin ní féidir léi fanacht.",
+        "col": "Tá {{deficit}} fós ag teastáil ón gcolún seo. Tá {{value}} níos mó ná sin, mar sin ní féidir léi fanacht."
+      },
+      "allStrike": {
+        "row": "Tá na huimhreacha atá ag fanacht sa tsraith seo cothrom leis an sprioc cheana, mar sin caithfidh gach rud eile imeacht.",
+        "col": "Tá na huimhreacha atá ag fanacht sa cholún seo cothrom leis an sprioc cheana, mar sin caithfidh gach rud eile imeacht."
+      },
+      "allKeep": {
+        "row": "Tá an tsraith seo cothrom leis an sprioc cheana — marcáil na huimhreacha seo mar chinn a fhanann, ionas gur féidir na colúin tríothu a oibriú amach.",
+        "col": "Tá an colún seo cothrom leis an sprioc cheana — marcáil na huimhreacha seo mar chinn a fhanann, ionas gur féidir na sraitheanna tríothu a oibriú amach."
+      },
+      "parityKeep": {
+        "row": "Tá {{deficit}} fós ag teastáil ón tsraith seo, uimhir chorr. Is í {{value}} an t-aon uimhir chorr atá fágtha, mar sin caithfidh sí fanacht.",
+        "col": "Tá {{deficit}} fós ag teastáil ón gcolún seo, uimhir chorr. Is í {{value}} an t-aon uimhir chorr atá fágtha, mar sin caithfidh sí fanacht."
+      },
+      "parityStrike": {
+        "row": "Tá {{deficit}} fós ag teastáil ón tsraith seo, uimhir réidh. Is í {{value}} an t-aon uimhir chorr atá fágtha, mar sin caithfidh sí imeacht.",
+        "col": "Tá {{deficit}} fós ag teastáil ón gcolún seo, uimhir réidh. Is í {{value}} an t-aon uimhir chorr atá fágtha, mar sin caithfidh sí imeacht."
+      },
+      "onlyCombination": {
+        "row": "Níl ach meascán amháin uimhreacha sa tsraith seo a thugann {{deficit}}.",
+        "col": "Níl ach meascán amháin uimhreacha sa cholún seo a thugann {{deficit}}."
+      },
+      "inEveryCombinationKeep": {
+        "row": "Gan {{value}}, ní thugann meascán ar bith de na huimhreacha eile sa tsraith seo {{deficit}} — mar sin caithfidh sí fanacht.",
+        "col": "Gan {{value}}, ní thugann meascán ar bith de na huimhreacha eile sa cholún seo {{deficit}} — mar sin caithfidh sí fanacht."
+      },
+      "inEveryCombinationStrike": {
+        "row": "Coinnigh {{value}} agus bheadh {{remaining}} fós ag teastáil ón tsraith seo, rud nach féidir le huimhir ar bith eile anseo a dhéanamh — mar sin caithfidh sí imeacht.",
+        "col": "Coinnigh {{value}} agus bheadh {{remaining}} fós ag teastáil ón gcolún seo, rud nach féidir le huimhir ar bith eile anseo a dhéanamh — mar sin caithfidh sí imeacht."
+      },
+      "tooBig.row": "Tá {{deficit}} fós ag teastáil ón tsraith seo, agus tá {{value}} níos mó ná sin.",
+      "tooBig.col": "Tá {{deficit}} fós ag teastáil ón gcolún seo, agus tá {{value}} níos mó ná sin.",
+      "allStrike.row": "Tá na huimhreacha atá ag fanacht sa tsraith seo cothrom leis an sprioc cheana.",
+      "allStrike.col": "Tá na huimhreacha atá ag fanacht sa cholún seo cothrom leis an sprioc cheana.",
+      "allKeep.row": "Tá an tsraith seo cothrom leis an sprioc cheana, mar sin is féidir na colúin tríthi a oibriú amach anois.",
+      "allKeep.col": "Tá an colún seo cothrom leis an sprioc cheana, mar sin is féidir na sraitheanna tríd a oibriú amach anois.",
+      "parityKeep.row": "Tá {{deficit}} fós ag teastáil ón tsraith seo, uimhir chorr, agus is í {{value}} an t-aon uimhir chorr atá fágtha.",
+      "parityKeep.col": "Tá {{deficit}} fós ag teastáil ón gcolún seo, uimhir chorr, agus is í {{value}} an t-aon uimhir chorr atá fágtha.",
+      "parityStrike.row": "Tá {{deficit}} fós ag teastáil ón tsraith seo, uimhir réidh, agus is í {{value}} an t-aon uimhir chorr atá fágtha.",
+      "parityStrike.col": "Tá {{deficit}} fós ag teastáil ón gcolún seo, uimhir réidh, agus is í {{value}} an t-aon uimhir chorr atá fágtha.",
+      "onlyCombination.row": "Níl ach meascán amháin uimhreacha sa tsraith seo a thugann {{deficit}}.",
+      "onlyCombination.col": "Níl ach meascán amháin uimhreacha sa cholún seo a thugann {{deficit}}.",
+      "inEveryCombinationKeep.row": "Gan {{value}}, ní thugann meascán ar bith de na huimhreacha eile sa tsraith seo {{deficit}}.",
+      "inEveryCombinationKeep.col": "Gan {{value}}, ní thugann meascán ar bith de na huimhreacha eile sa cholún seo {{deficit}}.",
+      "inEveryCombinationStrike.row": "Coinnigh {{value}} agus bheadh {{remaining}} fós ag teastáil ón tsraith seo, rud nach féidir le huimhir ar bith eile anseo a dhéanamh.",
+      "inEveryCombinationStrike.col": "Coinnigh {{value}} agus bheadh {{remaining}} fós ag teastáil ón gcolún seo, rud nach féidir le huimhir ar bith eile anseo a dhéanamh.",
+      "action": {
+        "strike_one": "Scrios amach an uimhir stríocach.",
+        "strike_two": "Scrios amach na huimhreacha stríocacha.",
+        "strike_few": "Scrios amach na huimhreacha stríocacha.",
+        "strike_many": "Scrios amach na huimhreacha stríocacha.",
+        "strike_other": "Scrios amach na huimhreacha stríocacha.",
+        "keep_one": "Marcáil an uimhir stríocach mar cheann a fhanann.",
+        "keep_two": "Marcáil na huimhreacha stríocacha mar chinn a fhanann.",
+        "keep_few": "Marcáil na huimhreacha stríocacha mar chinn a fhanann.",
+        "keep_many": "Marcáil na huimhreacha stríocacha mar chinn a fhanann.",
+        "keep_other": "Marcáil na huimhreacha stríocacha mar chinn a fhanann."
+      }
+    },
+    "goal": "Tá gach sraith agus gach colún cothrom leis an uimhir in aice leis.",
+    "name": "An Cuntas"
+  },
+  "futoshiki": {
+    "rules": {
+      "signs": "Díríonn comhartha idir dhá chearnóg ar an uimhir is lú den dá cheann.",
+      "enter": "Tapáil cearnóg, ansin tapáil uimhir. Baineann an uimhir chéanna arís amach í.",
+      "notes": "Athraigh go dtí an peann luaidhe le breacadh síos na n-uimhreacha a d’fhéadfadh a bheith i gcearnóg fós. Cuireann Cealaigh do bheart deireanach ar ceal."
+    },
+    "hint": {
+      "mistake": {
+        "value": "Ní féidir le ceann de na huimhreacha anseo a bheith ceart. Bain amach í agus féach arís.",
+        "note": "Chuir nótaí na cearnóige seo an uimhir cheart as an áireamh. Glan iad agus tosaigh arís."
+      },
+      "nakedSingle": "Tá gach uimhir eile tógtha cheana sa tsraith seo, sa cholún seo, nó ag na comharthaí — níl ach {{value}} fágtha don chearnóg seo.",
+      "hiddenSingle": {
+        "row": "Ní luíonn {{value}} in aon chearnóg eile sa tsraith seo, mar sin is anseo a théann sí.",
+        "col": "Ní luíonn {{value}} in aon chearnóg eile sa cholún seo, mar sin is anseo a théann sí."
+      },
+      "signBound": {
+        "high": "Díríonn comhartha anseo ar shiúl go huimhir níos mó, mar sin ní féidir {{value}} a bheith sa chearnóg seo.",
+        "low": "Díríonn comhartha anseo ar an gcearnóg seo, mar sin caithfidh rud éigin a bheith níos lú ná í — ní féidir {{value}} a bheith inti."
+      },
+      "signVsValue": {
+        "less": "Deir an comhartha go bhfuil an chearnóg seo níos lú ná a comharsa, agus tá {{value}} sa chomharsa sin.",
+        "greater": "Deir an comhartha go bhfuil an chearnóg seo níos mó ná a comharsa, agus tá {{value}} sa chomharsa sin."
+      },
+      "signChain": {
+        "high": "Lean na comharthaí ón gcearnóg seo: caithfidh {{chain}} cearnóg as a chéile a bheith níos mó ná an ceann roimpi, mar sin ní féidir leis an gceann seo a bheith os cionn {{bound}}.",
+        "low": "Lean na comharthaí isteach sa chearnóg seo: caithfidh {{chain}} cearnóg as a chéile a bheith níos lú ná an ceann roimpi, mar sin ní féidir leis an gceann seo a bheith faoi {{bound}}."
+      },
+      "signPair": {
+        "less": "Is í {{value}} an uimhir is mó is féidir a bheith fós sa chomharsa trasna an chomhartha, agus caithfidh an chearnóg seo fanacht faoina bun.",
+        "greater": "Is í {{value}} an uimhir is lú is féidir a bheith fós sa chomharsa trasna an chomhartha, agus caithfidh an chearnóg seo fanacht os a cionn."
+      },
+      "nakedPair": {
+        "row": "Ní féidir ach {{first}} agus {{second}} a bheith sa dá chearnóg seo, in ord amháin nó san ord eile, mar sin ní féidir ceachtar acu a bheith in aon chearnóg eile sa tsraith seo.",
+        "col": "Ní féidir ach {{first}} agus {{second}} a bheith sa dá chearnóg seo, in ord amháin nó san ord eile, mar sin ní féidir ceachtar acu a bheith in aon chearnóg eile sa cholún seo."
+      },
+      "hiddenPair": {
+        "row": "Sa tsraith seo, ní luíonn {{first}} agus {{second}} áit ar bith ach sa dá chearnóg seo, mar sin ní féidir aon rud eile a chur i gceachtar acu.",
+        "col": "Sa cholún seo, ní luíonn {{first}} agus {{second}} áit ar bith ach sa dá chearnóg seo, mar sin ní féidir aon rud eile a chur i gceachtar acu."
+      },
+      "xWing": {
+        "row": "Ní luíonn {{value}} ach i dhá chearnóg i ngach ceann den dá shraith seo, agus tá siad sna colúin chéanna. Cibé bealach a thiteann sé, tá an dá cholún tógtha — mar sin ní féidir {{value}} a chur áit ar bith eile iontu.",
+        "col": "Ní luíonn {{value}} ach i dhá chearnóg i ngach ceann den dá cholún seo, agus tá siad sna sraitheanna céanna. Cibé bealach a thiteann sé, tá an dá shraith tógtha — mar sin ní féidir {{value}} a chur áit ar bith eile iontu."
+      },
+      "nakedTriple": {
+        "row": "Níl sna trí chearnóg seo eatarthu ach {{first}}, {{second}} agus {{third}}, mar sin ní féidir le haon chearnóg eile sa tsraith seo ceann ar bith den trí cinn a ghlacadh.",
+        "col": "Níl sna trí chearnóg seo eatarthu ach {{first}}, {{second}} agus {{third}}, mar sin ní féidir le haon chearnóg eile sa cholún seo ceann ar bith den trí cinn a ghlacadh."
+      },
+      "hiddenTriple": {
+        "row": "Sa tsraith seo, ní luíonn {{first}}, {{second}} agus {{third}} áit ar bith ach sna trí chearnóg seo, mar sin ní féidir aon rud eile a chur in aon cheann acu.",
+        "col": "Sa cholún seo, ní luíonn {{first}}, {{second}} agus {{third}} áit ar bith ach sna trí chearnóg seo, mar sin ní féidir aon rud eile a chur in aon cheann acu."
+      }
+    },
+    "goal": "Taispeánann gach sraith agus gach colún gach uimhir uair amháin díreach.",
+    "name": "Níos Mó agus Níos Lú"
+  },
+  "lightbeam": {
+    "rules": {
+      "mirrors": "Lúbann scáthán an solas de cheachtar dá aghaidheanna. Taispeánann na marcanna beaga timpeall air na bealaí eile ar féidir leis luí: casann an chuid is mó acu an solas ceathrú cuid, agus stopann cuid acu gearr air sin agus cuireann siad an solas ar fiar.",
+      "walls": "Slogann bloc cloiche an solas. Déanann imeall an chláir an rud céanna.",
+      "tap": "Tapáil píosa lena athrú: casann scáthán, bogann píosa sleamhnáin go dtí an chéad áit eile. Ciallaíonn imeall bán gur leatsa é le bogadh; is cuid den phuzal aon rud eile.",
+      "nodes": "Tá cloch áirithe ceangailte le soicéad san urlár agus ní bhogfaidh tapáil ar bith í. Cuir an solas trasna an tsoicéid agus sleamhnaíonn an chloch i leataobh."
+    },
+    "hint": {
+      "entryRun": "Tosaigh san áit a dtéann an solas cheana: ritheann sé díreach ón diosca go dtí go mbuaileann sé leis an gcéad phíosa is féidir leat a athrú. Iompraíonn na cearnóga sin an solas cibé rud a dhéanann tú.",
+      "exitRun": "Féach ar an scrín. Níl ach taobh amháin di is féidir a lasadh ar chor ar bith — tá gach bealach eile isteach blocáilte nó ag féachaint amach den chlár — mar sin caithfidh an solas teacht ar an líne sin.",
+      "wiringFires": {
+        "one": "Caithfidh an solas an soicéad sin a thrasnú ar a bhealach — d’oibrigh tú é sin amach cheana. Nuair a thrasnaíonn sé é, tarraingíonn sé an chloch atá ceangailte leis as an mbealach, agus osclaíonn an cosán taobh thall.",
+        "all": "Tá an chloch sin ceangailte le níos mó ná soicéad amháin, agus ní bhogann sí go dtí go mbeidh an solas tar éis gach ceann acu a thrasnú. Aimsigh bealach leis an léas a thabhairt tríothu go léir."
+      },
+      "deadEnd": {
+        "wall": "Má chuirtear mar seo é, ritheann an solas díreach isteach i gcloch gan aon rud fágtha lena shábháil. Mar sin ní féidir é a chur mar seo.",
+        "disc": "Má chuirtear mar seo é, cuireann an scáthán an solas ar ais an bealach a tháinig sé, an bealach ar fad isteach sa diosca as ar tháinig sé. Mar sin ní féidir é a chur mar seo.",
+        "edge": "Má chuirtear mar seo é, ritheann an solas thar imeall an chláir gan aon rud fágtha le breith air. Mar sin ní féidir é a chur mar seo.",
+        "loop": "Má chuirtear mar seo é, ní shroicheann an solas áit ar bith — téann sé timpeall go deo. Mar sin ní féidir é a chur mar seo."
+      },
+      "feedsExit": {
+        "wall": "Oibrigh siar ón scrín. Má chuirtear mar seo é, ní féidir le haon rud an solas a thabhairt ar an aon líne a shroicheann í — faigheann sé bás i gcloch ar an mbealach.",
+        "disc": "Oibrigh siar ón scrín. Má chuirtear mar seo é, chaithfeadh an solas teacht as cúl dorcha an diosca, agus ní thagann solas ar bith as sin.",
+        "edge": "Oibrigh siar ón scrín. Má chuirtear mar seo é, chaithfeadh an solas teacht ó lasmuigh den chlár lena shroicheadh.",
+        "loop": "Oibrigh siar ón scrín. Má chuirtear mar seo é, ní dhéanann an solas a chaithfeadh í a shroicheadh ach dul timpeall go deo."
+      },
+      "wiringDead": "Cibé rud a dhéanann tú, ní féidir leis an solas an soicéad sin a shroicheadh riamh — mar sin fanann an chloch atá ceangailte leis díreach san áit a bhfuil sí, agus is féidir leat an cosán a léamh díreach thairsti.",
+      "neverReached": "Fág an ceann seo mar atá. Ní féidir leis an solas é a shroicheadh, is cuma conas a chuirtear an chuid eile, mar sin níl tábhacht le haon rud a dhéanann tú leis.",
+      "onlySurvivor": "Triail gach socrú den cheann seo i ndiaidh a chéile agus fágann gach ceann ach ceann amháin an scrín dorcha. Is é an ceann sin an freagra."
+    },
+    "goal": "Ritheann solas na gréine ón diosca go dtí an scrín.",
+    "name": "Léas Solais"
+  },
+  "eclipse": {
+    "rules": {
+      "triple": "Ní cheadaítear riamh trí cinn den rud céanna as a chéile, trasna ná síos.",
+      "copies": "Ní féidir le dhá shraith a bheith mar an gcéanna, ná le dhá cholún ach oiread.",
+      "signs": "Insíonn comhartha idir dhá chearnóg conas atá siad i gcomparáid: = don rud céanna, × do rudaí difriúla.",
+      "enter": "Tapáil cearnóg le grian a chur ann, tapáil arís do ghealach, agus tapáil uair amháin eile lena folmhú."
+    },
+    "hint": {
+      "mistake": "Ní féidir le ceann de na marcanna seo a bheith ceart.",
+      "sign.same": "Ciallaíonn = an rud céanna.",
+      "sign.different": "Ciallaíonn × rudaí difriúla.",
+      "noTriple.pair": "Dhá {{mark}} cheana, agus ní cheadaítear trí cinn as a chéile riamh.",
+      "noTriple.sandwich": "{{mark}} ar an dá thaobh, agus ní cheadaítear trí cinn as a chéile riamh.",
+      "signPair": "Tá an dá cheann seo mar an gcéanna, agus tá an {{mark}} sin in aice leo.",
+      "lineCount": "Tá a {{count}} {{mark}} ag an líne seo cheana.",
+      "noCopy": "Dhéanfadh an bealach eile timpeall cóip den líne lasta.",
+      "linePairing.sameNoRoom": "Níl ach {{count}} {{mark}} fágtha anseo, agus tá an dá cheann seo mar an gcéanna.",
+      "linePairing.differentTakesOne": "Úsáideann na péirí × an méid {{mark}} a bhfuil áit dóibh sa líne seo.",
+      "loneMark": "{{mark}} amháin fágtha, agus níl ach cearnóg amháin a choinníonn trí {{other}} óna chéile.",
+      "squeeze.triple": "Dhéanfadh {{mark}} anseo {{other}} den chuid eile — trí cinn as a chéile.",
+      "squeeze.sign": "Dhéanfadh {{mark}} anseo {{other}} den chuid eile — ní luíonn comhartha a thuilleadh.",
+      "squeeze.copy": "Dhéanfadh {{mark}} anseo {{other}} den chuid eile — bheadh an líne ina cóip.",
+      "action": {
+        "fill_one": "Cuir {{mark}} sa chearnóg stríocach.",
+        "fill_two": "Cuir {{mark}} sna cearnóga stríocacha.",
+        "fill_few": "Cuir {{mark}} sna cearnóga stríocacha.",
+        "fill_many": "Cuir {{mark}} sna cearnóga stríocacha.",
+        "fill_other": "Cuir {{mark}} sna cearnóga stríocacha.",
+        "fillMixed": "Líon isteach na cearnóga stríocacha — an t-aon bhealach a oibríonn."
+      }
+    },
+    "goal": "Tá grian nó gealach i ngach cearnóg, agus tá an oiread de cheann amháin agus den cheann eile i ngach líne.",
+    "name": "Grian agus Gealach"
+  },
+  "constellation": {
+    "rules": {
+      "default": {
+        "straight": "Ritheann línte solais díreach trasna nó síos, ó réalta amháin go dtí an chéad cheann eile.",
+        "pair": "Ní féidir le dhá réalta níos mó ná dhá líne a roinnt.",
+        "cross": "Ní thrasnaíonn línte a chéile riamh, agus ní théann siad trí réalta riamh.",
+        "enter": "Tarraing ó réalta i dtreo a comharsan le líne a tharraingt, arís do líne dhúbailte, agus uair amháin eile lena glanadh."
+      },
+      "causeway": {
+        "straight": "Ritheann bóithre iompair díreach trasna nó síos, ó láithreán amháin go dtí an chéad cheann eile.",
+        "pair": "Ní féidir le dhá láithreán níos mó ná dhá bhóthar a roinnt.",
+        "cross": "Ní thrasnaíonn bóithre a chéile riamh, agus ní ritheann siad trí láithreán riamh.",
+        "enter": "Tarraing ó láithreán i dtreo a chomharsan le bóthar a leagan, arís lena dhúbailt, agus uair amháin eile lena stróiceadh suas."
+      },
+      "irrigation": {
+        "straight": "Ritheann canálacha díreach trasna nó síos, ó umar amháin go dtí an chéad cheann eile.",
+        "pair": "Ní féidir le dhá umar níos mó ná dhá chanáil a roinnt.",
+        "cross": "Ní thrasnaíonn canálacha a chéile riamh, agus ní ritheann siad trí umar riamh.",
+        "enter": "Tarraing ó umar i dtreo a chomharsan le canáil a thochailt, arís lena leathnú, agus uair amháin eile lena líonadh isteach."
+      },
+      "ceiling": {
+        "straight": "Ritheann cordaí díreach trasna nó síos, ó réalta amháin go dtí an chéad cheann eile.",
+        "pair": "Ní féidir le dhá réalta níos mó ná dhá chorda a roinnt.",
+        "cross": "Ní thrasnaíonn cordaí a chéile riamh, agus ní ritheann siad trí réalta riamh.",
+        "enter": "Tarraing ó réalta i dtreo a comharsan le corda a leagan, arís lena dhúbailt, agus uair amháin eile lena bhaint."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Ní féidir le ceann de na línte seo a bheith ceart.",
+        "capacity": "Línte: {{count}}, agus díreach go leor bealaí amach.",
+        "settled": "Tá a línte go léir ag an {{count}} seo.",
+        "soleWayOut": "Níl ach bealach amháin amach fágtha, agus {{count}} fós le tarraingt.",
+        "crossed": "Thrasnódh líne ansin an ceann seo.",
+        "atLeastOne": "Línte: {{count}}, agus ní féidir leis na bealaí eile amach iad go léir a iompar.",
+        "twinBlock.single": "Dá gceanglófá an dá cheann sin, bheadh réaltbhuíon de dhá réalta ann.",
+        "twinBlock.double": "Le dara líne ansin bheadh réaltbhuíon de dhá réalta ann.",
+        "isolation": "Dhúnfadh an líne sin na {{count}} réalta seo amach ón gcuid eile.",
+        "action": {
+          "draw_one": "Tarraing an líne mharcáilte.",
+          "draw_two": "Tarraing na línte marcáilte.",
+          "draw_few": "Tarraing na línte marcáilte.",
+          "draw_many": "Tarraing na línte marcáilte.",
+          "draw_other": "Tarraing na línte marcáilte.",
+          "refuse_one": "Ná tarraing an líne mharcáilte.",
+          "refuse_two": "Ná tarraing na línte marcáilte.",
+          "refuse_few": "Ná tarraing na línte marcáilte.",
+          "refuse_many": "Ná tarraing na línte marcáilte.",
+          "refuse_other": "Ná tarraing na línte marcáilte.",
+          "refuseDouble": "Líne amháin ansin, agus ní dara ceann."
+        }
+      },
+      "causeway": {
+        "mistake": "Ní féidir le ceann de na bóithre seo a bheith ceart.",
+        "capacity": "Bóithre: {{count}}, agus díreach go leor bealaí amach.",
+        "settled": "Tá a bóithre go léir ag an {{count}} seo.",
+        "soleWayOut": "Níl ach bealach amháin amach fágtha, agus {{count}} fós le leagan.",
+        "crossed": "Thrasnódh bóthar ansin an ceann seo.",
+        "atLeastOne": "Bóithre: {{count}}, agus ní féidir leis na bealaí eile amach iad go léir a iompar.",
+        "twinBlock.single": "Dá gceanglófá an dá cheann sin, bheadh líonra de dhá láithreán ann.",
+        "twinBlock.double": "Le dara bóthar ansin bheadh líonra de dhá láithreán ann.",
+        "isolation": "Ghearrfadh an bóthar sin na {{count}} láithreán seo amach ón gcuid eile.",
+        "action": {
+          "draw_one": "Leag an bóthar marcáilte.",
+          "draw_two": "Leag na bóithre marcáilte.",
+          "draw_few": "Leag na bóithre marcáilte.",
+          "draw_many": "Leag na bóithre marcáilte.",
+          "draw_other": "Leag na bóithre marcáilte.",
+          "refuse_one": "Ná tóg an bóthar marcáilte.",
+          "refuse_two": "Ná tóg na bóithre marcáilte.",
+          "refuse_few": "Ná tóg na bóithre marcáilte.",
+          "refuse_many": "Ná tóg na bóithre marcáilte.",
+          "refuse_other": "Ná tóg na bóithre marcáilte.",
+          "refuseDouble": "Bóthar amháin ansin, agus ní dara ceann."
+        }
+      },
+      "irrigation": {
+        "mistake": "Ní féidir le ceann de na canálacha seo a bheith ceart.",
+        "capacity": "Canálacha: {{count}}, agus díreach go leor bealaí amach.",
+        "settled": "Tá a canálacha go léir ag an {{count}} seo.",
+        "soleWayOut": "Níl ach bealach amháin amach fágtha, agus {{count}} fós le tochailt.",
+        "crossed": "Thrasnódh canáil ansin an ceann seo.",
+        "atLeastOne": "Canálacha: {{count}}, agus ní féidir leis na bealaí eile amach iad go léir a iompar.",
+        "twinBlock.single": "Dá gceanglófá an dá cheann sin, bheadh córas uisce de dhá umar ann.",
+        "twinBlock.double": "Le dara canáil ansin bheadh córas uisce de dhá umar ann.",
+        "isolation": "Ghearrfadh an chanáil sin na {{count}} umar seo amach ón gcuid eile.",
+        "action": {
+          "draw_one": "Tochail an chanáil mharcáilte.",
+          "draw_two": "Tochail na canálacha marcáilte.",
+          "draw_few": "Tochail na canálacha marcáilte.",
+          "draw_many": "Tochail na canálacha marcáilte.",
+          "draw_other": "Tochail na canálacha marcáilte.",
+          "refuse_one": "Ná tochail an chanáil mharcáilte.",
+          "refuse_two": "Ná tochail na canálacha marcáilte.",
+          "refuse_few": "Ná tochail na canálacha marcáilte.",
+          "refuse_many": "Ná tochail na canálacha marcáilte.",
+          "refuse_other": "Ná tochail na canálacha marcáilte.",
+          "refuseDouble": "Canáil amháin ansin, agus ní dara ceann."
+        }
+      },
+      "ceiling": {
+        "mistake": "Ní féidir le ceann de na cordaí seo a bheith ceart.",
+        "capacity": "Cordaí: {{count}}, agus díreach go leor bealaí amach.",
+        "settled": "Tá a cordaí go léir ag an {{count}} seo.",
+        "soleWayOut": "Níl ach bealach amháin amach fágtha, agus {{count}} fós le leagan.",
+        "crossed": "Thrasnódh corda ansin an ceann seo.",
+        "atLeastOne": "Cordaí: {{count}}, agus ní féidir leis na bealaí eile amach iad go léir a iompar.",
+        "twinBlock.single": "Dá gceanglófá an dá cheann sin, bheadh spéir phéinteáilte de dhá réalta ann.",
+        "twinBlock.double": "Le dara corda ansin bheadh spéir phéinteáilte de dhá réalta ann.",
+        "isolation": "Ghearrfadh an corda sin na {{count}} réalta seo amach ón gcuid eile.",
+        "action": {
+          "draw_one": "Leag an corda marcáilte.",
+          "draw_two": "Leag na cordaí marcáilte.",
+          "draw_few": "Leag na cordaí marcáilte.",
+          "draw_many": "Leag na cordaí marcáilte.",
+          "draw_other": "Leag na cordaí marcáilte.",
+          "refuse_one": "Ná leag an corda marcáilte.",
+          "refuse_two": "Ná leag na cordaí marcáilte.",
+          "refuse_few": "Ná leag na cordaí marcáilte.",
+          "refuse_many": "Ná leag na cordaí marcáilte.",
+          "refuse_other": "Ná leag na cordaí marcáilte.",
+          "refuseDouble": "Corda amháin ansin, agus ní dara ceann."
+        }
+      }
+    },
+    "goal": {
+      "default": "Tá gach réalta i réaltbhuíon amháin, ceangailte le líon na línte solais a deir a huimhir.",
+      "causeway": "Tá gach láithreán i líonra bóithre amháin, le líon na mbóithre iompair a deir a uimhir.",
+      "irrigation": "Beathaíonn gach umar córas uisce amháin, le líon na gcanálacha a deir a uimhir.",
+      "ceiling": "Baineann gach réalta le spéir phéinteáilte amháin, ceangailte le líon na gcordaí óir a deir a huimhir."
+    },
+    "name": {
+      "default": "Léarscáil Réaltaí",
+      "causeway": "An Cabhsa",
+      "irrigation": "An Córas Uisce",
+      "ceiling": "An tSíleáil Phéinteáilte"
+    }
+  },
+  "starBattle": {
+    "rules": {
+      "default": {
+        "touch": "Ní féidir le dhá réalta teagmháil a chéile — áirítear na cúinní.",
+        "enter": "Tapáil cearnóg lena cur as an áireamh, tapáil arís le réalta a chur ann, agus uair amháin eile lena glanadh."
+      },
+      "fields": {
+        "touch": "Ní féidir le dhá theach feirme teagmháil a chéile — áirítear na cúinní. Chomh gar sin, bheadh tobar amháin eatarthu.",
+        "enter": "Tapáil ceapach lena cur as an áireamh, tapáil arís le teach feirme a thógáil, agus uair amháin eile lena glanadh."
+      },
+      "lamps": {
+        "touch": "Ní féidir le dhá lampa ola seasamh in aice a chéile — áirítear na cúinní. Bheadh a gcuid solais ag dul thar a chéile, agus bheadh an ola amú.",
+        "walls": "Is cuid den urlár na bloic chloiche liatha: ní féidir aon rud a chur ar cheann acu, agus ní cearnóg é.",
+        "enter": "Tapáil leac lena cur as an áireamh, tapáil arís le lampa ola a chur ann, agus uair amháin eile lena glanadh."
+      },
+      "market": {
+        "touch": "Ní féidir le dhá stainnín seasamh in aice a chéile — áirítear na cúinní. Ní chuireann iomaitheoirí suas taobh le taobh riamh.",
+        "walls": "Is cuid den chearnóg na tithe: ní féidir le duine ar bith stainnín a chur suas i gceann acu, agus ní spota é.",
+        "enter": "Tapáil spota lena chur as an áireamh, tapáil arís le stainnín a chur suas ann, agus uair amháin eile lena ghlanadh."
+      },
+      "lotus": {
+        "touch": "Ní féidir le dhá bhláth lóis snámh in aice a chéile — áirítear na cúinní. Teastaíonn uisce oscailte timpeall ar gach bláth.",
+        "walls": "Gobann na carraigeacha aníos as an lochán: ní féidir le haon rud snámh ar cheann acu, agus ní cearnóg í.",
+        "enter": "Tapáil paiste uisce lena chur as an áireamh, tapáil arís le bláth lóis a chur ar snámh ann, agus uair amháin eile lena ghlanadh."
+      },
+      "cats": {
+        "touch": "Ní féidir le dhá chat codladh in aice a chéile — áirítear na cúinní. Coinníonn gach cat a phaiste gréine féin.",
+        "walls": "Coinníonn na colúin an teampall suas: ní féidir le cat codladh ar cheann acu, agus ní cearnóg é.",
+        "enter": "Tapáil leac lena cur as an áireamh, tapáil arís le cat a leagan ann, agus uair amháin eile lena glanadh."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Ní féidir leis an marc seo a bheith ceart.",
+        "touch": "{{token}} anseo, agus ní féidir le haon rud teagmháil le {{token}}.",
+        "groupFull.row_one": "Tá a {{token}} ag an tsraith seo cheana.",
+        "groupFull.row_two": "Tá a {{count}} {{token}} ag an tsraith seo cheana.",
+        "groupFull.row_few": "Tá a {{count}} {{token}} ag an tsraith seo cheana.",
+        "groupFull.row_many": "Tá a {{count}} {{token}} ag an tsraith seo cheana.",
+        "groupFull.row_other": "Tá a {{count}} {{token}} ag an tsraith seo cheana.",
+        "groupFull.col_one": "Tá a {{token}} ag an gcolún seo cheana.",
+        "groupFull.col_two": "Tá a {{count}} {{token}} ag an gcolún seo cheana.",
+        "groupFull.col_few": "Tá a {{count}} {{token}} ag an gcolún seo cheana.",
+        "groupFull.col_many": "Tá a {{count}} {{token}} ag an gcolún seo cheana.",
+        "groupFull.col_other": "Tá a {{count}} {{token}} ag an gcolún seo cheana.",
+        "groupFull.region_one": "Tá a {{token}} ag an réigiún seo cheana.",
+        "groupFull.region_two": "Tá a {{count}} {{token}} ag an réigiún seo cheana.",
+        "groupFull.region_few": "Tá a {{count}} {{token}} ag an réigiún seo cheana.",
+        "groupFull.region_many": "Tá a {{count}} {{token}} ag an réigiún seo cheana.",
+        "groupFull.region_other": "Tá a {{count}} {{token}} ag an réigiún seo cheana.",
+        "groupTight.row_one": "Níl ach cearnóg amháin fágtha sa tsraith seo.",
+        "groupTight.row_two": "Níl ach {{count}} chearnóg fágtha sa tsraith seo.",
+        "groupTight.row_few": "Níl ach {{count}} chearnóg fágtha sa tsraith seo.",
+        "groupTight.row_many": "Níl ach {{count}} gcearnóg fágtha sa tsraith seo.",
+        "groupTight.row_other": "Níl ach {{count}} cearnóg fágtha sa tsraith seo.",
+        "groupTight.col_one": "Níl ach cearnóg amháin fágtha sa cholún seo.",
+        "groupTight.col_two": "Níl ach {{count}} chearnóg fágtha sa cholún seo.",
+        "groupTight.col_few": "Níl ach {{count}} chearnóg fágtha sa cholún seo.",
+        "groupTight.col_many": "Níl ach {{count}} gcearnóg fágtha sa cholún seo.",
+        "groupTight.col_other": "Níl ach {{count}} cearnóg fágtha sa cholún seo.",
+        "groupTight.region_one": "Níl ach cearnóg amháin fágtha sa réigiún seo.",
+        "groupTight.region_two": "Níl ach {{count}} chearnóg fágtha sa réigiún seo.",
+        "groupTight.region_few": "Níl ach {{count}} chearnóg fágtha sa réigiún seo.",
+        "groupTight.region_many": "Níl ach {{count}} gcearnóg fágtha sa réigiún seo.",
+        "groupTight.region_other": "Níl ach {{count}} cearnóg fágtha sa réigiún seo.",
+        "onlyWay.row_one": "Níl ach bealach amháin le {{token}} a chur sa tsraith seo.",
+        "onlyWay.row_two": "Níl ach bealach amháin le {{count}} {{token}} a chur sa tsraith seo.",
+        "onlyWay.row_few": "Níl ach bealach amháin le {{count}} {{token}} a chur sa tsraith seo.",
+        "onlyWay.row_many": "Níl ach bealach amháin le {{count}} {{token}} a chur sa tsraith seo.",
+        "onlyWay.row_other": "Níl ach bealach amháin le {{count}} {{token}} a chur sa tsraith seo.",
+        "onlyWay.col_one": "Níl ach bealach amháin le {{token}} a chur sa cholún seo.",
+        "onlyWay.col_two": "Níl ach bealach amháin le {{count}} {{token}} a chur sa cholún seo.",
+        "onlyWay.col_few": "Níl ach bealach amháin le {{count}} {{token}} a chur sa cholún seo.",
+        "onlyWay.col_many": "Níl ach bealach amháin le {{count}} {{token}} a chur sa cholún seo.",
+        "onlyWay.col_other": "Níl ach bealach amháin le {{count}} {{token}} a chur sa cholún seo.",
+        "onlyWay.region_one": "Níl ach bealach amháin le {{token}} a chur sa réigiún seo.",
+        "onlyWay.region_two": "Níl ach bealach amháin le {{count}} {{token}} a chur sa réigiún seo.",
+        "onlyWay.region_few": "Níl ach bealach amháin le {{count}} {{token}} a chur sa réigiún seo.",
+        "onlyWay.region_many": "Níl ach bealach amháin le {{count}} {{token}} a chur sa réigiún seo.",
+        "onlyWay.region_other": "Níl ach bealach amháin le {{count}} {{token}} a chur sa réigiún seo.",
+        "everyWay.row_one": "Cibé áit a dtéann {{token}} na sraithe seo, bíonn sé anseo i gcónaí.",
+        "everyWay.row_two": "Cibé áit a dtéann {{count}} {{token}} na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.row_few": "Cibé áit a dtéann {{count}} {{token}} na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.row_many": "Cibé áit a dtéann {{count}} {{token}} na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.row_other": "Cibé áit a dtéann {{count}} {{token}} na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_one": "Cibé áit a dtéann {{token}} an cholúin seo, bíonn sé anseo i gcónaí.",
+        "everyWay.col_two": "Cibé áit a dtéann {{count}} {{token}} an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_few": "Cibé áit a dtéann {{count}} {{token}} an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_many": "Cibé áit a dtéann {{count}} {{token}} an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_other": "Cibé áit a dtéann {{count}} {{token}} an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.region_one": "Cibé áit a dtéann {{token}} an réigiúin seo, bíonn sé anseo i gcónaí.",
+        "everyWay.region_two": "Cibé áit a dtéann {{count}} {{token}} an réigiúin seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.region_few": "Cibé áit a dtéann {{count}} {{token}} an réigiúin seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.region_many": "Cibé áit a dtéann {{count}} {{token}} an réigiúin seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.region_other": "Cibé áit a dtéann {{count}} {{token}} an réigiúin seo, bíonn ceann anseo i gcónaí.",
+        "regionLine.row_one": "Caithfidh {{token}} an réigiúin mharcáilte teacht ón tsraith sin.",
+        "regionLine.row_two": "Caithfidh {{count}} {{token}} an réigiúin mharcáilte teacht ón tsraith sin.",
+        "regionLine.row_few": "Caithfidh {{count}} {{token}} an réigiúin mharcáilte teacht ón tsraith sin.",
+        "regionLine.row_many": "Caithfidh {{count}} {{token}} an réigiúin mharcáilte teacht ón tsraith sin.",
+        "regionLine.row_other": "Caithfidh {{count}} {{token}} an réigiúin mharcáilte teacht ón tsraith sin.",
+        "regionLine.col_one": "Caithfidh {{token}} an réigiúin mharcáilte teacht ón gcolún sin.",
+        "regionLine.col_two": "Caithfidh {{count}} {{token}} an réigiúin mharcáilte teacht ón gcolún sin.",
+        "regionLine.col_few": "Caithfidh {{count}} {{token}} an réigiúin mharcáilte teacht ón gcolún sin.",
+        "regionLine.col_many": "Caithfidh {{count}} {{token}} an réigiúin mharcáilte teacht ón gcolún sin.",
+        "regionLine.col_other": "Caithfidh {{count}} {{token}} an réigiúin mharcáilte teacht ón gcolún sin.",
+        "lineRegion.row_one": "Baineann {{token}} na sraithe sin leis an réigiún marcáilte.",
+        "lineRegion.row_two": "Baineann {{count}} {{token}} na sraithe sin leis an réigiún marcáilte.",
+        "lineRegion.row_few": "Baineann {{count}} {{token}} na sraithe sin leis an réigiún marcáilte.",
+        "lineRegion.row_many": "Baineann {{count}} {{token}} na sraithe sin leis an réigiún marcáilte.",
+        "lineRegion.row_other": "Baineann {{count}} {{token}} na sraithe sin leis an réigiún marcáilte.",
+        "lineRegion.col_one": "Baineann {{token}} an cholúin sin leis an réigiún marcáilte.",
+        "lineRegion.col_two": "Baineann {{count}} {{token}} an cholúin sin leis an réigiún marcáilte.",
+        "lineRegion.col_few": "Baineann {{count}} {{token}} an cholúin sin leis an réigiún marcáilte.",
+        "lineRegion.col_many": "Baineann {{count}} {{token}} an cholúin sin leis an réigiún marcáilte.",
+        "lineRegion.col_other": "Baineann {{count}} {{token}} an cholúin sin leis an réigiún marcáilte.",
+        "spanning.toRows": "Líonann na réigiúin mharcáilte na sraitheanna sin ({{count}}) eatarthu.",
+        "spanning.toCols": "Líonann na réigiúin mharcáilte na colúin sin ({{count}}) eatarthu.",
+        "spanning.fromRows": "Ní féidir leis na sraitheanna marcáilte a {{count}} {{token}} a fháil ach ó na réigiúin sin.",
+        "spanning.fromCols": "Ní féidir leis na colúin mharcáilte a {{count}} {{token}} a fháil ach ó na réigiúin sin.",
+        "wouldStrand.row": "Dá mbeadh {{token}} anseo, ní bheadh áit ar bith fágtha don tsraith mharcáilte.",
+        "wouldStrand.col": "Dá mbeadh {{token}} anseo, ní bheadh áit ar bith fágtha don cholún marcáilte.",
+        "wouldStrand.region": "Dá mbeadh {{token}} anseo, ní bheadh áit ar bith fágtha don réigiún marcáilte.",
+        "action": {
+          "ruleOut_one": "Cuir an chearnóg stríocach as an áireamh.",
+          "ruleOut_two": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_few": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_many": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_other": "Cuir na cearnóga stríocacha as an áireamh.",
+          "place_one": "Cuir {{token}} sa chearnóg stríocach.",
+          "place_two": "Cuir {{token}} i ngach cearnóg stríocach.",
+          "place_few": "Cuir {{token}} i ngach cearnóg stríocach.",
+          "place_many": "Cuir {{token}} i ngach cearnóg stríocach.",
+          "place_other": "Cuir {{token}} i ngach cearnóg stríocach."
+        }
+      },
+      "fields": {
+        "mistake": "Ní féidir leis an marc seo a bheith ceart.",
+        "touch": "{{token}} anseo, agus ní féidir ceann eile a bheith ar aon cheapach a theagmhaíonn sé.",
+        "groupFull.row_one": "Tá an tsraith seo á hoibriú cheana.",
+        "groupFull.row_two": "Tá a {{count}} {{token}} ag an tsraith seo cheana.",
+        "groupFull.row_few": "Tá a {{count}} {{token}} ag an tsraith seo cheana.",
+        "groupFull.row_many": "Tá a {{count}} {{token}} ag an tsraith seo cheana.",
+        "groupFull.row_other": "Tá a {{count}} {{token}} ag an tsraith seo cheana.",
+        "groupFull.col_one": "Tá an colún seo á oibriú cheana.",
+        "groupFull.col_two": "Tá a {{count}} {{token}} ag an gcolún seo cheana.",
+        "groupFull.col_few": "Tá a {{count}} {{token}} ag an gcolún seo cheana.",
+        "groupFull.col_many": "Tá a {{count}} {{token}} ag an gcolún seo cheana.",
+        "groupFull.col_other": "Tá a {{count}} {{token}} ag an gcolún seo cheana.",
+        "groupFull.region_one": "Tá an gabháltas seo á oibriú cheana.",
+        "groupFull.region_two": "Tá a {{count}} {{token}} ag an ngabháltas seo cheana.",
+        "groupFull.region_few": "Tá a {{count}} {{token}} ag an ngabháltas seo cheana.",
+        "groupFull.region_many": "Tá a {{count}} {{token}} ag an ngabháltas seo cheana.",
+        "groupFull.region_other": "Tá a {{count}} {{token}} ag an ngabháltas seo cheana.",
+        "groupTight.row_one": "Níl ach ceapach amháin fágtha sa tsraith seo.",
+        "groupTight.row_two": "Níl ach {{count}} cheapach fágtha sa tsraith seo.",
+        "groupTight.row_few": "Níl ach {{count}} cheapach fágtha sa tsraith seo.",
+        "groupTight.row_many": "Níl ach {{count}} gceapach fágtha sa tsraith seo.",
+        "groupTight.row_other": "Níl ach {{count}} ceapach fágtha sa tsraith seo.",
+        "groupTight.col_one": "Níl ach ceapach amháin fágtha sa cholún seo.",
+        "groupTight.col_two": "Níl ach {{count}} cheapach fágtha sa cholún seo.",
+        "groupTight.col_few": "Níl ach {{count}} cheapach fágtha sa cholún seo.",
+        "groupTight.col_many": "Níl ach {{count}} gceapach fágtha sa cholún seo.",
+        "groupTight.col_other": "Níl ach {{count}} ceapach fágtha sa cholún seo.",
+        "groupTight.region_one": "Níl ach ceapach amháin fágtha sa ghabháltas seo.",
+        "groupTight.region_two": "Níl ach {{count}} cheapach fágtha sa ghabháltas seo.",
+        "groupTight.region_few": "Níl ach {{count}} cheapach fágtha sa ghabháltas seo.",
+        "groupTight.region_many": "Níl ach {{count}} gceapach fágtha sa ghabháltas seo.",
+        "groupTight.region_other": "Níl ach {{count}} ceapach fágtha sa ghabháltas seo.",
+        "onlyWay.row_one": "Níl ach ceapach amháin fágtha sa tsraith seo le tógáil air.",
+        "onlyWay.row_two": "Níl ach bealach amháin le {{count}} {{token}} a chur ar feadh na sraithe seo.",
+        "onlyWay.row_few": "Níl ach bealach amháin le {{count}} {{token}} a chur ar feadh na sraithe seo.",
+        "onlyWay.row_many": "Níl ach bealach amháin le {{count}} {{token}} a chur ar feadh na sraithe seo.",
+        "onlyWay.row_other": "Níl ach bealach amháin le {{count}} {{token}} a chur ar feadh na sraithe seo.",
+        "onlyWay.col_one": "Níl ach ceapach amháin fágtha sa cholún seo le tógáil air.",
+        "onlyWay.col_two": "Níl ach bealach amháin le {{count}} {{token}} a chur ar feadh an cholúin seo.",
+        "onlyWay.col_few": "Níl ach bealach amháin le {{count}} {{token}} a chur ar feadh an cholúin seo.",
+        "onlyWay.col_many": "Níl ach bealach amháin le {{count}} {{token}} a chur ar feadh an cholúin seo.",
+        "onlyWay.col_other": "Níl ach bealach amháin le {{count}} {{token}} a chur ar feadh an cholúin seo.",
+        "onlyWay.region_one": "Níl ach ceapach amháin fágtha sa ghabháltas seo le tógáil air.",
+        "onlyWay.region_two": "Níl ach bealach amháin le {{count}} {{token}} a chur ar an ngabháltas seo.",
+        "onlyWay.region_few": "Níl ach bealach amháin le {{count}} {{token}} a chur ar an ngabháltas seo.",
+        "onlyWay.region_many": "Níl ach bealach amháin le {{count}} {{token}} a chur ar an ngabháltas seo.",
+        "onlyWay.region_other": "Níl ach bealach amháin le {{count}} {{token}} a chur ar an ngabháltas seo.",
+        "everyWay.row_one": "Is cuma conas a oibrítear an tsraith seo, seasann a {{token}} anseo.",
+        "everyWay.row_two": "Is cuma conas a oibrítear an tsraith seo, seasann ceann dá {{count}} {{token}} anseo.",
+        "everyWay.row_few": "Is cuma conas a oibrítear an tsraith seo, seasann ceann dá {{count}} {{token}} anseo.",
+        "everyWay.row_many": "Is cuma conas a oibrítear an tsraith seo, seasann ceann dá {{count}} {{token}} anseo.",
+        "everyWay.row_other": "Is cuma conas a oibrítear an tsraith seo, seasann ceann dá {{count}} {{token}} anseo.",
+        "everyWay.col_one": "Is cuma conas a oibrítear an colún seo, seasann a {{token}} anseo.",
+        "everyWay.col_two": "Is cuma conas a oibrítear an colún seo, seasann ceann dá {{count}} {{token}} anseo.",
+        "everyWay.col_few": "Is cuma conas a oibrítear an colún seo, seasann ceann dá {{count}} {{token}} anseo.",
+        "everyWay.col_many": "Is cuma conas a oibrítear an colún seo, seasann ceann dá {{count}} {{token}} anseo.",
+        "everyWay.col_other": "Is cuma conas a oibrítear an colún seo, seasann ceann dá {{count}} {{token}} anseo.",
+        "everyWay.region_one": "Is cuma conas a oibrítear an gabháltas seo, seasann a {{token}} anseo.",
+        "everyWay.region_two": "Is cuma conas a oibrítear an gabháltas seo, seasann ceann dá {{count}} {{token}} anseo.",
+        "everyWay.region_few": "Is cuma conas a oibrítear an gabháltas seo, seasann ceann dá {{count}} {{token}} anseo.",
+        "everyWay.region_many": "Is cuma conas a oibrítear an gabháltas seo, seasann ceann dá {{count}} {{token}} anseo.",
+        "everyWay.region_other": "Is cuma conas a oibrítear an gabháltas seo, seasann ceann dá {{count}} {{token}} anseo.",
+        "regionLine.row_one": "Caithfidh {{token}} an ghabháltais mharcáilte teacht ón tsraith sin.",
+        "regionLine.row_two": "Caithfidh {{count}} {{token}} an ghabháltais mharcáilte teacht ón tsraith sin.",
+        "regionLine.row_few": "Caithfidh {{count}} {{token}} an ghabháltais mharcáilte teacht ón tsraith sin.",
+        "regionLine.row_many": "Caithfidh {{count}} {{token}} an ghabháltais mharcáilte teacht ón tsraith sin.",
+        "regionLine.row_other": "Caithfidh {{count}} {{token}} an ghabháltais mharcáilte teacht ón tsraith sin.",
+        "regionLine.col_one": "Caithfidh {{token}} an ghabháltais mharcáilte teacht ón gcolún sin.",
+        "regionLine.col_two": "Caithfidh {{count}} {{token}} an ghabháltais mharcáilte teacht ón gcolún sin.",
+        "regionLine.col_few": "Caithfidh {{count}} {{token}} an ghabháltais mharcáilte teacht ón gcolún sin.",
+        "regionLine.col_many": "Caithfidh {{count}} {{token}} an ghabháltais mharcáilte teacht ón gcolún sin.",
+        "regionLine.col_other": "Caithfidh {{count}} {{token}} an ghabháltais mharcáilte teacht ón gcolún sin.",
+        "lineRegion.row_one": "Baineann {{token}} na sraithe sin leis an ngabháltas marcáilte.",
+        "lineRegion.row_two": "Baineann {{count}} {{token}} na sraithe sin leis an ngabháltas marcáilte.",
+        "lineRegion.row_few": "Baineann {{count}} {{token}} na sraithe sin leis an ngabháltas marcáilte.",
+        "lineRegion.row_many": "Baineann {{count}} {{token}} na sraithe sin leis an ngabháltas marcáilte.",
+        "lineRegion.row_other": "Baineann {{count}} {{token}} na sraithe sin leis an ngabháltas marcáilte.",
+        "lineRegion.col_one": "Baineann {{token}} an cholúin sin leis an ngabháltas marcáilte.",
+        "lineRegion.col_two": "Baineann {{count}} {{token}} an cholúin sin leis an ngabháltas marcáilte.",
+        "lineRegion.col_few": "Baineann {{count}} {{token}} an cholúin sin leis an ngabháltas marcáilte.",
+        "lineRegion.col_many": "Baineann {{count}} {{token}} an cholúin sin leis an ngabháltas marcáilte.",
+        "lineRegion.col_other": "Baineann {{count}} {{token}} an cholúin sin leis an ngabháltas marcáilte.",
+        "spanning.toRows": "Líonann na gabháltais mharcáilte na sraitheanna sin ({{count}}) eatarthu.",
+        "spanning.toCols": "Líonann na gabháltais mharcáilte na colúin sin ({{count}}) eatarthu.",
+        "spanning.fromRows": "Ní féidir leis na sraitheanna marcáilte a {{count}} {{token}} a fháil ach ó na gabháltais sin.",
+        "spanning.fromCols": "Ní féidir leis na colúin mharcáilte a {{count}} {{token}} a fháil ach ó na gabháltais sin.",
+        "wouldStrand.row": "Dá mbeadh {{token}} anseo, ní bheadh áit ar bith fágtha don tsraith mharcáilte le tógáil.",
+        "wouldStrand.col": "Dá mbeadh {{token}} anseo, ní bheadh áit ar bith fágtha don cholún marcáilte le tógáil.",
+        "wouldStrand.region": "Dá mbeadh {{token}} anseo, ní bheadh áit ar bith fágtha don ghabháltas marcáilte le tógáil.",
+        "action": {
+          "ruleOut_one": "Cuir an cheapach stríocach as an áireamh.",
+          "ruleOut_two": "Cuir na ceapacha stríocacha as an áireamh.",
+          "ruleOut_few": "Cuir na ceapacha stríocacha as an áireamh.",
+          "ruleOut_many": "Cuir na ceapacha stríocacha as an áireamh.",
+          "ruleOut_other": "Cuir na ceapacha stríocacha as an áireamh.",
+          "place_one": "Tóg {{token}} ar an gceapach stríocach.",
+          "place_two": "Tóg {{token}} ar gach ceapach stríocach.",
+          "place_few": "Tóg {{token}} ar gach ceapach stríocach.",
+          "place_many": "Tóg {{token}} ar gach ceapach stríocach.",
+          "place_other": "Tóg {{token}} ar gach ceapach stríocach."
+        }
+      },
+      "lamps": {
+        "mistake": "Ní féidir leis an marc seo a bheith ceart.",
+        "touch": "{{token}} anseo, agus ní féidir le lampa ola seasamh in aice le ceann eile — áirítear na cúinní.",
+        "groupFull.row_one": "Tá a lampa ola ag an tsraith seo cheana.",
+        "groupFull.row_two": "Tá a {{count}} lampa ola ag an tsraith seo cheana.",
+        "groupFull.row_few": "Tá a {{count}} lampa ola ag an tsraith seo cheana.",
+        "groupFull.row_many": "Tá a {{count}} lampa ola ag an tsraith seo cheana.",
+        "groupFull.row_other": "Tá a {{count}} lampa ola ag an tsraith seo cheana.",
+        "groupFull.col_one": "Tá a lampa ola ag an gcolún seo cheana.",
+        "groupFull.col_two": "Tá a {{count}} lampa ola ag an gcolún seo cheana.",
+        "groupFull.col_few": "Tá a {{count}} lampa ola ag an gcolún seo cheana.",
+        "groupFull.col_many": "Tá a {{count}} lampa ola ag an gcolún seo cheana.",
+        "groupFull.col_other": "Tá a {{count}} lampa ola ag an gcolún seo cheana.",
+        "groupTight.row_one": "Níl ach leac amháin fágtha sa tsraith seo.",
+        "groupTight.row_two": "Níl ach {{count}} leac fágtha sa tsraith seo.",
+        "groupTight.row_few": "Níl ach {{count}} leac fágtha sa tsraith seo.",
+        "groupTight.row_many": "Níl ach {{count}} leac fágtha sa tsraith seo.",
+        "groupTight.row_other": "Níl ach {{count}} leac fágtha sa tsraith seo.",
+        "groupTight.col_one": "Níl ach leac amháin fágtha sa cholún seo.",
+        "groupTight.col_two": "Níl ach {{count}} leac fágtha sa cholún seo.",
+        "groupTight.col_few": "Níl ach {{count}} leac fágtha sa cholún seo.",
+        "groupTight.col_many": "Níl ach {{count}} leac fágtha sa cholún seo.",
+        "groupTight.col_other": "Níl ach {{count}} leac fágtha sa cholún seo.",
+        "onlyWay.row_one": "Idir na bloic chloiche, níl ach cearnóg amháin fágtha sa tsraith seo do lampa ola.",
+        "onlyWay.row_two": "Níl ach bealach amháin le {{count}} lampa ola a chur sa tsraith seo.",
+        "onlyWay.row_few": "Níl ach bealach amháin le {{count}} lampa ola a chur sa tsraith seo.",
+        "onlyWay.row_many": "Níl ach bealach amháin le {{count}} lampa ola a chur sa tsraith seo.",
+        "onlyWay.row_other": "Níl ach bealach amháin le {{count}} lampa ola a chur sa tsraith seo.",
+        "onlyWay.col_one": "Idir na bloic chloiche, níl ach cearnóg amháin fágtha sa cholún seo do lampa ola.",
+        "onlyWay.col_two": "Níl ach bealach amháin le {{count}} lampa ola a chur sa cholún seo.",
+        "onlyWay.col_few": "Níl ach bealach amháin le {{count}} lampa ola a chur sa cholún seo.",
+        "onlyWay.col_many": "Níl ach bealach amháin le {{count}} lampa ola a chur sa cholún seo.",
+        "onlyWay.col_other": "Níl ach bealach amháin le {{count}} lampa ola a chur sa cholún seo.",
+        "everyWay.row_one": "Cibé áit a dtéann lampa ola na sraithe seo, bíonn sé anseo i gcónaí.",
+        "everyWay.row_two": "Cibé áit a dtéann {{count}} lampa ola na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.row_few": "Cibé áit a dtéann {{count}} lampa ola na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.row_many": "Cibé áit a dtéann {{count}} lampa ola na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.row_other": "Cibé áit a dtéann {{count}} lampa ola na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_one": "Cibé áit a dtéann lampa ola an cholúin seo, bíonn sé anseo i gcónaí.",
+        "everyWay.col_two": "Cibé áit a dtéann {{count}} lampa ola an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_few": "Cibé áit a dtéann {{count}} lampa ola an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_many": "Cibé áit a dtéann {{count}} lampa ola an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_other": "Cibé áit a dtéann {{count}} lampa ola an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "lineBlock.rowsToCols": "Coinníonn na sraitheanna marcáilte a lampaí ola i gcearnóga na gcolún sin, mar sin níl aon cheann le spáráil ag na colúin sin.",
+        "lineBlock.colsToRows": "Coinníonn na colúin mharcáilte a lampaí ola i gcearnóga na sraitheanna sin, mar sin níl aon cheann le spáráil ag na sraitheanna sin.",
+        "wouldStrand.row": "Dá mbeadh lampa ola anseo, ní bheadh áit ar bith fágtha don tsraith mharcáilte.",
+        "wouldStrand.col": "Dá mbeadh lampa ola anseo, ní bheadh áit ar bith fágtha don cholún marcáilte.",
+        "action": {
+          "ruleOut_one": "Cuir an chearnóg stríocach as an áireamh.",
+          "ruleOut_two": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_few": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_many": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_other": "Cuir na cearnóga stríocacha as an áireamh.",
+          "place_one": "Cuir lampa ola sa chearnóg stríocach.",
+          "place_two": "Cuir lampa ola i ngach cearnóg stríocach.",
+          "place_few": "Cuir lampa ola i ngach cearnóg stríocach.",
+          "place_many": "Cuir lampa ola i ngach cearnóg stríocach.",
+          "place_other": "Cuir lampa ola i ngach cearnóg stríocach."
+        }
+      },
+      "market": {
+        "mistake": "Ní féidir leis an marc seo a bheith ceart.",
+        "touch": "{{token}} anseo, agus ní féidir le stainnín seasamh in aice le ceann eile — áirítear na cúinní.",
+        "groupFull.row_one": "Tá a stainnín ag an tsraith seo cheana.",
+        "groupFull.row_two": "Tá a {{count}} stainnín ag an tsraith seo cheana.",
+        "groupFull.row_few": "Tá a {{count}} stainnín ag an tsraith seo cheana.",
+        "groupFull.row_many": "Tá a {{count}} stainnín ag an tsraith seo cheana.",
+        "groupFull.row_other": "Tá a {{count}} stainnín ag an tsraith seo cheana.",
+        "groupFull.col_one": "Tá a stainnín ag an gcolún seo cheana.",
+        "groupFull.col_two": "Tá a {{count}} stainnín ag an gcolún seo cheana.",
+        "groupFull.col_few": "Tá a {{count}} stainnín ag an gcolún seo cheana.",
+        "groupFull.col_many": "Tá a {{count}} stainnín ag an gcolún seo cheana.",
+        "groupFull.col_other": "Tá a {{count}} stainnín ag an gcolún seo cheana.",
+        "groupTight.row_one": "Níl ach spota amháin fágtha sa tsraith seo.",
+        "groupTight.row_two": "Níl ach {{count}} spota fágtha sa tsraith seo.",
+        "groupTight.row_few": "Níl ach {{count}} spota fágtha sa tsraith seo.",
+        "groupTight.row_many": "Níl ach {{count}} spota fágtha sa tsraith seo.",
+        "groupTight.row_other": "Níl ach {{count}} spota fágtha sa tsraith seo.",
+        "groupTight.col_one": "Níl ach spota amháin fágtha sa cholún seo.",
+        "groupTight.col_two": "Níl ach {{count}} spota fágtha sa cholún seo.",
+        "groupTight.col_few": "Níl ach {{count}} spota fágtha sa cholún seo.",
+        "groupTight.col_many": "Níl ach {{count}} spota fágtha sa cholún seo.",
+        "groupTight.col_other": "Níl ach {{count}} spota fágtha sa cholún seo.",
+        "onlyWay.row_one": "Idir na tithe, níl ach cearnóg amháin fágtha sa tsraith seo do stainnín.",
+        "onlyWay.row_two": "Níl ach bealach amháin le {{count}} stainnín a chur sa tsraith seo.",
+        "onlyWay.row_few": "Níl ach bealach amháin le {{count}} stainnín a chur sa tsraith seo.",
+        "onlyWay.row_many": "Níl ach bealach amháin le {{count}} stainnín a chur sa tsraith seo.",
+        "onlyWay.row_other": "Níl ach bealach amháin le {{count}} stainnín a chur sa tsraith seo.",
+        "onlyWay.col_one": "Idir na tithe, níl ach cearnóg amháin fágtha sa cholún seo do stainnín.",
+        "onlyWay.col_two": "Níl ach bealach amháin le {{count}} stainnín a chur sa cholún seo.",
+        "onlyWay.col_few": "Níl ach bealach amháin le {{count}} stainnín a chur sa cholún seo.",
+        "onlyWay.col_many": "Níl ach bealach amháin le {{count}} stainnín a chur sa cholún seo.",
+        "onlyWay.col_other": "Níl ach bealach amháin le {{count}} stainnín a chur sa cholún seo.",
+        "everyWay.row_one": "Cibé áit a dtéann stainnín na sraithe seo, bíonn sé anseo i gcónaí.",
+        "everyWay.row_two": "Cibé áit a dtéann {{count}} stainnín na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.row_few": "Cibé áit a dtéann {{count}} stainnín na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.row_many": "Cibé áit a dtéann {{count}} stainnín na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.row_other": "Cibé áit a dtéann {{count}} stainnín na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_one": "Cibé áit a dtéann stainnín an cholúin seo, bíonn sé anseo i gcónaí.",
+        "everyWay.col_two": "Cibé áit a dtéann {{count}} stainnín an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_few": "Cibé áit a dtéann {{count}} stainnín an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_many": "Cibé áit a dtéann {{count}} stainnín an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_other": "Cibé áit a dtéann {{count}} stainnín an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "lineBlock.rowsToCols": "Coinníonn na sraitheanna marcáilte a stainníní i gcearnóga na gcolún sin, mar sin níl aon cheann le spáráil ag na colúin sin.",
+        "lineBlock.colsToRows": "Coinníonn na colúin mharcáilte a stainníní i gcearnóga na sraitheanna sin, mar sin níl aon cheann le spáráil ag na sraitheanna sin.",
+        "wouldStrand.row": "Dá mbeadh stainnín anseo, ní bheadh áit ar bith fágtha don tsraith mharcáilte.",
+        "wouldStrand.col": "Dá mbeadh stainnín anseo, ní bheadh áit ar bith fágtha don cholún marcáilte.",
+        "action": {
+          "ruleOut_one": "Cuir an chearnóg stríocach as an áireamh.",
+          "ruleOut_two": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_few": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_many": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_other": "Cuir na cearnóga stríocacha as an áireamh.",
+          "place_one": "Cuir stainnín sa chearnóg stríocach.",
+          "place_two": "Cuir stainnín i ngach cearnóg stríocach.",
+          "place_few": "Cuir stainnín i ngach cearnóg stríocach.",
+          "place_many": "Cuir stainnín i ngach cearnóg stríocach.",
+          "place_other": "Cuir stainnín i ngach cearnóg stríocach."
+        }
+      },
+      "lotus": {
+        "mistake": "Ní féidir leis an marc seo a bheith ceart.",
+        "touch": "{{token}} anseo, agus ní féidir le bláth lóis snámh in aice le ceann eile — áirítear na cúinní.",
+        "groupFull.row_one": "Tá a bhláth lóis ag an tsraith seo cheana.",
+        "groupFull.row_two": "Tá a {{count}} bhláth lóis ag an tsraith seo cheana.",
+        "groupFull.row_few": "Tá a {{count}} bhláth lóis ag an tsraith seo cheana.",
+        "groupFull.row_many": "Tá a {{count}} mbláth lóis ag an tsraith seo cheana.",
+        "groupFull.row_other": "Tá a {{count}} bláth lóis ag an tsraith seo cheana.",
+        "groupFull.col_one": "Tá a bhláth lóis ag an gcolún seo cheana.",
+        "groupFull.col_two": "Tá a {{count}} bhláth lóis ag an gcolún seo cheana.",
+        "groupFull.col_few": "Tá a {{count}} bhláth lóis ag an gcolún seo cheana.",
+        "groupFull.col_many": "Tá a {{count}} mbláth lóis ag an gcolún seo cheana.",
+        "groupFull.col_other": "Tá a {{count}} bláth lóis ag an gcolún seo cheana.",
+        "groupTight.row_one": "Níl ach paiste uisce amháin fágtha sa tsraith seo.",
+        "groupTight.row_two": "Níl ach {{count}} phaiste uisce fágtha sa tsraith seo.",
+        "groupTight.row_few": "Níl ach {{count}} phaiste uisce fágtha sa tsraith seo.",
+        "groupTight.row_many": "Níl ach {{count}} bpaiste uisce fágtha sa tsraith seo.",
+        "groupTight.row_other": "Níl ach {{count}} paiste uisce fágtha sa tsraith seo.",
+        "groupTight.col_one": "Níl ach paiste uisce amháin fágtha sa cholún seo.",
+        "groupTight.col_two": "Níl ach {{count}} phaiste uisce fágtha sa cholún seo.",
+        "groupTight.col_few": "Níl ach {{count}} phaiste uisce fágtha sa cholún seo.",
+        "groupTight.col_many": "Níl ach {{count}} bpaiste uisce fágtha sa cholún seo.",
+        "groupTight.col_other": "Níl ach {{count}} paiste uisce fágtha sa cholún seo.",
+        "onlyWay.row_one": "Idir na carraigeacha, níl ach cearnóg amháin fágtha sa tsraith seo do bhláth lóis.",
+        "onlyWay.row_two": "Níl ach bealach amháin le {{count}} bhláth lóis a chur sa tsraith seo.",
+        "onlyWay.row_few": "Níl ach bealach amháin le {{count}} bhláth lóis a chur sa tsraith seo.",
+        "onlyWay.row_many": "Níl ach bealach amháin le {{count}} mbláth lóis a chur sa tsraith seo.",
+        "onlyWay.row_other": "Níl ach bealach amháin le {{count}} bláth lóis a chur sa tsraith seo.",
+        "onlyWay.col_one": "Idir na carraigeacha, níl ach cearnóg amháin fágtha sa cholún seo do bhláth lóis.",
+        "onlyWay.col_two": "Níl ach bealach amháin le {{count}} bhláth lóis a chur sa cholún seo.",
+        "onlyWay.col_few": "Níl ach bealach amháin le {{count}} bhláth lóis a chur sa cholún seo.",
+        "onlyWay.col_many": "Níl ach bealach amháin le {{count}} mbláth lóis a chur sa cholún seo.",
+        "onlyWay.col_other": "Níl ach bealach amháin le {{count}} bláth lóis a chur sa cholún seo.",
+        "everyWay.row_one": "Cibé áit a dtéann bláth lóis na sraithe seo, bíonn sé anseo i gcónaí.",
+        "everyWay.row_two": "Cibé áit a dtéann {{count}} bhláth lóis na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.row_few": "Cibé áit a dtéann {{count}} bhláth lóis na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.row_many": "Cibé áit a dtéann {{count}} mbláth lóis na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.row_other": "Cibé áit a dtéann {{count}} bláth lóis na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_one": "Cibé áit a dtéann bláth lóis an cholúin seo, bíonn sé anseo i gcónaí.",
+        "everyWay.col_two": "Cibé áit a dtéann {{count}} bhláth lóis an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_few": "Cibé áit a dtéann {{count}} bhláth lóis an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_many": "Cibé áit a dtéann {{count}} mbláth lóis an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_other": "Cibé áit a dtéann {{count}} bláth lóis an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "lineBlock.rowsToCols": "Coinníonn na sraitheanna marcáilte a mbláthanna lóis i gcearnóga na gcolún sin, mar sin níl aon cheann le spáráil ag na colúin sin.",
+        "lineBlock.colsToRows": "Coinníonn na colúin mharcáilte a mbláthanna lóis i gcearnóga na sraitheanna sin, mar sin níl aon cheann le spáráil ag na sraitheanna sin.",
+        "wouldStrand.row": "Dá mbeadh bláth lóis anseo, ní bheadh áit ar bith fágtha don tsraith mharcáilte.",
+        "wouldStrand.col": "Dá mbeadh bláth lóis anseo, ní bheadh áit ar bith fágtha don cholún marcáilte.",
+        "action": {
+          "ruleOut_one": "Cuir an chearnóg stríocach as an áireamh.",
+          "ruleOut_two": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_few": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_many": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_other": "Cuir na cearnóga stríocacha as an áireamh.",
+          "place_one": "Cuir bláth lóis sa chearnóg stríocach.",
+          "place_two": "Cuir bláth lóis i ngach cearnóg stríocach.",
+          "place_few": "Cuir bláth lóis i ngach cearnóg stríocach.",
+          "place_many": "Cuir bláth lóis i ngach cearnóg stríocach.",
+          "place_other": "Cuir bláth lóis i ngach cearnóg stríocach."
+        }
+      },
+      "cats": {
+        "mistake": "Ní féidir leis an marc seo a bheith ceart.",
+        "touch": "{{token}} anseo, agus ní féidir le cat codladh in aice le cat eile — áirítear na cúinní.",
+        "groupFull.row_one": "Tá a chat ag an tsraith seo cheana.",
+        "groupFull.row_two": "Tá a {{count}} chat ag an tsraith seo cheana.",
+        "groupFull.row_few": "Tá a {{count}} chat ag an tsraith seo cheana.",
+        "groupFull.row_many": "Tá a {{count}} gcat ag an tsraith seo cheana.",
+        "groupFull.row_other": "Tá a {{count}} cat ag an tsraith seo cheana.",
+        "groupFull.col_one": "Tá a chat ag an gcolún seo cheana.",
+        "groupFull.col_two": "Tá a {{count}} chat ag an gcolún seo cheana.",
+        "groupFull.col_few": "Tá a {{count}} chat ag an gcolún seo cheana.",
+        "groupFull.col_many": "Tá a {{count}} gcat ag an gcolún seo cheana.",
+        "groupFull.col_other": "Tá a {{count}} cat ag an gcolún seo cheana.",
+        "groupTight.row_one": "Níl ach leac amháin fágtha sa tsraith seo.",
+        "groupTight.row_two": "Níl ach {{count}} leac fágtha sa tsraith seo.",
+        "groupTight.row_few": "Níl ach {{count}} leac fágtha sa tsraith seo.",
+        "groupTight.row_many": "Níl ach {{count}} leac fágtha sa tsraith seo.",
+        "groupTight.row_other": "Níl ach {{count}} leac fágtha sa tsraith seo.",
+        "groupTight.col_one": "Níl ach leac amháin fágtha sa cholún seo.",
+        "groupTight.col_two": "Níl ach {{count}} leac fágtha sa cholún seo.",
+        "groupTight.col_few": "Níl ach {{count}} leac fágtha sa cholún seo.",
+        "groupTight.col_many": "Níl ach {{count}} leac fágtha sa cholún seo.",
+        "groupTight.col_other": "Níl ach {{count}} leac fágtha sa cholún seo.",
+        "onlyWay.row_one": "Idir na colúin chloiche, níl ach cearnóg amháin fágtha sa tsraith seo do chat.",
+        "onlyWay.row_two": "Níl ach bealach amháin le {{count}} chat a chur sa tsraith seo.",
+        "onlyWay.row_few": "Níl ach bealach amháin le {{count}} chat a chur sa tsraith seo.",
+        "onlyWay.row_many": "Níl ach bealach amháin le {{count}} gcat a chur sa tsraith seo.",
+        "onlyWay.row_other": "Níl ach bealach amháin le {{count}} cat a chur sa tsraith seo.",
+        "onlyWay.col_one": "Idir na colúin chloiche, níl ach cearnóg amháin fágtha sa cholún seo do chat.",
+        "onlyWay.col_two": "Níl ach bealach amháin le {{count}} chat a chur sa cholún seo.",
+        "onlyWay.col_few": "Níl ach bealach amháin le {{count}} chat a chur sa cholún seo.",
+        "onlyWay.col_many": "Níl ach bealach amháin le {{count}} gcat a chur sa cholún seo.",
+        "onlyWay.col_other": "Níl ach bealach amháin le {{count}} cat a chur sa cholún seo.",
+        "everyWay.row_one": "Cibé áit a dtéann cat na sraithe seo, bíonn sé anseo i gcónaí.",
+        "everyWay.row_two": "Cibé áit a dtéann {{count}} chat na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.row_few": "Cibé áit a dtéann {{count}} chat na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.row_many": "Cibé áit a dtéann {{count}} gcat na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.row_other": "Cibé áit a dtéann {{count}} cat na sraithe seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_one": "Cibé áit a dtéann cat an cholúin seo, bíonn sé anseo i gcónaí.",
+        "everyWay.col_two": "Cibé áit a dtéann {{count}} chat an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_few": "Cibé áit a dtéann {{count}} chat an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_many": "Cibé áit a dtéann {{count}} gcat an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "everyWay.col_other": "Cibé áit a dtéann {{count}} cat an cholúin seo, bíonn ceann anseo i gcónaí.",
+        "lineBlock.rowsToCols": "Coinníonn na sraitheanna marcáilte a gcait i gcearnóga na gcolún sin, mar sin níl aon cheann le spáráil ag na colúin sin.",
+        "lineBlock.colsToRows": "Coinníonn na colúin mharcáilte a gcait i gcearnóga na sraitheanna sin, mar sin níl aon cheann le spáráil ag na sraitheanna sin.",
+        "wouldStrand.row": "Dá mbeadh cat anseo, ní bheadh áit ar bith fágtha don tsraith mharcáilte.",
+        "wouldStrand.col": "Dá mbeadh cat anseo, ní bheadh áit ar bith fágtha don cholún marcáilte.",
+        "action": {
+          "ruleOut_one": "Cuir an chearnóg stríocach as an áireamh.",
+          "ruleOut_two": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_few": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_many": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_other": "Cuir na cearnóga stríocacha as an áireamh.",
+          "place_one": "Leag cat sa chearnóg stríocach.",
+          "place_two": "Leag cat i ngach cearnóg stríocach.",
+          "place_few": "Leag cat i ngach cearnóg stríocach.",
+          "place_many": "Leag cat i ngach cearnóg stríocach.",
+          "place_other": "Leag cat i ngach cearnóg stríocach."
+        }
+      }
+    },
+    "quota": {
+      "default": "In aghaidh na sraithe, an cholúin agus an réigiúin",
+      "fields": "In aghaidh na sraithe, an cholúin agus an ghabháltais",
+      "lamps": "In aghaidh na sraithe agus an cholúin",
+      "market": "In aghaidh na sraithe agus an cholúin",
+      "lotus": "In aghaidh na sraithe agus an cholúin",
+      "cats": "In aghaidh na sraithe agus an cholúin"
+    },
+    "goal": {
+      "default_one": "Tá réalta amháin díreach i ngach sraith, i ngach colún agus i ngach réigiún.",
+      "default_two": "Tá {{count}} réalta díreach i ngach sraith, i ngach colún agus i ngach réigiún.",
+      "default_few": "Tá {{count}} réalta díreach i ngach sraith, i ngach colún agus i ngach réigiún.",
+      "default_many": "Tá {{count}} réalta díreach i ngach sraith, i ngach colún agus i ngach réigiún.",
+      "default_other": "Tá {{count}} réalta díreach i ngach sraith, i ngach colún agus i ngach réigiún.",
+      "fields_one": "Tá teach feirme amháin díreach i ngach sraith, i ngach colún agus i ngach gabháltas.",
+      "fields_two": "Tá {{count}} theach feirme díreach i ngach sraith, i ngach colún agus i ngach gabháltas.",
+      "fields_few": "Tá {{count}} theach feirme díreach i ngach sraith, i ngach colún agus i ngach gabháltas.",
+      "fields_many": "Tá {{count}} dteach feirme díreach i ngach sraith, i ngach colún agus i ngach gabháltas.",
+      "fields_other": "Tá {{count}} teach feirme díreach i ngach sraith, i ngach colún agus i ngach gabháltas.",
+      "lamps": "Tá lampa ola amháin díreach i ngach sraith agus i ngach colún.",
+      "market": "Tá stainnín margaidh amháin díreach i ngach sraith agus i ngach colún.",
+      "lotus": "Tá bláth lóis amháin díreach i ngach sraith agus i ngach colún.",
+      "cats": "Tá cat amháin díreach i ngach sraith agus i ngach colún."
+    },
+    "name": {
+      "default": "Réaltaí Óna Chéile",
+      "fields": "Tithe Feirme",
+      "twinDefault": "Réaltaí Cúpla",
+      "twinFields": "Tithe Feirme Cúpla",
+      "lamps": "Lampaí Ola",
+      "market": "Stainníní Margaidh",
+      "lotus": "Lochán Lóis",
+      "cats": "Cait an Teampaill"
+    }
+  },
+  "pairPuzzle": {
+    "name": {
+      "mummies": "Suaimhneas na Mumaithe",
+      "beetles": "Ciaróga Aoiligh"
+    },
+    "goal": {
+      "mummies": "Faigheann gach sarcafagas mumaí amháin in aice leis, agus tá i ngach sraith agus i ngach colún díreach an líon mumaithe atá scríofa in aice leis.",
+      "beetles": "Faigheann gach liathróid aoiligh ciaróg amháin in aice léi, agus tá i ngach sraith agus i ngach colún díreach an líon ciaróg atá scríofa in aice leis."
+    },
+    "rules": {
+      "mummies": {
+        "pair": "Tá mumaí amháin ina luí díreach os cionn, faoi, ar chlé nó ar dheis gach sarcafagais, agus luíonn gach mumaí in aice le sarcafagas dá cuid féin.",
+        "count": "Insíonn an uimhir in aice le sraith nó colún cé mhéad mumaí atá ann. Éiríonn sí glas nuair atá an líon sin díreach sa líne, agus dearg nuair nach féidir é a bhaint amach.",
+        "touch": "Ní féidir le dhá mhumaí seasamh in aice a chéile — áirítear na cúinní.",
+        "enter": "Tapáil cearnóg lena cur as an áireamh, tapáil arís le mumaí a leagan ann, agus uair amháin eile lena glanadh. Tarraing trasna cearnóg le sraith díobh a chur as an áireamh. Ní féidir sarcafagais a thapáil."
+      },
+      "beetles": {
+        "pair": "Tá ciaróg amháin díreach os cionn, faoi, ar chlé nó ar dheis gach liathróid aoiligh, agus seasann gach ciaróg in aice le liathróid dá cuid féin le rolladh.",
+        "count": "Insíonn an uimhir in aice le sraith nó colún cé mhéad ciaróg atá ann. Éiríonn sí glas nuair atá an líon sin díreach sa líne, agus dearg nuair nach féidir é a bhaint amach.",
+        "touch": "Ní féidir le dhá chiaróg seasamh in aice a chéile — áirítear na cúinní.",
+        "enter": "Tapáil cearnóg lena cur as an áireamh, tapáil arís le ciaróg a chur ann, agus uair amháin eile lena glanadh. Tarraing trasna cearnóg le sraith díobh a chur as an áireamh. Ní féidir liathróidí aoiligh a thapáil."
+      }
+    },
+    "hint": {
+      "mummies": {
+        "mistake": "Ní féidir leis an marc seo a bheith ceart.",
+        "touch": "Tá an mumaí seo ina luí, mar sin ní féidir le ceann eile seasamh in aice léi — áirítear na cúinní.",
+        "zeroLine.row": "Níl mumaí ar bith sa tsraith seo, mar sin tá sí folamh ar fad.",
+        "zeroLine.col": "Níl mumaí ar bith sa cholún seo, mar sin tá sé folamh ar fad.",
+        "noAnchor": "Níl sarcafagas in aice leis na cearnóga seo, mar sin ní féidir le mumaí luí anseo.",
+        "lineFull.row_one": "Tá a mumaí ag an tsraith seo cheana.",
+        "lineFull.row_two": "Tá a {{count}} mhumaí ag an tsraith seo cheana.",
+        "lineFull.row_few": "Tá a {{count}} mhumaí ag an tsraith seo cheana.",
+        "lineFull.row_many": "Tá a {{count}} mumaí ag an tsraith seo cheana.",
+        "lineFull.row_other": "Tá a {{count}} mumaí ag an tsraith seo cheana.",
+        "lineFull.col_one": "Tá a mhumaí ag an gcolún seo cheana.",
+        "lineFull.col_two": "Tá a {{count}} mhumaí ag an gcolún seo cheana.",
+        "lineFull.col_few": "Tá a {{count}} mhumaí ag an gcolún seo cheana.",
+        "lineFull.col_many": "Tá a {{count}} mumaí ag an gcolún seo cheana.",
+        "lineFull.col_other": "Tá a {{count}} mumaí ag an gcolún seo cheana.",
+        "lineTight.row_one": "Níl ach cearnóg amháin fágtha sa tsraith seo dá mumaí.",
+        "lineTight.row_two": "Níl ach {{count}} chearnóg fágtha sa tsraith seo dá {{count}} mhumaí.",
+        "lineTight.row_few": "Níl ach {{count}} chearnóg fágtha sa tsraith seo dá {{count}} mhumaí.",
+        "lineTight.row_many": "Níl ach {{count}} gcearnóg fágtha sa tsraith seo dá {{count}} mumaí.",
+        "lineTight.row_other": "Níl ach {{count}} cearnóg fágtha sa tsraith seo dá {{count}} mumaí.",
+        "lineTight.col_one": "Níl ach cearnóg amháin fágtha sa cholún seo dá mhumaí.",
+        "lineTight.col_two": "Níl ach {{count}} chearnóg fágtha sa cholún seo dá {{count}} mhumaí.",
+        "lineTight.col_few": "Níl ach {{count}} chearnóg fágtha sa cholún seo dá {{count}} mhumaí.",
+        "lineTight.col_many": "Níl ach {{count}} gcearnóg fágtha sa cholún seo dá {{count}} mumaí.",
+        "lineTight.col_other": "Níl ach {{count}} cearnóg fágtha sa cholún seo dá {{count}} mumaí.",
+        "onlyWay": "Níl ach cearnóg amháin fágtha in aice leis an sarcafagas seo dá mhumaí.",
+        "claimed": "Tá a mhumaí ag an sarcafagas seo cheana, mar sin fanann folamh na cearnóga in aice leis nach féidir le sarcafagas eile a úsáid.",
+        "lineBlock.rowsToCols_one": "Tá mumaí amháin níos mó sna sraitheanna marcáilte ná mar is féidir lena sarcafagais féin a thabhairt, mar sin tagann sí ó sharcafagas díreach taobh amuigh díobh.",
+        "lineBlock.rowsToCols_two": "Tá {{count}} mhumaí níos mó sna sraitheanna marcáilte ná mar is féidir lena sarcafagais féin a thabhairt, mar sin tagann siad ó sharcafagais díreach taobh amuigh díobh.",
+        "lineBlock.rowsToCols_few": "Tá {{count}} mhumaí níos mó sna sraitheanna marcáilte ná mar is féidir lena sarcafagais féin a thabhairt, mar sin tagann siad ó sharcafagais díreach taobh amuigh díobh.",
+        "lineBlock.rowsToCols_many": "Tá {{count}} mumaí níos mó sna sraitheanna marcáilte ná mar is féidir lena sarcafagais féin a thabhairt, mar sin tagann siad ó sharcafagais díreach taobh amuigh díobh.",
+        "lineBlock.rowsToCols_other": "Tá {{count}} mumaí níos mó sna sraitheanna marcáilte ná mar is féidir lena sarcafagais féin a thabhairt, mar sin tagann siad ó sharcafagais díreach taobh amuigh díobh.",
+        "lineBlock.colsToRows_one": "Tá mumaí amháin níos mó sna colúin mharcáilte ná mar is féidir lena sarcafagais féin a thabhairt, mar sin tagann sí ó sharcafagas díreach taobh amuigh díobh.",
+        "lineBlock.colsToRows_two": "Tá {{count}} mhumaí níos mó sna colúin mharcáilte ná mar is féidir lena sarcafagais féin a thabhairt, mar sin tagann siad ó sharcafagais díreach taobh amuigh díobh.",
+        "lineBlock.colsToRows_few": "Tá {{count}} mhumaí níos mó sna colúin mharcáilte ná mar is féidir lena sarcafagais féin a thabhairt, mar sin tagann siad ó sharcafagais díreach taobh amuigh díobh.",
+        "lineBlock.colsToRows_many": "Tá {{count}} mumaí níos mó sna colúin mharcáilte ná mar is féidir lena sarcafagais féin a thabhairt, mar sin tagann siad ó sharcafagais díreach taobh amuigh díobh.",
+        "lineBlock.colsToRows_other": "Tá {{count}} mumaí níos mó sna colúin mharcáilte ná mar is féidir lena sarcafagais féin a thabhairt, mar sin tagann siad ó sharcafagais díreach taobh amuigh díobh.",
+        "wouldStrand.row": "Dá mbeadh mumaí anseo, ní bheadh áit fágtha sa tsraith mharcáilte do na mumaithe atá fós ag teastáil uaithi.",
+        "wouldStrand.col": "Dá mbeadh mumaí anseo, ní bheadh áit fágtha sa cholún marcáilte do na mumaithe atá fós ag teastáil uaidh.",
+        "wouldStrand.anchor": "Dá mbeadh mumaí anseo, ní bheadh cearnóg ar bith fágtha in aice leis an sarcafagas marcáilte dá mhumaí féin.",
+        "action": {
+          "ruleOut_one": "Cuir an chearnóg stríocach as an áireamh.",
+          "ruleOut_two": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_few": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_many": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_other": "Cuir na cearnóga stríocacha as an áireamh.",
+          "place_one": "Leag mumaí ar an gcearnóg stríocach.",
+          "place_two": "Leag mumaí ar gach cearnóg stríocach.",
+          "place_few": "Leag mumaí ar gach cearnóg stríocach.",
+          "place_many": "Leag mumaí ar gach cearnóg stríocach.",
+          "place_other": "Leag mumaí ar gach cearnóg stríocach."
+        }
+      },
+      "beetles": {
+        "mistake": "Ní féidir leis an marc seo a bheith ceart.",
+        "touch": "Tá an chiaróg seo ina háit, mar sin ní féidir le ceann eile seasamh in aice léi — áirítear na cúinní.",
+        "zeroLine.row": "Níl ciaróg ar bith sa tsraith seo, mar sin tá sí folamh ar fad.",
+        "zeroLine.col": "Níl ciaróg ar bith sa cholún seo, mar sin tá sé folamh ar fad.",
+        "noAnchor": "Níl liathróid aoiligh in aice leis na cearnóga seo, mar sin ní féidir le ciaróg seasamh anseo.",
+        "lineFull.row_one": "Tá a ciaróg ag an tsraith seo cheana.",
+        "lineFull.row_two": "Tá a {{count}} chiaróg ag an tsraith seo cheana.",
+        "lineFull.row_few": "Tá a {{count}} chiaróg ag an tsraith seo cheana.",
+        "lineFull.row_many": "Tá a {{count}} gciaróg ag an tsraith seo cheana.",
+        "lineFull.row_other": "Tá a {{count}} ciaróg ag an tsraith seo cheana.",
+        "lineFull.col_one": "Tá a chiaróg ag an gcolún seo cheana.",
+        "lineFull.col_two": "Tá a {{count}} chiaróg ag an gcolún seo cheana.",
+        "lineFull.col_few": "Tá a {{count}} chiaróg ag an gcolún seo cheana.",
+        "lineFull.col_many": "Tá a {{count}} gciaróg ag an gcolún seo cheana.",
+        "lineFull.col_other": "Tá a {{count}} ciaróg ag an gcolún seo cheana.",
+        "lineTight.row_one": "Níl ach cearnóg amháin fágtha sa tsraith seo dá ciaróg.",
+        "lineTight.row_two": "Níl ach {{count}} chearnóg fágtha sa tsraith seo dá {{count}} chiaróg.",
+        "lineTight.row_few": "Níl ach {{count}} chearnóg fágtha sa tsraith seo dá {{count}} chiaróg.",
+        "lineTight.row_many": "Níl ach {{count}} gcearnóg fágtha sa tsraith seo dá {{count}} gciaróg.",
+        "lineTight.row_other": "Níl ach {{count}} cearnóg fágtha sa tsraith seo dá {{count}} ciaróg.",
+        "lineTight.col_one": "Níl ach cearnóg amháin fágtha sa cholún seo dá chiaróg.",
+        "lineTight.col_two": "Níl ach {{count}} chearnóg fágtha sa cholún seo dá {{count}} chiaróg.",
+        "lineTight.col_few": "Níl ach {{count}} chearnóg fágtha sa cholún seo dá {{count}} chiaróg.",
+        "lineTight.col_many": "Níl ach {{count}} gcearnóg fágtha sa cholún seo dá {{count}} gciaróg.",
+        "lineTight.col_other": "Níl ach {{count}} cearnóg fágtha sa cholún seo dá {{count}} ciaróg.",
+        "onlyWay": "Níl ach cearnóg amháin fágtha in aice leis an liathróid aoiligh seo dá ciaróg.",
+        "claimed": "Tá a ciaróg ag an liathróid aoiligh seo cheana, mar sin fanann folamh na cearnóga in aice léi nach féidir le liathróid eile a úsáid.",
+        "lineBlock.rowsToCols_one": "Tá ciaróg amháin níos mó sna sraitheanna marcáilte ná mar is féidir lena liathróidí aoiligh féin a thabhairt, mar sin tagann sí ó liathróid díreach taobh amuigh díobh.",
+        "lineBlock.rowsToCols_two": "Tá {{count}} chiaróg níos mó sna sraitheanna marcáilte ná mar is féidir lena liathróidí aoiligh féin a thabhairt, mar sin tagann siad ó liathróidí díreach taobh amuigh díobh.",
+        "lineBlock.rowsToCols_few": "Tá {{count}} chiaróg níos mó sna sraitheanna marcáilte ná mar is féidir lena liathróidí aoiligh féin a thabhairt, mar sin tagann siad ó liathróidí díreach taobh amuigh díobh.",
+        "lineBlock.rowsToCols_many": "Tá {{count}} gciaróg níos mó sna sraitheanna marcáilte ná mar is féidir lena liathróidí aoiligh féin a thabhairt, mar sin tagann siad ó liathróidí díreach taobh amuigh díobh.",
+        "lineBlock.rowsToCols_other": "Tá {{count}} ciaróg níos mó sna sraitheanna marcáilte ná mar is féidir lena liathróidí aoiligh féin a thabhairt, mar sin tagann siad ó liathróidí díreach taobh amuigh díobh.",
+        "lineBlock.colsToRows_one": "Tá ciaróg amháin níos mó sna colúin mharcáilte ná mar is féidir lena liathróidí aoiligh féin a thabhairt, mar sin tagann sí ó liathróid díreach taobh amuigh díobh.",
+        "lineBlock.colsToRows_two": "Tá {{count}} chiaróg níos mó sna colúin mharcáilte ná mar is féidir lena liathróidí aoiligh féin a thabhairt, mar sin tagann siad ó liathróidí díreach taobh amuigh díobh.",
+        "lineBlock.colsToRows_few": "Tá {{count}} chiaróg níos mó sna colúin mharcáilte ná mar is féidir lena liathróidí aoiligh féin a thabhairt, mar sin tagann siad ó liathróidí díreach taobh amuigh díobh.",
+        "lineBlock.colsToRows_many": "Tá {{count}} gciaróg níos mó sna colúin mharcáilte ná mar is féidir lena liathróidí aoiligh féin a thabhairt, mar sin tagann siad ó liathróidí díreach taobh amuigh díobh.",
+        "lineBlock.colsToRows_other": "Tá {{count}} ciaróg níos mó sna colúin mharcáilte ná mar is féidir lena liathróidí aoiligh féin a thabhairt, mar sin tagann siad ó liathróidí díreach taobh amuigh díobh.",
+        "wouldStrand.row": "Dá mbeadh ciaróg anseo, ní bheadh áit fágtha sa tsraith mharcáilte do na ciaróga atá fós ag teastáil uaithi.",
+        "wouldStrand.col": "Dá mbeadh ciaróg anseo, ní bheadh áit fágtha sa cholún marcáilte do na ciaróga atá fós ag teastáil uaidh.",
+        "wouldStrand.anchor": "Dá mbeadh ciaróg anseo, ní bheadh cearnóg ar bith fágtha in aice leis an liathróid aoiligh mharcáilte dá ciaróg féin.",
+        "action": {
+          "ruleOut_one": "Cuir an chearnóg stríocach as an áireamh.",
+          "ruleOut_two": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_few": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_many": "Cuir na cearnóga stríocacha as an áireamh.",
+          "ruleOut_other": "Cuir na cearnóga stríocacha as an áireamh.",
+          "place_one": "Cuir ciaróg ar an gcearnóg stríocach.",
+          "place_two": "Cuir ciaróg ar gach cearnóg stríocach.",
+          "place_few": "Cuir ciaróg ar gach cearnóg stríocach.",
+          "place_many": "Cuir ciaróg ar gach cearnóg stríocach.",
+          "place_other": "Cuir ciaróg ar gach cearnóg stríocach."
+        }
+      }
+    }
+  },
+  "rushHour": {
+    "name": {
+      "default": "An Bac",
+      "market": "An Lána Blocáilte"
+    },
+    "goal": {
+      "default": "Faigh do bhloc féin amach tríd an mbearna ar dheis.",
+      "market": "Faigh do charr sleamhnáin féin amach tríd an mbearna ag deireadh na sráide."
+    },
+    "rules": {
+      "default": {
+        "lanes": "Ní shleamhnaíonn bloc ach ar feadh a lána féin — ní i leataobh riamh, ní den chlár riamh.",
+        "shove": "Tarraing bloc lena bhrú. Stopann sé áit a bhfuil rud éigin sa bhealach."
+      },
+      "market": {
+        "lanes": "Ní shleamhnaíonn carr sleamhnáin ach ar feadh an lána ina seasann sé — ní i leataobh riamh, ní amach as an tsráid riamh.",
+        "shove": "Tarraing carr sleamhnáin lena bhrú. Stopann sé áit a bhfuil rud éigin sa bhealach."
+      }
+    },
+    "hint": {
+      "default": {
+        "drive": "Tá an bealach romhat glan chomh fada sin.",
+        "back": "Ní bhogfaidh aon rud romhat. Cúlaigh do cheann féin as an mbealach ar dtús.",
+        "clear": "Tá an bloc sin trasna do lána féin.",
+        "room": "Ní féidir le haon rud bogadh go dtí go mbogann an ceann sin.",
+        "push": {
+          "left": "Brúigh ar chlé é, chomh fada leis an bhfáinne.",
+          "right": "Brúigh ar dheis é, chomh fada leis an bhfáinne.",
+          "up": "Brúigh suas é, chomh fada leis an bhfáinne.",
+          "down": "Brúigh síos é, chomh fada leis an bhfáinne."
+        }
+      },
+      "market": {
+        "drive": "Tá an lána romhat glan chomh fada sin.",
+        "back": "Ní bhogfaidh aon rud romhat. Cúlaigh do charr sleamhnáin féin ar dtús.",
+        "clear": "Tá an t-ualach sin trasna an lána a n-imíonn tú air.",
+        "room": "Ní féidir le haon rud bogadh go dtí go mbogtar an ceann sin.",
+        "push": {
+          "left": "Brúigh ar chlé é, chomh fada leis an bhfáinne.",
+          "right": "Brúigh ar dheis é, chomh fada leis an bhfáinne.",
+          "up": "Brúigh suas an tsráid é, chomh fada leis an bhfáinne.",
+          "down": "Brúigh síos an tsráid é, chomh fada leis an bhfáinne."
+        }
+      }
+    }
+  },
+  "hidato": {
+    "rules": {
+      "default": {
+        "given": "Is cuid den phuzal na huimhreacha atá sa chíor cheana — fanann siad san áit a bhfuil siad.",
+        "enter": "Tapáil uimhir leis an tsraith a phiocadh suas ansin, ansin tapáil cill fholamh in aice léi lena leanúint — nó tarraing díreach trí na cealla a dtéann sí.",
+        "back": "Tapáil uimhir a chuir tú síos agus tapáil arís í lena baint, mar aon le haon rud atá ag brath uirthi. Má leanann tú an tsraith bealach eile amach as uimhir, tarlaíonn an rud céanna. Cuireann Cealaigh do bheart deireanach ar ceal."
+      },
+      "channel": {
+        "given": "Is cuid den phuzal na páirceanna a bhfuil uimhir orthu cheana — fanann siad san áit a bhfuil siad.",
+        "enter": "Tapáil páirc le huimhir leis an uisce a phiocadh suas ansin, ansin tapáil páirc thirim in aice léi le tochailt ar aghaidh — nó tarraing díreach ar feadh na bpáirceanna a ritheann an chanáil.",
+        "back": "Tapáil páirc a thochail tú agus tapáil arís í lena líonadh isteach, mar aon le haon chanáil atá gearrtha amach uaithi. Má thochlaíonn tú bealach eile amach as páirc, tarlaíonn an rud céanna. Cuireann Cealaigh do bheart deireanach ar ceal."
+      },
+      "scribe": {
+        "given": "Is leis an bpuzal féin na figiúirí i ndúch dearg — fanann siad san áit a bhfuil siad.",
+        "enter": "Tapáil figiúr leis an ngiolcach a thógáil ansin, ansin tapáil spás folamh in aice leis le scríobh ar aghaidh — nó tarraing díreach ar feadh na líne.",
+        "back": "Tapáil figiúr a scríobh tú agus tapáil arís é lena scríobadh de, mar aon le haon líne atá gearrtha amach uaidh. Má scríobhann tú bealach eile amach as figiúr, tarlaíonn an rud céanna. Cuireann Cealaigh do bheart deireanach ar ceal."
+      },
+      "chambers": {
+        "given": "Ghearr na tógálaithe na seomraí a bhfuil uimhir orthu cheana — fanann siad san áit a bhfuil siad.",
+        "enter": "Tapáil seomra le huimhir leis an bpasáiste a thógáil ansin, ansin tapáil seomra séalaithe in aice leis le briseadh tríd — nó tarraing díreach ar feadh na seomraí a ritheann an pasáiste.",
+        "back": "Tapáil seomra a d’oscail tú agus tapáil arís é lena shéalú, mar aon le haon phasáiste atá gearrtha amach uaidh. Má bhriseann tú tríd bealach eile amach as seomra, tarlaíonn an rud céanna. Cuireann Cealaigh do bheart deireanach ar ceal."
+      }
+    },
+    "goal": {
+      "default": "Tá uimhir i ngach cill den chíor, 1 go {{last}}, gach ceann acu i gcill atá in aice leis an uimhir roimpi.",
+      "channel": "Uisceann canáil amháin an machaire ar fad: faigheann gach páirc a seal, 1 go {{last}}, gach ceann tochailte in aice leis an bpáirc roimpi.",
+      "scribe": "Téann líne amháin gan bhriseadh d’fhigiúirí trasna an leathanaigh: tá figiúr i ngach spás, 1 go {{last}}, gach ceann in aice leis an bhfigiúr roimhe.",
+      "chambers": "Ritheann pasáiste amháin tríd an tuama ar fad: osclaítear gach seomra ina sheal, 1 go {{last}}, gach ceann briste tríd ón seomra roimhe."
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": "Ní féidir le ceann de na huimhreacha seo a bheith ceart.",
+          "sandwich": "Níl ach cill oscailte amháin idir an {{before}} agus an {{after}}.",
+          "neighbourForced": "Níl ach cill oscailte amháin fágtha in aice leis an {{from}}.",
+          "onlyCell": "Níl áit ar bith eile fágtha sa chíor don {{value}}.",
+          "onlyValue": "Ní féidir le haon uimhir eile an chill seo a shroicheadh."
+        },
+        "action": {
+          "place": "Cuir {{value}} sa chill stríocach."
+        }
+      },
+      "channel": {
+        "reason": {
+          "mistake": "Ní féidir le ceann de na huimhreacha seo a bheith ceart.",
+          "sandwich": "Níl ach páirc thirim amháin idir an {{before}} agus an {{after}}.",
+          "neighbourForced": "Níl ach páirc thirim amháin fágtha in aice leis an {{from}}.",
+          "onlyCell": "Níl áit ar bith eile ar an machaire don {{value}}.",
+          "onlyValue": "Ní féidir le haon uimhir eile an pháirc seo a shroicheadh."
+        },
+        "action": {
+          "place": "Tochail {{value}} sa pháirc stríocach."
+        }
+      },
+      "scribe": {
+        "reason": {
+          "mistake": "Ní féidir le ceann de na figiúirí seo a bheith ceart.",
+          "sandwich": "Níl ach spás folamh amháin idir an {{before}} agus an {{after}}.",
+          "neighbourForced": "Níl ach spás folamh amháin fágtha in aice leis an {{from}}.",
+          "onlyCell": "Níl áit ar bith eile ar an leathanach don {{value}}.",
+          "onlyValue": "Ní féidir le haon fhigiúr eile an spás seo a shroicheadh."
+        },
+        "action": {
+          "place": "Scríobh {{value}} sa spás stríocach."
+        }
+      },
+      "chambers": {
+        "reason": {
+          "mistake": "Ní féidir le ceann de na huimhreacha seo a bheith ceart.",
+          "sandwich": "Níl ach seomra séalaithe amháin idir an {{before}} agus an {{after}}.",
+          "neighbourForced": "Níl ach seomra séalaithe amháin fágtha in aice leis an {{from}}.",
+          "onlyCell": "Níl áit ar bith eile sa tuama don {{value}}.",
+          "onlyValue": "Ní féidir le haon uimhir eile an seomra seo a shroicheadh."
+        },
+        "action": {
+          "place": "Oscail {{value}} sa seomra stríocach."
+        }
+      }
+    },
+    "name": {
+      "default": "An Choirceog",
+      "channel": "An Chanáil",
+      "scribe": "Leathanach an Scríobhaí",
+      "chambers": "Seomraí Séalaithe"
+    }
+  },
+  "sudoku": {
+    "rules": {
+      "default": {
+        "chambers": "Gearrann na línte troma an greille ina sé sheomra, dhá chearnóg ar leithead agus trí cinn ar airde.",
+        "given": "Is cuid den phuzal na huimhreacha atá greanta cheana — fanann siad san áit a bhfuil siad.",
+        "enter": "Tapáil cearnóg, ansin tapáil uimhir. Baineann an uimhir chéanna arís amach í.",
+        "notes": "Athraigh go dtí an peann luaidhe le breacadh síos na n-uimhreacha a d’fhéadfadh a bheith i gcearnóg fós. Cuireann Cealaigh do bheart deireanach ar ceal."
+      },
+      "papyrus": {
+        "chambers": "Roinneann na línte troma an leathanach ina sé phainéal, dhá spás ar leithead agus trí cinn ar airde.",
+        "given": "Is leis an bpuzal féin na comharthaí i ndúch dearg — fanann siad san áit a bhfuil siad.",
+        "enter": "Tapáil spás, ansin tapáil comhartha. Scríobann an comhartha céanna arís de é.",
+        "notes": "Tóg an peann giolcaí le breacadh isteach na gcomharthaí a d’fhéadfadh a bheith i spás fós. Cuireann Cealaigh do bheart deireanach ar ceal."
+      }
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": {
+            "value": "Ní féidir le ceann de na huimhreacha anseo a bheith ceart. Bain amach í agus féach arís.",
+            "note": "Chuir nótaí na cearnóige seo an uimhir cheart as an áireamh. Glan iad agus tosaigh arís."
+          },
+          "nakedSingle": "Tá gach uimhir eile tógtha ag sraith, colún agus seomra na cearnóige seo.",
+          "hiddenSingle": {
+            "row": "Ní luíonn {{token}} in aon chearnóg eile sa tsraith seo.",
+            "col": "Ní luíonn {{token}} in aon chearnóg eile sa cholún seo.",
+            "box": "Ní luíonn {{token}} in aon chearnóg eile sa seomra seo."
+          },
+          "pointing": {
+            "row": "Taobh istigh den seomra marcáilte, ní féidir le {{token}} seasamh ach sa tsraith seo.",
+            "col": "Taobh istigh den seomra marcáilte, ní féidir le {{token}} seasamh ach sa cholún seo."
+          },
+          "claiming": {
+            "row": "Ar feadh na sraithe marcáilte, ní luíonn {{token}} ach taobh istigh den seomra amháin seo.",
+            "col": "Síos an colún marcáilte, ní luíonn {{token}} ach taobh istigh den seomra amháin seo."
+          }
+        },
+        "action": {
+          "place": "Cuir {{token}} sa chearnóg stríocach.",
+          "ruleOut_one": "Cuir {{token}} as an áireamh sa chearnóg stríocach.",
+          "ruleOut_two": "Cuir {{token}} as an áireamh sna cearnóga stríocacha.",
+          "ruleOut_few": "Cuir {{token}} as an áireamh sna cearnóga stríocacha.",
+          "ruleOut_many": "Cuir {{token}} as an áireamh sna cearnóga stríocacha.",
+          "ruleOut_other": "Cuir {{token}} as an áireamh sna cearnóga stríocacha."
+        }
+      },
+      "papyrus": {
+        "reason": {
+          "mistake": {
+            "value": "Ní féidir le ceann de na comharthaí seo a bheith ceart. Scríob de é agus féach arís.",
+            "note": "Chuir marcanna luaidhe an spáis seo an comhartha ceart as an áireamh. Glan iad agus tosaigh arís."
+          },
+          "nakedSingle": "Tá gach comhartha eile tógtha ag sraith, colún agus painéal an spáis seo.",
+          "hiddenSingle": {
+            "row": "Ní luíonn {{token}} in aon spás eile sa tsraith seo.",
+            "col": "Ní luíonn {{token}} in aon spás eile sa cholún seo.",
+            "box": "Ní luíonn {{token}} in aon spás eile sa phainéal seo."
+          },
+          "pointing": {
+            "row": "Taobh istigh den phainéal marcáilte, ní féidir le {{token}} seasamh ach sa tsraith seo.",
+            "col": "Taobh istigh den phainéal marcáilte, ní féidir le {{token}} seasamh ach sa cholún seo."
+          },
+          "claiming": {
+            "row": "Ar feadh na sraithe marcáilte, ní luíonn {{token}} ach taobh istigh den phainéal amháin seo.",
+            "col": "Síos an colún marcáilte, ní luíonn {{token}} ach taobh istigh den phainéal amháin seo."
+          }
+        },
+        "action": {
+          "place": "Scríobh {{token}} sa spás stríocach.",
+          "ruleOut_one": "Cuir {{token}} as an áireamh sa spás stríocach.",
+          "ruleOut_two": "Cuir {{token}} as an áireamh sna spásanna stríocacha.",
+          "ruleOut_few": "Cuir {{token}} as an áireamh sna spásanna stríocacha.",
+          "ruleOut_many": "Cuir {{token}} as an áireamh sna spásanna stríocacha.",
+          "ruleOut_other": "Cuir {{token}} as an áireamh sna spásanna stríocacha."
+        }
+      }
+    },
+    "goal": {
+      "default": "Taispeánann gach sraith, gach colún agus gach seomra gach ceann de na sé huimhir uair amháin díreach.",
+      "papyrus": "Tá gach ceann de na sé chomhartha uair amháin díreach i ngach sraith, i ngach colún agus i ngach painéal."
+    },
+    "name": {
+      "default": "Sé Sheomra",
+      "papyrus": "Clár an Scríobhaí"
+    }
+  },
+  "crocodile": {
+    "name": "Poll na gCrogall",
+    "goal": "Trasnaigh an poll go dtí an bruach thall.",
+    "rules": {
+      "want": "Teastaíonn freagra amháin ó gach crogall ón tsraith clocha taobh thiar de: an ceann is mó, nó an ceann is lú.",
+      "mark": "Insíonn a bhéal oscailte cé acu, agus insíonn an comhartha in aice leis freisin: osclaíonn > i dtreo an fhreagra is mó, < i dtreo an fhreagra is lú.",
+      "bite": "Seas ar aon chloch eile agus baineann sé plaic asat: cailleann tú sláinte agus tosaíonn tú arís ón mbruach seo."
+    },
+    "hint": {
+      "biggest": "Teastaíonn an freagra is mó ón gcrogall seo. Sin {{value}}.",
+      "smallest": "Teastaíonn an freagra is lú ón gcrogall seo. Sin {{value}}."
+    }
+  },
+  "canisters": {
+    "name": {
+      "default": "Na Canstáin",
+      "grain": "Miosúir an Ghráin",
+      "oil": "Ola do na Lampaí",
+      "wine": "Siléar an Cheannaí",
+      "natron": "Na Prócaí Canópacha",
+      "ink": "An Scriptóir"
+    },
+    "goal": {
+      "default_one": "Tomhais amach an méid a iarrtar, agus abair cén canstán ina bhfuil sé.",
+      "default_two": "Tomhais amach gach méid a iarrtar ina seal, ag rá cén canstán ina bhfuil sé roimh an gcéad cheann eile.",
+      "default_few": "Tomhais amach gach méid a iarrtar ina seal, ag rá cén canstán ina bhfuil sé roimh an gcéad cheann eile.",
+      "default_many": "Tomhais amach gach méid a iarrtar ina seal, ag rá cén canstán ina bhfuil sé roimh an gcéad cheann eile.",
+      "default_other": "Tomhais amach gach méid a iarrtar ina seal, ag rá cén canstán ina bhfuil sé roimh an gcéad cheann eile.",
+      "grain_one": "Tomhais amach an méid gráin a iarrtar, agus abair cén miosúr ina bhfuil sé.",
+      "grain_two": "Tomhais amach gach méid gráin ina seal, ag rá cén miosúr ina bhfuil sé roimh an gcéad cheann eile.",
+      "grain_few": "Tomhais amach gach méid gráin ina seal, ag rá cén miosúr ina bhfuil sé roimh an gcéad cheann eile.",
+      "grain_many": "Tomhais amach gach méid gráin ina seal, ag rá cén miosúr ina bhfuil sé roimh an gcéad cheann eile.",
+      "grain_other": "Tomhais amach gach méid gráin ina seal, ag rá cén miosúr ina bhfuil sé roimh an gcéad cheann eile.",
+      "oil_one": "Tomhais amach an ola a iarrtar, agus abair cén próca ina bhfuil sí.",
+      "oil_two": "Tomhais amach gach miosúr ola ina seal, ag rá cén próca ina bhfuil sé roimh an gcéad cheann eile.",
+      "oil_few": "Tomhais amach gach miosúr ola ina seal, ag rá cén próca ina bhfuil sé roimh an gcéad cheann eile.",
+      "oil_many": "Tomhais amach gach miosúr ola ina seal, ag rá cén próca ina bhfuil sé roimh an gcéad cheann eile.",
+      "oil_other": "Tomhais amach gach miosúr ola ina seal, ag rá cén próca ina bhfuil sé roimh an gcéad cheann eile.",
+      "wine_one": "Tomhais amach an fíon a iarrtar, agus abair cén amfóra ina bhfuil sé.",
+      "wine_two": "Tomhais amach gach miosúr fíona ina seal, ag rá cén amfóra ina bhfuil sé roimh an gcéad cheann eile.",
+      "wine_few": "Tomhais amach gach miosúr fíona ina seal, ag rá cén amfóra ina bhfuil sé roimh an gcéad cheann eile.",
+      "wine_many": "Tomhais amach gach miosúr fíona ina seal, ag rá cén amfóra ina bhfuil sé roimh an gcéad cheann eile.",
+      "wine_other": "Tomhais amach gach miosúr fíona ina seal, ag rá cén amfóra ina bhfuil sé roimh an gcéad cheann eile.",
+      "natron_one": "Tomhais amach an natrón a iarrtar, agus abair cén próca ina bhfuil sé.",
+      "natron_two": "Tomhais amach gach miosúr natróin ina seal, ag rá cén próca ina bhfuil sé roimh an gcéad cheann eile.",
+      "natron_few": "Tomhais amach gach miosúr natróin ina seal, ag rá cén próca ina bhfuil sé roimh an gcéad cheann eile.",
+      "natron_many": "Tomhais amach gach miosúr natróin ina seal, ag rá cén próca ina bhfuil sé roimh an gcéad cheann eile.",
+      "natron_other": "Tomhais amach gach miosúr natróin ina seal, ag rá cén próca ina bhfuil sé roimh an gcéad cheann eile.",
+      "ink_one": "Tomhais amach an dúch a iarrtar, agus abair cén pota ina bhfuil sé.",
+      "ink_two": "Tomhais amach gach miosúr dúigh ina seal, ag rá cén pota ina bhfuil sé roimh an gcéad cheann eile.",
+      "ink_few": "Tomhais amach gach miosúr dúigh ina seal, ag rá cén pota ina bhfuil sé roimh an gcéad cheann eile.",
+      "ink_many": "Tomhais amach gach miosúr dúigh ina seal, ag rá cén pota ina bhfuil sé roimh an gcéad cheann eile.",
+      "ink_other": "Tomhais amach gach miosúr dúigh ina seal, ag rá cén pota ina bhfuil sé roimh an gcéad cheann eile."
+    },
+    "rules": {
+      "method": {
+        "sums": "Is é gach méid is féidir leat a dhéanamh ná dhá uimhir ar an mbinse curtha le chéile nó bainte óna chéile: méid canstáin, a bhfuil ann, nó an spás atá fágtha ann.",
+        "backwards": "Mar sin oibrigh siar ón méid a iarrtar — cé na dhá uimhir a dhéanann é, agus conas a bhfaigheann tú an dá cheann sin ag an am céanna?"
+      },
+      "claim": "Nuair atá an méid agat, tapáil “an ceann seo”. Má ainmníonn tú an soitheach mícheart, cosnaíonn sé beart ort.",
+      "legs": "Ansin an chéad mhéid eile, tomhaiste ó cibé rud atá fágtha sna soithí.",
+      "default": {
+        "moves": "Tapáil canstán lena phiocadh suas, ansin tapáil ceann eile le doirteadh isteach ann. Stopann an doirteadh nuair a bhíonn an chéad cheann folamh nó an dara ceann lán.",
+        "contents": "Seo an t-uisce ar fad atá ann — tosaíonn canstán amháin lán, agus ní féidir aon cheann a chaitheamh amach ná a fháil.",
+        "levels": "Insíonn gach canstán cé mhéad atá ann, i gcomparáid le cé mhéad a choinníonn sé nuair atá sé lán."
+      },
+      "grain": {
+        "moves": "Tapáil miosúr lena ardú, ansin tapáil ceann eile leis an ngrán a dhoirteadh isteach. Stopann an doirteadh nuair a bhíonn an chéad cheann folamh nó an dara ceann lán go béal.",
+        "contents": "Seo an grán ar fad atá ann — tosaíonn miosúr amháin lán, agus ní féidir aon cheann a scuabadh ar shiúl ná a fháil ón ngráinseach.",
+        "levels": "Insíonn gach miosúr cé mhéad atá ann, i gcomparáid le cé mhéad a choinníonn sé nuair atá sé lán go béal."
+      },
+      "oil": {
+        "moves": "Tapáil próca lena ardú, ansin tapáil ceann eile le doirteadh isteach ann. Stopann an doirteadh nuair a bhíonn an chéad cheann folamh nó an dara ceann lán.",
+        "contents": "Seo an ola ar fad atá ann — tosaíonn próca amháin lán, agus ní féidir aon cheann a dhoirteadh ar shiúl ná a fháil.",
+        "levels": "Insíonn gach próca cé mhéad atá ann, i gcomparáid le cé mhéad a choinníonn sé nuair atá sé lán."
+      },
+      "wine": {
+        "moves": "Tapáil amfóra lena hardú, ansin tapáil ceann eile le doirteadh isteach ann. Stopann an doirteadh nuair a bhíonn an chéad cheann folamh nó an dara ceann lán.",
+        "contents": "Seo an fíon ar fad atá ann — tosaíonn amfóra amháin lán, agus ní féidir aon cheann a dhoirteadh amach ná a fháil ón siléar.",
+        "levels": "Insíonn gach amfóra cé mhéad atá inti, i gcomparáid le cé mhéad a choinníonn sí nuair atá sí lán."
+      },
+      "natron": {
+        "moves": "Tapáil próca lena ardú, ansin tapáil ceann eile leis an natrón a dhoirteadh isteach. Stopann an doirteadh nuair a bhíonn an chéad cheann folamh nó an dara ceann lán go dtí an clúdach.",
+        "contents": "Seo an natrón ar fad atá ann — tosaíonn próca amháin lán, agus ní féidir aon cheann a scuabadh ar shiúl ná a fháil.",
+        "levels": "Insíonn gach próca cé mhéad atá ann, i gcomparáid le cé mhéad a choinníonn sé nuair atá sé lán go dtí an clúdach."
+      },
+      "ink": {
+        "moves": "Tapáil pota lena ardú, ansin tapáil ceann eile le doirteadh isteach ann. Stopann an doirteadh nuair a bhíonn an chéad cheann folamh nó an dara ceann lán.",
+        "contents": "Seo an dúch ar fad atá ann — tosaíonn pota amháin lán, agus ní féidir aon cheann a dhoirteadh amach ná dúch úr a mheilt.",
+        "levels": "Insíonn gach pota cé mhéad atá ann, i gcomparáid le cé mhéad a choinníonn sé nuair atá sé lán."
+      }
+    },
+    "hint": {
+      "goal": {
+        "leftover": "Ag obair siar: is é {{amount}} ná {{content}} lúide {{space}} — canstán ina bhfuil {{content}} doirte isteach i gceann a bhfuil spás do {{space}} ann.",
+        "full": "Ag obair siar: is é {{amount}} méid canstáin, agus is é {{a}} agus {{b}} le chéile díreach é.",
+        "sum": "Ag obair siar: is é {{amount}} ná {{a}} agus {{b}} le chéile."
+      },
+      "claim": "Níl ach doirteadh amháin uait. Ansin oibrigh amach cén canstán ina bhfuil sé.",
+      "stuck": "Ón áit seo ní féidir {{target}} a thomhas a thuilleadh leis na bearta atá fágtha agat. Cealaigh doirteadh, nó tosaigh an clár arís.",
+      "overBudget": "Níl bearta ar bith fágtha. Cealaigh ceann, nó atosaigh agus aimsigh an bealach is giorra.",
+      "next": {
+        "leftover": "An tsuim roimhe sin: {{amount}} — {{content}} doirte isteach i spás do {{space}}.",
+        "full": "An tsuim roimhe sin: canstán lán ag {{amount}} — {{a}} agus {{b}} le chéile.",
+        "sum": "An tsuim roimhe sin: {{amount}} — {{a}} agus {{b}} le chéile."
+      }
+    },
+    "movesLeft_one": "Beart amháin fágtha",
+    "movesLeft_two": "{{count}} bheart fágtha",
+    "movesLeft_few": "{{count}} bheart fágtha",
+    "movesLeft_many": "{{count}} mbeart fágtha",
+    "movesLeft_other": "{{count}} beart fágtha",
+    "legs": "tomhaiste {{done}} as {{total}}",
+    "wanted": "Tomhais amach",
+    "claim": "an ceann seo",
+    "claimAria": "Abair go bhfuil an méid sa {{capacity}}"
+  },
+  "procession": {
+    "name": {
+      "default": "Na hUaireanta in Ord",
+      "funerary": "An Lá i nGleann na nOibrithe",
+      "cosmos": "Trasnú na hOíche",
+      "water": "Lá na Tuile",
+      "trade": "An Lá ar an gCé"
+    },
+    "goal": {
+      "default": "Sleamhnaigh gach rud a tharlaíonn isteach ina uair féin, go dtí go mbeidh gach marc faoin lá ceart.",
+      "funerary": "Sleamhnaigh gach jab isteach ina uair féin, go dtí go mbeidh gach marc faoin lá ceart.",
+      "cosmos": "Sleamhnaigh gach solas isteach ina uair féin, go dtí go mbeidh gach marc faoin oíche ceart.",
+      "water": "Sleamhnaigh gach jab isteach ina uair féin, go dtí go mbeidh gach marc faoin lá ceart.",
+      "trade": "Sleamhnaigh gach jab isteach ina uair féin, go dtí go mbeidh gach marc faoin lá ceart."
+    },
+    "rules": {
+      "default": {
+        "lengths": "Is rud amháin a tharlaíonn gach sraith, agus maireann sé chomh fada agus atá a bharra leathan. Is é an rud a oibríonn tú amach ná cathain a tharlaíonn sé.",
+        "marks": "Éiríonn líne faoin lá dearg fad nach bhfuil sí ceart. Tapáil ceann le ciorcal a chur timpeall ar na sraitheanna a bhaineann léi.",
+        "drag": "Tarraing barra ar feadh a shraithe féin. Ní fhágann sé an lá riamh."
+      }
+    },
+    "hint": {
+      "default": {
+        "chain": "Tá áit na sraithe sin socraithe cheana, agus braitheann an ceann seo uirthi.",
+        "squeeze": "Níl ach an méid sin den lá fágtha, agus seo a bhfuil de a luíonn.",
+        "apart": "Ní luíonn an bealach eile timpeall sa lá.",
+        "split": "Triail an bealach eile timpeall agus briseann rud éigin eile.",
+        "move": "Tarraing an barra le ciorcal air go dtí na marcanna stríocacha."
+      }
+    },
+    "events": {
+      "default": ["an tine", "iompar an uisce", "an bhácáil", "an turas báid", "tiomáint na ndamh", "faire na hoíche"],
+      "funerary": [
+        "an phlástráil",
+        "tarraingt na greille",
+        "an tsnoíodóireacht",
+        "an phéinteáil",
+        "an t-órú",
+        "feistiú an dorais"
+      ],
+      "cosmos": [
+        "trasnú na gréine",
+        "éirí na réalta",
+        "faire na gealaí",
+        "an spéir oscailte",
+        "an breacadh lae",
+        "casadh na bliana"
+      ],
+      "water": [
+        "an tuile",
+        "tochailt na canála",
+        "líonadh an umair",
+        "uisciú na bpáirceanna",
+        "an bhádóireacht",
+        "an bhuain"
+      ],
+      "trade": [
+        "sórtáil na n-earraí",
+        "díol an aráin",
+        "díol na beorach",
+        "an bhádóireacht",
+        "an tarraingt",
+        "an cuntas"
+      ]
+    },
+    "marks": {
+      "default": {
+        "pin": "Tosaíonn {{a}} ag uair {{tick}}.",
+        "handoff": "Tosaíonn {{a}} an nóiméad a bhíonn {{b}} críochnaithe.",
+        "link_one": "Tosaíonn {{a}} uair an chloig tar éis do {{b}} críochnú.",
+        "link_two": "Tosaíonn {{a}} {{count}} uair an chloig tar éis do {{b}} críochnú.",
+        "link_few": "Tosaíonn {{a}} {{count}} huaire an chloig tar éis do {{b}} críochnú.",
+        "link_many": "Tosaíonn {{a}} {{count}} n-uaire an chloig tar éis do {{b}} críochnú.",
+        "link_other": "Tosaíonn {{a}} {{count}} uair an chloig tar éis do {{b}} críochnú.",
+        "before": "Bíonn {{a}} críochnaithe sula dtosaíonn {{b}}.",
+        "apart": "Ní bhíonn {{a}} agus {{b}} ar siúl ag an am céanna riamh.",
+        "together": "Bíonn {{a}} agus {{b}} ar siúl ag an am céanna ar feadh tamaill.",
+        "span_one": "Ón gcéad tús go dtí an deireadh deiridh: uair an chloig.",
+        "span_two": "Ón gcéad tús go dtí an deireadh deiridh: {{count}} uair an chloig.",
+        "span_few": "Ón gcéad tús go dtí an deireadh deiridh: {{count}} huaire an chloig.",
+        "span_many": "Ón gcéad tús go dtí an deireadh deiridh: {{count}} n-uaire an chloig.",
+        "span_other": "Ón gcéad tús go dtí an deireadh deiridh: {{count}} uair an chloig."
+      }
+    },
+    "door": {
+      "title": "Doras an Mhórshiúil",
+      "hint": "Scaoileann gach tíl a seasann tú air a jab féin. Cuir an lá in ord, ansin siúil ar na tíleanna san ord sin.",
+      "read": "Tá an lá léite. Siúil ar a thíleanna san ord seo, ón gcéad cheann.",
+      "hintButton": "Leid"
+    }
+  },
+  "story": {
+    "invitation": "Labhair",
+    "log": {
+      "empty": "Faic fós. Beidh neart le rá ag Fez."
+    },
+    "speaker": {
+      "fez": "Fez",
+      "explorer": "Tusa",
+      "ipi": "Ipi",
+      "henut": "Henut",
+      "priest": "An sagart",
+      "pharaoh": "An faró",
+      "voice": "Guth"
+    },
+    "wall": {
+      "wrong": "Ghearr duine éigin an tríú comhartha mícheart. Tá sé mícheart le trí mhíle bliain.",
+      "fixed": "Sin a hainm arís.",
+      "pick": "Cuir an comhartha ceart ina áit.",
+      "cannot": "Níl an comhartha a bhaineann anseo ar eolas agat. Ní fós."
+    },
+    "sphinx": {
+      "wrong": "An scríbhneoireacht chéanna is atá taobh amuigh, ach níor shroich an gaineamh í anseo. Dhá chomhartha fós gearrtha go glan, agus spás san áit a raibh an tríú ceann.",
+      "fixed": "Sin é an t-iomlán.",
+      "pick": "Cuir an comhartha atá á iompar agat isteach sa spás.",
+      "cannot": "Dhá chomhartha atá ar eolas agat, agus spás nach féidir leat a líonadh. Ní fós.",
+      "gap": "An comhartha atá ar iarraidh"
+    }
+  },
+  "lightbeamSwitch": {
+    "name": "An Solas a Chasann",
+    "invitation": "Cas na scátháin",
+    "goal": "Luíonn an solas i scrín, agus tá an bealach amach faoina bun oscailte.",
+    "rules": {
+      "shrines": "Diosca solais amháin, agus scrín os cionn gach bealaigh amach as an gcrosbhealach seo. Is féidir leis na scátháin ar an urlár an solas a thabhairt chuig ceann ar bith acu.",
+      "doors": "Tá an bealach amach a shroicheann an solas oscailte, agus tá na cinn eile dúnta. Bealach solais amháin, bealach amháin ar aghaidh.",
+      "returning": "Ní chailltear faic trí rogha a dhéanamh. Siúil ar ais isteach aon uair is mian leat agus cuir an solas bealach eile — osclaíonn an bealach sin, agus dúnann an ceann seo.",
+      "tap": "Tapáil scáthán lena chasadh. Má thapálann tú arís é, cuirtear ar ais é."
+    },
+    "doorOpen": "Bealach amach {{way}}: oscailte",
+    "doorShut": "Bealach amach {{way}}: dúnta",
+    "way": {
+      "n": "ó thuaidh",
+      "e": "soir",
+      "s": "ó dheas",
+      "w": "siar"
+    }
+  },
+  "handle": {
+    "name": "An Luamhán",
+    "invitation": "Tarraing an luamhán",
+    "goal": "Tá an luamhán ar crochadh bealach amháin nó an bealach eile. An rud a osclaíonn taobh amháin, dúnann an taobh eile é.",
+    "left": "Tarraing ar chlé é",
+    "right": "Tarraing ar dheis é"
+  },
+  "torch": {
+    "name": "An Tóirse",
+    "invitation": "Las an tóirse",
+    "goal": "Tóirse gan lasadh. Nuair a bhíonn sé ar lasadh, ní féidir é a mhúchadh arís.",
+    "lit": "Tá an tóirse ar lasadh."
+  },
+  "gateFace": {
+    "title": "Doras atá ag Fanacht",
+    "hint": "Caithfidh gach comhartha a bheith ar lasadh sula n-osclóidh an doras seo.",
+    "lit": "{{owner}}: ar lasadh",
+    "unlit": "{{owner}}: ní fós",
+    "owner": {
+      "torch": "Tóirse",
+      "handle": "Luamhán",
+      "key": "Eochair",
+      "web": "Comhartha den ghaineamh",
+      "plateStone": "Cloch ar phláta",
+      "plateEmpty": "Pláta fágtha folamh",
+      "other": "Meicníocht"
+    },
+    "orderHint": "Siúil ar na tíleanna san ord seo.",
+    "reset": "Tosaigh arís",
+    "spoiled": "Tá an iarracht millte: siúladh ar thíl as ord.",
+    "tile": {
+      "unwalked": "Céim {{step}}: níor siúladh fós",
+      "inOrder": "Céim {{step}}: siúlta in ord",
+      "outOfOrder": "Céim {{step}}: siúlta as ord"
+    }
+  },
+  "devLockEditor": {
+    "syntax": "Comhréir",
+    "example": "Sampla",
+    "useExample": "Úsáid an sampla",
+    "title": "Eagarthóir glas",
+    "notation": "Nodaireacht ghlais",
+    "checks": "Seiceálacha",
+    "drawing": "Líníocht",
+    "carveAndPlay": "Snoigh agus imir",
+    "copyLink": "Cóipeáil an nasc",
+    "copied": "Nasc cóipeáilte",
+    "failed": "Níorbh fhéidir cóipeáil; tá an nasc sa bharra seoltaí",
+    "backToEditor": "← Eagarthóir",
+    "close": "Dún",
+    "open": "Eagarthóir glas",
+    "modeLock": "Glas",
+    "modeWeb": "Gréasán",
+    "webNotation": "Nodaireacht ghréasáin",
+    "openWeb": "Oscail gréasán",
+    "checking": "Á sheiceáil…",
+    "checkedIn": "seiceáilte in {{ms}} ms",
+    "worldCarved": "urláir Draoi snoite in {{ms}} ms, uair amháin",
+    "simulation": "Tarraingtí",
+    "noSimulation": "Faic le himirt tríd go dtí go mbeidh gach áit sa domhan.",
+    "summary": "Achoimre",
+    "stillBuried": "{{percent}}% fós faoin ngaineamh",
+    "nothingBuried": "Faic faoin ngaineamh",
+    "finishes": "críochnaíonn",
+    "stopsAt": "stopann ag {{pct}}%",
+    "notOpenYet": "níl sé oscailte fós",
+    "pullAll": "Tarraing gach rud atá ar fáil",
+    "reset": "Atosaigh",
+    "progress": "{{reachable}} ar fáil · {{pulled}} as {{total}} tógtha",
+    "allTaken": "Gach rud tarraingthe agus tógtha.",
+    "potFront": "{{pulled}} as {{total}} tarraingthe · tosach ag {{pct}}%",
+    "potOpen": "{{pulled}} as {{total}} tarraingthe · oscailte",
+    "keys": "Eochracha",
+    "keysNote": "osclaíonn gach ceann séala",
+    "log": "Cad a tharla",
+    "logEmpty": "Faic tarraingthe fós.",
+    "logPull": "tarraingíonn {{name}} in {{at}}",
+    "logTake": "tógann {{name}} in {{at}}",
+    "logFront": "{{pot}} tosach go {{pct}}%",
+    "logPotOpen": "{{pot}} oscailte",
+    "logSeal": "séala in {{at}} oscailte",
+    "logNew": "nua: {{names}}",
+    "pullPin": "tarraing luamhán {{name}}",
+    "takePin": "tóg eochair {{name}}",
+    "legendCleared": "glanta",
+    "legendBuried": "faoin ngaineamh",
+    "legendSeal": "séala",
+    "legendPins": "● luamhán · ■ eochair · beag = cuid taoibh"
+  },
+  "camp": {
+    "title": "Campa",
+    "continue": {
+      "heading": "An turas reatha",
+      "setOff": "Imigh leat",
+      "pyramid": "Pirimid {{level}} as {{count}} · {{tier}}",
+      "tomb": "Tuama · {{tier}}",
+      "empty": "Tá gach rud oscailte ar do léarscáil"
+    },
+    "hint_one": "Tá rud éigin nua le fáil ar sheanturas amháin",
+    "hint_two": "Tá rud éigin nua le fáil ar {{count}} sheanturas",
+    "hint_few": "Tá rud éigin nua le fáil ar {{count}} sheanturas",
+    "hint_many": "Tá rud éigin nua le fáil ar {{count}} seanturas",
+    "hint_other": "Tá rud éigin nua le fáil ar {{count}} seanturas",
+    "comingHome": {
+      "title": "Ar ais sa champa",
+      "haulTitle": "An méid a fuair tú ar an turas seo",
+      "new": "NUA",
+      "unpack": "Díphacáil",
+      "toCamp": "Chuig an gcampa"
+    },
+    "chapter": {
+      "subtitle": "Caibidil nua",
+      "title": "Tá pirimid nua ag fanacht",
+      "body": "Tá turais {{tier}} oscailte. Lig do scíth sa champa agus imigh nuair a bheidh tú réidh.",
+      "journeyNote": "An chéad turas {{tier}}",
+      "later": "Níos déanaí"
+    },
+    "close": "Dún",
+    "entrance": {
+      "collection": "Bailiúchán",
+      "mosaic": "Mósáic",
+      "journeys": "Na turais go léir",
+      "detectors": "Brathadóirí"
+    },
+    "mapTable": {
+      "title": "Bord na léarscáile",
+      "journeys": "Turais"
+    }
+  },
+  "home": {
+    "haul": {
+      "times": "×{{count}}"
+    }
+  },
+  "journeys": {
+    "tierNeed": "Aimsigh an stór seo",
+    "tierProgress": "{{done}} as {{total}} déanta",
+    "tierLockedName": "Turais {{tier}}",
+    "toggleTier": "Taispeáin nó folaigh na turais {{tier}}",
+    "now": "ANOIS",
+    "newDot": "Rud éigin nua le fáil",
+    "noteCurrentPyramid": "Ar siúl · pirimid {{level}} as {{count}}",
+    "noteCurrentTomb": "Ar siúl · sa tuama",
+    "noteFinished": "Críochnaithe",
+    "noteFinishedNews": "Críochnaithe · rud éigin nua le fáil",
+    "noteOpen": "Níor tugadh cuairt air fós",
+    "noteResumePyramid": "Tosaithe cheana · pirimid {{level}} as {{count}}",
+    "noteResumeTomb": "Tosaithe cheana · sa tuama",
+    "needProgress": "{{unit}}: {{found}} as {{required}}",
+    "showStops": "Taispeáin láithreáin {{name}}",
+    "stopPyramid": "Pirimid",
+    "stopTomb": "Láithreán"
+  },
+  "newVersion": {
+    "title": "Leagan nua!",
+    "name": "Tá an cluiche athraithe go mór",
+    "body": "Mar sin tosaíonn do thuras as an nua. Tá tuamaí nua, rudaí nua le fáil agus campa le tógáil ag fanacht leat."
+  },
+  "devPrefabPreview": {
+    "firstDoor": "Chuig an gcéad doras",
+    "stop": "Chuig an stad",
+    "secondDoor": "Chuig an dara doras",
+    "doorsInUse_one": "Doras amháin in úsáid",
+    "doorsInUse_two": "{{count}} dhoras in úsáid",
+    "doorsInUse_few": "{{count}} dhoras in úsáid",
+    "doorsInUse_many": "{{count}} ndoras in úsáid",
+    "doorsInUse_other": "{{count}} doras in úsáid",
+    "walled": "{{count}} faoi bhalla"
+  },
+  "devRoomEditor": {
+    "title": "Eagarthóir seomraí",
+    "open": "Eagarthóir seomraí",
+    "close": "Dún",
+    "tier": "Leibhéal",
+    "catalogue": "Oscail seomra",
+    "notation": "Nodaireacht seomra",
+    "copyLink": "Cóipeáil an nasc",
+    "copyText": "Cóipeáil an téacs",
+    "copied": "Cóipeáilte",
+    "failed": "Níorbh fhéidir cóipeáil chuig an ngearrthaisce",
+    "palette": "Pailéad",
+    "unpainted": "gan phéinteáil fós",
+    "layout": "Leagan amach",
+    "mirrored": "(scáthánaithe)",
+    "fill_one": "Líon (rogha amháin)",
+    "fill_two": "Líon ({{count}} rogha)",
+    "fill_few": "Líon ({{count}} rogha)",
+    "fill_many": "Líon ({{count}} rogha)",
+    "fill_other": "Líon ({{count}} rogha)",
+    "fromDoor": "Siúil ó",
+    "toDoor": "Siúil go",
+    "automatic": "Uathoibríoch",
+    "direction": {
+      "n": "Doras thuaidh",
+      "e": "Doras thoir",
+      "s": "Doras theas",
+      "w": "Doras thiar"
+    },
+    "checks": "Seiceálacha",
+    "sound": "Éiríonn leis an seomra sna seiceálacha",
+    "tierDisagrees": "Deir an ceanntásc leibhéal {{header}}, tarraingthe anseo i {{picked}}",
+    "undo": "Cealaigh",
+    "drawing": "Líníocht",
+    "tool": {
+      "select": "Roghnaigh",
+      "wall": "Balla",
+      "floor": "Urlár",
+      "door": "Áit dorais",
+      "stop": "Stad",
+      "chest": "Cófra",
+      "portal": "Tairseach",
+      "mechanism": "Meicníocht",
+      "erase": "Glan",
+      "copy": "Tarraing {{letter}}"
+    },
+    "againstWall": "Seasann rudaí a scaoiltear in aghaidh an bhalla thuaidh",
+    "dropHint": "Tarraing iontráil phailéid ar chill; tógann sé a spás féin",
+    "newLayout": "Ainm an leagain amach nua",
+    "addLayout": "Cóipeáil mar leagan amach",
+    "inspector": {
+      "title": "Áit {{letter}}",
+      "optional": "Roghnach",
+      "kinds": "Cineálacha",
+      "counted": "Líon cuid acu amháin",
+      "take": "Tóg",
+      "of": "as",
+      "per": "in aghaidh",
+      "perNone": "gach ceann leis féin",
+      "drawAnother": "Tarraing ceann eile",
+      "close": "Dún"
+    },
+    "refused": {
+      "notFree": "Ní ar urlár saor taobh istigh den seomra",
+      "wallRow": "Seasann áit balla ar an gcéad sraith taobh istigh den bhalla thuaidh",
+      "northWall": "Bíonn rud balla ar crochadh ar an mballa thuaidh",
+      "floorOnRing": "Ní ghlacann an fáinne seachtrach ach ballaí agus áiteanna dorais",
+      "doorInside": "Seasann áit dorais ar an bhfáinne seachtrach",
+      "keepStop": "Fanann an stad: cuir in áit eile é lena bhogadh",
+      "noLetter": "Tá gach litir tógtha",
+      "layoutName": "Tabhair ainm don leagan amach nach bhfuil ag aon leagan amach eile",
+      "notation": "Ní ghlacann an nodaireacht leis: {{message}}"
+    },
+    "layer": {
+      "wall": "in aghaidh an bhalla",
+      "floor": "urlár",
+      "ground": "talamh",
+      "wallItem": "rud balla"
+    },
+    "cell": "Cill {{row}},{{col}}: {{what}}",
+    "cellWhat": {
+      "wall": "balla",
+      "floor": "urlár saor",
+      "door": "áit dorais",
+      "place": "{{letter}}, {{kinds}}"
+    },
+    "rewrites": "Athscríobhann an líníocht an téacs: bogann gach nóta tráchta go dtí an barr"
+  }
+}

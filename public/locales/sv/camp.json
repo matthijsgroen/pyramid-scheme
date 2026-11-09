@@ -1,0 +1,253 @@
+{
+  "spots": {
+    "fire": "Lägereld",
+    "sleeping": "Sovplats",
+    "water": "Vattenplats",
+    "cooking": "Matplats",
+    "donkey": "Åsnans plats",
+    "camel": "Kamelens plats",
+    "mapTable": "Kartbord",
+    "palmGarden": "Palmträdgård",
+    "ibisPond": "Ibisdamm",
+    "lookout": "Utkik",
+    "godStatues": "Gudastatyer",
+    "starCanopy": "Stjärntak"
+  },
+  "finds": {
+    "pot": "Kokgryta",
+    "seatCushions": "Sittkuddar",
+    "reedMat": "Vassmatta",
+    "blanket": "Filt",
+    "tentRug": "Tältmatta",
+    "tentFlag": "Tältflagga",
+    "gourd": "Kalebass",
+    "jar": "Kruka",
+    "secondJar": "Andra krukan",
+    "spiceRack": "Kryddhylla",
+    "breadBoard": "Brödbräda",
+    "starMap": "Stjärnkarta",
+    "scrollCase": "Rullhylsa",
+    "astrolabe": "Astrolabium",
+    "reedGlobe": "Jordglob av vass",
+    "seed": "Palmfrö",
+    "secondPalm": "Palmfrö",
+    "figTree": "Fikonfrö",
+    "papyrus": "Papyrusrot",
+    "reeds": "Vasskott",
+    "lotus": "Lotusknöl",
+    "flag": "Utkiksflagga",
+    "thoth": "Thoth-statyett",
+    "bastet": "Bastet-statyett",
+    "anubis": "Anubis-statyett",
+    "ra": "Ra-statyett",
+    "cloth": "Stjärnduk"
+  },
+  "structures": {
+    "stoneRing": "Stenring",
+    "fire": "Eld",
+    "cookingStones": "Kokstenar",
+    "seatingStones": "Sittstenar",
+    "clayOven": "Lerugn",
+    "windbreak": "Vindskydd",
+    "tent": "Tält",
+    "secondTent": "Andra tältet",
+    "pavilion": "Paviljong",
+    "well": "Brunn",
+    "wellPulley": "Brunn med block",
+    "tripod": "Trefot",
+    "breadOven": "Bakugn",
+    "dryingRack": "Torkställning",
+    "feast": "Festmåltid",
+    "table": "Kartbord",
+    "lotusPlanter": "Lotuslåda",
+    "edgeStones": "Dammkant",
+    "post": "Utkiksstolpe",
+    "platform": "Utkiksplattform",
+    "ladder": "Stege",
+    "roof": "Tak",
+    "signalFire": "Signaleld",
+    "poles": "Stjärnmaster",
+    "stars": "Stjärnor",
+    "planets": "Planeter"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Fältstenar",
+      "sandBed": "Sandbädd"
+    },
+    "fire": {
+      "tinder": "Fnöske",
+      "acaciaLogs": "Akaciaved"
+    },
+    "cookingStones": {
+      "flatStone": "Platt sten",
+      "supportStones": "Stödstenar"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Släta stenblock",
+      "sandstoneBlock": "Sandstensblock",
+      "hewnSlab": "Huggen stenplatta"
+    },
+    "clayOven": {
+      "ovenFloor": "Ugnsbotten",
+      "firebricks": "Eldfast tegel",
+      "smokeHole": "Rökhål",
+      "copperGrate": "Kopparrost"
+    },
+    "windbreak": {
+      "reedBundles": "Vassknippen",
+      "stakes": "Träpålar"
+    },
+    "tent": {
+      "tentPoles": "Tältstänger",
+      "wovenCloth": "Vävt tyg",
+      "tentPegs": "Tältpinnar"
+    },
+    "secondTent": {
+      "largeCloth": "Stor tältduk",
+      "ridgePole": "Takås",
+      "guyRopes": "Stormlinor",
+      "woolFloor": "Golvmatta av ull"
+    },
+    "pavilion": {
+      "pavilionPosts": "Paviljongstolpar",
+      "linenCanopy": "Tak av linne",
+      "hangingCurtains": "Gardiner",
+      "woolRugs": "Ullmattor",
+      "woodenFloor": "Trägolv"
+    },
+    "well": {
+      "wellStones": "Brunnsstenar",
+      "rope": "Långt rep",
+      "bucket": "Hink",
+      "windlass": "Vinsch"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Blockhjul",
+      "frame": "Bärställning",
+      "hoistRope": "Hissrep",
+      "counterweight": "Motvikt",
+      "leatherBucket": "Läderhink"
+    },
+    "tripod": {
+      "tripodPoles": "Tre stänger",
+      "binding": "Snöre",
+      "hook": "Bronskrok"
+    },
+    "breadOven": {
+      "mudBricks": "Lertegel",
+      "clayPlaster": "Lerputs",
+      "ovenLid": "Ugnslucka"
+    },
+    "dryingRack": {
+      "rackPoles": "Ställningsstänger",
+      "crossbar": "Tvärslå",
+      "wickerTray": "Flätad bricka",
+      "cords": "Hängsnören"
+    },
+    "feast": {
+      "lowTable": "Lågt bord",
+      "breadBaskets": "Brödkorgar",
+      "roastDuck": "Stekt anka",
+      "beerJars": "Ölkrukor",
+      "fruitBowl": "Fruktskål"
+    },
+    "table": {
+      "tableTop": "Bordsskiva",
+      "trestles": "Bockar",
+      "leatherStraps": "Läderremmar"
+    },
+    "lotusPlanter": {
+      "clayTub": "Lerbalja",
+      "nileSilt": "Nilslam",
+      "waterJar": "Vattenkruka",
+      "lotusTubers": "Lotusknölar",
+      "stoneRim": "Stenkant"
+    },
+    "edgeStones": {
+      "riverStones": "Flodstenar",
+      "clayBedding": "Lerbädd",
+      "gravel": "Grus",
+      "boundaryStakes": "Kantpinnar"
+    },
+    "post": {
+      "postTrunk": "Palmstam",
+      "footStones": "Grundstenar",
+      "wedges": "Kilar",
+      "braces": "Strävor"
+    },
+    "platform": {
+      "platformBeams": "Bärbjälkar",
+      "platformPlanks": "Plankor",
+      "lashingRope": "Surrningsrep",
+      "edgeRail": "Räcke"
+    },
+    "ladder": {
+      "ladderRails": "Stegens sidor",
+      "rungs": "Stegpinnar",
+      "groundPegs": "Markpinnar",
+      "leatherLoops": "Läderöglor"
+    },
+    "roof": {
+      "roofPoles": "Takstänger",
+      "thatch": "Palmblad",
+      "clayLayer": "Lerlager",
+      "bindingGrass": "Bindgräs"
+    },
+    "signalFire": {
+      "fireBasin": "Eldskål",
+      "pitch": "Beck",
+      "dryBrushwood": "Torrt ris",
+      "flint": "Flinta",
+      "bellows": "Blåsbälg"
+    },
+    "poles": {
+      "masts": "Master",
+      "cornerStones": "Hörnstenar",
+      "stayLines": "Stagrep",
+      "bigPegs": "Stora pinnar",
+      "poleSockets": "Stolpfötter"
+    },
+    "stars": {
+      "goldLeaf": "Bladguld",
+      "needleThread": "Nål och tråd",
+      "indigoDye": "Indigofärg",
+      "chalk": "Krita",
+      "stencils": "Schabloner"
+    },
+    "planets": {
+      "ochre": "Ockra",
+      "copperDiscs": "Kopparskivor",
+      "lapisPowder": "Lapispulver",
+      "hangingLoops": "Upphängningsöglor",
+      "dividers": "Passare"
+    }
+  },
+  "collection": {
+    "title": "Byggen",
+    "progress": "{{found}} av {{total}}",
+    "built": "byggt",
+    "unknownPart": "???",
+    "open": "Visa delar",
+    "close": "Dölj delar"
+  },
+  "reward": {
+    "find": "Lägerfynd",
+    "part": "Del",
+    "progress": "{{name}} · {{found}} av {{total}}"
+  },
+  "haul": {
+    "new": "Nytt i ditt läger",
+    "parts_one": "{{name}} · {{count}} del",
+    "parts_other": "{{name}} · {{count}} delar"
+  },
+  "arrivals": {
+    "donkey": "Din åsna är i lägret",
+    "cart": "Din kärra är i lägret",
+    "camel": "Din kamel är i lägret",
+    "secondDonkey": "Din andra åsna är i lägret",
+    "secondCamel": "Din andra kamel är i lägret",
+    "sturdyCart": "Din stadigare kärra är i lägret",
+    "caravanBanner": "Ditt karavanbaner hänger i lägret"
+  }
+}

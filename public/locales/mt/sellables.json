@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Ġebel",
+    "bronze": "Bronż",
+    "silver": "Fidda",
+    "gold": "Deheb",
+    "divine": "Tal-allat"
+  },
+  "sell_stone_1": {
+    "name": "Biċċa Fuħħar Imqarrsa",
+    "description": "Biċċa fuħħar miksura b'noti ta' skriba jitħarreġ — l-ittri tant mitfija li ma tistax taqrahom."
+  },
+  "sell_stone_2": {
+    "name": "Ġarra tat-Tafal Maqsuma",
+    "description": "Ġarra għall-qamħ jew il-birra, maqsuma minn naħa waħda bil-piż ta' mijiet ta' snin."
+  },
+  "sell_stone_3": {
+    "name": "Sandal tal-Qasab Mikul",
+    "description": "Minsuġ mill-qasab tal-papiru, il-qiegħ irqaq bil-mixi ta' kuljum ta' xi ħaddiem minsi."
+  },
+  "sell_stone_4": {
+    "name": "Biċċa Għażel Mitfija",
+    "description": "Strixxa mqatta' ta' għażel abjad, minn dak li kienu jkebbu madwar il-mejtin — jew biex iraqqgħu qlugħ."
+  },
+  "sell_stone_5": {
+    "name": "Sikkina taż-Żnied Miksura",
+    "description": "Sikkina taż-żnied, miksura fil-ponta. Irħisa biex tagħmilha, u irħas biex tibdilha."
+  },
+  "sell_bronze_1": {
+    "name": "Amulett tal-Bronż Mgħawweġ",
+    "description": "Ħarsa rħisa, mitfugħa mgħawġa u qatt ma ssewwiet."
+  },
+  "sell_bronze_2": {
+    "name": "Mera tal-Bronż Imsadda",
+    "description": "Darba kienet tleqq tant li tara wiċċek fiha; issa saret ħadra u mċajpra bl-età."
+  },
+  "sell_bronze_3": {
+    "name": "Labra tas-Sajd tal-Bronż",
+    "description": "Għodda ta' sajjied, waqgħet fin-Nil ħafna qabel ma ngħalaq il-qabar."
+  },
+  "sell_bronze_4": {
+    "name": "Qanpiena Żgħira tal-Bronż",
+    "description": "Kienet tiddendel ma' bieb ta' tempju jew ma' għaksa ta' żeffiena — issa ma ddoqqx sew aktar."
+  },
+  "sell_bronze_5": {
+    "name": "Ċurkett tal-Bronż Mitfi",
+    "description": "Ċurkett sempliċi, għal saba' li ilu li sar trab."
+  },
+  "sell_silver_1": {
+    "name": "Ankh tal-Fidda Mitfi",
+    "description": "Sinjal tal-ħajja, mitfi minn mijiet ta' snin taħt l-art."
+  },
+  "sell_silver_2": {
+    "name": "Virga tal-Fidda għall-Kuħl",
+    "description": "Virga rqiqa li biha s-sinjuri kienu jpinġu madwar għajnejhom — il-kuħl ilu li spiċċa."
+  },
+  "sell_silver_3": {
+    "name": "Skutella tal-Fidda Mbaqqa'",
+    "description": "Skutella żgħira għall-offerti, mgħaffġa minn naħa meta s-saqaf fuqha fl-aħħar waqa'."
+  },
+  "sell_silver_4": {
+    "name": "Labra tax-Xagħar tal-Fidda",
+    "description": "Sempliċi u bla ebda tiżjin, darba żammet ix-xagħar ta' xi ħadd li ismu ntilef."
+  },
+  "sell_silver_5": {
+    "name": "Brazzuletta tal-Fidda Mikula",
+    "description": "Brazzuletta rqiqa tal-fidda, bil-qafla miksura. Mhix sabiħa biżżejjed għal nobbli, sabiħa wisq għal ħaddiem."
+  },
+  "sell_gold_1": {
+    "name": "Żibġa Żgħira tad-Deheb",
+    "description": "Żibġa waħda minn ġiżirana tad-dfin, li nxterdet ilu."
+  },
+  "sell_gold_2": {
+    "name": "Biċċa Werqa tad-Deheb",
+    "description": "Biċċa rqiqa ta' werqa tad-deheb, imqaxxra minn wiċċ ta' statwa minn ħallelin tal-oqbra ħafna qabel wasalt int."
+  },
+  "sell_gold_3": {
+    "name": "Imsielet Irqiq tad-Deheb",
+    "description": "Imsawwat irqiq biex id-deheb tan-nobbli jasal għal aktar."
+  },
+  "sell_gold_4": {
+    "name": "Biċċa bit-Tikki tad-Deheb",
+    "description": "Biċċa miksura ta' kisja indurata, b'tikki ta' deheb veru għadhom imwaħħlin magħha."
+  },
+  "sell_gold_5": {
+    "name": "Ċurkett tas-Siġill Imqarras",
+    "description": "Ċurkett tas-siġill, bit-tinqix mikul tant li ma tagħrfux — min kien isemmi ntesa."
+  },
+  "sell_divine_1": {
+    "name": "Skarabew tal-Lapis Mitfi",
+    "description": "Minqux mil-lapis lazuli prezzjuż, miġjub minn 'il bogħod bi flus kbar biex fargħun jitwieled mill-ġdid. Il-kulur baħat mal-mijiet ta' snin."
+  },
+  "sell_divine_2": {
+    "name": "Amulett tal-Għajn tal-Karnelja",
+    "description": "Għajn li tħares, minquxa minn karnelja ħamra demm, biex tbiegħed is-sfortuna fil-ħajja ta' wara l-mewt."
+  },
+  "sell_divine_3": {
+    "name": "Biċċa Turkważ tal-Mużajk",
+    "description": "Madum wieħed minn mużajk imfarrak, darba parti mill-wiċċ ta' alla fuq ħajt ta' tempju."
+  },
+  "sell_divine_4": {
+    "name": "Biċċa Alabastru ta' Ġarra Kanopika",
+    "description": "Biċċa miksura ta' ġarra li kienet iżżomm l-organi ta' fargħun — ġebla prezzjuża għal xogħol kerha."
+  },
+  "sell_divine_5": {
+    "name": "Sikkina tal-Ossidjana tar-Riti",
+    "description": "Ħġieġ tal-vulkan, imsenn għal xifer tar-riti li qatt ma kien għall-gwerra — għat-tempju biss."
+  }
+}

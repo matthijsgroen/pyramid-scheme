@@ -1,0 +1,254 @@
+{
+  "spots": {
+    "fire": "Ugunskurs",
+    "sleeping": "Guļvieta",
+    "water": "Ūdens vieta",
+    "cooking": "Ēst gatavošanas vieta",
+    "donkey": "Ēzeļa vieta",
+    "camel": "Kamieļa vieta",
+    "mapTable": "Kartes galds",
+    "palmGarden": "Palmu dārzs",
+    "ibisPond": "Ibisu dīķis",
+    "lookout": "Skatu tornis",
+    "godStatues": "Dievu statujas",
+    "starCanopy": "Zvaigžņu jumts"
+  },
+  "finds": {
+    "pot": "Katls",
+    "seatCushions": "Sēžamie spilveni",
+    "reedMat": "Niedru paklājiņš",
+    "blanket": "Sega",
+    "tentRug": "Telts paklājs",
+    "tentFlag": "Telts karodziņš",
+    "gourd": "Ķirbja blašķe",
+    "jar": "Krūka",
+    "secondJar": "Otra krūka",
+    "spiceRack": "Garšvielu plaukts",
+    "breadBoard": "Maizes dēlītis",
+    "starMap": "Zvaigžņu karte",
+    "scrollCase": "Rullīšu futrālis",
+    "astrolabe": "Astrolabs",
+    "reedGlobe": "Niedru globuss",
+    "seed": "Palmas sēkla",
+    "secondPalm": "Palmas sēkla",
+    "figTree": "Vīģes sēkla",
+    "papyrus": "Papirusa sakne",
+    "reeds": "Niedres dzinums",
+    "lotus": "Lotosa gumulis",
+    "flag": "Skatu torņa karogs",
+    "thoth": "Tota statuete",
+    "bastet": "Bastetes statuete",
+    "anubis": "Anubisa statuete",
+    "ra": "Ra statuete",
+    "cloth": "Zvaigžņu audums"
+  },
+  "structures": {
+    "stoneRing": "Akmeņu aplis",
+    "fire": "Uguns",
+    "cookingStones": "Vārīšanas akmeņi",
+    "seatingStones": "Sēžamie akmeņi",
+    "clayOven": "Māla krāsns",
+    "windbreak": "Vēja aizsegs",
+    "tent": "Telts",
+    "secondTent": "Otra telts",
+    "pavilion": "Paviljons",
+    "well": "Aka",
+    "wellPulley": "Aka ar trīsi",
+    "tripod": "Trijkājis",
+    "breadOven": "Maizes krāsns",
+    "dryingRack": "Žāvētava",
+    "feast": "Mielasts",
+    "table": "Kartes galds",
+    "lotusPlanter": "Lotosu dobe",
+    "edgeStones": "Dīķa mala",
+    "post": "Skatu torņa stabs",
+    "platform": "Skatu laukums",
+    "ladder": "Kāpnes",
+    "roof": "Jumts",
+    "signalFire": "Signāluguns",
+    "poles": "Jumta masti",
+    "stars": "Zvaigznes",
+    "planets": "Planētas"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Lauka akmeņi",
+      "sandBed": "Smilšu pamats"
+    },
+    "fire": {
+      "tinder": "Iekuri",
+      "acaciaLogs": "Akācijas pagales"
+    },
+    "cookingStones": {
+      "flatStone": "Plakans akmens",
+      "supportStones": "Balsta akmeņi"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Gludi laukakmeņi",
+      "sandstoneBlock": "Smilšakmens bluķis",
+      "hewnSlab": "Tēsta plāksne"
+    },
+    "clayOven": {
+      "ovenFloor": "Krāsns grīda",
+      "firebricks": "Ugunsizturīgi ķieģeļi",
+      "smokeHole": "Dūmu caurums",
+      "copperGrate": "Vara reste"
+    },
+    "windbreak": {
+      "reedBundles": "Niedru kūļi",
+      "stakes": "Koka mieti"
+    },
+    "tent": {
+      "tentPoles": "Telts kārtis",
+      "wovenCloth": "Austs audums",
+      "tentPegs": "Telts mietiņi"
+    },
+    "secondTent": {
+      "largeCloth": "Liels telts audums",
+      "ridgePole": "Kores kārts",
+      "guyRopes": "Atsaites",
+      "woolFloor": "Vilnas grīdsega"
+    },
+    "pavilion": {
+      "pavilionPosts": "Paviljona stabi",
+      "linenCanopy": "Lina jumts",
+      "hangingCurtains": "Aizkari",
+      "woolRugs": "Vilnas paklāji",
+      "woodenFloor": "Koka grīda"
+    },
+    "well": {
+      "wellStones": "Akas akmeņi",
+      "rope": "Gara virve",
+      "bucket": "Spainis",
+      "windlass": "Vinda"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Trīsis",
+      "frame": "Balsta rāmis",
+      "hoistRope": "Celšanas virve",
+      "counterweight": "Pretsvars",
+      "leatherBucket": "Ādas spainis"
+    },
+    "tripod": {
+      "tripodPoles": "Trīs kārtis",
+      "binding": "Siešanas virve",
+      "hook": "Bronzas āķis"
+    },
+    "breadOven": {
+      "mudBricks": "Dubļu ķieģeļi",
+      "clayPlaster": "Māla apmetums",
+      "ovenLid": "Krāsns vāks"
+    },
+    "dryingRack": {
+      "rackPoles": "Žāvētavas kārtis",
+      "crossbar": "Šķērskoks",
+      "wickerTray": "Pīta paplāte",
+      "cords": "Karināmās auklas"
+    },
+    "feast": {
+      "lowTable": "Zems galds",
+      "breadBaskets": "Maizes groziņi",
+      "roastDuck": "Cepta pīle",
+      "beerJars": "Alus krūkas",
+      "fruitBowl": "Augļu bļoda"
+    },
+    "table": {
+      "tableTop": "Galda virsma",
+      "trestles": "Galda āži",
+      "leatherStraps": "Ādas siksnas"
+    },
+    "lotusPlanter": {
+      "clayTub": "Māla sile",
+      "nileSilt": "Nīlas dūņas",
+      "waterJar": "Ūdens krūka",
+      "lotusTubers": "Lotosa gumuļi",
+      "stoneRim": "Akmens apmale"
+    },
+    "edgeStones": {
+      "riverStones": "Upes akmeņi",
+      "clayBedding": "Māla pamatne",
+      "gravel": "Grants",
+      "boundaryStakes": "Robežmieti"
+    },
+    "post": {
+      "postTrunk": "Palmas stumbrs",
+      "footStones": "Pamatu akmeņi",
+      "wedges": "Ķīļi",
+      "braces": "Balsti"
+    },
+    "platform": {
+      "platformBeams": "Balsta sijas",
+      "platformPlanks": "Dēļi",
+      "lashingRope": "Sasienamā virve",
+      "edgeRail": "Margas"
+    },
+    "ladder": {
+      "ladderRails": "Kāpņu sāni",
+      "rungs": "Pakāpieni",
+      "groundPegs": "Zemes mietiņi",
+      "leatherLoops": "Ādas cilpas"
+    },
+    "roof": {
+      "roofPoles": "Jumta kārtis",
+      "thatch": "Palmu lapu klājums",
+      "clayLayer": "Māla kārta",
+      "bindingGrass": "Siešanas zāle"
+    },
+    "signalFire": {
+      "fireBasin": "Uguns trauks",
+      "pitch": "Darva",
+      "dryBrushwood": "Sausi žagari",
+      "flint": "Krams",
+      "bellows": "Plēšas"
+    },
+    "poles": {
+      "masts": "Masti",
+      "cornerStones": "Stūra akmeņi",
+      "stayLines": "Atsaites",
+      "bigPegs": "Lieli mieti",
+      "poleSockets": "Mastu ligzdas"
+    },
+    "stars": {
+      "goldLeaf": "Zelta folija",
+      "needleThread": "Adata un diegs",
+      "indigoDye": "Indigo krāsa",
+      "chalk": "Krīts",
+      "stencils": "Trafareti"
+    },
+    "planets": {
+      "ochre": "Okers",
+      "copperDiscs": "Vara diski",
+      "lapisPowder": "Lazurīta pulveris",
+      "hangingLoops": "Karināmās cilpas",
+      "dividers": "Mērcirkulis"
+    }
+  },
+  "collection": {
+    "title": "Būves",
+    "progress": "{{found}} no {{total}}",
+    "built": "uzbūvēts",
+    "unknownPart": "???",
+    "open": "Rādīt daļas",
+    "close": "Paslēpt daļas"
+  },
+  "reward": {
+    "find": "Nometnes atradums",
+    "part": "Daļa",
+    "progress": "{{name}} · {{found}} no {{total}}"
+  },
+  "haul": {
+    "new": "Jaunums tavā nometnē",
+    "parts_zero": "{{name}} · {{count}} daļas",
+    "parts_one": "{{name}} · {{count}} daļa",
+    "parts_other": "{{name}} · {{count}} daļas"
+  },
+  "arrivals": {
+    "donkey": "Tavs ēzelis ir nometnē",
+    "cart": "Tavi rati ir nometnē",
+    "camel": "Tavs kamielis ir nometnē",
+    "secondDonkey": "Tavs otrais ēzelis ir nometnē",
+    "secondCamel": "Tavs otrais kamielis ir nometnē",
+    "sturdyCart": "Tavi stiprākie rati ir nometnē",
+    "caravanBanner": "Tavs karavānas karogs plīvo nometnē"
+  }
+}

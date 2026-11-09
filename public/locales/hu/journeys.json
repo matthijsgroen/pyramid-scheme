@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Hajnal a Szfinxnél",
+    "description": "A Nagy Szfinx, és a lábánál egy írás, amit ma már senki sem tud elolvasni. A térkép szerint itt kell kezdeni."
+  },
+  "starter_2": {
+    "name": "A papiruszárus útja",
+    "description": "Kereskedőút a Nílus mentén, tele a kereskedők raktáraival. Néhányat soha nem ürítettek ki."
+  },
+  "starter_3": {
+    "name": "Básztet temploma",
+    "description": "Básztet temploma. Az itteni macskák szentek voltak, és az évenkénti ünnep volt a legnagyobb egész Egyiptomban – hajókkal, zenével, mindennel."
+  },
+  "starter_4": {
+    "name": "Az írnokok iskolája",
+    "description": "Az írnokok iskolája, ahol Egyiptom megtanult írni. A tantermek még mindig a homok alatt vannak."
+  },
+  "starter_treasure_tomb": {
+    "name": "Az elfelejtett kereskedő rejteke",
+    "description": "Egy kereskedő pincéje, nem egy királyé. Egymásra rakott, lezárt, felcímkézett korsók, és senki sincs lent, aki veszekedne miattuk.",
+    "mapHint": "A cetlin egy piaci út és egy pinceajtó látszik. Egy kereskedő rejtekhelye, semmi több."
+  },
+  "junior_1": {
+    "name": "A szent íbiszek vonulása",
+    "description": "Mocsárvidék, és benne gázoló íbiszek. Egyiptomban figyelték ezeket a madarakat: ha visszajönnek, jön az áradás."
+  },
+  "junior_2": {
+    "name": "A kézművesek völgye",
+    "description": "Deir el-Medina, ahol a sírépítők laktak. Mindent, ami egy királyi sírba került, előbb itt készítettek el, formákban."
+  },
+  "junior_3": {
+    "name": "Thot temploma",
+    "description": "Thot temploma. Ő találta ki az írást, ő vezette a feljegyzéseket és ő számolt – nagyjából ugyanazt csinálta, amit mi is."
+  },
+  "junior_4": {
+    "name": "Az alexandriai világítótorony",
+    "description": "Alexandria Pharosza. A tetején egész éjjel tűz égett, és a tengerészek egynapi hajóútról is megtalálták a partot."
+  },
+  "junior_treasure_tomb": {
+    "name": "A nemes asszony rejtett kamrája",
+    "description": "Egy nemes asszony kamrája, padlótól a mennyezetig kifestve. A legszebb másolatokat vette meg, amiket pénzért kapni lehetett, de ezt soha senkinek nem mondta el.",
+    "mapHint": "Finom tinta, a sarokban egy címeres pecsét. Valaki előkelő azt akarta, hogy ezt a szobát elfelejtsék."
+  },
+  "expert_1": {
+    "name": "A Királyok völgye",
+    "description": "A Királyok völgye. Abbahagyták a piramisépítést, és egyetlen völgybe rejtették a királyi sírokat, egy piramis alakú hegycsúcs alá."
+  },
+  "expert_2": {
+    "name": "A karnaki templom",
+    "description": "Karnak, amit kétezer évig építettek tovább. Csak a nagy csarnokban százharmincnégy oszlop áll, és mindegyik faragott."
+  },
+  "expert_3": {
+    "name": "Expedíció a Nílus-deltába",
+    "description": "Ahol a Nílus szétágazik és zölden szétterül. Szobek földje: papirusz, halak, és krokodilok, akiket tiszteltek és etettek."
+  },
+  "expert_4": {
+    "name": "Dzsószer piramisa",
+    "description": "Dzsószer lépcsős piramisa, az első ekkora építmény kőből. Az építészét, Imhotepet végül istenként tisztelték."
+  },
+  "expert_treasure_tomb": {
+    "name": "A főpap kincseskamrája",
+    "description": "Egy főpap kincseskamrája az áldozati padló alatt. Mindent, ami lent van, egy istennek adtak, és soha többé nem hozták fel.",
+    "mapHint": "A vonalak egy templomkertet rajzolnak, és egy lépcsőt, ami lefelé vezet az áldozati padló alá."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "A legbelső szentély",
+    "description": "A lezárt szoba a templom szívében. A főpap naponta egyszer ment be, hogy megmosdassa és felöltöztesse az istent.",
+    "mapHint": "Folyosók vezetnek a templomi kamrák mellett egy lezárt ajtóig. Azon csak a legmagasabb rangú papok mentek át."
+  },
+  "master_1": {
+    "name": "A gízai Nagy Piramis",
+    "description": "A Nagy Piramis. Húsz év kő, és mellette egy egész város, ami kenyérrel és sörrel etette a munkásokat."
+  },
+  "master_2": {
+    "name": "A Halottak könyve",
+    "description": "Nem egy könyv, hanem varázsigék gyűjteménye, rendelésre lemásolva. Az olcsóbbakban üresen maradt a hely, ahová a neved került volna."
+  },
+  "master_3": {
+    "name": "A fáraók átka",
+    "description": "A híres átkot 1923-ban az újságok találták ki. Az egyiptomiak ajtókkal és papírmunkával védték a sírjaikat."
+  },
+  "master_4": {
+    "name": "Nefertari sírja",
+    "description": "Nefertari sírja, Egyiptom legszebben kifestett szobája. A színeket kövekből őrölték: azuritból, malachitból, okkerből."
+  },
+  "master_treasure_tomb": {
+    "name": "A fáraó titkos kincse",
+    "description": "Egy király saját kincse, ott, ahol a térképek véget érnek. Ami vele együtt a föld alá került, az még mindig ott van.",
+    "mapHint": "Az egyik szélén királyi kartus, és az út messze, a nyílt homok alatt ér véget."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Ozirisz csarnoka",
+    "description": "Ozirisz csarnoka. Az áradás és a gabona istene – ami itt a föld alá kerül, annak vissza kell jönnie.",
+    "mapHint": "A királyi kamrák alatt a térkép tovább ereszkedik, egy csarnokba, amit a halotti szertartások jelei díszítenek."
+  },
+  "wizard_1": {
+    "name": "Ré napútja",
+    "description": "Ré napnyugtakor a világ alá bukik, és tizenkét órányi sötétségen kell átjutnia. Egyiptomban leírták, mi történik mindegyik órában."
+  },
+  "wizard_2": {
+    "name": "Memnón-kolosszusok",
+    "description": "III. Amenhotep két ülő óriása. A görögök úgy döntöttek, hogy ezek valaki mások, és ez a név kétezer évig rajtuk ragadt."
+  },
+  "wizard_3": {
+    "name": "Maat kamrája",
+    "description": "Maat kamrája. Ő a dolgok rendje, és az egyetlen strucctolla az, amihez minden mást mérnek."
+  },
+  "wizard_4": {
+    "name": "Az örök piramis",
+    "description": "A burkolata csiszolt mészkő volt, fehér, mint a só. Olyan pontosan rakták, hogy egynapi járóföldről is látni lehetett a csillogását."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Az istenek kamrája",
+    "description": "Itt őrizte a templom azt, ami az isteneké volt. Senkit sem engedtek be, akinek nem a megfelelő dolog volt a kezében.",
+    "mapHint": "Ezen a cetlin egyetlen jel sem tartozik az emberek világához. Bármit is mutat, azt istenek tették oda."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "A csillagerők birodalma",
+    "description": "Csillagtérképek a mennyezeten, úgy festve, hogy a halottak éjjel is tudják, hány óra van. Valakinek a kötele még mindig lóg az aknában.",
+    "mapHint": "Az isteni kamrán túl a vonalak csillagösvényekké válnak, ahol az élet és a káosz erőit kincsként őrzik."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Az örökkévalóság trónja",
+    "description": "Középen egy trón, körülötte negyvenkét bíró. Mindegyik feltesz egy kérdést, amire nemmel kell felelned.",
+    "mapHint": "Ezen a darabon minden csillagösvény egyetlen trón felé fut, az isteni birodalom legközepén."
+  }
+}

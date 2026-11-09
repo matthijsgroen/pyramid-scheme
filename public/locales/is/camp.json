@@ -1,0 +1,253 @@
+{
+  "spots": {
+    "fire": "Varðeldur",
+    "sleeping": "Svefnstaður",
+    "water": "Vatnsstaður",
+    "cooking": "Eldunarstaður",
+    "donkey": "Asnastaður",
+    "camel": "Úlfaldastaður",
+    "mapTable": "Kortaborð",
+    "palmGarden": "Pálmagarður",
+    "ibisPond": "Íbistjörn",
+    "lookout": "Útsýnisstaður",
+    "godStatues": "Goðastyttur",
+    "starCanopy": "Stjörnuþak"
+  },
+  "finds": {
+    "pot": "Pottur",
+    "seatCushions": "Sessur",
+    "reedMat": "Reyrmotta",
+    "blanket": "Teppi",
+    "tentRug": "Tjaldmotta",
+    "tentFlag": "Tjaldfáni",
+    "gourd": "Graskersflaska",
+    "jar": "Krukka",
+    "secondJar": "Önnur krukka",
+    "spiceRack": "Kryddhilla",
+    "breadBoard": "Brauðbretti",
+    "starMap": "Stjörnukort",
+    "scrollCase": "Bókrollustokkur",
+    "astrolabe": "Stjörnuskífa",
+    "reedGlobe": "Reyrhnöttur",
+    "seed": "Pálmafræ",
+    "secondPalm": "Pálmafræ",
+    "figTree": "Fíkjufræ",
+    "papyrus": "Papýrusrót",
+    "reeds": "Reyrsproti",
+    "lotus": "Lótushnýði",
+    "flag": "Útsýnisfáni",
+    "thoth": "Stytta af Þót",
+    "bastet": "Stytta af Bastet",
+    "anubis": "Stytta af Anúbis",
+    "ra": "Stytta af Ra",
+    "cloth": "Stjörnudúkur"
+  },
+  "structures": {
+    "stoneRing": "Steinhringur",
+    "fire": "Eldur",
+    "cookingStones": "Eldunarsteinar",
+    "seatingStones": "Setsteinar",
+    "clayOven": "Leirofn",
+    "windbreak": "Skjólveggur",
+    "tent": "Tjald",
+    "secondTent": "Annað tjald",
+    "pavilion": "Skáli",
+    "well": "Brunnur",
+    "wellPulley": "Brunnur með trissu",
+    "tripod": "Þrífótur",
+    "breadOven": "Brauðofn",
+    "dryingRack": "Þurrkgrind",
+    "feast": "Veisla",
+    "table": "Kortaborð",
+    "lotusPlanter": "Lótuskar",
+    "edgeStones": "Tjarnarbakki",
+    "post": "Útsýnisstaur",
+    "platform": "Útsýnispallur",
+    "ladder": "Stigi",
+    "roof": "Þak",
+    "signalFire": "Merkjaeldur",
+    "poles": "Tjaldsúlur",
+    "stars": "Stjörnur",
+    "planets": "Reikistjörnur"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Grjót",
+      "sandBed": "Sandbeður"
+    },
+    "fire": {
+      "tinder": "Tundur",
+      "acaciaLogs": "Akasíukubbar"
+    },
+    "cookingStones": {
+      "flatStone": "Flatur steinn",
+      "supportStones": "Stoðsteinar"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Sléttir steinar",
+      "sandstoneBlock": "Sandsteinsblokk",
+      "hewnSlab": "Höggvin hella"
+    },
+    "clayOven": {
+      "ovenFloor": "Ofnbotn",
+      "firebricks": "Eldsteinar",
+      "smokeHole": "Reykop",
+      "copperGrate": "Koparrist"
+    },
+    "windbreak": {
+      "reedBundles": "Reyrknippi",
+      "stakes": "Tréhælar"
+    },
+    "tent": {
+      "tentPoles": "Tjaldsúlur",
+      "wovenCloth": "Ofinn dúkur",
+      "tentPegs": "Tjaldhælar"
+    },
+    "secondTent": {
+      "largeCloth": "Stór tjalddúkur",
+      "ridgePole": "Mænisás",
+      "guyRopes": "Stög",
+      "woolFloor": "Ullarbotn"
+    },
+    "pavilion": {
+      "pavilionPosts": "Skálastoðir",
+      "linenCanopy": "Línþak",
+      "hangingCurtains": "Gluggatjöld",
+      "woolRugs": "Ullarmottur",
+      "woodenFloor": "Viðargólf"
+    },
+    "well": {
+      "wellStones": "Brunnsteinar",
+      "rope": "Langt reipi",
+      "bucket": "Fata",
+      "windlass": "Vinda"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Trissuhjól",
+      "frame": "Burðargrind",
+      "hoistRope": "Hífingarreipi",
+      "counterweight": "Mótvægi",
+      "leatherBucket": "Leðurfata"
+    },
+    "tripod": {
+      "tripodPoles": "Þrjár stangir",
+      "binding": "Bindireipi",
+      "hook": "Bronskrókur"
+    },
+    "breadOven": {
+      "mudBricks": "Leirsteinar",
+      "clayPlaster": "Leirhúð",
+      "ovenLid": "Ofnlok"
+    },
+    "dryingRack": {
+      "rackPoles": "Grindarstangir",
+      "crossbar": "Þverslá",
+      "wickerTray": "Tágabakki",
+      "cords": "Hengisnúrur"
+    },
+    "feast": {
+      "lowTable": "Lágt borð",
+      "breadBaskets": "Brauðkörfur",
+      "roastDuck": "Steikt önd",
+      "beerJars": "Bjórkrukkur",
+      "fruitBowl": "Ávaxtaskál"
+    },
+    "table": {
+      "tableTop": "Borðplata",
+      "trestles": "Búkkar",
+      "leatherStraps": "Leðurólar"
+    },
+    "lotusPlanter": {
+      "clayTub": "Leirker",
+      "nileSilt": "Nílarleðja",
+      "waterJar": "Vatnskrukka",
+      "lotusTubers": "Lótushnýði",
+      "stoneRim": "Steinbrún"
+    },
+    "edgeStones": {
+      "riverStones": "Árgrjót",
+      "clayBedding": "Leirundirlag",
+      "gravel": "Möl",
+      "boundaryStakes": "Markhælar"
+    },
+    "post": {
+      "postTrunk": "Pálmastofn",
+      "footStones": "Undirstöðusteinar",
+      "wedges": "Fleygar",
+      "braces": "Stífur"
+    },
+    "platform": {
+      "platformBeams": "Burðarbitar",
+      "platformPlanks": "Plankar",
+      "lashingRope": "Bindireipi",
+      "edgeRail": "Handrið"
+    },
+    "ladder": {
+      "ladderRails": "Stigakjálkar",
+      "rungs": "Þrep",
+      "groundPegs": "Jarðhælar",
+      "leatherLoops": "Leðurlykkjur"
+    },
+    "roof": {
+      "roofPoles": "Þakstangir",
+      "thatch": "Pálmalauf",
+      "clayLayer": "Leirlag",
+      "bindingGrass": "Bindigras"
+    },
+    "signalFire": {
+      "fireBasin": "Eldskál",
+      "pitch": "Bik",
+      "dryBrushwood": "Þurr hrís",
+      "flint": "Tinnusteinn",
+      "bellows": "Físibelgur"
+    },
+    "poles": {
+      "masts": "Möstur",
+      "cornerStones": "Hornsteinar",
+      "stayLines": "Stagir",
+      "bigPegs": "Stórir hælar",
+      "poleSockets": "Súlufætur"
+    },
+    "stars": {
+      "goldLeaf": "Blaðgull",
+      "needleThread": "Nál og tvinni",
+      "indigoDye": "Indígólitur",
+      "chalk": "Krít",
+      "stencils": "Skapalón"
+    },
+    "planets": {
+      "ochre": "Okkur",
+      "copperDiscs": "Koparskífur",
+      "lapisPowder": "Lapisduft",
+      "hangingLoops": "Hengislykkjur",
+      "dividers": "Hringfari"
+    }
+  },
+  "collection": {
+    "title": "Byggingar",
+    "progress": "{{found}} af {{total}}",
+    "built": "byggt",
+    "unknownPart": "???",
+    "open": "Sýna hluta",
+    "close": "Fela hluta"
+  },
+  "reward": {
+    "find": "Fundur fyrir búðirnar",
+    "part": "Hluti",
+    "progress": "{{name}} · {{found}} af {{total}}"
+  },
+  "haul": {
+    "new": "Nýtt í búðunum þínum",
+    "parts_one": "{{name}} · {{count}} hluti",
+    "parts_other": "{{name}} · {{count}} hlutar"
+  },
+  "arrivals": {
+    "donkey": "Asninn þinn er kominn í búðirnar",
+    "cart": "Kerran þín er komin í búðirnar",
+    "camel": "Úlfaldinn þinn er kominn í búðirnar",
+    "secondDonkey": "Annar asninn þinn er kominn í búðirnar",
+    "secondCamel": "Annar úlfaldinn þinn er kominn í búðirnar",
+    "sturdyCart": "Sterkari kerran þín er komin í búðirnar",
+    "caravanBanner": "Lestarfáninn þinn hangir í búðunum"
+  }
+}

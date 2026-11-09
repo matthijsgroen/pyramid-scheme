@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Kamen",
+    "bronze": "Bron",
+    "silver": "Srebro",
+    "gold": "Zlato",
+    "divine": "Božansko"
+  },
+  "sell_stone_1": {
+    "name": "Okrušen ostrakon",
+    "description": "Zlomljena črepinja, na katero je pisar vadil pisanje – črke so preveč zbledele, da bi jih prebral."
+  },
+  "sell_stone_2": {
+    "name": "Počen glinen vrč",
+    "description": "Vrč za žito ali pivo, ki ga je teža stoletij razklala ob strani."
+  },
+  "sell_stone_3": {
+    "name": "Ponošen trstičen sandal",
+    "description": "Spleten iz papirusa, podplat pa je stanjšala vsakdanja hoja nekega davno pozabljenega delavca."
+  },
+  "sell_stone_4": {
+    "name": "Zbledel kos platna",
+    "description": "Strgan trak nebarvanega lanu, s kakršnim so ovijali mrtve – ali pa krpali jadro."
+  },
+  "sell_stone_5": {
+    "name": "Zlomljeno kremenovo rezilo",
+    "description": "Nož iz kremena z odlomljeno konico. Poceni za izdelavo, še cenejši za zamenjavo."
+  },
+  "sell_bronze_1": {
+    "name": "Ukrivljen bronast amulet",
+    "description": "Poceni zaščitni obesek, ulit postrani in nikoli popravljen."
+  },
+  "sell_bronze_2": {
+    "name": "Zarjavelo bronasto ogledalo",
+    "description": "Nekoč tako zglajeno, da si se videl v njem; zdaj je od starosti motno zeleno."
+  },
+  "sell_bronze_3": {
+    "name": "Top bronast trnek",
+    "description": "Ribičevo orodje, ki mu je padlo v Nil, dolgo preden so grobnico zapečatili."
+  },
+  "sell_bronze_4": {
+    "name": "Majhen bronast zvonček",
+    "description": "Visel naj bi na vratih templja ali na gležnju plesalke – zdaj ne zvoni več čisto."
+  },
+  "sell_bronze_5": {
+    "name": "Potemnel bronast prstan",
+    "description": "Preprost obroček za prst, ki je že davno razpadel v prah."
+  },
+  "sell_silver_1": {
+    "name": "Potemnel srebrn ankh",
+    "description": "Znak življenja, ki je po stoletjih pod zemljo izgubil sijaj."
+  },
+  "sell_silver_2": {
+    "name": "Srebrna paličica za kajal",
+    "description": "Tanka paličica, s katero so si bogataši risali črte okoli oči – kajala že dolgo ni več."
+  },
+  "sell_silver_3": {
+    "name": "Udrta srebrna skleda",
+    "description": "Majhna skleda za darove, zmečkana na eni strani, ko se je strop nad njo končno podrl."
+  },
+  "sell_silver_4": {
+    "name": "Srebrna lasnica",
+    "description": "Preprosta, brez okraskov. Nekoč je držala lase nekomu, čigar ime je izgubljeno."
+  },
+  "sell_silver_5": {
+    "name": "Ponošena srebrna zapestnica",
+    "description": "Tanek srebrn obroček z zlomljeno zaponko. Ni dovolj lep za plemiča, a prelep za delavca."
+  },
+  "sell_gold_1": {
+    "name": "Majhna zlata jagoda",
+    "description": "Ena jagoda z ogrlice iz grobnice, ki se je že zdavnaj raztresla."
+  },
+  "sell_gold_2": {
+    "name": "Košček zlatih lističev",
+    "description": "Drobec zlatega lističa, ki so ga roparji grobov odluščili s kipovega obraza stoletja pred tabo."
+  },
+  "sell_gold_3": {
+    "name": "Tanek zlat uhan",
+    "description": "Stanjšan s kladivom, da bi plemiču zlata zadoščalo za več."
+  },
+  "sell_gold_4": {
+    "name": "Črepinja z zlatimi pikami",
+    "description": "Zlomljen kos pozlačenega ometa, na katerem se še drži nekaj pravega zlata."
+  },
+  "sell_gold_5": {
+    "name": "Okrušen zlat pečatni prstan",
+    "description": "Pečatni prstan z obrabljeno gravuro – kdor koli je bil na njem, je pozabljen."
+  },
+  "sell_divine_1": {
+    "name": "Zbledel skarabej iz lapisa",
+    "description": "Izrezljan iz dragocenega lapis lazulija, ki so ga drago uvozili za faraonovo ponovno rojstvo. Barva je s stoletji zbledela."
+  },
+  "sell_divine_2": {
+    "name": "Amulet oko iz karneola",
+    "description": "Zaščitno oko iz krvavo rdečega karneola, ki naj bi v posmrtnem življenju odganjalo nesrečo."
+  },
+  "sell_divine_3": {
+    "name": "Košček turkiznega mozaika",
+    "description": "Ena sama ploščica iz razbitega mozaika, nekoč del podobe boga na steni templja."
+  },
+  "sell_divine_4": {
+    "name": "Črepinja kanope iz alabastra",
+    "description": "Kos vrča, v katerem so hranili faraonove notranje organe – dragocen kamen za mračen namen."
+  },
+  "sell_divine_5": {
+    "name": "Obredno rezilo iz obsidiana",
+    "description": "Vulkansko steklo, nabrušeno za obrede, nikoli za boj – samo za tempelj."
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Libista ese kivile, et see lahti teha",
+    "alsoAvailable": "Veel olemas:"
+  },
+  "perks": {
+    "max-health": "+½ südant sinu tervisele juurde",
+    "armor": "Lõksud teevad vähem haiget",
+    "trap-insight": "+1 s ajaga lõksudes",
+    "pack-mule": "Veelähker ravib kaks südant",
+    "compass": "Kompassi osa",
+    "detection": "Käiguotsija osa",
+    "tier-unlock": "Avab {{tier}}-taseme retked",
+    "tier-coming-soon": "{{tier}}-taseme retked tulevad hilisemas uuenduses",
+    "location-key": "Näitab veel üht hauakambrit",
+    "partOf": "{{count}} / {{total}}"
+  },
+  "tiers": {
+    "stone": "Kivi",
+    "bronze": "Pronks",
+    "silver": "Hõbe",
+    "gold": "Kuld",
+    "divine": "Jumalik"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Hõbedeben",
+      "description": "Vana Egiptuse hõbemünt, millega kaupmehed Niiluse ääres kaupa ajasid."
+    },
+    "t2": {
+      "name": "Papüüruserull",
+      "description": "Kaupmehe märkmerull kaubateede ja kallite lastide kohta."
+    },
+    "t3": {
+      "name": "Elevandiluust kamm",
+      "description": "Peenelt nikerdatud elevandiluust kamm, kallis asi kaugetelt maadelt."
+    },
+    "t4": {
+      "name": "Savist õlilamp",
+      "description": "Lihtne, aga ilus õlilamp, mis valgustas kaupmehe tube."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Kuldkäevõru",
+      "description": "Uhke kuldne käevõru vääriskividega, mida kandsid Egiptuse aadlikud."
+    },
+    "t6": {
+      "name": "Pidulik pistoda",
+      "description": "Kalliskividega käepidemega pistoda aadlike tseremooniateks."
+    },
+    "t7": {
+      "name": "Jadeiitskarabeus",
+      "description": "Jadeiidist kaitseamulett, taassünni ja igavese elu märk."
+    },
+    "t8": {
+      "name": "Alabastrist kanoop",
+      "description": "Ilus alabastrist kann kallite õlide ja lõhnade hoidmiseks."
+    },
+    "t9": {
+      "name": "Eebenipuust jalutuskepp",
+      "description": "Läikiv eebenipuust kepp, mille otsas on kuldne ankh."
+    },
+    "t10": {
+      "name": "Lasuriidist kaelakee",
+      "description": "Imeilus kaelakee haruldastest lasuriidi kividest, rikaste lemmik."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Püha ankh",
+      "description": "Kuldne ankh, igavese elu märk, mille templipreestrid on õnnistanud."
+    },
+    "t12": {
+      "name": "Vaskpeegel",
+      "description": "Läikiv vaskpeegel puhastustseremooniate jaoks."
+    },
+    "t13": {
+      "name": "Viirukipõleti",
+      "description": "Uhke pronksist viirukipõleti templi palvusteks."
+    },
+    "t14": {
+      "name": "Rituaalkarikas",
+      "description": "Püha hõbekarikas, millest valati jumalatele ohvrijooki."
+    },
+    "t15": {
+      "name": "Pidulik lehvik",
+      "description": "Uhke sulelehvik, mida preestrid templipidustustel kasutasid."
+    },
+    "t16": {
+      "name": "Palvehelmed",
+      "description": "Õnnistatud palvehelmeste nöör mõtisklemiseks ja palvetamiseks."
+    },
+    "t17": {
+      "name": "Pühaveenõu",
+      "description": "Nõu õnnistatud veega templi pühast kaevust."
+    },
+    "t18": {
+      "name": "Templikell",
+      "description": "Pronkskell, mis kutsus inimesi palvele ja andis märku pidustustest."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Vaarao pitser",
+      "description": "Vana kuninglik pitser unustatud vaarao kartušiga."
+    },
+    "t20": {
+      "name": "Kristallkera",
+      "description": "Salapärane kristallkera, mis väidetavalt näitab pilte minevikust ja tulevikust."
+    },
+    "t21": {
+      "name": "Hieroglüüfidega tahvel",
+      "description": "Vana kivitahvel salapäraste hieroglüüfidega ennustustega."
+    },
+    "t22": {
+      "name": "Kuldne valitsuskepp",
+      "description": "Uhke kuldne valitsuskepp, mille otsas on Horuse silm."
+    },
+    "t23": {
+      "name": "Obsidiaannuga",
+      "description": "Habemenoateravast obsidiaanist pidulik nuga vanadeks rituaalideks."
+    },
+    "t24": {
+      "name": "Meteoriidikild",
+      "description": "Tükk püha meteoriiti, milles usuti olevat jumalikku väge."
+    },
+    "t25": {
+      "name": "Iidne kompass",
+      "description": "Salapärane teenäitaja, mis osutab alati peidetud aarete poole."
+    },
+    "t26": {
+      "name": "Ajakristall",
+      "description": "Legendaarne kristall, mis helendab möödunud aegade väest."
+    },
+    "t27": {
+      "name": "Rituaalmask",
+      "description": "Uhke kuldmask, mida ülempreestrid pühadel tseremooniatel kandsid."
+    },
+    "t28": {
+      "name": "Igavese leegi tõrvik",
+      "description": "Tõrvik, mis põleb igavese leegiga ega ole iidsetest aegadest saati kustunud."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Ra kroon",
+      "description": "Päikesejumal Ra legendaarne kroon, mis kiirgab jumalikku valgust ja väge."
+    },
+    "t30": {
+      "name": "Thothi sau",
+      "description": "Teadmistejumal Thothi tarkusesau, milles on kõik iidsed saladused."
+    },
+    "t31": {
+      "name": "Ma'ati sulg",
+      "description": "Tõejumalanna Ma'ati püha sulg, millega teispoolsuses hingi kaaluti."
+    },
+    "t32": {
+      "name": "Isise pisarad",
+      "description": "Jumalanna Isise kristalliks muutunud pisarad, mis väidetavalt kaitsevad igavesti."
+    },
+    "t33": {
+      "name": "Osirise süda",
+      "description": "Allilma isanda Osirise säilinud süda, mis tuksub elujõust."
+    },
+    "t34": {
+      "name": "Horuse silma amulett",
+      "description": "Kõige võimsam kaitseamulett, milles on Horuse kogu vägi."
+    },
+    "t35": {
+      "name": "Apepi madu",
+      "description": "Seotud tükk kaosemadu Apepist, suletud pühasse nõusse."
+    },
+    "t36": {
+      "name": "Shu hingus",
+      "description": "Pudelike õhujumal Shu hingusega, mis annab võimu tuulte üle."
+    },
+    "t37": {
+      "name": "Sobeki soomus",
+      "description": "Üksainus soomus krokodillijumal Sobekilt, mis kaitseb vees."
+    },
+    "t38": {
+      "name": "Anubise valvurkuju",
+      "description": "Väike Anubise kuju, mis ärkab ellu, et oma omaniku aardeid valvata."
+    },
+    "t39": {
+      "name": "Surnuteraamat",
+      "description": "Terve Surnuteraamat kõigi loitsudega, mida on vaja teekonnaks teispoolsusesse."
+    },
+    "t40": {
+      "name": "Püramiidi tipukivi",
+      "description": "Suure püramiidi kuldne tipukivi, milles on kõigi vaaraode koondunud vägi."
+    }
+  }
+}

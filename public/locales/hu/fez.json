@@ -1,0 +1,1730 @@
+{
+  "not-found": "Bocsi, ez a beszélgetés nem létezik.",
+  "welcome": "Egyiptom! Tényleg itt vagyok.",
+  "welcome2": "És ez a térkép… Túl sokat fizettem érte. Remélem, legalább jó.",
+  "welcome3": "Gyerünk. Nézzük meg, hol van az a kis kereszt.",
+  "pyramidIntro": "Számok vannak ezeken a köveken. És néhány hiányzik…",
+  "pyramidIntro2": "Várj csak. Minden kő a két alatta lévő összege! Igen, itt is!",
+  "pyramidBlockedBlocks": "Hé, mi ez? Ezek a kövek le vannak zárva. Nem mutatják a számukat!",
+  "pyramidBlockedBlocks2": "Semmi baj. Nézd meg a köveket körülötte – azokból ki tudod számolni.",
+  "pyramidBlockedBlocks3": "Csak beírni nem tudod. Azt a számot fejben kell tartanod.",
+  "pyramidBlockedBlocks4": "Gyerünk, már idáig eljutottál. Ez menni fog!",
+  "levelCompleted": "Ha! Kinyílik! Gyere, menjünk be.",
+  "exitPillar": {
+    "1": {
+      "fez": "Ha! Napfény! Látod azt a fénycsíkot? Ott jutunk ki. Lépj bele, és végeztünk itt."
+    },
+    "2": {
+      "fez": "Mindig csak egy van, a főfolyosó legvégén. Akárhol kóborolunk, ide jövünk vissza."
+    },
+    "3": {
+      "explorer": "Egy kijárat. Megjegyeztem."
+    }
+  },
+  "expeditionCompleted": "Gratulálok, teljesítetted az expedíciót!",
+  "expeditionCompleted2": "Új expedíció nyílt meg.",
+  "tombTutorial": "Ó, írás! El tudjuk olvasni? A hieroglifákkal, amiket találtunk… talán!",
+  "tombTutorial2": "Nézd csak, számolások jelekkel! Látod az üres helyeket? Oda jönnek a hieroglifák. A tieid, ott lent.",
+  "tombTutorial3": "A kis számolások megmutatják, ha egy jel jó helyen van. Így derül ki, melyik jel hova kell.",
+  "tombTutorial4": "Mindent kitöltöttél? Akkor megjelenik egy számzár. A nagy számolás eredménye a kód – és kinyílik a sír!",
+  "hieroglyphUnlock": "Van egy különleges kincsünk – azzal írni tudunk az egyik lezárt kőre!",
+  "hieroglyphUnlock2": "Koppints egy csillogó kőre, aztán húzd rá a kincset, hogy kinyíljon. Piramisonként egy kő.",
+  "errorHighlightTutorial": "Ennek a kincsnek van egy ügyes trükkje: ha rossz választ írsz be, egy hiba pirosan felvillan!",
+  "errorHighlightTutorial2": "Egyszerre csak egy kő világít, úgyhogy azért nem lesz túl könnyű. De segít leszűkíteni!",
+  "earlyFeedbackTutorial": "Látod ezeket az ellenőrző köveket? Kitöltés közben zöldek vagy pirosak lesznek – azonnal látod!",
+  "earlyFeedbackTutorial2": "Kapaszkodj beléjük megoldás közben. Ha az egyik piros lesz, valami a közelében nem stimmel.",
+  "notEnoughHieroglyphs": "Ezt az expedíciót bármikor abbahagyhatod, ha visszamész az utazás képernyőre.",
+  "notEnoughHieroglyphs2": "Megszakíthatjuk az expedíciót, és máshol kereshetjük a hieroglifákat, amik még hiányoznak.",
+  "tombLoot": "Hűha, az első kincsünk! Szép munka!",
+  "mapPiece": "Nézd! EZ aztán a térkép! Igazán régi! Többet ér, mint a mi kettőnk együtt!",
+  "mapPiece2": "De csak egy darabja ám. Errefelé minden expedíció rejt egyet, és együtt egy sírhoz vezetnek.",
+  "mapComplete": "Egész lett! Nézd, minden darab pont illik.",
+  "mapComplete2": "Ott, ahol az összes vonal találkozik. Ott van egy sír.",
+  "mapComplete3": "Most már ott van az utazásaink között. Megnézzük?",
+  "mapPiece3": "Az expedíciók listáján követheted, mennyi van meg. Én biztosan számolom!",
+  "mosaicIntro": "Ó, színes üveg! Nézd, hogy csillog – ILYET nem dob ki az ember!",
+  "mosaicIntro2": "Egy kép darabja. Egy egész ablaknyi üveg, és minden darab, amit megtalálunk, visszahoz belőle egy kicsit.",
+  "mosaicIntro3": "Neked nincs valahol egy táborod? Vidd magaddal őket, ott majd összerakjuk. Kíváncsi vagyok, mi lesz belőle!",
+  "mosaicReminder": "Psszt! Azok az üvegdarabok még mindig csörögnek a táskánkban. Betegyük őket a tábori ablakba?",
+  "mosaicStarter": "Egy macska az ajtóban, és egy kígyó, ami gyorsan elinal. Ez megért egy tál tejet.",
+  "mosaicStarter2": "Az egyiptomiak pont ezért imádták a macskákat – megölték a kígyókat és a patkányokat, amik a gabonába másztak.",
+  "mosaicStarter3": "Annyira szerették őket, hogy istennőt csináltak az egyikből. Básztet. A ház, az ajtó és mindenki védelmezője, aki mögötte alszik.",
+  "mosaicJunior": "Nézd a kezét – valaki megmutatja neki, hogyan kell fogni a tollat.",
+  "mosaicJunior2": "Az a madárfejű Thot. Írás, számolás, feljegyzések – ez mind az övé.",
+  "mosaicJunior3": "Az íbisz, amit a folyón felfelé követtünk? Az az ő madara. És minden szám, amit egy falba beírtunk, szintén az övé.",
+  "mosaicExpert": "Az a fény nem szerencse. Úgy építették az egész csarnokot, hogy pont oda essen, pont a megfelelő reggelen.",
+  "mosaicExpert2": "A nap Ámon-Ré – a rejtőzködő, és a fény, amit mindenki lát. Egyszerre mindkettő.",
+  "mosaicExpert3": "Aki ilyen pontosan meg tudja mérni az eget, az bármit meg tud mérni. Egész úton az ő számolásaikat oldottuk meg.",
+  "mosaicMaster": "Zöld bőr, és búza nő ki belőle. Ez szándékos.",
+  "mosaicMaster2": "Ozirisz. Megölték, aztán újra összerakták, és most ő az, ami minden évben visszatér, amikor a folyó elönti a földeket.",
+  "mosaicMaster3": "Itt lent ez a lényeg: a halál nem a vég. Vidám gondolat egy sírban, nem?",
+  "mosaicWizard": "Az egyik oldalon egy szív. A másikon egy toll. És egyensúlyban vannak.",
+  "mosaicWizard2": "A toll Maat – az igazság, az egyensúly, az, ahogy a dolgoknak lenniük kell. Ha a szíved nehezebb a tollnál, nem mehetsz át az ajtón.",
+  "mosaicWizard3": "A sakál, aki a mérleget tartja, Anubisz. Ő az, aki elkísér ide.",
+  "mosaicFinale": "Lépj hátra egy kicsit. Nézd, mi mindent hoztunk fel azokból a piramisokból.",
+  "mosaicFinale2": "Minden darab őt mutatja – azt, aki a mérleget tartja. Egész úton figyelt minket.",
+  "mosaicFinale3": "Ez az ő feljegyzése rólunk. És szerintem egyensúlyban van.",
+  "shopFirstVisit": "Á, megérkeztünk. Az én standom – mondtam, hogy én az üzlet miatt jöttem.",
+  "shopFirstVisit2": "Mindent, ami ezen a pulton van, valahonnan én hoztam ki. Az ott két sírral ezelőttről van.",
+  "shopArrival": "Á, a standom! Hadd pakoljam ki, mit szedtem össze útközben.",
+  "shopArrival2": "A ritka leletek a legdrágábbak, de bármilyen csecsebecsét megveszek tőled, ami nálad van.",
+  "arrival": {
+    "starter_1": {
+      "1": {
+        "explorer": "Nézd, ott hátul! A Szfinx!"
+      },
+      "2": {
+        "explorer": "Még innen is hatalmas."
+      },
+      "3": {
+        "explorer": "Azt mondják, írás van a mancsai alatt. Amit senki sem tud elolvasni."
+      },
+      "4": {
+        "explorer": "Majd később. Előbb ez a piramis!"
+      }
+    },
+    "starter_2": {
+      "1": {
+        "fez": "Ha! Végre valami, amihez értek. Minden, ami a Níluson felfelé ment, előbb itt haladt el."
+      },
+      "2": {
+        "fez": "A kereskedők pedig mindent leírnak. Ki mit vett, ki kinek tartozott, ki késett…"
+      },
+      "3": {
+        "explorer": "Ki késett?"
+      },
+      "4": {
+        "fez": "Főleg azt, hogy ki késett!"
+      },
+      "5": {
+        "fez": "Háromezer év. Az áru eltűnt, de a számlák még mindig itt vannak. Hát persze!"
+      }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Nézd azokat az ajtókat! Ide jöttek az emberek védelmet kérni. Aztán egy ilyen ajtó zárva maradt."
+      },
+      "2": {
+        "explorer": "Ki előtt?"
+      },
+      "3": {
+        "fez": "Mindenki előtt, aki nem kérte szépen. Leginkább előttünk."
+      },
+      "4": {
+        "fez": "Ebben az országban mindent, ami le van zárva, valaki komolyan gondolta. Nagyon komolyan."
+      },
+      "5": {
+        "fez": "És a macskák! Itt imádták a macskákat. Egyszerűen nem tudták békén hagyni őket."
+      }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "Ó, ez tetszik. Itt tanultak meg írni! Jelről jelre, cserépdarabokon – a papirusz túl drága volt a gyerekeknek."
+      },
+      "2": {
+        "explorer": "Szemétre gyakoroltak?"
+      },
+      "3": {
+        "fez": "Arra, ami volt! És ha elég jelet megtanulsz, egy fal hirtelen már nem csak díszítés."
+      },
+      "4": {
+        "explorer": "Az a Szfinx… Még egyszer meg akarom nézni."
+      },
+      "5": {
+        "fez": "Még nem. Hamarosan."
+      }
+    },
+    "junior_1": {
+      "1": {
+        "fez": "Minden évben visszajöttek az áradással, szinte napra pontosan."
+      },
+      "2": {
+        "fez": "Úgyhogy az emberek elkezdték számolni a napokat közben. Innen jön a naptár – a madaraktól."
+      },
+      "3": {
+        "explorer": "A madaraktól."
+      },
+      "4": {
+        "fez": "Madarak és papírmunka. Mindig madarak és papírmunka."
+      }
+    },
+    "junior_2": {
+      "1": {
+        "fez": "Itt készítettek mindent. Nem a sírokat – hanem a holmikat, amik belekerültek."
+      },
+      "2": {
+        "fez": "Nézd a formákat. Ugyanaz a karkötő, negyvenszer."
+      },
+      "3": {
+        "explorer": "Negyven embernek?"
+      },
+      "4": {
+        "fez": "Bárkinek, aki meg tudta fizetni. Egy nemes azt akarta, ami a királynak volt, csak olyan áron, amit egy nemes is elbír."
+      }
+    },
+    "junior_3": {
+      "1": {
+        "fez": "Ez itt Thot. A titkok és a varázslat istene, egészen biztos vagyok benne."
+      },
+      "2": {
+        "explorer": "Egészen?"
+      },
+      "3": {
+        "fez": "Kilencven százalékig. Mindegy – a jelek, amiket gyűjtesz, az övéi."
+      }
+    },
+    "junior_4": {
+      "1": {
+        "fez": "Több mint kilencven méter magas, és a tetején egy tűz, ami soha nem aludt ki."
+      },
+      "2": {
+        "fez": "A tengerészek egynapi útról is megtalálták a partot. Azelőtt úgy találták meg, hogy nekimentek."
+      },
+      "3": {
+        "explorer": "Hogy találsz meg itt bármit egy ilyen nélkül?"
+      },
+      "4": {
+        "fez": "Megkérdezed valakitől, aki már járt ott. Ez az egész szakmám."
+      }
+    },
+    "expert_1": {
+      "1": {
+        "fez": "Vagy hatvan sírt vájtak ebbe az egy völgybe, és mindet kinyitották, mielőtt mi ideértünk."
+      },
+      "2": {
+        "explorer": "Kik?"
+      },
+      "3": {
+        "fez": "Olyanok, mint mi, többnyire. Csak korábban."
+      },
+      "4": {
+        "fez": "Te mit gondolsz?"
+      },
+      "5": {
+        "explorer": "Hogy elkéstünk."
+      }
+    },
+    "expert_2": {
+      "1": {
+        "fez": "Ámon-Ré. A nap. Mindenki kedvence, és látod, miért – nézd, mekkora ez a hely."
+      },
+      "2": {
+        "explorer": "Két név."
+      },
+      "3": {
+        "fez": "Ugyanaz az isten, azt hiszem. A népszerűeknek adtak még egy nevet."
+      }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Az egész ország egy zöld csík egyetlen folyó két partján, és itt hirtelen szétterül ilyenné."
+      },
+      "2": {
+        "fez": "Minden nő. És minden harap is."
+      },
+      "3": {
+        "explorer": "Mi melyikért jöttünk?"
+      },
+      "4": {
+        "fez": "Én igazából egyikben sem reménykedtem."
+      }
+    },
+    "expert_4": {
+      "1": {
+        "fez": "Az első. Előtte a királyok is egy lapos kő alá kerültek, mint mindenki más."
+      },
+      "2": {
+        "fez": "Valaki itt állt, és azt gondolta: mi lenne, ha ezt megcsinálnánk hatszor, egymás tetején?"
+      },
+      "3": {
+        "explorer": "És bevált?"
+      },
+      "4": {
+        "fez": "Ez még mindig áll, ő már nem. Attól függ, mit értesz rajta."
+      }
+    },
+    "master_1": {
+      "1": {
+        "fez": "Kétmillió kőtömb. Valaki megszámolta."
+      },
+      "2": {
+        "explorer": "Valaki megszámolta?"
+      },
+      "3": {
+        "fez": "Valaki mindig számol. Ezt felejtik el az emberek – az egészet hivatalnokok irányították."
+      },
+      "4": {
+        "fez": "Gyönyörű, nem? Bele sem merek gondolni, milyen hosszú lehetett a bérlista."
+      }
+    },
+    "master_2": {
+      "1": {
+        "fez": "Útmutató. Ennyi az egész – mit kell mondani, milyen sorrendben, hogy jól menjen az utazás."
+      },
+      "2": {
+        "explorer": "Használati utasítás."
+      },
+      "3": {
+        "fez": "Használati utasítás a halottaknak. Ezek tényleg mindent leírtak."
+      },
+      "4": {
+        "fez": "Ami, tekintve, hogy mit keresünk, a hét első jó híre."
+      }
+    },
+    "master_3": {
+      "1": {
+        "fez": "Á. Valakinek a tábora."
+      },
+      "2": {
+        "explorer": "Friss?"
+      },
+      "3": {
+        "fez": "Elég friss. Konzervkaja és csúnya köhögés, ahogy elnézem."
+      },
+      "4": {
+        "fez": "Beljebb mentek innen, és otthagyták a felszerelésüket."
+      },
+      "5": {
+        "explorer": "Visszajöttek érte?"
+      },
+      "6": {
+        "fez": "…Menjünk tovább."
+      }
+    },
+    "master_4": {
+      "1": {
+        "fez": "Na, EZT próbálta utánozni mindenki más. Nézd azt a színt – háromezer év, és még mindig olyan, mintha nedves lenne."
+      },
+      "2": {
+        "explorer": "Henut dühös lenne."
+      },
+      "3": {
+        "fez": "Henut jegyzetelne."
+      }
+    },
+    "wizard_1": {
+      "1": {
+        "fez": "A nap éjjel a világ alá bukik, és a másik oldalon jön fel. Ez az egész hit."
+      },
+      "2": {
+        "fez": "Tizenkét óra a sötétben, mindenféle akadállyal, és valakinek át kell vinnie rajta."
+      },
+      "3": {
+        "explorer": "Hát ezt csináljuk mi is."
+      },
+      "4": {
+        "fez": "Próbáltam nem kimondani."
+      },
+      "5": {
+        "explorer": "A homok még mindig befelé folyik."
+      },
+      "6": {
+        "fez": "Háromezer éve folyik befelé. Nem áll meg, csak körbe-körbe jár."
+      },
+      "7": {
+        "fez": "Megtelik, átfordul, újrakezdi. Mint a nap."
+      }
+    },
+    "wizard_2": {
+      "1": {
+        "fez": "Kettő van belőlük, tizennyolc méter magasak, és mindkettő Amenhotep."
+      },
+      "2": {
+        "fez": "A görögök ránéztek egyszer, és úgy döntöttek, hogy ez az ő egyik hősük. Memnón. A név kétezer évig rajta ragadt."
+      },
+      "3": {
+        "explorer": "Kinek a neve van rajta?"
+      },
+      "4": {
+        "fez": "A sajátja. Bevésve a trónba, ahol mindig is volt."
+      },
+      "5": {
+        "fez": "Senki sem olvasta el."
+      },
+      "6": {
+        "fez": "A földrengés után az északi hajnalban énekelt. Egy hang, minden reggel, amikor a nap felmelegítette a repedést."
+      },
+      "7": {
+        "explorer": "És most?"
+      },
+      "8": {
+        "fez": "Egy császár megjavíttatta. Azóta egy hangot sem adott ki."
+      }
+    },
+    "wizard_3": {
+      "1": {
+        "fez": "A mérleg. Az egyik oldalon a szív, a másikon a toll – szóval egy jó nehéz szív nyer, gondolom."
+      },
+      "2": {
+        "explorer": "Merre megy le, ami nehéz?"
+      },
+      "3": {
+        "fez": "…Lefelé."
+      },
+      "4": {
+        "fez": "Ó."
+      },
+      "5": {
+        "fez": "Könnyű. KÖNNYŰ szív kell."
+      }
+    },
+    "wizard_4": {
+      "1": {
+        "fez": "A csúcskő kerül fel utoljára, és aranyból, hogy az egész piramis elkapja az első napsugarat."
+      },
+      "2": {
+        "explorer": "Kinek?"
+      },
+      "3": {
+        "fez": "Mindenkinek, aki nézi. Ez volt a lényeg – sosem annak szólt, aki benne fekszik."
+      }
+    }
+  },
+  "tomb": {
+    "starter": {
+      "1": {
+        "ipi": "Hé! Kezeket le! Az az én korsóm!"
+      },
+      "2": {
+        "fez": "…Ez a korsó most megszólalt?!"
+      },
+      "3": {
+        "ipi": "Én voltam. Harmadik polc, az a csorba. Az az enyém."
+      },
+      "4": {
+        "explorer": "Jó, jó! Ott marad. Ki vagy te?"
+      },
+      "5": {
+        "ipi": "Ipi. Negyven évig vezettem a könyveket. Negyven évig!"
+      },
+      "6": {
+        "fez": "Könyveket? Kiét?"
+      },
+      "7": {
+        "ipi": "Mindenkiét! Ki mivel tartozott, az utolsó zsák gabonáig."
+      },
+      "8": {
+        "ipi": "Az a Henut, innen északra? Tizenegy deben lazúrkő. Soha nem fizette ki!"
+      },
+      "9": {
+        "explorer": "És erre még mindig emlékszel, ennyi idő után?"
+      },
+      "10": {
+        "ipi": "Le van írva! Ami le van írva, az megtörtént."
+      },
+      "11": {
+        "ipi": "Csak azok a Horik… Hori, a hajós, Hori, a pék… és az a MÁSIK Hori."
+      },
+      "12": {
+        "fez": "Neked is voltak macskáid? Mindenkinek voltak, ugye? Olyan édesek!"
+      },
+      "13": {
+        "ipi": "Édesek? A gabona miatt tartottuk őket! Tudod te, mennyibe kerül egyetlen patkány egy egész évszak alatt?"
+      },
+      "14": {
+        "fez": "…Ó. Értem."
+      },
+      "15": {
+        "ipi": "Mondd meg Henutnak, hogy Ipi küldött. Az majd elrontja a délutánját."
+      },
+      "16": {
+        "fez": "Ő tetszik nekem!"
+      },
+      "17": {
+        "explorer": "Neked csak az tetszik, hogy még tartoznak neki."
+      }
+    },
+    "junior": {
+      "1": {
+        "henut": "Végre. Biztos a lazúrkő miatt jöttél. Gondolom, Ipi még mindig a lazúrkövön rágódik."
+      },
+      "2": {
+        "explorer": "Igen."
+      },
+      "3": {
+        "henut": "Üveg volt. Gyönyörű üveg. Tudta ő azt jól."
+      },
+      "4": {
+        "fez": "…És a karkötő is üveg volt?"
+      },
+      "5": {
+        "henut": "Itt minden a legjobb utánzat, amit pénzért kapni lehetett, fiatalember, és minden darabot én magam válogattam ki."
+      },
+      "6": {
+        "henut": "Nos. A fal. A harmadik jel – az nem az én nevem. Valami inas egy vésővel, felügyelet nélkül."
+      },
+      "7": {
+        "henut": "Te megtanultad a jeleidet. Látom rajtad. Javítsd ki."
+      }
+    },
+    "juniorFixed": {
+      "1": {
+        "henut": "Tessék. Most már ezer év múlva is az én nevem lesz."
+      },
+      "2": {
+        "explorer": "Ipi jól írta."
+      },
+      "3": {
+        "henut": "Ipi mindent jól írt. Ez volt az egyetlen erénye."
+      },
+      "4": {
+        "fez": "Számít ez itt lent?"
+      },
+      "5": {
+        "henut": "Csak ez számít."
+      },
+      "6": {
+        "fez": "Odafent egy egész fal volt tele Thottal. A titkok istene."
+      },
+      "7": {
+        "henut": "Thot számol. Thot leírja, mit tettél, és az leírva marad."
+      },
+      "8": {
+        "henut": "Titoknak azt hívják az emberek, amit nem tudnak kiszámolni."
+      },
+      "9": {
+        "henut": "Ha továbbmész – és nyilván továbbmész –, van Karnakban egy pap, aki tartozik a halottaknak egy szertartással, amit soha nem végzett el. Kibírhatatlan lesz miatta. A papok már csak ilyenek."
+      },
+      "10": {
+        "henut": "…Találkoztunk már?"
+      },
+      "11": {
+        "fez": "Arra emlékeznék."
+      },
+      "12": {
+        "henut": "Igen. Én is."
+      }
+    },
+    "expert": {
+      "1": {
+        "priest": "Ön nem az, akit várok."
+      },
+      "2": {
+        "explorer": "Akkor kit vár?"
+      },
+      "3": {
+        "priest": "Valakit a pecséttel. Ide kellett volna hozni, oda letenni, és elmondani fölötte a szavakat. Ebből a háromból egy sem történt meg."
+      },
+      "4": {
+        "fez": "…Mióta vár itt?"
+      },
+      "5": {
+        "priest": "Nem számolom. Az nem lenne illendő."
+      },
+      "6": {
+        "priest": "Igazi áldozat csak az lehet, amivel egy királyt eltemettek. Nem másolat. Nem hasonmás. Maga a tárgy, rajta a jelével."
+      },
+      "7": {
+        "priest": "Hozza el, és bejelentik. Hozzon bármi mást, és nem."
+      },
+      "8": {
+        "explorer": "Kinek jelentenek be?"
+      },
+      "9": {
+        "priest": "Majd megtudja. Előbb-utóbb mindenki megtudja."
+      },
+      "10": {
+        "fez": "Nagyon odavan a napért, ez itt. Az a sok Ámon-Ré odakint."
+      },
+      "11": {
+        "priest": "Ámon a rejtőzködő. Ré az, akit mindenki lát."
+      },
+      "12": {
+        "priest": "Ugyanaz az isten. Ez nem véletlen, hanem éppen ez a lényeg."
+      },
+      "13": {
+        "fez": "…Persze. Igen. Ezt tudtam."
+      },
+      "14": {
+        "explorer": "Nem tudtad."
+      },
+      "15": {
+        "fez": "Nem tudtam."
+      }
+    },
+    "expertB": {
+      "1": {
+        "fez": "Ide még senki sem jött be. Se mi, se azok a korábbiak, senki."
+      },
+      "2": {
+        "explorer": "Honnan tudod?"
+      },
+      "3": {
+        "fez": "Onnan, hogy még van benne valami."
+      }
+    },
+    "master": {
+      "1": {
+        "pharaoh": "Közelebb jöhet. Közelebb jött. Rendben."
+      },
+      "2": {
+        "fez": "Felség."
+      },
+      "3": {
+        "pharaoh": "Igen."
+      },
+      "4": {
+        "explorer": "Szükségünk van a pecsétjére."
+      },
+      "5": {
+        "pharaoh": "Mindenkinek arra van szüksége. Kétszer vitték el, és egyszer sem hozták vissza."
+      },
+      "6": {
+        "pharaoh": "Másodszor egy másolatot hagytak itt. Egy MÁSOLATOT. Az ÉN síromban. Mintha nem venném észre."
+      },
+      "7": {
+        "explorer": "A másolat még itt van?"
+      },
+      "8": {
+        "pharaoh": "Persze hogy itt van, semmit sem ér. Ott fekszik a polcon, ahol az igazinak kellene lennie, és rossz."
+      },
+      "9": {
+        "pharaoh": "Vigye csak, ha akarja. Vigye el annak a papnak. Meglátja, mire megy vele."
+      },
+      "10": {
+        "fez": "…Ő ezt élvezi."
+      },
+      "11": {
+        "pharaoh": "Kilencszáz éve nem volt ilyen jó hetem."
+      },
+      "12": {
+        "fez": "Ott a falon Ozirisz. A halottak ura – komor dolog."
+      },
+      "13": {
+        "pharaoh": "ZÖLD, te nevetséges állat."
+      },
+      "14": {
+        "pharaoh": "Zöld, mint az elárasztott mező. Megölték, újra összerakták, és minden egyes évben visszatér."
+      },
+      "15": {
+        "pharaoh": "Itt lent ez nem komor, hanem éppen ez a lényeg. A halál nem a vég."
+      }
+    },
+    "wizard": {
+      "1": {
+        "priest": "Tegye le. Oda. Igen."
+      },
+      "2": {
+        "priest": "…"
+      },
+      "3": {
+        "priest": "Most csináltam ezt először. Már kezdtem azt hinni, hogy elfelejtettem, hogyan kell."
+      },
+      "4": {
+        "explorer": "Elfelejtette?"
+      },
+      "5": {
+        "priest": "Teljesen. De visszajött."
+      }
+    },
+    "wizardB": {
+      "1": {
+        "fez": "Az ő kötelük. Még mindig ki van kötve."
+      },
+      "2": {
+        "explorer": "Idáig eljutottak."
+      },
+      "3": {
+        "fez": "Még tovább is. Aztán ezen másztak vissza."
+      },
+      "4": {
+        "explorer": "Itt egy jegyzetfüzet."
+      },
+      "5": {
+        "fez": "Mi áll benne?"
+      },
+      "6": {
+        "explorer": "Nem tudom elolvasni az írást. Visszajöttem a pecsétért. Inkább csináltam egy jobbat."
+      },
+      "7": {
+        "explorer": "Senki sem dőlt be neki."
+      },
+      "8": {
+        "fez": "…Azért hamisították, mert nem tudták elolvasni, mire való."
+      },
+      "9": {
+        "explorer": "Aztán hazamentek."
+      }
+    },
+    "wizardC": {
+      "1": {
+        "fez": "Állj meg egy pillanatra. Nézd, mi mindent hoztunk fel azokból a piramisokból."
+      },
+      "2": {
+        "explorer": "Ez egy kép."
+      },
+      "3": {
+        "fez": "Végig egy kép volt."
+      }
+    }
+  },
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Egy barlang! A térképen egy pinceajtó volt, ez meg egy egész domb!"
+      },
+      "2": {
+        "fez": "Okos fickó. Az árut egy dombba rejteni – ez egy tolvajnak eszébe se jutna."
+      },
+      "3": {
+        "explorer": "Nekünk eszünkbe jutott."
+      },
+      "4": {
+        "fez": "Mi nem vagyunk tolvajok. Mi vevők vagyunk. Nagyon-nagyon késő vevők."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Ez lesz az. Henut! Az a tizenegy deben lazúrkő!"
+      },
+      "2": {
+        "fez": "Mit gondolsz, kapunk jutalékot, ha behajtjuk?"
+      },
+      "3": {
+        "explorer": "Még semmit sem hajtottál be."
+      },
+      "4": {
+        "fez": "Szeretek előre számolni."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Szóval itt van Henut papja. Kibírhatatlan, azt mondta."
+      },
+      "2": {
+        "fez": "Mit gondolsz, vigyünk valamit? Virágot?"
+      },
+      "3": {
+        "explorer": "Meghalt."
+      },
+      "4": {
+        "fez": "Annál inkább. Jó első benyomást akarsz tenni, nem?"
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Ide csak a főpap jöhetett be. És most mi!"
+      },
+      "2": {
+        "explorer": "Szabad nekünk?"
+      },
+      "3": {
+        "fez": "Nem áll senki az ajtóban, hogy nemet mondjon."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Nézd, itt egyszerűen véget ér a térkép. Homok, aztán semmi."
+      },
+      "2": {
+        "explorer": "Akkor jó helyen vagyunk."
+      },
+      "3": {
+        "fez": "Pont erről beszélek. Pont ettől leszek ideges."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Ozirisz csarnoka! Zöld, persze. Mert minden évben visszajön, mint a gabona."
+      },
+      "2": {
+        "explorer": "Ezt mindig is tudtad."
+      },
+      "3": {
+        "fez": "Mindig is."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Az istenek saját kamrája! Mit tesz el az, akinek már mindene megvan?"
+      },
+      "2": {
+        "explorer": "Amit az emberek hoznak neki."
+      },
+      "3": {
+        "fez": "…Igen. Biztos ez az."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "A csillagerők birodalma. Nocsak, nocsak."
+      },
+      "2": {
+        "fez": "Ha valami semmiséget kéne eladnom, én is így nevezném el."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Hirtelen olyan érzésem van, hogy valamit rosszul csináltam."
+      },
+      "2": {
+        "explorer": "Például mit?"
+      },
+      "3": {
+        "fez": "Fogalmam sincs. Ez a legrosszabb benne."
+      }
+    }
+  },
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Ennyi kar és ajtó egyetlen pincéért!"
+      },
+      "2": {
+        "fez": "Akkor valami jó van odalent. Szemétért senki sem törné magát ennyire."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Huh. Ezek az ajtók sokkal kényesebbek voltak, mint Ipié."
+      },
+      "2": {
+        "fez": "Hát igen. A hölgynek persze volt pénze."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Huh, végre! Ez a barlang tényleg nem akart beengedni minket."
+      },
+      "2": {
+        "explorer": "Szerintem pont ez volt a cél."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Psszt… miért suttogok én?"
+      },
+      "2": {
+        "explorer": "Fogalmam sincs. Én is suttogok."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Hú. Még mindig remeg a farkam attól az utolsó ajtótól."
+      },
+      "2": {
+        "fez": "Egy király, aki így elzárja a holmiját… az tényleg nem akarja elveszíteni."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Látod? Ha elég sokáig vagy a föld alatt, előbb-utóbb újra feljössz."
+      },
+      "2": {
+        "explorer": "Ez is Ozirisztól van?"
+      },
+      "3": {
+        "fez": "Nem, ez az enyém."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Ilyen ajtók… régen egyszerűen megfordultunk volna."
+      },
+      "2": {
+        "explorer": "Most már nem."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Három emeletnyi barlang, és csak utána jön a bejárati ajtó."
+      },
+      "2": {
+        "explorer": "Akkor biztos megéri."
+      },
+      "3": {
+        "fez": "Mindig ezt mondják. Aztán egy korsó."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Az utolsó sötét szakasz. Érzem."
+      },
+      "2": {
+        "explorer": "Ezt mondtad az előzőnél is."
+      },
+      "3": {
+        "fez": "És majdnem igazam lett."
+      }
+    }
+  },
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Nézd már! Egy piramis, a föld alatt! Egy kereskedőnek!"
+      },
+      "2": {
+        "fez": "Ez vagy nagyon jól keresett, vagy nagyon jól alkudott."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Nézd, hogy csillog a csúcsa a napon! Igazi arany, fogadjunk?"
+      },
+      "2": {
+        "explorer": "Egy lyukban a föld alatt. Kinek csillog?"
+      },
+      "3": {
+        "fez": "Neki. Ilyen típus, látszik rajta."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Hm. Szabad egyáltalán eladni valamit, ami már egy istené?"
+      },
+      "2": {
+        "explorer": "Kérdezd meg az istent."
+      },
+      "3": {
+        "fez": "Inkább nem."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Szerinted az a pap tudja, hogy itt kóborolunk?"
+      },
+      "2": {
+        "explorer": "Ő nem számol. Az nem lenne illendő."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Nézd, ott áll egészen egyedül a napon. Szép, nem?"
+      },
+      "2": {
+        "fez": "Mi lenne, ha csak lerajzolnánk, és mennénk?"
+      },
+      "3": {
+        "explorer": "Nem tudsz rajzolni."
+      },
+      "4": {
+        "fez": "…Nem. Akkor irány befelé."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Aki odabent fekszik, arra számít, hogy visszatér. Errefelé ez a szokás."
+      },
+      "2": {
+        "explorer": "Mióta vár?"
+      },
+      "3": {
+        "fez": "Régóta. De ez a munkával jár. Halottnak lenni főleg várakozás."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "explorer": "Hűha."
+      },
+      "2": {
+        "fez": "Igen."
+      },
+      "3": {
+        "fez": "Néha egyszerűen nincs mit mondani, ugye?"
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Látod azt a napfoltot a piramison? Arról le lehetne olvasni az időt."
+      },
+      "2": {
+        "explorer": "Akkor hány óra van?"
+      },
+      "3": {
+        "fez": "…Délután. Nagyjából. Nem vagyok óra."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Ott van. A térkép minden vonala ide fut ki."
+      },
+      "2": {
+        "explorer": "Akkor ez a vége."
+      },
+      "3": {
+        "fez": "A térképnek, igen. Furcsa. Azt hittem, ez jobb érzés lesz."
+      }
+    }
+  },
+  "camp": {
+    "firstHome": {
+      "1": {
+        "fez": "Ez a te táborod? Egy tűz meg egy láda?"
+      },
+      "2": {
+        "explorer": "A mi táborunk."
+      },
+      "3": {
+        "fez": "A miénk. Rendben. Akkor enyém a hely a tűz mellett."
+      },
+      "4": {
+        "fez": "Végül is gyík vagyok. Amikor éppen úgy kényelmes."
+      }
+    },
+    "homeHaul": {
+      "1": {
+        "fez": "Kipakolás! Az egész út legjobb része."
+      },
+      "2": {
+        "explorer": "Jobb, mint a piramis?"
+      },
+      "3": {
+        "fez": "A piramis nem a miénk. Ez igen."
+      }
+    },
+    "homeEmpty": {
+      "1": {
+        "explorer": "Üres kézzel."
+      },
+      "2": {
+        "fez": "És akkor? Sétáltunk. Az is számít."
+      },
+      "3": {
+        "explorer": "Mire számít?"
+      },
+      "4": {
+        "fez": "A lábaimnak. Nagyon rövidek ám."
+      }
+    },
+    "rested": {
+      "1": {
+        "fez": "Na. Jobban vagy egy kicsit?"
+      },
+      "2": {
+        "explorer": "Csak egy karcolás volt."
+      },
+      "3": {
+        "fez": "Oda se mertem nézni. Mégis le kellett ülnöm."
+      }
+    },
+    "chapterJunior": {
+      "1": {
+        "fez": "Na, ez szépen ment. Jöhet a következő!"
+      },
+      "2": {
+        "explorer": "Nem volt olyan könnyű."
+      },
+      "3": {
+        "fez": "Most már az. Utólag minden könnyű."
+      }
+    },
+    "chapterExpert": {
+      "1": {
+        "fez": "Odakint csapdák vannak. Igaziak. Harapnak."
+      },
+      "2": {
+        "fez": "Megsérülsz? Akkor egyszerűen visszasétálunk. Itthon rendbe jössz."
+      },
+      "3": {
+        "explorer": "És te?"
+      },
+      "4": {
+        "fez": "Én mögötted megyek. Ott biztonságosabb."
+      }
+    },
+    "chapterMaster": {
+      "1": {
+        "fez": "Négy piramis van ott. Emlékszel, amikor még csak egy volt?"
+      },
+      "2": {
+        "explorer": "Nem volt az olyan régen."
+      },
+      "3": {
+        "fez": "Nem. Mégis annak tűnik."
+      }
+    },
+    "chapterWizard": {
+      "1": {
+        "fez": "Nézd azt az utolsót. Még arany csúcsa is van!"
+      },
+      "2": {
+        "fez": "Az sokba fog kerülni nekünk. Az utolsó mindig a legdrágább."
+      },
+      "3": {
+        "explorer": "Mibe kerül?"
+      },
+      "4": {
+        "fez": "…Már nem is tudom."
+      }
+    },
+    "firstFind": {
+      "1": {
+        "fez": "Nézd csak – mintha mindig is itt lett volna!"
+      },
+      "2": {
+        "fez": "Viszket a kezem, hogy árcédulát akasszak rá."
+      },
+      "3": {
+        "explorer": "Ne tedd."
+      },
+      "4": {
+        "fez": "Nem, nem. Otthonról nem árul az ember. Ezt tudom."
+      }
+    },
+    "structureDone": {
+      "1": {
+        "fez": "Kész van! Minden darab a helyén!"
+      },
+      "2": {
+        "explorer": "Mind a saját munkánk."
+      },
+      "3": {
+        "fez": "Hát. Én főleg mutogattam."
+      }
+    }
+  },
+  "animal": {
+    "forSale": {
+      "1": {
+        "fez": "Nézd, mi van a standomon! Mostantól szállítást is árulok."
+      },
+      "2": {
+        "explorer": "Rágcsál."
+      },
+      "3": {
+        "fez": "Az benne van az árban."
+      }
+    },
+    "boughtDonkey": {
+      "1": {
+        "fez": "Eladva! Egy szamár. Makacs, de mindent elcipel."
+      },
+      "2": {
+        "explorer": "És hol van?"
+      },
+      "3": {
+        "fez": "Már úton van hazafelé. Inkább nélkülünk sétál."
+      }
+    },
+    "blockedDonkey": {
+      "1": {
+        "fez": "Ennyi cuccal nem gyalogolunk ilyen messzire. Ehhez szamár kell."
+      },
+      "2": {
+        "fez": "És képzeld, kinek van egy? Nekem. A standomon, Henut kamrájában."
+      }
+    },
+    "throughDonkey": {
+      "1": {
+        "explorer": "Hajlandó jönni."
+      },
+      "2": {
+        "fez": "Ma. Holnap kérdezd meg újra."
+      }
+    },
+    "arrivesDonkey": {
+      "1": {
+        "fez": "Ott van! Előbb ideért, mint mi."
+      },
+      "2": {
+        "explorer": "A tüzet is megtalálta."
+      },
+      "3": {
+        "fez": "Az én helyemet. Hát. Ő volt itt előbb."
+      }
+    },
+    "boughtCart": {
+      "1": {
+        "fez": "Egy kocsi! Két kerék, és alig zörögnek."
+      },
+      "2": {
+        "explorer": "Alig?"
+      },
+      "3": {
+        "fez": "A zörgés ingyen jár hozzá."
+      }
+    },
+    "blockedCart": {
+      "1": {
+        "fez": "A szamár nem visz el még egy zsákot. Megkérdeztem."
+      },
+      "2": {
+        "fez": "Egy kocsi kell nekünk. Van egy a standomon, a főpapnál."
+      }
+    },
+    "throughCart": {
+      "1": {
+        "explorer": "Hallod?"
+      },
+      "2": {
+        "fez": "Az a kocsi. Kicsit énekel."
+      },
+      "3": {
+        "explorer": "Egész úton?"
+      }
+    },
+    "arrivesCart": {
+      "1": {
+        "fez": "Egy kocsi a táborunkban! Most már úgy nézünk ki, mint akik mennek valahová."
+      },
+      "2": {
+        "explorer": "Megyünk is valahová."
+      },
+      "3": {
+        "fez": "Igen, de most már mindenki látja."
+      }
+    },
+    "boughtCamel": {
+      "1": {
+        "fez": "Egy teve! Napokig kibírja víz nélkül. Én nem ám."
+      },
+      "2": {
+        "explorer": "Téged néz."
+      },
+      "3": {
+        "fez": "Lenéz. A tevék mindig lenéznek."
+      }
+    },
+    "blockedCamel": {
+      "1": {
+        "fez": "A legbelső szentély? Gyalog oda soha nem érünk el."
+      },
+      "2": {
+        "fez": "Szerencsére van egy tevém. A standomon, a főpapnál."
+      }
+    },
+    "throughCamel": {
+      "1": {
+        "fez": "Letérdel! Előttem!"
+      },
+      "2": {
+        "explorer": "Hogy fel tudjunk ülni."
+      },
+      "3": {
+        "fez": "Hadd örüljek egy kicsit."
+      }
+    },
+    "arrivesCamel": {
+      "1": {
+        "fez": "Ott van. Úgy viselkedik, mintha övé lenne a tábor."
+      },
+      "2": {
+        "explorer": "És a szamár?"
+      },
+      "3": {
+        "fez": "Úgy tesz, mintha nem látná. Mint én."
+      }
+    },
+    "boughtSecondDonkey": {
+      "1": {
+        "fez": "Még egy szamár! Most az elsőnek is lesz kivel beszélgetnie."
+      },
+      "2": {
+        "explorer": "Beszélgetnie?"
+      },
+      "3": {
+        "fez": "Iázni. Az is beszélgetés, csak hangosabb."
+      }
+    },
+    "blockedSecondDonkey": {
+      "1": {
+        "fez": "A szamár nem akar továbbmenni. Egyedül nem, azt mondja."
+      },
+      "2": {
+        "explorer": "Ezt mondta?"
+      },
+      "3": {
+        "fez": "Értek szamárul. Egy pajtást szeretne, és nekem van egy a standomon, a fáraó kincsénél."
+      }
+    },
+    "throughSecondDonkey": {
+      "1": {
+        "fez": "Hallgasd őket! Az egyik hangosabb, mint a másik."
+      },
+      "2": {
+        "explorer": "Ki nyer?"
+      },
+      "3": {
+        "fez": "Nem mi. Nekünk hallgatni kell."
+      }
+    },
+    "arrivesSecondDonkey": {
+      "1": {
+        "fez": "Nézd őket. Mintha évek óta ismernék egymást."
+      },
+      "2": {
+        "explorer": "Mint mi."
+      },
+      "3": {
+        "fez": "Mi kevesebbet iázunk."
+      }
+    },
+    "boughtSecondCamel": {
+      "1": {
+        "fez": "Még egy teve. Igen. Én sem kedvelem őket."
+      },
+      "2": {
+        "fez": "De ez legalább barátságosnak tűnik."
+      },
+      "3": {
+        "explorer": "A fezedet nézi."
+      }
+    },
+    "blockedSecondCamel": {
+      "1": {
+        "fez": "Ozirisz csarnoka. Egy tevével oda nem jutunk el."
+      },
+      "2": {
+        "fez": "Szerencsére van még egy, a standomon, a fáraó kincsénél. A legeslegutolsó."
+      },
+      "3": {
+        "explorer": "Mindig ezt mondod."
+      }
+    },
+    "throughSecondCamel": {
+      "1": {
+        "fez": "Megeszi a fezemet!"
+      },
+      "2": {
+        "explorer": "Barátságos teve."
+      },
+      "3": {
+        "fez": "Túl barátságos."
+      }
+    },
+    "arrivesSecondCamel": {
+      "1": {
+        "fez": "Két teve. Most már ketten néznek le rám."
+      },
+      "2": {
+        "explorer": "Akkor állj a szamarak mellé."
+      },
+      "3": {
+        "fez": "Már ott állok."
+      }
+    },
+    "boughtSturdyCart": {
+      "1": {
+        "fez": "Egy erősebb kocsi. Ez nem énekel útközben."
+      },
+      "2": {
+        "explorer": "Virágok vannak rá festve."
+      },
+      "3": {
+        "fez": "Az erősség kedvéért."
+      }
+    },
+    "blockedSturdyCart": {
+      "1": {
+        "fez": "A régi kocsi nem ér oda egyben. Ehhez valami erősebb kell."
+      },
+      "2": {
+        "fez": "Van egy a standomon, az istenek kamrájában. Nem a festés miatt, hangsúlyozom."
+      }
+    },
+    "throughSturdyCart": {
+      "1": {
+        "explorer": "Nem zörög."
+      },
+      "2": {
+        "fez": "Látod? Erősség."
+      },
+      "3": {
+        "explorer": "És a virágok?"
+      },
+      "4": {
+        "fez": "Azok is segítenek egy kicsit."
+      }
+    },
+    "arrivesSturdyCart": {
+      "1": {
+        "fez": "Nézd, hogy csillog!"
+      },
+      "2": {
+        "explorer": "Szebb, mint amilyennek lennie kell."
+      },
+      "3": {
+        "fez": "Igen. Nem is az erőssége miatt adtam el."
+      }
+    },
+    "boughtCaravanBanner": {
+      "1": {
+        "fez": "Egy zászló. Őszinte leszek: semmit sem nyit ki."
+      },
+      "2": {
+        "explorer": "Akkor mit csinál?"
+      },
+      "3": {
+        "fez": "Lobog. Gyönyörűen."
+      }
+    },
+    "arrivesCaravanBanner": {
+      "1": {
+        "fez": "Nézd, hogy lobog! A saját táborunk fölött!"
+      },
+      "2": {
+        "explorer": "Még mindig semmit sem nyit ki."
+      },
+      "3": {
+        "fez": "Nem. Nem is kell neki."
+      }
+    }
+  },
+  "bond": {
+    "starter": {
+      "1": {
+        "fez": "Ez gyors volt."
+      },
+      "2": {
+        "explorer": "Csak egy ajtó volt."
+      },
+      "3": {
+        "fez": "Nekem egy hétig tartott volna."
+      }
+    },
+    "starterTomb": {
+      "1": {
+        "fez": "Csak hogy tisztázzuk. Én a viszonteladás miatt vagyok itt. Most mondom, amíg még igaz."
+      },
+      "2": {
+        "explorer": "Megjegyeztem."
+      }
+    },
+    "junior": {
+      "1": {
+        "fez": "Egy darabig nagyon csendben voltál."
+      },
+      "2": {
+        "explorer": "Számoltam."
+      },
+      "3": {
+        "fez": "Tudom. Láttam már embereket tippelni. Az nem tippelés volt."
+      }
+    },
+    "expert": {
+      "1": {
+        "fez": "Ez közel volt."
+      },
+      "2": {
+        "explorer": "Minden rendben volt."
+      },
+      "3": {
+        "fez": "Közel volt. Ezt azért mondhatom."
+      }
+    },
+    "master": {
+      "1": {
+        "fez": "Abbahagyhatnánk."
+      },
+      "2": {
+        "explorer": "Abbahagyhatnánk."
+      },
+      "3": {
+        "fez": "Csak azért mondom, hogy ki legyen mondva. Nem azért, hogy meg is tegyük."
+      }
+    },
+    "wizard": {
+      "1": {
+        "explorer": "Ez mennyit ér?"
+      },
+      "2": {
+        "fez": "…"
+      },
+      "3": {
+        "fez": "Erre nem fogok árat mondani."
+      },
+      "4": {
+        "explorer": "Megjegyeztem."
+      }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": {
+        "fez": "Hoppá. Ez egy pillanattal ezelőtt még fal volt."
+      },
+      "2": {
+        "explorer": "Egy folyosó volt mögötte."
+      },
+      "3": {
+        "fez": "Annyi éven át sétáltak el mellette az emberek. Annyi éven át!"
+      }
+    }
+  },
+  "reading": {
+    "junior": {
+      "1": {
+        "explorer": "Itt van egy sor, amit most már el tudok olvasni."
+      },
+      "2": {
+        "explorer": "Kenyeret adtam az éhezőknek."
+      },
+      "3": {
+        "fez": "Kenyér. Egy sírban."
+      },
+      "4": {
+        "explorer": "Az előzőben is ott volt. Nem tudtam, hogy ezek szavak."
+      }
+    },
+    "expert": {
+      "1": {
+        "explorer": "Második sor. Vizet a szomjazóknak."
+      },
+      "2": {
+        "fez": "Kenyér, és most víz. Valaki nagyon szerette volna, ha bőkezűnek emlékeznek rá."
+      },
+      "3": {
+        "explorer": "Mindenkinél ott van. Minden falon, minden sírban, ugyanaz a két sor."
+      },
+      "4": {
+        "fez": "Akkor vagy mind bőkezűek voltak, vagy ezt illett mondani."
+      },
+      "5": {
+        "explorer": "Vagy ezen mérték meg őket."
+      }
+    },
+    "master": {
+      "1": {
+        "explorer": "Ruhát a mezíteleneknek. Harmadik sor."
+      },
+      "2": {
+        "fez": "Kenyér, víz, ruha. Ez azoknak a dolgoknak a listája, amiket odaadtak."
+      },
+      "3": {
+        "explorer": "Egy olyan ember sírjában, aki mindent magával vitt."
+      },
+      "4": {
+        "fez": "…Igen. Ezt én is észrevettem."
+      }
+    },
+    "sphinx": {
+      "1": {
+        "fez": "Vissza, ahonnan elindultunk. Meg sem moccant."
+      },
+      "2": {
+        "explorer": "Az írás még mindig ott van."
+      },
+      "3": {
+        "fez": "El tudod olvasni?"
+      },
+      "4": {
+        "explorer": "Egy név."
+      },
+      "5": {
+        "fez": "Kié?"
+      },
+      "6": {
+        "explorer": "A tiéd."
+      },
+      "7": {
+        "fez": "…"
+      },
+      "8": {
+        "fez": "Biztos vagy benne?"
+      },
+      "9": {
+        "explorer": "Le van írva."
+      },
+      "10": {
+        "fez": "Hű."
+      },
+      "11": {
+        "fez": "Hori."
+      },
+      "12": {
+        "fez": "Egyiptom minden falujában volt egy Hori."
+      },
+      "13": {
+        "fez": "Nos. Ez megmagyarázza a fezt."
+      }
+    }
+  },
+  "altar": {
+    "refused": {
+      "1": {
+        "priest": "Nem."
+      },
+      "2": {
+        "explorer": "Rajta van a jele."
+      },
+      "3": {
+        "priest": "Van rajta egy jel. Nagyon jó jel. Valaki vésette, akinek kiváló szerszámai voltak, de semmi keresnivalója itt, és nem is olyan régen."
+      },
+      "4": {
+        "priest": "Háromezer éve várok. Nem hagyom, hogy az utolsó héten lerázzanak."
+      }
+    }
+  },
+  "meeting": {
+    "starter_1": {
+      "1": {
+        "voice": "Hé! Ne ODA! Nézz a lábad elé!"
+      },
+      "2": {
+        "explorer": "Bocsi! Semmit sem látok! Hol vagy?"
+      },
+      "3": {
+        "fez": "Itt lent! Az árumban állsz!"
+      },
+      "4": {
+        "explorer": "Egy gyík?! Fezben?"
+      },
+      "5": {
+        "fez": "Egy kereskedő. És mi baj van a fezemmel?"
+      },
+      "6": {
+        "fez": "Lefogadom, te is a piramis miatt jöttél. Vettél térképet? Túl sokat fizettél érte?"
+      },
+      "7": {
+        "explorer": "NAGYON sokat."
+      },
+      "8": {
+        "fez": "Én is. Pff."
+      },
+      "9": {
+        "explorer": "Az írás a Szfinxen… el tudod olvasni?"
+      },
+      "10": {
+        "fez": "Nem. Már senki sem tudja. Az a talapzat valaha kék és arany volt ám."
+      },
+      "11": {
+        "explorer": "Ezt meg honnan tudod?"
+      },
+      "12": {
+        "fez": "…Hallottam. Szóval, mit keresel itt?"
+      },
+      "13": {
+        "explorer": "Valami klasszat."
+      },
+      "14": {
+        "fez": "A klassz dolgok jól fogynak! Tudod mit? Veled megyek!"
+      },
+      "15": {
+        "explorer": "Micsoda? Velem?"
+      },
+      "16": {
+        "fez": "Négy szem többet lát, mint kettő. Gyerünk, vár a piramis!"
+      }
+    }
+  },
+  "end": {
+    "1": {
+      "fez": "Klassz volt?"
+    },
+    "2": {
+      "explorer": "Elmegy."
+    }
+  },
+  "revisit": {
+    "starter": {
+      "north1": {
+        "1": {
+          "ipi": "Még mindig itt vagy? Északra! Henut! Tizenegy deben!"
+        }
+      },
+      "north2": {
+        "1": {
+          "ipi": "Tizenegy deben lazúrkő. Henut. Észak. Mire vársz még?"
+        }
+      },
+      "paid1": {
+        "1": {
+          "ipi": "Na? Kifizette? …Nem. Persze hogy nem."
+        }
+      },
+      "paid2": {
+        "1": {
+          "ipi": "Üveg? ÜVEG? Itt az áll, hogy lazúrkő. Feketén-fehéren. Lazúrkő!"
+        }
+      },
+      "later1": {
+        "1": {
+          "ipi": "Már megint te. Harmadik polc, a csorba – még mindig az enyém. Kezeket le."
+        }
+      },
+      "later2": {
+        "1": {
+          "ipi": "Negyven év könyvelés, és egyik sem jön ki. Egyik sem!"
+        }
+      }
+    },
+    "junior": {
+      "wall1": {
+        "1": {
+          "henut": "A fal. A harmadik jel. Még mindig nem az én nevem."
+        }
+      },
+      "wall2": {
+        "1": {
+          "henut": "Te még mindig itt vagy, és az a liba még mindig ott van a falamon. Javítsd ki."
+        }
+      },
+      "priest1": {
+        "1": {
+          "henut": "Még mindig az én nevem. Megnéztem. És most – Karnak, a pap. Indulj."
+        }
+      },
+      "priest2": {
+        "1": {
+          "henut": "Karnak! Elég régóta vár már. Menj, és hadd jelentsenek be."
+        }
+      },
+      "met1": {
+        "1": {
+          "henut": "Na? Kibírhatatlan, ugye? Megmondtam."
+        }
+      },
+      "later1": {
+        "1": {
+          "henut": "Még mindig üveg. Még mindig gyönyörű. Még mindig én válogattam."
+        }
+      }
+    },
+    "expert": {
+      "seal1": {
+        "1": {
+          "priest": "A pecsét. Idehozni, letenni, elmondani fölötte a szavakat. Várok."
+        }
+      },
+      "seal2": {
+        "1": {
+          "priest": "Á. Már megint Ön. És még mindig nincs pecsét."
+        }
+      },
+      "king1": {
+        "1": {
+          "priest": "Látta a királyt. Helyes. Maga a tárgy, ne feledje – nem hasonmás."
+        }
+      },
+      "later1": {
+        "1": {
+          "priest": "Már megint Ön. Itt már nincs mit tenni. Nagyon pihentető."
+        }
+      }
+    },
+    "master": {
+      "priest1": {
+        "1": {
+          "pharaoh": "Még mindig itt? Irány a pap azzal a másolattal! Hallani akarom, hogy sül el."
+        }
+      },
+      "priest2": {
+        "1": {
+          "pharaoh": "Közelebb jöhet. Megint. Látta már a pap?"
+        }
+      },
+      "rite1": {
+        "1": {
+          "pharaoh": "Szóval végre elvégezte a szertartását. Helyes. Most majd kibírhatatlan lesz miatta."
+        }
+      },
+      "later1": {
+        "1": {
+          "pharaoh": "Még mindig a legjobb hét kilencszáz év óta. És még mindig tart!"
+        }
+      }
+    },
+    "wizard": {
+      "later1": {
+        "1": {
+          "priest": "…Igen. Még mindig tudom, hogyan kell. Helyes."
+        }
+      },
+      "later2": {
+        "1": {
+          "priest": "Letéve, a szavak elmondva. Kész. Furcsa érzés."
+        }
+      }
+    }
+  }
+}

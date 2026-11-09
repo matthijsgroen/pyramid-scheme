@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Pedra",
+    "bronze": "Bronze",
+    "silver": "Prata",
+    "gold": "Ouro",
+    "divine": "Divino"
+  },
+  "sell_stone_1": {
+    "name": "Caco riscado",
+    "description": "Um pedaço de barro partido onde um escriba treinou as letras. Já estão tão gastas que não se leem."
+  },
+  "sell_stone_2": {
+    "name": "Jarro de barro rachado",
+    "description": "Um jarro para guardar cereais ou cerveja. Rachou de um lado com o peso de muitos séculos."
+  },
+  "sell_stone_3": {
+    "name": "Sandália de junco gasta",
+    "description": "Feita de junco de papiro. A sola ficou fininha de tanto um trabalhador andar com ela, há muito, muito tempo."
+  },
+  "sell_stone_4": {
+    "name": "Retalho de linho desbotado",
+    "description": "Uma tira rasgada de linho simples. Servia para enrolar as múmias, ou para remendar uma vela de barco."
+  },
+  "sell_stone_5": {
+    "name": "Lâmina de sílex partida",
+    "description": "Uma faca de pedra com a ponta partida. Barata de fazer, e ainda mais barata de trocar."
+  },
+  "sell_bronze_1": {
+    "name": "Amuleto de bronze torto",
+    "description": "Um amuleto da sorte baratinho. Saiu torto e nunca ninguém o endireitou."
+  },
+  "sell_bronze_2": {
+    "name": "Espelho de bronze gasto",
+    "description": "Antes brilhava tanto que te vias nele. Agora está verde e baço de velho."
+  },
+  "sell_bronze_3": {
+    "name": "Anzol de bronze baço",
+    "description": "O anzol de um pescador. Caiu ao Nilo muito antes de fecharem o túmulo."
+  },
+  "sell_bronze_4": {
+    "name": "Sininho de bronze",
+    "description": "Era para pendurar numa porta de templo ou no tornozelo de uma bailarina. Já não toca bem."
+  },
+  "sell_bronze_5": {
+    "name": "Anel de bronze escurecido",
+    "description": "Um anel simples, feito para um dedo que já virou pó há muito tempo."
+  },
+  "sell_silver_1": {
+    "name": "Ankh de prata escurecido",
+    "description": "Um sinal da vida, que ficou baço depois de séculos debaixo da terra."
+  },
+  "sell_silver_2": {
+    "name": "Pincel de kohl de prata",
+    "description": "Um pauzinho fino para pintar os olhos das pessoas ricas. O kohl já desapareceu há muito."
+  },
+  "sell_silver_3": {
+    "name": "Taça de prata amolgada",
+    "description": "Uma tacinha de oferendas, amolgada de um lado quando o teto lhe caiu em cima."
+  },
+  "sell_silver_4": {
+    "name": "Gancho de cabelo de prata",
+    "description": "Simples, sem enfeites. Já prendeu o cabelo de alguém cujo nome ninguém se lembra."
+  },
+  "sell_silver_5": {
+    "name": "Pulseira de prata gasta",
+    "description": "Uma pulseira fininha de prata com o fecho partido. Pouco fina para um nobre, fina demais para um trabalhador."
+  },
+  "sell_gold_1": {
+    "name": "Contazinha de ouro",
+    "description": "Uma conta de um colar de túmulo que se espalhou há muito tempo."
+  },
+  "sell_gold_2": {
+    "name": "Pedacinho de folha de ouro",
+    "description": "Uma lasca de folha de ouro, arrancada da cara de uma estátua por ladrões, séculos antes de tu chegares."
+  },
+  "sell_gold_3": {
+    "name": "Brinco fino de ouro",
+    "description": "Batido até ficar fininho, para o ouro de um nobre render mais."
+  },
+  "sell_gold_4": {
+    "name": "Caco com pintinhas de ouro",
+    "description": "Um pedaço partido de estuque dourado. Ainda tem pintinhas de ouro verdadeiro agarradas."
+  },
+  "sell_gold_5": {
+    "name": "Anel-sinete de ouro lascado",
+    "description": "Um anel de carimbar. O desenho está tão gasto que já ninguém sabe de quem era."
+  },
+  "sell_divine_1": {
+    "name": "Escaravelho de lápis-lazúli desbotado",
+    "description": "Esculpido em lápis-lazúli, uma pedra preciosa trazida de muito longe para um faraó renascer. A cor foi desbotando com os séculos."
+  },
+  "sell_divine_2": {
+    "name": "Amuleto do olho em cornalina",
+    "description": "Um olho protetor esculpido em cornalina vermelha como sangue, para afastar o azar na outra vida."
+  },
+  "sell_divine_3": {
+    "name": "Pedrinha de turquesa",
+    "description": "Um único azulejo de um mosaico partido. Antes fazia parte da cara de um deus na parede de um templo."
+  },
+  "sell_divine_4": {
+    "name": "Caco de vaso canópico de alabastro",
+    "description": "Um pedaço de um vaso onde se guardavam os órgãos de um faraó. Pedra preciosa para um trabalho arrepiante."
+  },
+  "sell_divine_5": {
+    "name": "Lâmina de obsidiana para rituais",
+    "description": "Vidro de vulcão, afiado para cerimónias e nunca para lutar. Só para o templo."
+  }
+}

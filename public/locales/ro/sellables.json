@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Piatră",
+    "bronze": "Bronz",
+    "silver": "Argint",
+    "gold": "Aur",
+    "divine": "Divin"
+  },
+  "sell_stone_1": {
+    "name": "Ciob zgâriat",
+    "description": "Un ciob de oală pe care un scrib și-a exersat scrisul — literele sunt prea șterse ca să le mai citești."
+  },
+  "sell_stone_2": {
+    "name": "Ulcior crăpat",
+    "description": "Un ulcior pentru grâne sau bere, crăpat pe o parte de greutatea secolelor."
+  },
+  "sell_stone_3": {
+    "name": "Sanda de trestie roasă",
+    "description": "Împletită din papirus, cu talpa roasă de mersul zilnic al unui muncitor uitat de mult."
+  },
+  "sell_stone_4": {
+    "name": "Petic de in decolorat",
+    "description": "O fâșie ruptă de in nevopsit, din cea înfășurată la nesfârșit în jurul morților — sau folosită la cârpit o velă."
+  },
+  "sell_stone_5": {
+    "name": "Lamă de cremene ruptă",
+    "description": "Un cuțit cioplit din cremene, rupt la vârf. Ieftin de făcut, și mai ieftin de înlocuit."
+  },
+  "sell_bronze_1": {
+    "name": "Amuletă de bronz îndoită",
+    "description": "Un talisman ieftin de protecție, turnat strâmb și nereparat niciodată."
+  },
+  "sell_bronze_2": {
+    "name": "Oglindă de bronz ruginită",
+    "description": "Cândva lustruită atât de bine încât te vedeai în ea; acum e verde și tulbure de vechime."
+  },
+  "sell_bronze_3": {
+    "name": "Cârlig de pescuit tocit",
+    "description": "Unealta unui pescar, pierdută în Nil cu mult înainte să fie sigilat mormântul."
+  },
+  "sell_bronze_4": {
+    "name": "Clopoțel de bronz",
+    "description": "Făcut să atârne la ușa unui templu sau la glezna unei dansatoare — nu mai sună curat."
+  },
+  "sell_bronze_5": {
+    "name": "Inel de bronz pătat",
+    "description": "Un inel simplu, pentru un deget care s-a făcut de mult praf."
+  },
+  "sell_silver_1": {
+    "name": "Ankh de argint pătat",
+    "description": "Un semn al vieții, tocit de secolele petrecute sub pământ."
+  },
+  "sell_silver_2": {
+    "name": "Bețișor de argint pentru kohl",
+    "description": "O vergea subțire cu care cei bogați își conturau ochii — kohlul a dispărut de mult."
+  },
+  "sell_silver_3": {
+    "name": "Bol de argint turtit",
+    "description": "Un bol mic de ofrande, turtit pe o parte când tavanul de deasupra a cedat în sfârșit."
+  },
+  "sell_silver_4": {
+    "name": "Ac de păr din argint",
+    "description": "Simplu și fără podoabe, ținea cândva părul cuiva al cărui nume s-a pierdut."
+  },
+  "sell_silver_5": {
+    "name": "Brățară de argint tocită",
+    "description": "O brățară subțire de argint, cu încuietoarea ruptă. Prea simplă pentru un nobil, prea frumoasă pentru un muncitor."
+  },
+  "sell_gold_1": {
+    "name": "Mărgică de aur",
+    "description": "O mărgică dintr-un colier de înmormântare, împrăștiat demult."
+  },
+  "sell_gold_2": {
+    "name": "Bucată de foiță de aur",
+    "description": "O fâșie de foiță de aur, desprinsă de pe fața unei statui de hoții de morminte, cu secole înainte să ajungi tu."
+  },
+  "sell_gold_3": {
+    "name": "Cercel subțire de aur",
+    "description": "Bătut subțire, ca aurul unui nobil să ajungă pentru mai mult."
+  },
+  "sell_gold_4": {
+    "name": "Ciob cu fărâme de aur",
+    "description": "O bucată ruptă de tencuială aurită, cu fărâme de aur adevărat încă lipite pe ea."
+  },
+  "sell_gold_5": {
+    "name": "Inel-sigiliu de aur ciobit",
+    "description": "Un inel cu sigiliu, cu desenul tocit de nu-l mai recunoști — cel al cărui nume îl purta e uitat."
+  },
+  "sell_divine_1": {
+    "name": "Scarabeu de lapis decolorat",
+    "description": "Sculptat din prețiosul lapis lazuli, adus de departe cu mulți bani pentru renașterea unui faraon. Culoarea s-a șters cu secolele."
+  },
+  "sell_divine_2": {
+    "name": "Amuletă-ochi din carneol",
+    "description": "Un ochi de protecție sculptat din carneol roșu ca sângele, ca să alunge necazurile în lumea de dincolo."
+  },
+  "sell_divine_3": {
+    "name": "Bucățică de turcoaz",
+    "description": "O singură piesă dintr-un mozaic spart, care făcea cândva parte din chipul unui zeu de pe zidul unui templu."
+  },
+  "sell_divine_4": {
+    "name": "Ciob de vas canopic din alabastru",
+    "description": "O bucată dintr-un vas făcut să păstreze organele unui faraon — piatră prețioasă pentru o treabă cam lugubră."
+  },
+  "sell_divine_5": {
+    "name": "Lamă de ritual din obsidian",
+    "description": "Sticlă vulcanică, șlefuită până la un tăiș de ceremonie, niciodată pentru luptă — doar pentru templu."
+  }
+}

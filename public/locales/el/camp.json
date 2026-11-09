@@ -1,0 +1,253 @@
+{
+  "spots": {
+    "fire": "Φωτιά της κατασκήνωσης",
+    "sleeping": "Μέρος για ύπνο",
+    "water": "Μέρος για νερό",
+    "cooking": "Μέρος για μαγείρεμα",
+    "donkey": "Μέρος του γαϊδάρου",
+    "camel": "Μέρος της καμήλας",
+    "mapTable": "Τραπέζι με χάρτες",
+    "palmGarden": "Κήπος με φοίνικες",
+    "ibisPond": "Λίμνη των ίβιδων",
+    "lookout": "Παρατηρητήριο",
+    "godStatues": "Αγάλματα θεών",
+    "starCanopy": "Στέγη με αστέρια"
+  },
+  "finds": {
+    "pot": "Κατσαρόλα",
+    "seatCushions": "Μαξιλάρια για κάθισμα",
+    "reedMat": "Ψάθα από καλάμια",
+    "blanket": "Κουβέρτα",
+    "tentRug": "Χαλί σκηνής",
+    "tentFlag": "Σημαία σκηνής",
+    "gourd": "Κολοκύθα-παγούρι",
+    "jar": "Κανάτα",
+    "secondJar": "Δεύτερη κανάτα",
+    "spiceRack": "Ράφι για μπαχαρικά",
+    "breadBoard": "Ξύλο για ψωμί",
+    "starMap": "Χάρτης των άστρων",
+    "scrollCase": "Θήκη για πάπυρους",
+    "astrolabe": "Αστρολάβος",
+    "reedGlobe": "Υδρόγειος από καλάμια",
+    "seed": "Σπόρος φοίνικα",
+    "secondPalm": "Σπόρος φοίνικα",
+    "figTree": "Σπόρος συκιάς",
+    "papyrus": "Ρίζα παπύρου",
+    "reeds": "Κλαδί καλαμιού",
+    "lotus": "Βολβός λωτού",
+    "flag": "Σημαία παρατηρητηρίου",
+    "thoth": "Αγαλματάκι του Θωθ",
+    "bastet": "Αγαλματάκι της Μπαστέτ",
+    "anubis": "Αγαλματάκι του Άνουβη",
+    "ra": "Αγαλματάκι του Ρα",
+    "cloth": "Πανί με αστέρια"
+  },
+  "structures": {
+    "stoneRing": "Πέτρινος κύκλος",
+    "fire": "Φωτιά",
+    "cookingStones": "Πέτρες μαγειρέματος",
+    "seatingStones": "Πέτρες για κάθισμα",
+    "clayOven": "Πήλινος φούρνος",
+    "windbreak": "Ανεμοφράκτης",
+    "tent": "Σκηνή",
+    "secondTent": "Δεύτερη σκηνή",
+    "pavilion": "Περίπτερο",
+    "well": "Πηγάδι",
+    "wellPulley": "Πηγάδι με τροχαλία",
+    "tripod": "Τρίποδο",
+    "breadOven": "Φούρνος για ψωμί",
+    "dryingRack": "Απλώστρα",
+    "feast": "Γιορτινό τραπέζι",
+    "table": "Τραπέζι με χάρτες",
+    "lotusPlanter": "Γλάστρα λωτού",
+    "edgeStones": "Άκρη της λίμνης",
+    "post": "Στύλος παρατήρησης",
+    "platform": "Εξέδρα παρατήρησης",
+    "ladder": "Σκάλα",
+    "roof": "Στέγη",
+    "signalFire": "Φωτιά για σήματα",
+    "poles": "Κοντάρια της στέγης",
+    "stars": "Αστέρια",
+    "planets": "Πλανήτες"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Πέτρες από το χωράφι",
+      "sandBed": "Στρώμα άμμου"
+    },
+    "fire": {
+      "tinder": "Προσάναμμα",
+      "acaciaLogs": "Κούτσουρα ακακίας"
+    },
+    "cookingStones": {
+      "flatStone": "Επίπεδη πέτρα",
+      "supportStones": "Πέτρες στήριξης"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Λείοι βράχοι",
+      "sandstoneBlock": "Κομμάτι ψαμμίτη",
+      "hewnSlab": "Πελεκημένη πλάκα"
+    },
+    "clayOven": {
+      "ovenFloor": "Πάτος του φούρνου",
+      "firebricks": "Πυρότουβλα",
+      "smokeHole": "Τρύπα για τον καπνό",
+      "copperGrate": "Χάλκινη σχάρα"
+    },
+    "windbreak": {
+      "reedBundles": "Δεμάτια καλάμια",
+      "stakes": "Ξύλινοι πάσσαλοι"
+    },
+    "tent": {
+      "tentPoles": "Κοντάρια σκηνής",
+      "wovenCloth": "Υφαντό πανί",
+      "tentPegs": "Πασσαλάκια"
+    },
+    "secondTent": {
+      "largeCloth": "Μεγάλο πανί σκηνής",
+      "ridgePole": "Κεντρικό δοκάρι",
+      "guyRopes": "Σχοινιά τεντώματος",
+      "woolFloor": "Μάλλινο στρώμα"
+    },
+    "pavilion": {
+      "pavilionPosts": "Στύλοι περιπτέρου",
+      "linenCanopy": "Λινή τέντα",
+      "hangingCurtains": "Κουρτίνες",
+      "woolRugs": "Μάλλινα χαλιά",
+      "woodenFloor": "Ξύλινο πάτωμα"
+    },
+    "well": {
+      "wellStones": "Πέτρες πηγαδιού",
+      "rope": "Μακρύ σχοινί",
+      "bucket": "Κουβάς",
+      "windlass": "Μανιβέλα"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Τροχαλία",
+      "frame": "Σκελετός στήριξης",
+      "hoistRope": "Σχοινί για σήκωμα",
+      "counterweight": "Αντίβαρο",
+      "leatherBucket": "Δερμάτινος κουβάς"
+    },
+    "tripod": {
+      "tripodPoles": "Τρία κοντάρια",
+      "binding": "Σχοινί για δέσιμο",
+      "hook": "Μπρούντζινο γάντζο"
+    },
+    "breadOven": {
+      "mudBricks": "Λασπότουβλα",
+      "clayPlaster": "Πηλός για σοβά",
+      "ovenLid": "Πόρτα του φούρνου"
+    },
+    "dryingRack": {
+      "rackPoles": "Κοντάρια απλώστρας",
+      "crossbar": "Οριζόντιο ξύλο",
+      "wickerTray": "Ψάθινος δίσκος",
+      "cords": "Κορδόνια για κρέμασμα"
+    },
+    "feast": {
+      "lowTable": "Χαμηλό τραπέζι",
+      "breadBaskets": "Καλάθια με ψωμί",
+      "roastDuck": "Ψητή πάπια",
+      "beerJars": "Κανάτες με μπίρα",
+      "fruitBowl": "Φρουτιέρα"
+    },
+    "table": {
+      "tableTop": "Επιφάνεια τραπεζιού",
+      "trestles": "Καβαλέτα",
+      "leatherStraps": "Δερμάτινα λουριά"
+    },
+    "lotusPlanter": {
+      "clayTub": "Πήλινη γούρνα",
+      "nileSilt": "Λάσπη του Νείλου",
+      "waterJar": "Κανάτα νερού",
+      "lotusTubers": "Βολβοί λωτού",
+      "stoneRim": "Πέτρινο χείλος"
+    },
+    "edgeStones": {
+      "riverStones": "Πέτρες από το ποτάμι",
+      "clayBedding": "Στρώμα πηλού",
+      "gravel": "Χαλίκι",
+      "boundaryStakes": "Πασσαλάκια για όρια"
+    },
+    "post": {
+      "postTrunk": "Κορμός φοίνικα",
+      "footStones": "Πέτρες θεμελίων",
+      "wedges": "Σφήνες",
+      "braces": "Αντηρίδες"
+    },
+    "platform": {
+      "platformBeams": "Δοκάρια στήριξης",
+      "platformPlanks": "Σανίδες",
+      "lashingRope": "Σχοινί για δέσιμο",
+      "edgeRail": "Κάγκελο"
+    },
+    "ladder": {
+      "ladderRails": "Πλαϊνά της σκάλας",
+      "rungs": "Σκαλιά",
+      "groundPegs": "Πάσσαλοι εδάφους",
+      "leatherLoops": "Δερμάτινες θηλιές"
+    },
+    "roof": {
+      "roofPoles": "Δοκαράκια στέγης",
+      "thatch": "Φύλλα φοίνικα",
+      "clayLayer": "Στρώμα πηλού",
+      "bindingGrass": "Χόρτο για δέσιμο"
+    },
+    "signalFire": {
+      "fireBasin": "Λεκάνη φωτιάς",
+      "pitch": "Πίσσα",
+      "dryBrushwood": "Ξερά κλαδιά",
+      "flint": "Πυρόλιθος",
+      "bellows": "Φυσερό"
+    },
+    "poles": {
+      "masts": "Κατάρτια",
+      "cornerStones": "Γωνιακές πέτρες",
+      "stayLines": "Σχοινιά στήριξης",
+      "bigPegs": "Μεγάλοι πάσσαλοι",
+      "poleSockets": "Βάσεις για κοντάρια"
+    },
+    "stars": {
+      "goldLeaf": "Φύλλο χρυσού",
+      "needleThread": "Βελόνα και κλωστή",
+      "indigoDye": "Μπογιά λουλάκι",
+      "chalk": "Κιμωλία",
+      "stencils": "Στένσιλ"
+    },
+    "planets": {
+      "ochre": "Ώχρα",
+      "copperDiscs": "Χάλκινοι δίσκοι",
+      "lapisPowder": "Σκόνη λάπις",
+      "hangingLoops": "Θηλιές για κρέμασμα",
+      "dividers": "Διαβήτης"
+    }
+  },
+  "collection": {
+    "title": "Κατασκευές",
+    "progress": "{{found}} από {{total}}",
+    "built": "χτίστηκε",
+    "unknownPart": "???",
+    "open": "Δείξε τα κομμάτια",
+    "close": "Κρύψε τα κομμάτια"
+  },
+  "reward": {
+    "find": "Εύρημα για την κατασκήνωση",
+    "part": "Κομμάτι",
+    "progress": "{{name}} · {{found}} από {{total}}"
+  },
+  "haul": {
+    "new": "Καινούργια στην κατασκήνωσή σου",
+    "parts_one": "{{name}} · {{count}} κομμάτι",
+    "parts_other": "{{name}} · {{count}} κομμάτια"
+  },
+  "arrivals": {
+    "donkey": "Ο γάιδαρός σου είναι στην κατασκήνωση",
+    "cart": "Το κάρο σου είναι στην κατασκήνωση",
+    "camel": "Η καμήλα σου είναι στην κατασκήνωση",
+    "secondDonkey": "Ο δεύτερος γάιδαρός σου είναι στην κατασκήνωση",
+    "secondCamel": "Η δεύτερη καμήλα σου είναι στην κατασκήνωση",
+    "sturdyCart": "Το πιο γερό κάρο σου είναι στην κατασκήνωση",
+    "caravanBanner": "Το λάβαρο του καραβανιού σου κυματίζει στην κατασκήνωση"
+  }
+}

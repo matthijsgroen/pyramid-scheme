@@ -1,0 +1,1730 @@
+{
+  "not-found": "Piedod, saruna, ko tu meklē, neeksistē.",
+  "welcome": "Ēģipte! Es tiešām esmu šeit.",
+  "welcome2": "Un šī karte… Es par to samaksāju pārāk daudz. Lai tik tā būtu pareiza.",
+  "welcome3": "Nu tad aiziet. Paskatīsimies, kur ir tas krustiņš.",
+  "pyramidIntro": "Uz šiem akmeņiem ir skaitļi. Un daži trūkst…",
+  "pyramidIntro2": "Pagaidi. Katrs akmens ir abi apakšējie, saskaitīti kopā! Jā — arī šeit!",
+  "pyramidBlockedBlocks": "Ei, kas tas? Tie bluķi ir aizzīmogoti. Tie nerāda savu skaitli!",
+  "pyramidBlockedBlocks2": "Nekas. Paskaties uz bluķiem apkārt — no tiem var izrēķināt.",
+  "pyramidBlockedBlocks3": "Tikai ierakstīt to nevar. To skaitli nāksies paturēt galvā.",
+  "pyramidBlockedBlocks4": "Nu, tik tālu jau tiki. Tu to vari!",
+  "levelCompleted": "Ha! Tas atveras! Nāc, iekšā!",
+  "exitPillar": {
+    "1": {
+      "fez": "Ha! Dienas gaisma! Redzi to gaismas staru? Tā ir mūsu izeja. Iekāp tajā, un te mēs esam galā."
+    },
+    "2": {
+      "fez": "Vienmēr tikai viena, pašā galvenās ejas galā. Lai kur mēs vēl klīstu, atgriežamies pie tās."
+    },
+    "3": {
+      "explorer": "Viena izeja. Skaidrs."
+    }
+  },
+  "expeditionCompleted": "Apsveicu, ekspedīcija pabeigta!",
+  "expeditionCompleted2": "Tagad ir pieejama jauna ekspedīcija.",
+  "tombTutorial": "Ū, raksti! Vai mēs varam to izlasīt? Ar atrastajiem hieroglifiem… varbūt!",
+  "tombTutorial2": "Paskat, rēķini ar zīmēm iekšā! Redzi tās tukšās vietas? Tur jāliek hieroglifi. Tavējie, tur lejā.",
+  "tombTutorial3": "Mazie rēķini parāda, kad zīme ir pareiza. Tā mēs atrodam, kura zīme kur pieder.",
+  "tombTutorial4": "Viss aizpildīts? Tad parādās ciparu slēdzene. Lielais rēķins ir kods — un tad kaps atveras!",
+  "hieroglyphUnlock": "Mums ir īpaša senlieta — ar to var rakstīt uz viena no aizzīmogotajiem bluķiem!",
+  "hieroglyphUnlock2": "Pieskaries mirdzošam akmenim un tad uzvelc senlietu uz tā, lai to atvērtu. Viens bluķis katrā piramīdā.",
+  "errorHighlightTutorial": "Tam dārgumam, ko atradām, ir noderīgs triks — ieraksti nepareizu atbildi, un viena kļūda iedegsies sarkana!",
+  "errorHighlightTutorial2": "Vienlaikus deg tikai viens bluķis, tāpēc tas vēl joprojām ir izaicinājums. Bet tas palīdz sašaurināt meklēšanu!",
+  "earlyFeedbackTutorial": "Redzi tos kontrolbluķus? Tie kļūst zaļi vai sarkani, kamēr tu tos aizpildi — uzreiz redzams!",
+  "earlyFeedbackTutorial2": "Izmanto tos kā balstu, kamēr risini. Ja kāds kļūst sarkans, kaut kas netālu jāizlabo.",
+  "notEnoughHieroglyphs": "Šo ekspedīciju vienmēr vari apturēt, atgriežoties ceļojumu ekrānā.",
+  "notEnoughHieroglyphs2": "Mēs varam pārtraukt ekspedīciju un meklēt citur hieroglifus, kas mums vēl trūkst.",
+  "tombLoot": "Oho, mūsu pirmais dārgums! Malacis!",
+  "mapPiece": "Skat! Lūk, TĀ ir karte. Īsti veca! Vērtīgāka par abām mūsējām kopā!",
+  "mapPiece2": "Gan tikai gabaliņš no tās. Katrā ekspedīcijā te kāds ir paslēpts, un kopā tie rāda ceļu uz kapu.",
+  "mapComplete": "Tā ir vesela! Skat, katrs gabaliņš der tieši vietā.",
+  "mapComplete2": "Tur, kur satiekas visas līnijas. Tur ir kaps.",
+  "mapComplete3": "Tas tagad ir mūsu ceļojumos. Iesim paskatīties?",
+  "mapPiece3": "Skaiti līdzi ekspedīciju sarakstā. Es noteikti skaitīšu!",
+  "mosaicIntro": "Ū, krāsains stikls! Paskat, kā tas ķer gaismu — TĀDU neviens neizmet!",
+  "mosaicIntro2": "Tas ir gabaliņš no attēla. Vesels stikla logs, un katrs gabaliņš, ko atrodam, atgriež kādu tā daļu.",
+  "mosaicIntro3": "Vai tev kaut kur nav nometne? Ņem tos līdzi, un tur mēs tos saliksim kopā. Gribu redzēt, kas sanāk!",
+  "mosaicReminder": "Pst! Tie stikla gabaliņi vēl grab mūsu somā. Ieliksim tos logā nometnē?",
+  "mosaicStarter": "Kaķis durvīs, un čūska, kas steigšus bēg prom. Tas bija bļodas piena vērts.",
+  "mosaicStarter2": "Ēģiptieši mīlēja kaķus tieši tāpēc — tie nogalināja čūskas un žurkas, kas ielīda graudos.",
+  "mosaicStarter3": "Viņi tos mīlēja tik ļoti, ka vienu padarīja par dievieti. Bastete. Mājas, durvju un visu aiz tām guļošo sargātāja.",
+  "mosaicJunior": "Paskat uz viņa roku — kāds viņam rāda, kā turēt spalvu.",
+  "mosaicJunior2": "Tas ar putna galvu ir Tots. Rakstīšana, skaitīšana, pierakstu glabāšana — tas viss ir viņa.",
+  "mosaicJunior3": "Ibiss, kam sekojām augšup pa upi? Tas ir viņa putns. Arī katrs skaitlis, ko esam ierakstījuši sienā, pieder viņam.",
+  "mosaicExpert": "Tā gaisma nav nejaušība. Viņi uzcēla visu zāli tā, lai tā krīt tieši tur, īstajā rītā.",
+  "mosaicExpert2": "Saule ir Amons-Ra — apslēptais, un gaisma, ko redz visi. Abi reizē.",
+  "mosaicExpert3": "Kas var tik precīzi izmērīt debesis, var izmērīt jebko. Mēs visu ceļu esam risinājuši viņu rēķinus.",
+  "mosaicMaster": "Zaļa āda, un kvieši aug taisni no viņa ārā. Tas ir ar nolūku.",
+  "mosaicMaster2": "Ozīriss. Viņu nogalināja, un salika atpakaļ kopā, un tagad viņš ir tas, kas atgriežas katru gadu, kad upe appludina laukus.",
+  "mosaicMaster3": "Šeit lejā tā ir visa jēga: miris nenozīmē beigas. Jautra doma priekš kapa, vai ne?",
+  "mosaicWizard": "Vienā pusē sirds. Otrā viena spalva. Un tās ir līdzsvarā.",
+  "mosaicWizard2": "Spalva ir Maata — patiesība, līdzsvars, tā, kā visam jābūt. Ja sirds ir smagāka par spalvu, pa durvīm tu netiec.",
+  "mosaicWizard3": "Šakālis, kas tur svarus, ir Anubiss. Viņš ir tas, kas tevi šurp atved.",
+  "mosaicFinale": "Pakāp mirklīti atpakaļ. Paskaties, ko mēs esam nesuši ārā no tām piramīdām.",
+  "mosaicFinale2": "Katrs gabaliņš ir daļa no viņa — tā, kas tur svarus. Viņš visu ceļu ir skatījies.",
+  "mosaicFinale3": "Tas ir viņa pieraksts par mums. Un es teiktu, ka svari ir līdzsvarā.",
+  "shopFirstVisit": "Ā, lūk, kur esam. Mana bodīte — es taču teicu, ka esmu šeit tirdzniecības dēļ.",
+  "shopFirstVisit2": "Visu, kas uz šīs letes, es esmu kaut kur iznesis. Tas tur ir no divus kapus atpakaļ.",
+  "shopArrival": "Ā, mana bodīte! Ļauj man izlikt, ko esmu pa ceļam salasījis.",
+  "shopArrival2": "Retumi maksā visvairāk, bet es samaksāšu par jebkuriem nieciņiem, ko tu nes līdzi.",
+  "arrival": {
+    "starter_1": {
+      "1": {
+        "explorer": "Skat, tur aizmugurē! Sfinksa!"
+      },
+      "2": {
+        "explorer": "Milzīga, pat no šejienes."
+      },
+      "3": {
+        "explorer": "Saka, ka zem tās ķepām ir raksti. Ko neviens nevar izlasīt."
+      },
+      "4": {
+        "explorer": "Vēlāk. Vispirms šī piramīda!"
+      }
+    },
+    "starter_2": {
+      "1": {
+        "fez": "Ha! Beidzot kaut kas, ko es saprotu. Viss, kas brauca augšup pa Nīlu, vispirms nāca garām šeit."
+      },
+      "2": {
+        "fez": "Un tirgotāji visu pieraksta. Kas ko nopirka, kas kam bija parādā, kas nokavēja…"
+      },
+      "3": {
+        "explorer": "Kas nokavēja?"
+      },
+      "4": {
+        "fez": "Īpaši jau, kas nokavēja!"
+      },
+      "5": {
+        "fez": "Trīs tūkstoši gadu. Preču vairs nav, bet čeki vēl ir te. Tipiski!"
+      }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Paskat uz tām durvīm! Cilvēki nāca šurp lūgt aizsardzību. Un tad tādas durvis palika ciet."
+      },
+      "2": {
+        "explorer": "Ciet — kam?"
+      },
+      "3": {
+        "fez": "Visiem, kas nelūdza pieklājīgi. Galvenokārt mums."
+      },
+      "4": {
+        "fez": "Viss, kas šajā zemē aizzīmogots, — kāds to aizzīmogoja un domāja nopietni. Ļoti nopietni."
+      },
+      "5": {
+        "fez": "Un kaķi! Te kaķus dievināja. Nevarēja vien beigt tos glāstīt."
+      }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "Ā, šī man patīk. Te viņi mācījās rakstīt! Zīmi pa zīmei, uz saplīsušiem podiem — papiruss bērniem bija pārāk dārgs."
+      },
+      "2": {
+        "explorer": "Viņi vingrinājās uz drazām?"
+      },
+      "3": {
+        "fez": "Uz visa, kas bija pa rokai! Un, ja iemācies pietiekami daudz šo zīmju, pēkšņi siena vairs nav tikai rotājums."
+      },
+      "4": {
+        "explorer": "Tā Sfinksa… Es gribu vēlreiz uz to paskatīties."
+      },
+      "5": {
+        "fez": "Vēl ne. Drīz."
+      }
+    },
+    "junior_1": {
+      "1": {
+        "fez": "Tie atgriezās katru gadu kopā ar plūdiem, gandrīz vai tajā pašā dienā."
+      },
+      "2": {
+        "fez": "Tāpēc cilvēki sāka skaitīt dienas starplaikā. No turienes nāk kalendārs — no putniem."
+      },
+      "3": {
+        "explorer": "No putniem."
+      },
+      "4": {
+        "fez": "Putni un papīri. Vienmēr ir putni un papīri."
+      }
+    },
+    "junior_2": {
+      "1": {
+        "fez": "Te viņi to visu taisīja. Ne kapus — lietas, kas gāja tajos iekšā."
+      },
+      "2": {
+        "fez": "Paskat uz veidnēm. Tā pati aproce, četrdesmit reizes."
+      },
+      "3": {
+        "explorer": "Četrdesmit cilvēkiem?"
+      },
+      "4": {
+        "fez": "Katram, kas varēja samaksāt. Dižciltīgais gribēja to, kas bija karalim, par cenu, ko dižciltīgais var atļauties."
+      }
+    },
+    "junior_3": {
+      "1": {
+        "fez": "Šis ir Tots. Noslēpumu un maģijas dievs, esmu diezgan drošs."
+      },
+      "2": {
+        "explorer": "Diezgan."
+      },
+      "3": {
+        "fez": "Deviņdesmit procenti. Lai nu kā — zīmes, ko tu vāc, ir viņa."
+      }
+    },
+    "junior_4": {
+      "1": {
+        "fez": "Simt metru augsta, un augšā uguns, kas nekad nenodzisa."
+      },
+      "2": {
+        "fez": "Jūrnieki varēja atrast krastu dienas brauciena attālumā. Pirms tam viņi to atrada, ietriecoties tajā."
+      },
+      "3": {
+        "explorer": "Kā te vispār kaut ko var atrast bez tādas?"
+      },
+      "4": {
+        "fez": "Pajautā kādam, kas tur ir bijis. Tā ir visa mana profesija."
+      }
+    },
+    "expert_1": {
+      "1": {
+        "fez": "Kādi sešdesmit kapi izcirsti vienā ielejā, un katrs no tiem atvērts, pirms mēs te tikām."
+      },
+      "2": {
+        "explorer": "Kas tos atvēra?"
+      },
+      "3": {
+        "fez": "Tādi kā mēs, lielākoties. Agrāk."
+      },
+      "4": {
+        "fez": "Ko tu par to domā?"
+      },
+      "5": {
+        "explorer": "Ka mēs esam nokavējuši."
+      }
+    },
+    "expert_2": {
+      "1": {
+        "fez": "Amons-Ra. Saule. Visu mīlulis, un var saprast kāpēc — paskaties, cik milzīga ir šī vieta."
+      },
+      "2": {
+        "explorer": "Divi vārdi."
+      },
+      "3": {
+        "fez": "Tas pats dievs, man šķiet. Populārajiem viņi deva dubultā."
+      }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Visa zeme ir zaļa svītra abpus vienai upei, un tad te tā izplešas šajā te."
+      },
+      "2": {
+        "fez": "Viss aug. Viss arī kož."
+      },
+      "3": {
+        "explorer": "Kura no tām lietām dēļ mēs esam šeit?"
+      },
+      "4": {
+        "fez": "Es gan cerēju, ka ne vienas, ne otras."
+      }
+    },
+    "expert_4": {
+      "1": {
+        "fez": "Pirmā. Pirms tam karaļi gūlās zem plakanas plāksnes kā visi citi."
+      },
+      "2": {
+        "fez": "Kāds te stāvēja un domāja: ko, ja mēs to darītu, bet sešas reizes, uz augšu?"
+      },
+      "3": {
+        "explorer": "Un izdevās?"
+      },
+      "4": {
+        "fez": "Tā vēl stāv, bet viņš ne. Atkarīgs, ko tu ar to domā."
+      }
+    },
+    "master_1": {
+      "1": {
+        "fez": "Divi miljoni bluķu. Kāds saskaitīja."
+      },
+      "2": {
+        "explorer": "Kāds saskaitīja?"
+      },
+      "3": {
+        "fez": "Kāds vienmēr skaita. To visi aizmirst — šo visu vadīja rakstveži."
+      },
+      "4": {
+        "fez": "Skaisti, vai ne? Negribu pat domāt, kā izskatījās algu saraksts."
+      }
+    },
+    "master_2": {
+      "1": {
+        "fez": "Instrukcijas. Tas ir viss — ko teikt, kādā secībā, lai ceļojums noritētu kā nākas."
+      },
+      "2": {
+        "explorer": "Lietošanas pamācība."
+      },
+      "3": {
+        "fez": "Pamācība, kā būt mirušam. Šie te visu pierakstīja."
+      },
+      "4": {
+        "fez": "Un tas, ņemot vērā, ko mēs meklējam, ir pirmā labā ziņa visas nedēļas laikā."
+      }
+    },
+    "master_3": {
+      "1": {
+        "fez": "Ā. Kāda nometne."
+      },
+      "2": {
+        "explorer": "Nesena?"
+      },
+      "3": {
+        "fez": "Diezgan nesena. Konservi un slikts klepus, spriežot pēc izskata."
+      },
+      "4": {
+        "fez": "Viņi aizgāja tālāk par šo un savas mantas līdzi neņēma."
+      },
+      "5": {
+        "explorer": "Vai viņi atgriezās pēc tām?"
+      },
+      "6": {
+        "fez": "…Iesim tālāk."
+      }
+    },
+    "master_4": {
+      "1": {
+        "fez": "Lūk, TO visi pārējie atdarināja. Paskat uz krāsu — trīs tūkstoši gadu, un tā vēl izskatās slapja."
+      },
+      "2": {
+        "explorer": "Henut būtu nikna."
+      },
+      "3": {
+        "fez": "Henut rakstītu piezīmes."
+      }
+    },
+    "wizard_1": {
+      "1": {
+        "fez": "Naktī saule noiet zem pasaules un uzlec otrā pusē. Tā ir visa ticība."
+      },
+      "2": {
+        "fez": "Divpadsmit stundas tumsā, ar šķēršļiem ceļā, un kādam tā jānes cauri."
+      },
+      "3": {
+        "explorer": "To mēs visu laiku esam darījuši."
+      },
+      "4": {
+        "fez": "Es centos to neteikt."
+      },
+      "5": {
+        "explorer": "Smiltis vēl joprojām nāk iekšā."
+      },
+      "6": {
+        "fez": "Tās nāk iekšā jau trīs tūkstošus gadu. Tās neapstājas, tās tikai iet pa apli."
+      },
+      "7": {
+        "fez": "Piepildās, apgriežas, sāk no jauna. Tāpat kā saule."
+      }
+    },
+    "wizard_2": {
+      "1": {
+        "fez": "Divi, astoņpadsmit metrus augsti, un abi ir Amenhoteps."
+      },
+      "2": {
+        "fez": "Grieķi paskatījās un izlēma, ka tas ir viņu varonis. Memnons. Šis vārds palika divus tūkstošus gadu."
+      },
+      "3": {
+        "explorer": "Kā vārds tur ir rakstīts?"
+      },
+      "4": {
+        "fez": "Viņa paša. Iekalts tronī, kur tas vienmēr ir bijis."
+      },
+      "5": {
+        "fez": "Neviens to neizlasīja."
+      },
+      "6": {
+        "fez": "Pēc zemestrīces ziemeļu milzis rītausmā dziedāja. Viena nots, katru rītu, kad saule sasildīja plaisu."
+      },
+      "7": {
+        "explorer": "Un tagad?"
+      },
+      "8": {
+        "fez": "Kāds imperators lika to salabot. Kopš tā laika tas nav izdvesis ne skaņas."
+      }
+    },
+    "wizard_3": {
+      "1": {
+        "fez": "Svari. Vienā pusē sirds, otrā spalva — tātad laba, smaga sirds uzvar, vai ne?"
+      },
+      "2": {
+        "explorer": "Uz kuru pusi iet kaut kas smags?"
+      },
+      "3": {
+        "fez": "…Uz leju."
+      },
+      "4": {
+        "fez": "Ā."
+      },
+      "5": {
+        "fez": "Viegla. Tev vajag VIEGLU."
+      }
+    },
+    "wizard_4": {
+      "1": {
+        "fez": "Virsotnes akmeni liek pēdējo, un tas ir zelta, lai visa piramīda noķertu pirmo gaismu."
+      },
+      "2": {
+        "explorer": "Kam?"
+      },
+      "3": {
+        "fez": "Katram, kas skatās. Tā bija visa jēga — tas nekad nebija tam vīram iekšā."
+      }
+    }
+  },
+  "tomb": {
+    "starter": {
+      "1": {
+        "ipi": "Ei! Rokas nost! Tā ir mana krūka!"
+      },
+      "2": {
+        "fez": "…Vai tā krūka tikko kaut ko teica?!"
+      },
+      "3": {
+        "ipi": "Tas biju ES. Trešais plaukts, tā ar robu. Tā ir mana."
+      },
+      "4": {
+        "explorer": "Labi, labi! Tā paliek vietā. Kas tu esi?"
+      },
+      "5": {
+        "ipi": "Ipi. Četrdesmit gadus es vedu grāmatas. Četrdesmit!"
+      },
+      "6": {
+        "fez": "Grāmatas? Kā grāmatas?"
+      },
+      "7": {
+        "ipi": "Visu! Kas kam ko parādā, līdz pēdējam graudu maisam."
+      },
+      "8": {
+        "ipi": "Tā Henut, te uz ziemeļiem? Vienpadsmit debenu lazurīta. Nekad nesamaksāja!"
+      },
+      "9": {
+        "explorer": "Un tu to vēl atceries, pēc tik ilga laika?"
+      },
+      "10": {
+        "ipi": "Tas ir pierakstīts! Kas pierakstīts, tas noticis."
+      },
+      "11": {
+        "ipi": "Tikai tie Hori… Hori laivinieks, Hori maiznieks… un tas OTRS Hori."
+      },
+      "12": {
+        "fez": "Vai jums bija arī kaķi? Visiem taču bija kaķi, vai ne? Tādi mīlīši!"
+      },
+      "13": {
+        "ipi": "Mīlīši? Tie bija graudu dēļ! Vai tu zini, cik maksā viena žurka visas sezonas laikā?"
+      },
+      "14": {
+        "fez": "…Ā. Skaidrs."
+      },
+      "15": {
+        "ipi": "Pasaki Henut, ka tevi sūtīja Ipi. Tas viņai sabojās visu pēcpusdienu."
+      },
+      "16": {
+        "fez": "Viņš man patīk!"
+      },
+      "17": {
+        "explorer": "Tev vienkārši patīk, ka viņam vēl ir parādā."
+      }
+    },
+    "junior": {
+      "1": {
+        "henut": "Beidzot. Jūs droši vien atnācāt lazurīta dēļ. Pieņemu, ka Ipi joprojām runā par to lazurītu."
+      },
+      "2": {
+        "explorer": "Runā gan."
+      },
+      "3": {
+        "henut": "Tas bija stikls. Skaists stikls. Viņš to zināja."
+      },
+      "4": {
+        "fez": "…Vai aproce arī bija stikls?"
+      },
+      "5": {
+        "henut": "Viss šeit ir labākais atdarinājums, ko var nopirkt par naudu, jaunekli, un katru gabalu es izvēlējos pati."
+      },
+      "6": {
+        "henut": "Tātad. Siena. Trešā zīme pēc kārtas — tas nav mans vārds. Kāds māceklis ar kaltu un bez uzraudzības."
+      },
+      "7": {
+        "henut": "Tu mācījies savas zīmes. To es redzu. Izlabo to."
+      }
+    },
+    "juniorFixed": {
+      "1": {
+        "henut": "Lūk. Tagad tas būs mans vārds vēl pēc tūkstoš gadiem."
+      },
+      "2": {
+        "explorer": "Ipi to uzrakstīja pareizi."
+      },
+      "3": {
+        "henut": "Ipi visu rakstīja pareizi. Tā bija viņa vienīgā labā īpašība."
+      },
+      "4": {
+        "fez": "Vai tas šeit lejā ir svarīgi?"
+      },
+      "5": {
+        "henut": "Tas ir vienīgais, kas ir svarīgs."
+      },
+      "6": {
+        "fez": "Viņai tur augšā bija vesela Tota siena. Noslēpumu dievs."
+      },
+      "7": {
+        "henut": "Tots skaita. Tots pieraksta, ko tu darīji, un tas paliek pierakstīts."
+      },
+      "8": {
+        "henut": "Par noslēpumiem cilvēki sauc rēķināšanu, kad paši to neprot."
+      },
+      "9": {
+        "henut": "Ja jūs dodaties tālāk — un acīmredzot dodaties —, Karnakā ir priesteris, kurš ir parādā mirušajiem rituālu, ko nekad nenoturēja. Viņš būs neciešams. Priesteri tādi ir."
+      },
+      "10": {
+        "henut": "…Vai mēs esam tikušies?"
+      },
+      "11": {
+        "fez": "Es to atcerētos."
+      },
+      "12": {
+        "henut": "Jā. Es arī."
+      }
+    },
+    "expert": {
+      "1": {
+        "priest": "Tu neesi tas, kuru es gaidu."
+      },
+      "2": {
+        "explorer": "Ko tu gaidi?"
+      },
+      "3": {
+        "priest": "Kādu ar zīmogu. To vajadzēja atnest šurp, nolikt tur un pār to runāt. Neviena no šīm trim lietām nav notikusi."
+      },
+      "4": {
+        "fez": "…Cik ilgi tu jau gaidi?"
+      },
+      "5": {
+        "priest": "Es neskaitu. Tas būtu neprofesionāli."
+      },
+      "6": {
+        "priest": "Īsts upuris ir lieta, ko karalis turēja, kad viņu apglabāja. Ne kopija. Ne atveids. Pati lieta, ar viņa zīmi uz tās."
+      },
+      "7": {
+        "priest": "Atnes to, un tevi pieteiks. Atnes jebko citu, un nepieteiks."
+      },
+      "8": {
+        "explorer": "Pieteiks kam?"
+      },
+      "9": {
+        "priest": "Tu zināsi. Agri vai vēlu visi uzzina."
+      },
+      "10": {
+        "fez": "Šis ir ļoti aizrāvies ar sauli. Viss tas Amons-Ra tur priekšā."
+      },
+      "11": {
+        "priest": "Amons ir apslēptais. Ra ir tas, ko var redzēt ikviens."
+      },
+      "12": {
+        "priest": "Viņi ir viens un tas pats dievs. Tā nav sakritība, tā ir visa jēga."
+      },
+      "13": {
+        "fez": "…Jā. Protams. Es to zināju."
+      },
+      "14": {
+        "explorer": "Nezināji gan."
+      },
+      "15": {
+        "fez": "Nezināju."
+      }
+    },
+    "expertB": {
+      "1": {
+        "fez": "Te neviens nav bijis. Ne mēs, ne tie iepriekšējie, neviens."
+      },
+      "2": {
+        "explorer": "Kā tu to zini?"
+      },
+      "3": {
+        "fez": "Tāpēc, ka te vēl kaut kas ir iekšā."
+      }
+    },
+    "master": {
+      "1": {
+        "pharaoh": "Tu drīksti tuvoties. Tu esi tuvojies. Labi."
+      },
+      "2": {
+        "fez": "Jūsu majestāte."
+      },
+      "3": {
+        "pharaoh": "Jā."
+      },
+      "4": {
+        "explorer": "Mums vajag tavu zīmogu."
+      },
+      "5": {
+        "pharaoh": "Kā visiem. Manējo ir paņēmuši divreiz un atdevuši nevienu reizi."
+      },
+      "6": {
+        "pharaoh": "Otrajā reizē viņi atstāja kopiju. KOPIJU. MANĀ kapā. It kā es nepaskatītos."
+      },
+      "7": {
+        "explorer": "Vai kopija vēl ir šeit?"
+      },
+      "8": {
+        "pharaoh": "Protams, ka vēl ir, tā ir bezvērtīga. Tā stāv plauktā, kur vajadzētu būt īstajam, un ir nepareiza."
+      },
+      "9": {
+        "pharaoh": "Ņem, ja gribi. Aiznes to tam priesterim. Redzēsi, cik tālu ar to tiksi."
+      },
+      "10": {
+        "fez": "…Viņam tas patīk."
+      },
+      "11": {
+        "pharaoh": "Man ir labākā nedēļa deviņsimt gadu laikā."
+      },
+      "12": {
+        "fez": "Tur uz sienas Ozīriss. Mirušo valdnieks — drūma padarīšana."
+      },
+      "13": {
+        "pharaoh": "Viņš ir ZAĻŠ, tu smieklīgais radījum."
+      },
+      "14": {
+        "pharaoh": "Zaļš kā appludināts lauks. Viņu nogalināja un salika atpakaļ, un viņš atgriežas katru gadu."
+      },
+      "15": {
+        "pharaoh": "Šeit lejā tas nav drūmi, tā ir visa jēga. Miris nenozīmē beigas."
+      }
+    },
+    "wizard": {
+      "1": {
+        "priest": "Noliec to. Tur. Jā."
+      },
+      "2": {
+        "priest": "…"
+      },
+      "3": {
+        "priest": "Šī ir pirmā reize, kad es to daru. Jau sāku domāt, ka esmu aizmirsis, kā."
+      },
+      "4": {
+        "explorer": "Un biji?"
+      },
+      "5": {
+        "priest": "Pilnīgi. Tas atgriezās."
+      }
+    },
+    "wizardB": {
+      "1": {
+        "fez": "Viņu virve. Vēl joprojām piesieta."
+      },
+      "2": {
+        "explorer": "Viņi tika tik tālu."
+      },
+      "3": {
+        "fez": "Tālāk par šo. Un tad viņi kāpa pa to atpakaļ augšā."
+      },
+      "4": {
+        "explorer": "Te ir piezīmju grāmatiņa."
+      },
+      "5": {
+        "fez": "Ko tur raksta?"
+      },
+      "6": {
+        "explorer": "Nevar izlasīt rakstu. Atnācām pēc zīmoga. Tā vietā uztaisījām labāku."
+      },
+      "7": {
+        "explorer": "Neviens neuzķērās."
+      },
+      "8": {
+        "fez": "…Viņi to viltoja, jo nevarēja izlasīt, kam tas domāts."
+      },
+      "9": {
+        "explorer": "Un tad viņi aizbrauca mājās."
+      }
+    },
+    "wizardC": {
+      "1": {
+        "fez": "Pagaidi mirkli. Paskaties, ko mēs esam nesuši ārā no tām piramīdām."
+      },
+      "2": {
+        "explorer": "Tā ir bilde."
+      },
+      "3": {
+        "fez": "Tā visu laiku ir bijusi bilde."
+      }
+    }
+  },
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Ala! Kartē bija pagraba durvis, bet šis ir vesels kalns!"
+      },
+      "2": {
+        "fez": "Gudrs puisis. Paslēp savas preces kalnā — neviens zaglis to neiedomāsies."
+      },
+      "3": {
+        "explorer": "Mēs iedomājāmies."
+      },
+      "4": {
+        "fez": "Mēs neesam zagļi. Mēs esam pircēji. Ļoti novēloti pircēji."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Tam jābūt šeit. Henut! Tā ar vienpadsmit debeniem lazurīta!"
+      },
+      "2": {
+        "fez": "Kā tev šķiet — vai mēs dabūsim daļu, ja piedzīsim parādu?"
+      },
+      "3": {
+        "explorer": "Tu vēl neko nepiedzini."
+      },
+      "4": {
+        "fez": "Man patīk to izrēķināt laicīgi."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Tātad te ir Henut priesteris. Neciešams, viņa teica."
+      },
+      "2": {
+        "fez": "Kā tev šķiet, vai mums kaut ko vajag atnest? Puķes?"
+      },
+      "3": {
+        "explorer": "Viņš ir miris."
+      },
+      "4": {
+        "fez": "Jo vairāk iemesla. Gribas atstāt labu pirmo iespaidu."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Šeit drīkstēja ienākt tikai augstais priesteris. Un tagad mēs!"
+      },
+      "2": {
+        "explorer": "Vai mēs drīkstam?"
+      },
+      "3": {
+        "fez": "Pie durvīm nav neviena, kas teiktu nē."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Skat, karte te vienkārši beidzas. Smiltis, un tad nekas."
+      },
+      "2": {
+        "explorer": "Tad mēs esam īstajā vietā."
+      },
+      "3": {
+        "fez": "To jau es saku. Tieši tas mani satrauc."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Ozīrisa zāle! Zaļa, protams. Jo viņš atgriežas katru gadu, kā labība."
+      },
+      "2": {
+        "explorer": "Tu to vienmēr zināji."
+      },
+      "3": {
+        "fez": "Vienmēr."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Pašu dievu noliktava! Ko tu glabā, ja tev jau viss ir?"
+      },
+      "2": {
+        "explorer": "To, ko cilvēki tev atnes."
+      },
+      "3": {
+        "fez": "…Jā. Laikam tā."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Kosmisko spēku valstība. Nu, nu."
+      },
+      "2": {
+        "fez": "Ja man būtu jāpārdod kaut kas ne pārāk vērtīgs, es arī to tā nosauktu."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Man pēkšņi ir sajūta, ka esmu izdarījis kaut ko nepareizi."
+      },
+      "2": {
+        "explorer": "Ko tieši?"
+      },
+      "3": {
+        "fez": "Nav ne jausmas. Tas ir pats ļaunākais."
+      }
+    }
+  },
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Tik daudz sviru un durvju, viena pagraba dēļ!"
+      },
+      "2": {
+        "fez": "Tad tur lejā ir kaut kas labs. Neviens tik daudz nepūlas drazu dēļ."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Fū. Tās durvis bija daudz untumainākas nekā Ipi durvis."
+      },
+      "2": {
+        "fez": "Nu jā. Kundzei, protams, bija nauda."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Fū, beidzot! Tā ala tiešām negribēja mūs ielaist."
+      },
+      "2": {
+        "explorer": "Man šķiet, tāda bija doma."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Pst… kāpēc es čukstu?"
+      },
+      "2": {
+        "explorer": "Nav ne jausmas. Es arī čukstu."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Ufff. Mana aste vēl trīc no tām pēdējām durvīm."
+      },
+      "2": {
+        "fez": "Karalis, kas tā noslēdz savas mantas… viņš tiešām negrib tās pazaudēt."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Redzi? Paliec zem zemes pietiekami ilgi, un tu atkal nāc augšā."
+      },
+      "2": {
+        "explorer": "Vai tas arī ir Ozīriss?"
+      },
+      "3": {
+        "fez": "Nē, tas ir mans."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Tādas durvis… kādreiz mēs vienkārši būtu griezušies atpakaļ."
+      },
+      "2": {
+        "explorer": "Vairs ne."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Trīs stāvi alas, un tikai tad ārdurvis."
+      },
+      "2": {
+        "explorer": "Tad jau ir tā vērts."
+      },
+      "3": {
+        "fez": "Tā viņi vienmēr saka. Un tad tā ir krūka."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Pēdējais tumsas gabals. Es to jūtu."
+      },
+      "2": {
+        "explorer": "To tu teici arī pie iepriekšējā."
+      },
+      "3": {
+        "fez": "Un man gandrīz bija taisnība."
+      }
+    }
+  },
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Paskat! Piramīda, pazemē! Tirgotājam!"
+      },
+      "2": {
+        "fez": "Viņš vai nu ļoti labi pelnīja, vai ļoti labi kaulējās."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Paskat, kā virsotne mirdz saulē! Īsts zelts, varu derēt."
+      },
+      "2": {
+        "explorer": "Bedrē zemē. Kam tā mirdz?"
+      },
+      "3": {
+        "fez": "Viņai. Tādas var uzreiz pazīt."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Hm. Vai drīkst pārdot kaut ko, kas jau pieder dievam?"
+      },
+      "2": {
+        "explorer": "Pajautā dievam."
+      },
+      "3": {
+        "fez": "Labāk ne."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Kā tev šķiet, vai tas priesteris zina, ka mēs te klīstam?"
+      },
+      "2": {
+        "explorer": "Viņš neskaita. Tas būtu neprofesionāli."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Paskat uz to, pavisam vienu pašu saulē. Jauki, vai ne?"
+      },
+      "2": {
+        "fez": "Varbūt vienkārši uzzīmējam to un ejam?"
+      },
+      "3": {
+        "explorer": "Tu neproti zīmēt."
+      },
+      "4": {
+        "fez": "…Nē. Nu tad iekšā."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Kas tur iekšā ir, tas cer atgriezties. Tāda te ir vienošanās."
+      },
+      "2": {
+        "explorer": "Cik ilgi viņš jau gaida?"
+      },
+      "3": {
+        "fez": "Ilgi. Bet tas nāk līdzi darbam. Būt mirušam lielākoties nozīmē gaidīt."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "explorer": "Oho."
+      },
+      "2": {
+        "fez": "Jā."
+      },
+      "3": {
+        "fez": "Dažreiz vienkārši nav vairs ko teikt, vai ne."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Redzi to saules plankumu uz piramīdas? Pēc tā var noteikt laiku."
+      },
+      "2": {
+        "explorer": "Un cik tad ir pulkstenis?"
+      },
+      "3": {
+        "fez": "…Pēcpusdiena. Apmēram. Es neesmu pulkstenis."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Te tas ir. Katra līnija tajā kartē beidzas šeit."
+      },
+      "2": {
+        "explorer": "Tad šīs ir beigas."
+      },
+      "3": {
+        "fez": "Kartei — jā. Dīvaini. Domāju, ka tas liksies labāk."
+      }
+    }
+  },
+  "camp": {
+    "firstHome": {
+      "1": {
+        "fez": "Šī ir tava nometne? Ugunskurs un lāde?"
+      },
+      "2": {
+        "explorer": "Mūsu nometne."
+      },
+      "3": {
+        "fez": "Mūsu. Labi. Tad vieta pie uguns ir mana."
+      },
+      "4": {
+        "fez": "Es taču esmu ķirzaka. Kad man tas der."
+      }
+    },
+    "homeHaul": {
+      "1": {
+        "fez": "Izkravāšana! Labākā daļa no visa brauciena."
+      },
+      "2": {
+        "explorer": "Labāka par piramīdu?"
+      },
+      "3": {
+        "fez": "Piramīda nav mūsu. Šis ir."
+      }
+    },
+    "homeEmpty": {
+      "1": {
+        "explorer": "Tukšām rokām."
+      },
+      "2": {
+        "fez": "Un tad? Mēs pagājām. Tas arī skaitās."
+      },
+      "3": {
+        "explorer": "Kam par labu?"
+      },
+      "4": {
+        "fez": "Manām kājām. Tās ir ļoti īsas, zini."
+      }
+    },
+    "rested": {
+      "1": {
+        "fez": "Lūk. Mazliet labāk?"
+      },
+      "2": {
+        "explorer": "Tas bija tikai skrāpējums."
+      },
+      "3": {
+        "fez": "Es pat neskatījos. Un man tik un tā vajadzēja apsēsties."
+      }
+    },
+    "chapterJunior": {
+      "1": {
+        "fez": "Nu, tas gāja labi. Nākamais!"
+      },
+      "2": {
+        "explorer": "Nebija nemaz tik viegli."
+      },
+      "3": {
+        "fez": "Tagad ir. Pēc tam viss ir viegli."
+      }
+    },
+    "chapterExpert": {
+      "1": {
+        "fez": "Tur ārā ir lamatas. Īstas. Tās kož."
+      },
+      "2": {
+        "fez": "Savainojies? Tad vienkārši ejam atpakaļ. Mājās sadzīsi."
+      },
+      "3": {
+        "explorer": "Un tu?"
+      },
+      "4": {
+        "fez": "Es iešu tev aiz muguras. Tur ir drošāk."
+      }
+    },
+    "chapterMaster": {
+      "1": {
+        "fez": "Tur ārā četras piramīdas. Atceries, kad bija tikai viena?"
+      },
+      "2": {
+        "explorer": "Tas nebija nemaz tik sen."
+      },
+      "3": {
+        "fez": "Nē. Bet tā liekas."
+      }
+    },
+    "chapterWizard": {
+      "1": {
+        "fez": "Paskat uz pēdējo. Ar zelta virsotni un visu!"
+      },
+      "2": {
+        "fez": "Tā mums maksās. Pēdējā vienmēr maksā."
+      },
+      "3": {
+        "explorer": "Ko maksās?"
+      },
+      "4": {
+        "fez": "…Vairs neesmu pārliecināts."
+      }
+    },
+    "firstFind": {
+      "1": {
+        "fez": "Paskat — it kā tas vienmēr būtu bijis te!"
+      },
+      "2": {
+        "fez": "Man tā niez rokas tam piekārt cenu zīmīti."
+      },
+      "3": {
+        "explorer": "Nevajag."
+      },
+      "4": {
+        "fez": "Nē, nē. No mājām nepārdod. To es zinu."
+      }
+    },
+    "structureDone": {
+      "1": {
+        "fez": "Gatavs! Pēdējais gabaliņš ir vietā!"
+      },
+      "2": {
+        "explorer": "Viss pašu rokām."
+      },
+      "3": {
+        "fez": "Nu. Es pārsvarā rādīju ar pirkstu."
+      }
+    }
+  },
+  "animal": {
+    "forSale": {
+      "1": {
+        "fez": "Paskat, kas ir bodītē! Es tagad nodarbojos ar pārvadājumiem."
+      },
+      "2": {
+        "explorer": "Tas košļā."
+      },
+      "3": {
+        "fez": "Tas ir iekļauts cenā."
+      }
+    },
+    "boughtDonkey": {
+      "1": {
+        "fez": "Pārdots! Viens ēzelis. Ietiepīgs, bet nesīs jebko."
+      },
+      "2": {
+        "explorer": "Un kur tad viņš ir?"
+      },
+      "3": {
+        "fez": "Jau ceļā uz mājām. Viņš labprātāk iet bez mums."
+      }
+    },
+    "blockedDonkey": {
+      "1": {
+        "fez": "Tik tālu ar visām šīm mantām mēs nevilksimies. Tam vajag ēzeli."
+      },
+      "2": {
+        "fez": "Un uzmini, kam tāds ir? Man. Manā bodītē Henut velvē."
+      }
+    },
+    "throughDonkey": {
+      "1": {
+        "explorer": "Viņš ir ar mieru."
+      },
+      "2": {
+        "fez": "Šodien. Pajautā viņam vēlreiz rīt."
+      }
+    },
+    "arrivesDonkey": {
+      "1": {
+        "fez": "Lūk, kur viņš! Tika šurp pirms mums."
+      },
+      "2": {
+        "explorer": "Un ugunskuru arī atrada."
+      },
+      "3": {
+        "fez": "Manu vietu. Nu. Viņš bija pirmais."
+      }
+    },
+    "boughtCart": {
+      "1": {
+        "fez": "Rati! Divi riteņi, un tie gandrīz negrab."
+      },
+      "2": {
+        "explorer": "Gandrīz?"
+      },
+      "3": {
+        "fez": "Grabēšana nāk par brīvu."
+      }
+    },
+    "blockedCart": {
+      "1": {
+        "fez": "Ēzelis vairs nevienu somu nenesīs. Es viņam jautāju."
+      },
+      "2": {
+        "fez": "Rati, lūk, kas mums vajag. Viens ir manā bodītē, pie augstā priestera."
+      }
+    },
+    "throughCart": {
+      "1": {
+        "explorer": "Dzirdi?"
+      },
+      "2": {
+        "fez": "Tie ir rati. Tie mazliet dzied."
+      },
+      "3": {
+        "explorer": "Visu ceļu?"
+      }
+    },
+    "arrivesCart": {
+      "1": {
+        "fez": "Rati mūsu nometnē! Tagad izskatāmies pēc tādiem, kas kaut kur dodas."
+      },
+      "2": {
+        "explorer": "Mēs taču kaut kur dodamies."
+      },
+      "3": {
+        "fez": "Jā, bet tagad to redz visi."
+      }
+    },
+    "boughtCamel": {
+      "1": {
+        "fez": "Kamielis! Iztiek dienām bez ūdens. Es gan ne, ja kas."
+      },
+      "2": {
+        "explorer": "Viņš skatās uz tevi."
+      },
+      "3": {
+        "fez": "No augšas. Kamieļi vienmēr skatās no augšas."
+      }
+    },
+    "blockedCamel": {
+      "1": {
+        "fez": "Iekšējā svētnīca? Kājām mēs tur nekad netiksim."
+      },
+      "2": {
+        "fez": "Par laimi, man ir kamielis. Manā bodītē, pie augstā priestera."
+      }
+    },
+    "throughCamel": {
+      "1": {
+        "fez": "Viņš nometas ceļos! Manā priekšā!"
+      },
+      "2": {
+        "explorer": "Lai mēs varētu uzkāpt."
+      },
+      "3": {
+        "fez": "Ļauj man šo mirkli izbaudīt."
+      }
+    },
+    "arrivesCamel": {
+      "1": {
+        "fez": "Lūk, kur viņš. Uzvedas, it kā nometne būtu viņa."
+      },
+      "2": {
+        "explorer": "Un ēzelis?"
+      },
+      "3": {
+        "fez": "Izliekas, ka viņu neredz. Tāpat kā es."
+      }
+    },
+    "boughtSecondDonkey": {
+      "1": {
+        "fez": "Vēl viens ēzelis! Tagad pirmajam ir ar ko parunāt."
+      },
+      "2": {
+        "explorer": "Parunāt?"
+      },
+      "3": {
+        "fez": "Ī-ā. Tā ir runāšana, tikai skaļāk."
+      }
+    },
+    "blockedSecondDonkey": {
+      "1": {
+        "fez": "Ēzelis tālāk neies. Viens pats ne, viņš saka."
+      },
+      "2": {
+        "explorer": "Viņš tā teica?"
+      },
+      "3": {
+        "fez": "Es runāju ēzeliski. Viņš grib draugu, un man tāds ir manā bodītē faraona slēptuvē."
+      }
+    },
+    "throughSecondDonkey": {
+      "1": {
+        "fez": "Paklausies viņos! Viens skaļāk par otru."
+      },
+      "2": {
+        "explorer": "Kurš uzvar?"
+      },
+      "3": {
+        "fez": "Ne mēs. Mums tas jāklausās."
+      }
+    },
+    "arrivesSecondDonkey": {
+      "1": {
+        "fez": "Paskat uz viņiem. It kā pazītu viens otru gadiem ilgi."
+      },
+      "2": {
+        "explorer": "Kā mēs."
+      },
+      "3": {
+        "fez": "Mēs mazāk ī-ājam."
+      }
+    },
+    "boughtSecondCamel": {
+      "1": {
+        "fez": "Vēl viens kamielis. Jā. Man viņi arī nepatīk."
+      },
+      "2": {
+        "fez": "Bet šis vismaz izskatās draudzīgs."
+      },
+      "3": {
+        "explorer": "Viņš skatās uz tavu fesku."
+      }
+    },
+    "blockedSecondCamel": {
+      "1": {
+        "fez": "Ozīrisa zāle. Ar vienu kamieli mēs tur netiksim."
+      },
+      "2": {
+        "fez": "Par laimi, man ir vēl viens, manā bodītē faraona slēptuvē. Pats pēdējais."
+      },
+      "3": {
+        "explorer": "To tu vienmēr saki."
+      }
+    },
+    "throughSecondCamel": {
+      "1": {
+        "fez": "Viņš ēd manu fesku!"
+      },
+      "2": {
+        "explorer": "Draudzīgs kamielis."
+      },
+      "3": {
+        "fez": "Pārāk draudzīgs."
+      }
+    },
+    "arrivesSecondCamel": {
+      "1": {
+        "fez": "Divi kamieļi. Tagad abi skatās uz mani no augšas."
+      },
+      "2": {
+        "explorer": "Tad ej pastāvi pie ēzeļiem."
+      },
+      "3": {
+        "fez": "Es jau stāvu."
+      }
+    },
+    "boughtSturdyCart": {
+      "1": {
+        "fez": "Stiprāki rati. Šie ceļā nedzied."
+      },
+      "2": {
+        "explorer": "Uz tiem uzzīmētas puķes."
+      },
+      "3": {
+        "fez": "Stiprumam."
+      }
+    },
+    "blockedSturdyCart": {
+      "1": {
+        "fez": "Vecie rati līdz turienei veseli neaizbrauks. Tam vajag kaut ko stiprāku."
+      },
+      "2": {
+        "fez": "Vieni ir manā bodītē Dievu velvē. Ne krāsojuma dēļ, ja kas."
+      }
+    },
+    "throughSturdyCart": {
+      "1": {
+        "explorer": "Negrab."
+      },
+      "2": {
+        "fez": "Redzi? Stiprums."
+      },
+      "3": {
+        "explorer": "Un puķes?"
+      },
+      "4": {
+        "fez": "Tās arī mazliet palīdz."
+      }
+    },
+    "arrivesSturdyCart": {
+      "1": {
+        "fez": "Paskat, kā tie spīd!"
+      },
+      "2": {
+        "explorer": "Skaistāki, nekā vajag."
+      },
+      "3": {
+        "fez": "Jā. Es tos arī nepārdevu stipruma dēļ."
+      }
+    },
+    "boughtCaravanBanner": {
+      "1": {
+        "fez": "Karogs. Būšu godīgs: tas neko neatver."
+      },
+      "2": {
+        "explorer": "Ko tad tas dara?"
+      },
+      "3": {
+        "fez": "Plīvo. Skaisti."
+      }
+    },
+    "arrivesCaravanBanner": {
+      "1": {
+        "fez": "Paskat, kā plīvo! Virs mūsu pašu nometnes!"
+      },
+      "2": {
+        "explorer": "Joprojām neko neatver."
+      },
+      "3": {
+        "fez": "Nē. Tam arī nevajag."
+      }
+    }
+  },
+  "bond": {
+    "starter": {
+      "1": {
+        "fez": "Tas bija ātri."
+      },
+      "2": {
+        "explorer": "Tās bija durvis."
+      },
+      "3": {
+        "fez": "Man būtu vajadzējusi nedēļa."
+      }
+    },
+    "starterTomb": {
+      "1": {
+        "fez": "Lai būtu skaidrs. Es esmu šeit, lai pēc tam pārdotu. Es to saku tagad, kamēr tā vēl ir taisnība."
+      },
+      "2": {
+        "explorer": "Skaidrs."
+      }
+    },
+    "junior": {
+      "1": {
+        "fez": "Tu kādu brīdi neko neteici."
+      },
+      "2": {
+        "explorer": "Es skaitīju."
+      },
+      "3": {
+        "fez": "Zinu. Esmu redzējis, kā cilvēki min. Tā nebija minēšana."
+      }
+    },
+    "expert": {
+      "1": {
+        "fez": "Tas bija tuvu."
+      },
+      "2": {
+        "explorer": "Viss bija kārtībā."
+      },
+      "3": {
+        "fez": "Tas bija tuvu. Man ir tiesības to teikt."
+      }
+    },
+    "master": {
+      "1": {
+        "fez": "Mēs varētu apstāties."
+      },
+      "2": {
+        "explorer": "Varētu."
+      },
+      "3": {
+        "fez": "Es to saku, lai tas būtu pateikts. Ne tāpēc, lai mēs to darītu."
+      }
+    },
+    "wizard": {
+      "1": {
+        "explorer": "Cik šis ir vērts?"
+      },
+      "2": {
+        "fez": "…"
+      },
+      "3": {
+        "fez": "Tam es cenu nelikšu."
+      },
+      "4": {
+        "explorer": "Skaidrs."
+      }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": {
+        "fez": "Oho. Tikko tā bija siena."
+      },
+      "2": {
+        "explorer": "Aiz tās bija eja."
+      },
+      "3": {
+        "fez": "Visus tos gadus cilvēki gāja tai garām. Visus tos gadus!"
+      }
+    }
+  },
+  "reading": {
+    "junior": {
+      "1": {
+        "explorer": "Te ir rinda, ko es tagad varu izlasīt."
+      },
+      "2": {
+        "explorer": "Es devu maizi izsalkušajiem."
+      },
+      "3": {
+        "fez": "Maizi. Kapā."
+      },
+      "4": {
+        "explorer": "Tas bija arī iepriekšējā. Es nezināju, ka tie ir vārdi."
+      }
+    },
+    "expert": {
+      "1": {
+        "explorer": "Otrā rinda. Ūdeni izslāpušajiem."
+      },
+      "2": {
+        "fez": "Maize, un tagad ūdens. Kādam ļoti gribējās, lai viņu atceras kā dāsnu."
+      },
+      "3": {
+        "explorer": "Tas ir visiem. Katrā sienā, katrā kapā tās pašas divas rindas."
+      },
+      "4": {
+        "fez": "Tad vai nu viņi visi bija dāsni, vai arī tā vienkārši pieklājas teikt."
+      },
+      "5": {
+        "explorer": "Vai arī pēc tā viņus mērīja."
+      }
+    },
+    "master": {
+      "1": {
+        "explorer": "Drēbes kailajiem. Trešā rinda."
+      },
+      "2": {
+        "fez": "Maize, ūdens, drēbes. Tas ir saraksts ar lietām, kas atdotas citiem."
+      },
+      "3": {
+        "explorer": "Kapā vīram, kurš visu paņēma sev līdzi."
+      },
+      "4": {
+        "fez": "…Jā. To es pamanīju."
+      }
+    },
+    "sphinx": {
+      "1": {
+        "fez": "Atpakaļ tur, kur sākām. Tā nav pakustējusies."
+      },
+      "2": {
+        "explorer": "Raksts joprojām ir tur."
+      },
+      "3": {
+        "fez": "Vai tu vari to izlasīt?"
+      },
+      "4": {
+        "explorer": "Vārds."
+      },
+      "5": {
+        "fez": "Kā vārds?"
+      },
+      "6": {
+        "explorer": "Tavs."
+      },
+      "7": {
+        "fez": "…"
+      },
+      "8": {
+        "fez": "Tu tiešām tā domā?"
+      },
+      "9": {
+        "explorer": "Tas ir pierakstīts."
+      },
+      "10": {
+        "fez": "Hm."
+      },
+      "11": {
+        "fez": "Hori."
+      },
+      "12": {
+        "fez": "Katrā Ēģiptes ciemā bija kāds Hori."
+      },
+      "13": {
+        "fez": "Nu. Tad skaidrs, kāpēc es esmu Fez."
+      }
+    }
+  },
+  "altar": {
+    "refused": {
+      "1": {
+        "priest": "Nē."
+      },
+      "2": {
+        "explorer": "Uz tā ir viņa zīme."
+      },
+      "3": {
+        "priest": "Uz tā ir zīme. Ļoti laba zīme. To iegrieza kāds ar izciliem rīkiem, kam te nebija nekādas darīšanas, un tas bija nesen."
+      },
+      "4": {
+        "priest": "Es gaidu jau trīs tūkstošus gadu. Pēdējā nedēļā mani neviens neapmānīs."
+      }
+    }
+  },
+  "meeting": {
+    "starter_1": {
+      "1": {
+        "voice": "Ei! Ne TUR! Skaties, kur ej!"
+      },
+      "2": {
+        "explorer": "Piedod! Es neko neredzu! Kur tu esi?"
+      },
+      "3": {
+        "fez": "Te lejā! Tu stāvi tieši manās precēs!"
+      },
+      "4": {
+        "explorer": "Ķirzaka?! Ar fesku?"
+      },
+      "5": {
+        "fez": "Tirgotājs. Un kas vainas manai feskai?"
+      },
+      "6": {
+        "fez": "Tu droši vien arī nāc piramīdas dēļ. Nopirki karti? Samaksāji pārāk daudz?"
+      },
+      "7": {
+        "explorer": "Krietni par daudz."
+      },
+      "8": {
+        "fez": "Es arī. Pff."
+      },
+      "9": {
+        "explorer": "Tie raksti uz Sfinksas… vai tu vari tos izlasīt?"
+      },
+      "10": {
+        "fez": "Nē. Neviens vairs nevar. Tas pamats kādreiz bija zils un zelta, zini."
+      },
+      "11": {
+        "explorer": "Kā tu to zini?"
+      },
+      "12": {
+        "fez": "…Dzirdēju. Nu, ko tu te meklē?"
+      },
+      "13": {
+        "explorer": "Kaut ko skaistu."
+      },
+      "14": {
+        "fez": "Skaistais labi pārdodas! Zini ko? Es nākšu tev līdzi!"
+      },
+      "15": {
+        "explorer": "Ko? Man līdzi?"
+      },
+      "16": {
+        "fez": "Divi redz vairāk nekā viens. Nāc, tā piramīda gaida!"
+      }
+    }
+  },
+  "end": {
+    "1": {
+      "fez": "Vai bija skaisti?"
+    },
+    "2": {
+      "explorer": "Iztiks."
+    }
+  },
+  "revisit": {
+    "starter": {
+      "north1": {
+        "1": {
+          "ipi": "Vēl te? Uz ziemeļiem! Henut! Vienpadsmit debenu!"
+        }
+      },
+      "north2": {
+        "1": {
+          "ipi": "Vienpadsmit debenu lazurīta. Henut. Ziemeļi. Ko tu gaidi?"
+        }
+      },
+      "paid1": {
+        "1": {
+          "ipi": "Nu? Vai viņa samaksāja? …Nē. Protams, ka ne."
+        }
+      },
+      "paid2": {
+        "1": {
+          "ipi": "Stikls? STIKLS? Te rakstīts lazurīts. Tieši te. Lazurīts!"
+        }
+      },
+      "later1": {
+        "1": {
+          "ipi": "Atkal tu. Trešais plaukts, tā ar robu — joprojām mana. Rokas nost."
+        }
+      },
+      "later2": {
+        "1": {
+          "ipi": "Četrdesmit gadu grāmatas, un neviena nesakrīt. Neviena!"
+        }
+      }
+    },
+    "junior": {
+      "wall1": {
+        "1": {
+          "henut": "Siena. Trešā zīme. Tas joprojām nav mans vārds."
+        }
+      },
+      "wall2": {
+        "1": {
+          "henut": "Tu joprojām esi šeit, un tā zoss joprojām ir uz manas sienas. Izlabo to."
+        }
+      },
+      "priest1": {
+        "1": {
+          "henut": "Joprojām mans vārds. Es pārbaudīju. Tagad — Karnaka, priesteris. Ej nu."
+        }
+      },
+      "priest2": {
+        "1": {
+          "henut": "Karnaka! Viņš ir gaidījis pietiekami ilgi. Ej un liec sevi pieteikt."
+        }
+      },
+      "met1": {
+        "1": {
+          "henut": "Nu? Neciešams, vai ne? Es taču teicu."
+        }
+      },
+      "later1": {
+        "1": {
+          "henut": "Joprojām stikls. Joprojām skaists. Joprojām manis izvēlēts."
+        }
+      }
+    },
+    "expert": {
+      "seal1": {
+        "1": {
+          "priest": "Zīmogs. Atnests, nolikts, pār to runāts. Es pagaidīšu."
+        }
+      },
+      "seal2": {
+        "1": {
+          "priest": "Ā. Atkal tu. Un joprojām bez zīmoga."
+        }
+      },
+      "king1": {
+        "1": {
+          "priest": "Tu redzēji karali. Labi. Pati lieta, atceries — ne atveids."
+        }
+      },
+      "later1": {
+        "1": {
+          "priest": "Atkal tu. Te vairs nav ko darīt. Ļoti mierīgi."
+        }
+      }
+    },
+    "master": {
+      "priest1": {
+        "1": {
+          "pharaoh": "Vēl te? Pie priestera ar to kopiju! Gribu dzirdēt, kā tas izies."
+        }
+      },
+      "priest2": {
+        "1": {
+          "pharaoh": "Tu drīksti tuvoties. Atkal. Vai priesteris to jau redzēja?"
+        }
+      },
+      "rite1": {
+        "1": {
+          "pharaoh": "Tātad viņš beidzot noturēja savu rituālu. Labi. Tagad viņš par to būs neciešams."
+        }
+      },
+      "later1": {
+        "1": {
+          "pharaoh": "Joprojām labākā nedēļa deviņsimt gadu laikā. Un tā turpinās!"
+        }
+      }
+    },
+    "wizard": {
+      "later1": {
+        "1": {
+          "priest": "…Jā. Es joprojām atceros, kā. Labi."
+        }
+      },
+      "later2": {
+        "1": {
+          "priest": "Nolikts, pār to runāts. Gatavs. Dīvaina sajūta."
+        }
+      }
+    }
+  }
+}

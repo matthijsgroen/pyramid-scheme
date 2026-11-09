@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Kameň",
+    "bronze": "Bronz",
+    "silver": "Striebro",
+    "gold": "Zlato",
+    "divine": "Božské"
+  },
+  "sell_stone_1": {
+    "name": "Odštiepený črep",
+    "description": "Rozbitý kúsok hrnčeka, na ktorý si pisár skúšal písať. Písmená sú už príliš vyblednuté."
+  },
+  "sell_stone_2": {
+    "name": "Prasknutý hlinený džbán",
+    "description": "Džbán na obilie alebo pivo. Po stáročiach mu praskol jeden bok."
+  },
+  "sell_stone_3": {
+    "name": "Ošúchaná trstinová sandála",
+    "description": "Upletená z papyrusu. Podrážku celkom ošúchal nejaký dávno zabudnutý robotník."
+  },
+  "sell_stone_4": {
+    "name": "Vyblednutý kúsok plátna",
+    "description": "Roztrhaný pásik nefarbeného plátna. Také sa omotávalo okolo mŕtvych – alebo sa ním látala plachta."
+  },
+  "sell_stone_5": {
+    "name": "Zlomený pazúrikový nôž",
+    "description": "Nôž z pazúrika s odlomenou špičkou. Lacno sa vyrobí, ešte lacnejšie sa nahradí."
+  },
+  "sell_bronze_1": {
+    "name": "Ohnutý bronzový amulet",
+    "description": "Lacný ochranný amulet, ktorý odliali nakrivo a nikto ho neopravil."
+  },
+  "sell_bronze_2": {
+    "name": "Skorodované bronzové zrkadlo",
+    "description": "Kedysi také lesklé, že si sa v ňom videl. Teraz je zelené a zakalené."
+  },
+  "sell_bronze_3": {
+    "name": "Tupý bronzový háčik",
+    "description": "Rybársky háčik, ktorý niekomu spadol do Nílu dávno predtým, ako hrobku zapečatili."
+  },
+  "sell_bronze_4": {
+    "name": "Malý bronzový zvonček",
+    "description": "Mal visieť na dverách chrámu alebo na členku tanečnice. Už nezvoní čisto."
+  },
+  "sell_bronze_5": {
+    "name": "Zašlý bronzový prsteň",
+    "description": "Obyčajný krúžok pre prst, ktorý je už dávno prachom."
+  },
+  "sell_silver_1": {
+    "name": "Zašlý strieborný anch",
+    "description": "Znak života, ktorý po stáročiach pod zemou celkom zmatnel."
+  },
+  "sell_silver_2": {
+    "name": "Strieborná tyčinka na líčenie",
+    "description": "Tenká tyčinka, ktorou si bohatí ľudia maľovali oči. Farba je už dávno preč."
+  },
+  "sell_silver_3": {
+    "name": "Pokrčená strieborná miska",
+    "description": "Malá obetná miska. Z jednej strany ju rozpučil strop, keď napokon spadol."
+  },
+  "sell_silver_4": {
+    "name": "Strieborná ihlica do vlasov",
+    "description": "Jednoduchá, bez ozdôb. Kedysi držala vlasy niekomu, koho meno sa stratilo."
+  },
+  "sell_silver_5": {
+    "name": "Ošúchaný strieborný náramok",
+    "description": "Tenký strieborný náramok so zlomenou sponou. Pre šľachtica málo pekný, pre robotníka príliš pekný."
+  },
+  "sell_gold_1": {
+    "name": "Malý zlatý korálik",
+    "description": "Jeden korálik z pohrebného náhrdelníka, ktorý sa dávno rozsypal."
+  },
+  "sell_gold_2": {
+    "name": "Kúsok plátkového zlata",
+    "description": "Tenučký plátok zlata, ktorý zlodeji hrobov strhli z tváre sochy stáročia pred tebou."
+  },
+  "sell_gold_3": {
+    "name": "Tenká zlatá náušnica",
+    "description": "Vykovaná na tenko, aby šľachticovi zlato vystačilo na viac."
+  },
+  "sell_gold_4": {
+    "name": "Črep so zlatými zrnkami",
+    "description": "Kúsok pozlátenej omietky. Ešte na ňom držia zrnká skutočného zlata."
+  },
+  "sell_gold_5": {
+    "name": "Odštiepený zlatý pečatný prsteň",
+    "description": "Prsteň na pečatenie, ale rytina je celkom zodratá. Na toho, koho meno nesie, sa zabudlo."
+  },
+  "sell_divine_1": {
+    "name": "Vyblednutý skarabeus z lazuritu",
+    "description": "Vyrezaný zo vzácneho lazuritu, ktorý draho doviezli, aby faraón znovu ožil. Farba za stáročia vybledla."
+  },
+  "sell_divine_2": {
+    "name": "Amulet oka z karneolu",
+    "description": "Ochranné oko z krvavočerveného karneolu. Malo odháňať nešťastie vo svete mŕtvych."
+  },
+  "sell_divine_3": {
+    "name": "Tyrkysový kamienok z mozaiky",
+    "description": "Jeden kamienok z rozbitej mozaiky. Kedysi bol súčasťou obrazu boha na stene chrámu."
+  },
+  "sell_divine_4": {
+    "name": "Alabastrový črep z kanopy",
+    "description": "Kúsok nádoby, v ktorej sa uchovávali faraónove vnútornosti. Vzácny kameň na strašidelnú vec."
+  },
+  "sell_divine_5": {
+    "name": "Obsidiánový obradný nôž",
+    "description": "Sopečné sklo, nabrúsené na obrady, nie na boj – patril len do chrámu."
+  }
+}

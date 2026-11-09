@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Filgħodu kmieni ħdejn l-Isfinġi",
+    "description": "L-Isfinġi l-Kbira, u l-kitba f'riġlejha li ħadd ħaj ma jaf jaqraha. Il-mappa tgħid: ibda minn hawn."
+  },
+  "starter_2": {
+    "name": "It-Triq tal-Bejjiegħ tal-Papiru",
+    "description": "Triq tal-kummerċ max-xatt tan-Nil, mimlija mħażen tal-merkanti. Xi wħud minnhom qatt ma tbattlu."
+  },
+  "starter_3": {
+    "name": "It-Tempju ta' Bastet",
+    "description": "It-tempju ta' Bastet. Il-qtates hawn kienu qaddisa, u l-festa ta' kull sena kienet l-akbar fl-Eġittu — dgħajjes, mużika, kollox."
+  },
+  "starter_4": {
+    "name": "L-Iskola tal-Iskribi",
+    "description": "L-iskola tal-iskribi, fejn l-Eġittu tgħallem jikteb. Il-klassijiet għadhom taħt ir-ramel."
+  },
+  "starter_treasure_tomb": {
+    "name": "Il-Moħba Minsija tal-Merkant",
+    "description": "Il-kantina ta' merkant, mhux ta' re: ġarar f'munzell, issiġillati u b'tikketta, u ħadd hemm isfel biex jgerger.",
+    "mapHint": "Il-biċċa karta turi triq tas-suq u bieb ta' kantina — moħba ta' bejjiegħ, xejn aktar."
+  },
+  "junior_1": {
+    "name": "It-Titjira tal-Ibis Qaddis",
+    "description": "Art tal-bassasijiet, u l-ibis jimxi fl-ilma. L-Eġittu kien jgħasses lil dawn l-għasafar: meta jerġgħu lura, il-għargħar ġej."
+  },
+  "junior_2": {
+    "name": "Il-Wied tal-Artiġjani",
+    "description": "Deir el-Medina, fejn kienu jgħixu dawk li jibnu l-oqbra. Kull ħaġa għall-qabar ta' re saret hawn l-ewwel, fil-forom."
+  },
+  "junior_3": {
+    "name": "It-Tempju ta' Thoth",
+    "description": "It-tempju ta' Thoth. Huwa vvinta l-kitba, żamm ir-reġistri u għamel l-għadd — eżatt dak li qegħdin nagħmlu aħna."
+  },
+  "junior_4": {
+    "name": "Il-Fanal ta' Lixandra",
+    "description": "Il-Faros ta' Lixandra. Nar fil-quċċata, jaqbad il-lejl kollu, u l-baħrin isibu l-kosta minn ġurnata 'l bogħod."
+  },
+  "junior_treasure_tomb": {
+    "name": "Il-Kamra Moħbija tan-Nobbli",
+    "description": "Il-kamra ta' mara nobbli, miżbugħa mill-art sas-saqaf. Xtrat l-isbaħ kopji li setgħet issib, u qatt ma qalet lil ħadd.",
+    "mapHint": "Linka fina, siġill b'arma fil-kantuniera — xi ħadd importanti ried li din il-kamra tintesa."
+  },
+  "expert_1": {
+    "name": "Il-Wied tar-Rejiet",
+    "description": "Il-Wied tar-Rejiet. Waqfu jibnu l-piramidi u ħbew l-oqbra tar-rejiet f'wied wieħed, taħt quċċata li tixbah piramida."
+  },
+  "expert_2": {
+    "name": "It-Tempji ta' Karnak",
+    "description": "Karnak, li baqgħu jkabbruh għal elfejn sena. Is-sala l-kbira biss għandha mija u erbgħa u tletin kolonna, kollha minquxa."
+  },
+  "expert_3": {
+    "name": "Vjaġġ fid-Delta tan-Nil",
+    "description": "Fejn in-Nil jinqasam u jinfirex aħdar. L-art ta' Sobek — papiru, ħut, u kukkudrilli li kienu jqimuhom u jitimgħuhom."
+  },
+  "expert_4": {
+    "name": "Il-Piramida ta' Djoser",
+    "description": "Il-piramida bit-taraġ ta' Djoser, l-ewwel ħaġa daqshekk kbira mibnija bil-ġebel. L-arkitett tiegħu, Imhotep, sar jinftakar bħala alla."
+  },
+  "expert_treasure_tomb": {
+    "name": "It-Teżor tal-Qassis il-Kbir",
+    "description": "It-teżor ta' qassis il-kbir, taħt l-art tal-offerti. Kull ma hemm isfel ingħata lil alla u qatt ma reġa' ttieħed.",
+    "mapHint": "Il-linji juru l-art ta' tempju, u taraġ li jinżel taħt l-art tal-offerti."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Il-Kamra l-Aktar Qaddisa",
+    "description": "Il-kamra ssiġillata f'qalb it-tempju. Il-qassis il-kbir kien jidħol darba kuljum, biex jaħsel lill-alla u jlibbsu.",
+    "mapHint": "Il-kurituri jgħaddu minn ħdejn il-kmamar tat-tempju sa bieb issiġillat — l-ogħla qassisin biss għaddew minnu."
+  },
+  "master_1": {
+    "name": "Il-Piramida l-Kbira ta' Giża",
+    "description": "Il-Piramida l-Kbira. Għoxrin sena ġebel, u raħal sħiħ ħdejha jitma' lill-ħaddiema bil-ħobż u l-birra."
+  },
+  "master_2": {
+    "name": "Il-Ktieb tal-Mejtin",
+    "description": "Mhux ktieb wieħed iżda ġabra ta' sħarijiet, ikkupjati fuq ordni. Dawk irħas kienu jħallu spazju vojt fejn imissu ismek."
+  },
+  "master_3": {
+    "name": "Is-Saħta tal-Fargħuni",
+    "description": "Is-saħta famuża vvintawha l-gazzetti fl-1923. L-Eġizzjani kienu jħarsu l-oqbra tagħhom b'bibien u karti."
+  },
+  "master_4": {
+    "name": "Il-Qabar ta' Nefertari",
+    "description": "Il-qabar ta' Nefertari, l-isbaħ kamra miżbugħa fl-Eġittu. Il-kuluri kienu mitħuna mill-ġebel — ażżurrit, malakit, okra."
+  },
+  "master_treasure_tomb": {
+    "name": "It-Teżor Sigriet tal-Fargħun",
+    "description": "It-teżor privat ta' re, 'il bogħod fejn il-mapep jieqfu. Kull ma niżel fl-art miegħu għadu hemm isfel.",
+    "mapHint": "Kartoċċ irjali jimmarka xifer wieħed, u t-triq tispiċċa 'l bogħod taħt ir-ramel miftuħ."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Is-Sala ta' Osiris",
+    "description": "Is-sala ta' Osiris. Alla tal-għargħar u tal-qamħ — kull ma jinżel taħt l-art hawn, jistennewh lura.",
+    "mapHint": "Taħt il-kmamar irjali l-mappa tibqa' nieżla, għal sala mmarkata bir-riti tal-mejtin."
+  },
+  "wizard_1": {
+    "name": "Il-Vjaġġ ta' Ra max-Xemx",
+    "description": "Ra jinżel taħt id-dinja meta tinżel ix-xemx u għandu tnax-il siegħa dlam x'jaqsam. L-Eġittu kiteb x'jiġri f'kull waħda."
+  },
+  "wizard_2": {
+    "name": "Il-Kolossi ta' Memnon",
+    "description": "Żewġ ġganti bil-qiegħda ta' Amenhotep III. Il-Griegi ddeċidew li kienu xi ħadd ieħor, u dak l-isem baqa' għal elfejn sena."
+  },
+  "wizard_3": {
+    "name": "Il-Kamra ta' Ma'at",
+    "description": "Il-kamra ta' Ma'at. Hija l-ordni tal-affarijiet, u r-rixa waħda tagħha tan-ngħama hi dik li magħha jitkejjel kollox."
+  },
+  "wizard_4": {
+    "name": "Il-Piramida ta' Dejjem",
+    "description": "Il-kisja kienet ġebla tal-franka llustrata, bajda daqs il-melħ, imqiegħda tant preċiża li tara tleqq minn ġurnata mixi 'l bogħod."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Il-Kamra tal-Allat",
+    "description": "Fejn it-tempju żamm dak li kien tal-allat. Ħadd ma daħal hawn mingħajr il-ħaġa t-tajba f'idejh.",
+    "mapHint": "L-ebda sinjal fuq din il-biċċa ma hu tad-dinja tal-bnedmin — x'jurik, poġġewh l-allat."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Is-Saltna tal-Qawwiet tal-Kosmos",
+    "description": "Mapep tal-istilel mas-saqaf kollu, miżbugħa biex il-mejtin ikunu jafu x'ħin hu bil-lejl. Il-ħabel ta' xi ħadd għadu mdendel fix-xaft.",
+    "mapHint": "Wara l-kamra tal-allat il-linji jinqasmu f'mogħdijiet tal-istilel, fejn il-qawwiet tal-ħajja u tal-kaos jinżammu bħala relikwi."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "It-Tron ta' Dejjem",
+    "description": "Siġġu wieħed fin-nofs u tnejn u erbgħin imħallef madwaru, kull wieħed jistaqsi mistoqsija li suppost twieġeb le għaliha.",
+    "mapHint": "Kull mogħdija tal-istilel fuq din il-biċċa tasal f'siġġu wieħed, f'qalb is-saltna tal-allat."
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Dögun við Sfinxinn",
+    "description": "Sfinxinn mikli og letrið við fætur hans sem enginn á lífi getur lesið. Kortið segir: byrjaðu hér."
+  },
+  "starter_2": {
+    "name": "Leið papýruskaupmannsins",
+    "description": "Verslunarvegur meðfram Níl, með forðabúrum kaupmannanna á báðar hendur. Nokkur voru aldrei tæmd."
+  },
+  "starter_3": {
+    "name": "Musteri Bastetar",
+    "description": "Musteri Bastetar. Kettirnir hér voru heilagir og árshátíðin var sú stærsta í Egyptalandi, með bátum, tónlist og öllu saman."
+  },
+  "starter_4": {
+    "name": "Skóli skrifaranna",
+    "description": "Skóli skrifaranna, þar sem Egyptaland lærði að skrifa. Skólastofurnar eru enn undir sandinum."
+  },
+  "starter_treasure_tomb": {
+    "name": "Gleymdi kaupmannskjallarinn",
+    "description": "Kjallari kaupmanns, ekki konungs: krukkum staflað, innsiglaðar og merktar, og enginn þarna niðri til að rífast um þær.",
+    "mapHint": "Snifsið sýnir markaðsveg og kjallaradyr. Felustaður kaupmanns, ekkert fínna en það."
+  },
+  "junior_1": {
+    "name": "Ferðir íbisfuglanna",
+    "description": "Mýrlendi og íbisfuglar sem vaða um það. Egyptar fylgdust með þessum fuglum: þegar þeir koma aftur er flóðið á leiðinni."
+  },
+  "junior_2": {
+    "name": "Dalur handverksfólksins",
+    "description": "Deir el-Medina, þar sem grafhýsasmiðirnir bjuggu. Allt sem fór í konunglega gröf var fyrst búið til hér, í mótum."
+  },
+  "junior_3": {
+    "name": "Musteri Þóts",
+    "description": "Musteri Þóts. Hann fann upp skriftina, hélt skrárnar og taldi allt. Það er einmitt mest af því sem við höfum verið að gera."
+  },
+  "junior_4": {
+    "name": "Vitinn í Alexandríu",
+    "description": "Faros í Alexandríu. Eldur efst sem logaði alla nóttina, og sjómenn sáu ströndina heilan dag úti á sjó."
+  },
+  "junior_treasure_tomb": {
+    "name": "Falin hvelfing aðalskonunnar",
+    "description": "Hvelfing aðalskonu, máluð frá gólfi upp í loft. Hún keypti bestu eftirlíkingar sem fáanlegar voru og sagði aldrei neinum frá því.",
+    "mapHint": "Fínt blek og skjaldarmerki í horninu. Einhver mikilvægur vildi að þessu herbergi yrði gleymt."
+  },
+  "expert_1": {
+    "name": "Konungadalurinn",
+    "description": "Konungadalurinn. Þeir hættu að byggja pýramída og földu konungsgrafirnar í einum dal, undir tindi sem lítur út eins og pýramídi."
+  },
+  "expert_2": {
+    "name": "Musterin í Karnak",
+    "description": "Karnak, sem var byggt við í tvö þúsund ár. Í stóra salnum einum eru hundrað þrjátíu og fjórar súlur, og hver einasta er útskorin."
+  },
+  "expert_3": {
+    "name": "Leiðangur um Nílarósa",
+    "description": "Þar sem Níl klofnar og breiðir úr sér, græn og blaut. Land Sóbeks: papýrus, fiskar og krókódílar sem fólk tilbað og gaf að éta."
+  },
+  "expert_4": {
+    "name": "Pýramídi Djósers",
+    "description": "Þrepapýramídi Djósers, fyrsta svona stóra byggingin úr steini. Byggingameistarinn hans, Imhotep, varð á endanum að guði í minningu fólks."
+  },
+  "expert_treasure_tomb": {
+    "name": "Fjárhirsla æðsta prestsins",
+    "description": "Fjárhirsla æðsta prests, undir fórnargólfinu. Allt þarna niðri var gefið guði og aldrei tekið út aftur.",
+    "mapHint": "Línurnar sýna musterissvæði og stiga sem liggur niður undir fórnargólfið."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Innsta helgidómurinn",
+    "description": "Innsiglaða herbergið í hjarta musterisins. Æðsti presturinn fór þangað inn einu sinni á dag til að þvo guðinn og klæða hann.",
+    "mapHint": "Gangar liggja fram hjá hvelfingum musterisins að innsigluðum dyrum. Aðeins æðstu prestarnir fóru nokkurn tíma þar í gegn."
+  },
+  "master_1": {
+    "name": "Pýramídinn mikli í Gísa",
+    "description": "Pýramídinn mikli. Tuttugu ár af steini, og heill bær við hliðina sem gaf verkamönnunum brauð og bjór."
+  },
+  "master_2": {
+    "name": "Bók hinna dauðu",
+    "description": "Ekki ein bók heldur safn galdraþulna, skrifaðar upp eftir pöntun. Í þeim ódýru var autt bil þar sem nafnið þitt átti að koma."
+  },
+  "master_3": {
+    "name": "Bölvun faraóanna",
+    "description": "Fræga bölvunin var fundin upp af dagblöðum árið 1923. Egyptar vörðu grafirnar sínar með hurðum og pappírsvinnu."
+  },
+  "master_4": {
+    "name": "Gröf Nefertari",
+    "description": "Gröf Nefertari, best málaða herbergi Egyptalands. Litirnir voru malaðir úr steinum: asúrít, malakít og okkur."
+  },
+  "master_treasure_tomb": {
+    "name": "Leynifjársjóður faraósins",
+    "description": "Einkafjársjóður konungs, langt úti þar sem kortin gefast upp. Allt sem fór í jörðina með honum er þar enn.",
+    "mapHint": "Konungleg kartúsa merkir einn kantinn og leiðin endar langt úti undir berum sandi."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Salur Ósíris",
+    "description": "Salur Ósíris. Guð flóðsins og kornsins: það sem fer undir jörðina hér á að koma aftur.",
+    "mapHint": "Fyrir neðan konungssalina heldur kortið áfram niður, í sal merktan siðum hinna látnu."
+  },
+  "wizard_1": {
+    "name": "Sólarferð Ra",
+    "description": "Ra fer undir heiminn við sólsetur og þarf að fara í gegnum tólf klukkustundir af myrkri. Egyptar skrifuðu niður hvað gerist í hverri þeirra."
+  },
+  "wizard_2": {
+    "name": "Memnonsrisarnir",
+    "description": "Tveir sitjandi risar Amenhóteps þriðja. Grikkir ákváðu að þeir væru einhver annar, og það nafn hélst í tvö þúsund ár."
+  },
+  "wizard_3": {
+    "name": "Salur Maat",
+    "description": "Salur Maat. Hún er regla heimsins, og eina strútsfjöðrin hennar er það sem allt annað er mælt við."
+  },
+  "wizard_4": {
+    "name": "Eilífi pýramídinn",
+    "description": "Klæðningin var fægður kalksteinn, hvítur eins og salt og svo nákvæmlega lagður að það sást glampa á hann í dagleiðar fjarlægð."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Hvelfing guðanna",
+    "description": "Þar sem musterið geymdi það sem guðirnir áttu. Enginn fékk að koma hingað inn nema með réttan hlut í höndunum.",
+    "mapHint": "Ekkert kennileiti á þessu snifsi tilheyrir heimi mannanna. Hvað sem það sýnir, þá settu guðirnir það þar."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Ríki himinaflanna",
+    "description": "Stjörnukort um allt loftið, máluð svo hinir látnu gætu séð hvað klukkan væri á nóttunni. Reipi einhvers hangir enn í göngunum.",
+    "mapHint": "Handan við hvelfingu guðanna greinast línurnar í stjörnuslóðir, þar sem öfl lífs og óreiðu eru geymd sem helgir gripir."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Hásæti eilífðarinnar",
+    "description": "Eitt sæti í miðjunni og fjörutíu og tveir dómarar í kring. Hver þeirra spyr spurningar sem þú átt að svara neitandi.",
+    "mapHint": "Allar stjörnuslóðir á þessu broti mætast í einu sæti í sjálfu hjarta guðaríkisins."
+  }
+}

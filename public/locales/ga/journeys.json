@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Breacadh an Lae ag an Sfioncs",
+    "description": "An Sfioncs Mór, agus an scríbhneoireacht ag a chosa nach féidir le duine beo ar bith a léamh. Deir an léarscáil: tosaigh anseo."
+  },
+  "starter_2": {
+    "name": "Bóthar Cheannaí an Phaipír",
+    "description": "Bóthar trádála cois Níle, lán de stórais na gceannaithe. Níor folmhaíodh cúpla ceann acu riamh."
+  },
+  "starter_3": {
+    "name": "Teampall Bastet",
+    "description": "Teampall Bastet. Bhí na cait anseo naofa, agus ba í an fhéile bhliantúil an fhéile ba mhó san Éigipt — báid, ceol, gach rud."
+  },
+  "starter_4": {
+    "name": "Acadamh na Scríobhaithe",
+    "description": "Scoil na scríobhaithe, áit ar fhoghlaim an Éigipt scríobh. Tá na seomraí ranga fós faoin ngaineamh."
+  },
+  "starter_treasure_tomb": {
+    "name": "Stór Dearmadta an Cheannaí",
+    "description": "Siléar ceannaí, ní siléar rí: prócaí ina gcarn, séalaithe agus lipéad orthu, agus gan duine ar bith thíos ansin le hargóint fúthu.",
+    "mapHint": "Tarraingíonn an blúire bóthar margaidh agus doras siléir — áit fholaigh ceannaí, faic níos mó ná sin."
+  },
+  "junior_1": {
+    "name": "Imirce an Íbis Naofa",
+    "description": "Tír riasca, agus an t-íbis ag lapadaíl tríd. Bhíodh an Éigipt ag faire ar na héin seo: nuair a thagann siad ar ais, tá an tuile ag teacht."
+  },
+  "junior_2": {
+    "name": "Gleann na gCeardaithe",
+    "description": "Deir el-Medina, áit a raibh cónaí ar lucht déanta na dtuamaí. Rinneadh gach rud d’adhlacadh ríoga anseo ar dtús, i múnlaí."
+  },
+  "junior_3": {
+    "name": "Teampall Thoth",
+    "description": "Teampall Thoth. Chum sé an scríbhneoireacht, choinnigh sé na taifid agus rinne sé an comhaireamh — agus sin an chuid is mó dá bhfuil á dhéanamh againne."
+  },
+  "junior_4": {
+    "name": "Teach Solais Alexandria",
+    "description": "Pharos Alexandria. Tine ag an mbarr, ar lasadh ar feadh na hoíche, agus mairnéalaigh ag aimsiú an chósta lá seoltóireachta amach."
+  },
+  "junior_treasure_tomb": {
+    "name": "Cuas Folaithe an Uasail",
+    "description": "Cuas bean uasal, péinteáilte ón urlár go dtí an tsíleáil. Cheannaigh sí na cóipeanna ab fhearr a bhí ar fáil, agus níor dhúirt sí é sin riamh.",
+    "mapHint": "Dúch breá, séala le suaitheantas sa chúinne — bhí duine mór ag iarraidh go ndéanfaí dearmad ar an seomra seo."
+  },
+  "expert_1": {
+    "name": "Gleann na Ríthe",
+    "description": "Gleann na Ríthe. Stop siad ag tógáil pirimidí agus d’fholaigh siad tuamaí na ríthe i ngleann amháin, faoi bhinn atá cosúil le pirimid."
+  },
+  "expert_2": {
+    "name": "Teampaill Karnak",
+    "description": "Karnak, ar cuireadh leis ar feadh dhá mhíle bliain. Tá céad tríocha a ceathair colún sa halla mór amháin, agus snoíodóireacht ar gach ceann acu."
+  },
+  "expert_3": {
+    "name": "Turas go Deilt na Níle",
+    "description": "An áit a scoilteann an Níl agus a leathann sí amach glas. Tír Sobek — papaír, iasc, agus crogaill a raibh daoine ag adhradh dóibh agus á mbeathú."
+  },
+  "expert_4": {
+    "name": "Pirimid Djoser",
+    "description": "Pirimid chéimeanna Djoser, an chéad rud chomh mór sin a tógadh as cloch. Bhí an t-ailtire Imhotep ina dhia sa deireadh i gcuimhne na ndaoine."
+  },
+  "expert_treasure_tomb": {
+    "name": "Stór an Ard-Sagairt",
+    "description": "Stór ard-sagairt, faoi urlár na n-ofrálacha. Tugadh gach rud thíos ansin do dhia, agus níor tógadh amach riamh arís é.",
+    "mapHint": "Leanann na línte limistéar teampaill, agus staighre ag dul síos faoi urlár na n-ofrálacha."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "An Sanctóir Istigh",
+    "description": "An seomra séalaithe i gcroílár an teampaill. Théadh an t-ard-sagart isteach uair sa lá, leis an dia a ní agus a ghléasadh.",
+    "mapHint": "Ritheann pasáistí thar stórais an teampaill go doras séalaithe — níor ghabh ach na sagairt ab airde thairis riamh."
+  },
+  "master_1": {
+    "name": "Pirimid Mhór Giza",
+    "description": "An Phirimid Mhór. Fiche bliain de chlocha, agus baile iomlán in aice léi ag tabhairt aráin agus beorach do na hoibrithe."
+  },
+  "master_2": {
+    "name": "Leabhar na Marbh",
+    "description": "Ní leabhar amháin é ach sraith geasa, cóipeáilte de réir ordaithe. D’fhág na cinn shaora bearna san áit ar cheart d’ainm a bheith."
+  },
+  "master_3": {
+    "name": "Mallacht na bhFarónna",
+    "description": "Na nuachtáin a chum an mhallacht cháiliúil i 1923. Chosain na hÉigiptigh a dtuamaí le doirse agus le páipéarachas."
+  },
+  "master_4": {
+    "name": "Tuama Nefertari",
+    "description": "Tuama Nefertari, an seomra is fearr péinteáil san Éigipt. Rinneadh na dathanna as cloch mheilte — asúirít, malachít, ócar."
+  },
+  "master_treasure_tomb": {
+    "name": "Taisce Rúnda an Fharó",
+    "description": "Taisce phríobháideach rí, amuigh áit a n-éiríonn na léarscáileanna as. Pé rud a chuaigh faoin talamh leis, tá sé fós thíos ansin.",
+    "mapHint": "Tá cartús ríoga ar imeall amháin, agus críochnaíonn an bealach i bhfad amach faoi ghaineamh oscailte."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Halla Osiris",
+    "description": "Halla Osiris. Dia na tuile agus an ghráin — pé rud a théann faoin talamh anseo, táthar ag súil go dtiocfaidh sé ar ais.",
+    "mapHint": "Faoi sheomraí an rí leanann an léarscáil ag dul síos, go halla ar a bhfuil deasghnátha na marbh."
+  },
+  "wizard_1": {
+    "name": "Turas Gréine Ra",
+    "description": "Téann Ra faoin domhan ag luí na gréine agus tá dhá uair an chloig dhéag den dorchadas le trasnú aige. Scríobh an Éigipt síos cad a tharlaíonn i ngach ceann acu."
+  },
+  "wizard_2": {
+    "name": "Fathaigh Memnon",
+    "description": "Dhá fhathach ina suí, le Amenhotep III. Shocraigh na Gréagaigh gur duine eile a bhí iontu, agus d’fhan an t-ainm sin orthu ar feadh dhá mhíle bliain."
+  },
+  "wizard_3": {
+    "name": "Seomra Ma'at",
+    "description": "Seomra Ma'at. Is ise ord na rudaí, agus is é a cleite ostraise aonair an rud a ndéantar gach rud eile a thomhas ina choinne."
+  },
+  "wizard_4": {
+    "name": "An Phirimid Shíoraí",
+    "description": "Bhí an clúdach as aolchloch snasta, chomh bán le salann, chomh cruinn sin go bhfeicfeá ag lonrú í ó shiúlóid lae uait."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Cuas na nDéithe",
+    "description": "An áit a gcoinníodh an teampall rudaí na ndéithe. Níor ligeadh duine ar bith isteach anseo gan an rud ceart ina lámha.",
+    "mapHint": "Níl aon chomhartha ar an mblúire seo ó shaol na ndaoine — pé rud a thaispeánann sé, chuir na déithe ann é."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Ríocht na bhFórsaí Cosmacha",
+    "description": "Léarscáileanna réaltaí ar fud na síleála, péinteáilte ionas go mbeadh a fhios ag na mairbh cén t-am den oíche a bhí ann. Tá rópa duine éigin fós ar crochadh sa seafta.",
+    "mapHint": "Taobh thall den chuas diaga briseann na línte ina gcosáin réaltaí, áit a gcoinnítear fórsaí na beatha agus an anoird mar thaisí."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Ríchathaoir na Síoraíochta",
+    "description": "Suíochán amháin sa lár agus daichead a dó breitheamh timpeall air, gach duine acu ag cur ceiste ar a bhfuil tú le ‘ní hea’ a fhreagairt.",
+    "mapHint": "Tagann gach cosán réaltaí ar an mblúire seo le chéile ag suíochán amháin i gcroílár na ríochta diaga."
+  }
+}

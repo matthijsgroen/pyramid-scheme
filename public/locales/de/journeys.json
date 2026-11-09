@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Morgen an der Sphinx",
+    "description": "Die Große Sphinx, und die Schrift zu ihren Füßen, die heute niemand mehr lesen kann. Die Karte sagt: Hier geht es los."
+  },
+  "starter_2": {
+    "name": "Route der Papyrushändler",
+    "description": "Eine Handelsstraße am Nil, voller Lagerhäuser der Händler. Ein paar davon wurden nie leer geräumt."
+  },
+  "starter_3": {
+    "name": "Tempel der Bastet",
+    "description": "Der Tempel der Bastet. Die Katzen hier waren heilig, und das jährliche Fest war das größte in ganz Ägypten – mit Booten, Musik und allem Drum und Dran."
+  },
+  "starter_4": {
+    "name": "Schule der Schreiber",
+    "description": "Die Schule der Schreiber, wo Ägypten schreiben lernte. Die Klassenzimmer liegen noch unter dem Sand."
+  },
+  "starter_treasure_tomb": {
+    "name": "Vergessenes Händlerversteck",
+    "description": "Der Keller eines Händlers, nicht eines Königs: Krüge, gestapelt, versiegelt und beschriftet – und niemand da unten, der sich darum streitet.",
+    "mapHint": "Auf dem Fetzen sind eine Marktstraße und eine Kellertür gezeichnet – das Versteck eines Händlers, mehr nicht."
+  },
+  "junior_1": {
+    "name": "Der Zug der heiligen Ibisse",
+    "description": "Sumpfland, und Ibisse, die hindurchwaten. Ägypten hat diese Vögel genau beobachtet: Wenn sie zurückkommen, kommt auch die Flut."
+  },
+  "junior_2": {
+    "name": "Tal der Handwerker",
+    "description": "Deir el-Medina, wo die Grabbauer wohnten. Alles, was in ein Königsgrab kam, wurde zuerst hier gemacht, in Gussformen."
+  },
+  "junior_3": {
+    "name": "Tempel des Thoth",
+    "description": "Der Tempel des Thoth. Er hat die Schrift erfunden, alles aufgeschrieben und gezählt – also so ziemlich das, was wir die ganze Zeit machen."
+  },
+  "junior_4": {
+    "name": "Leuchtturm von Alexandria",
+    "description": "Der Pharos von Alexandria. Oben ein Feuer, das die ganze Nacht brennt, und Seeleute, die die Küste schon aus einer Tagesreise Entfernung finden."
+  },
+  "junior_treasure_tomb": {
+    "name": "Verborgene Kammer der Edeldame",
+    "description": "Die Kammer einer reichen Dame, vom Boden bis zur Decke bemalt. Sie kaufte die besten Nachbildungen, die man für Geld bekommen konnte – und hat es nie jemandem verraten.",
+    "mapHint": "Feine Tinte, ein Wappensiegel in der Ecke – jemand Vornehmes wollte, dass dieser Raum vergessen wird."
+  },
+  "expert_1": {
+    "name": "Tal der Könige",
+    "description": "Das Tal der Könige. Irgendwann baute man keine Pyramiden mehr und versteckte die Königsgräber in einem Tal, unter einem Berg, der wie eine Pyramide aussieht."
+  },
+  "expert_2": {
+    "name": "Tempelanlage von Karnak",
+    "description": "Karnak, an dem zweitausend Jahre lang weitergebaut wurde. Allein die große Halle hat hundertvierunddreißig Säulen, und jede einzelne ist verziert."
+  },
+  "expert_3": {
+    "name": "Expedition ins Nildelta",
+    "description": "Wo sich der Nil teilt und grün ausbreitet. Das Land von Sobek – Papyrus, Fische und Krokodile, die verehrt und gefüttert wurden."
+  },
+  "expert_4": {
+    "name": "Pyramide des Djoser",
+    "description": "Djosers Stufenpyramide, das erste so große Bauwerk aus Stein. Sein Baumeister Imhotep wurde später sogar als Gott verehrt."
+  },
+  "expert_treasure_tomb": {
+    "name": "Schatzkammer des Hohepriesters",
+    "description": "Die Schatzkammer eines Hohepriesters, unter dem Opferboden. Alles da unten wurde einem Gott geschenkt und nie wieder herausgeholt.",
+    "mapHint": "Die Linien zeigen einen Tempelbezirk und eine Treppe, die unter seinen Opferboden führt."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Das Allerheiligste",
+    "description": "Der versiegelte Raum im Herzen des Tempels. Der Hohepriester ging einmal am Tag hinein, um den Gott zu waschen und anzuziehen.",
+    "mapHint": "Gänge führen an den Tempelkammern vorbei zu einer versiegelten Tür – nur die höchsten Priester durften dort hindurch."
+  },
+  "master_1": {
+    "name": "Große Pyramide von Gizeh",
+    "description": "Die Große Pyramide. Zwanzig Jahre Steineschleppen, und daneben eine ganze Stadt, die die Arbeiter mit Brot und Bier versorgte."
+  },
+  "master_2": {
+    "name": "Totenbuch",
+    "description": "Nicht ein Buch, sondern eine Sammlung von Sprüchen, auf Bestellung abgeschrieben. Bei den billigen blieb eine Lücke, wo dein Name hingehört."
+  },
+  "master_3": {
+    "name": "Fluch der Pharaonen",
+    "description": "Den berühmten Fluch haben sich Zeitungen im Jahr 1923 ausgedacht. Die Ägypter schützten ihre Gräber mit Türen und mit Papierkram."
+  },
+  "master_4": {
+    "name": "Grab der Nefertari",
+    "description": "Das Grab der Nefertari, der am schönsten bemalte Raum Ägyptens. Die Farben wurden aus Stein gemahlen – Azurit, Malachit, Ocker."
+  },
+  "master_treasure_tomb": {
+    "name": "Geheimer Schatz des Pharaos",
+    "description": "Der private Schatz eines Königs, weit draußen, wo die Karten aufhören. Was mit ihm in die Erde kam, liegt immer noch da unten.",
+    "mapHint": "Eine königliche Kartusche markiert einen Rand, und der Weg endet weit draußen unter offenem Sand."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Halle des Osiris",
+    "description": "Die Halle des Osiris. Gott der Flut und des Getreides – was hier unter die Erde kommt, soll auch wieder hochkommen.",
+    "mapHint": "Unter den Königskammern führt die Karte immer weiter hinab, in eine Halle mit den Zeichen der Totenrituale."
+  },
+  "wizard_1": {
+    "name": "Ras Reise mit der Sonne",
+    "description": "Ra geht bei Sonnenuntergang unter die Welt und muss zwölf dunkle Stunden durchqueren. Ägypten hat aufgeschrieben, was in jeder davon passiert."
+  },
+  "wizard_2": {
+    "name": "Memnonkolosse",
+    "description": "Zwei sitzende Riesen von Amenhotep III. Die Griechen meinten, sie wären jemand anderes – und dieser Name blieb zweitausend Jahre lang hängen."
+  },
+  "wizard_3": {
+    "name": "Kammer der Ma'at",
+    "description": "Die Kammer der Ma'at. Sie ist die Ordnung der Dinge, und ihre einzige Straußenfeder ist das, woran alles andere gemessen wird."
+  },
+  "wizard_4": {
+    "name": "Ewige Pyramide",
+    "description": "Die Außenhaut war aus poliertem Kalkstein, weiß wie Salz, und so genau geglättet, dass man sie noch eine Tageswanderung entfernt blitzen sah."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Kammer der Götter",
+    "description": "Hier bewahrte der Tempel auf, was den Göttern gehörte. Niemand wurde hier hereingelassen, ohne das Richtige in den Händen zu halten.",
+    "mapHint": "Kein Ort auf diesem Fetzen gehört zur Welt der Menschen – was auch immer er zeigt, Götter haben es dort hingestellt."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Reich der Kosmischen Kräfte",
+    "description": "Sternkarten an der Decke, so gemalt, dass die Toten nachts die Uhrzeit ablesen konnten. Im Schacht hängt noch jemandes Seil.",
+    "mapHint": "Hinter der Götterkammer werden die Linien zu Sternenpfaden, wo die Kräfte des Lebens und des Chaos als Schätze aufbewahrt werden."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Thron der Ewigkeit",
+    "description": "Ein Sitz in der Mitte und zweiundvierzig Richter drum herum. Jeder stellt eine Frage, auf die du mit Nein antworten sollst.",
+    "mapHint": "Alle Sternenpfade auf diesem Stück treffen sich an einem einzigen Sitz, genau im Herzen des Götterreichs."
+  }
+}

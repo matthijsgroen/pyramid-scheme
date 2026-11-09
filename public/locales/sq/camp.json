@@ -1,0 +1,253 @@
+{
+  "spots": {
+    "fire": "Zjarri i kampit",
+    "sleeping": "Vendi i gjumit",
+    "water": "Vendi i ujit",
+    "cooking": "Vendi i gatimit",
+    "donkey": "Vendi i gomarit",
+    "camel": "Vendi i devesë",
+    "mapTable": "Tavolina e hartave",
+    "palmGarden": "Kopshti i palmave",
+    "ibisPond": "Pellgu i ibisëve",
+    "lookout": "Kulla e vrojtimit",
+    "godStatues": "Statujat e perëndive",
+    "starCanopy": "Tenda e yjeve"
+  },
+  "finds": {
+    "pot": "Tenxhere",
+    "seatCushions": "Jastëkë për t'u ulur",
+    "reedMat": "Rogoz kallami",
+    "blanket": "Batanije",
+    "tentRug": "Qilim tende",
+    "tentFlag": "Flamur tende",
+    "gourd": "Kungull uji",
+    "jar": "Shtambë",
+    "secondJar": "Shtamba e dytë",
+    "spiceRack": "Raft erëzash",
+    "breadBoard": "Dërrasë buke",
+    "starMap": "Harta e yjeve",
+    "scrollCase": "Kuti rrotullash",
+    "astrolabe": "Astrolab",
+    "reedGlobe": "Glob kallami",
+    "seed": "Farë palme",
+    "secondPalm": "Farë palme",
+    "figTree": "Farë fiku",
+    "papyrus": "Rrënjë papirusi",
+    "reeds": "Fidan kallami",
+    "lotus": "Zhardhok lotusi",
+    "flag": "Flamuri i vrojtimit",
+    "thoth": "Statujëz e Thothit",
+    "bastet": "Statujëz e Bastetës",
+    "anubis": "Statujëz e Anubisit",
+    "ra": "Statujëz e Ras",
+    "cloth": "Pëlhura e yjeve"
+  },
+  "structures": {
+    "stoneRing": "Rreth gurësh",
+    "fire": "Zjarr",
+    "cookingStones": "Gurë gatimi",
+    "seatingStones": "Gurë për t'u ulur",
+    "clayOven": "Furrë balte",
+    "windbreak": "Mburojë ere",
+    "tent": "Tendë",
+    "secondTent": "Tenda e dytë",
+    "pavilion": "Pavijon",
+    "well": "Pus",
+    "wellPulley": "Pus me makara",
+    "tripod": "Trekëmbësh",
+    "breadOven": "Furrë buke",
+    "dryingRack": "Tharëse",
+    "feast": "Gosti",
+    "table": "Tavolina e hartave",
+    "lotusPlanter": "Vazo lotusi",
+    "edgeStones": "Buza e pellgut",
+    "post": "Shtylla e vrojtimit",
+    "platform": "Platforma e vrojtimit",
+    "ladder": "Shkallë",
+    "roof": "Çati",
+    "signalFire": "Zjarr sinjali",
+    "poles": "Shtyllat e tendës",
+    "stars": "Yjet",
+    "planets": "Planetët"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Gurë fushe",
+      "sandBed": "Shtrat rëre"
+    },
+    "fire": {
+      "tinder": "Ashkla ndezëse",
+      "acaciaLogs": "Kërcunj akacieje"
+    },
+    "cookingStones": {
+      "flatStone": "Gur i sheshtë",
+      "supportStones": "Gurë mbajtës"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Gurë të lëmuar",
+      "sandstoneBlock": "Bllok guri ranor",
+      "hewnSlab": "Pllakë e gdhendur"
+    },
+    "clayOven": {
+      "ovenFloor": "Dyshemeja e furrës",
+      "firebricks": "Tulla zjarri",
+      "smokeHole": "Vrimë tymi",
+      "copperGrate": "Skarë bakri"
+    },
+    "windbreak": {
+      "reedBundles": "Duaj kallami",
+      "stakes": "Hunj druri"
+    },
+    "tent": {
+      "tentPoles": "Shkopinj tende",
+      "wovenCloth": "Pëlhurë e endur",
+      "tentPegs": "Kunja tende"
+    },
+    "secondTent": {
+      "largeCloth": "Pëlhurë e madhe tende",
+      "ridgePole": "Trau i kulmit",
+      "guyRopes": "Litarë tendosës",
+      "woolFloor": "Shtresë leshi"
+    },
+    "pavilion": {
+      "pavilionPosts": "Shtyllat e pavijonit",
+      "linenCanopy": "Strehë liri",
+      "hangingCurtains": "Perde",
+      "woolRugs": "Qilima leshi",
+      "woodenFloor": "Dysheme druri"
+    },
+    "well": {
+      "wellStones": "Gurët e pusit",
+      "rope": "Litar i gjatë",
+      "bucket": "Kovë",
+      "windlass": "Çikrik"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Rrota e makarës",
+      "frame": "Skelet mbajtës",
+      "hoistRope": "Litar ngritës",
+      "counterweight": "Kundërpeshë",
+      "leatherBucket": "Kovë lëkure"
+    },
+    "tripod": {
+      "tripodPoles": "Tre shkopinj",
+      "binding": "Litar lidhës",
+      "hook": "Grep bronzi"
+    },
+    "breadOven": {
+      "mudBricks": "Tulla balte",
+      "clayPlaster": "Suva balte",
+      "ovenLid": "Kapaku i furrës"
+    },
+    "dryingRack": {
+      "rackPoles": "Shkopinjtë e tharëses",
+      "crossbar": "Tra i tërthortë",
+      "wickerTray": "Tabaka e thurur",
+      "cords": "Spango për varje"
+    },
+    "feast": {
+      "lowTable": "Sofër e ulët",
+      "breadBaskets": "Shporta buke",
+      "roastDuck": "Rosë e pjekur",
+      "beerJars": "Shtamba birre",
+      "fruitBowl": "Tas me fruta"
+    },
+    "table": {
+      "tableTop": "Faqja e tavolinës",
+      "trestles": "Këmbalecë",
+      "leatherStraps": "Rripa lëkure"
+    },
+    "lotusPlanter": {
+      "clayTub": "Govatë balte",
+      "nileSilt": "Llum i Nilit",
+      "waterJar": "Shtambë uji",
+      "lotusTubers": "Zhardhokë lotusi",
+      "stoneRim": "Buzë guri"
+    },
+    "edgeStones": {
+      "riverStones": "Gurë lumi",
+      "clayBedding": "Shtresë balte",
+      "gravel": "Zhavorr",
+      "boundaryStakes": "Hunj kufiri"
+    },
+    "post": {
+      "postTrunk": "Trung palme",
+      "footStones": "Gurë themeli",
+      "wedges": "Pyka",
+      "braces": "Mbështetëse"
+    },
+    "platform": {
+      "platformBeams": "Trarë mbajtës",
+      "platformPlanks": "Dërrasa",
+      "lashingRope": "Litar për lidhje",
+      "edgeRail": "Parmak"
+    },
+    "ladder": {
+      "ladderRails": "Anët e shkallës",
+      "rungs": "Shkallaret",
+      "groundPegs": "Kunja toke",
+      "leatherLoops": "Laqe lëkure"
+    },
+    "roof": {
+      "roofPoles": "Shkopinj çatie",
+      "thatch": "Gjethe palme",
+      "clayLayer": "Shtresë balte",
+      "bindingGrass": "Bar lidhës"
+    },
+    "signalFire": {
+      "fireBasin": "Mangall",
+      "pitch": "Katran",
+      "dryBrushwood": "Shkurre të thata",
+      "flint": "Strall",
+      "bellows": "Fryrëse"
+    },
+    "poles": {
+      "masts": "Direkë",
+      "cornerStones": "Gurë cepi",
+      "stayLines": "Litarë mbajtës",
+      "bigPegs": "Kunja të mëdhenj",
+      "poleSockets": "Bazat e shtyllave"
+    },
+    "stars": {
+      "goldLeaf": "Fletë ari",
+      "needleThread": "Gjilpërë dhe pe",
+      "indigoDye": "Bojë indigo",
+      "chalk": "Shkumës",
+      "stencils": "Shabllone"
+    },
+    "planets": {
+      "ochre": "Okër",
+      "copperDiscs": "Disqe bakri",
+      "lapisPowder": "Pluhur lapisi",
+      "hangingLoops": "Laqe për varje",
+      "dividers": "Kompas"
+    }
+  },
+  "collection": {
+    "title": "Ndërtimet",
+    "progress": "{{found}} nga {{total}}",
+    "built": "ndërtuar",
+    "unknownPart": "???",
+    "open": "Shfaq pjesët",
+    "close": "Fshih pjesët"
+  },
+  "reward": {
+    "find": "Gjetje për kampin",
+    "part": "Pjesë",
+    "progress": "{{name}} · {{found}} nga {{total}}"
+  },
+  "haul": {
+    "new": "E re në kampin tënd",
+    "parts_one": "{{name}} · {{count}} pjesë",
+    "parts_other": "{{name}} · {{count}} pjesë"
+  },
+  "arrivals": {
+    "donkey": "Gomari yt është në kamp",
+    "cart": "Karroca jote është në kamp",
+    "camel": "Deveja jote është në kamp",
+    "secondDonkey": "Gomari yt i dytë është në kamp",
+    "secondCamel": "Deveja jote e dytë është në kamp",
+    "sturdyCart": "Karroca jote më e fortë është në kamp",
+    "caravanBanner": "Flamuri i karvanit tënd valëvitet në kamp"
+  }
+}

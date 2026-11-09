@@ -1,0 +1,2103 @@
+{
+  "language": "Malti",
+  "saveUnreadable": {
+    "title": "Ma nistgħux intellgħu l-progress tiegħek",
+    "body": "Il-browser mhux qed jagħtina l-logħba li ssejvjajt bħalissa. Is-save tiegħek mhux mitluf: erġa' tella' l-paġna biex terġa' tipprova.",
+    "banner": "Il-progress mhux qed jiġi ssejvjat. Agħfas biex terġa' ttella'.",
+    "reload": "Erġa' tella'",
+    "continue": "Ilgħab mingħajr ma tissejvja",
+    "reset": "Ibda mill-ġdid (ħassar is-save)",
+    "confirmReset": "Dan iħassar is-save kollu tiegħek, u ma tistax terġa' lura. Tibda mill-ġdid?",
+    "confirmResetYes": "Iva, ħassar is-save tiegħi",
+    "confirmResetNo": "Le, mur lura"
+  },
+  "difficulty": {
+    "starter": "Prinċipjant",
+    "junior": "Junior",
+    "expert": "Espert",
+    "master": "Mgħallem",
+    "wizard": "Saħħar"
+  },
+  "journeyLength": {
+    "short": "Qasir",
+    "medium": "Medju",
+    "long": "Twil"
+  },
+  "time": {
+    "morning": "Filgħodu",
+    "afternoon": "Wara nofsinhar",
+    "evening": "Filgħaxija",
+    "night": "Bil-lejl"
+  },
+  "tomb": {},
+  "ui": {
+    "level": "Livell",
+    "symbols": "simboli",
+    "journey": "Vjaġġ",
+    "tableau": "Tablò",
+    "difficulty": "Livell",
+    "length": "Tul",
+    "time": "Ħin",
+    "requiredPrestige": "Livell ta' Prestiġju Meħtieġ",
+    "rewards": "Premjijiet",
+    "coins": "Muniti",
+    "pieces": "Biċċiet",
+    "description": "Deskrizzjoni",
+    "expedition": "Spedizzjoni",
+    "expeditionCompleted": "Spedizzjoni Lesta!",
+    "goBackToBase": "Lura lejn il-kamp",
+    "backArrow": "←",
+    "back": "← Lura",
+    "floor": "Sular {{number}}",
+    "enterSite": "Idħol ġewwa",
+    "prompt": {
+      "here": "Fittex",
+      "stairs": "Ħu t-taraġ",
+      "exit": "Itlaq minn dan il-post",
+      "zipline": "Inżel mal-ħabel — ma tistax terġa' lura",
+      "oneWay": "Aqsam — ma tistax terġa' lura",
+      "liftStone": "Erfa' l-ġebla",
+      "setStone": "Poġġi l-ġebla fuq il-platt",
+      "postStone": "Daħħal il-ġebla",
+      "takeStone": "Ħu l-ġebla",
+      "squeeze": "Għaddi minn ġo l-fetħa",
+      "replay": "Erġa' ilgħab"
+    },
+    "blocked": {
+      "carrying": "Ma tistax tgħaddi b'ġebla f'idejk"
+    },
+    "backToMap": "Lura lejn il-mappa",
+    "continueExploration": "Kompli esplora l-piramidi.",
+    "startExpedition": "Ibda l-Ispedizzjoni",
+    "webBuriedPercent": "Għadu {{percent}}% midfun",
+    "interruptExpedition": "Waqqaf l-ispedizzjoni",
+    "confirmInterruptExpedition": "Żgur li trid twaqqaf din l-ispedizzjoni? Il-progress tal-ispedizzjoni jibqa', imma l-progress tal-livell jintilef!",
+    "cancel": "Ikkanċella",
+    "settings": "Issettjar",
+    "language": "Lingwa",
+    "close": "Agħlaq",
+    "done": "Lest",
+    "clearGameData": "Ħassar id-data tal-logħba",
+    "confirmClearGameData": "Dan iħassar għal dejjem il-progress kollu, l-oġġetti u l-piramidi li esplorajt. Ma tistax terġa' lura.",
+    "disableTutorials": "Itfi t-tutorials",
+    "treasureTomb": "Post tat-Teżor",
+    "requiresMapPieces": "Trid biċċiet tal-mappa",
+    "mapPieces": "Biċċiet tal-Mappa",
+    "completeExpeditionsToUnlock": "Lesti spedizzjonijiet biex tiftaħ",
+    "availableSymbols": "Simboli li għandek:",
+    "fragmentsNeeded": "{{found}}/{{required}} meħtieġa",
+    "howToPlay": "Kif tilgħab",
+    "puzzleComplete": "It-tweġiba hi:",
+    "puzzleCompleted": "Puzzle Lest",
+    "trapBlocked": "M'għandekx biżżejjed saħħa biex tipprova din in-nassa",
+    "spiritsRejectCode": "L-ispirti ma jaċċettawx dan il-kodiċi",
+    "sacredSealBroken": "Is-siġill qaddis inkiser",
+    "newExpeditionUnlocked": "Infetħet spedizzjoni ġdida",
+    "newTombUnlocked": "Infetaħ qabar ġdid",
+    "tierComingSoonTitle": "Il-vjaġġi {{tier}} fit-triq",
+    "tierComingSoon": "Għandek il-muftieħ, imma l-piramidi {{tier}} għadhom qed jinbnew. Jaslu f'aġġornament ieħor — sa dakinhar, il-muftieħ tiegħek jiftaħ aktar mill-piramidi li diġà taf.",
+    "answerNow": "It-tweġiba hi: ",
+    "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "resetPuzzle": "Erġa' ibda",
+    "hint": "Ħjiel",
+    "undo": "Lura",
+    "erase": "Ħassar",
+    "notes": "Noti",
+    "solvedUnaided": "Solvut mingħajr ebda ħjiel",
+    "solvedWithHints_one": "Solvut b'ħjiel wieħed",
+    "solvedWithHints_two": "Solvut b'żewġ ħjiliet",
+    "solvedWithHints_few": "Solvut b'{{count}} ħjiliet",
+    "solvedWithHints_many": "Solvut b'{{count}} ħjiel",
+    "solvedWithHints_other": "Solvut b'{{count}} ħjiel",
+    "tapToContinue": "Agħfas biex tkompli",
+    "goal": "Għan"
+  },
+  "trap": {
+    "warning": "⚠ Kuritur bin-Nases",
+    "canAttempt": "Tista' tipprova tgħaddi.",
+    "tooWeak": "Dgħajjef ħafna — jekk tfalli, tibqa' bla xejn.",
+    "attempt": "Ipprova n-nassa",
+    "turnAround": "Dur lura",
+    "rested": "Strieħ ħdejn in-nar — erġajt f'saħħtek"
+  },
+  "gate": {
+    "title": "🔒 Bieb Imsakkar",
+    "locked": "Għad m'għandekx il-muftieħ it-tajjeb.",
+    "markedWith": "Hemm sinjal minqux fil-bieb:",
+    "unlocked": "Għandek il-muftieħ.",
+    "pass": "Għaddi",
+    "turnAround": "Dur lura",
+    "wardDescription": {
+      "starter": "Siġill ta' merkant jagħlaq din il-mogħdija — il-muftieħ tal-għassa tiegħu biss jiftaħha.",
+      "junior": "L-arma ta' nobbli tagħlaq din it-triq — il-muftieħ tal-għassa tiegħu biss jiftaħha.",
+      "expert": "Il-għassa tat-tempju ta' qassis il-kbir tħares dan il-bieb — il-muftieħ qaddis tiegħu biss jiftħu.",
+      "master": "Is-siġill irjali ta' fargħun jorbot din il-mogħdija — il-muftieħ tas-sultan biss jiksru.",
+      "wizard": "Għassa tal-allat iżżomm din il-bieb — xejn ħlief il-muftieħ tal-allat ma jgħaddi."
+    },
+    "needsKey": "Il-bieb immarkat għal muftieħ wieħed:",
+    "lockedColor": "Għadek ma sibtx dak il-muftieħ f'dan is-sular."
+  },
+  "chest": {
+    "tapToOpen": "Agħfas biex tiftaħ",
+    "money_one": "{{count}} munita",
+    "money_two": "{{count}} muniti",
+    "money_few": "{{count}} muniti",
+    "money_many": "{{count}} munita",
+    "money_other": "{{count}} munita",
+    "mapPiece": "Biċċa tal-Mappa",
+    "mapPieceDescription": "Biċċa fraġli ta' mappa lejn xi post minsi. Ħasra li għadha 'l bogħod milli tkun sħiħa...",
+    "mapPieceProgress": "Ġbart {{found}} minn {{required}} biċċiet tal-mappa",
+    "mapPieceComplete": "Il-mappa sħiħa — twassal għal {{name}}.",
+    "hieroglyphFragment": "Biċċa Ġeroglifu",
+    "fragmentProgress": "Sibt {{found}} minn {{required}} biċċiet",
+    "tombKey": "Muftieħ tal-Qabar",
+    "sandLever": "Lieva tar-Ramel",
+    "sandLeverDescription": "Tiġbidha u tibqa' 'l isfel. X'imkien 'il bogħod, ir-ramel qed jiżvojta.",
+    "webKey": "Muftieħ Issiġillat",
+    "webKeyDescription": "Rasu għandha sinjal li rajt fuq bieb issiġillat x'imkien ieħor.",
+    "hieroglyphs": "Ġeroglifi Antiki",
+    "hieroglyphsDescription": "Simboli qaddisa minquxa mal-ħitan ta' din il-kamra. It-tifsira tagħhom iżżid ma' dak li taf dwar id-dinja antika.",
+    "mosaicPiece": "Biċċa tal-Mużajk",
+    "mosaicPieceDescription": "Madum tal-ħġieġ li jleqq, biċċa minn mużajk kbir. Poġġih ħdejn l-oħrajn u l-istampa moħbija toħroġ bil-mod il-mod.",
+    "waterskin": "Qirba tal-Ilma",
+    "waterskinDescription": "Ilma frisk. Tixorbu minnufih u tħoss il-feriti tiegħek jaqilgħu."
+  },
+  "loot": {
+    "youFound": "Sibt",
+    "expeditionReward": "Premju żejjed talli lestejt l-ispedizzjoni",
+    "clickToContinue": "Agħfas kullimkien biex tkompli"
+  },
+  "money": {
+    "label": "Muniti"
+  },
+  "shop": {
+    "title": "Il-Mejda ta' Fez",
+    "invitation": "Agħti ħarsa lejn il-mejda",
+    "buy": "Ixtri",
+    "sell": "Biegħ",
+    "soldOut": "Mibjugħ kollu",
+    "dismiss": "Itlaq",
+    "rareItems": "Sejbiet Rari",
+    "sellSection": "Ħwejjeġ żgħar biex tbigħ",
+    "haul": {
+      "coins_one": "+{{count}} munita",
+      "coins_two": "+{{count}} muniti",
+      "coins_few": "+{{count}} muniti",
+      "coins_many": "+{{count}} munita",
+      "coins_other": "+{{count}} munita",
+      "note": "Muniti mxerrdin fit-triq"
+    }
+  },
+  "purchases": {
+    "donkey": {
+      "name": "Ħmar",
+      "need": "Għandek bżonn ħmar",
+      "opens": "Iġorrlok l-affarijiet. Bih tista' titlaq għall-vjaġġi Espert."
+    },
+    "cart": {
+      "name": "Karrettun",
+      "need": "Għandek bżonn karrettun",
+      "opens": "Il-kamp kollu joqgħod fuqu. Bih tista' titlaq għall-vjaġġi Mgħallem."
+    },
+    "camel": {
+      "name": "Ġemel",
+      "need": "Għandek bżonn ġemel",
+      "opens": "Jimxi għal jiem sħaħ bla ilma. Jeħdok sal-Kamra l-Aktar Qaddisa."
+    },
+    "secondDonkey": {
+      "name": "It-tieni ħmar",
+      "need": "Għandek bżonn it-tieni ħmar",
+      "opens": "Saħansitra aktar x'iġġorr. Bih tista' titlaq għall-vjaġġi Saħħar."
+    },
+    "secondCamel": {
+      "name": "It-tieni ġemel",
+      "need": "Għandek bżonn it-tieni ġemel",
+      "opens": "Żewġ iġmla jġorru biżżejjed ilma għas-Sala ta' Osiris."
+    },
+    "sturdyCart": {
+      "name": "Karrettun aktar b'saħħtu",
+      "need": "Għandek bżonn karrettun aktar b'saħħtu",
+      "opens": "Ma jinkisirx, lanqas fit-triq lejn is-Saltna tal-Qawwiet tal-Kosmos."
+    },
+    "caravanBanner": {
+      "name": "Bandiera tal-karovana",
+      "opens": "Ma tiftaħ xejn. Għall-gost biss."
+    },
+    "hint": "Fez ibigħ wieħed f'{{place}}",
+    "devGrant": "Ixtri l-annimali kollha"
+  },
+  "level": {
+    "completed": "Livell Lest!"
+  },
+  "mosaic": {
+    "place_one": "Poġġi biċċa waħda",
+    "place_two": "Poġġi żewġ biċċiet",
+    "place_few": "Poġġi {{count}} biċċiet",
+    "place_many": "Poġġi {{count}} biċċa",
+    "place_other": "Poġġi {{count}} biċċa",
+    "placing": "Qed inpoġġu…",
+    "panel": {
+      "starter": "Il-Gwardjan ħdejn il-Bieb",
+      "junior": "L-Ewwel Lezzjoni",
+      "expert": "Daħħal ix-Xemx",
+      "master": "Is-Sultan l-Aħdar",
+      "wizard": "Ir-Rixa u l-Qalb"
+    },
+    "entrance": {
+      "title": "Mużajk",
+      "label": "Mużajk {{found}}/{{total}}"
+    },
+    "haul": {
+      "pieces_one": "{{count}} biċċa tal-mużajk",
+      "pieces_two": "{{count}} biċċiet tal-mużajk",
+      "pieces_few": "{{count}} biċċiet tal-mużajk",
+      "pieces_many": "{{count}} biċċa tal-mużajk",
+      "pieces_other": "{{count}} biċċa tal-mużajk",
+      "note": "Għat-tieqa tal-ħġieġ ikkulurit"
+    }
+  },
+  "collection": {
+    "tabs": {
+      "treasures": "Teżori",
+      "hieroglyphs": "Ġeroglifi",
+      "stories": "Stejjer",
+      "junk": "Ħwejjeġ żgħar"
+    },
+    "tabsLabel": "Dak li ġbart",
+    "tabNew_one": "{{label}} · {{count}} ġdid",
+    "tabNew_two": "{{label}} · {{count}} ġodda",
+    "tabNew_few": "{{label}} · {{count}} ġodda",
+    "tabNew_many": "{{label}} · {{count}} ġodda",
+    "tabNew_other": "{{label}} · {{count}} ġodda",
+    "empty": "Is-senduq tiegħek għadu vojt",
+    "newLabel": "ĠDID",
+    "clickForDetails": "Agħfas madum biex tara aktar",
+    "categories": {
+      "deities": "🏺 Allat",
+      "professions": "⚱️ Xogħlijiet",
+      "animals": "🐾 Annimali",
+      "artifacts": "💎 Oġġetti Antiki",
+      "treasures": "💰 Teżori",
+      "junk": "🔷 Ħwejjeġ żgħar",
+      "signs": "✍️ Sinjali"
+    },
+    "treasureCategories": {
+      "merchantCache": "💰 Moħba tal-Merkant",
+      "nobleVault": "👑 Kamra tan-Nobbli",
+      "templeSecrets": "🏛️ Sigrieti tat-Tempju",
+      "ancientRelics": "🏺 Relikwi Antiki",
+      "mythicalArtifacts": "✨ Oġġetti Leġġendarji"
+    }
+  },
+  "detector": {
+    "compassTitle": "Boxxla",
+    "corridorTitle": "Sejjieb tal-kurituri",
+    "pickTarget": "Agħżel ġeroglifu fuq il-mejda tal-mapep fil-kamp",
+    "allCollected": "Għad m'hemm l-ebda biċċa fil-qrib f'piramida li esplorajt qabel",
+    "more": "+{{count}} oħra",
+    "corridorHere": "Hawnhekk eżatt hemm mogħdija moħbija",
+    "revealCorridor": "Iftaħha",
+    "corridorNearby": "Hemm kuritur moħbi fil-qrib",
+    "corridorOnFloor": "Hemm kuritur moħbi jistenna f'dan is-sular",
+    "lookingFor": "Qed tfittex {{symbol}}",
+    "access": {
+      "open": "Ma nafu b'xejn li jwaqqfek hawn",
+      "unknown": "Forsi għadek ma tistax tasal — jinsab ġo qabar jew għall-bejgħ"
+    },
+    "corridorNoneNearby": "L-ebda kuritur moħbi fil-qrib",
+    "corridorNoneOnFloor": "L-ebda kuritur moħbi f'dan is-sular",
+    "corridorOtherFloor": "Hemm kuritur moħbi jistenna f'sular ieħor",
+    "corridorNoneInPyramid": "L-ebda kuritur moħbi f'sular ieħor",
+    "title": "Ditekter",
+    "band": {
+      "none": "Xejn ma nstab",
+      "pyramid": "Hemm xi ħaġa f'din il-piramida",
+      "floor": "Hemm xi ħaġa f'dan is-sular",
+      "near": "Hemm xi ħaġa fil-qrib",
+      "here": "Hawn eżatt! Iftaħ id-ditekter"
+    },
+    "camp": {
+      "parts": "{{count}} minn {{total}} biċċiet",
+      "compassReach": {
+        "1": "tara l-piramida",
+        "2": "tara s-sular",
+        "3": "turik il-post eżatt"
+      },
+      "pickHeading": "Il-boxxla x'qed tfittex?",
+      "onlyIncomplete": "Sinjali li għandek biċċa minnhom biss, sakemm ikunu sħaħ.",
+      "whereHeading": "Fejn jinsabu l-biċċiet ta' {{symbol}}",
+      "pickFirst": "Agħżel sinjal biex tara fejn jinsabu l-biċċiet tiegħu.",
+      "follow": "Segwi dan is-sinjal",
+      "following": "Il-boxxla qed issegwi dan is-sinjal",
+      "nothingToFind": "Għad m'għandek l-ebda biċċa ta' sinjal li mhux sħiħ.",
+      "noneInReach": "Għad m'hemm l-ebda biċċa fil-qrib f'piramida li esplorajt qabel.",
+      "corridorReach": {
+        "1": "jisma' kuritur fil-qrib",
+        "2": "jisma' dan is-sular kollu",
+        "3": "jisma' s-sulari l-oħra wkoll",
+        "4": "jisma' vjaġġi oħra"
+      },
+      "corridorInPyramid": "Ġo piramida jisma' għal kurituri magħluqa.",
+      "corridorFarNext": "Bl-erba' biċċiet kollha jisma' vjaġġi oħra mill-kamp.",
+      "corridorWhere": "Fejn għad hemm kuritur magħluq",
+      "corridorNone": "L-ebda kuritur magħluq f'vjaġġ li kont fih.",
+      "pyramid": "Piramida {{n}}",
+      "corridorCount_one": "kuritur wieħed",
+      "corridorCount_two": "żewġ kurituri",
+      "corridorCount_few": "{{count}} kurituri",
+      "corridorCount_many": "{{count}} kuritur",
+      "corridorCount_other": "{{count}} kuritur"
+    }
+  },
+  "keys": {
+    "blue": "Muftieħ blu",
+    "red": "Muftieħ aħmar",
+    "green": "Muftieħ aħdar",
+    "yellow": "Muftieħ isfar",
+    "purple": "Muftieħ vjola",
+    "bundle": "Ċirku ta' mfietaħ",
+    "foundDescription": "Jiftaħ il-bibien immarkati b'dan il-kulur, f'dan is-sular.",
+    "heldTitle": "{{key}} — f'idejk",
+    "neededTitle": "{{key}} — għad trid issibu"
+  },
+  "balance": {
+    "rules": {
+      "tap": "Agħfas sinjal hawn taħt, imbagħad numru. Agħfas dak in-numru għal darb'oħra biex tneħħih.",
+      "same": "Sinjal jiżen l-istess fuq kull miżien.",
+      "cancel": "Neħħi l-istess ħaġa miż-żewġ kefef u l-miżien jibqa' ndaqs. Agħfas biċċa mmarkata biex tagħmel dan — dak li jibqa' jinżamm bħala ringiela ġdida.",
+      "swap": "Agħfas sinjal li m'hemmx bħalu fin-naħa l-oħra, imbagħad ringiela fejn dak is-sinjal waħdu, biex tbiddlu ma' kemm tiswa dik ir-ringiela."
+    },
+    "hint": {
+      "mistake": "Wieħed mill-piżijiet li tajt iwaqqa' miżien. Neħħih u erġa' ħares.",
+      "alone": "Fir-ringiela mixgħula, {{glyph}} hu l-unika biċċa li fadal bla numru. Aħdem kemm jiżen.",
+      "equalShares": "Ir-ringiela mixgħula għandha biss {{glyph}} kontra numru. Aqsam dak in-numru bejniethom.",
+      "difference": "Iż-żewġ ringieli mixgħula huma l-istess ħlief għal {{glyph}}. Qabbilhom.",
+      "cancelGlyph": "Iż-żewġ kefef tar-ringiela mixgħula għandhom {{glyph}}. Agħfas waħda biex tneħħiha miż-żewġ naħat — ir-ringiela tibqa' ndaqs.",
+      "cancelStones": "Iż-żewġ kefef tar-ringiela mixgħula għandhom numri biss. Agħfas wieħed biex tneħħi l-istess ammont miż-żewġ naħat.",
+      "swap": "Ringiela mixgħula waħda tgħid kemm jiswa {{glyph}} waħdu. Agħfas {{glyph}} fir-ringiela mixgħula l-oħra, imbagħad agħfas dik ir-ringiela."
+    },
+    "swap": {
+      "pick": "Agħfas ringiela mixgħula biex tbiddel dan {{glyph}} ma' kemm tgħid dik ir-ringiela li jiswa.",
+      "none": "Xejn hawn ma jgħid kemm jiswa {{glyph}} waħdu, u xejn fin-naħa l-oħra ma jaqbel miegħu."
+    },
+    "goal": {
+      "default": "Kull sinjal għandu piż, u kull miżien ikun indaqs.",
+      "weighing": "Kull sinjal isib il-piż tiegħu, u kull miżien joqgħod dritt."
+    },
+    "name": {
+      "default": "Il-Miżien",
+      "weighing": "Il-Wiżna tal-Qalb"
+    }
+  },
+  "sumplete": {
+    "rules": {
+      "tap": "Agħfas darba biex taqta' numru, għal darb'oħra biex timmarkah bħala wieħed li jibqa', u għal darb'oħra biex tnaddfu.",
+      "totals": "In-numru ż-żgħir taħt kull għan hu kemm qed tagħmel dik il-linja bħalissa."
+    },
+    "hint": {
+      "mistake": "Waħda mill-marki hawn ma tistax tkun tajba. Neħħiha u erġa' ħares.",
+      "tooBig": {
+        "row": "Din ir-ringiela għad trid {{deficit}}. {{value}} akbar minn hekk, allura ma jistax jibqa'.",
+        "col": "Din il-kolonna għad trid {{deficit}}. {{value}} akbar minn hekk, allura ma jistax jibqa'."
+      },
+      "allStrike": {
+        "row": "In-numri li qed jibqgħu f'din ir-ringiela diġà jagħmlu l-għan tagħha, allura l-bqija kollha jridu jitilqu.",
+        "col": "In-numri li qed jibqgħu f'din il-kolonna diġà jagħmlu l-għan tagħha, allura l-bqija kollha jridu jitilqu."
+      },
+      "allKeep": {
+        "row": "Din ir-ringiela diġà tagħmel l-għan tagħha — immarka dawn in-numri bħala li jibqgħu, biex tkun tista' taħdem il-kolonni li jgħaddu minnhom.",
+        "col": "Din il-kolonna diġà tagħmel l-għan tagħha — immarka dawn in-numri bħala li jibqgħu, biex tkun tista' taħdem ir-ringieli li jgħaddu minnhom."
+      },
+      "parityKeep": {
+        "row": "Din ir-ringiela għad trid {{deficit}}, numru fard. {{value}} hu l-uniku numru fard li fadal, allura jrid jibqa'.",
+        "col": "Din il-kolonna għad trid {{deficit}}, numru fard. {{value}} hu l-uniku numru fard li fadal, allura jrid jibqa'."
+      },
+      "parityStrike": {
+        "row": "Din ir-ringiela għad trid {{deficit}}, numru par. {{value}} hu l-uniku numru fard li fadal, allura jrid jitlaq.",
+        "col": "Din il-kolonna għad trid {{deficit}}, numru par. {{value}} hu l-uniku numru fard li fadal, allura jrid jitlaq."
+      },
+      "onlyCombination": {
+        "row": "Grupp wieħed biss ta' numri f'din ir-ringiela jagħmel {{deficit}}.",
+        "col": "Grupp wieħed biss ta' numri f'din il-kolonna jagħmel {{deficit}}."
+      },
+      "inEveryCombinationKeep": {
+        "row": "Mingħajr {{value}}, l-ebda grupp tan-numri l-oħra f'din ir-ringiela ma jagħmel {{deficit}} — allura jrid jibqa'.",
+        "col": "Mingħajr {{value}}, l-ebda grupp tan-numri l-oħra f'din il-kolonna ma jagħmel {{deficit}} — allura jrid jibqa'."
+      },
+      "inEveryCombinationStrike": {
+        "row": "Jekk iżżomm {{value}}, din ir-ringiela tkun għad trid {{remaining}}, u l-ebda wieħed min-numri l-oħra hawn ma jista' jagħmel dan — allura jrid jitlaq.",
+        "col": "Jekk iżżomm {{value}}, din il-kolonna tkun għad trid {{remaining}}, u l-ebda wieħed min-numri l-oħra hawn ma jista' jagħmel dan — allura jrid jitlaq."
+      },
+      "tooBig.row": "Din ir-ringiela għad trid {{deficit}}, u {{value}} akbar minn hekk.",
+      "tooBig.col": "Din il-kolonna għad trid {{deficit}}, u {{value}} akbar minn hekk.",
+      "allStrike.row": "In-numri li qed jibqgħu f'din ir-ringiela diġà jagħmlu l-għan tagħha.",
+      "allStrike.col": "In-numri li qed jibqgħu f'din il-kolonna diġà jagħmlu l-għan tagħha.",
+      "allKeep.row": "Din ir-ringiela diġà tagħmel l-għan tagħha, allura issa tista' taħdem il-kolonni li jgħaddu minnha.",
+      "allKeep.col": "Din il-kolonna diġà tagħmel l-għan tagħha, allura issa tista' taħdem ir-ringieli li jgħaddu minnha.",
+      "parityKeep.row": "Din ir-ringiela għad trid {{deficit}}, numru fard, u {{value}} hu l-uniku numru fard li fadal.",
+      "parityKeep.col": "Din il-kolonna għad trid {{deficit}}, numru fard, u {{value}} hu l-uniku numru fard li fadal.",
+      "parityStrike.row": "Din ir-ringiela għad trid {{deficit}}, numru par, u {{value}} hu l-uniku numru fard li fadal.",
+      "parityStrike.col": "Din il-kolonna għad trid {{deficit}}, numru par, u {{value}} hu l-uniku numru fard li fadal.",
+      "onlyCombination.row": "Grupp wieħed biss ta' numri f'din ir-ringiela jagħmel {{deficit}}.",
+      "onlyCombination.col": "Grupp wieħed biss ta' numri f'din il-kolonna jagħmel {{deficit}}.",
+      "inEveryCombinationKeep.row": "Mingħajr {{value}}, l-ebda grupp tan-numri l-oħra f'din ir-ringiela ma jagħmel {{deficit}}.",
+      "inEveryCombinationKeep.col": "Mingħajr {{value}}, l-ebda grupp tan-numri l-oħra f'din il-kolonna ma jagħmel {{deficit}}.",
+      "inEveryCombinationStrike.row": "Jekk iżżomm {{value}}, din ir-ringiela tkun għad trid {{remaining}}, u l-ebda wieħed min-numri l-oħra hawn ma jista' jagħmel dan.",
+      "inEveryCombinationStrike.col": "Jekk iżżomm {{value}}, din il-kolonna tkun għad trid {{remaining}}, u l-ebda wieħed min-numri l-oħra hawn ma jista' jagħmel dan.",
+      "action": {
+        "strike_one": "Aqta' n-numru mmarkat bl-istrixxi.",
+        "strike_two": "Aqta' n-numri mmarkati bl-istrixxi.",
+        "strike_few": "Aqta' n-numri mmarkati bl-istrixxi.",
+        "strike_many": "Aqta' n-numri mmarkati bl-istrixxi.",
+        "strike_other": "Aqta' n-numri mmarkati bl-istrixxi.",
+        "keep_one": "Immarka n-numru bl-istrixxi bħala li jibqa'.",
+        "keep_two": "Immarka n-numri bl-istrixxi bħala li jibqgħu.",
+        "keep_few": "Immarka n-numri bl-istrixxi bħala li jibqgħu.",
+        "keep_many": "Immarka n-numri bl-istrixxi bħala li jibqgħu.",
+        "keep_other": "Immarka n-numri bl-istrixxi bħala li jibqgħu."
+      }
+    },
+    "goal": "Kull ringiela u kull kolonna jagħmlu n-numru li hemm ħdejhom.",
+    "name": "Il-Għadd"
+  },
+  "futoshiki": {
+    "rules": {
+      "signs": "Sinjal bejn żewġ kaxxi jipponta lejn l-iżgħar numru minnhom it-tnejn.",
+      "enter": "Agħfas kaxxa, imbagħad agħfas numru. L-istess numru għal darb'oħra jneħħih.",
+      "notes": "Aqleb għall-lapes biex tikteb in-numri li kaxxa għad tista' jkollha. 'Lura' jneħħi l-aħħar mossa tiegħek."
+    },
+    "hint": {
+      "mistake": {
+        "value": "Wieħed min-numri hawn ma jistax ikun tajjeb. Neħħih u erġa' ħares.",
+        "note": "In-noti ta' din il-kaxxa neħħew in-numru li suppost jmur hawn. Naddafhom u erġa' ibda."
+      },
+      "nakedSingle": "Kull numru ieħor diġà meħud f'din ir-ringiela, f'din il-kolonna, jew mis-sinjali — għal din il-kaxxa fadal {{value}} biss.",
+      "hiddenSingle": {
+        "row": "{{value}} ma joqgħod f'ebda kaxxa oħra ta' din ir-ringiela, allura jmur hawn.",
+        "col": "{{value}} ma joqgħod f'ebda kaxxa oħra ta' din il-kolonna, allura jmur hawn."
+      },
+      "signBound": {
+        "high": "Sinjal hawn jipponta 'l bogħod lejn numru akbar, allura din il-kaxxa ma tistax ikollha {{value}}.",
+        "low": "Sinjal hawn jipponta lejn din il-kaxxa, allura xi ħaġa trid tkun iżgħar minnha — ma tistax ikollha {{value}}."
+      },
+      "signVsValue": {
+        "less": "Is-sinjal jgħid li din il-kaxxa iżgħar minn ta' ħdejha, u dik ta' ħdejha għandha {{value}}.",
+        "greater": "Is-sinjal jgħid li din il-kaxxa akbar minn ta' ħdejha, u dik ta' ħdejha għandha {{value}}."
+      },
+      "signChain": {
+        "high": "Segwi s-sinjali minn din il-kaxxa: {{chain}} kaxxi wara xulxin iridu jkunu kull waħda akbar minn ta' qabilha, allura din ma tistax tkun aktar minn {{bound}}.",
+        "low": "Segwi s-sinjali lejn din il-kaxxa: {{chain}} kaxxi wara xulxin iridu jkunu kull waħda iżgħar minn ta' qabilha, allura din ma tistax tkun inqas minn {{bound}}."
+      },
+      "signPair": {
+        "less": "L-akbar numru li l-kaxxa fin-naħa l-oħra tas-sinjal għad jista' jkollha hu {{value}}, u din il-kaxxa trid tibqa' taħtu.",
+        "greater": "L-iżgħar numru li l-kaxxa fin-naħa l-oħra tas-sinjal għad jista' jkollha hu {{value}}, u din il-kaxxa trid tibqa' fuqu."
+      },
+      "nakedPair": {
+        "row": "Dawn iż-żewġ kaxxi jista' jkollhom biss {{first}} u {{second}}, b'xi ordni, allura l-ebda kaxxa oħra f'din ir-ringiela ma tista' jkollha xi wieħed minnhom.",
+        "col": "Dawn iż-żewġ kaxxi jista' jkollhom biss {{first}} u {{second}}, b'xi ordni, allura l-ebda kaxxa oħra f'din il-kolonna ma tista' jkollha xi wieħed minnhom."
+      },
+      "hiddenPair": {
+        "row": "F'din ir-ringiela, {{first}} u {{second}} ma joqogħdu mkien ħlief f'dawn iż-żewġ kaxxi, allura xejn ieħor ma jista' jmur fihom.",
+        "col": "F'din il-kolonna, {{first}} u {{second}} ma joqogħdu mkien ħlief f'dawn iż-żewġ kaxxi, allura xejn ieħor ma jista' jmur fihom."
+      },
+      "xWing": {
+        "row": "{{value}} joqgħod f'żewġ kaxxi biss f'kull waħda minn dawn iż-żewġ ringieli, u huma fl-istess kolonni. Kif ma jaqax, iż-żewġ kolonni jkunu meħuda — allura {{value}} ma jista' jmur imkien ieħor fihom.",
+        "col": "{{value}} joqgħod f'żewġ kaxxi biss f'kull waħda minn dawn iż-żewġ kolonni, u huma fl-istess ringieli. Kif ma jaqax, iż-żewġ ringieli jkunu meħuda — allura {{value}} ma jista' jmur imkien ieħor fihom."
+      },
+      "nakedTriple": {
+        "row": "Dawn it-tliet kaxxi għandhom biss {{first}}, {{second}} u {{third}} bejniethom, allura l-ebda kaxxa oħra f'din ir-ringiela ma tista' tieħu xi wieħed mit-tlieta.",
+        "col": "Dawn it-tliet kaxxi għandhom biss {{first}}, {{second}} u {{third}} bejniethom, allura l-ebda kaxxa oħra f'din il-kolonna ma tista' tieħu xi wieħed mit-tlieta."
+      },
+      "hiddenTriple": {
+        "row": "F'din ir-ringiela, {{first}}, {{second}} u {{third}} ma joqogħdu mkien ħlief f'dawn it-tliet kaxxi, allura xejn ieħor ma jista' jmur fihom.",
+        "col": "F'din il-kolonna, {{first}}, {{second}} u {{third}} ma joqogħdu mkien ħlief f'dawn it-tliet kaxxi, allura xejn ieħor ma jista' jmur fihom."
+      }
+    },
+    "goal": "Kull ringiela u kull kolonna juru kull numru darba biss.",
+    "name": "Akbar u Iżgħar"
+  },
+  "lightbeam": {
+    "rules": {
+      "mirrors": "Mera tbaxxi d-dawl minn kwalunkwe naħa tagħha. Il-marki ż-żgħar madwarha juru kif tista' tpoġġi wkoll: il-biċċa l-kbira jduru d-dawl kwart, u xi wħud ma jaslux hemm u jibagħtuh imżerżaq.",
+      "walls": "Blokka ġebel tibla' d-dawl. Hekk ukoll it-tarf tal-board.",
+      "tap": "Agħfas biċċa biex tbiddilha: mera ddur, biċċa li tiżżerżaq tmur fil-post li jmiss. Tarf abjad ifisser li tista' ċċaqlaqha int; kull ħaġa oħra hi parti mill-puzzle.",
+      "nodes": "Xi ġebel huwa marbut ma' sokit fl-art u l-ebda għafsa ma ċċaqlqu. Ibgħat id-dawl minn fuq is-sokit u l-ġebla titwarrab."
+    },
+    "hint": {
+      "entryRun": "Ibda minn fejn diġà jmur id-dawl: jiġri dritt mid-diska sa ma jiltaqa' mal-ewwel biċċa li tista' tbiddel. Dawk il-kaxxi jġorru d-dawl tagħmel x'tagħmel.",
+      "exitRun": "Ħares lejn is-santwarju. Naħa waħda biss minnu tista' tixgħel — kull triq oħra hi magħluqa jew tħares 'il barra mill-board — allura d-dawl irid jasal minn dik il-linja.",
+      "wiringFires": {
+        "one": "Id-dawl irid jgħaddi minn fuq dak is-sokit fit-triq — dan diġà ħdimtu. Meta jgħaddi minn fuqu, il-ġebla marbuta miegħu titwarrab, u t-triq ta' wara tinfetaħ.",
+        "all": "Dik il-ġebla marbuta ma' aktar minn sokit wieħed, u tiċċaqlaq biss meta d-dawl ikun għadda minn fuq kull wieħed minnhom. Sib triq biex ir-raġġ jgħaddi minnhom kollha."
+      },
+      "deadEnd": {
+        "wall": "Jekk tpoġġiha hekk, id-dawl jiġri dritt fil-ġebel u xejn ma jsalvah. Allura ma tistax tpoġġiha hekk.",
+        "disc": "Jekk tpoġġiha hekk, il-mera tibgħat id-dawl lura minn fejn ġie, sad-diska li ħareġ minnha. Allura ma tistax tpoġġiha hekk.",
+        "edge": "Jekk tpoġġiha hekk, id-dawl joħroġ mit-tarf tal-board u xejn ma jaqbdu. Allura ma tistax tpoġġiha hekk.",
+        "loop": "Jekk tpoġġiha hekk, id-dawl qatt ma jasal imkien — jibqa' jdur għal dejjem. Allura ma tistax tpoġġiha hekk."
+      },
+      "feedsExit": {
+        "wall": "Aħdem lura mis-santwarju. Jekk tpoġġiha hekk, xejn ma jista' jwassal id-dawl mal-unika linja li tasal għandu — imut fil-ġebel fit-triq.",
+        "disc": "Aħdem lura mis-santwarju. Jekk tpoġġiha hekk, id-dawl ikollu joħroġ min-naħa d-dlama ta' wara tad-diska, u minn hemm ma joħroġ l-ebda dawl.",
+        "edge": "Aħdem lura mis-santwarju. Jekk tpoġġiha hekk, id-dawl ikollu jiġi minn barra l-board biex jasal għandu.",
+        "loop": "Aħdem lura mis-santwarju. Jekk tpoġġiha hekk, id-dawl li suppost jasal għandu jibqa' jdur għal dejjem minflok."
+      },
+      "wiringDead": "Tagħmel x'tagħmel, id-dawl qatt ma jista' jasal għal dak is-sokit — allura l-ġebla marbuta miegħu tibqa' eżatt fejn hi, u tista' taqra t-triq dritt minn ħdejha.",
+      "neverReached": "Ħalli lil din. Id-dawl ma jistax jasal għandha kif ma tpoġġi l-bqija, allura xejn li tagħmlilha ma jagħmel differenza.",
+      "onlySurvivor": "Ipprova kull pożizzjoni ta' din waħda waħda, u kollha ħlief waħda jħallu s-santwarju mudlam. Dik hi t-tweġiba."
+    },
+    "goal": "Id-dawl tax-xemx jiġri mid-diska sas-santwarju.",
+    "name": "Raġġ ta' Dawl"
+  },
+  "eclipse": {
+    "rules": {
+      "triple": "Tlieta tal-istess wara xulxin qatt mhu permess, la mal-wiċċ u lanqas 'l isfel.",
+      "copies": "L-ebda żewġ ringieli ma jistgħu jkunu l-istess, u lanqas żewġ kolonni.",
+      "signs": "Sinjal bejn żewġ kaxxi jgħid kif inhuma: = għall-istess, × għal differenti.",
+      "enter": "Agħfas kaxxa biex tpoġġi xemx, għal darb'oħra għal qamar, u darba oħra biex tbattalha."
+    },
+    "hint": {
+      "mistake": "Waħda minn dawn il-marki ma tistax tkun tajba.",
+      "sign.same": "= tfisser l-istess.",
+      "sign.different": "× tfisser differenti.",
+      "noTriple.pair": "Diġà hemm żewġ {{mark}}, u tlieta wara xulxin qatt mhu permess.",
+      "noTriple.sandwich": "{{mark}} fuq iż-żewġ naħat, u tlieta wara xulxin qatt mhu permess.",
+      "signPair": "Dawn it-tnejn huma l-istess, u dak {{mark}} hu ħdejhom.",
+      "lineCount": "Din il-linja diġà għandha l-{{count}} {{mark}} tagħha.",
+      "noCopy": "Bil-kontra tkun tikkopja l-linja mixgħula.",
+      "linePairing.sameNoRoom": "Fadal biss {{count}} {{mark}} hawn, u dawn it-tnejn huma l-istess.",
+      "linePairing.differentTakesOne": "Il-pari × jieħdu l-{{mark}} li din il-linja għandha post għalihom.",
+      "loneMark": "Fadal {{mark}} wieħed, u kaxxa waħda biss iżżomm tliet {{other}} 'il bogħod minn xulxin.",
+      "squeeze.triple": "{{mark}} hawn iġiegħel il-bqija jkunu {{other}} — tlieta wara xulxin.",
+      "squeeze.sign": "{{mark}} hawn iġiegħel il-bqija jkunu {{other}} — sinjal ma jibqax jaqbel.",
+      "squeeze.copy": "{{mark}} hawn iġiegħel il-bqija jkunu {{other}} — il-linja ssir kopja.",
+      "action": {
+        "fill_one": "Poġġi {{mark}} fil-kaxxa bl-istrixxi.",
+        "fill_two": "Poġġi {{mark}} fil-kaxxi bl-istrixxi.",
+        "fill_few": "Poġġi {{mark}} fil-kaxxi bl-istrixxi.",
+        "fill_many": "Poġġi {{mark}} fil-kaxxi bl-istrixxi.",
+        "fill_other": "Poġġi {{mark}} fil-kaxxi bl-istrixxi.",
+        "fillMixed": "Imla l-kaxxi bl-istrixxi — l-unika mod li jaħdem."
+      }
+    },
+    "goal": "Kull kaxxa għandha xemx jew qamar, u kull linja għandha daqs minn waħda daqs kemm għandha mill-oħra.",
+    "name": "Xemx u Qamar"
+  },
+  "constellation": {
+    "rules": {
+      "default": {
+        "straight": "Il-linji tad-dawl jimxu dritti mal-wiċċ jew 'l isfel, minn stilla għal oħra.",
+        "pair": "Żewġ stilel jista' jkollhom mhux aktar minn żewġ linji bejniethom.",
+        "cross": "Il-linji qatt ma jaqsmu lil xulxin, u qatt ma jgħaddu minn ġo stilla.",
+        "enter": "Kaxkar minn stilla lejn ta' ħdejha biex tpinġi linja, għal darb'oħra għal waħda doppja, u darba oħra biex tħassarha."
+      },
+      "causeway": {
+        "straight": "It-toroq tal-ġarr jimxu dritti mal-wiċċ jew 'l isfel, minn post għal ieħor.",
+        "pair": "Żewġ postijiet jista' jkollhom mhux aktar minn żewġ toroq bejniethom.",
+        "cross": "It-toroq qatt ma jaqsmu lil xulxin, u qatt ma jgħaddu minn ġo post.",
+        "enter": "Kaxkar minn post lejn ta' ħdejh biex tagħmel triq, għal darb'oħra biex tirdoppjaha, u darba oħra biex tqalagħha."
+      },
+      "irrigation": {
+        "straight": "Il-kanali jimxu dritti mal-wiċċ jew 'l isfel, minn ħawt għal ieħor.",
+        "pair": "Żewġ ħwat jista' jkollhom mhux aktar minn żewġ kanali bejniethom.",
+        "cross": "Il-kanali qatt ma jaqsmu lil xulxin, u qatt ma jgħaddu minn ġo ħawt.",
+        "enter": "Kaxkar minn ħawt lejn ta' ħdejh biex tħaffer kanal, għal darb'oħra biex twessgħu, u darba oħra biex timlieh."
+      },
+      "ceiling": {
+        "straight": "Il-kurduni jimxu dritti mal-wiċċ jew 'l isfel, minn stilla għal oħra.",
+        "pair": "Żewġ stilel jista' jkollhom mhux aktar minn żewġ kurduni bejniethom.",
+        "cross": "Il-kurduni qatt ma jaqsmu lil xulxin, u qatt ma jgħaddu minn ġo stilla.",
+        "enter": "Kaxkar minn stilla lejn ta' ħdejha biex tqiegħed kurdun, għal darb'oħra biex tirdoppjah, u darba oħra biex tneħħih."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Waħda minn dawn il-linji ma tistax tkun tajba.",
+        "capacity": "{{count}} linji, u eżatt biżżejjed toroq 'il barra.",
+        "settled": "Dan {{count}} għandu l-linji tiegħu.",
+        "soleWayOut": "Fadal triq waħda biss 'il barra, u għad iridu jinġibdu {{count}}.",
+        "crossed": "Linja hemm taqsam lil din.",
+        "atLeastOne": "{{count}} linji, u t-toroq l-oħra 'l barra ma jistgħux iġorruhom kollha.",
+        "twinBlock.single": "Jekk tgħaqqad lil dawk it-tnejn, tagħmel kostellazzjoni ta' tnejn biss.",
+        "twinBlock.double": "It-tieni linja hemm tagħmel kostellazzjoni ta' tnejn biss.",
+        "isolation": "Dik il-linja tagħlaq lil dawn il-{{count}} stilel 'il bogħod mill-bqija.",
+        "action": {
+          "draw_one": "Iġbed il-linja mmarkata.",
+          "draw_two": "Iġbed il-linji mmarkati.",
+          "draw_few": "Iġbed il-linji mmarkati.",
+          "draw_many": "Iġbed il-linji mmarkati.",
+          "draw_other": "Iġbed il-linji mmarkati.",
+          "refuse_one": "Il-linja mmarkata tibqa' mhux miġbuda.",
+          "refuse_two": "Il-linji mmarkati jibqgħu mhux miġbuda.",
+          "refuse_few": "Il-linji mmarkati jibqgħu mhux miġbuda.",
+          "refuse_many": "Il-linji mmarkati jibqgħu mhux miġbuda.",
+          "refuse_other": "Il-linji mmarkati jibqgħu mhux miġbuda.",
+          "refuseDouble": "Linja waħda hemm, u mhux it-tieni."
+        }
+      },
+      "causeway": {
+        "mistake": "Waħda minn dawn it-toroq ma tistax tkun tajba.",
+        "capacity": "{{count}} toroq, u eżatt biżżejjed toroq 'il barra.",
+        "settled": "Dan {{count}} għandu t-toroq tiegħu.",
+        "soleWayOut": "Fadal triq waħda biss 'il barra, u għad iridu jsiru {{count}}.",
+        "crossed": "Triq hemm taqsam lil din.",
+        "atLeastOne": "{{count}} toroq, u t-toroq l-oħra 'l barra ma jistgħux iġorruhom kollha.",
+        "twinBlock.single": "Jekk tgħaqqad lil dawk it-tnejn, tagħmel netwerk ta' tnejn biss.",
+        "twinBlock.double": "It-tieni triq hemm tagħmel netwerk ta' tnejn biss.",
+        "isolation": "Dik it-triq taqta' lil dawn il-{{count}} postijiet mill-bqija.",
+        "action": {
+          "draw_one": "Agħmel it-triq immarkata.",
+          "draw_two": "Agħmel it-toroq immarkati.",
+          "draw_few": "Agħmel it-toroq immarkati.",
+          "draw_many": "Agħmel it-toroq immarkati.",
+          "draw_other": "Agħmel it-toroq immarkati.",
+          "refuse_one": "It-triq immarkata tibqa' ma ssirx.",
+          "refuse_two": "It-toroq immarkati jibqgħu ma jsirux.",
+          "refuse_few": "It-toroq immarkati jibqgħu ma jsirux.",
+          "refuse_many": "It-toroq immarkati jibqgħu ma jsirux.",
+          "refuse_other": "It-toroq immarkati jibqgħu ma jsirux.",
+          "refuseDouble": "Triq waħda hemm, u mhux it-tieni."
+        }
+      },
+      "irrigation": {
+        "mistake": "Wieħed minn dawn il-kanali ma jistax ikun tajjeb.",
+        "capacity": "{{count}} kanali, u eżatt biżżejjed toroq 'il barra.",
+        "settled": "Dan {{count}} għandu l-kanali tiegħu.",
+        "soleWayOut": "Fadal triq waħda biss 'il barra, u għad iridu jitħaffru {{count}}.",
+        "crossed": "Kanal hemm jaqsam lil dan.",
+        "atLeastOne": "{{count}} kanali, u t-toroq l-oħra 'l barra ma jistgħux iġorruhom kollha.",
+        "twinBlock.single": "Jekk tgħaqqad lil dawk it-tnejn, tagħmel sistema tal-ilma ta' tnejn biss.",
+        "twinBlock.double": "It-tieni kanal hemm jagħmel sistema tal-ilma ta' tnejn biss.",
+        "isolation": "Dak il-kanal jaqta' lil dawn il-{{count}} ħwat mill-bqija.",
+        "action": {
+          "draw_one": "Ħaffer il-kanal immarkat.",
+          "draw_two": "Ħaffer il-kanali mmarkati.",
+          "draw_few": "Ħaffer il-kanali mmarkati.",
+          "draw_many": "Ħaffer il-kanali mmarkati.",
+          "draw_other": "Ħaffer il-kanali mmarkati.",
+          "refuse_one": "Il-kanal immarkat jibqa' mhux imħaffer.",
+          "refuse_two": "Il-kanali mmarkati jibqgħu mhux imħaffra.",
+          "refuse_few": "Il-kanali mmarkati jibqgħu mhux imħaffra.",
+          "refuse_many": "Il-kanali mmarkati jibqgħu mhux imħaffra.",
+          "refuse_other": "Il-kanali mmarkati jibqgħu mhux imħaffra.",
+          "refuseDouble": "Kanal wieħed hemm, u mhux it-tieni."
+        }
+      },
+      "ceiling": {
+        "mistake": "Wieħed minn dawn il-kurduni ma jistax ikun tajjeb.",
+        "capacity": "{{count}} kurduni, u eżatt biżżejjed toroq 'il barra.",
+        "settled": "Dan {{count}} għandu l-kurduni tiegħu.",
+        "soleWayOut": "Fadal triq waħda biss 'il barra, u għad iridu jitqiegħdu {{count}}.",
+        "crossed": "Kurdun hemm jaqsam lil dan.",
+        "atLeastOne": "{{count}} kurduni, u t-toroq l-oħra 'l barra ma jistgħux iġorruhom kollha.",
+        "twinBlock.single": "Jekk tgħaqqad lil dawk it-tnejn, tagħmel sema miżbugħa ta' tnejn biss.",
+        "twinBlock.double": "It-tieni kurdun hemm jagħmel sema miżbugħa ta' tnejn biss.",
+        "isolation": "Dak il-kurdun jaqta' lil dawn il-{{count}} stilel mill-bqija.",
+        "action": {
+          "draw_one": "Qiegħed il-kurdun immarkat.",
+          "draw_two": "Qiegħed il-kurduni mmarkati.",
+          "draw_few": "Qiegħed il-kurduni mmarkati.",
+          "draw_many": "Qiegħed il-kurduni mmarkati.",
+          "draw_other": "Qiegħed il-kurduni mmarkati.",
+          "refuse_one": "Il-kurdun immarkat jibqa' ma jitqiegħedx.",
+          "refuse_two": "Il-kurduni mmarkati jibqgħu ma jitqiegħdux.",
+          "refuse_few": "Il-kurduni mmarkati jibqgħu ma jitqiegħdux.",
+          "refuse_many": "Il-kurduni mmarkati jibqgħu ma jitqiegħdux.",
+          "refuse_other": "Il-kurduni mmarkati jibqgħu ma jitqiegħdux.",
+          "refuseDouble": "Kurdun wieħed hemm, u mhux it-tieni."
+        }
+      }
+    },
+    "goal": {
+      "default": "Kull stilla tiddendel f'kostellazzjoni waħda, marbuta b'daqs kemm jgħid in-numru tagħha linji tad-dawl.",
+      "causeway": "Kull post jinsab f'netwerk wieħed ta' toroq, b'daqs kemm jgħid in-numru tiegħu toroq tal-ġarr.",
+      "irrigation": "Kull ħawt jitma' sistema waħda tal-ilma, mitmugħ b'daqs kemm jgħid in-numru tiegħu kanali.",
+      "ceiling": "Kull stilla tagħmel parti minn sema miżbugħa waħda, marbuta b'daqs kemm jgħid in-numru tagħha kurduni tad-deheb."
+    },
+    "name": {
+      "default": "Mappa tal-Istilel",
+      "causeway": "It-Toroq tal-Ġebel",
+      "irrigation": "L-Ilma tar-Raba'",
+      "ceiling": "Is-Saqaf Miżbugħ"
+    }
+  },
+  "starBattle": {
+    "rules": {
+      "default": {
+        "touch": "L-ebda żewġ stilel ma jistgħu jmissu — il-kantunieri jgħoddu wkoll.",
+        "enter": "Agħfas kaxxa biex teskludiha, għal darb'oħra biex tpoġġi stilla hemm, u darba oħra biex tnaddafha."
+      },
+      "fields": {
+        "touch": "L-ebda żewġ rziezet ma jistgħu jmissu — il-kantunieri jgħoddu wkoll. Daqshekk qrib, ikollhom jaqsmu bir wieħed.",
+        "enter": "Agħfas biċċa art biex teskludiha, għal darb'oħra biex tibni razzett, u darba oħra biex tnaddafha."
+      },
+      "lamps": {
+        "touch": "L-ebda żewġ msiebaħ ma jistgħu jkunu ħdejn xulxin — il-kantunieri jgħoddu wkoll. Id-dawl tagħhom jaqa' fuq xulxin, u ż-żejt jinħela.",
+        "walls": "Il-blokki tal-ġebel griż huma parti mill-art: xejn ma jista' joqgħod fuqhom, u mhumiex kaxxa.",
+        "enter": "Agħfas ċangun biex teskludih, għal darb'oħra biex tqiegħed musbieħ hemm, u darba oħra biex tnaddfu."
+      },
+      "market": {
+        "touch": "L-ebda żewġ bankijiet ma jistgħu jkunu ħdejn xulxin — il-kantunieri jgħoddu wkoll. Il-bejjiegħa rivali qatt ma joqogħdu ħdejn xulxin.",
+        "walls": "Id-djar huma parti mill-pjazza: ħadd ma jista' jpoġġi bank fihom, u mhumiex post.",
+        "enter": "Agħfas post biex teskludih, għal darb'oħra biex twaqqaf bank hemm, u darba oħra biex tnaddfu."
+      },
+      "lotus": {
+        "touch": "L-ebda żewġ fjuri tal-lotu ma jistgħu jżommu f'wiċċ l-ilma ħdejn xulxin — il-kantunieri jgħoddu wkoll. Kull fjura trid ilma miftuħ madwarha.",
+        "walls": "Il-blat joħroġ mill-għadira: xejn ma jista' jżomm f'wiċċ l-ilma fuqu, u mhux kaxxa.",
+        "enter": "Agħfas biċċa ilma biex teskludiha, għal darb'oħra biex tpoġġi lotu hemm, u darba oħra biex tnaddafha."
+      },
+      "cats": {
+        "touch": "L-ebda żewġ qtates ma jistgħu jorqdu ħdejn xulxin — il-kantunieri jgħoddu wkoll. Kull qattus għandu l-biċċa xemx tiegħu.",
+        "walls": "Il-pilastri jżommu t-tempju: l-ebda qattus ma jista' jorqod fuqhom, u mhumiex kaxxa.",
+        "enter": "Agħfas ċangun biex teskludih, għal darb'oħra biex timtedd qattus hemm, u darba oħra biex tnaddfu."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Din il-marka ma tistax tkun tajba.",
+        "touch": "{{token}} hawn, u xejn ma jista' jmiss {{token}}.",
+        "groupFull.row_one": "Din ir-ringiela diġà għandha l-{{token}} tagħha.",
+        "groupFull.row_two": "Din ir-ringiela diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.row_few": "Din ir-ringiela diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.row_many": "Din ir-ringiela diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.row_other": "Din ir-ringiela diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.col_one": "Din il-kolonna diġà għandha l-{{token}} tagħha.",
+        "groupFull.col_two": "Din il-kolonna diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.col_few": "Din il-kolonna diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.col_many": "Din il-kolonna diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.col_other": "Din il-kolonna diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.region_one": "Din iż-żona diġà għandha l-{{token}} tagħha.",
+        "groupFull.region_two": "Din iż-żona diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.region_few": "Din iż-żona diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.region_many": "Din iż-żona diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.region_other": "Din iż-żona diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupTight.row_one": "Din ir-ringiela fadlilha kaxxa waħda biss.",
+        "groupTight.row_two": "Din ir-ringiela fadlilha {{count}} kaxxi biss.",
+        "groupTight.row_few": "Din ir-ringiela fadlilha {{count}} kaxxi biss.",
+        "groupTight.row_many": "Din ir-ringiela fadlilha {{count}} kaxxa biss.",
+        "groupTight.row_other": "Din ir-ringiela fadlilha {{count}} kaxxa biss.",
+        "groupTight.col_one": "Din il-kolonna fadlilha kaxxa waħda biss.",
+        "groupTight.col_two": "Din il-kolonna fadlilha {{count}} kaxxi biss.",
+        "groupTight.col_few": "Din il-kolonna fadlilha {{count}} kaxxi biss.",
+        "groupTight.col_many": "Din il-kolonna fadlilha {{count}} kaxxa biss.",
+        "groupTight.col_other": "Din il-kolonna fadlilha {{count}} kaxxa biss.",
+        "groupTight.region_one": "Din iż-żona fadlilha kaxxa waħda biss.",
+        "groupTight.region_two": "Din iż-żona fadlilha {{count}} kaxxi biss.",
+        "groupTight.region_few": "Din iż-żona fadlilha {{count}} kaxxi biss.",
+        "groupTight.region_many": "Din iż-żona fadlilha {{count}} kaxxa biss.",
+        "groupTight.region_other": "Din iż-żona fadlilha {{count}} kaxxa biss.",
+        "onlyWay.row_one": "Hemm mod wieħed biss kif tpoġġi {{token}} f'din ir-ringiela.",
+        "onlyWay.row_two": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din ir-ringiela.",
+        "onlyWay.row_few": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din ir-ringiela.",
+        "onlyWay.row_many": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din ir-ringiela.",
+        "onlyWay.row_other": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din ir-ringiela.",
+        "onlyWay.col_one": "Hemm mod wieħed biss kif tpoġġi {{token}} f'din il-kolonna.",
+        "onlyWay.col_two": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din il-kolonna.",
+        "onlyWay.col_few": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din il-kolonna.",
+        "onlyWay.col_many": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din il-kolonna.",
+        "onlyWay.col_other": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din il-kolonna.",
+        "onlyWay.region_one": "Hemm mod wieħed biss kif tpoġġi {{token}} f'din iż-żona.",
+        "onlyWay.region_two": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din iż-żona.",
+        "onlyWay.region_few": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din iż-żona.",
+        "onlyWay.region_many": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din iż-żona.",
+        "onlyWay.region_other": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din iż-żona.",
+        "everyWay.row_one": "Kull fejn imur il-{{token}} ta' din ir-ringiela, dejjem ikun hawn.",
+        "everyWay.row_two": "Kull fejn imorru l-{{count}} {{token}} ta' din ir-ringiela, wieħed dejjem ikun hawn.",
+        "everyWay.row_few": "Kull fejn imorru l-{{count}} {{token}} ta' din ir-ringiela, wieħed dejjem ikun hawn.",
+        "everyWay.row_many": "Kull fejn imorru l-{{count}} {{token}} ta' din ir-ringiela, wieħed dejjem ikun hawn.",
+        "everyWay.row_other": "Kull fejn imorru l-{{count}} {{token}} ta' din ir-ringiela, wieħed dejjem ikun hawn.",
+        "everyWay.col_one": "Kull fejn imur il-{{token}} ta' din il-kolonna, dejjem ikun hawn.",
+        "everyWay.col_two": "Kull fejn imorru l-{{count}} {{token}} ta' din il-kolonna, wieħed dejjem ikun hawn.",
+        "everyWay.col_few": "Kull fejn imorru l-{{count}} {{token}} ta' din il-kolonna, wieħed dejjem ikun hawn.",
+        "everyWay.col_many": "Kull fejn imorru l-{{count}} {{token}} ta' din il-kolonna, wieħed dejjem ikun hawn.",
+        "everyWay.col_other": "Kull fejn imorru l-{{count}} {{token}} ta' din il-kolonna, wieħed dejjem ikun hawn.",
+        "everyWay.region_one": "Kull fejn imur il-{{token}} ta' din iż-żona, dejjem ikun hawn.",
+        "everyWay.region_two": "Kull fejn imorru l-{{count}} {{token}} ta' din iż-żona, wieħed dejjem ikun hawn.",
+        "everyWay.region_few": "Kull fejn imorru l-{{count}} {{token}} ta' din iż-żona, wieħed dejjem ikun hawn.",
+        "everyWay.region_many": "Kull fejn imorru l-{{count}} {{token}} ta' din iż-żona, wieħed dejjem ikun hawn.",
+        "everyWay.region_other": "Kull fejn imorru l-{{count}} {{token}} ta' din iż-żona, wieħed dejjem ikun hawn.",
+        "regionLine.row_one": "Il-{{token}} taż-żona mmarkata jrid jiġi minn dik ir-ringiela.",
+        "regionLine.row_two": "Il-{{count}} {{token}} taż-żona mmarkata jridu jiġu minn dik ir-ringiela.",
+        "regionLine.row_few": "Il-{{count}} {{token}} taż-żona mmarkata jridu jiġu minn dik ir-ringiela.",
+        "regionLine.row_many": "Il-{{count}} {{token}} taż-żona mmarkata jridu jiġu minn dik ir-ringiela.",
+        "regionLine.row_other": "Il-{{count}} {{token}} taż-żona mmarkata jridu jiġu minn dik ir-ringiela.",
+        "regionLine.col_one": "Il-{{token}} taż-żona mmarkata jrid jiġi minn dik il-kolonna.",
+        "regionLine.col_two": "Il-{{count}} {{token}} taż-żona mmarkata jridu jiġu minn dik il-kolonna.",
+        "regionLine.col_few": "Il-{{count}} {{token}} taż-żona mmarkata jridu jiġu minn dik il-kolonna.",
+        "regionLine.col_many": "Il-{{count}} {{token}} taż-żona mmarkata jridu jiġu minn dik il-kolonna.",
+        "regionLine.col_other": "Il-{{count}} {{token}} taż-żona mmarkata jridu jiġu minn dik il-kolonna.",
+        "lineRegion.row_one": "Il-{{token}} ta' dik ir-ringiela jagħmel parti miż-żona mmarkata.",
+        "lineRegion.row_two": "Il-{{count}} {{token}} ta' dik ir-ringiela jagħmlu parti miż-żona mmarkata.",
+        "lineRegion.row_few": "Il-{{count}} {{token}} ta' dik ir-ringiela jagħmlu parti miż-żona mmarkata.",
+        "lineRegion.row_many": "Il-{{count}} {{token}} ta' dik ir-ringiela jagħmlu parti miż-żona mmarkata.",
+        "lineRegion.row_other": "Il-{{count}} {{token}} ta' dik ir-ringiela jagħmlu parti miż-żona mmarkata.",
+        "lineRegion.col_one": "Il-{{token}} ta' dik il-kolonna jagħmel parti miż-żona mmarkata.",
+        "lineRegion.col_two": "Il-{{count}} {{token}} ta' dik il-kolonna jagħmlu parti miż-żona mmarkata.",
+        "lineRegion.col_few": "Il-{{count}} {{token}} ta' dik il-kolonna jagħmlu parti miż-żona mmarkata.",
+        "lineRegion.col_many": "Il-{{count}} {{token}} ta' dik il-kolonna jagħmlu parti miż-żona mmarkata.",
+        "lineRegion.col_other": "Il-{{count}} {{token}} ta' dik il-kolonna jagħmlu parti miż-żona mmarkata.",
+        "spanning.toRows": "Iż-żoni mmarkati jimlew dawk il-{{count}} ringieli bejniethom.",
+        "spanning.toCols": "Iż-żoni mmarkati jimlew dawk il-{{count}} kolonni bejniethom.",
+        "spanning.fromRows": "Ir-ringieli mmarkati jistgħu jieħdu l-{{count}} {{token}} tagħhom minn dawk iż-żoni biss.",
+        "spanning.fromCols": "Il-kolonni mmarkati jistgħu jieħdu l-{{count}} {{token}} tagħhom minn dawk iż-żoni biss.",
+        "wouldStrand.row": "{{token}} hawn iħalli r-ringiela mmarkata bla ebda post.",
+        "wouldStrand.col": "{{token}} hawn iħalli l-kolonna mmarkata bla ebda post.",
+        "wouldStrand.region": "{{token}} hawn iħalli ż-żona mmarkata bla ebda post.",
+        "action": {
+          "ruleOut_one": "Eskludi l-kaxxa bl-istrixxi.",
+          "ruleOut_two": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_few": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_many": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_other": "Eskludi l-kaxxi bl-istrixxi.",
+          "place_one": "Poġġi {{token}} fil-kaxxa bl-istrixxi.",
+          "place_two": "Poġġi {{token}} f'kull kaxxa bl-istrixxi.",
+          "place_few": "Poġġi {{token}} f'kull kaxxa bl-istrixxi.",
+          "place_many": "Poġġi {{token}} f'kull kaxxa bl-istrixxi.",
+          "place_other": "Poġġi {{token}} f'kull kaxxa bl-istrixxi."
+        }
+      },
+      "fields": {
+        "mistake": "Din il-marka ma tistax tkun tajba.",
+        "touch": "{{token}} hawn, u l-ebda biċċa art li tmissu ma tista' jkollha ieħor.",
+        "groupFull.row_one": "Din ir-ringiela diġà maħduma.",
+        "groupFull.row_two": "Din ir-ringiela diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.row_few": "Din ir-ringiela diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.row_many": "Din ir-ringiela diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.row_other": "Din ir-ringiela diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.col_one": "Din il-kolonna diġà maħduma.",
+        "groupFull.col_two": "Din il-kolonna diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.col_few": "Din il-kolonna diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.col_many": "Din il-kolonna diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.col_other": "Din il-kolonna diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.region_one": "Din l-għalqa diġà maħduma.",
+        "groupFull.region_two": "Din l-għalqa diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.region_few": "Din l-għalqa diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.region_many": "Din l-għalqa diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupFull.region_other": "Din l-għalqa diġà għandha l-{{count}} {{token}} tagħha.",
+        "groupTight.row_one": "Din ir-ringiela fadlilha biċċa art waħda biss.",
+        "groupTight.row_two": "Din ir-ringiela fadlilha {{count}} biċċiet art biss.",
+        "groupTight.row_few": "Din ir-ringiela fadlilha {{count}} biċċiet art biss.",
+        "groupTight.row_many": "Din ir-ringiela fadlilha {{count}} biċċa art biss.",
+        "groupTight.row_other": "Din ir-ringiela fadlilha {{count}} biċċa art biss.",
+        "groupTight.col_one": "Din il-kolonna fadlilha biċċa art waħda biss.",
+        "groupTight.col_two": "Din il-kolonna fadlilha {{count}} biċċiet art biss.",
+        "groupTight.col_few": "Din il-kolonna fadlilha {{count}} biċċiet art biss.",
+        "groupTight.col_many": "Din il-kolonna fadlilha {{count}} biċċa art biss.",
+        "groupTight.col_other": "Din il-kolonna fadlilha {{count}} biċċa art biss.",
+        "groupTight.region_one": "Din l-għalqa fadlilha biċċa art waħda biss.",
+        "groupTight.region_two": "Din l-għalqa fadlilha {{count}} biċċiet art biss.",
+        "groupTight.region_few": "Din l-għalqa fadlilha {{count}} biċċiet art biss.",
+        "groupTight.region_many": "Din l-għalqa fadlilha {{count}} biċċa art biss.",
+        "groupTight.region_other": "Din l-għalqa fadlilha {{count}} biċċa art biss.",
+        "onlyWay.row_one": "F'din ir-ringiela fadal biċċa art waħda biss fejn tista' tibni.",
+        "onlyWay.row_two": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din ir-ringiela.",
+        "onlyWay.row_few": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din ir-ringiela.",
+        "onlyWay.row_many": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din ir-ringiela.",
+        "onlyWay.row_other": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din ir-ringiela.",
+        "onlyWay.col_one": "F'din il-kolonna fadal biċċa art waħda biss fejn tista' tibni.",
+        "onlyWay.col_two": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din il-kolonna.",
+        "onlyWay.col_few": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din il-kolonna.",
+        "onlyWay.col_many": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din il-kolonna.",
+        "onlyWay.col_other": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din il-kolonna.",
+        "onlyWay.region_one": "F'din l-għalqa fadal biċċa art waħda biss fejn tista' tibni.",
+        "onlyWay.region_two": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din l-għalqa.",
+        "onlyWay.region_few": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din l-għalqa.",
+        "onlyWay.region_many": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din l-għalqa.",
+        "onlyWay.region_other": "Hemm mod wieħed biss kif tpoġġi {{count}} {{token}} f'din l-għalqa.",
+        "everyWay.row_one": "Kif ma taħdem din ir-ringiela, il-{{token}} tagħha jkun hawn.",
+        "everyWay.row_two": "Kif ma taħdem din ir-ringiela, wieħed mill-{{count}} {{token}} tagħha jkun hawn.",
+        "everyWay.row_few": "Kif ma taħdem din ir-ringiela, wieħed mill-{{count}} {{token}} tagħha jkun hawn.",
+        "everyWay.row_many": "Kif ma taħdem din ir-ringiela, wieħed mill-{{count}} {{token}} tagħha jkun hawn.",
+        "everyWay.row_other": "Kif ma taħdem din ir-ringiela, wieħed mill-{{count}} {{token}} tagħha jkun hawn.",
+        "everyWay.col_one": "Kif ma taħdem din il-kolonna, il-{{token}} tagħha jkun hawn.",
+        "everyWay.col_two": "Kif ma taħdem din il-kolonna, wieħed mill-{{count}} {{token}} tagħha jkun hawn.",
+        "everyWay.col_few": "Kif ma taħdem din il-kolonna, wieħed mill-{{count}} {{token}} tagħha jkun hawn.",
+        "everyWay.col_many": "Kif ma taħdem din il-kolonna, wieħed mill-{{count}} {{token}} tagħha jkun hawn.",
+        "everyWay.col_other": "Kif ma taħdem din il-kolonna, wieħed mill-{{count}} {{token}} tagħha jkun hawn.",
+        "everyWay.region_one": "Kif ma taħdem din l-għalqa, il-{{token}} tagħha jkun hawn.",
+        "everyWay.region_two": "Kif ma taħdem din l-għalqa, wieħed mill-{{count}} {{token}} tagħha jkun hawn.",
+        "everyWay.region_few": "Kif ma taħdem din l-għalqa, wieħed mill-{{count}} {{token}} tagħha jkun hawn.",
+        "everyWay.region_many": "Kif ma taħdem din l-għalqa, wieħed mill-{{count}} {{token}} tagħha jkun hawn.",
+        "everyWay.region_other": "Kif ma taħdem din l-għalqa, wieħed mill-{{count}} {{token}} tagħha jkun hawn.",
+        "regionLine.row_one": "Il-{{token}} tal-għalqa mmarkata jrid jiġi minn dik ir-ringiela.",
+        "regionLine.row_two": "Il-{{count}} {{token}} tal-għalqa mmarkata jridu jiġu minn dik ir-ringiela.",
+        "regionLine.row_few": "Il-{{count}} {{token}} tal-għalqa mmarkata jridu jiġu minn dik ir-ringiela.",
+        "regionLine.row_many": "Il-{{count}} {{token}} tal-għalqa mmarkata jridu jiġu minn dik ir-ringiela.",
+        "regionLine.row_other": "Il-{{count}} {{token}} tal-għalqa mmarkata jridu jiġu minn dik ir-ringiela.",
+        "regionLine.col_one": "Il-{{token}} tal-għalqa mmarkata jrid jiġi minn dik il-kolonna.",
+        "regionLine.col_two": "Il-{{count}} {{token}} tal-għalqa mmarkata jridu jiġu minn dik il-kolonna.",
+        "regionLine.col_few": "Il-{{count}} {{token}} tal-għalqa mmarkata jridu jiġu minn dik il-kolonna.",
+        "regionLine.col_many": "Il-{{count}} {{token}} tal-għalqa mmarkata jridu jiġu minn dik il-kolonna.",
+        "regionLine.col_other": "Il-{{count}} {{token}} tal-għalqa mmarkata jridu jiġu minn dik il-kolonna.",
+        "lineRegion.row_one": "Il-{{token}} ta' dik ir-ringiela jagħmel parti mill-għalqa mmarkata.",
+        "lineRegion.row_two": "Il-{{count}} {{token}} ta' dik ir-ringiela jagħmlu parti mill-għalqa mmarkata.",
+        "lineRegion.row_few": "Il-{{count}} {{token}} ta' dik ir-ringiela jagħmlu parti mill-għalqa mmarkata.",
+        "lineRegion.row_many": "Il-{{count}} {{token}} ta' dik ir-ringiela jagħmlu parti mill-għalqa mmarkata.",
+        "lineRegion.row_other": "Il-{{count}} {{token}} ta' dik ir-ringiela jagħmlu parti mill-għalqa mmarkata.",
+        "lineRegion.col_one": "Il-{{token}} ta' dik il-kolonna jagħmel parti mill-għalqa mmarkata.",
+        "lineRegion.col_two": "Il-{{count}} {{token}} ta' dik il-kolonna jagħmlu parti mill-għalqa mmarkata.",
+        "lineRegion.col_few": "Il-{{count}} {{token}} ta' dik il-kolonna jagħmlu parti mill-għalqa mmarkata.",
+        "lineRegion.col_many": "Il-{{count}} {{token}} ta' dik il-kolonna jagħmlu parti mill-għalqa mmarkata.",
+        "lineRegion.col_other": "Il-{{count}} {{token}} ta' dik il-kolonna jagħmlu parti mill-għalqa mmarkata.",
+        "spanning.toRows": "L-għelieqi mmarkati jimlew dawk il-{{count}} ringieli bejniethom.",
+        "spanning.toCols": "L-għelieqi mmarkati jimlew dawk il-{{count}} kolonni bejniethom.",
+        "spanning.fromRows": "Ir-ringieli mmarkati jistgħu jieħdu l-{{count}} {{token}} tagħhom minn dawk l-għelieqi biss.",
+        "spanning.fromCols": "Il-kolonni mmarkati jistgħu jieħdu l-{{count}} {{token}} tagħhom minn dawk l-għelieqi biss.",
+        "wouldStrand.row": "{{token}} hawn iħalli r-ringiela mmarkata bla ebda post fejn tibni.",
+        "wouldStrand.col": "{{token}} hawn iħalli l-kolonna mmarkata bla ebda post fejn tibni.",
+        "wouldStrand.region": "{{token}} hawn iħalli l-għalqa mmarkata bla ebda post fejn tibni.",
+        "action": {
+          "ruleOut_one": "Eskludi l-biċċa art bl-istrixxi.",
+          "ruleOut_two": "Eskludi l-biċċiet art bl-istrixxi.",
+          "ruleOut_few": "Eskludi l-biċċiet art bl-istrixxi.",
+          "ruleOut_many": "Eskludi l-biċċiet art bl-istrixxi.",
+          "ruleOut_other": "Eskludi l-biċċiet art bl-istrixxi.",
+          "place_one": "Ibni {{token}} fuq il-biċċa art bl-istrixxi.",
+          "place_two": "Ibni {{token}} fuq kull biċċa art bl-istrixxi.",
+          "place_few": "Ibni {{token}} fuq kull biċċa art bl-istrixxi.",
+          "place_many": "Ibni {{token}} fuq kull biċċa art bl-istrixxi.",
+          "place_other": "Ibni {{token}} fuq kull biċċa art bl-istrixxi."
+        }
+      },
+      "lamps": {
+        "mistake": "Din il-marka ma tistax tkun tajba.",
+        "touch": "{{token}} hawn, u l-ebda musbieħ ma jista' jkun ħdejn ieħor — il-kantunieri jgħoddu wkoll.",
+        "groupFull.row_one": "Din ir-ringiela diġà għandha l-musbieħ tagħha.",
+        "groupFull.row_two": "Din ir-ringiela diġà għandha l-{{count}} msiebaħ tagħha.",
+        "groupFull.row_few": "Din ir-ringiela diġà għandha l-{{count}} msiebaħ tagħha.",
+        "groupFull.row_many": "Din ir-ringiela diġà għandha l-{{count}} musbieħ tagħha.",
+        "groupFull.row_other": "Din ir-ringiela diġà għandha l-{{count}} musbieħ tagħha.",
+        "groupFull.col_one": "Din il-kolonna diġà għandha l-musbieħ tagħha.",
+        "groupFull.col_two": "Din il-kolonna diġà għandha l-{{count}} msiebaħ tagħha.",
+        "groupFull.col_few": "Din il-kolonna diġà għandha l-{{count}} msiebaħ tagħha.",
+        "groupFull.col_many": "Din il-kolonna diġà għandha l-{{count}} musbieħ tagħha.",
+        "groupFull.col_other": "Din il-kolonna diġà għandha l-{{count}} musbieħ tagħha.",
+        "groupTight.row_one": "Din ir-ringiela fadlilha ċangun wieħed biss.",
+        "groupTight.row_two": "Din ir-ringiela fadlilha {{count}} ċangaturi biss.",
+        "groupTight.row_few": "Din ir-ringiela fadlilha {{count}} ċangaturi biss.",
+        "groupTight.row_many": "Din ir-ringiela fadlilha {{count}} ċangun biss.",
+        "groupTight.row_other": "Din ir-ringiela fadlilha {{count}} ċangun biss.",
+        "groupTight.col_one": "Din il-kolonna fadlilha ċangun wieħed biss.",
+        "groupTight.col_two": "Din il-kolonna fadlilha {{count}} ċangaturi biss.",
+        "groupTight.col_few": "Din il-kolonna fadlilha {{count}} ċangaturi biss.",
+        "groupTight.col_many": "Din il-kolonna fadlilha {{count}} ċangun biss.",
+        "groupTight.col_other": "Din il-kolonna fadlilha {{count}} ċangun biss.",
+        "onlyWay.row_one": "Bejn il-blokki tal-ġebel, f'din ir-ringiela fadal kaxxa waħda biss għal musbieħ.",
+        "onlyWay.row_two": "Hemm mod wieħed biss kif tpoġġi {{count}} msiebaħ f'din ir-ringiela.",
+        "onlyWay.row_few": "Hemm mod wieħed biss kif tpoġġi {{count}} msiebaħ f'din ir-ringiela.",
+        "onlyWay.row_many": "Hemm mod wieħed biss kif tpoġġi {{count}} musbieħ f'din ir-ringiela.",
+        "onlyWay.row_other": "Hemm mod wieħed biss kif tpoġġi {{count}} musbieħ f'din ir-ringiela.",
+        "onlyWay.col_one": "Bejn il-blokki tal-ġebel, f'din il-kolonna fadal kaxxa waħda biss għal musbieħ.",
+        "onlyWay.col_two": "Hemm mod wieħed biss kif tpoġġi {{count}} msiebaħ f'din il-kolonna.",
+        "onlyWay.col_few": "Hemm mod wieħed biss kif tpoġġi {{count}} msiebaħ f'din il-kolonna.",
+        "onlyWay.col_many": "Hemm mod wieħed biss kif tpoġġi {{count}} musbieħ f'din il-kolonna.",
+        "onlyWay.col_other": "Hemm mod wieħed biss kif tpoġġi {{count}} musbieħ f'din il-kolonna.",
+        "everyWay.row_one": "Kull fejn imur il-musbieħ ta' din ir-ringiela, dejjem ikun hawn.",
+        "everyWay.row_two": "Kull fejn imorru l-{{count}} msiebaħ ta' din ir-ringiela, wieħed dejjem ikun hawn.",
+        "everyWay.row_few": "Kull fejn imorru l-{{count}} msiebaħ ta' din ir-ringiela, wieħed dejjem ikun hawn.",
+        "everyWay.row_many": "Kull fejn imorru l-{{count}} musbieħ ta' din ir-ringiela, wieħed dejjem ikun hawn.",
+        "everyWay.row_other": "Kull fejn imorru l-{{count}} musbieħ ta' din ir-ringiela, wieħed dejjem ikun hawn.",
+        "everyWay.col_one": "Kull fejn imur il-musbieħ ta' din il-kolonna, dejjem ikun hawn.",
+        "everyWay.col_two": "Kull fejn imorru l-{{count}} msiebaħ ta' din il-kolonna, wieħed dejjem ikun hawn.",
+        "everyWay.col_few": "Kull fejn imorru l-{{count}} msiebaħ ta' din il-kolonna, wieħed dejjem ikun hawn.",
+        "everyWay.col_many": "Kull fejn imorru l-{{count}} musbieħ ta' din il-kolonna, wieħed dejjem ikun hawn.",
+        "everyWay.col_other": "Kull fejn imorru l-{{count}} musbieħ ta' din il-kolonna, wieħed dejjem ikun hawn.",
+        "lineBlock.rowsToCols": "Ir-ringieli mmarkati jżommu l-msiebaħ tagħhom fil-kaxxi ta' dawk il-kolonni, allura dawk il-kolonni m'għandhomx aktar post.",
+        "lineBlock.colsToRows": "Il-kolonni mmarkati jżommu l-msiebaħ tagħhom fil-kaxxi ta' dawk ir-ringieli, allura dawk ir-ringieli m'għandhomx aktar post.",
+        "wouldStrand.row": "Musbieħ hawn iħalli r-ringiela mmarkata bla ebda post fejn tmur.",
+        "wouldStrand.col": "Musbieħ hawn iħalli l-kolonna mmarkata bla ebda post fejn tmur.",
+        "action": {
+          "ruleOut_one": "Eskludi l-kaxxa bl-istrixxi.",
+          "ruleOut_two": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_few": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_many": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_other": "Eskludi l-kaxxi bl-istrixxi.",
+          "place_one": "Poġġi musbieħ fil-kaxxa bl-istrixxi.",
+          "place_two": "Poġġi musbieħ f'kull kaxxa bl-istrixxi.",
+          "place_few": "Poġġi musbieħ f'kull kaxxa bl-istrixxi.",
+          "place_many": "Poġġi musbieħ f'kull kaxxa bl-istrixxi.",
+          "place_other": "Poġġi musbieħ f'kull kaxxa bl-istrixxi."
+        }
+      },
+      "market": {
+        "mistake": "Din il-marka ma tistax tkun tajba.",
+        "touch": "{{token}} hawn, u l-ebda bank ma jista' jkun ħdejn ieħor — il-kantunieri jgħoddu wkoll.",
+        "groupFull.row_one": "Din ir-ringiela diġà għandha l-bank tagħha.",
+        "groupFull.row_two": "Din ir-ringiela diġà għandha l-{{count}} bankijiet tagħha.",
+        "groupFull.row_few": "Din ir-ringiela diġà għandha l-{{count}} bankijiet tagħha.",
+        "groupFull.row_many": "Din ir-ringiela diġà għandha l-{{count}} bank tagħha.",
+        "groupFull.row_other": "Din ir-ringiela diġà għandha l-{{count}} bank tagħha.",
+        "groupFull.col_one": "Din il-kolonna diġà għandha l-bank tagħha.",
+        "groupFull.col_two": "Din il-kolonna diġà għandha l-{{count}} bankijiet tagħha.",
+        "groupFull.col_few": "Din il-kolonna diġà għandha l-{{count}} bankijiet tagħha.",
+        "groupFull.col_many": "Din il-kolonna diġà għandha l-{{count}} bank tagħha.",
+        "groupFull.col_other": "Din il-kolonna diġà għandha l-{{count}} bank tagħha.",
+        "groupTight.row_one": "Din ir-ringiela fadlilha post wieħed biss.",
+        "groupTight.row_two": "Din ir-ringiela fadlilha {{count}} postijiet biss.",
+        "groupTight.row_few": "Din ir-ringiela fadlilha {{count}} postijiet biss.",
+        "groupTight.row_many": "Din ir-ringiela fadlilha {{count}} post biss.",
+        "groupTight.row_other": "Din ir-ringiela fadlilha {{count}} post biss.",
+        "groupTight.col_one": "Din il-kolonna fadlilha post wieħed biss.",
+        "groupTight.col_two": "Din il-kolonna fadlilha {{count}} postijiet biss.",
+        "groupTight.col_few": "Din il-kolonna fadlilha {{count}} postijiet biss.",
+        "groupTight.col_many": "Din il-kolonna fadlilha {{count}} post biss.",
+        "groupTight.col_other": "Din il-kolonna fadlilha {{count}} post biss.",
+        "onlyWay.row_one": "Bejn id-djar, f'din ir-ringiela fadal kaxxa waħda biss għal bank.",
+        "onlyWay.row_two": "Hemm mod wieħed biss kif tpoġġi {{count}} bankijiet f'din ir-ringiela.",
+        "onlyWay.row_few": "Hemm mod wieħed biss kif tpoġġi {{count}} bankijiet f'din ir-ringiela.",
+        "onlyWay.row_many": "Hemm mod wieħed biss kif tpoġġi {{count}} bank f'din ir-ringiela.",
+        "onlyWay.row_other": "Hemm mod wieħed biss kif tpoġġi {{count}} bank f'din ir-ringiela.",
+        "onlyWay.col_one": "Bejn id-djar, f'din il-kolonna fadal kaxxa waħda biss għal bank.",
+        "onlyWay.col_two": "Hemm mod wieħed biss kif tpoġġi {{count}} bankijiet f'din il-kolonna.",
+        "onlyWay.col_few": "Hemm mod wieħed biss kif tpoġġi {{count}} bankijiet f'din il-kolonna.",
+        "onlyWay.col_many": "Hemm mod wieħed biss kif tpoġġi {{count}} bank f'din il-kolonna.",
+        "onlyWay.col_other": "Hemm mod wieħed biss kif tpoġġi {{count}} bank f'din il-kolonna.",
+        "everyWay.row_one": "Kull fejn imur il-bank ta' din ir-ringiela, dejjem ikun hawn.",
+        "everyWay.row_two": "Kull fejn imorru l-{{count}} bankijiet ta' din ir-ringiela, wieħed dejjem ikun hawn.",
+        "everyWay.row_few": "Kull fejn imorru l-{{count}} bankijiet ta' din ir-ringiela, wieħed dejjem ikun hawn.",
+        "everyWay.row_many": "Kull fejn imorru l-{{count}} bank ta' din ir-ringiela, wieħed dejjem ikun hawn.",
+        "everyWay.row_other": "Kull fejn imorru l-{{count}} bank ta' din ir-ringiela, wieħed dejjem ikun hawn.",
+        "everyWay.col_one": "Kull fejn imur il-bank ta' din il-kolonna, dejjem ikun hawn.",
+        "everyWay.col_two": "Kull fejn imorru l-{{count}} bankijiet ta' din il-kolonna, wieħed dejjem ikun hawn.",
+        "everyWay.col_few": "Kull fejn imorru l-{{count}} bankijiet ta' din il-kolonna, wieħed dejjem ikun hawn.",
+        "everyWay.col_many": "Kull fejn imorru l-{{count}} bank ta' din il-kolonna, wieħed dejjem ikun hawn.",
+        "everyWay.col_other": "Kull fejn imorru l-{{count}} bank ta' din il-kolonna, wieħed dejjem ikun hawn.",
+        "lineBlock.rowsToCols": "Ir-ringieli mmarkati jżommu l-bankijiet tagħhom fil-kaxxi ta' dawk il-kolonni, allura dawk il-kolonni m'għandhomx aktar post.",
+        "lineBlock.colsToRows": "Il-kolonni mmarkati jżommu l-bankijiet tagħhom fil-kaxxi ta' dawk ir-ringieli, allura dawk ir-ringieli m'għandhomx aktar post.",
+        "wouldStrand.row": "Bank hawn iħalli r-ringiela mmarkata bla ebda post fejn tmur.",
+        "wouldStrand.col": "Bank hawn iħalli l-kolonna mmarkata bla ebda post fejn tmur.",
+        "action": {
+          "ruleOut_one": "Eskludi l-kaxxa bl-istrixxi.",
+          "ruleOut_two": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_few": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_many": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_other": "Eskludi l-kaxxi bl-istrixxi.",
+          "place_one": "Poġġi bank fil-kaxxa bl-istrixxi.",
+          "place_two": "Poġġi bank f'kull kaxxa bl-istrixxi.",
+          "place_few": "Poġġi bank f'kull kaxxa bl-istrixxi.",
+          "place_many": "Poġġi bank f'kull kaxxa bl-istrixxi.",
+          "place_other": "Poġġi bank f'kull kaxxa bl-istrixxi."
+        }
+      },
+      "lotus": {
+        "mistake": "Din il-marka ma tistax tkun tajba.",
+        "touch": "{{token}} hawn, u l-ebda lotu ma jista' jżomm f'wiċċ l-ilma ħdejn ieħor — il-kantunieri jgħoddu wkoll.",
+        "groupFull.row_one": "Din ir-ringiela diġà għandha l-lotu tagħha.",
+        "groupFull.row_two": "Din ir-ringiela diġà għandha l-{{count}} fjuri tal-lotu tagħha.",
+        "groupFull.row_few": "Din ir-ringiela diġà għandha l-{{count}} fjuri tal-lotu tagħha.",
+        "groupFull.row_many": "Din ir-ringiela diġà għandha l-{{count}} fjura tal-lotu tagħha.",
+        "groupFull.row_other": "Din ir-ringiela diġà għandha l-{{count}} fjura tal-lotu tagħha.",
+        "groupFull.col_one": "Din il-kolonna diġà għandha l-lotu tagħha.",
+        "groupFull.col_two": "Din il-kolonna diġà għandha l-{{count}} fjuri tal-lotu tagħha.",
+        "groupFull.col_few": "Din il-kolonna diġà għandha l-{{count}} fjuri tal-lotu tagħha.",
+        "groupFull.col_many": "Din il-kolonna diġà għandha l-{{count}} fjura tal-lotu tagħha.",
+        "groupFull.col_other": "Din il-kolonna diġà għandha l-{{count}} fjura tal-lotu tagħha.",
+        "groupTight.row_one": "Din ir-ringiela fadlilha biċċa ilma waħda biss.",
+        "groupTight.row_two": "Din ir-ringiela fadlilha {{count}} biċċiet ilma biss.",
+        "groupTight.row_few": "Din ir-ringiela fadlilha {{count}} biċċiet ilma biss.",
+        "groupTight.row_many": "Din ir-ringiela fadlilha {{count}} biċċa ilma biss.",
+        "groupTight.row_other": "Din ir-ringiela fadlilha {{count}} biċċa ilma biss.",
+        "groupTight.col_one": "Din il-kolonna fadlilha biċċa ilma waħda biss.",
+        "groupTight.col_two": "Din il-kolonna fadlilha {{count}} biċċiet ilma biss.",
+        "groupTight.col_few": "Din il-kolonna fadlilha {{count}} biċċiet ilma biss.",
+        "groupTight.col_many": "Din il-kolonna fadlilha {{count}} biċċa ilma biss.",
+        "groupTight.col_other": "Din il-kolonna fadlilha {{count}} biċċa ilma biss.",
+        "onlyWay.row_one": "Bejn il-blat, f'din ir-ringiela fadal kaxxa waħda biss għal lotu.",
+        "onlyWay.row_two": "Hemm mod wieħed biss kif tpoġġi {{count}} fjuri tal-lotu f'din ir-ringiela.",
+        "onlyWay.row_few": "Hemm mod wieħed biss kif tpoġġi {{count}} fjuri tal-lotu f'din ir-ringiela.",
+        "onlyWay.row_many": "Hemm mod wieħed biss kif tpoġġi {{count}} fjura tal-lotu f'din ir-ringiela.",
+        "onlyWay.row_other": "Hemm mod wieħed biss kif tpoġġi {{count}} fjura tal-lotu f'din ir-ringiela.",
+        "onlyWay.col_one": "Bejn il-blat, f'din il-kolonna fadal kaxxa waħda biss għal lotu.",
+        "onlyWay.col_two": "Hemm mod wieħed biss kif tpoġġi {{count}} fjuri tal-lotu f'din il-kolonna.",
+        "onlyWay.col_few": "Hemm mod wieħed biss kif tpoġġi {{count}} fjuri tal-lotu f'din il-kolonna.",
+        "onlyWay.col_many": "Hemm mod wieħed biss kif tpoġġi {{count}} fjura tal-lotu f'din il-kolonna.",
+        "onlyWay.col_other": "Hemm mod wieħed biss kif tpoġġi {{count}} fjura tal-lotu f'din il-kolonna.",
+        "everyWay.row_one": "Kull fejn imur il-lotu ta' din ir-ringiela, dejjem ikun hawn.",
+        "everyWay.row_two": "Kull fejn imorru l-{{count}} fjuri tal-lotu ta' din ir-ringiela, waħda dejjem tkun hawn.",
+        "everyWay.row_few": "Kull fejn imorru l-{{count}} fjuri tal-lotu ta' din ir-ringiela, waħda dejjem tkun hawn.",
+        "everyWay.row_many": "Kull fejn imorru l-{{count}} fjura tal-lotu ta' din ir-ringiela, waħda dejjem tkun hawn.",
+        "everyWay.row_other": "Kull fejn imorru l-{{count}} fjura tal-lotu ta' din ir-ringiela, waħda dejjem tkun hawn.",
+        "everyWay.col_one": "Kull fejn imur il-lotu ta' din il-kolonna, dejjem ikun hawn.",
+        "everyWay.col_two": "Kull fejn imorru l-{{count}} fjuri tal-lotu ta' din il-kolonna, waħda dejjem tkun hawn.",
+        "everyWay.col_few": "Kull fejn imorru l-{{count}} fjuri tal-lotu ta' din il-kolonna, waħda dejjem tkun hawn.",
+        "everyWay.col_many": "Kull fejn imorru l-{{count}} fjura tal-lotu ta' din il-kolonna, waħda dejjem tkun hawn.",
+        "everyWay.col_other": "Kull fejn imorru l-{{count}} fjura tal-lotu ta' din il-kolonna, waħda dejjem tkun hawn.",
+        "lineBlock.rowsToCols": "Ir-ringieli mmarkati jżommu l-fjuri tal-lotu tagħhom fil-kaxxi ta' dawk il-kolonni, allura dawk il-kolonni m'għandhomx aktar post.",
+        "lineBlock.colsToRows": "Il-kolonni mmarkati jżommu l-fjuri tal-lotu tagħhom fil-kaxxi ta' dawk ir-ringieli, allura dawk ir-ringieli m'għandhomx aktar post.",
+        "wouldStrand.row": "Lotu hawn iħalli r-ringiela mmarkata bla ebda post fejn tmur.",
+        "wouldStrand.col": "Lotu hawn iħalli l-kolonna mmarkata bla ebda post fejn tmur.",
+        "action": {
+          "ruleOut_one": "Eskludi l-kaxxa bl-istrixxi.",
+          "ruleOut_two": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_few": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_many": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_other": "Eskludi l-kaxxi bl-istrixxi.",
+          "place_one": "Poġġi lotu fil-kaxxa bl-istrixxi.",
+          "place_two": "Poġġi lotu f'kull kaxxa bl-istrixxi.",
+          "place_few": "Poġġi lotu f'kull kaxxa bl-istrixxi.",
+          "place_many": "Poġġi lotu f'kull kaxxa bl-istrixxi.",
+          "place_other": "Poġġi lotu f'kull kaxxa bl-istrixxi."
+        }
+      },
+      "cats": {
+        "mistake": "Din il-marka ma tistax tkun tajba.",
+        "touch": "{{token}} hawn, u l-ebda qattus ma jista' jorqod ħdejn ieħor — il-kantunieri jgħoddu wkoll.",
+        "groupFull.row_one": "Din ir-ringiela diġà għandha l-qattus tagħha.",
+        "groupFull.row_two": "Din ir-ringiela diġà għandha l-{{count}} qtates tagħha.",
+        "groupFull.row_few": "Din ir-ringiela diġà għandha l-{{count}} qtates tagħha.",
+        "groupFull.row_many": "Din ir-ringiela diġà għandha l-{{count}} qattus tagħha.",
+        "groupFull.row_other": "Din ir-ringiela diġà għandha l-{{count}} qattus tagħha.",
+        "groupFull.col_one": "Din il-kolonna diġà għandha l-qattus tagħha.",
+        "groupFull.col_two": "Din il-kolonna diġà għandha l-{{count}} qtates tagħha.",
+        "groupFull.col_few": "Din il-kolonna diġà għandha l-{{count}} qtates tagħha.",
+        "groupFull.col_many": "Din il-kolonna diġà għandha l-{{count}} qattus tagħha.",
+        "groupFull.col_other": "Din il-kolonna diġà għandha l-{{count}} qattus tagħha.",
+        "groupTight.row_one": "Din ir-ringiela fadlilha ċangun wieħed biss.",
+        "groupTight.row_two": "Din ir-ringiela fadlilha {{count}} ċangaturi biss.",
+        "groupTight.row_few": "Din ir-ringiela fadlilha {{count}} ċangaturi biss.",
+        "groupTight.row_many": "Din ir-ringiela fadlilha {{count}} ċangun biss.",
+        "groupTight.row_other": "Din ir-ringiela fadlilha {{count}} ċangun biss.",
+        "groupTight.col_one": "Din il-kolonna fadlilha ċangun wieħed biss.",
+        "groupTight.col_two": "Din il-kolonna fadlilha {{count}} ċangaturi biss.",
+        "groupTight.col_few": "Din il-kolonna fadlilha {{count}} ċangaturi biss.",
+        "groupTight.col_many": "Din il-kolonna fadlilha {{count}} ċangun biss.",
+        "groupTight.col_other": "Din il-kolonna fadlilha {{count}} ċangun biss.",
+        "onlyWay.row_one": "Bejn il-pilastri, f'din ir-ringiela fadal kaxxa waħda biss għal qattus.",
+        "onlyWay.row_two": "Hemm mod wieħed biss kif tpoġġi {{count}} qtates f'din ir-ringiela.",
+        "onlyWay.row_few": "Hemm mod wieħed biss kif tpoġġi {{count}} qtates f'din ir-ringiela.",
+        "onlyWay.row_many": "Hemm mod wieħed biss kif tpoġġi {{count}} qattus f'din ir-ringiela.",
+        "onlyWay.row_other": "Hemm mod wieħed biss kif tpoġġi {{count}} qattus f'din ir-ringiela.",
+        "onlyWay.col_one": "Bejn il-pilastri, f'din il-kolonna fadal kaxxa waħda biss għal qattus.",
+        "onlyWay.col_two": "Hemm mod wieħed biss kif tpoġġi {{count}} qtates f'din il-kolonna.",
+        "onlyWay.col_few": "Hemm mod wieħed biss kif tpoġġi {{count}} qtates f'din il-kolonna.",
+        "onlyWay.col_many": "Hemm mod wieħed biss kif tpoġġi {{count}} qattus f'din il-kolonna.",
+        "onlyWay.col_other": "Hemm mod wieħed biss kif tpoġġi {{count}} qattus f'din il-kolonna.",
+        "everyWay.row_one": "Kull fejn imur il-qattus ta' din ir-ringiela, dejjem ikun hawn.",
+        "everyWay.row_two": "Kull fejn imorru l-{{count}} qtates ta' din ir-ringiela, wieħed dejjem ikun hawn.",
+        "everyWay.row_few": "Kull fejn imorru l-{{count}} qtates ta' din ir-ringiela, wieħed dejjem ikun hawn.",
+        "everyWay.row_many": "Kull fejn imorru l-{{count}} qattus ta' din ir-ringiela, wieħed dejjem ikun hawn.",
+        "everyWay.row_other": "Kull fejn imorru l-{{count}} qattus ta' din ir-ringiela, wieħed dejjem ikun hawn.",
+        "everyWay.col_one": "Kull fejn imur il-qattus ta' din il-kolonna, dejjem ikun hawn.",
+        "everyWay.col_two": "Kull fejn imorru l-{{count}} qtates ta' din il-kolonna, wieħed dejjem ikun hawn.",
+        "everyWay.col_few": "Kull fejn imorru l-{{count}} qtates ta' din il-kolonna, wieħed dejjem ikun hawn.",
+        "everyWay.col_many": "Kull fejn imorru l-{{count}} qattus ta' din il-kolonna, wieħed dejjem ikun hawn.",
+        "everyWay.col_other": "Kull fejn imorru l-{{count}} qattus ta' din il-kolonna, wieħed dejjem ikun hawn.",
+        "lineBlock.rowsToCols": "Ir-ringieli mmarkati jżommu l-qtates tagħhom fil-kaxxi ta' dawk il-kolonni, allura dawk il-kolonni m'għandhomx aktar post.",
+        "lineBlock.colsToRows": "Il-kolonni mmarkati jżommu l-qtates tagħhom fil-kaxxi ta' dawk ir-ringieli, allura dawk ir-ringieli m'għandhomx aktar post.",
+        "wouldStrand.row": "Qattus hawn iħalli r-ringiela mmarkata bla ebda post fejn imur.",
+        "wouldStrand.col": "Qattus hawn iħalli l-kolonna mmarkata bla ebda post fejn imur.",
+        "action": {
+          "ruleOut_one": "Eskludi l-kaxxa bl-istrixxi.",
+          "ruleOut_two": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_few": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_many": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_other": "Eskludi l-kaxxi bl-istrixxi.",
+          "place_one": "Poġġi qattus fil-kaxxa bl-istrixxi.",
+          "place_two": "Poġġi qattus f'kull kaxxa bl-istrixxi.",
+          "place_few": "Poġġi qattus f'kull kaxxa bl-istrixxi.",
+          "place_many": "Poġġi qattus f'kull kaxxa bl-istrixxi.",
+          "place_other": "Poġġi qattus f'kull kaxxa bl-istrixxi."
+        }
+      }
+    },
+    "quota": {
+      "default": "F'kull ringiela, kolonna u żona",
+      "fields": "F'kull ringiela, kolonna u għalqa",
+      "lamps": "F'kull ringiela u kolonna",
+      "market": "F'kull ringiela u kolonna",
+      "lotus": "F'kull ringiela u kolonna",
+      "cats": "F'kull ringiela u kolonna"
+    },
+    "goal": {
+      "default_one": "Kull ringiela, kull kolonna u kull żona għandhom eżatt stilla waħda.",
+      "default_two": "Kull ringiela, kull kolonna u kull żona għandhom eżatt żewġ stilel.",
+      "default_few": "Kull ringiela, kull kolonna u kull żona għandhom eżatt {{count}} stilel.",
+      "default_many": "Kull ringiela, kull kolonna u kull żona għandhom eżatt {{count}} stilla.",
+      "default_other": "Kull ringiela, kull kolonna u kull żona għandhom eżatt {{count}} stilla.",
+      "fields_one": "Kull ringiela, kull kolonna u kull għalqa għandhom eżatt razzett wieħed.",
+      "fields_two": "Kull ringiela, kull kolonna u kull għalqa għandhom eżatt żewġ rziezet.",
+      "fields_few": "Kull ringiela, kull kolonna u kull għalqa għandhom eżatt {{count}} rziezet.",
+      "fields_many": "Kull ringiela, kull kolonna u kull għalqa għandhom eżatt {{count}} razzett.",
+      "fields_other": "Kull ringiela, kull kolonna u kull għalqa għandhom eżatt {{count}} razzett.",
+      "lamps": "Kull ringiela u kull kolonna għandhom eżatt musbieħ wieħed.",
+      "market": "Kull ringiela u kull kolonna għandhom eżatt bank tas-suq wieħed.",
+      "lotus": "Kull ringiela u kull kolonna għandhom eżatt lotu wieħed.",
+      "cats": "Kull ringiela u kull kolonna għandhom eżatt qattus wieħed."
+    },
+    "name": {
+      "default": "Stilel 'il Bogħod",
+      "fields": "Rziezet",
+      "twinDefault": "Stilel Tewmin",
+      "twinFields": "Rziezet Tewmin",
+      "lamps": "Msiebaħ taż-Żejt",
+      "market": "Bankijiet tas-Suq",
+      "lotus": "L-Għadira tal-Lotu",
+      "cats": "Il-Qtates tat-Tempju"
+    }
+  },
+  "pairPuzzle": {
+    "name": {
+      "mummies": "Il-Mistrieħ tal-Mummji",
+      "beetles": "Il-Ħanfus tad-Demel"
+    },
+    "goal": {
+      "mummies": "Kull sarkofagu jkollu mummja waħda ħdejh, u kull ringiela u kolonna jkollhom eżatt in-numru ta' mummji miktub ħdejhom.",
+      "beetles": "Kull ballun tad-demel ikollu ħanfusa waħda ħdejh, u kull ringiela u kolonna jkollhom eżatt in-numru ta' ħanfusiet miktub ħdejhom."
+    },
+    "rules": {
+      "mummies": {
+        "pair": "Kull sarkofagu għandu mummja waħda tistrieħ eżatt fuqu, taħtu, fuq ix-xellug jew fuq il-lemin, u kull mummja tistrieħ ħdejn sarkofagu tagħha.",
+        "count": "In-numru ħdejn ringiela jew kolonna jgħid kemm għandha mummji. Isir aħdar meta l-linja jkollha eżatt daqshekk, u aħmar meta ma jistax jirnexxi.",
+        "touch": "L-ebda żewġ mummji ma jistgħu jkunu ħdejn xulxin — il-kantunieri jgħoddu wkoll.",
+        "enter": "Agħfas kaxxa biex teskludiha, għal darb'oħra biex tqiegħed mummja hemm, u darba oħra biex tnaddafha. Kaxkar fuq ħafna kaxxi biex teskludihom f'daqqa. Is-sarkofagi ma tistax tagħfashom."
+      },
+      "beetles": {
+        "pair": "Kull ballun tad-demel għandu ħanfusa waħda eżatt fuqu, taħtu, fuq ix-xellug jew fuq il-lemin, u kull ħanfusa tinsab ħdejn ballun tagħha biex iddawru.",
+        "count": "In-numru ħdejn ringiela jew kolonna jgħid kemm għandha ħanfusiet. Isir aħdar meta l-linja jkollha eżatt daqshekk, u aħmar meta ma jistax jirnexxi.",
+        "touch": "L-ebda żewġ ħanfusiet ma jistgħu jkunu ħdejn xulxin — il-kantunieri jgħoddu wkoll.",
+        "enter": "Agħfas kaxxa biex teskludiha, għal darb'oħra biex tpoġġi ħanfusa hemm, u darba oħra biex tnaddafha. Kaxkar fuq ħafna kaxxi biex teskludihom f'daqqa. Il-blalen tad-demel ma tistax tagħfashom."
+      }
+    },
+    "hint": {
+      "mummies": {
+        "mistake": "Din il-marka ma tistax tkun tajba.",
+        "touch": "Din il-mummja tqiegħdet, allura l-ebda waħda oħra ma tista' tkun ħdejha — il-kantunieri jgħoddu wkoll.",
+        "zeroLine.row": "Din ir-ringiela m'għandha l-ebda mummja, allura hi kollha vojta.",
+        "zeroLine.col": "Din il-kolonna m'għandha l-ebda mummja, allura hi kollha vojta.",
+        "noAnchor": "Dawn il-kaxxi m'għandhom l-ebda sarkofagu ħdejhom, allura l-ebda mummja ma tista' tistrieħ hawn.",
+        "lineFull.row_one": "Din ir-ringiela diġà għandha l-mummja tagħha.",
+        "lineFull.row_two": "Din ir-ringiela diġà għandha l-{{count}} mummji tagħha.",
+        "lineFull.row_few": "Din ir-ringiela diġà għandha l-{{count}} mummji tagħha.",
+        "lineFull.row_many": "Din ir-ringiela diġà għandha l-{{count}} mummja tagħha.",
+        "lineFull.row_other": "Din ir-ringiela diġà għandha l-{{count}} mummja tagħha.",
+        "lineFull.col_one": "Din il-kolonna diġà għandha l-mummja tagħha.",
+        "lineFull.col_two": "Din il-kolonna diġà għandha l-{{count}} mummji tagħha.",
+        "lineFull.col_few": "Din il-kolonna diġà għandha l-{{count}} mummji tagħha.",
+        "lineFull.col_many": "Din il-kolonna diġà għandha l-{{count}} mummja tagħha.",
+        "lineFull.col_other": "Din il-kolonna diġà għandha l-{{count}} mummja tagħha.",
+        "lineTight.row_one": "Din ir-ringiela fadlilha kaxxa waħda biss għall-mummja tagħha.",
+        "lineTight.row_two": "Din ir-ringiela fadlilha eżatt {{count}} kaxxi għall-{{count}} mummji tagħha.",
+        "lineTight.row_few": "Din ir-ringiela fadlilha eżatt {{count}} kaxxi għall-{{count}} mummji tagħha.",
+        "lineTight.row_many": "Din ir-ringiela fadlilha eżatt {{count}} kaxxa għall-{{count}} mummja tagħha.",
+        "lineTight.row_other": "Din ir-ringiela fadlilha eżatt {{count}} kaxxa għall-{{count}} mummja tagħha.",
+        "lineTight.col_one": "Din il-kolonna fadlilha kaxxa waħda biss għall-mummja tagħha.",
+        "lineTight.col_two": "Din il-kolonna fadlilha eżatt {{count}} kaxxi għall-{{count}} mummji tagħha.",
+        "lineTight.col_few": "Din il-kolonna fadlilha eżatt {{count}} kaxxi għall-{{count}} mummji tagħha.",
+        "lineTight.col_many": "Din il-kolonna fadlilha eżatt {{count}} kaxxa għall-{{count}} mummja tagħha.",
+        "lineTight.col_other": "Din il-kolonna fadlilha eżatt {{count}} kaxxa għall-{{count}} mummja tagħha.",
+        "onlyWay": "Dan is-sarkofagu fadallu kaxxa waħda biss ħdejh għall-mummja tiegħu.",
+        "claimed": "Dan is-sarkofagu diġà għandu l-mummja tiegħu, allura l-kaxxi ħdejh li l-ebda sarkofagu ieħor ma jista' juża jibqgħu vojta.",
+        "lineBlock.rowsToCols_one": "Ir-ringieli mmarkati għandhom mummja waħda aktar milli jistgħu jagħtu s-sarkofagi tagħhom, allura ġejja minn sarkofagu eżatt barra minnhom.",
+        "lineBlock.rowsToCols_two": "Ir-ringieli mmarkati għandhom {{count}} mummji aktar milli jistgħu jagħtu s-sarkofagi tagħhom, allura ġejjin minn sarkofagi eżatt barra minnhom.",
+        "lineBlock.rowsToCols_few": "Ir-ringieli mmarkati għandhom {{count}} mummji aktar milli jistgħu jagħtu s-sarkofagi tagħhom, allura ġejjin minn sarkofagi eżatt barra minnhom.",
+        "lineBlock.rowsToCols_many": "Ir-ringieli mmarkati għandhom {{count}} mummja aktar milli jistgħu jagħtu s-sarkofagi tagħhom, allura ġejjin minn sarkofagi eżatt barra minnhom.",
+        "lineBlock.rowsToCols_other": "Ir-ringieli mmarkati għandhom {{count}} mummja aktar milli jistgħu jagħtu s-sarkofagi tagħhom, allura ġejjin minn sarkofagi eżatt barra minnhom.",
+        "lineBlock.colsToRows_one": "Il-kolonni mmarkati għandhom mummja waħda aktar milli jistgħu jagħtu s-sarkofagi tagħhom, allura ġejja minn sarkofagu eżatt barra minnhom.",
+        "lineBlock.colsToRows_two": "Il-kolonni mmarkati għandhom {{count}} mummji aktar milli jistgħu jagħtu s-sarkofagi tagħhom, allura ġejjin minn sarkofagi eżatt barra minnhom.",
+        "lineBlock.colsToRows_few": "Il-kolonni mmarkati għandhom {{count}} mummji aktar milli jistgħu jagħtu s-sarkofagi tagħhom, allura ġejjin minn sarkofagi eżatt barra minnhom.",
+        "lineBlock.colsToRows_many": "Il-kolonni mmarkati għandhom {{count}} mummja aktar milli jistgħu jagħtu s-sarkofagi tagħhom, allura ġejjin minn sarkofagi eżatt barra minnhom.",
+        "lineBlock.colsToRows_other": "Il-kolonni mmarkati għandhom {{count}} mummja aktar milli jistgħu jagħtu s-sarkofagi tagħhom, allura ġejjin minn sarkofagi eżatt barra minnhom.",
+        "wouldStrand.row": "Mummja hawn tħalli r-ringiela mmarkata bla post għall-mummji li għad trid.",
+        "wouldStrand.col": "Mummja hawn tħalli l-kolonna mmarkata bla post għall-mummji li għad trid.",
+        "wouldStrand.anchor": "Mummja hawn tħalli s-sarkofagu mmarkat bla kaxxa ħdejh għall-mummja tiegħu.",
+        "action": {
+          "ruleOut_one": "Eskludi l-kaxxa bl-istrixxi.",
+          "ruleOut_two": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_few": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_many": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_other": "Eskludi l-kaxxi bl-istrixxi.",
+          "place_one": "Qiegħed mummja fuq il-kaxxa bl-istrixxi.",
+          "place_two": "Qiegħed mummja fuq kull kaxxa bl-istrixxi.",
+          "place_few": "Qiegħed mummja fuq kull kaxxa bl-istrixxi.",
+          "place_many": "Qiegħed mummja fuq kull kaxxa bl-istrixxi.",
+          "place_other": "Qiegħed mummja fuq kull kaxxa bl-istrixxi."
+        }
+      },
+      "beetles": {
+        "mistake": "Din il-marka ma tistax tkun tajba.",
+        "touch": "Din il-ħanfusa tqiegħdet, allura l-ebda waħda oħra ma tista' tkun ħdejha — il-kantunieri jgħoddu wkoll.",
+        "zeroLine.row": "Din ir-ringiela m'għandha l-ebda ħanfusa, allura hi kollha vojta.",
+        "zeroLine.col": "Din il-kolonna m'għandha l-ebda ħanfusa, allura hi kollha vojta.",
+        "noAnchor": "Dawn il-kaxxi m'għandhom l-ebda ballun tad-demel ħdejhom, allura l-ebda ħanfusa ma tista' tkun hawn.",
+        "lineFull.row_one": "Din ir-ringiela diġà għandha l-ħanfusa tagħha.",
+        "lineFull.row_two": "Din ir-ringiela diġà għandha l-{{count}} ħanfusiet tagħha.",
+        "lineFull.row_few": "Din ir-ringiela diġà għandha l-{{count}} ħanfusiet tagħha.",
+        "lineFull.row_many": "Din ir-ringiela diġà għandha l-{{count}} ħanfusa tagħha.",
+        "lineFull.row_other": "Din ir-ringiela diġà għandha l-{{count}} ħanfusa tagħha.",
+        "lineFull.col_one": "Din il-kolonna diġà għandha l-ħanfusa tagħha.",
+        "lineFull.col_two": "Din il-kolonna diġà għandha l-{{count}} ħanfusiet tagħha.",
+        "lineFull.col_few": "Din il-kolonna diġà għandha l-{{count}} ħanfusiet tagħha.",
+        "lineFull.col_many": "Din il-kolonna diġà għandha l-{{count}} ħanfusa tagħha.",
+        "lineFull.col_other": "Din il-kolonna diġà għandha l-{{count}} ħanfusa tagħha.",
+        "lineTight.row_one": "Din ir-ringiela fadlilha kaxxa waħda biss għall-ħanfusa tagħha.",
+        "lineTight.row_two": "Din ir-ringiela fadlilha eżatt {{count}} kaxxi għall-{{count}} ħanfusiet tagħha.",
+        "lineTight.row_few": "Din ir-ringiela fadlilha eżatt {{count}} kaxxi għall-{{count}} ħanfusiet tagħha.",
+        "lineTight.row_many": "Din ir-ringiela fadlilha eżatt {{count}} kaxxa għall-{{count}} ħanfusa tagħha.",
+        "lineTight.row_other": "Din ir-ringiela fadlilha eżatt {{count}} kaxxa għall-{{count}} ħanfusa tagħha.",
+        "lineTight.col_one": "Din il-kolonna fadlilha kaxxa waħda biss għall-ħanfusa tagħha.",
+        "lineTight.col_two": "Din il-kolonna fadlilha eżatt {{count}} kaxxi għall-{{count}} ħanfusiet tagħha.",
+        "lineTight.col_few": "Din il-kolonna fadlilha eżatt {{count}} kaxxi għall-{{count}} ħanfusiet tagħha.",
+        "lineTight.col_many": "Din il-kolonna fadlilha eżatt {{count}} kaxxa għall-{{count}} ħanfusa tagħha.",
+        "lineTight.col_other": "Din il-kolonna fadlilha eżatt {{count}} kaxxa għall-{{count}} ħanfusa tagħha.",
+        "onlyWay": "Dan il-ballun tad-demel fadallu kaxxa waħda biss ħdejh għall-ħanfusa tiegħu.",
+        "claimed": "Dan il-ballun tad-demel diġà għandu l-ħanfusa tiegħu, allura l-kaxxi ħdejh li l-ebda ballun ieħor ma jista' juża jibqgħu vojta.",
+        "lineBlock.rowsToCols_one": "Ir-ringieli mmarkati għandhom ħanfusa waħda aktar milli jistgħu jagħtu l-blalen tad-demel tagħhom, allura ġejja minn ballun eżatt barra minnhom.",
+        "lineBlock.rowsToCols_two": "Ir-ringieli mmarkati għandhom {{count}} ħanfusiet aktar milli jistgħu jagħtu l-blalen tad-demel tagħhom, allura ġejjin minn blalen eżatt barra minnhom.",
+        "lineBlock.rowsToCols_few": "Ir-ringieli mmarkati għandhom {{count}} ħanfusiet aktar milli jistgħu jagħtu l-blalen tad-demel tagħhom, allura ġejjin minn blalen eżatt barra minnhom.",
+        "lineBlock.rowsToCols_many": "Ir-ringieli mmarkati għandhom {{count}} ħanfusa aktar milli jistgħu jagħtu l-blalen tad-demel tagħhom, allura ġejjin minn blalen eżatt barra minnhom.",
+        "lineBlock.rowsToCols_other": "Ir-ringieli mmarkati għandhom {{count}} ħanfusa aktar milli jistgħu jagħtu l-blalen tad-demel tagħhom, allura ġejjin minn blalen eżatt barra minnhom.",
+        "lineBlock.colsToRows_one": "Il-kolonni mmarkati għandhom ħanfusa waħda aktar milli jistgħu jagħtu l-blalen tad-demel tagħhom, allura ġejja minn ballun eżatt barra minnhom.",
+        "lineBlock.colsToRows_two": "Il-kolonni mmarkati għandhom {{count}} ħanfusiet aktar milli jistgħu jagħtu l-blalen tad-demel tagħhom, allura ġejjin minn blalen eżatt barra minnhom.",
+        "lineBlock.colsToRows_few": "Il-kolonni mmarkati għandhom {{count}} ħanfusiet aktar milli jistgħu jagħtu l-blalen tad-demel tagħhom, allura ġejjin minn blalen eżatt barra minnhom.",
+        "lineBlock.colsToRows_many": "Il-kolonni mmarkati għandhom {{count}} ħanfusa aktar milli jistgħu jagħtu l-blalen tad-demel tagħhom, allura ġejjin minn blalen eżatt barra minnhom.",
+        "lineBlock.colsToRows_other": "Il-kolonni mmarkati għandhom {{count}} ħanfusa aktar milli jistgħu jagħtu l-blalen tad-demel tagħhom, allura ġejjin minn blalen eżatt barra minnhom.",
+        "wouldStrand.row": "Ħanfusa hawn tħalli r-ringiela mmarkata bla post għall-ħanfusiet li għad trid.",
+        "wouldStrand.col": "Ħanfusa hawn tħalli l-kolonna mmarkata bla post għall-ħanfusiet li għad trid.",
+        "wouldStrand.anchor": "Ħanfusa hawn tħalli l-ballun tad-demel immarkat bla kaxxa ħdejh għall-ħanfusa tiegħu.",
+        "action": {
+          "ruleOut_one": "Eskludi l-kaxxa bl-istrixxi.",
+          "ruleOut_two": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_few": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_many": "Eskludi l-kaxxi bl-istrixxi.",
+          "ruleOut_other": "Eskludi l-kaxxi bl-istrixxi.",
+          "place_one": "Poġġi ħanfusa fuq il-kaxxa bl-istrixxi.",
+          "place_two": "Poġġi ħanfusa fuq kull kaxxa bl-istrixxi.",
+          "place_few": "Poġġi ħanfusa fuq kull kaxxa bl-istrixxi.",
+          "place_many": "Poġġi ħanfusa fuq kull kaxxa bl-istrixxi.",
+          "place_other": "Poġġi ħanfusa fuq kull kaxxa bl-istrixxi."
+        }
+      }
+    }
+  },
+  "rushHour": {
+    "name": {
+      "default": "Il-Imblokk",
+      "market": "Is-Sqaq Imblukkat"
+    },
+    "goal": {
+      "default": "Oħroġ il-blokka tiegħek mill-fetħa fuq il-lemin.",
+      "market": "Oħroġ is-slitta tiegħek mill-fetħa fit-tarf tat-triq."
+    },
+    "rules": {
+      "default": {
+        "lanes": "Blokka tiżżerżaq biss tul il-linja tagħha — qatt minn ġenb, qatt barra mill-board.",
+        "shove": "Kaxkar blokka biex timbuttaha. Tieqaf fejn hemm xi ħaġa fit-triq."
+      },
+      "market": {
+        "lanes": "Slitta tiżżerżaq biss tul il-linja li qiegħda fiha — qatt minn ġenb, qatt barra mit-triq.",
+        "shove": "Kaxkar slitta biex timbuttaha. Tieqaf fejn hemm xi ħaġa fit-triq."
+      }
+    },
+    "hint": {
+      "default": {
+        "drive": "It-triq quddiem hi ħielsa sa hemm.",
+        "back": "Xejn quddiem mhu se jiċċaqlaq. L-ewwel erġa' lura bit-tiegħek minn nofs it-triq.",
+        "clear": "Dik il-blokka qiegħda f'nofs il-linja tiegħek.",
+        "room": "Xejn ma jista' jiċċaqlaq qabel ma tiċċaqlaq dik.",
+        "push": {
+          "left": "Imbuttaha lejn ix-xellug, sal-ċirku.",
+          "right": "Imbuttaha lejn il-lemin, sal-ċirku.",
+          "up": "Imbuttaha 'l fuq, sal-ċirku.",
+          "down": "Imbuttaha 'l isfel, sal-ċirku."
+        }
+      },
+      "market": {
+        "drive": "Il-linja quddiem tiegħek hi ħielsa sa hemm.",
+        "back": "Xejn quddiem mhu se jiċċaqlaq. L-ewwel erġa' lura bis-slitta tiegħek.",
+        "clear": "Dik it-tagħbija qiegħda f'nofs il-linja li minnha toħroġ.",
+        "room": "Xejn ma jista' jiċċaqlaq qabel ma titwarrab dik.",
+        "push": {
+          "left": "Imbuttaha lejn ix-xellug, sal-ċirku.",
+          "right": "Imbuttaha lejn il-lemin, sal-ċirku.",
+          "up": "Imbuttaha 'l fuq fit-triq, sal-ċirku.",
+          "down": "Imbuttaha 'l isfel fit-triq, sal-ċirku."
+        }
+      }
+    }
+  },
+  "hidato": {
+    "rules": {
+      "default": {
+        "given": "In-numri li diġà qegħdin fix-xehda huma parti mill-puzzle — jibqgħu fejn huma.",
+        "enter": "Agħfas numru biex tkompli l-katina minn hemm, imbagħad agħfas ċella vojta li tmissu biex tkompli — jew kaxkar dritt minn ġoċ-ċelel fejn tgħaddi.",
+        "back": "Agħfas numru li poġġejt u agħfsu għal darb'oħra biex tneħħih, flimkien ma' kull ma jkun baqa' mdendel miegħu. Jekk tieħu l-katina minn triq oħra minn numru, jiġri l-istess. 'Lura' jneħħi l-aħħar mossa tiegħek."
+      },
+      "channel": {
+        "given": "L-għelieqi li diġà għandhom numru huma parti mill-puzzle — jibqgħu fejn huma.",
+        "enter": "Agħfas għalqa b'numru biex tieħu l-ilma minn hemm, imbagħad agħfas għalqa niexfa ħdejha biex tkompli tħaffer — jew kaxkar dritt tul l-għelieqi fejn jgħaddi l-kanal.",
+        "back": "Agħfas għalqa li ħaffirt u agħfasha għal darb'oħra biex terġa' timliha, flimkien ma' kull kanal li jibqa' maqtugħ minnha. Jekk tħaffer minn triq oħra minn għalqa, jiġri l-istess. 'Lura' jneħħi l-aħħar mossa tiegħek."
+      },
+      "scribe": {
+        "given": "In-numri miktuba bl-aħmar huma tal-puzzle nnifsu — jibqgħu fejn huma.",
+        "enter": "Agħfas numru biex tieħu l-pinna tal-qasab minn hemm, imbagħad agħfas spazju vojt ħdejh biex tkompli tikteb — jew kaxkar dritt tul il-linja.",
+        "back": "Agħfas numru li ktibt u agħfsu għal darb'oħra biex tobrxu, flimkien ma' kull linja li tibqa' maqtugħa minnu. Jekk tikteb minn triq oħra minn numru, jiġri l-istess. 'Lura' jneħħi l-aħħar mossa tiegħek."
+      },
+      "chambers": {
+        "given": "Il-kmamar li diġà għandhom numru qatgħuhom il-bennejja — jibqgħu fejn huma.",
+        "enter": "Agħfas kamra b'numru biex tkompli l-passaġġ minn hemm, imbagħad agħfas kamra magħluqa ħdejha biex tiftaħ triqtek — jew kaxkar dritt tul il-kmamar fejn jgħaddi l-passaġġ.",
+        "back": "Agħfas kamra li ftaħt u agħfasha għal darb'oħra biex terġa' tagħlaqha, flimkien ma' kull passaġġ li jibqa' maqtugħ minnha. Jekk tiftaħ minn triq oħra minn kamra, jiġri l-istess. 'Lura' jneħħi l-aħħar mossa tiegħek."
+      }
+    },
+    "goal": {
+      "default": "Kull ċella tax-xehda għandha numru, minn 1 sa {{last}}, kull wieħed f'ċella li tmiss in-numru ta' qablu.",
+      "channel": "Kanal wieħed isaqqi l-pjanura kollha: kull għalqa tieħu daqqa tagħha, minn 1 sa {{last}}, kull waħda mħaffra ħdejn l-għalqa ta' qabilha.",
+      "scribe": "Linja waħda sħiħa ta' numri taqsam il-folja: kull spazju għandu numru, minn 1 sa {{last}}, kull wieħed ħdejn in-numru ta' qablu.",
+      "chambers": "Passaġġ wieħed jgħaddi mill-qabar kollu: kull kamra tinfetaħ waħda wara l-oħra, minn 1 sa {{last}}, kull waħda miftuħa mill-kamra ta' qabilha."
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": "Wieħed minn dawn in-numri ma jistax ikun tajjeb.",
+          "sandwich": "Il-{{before}} u l-{{after}} jmissu ċella miftuħa waħda biss bejniethom.",
+          "neighbourForced": "Il-{{from}} fadallu ċella miftuħa waħda biss ħdejh.",
+          "onlyCell": "M'hemm imkien ieħor fix-xehda għall-{{value}}.",
+          "onlyValue": "L-ebda numru ieħor ma jista' jasal f'din iċ-ċella."
+        },
+        "action": {
+          "place": "Poġġi {{value}} fiċ-ċella bl-istrixxi."
+        }
+      },
+      "channel": {
+        "reason": {
+          "mistake": "Wieħed minn dawn in-numri ma jistax ikun tajjeb.",
+          "sandwich": "Il-{{before}} u l-{{after}} jmissu għalqa niexfa waħda biss bejniethom.",
+          "neighbourForced": "Fadal għalqa niexfa waħda biss ħdejn il-{{from}}.",
+          "onlyCell": "M'hemm imkien ieħor fil-pjanura għall-{{value}}.",
+          "onlyValue": "L-ebda numru ieħor ma jista' jasal f'din l-għalqa."
+        },
+        "action": {
+          "place": "Ħaffer {{value}} fl-għalqa bl-istrixxi."
+        }
+      },
+      "scribe": {
+        "reason": {
+          "mistake": "Wieħed minn dawn in-numri ma jistax ikun tajjeb.",
+          "sandwich": "Il-{{before}} u l-{{after}} jmissu spazju vojt wieħed biss bejniethom.",
+          "neighbourForced": "Fadal spazju vojt wieħed biss ħdejn il-{{from}}.",
+          "onlyCell": "M'hemm imkien ieħor fuq il-folja għall-{{value}}.",
+          "onlyValue": "L-ebda numru ieħor ma jista' jasal f'dan l-ispazju."
+        },
+        "action": {
+          "place": "Ikteb {{value}} fl-ispazju bl-istrixxi."
+        }
+      },
+      "chambers": {
+        "reason": {
+          "mistake": "Wieħed minn dawn in-numri ma jistax ikun tajjeb.",
+          "sandwich": "Il-{{before}} u l-{{after}} jmissu kamra magħluqa waħda biss bejniethom.",
+          "neighbourForced": "Fadal kamra magħluqa waħda biss ħdejn il-{{from}}.",
+          "onlyCell": "M'hemm imkien ieħor fil-qabar għall-{{value}}.",
+          "onlyValue": "L-ebda numru ieħor ma jista' jasal f'din il-kamra."
+        },
+        "action": {
+          "place": "Iftaħ {{value}} fil-kamra bl-istrixxi."
+        }
+      }
+    },
+    "name": {
+      "default": "Il-Ġarra tan-Naħal",
+      "channel": "Il-Kanal",
+      "scribe": "Il-Folja tal-Iskriba",
+      "chambers": "Kmamar Magħluqa"
+    }
+  },
+  "sudoku": {
+    "rules": {
+      "default": {
+        "chambers": "Il-linji ħoxnin jaqsmu l-grilja f'sitt kmamar, kull waħda żewġ kaxxi wiesgħa u tlieta għolja.",
+        "given": "In-numri li diġà minquxa huma parti mill-puzzle — jibqgħu fejn huma.",
+        "enter": "Agħfas kaxxa, imbagħad agħfas numru. L-istess numru għal darb'oħra jneħħih.",
+        "notes": "Aqleb għall-lapes biex tikteb in-numri li kaxxa għad tista' jkollha. 'Lura' jneħħi l-aħħar mossa tiegħek."
+      },
+      "papyrus": {
+        "chambers": "Il-linji ħoxnin jaqsmu l-folja f'sitt pannelli, kull wieħed żewġ spazji wiesgħa u tlieta għoljin.",
+        "given": "Is-sinjali miktuba bl-aħmar huma tal-puzzle nnifsu — jibqgħu fejn huma.",
+        "enter": "Agħfas spazju, imbagħad agħfas sinjal. L-istess sinjal għal darb'oħra jobrxu.",
+        "notes": "Ħu l-pinna tal-qasab biex tikteb bil-ħafif is-sinjali li spazju għad jista' jkollu. 'Lura' jneħħi l-aħħar mossa tiegħek."
+      }
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": {
+            "value": "Wieħed min-numri hawn ma jistax ikun tajjeb. Neħħih u erġa' ħares.",
+            "note": "In-noti ta' din il-kaxxa neħħew in-numru li suppost jmur hawn. Naddafhom u erġa' ibda."
+          },
+          "nakedSingle": "Ir-ringiela, il-kolonna u l-kamra ta' din il-kaxxa ħadu kull numru ieħor.",
+          "hiddenSingle": {
+            "row": "{{token}} ma joqgħod f'ebda kaxxa oħra ta' din ir-ringiela.",
+            "col": "{{token}} ma joqgħod f'ebda kaxxa oħra ta' din il-kolonna.",
+            "box": "{{token}} ma joqgħod f'ebda kaxxa oħra ta' din il-kamra."
+          },
+          "pointing": {
+            "row": "Ġol-kamra mmarkata, {{token}} jista' joqgħod biss f'din ir-ringiela.",
+            "col": "Ġol-kamra mmarkata, {{token}} jista' joqgħod biss f'din il-kolonna."
+          },
+          "claiming": {
+            "row": "Tul ir-ringiela mmarkata, {{token}} joqgħod biss ġo din il-kamra.",
+            "col": "Tul il-kolonna mmarkata, {{token}} joqgħod biss ġo din il-kamra."
+          }
+        },
+        "action": {
+          "place": "Poġġi {{token}} fil-kaxxa bl-istrixxi.",
+          "ruleOut_one": "Eskludi {{token}} mill-kaxxa bl-istrixxi.",
+          "ruleOut_two": "Eskludi {{token}} mill-kaxxi bl-istrixxi.",
+          "ruleOut_few": "Eskludi {{token}} mill-kaxxi bl-istrixxi.",
+          "ruleOut_many": "Eskludi {{token}} mill-kaxxi bl-istrixxi.",
+          "ruleOut_other": "Eskludi {{token}} mill-kaxxi bl-istrixxi."
+        }
+      },
+      "papyrus": {
+        "reason": {
+          "mistake": {
+            "value": "Wieħed minn dawn is-sinjali ma jistax ikun tajjeb. Obrxu u erġa' ħares.",
+            "note": "In-noti ta' dan l-ispazju neħħew is-sinjal li suppost jmur hawn. Ħassarhom u erġa' ibda."
+          },
+          "nakedSingle": "Ir-ringiela, il-kolonna u l-pannell ta' dan l-ispazju ħadu kull sinjal ieħor.",
+          "hiddenSingle": {
+            "row": "{{token}} ma joqgħod f'ebda spazju ieħor ta' din ir-ringiela.",
+            "col": "{{token}} ma joqgħod f'ebda spazju ieħor ta' din il-kolonna.",
+            "box": "{{token}} ma joqgħod f'ebda spazju ieħor ta' dan il-pannell."
+          },
+          "pointing": {
+            "row": "Ġol-pannell immarkat, {{token}} jista' joqgħod biss f'din ir-ringiela.",
+            "col": "Ġol-pannell immarkat, {{token}} jista' joqgħod biss f'din il-kolonna."
+          },
+          "claiming": {
+            "row": "Tul ir-ringiela mmarkata, {{token}} joqgħod biss ġo dan il-pannell.",
+            "col": "Tul il-kolonna mmarkata, {{token}} joqgħod biss ġo dan il-pannell."
+          }
+        },
+        "action": {
+          "place": "Ikteb {{token}} fl-ispazju bl-istrixxi.",
+          "ruleOut_one": "Eskludi {{token}} mill-ispazju bl-istrixxi.",
+          "ruleOut_two": "Eskludi {{token}} mill-ispazji bl-istrixxi.",
+          "ruleOut_few": "Eskludi {{token}} mill-ispazji bl-istrixxi.",
+          "ruleOut_many": "Eskludi {{token}} mill-ispazji bl-istrixxi.",
+          "ruleOut_other": "Eskludi {{token}} mill-ispazji bl-istrixxi."
+        }
+      }
+    },
+    "goal": {
+      "default": "Kull ringiela, kull kolonna u kull kamra juru kull wieħed mis-sitt numri darba biss.",
+      "papyrus": "Kull ringiela, kull kolonna u kull pannell għandhom kull wieħed mis-sitt sinjali darba biss."
+    },
+    "name": {
+      "default": "Sitt Kmamar",
+      "papyrus": "Ir-Reġistru tal-Iskriba"
+    }
+  },
+  "crocodile": {
+    "name": "Il-Ħofra tal-Kukkudrilli",
+    "goal": "Aqsam il-ħofra sax-xatt l-ieħor.",
+    "rules": {
+      "want": "Kull kukkudrill irid tweġiba waħda mir-ringiela ta' ġebel warajh: l-akbar, jew l-iżgħar.",
+      "mark": "Ħalqu miftuħ jgħidlek liema, u hekk ukoll is-sinjal ħdejh: > jiftaħ lejn l-akbar tweġiba, < lejn l-iżgħar.",
+      "bite": "Jekk titla' fuq kwalunkwe ġebla oħra, jigdmek: titlef is-saħħa u terġa' tibda mix-xatt ta' quddiem."
+    },
+    "hint": {
+      "biggest": "Dan il-kukkudrill irid l-akbar tweġiba. Dik hi {{value}}.",
+      "smallest": "Dan il-kukkudrill irid l-iżgħar tweġiba. Dik hi {{value}}."
+    }
+  },
+  "canisters": {
+    "name": {
+      "default": "Il-Kontenituri",
+      "grain": "Il-Miżuri tal-Qamħ",
+      "oil": "Żejt għall-Msiebaħ",
+      "wine": "Il-Kantina tal-Merkant",
+      "natron": "Il-Ġarar Kanopiċi",
+      "ink": "Il-Kamra tal-Kitba"
+    },
+    "goal": {
+      "default_one": "Kejjel l-ammont mitlub, u għid liema kontenitur għandu.",
+      "default_two": "Kejjel kull ammont mitlub wieħed wara l-ieħor, u għid liema kontenitur għandu qabel tgħaddi għal li jmiss.",
+      "default_few": "Kejjel kull ammont mitlub wieħed wara l-ieħor, u għid liema kontenitur għandu qabel tgħaddi għal li jmiss.",
+      "default_many": "Kejjel kull ammont mitlub wieħed wara l-ieħor, u għid liema kontenitur għandu qabel tgħaddi għal li jmiss.",
+      "default_other": "Kejjel kull ammont mitlub wieħed wara l-ieħor, u għid liema kontenitur għandu qabel tgħaddi għal li jmiss.",
+      "grain_one": "Kejjel l-ammont ta' qamħ mitlub, u għid liema miżura għandha.",
+      "grain_two": "Kejjel kull ammont ta' qamħ wieħed wara l-ieħor, u għid liema miżura għandha qabel tgħaddi għal li jmiss.",
+      "grain_few": "Kejjel kull ammont ta' qamħ wieħed wara l-ieħor, u għid liema miżura għandha qabel tgħaddi għal li jmiss.",
+      "grain_many": "Kejjel kull ammont ta' qamħ wieħed wara l-ieħor, u għid liema miżura għandha qabel tgħaddi għal li jmiss.",
+      "grain_other": "Kejjel kull ammont ta' qamħ wieħed wara l-ieħor, u għid liema miżura għandha qabel tgħaddi għal li jmiss.",
+      "oil_one": "Kejjel iż-żejt mitlub, u għid liema ġarra għandha.",
+      "oil_two": "Kejjel kull ammont ta' żejt wieħed wara l-ieħor, u għid liema ġarra għandha qabel tgħaddi għal li jmiss.",
+      "oil_few": "Kejjel kull ammont ta' żejt wieħed wara l-ieħor, u għid liema ġarra għandha qabel tgħaddi għal li jmiss.",
+      "oil_many": "Kejjel kull ammont ta' żejt wieħed wara l-ieħor, u għid liema ġarra għandha qabel tgħaddi għal li jmiss.",
+      "oil_other": "Kejjel kull ammont ta' żejt wieħed wara l-ieħor, u għid liema ġarra għandha qabel tgħaddi għal li jmiss.",
+      "wine_one": "Kejjel l-inbid mitlub, u għid liema amfora għandha.",
+      "wine_two": "Kejjel kull ammont ta' nbid wieħed wara l-ieħor, u għid liema amfora għandha qabel tgħaddi għal li jmiss.",
+      "wine_few": "Kejjel kull ammont ta' nbid wieħed wara l-ieħor, u għid liema amfora għandha qabel tgħaddi għal li jmiss.",
+      "wine_many": "Kejjel kull ammont ta' nbid wieħed wara l-ieħor, u għid liema amfora għandha qabel tgħaddi għal li jmiss.",
+      "wine_other": "Kejjel kull ammont ta' nbid wieħed wara l-ieħor, u għid liema amfora għandha qabel tgħaddi għal li jmiss.",
+      "natron_one": "Kejjel in-natron mitlub, u għid liema ġarra għandha.",
+      "natron_two": "Kejjel kull ammont ta' natron wieħed wara l-ieħor, u għid liema ġarra għandha qabel tgħaddi għal li jmiss.",
+      "natron_few": "Kejjel kull ammont ta' natron wieħed wara l-ieħor, u għid liema ġarra għandha qabel tgħaddi għal li jmiss.",
+      "natron_many": "Kejjel kull ammont ta' natron wieħed wara l-ieħor, u għid liema ġarra għandha qabel tgħaddi għal li jmiss.",
+      "natron_other": "Kejjel kull ammont ta' natron wieħed wara l-ieħor, u għid liema ġarra għandha qabel tgħaddi għal li jmiss.",
+      "ink_one": "Kejjel il-linka mitluba, u għid liema borma għandha.",
+      "ink_two": "Kejjel kull ammont ta' linka wieħed wara l-ieħor, u għid liema borma għandha qabel tgħaddi għal li jmiss.",
+      "ink_few": "Kejjel kull ammont ta' linka wieħed wara l-ieħor, u għid liema borma għandha qabel tgħaddi għal li jmiss.",
+      "ink_many": "Kejjel kull ammont ta' linka wieħed wara l-ieħor, u għid liema borma għandha qabel tgħaddi għal li jmiss.",
+      "ink_other": "Kejjel kull ammont ta' linka wieħed wara l-ieħor, u għid liema borma għandha qabel tgħaddi għal li jmiss."
+    },
+    "rules": {
+      "method": {
+        "sums": "Kull ammont li tista' tagħmel huwa żewġ numri fuq il-bank miżjuda flimkien jew imnaqqsa: id-daqs ta' kontenitur, kemm fih, jew kemm fadallu post.",
+        "backwards": "Allura aħdem lura mill-ammont mitlub — liema żewġ numri jagħmluh, u kif tasal biex ikollok dawk it-tnejn fl-istess ħin?"
+      },
+      "claim": "Meta jkollok l-ammont, agħfas “dan”. Jekk tgħid ir-reċipjent il-ħażin, titlef mossa.",
+      "legs": "Imbagħad l-ammont li jmiss, imkejjel minn dak li jibqa' fir-reċipjenti.",
+      "default": {
+        "moves": "Agħfas kontenitur biex terfgħu, imbagħad agħfas ieħor biex tferra' fih. It-tferrigħ jieqaf meta l-ewwel wieħed jitbattal jew it-tieni jimtela.",
+        "contents": "Dan hu l-ilma kollu li hemm — kontenitur wieħed jibda mimli, u ma tistax tarmi jew iġġib aktar.",
+        "levels": "Kull kontenitur jgħid kemm fih, u kemm jesa' meta jkun mimli."
+      },
+      "grain": {
+        "moves": "Agħfas miżura biex terfagħha, imbagħad agħfas oħra biex tqalleb il-qamħ fiha. It-tqallib jieqaf meta l-ewwel waħda titbattal jew it-tieni tasal sax-xifer.",
+        "contents": "Dan hu l-qamħ kollu li hemm — miżura waħda tibda mimlija, u ma tistax tkanslu jew iġġib aktar mill-maħżen.",
+        "levels": "Kull miżura tgħid kemm fiha, u kemm tesa' meta tkun mimlija sax-xifer."
+      },
+      "oil": {
+        "moves": "Agħfas ġarra biex terfagħha, imbagħad agħfas oħra biex tferra' fiha. It-tferrigħ jieqaf meta l-ewwel waħda titbattal jew it-tieni timtela.",
+        "contents": "Dan hu ż-żejt kollu li hemm — ġarra waħda tibda mimlija, u ma tistax tarmih jew iġġib aktar.",
+        "levels": "Kull ġarra tgħid kemm fiha, u kemm tesa' meta tkun mimlija."
+      },
+      "wine": {
+        "moves": "Agħfas amfora biex terfagħha, imbagħad agħfas oħra biex tferra' fiha. It-tferrigħ jieqaf meta l-ewwel waħda titbattal jew it-tieni timtela.",
+        "contents": "Dan hu l-inbid kollu li hemm — amfora waħda tibda mimlija, u ma tistax xxerrdu jew iġġib aktar mill-kantina.",
+        "levels": "Kull amfora tgħid kemm fiha, u kemm tesa' meta tkun mimlija."
+      },
+      "natron": {
+        "moves": "Agħfas ġarra biex terfagħha, imbagħad agħfas oħra biex tqalleb in-natron fiha. It-tqallib jieqaf meta l-ewwel waħda titbattal jew it-tieni timtela sal-għatu.",
+        "contents": "Dan hu n-natron kollu li hemm — ġarra waħda tibda mimlija, u ma tistax tkanslu jew iġġib aktar.",
+        "levels": "Kull ġarra tgħid kemm fiha, u kemm tesa' meta tkun mimlija sal-għatu."
+      },
+      "ink": {
+        "moves": "Agħfas borma biex terfagħha, imbagħad agħfas oħra biex tferra' fiha. It-tferrigħ jieqaf meta l-ewwel waħda titbattal jew it-tieni timtela.",
+        "contents": "Dan hu l-linka kollha li hemm — borma waħda tibda mimlija, u ma tistax tarmiha jew tagħmel aktar.",
+        "levels": "Kull borma tgħid kemm fiha, u kemm tesa' meta tkun mimlija."
+      }
+    },
+    "hint": {
+      "goal": {
+        "leftover": "Aħdem lura: {{amount}} huwa {{content}} bi {{space}} imneħħija — kontenitur b'{{content}} fih imferra' f'wieħed b'post għal {{space}}.",
+        "full": "Aħdem lura: {{amount}} huwa d-daqs ta' kontenitur, u {{a}} u {{b}} flimkien jagħmluh eżatt.",
+        "sum": "Aħdem lura: {{amount}} huwa {{a}} u {{b}} flimkien."
+      },
+      "claim": "Dak hu tferrigħa waħda 'l bogħod. Imbagħad aħdem liema kontenitur għandu.",
+      "stuck": "Minn hawn ma tistax tibqa' tkejjel {{target}} bil-mossi li fadallek. Erġa' lura tferrigħa, jew erġa' ibda l-board.",
+      "overBudget": "Ma fadallekx mossi. Erġa' lura waħda, jew erġa' ibda u sib it-triq l-iqsar.",
+      "next": {
+        "leftover": "Is-somma ta' qabel: {{amount}} — {{content}} imferra' f'post għal {{space}}.",
+        "full": "Is-somma ta' qabel: kontenitur mimli b'{{amount}} — {{a}} u {{b}} flimkien.",
+        "sum": "Is-somma ta' qabel: {{amount}} — {{a}} u {{b}} flimkien."
+      }
+    },
+    "movesLeft_one": "Fadlitlek mossa waħda",
+    "movesLeft_two": "Fadlulek żewġ mossi",
+    "movesLeft_few": "Fadlulek {{count}} mossi",
+    "movesLeft_many": "Fadlulek {{count}} mossa",
+    "movesLeft_other": "Fadlulek {{count}} mossa",
+    "legs": "imkejla {{done}} minn {{total}}",
+    "wanted": "Kejjel",
+    "claim": "dan",
+    "claimAria": "Għid li l-{{capacity}} għandu l-ammont"
+  },
+  "procession": {
+    "name": {
+      "default": "Is-Sigħat f'Ordni",
+      "funerary": "Il-Ġurnata fil-Wied tal-Ħaddiema",
+      "cosmos": "Il-Qsim tal-Lejl",
+      "water": "Il-Ġurnata tal-Għargħar",
+      "trade": "Il-Ġurnata fil-Moll"
+    },
+    "goal": {
+      "default": "Żerżaq kull ħaġa li tiġri fis-siegħa tagħha, sakemm il-marki kollha taħt il-ġurnata jkunu tajbin.",
+      "funerary": "Żerżaq kull xogħol fis-siegħa tiegħu, sakemm il-marki kollha taħt il-ġurnata jkunu tajbin.",
+      "cosmos": "Żerżaq kull dawl fis-siegħa tiegħu, sakemm il-marki kollha taħt il-lejl ikunu tajbin.",
+      "water": "Żerżaq kull xogħol fis-siegħa tiegħu, sakemm il-marki kollha taħt il-ġurnata jkunu tajbin.",
+      "trade": "Żerżaq kull xogħol fis-siegħa tiegħu, sakemm il-marki kollha taħt il-ġurnata jkunu tajbin."
+    },
+    "rules": {
+      "default": {
+        "lengths": "Kull ringiela hi ħaġa waħda li tiġri, u ddum daqs kemm hi wiesgħa l-istrixxa tagħha. Meta tiġri, dak trid issib int.",
+        "marks": "Linja taħt il-ġurnata tibqa' ħamra sakemm mhix tajba. Agħfas waħda biex tagħmel ċirku madwar ir-ringieli li titkellem dwarhom.",
+        "drag": "Kaxkar strixxa tul ir-ringiela tagħha. Qatt ma toħroġ mill-ġurnata."
+      }
+    },
+    "hint": {
+      "default": {
+        "chain": "Il-post ta' dik ir-ringiela diġà maqbud, u din tiddependi minnha.",
+        "squeeze": "Fadal biss daqshekk ġurnata, u dan hu kull ma joqgħod.",
+        "apart": "Bil-kontra ma toqgħodx fil-ġurnata.",
+        "split": "Ipprova bil-kontra u xi ħaġa oħra tinkiser.",
+        "move": "Kaxkar l-istrixxa fiċ-ċirku fuq il-marki bl-istrixxi."
+      }
+    },
+    "events": {
+      "default": [
+        "in-nar",
+        "il-ġarr tal-ilma",
+        "il-ħami tal-ħobż",
+        "il-vjaġġ bid-dgħajsa",
+        "is-sewqan tal-barrin",
+        "l-għassa tal-lejl"
+      ],
+      "funerary": ["il-kisi", "it-tpinġija tal-grilja", "it-tinqix", "iż-żbigħ", "l-induratura", "it-tqegħid tal-bieb"],
+      "cosmos": [
+        "il-qsim tax-xemx",
+        "it-tlugħ tal-istilla",
+        "l-għassa tal-qamar",
+        "is-sema miftuħ",
+        "is-sebħ",
+        "id-dawran tas-sena"
+      ],
+      "water": [
+        "il-għargħar",
+        "it-tħaffir tal-kanal",
+        "il-mili tal-ħawt",
+        "it-tisqija tar-raba'",
+        "il-qsim bid-dgħajsa",
+        "il-ħsad"
+      ],
+      "trade": [
+        "l-għażla tal-merkanzija",
+        "il-bejgħ tal-ħobż",
+        "il-bejgħ tal-birra",
+        "il-qsim bid-dgħajsa",
+        "il-ġarr",
+        "l-għadd"
+      ]
+    },
+    "marks": {
+      "default": {
+        "pin": "{{a}} jibda fis-siegħa {{tick}}.",
+        "handoff": "{{a}} jibda eżatt meta jispiċċa {{b}}.",
+        "link_one": "{{a}} jibda siegħa wara li jispiċċa {{b}}.",
+        "link_two": "{{a}} jibda sagħtejn wara li jispiċċa {{b}}.",
+        "link_few": "{{a}} jibda {{count}} sigħat wara li jispiċċa {{b}}.",
+        "link_many": "{{a}} jibda {{count}} siegħa wara li jispiċċa {{b}}.",
+        "link_other": "{{a}} jibda {{count}} siegħa wara li jispiċċa {{b}}.",
+        "before": "{{a}} jispiċċa qabel ma jibda {{b}}.",
+        "apart": "{{a}} u {{b}} qatt ma jiġru fl-istess ħin.",
+        "together": "{{a}} u {{b}} jiġru fl-istess ħin għal ftit.",
+        "span_one": "Mill-ewwel bidu sal-aħħar tmiem hemm siegħa.",
+        "span_two": "Mill-ewwel bidu sal-aħħar tmiem hemm sagħtejn.",
+        "span_few": "Mill-ewwel bidu sal-aħħar tmiem hemm {{count}} sigħat.",
+        "span_many": "Mill-ewwel bidu sal-aħħar tmiem hemm {{count}} siegħa.",
+        "span_other": "Mill-ewwel bidu sal-aħħar tmiem hemm {{count}} siegħa."
+      }
+    },
+    "door": {
+      "title": "Il-Bieb tal-Purċissjoni",
+      "hint": "Kull madum li titla' fuqu jeħles il-ħaġa tiegħu. Poġġi l-ġurnata f'ordni, imbagħad imxi fuq il-madum b'dik l-ordni.",
+      "read": "Il-ġurnata nqrat. Imxi fuq il-madum tagħha b'din l-ordni, mill-ewwel.",
+      "hintButton": "Ħjiel"
+    }
+  },
+  "story": {
+    "invitation": "Kellem",
+    "log": {
+      "empty": "Għad xejn. Fez se jkollu ħafna x'jgħid."
+    },
+    "speaker": {
+      "fez": "Fez",
+      "explorer": "Int",
+      "ipi": "Ipi",
+      "henut": "Henut",
+      "priest": "Il-qassis",
+      "pharaoh": "Il-fargħun",
+      "voice": "Leħen"
+    },
+    "wall": {
+      "wrong": "Xi ħadd naqqax it-tielet sinjal ħażin. Ilu ħażin tlett elef sena.",
+      "fixed": "Dak ismha mill-ġdid.",
+      "pick": "Poġġi s-sinjal it-tajjeb f'postu.",
+      "cannot": "Ma tafx is-sinjal li jmur hawn. Mhux s'issa."
+    },
+    "sphinx": {
+      "wrong": "L-istess kitba bħal barra, imma r-ramel qatt ma wasal hawn. Żewġ sinjali għadhom minquxa nodfa, u spazju fejn kien it-tielet.",
+      "fixed": "Hekk hu kollu.",
+      "pick": "Poġġi s-sinjal li qed iġġorr fl-ispazju.",
+      "cannot": "Żewġ sinjali tafhom, u spazju li ma tistax timlieh. Mhux s'issa.",
+      "gap": "Is-sinjal nieqes"
+    }
+  },
+  "lightbeamSwitch": {
+    "name": "Id-Dawl li Jdur",
+    "invitation": "Dawwar il-mirja",
+    "goal": "Id-dawl jistrieħ f'santwarju, u t-triq 'il barra taħtu tkun miftuħa.",
+    "rules": {
+      "shrines": "Diska waħda tad-dawl, u santwarju fuq kull triq 'il barra minn din il-kantuniera. Il-mirja fuq l-art jistgħu jwasslu d-dawl għal kwalunkwe wieħed minnhom.",
+      "doors": "It-triq 'il barra li jasal għaliha d-dawl tkun miftuħa, u l-oħrajn magħluqa. Triq waħda għad-dawl, triq waħda 'l quddiem.",
+      "returning": "Ma titlef xejn talli tagħżel. Erġa' idħol meta trid u ibgħat id-dawl minn triq oħra minflok — dik tinfetaħ, u din tingħalaq.",
+      "tap": "Agħfas mera biex iddawwarha. Jekk terġa' tagħfasha, terġa' lura kif kienet."
+    },
+    "doorOpen": "Triq 'il barra tal-{{way}}: miftuħa",
+    "doorShut": "Triq 'il barra tal-{{way}}: magħluqa",
+    "way": {
+      "n": "Tramuntana",
+      "e": "Lvant",
+      "s": "Nofsinhar",
+      "w": "Punent"
+    }
+  },
+  "handle": {
+    "name": "Il-Lieva",
+    "invitation": "Iġbed il-lieva",
+    "goal": "Il-lieva tkun jew naħa jew l-oħra. Dak li tiftaħ naħa, l-oħra tagħlqu.",
+    "left": "Iġbidha lejn ix-xellug",
+    "right": "Iġbidha lejn il-lemin"
+  },
+  "torch": {
+    "name": "It-Torċa",
+    "invitation": "Ixgħel it-torċa",
+    "goal": "Torċa mitfija. Ladarba taqbad, ma tistax terġa' titfiha.",
+    "lit": "It-torċa qed taqbad."
+  },
+  "gateFace": {
+    "title": "Bieb li Jistenna",
+    "hint": "Kull sinjal irid jaqbad qabel ma jinfetaħ dan il-bieb.",
+    "lit": "{{owner}}: mixgħul",
+    "unlit": "{{owner}}: għad le",
+    "owner": {
+      "torch": "Torċa",
+      "handle": "Lieva",
+      "key": "Muftieħ",
+      "web": "Sinjal tar-ramel",
+      "plateStone": "Ġebla fuq platt",
+      "plateEmpty": "Platt vojt",
+      "other": "Mekkaniżmu"
+    },
+    "orderHint": "Imxi fuq il-madum b'din l-ordni.",
+    "reset": "Erġa' ibda",
+    "spoiled": "Ħsirtha: mxejt fuq madum barra mill-ordni.",
+    "tile": {
+      "unwalked": "Pass {{step}}: għadek ma mxejtx fuqu",
+      "inOrder": "Pass {{step}}: mixi fl-ordni",
+      "outOfOrder": "Pass {{step}}: mixi barra mill-ordni"
+    }
+  },
+  "devLockEditor": {
+    "syntax": "Sintassi",
+    "example": "Eżempju",
+    "useExample": "Uża l-eżempju",
+    "title": "Editur tas-serraturi",
+    "notation": "Notazzjoni tas-serratura",
+    "checks": "Kontrolli",
+    "drawing": "Tpinġija",
+    "carveAndPlay": "Aqta' u ilgħab",
+    "copyLink": "Ikkopja l-link",
+    "copied": "Il-link ġie kkupjat",
+    "failed": "Ma rnexxilniex nikkupjaw; il-link qiegħed fil-bar tal-indirizz",
+    "backToEditor": "← Editur",
+    "close": "Agħlaq",
+    "open": "Editur tas-serraturi",
+    "modeLock": "Serratura",
+    "modeWeb": "Xibka",
+    "webNotation": "Notazzjoni tax-xibka",
+    "openWeb": "Iftaħ xibka",
+    "checking": "Qed niċċekkjaw…",
+    "checkedIn": "iċċekkjat f'{{ms}} ms",
+    "worldCarved": "is-sulari Saħħar inqatgħu f'{{ms}} ms, darba",
+    "simulation": "Ġbid",
+    "noSimulation": "Xejn x'tilgħab sakemm kull post ikun fid-dinja.",
+    "summary": "Sommarju",
+    "stillBuried": "Għadu {{percent}}% midfun",
+    "nothingBuried": "Xejn midfun",
+    "finishes": "jispiċċa",
+    "stopsAt": "jieqaf f'{{pct}}%",
+    "notOpenYet": "għadu mhux miftuħ",
+    "pullAll": "Iġbed kull ma tilħaq",
+    "reset": "Erġa' ibda",
+    "progress": "{{reachable}} fil-qrib · {{pulled}} minn {{total}} meħuda",
+    "allTaken": "Kollox miġbud u meħud.",
+    "potFront": "{{pulled}} minn {{total}} miġbuda · quddiem f'{{pct}}%",
+    "potOpen": "{{pulled}} minn {{total}} miġbuda · miftuħ",
+    "keys": "Imfietaħ",
+    "keysNote": "kull wieħed jiftaħ siġill",
+    "log": "X'ġara",
+    "logEmpty": "Għad ma nġibed xejn.",
+    "logPull": "jiġbed {{name}} f'{{at}}",
+    "logTake": "jieħu {{name}} f'{{at}}",
+    "logFront": "{{pot}} quddiem sa {{pct}}%",
+    "logPotOpen": "{{pot}} miftuħ",
+    "logSeal": "siġill f'{{at}} miftuħ",
+    "logNew": "ġdid: {{names}}",
+    "pullPin": "iġbed il-lieva {{name}}",
+    "takePin": "ħu l-muftieħ {{name}}",
+    "legendCleared": "imnaddaf",
+    "legendBuried": "midfun",
+    "legendSeal": "siġill",
+    "legendPins": "● lieva · ■ muftieħ · żgħir = taqsima tal-ġenb"
+  },
+  "camp": {
+    "title": "Kamp",
+    "continue": {
+      "heading": "L-ispedizzjoni ta' issa",
+      "setOff": "Itlaq",
+      "pyramid": "Piramida {{level}} minn {{count}} · {{tier}}",
+      "tomb": "Qabar · {{tier}}",
+      "empty": "Kollox miftuħ fuq il-mappa tiegħek"
+    },
+    "hint_one": "Vjaġġ qadim wieħed għandu xi ħaġa ġdida x'tiskopri",
+    "hint_two": "Żewġ vjaġġi qodma għandhom xi ħaġa ġdida x'tiskopri",
+    "hint_few": "{{count}} vjaġġi qodma għandhom xi ħaġa ġdida x'tiskopri",
+    "hint_many": "{{count}} vjaġġ qadim għandhom xi ħaġa ġdida x'tiskopri",
+    "hint_other": "{{count}} vjaġġ qadim għandhom xi ħaġa ġdida x'tiskopri",
+    "comingHome": {
+      "title": "Lura fil-kamp",
+      "haulTitle": "Dak li ġibt minn dan il-vjaġġ",
+      "new": "ĠDID",
+      "unpack": "Żarma",
+      "toCamp": "Lejn il-kamp"
+    },
+    "chapter": {
+      "subtitle": "Kapitlu ġdid",
+      "title": "Piramida ġdida tidher 'il bogħod",
+      "body": "Il-vjaġġi {{tier}} huma miftuħa. Ħu nifs fil-kamp u itlaq meta tkun lest.",
+      "journeyNote": "L-ewwel vjaġġ {{tier}}",
+      "later": "Wara"
+    },
+    "close": "Agħlaq",
+    "entrance": {
+      "collection": "Kollezzjoni",
+      "mosaic": "Mużajk",
+      "journeys": "Il-vjaġġi kollha",
+      "detectors": "Ditekters"
+    },
+    "mapTable": {
+      "title": "Mejda tal-mapep",
+      "journeys": "Vjaġġi"
+    }
+  },
+  "home": {
+    "haul": {
+      "times": "×{{count}}"
+    }
+  },
+  "journeys": {
+    "tierNeed": "Sib dan it-teżor",
+    "tierProgress": "{{done}} minn {{total}} lesti",
+    "tierLockedName": "Vjaġġi {{tier}}",
+    "toggleTier": "Uri jew aħbi l-vjaġġi {{tier}}",
+    "now": "ISSA",
+    "newDot": "Xi ħaġa ġdida x'tiskopri",
+    "noteCurrentPyramid": "Għaddej · piramida {{level}} minn {{count}}",
+    "noteCurrentTomb": "Għaddej · fil-qabar",
+    "noteFinished": "Lest",
+    "noteFinishedNews": "Lest · xi ħaġa ġdida x'tiskopri",
+    "noteOpen": "Għadek ma mortx",
+    "noteResumePyramid": "Bdejtu qabel · piramida {{level}} minn {{count}}",
+    "noteResumeTomb": "Bdejtu qabel · fil-qabar",
+    "needProgress": "{{unit}}: {{found}} minn {{required}}",
+    "showStops": "Uri l-postijiet ta' {{name}}",
+    "stopPyramid": "Piramida",
+    "stopTomb": "Post"
+  },
+  "newVersion": {
+    "title": "Verżjoni ġdida!",
+    "name": "Il-logħba nbidlet ħafna",
+    "body": "Allura l-vjaġġ tiegħek jerġa' jibda mill-ġdid. Oqbra ġodda, sejbiet u kamp biex tibni qed jistennewk."
+  },
+  "devPrefabPreview": {
+    "firstDoor": "Lejn l-ewwel bieb",
+    "stop": "Lejn il-waqfa",
+    "secondDoor": "Lejn it-tieni bieb",
+    "doorsInUse_one": "bieb wieħed qed jintuża",
+    "doorsInUse_two": "żewġ bibien qed jintużaw",
+    "doorsInUse_few": "{{count}} bibien qed jintużaw",
+    "doorsInUse_many": "{{count}} bieb qed jintużaw",
+    "doorsInUse_other": "{{count}} bieb qed jintużaw",
+    "walled": "{{count}} magħluqa bil-ħajt"
+  },
+  "devRoomEditor": {
+    "title": "Editur tal-kmamar",
+    "open": "Editur tal-kmamar",
+    "close": "Agħlaq",
+    "tier": "Livell",
+    "catalogue": "Iftaħ kamra",
+    "notation": "Notazzjoni tal-kamra",
+    "copyLink": "Ikkopja l-link",
+    "copyText": "Ikkopja t-test",
+    "copied": "Ikkupjat",
+    "failed": "Ma rnexxilniex nikkupjaw fil-clipboard",
+    "palette": "Paletta",
+    "unpainted": "għadu mhux miżbugħ",
+    "layout": "Tqassim",
+    "mirrored": "(bil-maqlub)",
+    "fill_one": "Imla (għażla waħda)",
+    "fill_two": "Imla (żewġ għażliet)",
+    "fill_few": "Imla ({{count}} għażliet)",
+    "fill_many": "Imla ({{count}} għażla)",
+    "fill_other": "Imla ({{count}} għażla)",
+    "fromDoor": "Imxi minn",
+    "toDoor": "Imxi sa",
+    "automatic": "Awtomatiku",
+    "direction": {
+      "n": "Bieb tat-tramuntana",
+      "e": "Bieb tal-lvant",
+      "s": "Bieb tan-nofsinhar",
+      "w": "Bieb tal-punent"
+    },
+    "checks": "Kontrolli",
+    "sound": "Il-kamra tgħaddi l-kontrolli tagħha",
+    "tierDisagrees": "L-intestatura tgħid livell {{header}}, imma hawn hi mpinġija f'{{picked}}",
+    "undo": "Lura",
+    "drawing": "Tpinġija",
+    "tool": {
+      "select": "Agħżel",
+      "wall": "Ħajt",
+      "floor": "Art",
+      "door": "Post tal-bieb",
+      "stop": "Waqfa",
+      "chest": "Senduq",
+      "portal": "Portal",
+      "mechanism": "Mekkaniżmu",
+      "erase": "Ħassar",
+      "copy": "Pinġi {{letter}}"
+    },
+    "againstWall": "L-oġġetti mwaqqgħa joqogħdu mal-ħajt tat-tramuntana",
+    "dropHint": "Kaxkar ħaġa mill-paletta fuq ċella; tieħu d-daqs tagħha",
+    "newLayout": "Isem tat-tqassim il-ġdid",
+    "addLayout": "Ikkopja bħala tqassim",
+    "inspector": {
+      "title": "Post {{letter}}",
+      "optional": "Mhux obbligatorju",
+      "kinds": "Tipi",
+      "counted": "Imla xi wħud biss",
+      "take": "Ħu",
+      "of": "minn",
+      "per": "kull",
+      "perNone": "kull wieħed waħdu",
+      "drawAnother": "Pinġi ieħor",
+      "close": "Agħlaq"
+    },
+    "refused": {
+      "notFree": "Mhux fuq art ħielsa ġol-kamra",
+      "wallRow": "Post tal-ħajt joqgħod fl-ewwel ringiela ġewwa l-ħajt tat-tramuntana",
+      "northWall": "Oġġett tal-ħajt jiddendel mal-ħajt tat-tramuntana",
+      "floorOnRing": "Iċ-ċirku ta' barra jieħu ħitan u postijiet tal-bibien biss",
+      "doorInside": "Post tal-bieb joqgħod fuq iċ-ċirku ta' barra",
+      "keepStop": "Il-waqfa tibqa': poġġiha x'imkien ieħor biex iċċaqlaqha",
+      "noLetter": "Kull ittra diġà meħuda",
+      "layoutName": "Agħti lit-tqassim isem li l-ebda tqassim ieħor m'għandu",
+      "notation": "In-notazzjoni ma taċċettahx: {{message}}"
+    },
+    "layer": {
+      "wall": "mal-ħajt",
+      "floor": "art",
+      "ground": "qiegħ",
+      "wallItem": "oġġett tal-ħajt"
+    },
+    "cell": "Ċella {{row}},{{col}}: {{what}}",
+    "cellWhat": {
+      "wall": "ħajt",
+      "floor": "art ħielsa",
+      "door": "post tal-bieb",
+      "place": "{{letter}}, {{kinds}}"
+    },
+    "rewrites": "It-tpinġija terġa' tikteb it-test: kull kumment imur fuq nett"
+  }
+}

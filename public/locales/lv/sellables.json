@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Akmens",
+    "bronze": "Bronza",
+    "silver": "Sudrabs",
+    "gold": "Zelts",
+    "divine": "Dievišķs"
+  },
+  "sell_stone_1": {
+    "name": "Ieplīsusi lauska",
+    "description": "Saplīsis māla trauka gabals ar rakstveža vingrinājumu skrāpējumiem — burti pārāk izbalējuši, lai tos izlasītu."
+  },
+  "sell_stone_2": {
+    "name": "Ieplīsusi māla krūka",
+    "description": "Krūka graudiem vai alum, no vienas puses pāršķelta gadsimtu smaguma."
+  },
+  "sell_stone_3": {
+    "name": "Nonēsāta niedru sandale",
+    "description": "Nopīta no papirusa niedrēm, zole nodilusi plāna no kāda sen aizmirsta strādnieka ikdienas gājieniem."
+  },
+  "sell_stone_4": {
+    "name": "Izbalējis lina gabaliņš",
+    "description": "Saplēsta nekrāsota lina strēmele, tāda, ko bezgalīgi tina ap mirušajiem — vai ar ko lāpīja buras."
+  },
+  "sell_stone_5": {
+    "name": "Salauzts krama asmens",
+    "description": "Atšķelts krama nazis ar nolūzušu galu. Lēti uztaisīt, vēl lētāk aizstāt."
+  },
+  "sell_bronze_1": {
+    "name": "Saliekts bronzas amulets",
+    "description": "Lēts aizsargamulets, izliets greizs un tā arī nekad neizlabots."
+  },
+  "sell_bronze_2": {
+    "name": "Sarūsējis bronzas spogulis",
+    "description": "Kādreiz nopulēts tik spoži, ka varēja redzēt savu atspulgu; tagad laika gaitā apsūbējis zaļš."
+  },
+  "sell_bronze_3": {
+    "name": "Neass bronzas makšķerāķis",
+    "description": "Zvejnieka rīks, iekritis Nīlā krietni pirms tam, kad kaps tika aizzīmogots."
+  },
+  "sell_bronze_4": {
+    "name": "Mazs bronzas zvaniņš",
+    "description": "Domāts, lai karātos pie tempļa durvīm vai dejotājas potītes — tas vairs neskan tīri."
+  },
+  "sell_bronze_5": {
+    "name": "Apsūbējis bronzas gredzens",
+    "description": "Vienkāršs gredzens pirkstam, kas sen jau pārvērties putekļos."
+  },
+  "sell_silver_1": {
+    "name": "Apsūbējis sudraba anhs",
+    "description": "Dzīvības simbols, gadsimtiem pazemē kļuvis blāvs."
+  },
+  "sell_silver_2": {
+    "name": "Sudraba kola irbulis",
+    "description": "Tievs irbulis, ar ko bagātie apvilka acis — kola sen vairs nav."
+  },
+  "sell_silver_3": {
+    "name": "Iespiesta sudraba bļoda",
+    "description": "Maza upuru bļoda, no vienas puses saspiesta, kad griesti virs tās beidzot iebruka."
+  },
+  "sell_silver_4": {
+    "name": "Sudraba matadata",
+    "description": "Vienkārša un bez rotājumiem, tā kādreiz turēja matus kādam, kura vārds ir pazudis."
+  },
+  "sell_silver_5": {
+    "name": "Nonēsāta sudraba aproce",
+    "description": "Tieva sudraba stīpa ar salauztu aizdari. Pārāk vienkārša dižciltīgajam, pārāk smalka strādniekam."
+  },
+  "sell_gold_1": {
+    "name": "Maza zelta pērlīte",
+    "description": "Viena pērlīte no apbedījuma kaklarotas, sen izbirusi."
+  },
+  "sell_gold_2": {
+    "name": "Zelta folijas gabaliņš",
+    "description": "Zelta folijas skaidiņa, ko kapu laupītāji nolupināja no statujas sejas gadsimtiem pirms tavas ierašanās."
+  },
+  "sell_gold_3": {
+    "name": "Plāns zelta auskars",
+    "description": "Izkalts plāns, lai dižciltīgā zelts pietiktu ilgāk."
+  },
+  "sell_gold_4": {
+    "name": "Lauska ar zelta plankumiem",
+    "description": "Apzeltīta apmetuma gabals, kam pie virsmas vēl turas īsta zelta plankumiņi."
+  },
+  "sell_gold_5": {
+    "name": "Ieplīsis zelta zīmoggredzens",
+    "description": "Zīmoggredzens ar tik nodilušu gravējumu, ka to vairs nevar atpazīt — kura vārds tur bija, ir aizmirsts."
+  },
+  "sell_divine_1": {
+    "name": "Izbalējis lazurīta skarabejs",
+    "description": "Izgriezts no dārgā lazurīta, ievests par lielu naudu faraona atdzimšanai. Gadsimtu gaitā krāsa ir izbalējusi."
+  },
+  "sell_divine_2": {
+    "name": "Karneola acs amulets",
+    "description": "Sargājoša acs, izgriezta no asinssarkana karneola, lai atvairītu nelaimi aizsaulē."
+  },
+  "sell_divine_3": {
+    "name": "Tirkīza inkrustācijas šķemba",
+    "description": "Viena flīzīte no sašķīdušas mozaīkas, kas kādreiz bija daļa no dieva attēla tempļa sienā."
+  },
+  "sell_divine_4": {
+    "name": "Alabastra kanopas lauska",
+    "description": "Gabals no trauka, kurā glabāja faraona iekšējos orgānus — dārgs akmens drūmam mērķim."
+  },
+  "sell_divine_5": {
+    "name": "Obsidiāna rituāla asmens",
+    "description": "Vulkāniskais stikls, noslīpēts svinīgam asmenim, kas nekad nebija domāts kaujai — tikai templim."
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Fais glisser l’objet sur la pierre pour l’ouvrir",
+    "alsoAvailable": "Tu as aussi :"
+  },
+  "perks": {
+    "max-health": "+½ cœur à ta vie maximum",
+    "armor": "Les pièges te font moins mal",
+    "trap-insight": "+1 s sur les pièges chronométrés",
+    "pack-mule": "Une outre d’eau soigne deux cœurs",
+    "compass": "Pièce de boussole",
+    "detection": "Pièce du détecteur de couloirs",
+    "tier-unlock": "Débloque les expéditions {{tier}}",
+    "tier-coming-soon": "Les expéditions {{tier}} arrivent dans une prochaine mise à jour",
+    "location-key": "Montre un autre tombeau",
+    "partOf": "{{count}} sur {{total}}"
+  },
+  "tiers": {
+    "stone": "Pierre",
+    "bronze": "Bronze",
+    "silver": "Argent",
+    "gold": "Or",
+    "divine": "Divin"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Deben d’argent",
+      "description": "Une ancienne pièce égyptienne en argent, que les marchands utilisaient pour commercer le long du Nil."
+    },
+    "t2": {
+      "name": "Rouleau de papyrus",
+      "description": "Le carnet d’un marchand, avec ses routes de commerce et la liste de ses précieuses marchandises."
+    },
+    "t3": {
+      "name": "Peigne en ivoire",
+      "description": "Un peigne en ivoire finement sculpté, un objet de luxe venu de pays lointains."
+    },
+    "t4": {
+      "name": "Lampe à huile",
+      "description": "Une lampe à huile simple mais jolie, pour éclairer la maison du marchand."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Bracelet en or",
+      "description": "Un bracelet en or décoré de pierres précieuses, porté par les nobles d’Égypte."
+    },
+    "t6": {
+      "name": "Poignard de cérémonie",
+      "description": "Un poignard au manche couvert de pierres précieuses, pour les cérémonies des nobles."
+    },
+    "t7": {
+      "name": "Scarabée de jade",
+      "description": "Une amulette scarabée en jade, qui protège. Le signe de la renaissance et de la vie éternelle."
+    },
+    "t8": {
+      "name": "Vase en albâtre",
+      "description": "Un joli vase en albâtre pour garder des huiles précieuses et des parfums."
+    },
+    "t9": {
+      "name": "Canne en ébène",
+      "description": "Une canne en ébène bien polie, avec un ânkh en or au sommet."
+    },
+    "t10": {
+      "name": "Collier de lapis-lazuli",
+      "description": "Un magnifique collier en lapis-lazuli, une pierre rare que les riches adoraient."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Ânkh sacré",
+      "description": "Un ânkh en or, signe de la vie éternelle, béni par les prêtres du temple."
+    },
+    "t12": {
+      "name": "Miroir en cuivre",
+      "description": "Un miroir en cuivre poli, utilisé pour les cérémonies de purification."
+    },
+    "t13": {
+      "name": "Brûle-encens",
+      "description": "Un beau brûle-encens en bronze, pour les prières au temple."
+    },
+    "t14": {
+      "name": "Coupe sacrée",
+      "description": "Une coupe sacrée en argent, pour verser des offrandes aux dieux."
+    },
+    "t15": {
+      "name": "Éventail de cérémonie",
+      "description": "Un bel éventail en plumes, que les prêtres utilisaient pendant les cérémonies."
+    },
+    "t16": {
+      "name": "Chapelet de prière",
+      "description": "Un collier de perles bénies, pour prier et réfléchir."
+    },
+    "t17": {
+      "name": "Vase d’eau bénite",
+      "description": "Un vase plein d’eau bénite, tirée du puits sacré du temple."
+    },
+    "t18": {
+      "name": "Cloche du temple",
+      "description": "Une cloche en bronze pour appeler à la prière et annoncer les cérémonies."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Sceau du pharaon",
+      "description": "Un très vieux sceau royal, avec le cartouche d’un pharaon oublié."
+    },
+    "t20": {
+      "name": "Boule de cristal",
+      "description": "Une boule de cristal mystérieuse. On dit qu’elle montre le passé et l’avenir."
+    },
+    "t21": {
+      "name": "Tablette de hiéroglyphes",
+      "description": "Une vieille tablette en pierre, couverte de prophéties mystérieuses en hiéroglyphes."
+    },
+    "t22": {
+      "name": "Sceptre en or",
+      "description": "Un magnifique sceptre en or, avec l’œil d’Horus au sommet."
+    },
+    "t23": {
+      "name": "Couteau d’obsidienne",
+      "description": "Un couteau de cérémonie en obsidienne, coupant comme un rasoir, pour les anciens rituels."
+    },
+    "t24": {
+      "name": "Morceau de météorite",
+      "description": "Un morceau de météorite sacrée. On croyait qu’il contenait la force des dieux."
+    },
+    "t25": {
+      "name": "Boussole ancienne",
+      "description": "Un drôle d’instrument qui montre toujours la direction des trésors cachés."
+    },
+    "t26": {
+      "name": "Cristal du temps",
+      "description": "Un cristal de légende qui brille de la force des siècles passés."
+    },
+    "t27": {
+      "name": "Masque rituel",
+      "description": "Un beau masque en or, porté par les grands prêtres pendant les cérémonies sacrées."
+    },
+    "t28": {
+      "name": "Torche éternelle",
+      "description": "Une torche qui brûle d’une flamme éternelle. Elle ne s’est jamais éteinte depuis les temps anciens."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Couronne de Râ",
+      "description": "La couronne de légende du dieu soleil Râ, qui rayonne de lumière et de puissance."
+    },
+    "t30": {
+      "name": "Bâton de Thot",
+      "description": "Le bâton de sagesse de Thot, dieu du savoir. Il contient tous les secrets anciens."
+    },
+    "t31": {
+      "name": "Plume de Maât",
+      "description": "La plume sacrée de Maât, déesse de la vérité. On s’en servait pour peser les âmes dans l’au-delà."
+    },
+    "t32": {
+      "name": "Larmes d’Isis",
+      "description": "Les larmes de la déesse Isis, devenues cristal. On dit qu’elles protègent pour toujours."
+    },
+    "t33": {
+      "name": "Cœur d’Osiris",
+      "description": "Le cœur d’Osiris, seigneur du monde des morts. Il bat encore, plein de vie."
+    },
+    "t34": {
+      "name": "Amulette de l’Œil d’Horus",
+      "description": "L’amulette de protection suprême, avec toute la puissance d’Horus."
+    },
+    "t35": {
+      "name": "Serpent d’Apophis",
+      "description": "Un morceau du serpent du chaos Apophis, enfermé dans un vase sacré."
+    },
+    "t36": {
+      "name": "Souffle de Shou",
+      "description": "Une fiole avec le souffle de Shou, dieu de l’air. Il donne le pouvoir sur les vents."
+    },
+    "t37": {
+      "name": "Écaille de Sobek",
+      "description": "Une seule écaille du dieu crocodile Sobek. Elle protège dans l’eau."
+    },
+    "t38": {
+      "name": "Statue gardienne d’Anubis",
+      "description": "Une petite statue d’Anubis qui se réveille pour garder les trésors de son maître."
+    },
+    "t39": {
+      "name": "Livre des morts",
+      "description": "Le Livre des morts complet, avec toutes les formules pour le voyage dans l’au-delà."
+    },
+    "t40": {
+      "name": "Sommet de la pyramide",
+      "description": "Le sommet en or de la grande pyramide, avec la puissance de tous les pharaons réunie."
+    }
+  }
+}

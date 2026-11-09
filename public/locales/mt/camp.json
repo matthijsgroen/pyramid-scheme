@@ -1,0 +1,256 @@
+{
+  "spots": {
+    "fire": "Nar tal-kamp",
+    "sleeping": "Post fejn torqod",
+    "water": "Post tal-ilma",
+    "cooking": "Post fejn issajjar",
+    "donkey": "Post tal-ħmar",
+    "camel": "Post tal-ġemel",
+    "mapTable": "Mejda tal-mapep",
+    "palmGarden": "Ġnien tal-palm",
+    "ibisPond": "Għadira tal-ibis",
+    "lookout": "Post tal-għassa",
+    "godStatues": "Statwi tal-allat",
+    "starCanopy": "Saqaf tal-istilel"
+  },
+  "finds": {
+    "pot": "Borma",
+    "seatCushions": "Imħaded biex toqgħod",
+    "reedMat": "Tapit tal-qasab",
+    "blanket": "Kutra",
+    "tentRug": "Tapit tat-tinda",
+    "tentFlag": "Bandiera tat-tinda",
+    "gourd": "Qargħa",
+    "jar": "Ġarra",
+    "secondJar": "It-tieni ġarra",
+    "spiceRack": "Xkaffa tal-ħwawar",
+    "breadBoard": "Lasta tal-ħobż",
+    "starMap": "Mappa tal-istilel",
+    "scrollCase": "Kaxxa tar-romblu",
+    "astrolabe": "Astrolabju",
+    "reedGlobe": "Globu tal-qasab",
+    "seed": "Żerriegħa tal-palm",
+    "secondPalm": "Żerriegħa tal-palm",
+    "figTree": "Żerriegħa tat-tin",
+    "papyrus": "Għerq tal-papiru",
+    "reeds": "Biċċa qasab",
+    "lotus": "Basla tal-lotu",
+    "flag": "Bandiera tal-għassa",
+    "thoth": "Statwa żgħira ta' Thoth",
+    "bastet": "Statwa żgħira ta' Bastet",
+    "anubis": "Statwa żgħira ta' Anubis",
+    "ra": "Statwa żgħira ta' Ra",
+    "cloth": "Drapp tal-istilel"
+  },
+  "structures": {
+    "stoneRing": "Ċirku tal-ġebel",
+    "fire": "Nar",
+    "cookingStones": "Ġebel tat-tisjir",
+    "seatingStones": "Ġebel biex toqgħod",
+    "clayOven": "Forn tat-tafal",
+    "windbreak": "Lqugħ mir-riħ",
+    "tent": "Tinda",
+    "secondTent": "It-tieni tinda",
+    "pavilion": "Padiljun",
+    "well": "Bir",
+    "wellPulley": "Bir bil-girella",
+    "tripod": "Tripied",
+    "breadOven": "Forn tal-ħobż",
+    "dryingRack": "Xkaffa biex tnixxef",
+    "feast": "Festa kbira",
+    "table": "Mejda tal-mapep",
+    "lotusPlanter": "Qasrija tal-lotu",
+    "edgeStones": "Xifer tal-għadira",
+    "post": "Arblu tal-għassa",
+    "platform": "Pjattaforma tal-għassa",
+    "ladder": "Sellum",
+    "roof": "Saqaf",
+    "signalFire": "Nar tas-sinjal",
+    "poles": "Arbli tas-saqaf",
+    "stars": "Stilel",
+    "planets": "Pjaneti"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Ġebel tar-raba'",
+      "sandBed": "Sodda tar-ramel"
+    },
+    "fire": {
+      "tinder": "Ħaxix niexef",
+      "acaciaLogs": "Zkuk tal-akaċja"
+    },
+    "cookingStones": {
+      "flatStone": "Ġebla ċatta",
+      "supportStones": "Ġebel taħt"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Ġebel kbir lixx",
+      "sandstoneBlock": "Blokka tal-ġebel ramli",
+      "hewnSlab": "Ċangun maqtugħ"
+    },
+    "clayOven": {
+      "ovenFloor": "Qiegħ il-forn",
+      "firebricks": "Briks tan-nar",
+      "smokeHole": "Toqba tad-duħħan",
+      "copperGrate": "Gradilja tar-ram"
+    },
+    "windbreak": {
+      "reedBundles": "Qatet tal-qasab",
+      "stakes": "Pali tal-injam"
+    },
+    "tent": {
+      "tentPoles": "Arbli tat-tinda",
+      "wovenCloth": "Drapp minsuġ",
+      "tentPegs": "Musmari tat-tinda"
+    },
+    "secondTent": {
+      "largeCloth": "Drapp kbir tat-tinda",
+      "ridgePole": "Travu tal-quċċata",
+      "guyRopes": "Ħbula li jżommu",
+      "woolFloor": "Tapit tas-suf"
+    },
+    "pavilion": {
+      "pavilionPosts": "Arbli tal-padiljun",
+      "linenCanopy": "Saqaf tal-għażel",
+      "hangingCurtains": "Purtieri",
+      "woolRugs": "Twapet tas-suf",
+      "woodenFloor": "Art tal-injam"
+    },
+    "well": {
+      "wellStones": "Ġebel tal-bir",
+      "rope": "Ħabel twil",
+      "bucket": "Barmil",
+      "windlass": "Rkiekel"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Girella",
+      "frame": "Qafas",
+      "hoistRope": "Ħabel biex tiġbed",
+      "counterweight": "Piż kontra",
+      "leatherBucket": "Barmil tal-ġilda"
+    },
+    "tripod": {
+      "tripodPoles": "Tliet arbli",
+      "binding": "Ħabel biex torbot",
+      "hook": "Ganċ tal-bronż"
+    },
+    "breadOven": {
+      "mudBricks": "Briks tat-tajn",
+      "clayPlaster": "Kisja tat-tafal",
+      "ovenLid": "Għatu tal-forn"
+    },
+    "dryingRack": {
+      "rackPoles": "Arbli tax-xkaffa",
+      "crossbar": "Injama mimduda",
+      "wickerTray": "Pinnur tal-qasab",
+      "cords": "Spag biex tdendel"
+    },
+    "feast": {
+      "lowTable": "Mejda baxxa",
+      "breadBaskets": "Qfief tal-ħobż",
+      "roastDuck": "Papra mixwija",
+      "beerJars": "Ġarar tal-birra",
+      "fruitBowl": "Skutella tal-frott"
+    },
+    "table": {
+      "tableTop": "Wiċċ il-mejda",
+      "trestles": "Trispi",
+      "leatherStraps": "Ċineg tal-ġilda"
+    },
+    "lotusPlanter": {
+      "clayTub": "Ħawt tat-tafal",
+      "nileSilt": "Tajn tan-Nil",
+      "waterJar": "Ġarra tal-ilma",
+      "lotusTubers": "Basal tal-lotu",
+      "stoneRim": "Xifer tal-ġebel"
+    },
+    "edgeStones": {
+      "riverStones": "Ġebel tax-xmara",
+      "clayBedding": "Sodda tat-tafal",
+      "gravel": "Żrar",
+      "boundaryStakes": "Pali tal-konfini"
+    },
+    "post": {
+      "postTrunk": "Zokk tal-palm",
+      "footStones": "Ġebel tal-pedament",
+      "wedges": "Kunjardi",
+      "braces": "Saqqijiet"
+    },
+    "platform": {
+      "platformBeams": "Travi",
+      "platformPlanks": "Twavel",
+      "lashingRope": "Ħabel biex tissikka",
+      "edgeRail": "Poġġaman"
+    },
+    "ladder": {
+      "ladderRails": "Ġnub tas-sellum",
+      "rungs": "Taraġ tas-sellum",
+      "groundPegs": "Pali fl-art",
+      "leatherLoops": "Ċrieki tal-ġilda"
+    },
+    "roof": {
+      "roofPoles": "Travi tas-saqaf",
+      "thatch": "Weraq tal-palm",
+      "clayLayer": "Saff tat-tafal",
+      "bindingGrass": "Ħaxix biex torbot"
+    },
+    "signalFire": {
+      "fireBasin": "Bieqja tan-nar",
+      "pitch": "Qatran",
+      "dryBrushwood": "Zkuk niexfa",
+      "flint": "Żnied",
+      "bellows": "Minfaħ"
+    },
+    "poles": {
+      "masts": "Arbli",
+      "cornerStones": "Ġebel tal-kantunieri",
+      "stayLines": "Ħbula tas-sostenn",
+      "bigPegs": "Musmari kbar",
+      "poleSockets": "Toqob tal-arbli"
+    },
+    "stars": {
+      "goldLeaf": "Werqa tad-deheb",
+      "needleThread": "Labra u ħajta",
+      "indigoDye": "Żebgħa indigo",
+      "chalk": "Ġibs",
+      "stencils": "Mudelli maqtugħa"
+    },
+    "planets": {
+      "ochre": "Okra",
+      "copperDiscs": "Diski tar-ram",
+      "lapisPowder": "Trab tal-lapis",
+      "hangingLoops": "Ċrieki biex tdendel",
+      "dividers": "Kumpass"
+    }
+  },
+  "collection": {
+    "title": "Bini",
+    "progress": "{{found}} minn {{total}}",
+    "built": "mibni",
+    "unknownPart": "???",
+    "open": "Uri l-biċċiet",
+    "close": "Aħbi l-biċċiet"
+  },
+  "reward": {
+    "find": "Sejba għall-kamp",
+    "part": "Biċċa",
+    "progress": "{{name}} · {{found}} minn {{total}}"
+  },
+  "haul": {
+    "new": "Ġdid fil-kamp tiegħek",
+    "parts_one": "{{name}} · biċċa waħda",
+    "parts_two": "{{name}} · {{count}} biċċiet",
+    "parts_few": "{{name}} · {{count}} biċċiet",
+    "parts_many": "{{name}} · {{count}} biċċa",
+    "parts_other": "{{name}} · {{count}} biċċa"
+  },
+  "arrivals": {
+    "donkey": "Il-ħmar tiegħek wasal fil-kamp",
+    "cart": "Il-karrettun tiegħek wasal fil-kamp",
+    "camel": "Il-ġemel tiegħek wasal fil-kamp",
+    "secondDonkey": "It-tieni ħmar tiegħek wasal fil-kamp",
+    "secondCamel": "It-tieni ġemel tiegħek wasal fil-kamp",
+    "sturdyCart": "Il-karrettun l-aktar b'saħħtu tiegħek wasal fil-kamp",
+    "caravanBanner": "Il-bandiera tal-karovana tiegħek imdendla fil-kamp"
+  }
+}

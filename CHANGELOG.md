@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Support for 42 languages.
+
 ### Fixed
 
 - Standing in a room's doorway shows the arrow into the room again.

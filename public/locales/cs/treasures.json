@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Posuň předmět na kámen a odemkni ho",
+    "alsoAvailable": "Máš taky:"
+  },
+  "perks": {
+    "max-health": "+½ srdce k nejvyššímu zdraví",
+    "armor": "Pasti ti ublíží méně",
+    "trap-insight": "+1 s u pastí na čas",
+    "pack-mule": "Měch s vodou vyléčí dvě srdce",
+    "compass": "Díl kompasu",
+    "detection": "Díl hledače chodeb",
+    "tier-unlock": "Odemyká výpravy úrovně {{tier}}",
+    "tier-coming-soon": "Výpravy úrovně {{tier}} přijdou v pozdější aktualizaci",
+    "location-key": "Ukáže další hrobku",
+    "partOf": "{{count}} z {{total}}"
+  },
+  "tiers": {
+    "stone": "Kámen",
+    "bronze": "Bronz",
+    "silver": "Stříbro",
+    "gold": "Zlato",
+    "divine": "Božské"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Stříbrný deben",
+      "description": "Stará egyptská stříbrná mince. Obchodníci s ní platili podél celého Nilu."
+    },
+    "t2": {
+      "name": "Svitek papyru",
+      "description": "Kupcův svitek se zápisky o obchodních cestách a vzácném nákladu."
+    },
+    "t3": {
+      "name": "Slonovinový hřeben",
+      "description": "Jemně vyřezávaný hřeben ze slonoviny. Vzácná věc přivezená z dalekých zemí."
+    },
+    "t4": {
+      "name": "Hliněná olejová lampa",
+      "description": "Jednoduchá, ale hezká olejová lampa, která svítila v kupcově domě."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Zlatý náramek",
+      "description": "Zdobený zlatý náramek s drahými kameny. Nosili ho egyptští šlechtici."
+    },
+    "t6": {
+      "name": "Obřadní dýka",
+      "description": "Dýka s rukojetí posázenou drahokamy. Používala se při slavnostních obřadech."
+    },
+    "t7": {
+      "name": "Nefritový skarabeus",
+      "description": "Ochranný amulet z nefritu ve tvaru brouka. Znamení znovuzrození a věčného života."
+    },
+    "t8": {
+      "name": "Alabastrová kanopa",
+      "description": "Krásný alabastrový džbán na vzácné oleje a voňavky."
+    },
+    "t9": {
+      "name": "Ebenová vycházková hůl",
+      "description": "Nablýskaná hůl z ebenového dřeva se zlatým anchem nahoře."
+    },
+    "t10": {
+      "name": "Lazuritový náhrdelník",
+      "description": "Nádherný náhrdelník ze vzácných modrých lazuritů. Bohatí ho měli moc rádi."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Posvátný anch",
+      "description": "Zlatý anch, znamení věčného života, požehnaný chrámovými kněžími."
+    },
+    "t12": {
+      "name": "Měděné zrcadlo",
+      "description": "Nablýskané měděné zrcadlo pro obřady očišťování."
+    },
+    "t13": {
+      "name": "Kadidelnice",
+      "description": "Zdobená bronzová nádoba, ve které se v chrámu pálilo kadidlo."
+    },
+    "t14": {
+      "name": "Obřadní pohár",
+      "description": "Posvátný stříbrný pohár, ze kterého se lily obětiny pro bohy."
+    },
+    "t15": {
+      "name": "Obřadní vějíř",
+      "description": "Zdobený vějíř z peří, který kněží používali při obřadech v chrámu."
+    },
+    "t16": {
+      "name": "Modlitební korálky",
+      "description": "Šňůrka požehnaných korálků k modlení a rozjímání."
+    },
+    "t17": {
+      "name": "Nádoba se svatou vodou",
+      "description": "Nádoba s požehnanou vodou z posvátné chrámové studny."
+    },
+    "t18": {
+      "name": "Chrámový zvon",
+      "description": "Bronzový zvon, který svolával lidi k modlitbě a ohlašoval obřady."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Faraonova pečeť",
+      "description": "Stará královská pečeť s kartuší zapomenutého faraona."
+    },
+    "t20": {
+      "name": "Křišťálová koule",
+      "description": "Tajemná křišťálová koule. Prý v ní můžeš uvidět minulost i budoucnost."
+    },
+    "t21": {
+      "name": "Deska s hieroglyfy",
+      "description": "Stará kamenná deska s tajemnými proroctvími psanými hieroglyfy."
+    },
+    "t22": {
+      "name": "Zlaté žezlo",
+      "description": "Nádherné zlaté žezlo, nahoře s Horovým okem."
+    },
+    "t23": {
+      "name": "Obsidiánový nůž",
+      "description": "Obřadní nůž z obsidiánu, ostrý jako břitva. Používal se při dávných obřadech."
+    },
+    "t24": {
+      "name": "Úlomek meteoritu",
+      "description": "Kousek posvátného meteoritu. Lidé věřili, že je v něm síla bohů."
+    },
+    "t25": {
+      "name": "Starý kompas",
+      "description": "Tajemný přístroj, který vždycky ukazuje ke skrytým pokladům."
+    },
+    "t26": {
+      "name": "Krystal času",
+      "description": "Pověstný krystal, který září silou dávných věků."
+    },
+    "t27": {
+      "name": "Obřadní maska",
+      "description": "Zdobená zlatá maska, kterou nosili veleknězi při posvátných obřadech."
+    },
+    "t28": {
+      "name": "Pochodeň věčného ohně",
+      "description": "Pochodeň s plamenem, který od pradávna nikdy nezhasl."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Koruna boha Ra",
+      "description": "Pověstná koruna boha slunce Ra, která září světlem a silou bohů."
+    },
+    "t30": {
+      "name": "Thothova hůl",
+      "description": "Hůl moudrosti boha Thotha, boha vědění. Skrývá všechna dávná tajemství."
+    },
+    "t31": {
+      "name": "Pero bohyně Maat",
+      "description": "Posvátné pero Maat, bohyně pravdy. Podle něj se v posmrtném světě vážily duše."
+    },
+    "t32": {
+      "name": "Slzy bohyně Isis",
+      "description": "Zkamenělé slzy bohyně Isis. Prý chrání navždy."
+    },
+    "t33": {
+      "name": "Osiridovo srdce",
+      "description": "Uchované srdce Osirida, pána podsvětí. Pořád v něm buší síla života."
+    },
+    "t34": {
+      "name": "Amulet Horova oka",
+      "description": "Nejsilnější ochranný amulet, ve kterém je celá Horova síla."
+    },
+    "t35": {
+      "name": "Had Apop",
+      "description": "Spoutaný kousek hada chaosu Apopa, zavřený v posvátné nádobě."
+    },
+    "t36": {
+      "name": "Dech boha Šu",
+      "description": "Lahvička s dechem Šu, boha vzduchu. Kdo ji má, poroučí větrům."
+    },
+    "t37": {
+      "name": "Sobkova šupina",
+      "description": "Jedna šupina krokodýlího boha Sobka. Chrání tě ve vodě."
+    },
+    "t38": {
+      "name": "Soška strážce Anubise",
+      "description": "Malá soška Anubise, která ožije a hlídá poklady svého majitele."
+    },
+    "t39": {
+      "name": "Kniha mrtvých",
+      "description": "Celá Kniha mrtvých se všemi zaříkadly, která potřebuješ na cestu do posmrtného světa."
+    },
+    "t40": {
+      "name": "Vrchol pyramidy",
+      "description": "Zlatý vrcholový kámen Velké pyramidy. Je v něm síla všech faraonů dohromady."
+    }
+  }
+}
