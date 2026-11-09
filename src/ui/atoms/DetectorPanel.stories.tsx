@@ -32,7 +32,8 @@ const meta = {
     compassResults: [],
     hitLabel: (hit: CompassHit, level: number) =>
       [
-        ({ starter_1: "Sphinx Dawn", starter_2: "Papyrus Route" } as Record<string, string>)[hit.journeyId] ?? hit.journeyId,
+        ({ starter_1: "Sphinx Dawn", starter_2: "Papyrus Route" } as Record<string, string>)[hit.journeyId] ??
+          hit.journeyId,
         `Pyramid ${hit.levelIdx + 1}`,
         level >= 2 ? `Floor ${hit.floorIdx + 1}` : undefined,
       ]
