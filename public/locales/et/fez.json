@@ -561,9 +561,7 @@
 
   "animal": {
     "forSale": {
-      "1": { "fez": "Vaata, mis letil on! Ma teen nüüd ka vedusid." },
-      "2": { "explorer": "Ta mäletseb." },
-      "3": { "fez": "See on hinna sees." }
+      "1": { "fez": "Vaata, mis letil on! Ma teen nüüd ka vedusid." }
     },
     "boughtDonkey": {
       "1": { "fez": "Müüdud! Üks eesel. Kangekaelne, aga kannab kõike." },

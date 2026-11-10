@@ -167,13 +167,26 @@ const DIRS: Array<[number, number, Direction]> = [
 ]
 const opposite = (d: number) => (d + 2) % 4
 
-/** Every ordered pick of `count` different items of `items`. */
-const arrangements = <T>(items: readonly T[], count: number): T[][] =>
+/** Every ordered pick of `count` different indexes below `size`. */
+const indexArrangements = (
+  size: number,
+  count: number,
+  from: readonly number[] = [...Array(size).keys()]
+): number[][] =>
   count === 0
     ? [[]]
-    : items.flatMap((item, i) =>
-        arrangements([...items.slice(0, i), ...items.slice(i + 1)], count - 1).map(rest => [item, ...rest])
+    : from.flatMap((index, i) =>
+        indexArrangements(size, count - 1, [...from.slice(0, i), ...from.slice(i + 1)]).map(rest => [index, ...rest])
       )
+// A designed room asks for the same few picks at every placement it tries, so each is worked out once.
+const arrangementsBySize = new Map<string, number[][]>()
+/** Every ordered pick of `count` different items of `items`. */
+const arrangements = <T>(items: readonly T[], count: number): T[][] => {
+  const key = `${items.length}:${count}`
+  let picks = arrangementsBySize.get(key)
+  if (!picks) arrangementsBySize.set(key, (picks = indexArrangements(items.length, count)))
+  return picks.map(pick => pick.map(index => items[index]))
+}
 
 type Part = LayRefusal["part"]
 type Step = { part: Part; run: (next: () => boolean) => boolean }
@@ -352,7 +365,17 @@ const search = (
         r < 0 || c < 0 || r >= n || c >= n || r % 2 !== 0 || c % 2 !== 0 ? -1 : idOf(r / 2, c / 2)
       type Port = { node: number; out: number; dir: number }
       type Porch = { p: number; out: number; at: number }
-      type Option = { score: number; anchor: number; held: number[]; ports: Port[]; block: LaidBlock; porch?: Porch }
+      type Option = {
+        score: number
+        shape: number
+        top: number
+        left: number
+        all: number[]
+        anchor: number
+        joined: number[]
+        ports: Port[]
+        porch?: Porch
+      }
       const options: Option[] = []
       // A room uses as many of its doors as the region has ways: a porch carries only what no door of it can.
       const doors = Math.min(ordered.length, Math.max(...ask.shapes.map(shape => shape.ports.length)))
@@ -389,6 +412,8 @@ const search = (
                     })
               for (const porch of porches) {
                 let score = rand()
+                // Distances only add to the score: a placement already out of the running stays out.
+                if (options.length === BLOCK_OPTIONS && score >= options[BLOCK_OPTIONS - 1].score) continue
                 const fits = pick.every((port, w) => {
                   const other = otherOf(ordered[w])
                   const end = porch?.p === w ? porch.at : port.out
@@ -398,26 +423,31 @@ const search = (
                   return true
                 })
                 if (!fits) continue
-                const held = all.filter(node => node !== anchor && !joined.includes(node))
-                const block: LaidBlock = {
-                  region: region.id,
-                  room: ask.room,
-                  shape: index,
-                  top,
-                  left,
-                  anchor: cell(anchor),
-                  nodes: all.map(cell),
-                  joined: joined.map(cell),
-                }
-                options.push({ score, anchor, held, ports: pick, block, ...(porch ? { porch } : {}) })
+                // Only the best BLOCK_OPTIONS are ever tried, so only those are kept, the earlier of two equal
+                // scores first: a floor offers millions of placements, and this step runs again on every backtrack.
+                if (options.length === BLOCK_OPTIONS && score >= options[BLOCK_OPTIONS - 1].score) continue
+                let slot = options.length
+                while (slot > 0 && options[slot - 1].score > score) slot--
+                options.splice(slot, 0, { score, shape: index, top, left, all, anchor, joined, ports: pick, porch })
+                if (options.length > BLOCK_OPTIONS) options.pop()
               }
             }
           }
         }
       })
-      options.sort((a, b) => a.score - b.score)
-      for (const { anchor, held, ports, block, porch } of options.slice(0, BLOCK_OPTIONS)) {
+      for (const { shape, top, left, all, anchor, joined, ports, porch } of options) {
         if (spent()) return false
+        const held = all.filter(node => node !== anchor && !joined.includes(node))
+        const block: LaidBlock = {
+          region: region.id,
+          room: ask.room,
+          shape,
+          top,
+          left,
+          anchor: cell(anchor),
+          nodes: all.map(cell),
+          joined: joined.map(cell),
+        }
         const mark = trail.length
         const nodes = [...new Set([anchor, ...ports.map(port => port.node)])]
         nodes.forEach(node => claim(node, region.id))

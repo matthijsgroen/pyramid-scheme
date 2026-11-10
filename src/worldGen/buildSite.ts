@@ -7,7 +7,7 @@ import { hashStr, hintToReward } from "./rewards"
 import { initPuzzleChains } from "./puzzleRewards"
 import { buildSideSections, type ResolveReward } from "./sideSections"
 import { stairIdAt } from "../game/stairAddress"
-import type { FloorConstraint, PyramidConstraint, RewardSpec, WardPathSpec } from "./dsl"
+import type { FloorConstraint, PyramidConstraint, RewardSpec, RoomPlacement, WardPathSpec } from "./dsl"
 import { wardKeyDifficulty } from "../data/difficultyLevels"
 import type { Prefab } from "../game/prefabTypes"
 import { catalogueRoom } from "../game/roomCatalogue"
@@ -322,8 +322,15 @@ export type BuildSiteContext<TExtra extends string = never> = {
 }
 
 // Lays `floorLocks` over floors the auto build made: the targeted floor gains its locks and the binding resolved
-// through the same cascade an explicit floor uses, every other field stays as built.
-const applyFloorLocks = (floors: FloorConfig[], constraint: PyramidConstraint, journeyId: string, i: number): void => {
+// through the same cascade an explicit floor uses, and its own rooms where the overlay names them (on a lock floor the
+// rooms stand in the lock's regions); every other field stays as built.
+const applyFloorLocks = (
+  floors: FloorConfig[],
+  constraint: PyramidConstraint,
+  journeyId: string,
+  i: number,
+  roomsAt: (rooms: RoomPlacement[], difficulty: Difficulty, label: string) => Partial<FloorConfig>
+): void => {
   const overlays = constraint.floorLocks
   if (!overlays) return
   const where = `journey=${journeyId} pyramid=${i + 1}`
@@ -338,6 +345,11 @@ const applyFloorLocks = (floors: FloorConfig[], constraint: PyramidConstraint, j
     const floor = floors[fi]
     floor.locks = overlay.locks
     if (overlay.packing !== undefined) floor.packing = overlay.packing
+    if (overlay.rooms !== undefined) {
+      delete floor.prefabs
+      delete floor.prefabPlacements
+      Object.assign(floor, roomsAt(overlay.rooms, floor.difficulty, `floor=${fi}`))
+    }
     // The binding carries the one-way's realisation once a floor places locks, as in an explicit floor.
     delete floor.oneWayRealisation
     if (Object.keys(floorBinding).length > 0) floor.realisations = floorBinding
@@ -374,6 +386,10 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       difficulty,
       label: `journey=${journeyId} pyramid=${i + 1} ${label}`,
     })
+
+  // A floorLocks overlay's own rooms, checked against the difficulty of the floor it lays them on.
+  const overlayRoomsAt = (rooms: RoomPlacement[], difficulty: Difficulty, label: string) =>
+    resolveFloorRooms(rooms, {}, lookupRoom, { difficulty, label: `journey=${journeyId} pyramid=${i + 1} ${label}` })
 
   // The end of a path that authors no reward is an open loot slot, unless it is lootless.
   const unauthoredEnd = (loot: false | undefined): TreasureReward | undefined =>
@@ -798,7 +814,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       ]
     }
 
-    applyFloorLocks(floorConfigs, constraint, journeyId, i)
+    applyFloorLocks(floorConfigs, constraint, journeyId, i, overlayRoomsAt)
     initPuzzleChains(floorConfigs)
     return { floors: floorConfigs }
   }
@@ -865,7 +881,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     sealed: resolveSealed(constraint),
   })
 
-  applyFloorLocks([floor], constraint, journeyId, i)
+  applyFloorLocks([floor], constraint, journeyId, i, overlayRoomsAt)
   initPuzzleChains([floor])
   return { floors: [floor] }
 }

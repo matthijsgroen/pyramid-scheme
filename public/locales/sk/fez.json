@@ -553,9 +553,7 @@
 
   "animal": {
     "forSale": {
-      "1": { "fez": "Pozri, čo je pri stánku! Už robím aj dopravu." },
-      "2": { "explorer": "Prežúva." },
-      "3": { "fez": "To je v cene." }
+      "1": { "fez": "Pozri, čo je pri stánku! Už robím aj dopravu." }
     },
     "boughtDonkey": {
       "1": { "fez": "Predané! Jeden osol. Tvrdohlavý, ale unesie čokoľvek." },

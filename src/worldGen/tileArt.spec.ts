@@ -2,7 +2,7 @@ import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { describe, expect, it } from "vitest"
-import { hasTileArt } from "./tileArt"
+import { hasStandIn, hasTileArt } from "./tileArt"
 
 const rootWith = (files: string[]) => {
   const root = mkdtempSync(join(tmpdir(), "tiles-"))
@@ -25,5 +25,14 @@ describe("hasTileArt", () => {
   })
   it("does not count a placeholder", () => {
     expect(hasTileArt("junior", "jar", rootWith(["placeholder/jar.png"]))).toBe(false)
+  })
+})
+
+describe("hasStandIn", () => {
+  it("finds a kind's placeholder", () => {
+    expect(hasStandIn("jar", rootWith(["placeholder/jar.png"]))).toBe(true)
+  })
+  it("does not count painted art as a stand-in", () => {
+    expect(hasStandIn("jar", rootWith(["junior/jar.png"]))).toBe(false)
   })
 })

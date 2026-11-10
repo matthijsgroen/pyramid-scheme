@@ -563,9 +563,7 @@
 
   "animal": {
     "forSale": {
-      "1": { "fez": "Titta vad som står vid ståndet! Jag sysslar med transporter nu." },
-      "2": { "explorer": "Den tuggar." },
-      "3": { "fez": "Det ingår i priset." }
+      "1": { "fez": "Titta vad som står vid ståndet! Jag sysslar med transporter nu." }
     },
     "boughtDonkey": {
       "1": { "fez": "Såld! En åsna. Envis, men han bär vad som helst." },

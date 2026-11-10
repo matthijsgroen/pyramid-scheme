@@ -1,0 +1,19 @@
+// designed by: Claude
+// junior. The dressing room: the table with its mirror and kohl pots, the wig on its stand, a mirror bracket either side.
+room dressingRoom
+tier junior
+activity dressingRoom
+mirror
+holds chest
+
+layout
+# n d n #
+# w . e #
+d . s . d
+# . . . #
+# d d d #
+
+w wall dressingTable
+e wall wigStand | shelf
+n wallItem sconce
+s stop

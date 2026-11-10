@@ -1077,12 +1077,6 @@
     "forSale": {
       "1": {
         "fez": "Edrych beth sydd wrth y stondin! Dw i'n gwneud cludiant nawr."
-      },
-      "2": {
-        "explorer": "Mae e'n cnoi."
-      },
-      "3": {
-        "fez": "Mae hynna'n rhan o'r pris."
       }
     },
     "boughtDonkey": {

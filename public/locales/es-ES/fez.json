@@ -1077,12 +1077,6 @@
     "forSale": {
       "1": {
         "fez": "¡Mira lo que hay en el puesto! Ahora también hago transporte."
-      },
-      "2": {
-        "explorer": "Está masticando."
-      },
-      "3": {
-        "fez": "Eso viene incluido en el precio."
       }
     },
     "boughtDonkey": {

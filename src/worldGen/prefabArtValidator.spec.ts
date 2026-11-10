@@ -4,7 +4,11 @@ import type { FloorConfig } from "./types"
 import type { GateWalk } from "./gateWalk"
 
 const painted = new Set<string>()
-vi.mock("./tileArt", () => ({ hasTileArt: (tier: string, kind: string) => painted.has(`${tier}/${kind}`) }))
+const standIns = new Set<string>()
+vi.mock("./tileArt", () => ({
+  hasTileArt: (tier: string, kind: string) => painted.has(`${tier}/${kind}`),
+  hasStandIn: (kind: string) => standIns.has(kind),
+}))
 const { prefabArtValidator } = await import("./prefabArtValidator")
 
 const prefab = (kinds: string[]): Prefab => ({
@@ -36,6 +40,12 @@ describe("prefabArtValidator", () => {
     painted.clear()
     painted.add("cave/jar")
     expect(() => run(floor(["jar"], { tileset: "cave" }))).not.toThrow()
+  })
+  it("passes on a stand-in for a kind not yet painted", () => {
+    painted.clear()
+    standIns.add("jar")
+    expect(() => run(floor(["jar"]))).not.toThrow()
+    standIns.clear()
   })
   it("needs the patron statue only on a floor with a patron", () => {
     painted.clear()

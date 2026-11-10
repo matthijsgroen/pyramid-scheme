@@ -1,0 +1,17 @@
+// designed by: Claude
+// junior. A small room off the bakery: the quern in one corner of the north wall, the lever or torch in the middle.
+room quernRoom
+tier junior
+activity bakeryBrewery
+mirror
+
+layout
+# d # # #
+# . . g #
+d . m . d
+# . s . #
+# d # d #
+
+g wall grindstone
+m mechanism
+s stop

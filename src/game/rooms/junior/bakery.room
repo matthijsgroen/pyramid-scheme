@@ -1,0 +1,18 @@
+// designed by: Claude
+// junior. The bakery-brewery: the bread oven, the quern between, the beer jars on their rack.
+room bakery
+tier junior
+activity bakeryBrewery
+mirror
+
+layout
+# # d # d # #
+# o . g . j #
+d . . . . . d
+# . . s . . #
+# # d # d # #
+
+o wall breadOven
+g wall grindstone
+j wall jarRack
+s stop

@@ -11,3 +11,7 @@ const tilesRoot = () => join(dirname(fileURLToPath(import.meta.url)), "../assets
  * The node-side twin of `tileUrl` (app/SiteMap/tileAssets.ts); the folder is read when asked, not at import. */
 export const hasTileArt = (tier: Tileset, kind: string, root: string = tilesRoot()): boolean =>
   [tier, "default"].some(folder => existsSync(join(root, folder, `${kind}.png`)))
+
+/** Whether a kind has a stand-in in `placeholder/`, drawn wherever no rank has painted it yet (`tileOrPlaceholder`). */
+export const hasStandIn = (kind: string, root: string = tilesRoot()): boolean =>
+  existsSync(join(root, "placeholder", `${kind}.png`))
