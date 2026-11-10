@@ -1077,12 +1077,6 @@
     "forSale": {
       "1": {
         "fez": "Pažiūrėk, kas prie prekystalio! Dabar aš verčiuosi ir vežimu."
-      },
-      "2": {
-        "explorer": "Jis kramto."
-      },
-      "3": {
-        "fez": "Įskaičiuota į kainą."
       }
     },
     "boughtDonkey": {

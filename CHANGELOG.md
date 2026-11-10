@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - The game works offline again.
+- Fez's remark about how you solve puzzles now waits for the right tier.
+- At Fez's stall the explorer no longer sees an animal that is not there.
 
 ## 0.47.0 - 2026-11-10
 

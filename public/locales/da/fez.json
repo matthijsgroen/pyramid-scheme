@@ -1077,12 +1077,6 @@
     "forSale": {
       "1": {
         "fez": "Se, hvad der står i boden! Nu sælger jeg også transport."
-      },
-      "2": {
-        "explorer": "Den tygger."
-      },
-      "3": {
-        "fez": "Det er med i prisen."
       }
     },
     "boughtDonkey": {

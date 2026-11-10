@@ -1077,12 +1077,6 @@
     "forSale": {
       "1": {
         "fez": "Sjáðu hvað er á básnum! Ég er kominn í flutninga."
-      },
-      "2": {
-        "explorer": "Hann er að jórtra."
-      },
-      "3": {
-        "fez": "Það er innifalið í verðinu."
       }
     },
     "boughtDonkey": {

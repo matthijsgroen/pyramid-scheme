@@ -525,9 +525,7 @@
   },
   "animal": {
     "forSale": {
-      "1": { "fez": "Koukej, co mám ve stánku! Teď dělám i dopravu." },
-      "2": { "explorer": "Ono to žvýká." },
-      "3": { "fez": "To je v ceně." }
+      "1": { "fez": "Koukej, co mám ve stánku! Teď dělám i dopravu." }
     },
     "boughtDonkey": {
       "1": { "fez": "Prodáno! Jeden osel. Tvrdohlavý, ale unese cokoli." },
