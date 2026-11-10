@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
- * Traces piece polygons straight from stained-glass.png: the leadwork is neutral black ink and
+ * Traces piece polygons straight from art/masters/stained-glass.png: the leadwork is neutral black ink and
  * every glass cell carries colour, so the artwork is its own mask and there is nothing to keep
  * in sync.
  *
- * The component renders the same PNG as background and uses the traced polygons as a dark
+ * The component renders the same picture (src/assets/stained-glass.webp) as background and uses the traced polygons as a dark
  * overlay — revealing a piece makes its polygon transparent.
  *
  * Run: yarn tsx scripts/traceMask.ts
@@ -18,7 +18,7 @@ import { journeys } from "../src/data/journeys"
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 // The artwork is its own mask: leadwork is black ink, every cell carries either colour or charcoal.
-const ARTWORK_PATH = "src/assets/stained-glass.png"
+const ARTWORK_PATH = "art/masters/stained-glass.png"
 // Ink versus paint. The artwork uses two different blacks: leading, dividers and the border sit at
 // brightness 0-12, while shapes PAINTED black — Anubis's head, the balance scale, the snake — sit
 // around 60. The histogram between them is empty at 40-49, so 45 splits ink from paint. Set this at

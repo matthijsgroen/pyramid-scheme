@@ -1,15 +1,15 @@
 import type { FC, PropsWithChildren } from "react"
-import caveMouthUrl from "@/assets/exteriors/cave-mouth.png"
+import caveMouthUrl from "@/assets/exteriors/cave-mouth.webp"
 
-// Painted exteriors, one file each; a missing file leaves the CSS stand-in. Dropping a PNG in is the
+// Painted exteriors, one file each; a missing file leaves the CSS stand-in. Dropping a webp in is the
 // whole hand-over — no manifest.
-const art = import.meta.glob("../../assets/exteriors/*.png", {
+const art = import.meta.glob("../../assets/exteriors/*.webp", {
   eager: true,
   query: "?url",
   import: "default",
 }) as Record<string, string>
 
-const artUrl = (name: string): string | undefined => art[`../../assets/exteriors/${name}.png`]
+const artUrl = (name: string): string | undefined => art[`../../assets/exteriors/${name}.webp`]
 
 // Dark rock, a pale shaft of light falling from a gap in the ceiling onto the floor.
 const cavernScene = [

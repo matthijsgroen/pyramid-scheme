@@ -9,6 +9,12 @@ import path from "node:path"
 import info from "./package.json" with { type: "json" }
 import { PRODUCTION_BASE, pwaBuild } from "./scripts/pwaIdentity.ts"
 
+type WorkerCaches = {
+  open: (
+    name: string
+  ) => Promise<{ match: (request: Request, options: { ignoreSearch: boolean }) => Promise<Response | undefined> }>
+}
+
 const base = process.env.VITE_BASE ?? PRODUCTION_BASE
 const pwa = pwaBuild(base)
 
@@ -107,16 +113,51 @@ export default defineConfig({
           // left out of the precache means every sign is a box on a plane — the exact failure the font
           // was added to fix (scripts/generateFont.ts). webp carries the tomb-puzzle wall panels and the
           // rush-hour market sprites, so a tableau plays against a blank wall without it.
-          globPatterns: ["**/*.{js,css,html,svg,png,webp,ico,mp3,aac,ttf,otf,woff2,json}"],
+          // Of the locales only English is precached: it is the fallback every language leans on. The other
+          // 41 were half the precache, and a player reads one of them.
+          globPatterns: ["**/*.{js,css,html,svg,png,webp,ico,mp3,aac,ttf,otf,woff2}", "locales/en/*.json"],
+          // i18next asks for `common.json?v=<version>`; without this the precached English never matches.
+          ignoreURLParametersMatching: [/^utm_/, /^fbclid$/, /^v$/],
+          // The language a player picks is cached the first time it loads, so it keeps working offline.
+          // CacheFirst because the `?v=` makes every release a new URL: a cached file is never stale, and a
+          // release fetches its own. Offline right after an update the new URL is not cached yet, so the
+          // last release's file stands in rather than the game falling back to English.
+          runtimeCaching: [
+            {
+              urlPattern: ({ url }) => url.pathname.includes("/locales/"),
+              handler: "CacheFirst",
+              options: {
+                cacheName: "locales",
+                expiration: { maxEntries: 120 },
+                cacheableResponse: { statuses: [200] },
+                plugins: [
+                  {
+                    handlerDidError: async ({ request }) => {
+                      // This runs in the service worker, where `caches` is a global; the config is typed for node.
+                      const { caches } = globalThis as unknown as { caches: WorkerCaches }
+                      return (await (await caches.open("locales")).match(request, { ignoreSearch: true })) ?? undefined
+                    },
+                  },
+                ],
+              },
+            },
+          ],
           // iOS draws its own launch screens and does not go through the service worker for them,
           // so 27 splash PNGs in the precache were 0.6 MB nobody read.
           // The Lock editor's web worker carries a second copy of the world and the web walk for a develop-mode
           // tool: fetched when the editor's web mode opens, never precached for players.
-          globIgnores: ["**/apple-splash-*.png", "**/webCheck.worker-*.js"],
-          // The whole game has to be playable offline, mosaic window included, so the stained-glass
-          // artwork is precached — and the ceiling covers it UNOPTIMIZED. sharp is an optional peer
-          // dep: when it fails to install (Linux CI) the image optimizer skips silently and the raw
-          // 3.9 MB PNG ships, which the 2 MB default would reject and fail the build.
+          // The icons and og-image are listed by the plugin itself (manifest icons, includeAssets) with a revision
+          // of their own. Globbed as well, the same URL shows up twice with two revisions, workbox throws while
+          // the worker starts, and what installs is a worker with no precache and no routes: nothing offline.
+          globIgnores: [
+            "**/apple-splash-*.png",
+            "**/webCheck.worker-*.js",
+            "pwa-*.png",
+            "maskable-icon-*.png",
+            "og-image.png",
+          ],
+          // The whole game has to be playable offline, so every file is precached however big. The main
+          // bundle carries the baked world and is 2.6 MB, which the 2 MB default would reject and fail the build.
           maximumFileSizeToCacheInBytes: 4_500_000,
           cleanupOutdatedCaches: true,
           clientsClaim: true,
