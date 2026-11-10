@@ -483,7 +483,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
-## Nobleman — four
+## Nobleman — three
 
 The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
 first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
@@ -572,38 +572,6 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 ```
 
 **Import:** `yarn import-tile art/masters/props/junior/stela-thoth.webp --tier=junior --name=stela-thoth --slot=wall --filter=smooth --headroom=0.18 --trim`
-
-### `junior/breadOven` — a clay bread oven with its moulds
-
-**Attach:**
-
-1. `~/tile-previews/breadOven-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a BREAD OVEN. The tall round body is the OVEN, its thick lip the RIM and the dark disc inside
-it the open MOUTH; the dark square at its foot is the STOKE HOLE; the stepped cone standing against it is
-a stack of conical BREAD MOULDS, one nested in the next.
-
-The oven is sun-dried Nile clay, a dark warm brown #6e4a30, #5a3a24 in shade, hand-smoothed, blackened
-with soot #2a1f18 round the mouth and the stoke hole. Inside the mouth is dark, with a faint orange glow
-of embers deep in it; the stoke hole the same. The bread moulds are red-brown fired pottery #8c4a36, each
-rim a slightly paler line #a05a40.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold breadOven --spin=14 --colour=#6e4a30 --floor=#e2a86f
-yarn import-tile art/masters/props/junior/breadOven.webp --tier=junior --name=breadOven --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ## Priest — fifteen
 
