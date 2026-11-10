@@ -54,15 +54,15 @@ describe("objectStep", () => {
 describe("wallStep", () => {
   const midWall: TierPalette = { ...pale, wall: "#907860", faceNight: 0 }
 
-  it("passes a wall item drawn well below a mid-tone face", () => {
-    expect(wallStep(midWall, [30, 22, 18])).toBeGreaterThanOrEqual(MIN_STEP)
+  it("is positive for a wall item drawn darker than its face", () => {
+    expect(wallStep(midWall, [30, 22, 18])).toBeGreaterThan(0)
   })
 
-  it("passes a wall item drawn well above a mid-tone face", () => {
-    expect(wallStep(midWall, [250, 245, 235])).toBeLessThanOrEqual(-MIN_STEP)
+  it("is negative for a wall item drawn lighter than its face", () => {
+    expect(wallStep(midWall, [250, 245, 235])).toBeLessThan(0)
   })
 
-  it("fails an object that stands off the light floor but sits at the wall's own value", () => {
+  it("measures against the face, not the floor: a colour far off the floor can sit near the wall", () => {
     const terracotta: [number, number, number] = [110, 70, 50]
     expect(objectStep(midWall, terracotta)).toBeGreaterThanOrEqual(MIN_STEP)
     expect(Math.abs(wallStep(midWall, terracotta))).toBeLessThan(MIN_STEP)

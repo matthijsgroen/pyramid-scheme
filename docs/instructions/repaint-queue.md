@@ -502,11 +502,10 @@ the rest is, so a white-linen hanging is dyed, pale limestone is painted (red gr
 the statues are dark wood. Each scaffold's `--colour` is the entry's body hex: a repaint keeps the
 scaffold's value, and `tierPalette.junior.prop`, #e0c193, is lighter than the floor.
 
-A wall item (`--slot=wall`: niche, sconce, the stelae, the tally board) is judged against the wall face
-instead, #b88050 at L\* 40 as drawn, and passes 25 L\* off it in either direction. Lighter is out of reach:
-near-white #f8f4ec stands 24.8 above it, and anything past `tile-stats`' light clamp (#e0c193) fails on
-its own. So a wall item's body stays dark, at #3a2a20 or below; red ochre #8a3a2a is 15 off the wall and
-smoke-darkened plaster #74604a only 10.
+A wall item (`--slot=wall`: niche, sconce, the stelae, the tally board) is not held to the floor rule.
+`--land` measures and prints its step off the wall face, #b88050 at L\* 40 as drawn, and imports it: it
+is judged by eye on the wall, because a wall item reads by its own internal contrast — a light frame round
+a dark recess — not by its mean.
 
 The last nine are the house's own kinds, new with its activities ([themed-rooms.md](../game-design/themed-rooms.md)
 § Junior): each has a primitive of its own in `renderProp.py` and a guarded block in `art/rebuild.sh`. The

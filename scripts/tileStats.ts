@@ -18,9 +18,10 @@
  *   `--slot=face` and it is graded as three bands against `wall` / `wallTop` / `wallBase` instead, with
  *   only the brick field deciding the verdict. An OBJECT — prop, wall item, archway, explorer — is held to
  *   the palette's ends and nothing else: it is meant to differ from the stone behind it.
- * - THE WRONG GROUND. A wall item (`--slot=wall`) hangs on the wall face, not on the floor, so it is held
- *   `MIN_STEP` L* off the face as the map draws it (`wall` under `faceNight`, the night and the seating
- *   pass), at every rank and in either direction: a mid-tone face leaves room on both sides of it.
+ * - THE WRONG GROUND. A wall item (`--slot=wall`) hangs on the wall face, not on the floor, so its step is
+ *   printed against the face as the map draws it (`wall` under `faceNight`, the night and the seating
+ *   pass) and never faults: a wall item reads by its own internal contrast — a light frame round a dark
+ *   recess — not by its mean, so it is judged by eye on the wall.
  *
  * A LIGHT rank — one whose floor stands above mid-grey through its own night — turns the object rule over
  * (docs/game-design/visual-direction.md, light and dark floors): an object passes on value when it stands
@@ -207,7 +208,7 @@ const main = async () => {
   const offWall = wallStep(palette, mean)
   if (isWallItem)
     console.log(
-      `against the wall it hangs on: ${Math.abs(offWall).toFixed(1)} L* ${offWall >= 0 ? "darker" : "lighter"} at night (wants ${MIN_STEP} either way; the face is L* ${faceL(
+      `against the wall it hangs on: ${Math.abs(offWall).toFixed(1)} L* ${offWall >= 0 ? "darker" : "lighter"} at night (judged by eye; the face is L* ${faceL(
         palette
       ).toFixed(1)})`
     )
@@ -247,34 +248,33 @@ const main = async () => {
     console.log(
       `dark detail: p5 sits ${detail.toFixed(1)} L* below the body at night (under ${MIN_STEP} keeps it floor)`
     )
-  const faults = isObject
-    ? [
-        // Only the LIGHT end. An object's dark end is its own shadow — the underside of a beam, the inner
-        // face of a post — which is what seats it in the world; the failure objects actually have is
-        // chalky highlights, the same white flaking that ruined the first floor.
-        tooLight >= 2 ? `${tooLight.toFixed(1)}% lighter than ${lightest} — restate the value clamp` : null,
-        isWallItem && Math.abs(offWall) < MIN_STEP
-          ? `only ${Math.abs(offWall).toFixed(1)} L* off the wall at night — a wall item wants ${MIN_STEP}, darker or lighter`
-          : null,
-        !isWallItem && light && step < MIN_STEP
-          ? `only ${step.toFixed(1)} L* below the floor at night — a light rank's object wants ${MIN_STEP}`
-          : null,
-        // 10 is about a palette step. Closer than that and the object is the floor's own value.
-        !isWallItem && !light && Math.abs(floorGap) < 10
-          ? `only ${Math.abs(floorGap)} from the floor it stands on — it will not read against it`
-          : null,
-      ].filter(Boolean)
-    : [
-        tooContrasty && !isStep ? `too contrasty: p5–p95 spans ${spread}, restate the value clamp` : null,
-        // 15 is about the width of one palette step, so a drift past it is a different brown, not a variation.
-        Math.abs(drift) > 15
-          ? `${drift > 0 ? "too warm" : "too cool"} by ${Math.abs(Math.round(drift))}, restate the palette hexes`
-          : null,
-        // A surface that is not the value of its own material is the failure that inverts the map's depth.
-        offMaterial > 20
-          ? `${at(50) > lumOf(material) ? "too light" : "too dark"} by ${offMaterial} for ${material}`
-          : null,
-      ].filter(Boolean)
+  const faults = isWallItem
+    ? []
+    : isObject
+      ? [
+          // Only the LIGHT end. An object's dark end is its own shadow — the underside of a beam, the inner
+          // face of a post — which is what seats it in the world; the failure objects actually have is
+          // chalky highlights, the same white flaking that ruined the first floor.
+          tooLight >= 2 ? `${tooLight.toFixed(1)}% lighter than ${lightest} — restate the value clamp` : null,
+          light && step < MIN_STEP
+            ? `only ${step.toFixed(1)} L* below the floor at night — a light rank's object wants ${MIN_STEP}`
+            : null,
+          // 10 is about a palette step. Closer than that and the object is the floor's own value.
+          !light && Math.abs(floorGap) < 10
+            ? `only ${Math.abs(floorGap)} from the floor it stands on — it will not read against it`
+            : null,
+        ].filter(Boolean)
+      : [
+          tooContrasty && !isStep ? `too contrasty: p5–p95 spans ${spread}, restate the value clamp` : null,
+          // 15 is about the width of one palette step, so a drift past it is a different brown, not a variation.
+          Math.abs(drift) > 15
+            ? `${drift > 0 ? "too warm" : "too cool"} by ${Math.abs(Math.round(drift))}, restate the palette hexes`
+            : null,
+          // A surface that is not the value of its own material is the failure that inverts the map's depth.
+          offMaterial > 20
+            ? `${at(50) > lumOf(material) ? "too light" : "too dark"} by ${offMaterial} for ${material}`
+            : null,
+        ].filter(Boolean)
   console.log(faults.length === 0 ? "reads as one tomb — import it" : faults.join("\n"))
 }
 

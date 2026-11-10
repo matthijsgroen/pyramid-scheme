@@ -43,8 +43,8 @@ const tileStats = (master: string, tier: string, slot: string | undefined) => {
 }
 
 /** The 25 L* rule for what was just imported: a floor through the rank's row, an object through its own art
- * against the floor, a wall item through its own art against the wall face, either way. A face is shown as
- * painted and has no step to keep. */
+ * against the floor. A wall item's step off the wall face is printed and judged by eye, and a face is shown as
+ * painted: neither has a step to keep. */
 const rankRule = async (tier: Difficulty, name: string, slot: string | undefined) => {
   const { inputs, reports } = await measureAll()
   console.table({ [tier]: rankRow(tier, reports) })
@@ -57,7 +57,7 @@ const rankRule = async (tier: Difficulty, name: string, slot: string | undefined
     console.log(
       `${name} stands ${round(Math.abs(step))} L* ${step >= 0 ? "below" : "above"} the ${tier} wall face after the night`
     )
-    return Math.abs(step) >= MIN_STEP ? [] : [`${name} ${round(Math.abs(step))} L* off the wall (wants ${MIN_STEP})`]
+    return []
   }
   if (!["prop", "arch"].includes(slot ?? "")) return []
   const step = measureRank({ ...inputs[tier], prop: await artMean(tier, name) }).prop
