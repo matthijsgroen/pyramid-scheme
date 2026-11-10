@@ -219,6 +219,18 @@ describe("an arch in a wall standing in front of floor", () => {
     const { container } = render(<SiteMapView grid={archBehindAWall()} explorerPos={[0, 3]} revealAllCells />)
     expect(Number(archOf(container).style.opacity)).toBe(OCCLUDER_FADE)
   })
+
+  it("fades its wall while the explorer stands on the cell the wall over the arch rises over", () => {
+    const { container } = render(<SiteMapView grid={archBehindAWall()} explorerPos={[0, 2]} revealAllCells />)
+
+    expect(drawnWalls(container).filter(wall => wall.hasAttribute("data-faded"))).toHaveLength(1)
+  })
+
+  it("leaves its wall solid while the explorer stands in the doorway", () => {
+    const { container } = render(<SiteMapView grid={archBehindAWall()} explorerPos={[1, 2]} revealAllCells />)
+
+    expect(drawnWalls(container).filter(wall => wall.hasAttribute("data-faded"))).toEqual([])
+  })
 })
 
 const run = (key: string, behind: string[], bounds: FrontRun["bounds"] = [0, 0, 10, 10]): FrontRun => ({

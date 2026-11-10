@@ -415,8 +415,9 @@ export type FrontPiece = { rect: Rect; tier: Tileset; state: CellState }
  * A run of back wall that rises in front of floor, as one thing the renderer can fade.
  *
  * `behind` is every cell a face of the run rises over, so "is anyone behind this wall" is one lookup.
- * Corner pieces rise over the seam between two of those cells and add none of their own, and the wall above
- * an arch rises over the doorway, which the arch already fades for.
+ * Corner pieces rise over the seam between two of those cells and add none of their own. The wall above an
+ * arch rises over the cell behind the doorway as any face does, so that cell is behind the run; the doorway
+ * itself, and the cell in front of it, are not.
  */
 export type FrontRun = { key: string; pieces: FrontPiece[]; bounds: Rect; behind: ReadonlySet<string> }
 
@@ -437,7 +438,7 @@ export const frontRuns = (regions: TileRegions): FrontRun[] => {
     const box = boundsOf(grownFaceRects(run.map(p => p.rect)))
     const behind = new Set(
       run
-        .filter(p => p.rect[2] === CELL && p.rect[3] > 0)
+        .filter(p => p.rect[2] === CELL)
         .map(({ rect: [x, y] }) => `${(y - PAD_TOP) / ROW_PITCH - 1},${(x - PAD - SIDE_W) / COL_PITCH}`)
     )
     return { key: `${box.x},${box.y}`, pieces: run, bounds: [box.x, box.y, box.w, box.h], behind }
