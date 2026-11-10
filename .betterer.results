@@ -24,8 +24,8 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/app/SiteMap/htmlLayers.tsx:1994925392": [
       [140, 97, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/app/SiteMap/tileAssets.ts:2315541081": [
-      [50, 24, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/app/SiteMap/tileAssets.ts:2551997613": [
+      [58, 24, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/app/SiteMap/useAssembledFloor.ts:3574389895": [
       [271, 82, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
@@ -82,16 +82,16 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/game/seeds/generatePuzzle.ts:94021237": [
       [9, 42, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/game/siteTypes.ts:2356303868": [
+    "src/game/siteTypes.ts:148569521": [
       [15, 70, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [25, 19, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [26, 82, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [210, 77, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [364, 84, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [498, 85, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [1145, 82, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [1154, 24, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [1160, 86, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+      [211, 77, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [365, 84, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [499, 85, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [1146, 82, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [1155, 24, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [1161, 86, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/game/siteValidator.ts:3585857321": [
       [133, 13, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
