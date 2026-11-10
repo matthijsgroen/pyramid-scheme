@@ -3631,8 +3631,11 @@ def prim_statue():
     masks. The silhouette then belongs to the paint, which is the intention here rather than a defect.
     """
     contents = arg("contents", "seated")
-    plinth_h = 0.09
-    mark(box(0.62, 0.46, plinth_h, z=plinth_h / 2), "body")
+    # --no-plinth stands the figure on the paving itself: a rank whose coffin stands in a room rather
+    # than on display wants no slab under it, and a painted slab cannot be cut away afterwards.
+    plinth_h = 0.0 if arg("no-plinth") else 0.09
+    if plinth_h:
+        mark(box(0.62, 0.46, plinth_h, z=plinth_h / 2), "body")
     b = plinth_h
 
     if contents == "mummiform":
