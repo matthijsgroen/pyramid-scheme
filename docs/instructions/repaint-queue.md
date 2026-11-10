@@ -513,7 +513,7 @@ potted tree stand a cell taller, so theirs is portrait two by five.
 
 **Attach:**
 
-1. `~/tile-previews/statue-thoth-junior.png` — the scaffold
+1. `~/tile-previews/statue-thoth-junior-previous.png` — the previous painting, repainted over: it already holds the scaffold's pose and silhouette
 2. `~/tile-previews/junior-plain.png` — the material reference
 
 ```
