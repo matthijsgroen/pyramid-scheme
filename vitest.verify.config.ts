@@ -1,5 +1,6 @@
 import path from "node:path"
 import { defineConfig } from "vitest/config"
+import { tileSizesPlugin } from "./scripts/tileSizesPlugin.ts"
 
 // The sweeps too expensive for `yarn test`. A `.verify.ts` matches no default include, so nothing
 // creeps back onto a test run's critical path. `yarn verify-content` runs them.
@@ -9,6 +10,7 @@ import { defineConfig } from "vitest/config"
 // job: a generator is worth re-checking when somebody changes one, not on every pull request, and putting
 // it on the critical path is how it ended up making the build red or green according to machine load.
 export default defineConfig({
+  plugins: [tileSizesPlugin(path.resolve(import.meta.dirname, "./src/assets/tiles"))],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),

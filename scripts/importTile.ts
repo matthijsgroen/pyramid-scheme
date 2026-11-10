@@ -77,6 +77,11 @@
  *                    Must match the kind's `DECORATION_FOOTPRINTS` entry.
  *   --tall=1         (prop) N extra cells of height above the face band, for art that stands taller than
  *                    a prop slot. Combines with --cells.
+ *   --tall           (wall, no value) a TALL wall item — a stela, a tally board — whose art has to be read:
+ *                    a cell wide and the face's whole brick under the coping high (112x96 at 2 px/unit)
+ *                    instead of the 2:1 band. The map draws a wall item at its tile's own aspect
+ *                    (`wallItemFrame`), so the slot's shape is all it takes. Still `--slot=wall`, so
+ *                    everything that grades a wall item grades this one.
  *   --span=6         grow the slot N times in both directions, keeping its aspect, for a sprite the renderer
  *                    draws across N cells, stored at the pixels it is drawn at rather than 3x softer.
  *   --crop-below=1513  discard every row of the master from this one down, after the mask and seat are laid
@@ -93,7 +98,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs"
 import { dirname, join } from "path"
 import { fileURLToPath } from "url"
 import sharp from "sharp"
-import { ARCH_H, ARCH_W, CELL, WALL_H, propFrameSize } from "../src/app/SiteMap/mapScale"
+import { ARCH_H, ARCH_W, CELL, WALL_FACE_H, WALL_H, propFrameSize } from "../src/app/SiteMap/mapScale"
 import { keyOut } from "./keyOut"
 import { tierPalette } from "../src/app/SiteMap/tileMaterials"
 import type { Difficulty } from "../src/data/difficultyLevels"
@@ -573,9 +578,11 @@ const main = async (): Promise<void> => {
   const tall = Number(arg("tall", "0"))
   if (!(cols >= 1 && rows >= 1 && tall >= 0)) throw new Error("--cells is COLSxROWS (e.g. 2x1) and --tall a count")
   if (slot !== "prop" && (cols !== 1 || rows !== 1 || tall !== 0)) throw new Error("--cells and --tall size a prop")
+  const tallWall = process.argv.includes("--tall")
+  if (tallWall && slot !== "wall") throw new Error("--tall with no value is a wall item's; a prop takes --tall=N")
   const frame = propFrameSize({ cols, rows, tall })
   let w = Math.round((slot === "prop" ? px(frame.w) : SLOTS[slot].w) * span)
-  let h = Math.round((slot === "prop" ? px(frame.h) : SLOTS[slot].h) * span)
+  let h = Math.round((slot === "prop" ? px(frame.h) : tallWall ? px(WALL_FACE_H) : SLOTS[slot].h) * span)
   const key = arg("key", "#ff00ff")!
   const tolerance = Number(arg("tolerance", "60"))
   const smooth = arg("filter", "nearest") === "smooth"
