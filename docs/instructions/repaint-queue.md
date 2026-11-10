@@ -1780,7 +1780,6 @@ EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 You are re-carving a shape, not re-staging a photograph.
 
-
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
 ```
 
@@ -2433,7 +2432,6 @@ EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 You are re-carving a shape, not re-staging a photograph.
 
-
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
 ```
 
@@ -3009,41 +3007,6 @@ The merchant's three are MORE DRAWINGS of kinds he already has. The renderer pic
 `<kind>-2.png` or `<kind>-3.png` per cell and mirrors half of them, so each one painted is another picture
 in the rotation and at high clutter his floors stop repeating the same two. Each is a new `--contents`
 of the kind's own primitive, a different silhouette with the same language.
-
-### `starter/rubbleSpill-2` — a fallen run of mudbrick, snapped at one end
-
-**Attach:**
-
-1. `~/tile-previews/rubbleSpill-2-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a length of MUDBRICK WALL that fell flat on the floor in one piece and broke where it landed.
-The long straight row on the left is the fallen COURSE — four bricks still held together by their mortar,
-with two bricks of the course above still bonded on its far end. On the right the end of it has SNAPPED
-OFF and slid away, two bricks lying askew. Broken halves and small chips are thrown out from the break.
-
-The bricks are sun-dried mud brick, warm grey-brown #a49781 shading to #7a6a58, rough and straw-flecked,
-their corners knocked round. The MORTAR between the bricks of a run is a thin, slightly paler line of
-dried mud, crumbled out in places. Every broken face is rougher and a little darker than a brick's old
-face, and a little grit lies around the break.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Rough and warm, and never as pale as the floor it lies on.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold rubblePile --contents=course --floor=#d8c8a8
-yarn import-tile art/masters/props/starter/rubbleSpill-2.webp --tier=starter --name=rubbleSpill-2 --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.80 --saturation=1.0
-```
 
 ### `master/rubbleSpill` — shattered alabaster, gold leaf in the dust
 
@@ -3665,7 +3628,6 @@ reference image exactly and do not reason about them: whatever it does with vert
 with depth and with which way the object is turned, do the same. It is not a photograph and not an
 isometric view, and it is not for you to correct into either.
 
-
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
 The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
@@ -3756,7 +3718,6 @@ THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S.
 reference image exactly and do not reason about them: whatever it does with verticals, with top faces,
 with depth and with which way the object is turned, do the same. It is not a photograph and not an
 isometric view, and it is not for you to correct into either.
-
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -3874,7 +3835,6 @@ reference image exactly and do not reason about them: whatever it does with vert
 with depth and with which way the object is turned, do the same. It is not a photograph and not an
 isometric view, and it is not for you to correct into either.
 
-
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
 The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
@@ -3962,7 +3922,6 @@ THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S.
 reference image exactly and do not reason about them: whatever it does with verticals, with top faces,
 with depth and with which way the object is turned, do the same. It is not a photograph and not an
 isometric view, and it is not for you to correct into either.
-
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -4692,96 +4651,6 @@ foot: it is shown alone, not stood on sand. A return with a ground patch or a ca
 silver, gold, lapis), and still an ordinary, worn object.
 
 Entries are deleted as they land, like the rest of this file.
-
-### `sellable/sell_bronze_1` — Bent Bronze Amulet
-
-1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
-
-```
-FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
-
-STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
-
-THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
-
-SUBJECT: Bent Bronze Amulet (Verbogen Bronzen Amulet). A small cast bronze charm shaped like a protective sign, its loop and body bent crooked, dull warm brown.
-
-BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
-```
-
-**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_bronze_1 --size=256`
-
-### `sellable/sell_bronze_2` — Corroded Bronze Mirror
-
-1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
-
-```
-FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
-
-STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
-
-THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
-
-SUBJECT: Corroded Bronze Mirror (Verweerde Bronzen Spiegel). A round hand mirror of bronze on a short handle, its face clouded with green corrosion.
-
-BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
-```
-
-**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_bronze_2 --size=256`
-
-### `sellable/sell_bronze_3` — Dull Bronze Fishhook
-
-1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
-
-```
-FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
-
-STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
-
-THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
-
-SUBJECT: Dull Bronze Fishhook (Dof Bronzen Vishaak). A small plain bronze fishhook with a barb, dulled and darkened, a bit of old cord on its eye.
-
-BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
-```
-
-**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_bronze_3 --size=256`
-
-### `sellable/sell_bronze_4` — Small Bronze Bell
-
-1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
-
-```
-FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
-
-STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
-
-THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
-
-SUBJECT: Small Bronze Bell (Kleine Bronzen Bel). A small bronze bell with a loop on top, dented, its brown surface dulled, no clapper showing.
-
-BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
-```
-
-**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_bronze_4 --size=256`
-
-### `sellable/sell_bronze_5` — Tarnished Bronze Ring
-
-1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
-
-```
-FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
-
-STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
-
-THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
-
-SUBJECT: Tarnished Bronze Ring (Verkleurde Bronzen Ring). A plain bronze ring band, dull brown and tarnished green in places, slightly out of round.
-
-BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
-```
-
-**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_bronze_5 --size=256`
 
 ### `sellable/sell_silver_1` — Tarnished Silver Ankh
 
