@@ -483,7 +483,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
-## Nobleman — one
+## Nobleman — none
 
 The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
 first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
@@ -511,32 +511,6 @@ The last nine are the house's own kinds, new with its activities ([themed-rooms.
 § Junior): each has a primitive of its own in `renderProp.py` and a guarded block in `art/rebuild.sh`. The
 banquet table and the bed are two cells across, so their frame is landscape three by two; the harp and the
 potted tree stand a cell taller, so theirs is portrait two by five.
-
-### `junior/namePanel` — Henut's name panel, an empty cartouche
-
-**Re-roll:** the first roll painted her name already put right, which gives the wall's puzzle away. The panel is the plate the reading screen writes the signs into, so the cartouche is EMPTY.
-
-**New:** the centrepiece of Henut's wall (`henutWall.room`), where the player reads her name and puts its sign right. It hangs alone on the north wall, so it has to read as A NAME at map scale: one big cartouche, a few large signs, nothing busy.
-
-**Attach:**
-
-1. `~/tile-previews/namePanel-junior-previous.png` — the first roll, repainted over: keep its slab, border and cartouche exactly
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A single flat object, painted in flat matte gouache, on pure magenta #FF00FF. Nearly square, exactly seven units wide by six tall. Do not re-compose it into a landscape strip. ONE OBJECT, AND IT FILLS THE FRAME, reaching the left and right edges. The magenta fills the frame around it to its edges: there is no wall, no floor and no surface behind the object. Seen straight on, flat, no perspective.
-
-The object: a NAME PANEL, a flat rectangular slab of dressed limestone, plastered smooth, with a narrow
-red ochre #8a3a2a border.
-
-The plaster is a warm cream #e8d8b8, clean and fresh. Filling most of it, standing upright, is one large
-CARTOUCHE: a long rounded oval of knotted rope, painted thick in red ochre #8a3a2a, with the tied bar across
-its foot. INSIDE THE CARTOUCHE IS EMPTY: plain cream plaster #e8d8b8, no signs, no face, no marks at all. Keep the slab, its red ochre border and the rope cartouche exactly as in the attached painting; remove only what is inside the oval. No writing anywhere on the panel.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
-```
-
-**Import:** `yarn import-tile art/masters/props/junior/namePanel.webp --tier=junior --name=namePanel --slot=wall --tall --filter=smooth`
 
 ## Priest — fifteen
 
