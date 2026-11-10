@@ -1738,6 +1738,31 @@ yarn import-tile art/masters/props/junior/breadOven.webp --tier=junior --name=br
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
+### `junior/namePanel` — Henut's name in a cartouche, with Hathor's face
+
+**New:** the centrepiece of Henut's wall (`henutWall.room`), where the player reads her name and puts its sign right. It hangs alone on the north wall, so it has to read as A NAME at map scale: one big cartouche, a few large signs, nothing busy.
+
+**Attach:** `~/tile-previews/junior-plain.png` — the material reference. A flat item has no scaffold.
+
+```
+A single flat object, painted in flat matte gouache, on pure magenta #FF00FF. Nearly square, exactly seven units wide by six tall. Do not re-compose it into a landscape strip. ONE OBJECT, AND IT FILLS THE FRAME, reaching the left and right edges. The magenta fills the frame around it to its edges: there is no wall, no floor and no surface behind the object. Seen straight on, flat, no perspective.
+
+The object: a NAME PANEL, a flat rectangular slab of dressed limestone, plastered smooth, with a narrow
+red ochre #8a3a2a border.
+
+The plaster is a warm cream #e8d8b8, clean and fresh. Filling most of it, standing upright, is one large
+CARTOUCHE: a long rounded oval of knotted rope, painted thick in red ochre #8a3a2a, with the tied bar across
+its foot. At the top inside the cartouche is HATHOR's face, seen from the front: a calm woman's face with
+cow's ears, a heavy blue wig #2a5a9a falling either side, painted in yellow ochre #c9a040 and black
+#2a1f18. Below the face, three or four large HIEROGLYPHS stacked down the oval, a bird, a water line, a
+loaf, a seated woman, in black #2a1f18 with Egyptian blue #2a5a9a fills. Few signs, large and clear,
+spaced well apart. No modern writing, no letters, no numbers.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
+```
+
+**Import:** `yarn import-tile art/masters/props/junior/namePanel.webp --tier=junior --name=namePanel --slot=wall --tall --filter=smooth`
+
 ## Priest — fifteen
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and
