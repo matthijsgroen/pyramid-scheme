@@ -247,3 +247,7 @@ export const sequenceHarness = (
   }
   return { store, encountered, current, tap, walkTo, remount, settle, holder }
 }
+
+/** A drawing behind a front wall is laid twice, once more under the wall to show through it as it fades
+ * (`BehindWalls`): this keeps the one copy every marker has. */
+export const drawnOnce = (el: Element) => !el.closest("[data-behind-copy]")

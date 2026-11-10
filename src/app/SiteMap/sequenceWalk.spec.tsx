@@ -19,6 +19,7 @@ import {
   sequenceHarness,
   tilesOf,
   allTilesOf,
+  drawnOnce,
   type Place,
 } from "./sequenceHarness.testing"
 import "@/mods/registerModApps"
@@ -151,10 +152,9 @@ describe.each(FLOORS)("walking a sequence of $name", ({ name }) => {
     const faceBefore = faceOf()
     const liveStates = h.current().mechanismStates
     const plates = (container: HTMLElement) =>
-      Array.from(container.querySelectorAll("[data-plate]")).map(el => [
-        el.getAttribute("data-plate"),
-        el.getAttribute("data-status"),
-      ])
+      Array.from(container.querySelectorAll("[data-plate]"))
+        .filter(drawnOnce)
+        .map(el => [el.getAttribute("data-plate"), el.getAttribute("data-status")])
     const before = render(
       <SiteMapView grid={revealed(h.current().grid!)} currentFloor={0} mechanismStates={liveStates} />
     )
@@ -209,13 +209,15 @@ describe("every tile shows its own state", () => {
 
   const drawn = (container: HTMLElement) =>
     new Map(
-      Array.from(container.querySelectorAll<SVGGElement>("[data-plate]")).map(el => [
-        Number(el.getAttribute("data-plate")),
-        {
-          status: el.getAttribute("data-status"),
-          ink: el.querySelector("[data-glyph-ink]")?.getAttribute("fill"),
-        },
-      ])
+      Array.from(container.querySelectorAll<SVGGElement>("[data-plate]"))
+        .filter(drawnOnce)
+        .map(el => [
+          Number(el.getAttribute("data-plate")),
+          {
+            status: el.getAttribute("data-status"),
+            ink: el.querySelector("[data-glyph-ink]")?.getAttribute("fill"),
+          },
+        ])
     )
 
   for (const { name } of FLOORS) {
@@ -264,7 +266,7 @@ describe("every tile shows its own state", () => {
         ),
       }
       const { container, unmount } = render(<SiteMapView grid={walked} currentFloor={0} mechanismStates={positions} />)
-      const plates = container.querySelectorAll("[data-plate]")
+      const plates = Array.from(container.querySelectorAll("[data-plate]")).filter(drawnOnce)
       expect(plates.length, state).toBe(allTilesOf(grid).length)
       for (const plate of plates) {
         const marker = plate.closest("[data-marker-cell]")
