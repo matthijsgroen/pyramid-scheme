@@ -2978,6 +2978,15 @@ describe("SiteMapView — a prefab room", () => {
     expect(items).toContainEqual(expect.objectContaining({ row: 3, col: 4, kind: "niche" }))
   })
 
+  it("a wall item hangs centred on its face", () => {
+    const { container } = render(<SiteMapView grid={grid} explorerPos={PREFAB_FORK} />)
+    const niche = container.querySelector<HTMLElement>('[data-wall-item-at="3,4"] [data-wall-item]')!
+    const face = { top: cellTop(3) - FACE_H, bottom: cellTop(3) }
+    const box = boxOf(niche)
+    expect(box.h).toBe(WALL_H)
+    expect(box.y - face.top).toBe(face.bottom - (box.y + box.h))
+  })
+
   it("a mirrored room's ground steps draw flipped, under the explorer", () => {
     const porch = revealAll(prefabPorchFloor())
     const { container } = render(<SiteMapView grid={porch} explorerPos={PREFAB_PORCH} />)
