@@ -13,7 +13,8 @@ import { Plant, Pyramid } from "./glyphs"
 /**
  * A skin: what the board, its lines and its nodes look like. The family emits logical state only — a node
  * that is short of its number, has it, or holds too many; a line drawn, doubled or previewed — and a skin
- * decides the pixels (docs/instructions/puzzle-screens.md §2).
+ * decides the pixels (docs/instructions/puzzle-screens.md: the family renders states, the skin renders
+ * pixels).
  *
  * The same rule holds in every one of them, and it is the accessibility floor rather than a style note: the
  * three node states differ in **fill and outline**, not only in hue, and a node that has its count always
@@ -24,8 +25,9 @@ export type Skin = {
    * Which place this is, as its own name.
    *
    * Carried so anything that has to SAY what the room is can ask the skin — the goal sentence above the
-   * rules, for one (`puzzle-screens.md` §2). Deliberately absent from the `night` overlays: a causeway
-   * after dark is still a causeway, so the ambience never renames the place.
+   * rules, for one (`puzzle-screens.md`: the role is the identity, the theme only the hour). Deliberately
+   * absent from the `night` overlays: a causeway after dark is still a causeway, so the ambience never
+   * renames the place.
    */
   name: string
   /** The board itself — background and frame. */
@@ -80,9 +82,9 @@ const SKINS: Record<string, Skin> = {
     celebrate: "animate-bloom",
     // The default sky IS night, so there is nothing for the ambience to change.
   },
-  // **Basins and channels** (PUZZLE_FAMILIES.md §11.1, Water & Nile). The rules read straight across: a
-  // number is how many channels a basin feeds, no crossing is channels that cannot cross, and one group is
-  // one network watering every field. A dry basin is a stone ring; a fed one holds water.
+  // **Basins and channels** (PUZZLE_FAMILIES.md theme taxonomy, Water & Agriculture). The rules read straight
+  // across: a number is how many channels a basin feeds, no crossing is channels that cannot cross, and one
+  // group is one network watering every field. A dry basin is a stone ring; a fed one holds water.
   irrigation: {
     name: "irrigation",
     // **Daylight on sand**, which is the deliberate opposite of the night sky the same board wears by
@@ -117,9 +119,10 @@ const SKINS: Record<string, Skin> = {
       },
     },
   },
-  // **Junctions and haul roads** (§11.1, Logistics / Caravan). A number is how many roads meet a site, and
-  // the network has to reach every one of them. A bare stake is a junction nobody has paved yet; a served one
-  // is finished stone. Daylight rather than night, so the lines read as limestone rather than light.
+  // **Junctions and haul roads** (PUZZLE_FAMILIES.md theme taxonomy, Trade). A number is how many roads meet
+  // a site, and the network has to reach every one of them. A bare stake is a junction nobody has paved yet;
+  // a served one is finished stone. Daylight rather than night, so the lines read as limestone rather than
+  // light.
   causeway: {
     name: "causeway",
     // Sand, like the delta — a building site is outdoors too — but drier and greyer, so the two daylight
@@ -158,10 +161,10 @@ const SKINS: Record<string, Skin> = {
       },
     },
   },
-  // **A painted ceiling** (PUZZLE_FAMILIES.md §11.1, Tomb / Burial Logic). The same board read as the
-  // starred sky over a burial chamber: the stars are pigment, and the lines are cords of gold leaf tying
-  // them into one figure. Nefertari's is the ceiling this is drawn from, which is also what journeys.md §7
-  // records master_4 asking for — a fresco in queen's blue.
+  // **A painted ceiling** (PUZZLE_FAMILIES.md theme taxonomy, Tomb / Burial Logic). The same board read as
+  // the starred sky over a burial chamber: the stars are pigment, and the lines are cords of gold leaf tying
+  // them into one figure. Nefertari's is the ceiling this is drawn from, which is also what journeys.md's
+  // master table records master_4 asking for — a fresco in queen's blue.
   //
   // **The nearest face to the default, and that is the risk.** Both are a sky full of stars, so what has to
   // separate them is MATERIAL: the default is depth, a gradient falling away into black with stars burning
@@ -197,7 +200,7 @@ const SKINS: Record<string, Skin> = {
  * Which place this room is, resolved the same way every family resolves it (`app/faceFor.ts`).
  *
  * The map itself lives on this family's `FamilyMeta`, where world-gen can read it too
- * (`docs/instructions/puzzle-screens.md` §2).
+ * (`docs/instructions/puzzle-screens.md`: a site names a role, never a skin).
  */
 export const skinFor = (
   role: string | string[] | undefined,

@@ -6,8 +6,9 @@ export const CONSTELLATION_META: FamilyMeta = {
   id: "constellation",
   ownerMod: "puzzle",
   // `sky` is the cluster a lighthouse or star-map journey draws from, and this is the star map that pool was
-  // named for (docs/game-design/PUZZLE_FAMILIES.md §4.21). NOT `light`: that is the narrower pool for the
-  // families about light itself — a beam bending, a sun and a moon — and lines between stars are not that.
+  // named for (docs/game-design/PUZZLE_FAMILIES.md: Constellation, stars joined by light). NOT `light`: that
+  // is the narrower pool for the families about light itself — a beam bending, a sun and a moon — and lines
+  // between stars are not that.
   // Four pools, because the same rules describe four places: stars joined by light, sites joined by haul
   // roads, basins joined by channels, fields fed by them. WHICH of them a room is comes from the role it was
   // allocated for, not from the family — see the skin table in app/constellation/skins.ts.
@@ -17,8 +18,8 @@ export const CONSTELLATION_META: FamilyMeta = {
   // it and every room of that pyramid would be the same board in the same dress. So the tags go on now and
   // the authoring waits — see expert.ts, on the Nile Delta.
   tags: ["puzzle", "sky", "trade", "water", "agriculture", "funerary"],
-  // Configured for every tier (docs/game-design/puzzles/constellation.md §5), so the allocator may draw it
-  // anywhere and a node may author it anywhere.
+  // Configured for every tier (docs/game-design/puzzles/constellation.md: a tier table from starter to
+  // wizard), so the allocator may draw it anywhere and a node may author it anywhere.
   // A star map for the sky, a haul road for trade, a waterworks for water, a painted ceiling for a tomb.
   // `light` and `logistics` used to be in here and are gone: this family carries neither tag, so both were
   // faces nothing could ever reach.

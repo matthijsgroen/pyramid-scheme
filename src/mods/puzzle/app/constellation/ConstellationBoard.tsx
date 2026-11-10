@@ -39,7 +39,7 @@ const DRAG_THRESHOLD = 12
 
 // A star's hit area is wider than its disc, which is what lets the grid be denser than a 44px tap target.
 // Safe because empty cells take no input at all and the drawer never places two stars side by side, so no
-// two hit areas can overlap (docs/game-design/puzzles/constellation.md §8).
+// two hit areas can overlap (docs/game-design/puzzles/constellation.md: the star is the only touch target).
 const HIT_SCALE = 1.3
 
 /** Where a star sits, as a share of the board. */
@@ -81,9 +81,9 @@ const backdropStars = (puzzle: ConstellationPuzzle) => {
 /**
  * The lines, drawn under the stars.
  *
- * One line and two differ in **shape** rather than in weight — two strokes with sky between them — so a
- * phone in daylight reads the difference (§8). The overlay never takes a pointer: the stars are the whole
- * input surface.
+ * One line and two differ in **shape** rather than in weight — two strokes with sky between them — so a phone
+ * in daylight reads the difference (constellation.md board requirements). The overlay never takes a pointer:
+ * the stars are the whole input surface.
  *
  * **A pair under the finger is drawn as what it is about to become**, not as what it is. Drawn as what it is,
  * the drag that doubles a line and the drag that clears it both showed nothing — the preview was the line
@@ -122,7 +122,7 @@ const Lines: FC<{
       const [from, to] = [puzzle.stars[pair.a].cell, puzzle.stars[pair.b].cell]
       const horizontal = rowOf(puzzle.size, from) === rowOf(puzzle.size, to)
       // Stopped at each star's edge rather than run under it, so a number stays readable with lines of
-      // light meeting it (§8).
+      // light meeting it (constellation.md: the lines stop at the star's edge).
       const inset = horizontal ? [STAR_RADIUS, 0] : [0, STAR_RADIUS]
       const along = Math.sign((horizontal ? colOf(puzzle.size, to) - colOf(puzzle.size, from) : 0) || 1)
       const down = Math.sign((horizontal ? 0 : rowOf(puzzle.size, to) - rowOf(puzzle.size, from)) || 1)
@@ -203,7 +203,8 @@ export const ConstellationBoard: FC<Props> = ({
 
   return (
     // The board claims its own gestures: a vertical drag here means "draw a line down", and the page is
-    // scrolled to the rules from the chrome around it (docs/game-design/puzzles/constellation.md §6).
+    // scrolled to the rules from the chrome around it (docs/game-design/puzzles/constellation.md: a
+    // vertical drag would otherwise be ambiguous with scrolling).
     <div
       className={clsx(
         "relative aspect-square w-full max-w-[min(56vh,26rem)] touch-none overflow-hidden rounded-lg select-none",

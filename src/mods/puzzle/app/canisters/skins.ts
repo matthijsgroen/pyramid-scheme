@@ -5,8 +5,9 @@ import { AMPHORA, CANOPIC, INKPOT, MEASURE, type VesselShape } from "./vesselSha
 /**
  * What each of this mechanic's places looks like, and how a room works out which place it is.
  *
- * The family emits logical state only — how full each vessel is, which one is held, which pour the hint
- * names — and a skin decides the pixels (`docs/instructions/puzzle-screens.md` §2).
+ * The family emits logical state only — how full each vessel is, which one is held, which pour the hint names
+ * — and a skin decides the pixels (`docs/instructions/puzzle-screens.md`: the family renders states, the skin
+ * renders pixels).
  *
  * **Six places, which is the most any family here wears**, and they are not recolours of one another: the
  * vessel changes shape, the ground changes, and what is in them behaves differently. Measuring grain into
@@ -154,7 +155,7 @@ const SKINS: Record<string, CanistersSkin> = {
  * Which place this room is, resolved the same way every family resolves it (`app/faceFor.ts`).
  *
  * The map itself lives on this family's `FamilyMeta`, where world-gen can read it too
- * (`docs/instructions/puzzle-screens.md` §2).
+ * (`docs/instructions/puzzle-screens.md`: a site names a role, never a skin).
  */
 export const skinFor = (
   role: string | string[] | undefined,

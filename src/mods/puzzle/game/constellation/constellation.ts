@@ -105,8 +105,9 @@ export const pairsOf = (size: number, stars: readonly Star[]): Pair[] => {
  * The pair leaving a star in a direction, if the rules allow one there.
  *
  * What a drag decides is a **direction**, not a destination: the line then runs to whichever star lies that
- * way, however far past the finger it is (docs/game-design/puzzles/constellation.md §6). So the gesture only
- * ever has to be resolved this far, and a flick toward empty sky resolves to nothing.
+ * way, however far past the finger it is (docs/game-design/puzzles/constellation.md: the gesture is a
+ * direction, not a destination). So the gesture only ever has to be resolved this far, and a flick toward
+ * empty sky resolves to nothing.
  */
 export const pairTowards = (
   puzzle: ConstellationPuzzle,
