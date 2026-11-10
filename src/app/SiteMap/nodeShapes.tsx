@@ -486,7 +486,7 @@ export const NodeShape = ({
       return <ForkShape {...p} />
     case "switch":
       return <SwitchShape {...p} />
-    case "handle":
+    case "lever":
       return <HandleShape {...p} />
     case "mechanism":
       return <MechanismShape {...p} />
