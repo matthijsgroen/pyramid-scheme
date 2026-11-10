@@ -227,7 +227,10 @@ export const juniorRules: Rule[] = [
   // THE PLACEMENT: one lock per junior floor, as the adopted proposal says (docs/game-design/lock-placement.md). A journey
   // opens on lessons, each control alone, and the locks that combine them follow. Every region `free`.
   journey("junior_1").pyramid(1, lessonOnMainFloor("dropDown", house("bakeryWorks"))),
-  journey("junior_1").pyramid(2, lessonOnMainFloor("leverOpensADoor", house("bedroom", "gardenCourt"))),
+  journey("junior_1").pyramid(
+    2,
+    lessonOnMainFloor("leverOpensADoor", house(["shrineRoom", 0], "gardenCourt", "bedroom"))
+  ),
   journey("junior_1").pyramid(3, lessonOnMainFloor("boardPicksTheWay")),
   journey("junior_2").pyramid(1, lessonOnMainFloor("torch", house("dressingRoom", "shrineRoom", "bigGardenCourt"))),
   journey("junior_2").pyramid(3, lessonOnMainFloor("waterMoves", house("quernRoom", "bedroom", "dressingRoom"))),
@@ -238,7 +241,7 @@ export const juniorRules: Rule[] = [
   ),
   journey("junior_3").pyramid(2, lockOnMainFloor("beforeYouJump", house(["bedroom", 0.5]))),
   journey("junior_3").pyramid(3, lockOnMainFloor("dropHome")),
-  journey("junior_3").pyramid(4, lockOnMainFloor("cellar", house("dressingRoom"))),
+  journey("junior_3").pyramid(4, lockOnMainFloor("cellar", house("shrineRoom"))),
   journey("junior_4").pyramid(1, lessonOnMainFloor("stoneOnAPlate", house("bigBanquetHall", "bedroom", "courtWorks"))),
   journey("junior_4").pyramid(2, lockOnMainFloor("overlook", house("shrineWorks"))),
   journey("junior_4").pyramid(3, lockOnMainFloor("seesaw")),

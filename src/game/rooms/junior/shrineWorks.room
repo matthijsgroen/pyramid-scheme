@@ -1,17 +1,22 @@
 // designed by: Claude
 // junior. A shrine with the lever or torch before it: the shrine alone under its false door, the mechanism in front.
+// On a floor with a patron, the god's statue stands beside the shrine wherever no corridor comes in.
 room shrineWorks
 tier junior
 activity householdShrine
 
 layout
-# d f d #
-# . r . #
+# A f B #
+# p r q #
 d . m . d
 # . s . #
 # d # d #
 
 r wall shrine
 f wallItem stela
+A door
+B door
+p floor? patron unless A
+q floor? patron unless B
 m mechanism
 s stop

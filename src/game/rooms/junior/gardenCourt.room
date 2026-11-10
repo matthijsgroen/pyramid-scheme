@@ -1,5 +1,6 @@
 // designed by: Claude
 // junior. The garden court: the lotus pool in the middle, a lotus column between two potted trees on the north wall.
+// On a floor with a patron, the god's statues stand in the south corners.
 room gardenCourt
 tier junior
 activity gardenCourt
@@ -8,10 +9,11 @@ layout
 # # d # d # #
 # t . c . t #
 d . . b . . d
-# . . s . . #
+# p . s . p #
 # # d # d # #
 
 t wall pottedTree
 c wall pillar
 b floor basin
+p floor? patron
 s stop

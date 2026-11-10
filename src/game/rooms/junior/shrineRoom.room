@@ -1,5 +1,6 @@
 // designed by: Claude
 // junior. The household shrine: Bes in his shrine under the false door, lamps and flowers either side, the stop in front.
+// On a floor with a patron, the god's statues stand either side of the way up to the shrine.
 room shrineRoom
 tier junior
 activity householdShrine
@@ -7,7 +8,7 @@ activity householdShrine
 layout
 # # # f # # #
 # l o r o l #
-d . . . . . d
+d . p . p . d
 # . . s . . #
 # d # d # d #
 
@@ -15,4 +16,5 @@ r wall shrine
 o wall offeringTable
 l wall lamp
 f wallItem stela
+p floor? patron
 s stop
