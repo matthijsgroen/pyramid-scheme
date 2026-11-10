@@ -483,7 +483,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
-## Nobleman — five
+## Nobleman — four
 
 The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
 first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
@@ -572,38 +572,6 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 ```
 
 **Import:** `yarn import-tile art/masters/props/junior/stela-thoth.webp --tier=junior --name=stela-thoth --slot=wall --filter=smooth --headroom=0.18 --trim`
-
-### `junior/grindstone` — a saddle quern on its plastered emplacement
-
-**Attach:**
-
-1. `~/tile-previews/grindstone-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a SADDLE QUERN for grinding grain. The low block is the EMPLACEMENT; the dark slab set on it,
-sloping down to the left, is the LOWER STONE; the pale bar lying across it is the HANDSTONE; the bowl at
-the left end catches the FLOUR; the heap at the right end is GRAIN waiting to be ground.
-
-The emplacement is mud plaster #6e4a30, #5a3a24 in shade, smoothed by hand, clearly DARKER than the
-orange floor #e2a86f. The lower stone is dark grey-brown quartzite #4a4038, its top worn smooth and
-dusted with flour #b8a888 only along the grinding path. The handstone is sandstone #8a5a30. The bowl is
-red-brown pottery #8c4a36 holding white flour; the grain is golden emmer #a07a3a.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold grindstone --spin=6 --colour=#6e4a30 --floor=#e2a86f
-yarn import-tile art/masters/props/junior/grindstone.webp --tier=junior --name=grindstone --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `junior/breadOven` — a clay bread oven with its moulds
 
