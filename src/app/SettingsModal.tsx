@@ -1,7 +1,8 @@
 import { type FC, type KeyboardEvent, use, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { version } from "@/../package.json"
-import { LANGUAGES, preferredLanguages } from "@/i18n/languages"
+import { languageChoices } from "@/i18n/languages"
+import { LanguageSelect } from "@/ui/atoms/LanguageSelect"
 import { clearGameData, useGameStorage } from "@/support/useGameStorage"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { closeOnEscape, focusOnMount, trapTab } from "@/ui/atoms/dialogFocus"
@@ -125,29 +126,13 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, startGa
             <label htmlFor="language-select" className="mb-2 block text-sm font-medium text-gray-700">
               {t("ui.language")}
             </label>
-            <select
+            <LanguageSelect
               id="language-select"
               value={selectedLanguage}
-              onChange={e => handleLanguageChange(e.target.value)}
+              {...languageChoices(navigator.languages ?? [])}
+              onChange={handleLanguageChange}
               className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-            >
-              {(() => {
-                const option = ({ code, name }: (typeof LANGUAGES)[number]) => (
-                  <option key={code} value={code} lang={code}>
-                    {name}
-                  </option>
-                )
-                const preferred = preferredLanguages(navigator.languages ?? [])
-                if (preferred.length === 0) return LANGUAGES.map(option)
-                return [
-                  ...preferred.map(option),
-                  <option key="divider" disabled>
-                    ──────────
-                  </option>,
-                  ...LANGUAGES.filter(language => !preferred.includes(language)).map(option),
-                ]
-              })()}
-            </select>
+            />
           </div>
 
           {/* Disable tutorials */}

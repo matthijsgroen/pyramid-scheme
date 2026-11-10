@@ -15,6 +15,8 @@ export const FezContext = createContext<{
   ) => void
   /** Someone is talking: whatever else asks for the player's eye waits until the conversation is over. */
   speaking?: boolean
+  /** The conversation playing now, if any. */
+  conversation?: string
   /** The explorer has met Fez, so a conversation he speaks in plays rather than being dropped. */
   met?: boolean
 }>({

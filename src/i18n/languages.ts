@@ -50,7 +50,7 @@ export const LANGUAGES = [
 
 export const LANGUAGE_CODES: string[] = LANGUAGES.map(language => language.code)
 
-type Language = (typeof LANGUAGES)[number]
+export type Language = (typeof LANGUAGES)[number]
 
 /**
  * The shipped languages the browser says its user reads, in the browser's order: an exact code first
@@ -66,4 +66,17 @@ export const preferredLanguages = (browser: readonly string[]): Language[] => {
     if (match && !found.includes(match)) found.push(match)
   }
   return found
+}
+
+// Fixed to one locale, so the order is the same in every interface language: Latin, then Greek, then Cyrillic.
+const byName = new Intl.Collator("en", { sensitivity: "base" })
+
+/** The languages sorted by their own name, a letter with a mark beside the bare one (`Čeština` with C). */
+export const byNativeName = (languages: readonly Language[]): Language[] =>
+  [...languages].sort((a, b) => byName.compare(a.name, b.name))
+
+/** The picker's two groups: the browser's languages in its order, then the rest by name. */
+export const languageChoices = (browser: readonly string[]): { preferred: Language[]; others: Language[] } => {
+  const preferred = preferredLanguages(browser)
+  return { preferred, others: byNativeName(LANGUAGES.filter(language => !preferred.includes(language))) }
 }

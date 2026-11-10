@@ -33,6 +33,7 @@ import { useElementSize } from "@/app/home/useElementSize"
 import { useIsDesktop } from "@/app/home/useIsDesktop"
 import { usePress } from "@/app/home/usePress"
 import { useWindowEntrance } from "@/app/home/useWindowEntrance"
+import { WelcomeLanguageChip } from "@/app/home/WelcomeLanguageChip"
 import { CampScene } from "@/ui/atoms/CampScene"
 import { TapHint } from "@/ui/atoms/TapHint"
 import { CampHud } from "@/ui/molecules/CampHud"
@@ -259,6 +260,8 @@ export const Base = ({
         // screen busy.
         quiet={speaking}
         pressed={panelPressed}
+        notice={<WelcomeLanguageChip />}
+        hudHeight={hud.height}
         card={<div ref={cardRef}>{continueCard}</div>}
         aside={
           isDesktop ? (

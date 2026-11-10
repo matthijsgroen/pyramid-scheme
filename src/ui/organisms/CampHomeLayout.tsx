@@ -1,4 +1,4 @@
-import type { FC, ReactNode, Ref } from "react"
+import type { CSSProperties, FC, ReactNode, Ref } from "react"
 
 /** From `lg`, the width of the panel standing over the scene's right side. */
 export const CAMP_PANEL_WIDTH = 440
@@ -15,6 +15,10 @@ export type CampHomeLayoutProps = {
   quiet?: boolean
   /** Desktop only: the panel grows a little and brightens, pointing the player to it. */
   pressed?: boolean
+  /** A notice floating at the top of the scene, under the HUD and over a conversation. */
+  notice?: ReactNode
+  /** Phone only: the HUD's height, which the notice stands below. */
+  hudHeight?: number
 }
 
 // The panel eases in fast and back slower; with reduced motion it only brightens.
@@ -33,6 +37,8 @@ export const CampHomeLayout: FC<CampHomeLayoutProps> = ({
   aside,
   quiet = false,
   pressed = false,
+  notice,
+  hudHeight = 0,
 }) => (
   <div className="relative h-(--screen-height) overflow-hidden bg-camp-night lg:grid lg:grid-cols-[minmax(0,1fr)_440px] lg:grid-rows-[auto_minmax(0,1fr)]">
     <div className="absolute inset-x-0 top-0 z-10 pt-safe-top lg:static lg:col-span-2 lg:bg-camp-night lg:pt-safe-top">
@@ -48,5 +54,14 @@ export const CampHomeLayout: FC<CampHomeLayoutProps> = ({
       {card}
       {aside && <div className="hidden min-h-0 flex-1 flex-col lg:flex">{aside}</div>}
     </div>
+    {notice && (
+      // Over a conversation (z-35), which it is shown beside, and under the popups at z-40.
+      <div
+        className="pointer-events-none absolute inset-x-0 top-[calc(var(--hud-height)+env(safe-area-inset-top)+0.75rem)] z-36 flex justify-center px-4 lg:top-4 lg:col-start-1 lg:row-start-2"
+        style={{ "--hud-height": `${hudHeight}px` } as CSSProperties}
+      >
+        <div className="pointer-events-auto">{notice}</div>
+      </div>
+    )}
   </div>
 )
