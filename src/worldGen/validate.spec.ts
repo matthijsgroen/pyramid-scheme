@@ -155,9 +155,9 @@ describe("validateRewardCounts", () => {
     expect(() => validateRewardCounts(validConfigWithFragments(3), undefined, isFragment)).not.toThrow()
   })
 
-  // §7.3: a hidden corridor is a discovery-gated OPTIONAL pocket — a gating currency the solver
-  // must guarantee (map piece / registered fragment) may never sit there. placeFragments excludes
-  // hidden slots; this guard is the post-build backstop.
+  // collection-and-detector-design.md: a hidden corridor is a discovery-gated OPTIONAL pocket — a gating
+  // currency the solver must guarantee (map piece / registered fragment) may never sit there. placeFragments
+  // excludes hidden slots; this guard is the post-build backstop.
   const realTombId = PYRAMID_JOURNEYS[0].id
   const hiddenSectionWith = (r: TreasureReward): Record<string, SiteConfig[]> => ({
     [realTombId]: [
@@ -193,10 +193,10 @@ describe("validateRewardCounts", () => {
   })
 })
 
-// The old `validateDiscovery` tests were removed in §E — secondary-tomb discovery + ward-key
-// ordering are no longer a separate post-build check; the worklist reachability model
-// (reachability.ts + placeFragments.ts) guarantees both and hard-fails on a stuck lock. Its
-// coverage lives in reachability.spec.ts / the configBuilder integration golden guard. See
+// The old `validateDiscovery` tests were removed (keys-and-locks-solver.md: why retiring it is safe) —
+// secondary-tomb discovery + ward-key ordering are no longer a separate post-build check; the worklist
+// reachability model (reachability.ts + placeFragments.ts) guarantees both and hard-fails on a stuck lock.
+// Its coverage lives in reachability.spec.ts / the configBuilder integration golden guard. See
 // docs/game-design/keys-and-locks-solver.md.
 
 // The shop economy guard moved to the shop mod (src/mods/shop/game/economyGuard.spec.ts) —

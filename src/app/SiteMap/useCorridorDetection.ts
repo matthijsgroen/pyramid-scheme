@@ -29,8 +29,8 @@ export type CorridorDetection = {
   onOtherFloor: boolean
 }
 
-// The corridor detector's world model (§7.2): which hidden corridors are known, which are found,
-// and what the readout says at each level.
+// The corridor detector's world model (collection-and-detector-design.md): which hidden corridors are known,
+// which are found, and what the readout says at each level.
 //
 // Known vs. found: every floor the player views makes its hidden corridors "known"; a corridor is "found" once
 // the player, standing on the junction it borders with the detector running, opens it from the detector.

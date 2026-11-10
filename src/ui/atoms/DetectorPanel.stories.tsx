@@ -48,13 +48,14 @@ type Story = StoryObj<typeof meta>
 // nothing at all rather than an empty card.
 export const NoModeActive: Story = {}
 
-// Compass active but no target picked yet — the HUD points the player at the Collection picker (§3C).
+// Compass active but no target picked yet — the HUD points the player at the Collection picker
+// (collection-and-detector-design.md: Collection is where the player picks a hieroglyph to hunt).
 export const CompassNoTarget: Story = {
   args: { compassLevel: 1, activeDetector: "compass", compassTarget: null },
 }
 
-// One hit of each access verdict, so the stories show the full marker vocabulary (§7.2): reachable
-// (no badge) and not-determinable.
+// One hit of each access verdict, so the stories show the full marker vocabulary
+// (collection-and-detector-design.md): reachable (no badge) and not-determinable.
 const COMPASS_HITS: CompassHit[] = [
   {
     journeyId: "starter_1",
@@ -95,7 +96,8 @@ export const AllModes: Story = {
   },
 }
 
-// Corridor detector widens outward (§7.2): L2 adds a floor indicator, L3 the pyramid-wide count.
+// Corridor detector widens outward (collection-and-detector-design.md): L2 adds a floor indicator, L3 the
+// pyramid-wide count.
 export const CorridorLevel2: Story = {
   args: { detectionLevel: 2, activeDetector: "hiddenPassageway", floorHasHiddenCorridor: true },
 }

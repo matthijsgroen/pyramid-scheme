@@ -217,7 +217,7 @@ export const carveSiteFloor = (
 
 // Reachable floor indices within one site, given already-held facts (plus any tombKey
 // rewards the site's own reachable floors grant along the way — a tomb's treasure can be
-// exactly the key that opens its own further gate, pyramid-interior-design.md §8).
+// exactly the key that opens its own further gate, pyramid-interior-design.md: the treasure is the key).
 //
 // A later floor's entrance stairId isn't always hosted on the immediately preceding floor
 // — buildSite.ts's ward-wing branches all anchor off the single last main floor, not a

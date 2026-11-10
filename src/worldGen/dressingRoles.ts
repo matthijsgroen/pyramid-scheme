@@ -2,7 +2,7 @@ import type { DecorationKind, WallDecorationKind } from "../game/siteTypes"
 import { PROP_ROLES, WALL_ITEM_ROLES } from "../game/dressingTags"
 import type { SiteConfig, SubSection } from "./types"
 
-// A role is the PLACE a stretch of floor is (journeys.md §2: the role is the place, the theme is only
+// A role is the PLACE a stretch of floor is (journeys.md: the role is the place, the theme is only
 // the hour), so it is also what furnishes it — a trade wing stacks amphorae on shelves, a funerary one
 // holds a coffin and a false-door stela. Dressing a journey IS authoring its role, and until now the
 // role reached the puzzle families and nothing else: every rank furnished every place identically.

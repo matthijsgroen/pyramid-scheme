@@ -97,7 +97,7 @@ const buildDslSection = <TExtra extends string>(
         : undefined
   const pathPuzzles = typeof cs.pathPuzzles === "number" ? cs.pathPuzzles : 0
   // This section's own per-node encounter overrides (authored `nodes` selectors) — selectors work
-  // on any path, not just the main path (§G).
+  // on any path, not just the main path (ARCHITECTURE.md: Authoring: node selectors).
   const encountersByIndex = resolveNodeSelectors(cs.nodes, pathPuzzles)
   const activitiesByIndex = resolveNodeActivities(cs.nodes, pathPuzzles)
   const chambersByIndex = resolveNodeChambers(cs.nodes, pathPuzzles)

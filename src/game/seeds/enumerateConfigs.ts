@@ -125,7 +125,7 @@ export const doorBoardsOf = (floor: FloorConfig, families: readonly FamilyMeta[]
 
 /**
  * The configurations the baked world can ask a generator for, with the demand behind each
- * (`docs/instructions/puzzle-screens.md` §6.1).
+ * (`docs/instructions/puzzle-screens.md`: seed lists are searched on a build machine, not a phone).
  *
  * This is what makes the offline pass finite. It enumerates *configurations*, never the seeds a player
  * can meet — a room's own hash only indexes the resulting list — so reassembling a floor or

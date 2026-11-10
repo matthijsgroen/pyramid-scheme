@@ -20,8 +20,8 @@ export type RoomAddress = { section: string; pathIndex: number }
 export type ResolveBoardIndex = (familyId: string, address: RoomAddress) => number | undefined
 
 /**
- * Which entry of its family's seed list each room in the world draws (`docs/instructions/puzzle-screens.md`
- * §6.1). Every room in one list's bucket gets a DIFFERENT entry — the whole point, since the previous
+ * Which entry of its family's seed list each room in the world draws (`docs/instructions/puzzle-screens.md`:
+ * a room is dealt its entry rather than drawing one). Every room in one list's bucket gets a DIFFERENT entry — the whole point, since the previous
  * scheme indexed the list by a hash of the room's identity and so drew with replacement: 14 rooms over a
  * 14-board list handed some board out three times and left five unused. Dealing instead of drawing makes
  * a repeat impossible while the list covers the bucket, which is exactly the invariant `seedFloor` in

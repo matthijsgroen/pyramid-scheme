@@ -12,8 +12,8 @@ import { hashUnit } from "@/support/hashString"
  *
  * Its own vocabulary rather than a slice of `DecorationKind`, for the same reason `WallDecorationKind`
  * is: a drift of sand is not a thing that could stand in the middle of a chamber. The kinds are the
- * brief's §4 (docs/game-design/tile-art-brief.md) and resolve as `tiles/<tier>/<kind>.png`, so a rank
- * is a skin and not a new set of files.
+ * brief's floor scatter list (docs/game-design/tile-art-brief.md) and resolve as `tiles/<tier>/<kind>.png`,
+ * so a rank is a skin and not a new set of files.
  */
 export type ScatterKind = "sand" | "rubbleSpill" | "mat" | "floorClutter"
 
@@ -80,8 +80,8 @@ const runThrough = (grid: FloorGrid, row: number, col: number, dr: number, dc: n
  *
  * So a drift is drawn LARGER THAN A CELL and clipped to the walkable floor, which the renderer already
  * has as one path. It crosses cells, stops dead at a wall, and the shape it ends up with is the shape of
- * the room it blew into rather than anything the art had to guess. `tile-art-brief` §4 asks for "a fan of
- * sand through a breach", which was never a cell-sized object in the first place.
+ * the room it blew into rather than anything the art had to guess. `tile-art-brief.md`'s floor scatter asks
+ * for "a fan of sand through a breach", which was never a cell-sized object in the first place.
  *
  * **A drift is sized to the run it lands in**, which is what makes the clip read as a clip: a square
  * drift in a one-cell passage has every edge cut by a wall, so none of the sand's own shape survives and

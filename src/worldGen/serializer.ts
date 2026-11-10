@@ -30,7 +30,7 @@ const serializeEncountersByIndex = (m: Record<number, string | string[]>): strin
     .join(", ")} }`
 
 // Emit a reward as an object literal from whatever fields it carries — core enumerates no reward
-// type or currency id (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1).
+// type or currency id (docs/mods/ARCHITECTURE.md invariant 1: core is mod-agnostic).
 // Reward payloads are flat scalars (type + amount/itemId/hieroglyphId/pieceIndex/…). fragmentSlot
 // is the placement sentinel; any hieroglyph pieceIndex is already stamped by the hieroglyph
 // finalize pass (scripts/generateWorld.ts) before we get here.
