@@ -114,7 +114,7 @@ landed. `prop-pipeline.md` has the numbers.
 
 ---
 
-## Rank surfaces — nine
+## Rank surfaces — ten
 
 The floor, the wall face and the sill of the four ranks above the merchant, in the character of
 [visual-direction.md](../game-design/visual-direction.md): ground plus metal, the floor darkening rank by rank
@@ -572,6 +572,54 @@ Even lighting left to right, no hotspot, no vignette.
 ```
 
 **Import:** `yarn import-tile art/masters/surfaces/wizard-threshold.webp --tier=wizard --name=threshold --slot=sill --filter=smooth --key=none`
+
+### `cave/arch` — a rough rock opening with a fallen-slab lintel
+
+**New:** cave doorways have no arch, so an opening in a cave wall shows as a bare notch. This gives them one, and with it the wall above the opening.
+
+**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's rock floor, as the style reference
+
+```
+FRAME: landscape, exactly 2.7 times as wide as it is tall. Do not re-compose it square.
+
+Top-down dungeon game tile art for a natural cave under the desert, below an ancient Egyptian tomb.
+No mason ever worked here: raw limestone, water-worn and cracked, dust and grit in every hollow.
+A dark cave lit only by the explorer's torch; the rock nearest the light is pale, nothing sinks into black.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Palette, strictly: pale rock #ccc6ba with tops #d8d2c4, rock in shade #8a8276, floor rock #615951 and
+#554e46, cracks and deep shade #2a2520.
+Nothing lighter than #e4dfd4, nothing darker than #1f1b16.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it — the palette above is the only source of colour.
+THE CAMERA: 30 degrees above the floor, looking slightly down. Depth going away from the viewer is
+squashed to HALF; height is barely squashed. A square block of rock shows a top face a bit more than HALF
+as deep as the front of it is tall — a clear band, not a sliver. Verticals stay vertical, horizontals
+stay horizontal: an orthographic squash, never a vanishing point. Not isometric, not photographic.
+
+A free-standing rock gateway, alone on a flat magenta #ff00ff background. Nothing else in the
+picture: no wall, no floor, no ground, no shadow cast on the magenta.
+The gateway is 2.7 times as wide as it is tall. Two rough rock PILLARS, one at the left and one at the
+right, and one long fallen SLAB of rock lying across the top of them, wedged where it fell. THE MIDDLE IS
+EMPTY — flat magenta #ff00ff between the pillars, from under the slab all the way down and off the bottom
+edge of the picture. Magenta OUTSIDE the gateway too, left of the left pillar, right of the right pillar,
+and above the slab.
+Each pillar is about a sixth of the picture's width. The gap between them is the remaining two thirds.
+The rock is the pale cave wall's limestone, #ccc6ba in the light and #8a8276 in shade: uneven, lumpy,
+cracked, its edges broken rather than cut. A few short stubs of stalactite hang from the slab's
+underside; small rubble lies at the foot of each pillar.
+EVERY PIECE SHOWS ITS TOP. The slab's whole upper face is visible as a band running the full width,
+lighter than its front. Each pillar shows the small top face where the slab rests on it.
+The underside of the slab, where it overhangs the opening, is in deep shadow #2a2520, and so is the inner
+face of each pillar. That darker edge around the empty middle is what makes the gateway read as a way
+through.
+Even lighting left to right, no hotspot, no vignette.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/cave-arch.webp --tier=cave --name=arch --slot=arch --filter=smooth`
 
 ---
 
