@@ -201,7 +201,7 @@ describe("an arch in a wall standing in front of floor", () => {
 
   it("leaves a doorway in a tier with no arch art an opening, with no wall over it", () => {
     const { container } = render(
-      <SiteMapView grid={{ ...archBehindAWall(), tileset: "cave" }} explorerPos={[2, 2]} revealAllCells />
+      <SiteMapView grid={{ ...archBehindAWall(), tileset: "sphinx" }} explorerPos={[2, 2]} revealAllCells />
     )
     const pieces = drawnWalls(container).flatMap(wall =>
       Array.from(wall.querySelectorAll<HTMLElement>("[data-front-piece]"))
