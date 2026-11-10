@@ -9,7 +9,8 @@ import { SIGN_CHARACTERS } from "./signs"
  *
  * The family emits logical state only — a square is empty, holds a value the puzzle wrote in or one
  * the player wrote, is pencilled with options, repeats a value, is what a hint settles or argues from
- * — and a skin decides the pixels (`docs/instructions/puzzle-screens.md` §2).
+ * — and a skin decides the pixels (`docs/instructions/puzzle-screens.md`: the family renders states, the
+ * skin renders pixels).
  *
  * **What a value LOOKS like is skinned along with the ground, and that is the whole second face.** A
  * value is a position in this family's rules and nothing more: a 4 and a drawn ripple are the same
@@ -70,7 +71,7 @@ export type SudokuSkin = {
    * The wash a square wears when it holds the value the player has picked, as a CSS colour.
    *
    * A WASH rather than a ring or a hatch, and that is the whole reason it can exist: the rings and the
-   * hatching are the hint's vocabulary and a treatment means one thing (`puzzle-screens.md` §4.2). It
+   * hatching are the hint's vocabulary and a treatment means one thing (`puzzle-screens.md`). It
    * is laid over the ground instead of replacing it, so a pre-filled square that is also a twin still
    * reads as the puzzle's own — which is what a colour on the background could not do.
    */
@@ -97,7 +98,7 @@ export type SudokuSkin = {
     pencilKey: string
     disabledKey: string
   }
-  /** What a value wears for its turn in the completion run (`puzzle-screens.md` §3). */
+  /** What a value wears for its turn in the completion run (`puzzle-screens.md`: it plays before "solved"). */
   celebrate: string
   /**
    * How a chamber of this board is TAKEN UP when the run reaches it, or nothing for a face whose
@@ -106,7 +107,8 @@ export type SudokuSkin = {
    * Carrying it here is what makes the completion run the skin's and not the family's: a sheet finishes
    * by being rolled and put away, a wall cut with figures finishes by catching the light. So the two
    * faces count different things — a face with a scroll counts CHAMBERS, one without counts VALUES
-   * (design doc §9.1) — and both are the same rule said back, each in the half its own ground can say.
+   * (`sudoku.md`: each face finishes its own way) — and both are the same rule said back, each in the half
+   * its own ground can say.
    */
   scroll?: {
     /** The roll seen edge-on, as a CSS `background`: a sheet wound on itself has a thickness to draw. */
@@ -235,7 +237,7 @@ const SKINS: Record<string, SudokuSkin> = { default: carved, papyrus: register }
  * Which place this room is, resolved the same way every family resolves it (`app/faceFor.ts`).
  *
  * The map itself lives on this family's `FamilyMeta`, where world-gen can read it too
- * (`docs/instructions/puzzle-screens.md` §2).
+ * (`docs/instructions/puzzle-screens.md`: a site names a role, never a skin).
  */
 export const skinFor = (
   role: string | string[] | undefined,

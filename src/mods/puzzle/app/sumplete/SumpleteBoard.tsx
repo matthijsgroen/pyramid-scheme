@@ -13,8 +13,9 @@ type Props = {
   /** The line the hint reasons about — lit so "this line still needs 6" points somewhere. */
   litLine?: { kind: "row" | "col"; index: number }
   /**
-   * How many lines the completion run has checked off (`puzzle-screens.md` §3): the rows top to bottom first,
-   * then the columns left to right. Unset means no run.
+   * How many lines the completion run has checked off (`puzzle-screens.md`: a family finishes its board
+   * before it says "solved"): the rows top to bottom first, then the columns left to right. Unset means no
+   * run.
    */
   checked?: number
   onToggle: (row: number, col: number) => void
@@ -26,7 +27,8 @@ const cellKey = (row: number, col: number) => `${row},${col}`
  * The numbers a hint is about, hatched.
  *
  * **The words name this** — "cross out the hatched numbers" leaves nothing to match up, where "everything
- * else has to go" leaves the player deciding which numbers that was (`puzzle-screens.md` §4). The same
+ * else has to go" leaves the player deciding which numbers that was (`puzzle-screens.md`: the words name
+ * the marking, and the marking means one thing). The same
  * treatment means the same thing on eclipse's and star battle's boards.
  */
 const HATCH = {
@@ -49,7 +51,7 @@ const cellCls = (mark: SumpleteMark, lit: boolean, inLitLine: boolean) =>
 
 // The target beside a line carries its live total underneath: two techniques reason about "what this
 // line still needs", so the player has to be able to see it without adding the row up again
-// (docs/game-design/puzzles/sumplete.md §7).
+// (docs/game-design/puzzles/sumplete.md: board requirements ask for a live per-line total and deficit).
 const lineCls = (line: SumpleteLine) =>
   clsx("flex aspect-square flex-col items-center justify-center rounded border", {
     "border-green-600 bg-green-900/40 text-green-400": line.status === "exact",
@@ -70,7 +72,8 @@ const LineTarget: FC<{ line: SumpleteLine; checking?: boolean }> = ({ line, chec
 
 // Sized off its container and the viewport height, never off a pixel constant: the whole board — grid
 // plus its target column and row — has to fit a phone screen without pan or zoom
-// (docs/instructions/puzzle-screens.md §1). Width comes from the container rather than from `vw`, so
+// (docs/instructions/puzzle-screens.md: the board fits a 360×640 phone). Width comes from the container
+// rather than from `vw`, so
 // the modal's own padding can never push the board past the screen edge.
 export const SumpleteBoard: FC<Props> = ({ grid, cells, rows, cols, highlighted, litLine, checked, onToggle }) => {
   const size = grid.length

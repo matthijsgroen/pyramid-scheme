@@ -1,9 +1,11 @@
-// The deduction system behind both generation and hints, per docs/game-design/puzzles/sudoku.md §4.
+// The deduction system behind both generation and hints, per docs/game-design/puzzles/sudoku.md's
+// technique ladder.
 //
 // Four rungs, and the ladder stops there because the GRID stops there. The subsets every larger
 // sudoku turns on — a naked pair, a hidden pair, a triple, an x-wing — were built and measured, and
 // not one of them ever fired: a group only six squares wide leaves a pair one step behind a single
-// that fires first, so every board they might have decided was already decided (design doc §11).
+// that fires first, so every board they might have decided was already decided (`sudoku.md`: measured
+// and rejected).
 // Rungs nothing can reach are not a ceiling to grow into, they are dead weight in the ladder and a
 // tier table that promises reasoning no board demands.
 //

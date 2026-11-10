@@ -62,7 +62,7 @@ describe("generateSudoku", () => {
   })
 
   /**
-   * Rule 9 of the bar (`docs/instructions/puzzle-screens.md` §5): a board must be reachable by
+   * Rule 9 of the bar (`docs/instructions/puzzle-screens.md`): a board must be reachable by
    * deduction alone. Every dig is kept only where the tier's own ladder still finishes the board, so a
    * board that ships was settled step by forced step — which settles uniqueness with it, since nothing
    * along the way was ever a choice.
@@ -173,7 +173,7 @@ describe("what a tier is guaranteed to demand", () => {
   /**
    * A board "demands" a rung when the ladder BELOW it cannot finish the board — the only form of the
    * claim that means anything, since a cheapest-first solver reaches a dear step only where the cheap
-   * ones have run out (design doc §5.3).
+   * ones have run out (`sudoku.md`).
    */
   it.each(difficulties)(
     "%s hands back a board its own gentler ladder cannot finish",
@@ -220,7 +220,7 @@ describe("gradeSudoku", () => {
 
 describe("the options a seed list keys on", () => {
   it("files every tier under its own bucket, so a dial moved takes the key with it", () => {
-    // `docs/instructions/puzzle-screens.md` §6.1: the bucket is a hash of the options object, which is
+    // `docs/instructions/puzzle-screens.md`: the bucket is a hash of the options object, which is
     // what makes a list self-invalidating. Two tiers sharing a table would share a list, which is
     // correct rather than wasteful — these five do not.
     const hashes = difficulties.map(difficulty => configHash(SUDOKU_CONFIG[difficulty]))

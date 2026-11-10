@@ -43,7 +43,7 @@ export const SumpletePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCanc
    * top to bottom, then the column targets left to right.
    *
    * The shell freezes the board and starts its banner the moment it hears "solved", so the celebration has to
-   * happen BEFORE that word is said (`puzzle-screens.md` §3) — the family reports the solve a beat later, and
+   * happen BEFORE that word is said (`puzzle-screens.md`) — the family reports the solve a beat later, and
    * input is refused for that beat, or a number toggled mid-run would land a solve on a board that is no
    * longer solved.
    *
@@ -76,7 +76,7 @@ export const SumpletePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCanc
       onCancel={onCancel}
       solved={celebration.done}
       onReset={() => setState(createSumpleteState(grid.length))}
-      // Two lines: the reason, then the move it asks for (`puzzle-screens.md` §4).
+      // Two lines: the reason, then the move it asks for (`puzzle-screens.md`).
       hint={
         (available ?? hint) &&
         (() =>

@@ -39,7 +39,7 @@ const reducedMotion = (reduce: boolean) =>
   }))
 
 /**
- * The board finishes itself before the shell hears the word "solved" (`puzzle-screens.md` §3).
+ * The board finishes itself before the shell hears the word "solved" (`puzzle-screens.md`).
  *
  * Here the run checks the sums off: the row targets flare top to bottom, then the column targets left to
  * right — the board making its own claim in the two directions the claim is made in. The constraints are the

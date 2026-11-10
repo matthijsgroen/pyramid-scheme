@@ -15,7 +15,7 @@ type Props = {
 
 /**
  * A finished register filing itself: each chamber is taken up as a scroll, one after the next
- * (`sudoku.md` §9.1).
+ * (`sudoku.md`: a face with a scroll finishes by filing its chambers).
  *
  * Drawn as a layer OVER the board rather than by moving the squares, and that is the whole reason this
  * is its own component. A chamber is six separate grid squares, and six squares each scaling about
