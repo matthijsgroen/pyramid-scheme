@@ -513,7 +513,7 @@ potted tree stand a cell taller, so theirs is portrait two by five.
 
 **Attach:**
 
-1. `~/tile-previews/statue-anubis-junior.png` — the scaffold
+1. `~/tile-previews/statue-anubis-junior-previous.png` — the previous painting, repainted over: it already holds the scaffold's pose and silhouette, smoother than the blocks
 2. `~/tile-previews/junior-plain.png` — the material reference
 
 ```
@@ -522,15 +522,13 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 The object: ANUBIS as a jackal lying down on a chest. The upper marked part is the ANIMAL; the block
 under it is the CHEST it lies on.
 
-IT IS A CARVED OBJECT: block-carved, flat planes, the legs never leave the block.
+IT IS A CARVED OBJECT, smoothly modelled, the legs never leave the body.
 
 The jackal is painted matte BLACK #2a1f18, #3a2e26 on his top planes: long muzzle, two tall pointed ears,
 a thin copper collar #8a4022 gone verdigris at its knot, the one mark of metal. The chest under him is
 dark cedar #6b4226, painted with a band of Egyptian blue #2a5a9a and red ochre #8a3a2a rosettes.
 
-THE REFERENCE IS A ROUGHED-OUT BLOCK, deliberately left fat. CHANGE, freely, and ONLY this: the contour
-of the figure, and only by CUTTING. CARVE INWARD ONLY — nothing may end up further left, right, higher or
-lower than the rough shape reaches.
+THE REFERENCE IS A FINISHED PAINTING of this statue, in the wrong materials. Keep every contour, the pose and the smooth modelling exactly; REPAINT ONLY the materials: the jackal as described, and its pale stone base becomes the painted cedar chest.
 
 EVERYTHING ELSE IS FIXED:
 
@@ -542,7 +540,7 @@ EVERYTHING ELSE IS FIXED:
 
 The animal is as big as the reference makes it.
 
-ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF. Nothing is added below the plinth — no ground, no shadow, no floor.
+ANYTHING DRAWN OUTSIDE THE REFERENCE'S SHAPE IS CUT OFF. Nothing is added below the plinth — no ground, no shadow, no floor.
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
 ```
