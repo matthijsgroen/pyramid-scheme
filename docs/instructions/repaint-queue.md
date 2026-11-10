@@ -483,7 +483,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
-## Nobleman — twenty-one
+## Nobleman — twenty
 
 The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
 first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
@@ -506,59 +506,6 @@ The last nine are the house's own kinds, new with its activities ([themed-rooms.
 § Junior): each has a primitive of its own in `renderProp.py` and a guarded block in `art/rebuild.sh`. The
 banquet table and the bed are two cells across, so their frame is landscape three by two; the harp and the
 potted tree stand a cell taller, so theirs is portrait two by five.
-
-### `junior/statue` — the nobleman's ka-statue in dark wood, seated
-
-**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
-
-**Attach:**
-
-1. `~/tile-previews/statue-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a seated KA-STATUE of the nobleman, carved from one block of dark ACACIA WOOD. The upper
-marked part is the FIGURE; the block under it is the SEAT and PLINTH.
-
-IT IS A CARVED OBJECT AND NOT A PERSON. Block-carved: flat planes, hard arrises, the figure never
-leaves its block, nothing undercut. No anatomy is modelled. The figure is CLOTHED, no bare torso — bare
-painted flesh is what turns a statue into a cartoon character.
-
-PAINTED as his house is, on dark wood: the figure is the oiled wood itself, #5e3a22, #6e4428 on its top
-planes, with his face and hands left bare wood in flat planes. A pleated robe from his shoulders to his
-shins, in the wood's own colour with its pleats carved, its hem edged with a thin cream line #d8c8a8. A
-black shoulder-length wig #2a1f18, a broad collar of Egyptian blue #2a5a9a, leaf green #3b6b45 and red
-ochre #8a3a2a bands. The seat and plinth are painted black #2a1f18, #3a2e26 on their top faces, with a
-band of small yellow #c9a040 hieroglyphs along the front.
-
-THE REFERENCE IS A ROUGHED-OUT BLOCK, deliberately left fat. CHANGE, freely, and ONLY this: the contour
-of the figure, and only by CUTTING. CARVE INWARD ONLY — nothing may end up further left, right, higher or
-lower than the rough shape reaches.
-
-EVERYTHING ELSE IS FIXED:
-
-1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them. It is not a photograph and not an isometric view.
-3. HE SITS, facing the viewer, hands on his knees.
-4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows. Do not swing it round, do not flatten it.
-5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is. The figure is the marked upper part; the base is the lower part. Do not shrink the figure onto a taller base.
-
-You are re-carving a shape, not re-staging a photograph.
-
-ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF. Nothing is added below the plinth — no ground, no shadow, no floor.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold statue --contents=seated --spin=7 --colour=#4a3e34 --colour-figure=#6e4428 --floor=#e2a86f
-yarn import-tile art/masters/props/junior/statue.webp --tier=junior --name=statue --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `junior/sarcophagus` — a black-ground anthropoid coffin
 
