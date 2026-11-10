@@ -483,7 +483,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
-## Nobleman — twenty-nine
+## Nobleman — twenty-eight
 
 The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
 first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
@@ -506,40 +506,6 @@ The last nine are the house's own kinds, new with its activities ([themed-rooms.
 § Junior): each has a primitive of its own in `renderProp.py` and a guarded block in `art/rebuild.sh`. The
 banquet table and the bed are two cells across, so their frame is landscape three by two; the harp and the
 potted tree stand a cell taller, so theirs is portrait two by five.
-
-### `junior/lamp` — a cedar lamp stand
-
-**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
-
-**Attach:**
-
-1. `~/tile-previews/lamp-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a LAMP STAND. The tall upright is the STAND; the foot is its BASE; the wide flat disc at the
-top is a DRIP-TRAY; the small round pot standing in the middle of it is the oil LAMP; the teardrop rising
-from the centre of the lamp's top is its FLAME, burning straight up out of the lamp.
-
-The stand is turned cedar #6b4226, oiled, #4a2c1a in shade, with a painted ring in red ochre #8a3a2a and
-Egyptian blue #2a5a9a near the top. The drip-tray is thin copper #8a4022, gone verdigris #4f9a86 at its
-edge. The lamp is red-brown fired pottery #8c4a36, sooted black round its lip. The flame is warm orange
-#e8913a with a pale core #f6c86a, the brightest thing on the whole object; no glow and no rays round it.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold lamp --contents=vessel --spin=8 --colour=#6b4226 --colour-metal=#6b4226 --colour-pottery=#8c4a36 --floor=#e2a86f
-yarn import-tile art/masters/props/junior/lamp.webp --tier=junior --name=lamp --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `junior/chestProp` — a sealed cedar chest with a painted lid
 
