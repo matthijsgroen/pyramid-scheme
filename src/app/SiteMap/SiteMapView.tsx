@@ -40,6 +40,7 @@ import {
   mapWidth,
   PROP_H,
   propFrame,
+  wallItemFrame,
 } from "./mapScale"
 import { DROP_ART, LOOTED_OPACITY, NODE_OVER_ART_OPACITY, nodeArtOffset, type NodeSprite } from "./nodeArt"
 import { stateWash, tierPalette } from "./tileMaterials"
@@ -52,6 +53,7 @@ import {
   ART_IMAGE_RENDERING,
   patronTileUrl,
   tileOrPlaceholder,
+  tileSize,
   tileUrl,
   tileVariants,
   sharedTileUrl,
@@ -1309,14 +1311,12 @@ const WallItems = ({ items, patron, walls }: { items: readonly WallItem[]; patro
   <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
     {items.map(({ row, col, kind, tier, state }) => {
       const url = patronTileUrl(tier, kind, patron)
-      const x = cellLeft(col)
-      // Centred on the face, which is taller than the band the item is painted for, so the mural and the
-      // face's dark base show above and below it.
-      const y = cellTop(row) - (FACE_H + WALL_H) / 2
+      // At the tile's own aspect, centred on the face and kept under its cap (`wallItemFrame`).
+      const { x, y, w, h } = wallItemFrame(row, col, url ? tileSize(url) : undefined)
       const wash = stateWash[state]
       // Hung on a front wall, it fades with that wall: an item left standing on a faded face floats. Hung
       // on a wall behind one, it is drawn behind it, as everything standing there is.
-      const box: Rect = [x, y, CELL, WALL_H]
+      const box: Rect = [x, y, w, h]
       const fade = wallFade(onFadedRun(walls.runs, walls.faded, box))
       const behind = wallsBehind(walls.runs, box, cellTop(row))
       const item = (
@@ -1327,14 +1327,13 @@ const WallItems = ({ items, patron, walls }: { items: readonly WallItem[]; patro
           style={{ opacity: fade.opacity }}
         >
           {url ? (
-            // The band's shape, not a square: a wall item is painted on the face.
-            <Sprite url={url} x={x} y={y} w={CELL} h={WALL_H} data-wall-item="" />
+            <Sprite url={url} x={x} y={y} w={w} h={h} data-wall-item="" />
           ) : (
             <div
               style={{
                 position: "absolute",
-                left: x + CELL / 2 - 6,
-                top: y + WALL_H / 2 - 5,
+                left: x + w / 2 - 6,
+                top: y + h / 2 - 5,
                 width: 12,
                 height: 10,
                 border: `1.5px solid ${DECORATION_COLOR}`,
@@ -1348,8 +1347,8 @@ const WallItems = ({ items, patron, walls }: { items: readonly WallItem[]; patro
                 position: "absolute",
                 left: x,
                 top: y,
-                width: CELL,
-                height: WALL_H,
+                width: w,
+                height: h,
                 background: wash.fill,
                 opacity: wash.opacity,
               }}

@@ -1,7 +1,9 @@
 import path from "node:path"
 import { defineConfig } from "vitest/config"
+import { tileSizesPlugin } from "./scripts/tileSizesPlugin.ts"
 
 export default defineConfig({
+  plugins: [tileSizesPlugin(path.resolve(import.meta.dirname, "./src/assets/tiles"))],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),
