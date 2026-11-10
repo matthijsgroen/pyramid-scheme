@@ -1,0 +1,1858 @@
+{
+  "language": "Català",
+  "saveUnreadable": {
+    "title": "No es pot carregar la teva partida",
+    "body": "Ara mateix el navegador no ens deixa la teva partida guardada. No s'ha perdut: torna a carregar la pàgina per provar-ho un altre cop.",
+    "banner": "La partida no s'està guardant. Toca per tornar a carregar.",
+    "reload": "Torna a carregar",
+    "continue": "Continua jugant sense guardar",
+    "reset": "Torna a començar (esborra la partida)",
+    "confirmReset": "Això esborra tota la teva partida, i no es pot desfer. Vols tornar a començar?",
+    "confirmResetYes": "Sí, esborra la meva partida",
+    "confirmResetNo": "No, enrere"
+  },
+  "difficulty": {
+    "starter": "Principiant",
+    "junior": "Júnior",
+    "expert": "Expert",
+    "master": "Mestre",
+    "wizard": "Mag"
+  },
+  "journeyLength": {
+    "short": "Curt",
+    "medium": "Mitjà",
+    "long": "Llarg"
+  },
+  "time": {
+    "morning": "Matí",
+    "afternoon": "Tarda",
+    "evening": "Vespre",
+    "night": "Nit"
+  },
+  "tomb": {},
+  "ui": {
+    "level": "Nivell",
+    "symbols": "símbols",
+    "journey": "Viatge",
+    "tableau": "Quadre",
+    "difficulty": "Dificultat",
+    "length": "Durada",
+    "time": "Hora",
+    "requiredPrestige": "Nivell de prestigi necessari",
+    "rewards": "Premis",
+    "coins": "Monedes",
+    "pieces": "Peces",
+    "description": "Descripció",
+    "expedition": "Expedició",
+    "expeditionCompleted": "Expedició acabada!",
+    "goBackToBase": "Torna al campament",
+    "backArrow": "←",
+    "back": "← Enrere",
+    "floor": "Pis {{number}}",
+    "enterSite": "Entra",
+    "prompt": {
+      "here": "Investiga",
+      "stairs": "Agafa les escales",
+      "exit": "Surt d'aquest lloc",
+      "zipline": "Llisca per la corda: no hi ha camí de tornada",
+      "oneWay": "Passa a l'altra banda: no hi ha camí de tornada",
+      "liftStone": "Aixeca la pedra",
+      "setStone": "Posa la pedra a la placa",
+      "postStone": "Fica la pedra al forat",
+      "takeStone": "Agafa la pedra",
+      "squeeze": "Passa per l'escletxa",
+      "replay": "Torna a jugar"
+    },
+    "blocked": {
+      "carrying": "No pots passar amb una pedra"
+    },
+    "backToMap": "Torna al mapa",
+    "continueExploration": "Continua explorant les piràmides.",
+    "startExpedition": "Comença l'expedició",
+    "webBuriedPercent": "Encara un {{percent}}% enterrat",
+    "interruptExpedition": "Atura l'expedició",
+    "confirmInterruptExpedition": "Segur que vols aturar aquesta expedició? El que has fet a l'expedició es guarda, però perdràs el que portes fet en aquest nivell!",
+    "cancel": "Cancel·la",
+    "settings": "Configuració",
+    "language": "Idioma",
+    "close": "Tanca",
+    "done": "Fet",
+    "clearGameData": "Esborra les dades del joc",
+    "confirmClearGameData": "Això esborra per sempre tot el que has fet, els objectes i les piràmides explorades. No es pot desfer.",
+    "disableTutorials": "Desactiva les explicacions",
+    "treasureTomb": "Lloc del tresor",
+    "requiresMapPieces": "Calen trossos de mapa",
+    "mapPieces": "Trossos de mapa",
+    "completeExpeditionsToUnlock": "Acaba expedicions per obrir-ho",
+    "availableSymbols": "Símbols que tens:",
+    "fragmentsNeeded": "{{found}}/{{required}} necessaris",
+    "howToPlay": "Com es juga",
+    "puzzleComplete": "La resposta és:",
+    "puzzleCompleted": "Trencaclosques resolt",
+    "trapBlocked": "No tens prou vida per intentar passar aquesta trampa",
+    "spiritsRejectCode": "Els esperits rebutgen aquest codi",
+    "sacredSealBroken": "El segell sagrat s'ha trencat",
+    "newExpeditionUnlocked": "Ja tens una expedició nova",
+    "newTombUnlocked": "Ja tens una tomba nova",
+    "tierComingSoonTitle": "Les expedicions de nivell {{tier}} ja vénen de camí",
+    "tierComingSoon": "Tens la clau, però les piràmides de nivell {{tier}} encara s'estan construint. Arribaran en una actualització futura. Mentrestant, la teva clau obre més parts de les piràmides que ja coneixes.",
+    "answerNow": "La resposta és: ",
+    "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "resetPuzzle": "Reinicia",
+    "hint": "Pista",
+    "undo": "Desfés",
+    "erase": "Esborra",
+    "notes": "Notes",
+    "solvedUnaided": "Resolt sense cap pista",
+    "solvedWithHints_one": "Resolt amb {{count}} pista",
+    "solvedWithHints_many": "Resolt amb {{count}} pistes",
+    "solvedWithHints_other": "Resolt amb {{count}} pistes",
+    "tapToContinue": "Toca per continuar",
+    "goal": "Objectiu"
+  },
+  "trap": {
+    "warning": "⚠ Passadís amb trampa",
+    "canAttempt": "Pots intentar passar.",
+    "tooWeak": "Estàs molt feble: si falles, et quedaràs sense res.",
+    "attempt": "Intenta passar la trampa",
+    "turnAround": "Fes mitja volta",
+    "rested": "Has descansat vora el foc: tornes a estar en forma"
+  },
+  "gate": {
+    "title": "🔒 Porta tancada",
+    "locked": "Encara no tens la clau bona.",
+    "markedWith": "Hi ha un signe tallat a la porta:",
+    "unlocked": "Tens la clau.",
+    "pass": "Passa",
+    "turnAround": "Fes mitja volta",
+    "wardDescription": {
+      "starter": "El segell d'un mercader tanca aquest pas. Només la seva clau el pot obrir.",
+      "junior": "L'escut d'una família noble tanca aquest camí. Només la seva clau l'aixeca.",
+      "expert": "Un segell del temple d'un gran sacerdot protegeix aquesta porta. L'ha d'obrir la seva clau sagrada.",
+      "master": "El segell reial d'un faraó tanca aquest pas. Només la clau del rei el trenca.",
+      "wizard": "Un segell dels déus tanca aquesta porta. Només hi passa la seva clau divina."
+    },
+    "needsKey": "La porta està marcada per a una clau:",
+    "lockedColor": "Encara no has trobat aquesta clau en aquest pis."
+  },
+  "chest": {
+    "tapToOpen": "Toca per obrir",
+    "money_one": "{{count}} moneda",
+    "money_many": "{{count}} monedes",
+    "money_other": "{{count}} monedes",
+    "mapPiece": "Tros de mapa",
+    "mapPieceDescription": "Un tros de mapa trencadís que porta a un lloc oblidat fa molt de temps. Llàstima que n'hi falti tant...",
+    "mapPieceProgress": "{{found}} de {{required}} trossos de mapa trobats",
+    "mapPieceComplete": "El mapa està sencer: porta a {{name}}.",
+    "hieroglyphFragment": "Tros de jeroglífic",
+    "fragmentProgress": "{{found}} de {{required}} trossos trobats",
+    "tombKey": "Clau de la tomba",
+    "sandLever": "Palanca de la sorra",
+    "sandLeverDescription": "L'estires i es queda avall. En algun lloc lluny d'aquí, la sorra se'n va.",
+    "webKey": "Clau segellada",
+    "webKeyDescription": "Té al cap una marca que ja has vist en una porta segellada d'un altre lloc.",
+    "hieroglyphs": "Jeroglífics antics",
+    "hieroglyphsDescription": "Símbols sagrats escrits a les parets d'aquesta cambra. El seu significat t'ajuda a saber més coses del món antic.",
+    "mosaicPiece": "Tros de mosaic",
+    "mosaicPieceDescription": "Una peça de vidre brillant, un tros d'un gran mosaic. Posa-la al costat de les altres i el dibuix amagat anirà apareixent a poc a poc.",
+    "waterskin": "Odre d'aigua",
+    "waterskinDescription": "Aigua fresca. Te la beus de seguida i les ferides et fan menys mal."
+  },
+  "loot": {
+    "youFound": "Has trobat",
+    "expeditionReward": "Premi extra per acabar l'expedició",
+    "clickToContinue": "Toca on vulguis per continuar"
+  },
+  "money": {
+    "label": "Monedes"
+  },
+  "shop": {
+    "title": "La parada d'en Fez",
+    "invitation": "Fes una ullada a la parada",
+    "buy": "Compra",
+    "sell": "Ven",
+    "soldOut": "Esgotat",
+    "dismiss": "Marxa",
+    "rareItems": "Troballes rares",
+    "sellSection": "Andròmines per vendre",
+    "haul": {
+      "coins_one": "+{{count}} moneda",
+      "coins_many": "+{{count}} monedes",
+      "coins_other": "+{{count}} monedes",
+      "note": "Monedes soltes pel camí"
+    }
+  },
+  "purchases": {
+    "donkey": {
+      "name": "Ruc",
+      "need": "Necessites un ruc",
+      "opens": "Porta el teu equipatge. Amb ell pots fer els viatges de nivell Expert."
+    },
+    "cart": {
+      "name": "Carro",
+      "need": "Necessites un carro",
+      "opens": "Hi cap tot el campament. Amb ell pots fer els viatges de nivell Mestre."
+    },
+    "camel": {
+      "name": "Camell",
+      "need": "Necessites un camell",
+      "opens": "Camina dies sense beure aigua. Et porta fins al santuari interior."
+    },
+    "secondDonkey": {
+      "name": "Segon ruc",
+      "need": "Necessites un segon ruc",
+      "opens": "Encara més coses per portar. Amb ell pots fer els viatges de nivell Mag."
+    },
+    "secondCamel": {
+      "name": "Segon camell",
+      "need": "Necessites un segon camell",
+      "opens": "Dos camells porten prou aigua per arribar a la sala d'Osiris."
+    },
+    "sturdyCart": {
+      "name": "Carro més fort",
+      "need": "Necessites un carro més fort",
+      "opens": "No es trenca, ni tan sols de camí al regne de les forces del cosmos."
+    },
+    "caravanBanner": {
+      "name": "Estendard de caravana",
+      "opens": "No obre res. Només és per divertir-se."
+    },
+    "hint": "En Fez en ven un a {{place}}",
+    "devGrant": "Compra tots els animals"
+  },
+  "level": {
+    "completed": "Nivell superat!"
+  },
+  "mosaic": {
+    "place_one": "Col·loca {{count}} peça",
+    "place_many": "Col·loca {{count}} peces",
+    "place_other": "Col·loca {{count}} peces",
+    "placing": "Col·locant…",
+    "panel": {
+      "starter": "El guardià de la porta",
+      "junior": "La primera lliçó",
+      "expert": "Deixar entrar el sol",
+      "master": "El rei verd",
+      "wizard": "La ploma i el cor"
+    },
+    "entrance": {
+      "title": "Mosaic",
+      "label": "Mosaic {{found}}/{{total}}"
+    },
+    "haul": {
+      "pieces_one": "{{count}} tros de mosaic",
+      "pieces_many": "{{count}} trossos de mosaic",
+      "pieces_other": "{{count}} trossos de mosaic",
+      "note": "Per a la vidriera"
+    }
+  },
+  "collection": {
+    "tabs": {
+      "treasures": "Tresors",
+      "hieroglyphs": "Jeroglífics",
+      "stories": "Històries",
+      "junk": "Andròmines"
+    },
+    "tabsLabel": "El que has col·leccionat",
+    "tabNew_one": "{{label}} · {{count}} novetat",
+    "tabNew_many": "{{label}} · {{count}} novetats",
+    "tabNew_other": "{{label}} · {{count}} novetats",
+    "empty": "El teu cofre encara és buit",
+    "newLabel": "NOU",
+    "clickForDetails": "Toca una casella per veure'n més",
+    "categories": {
+      "deities": "🏺 Déus",
+      "professions": "⚱️ Oficis",
+      "animals": "🐾 Animals",
+      "artifacts": "💎 Objectes",
+      "treasures": "💰 Tresors",
+      "junk": "🔷 Andròmines",
+      "signs": "✍️ Signes"
+    },
+    "treasureCategories": {
+      "merchantCache": "💰 Amagatall del mercader",
+      "nobleVault": "👑 Cambra de la noble",
+      "templeSecrets": "🏛️ Secrets del temple",
+      "ancientRelics": "🏺 Relíquies antigues",
+      "mythicalArtifacts": "✨ Objectes llegendaris"
+    }
+  },
+  "detector": {
+    "compassTitle": "Brúixola",
+    "corridorTitle": "Cercador de passadissos",
+    "pickTarget": "Tria un jeroglífic a la taula dels mapes del campament",
+    "allCollected": "Encara no hi ha cap tros a l'abast en una piràmide on ja hagis estat",
+    "more": "+{{count}} més",
+    "corridorHere": "Aquí mateix hi ha un pas amagat",
+    "revealCorridor": "Obre'l",
+    "corridorNearby": "Hi ha un passadís amagat a prop",
+    "corridorOnFloor": "En aquest pis hi ha un passadís amagat",
+    "lookingFor": "Busca {{symbol}}",
+    "access": {
+      "open": "No sabem de res que ho bloquegi",
+      "unknown": "Potser encara no hi pots arribar: és dins d'una tomba o està a la venda"
+    },
+    "corridorNoneNearby": "No hi ha cap passadís amagat a prop",
+    "corridorNoneOnFloor": "No hi ha cap passadís amagat en aquest pis",
+    "corridorOtherFloor": "En un altre pis hi ha un passadís amagat",
+    "corridorNoneInPyramid": "No hi ha cap passadís amagat en cap altre pis",
+    "title": "Detector",
+    "band": {
+      "none": "No s'ha detectat res",
+      "pyramid": "Hi ha alguna cosa en aquesta piràmide",
+      "floor": "Hi ha alguna cosa en aquest pis",
+      "near": "Hi ha alguna cosa a prop",
+      "here": "Aquí mateix! Obre el detector"
+    },
+    "camp": {
+      "parts": "{{count}} de {{total}} peces",
+      "compassReach": {
+        "1": "veu la piràmide",
+        "2": "veu el pis",
+        "3": "assenyala el lloc"
+      },
+      "pickHeading": "Què ha de buscar la brúixola?",
+      "onlyIncomplete": "Només els signes dels quals tens un tros, fins que estiguin complets.",
+      "whereHeading": "On són els trossos de {{symbol}}",
+      "pickFirst": "Tria un signe per veure on són els seus trossos.",
+      "follow": "Segueix aquest signe",
+      "following": "La brúixola segueix aquest signe",
+      "nothingToFind": "Encara no tens cap tros d'un signe que no estigui complet.",
+      "noneInReach": "Encara no hi ha cap tros a l'abast en una piràmide on ja hagis estat.",
+      "corridorReach": {
+        "1": "sent un passadís a prop",
+        "2": "sent tot aquest pis",
+        "3": "també sent els altres pisos",
+        "4": "sent altres viatges"
+      },
+      "corridorInPyramid": "Dins d'una piràmide escolta si hi ha passadissos tancats.",
+      "corridorFarNext": "Amb les quatre peces, des del campament sent altres viatges.",
+      "corridorWhere": "On encara hi ha un passadís tancat",
+      "corridorNone": "No hi ha cap passadís tancat en els viatges on has estat.",
+      "pyramid": "Piràmide {{n}}",
+      "corridorCount_one": "{{count}} passadís",
+      "corridorCount_many": "{{count}} passadissos",
+      "corridorCount_other": "{{count}} passadissos"
+    }
+  },
+  "keys": {
+    "blue": "Clau blava",
+    "red": "Clau vermella",
+    "green": "Clau verda",
+    "yellow": "Clau groga",
+    "purple": "Clau lila",
+    "bundle": "Un clauer",
+    "foundDescription": "Obre les portes marcades d'aquest color, en aquest pis.",
+    "heldTitle": "{{key}}: ja la tens",
+    "neededTitle": "{{key}}: encara et falta"
+  },
+  "balance": {
+    "rules": {
+      "tap": "Toca un signe de sota i després un número. Torna a tocar el número per treure'l.",
+      "same": "Un signe pesa el mateix a totes les balances.",
+      "cancel": "Si treus el mateix dels dos plats, la balança continua equilibrada. Toca una peça marcada per fer-ho: el que queda es guarda com una fila nova.",
+      "swap": "Toca un signe que no tingui cap igual a l'altra banda, i després una fila on aquell signe estigui sol, per canviar-lo pel que val aquella fila."
+    },
+    "hint": {
+      "mistake": "Un dels pesos que has posat fa que una balança s'inclini. Treu-lo i torna-ho a mirar.",
+      "alone": "A la fila il·luminada, {{glyph}} és l'única peça que queda sense número. Calcula quant pesa.",
+      "equalShares": "La fila il·luminada només té {{glyph}} contra un número. Reparteix aquest número entre ells.",
+      "difference": "Les dues files il·luminades són iguals menys per {{glyph}}. Compara-les.",
+      "cancelGlyph": "Els dos plats de la fila il·luminada tenen {{glyph}}. Toca'n un per treure'l dels dos costats: la fila continua equilibrada.",
+      "cancelStones": "Els dos plats de la fila il·luminada tenen números sols. Toca'n un per treure la mateixa quantitat dels dos costats.",
+      "swap": "Una fila il·luminada diu quant val un sol {{glyph}}. Toca el {{glyph}} de l'altra fila il·luminada i després toca aquella fila."
+    },
+    "swap": {
+      "pick": "Toca una fila il·luminada per canviar aquest {{glyph}} pel que aquella fila diu que val.",
+      "none": "Aquí res no diu quant val un {{glyph}} sol, i a l'altra banda no hi ha res igual."
+    },
+    "goal": {
+      "default": "Cada signe té un pes, i totes les balances estan equilibrades.",
+      "weighing": "Cada signe troba el seu pes, i totes les balances queden planes."
+    },
+    "name": {
+      "default": "La balança",
+      "weighing": "El pes del cor"
+    }
+  },
+  "sumplete": {
+    "rules": {
+      "tap": "Toca un cop per ratllar un número, un altre cop per marcar-lo com a número que es queda, i un altre per esborrar-ho.",
+      "totals": "El número petit sota cada objectiu és el que suma aquella línia ara mateix."
+    },
+    "hint": {
+      "mistake": "Una de les marques d'aquí no pot ser correcta. Desfés-la i torna-ho a mirar.",
+      "tooBig": {
+        "row": "A aquesta fila encara li falten {{deficit}}. {{value}} és més gran, així que no es pot quedar.",
+        "col": "A aquesta columna encara li falten {{deficit}}. {{value}} és més gran, així que no es pot quedar."
+      },
+      "allStrike": {
+        "row": "Els números que es queden en aquesta fila ja sumen l'objectiu, així que tots els altres han de marxar.",
+        "col": "Els números que es queden en aquesta columna ja sumen l'objectiu, així que tots els altres han de marxar."
+      },
+      "allKeep": {
+        "row": "Aquesta fila ja suma l'objectiu: marca aquests números com a números que es queden, i així podràs resoldre les columnes que hi passen.",
+        "col": "Aquesta columna ja suma l'objectiu: marca aquests números com a números que es queden, i així podràs resoldre les files que hi passen."
+      },
+      "parityKeep": {
+        "row": "A aquesta fila encara li falten {{deficit}}, un número senar. {{value}} és l'únic número senar que queda, així que s'ha de quedar.",
+        "col": "A aquesta columna encara li falten {{deficit}}, un número senar. {{value}} és l'únic número senar que queda, així que s'ha de quedar."
+      },
+      "parityStrike": {
+        "row": "A aquesta fila encara li falten {{deficit}}, un número parell. {{value}} és l'únic número senar que queda, així que ha de marxar.",
+        "col": "A aquesta columna encara li falten {{deficit}}, un número parell. {{value}} és l'únic número senar que queda, així que ha de marxar."
+      },
+      "onlyCombination": {
+        "row": "En aquesta fila només hi ha un grup de números que sumi {{deficit}}.",
+        "col": "En aquesta columna només hi ha un grup de números que sumi {{deficit}}."
+      },
+      "inEveryCombinationKeep": {
+        "row": "Sense {{value}}, cap grup dels altres números d'aquesta fila fa {{deficit}}. Així que s'ha de quedar.",
+        "col": "Sense {{value}}, cap grup dels altres números d'aquesta columna fa {{deficit}}. Així que s'ha de quedar."
+      },
+      "inEveryCombinationStrike": {
+        "row": "Si et quedes {{value}}, a aquesta fila encara li faltarien {{remaining}}, i cap dels altres números d'aquí ho pot fer. Així que ha de marxar.",
+        "col": "Si et quedes {{value}}, a aquesta columna encara li faltarien {{remaining}}, i cap dels altres números d'aquí ho pot fer. Així que ha de marxar."
+      },
+      "tooBig.row": "A aquesta fila encara li falten {{deficit}}, i {{value}} és més gran.",
+      "tooBig.col": "A aquesta columna encara li falten {{deficit}}, i {{value}} és més gran.",
+      "allStrike.row": "Els números que es queden en aquesta fila ja sumen l'objectiu.",
+      "allStrike.col": "Els números que es queden en aquesta columna ja sumen l'objectiu.",
+      "allKeep.row": "Aquesta fila ja suma l'objectiu, així que ara pots resoldre les columnes que hi passen.",
+      "allKeep.col": "Aquesta columna ja suma l'objectiu, així que ara pots resoldre les files que hi passen.",
+      "parityKeep.row": "A aquesta fila encara li falten {{deficit}}, un número senar, i {{value}} és l'únic número senar que queda.",
+      "parityKeep.col": "A aquesta columna encara li falten {{deficit}}, un número senar, i {{value}} és l'únic número senar que queda.",
+      "parityStrike.row": "A aquesta fila encara li falten {{deficit}}, un número parell, i {{value}} és l'únic número senar que queda.",
+      "parityStrike.col": "A aquesta columna encara li falten {{deficit}}, un número parell, i {{value}} és l'únic número senar que queda.",
+      "onlyCombination.row": "En aquesta fila només hi ha un grup de números que sumi {{deficit}}.",
+      "onlyCombination.col": "En aquesta columna només hi ha un grup de números que sumi {{deficit}}.",
+      "inEveryCombinationKeep.row": "Sense {{value}}, cap grup dels altres números d'aquesta fila fa {{deficit}}.",
+      "inEveryCombinationKeep.col": "Sense {{value}}, cap grup dels altres números d'aquesta columna fa {{deficit}}.",
+      "inEveryCombinationStrike.row": "Si et quedes {{value}}, a aquesta fila encara li faltarien {{remaining}}, i cap dels altres números d'aquí ho pot fer.",
+      "inEveryCombinationStrike.col": "Si et quedes {{value}}, a aquesta columna encara li faltarien {{remaining}}, i cap dels altres números d'aquí ho pot fer.",
+      "action": {
+        "strike_one": "Ratlla el número assenyalat.",
+        "strike_many": "Ratlla els números assenyalats.",
+        "strike_other": "Ratlla els números assenyalats.",
+        "keep_one": "Marca el número assenyalat com a número que es queda.",
+        "keep_many": "Marca els números assenyalats com a números que es queden.",
+        "keep_other": "Marca els números assenyalats com a números que es queden."
+      }
+    },
+    "goal": "Cada fila i cada columna sumen el número del costat.",
+    "name": "El compte"
+  },
+  "futoshiki": {
+    "rules": {
+      "signs": "Un signe entre dues caselles apunta al número més petit dels dos.",
+      "enter": "Toca una casella i després un número. Si tornes a tocar el mateix número, el treus.",
+      "notes": "Canvia al llapis per apuntar els números que encara hi podrien anar. Desfés torna enrere el teu últim moviment."
+    },
+    "hint": {
+      "mistake": {
+        "value": "Un dels números d'aquí no pot ser correcte. Treu-lo i torna-ho a mirar.",
+        "note": "Les notes d'aquesta casella han descartat el número que hi va. Esborra-les i torna a començar aquesta casella."
+      },
+      "nakedSingle": "Tots els altres números ja estan agafats en aquesta fila, en aquesta columna o pels signes. Per a aquesta casella només queda el {{value}}.",
+      "hiddenSingle": {
+        "row": "El {{value}} no cap en cap altra casella d'aquesta fila, així que va aquí.",
+        "col": "El {{value}} no cap en cap altra casella d'aquesta columna, així que va aquí."
+      },
+      "signBound": {
+        "high": "Aquí un signe apunta cap a fora, cap a un número més gran, així que aquesta casella no pot tenir el {{value}}.",
+        "low": "Aquí un signe apunta a aquesta casella, així que hi ha d'haver un número més petit que ella: no pot tenir el {{value}}."
+      },
+      "signVsValue": {
+        "less": "El signe diu que aquesta casella és més petita que la del costat, i la del costat té el {{value}}.",
+        "greater": "El signe diu que aquesta casella és més gran que la del costat, i la del costat té el {{value}}."
+      },
+      "signChain": {
+        "high": "Segueix els signes des d'aquesta casella: {{chain}} caselles seguides han de ser cada una més gran que l'anterior, així que aquesta no pot passar de {{bound}}.",
+        "low": "Segueix els signes fins a aquesta casella: {{chain}} caselles seguides han de ser cada una més petita que l'anterior, així que aquesta no pot ser menys de {{bound}}."
+      },
+      "signPair": {
+        "less": "El número més gran que encara pot tenir la casella de l'altra banda del signe és el {{value}}, i aquesta casella ha de quedar per sota.",
+        "greater": "El número més petit que encara pot tenir la casella de l'altra banda del signe és el {{value}}, i aquesta casella ha de quedar per sobre."
+      },
+      "nakedPair": {
+        "row": "Aquestes dues caselles només poden tenir el {{first}} i el {{second}}, en un ordre o en l'altre, així que cap altra casella d'aquesta fila pot tenir cap dels dos.",
+        "col": "Aquestes dues caselles només poden tenir el {{first}} i el {{second}}, en un ordre o en l'altre, així que cap altra casella d'aquesta columna pot tenir cap dels dos."
+      },
+      "hiddenPair": {
+        "row": "En aquesta fila, el {{first}} i el {{second}} només caben en aquestes dues caselles, així que no hi pot anar res més.",
+        "col": "En aquesta columna, el {{first}} i el {{second}} només caben en aquestes dues caselles, així que no hi pot anar res més."
+      },
+      "xWing": {
+        "row": "El {{value}} només cap en dues caselles de cadascuna d'aquestes dues files, i estan a les mateixes columnes. Vagi com vagi, totes dues columnes ja estan ocupades, així que el {{value}} no pot anar enlloc més d'aquestes columnes.",
+        "col": "El {{value}} només cap en dues caselles de cadascuna d'aquestes dues columnes, i estan a les mateixes files. Vagi com vagi, totes dues files ja estan ocupades, així que el {{value}} no pot anar enlloc més d'aquestes files."
+      },
+      "nakedTriple": {
+        "row": "Entre aquestes tres caselles només hi pot haver el {{first}}, el {{second}} i el {{third}}, així que cap altra casella d'aquesta fila pot tenir cap dels tres.",
+        "col": "Entre aquestes tres caselles només hi pot haver el {{first}}, el {{second}} i el {{third}}, així que cap altra casella d'aquesta columna pot tenir cap dels tres."
+      },
+      "hiddenTriple": {
+        "row": "En aquesta fila, el {{first}}, el {{second}} i el {{third}} només caben en aquestes tres caselles, així que no hi pot anar res més.",
+        "col": "En aquesta columna, el {{first}}, el {{second}} i el {{third}} només caben en aquestes tres caselles, així que no hi pot anar res més."
+      }
+    },
+    "goal": "Cada fila i cada columna tenen cada número exactament un cop.",
+    "name": "Més gran i més petit"
+  },
+  "lightbeam": {
+    "rules": {
+      "mirrors": "Un mirall desvia la llum per qualsevol de les seves dues cares. Les marquetes del voltant mostren les altres posicions que pot tenir: la majoria giren la llum un quart de volta, i algunes giren menys i l'envien de biaix.",
+      "walls": "Un bloc de pedra s'empassa la llum. La vora del tauler també.",
+      "tap": "Toca una peça per canviar-la: un mirall gira, una peça que llisca es mou al lloc següent. Si té la vora blanca, la pots moure tu; la resta és part del trencaclosques.",
+      "nodes": "Algunes pedres estan connectades a un forat del terra i no es mouen per molt que les toquis. Fes passar la llum pel forat i la pedra s'apartarà."
+    },
+    "hint": {
+      "entryRun": "Comença per on la llum ja va: surt recta del disc fins que troba la primera peça que pots canviar. Per aquestes caselles la llum hi passa facis el que facis.",
+      "exitRun": "Mira el santuari. Només se'n pot il·luminar un costat: totes les altres entrades estan tapades o miren fora del tauler. Així que la llum hi ha d'arribar per aquesta línia.",
+      "wiringFires": {
+        "one": "La llum ha de passar per aquell forat pel camí, això ja ho has descobert. En passar-hi, aparta la pedra connectada, i el camí de més enllà s'obre.",
+        "all": "Aquella pedra està connectada a més d'un forat, i només es mou quan la llum ha passat per tots. Busca com fer passar el raig per tots ells."
+      },
+      "deadEnd": {
+        "wall": "Si la poses així, la llum va recta contra la pedra i ja no hi ha res que la salvi. Així que no pot anar així.",
+        "disc": "Si el poses així, el mirall torna la llum per on ha vingut, fins al mateix disc d'on ha sortit. Així que no pot anar així.",
+        "edge": "Si la poses així, la llum surt per la vora del tauler i ja no hi ha res que l'atrapi. Així que no pot anar així.",
+        "loop": "Si la poses així, la llum no arriba enlloc: dona voltes per sempre. Així que no pot anar així."
+      },
+      "feedsExit": {
+        "wall": "Ves enrere des del santuari. Si la poses així, res no pot portar la llum per l'única línia que hi arriba: es perd contra la pedra pel camí.",
+        "disc": "Ves enrere des del santuari. Si la poses així, la llum hauria de sortir de la part fosca del darrere del disc, i d'allà no surt cap llum.",
+        "edge": "Ves enrere des del santuari. Si la poses així, la llum hauria de venir de fora del tauler per arribar-hi.",
+        "loop": "Ves enrere des del santuari. Si la poses així, la llum que hi hauria d'arribar només dona voltes per sempre."
+      },
+      "wiringDead": "Facis el que facis, la llum no pot arribar mai a aquell forat. Així que la pedra connectada es queda on és, i pots seguir el camí sense comptar-hi.",
+      "neverReached": "Aquesta, deixa-la estar. La llum no hi arriba posis com posis la resta, així que no importa què hi facis.",
+      "onlySurvivor": "Prova totes les posicions d'aquesta peça una per una: totes menys una deixen el santuari a les fosques. Aquella és la resposta."
+    },
+    "goal": "La llum del sol va del disc fins al santuari.",
+    "name": "Raig de llum"
+  },
+  "eclipse": {
+    "rules": {
+      "triple": "Mai hi pot haver tres iguals seguits, ni en horitzontal ni en vertical.",
+      "copies": "No hi pot haver dues files iguals, ni dues columnes iguals.",
+      "signs": "Un signe entre dues caselles diu com són: = vol dir iguals, × vol dir diferents.",
+      "enter": "Toca una casella per posar-hi un sol, torna-la a tocar per una lluna, i un altre cop per buidar-la."
+    },
+    "hint": {
+      "mistake": "Una d'aquestes marques no pot ser correcta.",
+      "sign.same": "= vol dir iguals.",
+      "sign.different": "× vol dir diferents.",
+      "noTriple.pair": "Ja hi ha dos {{mark}}, i mai hi pot haver tres seguits.",
+      "noTriple.sandwich": "Hi ha {{mark}} als dos costats, i mai hi pot haver tres seguits.",
+      "signPair": "Aquests dos són iguals, i aquell {{mark}} és al seu costat.",
+      "lineCount": "Aquesta línia ja té els seus {{count}} {{mark}}.",
+      "noCopy": "Al revés, seria una còpia de la línia il·luminada.",
+      "linePairing.sameNoRoom": "Aquí només queden {{count}} {{mark}}, i aquests dos són iguals.",
+      "linePairing.differentTakesOne": "Les parelles amb × ja fan servir els {{mark}} que hi caben en aquesta línia.",
+      "loneMark": "Queda un {{mark}}, i només una casella evita que hi hagi tres {{other}} seguits.",
+      "squeeze.triple": "Un {{mark}} aquí obligaria la resta a ser {{other}}: tres seguits.",
+      "squeeze.sign": "Un {{mark}} aquí obligaria la resta a ser {{other}}: un signe deixaria de complir-se.",
+      "squeeze.copy": "Un {{mark}} aquí obligaria la resta a ser {{other}}: la línia seria una còpia.",
+      "action": {
+        "fill_one": "Posa {{mark}} a la casella assenyalada.",
+        "fill_many": "Posa {{mark}} a les caselles assenyalades.",
+        "fill_other": "Posa {{mark}} a les caselles assenyalades.",
+        "fillMixed": "Omple les caselles assenyalades: només hi ha una manera que funcioni."
+      }
+    },
+    "goal": "Cada casella té un sol o una lluna, i cada línia té tants d'un com de l'altre.",
+    "name": "Sol i lluna"
+  },
+  "constellation": {
+    "rules": {
+      "default": {
+        "straight": "Les línies de llum van rectes, en horitzontal o en vertical, d'una estrella a la següent.",
+        "pair": "Dues estrelles poden compartir dues línies com a màxim.",
+        "cross": "Les línies mai es creuen, i mai passen per sobre d'una estrella.",
+        "enter": "Arrossega des d'una estrella cap a la del costat per dibuixar una línia, un altre cop per fer-la doble, i un altre cop per esborrar-la."
+      },
+      "causeway": {
+        "straight": "Els camins de càrrega van rectes, en horitzontal o en vertical, d'un lloc al següent.",
+        "pair": "Dos llocs poden compartir dos camins com a màxim.",
+        "cross": "Els camins mai es creuen, i mai passen per sobre d'un lloc.",
+        "enter": "Arrossega des d'un lloc cap al del costat per fer un camí, un altre cop per fer-lo doble, i un altre cop per desfer-lo."
+      },
+      "irrigation": {
+        "straight": "Els canals van rectes, en horitzontal o en vertical, d'una bassa a la següent.",
+        "pair": "Dues basses poden compartir dos canals com a màxim.",
+        "cross": "Els canals mai es creuen, i mai passen per sobre d'una bassa.",
+        "enter": "Arrossega des d'una bassa cap a la del costat per cavar un canal, un altre cop per fer-lo més ample, i un altre cop per tapar-lo."
+      },
+      "ceiling": {
+        "straight": "Els cordills van rectes, en horitzontal o en vertical, d'una estrella a la següent.",
+        "pair": "Dues estrelles poden compartir dos cordills com a màxim.",
+        "cross": "Els cordills mai es creuen, i mai passen per sobre d'una estrella.",
+        "enter": "Arrossega des d'una estrella cap a la del costat per posar un cordill, un altre cop per fer-lo doble, i un altre cop per treure'l."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Una d'aquestes línies no pot ser correcta.",
+        "capacity": "{{count}} línies, i just les sortides justes.",
+        "settled": "Aquest {{count}} ja té les seves línies.",
+        "soleWayOut": "Només queda una sortida, i encara falten {{count}} per dibuixar.",
+        "crossed": "Una línia allà creuaria aquesta.",
+        "atLeastOne": "{{count}} línies, i les altres sortides no les poden portar totes.",
+        "twinBlock.single": "Si uneixes aquests dos, faries una constel·lació de només dues estrelles.",
+        "twinBlock.double": "Una segona línia allà faria una constel·lació de només dues estrelles.",
+        "isolation": "Aquesta línia deixaria aquestes {{count}} estrelles separades de la resta.",
+        "action": {
+          "draw_one": "Dibuixa la línia marcada.",
+          "draw_many": "Dibuixa les línies marcades.",
+          "draw_other": "Dibuixa les línies marcades.",
+          "refuse_one": "La línia marcada es queda sense dibuixar.",
+          "refuse_many": "Les línies marcades es queden sense dibuixar.",
+          "refuse_other": "Les línies marcades es queden sense dibuixar.",
+          "refuseDouble": "Allà, una línia i prou, no dues."
+        }
+      },
+      "causeway": {
+        "mistake": "Un d'aquests camins no pot ser correcte.",
+        "capacity": "{{count}} camins, i just les sortides justes.",
+        "settled": "Aquest {{count}} ja té els seus camins.",
+        "soleWayOut": "Només queda una sortida, i encara falten {{count}} per fer.",
+        "crossed": "Un camí allà creuaria aquest.",
+        "atLeastOne": "{{count}} camins, i les altres sortides no els poden portar tots.",
+        "twinBlock.single": "Si uneixes aquests dos, faries una xarxa de només dos llocs.",
+        "twinBlock.double": "Un segon camí allà faria una xarxa de només dos llocs.",
+        "isolation": "Aquest camí deixaria aquests {{count}} llocs separats de la resta.",
+        "action": {
+          "draw_one": "Fes el camí marcat.",
+          "draw_many": "Fes els camins marcats.",
+          "draw_other": "Fes els camins marcats.",
+          "refuse_one": "El camí marcat es queda sense fer.",
+          "refuse_many": "Els camins marcats es queden sense fer.",
+          "refuse_other": "Els camins marcats es queden sense fer.",
+          "refuseDouble": "Allà, un camí i prou, no dos."
+        }
+      },
+      "irrigation": {
+        "mistake": "Un d'aquests canals no pot ser correcte.",
+        "capacity": "{{count}} canals, i just les sortides justes.",
+        "settled": "Aquest {{count}} ja té els seus canals.",
+        "soleWayOut": "Només queda una sortida, i encara falten {{count}} per cavar.",
+        "crossed": "Un canal allà creuaria aquest.",
+        "atLeastOne": "{{count}} canals, i les altres sortides no els poden portar tots.",
+        "twinBlock.single": "Si uneixes aquests dos, faries un sistema d'aigua de només dues basses.",
+        "twinBlock.double": "Un segon canal allà faria un sistema d'aigua de només dues basses.",
+        "isolation": "Aquest canal deixaria aquestes {{count}} basses separades de la resta.",
+        "action": {
+          "draw_one": "Cava el canal marcat.",
+          "draw_many": "Cava els canals marcats.",
+          "draw_other": "Cava els canals marcats.",
+          "refuse_one": "El canal marcat es queda sense cavar.",
+          "refuse_many": "Els canals marcats es queden sense cavar.",
+          "refuse_other": "Els canals marcats es queden sense cavar.",
+          "refuseDouble": "Allà, un canal i prou, no dos."
+        }
+      },
+      "ceiling": {
+        "mistake": "Un d'aquests cordills no pot ser correcte.",
+        "capacity": "{{count}} cordills, i just les sortides justes.",
+        "settled": "Aquest {{count}} ja té els seus cordills.",
+        "soleWayOut": "Només queda una sortida, i encara falten {{count}} per posar.",
+        "crossed": "Un cordill allà creuaria aquest.",
+        "atLeastOne": "{{count}} cordills, i les altres sortides no els poden portar tots.",
+        "twinBlock.single": "Si uneixes aquestes dues, faries un cel pintat de només dues estrelles.",
+        "twinBlock.double": "Un segon cordill allà faria un cel pintat de només dues estrelles.",
+        "isolation": "Aquest cordill deixaria aquestes {{count}} estrelles separades de la resta.",
+        "action": {
+          "draw_one": "Posa el cordill marcat.",
+          "draw_many": "Posa els cordills marcats.",
+          "draw_other": "Posa els cordills marcats.",
+          "refuse_one": "El cordill marcat es queda sense posar.",
+          "refuse_many": "Els cordills marcats es queden sense posar.",
+          "refuse_other": "Els cordills marcats es queden sense posar.",
+          "refuseDouble": "Allà, un cordill i prou, no dos."
+        }
+      }
+    },
+    "goal": {
+      "default": "Totes les estrelles formen una sola constel·lació, i cada una té tantes línies de llum com diu el seu número.",
+      "causeway": "Tots els llocs formen una sola xarxa de camins, i cada un té tants camins com diu el seu número.",
+      "irrigation": "Totes les basses formen un sol sistema d'aigua, i cada una té tants canals com diu el seu número.",
+      "ceiling": "Totes les estrelles formen un sol cel pintat, i cada una està lligada amb tants cordills d'or com diu el seu número."
+    },
+    "name": {
+      "default": "Mapa d'estrelles",
+      "causeway": "Camins de pedra",
+      "irrigation": "Canals d'aigua",
+      "ceiling": "Sostre pintat"
+    }
+  },
+  "starBattle": {
+    "rules": {
+      "default": {
+        "touch": "Dues estrelles no es poden tocar, ni tan sols per les cantonades.",
+        "enter": "Toca una casella per descartar-la, un altre cop per posar-hi una estrella, i un altre cop per esborrar-la."
+      },
+      "fields": {
+        "touch": "Dues granges no es poden tocar, ni tan sols per les cantonades. Tan a prop, haurien de compartir el pou.",
+        "enter": "Toca un terreny per descartar-lo, un altre cop per construir-hi una granja, i un altre cop per esborrar-la."
+      },
+      "lamps": {
+        "touch": "Dues llànties d'oli no poden estar una al costat de l'altra, ni tan sols per les cantonades. La seva llum se sobreposaria i es malgastaria l'oli.",
+        "walls": "Els blocs de pedra grisos són part del terra: no s'hi pot posar res, i no compten com a casella.",
+        "enter": "Toca una llosa per descartar-la, un altre cop per posar-hi una llàntia d'oli, i un altre cop per esborrar-la."
+      },
+      "market": {
+        "touch": "Dues parades no poden estar una al costat de l'altra, ni tan sols per les cantonades. Els rivals mai es posen de costat.",
+        "walls": "Les cases són part de la plaça: no s'hi pot posar cap parada, i no compten com a lloc.",
+        "enter": "Toca un lloc per descartar-lo, un altre cop per muntar-hi una parada, i un altre cop per esborrar-la."
+      },
+      "lotus": {
+        "touch": "Dos lotus no poden flotar un al costat de l'altre, ni tan sols per les cantonades. Cada flor necessita aigua lliure al voltant.",
+        "walls": "Les roques surten de la bassa: no hi pot flotar res, i no compten com a casella.",
+        "enter": "Toca un tros d'aigua per descartar-lo, un altre cop per posar-hi un lotus, i un altre cop per esborrar-lo."
+      },
+      "cats": {
+        "touch": "Dos gats no poden dormir un al costat de l'altre, ni tan sols per les cantonades. Cada gat té el seu racó de sol.",
+        "walls": "Les columnes aguanten el temple: cap gat hi pot dormir, i no compten com a casella.",
+        "enter": "Toca una llosa per descartar-la, un altre cop per posar-hi un gat, i un altre cop per esborrar-la."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Aquesta marca no pot ser correcta.",
+        "touch": "Aquí hi ha una {{token}}, i res no pot tocar una {{token}}.",
+        "groupFull.row_one": "Aquesta fila ja té la seva {{token}}.",
+        "groupFull.row_many": "Aquesta fila ja té les seves {{count}} {{token}}.",
+        "groupFull.row_other": "Aquesta fila ja té les seves {{count}} {{token}}.",
+        "groupFull.col_one": "Aquesta columna ja té la seva {{token}}.",
+        "groupFull.col_many": "Aquesta columna ja té les seves {{count}} {{token}}.",
+        "groupFull.col_other": "Aquesta columna ja té les seves {{count}} {{token}}.",
+        "groupFull.region_one": "Aquesta zona ja té la seva {{token}}.",
+        "groupFull.region_many": "Aquesta zona ja té les seves {{count}} {{token}}.",
+        "groupFull.region_other": "Aquesta zona ja té les seves {{count}} {{token}}.",
+        "groupTight.row_one": "En aquesta fila només queda una casella.",
+        "groupTight.row_many": "En aquesta fila només queden {{count}} caselles.",
+        "groupTight.row_other": "En aquesta fila només queden {{count}} caselles.",
+        "groupTight.col_one": "En aquesta columna només queda una casella.",
+        "groupTight.col_many": "En aquesta columna només queden {{count}} caselles.",
+        "groupTight.col_other": "En aquesta columna només queden {{count}} caselles.",
+        "groupTight.region_one": "En aquesta zona només queda una casella.",
+        "groupTight.region_many": "En aquesta zona només queden {{count}} caselles.",
+        "groupTight.region_other": "En aquesta zona només queden {{count}} caselles.",
+        "onlyWay.row_one": "Només hi ha una manera de fer cabre una {{token}} en aquesta fila.",
+        "onlyWay.row_many": "Només hi ha una manera de fer cabre {{count}} {{token}} en aquesta fila.",
+        "onlyWay.row_other": "Només hi ha una manera de fer cabre {{count}} {{token}} en aquesta fila.",
+        "onlyWay.col_one": "Només hi ha una manera de fer cabre una {{token}} en aquesta columna.",
+        "onlyWay.col_many": "Només hi ha una manera de fer cabre {{count}} {{token}} en aquesta columna.",
+        "onlyWay.col_other": "Només hi ha una manera de fer cabre {{count}} {{token}} en aquesta columna.",
+        "onlyWay.region_one": "Només hi ha una manera de fer cabre una {{token}} en aquesta zona.",
+        "onlyWay.region_many": "Només hi ha una manera de fer cabre {{count}} {{token}} en aquesta zona.",
+        "onlyWay.region_other": "Només hi ha una manera de fer cabre {{count}} {{token}} en aquesta zona.",
+        "everyWay.row_one": "Vagi on vagi la {{token}} d'aquesta fila, sempre passa per aquí.",
+        "everyWay.row_many": "Vagin on vagin les {{count}} {{token}} d'aquesta fila, sempre n'hi ha una aquí.",
+        "everyWay.row_other": "Vagin on vagin les {{count}} {{token}} d'aquesta fila, sempre n'hi ha una aquí.",
+        "everyWay.col_one": "Vagi on vagi la {{token}} d'aquesta columna, sempre passa per aquí.",
+        "everyWay.col_many": "Vagin on vagin les {{count}} {{token}} d'aquesta columna, sempre n'hi ha una aquí.",
+        "everyWay.col_other": "Vagin on vagin les {{count}} {{token}} d'aquesta columna, sempre n'hi ha una aquí.",
+        "everyWay.region_one": "Vagi on vagi la {{token}} d'aquesta zona, sempre passa per aquí.",
+        "everyWay.region_many": "Vagin on vagin les {{count}} {{token}} d'aquesta zona, sempre n'hi ha una aquí.",
+        "everyWay.region_other": "Vagin on vagin les {{count}} {{token}} d'aquesta zona, sempre n'hi ha una aquí.",
+        "regionLine.row_one": "La {{token}} de la zona marcada ha de sortir d'aquella fila.",
+        "regionLine.row_many": "Les {{count}} {{token}} de la zona marcada han de sortir d'aquella fila.",
+        "regionLine.row_other": "Les {{count}} {{token}} de la zona marcada han de sortir d'aquella fila.",
+        "regionLine.col_one": "La {{token}} de la zona marcada ha de sortir d'aquella columna.",
+        "regionLine.col_many": "Les {{count}} {{token}} de la zona marcada han de sortir d'aquella columna.",
+        "regionLine.col_other": "Les {{count}} {{token}} de la zona marcada han de sortir d'aquella columna.",
+        "lineRegion.row_one": "La {{token}} d'aquella fila és de la zona marcada.",
+        "lineRegion.row_many": "Les {{count}} {{token}} d'aquella fila són de la zona marcada.",
+        "lineRegion.row_other": "Les {{count}} {{token}} d'aquella fila són de la zona marcada.",
+        "lineRegion.col_one": "La {{token}} d'aquella columna és de la zona marcada.",
+        "lineRegion.col_many": "Les {{count}} {{token}} d'aquella columna són de la zona marcada.",
+        "lineRegion.col_other": "Les {{count}} {{token}} d'aquella columna són de la zona marcada.",
+        "spanning.toRows": "Entre totes, les zones marcades omplen aquelles {{count}} files.",
+        "spanning.toCols": "Entre totes, les zones marcades omplen aquelles {{count}} columnes.",
+        "spanning.fromRows": "Les files marcades només poden treure les seves {{count}} {{token}} d'aquelles zones.",
+        "spanning.fromCols": "Les columnes marcades només poden treure les seves {{count}} {{token}} d'aquelles zones.",
+        "wouldStrand.row": "Una {{token}} aquí deixaria la fila marcada sense cap lloc on posar-ne.",
+        "wouldStrand.col": "Una {{token}} aquí deixaria la columna marcada sense cap lloc on posar-ne.",
+        "wouldStrand.region": "Una {{token}} aquí deixaria la zona marcada sense cap lloc on posar-ne.",
+        "action": {
+          "ruleOut_one": "Descarta la casella assenyalada.",
+          "ruleOut_many": "Descarta les caselles assenyalades.",
+          "ruleOut_other": "Descarta les caselles assenyalades.",
+          "place_one": "Posa una {{token}} a la casella assenyalada.",
+          "place_many": "Posa una {{token}} a cada casella assenyalada.",
+          "place_other": "Posa una {{token}} a cada casella assenyalada."
+        }
+      },
+      "fields": {
+        "mistake": "Aquesta marca no pot ser correcta.",
+        "touch": "Aquí hi ha una {{token}}, i cap terreny que la toqui en pot tenir una altra.",
+        "groupFull.row_one": "Aquesta fila ja està treballada.",
+        "groupFull.row_many": "Aquesta fila ja té les seves {{count}} {{token}}.",
+        "groupFull.row_other": "Aquesta fila ja té les seves {{count}} {{token}}.",
+        "groupFull.col_one": "Aquesta columna ja està treballada.",
+        "groupFull.col_many": "Aquesta columna ja té les seves {{count}} {{token}}.",
+        "groupFull.col_other": "Aquesta columna ja té les seves {{count}} {{token}}.",
+        "groupFull.region_one": "Aquesta finca ja està treballada.",
+        "groupFull.region_many": "Aquesta finca ja té les seves {{count}} {{token}}.",
+        "groupFull.region_other": "Aquesta finca ja té les seves {{count}} {{token}}.",
+        "groupTight.row_one": "En aquesta fila només queda un terreny.",
+        "groupTight.row_many": "En aquesta fila només queden {{count}} terrenys.",
+        "groupTight.row_other": "En aquesta fila només queden {{count}} terrenys.",
+        "groupTight.col_one": "En aquesta columna només queda un terreny.",
+        "groupTight.col_many": "En aquesta columna només queden {{count}} terrenys.",
+        "groupTight.col_other": "En aquesta columna només queden {{count}} terrenys.",
+        "groupTight.region_one": "En aquesta finca només queda un terreny.",
+        "groupTight.region_many": "En aquesta finca només queden {{count}} terrenys.",
+        "groupTight.region_other": "En aquesta finca només queden {{count}} terrenys.",
+        "onlyWay.row_one": "En aquesta fila només queda un terreny on construir.",
+        "onlyWay.row_many": "Només hi ha una manera de fer cabre {{count}} {{token}} en aquesta fila.",
+        "onlyWay.row_other": "Només hi ha una manera de fer cabre {{count}} {{token}} en aquesta fila.",
+        "onlyWay.col_one": "En aquesta columna només queda un terreny on construir.",
+        "onlyWay.col_many": "Només hi ha una manera de fer cabre {{count}} {{token}} en aquesta columna.",
+        "onlyWay.col_other": "Només hi ha una manera de fer cabre {{count}} {{token}} en aquesta columna.",
+        "onlyWay.region_one": "En aquesta finca només queda un terreny on construir.",
+        "onlyWay.region_many": "Només hi ha una manera de fer cabre {{count}} {{token}} en aquesta finca.",
+        "onlyWay.region_other": "Només hi ha una manera de fer cabre {{count}} {{token}} en aquesta finca.",
+        "everyWay.row_one": "Treballis com treballis aquesta fila, la seva {{token}} va aquí.",
+        "everyWay.row_many": "Treballis com treballis aquesta fila, una de les seves {{count}} {{token}} va aquí.",
+        "everyWay.row_other": "Treballis com treballis aquesta fila, una de les seves {{count}} {{token}} va aquí.",
+        "everyWay.col_one": "Treballis com treballis aquesta columna, la seva {{token}} va aquí.",
+        "everyWay.col_many": "Treballis com treballis aquesta columna, una de les seves {{count}} {{token}} va aquí.",
+        "everyWay.col_other": "Treballis com treballis aquesta columna, una de les seves {{count}} {{token}} va aquí.",
+        "everyWay.region_one": "Treballis com treballis aquesta finca, la seva {{token}} va aquí.",
+        "everyWay.region_many": "Treballis com treballis aquesta finca, una de les seves {{count}} {{token}} va aquí.",
+        "everyWay.region_other": "Treballis com treballis aquesta finca, una de les seves {{count}} {{token}} va aquí.",
+        "regionLine.row_one": "La {{token}} de la finca marcada ha de sortir d'aquella fila.",
+        "regionLine.row_many": "Les {{count}} {{token}} de la finca marcada han de sortir d'aquella fila.",
+        "regionLine.row_other": "Les {{count}} {{token}} de la finca marcada han de sortir d'aquella fila.",
+        "regionLine.col_one": "La {{token}} de la finca marcada ha de sortir d'aquella columna.",
+        "regionLine.col_many": "Les {{count}} {{token}} de la finca marcada han de sortir d'aquella columna.",
+        "regionLine.col_other": "Les {{count}} {{token}} de la finca marcada han de sortir d'aquella columna.",
+        "lineRegion.row_one": "La {{token}} d'aquella fila és de la finca marcada.",
+        "lineRegion.row_many": "Les {{count}} {{token}} d'aquella fila són de la finca marcada.",
+        "lineRegion.row_other": "Les {{count}} {{token}} d'aquella fila són de la finca marcada.",
+        "lineRegion.col_one": "La {{token}} d'aquella columna és de la finca marcada.",
+        "lineRegion.col_many": "Les {{count}} {{token}} d'aquella columna són de la finca marcada.",
+        "lineRegion.col_other": "Les {{count}} {{token}} d'aquella columna són de la finca marcada.",
+        "spanning.toRows": "Entre totes, les finques marcades omplen aquelles {{count}} files.",
+        "spanning.toCols": "Entre totes, les finques marcades omplen aquelles {{count}} columnes.",
+        "spanning.fromRows": "Les files marcades només poden treure les seves {{count}} {{token}} d'aquelles finques.",
+        "spanning.fromCols": "Les columnes marcades només poden treure les seves {{count}} {{token}} d'aquelles finques.",
+        "wouldStrand.row": "Una {{token}} aquí deixaria la fila marcada sense cap lloc on construir.",
+        "wouldStrand.col": "Una {{token}} aquí deixaria la columna marcada sense cap lloc on construir.",
+        "wouldStrand.region": "Una {{token}} aquí deixaria la finca marcada sense cap lloc on construir.",
+        "action": {
+          "ruleOut_one": "Descarta el terreny assenyalat.",
+          "ruleOut_many": "Descarta els terrenys assenyalats.",
+          "ruleOut_other": "Descarta els terrenys assenyalats.",
+          "place_one": "Construeix una {{token}} al terreny assenyalat.",
+          "place_many": "Construeix una {{token}} a cada terreny assenyalat.",
+          "place_other": "Construeix una {{token}} a cada terreny assenyalat."
+        }
+      },
+      "lamps": {
+        "mistake": "Aquesta marca no pot ser correcta.",
+        "touch": "Aquí hi ha una {{token}}, i dues llànties d'oli no poden estar una al costat de l'altra, ni tan sols per les cantonades.",
+        "groupFull.row_one": "Aquesta fila ja té la seva llàntia d'oli.",
+        "groupFull.row_many": "Aquesta fila ja té les seves {{count}} llànties d'oli.",
+        "groupFull.col_one": "Aquesta columna ja té la seva llàntia d'oli.",
+        "groupFull.col_many": "Aquesta columna ja té les seves {{count}} llànties d'oli.",
+        "groupFull.row_other": "Aquesta fila ja té les seves {{count}} llànties d'oli.",
+        "groupFull.col_other": "Aquesta columna ja té les seves {{count}} llànties d'oli.",
+        "groupTight.row_one": "En aquesta fila només queda una llosa.",
+        "groupTight.row_many": "En aquesta fila només queden {{count}} lloses.",
+        "groupTight.row_other": "En aquesta fila només queden {{count}} lloses.",
+        "groupTight.col_one": "En aquesta columna només queda una llosa.",
+        "groupTight.col_many": "En aquesta columna només queden {{count}} lloses.",
+        "groupTight.col_other": "En aquesta columna només queden {{count}} lloses.",
+        "onlyWay.row_one": "Entre els blocs de pedra, en aquesta fila només queda una casella per a una llàntia d'oli.",
+        "onlyWay.row_many": "Només hi ha una manera de fer cabre {{count}} llànties d'oli en aquesta fila.",
+        "onlyWay.col_one": "Entre els blocs de pedra, en aquesta columna només queda una casella per a una llàntia d'oli.",
+        "onlyWay.col_many": "Només hi ha una manera de fer cabre {{count}} llànties d'oli en aquesta columna.",
+        "onlyWay.row_other": "Només hi ha una manera de fer cabre {{count}} llànties d'oli en aquesta fila.",
+        "onlyWay.col_other": "Només hi ha una manera de fer cabre {{count}} llànties d'oli en aquesta columna.",
+        "everyWay.row_one": "Vagi on vagi la llàntia d'oli d'aquesta fila, sempre passa per aquí.",
+        "everyWay.row_many": "Vagin on vagin les {{count}} llànties d'oli d'aquesta fila, sempre n'hi ha una aquí.",
+        "everyWay.col_one": "Vagi on vagi la llàntia d'oli d'aquesta columna, sempre passa per aquí.",
+        "everyWay.col_many": "Vagin on vagin les {{count}} llànties d'oli d'aquesta columna, sempre n'hi ha una aquí.",
+        "everyWay.row_other": "Vagin on vagin les {{count}} llànties d'oli d'aquesta fila, sempre n'hi ha una aquí.",
+        "everyWay.col_other": "Vagin on vagin les {{count}} llànties d'oli d'aquesta columna, sempre n'hi ha una aquí.",
+        "lineBlock.rowsToCols": "Les files marcades tenen les seves llànties d'oli a les caselles d'aquelles columnes, així que aquelles columnes no en tenen cap de sobres.",
+        "lineBlock.colsToRows": "Les columnes marcades tenen les seves llànties d'oli a les caselles d'aquelles files, així que aquelles files no en tenen cap de sobres.",
+        "wouldStrand.row": "Una llàntia d'oli aquí deixaria la fila marcada sense cap lloc on posar-ne.",
+        "wouldStrand.col": "Una llàntia d'oli aquí deixaria la columna marcada sense cap lloc on posar-ne.",
+        "action": {
+          "ruleOut_one": "Descarta la casella assenyalada.",
+          "ruleOut_many": "Descarta les caselles assenyalades.",
+          "ruleOut_other": "Descarta les caselles assenyalades.",
+          "place_one": "Posa una llàntia d'oli a la casella assenyalada.",
+          "place_many": "Posa una llàntia d'oli a cada casella assenyalada.",
+          "place_other": "Posa una llàntia d'oli a cada casella assenyalada."
+        }
+      },
+      "market": {
+        "mistake": "Aquesta marca no pot ser correcta.",
+        "touch": "Aquí hi ha una {{token}}, i dues parades no poden estar una al costat de l'altra, ni tan sols per les cantonades.",
+        "groupFull.row_one": "Aquesta fila ja té la seva parada.",
+        "groupFull.row_many": "Aquesta fila ja té les seves {{count}} parades.",
+        "groupFull.col_one": "Aquesta columna ja té la seva parada.",
+        "groupFull.col_many": "Aquesta columna ja té les seves {{count}} parades.",
+        "groupFull.row_other": "Aquesta fila ja té les seves {{count}} parades.",
+        "groupFull.col_other": "Aquesta columna ja té les seves {{count}} parades.",
+        "groupTight.row_one": "En aquesta fila només queda un lloc.",
+        "groupTight.row_many": "En aquesta fila només queden {{count}} llocs.",
+        "groupTight.row_other": "En aquesta fila només queden {{count}} llocs.",
+        "groupTight.col_one": "En aquesta columna només queda un lloc.",
+        "groupTight.col_many": "En aquesta columna només queden {{count}} llocs.",
+        "groupTight.col_other": "En aquesta columna només queden {{count}} llocs.",
+        "onlyWay.row_one": "Entre les cases, en aquesta fila només queda una casella per a una parada.",
+        "onlyWay.row_many": "Només hi ha una manera de fer cabre {{count}} parades en aquesta fila.",
+        "onlyWay.col_one": "Entre les cases, en aquesta columna només queda una casella per a una parada.",
+        "onlyWay.col_many": "Només hi ha una manera de fer cabre {{count}} parades en aquesta columna.",
+        "onlyWay.row_other": "Només hi ha una manera de fer cabre {{count}} parades en aquesta fila.",
+        "onlyWay.col_other": "Només hi ha una manera de fer cabre {{count}} parades en aquesta columna.",
+        "everyWay.row_one": "Vagi on vagi la parada d'aquesta fila, sempre passa per aquí.",
+        "everyWay.row_many": "Vagin on vagin les {{count}} parades d'aquesta fila, sempre n'hi ha una aquí.",
+        "everyWay.col_one": "Vagi on vagi la parada d'aquesta columna, sempre passa per aquí.",
+        "everyWay.col_many": "Vagin on vagin les {{count}} parades d'aquesta columna, sempre n'hi ha una aquí.",
+        "everyWay.row_other": "Vagin on vagin les {{count}} parades d'aquesta fila, sempre n'hi ha una aquí.",
+        "everyWay.col_other": "Vagin on vagin les {{count}} parades d'aquesta columna, sempre n'hi ha una aquí.",
+        "lineBlock.rowsToCols": "Les files marcades tenen les seves parades a les caselles d'aquelles columnes, així que aquelles columnes no en tenen cap de sobres.",
+        "lineBlock.colsToRows": "Les columnes marcades tenen les seves parades a les caselles d'aquelles files, així que aquelles files no en tenen cap de sobres.",
+        "wouldStrand.row": "Una parada aquí deixaria la fila marcada sense cap lloc on posar-ne.",
+        "wouldStrand.col": "Una parada aquí deixaria la columna marcada sense cap lloc on posar-ne.",
+        "action": {
+          "ruleOut_one": "Descarta la casella assenyalada.",
+          "ruleOut_many": "Descarta les caselles assenyalades.",
+          "ruleOut_other": "Descarta les caselles assenyalades.",
+          "place_one": "Posa una parada a la casella assenyalada.",
+          "place_many": "Posa una parada a cada casella assenyalada.",
+          "place_other": "Posa una parada a cada casella assenyalada."
+        }
+      },
+      "lotus": {
+        "mistake": "Aquesta marca no pot ser correcta.",
+        "touch": "Aquí hi ha un {{token}}, i dos lotus no poden flotar un al costat de l'altre, ni tan sols per les cantonades.",
+        "groupFull.row_one": "Aquesta fila ja té el seu lotus.",
+        "groupFull.row_many": "Aquesta fila ja té els seus {{count}} lotus.",
+        "groupFull.col_one": "Aquesta columna ja té el seu lotus.",
+        "groupFull.col_many": "Aquesta columna ja té els seus {{count}} lotus.",
+        "groupFull.row_other": "Aquesta fila ja té els seus {{count}} lotus.",
+        "groupFull.col_other": "Aquesta columna ja té els seus {{count}} lotus.",
+        "groupTight.row_one": "En aquesta fila només queda un tros d'aigua.",
+        "groupTight.row_many": "En aquesta fila només queden {{count}} trossos d'aigua.",
+        "groupTight.row_other": "En aquesta fila només queden {{count}} trossos d'aigua.",
+        "groupTight.col_one": "En aquesta columna només queda un tros d'aigua.",
+        "groupTight.col_many": "En aquesta columna només queden {{count}} trossos d'aigua.",
+        "groupTight.col_other": "En aquesta columna només queden {{count}} trossos d'aigua.",
+        "onlyWay.row_one": "Entre les roques, en aquesta fila només queda una casella per a un lotus.",
+        "onlyWay.row_many": "Només hi ha una manera de fer cabre {{count}} lotus en aquesta fila.",
+        "onlyWay.col_one": "Entre les roques, en aquesta columna només queda una casella per a un lotus.",
+        "onlyWay.col_many": "Només hi ha una manera de fer cabre {{count}} lotus en aquesta columna.",
+        "onlyWay.row_other": "Només hi ha una manera de fer cabre {{count}} lotus en aquesta fila.",
+        "onlyWay.col_other": "Només hi ha una manera de fer cabre {{count}} lotus en aquesta columna.",
+        "everyWay.row_one": "Vagi on vagi el lotus d'aquesta fila, sempre passa per aquí.",
+        "everyWay.row_many": "Vagin on vagin els {{count}} lotus d'aquesta fila, sempre n'hi ha un aquí.",
+        "everyWay.col_one": "Vagi on vagi el lotus d'aquesta columna, sempre passa per aquí.",
+        "everyWay.col_many": "Vagin on vagin els {{count}} lotus d'aquesta columna, sempre n'hi ha un aquí.",
+        "everyWay.row_other": "Vagin on vagin els {{count}} lotus d'aquesta fila, sempre n'hi ha un aquí.",
+        "everyWay.col_other": "Vagin on vagin els {{count}} lotus d'aquesta columna, sempre n'hi ha un aquí.",
+        "lineBlock.rowsToCols": "Les files marcades tenen els seus lotus a les caselles d'aquelles columnes, així que aquelles columnes no en tenen cap de sobres.",
+        "lineBlock.colsToRows": "Les columnes marcades tenen els seus lotus a les caselles d'aquelles files, així que aquelles files no en tenen cap de sobres.",
+        "wouldStrand.row": "Un lotus aquí deixaria la fila marcada sense cap lloc on posar-ne.",
+        "wouldStrand.col": "Un lotus aquí deixaria la columna marcada sense cap lloc on posar-ne.",
+        "action": {
+          "ruleOut_one": "Descarta la casella assenyalada.",
+          "ruleOut_many": "Descarta les caselles assenyalades.",
+          "ruleOut_other": "Descarta les caselles assenyalades.",
+          "place_one": "Posa un lotus a la casella assenyalada.",
+          "place_many": "Posa un lotus a cada casella assenyalada.",
+          "place_other": "Posa un lotus a cada casella assenyalada."
+        }
+      },
+      "cats": {
+        "mistake": "Aquesta marca no pot ser correcta.",
+        "touch": "Aquí hi ha un {{token}}, i dos gats no poden dormir un al costat de l'altre, ni tan sols per les cantonades.",
+        "groupFull.row_one": "Aquesta fila ja té el seu gat.",
+        "groupFull.row_many": "Aquesta fila ja té els seus {{count}} gats.",
+        "groupFull.col_one": "Aquesta columna ja té el seu gat.",
+        "groupFull.col_many": "Aquesta columna ja té els seus {{count}} gats.",
+        "groupFull.row_other": "Aquesta fila ja té els seus {{count}} gats.",
+        "groupFull.col_other": "Aquesta columna ja té els seus {{count}} gats.",
+        "groupTight.row_one": "En aquesta fila només queda una llosa.",
+        "groupTight.row_many": "En aquesta fila només queden {{count}} lloses.",
+        "groupTight.row_other": "En aquesta fila només queden {{count}} lloses.",
+        "groupTight.col_one": "En aquesta columna només queda una llosa.",
+        "groupTight.col_many": "En aquesta columna només queden {{count}} lloses.",
+        "groupTight.col_other": "En aquesta columna només queden {{count}} lloses.",
+        "onlyWay.row_one": "Entre les columnes del temple, en aquesta fila només queda una casella per a un gat.",
+        "onlyWay.row_many": "Només hi ha una manera de fer cabre {{count}} gats en aquesta fila.",
+        "onlyWay.col_one": "Entre les columnes del temple, en aquesta columna només queda una casella per a un gat.",
+        "onlyWay.col_many": "Només hi ha una manera de fer cabre {{count}} gats en aquesta columna.",
+        "onlyWay.row_other": "Només hi ha una manera de fer cabre {{count}} gats en aquesta fila.",
+        "onlyWay.col_other": "Només hi ha una manera de fer cabre {{count}} gats en aquesta columna.",
+        "everyWay.row_one": "Vagi on vagi el gat d'aquesta fila, sempre passa per aquí.",
+        "everyWay.row_many": "Vagin on vagin els {{count}} gats d'aquesta fila, sempre n'hi ha un aquí.",
+        "everyWay.col_one": "Vagi on vagi el gat d'aquesta columna, sempre passa per aquí.",
+        "everyWay.col_many": "Vagin on vagin els {{count}} gats d'aquesta columna, sempre n'hi ha un aquí.",
+        "everyWay.row_other": "Vagin on vagin els {{count}} gats d'aquesta fila, sempre n'hi ha un aquí.",
+        "everyWay.col_other": "Vagin on vagin els {{count}} gats d'aquesta columna, sempre n'hi ha un aquí.",
+        "lineBlock.rowsToCols": "Les files marcades tenen els seus gats a les caselles d'aquelles columnes, així que aquelles columnes no en tenen cap de sobres.",
+        "lineBlock.colsToRows": "Les columnes marcades tenen els seus gats a les caselles d'aquelles files, així que aquelles files no en tenen cap de sobres.",
+        "wouldStrand.row": "Un gat aquí deixaria la fila marcada sense cap lloc on posar-ne.",
+        "wouldStrand.col": "Un gat aquí deixaria la columna marcada sense cap lloc on posar-ne.",
+        "action": {
+          "ruleOut_one": "Descarta la casella assenyalada.",
+          "ruleOut_many": "Descarta les caselles assenyalades.",
+          "ruleOut_other": "Descarta les caselles assenyalades.",
+          "place_one": "Posa un gat a la casella assenyalada.",
+          "place_many": "Posa un gat a cada casella assenyalada.",
+          "place_other": "Posa un gat a cada casella assenyalada."
+        }
+      }
+    },
+    "quota": {
+      "default": "Per fila, columna i zona",
+      "fields": "Per fila, columna i finca",
+      "lamps": "Per fila i columna",
+      "market": "Per fila i columna",
+      "lotus": "Per fila i columna",
+      "cats": "Per fila i columna"
+    },
+    "goal": {
+      "default_one": "Cada fila, cada columna i cada zona tenen exactament una estrella.",
+      "default_many": "Cada fila, cada columna i cada zona tenen exactament {{count}} estrelles.",
+      "default_other": "Cada fila, cada columna i cada zona tenen exactament {{count}} estrelles.",
+      "fields_one": "Cada fila, cada columna i cada finca tenen exactament una granja.",
+      "fields_many": "Cada fila, cada columna i cada finca tenen exactament {{count}} granges.",
+      "fields_other": "Cada fila, cada columna i cada finca tenen exactament {{count}} granges.",
+      "lamps": "Cada fila i cada columna tenen exactament una llàntia d'oli.",
+      "market": "Cada fila i cada columna tenen exactament una parada de mercat.",
+      "lotus": "Cada fila i cada columna tenen exactament un lotus.",
+      "cats": "Cada fila i cada columna tenen exactament un gat."
+    },
+    "name": {
+      "default": "Estrelles separades",
+      "fields": "Granges",
+      "twinDefault": "Estrelles bessones",
+      "twinFields": "Granges bessones",
+      "lamps": "Llànties d'oli",
+      "market": "Parades de mercat",
+      "lotus": "La bassa dels lotus",
+      "cats": "Els gats del temple"
+    }
+  },
+  "pairPuzzle": {
+    "name": {
+      "mummies": "El descans de les mòmies",
+      "beetles": "Escarabats piloters"
+    },
+    "goal": {
+      "mummies": "Cada sarcòfag té una mòmia al costat, i cada fila i cada columna tenen exactament el número de mòmies que hi ha escrit al costat.",
+      "beetles": "Cada bola de fems té un escarabat al costat, i cada fila i cada columna tenen exactament el número d'escarabats que hi ha escrit al costat."
+    },
+    "rules": {
+      "mummies": {
+        "pair": "Cada sarcòfag té una mòmia just a dalt, a baix, a l'esquerra o a la dreta, i cada mòmia descansa al costat del seu propi sarcòfag.",
+        "count": "El número del costat d'una fila o columna diu quantes mòmies hi ha. Es posa verd quan la línia en té exactament aquestes, i vermell quan ja no pot ser.",
+        "touch": "Dues mòmies no poden estar una al costat de l'altra, ni tan sols per les cantonades.",
+        "enter": "Toca una casella per descartar-la, un altre cop per posar-hi una mòmia, i un altre cop per esborrar-la. Arrossega per sobre de diverses caselles per descartar-les totes. Els sarcòfags no es poden tocar."
+      },
+      "beetles": {
+        "pair": "Cada bola de fems té un escarabat just a dalt, a baix, a l'esquerra o a la dreta, i cada escarabat és al costat de la seva pròpia bola per fer-la rodolar.",
+        "count": "El número del costat d'una fila o columna diu quants escarabats hi ha. Es posa verd quan la línia en té exactament aquests, i vermell quan ja no pot ser.",
+        "touch": "Dos escarabats no poden estar un al costat de l'altre, ni tan sols per les cantonades.",
+        "enter": "Toca una casella per descartar-la, un altre cop per posar-hi un escarabat, i un altre cop per esborrar-lo. Arrossega per sobre de diverses caselles per descartar-les totes. Les boles de fems no es poden tocar."
+      }
+    },
+    "hint": {
+      "mummies": {
+        "mistake": "Aquesta marca no pot ser correcta.",
+        "touch": "Aquesta mòmia ja hi és, així que cap altra pot estar al seu costat, ni tan sols per les cantonades.",
+        "zeroLine.row": "Aquesta fila no té cap mòmia, així que tota està buida.",
+        "zeroLine.col": "Aquesta columna no té cap mòmia, així que tota està buida.",
+        "noAnchor": "Aquestes caselles no tenen cap sarcòfag al costat, així que aquí no hi pot descansar cap mòmia.",
+        "lineFull.row_one": "Aquesta fila ja té la seva mòmia.",
+        "lineFull.row_many": "Aquesta fila ja té les seves {{count}} mòmies.",
+        "lineFull.row_other": "Aquesta fila ja té les seves {{count}} mòmies.",
+        "lineFull.col_one": "Aquesta columna ja té la seva mòmia.",
+        "lineFull.col_many": "Aquesta columna ja té les seves {{count}} mòmies.",
+        "lineFull.col_other": "Aquesta columna ja té les seves {{count}} mòmies.",
+        "lineTight.row_one": "A aquesta fila només li queda una casella per a la seva mòmia.",
+        "lineTight.row_many": "A aquesta fila només li queden exactament {{count}} caselles per a les seves {{count}} mòmies.",
+        "lineTight.row_other": "A aquesta fila només li queden exactament {{count}} caselles per a les seves {{count}} mòmies.",
+        "lineTight.col_one": "A aquesta columna només li queda una casella per a la seva mòmia.",
+        "lineTight.col_many": "A aquesta columna només li queden exactament {{count}} caselles per a les seves {{count}} mòmies.",
+        "lineTight.col_other": "A aquesta columna només li queden exactament {{count}} caselles per a les seves {{count}} mòmies.",
+        "onlyWay": "A aquest sarcòfag només li queda una casella al costat per a la seva mòmia.",
+        "claimed": "Aquest sarcòfag ja té la seva mòmia, així que les caselles del costat que cap altre sarcòfag pot fer servir es queden buides.",
+        "lineBlock.rowsToCols_one": "Les files marcades tenen una mòmia més de les que poden donar els seus sarcòfags, així que ve d'un sarcòfag just de fora.",
+        "lineBlock.rowsToCols_many": "Les files marcades tenen {{count}} mòmies més de les que poden donar els seus sarcòfags, així que vénen de sarcòfags just de fora.",
+        "lineBlock.rowsToCols_other": "Les files marcades tenen {{count}} mòmies més de les que poden donar els seus sarcòfags, així que vénen de sarcòfags just de fora.",
+        "lineBlock.colsToRows_one": "Les columnes marcades tenen una mòmia més de les que poden donar els seus sarcòfags, així que ve d'un sarcòfag just de fora.",
+        "lineBlock.colsToRows_many": "Les columnes marcades tenen {{count}} mòmies més de les que poden donar els seus sarcòfags, així que vénen de sarcòfags just de fora.",
+        "lineBlock.colsToRows_other": "Les columnes marcades tenen {{count}} mòmies més de les que poden donar els seus sarcòfags, així que vénen de sarcòfags just de fora.",
+        "wouldStrand.row": "Una mòmia aquí deixaria la fila marcada sense lloc per a les mòmies que encara li falten.",
+        "wouldStrand.col": "Una mòmia aquí deixaria la columna marcada sense lloc per a les mòmies que encara li falten.",
+        "wouldStrand.anchor": "Una mòmia aquí deixaria el sarcòfag marcat sense cap casella al costat per a la seva.",
+        "action": {
+          "ruleOut_one": "Descarta la casella assenyalada.",
+          "ruleOut_many": "Descarta les caselles assenyalades.",
+          "ruleOut_other": "Descarta les caselles assenyalades.",
+          "place_one": "Posa una mòmia a la casella assenyalada.",
+          "place_many": "Posa una mòmia a cada casella assenyalada.",
+          "place_other": "Posa una mòmia a cada casella assenyalada."
+        }
+      },
+      "beetles": {
+        "mistake": "Aquesta marca no pot ser correcta.",
+        "touch": "Aquest escarabat ja hi és, així que cap altre pot estar al seu costat, ni tan sols per les cantonades.",
+        "zeroLine.row": "Aquesta fila no té cap escarabat, així que tota està buida.",
+        "zeroLine.col": "Aquesta columna no té cap escarabat, així que tota està buida.",
+        "noAnchor": "Aquestes caselles no tenen cap bola de fems al costat, així que aquí no hi pot haver cap escarabat.",
+        "lineFull.row_one": "Aquesta fila ja té el seu escarabat.",
+        "lineFull.row_many": "Aquesta fila ja té els seus {{count}} escarabats.",
+        "lineFull.row_other": "Aquesta fila ja té els seus {{count}} escarabats.",
+        "lineFull.col_one": "Aquesta columna ja té el seu escarabat.",
+        "lineFull.col_many": "Aquesta columna ja té els seus {{count}} escarabats.",
+        "lineFull.col_other": "Aquesta columna ja té els seus {{count}} escarabats.",
+        "lineTight.row_one": "A aquesta fila només li queda una casella per al seu escarabat.",
+        "lineTight.row_many": "A aquesta fila només li queden exactament {{count}} caselles per als seus {{count}} escarabats.",
+        "lineTight.row_other": "A aquesta fila només li queden exactament {{count}} caselles per als seus {{count}} escarabats.",
+        "lineTight.col_one": "A aquesta columna només li queda una casella per al seu escarabat.",
+        "lineTight.col_many": "A aquesta columna només li queden exactament {{count}} caselles per als seus {{count}} escarabats.",
+        "lineTight.col_other": "A aquesta columna només li queden exactament {{count}} caselles per als seus {{count}} escarabats.",
+        "onlyWay": "A aquesta bola de fems només li queda una casella al costat per al seu escarabat.",
+        "claimed": "Aquesta bola de fems ja té el seu escarabat, així que les caselles del costat que cap altra bola pot fer servir es queden buides.",
+        "lineBlock.rowsToCols_one": "Les files marcades tenen un escarabat més dels que poden donar les seves boles de fems, així que ve d'una bola just de fora.",
+        "lineBlock.rowsToCols_many": "Les files marcades tenen {{count}} escarabats més dels que poden donar les seves boles de fems, així que vénen de boles just de fora.",
+        "lineBlock.rowsToCols_other": "Les files marcades tenen {{count}} escarabats més dels que poden donar les seves boles de fems, així que vénen de boles just de fora.",
+        "lineBlock.colsToRows_one": "Les columnes marcades tenen un escarabat més dels que poden donar les seves boles de fems, així que ve d'una bola just de fora.",
+        "lineBlock.colsToRows_many": "Les columnes marcades tenen {{count}} escarabats més dels que poden donar les seves boles de fems, així que vénen de boles just de fora.",
+        "lineBlock.colsToRows_other": "Les columnes marcades tenen {{count}} escarabats més dels que poden donar les seves boles de fems, així que vénen de boles just de fora.",
+        "wouldStrand.row": "Un escarabat aquí deixaria la fila marcada sense lloc per als escarabats que encara li falten.",
+        "wouldStrand.col": "Un escarabat aquí deixaria la columna marcada sense lloc per als escarabats que encara li falten.",
+        "wouldStrand.anchor": "Un escarabat aquí deixaria la bola de fems marcada sense cap casella al costat per al seu escarabat.",
+        "action": {
+          "ruleOut_one": "Descarta la casella assenyalada.",
+          "ruleOut_many": "Descarta les caselles assenyalades.",
+          "ruleOut_other": "Descarta les caselles assenyalades.",
+          "place_one": "Posa un escarabat a la casella assenyalada.",
+          "place_many": "Posa un escarabat a cada casella assenyalada.",
+          "place_other": "Posa un escarabat a cada casella assenyalada."
+        }
+      }
+    }
+  },
+  "rushHour": {
+    "name": {
+      "default": "El bloqueig",
+      "market": "El carrer embussat"
+    },
+    "goal": {
+      "default": "Treu el teu bloc pel forat de la dreta.",
+      "market": "Treu el teu trineu pel forat del final del carrer."
+    },
+    "rules": {
+      "default": {
+        "lanes": "Un bloc només llisca pel seu carril: mai de costat, mai fora del tauler.",
+        "shove": "Arrossega un bloc per empènyer-lo. S'atura quan troba alguna cosa pel mig."
+      },
+      "market": {
+        "lanes": "Un trineu només llisca pel carril on és: mai de costat, mai fora del carrer.",
+        "shove": "Arrossega un trineu per empènyer-lo. S'atura quan troba alguna cosa pel mig."
+      }
+    },
+    "hint": {
+      "default": {
+        "drive": "Fins aquí el camí està lliure.",
+        "back": "Res del davant es mourà. Primer fes recular el teu.",
+        "clear": "Aquest bloc està travessat al teu carril.",
+        "room": "Res no es pot moure fins que aquest es mogui.",
+        "push": {
+          "left": "Empeny-lo cap a l'esquerra, fins a l'anella.",
+          "right": "Empeny-lo cap a la dreta, fins a l'anella.",
+          "up": "Empeny-lo cap amunt, fins a l'anella.",
+          "down": "Empeny-lo cap avall, fins a l'anella."
+        }
+      },
+      "market": {
+        "drive": "Fins aquí el carril davant del teu està lliure.",
+        "back": "Res del davant es mourà. Primer fes recular el teu trineu.",
+        "clear": "Aquesta càrrega està travessada al carril per on has de sortir.",
+        "room": "Res no es pot moure fins que no apartis aquesta.",
+        "push": {
+          "left": "Empeny-la cap a l'esquerra, fins a l'anella.",
+          "right": "Empeny-la cap a la dreta, fins a l'anella.",
+          "up": "Empeny-la carrer amunt, fins a l'anella.",
+          "down": "Empeny-la carrer avall, fins a l'anella."
+        }
+      }
+    }
+  },
+  "hidato": {
+    "rules": {
+      "default": {
+        "given": "Els números que ja són a la bresca són part del trencaclosques: no es mouen.",
+        "enter": "Toca un número per continuar la sèrie des d'allà, i després toca una cel·la buida que el toqui per seguir. O arrossega directament per les cel·les per on passa.",
+        "back": "Toca un número que hagis posat i torna'l a tocar per treure'l, juntament amb tot el que en penja. Si continues la sèrie per un altre costat d'un número, passa el mateix. Desfés torna enrere el teu últim moviment."
+      },
+      "channel": {
+        "given": "Els camps que ja tenen número són part del trencaclosques: no es mouen.",
+        "enter": "Toca un camp amb número per portar l'aigua des d'allà, i després toca un camp sec del costat per continuar cavant. O arrossega directament pels camps per on passa el canal.",
+        "back": "Toca un camp que hagis cavat i torna'l a tocar per tapar-lo, juntament amb el canal que en quedi tallat. Si caves per un altre costat d'un camp, passa el mateix. Desfés torna enrere el teu últim moviment."
+      },
+      "scribe": {
+        "given": "Els números escrits en vermell són del mateix trencaclosques: no es mouen.",
+        "enter": "Toca un número per agafar la ploma des d'allà, i després toca un espai buit del costat per continuar escrivint. O arrossega directament per la línia.",
+        "back": "Toca un número que hagis escrit i torna'l a tocar per esborrar-lo, juntament amb la línia que en quedi tallada. Si escrius per un altre costat d'un número, passa el mateix. Desfés torna enrere el teu últim moviment."
+      },
+      "chambers": {
+        "given": "Les cambres que ja tenen número les van excavar els constructors: no es mouen.",
+        "enter": "Toca una cambra amb número per continuar el passadís des d'allà, i després toca una cambra tancada del costat per obrir-hi pas. O arrossega directament per les cambres per on passa el passadís.",
+        "back": "Toca una cambra que hagis obert i torna-la a tocar per tancar-la, juntament amb el passadís que en quedi tallat. Si obres pas per un altre costat d'una cambra, passa el mateix. Desfés torna enrere el teu últim moviment."
+      }
+    },
+    "goal": {
+      "default": "Cada cel·la de la bresca té un número, de l'1 al {{last}}, i cada un toca el número d'abans.",
+      "channel": "Un sol canal rega tota la plana: cada camp hi passa per torn, de l'1 al {{last}}, i cada un està cavat al costat del camp d'abans.",
+      "scribe": "Una línia de números sense cap tall travessa el full: cada espai té un número, de l'1 al {{last}}, i cada un és al costat del número d'abans.",
+      "chambers": "Un sol passadís recorre tota la tomba: cada cambra s'obre per torn, de l'1 al {{last}}, i cada una s'obre des de la cambra d'abans."
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": "Un d'aquests números no pot ser correcte.",
+          "sandwich": "El {{before}} i el {{after}} només toquen una cel·la buida entre tots dos.",
+          "neighbourForced": "Al {{from}} només li queda una cel·la buida al costat.",
+          "onlyCell": "A la bresca no queda cap altre lloc per al {{value}}.",
+          "onlyValue": "Cap altre número pot arribar a aquesta cel·la."
+        },
+        "action": {
+          "place": "Posa el {{value}} a la cel·la assenyalada."
+        }
+      },
+      "channel": {
+        "reason": {
+          "mistake": "Un d'aquests números no pot ser correcte.",
+          "sandwich": "El {{before}} i el {{after}} només toquen un camp sec entre tots dos.",
+          "neighbourForced": "Al costat del {{from}} només queda un camp sec.",
+          "onlyCell": "A la plana no hi ha cap altre lloc per al {{value}}.",
+          "onlyValue": "Cap altre número pot arribar a aquest camp."
+        },
+        "action": {
+          "place": "Cava el {{value}} al camp assenyalat."
+        }
+      },
+      "scribe": {
+        "reason": {
+          "mistake": "Un d'aquests números no pot ser correcte.",
+          "sandwich": "El {{before}} i el {{after}} només toquen un espai buit entre tots dos.",
+          "neighbourForced": "Al costat del {{from}} només queda un espai buit.",
+          "onlyCell": "Al full no hi ha cap altre lloc per al {{value}}.",
+          "onlyValue": "Cap altre número pot arribar a aquest espai."
+        },
+        "action": {
+          "place": "Escriu el {{value}} a l'espai assenyalat."
+        }
+      },
+      "chambers": {
+        "reason": {
+          "mistake": "Un d'aquests números no pot ser correcte.",
+          "sandwich": "El {{before}} i el {{after}} només toquen una cambra tancada entre tots dos.",
+          "neighbourForced": "Al costat del {{from}} només queda una cambra tancada.",
+          "onlyCell": "A la tomba no hi ha cap altre lloc per al {{value}}.",
+          "onlyValue": "Cap altre número pot arribar a aquesta cambra."
+        },
+        "action": {
+          "place": "Obre el {{value}} a la cambra assenyalada."
+        }
+      }
+    },
+    "name": {
+      "default": "El rusc",
+      "channel": "El canal",
+      "scribe": "El full de l'escriba",
+      "chambers": "Cambres segellades"
+    }
+  },
+  "sudoku": {
+    "rules": {
+      "default": {
+        "chambers": "Les línies gruixudes divideixen la graella en sis cambres, de dues caselles d'ample i tres d'alt.",
+        "given": "Els números que ja estan gravats són part del trencaclosques: no es mouen.",
+        "enter": "Toca una casella i després un número. Si tornes a tocar el mateix número, el treus.",
+        "notes": "Canvia al llapis per apuntar els números que encara hi podrien anar. Desfés torna enrere el teu últim moviment."
+      },
+      "papyrus": {
+        "chambers": "Les línies gruixudes divideixen el full en sis requadres, de dos espais d'ample i tres d'alt.",
+        "given": "Els signes escrits en vermell són del mateix trencaclosques: no es mouen.",
+        "enter": "Toca un espai i després un signe. Si tornes a tocar el mateix signe, l'esborres.",
+        "notes": "Agafa la ploma de canya per apuntar els signes que encara hi podrien anar. Desfés torna enrere el teu últim moviment."
+      }
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": {
+            "value": "Un dels números d'aquí no pot ser correcte. Treu-lo i torna-ho a mirar.",
+            "note": "Les notes d'aquesta casella han descartat el número que hi va. Esborra-les i torna a començar aquesta casella."
+          },
+          "nakedSingle": "La fila, la columna i la cambra d'aquesta casella ja tenen tots els altres números.",
+          "hiddenSingle": {
+            "row": "El {{token}} no cap en cap altra casella d'aquesta fila.",
+            "col": "El {{token}} no cap en cap altra casella d'aquesta columna.",
+            "box": "El {{token}} no cap en cap altra casella d'aquesta cambra."
+          },
+          "pointing": {
+            "row": "Dins de la cambra marcada, el {{token}} només pot anar en aquesta fila.",
+            "col": "Dins de la cambra marcada, el {{token}} només pot anar en aquesta columna."
+          },
+          "claiming": {
+            "row": "En la fila marcada, el {{token}} només cap dins d'aquesta cambra.",
+            "col": "En la columna marcada, el {{token}} només cap dins d'aquesta cambra."
+          }
+        },
+        "action": {
+          "place": "Posa el {{token}} a la casella assenyalada.",
+          "ruleOut_one": "Descarta el {{token}} de la casella assenyalada.",
+          "ruleOut_many": "Descarta el {{token}} de les caselles assenyalades.",
+          "ruleOut_other": "Descarta el {{token}} de les caselles assenyalades."
+        }
+      },
+      "papyrus": {
+        "reason": {
+          "mistake": {
+            "value": "Un d'aquests signes no pot ser correcte. Esborra'l i torna-ho a mirar.",
+            "note": "Les notes d'aquest espai han descartat el signe que hi va. Esborra-les i torna a començar aquest espai."
+          },
+          "nakedSingle": "La fila, la columna i el requadre d'aquest espai ja tenen tots els altres signes.",
+          "hiddenSingle": {
+            "row": "{{token}} no cap en cap altre espai d'aquesta fila.",
+            "col": "{{token}} no cap en cap altre espai d'aquesta columna.",
+            "box": "{{token}} no cap en cap altre espai d'aquest requadre."
+          },
+          "pointing": {
+            "row": "Dins del requadre marcat, {{token}} només pot anar en aquesta fila.",
+            "col": "Dins del requadre marcat, {{token}} només pot anar en aquesta columna."
+          },
+          "claiming": {
+            "row": "En la fila marcada, {{token}} només cap dins d'aquest requadre.",
+            "col": "En la columna marcada, {{token}} només cap dins d'aquest requadre."
+          }
+        },
+        "action": {
+          "place": "Escriu {{token}} a l'espai assenyalat.",
+          "ruleOut_one": "Descarta {{token}} de l'espai assenyalat.",
+          "ruleOut_many": "Descarta {{token}} dels espais assenyalats.",
+          "ruleOut_other": "Descarta {{token}} dels espais assenyalats."
+        }
+      }
+    },
+    "goal": {
+      "default": "Cada fila, cada columna i cada cambra tenen cadascun dels sis números exactament un cop.",
+      "papyrus": "Cada fila, cada columna i cada requadre tenen cadascun dels sis signes exactament un cop."
+    },
+    "name": {
+      "default": "Sis cambres",
+      "papyrus": "El registre de l'escriba"
+    }
+  },
+  "crocodile": {
+    "name": "El fossat dels cocodrils",
+    "goal": "Travessa el fossat fins a l'altra riba.",
+    "rules": {
+      "want": "Cada cocodril vol una resposta de la fila de pedres que té al darrere: la més gran o la més petita.",
+      "mark": "La seva boca oberta diu quina, i el signe del costat també: > s'obre cap a la resposta més gran, < cap a la més petita.",
+      "bite": "Si trepitges qualsevol altra pedra, et mossega: perds vida i tornes a començar des de la riba d'aquest costat."
+    },
+    "hint": {
+      "biggest": "Aquest cocodril vol la resposta més gran. És {{value}}.",
+      "smallest": "Aquest cocodril vol la resposta més petita. És {{value}}."
+    }
+  },
+  "canisters": {
+    "name": {
+      "default": "Els recipients",
+      "grain": "Les mesures de gra",
+      "oil": "Oli per a les llànties",
+      "wine": "El celler del mercader",
+      "natron": "Els vasos canopis",
+      "ink": "La sala dels escribes"
+    },
+    "goal": {
+      "default_one": "Mesura la quantitat que et demanen, i digues quin recipient la té.",
+      "default_many": "Mesura cada quantitat que et demanen, una darrere l'altra, i digues quin recipient la té abans de passar a la següent.",
+      "default_other": "Mesura cada quantitat que et demanen, una darrere l'altra, i digues quin recipient la té abans de passar a la següent.",
+      "grain_one": "Mesura el gra que et demanen, i digues quina mesura el té.",
+      "grain_many": "Mesura cada quantitat de gra, una darrere l'altra, i digues quina mesura la té abans de passar a la següent.",
+      "grain_other": "Mesura cada quantitat de gra, una darrere l'altra, i digues quina mesura la té abans de passar a la següent.",
+      "oil_one": "Mesura l'oli que et demanen, i digues quina gerra el té.",
+      "oil_many": "Mesura cada quantitat d'oli, una darrere l'altra, i digues quina gerra la té abans de passar a la següent.",
+      "oil_other": "Mesura cada quantitat d'oli, una darrere l'altra, i digues quina gerra la té abans de passar a la següent.",
+      "wine_one": "Mesura el vi que et demanen, i digues quina àmfora el té.",
+      "wine_many": "Mesura cada quantitat de vi, una darrere l'altra, i digues quina àmfora la té abans de passar a la següent.",
+      "wine_other": "Mesura cada quantitat de vi, una darrere l'altra, i digues quina àmfora la té abans de passar a la següent.",
+      "natron_one": "Mesura el natró que et demanen, i digues quin vas el té.",
+      "natron_many": "Mesura cada quantitat de natró, una darrere l'altra, i digues quin vas la té abans de passar a la següent.",
+      "natron_other": "Mesura cada quantitat de natró, una darrere l'altra, i digues quin vas la té abans de passar a la següent.",
+      "ink_one": "Mesura la tinta que et demanen, i digues quin pot la té.",
+      "ink_many": "Mesura cada quantitat de tinta, una darrere l'altra, i digues quin pot la té abans de passar a la següent.",
+      "ink_other": "Mesura cada quantitat de tinta, una darrere l'altra, i digues quin pot la té abans de passar a la següent."
+    },
+    "rules": {
+      "method": {
+        "sums": "Cada quantitat que pots fer és dos números de la taula sumats o restats: la mida d'un recipient, el que té a dins, o el lloc que li queda.",
+        "backwards": "Així que ves enrere des de la quantitat que et demanen: quins dos números la fan, i com aconsegueixes tenir-los tots dos alhora?"
+      },
+      "claim": "Quan tinguis la quantitat, toca «aquest». Si dius el recipient equivocat, perds un moviment.",
+      "legs": "Després ve la quantitat següent, mesurada amb el que hagi quedat als recipients.",
+      "default": {
+        "moves": "Toca un recipient per agafar-lo, i després toca'n un altre per abocar-hi. S'atura quan el primer queda buit o el segon queda ple.",
+        "contents": "Aquesta és tota l'aigua que hi ha: un recipient comença ple, i no se'n pot llençar ni anar a buscar més.",
+        "levels": "Cada recipient diu quant en té, i quant n'hi cap quan és ple."
+      },
+      "grain": {
+        "moves": "Toca una mesura per aixecar-la, i després toca'n una altra per tirar-hi el gra. S'atura quan la primera queda buida o la segona queda plena fins a dalt.",
+        "contents": "Aquest és tot el gra que hi ha: una mesura comença plena, i no se'n pot escombrar ni anar a buscar més al graner.",
+        "levels": "Cada mesura diu quant en té, i quant n'hi cap quan és plena fins a dalt."
+      },
+      "oil": {
+        "moves": "Toca una gerra per aixecar-la, i després toca'n una altra per abocar-hi. S'atura quan la primera queda buida o la segona queda plena.",
+        "contents": "Aquest és tot l'oli que hi ha: una gerra comença plena, i no se'n pot llençar ni anar a buscar més.",
+        "levels": "Cada gerra diu quant en té, i quant n'hi cap quan és plena."
+      },
+      "wine": {
+        "moves": "Toca una àmfora per aixecar-la, i després toca'n una altra per abocar-hi. S'atura quan la primera queda buida o la segona queda plena.",
+        "contents": "Aquest és tot el vi que hi ha: una àmfora comença plena, i no se'n pot vessar ni anar a buscar més al celler.",
+        "levels": "Cada àmfora diu quant en té, i quant n'hi cap quan és plena."
+      },
+      "natron": {
+        "moves": "Toca un vas per aixecar-lo, i després toca'n un altre per tirar-hi el natró. S'atura quan el primer queda buit o el segon queda ple fins a la tapa.",
+        "contents": "Aquest és tot el natró que hi ha: un vas comença ple, i no se'n pot escombrar ni anar a buscar més.",
+        "levels": "Cada vas diu quant en té, i quant n'hi cap quan és ple fins a la tapa."
+      },
+      "ink": {
+        "moves": "Toca un pot per aixecar-lo, i després toca'n un altre per abocar-hi. S'atura quan el primer queda buit o el segon queda ple.",
+        "contents": "Aquesta és tota la tinta que hi ha: un pot comença ple, i no se'n pot llençar ni fer-ne de nova.",
+        "levels": "Cada pot diu quant en té, i quant n'hi cap quan és ple."
+      }
+    },
+    "hint": {
+      "goal": {
+        "leftover": "Anant enrere: {{amount}} és {{content}} menys {{space}}. Un recipient amb {{content}} abocat dins d'un que té lloc per a {{space}}.",
+        "full": "Anant enrere: {{amount}} és la mida d'un recipient, i {{a}} més {{b}} fan exactament això.",
+        "sum": "Anant enrere: {{amount}} és {{a}} més {{b}}."
+      },
+      "claim": "Només falta abocar un cop. Després pensa quin recipient ho té.",
+      "stuck": "Des d'aquí ja no pots mesurar {{target}} amb els moviments que et queden. Desfés un abocament, o torna a començar.",
+      "overBudget": "No et queden moviments. Desfés-ne un, o torna a començar i busca el camí més curt.",
+      "next": {
+        "leftover": "El compte d'abans: {{amount}}, és a dir, {{content}} abocat on hi ha lloc per a {{space}}.",
+        "full": "El compte d'abans: un recipient ple amb {{amount}}, és a dir, {{a}} més {{b}}.",
+        "sum": "El compte d'abans: {{amount}}, és a dir, {{a}} més {{b}}."
+      }
+    },
+    "movesLeft_one": "Queda {{count}} moviment",
+    "movesLeft_many": "Queden {{count}} moviments",
+    "movesLeft_other": "Queden {{count}} moviments",
+    "legs": "{{done}} de {{total}} mesurats",
+    "wanted": "Mesura",
+    "claim": "aquest",
+    "claimAria": "Digues que el de {{capacity}} té la quantitat"
+  },
+  "procession": {
+    "name": {
+      "default": "Les hores en ordre",
+      "funerary": "Un dia a la vall dels treballadors",
+      "cosmos": "El viatge de la nit",
+      "water": "El dia de la crescuda",
+      "trade": "Un dia al moll"
+    },
+    "goal": {
+      "default": "Llisca cada cosa que passa fins a la seva hora, fins que totes les marques de sota el dia es compleixin.",
+      "funerary": "Llisca cada feina fins a la seva hora, fins que totes les marques de sota el dia es compleixin.",
+      "cosmos": "Llisca cada llum fins a la seva hora, fins que totes les marques de sota la nit es compleixin.",
+      "water": "Llisca cada feina fins a la seva hora, fins que totes les marques de sota el dia es compleixin.",
+      "trade": "Llisca cada feina fins a la seva hora, fins que totes les marques de sota el dia es compleixin."
+    },
+    "rules": {
+      "default": {
+        "lengths": "Cada fila és una cosa que passa, i dura tant com ample és la seva barra. Quan passa, ho has de descobrir tu.",
+        "marks": "Una línia de sota el dia es posa vermella mentre no es compleix. Toca-la per encerclar les files de què parla.",
+        "drag": "Arrossega una barra per la seva fila. Mai surt del dia."
+      }
+    },
+    "hint": {
+      "default": {
+        "chain": "El lloc d'aquella fila ja està decidit, i aquesta en depèn.",
+        "squeeze": "Només queda una mica de dia, i això és tot el que hi cap.",
+        "apart": "Al revés no cap dins del dia.",
+        "split": "Prova-ho al revés i una altra cosa deixa de funcionar.",
+        "move": "Arrossega la barra encerclada fins a les marques assenyalades."
+      }
+    },
+    "events": {
+      "default": [
+        "el foc",
+        "el transport d'aigua",
+        "la fornada",
+        "el viatge en barca",
+        "la feina amb els bous",
+        "la guàrdia de nit"
+      ],
+      "funerary": [
+        "l'arrebossat",
+        "el dibuix de la quadrícula",
+        "la talla",
+        "la pintura",
+        "el daurat",
+        "la col·locació de la porta"
+      ],
+      "cosmos": [
+        "el viatge del sol",
+        "la sortida de l'estrella",
+        "la guàrdia de la lluna",
+        "el cel obert",
+        "l'alba",
+        "el canvi d'any"
+      ],
+      "water": [
+        "la crescuda",
+        "l'excavació del canal",
+        "l'ompliment de la bassa",
+        "el reg dels camps",
+        "el pas amb barca",
+        "la sega"
+      ],
+      "trade": [
+        "la tria de mercaderies",
+        "la venda de pa",
+        "la venda de cervesa",
+        "el pas amb barca",
+        "el transport de càrrega",
+        "el compte"
+      ]
+    },
+    "marks": {
+      "default": {
+        "pin": "{{a}} comença a l'hora {{tick}}.",
+        "handoff": "{{a}} comença just quan s'acaba {{b}}.",
+        "link_one": "{{a}} comença {{count}} hora després que s'acabi {{b}}.",
+        "link_many": "{{a}} comença {{count}} hores després que s'acabi {{b}}.",
+        "link_other": "{{a}} comença {{count}} hores després que s'acabi {{b}}.",
+        "before": "{{a}} s'acaba abans que comenci {{b}}.",
+        "apart": "{{a}} i {{b}} mai passen alhora.",
+        "together": "{{a}} i {{b}} passen alhora durant una estona.",
+        "span_one": "Del primer començament a l'últim final hi ha {{count}} hora.",
+        "span_many": "Del primer començament a l'últim final hi ha {{count}} hores.",
+        "span_other": "Del primer començament a l'últim final hi ha {{count}} hores."
+      }
+    },
+    "door": {
+      "title": "La porta de la processó",
+      "hint": "Cada rajola que trepitges allibera la seva feina. Posa el dia en ordre, i després trepitja les rajoles en aquest ordre.",
+      "read": "El dia ja està llegit. Trepitja les seves rajoles en aquest ordre, començant per la primera.",
+      "hintButton": "Pista"
+    }
+  },
+  "story": {
+    "invitation": "Parla",
+    "log": {
+      "empty": "Encara res. En Fez tindrà moltes coses a dir."
+    },
+    "speaker": {
+      "fez": "Fez",
+      "explorer": "Tu",
+      "ipi": "Ipi",
+      "henut": "Henut",
+      "priest": "El sacerdot",
+      "pharaoh": "El faraó",
+      "voice": "Una veu"
+    },
+    "wall": {
+      "wrong": "Algú va tallar malament el tercer signe. Fa tres mil anys que està malament.",
+      "fixed": "Torna a ser el seu nom.",
+      "pick": "Posa el signe correcte al seu lloc.",
+      "cannot": "No coneixes el signe que va aquí. Encara no."
+    },
+    "sphinx": {
+      "wrong": "La mateixa escriptura que a fora, però aquí la sorra no hi va arribar mai. Dos signes encara ben tallats, i un forat on hi havia el tercer.",
+      "fixed": "Això és tot.",
+      "pick": "Posa al forat el signe que portes.",
+      "cannot": "Dos signes que coneixes, i un forat que no pots omplir. Encara no.",
+      "gap": "El signe que falta"
+    }
+  },
+  "lightbeamSwitch": {
+    "name": "La llum que gira",
+    "invitation": "Gira els miralls",
+    "goal": "La llum descansa en un santuari, i la sortida de sota queda oberta.",
+    "rules": {
+      "shrines": "Un disc de llum, i un santuari sobre cada sortida d'aquest encreuament. Els miralls del terra poden portar la llum a qualsevol d'ells.",
+      "doors": "La sortida on arriba la llum queda oberta, i les altres tancades. Un camí de llum, una sortida.",
+      "returning": "Triar no et fa perdre res. Torna a entrar quan vulguis i envia la llum per un altre camí: aquella sortida s'obre, i aquesta es tanca.",
+      "tap": "Toca un mirall per girar-lo. Si el tornes a tocar, torna a com estava."
+    },
+    "doorOpen": "Sortida {{way}}: oberta",
+    "doorShut": "Sortida {{way}}: tancada",
+    "way": {
+      "n": "nord",
+      "e": "est",
+      "s": "sud",
+      "w": "oest"
+    }
+  },
+  "handle": {
+    "name": "La palanca",
+    "invitation": "Mou la palanca",
+    "goal": "La palanca està cap a un costat o cap a l'altre. El que un costat obre, l'altre ho tanca.",
+    "left": "Mou-la a l'esquerra",
+    "right": "Mou-la a la dreta"
+  },
+  "torch": {
+    "name": "La torxa",
+    "invitation": "Encén la torxa",
+    "goal": "Una torxa apagada. Un cop encesa, ja no es pot tornar a apagar.",
+    "lit": "La torxa crema."
+  },
+  "gateFace": {
+    "title": "Una porta que espera",
+    "hint": "Tots els signes han de cremar abans que aquesta porta s'obri.",
+    "lit": "{{owner}}: encès",
+    "unlit": "{{owner}}: encara no",
+    "owner": {
+      "torch": "Torxa",
+      "handle": "Palanca",
+      "key": "Clau",
+      "web": "Un signe de la sorra",
+      "plateStone": "Una pedra en una placa",
+      "plateEmpty": "Una placa buida",
+      "other": "Mecanisme"
+    },
+    "orderHint": "Trepitja les rajoles en aquest ordre.",
+    "reset": "Torna a començar",
+    "spoiled": "S'ha espatllat: has trepitjat una rajola fora d'ordre.",
+    "tile": {
+      "unwalked": "Pas {{step}}: encara no trepitjat",
+      "inOrder": "Pas {{step}}: trepitjat en ordre",
+      "outOfOrder": "Pas {{step}}: trepitjat fora d'ordre"
+    }
+  },
+  "devLockEditor": {
+    "syntax": "Sintaxi",
+    "example": "Exemple",
+    "useExample": "Fes servir l'exemple",
+    "title": "Editor de panys",
+    "notation": "Notació del pany",
+    "checks": "Comprovacions",
+    "drawing": "Dibuix",
+    "carveAndPlay": "Excava i juga",
+    "copyLink": "Copia l'enllaç",
+    "copied": "Enllaç copiat",
+    "failed": "No s'ha pogut copiar; l'enllaç és a la barra d'adreces",
+    "backToEditor": "← Editor",
+    "close": "Tanca",
+    "open": "Editor de panys",
+    "modeLock": "Pany",
+    "modeWeb": "Xarxa",
+    "webNotation": "Notació de la xarxa",
+    "openWeb": "Obre una xarxa",
+    "checking": "Comprovant…",
+    "checkedIn": "comprovat en {{ms}} ms",
+    "worldCarved": "pisos de nivell Mag excavats en {{ms}} ms, un sol cop",
+    "simulation": "Estirades",
+    "noSimulation": "No hi ha res per provar fins que tots els llocs siguin al món.",
+    "summary": "Resum",
+    "stillBuried": "Encara un {{percent}}% enterrat",
+    "nothingBuried": "No hi ha res enterrat",
+    "finishes": "s'acaba",
+    "stopsAt": "s'atura al {{pct}}%",
+    "notOpenYet": "encara no obert",
+    "pullAll": "Estira tot el que tens a l'abast",
+    "reset": "Reinicia",
+    "progress": "{{reachable}} a l'abast · {{pulled}} de {{total}} agafats",
+    "allTaken": "Tot estirat i agafat.",
+    "potFront": "{{pulled}} de {{total}} estirades · front al {{pct}}%",
+    "potOpen": "{{pulled}} de {{total}} estirades · obert",
+    "keys": "Claus",
+    "keysNote": "cada una obre un segell",
+    "log": "Què ha passat",
+    "logEmpty": "Encara no s'ha estirat res.",
+    "logPull": "estira {{name}} a {{at}}",
+    "logTake": "agafa {{name}} a {{at}}",
+    "logFront": "front de {{pot}} al {{pct}}%",
+    "logPotOpen": "{{pot}} obert",
+    "logSeal": "segell de {{at}} obert",
+    "logNew": "nou: {{names}}",
+    "pullPin": "estira la palanca {{name}}",
+    "takePin": "agafa la clau {{name}}",
+    "legendCleared": "net",
+    "legendBuried": "enterrat",
+    "legendSeal": "segell",
+    "legendPins": "● palanca · ■ clau · petit = secció lateral"
+  },
+  "camp": {
+    "title": "Campament",
+    "continue": {
+      "heading": "Expedició actual",
+      "setOff": "Posa't en camí",
+      "pyramid": "Piràmide {{level}} de {{count}} · {{tier}}",
+      "tomb": "Tomba · {{tier}}",
+      "empty": "Tot el teu mapa està obert"
+    },
+    "hint_one": "{{count}} viatge antic té alguna cosa nova per descobrir",
+    "hint_many": "{{count}} viatges antics tenen alguna cosa nova per descobrir",
+    "hint_other": "{{count}} viatges antics tenen alguna cosa nova per descobrir",
+    "comingHome": {
+      "title": "De tornada al campament",
+      "haulTitle": "El que has portat d'aquest viatge",
+      "new": "NOU",
+      "unpack": "Desfés l'equipatge",
+      "toCamp": "Al campament"
+    },
+    "chapter": {
+      "subtitle": "Capítol nou",
+      "title": "Apareix una piràmide nova",
+      "body": "Els viatges de nivell {{tier}} ja estan oberts. Descansa una mica al campament i posa't en camí quan estiguis a punt.",
+      "journeyNote": "Primer viatge de nivell {{tier}}",
+      "later": "Més tard"
+    },
+    "close": "Tanca",
+    "entrance": {
+      "collection": "Col·lecció",
+      "mosaic": "Mosaic",
+      "journeys": "Tots els viatges",
+      "detectors": "Detectors"
+    },
+    "mapTable": {
+      "title": "Taula dels mapes",
+      "journeys": "Viatges"
+    }
+  },
+  "home": {
+    "haul": {
+      "times": "×{{count}}"
+    }
+  },
+  "journeys": {
+    "tierNeed": "Troba aquest tresor",
+    "tierProgress": "{{done}} de {{total}} fets",
+    "tierLockedName": "Viatges de nivell {{tier}}",
+    "toggleTier": "Mostra o amaga els viatges de nivell {{tier}}",
+    "now": "ARA",
+    "newDot": "Alguna cosa nova per descobrir",
+    "noteCurrentPyramid": "En marxa · piràmide {{level}} de {{count}}",
+    "noteCurrentTomb": "En marxa · a la tomba",
+    "noteFinished": "Acabat",
+    "noteFinishedNews": "Acabat · alguna cosa nova per descobrir",
+    "noteOpen": "Encara no hi has anat",
+    "noteResumePyramid": "Començat abans · piràmide {{level}} de {{count}}",
+    "noteResumeTomb": "Començat abans · a la tomba",
+    "needProgress": "{{unit}}: {{found}} de {{required}}",
+    "showStops": "Mostra els llocs de {{name}}",
+    "stopPyramid": "Piràmide",
+    "stopTomb": "Lloc"
+  },
+  "newVersion": {
+    "title": "Una versió nova!",
+    "name": "El joc ha canviat molt",
+    "body": "Per això el teu viatge torna a començar. T'esperen tombes noves, troballes noves i un campament per construir."
+  },
+  "devPrefabPreview": {
+    "firstDoor": "A la primera porta",
+    "stop": "A la parada",
+    "secondDoor": "A la segona porta",
+    "doorsInUse_one": "{{count}} porta en ús",
+    "doorsInUse_many": "{{count}} portes en ús",
+    "doorsInUse_other": "{{count}} portes en ús",
+    "walled": "{{count}} tapiades"
+  },
+  "devRoomEditor": {
+    "title": "Editor de sales",
+    "open": "Editor de sales",
+    "close": "Tanca",
+    "tier": "Nivell",
+    "catalogue": "Obre una sala",
+    "notation": "Notació de la sala",
+    "copyLink": "Copia l'enllaç",
+    "copyText": "Copia el text",
+    "copied": "Copiat",
+    "failed": "No s'ha pogut copiar al porta-retalls",
+    "palette": "Paleta",
+    "unpainted": "encara sense pintar",
+    "layout": "Disposició",
+    "mirrored": "(en mirall)",
+    "fill_one": "Omple ({{count}} opció)",
+    "fill_many": "Omple ({{count}} opcions)",
+    "fill_other": "Omple ({{count}} opcions)",
+    "fromDoor": "Camina des de",
+    "toDoor": "Camina fins a",
+    "automatic": "Automàtic",
+    "direction": {
+      "n": "Porta nord",
+      "e": "Porta est",
+      "s": "Porta sud",
+      "w": "Porta oest"
+    },
+    "checks": "Comprovacions",
+    "sound": "La sala passa les comprovacions",
+    "tierDisagrees": "La capçalera diu nivell {{header}}, aquí dibuixada en {{picked}}",
+    "undo": "Desfés",
+    "drawing": "Dibuix",
+    "tool": {
+      "select": "Selecciona",
+      "wall": "Paret",
+      "floor": "Terra",
+      "door": "Lloc de porta",
+      "stop": "Parada",
+      "chest": "Cofre",
+      "portal": "Portal",
+      "mechanism": "Mecanisme",
+      "erase": "Esborra",
+      "copy": "Dibuixa {{letter}}"
+    },
+    "againstWall": "Els objectes deixats queden contra la paret nord",
+    "dropHint": "Arrossega un element de la paleta a una cel·la; ocupa el seu propi espai",
+    "newLayout": "Nom de la disposició nova",
+    "addLayout": "Copia com a disposició",
+    "inspector": {
+      "title": "Lloc {{letter}}",
+      "optional": "Opcional",
+      "kinds": "Tipus",
+      "counted": "Omple només alguns",
+      "take": "Agafa",
+      "of": "de",
+      "per": "per",
+      "perNone": "cada un pel seu compte",
+      "drawAnother": "Dibuixa'n un altre",
+      "close": "Tanca"
+    },
+    "refused": {
+      "notFree": "No és sobre terra lliure dins de la sala",
+      "wallRow": "Un lloc de paret va a la primera fila de dins de la paret nord",
+      "northWall": "Un objecte de paret penja de la paret nord",
+      "floorOnRing": "L'anella de fora només admet parets i llocs de porta",
+      "doorInside": "Un lloc de porta va a l'anella de fora",
+      "keepStop": "La parada es queda: posa-la en un altre lloc per moure-la",
+      "noLetter": "Totes les lletres estan agafades",
+      "layoutName": "Posa a la disposició un nom que no tingui cap altra",
+      "notation": "La notació no ho accepta: {{message}}"
+    },
+    "layer": {
+      "wall": "contra la paret",
+      "floor": "terra",
+      "ground": "sòl",
+      "wallItem": "objecte de paret"
+    },
+    "cell": "Cel·la {{row}},{{col}}: {{what}}",
+    "cellWhat": {
+      "wall": "paret",
+      "floor": "terra lliure",
+      "door": "lloc de porta",
+      "place": "{{letter}}, {{kinds}}"
+    },
+    "rewrites": "Dibuixar reescriu el text: tots els comentaris es mouen a dalt de tot"
+  }
+}

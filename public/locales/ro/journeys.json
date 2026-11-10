@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Zori la Sfinx",
+    "description": "Marele Sfinx și scrisul de la picioarele lui, pe care nimeni nu-l mai știe citi. Harta spune: începe de aici."
+  },
+  "starter_2": {
+    "name": "Drumul negustorului de papirus",
+    "description": "Un drum de negoț pe malul Nilului, plin de magaziile negustorilor. Câteva n-au fost golite niciodată."
+  },
+  "starter_3": {
+    "name": "Templul lui Bastet",
+    "description": "Templul lui Bastet. Pisicile de aici erau sfinte, iar sărbătoarea de fiecare an era cea mai mare din Egipt — bărci, muzică, de toate."
+  },
+  "starter_4": {
+    "name": "Școala scribilor",
+    "description": "Școala scribilor, unde Egiptul a învățat să scrie. Sălile de clasă sunt încă sub nisip."
+  },
+  "starter_treasure_tomb": {
+    "name": "Ascunzătoarea uitată a negustorului",
+    "description": "Pivnița unui negustor, nu a unui rege: ulcioare stivuite, sigilate și etichetate, și nimeni jos care să se certe pe ele.",
+    "mapHint": "Bucățica de hartă arată un drum de piață și ușa unei pivnițe — ascunzătoarea unui negustor, nimic mai mult."
+  },
+  "junior_1": {
+    "name": "Zborul ibișilor sfinți",
+    "description": "Ținut de mlaștini, cu ibiși care umblă prin apă. Egiptenii îi urmăreau: când se întorc păsările, vine și revărsarea Nilului."
+  },
+  "junior_2": {
+    "name": "Valea meșteșugarilor",
+    "description": "Deir el-Medina, unde locuiau cei care făceau mormintele. Tot ce intra într-un mormânt regal era făcut aici întâi, în tipare."
+  },
+  "junior_3": {
+    "name": "Templul lui Thot",
+    "description": "Templul lui Thot. El a inventat scrisul, ținea socotelile și număra totul — cam ce facem și noi de ceva vreme."
+  },
+  "junior_4": {
+    "name": "Farul din Alexandria",
+    "description": "Farul din Alexandria. Un foc în vârf, care ardea toată noaptea, iar marinarii vedeau coasta de la o zi de mers cu corabia."
+  },
+  "junior_treasure_tomb": {
+    "name": "Seiful ascuns al nobilei",
+    "description": "Seiful unei doamne nobile, pictat din podea până în tavan. Și-a cumpărat cele mai frumoase copii pe bani și n-a spus-o niciodată.",
+    "mapHint": "Cerneală fină, un sigiliu cu blazon în colț — cineva de rang mare voia ca această cameră să fie uitată."
+  },
+  "expert_1": {
+    "name": "Valea Regilor",
+    "description": "Valea Regilor. Regii n-au mai construit piramide și și-au ascuns mormintele într-o vale, sub un vârf de munte în formă de piramidă."
+  },
+  "expert_2": {
+    "name": "Templele din Karnak",
+    "description": "Karnak, la care s-a tot construit două mii de ani. Doar sala cea mare are o sută treizeci și patru de coloane, toate sculptate."
+  },
+  "expert_3": {
+    "name": "Expediția în Delta Nilului",
+    "description": "Acolo unde Nilul se desparte și se întinde verde. Ținutul lui Sobek — papirus, pești și crocodili venerați și hrăniți."
+  },
+  "expert_4": {
+    "name": "Piramida lui Djoser",
+    "description": "Piramida în trepte a lui Djoser, primul lucru atât de mare construit din piatră. Arhitectul lui, Imhotep, a ajuns să fie ținut minte ca un zeu."
+  },
+  "expert_treasure_tomb": {
+    "name": "Vistieria marelui preot",
+    "description": "Vistieria unui mare preot, sub podeaua ofrandelor. Tot ce e acolo a fost dăruit unui zeu și n-a mai fost scos niciodată.",
+    "mapHint": "Liniile arată curtea unui templu și o scară care coboară sub podeaua ofrandelor."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Sanctuarul ascuns",
+    "description": "Camera sigilată din inima templului. Marele preot intra o dată pe zi, ca să-l spele pe zeu și să-l îmbrace.",
+    "mapHint": "Coridoare trec pe lângă cămările templului spre o ușă sigilată — doar marii preoți au trecut vreodată de ea."
+  },
+  "master_1": {
+    "name": "Marea Piramidă din Giza",
+    "description": "Marea Piramidă. Douăzeci de ani de piatră și un oraș întreg alături, care hrănea muncitorii cu pâine și bere."
+  },
+  "master_2": {
+    "name": "Cartea morților",
+    "description": "Nu o singură carte, ci un set de vrăji, copiate la comandă. Cele mai ieftine lăsau un loc gol unde trebuia scris numele tău."
+  },
+  "master_3": {
+    "name": "Blestemul faraonilor",
+    "description": "Faimosul blestem a fost inventat de ziare în 1923. Egiptenii își păzeau mormintele cu uși și cu hârțoage."
+  },
+  "master_4": {
+    "name": "Mormântul lui Nefertari",
+    "description": "Mormântul lui Nefertari, cea mai frumos pictată cameră din Egipt. Culorile erau făcute din piatră pisată — azurit, malahit, ocru."
+  },
+  "master_treasure_tomb": {
+    "name": "Comoara secretă a faraonului",
+    "description": "Comoara ascunsă a unui rege, acolo unde hărțile nu mai ajung. Tot ce a fost îngropat cu el e încă acolo jos.",
+    "mapHint": "Un cartuș regal e desenat pe o margine, iar drumul se termină departe, sub nisipul deschis."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Sala lui Osiris",
+    "description": "Sala lui Osiris. Zeul revărsării și al grâului — tot ce intră în pământ aici e așteptat să se întoarcă.",
+    "mapHint": "Sub camerele regale harta tot coboară, spre o sală însemnată cu ritualurile morților."
+  },
+  "wizard_1": {
+    "name": "Călătoria lui Ra",
+    "description": "Ra coboară sub lume la apus și are de trecut douăsprezece ore de întuneric. Egiptenii au scris ce se întâmplă în fiecare."
+  },
+  "wizard_2": {
+    "name": "Colosii lui Memnon",
+    "description": "Doi uriași așezați ai lui Amenhotep al III-lea. Grecii au hotărât că sunt altcineva, și numele acela a rămas două mii de ani."
+  },
+  "wizard_3": {
+    "name": "Camera lui Maat",
+    "description": "Camera lui Maat. Ea e ordinea lucrurilor, iar singura ei pană de struț e cea cu care se măsoară tot restul."
+  },
+  "wizard_4": {
+    "name": "Piramida veșnică",
+    "description": "Învelișul era din calcar lustruit, alb ca sarea, tăiat atât de exact încât îl vedeai sclipind de la o zi de mers."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Seiful zeilor",
+    "description": "Aici păstra templul ce era al zeilor. Nimeni nu era primit înăuntru fără lucrul potrivit în mâini.",
+    "mapHint": "Niciun semn de pe această bucată nu e din lumea oamenilor — orice ar arăta, zeii l-au pus acolo."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Tărâmul forțelor cerului",
+    "description": "Hărți ale stelelor pe tot tavanul, pictate ca morții să știe ce oră e noaptea. Frânghia cuiva încă atârnă în puț.",
+    "mapHint": "Dincolo de seiful zeilor liniile se rup în cărări de stele, unde forțele vieții și ale haosului sunt păstrate ca relicve."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Tronul veșniciei",
+    "description": "Un scaun în mijloc și patruzeci și doi de judecători în jur, fiecare cu o întrebare la care trebuie să răspunzi „nu”.",
+    "mapHint": "Toate cărările de stele de pe această bucată duc spre un singur scaun, chiar în inima tărâmului zeilor."
+  }
+}

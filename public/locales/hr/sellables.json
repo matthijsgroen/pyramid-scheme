@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Kamen",
+    "bronze": "Bronca",
+    "silver": "Srebro",
+    "gold": "Zlato",
+    "divine": "Božansko"
+  },
+  "sell_stone_1": {
+    "name": "Okrnjeni ostrakon",
+    "description": "Razbijeni komadić posude na kojem je pisar vježbao pisanje — slova su preblijeda da bi se pročitala."
+  },
+  "sell_stone_2": {
+    "name": "Napuknuti glineni vrč",
+    "description": "Vrč za žito ili pivo, napuknut sa strane od težine stoljeća."
+  },
+  "sell_stone_3": {
+    "name": "Izlizana sandala od trske",
+    "description": "Ispletena od papirusa. Potplat je istanjio neki davno zaboravljeni radnik koji je u njoj hodao svaki dan."
+  },
+  "sell_stone_4": {
+    "name": "Izblijedjeli komadić platna",
+    "description": "Poderana traka lanenog platna, kakvom su omotavali mrtve — ili krpali jedro."
+  },
+  "sell_stone_5": {
+    "name": "Slomljena kremena oštrica",
+    "description": "Nož od kremena, slomljenog vrha. Lako ga je napraviti, a još lakše zamijeniti."
+  },
+  "sell_bronze_1": {
+    "name": "Savijena brončana amajlija",
+    "description": "Jeftina amajlija za zaštitu, izlivena krivo i nikad popravljena."
+  },
+  "sell_bronze_2": {
+    "name": "Zahrđalo brončano zrcalo",
+    "description": "Nekoć tako sjajno da se u njemu moglo ogledati. Sad je zeleno i mutno od starosti."
+  },
+  "sell_bronze_3": {
+    "name": "Tupa brončana udica",
+    "description": "Ribarski alat koji je pao s broda u Nil mnogo prije nego što su grobnicu zapečatili."
+  },
+  "sell_bronze_4": {
+    "name": "Mali brončani zvončić",
+    "description": "Visio je na vratima hrama ili na gležnju plesačice — sad više ne zvoni kako treba."
+  },
+  "sell_bronze_5": {
+    "name": "Potamnjeli brončani prsten",
+    "description": "Običan prsten za prst koji se davno pretvorio u prah."
+  },
+  "sell_silver_1": {
+    "name": "Potamnjeli srebrni ankh",
+    "description": "Znak života, potamnio nakon stoljeća pod zemljom."
+  },
+  "sell_silver_2": {
+    "name": "Srebrni štapić za kohl",
+    "description": "Tanki štapić kojim su bogataši crtali crte oko očiju — kohla odavno nema."
+  },
+  "sell_silver_3": {
+    "name": "Ulubljena srebrna zdjelica",
+    "description": "Mala zdjelica za žrtve, zgnječena s jedne strane kad se strop iznad nje napokon srušio."
+  },
+  "sell_silver_4": {
+    "name": "Srebrna ukosnica",
+    "description": "Jednostavna i bez ukrasa. Nekoć je držala kosu nekoga čije je ime zaboravljeno."
+  },
+  "sell_silver_5": {
+    "name": "Izlizana srebrna narukvica",
+    "description": "Tanka srebrna narukvica sa slomljenom kopčom. Nije dovoljno fina za plemića, a prefina je za radnika."
+  },
+  "sell_gold_1": {
+    "name": "Mala zlatna perla",
+    "description": "Jedna perla s grobne ogrlice koja se davno rasula."
+  },
+  "sell_gold_2": {
+    "name": "Komadić zlatnog listića",
+    "description": "Tanki zlatni listić koji su pljačkaši grobova stoljećima prije tebe ogulili s lica kipa."
+  },
+  "sell_gold_3": {
+    "name": "Tanka zlatna naušnica",
+    "description": "Iskovana tanko da plemićevo zlato potraje dulje."
+  },
+  "sell_gold_4": {
+    "name": "Krhotina sa zlatnim točkicama",
+    "description": "Slomljeni komad pozlaćene žbuke. Na njemu još ima mrvica pravog zlata."
+  },
+  "sell_gold_5": {
+    "name": "Okrnjeni zlatni pečatnjak",
+    "description": "Prsten s pečatom, tako izlizan da se ništa ne prepoznaje — tko god je na njemu bio, zaboravljen je."
+  },
+  "sell_divine_1": {
+    "name": "Izblijedjeli skarabej od lapisa",
+    "description": "Izrezbaren od dragocjenog lapis lazulija, donesenog izdaleka za faraonov novi život. Boja je izblijedjela kroz stoljeća."
+  },
+  "sell_divine_2": {
+    "name": "Amajlija oko od karneola",
+    "description": "Oko za zaštitu, izrezbareno od krvavocrvenog karneola. Trebalo je tjerati nesreću u zagrobnom životu."
+  },
+  "sell_divine_3": {
+    "name": "Pločica od tirkiza",
+    "description": "Jedna pločica iz razbijenog mozaika. Nekoć je bila dio lika boga na zidu hrama."
+  },
+  "sell_divine_4": {
+    "name": "Krhotina kanopske posude od alabastera",
+    "description": "Komad posude u kojoj su čuvali faraonove organe — dragi kamen za jezivu svrhu."
+  },
+  "sell_divine_5": {
+    "name": "Obredna oštrica od opsidijana",
+    "description": "Vulkansko staklo, izbrušeno za obrede, nikad za bitku — samo za hram."
+  }
+}

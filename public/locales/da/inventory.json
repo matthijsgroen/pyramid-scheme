@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Gudernes konge og herre over solen. Hver dag sejler han over himlen i sin solbåd."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Gud med sjakalhoved. Han passer på de døde og hjælper dem på vej til dødsriget."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Himmelgud med falkehoved, der beskytter faraoerne. Søn af Osiris og Isis."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "Gud med ibishoved. Han er gud for visdom, skrift og viden og passer på gudernes skrifter."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Kattegudinde for beskyttelse og glæde. Hun jager onde ånder væk."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Krokodillegud for Nilen. Han giver frugtbar jord og mod i kamp."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Skarabæ-gud for nye begyndelser. Han ruller solen hen over himlen."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Kobragudinde, der beskytter Nedre Egypten. Hun er et tegn på kongens magt."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "Gudinde for trylleri, mødre og helbredelse. Hun er Osiris' trofaste kone."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "Gud for dødsriget og for at vågne til live igen. Han dømmer de døde."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "Gud for kaos, storme og ørkenen. Han er Osiris' bror — og hans fjende."
+    },
+    "d12": {
+      "name": "Nephthys",
+      "description": "Gudinde for sorg, der passer på de døde. Hun er Isis' søster."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Skabergud og håndværkernes og bygmestrenes gud. Han skabte verden bare ved at tale."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Løvegudinde for krig og helbredelse. Hun er vild, men kan også kurere sygdomme."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Kogudinde for kærlighed, musik og mødre. Hun passede på faraoerne."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Farao",
+      "description": "Egyptens hersker. Folk troede, han var en levende gud — en bro mellem mennesker og guder."
+    },
+    "p2": {
+      "name": "Ypperstepræst",
+      "description": "Templets øverste præst. Han holdt de hellige ritualer og sørgede for orden blandt guderne."
+    },
+    "p3": {
+      "name": "Skriver",
+      "description": "En person, der kunne læse og skrive. Han skrev alt ned og passede på viden."
+    },
+    "p4": {
+      "name": "Bygmester",
+      "description": "En mester, der tegnede pyramider, templer og monumenter, som skulle stå for evigt."
+    },
+    "p5": {
+      "name": "General",
+      "description": "Hærens leder. Han beskyttede Egyptens grænser og gjorde riget større."
+    },
+    "p6": {
+      "name": "Læge",
+      "description": "En helbreder, der brugte både lægekunst og trylleformularer til at gøre syge raske."
+    },
+    "p7": {
+      "name": "Balsamerer",
+      "description": "En hellig håndværker, der gjorde de døde klar til rejsen til dødsriget."
+    },
+    "p8": {
+      "name": "Bonde",
+      "description": "Han dyrkede den frugtbare jord ved Nilen og skaffede mad til hele riget."
+    },
+    "p9": {
+      "name": "Kunsthåndværker",
+      "description": "En dygtig håndværker, der lavede smukke ting og smykker til fine folk og guder."
+    },
+    "p10": {
+      "name": "Købmand",
+      "description": "En handelsmand, der hentede spændende varer fra fjerne lande."
+    },
+    "p11": {
+      "name": "Vesir",
+      "description": "Faraos vigtigste rådgiver. Han styrede rigets arbejde."
+    },
+    "p12": {
+      "name": "Orakel",
+      "description": "En hellig spåmand, der forstod gudernes beskeder og forudsagde fremtiden."
+    },
+    "p13": {
+      "name": "Sømand",
+      "description": "Han sejlede på Nilen og Middelhavet. Uden ham ingen handel og ingen transport."
+    },
+    "p14": {
+      "name": "Stenhugger",
+      "description": "Han huggede hieroglyffer i sten og byggede Egyptens store monumenter."
+    },
+    "p15": {
+      "name": "Vogter",
+      "description": "Han passede på hellige steder og grave, så de døde kunne hvile i fred for evigt."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Flodhest",
+      "description": "Et kæmpestærkt dyr fra Nilen. Alle var bange for det, for det forsvarer sit område."
+    },
+    "a2": {
+      "name": "Løve",
+      "description": "Dyrenes konge. Et tegn på kongens magt og gudernes styrke i ørkenen."
+    },
+    "a3": {
+      "name": "Elefant",
+      "description": "Et kæmpestort dyr fra landene mod syd. Det er kendt for sin visdom og sin gode hukommelse."
+    },
+    "a4": {
+      "name": "Gazelle",
+      "description": "Hurtig og yndefuld. Den bor i ørkenen og er et tegn på fart."
+    },
+    "a5": {
+      "name": "Abe",
+      "description": "Et klogt dyr, der hører til Thoth. Den er snu og fuld af løjer."
+    },
+    "a6": {
+      "name": "Fisk",
+      "description": "Hellige dyr fra Nilen. De gav folk mad og var et tegn på liv."
+    },
+    "a7": {
+      "name": "Gås",
+      "description": "En hellig fugl fra Nilens sumpe. Den hører til fortællingen om, hvordan verden blev skabt."
+    },
+    "a8": {
+      "name": "Bi",
+      "description": "Et tegn for Nedre Egypten og for kongen. Den laver kostbar honning."
+    },
+    "a9": {
+      "name": "Skildpadde",
+      "description": "Et gammelt og klogt dyr, der bærer verden på sit skjold."
+    },
+    "a10": {
+      "name": "Frø",
+      "description": "Et tegn på nyt liv. Den kommer frem, når Nilen går over sine bredder."
+    },
+    "a11": {
+      "name": "Grib",
+      "description": "En hellig fugl fra Øvre Egypten. Gudinden Nekhbet kunne se ud som en grib."
+    },
+    "a12": {
+      "name": "Ugle",
+      "description": "En klog jæger om natten, der vogter skjult viden og gamle hemmeligheder."
+    },
+    "a13": {
+      "name": "Vædder",
+      "description": "Amun-Ras hellige dyr. Et tegn på gudernes magt og på at gå forrest."
+    },
+    "a14": {
+      "name": "Giraf",
+      "description": "Høj og yndefuld, fra landene mod syd. Med sin lange hals når den næsten himlen."
+    },
+    "a15": {
+      "name": "Sjakal",
+      "description": "Ørkenens ådselæder og guide til dødsriget. Den tjener Anubis."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Et tegn for liv, der aldrig slutter. Guder og faraoer holder den tit i hånden."
+    },
+    "art2": {
+      "name": "Horus' øje",
+      "description": "Et tegn for beskyttelse, kongemagt og godt helbred. Det hører til himmelguden Horus."
+    },
+    "art3": {
+      "name": "Sistrum",
+      "description": "Et raslende musikinstrument til hellige fester. Det hører til gudinden Hathor."
+    },
+    "art4": {
+      "name": "Djed-søjle",
+      "description": "Et tegn for styrke og for at vågne til live igen. Den hører tit til Osiris."
+    },
+    "art5": {
+      "name": "Kartouche",
+      "description": "En oval ring om en faraos navn skrevet i hieroglyffer. Den passer på navnet for evigt."
+    },
+    "art6": {
+      "name": "Kanopekrukke",
+      "description": "En hellig krukke med et vogterhoved som låg — fire af dem stod om en kiste og holdt vagt."
+    },
+    "art7": {
+      "name": "Scepter",
+      "description": "En stav, der viser magt. Guder og faraoer bar den som tegn på, at de bestemte."
+    },
+    "art9": {
+      "name": "Pyramide",
+      "description": "En grav for evigt og en port til dødsriget. Bygget til faraoerne, så den kunne stå for altid."
+    },
+    "art10": {
+      "name": "Solbåd",
+      "description": "Den hellige båd, der bærer solguden Ra over himlen fra morgen til aften."
+    },
+    "art11": {
+      "name": "Obelisk",
+      "description": "En høj stensøjle med en lille pyramide på toppen. Den rækker op mod himlen for at ære guderne."
+    },
+    "art12": {
+      "name": "Hyrdestav og plejl",
+      "description": "Kongens tegn. De viser, at faraoen er Egyptens hyrde og beskytter."
+    },
+    "art14": {
+      "name": "Lotusblomst",
+      "description": "Et tegn for nyt liv og for solen. Den vokser ren op af Nilens mudrede vand."
+    },
+    "art15": {
+      "name": "Uræus-krone",
+      "description": "Kongens hovedpynt med en beskyttende kobra. Faraoerne bar den for at være beskyttet af guderne."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Sivblad",
+      "description": "Ét siv betyder lyden i. Sat efter en guds navn bliver det til et menneskes navn: Horus bliver til Hori, ham fra Horus."
+    }
+  }
+}

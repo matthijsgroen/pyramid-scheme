@@ -1,0 +1,254 @@
+{
+  "spots": {
+    "fire": "Focul de tabără",
+    "sleeping": "Locul de dormit",
+    "water": "Locul de apă",
+    "cooking": "Locul de gătit",
+    "donkey": "Locul măgarului",
+    "camel": "Locul cămilei",
+    "mapTable": "Masa hărților",
+    "palmGarden": "Grădina cu palmieri",
+    "ibisPond": "Iazul ibișilor",
+    "lookout": "Foișorul de pază",
+    "godStatues": "Statuile zeilor",
+    "starCanopy": "Cortul cu stele"
+  },
+  "finds": {
+    "pot": "Oală de gătit",
+    "seatCushions": "Perne de șezut",
+    "reedMat": "Rogojină de trestie",
+    "blanket": "Pătură",
+    "tentRug": "Covor de cort",
+    "tentFlag": "Steag de cort",
+    "gourd": "Tigvă",
+    "jar": "Ulcior",
+    "secondJar": "Al doilea ulcior",
+    "spiceRack": "Raft cu mirodenii",
+    "breadBoard": "Tocător de pâine",
+    "starMap": "Hartă a stelelor",
+    "scrollCase": "Cutie pentru suluri",
+    "astrolabe": "Astrolab",
+    "reedGlobe": "Glob de trestie",
+    "seed": "Sămânță de palmier",
+    "secondPalm": "Sămânță de palmier",
+    "figTree": "Sămânță de smochin",
+    "papyrus": "Rădăcină de papirus",
+    "reeds": "Butaș de trestie",
+    "lotus": "Bulb de lotus",
+    "flag": "Steagul foișorului",
+    "thoth": "Statuetă a lui Thot",
+    "bastet": "Statuetă a lui Bastet",
+    "anubis": "Statuetă a lui Anubis",
+    "ra": "Statuetă a lui Ra",
+    "cloth": "Pânza cu stele"
+  },
+  "structures": {
+    "stoneRing": "Cerc de pietre",
+    "fire": "Foc",
+    "cookingStones": "Pietre de gătit",
+    "seatingStones": "Pietre de șezut",
+    "clayOven": "Cuptor de lut",
+    "windbreak": "Paravan de vânt",
+    "tent": "Cort",
+    "secondTent": "Al doilea cort",
+    "pavilion": "Pavilion",
+    "well": "Fântână",
+    "wellPulley": "Fântână cu scripete",
+    "tripod": "Trepied",
+    "breadOven": "Cuptor de pâine",
+    "dryingRack": "Uscătoare",
+    "feast": "Ospăț",
+    "table": "Masa hărților",
+    "lotusPlanter": "Jardinieră cu lotus",
+    "edgeStones": "Marginea iazului",
+    "post": "Stâlpul de pază",
+    "platform": "Platforma de pază",
+    "ladder": "Scară",
+    "roof": "Acoperiș",
+    "signalFire": "Foc de semnalizare",
+    "poles": "Catargele cortului",
+    "stars": "Stele",
+    "planets": "Planete"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Pietre de câmp",
+      "sandBed": "Pat de nisip"
+    },
+    "fire": {
+      "tinder": "Iască",
+      "acaciaLogs": "Bușteni de salcâm"
+    },
+    "cookingStones": {
+      "flatStone": "Piatră plată",
+      "supportStones": "Pietre de sprijin"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Bolovani netezi",
+      "sandstoneBlock": "Bloc de gresie",
+      "hewnSlab": "Lespede cioplită"
+    },
+    "clayOven": {
+      "ovenFloor": "Vatra cuptorului",
+      "firebricks": "Cărămizi de foc",
+      "smokeHole": "Gaură de fum",
+      "copperGrate": "Grătar de cupru"
+    },
+    "windbreak": {
+      "reedBundles": "Snopi de trestie",
+      "stakes": "Țăruși de lemn"
+    },
+    "tent": {
+      "tentPoles": "Stâlpi de cort",
+      "wovenCloth": "Pânză țesută",
+      "tentPegs": "Țăruși de cort"
+    },
+    "secondTent": {
+      "largeCloth": "Pânză mare de cort",
+      "ridgePole": "Bârna de sus",
+      "guyRopes": "Frânghii de întins",
+      "woolFloor": "Covor de lână pentru jos"
+    },
+    "pavilion": {
+      "pavilionPosts": "Stâlpii pavilionului",
+      "linenCanopy": "Acoperiș de in",
+      "hangingCurtains": "Perdele",
+      "woolRugs": "Covoare de lână",
+      "woodenFloor": "Podea de lemn"
+    },
+    "well": {
+      "wellStones": "Pietrele fântânii",
+      "rope": "Frânghie lungă",
+      "bucket": "Găleată",
+      "windlass": "Vârtej"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Roata scripetelui",
+      "frame": "Cadru de sprijin",
+      "hoistRope": "Frânghie de ridicat",
+      "counterweight": "Contragreutate",
+      "leatherBucket": "Găleată de piele"
+    },
+    "tripod": {
+      "tripodPoles": "Trei pari",
+      "binding": "Sfoară de legat",
+      "hook": "Cârlig de bronz"
+    },
+    "breadOven": {
+      "mudBricks": "Cărămizi de chirpici",
+      "clayPlaster": "Tencuială de lut",
+      "ovenLid": "Capacul cuptorului"
+    },
+    "dryingRack": {
+      "rackPoles": "Parii uscătoarei",
+      "crossbar": "Bară transversală",
+      "wickerTray": "Tavă de nuiele",
+      "cords": "Sfori de atârnat"
+    },
+    "feast": {
+      "lowTable": "Masă joasă",
+      "breadBaskets": "Coșuri cu pâine",
+      "roastDuck": "Rață friptă",
+      "beerJars": "Ulcioare cu bere",
+      "fruitBowl": "Bol cu fructe"
+    },
+    "table": {
+      "tableTop": "Tăblia mesei",
+      "trestles": "Capre de lemn",
+      "leatherStraps": "Curele de piele"
+    },
+    "lotusPlanter": {
+      "clayTub": "Jgheab de lut",
+      "nileSilt": "Mâl din Nil",
+      "waterJar": "Ulcior cu apă",
+      "lotusTubers": "Bulbi de lotus",
+      "stoneRim": "Margine de piatră"
+    },
+    "edgeStones": {
+      "riverStones": "Pietre de râu",
+      "clayBedding": "Strat de lut",
+      "gravel": "Pietriș",
+      "boundaryStakes": "Țăruși de hotar"
+    },
+    "post": {
+      "postTrunk": "Trunchi de palmier",
+      "footStones": "Pietre de temelie",
+      "wedges": "Pene",
+      "braces": "Proptele"
+    },
+    "platform": {
+      "platformBeams": "Grinzi de sprijin",
+      "platformPlanks": "Scânduri",
+      "lashingRope": "Frânghie de legat",
+      "edgeRail": "Balustradă"
+    },
+    "ladder": {
+      "ladderRails": "Laturile scării",
+      "rungs": "Trepte",
+      "groundPegs": "Țăruși de pământ",
+      "leatherLoops": "Bucle de piele"
+    },
+    "roof": {
+      "roofPoles": "Pari de acoperiș",
+      "thatch": "Frunze de palmier",
+      "clayLayer": "Strat de lut",
+      "bindingGrass": "Iarbă de legat"
+    },
+    "signalFire": {
+      "fireBasin": "Vas de foc",
+      "pitch": "Smoală",
+      "dryBrushwood": "Vreascuri uscate",
+      "flint": "Cremene",
+      "bellows": "Foale"
+    },
+    "poles": {
+      "masts": "Catarge",
+      "cornerStones": "Pietre de colț",
+      "stayLines": "Frânghii de ancorare",
+      "bigPegs": "Țăruși mari",
+      "poleSockets": "Suporturi pentru catarge"
+    },
+    "stars": {
+      "goldLeaf": "Foiță de aur",
+      "needleThread": "Ac și ață",
+      "indigoDye": "Vopsea indigo",
+      "chalk": "Cretă",
+      "stencils": "Șabloane"
+    },
+    "planets": {
+      "ochre": "Ocru",
+      "copperDiscs": "Discuri de cupru",
+      "lapisPowder": "Pulbere de lapis",
+      "hangingLoops": "Bucle de atârnat",
+      "dividers": "Compas"
+    }
+  },
+  "collection": {
+    "title": "Construcții",
+    "progress": "{{found}} din {{total}}",
+    "built": "construit",
+    "unknownPart": "???",
+    "open": "Arată piesele",
+    "close": "Ascunde piesele"
+  },
+  "reward": {
+    "find": "Găsit pentru tabără",
+    "part": "Piesă",
+    "progress": "{{name}} · {{found}} din {{total}}"
+  },
+  "haul": {
+    "new": "Nou în tabăra ta",
+    "parts_one": "{{name}} · {{count}} piesă",
+    "parts_few": "{{name}} · {{count}} piese",
+    "parts_other": "{{name}} · {{count}} de piese"
+  },
+  "arrivals": {
+    "donkey": "Măgarul tău e în tabără",
+    "cart": "Căruța ta e în tabără",
+    "camel": "Cămila ta e în tabără",
+    "secondDonkey": "Al doilea măgar al tău e în tabără",
+    "secondCamel": "A doua cămilă a ta e în tabără",
+    "sturdyCart": "Căruța ta mai zdravănă e în tabără",
+    "caravanBanner": "Steagul caravanei tale flutură în tabără"
+  }
+}

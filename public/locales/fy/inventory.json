@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Kening fan de goaden en hearsker fan de sinne, dy't elke dei yn syn sinneboat oer de himel farret."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "God mei de holle fan in jakhals, god fan mummys en it hjirneimels, beskermer fan de deaden."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Himelgod mei de holle fan in falk en beskermer fan de farao's, soan fan Osiris en Isis."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "God mei de holle fan in ibis, god fan wiisheid, skrift en kennis, hoeder fan de godlike argiven."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Kattegoadinne fan beskerming, wille en nij libben, dy't kweade geasten fuorthâldt."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Krokodillegod fan de Nyl, fan nij libben en fan moed yn 'e striid."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Skarabeegod fan werberte en nij begjin, dy't de sinne oer de himel rôlet."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Kobragoadinne en beskermster fan Neder-Egypte, teken fan keninklike macht."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "Goadinne fan tsjoenderij, memmen en betterskip, trouwe frou fan Osiris."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "God fan de ûnderwrâld, de dea en it opstean, rjochter fan de deaden."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "God fan gaos, stoarmen en de woastyn, broer en rivaal fan Osiris."
+    },
+    "d12": {
+      "name": "Nephthys",
+      "description": "Goadinne fan rouwe en beskerming fan de deaden, suster fan Isis."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Skeppergod en beskermer fan ambachtslju en arsjitekten, dy't dingen makke troch se út te sprekken."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Liuwegoadinne fan oarloch en betterskip, in felle beskermster dy't sykten genêze kin."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Kowegoadinne fan leafde, muzyk en memmen, dy't de farao's fuorre."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Farao",
+      "description": "Godlike hearsker fan Egypte, sjoen as in libbene god en in brêge tusken minsken en goaden."
+    },
+    "p2": {
+      "name": "Hegepryster",
+      "description": "De heechste lieder fan de timpels, dy't de hillige riten die en de godlike oarder bewarre."
+    },
+    "p3": {
+      "name": "Skriuwer",
+      "description": "Ien dy't lêze en skriuwe leard hie, hoeder fan argiven en kennis."
+    },
+    "p4": {
+      "name": "Arsjitekt",
+      "description": "Masterbouwer dy't piramiden, timpels en monuminten ûntwurp foar de ivichheid."
+    },
+    "p5": {
+      "name": "Generaal",
+      "description": "Kommandant dy't legers liede om de grinzen fan Egypte te beskermjen en it ryk grutter te meitsjen."
+    },
+    "p6": {
+      "name": "Dokter",
+      "description": "Genêzer dy't kennis fan medisinen mingde mei tsjoenderij om siken better te meitsjen."
+    },
+    "p7": {
+      "name": "Balsemer",
+      "description": "Hillige ambachtsman dy't immen klearmakke foar de reis nei it hjirneimels."
+    },
+    "p8": {
+      "name": "Boer",
+      "description": "Hy soarge foar it iten fan Egypte en wurke op it fruchtbere lân by de Nyl om it ryk te fuorjen."
+    },
+    "p9": {
+      "name": "Ambachtsman",
+      "description": "Handige makker fan moaie dingen, sieraden en keunst foar eallju en goaden."
+    },
+    "p10": {
+      "name": "Hanneler",
+      "description": "Keapman dy't bysûndere guod út fiere lannen meinaam lâns de hannelsrûtes."
+    },
+    "p11": {
+      "name": "Fizier",
+      "description": "Earste minister en riedsman fan de Farao, dy't it bestjoer fan it lân yn 'e gaten hold."
+    },
+    "p12": {
+      "name": "Orakel",
+      "description": "Hillige profeet dy't berjochten fan de goaden útlei en de takomst foarsei."
+    },
+    "p13": {
+      "name": "Seeman",
+      "description": "Stjoerman op 'e Nyl en de Middellânske See, nedich foar hannel en ferfier."
+    },
+    "p14": {
+      "name": "Stienhouwer",
+      "description": "Stienwurker dy't hiëroglyfen útbeitele en de grutte monuminten fan Egypte boude."
+    },
+    "p15": {
+      "name": "Wachter",
+      "description": "Beskermer fan hillige plakken en grêven, dy't soarget dat de deaden ivich rêste kinne."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Nylhynder",
+      "description": "Sterk rivierdier fan de Nyl, dêr't minsken bang foar wiene om syn krêft en syn lilke aard."
+    },
+    "a2": {
+      "name": "Liuw",
+      "description": "Kening fan de bisten, teken fan keninklike macht en godlike krêft yn 'e woastyn."
+    },
+    "a3": {
+      "name": "Oaljefant",
+      "description": "Gigantysk bist út de lannen yn it suden, fereare om syn wiisheid en syn ûnthâld."
+    },
+    "a4": {
+      "name": "Gazelle",
+      "description": "Flugge en sierlike bewenner fan de woastyn, teken fan faasje en elegânsje."
+    },
+    "a5": {
+      "name": "Aap",
+      "description": "Tûke aap dy't by Thoth heart, teken fan ferstân en kwea-aardichheid."
+    },
+    "a6": {
+      "name": "Fisk",
+      "description": "Hillige bisten fan de Nyl, dy't iten joegen en teken wiene fan nij libben."
+    },
+    "a7": {
+      "name": "Goes",
+      "description": "Hillige fûgel fan de Nylsompen, dy't heart by ferhalen oer it begjin fan de wrâld en oer de siel."
+    },
+    "a8": {
+      "name": "Bij",
+      "description": "Teken fan Neder-Egypte en fan de kening, makker fan djoere hunich."
+    },
+    "a9": {
+      "name": "Skyldpod",
+      "description": "Âld en wiis bist, dat it gewicht fan de wrâld op syn skyld draacht."
+    },
+    "a10": {
+      "name": "Kikkert",
+      "description": "Teken fan werberte en nij libben, dat opkomt út it hege wetter fan de Nyl."
+    },
+    "a11": {
+      "name": "Gier",
+      "description": "Hillige fûgel fan Opper-Egypte, de ierdske foarm fan de beskermgoadinne Nekhbet."
+    },
+    "a12": {
+      "name": "Ûle",
+      "description": "Wize nachtjager, hoeder fan ferburgen kennis en âlde geheimen."
+    },
+    "a13": {
+      "name": "Raam",
+      "description": "Hillich bist fan Amun-Ra, teken fan godlike macht en liederskip."
+    },
+    "a14": {
+      "name": "Sjiraf",
+      "description": "Heech en sierlik bist út de lannen yn it suden, dat mei syn lange nekke nei de himel rikt."
+    },
+    "a15": {
+      "name": "Jakhals",
+      "description": "Woastynbist dat de wei wiist nei it hjirneimels, tsjinner fan Anubis."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Teken fan libben en ivich libben, faak fêsthâlden troch goaden en farao's."
+    },
+    "art2": {
+      "name": "Each fan Horus",
+      "description": "Teken fan beskerming, keninklike macht en goede sûnens, dat heart by de himelgod Horus."
+    },
+    "art3": {
+      "name": "Sistrum",
+      "description": "Muzykynstrumint foar hillige feesten, dat heart by de goadinne Hathor."
+    },
+    "art4": {
+      "name": "Djed-pylder",
+      "description": "Teken fan stevichheid en opstean, faak byinoar mei Osiris."
+    },
+    "art5": {
+      "name": "Kartoesj",
+      "description": "Ovale râne om de namme fan in farao yn hiëroglyfen, dy't syn namme foar altyd beskermet."
+    },
+    "art6": {
+      "name": "Kanopyske Krûk",
+      "description": "Hillige krûk mei de holle fan in beskermer as deksel — der stiene der fjouwer om in kiste hinne, op wacht."
+    },
+    "art7": {
+      "name": "Septer",
+      "description": "Stêf fan macht dy't goaden en farao's droegen as teken fan godlik bestjoer."
+    },
+    "art9": {
+      "name": "Piramide",
+      "description": "Ivich grêf en poarte nei it hjirneimels, boud om foar altyd te bestean foar de farao's."
+    },
+    "art10": {
+      "name": "Sinneboat",
+      "description": "Hillige boat dy't de sinnegod Ra oer de himel draacht, fan moarnsiere oant skimer."
+    },
+    "art11": {
+      "name": "Obelisk",
+      "description": "Hege stiennen pylder mei in lytse piramide boppe-op, dy't nei de himel rikt om de goaden te earjen."
+    },
+    "art12": {
+      "name": "Hoedersstêf en Terskflaai",
+      "description": "Keninklike tekens dy't sjen litte dat de farao de hoeder en beskermer fan Egypte is."
+    },
+    "art14": {
+      "name": "Lotusblom",
+      "description": "Teken fan werberte en de sinne, dy't suver opkomt út it modderige wetter fan de Nyl."
+    },
+    "art15": {
+      "name": "Uraeuskroan",
+      "description": "Keninklike kroan mei de beskermjende kobra, droegen troch farao's as godlike beskerming."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Reidblêd",
+      "description": "Ien reid, foar de klank i. Efter de namme fan in god makket it de namme fan in minske: Horus wurdt Hori, hy fan Horus."
+    }
+  }
+}

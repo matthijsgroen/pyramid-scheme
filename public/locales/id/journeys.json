@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Fajar di Sphinx",
+    "description": "Sphinx Agung, dan tulisan di kakinya yang tidak bisa dibaca siapa pun lagi. Kata peta: mulai dari sini."
+  },
+  "starter_2": {
+    "name": "Jalur Pedagang Papirus",
+    "description": "Jalan dagang di tepi Sungai Nil, penuh gudang milik para pedagang. Ada beberapa yang belum pernah dikosongkan."
+  },
+  "starter_3": {
+    "name": "Kuil Bastet",
+    "description": "Kuil Dewi Bastet. Kucing-kucing di sini dianggap suci, dan pestanya tiap tahun adalah yang paling meriah di Mesir. Ada perahu, musik, pokoknya lengkap!"
+  },
+  "starter_4": {
+    "name": "Sekolah Juru Tulis",
+    "description": "Sekolah para juru tulis, tempat orang Mesir belajar menulis. Ruang kelasnya masih terkubur pasir."
+  },
+  "starter_treasure_tomb": {
+    "name": "Gudang Pedagang yang Terlupakan",
+    "description": "Gudang bawah tanah seorang pedagang, bukan raja. Kendi-kendi bertumpuk, disegel dan diberi label, dan tidak ada yang protes di bawah sana.",
+    "mapHint": "Sobekan ini menggambar jalan pasar dan pintu gudang. Tempat sembunyi seorang pedagang, tidak lebih."
+  },
+  "junior_1": {
+    "name": "Perjalanan Burung Ibis Suci",
+    "description": "Daerah rawa, dan burung ibis yang berjalan di airnya. Orang Mesir memperhatikan burung ini: kalau mereka pulang, banjir Sungai Nil akan datang."
+  },
+  "junior_2": {
+    "name": "Lembah Para Perajin",
+    "description": "Deir el-Medina, tempat tinggal para pembuat makam. Semua barang untuk makam raja dibuat di sini dulu, pakai cetakan."
+  },
+  "junior_3": {
+    "name": "Kuil Thoth",
+    "description": "Kuil Dewa Thoth. Dia yang menemukan tulisan, mencatat semuanya, dan berhitung. Mirip dengan yang kita kerjakan dari tadi!"
+  },
+  "junior_4": {
+    "name": "Mercusuar Aleksandria",
+    "description": "Pharos di Aleksandria. Di puncaknya ada api yang menyala sepanjang malam, dan pelaut bisa menemukan pantai dari jarak sehari berlayar."
+  },
+  "junior_treasure_tomb": {
+    "name": "Ruang Rahasia Bangsawan",
+    "description": "Ruang rahasia seorang bangsawan wanita, dilukis dari lantai sampai langit-langit. Dia membeli tiruan paling bagus yang bisa dibeli, dan tidak pernah bilang siapa-siapa.",
+    "mapHint": "Tinta halus, cap lambang keluarga di pojok. Seseorang yang terpandang ingin ruangan ini dilupakan."
+  },
+  "expert_1": {
+    "name": "Lembah Para Raja",
+    "description": "Lembah Para Raja. Orang berhenti membangun piramida dan menyembunyikan makam raja di satu lembah, di bawah puncak gunung yang bentuknya mirip piramida."
+  },
+  "expert_2": {
+    "name": "Kompleks Kuil Karnak",
+    "description": "Karnak, yang terus diperbesar selama dua ribu tahun. Aula besarnya saja punya seratus tiga puluh empat tiang, dan semuanya berukir."
+  },
+  "expert_3": {
+    "name": "Ekspedisi Delta Nil",
+    "description": "Tempat Sungai Nil bercabang dan melebar hijau. Negeri Sobek: papirus, ikan, dan buaya yang disembah dan diberi makan."
+  },
+  "expert_4": {
+    "name": "Piramida Djoser",
+    "description": "Piramida berundak Djoser, bangunan batu pertama yang sebesar itu. Arsiteknya, Imhotep, akhirnya dikenang sebagai dewa."
+  },
+  "expert_treasure_tomb": {
+    "name": "Ruang Harta Imam Besar",
+    "description": "Ruang harta seorang imam besar, di bawah lantai persembahan. Semua yang ada di bawah sana diberikan kepada dewa dan tidak pernah diambil lagi.",
+    "mapHint": "Garis-garisnya menggambar halaman kuil, dan tangga yang turun ke bawah lantai persembahannya."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Ruang Paling Suci",
+    "description": "Ruang tersegel di jantung kuil. Imam besar masuk sekali sehari untuk memandikan dewa dan memberinya pakaian.",
+    "mapHint": "Lorong-lorong melewati ruang harta kuil menuju pintu tersegel. Hanya imam tertinggi yang pernah melewatinya."
+  },
+  "master_1": {
+    "name": "Piramida Agung Giza",
+    "description": "Piramida Agung. Dua puluh tahun menyusun batu, dan di sebelahnya ada satu kota penuh yang memberi makan para pekerja dengan roti dan minuman."
+  },
+  "master_2": {
+    "name": "Kitab Orang Mati",
+    "description": "Bukan satu buku, tapi kumpulan mantra yang disalin sesuai pesanan. Yang murah ada tempat kosong untuk menulis namamu."
+  },
+  "master_3": {
+    "name": "Kutukan Para Firaun",
+    "description": "Kutukan terkenal itu dikarang koran-koran pada tahun 1923. Orang Mesir menjaga makam mereka dengan pintu dan surat-surat."
+  },
+  "master_4": {
+    "name": "Makam Nefertari",
+    "description": "Makam Nefertari, ruangan dengan lukisan terindah di Mesir. Warnanya dibuat dari batu yang digiling: azurit, malakit, oker."
+  },
+  "master_treasure_tomb": {
+    "name": "Harta Rahasia Firaun",
+    "description": "Harta pribadi seorang raja, jauh di tempat peta-peta sudah menyerah. Apa pun yang dikubur bersamanya masih ada di bawah sana.",
+    "mapHint": "Ada kartusy kerajaan di satu sisi, dan jalurnya berakhir jauh di bawah padang pasir."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Aula Osiris",
+    "description": "Aula Osiris. Dewa banjir dan gandum. Apa pun yang masuk ke tanah di sini, diharapkan tumbuh kembali.",
+    "mapHint": "Di bawah ruang-ruang kerajaan, peta terus turun ke sebuah aula yang dihiasi upacara orang mati."
+  },
+  "wizard_1": {
+    "name": "Perjalanan Matahari Ra",
+    "description": "Saat matahari terbenam, Ra turun ke bawah dunia dan harus melewati dua belas jam gelap. Orang Mesir menulis apa yang terjadi di setiap jamnya."
+  },
+  "wizard_2": {
+    "name": "Patung Raksasa Memnon",
+    "description": "Dua raksasa duduk milik Amenhotep III. Orang Yunani mengira itu orang lain, dan nama itu melekat selama dua ribu tahun."
+  },
+  "wizard_3": {
+    "name": "Ruang Ma'at",
+    "description": "Ruang Dewi Ma'at. Dialah aturan segala sesuatu, dan satu bulu burung untanya menjadi ukuran untuk semua hal lain."
+  },
+  "wizard_4": {
+    "name": "Piramida Abadi",
+    "description": "Lapisan luarnya batu kapur yang dipoles, putih seperti garam, dipasang begitu rapi sampai kilaunya terlihat dari jarak sehari berjalan kaki."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Ruang Harta Para Dewa",
+    "description": "Tempat kuil menyimpan barang milik para dewa. Tidak ada yang boleh masuk tanpa membawa benda yang tepat.",
+    "mapHint": "Tidak ada satu pun tanda di sobekan ini yang berasal dari dunia manusia. Apa pun yang digambarnya, para dewa yang menaruhnya di sana."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Alam Kekuatan Semesta",
+    "description": "Peta bintang di seluruh langit-langit, dilukis supaya orang mati bisa tahu jam berapa di malam hari. Tali seseorang masih tergantung di lubang sumur.",
+    "mapHint": "Di balik ruang harta para dewa, garis-garisnya pecah menjadi jalan bintang, tempat kekuatan hidup dan kekacauan disimpan sebagai pusaka."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Takhta Keabadian",
+    "description": "Satu kursi di tengah dan empat puluh dua hakim di sekelilingnya. Masing-masing mengajukan satu pertanyaan, dan kamu harus menjawab tidak.",
+    "mapHint": "Semua jalan bintang di pecahan ini bertemu di satu kursi, tepat di jantung alam para dewa."
+  }
+}

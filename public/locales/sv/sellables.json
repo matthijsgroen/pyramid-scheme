@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Sten",
+    "bronze": "Brons",
+    "silver": "Silver",
+    "gold": "Guld",
+    "divine": "Gudomlig"
+  },
+  "sell_stone_1": {
+    "name": "Kantstött lerskärva",
+    "description": "En trasig lerskärva där en skrivare har övat på att skriva. Bokstäverna är för blekta för att läsa."
+  },
+  "sell_stone_2": {
+    "name": "Sprucken lerkruka",
+    "description": "En kruka för säd eller öl. Den har spruckit på ena sidan av tyngden från hundratals år."
+  },
+  "sell_stone_3": {
+    "name": "Sliten vassandal",
+    "description": "Flätad av papyrusvass. Sulan är tunn efter att någon bortglömd arbetare gått i den varje dag."
+  },
+  "sell_stone_4": {
+    "name": "Blekt linnebit",
+    "description": "En trasig remsa ofärgat linne, sådant som lindades runt de döda – eller användes för att laga ett segel."
+  },
+  "sell_stone_5": {
+    "name": "Trasigt flintblad",
+    "description": "En kniv av flinta med avbruten spets. Billig att göra, ännu billigare att byta ut."
+  },
+  "sell_bronze_1": {
+    "name": "Böjd bronsamulett",
+    "description": "En billig skyddsamulett. Den blev sned när den göts och ingen lagade den."
+  },
+  "sell_bronze_2": {
+    "name": "Ärgad bronsspegel",
+    "description": "En gång så blank att man kunde se sig själv i den. Nu är den grön och grumlig av ålder."
+  },
+  "sell_bronze_3": {
+    "name": "Slö bronskrok",
+    "description": "En fiskares krok som tappades i Nilen långt innan graven förseglades."
+  },
+  "sell_bronze_4": {
+    "name": "Liten bronsklocka",
+    "description": "Den skulle hänga på en tempeldörr eller på en dansares fotled – men nu låter den falskt."
+  },
+  "sell_bronze_5": {
+    "name": "Matt bronsring",
+    "description": "En enkel ring, gjord för ett finger som för länge sedan blivit stoft."
+  },
+  "sell_silver_1": {
+    "name": "Matt silverankh",
+    "description": "Ett tecken för liv, mattslitet efter hundratals år under jorden."
+  },
+  "sell_silver_2": {
+    "name": "Silverstav för kohl",
+    "description": "En smal stav som rika människor använde för att måla runt ögonen. Färgen är borta sedan länge."
+  },
+  "sell_silver_3": {
+    "name": "Bucklig silverskål",
+    "description": "En liten offerskål, intryckt på ena sidan när taket ovanför till slut rasade."
+  },
+  "sell_silver_4": {
+    "name": "Hårnål av silver",
+    "description": "Enkel och utan pynt. Den höll en gång undan håret på någon vars namn är glömt."
+  },
+  "sell_silver_5": {
+    "name": "Slitet silverarmband",
+    "description": "Ett tunt silverarmband med trasigt lås. För enkelt för en adelsman, för fint för en arbetare."
+  },
+  "sell_gold_1": {
+    "name": "Liten guldpärla",
+    "description": "En pärla från ett gravhalsband som gick sönder för länge sedan."
+  },
+  "sell_gold_2": {
+    "name": "Bit av bladguld",
+    "description": "En flisa bladguld som gravplundrare skrapade av en staty hundratals år innan du kom hit."
+  },
+  "sell_gold_3": {
+    "name": "Tunt guldörhänge",
+    "description": "Hamrat tunt så att guldet skulle räcka längre."
+  },
+  "sell_gold_4": {
+    "name": "Guldprickig skärva",
+    "description": "En trasig bit förgylld puts. Små prickar av riktigt guld sitter fortfarande kvar."
+  },
+  "sell_gold_5": {
+    "name": "Kantstött guldsigill",
+    "description": "En sigillring så nött att ingen kan läsa den längre – vems namn det än var, så är det glömt."
+  },
+  "sell_divine_1": {
+    "name": "Blekt lapisskarabé",
+    "description": "Huggen i dyrbar lapis lazuli, hämtad långt bortifrån för en faraos nya liv. Färgen har bleknat med åren."
+  },
+  "sell_divine_2": {
+    "name": "Ögonamulett av karneol",
+    "description": "Ett skyddande öga i blodröd karneol. Det skulle hålla otur borta i livet efter döden."
+  },
+  "sell_divine_3": {
+    "name": "Bit av turkosmosaik",
+    "description": "En enda bit från en krossad mosaik. Den var en gång en del av en gudsbild på en tempelvägg."
+  },
+  "sell_divine_4": {
+    "name": "Skärva av alabasterkruka",
+    "description": "En bit av en kruka där en faraos inre organ förvarades – dyrbar sten för ett lite otäckt jobb."
+  },
+  "sell_divine_5": {
+    "name": "Rituell kniv av obsidian",
+    "description": "Vulkaniskt glas, slipat för fester i templet. Den var aldrig tänkt för strid."
+  }
+}

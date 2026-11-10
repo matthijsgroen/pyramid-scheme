@@ -1,0 +1,1718 @@
+{
+  "language": "Euskara",
+  "saveUnreadable": {
+    "title": "Ezin da zure aurrerapena kargatu",
+    "body": "Nabigatzaileak ez dizu orain zure partida gordea ematen. Zure partida ez da galdu: kargatu berriz orria berriz saiatzeko.",
+    "banner": "Aurrerapena ez da gordetzen ari. Ukitu berriz kargatzeko.",
+    "reload": "Berriz kargatu",
+    "continue": "Jarraitu jokatzen gorde gabe",
+    "reset": "Hasi berriz (ezabatu partida)",
+    "confirmReset": "Honek zure partida osoa ezabatzen du, eta ezin da desegin. Berriz hasi?",
+    "confirmResetYes": "Bai, ezabatu nire partida",
+    "confirmResetNo": "Ez, itzuli"
+  },
+  "difficulty": {
+    "starter": "Hasiberria",
+    "junior": "Gaztea",
+    "expert": "Aditua",
+    "master": "Maisua",
+    "wizard": "Aztia"
+  },
+  "journeyLength": {
+    "short": "Laburra",
+    "medium": "Ertaina",
+    "long": "Luzea"
+  },
+  "time": {
+    "morning": "Goiza",
+    "afternoon": "Arratsaldea",
+    "evening": "Iluntzea",
+    "night": "Gaua"
+  },
+  "tomb": {},
+  "ui": {
+    "level": "Maila",
+    "symbols": "ikurrak",
+    "journey": "Bidaia",
+    "tableau": "Eszena",
+    "difficulty": "Zailtasuna",
+    "length": "Luzera",
+    "time": "Ordua",
+    "requiredPrestige": "Behar den ospe-maila",
+    "rewards": "Sariak",
+    "coins": "Txanponak",
+    "pieces": "Zatiak",
+    "description": "Deskribapena",
+    "expedition": "Espedizioa",
+    "expeditionCompleted": "Espedizioa amaituta!",
+    "goBackToBase": "Kanpalekura itzuli",
+    "backArrow": "←",
+    "back": "← Atzera",
+    "floor": "{{number}}. solairua",
+    "enterSite": "Sartu barrura",
+    "prompt": {
+      "here": "Ikertu",
+      "stairs": "Hartu eskailerak",
+      "exit": "Utzi leku hau",
+      "zipline": "Jaitsi sokatik: ezin da atzera itzuli",
+      "oneWay": "Pasa beste aldera: ezin da atzera itzuli",
+      "liftStone": "Altxatu harria",
+      "setStone": "Jarri harria plakaren gainean",
+      "postStone": "Sartu harria",
+      "takeStone": "Hartu harria",
+      "squeeze": "Estu-estu pasatu",
+      "replay": "Jokatu berriz"
+    },
+    "blocked": {
+      "carrying": "Ezin da pasatu harri batekin"
+    },
+    "backToMap": "Mapara itzuli",
+    "continueExploration": "Jarraitu piramideak arakatzen.",
+    "startExpedition": "Hasi espedizioa",
+    "webBuriedPercent": "Oraindik %{{percent}} lurperatuta",
+    "interruptExpedition": "Eten espedizioa",
+    "confirmInterruptExpedition": "Ziur zaude espedizio hau eten nahi duzula? Espedizioaren aurrerapena gordeko da, baina mailako aurrerapena galduko da!",
+    "cancel": "Utzi",
+    "settings": "Ezarpenak",
+    "language": "Hizkuntza",
+    "close": "Itxi",
+    "done": "Eginda",
+    "clearGameData": "Ezabatu jokoaren datuak",
+    "confirmClearGameData": "Honek betiko ezabatzen ditu aurrerapen guztia, gauza guztiak eta arakatutako piramideak. Ezin da desegin.",
+    "disableTutorials": "Desgaitu tutorialak",
+    "treasureTomb": "Altxorraren lekua",
+    "requiresMapPieces": "Mapa-zatiak behar dira",
+    "mapPieces": "Mapa-zatiak",
+    "completeExpeditionsToUnlock": "Amaitu espedizioak irekitzeko",
+    "availableSymbols": "Ikur erabilgarriak:",
+    "fragmentsNeeded": "{{found}}/{{required}} behar dira",
+    "howToPlay": "Nola jokatu",
+    "puzzleComplete": "Erantzuna hau da:",
+    "puzzleCompleted": "Buru-hausgarria ebatzita",
+    "trapBlocked": "Ez duzu nahikoa osasun tranpa hau probatzeko",
+    "spiritsRejectCode": "Izpirituek ez dute kode hau onartzen",
+    "sacredSealBroken": "Zigilu sakratua hautsi da",
+    "newExpeditionUnlocked": "Espedizio berri bat ireki da",
+    "newTombUnlocked": "Hilobi berri bat ireki da",
+    "tierComingSoonTitle": "{{tier}} mailako espedizioak bidean daude",
+    "tierComingSoon": "Giltza daukazu, baina {{tier}} mailako piramideak oraindik eraikitzen ari dira. Geroago iritsiko dira. Bitartean, zure giltzak lehendik ezagutzen dituzun piramideetako leku gehiago irekitzen ditu.",
+    "answerNow": "Erantzuna hau da: ",
+    "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "resetPuzzle": "Hasi berriz",
+    "hint": "Pista",
+    "undo": "Desegin",
+    "erase": "Ezabatu",
+    "notes": "Oharrak",
+    "solvedUnaided": "Pistarik gabe ebatzita",
+    "solvedWithHints_one": "Pista bakar batekin ebatzita",
+    "solvedWithHints_other": "{{count}} pistarekin ebatzita",
+    "tapToContinue": "Ukitu jarraitzeko",
+    "goal": "Helburua"
+  },
+  "trap": {
+    "warning": "⚠ Tranpa duen korridorea",
+    "canAttempt": "Pasatzen saia zaitezke.",
+    "tooWeak": "Oso ahul zaude: huts egiten baduzu, ezer gabe geratuko zara.",
+    "attempt": "Probatu tranpa",
+    "turnAround": "Buelta eman",
+    "rested": "Suaren ondoan atseden hartuta: berriz sasoian"
+  },
+  "gate": {
+    "title": "🔒 Ate itxia",
+    "locked": "Oraindik ez duzu giltza egokia.",
+    "markedWith": "Ikur bat dago atean zizelkatuta:",
+    "unlocked": "Giltza daukazu.",
+    "pass": "Pasatu",
+    "turnAround": "Buelta eman",
+    "wardDescription": {
+      "starter": "Merkatari baten zigiluak pasabide hau ixten du. Haren giltzak bakarrik irekiko du.",
+      "junior": "Noble baten armarriak bide hau ixten du. Haren giltzak bakarrik altxatzen du.",
+      "expert": "Apaiz nagusi baten tenplu-babesak ate hau zaintzen du. Giltza sakratuak ireki behar du.",
+      "master": "Faraoi baten errege-zigiluak pasabide hau lotzen du. Erregearen giltzak bakarrik hausten du.",
+      "wizard": "Jainkoen babes batek ate hau eusten du. Giltza jainkotiarrak bakarrik pasatuko du."
+    },
+    "needsKey": "Ateak giltza baterako marka du:",
+    "lockedColor": "Oraindik ez duzu giltza hori aurkitu solairu honetan."
+  },
+  "chest": {
+    "tapToOpen": "Ukitu irekitzeko",
+    "money_one": "Txanpon bat",
+    "money_other": "{{count}} txanpon",
+    "mapPiece": "Mapa-zatia",
+    "mapPieceDescription": "Aspaldi ahaztutako leku baterako mapa baten zati hauskorra. Lastima, ez dago osotik gertu ere...",
+    "mapPieceProgress": "{{found}} / {{required}} mapa-zati bilduta",
+    "mapPieceComplete": "Mapa osorik dago: {{name}}-ra darama.",
+    "hieroglyphFragment": "Hieroglifo-zatia",
+    "fragmentProgress": "{{found}} / {{required}} zati aurkituta",
+    "tombKey": "Hilobiko giltza",
+    "sandLever": "Harea-palanka",
+    "sandLeverDescription": "Tira egiten diozu eta behean geratzen da. Urrun nonbait, harea husten ari da.",
+    "webKey": "Giltza zigilatua",
+    "webKeyDescription": "Bere buruan beste nonbait ate zigilatu batean ikusi duzun marka bat dago.",
+    "hieroglyphs": "Antzinako hieroglifoak",
+    "hieroglyphsDescription": "Gela honetako hormetan idatzitako ikur sakratuak. Haien esanahiak antzinako munduari buruz dakizuna handitzen du.",
+    "mosaicPiece": "Mosaiko-zatia",
+    "mosaicPieceDescription": "Beira-pieza distiratsua, mosaiko handi baten zati bat. Jarri besteen ondoan, eta ezkutuko irudia poliki-poliki agertuko da.",
+    "waterskin": "Ur-zahatoa",
+    "waterskinDescription": "Ur freskoa. Bertan edaten duzu, eta zauriak arintzen zaizkizu."
+  },
+  "loot": {
+    "youFound": "Aurkitu duzu",
+    "expeditionReward": "Sari gehigarria espedizioa amaitzeagatik",
+    "clickToContinue": "Ukitu edonon jarraitzeko"
+  },
+  "money": {
+    "label": "Txanponak"
+  },
+  "shop": {
+    "title": "Fezen postua",
+    "invitation": "Begiratu postuari",
+    "buy": "Erosi",
+    "sell": "Saldu",
+    "soldOut": "Agortuta",
+    "dismiss": "Joan",
+    "rareItems": "Aurkikuntza arraroak",
+    "sellSection": "Saltzeko tramankuluak",
+    "haul": {
+      "coins_one": "+{{count}} txanpon",
+      "coins_other": "+{{count}} txanpon",
+      "note": "Bidean aurkitutako txanpon solteak"
+    }
+  },
+  "purchases": {
+    "donkey": {
+      "name": "Astoa",
+      "need": "Asto bat behar duzu",
+      "opens": "Zure gauzak eramaten ditu. Harekin Aditua mailako bidaietara joan zaitezke."
+    },
+    "cart": {
+      "name": "Gurdia",
+      "need": "Gurdi bat behar duzu",
+      "opens": "Kanpaleku osoa sartzen da bertan. Harekin Maisua mailako bidaietara joan zaitezke."
+    },
+    "camel": {
+      "name": "Gamelua",
+      "need": "Gamelu bat behar duzu",
+      "opens": "Egun askotan ibiltzen da urik gabe. Santutegi barrenera eramaten zaitu."
+    },
+    "secondDonkey": {
+      "name": "Bigarren astoa",
+      "need": "Bigarren asto bat behar duzu",
+      "opens": "Are gehiago eramateko. Harekin Aztia mailako bidaietara joan zaitezke."
+    },
+    "secondCamel": {
+      "name": "Bigarren gamelua",
+      "need": "Bigarren gamelu bat behar duzu",
+      "opens": "Bi gameluk nahikoa ur eramaten dute Osirisen aretorako."
+    },
+    "sturdyCart": {
+      "name": "Gurdi sendoagoa",
+      "need": "Gurdi sendoagoa behar duzu",
+      "opens": "Ez da hautsiko, ezta Indar kosmikoen erresumarako bidean ere."
+    },
+    "caravanBanner": {
+      "name": "Karabanaren bandera",
+      "opens": "Ez du ezer irekitzen. Dibertsiorako bakarrik."
+    },
+    "hint": "Fezek bat saltzen du hemen: {{place}}",
+    "devGrant": "Erosi animalia guztiak"
+  },
+  "level": {
+    "completed": "Maila amaituta!"
+  },
+  "mosaic": {
+    "place_one": "Jarri zati bat",
+    "place_other": "Jarri {{count}} zati",
+    "placing": "Jartzen…",
+    "panel": {
+      "starter": "Ateko zaindaria",
+      "junior": "Lehen ikasgaia",
+      "expert": "Eguzkiari sartzen utzi",
+      "master": "Errege berdea",
+      "wizard": "Luma eta bihotza"
+    },
+    "entrance": {
+      "title": "Mosaikoa",
+      "label": "Mosaikoa {{found}}/{{total}}"
+    },
+    "haul": {
+      "pieces_one": "Mosaiko-zati bat",
+      "pieces_other": "{{count}} mosaiko-zati",
+      "note": "Beirateko leihorako"
+    }
+  },
+  "collection": {
+    "tabs": {
+      "treasures": "Altxorrak",
+      "hieroglyphs": "Hieroglifoak",
+      "stories": "Istorioak",
+      "junk": "Tramankuluak"
+    },
+    "tabsLabel": "Bildu duzuna",
+    "tabNew_one": "{{label}} · berri bat",
+    "tabNew_other": "{{label}} · {{count}} berri",
+    "empty": "Zure kutxa hutsik dago oraindik",
+    "newLabel": "BERRIA",
+    "clickForDetails": "Ukitu lauki bat xehetasunetarako",
+    "categories": {
+      "deities": "🏺 Jainkoak",
+      "professions": "⚱️ Lanbideak",
+      "animals": "🐾 Animaliak",
+      "artifacts": "💎 Objektuak",
+      "treasures": "💰 Altxorrak",
+      "junk": "🔷 Tramankuluak",
+      "signs": "✍️ Ikurrak"
+    },
+    "treasureCategories": {
+      "merchantCache": "💰 Merkatariaren gordelekua",
+      "nobleVault": "👑 Noblearen ganga",
+      "templeSecrets": "🏛️ Tenpluaren sekretuak",
+      "ancientRelics": "🏺 Antzinako erlikiak",
+      "mythicalArtifacts": "✨ Objektu mitikoak"
+    }
+  },
+  "detector": {
+    "compassTitle": "Iparrorratza",
+    "corridorTitle": "Korridore-bilatzailea",
+    "pickTarget": "Aukeratu hieroglifo bat kanpalekuko mapen mahaian",
+    "allCollected": "Oraindik ez dago zatirik eskura lehen arakatu duzun piramide batean",
+    "more": "+{{count}} gehiago",
+    "corridorHere": "Pasabide ezkutu bat dago hementxe",
+    "revealCorridor": "Ireki",
+    "corridorNearby": "Korridore ezkutu bat dago gertu",
+    "corridorOnFloor": "Korridore ezkutu bat dago solairu honetan",
+    "lookingFor": "{{symbol}} bilatzen",
+    "access": {
+      "open": "Ez dakigu ezerk hau oztopatzen duenik",
+      "unknown": "Agian ezin da oraindik iritsi: hilobi baten barruan dago, edo salgai"
+    },
+    "corridorNoneNearby": "Ez dago korridore ezkuturik gertu",
+    "corridorNoneOnFloor": "Ez dago korridore ezkuturik solairu honetan",
+    "corridorOtherFloor": "Korridore ezkutu bat dago beste solairu batean",
+    "corridorNoneInPyramid": "Ez dago korridore ezkuturik beste solairuetan",
+    "title": "Detektagailua",
+    "band": {
+      "none": "Ez da ezer detektatu",
+      "pyramid": "Zerbait piramide honetan",
+      "floor": "Zerbait solairu honetan",
+      "near": "Zerbait gertu",
+      "here": "Hementxe! Ireki detektagailua"
+    },
+    "camp": {
+      "parts": "{{count}} / {{total}} zati",
+      "compassReach": {
+        "1": "piramidea ikusten du",
+        "2": "solairua ikusten du",
+        "3": "lekua erakusten du"
+      },
+      "pickHeading": "Zer bilatzen du iparrorratzak?",
+      "onlyIncomplete": "Zati bat duzun ikurrak bakarrik, osatu arte.",
+      "whereHeading": "Non dauden {{symbol}} ikurraren zatiak",
+      "pickFirst": "Aukeratu ikur bat bere zatiak non dauden ikusteko.",
+      "follow": "Jarraitu ikur honi",
+      "following": "Iparrorratzak ikur honi jarraitzen dio",
+      "nothingToFind": "Oraindik ez duzu osatu gabeko ikur baten zatirik.",
+      "noneInReach": "Oraindik ez dago zatirik eskura lehen arakatu duzun piramide batean.",
+      "corridorReach": {
+        "1": "gertuko korridore bat entzuten du",
+        "2": "solairu osoa entzuten du",
+        "3": "beste solairuak ere entzuten ditu",
+        "4": "beste bidaiak entzuten ditu"
+      },
+      "corridorInPyramid": "Piramide baten barruan, korridore itxiak entzuten ditu.",
+      "corridorFarNext": "Lau zatiekin, beste bidaiak entzuten ditu kanpalekutik.",
+      "corridorWhere": "Non dagoen oraindik korridore itxi bat",
+      "corridorNone": "Ez dago korridore itxirik joan zaren bidaietan.",
+      "pyramid": "{{n}}. piramidea",
+      "corridorCount_one": "Korridore bat",
+      "corridorCount_other": "{{count}} korridore"
+    }
+  },
+  "keys": {
+    "blue": "Giltza urdina",
+    "red": "Giltza gorria",
+    "green": "Giltza berdea",
+    "yellow": "Giltza horia",
+    "purple": "Giltza morea",
+    "bundle": "Giltza-sorta bat",
+    "foundDescription": "Kolore honekin markatutako ateak irekitzen ditu, solairu honetan.",
+    "heldTitle": "{{key}}: eskuan",
+    "neededTitle": "{{key}}: oraindik behar da"
+  },
+  "balance": {
+    "rules": {
+      "tap": "Ukitu beheko ikur bat, eta gero zenbaki bat. Ukitu berriz zenbaki hori kentzeko.",
+      "same": "Ikur batek pisu bera du balantza guztietan.",
+      "cancel": "Kendu gauza bera bi platerretatik, eta balantzak orekan jarraituko du. Ukitu markatutako pieza bat horretarako: geratzen dena errenkada berri gisa gordetzen da.",
+      "swap": "Ukitu aurrean bere parekorik ez duen ikur bat, eta gero ikur hori bakarrik dagoen errenkada bat, errenkada horrek balio duenaren truke aldatzeko."
+    },
+    "hint": {
+      "mistake": "Eman dituzun pisuetako batek balantza bat okertzen du. Kendu eta begiratu berriz.",
+      "alone": "Argiztatutako errenkadan, {{glyph}} da zenbakirik gabe geratzen den pieza bakarra. Kalkulatu zenbat pisatzen duen.",
+      "equalShares": "Argiztatutako errenkadan {{glyph}} besterik ez dago zenbaki baten aurrean. Banatu zenbaki hori haien artean.",
+      "difference": "Argiztatutako bi errenkadak berdinak dira, {{glyph}} izan ezik. Konparatu itzazu.",
+      "cancelGlyph": "Argiztatutako errenkadaren bi platerek dute {{glyph}}. Ukitu bat bi aldeetatik kentzeko: errenkadak orekan jarraitzen du.",
+      "cancelStones": "Argiztatutako errenkadaren bi platerek zenbaki hutsak dituzte. Ukitu bat bi aldeetatik kopuru bera kentzeko.",
+      "swap": "Argiztatutako errenkada batek dio {{glyph}} bakar batek zenbat balio duen. Ukitu beste errenkada argiztatuko {{glyph}}, eta gero ukitu errenkada hori."
+    },
+    "swap": {
+      "pick": "Ukitu errenkada argiztatu bat {{glyph}} hau errenkada horrek dioen balioaren truke aldatzeko.",
+      "none": "Hemen ezerk ez du esaten {{glyph}} bakar batek zenbat balio duen, eta aurrean ez dago parekorik."
+    },
+    "goal": {
+      "default": "Ikur bakoitzak pisu bat du, eta balantza guztiak orekan daude.",
+      "weighing": "Ikur bakoitzak bere pisua aurkitzen du, eta balantza guztiak orekan geratzen dira."
+    },
+    "name": {
+      "default": "Balantza",
+      "weighing": "Bihotzaren pisaketa"
+    }
+  },
+  "sumplete": {
+    "rules": {
+      "tap": "Ukitu behin zenbaki bat ezabatzeko, berriz gordetzen duzula markatzeko, eta berriz garbitzeko.",
+      "totals": "Helburu bakoitzaren azpiko zenbaki txikia lerro horrek orain batuta ematen duena da."
+    },
+    "hint": {
+      "mistake": "Hemengo marketako bat ezin da zuzena izan. Desegin eta begiratu berriz.",
+      "tooBig": {
+        "row": "Errenkada honek oraindik {{deficit}} behar du. {{value}} handiagoa da, beraz ezin da geratu.",
+        "col": "Zutabe honek oraindik {{deficit}} behar du. {{value}} handiagoa da, beraz ezin da geratu."
+      },
+      "allStrike": {
+        "row": "Errenkada honetan geratzen diren zenbakiek helburua ematen dute jada, beraz beste guztiak kendu behar dira.",
+        "col": "Zutabe honetan geratzen diren zenbakiek helburua ematen dute jada, beraz beste guztiak kendu behar dira."
+      },
+      "allKeep": {
+        "row": "Errenkada honek helburua ematen du jada. Markatu zenbaki hauek geratzen direla, haietatik pasatzen diren zutabeak kalkulatu ahal izateko.",
+        "col": "Zutabe honek helburua ematen du jada. Markatu zenbaki hauek geratzen direla, haietatik pasatzen diren errenkadak kalkulatu ahal izateko."
+      },
+      "parityKeep": {
+        "row": "Errenkada honek oraindik {{deficit}} behar du, zenbaki bakoitia. {{value}} da geratzen den bakoiti bakarra, beraz geratu egin behar da.",
+        "col": "Zutabe honek oraindik {{deficit}} behar du, zenbaki bakoitia. {{value}} da geratzen den bakoiti bakarra, beraz geratu egin behar da."
+      },
+      "parityStrike": {
+        "row": "Errenkada honek oraindik {{deficit}} behar du, zenbaki bikoitia. {{value}} da geratzen den bakoiti bakarra, beraz kendu egin behar da.",
+        "col": "Zutabe honek oraindik {{deficit}} behar du, zenbaki bikoitia. {{value}} da geratzen den bakoiti bakarra, beraz kendu egin behar da."
+      },
+      "onlyCombination": {
+        "row": "Errenkada honetan zenbaki-multzo bakar batek ematen du {{deficit}}.",
+        "col": "Zutabe honetan zenbaki-multzo bakar batek ematen du {{deficit}}."
+      },
+      "inEveryCombinationKeep": {
+        "row": "{{value}} gabe, errenkada honetako beste zenbakiek ezin dute {{deficit}} eman. Beraz, geratu egin behar da.",
+        "col": "{{value}} gabe, zutabe honetako beste zenbakiek ezin dute {{deficit}} eman. Beraz, geratu egin behar da."
+      },
+      "inEveryCombinationStrike": {
+        "row": "{{value}} gordetzen baduzu, errenkada honek oraindik {{remaining}} beharko luke, eta hemengo beste zenbakiek ezin dute hori eman. Beraz, kendu egin behar da.",
+        "col": "{{value}} gordetzen baduzu, zutabe honek oraindik {{remaining}} beharko luke, eta hemengo beste zenbakiek ezin dute hori eman. Beraz, kendu egin behar da."
+      },
+      "tooBig.row": "Errenkada honek oraindik {{deficit}} behar du, eta {{value}} handiagoa da.",
+      "tooBig.col": "Zutabe honek oraindik {{deficit}} behar du, eta {{value}} handiagoa da.",
+      "allStrike.row": "Errenkada honetan geratzen diren zenbakiek helburua ematen dute jada.",
+      "allStrike.col": "Zutabe honetan geratzen diren zenbakiek helburua ematen dute jada.",
+      "allKeep.row": "Errenkada honek helburua ematen du jada, beraz haren zutabeak kalkula daitezke orain.",
+      "allKeep.col": "Zutabe honek helburua ematen du jada, beraz haren errenkadak kalkula daitezke orain.",
+      "parityKeep.row": "Errenkada honek oraindik {{deficit}} behar du, zenbaki bakoitia, eta {{value}} da geratzen den bakoiti bakarra.",
+      "parityKeep.col": "Zutabe honek oraindik {{deficit}} behar du, zenbaki bakoitia, eta {{value}} da geratzen den bakoiti bakarra.",
+      "parityStrike.row": "Errenkada honek oraindik {{deficit}} behar du, zenbaki bikoitia, eta {{value}} da geratzen den bakoiti bakarra.",
+      "parityStrike.col": "Zutabe honek oraindik {{deficit}} behar du, zenbaki bikoitia, eta {{value}} da geratzen den bakoiti bakarra.",
+      "onlyCombination.row": "Errenkada honetan zenbaki-multzo bakar batek ematen du {{deficit}}.",
+      "onlyCombination.col": "Zutabe honetan zenbaki-multzo bakar batek ematen du {{deficit}}.",
+      "inEveryCombinationKeep.row": "{{value}} gabe, errenkada honetako beste zenbakiek ezin dute {{deficit}} eman.",
+      "inEveryCombinationKeep.col": "{{value}} gabe, zutabe honetako beste zenbakiek ezin dute {{deficit}} eman.",
+      "inEveryCombinationStrike.row": "{{value}} gordetzen baduzu, errenkada honek oraindik {{remaining}} beharko luke, eta hemengo beste zenbakiek ezin dute hori eman.",
+      "inEveryCombinationStrike.col": "{{value}} gordetzen baduzu, zutabe honek oraindik {{remaining}} beharko luke, eta hemengo beste zenbakiek ezin dute hori eman.",
+      "action": {
+        "strike_one": "Ezabatu marraz betetako zenbakia.",
+        "strike_other": "Ezabatu marraz betetako zenbakiak.",
+        "keep_one": "Markatu marraz betetako zenbakia geratzen dela.",
+        "keep_other": "Markatu marraz betetako zenbakiak geratzen direla."
+      }
+    },
+    "goal": "Errenkada eta zutabe bakoitzak ondoko zenbakia ematen du batuta.",
+    "name": "Kontaketa"
+  },
+  "futoshiki": {
+    "rules": {
+      "signs": "Bi laukiren arteko ikurrak bietako zenbaki txikiena seinalatzen du.",
+      "enter": "Ukitu lauki bat, eta gero zenbaki bat. Zenbaki bera berriz ukituz gero, kendu egiten da.",
+      "notes": "Aldatu arkatzera lauki batean oraindik egon daitezkeen zenbakiak idazteko. Desegin botoiak zure azken mugimendua kentzen du."
+    },
+    "hint": {
+      "mistake": {
+        "value": "Hemengo zenbakietako bat ezin da zuzena izan. Kendu eta begiratu berriz.",
+        "note": "Lauki honetako oharrek hemen doan zenbakia baztertu dute. Garbitu eta hasi berriz."
+      },
+      "nakedSingle": "Beste zenbaki guztiak hartuta daude errenkada honetan, zutabe honetan edo ikurrengatik. {{value}} bakarrik geratzen da lauki honetarako.",
+      "hiddenSingle": {
+        "row": "{{value}} ez da errenkada honetako beste inongo laukitan sartzen, beraz hemen doa.",
+        "col": "{{value}} ez da zutabe honetako beste inongo laukitan sartzen, beraz hemen doa."
+      },
+      "signBound": {
+        "high": "Hemengo ikur batek zenbaki handiago batera seinalatzen du, beraz lauki honetan ezin da {{value}} egon.",
+        "low": "Hemengo ikur batek lauki hau seinalatzen du, beraz zerbaitek txikiagoa izan behar du. Ezin da {{value}} egon."
+      },
+      "signVsValue": {
+        "less": "Ikurrak dio lauki hau bere ondokoa baino txikiagoa dela, eta ondoko horretan {{value}} dago.",
+        "greater": "Ikurrak dio lauki hau bere ondokoa baino handiagoa dela, eta ondoko horretan {{value}} dago."
+      },
+      "signChain": {
+        "high": "Jarraitu ikurrei lauki honetatik: jarraian dauden {{chain}} laukietako bakoitzak aurrekoa baino handiagoa izan behar du, beraz hau ezin da {{bound}} baino handiagoa izan.",
+        "low": "Jarraitu ikurrei lauki honetaraino: jarraian dauden {{chain}} laukietako bakoitzak aurrekoa baino txikiagoa izan behar du, beraz hau ezin da {{bound}} baino txikiagoa izan."
+      },
+      "signPair": {
+        "less": "Ikurraren beste aldeko laukian egon daitekeen zenbakirik handiena {{value}} da, eta lauki honek horren azpitik egon behar du.",
+        "greater": "Ikurraren beste aldeko laukian egon daitekeen zenbakirik txikiena {{value}} da, eta lauki honek horren gainetik egon behar du."
+      },
+      "nakedPair": {
+        "row": "Bi lauki hauetan {{first}} eta {{second}} bakarrik egon daitezke, ordena batean edo bestean. Beraz, errenkada honetako beste inongo laukitan ezin da horietako bat ere egon.",
+        "col": "Bi lauki hauetan {{first}} eta {{second}} bakarrik egon daitezke, ordena batean edo bestean. Beraz, zutabe honetako beste inongo laukitan ezin da horietako bat ere egon."
+      },
+      "hiddenPair": {
+        "row": "Errenkada honetan, {{first}} eta {{second}} bi lauki hauetan bakarrik sartzen dira, beraz beste ezer ezin da horietan sartu.",
+        "col": "Zutabe honetan, {{first}} eta {{second}} bi lauki hauetan bakarrik sartzen dira, beraz beste ezer ezin da horietan sartu."
+      },
+      "xWing": {
+        "row": "{{value}} bi errenkada hauetako bakoitzaren bi laukitan bakarrik sartzen da, eta zutabe berean daude. Edozein modutan jarrita ere, bi zutabeak hartuta daude. Beraz, {{value}} ezin da haietan beste inon egon.",
+        "col": "{{value}} bi zutabe hauetako bakoitzaren bi laukitan bakarrik sartzen da, eta errenkada berean daude. Edozein modutan jarrita ere, bi errenkadak hartuta daude. Beraz, {{value}} ezin da haietan beste inon egon."
+      },
+      "nakedTriple": {
+        "row": "Hiru lauki hauetan {{first}}, {{second}} eta {{third}} bakarrik daude guztien artean, beraz errenkada honetako beste inongo laukitan ezin da hiruretako bat ere egon.",
+        "col": "Hiru lauki hauetan {{first}}, {{second}} eta {{third}} bakarrik daude guztien artean, beraz zutabe honetako beste inongo laukitan ezin da hiruretako bat ere egon."
+      },
+      "hiddenTriple": {
+        "row": "Errenkada honetan, {{first}}, {{second}} eta {{third}} hiru lauki hauetan bakarrik sartzen dira, beraz beste ezer ezin da horietan sartu.",
+        "col": "Zutabe honetan, {{first}}, {{second}} eta {{third}} hiru lauki hauetan bakarrik sartzen dira, beraz beste ezer ezin da horietan sartu."
+      }
+    },
+    "goal": "Errenkada eta zutabe bakoitzean zenbaki bakoitza behin bakarrik agertzen da.",
+    "name": "Handiagoa eta txikiagoa"
+  },
+  "lightbeam": {
+    "rules": {
+      "mirrors": "Ispilu batek argia desbideratzen du bere bi aurpegietako edozeinetan. Inguruko marka txikiek beste nola jar daitekeen erakusten dute: gehienek argia laurden bat biratzen dute, eta batzuek gutxiago, alboka bidaltzen dute.",
+      "walls": "Harri-bloke batek argia irensten du. Taularen ertzak ere bai.",
+      "tap": "Ukitu pieza bat aldatzeko: ispilu bat biratu egiten da, pieza irristakor bat hurrengo lekura mugitzen da. Ertz zuriak esan nahi du zuk mugi dezakezula; beste guztia buru-hausgarriaren parte da.",
+      "nodes": "Harri batzuk lurreko entxufe batera lotuta daude, eta ukituz ez dira mugitzen. Bidali argia entxufearen gainetik, eta harria alde batera irristatuko da."
+    },
+    "hint": {
+      "entryRun": "Hasi argia jada doan lekutik: diskotik zuzen doa, aldatu dezakezun lehen piezarekin topo egin arte. Lauki horiek argia eramaten dute, zuk zer egin.",
+      "exitRun": "Begiratu santutegiari. Alde bakarra argiztatu daiteke: beste sarrera guztiak itxita daude edo taulatik kanpora begira. Beraz, argiak lerro horretatik iritsi behar du.",
+      "wiringFires": {
+        "one": "Argiak entxufe hori zeharkatu behar du bidean: hori jada kalkulatu duzu. Zeharkatzean, lotuta dagoen harria alde batera mugitzen da, eta haratago dagoen bidea irekitzen da.",
+        "all": "Harri hori entxufe bat baino gehiagori lotuta dago, eta argiak guztiak zeharkatu ondoren bakarrik mugitzen da. Bilatu izpia guztietatik pasatzeko modu bat."
+      },
+      "deadEnd": {
+        "wall": "Horrela jarrita, argiak harriaren kontra jotzen du zuzenean, salbatzeko ezer gabe. Beraz, ezin da horrela jarri.",
+        "disc": "Horrela jarrita, ispiluak argia etorri zen bidetik itzultzen du, atera zen diskoraino. Beraz, ezin da horrela jarri.",
+        "edge": "Horrela jarrita, argia taularen ertzetik ateratzen da, harrapatzeko ezer gabe. Beraz, ezin da horrela jarri.",
+        "loop": "Horrela jarrita, argia ez da inora iristen: betiko bueltaka dabil. Beraz, ezin da horrela jarri."
+      },
+      "feedsExit": {
+        "wall": "Egin atzera santutegitik. Horrela jarrita, ezerk ezin du argia eraman hara iristen den lerro bakarretik: bidean harrian galtzen da.",
+        "disc": "Egin atzera santutegitik. Horrela jarrita, argiak diskoaren atzealde ilunetik atera beharko luke, eta handik ez da argirik ateratzen.",
+        "edge": "Egin atzera santutegitik. Horrela jarrita, argiak taulatik kanpotik etorri beharko luke hara iristeko.",
+        "loop": "Egin atzera santutegitik. Horrela jarrita, hara iritsi beharko lukeen argia betiko bueltaka ibiltzen da, besterik ez."
+      },
+      "wiringDead": "Zuk zer egin, argia ez da inoiz entxufe horretara iritsiko. Beraz, lotuta dagoen harria bere lekuan geratzen da, eta bidea zuzenean irakur dezakezu haren ondotik.",
+      "neverReached": "Utzi hau bakean. Argia ezin da hona iritsi, beste guztia nola jarri arren, beraz berarekin egiten duzun ezerk ez du axola.",
+      "onlySurvivor": "Probatu honen jarrera guztiak banan-banan: bat izan ezik, guztiek uzten dute santutegia ilun. Hori da erantzuna."
+    },
+    "goal": "Eguzkiaren argia diskotik santutegiraino doa.",
+    "name": "Argi-izpia"
+  },
+  "eclipse": {
+    "rules": {
+      "triple": "Ezin dira hiru berdin egon jarraian, ez zeharka ez behera.",
+      "copies": "Ezin dira bi errenkada berdinak izan, ezta bi zutabe ere.",
+      "signs": "Bi laukiren arteko ikurrak nola diren esaten du: = berdinak badira, × desberdinak badira.",
+      "enter": "Ukitu lauki bat eguzki bat jartzeko, berriz ilargi baterako, eta beste behin husteko."
+    },
+    "hint": {
+      "mistake": "Marka hauetako bat ezin da zuzena izan.",
+      "sign.same": "= berdina esan nahi du.",
+      "sign.different": "× desberdina esan nahi du.",
+      "noTriple.pair": "Bi {{mark}} daude jada, eta ezin dira hiru egon jarraian.",
+      "noTriple.sandwich": "{{mark}} bi aldeetan, eta ezin dira hiru egon jarraian.",
+      "signPair": "Bi hauek berdinak dira, eta {{mark}} hori haien ondoan dago.",
+      "lineCount": "Lerro honek bere {{count}} {{mark}} ditu jada.",
+      "noCopy": "Alderantziz jarrita, argiztatutako lerroaren kopia izango litzateke.",
+      "linePairing.sameNoRoom": "{{count}} {{mark}} bakarrik geratzen dira hemen, eta bi hauek berdinak dira.",
+      "linePairing.differentTakesOne": "× bikoteek lerro honetan sartzen diren {{mark}} guztiak hartzen dituzte.",
+      "loneMark": "{{mark}} bat geratzen da, eta lauki bakar batek bakarrik bereizten ditu hiru {{other}}.",
+      "squeeze.triple": "Hemen {{mark}} jarriz gero, gainerakoak {{other}} izango lirateke: hiru jarraian.",
+      "squeeze.sign": "Hemen {{mark}} jarriz gero, gainerakoak {{other}} izango lirateke: ikur batek ez luke balioko.",
+      "squeeze.copy": "Hemen {{mark}} jarriz gero, gainerakoak {{other}} izango lirateke: lerroa kopia bat bihurtuko litzateke.",
+      "action": {
+        "fill_one": "Jarri {{mark}} marraz betetako laukian.",
+        "fill_other": "Jarri {{mark}} marraz betetako laukietan.",
+        "fillMixed": "Bete marraz betetako laukiak: funtzionatzen duen modu bakarrean."
+      }
+    },
+    "goal": "Lauki bakoitzean eguzki bat edo ilargi bat dago, eta lerro bakoitzean bata bestea adina daude.",
+    "name": "Eguzkia eta ilargia"
+  },
+  "constellation": {
+    "rules": {
+      "default": {
+        "straight": "Argi-lerroak zuzen doaz, zeharka edo behera, izar batetik hurrengora.",
+        "pair": "Bi izarrek gehienez bi lerro izan ditzakete elkarren artean.",
+        "cross": "Lerroak ez dira inoiz gurutzatzen, eta ez dira inoiz izar baten gainetik pasatzen.",
+        "enter": "Arrastatu izar batetik bere ondokora lerro bat marrazteko, berriz bikoitza egiteko, eta beste behin garbitzeko."
+      },
+      "causeway": {
+        "straight": "Garraio-bideak zuzen doaz, zeharka edo behera, leku batetik hurrengora.",
+        "pair": "Bi lekuk gehienez bi bide izan ditzakete elkarren artean.",
+        "cross": "Bideak ez dira inoiz gurutzatzen, eta ez dira inoiz leku baten gainetik pasatzen.",
+        "enter": "Arrastatu leku batetik bere ondokora bide bat egiteko, berriz bikoizteko, eta beste behin kentzeko."
+      },
+      "irrigation": {
+        "straight": "Ubideak zuzen doaz, zeharka edo behera, urmael batetik hurrengora.",
+        "pair": "Bi urmaelek gehienez bi ubide izan ditzakete elkarren artean.",
+        "cross": "Ubideak ez dira inoiz gurutzatzen, eta ez dira inoiz urmael baten gainetik pasatzen.",
+        "enter": "Arrastatu urmael batetik bere ondokora ubide bat zulatzeko, berriz zabaltzeko, eta beste behin betetzeko."
+      },
+      "ceiling": {
+        "straight": "Sokak zuzen doaz, zeharka edo behera, izar batetik hurrengora.",
+        "pair": "Bi izarrek gehienez bi soka izan ditzakete elkarren artean.",
+        "cross": "Sokak ez dira inoiz gurutzatzen, eta ez dira inoiz izar baten gainetik pasatzen.",
+        "enter": "Arrastatu izar batetik bere ondokora soka bat jartzeko, berriz bikoizteko, eta beste behin kentzeko."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Lerro hauetako bat ezin da zuzena izan.",
+        "capacity": "{{count}} lerro, eta irteera justu-justuak.",
+        "settled": "{{count}} honek bere lerroak ditu.",
+        "soleWayOut": "Irteera bakarra geratzen da, eta oraindik {{count}} marraztu behar dira.",
+        "crossed": "Han lerro batek hau gurutzatuko luke.",
+        "atLeastOne": "{{count}} lerro, eta beste irteerek ezin dituzte denak eraman.",
+        "twinBlock.single": "Bi horiek lotuz gero, biko konstelazio bat egingo litzateke.",
+        "twinBlock.double": "Han bigarren lerro batek biko konstelazio bat egingo luke.",
+        "isolation": "Lerro horrek {{count}} izar hauek gainerakoetatik bakartuko lituzke.",
+        "action": {
+          "draw_one": "Marraztu markatutako lerroa.",
+          "draw_other": "Marraztu markatutako lerroak.",
+          "refuse_one": "Markatutako lerroa marraztu gabe geratzen da.",
+          "refuse_other": "Markatutako lerroak marraztu gabe geratzen dira.",
+          "refuseDouble": "Lerro bat han, eta ez bigarrenik."
+        }
+      },
+      "causeway": {
+        "mistake": "Bide hauetako bat ezin da zuzena izan.",
+        "capacity": "{{count}} bide, eta irteera justu-justuak.",
+        "settled": "{{count}} honek bere bideak ditu.",
+        "soleWayOut": "Irteera bakarra geratzen da, eta oraindik {{count}} egin behar dira.",
+        "crossed": "Han bide batek hau gurutzatuko luke.",
+        "atLeastOne": "{{count}} bide, eta beste irteerek ezin dituzte denak eraman.",
+        "twinBlock.single": "Bi horiek lotuz gero, biko sare bat egingo litzateke.",
+        "twinBlock.double": "Han bigarren bide batek biko sare bat egingo luke.",
+        "isolation": "Bide horrek {{count}} leku hauek gainerakoetatik bakartuko lituzke.",
+        "action": {
+          "draw_one": "Egin markatutako bidea.",
+          "draw_other": "Egin markatutako bideak.",
+          "refuse_one": "Markatutako bidea egin gabe geratzen da.",
+          "refuse_other": "Markatutako bideak egin gabe geratzen dira.",
+          "refuseDouble": "Bide bat han, eta ez bigarrenik."
+        }
+      },
+      "irrigation": {
+        "mistake": "Ubide hauetako bat ezin da zuzena izan.",
+        "capacity": "{{count}} ubide, eta irteera justu-justuak.",
+        "settled": "{{count}} honek bere ubideak ditu.",
+        "soleWayOut": "Irteera bakarra geratzen da, eta oraindik {{count}} zulatu behar dira.",
+        "crossed": "Han ubide batek hau gurutzatuko luke.",
+        "atLeastOne": "{{count}} ubide, eta beste irteerek ezin dituzte denak eraman.",
+        "twinBlock.single": "Bi horiek lotuz gero, biko ur-sare bat egingo litzateke.",
+        "twinBlock.double": "Han bigarren ubide batek biko ur-sare bat egingo luke.",
+        "isolation": "Ubide horrek {{count}} urmael hauek gainerakoetatik bakartuko lituzke.",
+        "action": {
+          "draw_one": "Zulatu markatutako ubidea.",
+          "draw_other": "Zulatu markatutako ubideak.",
+          "refuse_one": "Markatutako ubidea zulatu gabe geratzen da.",
+          "refuse_other": "Markatutako ubideak zulatu gabe geratzen dira.",
+          "refuseDouble": "Ubide bat han, eta ez bigarrenik."
+        }
+      },
+      "ceiling": {
+        "mistake": "Soka hauetako bat ezin da zuzena izan.",
+        "capacity": "{{count}} soka, eta irteera justu-justuak.",
+        "settled": "{{count}} honek bere sokak ditu.",
+        "soleWayOut": "Irteera bakarra geratzen da, eta oraindik {{count}} jarri behar dira.",
+        "crossed": "Han soka batek hau gurutzatuko luke.",
+        "atLeastOne": "{{count}} soka, eta beste irteerek ezin dituzte denak eraman.",
+        "twinBlock.single": "Bi horiek lotuz gero, biko zeru margotu bat egingo litzateke.",
+        "twinBlock.double": "Han bigarren soka batek biko zeru margotu bat egingo luke.",
+        "isolation": "Soka horrek {{count}} izar hauek gainerakoetatik bakartuko lituzke.",
+        "action": {
+          "draw_one": "Jarri markatutako soka.",
+          "draw_other": "Jarri markatutako sokak.",
+          "refuse_one": "Markatutako soka jarri gabe geratzen da.",
+          "refuse_other": "Markatutako sokak jarri gabe geratzen dira.",
+          "refuseDouble": "Soka bat han, eta ez bigarrenik."
+        }
+      }
+    },
+    "goal": {
+      "default": "Izar guztiak konstelazio bakar batean daude, bakoitza bere zenbakiak dioen adina argi-lerrorekin lotuta.",
+      "causeway": "Leku guztiak bide-sare bakar batean daude, bakoitza bere zenbakiak dioen adina garraio-biderekin.",
+      "irrigation": "Urmael guztiak ur-sare bakar batean daude, bakoitza bere zenbakiak dioen adina ubiderekin.",
+      "ceiling": "Izar guztiak zeru margotu bakar batekoak dira, bakoitza bere zenbakiak dioen adina urrezko sokarekin lotuta."
+    },
+    "name": {
+      "default": "Izar-mapa",
+      "causeway": "Galtzada",
+      "irrigation": "Ur-sarea",
+      "ceiling": "Sabai margotua"
+    }
+  },
+  "starBattle": {
+    "rules": {
+      "default": {
+        "touch": "Bi izarrek ezin dute elkar ukitu, ezta izkinetatik ere.",
+        "enter": "Ukitu lauki bat baztertzeko, berriz izar bat jartzeko, eta beste behin garbitzeko."
+      },
+      "fields": {
+        "touch": "Bi baserrik ezin dute elkar ukitu, ezta izkinetatik ere. Hain gertu, putzu bera partekatu beharko lukete.",
+        "enter": "Ukitu partzela bat baztertzeko, berriz baserri bat eraikitzeko, eta beste behin garbitzeko."
+      },
+      "lamps": {
+        "touch": "Bi olio-lanpara ezin dira elkarren ondoan egon, ezta izkinetatik ere. Haien argiak elkar zapalduko luke, eta olioa alferrik galduko litzateke.",
+        "walls": "Harri-bloke grisak zoruaren parte dira: ezin da ezer haien gainean jarri, eta ez dira laukiak.",
+        "enter": "Ukitu lauza bat baztertzeko, berriz olio-lanpara bat jartzeko, eta beste behin garbitzeko."
+      },
+      "market": {
+        "touch": "Bi postu ezin dira elkarren ondoan egon, ezta izkinetatik ere. Lehiakideak ez dira inoiz elkarren ondoan jartzen.",
+        "walls": "Etxeak plazaren parte dira: ezin da haietan posturik jarri, eta ez dira lekuak.",
+        "enter": "Ukitu leku bat baztertzeko, berriz postu bat jartzeko, eta beste behin garbitzeko."
+      },
+      "lotus": {
+        "touch": "Bi loto ezin dira elkarren ondoan flotatu, ezta izkinetatik ere. Lore bakoitzak ur librea behar du inguruan.",
+        "walls": "Harkaitzak urmaeletik ateratzen dira: ezerk ezin du haien gainean flotatu, eta ez dira laukiak.",
+        "enter": "Ukitu ur-zati bat baztertzeko, berriz loto bat jartzeko, eta beste behin garbitzeko."
+      },
+      "cats": {
+        "touch": "Bi katuk ezin dute elkarren ondoan lo egin, ezta izkinetatik ere. Katu bakoitzak bere eguzki-zatia du.",
+        "walls": "Zutabeek tenplua eusten dute: katu batek ere ezin du haien gainean lo egin, eta ez dira laukiak.",
+        "enter": "Ukitu lauza bat baztertzeko, berriz katu bat jartzeko, eta beste behin garbitzeko."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Marka hau ezin da zuzena izan.",
+        "touch": "{{token}} bat hemen, eta ezerk ezin du {{token}} bat ukitu.",
+        "groupFull.row_one": "Errenkada honek badu jada bere {{token}}.",
+        "groupFull.row_other": "Errenkada honek baditu jada bere {{count}} {{token}}.",
+        "groupFull.col_one": "Zutabe honek badu jada bere {{token}}.",
+        "groupFull.col_other": "Zutabe honek baditu jada bere {{count}} {{token}}.",
+        "groupFull.region_one": "Eskualde honek badu jada bere {{token}}.",
+        "groupFull.region_other": "Eskualde honek baditu jada bere {{count}} {{token}}.",
+        "groupTight.row_one": "Errenkada honetan lauki bakarra geratzen da.",
+        "groupTight.row_other": "Errenkada honetan {{count}} lauki bakarrik geratzen dira.",
+        "groupTight.col_one": "Zutabe honetan lauki bakarra geratzen da.",
+        "groupTight.col_other": "Zutabe honetan {{count}} lauki bakarrik geratzen dira.",
+        "groupTight.region_one": "Eskualde honetan lauki bakarra geratzen da.",
+        "groupTight.region_other": "Eskualde honetan {{count}} lauki bakarrik geratzen dira.",
+        "onlyWay.row_one": "Modu bakarra dago errenkada honetan {{token}} bat sartzeko.",
+        "onlyWay.row_other": "Modu bakarra dago errenkada honetan {{count}} {{token}} sartzeko.",
+        "onlyWay.col_one": "Modu bakarra dago zutabe honetan {{token}} bat sartzeko.",
+        "onlyWay.col_other": "Modu bakarra dago zutabe honetan {{count}} {{token}} sartzeko.",
+        "onlyWay.region_one": "Modu bakarra dago eskualde honetan {{token}} bat sartzeko.",
+        "onlyWay.region_other": "Modu bakarra dago eskualde honetan {{count}} {{token}} sartzeko.",
+        "everyWay.row_one": "Errenkada honetako {{token}} edonon jarrita ere, beti dago hemen.",
+        "everyWay.row_other": "Errenkada honetako {{count}} {{token}} edonon jarrita ere, bat beti dago hemen.",
+        "everyWay.col_one": "Zutabe honetako {{token}} edonon jarrita ere, beti dago hemen.",
+        "everyWay.col_other": "Zutabe honetako {{count}} {{token}} edonon jarrita ere, bat beti dago hemen.",
+        "everyWay.region_one": "Eskualde honetako {{token}} edonon jarrita ere, beti dago hemen.",
+        "everyWay.region_other": "Eskualde honetako {{count}} {{token}} edonon jarrita ere, bat beti dago hemen.",
+        "regionLine.row_one": "Markatutako eskualdearen {{token}} errenkada horretatik etorri behar da.",
+        "regionLine.row_other": "Markatutako eskualdearen {{count}} {{token}} errenkada horretatik etorri behar dira.",
+        "regionLine.col_one": "Markatutako eskualdearen {{token}} zutabe horretatik etorri behar da.",
+        "regionLine.col_other": "Markatutako eskualdearen {{count}} {{token}} zutabe horretatik etorri behar dira.",
+        "lineRegion.row_one": "Errenkada horren {{token}} markatutako eskualdekoa da.",
+        "lineRegion.row_other": "Errenkada horren {{count}} {{token}} markatutako eskualdekoak dira.",
+        "lineRegion.col_one": "Zutabe horren {{token}} markatutako eskualdekoa da.",
+        "lineRegion.col_other": "Zutabe horren {{count}} {{token}} markatutako eskualdekoak dira.",
+        "spanning.toRows": "Markatutako eskualdeek, guztien artean, {{count}} errenkada horiek betetzen dituzte.",
+        "spanning.toCols": "Markatutako eskualdeek, guztien artean, {{count}} zutabe horiek betetzen dituzte.",
+        "spanning.fromRows": "Markatutako errenkadek eskualde horietatik bakarrik har ditzakete beren {{count}} {{token}}.",
+        "spanning.fromCols": "Markatutako zutabeek eskualde horietatik bakarrik har ditzakete beren {{count}} {{token}}.",
+        "wouldStrand.row": "Hemen {{token}} bat jarriz gero, markatutako errenkadak ez luke lekurik izango.",
+        "wouldStrand.col": "Hemen {{token}} bat jarriz gero, markatutako zutabeak ez luke lekurik izango.",
+        "wouldStrand.region": "Hemen {{token}} bat jarriz gero, markatutako eskualdeak ez luke lekurik izango.",
+        "action": {
+          "ruleOut_one": "Baztertu marraz betetako laukia.",
+          "ruleOut_other": "Baztertu marraz betetako laukiak.",
+          "place_one": "Jarri {{token}} bat marraz betetako laukian.",
+          "place_other": "Jarri {{token}} bat marraz betetako lauki bakoitzean."
+        }
+      },
+      "fields": {
+        "mistake": "Marka hau ezin da zuzena izan.",
+        "touch": "{{token}} bat hemen, eta ukitzen duen partzela batek ere ezin du beste bat izan.",
+        "groupFull.row_one": "Errenkada hau landuta dago jada.",
+        "groupFull.row_other": "Errenkada honek baditu jada bere {{count}} {{token}}.",
+        "groupFull.col_one": "Zutabe hau landuta dago jada.",
+        "groupFull.col_other": "Zutabe honek baditu jada bere {{count}} {{token}}.",
+        "groupFull.region_one": "Lursail hau landuta dago jada.",
+        "groupFull.region_other": "Lursail honek baditu jada bere {{count}} {{token}}.",
+        "groupTight.row_one": "Errenkada honetan partzela bakarra geratzen da.",
+        "groupTight.row_other": "Errenkada honetan {{count}} partzela bakarrik geratzen dira.",
+        "groupTight.col_one": "Zutabe honetan partzela bakarra geratzen da.",
+        "groupTight.col_other": "Zutabe honetan {{count}} partzela bakarrik geratzen dira.",
+        "groupTight.region_one": "Lursail honetan partzela bakarra geratzen da.",
+        "groupTight.region_other": "Lursail honetan {{count}} partzela bakarrik geratzen dira.",
+        "onlyWay.row_one": "Errenkada honetan partzela bakarra geratzen da eraikitzeko.",
+        "onlyWay.row_other": "Modu bakarra dago errenkada honetan {{count}} {{token}} sartzeko.",
+        "onlyWay.col_one": "Zutabe honetan partzela bakarra geratzen da eraikitzeko.",
+        "onlyWay.col_other": "Modu bakarra dago zutabe honetan {{count}} {{token}} sartzeko.",
+        "onlyWay.region_one": "Lursail honetan partzela bakarra geratzen da eraikitzeko.",
+        "onlyWay.region_other": "Modu bakarra dago lursail honetan {{count}} {{token}} sartzeko.",
+        "everyWay.row_one": "Errenkada hau nola landu ere, bere {{token}} hemen dago.",
+        "everyWay.row_other": "Errenkada hau nola landu ere, bere {{count}} {{token}} horietako bat hemen dago.",
+        "everyWay.col_one": "Zutabe hau nola landu ere, bere {{token}} hemen dago.",
+        "everyWay.col_other": "Zutabe hau nola landu ere, bere {{count}} {{token}} horietako bat hemen dago.",
+        "everyWay.region_one": "Lursail hau nola landu ere, bere {{token}} hemen dago.",
+        "everyWay.region_other": "Lursail hau nola landu ere, bere {{count}} {{token}} horietako bat hemen dago.",
+        "regionLine.row_one": "Markatutako lursailaren {{token}} errenkada horretatik etorri behar da.",
+        "regionLine.row_other": "Markatutako lursailaren {{count}} {{token}} errenkada horretatik etorri behar dira.",
+        "regionLine.col_one": "Markatutako lursailaren {{token}} zutabe horretatik etorri behar da.",
+        "regionLine.col_other": "Markatutako lursailaren {{count}} {{token}} zutabe horretatik etorri behar dira.",
+        "lineRegion.row_one": "Errenkada horren {{token}} markatutako lursailekoa da.",
+        "lineRegion.row_other": "Errenkada horren {{count}} {{token}} markatutako lursailekoak dira.",
+        "lineRegion.col_one": "Zutabe horren {{token}} markatutako lursailekoa da.",
+        "lineRegion.col_other": "Zutabe horren {{count}} {{token}} markatutako lursailekoak dira.",
+        "spanning.toRows": "Markatutako lursailek, guztien artean, {{count}} errenkada horiek betetzen dituzte.",
+        "spanning.toCols": "Markatutako lursailek, guztien artean, {{count}} zutabe horiek betetzen dituzte.",
+        "spanning.fromRows": "Markatutako errenkadek lursail horietatik bakarrik har ditzakete beren {{count}} {{token}}.",
+        "spanning.fromCols": "Markatutako zutabeek lursail horietatik bakarrik har ditzakete beren {{count}} {{token}}.",
+        "wouldStrand.row": "Hemen {{token}} bat jarriz gero, markatutako errenkadak ez luke non eraikirik izango.",
+        "wouldStrand.col": "Hemen {{token}} bat jarriz gero, markatutako zutabeak ez luke non eraikirik izango.",
+        "wouldStrand.region": "Hemen {{token}} bat jarriz gero, markatutako lursailak ez luke non eraikirik izango.",
+        "action": {
+          "ruleOut_one": "Baztertu marraz betetako partzela.",
+          "ruleOut_other": "Baztertu marraz betetako partzelak.",
+          "place_one": "Eraiki {{token}} bat marraz betetako partzelan.",
+          "place_other": "Eraiki {{token}} bat marraz betetako partzela bakoitzean."
+        }
+      },
+      "lamps": {
+        "mistake": "Marka hau ezin da zuzena izan.",
+        "touch": "{{token}} bat hemen, eta ezin da olio-lanpara bat bestearen ondoan egon. Izkinek ere balio dute.",
+        "groupFull.row_one": "Errenkada honek badu jada bere olio-lanpara.",
+        "groupFull.col_one": "Zutabe honek badu jada bere olio-lanpara.",
+        "groupFull.row_other": "Errenkada honek baditu jada bere {{count}} olio-lanpara.",
+        "groupFull.col_other": "Zutabe honek baditu jada bere {{count}} olio-lanpara.",
+        "groupTight.row_one": "Errenkada honetan lauza bakarra geratzen da.",
+        "groupTight.row_other": "Errenkada honetan {{count}} lauza bakarrik geratzen dira.",
+        "groupTight.col_one": "Zutabe honetan lauza bakarra geratzen da.",
+        "groupTight.col_other": "Zutabe honetan {{count}} lauza bakarrik geratzen dira.",
+        "onlyWay.row_one": "Harri-blokeen artean, lauki bakarra geratzen da errenkada honetan olio-lanpara batentzat.",
+        "onlyWay.col_one": "Harri-blokeen artean, lauki bakarra geratzen da zutabe honetan olio-lanpara batentzat.",
+        "onlyWay.row_other": "Modu bakarra dago errenkada honetan {{count}} olio-lanpara sartzeko.",
+        "onlyWay.col_other": "Modu bakarra dago zutabe honetan {{count}} olio-lanpara sartzeko.",
+        "everyWay.row_one": "Errenkada honetako olio-lanpara edonon jarrita ere, beti dago hemen.",
+        "everyWay.col_one": "Zutabe honetako olio-lanpara edonon jarrita ere, beti dago hemen.",
+        "everyWay.row_other": "Errenkada honetako {{count}} olio-lanpara edonon jarrita ere, bat beti dago hemen.",
+        "everyWay.col_other": "Zutabe honetako {{count}} olio-lanpara edonon jarrita ere, bat beti dago hemen.",
+        "lineBlock.rowsToCols": "Markatutako errenkadek beren olio-lanparak zutabe horietako laukietan dituzte, beraz zutabe horiek ez dute bat ere soberan.",
+        "lineBlock.colsToRows": "Markatutako zutabeek beren olio-lanparak errenkada horietako laukietan dituzte, beraz errenkada horiek ez dute bat ere soberan.",
+        "wouldStrand.row": "Hemen olio-lanpara bat jarriz gero, markatutako errenkadak ez luke lekurik izango.",
+        "wouldStrand.col": "Hemen olio-lanpara bat jarriz gero, markatutako zutabeak ez luke lekurik izango.",
+        "action": {
+          "ruleOut_one": "Baztertu marraz betetako laukia.",
+          "ruleOut_other": "Baztertu marraz betetako laukiak.",
+          "place_one": "Jarri olio-lanpara bat marraz betetako laukian.",
+          "place_other": "Jarri olio-lanpara bat marraz betetako lauki bakoitzean."
+        }
+      },
+      "market": {
+        "mistake": "Marka hau ezin da zuzena izan.",
+        "touch": "{{token}} bat hemen, eta ezin da postu bat bestearen ondoan egon. Izkinek ere balio dute.",
+        "groupFull.row_one": "Errenkada honek badu jada bere postua.",
+        "groupFull.col_one": "Zutabe honek badu jada bere postua.",
+        "groupFull.row_other": "Errenkada honek baditu jada bere {{count}} postu.",
+        "groupFull.col_other": "Zutabe honek baditu jada bere {{count}} postu.",
+        "groupTight.row_one": "Errenkada honetan leku bakarra geratzen da.",
+        "groupTight.row_other": "Errenkada honetan {{count}} leku bakarrik geratzen dira.",
+        "groupTight.col_one": "Zutabe honetan leku bakarra geratzen da.",
+        "groupTight.col_other": "Zutabe honetan {{count}} leku bakarrik geratzen dira.",
+        "onlyWay.row_one": "Etxeen artean, lauki bakarra geratzen da errenkada honetan postu batentzat.",
+        "onlyWay.col_one": "Etxeen artean, lauki bakarra geratzen da zutabe honetan postu batentzat.",
+        "onlyWay.row_other": "Modu bakarra dago errenkada honetan {{count}} postu sartzeko.",
+        "onlyWay.col_other": "Modu bakarra dago zutabe honetan {{count}} postu sartzeko.",
+        "everyWay.row_one": "Errenkada honetako postua edonon jarrita ere, beti dago hemen.",
+        "everyWay.col_one": "Zutabe honetako postua edonon jarrita ere, beti dago hemen.",
+        "everyWay.row_other": "Errenkada honetako {{count}} postu edonon jarrita ere, bat beti dago hemen.",
+        "everyWay.col_other": "Zutabe honetako {{count}} postu edonon jarrita ere, bat beti dago hemen.",
+        "lineBlock.rowsToCols": "Markatutako errenkadek beren postuak zutabe horietako laukietan dituzte, beraz zutabe horiek ez dute bat ere soberan.",
+        "lineBlock.colsToRows": "Markatutako zutabeek beren postuak errenkada horietako laukietan dituzte, beraz errenkada horiek ez dute bat ere soberan.",
+        "wouldStrand.row": "Hemen postu bat jarriz gero, markatutako errenkadak ez luke lekurik izango.",
+        "wouldStrand.col": "Hemen postu bat jarriz gero, markatutako zutabeak ez luke lekurik izango.",
+        "action": {
+          "ruleOut_one": "Baztertu marraz betetako laukia.",
+          "ruleOut_other": "Baztertu marraz betetako laukiak.",
+          "place_one": "Jarri postu bat marraz betetako laukian.",
+          "place_other": "Jarri postu bat marraz betetako lauki bakoitzean."
+        }
+      },
+      "lotus": {
+        "mistake": "Marka hau ezin da zuzena izan.",
+        "touch": "{{token}} bat hemen, eta ezin da loto bat bestearen ondoan flotatu. Izkinek ere balio dute.",
+        "groupFull.row_one": "Errenkada honek badu jada bere lotoa.",
+        "groupFull.col_one": "Zutabe honek badu jada bere lotoa.",
+        "groupFull.row_other": "Errenkada honek baditu jada bere {{count}} loto.",
+        "groupFull.col_other": "Zutabe honek baditu jada bere {{count}} loto.",
+        "groupTight.row_one": "Errenkada honetan ur-zati bakarra geratzen da.",
+        "groupTight.row_other": "Errenkada honetan {{count}} ur-zati bakarrik geratzen dira.",
+        "groupTight.col_one": "Zutabe honetan ur-zati bakarra geratzen da.",
+        "groupTight.col_other": "Zutabe honetan {{count}} ur-zati bakarrik geratzen dira.",
+        "onlyWay.row_one": "Harkaitzen artean, lauki bakarra geratzen da errenkada honetan loto batentzat.",
+        "onlyWay.col_one": "Harkaitzen artean, lauki bakarra geratzen da zutabe honetan loto batentzat.",
+        "onlyWay.row_other": "Modu bakarra dago errenkada honetan {{count}} loto sartzeko.",
+        "onlyWay.col_other": "Modu bakarra dago zutabe honetan {{count}} loto sartzeko.",
+        "everyWay.row_one": "Errenkada honetako lotoa edonon jarrita ere, beti dago hemen.",
+        "everyWay.col_one": "Zutabe honetako lotoa edonon jarrita ere, beti dago hemen.",
+        "everyWay.row_other": "Errenkada honetako {{count}} loto edonon jarrita ere, bat beti dago hemen.",
+        "everyWay.col_other": "Zutabe honetako {{count}} loto edonon jarrita ere, bat beti dago hemen.",
+        "lineBlock.rowsToCols": "Markatutako errenkadek beren lotoak zutabe horietako laukietan dituzte, beraz zutabe horiek ez dute bat ere soberan.",
+        "lineBlock.colsToRows": "Markatutako zutabeek beren lotoak errenkada horietako laukietan dituzte, beraz errenkada horiek ez dute bat ere soberan.",
+        "wouldStrand.row": "Hemen loto bat jarriz gero, markatutako errenkadak ez luke lekurik izango.",
+        "wouldStrand.col": "Hemen loto bat jarriz gero, markatutako zutabeak ez luke lekurik izango.",
+        "action": {
+          "ruleOut_one": "Baztertu marraz betetako laukia.",
+          "ruleOut_other": "Baztertu marraz betetako laukiak.",
+          "place_one": "Jarri loto bat marraz betetako laukian.",
+          "place_other": "Jarri loto bat marraz betetako lauki bakoitzean."
+        }
+      },
+      "cats": {
+        "mistake": "Marka hau ezin da zuzena izan.",
+        "touch": "{{token}} bat hemen, eta ezin da katu bat bestearen ondoan lo egin. Izkinek ere balio dute.",
+        "groupFull.row_one": "Errenkada honek badu jada bere katua.",
+        "groupFull.col_one": "Zutabe honek badu jada bere katua.",
+        "groupFull.row_other": "Errenkada honek baditu jada bere {{count}} katu.",
+        "groupFull.col_other": "Zutabe honek baditu jada bere {{count}} katu.",
+        "groupTight.row_one": "Errenkada honetan lauza bakarra geratzen da.",
+        "groupTight.row_other": "Errenkada honetan {{count}} lauza bakarrik geratzen dira.",
+        "groupTight.col_one": "Zutabe honetan lauza bakarra geratzen da.",
+        "groupTight.col_other": "Zutabe honetan {{count}} lauza bakarrik geratzen dira.",
+        "onlyWay.row_one": "Zutabeen artean, lauki bakarra geratzen da errenkada honetan katu batentzat.",
+        "onlyWay.col_one": "Zutabeen artean, lauki bakarra geratzen da zutabe honetan katu batentzat.",
+        "onlyWay.row_other": "Modu bakarra dago errenkada honetan {{count}} katu sartzeko.",
+        "onlyWay.col_other": "Modu bakarra dago zutabe honetan {{count}} katu sartzeko.",
+        "everyWay.row_one": "Errenkada honetako katua edonon jarrita ere, beti dago hemen.",
+        "everyWay.col_one": "Zutabe honetako katua edonon jarrita ere, beti dago hemen.",
+        "everyWay.row_other": "Errenkada honetako {{count}} katu edonon jarrita ere, bat beti dago hemen.",
+        "everyWay.col_other": "Zutabe honetako {{count}} katu edonon jarrita ere, bat beti dago hemen.",
+        "lineBlock.rowsToCols": "Markatutako errenkadek beren katuak zutabe horietako laukietan dituzte, beraz zutabe horiek ez dute bat ere soberan.",
+        "lineBlock.colsToRows": "Markatutako zutabeek beren katuak errenkada horietako laukietan dituzte, beraz errenkada horiek ez dute bat ere soberan.",
+        "wouldStrand.row": "Hemen katu bat jarriz gero, markatutako errenkadak ez luke lekurik izango.",
+        "wouldStrand.col": "Hemen katu bat jarriz gero, markatutako zutabeak ez luke lekurik izango.",
+        "action": {
+          "ruleOut_one": "Baztertu marraz betetako laukia.",
+          "ruleOut_other": "Baztertu marraz betetako laukiak.",
+          "place_one": "Jarri katu bat marraz betetako laukian.",
+          "place_other": "Jarri katu bat marraz betetako lauki bakoitzean."
+        }
+      }
+    },
+    "quota": {
+      "default": "Errenkada, zutabe eta eskualde bakoitzeko",
+      "fields": "Errenkada, zutabe eta lursail bakoitzeko",
+      "lamps": "Errenkada eta zutabe bakoitzeko",
+      "market": "Errenkada eta zutabe bakoitzeko",
+      "lotus": "Errenkada eta zutabe bakoitzeko",
+      "cats": "Errenkada eta zutabe bakoitzeko"
+    },
+    "goal": {
+      "default_one": "Errenkada, zutabe eta eskualde bakoitzean izar bakar bat dago.",
+      "default_other": "Errenkada, zutabe eta eskualde bakoitzean {{count}} izar daude, ez gehiago ez gutxiago.",
+      "fields_one": "Errenkada, zutabe eta lursail bakoitzean baserri bakar bat dago.",
+      "fields_other": "Errenkada, zutabe eta lursail bakoitzean {{count}} baserri daude, ez gehiago ez gutxiago.",
+      "lamps": "Errenkada eta zutabe bakoitzean olio-lanpara bakar bat dago.",
+      "market": "Errenkada eta zutabe bakoitzean merkatu-postu bakar bat dago.",
+      "lotus": "Errenkada eta zutabe bakoitzean loto bakar bat dago.",
+      "cats": "Errenkada eta zutabe bakoitzean katu bakar bat dago."
+    },
+    "name": {
+      "default": "Izarrak bereizita",
+      "fields": "Baserriak",
+      "twinDefault": "Izar bikiak",
+      "twinFields": "Baserri bikiak",
+      "lamps": "Olio-lanparak",
+      "market": "Merkatu-postuak",
+      "lotus": "Lotoen urmaela",
+      "cats": "Tenpluko katuak"
+    }
+  },
+  "pairPuzzle": {
+    "name": {
+      "mummies": "Mumien atsedena",
+      "beetles": "Kakalardoak"
+    },
+    "goal": {
+      "mummies": "Sarkofago bakoitzak mumia bat du ondoan, eta errenkada eta zutabe bakoitzean ondoan idatzitako adina mumia daude.",
+      "beetles": "Simaur-bola bakoitzak kakalardo bat du ondoan, eta errenkada eta zutabe bakoitzean ondoan idatzitako adina kakalardo daude."
+    },
+    "rules": {
+      "mummies": {
+        "pair": "Sarkofago bakoitzak mumia bat du atseden hartzen bere gainean, azpian, ezkerrean edo eskuinean, eta mumia bakoitza bere sarkofago propioaren ondoan dago.",
+        "count": "Errenkada edo zutabe baten ondoko zenbakiak dio zenbat mumia dauden. Berde jartzen da lerroan zehazki horrenbeste daudenean, eta gorri ezin denean lortu.",
+        "touch": "Bi mumia ezin dira elkarren ondoan egon, ezta izkinetatik ere.",
+        "enter": "Ukitu lauki bat baztertzeko, berriz mumia bat jartzeko, eta beste behin garbitzeko. Arrastatu laukien gainetik hainbat batera baztertzeko. Sarkofagoak ezin dira ukitu."
+      },
+      "beetles": {
+        "pair": "Simaur-bola bakoitzak kakalardo bat du bere gainean, azpian, ezkerrean edo eskuinean, eta kakalardo bakoitza bultzatzeko bere bola propioaren ondoan dago.",
+        "count": "Errenkada edo zutabe baten ondoko zenbakiak dio zenbat kakalardo dauden. Berde jartzen da lerroan zehazki horrenbeste daudenean, eta gorri ezin denean lortu.",
+        "touch": "Bi kakalardo ezin dira elkarren ondoan egon, ezta izkinetatik ere.",
+        "enter": "Ukitu lauki bat baztertzeko, berriz kakalardo bat jartzeko, eta beste behin garbitzeko. Arrastatu laukien gainetik hainbat batera baztertzeko. Simaur-bolak ezin dira ukitu."
+      }
+    },
+    "hint": {
+      "mummies": {
+        "mistake": "Marka hau ezin da zuzena izan.",
+        "touch": "Mumia hau jarrita dago, beraz beste batek ere ezin du bere ondoan egon. Izkinek ere balio dute.",
+        "zeroLine.row": "Errenkada honetan ez dago mumiarik, beraz osorik hutsik dago.",
+        "zeroLine.col": "Zutabe honetan ez dago mumiarik, beraz osorik hutsik dago.",
+        "noAnchor": "Lauki hauek ez dute sarkofagorik ondoan, beraz ezin da mumiarik egon hemen.",
+        "lineFull.row_one": "Errenkada honek badu jada bere mumia.",
+        "lineFull.row_other": "Errenkada honek baditu jada bere {{count}} mumiak.",
+        "lineFull.col_one": "Zutabe honek badu jada bere mumia.",
+        "lineFull.col_other": "Zutabe honek baditu jada bere {{count}} mumiak.",
+        "lineTight.row_one": "Errenkada honetan lauki bakarra geratzen da bere mumiarentzat.",
+        "lineTight.row_other": "Errenkada honetan {{count}} lauki geratzen dira, justu bere {{count}} mumientzat.",
+        "lineTight.col_one": "Zutabe honetan lauki bakarra geratzen da bere mumiarentzat.",
+        "lineTight.col_other": "Zutabe honetan {{count}} lauki geratzen dira, justu bere {{count}} mumientzat.",
+        "onlyWay": "Sarkofago honek lauki bakarra du ondoan bere mumiarentzat.",
+        "claimed": "Sarkofago honek badu jada bere mumia, beraz beste sarkofago batek erabili ezin dituen ondoko laukiak hutsik geratzen dira.",
+        "lineBlock.rowsToCols_one": "Markatutako errenkadetan beren sarkofagoek eman dezaketena baino mumia bat gehiago dago, beraz kanpoan dagoen sarkofago batetik dator.",
+        "lineBlock.rowsToCols_other": "Markatutako errenkadetan beren sarkofagoek eman dezaketena baino {{count}} mumia gehiago daude, beraz kanpoan dauden sarkofagoetatik datoz.",
+        "lineBlock.colsToRows_one": "Markatutako zutabeetan beren sarkofagoek eman dezaketena baino mumia bat gehiago dago, beraz kanpoan dagoen sarkofago batetik dator.",
+        "lineBlock.colsToRows_other": "Markatutako zutabeetan beren sarkofagoek eman dezaketena baino {{count}} mumia gehiago daude, beraz kanpoan dauden sarkofagoetatik datoz.",
+        "wouldStrand.row": "Hemen mumia bat jarriz gero, markatutako errenkadak ez luke lekurik izango oraindik falta zaizkion mumientzat.",
+        "wouldStrand.col": "Hemen mumia bat jarriz gero, markatutako zutabeak ez luke lekurik izango oraindik falta zaizkion mumientzat.",
+        "wouldStrand.anchor": "Hemen mumia bat jarriz gero, markatutako sarkofagoak ez luke laukirik izango ondoan bere mumiarentzat.",
+        "action": {
+          "ruleOut_one": "Baztertu marraz betetako laukia.",
+          "ruleOut_other": "Baztertu marraz betetako laukiak.",
+          "place_one": "Jarri mumia bat marraz betetako laukian.",
+          "place_other": "Jarri mumia bat marraz betetako lauki bakoitzean."
+        }
+      },
+      "beetles": {
+        "mistake": "Marka hau ezin da zuzena izan.",
+        "touch": "Kakalardo hau jarrita dago, beraz beste batek ere ezin du bere ondoan egon. Izkinek ere balio dute.",
+        "zeroLine.row": "Errenkada honetan ez dago kakalardorik, beraz osorik hutsik dago.",
+        "zeroLine.col": "Zutabe honetan ez dago kakalardorik, beraz osorik hutsik dago.",
+        "noAnchor": "Lauki hauek ez dute simaur-bolarik ondoan, beraz ezin da kakalardorik egon hemen.",
+        "lineFull.row_one": "Errenkada honek badu jada bere kakalardoa.",
+        "lineFull.row_other": "Errenkada honek baditu jada bere {{count}} kakalardoak.",
+        "lineFull.col_one": "Zutabe honek badu jada bere kakalardoa.",
+        "lineFull.col_other": "Zutabe honek baditu jada bere {{count}} kakalardoak.",
+        "lineTight.row_one": "Errenkada honetan lauki bakarra geratzen da bere kakalardoarentzat.",
+        "lineTight.row_other": "Errenkada honetan {{count}} lauki geratzen dira, justu bere {{count}} kakalardoentzat.",
+        "lineTight.col_one": "Zutabe honetan lauki bakarra geratzen da bere kakalardoarentzat.",
+        "lineTight.col_other": "Zutabe honetan {{count}} lauki geratzen dira, justu bere {{count}} kakalardoentzat.",
+        "onlyWay": "Simaur-bola honek lauki bakarra du ondoan bere kakalardoarentzat.",
+        "claimed": "Simaur-bola honek badu jada bere kakalardoa, beraz beste bola batek erabili ezin dituen ondoko laukiak hutsik geratzen dira.",
+        "lineBlock.rowsToCols_one": "Markatutako errenkadetan beren simaur-bolek eman dezaketena baino kakalardo bat gehiago dago, beraz kanpoan dagoen simaur-bola batetik dator.",
+        "lineBlock.rowsToCols_other": "Markatutako errenkadetan beren simaur-bolek eman dezaketena baino {{count}} kakalardo gehiago daude, beraz kanpoan dauden simaur-boletatik datoz.",
+        "lineBlock.colsToRows_one": "Markatutako zutabeetan beren simaur-bolek eman dezaketena baino kakalardo bat gehiago dago, beraz kanpoan dagoen simaur-bola batetik dator.",
+        "lineBlock.colsToRows_other": "Markatutako zutabeetan beren simaur-bolek eman dezaketena baino {{count}} kakalardo gehiago daude, beraz kanpoan dauden simaur-boletatik datoz.",
+        "wouldStrand.row": "Hemen kakalardo bat jarriz gero, markatutako errenkadak ez luke lekurik izango oraindik falta zaizkion kakalardoentzat.",
+        "wouldStrand.col": "Hemen kakalardo bat jarriz gero, markatutako zutabeak ez luke lekurik izango oraindik falta zaizkion kakalardoentzat.",
+        "wouldStrand.anchor": "Hemen kakalardo bat jarriz gero, markatutako simaur-bolak ez luke laukirik izango ondoan bere kakalardoarentzat.",
+        "action": {
+          "ruleOut_one": "Baztertu marraz betetako laukia.",
+          "ruleOut_other": "Baztertu marraz betetako laukiak.",
+          "place_one": "Jarri kakalardo bat marraz betetako laukian.",
+          "place_other": "Jarri kakalardo bat marraz betetako lauki bakoitzean."
+        }
+      }
+    }
+  },
+  "rushHour": {
+    "name": {
+      "default": "Blokeoa",
+      "market": "Kale blokeatua"
+    },
+    "goal": {
+      "default": "Atera zure blokea eskuineko zulotik.",
+      "market": "Atera zure lera kalearen amaierako zulotik."
+    },
+    "rules": {
+      "default": {
+        "lanes": "Bloke bat bere bidetik bakarrik irristatzen da: inoiz ez alboka, inoiz ez taulatik kanpora.",
+        "shove": "Arrastatu bloke bat bultzatzeko. Zerbait bidean dagoen lekuan gelditzen da."
+      },
+      "market": {
+        "lanes": "Lera bat dagoen bidetik bakarrik irristatzen da: inoiz ez alboka, inoiz ez kaletik kanpora.",
+        "shove": "Arrastatu lera bat bultzatzeko. Zerbait bidean dagoen lekuan gelditzen da."
+      }
+    },
+    "hint": {
+      "default": {
+        "drive": "Aurreko bidea libre dago hara arte.",
+        "back": "Aurrean ezer ez da mugituko. Atera zurea bidetik lehenik, atzera eginez.",
+        "clear": "Bloke hori zure bidearen zeharka dago.",
+        "room": "Ezer ezin da mugitu hori mugitu arte.",
+        "push": {
+          "left": "Bultzatu ezkerrera, eraztuneraino.",
+          "right": "Bultzatu eskuinera, eraztuneraino.",
+          "up": "Bultzatu gora, eraztuneraino.",
+          "down": "Bultzatu behera, eraztuneraino."
+        }
+      },
+      "market": {
+        "drive": "Zure aurreko bidea libre dago hara arte.",
+        "back": "Aurrean ezer ez da mugituko. Egin atzera zure lerarekin lehenik.",
+        "clear": "Zama hori irteteko bidearen zeharka dago.",
+        "room": "Ezer ezin da mugitu hori mugitu arte.",
+        "push": {
+          "left": "Bultzatu ezkerrera, eraztuneraino.",
+          "right": "Bultzatu eskuinera, eraztuneraino.",
+          "up": "Bultzatu kalean gora, eraztuneraino.",
+          "down": "Bultzatu kalean behera, eraztuneraino."
+        }
+      }
+    }
+  },
+  "hidato": {
+    "rules": {
+      "default": {
+        "given": "Abaraskan dauden zenbakiak buru-hausgarriaren parte dira: bere lekuan geratzen dira.",
+        "enter": "Ukitu zenbaki bat segida hor hartzeko, eta gero ukitu ondoko gelaxka huts bat jarraitzeko. Edo arrastatu zuzenean segidak hartzen dituen gelaxketatik.",
+        "back": "Ukitu zuk jarritako zenbaki bat eta ukitu berriz kentzeko, harekin zintzilik geratzen den guztiarekin batera. Zenbaki batetik beste norabide batera jarraituz gero, gauza bera gertatzen da. Desegin botoiak zure azken mugimendua kentzen du."
+      },
+      "channel": {
+        "given": "Zenbakia duten soroak buru-hausgarriaren parte dira: bere lekuan geratzen dira.",
+        "enter": "Ukitu zenbakidun soro bat ura hor hartzeko, eta gero ukitu ondoko soro lehor bat zulatzen jarraitzeko. Edo arrastatu zuzenean ubideak zeharkatzen dituen soroetatik.",
+        "back": "Ukitu zuk zulatutako soro bat eta ukitu berriz betetzeko, harengandik moztuta geratzen den ubidearekin batera. Soro batetik beste norabide batera zulatuz gero, gauza bera gertatzen da. Desegin botoiak zure azken mugimendua kentzen du."
+      },
+      "scribe": {
+        "given": "Gorriz idatzitako zenbakiak buru-hausgarriarenak dira: bere lekuan geratzen dira.",
+        "enter": "Ukitu zenbaki bat luma hor hartzeko, eta gero ukitu ondoko leku huts bat idazten jarraitzeko. Edo arrastatu zuzenean lerroan zehar.",
+        "back": "Ukitu zuk idatzitako zenbaki bat eta ukitu berriz ezabatzeko, harengandik moztuta geratzen den lerroarekin batera. Zenbaki batetik beste norabide batera idatziz gero, gauza bera gertatzen da. Desegin botoiak zure azken mugimendua kentzen du."
+      },
+      "chambers": {
+        "given": "Zenbakia duten gelak eraikitzaileek egin zituzten: bere lekuan geratzen dira.",
+        "enter": "Ukitu zenbakidun gela bat pasabidea hor hartzeko, eta gero ukitu ondoko gela itxi bat zulatzeko. Edo arrastatu zuzenean pasabideak zeharkatzen dituen geletatik.",
+        "back": "Ukitu zuk irekitako gela bat eta ukitu berriz ixteko, harengandik moztuta geratzen den pasabidearekin batera. Gela batetik beste norabide batera zulatuz gero, gauza bera gertatzen da. Desegin botoiak zure azken mugimendua kentzen du."
+      }
+    },
+    "goal": {
+      "default": "Abaraskaren gelaxka guztietan zenbaki bat dago, 1etik {{last}}-raino, bakoitza aurreko zenbakia ukitzen duen gelaxka batean.",
+      "channel": "Ubide bakar batek ureztatzen du lautada osoa: soro guztiek dute beren txanda, 1etik {{last}}-raino, bakoitza aurreko soroaren ondoan zulatuta.",
+      "scribe": "Zenbakien lerro eten gabe batek zeharkatzen du orria: leku guztiek dute zenbaki bat, 1etik {{last}}-raino, bakoitza aurreko zenbakiaren ondoan.",
+      "chambers": "Pasabide bakar batek zeharkatzen du hilobi osoa: gela guztiak txandaka irekitzen dira, 1etik {{last}}-raino, bakoitza aurreko gelatik zulatuta."
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": "Zenbaki hauetako bat ezin da zuzena izan.",
+          "sandwich": "{{before}} eta {{after}} zenbakiek gelaxka libre bakarra ukitzen dute biek.",
+          "neighbourForced": "{{from}} zenbakiak gelaxka libre bakarra du ondoan.",
+          "onlyCell": "Abaraskan ez dago beste lekurik {{value}} zenbakiarentzat.",
+          "onlyValue": "Beste zenbakirik ezin da gelaxka honetara iritsi."
+        },
+        "action": {
+          "place": "Jarri {{value}} marraz betetako gelaxkan."
+        }
+      },
+      "channel": {
+        "reason": {
+          "mistake": "Zenbaki hauetako bat ezin da zuzena izan.",
+          "sandwich": "{{before}} eta {{after}} zenbakiek soro lehor bakarra ukitzen dute biek.",
+          "neighbourForced": "{{from}} zenbakiaren ondoan soro lehor bakarra geratzen da.",
+          "onlyCell": "Lautadan ez dago beste lekurik {{value}} zenbakiarentzat.",
+          "onlyValue": "Beste zenbakirik ezin da soro honetara iritsi."
+        },
+        "action": {
+          "place": "Zulatu {{value}} marraz betetako soroan."
+        }
+      },
+      "scribe": {
+        "reason": {
+          "mistake": "Zenbaki hauetako bat ezin da zuzena izan.",
+          "sandwich": "{{before}} eta {{after}} zenbakiek leku huts bakarra ukitzen dute biek.",
+          "neighbourForced": "{{from}} zenbakiaren ondoan leku huts bakarra geratzen da.",
+          "onlyCell": "Orrian ez dago beste lekurik {{value}} zenbakiarentzat.",
+          "onlyValue": "Beste zenbakirik ezin da leku honetara iritsi."
+        },
+        "action": {
+          "place": "Idatzi {{value}} marraz betetako lekuan."
+        }
+      },
+      "chambers": {
+        "reason": {
+          "mistake": "Zenbaki hauetako bat ezin da zuzena izan.",
+          "sandwich": "{{before}} eta {{after}} zenbakiek gela itxi bakarra ukitzen dute biek.",
+          "neighbourForced": "{{from}} zenbakiaren ondoan gela itxi bakarra geratzen da.",
+          "onlyCell": "Hilobian ez dago beste lekurik {{value}} zenbakiarentzat.",
+          "onlyValue": "Beste zenbakirik ezin da gela honetara iritsi."
+        },
+        "action": {
+          "place": "Ireki {{value}} marraz betetako gelan."
+        }
+      }
+    },
+    "name": {
+      "default": "Erlauntza",
+      "channel": "Ubidea",
+      "scribe": "Eskribauaren orria",
+      "chambers": "Gela itxiak"
+    }
+  },
+  "sudoku": {
+    "rules": {
+      "default": {
+        "chambers": "Lerro lodiek sareta sei gelatan banatzen dute, bi lauki zabal eta hiru altu.",
+        "given": "Zizelkatuta dauden zenbakiak buru-hausgarriaren parte dira: bere lekuan geratzen dira.",
+        "enter": "Ukitu lauki bat, eta gero zenbaki bat. Zenbaki bera berriz ukituz gero, kendu egiten da.",
+        "notes": "Aldatu arkatzera lauki batean oraindik egon daitezkeen zenbakiak idazteko. Desegin botoiak zure azken mugimendua kentzen du."
+      },
+      "papyrus": {
+        "chambers": "Marra lodiek orria sei zatitan banatzen dute, bi leku zabal eta hiru altu.",
+        "given": "Gorriz idatzitako ikurrak buru-hausgarriarenak dira: bere lekuan geratzen dira.",
+        "enter": "Ukitu leku bat, eta gero ikur bat. Ikur bera berriz ukituz gero, ezabatu egiten da.",
+        "notes": "Hartu ihizko luma leku batean oraindik egon daitezkeen ikurrak idazteko. Desegin botoiak zure azken mugimendua kentzen du."
+      }
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": {
+            "value": "Hemengo zenbakietako bat ezin da zuzena izan. Kendu eta begiratu berriz.",
+            "note": "Lauki honetako oharrek hemen doan zenbakia baztertu dute. Garbitu eta hasi berriz."
+          },
+          "nakedSingle": "Lauki honen errenkadak, zutabeak eta gelak beste zenbaki guztiak hartu dituzte.",
+          "hiddenSingle": {
+            "row": "{{token}} ez da errenkada honetako beste inongo laukitan sartzen.",
+            "col": "{{token}} ez da zutabe honetako beste inongo laukitan sartzen.",
+            "box": "{{token}} ez da gela honetako beste inongo laukitan sartzen."
+          },
+          "pointing": {
+            "row": "Markatutako gelaren barruan, {{token}} errenkada honetan bakarrik egon daiteke.",
+            "col": "Markatutako gelaren barruan, {{token}} zutabe honetan bakarrik egon daiteke."
+          },
+          "claiming": {
+            "row": "Markatutako errenkadan zehar, {{token}} gela bakar honen barruan bakarrik sartzen da.",
+            "col": "Markatutako zutabean behera, {{token}} gela bakar honen barruan bakarrik sartzen da."
+          }
+        },
+        "action": {
+          "place": "Jarri {{token}} marraz betetako laukian.",
+          "ruleOut_one": "Baztertu {{token}} marraz betetako laukitik.",
+          "ruleOut_other": "Baztertu {{token}} marraz betetako laukietatik."
+        }
+      },
+      "papyrus": {
+        "reason": {
+          "mistake": {
+            "value": "Ikur hauetako bat ezin da zuzena izan. Ezabatu eta begiratu berriz.",
+            "note": "Leku honetako arkatz-markek hemen doan ikurra baztertu dute. Ezabatu eta hasi berriz."
+          },
+          "nakedSingle": "Leku honen errenkadak, zutabeak eta zatiak beste ikur guztiak hartu dituzte.",
+          "hiddenSingle": {
+            "row": "{{token}} ez da errenkada honetako beste inongo lekutan sartzen.",
+            "col": "{{token}} ez da zutabe honetako beste inongo lekutan sartzen.",
+            "box": "{{token}} ez da zati honetako beste inongo lekutan sartzen."
+          },
+          "pointing": {
+            "row": "Markatutako zatiaren barruan, {{token}} errenkada honetan bakarrik egon daiteke.",
+            "col": "Markatutako zatiaren barruan, {{token}} zutabe honetan bakarrik egon daiteke."
+          },
+          "claiming": {
+            "row": "Markatutako errenkadan zehar, {{token}} zati bakar honen barruan bakarrik sartzen da.",
+            "col": "Markatutako zutabean behera, {{token}} zati bakar honen barruan bakarrik sartzen da."
+          }
+        },
+        "action": {
+          "place": "Idatzi {{token}} marraz betetako lekuan.",
+          "ruleOut_one": "Baztertu {{token}} marraz betetako lekutik.",
+          "ruleOut_other": "Baztertu {{token}} marraz betetako lekuetatik."
+        }
+      }
+    },
+    "goal": {
+      "default": "Errenkada, zutabe eta gela bakoitzean sei zenbakietako bakoitza behin bakarrik agertzen da.",
+      "papyrus": "Errenkada, zutabe eta zati bakoitzean sei ikurretako bakoitza behin bakarrik agertzen da."
+    },
+    "name": {
+      "default": "Sei gelak",
+      "papyrus": "Eskribauaren erregistroa"
+    }
+  },
+  "crocodile": {
+    "name": "Krokodiloen putzua",
+    "goal": "Zeharkatu putzua beste ertzeraino.",
+    "rules": {
+      "want": "Krokodilo bakoitzak bere atzeko harri-errenkadako erantzun bat nahi du: handiena, edo txikiena.",
+      "mark": "Bere aho irekiak esaten du zein, eta ondoko ikurrak ere bai: > erantzun handienerantz irekitzen da, < txikienerantz.",
+      "bite": "Beste edozein harri zapaltzen baduzu, kosk egiten dizu: osasuna galtzen duzu eta hurbileko ertzetik hasi behar duzu berriz."
+    },
+    "hint": {
+      "biggest": "Krokodilo honek erantzun handiena nahi du. Hori {{value}} da.",
+      "smallest": "Krokodilo honek erantzun txikiena nahi du. Hori {{value}} da."
+    }
+  },
+  "canisters": {
+    "name": {
+      "default": "Ontziak",
+      "grain": "Gari-neurriak",
+      "oil": "Olioa lanparetarako",
+      "wine": "Merkatariaren upategia",
+      "natron": "Ontzi kanopikoak",
+      "ink": "Idazgela"
+    },
+    "goal": {
+      "default_one": "Neurtu eskatutako kopurua, eta esan zein ontzitan dagoen.",
+      "default_other": "Neurtu eskatutako kopuru bakoitza txandaka, eta esan zein ontzitan dagoen hurrengoaren aurretik.",
+      "grain_one": "Neurtu eskatutako gari kopurua, eta esan zein neurritan dagoen.",
+      "grain_other": "Neurtu gari kopuru bakoitza txandaka, eta esan zein neurritan dagoen hurrengoaren aurretik.",
+      "oil_one": "Neurtu eskatutako olioa, eta esan zein pitxerretan dagoen.",
+      "oil_other": "Neurtu olio-neurri bakoitza txandaka, eta esan zein pitxerretan dagoen hurrengoaren aurretik.",
+      "wine_one": "Neurtu eskatutako ardoa, eta esan zein anforatan dagoen.",
+      "wine_other": "Neurtu ardo-neurri bakoitza txandaka, eta esan zein anforatan dagoen hurrengoaren aurretik.",
+      "natron_one": "Neurtu eskatutako natroia, eta esan zein ontzitan dagoen.",
+      "natron_other": "Neurtu natroi-neurri bakoitza txandaka, eta esan zein ontzitan dagoen hurrengoaren aurretik.",
+      "ink_one": "Neurtu eskatutako tinta, eta esan zein potetan dagoen.",
+      "ink_other": "Neurtu tinta-neurri bakoitza txandaka, eta esan zein potetan dagoen hurrengoaren aurretik."
+    },
+    "rules": {
+      "method": {
+        "sums": "Egin dezakezun kopuru bakoitza mahaiko bi zenbaki batuta edo kenduta da: ontzi baten tamaina, barruan duena, edo oraindik sartzen zaiona.",
+        "backwards": "Beraz, egin atzera eskatutako kopurutik: zein bi zenbakik ematen dute, eta nola lortzen dituzu biak aldi berean?"
+      },
+      "claim": "Kopurua duzunean, ukitu «hau». Ontzi okerra esateak mugimendu bat kostatzen du.",
+      "legs": "Gero hurrengo kopurua, ontziek geratzen zaien edukitik neurtuta.",
+      "default": {
+        "moves": "Ukitu ontzi bat hartzeko, eta gero beste bat hartara isurtzeko. Isurtzea gelditzen da lehena hustu edo bigarrena bete denean.",
+        "contents": "Hau da dagoen ur guztia: ontzi bat beteta hasten da, eta ezin da ezer bota edo ekarri.",
+        "levels": "Ontzi bakoitzak dio zenbat duen barruan, eta zenbat sartzen zaion beteta dagoenean."
+      },
+      "grain": {
+        "moves": "Ukitu neurri bat altxatzeko, eta gero beste bat garia hartara isurtzeko. Isurtzea gelditzen da lehena hustu edo bigarrena ertzeraino bete denean.",
+        "contents": "Hau da dagoen gari guztia: neurri bat beteta hasten da, eta ezin da ezer erratzaz kendu edo alearen biltegitik ekarri.",
+        "levels": "Neurri bakoitzak dio zenbat duen barruan, eta zenbat sartzen zaion ertzeraino beteta."
+      },
+      "oil": {
+        "moves": "Ukitu pitxer bat altxatzeko, eta gero beste bat hartara isurtzeko. Isurtzea gelditzen da lehena hustu edo bigarrena bete denean.",
+        "contents": "Hau da dagoen olio guztia: pitxer bat beteta hasten da, eta ezin da ezer bota edo atera.",
+        "levels": "Pitxer bakoitzak dio zenbat duen barruan, eta zenbat sartzen zaion beteta dagoenean."
+      },
+      "wine": {
+        "moves": "Ukitu anfora bat altxatzeko, eta gero beste bat hartara isurtzeko. Isurtzea gelditzen da lehena hustu edo bigarrena bete denean.",
+        "contents": "Hau da dagoen ardo guztia: anfora bat beteta hasten da, eta ezin da ezer isuri edo upategitik ekarri.",
+        "levels": "Anfora bakoitzak dio zenbat duen barruan, eta zenbat sartzen zaion beteta dagoenean."
+      },
+      "natron": {
+        "moves": "Ukitu ontzi bat altxatzeko, eta gero beste bat natroia hartara isurtzeko. Isurtzea gelditzen da lehena hustu edo bigarrena tapara arte bete denean.",
+        "contents": "Hau da dagoen natroi guztia: ontzi bat beteta hasten da, eta ezin da ezer kendu edo ekarri.",
+        "levels": "Ontzi bakoitzak dio zenbat duen barruan, eta zenbat sartzen zaion tapara arte beteta."
+      },
+      "ink": {
+        "moves": "Ukitu pote bat altxatzeko, eta gero beste bat hartara isurtzeko. Isurtzea gelditzen da lehena hustu edo bigarrena bete denean.",
+        "contents": "Hau da dagoen tinta guztia: pote bat beteta hasten da, eta ezin da ezer bota edo berria egin.",
+        "levels": "Pote bakoitzak dio zenbat duen barruan, eta zenbat sartzen zaion beteta dagoenean."
+      }
+    },
+    "hint": {
+      "goal": {
+        "leftover": "Atzera eginez: {{amount}} = {{content}} ken {{space}}. Hau da, {{content}} duen ontzi bat {{space}} lekua duen beste batera isurita.",
+        "full": "Atzera eginez: {{amount}} ontzi baten tamaina da, eta {{a}} gehi {{b}} zehazki hori da.",
+        "sum": "Atzera eginez: {{amount}} = {{a}} gehi {{b}}."
+      },
+      "claim": "Isurketa bakar bat falta da. Gero, asmatu zein ontzitan dagoen.",
+      "stuck": "Hemendik ezin da {{target}} neurtu geratzen zaizkizun mugimenduekin. Desegin isurketa bat, edo hasi berriz.",
+      "overBudget": "Ez da mugimendurik geratzen. Desegin bat, edo hasi berriz eta bilatu bide laburragoa.",
+      "next": {
+        "leftover": "Horren aurreko kalkulua: {{amount}}. {{content}}, {{space}} lekua duen ontzi batera isurita.",
+        "full": "Horren aurreko kalkulua: ontzi bat beteta {{amount}}-ekin. {{a}} gehi {{b}}.",
+        "sum": "Horren aurreko kalkulua: {{amount}} = {{a}} gehi {{b}}."
+      }
+    },
+    "movesLeft_one": "Mugimendu bat geratzen da",
+    "movesLeft_other": "{{count}} mugimendu geratzen dira",
+    "legs": "{{done}} / {{total}} neurtuta",
+    "wanted": "Neurtu",
+    "claim": "hau",
+    "claimAria": "Esan {{capacity}} edukierako ontziak duela kopurua"
+  },
+  "procession": {
+    "name": {
+      "default": "Orduak ordenan",
+      "funerary": "Eguna langileen haranean",
+      "cosmos": "Gaueko zeharkaldia",
+      "water": "Uholdearen eguna",
+      "trade": "Eguna kaian"
+    },
+    "goal": {
+      "default": "Irristatu gertatzen den gauza bakoitza bere ordura, egunaren azpiko marka guztiak bete arte.",
+      "funerary": "Irristatu lan bakoitza bere ordura, egunaren azpiko marka guztiak bete arte.",
+      "cosmos": "Irristatu argi bakoitza bere ordura, gauaren azpiko marka guztiak bete arte.",
+      "water": "Irristatu lan bakoitza bere ordura, egunaren azpiko marka guztiak bete arte.",
+      "trade": "Irristatu lan bakoitza bere ordura, egunaren azpiko marka guztiak bete arte."
+    },
+    "rules": {
+      "default": {
+        "lengths": "Errenkada bakoitza gertatzen den gauza bat da, eta bere barra bezain luzea irauten du. Noiz gertatzen den, hori asmatu behar duzu.",
+        "marks": "Egunaren azpiko lerro bat gorri jartzen da betetzen ez den bitartean. Ukitu bat dagozkion errenkadak inguratzeko.",
+        "drag": "Arrastatu barra bat bere errenkadan zehar. Ez da inoiz egunetik ateratzen."
+      }
+    },
+    "hint": {
+      "default": {
+        "chain": "Errenkada horren lekua finkatuta dago jada, eta hau harekin lotuta dago.",
+        "squeeze": "Egunaren zati jakin bat besterik ez da geratzen, eta hau da sartzen den guztia.",
+        "apart": "Alderantziz ez da egunean sartzen.",
+        "split": "Probatu alderantziz, eta beste zerbait hautsiko da.",
+        "move": "Arrastatu inguratutako barra marraz betetako marretara."
+      }
+    },
+    "events": {
+      "default": ["sua", "ur-garraioa", "ogi-egitea", "txalupa-bidaia", "idien gidaritza", "gaueko zaintza"],
+      "funerary": ["igeltseroen lana", "sareta marraztea", "zizelkatzea", "margotzea", "urreztatzea", "atea jartzea"],
+      "cosmos": [
+        "eguzkiaren zeharkaldia",
+        "izarraren igoera",
+        "ilargiaren zaintza",
+        "zeru irekia",
+        "egunsentia",
+        "urte-aldaketa"
+      ],
+      "water": [
+        "uholdea",
+        "ubideak zulatzea",
+        "urmaela betetzea",
+        "soroak ureztatzea",
+        "ibaia zeharkatzea",
+        "uzta biltzea"
+      ],
+      "trade": [
+        "salgaiak sailkatzea",
+        "ogia saltzea",
+        "garagardoa saltzea",
+        "ibaia zeharkatzea",
+        "zamak garraiatzea",
+        "kontuak egitea"
+      ]
+    },
+    "marks": {
+      "default": {
+        "pin": "{{a}}: {{tick}}. orduan hasten da.",
+        "handoff": "{{a}}: {{b}} amaitu bezain laster hasten da.",
+        "link_one": "{{a}}: {{b}} amaitu eta ordu bat geroago hasten da.",
+        "link_other": "{{a}}: {{b}} amaitu eta {{count}} ordu geroago hasten da.",
+        "before": "{{a}}: {{b}} hasi baino lehen amaitzen da.",
+        "apart": "{{a}} eta {{b}}: ez dira inoiz aldi berean egiten.",
+        "together": "{{a}} eta {{b}}: aldi berean egiten dira denbora batez.",
+        "span_one": "Lehen hasieratik azken amaierara ordu bat dago.",
+        "span_other": "Lehen hasieratik azken amaierara {{count}} ordu daude."
+      }
+    },
+    "door": {
+      "title": "Prozesioaren atea",
+      "hint": "Zapaltzen duzun lauza bakoitzak bere lana askatzen du. Ordenatu eguna, eta gero ibili lauzetatik ordena horretan.",
+      "read": "Eguna irakurrita dago. Ibili bere lauzetatik ordena honetan, lehenengotik hasita.",
+      "hintButton": "Pista"
+    }
+  },
+  "story": {
+    "invitation": "Hitz egin",
+    "log": {
+      "empty": "Ezer ez oraindik. Fezek gauza asko izango ditu esateko."
+    },
+    "speaker": {
+      "fez": "Fez",
+      "explorer": "Zu",
+      "ipi": "Ipi",
+      "henut": "Henut",
+      "priest": "Apaiza",
+      "pharaoh": "Faraoia",
+      "voice": "Ahots bat"
+    },
+    "wall": {
+      "wrong": "Norbaitek hirugarren ikurra gaizki zizelkatu zuen. Hiru mila urte daramatza gaizki.",
+      "fixed": "Hori da berriz bere izena.",
+      "pick": "Jarri ikur egokia bere lekuan.",
+      "cannot": "Ez dakizu hemen doan ikurra. Oraindik ez."
+    },
+    "sphinx": {
+      "wrong": "Kanpoko idazki bera, baina harea ez zen hona iritsi. Bi ikur oraindik garbi zizelkatuta, eta hutsune bat hirugarrena zegoen lekuan.",
+      "fixed": "Hori da dena.",
+      "pick": "Jarri daramazun ikurra hutsunean.",
+      "cannot": "Bi ikur ezagutzen dituzu, eta hutsune bat ezin duzu bete. Oraindik ez.",
+      "gap": "Falta den ikurra"
+    }
+  },
+  "lightbeamSwitch": {
+    "name": "Argi biraka",
+    "invitation": "Biratu ispiluak",
+    "goal": "Argia santutegi batean dago, eta haren azpiko irteera irekita dago.",
+    "rules": {
+      "shrines": "Argi-disko bat, eta santutegi bat bidegurutze honetako irteera bakoitzaren gainean. Zoruko ispiluek argia edozein santutegitara eraman dezakete.",
+      "doors": "Argia iristen den irteera irekita dago, eta besteak itxita. Bide bat, irteera bat.",
+      "returning": "Aukeratzean ez duzu ezer galtzen. Itzuli nahi duzunean, eta bidali argia beste bide batetik: hura irekiko da, eta hau itxi.",
+      "tap": "Ukitu ispilu bat biratzeko. Berriz ukituz gero, lehengo lekura itzultzen da."
+    },
+    "doorOpen": "{{way}} irteera: irekita",
+    "doorShut": "{{way}} irteera: itxita",
+    "way": {
+      "n": "Iparraldeko",
+      "e": "Ekialdeko",
+      "s": "Hegoaldeko",
+      "w": "Mendebaldeko"
+    }
+  },
+  "handle": {
+    "name": "Palanka",
+    "invitation": "Mugitu palanka",
+    "goal": "Palanka alde batera edo bestera dago. Alde batek irekitzen duena, besteak ixten du.",
+    "left": "Mugitu ezkerrera",
+    "right": "Mugitu eskuinera"
+  },
+  "torch": {
+    "name": "Zuzia",
+    "invitation": "Piztu zuzia",
+    "goal": "Itzalitako zuzi bat. Behin pizten denean, ezin da berriz itzali.",
+    "lit": "Zuzia piztuta dago."
+  },
+  "gateFace": {
+    "title": "Zain dagoen ate bat",
+    "hint": "Ikur guztiek piztuta egon behar dute ate hau ireki dadin.",
+    "lit": "{{owner}}: piztuta",
+    "unlit": "{{owner}}: oraindik ez",
+    "owner": {
+      "torch": "Zuzia",
+      "handle": "Palanka",
+      "key": "Giltza",
+      "web": "Harearen ikur bat",
+      "plateStone": "Harri bat plaka baten gainean",
+      "plateEmpty": "Plaka hutsik",
+      "other": "Mekanismoa"
+    },
+    "orderHint": "Ibili lauzetatik ordena honetan.",
+    "reset": "Hasi berriz",
+    "spoiled": "Ibilaldia hondatu da: lauza bat ordenaz kanpo zapaldu da.",
+    "tile": {
+      "unwalked": "{{step}}. urratsa: oraindik zapaldu gabe",
+      "inOrder": "{{step}}. urratsa: ordenan zapalduta",
+      "outOfOrder": "{{step}}. urratsa: ordenaz kanpo zapalduta"
+    }
+  },
+  "devLockEditor": {
+    "syntax": "Sintaxia",
+    "example": "Adibidea",
+    "useExample": "Erabili adibidea",
+    "title": "Sarraila-editorea",
+    "notation": "Sarrailaren notazioa",
+    "checks": "Egiaztapenak",
+    "drawing": "Marrazkia",
+    "carveAndPlay": "Zizelkatu eta jokatu",
+    "copyLink": "Kopiatu esteka",
+    "copied": "Esteka kopiatuta",
+    "failed": "Ezin izan da kopiatu; esteka helbide-barran dago",
+    "backToEditor": "← Editorea",
+    "close": "Itxi",
+    "open": "Sarraila-editorea",
+    "modeLock": "Sarraila",
+    "modeWeb": "Sarea",
+    "webNotation": "Sarearen notazioa",
+    "openWeb": "Ireki sare bat",
+    "checking": "Egiaztatzen…",
+    "checkedIn": "{{ms}} ms-tan egiaztatuta",
+    "worldCarved": "Aztia mailako solairuak {{ms}} ms-tan zizelkatuta, behin",
+    "simulation": "Tirakadak",
+    "noSimulation": "Ez dago ezer probatzeko, leku guztiak munduan egon arte.",
+    "summary": "Laburpena",
+    "stillBuried": "Oraindik %{{percent}} lurperatuta",
+    "nothingBuried": "Ezer ez lurperatuta",
+    "finishes": "amaitzen da",
+    "stopsAt": "%{{pct}}-an gelditzen da",
+    "notOpenYet": "oraindik ez irekita",
+    "pullAll": "Tira eskura dagoen guztiari",
+    "reset": "Hasi berriz",
+    "progress": "{{reachable}} eskura · {{pulled}} / {{total}} hartuta",
+    "allTaken": "Dena tiratuta eta hartuta.",
+    "potFront": "{{pulled}} / {{total}} tiratuta · aurrealdea %{{pct}}-an",
+    "potOpen": "{{pulled}} / {{total}} tiratuta · irekita",
+    "keys": "Giltzak",
+    "keysNote": "bakoitzak zigilu bat irekitzen du",
+    "log": "Zer gertatu den",
+    "logEmpty": "Oraindik ez da ezer tiratu.",
+    "logPull": "{{name}} tiratzen du hemen: {{at}}",
+    "logTake": "{{name}} hartzen du hemen: {{at}}",
+    "logFront": "{{pot}} aurrealdea %{{pct}}-ra",
+    "logPotOpen": "{{pot}} irekita",
+    "logSeal": "zigilua irekita hemen: {{at}}",
+    "logNew": "berria: {{names}}",
+    "pullPin": "tira {{name}} palankari",
+    "takePin": "hartu {{name}} giltza",
+    "legendCleared": "garbituta",
+    "legendBuried": "lurperatuta",
+    "legendSeal": "zigilua",
+    "legendPins": "● palanka · ■ giltza · txikia = alboko zatia"
+  },
+  "camp": {
+    "title": "Kanpalekua",
+    "continue": {
+      "heading": "Oraingo espedizioa",
+      "setOff": "Abiatu",
+      "pyramid": "{{level}}. piramidea / {{count}} · {{tier}}",
+      "tomb": "Hilobia · {{tier}}",
+      "empty": "Zure mapako dena irekita dago"
+    },
+    "hint_one": "Bidaia zahar batek badu zerbait berria aurkitzeko",
+    "hint_other": "{{count}} bidaia zaharrek badute zerbait berria aurkitzeko",
+    "comingHome": {
+      "title": "Kanpalekuan berriz",
+      "haulTitle": "Bidaia honetan bildutakoa",
+      "new": "BERRIA",
+      "unpack": "Hustu zakuak",
+      "toCamp": "Kanpalekura"
+    },
+    "chapter": {
+      "subtitle": "Kapitulu berria",
+      "title": "Piramide berri bat ageri da",
+      "body": "{{tier}} mailako bidaiak irekita daude. Hartu arnasa kanpalekuan, eta abiatu prest zaudenean.",
+      "journeyNote": "{{tier}} mailako lehen bidaia",
+      "later": "Gero"
+    },
+    "close": "Itxi",
+    "entrance": {
+      "collection": "Bilduma",
+      "mosaic": "Mosaikoa",
+      "journeys": "Bidaia guztiak",
+      "detectors": "Detektagailuak"
+    },
+    "mapTable": {
+      "title": "Mapen mahaia",
+      "journeys": "Bidaiak"
+    }
+  },
+  "home": {
+    "haul": {
+      "times": "×{{count}}"
+    }
+  },
+  "journeys": {
+    "tierNeed": "Aurkitu altxor hau",
+    "tierProgress": "{{done}} / {{total}} eginda",
+    "tierLockedName": "{{tier}} mailako bidaiak",
+    "toggleTier": "Erakutsi edo ezkutatu {{tier}} mailako bidaiak",
+    "now": "ORAIN",
+    "newDot": "Zerbait berria aurkitzeko",
+    "noteCurrentPyramid": "Martxan · {{level}}. piramidea / {{count}}",
+    "noteCurrentTomb": "Martxan · hilobian",
+    "noteFinished": "Amaituta",
+    "noteFinishedNews": "Amaituta · zerbait berria aurkitzeko",
+    "noteOpen": "Oraindik bisitatu gabe",
+    "noteResumePyramid": "Lehen hasita · {{level}}. piramidea / {{count}}",
+    "noteResumeTomb": "Lehen hasita · hilobian",
+    "needProgress": "{{unit}}: {{found}} / {{required}}",
+    "showStops": "Erakutsi {{name}}: lekuak",
+    "stopPyramid": "Piramidea",
+    "stopTomb": "Lekua"
+  },
+  "newVersion": {
+    "title": "Bertsio berri bat!",
+    "name": "Jokoa asko aldatu da",
+    "body": "Beraz, zure bidaia berriz hasten da. Hilobi berriak, aurkikuntzak eta eraikitzeko kanpaleku bat zain dituzu."
+  },
+  "devPrefabPreview": {
+    "firstDoor": "Lehen atera",
+    "stop": "Geldialdira",
+    "secondDoor": "Bigarren atera",
+    "doorsInUse_one": "Ate bat erabiltzen",
+    "doorsInUse_other": "{{count}} ate erabiltzen",
+    "walled": "{{count}} hormaz itxita"
+  },
+  "devRoomEditor": {
+    "title": "Gela-editorea",
+    "open": "Gela-editorea",
+    "close": "Itxi",
+    "tier": "Maila",
+    "catalogue": "Ireki gela bat",
+    "notation": "Gelaren notazioa",
+    "copyLink": "Kopiatu esteka",
+    "copyText": "Kopiatu testua",
+    "copied": "Kopiatuta",
+    "failed": "Ezin izan da arbelera kopiatu",
+    "palette": "Paleta",
+    "unpainted": "oraindik margotu gabe",
+    "layout": "Diseinua",
+    "mirrored": "(ispilatuta)",
+    "fill_one": "Bete (aukera bat)",
+    "fill_other": "Bete ({{count}} aukera)",
+    "fromDoor": "Ibili hemendik",
+    "toDoor": "Ibili hona",
+    "automatic": "Automatikoa",
+    "direction": {
+      "n": "Iparraldeko atea",
+      "e": "Ekialdeko atea",
+      "s": "Hegoaldeko atea",
+      "w": "Mendebaldeko atea"
+    },
+    "checks": "Egiaztapenak",
+    "sound": "Gelak egiaztapenak gainditzen ditu",
+    "tierDisagrees": "Goiburuak {{header}} maila dio, hemen {{picked}} mailan marraztuta",
+    "undo": "Desegin",
+    "drawing": "Marrazkia",
+    "tool": {
+      "select": "Hautatu",
+      "wall": "Horma",
+      "floor": "Zorua",
+      "door": "Ate-lekua",
+      "stop": "Geldialdia",
+      "chest": "Kutxa",
+      "portal": "Atari",
+      "mechanism": "Mekanismoa",
+      "erase": "Ezabatu",
+      "copy": "Marraztu {{letter}}"
+    },
+    "againstWall": "Jaregindako objektuak iparraldeko hormaren kontra jartzen dira",
+    "dropHint": "Arrastatu paletako elementu bat gelaxka batera; bere tamaina hartzen du",
+    "newLayout": "Diseinu berriaren izena",
+    "addLayout": "Kopiatu diseinu gisa",
+    "inspector": {
+      "title": "{{letter}} lekua",
+      "optional": "Aukerakoa",
+      "kinds": "Motak",
+      "counted": "Bete batzuk bakarrik",
+      "take": "Hartu",
+      "of": "/",
+      "per": "bakoitzeko",
+      "perNone": "bakoitza bere aldetik",
+      "drawAnother": "Marraztu beste bat",
+      "close": "Itxi"
+    },
+    "refused": {
+      "notFree": "Ez dago gelaren barruko zoru librean",
+      "wallRow": "Horma-leku bat iparraldeko hormaren barruko lehen errenkadan dago",
+      "northWall": "Horma-elementu bat iparraldeko horman zintzilik dago",
+      "floorOnRing": "Kanpoko eraztunean hormak eta ate-lekuak bakarrik",
+      "doorInside": "Ate-leku bat kanpoko eraztunean dago",
+      "keepStop": "Geldialdia geratzen da: jarri beste nonbait mugitzeko",
+      "noLetter": "Letra guztiak hartuta daude",
+      "layoutName": "Eman diseinuari beste inongo diseinuk ez duen izen bat",
+      "notation": "Notazioak ez du onartzen: {{message}}"
+    },
+    "layer": {
+      "wall": "hormaren kontra",
+      "floor": "zorua",
+      "ground": "lurra",
+      "wallItem": "horma-elementua"
+    },
+    "cell": "{{row}},{{col}} gelaxka: {{what}}",
+    "cellWhat": {
+      "wall": "horma",
+      "floor": "zoru librea",
+      "door": "ate-lekua",
+      "place": "{{letter}}, {{kinds}}"
+    },
+    "rewrites": "Marrazteak testua berridazten du: iruzkin guztiak goira mugitzen dira"
+  }
+}

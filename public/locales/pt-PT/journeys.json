@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Amanhecer na Esfinge",
+    "description": "A Grande Esfinge, e a escrita aos pés dela que já ninguém sabe ler. O mapa diz: começa aqui."
+  },
+  "starter_2": {
+    "name": "A rota do mercador de papiro",
+    "description": "Uma estrada de comércio ao longo do Nilo, cheia de armazéns de mercadores. Alguns nunca foram esvaziados."
+  },
+  "starter_3": {
+    "name": "Templo de Bastet",
+    "description": "O templo de Bastet. Aqui os gatos eram sagrados, e a festa de todos os anos era a maior do Egito: barcos, música, tudo a que tinham direito."
+  },
+  "starter_4": {
+    "name": "A escola dos escribas",
+    "description": "A escola dos escribas, onde o Egito aprendeu a escrever. As salas de aula ainda estão debaixo da areia."
+  },
+  "starter_treasure_tomb": {
+    "name": "O esconderijo do mercador esquecido",
+    "description": "A cave de um mercador, não de um rei: jarros empilhados, fechados e com etiqueta, e ninguém lá em baixo para refilar.",
+    "mapHint": "O papelinho mostra uma rua de mercado e a porta de uma cave. O esconderijo de um comerciante, nada mais."
+  },
+  "junior_1": {
+    "name": "O voo dos íbis sagrados",
+    "description": "Terra de pântanos, e os íbis a andar pela água. O Egito vigiava estas aves: quando voltam, a cheia do rio está a chegar."
+  },
+  "junior_2": {
+    "name": "O vale dos artesãos",
+    "description": "Deir el-Medina, onde viviam os construtores de túmulos. Tudo o que ia para o túmulo de um rei era feito aqui primeiro, em moldes."
+  },
+  "junior_3": {
+    "name": "Templo de Thoth",
+    "description": "O templo de Thoth. Ele inventou a escrita, guardava os registos e fazia as contas. Mais ou menos o que nós andamos a fazer."
+  },
+  "junior_4": {
+    "name": "O farol de Alexandria",
+    "description": "O Farol de Alexandria. Lá em cima, um fogo aceso a noite toda, e os marinheiros a ver a costa a um dia de viagem."
+  },
+  "junior_treasure_tomb": {
+    "name": "O cofre escondido da nobre",
+    "description": "O cofre de uma senhora nobre, pintado do chão ao teto. Comprou as cópias mais bonitas que havia, e nunca o disse a ninguém.",
+    "mapHint": "Tinta fina, um brasão no canto. Alguém importante queria que esta sala fosse esquecida."
+  },
+  "expert_1": {
+    "name": "O Vale dos Reis",
+    "description": "O Vale dos Reis. Deixaram de construir pirâmides e esconderam os túmulos dos reis num só vale, debaixo de um pico em forma de pirâmide."
+  },
+  "expert_2": {
+    "name": "Os templos de Karnak",
+    "description": "Karnak, que foi crescendo durante dois mil anos. Só a grande sala tem cento e trinta e quatro colunas, todas esculpidas."
+  },
+  "expert_3": {
+    "name": "Expedição ao delta do Nilo",
+    "description": "Onde o Nilo se divide e se espalha, todo verde. A terra de Sobek: papiro, peixe, e crocodilos que eram adorados e alimentados."
+  },
+  "expert_4": {
+    "name": "A pirâmide de Djoser",
+    "description": "A pirâmide de degraus de Djoser, a primeira coisa deste tamanho feita em pedra. O arquiteto dele, Imhotep, acabou lembrado como um deus."
+  },
+  "expert_treasure_tomb": {
+    "name": "O tesouro do sumo sacerdote",
+    "description": "O tesouro de um sumo sacerdote, debaixo do chão das oferendas. Tudo o que está lá em baixo foi dado a um deus e nunca mais saiu.",
+    "mapHint": "As linhas mostram um templo, e uma escada que desce por baixo do chão das oferendas."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "O santuário secreto",
+    "description": "A sala fechada no coração do templo. O sumo sacerdote entrava uma vez por dia, para lavar o deus e vesti-lo.",
+    "mapHint": "Os corredores passam pelos cofres do templo até uma porta selada. Só os sacerdotes mais importantes passavam por ela."
+  },
+  "master_1": {
+    "name": "A Grande Pirâmide de Gizé",
+    "description": "A Grande Pirâmide. Vinte anos de pedra, e uma vila inteira ao lado a dar pão e cerveja aos trabalhadores."
+  },
+  "master_2": {
+    "name": "O Livro dos Mortos",
+    "description": "Não é um livro só, mas um monte de feitiços, copiados por encomenda. Os mais baratos deixavam um espaço em branco para o teu nome."
+  },
+  "master_3": {
+    "name": "A maldição dos faraós",
+    "description": "A famosa maldição foi inventada pelos jornais em 1923. Os egípcios guardavam os túmulos com portas e papelada."
+  },
+  "master_4": {
+    "name": "O túmulo de Nefertari",
+    "description": "O túmulo de Nefertari, a sala mais bem pintada do Egito. As cores eram feitas de pedra moída: azurite, malaquite, ocre."
+  },
+  "master_treasure_tomb": {
+    "name": "O tesouro secreto do faraó",
+    "description": "O tesouro privado de um rei, lá onde os mapas desistem. Tudo o que foi enterrado com ele ainda lá está.",
+    "mapHint": "Um cartucho real marca uma ponta, e o caminho acaba muito longe, debaixo da areia."
+  },
+  "master_treasure_tomb_b": {
+    "name": "O salão de Osíris",
+    "description": "O salão de Osíris. Deus da cheia e dos cereais: tudo o que vai para debaixo da terra aqui tem de voltar a crescer.",
+    "mapHint": "Por baixo das salas do rei o mapa continua a descer, até um salão marcado com os rituais dos mortos."
+  },
+  "wizard_1": {
+    "name": "A viagem do sol de Rá",
+    "description": "Rá desce para debaixo do mundo ao pôr do sol e tem doze horas de escuro para atravessar. O Egito escreveu o que acontece em cada uma."
+  },
+  "wizard_2": {
+    "name": "Os Colossos de Mémnon",
+    "description": "Dois gigantes sentados de Amenhotep III. Os gregos acharam que eram outra pessoa, e esse nome ficou durante dois mil anos."
+  },
+  "wizard_3": {
+    "name": "A câmara de Ma'at",
+    "description": "A câmara de Ma'at. Ela é a ordem das coisas, e a sua única pena de avestruz é a medida de tudo o resto."
+  },
+  "wizard_4": {
+    "name": "A pirâmide eterna",
+    "description": "O revestimento era de calcário polido, branco como o sal, tão perfeito que se via a brilhar a um dia de caminho."
+  },
+  "wizard_treasure_tomb": {
+    "name": "O cofre dos deuses",
+    "description": "Onde o templo guardava o que era dos deuses. Ninguém entrava aqui sem ter a coisa certa nas mãos.",
+    "mapHint": "Nada neste papelinho pertence ao mundo dos vivos. Seja o que for, foram os deuses que o puseram lá."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "O reino das forças do céu",
+    "description": "Mapas de estrelas no teto, pintados para os mortos saberem as horas à noite. A corda de alguém ainda está pendurada no poço.",
+    "mapHint": "Depois do cofre dos deuses, as linhas viram caminhos de estrelas, onde as forças da vida e do caos estão guardadas."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "O trono da eternidade",
+    "description": "Um lugar no meio e quarenta e dois juízes à volta, cada um a fazer uma pergunta a que tens de responder que não.",
+    "mapHint": "Todos os caminhos de estrelas deste pedaço vão dar a um só trono, bem no coração do reino dos deuses."
+  }
+}

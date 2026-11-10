@@ -1,0 +1,1949 @@
+{
+  "language": "Slovenščina",
+  "saveUnreadable": {
+    "title": "Tvojega napredka ni mogoče naložiti",
+    "body": "Brskalnik ti trenutno ne da shranjene igre. Tvoja igra ni izgubljena: znova naloži stran in poskusi še enkrat.",
+    "banner": "Napredek se ne shranjuje. Tapni za ponovno nalaganje.",
+    "reload": "Znova naloži",
+    "continue": "Igraj naprej brez shranjevanja",
+    "reset": "Začni znova (izbriši shranjeno igro)",
+    "confirmReset": "S tem izbrišeš vso shranjeno igro in tega ni mogoče razveljaviti. Želiš začeti znova?",
+    "confirmResetYes": "Ja, izbriši mojo igro",
+    "confirmResetNo": "Ne, nazaj"
+  },
+  "difficulty": {
+    "starter": "Začetnik",
+    "junior": "Mladinec",
+    "expert": "Strokovnjak",
+    "master": "Mojster",
+    "wizard": "Čarovnik"
+  },
+  "journeyLength": {
+    "short": "Kratka",
+    "medium": "Srednja",
+    "long": "Dolga"
+  },
+  "time": {
+    "morning": "Jutro",
+    "afternoon": "Popoldne",
+    "evening": "Večer",
+    "night": "Noč"
+  },
+  "tomb": {},
+  "ui": {
+    "level": "Stopnja",
+    "symbols": "znaki",
+    "journey": "Potovanje",
+    "tableau": "Prizor",
+    "difficulty": "Težavnost",
+    "length": "Dolžina",
+    "time": "Čas",
+    "requiredPrestige": "Potrebna stopnja ugleda",
+    "rewards": "Nagrade",
+    "coins": "Kovanci",
+    "pieces": "Koščki",
+    "description": "Opis",
+    "expedition": "Odprava",
+    "expeditionCompleted": "Odprava končana!",
+    "goBackToBase": "Nazaj v tabor",
+    "backArrow": "←",
+    "back": "← Nazaj",
+    "floor": "Nadstropje {{number}}",
+    "enterSite": "Stopi noter",
+    "prompt": {
+      "here": "Razišči",
+      "stairs": "Pojdi po stopnicah",
+      "exit": "Zapusti ta kraj",
+      "zipline": "Spusti se po vrvi – nazaj ni poti",
+      "oneWay": "Pojdi čez – nazaj ni poti",
+      "liftStone": "Dvigni kamen",
+      "setStone": "Položi kamen na ploščo",
+      "postStone": "Vrzi kamen v režo",
+      "takeStone": "Vzemi kamen",
+      "squeeze": "Zrini se skozi",
+      "replay": "Igraj znova"
+    },
+    "blocked": {
+      "carrying": "S kamnom ne moreš skozi"
+    },
+    "backToMap": "Nazaj na zemljevid",
+    "continueExploration": "Nadaljuj z raziskovanjem piramid.",
+    "startExpedition": "Začni odpravo",
+    "webBuriedPercent": "Še {{percent}} % pod peskom",
+    "interruptExpedition": "Prekini odpravo",
+    "confirmInterruptExpedition": "Res želiš prekiniti to odpravo? Napredek odprave ostane, napredek te stopnje pa se izgubi!",
+    "cancel": "Prekliči",
+    "settings": "Nastavitve",
+    "language": "Jezik",
+    "close": "Zapri",
+    "done": "Končano",
+    "clearGameData": "Izbriši podatke igre",
+    "confirmClearGameData": "S tem za vedno izbrišeš ves napredek, vse predmete in raziskane piramide. Tega ni mogoče razveljaviti.",
+    "disableTutorials": "Izklopi navodila",
+    "treasureTomb": "Kraj zaklada",
+    "requiresMapPieces": "Potrebuješ koščke zemljevida",
+    "mapPieces": "Koščki zemljevida",
+    "completeExpeditionsToUnlock": "Končaj odprave, da se odklene",
+    "availableSymbols": "Znaki, ki jih imaš:",
+    "fragmentsNeeded": "{{found}}/{{required}} potrebnih",
+    "howToPlay": "Kako se igra",
+    "puzzleComplete": "Odgovor je:",
+    "puzzleCompleted": "Uganka rešena",
+    "trapBlocked": "Nimaš dovolj zdravja za to past",
+    "spiritsRejectCode": "Duhovi zavrnejo to kodo",
+    "sacredSealBroken": "Sveti pečat je zlomljen",
+    "newExpeditionUnlocked": "Odklenjena je nova odprava",
+    "newTombUnlocked": "Odklenjena je nova grobnica",
+    "tierComingSoonTitle": "Odprave {{tier}} so na poti",
+    "tierComingSoon": "Ključ imaš, a piramide {{tier}} še gradijo. Prišle bodo v eni od prihodnjih posodobitev – do takrat ti ključ odpre več piramid, ki jih že poznaš.",
+    "answerNow": "Odgovor je: ",
+    "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "resetPuzzle": "Ponastavi",
+    "hint": "Namig",
+    "undo": "Razveljavi",
+    "erase": "Briši",
+    "notes": "Opombe",
+    "solvedUnaided": "Rešeno brez enega samega namiga",
+    "solvedWithHints_one": "Rešeno – porabljen {{count}} namig",
+    "solvedWithHints_two": "Rešeno – porabljena {{count}} namiga",
+    "solvedWithHints_few": "Rešeno – porabljeni {{count}} namigi",
+    "solvedWithHints_other": "Rešeno – porabljenih {{count}} namigov",
+    "tapToContinue": "Tapni za nadaljevanje",
+    "goal": "Cilj"
+  },
+  "trap": {
+    "warning": "⚠ Hodnik s pastjo",
+    "canAttempt": "Lahko poskusiš priti skozi.",
+    "tooWeak": "Zdravja imaš nevarno malo – če ne uspe, ti ne ostane nič.",
+    "attempt": "Poskusi past",
+    "turnAround": "Obrni se",
+    "rested": "Počitek ob ognju – spet si pri močeh"
+  },
+  "gate": {
+    "title": "🔒 Zaklenjena vrata",
+    "locked": "Pravega ključa še nimaš.",
+    "markedWith": "V vrata je vklesan znak:",
+    "unlocked": "Ključ imaš.",
+    "pass": "Pojdi skozi",
+    "turnAround": "Obrni se",
+    "wardDescription": {
+      "starter": "Trgovčev pečat zapira ta prehod – odpre ga samo njegov ključ.",
+      "junior": "Plemiški grb zaklepa to pot – dvigne ga samo plemičev ključ.",
+      "expert": "Ta vrata varuje tempeljski pečat velikega duhovnika – odpreti jih mora njegov sveti ključ.",
+      "master": "Faraonov kraljevi pečat zapira ta prehod – zlomi ga samo vladarjev ključ.",
+      "wizard": "Ta vrata drži pečat bogov – skozi spusti samo njihov božanski ključ."
+    },
+    "needsKey": "Vrata so označena za en ključ:",
+    "lockedColor": "Tega ključa v tem nadstropju še nimaš."
+  },
+  "chest": {
+    "tapToOpen": "Tapni, da odpreš",
+    "money_one": "{{count}} kovanec",
+    "money_two": "{{count}} kovanca",
+    "money_few": "{{count}} kovanci",
+    "money_other": "{{count}} kovancev",
+    "mapPiece": "Košček zemljevida",
+    "mapPieceDescription": "Krhek košček zemljevida do nekega davno pozabljenega kraja. Škoda, da je še tako daleč od celega…",
+    "mapPieceProgress": "{{found}} od {{required}} koščkov zemljevida zbranih",
+    "mapPieceComplete": "Zemljevid je cel – vodi do kraja {{name}}.",
+    "hieroglyphFragment": "Delček hieroglifa",
+    "fragmentProgress": "{{found}} od {{required}} delčkov najdenih",
+    "tombKey": "Ključ grobnice",
+    "sandLever": "Ročica za pesek",
+    "sandLeverDescription": "Potegneš jo in ostane spodaj. Nekje daleč pesek odteka.",
+    "webKey": "Zapečaten ključ",
+    "webKeyDescription": "Na glavi ima znak, ki ga poznaš z zapečatenih vrat nekje drugje.",
+    "hieroglyphs": "Starodavni hieroglifi",
+    "hieroglyphsDescription": "Sveti znaki, vklesani v stene te sobe. Njihov pomen ti pomaga bolje razumeti stari svet.",
+    "mosaicPiece": "Košček mozaika",
+    "mosaicPieceDescription": "Bleščeča steklena ploščica, en košček velikega mozaika. Postavi jo k drugim in skrita slika se počasi pokaže.",
+    "waterskin": "Meh z vodo",
+    "waterskinDescription": "Hladna voda. Takoj jo spiješ in rane te manj bolijo."
+  },
+  "loot": {
+    "youFound": "Tvoja najdba",
+    "expeditionReward": "Dodatna nagrada za končano odpravo",
+    "clickToContinue": "Tapni kjer koli za nadaljevanje"
+  },
+  "money": {
+    "label": "Kovanci"
+  },
+  "shop": {
+    "title": "Fezova stojnica",
+    "invitation": "Poglej stojnico",
+    "buy": "Kupi",
+    "sell": "Prodaj",
+    "soldOut": "Razprodano",
+    "dismiss": "Odidi",
+    "rareItems": "Redke najdbe",
+    "sellSection": "Malenkosti za prodajo",
+    "haul": {
+      "coins_one": "+{{count}} kovanec",
+      "coins_two": "+{{count}} kovanca",
+      "coins_few": "+{{count}} kovanci",
+      "coins_other": "+{{count}} kovancev",
+      "note": "Drobiž, najden na poti"
+    }
+  },
+  "purchases": {
+    "donkey": {
+      "name": "Osel",
+      "need": "Potrebuješ osla",
+      "opens": "Nese tvojo opremo. Z njim se lahko odpraviš na potovanja Strokovnjak."
+    },
+    "cart": {
+      "name": "Voz",
+      "need": "Potrebuješ voz",
+      "opens": "Nanj gre cel tabor. Z njim se lahko odpraviš na potovanja Mojster."
+    },
+    "camel": {
+      "name": "Kamela",
+      "need": "Potrebuješ kamelo",
+      "opens": "Hodi več dni brez vode. Pripelje te do Notranjega svetišča."
+    },
+    "secondDonkey": {
+      "name": "Drugi osel",
+      "need": "Potrebuješ drugega osla",
+      "opens": "Še več prostora za stvari. Z njim se lahko odpraviš na potovanja Čarovnik."
+    },
+    "secondCamel": {
+      "name": "Druga kamela",
+      "need": "Potrebuješ drugo kamelo",
+      "opens": "Dve kameli neseta dovolj vode za Ozirisovo dvorano."
+    },
+    "sturdyCart": {
+      "name": "Trdnejši voz",
+      "need": "Potrebuješ trdnejši voz",
+      "opens": "Ne zlomi se, niti na poti v Kraljestvo vesoljnih sil."
+    },
+    "caravanBanner": {
+      "name": "Karavanski prapor",
+      "opens": "Nič ne odpre. Samo za zabavo."
+    },
+    "hint": "Fez ga prodaja: {{place}}",
+    "devGrant": "Kupi vse živali"
+  },
+  "level": {
+    "completed": "Stopnja končana!"
+  },
+  "mosaic": {
+    "place_one": "Postavi {{count}} košček",
+    "place_two": "Postavi {{count}} koščka",
+    "place_few": "Postavi {{count}} koščke",
+    "place_other": "Postavi {{count}} koščkov",
+    "placing": "Postavljam…",
+    "panel": {
+      "starter": "Varuhinja pri vratih",
+      "junior": "Prva lekcija",
+      "expert": "Sonce sme noter",
+      "master": "Zeleni kralj",
+      "wizard": "Pero in srce"
+    },
+    "entrance": {
+      "title": "Mozaik",
+      "label": "Mozaik {{found}}/{{total}}"
+    },
+    "haul": {
+      "pieces_one": "{{count}} košček mozaika",
+      "pieces_two": "{{count}} koščka mozaika",
+      "pieces_few": "{{count}} koščki mozaika",
+      "pieces_other": "{{count}} koščkov mozaika",
+      "note": "Za okno iz barvnega stekla"
+    }
+  },
+  "collection": {
+    "tabs": {
+      "treasures": "Zakladi",
+      "hieroglyphs": "Hieroglifi",
+      "stories": "Zgodbe",
+      "junk": "Malenkosti"
+    },
+    "tabsLabel": "Tvoja zbirka",
+    "tabNew_one": "{{label}} · novo: {{count}}",
+    "tabNew_two": "{{label}} · novo: {{count}}",
+    "tabNew_few": "{{label}} · novo: {{count}}",
+    "tabNew_other": "{{label}} · novo: {{count}}",
+    "empty": "Tvoja skrinja je še prazna",
+    "newLabel": "NOVO",
+    "clickForDetails": "Tapni ploščico za podrobnosti",
+    "categories": {
+      "deities": "🏺 Bogovi",
+      "professions": "⚱️ Poklici",
+      "animals": "🐾 Živali",
+      "artifacts": "💎 Predmeti",
+      "treasures": "💰 Zakladi",
+      "junk": "🔷 Malenkosti",
+      "signs": "✍️ Znaki"
+    },
+    "treasureCategories": {
+      "merchantCache": "💰 Trgovčevo skrivališče",
+      "nobleVault": "👑 Plemiški trezor",
+      "templeSecrets": "🏛️ Skrivnosti templja",
+      "ancientRelics": "🏺 Starodavne relikvije",
+      "mythicalArtifacts": "✨ Legendarni predmeti"
+    }
+  },
+  "detector": {
+    "compassTitle": "Kompas",
+    "corridorTitle": "Iskalnik hodnikov",
+    "pickTarget": "Izberi hieroglif pri mizi z zemljevidi v taboru",
+    "allCollected": "V že raziskanih piramidah še ni nobenega koščka na dosegu",
+    "more": "+{{count}} več",
+    "corridorHere": "Prav tukaj je skrit prehod",
+    "revealCorridor": "Odpri ga",
+    "corridorNearby": "Skrit hodnik je čisto blizu",
+    "corridorOnFloor": "V tem nadstropju čaka skrit hodnik",
+    "lookingFor": "Iščem {{symbol}}",
+    "access": {
+      "open": "Nič znanega ne ovira poti do tega",
+      "unknown": "Morda še ni dosegljiv – je v grobnici ali naprodaj"
+    },
+    "corridorNoneNearby": "V bližini ni skritega hodnika",
+    "corridorNoneOnFloor": "V tem nadstropju ni skritega hodnika",
+    "corridorOtherFloor": "V drugem nadstropju čaka skrit hodnik",
+    "corridorNoneInPyramid": "V drugih nadstropjih ni skritega hodnika",
+    "title": "Detektor",
+    "band": {
+      "none": "Nič ni zaznano",
+      "pyramid": "Nekaj je v tej piramidi",
+      "floor": "Nekaj je v tem nadstropju",
+      "near": "Nekaj je čisto blizu",
+      "here": "Prav tukaj! Odpri detektor"
+    },
+    "camp": {
+      "parts": "{{count}} od {{total}} delov",
+      "compassReach": {
+        "1": "vidi piramido",
+        "2": "vidi nadstropje",
+        "3": "pokaže točno mesto"
+      },
+      "pickHeading": "Kaj naj išče kompas?",
+      "onlyIncomplete": "Samo znaki, od katerih imaš košček, dokler niso celi.",
+      "whereHeading": "Kje ležijo koščki znaka {{symbol}}",
+      "pickFirst": "Izberi znak in poglej, kje ležijo njegovi koščki.",
+      "follow": "Sledi temu znaku",
+      "following": "Kompas sledi temu znaku",
+      "nothingToFind": "Nimaš še nobenega koščka znaka, ki ni cel.",
+      "noneInReach": "V že raziskanih piramidah še ni nobenega koščka na dosegu.",
+      "corridorReach": {
+        "1": "sliši hodnik v bližini",
+        "2": "sliši celo nadstropje",
+        "3": "sliši tudi druga nadstropja",
+        "4": "sliši druga potovanja"
+      },
+      "corridorInPyramid": "V piramidi prisluškuje zaprtim hodnikom.",
+      "corridorFarNext": "Z vsemi štirimi deli iz tabora sliši druga potovanja.",
+      "corridorWhere": "Kje je hodnik še zaprt",
+      "corridorNone": "Na že obiskanih potovanjih ni zaprtih hodnikov.",
+      "pyramid": "Piramida {{n}}",
+      "corridorCount_one": "{{count}} hodnik",
+      "corridorCount_two": "{{count}} hodnika",
+      "corridorCount_few": "{{count}} hodniki",
+      "corridorCount_other": "{{count}} hodnikov"
+    }
+  },
+  "keys": {
+    "blue": "Moder ključ",
+    "red": "Rdeč ključ",
+    "green": "Zelen ključ",
+    "yellow": "Rumen ključ",
+    "purple": "Vijoličen ključ",
+    "bundle": "Šop ključev",
+    "foundDescription": "Odpre vrata, označena s to barvo, v tem nadstropju.",
+    "heldTitle": "{{key}} – v roki",
+    "neededTitle": "{{key}} – še potreben"
+  },
+  "balance": {
+    "rules": {
+      "tap": "Tapni znak spodaj in nato številko. Če isto številko tapneš še enkrat, jo odstraniš.",
+      "same": "Znak tehta enako na vsaki tehtnici.",
+      "cancel": "Če z obeh skled vzameš isto stvar, tehtnica ostane v ravnotežju. Tapni označen kos – kar ostane, se shrani kot nova vrstica.",
+      "swap": "Tapni znak, ki nima enakega na drugi strani, nato pa vrstico, kjer je ta znak čisto sam. Tako ga zamenjaš za to, kar je vredna ta vrstica."
+    },
+    "hint": {
+      "mistake": "Ena od tvojih uteži nagne tehtnico. Odstrani jo in poglej še enkrat.",
+      "alone": "V osvetljeni vrstici je {{glyph}} edini kos brez številke. Izračunaj, koliko tehta.",
+      "equalShares": "V osvetljeni vrstici je samo {{glyph}} proti številki. Razdeli to številko med njih.",
+      "difference": "Osvetljeni vrstici sta enaki, razen pri {{glyph}}. Primerjaj ju.",
+      "cancelGlyph": "Na obeh skledah osvetljene vrstice je {{glyph}}. Tapni enega, da ga vzameš z obeh strani – vrstica ostane v ravnotežju.",
+      "cancelStones": "Na obeh skledah osvetljene vrstice so navadne številke. Tapni eno, da z obeh strani vzameš enako količino.",
+      "swap": "Ena osvetljena vrstica pove, koliko je vreden en sam {{glyph}}. Tapni {{glyph}} v drugi osvetljeni vrstici in nato to vrstico."
+    },
+    "swap": {
+      "pick": "Tapni osvetljeno vrstico, da ta {{glyph}} zamenjaš za to, kar je po tej vrstici vreden.",
+      "none": "Nič tukaj ne pove, koliko je vreden en sam {{glyph}}, in nič na drugi strani se ne ujema."
+    },
+    "goal": {
+      "default": "Vsak znak ima svojo težo in vsaka tehtnica je v ravnotežju.",
+      "weighing": "Vsak znak najde svojo težo in vsaka tehtnica se umiri v ravnotežju."
+    },
+    "name": {
+      "default": "Tehtnica",
+      "weighing": "Tehtanje srca"
+    }
+  },
+  "sumplete": {
+    "rules": {
+      "tap": "Tapni enkrat, da številko prečrtaš, še enkrat, da jo označiš kot tisto, ki ostane, in še enkrat, da jo počistiš.",
+      "totals": "Majhna številka pod vsakim ciljem pove, koliko je vsota te vrste zdaj."
+    },
+    "hint": {
+      "mistake": "Ena od oznak tukaj ne more biti prava. Razveljavi jo in poglej še enkrat.",
+      "tooBig": {
+        "row": "Tej vrstici manjka še {{deficit}}. {{value}} je več od tega, zato ne more ostati.",
+        "col": "Temu stolpcu manjka še {{deficit}}. {{value}} je več od tega, zato ne more ostati."
+      },
+      "allStrike": {
+        "row": "Številke, ki ostanejo v tej vrstici, že dajo cilj, zato mora vse drugo stran.",
+        "col": "Številke, ki ostanejo v tem stolpcu, že dajo cilj, zato mora vse drugo stran."
+      },
+      "allKeep": {
+        "row": "Ta vrstica že da svoj cilj – označi te številke, da ostanejo, potem lahko izračunaš stolpce skozi njih.",
+        "col": "Ta stolpec že da svoj cilj – označi te številke, da ostanejo, potem lahko izračunaš vrstice skozi njih."
+      },
+      "parityKeep": {
+        "row": "Tej vrstici manjka še {{deficit}}, to je liho število. {{value}} je edino liho število, ki je ostalo, zato mora ostati.",
+        "col": "Temu stolpcu manjka še {{deficit}}, to je liho število. {{value}} je edino liho število, ki je ostalo, zato mora ostati."
+      },
+      "parityStrike": {
+        "row": "Tej vrstici manjka še {{deficit}}, to je sodo število. {{value}} je edino liho število, ki je ostalo, zato mora stran.",
+        "col": "Temu stolpcu manjka še {{deficit}}, to je sodo število. {{value}} je edino liho število, ki je ostalo, zato mora stran."
+      },
+      "onlyCombination": {
+        "row": "Samo ena skupina številk v tej vrstici da skupaj {{deficit}}.",
+        "col": "Samo ena skupina številk v tem stolpcu da skupaj {{deficit}}."
+      },
+      "inEveryCombinationKeep": {
+        "row": "Brez {{value}} nobena skupina drugih številk v tej vrstici ne da {{deficit}} – zato mora ostati.",
+        "col": "Brez {{value}} nobena skupina drugih številk v tem stolpcu ne da {{deficit}} – zato mora ostati."
+      },
+      "inEveryCombinationStrike": {
+        "row": "Če {{value}} ostane, bi tej vrstici manjkalo še {{remaining}}, tega pa nobena druga številka tukaj ne da – zato mora stran.",
+        "col": "Če {{value}} ostane, bi temu stolpcu manjkalo še {{remaining}}, tega pa nobena druga številka tukaj ne da – zato mora stran."
+      },
+      "tooBig.row": "Tej vrstici manjka še {{deficit}}, {{value}} pa je več od tega.",
+      "tooBig.col": "Temu stolpcu manjka še {{deficit}}, {{value}} pa je več od tega.",
+      "allStrike.row": "Številke, ki ostanejo v tej vrstici, že dajo cilj.",
+      "allStrike.col": "Številke, ki ostanejo v tem stolpcu, že dajo cilj.",
+      "allKeep.row": "Ta vrstica že da svoj cilj, zato lahko zdaj izračunaš stolpce skozi njo.",
+      "allKeep.col": "Ta stolpec že da svoj cilj, zato lahko zdaj izračunaš vrstice skozi njega.",
+      "parityKeep.row": "Tej vrstici manjka še {{deficit}}, to je liho število, {{value}} pa je edino liho število, ki je ostalo.",
+      "parityKeep.col": "Temu stolpcu manjka še {{deficit}}, to je liho število, {{value}} pa je edino liho število, ki je ostalo.",
+      "parityStrike.row": "Tej vrstici manjka še {{deficit}}, to je sodo število, {{value}} pa je edino liho število, ki je ostalo.",
+      "parityStrike.col": "Temu stolpcu manjka še {{deficit}}, to je sodo število, {{value}} pa je edino liho število, ki je ostalo.",
+      "onlyCombination.row": "Samo ena skupina številk v tej vrstici da skupaj {{deficit}}.",
+      "onlyCombination.col": "Samo ena skupina številk v tem stolpcu da skupaj {{deficit}}.",
+      "inEveryCombinationKeep.row": "Brez {{value}} nobena skupina drugih številk v tej vrstici ne da {{deficit}}.",
+      "inEveryCombinationKeep.col": "Brez {{value}} nobena skupina drugih številk v tem stolpcu ne da {{deficit}}.",
+      "inEveryCombinationStrike.row": "Če {{value}} ostane, bi tej vrstici manjkalo še {{remaining}}, tega pa nobena druga številka tukaj ne da.",
+      "inEveryCombinationStrike.col": "Če {{value}} ostane, bi temu stolpcu manjkalo še {{remaining}}, tega pa nobena druga številka tukaj ne da.",
+      "action": {
+        "strike_one": "Prečrtaj šrafirano številko.",
+        "strike_two": "Prečrtaj šrafirani številki.",
+        "strike_few": "Prečrtaj šrafirane številke.",
+        "strike_other": "Prečrtaj šrafirane številke.",
+        "keep_one": "Označi šrafirano številko, da ostane.",
+        "keep_two": "Označi šrafirani številki, da ostaneta.",
+        "keep_few": "Označi šrafirane številke, da ostanejo.",
+        "keep_other": "Označi šrafirane številke, da ostanejo."
+      }
+    },
+    "goal": "Vsaka vrstica in vsak stolpec dasta skupaj številko, ki je zraven.",
+    "name": "Seštevanka"
+  },
+  "futoshiki": {
+    "rules": {
+      "signs": "Znak med dvema poljema kaže na manjšo od obeh številk.",
+      "enter": "Tapni polje in nato številko. Če isto številko tapneš še enkrat, jo odstraniš.",
+      "notes": "Preklopi na svinčnik, da si zapišeš številke, ki bi še lahko bile v polju. Razveljavi vrne tvojo zadnjo potezo."
+    },
+    "hint": {
+      "mistake": {
+        "value": "Ena od številk tukaj ne more biti prava. Odstrani jo in poglej še enkrat.",
+        "note": "Opombe v tem polju so izločile številko, ki spada sem. Počisti jih in začni to polje znova."
+      },
+      "nakedSingle": "Vse druge številke so že porabljene v tej vrstici, tem stolpcu ali zaradi znakov – za to polje ostane samo {{value}}.",
+      "hiddenSingle": {
+        "row": "{{value}} ne gre v nobeno drugo polje te vrstice, zato gre sem.",
+        "col": "{{value}} ne gre v nobeno drugo polje tega stolpca, zato gre sem."
+      },
+      "signBound": {
+        "high": "Znak tukaj kaže stran, proti večji številki, zato v tem polju ne more biti {{value}}.",
+        "low": "Znak tukaj kaže na to polje, zato mora biti nekaj manjše od njega – v njem ne more biti {{value}}."
+      },
+      "signVsValue": {
+        "less": "Znak pravi, da je to polje manjše od soseda, sosed pa ima {{value}}.",
+        "greater": "Znak pravi, da je to polje večje od soseda, sosed pa ima {{value}}."
+      },
+      "signChain": {
+        "high": "Sledi znakom od tega polja: {{chain}} polj zapored mora biti vsako večje od prejšnjega, zato to ne more biti več kot {{bound}}.",
+        "low": "Sledi znakom do tega polja: {{chain}} polj zapored mora biti vsako manjše od prejšnjega, zato to ne more biti manj kot {{bound}}."
+      },
+      "signPair": {
+        "less": "Največja številka, ki je še lahko v sosednjem polju čez znak, je {{value}}, in to polje mora ostati pod njo.",
+        "greater": "Najmanjša številka, ki je še lahko v sosednjem polju čez znak, je {{value}}, in to polje mora ostati nad njo."
+      },
+      "nakedPair": {
+        "row": "V teh dveh poljih sta lahko samo {{first}} in {{second}}, v takem ali drugačnem vrstnem redu, zato nobeno drugo polje v tej vrstici ne more imeti nobene od njiju.",
+        "col": "V teh dveh poljih sta lahko samo {{first}} in {{second}}, v takem ali drugačnem vrstnem redu, zato nobeno drugo polje v tem stolpcu ne more imeti nobene od njiju."
+      },
+      "hiddenPair": {
+        "row": "V tej vrstici {{first}} in {{second}} ne gresta nikamor drugam kot v ti dve polji, zato v njiju ne more nič drugega.",
+        "col": "V tem stolpcu {{first}} in {{second}} ne gresta nikamor drugam kot v ti dve polji, zato v njiju ne more nič drugega."
+      },
+      "xWing": {
+        "row": "{{value}} gre v vsaki od teh dveh vrstic samo v dve polji, in ta stojita v istih stolpcih. Kakor koli že pade, sta oba stolpca zasedena – zato {{value}} ne more nikamor drugam v njiju.",
+        "col": "{{value}} gre v vsakem od teh dveh stolpcev samo v dve polji, in ta stojita v istih vrsticah. Kakor koli že pade, sta obe vrstici zasedeni – zato {{value}} ne more nikamor drugam v njiju."
+      },
+      "nakedTriple": {
+        "row": "V teh treh poljih so lahko samo {{first}}, {{second}} in {{third}}, zato nobeno drugo polje v tej vrstici ne more imeti nobene od teh treh.",
+        "col": "V teh treh poljih so lahko samo {{first}}, {{second}} in {{third}}, zato nobeno drugo polje v tem stolpcu ne more imeti nobene od teh treh."
+      },
+      "hiddenTriple": {
+        "row": "V tej vrstici {{first}}, {{second}} in {{third}} ne gredo nikamor drugam kot v ta tri polja, zato v njih ne more nič drugega.",
+        "col": "V tem stolpcu {{first}}, {{second}} in {{third}} ne gredo nikamor drugam kot v ta tri polja, zato v njih ne more nič drugega."
+      }
+    },
+    "goal": "V vsaki vrstici in vsakem stolpcu je vsaka številka natanko enkrat.",
+    "name": "Večje in manjše"
+  },
+  "lightbeam": {
+    "rules": {
+      "mirrors": "Ogledalo odbije svetlobo z obeh svojih strani. Majhne oznake okoli njega kažejo, kako drugače lahko še leži: večina obrne svetlobo za četrt kroga, nekatera manj in jo pošljejo postrani.",
+      "walls": "Kamniti blok pogoltne svetlobo. Rob plošče tudi.",
+      "tap": "Tapni kos, da ga spremeniš: ogledalo se obrne, drsni kos se premakne na naslednje mesto. Bel rob pomeni, da ga lahko premikaš ti; vse drugo je del uganke.",
+      "nodes": "Nekateri kamni so povezani z odprtino v tleh in jih noben tap ne premakne. Pošlji svetlobo čez odprtino in kamen se odmakne."
+    },
+    "hint": {
+      "entryRun": "Začni tam, kamor svetloba že gre: teče naravnost od diska, dokler ne zadene prvega kosa, ki ga lahko spremeniš. Ta polja so osvetljena, kar koli narediš.",
+      "exitRun": "Poglej svetišče. Osvetliti je mogoče samo eno njegovo stran – vse druge poti so zaprte ali gledajo s plošče – zato mora svetloba priti po tisti črti.",
+      "wiringFires": {
+        "one": "Svetloba mora na poti čez to odprtino – toliko je že jasno. Ko gre čez, umakne kamen, ki je povezan z njo, in pot naprej se odpre.",
+        "all": "Ta kamen je povezan z več odprtinami in se premakne šele, ko gre svetloba čez vse. Poišči pot, ki pelje žarek skozi vse."
+      },
+      "deadEnd": {
+        "wall": "Če je obrnjeno tako, gre svetloba naravnost v kamen in je nič več ne reši. Zato ne more biti obrnjeno tako.",
+        "disc": "Če je obrnjeno tako, ogledalo pošlje svetlobo nazaj, od koder je prišla, vse do diska. Zato ne more biti obrnjeno tako.",
+        "edge": "Če je obrnjeno tako, gre svetloba čez rob plošče in je nič več ne ujame. Zato ne more biti obrnjeno tako.",
+        "loop": "Če je obrnjeno tako, svetloba nikamor ne pride – kroži v nedogled. Zato ne more biti obrnjeno tako."
+      },
+      "feedsExit": {
+        "wall": "Pojdi nazaj od svetišča. Če je obrnjeno tako, svetloba ne more priti po edini črti, ki vodi do njega – na poti se ustavi v kamnu.",
+        "disc": "Pojdi nazaj od svetišča. Če je obrnjeno tako, bi morala svetloba priti iz temne zadnje strani diska, od tam pa ne pride nobena svetloba.",
+        "edge": "Pojdi nazaj od svetišča. Če je obrnjeno tako, bi morala svetloba do njega priti od zunaj plošče.",
+        "loop": "Pojdi nazaj od svetišča. Če je obrnjeno tako, svetloba, ki bi morala priti do njega, samo kroži v nedogled."
+      },
+      "wiringDead": "Kar koli narediš, svetloba nikoli ne pride do te odprtine – zato kamen, povezan z njo, ostane točno tam, kjer je, in pot lahko bereš naravnost mimo njega.",
+      "neverReached": "Tega pusti pri miru. Svetloba ne pride do njega, kakor koli postaviš ostalo, zato ni pomembno, kaj narediš z njim.",
+      "onlySurvivor": "Poskusi vse lege tega kosa po vrsti: pri vseh razen pri eni ostane svetišče temno. Ta ena je odgovor."
+    },
+    "goal": "Sončna svetloba teče od diska do svetišča.",
+    "name": "Žarek svetlobe"
+  },
+  "eclipse": {
+    "rules": {
+      "triple": "Trije enaki zapored niso nikoli dovoljeni, ne vodoravno ne navpično.",
+      "copies": "Nobeni dve vrstici ne smeta biti enaki, nobena dva stolpca tudi ne.",
+      "signs": "Znak med dvema poljema pove, kakšni sta: = pomeni enaki, × pomeni različni.",
+      "enter": "Tapni polje, da vanj postaviš sonce, še enkrat za luno, in še enkrat, da ga izprazniš."
+    },
+    "hint": {
+      "mistake": "Ena od teh oznak ne more biti prava.",
+      "sign.same": "= pomeni enako.",
+      "sign.different": "× pomeni različno.",
+      "noTriple.pair": "Tu sta že dva {{mark}}, trije zapored pa niso nikoli dovoljeni.",
+      "noTriple.sandwich": "{{mark}} je na obeh straneh, trije zapored pa niso nikoli dovoljeni.",
+      "signPair": "Ta dva sta enaka, in tisti {{mark}} stoji poleg njiju.",
+      "lineCount": "Ta vrsta že ima vse svoje {{mark}}: {{count}}.",
+      "noCopy": "Obratno bi bila to kopija osvetljene vrste.",
+      "linePairing.sameNoRoom": "Tukaj je ostalo samo še {{mark}}: {{count}}, ta dva pa sta enaka.",
+      "linePairing.differentTakesOne": "Pari z × porabijo vse {{mark}}, za katere je v tej vrsti prostor.",
+      "loneMark": "Ostal je en {{mark}} in samo eno polje loči tri {{other}}.",
+      "squeeze.triple": "{{mark}} tukaj bi pomenil, da je ostalo {{other}} – trije zapored.",
+      "squeeze.sign": "{{mark}} tukaj bi pomenil, da je ostalo {{other}} – znak ne bi več držal.",
+      "squeeze.copy": "{{mark}} tukaj bi pomenil, da je ostalo {{other}} – vrsta bi postala kopija.",
+      "action": {
+        "fill_one": "Postavi {{mark}} v šrafirano polje.",
+        "fill_two": "Postavi {{mark}} v šrafirani polji.",
+        "fill_few": "Postavi {{mark}} v šrafirana polja.",
+        "fill_other": "Postavi {{mark}} v šrafirana polja.",
+        "fillMixed": "Izpolni šrafirana polja – samo tako gre."
+      }
+    },
+    "goal": "V vsakem polju je sonce ali luna, in v vsaki vrsti je enako sonc kot lun.",
+    "name": "Sonce in luna"
+  },
+  "constellation": {
+    "rules": {
+      "default": {
+        "straight": "Svetlobne črte gredo naravnost vodoravno ali navpično, od ene zvezde do naslednje.",
+        "pair": "Dve zvezdi imata lahko največ dve skupni črti.",
+        "cross": "Črte se nikoli ne križajo in nikoli ne gredo skozi zvezdo.",
+        "enter": "Povleci od zvezde proti sosedi, da narišeš črto, še enkrat za dvojno, in še enkrat, da jo izbrišeš."
+      },
+      "causeway": {
+        "straight": "Poti za vlačenje kamnov gredo naravnost vodoravno ali navpično, od enega gradbišča do naslednjega.",
+        "pair": "Dve gradbišči imata lahko največ dve skupni poti.",
+        "cross": "Poti se nikoli ne križajo in nikoli ne gredo skozi gradbišče.",
+        "enter": "Povleci od gradbišča proti sosedu, da položiš pot, še enkrat, da jo podvojiš, in še enkrat, da jo podreš."
+      },
+      "irrigation": {
+        "straight": "Kanali gredo naravnost vodoravno ali navpično, od enega bazena do naslednjega.",
+        "pair": "Dva bazena imata lahko največ dva skupna kanala.",
+        "cross": "Kanali se nikoli ne križajo in nikoli ne gredo skozi bazen.",
+        "enter": "Povleci od bazena proti sosedu, da izkoplješ kanal, še enkrat, da ga razširiš, in še enkrat, da ga zasuješ."
+      },
+      "ceiling": {
+        "straight": "Vrvice gredo naravnost vodoravno ali navpično, od ene zvezde do naslednje.",
+        "pair": "Dve zvezdi imata lahko največ dve skupni vrvici.",
+        "cross": "Vrvice se nikoli ne križajo in nikoli ne gredo skozi zvezdo.",
+        "enter": "Povleci od zvezde proti sosedi, da napneš vrvico, še enkrat, da jo podvojiš, in še enkrat, da jo snameš."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Ena od teh črt ne more biti prava.",
+        "capacity": "Črt: {{count}}, izhodov pa je ravno dovolj.",
+        "settled": "Ta {{count}} že ima vse svoje črte.",
+        "soleWayOut": "Ostal je samo še en izhod, narisati pa je treba še: {{count}}.",
+        "crossed": "Črta tam bi prečkala to.",
+        "atLeastOne": "Črt: {{count}}, drugi izhodi pa jih ne morejo nositi vseh.",
+        "twinBlock.single": "Če povežeš ti dve, nastane ozvezdje iz samo dveh zvezd.",
+        "twinBlock.double": "Druga črta tam bi naredila ozvezdje iz samo dveh zvezd.",
+        "isolation": "Ta črta bi teh zvezd ({{count}}) odrezala od ostalih.",
+        "action": {
+          "draw_one": "Nariši označeno črto.",
+          "draw_two": "Nariši označeni črti.",
+          "draw_few": "Nariši označene črte.",
+          "draw_other": "Nariši označene črte.",
+          "refuse_one": "Označena črta ostane nenarisana.",
+          "refuse_two": "Označeni črti ostaneta nenarisani.",
+          "refuse_few": "Označene črte ostanejo nenarisane.",
+          "refuse_other": "Označene črte ostanejo nenarisane.",
+          "refuseDouble": "Tam ena črta, druge pa ne."
+        }
+      },
+      "causeway": {
+        "mistake": "Ena od teh poti ne more biti prava.",
+        "capacity": "Poti: {{count}}, izhodov pa je ravno dovolj.",
+        "settled": "Ta {{count}} že ima vse svoje poti.",
+        "soleWayOut": "Ostal je samo še en izhod, položiti pa je treba še: {{count}}.",
+        "crossed": "Pot tam bi prečkala to.",
+        "atLeastOne": "Poti: {{count}}, drugi izhodi pa jih ne morejo nositi vseh.",
+        "twinBlock.single": "Če povežeš ti dve, nastane mreža iz samo dveh gradbišč.",
+        "twinBlock.double": "Druga pot tam bi naredila mrežo iz samo dveh gradbišč.",
+        "isolation": "Ta pot bi teh gradbišč ({{count}}) odrezala od ostalih.",
+        "action": {
+          "draw_one": "Položi označeno pot.",
+          "draw_two": "Položi označeni poti.",
+          "draw_few": "Položi označene poti.",
+          "draw_other": "Položi označene poti.",
+          "refuse_one": "Označena pot ostane nezgrajena.",
+          "refuse_two": "Označeni poti ostaneta nezgrajeni.",
+          "refuse_few": "Označene poti ostanejo nezgrajene.",
+          "refuse_other": "Označene poti ostanejo nezgrajene.",
+          "refuseDouble": "Tam ena pot, druge pa ne."
+        }
+      },
+      "irrigation": {
+        "mistake": "Eden od teh kanalov ne more biti pravi.",
+        "capacity": "Kanalov: {{count}}, izhodov pa je ravno dovolj.",
+        "settled": "Ta {{count}} že ima vse svoje kanale.",
+        "soleWayOut": "Ostal je samo še en izhod, izkopati pa je treba še: {{count}}.",
+        "crossed": "Kanal tam bi prečkal tega.",
+        "atLeastOne": "Kanalov: {{count}}, drugi izhodi pa jih ne morejo nositi vseh.",
+        "twinBlock.single": "Če povežeš ta dva, nastane namakalni sistem iz samo dveh bazenov.",
+        "twinBlock.double": "Drugi kanal tam bi naredil namakalni sistem iz samo dveh bazenov.",
+        "isolation": "Ta kanal bi teh bazenov ({{count}}) odrezal od ostalih.",
+        "action": {
+          "draw_one": "Izkoplji označeni kanal.",
+          "draw_two": "Izkoplji označena kanala.",
+          "draw_few": "Izkoplji označene kanale.",
+          "draw_other": "Izkoplji označene kanale.",
+          "refuse_one": "Označeni kanal ostane neizkopan.",
+          "refuse_two": "Označena kanala ostaneta neizkopana.",
+          "refuse_few": "Označeni kanali ostanejo neizkopani.",
+          "refuse_other": "Označeni kanali ostanejo neizkopani.",
+          "refuseDouble": "Tam en kanal, drugega pa ne."
+        }
+      },
+      "ceiling": {
+        "mistake": "Ena od teh vrvic ne more biti prava.",
+        "capacity": "Vrvic: {{count}}, izhodov pa je ravno dovolj.",
+        "settled": "Ta {{count}} že ima vse svoje vrvice.",
+        "soleWayOut": "Ostal je samo še en izhod, napeti pa je treba še: {{count}}.",
+        "crossed": "Vrvica tam bi prečkala to.",
+        "atLeastOne": "Vrvic: {{count}}, drugi izhodi pa jih ne morejo nositi vseh.",
+        "twinBlock.single": "Če povežeš ti dve, nastane naslikano nebo iz samo dveh zvezd.",
+        "twinBlock.double": "Druga vrvica tam bi naredila naslikano nebo iz samo dveh zvezd.",
+        "isolation": "Ta vrvica bi teh zvezd ({{count}}) odrezala od ostalih.",
+        "action": {
+          "draw_one": "Napni označeno vrvico.",
+          "draw_two": "Napni označeni vrvici.",
+          "draw_few": "Napni označene vrvice.",
+          "draw_other": "Napni označene vrvice.",
+          "refuse_one": "Označena vrvica ostane nenapeta.",
+          "refuse_two": "Označeni vrvici ostaneta nenapeti.",
+          "refuse_few": "Označene vrvice ostanejo nenapete.",
+          "refuse_other": "Označene vrvice ostanejo nenapete.",
+          "refuseDouble": "Tam ena vrvica, druge pa ne."
+        }
+      }
+    },
+    "goal": {
+      "default": "Vsaka zvezda je v enem samem ozvezdju in ima toliko svetlobnih črt, kot pove njena številka.",
+      "causeway": "Vsako gradbišče je v eni sami mreži poti in ima toliko poti, kot pove njegova številka.",
+      "irrigation": "Vsak bazen je del enega samega namakalnega sistema in ima toliko kanalov, kot pove njegova številka.",
+      "ceiling": "Vsaka zvezda je del enega samega naslikanega neba in ima toliko zlatih vrvic, kot pove njena številka."
+    },
+    "name": {
+      "default": "Zvezdni zemljevid",
+      "causeway": "Nasip",
+      "irrigation": "Namakanje",
+      "ceiling": "Poslikan strop"
+    }
+  },
+  "starBattle": {
+    "rules": {
+      "default": {
+        "touch": "Nobeni dve zvezdi se ne smeta dotikati – tudi vogali štejejo.",
+        "enter": "Tapni polje, da ga izločiš, še enkrat, da vanj postaviš zvezdo, in še enkrat, da ga počistiš."
+      },
+      "fields": {
+        "touch": "Nobeni dve kmetiji se ne smeta dotikati – tudi vogali štejejo. Tako blizu bi si morali deliti en vodnjak.",
+        "enter": "Tapni parcelo, da jo izločiš, še enkrat, da nanjo postaviš kmetijo, in še enkrat, da jo počistiš."
+      },
+      "lamps": {
+        "touch": "Nobeni dve oljenki ne smeta stati druga ob drugi – tudi vogali štejejo. Njuna svetloba bi se prekrivala in olje bi šlo v nič.",
+        "walls": "Sivi kamniti bloki so del tal: nanje ne moreš nič postaviti in niso polja.",
+        "enter": "Tapni ploščo, da jo izločiš, še enkrat, da nanjo postaviš oljenko, in še enkrat, da jo počistiš."
+      },
+      "market": {
+        "touch": "Nobeni dve stojnici ne smeta stati druga ob drugi – tudi vogali štejejo. Tekmeca se nikoli ne postavita drug ob drugega.",
+        "walls": "Hiše so del trga: v njih ne moreš postaviti stojnice in niso prostori.",
+        "enter": "Tapni prostor, da ga izločiš, še enkrat, da tja postaviš stojnico, in še enkrat, da ga počistiš."
+      },
+      "lotus": {
+        "touch": "Nobena dva lotosa ne smeta plavati drug ob drugem – tudi vogali štejejo. Vsak cvet potrebuje okoli sebe prosto vodo.",
+        "walls": "Skale gledajo iz ribnika: na njih nič ne more plavati in niso polja.",
+        "enter": "Tapni mesto na vodi, da ga izločiš, še enkrat, da tja spustiš lotos, in še enkrat, da ga počistiš."
+      },
+      "cats": {
+        "touch": "Nobeni dve mački ne smeta spati druga ob drugi – tudi vogali štejejo. Vsaka mačka ima svoj košček sonca.",
+        "walls": "Stebri držijo tempelj: na njih ne more spati nobena mačka in niso polja.",
+        "enter": "Tapni ploščo, da jo izločiš, še enkrat, da tja položiš mačko, in še enkrat, da jo počistiš."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Ta oznaka ne more biti prava.",
+        "touch": "Tukaj je {{token}}, ničesar pa se {{token}} ne sme dotikati.",
+        "groupFull.row_one": "V tej vrstici je {{token}} že na mestu.",
+        "groupFull.row_two": "V tej vrstici so že vsi {{token}} ({{count}}).",
+        "groupFull.row_few": "V tej vrstici so že vsi {{token}} ({{count}}).",
+        "groupFull.row_other": "V tej vrstici so že vsi {{token}} ({{count}}).",
+        "groupFull.col_one": "V tem stolpcu je {{token}} že na mestu.",
+        "groupFull.col_two": "V tem stolpcu so že vsi {{token}} ({{count}}).",
+        "groupFull.col_few": "V tem stolpcu so že vsi {{token}} ({{count}}).",
+        "groupFull.col_other": "V tem stolpcu so že vsi {{token}} ({{count}}).",
+        "groupFull.region_one": "V tem območju je {{token}} že na mestu.",
+        "groupFull.region_two": "V tem območju so že vsi {{token}} ({{count}}).",
+        "groupFull.region_few": "V tem območju so že vsi {{token}} ({{count}}).",
+        "groupFull.region_other": "V tem območju so že vsi {{token}} ({{count}}).",
+        "groupTight.row_one": "V tej vrstici je ostalo samo še eno polje.",
+        "groupTight.row_two": "V tej vrstici imaš samo še {{count}} polji.",
+        "groupTight.row_few": "V tej vrstici imaš samo še {{count}} polja.",
+        "groupTight.row_other": "V tej vrstici imaš samo še {{count}} polj.",
+        "groupTight.col_one": "V tem stolpcu je ostalo samo še eno polje.",
+        "groupTight.col_two": "V tem stolpcu imaš samo še {{count}} polji.",
+        "groupTight.col_few": "V tem stolpcu imaš samo še {{count}} polja.",
+        "groupTight.col_other": "V tem stolpcu imaš samo še {{count}} polj.",
+        "groupTight.region_one": "V tem območju je ostalo samo še eno polje.",
+        "groupTight.region_two": "V tem območju imaš samo še {{count}} polji.",
+        "groupTight.region_few": "V tem območju imaš samo še {{count}} polja.",
+        "groupTight.region_other": "V tem območju imaš samo še {{count}} polj.",
+        "onlyWay.row_one": "Samo en način je, kako v to vrstico spraviš {{token}}.",
+        "onlyWay.row_two": "Samo en način je, kako v to vrstico spraviš vse {{token}} ({{count}}).",
+        "onlyWay.row_few": "Samo en način je, kako v to vrstico spraviš vse {{token}} ({{count}}).",
+        "onlyWay.row_other": "Samo en način je, kako v to vrstico spraviš vse {{token}} ({{count}}).",
+        "onlyWay.col_one": "Samo en način je, kako v ta stolpec spraviš {{token}}.",
+        "onlyWay.col_two": "Samo en način je, kako v ta stolpec spraviš vse {{token}} ({{count}}).",
+        "onlyWay.col_few": "Samo en način je, kako v ta stolpec spraviš vse {{token}} ({{count}}).",
+        "onlyWay.col_other": "Samo en način je, kako v ta stolpec spraviš vse {{token}} ({{count}}).",
+        "onlyWay.region_one": "Samo en način je, kako v to območje spraviš {{token}}.",
+        "onlyWay.region_two": "Samo en način je, kako v to območje spraviš vse {{token}} ({{count}}).",
+        "onlyWay.region_few": "Samo en način je, kako v to območje spraviš vse {{token}} ({{count}}).",
+        "onlyWay.region_other": "Samo en način je, kako v to območje spraviš vse {{token}} ({{count}}).",
+        "everyWay.row_one": "Kakor koli postaviš {{token}} te vrstice, vedno pristane tukaj.",
+        "everyWay.row_two": "Kakor koli razporediš {{token}} te vrstice ({{count}}), eden je vedno tukaj.",
+        "everyWay.row_few": "Kakor koli razporediš {{token}} te vrstice ({{count}}), eden je vedno tukaj.",
+        "everyWay.row_other": "Kakor koli razporediš {{token}} te vrstice ({{count}}), eden je vedno tukaj.",
+        "everyWay.col_one": "Kakor koli postaviš {{token}} tega stolpca, vedno pristane tukaj.",
+        "everyWay.col_two": "Kakor koli razporediš {{token}} tega stolpca ({{count}}), eden je vedno tukaj.",
+        "everyWay.col_few": "Kakor koli razporediš {{token}} tega stolpca ({{count}}), eden je vedno tukaj.",
+        "everyWay.col_other": "Kakor koli razporediš {{token}} tega stolpca ({{count}}), eden je vedno tukaj.",
+        "everyWay.region_one": "Kakor koli postaviš {{token}} tega območja, vedno pristane tukaj.",
+        "everyWay.region_two": "Kakor koli razporediš {{token}} tega območja ({{count}}), eden je vedno tukaj.",
+        "everyWay.region_few": "Kakor koli razporediš {{token}} tega območja ({{count}}), eden je vedno tukaj.",
+        "everyWay.region_other": "Kakor koli razporediš {{token}} tega območja ({{count}}), eden je vedno tukaj.",
+        "regionLine.row_one": "{{token}} označenega območja mora priti iz te vrstice.",
+        "regionLine.row_two": "Vsi {{token}} označenega območja ({{count}}) morajo priti iz te vrstice.",
+        "regionLine.row_few": "Vsi {{token}} označenega območja ({{count}}) morajo priti iz te vrstice.",
+        "regionLine.row_other": "Vsi {{token}} označenega območja ({{count}}) morajo priti iz te vrstice.",
+        "regionLine.col_one": "{{token}} označenega območja mora priti iz tega stolpca.",
+        "regionLine.col_two": "Vsi {{token}} označenega območja ({{count}}) morajo priti iz tega stolpca.",
+        "regionLine.col_few": "Vsi {{token}} označenega območja ({{count}}) morajo priti iz tega stolpca.",
+        "regionLine.col_other": "Vsi {{token}} označenega območja ({{count}}) morajo priti iz tega stolpca.",
+        "lineRegion.row_one": "{{token}} te vrstice spada v označeno območje.",
+        "lineRegion.row_two": "Vsi {{token}} te vrstice ({{count}}) spadajo v označeno območje.",
+        "lineRegion.row_few": "Vsi {{token}} te vrstice ({{count}}) spadajo v označeno območje.",
+        "lineRegion.row_other": "Vsi {{token}} te vrstice ({{count}}) spadajo v označeno območje.",
+        "lineRegion.col_one": "{{token}} tega stolpca spada v označeno območje.",
+        "lineRegion.col_two": "Vsi {{token}} tega stolpca ({{count}}) spadajo v označeno območje.",
+        "lineRegion.col_few": "Vsi {{token}} tega stolpca ({{count}}) spadajo v označeno območje.",
+        "lineRegion.col_other": "Vsi {{token}} tega stolpca ({{count}}) spadajo v označeno območje.",
+        "spanning.toRows": "Označena območja skupaj zapolnijo teh toliko vrstic: {{count}}.",
+        "spanning.toCols": "Označena območja skupaj zapolnijo teh toliko stolpcev: {{count}}.",
+        "spanning.fromRows": "Označene vrstice lahko dobijo svoje {{token}} ({{count}}) samo iz teh območij.",
+        "spanning.fromCols": "Označeni stolpci lahko dobijo svoje {{token}} ({{count}}) samo iz teh območij.",
+        "wouldStrand.row": "{{token}} tukaj bi označeni vrstici vzel zadnje prosto mesto.",
+        "wouldStrand.col": "{{token}} tukaj bi označenemu stolpcu vzel zadnje prosto mesto.",
+        "wouldStrand.region": "{{token}} tukaj bi označenemu območju vzel zadnje prosto mesto.",
+        "action": {
+          "ruleOut_one": "Izloči šrafirano polje.",
+          "ruleOut_two": "Izloči šrafirani polji.",
+          "ruleOut_few": "Izloči šrafirana polja.",
+          "ruleOut_other": "Izloči šrafirana polja.",
+          "place_one": "Postavi {{token}} v šrafirano polje.",
+          "place_two": "Postavi {{token}} v vsako šrafirano polje.",
+          "place_few": "Postavi {{token}} v vsako šrafirano polje.",
+          "place_other": "Postavi {{token}} v vsako šrafirano polje."
+        }
+      },
+      "fields": {
+        "mistake": "Ta oznaka ne more biti prava.",
+        "touch": "Tukaj je {{token}}, zato na nobeni parceli, ki se je dotika, ne sme stati še ena.",
+        "groupFull.row_one": "V tej vrstici je že zgrajeno.",
+        "groupFull.row_two": "V tej vrstici so že vsi {{token}} ({{count}}).",
+        "groupFull.row_few": "V tej vrstici so že vsi {{token}} ({{count}}).",
+        "groupFull.row_other": "V tej vrstici so že vsi {{token}} ({{count}}).",
+        "groupFull.col_one": "V tem stolpcu je že zgrajeno.",
+        "groupFull.col_two": "V tem stolpcu so že vsi {{token}} ({{count}}).",
+        "groupFull.col_few": "V tem stolpcu so že vsi {{token}} ({{count}}).",
+        "groupFull.col_other": "V tem stolpcu so že vsi {{token}} ({{count}}).",
+        "groupFull.region_one": "Na tem posestvu je že zgrajeno.",
+        "groupFull.region_two": "Na tem posestvu so že vsi {{token}} ({{count}}).",
+        "groupFull.region_few": "Na tem posestvu so že vsi {{token}} ({{count}}).",
+        "groupFull.region_other": "Na tem posestvu so že vsi {{token}} ({{count}}).",
+        "groupTight.row_one": "V tej vrstici je ostala samo še ena parcela.",
+        "groupTight.row_two": "V tej vrstici imaš samo še {{count}} parceli.",
+        "groupTight.row_few": "V tej vrstici imaš samo še {{count}} parcele.",
+        "groupTight.row_other": "V tej vrstici imaš samo še {{count}} parcel.",
+        "groupTight.col_one": "V tem stolpcu je ostala samo še ena parcela.",
+        "groupTight.col_two": "V tem stolpcu imaš samo še {{count}} parceli.",
+        "groupTight.col_few": "V tem stolpcu imaš samo še {{count}} parcele.",
+        "groupTight.col_other": "V tem stolpcu imaš samo še {{count}} parcel.",
+        "groupTight.region_one": "Na tem posestvu je ostala samo še ena parcela.",
+        "groupTight.region_two": "Na tem posestvu imaš samo še {{count}} parceli.",
+        "groupTight.region_few": "Na tem posestvu imaš samo še {{count}} parcele.",
+        "groupTight.region_other": "Na tem posestvu imaš samo še {{count}} parcel.",
+        "onlyWay.row_one": "V tej vrstici je samo še ena parcela, kjer lahko gradiš.",
+        "onlyWay.row_two": "Samo en način je, kako v to vrstico spraviš vse {{token}} ({{count}}).",
+        "onlyWay.row_few": "Samo en način je, kako v to vrstico spraviš vse {{token}} ({{count}}).",
+        "onlyWay.row_other": "Samo en način je, kako v to vrstico spraviš vse {{token}} ({{count}}).",
+        "onlyWay.col_one": "V tem stolpcu je samo še ena parcela, kjer lahko gradiš.",
+        "onlyWay.col_two": "Samo en način je, kako v ta stolpec spraviš vse {{token}} ({{count}}).",
+        "onlyWay.col_few": "Samo en način je, kako v ta stolpec spraviš vse {{token}} ({{count}}).",
+        "onlyWay.col_other": "Samo en način je, kako v ta stolpec spraviš vse {{token}} ({{count}}).",
+        "onlyWay.region_one": "Na tem posestvu je samo še ena parcela, kjer lahko gradiš.",
+        "onlyWay.region_two": "Samo en način je, kako na to posestvo spraviš vse {{token}} ({{count}}).",
+        "onlyWay.region_few": "Samo en način je, kako na to posestvo spraviš vse {{token}} ({{count}}).",
+        "onlyWay.region_other": "Samo en način je, kako na to posestvo spraviš vse {{token}} ({{count}}).",
+        "everyWay.row_one": "Kakor koli zgradiš te vrstice, {{token}} stoji tukaj.",
+        "everyWay.row_two": "Kakor koli zgradiš te vrstice, eden od {{token}} ({{count}}) stoji tukaj.",
+        "everyWay.row_few": "Kakor koli zgradiš te vrstice, eden od {{token}} ({{count}}) stoji tukaj.",
+        "everyWay.row_other": "Kakor koli zgradiš te vrstice, eden od {{token}} ({{count}}) stoji tukaj.",
+        "everyWay.col_one": "Kakor koli zgradiš tega stolpca, {{token}} stoji tukaj.",
+        "everyWay.col_two": "Kakor koli zgradiš tega stolpca, eden od {{token}} ({{count}}) stoji tukaj.",
+        "everyWay.col_few": "Kakor koli zgradiš tega stolpca, eden od {{token}} ({{count}}) stoji tukaj.",
+        "everyWay.col_other": "Kakor koli zgradiš tega stolpca, eden od {{token}} ({{count}}) stoji tukaj.",
+        "everyWay.region_one": "Kakor koli zgradiš to posestvo, {{token}} stoji tukaj.",
+        "everyWay.region_two": "Kakor koli zgradiš to posestvo, eden od {{token}} ({{count}}) stoji tukaj.",
+        "everyWay.region_few": "Kakor koli zgradiš to posestvo, eden od {{token}} ({{count}}) stoji tukaj.",
+        "everyWay.region_other": "Kakor koli zgradiš to posestvo, eden od {{token}} ({{count}}) stoji tukaj.",
+        "regionLine.row_one": "{{token}} označenega posestva mora priti iz te vrstice.",
+        "regionLine.row_two": "Vsi {{token}} označenega posestva ({{count}}) morajo priti iz te vrstice.",
+        "regionLine.row_few": "Vsi {{token}} označenega posestva ({{count}}) morajo priti iz te vrstice.",
+        "regionLine.row_other": "Vsi {{token}} označenega posestva ({{count}}) morajo priti iz te vrstice.",
+        "regionLine.col_one": "{{token}} označenega posestva mora priti iz tega stolpca.",
+        "regionLine.col_two": "Vsi {{token}} označenega posestva ({{count}}) morajo priti iz tega stolpca.",
+        "regionLine.col_few": "Vsi {{token}} označenega posestva ({{count}}) morajo priti iz tega stolpca.",
+        "regionLine.col_other": "Vsi {{token}} označenega posestva ({{count}}) morajo priti iz tega stolpca.",
+        "lineRegion.row_one": "{{token}} te vrstice spada v označeno posestvo.",
+        "lineRegion.row_two": "Vsi {{token}} te vrstice ({{count}}) spadajo v označeno posestvo.",
+        "lineRegion.row_few": "Vsi {{token}} te vrstice ({{count}}) spadajo v označeno posestvo.",
+        "lineRegion.row_other": "Vsi {{token}} te vrstice ({{count}}) spadajo v označeno posestvo.",
+        "lineRegion.col_one": "{{token}} tega stolpca spada v označeno posestvo.",
+        "lineRegion.col_two": "Vsi {{token}} tega stolpca ({{count}}) spadajo v označeno posestvo.",
+        "lineRegion.col_few": "Vsi {{token}} tega stolpca ({{count}}) spadajo v označeno posestvo.",
+        "lineRegion.col_other": "Vsi {{token}} tega stolpca ({{count}}) spadajo v označeno posestvo.",
+        "spanning.toRows": "Označena posestva skupaj zapolnijo teh toliko vrstic: {{count}}.",
+        "spanning.toCols": "Označena posestva skupaj zapolnijo teh toliko stolpcev: {{count}}.",
+        "spanning.fromRows": "Označene vrstice lahko dobijo svoje {{token}} ({{count}}) samo s teh posestev.",
+        "spanning.fromCols": "Označeni stolpci lahko dobijo svoje {{token}} ({{count}}) samo s teh posestev.",
+        "wouldStrand.row": "{{token}} tukaj bi označeni vrstici vzel zadnjo parcelo za gradnjo.",
+        "wouldStrand.col": "{{token}} tukaj bi označenemu stolpcu vzel zadnjo parcelo za gradnjo.",
+        "wouldStrand.region": "{{token}} tukaj bi označenemu posestvu vzel zadnjo parcelo za gradnjo.",
+        "action": {
+          "ruleOut_one": "Izloči šrafirano parcelo.",
+          "ruleOut_two": "Izloči šrafirani parceli.",
+          "ruleOut_few": "Izloči šrafirane parcele.",
+          "ruleOut_other": "Izloči šrafirane parcele.",
+          "place_one": "Zgradi {{token}} na šrafirani parceli.",
+          "place_two": "Zgradi {{token}} na vsaki šrafirani parceli.",
+          "place_few": "Zgradi {{token}} na vsaki šrafirani parceli.",
+          "place_other": "Zgradi {{token}} na vsaki šrafirani parceli."
+        }
+      },
+      "lamps": {
+        "mistake": "Ta oznaka ne more biti prava.",
+        "touch": "{{token}} je tukaj, nobena oljenka pa ne sme stati ob drugi – tudi vogali štejejo.",
+        "groupFull.row_one": "Ta vrstica že ima svojo oljenko.",
+        "groupFull.row_two": "V tej vrstici so že vse oljenke ({{count}}).",
+        "groupFull.row_few": "V tej vrstici so že vse oljenke ({{count}}).",
+        "groupFull.row_other": "V tej vrstici so že vse oljenke ({{count}}).",
+        "groupFull.col_one": "Ta stolpec že ima svojo oljenko.",
+        "groupFull.col_two": "V tem stolpcu so že vse oljenke ({{count}}).",
+        "groupFull.col_few": "V tem stolpcu so že vse oljenke ({{count}}).",
+        "groupFull.col_other": "V tem stolpcu so že vse oljenke ({{count}}).",
+        "groupTight.row_one": "V tej vrstici je ostala samo še ena plošča.",
+        "groupTight.row_two": "V tej vrstici imaš samo še {{count}} plošči.",
+        "groupTight.row_few": "V tej vrstici imaš samo še {{count}} plošče.",
+        "groupTight.row_other": "V tej vrstici imaš samo še {{count}} plošč.",
+        "groupTight.col_one": "V tem stolpcu je ostala samo še ena plošča.",
+        "groupTight.col_two": "V tem stolpcu imaš samo še {{count}} plošči.",
+        "groupTight.col_few": "V tem stolpcu imaš samo še {{count}} plošče.",
+        "groupTight.col_other": "V tem stolpcu imaš samo še {{count}} plošč.",
+        "onlyWay.row_one": "Med kamnitimi bloki je v tej vrstici samo še eno polje za oljenko.",
+        "onlyWay.row_two": "Samo en način je, kako v to vrstico spraviš {{count}} oljenki.",
+        "onlyWay.row_few": "Samo en način je, kako v to vrstico spraviš {{count}} oljenke.",
+        "onlyWay.row_other": "Samo en način je, kako v to vrstico spraviš {{count}} oljenk.",
+        "onlyWay.col_one": "Med kamnitimi bloki je v tem stolpcu samo še eno polje za oljenko.",
+        "onlyWay.col_two": "Samo en način je, kako v ta stolpec spraviš {{count}} oljenki.",
+        "onlyWay.col_few": "Samo en način je, kako v ta stolpec spraviš {{count}} oljenke.",
+        "onlyWay.col_other": "Samo en način je, kako v ta stolpec spraviš {{count}} oljenk.",
+        "everyWay.row_one": "Kakor koli postaviš oljenko te vrstice, vedno pristane tukaj.",
+        "everyWay.row_two": "Kakor koli razporediš {{count}} oljenki te vrstice, ena je vedno tukaj.",
+        "everyWay.row_few": "Kakor koli razporediš {{count}} oljenke te vrstice, ena je vedno tukaj.",
+        "everyWay.row_other": "Kakor koli razporediš {{count}} oljenk te vrstice, ena je vedno tukaj.",
+        "everyWay.col_one": "Kakor koli postaviš oljenko tega stolpca, vedno pristane tukaj.",
+        "everyWay.col_two": "Kakor koli razporediš {{count}} oljenki tega stolpca, ena je vedno tukaj.",
+        "everyWay.col_few": "Kakor koli razporediš {{count}} oljenke tega stolpca, ena je vedno tukaj.",
+        "everyWay.col_other": "Kakor koli razporediš {{count}} oljenk tega stolpca, ena je vedno tukaj.",
+        "lineBlock.rowsToCols": "Označene vrstice imajo svoje oljenke v poljih teh stolpcev, zato ti stolpci nimajo nobene več na voljo.",
+        "lineBlock.colsToRows": "Označeni stolpci imajo svoje oljenke v poljih teh vrstic, zato te vrstice nimajo nobene več na voljo.",
+        "wouldStrand.row": "Oljenka tukaj bi označeni vrstici vzela zadnje prosto mesto.",
+        "wouldStrand.col": "Oljenka tukaj bi označenemu stolpcu vzela zadnje prosto mesto.",
+        "action": {
+          "ruleOut_one": "Izloči šrafirano polje.",
+          "ruleOut_two": "Izloči šrafirani polji.",
+          "ruleOut_few": "Izloči šrafirana polja.",
+          "ruleOut_other": "Izloči šrafirana polja.",
+          "place_one": "Postavi oljenko v šrafirano polje.",
+          "place_two": "Postavi oljenko v vsako šrafirano polje.",
+          "place_few": "Postavi oljenko v vsako šrafirano polje.",
+          "place_other": "Postavi oljenko v vsako šrafirano polje."
+        }
+      },
+      "market": {
+        "mistake": "Ta oznaka ne more biti prava.",
+        "touch": "{{token}} je tukaj, nobena stojnica pa ne sme stati ob drugi – tudi vogali štejejo.",
+        "groupFull.row_one": "Ta vrstica že ima svojo stojnico.",
+        "groupFull.row_two": "V tej vrstici so že vse stojnice ({{count}}).",
+        "groupFull.row_few": "V tej vrstici so že vse stojnice ({{count}}).",
+        "groupFull.row_other": "V tej vrstici so že vse stojnice ({{count}}).",
+        "groupFull.col_one": "Ta stolpec že ima svojo stojnico.",
+        "groupFull.col_two": "V tem stolpcu so že vse stojnice ({{count}}).",
+        "groupFull.col_few": "V tem stolpcu so že vse stojnice ({{count}}).",
+        "groupFull.col_other": "V tem stolpcu so že vse stojnice ({{count}}).",
+        "groupTight.row_one": "V tej vrstici je ostal samo še en prostor.",
+        "groupTight.row_two": "V tej vrstici imaš samo še {{count}} prostora.",
+        "groupTight.row_few": "V tej vrstici imaš samo še {{count}} prostore.",
+        "groupTight.row_other": "V tej vrstici imaš samo še {{count}} prostorov.",
+        "groupTight.col_one": "V tem stolpcu je ostal samo še en prostor.",
+        "groupTight.col_two": "V tem stolpcu imaš samo še {{count}} prostora.",
+        "groupTight.col_few": "V tem stolpcu imaš samo še {{count}} prostore.",
+        "groupTight.col_other": "V tem stolpcu imaš samo še {{count}} prostorov.",
+        "onlyWay.row_one": "Med hišami je v tej vrstici samo še eno polje za stojnico.",
+        "onlyWay.row_two": "Samo en način je, kako v to vrstico spraviš {{count}} stojnici.",
+        "onlyWay.row_few": "Samo en način je, kako v to vrstico spraviš {{count}} stojnice.",
+        "onlyWay.row_other": "Samo en način je, kako v to vrstico spraviš {{count}} stojnic.",
+        "onlyWay.col_one": "Med hišami je v tem stolpcu samo še eno polje za stojnico.",
+        "onlyWay.col_two": "Samo en način je, kako v ta stolpec spraviš {{count}} stojnici.",
+        "onlyWay.col_few": "Samo en način je, kako v ta stolpec spraviš {{count}} stojnice.",
+        "onlyWay.col_other": "Samo en način je, kako v ta stolpec spraviš {{count}} stojnic.",
+        "everyWay.row_one": "Kakor koli postaviš stojnico te vrstice, vedno pristane tukaj.",
+        "everyWay.row_two": "Kakor koli razporediš {{count}} stojnici te vrstice, ena je vedno tukaj.",
+        "everyWay.row_few": "Kakor koli razporediš {{count}} stojnice te vrstice, ena je vedno tukaj.",
+        "everyWay.row_other": "Kakor koli razporediš {{count}} stojnic te vrstice, ena je vedno tukaj.",
+        "everyWay.col_one": "Kakor koli postaviš stojnico tega stolpca, vedno pristane tukaj.",
+        "everyWay.col_two": "Kakor koli razporediš {{count}} stojnici tega stolpca, ena je vedno tukaj.",
+        "everyWay.col_few": "Kakor koli razporediš {{count}} stojnice tega stolpca, ena je vedno tukaj.",
+        "everyWay.col_other": "Kakor koli razporediš {{count}} stojnic tega stolpca, ena je vedno tukaj.",
+        "lineBlock.rowsToCols": "Označene vrstice imajo svoje stojnice v poljih teh stolpcev, zato ti stolpci nimajo nobene več na voljo.",
+        "lineBlock.colsToRows": "Označeni stolpci imajo svoje stojnice v poljih teh vrstic, zato te vrstice nimajo nobene več na voljo.",
+        "wouldStrand.row": "Stojnica tukaj bi označeni vrstici vzela zadnje prosto mesto.",
+        "wouldStrand.col": "Stojnica tukaj bi označenemu stolpcu vzela zadnje prosto mesto.",
+        "action": {
+          "ruleOut_one": "Izloči šrafirano polje.",
+          "ruleOut_two": "Izloči šrafirani polji.",
+          "ruleOut_few": "Izloči šrafirana polja.",
+          "ruleOut_other": "Izloči šrafirana polja.",
+          "place_one": "Postavi stojnico v šrafirano polje.",
+          "place_two": "Postavi stojnico v vsako šrafirano polje.",
+          "place_few": "Postavi stojnico v vsako šrafirano polje.",
+          "place_other": "Postavi stojnico v vsako šrafirano polje."
+        }
+      },
+      "lotus": {
+        "mistake": "Ta oznaka ne more biti prava.",
+        "touch": "{{token}} je tukaj, noben lotos pa ne sme plavati ob drugem – tudi vogali štejejo.",
+        "groupFull.row_one": "Ta vrstica že ima svoj lotos.",
+        "groupFull.row_two": "V tej vrstici so že vsi lotosi ({{count}}).",
+        "groupFull.row_few": "V tej vrstici so že vsi lotosi ({{count}}).",
+        "groupFull.row_other": "V tej vrstici so že vsi lotosi ({{count}}).",
+        "groupFull.col_one": "Ta stolpec že ima svoj lotos.",
+        "groupFull.col_two": "V tem stolpcu so že vsi lotosi ({{count}}).",
+        "groupFull.col_few": "V tem stolpcu so že vsi lotosi ({{count}}).",
+        "groupFull.col_other": "V tem stolpcu so že vsi lotosi ({{count}}).",
+        "groupTight.row_one": "V tej vrstici je ostalo samo še eno mesto na vodi.",
+        "groupTight.row_two": "V tej vrstici imaš samo še {{count}} mesti na vodi.",
+        "groupTight.row_few": "V tej vrstici imaš samo še {{count}} mesta na vodi.",
+        "groupTight.row_other": "V tej vrstici imaš samo še {{count}} mest na vodi.",
+        "groupTight.col_one": "V tem stolpcu je ostalo samo še eno mesto na vodi.",
+        "groupTight.col_two": "V tem stolpcu imaš samo še {{count}} mesti na vodi.",
+        "groupTight.col_few": "V tem stolpcu imaš samo še {{count}} mesta na vodi.",
+        "groupTight.col_other": "V tem stolpcu imaš samo še {{count}} mest na vodi.",
+        "onlyWay.row_one": "Med skalami je v tej vrstici samo še eno polje za lotos.",
+        "onlyWay.row_two": "Samo en način je, kako v to vrstico spraviš {{count}} lotosa.",
+        "onlyWay.row_few": "Samo en način je, kako v to vrstico spraviš {{count}} lotose.",
+        "onlyWay.row_other": "Samo en način je, kako v to vrstico spraviš {{count}} lotosov.",
+        "onlyWay.col_one": "Med skalami je v tem stolpcu samo še eno polje za lotos.",
+        "onlyWay.col_two": "Samo en način je, kako v ta stolpec spraviš {{count}} lotosa.",
+        "onlyWay.col_few": "Samo en način je, kako v ta stolpec spraviš {{count}} lotose.",
+        "onlyWay.col_other": "Samo en način je, kako v ta stolpec spraviš {{count}} lotosov.",
+        "everyWay.row_one": "Kakor koli postaviš lotos te vrstice, vedno pristane tukaj.",
+        "everyWay.row_two": "Kakor koli razporediš {{count}} lotosa te vrstice, eden je vedno tukaj.",
+        "everyWay.row_few": "Kakor koli razporediš {{count}} lotose te vrstice, eden je vedno tukaj.",
+        "everyWay.row_other": "Kakor koli razporediš {{count}} lotosov te vrstice, eden je vedno tukaj.",
+        "everyWay.col_one": "Kakor koli postaviš lotos tega stolpca, vedno pristane tukaj.",
+        "everyWay.col_two": "Kakor koli razporediš {{count}} lotosa tega stolpca, eden je vedno tukaj.",
+        "everyWay.col_few": "Kakor koli razporediš {{count}} lotose tega stolpca, eden je vedno tukaj.",
+        "everyWay.col_other": "Kakor koli razporediš {{count}} lotosov tega stolpca, eden je vedno tukaj.",
+        "lineBlock.rowsToCols": "Označene vrstice imajo svoje lotose v poljih teh stolpcev, zato ti stolpci nimajo nobenega več na voljo.",
+        "lineBlock.colsToRows": "Označeni stolpci imajo svoje lotose v poljih teh vrstic, zato te vrstice nimajo nobenega več na voljo.",
+        "wouldStrand.row": "Lotos tukaj bi označeni vrstici vzel zadnje prosto mesto.",
+        "wouldStrand.col": "Lotos tukaj bi označenemu stolpcu vzel zadnje prosto mesto.",
+        "action": {
+          "ruleOut_one": "Izloči šrafirano polje.",
+          "ruleOut_two": "Izloči šrafirani polji.",
+          "ruleOut_few": "Izloči šrafirana polja.",
+          "ruleOut_other": "Izloči šrafirana polja.",
+          "place_one": "Postavi lotos v šrafirano polje.",
+          "place_two": "Postavi lotos v vsako šrafirano polje.",
+          "place_few": "Postavi lotos v vsako šrafirano polje.",
+          "place_other": "Postavi lotos v vsako šrafirano polje."
+        }
+      },
+      "cats": {
+        "mistake": "Ta oznaka ne more biti prava.",
+        "touch": "{{token}} je tukaj, nobena mačka pa ne sme spati ob drugi – tudi vogali štejejo.",
+        "groupFull.row_one": "Ta vrstica že ima svojo mačko.",
+        "groupFull.row_two": "V tej vrstici so že vse mačke ({{count}}).",
+        "groupFull.row_few": "V tej vrstici so že vse mačke ({{count}}).",
+        "groupFull.row_other": "V tej vrstici so že vse mačke ({{count}}).",
+        "groupFull.col_one": "Ta stolpec že ima svojo mačko.",
+        "groupFull.col_two": "V tem stolpcu so že vse mačke ({{count}}).",
+        "groupFull.col_few": "V tem stolpcu so že vse mačke ({{count}}).",
+        "groupFull.col_other": "V tem stolpcu so že vse mačke ({{count}}).",
+        "groupTight.row_one": "V tej vrstici je ostala samo še ena plošča.",
+        "groupTight.row_two": "V tej vrstici imaš samo še {{count}} plošči.",
+        "groupTight.row_few": "V tej vrstici imaš samo še {{count}} plošče.",
+        "groupTight.row_other": "V tej vrstici imaš samo še {{count}} plošč.",
+        "groupTight.col_one": "V tem stolpcu je ostala samo še ena plošča.",
+        "groupTight.col_two": "V tem stolpcu imaš samo še {{count}} plošči.",
+        "groupTight.col_few": "V tem stolpcu imaš samo še {{count}} plošče.",
+        "groupTight.col_other": "V tem stolpcu imaš samo še {{count}} plošč.",
+        "onlyWay.row_one": "Med stebri je v tej vrstici samo še eno polje za mačko.",
+        "onlyWay.row_two": "Samo en način je, kako v to vrstico spraviš {{count}} mački.",
+        "onlyWay.row_few": "Samo en način je, kako v to vrstico spraviš {{count}} mačke.",
+        "onlyWay.row_other": "Samo en način je, kako v to vrstico spraviš {{count}} mačk.",
+        "onlyWay.col_one": "Med stebri je v tem stolpcu samo še eno polje za mačko.",
+        "onlyWay.col_two": "Samo en način je, kako v ta stolpec spraviš {{count}} mački.",
+        "onlyWay.col_few": "Samo en način je, kako v ta stolpec spraviš {{count}} mačke.",
+        "onlyWay.col_other": "Samo en način je, kako v ta stolpec spraviš {{count}} mačk.",
+        "everyWay.row_one": "Kakor koli postaviš mačko te vrstice, vedno pristane tukaj.",
+        "everyWay.row_two": "Kakor koli razporediš {{count}} mački te vrstice, ena je vedno tukaj.",
+        "everyWay.row_few": "Kakor koli razporediš {{count}} mačke te vrstice, ena je vedno tukaj.",
+        "everyWay.row_other": "Kakor koli razporediš {{count}} mačk te vrstice, ena je vedno tukaj.",
+        "everyWay.col_one": "Kakor koli postaviš mačko tega stolpca, vedno pristane tukaj.",
+        "everyWay.col_two": "Kakor koli razporediš {{count}} mački tega stolpca, ena je vedno tukaj.",
+        "everyWay.col_few": "Kakor koli razporediš {{count}} mačke tega stolpca, ena je vedno tukaj.",
+        "everyWay.col_other": "Kakor koli razporediš {{count}} mačk tega stolpca, ena je vedno tukaj.",
+        "lineBlock.rowsToCols": "Označene vrstice imajo svoje mačke v poljih teh stolpcev, zato ti stolpci nimajo nobene več na voljo.",
+        "lineBlock.colsToRows": "Označeni stolpci imajo svoje mačke v poljih teh vrstic, zato te vrstice nimajo nobene več na voljo.",
+        "wouldStrand.row": "Mačka tukaj bi označeni vrstici vzela zadnje prosto mesto.",
+        "wouldStrand.col": "Mačka tukaj bi označenemu stolpcu vzela zadnje prosto mesto.",
+        "action": {
+          "ruleOut_one": "Izloči šrafirano polje.",
+          "ruleOut_two": "Izloči šrafirani polji.",
+          "ruleOut_few": "Izloči šrafirana polja.",
+          "ruleOut_other": "Izloči šrafirana polja.",
+          "place_one": "Postavi mačko v šrafirano polje.",
+          "place_two": "Postavi mačko v vsako šrafirano polje.",
+          "place_few": "Postavi mačko v vsako šrafirano polje.",
+          "place_other": "Postavi mačko v vsako šrafirano polje."
+        }
+      }
+    },
+    "quota": {
+      "default": "Na vrstico, stolpec in območje",
+      "fields": "Na vrstico, stolpec in posestvo",
+      "lamps": "Na vrstico in stolpec",
+      "market": "Na vrstico in stolpec",
+      "lotus": "Na vrstico in stolpec",
+      "cats": "Na vrstico in stolpec"
+    },
+    "goal": {
+      "default_one": "V vsaki vrstici, vsakem stolpcu in vsakem območju je natanko ena zvezda.",
+      "default_two": "V vsaki vrstici, vsakem stolpcu in vsakem območju sta natanko {{count}} zvezdi.",
+      "default_few": "V vsaki vrstici, vsakem stolpcu in vsakem območju so natanko {{count}} zvezde.",
+      "default_other": "V vsaki vrstici, vsakem stolpcu in vsakem območju je natanko {{count}} zvezd.",
+      "fields_one": "V vsaki vrstici, vsakem stolpcu in na vsakem posestvu je natanko ena kmetija.",
+      "fields_two": "V vsaki vrstici, vsakem stolpcu in na vsakem posestvu sta natanko {{count}} kmetiji.",
+      "fields_few": "V vsaki vrstici, vsakem stolpcu in na vsakem posestvu so natanko {{count}} kmetije.",
+      "fields_other": "V vsaki vrstici, vsakem stolpcu in na vsakem posestvu je natanko {{count}} kmetij.",
+      "lamps": "V vsaki vrstici in vsakem stolpcu je natanko ena oljenka.",
+      "market": "V vsaki vrstici in vsakem stolpcu je natanko ena tržna stojnica.",
+      "lotus": "V vsaki vrstici in vsakem stolpcu je natanko en lotos.",
+      "cats": "V vsaki vrstici in vsakem stolpcu je natanko ena mačka."
+    },
+    "name": {
+      "default": "Zvezde narazen",
+      "fields": "Kmetije",
+      "twinDefault": "Zvezdna dvojčka",
+      "twinFields": "Kmetije dvojčice",
+      "lamps": "Oljenke",
+      "market": "Tržne stojnice",
+      "lotus": "Lotosov ribnik",
+      "cats": "Tempeljske mačke"
+    }
+  },
+  "pairPuzzle": {
+    "name": {
+      "mummies": "Počitek mumij",
+      "beetles": "Gnojni hrošči"
+    },
+    "goal": {
+      "mummies": "Vsak sarkofag dobi eno mumijo ob sebi, in v vsaki vrstici in stolpcu je natanko toliko mumij, kot pove številka ob njem.",
+      "beetles": "Vsaka gnojna kroglica dobi enega hrošča ob sebi, in v vsaki vrstici in stolpcu je natanko toliko hroščev, kot pove številka ob njem."
+    },
+    "rules": {
+      "mummies": {
+        "pair": "Vsak sarkofag ima eno mumijo tik nad, pod, levo ali desno od sebe, in vsaka mumija počiva ob svojem sarkofagu.",
+        "count": "Številka ob vrstici ali stolpcu pove, koliko mumij je v njem. Zazeleni se, ko jih je natanko toliko, in pordeči, ko se to ne more več iziti.",
+        "touch": "Nobeni dve mumiji ne smeta biti druga ob drugi – tudi vogali štejejo.",
+        "enter": "Tapni polje, da ga izločiš, še enkrat, da tja položiš mumijo, in še enkrat, da ga počistiš. Povleci čez polja, da jih izločiš več naenkrat. Sarkofagov ne moreš tapniti."
+      },
+      "beetles": {
+        "pair": "Vsaka gnojna kroglica ima enega hrošča tik nad, pod, levo ali desno od sebe, in vsak hrošč stoji ob svoji kroglici, ki jo bo kotalil.",
+        "count": "Številka ob vrstici ali stolpcu pove, koliko hroščev je v njem. Zazeleni se, ko jih je natanko toliko, in pordeči, ko se to ne more več iziti.",
+        "touch": "Nobena dva hrošča ne smeta biti drug ob drugem – tudi vogali štejejo.",
+        "enter": "Tapni polje, da ga izločiš, še enkrat, da tja postaviš hrošča, in še enkrat, da ga počistiš. Povleci čez polja, da jih izločiš več naenkrat. Gnojnih kroglic ne moreš tapniti."
+      }
+    },
+    "hint": {
+      "mummies": {
+        "mistake": "Ta oznaka ne more biti prava.",
+        "touch": "Ta mumija že leži, zato nobena druga ne sme biti ob njej – tudi vogali štejejo.",
+        "zeroLine.row": "V tej vrstici ni mumij, zato je vsa prazna.",
+        "zeroLine.col": "V tem stolpcu ni mumij, zato je ves prazen.",
+        "noAnchor": "Ob teh poljih ni nobenega sarkofaga, zato tukaj ne more počivati nobena mumija.",
+        "lineFull.row_one": "V tej vrstici je mumija že na mestu.",
+        "lineFull.row_two": "V tej vrstici so že vse mumije ({{count}}).",
+        "lineFull.row_few": "V tej vrstici so že vse mumije ({{count}}).",
+        "lineFull.row_other": "V tej vrstici so že vse mumije ({{count}}).",
+        "lineFull.col_one": "V tem stolpcu je mumija že na mestu.",
+        "lineFull.col_two": "V tem stolpcu so že vse mumije ({{count}}).",
+        "lineFull.col_few": "V tem stolpcu so že vse mumije ({{count}}).",
+        "lineFull.col_other": "V tem stolpcu so že vse mumije ({{count}}).",
+        "lineTight.row_one": "Tej vrstici je ostalo samo še eno polje za mumijo.",
+        "lineTight.row_two": "Tej vrstici je ostalo točno toliko polj, kolikor mumij še potrebuje: {{count}}.",
+        "lineTight.row_few": "Tej vrstici je ostalo točno toliko polj, kolikor mumij še potrebuje: {{count}}.",
+        "lineTight.row_other": "Tej vrstici je ostalo točno toliko polj, kolikor mumij še potrebuje: {{count}}.",
+        "lineTight.col_one": "Temu stolpcu je ostalo samo še eno polje za mumijo.",
+        "lineTight.col_two": "Temu stolpcu je ostalo točno toliko polj, kolikor mumij še potrebuje: {{count}}.",
+        "lineTight.col_few": "Temu stolpcu je ostalo točno toliko polj, kolikor mumij še potrebuje: {{count}}.",
+        "lineTight.col_other": "Temu stolpcu je ostalo točno toliko polj, kolikor mumij še potrebuje: {{count}}.",
+        "onlyWay": "Temu sarkofagu je ostalo samo še eno polje ob njem za njegovo mumijo.",
+        "claimed": "Ta sarkofag že ima svojo mumijo, zato polja ob njem, ki jih ne more uporabiti noben drug sarkofag, ostanejo prazna.",
+        "lineBlock.rowsToCols_one": "Označene vrstice imajo eno mumijo več, kot jih lahko dajo njihovi sarkofagi, zato pride iz sarkofaga tik zunaj njih.",
+        "lineBlock.rowsToCols_two": "Označene vrstice imajo več mumij, kot jih lahko dajo njihovi sarkofagi (za {{count}}), zato pridejo iz sarkofagov tik zunaj njih.",
+        "lineBlock.rowsToCols_few": "Označene vrstice imajo več mumij, kot jih lahko dajo njihovi sarkofagi (za {{count}}), zato pridejo iz sarkofagov tik zunaj njih.",
+        "lineBlock.rowsToCols_other": "Označene vrstice imajo več mumij, kot jih lahko dajo njihovi sarkofagi (za {{count}}), zato pridejo iz sarkofagov tik zunaj njih.",
+        "lineBlock.colsToRows_one": "Označeni stolpci imajo eno mumijo več, kot jih lahko dajo njihovi sarkofagi, zato pride iz sarkofaga tik zunaj njih.",
+        "lineBlock.colsToRows_two": "Označeni stolpci imajo več mumij, kot jih lahko dajo njihovi sarkofagi (za {{count}}), zato pridejo iz sarkofagov tik zunaj njih.",
+        "lineBlock.colsToRows_few": "Označeni stolpci imajo več mumij, kot jih lahko dajo njihovi sarkofagi (za {{count}}), zato pridejo iz sarkofagov tik zunaj njih.",
+        "lineBlock.colsToRows_other": "Označeni stolpci imajo več mumij, kot jih lahko dajo njihovi sarkofagi (za {{count}}), zato pridejo iz sarkofagov tik zunaj njih.",
+        "wouldStrand.row": "Mumija tukaj bi označeni vrstici vzela prostor za mumije, ki jih še potrebuje.",
+        "wouldStrand.col": "Mumija tukaj bi označenemu stolpcu vzela prostor za mumije, ki jih še potrebuje.",
+        "wouldStrand.anchor": "Mumija tukaj bi označenemu sarkofagu vzela zadnje polje ob njem za njegovo mumijo.",
+        "action": {
+          "ruleOut_one": "Izloči šrafirano polje.",
+          "ruleOut_two": "Izloči šrafirani polji.",
+          "ruleOut_few": "Izloči šrafirana polja.",
+          "ruleOut_other": "Izloči šrafirana polja.",
+          "place_one": "Položi mumijo na šrafirano polje.",
+          "place_two": "Položi mumijo na vsako šrafirano polje.",
+          "place_few": "Položi mumijo na vsako šrafirano polje.",
+          "place_other": "Položi mumijo na vsako šrafirano polje."
+        }
+      },
+      "beetles": {
+        "mistake": "Ta oznaka ne more biti prava.",
+        "touch": "Ta hrošč že stoji, zato noben drug ne sme biti ob njem – tudi vogali štejejo.",
+        "zeroLine.row": "V tej vrstici ni hroščev, zato je vsa prazna.",
+        "zeroLine.col": "V tem stolpcu ni hroščev, zato je ves prazen.",
+        "noAnchor": "Ob teh poljih ni nobene gnojne kroglice, zato tukaj ne more stati noben hrošč.",
+        "lineFull.row_one": "V tej vrstici je hrošč že na mestu.",
+        "lineFull.row_two": "V tej vrstici so že vsi hrošči ({{count}}).",
+        "lineFull.row_few": "V tej vrstici so že vsi hrošči ({{count}}).",
+        "lineFull.row_other": "V tej vrstici so že vsi hrošči ({{count}}).",
+        "lineFull.col_one": "V tem stolpcu je hrošč že na mestu.",
+        "lineFull.col_two": "V tem stolpcu so že vsi hrošči ({{count}}).",
+        "lineFull.col_few": "V tem stolpcu so že vsi hrošči ({{count}}).",
+        "lineFull.col_other": "V tem stolpcu so že vsi hrošči ({{count}}).",
+        "lineTight.row_one": "Tej vrstici je ostalo samo še eno polje za hrošča.",
+        "lineTight.row_two": "Tej vrstici je ostalo točno toliko polj, kolikor hroščev še potrebuje: {{count}}.",
+        "lineTight.row_few": "Tej vrstici je ostalo točno toliko polj, kolikor hroščev še potrebuje: {{count}}.",
+        "lineTight.row_other": "Tej vrstici je ostalo točno toliko polj, kolikor hroščev še potrebuje: {{count}}.",
+        "lineTight.col_one": "Temu stolpcu je ostalo samo še eno polje za hrošča.",
+        "lineTight.col_two": "Temu stolpcu je ostalo točno toliko polj, kolikor hroščev še potrebuje: {{count}}.",
+        "lineTight.col_few": "Temu stolpcu je ostalo točno toliko polj, kolikor hroščev še potrebuje: {{count}}.",
+        "lineTight.col_other": "Temu stolpcu je ostalo točno toliko polj, kolikor hroščev še potrebuje: {{count}}.",
+        "onlyWay": "Tej gnojni kroglici je ostalo samo še eno polje ob njej za njenega hrošča.",
+        "claimed": "Ta gnojna kroglica že ima svojega hrošča, zato polja ob njej, ki jih ne more uporabiti nobena druga kroglica, ostanejo prazna.",
+        "lineBlock.rowsToCols_one": "Označene vrstice imajo enega hrošča več, kot jih lahko dajo njihove gnojne kroglice, zato pride s kroglice tik zunaj njih.",
+        "lineBlock.rowsToCols_two": "Označene vrstice imajo več hroščev, kot jih lahko dajo njihove gnojne kroglice (za {{count}}), zato pridejo s kroglic tik zunaj njih.",
+        "lineBlock.rowsToCols_few": "Označene vrstice imajo več hroščev, kot jih lahko dajo njihove gnojne kroglice (za {{count}}), zato pridejo s kroglic tik zunaj njih.",
+        "lineBlock.rowsToCols_other": "Označene vrstice imajo več hroščev, kot jih lahko dajo njihove gnojne kroglice (za {{count}}), zato pridejo s kroglic tik zunaj njih.",
+        "lineBlock.colsToRows_one": "Označeni stolpci imajo enega hrošča več, kot jih lahko dajo njihove gnojne kroglice, zato pride s kroglice tik zunaj njih.",
+        "lineBlock.colsToRows_two": "Označeni stolpci imajo več hroščev, kot jih lahko dajo njihove gnojne kroglice (za {{count}}), zato pridejo s kroglic tik zunaj njih.",
+        "lineBlock.colsToRows_few": "Označeni stolpci imajo več hroščev, kot jih lahko dajo njihove gnojne kroglice (za {{count}}), zato pridejo s kroglic tik zunaj njih.",
+        "lineBlock.colsToRows_other": "Označeni stolpci imajo več hroščev, kot jih lahko dajo njihove gnojne kroglice (za {{count}}), zato pridejo s kroglic tik zunaj njih.",
+        "wouldStrand.row": "Hrošč tukaj bi označeni vrstici vzel prostor za hrošče, ki jih še potrebuje.",
+        "wouldStrand.col": "Hrošč tukaj bi označenemu stolpcu vzel prostor za hrošče, ki jih še potrebuje.",
+        "wouldStrand.anchor": "Hrošč tukaj bi označeni gnojni kroglici vzel zadnje polje ob njej za njenega hrošča.",
+        "action": {
+          "ruleOut_one": "Izloči šrafirano polje.",
+          "ruleOut_two": "Izloči šrafirani polji.",
+          "ruleOut_few": "Izloči šrafirana polja.",
+          "ruleOut_other": "Izloči šrafirana polja.",
+          "place_one": "Postavi hrošča na šrafirano polje.",
+          "place_two": "Postavi hrošča na vsako šrafirano polje.",
+          "place_few": "Postavi hrošča na vsako šrafirano polje.",
+          "place_other": "Postavi hrošča na vsako šrafirano polje."
+        }
+      }
+    }
+  },
+  "rushHour": {
+    "name": {
+      "default": "Blokada",
+      "market": "Zaprta ulica"
+    },
+    "goal": {
+      "default": "Spravi svoj kamen ven skozi odprtino na desni.",
+      "market": "Spravi svoje sani ven skozi odprtino na koncu ulice."
+    },
+    "rules": {
+      "default": {
+        "lanes": "Kamen drsi samo po svoji progi – nikoli vstran in nikoli s plošče.",
+        "shove": "Povleci kamen, da ga poriveš. Ustavi se tam, kjer je nekaj na poti."
+      },
+      "market": {
+        "lanes": "Sani drsijo samo po progi, na kateri stojijo – nikoli vstran in nikoli z ulice.",
+        "shove": "Povleci sani, da jih poriveš. Ustavijo se tam, kjer je nekaj na poti."
+      }
+    },
+    "hint": {
+      "default": {
+        "drive": "Pot naprej je prosta do tja.",
+        "back": "Nič pred tabo se ne umakne. Najprej svoj kamen pomakni nazaj.",
+        "clear": "Ta kamen stoji čez tvojo progo.",
+        "room": "Nič se ne more premakniti, dokler se ne premakne ta.",
+        "push": {
+          "left": "Porini ga levo, do obročka.",
+          "right": "Porini ga desno, do obročka.",
+          "up": "Porini ga gor, do obročka.",
+          "down": "Porini ga dol, do obročka."
+        }
+      },
+      "market": {
+        "drive": "Proga pred tvojimi sanmi je prosta do tja.",
+        "back": "Nič pred tabo se ne umakne. Najprej svoje sani pomakni nazaj.",
+        "clear": "Ta tovor stoji čez progo, po kateri greš ven.",
+        "room": "Nič se ne more premakniti, dokler ne premakneš tega.",
+        "push": {
+          "left": "Porini ga levo, do obročka.",
+          "right": "Porini ga desno, do obročka.",
+          "up": "Porini ga gor po ulici, do obročka.",
+          "down": "Porini ga dol po ulici, do obročka."
+        }
+      }
+    }
+  },
+  "hidato": {
+    "rules": {
+      "default": {
+        "given": "Številke, ki so že v satju, so del uganke – ostanejo na mestu.",
+        "enter": "Tapni številko, da od tam nadaljuješ vrsto, nato tapni prazno celico ob njej, da nadaljuješ – ali pa povleci naravnost čez celice, kamor gre vrsta.",
+        "back": "Tapni številko, ki jo je postavila tvoja roka, in jo tapni še enkrat, da jo odstraniš, skupaj z vsem, kar je viselo na njej. Enako se zgodi, če vrsto iz številke nadaljuješ v drugo smer. Razveljavi vrne tvojo zadnjo potezo."
+      },
+      "channel": {
+        "given": "Polja, ki so že oštevilčena, so del uganke – ostanejo na mestu.",
+        "enter": "Tapni oštevilčeno polje, da od tam vodiš vodo naprej, nato tapni suho polje ob njem, da kopljaš naprej – ali pa povleci naravnost čez polja, kjer teče kanal.",
+        "back": "Tapni izkopano polje in ga tapni še enkrat, da ga zasuješ, skupaj z vsem kanalom, ki je ostal odrezan od njega. Enako se zgodi, če iz polja kopljaš v drugo smer. Razveljavi vrne tvojo zadnjo potezo."
+      },
+      "scribe": {
+        "given": "Številke, napisane z rdečim črnilom, so del uganke – ostanejo na mestu.",
+        "enter": "Tapni številko, da tam vzameš v roke trstično pero, nato tapni prazno mesto ob njej, da pišeš naprej – ali pa povleci naravnost vzdolž črte.",
+        "back": "Tapni številko, ki jo je napisala tvoja roka, in jo tapni še enkrat, da jo postrgaš, skupaj z vsem delom črte, ki je ostal odrezan od nje. Enako se zgodi, če iz številke pišeš v drugo smer. Razveljavi vrne tvojo zadnjo potezo."
+      },
+      "chambers": {
+        "given": "Sobe, ki so že oštevilčene, so izklesali graditelji – ostanejo na mestu.",
+        "enter": "Tapni oštevilčeno sobo, da od tam nadaljuješ prehod, nato tapni zaprto sobo ob njej, da se prebiješ vanjo – ali pa povleci naravnost čez sobe, kjer teče prehod.",
+        "back": "Tapni odprto sobo in jo tapni še enkrat, da jo spet zapreš, skupaj z vsem prehodom, ki je ostal odrezan od nje. Enako se zgodi, če se iz sobe prebiješ v drugo smer. Razveljavi vrne tvojo zadnjo potezo."
+      }
+    },
+    "goal": {
+      "default": "V vsaki celici satja je številka od 1 do {{last}}, vsaka v celici, ki se dotika prejšnje številke.",
+      "channel": "En sam kanal namaka vso ravnino: vsako polje pride na vrsto, od 1 do {{last}}, vsako izkopano ob prejšnjem polju.",
+      "scribe": "Ena sama nepretrgana črta številk gre čez list: na vsakem mestu je številka od 1 do {{last}}, vsaka ob prejšnji številki.",
+      "chambers": "En sam prehod gre skozi vso grobnico: vsaka soba se odpre po vrsti, od 1 do {{last}}, vsaka prebita iz prejšnje sobe."
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": "Ena od teh številk ne more biti prava.",
+          "sandwich": "Med {{before}} in {{after}} je samo ena prosta celica, ki se dotika obeh.",
+          "neighbourForced": "Ob {{from}} je ostala samo še ena prosta celica.",
+          "onlyCell": "V satju ni nikjer drugje več prostora za {{value}}.",
+          "onlyValue": "Nobena druga številka ne more priti do te celice."
+        },
+        "action": {
+          "place": "Postavi {{value}} v šrafirano celico."
+        }
+      },
+      "channel": {
+        "reason": {
+          "mistake": "Ena od teh številk ne more biti prava.",
+          "sandwich": "Med {{before}} in {{after}} je samo eno suho polje, ki se dotika obeh.",
+          "neighbourForced": "Ob {{from}} je ostalo samo še eno suho polje.",
+          "onlyCell": "Nikjer drugje na ravnini ni prostora za {{value}}.",
+          "onlyValue": "Nobena druga številka ne more priti do tega polja."
+        },
+        "action": {
+          "place": "Izkoplji {{value}} v šrafiranem polju."
+        }
+      },
+      "scribe": {
+        "reason": {
+          "mistake": "Ena od teh številk ne more biti prava.",
+          "sandwich": "Med {{before}} in {{after}} je samo eno prazno mesto, ki se dotika obeh.",
+          "neighbourForced": "Ob {{from}} je ostalo samo še eno prazno mesto.",
+          "onlyCell": "Nikjer drugje na listu ni prostora za {{value}}.",
+          "onlyValue": "Nobena druga številka ne more priti do tega mesta."
+        },
+        "action": {
+          "place": "Napiši {{value}} na šrafirano mesto."
+        }
+      },
+      "chambers": {
+        "reason": {
+          "mistake": "Ena od teh številk ne more biti prava.",
+          "sandwich": "Med {{before}} in {{after}} je samo ena zaprta soba, ki se dotika obeh.",
+          "neighbourForced": "Ob {{from}} je ostala samo še ena zaprta soba.",
+          "onlyCell": "Nikjer drugje v grobnici ni prostora za {{value}}.",
+          "onlyValue": "Nobena druga številka ne more priti do te sobe."
+        },
+        "action": {
+          "place": "Odpri {{value}} v šrafirani sobi."
+        }
+      }
+    },
+    "name": {
+      "default": "Panj",
+      "channel": "Kanal",
+      "scribe": "Pisarjev list",
+      "chambers": "Zapečatene sobe"
+    }
+  },
+  "sudoku": {
+    "rules": {
+      "default": {
+        "chambers": "Debele črte razdelijo mrežo na šest sob, vsaka je široka dve polji in visoka tri.",
+        "given": "Številke, ki so že vklesane, so del uganke – ostanejo na mestu.",
+        "enter": "Tapni polje in nato številko. Če isto številko tapneš še enkrat, jo odstraniš.",
+        "notes": "Preklopi na svinčnik, da si zapišeš številke, ki bi še lahko bile v polju. Razveljavi vrne tvojo zadnjo potezo."
+      },
+      "papyrus": {
+        "chambers": "Debele črte razdelijo list na šest okvirjev, vsak je širok dve mesti in visok tri.",
+        "given": "Znaki, napisani z rdečim črnilom, so del uganke – ostanejo na mestu.",
+        "enter": "Tapni mesto in nato znak. Če isti znak tapneš še enkrat, ga postrgaš.",
+        "notes": "Vzemi trstično pero in si rahlo zapiši znake, ki bi še lahko bili na tem mestu. Razveljavi vrne tvojo zadnjo potezo."
+      }
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": {
+            "value": "Ena od številk tukaj ne more biti prava. Odstrani jo in poglej še enkrat.",
+            "note": "Opombe v tem polju so izločile številko, ki spada sem. Počisti jih in začni to polje znova."
+          },
+          "nakedSingle": "Vrstica, stolpec in soba tega polja so porabili že vse druge številke.",
+          "hiddenSingle": {
+            "row": "{{token}} ne gre v nobeno drugo polje te vrstice.",
+            "col": "{{token}} ne gre v nobeno drugo polje tega stolpca.",
+            "box": "{{token}} ne gre v nobeno drugo polje te sobe."
+          },
+          "pointing": {
+            "row": "V označeni sobi je {{token}} lahko samo v tej vrstici.",
+            "col": "V označeni sobi je {{token}} lahko samo v tem stolpcu."
+          },
+          "claiming": {
+            "row": "V označeni vrstici gre {{token}} samo v to eno sobo.",
+            "col": "V označenem stolpcu gre {{token}} samo v to eno sobo."
+          }
+        },
+        "action": {
+          "place": "Postavi {{token}} v šrafirano polje.",
+          "ruleOut_one": "Izloči {{token}} iz šrafiranega polja.",
+          "ruleOut_two": "Izloči {{token}} iz šrafiranih polj.",
+          "ruleOut_few": "Izloči {{token}} iz šrafiranih polj.",
+          "ruleOut_other": "Izloči {{token}} iz šrafiranih polj."
+        }
+      },
+      "papyrus": {
+        "reason": {
+          "mistake": {
+            "value": "Eden od teh znakov ne more biti pravi. Postrgaj ga in poglej še enkrat.",
+            "note": "Zapiski na tem mestu so izločili znak, ki spada sem. Zbriši jih in začni to mesto znova."
+          },
+          "nakedSingle": "Vrstica, stolpec in okvir tega mesta so porabili že vse druge znake.",
+          "hiddenSingle": {
+            "row": "{{token}} ne gre na nobeno drugo mesto te vrstice.",
+            "col": "{{token}} ne gre na nobeno drugo mesto tega stolpca.",
+            "box": "{{token}} ne gre na nobeno drugo mesto tega okvirja."
+          },
+          "pointing": {
+            "row": "V označenem okvirju je {{token}} lahko samo v tej vrstici.",
+            "col": "V označenem okvirju je {{token}} lahko samo v tem stolpcu."
+          },
+          "claiming": {
+            "row": "V označeni vrstici gre {{token}} samo v ta en okvir.",
+            "col": "V označenem stolpcu gre {{token}} samo v ta en okvir."
+          }
+        },
+        "action": {
+          "place": "Napiši {{token}} na šrafirano mesto.",
+          "ruleOut_one": "Izloči {{token}} s šrafiranega mesta.",
+          "ruleOut_two": "Izloči {{token}} s šrafiranih mest.",
+          "ruleOut_few": "Izloči {{token}} s šrafiranih mest.",
+          "ruleOut_other": "Izloči {{token}} s šrafiranih mest."
+        }
+      }
+    },
+    "goal": {
+      "default": "V vsaki vrstici, vsakem stolpcu in vsaki sobi je vsaka od šestih številk natanko enkrat.",
+      "papyrus": "V vsaki vrstici, vsakem stolpcu in vsakem okvirju je vsak od šestih znakov natanko enkrat."
+    },
+    "name": {
+      "default": "Šest sob",
+      "papyrus": "Pisarjev register"
+    }
+  },
+  "crocodile": {
+    "name": "Krokodilja jama",
+    "goal": "Prečkaj jamo do drugega brega.",
+    "rules": {
+      "want": "Vsak krokodil hoče en odgovor iz vrste kamnov za njim: največjega ali najmanjšega.",
+      "mark": "Kateri, pove njegov odprt gobec in tudi znak ob njem: > se odpira proti največjemu odgovoru, < proti najmanjšemu.",
+      "bite": "Če stopiš na kateri koli drug kamen, ugrizne: izgubiš zdravje in začneš znova z bližnjega brega."
+    },
+    "hint": {
+      "biggest": "Ta krokodil hoče največji odgovor. To je {{value}}.",
+      "smallest": "Ta krokodil hoče najmanjši odgovor. To je {{value}}."
+    }
+  },
+  "canisters": {
+    "name": {
+      "default": "Posode",
+      "grain": "Mere za žito",
+      "oil": "Olje za svetilke",
+      "wine": "Trgovčeva klet",
+      "natron": "Kanope",
+      "ink": "Pisarna"
+    },
+    "goal": {
+      "default_one": "Odmeri zahtevano prostornino in povej, v kateri posodi je.",
+      "default_two": "Odmeri vsako zahtevano prostornino po vrsti in povej, v kateri posodi je, preden začneš naslednjo.",
+      "default_few": "Odmeri vsako zahtevano prostornino po vrsti in povej, v kateri posodi je, preden začneš naslednjo.",
+      "default_other": "Odmeri vsako zahtevano prostornino po vrsti in povej, v kateri posodi je, preden začneš naslednjo.",
+      "grain_one": "Odmeri zahtevano količino žita in povej, v kateri meri je.",
+      "grain_two": "Odmeri vsako količino žita po vrsti in povej, v kateri meri je, preden začneš naslednjo.",
+      "grain_few": "Odmeri vsako količino žita po vrsti in povej, v kateri meri je, preden začneš naslednjo.",
+      "grain_other": "Odmeri vsako količino žita po vrsti in povej, v kateri meri je, preden začneš naslednjo.",
+      "oil_one": "Odmeri zahtevano olje in povej, v katerem vrču je.",
+      "oil_two": "Odmeri vsako mero olja po vrsti in povej, v katerem vrču je, preden začneš naslednjo.",
+      "oil_few": "Odmeri vsako mero olja po vrsti in povej, v katerem vrču je, preden začneš naslednjo.",
+      "oil_other": "Odmeri vsako mero olja po vrsti in povej, v katerem vrču je, preden začneš naslednjo.",
+      "wine_one": "Odmeri zahtevano vino in povej, v kateri amfori je.",
+      "wine_two": "Odmeri vsako mero vina po vrsti in povej, v kateri amfori je, preden začneš naslednjo.",
+      "wine_few": "Odmeri vsako mero vina po vrsti in povej, v kateri amfori je, preden začneš naslednjo.",
+      "wine_other": "Odmeri vsako mero vina po vrsti in povej, v kateri amfori je, preden začneš naslednjo.",
+      "natron_one": "Odmeri zahtevani natron in povej, v katerem vrču je.",
+      "natron_two": "Odmeri vsako mero natrona po vrsti in povej, v katerem vrču je, preden začneš naslednjo.",
+      "natron_few": "Odmeri vsako mero natrona po vrsti in povej, v katerem vrču je, preden začneš naslednjo.",
+      "natron_other": "Odmeri vsako mero natrona po vrsti in povej, v katerem vrču je, preden začneš naslednjo.",
+      "ink_one": "Odmeri zahtevano črnilo in povej, v katerem lončku je.",
+      "ink_two": "Odmeri vsako mero črnila po vrsti in povej, v katerem lončku je, preden začneš naslednjo.",
+      "ink_few": "Odmeri vsako mero črnila po vrsti in povej, v katerem lončku je, preden začneš naslednjo.",
+      "ink_other": "Odmeri vsako mero črnila po vrsti in povej, v katerem lončku je, preden začneš naslednjo."
+    },
+    "rules": {
+      "method": {
+        "sums": "Vsaka količina, ki jo lahko narediš, je seštevek ali razlika dveh številk na klopi: velikosti posode, tega, kar je v njej, ali prostora, ki ji še ostane.",
+        "backwards": "Zato pojdi nazaj od zahtevane količine – kateri dve številki jo dasta in kako dosežeš, da sta obe hkrati pred tabo?"
+      },
+      "claim": "Ko imaš količino, tapni »ta«. Če pokažeš napačno posodo, te to stane eno potezo.",
+      "legs": "Potem pride naslednja količina, odmerjena iz tega, kar je ostalo v posodah.",
+      "default": {
+        "moves": "Tapni posodo, da jo dvigneš, nato tapni drugo, da preliješ vanjo. Prelivanje se ustavi, ko je prva prazna ali druga polna.",
+        "contents": "To je vsa voda, kar je je – ena posoda je na začetku polna, nobene ne moreš izliti ali prinesti nove.",
+        "levels": "Na vsaki posodi piše, koliko je v njej in koliko drži, ko je polna."
+      },
+      "grain": {
+        "moves": "Tapni mero, da jo dvigneš, nato tapni drugo, da vanjo streseš žito. Stresanje se ustavi, ko je prva prazna ali je druga polna do roba.",
+        "contents": "To je vse žito, kar ga je – ena mera je na začetku polna, nobenega ne moreš pomesti stran ali prinesti iz kašče.",
+        "levels": "Na vsaki meri piše, koliko je v njej in koliko drži, ko je polna do roba."
+      },
+      "oil": {
+        "moves": "Tapni vrč, da ga dvigneš, nato tapni drugega, da preliješ vanj. Prelivanje se ustavi, ko je prvi prazen ali drugi poln.",
+        "contents": "To je vse olje, kar ga je – en vrč je na začetku poln, nobenega ne moreš izliti ali natočiti novega.",
+        "levels": "Na vsakem vrču piše, koliko je v njem in koliko drži, ko je poln."
+      },
+      "wine": {
+        "moves": "Tapni amforo, da jo dvigneš, nato tapni drugo, da preliješ vanjo. Prelivanje se ustavi, ko je prva prazna ali druga polna.",
+        "contents": "To je vse vino, kar ga je – ena amfora je na začetku polna, nobenega ne moreš politi ali prinesti iz kleti.",
+        "levels": "Na vsaki amfori piše, koliko je v njej in koliko drži, ko je polna."
+      },
+      "natron": {
+        "moves": "Tapni vrč, da ga dvigneš, nato tapni drugega, da vanj streseš natron. Stresanje se ustavi, ko je prvi prazen ali drugi poln do pokrova.",
+        "contents": "To je ves natron, kar ga je – en vrč je na začetku poln, nobenega ne moreš pomesti stran ali prinesti novega.",
+        "levels": "Na vsakem vrču piše, koliko je v njem in koliko drži, ko je poln do pokrova."
+      },
+      "ink": {
+        "moves": "Tapni lonček, da ga dvigneš, nato tapni drugega, da preliješ vanj. Prelivanje se ustavi, ko je prvi prazen ali drugi poln.",
+        "contents": "To je vse črnilo, kar ga je – en lonček je na začetku poln, nobenega ne moreš izliti ali zmleti novega.",
+        "levels": "Na vsakem lončku piše, koliko je v njem in koliko drži, ko je poln."
+      }
+    },
+    "hint": {
+      "goal": {
+        "leftover": "Pojdi nazaj: {{amount}} je {{content}}, od česar odšteješ {{space}} – posodo, v kateri je {{content}}, preliješ v posodo, ki ima prostora za {{space}}.",
+        "full": "Pojdi nazaj: {{amount}} je velikost ene posode, {{a}} in {{b}} skupaj pa dasta točno to.",
+        "sum": "Pojdi nazaj: {{amount}} je {{a}} in {{b}} skupaj."
+      },
+      "claim": "Do tega je samo še eno prelivanje. Potem ugotovi, v kateri posodi je.",
+      "stuck": "Od tu {{target}} ne moreš več odmeriti s potezami, ki so ti ostale. Vrni eno prelivanje ali začni ploščo znova.",
+      "overBudget": "Potez ni več. Vrni eno ali začni znova in poišči krajšo pot.",
+      "next": {
+        "leftover": "Račun pred tem: {{amount}} – {{content}}, preliti v prostor za {{space}}.",
+        "full": "Račun pred tem: polna posoda, v kateri je {{amount}} – {{a}} in {{b}} skupaj.",
+        "sum": "Račun pred tem: {{amount}} – {{a}} in {{b}} skupaj."
+      }
+    },
+    "movesLeft_one": "Še {{count}} poteza",
+    "movesLeft_two": "Še {{count}} potezi",
+    "movesLeft_few": "Še {{count}} poteze",
+    "movesLeft_other": "Še {{count}} potez",
+    "legs": "odmerjeno {{done}} od {{total}}",
+    "wanted": "Odmeri",
+    "claim": "ta",
+    "claimAria": "Povej, da je količina v posodi {{capacity}}"
+  },
+  "procession": {
+    "name": {
+      "default": "Urejene ure",
+      "funerary": "Dan v Dolini delavcev",
+      "cosmos": "Nočno potovanje",
+      "water": "Dan poplave",
+      "trade": "Dan v pristanišču"
+    },
+    "goal": {
+      "default": "Vsako dogajanje potisni v njegovo uro, dokler ne držijo vse oznake pod dnevom.",
+      "funerary": "Vsako opravilo potisni v njegovo uro, dokler ne držijo vse oznake pod dnevom.",
+      "cosmos": "Vsako luč potisni v njeno uro, dokler ne držijo vse oznake pod nočjo.",
+      "water": "Vsako opravilo potisni v njegovo uro, dokler ne držijo vse oznake pod dnevom.",
+      "trade": "Vsako opravilo potisni v njegovo uro, dokler ne držijo vse oznake pod dnevom."
+    },
+    "rules": {
+      "default": {
+        "lengths": "Vsaka vrstica je eno dogajanje in traja tako dolgo, kot je širok njen trak. Kdaj se zgodi, moraš ugotoviti ti.",
+        "marks": "Črta pod dnevom je rdeča, dokler ne drži. Tapni jo, da obkrožiš vrstice, o katerih govori.",
+        "drag": "Trak vleci po njegovi vrstici. Nikoli ne gre ven iz dneva."
+      }
+    },
+    "hint": {
+      "default": {
+        "chain": "Mesto tiste vrstice je že določeno, ta pa je odvisna od nje.",
+        "squeeze": "Dneva je ostalo samo toliko in to je vse, kar gre vanj.",
+        "apart": "Obratno ne gre v dan.",
+        "split": "Poskusi obratno, pa se pokvari nekaj drugega.",
+        "move": "Povleci obkroženi trak na šrafirane oznake."
+      }
+    },
+    "events": {
+      "default": ["ogenj", "nošenje vode", "peka kruha", "vožnja s čolnom", "gonjenje volov", "nočna straža"],
+      "funerary": ["ometavanje", "risanje mreže", "klesanje", "slikanje", "pozlačevanje", "vgradnja vrat"],
+      "cosmos": ["sončna pot", "vzhod zvezde", "lunina straža", "jasno nebo", "zora", "obrat leta"],
+      "water": ["poplava", "kopanje kanala", "polnjenje bazena", "zalivanje polja", "prevoz čez reko", "žetev"],
+      "trade": ["razvrščanje blaga", "prodaja kruha", "prodaja piva", "prevoz čez reko", "vlačenje tovora", "štetje"]
+    },
+    "marks": {
+      "default": {
+        "pin": "{{a}} se začne ob {{tick}}. uri.",
+        "handoff": "{{a}} se začne takoj, ko se {{b}} konča.",
+        "link_one": "{{a}} se začne {{count}} uro po tem, ko se {{b}} konča.",
+        "link_two": "{{a}} se začne {{count}} uri po tem, ko se {{b}} konča.",
+        "link_few": "{{a}} se začne {{count}} ure po tem, ko se {{b}} konča.",
+        "link_other": "{{a}} se začne {{count}} ur po tem, ko se {{b}} konča.",
+        "before": "{{a}} se konča, preden se {{b}} začne.",
+        "apart": "{{a}} in {{b}} nikoli ne potekata hkrati.",
+        "together": "{{a}} in {{b}} nekaj časa potekata hkrati.",
+        "span_one": "Od prvega začetka do zadnjega konca mine {{count}} ura.",
+        "span_two": "Od prvega začetka do zadnjega konca mineta {{count}} uri.",
+        "span_few": "Od prvega začetka do zadnjega konca minejo {{count}} ure.",
+        "span_other": "Od prvega začetka do zadnjega konca mine {{count}} ur."
+      }
+    },
+    "door": {
+      "title": "Vrata procesije",
+      "hint": "Vsaka ploščica, na katero stopiš, sprosti svoje opravilo. Uredi dan, potem pa hodi po ploščicah v tem vrstnem redu.",
+      "read": "Dan je prebran. Hodi po njegovih ploščicah v tem vrstnem redu, od prve naprej.",
+      "hintButton": "Namig"
+    }
+  },
+  "story": {
+    "invitation": "Pogovori se",
+    "log": {
+      "empty": "Še nič. Fez bo imel veliko povedati."
+    },
+    "speaker": {
+      "fez": "Fez",
+      "explorer": "Ti",
+      "ipi": "Ipi",
+      "henut": "Henut",
+      "priest": "Duhovnik",
+      "pharaoh": "Faraon",
+      "voice": "Glas"
+    },
+    "wall": {
+      "wrong": "Nekdo je tretji znak vklesal narobe. Narobe je že tri tisoč let.",
+      "fixed": "To je spet njeno ime.",
+      "pick": "Postavi pravi znak na njegovo mesto.",
+      "cannot": "Znaka, ki spada sem, še ne poznaš. Še ne."
+    },
+    "sphinx": {
+      "wrong": "Ista pisava kot zunaj, a pesek je tukaj ni nikoli dosegel. Dva znaka sta še vedno lepo vklesana, tam, kjer je bil tretji, pa je prazno mesto.",
+      "fixed": "To je vse.",
+      "pick": "Postavi znak, ki ga nosiš s sabo, na prazno mesto.",
+      "cannot": "Dva znaka poznaš, praznega mesta pa ne moreš zapolniti. Še ne.",
+      "gap": "Manjkajoči znak"
+    }
+  },
+  "lightbeamSwitch": {
+    "name": "Vrteča se svetloba",
+    "invitation": "Obrni ogledala",
+    "goal": "Svetloba počiva v svetišču in izhod pod njim je odprt.",
+    "rules": {
+      "shrines": "En svetlobni disk in nad vsakim izhodom iz tega križišča svetišče. Ogledala na tleh lahko svetlobo pripeljejo do katerega koli.",
+      "doors": "Izhod, do katerega pride svetloba, je odprt, drugi so zaprti. Ena pot svetlobe, ena pot naprej.",
+      "returning": "Z izbiro ne izgubiš ničesar. Kadar koli se lahko vrneš in svetlobo pošlješ drugam – tisti izhod se odpre, ta pa zapre.",
+      "tap": "Tapni ogledalo, da ga obrneš. Če ga tapneš še enkrat, ga vrneš nazaj."
+    },
+    "doorOpen": "{{way}} izhod: odprt",
+    "doorShut": "{{way}} izhod: zaprt",
+    "way": {
+      "n": "Severni",
+      "e": "Vzhodni",
+      "s": "Južni",
+      "w": "Zahodni"
+    }
+  },
+  "handle": {
+    "name": "Ročica",
+    "invitation": "Premakni ročico",
+    "goal": "Ročica visi na eno ali na drugo stran. Kar ena stran odpre, druga zapre.",
+    "left": "Premakni jo levo",
+    "right": "Premakni jo desno"
+  },
+  "torch": {
+    "name": "Bakla",
+    "invitation": "Prižgi baklo",
+    "goal": "Neprižgana bakla. Ko enkrat gori, je ne moreš več ugasniti.",
+    "lit": "Bakla gori."
+  },
+  "gateFace": {
+    "title": "Vrata, ki čakajo",
+    "hint": "Vsak znak mora goreti, preden se ta vrata odprejo.",
+    "lit": "{{owner}}: gori",
+    "unlit": "{{owner}}: še ne",
+    "owner": {
+      "torch": "Bakla",
+      "handle": "Ročica",
+      "key": "Ključ",
+      "web": "Znak peska",
+      "plateStone": "Kamen na plošči",
+      "plateEmpty": "Prazna plošča",
+      "other": "Mehanizem"
+    },
+    "orderHint": "Hodi po ploščicah v tem vrstnem redu.",
+    "reset": "Začni znova",
+    "spoiled": "Pokvarjeno: ena ploščica je bila prehojena ob napačnem času.",
+    "tile": {
+      "unwalked": "Korak {{step}}: še ne",
+      "inOrder": "Korak {{step}}: po pravem vrstnem redu",
+      "outOfOrder": "Korak {{step}}: po napačnem vrstnem redu"
+    }
+  },
+  "devLockEditor": {
+    "syntax": "Skladnja",
+    "example": "Primer",
+    "useExample": "Uporabi primer",
+    "title": "Urejevalnik ključavnic",
+    "notation": "Zapis ključavnice",
+    "checks": "Preverjanja",
+    "drawing": "Risba",
+    "carveAndPlay": "Izkleši in igraj",
+    "copyLink": "Kopiraj povezavo",
+    "copied": "Povezava kopirana",
+    "failed": "Kopiranje ni uspelo; povezava je v naslovni vrstici",
+    "backToEditor": "← Urejevalnik",
+    "close": "Zapri",
+    "open": "Urejevalnik ključavnic",
+    "modeLock": "Ključavnica",
+    "modeWeb": "Mreža",
+    "webNotation": "Zapis mreže",
+    "openWeb": "Odpri mrežo",
+    "checking": "Preverjam…",
+    "checkedIn": "preverjeno v {{ms}} ms",
+    "worldCarved": "nadstropja Čarovnik izklesana v {{ms}} ms, enkrat",
+    "simulation": "Poteg",
+    "noSimulation": "Ničesar ni mogoče preigrati, dokler ni vsako mesto v svetu.",
+    "summary": "Povzetek",
+    "stillBuried": "Še {{percent}} % pod peskom",
+    "nothingBuried": "Nič ni pod peskom",
+    "finishes": "konča",
+    "stopsAt": "se ustavi pri {{pct}} %",
+    "notOpenYet": "še ni odprto",
+    "pullAll": "Potegni vse, kar je na dosegu",
+    "reset": "Ponastavi",
+    "progress": "{{reachable}} na dosegu · {{pulled}} od {{total}} vzetih",
+    "allTaken": "Vse potegnjeno in vzeto.",
+    "potFront": "{{pulled}} od {{total}} potegnjenih · rob pri {{pct}} %",
+    "potOpen": "{{pulled}} od {{total}} potegnjenih · odprto",
+    "keys": "Ključi",
+    "keysNote": "vsak odpre en pečat",
+    "log": "Kaj se je zgodilo",
+    "logEmpty": "Še nič potegnjeno.",
+    "logPull": "potegne {{name}} v {{at}}",
+    "logTake": "vzame {{name}} v {{at}}",
+    "logFront": "{{pot}} rob do {{pct}} %",
+    "logPotOpen": "{{pot}} odprto",
+    "logSeal": "pečat v {{at}} odprt",
+    "logNew": "novo: {{names}}",
+    "pullPin": "potegni ročico {{name}}",
+    "takePin": "vzemi ključ {{name}}",
+    "legendCleared": "očiščeno",
+    "legendBuried": "pod peskom",
+    "legendSeal": "pečat",
+    "legendPins": "● ročica · ■ ključ · majhno = stranski del"
+  },
+  "camp": {
+    "title": "Tabor",
+    "continue": {
+      "heading": "Trenutna odprava",
+      "setOff": "Na pot",
+      "pyramid": "Piramida {{level}} od {{count}} · {{tier}}",
+      "tomb": "Grobnica · {{tier}}",
+      "empty": "Na tvojem zemljevidu je vse odprto"
+    },
+    "hint_one": "{{count}} staro potovanje skriva nekaj novega",
+    "hint_two": "{{count}} stari potovanji skrivata nekaj novega",
+    "hint_few": "{{count}} stara potovanja skrivajo nekaj novega",
+    "hint_other": "{{count}} starih potovanj skriva nekaj novega",
+    "comingHome": {
+      "title": "Spet v taboru",
+      "haulTitle": "Kaj prinašaš s tega potovanja",
+      "new": "NOVO",
+      "unpack": "Razpakiraj",
+      "toCamp": "V tabor"
+    },
+    "chapter": {
+      "subtitle": "Novo poglavje",
+      "title": "Pred tabo se dviga nova piramida",
+      "body": "Potovanja {{tier}} so odprta. Odpočij si v taboru in se odpravi na pot, ko te zamika.",
+      "journeyNote": "Prvo potovanje {{tier}}",
+      "later": "Pozneje"
+    },
+    "close": "Zapri",
+    "entrance": {
+      "collection": "Zbirka",
+      "mosaic": "Mozaik",
+      "journeys": "Vsa potovanja",
+      "detectors": "Detektorji"
+    },
+    "mapTable": {
+      "title": "Miza z zemljevidi",
+      "journeys": "Potovanja"
+    }
+  },
+  "home": {
+    "haul": {
+      "times": "×{{count}}"
+    }
+  },
+  "journeys": {
+    "tierNeed": "Najdi ta zaklad",
+    "tierProgress": "{{done}} od {{total}} opravljenih",
+    "tierLockedName": "Potovanja {{tier}}",
+    "toggleTier": "Pokaži ali skrij potovanja {{tier}}",
+    "now": "ZDAJ",
+    "newDot": "Nekaj novega za odkriti",
+    "noteCurrentPyramid": "Poteka · piramida {{level}} od {{count}}",
+    "noteCurrentTomb": "Poteka · v grobnici",
+    "noteFinished": "Končano",
+    "noteFinishedNews": "Končano · nekaj novega za odkriti",
+    "noteOpen": "Še ni obiskano",
+    "noteResumePyramid": "Že začeto · piramida {{level}} od {{count}}",
+    "noteResumeTomb": "Že začeto · v grobnici",
+    "needProgress": "{{unit}}: {{found}} od {{required}}",
+    "showStops": "Pokaži kraje potovanja {{name}}",
+    "stopPyramid": "Piramida",
+    "stopTomb": "Kraj"
+  },
+  "newVersion": {
+    "title": "Nova različica!",
+    "name": "Igra se je močno spremenila",
+    "body": "Zato se tvoje potovanje začne znova. Čakajo te nove grobnice, najdbe in tabor, ki ga lahko zgradiš."
+  },
+  "devPrefabPreview": {
+    "firstDoor": "Do prvih vrat",
+    "stop": "Do postanka",
+    "secondDoor": "Do drugih vrat",
+    "doorsInUse_one": "Vrat v uporabi: {{count}}",
+    "doorsInUse_two": "Vrat v uporabi: {{count}}",
+    "doorsInUse_few": "Vrat v uporabi: {{count}}",
+    "doorsInUse_other": "Vrat v uporabi: {{count}}",
+    "walled": "Zazidanih: {{count}}"
+  },
+  "devRoomEditor": {
+    "title": "Urejevalnik sob",
+    "open": "Urejevalnik sob",
+    "close": "Zapri",
+    "tier": "Težavnost",
+    "catalogue": "Odpri sobo",
+    "notation": "Zapis sobe",
+    "copyLink": "Kopiraj povezavo",
+    "copyText": "Kopiraj besedilo",
+    "copied": "Kopirano",
+    "failed": "Kopiranje v odložišče ni uspelo",
+    "palette": "Paleta",
+    "unpainted": "še ni naslikano",
+    "layout": "Postavitev",
+    "mirrored": "(zrcaljeno)",
+    "fill_one": "Zapolni ({{count}} možnost)",
+    "fill_two": "Zapolni ({{count}} možnosti)",
+    "fill_few": "Zapolni ({{count}} možnosti)",
+    "fill_other": "Zapolni ({{count}} možnosti)",
+    "fromDoor": "Hodi od",
+    "toDoor": "Hodi do",
+    "automatic": "Samodejno",
+    "direction": {
+      "n": "Severna vrata",
+      "e": "Vzhodna vrata",
+      "s": "Južna vrata",
+      "w": "Zahodna vrata"
+    },
+    "checks": "Preverjanja",
+    "sound": "Soba prestane preverjanja",
+    "tierDisagrees": "Glava pravi težavnost {{header}}, tukaj narisano v {{picked}}",
+    "undo": "Razveljavi",
+    "drawing": "Risba",
+    "tool": {
+      "select": "Izberi",
+      "wall": "Zid",
+      "floor": "Tla",
+      "door": "Mesto za vrata",
+      "stop": "Postanek",
+      "chest": "Skrinja",
+      "portal": "Portal",
+      "mechanism": "Mehanizem",
+      "erase": "Briši",
+      "copy": "Nariši {{letter}}"
+    },
+    "againstWall": "Spuščeni predmeti stojijo ob severnem zidu",
+    "dropHint": "Povleci element palete na celico; zasede toliko prostora, kot ga potrebuje",
+    "newLayout": "Ime nove postavitve",
+    "addLayout": "Kopiraj kot postavitev",
+    "inspector": {
+      "title": "Mesto {{letter}}",
+      "optional": "Neobvezno",
+      "kinds": "Vrste",
+      "counted": "Zapolni le nekatere",
+      "take": "Vzemi",
+      "of": "od",
+      "per": "na",
+      "perNone": "vsakega posebej",
+      "drawAnother": "Nariši še enega",
+      "close": "Zapri"
+    },
+    "refused": {
+      "notFree": "Ni na prostih tleh znotraj sobe",
+      "wallRow": "Mesto ob zidu stoji v prvi vrsti ob severnem zidu",
+      "northWall": "Predmet na zidu visi na severnem zidu",
+      "floorOnRing": "Na zunanji obroč gredo samo zidovi in mesta za vrata",
+      "doorInside": "Mesto za vrata stoji na zunanjem obroču",
+      "keepStop": "Postanek ostane: postavi ga drugam, da ga premakneš",
+      "noLetter": "Vse črke so zasedene",
+      "layoutName": "Postavitvi daj ime, ki ga nima nobena druga",
+      "notation": "Zapis tega ne sprejme: {{message}}"
+    },
+    "layer": {
+      "wall": "ob zidu",
+      "floor": "tla",
+      "ground": "podlaga",
+      "wallItem": "predmet na zidu"
+    },
+    "cell": "Celica {{row}},{{col}}: {{what}}",
+    "cellWhat": {
+      "wall": "zid",
+      "floor": "prosta tla",
+      "door": "mesto za vrata",
+      "place": "{{letter}}, {{kinds}}"
+    },
+    "rewrites": "Risanje prepiše besedilo: vsi komentarji se premaknejo na vrh"
+  }
+}

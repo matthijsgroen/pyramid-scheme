@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Akmuo",
+    "bronze": "Bronza",
+    "silver": "Sidabras",
+    "gold": "Auksas",
+    "divine": "Dieviška"
+  },
+  "sell_stone_1": {
+    "name": "Atskilusi šukė",
+    "description": "Sudužusio puodo šukė, ant kurios raštininkas mokėsi rašyti. Raidės taip išblukusios, kad nieko neįskaitysi."
+  },
+  "sell_stone_2": {
+    "name": "Įskilęs molio ąsotis",
+    "description": "Ąsotis grūdams ar alui. Per šimtus metų jis įskilo per visą šoną."
+  },
+  "sell_stone_3": {
+    "name": "Nudėvėta nendrinė basutė",
+    "description": "Nupinta iš papiruso nendrių. Padas suplonėjęs nuo kažkokio seniai pamiršto darbininko kasdienių žingsnių."
+  },
+  "sell_stone_4": {
+    "name": "Išblukęs lino skudurėlis",
+    "description": "Nuplėšta nedažyto lino juostelė. Tokiu linu vyniodavo mumijas — arba lopydavo bures."
+  },
+  "sell_stone_5": {
+    "name": "Nulūžęs titnago peilis",
+    "description": "Iš titnago skeltas peilis su nulūžusiu galiuku. Pasidaryti pigu, pakeisti dar pigiau."
+  },
+  "sell_bronze_1": {
+    "name": "Sulenktas bronzinis amuletas",
+    "description": "Pigus apsauginis amuletas. Išlietas kreivai, ir niekas jo taip ir neištiesino."
+  },
+  "sell_bronze_2": {
+    "name": "Aprūdijęs bronzinis veidrodis",
+    "description": "Kadaise toks blizgus, kad matydavai savo atspindį. Dabar visas žalias nuo senumo."
+  },
+  "sell_bronze_3": {
+    "name": "Atšipęs bronzinis kabliukas",
+    "description": "Žvejo kabliukas, įkritęs į Nilą dar gerokai prieš užantspauduojant kapą."
+  },
+  "sell_bronze_4": {
+    "name": "Mažas bronzinis varpelis",
+    "description": "Turėjo kaboti ant šventyklos durų ar šokėjos kulkšnies. Dabar jis skamba kreivai."
+  },
+  "sell_bronze_5": {
+    "name": "Patamsėjęs bronzinis žiedas",
+    "description": "Paprastas žiedas pirštui, kuris jau seniai virto dulkėmis."
+  },
+  "sell_silver_1": {
+    "name": "Patamsėjęs sidabrinis anchas",
+    "description": "Gyvybės ženklas, per šimtmečius po žeme visai nublukęs."
+  },
+  "sell_silver_2": {
+    "name": "Sidabrinė akių dažų lazdelė",
+    "description": "Plona lazdelė, kuria turtuoliai pasidažydavo akis. Dažų jau seniai nebėra."
+  },
+  "sell_silver_3": {
+    "name": "Įlenktas sidabrinis dubenėlis",
+    "description": "Mažas aukų dubenėlis. Vienas šonas sutraiškytas, kai pagaliau įgriuvo lubos."
+  },
+  "sell_silver_4": {
+    "name": "Sidabrinis plaukų smeigtukas",
+    "description": "Paprastas, be jokių papuošimų. Kadaise juo kažkas susismeigdavo plaukus, bet vardas pamirštas."
+  },
+  "sell_silver_5": {
+    "name": "Nudėvėta sidabrinė apyrankė",
+    "description": "Plona sidabro apyrankė su sulūžusiu užsegimu. Per prasta didikui, per gera darbininkui."
+  },
+  "sell_gold_1": {
+    "name": "Mažas aukso karoliukas",
+    "description": "Vienas karoliukas iš laidojimo vėrinio, seniai išbirusio."
+  },
+  "sell_gold_2": {
+    "name": "Aukso lapelio skiautė",
+    "description": "Aukso lapelio gabalėlis, kurį kapų plėšikai nulupo nuo statulos veido dar gerokai prieš tau atvykstant."
+  },
+  "sell_gold_3": {
+    "name": "Plonas aukso auskaras",
+    "description": "Iškaltas labai plonai, kad didiko aukso užtektų ilgiau."
+  },
+  "sell_gold_4": {
+    "name": "Šukė su aukso dulkelėmis",
+    "description": "Paauksuoto tinko gabalas. Ant jo dar laikosi tikro aukso dulkelės."
+  },
+  "sell_gold_5": {
+    "name": "Atskilęs aukso antspaudas",
+    "description": "Antspaudo žiedas, kurio raštas nusitrynė. Kieno jis buvo, niekas nebeprisimena."
+  },
+  "sell_divine_1": {
+    "name": "Išblukęs lazurito skarabėjas",
+    "description": "Išdrožtas iš brangaus lazurito, už didelius pinigus atgabento faraono atgimimui. Per šimtmečius spalva išbluko."
+  },
+  "sell_divine_2": {
+    "name": "Karneolio akies amuletas",
+    "description": "Apsauginė akis iš kraujo raudonumo karneolio. Ji turėjo saugoti nuo nelaimių pomirtiniame gyvenime."
+  },
+  "sell_divine_3": {
+    "name": "Turkio mozaikos gabalėlis",
+    "description": "Viena plytelė iš sudužusios mozaikos. Kadaise ji buvo dievo atvaizdo dalis ant šventyklos sienos."
+  },
+  "sell_divine_4": {
+    "name": "Alebastrinio indo šukė",
+    "description": "Gabalas indo, kuriame buvo laikomi faraono vidaus organai. Brangus akmuo liūdnam darbui."
+  },
+  "sell_divine_5": {
+    "name": "Obsidiano apeigų peilis",
+    "description": "Vulkaninis stiklas, išgaląstas apeigoms. Ne mūšiui — tik šventyklai."
+  }
+}

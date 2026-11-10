@@ -1,0 +1,255 @@
+{
+  "spots": {
+    "fire": "Taborni ogenj",
+    "sleeping": "Prostor za spanje",
+    "water": "Prostor za vodo",
+    "cooking": "Prostor za kuhanje",
+    "donkey": "Prostor za osla",
+    "camel": "Prostor za kamelo",
+    "mapTable": "Miza z zemljevidi",
+    "palmGarden": "Palmov vrt",
+    "ibisPond": "Ibisov ribnik",
+    "lookout": "Razgledišče",
+    "godStatues": "Kipi bogov",
+    "starCanopy": "Zvezdna streha"
+  },
+  "finds": {
+    "pot": "Lonec za kuhanje",
+    "seatCushions": "Blazine za sedenje",
+    "reedMat": "Trstična preproga",
+    "blanket": "Odeja",
+    "tentRug": "Preproga za šotor",
+    "tentFlag": "Zastavica za šotor",
+    "gourd": "Buča za vodo",
+    "jar": "Vrč",
+    "secondJar": "Drugi vrč",
+    "spiceRack": "Polica za začimbe",
+    "breadBoard": "Deska za kruh",
+    "starMap": "Zvezdni zemljevid",
+    "scrollCase": "Tulec za zvitke",
+    "astrolabe": "Astrolab",
+    "reedGlobe": "Trstični globus",
+    "seed": "Palmovo seme",
+    "secondPalm": "Palmovo seme",
+    "figTree": "Figovo seme",
+    "papyrus": "Korenina papirusa",
+    "reeds": "Potaknjenec trsta",
+    "lotus": "Lotosov gomolj",
+    "flag": "Zastava za razgledišče",
+    "thoth": "Kipec Thotha",
+    "bastet": "Kipec Bastet",
+    "anubis": "Kipec Anubisa",
+    "ra": "Kipec Raja",
+    "cloth": "Zvezdno platno"
+  },
+  "structures": {
+    "stoneRing": "Kamniti krog",
+    "fire": "Ogenj",
+    "cookingStones": "Kamni za kuhanje",
+    "seatingStones": "Kamni za sedenje",
+    "clayOven": "Glinena peč",
+    "windbreak": "Zaščita pred vetrom",
+    "tent": "Šotor",
+    "secondTent": "Drugi šotor",
+    "pavilion": "Paviljon",
+    "well": "Vodnjak",
+    "wellPulley": "Vodnjak s škripcem",
+    "tripod": "Trinožnik",
+    "breadOven": "Krušna peč",
+    "dryingRack": "Sušilnik",
+    "feast": "Pojedina",
+    "table": "Miza z zemljevidi",
+    "lotusPlanter": "Korito za lotos",
+    "edgeStones": "Rob ribnika",
+    "post": "Razgledni drog",
+    "platform": "Razgledni oder",
+    "ladder": "Lestev",
+    "roof": "Streha",
+    "signalFire": "Signalni ogenj",
+    "poles": "Drogovi za streho",
+    "stars": "Zvezde",
+    "planets": "Planeti"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Poljski kamni",
+      "sandBed": "Peščena podlaga"
+    },
+    "fire": {
+      "tinder": "Netivo",
+      "acaciaLogs": "Akacijeva polena"
+    },
+    "cookingStones": {
+      "flatStone": "Ploščat kamen",
+      "supportStones": "Podporni kamni"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Gladke skale",
+      "sandstoneBlock": "Blok peščenjaka",
+      "hewnSlab": "Klesana plošča"
+    },
+    "clayOven": {
+      "ovenFloor": "Dno peči",
+      "firebricks": "Ognjevarne opeke",
+      "smokeHole": "Luknja za dim",
+      "copperGrate": "Bakrena rešetka"
+    },
+    "windbreak": {
+      "reedBundles": "Snopi trsta",
+      "stakes": "Leseni koli"
+    },
+    "tent": {
+      "tentPoles": "Šotorske palice",
+      "wovenCloth": "Tkano platno",
+      "tentPegs": "Šotorski klini"
+    },
+    "secondTent": {
+      "largeCloth": "Veliko šotorsko platno",
+      "ridgePole": "Slemenski drog",
+      "guyRopes": "Napenjalne vrvi",
+      "woolFloor": "Volnena podloga"
+    },
+    "pavilion": {
+      "pavilionPosts": "Stebri paviljona",
+      "linenCanopy": "Lanena streha",
+      "hangingCurtains": "Zavese",
+      "woolRugs": "Volnene preproge",
+      "woodenFloor": "Lesena tla"
+    },
+    "well": {
+      "wellStones": "Kamni za vodnjak",
+      "rope": "Dolga vrv",
+      "bucket": "Vedro",
+      "windlass": "Vreteno"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Škripec",
+      "frame": "Nosilni okvir",
+      "hoistRope": "Vrv za dviganje",
+      "counterweight": "Protiutež",
+      "leatherBucket": "Usnjeno vedro"
+    },
+    "tripod": {
+      "tripodPoles": "Tri palice",
+      "binding": "Vrv za vezanje",
+      "hook": "Bronasti kavelj"
+    },
+    "breadOven": {
+      "mudBricks": "Opeke iz blata",
+      "clayPlaster": "Glinen omet",
+      "ovenLid": "Pokrov peči"
+    },
+    "dryingRack": {
+      "rackPoles": "Palice za sušilnik",
+      "crossbar": "Prečka",
+      "wickerTray": "Pleten pladenj",
+      "cords": "Vrvice za obešanje"
+    },
+    "feast": {
+      "lowTable": "Nizka miza",
+      "breadBaskets": "Košare za kruh",
+      "roastDuck": "Pečena raca",
+      "beerJars": "Vrči piva",
+      "fruitBowl": "Skleda s sadjem"
+    },
+    "table": {
+      "tableTop": "Mizna plošča",
+      "trestles": "Kozice",
+      "leatherStraps": "Usnjeni jermeni"
+    },
+    "lotusPlanter": {
+      "clayTub": "Glineno korito",
+      "nileSilt": "Nilsko blato",
+      "waterJar": "Vrč za vodo",
+      "lotusTubers": "Lotosovi gomolji",
+      "stoneRim": "Kamniti rob"
+    },
+    "edgeStones": {
+      "riverStones": "Rečni kamni",
+      "clayBedding": "Glinena podlaga",
+      "gravel": "Prod",
+      "boundaryStakes": "Mejni koli"
+    },
+    "post": {
+      "postTrunk": "Palmovo deblo",
+      "footStones": "Temeljni kamni",
+      "wedges": "Zagozde",
+      "braces": "Opore"
+    },
+    "platform": {
+      "platformBeams": "Nosilni tramovi",
+      "platformPlanks": "Deske",
+      "lashingRope": "Vrv za privezovanje",
+      "edgeRail": "Ograja"
+    },
+    "ladder": {
+      "ladderRails": "Stranici lestve",
+      "rungs": "Klini lestve",
+      "groundPegs": "Talni klini",
+      "leatherLoops": "Usnjene zanke"
+    },
+    "roof": {
+      "roofPoles": "Strešni drogovi",
+      "thatch": "Palmovo listje",
+      "clayLayer": "Plast gline",
+      "bindingGrass": "Trava za vezanje"
+    },
+    "signalFire": {
+      "fireBasin": "Posoda za ogenj",
+      "pitch": "Smola",
+      "dryBrushwood": "Suho dračje",
+      "flint": "Kremen",
+      "bellows": "Meh"
+    },
+    "poles": {
+      "masts": "Jambori",
+      "cornerStones": "Vogalni kamni",
+      "stayLines": "Napenjalke",
+      "bigPegs": "Veliki klini",
+      "poleSockets": "Ležišča za drogove"
+    },
+    "stars": {
+      "goldLeaf": "Zlati listič",
+      "needleThread": "Šivanka in nit",
+      "indigoDye": "Indigo barva",
+      "chalk": "Kreda",
+      "stencils": "Šablone"
+    },
+    "planets": {
+      "ochre": "Oker",
+      "copperDiscs": "Bakreni diski",
+      "lapisPowder": "Lapisov prah",
+      "hangingLoops": "Zanke za obešanje",
+      "dividers": "Šestilo"
+    }
+  },
+  "collection": {
+    "title": "Zgradbe",
+    "progress": "{{found}} od {{total}}",
+    "built": "zgrajeno",
+    "unknownPart": "???",
+    "open": "Pokaži dele",
+    "close": "Skrij dele"
+  },
+  "reward": {
+    "find": "Najdba za tabor",
+    "part": "Del",
+    "progress": "{{name}} · {{found}} od {{total}}"
+  },
+  "haul": {
+    "new": "Novo v tvojem taboru",
+    "parts_one": "{{name}} · {{count}} del",
+    "parts_two": "{{name}} · {{count}} dela",
+    "parts_few": "{{name}} · {{count}} deli",
+    "parts_other": "{{name}} · {{count}} delov"
+  },
+  "arrivals": {
+    "donkey": "Tvoj osel je v taboru",
+    "cart": "Tvoj voz je v taboru",
+    "camel": "Tvoja kamela je v taboru",
+    "secondDonkey": "Tvoj drugi osel je v taboru",
+    "secondCamel": "Tvoja druga kamela je v taboru",
+    "sturdyCart": "Tvoj trdnejši voz je v taboru",
+    "caravanBanner": "Tvoj karavanski prapor visi v taboru"
+  }
+}

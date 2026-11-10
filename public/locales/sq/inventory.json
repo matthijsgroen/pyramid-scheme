@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Mbreti i perëndive dhe zoti i diellit. Çdo ditë lundron nëpër qiell me varkën e tij të diellit."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Perëndia me kokë çakalli. Ai kujdeset për mumiet, për jetën e përtejme dhe mbron të vdekurit."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Perëndia i qiellit me kokë skifteri. Mbron faraonët. Prindërit e tij janë Osirisi dhe Isis."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "Perëndia me kokë ibisi. Zoti i mençurisë, i shkrimit dhe i dijes. Ai mban shënimet e perëndive."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Perëndesha mace. Ajo mbron, sjell gëzim dhe të përzë shpirtrat e këqij."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Perëndia krokodil i lumit Nil. Zoti i pjellorisë dhe i ushtarëve të fortë."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Perëndia skarabe. Ai rrotullon diellin nëpër qiell dhe sjell çdo ditë një fillim të ri."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Perëndesha kobër, mbrojtësja e Egjiptit të Poshtëm. Ajo është shenja e fuqisë mbretërore."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "Perëndesha e magjisë, e nënave dhe e shërimit. Gruaja besnike e Osirisit."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "Perëndia i botës së nëndheshme, i vdekjes dhe i ringjalljes. Ai gjykon të vdekurit."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "Perëndia i rrëmujës, i stuhive dhe i shkretëtirës. Vëllai dhe rivali i Osirisit."
+    },
+    "d12": {
+      "name": "Nephthys",
+      "description": "Perëndesha e zisë, që mbron të vdekurit. Isis është motra e saj."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Perëndia krijues dhe mbrojtësi i zejtarëve dhe i arkitektëve. Ai krijonte gjërat duke i thënë me fjalë."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Perëndesha luaneshë e luftës dhe e shërimit. Mbrojtëse e egër që mund të shërojë sëmundjet."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Perëndesha lopë e dashurisë, e muzikës dhe e nënave. Ajo kujdesej për faraonët."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Faraon",
+      "description": "Sundimtari hyjnor i Egjiptit. Njerëzit e shihnin si një zot të gjallë, si urë mes njerëzve dhe perëndive."
+    },
+    "p2": {
+      "name": "Kryeprift",
+      "description": "Udhëheqësi i tempujve. Ai bënte ritet e shenjta dhe ruante rendin e perëndive."
+    },
+    "p3": {
+      "name": "Shkrues",
+      "description": "Një njeri i shkolluar që dinte të lexonte dhe të shkruante. Ai ruante shënimet dhe dijen."
+    },
+    "p4": {
+      "name": "Arkitekt",
+      "description": "Mjeshtri ndërtues që vizatonte piramida, tempuj dhe monumente për përjetësi."
+    },
+    "p5": {
+      "name": "Gjeneral",
+      "description": "Komandanti i ushtrisë. Ai mbronte kufijtë e Egjiptit dhe e zgjeronte mbretërinë."
+    },
+    "p6": {
+      "name": "Mjek",
+      "description": "Shërues që përziente dijen e mjekësisë me magji për të shëruar të sëmurët."
+    },
+    "p7": {
+      "name": "Balsamues",
+      "description": "Zejtar i shenjtë që e bënte dikë gati për udhëtimin drejt jetës së përtejme."
+    },
+    "p8": {
+      "name": "Fermer",
+      "description": "Ai sillte ushqim për Egjiptin. Punonte tokën pjellore buzë Nilit që të ushqente mbretërinë."
+    },
+    "p9": {
+      "name": "Zejtar",
+      "description": "Mjeshtër i zoti që bënte sende të bukura, stoli dhe vepra arti për fisnikët dhe perënditë."
+    },
+    "p10": {
+      "name": "Tregtar",
+      "description": "Ai sillte mallra të çuditshme nga vende të largëta, përgjatë rrugëve të tregtisë."
+    },
+    "p11": {
+      "name": "Vezir",
+      "description": "Ministri i parë dhe këshilltari i faraonit. Ai drejtonte punët e shtetit."
+    },
+    "p12": {
+      "name": "Orakull",
+      "description": "Profet i shenjtë që shpjegonte mesazhet e perëndive dhe parashikonte të ardhmen."
+    },
+    "p13": {
+      "name": "Detar",
+      "description": "Ai lundronte në Nil dhe në Mesdhe. Pa të nuk kishte tregti dhe as udhëtime."
+    },
+    "p14": {
+      "name": "Gurgdhendës",
+      "description": "Punëtor guri që gdhendte hieroglifë dhe ndërtoi monumentet e mëdha të Egjiptit."
+    },
+    "p15": {
+      "name": "Rojtar",
+      "description": "Mbrojtësi i vendeve të shenjta dhe i varreve, që të vdekurit të pushonin përgjithmonë në qetësi."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Hipopotam",
+      "description": "Kafsha e fuqishme e Nilit. Të gjithë i trembeshin forcës së tij dhe e linin të qetë në vendin e vet."
+    },
+    "a2": {
+      "name": "Luan",
+      "description": "Mbreti i kafshëve. Shenja e fuqisë mbretërore dhe e forcës hyjnore në shkretëtirë."
+    },
+    "a3": {
+      "name": "Elefant",
+      "description": "Kafshë gjigante nga vendet e jugut. E nderonin për mençurinë dhe kujtesën e saj."
+    },
+    "a4": {
+      "name": "Gazelë",
+      "description": "Banore e shpejtë dhe e hijshme e shkretëtirës. Shenjë e shpejtësisë dhe e bukurisë."
+    },
+    "a5": {
+      "name": "Majmun",
+      "description": "Kafshë e zgjuar që lidhej me Thothin. Shenjë e mençurisë dhe e shakave."
+    },
+    "a6": {
+      "name": "Peshk",
+      "description": "Krijesat e shenjta të Nilit. Ato jepnin ushqim dhe ishin shenjë e pjellorisë."
+    },
+    "a7": {
+      "name": "Patë",
+      "description": "Zogu i shenjtë i kënetave të Nilit. Lidhej me përrallat e krijimit dhe me shpirtin."
+    },
+    "a8": {
+      "name": "Bletë",
+      "description": "Shenja e Egjiptit të Poshtëm dhe e pushtetit mbretëror. Ajo bën mjaltin e çmuar."
+    },
+    "a9": {
+      "name": "Breshkë",
+      "description": "Krijesë e lashtë dhe e urtë, që mban peshën e botës mbi guaskë."
+    },
+    "a10": {
+      "name": "Bretkosë",
+      "description": "Shenjë e rilindjes dhe e pjellorisë. Ajo del nga përmbytjet e Nilit, që sjellin jetë."
+    },
+    "a11": {
+      "name": "Shkaba",
+      "description": "Zogu i shenjtë i Egjiptit të Sipërm. Në tokë, perëndesha mbrojtëse Nekhbet merrte trupin e saj."
+    },
+    "a12": {
+      "name": "Buf",
+      "description": "Gjahtar i urtë i natës, rojtar i dijeve të fshehura dhe i sekreteve të lashta."
+    },
+    "a13": {
+      "name": "Dash",
+      "description": "Kafsha e shenjtë e Amun-Rasë. Shenjë e fuqisë hyjnore dhe e udhëheqjes."
+    },
+    "a14": {
+      "name": "Gjirafë",
+      "description": "Kafshë e gjatë dhe e hijshme nga vendet e jugut. Me qafën e saj të gjatë arrin deri në qiell."
+    },
+    "a15": {
+      "name": "Çakall",
+      "description": "Kafshë e shkretëtirës dhe udhërrëfyes për në jetën e përtejme. Shërbëtori i Anubisit."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Shenja e jetës dhe e pavdekësisë. Shpesh e mbajnë në dorë perënditë dhe faraonët."
+    },
+    "art2": {
+      "name": "Syri i Horusit",
+      "description": "Shenjë mbrojtjeje, fuqie mbretërore dhe shëndeti të mirë. Lidhet me Horusin, perëndinë e qiellit."
+    },
+    "art3": {
+      "name": "Sistrum",
+      "description": "Vegël muzikore që përdorej në ritet e shenjta. Lidhet me perëndeshën Hathor."
+    },
+    "art4": {
+      "name": "Shtylla Djed",
+      "description": "Shenjë e qëndrueshmërisë dhe e ringjalljes. Shpesh lidhet me Osirisin."
+    },
+    "art5": {
+      "name": "Kartush",
+      "description": "Një kornizë ovale me emrin e një faraoni në hieroglifë. Ajo e ruan emrin e tij përgjithmonë."
+    },
+    "art6": {
+      "name": "Kavanoz kanopik",
+      "description": "Kavanoz i shenjtë me kokën e një rojtari si kapak. Katër të tillë qëndronin rreth arkivolit dhe ruanin."
+    },
+    "art7": {
+      "name": "Skeptër",
+      "description": "Shkopi i fuqisë dhe i pushtetit. E mbanin perënditë dhe faraonët si shenjë sundimi hyjnor."
+    },
+    "art9": {
+      "name": "Piramidë",
+      "description": "Varr i përjetshëm dhe portë për në jetën e përtejme, ndërtuar për faraonët që të qëndrojë përgjithmonë."
+    },
+    "art10": {
+      "name": "Varka e diellit",
+      "description": "Varka e shenjtë që e çon perëndinë e diellit Ra nëpër qiell, nga agimi deri në muzg."
+    },
+    "art11": {
+      "name": "Obelisk",
+      "description": "Shtyllë e gjatë guri me një piramidë në majë. Ngrihet drejt qiellit për të nderuar perënditë."
+    },
+    "art12": {
+      "name": "Shkopi dhe kamxhiku",
+      "description": "Shenjat mbretërore që tregojnë se faraoni është bariu dhe mbrojtësi i Egjiptit."
+    },
+    "art14": {
+      "name": "Lule lotusi",
+      "description": "Shenjë e rilindjes dhe e diellit. Ajo del e pastër nga ujërat me baltë të Nilit."
+    },
+    "art15": {
+      "name": "Kurora Ureus",
+      "description": "Kurorë mbretërore me një kobër mbrojtëse. Faraonët e mbanin si mbrojtje hyjnore."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Gjethe kallami",
+      "description": "Një kallam i vetëm, për tingullin i. Pas emrit të një perëndie, bëhet emër njeriu: Horus bëhet Hori, ai i Horusit."
+    }
+  }
+}

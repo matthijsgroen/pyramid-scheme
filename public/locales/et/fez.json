@@ -1,0 +1,848 @@
+{
+  "not-found": "Vabandust, seda vestlust, mida otsid, pole olemas.",
+  "welcome": "Egiptus! Ma olen päriselt siin.",
+  "welcome2": "Ja see kaart… Ma maksin selle eest liiga palju. Parem olgu see õige.",
+  "welcome3": "Lähme. Vaatame, kus see rist on.",
+
+  "pyramidIntro": "Nendel kividel on numbrid. Ja mõned on puudu…",
+  "pyramidIntro2": "Oota. Iga kivi on tema all olevate kahe kivi summa! Jah — siin ka!",
+
+  "pyramidBlockedBlocks": "Hei, mis see on? Need kivid on pitseeritud. Nad ei näita oma numbrit!",
+  "pyramidBlockedBlocks2": "Pole hullu. Vaata ümberringi olevaid kive — nende järgi saad selle välja nuputada.",
+  "pyramidBlockedBlocks3": "Ainult kirja panna sa seda ei saa. Seda numbrit pead peas hoidma.",
+  "pyramidBlockedBlocks4": "No kuule, sa oled juba nii kaugele jõudnud. Sa saad sellega hakkama!",
+
+  "levelCompleted": "Ha! See läheb lahti! Tule, lähme sisse.",
+  "exitPillar": {
+    "1": { "fez": "Ha! Päevavalgus! Näed seda valgusvihku? See on meie tee välja. Astu sisse ja siin oleme valmis." },
+    "2": { "fez": "Ainult üks, alati peakäigu päris lõpus. Kuhu iganes me ka ei kõnniks, sinna tuleme ikka tagasi." },
+    "3": { "explorer": "Üks väljapääs. Selge." }
+  },
+  "expeditionCompleted": "Palju õnne, retk on läbitud!",
+  "expeditionCompleted2": "Nüüd saab minna uuele retkele.",
+
+  "tombTutorial": "Ooh, kiri! Kas me saame seda lugeda? Nende hieroglüüfidega, mis me leidsime… võib-olla!",
+  "tombTutorial2": "Vaata, tehted, mille sees on märgid! Näed neid tühje kohti? Sinna lähevad hieroglüüfid. Sinu omad, seal all.",
+  "tombTutorial3": "Väikesed tehted näitavad, kas märk on õige. Nii leiame, milline märk kuhu käib.",
+  "tombTutorial4": "Kõik täidetud? Siis tuleb välja numbrilukk. Suur tehe on kood — ja siis läheb hauakamber lahti!",
+
+  "hieroglyphUnlock": "Meil on eriline ese — sellega saame kirjutada ühele pitseeritud kivile!",
+  "hieroglyphUnlock2": "Puuduta helendavat kivi ja lohista ese selle peale, et see lahti teha. Üks kivi püramiidi kohta.",
+
+  "errorHighlightTutorial": "Sellel aardel, mis me leidsime, on kasulik nipp — kui paned vale vastuse, hakkab üks viga punaselt helendama!",
+  "errorHighlightTutorial2": "Korraga helendab ainult üks kivi, nii et nuputamist jagub ikka. Aga see aitab otsimist kitsendada!",
+
+  "earlyFeedbackTutorial": "Näed neid kontrollkive? Need muutuvad roheliseks või punaseks kohe, kui neid täidad!",
+  "earlyFeedbackTutorial2": "Kasuta neid lahendades tugipunktidena. Kui mõni läheb punaseks, on kuskil lähedal midagi valesti.",
+
+  "notEnoughHieroglyphs": "Selle retke saad alati pooleli jätta, kui lähed tagasi reisiekraanile.",
+  "notEnoughHieroglyphs2": "Me võime retke katkestada ja mujalt otsida hieroglüüfe, mida meil veel lõpetamiseks vaja on.",
+
+  "tombLoot": "Vau, meie esimene aare! Tubli!",
+  "mapPiece": "Vaata! SEE on alles kaart. Päris vana! Väärt rohkem kui meie mõlema kaardid kokku!",
+  "mapPiece2": "Aga ainult üks tükk. Iga retk siinkandis peidab ühe, ja koos näitavad need teed hauakambrini.",
+  "mapComplete": "See on terve! Vaata, iga tükk sobib täpselt.",
+  "mapComplete2": "Seal, kus kõik jooned kokku saavad. Seal on hauakamber.",
+  "mapComplete3": "Nüüd on see meie retkede seas. Kas läheme vaatama?",
+  "mapPiece3": "Pea retkede nimekirjas arvet. Mina pean kindlasti!",
+
+  "mosaicIntro": "Ooh, värviline klaas! Vaata, kuidas see valgust püüab — SELLIST asja küll keegi ära ei viska!",
+  "mosaicIntro2": "See on üks tükk pildist. Terve klaasaken, ja iga tükk, mille leiame, toob osa sellest tagasi.",
+  "mosaicIntro3": "Sul on ju kuskil laager? Võta need kaasa, seal paneme need kokku. Ma tahan näha, mis pilt sellest tuleb!",
+  "mosaicReminder": "Psst! Need klaasitükid kolisevad ikka veel meie kotis. Kas paneme need laagris aknasse?",
+
+  "mosaicStarter": "Kass uksel ja madu, kellel on kiire minema saada. See oli kausitäit piima väärt.",
+  "mosaicStarter2": "Egiptlased armastasid kasse just selle pärast — kassid tapsid maod ja rotid, kes vilja kallale tulid.",
+  "mosaicStarter3": "Nad armastasid neid nii väga, et tegid ühest jumalanna. Bastet. Ta kaitseb maja, ust ja kõiki, kes selle taga magavad.",
+
+  "mosaicJunior": "Vaata tema kätt — keegi näitab talle, kuidas sulge hoida.",
+  "mosaicJunior2": "See linnupeaga on Thoth. Kirjutamine, arvutamine, arvepidamine — kõik see on tema töö.",
+  "mosaicJunior3": "See iibis, kellele me jõge mööda järgnesime? See on tema lind. Iga number, mis me seina sisse kirjutasime, kuulub ka temale.",
+
+  "mosaicExpert": "See valgus pole juhus. Nad ehitasid terve saali nii, et see langeks täpselt sinna, õigel hommikul.",
+  "mosaicExpert2": "Päike on Amon-Ra — see, kes on peidus, ja ka valgus, mida kõik näevad. Mõlemad korraga.",
+  "mosaicExpert3": "Kes oskab taevast nii täpselt mõõta, oskab mõõta kõike. Me oleme terve tee nende arvutusi lahendanud.",
+
+  "mosaicMaster": "Roheline nahk ja nisu kasvab otse temast välja. See on meelega nii.",
+  "mosaicMaster2": "Osiris. Ta tapeti ja pandi uuesti kokku, ja nüüd tuleb ta igal aastal tagasi, kui jõgi põllud üle ujutab.",
+  "mosaicMaster3": "Siin all ongi see kogu mõte: surnud ei tähenda lõppu. Rõõmus mõte hauakambri jaoks, eks?",
+
+  "mosaicWizard": "Ühel pool süda. Teisel pool üks sulg. Ja need on tasakaalus.",
+  "mosaicWizard2": "Sulg on Ma'at — tõde, tasakaal, see, kuidas asjad peavad olema. Kui süda on sulest raskem, siis sa uksest läbi ei saa.",
+  "mosaicWizard3": "Šaakal, kes kaalu paigal hoiab, on Anubis. Tema on see, kes sind siia saadab.",
+
+  "mosaicFinale": "Astu hetkeks tagasi. Vaata, mida me oleme nendest püramiididest välja tassinud.",
+  "mosaicFinale2": "Iga tükk on osa temast — sellest, kes kaalu paigal hoiab. Ta on meid terve tee vaadanud.",
+  "mosaicFinale3": "See on tema kirjapanek meist. Ja mulle tundub, et see on tasakaalus.",
+
+  "shopFirstVisit": "Ah, siin me oleme. Minu lett — ma ju ütlesin, et olen siin kauplemise pärast.",
+  "shopFirstVisit2": "Kõik sellel letil olen ma kuskilt välja tassinud. See seal on kahe hauakambri tagant.",
+
+  "shopArrival": "Ah, minu lett! Las ma laon välja, mis ma teel kokku korjasin.",
+  "shopArrival2": "Haruldased leiud on kõige kallimad, aga ma maksan sulle iga pisiasja eest, mis sul kaasas on.",
+  "arrival": {
+    "starter_1": {
+      "1": { "explorer": "Vaata, seal taga! Sfinks!" },
+      "2": { "explorer": "Hiiglaslik, isegi siit." },
+      "3": { "explorer": "Räägitakse, et tema käppade all on kiri. Mida keegi lugeda ei oska." },
+      "4": { "explorer": "Hiljem. Kõigepealt see püramiid!" }
+    },
+    "starter_2": {
+      "1": {
+        "fez": "Ha! Lõpuks midagi, millest ma aru saan. Kõik, mis Niilust mööda üles läks, tuli kõigepealt siit läbi."
+      },
+      "2": { "fez": "Ja kaupmehed panevad kõik kirja. Kes mida ostis, kes kellele võlgu oli, kes hilines…" },
+      "3": { "explorer": "Kes hilines?" },
+      "4": { "fez": "Eriti see, kes hilines!" },
+      "5": { "fez": "Kolm tuhat aastat. Kaup on läinud, aga arved on ikka alles. Tüüpiline!" }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Vaata neid uksi! Inimesed tulid siia kaitset paluma. Ja siis jäi selline uks kinni."
+      },
+      "2": { "explorer": "Kinni kelle eest?" },
+      "3": { "fez": "Kõigi eest, kes viisakalt ei palunud. Peamiselt meie eest." },
+      "4": {
+        "fez": "Kõik, mis siin maal on pitseeritud, selle on keegi pitseerinud ja mõelnud seda tõsiselt. Väga tõsiselt."
+      },
+      "5": { "fez": "Ja kassid! Siin jumaldati kasse. Neid lihtsalt pidi kogu aeg paitama." }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "Oh, see meeldib mulle. Siin õpiti kirjutama! Märk märgi haaval, katkistel pottidel — papüürus oli lastele liiga kallis."
+      },
+      "2": { "explorer": "Nad harjutasid prügi peal?" },
+      "3": {
+        "fez": "Kõige peal, mis käepärast oli! Ja kui sa piisavalt neid märke õpid, siis äkki pole sein enam lihtsalt kaunistus."
+      },
+      "4": { "explorer": "See Sfinks… Ma tahan seda veel kord vaadata." },
+      "5": { "fez": "Mitte veel. Varsti." }
+    },
+
+    "junior_1": {
+      "1": { "fez": "Nad tulid iga aasta koos üleujutusega tagasi, peaaegu päeva pealt." },
+      "2": { "fez": "Nii hakkasid inimesed vahepealseid päevi lugema. Sealt tulebki kalender — lindudest." },
+      "3": { "explorer": "Lindudest." },
+      "4": { "fez": "Lindudest ja paberitest. Alati on linnud ja paberid." }
+    },
+    "junior_2": {
+      "1": { "fez": "Siin tehti kõik valmis. Mitte hauakambreid — vaid asju, mis nende sisse läksid." },
+      "2": { "fez": "Vaata neid vorme. Sama käevõru, nelikümmend korda." },
+      "3": { "explorer": "Neljakümnele inimesele?" },
+      "4": { "fez": "Igaühele, kes maksta jaksas. Aadlik tahtis seda, mis kuningal, aga aadliku hinnaga." }
+    },
+    "junior_3": {
+      "1": { "fez": "See siin on Thoth. Saladuste ja võluväe jumal, olen üsna kindel." },
+      "2": { "explorer": "Üsna." },
+      "3": { "fez": "Üheksakümmend protsenti. Igatahes — märgid, mida sa oled kogunud, on tema omad." }
+    },
+    "junior_4": {
+      "1": { "fez": "Sada meetrit kõrge, ja tipus tuli, mis kunagi ei kustunud." },
+      "2": { "fez": "Meremehed leidsid ranniku juba päeva kauguselt. Enne seda leidsid nad selle, kui otsa sõitsid." },
+      "3": { "explorer": "Kuidas siin üldse midagi leida ilma selleta?" },
+      "4": { "fez": "Küsid kelleltki, kes on seal käinud. See ongi kogu minu amet." }
+    },
+
+    "expert_1": {
+      "1": {
+        "fez": "Kuuskümmend-midagi hauakambrit ühte orgu raiutud, ja iga viimane kui üks oli lahti tehtud enne, kui meie jõudsime."
+      },
+      "2": { "explorer": "Kelle poolt?" },
+      "3": { "fez": "Peamiselt meiesuguste poolt. Varem." },
+      "4": { "fez": "Mis sa sellest arvad?" },
+      "5": { "explorer": "Et me oleme hiljaks jäänud." }
+    },
+    "expert_2": {
+      "1": { "fez": "Amon-Ra. Päike. Kõigi lemmik, ja näha on, miks — vaata, kui suur see koht on." },
+      "2": { "explorer": "Kaks nime." },
+      "3": { "fez": "Sama jumal, ma arvan. Populaarsetele panid nad topelt." }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Terve maa on üks roheline triip ühe jõe kummalgi kaldal, ja siin avaneb see sellisteks laiadeks aladeks."
+      },
+      "2": { "fez": "Kõik kasvab. Ja kõik hammustab ka." },
+      "3": { "explorer": "Kumma pärast me siin oleme?" },
+      "4": { "fez": "Ma lootsin, et kummagi pärast mitte." }
+    },
+    "expert_4": {
+      "1": { "fez": "Esimene. Enne seda maeti kuningad lameda kiviplaadi alla nagu kõik teisedki." },
+      "2": { "fez": "Keegi seisis siin ja mõtles: aga kui teeks seda kuus korda, ülespoole." },
+      "3": { "explorer": "Kas see õnnestus?" },
+      "4": { "fez": "See seisab ikka veel, tema enam mitte. Oleneb, mida sa mõtled." }
+    },
+
+    "master_1": {
+      "1": { "fez": "Kaks miljonit kivi. Keegi luges üle." },
+      "2": { "explorer": "Keegi luges üle?" },
+      "3": { "fez": "Keegi loeb alati üle. Seda unustatakse kõige rohkem — seda kõike juhtisid ametnikud." },
+      "4": { "fez": "Ilus, eks. Ei taha mõeldagi, milline see palgaleht välja nägi." }
+    },
+    "master_2": {
+      "1": { "fez": "Juhised. Muud see polegi — mida öelda ja mis järjekorras, et teekond läheks nii, nagu peab." },
+      "2": { "explorer": "Kasutusjuhend." },
+      "3": { "fez": "Kasutusjuhend surnuks olemiseks. Need siin panid kõik kirja." },
+      "4": { "fez": "Mis on, arvestades seda, mida me otsime, terve nädala esimene hea uudis." }
+    },
+    "master_3": {
+      "1": { "fez": "Ah. Kellegi laager." },
+      "2": { "explorer": "Hiljutine?" },
+      "3": { "fez": "Enam-vähem. Konservid ja paha köha, nagu paistab." },
+      "4": { "fez": "Nad läksid siit veel kaugemale ja oma asju nad kaasa ei võtnud." },
+      "5": { "explorer": "Kas nad tulid nende järele tagasi?" },
+      "6": { "fez": "…Lähme parem edasi." }
+    },
+    "master_4": {
+      "1": {
+        "fez": "Vot SEDA teised matkisidki. Vaata seda värvi — kolm tuhat aastat ja näeb ikka välja, nagu oleks märg."
+      },
+      "2": { "explorer": "Henut oleks raevus." },
+      "3": { "fez": "Henut teeks märkmeid." }
+    },
+
+    "wizard_1": {
+      "1": { "fez": "Öösel läheb päike maailma alla ja tuleb teiselt poolt üles. See ongi kogu usk." },
+      "2": { "fez": "Kaksteist tundi pimeduses, igasugu asjad ees, ja keegi peab selle läbi kandma." },
+      "3": { "explorer": "Seda me olemegi teinud." },
+      "4": { "fez": "Ma püüdsin seda mitte välja öelda." },
+      "5": { "explorer": "Liiva tuleb ikka sisse." },
+      "6": { "fez": "Seda on sisse tulnud kolm tuhat aastat. See ei lõpe, see lihtsalt käib ringi." },
+      "7": { "fez": "Täitub, pöörab ümber, algab otsast. Täpselt nagu päike." }
+    },
+    "wizard_2": {
+      "1": { "fez": "Kaks tükki, kaheksateist meetrit kõrged, ja mõlemad on Amenhotep." },
+      "2": {
+        "fez": "Kreeklased vaatasid korra ja otsustasid, et see on nende kangelane. Memnon. See nimi jäi külge kaheks tuhandeks aastaks."
+      },
+      "3": { "explorer": "Kelle nimi sellel on?" },
+      "4": { "fez": "Tema enda oma. Trooni sisse raiutud, kus see on alati olnud." },
+      "5": { "fez": "Keegi ei lugenud seda." },
+      "6": {
+        "fez": "Pärast maavärinat laulis põhjapoolne koidikul. Üks noot iga hommik, kui päike pragu soojendas."
+      },
+      "7": { "explorer": "Ja nüüd?" },
+      "8": { "fez": "Üks keiser lasi selle ära parandada. Sellest saadik pole see häält teinud." }
+    },
+    "wizard_3": {
+      "1": { "fez": "Kaal. Ühel pool süda, teisel pool sulg — nii et korralik raske süda võidab, eks ole." },
+      "2": { "explorer": "Kuhu poole raske asi läheb?" },
+      "3": { "fez": "…Alla." },
+      "4": { "fez": "Oi." },
+      "5": { "fez": "Kerge. Süda peab olema KERGE." }
+    },
+    "wizard_4": {
+      "1": { "fez": "Tipukivi pannakse viimasena ja see on kuldne, et terve püramiid püüaks esimese valguse." },
+      "2": { "explorer": "Kelle jaoks?" },
+      "3": { "fez": "Igaühe jaoks, kes vaatab. Asi oligi selles — see polnud kunagi selle mehe jaoks, kes sees on." }
+    }
+  },
+
+  "tomb": {
+    "starter": {
+      "1": { "ipi": "Hei! Käed eemale! See on minu kann!" },
+      "2": { "fez": "…Kas see kann ütles just midagi?!" },
+      "3": { "ipi": "See olin MINA. Kolmas riiul, see, millel on täke. See on minu oma." },
+      "4": { "explorer": "Hea küll, hea küll! See jääb paigale. Kes sa oled?" },
+      "5": { "ipi": "Ipi. Nelikümmend aastat pidasin ma arveraamatuid. Nelikümmend!" },
+      "6": { "fez": "Arveraamatuid? Kelle omi?" },
+      "7": { "ipi": "Kõigi omi! Kes kui palju võlgu oli, viimase viljakotini välja." },
+      "8": { "ipi": "See Henut, siit põhja pool? Üksteist debenit lasuriiti. Ei maksnud kunagi!" },
+      "9": { "explorer": "Ja sa mäletad seda ikka veel, pärast nii pikka aega?" },
+      "10": { "ipi": "See on kirja pandud! Mis on kirja pandud, see on juhtunud." },
+      "11": { "ipi": "Ainult need Horid… Hori paadimees, Hori pagar… ja see TEINE Hori." },
+      "12": { "fez": "Kas sul olid ka kassid? Kõigil olid ju kassid? Nii armsad!" },
+      "13": {
+        "ipi": "Armsad? Need olid vilja jaoks! Kas sa tead, mis üks rott sulle terve hooaja jooksul maksma läheb?"
+      },
+      "14": { "fez": "…Ahah. Selge." },
+      "15": { "ipi": "Ütle Henutile, et Ipi saatis sind. See rikub tal pärastlõuna ära." },
+      "16": { "fez": "Ta meeldib mulle!" },
+      "17": { "explorer": "Sulle lihtsalt meeldib, et talle on ikka veel raha võlgu." }
+    },
+    "junior": {
+      "1": {
+        "henut": "Lõpuks ometi. Te olete muidugi lasuriidi pärast tulnud. Küllap Ipi jahub ikka veel sellest lasuriidist."
+      },
+      "2": { "explorer": "Jahub küll." },
+      "3": { "henut": "See oli klaas. Ilus klaas. Ta teadis seda." },
+      "4": { "fez": "…Kas käevõru oli ka klaasist?" },
+      "5": {
+        "henut": "Kõik siin on parim koopia, mida raha eest osta sai, noormees, ja iga tüki valisin ma ise välja."
+      },
+      "6": {
+        "henut": "Nüüd. Sein. Kolmas märk — see ei ole minu nimi. Mingi õpipoiss peitliga ja ilma järelevalveta."
+      },
+      "7": { "henut": "Sa oled oma märke õppinud. Ma näen seda. Paranda see ära." }
+    },
+    "juniorFixed": {
+      "1": { "henut": "Nii. Nüüd on see ka tuhande aasta pärast minu nimi." },
+      "2": { "explorer": "Ipi kirjutas selle õigesti." },
+      "3": { "henut": "Ipi kirjutas kõike õigesti. See oli tema ainus hea omadus." },
+      "4": { "fez": "Kas see on siin all üldse tähtis?" },
+      "5": { "henut": "See on ainus asi, mis on tähtis." },
+      "6": { "fez": "Tal oli seal üleval terve sein Thothi. Saladuste jumal." },
+      "7": { "henut": "Thoth loeb. Thoth paneb kirja, mida sa tegid, ja see jääb kirja." },
+      "8": { "henut": "Saladusteks nimetavad inimesed arvutamist, kui nad ise seda ei oska." },
+      "9": {
+        "henut": "Kui te edasi lähete — ja selgelt lähete — siis Karnakis on üks preester, kes on surnutele võlgu ühe talituse, mida ta kunagi ei teinud. Ta on sellega seoses talumatu. Preestrid on alati."
+      },
+      "10": { "henut": "…Kas me oleme kohtunud?" },
+      "11": { "fez": "Ma mäletaksin." },
+      "12": { "henut": "Jah. Mina ka." }
+    },
+    "expert": {
+      "1": { "priest": "Teie ei ole see, keda ma ootan." },
+      "2": { "explorer": "Keda sa ootad?" },
+      "3": {
+        "priest": "Kedagi, kellel on pitser. See tuli siia tuua, sinna maha panna ja selle kohal sõnad lausuda. Ükski neist kolmest asjast pole juhtunud."
+      },
+      "4": { "fez": "…Kui kaua sa juba ootad?" },
+      "5": { "priest": "Ma ei pea arvet. See oleks ebaprofessionaalne." },
+      "6": {
+        "priest": "Õige ohvriand on asi, mida kuningas hoidis käes, kui ta maeti. Mitte koopia. Mitte sarnane asi. Asi ise, tema märgiga."
+      },
+      "7": { "priest": "Too see ja sinust teatatakse. Too midagi muud ja ei teatata." },
+      "8": { "explorer": "Kellele teatatakse?" },
+      "9": { "priest": "Sa saad teada. Kõik saavad, varem või hiljem." },
+      "10": { "fez": "Talle väga meeldib päike, sellele siin. Kõik see Amon-Ra seal ees." },
+      "11": { "priest": "Amon on see, kes on peidus. Ra on see, keda igaüks näeb." },
+      "12": { "priest": "Nad on sama jumal. See pole juhus, see ongi kogu mõte." },
+      "13": { "fez": "…Õige. Jah. Ma teadsin seda." },
+      "14": { "explorer": "Ei teadnud." },
+      "15": { "fez": "Ei teadnud." }
+    },
+    "expertB": {
+      "1": { "fez": "Siin pole keegi käinud. Mitte meie, mitte need varasemad, mitte keegi." },
+      "2": { "explorer": "Kust sa tead?" },
+      "3": { "fez": "Sest siin on veel midagi sees." }
+    },
+    "master": {
+      "1": { "pharaoh": "Te võite läheneda. Te olete lähenenud. Väga hea." },
+      "2": { "fez": "Teie majesteet." },
+      "3": { "pharaoh": "Jah." },
+      "4": { "explorer": "Meil on vaja sinu pitserit." },
+      "5": { "pharaoh": "Seda on kõigil vaja. Minu oma on kaks korda ära viidud ja mitte kordagi tagasi toodud." },
+      "6": { "pharaoh": "Teisel korral jäeti koopia. KOOPIA. MINU hauakambrisse. Nagu ma ei vaataks." },
+      "7": { "explorer": "Kas koopia on ikka veel siin?" },
+      "8": {
+        "pharaoh": "Muidugi on see siin, see on väärtusetu. See on riiulil, kus peaks olema päris, ja on lihtsalt vale."
+      },
+      "9": { "pharaoh": "Võtke kaasa, kui tahate. Viige sellele preestrile. Vaadake, kui kaugele sellega jõuate." },
+      "10": { "fez": "…Talle meeldib see." },
+      "11": { "pharaoh": "Mul on üheksasaja aasta parim nädal." },
+      "12": { "fez": "Seal seinal on Osiris. Surnute isand — sünge värk." },
+      "13": { "pharaoh": "Ta on ROHELINE, sa naeruväärne loom." },
+      "14": {
+        "pharaoh": "Roheline nagu üleujutatud põld. Ta tapeti ja pandi uuesti kokku, ja ta tuleb tagasi iga kord, igal aastal."
+      },
+      "15": { "pharaoh": "Siin all pole see sünge, see ongi kogu mõte. Surnud ei tähenda lõppu." }
+    },
+    "wizard": {
+      "1": { "priest": "Pane see maha. Sinna. Jah." },
+      "2": { "priest": "…" },
+      "3": { "priest": "See on esimene kord, kui ma seda tegin. Hakkasin juba arvama, et olen unustanud, kuidas." },
+      "4": { "explorer": "Olid sa?" },
+      "5": { "priest": "Täiesti. See tuli meelde tagasi." }
+    },
+    "wizardB": {
+      "1": { "fez": "Nende köis. Ikka veel kinni seotud." },
+      "2": { "explorer": "Nad jõudsid nii kaugele." },
+      "3": { "fez": "Veel kaugemale. Ja siis ronisid nad mööda seda tagasi üles." },
+      "4": { "explorer": "Siin on märkmik." },
+      "5": { "fez": "Mis seal kirjas on?" },
+      "6": { "explorer": "Ei oska kirja lugeda. Tulime pitseri järele. Tegime hoopis parema." },
+      "7": { "explorer": "Keegi ei jäänud uskuma." },
+      "8": { "fez": "…Nad võltsisid selle, sest ei osanud lugeda, milleks see oli." },
+      "9": { "explorer": "Ja siis läksid nad koju." }
+    },
+    "wizardC": {
+      "1": { "fez": "Peatu hetkeks. Vaata, mida me oleme nendest püramiididest välja tassinud." },
+      "2": { "explorer": "See on pilt." },
+      "3": { "fez": "See on kogu aeg olnud pilt." }
+    }
+  },
+
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Koobas! Kaardil oli keldriuks, ja see siin on terve küngas!" },
+      "2": { "fez": "Nutikas mees. Peida oma kaup künka sisse — selle peale ei tuleks ükski varas." },
+      "3": { "explorer": "Meie tulime." },
+      "4": { "fez": "Me pole vargad. Me oleme kliendid. Väga hilised kliendid." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "See peab see olema. Henut! See, kes on üksteist debenit lasuriiti võlgu!" },
+      "2": { "fez": "Mis sa arvad — kas me saame osa, kui me võla sisse nõuame?" },
+      "3": { "explorer": "Sa pole midagi sisse nõudnud." },
+      "4": { "fez": "Mulle meeldib varakult välja arvutada." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Nii et siin on Henuti preester. Talumatu, ütles ta." },
+      "2": { "fez": "Mis sa arvad, kas peaksime midagi kaasa võtma? Lilli?" },
+      "3": { "explorer": "Ta on surnud." },
+      "4": { "fez": "Seda enam. Esimene mulje on tähtis." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Siia tohtis tulla ainult ülempreester. Ja nüüd meie!" },
+      "2": { "explorer": "Kas me tohime?" },
+      "3": { "fez": "Uksel pole kedagi, kes ütleks, et ei." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Vaata, kaart lihtsalt lõpeb siin. Liiv ja siis mitte midagi." },
+      "2": { "explorer": "Siis oleme õiges kohas." },
+      "3": { "fez": "Seda ma mõtlengi. Just see teeb mind närviliseks." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Osirise saal! Roheline, muidugi. Sest ta tuleb igal aastal tagasi, nagu vili." },
+      "2": { "explorer": "Sa teadsid seda alati." },
+      "3": { "fez": "Alati." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "fez": "Jumalate enda sahver! Mida sa hoiad, kui sul on juba kõik olemas?" },
+      "2": { "explorer": "Seda, mida inimesed sulle toovad." },
+      "3": { "fez": "…Jah. Küllap see nii ongi." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Taevajõudude riik. Vaat kus lugu." },
+      "2": { "fez": "Kui mul oleks müüa midagi, mis on tegelikult tühiasi, paneksin ka sellise nime." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Mul on äkki selline tunne, nagu oleksin midagi valesti teinud." },
+      "2": { "explorer": "Näiteks mida?" },
+      "3": { "fez": "Pole aimugi. See ongi kõige hullem." }
+    }
+  },
+
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Kõik need kangid ja uksed ühe keldri pärast!" },
+      "2": { "fez": "Siis on seal all midagi head. Keegi ei näe prügi pärast nii palju vaeva." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Uhh. Need uksed olid palju tujukamad kui Ipi omad." },
+      "2": { "fez": "Noh. Prouale oli ju raha." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Uhh, lõpuks! See koobas tõesti ei tahtnud meid sisse lasta." },
+      "2": { "explorer": "Ma arvan, et see oligi mõte." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Psst… miks ma sosistan?" },
+      "2": { "explorer": "Pole aimu. Mina teen ka seda." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Ohh. Mu saba väriseb selle viimase ukse pärast ikka veel." },
+      "2": { "fez": "Kuningas, kes oma asjad niimoodi luku taha paneb… tema tõesti ei taha neist ilma jääda." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Näed? Ole piisavalt kaua maa all ja tuled jälle üles." },
+      "2": { "explorer": "Kas see on ka Osiris?" },
+      "3": { "fez": "Ei, see on minu oma." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "fez": "Sellised uksed… Kunagi oleksime lihtsalt ümber pööranud." },
+      "2": { "explorer": "Enam mitte." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Kolm korrust koobast ja alles siis välisuks." },
+      "2": { "explorer": "Küllap on see siis seda väärt." },
+      "3": { "fez": "Seda öeldakse alati. Ja siis on seal kann." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Viimane pime jupp. Ma tunnen seda." },
+      "2": { "explorer": "Sa ütlesid seda ka eelmise juures." },
+      "3": { "fez": "Ja mul oli peaaegu õigus." }
+    }
+  },
+
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Vaata seda! Püramiid maa all! Kaupmehe jaoks!" },
+      "2": { "fez": "Ta kas teenis väga hästi või kauples väga hästi." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Vaata, kuidas tipp päikese käes särab! Päris kuld, kihla vean." },
+      "2": { "explorer": "Augus maa sees. Kelle jaoks see särab?" },
+      "3": { "fez": "Tema enda jaoks. Seda tüüpi on kohe näha." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Hm. Kas tohib üldse müüa midagi, mis juba kuulub jumalale?" },
+      "2": { "explorer": "Küsi jumalalt." },
+      "3": { "fez": "Parem mitte." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Kas sa arvad, et see preester teab, et me siin ringi kolame?" },
+      "2": { "explorer": "Ta ei pea arvet. See oleks ebaprofessionaalne." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Vaata seda, üksinda päikese käes. Ilus, eks?" },
+      "2": { "fez": "Kas joonistame lihtsalt pildi ja läheme ära?" },
+      "3": { "explorer": "Sa ei oska joonistada." },
+      "4": { "fez": "…Ei oska. No siis läheme sisse." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Kes seal sees on, see loodab tagasi tulla. Siinkandis on selline kokkulepe." },
+      "2": { "explorer": "Kui kaua ta juba ootab?" },
+      "3": { "fez": "Kaua. Aga see käib töö juurde. Surnud olemine on enamasti ootamine." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "explorer": "Vau." },
+      "2": { "fez": "Jah." },
+      "3": { "fez": "Mõnikord pole lihtsalt midagi enam öelda, eks." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Näed seda päikeselaiku püramiidil? Selle järgi saaks kella vaadata." },
+      "2": { "explorer": "Mis kell siis on?" },
+      "3": { "fez": "…Pärastlõuna. Umbes. Ma pole kell." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Seal see on. Iga joon sellel kaardil jõuab siia." },
+      "2": { "explorer": "Siis on see lõpp." },
+      "3": { "fez": "Kaardi lõpp, jah. Naljakas. Ma arvasin, et see tundub parem." }
+    }
+  },
+
+  "camp": {
+    "firstHome": {
+      "1": { "fez": "See on sinu laager? Lõke ja kirst?" },
+      "2": { "explorer": "Meie laager." },
+      "3": { "fez": "Meie. Selge. Siis võtan mina koha lõkke ääres." },
+      "4": { "fez": "Ma olen ju sisalik. Kui mulle sobib." }
+    },
+    "homeHaul": {
+      "1": { "fez": "Lahtipakkimine! Kogu reisi parim osa." },
+      "2": { "explorer": "Parem kui püramiid?" },
+      "3": { "fez": "Püramiid pole meie oma. See siin on." }
+    },
+    "homeEmpty": {
+      "1": { "explorer": "Tühjade kätega." },
+      "2": { "fez": "Ja mis siis? Me kõndisime. See loeb ka." },
+      "3": { "explorer": "Kuhu poole?" },
+      "4": { "fez": "Minu jalad. Need on väga lühikesed, tead." }
+    },
+    "rested": {
+      "1": { "fez": "Nii. Natuke parem?" },
+      "2": { "explorer": "See oli ainult kriimustus." },
+      "3": { "fez": "Ma isegi ei vaadanud. Ja ikka pidin maha istuma." }
+    },
+    "chapterJunior": {
+      "1": { "fez": "No see läks kenasti. Järgmine!" },
+      "2": { "explorer": "Nii lihtne see ka polnud." },
+      "3": { "fez": "Nüüd on. Pärast on kõik lihtne." }
+    },
+    "chapterExpert": {
+      "1": { "fez": "Seal väljas on lõksud. Päris lõksud. Need hammustavad." },
+      "2": { "fez": "Said haiget? Siis kõnnime lihtsalt tagasi. Kodus saad terveks." },
+      "3": { "explorer": "Aga sina?" },
+      "4": { "fez": "Mina kõnnin sinu taga. Seal on ohutum." }
+    },
+    "chapterMaster": {
+      "1": { "fez": "Neli püramiidi seal väljas. Mäletad, kui oli ainult üks?" },
+      "2": { "explorer": "See polnud nii ammu." },
+      "3": { "fez": "Ei. Aga tundub küll." }
+    },
+    "chapterWizard": {
+      "1": { "fez": "Vaata viimast. Kuldse tipuga ja puha!" },
+      "2": { "fez": "See läheb meile maksma. Viimane läheb alati." },
+      "3": { "explorer": "Mida maksma?" },
+      "4": { "fez": "…Ma ei tea enam." }
+    },
+    "firstFind": {
+      "1": { "fez": "Vaata seda — nagu oleks see alati siin olnud!" },
+      "2": { "fez": "Mul on tohutu isu sellele hinnasilt külge panna." },
+      "3": { "explorer": "Ära pane." },
+      "4": { "fez": "Ei, ei. Kodust ei müüda. Ma tean seda." }
+    },
+    "structureDone": {
+      "1": { "fez": "Valmis! Iga viimane kui tükk on paigas!" },
+      "2": { "explorer": "Kõik meie enda töö." },
+      "3": { "fez": "Noh. Mina peamiselt näitasin näpuga." }
+    }
+  },
+
+  "animal": {
+    "forSale": {
+      "1": { "fez": "Vaata, mis letil on! Ma teen nüüd ka vedusid." },
+      "2": { "explorer": "Ta mäletseb." },
+      "3": { "fez": "See on hinna sees." }
+    },
+    "boughtDonkey": {
+      "1": { "fez": "Müüdud! Üks eesel. Kangekaelne, aga kannab kõike." },
+      "2": { "explorer": "Kus ta siis on?" },
+      "3": { "fez": "Juba teel koju. Ta kõnnib parema meelega ilma meieta." }
+    },
+    "blockedDonkey": {
+      "1": { "fez": "Kõige selle kraamiga me nii kaugele ei kõnni. Selleks on eeslit vaja." },
+      "2": { "fez": "Ja arva ära, kellel on üks? Minul. Minu letis Henuti kambris." }
+    },
+    "throughDonkey": {
+      "1": { "explorer": "Ta on nõus." },
+      "2": { "fez": "Täna. Küsi homme uuesti." }
+    },
+    "arrivesDonkey": {
+      "1": { "fez": "Seal ta on! Jõudis enne meid kohale." },
+      "2": { "explorer": "Lõkke leidis ka üles." },
+      "3": { "fez": "Minu koht. Noh. Tema oli esimene." }
+    },
+    "boughtCart": {
+      "1": { "fez": "Vanker! Kaks ratast ja need vaevu kolisevad." },
+      "2": { "explorer": "Vaevu?" },
+      "3": { "fez": "Kolin tuleb tasuta kaasa." }
+    },
+    "blockedCart": {
+      "1": { "fez": "Eesel ei võta enam ühtegi kotti. Ma küsisin temalt." },
+      "2": { "fez": "Vankrit on meil vaja. Üks on minu letis, ülempreestri juures." }
+    },
+    "throughCart": {
+      "1": { "explorer": "Kuuled?" },
+      "2": { "fez": "See on vanker. Ta laulab natuke." },
+      "3": { "explorer": "Terve tee?" }
+    },
+    "arrivesCart": {
+      "1": { "fez": "Vanker meie laagris! Nüüd paistame, nagu oleksime kuhugi teel." },
+      "2": { "explorer": "Me olemegi kuhugi teel." },
+      "3": { "fez": "Jah, aga nüüd näevad seda kõik." }
+    },
+    "boughtCamel": {
+      "1": { "fez": "Kaamel! Elab päevi ilma veeta. Mina küll mitte." },
+      "2": { "explorer": "Ta vaatab sind." },
+      "3": { "fez": "Ülevalt alla. Kaamelid vaatavad sind alati ülevalt alla." }
+    },
+    "blockedCamel": {
+      "1": { "fez": "Sisemine pühamu? Sinna me jala ei jõua." },
+      "2": { "fez": "Õnneks on mul kaamel. Minu letis, ülempreestri juures." }
+    },
+    "throughCamel": {
+      "1": { "fez": "Ta põlvitab! Minu ees!" },
+      "2": { "explorer": "Et me saaksime peale ronida." },
+      "3": { "fez": "Lase mul seda nautida." }
+    },
+    "arrivesCamel": {
+      "1": { "fez": "Seal ta on. Käitub, nagu laager oleks tema oma." },
+      "2": { "explorer": "Ja eesel?" },
+      "3": { "fez": "Teeb näo, et ei näe teda. Täpselt nagu mina." }
+    },
+    "boughtSecondDonkey": {
+      "1": { "fez": "Veel üks eesel! Nüüd on esimesel kellega juttu ajada." },
+      "2": { "explorer": "Juttu ajada?" },
+      "3": { "fez": "Iiaa-tada. See on jutt, ainult valjemini." }
+    },
+    "blockedSecondDonkey": {
+      "1": { "fez": "Eesel ei lähe edasi. Üksinda mitte, ütleb ta." },
+      "2": { "explorer": "Ta ütles nii?" },
+      "3": { "fez": "Ma räägin eesli keelt. Ta tahab sõpra, ja mul on üks letis vaarao varamus." }
+    },
+    "throughSecondDonkey": {
+      "1": { "fez": "Kuula neid! Üks valjem kui teine." },
+      "2": { "explorer": "Kes võidab?" },
+      "3": { "fez": "Mitte meie. Meie peame seda kuulama." }
+    },
+    "arrivesSecondDonkey": {
+      "1": { "fez": "Vaata neid. Nagu oleksid nad teineteist aastaid tundnud." },
+      "2": { "explorer": "Nagu meie." },
+      "3": { "fez": "Meie kisame vähem." }
+    },
+    "boughtSecondCamel": {
+      "1": { "fez": "Veel üks kaamel. Jah. Mulle ei meeldi nad ka." },
+      "2": { "fez": "Aga see siin näeb vähemalt sõbralik välja." },
+      "3": { "explorer": "Ta vaatab sinu fezi." }
+    },
+    "blockedSecondCamel": {
+      "1": { "fez": "Osirise saal. Ühe kaameliga me sinna ei jõua." },
+      "2": { "fez": "Õnneks on mul veel üks, letis vaarao varamus. Minu päris viimane." },
+      "3": { "explorer": "Sa ütled seda alati." }
+    },
+    "throughSecondCamel": {
+      "1": { "fez": "Ta sööb mu fezi!" },
+      "2": { "explorer": "Sõbralik kaamel." },
+      "3": { "fez": "Liiga sõbralik." }
+    },
+    "arrivesSecondCamel": {
+      "1": { "fez": "Kaks kaamelit. Nüüd vaatavad mõlemad mind ülevalt alla." },
+      "2": { "explorer": "Mine siis eeslite juurde seisma." },
+      "3": { "fez": "Ma juba seisan." }
+    },
+    "boughtSturdyCart": {
+      "1": { "fez": "Tugevam vanker. See ei laula teel." },
+      "2": { "explorer": "Sellele on lilled maalitud." },
+      "3": { "fez": "Tugevuse jaoks." }
+    },
+    "blockedSturdyCart": {
+      "1": { "fez": "Vana vanker ei jõua sinna tervena. Selleks on vaja midagi tugevamat." },
+      "2": { "fez": "Üks on minu letis Jumalate varamus. Mitte värvi pärast, pane tähele." }
+    },
+    "throughSturdyCart": {
+      "1": { "explorer": "Ei kolise." },
+      "2": { "fez": "Näed? Tugevus." },
+      "3": { "explorer": "Ja lilled?" },
+      "4": { "fez": "Need aitavad ka natuke." }
+    },
+    "arrivesSturdyCart": {
+      "1": { "fez": "Vaata, kuidas see särab!" },
+      "2": { "explorer": "Ilusam, kui vaja." },
+      "3": { "fez": "Jah. Ega ma seda ka tugevuse pärast ei müünud." }
+    },
+    "boughtCaravanBanner": {
+      "1": { "fez": "Lipp. Ütlen ausalt: see ei ava midagi." },
+      "2": { "explorer": "Mida see siis teeb?" },
+      "3": { "fez": "See lehvib. Imeilusasti." }
+    },
+    "arrivesCaravanBanner": {
+      "1": { "fez": "Vaata, kuidas see lehvib! Meie oma laagri kohal!" },
+      "2": { "explorer": "Ikka ei ava midagi." },
+      "3": { "fez": "Ei. Ei peagi." }
+    }
+  },
+
+  "bond": {
+    "starter": {
+      "1": { "fez": "See läks kiiresti." },
+      "2": { "explorer": "See oli uks." },
+      "3": { "fez": "Mul oleks nädal aega läinud." }
+    },
+    "starterTomb": {
+      "1": { "fez": "Et oleks selge. Ma olen siin edasimüügi pärast. Ütlen seda praegu, kuni see veel tõsi on." },
+      "2": { "explorer": "Selge." }
+    },
+    "junior": {
+      "1": { "fez": "Sa jäid vahepeal vaikseks." },
+      "2": { "explorer": "Ma lugesin." },
+      "3": { "fez": "Ma tean. Ma olen näinud, kuidas inimesed arvavad huupi. See polnud huupi." }
+    },
+    "expert": {
+      "1": { "fez": "See oli napp." },
+      "2": { "explorer": "Kõik oli korras." },
+      "3": { "fez": "See oli napp. Mul on lubatud seda öelda." }
+    },
+    "master": {
+      "1": { "fez": "Me võiksime lõpetada." },
+      "2": { "explorer": "Võiksime." },
+      "3": { "fez": "Ma ütlen seda, et see oleks öeldud. Mitte selleks, et me seda teeksime." }
+    },
+    "wizard": {
+      "1": { "explorer": "Kui palju see väärt on?" },
+      "2": { "fez": "…" },
+      "3": { "fez": "Sellele ma hinda ei pane." },
+      "4": { "explorer": "Selge." }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": { "fez": "Vau. See oli hetk tagasi sein." },
+      "2": { "explorer": "Selle taga oli käik." },
+      "3": { "fez": "Kõik need aastad kõndisid inimesed sellest mööda. Kõik need aastad!" }
+    }
+  },
+
+  "reading": {
+    "junior": {
+      "1": { "explorer": "Siin on rida, mida ma nüüd oskan lugeda." },
+      "2": { "explorer": "Ma andsin leiba näljasele." },
+      "3": { "fez": "Leib. Hauakambris." },
+      "4": { "explorer": "See oli ka eelmises. Ma ei teadnud, et need on sõnad." }
+    },
+    "expert": {
+      "1": { "explorer": "Teine rida. Vett janusele." },
+      "2": { "fez": "Leib ja nüüd vesi. Keegi tahtis väga, et teda mäletataks heldena." },
+      "3": { "explorer": "Kõigil on see. Igal seinal, igas hauakambris, samad kaks rida." },
+      "4": { "fez": "Siis olid nad kas kõik helded, või on see lihtsalt see, mida peab ütlema." },
+      "5": { "explorer": "Või on see see, mille järgi neid mõõdeti." }
+    },
+    "master": {
+      "1": { "explorer": "Riideid alastile. Kolmas rida." },
+      "2": { "fez": "Leib, vesi, riided. See on nimekiri asjadest, mis ära anti." },
+      "3": { "explorer": "Selle mehe hauakambris, kes võttis kõik endaga kaasa." },
+      "4": { "fez": "…Jah. Ma panin seda tähele." }
+    },
+    "sphinx": {
+      "1": { "fez": "Tagasi seal, kust alustasime. Ta pole paigast liikunud." },
+      "2": { "explorer": "Kiri on ikka veel seal." },
+      "3": { "fez": "Kas sa oskad seda lugeda?" },
+      "4": { "explorer": "Üks nimi." },
+      "5": { "fez": "Kelle oma?" },
+      "6": { "explorer": "Sinu oma." },
+      "7": { "fez": "…" },
+      "8": { "fez": "Oled sa kindel?" },
+      "9": { "explorer": "See on kirja pandud." },
+      "10": { "fez": "Hm." },
+      "11": { "fez": "Hori." },
+      "12": { "fez": "Igas Egiptuse külas oli üks Hori." },
+      "13": { "fez": "Noh. See seletab fezi ära." }
+    }
+  },
+
+  "altar": {
+    "refused": {
+      "1": { "priest": "Ei." },
+      "2": { "explorer": "Sellel on tema märk." },
+      "3": {
+        "priest": "Sellel on märk. Väga hea märk. Selle lõikas keegi, kellel olid suurepärased tööriistad ja kellel polnud siin mingit asja, ja seda mitte väga ammu."
+      },
+      "4": { "priest": "Ma olen oodanud kolm tuhat aastat. Mind ei peteta viimasel nädalal ära." }
+    }
+  },
+
+  "meeting": {
+    "starter_1": {
+      "1": { "voice": "Hei! Mitte SINNA! Vaata, kuhu astud!" },
+      "2": { "explorer": "Vabandust! Ma ei näe midagi! Kus sa oled?" },
+      "3": { "fez": "Siin all! Sa seisad keset mu kaupa!" },
+      "4": { "explorer": "Sisalik?! Fez peas?" },
+      "5": { "fez": "Kaupmees. Ja mis mu fezil viga on?" },
+      "6": { "fez": "Sa oled ka püramiidi pärast siin, kihla vean. Ostsid kaardi? Maksid liiga palju?" },
+      "7": { "explorer": "KAUGELT liiga palju." },
+      "8": { "fez": "Mina ka. Pff." },
+      "9": { "explorer": "See kiri Sfinksil… kas sina oskad seda lugeda?" },
+      "10": { "fez": "Ei. Enam ei oska keegi. See alus oli kunagi sinine ja kuldne, tead." },
+      "11": { "explorer": "Kust sa seda tead?" },
+      "12": { "fez": "…Kuulsin. Noh, mida sa siit all otsid?" },
+      "13": { "explorer": "Midagi ägedat." },
+      "14": { "fez": "Äge müüb hästi! Tead mis? Ma tulen sinuga kaasa!" },
+      "15": { "explorer": "Mis? Minuga?" },
+      "16": { "fez": "Neli silma näeb rohkem kui kaks. Lähme, püramiid ootab!" }
+    }
+  },
+
+  "end": {
+    "1": { "fez": "Kas see oli äge?" },
+    "2": { "explorer": "Kõlbab küll." }
+  },
+
+  "revisit": {
+    "starter": {
+      "north1": { "1": { "ipi": "Ikka veel siin? Põhja! Henut! Üksteist debenit!" } },
+      "north2": { "1": { "ipi": "Üksteist debenit lasuriiti. Henut. Põhjas. Mida sa ootad?" } },
+      "paid1": { "1": { "ipi": "Noh? Kas ta maksis? …Ei. Muidugi mitte." } },
+      "paid2": { "1": { "ipi": "Klaas? KLAAS? Siin on kirjas lasuriit. Just siin. Lasuriit!" } },
+      "later1": { "1": { "ipi": "Jälle sina. Kolmas riiul, see täkkega — ikka minu oma. Käed eemale." } },
+      "later2": { "1": { "ipi": "Nelikümmend aastat arveraamatuid ja mitte ükski ei klapi. Mitte ükski!" } }
+    },
+    "junior": {
+      "wall1": { "1": { "henut": "Sein. Kolmas märk. See ei ole ikka veel minu nimi." } },
+      "wall2": { "1": { "henut": "Sina oled ikka veel siin ja see hani on ikka veel minu seinal. Paranda see ära." } },
+      "priest1": { "1": { "henut": "Ikka minu nimi. Ma kontrollisin. Nüüd — Karnak, preester. Mine nüüd." } },
+      "priest2": { "1": { "henut": "Karnak! Ta on piisavalt kaua oodanud. Mine ja lase endast teatada." } },
+      "met1": { "1": { "henut": "Noh? Talumatu, eks? Ma ju ütlesin." } },
+      "later1": { "1": { "henut": "Ikka klaas. Ikka ilus. Ikka minu valitud." } }
+    },
+    "expert": {
+      "seal1": { "1": { "priest": "Pitser. Siia toodud, maha pandud, sõnad lausutud. Ma ootan." } },
+      "seal2": { "1": { "priest": "Ah. Jälle sina. Ja ikka pole pitserit." } },
+      "king1": { "1": { "priest": "Sa oled kuningat näinud. Hea. Aga asi ise — mitte sarnane asi." } },
+      "later1": { "1": { "priest": "Jälle sina. Siin pole enam midagi teha. See on väga rahustav." } }
+    },
+    "master": {
+      "priest1": {
+        "1": { "pharaoh": "Ikka veel siin? Selle koopiaga preestri juurde! Ma tahan kuulda, kuidas läheb." }
+      },
+      "priest2": { "1": { "pharaoh": "Te võite läheneda. Jälle. Kas preester on seda juba näinud?" } },
+      "rite1": {
+        "1": { "pharaoh": "Nii et ta tegi lõpuks oma talituse ära. Hea. Nüüd on ta selle pärast väljakannatamatu." }
+      },
+      "later1": { "1": { "pharaoh": "Ikka veel üheksasaja aasta parim nädal. Ja see muudkui jätkub!" } }
+    },
+    "wizard": {
+      "later1": { "1": { "priest": "…Jah. Ma mäletan ikka veel, kuidas. Hea." } },
+      "later2": { "1": { "priest": "Maha pandud, sõnad lausutud. Tehtud. See on imelik tunne." } }
+    }
+  }
+}

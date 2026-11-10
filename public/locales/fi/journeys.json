@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Aamunkoitto Sfinksillä",
+    "description": "Suuri Sfinksi ja sen jalkojen juureen kirjoitettu teksti, jota kukaan elävä ei osaa lukea. Kartta sanoo: aloita tästä."
+  },
+  "starter_2": {
+    "name": "Papyruskauppiaan reitti",
+    "description": "Kauppatie Niilin varrella, täynnä kauppiaiden varastoja. Muutamaa ei koskaan tyhjennetty."
+  },
+  "starter_3": {
+    "name": "Bastetin temppeli",
+    "description": "Bastetin temppeli. Täällä kissat olivat pyhiä, ja vuotuinen juhla oli Egyptin suurin: veneitä, musiikkia, kaikkea."
+  },
+  "starter_4": {
+    "name": "Kirjurien koulu",
+    "description": "Kirjurien koulu, jossa Egypti oppi kirjoittamaan. Luokkahuoneet ovat yhä hiekan alla."
+  },
+  "starter_treasure_tomb": {
+    "name": "Unohdettu kauppiaan kätkö",
+    "description": "Kauppiaan kellari, ei kuninkaan: ruukkuja pinoissa, sinetöityinä ja nimilapuilla, eikä ketään siellä alhaalla väittämässä vastaan.",
+    "mapHint": "Paperinpalassa on luonnos kauppatiestä ja kellarin ovesta. Kauppiaan piilopaikka, ei mitään hienompaa."
+  },
+  "junior_1": {
+    "name": "Pyhien iibisten muutto",
+    "description": "Suomaata, ja iibikset kahlaamassa sen läpi. Egyptissä näitä lintuja seurattiin: kun ne palaavat, tulva on tulossa."
+  },
+  "junior_2": {
+    "name": "Käsityöläisten laakso",
+    "description": "Deir el-Medina, jossa hautojen rakentajat asuivat. Kaikki, mitä kuninkaan hautaan pantiin, tehtiin ensin täällä muoteissa."
+  },
+  "junior_3": {
+    "name": "Thothin temppeli",
+    "description": "Thothin temppeli. Hän keksi kirjoituksen, piti kirjaa ja laski laskut. Aika lailla sitä, mitä mekin olemme tehneet."
+  },
+  "junior_4": {
+    "name": "Aleksandrian majakka",
+    "description": "Aleksandrian Faros. Huipulla tuli, joka paloi koko yön, ja merimiehet löysivät rannikon päivän purjehduksen päästä."
+  },
+  "junior_treasure_tomb": {
+    "name": "Ylhäisen piilotettu holvi",
+    "description": "Ylhäisen naisen holvi, maalattu lattiasta kattoon. Hän osti hienoimmat kopiot, mitä rahalla sai, eikä koskaan kertonut sitä kenellekään.",
+    "mapHint": "Hienoa mustetta ja vaakunasinetti nurkassa. Joku arvohenkilö halusi tämän huoneen unohtuvan."
+  },
+  "expert_1": {
+    "name": "Kuninkaiden laakso",
+    "description": "Kuninkaiden laakso. Pyramidien rakentaminen loppui, ja kuninkaiden haudat piilotettiin yhteen laaksoon pyramidin muotoisen huipun alle."
+  },
+  "expert_2": {
+    "name": "Karnakin temppelialue",
+    "description": "Karnak, jota laajennettiin kaksituhatta vuotta. Pelkässä suuressa salissa on satakolmekymmentäneljä pylvästä, ja jokainen on koristeltu."
+  },
+  "expert_3": {
+    "name": "Niilin suiston retki",
+    "description": "Paikka, jossa Niili haarautuu ja levittäytyy vihreäksi. Sobekin maata: papyrusta, kaloja ja krokotiileja, joita palvottiin ja ruokittiin."
+  },
+  "expert_4": {
+    "name": "Djoserin pyramidi",
+    "description": "Djoserin porraspyramidi, ensimmäinen näin iso kivirakennus. Hänen arkkitehtiaan Imhotepia alettiin lopulta palvoa jumalana."
+  },
+  "expert_treasure_tomb": {
+    "name": "Ylipapin aarrekammio",
+    "description": "Ylipapin aarrekammio uhrilattian alla. Kaikki siellä alhaalla annettiin jumalalle, eikä mitään koskaan otettu takaisin.",
+    "mapHint": "Viivat piirtävät temppelialueen ja portaat, jotka laskeutuvat uhrilattian alle."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Sisin pyhäkkö",
+    "description": "Sinetöity huone temppelin sydämessä. Ylipappi kävi siellä kerran päivässä pesemässä jumalan ja pukemassa hänet.",
+    "mapHint": "Käytävät kulkevat temppelin holvien ohi sinetöidylle ovelle. Vain korkeimmat papit pääsivät siitä."
+  },
+  "master_1": {
+    "name": "Gizan suuri pyramidi",
+    "description": "Suuri pyramidi. Kaksikymmentä vuotta kiveä, ja sen vieressä kokonainen kylä, joka ruokki työmiehiä leivällä ja oluella."
+  },
+  "master_2": {
+    "name": "Kuolleiden kirja",
+    "description": "Ei yksi kirja vaan joukko loitsuja, jotka kopioitiin tilauksesta. Halvimpiin jäi tyhjä kohta, johon oma nimi piti kirjoittaa."
+  },
+  "master_3": {
+    "name": "Faaraoiden kirous",
+    "description": "Kuuluisan kirouksen keksivät sanomalehdet vuonna 1923. Egyptiläiset vartioivat hautojaan ovilla ja papereilla."
+  },
+  "master_4": {
+    "name": "Nefertarin hauta",
+    "description": "Nefertarin hauta, Egyptin kauneimmin maalattu huone. Värit jauhettiin kivistä: atsuriitista, malakiitista ja okrasta."
+  },
+  "master_treasure_tomb": {
+    "name": "Faaraon salainen aarre",
+    "description": "Kuninkaan oma aarre, siellä missä kartat loppuvat. Kaikki, mikä meni maan alle hänen kanssaan, on siellä yhä.",
+    "mapHint": "Reunassa on kuninkaan kartussi, ja reitti päättyy kauas avoimen hiekan alle."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Osiriksen sali",
+    "description": "Osiriksen sali. Hän on tulvan ja viljan jumala: mikä täällä menee maan alle, sen odotetaan palaavan.",
+    "mapHint": "Kuninkaan kammioiden alla kartta jatkaa yhä alemmas saliin, johon on piirretty kuolleiden menot."
+  },
+  "wizard_1": {
+    "name": "Ran aurinkomatka",
+    "description": "Ra laskee illalla maailman alle, ja hänellä on kaksitoista tuntia pimeää kuljettavana. Egyptiläiset kirjoittivat ylös, mitä joka tunti tapahtuu."
+  },
+  "wizard_2": {
+    "name": "Memnonin kolossit",
+    "description": "Amenhotep III:n kaksi istuvaa jättiläistä. Kreikkalaiset päättivät, että ne esittävät jotakuta muuta, ja se nimi jäi elämään kahdeksituhanneksi vuodeksi."
+  },
+  "wizard_3": {
+    "name": "Ma'atin kammio",
+    "description": "Ma'atin kammio. Hän on maailman järjestys, ja hänen ainoa strutsinsulkansa on se, johon kaikkea muuta verrataan."
+  },
+  "wizard_4": {
+    "name": "Ikuinen pyramidi",
+    "description": "Pinta oli kiillotettua kalkkikiveä, valkoista kuin suola, ja niin tarkkaan tehty, että sen välkkeen näki päivän kävelymatkan päästä."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Jumalten holvi",
+    "description": "Täällä temppeli säilytti jumalten omaisuutta. Kukaan ei päässyt sisään ilman oikeaa esinettä käsissään.",
+    "mapHint": "Yksikään maamerkki tässä palassa ei kuulu ihmisten maailmaan. Mitä se ikinä näyttääkin, jumalat panivat sen sinne."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Kosmisten voimien valtakunta",
+    "description": "Katossa tähtikarttoja, maalattu niin, että kuolleet näkivät yöllä, paljonko kello on. Jonkun köysi roikkuu yhä kuilussa.",
+    "mapHint": "Jumalten holvin takana viivat hajoavat tähtipoluiksi, joilla elämän ja sekasorron voimia säilytetään pyhinä esineinä."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Ikuisuuden valtaistuin",
+    "description": "Yksi istuin keskellä ja neljäkymmentäkaksi tuomaria sen ympärillä. Jokainen kysyy kysymyksen, johon sinun pitäisi vastata ei.",
+    "mapHint": "Kaikki tämän palan tähtipolut johtavat yhteen istuimeen jumalten valtakunnan sydämessä."
+  }
+}

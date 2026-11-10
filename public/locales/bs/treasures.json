@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Prevuci predmet na kamen da ga otključaš",
+    "alsoAvailable": "Imaš još:"
+  },
+  "perks": {
+    "max-health": "+½ srca na tvoje najviše zdravlje",
+    "armor": "Zamke ti manje naude",
+    "trap-insight": "+1 s na zamkama s vremenom",
+    "pack-mule": "Mješina vode liječi dva srca",
+    "compass": "Dio kompasa",
+    "detection": "Dio tragača za hodnicima",
+    "tier-unlock": "Otključava pohode za nivo {{tier}}",
+    "tier-coming-soon": "Pohodi za nivo {{tier}} stižu u nekom kasnijem ažuriranju",
+    "location-key": "Otkriva još jednu grobnicu",
+    "partOf": "{{count}} od {{total}}"
+  },
+  "tiers": {
+    "stone": "Kamen",
+    "bronze": "Bronza",
+    "silver": "Srebro",
+    "gold": "Zlato",
+    "divine": "Božansko"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Srebreni deben",
+      "description": "Stari egipatski srebreni novac kojim su trgovci plaćali uz Nil."
+    },
+    "t2": {
+      "name": "Svitak papirusa",
+      "description": "Trgovčev svitak sa zapisima o trgovačkim putevima i skupocjenom tovaru."
+    },
+    "t3": {
+      "name": "Češalj od slonovače",
+      "description": "Fino izrezbaren češalj od slonovače, skupocjena roba iz dalekih zemalja."
+    },
+    "t4": {
+      "name": "Glinena uljanica",
+      "description": "Jednostavna, ali lijepa uljanica kojom je trgovac osvjetljavao svoju kuću."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Zlatna narukvica",
+      "description": "Ukrašena zlatna narukvica s dragim kamenjem, kakvu su nosili egipatski plemići."
+    },
+    "t6": {
+      "name": "Obredni bodež",
+      "description": "Bodež s drškom punom dragulja, za svečane obrede plemića."
+    },
+    "t7": {
+      "name": "Skarabej od žada",
+      "description": "Amajlija skarabej od žada koja štiti. Znak ponovnog rođenja i vječnog života."
+    },
+    "t8": {
+      "name": "Alabasterna posuda",
+      "description": "Lijepa posuda od alabastera za čuvanje skupocjenih ulja i parfema."
+    },
+    "t9": {
+      "name": "Štap od abonosa",
+      "description": "Uglačan štap za hodanje od abonosa, sa zlatnim ankhom na vrhu."
+    },
+    "t10": {
+      "name": "Ogrlica od lapis lazulija",
+      "description": "Predivna ogrlica od rijetkog kamena lapis lazulija, koju su bogataši jako cijenili."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Sveti ankh",
+      "description": "Zlatni ankh, znak vječnog života, koji su blagoslovili svećenici hrama."
+    },
+    "t12": {
+      "name": "Bakarno ogledalo",
+      "description": "Uglačano bakarno ogledalo za obrede čišćenja."
+    },
+    "t13": {
+      "name": "Kadionica",
+      "description": "Ukrašena bronzana posuda za paljenje tamjana na obredima u hramu."
+    },
+    "t14": {
+      "name": "Obredna čaša",
+      "description": "Sveta srebrena čaša iz koje su bogovima prosipali piće kao dar."
+    },
+    "t15": {
+      "name": "Svečana lepeza",
+      "description": "Ukrašena lepeza od perja koju su svećenici koristili na obredima u hramu."
+    },
+    "t16": {
+      "name": "Brojanica",
+      "description": "Niz blagoslovljenih zrna za molitvu i razmišljanje."
+    },
+    "t17": {
+      "name": "Posuda za svetu vodu",
+      "description": "Posuda s blagoslovljenom vodom iz svetog bunara u hramu."
+    },
+    "t18": {
+      "name": "Zvono hrama",
+      "description": "Bronzano zvono koje poziva vjernike na molitvu i najavljuje obrede."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Faraonov pečat",
+      "description": "Drevni kraljevski pečat s kartušom nekog zaboravljenog faraona."
+    },
+    "t20": {
+      "name": "Kristalna kugla",
+      "description": "Tajanstvena kristalna kugla za koju kažu da pokazuje slike prošlosti i budućnosti."
+    },
+    "t21": {
+      "name": "Ploča s hijeroglifima",
+      "description": "Drevna kamena ploča s tajanstvenim proročanstvima ispisanim hijeroglifima."
+    },
+    "t22": {
+      "name": "Zlatno žezlo",
+      "description": "Predivno zlatno žezlo s Horusovim okom na vrhu."
+    },
+    "t23": {
+      "name": "Nož od opsidijana",
+      "description": "Obredni nož od opsidijana, oštar kao britva, iz drevnih obreda."
+    },
+    "t24": {
+      "name": "Komad meteorita",
+      "description": "Komad svetog meteorita za koji vjeruju da u sebi ima moć bogova."
+    },
+    "t25": {
+      "name": "Drevni kompas",
+      "description": "Tajanstvena sprava koja uvijek pokazuje prema skrivenom blagu."
+    },
+    "t26": {
+      "name": "Kristal vremena",
+      "description": "Kristal iz legendi koji svijetli snagom davnih vremena."
+    },
+    "t27": {
+      "name": "Obredna maska",
+      "description": "Ukrašena zlatna maska koju su vrhovni svećenici nosili na svetim obredima."
+    },
+    "t28": {
+      "name": "Baklja vječnog plamena",
+      "description": "Baklja koja gori vječnim plamenom i nije se ugasila od davnina."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Raova kruna",
+      "description": "Kruna iz legendi, koja je pripadala bogu sunca Rau. Sija svjetlošću i moći bogova."
+    },
+    "t30": {
+      "name": "Thothov štap",
+      "description": "Štap mudrosti boga znanja Thotha. U njemu su sve drevne tajne."
+    },
+    "t31": {
+      "name": "Pero boginje Maat",
+      "description": "Sveto pero boginje istine Maat, kojim su u zagrobnom životu vagali duše."
+    },
+    "t32": {
+      "name": "Izidine suze",
+      "description": "Suze boginje Izide, pretvorene u kristal. Kažu da zauvijek štite."
+    },
+    "t33": {
+      "name": "Ozirisovo srce",
+      "description": "Sačuvano srce Ozirisa, gospodara podzemnog svijeta, koje još kuca od životne snage."
+    },
+    "t34": {
+      "name": "Amajlija Horusovog oka",
+      "description": "Najjača amajlija za zaštitu, s cijelom Horusovom moći."
+    },
+    "t35": {
+      "name": "Zmija Apep",
+      "description": "Zarobljeni komadić zmije haosa Apep, zatvoren u svetu posudu."
+    },
+    "t36": {
+      "name": "Šuov dah",
+      "description": "Bočica s dahom Šua, boga zraka, koji daje moć nad vjetrovima."
+    },
+    "t37": {
+      "name": "Sobekova krljušt",
+      "description": "Jedna krljušt boga krokodila Sobeka, koja čuva u vodi."
+    },
+    "t38": {
+      "name": "Kip čuvara Anubisa",
+      "description": "Mali Anubisov kip koji oživi da čuva blago svog vlasnika."
+    },
+    "t39": {
+      "name": "Knjiga mrtvih",
+      "description": "Cijela Knjiga mrtvih, sa svim čarolijama potrebnim za put u zagrobni život."
+    },
+    "t40": {
+      "name": "Vrh piramide",
+      "description": "Zlatni vrh Velike piramide, u kojem je skupljena moć svih faraona."
+    }
+  }
+}

@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Jumalten kuningas ja auringon valtias. Hän purjehtii joka päivä taivaan yli aurinkoveneessään."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Sakaalinpäinen jumala, joka huolehti muumioista ja tuonpuoleisesta. Hän suojeli kuolleita."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Haukkapäinen taivaan jumala ja faaraoiden suojelija. Osiriksen ja Isiksen poika."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "Iibispäinen viisauden, kirjoituksen ja tiedon jumala. Hän piti kirjaa jumalten asioista."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Kissajumalatar, joka toi suojaa ja iloa ja ajoi pahat henget pois."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Niilin krokotiilijumala. Hän toi satoa ja rohkeutta sotilaille."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Skarabeuskuoriaisen jumala. Hän kierittää aurinkoa taivaan yli, ja kaikki alkaa aina uudestaan."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Kobrajumalatar ja Ala-Egyptin suojelija. Hän on kuninkaan vallan merkki."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "Taikuuden, äitiyden ja parantamisen jumalatar. Osiriksen uskollinen vaimo."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "Manalan jumala. Hän tuomitsee kuolleet ja herää itse aina uudelleen henkiin."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "Sekasorron, myrskyjen ja aavikon jumala. Osiriksen veli ja kilpailija."
+    },
+    "d12": {
+      "name": "Nephthys",
+      "description": "Surun jumalatar, joka suojelee kuolleita. Isiksen sisko."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Luojajumala ja käsityöläisten ja rakentajien suojelija. Hän loi maailman puhumalla."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Leijonajumalatar. Hän on hurja soturi, mutta osaa myös parantaa sairauksia."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Lehmäjumalatar, joka rakastaa musiikkia ja iloa. Hän hoivasi faaraoita kuin äiti."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Faarao",
+      "description": "Egyptin kuningas. Häntä pidettiin elävänä jumalana, ihmisten ja jumalten välisenä siltana."
+    },
+    "p2": {
+      "name": "Ylipappi",
+      "description": "Temppelin tärkein pappi. Hän hoiti pyhät menot ja piti huolta jumalten järjestyksestä."
+    },
+    "p3": {
+      "name": "Kirjuri",
+      "description": "Taitava ihminen, joka osasi lukea ja kirjoittaa. Hän piti kirjaa kaikesta tärkeästä."
+    },
+    "p4": {
+      "name": "Arkkitehti",
+      "description": "Mestarirakentaja, joka suunnitteli pyramideja ja temppeleitä kestämään ikuisesti."
+    },
+    "p5": {
+      "name": "Kenraali",
+      "description": "Armeijan johtaja, joka suojeli Egyptin rajoja ja laajensi valtakuntaa."
+    },
+    "p6": {
+      "name": "Parantaja",
+      "description": "Lääkäri, joka paransi sairaita lääkkeillä ja taikasanoilla."
+    },
+    "p7": {
+      "name": "Palsamoija",
+      "description": "Pyhä käsityöläinen, joka valmisti vainajan matkalle tuonpuoleiseen."
+    },
+    "p8": {
+      "name": "Maanviljelijä",
+      "description": "Hän kasvatti Egyptin ruoan Niilin hedelmällisillä tulvamailla ja ruokki koko valtakunnan."
+    },
+    "p9": {
+      "name": "Käsityöläinen",
+      "description": "Taitava tekijä, joka teki kauniita esineitä, koruja ja taidetta ylhäisille ja jumalille."
+    },
+    "p10": {
+      "name": "Kauppias",
+      "description": "Hän toi harvinaisia tavaroita kaukaisista maista pitkiä kauppareittejä pitkin."
+    },
+    "p11": {
+      "name": "Visiiri",
+      "description": "Faaraon tärkein neuvonantaja, joka johti valtakunnan hallintoa."
+    },
+    "p12": {
+      "name": "Oraakkeli",
+      "description": "Pyhä ennustaja, joka selitti jumalten viestejä ja kertoi, mitä tulevaisuus tuo."
+    },
+    "p13": {
+      "name": "Merimies",
+      "description": "Hän ohjasi laivoja Niilillä ja Välimerellä. Ilman häntä kauppa ei olisi kulkenut."
+    },
+    "p14": {
+      "name": "Kivenhakkaaja",
+      "description": "Kivityöläinen, joka hakkasi hieroglyfejä ja rakensi Egyptin suuret muistomerkit."
+    },
+    "p15": {
+      "name": "Vartija",
+      "description": "Pyhien paikkojen ja hautojen suojelija, joka varmisti, että kuolleet saivat levätä rauhassa."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Virtahepo",
+      "description": "Niilin voimakas jokipeto. Sitä pelättiin, koska se on vahva ja puolustaa aluettaan."
+    },
+    "a2": {
+      "name": "Leijona",
+      "description": "Eläinten kuningas. Se on kuninkaan vallan ja jumalten voiman merkki aavikolla."
+    },
+    "a3": {
+      "name": "Norsu",
+      "description": "Valtava eläin etelän maista. Sitä ihailtiin viisaudesta ja hyvästä muistista."
+    },
+    "a4": {
+      "name": "Gaselli",
+      "description": "Nopea ja sulavaliikkeinen aavikon asukas. Se on vauhdin ja kauneuden merkki."
+    },
+    "a5": {
+      "name": "Apina",
+      "description": "Fiksu ja kujeileva eläin, joka kuuluu Thothille. Se on älyn ja kepposten merkki."
+    },
+    "a6": {
+      "name": "Kala",
+      "description": "Niilin pyhä eläin. Kalat antoivat ruokaa ja olivat runsauden merkki."
+    },
+    "a7": {
+      "name": "Hanhi",
+      "description": "Niilin soiden pyhä lintu. Se liittyy tarinoihin maailman synnystä ja sielusta."
+    },
+    "a8": {
+      "name": "Mehiläinen",
+      "description": "Ala-Egyptin ja kuninkaan vallan merkki. Se tekee kallisarvoista hunajaa."
+    },
+    "a9": {
+      "name": "Kilpikonna",
+      "description": "Ikivanha ja viisas eläin, joka kantaa maailman painoa kilvellään."
+    },
+    "a10": {
+      "name": "Sammakko",
+      "description": "Uuden elämän merkki. Se nousee Niilin tulvavesistä, jotka tuovat elämää."
+    },
+    "a11": {
+      "name": "Korppikotka",
+      "description": "Ylä-Egyptin pyhä lintu. Suojelijajumalatar Nekhbet näyttäytyy maan päällä sen hahmossa."
+    },
+    "a12": {
+      "name": "Pöllö",
+      "description": "Viisas yön metsästäjä, joka vartioi piilotettua tietoa ja vanhoja salaisuuksia."
+    },
+    "a13": {
+      "name": "Pässi",
+      "description": "Amon-Ran pyhä eläin. Se on jumalten voiman ja johtajuuden merkki."
+    },
+    "a14": {
+      "name": "Kirahvi",
+      "description": "Pitkä ja sulava eläin etelän maista. Se kurottaa pitkällä kaulallaan kohti taivasta."
+    },
+    "a15": {
+      "name": "Sakaali",
+      "description": "Aavikon raadonsyöjä ja opas tuonpuoleiseen. Anubiksen palvelija."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Elämän ja ikuisuuden merkki. Jumalat ja faaraot pitävät sitä usein kädessään."
+    },
+    "art2": {
+      "name": "Horuksen silmä",
+      "description": "Suojan, kuninkaan vallan ja hyvän terveyden merkki. Se kuuluu taivaan jumala Horukselle."
+    },
+    "art3": {
+      "name": "Sistrum",
+      "description": "Helisevä soitin, jota käytettiin pyhissä juhlissa. Se kuuluu jumalatar Hathorille."
+    },
+    "art4": {
+      "name": "Djed-pylväs",
+      "description": "Vakauden ja henkiin heräämisen merkki. Se liittyy usein Osirikseen."
+    },
+    "art5": {
+      "name": "Kartussi",
+      "description": "Soikea kehys, jonka sisällä on faaraon nimi hieroglyfeinä. Se suojelee nimeä ikuisesti."
+    },
+    "art6": {
+      "name": "Kanooppiruukku",
+      "description": "Pyhä ruukku, jonka kantena on vartijan pää. Neljä tällaista seisoi arkun ympärillä vartiossa."
+    },
+    "art7": {
+      "name": "Valtikka",
+      "description": "Vallan sauva, jota jumalat ja faaraot kantoivat jumalallisen vallan merkkinä."
+    },
+    "art9": {
+      "name": "Pyramidi",
+      "description": "Ikuinen hauta ja portti tuonpuoleiseen. Faaraoille rakennettu kestämään aina."
+    },
+    "art10": {
+      "name": "Aurinkovene",
+      "description": "Pyhä vene, joka kuljettaa aurinkojumala Ran taivaan yli aamusta iltaan."
+    },
+    "art11": {
+      "name": "Obeliski",
+      "description": "Korkea kivipylväs, jonka huipulla on pieni pyramidi. Se kurottaa taivaalle jumalten kunniaksi."
+    },
+    "art12": {
+      "name": "Paimensauva ja ruoska",
+      "description": "Kuninkaan merkit. Ne kertovat, että faarao on Egyptin paimen ja suojelija."
+    },
+    "art14": {
+      "name": "Lootuksenkukka",
+      "description": "Uuden elämän ja auringon merkki. Se nousee puhtaana Niilin mutaisesta vedestä."
+    },
+    "art15": {
+      "name": "Uraeus-kruunu",
+      "description": "Kuninkaan päähine, jossa on suojeleva kobra. Faaraot käyttivät sitä jumalten suojana."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Ruokolehti",
+      "description": "Yksi ruoko, joka tarkoittaa äännettä i. Kun sen lisää jumalan nimeen, siitä tulee ihmisen nimi: Horuksesta tulee Hori, Horuksen oma."
+    }
+  }
+}

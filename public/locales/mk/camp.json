@@ -1,0 +1,253 @@
+{
+  "spots": {
+    "fire": "Логорски оган",
+    "sleeping": "Место за спиење",
+    "water": "Место за вода",
+    "cooking": "Место за готвење",
+    "donkey": "Место за магарето",
+    "camel": "Место за камилата",
+    "mapTable": "Маса за мапи",
+    "palmGarden": "Палмова градина",
+    "ibisPond": "Езерце со ибиси",
+    "lookout": "Набљудувачница",
+    "godStatues": "Статуи на боговите",
+    "starCanopy": "Ѕвездена тенда"
+  },
+  "finds": {
+    "pot": "Тенџере",
+    "seatCushions": "Перничиња за седење",
+    "reedMat": "Рогозина од трска",
+    "blanket": "Ќебе",
+    "tentRug": "Килимче за шатор",
+    "tentFlag": "Знаменце за шатор",
+    "gourd": "Тиква",
+    "jar": "Ќуп",
+    "secondJar": "Втор ќуп",
+    "spiceRack": "Полица за зачини",
+    "breadBoard": "Даска за леб",
+    "starMap": "Мапа на ѕвездите",
+    "scrollCase": "Кутија за свитоци",
+    "astrolabe": "Астролаб",
+    "reedGlobe": "Глобус од трска",
+    "seed": "Палмово семе",
+    "secondPalm": "Палмово семе",
+    "figTree": "Семе од смоква",
+    "papyrus": "Корен од папирус",
+    "reeds": "Стебленце трска",
+    "lotus": "Грутка од лотос",
+    "flag": "Знаме за набљудувачницата",
+    "thoth": "Статуетка на Тот",
+    "bastet": "Статуетка на Бастет",
+    "anubis": "Статуетка на Анубис",
+    "ra": "Статуетка на Ра",
+    "cloth": "Ѕвездено платно"
+  },
+  "structures": {
+    "stoneRing": "Камен круг",
+    "fire": "Оган",
+    "cookingStones": "Камења за готвење",
+    "seatingStones": "Камења за седење",
+    "clayOven": "Глинена печка",
+    "windbreak": "Заштита од ветер",
+    "tent": "Шатор",
+    "secondTent": "Втор шатор",
+    "pavilion": "Павилјон",
+    "well": "Бунар",
+    "wellPulley": "Бунар со макара",
+    "tripod": "Триножник",
+    "breadOven": "Фурна за леб",
+    "dryingRack": "Сушалка",
+    "feast": "Гозба",
+    "table": "Маса за мапи",
+    "lotusPlanter": "Сад за лотоси",
+    "edgeStones": "Раб на езерцето",
+    "post": "Столб за набљудување",
+    "platform": "Платформа за набљудување",
+    "ladder": "Скали",
+    "roof": "Покрив",
+    "signalFire": "Сигнален оган",
+    "poles": "Јарболи за тендата",
+    "stars": "Ѕвезди",
+    "planets": "Планети"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Камења од поле",
+      "sandBed": "Песочна подлога"
+    },
+    "fire": {
+      "tinder": "Потпалка",
+      "acaciaLogs": "Цепеници од акација"
+    },
+    "cookingStones": {
+      "flatStone": "Рамен камен",
+      "supportStones": "Потпорни камења"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Мазни карпи",
+      "sandstoneBlock": "Блок од песочник",
+      "hewnSlab": "Делкана плоча"
+    },
+    "clayOven": {
+      "ovenFloor": "Дно на печката",
+      "firebricks": "Огноотпорни тули",
+      "smokeHole": "Дупка за чад",
+      "copperGrate": "Бакарна решетка"
+    },
+    "windbreak": {
+      "reedBundles": "Снопови трска",
+      "stakes": "Дрвени колци"
+    },
+    "tent": {
+      "tentPoles": "Шипки за шатор",
+      "wovenCloth": "Ткаено платно",
+      "tentPegs": "Клинци за шатор"
+    },
+    "secondTent": {
+      "largeCloth": "Големо платно за шатор",
+      "ridgePole": "Горна греда",
+      "guyRopes": "Јажиња за затегнување",
+      "woolFloor": "Волнена подлога"
+    },
+    "pavilion": {
+      "pavilionPosts": "Столбови за павилјонот",
+      "linenCanopy": "Ленена тенда",
+      "hangingCurtains": "Завеси",
+      "woolRugs": "Волнени килими",
+      "woodenFloor": "Дрвен под"
+    },
+    "well": {
+      "wellStones": "Камења за бунарот",
+      "rope": "Долго јаже",
+      "bucket": "Кофа",
+      "windlass": "Чекрк"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Тркало за макарата",
+      "frame": "Потпорна рамка",
+      "hoistRope": "Јаже за кревање",
+      "counterweight": "Противтег",
+      "leatherBucket": "Кожена кофа"
+    },
+    "tripod": {
+      "tripodPoles": "Три шипки",
+      "binding": "Јаже за врзување",
+      "hook": "Бронзена кука"
+    },
+    "breadOven": {
+      "mudBricks": "Тули од кал",
+      "clayPlaster": "Глинен малтер",
+      "ovenLid": "Капак за фурната"
+    },
+    "dryingRack": {
+      "rackPoles": "Шипки за сушалката",
+      "crossbar": "Напречна шипка",
+      "wickerTray": "Плетен послужавник",
+      "cords": "Врвки за закачување"
+    },
+    "feast": {
+      "lowTable": "Ниска маса",
+      "breadBaskets": "Корпи со леб",
+      "roastDuck": "Печена патка",
+      "beerJars": "Ќупови со пиво",
+      "fruitBowl": "Чинија со овошје"
+    },
+    "table": {
+      "tableTop": "Плоча за масата",
+      "trestles": "Нозе за масата",
+      "leatherStraps": "Кожени ремени"
+    },
+    "lotusPlanter": {
+      "clayTub": "Глинено корито",
+      "nileSilt": "Тиња од Нил",
+      "waterJar": "Ќуп за вода",
+      "lotusTubers": "Грутки од лотос",
+      "stoneRim": "Камен раб"
+    },
+    "edgeStones": {
+      "riverStones": "Речни камчиња",
+      "clayBedding": "Глинена подлога",
+      "gravel": "Чакал",
+      "boundaryStakes": "Гранични колци"
+    },
+    "post": {
+      "postTrunk": "Палмово стебло",
+      "footStones": "Камења за темел",
+      "wedges": "Клинови",
+      "braces": "Потпори"
+    },
+    "platform": {
+      "platformBeams": "Потпорни греди",
+      "platformPlanks": "Штици",
+      "lashingRope": "Јаже за врзување",
+      "edgeRail": "Ограда"
+    },
+    "ladder": {
+      "ladderRails": "Страни на скалите",
+      "rungs": "Скалила",
+      "groundPegs": "Колци за земја",
+      "leatherLoops": "Кожени јамки"
+    },
+    "roof": {
+      "roofPoles": "Шипки за покривот",
+      "thatch": "Палмови листови",
+      "clayLayer": "Слој глина",
+      "bindingGrass": "Трева за врзување"
+    },
+    "signalFire": {
+      "fireBasin": "Сад за оган",
+      "pitch": "Смола",
+      "dryBrushwood": "Суви гранчиња",
+      "flint": "Кремен",
+      "bellows": "Мев"
+    },
+    "poles": {
+      "masts": "Јарболи",
+      "cornerStones": "Аголни камења",
+      "stayLines": "Јажиња за потпора",
+      "bigPegs": "Големи колци",
+      "poleSockets": "Лежишта за јарболите"
+    },
+    "stars": {
+      "goldLeaf": "Златни листови",
+      "needleThread": "Игла и конец",
+      "indigoDye": "Индиго боја",
+      "chalk": "Креда",
+      "stencils": "Шаблони"
+    },
+    "planets": {
+      "ochre": "Окер",
+      "copperDiscs": "Бакарни дискови",
+      "lapisPowder": "Лапис во прав",
+      "hangingLoops": "Јамки за закачување",
+      "dividers": "Шестар"
+    }
+  },
+  "collection": {
+    "title": "Градби",
+    "progress": "{{found}} од {{total}}",
+    "built": "изградено",
+    "unknownPart": "???",
+    "open": "Покажи делови",
+    "close": "Скриј делови"
+  },
+  "reward": {
+    "find": "Наод за логорот",
+    "part": "Дел",
+    "progress": "{{name}} · {{found}} од {{total}}"
+  },
+  "haul": {
+    "new": "Ново во твојот логор",
+    "parts_one": "{{name}} · {{count}} дел",
+    "parts_other": "{{name}} · {{count}} делови"
+  },
+  "arrivals": {
+    "donkey": "Твоето магаре е во логорот",
+    "cart": "Твојата количка е во логорот",
+    "camel": "Твојата камила е во логорот",
+    "secondDonkey": "Твоето второ магаре е во логорот",
+    "secondCamel": "Твојата втора камила е во логорот",
+    "sturdyCart": "Твојата поцврста количка е во логорот",
+    "caravanBanner": "Знамето на твојот караван виси во логорот"
+  }
+}

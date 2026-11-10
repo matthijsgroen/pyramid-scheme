@@ -1,0 +1,253 @@
+{
+  "spots": {
+    "fire": "Nuotio",
+    "sleeping": "Nukkumapaikka",
+    "water": "Vesipaikka",
+    "cooking": "Ruokapaikka",
+    "donkey": "Aasin paikka",
+    "camel": "Kamelin paikka",
+    "mapTable": "Karttapöytä",
+    "palmGarden": "Palmupuutarha",
+    "ibisPond": "Iibislampi",
+    "lookout": "Tähystyspaikka",
+    "godStatues": "Jumalten patsaat",
+    "starCanopy": "Tähtikatos"
+  },
+  "finds": {
+    "pot": "Keittopata",
+    "seatCushions": "Istuintyynyt",
+    "reedMat": "Ruokomatto",
+    "blanket": "Peitto",
+    "tentRug": "Teltan matto",
+    "tentFlag": "Teltan lippu",
+    "gourd": "Kurpitsapullo",
+    "jar": "Ruukku",
+    "secondJar": "Toinen ruukku",
+    "spiceRack": "Maustehylly",
+    "breadBoard": "Leipälauta",
+    "starMap": "Tähtikartta",
+    "scrollCase": "Kääröputki",
+    "astrolabe": "Astrolabi",
+    "reedGlobe": "Ruokokarttapallo",
+    "seed": "Palmun siemen",
+    "secondPalm": "Palmun siemen",
+    "figTree": "Viikunan siemen",
+    "papyrus": "Papyruksen juuri",
+    "reeds": "Ruo'on pistokas",
+    "lotus": "Lootuksen mukula",
+    "flag": "Tähystyslippu",
+    "thoth": "Thoth-patsas",
+    "bastet": "Bastet-patsas",
+    "anubis": "Anubis-patsas",
+    "ra": "Ra-patsas",
+    "cloth": "Tähtikangas"
+  },
+  "structures": {
+    "stoneRing": "Kivikehä",
+    "fire": "Tuli",
+    "cookingStones": "Keittokivet",
+    "seatingStones": "Istuinkivet",
+    "clayOven": "Saviuuni",
+    "windbreak": "Tuulensuoja",
+    "tent": "Teltta",
+    "secondTent": "Toinen teltta",
+    "pavilion": "Paviljonki",
+    "well": "Kaivo",
+    "wellPulley": "Väkipyöräkaivo",
+    "tripod": "Kolmijalka",
+    "breadOven": "Leivinuuni",
+    "dryingRack": "Kuivausteline",
+    "feast": "Juhla-ateria",
+    "table": "Karttapöytä",
+    "lotusPlanter": "Lootusallas",
+    "edgeStones": "Lammen reuna",
+    "post": "Tähystyspylväs",
+    "platform": "Tähystystasanne",
+    "ladder": "Tikkaat",
+    "roof": "Katto",
+    "signalFire": "Merkkituli",
+    "poles": "Tähtimastot",
+    "stars": "Tähdet",
+    "planets": "Planeetat"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Peltokivet",
+      "sandBed": "Hiekkapeti"
+    },
+    "fire": {
+      "tinder": "Sytykkeet",
+      "acaciaLogs": "Akaasiahalot"
+    },
+    "cookingStones": {
+      "flatStone": "Litteä kivi",
+      "supportStones": "Tukikivet"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Sileät kivet",
+      "sandstoneBlock": "Hiekkakivilohkare",
+      "hewnSlab": "Hakattu laatta"
+    },
+    "clayOven": {
+      "ovenFloor": "Uunin pohja",
+      "firebricks": "Tulitiilet",
+      "smokeHole": "Savureikä",
+      "copperGrate": "Kupariritilä"
+    },
+    "windbreak": {
+      "reedBundles": "Ruokonipput",
+      "stakes": "Puupaalut"
+    },
+    "tent": {
+      "tentPoles": "Telttakepit",
+      "wovenCloth": "Kudottu kangas",
+      "tentPegs": "Telttavaarnat"
+    },
+    "secondTent": {
+      "largeCloth": "Iso telttakangas",
+      "ridgePole": "Harjakeppi",
+      "guyRopes": "Kiristysnarut",
+      "woolFloor": "Villainen pohjakangas"
+    },
+    "pavilion": {
+      "pavilionPosts": "Paviljongin pylväät",
+      "linenCanopy": "Pellavakatos",
+      "hangingCurtains": "Verhot",
+      "woolRugs": "Villamatot",
+      "woodenFloor": "Puulattia"
+    },
+    "well": {
+      "wellStones": "Kaivon kivet",
+      "rope": "Pitkä köysi",
+      "bucket": "Ämpäri",
+      "windlass": "Vintturi"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Väkipyörä",
+      "frame": "Tukikehikko",
+      "hoistRope": "Nostoköysi",
+      "counterweight": "Vastapaino",
+      "leatherBucket": "Nahkaämpäri"
+    },
+    "tripod": {
+      "tripodPoles": "Kolme keppiä",
+      "binding": "Sidontanaru",
+      "hook": "Pronssikoukku"
+    },
+    "breadOven": {
+      "mudBricks": "Savitiilet",
+      "clayPlaster": "Savilaasti",
+      "ovenLid": "Uunin luukku"
+    },
+    "dryingRack": {
+      "rackPoles": "Telineen kepit",
+      "crossbar": "Poikkipuu",
+      "wickerTray": "Punottu tarjotin",
+      "cords": "Ripustusnarut"
+    },
+    "feast": {
+      "lowTable": "Matala pöytä",
+      "breadBaskets": "Leipäkorit",
+      "roastDuck": "Paistettu ankka",
+      "beerJars": "Olutruukut",
+      "fruitBowl": "Hedelmäkulho"
+    },
+    "table": {
+      "tableTop": "Pöytälevy",
+      "trestles": "Pukit",
+      "leatherStraps": "Nahkahihnat"
+    },
+    "lotusPlanter": {
+      "clayTub": "Saviallas",
+      "nileSilt": "Niilin liete",
+      "waterJar": "Vesiruukku",
+      "lotusTubers": "Lootuksen mukulat",
+      "stoneRim": "Kivireuna"
+    },
+    "edgeStones": {
+      "riverStones": "Jokikivet",
+      "clayBedding": "Savipohja",
+      "gravel": "Sora",
+      "boundaryStakes": "Rajapaalut"
+    },
+    "post": {
+      "postTrunk": "Palmun runko",
+      "footStones": "Perustuskivet",
+      "wedges": "Kiilat",
+      "braces": "Tuet"
+    },
+    "platform": {
+      "platformBeams": "Kannatinpalkit",
+      "platformPlanks": "Lankut",
+      "lashingRope": "Sidontaköysi",
+      "edgeRail": "Kaide"
+    },
+    "ladder": {
+      "ladderRails": "Tikkaiden sivupuut",
+      "rungs": "Askelmat",
+      "groundPegs": "Maavaarnat",
+      "leatherLoops": "Nahkalenkit"
+    },
+    "roof": {
+      "roofPoles": "Kattokepit",
+      "thatch": "Palmunlehdet",
+      "clayLayer": "Savikerros",
+      "bindingGrass": "Sidontaruoho"
+    },
+    "signalFire": {
+      "fireBasin": "Tulimalja",
+      "pitch": "Piki",
+      "dryBrushwood": "Kuivat risut",
+      "flint": "Piikivi",
+      "bellows": "Palkeet"
+    },
+    "poles": {
+      "masts": "Mastot",
+      "cornerStones": "Kulmakivet",
+      "stayLines": "Harukset",
+      "bigPegs": "Isot vaarnat",
+      "poleSockets": "Mastojen jalat"
+    },
+    "stars": {
+      "goldLeaf": "Lehtikulta",
+      "needleThread": "Neula ja lanka",
+      "indigoDye": "Indigoväri",
+      "chalk": "Liitu",
+      "stencils": "Sabluunat"
+    },
+    "planets": {
+      "ochre": "Okra",
+      "copperDiscs": "Kuparikiekot",
+      "lapisPowder": "Lapisjauhe",
+      "hangingLoops": "Ripustuslenkit",
+      "dividers": "Harppi"
+    }
+  },
+  "collection": {
+    "title": "Rakennelmat",
+    "progress": "{{found}}/{{total}}",
+    "built": "rakennettu",
+    "unknownPart": "???",
+    "open": "Näytä osat",
+    "close": "Piilota osat"
+  },
+  "reward": {
+    "find": "Leirilöytö",
+    "part": "Osa",
+    "progress": "{{name}} · {{found}}/{{total}}"
+  },
+  "haul": {
+    "new": "Uutta leirissäsi",
+    "parts_one": "{{name}} · {{count}} osa",
+    "parts_other": "{{name}} · {{count}} osaa"
+  },
+  "arrivals": {
+    "donkey": "Aasisi on leirissä",
+    "cart": "Kärrysi on leirissä",
+    "camel": "Kamelisi on leirissä",
+    "secondDonkey": "Toinen aasisi on leirissä",
+    "secondCamel": "Toinen kamelisi on leirissä",
+    "sturdyCart": "Tukevampi kärrysi on leirissä",
+    "caravanBanner": "Karavaanilippusi liehuu leirissä"
+  }
+}

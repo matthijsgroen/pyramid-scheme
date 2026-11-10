@@ -1,0 +1,1730 @@
+{
+  "not-found": "Sori, dydy'r sgwrs rwyt ti'n chwilio amdani ddim yn bod.",
+  "welcome": "Yr Aifft! Dw i yma go iawn.",
+  "welcome2": "A'r map yma… Talais i lawer gormod amdano fe. Gobeithio'i fod e'n gywir.",
+  "welcome3": "Dere. Gad i ni weld ble mae'r groes 'na.",
+  "pyramidIntro": "Mae rhifau ar y cerrig yma. Ac mae rhai ar goll…",
+  "pyramidIntro2": "Aros. Mae pob carreg yr un fath â'r ddwy oddi tani, wedi'u hadio! Ie — fan hyn hefyd!",
+  "pyramidBlockedBlocks": "Hei, beth yw hwn? Mae'r blociau 'na wedi'u selio. Dydyn nhw ddim yn dangos eu rhif!",
+  "pyramidBlockedBlocks2": "Dim ots. Edrych ar y blociau o'i gwmpas — galli di ei weithio fe mas o'r rheina.",
+  "pyramidBlockedBlocks3": "Ond alli di ddim ei ysgrifennu fe i mewn. Bydd rhaid i ti gofio'r rhif yn dy ben.",
+  "pyramidBlockedBlocks4": "Dere, rwyt ti wedi dod mor bell. Galli di wneud hyn!",
+  "levelCompleted": "Ha! Mae'n agor! Dere, i mewn â ni.",
+  "exitPillar": {
+    "1": {
+      "fez": "Ha! Golau dydd! Weli di'r pelydr golau 'na? Dyna'r ffordd mas. Cama i mewn, ac rydyn ni wedi gorffen fan hyn."
+    },
+    "2": {
+      "fez": "Dim ond un sydd, reit ar ddiwedd y prif goridor. Ble bynnag arall rydyn ni'n crwydro, rydyn ni'n dod 'nôl ato fe."
+    },
+    "3": {
+      "explorer": "Un ffordd mas. Iawn."
+    }
+  },
+  "expeditionCompleted": "Llongyfarchiadau, rwyt ti wedi gorffen y daith!",
+  "expeditionCompleted2": "Mae taith newydd ar gael nawr.",
+  "tombTutorial": "Www, ysgrifen! Allwn ni ei darllen hi? Gyda'r hieroglyffau rydyn ni wedi'u ffeindio… efallai!",
+  "tombTutorial2": "Edrych, symiau gydag arwyddion ynddyn nhw! Weli di'r bylchau gwag? Mae'r hieroglyffau'n mynd i mewn fan'na. Dy rai di, ar y gwaelod.",
+  "tombTutorial3": "Mae'r symiau bach yn dangos pryd mae arwydd yn iawn. Dyna sut rydyn ni'n ffeindio pa arwydd sy'n mynd ble.",
+  "tombTutorial4": "Popeth wedi'i lenwi? Yna mae clo rhifau'n ymddangos. Y swm mawr yw'r cod — ac wedyn mae'r bedd yn agor!",
+  "hieroglyphUnlock": "Mae gyda ni drysor arbennig — gallwn ni ysgrifennu ar un o'r blociau wedi'u selio gyda fe!",
+  "hieroglyphUnlock2": "Tapia garreg sy'n disgleirio, yna llusga'r trysor arni i'w hagor. Un bloc ym mhob pyramid.",
+  "errorHighlightTutorial": "Mae tric handi gyda'r trysor 'na ffeindion ni — rho ateb anghywir i mewn a bydd un camgymeriad yn troi'n goch!",
+  "errorHighlightTutorial2": "Dim ond un bloc sy'n goleuo ar y tro, felly mae'n dal yn her. Ond mae'n helpu i ffeindio'r broblem!",
+  "earlyFeedbackTutorial": "Weli di'r blociau gwirio 'na? Maen nhw'n troi'n wyrdd neu'n goch wrth i ti eu llenwi — yn syth!",
+  "earlyFeedbackTutorial2": "Defnyddia nhw i dy helpu wrth ddatrys. Os ydy un yn troi'n goch, mae rhywbeth gerllaw yn anghywir.",
+  "notEnoughHieroglyphs": "Galli di stopio'r daith yma unrhyw bryd drwy fynd 'nôl i'r sgrin deithio.",
+  "notEnoughHieroglyphs2": "Gallwn ni stopio'r daith i chwilio rywle arall am yr hieroglyffau sydd dal eu hangen arnon ni.",
+  "tombLoot": "Waw, ein trysor cyntaf! Da iawn ti!",
+  "mapPiece": "Edrych! DYNA beth yw map. Hen iawn! Werth mwy na'n dau fap ni gyda'i gilydd!",
+  "mapPiece2": "Dim ond darn ohono fe, cofia. Mae pob taith ffordd hyn yn cuddio un, a gyda'i gilydd maen nhw'n pwyntio at fedd.",
+  "mapComplete": "Mae'n gyfan! Edrych, mae pob darn yn ffitio'n berffaith.",
+  "mapComplete2": "Fan'na, lle mae'r llinellau i gyd yn cwrdd. Dyna ble mae bedd.",
+  "mapComplete3": "Mae e yn ein teithiau ni nawr. Awn ni i edrych?",
+  "mapPiece3": "Cadwa gyfrif ar y rhestr teithiau. Fe wna i, yn bendant!",
+  "mosaicIntro": "Www, gwydr lliw! Edrych arno'n dal y golau — does neb yn taflu HWNNA i ffwrdd!",
+  "mosaicIntro2": "Un darn o lun yw e. Ffenest gyfan o wydr, ac mae pob darn rydyn ni'n ei ffeindio yn dod â mwy ohoni 'nôl.",
+  "mosaicIntro3": "Oes gwersyll gyda ti yn rhywle? Cer â nhw yno ac fe rown ni nhw at ei gilydd. Dw i eisiau gweld beth fydd e!",
+  "mosaicReminder": "Psst! Mae'r darnau gwydr yn dal i ratlo yn ein bag ni. Rown ni nhw yn y ffenest yn y gwersyll?",
+  "mosaicStarter": "Cath yn y drws, a neidr yn ei heglu hi o 'na. Roedd hynna'n werth powlen o laeth.",
+  "mosaicStarter2": "Roedd yr Eifftiaid yn dwlu ar gathod am yr union reswm yma — roedden nhw'n lladd y nadroedd a'r llygod mawr oedd yn mynd at y grawn.",
+  "mosaicStarter3": "Roedden nhw'n eu caru nhw gymaint, fe wnaethon nhw un yn dduwies. Bastet. Hi oedd yn gwarchod y tŷ, y drws, a phawb oedd yn cysgu y tu ôl iddo.",
+  "mosaicJunior": "Edrych ar ei law e — mae rhywun yn dangos iddo sut i ddal y pen.",
+  "mosaicJunior2": "Yr un â phen aderyn yw Thoth. Ysgrifennu, cyfrif, cadw'r cofnodion — fe sy'n gwneud y cwbl.",
+  "mosaicJunior3": "Yr ibis ddilynon ni i fyny'r afon? Ei aderyn e yw hwnna. Mae pob rhif rydyn ni wedi'i roi mewn wal yn perthyn iddo fe hefyd.",
+  "mosaicExpert": "Dydy'r golau 'na ddim yn lwc. Fe adeiladon nhw'r neuadd gyfan er mwyn iddo fe lanio fan'na'n union, ar y bore iawn.",
+  "mosaicExpert2": "Yr haul yw Amun-Ra — yr un cudd, a'r golau mae pawb yn gallu ei weld. Y ddau ar yr un pryd.",
+  "mosaicExpert3": "Os galli di fesur yr awyr mor fanwl â hynna, galli di fesur unrhyw beth. Rydyn ni wedi bod yn datrys eu symiau nhw yr holl ffordd.",
+  "mosaicMaster": "Croen gwyrdd, a gwenith yn tyfu'n syth allan ohono fe. Mae hynna'n fwriadol.",
+  "mosaicMaster2": "Osiris. Cafodd ei ladd, a'i roi 'nôl at ei gilydd, a nawr fe yw'r hyn sy'n dod 'nôl bob blwyddyn pan mae'r afon yn llifo dros y caeau.",
+  "mosaicMaster3": "I lawr fan hyn, dyna'r holl syniad: dydy marw ddim yn golygu bod popeth ar ben. Meddwl hapus ar gyfer bedd, on'd yw e?",
+  "mosaicWizard": "Calon ar un ochr. Un bluen ar yr ochr arall. Ac maen nhw'n pwyso'r un faint.",
+  "mosaicWizard2": "Ma'at yw'r bluen — y gwir, cydbwysedd, y ffordd mae pethau i fod. Os ydy dy galon di'n drymach na'r bluen, chei di ddim mynd drwy'r drws.",
+  "mosaicWizard3": "Y jacal sy'n dal y glorian yn llonydd yw Anubis. Fe sy'n dy dywys di yma.",
+  "mosaicFinale": "Cama'n ôl am eiliad. Edrych beth rydyn ni wedi bod yn ei gario allan o'r pyramidiau 'na.",
+  "mosaicFinale2": "Mae pob darn yn rhan ohono fe — yr un sy'n dal y glorian yn llonydd. Mae e wedi bod yn ein gwylio ni yr holl ffordd.",
+  "mosaicFinale3": "Dyna ei gofnod e ohonon ni. A baswn i'n dweud ei fod e'n pwyso'n iawn.",
+  "shopFirstVisit": "A, dyma ni. Fy stondin i — wedes i mai masnach oedd y rheswm i fi ddod.",
+  "shopFirstVisit2": "Cariais i bopeth ar y cownter 'ma allan o rywle. Daeth hwnna o ddau fedd yn ôl.",
+  "shopArrival": "A, fy stondin! Gad i fi osod beth dw i wedi'i godi ar y ffordd.",
+  "shopArrival2": "Pethau prin sy'n costio fwyaf, ond fe dala i ti am unrhyw drugareddau rwyt ti'n eu cario.",
+  "arrival": {
+    "starter_1": {
+      "1": {
+        "explorer": "Edrych, draw fan'na! Y Sffincs!"
+      },
+      "2": {
+        "explorer": "Anferth, hyd yn oed o fan hyn."
+      },
+      "3": {
+        "explorer": "Maen nhw'n dweud bod ysgrifen o dan ei bawennau. Does neb yn gallu ei darllen."
+      },
+      "4": {
+        "explorer": "Wedyn. Y pyramid yma gyntaf!"
+      }
+    },
+    "starter_2": {
+      "1": {
+        "fez": "Ha! O'r diwedd, rhywbeth dw i'n ei ddeall. Daeth popeth aeth i fyny'r Nîl heibio fan hyn gyntaf."
+      },
+      "2": {
+        "fez": "Ac mae masnachwyr yn ysgrifennu popeth i lawr. Pwy brynodd beth, pwy oedd mewn dyled i bwy, pwy oedd yn hwyr…"
+      },
+      "3": {
+        "explorer": "Pwy oedd yn hwyr?"
+      },
+      "4": {
+        "fez": "Yn enwedig pwy oedd yn hwyr!"
+      },
+      "5": {
+        "fez": "Tair mil o flynyddoedd. Mae'r nwyddau wedi mynd, ac mae'r derbynebau'n dal yma. Typical!"
+      }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Edrych ar y drysau 'na! Roedd pobl yn dod yma i ofyn am gael eu gwarchod. Ac wedyn roedd drws fel 'na'n aros ar gau."
+      },
+      "2": {
+        "explorer": "Ar gau i bwy?"
+      },
+      "3": {
+        "fez": "I unrhyw un oedd ddim yn gofyn yn neis. Ni, gan amlaf."
+      },
+      "4": {
+        "fez": "Popeth sydd wedi'i selio yn y wlad yma, roedd rhywun yn ei feddwl e. Wir yn ei feddwl e."
+      },
+      "5": {
+        "fez": "A'r cathod! Roedden nhw'n dwlu ar gathod yma. Allen nhw ddim cadw'u dwylo oddi arnyn nhw."
+      }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "O, dw i'n hoffi'r un yma. Fan hyn dysgon nhw ysgrifennu! Arwydd ar ôl arwydd, ar ddarnau o botiau — roedd papyrws yn llawer rhy ddrud i blant."
+      },
+      "2": {
+        "explorer": "Roedden nhw'n ymarfer ar sbwriel?"
+      },
+      "3": {
+        "fez": "Ar beth bynnag oedd ar gael! A dysga ddigon o'r rhain, ac yn sydyn dydy wal ddim yn addurn bellach."
+      },
+      "4": {
+        "explorer": "Y Sffincs 'na… Dw i eisiau edrych arno fe eto."
+      },
+      "5": {
+        "fez": "Ddim eto. Cyn bo hir."
+      }
+    },
+    "junior_1": {
+      "1": {
+        "fez": "Roedden nhw'n dod 'nôl bob blwyddyn gyda'r llifogydd, bron ar yr un diwrnod."
+      },
+      "2": {
+        "fez": "Felly dechreuodd pobl gyfrif y dyddiau rhwng. Dyna o ble daeth y calendr — adar."
+      },
+      "3": {
+        "explorer": "Adar."
+      },
+      "4": {
+        "fez": "Adar a gwaith papur. Adar a gwaith papur yw e bob tro."
+      }
+    },
+    "junior_2": {
+      "1": {
+        "fez": "Fan hyn roedden nhw'n gwneud y cwbl. Nid y beddau — y pethau oedd yn mynd ynddyn nhw."
+      },
+      "2": {
+        "fez": "Edrych ar y mowldiau. Yr un freichled, deugain o weithiau."
+      },
+      "3": {
+        "explorer": "I ddeugain o bobl?"
+      },
+      "4": {
+        "fez": "I unrhyw un allai dalu. Roedd uchelwr eisiau beth oedd gan frenin, am bris allai uchelwr ei dalu."
+      }
+    },
+    "junior_3": {
+      "1": {
+        "fez": "Thoth, yr un yma. Duw cyfrinachau a hud, dw i'n eitha siŵr."
+      },
+      "2": {
+        "explorer": "Eitha."
+      },
+      "3": {
+        "fez": "Naw deg y cant. Beth bynnag — yr arwyddion rwyt ti wedi bod yn eu casglu, ei rai e ydyn nhw."
+      }
+    },
+    "junior_4": {
+      "1": {
+        "fez": "Naw deg metr o uchder, a thân ar y top oedd byth yn diffodd."
+      },
+      "2": {
+        "fez": "Roedd morwyr yn gallu ffeindio'r arfordir o ddiwrnod i ffwrdd. Cyn hynny, roedden nhw'n ei ffeindio fe drwy fwrw i mewn iddo fe."
+      },
+      "3": {
+        "explorer": "Sut wyt ti'n ffeindio unrhyw beth fan hyn heb un?"
+      },
+      "4": {
+        "fez": "Rwyt ti'n gofyn i rywun sydd wedi bod. Dyna fy ngwaith i, i gyd."
+      }
+    },
+    "expert_1": {
+      "1": {
+        "fez": "Tua thrigain o feddau wedi'u torri mewn un dyffryn, ac roedd pob un wedi'i agor cyn i ni gyrraedd."
+      },
+      "2": {
+        "explorer": "Gan bwy?"
+      },
+      "3": {
+        "fez": "Pobl fel ni, gan amlaf. Yn gynt."
+      },
+      "4": {
+        "fez": "Beth wyt ti'n feddwl?"
+      },
+      "5": {
+        "explorer": "Ein bod ni'n hwyr."
+      }
+    },
+    "expert_2": {
+      "1": {
+        "fez": "Amun-Ra. Yr haul. Hoff dduw pawb, ac rwyt ti'n gweld pam — edrych pa mor fawr yw'r lle."
+      },
+      "2": {
+        "explorer": "Dau enw."
+      },
+      "3": {
+        "fez": "Yr un duw, dw i'n meddwl. Roedden nhw'n rhoi enw ychwanegol i'r rhai poblogaidd."
+      }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Mae'r wlad gyfan yn llinell werdd bob ochr i un afon, ac wedyn mae'n agor allan fan hyn i hyn."
+      },
+      "2": {
+        "fez": "Mae popeth yn tyfu. Mae popeth yn cnoi hefyd."
+      },
+      "3": {
+        "explorer": "Ar gyfer pa un o'r ddau ydyn ni yma?"
+      },
+      "4": {
+        "fez": "Ro'n i'n gobeithio dim un o'r ddau, a dweud y gwir."
+      }
+    },
+    "expert_4": {
+      "1": {
+        "fez": "Yr un cyntaf. Cyn hyn, roedd brenhinoedd yn mynd o dan garreg fflat fel pawb arall."
+      },
+      "2": {
+        "fez": "Safodd rhywun fan hyn a meddwl: beth os gwnawn ni hynna, ond chwe gwaith, i fyny."
+      },
+      "3": {
+        "explorer": "Weithiodd e?"
+      },
+      "4": {
+        "fez": "Mae e'n dal i sefyll, a dydy e ddim. Dibynnu beth wyt ti'n feddwl."
+      }
+    },
+    "master_1": {
+      "1": {
+        "fez": "Dwy filiwn o flociau. Gwnaeth rhywun eu cyfrif nhw."
+      },
+      "2": {
+        "explorer": "Gwnaeth rhywun eu cyfrif nhw?"
+      },
+      "3": {
+        "fez": "Mae rhywun wastad yn cyfrif. Dyna'r darn mae pobl yn ei anghofio — clercod oedd yn rhedeg y cwbl."
+      },
+      "4": {
+        "fez": "Hardd, on'd yw e? Gas gen i feddwl sut roedd y rhestr gyflogau'n edrych."
+      }
+    },
+    "master_2": {
+      "1": {
+        "fez": "Cyfarwyddiadau. Dyna'r cwbl yw e — beth i'w ddweud, ym mha drefn, er mwyn i'r daith fynd yn iawn."
+      },
+      "2": {
+        "explorer": "Llawlyfr."
+      },
+      "3": {
+        "fez": "Llawlyfr ar gyfer bod yn farw. Roedden nhw'n ysgrifennu popeth i lawr, y rhain."
+      },
+      "4": {
+        "fez": "Sydd, o gofio beth rydyn ni'n chwilio amdano, yn newyddion da cyntaf yr wythnos."
+      }
+    },
+    "master_3": {
+      "1": {
+        "fez": "A. Gwersyll rhywun."
+      },
+      "2": {
+        "explorer": "Newydd?"
+      },
+      "3": {
+        "fez": "Eitha newydd. Bwyd tun a pheswch cas, o'r olwg."
+      },
+      "4": {
+        "fez": "Aethon nhw ymhellach i mewn na hyn, a wnaethon nhw ddim mynd â'u stwff gyda nhw."
+      },
+      "5": {
+        "explorer": "Ddaethon nhw 'nôl i'w nôl e?"
+      },
+      "6": {
+        "fez": "…Gad i ni gario 'mlaen."
+      }
+    },
+    "master_4": {
+      "1": {
+        "fez": "Nawr HWN yw beth roedd y lleill yn ei gopïo. Edrych ar y lliw — tair mil o flynyddoedd ac mae'n dal i edrych yn wlyb."
+      },
+      "2": {
+        "explorer": "Byddai Henut yn wyllt gacwn."
+      },
+      "3": {
+        "fez": "Byddai Henut yn cymryd nodiadau."
+      }
+    },
+    "wizard_1": {
+      "1": {
+        "fez": "Mae'r haul yn mynd o dan y byd yn y nos ac yn codi yr ochr arall. Dyna'r holl gred."
+      },
+      "2": {
+        "fez": "Deuddeg awr yn y tywyllwch, gyda phethau yn y ffordd, ac mae'n rhaid i rywun ei gario fe drwodd."
+      },
+      "3": {
+        "explorer": "Dyna beth rydyn ni wedi bod yn ei wneud."
+      },
+      "4": {
+        "fez": "Ro'n i wedi bod yn trio peidio â dweud hynna."
+      },
+      "5": {
+        "explorer": "Mae'r tywod yn dal i ddod i mewn."
+      },
+      "6": {
+        "fez": "Mae e wedi bod yn dod i mewn ers tair mil o flynyddoedd. Dydy e ddim yn stopio, mae e'n mynd rownd."
+      },
+      "7": {
+        "fez": "Llenwi, troi drosodd, dechrau eto. Yr un fath â'r haul."
+      }
+    },
+    "wizard_2": {
+      "1": {
+        "fez": "Dau ohonyn nhw, deunaw metr o uchder, a'r ddau yn Amenhotep."
+      },
+      "2": {
+        "fez": "Edrychodd y Groegiaid unwaith a phenderfynu mai un o'u harwyr nhw oedd e. Memnon. Arhosodd yr enw am ddwy fil o flynyddoedd."
+      },
+      "3": {
+        "explorer": "Enw pwy sydd arno fe?"
+      },
+      "4": {
+        "fez": "Ei enw ei hun. Wedi'i dorri i mewn i'r orsedd, lle mae e wastad wedi bod."
+      },
+      "5": {
+        "fez": "Wnaeth neb ei ddarllen."
+      },
+      "6": {
+        "fez": "Ar ôl y daeargryn, roedd yr un gogleddol yn canu adeg y wawr. Un nodyn, bob bore, pan oedd yr haul yn cynhesu'r crac."
+      },
+      "7": {
+        "explorer": "A nawr?"
+      },
+      "8": {
+        "fez": "Gofynnodd ymerawdwr i rywun ei drwsio fe. Dydy e ddim wedi gwneud smic ers hynny."
+      }
+    },
+    "wizard_3": {
+      "1": {
+        "fez": "Y glorian. Calon ar un ochr, pluen ar y llall — felly calon braf, drom sy'n ennill, siŵr o fod."
+      },
+      "2": {
+        "explorer": "Pa ffordd mae rhywbeth trwm yn mynd?"
+      },
+      "3": {
+        "fez": "…I lawr."
+      },
+      "4": {
+        "fez": "O."
+      },
+      "5": {
+        "fez": "Ysgafn. Rwyt ti eisiau iddi fod yn YSGAFN."
+      }
+    },
+    "wizard_4": {
+      "1": {
+        "fez": "Y maen copa sy'n mynd ymlaen olaf, ac mae'n mynd ymlaen mewn aur, er mwyn i'r holl beth ddal y golau cyntaf."
+      },
+      "2": {
+        "explorer": "I bwy?"
+      },
+      "3": {
+        "fez": "I unrhyw un sy'n edrych. Dyna'r pwynt — doedd e byth ar gyfer y dyn y tu mewn."
+      }
+    }
+  },
+  "tomb": {
+    "starter": {
+      "1": {
+        "ipi": "Hei! Dwylo bant! Fy jar i yw honna!"
+      },
+      "2": {
+        "fez": "…Wnaeth y jar 'na ddweud rhywbeth?!"
+      },
+      "3": {
+        "ipi": "Fi oedd hwnna. Trydedd silff, yr un â'r darn wedi torri. Fi piau honna."
+      },
+      "4": {
+        "explorer": "Iawn, iawn! Mae hi'n aros lle mae hi. Pwy wyt ti?"
+      },
+      "5": {
+        "ipi": "Ipi. Deugain mlynedd fues i'n cadw'r llyfrau. Deugain!"
+      },
+      "6": {
+        "fez": "Llyfrau? Llyfrau pwy?"
+      },
+      "7": {
+        "ipi": "Llyfrau pawb! Pwy oedd mewn dyled am beth, hyd at y sach olaf o rawn."
+      },
+      "8": {
+        "ipi": "Yr Henut 'na, i'r gogledd o fan hyn? Un deg un deben o lapis. Thalodd hi byth!"
+      },
+      "9": {
+        "explorer": "A rwyt ti'n dal i gofio hynna, ar ôl yr holl amser?"
+      },
+      "10": {
+        "ipi": "Mae wedi'i ysgrifennu! Os yw rhywbeth wedi'i ysgrifennu, mae e wedi digwydd."
+      },
+      "11": {
+        "ipi": "Ond yr Horis 'na… Hori'r cychwr, Hori'r pobydd… a'r Hori ARALL 'na."
+      },
+      "12": {
+        "fez": "Oedd cathod gyda ti hefyd? Roedd cathod gyda phawb, on'd oedd e? Pethau bach ciwt!"
+      },
+      "13": {
+        "ipi": "Ciwt? Roedden nhw ar gyfer y grawn! Wyt ti'n gwybod faint mae un llygoden fawr yn ei gostio i ti, dros dymor cyfan?"
+      },
+      "14": {
+        "fez": "…O. Iawn."
+      },
+      "15": {
+        "ipi": "Dwed wrth Henut mai Ipi anfonodd ti. Bydd hynna'n sbwylio'i phrynhawn hi."
+      },
+      "16": {
+        "fez": "Dw i'n ei hoffi fe!"
+      },
+      "17": {
+        "explorer": "Rwyt ti jyst yn hoffi bod arian yn ddyledus iddo fe o hyd."
+      }
+    },
+    "junior": {
+      "1": {
+        "henut": "O'r diwedd. Rwyt ti wedi dod am y lapis, siŵr o fod. Mae Ipi'n dal i gwyno am y lapis, mae'n debyg."
+      },
+      "2": {
+        "explorer": "Ydy."
+      },
+      "3": {
+        "henut": "Gwydr oedd e. Gwydr hardd. Roedd e'n gwybod."
+      },
+      "4": {
+        "fez": "…Oedd y freichled yn wydr hefyd?"
+      },
+      "5": {
+        "henut": "Mae popeth fan hyn yn gopi gorau y gallai arian ei brynu, ŵr ifanc, a dewisais i bob darn fy hunan."
+      },
+      "6": {
+        "henut": "Nawr. Y wal. Y trydydd arwydd — nid fy enw i yw hwnna. Rhyw brentis gyda chŷn a neb yn cadw llygad arno."
+      },
+      "7": {
+        "henut": "Rwyt ti wedi bod yn dysgu dy arwyddion. Dw i'n gallu gweld. Trwsia fe."
+      }
+    },
+    "juniorFixed": {
+      "1": {
+        "henut": "Dyna ni. Nawr fy enw i fydd e o hyd, ymhen mil o flynyddoedd."
+      },
+      "2": {
+        "explorer": "Sillafodd Ipi fe'n gywir."
+      },
+      "3": {
+        "henut": "Sillafodd Ipi bopeth yn gywir. Dyna'r unig beth da amdano fe."
+      },
+      "4": {
+        "fez": "Ydy e'n bwysig, i lawr fan hyn?"
+      },
+      "5": {
+        "henut": "Dyna'r unig beth sy'n bwysig."
+      },
+      "6": {
+        "fez": "Roedd wal gyfan o Thoth gyda hi lan fan'na. Duw cyfrinachau."
+      },
+      "7": {
+        "henut": "Mae Thoth yn cyfrif. Mae Thoth yn ysgrifennu beth wnest ti, ac mae'n aros wedi'i ysgrifennu."
+      },
+      "8": {
+        "henut": "Cyfrinachau yw beth mae pobl yn galw syms pan dydyn nhw ddim yn gallu eu gwneud nhw."
+      },
+      "9": {
+        "henut": "Os wyt ti'n mynd ymlaen — ac mae'n amlwg dy fod ti — mae offeiriad yn Karnak sydd heb wneud gwasanaeth roedd e i fod i'w wneud i'r meirw. Bydd e'n annioddefol am y peth. Mae offeiriaid felly."
+      },
+      "10": {
+        "henut": "…Ydyn ni wedi cwrdd?"
+      },
+      "11": {
+        "fez": "Baswn i'n cofio."
+      },
+      "12": {
+        "henut": "Basech. A finnau hefyd."
+      }
+    },
+    "expert": {
+      "1": {
+        "priest": "Nid chi yw'r person dw i'n ei ddisgwyl."
+      },
+      "2": {
+        "explorer": "Pwy ydych chi'n ei ddisgwyl?"
+      },
+      "3": {
+        "priest": "Rhywun gyda'r sêl. Roedd i fod i gael ei chario yma, ei gosod fan'na, a geiriau i gael eu dweud drosti. Dydy dim un o'r tri pheth yna wedi digwydd."
+      },
+      "4": {
+        "fez": "…Ers faint ydych chi wedi bod yn aros?"
+      },
+      "5": {
+        "priest": "Dw i ddim yn cadw cyfrif. Fyddai hynny ddim yn broffesiynol."
+      },
+      "6": {
+        "priest": "Rhodd go iawn yw rhywbeth roedd brenin yn ei ddal pan gafodd ei gladdu. Nid copi. Nid rhywbeth tebyg. Y peth ei hun, gyda'i farc e arno."
+      },
+      "7": {
+        "priest": "Dewch â hwnnw, a chewch eich cyhoeddi. Dewch ag unrhyw beth arall, a chewch chi ddim."
+      },
+      "8": {
+        "explorer": "Ein cyhoeddi i bwy?"
+      },
+      "9": {
+        "priest": "Fe gewch chi wybod. Mae pawb yn cael gwybod, yn y diwedd."
+      },
+      "10": {
+        "fez": "Mae e'n hoff iawn o'r haul, hwn. Yr holl Amun-Ra 'na tu fas."
+      },
+      "11": {
+        "priest": "Amun yw'r un cudd. Ra yw'r un mae pawb yn gallu ei weld."
+      },
+      "12": {
+        "priest": "Yr un duw ydyn nhw. Dydy hynny ddim yn ddamwain, dyna'r holl syniad."
+      },
+      "13": {
+        "fez": "…Iawn. Ie. Ro'n i'n gwybod hynna."
+      },
+      "14": {
+        "explorer": "Doeddet ti ddim."
+      },
+      "15": {
+        "fez": "Doeddwn i ddim."
+      }
+    },
+    "expertB": {
+      "1": {
+        "fez": "Does neb wedi bod i mewn fan hyn. Dim ni, dim y criw cynt, neb."
+      },
+      "2": {
+        "explorer": "Sut wyt ti'n gwybod?"
+      },
+      "3": {
+        "fez": "Achos mae rhywbeth ynddo fe o hyd."
+      }
+    },
+    "master": {
+      "1": {
+        "pharaoh": "Cewch ddod yn nes. Rydych chi wedi dod yn nes. Da iawn."
+      },
+      "2": {
+        "fez": "Eich mawrhydi."
+      },
+      "3": {
+        "pharaoh": "Ie."
+      },
+      "4": {
+        "explorer": "Mae angen eich sêl chi arnon ni."
+      },
+      "5": {
+        "pharaoh": "Mae ei hangen ar bawb. Mae fy un i wedi cael ei chymryd ddwywaith a byth wedi dod 'nôl."
+      },
+      "6": {
+        "pharaoh": "Yr ail dro, gadawon nhw gopi. COPI. Yn FY medd I. Fel petawn i ddim yn mynd i edrych."
+      },
+      "7": {
+        "explorer": "Ydy'r copi'n dal yma?"
+      },
+      "8": {
+        "pharaoh": "Wrth gwrs ei fod e'n dal yma, mae e'n werth dim. Mae e ar y silff lle dylai'r un go iawn fod, yn bod yn anghywir."
+      },
+      "9": {
+        "pharaoh": "Cymerwch e os mynnwch chi. Ewch ag e at yr offeiriad 'na. Gewch chi weld pa mor bell gewch chi."
+      },
+      "10": {
+        "fez": "…Mae e'n mwynhau hyn."
+      },
+      "11": {
+        "pharaoh": "Dw i'n cael yr wythnos orau ers naw can mlynedd."
+      },
+      "12": {
+        "fez": "Osiris ar y wal fan'na. Arglwydd y meirw — busnes digon tywyll."
+      },
+      "13": {
+        "pharaoh": "Mae e'n WYRDD, y creadur hurt!"
+      },
+      "14": {
+        "pharaoh": "Gwyrdd fel cae dan ddŵr. Cafodd ei ladd a'i roi 'nôl at ei gilydd, ac mae e'n dod 'nôl bob un flwyddyn."
+      },
+      "15": {
+        "pharaoh": "I lawr fan hyn, dydy hynny ddim yn dywyll, dyna'r holl bwynt. Dydy marw ddim yn ddiwedd."
+      }
+    },
+    "wizard": {
+      "1": {
+        "priest": "Rhowch hi i lawr. Fan'na. Ie."
+      },
+      "2": {
+        "priest": "…"
+      },
+      "3": {
+        "priest": "Dyna'r tro cyntaf i fi wneud hynna. Ro'n i wedi dechrau meddwl fy mod i wedi anghofio sut."
+      },
+      "4": {
+        "explorer": "Oeddech chi?"
+      },
+      "5": {
+        "priest": "Yn llwyr. Daeth e 'nôl."
+      }
+    },
+    "wizardB": {
+      "1": {
+        "fez": "Eu rhaff nhw. Wedi'i chlymu o hyd."
+      },
+      "2": {
+        "explorer": "Daethon nhw mor bell â hyn."
+      },
+      "3": {
+        "fez": "Ymhellach na hyn. Ac wedyn aethon nhw 'nôl i fyny arni."
+      },
+      "4": {
+        "explorer": "Mae llyfr nodiadau yma."
+      },
+      "5": {
+        "fez": "Beth mae'n ddweud?"
+      },
+      "6": {
+        "explorer": "Methu darllen yr ysgrifen. Wedi dod 'nôl am y sêl. Gwneud un well yn lle."
+      },
+      "7": {
+        "explorer": "Chafodd neb ei dwyllo."
+      },
+      "8": {
+        "fez": "…Gwnaethon nhw ei ffugio hi achos doedden nhw ddim yn gallu darllen beth oedd ei phwrpas."
+      },
+      "9": {
+        "explorer": "Ac wedyn aethon nhw adre."
+      }
+    },
+    "wizardC": {
+      "1": {
+        "fez": "Aros am eiliad. Edrych beth rydyn ni wedi bod yn ei gario allan o'r pyramidiau 'na."
+      },
+      "2": {
+        "explorer": "Llun yw e."
+      },
+      "3": {
+        "fez": "Mae e wedi bod yn llun drwy'r amser."
+      }
+    }
+  },
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Ogof! Roedd y map yn dangos drws seler, a dyma fryn cyfan!"
+      },
+      "2": {
+        "fez": "Boi clyfar. Cuddio dy stoc y tu mewn i fryn — fyddai dim lleidr yn meddwl am hynna."
+      },
+      "3": {
+        "explorer": "Fe wnaethon ni."
+      },
+      "4": {
+        "fez": "Dydyn ni ddim yn lladron. Cwsmeriaid ydyn ni. Cwsmeriaid hwyr iawn, iawn."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Rhaid mai fan hyn yw e. Henut! Honna â'r un deg un deben o lapis!"
+      },
+      "2": {
+        "fez": "Beth wyt ti'n feddwl — gawn ni gyfran os ydyn ni'n casglu'r arian?"
+      },
+      "3": {
+        "explorer": "Dwyt ti ddim wedi casglu dim byd."
+      },
+      "4": {
+        "fez": "Dw i'n hoffi gwneud y syms yn gynnar."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Felly fan hyn mae offeiriad Henut. Annioddefol, meddai hi."
+      },
+      "2": {
+        "fez": "Beth wyt ti'n feddwl, ddylen ni ddod â rhywbeth? Blodau?"
+      },
+      "3": {
+        "explorer": "Mae e wedi marw."
+      },
+      "4": {
+        "fez": "Mwy o reswm byth. Rwyt ti eisiau gwneud argraff dda y tro cyntaf."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Dim ond yr archoffeiriad oedd yn cael dod i mewn fan hyn. A nawr ni!"
+      },
+      "2": {
+        "explorer": "Ydyn ni'n cael?"
+      },
+      "3": {
+        "fez": "Does neb wrth y drws i ddweud na."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Edrych, mae'r map jyst yn stopio fan hyn. Tywod, a wedyn dim byd."
+      },
+      "2": {
+        "explorer": "Felly rydyn ni yn y lle iawn."
+      },
+      "3": {
+        "fez": "Dyna dw i'n ei feddwl. Dyna'n union sy'n fy ngwneud i'n nerfus."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Neuadd Osiris! Gwyrdd, wrth gwrs. Achos mae e'n dod 'nôl bob blwyddyn, fel y grawn."
+      },
+      "2": {
+        "explorer": "Roeddet ti wastad yn gwybod hynna."
+      },
+      "3": {
+        "fez": "Wastad."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Stordy'r duwiau eu hunain! Beth wyt ti'n ei gadw pan mae popeth gyda ti'n barod?"
+      },
+      "2": {
+        "explorer": "Beth bynnag mae pobl yn dod â fe i ti."
+      },
+      "3": {
+        "fez": "…Ie. Dyna fe, siŵr o fod."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Teyrnas y Grymoedd Mawr. Wel, wel."
+      },
+      "2": {
+        "fez": "Petai rhywbeth gyda fi i'w werthu oedd ddim yn llawer o ddim byd, dyna faswn i'n ei alw fe hefyd."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Mae gen i'r teimlad sydyn 'ma fy mod i wedi gwneud rhywbeth o'i le."
+      },
+      "2": {
+        "explorer": "Fel beth?"
+      },
+      "3": {
+        "fez": "Dim syniad. Dyna'r darn gwaethaf."
+      }
+    }
+  },
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Yr holl liferi a drysau 'na, ar gyfer un seler!"
+      },
+      "2": {
+        "fez": "Felly mae rhywbeth da i lawr fan'na. Does neb yn mynd i'r holl drafferth 'na am sbwriel."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Ffiw. Roedd y drysau 'na'n llawer mwy ffyslyd na rhai Ipi."
+      },
+      "2": {
+        "fez": "Wel. Roedd arian gyda'r ledi, wrth gwrs."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Ffiw, o'r diwedd! Doedd yr ogof 'na wir ddim eisiau ni i mewn."
+      },
+      "2": {
+        "explorer": "Dw i'n meddwl mai dyna oedd y syniad."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Psst… pam dw i'n sibrwd?"
+      },
+      "2": {
+        "explorer": "Dim syniad. Dw i'n ei wneud e hefyd."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Ffiw. Mae fy nghynffon i'n dal i grynu ar ôl y drws olaf 'na."
+      },
+      "2": {
+        "fez": "Brenin sy'n cloi ei bethau fel 'na… dydy e wir ddim eisiau eu colli nhw."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Weli di? Aros o dan y ddaear yn ddigon hir, ac i fyny â ti eto."
+      },
+      "2": {
+        "explorer": "Osiris yw hwnna hefyd?"
+      },
+      "3": {
+        "fez": "Na, fy un i yw hwnna."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Drysau fel 'na… ar un adeg, basen ni wedi troi rownd."
+      },
+      "2": {
+        "explorer": "Ddim bellach."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Tri llawr o ogof, a dim ond wedyn y drws ffrynt."
+      },
+      "2": {
+        "explorer": "Mae'n rhaid ei fod e'n werth chweil, felly."
+      },
+      "3": {
+        "fez": "Dyna maen nhw wastad yn ei ddweud. Ac wedyn jar yw e."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Darn olaf y tywyllwch. Dw i'n gallu ei deimlo fe."
+      },
+      "2": {
+        "explorer": "Wedest ti hynna wrth yr un diwethaf."
+      },
+      "3": {
+        "fez": "A ro'n i bron yn iawn."
+      }
+    }
+  },
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Edrych ar hwnna! Pyramid, o dan y ddaear! I fasnachwr!"
+      },
+      "2": {
+        "fez": "Naill ai roedd e'n ennill yn dda iawn, neu'n bargeinio'n dda iawn."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Edrych ar y top yn sgleinio yn yr haul! Aur go iawn, mentra i."
+      },
+      "2": {
+        "explorer": "I lawr twll yn y ddaear. I bwy mae'n sgleinio?"
+      },
+      "3": {
+        "fez": "Iddi hi. Rwyt ti'n nabod y teip."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Hm. Wyt ti wir yn cael gwerthu rhywbeth sydd eisoes yn perthyn i dduw?"
+      },
+      "2": {
+        "explorer": "Gofyn i'r duw."
+      },
+      "3": {
+        "fez": "Gwell gen i beidio."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Wyt ti'n meddwl bod yr offeiriad 'na'n gwybod ein bod ni'n crwydro o gwmpas fan hyn?"
+      },
+      "2": {
+        "explorer": "Dydy e ddim yn cadw cyfrif. Fyddai hynny ddim yn broffesiynol."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Edrych arno fe, ar ei ben ei hun yn yr haul. Hyfryd, on'd yw e?"
+      },
+      "2": {
+        "fez": "Beth am i ni dynnu llun ohono fe a mynd?"
+      },
+      "3": {
+        "explorer": "Dwyt ti ddim yn gallu tynnu llun."
+      },
+      "4": {
+        "fez": "…Na. I mewn â ni, felly."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Pwy bynnag sydd i mewn fan'na, mae e'n disgwyl dod 'nôl. Dyna'r fargen ffordd hyn."
+      },
+      "2": {
+        "explorer": "Ers faint mae e wedi bod yn aros?"
+      },
+      "3": {
+        "fez": "Amser hir. Ond mae'n rhan o'r swydd. Aros yw rhan fwyaf bod yn farw."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "explorer": "Waw."
+      },
+      "2": {
+        "fez": "Ie."
+      },
+      "3": {
+        "fez": "Weithiau does dim byd ar ôl i'w ddweud, nag oes?"
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Weli di'r darn o haul ar y pyramid? Gallet ti ddweud faint o'r gloch yw hi wrtho fe."
+      },
+      "2": {
+        "explorer": "Faint o'r gloch yw hi, felly?"
+      },
+      "3": {
+        "fez": "…Prynhawn. Fwy neu lai. Dw i ddim yn gloc."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Dyna fe. Mae pob llinell ar y map yn gorffen fan hyn."
+      },
+      "2": {
+        "explorer": "Felly dyma'r diwedd."
+      },
+      "3": {
+        "fez": "Diwedd y map, ie. Doniol. Ro'n i'n meddwl y byddai hynna'n teimlo'n well."
+      }
+    }
+  },
+  "camp": {
+    "firstHome": {
+      "1": {
+        "fez": "Dyma dy wersyll di? Tân a chist?"
+      },
+      "2": {
+        "explorer": "Ein gwersyll ni."
+      },
+      "3": {
+        "fez": "Ein un ni. Iawn. Felly fi sy'n cael y lle wrth y tân."
+      },
+      "4": {
+        "fez": "Madfall ydw i, wedi'r cwbl. Pan mae'n fy siwtio i."
+      }
+    },
+    "homeHaul": {
+      "1": {
+        "fez": "Dadbacio! Darn gorau'r daith gyfan."
+      },
+      "2": {
+        "explorer": "Gwell na'r pyramid?"
+      },
+      "3": {
+        "fez": "Dydy'r pyramid ddim yn eiddo i ni. Mae hwn."
+      }
+    },
+    "homeEmpty": {
+      "1": {
+        "explorer": "Dwylo gwag."
+      },
+      "2": {
+        "fez": "So? Fe gerddon ni. Mae hynna'n cyfri hefyd."
+      },
+      "3": {
+        "explorer": "Tuag at beth?"
+      },
+      "4": {
+        "fez": "Fy nghoesau. Maen nhw'n fyr iawn, cofia."
+      }
+    },
+    "rested": {
+      "1": {
+        "fez": "Dyna ni. Teimlo ychydig yn well?"
+      },
+      "2": {
+        "explorer": "Dim ond crafiad oedd e."
+      },
+      "3": {
+        "fez": "Wnes i ddim hyd yn oed edrych. A bu rhaid i fi eistedd i lawr o hyd."
+      }
+    },
+    "chapterJunior": {
+      "1": {
+        "fez": "Wel, aeth hynna'n dda. Nesaf!"
+      },
+      "2": {
+        "explorer": "Doedd e ddim mor hawdd â hynna."
+      },
+      "3": {
+        "fez": "Mae e nawr. Mae popeth yn hawdd wedyn."
+      }
+    },
+    "chapterExpert": {
+      "1": {
+        "fez": "Mas fan'na mae trapiau. Rhai go iawn. Maen nhw'n cnoi."
+      },
+      "2": {
+        "fez": "Cael dolur? Wedyn rydyn ni jyst yn cerdded 'nôl. Byddi di'n gwella gartre."
+      },
+      "3": {
+        "explorer": "Beth amdanat ti?"
+      },
+      "4": {
+        "fez": "Fe gerdda i y tu ôl i ti. Mae'n saffach fan'na."
+      }
+    },
+    "chapterMaster": {
+      "1": {
+        "fez": "Pedwar pyramid mas fan'na. Cofio pan oedd dim ond un?"
+      },
+      "2": {
+        "explorer": "Doedd hynna ddim mor bell yn ôl."
+      },
+      "3": {
+        "fez": "Na. Ond mae'n teimlo felly."
+      }
+    },
+    "chapterWizard": {
+      "1": {
+        "fez": "Edrych ar yr un olaf. Top aur a phopeth!"
+      },
+      "2": {
+        "fez": "Bydd hwnna'n costio i ni. Mae'r un olaf wastad yn costio."
+      },
+      "3": {
+        "explorer": "Costio beth i ni?"
+      },
+      "4": {
+        "fez": "…Dw i ddim yn siŵr bellach."
+      }
+    },
+    "firstFind": {
+      "1": {
+        "fez": "Edrych ar hwnna — fel petai e wastad wedi bod yna!"
+      },
+      "2": {
+        "fez": "Mae'n fy nghosi i roi label pris arno fe."
+      },
+      "3": {
+        "explorer": "Paid."
+      },
+      "4": {
+        "fez": "Na, na. Dwyt ti ddim yn gwerthu o gartre. Dw i'n gwybod hynna."
+      }
+    },
+    "structureDone": {
+      "1": {
+        "fez": "Mae e'n barod! Mae pob darn olaf i mewn!"
+      },
+      "2": {
+        "explorer": "Ein gwaith ni i gyd."
+      },
+      "3": {
+        "fez": "Wel. Pwyntio wnes i, gan amlaf."
+      }
+    }
+  },
+  "animal": {
+    "forSale": {
+      "1": {
+        "fez": "Edrych beth sydd wrth y stondin! Dw i'n gwneud cludiant nawr."
+      },
+      "2": {
+        "explorer": "Mae e'n cnoi."
+      },
+      "3": {
+        "fez": "Mae hynna'n rhan o'r pris."
+      }
+    },
+    "boughtDonkey": {
+      "1": {
+        "fez": "Wedi'i werthu! Un asyn. Styfnig, ond fe gariith e unrhyw beth."
+      },
+      "2": {
+        "explorer": "Felly ble mae e?"
+      },
+      "3": {
+        "fez": "Ar ei ffordd adre'n barod. Mae'n well ganddo fe gerdded hebddon ni."
+      }
+    },
+    "blockedDonkey": {
+      "1": {
+        "fez": "Dydyn ni ddim yn cerdded mor bell â hynna gyda'r holl stwff 'ma. Mae angen asyn."
+      },
+      "2": {
+        "fez": "A dyfala pwy sydd ag un? Fi. Wrth fy stondin yng nghladdgell Henut."
+      }
+    },
+    "throughDonkey": {
+      "1": {
+        "explorer": "Mae e'n fodlon."
+      },
+      "2": {
+        "fez": "Heddiw. Gofyn iddo fe eto fory."
+      }
+    },
+    "arrivesDonkey": {
+      "1": {
+        "fez": "Dyna fe! Cyrhaeddodd e o'n blaenau ni."
+      },
+      "2": {
+        "explorer": "Ffeindiodd e'r tân, hefyd."
+      },
+      "3": {
+        "fez": "Fy lle i. Wel. Fe oedd yma gyntaf."
+      }
+    },
+    "boughtCart": {
+      "1": {
+        "fez": "Cert! Dwy olwyn, a prin maen nhw'n ratlo."
+      },
+      "2": {
+        "explorer": "Prin?"
+      },
+      "3": {
+        "fez": "Mae'r ratl am ddim."
+      }
+    },
+    "blockedCart": {
+      "1": {
+        "fez": "Dydy'r asyn ddim yn fodlon cario bag arall. Gofynnais i iddo fe."
+      },
+      "2": {
+        "fez": "Cert, dyna sydd ei angen. Mae un wrth fy stondin, yn lle'r archoffeiriad."
+      }
+    },
+    "throughCart": {
+      "1": {
+        "explorer": "Glywi di hwnna?"
+      },
+      "2": {
+        "fez": "Y gert yw hwnna. Mae hi'n canu ychydig."
+      },
+      "3": {
+        "explorer": "Yr holl ffordd?"
+      }
+    },
+    "arrivesCart": {
+      "1": {
+        "fez": "Cert yn ein gwersyll ni! Nawr rydyn ni'n edrych fel petaen ni'n mynd i rywle."
+      },
+      "2": {
+        "explorer": "Rydyn ni yn mynd i rywle."
+      },
+      "3": {
+        "fez": "Ydyn, ond nawr mae pawb yn gallu gweld hynny."
+      }
+    },
+    "boughtCamel": {
+      "1": {
+        "fez": "Camel! Gall fynd am ddyddiau heb ddŵr. Alla i ddim, cofia."
+      },
+      "2": {
+        "explorer": "Mae e'n edrych arnat ti."
+      },
+      "3": {
+        "fez": "I lawr arna i. Mae camelod wastad yn edrych i lawr arnat ti."
+      }
+    },
+    "blockedCamel": {
+      "1": {
+        "fez": "Y Cysegr Mewnol? Chyrhaeddwn ni byth fan'na ar droed."
+      },
+      "2": {
+        "fez": "Lwcus i ni, mae camel gyda fi. Wrth fy stondin, yn lle'r archoffeiriad."
+      }
+    },
+    "throughCamel": {
+      "1": {
+        "fez": "Mae e'n penlinio! I fi!"
+      },
+      "2": {
+        "explorer": "Er mwyn i ni ddringo arno fe."
+      },
+      "3": {
+        "fez": "Gad i fi gael hyn."
+      }
+    },
+    "arrivesCamel": {
+      "1": {
+        "fez": "Dyna fe. Yn ymddwyn fel petai'r gwersyll yn eiddo iddo fe."
+      },
+      "2": {
+        "explorer": "A'r asyn?"
+      },
+      "3": {
+        "fez": "Yn esgus peidio â'i weld e. Yr un fath â fi."
+      }
+    },
+    "boughtSecondDonkey": {
+      "1": {
+        "fez": "Asyn arall! Nawr mae gan yr un cyntaf rywun i siarad â fe."
+      },
+      "2": {
+        "explorer": "Siarad?"
+      },
+      "3": {
+        "fez": "Nadu. Siarad yw e, ond yn uwch."
+      }
+    },
+    "blockedSecondDonkey": {
+      "1": {
+        "fez": "Dydy'r asyn ddim yn fodlon mynd ymlaen. Ddim ar ei ben ei hun, meddai fe."
+      },
+      "2": {
+        "explorer": "Wedodd e hynna?"
+      },
+      "3": {
+        "fez": "Dw i'n siarad asyn. Mae e eisiau ffrind, ac mae un gyda fi wrth fy stondin yng nghelc y pharo."
+      }
+    },
+    "throughSecondDonkey": {
+      "1": {
+        "fez": "Gwranda arnyn nhw! Pob un yn uwch na'r llall."
+      },
+      "2": {
+        "explorer": "Pwy sy'n ennill?"
+      },
+      "3": {
+        "fez": "Dim ni. Mae'n rhaid i ni wrando arno fe."
+      }
+    },
+    "arrivesSecondDonkey": {
+      "1": {
+        "fez": "Edrych arnyn nhw. Fel petaen nhw wedi nabod ei gilydd ers blynyddoedd."
+      },
+      "2": {
+        "explorer": "Fel ni."
+      },
+      "3": {
+        "fez": "Rydyn ni'n nadu llai."
+      }
+    },
+    "boughtSecondCamel": {
+      "1": {
+        "fez": "Camel arall. Ie. Dw i ddim yn eu hoffi nhw chwaith."
+      },
+      "2": {
+        "fez": "Ond o leiaf mae hwn yn edrych yn gyfeillgar."
+      },
+      "3": {
+        "explorer": "Mae e'n edrych ar dy fez di."
+      }
+    },
+    "blockedSecondCamel": {
+      "1": {
+        "fez": "Neuadd Osiris. Wnaiff un camel ddim mynd â ni yno."
+      },
+      "2": {
+        "fez": "Lwcus, mae un arall gyda fi, wrth fy stondin yng nghelc y pharo. Fy un olaf un."
+      },
+      "3": {
+        "explorer": "Rwyt ti wastad yn dweud hynna."
+      }
+    },
+    "throughSecondCamel": {
+      "1": {
+        "fez": "Mae e'n bwyta fy fez i!"
+      },
+      "2": {
+        "explorer": "Camel cyfeillgar."
+      },
+      "3": {
+        "fez": "Rhy gyfeillgar."
+      }
+    },
+    "arrivesSecondCamel": {
+      "1": {
+        "fez": "Dau gamel. Nawr mae'r ddau'n edrych i lawr arna i."
+      },
+      "2": {
+        "explorer": "Cer i sefyll gyda'r asynnod, 'te."
+      },
+      "3": {
+        "fez": "Dw i yno'n barod."
+      }
+    },
+    "boughtSturdyCart": {
+      "1": {
+        "fez": "Cert gryfach. Dydy hon ddim yn canu ar y ffordd."
+      },
+      "2": {
+        "explorer": "Mae blodau wedi'u paentio arni."
+      },
+      "3": {
+        "fez": "Er mwyn ei gwneud hi'n gryf."
+      }
+    },
+    "blockedSturdyCart": {
+      "1": {
+        "fez": "Wnaiff yr hen gert ddim cyrraedd yno mewn un darn. Mae angen rhywbeth cryfach."
+      },
+      "2": {
+        "fez": "Mae un wrth fy stondin yng Nghladdgell y Duwiau. Nid am y paent, cofia."
+      }
+    },
+    "throughSturdyCart": {
+      "1": {
+        "explorer": "Dim ratl."
+      },
+      "2": {
+        "fez": "Weli di? Cryfder."
+      },
+      "3": {
+        "explorer": "A'r blodau?"
+      },
+      "4": {
+        "fez": "Maen nhw'n helpu ychydig hefyd."
+      }
+    },
+    "arrivesSturdyCart": {
+      "1": {
+        "fez": "Edrych arni'n sgleinio!"
+      },
+      "2": {
+        "explorer": "Pertach nag sydd angen."
+      },
+      "3": {
+        "fez": "Ie. Wnes i ddim ei gwerthu hi am ei chryfder chwaith."
+      }
+    },
+    "boughtCaravanBanner": {
+      "1": {
+        "fez": "Baner. Fe fydda i'n onest: dydy hi ddim yn agor dim byd."
+      },
+      "2": {
+        "explorer": "Beth mae hi'n ei wneud, 'te?"
+      },
+      "3": {
+        "fez": "Chwifio. Yn hyfryd."
+      }
+    },
+    "arrivesCaravanBanner": {
+      "1": {
+        "fez": "Edrych arni'n chwifio! Dros ein gwersyll ni!"
+      },
+      "2": {
+        "explorer": "Dal ddim yn agor dim byd."
+      },
+      "3": {
+        "fez": "Na. Does dim rhaid iddi."
+      }
+    }
+  },
+  "bond": {
+    "starter": {
+      "1": {
+        "fez": "Roedd hynna'n gyflym."
+      },
+      "2": {
+        "explorer": "Drws oedd e."
+      },
+      "3": {
+        "fez": "Baswn i wedi cymryd wythnos."
+      }
+    },
+    "starterTomb": {
+      "1": {
+        "fez": "Jyst i fod yn glir. Dw i yma i ailwerthu. Dw i'n ei ddweud e nawr, tra'i fod e'n dal yn wir."
+      },
+      "2": {
+        "explorer": "Iawn."
+      }
+    },
+    "junior": {
+      "1": {
+        "fez": "Est ti'n dawel am ychydig fan'na."
+      },
+      "2": {
+        "explorer": "Ro'n i'n cyfrif."
+      },
+      "3": {
+        "fez": "Dw i'n gwybod. Dw i wedi gweld pobl yn dyfalu. Nid dyfalu oedd hwnna."
+      }
+    },
+    "expert": {
+      "1": {
+        "fez": "Roedd hwnna'n agos."
+      },
+      "2": {
+        "explorer": "Roedd e'n iawn."
+      },
+      "3": {
+        "fez": "Roedd e'n agos. Dw i'n cael dweud hynny."
+      }
+    },
+    "master": {
+      "1": {
+        "fez": "Gallen ni stopio."
+      },
+      "2": {
+        "explorer": "Gallen."
+      },
+      "3": {
+        "fez": "Dw i'n ei ddweud e er mwyn iddo fe gael ei ddweud. Nid er mwyn i ni ei wneud e."
+      }
+    },
+    "wizard": {
+      "1": {
+        "explorer": "Faint yw gwerth hwn?"
+      },
+      "2": {
+        "fez": "…"
+      },
+      "3": {
+        "fez": "Dw i ddim yn mynd i roi pris ar hwnna."
+      },
+      "4": {
+        "explorer": "Iawn."
+      }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": {
+        "fez": "Wow. Wal oedd hwnna eiliad yn ôl."
+      },
+      "2": {
+        "explorer": "Roedd coridor y tu ôl iddi."
+      },
+      "3": {
+        "fez": "Yr holl flynyddoedd 'na, cerddodd pobl reit heibio iddo fe. Yr holl flynyddoedd!"
+      }
+    }
+  },
+  "reading": {
+    "junior": {
+      "1": {
+        "explorer": "Mae llinell fan hyn dw i'n gallu ei darllen nawr."
+      },
+      "2": {
+        "explorer": "Rhoddais fara i'r rhai oedd eisiau bwyd."
+      },
+      "3": {
+        "fez": "Bara. Mewn bedd."
+      },
+      "4": {
+        "explorer": "Mae e yn yr un diwethaf hefyd. Do'n i ddim yn gwybod mai geiriau oedden nhw."
+      }
+    },
+    "expert": {
+      "1": {
+        "explorer": "Ail linell. Dŵr i'r rhai oedd yn sychedig."
+      },
+      "2": {
+        "fez": "Bara, a nawr dŵr. Roedd rhywun yn awyddus iawn i bobl gofio pa mor hael oedd e."
+      },
+      "3": {
+        "explorer": "Mae e gyda pawb. Pob wal, pob bedd, yr un ddwy linell."
+      },
+      "4": {
+        "fez": "Felly naill ai roedden nhw i gyd yn hael, neu dyna beth rwyt ti i fod i'w ddweud."
+      },
+      "5": {
+        "explorer": "Neu dyna beth gawson nhw eu pwyso arno."
+      }
+    },
+    "master": {
+      "1": {
+        "explorer": "Dillad i'r rhai heb ddim. Trydedd linell."
+      },
+      "2": {
+        "fez": "Bara, dŵr, dillad. Rhestr o bethau wedi'u rhoi i ffwrdd yw hi."
+      },
+      "3": {
+        "explorer": "Ym medd dyn aeth â phopeth gyda fe."
+      },
+      "4": {
+        "fez": "…Ie. Ro'n i wedi sylwi ar hynna."
+      }
+    },
+    "sphinx": {
+      "1": {
+        "fez": "'Nôl lle dechreuon ni. Dydy e ddim wedi symud."
+      },
+      "2": {
+        "explorer": "Mae'r ysgrifen yno o hyd."
+      },
+      "3": {
+        "fez": "Alli di ei darllen hi?"
+      },
+      "4": {
+        "explorer": "Enw."
+      },
+      "5": {
+        "fez": "Enw pwy?"
+      },
+      "6": {
+        "explorer": "Dy enw di."
+      },
+      "7": {
+        "fez": "…"
+      },
+      "8": {
+        "fez": "Wyt ti'n siŵr?"
+      },
+      "9": {
+        "explorer": "Mae wedi'i ysgrifennu."
+      },
+      "10": {
+        "fez": "Hy."
+      },
+      "11": {
+        "fez": "Hori."
+      },
+      "12": {
+        "fez": "Roedd Hori ym mhob pentref yn yr Aifft."
+      },
+      "13": {
+        "fez": "Wel. Mae hynna'n esbonio'r fez."
+      }
+    }
+  },
+  "altar": {
+    "refused": {
+      "1": {
+        "priest": "Na."
+      },
+      "2": {
+        "explorer": "Mae ei farc e arni."
+      },
+      "3": {
+        "priest": "Mae marc arni. Mae'n farc da iawn. Cafodd ei dorri gan rywun ag offer ardderchog a dim busnes bod yma, a hynny ddim yn bell yn ôl."
+      },
+      "4": {
+        "priest": "Dw i wedi bod yn aros ers tair mil o flynyddoedd. Dw i ddim yn mynd i gael fy nhwyllo yn yr wythnos olaf."
+      }
+    }
+  },
+  "meeting": {
+    "starter_1": {
+      "1": {
+        "voice": "Hei! Nid FAN'NA! Gwylia ble rwyt ti'n mynd!"
+      },
+      "2": {
+        "explorer": "Sori! Dw i ddim yn gallu gweld dim byd! Ble wyt ti?"
+      },
+      "3": {
+        "fez": "Lawr fan hyn! Rwyt ti'n sefyll yn fy stoc i!"
+      },
+      "4": {
+        "explorer": "Madfall?! Mewn fez?"
+      },
+      "5": {
+        "fez": "Masnachwr. A beth sy'n bod ar fy fez i?"
+      },
+      "6": {
+        "fez": "Rwyt ti yma am y pyramid hefyd, mentra i. Prynu map? Talu llawer gormod?"
+      },
+      "7": {
+        "explorer": "LLAWER gormod."
+      },
+      "8": {
+        "fez": "Fi hefyd. Pff."
+      },
+      "9": {
+        "explorer": "Yr ysgrifen ar y Sffincs… alli di ei darllen hi?"
+      },
+      "10": {
+        "fez": "Na. Does neb yn gallu, bellach. Roedd y gwaelod 'na'n las ac aur ar un adeg, ti'n gwybod."
+      },
+      "11": {
+        "explorer": "Sut wyt ti'n gwybod hynna?"
+      },
+      "12": {
+        "fez": "…Clywed. Felly, beth wyt ti'n chwilio amdano i lawr fan hyn?"
+      },
+      "13": {
+        "explorer": "Rhywbeth gwych."
+      },
+      "14": {
+        "fez": "Mae gwych yn gwerthu! Ti'n gwybod beth? Dw i'n dod gyda ti!"
+      },
+      "15": {
+        "explorer": "Beth? Gyda fi?"
+      },
+      "16": {
+        "fez": "Mae dau yn gweld mwy nag un. Dere, mae'r pyramid 'na'n aros!"
+      }
+    }
+  },
+  "end": {
+    "1": {
+      "fez": "Oedd e'n wych?"
+    },
+    "2": {
+      "explorer": "Fe wnaiff y tro."
+    }
+  },
+  "revisit": {
+    "starter": {
+      "north1": {
+        "1": {
+          "ipi": "Dal yma? I'r gogledd! Henut! Un deg un deben!"
+        }
+      },
+      "north2": {
+        "1": {
+          "ipi": "Un deg un deben o lapis. Henut. Gogledd. Am beth wyt ti'n aros?"
+        }
+      },
+      "paid1": {
+        "1": {
+          "ipi": "Wel? Dalodd hi? …Naddo. Wrth gwrs naddo."
+        }
+      },
+      "paid2": {
+        "1": {
+          "ipi": "Gwydr? GWYDR? Lapis mae'n ddweud. Fan hyn. Lapis!"
+        }
+      },
+      "later1": {
+        "1": {
+          "ipi": "Ti eto. Trydedd silff, yr un â'r darn wedi torri — fi piau hi o hyd. Dwylo bant."
+        }
+      },
+      "later2": {
+        "1": {
+          "ipi": "Deugain mlynedd o lyfrau, a dydy dim un ohonyn nhw'n adio'n iawn. Dim un!"
+        }
+      }
+    },
+    "junior": {
+      "wall1": {
+        "1": {
+          "henut": "Y wal. Y trydydd arwydd. Dydy e dal ddim yn fy enw i."
+        }
+      },
+      "wall2": {
+        "1": {
+          "henut": "Rwyt ti'n dal yma, ac mae'r ŵydd 'na'n dal ar fy wal i. Trwsia fe."
+        }
+      },
+      "priest1": {
+        "1": {
+          "henut": "Fy enw i o hyd. Dw i wedi edrych. Nawr — Karnak, yr offeiriad. Bant â ti."
+        }
+      },
+      "priest2": {
+        "1": {
+          "henut": "Karnak! Mae e wedi bod yn aros yn ddigon hir. Cer i gael dy gyhoeddi."
+        }
+      },
+      "met1": {
+        "1": {
+          "henut": "Wel? Annioddefol, on'd oedd e? Wedes i."
+        }
+      },
+      "later1": {
+        "1": {
+          "henut": "Gwydr, o hyd. Hardd, o hyd. Wedi'i ddewis gen i, o hyd."
+        }
+      }
+    },
+    "expert": {
+      "seal1": {
+        "1": {
+          "priest": "Y sêl. Wedi'i chario yma, wedi'i gosod, geiriau wedi'u dweud drosti. Fe arhosa i."
+        }
+      },
+      "seal2": {
+        "1": {
+          "priest": "A. Chi eto. A dal dim sêl."
+        }
+      },
+      "king1": {
+        "1": {
+          "priest": "Rydych chi wedi gweld y brenin. Da. Y peth ei hun, cofiwch — nid rhywbeth tebyg."
+        }
+      },
+      "later1": {
+        "1": {
+          "priest": "Chi eto. Does dim byd ar ôl i'w wneud fan hyn. Mae'n braf ac yn dawel iawn."
+        }
+      }
+    },
+    "master": {
+      "priest1": {
+        "1": {
+          "pharaoh": "Dal yma? At yr offeiriad gyda'r copi 'na! Dw i eisiau clywed sut mae'n mynd."
+        }
+      },
+      "priest2": {
+        "1": {
+          "pharaoh": "Cewch ddod yn nes. Eto. Ydy'r offeiriad wedi'i weld e eto?"
+        }
+      },
+      "rite1": {
+        "1": {
+          "pharaoh": "Felly fe wnaeth e ei ddefod o'r diwedd. Da. Nawr bydd e'n annioddefol am y peth."
+        }
+      },
+      "later1": {
+        "1": {
+          "pharaoh": "Yr wythnos orau ers naw can mlynedd o hyd. Ac mae'n dal i fynd!"
+        }
+      }
+    },
+    "wizard": {
+      "later1": {
+        "1": {
+          "priest": "…Ie. Dw i'n dal i gofio sut. Da."
+        }
+      },
+      "later2": {
+        "1": {
+          "priest": "Wedi'i gosod, geiriau wedi'u dweud. Wedi gorffen. Mae'n deimlad rhyfedd."
+        }
+      }
+    }
+  }
+}

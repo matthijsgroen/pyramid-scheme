@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Harria",
+    "bronze": "Brontzea",
+    "silver": "Zilarra",
+    "gold": "Urrea",
+    "divine": "Jainkotiarra"
+  },
+  "sell_stone_1": {
+    "name": "Ostrakon apurtua",
+    "description": "Buztinezko zati hautsia, eskribau baten ariketekin marraztua. Letrak ia ez dira ikusten."
+  },
+  "sell_stone_2": {
+    "name": "Buztinezko pitxer pitzatua",
+    "description": "Gari edo garagardorako pitxerra. Mendeen pisuak alde batetik zabaldu du."
+  },
+  "sell_stone_3": {
+    "name": "Ihizko sandalia higatua",
+    "description": "Papiro-ihiz ehundua. Aspaldiko langile baten eguneroko ibilaldiek zola mehe-mehe utzi dute."
+  },
+  "sell_stone_4": {
+    "name": "Liho-zati koloregabea",
+    "description": "Tindatu gabeko liho-zerrenda urratua. Hildakoei inguruan biltzen zitzaien, edo bela bat adabatzeko erabiltzen zen."
+  },
+  "sell_stone_5": {
+    "name": "Suharrizko aizto hautsia",
+    "description": "Suharrizko labana, punta hautsita. Egiten merkea, ordezkatzen are merkeagoa."
+  },
+  "sell_bronze_1": {
+    "name": "Brontzezko amuleto okertua",
+    "description": "Babeserako kutun merkea. Oker egin zuten, eta inork ez zuen konpondu."
+  },
+  "sell_bronze_2": {
+    "name": "Brontzezko ispilu herdoildua",
+    "description": "Garai batean hain distiratsua zen, zure burua ikus zenezakeen. Orain berde eta lauso dago."
+  },
+  "sell_bronze_3": {
+    "name": "Brontzezko amu kamutsa",
+    "description": "Arrantzale baten tresna. Nilora erori zitzaion, hilobia itxi baino askoz lehenago."
+  },
+  "sell_bronze_4": {
+    "name": "Brontzezko kanpai txikia",
+    "description": "Tenplu baten atean edo dantzari baten orkatilan zintzilikatzeko zen. Orain ez du ondo jotzen."
+  },
+  "sell_bronze_5": {
+    "name": "Brontzezko eraztun iluna",
+    "description": "Eraztun soila, aspaldi hauts bihurtu zen hatz batentzat egina."
+  },
+  "sell_silver_1": {
+    "name": "Zilarrezko ankh iluna",
+    "description": "Bizitzaren ikurra. Lur azpian mendeak eman ondoren, distira galdu du."
+  },
+  "sell_silver_2": {
+    "name": "Zilarrezko kohl-makila",
+    "description": "Makila mehea, aberatsen begiak margotzeko. Kohla aspaldi desagertu zen."
+  },
+  "sell_silver_3": {
+    "name": "Zilarrezko katilu zanpatua",
+    "description": "Eskaintzetarako katilu txikia. Gaineko sabaia erori zenean, alde bat zapaldu zitzaion."
+  },
+  "sell_silver_4": {
+    "name": "Zilarrezko ile-orratza",
+    "description": "Sinplea, apaingarririk gabea. Izena galdu den norbaiten ilea eusten zuen."
+  },
+  "sell_silver_5": {
+    "name": "Zilarrezko eskumuturreko higatua",
+    "description": "Zilarrezko zerrenda mehea, itxitura hautsita. Noble batentzat ez da nahikoa fina, langile batentzat fin larregi."
+  },
+  "sell_gold_1": {
+    "name": "Urrezko ale txikia",
+    "description": "Hileta-lepoko bateko ale bat, aspaldi sakabanatua."
+  },
+  "sell_gold_2": {
+    "name": "Urre-xafla zatia",
+    "description": "Urre-xafla puska mehea. Hilobi-lapurrek irudi baten aurpegitik kendu zuten, zu iritsi baino mende asko lehenago."
+  },
+  "sell_gold_3": {
+    "name": "Urrezko belarritako mehea",
+    "description": "Mailukatuz mehe-mehe egina, noble baten urrea gehiagorako izan zedin."
+  },
+  "sell_gold_4": {
+    "name": "Urre-printzadun zatia",
+    "description": "Igeltsu urreztatuaren zati hautsia. Benetako urre-printzak oraindik itsatsita daude."
+  },
+  "sell_gold_5": {
+    "name": "Urrezko zigilu-eraztun apurtua",
+    "description": "Zigilu-eraztuna, grabatua ezin irakurrizkoa. Nori zegokion, inork ez du gogoratzen."
+  },
+  "sell_divine_1": {
+    "name": "Lapitzezko kakalardo kolore-galdua",
+    "description": "Lapislazuli preziatuz zizelkatua, oso garesti ekarria faraoi baten berpizkunderako. Mendeekin kolorea galdu du."
+  },
+  "sell_divine_2": {
+    "name": "Kornalinazko begi-amuletoa",
+    "description": "Odol-gorri kornalinaz zizelkatutako begi babeslea. Heriotzaren ondoko bizitzan zorte txarra uxatzeko zen."
+  },
+  "sell_divine_3": {
+    "name": "Turkesa-zatitxoa",
+    "description": "Mosaiko hautsi bateko pieza bakarra. Tenplu bateko horman jainko baten irudiaren parte zen."
+  },
+  "sell_divine_4": {
+    "name": "Alabastrozko ontzi kanopikoaren zatia",
+    "description": "Faraoi baten barrenak gordetzeko ontzi baten zati hautsia. Harri preziatua, zeregin goibel baterako."
+  },
+  "sell_divine_5": {
+    "name": "Obsidianazko errito-aiztoa",
+    "description": "Sumendi-beira, zeremonietarako zorroztua. Ez zen borrokarako, tenplurako baizik."
+  }
+}

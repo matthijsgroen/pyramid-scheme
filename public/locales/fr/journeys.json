@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "L’aube au Sphinx",
+    "description": "Le grand Sphinx, et l’écriture à ses pieds que plus personne ne sait lire. La carte dit : commence ici."
+  },
+  "starter_2": {
+    "name": "La route du marchand de papyrus",
+    "description": "Une route de commerce le long du Nil, bordée de réserves de marchands. Certaines n’ont jamais été vidées."
+  },
+  "starter_3": {
+    "name": "Le temple de Bastet",
+    "description": "Le temple de Bastet. Ici, les chats étaient sacrés, et sa fête était la plus grande d’Égypte : des bateaux, de la musique, tout !"
+  },
+  "starter_4": {
+    "name": "L’école des scribes",
+    "description": "L’école des scribes, où l’Égypte a appris à écrire. Les salles de classe sont encore sous le sable."
+  },
+  "starter_treasure_tomb": {
+    "name": "La cachette du marchand oublié",
+    "description": "La cave d’un marchand, pas celle d’un roi : des jarres empilées, fermées, étiquetées, et personne en bas pour se les disputer.",
+    "mapHint": "Le bout de papier dessine une route de marché et une porte de cave. La cachette d’un marchand, rien de plus."
+  },
+  "junior_1": {
+    "name": "Le voyage des ibis sacrés",
+    "description": "Un pays de marais, où marchent les ibis. L’Égypte surveillait ces oiseaux : quand ils reviennent, la crue du Nil arrive."
+  },
+  "junior_2": {
+    "name": "La vallée des artisans",
+    "description": "Deir el-Médina, où vivaient ceux qui fabriquaient les tombeaux. Tout ce qu’on mettait dans une tombe royale était d’abord fait ici, dans des moules."
+  },
+  "junior_3": {
+    "name": "Le temple de Thot",
+    "description": "Le temple de Thot. Il a inventé l’écriture, gardé les registres et fait les comptes. C’est à peu près ce qu’on fait depuis le début !"
+  },
+  "junior_4": {
+    "name": "Le phare d’Alexandrie",
+    "description": "Le phare d’Alexandrie. Un feu en haut, qui brûlait toute la nuit, et les marins voyaient la côte à un jour de bateau."
+  },
+  "junior_treasure_tomb": {
+    "name": "Le caveau caché de la noble",
+    "description": "Le caveau d’une noble, peint du sol au plafond. Elle a acheté les plus belles copies du pays, et ne l’a jamais dit à personne.",
+    "mapHint": "Une encre fine, un sceau avec un blason dans le coin. Quelqu’un d’important voulait qu’on oublie cette salle."
+  },
+  "expert_1": {
+    "name": "La Vallée des Rois",
+    "description": "La Vallée des Rois. On a arrêté de construire des pyramides, et on a caché les tombes royales dans une vallée, sous un sommet en forme de pyramide."
+  },
+  "expert_2": {
+    "name": "Le temple de Karnak",
+    "description": "Karnak, agrandi pendant deux mille ans. Rien que la grande salle a cent trente-quatre colonnes, toutes sculptées."
+  },
+  "expert_3": {
+    "name": "Expédition dans le delta du Nil",
+    "description": "Là où le Nil se sépare et s’étale tout vert. Le pays de Sobek : papyrus, poissons, et crocodiles qu’on adorait et qu’on nourrissait."
+  },
+  "expert_4": {
+    "name": "La pyramide de Djéser",
+    "description": "La pyramide à degrés de Djéser, la première aussi grande en pierre. Son architecte, Imhotep, est devenu un dieu dans les mémoires."
+  },
+  "expert_treasure_tomb": {
+    "name": "Le trésor du grand prêtre",
+    "description": "Le trésor d’un grand prêtre, sous le sol des offrandes. Tout ce qui est en bas a été donné à un dieu, et n’est jamais ressorti.",
+    "mapHint": "Les traits dessinent l’enceinte d’un temple, et un escalier qui descend sous le sol des offrandes."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Le sanctuaire secret",
+    "description": "La salle fermée au cœur du temple. Le grand prêtre y entrait une fois par jour, pour laver le dieu et l’habiller.",
+    "mapHint": "Des couloirs passent devant les caves du temple jusqu’à une porte scellée. Seuls les plus grands prêtres l’ont franchie."
+  },
+  "master_1": {
+    "name": "La grande pyramide de Gizeh",
+    "description": "La grande pyramide. Vingt ans de pierres, et toute une ville à côté pour nourrir les ouvriers de pain et de bière."
+  },
+  "master_2": {
+    "name": "Le Livre des morts",
+    "description": "Pas un seul livre, mais une liste de formules, copiées sur commande. Dans les moins chères, il y avait un blanc à la place de ton nom."
+  },
+  "master_3": {
+    "name": "La malédiction des pharaons",
+    "description": "La fameuse malédiction a été inventée par les journaux en 1923. Les Égyptiens, eux, protégeaient leurs tombes avec des portes et de la paperasse."
+  },
+  "master_4": {
+    "name": "Le tombeau de Néfertari",
+    "description": "Le tombeau de Néfertari, la salle la mieux peinte d’Égypte. Les couleurs venaient de pierres écrasées : azurite, malachite, ocre."
+  },
+  "master_treasure_tomb": {
+    "name": "Le trésor secret du pharaon",
+    "description": "Le trésor privé d’un roi, là où les cartes s’arrêtent. Tout ce qu’on a enterré avec lui est encore là-dessous.",
+    "mapHint": "Un cartouche royal marque un bord, et la route finit très loin, sous le sable."
+  },
+  "master_treasure_tomb_b": {
+    "name": "La salle d’Osiris",
+    "description": "La salle d’Osiris. Le dieu de la crue et du grain : tout ce qu’on met sous terre ici doit revenir.",
+    "mapHint": "Sous les chambres royales, la carte continue de descendre, vers une salle marquée des rites des morts."
+  },
+  "wizard_1": {
+    "name": "Le voyage de Râ",
+    "description": "Au coucher du soleil, Râ passe sous le monde et doit traverser douze heures de nuit. L’Égypte a écrit ce qui se passe dans chacune."
+  },
+  "wizard_2": {
+    "name": "Les colosses de Memnon",
+    "description": "Deux géants assis d’Amenhotep III. Les Grecs ont décidé que c’était quelqu’un d’autre, et ce nom est resté deux mille ans."
+  },
+  "wizard_3": {
+    "name": "La chambre de Maât",
+    "description": "La chambre de Maât. Elle est l’ordre des choses, et sa seule plume d’autruche sert à tout mesurer."
+  },
+  "wizard_4": {
+    "name": "La pyramide éternelle",
+    "description": "Elle était couverte de calcaire poli, blanc comme le sel, si bien taillé qu’on la voyait briller à un jour de marche."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Le caveau des dieux",
+    "description": "Là où le temple gardait ce qui appartenait aux dieux. Personne n’entrait ici sans la bonne chose dans les mains.",
+    "mapHint": "Rien sur ce bout de carte n’appartient au monde des humains. Ce qu’il montre, ce sont les dieux qui l’ont mis là."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Le royaume des forces du ciel",
+    "description": "Des cartes du ciel sur tout le plafond, peintes pour que les morts sachent l’heure la nuit. La corde de quelqu’un pend encore dans le puits.",
+    "mapHint": "Après le caveau des dieux, les traits deviennent des chemins d’étoiles, où l’on garde les forces de la vie et du chaos."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Le trône de l’éternité",
+    "description": "Un siège au milieu et quarante-deux juges autour, qui posent chacun une question. À chaque fois, il faut répondre non.",
+    "mapHint": "Tous les chemins d’étoiles de ce morceau mènent à un seul siège, au cœur même du royaume des dieux."
+  }
+}

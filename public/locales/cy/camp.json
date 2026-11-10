@@ -1,0 +1,257 @@
+{
+  "spots": {
+    "fire": "Tân gwersyll",
+    "sleeping": "Lle cysgu",
+    "water": "Lle dŵr",
+    "cooking": "Lle coginio",
+    "donkey": "Lle'r asyn",
+    "camel": "Lle'r camel",
+    "mapTable": "Bwrdd mapiau",
+    "palmGarden": "Gardd palmwydd",
+    "ibisPond": "Pwll yr ibis",
+    "lookout": "Gwylfa",
+    "godStatues": "Cerfluniau'r duwiau",
+    "starCanopy": "To sêr"
+  },
+  "finds": {
+    "pot": "Crochan coginio",
+    "seatCushions": "Clustogau eistedd",
+    "reedMat": "Mat brwyn",
+    "blanket": "Blanced",
+    "tentRug": "Ryg pabell",
+    "tentFlag": "Baner pabell",
+    "gourd": "Cicaion",
+    "jar": "Jar",
+    "secondJar": "Ail jar",
+    "spiceRack": "Rac sbeisys",
+    "breadBoard": "Bwrdd bara",
+    "starMap": "Map sêr",
+    "scrollCase": "Cas sgroliau",
+    "astrolabe": "Astrolab",
+    "reedGlobe": "Glôb brwyn",
+    "seed": "Hedyn palmwydd",
+    "secondPalm": "Hedyn palmwydd",
+    "figTree": "Hedyn ffigys",
+    "papyrus": "Gwreiddyn papyrws",
+    "reeds": "Toriad brwyn",
+    "lotus": "Cloronen lotws",
+    "flag": "Baner y wylfa",
+    "thoth": "Cerflun bach Thoth",
+    "bastet": "Cerflun bach Bastet",
+    "anubis": "Cerflun bach Anubis",
+    "ra": "Cerflun bach Ra",
+    "cloth": "Lliain sêr"
+  },
+  "structures": {
+    "stoneRing": "Cylch cerrig",
+    "fire": "Tân",
+    "cookingStones": "Cerrig coginio",
+    "seatingStones": "Cerrig eistedd",
+    "clayOven": "Popty clai",
+    "windbreak": "Cysgod gwynt",
+    "tent": "Pabell",
+    "secondTent": "Ail babell",
+    "pavilion": "Pafiliwn",
+    "well": "Ffynnon",
+    "wellPulley": "Ffynnon pwli",
+    "tripod": "Trybedd",
+    "breadOven": "Popty bara",
+    "dryingRack": "Rac sychu",
+    "feast": "Gwledd",
+    "table": "Bwrdd mapiau",
+    "lotusPlanter": "Twb lotws",
+    "edgeStones": "Ymyl y pwll",
+    "post": "Polyn gwylio",
+    "platform": "Llwyfan gwylio",
+    "ladder": "Ysgol",
+    "roof": "To",
+    "signalFire": "Tân rhybudd",
+    "poles": "Mastiau'r to",
+    "stars": "Sêr",
+    "planets": "Planedau"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Cerrig cae",
+      "sandBed": "Gwely tywod"
+    },
+    "fire": {
+      "tinder": "Cynnud",
+      "acaciaLogs": "Boncyffion acasia"
+    },
+    "cookingStones": {
+      "flatStone": "Carreg fflat",
+      "supportStones": "Cerrig cynnal"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Clogfeini llyfn",
+      "sandstoneBlock": "Bloc tywodfaen",
+      "hewnSlab": "Llechen naddedig"
+    },
+    "clayOven": {
+      "ovenFloor": "Llawr y popty",
+      "firebricks": "Brics tân",
+      "smokeHole": "Twll mwg",
+      "copperGrate": "Grât copr"
+    },
+    "windbreak": {
+      "reedBundles": "Bwndeli brwyn",
+      "stakes": "Pyst pren"
+    },
+    "tent": {
+      "tentPoles": "Polion pabell",
+      "wovenCloth": "Lliain wedi'i wehyddu",
+      "tentPegs": "Pegiau pabell"
+    },
+    "secondTent": {
+      "largeCloth": "Lliain pabell mawr",
+      "ridgePole": "Polyn crib",
+      "guyRopes": "Rhaffau dal",
+      "woolFloor": "Lliain llawr gwlân"
+    },
+    "pavilion": {
+      "pavilionPosts": "Pyst pafiliwn",
+      "linenCanopy": "To lliain",
+      "hangingCurtains": "Llenni",
+      "woolRugs": "Rygiau gwlân",
+      "woodenFloor": "Llawr pren"
+    },
+    "well": {
+      "wellStones": "Cerrig ffynnon",
+      "rope": "Rhaff hir",
+      "bucket": "Bwced",
+      "windlass": "Wins"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Olwyn pwli",
+      "frame": "Ffrâm gynnal",
+      "hoistRope": "Rhaff godi",
+      "counterweight": "Gwrthbwys",
+      "leatherBucket": "Bwced lledr"
+    },
+    "tripod": {
+      "tripodPoles": "Tri pholyn",
+      "binding": "Rhaff rwymo",
+      "hook": "Bachyn efydd"
+    },
+    "breadOven": {
+      "mudBricks": "Brics mwd",
+      "clayPlaster": "Plastr clai",
+      "ovenLid": "Caead popty"
+    },
+    "dryingRack": {
+      "rackPoles": "Polion rac",
+      "crossbar": "Croesbren",
+      "wickerTray": "Hambwrdd gwiail",
+      "cords": "Cortynnau hongian"
+    },
+    "feast": {
+      "lowTable": "Bwrdd isel",
+      "breadBaskets": "Basgedi bara",
+      "roastDuck": "Hwyaden rost",
+      "beerJars": "Jariau cwrw",
+      "fruitBowl": "Powlen ffrwythau"
+    },
+    "table": {
+      "tableTop": "Pen bwrdd",
+      "trestles": "Trestlau",
+      "leatherStraps": "Strapiau lledr"
+    },
+    "lotusPlanter": {
+      "clayTub": "Cafn clai",
+      "nileSilt": "Llaid y Nîl",
+      "waterJar": "Jar ddŵr",
+      "lotusTubers": "Cloron lotws",
+      "stoneRim": "Ymyl carreg"
+    },
+    "edgeStones": {
+      "riverStones": "Cerrig afon",
+      "clayBedding": "Gwely clai",
+      "gravel": "Graean",
+      "boundaryStakes": "Pyst ffin"
+    },
+    "post": {
+      "postTrunk": "Boncyff palmwydden",
+      "footStones": "Cerrig sylfaen",
+      "wedges": "Lletemau",
+      "braces": "Breichiau cynnal"
+    },
+    "platform": {
+      "platformBeams": "Trawstiau cynnal",
+      "platformPlanks": "Planciau",
+      "lashingRope": "Rhaff glymu",
+      "edgeRail": "Canllaw"
+    },
+    "ladder": {
+      "ladderRails": "Ochrau'r ysgol",
+      "rungs": "Ffyn ysgol",
+      "groundPegs": "Pegiau daear",
+      "leatherLoops": "Dolenni lledr"
+    },
+    "roof": {
+      "roofPoles": "Polion to",
+      "thatch": "Gwellt palmwydd",
+      "clayLayer": "Haen glai",
+      "bindingGrass": "Glaswellt rhwymo"
+    },
+    "signalFire": {
+      "fireBasin": "Powlen dân",
+      "pitch": "Pyg",
+      "dryBrushwood": "Prysgwydd sych",
+      "flint": "Callestr",
+      "bellows": "Megin"
+    },
+    "poles": {
+      "masts": "Mastiau",
+      "cornerStones": "Cerrig cornel",
+      "stayLines": "Rhaffau dal",
+      "bigPegs": "Pegiau mawr",
+      "poleSockets": "Socedi polion"
+    },
+    "stars": {
+      "goldLeaf": "Deilen aur",
+      "needleThread": "Nodwydd ac edau",
+      "indigoDye": "Lliw indigo",
+      "chalk": "Sialc",
+      "stencils": "Stensiliau"
+    },
+    "planets": {
+      "ochre": "Ocr",
+      "copperDiscs": "Disgiau copr",
+      "lapisPowder": "Powdr lapis",
+      "hangingLoops": "Dolenni hongian",
+      "dividers": "Cwmpawd"
+    }
+  },
+  "collection": {
+    "title": "Adeiladau",
+    "progress": "{{found}} o {{total}}",
+    "built": "wedi'i adeiladu",
+    "unknownPart": "???",
+    "open": "Dangos y darnau",
+    "close": "Cuddio'r darnau"
+  },
+  "reward": {
+    "find": "Darganfyddiad i'r gwersyll",
+    "part": "Darn",
+    "progress": "{{name}} · {{found}} o {{total}}"
+  },
+  "haul": {
+    "new": "Newydd yn dy wersyll",
+    "parts_zero": "{{name}} · {{count}} o ddarnau",
+    "parts_one": "{{name}} · {{count}} darn",
+    "parts_two": "{{name}} · {{count}} o ddarnau",
+    "parts_few": "{{name}} · {{count}} o ddarnau",
+    "parts_many": "{{name}} · {{count}} o ddarnau",
+    "parts_other": "{{name}} · {{count}} o ddarnau"
+  },
+  "arrivals": {
+    "donkey": "Mae dy asyn yn y gwersyll",
+    "cart": "Mae dy gert yn y gwersyll",
+    "camel": "Mae dy gamel yn y gwersyll",
+    "secondDonkey": "Mae dy ail asyn yn y gwersyll",
+    "secondCamel": "Mae dy ail gamel yn y gwersyll",
+    "sturdyCart": "Mae dy gert cryfach yn y gwersyll",
+    "caravanBanner": "Mae baner dy garafán yn hongian yn y gwersyll"
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Kivi",
+    "bronze": "Pronks",
+    "silver": "Hõbe",
+    "gold": "Kuld",
+    "divine": "Jumalik"
+  },
+  "sell_stone_1": {
+    "name": "Mõranenud kivikild",
+    "description": "Katkine savikild, millele kirjutaja on harjutusmärkmeid kriipsutanud — tähed on liiga tuhmid, et lugeda."
+  },
+  "sell_stone_2": {
+    "name": "Pragunenud savikann",
+    "description": "Kann vilja või õlle jaoks. Sajandite raskus on selle ühelt küljelt lõhki ajanud."
+  },
+  "sell_stone_3": {
+    "name": "Kulunud pilliroosandaal",
+    "description": "Papüürusest punutud. Mõne ammu unustatud töölise igapäevane käik on talla õhukeseks kulutanud."
+  },
+  "sell_stone_4": {
+    "name": "Pleekinud linariba",
+    "description": "Rebitud riba värvimata linast, sellist mähiti lõputult ümber surnute — või paigati sellega purje."
+  },
+  "sell_stone_5": {
+    "name": "Katkine tulekivinuga",
+    "description": "Tahutud tulekivinuga, mille ots on murdunud. Odav teha, veel odavam asendada."
+  },
+  "sell_bronze_1": {
+    "name": "Kõver pronksamulett",
+    "description": "Odav kaitseamulett, mis valati viltu ja jäigi parandamata."
+  },
+  "sell_bronze_2": {
+    "name": "Roostes pronkspeegel",
+    "description": "Kunagi nii läikiv, et nägid selles oma nägu. Nüüd on see vanusest roheliseks tõmbunud."
+  },
+  "sell_bronze_3": {
+    "name": "Tuhm pronksist õngekonks",
+    "description": "Kaluri tööriist, mis kukkus Niilusse ammu enne, kui hauakamber suleti."
+  },
+  "sell_bronze_4": {
+    "name": "Väike pronkskelluke",
+    "description": "Pidi rippuma templi uksel või tantsija pahkluul — enam ei helise see puhtalt."
+  },
+  "sell_bronze_5": {
+    "name": "Tuhmunud pronksist sõrmus",
+    "description": "Lihtne rõngas sõrmele, mis on ammu tolmuks muutunud."
+  },
+  "sell_silver_1": {
+    "name": "Tuhmunud hõbeankh",
+    "description": "Elu märk, mida sajandid maa all on tuhmiks kulutanud."
+  },
+  "sell_silver_2": {
+    "name": "Hõbedane silmapliiatsipulk",
+    "description": "Peenike pulk, millega rikkad kunagi silmi tumedaks joonistasid — värv on ammu kadunud."
+  },
+  "sell_silver_3": {
+    "name": "Mõlkis hõbekauss",
+    "description": "Väike ohvrikauss, mis ühelt küljelt lömmi läks, kui lagi selle kohal lõpuks alla kukkus."
+  },
+  "sell_silver_4": {
+    "name": "Hõbedane juuksenõel",
+    "description": "Lihtne ja ilustusteta. Kunagi hoidis see kinni kellegi juukseid, kelle nime keegi enam ei tea."
+  },
+  "sell_silver_5": {
+    "name": "Kulunud hõbekäevõru",
+    "description": "Õhuke hõbevõru, lukk katki. Aadlikule liiga lihtne, töölisele liiga uhke."
+  },
+  "sell_gold_1": {
+    "name": "Väike kuldhelmes",
+    "description": "Üks helmes hauakaelakeest, mis ammu laiali pudenes."
+  },
+  "sell_gold_2": {
+    "name": "Lehtkulla tükk",
+    "description": "Kildeke lehtkulda, mille hauarüüstajad kuju näolt maha koorisid sajandeid enne sinu tulekut."
+  },
+  "sell_gold_3": {
+    "name": "Õhuke kuldkõrvarõngas",
+    "description": "Õhukeseks taotud, et aadliku kuld kauemaks jaguks."
+  },
+  "sell_gold_4": {
+    "name": "Kullatäppidega kild",
+    "description": "Katkine tükk kullatud krohvi, mille küljes on veel päris kulla täpikesi."
+  },
+  "sell_gold_5": {
+    "name": "Mõranenud kuldpitsatsõrmus",
+    "description": "Pitsatsõrmus, mille kiri on tundmatuseni kulunud — kelle nimi seal oli, on unustatud."
+  },
+  "sell_divine_1": {
+    "name": "Pleekinud lasuriitskarabeus",
+    "description": "Nikerdatud kallist lasuriidist, mis toodi kaugelt suure raha eest vaarao taassünni jaoks. Sajanditega on värv pleekinud."
+  },
+  "sell_divine_2": {
+    "name": "Karneoolist silmaamulett",
+    "description": "Verevärvi karneoolist nikerdatud kaitsesilm, mis pidi teispoolsuses õnnetusi eemale hoidma."
+  },
+  "sell_divine_3": {
+    "name": "Türkiisist mosaiigikild",
+    "description": "Üksainus kivike purunenud mosaiigist, mis oli kunagi osa jumala pildist templi seinal."
+  },
+  "sell_divine_4": {
+    "name": "Alabastrist kanoopi kild",
+    "description": "Katkine tükk kannust, kus hoiti vaarao siseelundeid — kallis kivi sünge töö jaoks."
+  },
+  "sell_divine_5": {
+    "name": "Obsidiaanist rituaalnuga",
+    "description": "Vulkaaniline klaas, teritatud pidulikuks teraks, mis polnud mõeldud lahingusse — ainult templisse."
+  }
+}

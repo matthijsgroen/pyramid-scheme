@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Stein",
+    "bronze": "Bronze",
+    "silver": "Silber",
+    "gold": "Gold",
+    "divine": "Göttlich"
+  },
+  "sell_stone_1": {
+    "name": "Angeschlagene Tonscherbe",
+    "description": "Eine kaputte Tonscherbe, auf der ein Schreiber geübt hat – die Zeichen sind zu verblasst, um sie zu lesen."
+  },
+  "sell_stone_2": {
+    "name": "Gesprungener Tonkrug",
+    "description": "Ein Vorratskrug für Getreide oder Bier, an einer Seite aufgeplatzt unter dem Gewicht der Jahrhunderte."
+  },
+  "sell_stone_3": {
+    "name": "Abgelaufene Schilfsandale",
+    "description": "Aus Papyrusschilf geflochten, die Sohle dünn gelaufen vom täglichen Weg eines längst vergessenen Arbeiters."
+  },
+  "sell_stone_4": {
+    "name": "Verblasster Leinenfetzen",
+    "description": "Ein zerrissener Streifen ungefärbtes Leinen, wie man es endlos um die Toten wickelte – oder damit ein Segel flickte."
+  },
+  "sell_stone_5": {
+    "name": "Zerbrochene Feuersteinklinge",
+    "description": "Ein Messer aus Feuerstein, die Spitze abgebrochen. Billig gemacht, noch billiger ersetzt."
+  },
+  "sell_bronze_1": {
+    "name": "Verbogenes Bronzeamulett",
+    "description": "Ein billiger Glücksbringer, schief gegossen und nie gerichtet."
+  },
+  "sell_bronze_2": {
+    "name": "Angelaufener Bronzespiegel",
+    "description": "Früher so blank, dass man sich darin sehen konnte. Jetzt grün und trüb vor Alter."
+  },
+  "sell_bronze_3": {
+    "name": "Stumpfer Bronzeangelhaken",
+    "description": "Das Werkzeug eines Fischers, im Nil verloren, lange bevor das Grab versiegelt wurde."
+  },
+  "sell_bronze_4": {
+    "name": "Kleine Bronzeglocke",
+    "description": "Sie hing einmal an einer Tempeltür oder am Knöchel einer Tänzerin – jetzt klingt sie schief."
+  },
+  "sell_bronze_5": {
+    "name": "Angelaufener Bronzering",
+    "description": "Ein schlichter Reif, gemacht für einen Finger, der längst zu Staub zerfallen ist."
+  },
+  "sell_silver_1": {
+    "name": "Angelaufenes Silber-Anch",
+    "description": "Ein Zeichen des Lebens, matt geworden nach Jahrhunderten unter der Erde."
+  },
+  "sell_silver_2": {
+    "name": "Silberner Kajalstift",
+    "description": "Ein dünnes Stäbchen, mit dem reiche Leute sich die Augen schminkten – die Schminke ist längst weg."
+  },
+  "sell_silver_3": {
+    "name": "Verbeulte Silberschale",
+    "description": "Eine kleine Opferschale, an einer Seite eingedrückt, als die Decke darüber endlich nachgab."
+  },
+  "sell_silver_4": {
+    "name": "Silberne Haarnadel",
+    "description": "Schlicht und ohne Schmuck. Sie hielt einmal die Haare von jemandem, dessen Name verloren ist."
+  },
+  "sell_silver_5": {
+    "name": "Abgetragenes Silberarmband",
+    "description": "Ein dünnes Silberband mit kaputtem Verschluss. Nicht fein genug für Vornehme, zu fein für einen Arbeiter."
+  },
+  "sell_gold_1": {
+    "name": "Kleine Goldperle",
+    "description": "Eine Perle aus einer Grabkette, die vor langer Zeit zerstreut wurde."
+  },
+  "sell_gold_2": {
+    "name": "Stückchen Blattgold",
+    "description": "Ein Streifen Blattgold, von Grabräubern vom Gesicht einer Statue gekratzt – Jahrhunderte bevor du kamst."
+  },
+  "sell_gold_3": {
+    "name": "Dünner Goldohrring",
+    "description": "Ganz dünn gehämmert, damit das Gold eines Vornehmen länger reicht."
+  },
+  "sell_gold_4": {
+    "name": "Scherbe mit Goldflecken",
+    "description": "Ein Stück vergoldeter Putz, an dem noch Flöckchen von echtem Gold kleben."
+  },
+  "sell_gold_5": {
+    "name": "Angeschlagener Goldsiegelring",
+    "description": "Ein Siegelring, so abgenutzt, dass man die Gravur nicht mehr erkennt – wessen Name es war, ist vergessen."
+  },
+  "sell_divine_1": {
+    "name": "Verblasster Lapis-Skarabäus",
+    "description": "Aus kostbarem Lapislazuli geschnitzt, teuer aus der Ferne geholt für die Wiedergeburt eines Pharaos. Die Farbe ist über die Jahrhunderte verblasst."
+  },
+  "sell_divine_2": {
+    "name": "Karneol-Augenamulett",
+    "description": "Ein Schutzauge aus blutrotem Karneol, das im Jenseits Unglück fernhalten sollte."
+  },
+  "sell_divine_3": {
+    "name": "Türkissteinchen",
+    "description": "Ein einzelnes Steinchen aus einem zerbrochenen Mosaik, früher Teil eines Götterbildes an einer Tempelwand."
+  },
+  "sell_divine_4": {
+    "name": "Alabasterscherbe eines Kanopenkrugs",
+    "description": "Das Bruchstück eines Krugs, in dem die Organe eines Pharaos aufbewahrt wurden – kostbarer Stein für eine gruselige Aufgabe."
+  },
+  "sell_divine_5": {
+    "name": "Obsidian-Ritualklinge",
+    "description": "Vulkanglas, zu einer Zeremonienklinge geschliffen. Nie für den Kampf gedacht – nur für den Tempel."
+  }
+}

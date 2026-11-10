@@ -1,0 +1,253 @@
+{
+  "spots": {
+    "fire": "Kampfjoer",
+    "sleeping": "Sliepplak",
+    "water": "Wetterplak",
+    "cooking": "Kookplak",
+    "donkey": "Ezelplak",
+    "camel": "Kamielenplak",
+    "mapTable": "Kaartetafel",
+    "palmGarden": "Palmetún",
+    "ibisPond": "Ibisfiver",
+    "lookout": "Útsjochpost",
+    "godStatues": "Goadebylden",
+    "starCanopy": "Stjerredak"
+  },
+  "finds": {
+    "pot": "Kookpot",
+    "seatCushions": "Sitkessens",
+    "reedMat": "Reidmatte",
+    "blanket": "Tekken",
+    "tentRug": "Tinteklaad",
+    "tentFlag": "Tintflagge",
+    "gourd": "Kalebas",
+    "jar": "Krûk",
+    "secondJar": "Twadde krûk",
+    "spiceRack": "Krûdenrek",
+    "breadBoard": "Bôlplanke",
+    "starMap": "Stjerrekaart",
+    "scrollCase": "Rolkoker",
+    "astrolabe": "Astrolabium",
+    "reedGlobe": "Reiden wrâldbol",
+    "seed": "Palmsied",
+    "secondPalm": "Palmsied",
+    "figTree": "Figesied",
+    "papyrus": "Papyruswoartel",
+    "reeds": "Reidstek",
+    "lotus": "Lotusknol",
+    "flag": "Útsjochflagge",
+    "thoth": "Thoth-byldsje",
+    "bastet": "Bastet-byldsje",
+    "anubis": "Anubis-byldsje",
+    "ra": "Ra-byldsje",
+    "cloth": "Stjerredoek"
+  },
+  "structures": {
+    "stoneRing": "Stiennen rûnte",
+    "fire": "Fjoer",
+    "cookingStones": "Kookstiennen",
+    "seatingStones": "Sitstiennen",
+    "clayOven": "Klaaioven",
+    "windbreak": "Wynskerm",
+    "tent": "Tinte",
+    "secondTent": "Twadde tinte",
+    "pavilion": "Paviljoen",
+    "well": "Put",
+    "wellPulley": "Katrolput",
+    "tripod": "Trijepoat",
+    "breadOven": "Bôloven",
+    "dryingRack": "Droechrek",
+    "feast": "Feestmiel",
+    "table": "Kaartetafel",
+    "lotusPlanter": "Lotusbak",
+    "edgeStones": "Fiverrâne",
+    "post": "Útsjochpeal",
+    "platform": "Útsjochplatfoarm",
+    "ladder": "Ljedder",
+    "roof": "Dak",
+    "signalFire": "Sinjaalfjoer",
+    "poles": "Stjerremêsten",
+    "stars": "Stjerren",
+    "planets": "Planeten"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Fjildstiennen",
+      "sandBed": "Sânbêd"
+    },
+    "fire": {
+      "tinder": "Tontel",
+      "acaciaLogs": "Akasiahout"
+    },
+    "cookingStones": {
+      "flatStone": "Platte stien",
+      "supportStones": "Stipestiennen"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Glêde keien",
+      "sandstoneBlock": "Sânstienblok",
+      "hewnSlab": "Houwen plaat"
+    },
+    "clayOven": {
+      "ovenFloor": "Ovenflier",
+      "firebricks": "Fjoerfaste stiennen",
+      "smokeHole": "Reekgat",
+      "copperGrate": "Koperen roaster"
+    },
+    "windbreak": {
+      "reedBundles": "Reidbondels",
+      "stakes": "Houten peallen"
+    },
+    "tent": {
+      "tentPoles": "Tintstokken",
+      "wovenCloth": "Weven doek",
+      "tentPegs": "Tintpinnen"
+    },
+    "secondTent": {
+      "largeCloth": "Grut tintdoek",
+      "ridgePole": "Nokbalke",
+      "guyRopes": "Spantouwen",
+      "woolFloor": "Wollen flierkleed"
+    },
+    "pavilion": {
+      "pavilionPosts": "Paviljoenpeallen",
+      "linenCanopy": "Linnen dak",
+      "hangingCurtains": "Gerdinen",
+      "woolRugs": "Wollen kleden",
+      "woodenFloor": "Houten flier"
+    },
+    "well": {
+      "wellStones": "Putstiennen",
+      "rope": "Lang tou",
+      "bucket": "Amer",
+      "windlass": "Wyndas"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Katrol",
+      "frame": "Draachframe",
+      "hoistRope": "Hystou",
+      "counterweight": "Tsjingewicht",
+      "leatherBucket": "Learen amer"
+    },
+    "tripod": {
+      "tripodPoles": "Trije stokken",
+      "binding": "Bynbân",
+      "hook": "Brûnzen heak"
+    },
+    "breadOven": {
+      "mudBricks": "Klaaistiennen",
+      "clayPlaster": "Klaaipleister",
+      "ovenLid": "Ovenklep"
+    },
+    "dryingRack": {
+      "rackPoles": "Rekpeallen",
+      "crossbar": "Dwershout",
+      "wickerTray": "Flechtwurk",
+      "cords": "Hingkoarden"
+    },
+    "feast": {
+      "lowTable": "Lege tafel",
+      "breadBaskets": "Bôlkuorren",
+      "roastDuck": "Brette ein",
+      "beerJars": "Bierkrûken",
+      "fruitBowl": "Fruitskaal"
+    },
+    "table": {
+      "tableTop": "Tafelblêd",
+      "trestles": "Skragen",
+      "leatherStraps": "Learen riemkes"
+    },
+    "lotusPlanter": {
+      "clayTub": "Klaaibak",
+      "nileSilt": "Nylslyk",
+      "waterJar": "Wetterkrûk",
+      "lotusTubers": "Lotusknollen",
+      "stoneRim": "Stiennen râne"
+    },
+    "edgeStones": {
+      "riverStones": "Rivierstiennen",
+      "clayBedding": "Klaaibêd",
+      "gravel": "Grint",
+      "boundaryStakes": "Grinspealtsjes"
+    },
+    "post": {
+      "postTrunk": "Palmstam",
+      "footStones": "Foetstiennen",
+      "wedges": "Wiggen",
+      "braces": "Skoarren"
+    },
+    "platform": {
+      "platformBeams": "Draachbalken",
+      "platformPlanks": "Planken",
+      "lashingRope": "Sjoertou",
+      "edgeRail": "Reling"
+    },
+    "ladder": {
+      "ladderRails": "Ljedderkanten",
+      "rungs": "Spoarten",
+      "groundPegs": "Grûnpinnen",
+      "leatherLoops": "Learen lussen"
+    },
+    "roof": {
+      "roofPoles": "Dakbalkjes",
+      "thatch": "Palmblêden",
+      "clayLayer": "Klaailaach",
+      "bindingGrass": "Byngers"
+    },
+    "signalFire": {
+      "fireBasin": "Fjoerskaal",
+      "pitch": "Pik",
+      "dryBrushwood": "Droech rys",
+      "flint": "Fjoerstien",
+      "bellows": "Blaasbalge"
+    },
+    "poles": {
+      "masts": "Mêsten",
+      "cornerStones": "Hoekstiennen",
+      "stayLines": "Stagtouwen",
+      "bigPegs": "Grutte pinnen",
+      "poleSockets": "Pealfuotten"
+    },
+    "stars": {
+      "goldLeaf": "Blêdgoud",
+      "needleThread": "Nulle en tried",
+      "indigoDye": "Indigoferve",
+      "chalk": "Kryt",
+      "stencils": "Sjablonen"
+    },
+    "planets": {
+      "ochre": "Oker",
+      "copperDiscs": "Koperen skiven",
+      "lapisPowder": "Lapispoeier",
+      "hangingLoops": "Ophingluskes",
+      "dividers": "Passer"
+    }
+  },
+  "collection": {
+    "title": "Bouwwurken",
+    "progress": "{{found}} fan {{total}}",
+    "built": "boud",
+    "unknownPart": "???",
+    "open": "Ûnderdielen sjen litte",
+    "close": "Ûnderdielen ferbergje"
+  },
+  "reward": {
+    "find": "Kampfynst",
+    "part": "Ûnderdiel",
+    "progress": "{{name}} · {{found}} fan {{total}}"
+  },
+  "haul": {
+    "new": "Nij yn dyn kamp",
+    "parts_one": "{{name}} · {{count}} ûnderdiel",
+    "parts_other": "{{name}} · {{count}} ûnderdielen"
+  },
+  "arrivals": {
+    "donkey": "Dyn ezel stiet yn it kamp",
+    "cart": "Dyn karre stiet yn it kamp",
+    "camel": "Dyn kamiel stiet yn it kamp",
+    "secondDonkey": "Dyn twadde ezel stiet yn it kamp",
+    "secondCamel": "Dyn twadde kamiel stiet yn it kamp",
+    "sturdyCart": "Dyn sterkere karre stiet yn it kamp",
+    "caravanBanner": "Dyn karavaanbanier hinget yn it kamp"
+  }
+}

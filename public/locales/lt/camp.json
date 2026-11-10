@@ -1,0 +1,255 @@
+{
+  "spots": {
+    "fire": "Laužavietė",
+    "sleeping": "Miegojimo vieta",
+    "water": "Vandens vieta",
+    "cooking": "Virtuvėlė",
+    "donkey": "Asilo vieta",
+    "camel": "Kupranugario vieta",
+    "mapTable": "Žemėlapių stalas",
+    "palmGarden": "Palmių sodas",
+    "ibisPond": "Ibisų tvenkinys",
+    "lookout": "Sargybos bokštelis",
+    "godStatues": "Dievų statulos",
+    "starCanopy": "Žvaigždžių stogas"
+  },
+  "finds": {
+    "pot": "Puodas",
+    "seatCushions": "Sėdimos pagalvėlės",
+    "reedMat": "Nendrių kilimėlis",
+    "blanket": "Antklodė",
+    "tentRug": "Palapinės kilimas",
+    "tentFlag": "Palapinės vėliavėlė",
+    "gourd": "Moliūgo gertuvė",
+    "jar": "Ąsotis",
+    "secondJar": "Antras ąsotis",
+    "spiceRack": "Prieskonių lentyna",
+    "breadBoard": "Duonos lentelė",
+    "starMap": "Žvaigždėlapis",
+    "scrollCase": "Ritinių dėklas",
+    "astrolabe": "Astroliabija",
+    "reedGlobe": "Nendrių gaublys",
+    "seed": "Palmės sėkla",
+    "secondPalm": "Palmės sėkla",
+    "figTree": "Figos sėkla",
+    "papyrus": "Papiruso šaknis",
+    "reeds": "Nendrės atžala",
+    "lotus": "Lotoso gumbas",
+    "flag": "Bokštelio vėliava",
+    "thoth": "Toto statulėlė",
+    "bastet": "Bastetės statulėlė",
+    "anubis": "Anubio statulėlė",
+    "ra": "Ra statulėlė",
+    "cloth": "Žvaigždžių audeklas"
+  },
+  "structures": {
+    "stoneRing": "Akmenų ratas",
+    "fire": "Laužas",
+    "cookingStones": "Virimo akmenys",
+    "seatingStones": "Sėdimi akmenys",
+    "clayOven": "Molio krosnis",
+    "windbreak": "Užuovėja",
+    "tent": "Palapinė",
+    "secondTent": "Antra palapinė",
+    "pavilion": "Pavėsinė",
+    "well": "Šulinys",
+    "wellPulley": "Šulinys su skridiniu",
+    "tripod": "Trikojis",
+    "breadOven": "Duonkepė krosnis",
+    "dryingRack": "Džiovykla",
+    "feast": "Puota",
+    "table": "Žemėlapių stalas",
+    "lotusPlanter": "Lotosų lovelis",
+    "edgeStones": "Tvenkinio krantas",
+    "post": "Sargybos stulpas",
+    "platform": "Sargybos aikštelė",
+    "ladder": "Kopėčios",
+    "roof": "Stogas",
+    "signalFire": "Signalinis laužas",
+    "poles": "Stogo stiebai",
+    "stars": "Žvaigždės",
+    "planets": "Planetos"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Lauko akmenys",
+      "sandBed": "Smėlio pagrindas"
+    },
+    "fire": {
+      "tinder": "Pakurai",
+      "acaciaLogs": "Akacijos malkos"
+    },
+    "cookingStones": {
+      "flatStone": "Plokščias akmuo",
+      "supportStones": "Atraminiai akmenys"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Glotnūs rieduliai",
+      "sandstoneBlock": "Smiltainio luitas",
+      "hewnSlab": "Tašyta plokštė"
+    },
+    "clayOven": {
+      "ovenFloor": "Krosnies padas",
+      "firebricks": "Ugniai atsparios plytos",
+      "smokeHole": "Dūmų anga",
+      "copperGrate": "Varinės grotelės"
+    },
+    "windbreak": {
+      "reedBundles": "Nendrių pundai",
+      "stakes": "Mediniai kuoliukai"
+    },
+    "tent": {
+      "tentPoles": "Palapinės stulpeliai",
+      "wovenCloth": "Austas audeklas",
+      "tentPegs": "Palapinės kuoliukai"
+    },
+    "secondTent": {
+      "largeCloth": "Didelis palapinės audeklas",
+      "ridgePole": "Kraigo kartis",
+      "guyRopes": "Tempimo virvės",
+      "woolFloor": "Vilnonė paklotė"
+    },
+    "pavilion": {
+      "pavilionPosts": "Pavėsinės stulpai",
+      "linenCanopy": "Lininis stogas",
+      "hangingCurtains": "Užuolaidos",
+      "woolRugs": "Vilnoniai kilimai",
+      "woodenFloor": "Medinės grindys"
+    },
+    "well": {
+      "wellStones": "Šulinio akmenys",
+      "rope": "Ilga virvė",
+      "bucket": "Kibiras",
+      "windlass": "Suktuvas"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Skridinys",
+      "frame": "Atraminis rėmas",
+      "hoistRope": "Kėlimo virvė",
+      "counterweight": "Atsvara",
+      "leatherBucket": "Odinis kibiras"
+    },
+    "tripod": {
+      "tripodPoles": "Trys kartys",
+      "binding": "Rišimo virvė",
+      "hook": "Bronzinis kablys"
+    },
+    "breadOven": {
+      "mudBricks": "Molio plytos",
+      "clayPlaster": "Molio tinkas",
+      "ovenLid": "Krosnies dangtis"
+    },
+    "dryingRack": {
+      "rackPoles": "Džiovyklos stulpeliai",
+      "crossbar": "Skersinis",
+      "wickerTray": "Pintas padėklas",
+      "cords": "Kabinimo virvutės"
+    },
+    "feast": {
+      "lowTable": "Žemas stalas",
+      "breadBaskets": "Duonos krepšiai",
+      "roastDuck": "Kepta antis",
+      "beerJars": "Alaus ąsočiai",
+      "fruitBowl": "Vaisių dubuo"
+    },
+    "table": {
+      "tableTop": "Stalviršis",
+      "trestles": "Ožiai",
+      "leatherStraps": "Odiniai diržai"
+    },
+    "lotusPlanter": {
+      "clayTub": "Molio lovelis",
+      "nileSilt": "Nilo dumblas",
+      "waterJar": "Vandens ąsotis",
+      "lotusTubers": "Lotoso gumbai",
+      "stoneRim": "Akmeninis kraštas"
+    },
+    "edgeStones": {
+      "riverStones": "Upės akmenys",
+      "clayBedding": "Molio pagrindas",
+      "gravel": "Žvyras",
+      "boundaryStakes": "Ribos kuoliukai"
+    },
+    "post": {
+      "postTrunk": "Palmės kamienas",
+      "footStones": "Pamato akmenys",
+      "wedges": "Pleištai",
+      "braces": "Atramos"
+    },
+    "platform": {
+      "platformBeams": "Atraminės sijos",
+      "platformPlanks": "Lentos",
+      "lashingRope": "Surišimo virvė",
+      "edgeRail": "Turėklai"
+    },
+    "ladder": {
+      "ladderRails": "Kopėčių šonai",
+      "rungs": "Skersiniai",
+      "groundPegs": "Žemės kuoliukai",
+      "leatherLoops": "Odinės kilpos"
+    },
+    "roof": {
+      "roofPoles": "Stogo kartys",
+      "thatch": "Palmių lapai",
+      "clayLayer": "Molio sluoksnis",
+      "bindingGrass": "Rišimo žolė"
+    },
+    "signalFire": {
+      "fireBasin": "Ugnies dubuo",
+      "pitch": "Derva",
+      "dryBrushwood": "Sausi žabai",
+      "flint": "Titnagas",
+      "bellows": "Dumplės"
+    },
+    "poles": {
+      "masts": "Stiebai",
+      "cornerStones": "Kampų akmenys",
+      "stayLines": "Tempimo lynai",
+      "bigPegs": "Dideli kuolai",
+      "poleSockets": "Stiebų lizdai"
+    },
+    "stars": {
+      "goldLeaf": "Aukso lapelis",
+      "needleThread": "Adata ir siūlas",
+      "indigoDye": "Indigo dažai",
+      "chalk": "Kreida",
+      "stencils": "Trafaretai"
+    },
+    "planets": {
+      "ochre": "Ochra",
+      "copperDiscs": "Variniai diskai",
+      "lapisPowder": "Lazurito milteliai",
+      "hangingLoops": "Kabinimo kilpelės",
+      "dividers": "Skriestuvas"
+    }
+  },
+  "collection": {
+    "title": "Statiniai",
+    "progress": "{{found}} iš {{total}}",
+    "built": "pastatyta",
+    "unknownPart": "???",
+    "open": "Rodyti dalis",
+    "close": "Slėpti dalis"
+  },
+  "reward": {
+    "find": "Radinys stovyklai",
+    "part": "Dalis",
+    "progress": "{{name}} · {{found}} iš {{total}}"
+  },
+  "haul": {
+    "new": "Nauja tavo stovykloje",
+    "parts_one": "{{name}} · {{count}} dalis",
+    "parts_few": "{{name}} · {{count}} dalys",
+    "parts_many": "{{name}} · {{count}} dalies",
+    "parts_other": "{{name}} · {{count}} dalių"
+  },
+  "arrivals": {
+    "donkey": "Tavo asilas jau stovykloje",
+    "cart": "Tavo vežimas jau stovykloje",
+    "camel": "Tavo kupranugaris jau stovykloje",
+    "secondDonkey": "Tavo antras asilas jau stovykloje",
+    "secondCamel": "Tavo antras kupranugaris jau stovykloje",
+    "sturdyCart": "Tavo tvirtesnis vežimas jau stovykloje",
+    "caravanBanner": "Tavo karavano vėliava plevėsuoja stovykloje"
+  }
+}

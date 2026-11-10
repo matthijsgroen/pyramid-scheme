@@ -1,0 +1,1830 @@
+{
+  "language": "Latviešu",
+  "saveUnreadable": {
+    "title": "Tavu progresu nevar ielādēt",
+    "body": "Pārlūks šobrīd neatdod tavu saglabāto spēli. Tava saglabātā spēle nav pazudusi: pārlādē lapu un mēģini vēlreiz.",
+    "banner": "Progress netiek saglabāts. Pieskaries, lai pārlādētu.",
+    "reload": "Pārlādēt",
+    "continue": "Spēlēt tālāk bez saglabāšanas",
+    "reset": "Sākt no jauna (dzēst saglabāto)",
+    "confirmReset": "Tas izdzēsīs visu tavu saglabāto spēli, un to vairs nevarēs atgriezt. Sākt no jauna?",
+    "confirmResetYes": "Jā, dzēst manu spēli",
+    "confirmResetNo": "Nē, atpakaļ"
+  },
+  "difficulty": {
+    "starter": "Iesācējs",
+    "junior": "Juniors",
+    "expert": "Eksperts",
+    "master": "Meistars",
+    "wizard": "Burvis"
+  },
+  "journeyLength": {
+    "short": "Īss",
+    "medium": "Vidējs",
+    "long": "Garš"
+  },
+  "time": {
+    "morning": "Rīts",
+    "afternoon": "Pēcpusdiena",
+    "evening": "Vakars",
+    "night": "Nakts"
+  },
+  "tomb": {},
+  "ui": {
+    "level": "Līmenis",
+    "symbols": "simboli",
+    "journey": "Ceļojums",
+    "tableau": "Tablo",
+    "difficulty": "Grūtība",
+    "length": "Garums",
+    "time": "Laiks",
+    "requiredPrestige": "Vajadzīgais slavas līmenis",
+    "rewards": "Balvas",
+    "coins": "Monētas",
+    "pieces": "Gabaliņi",
+    "description": "Apraksts",
+    "expedition": "Ekspedīcija",
+    "expeditionCompleted": "Ekspedīcija pabeigta!",
+    "goBackToBase": "Atpakaļ uz nometni",
+    "backArrow": "←",
+    "back": "← Atpakaļ",
+    "floor": "{{number}}. stāvs",
+    "enterSite": "Iet iekšā",
+    "prompt": {
+      "here": "Apskatīt",
+      "stairs": "Iet pa kāpnēm",
+      "exit": "Iziet no šīs vietas",
+      "zipline": "Brauc pa trosi — atpakaļceļa nav",
+      "oneWay": "Pāriet pāri — atpakaļceļa nav",
+      "liftStone": "Pacelt akmeni",
+      "setStone": "Nolikt akmeni uz plāksnes",
+      "postStone": "Iemest akmeni",
+      "takeStone": "Paņemt akmeni",
+      "squeeze": "Izspraukties cauri",
+      "replay": "Spēlēt vēlreiz"
+    },
+    "blocked": {
+      "carrying": "Ar akmeni rokās nevar tikt cauri"
+    },
+    "backToMap": "Atpakaļ uz karti",
+    "continueExploration": "Turpini pētīt piramīdas.",
+    "startExpedition": "Sākt ekspedīciju",
+    "webBuriedPercent": "Vēl {{percent}}% zem smiltīm",
+    "interruptExpedition": "Pārtraukt ekspedīciju",
+    "confirmInterruptExpedition": "Vai tiešām gribi pārtraukt šo ekspedīciju? Ekspedīcijas progress paliks, bet līmeņa progress pazudīs!",
+    "cancel": "Atcelt",
+    "settings": "Iestatījumi",
+    "language": "Valoda",
+    "close": "Aizvērt",
+    "done": "Gatavs",
+    "clearGameData": "Dzēst spēles datus",
+    "confirmClearGameData": "Tas uz visiem laikiem izdzēsīs visu progresu, mantas un izpētītās piramīdas. To vairs nevarēs atgriezt.",
+    "disableTutorials": "Izslēgt pamācības",
+    "treasureTomb": "Dārgumu vieta",
+    "requiresMapPieces": "Vajag kartes gabaliņus",
+    "mapPieces": "Kartes gabaliņi",
+    "completeExpeditionsToUnlock": "Pabeidz ekspedīcijas, lai atvērtu",
+    "availableSymbols": "Pieejamie simboli:",
+    "fragmentsNeeded": "Vajag {{found}}/{{required}}",
+    "howToPlay": "Kā spēlēt",
+    "puzzleComplete": "Atbilde ir:",
+    "puzzleCompleted": "Mīkla atrisināta",
+    "trapBlocked": "Tev nepietiek spēka, lai mēģinātu tikt garām šīm lamatām",
+    "spiritsRejectCode": "Gari šo kodu nepieņem",
+    "sacredSealBroken": "Svētais zīmogs ir salauzts",
+    "newExpeditionUnlocked": "Ir atvērta jauna ekspedīcija",
+    "newTombUnlocked": "Ir atvērts jauns kaps",
+    "tierComingSoonTitle": "Līmeņa „{{tier}}” ekspedīcijas jau ir ceļā",
+    "tierComingSoon": "Atslēga tev ir, bet līmeņa „{{tier}}” piramīdas vēl tiek celtas. Tās nāks kādā no nākamajiem atjauninājumiem — līdz tam tava atslēga atver vairāk no piramīdām, kuras tu jau pazīsti.",
+    "answerNow": "Atbilde ir: ",
+    "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "resetPuzzle": "Sākt no jauna",
+    "hint": "Padoms",
+    "undo": "Atsaukt",
+    "erase": "Dzēst",
+    "notes": "Piezīmes",
+    "solvedUnaided": "Atrisināts bez neviena padoma",
+    "solvedWithHints_zero": "Atrisināts ar {{count}} padomiem",
+    "solvedWithHints_one": "Atrisināts ar {{count}} padomu",
+    "solvedWithHints_other": "Atrisināts ar {{count}} padomiem",
+    "tapToContinue": "Pieskaries, lai turpinātu",
+    "goal": "Mērķis"
+  },
+  "trap": {
+    "warning": "⚠ Eja ar lamatām",
+    "canAttempt": "Tu vari mēģināt tikt cauri.",
+    "tooWeak": "Tev ir ļoti maz spēka — ja neizdosies, tev nepaliks nekā.",
+    "attempt": "Mēģināt tikt garām lamatām",
+    "turnAround": "Griezties atpakaļ",
+    "rested": "Atpūties pie ugunskura — atkal spēkā"
+  },
+  "gate": {
+    "title": "🔒 Aizslēgti vārti",
+    "locked": "Tev vēl nav īstās atslēgas.",
+    "markedWith": "Durvīs ir iecirsta zīme:",
+    "unlocked": "Atslēga tev ir.",
+    "pass": "Iet cauri",
+    "turnAround": "Griezties atpakaļ",
+    "wardDescription": {
+      "starter": "Šo eju aizsprosto tirgotāja zīmogs — to atvērs tikai viņa sargatslēga.",
+      "junior": "Šo ceļu aizslēdz dižciltīgā ģerbonis — to pacels tikai viņa sargatslēga.",
+      "expert": "Šīs durvis sargā augstā priestera tempļa zīme — tās jāatver ar svēto atslēgu.",
+      "master": "Šo eju saista faraona karaliskais zīmogs — to salauzīs tikai valdnieka atslēga.",
+      "wizard": "Šos vārtus tur dievu sargzīme — garām tiks tikai ar tās dievišķo atslēgu."
+    },
+    "needsKey": "Durvis ir iezīmētas vienai atslēgai:",
+    "lockedColor": "Šo atslēgu tu šajā stāvā vēl neatradi."
+  },
+  "chest": {
+    "tapToOpen": "Pieskaries, lai atvērtu",
+    "money_zero": "{{count}} monētas",
+    "money_one": "{{count}} monēta",
+    "money_other": "{{count}} monētas",
+    "mapPiece": "Kartes gabaliņš",
+    "mapPieceDescription": "Trausls gabaliņš no kartes uz kādu sen aizmirstu vietu. Žēl, ka līdz veselai kartei vēl tālu...",
+    "mapPieceProgress": "Savākti {{found}} no {{required}} kartes gabaliņiem",
+    "mapPieceComplete": "Karte ir vesela — tā ved uz: {{name}}.",
+    "hieroglyphFragment": "Hieroglifa gabaliņš",
+    "fragmentProgress": "Atrasti {{found}} no {{required}} gabaliņiem",
+    "tombKey": "Kapa atslēga",
+    "sandLever": "Smilšu svira",
+    "sandLeverDescription": "Tu to pavelc, un tā paliek lejā. Kaut kur tālu prom smiltis aiztek.",
+    "webKey": "Zīmogota atslēga",
+    "webKeyDescription": "Uz tās galviņas ir zīme, ko tu jau redzēji uz kādām aizzīmogotām durvīm citur.",
+    "hieroglyphs": "Senie hieroglifi",
+    "hieroglyphsDescription": "Svētas zīmes, iekaltas šīs telpas sienās. To nozīme papildina tavas zināšanas par seno pasauli.",
+    "mosaicPiece": "Mozaīkas gabaliņš",
+    "mosaicPieceDescription": "Mirdzoša stikla flīzīte, viens gabaliņš no lielas mozaīkas. Noliec to pie pārējiem, un apslēptais attēls pamazām parādās.",
+    "waterskin": "Ūdens maiss",
+    "waterskinDescription": "Vēss ūdens. Tu to izdzer uzreiz un jūti, kā brūces kļūst vieglākas."
+  },
+  "loot": {
+    "youFound": "Tu atradi",
+    "expeditionReward": "Papildu balva par ekspedīcijas pabeigšanu",
+    "clickToContinue": "Pieskaries jebkur, lai turpinātu"
+  },
+  "money": {
+    "label": "Monētas"
+  },
+  "shop": {
+    "title": "Feza bodīte",
+    "invitation": "Apskatīt bodīti",
+    "buy": "Pirkt",
+    "sell": "Pārdot",
+    "soldOut": "Izpārdots",
+    "dismiss": "Iet prom",
+    "rareItems": "Retumi",
+    "sellSection": "Nieciņi pārdošanai",
+    "haul": {
+      "coins_zero": "+{{count}} monētas",
+      "coins_one": "+{{count}} monēta",
+      "coins_other": "+{{count}} monētas",
+      "note": "Pa ceļam atrastas monētas"
+    }
+  },
+  "purchases": {
+    "donkey": {
+      "name": "Ēzelis",
+      "need": "Tev vajag ēzeli",
+      "opens": "Nes tavas mantas. Ar to tu vari doties Eksperta līmeņa ceļojumos."
+    },
+    "cart": {
+      "name": "Rati",
+      "need": "Tev vajag ratus",
+      "opens": "Uz tiem sakrāmējas visa nometne. Ar tiem tu vari doties Meistara līmeņa ceļojumos."
+    },
+    "camel": {
+      "name": "Kamielis",
+      "need": "Tev vajag kamieli",
+      "opens": "Iet dienām ilgi bez ūdens. Tas tevi aizved uz Iekšējo svētnīcu."
+    },
+    "secondDonkey": {
+      "name": "Otrs ēzelis",
+      "need": "Tev vajag otru ēzeli",
+      "opens": "Vēl vairāk vietas mantām. Ar to tu vari doties Burvja līmeņa ceļojumos."
+    },
+    "secondCamel": {
+      "name": "Otrs kamielis",
+      "need": "Tev vajag otru kamieli",
+      "opens": "Divi kamieļi panes pietiekami daudz ūdens ceļam uz Ozīrisa zāli."
+    },
+    "sturdyCart": {
+      "name": "Stiprāki rati",
+      "need": "Tev vajag stiprākus ratus",
+      "opens": "Nesalūzīs, pat ne ceļā uz Kosmisko spēku valstību."
+    },
+    "caravanBanner": {
+      "name": "Karavānas karogs",
+      "opens": "Neko neatver. Vienkārši prieka pēc."
+    },
+    "hint": "Fez to pārdod šeit: {{place}}",
+    "devGrant": "Nopirkt visus dzīvniekus"
+  },
+  "level": {
+    "completed": "Līmenis pabeigts!"
+  },
+  "mosaic": {
+    "place_zero": "Ielikt {{count}} gabaliņus",
+    "place_one": "Ielikt {{count}} gabaliņu",
+    "place_other": "Ielikt {{count}} gabaliņus",
+    "placing": "Liek…",
+    "panel": {
+      "starter": "Sargs pie durvīm",
+      "junior": "Pirmā mācība",
+      "expert": "Ielaižot sauli",
+      "master": "Zaļais karalis",
+      "wizard": "Spalva un sirds"
+    },
+    "entrance": {
+      "title": "Mozaīka",
+      "label": "Mozaīka {{found}}/{{total}}"
+    },
+    "haul": {
+      "pieces_zero": "{{count}} mozaīkas gabaliņi",
+      "pieces_one": "{{count}} mozaīkas gabaliņš",
+      "pieces_other": "{{count}} mozaīkas gabaliņi",
+      "note": "Krāsainā stikla logam"
+    }
+  },
+  "collection": {
+    "tabs": {
+      "treasures": "Dārgumi",
+      "hieroglyphs": "Hieroglifi",
+      "stories": "Stāsti",
+      "junk": "Nieciņi"
+    },
+    "tabsLabel": "Ko tu savāci",
+    "tabNew_zero": "{{label}} · {{count}} jauni",
+    "tabNew_one": "{{label}} · {{count}} jauns",
+    "tabNew_other": "{{label}} · {{count}} jauni",
+    "empty": "Tava lāde vēl ir tukša",
+    "newLabel": "JAUNS",
+    "clickForDetails": "Pieskaries flīzītei, lai redzētu vairāk",
+    "categories": {
+      "deities": "🏺 Dievi",
+      "professions": "⚱️ Amati",
+      "animals": "🐾 Dzīvnieki",
+      "artifacts": "💎 Senlietas",
+      "treasures": "💰 Dārgumi",
+      "junk": "🔷 Nieciņi",
+      "signs": "✍️ Zīmes"
+    },
+    "treasureCategories": {
+      "merchantCache": "💰 Tirgotāja slēptuve",
+      "nobleVault": "👑 Dižciltīgās velve",
+      "templeSecrets": "🏛️ Tempļa noslēpumi",
+      "ancientRelics": "🏺 Senās relikvijas",
+      "mythicalArtifacts": "✨ Leģendārās senlietas"
+    }
+  },
+  "detector": {
+    "compassTitle": "Kompass",
+    "corridorTitle": "Eju meklētājs",
+    "pickTarget": "Izvēlies hieroglifu pie kartes galda nometnē",
+    "allCollected": "Piramīdās, kuras tu jau pētīji, vēl nav neviena sasniedzama gabaliņa",
+    "more": "+{{count}} vēl",
+    "corridorHere": "Tieši šeit ir slepena eja",
+    "revealCorridor": "Atvērt to",
+    "corridorNearby": "Netālu ir slepena eja",
+    "corridorOnFloor": "Šajā stāvā gaida slepena eja",
+    "lookingFor": "Meklē {{symbol}}",
+    "access": {
+      "open": "Nekas zināms šo neaizšķērso",
+      "unknown": "Varbūt vēl nav sasniedzams — tas ir kapā vai tiek pārdots"
+    },
+    "corridorNoneNearby": "Tuvumā nav slepenas ejas",
+    "corridorNoneOnFloor": "Šajā stāvā nav slepenas ejas",
+    "corridorOtherFloor": "Citā stāvā gaida slepena eja",
+    "corridorNoneInPyramid": "Citos stāvos nav slepenas ejas",
+    "title": "Detektors",
+    "band": {
+      "none": "Nekas nav atrasts",
+      "pyramid": "Kaut kas ir šajā piramīdā",
+      "floor": "Kaut kas ir šajā stāvā",
+      "near": "Kaut kas ir pavisam tuvu",
+      "here": "Tieši šeit! Atver detektoru"
+    },
+    "camp": {
+      "parts": "{{count}} no {{total}} daļām",
+      "compassReach": {
+        "1": "redz piramīdu",
+        "2": "redz stāvu",
+        "3": "parāda īsto vietu"
+      },
+      "pickHeading": "Ko kompass meklē?",
+      "onlyIncomplete": "Tikai zīmes, no kurām tev ir kāds gabaliņš, līdz tās ir pilnas.",
+      "whereHeading": "Kur atrodas {{symbol}} gabaliņi",
+      "pickFirst": "Izvēlies zīmi, lai redzētu, kur ir tās gabaliņi.",
+      "follow": "Sekot šai zīmei",
+      "following": "Kompass seko šai zīmei",
+      "nothingToFind": "Tev vēl nav neviena gabaliņa no zīmes, kas nav pilna.",
+      "noneInReach": "Piramīdās, kuras tu jau pētīji, vēl nav neviena sasniedzama gabaliņa.",
+      "corridorReach": {
+        "1": "dzird eju tuvumā",
+        "2": "dzird visu šo stāvu",
+        "3": "dzird arī citus stāvus",
+        "4": "dzird citus ceļojumus"
+      },
+      "corridorInPyramid": "Piramīdā tas klausās, vai nav kāda aizvērta eja.",
+      "corridorFarNext": "Ar visām četrām daļām tas no nometnes dzird citus ceļojumus.",
+      "corridorWhere": "Kur vēl ir aizvērta eja",
+      "corridorNone": "Ceļojumos, kuros tu biji, nav nevienas aizvērtas ejas.",
+      "pyramid": "{{n}}. piramīda",
+      "corridorCount_zero": "{{count}} ejas",
+      "corridorCount_one": "{{count}} eja",
+      "corridorCount_other": "{{count}} ejas"
+    }
+  },
+  "keys": {
+    "blue": "Zilā atslēga",
+    "red": "Sarkanā atslēga",
+    "green": "Zaļā atslēga",
+    "yellow": "Dzeltenā atslēga",
+    "purple": "Violetā atslēga",
+    "bundle": "Atslēgu saišķis",
+    "foundDescription": "Tā atver šīs krāsas durvis šajā stāvā.",
+    "heldTitle": "{{key}} — tev rokā",
+    "neededTitle": "{{key}} — vēl vajadzīga"
+  },
+  "balance": {
+    "rules": {
+      "tap": "Pieskaries zīmei apakšā un tad skaitlim. Pieskaries tam pašam skaitlim vēlreiz, lai to noņemtu.",
+      "same": "Zīme sver vienādi uz visiem svariem.",
+      "cancel": "Ja no abiem kausiem noņem vienu un to pašu, svari paliek līdzsvarā. Pieskaries iezīmētam gabalam, lai to izdarītu — tas, kas paliek, saglabājas kā jauna rinda.",
+      "swap": "Pieskaries zīmei, kurai pretī nav nekā līdzīga, un tad rindai, kurā šī zīme ir viena pati, lai to apmainītu pret to, cik tā rinda ir vērta."
+    },
+    "hint": {
+      "mistake": "Kāds no tevis ieliktajiem skaitļiem liek svariem sasvērties. Noņem to un paskaties vēlreiz.",
+      "alone": "Izgaismotajā rindā {{glyph}} ir vienīgais gabals bez skaitļa. Izdomā, cik tas sver.",
+      "equalShares": "Izgaismotajā rindā ir tikai {{glyph}} pret skaitli. Sadali to skaitli starp tiem vienādi.",
+      "difference": "Abas izgaismotās rindas ir vienādas, izņemot {{glyph}}. Salīdzini tās.",
+      "cancelGlyph": "Abos izgaismotās rindas kausos ir {{glyph}}. Pieskaries vienam, lai to noņemtu no abām pusēm — rinda paliek līdzsvarā.",
+      "cancelStones": "Abos izgaismotās rindas kausos ir parasti skaitļi. Pieskaries vienam, lai no abām pusēm noņemtu vienādu daudzumu.",
+      "swap": "Viena izgaismotā rinda pasaka, cik ir vērts viens pats {{glyph}}. Pieskaries {{glyph}} otrā izgaismotajā rindā un tad tai rindai."
+    },
+    "swap": {
+      "pick": "Pieskaries izgaismotai rindai, lai apmainītu šo {{glyph}} pret to, cik tā rinda saka, ka tas ir vērts.",
+      "none": "Nekas šeit nepasaka, cik vērts ir viens pats {{glyph}}, un nekas pretī tam neder."
+    },
+    "goal": {
+      "default": "Katrai zīmei ir savs svars, un visi svari ir līdzsvarā.",
+      "weighing": "Katra zīme atrod savu svaru, un visi svari nostājas taisni."
+    },
+    "name": {
+      "default": "Svari",
+      "weighing": "Sirds svēršana"
+    }
+  },
+  "sumplete": {
+    "rules": {
+      "tap": "Pieskaries vienreiz, lai skaitli izsvītrotu, vēlreiz — lai to atzīmētu kā paliekošu, vēl vienreiz — lai notīrītu.",
+      "totals": "Mazais skaitlis zem katra mērķa rāda, cik tā līnija saskaitās tieši tagad."
+    },
+    "hint": {
+      "mistake": "Kāda no atzīmēm šeit nevar būt pareiza. Atsauc to un paskaties vēlreiz.",
+      "tooBig": {
+        "row": "Šai rindai vēl vajag {{deficit}}. {{value}} ir lielāks par to, tāpēc tas nevar palikt.",
+        "col": "Šai kolonnai vēl vajag {{deficit}}. {{value}} ir lielāks par to, tāpēc tas nevar palikt."
+      },
+      "allStrike": {
+        "row": "Paliekošie skaitļi šajā rindā jau kopā dod mērķi, tāpēc viss pārējais jāizsvītro.",
+        "col": "Paliekošie skaitļi šajā kolonnā jau kopā dod mērķi, tāpēc viss pārējais jāizsvītro."
+      },
+      "allKeep": {
+        "row": "Šī rinda jau kopā dod savu mērķi — atzīmē šos skaitļus kā paliekošus, lai varētu atrisināt kolonnas, kas iet tiem cauri.",
+        "col": "Šī kolonna jau kopā dod savu mērķi — atzīmē šos skaitļus kā paliekošus, lai varētu atrisināt rindas, kas iet tiem cauri."
+      },
+      "parityKeep": {
+        "row": "Šai rindai vēl vajag {{deficit}}, un tas ir nepāra skaitlis. {{value}} ir vienīgais palikušais nepāra skaitlis, tāpēc tam jāpaliek.",
+        "col": "Šai kolonnai vēl vajag {{deficit}}, un tas ir nepāra skaitlis. {{value}} ir vienīgais palikušais nepāra skaitlis, tāpēc tam jāpaliek."
+      },
+      "parityStrike": {
+        "row": "Šai rindai vēl vajag {{deficit}}, un tas ir pāra skaitlis. {{value}} ir vienīgais palikušais nepāra skaitlis, tāpēc tas jāizsvītro.",
+        "col": "Šai kolonnai vēl vajag {{deficit}}, un tas ir pāra skaitlis. {{value}} ir vienīgais palikušais nepāra skaitlis, tāpēc tas jāizsvītro."
+      },
+      "onlyCombination": {
+        "row": "Tikai viena skaitļu kopa šajā rindā kopā dod {{deficit}}.",
+        "col": "Tikai viena skaitļu kopa šajā kolonnā kopā dod {{deficit}}."
+      },
+      "inEveryCombinationKeep": {
+        "row": "Bez {{value}} neviena citu skaitļu kopa šajā rindā nedod {{deficit}} — tāpēc tam jāpaliek.",
+        "col": "Bez {{value}} neviena citu skaitļu kopa šajā kolonnā nedod {{deficit}} — tāpēc tam jāpaliek."
+      },
+      "inEveryCombinationStrike": {
+        "row": "Ja {{value}} paliek, šai rindai vēl vajadzētu {{remaining}}, bet to nevar salikt neviens no pārējiem skaitļiem — tāpēc tas jāizsvītro.",
+        "col": "Ja {{value}} paliek, šai kolonnai vēl vajadzētu {{remaining}}, bet to nevar salikt neviens no pārējiem skaitļiem — tāpēc tas jāizsvītro."
+      },
+      "tooBig.row": "Šai rindai vēl vajag {{deficit}}, un {{value}} ir lielāks par to.",
+      "tooBig.col": "Šai kolonnai vēl vajag {{deficit}}, un {{value}} ir lielāks par to.",
+      "allStrike.row": "Paliekošie skaitļi šajā rindā jau kopā dod mērķi.",
+      "allStrike.col": "Paliekošie skaitļi šajā kolonnā jau kopā dod mērķi.",
+      "allKeep.row": "Šī rinda jau kopā dod savu mērķi, tāpēc tālāk var atrisināt kolonnas, kas iet tai cauri.",
+      "allKeep.col": "Šī kolonna jau kopā dod savu mērķi, tāpēc tālāk var atrisināt rindas, kas iet tai cauri.",
+      "parityKeep.row": "Šai rindai vēl vajag {{deficit}}, nepāra skaitli, un {{value}} ir vienīgais palikušais nepāra skaitlis.",
+      "parityKeep.col": "Šai kolonnai vēl vajag {{deficit}}, nepāra skaitli, un {{value}} ir vienīgais palikušais nepāra skaitlis.",
+      "parityStrike.row": "Šai rindai vēl vajag {{deficit}}, pāra skaitli, un {{value}} ir vienīgais palikušais nepāra skaitlis.",
+      "parityStrike.col": "Šai kolonnai vēl vajag {{deficit}}, pāra skaitli, un {{value}} ir vienīgais palikušais nepāra skaitlis.",
+      "onlyCombination.row": "Tikai viena skaitļu kopa šajā rindā kopā dod {{deficit}}.",
+      "onlyCombination.col": "Tikai viena skaitļu kopa šajā kolonnā kopā dod {{deficit}}.",
+      "inEveryCombinationKeep.row": "Bez {{value}} neviena citu skaitļu kopa šajā rindā nedod {{deficit}}.",
+      "inEveryCombinationKeep.col": "Bez {{value}} neviena citu skaitļu kopa šajā kolonnā nedod {{deficit}}.",
+      "inEveryCombinationStrike.row": "Ja {{value}} paliek, šai rindai vēl vajadzētu {{remaining}}, bet to nevar salikt neviens no pārējiem skaitļiem.",
+      "inEveryCombinationStrike.col": "Ja {{value}} paliek, šai kolonnai vēl vajadzētu {{remaining}}, bet to nevar salikt neviens no pārējiem skaitļiem.",
+      "action": {
+        "strike_zero": "Izsvītro iesvītrotos skaitļus.",
+        "strike_one": "Izsvītro iesvītroto skaitli.",
+        "strike_other": "Izsvītro iesvītrotos skaitļus.",
+        "keep_zero": "Atzīmē iesvītrotos skaitļus kā paliekošus.",
+        "keep_one": "Atzīmē iesvītroto skaitli kā paliekošu.",
+        "keep_other": "Atzīmē iesvītrotos skaitļus kā paliekošus."
+      }
+    },
+    "goal": "Katra rinda un katra kolonna kopā dod skaitli, kas ir tai blakus.",
+    "name": "Saskaitīšana"
+  },
+  "futoshiki": {
+    "rules": {
+      "signs": "Zīme starp diviem lauciņiem rāda uz mazāko no abiem skaitļiem.",
+      "enter": "Pieskaries lauciņam un tad skaitlim. Tas pats skaitlis vēlreiz to izņem ārā.",
+      "notes": "Pārslēdzies uz zīmuli, lai pierakstītu skaitļus, kas lauciņā vēl varētu būt. Atsaukt atceļ tavu pēdējo gājienu."
+    },
+    "hint": {
+      "mistake": {
+        "value": "Kāds no šiem skaitļiem nevar būt pareizs. Izņem to ārā un paskaties vēlreiz.",
+        "note": "Šī lauciņa piezīmes ir izslēgušas skaitli, kam te jābūt. Notīri tās un sāc šo lauciņu no jauna."
+      },
+      "nakedSingle": "Visi citi skaitļi jau ir aizņemti šajā rindā, šajā kolonnā vai zīmju dēļ — šim lauciņam paliek tikai {{value}}.",
+      "hiddenSingle": {
+        "row": "{{value}} neder nevienā citā šīs rindas lauciņā, tāpēc tas jāliek šeit.",
+        "col": "{{value}} neder nevienā citā šīs kolonnas lauciņā, tāpēc tas jāliek šeit."
+      },
+      "signBound": {
+        "high": "Zīme šeit rāda prom uz lielāku skaitli, tāpēc šajā lauciņā nevar būt {{value}}.",
+        "low": "Zīme šeit rāda uz šo lauciņu, tāpēc kaut kam jābūt mazākam par to — šeit nevar būt {{value}}."
+      },
+      "signVsValue": {
+        "less": "Zīme saka, ka šis lauciņš ir mazāks par kaimiņu, un kaimiņā ir {{value}}.",
+        "greater": "Zīme saka, ka šis lauciņš ir lielāks par kaimiņu, un kaimiņā ir {{value}}."
+      },
+      "signChain": {
+        "high": "Seko zīmēm no šī lauciņa: {{chain}} lauciņiem pēc kārtas katram jābūt lielākam par iepriekšējo, tāpēc šis nevar būt lielāks par {{bound}}.",
+        "low": "Seko zīmēm līdz šim lauciņam: {{chain}} lauciņiem pēc kārtas katram jābūt mazākam par iepriekšējo, tāpēc šis nevar būt mazāks par {{bound}}."
+      },
+      "signPair": {
+        "less": "Lielākais skaitlis, kas vēl var būt kaimiņā aiz zīmes, ir {{value}}, un šim lauciņam jāpaliek zem tā.",
+        "greater": "Mazākais skaitlis, kas vēl var būt kaimiņā aiz zīmes, ir {{value}}, un šim lauciņam jāpaliek virs tā."
+      },
+      "nakedPair": {
+        "row": "Šajos divos lauciņos var būt tikai {{first}} un {{second}}, vienā vai otrā secībā, tāpēc nevienā citā šīs rindas lauciņā nevar būt neviens no tiem.",
+        "col": "Šajos divos lauciņos var būt tikai {{first}} un {{second}}, vienā vai otrā secībā, tāpēc nevienā citā šīs kolonnas lauciņā nevar būt neviens no tiem."
+      },
+      "hiddenPair": {
+        "row": "Šajā rindā {{first}} un {{second}} der tikai šajos divos lauciņos, tāpēc tajos nevar būt nekas cits.",
+        "col": "Šajā kolonnā {{first}} un {{second}} der tikai šajos divos lauciņos, tāpēc tajos nevar būt nekas cits."
+      },
+      "xWing": {
+        "row": "{{value}} der tikai divos lauciņos katrā no šīm divām rindām, un tie ir tajās pašās kolonnās. Lai kā arī būtu, abas kolonnas ir aizņemtas — tāpēc citur tajās {{value}} nevar būt.",
+        "col": "{{value}} der tikai divos lauciņos katrā no šīm divām kolonnām, un tie ir tajās pašās rindās. Lai kā arī būtu, abas rindas ir aizņemtas — tāpēc citur tajās {{value}} nevar būt."
+      },
+      "nakedTriple": {
+        "row": "Šajos trijos lauciņos kopā var būt tikai {{first}}, {{second}} un {{third}}, tāpēc nevienā citā šīs rindas lauciņā nevar būt neviens no tiem.",
+        "col": "Šajos trijos lauciņos kopā var būt tikai {{first}}, {{second}} un {{third}}, tāpēc nevienā citā šīs kolonnas lauciņā nevar būt neviens no tiem."
+      },
+      "hiddenTriple": {
+        "row": "Šajā rindā {{first}}, {{second}} un {{third}} der tikai šajos trijos lauciņos, tāpēc tajos nevar būt nekas cits.",
+        "col": "Šajā kolonnā {{first}}, {{second}} un {{third}} der tikai šajos trijos lauciņos, tāpēc tajos nevar būt nekas cits."
+      }
+    },
+    "goal": "Katrā rindā un katrā kolonnā katrs skaitlis ir tieši vienu reizi.",
+    "name": "Lielāks un mazāks"
+  },
+  "lightbeam": {
+    "rules": {
+      "mirrors": "Spogulis noliec gaismu no jebkuras savas puses. Mazās atzīmes ap to rāda, kā vēl to var pagriezt: lielākā daļa pagriež gaismu par ceturtdaļu, bet daži mazāk un aizsūta to slīpi.",
+      "walls": "Akmens bluķis gaismu aprij. Tāpat arī laukuma mala.",
+      "tap": "Pieskaries gabalam, lai to mainītu: spogulis pagriežas, slīdošs gabals pārvietojas uz nākamo vietu. Balta mala nozīmē, ka to vari kustināt tu; viss pārējais ir daļa no mīklas.",
+      "nodes": "Daži akmeņi ir savienoti ar ligzdu grīdā, un tos ar pieskārienu nevar pakustināt. Aizsūti gaismu pāri ligzdai, un akmens aizslīd malā."
+    },
+    "hint": {
+      "entryRun": "Sāc tur, kur gaisma jau iet: tā skrien taisni no diska, līdz satiek pirmo gabalu, ko tu vari mainīt. Pa šiem lauciņiem gaisma ies vienmēr, lai ko tu darītu.",
+      "exitRun": "Paskaties uz svētnīcu. Tikai viena tās puse vispār var tikt izgaismota — visi citi ceļi ir aizsprostoti vai vērsti ārpus laukuma —, tāpēc gaismai jāatnāk pa to līniju.",
+      "wiringFires": {
+        "one": "Gaismai pa ceļam jāiet pāri tai ligzdai — to tu jau izdomāji. Kad tā iet pāri, akmens, kas ar to savienots, pavirzās nost, un ceļš aiz tā atveras.",
+        "all": "Tas akmens ir savienots ar vairākām ligzdām, un tas pakustas tikai tad, kad gaisma ir gājusi pāri visām. Atrodi veidu, kā vest staru caur tām visām."
+      },
+      "deadEnd": {
+        "wall": "Ja to pagriež šādi, gaisma ieskrien taisni akmenī, un nekas to vairs neizglābj. Tātad šādi to nevar pagriezt.",
+        "disc": "Ja to pagriež šādi, spogulis sūta gaismu atpakaļ, no kurienes tā nāca, līdz pat diskam. Tātad šādi to nevar pagriezt.",
+        "edge": "Ja to pagriež šādi, gaisma aizskrien pāri laukuma malai, un nekas to vairs nenoķer. Tātad šādi to nevar pagriezt.",
+        "loop": "Ja to pagriež šādi, gaisma nekur nenonāk — tā riņķo bezgalīgi. Tātad šādi to nevar pagriezt."
+      },
+      "feedsExit": {
+        "wall": "Ej atpakaļ no svētnīcas. Ja to pagriež šādi, nekas nevar aizvest gaismu pa vienīgo līniju, kas līdz tai sniedzas — tā pa ceļam pazūd akmenī.",
+        "disc": "Ej atpakaļ no svētnīcas. Ja to pagriež šādi, gaismai būtu jānāk no diska ēnainās aizmugures, bet no turienes gaisma nenāk.",
+        "edge": "Ej atpakaļ no svētnīcas. Ja to pagriež šādi, gaismai būtu jānāk no ārpuses laukumam, lai līdz tai tiktu.",
+        "loop": "Ej atpakaļ no svētnīcas. Ja to pagriež šādi, gaisma, kurai būtu jātiek līdz tai, tikai bezgalīgi riņķo."
+      },
+      "wiringDead": "Lai ko tu darītu, gaisma nekad netiks līdz tai ligzdai — tāpēc akmens, kas ar to savienots, paliek tieši savā vietā, un ceļu var lasīt tam garām.",
+      "neverReached": "Liec šo mierā. Gaisma līdz tam netiek, lai kā būtu pagriezts viss pārējais, tāpēc nav svarīgi, ko tu ar to dari.",
+      "onlySurvivor": "Izmēģini visus šī gabala stāvokļus pēc kārtas — visi, izņemot vienu, atstāj svētnīcu tumsā. Tas viens ir atbilde."
+    },
+    "goal": "Saules gaisma skrien no diska līdz svētnīcai.",
+    "name": "Gaismas stars"
+  },
+  "eclipse": {
+    "rules": {
+      "triple": "Trīs vienādi pēc kārtas nedrīkst būt nekad — ne horizontāli, ne vertikāli.",
+      "copies": "Nevienas divas rindas nedrīkst būt vienādas, un arī nevienas divas kolonnas.",
+      "signs": "Zīme starp diviem lauciņiem saka, kā tie salīdzināmi: = nozīmē vienādi, × — dažādi.",
+      "enter": "Pieskaries lauciņam, lai ieliktu sauli, vēlreiz — mēnesi, vēl vienreiz — lai to iztukšotu."
+    },
+    "hint": {
+      "mistake": "Kāda no šīm atzīmēm nevar būt pareiza.",
+      "sign.same": "= nozīmē vienādi.",
+      "sign.different": "× nozīmē dažādi.",
+      "noTriple.pair": "Jau divi {{mark}}, un trīs pēc kārtas nedrīkst būt nekad.",
+      "noTriple.sandwich": "{{mark}} abās pusēs, un trīs pēc kārtas nedrīkst būt nekad.",
+      "signPair": "Šie divi ir vienādi, un tam {{mark}} blakus.",
+      "lineCount": "Šajā līnijā jau ir visi {{count}} {{mark}}.",
+      "noCopy": "Otrādi tā kļūtu par izgaismotās līnijas kopiju.",
+      "linePairing.sameNoRoom": "Šeit palikuši tikai {{count}} {{mark}}, un šie divi ir vienādi.",
+      "linePairing.differentTakesOne": "× pāri izlieto visus {{mark}}, kam šajā līnijā ir vieta.",
+      "loneMark": "Palicis viens {{mark}}, un tikai viens lauciņš neļauj trim {{other}} sanākt kopā.",
+      "squeeze.triple": "{{mark}} šeit padarītu pārējos par {{other}} — trīs pēc kārtas.",
+      "squeeze.sign": "{{mark}} šeit padarītu pārējos par {{other}} — kāda zīme vairs neder.",
+      "squeeze.copy": "{{mark}} šeit padarītu pārējos par {{other}} — līnija kļūst par kopiju.",
+      "action": {
+        "fill_zero": "Ieliec {{mark}} iesvītrotajos lauciņos.",
+        "fill_one": "Ieliec {{mark}} iesvītrotajā lauciņā.",
+        "fill_other": "Ieliec {{mark}} iesvītrotajos lauciņos.",
+        "fillMixed": "Aizpildi iesvītrotos lauciņus — tikai viens veids der."
+      }
+    },
+    "goal": "Katrā lauciņā ir saule vai mēness, un katrā līnijā ir tikpat daudz saules, cik mēness.",
+    "name": "Saule un Mēness"
+  },
+  "constellation": {
+    "rules": {
+      "default": {
+        "straight": "Gaismas līnijas iet taisni horizontāli vai vertikāli, no vienas zvaigznes līdz nākamajai.",
+        "pair": "Divām zvaigznēm var būt ne vairāk kā divas kopīgas līnijas.",
+        "cross": "Līnijas nekad nekrustojas un nekad neiet cauri zvaigznei.",
+        "enter": "Velc no zvaigznes uz kaimiņu, lai uzvilktu līniju, vēlreiz — dubultu, vēl vienreiz — lai to notīrītu."
+      },
+      "causeway": {
+        "straight": "Vedamie ceļi iet taisni horizontāli vai vertikāli, no vienas vietas līdz nākamajai.",
+        "pair": "Divām vietām var būt ne vairāk kā divi kopīgi ceļi.",
+        "cross": "Ceļi nekad nekrustojas un nekad neiet cauri kādai vietai.",
+        "enter": "Velc no vietas uz kaimiņu, lai ieliktu ceļu, vēlreiz — dubultu, vēl vienreiz — lai to noārdītu."
+      },
+      "irrigation": {
+        "straight": "Kanāli iet taisni horizontāli vai vertikāli, no viena baseina līdz nākamajam.",
+        "pair": "Diviem baseiniem var būt ne vairāk kā divi kopīgi kanāli.",
+        "cross": "Kanāli nekad nekrustojas un nekad neiet cauri baseinam.",
+        "enter": "Velc no baseina uz kaimiņu, lai izraktu kanālu, vēlreiz — lai to paplašinātu, vēl vienreiz — lai to aizbērtu."
+      },
+      "ceiling": {
+        "straight": "Auklas iet taisni horizontāli vai vertikāli, no vienas zvaigznes līdz nākamajai.",
+        "pair": "Divām zvaigznēm var būt ne vairāk kā divas kopīgas auklas.",
+        "cross": "Auklas nekad nekrustojas un nekad neiet cauri zvaigznei.",
+        "enter": "Velc no zvaigznes uz kaimiņu, lai uzliktu auklu, vēlreiz — dubultu, vēl vienreiz — lai to noņemtu."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Kāda no šīm līnijām nevar būt pareiza.",
+        "capacity": "{{count}} līnijas, un izeju ir tieši tik, cik vajag.",
+        "settled": "Šim {{count}} jau ir visas līnijas.",
+        "soleWayOut": "Palikusi tikai viena izeja, un vēl jāvelk {{count}}.",
+        "crossed": "Līnija tur krustotu šo.",
+        "atLeastOne": "{{count}} līnijas, un pārējās izejas tās visas nevar panest.",
+        "twinBlock.single": "Ja savienotu tos divus, sanāktu zvaigznājs tikai no divām zvaigznēm.",
+        "twinBlock.double": "Otra līnija tur radītu zvaigznāju tikai no divām zvaigznēm.",
+        "isolation": "Šī līnija nošķirtu šīs {{count}} zvaigznes no pārējām.",
+        "action": {
+          "draw_zero": "Uzvelc iezīmētās līnijas.",
+          "draw_one": "Uzvelc iezīmēto līniju.",
+          "draw_other": "Uzvelc iezīmētās līnijas.",
+          "refuse_zero": "Iezīmētās līnijas paliek neuzvilktas.",
+          "refuse_one": "Iezīmētā līnija paliek neuzvilkta.",
+          "refuse_other": "Iezīmētās līnijas paliek neuzvilktas.",
+          "refuseDouble": "Tur viena līnija, un otras nav."
+        }
+      },
+      "causeway": {
+        "mistake": "Kāds no šiem ceļiem nevar būt pareizs.",
+        "capacity": "{{count}} ceļi, un izeju ir tieši tik, cik vajag.",
+        "settled": "Šim {{count}} jau ir visi ceļi.",
+        "soleWayOut": "Palikusi tikai viena izeja, un vēl jāliek {{count}}.",
+        "crossed": "Ceļš tur krustotu šo.",
+        "atLeastOne": "{{count}} ceļi, un pārējās izejas tos visus nevar panest.",
+        "twinBlock.single": "Ja savienotu tās divas, sanāktu ceļu tīkls tikai no divām vietām.",
+        "twinBlock.double": "Otrs ceļš tur radītu ceļu tīklu tikai no divām vietām.",
+        "isolation": "Šis ceļš nošķirtu šīs {{count}} vietas no pārējām.",
+        "action": {
+          "draw_zero": "Ieliec iezīmētos ceļus.",
+          "draw_one": "Ieliec iezīmēto ceļu.",
+          "draw_other": "Ieliec iezīmētos ceļus.",
+          "refuse_zero": "Iezīmētie ceļi paliek neuzbūvēti.",
+          "refuse_one": "Iezīmētais ceļš paliek neuzbūvēts.",
+          "refuse_other": "Iezīmētie ceļi paliek neuzbūvēti.",
+          "refuseDouble": "Tur viens ceļš, un otra nav."
+        }
+      },
+      "irrigation": {
+        "mistake": "Kāds no šiem kanāliem nevar būt pareizs.",
+        "capacity": "{{count}} kanāli, un izeju ir tieši tik, cik vajag.",
+        "settled": "Šim {{count}} jau ir visi kanāli.",
+        "soleWayOut": "Palikusi tikai viena izeja, un vēl jāizrok {{count}}.",
+        "crossed": "Kanāls tur krustotu šo.",
+        "atLeastOne": "{{count}} kanāli, un pārējās izejas tos visus nevar panest.",
+        "twinBlock.single": "Ja savienotu tos divus, sanāktu ūdenssistēma tikai no diviem baseiniem.",
+        "twinBlock.double": "Otrs kanāls tur radītu ūdenssistēmu tikai no diviem baseiniem.",
+        "isolation": "Šis kanāls nošķirtu šos {{count}} baseinus no pārējiem.",
+        "action": {
+          "draw_zero": "Izroc iezīmētos kanālus.",
+          "draw_one": "Izroc iezīmēto kanālu.",
+          "draw_other": "Izroc iezīmētos kanālus.",
+          "refuse_zero": "Iezīmētie kanāli paliek neizrakti.",
+          "refuse_one": "Iezīmētais kanāls paliek neizrakts.",
+          "refuse_other": "Iezīmētie kanāli paliek neizrakti.",
+          "refuseDouble": "Tur viens kanāls, un otra nav."
+        }
+      },
+      "ceiling": {
+        "mistake": "Kāda no šīm auklām nevar būt pareiza.",
+        "capacity": "{{count}} auklas, un izeju ir tieši tik, cik vajag.",
+        "settled": "Šim {{count}} jau ir visas auklas.",
+        "soleWayOut": "Palikusi tikai viena izeja, un vēl jāliek {{count}}.",
+        "crossed": "Aukla tur krustotu šo.",
+        "atLeastOne": "{{count}} auklas, un pārējās izejas tās visas nevar panest.",
+        "twinBlock.single": "Ja savienotu tās divas, sanāktu zīmētas debesis tikai no divām zvaigznēm.",
+        "twinBlock.double": "Otra aukla tur radītu zīmētas debesis tikai no divām zvaigznēm.",
+        "isolation": "Šī aukla nošķirtu šīs {{count}} zvaigznes no pārējām.",
+        "action": {
+          "draw_zero": "Uzliec iezīmētās auklas.",
+          "draw_one": "Uzliec iezīmēto auklu.",
+          "draw_other": "Uzliec iezīmētās auklas.",
+          "refuse_zero": "Iezīmētās auklas paliek neuzliktas.",
+          "refuse_one": "Iezīmētā aukla paliek neuzlikta.",
+          "refuse_other": "Iezīmētās auklas paliek neuzliktas.",
+          "refuseDouble": "Tur viena aukla, un otras nav."
+        }
+      }
+    },
+    "goal": {
+      "default": "Katra zvaigzne ir vienā zvaigznājā, savienota ar tik gaismas līnijām, cik saka tās skaitlis.",
+      "causeway": "Katra vieta ir vienā ceļu tīklā, savienota ar tik vedamajiem ceļiem, cik saka tās skaitlis.",
+      "irrigation": "Katrs baseins ir vienā ūdenssistēmā, piepildīts ar tik kanāliem, cik saka tā skaitlis.",
+      "ceiling": "Katra zvaigzne pieder vienām zīmētām debesīm, piesieta ar tik zelta auklām, cik saka tās skaitlis."
+    },
+    "name": {
+      "default": "Zvaigžņu karte",
+      "causeway": "Ceļu tīkls",
+      "irrigation": "Ūdenssistēma",
+      "ceiling": "Zīmētie griesti"
+    }
+  },
+  "starBattle": {
+    "rules": {
+      "default": {
+        "touch": "Nekādas divas zvaigznes nedrīkst saskarties — arī ar stūriem ne.",
+        "enter": "Pieskaries lauciņam, lai to izslēgtu, vēlreiz — lai ieliktu zvaigzni, vēl vienreiz — lai notīrītu."
+      },
+      "fields": {
+        "touch": "Nekādas divas sētas nedrīkst saskarties — arī ar stūriem ne. Tik tuvu tām būtu jādala viena aka.",
+        "enter": "Pieskaries zemes gabalam, lai to izslēgtu, vēlreiz — lai uzceltu sētu, vēl vienreiz — lai notīrītu."
+      },
+      "lamps": {
+        "touch": "Nekādas divas eļļas lampas nedrīkst stāvēt blakus — arī ar stūriem ne. To gaismas apļi pārklātos, un eļļa ietu zudumā.",
+        "walls": "Pelēkie akmens bluķi ir daļa no grīdas: uz tiem neko nevar nolikt, un tie nav lauciņi.",
+        "enter": "Pieskaries grīdas plāksnei, lai to izslēgtu, vēlreiz — lai noliktu eļļas lampu, vēl vienreiz — lai notīrītu."
+      },
+      "market": {
+        "touch": "Nekādi divi stendi nedrīkst stāvēt blakus — arī ar stūriem ne. Konkurenti nekad neiekārtojas blakus.",
+        "walls": "Mājas ir daļa no laukuma: tajās nevar uzlikt stendu, un tās nav vietas.",
+        "enter": "Pieskaries vietai, lai to izslēgtu, vēlreiz — lai uzliktu stendu, vēl vienreiz — lai notīrītu."
+      },
+      "lotus": {
+        "touch": "Nekādi divi lotosi nedrīkst peldēt blakus — arī ar stūriem ne. Katram ziedam vajag brīvu ūdeni apkārt.",
+        "walls": "Akmeņi rēgojas ārā no dīķa: uz tiem nekas nevar peldēt, un tie nav lauciņi.",
+        "enter": "Pieskaries ūdens gabaliņam, lai to izslēgtu, vēlreiz — lai tur peldētu lotoss, vēl vienreiz — lai notīrītu."
+      },
+      "cats": {
+        "touch": "Nekādi divi kaķi nedrīkst gulēt blakus — arī ar stūriem ne. Katram kaķim ir savs saules plankums.",
+        "walls": "Kolonnas tur templi: uz tām neviens kaķis nevar gulēt, un tās nav lauciņi.",
+        "enter": "Pieskaries grīdas plāksnei, lai to izslēgtu, vēlreiz — lai tur noguldītu kaķi, vēl vienreiz — lai notīrītu."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Šī atzīme nevar būt pareiza.",
+        "touch": "Šeit ir {{token}}, un nekas nedrīkst pieskarties {{token}}.",
+        "groupFull.row_zero": "Šajā rindā jau ir visi {{count}} {{token}}.",
+        "groupFull.row_one": "Šajā rindā jau ir savs {{token}}.",
+        "groupFull.row_other": "Šajā rindā jau ir visi {{count}} {{token}}.",
+        "groupFull.col_zero": "Šajā kolonnā jau ir visi {{count}} {{token}}.",
+        "groupFull.col_one": "Šajā kolonnā jau ir savs {{token}}.",
+        "groupFull.col_other": "Šajā kolonnā jau ir visi {{count}} {{token}}.",
+        "groupFull.region_zero": "Šajā apgabalā jau ir visi {{count}} {{token}}.",
+        "groupFull.region_one": "Šajā apgabalā jau ir savs {{token}}.",
+        "groupFull.region_other": "Šajā apgabalā jau ir visi {{count}} {{token}}.",
+        "groupTight.row_zero": "Šajā rindā palikuši tikai {{count}} lauciņi.",
+        "groupTight.row_one": "Šajā rindā palicis tikai viens lauciņš.",
+        "groupTight.row_other": "Šajā rindā palikuši tikai {{count}} lauciņi.",
+        "groupTight.col_zero": "Šajā kolonnā palikuši tikai {{count}} lauciņi.",
+        "groupTight.col_one": "Šajā kolonnā palicis tikai viens lauciņš.",
+        "groupTight.col_other": "Šajā kolonnā palikuši tikai {{count}} lauciņi.",
+        "groupTight.region_zero": "Šajā apgabalā palikuši tikai {{count}} lauciņi.",
+        "groupTight.region_one": "Šajā apgabalā palicis tikai viens lauciņš.",
+        "groupTight.region_other": "Šajā apgabalā palikuši tikai {{count}} lauciņi.",
+        "onlyWay.row_zero": "Ir tikai viens veids, kā šajā rindā ielikt {{count}} {{token}}.",
+        "onlyWay.row_one": "Ir tikai viens veids, kā šajā rindā ielikt {{token}}.",
+        "onlyWay.row_other": "Ir tikai viens veids, kā šajā rindā ielikt {{count}} {{token}}.",
+        "onlyWay.col_zero": "Ir tikai viens veids, kā šajā kolonnā ielikt {{count}} {{token}}.",
+        "onlyWay.col_one": "Ir tikai viens veids, kā šajā kolonnā ielikt {{token}}.",
+        "onlyWay.col_other": "Ir tikai viens veids, kā šajā kolonnā ielikt {{count}} {{token}}.",
+        "onlyWay.region_zero": "Ir tikai viens veids, kā šajā apgabalā ielikt {{count}} {{token}}.",
+        "onlyWay.region_one": "Ir tikai viens veids, kā šajā apgabalā ielikt {{token}}.",
+        "onlyWay.region_other": "Ir tikai viens veids, kā šajā apgabalā ielikt {{count}} {{token}}.",
+        "everyWay.row_zero": "Lai kur atrastos šīs rindas {{count}} {{token}}, viens vienmēr ir šeit.",
+        "everyWay.row_one": "Lai kur atrastos šīs rindas {{token}}, tas vienmēr ir šeit.",
+        "everyWay.row_other": "Lai kur atrastos šīs rindas {{count}} {{token}}, viens vienmēr ir šeit.",
+        "everyWay.col_zero": "Lai kur atrastos šīs kolonnas {{count}} {{token}}, viens vienmēr ir šeit.",
+        "everyWay.col_one": "Lai kur atrastos šīs kolonnas {{token}}, tas vienmēr ir šeit.",
+        "everyWay.col_other": "Lai kur atrastos šīs kolonnas {{count}} {{token}}, viens vienmēr ir šeit.",
+        "everyWay.region_zero": "Lai kur atrastos šī apgabala {{count}} {{token}}, viens vienmēr ir šeit.",
+        "everyWay.region_one": "Lai kur atrastos šī apgabala {{token}}, tas vienmēr ir šeit.",
+        "everyWay.region_other": "Lai kur atrastos šī apgabala {{count}} {{token}}, viens vienmēr ir šeit.",
+        "regionLine.row_zero": "Iezīmētā apgabala {{count}} {{token}} jābūt tajā rindā.",
+        "regionLine.row_one": "Iezīmētā apgabala {{token}} jābūt tajā rindā.",
+        "regionLine.row_other": "Iezīmētā apgabala {{count}} {{token}} jābūt tajā rindā.",
+        "regionLine.col_zero": "Iezīmētā apgabala {{count}} {{token}} jābūt tajā kolonnā.",
+        "regionLine.col_one": "Iezīmētā apgabala {{token}} jābūt tajā kolonnā.",
+        "regionLine.col_other": "Iezīmētā apgabala {{count}} {{token}} jābūt tajā kolonnā.",
+        "lineRegion.row_zero": "Tās rindas {{count}} {{token}} pieder iezīmētajam apgabalam.",
+        "lineRegion.row_one": "Tās rindas {{token}} pieder iezīmētajam apgabalam.",
+        "lineRegion.row_other": "Tās rindas {{count}} {{token}} pieder iezīmētajam apgabalam.",
+        "lineRegion.col_zero": "Tās kolonnas {{count}} {{token}} pieder iezīmētajam apgabalam.",
+        "lineRegion.col_one": "Tās kolonnas {{token}} pieder iezīmētajam apgabalam.",
+        "lineRegion.col_other": "Tās kolonnas {{count}} {{token}} pieder iezīmētajam apgabalam.",
+        "spanning.toRows": "Iezīmētie apgabali kopā aizpilda tās {{count}} rindas.",
+        "spanning.toCols": "Iezīmētie apgabali kopā aizpilda tās {{count}} kolonnas.",
+        "spanning.fromRows": "Iezīmētās rindas savus {{count}} {{token}} var ņemt tikai no tiem apgabaliem.",
+        "spanning.fromCols": "Iezīmētās kolonnas savus {{count}} {{token}} var ņemt tikai no tiem apgabaliem.",
+        "wouldStrand.row": "{{token}} šeit atstātu iezīmēto rindu bez vietas.",
+        "wouldStrand.col": "{{token}} šeit atstātu iezīmēto kolonnu bez vietas.",
+        "wouldStrand.region": "{{token}} šeit atstātu iezīmēto apgabalu bez vietas.",
+        "action": {
+          "ruleOut_zero": "Izslēdz iesvītrotos lauciņus.",
+          "ruleOut_one": "Izslēdz iesvītroto lauciņu.",
+          "ruleOut_other": "Izslēdz iesvītrotos lauciņus.",
+          "place_zero": "Ieliec {{token}} katrā iesvītrotajā lauciņā.",
+          "place_one": "Ieliec {{token}} iesvītrotajā lauciņā.",
+          "place_other": "Ieliec {{token}} katrā iesvītrotajā lauciņā."
+        }
+      },
+      "fields": {
+        "mistake": "Šī atzīme nevar būt pareiza.",
+        "touch": "Šeit ir {{token}}, un nevienā zemes gabalā, kam tā pieskaras, nevar būt vēl viena.",
+        "groupFull.row_zero": "Šajā rindā jau ir visas {{count}} {{token}}.",
+        "groupFull.row_one": "Šī rinda jau ir apsaimniekota.",
+        "groupFull.row_other": "Šajā rindā jau ir visas {{count}} {{token}}.",
+        "groupFull.col_zero": "Šajā kolonnā jau ir visas {{count}} {{token}}.",
+        "groupFull.col_one": "Šī kolonna jau ir apsaimniekota.",
+        "groupFull.col_other": "Šajā kolonnā jau ir visas {{count}} {{token}}.",
+        "groupFull.region_zero": "Šajā saimniecībā jau ir visas {{count}} {{token}}.",
+        "groupFull.region_one": "Šī saimniecība jau ir apsaimniekota.",
+        "groupFull.region_other": "Šajā saimniecībā jau ir visas {{count}} {{token}}.",
+        "groupTight.row_zero": "Šajā rindā palikuši tikai {{count}} zemes gabali.",
+        "groupTight.row_one": "Šajā rindā palicis tikai viens zemes gabals.",
+        "groupTight.row_other": "Šajā rindā palikuši tikai {{count}} zemes gabali.",
+        "groupTight.col_zero": "Šajā kolonnā palikuši tikai {{count}} zemes gabali.",
+        "groupTight.col_one": "Šajā kolonnā palicis tikai viens zemes gabals.",
+        "groupTight.col_other": "Šajā kolonnā palikuši tikai {{count}} zemes gabali.",
+        "groupTight.region_zero": "Šajā saimniecībā palikuši tikai {{count}} zemes gabali.",
+        "groupTight.region_one": "Šajā saimniecībā palicis tikai viens zemes gabals.",
+        "groupTight.region_other": "Šajā saimniecībā palikuši tikai {{count}} zemes gabali.",
+        "onlyWay.row_zero": "Ir tikai viens veids, kā šajā rindā ielikt {{count}} {{token}}.",
+        "onlyWay.row_one": "Šajā rindā palicis tikai viens zemes gabals, kur būvēt.",
+        "onlyWay.row_other": "Ir tikai viens veids, kā šajā rindā ielikt {{count}} {{token}}.",
+        "onlyWay.col_zero": "Ir tikai viens veids, kā šajā kolonnā ielikt {{count}} {{token}}.",
+        "onlyWay.col_one": "Šajā kolonnā palicis tikai viens zemes gabals, kur būvēt.",
+        "onlyWay.col_other": "Ir tikai viens veids, kā šajā kolonnā ielikt {{count}} {{token}}.",
+        "onlyWay.region_zero": "Ir tikai viens veids, kā šajā saimniecībā ielikt {{count}} {{token}}.",
+        "onlyWay.region_one": "Šajā saimniecībā palicis tikai viens zemes gabals, kur būvēt.",
+        "onlyWay.region_other": "Ir tikai viens veids, kā šajā saimniecībā ielikt {{count}} {{token}}.",
+        "everyWay.row_zero": "Lai kā šo rindu apsaimniekotu, viena no tās {{count}} {{token}} stāv šeit.",
+        "everyWay.row_one": "Lai kā šo rindu apsaimniekotu, tās {{token}} stāv šeit.",
+        "everyWay.row_other": "Lai kā šo rindu apsaimniekotu, viena no tās {{count}} {{token}} stāv šeit.",
+        "everyWay.col_zero": "Lai kā šo kolonnu apsaimniekotu, viena no tās {{count}} {{token}} stāv šeit.",
+        "everyWay.col_one": "Lai kā šo kolonnu apsaimniekotu, tās {{token}} stāv šeit.",
+        "everyWay.col_other": "Lai kā šo kolonnu apsaimniekotu, viena no tās {{count}} {{token}} stāv šeit.",
+        "everyWay.region_zero": "Lai kā šo saimniecību apsaimniekotu, viena no tās {{count}} {{token}} stāv šeit.",
+        "everyWay.region_one": "Lai kā šo saimniecību apsaimniekotu, tās {{token}} stāv šeit.",
+        "everyWay.region_other": "Lai kā šo saimniecību apsaimniekotu, viena no tās {{count}} {{token}} stāv šeit.",
+        "regionLine.row_zero": "Iezīmētās saimniecības {{count}} {{token}} jābūt tajā rindā.",
+        "regionLine.row_one": "Iezīmētās saimniecības {{token}} jābūt tajā rindā.",
+        "regionLine.row_other": "Iezīmētās saimniecības {{count}} {{token}} jābūt tajā rindā.",
+        "regionLine.col_zero": "Iezīmētās saimniecības {{count}} {{token}} jābūt tajā kolonnā.",
+        "regionLine.col_one": "Iezīmētās saimniecības {{token}} jābūt tajā kolonnā.",
+        "regionLine.col_other": "Iezīmētās saimniecības {{count}} {{token}} jābūt tajā kolonnā.",
+        "lineRegion.row_zero": "Tās rindas {{count}} {{token}} pieder iezīmētajai saimniecībai.",
+        "lineRegion.row_one": "Tās rindas {{token}} pieder iezīmētajai saimniecībai.",
+        "lineRegion.row_other": "Tās rindas {{count}} {{token}} pieder iezīmētajai saimniecībai.",
+        "lineRegion.col_zero": "Tās kolonnas {{count}} {{token}} pieder iezīmētajai saimniecībai.",
+        "lineRegion.col_one": "Tās kolonnas {{token}} pieder iezīmētajai saimniecībai.",
+        "lineRegion.col_other": "Tās kolonnas {{count}} {{token}} pieder iezīmētajai saimniecībai.",
+        "spanning.toRows": "Iezīmētās saimniecības kopā aizpilda tās {{count}} rindas.",
+        "spanning.toCols": "Iezīmētās saimniecības kopā aizpilda tās {{count}} kolonnas.",
+        "spanning.fromRows": "Iezīmētās rindas savas {{count}} {{token}} var ņemt tikai no tām saimniecībām.",
+        "spanning.fromCols": "Iezīmētās kolonnas savas {{count}} {{token}} var ņemt tikai no tām saimniecībām.",
+        "wouldStrand.row": "{{token}} šeit atstātu iezīmēto rindu bez vietas, kur būvēt.",
+        "wouldStrand.col": "{{token}} šeit atstātu iezīmēto kolonnu bez vietas, kur būvēt.",
+        "wouldStrand.region": "{{token}} šeit atstātu iezīmēto saimniecību bez vietas, kur būvēt.",
+        "action": {
+          "ruleOut_zero": "Izslēdz iesvītrotos zemes gabalus.",
+          "ruleOut_one": "Izslēdz iesvītroto zemes gabalu.",
+          "ruleOut_other": "Izslēdz iesvītrotos zemes gabalus.",
+          "place_zero": "Uzcel {{token}} katrā iesvītrotajā zemes gabalā.",
+          "place_one": "Uzcel {{token}} iesvītrotajā zemes gabalā.",
+          "place_other": "Uzcel {{token}} katrā iesvītrotajā zemes gabalā."
+        }
+      },
+      "lamps": {
+        "mistake": "Šī atzīme nevar būt pareiza.",
+        "touch": "Šeit ir {{token}}, un nekādas divas eļļas lampas nedrīkst stāvēt blakus — arī ar stūriem ne.",
+        "groupFull.row_zero": "Šajā rindā jau ir visas {{count}} eļļas lampas.",
+        "groupFull.row_one": "Šajā rindā jau ir sava eļļas lampa.",
+        "groupFull.col_zero": "Šajā kolonnā jau ir visas {{count}} eļļas lampas.",
+        "groupFull.col_one": "Šajā kolonnā jau ir sava eļļas lampa.",
+        "groupFull.row_other": "Šajā rindā jau ir visas {{count}} eļļas lampas.",
+        "groupFull.col_other": "Šajā kolonnā jau ir visas {{count}} eļļas lampas.",
+        "groupTight.row_zero": "Šajā rindā palikušas tikai {{count}} grīdas plāksnes.",
+        "groupTight.row_one": "Šajā rindā palikusi tikai viena grīdas plāksne.",
+        "groupTight.row_other": "Šajā rindā palikušas tikai {{count}} grīdas plāksnes.",
+        "groupTight.col_zero": "Šajā kolonnā palikušas tikai {{count}} grīdas plāksnes.",
+        "groupTight.col_one": "Šajā kolonnā palikusi tikai viena grīdas plāksne.",
+        "groupTight.col_other": "Šajā kolonnā palikušas tikai {{count}} grīdas plāksnes.",
+        "onlyWay.row_zero": "Ir tikai viens veids, kā šajā rindā ielikt {{count}} eļļas lampas.",
+        "onlyWay.row_one": "Starp akmens bluķiem šajā rindā palicis tikai viens lauciņš eļļas lampai.",
+        "onlyWay.col_zero": "Ir tikai viens veids, kā šajā kolonnā ielikt {{count}} eļļas lampas.",
+        "onlyWay.col_one": "Starp akmens bluķiem šajā kolonnā palicis tikai viens lauciņš eļļas lampai.",
+        "onlyWay.row_other": "Ir tikai viens veids, kā šajā rindā ielikt {{count}} eļļas lampas.",
+        "onlyWay.col_other": "Ir tikai viens veids, kā šajā kolonnā ielikt {{count}} eļļas lampas.",
+        "everyWay.row_zero": "Lai kur atrastos šīs rindas {{count}} eļļas lampas, viena vienmēr ir šeit.",
+        "everyWay.row_one": "Lai kur atrastos šīs rindas eļļas lampa, tā vienmēr ir šeit.",
+        "everyWay.col_zero": "Lai kur atrastos šīs kolonnas {{count}} eļļas lampas, viena vienmēr ir šeit.",
+        "everyWay.col_one": "Lai kur atrastos šīs kolonnas eļļas lampa, tā vienmēr ir šeit.",
+        "everyWay.row_other": "Lai kur atrastos šīs rindas {{count}} eļļas lampas, viena vienmēr ir šeit.",
+        "everyWay.col_other": "Lai kur atrastos šīs kolonnas {{count}} eļļas lampas, viena vienmēr ir šeit.",
+        "lineBlock.rowsToCols": "Iezīmētās rindas tur savas eļļas lampas to kolonnu lauciņos, tāpēc tām kolonnām lampu vairs nepietiek citur.",
+        "lineBlock.colsToRows": "Iezīmētās kolonnas tur savas eļļas lampas to rindu lauciņos, tāpēc tām rindām lampu vairs nepietiek citur.",
+        "wouldStrand.row": "Eļļas lampa šeit atstātu iezīmēto rindu bez vietas.",
+        "wouldStrand.col": "Eļļas lampa šeit atstātu iezīmēto kolonnu bez vietas.",
+        "action": {
+          "ruleOut_zero": "Izslēdz iesvītrotos lauciņus.",
+          "ruleOut_one": "Izslēdz iesvītroto lauciņu.",
+          "ruleOut_other": "Izslēdz iesvītrotos lauciņus.",
+          "place_zero": "Noliec eļļas lampu katrā iesvītrotajā lauciņā.",
+          "place_one": "Noliec eļļas lampu iesvītrotajā lauciņā.",
+          "place_other": "Noliec eļļas lampu katrā iesvītrotajā lauciņā."
+        }
+      },
+      "market": {
+        "mistake": "Šī atzīme nevar būt pareiza.",
+        "touch": "Šeit ir {{token}}, un nekādi divi stendi nedrīkst stāvēt blakus — arī ar stūriem ne.",
+        "groupFull.row_zero": "Šajā rindā jau ir visi {{count}} stendi.",
+        "groupFull.row_one": "Šajā rindā jau ir savs stends.",
+        "groupFull.col_zero": "Šajā kolonnā jau ir visi {{count}} stendi.",
+        "groupFull.col_one": "Šajā kolonnā jau ir savs stends.",
+        "groupFull.row_other": "Šajā rindā jau ir visi {{count}} stendi.",
+        "groupFull.col_other": "Šajā kolonnā jau ir visi {{count}} stendi.",
+        "groupTight.row_zero": "Šajā rindā palikušas tikai {{count}} vietas.",
+        "groupTight.row_one": "Šajā rindā palikusi tikai viena vieta.",
+        "groupTight.row_other": "Šajā rindā palikušas tikai {{count}} vietas.",
+        "groupTight.col_zero": "Šajā kolonnā palikušas tikai {{count}} vietas.",
+        "groupTight.col_one": "Šajā kolonnā palikusi tikai viena vieta.",
+        "groupTight.col_other": "Šajā kolonnā palikušas tikai {{count}} vietas.",
+        "onlyWay.row_zero": "Ir tikai viens veids, kā šajā rindā ielikt {{count}} stendus.",
+        "onlyWay.row_one": "Starp mājām šajā rindā palicis tikai viens lauciņš stendam.",
+        "onlyWay.col_zero": "Ir tikai viens veids, kā šajā kolonnā ielikt {{count}} stendus.",
+        "onlyWay.col_one": "Starp mājām šajā kolonnā palicis tikai viens lauciņš stendam.",
+        "onlyWay.row_other": "Ir tikai viens veids, kā šajā rindā ielikt {{count}} stendus.",
+        "onlyWay.col_other": "Ir tikai viens veids, kā šajā kolonnā ielikt {{count}} stendus.",
+        "everyWay.row_zero": "Lai kur atrastos šīs rindas {{count}} stendi, viens vienmēr ir šeit.",
+        "everyWay.row_one": "Lai kur atrastos šīs rindas stends, tas vienmēr ir šeit.",
+        "everyWay.col_zero": "Lai kur atrastos šīs kolonnas {{count}} stendi, viens vienmēr ir šeit.",
+        "everyWay.col_one": "Lai kur atrastos šīs kolonnas stends, tas vienmēr ir šeit.",
+        "everyWay.row_other": "Lai kur atrastos šīs rindas {{count}} stendi, viens vienmēr ir šeit.",
+        "everyWay.col_other": "Lai kur atrastos šīs kolonnas {{count}} stendi, viens vienmēr ir šeit.",
+        "lineBlock.rowsToCols": "Iezīmētās rindas tur savus stendus to kolonnu lauciņos, tāpēc tām kolonnām stendu vairs nepietiek citur.",
+        "lineBlock.colsToRows": "Iezīmētās kolonnas tur savus stendus to rindu lauciņos, tāpēc tām rindām stendu vairs nepietiek citur.",
+        "wouldStrand.row": "Stends šeit atstātu iezīmēto rindu bez vietas.",
+        "wouldStrand.col": "Stends šeit atstātu iezīmēto kolonnu bez vietas.",
+        "action": {
+          "ruleOut_zero": "Izslēdz iesvītrotos lauciņus.",
+          "ruleOut_one": "Izslēdz iesvītroto lauciņu.",
+          "ruleOut_other": "Izslēdz iesvītrotos lauciņus.",
+          "place_zero": "Uzliec stendu katrā iesvītrotajā lauciņā.",
+          "place_one": "Uzliec stendu iesvītrotajā lauciņā.",
+          "place_other": "Uzliec stendu katrā iesvītrotajā lauciņā."
+        }
+      },
+      "lotus": {
+        "mistake": "Šī atzīme nevar būt pareiza.",
+        "touch": "Šeit ir {{token}}, un nekādi divi lotosi nedrīkst peldēt blakus — arī ar stūriem ne.",
+        "groupFull.row_zero": "Šajā rindā jau ir visi {{count}} lotosi.",
+        "groupFull.row_one": "Šajā rindā jau ir savs lotoss.",
+        "groupFull.col_zero": "Šajā kolonnā jau ir visi {{count}} lotosi.",
+        "groupFull.col_one": "Šajā kolonnā jau ir savs lotoss.",
+        "groupFull.row_other": "Šajā rindā jau ir visi {{count}} lotosi.",
+        "groupFull.col_other": "Šajā kolonnā jau ir visi {{count}} lotosi.",
+        "groupTight.row_zero": "Šajā rindā palikuši tikai {{count}} ūdens gabaliņi.",
+        "groupTight.row_one": "Šajā rindā palicis tikai viens ūdens gabaliņš.",
+        "groupTight.row_other": "Šajā rindā palikuši tikai {{count}} ūdens gabaliņi.",
+        "groupTight.col_zero": "Šajā kolonnā palikuši tikai {{count}} ūdens gabaliņi.",
+        "groupTight.col_one": "Šajā kolonnā palicis tikai viens ūdens gabaliņš.",
+        "groupTight.col_other": "Šajā kolonnā palikuši tikai {{count}} ūdens gabaliņi.",
+        "onlyWay.row_zero": "Ir tikai viens veids, kā šajā rindā ielikt {{count}} lotosus.",
+        "onlyWay.row_one": "Starp akmeņiem šajā rindā palicis tikai viens lauciņš lotosam.",
+        "onlyWay.col_zero": "Ir tikai viens veids, kā šajā kolonnā ielikt {{count}} lotosus.",
+        "onlyWay.col_one": "Starp akmeņiem šajā kolonnā palicis tikai viens lauciņš lotosam.",
+        "onlyWay.row_other": "Ir tikai viens veids, kā šajā rindā ielikt {{count}} lotosus.",
+        "onlyWay.col_other": "Ir tikai viens veids, kā šajā kolonnā ielikt {{count}} lotosus.",
+        "everyWay.row_zero": "Lai kur atrastos šīs rindas {{count}} lotosi, viens vienmēr ir šeit.",
+        "everyWay.row_one": "Lai kur atrastos šīs rindas lotoss, tas vienmēr ir šeit.",
+        "everyWay.col_zero": "Lai kur atrastos šīs kolonnas {{count}} lotosi, viens vienmēr ir šeit.",
+        "everyWay.col_one": "Lai kur atrastos šīs kolonnas lotoss, tas vienmēr ir šeit.",
+        "everyWay.row_other": "Lai kur atrastos šīs rindas {{count}} lotosi, viens vienmēr ir šeit.",
+        "everyWay.col_other": "Lai kur atrastos šīs kolonnas {{count}} lotosi, viens vienmēr ir šeit.",
+        "lineBlock.rowsToCols": "Iezīmētās rindas tur savus lotosus to kolonnu lauciņos, tāpēc tām kolonnām lotosu vairs nepietiek citur.",
+        "lineBlock.colsToRows": "Iezīmētās kolonnas tur savus lotosus to rindu lauciņos, tāpēc tām rindām lotosu vairs nepietiek citur.",
+        "wouldStrand.row": "Lotoss šeit atstātu iezīmēto rindu bez vietas.",
+        "wouldStrand.col": "Lotoss šeit atstātu iezīmēto kolonnu bez vietas.",
+        "action": {
+          "ruleOut_zero": "Izslēdz iesvītrotos lauciņus.",
+          "ruleOut_one": "Izslēdz iesvītroto lauciņu.",
+          "ruleOut_other": "Izslēdz iesvītrotos lauciņus.",
+          "place_zero": "Ieliec lotosu katrā iesvītrotajā lauciņā.",
+          "place_one": "Ieliec lotosu iesvītrotajā lauciņā.",
+          "place_other": "Ieliec lotosu katrā iesvītrotajā lauciņā."
+        }
+      },
+      "cats": {
+        "mistake": "Šī atzīme nevar būt pareiza.",
+        "touch": "Šeit ir {{token}}, un nekādi divi kaķi nedrīkst gulēt blakus — arī ar stūriem ne.",
+        "groupFull.row_zero": "Šajā rindā jau ir visi {{count}} kaķi.",
+        "groupFull.row_one": "Šajā rindā jau ir savs kaķis.",
+        "groupFull.col_zero": "Šajā kolonnā jau ir visi {{count}} kaķi.",
+        "groupFull.col_one": "Šajā kolonnā jau ir savs kaķis.",
+        "groupFull.row_other": "Šajā rindā jau ir visi {{count}} kaķi.",
+        "groupFull.col_other": "Šajā kolonnā jau ir visi {{count}} kaķi.",
+        "groupTight.row_zero": "Šajā rindā palikušas tikai {{count}} grīdas plāksnes.",
+        "groupTight.row_one": "Šajā rindā palikusi tikai viena grīdas plāksne.",
+        "groupTight.row_other": "Šajā rindā palikušas tikai {{count}} grīdas plāksnes.",
+        "groupTight.col_zero": "Šajā kolonnā palikušas tikai {{count}} grīdas plāksnes.",
+        "groupTight.col_one": "Šajā kolonnā palikusi tikai viena grīdas plāksne.",
+        "groupTight.col_other": "Šajā kolonnā palikušas tikai {{count}} grīdas plāksnes.",
+        "onlyWay.row_zero": "Ir tikai viens veids, kā šajā rindā ielikt {{count}} kaķus.",
+        "onlyWay.row_one": "Starp kolonnām šajā rindā palicis tikai viens lauciņš kaķim.",
+        "onlyWay.col_zero": "Ir tikai viens veids, kā šajā kolonnā ielikt {{count}} kaķus.",
+        "onlyWay.col_one": "Starp kolonnām šajā kolonnā palicis tikai viens lauciņš kaķim.",
+        "onlyWay.row_other": "Ir tikai viens veids, kā šajā rindā ielikt {{count}} kaķus.",
+        "onlyWay.col_other": "Ir tikai viens veids, kā šajā kolonnā ielikt {{count}} kaķus.",
+        "everyWay.row_zero": "Lai kur atrastos šīs rindas {{count}} kaķi, viens vienmēr ir šeit.",
+        "everyWay.row_one": "Lai kur atrastos šīs rindas kaķis, tas vienmēr ir šeit.",
+        "everyWay.col_zero": "Lai kur atrastos šīs kolonnas {{count}} kaķi, viens vienmēr ir šeit.",
+        "everyWay.col_one": "Lai kur atrastos šīs kolonnas kaķis, tas vienmēr ir šeit.",
+        "everyWay.row_other": "Lai kur atrastos šīs rindas {{count}} kaķi, viens vienmēr ir šeit.",
+        "everyWay.col_other": "Lai kur atrastos šīs kolonnas {{count}} kaķi, viens vienmēr ir šeit.",
+        "lineBlock.rowsToCols": "Iezīmētās rindas tur savus kaķus to kolonnu lauciņos, tāpēc tām kolonnām kaķu vairs nepietiek citur.",
+        "lineBlock.colsToRows": "Iezīmētās kolonnas tur savus kaķus to rindu lauciņos, tāpēc tām rindām kaķu vairs nepietiek citur.",
+        "wouldStrand.row": "Kaķis šeit atstātu iezīmēto rindu bez vietas.",
+        "wouldStrand.col": "Kaķis šeit atstātu iezīmēto kolonnu bez vietas.",
+        "action": {
+          "ruleOut_zero": "Izslēdz iesvītrotos lauciņus.",
+          "ruleOut_one": "Izslēdz iesvītroto lauciņu.",
+          "ruleOut_other": "Izslēdz iesvītrotos lauciņus.",
+          "place_zero": "Noguldi kaķi katrā iesvītrotajā lauciņā.",
+          "place_one": "Noguldi kaķi iesvītrotajā lauciņā.",
+          "place_other": "Noguldi kaķi katrā iesvītrotajā lauciņā."
+        }
+      }
+    },
+    "quota": {
+      "default": "Katrā rindā, kolonnā un apgabalā",
+      "fields": "Katrā rindā, kolonnā un saimniecībā",
+      "lamps": "Katrā rindā un kolonnā",
+      "market": "Katrā rindā un kolonnā",
+      "lotus": "Katrā rindā un kolonnā",
+      "cats": "Katrā rindā un kolonnā"
+    },
+    "goal": {
+      "default_zero": "Katrā rindā, katrā kolonnā un katrā apgabalā ir tieši {{count}} zvaigznes.",
+      "default_one": "Katrā rindā, katrā kolonnā un katrā apgabalā ir tieši viena zvaigzne.",
+      "default_other": "Katrā rindā, katrā kolonnā un katrā apgabalā ir tieši {{count}} zvaigznes.",
+      "fields_zero": "Katrā rindā, katrā kolonnā un katrā saimniecībā ir tieši {{count}} sētas.",
+      "fields_one": "Katrā rindā, katrā kolonnā un katrā saimniecībā ir tieši viena sēta.",
+      "fields_other": "Katrā rindā, katrā kolonnā un katrā saimniecībā ir tieši {{count}} sētas.",
+      "lamps": "Katrā rindā un katrā kolonnā ir tieši viena eļļas lampa.",
+      "market": "Katrā rindā un katrā kolonnā ir tieši viens tirgus stends.",
+      "lotus": "Katrā rindā un katrā kolonnā ir tieši viens lotoss.",
+      "cats": "Katrā rindā un katrā kolonnā ir tieši viens kaķis."
+    },
+    "name": {
+      "default": "Zvaigznes atstatus",
+      "fields": "Sētas",
+      "twinDefault": "Dvīņu zvaigznes",
+      "twinFields": "Dvīņu sētas",
+      "lamps": "Eļļas lampas",
+      "market": "Tirgus stendi",
+      "lotus": "Lotosu dīķis",
+      "cats": "Tempļa kaķi"
+    }
+  },
+  "pairPuzzle": {
+    "name": {
+      "mummies": "Mūmiju miers",
+      "beetles": "Mēslu vaboles"
+    },
+    "goal": {
+      "mummies": "Katram sarkofāgam blakus ir viena mūmija, un katrā rindā un kolonnā ir tieši tik mūmiju, cik rāda skaitlis blakus.",
+      "beetles": "Katrai mēslu bumbai blakus ir viena vabole, un katrā rindā un kolonnā ir tieši tik vaboļu, cik rāda skaitlis blakus."
+    },
+    "rules": {
+      "mummies": {
+        "pair": "Katram sarkofāgam ir viena mūmija tieši virs, zem, pa kreisi vai pa labi no tā, un katra mūmija atpūšas blakus savam sarkofāgam.",
+        "count": "Skaitlis blakus rindai vai kolonnai saka, cik tajā ir mūmiju. Tas kļūst zaļš, kad līnijā ir tieši tik, un sarkans, kad to vairs nevar izpildīt.",
+        "touch": "Nekādas divas mūmijas nedrīkst būt blakus — arī ar stūriem ne.",
+        "enter": "Pieskaries lauciņam, lai to izslēgtu, vēlreiz — lai noguldītu mūmiju, vēl vienreiz — lai notīrītu. Velc pāri lauciņiem, lai izslēgtu vairākus uzreiz. Sarkofāgiem pieskarties nevar."
+      },
+      "beetles": {
+        "pair": "Katrai mēslu bumbai ir viena vabole tieši virs, zem, pa kreisi vai pa labi no tās, un katra vabole stāv blakus savai bumbai, ko ripināt.",
+        "count": "Skaitlis blakus rindai vai kolonnai saka, cik tajā ir vaboļu. Tas kļūst zaļš, kad līnijā ir tieši tik, un sarkans, kad to vairs nevar izpildīt.",
+        "touch": "Nekādas divas vaboles nedrīkst būt blakus — arī ar stūriem ne.",
+        "enter": "Pieskaries lauciņam, lai to izslēgtu, vēlreiz — lai ieliktu vaboli, vēl vienreiz — lai notīrītu. Velc pāri lauciņiem, lai izslēgtu vairākus uzreiz. Mēslu bumbām pieskarties nevar."
+      }
+    },
+    "hint": {
+      "mummies": {
+        "mistake": "Šī atzīme nevar būt pareiza.",
+        "touch": "Šī mūmija jau ir noguldīta, tāpēc neviena cita nedrīkst būt tai blakus — arī ar stūriem ne.",
+        "zeroLine.row": "Šajā rindā nav nevienas mūmijas, tāpēc tā visa ir tukša.",
+        "zeroLine.col": "Šajā kolonnā nav nevienas mūmijas, tāpēc tā visa ir tukša.",
+        "noAnchor": "Šiem lauciņiem blakus nav sarkofāga, tāpēc šeit nevar atpūsties neviena mūmija.",
+        "lineFull.row_zero": "Šajā rindā jau ir visas {{count}} mūmijas.",
+        "lineFull.row_one": "Šajā rindā jau ir sava mūmija.",
+        "lineFull.row_other": "Šajā rindā jau ir visas {{count}} mūmijas.",
+        "lineFull.col_zero": "Šajā kolonnā jau ir visas {{count}} mūmijas.",
+        "lineFull.col_one": "Šajā kolonnā jau ir sava mūmija.",
+        "lineFull.col_other": "Šajā kolonnā jau ir visas {{count}} mūmijas.",
+        "lineTight.row_zero": "Šajā rindā palikuši tieši {{count}} lauciņi tās {{count}} mūmijām.",
+        "lineTight.row_one": "Šajā rindā mūmijai palicis tikai viens lauciņš.",
+        "lineTight.row_other": "Šajā rindā palikuši tieši {{count}} lauciņi tās {{count}} mūmijām.",
+        "lineTight.col_zero": "Šajā kolonnā palikuši tieši {{count}} lauciņi tās {{count}} mūmijām.",
+        "lineTight.col_one": "Šajā kolonnā mūmijai palicis tikai viens lauciņš.",
+        "lineTight.col_other": "Šajā kolonnā palikuši tieši {{count}} lauciņi tās {{count}} mūmijām.",
+        "onlyWay": "Šim sarkofāgam blakus palicis tikai viens lauciņš tā mūmijai.",
+        "claimed": "Šim sarkofāgam jau ir sava mūmija, tāpēc lauciņi tam blakus, ko nevar izmantot neviens cits sarkofāgs, paliek tukši.",
+        "lineBlock.rowsToCols_zero": "Iezīmētajās rindās ir par {{count}} mūmijām vairāk, nekā var dot to pašu sarkofāgi, tāpēc tās nāk no sarkofāgiem tieši aiz to malas.",
+        "lineBlock.rowsToCols_one": "Iezīmētajās rindās ir par vienu mūmiju vairāk, nekā var dot to pašu sarkofāgi, tāpēc tā nāk no sarkofāga tieši aiz to malas.",
+        "lineBlock.rowsToCols_other": "Iezīmētajās rindās ir par {{count}} mūmijām vairāk, nekā var dot to pašu sarkofāgi, tāpēc tās nāk no sarkofāgiem tieši aiz to malas.",
+        "lineBlock.colsToRows_zero": "Iezīmētajās kolonnās ir par {{count}} mūmijām vairāk, nekā var dot to pašu sarkofāgi, tāpēc tās nāk no sarkofāgiem tieši aiz to malas.",
+        "lineBlock.colsToRows_one": "Iezīmētajās kolonnās ir par vienu mūmiju vairāk, nekā var dot to pašu sarkofāgi, tāpēc tā nāk no sarkofāga tieši aiz to malas.",
+        "lineBlock.colsToRows_other": "Iezīmētajās kolonnās ir par {{count}} mūmijām vairāk, nekā var dot to pašu sarkofāgi, tāpēc tās nāk no sarkofāgiem tieši aiz to malas.",
+        "wouldStrand.row": "Mūmija šeit atstātu iezīmēto rindu bez vietas mūmijām, kas tai vēl pienākas.",
+        "wouldStrand.col": "Mūmija šeit atstātu iezīmēto kolonnu bez vietas mūmijām, kas tai vēl pienākas.",
+        "wouldStrand.anchor": "Mūmija šeit atstātu iezīmēto sarkofāgu bez neviena brīva lauciņa tā paša mūmijai.",
+        "action": {
+          "ruleOut_zero": "Izslēdz iesvītrotos lauciņus.",
+          "ruleOut_one": "Izslēdz iesvītroto lauciņu.",
+          "ruleOut_other": "Izslēdz iesvītrotos lauciņus.",
+          "place_zero": "Noguldi mūmiju katrā iesvītrotajā lauciņā.",
+          "place_one": "Noguldi mūmiju iesvītrotajā lauciņā.",
+          "place_other": "Noguldi mūmiju katrā iesvītrotajā lauciņā."
+        }
+      },
+      "beetles": {
+        "mistake": "Šī atzīme nevar būt pareiza.",
+        "touch": "Šī vabole jau ir ielikta, tāpēc neviena cita nedrīkst būt tai blakus — arī ar stūriem ne.",
+        "zeroLine.row": "Šajā rindā nav nevienas vaboles, tāpēc tā visa ir tukša.",
+        "zeroLine.col": "Šajā kolonnā nav nevienas vaboles, tāpēc tā visa ir tukša.",
+        "noAnchor": "Šiem lauciņiem blakus nav mēslu bumbas, tāpēc šeit nevar stāvēt neviena vabole.",
+        "lineFull.row_zero": "Šajā rindā jau ir visas {{count}} vaboles.",
+        "lineFull.row_one": "Šajā rindā jau ir sava vabole.",
+        "lineFull.row_other": "Šajā rindā jau ir visas {{count}} vaboles.",
+        "lineFull.col_zero": "Šajā kolonnā jau ir visas {{count}} vaboles.",
+        "lineFull.col_one": "Šajā kolonnā jau ir sava vabole.",
+        "lineFull.col_other": "Šajā kolonnā jau ir visas {{count}} vaboles.",
+        "lineTight.row_zero": "Šajā rindā palikuši tieši {{count}} lauciņi tās {{count}} vabolēm.",
+        "lineTight.row_one": "Šajā rindā vabolei palicis tikai viens lauciņš.",
+        "lineTight.row_other": "Šajā rindā palikuši tieši {{count}} lauciņi tās {{count}} vabolēm.",
+        "lineTight.col_zero": "Šajā kolonnā palikuši tieši {{count}} lauciņi tās {{count}} vabolēm.",
+        "lineTight.col_one": "Šajā kolonnā vabolei palicis tikai viens lauciņš.",
+        "lineTight.col_other": "Šajā kolonnā palikuši tieši {{count}} lauciņi tās {{count}} vabolēm.",
+        "onlyWay": "Šai mēslu bumbai blakus palicis tikai viens lauciņš tās vabolei.",
+        "claimed": "Šai mēslu bumbai jau ir sava vabole, tāpēc lauciņi tai blakus, ko nevar izmantot neviena cita bumba, paliek tukši.",
+        "lineBlock.rowsToCols_zero": "Iezīmētajās rindās ir par {{count}} vabolēm vairāk, nekā var dot to pašu mēslu bumbas, tāpēc tās nāk no bumbām tieši aiz to malas.",
+        "lineBlock.rowsToCols_one": "Iezīmētajās rindās ir par vienu vaboli vairāk, nekā var dot to pašu mēslu bumbas, tāpēc tā nāk no bumbas tieši aiz to malas.",
+        "lineBlock.rowsToCols_other": "Iezīmētajās rindās ir par {{count}} vabolēm vairāk, nekā var dot to pašu mēslu bumbas, tāpēc tās nāk no bumbām tieši aiz to malas.",
+        "lineBlock.colsToRows_zero": "Iezīmētajās kolonnās ir par {{count}} vabolēm vairāk, nekā var dot to pašu mēslu bumbas, tāpēc tās nāk no bumbām tieši aiz to malas.",
+        "lineBlock.colsToRows_one": "Iezīmētajās kolonnās ir par vienu vaboli vairāk, nekā var dot to pašu mēslu bumbas, tāpēc tā nāk no bumbas tieši aiz to malas.",
+        "lineBlock.colsToRows_other": "Iezīmētajās kolonnās ir par {{count}} vabolēm vairāk, nekā var dot to pašu mēslu bumbas, tāpēc tās nāk no bumbām tieši aiz to malas.",
+        "wouldStrand.row": "Vabole šeit atstātu iezīmēto rindu bez vietas vabolēm, kas tai vēl pienākas.",
+        "wouldStrand.col": "Vabole šeit atstātu iezīmēto kolonnu bez vietas vabolēm, kas tai vēl pienākas.",
+        "wouldStrand.anchor": "Vabole šeit atstātu iezīmēto mēslu bumbu bez neviena brīva lauciņa tās pašas vabolei.",
+        "action": {
+          "ruleOut_zero": "Izslēdz iesvītrotos lauciņus.",
+          "ruleOut_one": "Izslēdz iesvītroto lauciņu.",
+          "ruleOut_other": "Izslēdz iesvītrotos lauciņus.",
+          "place_zero": "Ieliec vaboli katrā iesvītrotajā lauciņā.",
+          "place_one": "Ieliec vaboli iesvītrotajā lauciņā.",
+          "place_other": "Ieliec vaboli katrā iesvītrotajā lauciņā."
+        }
+      }
+    }
+  },
+  "rushHour": {
+    "name": {
+      "default": "Blokāde",
+      "market": "Aizsprostotā iela"
+    },
+    "goal": {
+      "default": "Izdabū savu bluķi ārā pa spraugu labajā pusē.",
+      "market": "Izdabū savas ragavas ārā pa spraugu ielas galā."
+    },
+    "rules": {
+      "default": {
+        "lanes": "Bluķis slīd tikai pa savu joslu — nekad uz sāniem, nekad ārā no laukuma.",
+        "shove": "Velc bluķi, lai to pastumtu. Tas apstājas, kur kaut kas ir ceļā."
+      },
+      "market": {
+        "lanes": "Ragavas slīd tikai pa joslu, kurā tās stāv — nekad uz sāniem, nekad ārā no ielas.",
+        "shove": "Velc ragavas, lai tās pastumtu. Tās apstājas, kur kaut kas ir ceļā."
+      }
+    },
+    "hint": {
+      "default": {
+        "drive": "Ceļš uz priekšu ir brīvs līdz turienei.",
+        "back": "Priekšā nekas nepadosies. Vispirms pavirzi savējo atpakaļ.",
+        "clear": "Tas bluķis stāv šķērsām tavai joslai.",
+        "room": "Nekas nevar pakustēties, kamēr tas nepakustas.",
+        "push": {
+          "left": "Pastum to pa kreisi, līdz aplim.",
+          "right": "Pastum to pa labi, līdz aplim.",
+          "up": "Pastum to uz augšu, līdz aplim.",
+          "down": "Pastum to uz leju, līdz aplim."
+        }
+      },
+      "market": {
+        "drive": "Josla tavām ragavām priekšā ir brīva līdz turienei.",
+        "back": "Priekšā nekas nepadosies. Vispirms pavirzi savas ragavas atpakaļ.",
+        "clear": "Tā krava stāv šķērsām joslai, pa kuru tu brauksi ārā.",
+        "room": "Nekas nevar pakustēties, kamēr tā nav pārvietota.",
+        "push": {
+          "left": "Pastum to pa kreisi, līdz aplim.",
+          "right": "Pastum to pa labi, līdz aplim.",
+          "up": "Pastum to augšup pa ielu, līdz aplim.",
+          "down": "Pastum to lejup pa ielu, līdz aplim."
+        }
+      }
+    }
+  },
+  "hidato": {
+    "rules": {
+      "default": {
+        "given": "Skaitļi, kas jau ir šūnās, ir daļa no mīklas — tie paliek savā vietā.",
+        "enter": "Pieskaries skaitlim, lai turpinātu virkni no turienes, tad pieskaries tukšai blakus šūnai, lai to turpinātu — vai velc taisni pāri šūnām, pa kurām tā iet.",
+        "back": "Pieskaries skaitlim, ko tu ieliki, un vēlreiz, lai to noņemtu kopā ar visu, kas pie tā karājas. Tas pats notiek, ja virkni no skaitļa turpini citā virzienā. Atsaukt atceļ tavu pēdējo gājienu."
+      },
+      "channel": {
+        "given": "Lauki, kuriem jau ir numurs, ir daļa no mīklas — tie paliek savā vietā.",
+        "enter": "Pieskaries numurētam laukam, lai ņemtu ūdeni no turienes, tad pieskaries sausam laukam blakus, lai raktu tālāk — vai velc taisni pa laukiem, pa kuriem iet kanāls.",
+        "back": "Pieskaries laukam, ko tu izraki, un vēlreiz, lai to aizbērtu kopā ar katru kanālu, kas no tā atdalās. Tas pats notiek, ja no lauka raksi citā virzienā. Atsaukt atceļ tavu pēdējo gājienu."
+      },
+      "scribe": {
+        "given": "Ar sarkanu tinti rakstītie cipari pieder mīklai — tie paliek savā vietā.",
+        "enter": "Pieskaries ciparam, lai paņemtu niedres spalvu tur, tad pieskaries tukšai vietai blakus, lai rakstītu tālāk — vai velc taisni pa līniju.",
+        "back": "Pieskaries ciparam, ko tu uzrakstīji, un vēlreiz, lai to nokasītu kopā ar katru līniju, kas no tā atdalās. Tas pats notiek, ja no cipara raksti citā virzienā. Atsaukt atceļ tavu pēdējo gājienu."
+      },
+      "chambers": {
+        "given": "Kambarus, kuriem jau ir numurs, izcirta celtnieki — tie paliek savā vietā.",
+        "enter": "Pieskaries numurētam kambarim, lai turpinātu eju no turienes, tad pieskaries aizzīmogotam kambarim blakus, lai izlauztos cauri — vai velc taisni pa kambariem, pa kuriem iet eja.",
+        "back": "Pieskaries kambarim, ko tu atvēri, un vēlreiz, lai to aizzīmogotu kopā ar katru eju, kas no tā atdalās. Tas pats notiek, ja no kambara izlauzies citā virzienā. Atsaukt atceļ tavu pēdējo gājienu."
+      }
+    },
+    "goal": {
+      "default": "Katrā šūnā ir skaitlis no 1 līdz {{last}}, un katrs ir šūnā, kas pieskaras iepriekšējam skaitlim.",
+      "channel": "Viens kanāls apūdeņo visu līdzenumu: katrs lauks tiek pēc kārtas, no 1 līdz {{last}}, katrs izrakts blakus iepriekšējam laukam.",
+      "scribe": "Viena nepārtraukta ciparu līnija iet pāri lapai: katrā vietā ir cipars no 1 līdz {{last}}, katrs blakus iepriekšējam ciparam.",
+      "chambers": "Viena eja iet cauri visam kapam: katrs kambaris tiek atvērts pēc kārtas, no 1 līdz {{last}}, katrs izlauzts no iepriekšējā kambara."
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": "Kāds no šiem skaitļiem nevar būt pareizs.",
+          "sandwich": "{{before}} un {{after}} pieskaras tikai vienai brīvai šūnai starp tiem.",
+          "neighbourForced": "Skaitlim {{from}} blakus palikusi tikai viena brīva šūna.",
+          "onlyCell": "Šūnās vairs nav citas vietas skaitlim {{value}}.",
+          "onlyValue": "Neviens cits skaitlis nevar sasniegt šo šūnu."
+        },
+        "action": {
+          "place": "Ieliec {{value}} iesvītrotajā šūnā."
+        }
+      },
+      "channel": {
+        "reason": {
+          "mistake": "Kāds no šiem skaitļiem nevar būt pareizs.",
+          "sandwich": "{{before}} un {{after}} pieskaras tikai vienam sausam laukam starp tiem.",
+          "neighbourForced": "Blakus {{from}} palicis tikai viens sauss lauks.",
+          "onlyCell": "Nekur citur līdzenumā nevar būt {{value}}.",
+          "onlyValue": "Neviens cits skaitlis nevar sasniegt šo lauku."
+        },
+        "action": {
+          "place": "Izroc {{value}} iesvītrotajā laukā."
+        }
+      },
+      "scribe": {
+        "reason": {
+          "mistake": "Kāds no šiem cipariem nevar būt pareizs.",
+          "sandwich": "{{before}} un {{after}} pieskaras tikai vienai tukšai vietai starp tiem.",
+          "neighbourForced": "Blakus {{from}} palikusi tikai viena tukša vieta.",
+          "onlyCell": "Nekur citur lapā nevar būt {{value}}.",
+          "onlyValue": "Neviens cits cipars nevar sasniegt šo vietu."
+        },
+        "action": {
+          "place": "Ieraksti {{value}} iesvītrotajā vietā."
+        }
+      },
+      "chambers": {
+        "reason": {
+          "mistake": "Kāds no šiem skaitļiem nevar būt pareizs.",
+          "sandwich": "{{before}} un {{after}} pieskaras tikai vienam aizzīmogotam kambarim starp tiem.",
+          "neighbourForced": "Blakus {{from}} palicis tikai viens aizzīmogots kambaris.",
+          "onlyCell": "Nekur citur kapā nevar būt {{value}}.",
+          "onlyValue": "Neviens cits skaitlis nevar sasniegt šo kambari."
+        },
+        "action": {
+          "place": "Atver {{value}} iesvītrotajā kambarī."
+        }
+      }
+    },
+    "name": {
+      "default": "Bišu strops",
+      "channel": "Kanāls",
+      "scribe": "Rakstveža lapa",
+      "chambers": "Aizzīmogotie kambari"
+    }
+  },
+  "sudoku": {
+    "rules": {
+      "default": {
+        "chambers": "Treknās līnijas sadala režģi sešos kambaros, divus lauciņus platos un trīs augstos.",
+        "given": "Skaitļi, kas jau ir iekalti, ir daļa no mīklas — tie paliek savā vietā.",
+        "enter": "Pieskaries lauciņam un tad skaitlim. Tas pats skaitlis vēlreiz to izņem ārā.",
+        "notes": "Pārslēdzies uz zīmuli, lai pierakstītu skaitļus, kas lauciņā vēl varētu būt. Atsaukt atceļ tavu pēdējo gājienu."
+      },
+      "papyrus": {
+        "chambers": "Treknās līnijas sadala lapu sešos laukos, divas vietas platos un trīs augstos.",
+        "given": "Ar sarkanu tinti rakstītās zīmes pieder mīklai — tās paliek savā vietā.",
+        "enter": "Pieskaries vietai un tad zīmei. Tā pati zīme vēlreiz to nokasa.",
+        "notes": "Paņem niedres spalvu, lai viegli ierakstītu zīmes, kas vietā vēl varētu būt. Atsaukt atceļ tavu pēdējo gājienu."
+      }
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": {
+            "value": "Kāds no šiem skaitļiem nevar būt pareizs. Izņem to ārā un paskaties vēlreiz.",
+            "note": "Šī lauciņa piezīmes ir izslēgušas skaitli, kam te jābūt. Notīri tās un sāc šo lauciņu no jauna."
+          },
+          "nakedSingle": "Šī lauciņa rinda, kolonna un kambaris jau ir paņēmuši visus citus skaitļus.",
+          "hiddenSingle": {
+            "row": "{{token}} neder nevienā citā šīs rindas lauciņā.",
+            "col": "{{token}} neder nevienā citā šīs kolonnas lauciņā.",
+            "box": "{{token}} neder nevienā citā šī kambara lauciņā."
+          },
+          "pointing": {
+            "row": "Iezīmētajā kambarī {{token}} var būt tikai šajā rindā.",
+            "col": "Iezīmētajā kambarī {{token}} var būt tikai šajā kolonnā."
+          },
+          "claiming": {
+            "row": "Iezīmētajā rindā {{token}} der tikai šajā vienā kambarī.",
+            "col": "Iezīmētajā kolonnā {{token}} der tikai šajā vienā kambarī."
+          }
+        },
+        "action": {
+          "place": "Ieliec {{token}} iesvītrotajā lauciņā.",
+          "ruleOut_zero": "Izslēdz {{token}} iesvītrotajos lauciņos.",
+          "ruleOut_one": "Izslēdz {{token}} iesvītrotajā lauciņā.",
+          "ruleOut_other": "Izslēdz {{token}} iesvītrotajos lauciņos."
+        }
+      },
+      "papyrus": {
+        "reason": {
+          "mistake": {
+            "value": "Kāda no šīm zīmēm nevar būt pareiza. Nokasi to un paskaties vēlreiz.",
+            "note": "Šīs vietas piezīmes ir izslēgušas zīmi, kam te jābūt. Izdzēs tās un sāc šo vietu no jauna."
+          },
+          "nakedSingle": "Šīs vietas rinda, kolonna un lauks jau ir paņēmuši visas citas zīmes.",
+          "hiddenSingle": {
+            "row": "{{token}} neder nevienā citā šīs rindas vietā.",
+            "col": "{{token}} neder nevienā citā šīs kolonnas vietā.",
+            "box": "{{token}} neder nevienā citā šī lauka vietā."
+          },
+          "pointing": {
+            "row": "Iezīmētajā laukā {{token}} var būt tikai šajā rindā.",
+            "col": "Iezīmētajā laukā {{token}} var būt tikai šajā kolonnā."
+          },
+          "claiming": {
+            "row": "Iezīmētajā rindā {{token}} der tikai šajā vienā laukā.",
+            "col": "Iezīmētajā kolonnā {{token}} der tikai šajā vienā laukā."
+          }
+        },
+        "action": {
+          "place": "Ieraksti {{token}} iesvītrotajā vietā.",
+          "ruleOut_zero": "Izslēdz {{token}} iesvītrotajās vietās.",
+          "ruleOut_one": "Izslēdz {{token}} iesvītrotajā vietā.",
+          "ruleOut_other": "Izslēdz {{token}} iesvītrotajās vietās."
+        }
+      }
+    },
+    "goal": {
+      "default": "Katrā rindā, katrā kolonnā un katrā kambarī katrs no sešiem skaitļiem ir tieši vienu reizi.",
+      "papyrus": "Katrā rindā, katrā kolonnā un katrā laukā katra no sešām zīmēm ir tieši vienu reizi."
+    },
+    "name": {
+      "default": "Seši kambari",
+      "papyrus": "Rakstveža reģistrs"
+    }
+  },
+  "crocodile": {
+    "name": "Krokodilu bedre",
+    "goal": "Tiec pāri bedrei uz otru krastu.",
+    "rules": {
+      "want": "Katrs krokodils grib vienu atbildi no akmeņu rindas aiz sevis: lielāko vai mazāko.",
+      "mark": "Kuru — to rāda tā atvērtā mute un arī zīme blakus: > atveras uz lielāko atbildi, < uz mazāko.",
+      "bite": "Uzkāp uz jebkura cita akmens, un tas iekož: tu zaudē spēku un sāc no jauna no tuvākā krasta."
+    },
+    "hint": {
+      "biggest": "Šis krokodils grib lielāko atbildi. Tā ir {{value}}.",
+      "smallest": "Šis krokodils grib mazāko atbildi. Tā ir {{value}}."
+    }
+  },
+  "canisters": {
+    "name": {
+      "default": "Trauki",
+      "grain": "Graudu mēri",
+      "oil": "Eļļa lampām",
+      "wine": "Tirgotāja pagrabs",
+      "natron": "Kanopas trauki",
+      "ink": "Rakstvežu istaba"
+    },
+    "goal": {
+      "default_zero": "Nomēri katru prasīto daudzumu pēc kārtas un pasaki, kurā traukā tas ir, pirms ķeries pie nākamā.",
+      "default_one": "Nomēri prasīto daudzumu un pasaki, kurā traukā tas ir.",
+      "default_other": "Nomēri katru prasīto daudzumu pēc kārtas un pasaki, kurā traukā tas ir, pirms ķeries pie nākamā.",
+      "grain_zero": "Nomēri katru graudu daudzumu pēc kārtas un pasaki, kurā mērā tas ir, pirms ķeries pie nākamā.",
+      "grain_one": "Nomēri prasīto graudu daudzumu un pasaki, kurā mērā tas ir.",
+      "grain_other": "Nomēri katru graudu daudzumu pēc kārtas un pasaki, kurā mērā tas ir, pirms ķeries pie nākamā.",
+      "oil_zero": "Nomēri katru eļļas daudzumu pēc kārtas un pasaki, kurā krūkā tas ir, pirms ķeries pie nākamā.",
+      "oil_one": "Nomēri prasīto eļļu un pasaki, kurā krūkā tā ir.",
+      "oil_other": "Nomēri katru eļļas daudzumu pēc kārtas un pasaki, kurā krūkā tas ir, pirms ķeries pie nākamā.",
+      "wine_zero": "Nomēri katru vīna daudzumu pēc kārtas un pasaki, kurā amforā tas ir, pirms ķeries pie nākamā.",
+      "wine_one": "Nomēri prasīto vīnu un pasaki, kurā amforā tas ir.",
+      "wine_other": "Nomēri katru vīna daudzumu pēc kārtas un pasaki, kurā amforā tas ir, pirms ķeries pie nākamā.",
+      "natron_zero": "Nomēri katru natrona daudzumu pēc kārtas un pasaki, kurā traukā tas ir, pirms ķeries pie nākamā.",
+      "natron_one": "Nomēri prasīto natronu un pasaki, kurā traukā tas ir.",
+      "natron_other": "Nomēri katru natrona daudzumu pēc kārtas un pasaki, kurā traukā tas ir, pirms ķeries pie nākamā.",
+      "ink_zero": "Nomēri katru tintes daudzumu pēc kārtas un pasaki, kurā podiņā tas ir, pirms ķeries pie nākamā.",
+      "ink_one": "Nomēri prasīto tinti un pasaki, kurā podiņā tā ir.",
+      "ink_other": "Nomēri katru tintes daudzumu pēc kārtas un pasaki, kurā podiņā tas ir, pirms ķeries pie nākamā."
+    },
+    "rules": {
+      "method": {
+        "sums": "Katrs daudzums, ko vari dabūt, ir divi skaitļi uz sola, saskaitīti vai atņemti: trauka lielums, cik tajā ir, vai cik vietas tajā vēl palicis.",
+        "backwards": "Tāpēc ej atpakaļ no prasītā daudzuma — kuri divi skaitļi to dod, un kā panākt, lai abi būtu vienlaikus?"
+      },
+      "claim": "Kad daudzums tev ir, pieskaries “šis”. Ja nosauc nepareizo trauku, tas maksā vienu gājienu.",
+      "legs": "Tad nākamais daudzums, ko mēra no tā, kas traukos palicis.",
+      "default": {
+        "moves": "Pieskaries traukam, lai to paceltu, tad citam, lai ielietu tajā. Liešana apstājas, kad pirmais ir tukšs vai otrais pilns.",
+        "contents": "Tas ir viss ūdens, kas ir — viens trauks sākumā ir pilns, un neko nevar izliet vai atnest klāt.",
+        "levels": "Katrs trauks rāda, cik tajā ir, un cik tajā ietilpst, kad tas ir pilns."
+      },
+      "grain": {
+        "moves": "Pieskaries mēram, lai to paceltu, tad citam, lai ieber tajā graudus. Beršana apstājas, kad pirmais ir tukšs vai otrais pilns līdz malām.",
+        "contents": "Tie ir visi graudi, kas ir — viens mērs sākumā ir pilns, un neko nevar noslaucīt vai atnest no klēts.",
+        "levels": "Katrs mērs rāda, cik tajā ir, un cik tajā ietilpst, kad tas ir pilns līdz malām."
+      },
+      "oil": {
+        "moves": "Pieskaries krūkai, lai to paceltu, tad citai, lai ielietu tajā. Liešana apstājas, kad pirmā ir tukša vai otrā pilna.",
+        "contents": "Tā ir visa eļļa, kas ir — viena krūka sākumā ir pilna, un neko nevar izliet vai atnest klāt.",
+        "levels": "Katra krūka rāda, cik tajā ir, un cik tajā ietilpst, kad tā ir pilna."
+      },
+      "wine": {
+        "moves": "Pieskaries amforai, lai to paceltu, tad citai, lai pārlietu tajā. Pārliešana apstājas, kad pirmā ir tukša vai otrā pilna.",
+        "contents": "Tas ir viss vīns, kas ir — viena amfora sākumā ir pilna, un neko nevar izšļakstīt vai atnest no pagraba.",
+        "levels": "Katra amfora rāda, cik tajā ir, un cik tajā ietilpst, kad tā ir pilna."
+      },
+      "natron": {
+        "moves": "Pieskaries traukam, lai to paceltu, tad citam, lai ieber tajā natronu. Beršana apstājas, kad pirmais ir tukšs vai otrais pilns līdz vākam.",
+        "contents": "Tas ir viss natrons, kas ir — viens trauks sākumā ir pilns, un neko nevar noslaucīt vai atnest klāt.",
+        "levels": "Katrs trauks rāda, cik tajā ir, un cik tajā ietilpst, kad tas ir pilns līdz vākam."
+      },
+      "ink": {
+        "moves": "Pieskaries podiņam, lai to paceltu, tad citam, lai ielietu tajā. Liešana apstājas, kad pirmais ir tukšs vai otrais pilns.",
+        "contents": "Tā ir visa tinte, kas ir — viens podiņš sākumā ir pilns, un neko nevar izliet vai saberzt no jauna.",
+        "levels": "Katrs podiņš rāda, cik tajā ir, un cik tajā ietilpst, kad tas ir pilns."
+      }
+    },
+    "hint": {
+      "goal": {
+        "leftover": "Ejot atpakaļ: {{amount}} ir {{content}} mīnus {{space}} — trauks, kurā ir {{content}}, ielejot traukā, kurā ir vieta {{space}}.",
+        "full": "Ejot atpakaļ: {{amount}} ir trauka lielums, un {{a}} plus {{b}} ir tieši tik.",
+        "sum": "Ejot atpakaļ: {{amount}} ir {{a}} plus {{b}}."
+      },
+      "claim": "Līdz tam ir tikai viena liešana. Tad izdomā, kurā traukā tas ir.",
+      "stuck": "No šejienes {{target}} vairs nevar nomērīt ar gājieniem, kas tev palikuši. Atsauc vienu liešanu vai sāc no jauna.",
+      "overBudget": "Gājienu vairs nav. Atsauc vienu vai sāc no jauna un atrodi īsāku ceļu.",
+      "next": {
+        "leftover": "Rēķins pirms tam: {{amount}} — {{content}} ielejot vietā {{space}}.",
+        "full": "Rēķins pirms tam: trauks, kas pilns ar {{amount}} — {{a}} plus {{b}}.",
+        "sum": "Rēķins pirms tam: {{amount}} — {{a}} plus {{b}}."
+      }
+    },
+    "movesLeft_zero": "Palikuši {{count}} gājieni",
+    "movesLeft_one": "Palicis {{count}} gājiens",
+    "movesLeft_other": "Palikuši {{count}} gājieni",
+    "legs": "nomērīti {{done}} no {{total}}",
+    "wanted": "Nomēri",
+    "claim": "šis",
+    "claimAria": "Pateikt, ka daudzums ir traukā ar ietilpību {{capacity}}"
+  },
+  "procession": {
+    "name": {
+      "default": "Sakārtotās stundas",
+      "funerary": "Diena amatnieku ielejā",
+      "cosmos": "Nakts ceļš",
+      "water": "Plūdu diena",
+      "trade": "Diena ostā"
+    },
+    "goal": {
+      "default": "Pabīdi katru notikumu uz savu stundu, līdz visas atzīmes zem dienas ir izpildītas.",
+      "funerary": "Pabīdi katru darbu uz savu stundu, līdz visas atzīmes zem dienas ir izpildītas.",
+      "cosmos": "Pabīdi katru gaismu uz savu stundu, līdz visas atzīmes zem nakts ir izpildītas.",
+      "water": "Pabīdi katru darbu uz savu stundu, līdz visas atzīmes zem dienas ir izpildītas.",
+      "trade": "Pabīdi katru darbu uz savu stundu, līdz visas atzīmes zem dienas ir izpildītas."
+    },
+    "rules": {
+      "default": {
+        "lengths": "Katra rinda ir viens notikums, un tas ilgst tik ilgi, cik plata ir tā josla. Kad tas notiek — to tev jāizdomā.",
+        "marks": "Līnija zem dienas ir sarkana, kamēr tā nav izpildīta. Pieskaries tai, lai apvilktu rindas, par kurām tā runā.",
+        "drag": "Velc joslu pa tās rindu. Tā nekad neiziet ārpus dienas."
+      }
+    },
+    "hint": {
+      "default": {
+        "chain": "Tās rindas vieta jau ir zināma, un šī ir atkarīga no tās.",
+        "squeeze": "Dienas palicis tikai tik daudz, un vairāk te neietilpst.",
+        "apart": "Otrādi tas dienā neietilpst.",
+        "split": "Pamēģini otrādi, un kaut kas cits saplīst.",
+        "move": "Velc apvilkto joslu uz iesvītrotajām iedaļām."
+      }
+    },
+    "events": {
+      "default": ["ugunskurs", "ūdens nešana", "maizes cepšana", "brauciens ar laivu", "vēršu dzīšana", "nakts sardze"],
+      "funerary": ["sienu apmešana", "režģa zīmēšana", "kalšana", "krāsošana", "zeltīšana", "durvju ielikšana"],
+      "cosmos": ["saules ceļš", "zvaigznes lēkts", "mēness sardze", "skaidras debesis", "rītausma", "gada griežas"],
+      "water": ["plūdi", "kanāla rakšana", "baseina pildīšana", "lauku laistīšana", "pārcelšana pār upi", "pļauja"],
+      "trade": [
+        "preču šķirošana",
+        "maizes pārdošana",
+        "alus pārdošana",
+        "pārcelšana pār upi",
+        "kravu vilkšana",
+        "uzskaite"
+      ]
+    },
+    "marks": {
+      "default": {
+        "pin": "{{a}} sākas {{tick}}. stundā.",
+        "handoff": "{{a}} sākas tajā brīdī, kad {{b}} ir galā.",
+        "link_zero": "{{a}} sākas {{count}} stundas pēc tam, kad {{b}} ir galā.",
+        "link_one": "{{a}} sākas {{count}} stundu pēc tam, kad {{b}} ir galā.",
+        "link_other": "{{a}} sākas {{count}} stundas pēc tam, kad {{b}} ir galā.",
+        "before": "{{a}} ir galā, pirms sākas {{b}}.",
+        "apart": "{{a}} un {{b}} nekad nenotiek vienlaikus.",
+        "together": "{{a}} un {{b}} kādu laiku notiek vienlaikus.",
+        "span_zero": "No pirmā sākuma līdz pēdējām beigām ir {{count}} stundas.",
+        "span_one": "No pirmā sākuma līdz pēdējām beigām ir {{count}} stunda.",
+        "span_other": "No pirmā sākuma līdz pēdējām beigām ir {{count}} stundas."
+      }
+    },
+    "door": {
+      "title": "Gājiena durvis",
+      "hint": "Katra plāksne, uz kuras tu uzkāp, atbrīvo savu darbu. Sakārto dienu un tad ej pa plāksnēm tādā secībā.",
+      "read": "Diena ir izlasīta. Ej pa tās plāksnēm šādā secībā, sākot no pirmās.",
+      "hintButton": "Padoms"
+    }
+  },
+  "story": {
+    "invitation": "Runāt",
+    "log": {
+      "empty": "Vēl nekā. Fez vēl daudz ko pastāstīs."
+    },
+    "speaker": {
+      "fez": "Fez",
+      "explorer": "Tu",
+      "ipi": "Ipi",
+      "henut": "Henut",
+      "priest": "Priesteris",
+      "pharaoh": "Faraons",
+      "voice": "Balss"
+    },
+    "wall": {
+      "wrong": "Kāds trešo zīmi iekalis nepareizi. Tā ir bijusi nepareiza trīs tūkstošus gadu.",
+      "fixed": "Tas atkal ir viņas vārds.",
+      "pick": "Ieliec īsto zīmi tās vietā.",
+      "cannot": "Tu nezini zīmi, kas te pieder. Vēl ne."
+    },
+    "sphinx": {
+      "wrong": "Tas pats raksts kā ārā, bet smiltis šeit to nekad nesasniedza. Divas zīmes vēl skaidri iekaltas, un tukša vieta, kur bija trešā.",
+      "fixed": "Tagad tas ir viss.",
+      "pick": "Ieliec tukšajā vietā zīmi, ko tu nes līdzi.",
+      "cannot": "Divas zīmes tu zini, bet tukšo vietu aizpildīt nevari. Vēl ne.",
+      "gap": "Trūkstošā zīme"
+    }
+  },
+  "lightbeamSwitch": {
+    "name": "Griežamā gaisma",
+    "invitation": "Griezt spoguļus",
+    "goal": "Gaisma atdusas svētnīcā, un izeja zem tās ir atvērta.",
+    "rules": {
+      "shrines": "Viens gaismas disks un svētnīca virs katras izejas no šī krustojuma. Spoguļi uz grīdas var aizvest gaismu uz jebkuru no tām.",
+      "doors": "Izeja, līdz kurai tiek gaisma, ir atvērta, un pārējās ir ciet. Viens gaismas ceļš, viena izeja.",
+      "returning": "Izvēloties tu neko nezaudē. Nāc atpakaļ, kad vien gribi, un sūti gaismu citur — tā izeja atveras, un šī aizveras.",
+      "tap": "Pieskaries spogulim, lai to pagrieztu. Vēl viens pieskāriens to noliek atpakaļ."
+    },
+    "doorOpen": "{{way}} izeja: atvērta",
+    "doorShut": "{{way}} izeja: ciet",
+    "way": {
+      "n": "Ziemeļu",
+      "e": "Austrumu",
+      "s": "Dienvidu",
+      "w": "Rietumu"
+    }
+  },
+  "handle": {
+    "name": "Svira",
+    "invitation": "Pavilkt sviru",
+    "goal": "Svira ir vai nu vienā, vai otrā pusē. Ko viena puse atver, to otra aizver.",
+    "left": "Pavilkt pa kreisi",
+    "right": "Pavilkt pa labi"
+  },
+  "torch": {
+    "name": "Lāpa",
+    "invitation": "Aizdegt lāpu",
+    "goal": "Neaizdegta lāpa. Kad tā deg, to vairs nevar nodzēst.",
+    "lit": "Lāpa deg."
+  },
+  "gateFace": {
+    "title": "Durvis, kas gaida",
+    "hint": "Katrai zīmei jādeg, pirms šīs durvis atvērsies.",
+    "lit": "{{owner}}: deg",
+    "unlit": "{{owner}}: vēl ne",
+    "owner": {
+      "torch": "Lāpa",
+      "handle": "Svira",
+      "key": "Atslēga",
+      "web": "Smilšu zīme",
+      "plateStone": "Akmens uz plāksnes",
+      "plateEmpty": "Tukša plāksne",
+      "other": "Mehānisms"
+    },
+    "orderHint": "Ej pa plāksnēm šādā secībā.",
+    "reset": "Sākt no jauna",
+    "spoiled": "Gājiens ir sabojāts: uz kādas plāksnes uzkāpa nepareizā secībā.",
+    "tile": {
+      "unwalked": "{{step}}. solis: vēl nav iets",
+      "inOrder": "{{step}}. solis: iets pareizā secībā",
+      "outOfOrder": "{{step}}. solis: iets nepareizā secībā"
+    }
+  },
+  "devLockEditor": {
+    "syntax": "Sintakse",
+    "example": "Piemērs",
+    "useExample": "Izmantot piemēru",
+    "title": "Slēdzeņu redaktors",
+    "notation": "Slēdzenes pieraksts",
+    "checks": "Pārbaudes",
+    "drawing": "Zīmējums",
+    "carveAndPlay": "Izcirst un spēlēt",
+    "copyLink": "Kopēt saiti",
+    "copied": "Saite nokopēta",
+    "failed": "Neizdevās nokopēt; saite ir adreses joslā",
+    "backToEditor": "← Redaktors",
+    "close": "Aizvērt",
+    "open": "Slēdzeņu redaktors",
+    "modeLock": "Slēdzene",
+    "modeWeb": "Tīkls",
+    "webNotation": "Tīkla pieraksts",
+    "openWeb": "Atvērt tīklu",
+    "checking": "Pārbauda…",
+    "checkedIn": "pārbaudīts {{ms}} ms laikā",
+    "worldCarved": "Burvja līmeņa stāvi izcirsti {{ms}} ms laikā, vienreiz",
+    "simulation": "Pavilkšanas",
+    "noSimulation": "Nav ko izspēlēt, kamēr katra vieta nav pasaulē.",
+    "summary": "Kopsavilkums",
+    "stillBuried": "Vēl {{percent}}% zem smiltīm",
+    "nothingBuried": "Nekas nav zem smiltīm",
+    "finishes": "pabeidz",
+    "stopsAt": "apstājas pie {{pct}}%",
+    "notOpenYet": "vēl nav atvērts",
+    "pullAll": "Pavilkt visu, kas sasniedzams",
+    "reset": "Sākt no jauna",
+    "progress": "{{reachable}} sasniedzami · {{pulled}} no {{total}} paņemti",
+    "allTaken": "Viss pavilkts un paņemts.",
+    "potFront": "{{pulled}} no {{total}} pavilkti · mala pie {{pct}}%",
+    "potOpen": "{{pulled}} no {{total}} pavilkti · atvērts",
+    "keys": "Atslēgas",
+    "keysNote": "katra atver vienu zīmogu",
+    "log": "Kas notika",
+    "logEmpty": "Vēl nekas nav pavilkts.",
+    "logPull": "pavelk {{name}} vietā {{at}}",
+    "logTake": "paņem {{name}} vietā {{at}}",
+    "logFront": "{{pot}} mala līdz {{pct}}%",
+    "logPotOpen": "{{pot}} atvērts",
+    "logSeal": "zīmogs vietā {{at}} atvērts",
+    "logNew": "jauns: {{names}}",
+    "pullPin": "pavilkt sviru {{name}}",
+    "takePin": "paņemt atslēgu {{name}}",
+    "legendCleared": "notīrīts",
+    "legendBuried": "zem smiltīm",
+    "legendSeal": "zīmogs",
+    "legendPins": "● svira · ■ atslēga · mazs = sānu daļa"
+  },
+  "camp": {
+    "title": "Nometne",
+    "continue": {
+      "heading": "Pašreizējā ekspedīcija",
+      "setOff": "Doties ceļā",
+      "pyramid": "{{level}}. piramīda no {{count}} · {{tier}}",
+      "tomb": "Kaps · {{tier}}",
+      "empty": "Tavā kartē viss ir atvērts"
+    },
+    "hint_zero": "{{count}} vecos ceļojumos ir kaut kas jauns, ko atklāt",
+    "hint_one": "{{count}} vecā ceļojumā ir kaut kas jauns, ko atklāt",
+    "hint_other": "{{count}} vecos ceļojumos ir kaut kas jauns, ko atklāt",
+    "comingHome": {
+      "title": "Atpakaļ nometnē",
+      "haulTitle": "Tavs loms no šī brauciena",
+      "new": "JAUNS",
+      "unpack": "Izkravāt",
+      "toCamp": "Uz nometni"
+    },
+    "chapter": {
+      "subtitle": "Jauna nodaļa",
+      "title": "Paceļas jauna piramīda",
+      "body": "Līmeņa „{{tier}}” ceļojumi ir atvērti. Atvelc elpu nometnē un dodies ceļā, kad vien gribi.",
+      "journeyNote": "Pirmais līmeņa „{{tier}}” ceļojums",
+      "later": "Vēlāk"
+    },
+    "close": "Aizvērt",
+    "entrance": {
+      "collection": "Kolekcija",
+      "mosaic": "Mozaīka",
+      "journeys": "Visi ceļojumi",
+      "detectors": "Detektori"
+    },
+    "mapTable": {
+      "title": "Kartes galds",
+      "journeys": "Ceļojumi"
+    }
+  },
+  "home": {
+    "haul": {
+      "times": "×{{count}}"
+    }
+  },
+  "journeys": {
+    "tierNeed": "Atrodi šo dārgumu",
+    "tierProgress": "Paveikti {{done}} no {{total}}",
+    "tierLockedName": "Līmeņa „{{tier}}” ceļojumi",
+    "toggleTier": "Rādīt vai paslēpt līmeņa „{{tier}}” ceļojumus",
+    "now": "TAGAD",
+    "newDot": "Kaut kas jauns, ko atklāt",
+    "noteCurrentPyramid": "Notiek · {{level}}. piramīda no {{count}}",
+    "noteCurrentTomb": "Notiek · kapā",
+    "noteFinished": "Pabeigts",
+    "noteFinishedNews": "Pabeigts · kaut kas jauns, ko atklāt",
+    "noteOpen": "Vēl neapmeklēts",
+    "noteResumePyramid": "Iesākts agrāk · {{level}}. piramīda no {{count}}",
+    "noteResumeTomb": "Iesākts agrāk · kapā",
+    "needProgress": "{{unit}}: {{found}} no {{required}}",
+    "showStops": "Rādīt vietas ceļojumā „{{name}}”",
+    "stopPyramid": "Piramīda",
+    "stopTomb": "Vieta"
+  },
+  "newVersion": {
+    "title": "Jauna versija!",
+    "name": "Spēle ir ļoti mainījusies",
+    "body": "Tāpēc tavs ceļojums sākas no jauna. Tevi gaida jauni kapi, jauni atradumi un nometne, ko celt."
+  },
+  "devPrefabPreview": {
+    "firstDoor": "Uz pirmajām durvīm",
+    "stop": "Uz pieturu",
+    "secondDoor": "Uz otrajām durvīm",
+    "doorsInUse_zero": "Izmantotas {{count}} durvis",
+    "doorsInUse_one": "Izmantotas {{count}} durvis",
+    "doorsInUse_other": "Izmantotas {{count}} durvis",
+    "walled": "{{count}} aizmūrētas"
+  },
+  "devRoomEditor": {
+    "title": "Istabu redaktors",
+    "open": "Istabu redaktors",
+    "close": "Aizvērt",
+    "tier": "Līmenis",
+    "catalogue": "Atvērt istabu",
+    "notation": "Istabas pieraksts",
+    "copyLink": "Kopēt saiti",
+    "copyText": "Kopēt tekstu",
+    "copied": "Nokopēts",
+    "failed": "Neizdevās nokopēt starpliktuvē",
+    "palette": "Palete",
+    "unpainted": "vēl nav uzzīmēts",
+    "layout": "Izkārtojums",
+    "mirrored": "(spoguļots)",
+    "fill_zero": "Aizpildīt ({{count}} izvēles)",
+    "fill_one": "Aizpildīt ({{count}} izvēle)",
+    "fill_other": "Aizpildīt ({{count}} izvēles)",
+    "fromDoor": "Iet no",
+    "toDoor": "Iet uz",
+    "automatic": "Automātiski",
+    "direction": {
+      "n": "Ziemeļu durvis",
+      "e": "Austrumu durvis",
+      "s": "Dienvidu durvis",
+      "w": "Rietumu durvis"
+    },
+    "checks": "Pārbaudes",
+    "sound": "Istaba iztur pārbaudes",
+    "tierDisagrees": "Galvenē ir līmenis {{header}}, bet šeit zīmēts kā {{picked}}",
+    "undo": "Atsaukt",
+    "drawing": "Zīmējums",
+    "tool": {
+      "select": "Atlasīt",
+      "wall": "Siena",
+      "floor": "Grīda",
+      "door": "Durvju vieta",
+      "stop": "Pietura",
+      "chest": "Lāde",
+      "portal": "Portāls",
+      "mechanism": "Mehānisms",
+      "erase": "Dzēst",
+      "copy": "Zīmēt {{letter}}"
+    },
+    "againstWall": "Nomestie priekšmeti stāv pie ziemeļu sienas",
+    "dropHint": "Velc paletes vienumu uz šūnu; tas aizņem savu laukumu",
+    "newLayout": "Jaunā izkārtojuma nosaukums",
+    "addLayout": "Kopēt kā izkārtojumu",
+    "inspector": {
+      "title": "Vieta {{letter}}",
+      "optional": "Neobligāts",
+      "kinds": "Veidi",
+      "counted": "Aizpildīt tikai dažus",
+      "take": "Ņemt",
+      "of": "no",
+      "per": "uz",
+      "perNone": "katrs atsevišķi",
+      "drawAnother": "Zīmēt vēl vienu",
+      "close": "Aizvērt"
+    },
+    "refused": {
+      "notFree": "Nav uz brīvas grīdas istabas iekšpusē",
+      "wallRow": "Sienas vieta ir pirmajā rindā pie ziemeļu sienas",
+      "northWall": "Sienas priekšmets karājas pie ziemeļu sienas",
+      "floorOnRing": "Ārējā lokā drīkst būt tikai sienas un durvju vietas",
+      "doorInside": "Durvju vieta ir ārējā lokā",
+      "keepStop": "Pietura paliek: novieto to citur, lai to pārvietotu",
+      "noLetter": "Visi burti jau ir aizņemti",
+      "layoutName": "Dod izkārtojumam nosaukumu, kāda nav nevienam citam",
+      "notation": "Pieraksts to nepieņem: {{message}}"
+    },
+    "layer": {
+      "wall": "pie sienas",
+      "floor": "grīda",
+      "ground": "zeme",
+      "wallItem": "sienas priekšmets"
+    },
+    "cell": "Šūna {{row}},{{col}}: {{what}}",
+    "cellWhat": {
+      "wall": "siena",
+      "floor": "brīva grīda",
+      "door": "durvju vieta",
+      "place": "{{letter}}, {{kinds}}"
+    },
+    "rewrites": "Zīmēšana pārraksta tekstu: visi komentāri pārvietojas uz augšu"
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Batu",
+    "bronze": "Perunggu",
+    "silver": "Perak",
+    "gold": "Emas",
+    "divine": "Ilahi"
+  },
+  "sell_stone_1": {
+    "name": "Pecahan Tembikar Gompal",
+    "description": "Pecahan tembikar yang dicoret-coret juru tulis untuk latihan menulis. Hurufnya sudah terlalu pudar untuk dibaca."
+  },
+  "sell_stone_2": {
+    "name": "Kendi Tanah Liat Retak",
+    "description": "Kendi untuk menyimpan gandum atau minuman. Satu sisinya retak karena beratnya ratusan tahun."
+  },
+  "sell_stone_3": {
+    "name": "Sandal Alang-alang Usang",
+    "description": "Dianyam dari papirus. Solnya tipis karena dipakai jalan setiap hari oleh seorang pekerja yang sudah lama terlupakan."
+  },
+  "sell_stone_4": {
+    "name": "Sobekan Linen Pudar",
+    "description": "Sobekan kain linen polos, seperti yang dililitkan pada mumi. Atau dipakai untuk menambal layar perahu."
+  },
+  "sell_stone_5": {
+    "name": "Pisau Batu Api Patah",
+    "description": "Pisau dari batu api, ujungnya patah. Murah dibuat, lebih murah lagi diganti."
+  },
+  "sell_bronze_1": {
+    "name": "Jimat Perunggu Bengkok",
+    "description": "Jimat pelindung murahan. Dicetak bengkok dan tidak pernah diperbaiki."
+  },
+  "sell_bronze_2": {
+    "name": "Cermin Perunggu Berkarat",
+    "description": "Dulu begitu mengilap sampai kamu bisa berkaca. Sekarang buram dan hijau karena tua."
+  },
+  "sell_bronze_3": {
+    "name": "Kail Perunggu Tumpul",
+    "description": "Alat seorang nelayan yang jatuh ke Sungai Nil, jauh sebelum makam ini ditutup."
+  },
+  "sell_bronze_4": {
+    "name": "Lonceng Perunggu Kecil",
+    "description": "Dulu tergantung di pintu kuil atau di pergelangan kaki penari. Bunyinya sudah sumbang."
+  },
+  "sell_bronze_5": {
+    "name": "Cincin Perunggu Kusam",
+    "description": "Cincin polos, untuk jari yang sudah lama menjadi debu."
+  },
+  "sell_silver_1": {
+    "name": "Ankh Perak Kusam",
+    "description": "Lambang kehidupan, kusam setelah ratusan tahun di bawah tanah."
+  },
+  "sell_silver_2": {
+    "name": "Batang Celak Perak",
+    "description": "Batang ramping untuk menggaris mata orang kaya. Celaknya sudah lama hilang."
+  },
+  "sell_silver_3": {
+    "name": "Mangkuk Perak Penyok",
+    "description": "Mangkuk sesaji kecil. Satu sisinya penyok waktu langit-langit di atasnya akhirnya runtuh."
+  },
+  "sell_silver_4": {
+    "name": "Tusuk Konde Perak",
+    "description": "Sederhana, tanpa hiasan. Dulu menahan rambut seseorang yang namanya sudah hilang."
+  },
+  "sell_silver_5": {
+    "name": "Gelang Perak Usang",
+    "description": "Gelang perak tipis dengan kait yang patah. Kurang bagus untuk bangsawan, terlalu bagus untuk buruh."
+  },
+  "sell_gold_1": {
+    "name": "Manik Emas Kecil",
+    "description": "Satu manik dari kalung pemakaman yang sudah lama tercerai-berai."
+  },
+  "sell_gold_2": {
+    "name": "Serpihan Daun Emas",
+    "description": "Secuil daun emas, dikelupas dari wajah patung oleh perampok makam berabad-abad sebelum kamu datang."
+  },
+  "sell_gold_3": {
+    "name": "Anting Emas Tipis",
+    "description": "Ditempa tipis-tipis supaya emas si bangsawan cukup untuk lebih banyak perhiasan."
+  },
+  "sell_gold_4": {
+    "name": "Pecahan Berbintik Emas",
+    "description": "Pecahan plester bersepuh. Bintik-bintik emas asli masih menempel di permukaannya."
+  },
+  "sell_gold_5": {
+    "name": "Cincin Stempel Emas Gompal",
+    "description": "Cincin stempel yang ukirannya sudah tidak terbaca. Nama pemiliknya sudah terlupakan."
+  },
+  "sell_divine_1": {
+    "name": "Kumbang Lapis Pudar",
+    "description": "Diukir dari batu lapis lazuli yang mahal, didatangkan dari jauh untuk kelahiran kembali seorang firaun. Warnanya pudar dimakan zaman."
+  },
+  "sell_divine_2": {
+    "name": "Jimat Mata Akik",
+    "description": "Mata pelindung dari batu akik merah darah, untuk menangkal sial di alam baka."
+  },
+  "sell_divine_3": {
+    "name": "Keping Hiasan Pirus",
+    "description": "Satu keping dari mosaik yang hancur. Dulu bagian dari gambar dewa di dinding kuil."
+  },
+  "sell_divine_4": {
+    "name": "Pecahan Guci Pualam",
+    "description": "Pecahan guci untuk menyimpan organ tubuh firaun yang diawetkan. Batu mahal untuk tugas yang seram."
+  },
+  "sell_divine_5": {
+    "name": "Pisau Upacara Obsidian",
+    "description": "Kaca gunung berapi yang diasah tajam untuk upacara. Bukan untuk perang, hanya untuk kuil."
+  }
+}

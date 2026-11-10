@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Daggry ved Sfinksen",
+    "description": "Den Store Sfinks, og skriften ved dens fødder, som ingen kan læse i dag. Kortet siger: start her."
+  },
+  "starter_2": {
+    "name": "Papyrushandlerens vej",
+    "description": "En handelsvej langs Nilen med købmændenes lagerhuse. Nogle af dem blev aldrig tømt."
+  },
+  "starter_3": {
+    "name": "Bastets tempel",
+    "description": "Bastets tempel. Kattene her var hellige, og den årlige fest var den største i Egypten — både, musik, hele pakken."
+  },
+  "starter_4": {
+    "name": "Skrivernes skole",
+    "description": "Skolen, hvor Egypten lærte at skrive. Klasseværelserne ligger stadig under sandet."
+  },
+  "starter_treasure_tomb": {
+    "name": "Den glemte købmands lager",
+    "description": "En købmands kælder, ikke en konges: krukker stablet, lukket og mærket, og ingen dernede til at brokke sig.",
+    "mapHint": "Stumpen viser en markedsvej og en kælderdør — en købmands gemmested, ikke noget finere."
+  },
+  "junior_1": {
+    "name": "De hellige ibisser",
+    "description": "Sumpland, og ibisserne der vader igennem det. Egypten holdt øje med de fugle: når de kommer tilbage, kommer oversvømmelsen."
+  },
+  "junior_2": {
+    "name": "Håndværkernes dal",
+    "description": "Deir el-Medina, hvor gravbyggerne boede. Alt, der kom i en kongegrav, blev først lavet her, i forme."
+  },
+  "junior_3": {
+    "name": "Thoths tempel",
+    "description": "Thoths tempel. Han opfandt skriften, skrev alt ned og regnede det hele ud — lidt ligesom os."
+  },
+  "junior_4": {
+    "name": "Fyrtårnet i Alexandria",
+    "description": "Pharos i Alexandria. Et bål på toppen, der brændte hele natten, så sømænd kunne finde kysten en dags sejlads ude."
+  },
+  "junior_treasure_tomb": {
+    "name": "Adelsdamens skjulte hvælving",
+    "description": "En adelsdames hvælving, malet fra gulv til loft. Hun købte de flotteste kopier, man kunne få — og sagde det aldrig højt.",
+    "mapHint": "Fint blæk og et våbenskjold i hjørnet — en fin person ville have, at dette rum blev glemt."
+  },
+  "expert_1": {
+    "name": "Kongernes Dal",
+    "description": "Kongernes Dal. De holdt op med at bygge pyramider og gemte kongegravene i én dal, under en top formet som en pyramide."
+  },
+  "expert_2": {
+    "name": "Templerne i Karnak",
+    "description": "Karnak, som man byggede videre på i to tusind år. Alene den store sal har hundrede og fireogtredive søjler, og der er billeder på dem alle."
+  },
+  "expert_3": {
+    "name": "Ekspedition til Nildeltaet",
+    "description": "Hvor Nilen deler sig og breder sig ud i grønt. Sobeks land — papyrus, fisk og krokodiller, som blev tilbedt og fodret."
+  },
+  "expert_4": {
+    "name": "Djosers pyramide",
+    "description": "Djosers trappepyramide, det første så store bygværk af sten. Hans bygmester Imhotep blev til sidst dyrket som en gud."
+  },
+  "expert_treasure_tomb": {
+    "name": "Ypperstepræstens skatkammer",
+    "description": "En ypperstepræsts skatkammer under offergulvet. Alt dernede blev givet til en gud og aldrig hentet op igen.",
+    "mapHint": "Stregerne tegner et tempelområde og en trappe, der går ned under offergulvet."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Den inderste helligdom",
+    "description": "Det lukkede rum midt i templet. Ypperstepræsten gik derind én gang om dagen for at vaske guden og give ham tøj på.",
+    "mapHint": "Gange løber forbi templets hvælvinger hen til en forseglet dør — kun de højeste præster kom igennem den."
+  },
+  "master_1": {
+    "name": "Den Store Pyramide i Giza",
+    "description": "Den Store Pyramide. Tyve års stenarbejde, og en hel by ved siden af, der gav arbejderne brød og øl."
+  },
+  "master_2": {
+    "name": "Dødebogen",
+    "description": "Ikke én bog, men en samling trylleformularer, skrevet af på bestilling. I de billige var der et tomt hul, hvor dit navn skulle stå."
+  },
+  "master_3": {
+    "name": "Faraoernes forbandelse",
+    "description": "Den berømte forbandelse blev fundet på af aviserne i 1923. Egypterne passede på deres grave med døre og papirarbejde."
+  },
+  "master_4": {
+    "name": "Nefertaris grav",
+    "description": "Nefertaris grav, det flotteste malede rum i Egypten. Farverne blev malet af sten — azurit, malakit, okker."
+  },
+  "master_treasure_tomb": {
+    "name": "Faraos hemmelige skat",
+    "description": "En konges egen skat, derude hvor kortene slutter. Det, der kom i jorden sammen med ham, ligger der stadig.",
+    "mapHint": "En kongelig kartouche står i kanten, og vejen ender langt ude under åbent sand."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Osiris' sal",
+    "description": "Osiris' sal. Gud for oversvømmelsen og kornet — det, der kommer i jorden her, regner man med at få tilbage.",
+    "mapHint": "Under kongens kamre fortsætter kortet nedad, til en sal tegnet med de dødes ritualer."
+  },
+  "wizard_1": {
+    "name": "Ras rejse om natten",
+    "description": "Ra går ned under verden ved solnedgang og har tolv timers mørke foran sig. Egypten skrev ned, hvad der sker i hver eneste time."
+  },
+  "wizard_2": {
+    "name": "Memnonkolosserne",
+    "description": "To siddende kæmper af Amenhotep III. Grækerne besluttede, at de forestillede en helt anden, og det navn hang ved i to tusind år."
+  },
+  "wizard_3": {
+    "name": "Ma'ats kammer",
+    "description": "Ma'ats kammer. Hun er tingenes orden, og hendes ene strudsefjer er det, alt andet bliver vejet op imod."
+  },
+  "wizard_4": {
+    "name": "Den evige pyramide",
+    "description": "Ydersiden var poleret kalksten, hvid som salt, lagt så præcist, at man kunne se den glimte en hel dagsrejse væk."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Gudernes hvælving",
+    "description": "Her gemte templet det, der tilhørte guderne. Ingen blev lukket ind uden det rigtige i hænderne.",
+    "mapHint": "Intet mærke på denne stump hører til menneskenes verden — hvad den end viser, så har guder lagt det der."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Himmelkræfternes rige",
+    "description": "Stjernekort over hele loftet, malet så de døde kunne se, hvad klokken var om natten. Nogens reb hænger stadig i skakten.",
+    "mapHint": "Forbi gudernes hvælving bliver stregerne til stjernestier, hvor livets og kaosets kræfter er gemt som relikvier."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Evighedens trone",
+    "description": "Én stol i midten og toogfyrre dommere rundt om den, og hver af dem stiller et spørgsmål, du skal svare nej til.",
+    "mapHint": "Alle stjernestier på denne stump mødes ved én stol, midt i gudernes rige."
+  }
+}

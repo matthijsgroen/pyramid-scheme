@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "König der Götter und Herrscher der Sonne. Jeden Tag segelt er in seiner Sonnenbarke über den Himmel."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Gott mit dem Kopf eines Schakals. Er sorgt für die Mumien und das Jenseits und beschützt die Toten."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Himmelsgott mit dem Kopf eines Falken und Beschützer der Pharaonen, Sohn von Osiris und Isis."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "Gott mit dem Kopf eines Ibis. Gott der Weisheit, der Schrift und des Wissens, der alles für die Götter aufschreibt."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Katzengöttin für Schutz, Freude und Fruchtbarkeit. Sie verjagt böse Geister."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Krokodilgott des Nils, der Fruchtbarkeit und der Stärke im Kampf."
+    },
+    "d7": {
+      "name": "Chepri",
+      "description": "Skarabäus-Gott der Wiedergeburt und des Neubeginns. Er rollt die Sonne über den Himmel."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Kobragöttin und Beschützerin von Unterägypten, Zeichen der Macht des Königs."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "Göttin der Zauberei, der Mütter und der Heilung, treue Frau des Osiris."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "Gott der Unterwelt, des Todes und der Auferstehung, Richter über die Toten."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "Gott des Chaos, der Stürme und der Wüste, Bruder und Rivale von Osiris."
+    },
+    "d12": {
+      "name": "Nephthys",
+      "description": "Göttin der Trauer, die die Toten beschützt, Schwester der Isis."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Schöpfergott und Beschützer der Handwerker und Baumeister. Er erschuf die Welt mit seinen Worten."
+    },
+    "d14": {
+      "name": "Sachmet",
+      "description": "Löwengöttin des Krieges und der Heilung, eine wilde Beschützerin, die Krankheiten heilen kann."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Kuhgöttin der Liebe, der Musik und der Mütter, die die Pharaonen umsorgte."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Pharao",
+      "description": "Göttlicher Herrscher Ägyptens. Man hielt ihn für einen lebenden Gott, eine Brücke zwischen Menschen und Göttern."
+    },
+    "p2": {
+      "name": "Hohepriester",
+      "description": "Oberster Priester der Tempel. Er führte heilige Rituale durch und hielt die göttliche Ordnung aufrecht."
+    },
+    "p3": {
+      "name": "Schreiber",
+      "description": "Jemand, der lesen und schreiben gelernt hatte. Er schrieb alles auf und bewahrte das Wissen."
+    },
+    "p4": {
+      "name": "Baumeister",
+      "description": "Meister des Bauens, der Pyramiden, Tempel und Denkmäler für die Ewigkeit plante."
+    },
+    "p5": {
+      "name": "General",
+      "description": "Anführer der Armee, der die Grenzen Ägyptens schützte und das Reich vergrößerte."
+    },
+    "p6": {
+      "name": "Arzt",
+      "description": "Heiler, der Heilkunde und Zaubersprüche mischte, um Kranke gesund zu machen."
+    },
+    "p7": {
+      "name": "Einbalsamierer",
+      "description": "Heiliger Handwerker, der Verstorbene für die Reise ins Jenseits vorbereitete."
+    },
+    "p8": {
+      "name": "Bauer",
+      "description": "Er sorgte für Essen in Ägypten und bestellte die fruchtbaren Felder am Nil, um das ganze Reich satt zu machen."
+    },
+    "p9": {
+      "name": "Kunsthandwerker",
+      "description": "Geschickter Handwerker, der schöne Dinge, Schmuck und Kunstwerke für Vornehme und Götter herstellte."
+    },
+    "p10": {
+      "name": "Händler",
+      "description": "Kaufmann, der seltene Waren auf Handelswegen aus fernen Ländern brachte."
+    },
+    "p11": {
+      "name": "Wesir",
+      "description": "Oberster Minister und Berater des Pharaos, der sich um die Regierung kümmerte."
+    },
+    "p12": {
+      "name": "Orakel",
+      "description": "Heilige Seherin, die Botschaften der Götter deutete und die Zukunft vorhersagte."
+    },
+    "p13": {
+      "name": "Seefahrer",
+      "description": "Er steuerte Schiffe über den Nil und das Mittelmeer, wichtig für Handel und Transport."
+    },
+    "p14": {
+      "name": "Steinmetz",
+      "description": "Steinarbeiter, der Hieroglyphen meißelte und die großen Denkmäler Ägyptens baute."
+    },
+    "p15": {
+      "name": "Wächter",
+      "description": "Beschützer heiliger Orte und Gräber, der für die ewige Ruhe der Toten sorgte."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Nilpferd",
+      "description": "Starkes Flusstier des Nils, gefürchtet wegen seiner Kraft und weil es sein Revier verteidigt."
+    },
+    "a2": {
+      "name": "Löwe",
+      "description": "König der Tiere, Zeichen königlicher Macht und göttlicher Stärke in der Wüste."
+    },
+    "a3": {
+      "name": "Elefant",
+      "description": "Riesiges Tier aus den Ländern im Süden, verehrt wegen seiner Klugheit und seines Gedächtnisses."
+    },
+    "a4": {
+      "name": "Gazelle",
+      "description": "Schnelle und elegante Wüstenbewohnerin, Zeichen für Tempo und Anmut."
+    },
+    "a5": {
+      "name": "Affe",
+      "description": "Schlaues Tier, das zu Thoth gehört. Er steht für Klugheit und Unfug."
+    },
+    "a6": {
+      "name": "Fisch",
+      "description": "Heilige Tiere des Nils. Sie gaben Nahrung und waren ein Zeichen für Fruchtbarkeit."
+    },
+    "a7": {
+      "name": "Gans",
+      "description": "Heiliger Vogel der Nilsümpfe, verbunden mit Geschichten über die Erschaffung der Welt und mit der Seele."
+    },
+    "a8": {
+      "name": "Biene",
+      "description": "Zeichen für Unterägypten und die Macht des Königs, Erzeugerin von kostbarem Honig."
+    },
+    "a9": {
+      "name": "Schildkröte",
+      "description": "Uraltes, weises Tier, das das Gewicht der Welt auf seinem Panzer trägt."
+    },
+    "a10": {
+      "name": "Frosch",
+      "description": "Zeichen für Wiedergeburt und Fruchtbarkeit, das aus den lebensspendenden Fluten des Nils auftaucht."
+    },
+    "a11": {
+      "name": "Geier",
+      "description": "Heiliger Vogel von Oberägypten, die irdische Gestalt der Schutzgöttin Nechbet."
+    },
+    "a12": {
+      "name": "Eule",
+      "description": "Weise Jägerin der Nacht, Hüterin von verborgenem Wissen und alten Geheimnissen."
+    },
+    "a13": {
+      "name": "Widder",
+      "description": "Heiliges Tier von Amun-Ra, Zeichen für göttliche Macht und Führung."
+    },
+    "a14": {
+      "name": "Giraffe",
+      "description": "Großes, elegantes Tier aus den Ländern im Süden, das mit seinem langen Hals bis zum Himmel reicht."
+    },
+    "a15": {
+      "name": "Schakal",
+      "description": "Aasfresser der Wüste und Führer ins Jenseits, Diener des Anubis."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Anch",
+      "description": "Zeichen für Leben und Unsterblichkeit, das oft Götter und Pharaonen in der Hand halten."
+    },
+    "art2": {
+      "name": "Horusauge",
+      "description": "Zeichen für Schutz, königliche Macht und Gesundheit, verbunden mit dem Himmelsgott Horus."
+    },
+    "art3": {
+      "name": "Sistrum",
+      "description": "Musikinstrument, das bei religiösen Feiern gespielt wurde, verbunden mit der Göttin Hathor."
+    },
+    "art4": {
+      "name": "Djed-Pfeiler",
+      "description": "Zeichen für Beständigkeit und Auferstehung, oft mit Osiris verbunden."
+    },
+    "art5": {
+      "name": "Kartusche",
+      "description": "Ovaler Rahmen um den Namen eines Pharaos in Hieroglyphen. Er schützt seinen Namen für alle Ewigkeit."
+    },
+    "art6": {
+      "name": "Kanopenkrug",
+      "description": "Heiliger Krug mit dem Kopf eines Wächters als Deckel – vier davon standen um einen Sarg herum und hielten Wache."
+    },
+    "art7": {
+      "name": "Zepter",
+      "description": "Stab der Macht, den Götter und Pharaonen als Zeichen ihrer göttlichen Herrschaft trugen."
+    },
+    "art9": {
+      "name": "Pyramide",
+      "description": "Ewiges Grab und Tor zum Jenseits, gebaut, um für die Pharaonen für immer zu halten."
+    },
+    "art10": {
+      "name": "Sonnenbarke",
+      "description": "Heiliges Boot, das den Sonnengott Ra vom Morgen bis zum Abend über den Himmel trägt."
+    },
+    "art11": {
+      "name": "Obelisk",
+      "description": "Hohe Steinsäule mit einer kleinen Pyramide an der Spitze, die zum Himmel ragt, um die Götter zu ehren."
+    },
+    "art12": {
+      "name": "Krummstab und Geißel",
+      "description": "Königliche Zeichen, die zeigen: Der Pharao ist der Hirte und Beschützer Ägyptens."
+    },
+    "art14": {
+      "name": "Lotusblume",
+      "description": "Zeichen für Wiedergeburt und die Sonne. Sie wächst rein aus dem schlammigen Wasser des Nils."
+    },
+    "art15": {
+      "name": "Uräus-Krone",
+      "description": "Königlicher Kopfschmuck mit einer schützenden Kobra, den Pharaonen als göttlichen Schutz trugen."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Schilfblatt",
+      "description": "Ein einzelnes Schilfrohr, es steht für den Laut i. Hängt man es an den Namen eines Gottes, wird ein Männername daraus: Aus Horus wird Hori, „der von Horus“."
+    }
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Arraste o objeto até a pedra para destravar",
+    "alsoAvailable": "Também disponível:"
+  },
+  "perks": {
+    "max-health": "+½ coração na sua vida máxima",
+    "armor": "Diminui o dano das armadilhas",
+    "trap-insight": "+1s nas armadilhas com tempo",
+    "pack-mule": "Um cantil cura dois corações",
+    "compass": "Peça da bússola",
+    "detection": "Peça do detector de corredores",
+    "tier-unlock": "Libera as expedições de nível {{tier}}",
+    "tier-coming-soon": "As expedições de nível {{tier}} chegam numa próxima atualização",
+    "location-key": "Mostra mais uma tumba",
+    "partOf": "{{count}} de {{total}}"
+  },
+  "tiers": {
+    "stone": "Pedra",
+    "bronze": "Bronze",
+    "silver": "Prata",
+    "gold": "Ouro",
+    "divine": "Divino"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Deben de prata",
+      "description": "Uma moeda de prata do Egito antigo, usada pelos mercadores para fazer comércio ao longo do Nilo."
+    },
+    "t2": {
+      "name": "Rolo de papiro",
+      "description": "O caderno de um mercador, com as rotas de comércio e a lista das cargas preciosas."
+    },
+    "t3": {
+      "name": "Pente de marfim",
+      "description": "Um pente de marfim cheio de detalhes entalhados, uma coisa chique trazida de terras distantes."
+    },
+    "t4": {
+      "name": "Lamparina de cerâmica",
+      "description": "Uma lamparina a óleo simples mas bonita, que iluminava a casa do mercador."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Pulseira de ouro",
+      "description": "Uma pulseira de ouro enfeitada com pedras preciosas, usada pelos nobres do Egito."
+    },
+    "t6": {
+      "name": "Punhal de cerimônia",
+      "description": "Um punhal de ritual com o cabo cheio de joias, usado nas cerimônias dos nobres."
+    },
+    "t7": {
+      "name": "Escaravelho de jade",
+      "description": "Um amuleto de escaravelho de jade que protege. Sinal de renascer e de vida eterna."
+    },
+    "t8": {
+      "name": "Vaso canópico de alabastro",
+      "description": "Um vaso elegante de alabastro para guardar óleos e perfumes preciosos."
+    },
+    "t9": {
+      "name": "Bengala de ébano",
+      "description": "Uma bengala de ébano polido com um ankh de ouro no topo."
+    },
+    "t10": {
+      "name": "Colar de lápis-lazúli",
+      "description": "Um colar lindo de pedras raras de lápis-lazúli, muito querido pelos ricos."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Ankh sagrado",
+      "description": "Um ankh de ouro, sinal da vida eterna, abençoado pelos sacerdotes do templo."
+    },
+    "t12": {
+      "name": "Espelho de cobre",
+      "description": "Um espelho de cobre polido, usado nas cerimônias de purificação."
+    },
+    "t13": {
+      "name": "Incensário",
+      "description": "Um queimador de incenso de bronze, cheio de enfeites, usado nas rezas do templo."
+    },
+    "t14": {
+      "name": "Cálice de ritual",
+      "description": "Um cálice sagrado de prata, usado para oferecer bebida aos deuses."
+    },
+    "t15": {
+      "name": "Leque de cerimônia",
+      "description": "Um leque de penas cheio de enfeites, usado pelos sacerdotes nas cerimônias do templo."
+    },
+    "t16": {
+      "name": "Contas de oração",
+      "description": "Um cordão de contas abençoadas, usado para rezar e meditar."
+    },
+    "t17": {
+      "name": "Vaso de água benta",
+      "description": "Um vaso com água abençoada do poço sagrado do templo."
+    },
+    "t18": {
+      "name": "Sino do templo",
+      "description": "Um sino de bronze que chamava as pessoas para rezar e avisava das cerimônias."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Selo do faraó",
+      "description": "Um selo real antigo com o cartucho de um faraó esquecido."
+    },
+    "t20": {
+      "name": "Bola de cristal",
+      "description": "Uma bola de cristal misteriosa que, dizem, mostra cenas do passado e do futuro."
+    },
+    "t21": {
+      "name": "Placa de hieróglifos",
+      "description": "Uma placa de pedra antiga com profecias misteriosas escritas em hieróglifos."
+    },
+    "t22": {
+      "name": "Cetro de ouro",
+      "description": "Um cetro de ouro magnífico, com o olho de Hórus no topo."
+    },
+    "t23": {
+      "name": "Faca de obsidiana",
+      "description": "Uma faca de obsidiana afiadíssima, usada em rituais antigos."
+    },
+    "t24": {
+      "name": "Pedaço de meteorito",
+      "description": "Um pedaço de meteorito sagrado que, acreditavam, tinha o poder dos deuses."
+    },
+    "t25": {
+      "name": "Bússola antiga",
+      "description": "Um aparelho misterioso que sempre aponta para tesouros escondidos."
+    },
+    "t26": {
+      "name": "Cristal do tempo",
+      "description": "Um cristal lendário que brilha com o poder dos tempos antigos."
+    },
+    "t27": {
+      "name": "Máscara de ritual",
+      "description": "Uma máscara de ouro cheia de enfeites, usada pelos sumos sacerdotes nas cerimônias sagradas."
+    },
+    "t28": {
+      "name": "Tocha da chama eterna",
+      "description": "Uma tocha com uma chama que nunca se apagou desde os tempos antigos."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Coroa de Rá",
+      "description": "A coroa lendária do deus do sol, Rá, que brilha com luz e poder dos deuses."
+    },
+    "t30": {
+      "name": "Cajado de Thoth",
+      "description": "O cajado da sabedoria de Thoth, deus do saber, com todos os segredos antigos dentro."
+    },
+    "t31": {
+      "name": "Pena de Ma'at",
+      "description": "A pena sagrada de Ma'at, deusa da verdade, usada para pesar as almas depois da morte."
+    },
+    "t32": {
+      "name": "Lágrimas de Ísis",
+      "description": "Lágrimas da deusa Ísis que viraram cristal. Dizem que protegem para sempre."
+    },
+    "t33": {
+      "name": "Coração de Osíris",
+      "description": "O coração de Osíris, senhor do mundo dos mortos, ainda batendo com força de vida."
+    },
+    "t34": {
+      "name": "Amuleto do Olho de Hórus",
+      "description": "O amuleto de proteção mais forte de todos, com todo o poder de Hórus."
+    },
+    "t35": {
+      "name": "Serpente de Apep",
+      "description": "Um pedaço preso da serpente da bagunça, Apep, trancado dentro de um vaso sagrado."
+    },
+    "t36": {
+      "name": "Sopro de Shu",
+      "description": "Um frasco com o sopro de Shu, deus do ar, que dá poder sobre os ventos."
+    },
+    "t37": {
+      "name": "Escama de Sobek",
+      "description": "Uma escama do deus crocodilo Sobek, que protege na água."
+    },
+    "t38": {
+      "name": "Estátua guardiã de Anúbis",
+      "description": "Uma estatueta de Anúbis que ganha vida para proteger os tesouros do seu dono."
+    },
+    "t39": {
+      "name": "Livro dos Mortos",
+      "description": "O Livro dos Mortos completo, com todos os feitiços para a viagem depois da morte."
+    },
+    "t40": {
+      "name": "Topo da pirâmide",
+      "description": "A pedra de ouro do topo da Grande Pirâmide, com o poder de todos os faraós juntos."
+    }
+  }
+}

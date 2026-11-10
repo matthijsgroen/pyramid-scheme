@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Kő",
+    "bronze": "Bronz",
+    "silver": "Ezüst",
+    "gold": "Arany",
+    "divine": "Isteni"
+  },
+  "sell_stone_1": {
+    "name": "Csorba cserépdarab",
+    "description": "Egy törött cserép, amire egy írnok gyakorlásból betűket karcolt. A betűk már annyira elkoptak, hogy nem lehet elolvasni őket."
+  },
+  "sell_stone_2": {
+    "name": "Repedt agyagkorsó",
+    "description": "Gabonát vagy sört tartottak benne. Az évszázadok súlyától az egyik oldala megrepedt."
+  },
+  "sell_stone_3": {
+    "name": "Kopott nádszandál",
+    "description": "Papirusznádból fonták. A talpa elvékonyodott, mert egy régen elfelejtett munkás minden nap ebben járt."
+  },
+  "sell_stone_4": {
+    "name": "Fakó vászoncsík",
+    "description": "Egy szakadt, festetlen vászoncsík. Ilyet tekertek a halottak köré, vagy vitorlát foltoztak vele."
+  },
+  "sell_stone_5": {
+    "name": "Törött kovakés",
+    "description": "Pattintott kovakőből készült kés, letört a hegye. Olcsó volt megcsinálni, és még olcsóbb kicserélni."
+  },
+  "sell_bronze_1": {
+    "name": "Görbe bronzamulett",
+    "description": "Egy olcsó védőamulett. Ferdén öntötték, és soha senki nem egyenesítette ki."
+  },
+  "sell_bronze_2": {
+    "name": "Rozsdás bronztükör",
+    "description": "Valaha olyan fényes volt, hogy láttad benne magad. Most zöld és homályos a kortól."
+  },
+  "sell_bronze_3": {
+    "name": "Tompa bronz horog",
+    "description": "Egy halász horga. Még jóval a sír lezárása előtt esett bele a Nílusba."
+  },
+  "sell_bronze_4": {
+    "name": "Kis bronzcsengő",
+    "description": "Templomajtón vagy egy táncosnő bokáján lógott. Ma már nem cseng tisztán."
+  },
+  "sell_bronze_5": {
+    "name": "Fakó bronzgyűrű",
+    "description": "Egyszerű karika egy ujjra, amely már rég porrá lett."
+  },
+  "sell_silver_1": {
+    "name": "Fakó ezüst ankh",
+    "description": "Az élet jele. Évszázadokig a föld alatt volt, és egészen elfakult."
+  },
+  "sell_silver_2": {
+    "name": "Ezüst szemfestő pálcika",
+    "description": "Vékony pálcika, amivel a gazdagok kifestették a szemüket. A festék már rég eltűnt róla."
+  },
+  "sell_silver_3": {
+    "name": "Horpadt ezüsttál",
+    "description": "Egy kis áldozati tál. Az egyik oldala behorpadt, amikor a mennyezet végül leszakadt fölötte."
+  },
+  "sell_silver_4": {
+    "name": "Ezüst hajtű",
+    "description": "Egyszerű, díszítés nélküli hajtű. Valaki haját fogta össze, akinek a nevét már senki sem tudja."
+  },
+  "sell_silver_5": {
+    "name": "Kopott ezüst karkötő",
+    "description": "Vékony ezüstkarika, eltört a csatja. Egy nemesnek nem elég szép, egy munkásnak túl szép."
+  },
+  "sell_gold_1": {
+    "name": "Kis aranygyöngy",
+    "description": "Egyetlen gyöngy egy temetési nyakláncról. A többi rég szétszóródott."
+  },
+  "sell_gold_2": {
+    "name": "Aranyfüst-darabka",
+    "description": "Egy kis aranyfüst-szilánk. Sírrablók kaparták le egy szobor arcáról, évszázadokkal azelőtt, hogy te ideértél."
+  },
+  "sell_gold_3": {
+    "name": "Vékony arany fülbevaló",
+    "description": "Nagyon vékonyra kalapálták, hogy a nemes aranya tovább kitartson."
+  },
+  "sell_gold_4": {
+    "name": "Aranypöttyös cserép",
+    "description": "Egy aranyozott vakolatdarab. Igazi arany pöttyök tapadnak még rá."
+  },
+  "sell_gold_5": {
+    "name": "Csorba arany pecsétgyűrű",
+    "description": "Pecsétgyűrű, de a véset annyira elkopott, hogy nem lehet kivenni. Akinek a nevét viselte, azt elfelejtették."
+  },
+  "sell_divine_1": {
+    "name": "Fakó lazúrkő szkarabeusz",
+    "description": "Drága lazúrkőből faragták, és messziről hozták egy fáraó újjászületéséhez. A színe az évszázadok alatt elfakult."
+  },
+  "sell_divine_2": {
+    "name": "Karneol szemamulett",
+    "description": "Vérvörös karneolból faragott védőszem. A túlvilágon kellett távol tartania a bajt."
+  },
+  "sell_divine_3": {
+    "name": "Türkiz mozaikdarab",
+    "description": "Egyetlen lapocska egy összetört mozaikból. Valaha egy isten képének része volt egy templomfalon."
+  },
+  "sell_divine_4": {
+    "name": "Alabástrom kanópuszcserép",
+    "description": "Egy korsó darabja, amelyben egy fáraó belső szerveit őrizték. Drága kő egy komor feladatra."
+  },
+  "sell_divine_5": {
+    "name": "Obszidián szertartási kés",
+    "description": "Vulkáni üveg, élesre csiszolva. Soha nem harcra szánták, csak a templomba."
+  }
+}

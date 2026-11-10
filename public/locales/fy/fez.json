@@ -1,0 +1,1730 @@
+{
+  "not-found": "Sorry, it petear dat do sikest, bestiet net.",
+  "welcome": "Egypte! Ik bin der echt.",
+  "welcome2": "En dizze kaart… dêr haw ik folle te folle foar betelle. As er mar klopt.",
+  "welcome3": "Kom op. Even sjen wêr't dat krúske stiet.",
+  "pyramidIntro": "Der steane getallen op dy stiennen. En der misse der in pear…",
+  "pyramidIntro2": "Wachtsje. Elke stien is dy twa derûnder byinoar opteld! Ja, hjir ek!",
+  "pyramidBlockedBlocks": "Hé, wat is dit no? Dy blokken sitte ticht. Se litte harren getal net sjen!",
+  "pyramidBlockedBlocks2": "Jout neat. Sjoch nei de blokken deromhinne — dêr kinst it út útrekkenje.",
+  "pyramidBlockedBlocks3": "Allinnich kinst it der net yn sette. Dat getal moatst ûnthâlde.",
+  "pyramidBlockedBlocks4": "Kom op, do bist al sa fier kommen. Dit kinst wol!",
+  "levelCompleted": "Ha! Hy giet iepen! Kom, nei binnen.",
+  "exitPillar": {
+    "1": {
+      "fez": "Ha! Deiljocht! Sjochst dy ljochtstriel? Dêr geane wy nei bûten. Der yn stappe, en wy binne hjir klear."
+    },
+    "2": {
+      "fez": "Der is der mar ien, altyd hielendal oan 'e ein fan de haadgong. Wêr't wy ek omswalkje, wy komme hjir werom."
+    },
+    "3": {
+      "explorer": "Ien útgong. Opskreaun."
+    }
+  },
+  "expeditionCompleted": "Lokwinske, do hast de ekspedysje helle!",
+  "expeditionCompleted2": "Der is no in nije ekspedysje te dwaan.",
+  "tombTutorial": "Ooh, tekst! Kinne wy dat lêze? Mei de hiëroglyfen dy't wy fûn hawwe… miskien!",
+  "tombTutorial2": "Sjoch no, sommen mei tekens deryn! Sjochst dy lege plakjes? Dêr geane de hiëroglyfen yn. Dy fan dy, hjirûnder.",
+  "tombTutorial3": "De lytse sommen litte sjen wannear't in teken goed sit. Sa fine wy hokker teken wêr heart.",
+  "tombTutorial4": "Alles fol? Dan komt der in sifersslot. De grutte som is de koade — en dan giet it grêf iepen!",
+  "hieroglyphUnlock": "Wy hawwe in spesjaal artefakt — dêrmei kinne wy op ien fan dy fersegele blokken skriuwe!",
+  "hieroglyphUnlock2": "Tik op in glinsterjende stien en sleep it artefakt derop om him iepen te meitsjen. Ien blok per piramide.",
+  "errorHighlightTutorial": "Dat artefakt dat wy fûnen hat in handige trúk — fol in ferkeard antwurd yn en ien ferkeard blok gloeit read op!",
+  "errorHighlightTutorial2": "Mar mar ien blok tagelyk, dus it bliuwt spannend. It helpt wol om te sjen wêr't it sit!",
+  "earlyFeedbackTutorial": "Sjochst dy kontrôleblokken? Se wurde grien of read wylst do ynfolst — dan witst it daliks!",
+  "earlyFeedbackTutorial2": "Brûk se as hâldfêst by it oplossen. As der ien read wurdt, sit der wat ferkeard yn 'e buert.",
+  "notEnoughHieroglyphs": "Do kinst dizze ekspedysje altyd stopje troch werom te gean nei it reisskerm.",
+  "notEnoughHieroglyphs2": "Wy kinne de ekspedysje efkes litte en earst earne oars de hiëroglyfen sykje dy't wy noch misse.",
+  "tombLoot": "Wauw, ús earste skat! Goed dien!",
+  "mapPiece": "Sjoch! DÁT is pas in kaart. Echt âld! Mear wurdich as dy fan ús by inoar!",
+  "mapPiece2": "Mar it is mar in stikje, hear. Elke ekspedysje hjir yn 'e buert ferberget der ien, en tegearre wize se nei in grêf.",
+  "mapComplete": "Hy is hiel! Sjoch dan, alle stikjes passe krekt.",
+  "mapComplete2": "Dêr, wêr't alle linen byinoar komme. Dêr leit in grêf.",
+  "mapComplete3": "Hy stiet no by ús reizen. Sille wy ris sjen?",
+  "mapPiece3": "Hâld yn 'e list mei ekspedysjes mar by hoefolle wy der hawwe. Ik tel yn alle gefallen mei!",
+  "mosaicIntro": "Ooh, kleurd glês! Sjoch hoe't dat glinstert — DÁT smytst net fuort!",
+  "mosaicIntro2": "It heart by in plaatsje. In hiel finster fol glês, en elk stikje dat wy fine, bringt der wer wat fan werom.",
+  "mosaicIntro3": "Hast do net earne in kamp? Nim se mei, dan sette wy se dêr yn inoar. Ik wol sjen wat it wurdt!",
+  "mosaicReminder": "Psst! Dy glêzen stikjes rammelje noch hieltyd yn ús tas. Sille wy se yn it finster yn it kamp sette?",
+  "mosaicStarter": "In kat yn 'e doar, en in slang dy't hurd fuortflechtet. Dat wie in skaaltsje molke wurdich.",
+  "mosaicStarter2": "Egyptners wiene gek op katten, krekt hjirom — dy deaden de slangen en de rotten dy't yn it nôt kamen.",
+  "mosaicStarter3": "Sa gek dat se der in goadinne fan makken. Bastet. Beskermer fan it hûs, de doar, en elkenien dy't derefter leit te sliepen.",
+  "mosaicJunior": "Sjoch nei syn hân — immen lit him sjen hoe't je de pinne fêsthâlde.",
+  "mosaicJunior2": "Dy mei de fûgelholle is Thoth. Skriuwe, telle, alles byhâlde — allegear fan him.",
+  "mosaicJunior3": "De ibis dy't wy lâns de rivier folgen? Dat is syn fûgel. Elk getal dat wy yn in muorre ynfolle hawwe, is ek fan him.",
+  "mosaicExpert": "Dat ljocht is gjin tafal. Se bouden de hiele seal sa dat it krekt dêr falle soe, op 'e goede moarn.",
+  "mosaicExpert2": "De sinne is Amon-Ra — de ferburgene, én it ljocht dat elkenien sjen kin. Allebeide tagelyk.",
+  "mosaicExpert3": "Wa't de himel sa krekt mjitte kin, kin alles mjitte. Wy binne al dy tiid harren rekkensommen oan it oplossen.",
+  "mosaicMaster": "Griene hûd, en nôt dat sa út him groeit. Dat is mei opsetsin.",
+  "mosaicMaster2": "Osiris. Hy waard fermoarde, en wer yn inoar set, en no is hy wat elk jier weromkomt as de rivier de fjilden ûnder wetter set.",
+  "mosaicMaster3": "Hjir ûnder is dat it hiele idee: dea is net klear. Fleurige gedachte foar in grêf, fynst net?",
+  "mosaicWizard": "In hert oan 'e iene kant. Ien fear oan 'e oare. En it is yn lykwicht.",
+  "mosaicWizard2": "De fear is Ma'at — wierheid, lykwicht, hoe't it heart te wêzen. In hert swierder as dy fear en do komst net troch de doar.",
+  "mosaicWizard3": "De jakhals dy't de weachskaal stil hâldt, is Anubis. Hy is dejinge dy't dy hjirhinne bringt.",
+  "mosaicFinale": "Even in stap werom. Sjoch ris wat wy allegear út dy piramiden nei boppen droegen hawwe.",
+  "mosaicFinale2": "Elk stik heart by hím — dejinge dy't de weachskaal stil hâldt. Hy hat de hiele wei meisjoen.",
+  "mosaicFinale3": "Dat is syn ferslach fan ús. En as do it my freegest: it is yn lykwicht.",
+  "shopFirstVisit": "Ah, dêr binne wy. Myn kream — ik sei dochs dat ik foar de hannel meigean.",
+  "shopFirstVisit2": "Alles op dizze toanbank haw ik earne wei sleept. Dy dêr komt fan twa grêven werom.",
+  "shopArrival": "Ah, myn kream! Even útstalle wat ik ûnderweis oppikt haw.",
+  "shopArrival2": "Seldsume fynsten kostje it meast, mar ik betelje dy foar snypsnaren dy'tst meisjouwest.",
+  "arrival": {
+    "starter_1": {
+      "1": {
+        "explorer": "Sjoch, dêr efter! De Sfinks!"
+      },
+      "2": {
+        "explorer": "Sels fan hjirút is er enoarm."
+      },
+      "3": {
+        "explorer": "Se sizze dat der skrift ûnder syn poaten stiet. Dat gjinien lêze kin."
+      },
+      "4": {
+        "explorer": "Letter. Earst dizze piramide!"
+      }
+    },
+    "starter_2": {
+      "1": {
+        "fez": "Ha! Einliks wat dêr't ik ferstân fan haw. Alles wat de Nyl op gie, kaam hjir earst lâns."
+      },
+      "2": {
+        "fez": "En hannelers skriuwe álles op. Wa't wat kocht, wa't wa wat skuldich wie, wa't te let wie…"
+      },
+      "3": {
+        "explorer": "Wa't te let wie?"
+      },
+      "4": {
+        "fez": "Benammen wa't te let wie!"
+      },
+      "5": {
+        "fez": "Trijetûzen jier. It guod is fuort, en de bonnen lizze der noch. Typysk!"
+      }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Sjoch dy doarren! Hjir kamst om beskerming te freegjen. En dan bleau sa'n doar ticht."
+      },
+      "2": {
+        "explorer": "Ticht foar wa?"
+      },
+      "3": {
+        "fez": "Foar elkenien dy't it net moai frege. Foar ús dus, benammen."
+      },
+      "4": {
+        "fez": "Alles wat hjir fersegele is, hat immen fersegele dy't it meande. Echt meande."
+      },
+      "5": {
+        "fez": "En de katten! Se bidden hjir katten oan. Se koene der gewoan net ôfbliuwe."
+      }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "O, dit fyn ik moai. Hjir learden se skriuwen! Teken foar teken, op potskerven — papyrus wie folle te djoer foar bern."
+      },
+      "2": {
+        "explorer": "Se oefenen op ôffal?"
+      },
+      "3": {
+        "fez": "Op wat der wie! En kenst der genôch, dan is sa'n muorre ynienen gjin fersiering mear."
+      },
+      "4": {
+        "explorer": "Dy Sfinks… dêr wol ik noch ris nei sjen."
+      },
+      "5": {
+        "fez": "Noch net. Straks."
+      }
+    },
+    "junior_1": {
+      "1": {
+        "fez": "Se kamen elk jier werom mei it hege wetter, hast op 'e dei ôf."
+      },
+      "2": {
+        "fez": "Dus gongen minsken de dagen dêrtusken telle. Dêr komt de kalinder wei — fûgels."
+      },
+      "3": {
+        "explorer": "Fûgels."
+      },
+      "4": {
+        "fez": "Fûgels en papierwurk. It is altyd fûgels en papierwurk."
+      }
+    },
+    "junior_2": {
+      "1": {
+        "fez": "Hjir makken se it allegear. Net de grêven — de dingen dy't deryn gongen."
+      },
+      "2": {
+        "fez": "Sjoch nei de mallen. Deselde earmbân, fjirtich kear."
+      },
+      "3": {
+        "explorer": "Foar fjirtich minsken?"
+      },
+      "4": {
+        "fez": "Foar elkenien dy't betelje koe. In ealman woe wat in kening hie, foar in priis dy't in ealman betelje koe."
+      }
+    },
+    "junior_3": {
+      "1": {
+        "fez": "Thoth, dizze. God fan geheimen en tsjoenderij, frij wis."
+      },
+      "2": {
+        "explorer": "Frij."
+      },
+      "3": {
+        "fez": "Njoggentich persint. Hoe dan ek — de tekens dy'tst sammelst, binne fan him."
+      }
+    },
+    "junior_4": {
+      "1": {
+        "fez": "Mear as njoggentich meter heech, en boppe-yn in fjoer dat nea útgie."
+      },
+      "2": {
+        "fez": "Seelju fûnen de kust fan in dei farren fier. Dêrfoar fûnen se him troch der tsjinoan te farren."
+      },
+      "3": {
+        "explorer": "Hoe fynst hjir wat sûnder sa'n ding?"
+      },
+      "4": {
+        "fez": "Do freegest it oan immen dy't der west hat. Dat is myn hiele fak."
+      }
+    },
+    "expert_1": {
+      "1": {
+        "fez": "Mear as sechstich grêven úthakt yn ien delling, en se binne stik foar stik al iepen foardat wy der wiene."
+      },
+      "2": {
+        "explorer": "Troch wa?"
+      },
+      "3": {
+        "fez": "Minsken lykas wy, meastentiids. Earder."
+      },
+      "4": {
+        "fez": "Wat tinkst do derfan?"
+      },
+      "5": {
+        "explorer": "Dat wy te let binne."
+      }
+    },
+    "expert_2": {
+      "1": {
+        "fez": "Amon-Ra. De sinne. Elkenien syn favoryt, en do sjochst wêrom — sjoch hoe grut it is."
+      },
+      "2": {
+        "explorer": "Twa nammen."
+      },
+      "3": {
+        "fez": "Deselde god, tink ik. By de populêre diene se der noch in namme by."
+      }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "It hiele lân is in streek grien oan beide kanten fan ien rivier, en hjir waaiert it út ta dit."
+      },
+      "2": {
+        "fez": "Alles groeit. Alles bit ek."
+      },
+      "3": {
+        "explorer": "Foar hokker fan dy twa komme wy?"
+      },
+      "4": {
+        "fez": "Ik hope eins op gjin fan beide."
+      }
+    },
+    "expert_4": {
+      "1": {
+        "fez": "De earste. Dêrfoar gongen keningen ûnder in platte stien, krekt as elkenien."
+      },
+      "2": {
+        "fez": "Immen stie hjir en tocht: wat as wy dat dogge, mar seis kear, omheech."
+      },
+      "3": {
+        "explorer": "Wurke it?"
+      },
+      "4": {
+        "fez": "It stiet der noch en hy net. Leit deroan wat'st bedoelst."
+      }
+    },
+    "master_1": {
+      "1": {
+        "fez": "Twa miljoen blokken. Immen hat se teld."
+      },
+      "2": {
+        "explorer": "Immen hat se teld?"
+      },
+      "3": {
+        "fez": "Der telt altyd immen. Dat ferjitte minsken by dit allegear — it waard regele troch klerken."
+      },
+      "4": {
+        "fez": "Prachtich, hè. Ik moat der net oan tinke hoe't de leanlist der útseach."
+      }
+    },
+    "master_2": {
+      "1": {
+        "fez": "Ynstruksjes. Mear is it net — wat je sizze moatte, en yn hokker folchoarder, sadat de reis goed giet."
+      },
+      "2": {
+        "explorer": "In hantlieding."
+      },
+      "3": {
+        "fez": "In hantlieding foar dea wêzen. Se skreaunen wier alles op, dy lju."
+      },
+      "4": {
+        "fez": "Wat, as je sjogge wêr't wy nei sykje, it earste goede nijs fan 'e wike is."
+      }
+    },
+    "master_3": {
+      "1": {
+        "fez": "Ah. Immen syn kamp."
+      },
+      "2": {
+        "explorer": "Koartlyn?"
+      },
+      "3": {
+        "fez": "Frij koartlyn. Blikiten en in nuvere hoast, sa te sjen."
+      },
+      "4": {
+        "fez": "Se binne fierder nei binnen gien en hawwe harren spul stean litten."
+      },
+      "5": {
+        "explorer": "Binne se weromkommen om it te heljen?"
+      },
+      "6": {
+        "fez": "…Lit ús trochrinne."
+      }
+    },
+    "master_4": {
+      "1": {
+        "fez": "Dít is wat de oaren besochten nei te dwaan. Sjoch nei dy kleur — trijetûzen jier en it liket noch wiet."
+      },
+      "2": {
+        "explorer": "Henut soe razend wêze."
+      },
+      "3": {
+        "fez": "Henut soe oantekeningen meitsje."
+      }
+    },
+    "wizard_1": {
+      "1": {
+        "fez": "De sinne giet nachts ûnder de wrâld troch en komt der oan 'e oare kant wer út. Dat is it hiele leauwe."
+      },
+      "2": {
+        "fez": "Tolve oeren yn it tsjuster, mei fan alles yn 'e wei, en immen moat him der trochhinne drage."
+      },
+      "3": {
+        "explorer": "Dat is wat wy dogge."
+      },
+      "4": {
+        "fez": "Ik besocht it net lûdop te sizzen."
+      },
+      "5": {
+        "explorer": "It sân komt noch hieltyd binnen."
+      },
+      "6": {
+        "fez": "It komt al trijetûzen jier binnen. It hâldt net op, it giet rûn."
+      },
+      "7": {
+        "fez": "Rint fol, kantelet, begjint opnij. Krekt as de sinne."
+      }
+    },
+    "wizard_2": {
+      "1": {
+        "fez": "Twa stiks, achttjin meter heech, en allebeide Amenhotep."
+      },
+      "2": {
+        "fez": "De Griken seagen ien kear en besleaten dat it in held fan harren wie. Memnon. Dy namme bleau twatûzen jier plakken."
+      },
+      "3": {
+        "explorer": "Wa syn namme stiet derop?"
+      },
+      "4": {
+        "fez": "Syn eigen. Yn 'e troan hakt, dêr't er altyd al stie."
+      },
+      "5": {
+        "fez": "Gjinien lies him."
+      },
+      "6": {
+        "fez": "Nei de ierdbeving song de noardlike by sinne-opgong. Ien toan, elke moarn, as de sinne de skuor waarm makke."
+      },
+      "7": {
+        "explorer": "En no?"
+      },
+      "8": {
+        "fez": "In keizer liet him meitsje. Sûnt dy tiid hat er gjin lûd mear makke."
+      }
+    },
+    "wizard_3": {
+      "1": {
+        "fez": "De weachskaal. Hert oan 'e iene kant, fear oan 'e oare — dus in lekker swier hert wint, nim ik oan."
+      },
+      "2": {
+        "explorer": "Hokker kant giet wat swiers op?"
+      },
+      "3": {
+        "fez": "…Omleech."
+      },
+      "4": {
+        "fez": "Oh."
+      },
+      "5": {
+        "fez": "Licht. Do wolst him LICHT."
+      }
+    },
+    "wizard_4": {
+      "1": {
+        "fez": "De topstien giet der as lêste op, en hy giet der yn goud op, sadat it hiele ding it earste ljocht fangt."
+      },
+      "2": {
+        "explorer": "Foar wa?"
+      },
+      "3": {
+        "fez": "Foar elkenien dy't sjocht. Dat wie it punt — it wie nea foar de man dy't deryn lei."
+      }
+    }
+  },
+  "tomb": {
+    "starter": {
+      "1": {
+        "ipi": "Hé! Ôfbliuwe! Dat is myn krûk!"
+      },
+      "2": {
+        "fez": "…Sei dy krûk no wat?!"
+      },
+      "3": {
+        "ipi": "Ík sei wat. Tredde planke, dy mei it skylfke. Dy is fan my."
+      },
+      "4": {
+        "explorer": "Okee, okee! Dy bliuwt stean. Wa bisto?"
+      },
+      "5": {
+        "ipi": "Ipi. Fjirtich jier de boeken byholden. Fjirtich!"
+      },
+      "6": {
+        "fez": "Boeken? Fan wa dan?"
+      },
+      "7": {
+        "ipi": "Fan elkenien! Wa't wat skuldich wie, oant de sek nôt ta."
+      },
+      "8": {
+        "ipi": "Dy Henut, fierderop nei it noarden? Alve deben lapis. Nea betelle!"
+      },
+      "9": {
+        "explorer": "En dat witsto noch, nei al dy tiid?"
+      },
+      "10": {
+        "ipi": "It stiet opskreaun! Wat opskreaun is, is bard."
+      },
+      "11": {
+        "ipi": "Allinnich dy Hori's… Hori de skipper, Hori de bakker… en dy óare Hori."
+      },
+      "12": {
+        "fez": "Hiest ek katten? Elkenien hie dochs katten? Skatsjes!"
+      },
+      "13": {
+        "ipi": "Skatsjes? Se wiene foar it nôt! Witsto wat ien rôt kostet, in hiel seizoen?"
+      },
+      "14": {
+        "fez": "…O. Krekt."
+      },
+      "15": {
+        "ipi": "Sis tsjin Henut dat Ipi dy stjoert. Dat bedjert har middei wol."
+      },
+      "16": {
+        "fez": "Ik mei him wol lije!"
+      },
+      "17": {
+        "explorer": "Do fynst it gewoan leuk dat hy noch jild krijt."
+      }
+    },
+    "junior": {
+      "1": {
+        "henut": "Einliks. Do komst seker oer it lapis. Ipi seuret der fêst noch hieltyd oer."
+      },
+      "2": {
+        "explorer": "Dat klopt."
+      },
+      "3": {
+        "henut": "It wie glês. Prachtich glês. Dat wist er bêst."
+      },
+      "4": {
+        "fez": "…Wie dy earmbân dan ek glês?"
+      },
+      "5": {
+        "henut": "Alles hjir is de bêste neimakker dy't der foar jild te krijen wie, jongkeardel, en ik haw elk stik sels útsocht."
+      },
+      "6": {
+        "henut": "Sa. De muorre. It tredde teken — dat is myn namme net. Ien of oare learling mei in beitel en gjinien dy't tasjoch."
+      },
+      "7": {
+        "henut": "Do hast dyn tekens leard. Dat sjoch ik sa. Set it rjocht."
+      }
+    },
+    "juniorFixed": {
+      "1": {
+        "henut": "Sjoch. No is it oer tûzen jier noch hieltyd myn namme."
+      },
+      "2": {
+        "explorer": "Ipi stavere him goed."
+      },
+      "3": {
+        "henut": "Ipi stavere alles goed. Dat wie it iennichste dêr't er goed yn wie."
+      },
+      "4": {
+        "fez": "Makket it út, hjir ûnder?"
+      },
+      "5": {
+        "henut": "It is it iennichste dat útmakket."
+      },
+      "6": {
+        "fez": "Se hie dêrboppe in hiele muorre fol Thoth. God fan geheimen."
+      },
+      "7": {
+        "henut": "Thoth telt. Thoth skriuwt op wat'st dien hast, en it bliuwt stean."
+      },
+      "8": {
+        "henut": "Geheimen is hoe't minsken rekkenjen neame as se it sels net kinne."
+      },
+      "9": {
+        "henut": "As do fierder giest — en dat dochst dúdlik — dan is der in pryster yn Karnak dy't de deaden in tsjinst skuldich is dy't er nea dien hat. Hy sil der ûnútsteanber oer dwaan. Prysters binne sa."
+      },
+      "10": {
+        "henut": "…Kenne wy inoar?"
+      },
+      "11": {
+        "fez": "Dat soe ik my heuge."
+      },
+      "12": {
+        "henut": "Ja. Ik ek."
+      }
+    },
+    "expert": {
+      "1": {
+        "priest": "Jo binne net dejinge dy't ik ferwachtsje."
+      },
+      "2": {
+        "explorer": "Wa ferwachtsje jo dan?"
+      },
+      "3": {
+        "priest": "Immen mei it segel. It moast hjirhinne brocht wurde, dêr dellein, en útsprutsen. Gjin fan dy trije dingen is bard."
+      },
+      "4": {
+        "fez": "…Hoe lang wachtsje jo hjir al?"
+      },
+      "5": {
+        "priest": "Ik hâld it net by. Dat soe net fakkundich wêze."
+      },
+      "6": {
+        "priest": "In goed offer is wat dêr't in kening mei begroeven is. Gjin kopy. Gjin neimakker. It ding sels, mei syn teken derop."
+      },
+      "7": {
+        "priest": "Bring dat, en jo wurde oankundige. Bring wat oars, en net."
+      },
+      "8": {
+        "explorer": "Oankundige by wa?"
+      },
+      "9": {
+        "priest": "Dat fernimme jo fansels. Elkenien fernimt it, op it lêst."
+      },
+      "10": {
+        "fez": "Hy is tige op 'e sinne, dizze. Al dy Amon-Ra bûten."
+      },
+      "11": {
+        "priest": "Amon is de ferburgene. Ra is dejinge dy't elkenien sjen kin."
+      },
+      "12": {
+        "priest": "It is deselde god. Dat is gjin tafal, dat is it hiele idee."
+      },
+      "13": {
+        "fez": "…Krekt. Ja. Dat wist ik wol."
+      },
+      "14": {
+        "explorer": "Dat wiste net."
+      },
+      "15": {
+        "fez": "Dat wist ik net."
+      }
+    },
+    "expertB": {
+      "1": {
+        "fez": "Hjir hat noch nea immen west. Wy net, dy lju fan earder net, gjinien."
+      },
+      "2": {
+        "explorer": "Hoe witst dat?"
+      },
+      "3": {
+        "fez": "Om't der noch wat yn stiet."
+      }
+    },
+    "master": {
+      "1": {
+        "pharaoh": "Jo meie neier komme. Jo binne neier kommen. Goed dan."
+      },
+      "2": {
+        "fez": "Majesteit."
+      },
+      "3": {
+        "pharaoh": "Ja."
+      },
+      "4": {
+        "explorer": "Wy hawwe jo segel nedich."
+      },
+      "5": {
+        "pharaoh": "Dat hat elkenien nedich. Mines is twa kear meinommen en nea weromjûn."
+      },
+      "6": {
+        "pharaoh": "De twadde kear lieten se in kopy lizzen. In KOPY. Yn MYN grêf. Krekt as soe ik net sjen."
+      },
+      "7": {
+        "explorer": "Is dy kopy der noch?"
+      },
+      "8": {
+        "pharaoh": "Fansels is er der noch, hy is neat wurdich. Hy leit op 'e planke dêr't de echte hearre te lizzen, ferkeard te wêzen."
+      },
+      "9": {
+        "pharaoh": "Nim him gerust mei. Bring him nei dy pryster. Sjoch hoe fier jo dêrmei komme."
+      },
+      "10": {
+        "fez": "…Hy genietet hjirfan."
+      },
+      "11": {
+        "pharaoh": "Ik haw myn bêste wike yn njoggenhûndert jier."
+      },
+      "12": {
+        "fez": "Osiris dêr op 'e muorre. Hear fan de deaden — grimmige saak."
+      },
+      "13": {
+        "pharaoh": "Hy is GRIEN, ûnnoazel bist."
+      },
+      "14": {
+        "pharaoh": "Grien as in fjild ûnder wetter. Hy waard fermoarde en wer yn inoar set en hy komt elk jier wer werom."
+      },
+      "15": {
+        "pharaoh": "Hjir ûnder is dat net grimmich, dat is it hiele punt. Dea is net klear."
+      }
+    },
+    "wizard": {
+      "1": {
+        "priest": "Set it del. Dêr. Ja."
+      },
+      "2": {
+        "priest": "…"
+      },
+      "3": {
+        "priest": "Dat is de earste kear dat ik dat doch. Ik begûn te tinken dat ik it ferleard wie."
+      },
+      "4": {
+        "explorer": "Wie dat sa?"
+      },
+      "5": {
+        "priest": "Hielendal. It kaam werom."
+      }
+    },
+    "wizardB": {
+      "1": {
+        "fez": "Harren tou. Noch hieltyd fêstknoopt."
+      },
+      "2": {
+        "explorer": "Se binne oant hjir kommen."
+      },
+      "3": {
+        "fez": "Fierder as hjir. En doe binne se der lâns wer omheech gien."
+      },
+      "4": {
+        "explorer": "Der leit in oantekenboekje."
+      },
+      "5": {
+        "fez": "Wat stiet deryn?"
+      },
+      "6": {
+        "explorer": "Kin it skrift net lêze. Weromkommen foar it segel. Doe mar in better makke."
+      },
+      "7": {
+        "explorer": "Gjinien trape deryn."
+      },
+      "8": {
+        "fez": "…Se hawwe it neimakke om't se net lêze koene wêr't it foar wie."
+      },
+      "9": {
+        "explorer": "En doe binne se nei hûs gien."
+      }
+    },
+    "wizardC": {
+      "1": {
+        "fez": "Even stilstean. Sjoch ris wat wy allegear út dy piramiden nei boppen droegen hawwe."
+      },
+      "2": {
+        "explorer": "It is in ôfbylding."
+      },
+      "3": {
+        "fez": "It hat de hiele tiid al in ôfbylding west."
+      }
+    }
+  },
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "In grot! Op 'e kaart stie in kelderdoar, en dit is in hiele heuvel!"
+      },
+      "2": {
+        "fez": "Tûke keardel. Dyn foarried yn in heuvel ferstopje, dêr komt gjin dief op."
+      },
+      "3": {
+        "explorer": "Wy wol."
+      },
+      "4": {
+        "fez": "Wy binne gjin dieven. Wy binne klanten. Hiel lette klanten."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Hjir moat it wêze. Henut! Dy fan de alve deben lapis!"
+      },
+      "2": {
+        "fez": "Wat tinkst, meie wy in persintsje hâlde as wy it ophelje?"
+      },
+      "3": {
+        "explorer": "Do hast noch neat ophelle."
+      },
+      "4": {
+        "fez": "Ik rekkenje al efkes foarút."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Dus hjir sit dy pryster fan Henut. Ûnútsteanber, sei se."
+      },
+      "2": {
+        "fez": "Wat tinkst do, moatte wy wat meinimme? Blommen?"
+      },
+      "3": {
+        "explorer": "Hy is dea."
+      },
+      "4": {
+        "fez": "Krekt dêrom. Do wolst dochs in goeie earste yndruk meitsje."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Hjir mocht allinnich de hegepryster yn. En no wy!"
+      },
+      "2": {
+        "explorer": "Meie wy dat?"
+      },
+      "3": {
+        "fez": "Der stiet gjinien by de doar om nee te sizzen."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Sjoch, hjir hâldt de kaart gewoan op. Sân, en dan neat mear."
+      },
+      "2": {
+        "explorer": "Dan sitte wy goed."
+      },
+      "3": {
+        "fez": "Dat bedoel ik no. Dêr wurd ik krekt senuweftich fan."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "De hal fan Osiris! Grien, fansels. Om't er elk jier weromkomt, krekt as it nôt."
+      },
+      "2": {
+        "explorer": "Dat wiste altyd al."
+      },
+      "3": {
+        "fez": "Altyd al."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "De foarriedkeamer fan de goaden! Wat bewarest as do al alles hast?"
+      },
+      "2": {
+        "explorer": "Wat minsken dy bringe."
+      },
+      "3": {
+        "fez": "…Ja. Dat sil it wêze."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Ryk fan de Kosmyske Krêften. Sa, sa."
+      },
+      "2": {
+        "fez": "As ik wat ferkeapje moast dat neat foarstelde, soe ik it ek sa neame."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Ik haw ynienen it gefoel dat ik wat ferkeard dien haw."
+      },
+      "2": {
+        "explorer": "Wat dan?"
+      },
+      "3": {
+        "fez": "Wit ik net. Dat is no krekt it slimste."
+      }
+    }
+  },
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Al dy hendels en doarren, foar ien kelder!"
+      },
+      "2": {
+        "fez": "Dan leit der wat goeds, hear. Gjinien docht safolle muoite foar rommel."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Pff. Dy doarren wiene hiel wat dreger as by Ipi."
+      },
+      "2": {
+        "fez": "Tsja. Mefrou hie fansels jild."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Hè hè, einliks! Dy grot woe ús der echt net yn hawwe."
+      },
+      "2": {
+        "explorer": "Dat wie ek de bedoeling, tink ik."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Psst… Wêrom flústerje ik eins?"
+      },
+      "2": {
+        "explorer": "Gjin idee. Ik doch it ek."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Pfoe. Myn sturt trillet noch fan dy lêste doar."
+      },
+      "2": {
+        "fez": "In kening dy't syn spul sá opbergt… dy wol it echt net kwyt."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Sjochst wol. Sitst mar lang genôch ûnder de grûn, dan komst fansels wer boppe."
+      },
+      "2": {
+        "explorer": "Is dat ek fan Osiris?"
+      },
+      "3": {
+        "fez": "Nee, dy is fan my."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Sokke doarren… dêr wiene wy eartiids gewoan foar omkeard."
+      },
+      "2": {
+        "explorer": "No net mear."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Trije ferdjippings grot, en dán pas de foardoar."
+      },
+      "2": {
+        "explorer": "Dan is it fêst de muoite wurdich."
+      },
+      "3": {
+        "fez": "Dat sizze se altyd. En dan is it in krûk."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Lêste stik tsjuster. Dat fiel ik gewoan."
+      },
+      "2": {
+        "explorer": "Dat seiste by de foarige ek."
+      },
+      "3": {
+        "fez": "En doe hie ik hast gelyk."
+      }
+    }
+  },
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Sjoch dan! In piramide, ûnder de grûn! Foar in hanneler!"
+      },
+      "2": {
+        "fez": "Dy hat óf hiel goed fertsjinne, óf hiel goed ôfdonge."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Sjoch dy punt ris glimme yn 'e sinne! Echt goud, wedzje?"
+      },
+      "2": {
+        "explorer": "Yn in gat yn 'e grûn. Foar wa glimt dat dan?"
+      },
+      "3": {
+        "fez": "Foar har. Sa'n type is it, dat sjochst sa."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Hm. Meist eins wat ferkeapje dat al fan in god is?"
+      },
+      "2": {
+        "explorer": "Freegje it de god."
+      },
+      "3": {
+        "fez": "Leaver net."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Soe dy pryster witte dat wy hjir omrinne?"
+      },
+      "2": {
+        "explorer": "Hy hâldt neat by. Dat soe net fakkundich wêze."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Sjoch him stean, hielendal allinnich yn 'e sinne. Moai, hè?"
+      },
+      "2": {
+        "fez": "Sille wy gewoan in tekening meitsje en wer gean?"
+      },
+      "3": {
+        "explorer": "Do kinst net tekenje."
+      },
+      "4": {
+        "fez": "…Nee. Nei binnen dan mar."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Wa't dêryn leit, rekkenet derop dat er weromkomt. Dat is hjir de ôfspraak."
+      },
+      "2": {
+        "explorer": "Hoe lang wachtet er al?"
+      },
+      "3": {
+        "fez": "Lang. Mar dat heart by it fak, hè. Dea wêze is benammen wachtsje."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "explorer": "Wauw."
+      },
+      "2": {
+        "fez": "Ja."
+      },
+      "3": {
+        "fez": "Soms falt der gewoan neat mear by te sizzen, hè."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Sjochst dy plak sinne op 'e piramide? Dêr kinst sa de tiid op ôflêze."
+      },
+      "2": {
+        "explorer": "Hoe let is it dan?"
+      },
+      "3": {
+        "fez": "…Middei. Sa likernôch. Ik bin gjin klok, hè."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Dêr is er. Alle linen op dy kaart komme hjir út."
+      },
+      "2": {
+        "explorer": "Dan is dit it ein."
+      },
+      "3": {
+        "fez": "Fan de kaart, ja. Raar. Ik tocht dat dat better fiele soe."
+      }
+    }
+  },
+  "camp": {
+    "firstHome": {
+      "1": {
+        "fez": "Is dít dyn kamp? In fjoerke en in kiste?"
+      },
+      "2": {
+        "explorer": "Ús kamp."
+      },
+      "3": {
+        "fez": "Ús. Goed. Dan wol ik wol it plakje flak by it fjoer."
+      },
+      "4": {
+        "fez": "Ik bin no ienris in hagedis. As it my útkomt."
+      }
+    },
+    "homeHaul": {
+      "1": {
+        "fez": "Útpakke! It moaiste stik fan de hiele reis."
+      },
+      "2": {
+        "explorer": "Moaier as de piramide?"
+      },
+      "3": {
+        "fez": "Dy piramide is net fan ús. Dit wol."
+      }
+    },
+    "homeEmpty": {
+      "1": {
+        "explorer": "Lege hannen."
+      },
+      "2": {
+        "fez": "No en? Wy hawwe rûn. Dat telt ek."
+      },
+      "3": {
+        "explorer": "Foar wat?"
+      },
+      "4": {
+        "fez": "Foar myn skonken. Dy binne hiel koart, hè."
+      }
+    },
+    "rested": {
+      "1": {
+        "fez": "Sa. Giet it wer in bytsje?"
+      },
+      "2": {
+        "explorer": "It wie mar in skrammke."
+      },
+      "3": {
+        "fez": "Ik haw net iens sjoen. En dochs moast ik even sitte."
+      }
+    },
+    "chapterJunior": {
+      "1": {
+        "fez": "No, dat hawwe wy moai dien. Folgjende!"
+      },
+      "2": {
+        "explorer": "Sa maklik gie it net."
+      },
+      "3": {
+        "fez": "Efterôf wol. Efterôf giet alles maklik."
+      }
+    },
+    "chapterExpert": {
+      "1": {
+        "fez": "Dêr fierderop sitte fâlstrikken. Echte, dy bite."
+      },
+      "2": {
+        "fez": "Rakest ferwûne? Dan rinne wy gewoan werom. Thús kinst wer opknappe."
+      },
+      "3": {
+        "explorer": "En do dan?"
+      },
+      "4": {
+        "fez": "Ik rin efter dy. Dêr is it feiliger."
+      }
+    },
+    "chapterMaster": {
+      "1": {
+        "fez": "Fjouwer piramiden, dêrginds. Witst noch, doe't der mar ien stie?"
+      },
+      "2": {
+        "explorer": "Sa lang is dat net lyn."
+      },
+      "3": {
+        "fez": "Nee. Dochs fielt it sa."
+      }
+    },
+    "chapterWizard": {
+      "1": {
+        "fez": "Moatst dy lêste sjen. Mei in gouden punt!"
+      },
+      "2": {
+        "fez": "Dy sil ús wat kostje. De lêste kostet altyd it meast."
+      },
+      "3": {
+        "explorer": "Wat dan?"
+      },
+      "4": {
+        "fez": "…Wit ik eins net mear."
+      }
+    },
+    "firstFind": {
+      "1": {
+        "fez": "Sjoch ris, it stiet der krekt as hat it der altyd al stien!"
+      },
+      "2": {
+        "fez": "Ik krij sin om der in priiskaartsje oan te hingjen."
+      },
+      "3": {
+        "explorer": "Net dwaan."
+      },
+      "4": {
+        "fez": "Nee, nee. Thús ferkeapest neat. Dat wit ik ek wol."
+      }
+    },
+    "structureDone": {
+      "1": {
+        "fez": "It is klear! Alle stikjes sitte deryn!"
+      },
+      "2": {
+        "explorer": "Sels boud."
+      },
+      "3": {
+        "fez": "No ja. Ik haw benammen wiisd."
+      }
+    }
+  },
+  "animal": {
+    "forSale": {
+      "1": {
+        "fez": "Sjoch ris wat ik yn 'e kream haw! Fan no ôf ferkeapje ik ek ferfier."
+      },
+      "2": {
+        "explorer": "It stiet te kauwen."
+      },
+      "3": {
+        "fez": "Dat sit by de priis yn."
+      }
+    },
+    "boughtDonkey": {
+      "1": {
+        "fez": "Ferkocht! Ien ezel. Eigenwiis, mar hy draacht alles."
+      },
+      "2": {
+        "explorer": "Wêr is er dan?"
+      },
+      "3": {
+        "fez": "Al ûnderweis nei hûs. Hy rint leaver sûnder ús."
+      }
+    },
+    "blockedDonkey": {
+      "1": {
+        "fez": "Sa fier rinne wy net, mei al dat spul. Dêr heart in ezel by."
+      },
+      "2": {
+        "fez": "En wa hat der ien stean? Ik. Yn myn kream by Henut."
+      }
+    },
+    "throughDonkey": {
+      "1": {
+        "explorer": "Hy wol wol."
+      },
+      "2": {
+        "fez": "Hjoed. Moarn hawwe wy it der wer oer."
+      }
+    },
+    "arrivesDonkey": {
+      "1": {
+        "fez": "Dêr stiet er! Hy wie der earder as wy."
+      },
+      "2": {
+        "explorer": "It fjoer hat er ek al fûn."
+      },
+      "3": {
+        "fez": "Myn plakje. No ja. Hy wie earst."
+      }
+    },
+    "boughtCart": {
+      "1": {
+        "fez": "In karre! Twa tsjillen, en se rammelje hast net."
+      },
+      "2": {
+        "explorer": "Hast?"
+      },
+      "3": {
+        "fez": "Dat rammeljen krijst der fergees by."
+      }
+    },
+    "blockedCart": {
+      "1": {
+        "fez": "De ezel draacht gjin tas mear. Ik haw it him frege."
+      },
+      "2": {
+        "fez": "In karre, dat hawwe wy nedich. Ik haw der ien yn myn kream, by de hegepryster."
+      }
+    },
+    "throughCart": {
+      "1": {
+        "explorer": "Hearst dat?"
+      },
+      "2": {
+        "fez": "Dat is de karre. Hy sjongt in bytsje."
+      },
+      "3": {
+        "explorer": "De hiele wei?"
+      }
+    },
+    "arrivesCart": {
+      "1": {
+        "fez": "In karre by ús kamp! No sjogge wy der út as geane wy earne hinne."
+      },
+      "2": {
+        "explorer": "Wy geane ek earne hinne."
+      },
+      "3": {
+        "fez": "Ja, mar no sjocht elkenien it."
+      }
+    },
+    "boughtCamel": {
+      "1": {
+        "fez": "In kamiel! Dy rint dagen sûnder wetter. Ik net, hear."
+      },
+      "2": {
+        "explorer": "Hy sjocht nei dy."
+      },
+      "3": {
+        "fez": "Op my del. Kamielen sjogge altyd op dy del."
+      }
+    },
+    "blockedCamel": {
+      "1": {
+        "fez": "It Binnenste Hillichdom? Dêr komme wy te foet nea."
+      },
+      "2": {
+        "fez": "Tafallich haw ik in kamiel. Yn myn kream, by de hegepryster."
+      }
+    },
+    "throughCamel": {
+      "1": {
+        "fez": "Hy knibbelet! Foar my!"
+      },
+      "2": {
+        "explorer": "Om op te stappen."
+      },
+      "3": {
+        "fez": "Lit my no even."
+      }
+    },
+    "arrivesCamel": {
+      "1": {
+        "fez": "Dêr stiet er. Hy docht krekt as is it kamp fan him."
+      },
+      "2": {
+        "explorer": "En de ezel?"
+      },
+      "3": {
+        "fez": "Dy docht krekt as sjocht er him net. Krekt as ik."
+      }
+    },
+    "boughtSecondDonkey": {
+      "1": {
+        "fez": "Noch in ezel! Dan hat de earste einliks ien om mei te praten."
+      },
+      "2": {
+        "explorer": "Praten?"
+      },
+      "3": {
+        "fez": "Balte. Dat is praten, mar hurder."
+      }
+    },
+    "blockedSecondDonkey": {
+      "1": {
+        "fez": "De ezel wol net fierder. Net allinnich, seit er."
+      },
+      "2": {
+        "explorer": "Seit er dat?"
+      },
+      "3": {
+        "fez": "Ik ferstean ezel. Hy wol in maat, en by de farao haw ik der ien yn 'e kream."
+      }
+    },
+    "throughSecondDonkey": {
+      "1": {
+        "fez": "Hear se! Se balte om it hurdst."
+      },
+      "2": {
+        "explorer": "Wa wint der?"
+      },
+      "3": {
+        "fez": "Wy net. Wy moatte it oanhearre."
+      }
+    },
+    "arrivesSecondDonkey": {
+      "1": {
+        "fez": "Sjoch se no stean. Krekt as kenne se inoar al jierren."
+      },
+      "2": {
+        "explorer": "Krekt as wy."
+      },
+      "3": {
+        "fez": "Wy balte minder."
+      }
+    },
+    "boughtSecondCamel": {
+      "1": {
+        "fez": "Noch in kamiel. Ja. Ik fyn se ek net aardich."
+      },
+      "2": {
+        "fez": "Mar dizze sjocht teminsten freonlik."
+      },
+      "3": {
+        "explorer": "Hy sjocht nei dyn fez."
+      }
+    },
+    "blockedSecondCamel": {
+      "1": {
+        "fez": "De Hal fan Osiris. Mei ien kamiel komme wy dêr net."
+      },
+      "2": {
+        "fez": "Gelokkich haw ik der noch ien, by de farao yn 'e kream. Myn alderlêste."
+      },
+      "3": {
+        "explorer": "Dat seist altyd."
+      }
+    },
+    "throughSecondCamel": {
+      "1": {
+        "fez": "Hy yt fan myn fez!"
+      },
+      "2": {
+        "explorer": "In freonlike kamiel."
+      },
+      "3": {
+        "fez": "Té freonlik."
+      }
+    },
+    "arrivesSecondCamel": {
+      "1": {
+        "fez": "Twa kamielen. No sjogge se mei har twaen op my del."
+      },
+      "2": {
+        "explorer": "Gean dan by de ezels stean."
+      },
+      "3": {
+        "fez": "Dêr stean ik al."
+      }
+    },
+    "boughtSturdyCart": {
+      "1": {
+        "fez": "In sterkere karre. Dizze sjongt net ûnderweis."
+      },
+      "2": {
+        "explorer": "Der steane blommen op skildere."
+      },
+      "3": {
+        "fez": "Foar de stevichheid."
+      }
+    },
+    "blockedSturdyCart": {
+      "1": {
+        "fez": "Dêr komt dy âlde karre net hiel oan. Dêr wol ik wat sterkers foar."
+      },
+      "2": {
+        "fez": "Der stiet der ien yn myn kream, yn 'e Klûs fan de Goaden. Net om 'e ferve, hear."
+      }
+    },
+    "throughSturdyCart": {
+      "1": {
+        "explorer": "Gjin gerammel."
+      },
+      "2": {
+        "fez": "Sjochst wol? Stevichheid."
+      },
+      "3": {
+        "explorer": "En de blommen?"
+      },
+      "4": {
+        "fez": "Dy helpe ek in bytsje."
+      }
+    },
+    "arrivesSturdyCart": {
+      "1": {
+        "fez": "Moatst sjen hoe't er glimt!"
+      },
+      "2": {
+        "explorer": "Moaier as nedich."
+      },
+      "3": {
+        "fez": "Ja. Ik haw him ek net om 'e stevichheid ferkocht."
+      }
+    },
+    "boughtCaravanBanner": {
+      "1": {
+        "fez": "In banier. Ik moat earlik wêze: hy docht neat iepen."
+      },
+      "2": {
+        "explorer": "Wat docht er dan?"
+      },
+      "3": {
+        "fez": "Wapperje. Hiel moai wapperje."
+      }
+    },
+    "arrivesCaravanBanner": {
+      "1": {
+        "fez": "Sjoch him wapperjen! Boppe ús eigen kamp!"
+      },
+      "2": {
+        "explorer": "Hy docht noch hieltyd neat iepen."
+      },
+      "3": {
+        "fez": "Nee. Dat hoecht ek net."
+      }
+    }
+  },
+  "bond": {
+    "starter": {
+      "1": {
+        "fez": "Dat gie fluch."
+      },
+      "2": {
+        "explorer": "It wie in doar."
+      },
+      "3": {
+        "fez": "Ik hie der in wike oer dien."
+      }
+    },
+    "starterTomb": {
+      "1": {
+        "fez": "Even foar de dúdlikens, hè. Ik doch dit foar de hannel. Dat sis ik no mar, no't it noch wier is."
+      },
+      "2": {
+        "explorer": "Opskreaun."
+      }
+    },
+    "junior": {
+      "1": {
+        "fez": "Do wiest dêr even stil."
+      },
+      "2": {
+        "explorer": "Ik wie oan it tellen."
+      },
+      "3": {
+        "fez": "Wit ik. Ik haw minsken gokken sjoen. Dat wie gjin gokken."
+      }
+    },
+    "expert": {
+      "1": {
+        "fez": "Dat skeelde net folle."
+      },
+      "2": {
+        "explorer": "It gie prima."
+      },
+      "3": {
+        "fez": "It skeelde net folle. Dat mei ik bêst sizze."
+      }
+    },
+    "master": {
+      "1": {
+        "fez": "Wy kinne der mei ophâlde."
+      },
+      "2": {
+        "explorer": "Dat kin."
+      },
+      "3": {
+        "fez": "Ik sis it sadat it sein is. Net sadat wy it dogge."
+      }
+    },
+    "wizard": {
+      "1": {
+        "explorer": "Wat is dizze wurdich?"
+      },
+      "2": {
+        "fez": "…"
+      },
+      "3": {
+        "fez": "Hjir plak ik gjin priis op."
+      },
+      "4": {
+        "explorer": "Opskreaun."
+      }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": {
+        "fez": "Ho. Dêr siet krekt noch in muorre."
+      },
+      "2": {
+        "explorer": "Dêr siet in gong efter."
+      },
+      "3": {
+        "fez": "Al dy jierren rinne minsken hjir lâns. Al dy jierren!"
+      }
+    }
+  },
+  "reading": {
+    "junior": {
+      "1": {
+        "explorer": "Hjir stiet in rigel dy't ik no lêze kin."
+      },
+      "2": {
+        "explorer": "Ik joech bôle oan wa't honger hie."
+      },
+      "3": {
+        "fez": "Bôle. Yn in grêf."
+      },
+      "4": {
+        "explorer": "It stie yn it foarige ek. Ik wist net dat it wurden wiene."
+      }
+    },
+    "expert": {
+      "1": {
+        "explorer": "Twadde rigel. Wetter oan wa't toarst hie."
+      },
+      "2": {
+        "fez": "Bôle, en no wetter. Immen woe hiel graach ûnthâlden wurde as rojaal."
+      },
+      "3": {
+        "explorer": "Elkenien hat it. Elke muorre, elk grêf, deselde twa rigels."
+      },
+      "4": {
+        "fez": "Dan wiene se óf allegear rojaal, óf it is wat je sizze moatte."
+      },
+      "5": {
+        "explorer": "Of it is dêr't se op wogen waarden."
+      }
+    },
+    "master": {
+      "1": {
+        "explorer": "Klean oan wa't neaken wie. Tredde rigel."
+      },
+      "2": {
+        "fez": "Bôle, wetter, klean. It is in list fan dingen dy't weijûn binne."
+      },
+      "3": {
+        "explorer": "Yn it grêf fan in man dy't alles meinaam."
+      },
+      "4": {
+        "fez": "…Ja. Dat wie my ek opfallen."
+      }
+    },
+    "sphinx": {
+      "1": {
+        "fez": "Werom dêr't wy begûnen. Hy hat him net ferroerd."
+      },
+      "2": {
+        "explorer": "It skrift stiet der noch."
+      },
+      "3": {
+        "fez": "Kinst it lêze?"
+      },
+      "4": {
+        "explorer": "In namme."
+      },
+      "5": {
+        "fez": "Fan wa?"
+      },
+      "6": {
+        "explorer": "Fan dy."
+      },
+      "7": {
+        "fez": "…"
+      },
+      "8": {
+        "fez": "Witst it wis?"
+      },
+      "9": {
+        "explorer": "It stiet opskreaun."
+      },
+      "10": {
+        "fez": "Huh."
+      },
+      "11": {
+        "fez": "Hori."
+      },
+      "12": {
+        "fez": "Yn elk doarp fan Egypte rûn wol in Hori om."
+      },
+      "13": {
+        "fez": "No. Dat ferklearret de fez."
+      }
+    }
+  },
+  "altar": {
+    "refused": {
+      "1": {
+        "priest": "Nee."
+      },
+      "2": {
+        "explorer": "Syn teken stiet derop."
+      },
+      "3": {
+        "priest": "Der stiet in teken op. It is in hiel goed teken. It is snien troch immen mei poerbêst ark dy't hjir neat te sykjen hie, en noch net lang lyn."
+      },
+      "4": {
+        "priest": "Ik wachtsje hjir trijetûzen jier. Ik lit my net ôfskepe yn 'e lêste wike derfan."
+      }
+    }
+  },
+  "meeting": {
+    "starter_1": {
+      "1": {
+        "voice": "Hé! Net dêr! Sjoch út wêrst rinst!"
+      },
+      "2": {
+        "explorer": "Sorry! Ik sjoch neat! Wêr bisto?"
+      },
+      "3": {
+        "fez": "Hjir ûnder! Do stiest midden yn myn hannelsguod!"
+      },
+      "4": {
+        "explorer": "In hagedis?! Mei in fez?"
+      },
+      "5": {
+        "fez": "In hanneler. En wat is der mis mei myn fez?"
+      },
+      "6": {
+        "fez": "Do komst seker ek foar de piramide. Kaart kocht? Folle te djoer?"
+      },
+      "7": {
+        "explorer": "Fólle te djoer."
+      },
+      "8": {
+        "fez": "Ik ek. Pff."
+      },
+      "9": {
+        "explorer": "Dat skrift op 'e Sfinks… kinsto dat lêze?"
+      },
+      "10": {
+        "fez": "Nee. Gjinien mear. Dy sokkel wie eartiids blau en goud, hear."
+      },
+      "11": {
+        "explorer": "Hoe witsto dat no?"
+      },
+      "12": {
+        "fez": "…Heard. Sis, wat sikesto hjir eins?"
+      },
+      "13": {
+        "explorer": "Wat moais."
+      },
+      "14": {
+        "fez": "Moais ferkeapet goed! Witst wat? Ik gean mei dy mei!"
+      },
+      "15": {
+        "explorer": "Wat? Mei my mei?"
+      },
+      "16": {
+        "fez": "Twa sjogge mear as ien. Kom op, dy piramide wachtet!"
+      }
+    }
+  },
+  "end": {
+    "1": {
+      "fez": "Wie it moai?"
+    },
+    "2": {
+      "explorer": "It kin der mei troch."
+    }
+  },
+  "revisit": {
+    "starter": {
+      "north1": {
+        "1": {
+          "ipi": "Noch hieltyd hjir? Nei it noarden! Henut! Alve deben!"
+        }
+      },
+      "north2": {
+        "1": {
+          "ipi": "Alve deben lapis. Henut. Noarden. Wêr wachtsto noch op?"
+        }
+      },
+      "paid1": {
+        "1": {
+          "ipi": "En? Hat se betelle? …Nee. Fansels net."
+        }
+      },
+      "paid2": {
+        "1": {
+          "ipi": "Glês? GLÊS? Hjir stiet lapis. Swart op wyt. Lapis!"
+        }
+      },
+      "later1": {
+        "1": {
+          "ipi": "Do wer. Tredde planke, dy mei it skylfke — noch hieltyd fan my. Ôfbliuwe."
+        }
+      },
+      "later2": {
+        "1": {
+          "ipi": "Fjirtich jier boeken, en der klopt der net ien. Net ien!"
+        }
+      }
+    },
+    "junior": {
+      "wall1": {
+        "1": {
+          "henut": "De muorre. It tredde teken. It is noch hieltyd myn namme net."
+        }
+      },
+      "wall2": {
+        "1": {
+          "henut": "Do bist der noch, en dy goes stiet noch hieltyd op myn muorre. Set it rjocht."
+        }
+      },
+      "priest1": {
+        "1": {
+          "henut": "Noch hieltyd myn namme. Ik haw sjoen. En no — Karnak, dy pryster. Hup."
+        }
+      },
+      "priest2": {
+        "1": {
+          "henut": "Karnak! Hy wachtet al lang genôch. Gean dy mar oankundigje litte."
+        }
+      },
+      "met1": {
+        "1": {
+          "henut": "En? Ûnútsteanber, hè? Ik sei it dochs."
+        }
+      },
+      "later1": {
+        "1": {
+          "henut": "Noch hieltyd glês. Noch hieltyd prachtich. Noch hieltyd troch my útsocht."
+        }
+      }
+    },
+    "expert": {
+      "seal1": {
+        "1": {
+          "priest": "It segel. Hjirhinne brocht, dellein, útsprutsen. Ik wachtsje wol."
+        }
+      },
+      "seal2": {
+        "1": {
+          "priest": "Ah. Jo wer. En noch hieltyd gjin segel."
+        }
+      },
+      "king1": {
+        "1": {
+          "priest": "Jo hawwe by de kening west. Goed. It ding sels, tink derom — gjin neimakker."
+        }
+      },
+      "later1": {
+        "1": {
+          "priest": "Jo wer. Der falt hjir neat mear te dwaan. It is tige rêstich."
+        }
+      }
+    },
+    "master": {
+      "priest1": {
+        "1": {
+          "pharaoh": "Noch hieltyd hjir? Nei dy pryster mei dy kopy! Ik wol hearre hoe't it ôfrint."
+        }
+      },
+      "priest2": {
+        "1": {
+          "pharaoh": "Jo meie neier komme. Alwer. Hat de pryster it al sjoen?"
+        }
+      },
+      "rite1": {
+        "1": {
+          "pharaoh": "Dus hy hat einliks syn rite dien. Moai. No wurdt er der net te harden oer."
+        }
+      },
+      "later1": {
+        "1": {
+          "pharaoh": "Noch hieltyd de bêste wike yn njoggenhûndert jier. En hy duorret mar troch!"
+        }
+      }
+    },
+    "wizard": {
+      "later1": {
+        "1": {
+          "priest": "…Ja. Ik wit noch hieltyd hoe't it moat. Goed sa."
+        }
+      },
+      "later2": {
+        "1": {
+          "priest": "Dellein, útsprutsen. Klear. It is in nuver gefoel."
+        }
+      }
+    }
+  }
+}

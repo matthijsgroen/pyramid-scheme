@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Re degli dèi e signore del sole. Ogni giorno attraversa il cielo sulla sua barca del sole."
+    },
+    "d2": {
+      "name": "Anubi",
+      "description": "Dio con la testa di sciacallo. Protegge i morti e li accompagna nell'aldilà."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Dio del cielo con la testa di falco, protettore dei faraoni. È figlio di Osiride e Iside."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "Dio con la testa di ibis. È il dio della saggezza e della scrittura, e custodisce i registri degli dèi."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Dea gatta della gioia e della protezione. Tiene lontani gli spiriti cattivi."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Dio coccodrillo del Nilo. Dà forza ai soldati e fa crescere i raccolti."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Dio scarabeo della rinascita. Fa rotolare il sole attraverso il cielo."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Dea cobra che protegge il Basso Egitto. È il simbolo del potere del re."
+    },
+    "d9": {
+      "name": "Iside",
+      "description": "Dea della magia, delle mamme e della guarigione. È la moglie fedele di Osiride."
+    },
+    "d10": {
+      "name": "Osiride",
+      "description": "Dio del mondo dei morti e della rinascita. Giudica i morti."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "Dio del caos, delle tempeste e del deserto. È fratello e rivale di Osiride."
+    },
+    "d12": {
+      "name": "Nefti",
+      "description": "Dea che piange e protegge i morti. È la sorella di Iside."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Dio creatore e protettore di artigiani e architetti. Ha creato il mondo con la sua parola."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Dea leonessa della guerra e della guarigione. È una protettrice feroce che sa curare le malattie."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Dea mucca dell'amore, della musica e delle mamme. Si prende cura dei faraoni."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Faraone",
+      "description": "Il re dell'Egitto. La gente lo vedeva come un dio vivente, un ponte tra gli uomini e gli dèi."
+    },
+    "p2": {
+      "name": "Sommo sacerdote",
+      "description": "Il capo dei templi. Fa i riti sacri e mantiene l'ordine voluto dagli dèi."
+    },
+    "p3": {
+      "name": "Scriba",
+      "description": "Una persona che sapeva leggere e scrivere. Teneva i registri e custodiva il sapere."
+    },
+    "p4": {
+      "name": "Architetto",
+      "description": "Il grande costruttore che progettava piramidi, templi e monumenti fatti per durare per sempre."
+    },
+    "p5": {
+      "name": "Generale",
+      "description": "Il capo dell'esercito. Proteggeva i confini dell'Egitto e allargava il regno."
+    },
+    "p6": {
+      "name": "Medico",
+      "description": "Un guaritore che usava medicine e magia per curare i malati."
+    },
+    "p7": {
+      "name": "Imbalsamatore",
+      "description": "Un artigiano sacro che preparava i morti per il viaggio nell'aldilà."
+    },
+    "p8": {
+      "name": "Contadino",
+      "description": "Coltivava le terre fertili lungo il Nilo per dare da mangiare a tutto il regno."
+    },
+    "p9": {
+      "name": "Artigiano",
+      "description": "Un abile artigiano che creava oggetti bellissimi, gioielli e opere d'arte per nobili e dèi."
+    },
+    "p10": {
+      "name": "Mercante",
+      "description": "Un commerciante che portava merci rare da terre lontane."
+    },
+    "p11": {
+      "name": "Visir",
+      "description": "Il primo ministro e consigliere del faraone. Controllava il governo del regno."
+    },
+    "p12": {
+      "name": "Oracolo",
+      "description": "Un profeta sacro che capiva i messaggi degli dèi e prediceva il futuro."
+    },
+    "p13": {
+      "name": "Marinaio",
+      "description": "Navigava sul Nilo e sul mare. Senza di lui niente commerci e niente viaggi."
+    },
+    "p14": {
+      "name": "Scalpellino",
+      "description": "Lavorava la pietra, scolpiva i geroglifici e costruiva i grandi monumenti dell'Egitto."
+    },
+    "p15": {
+      "name": "Guardiano",
+      "description": "Proteggeva i luoghi sacri e le tombe, perché i morti potessero riposare in pace per sempre."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Ippopotamo",
+      "description": "Un bestione fortissimo del Nilo. Tutti lo temevano perché difende il suo territorio."
+    },
+    "a2": {
+      "name": "Leone",
+      "description": "Il re degli animali, simbolo del potere del re e della forza degli dèi nel deserto."
+    },
+    "a3": {
+      "name": "Elefante",
+      "description": "Un animale enorme delle terre del sud, famoso per la sua saggezza e la sua memoria."
+    },
+    "a4": {
+      "name": "Gazzella",
+      "description": "Veloce ed elegante, vive nel deserto. È il simbolo della velocità."
+    },
+    "a5": {
+      "name": "Scimmia",
+      "description": "Un animale furbo, legato a Thoth. Rappresenta l'intelligenza e i dispetti."
+    },
+    "a6": {
+      "name": "Pesce",
+      "description": "Animali sacri del Nilo. Davano cibo alla gente e portavano abbondanza."
+    },
+    "a7": {
+      "name": "Oca",
+      "description": "Uccello sacro delle paludi del Nilo, legato alle storie sulla nascita del mondo e all'anima."
+    },
+    "a8": {
+      "name": "Ape",
+      "description": "Simbolo del Basso Egitto e del re. Fa il miele prezioso."
+    },
+    "a9": {
+      "name": "Tartaruga",
+      "description": "Un animale antico e saggio, che porta il peso del mondo sul suo guscio."
+    },
+    "a10": {
+      "name": "Rana",
+      "description": "Simbolo della rinascita. Spunta fuori dalle piene del Nilo che portano la vita."
+    },
+    "a11": {
+      "name": "Avvoltoio",
+      "description": "Uccello sacro dell'Alto Egitto. È la forma sulla terra della dea protettrice Nekhbet."
+    },
+    "a12": {
+      "name": "Gufo",
+      "description": "Un saggio cacciatore della notte, custode di segreti antichi."
+    },
+    "a13": {
+      "name": "Ariete",
+      "description": "Animale sacro di Amon-Ra, simbolo del potere degli dèi e del comando."
+    },
+    "a14": {
+      "name": "Giraffa",
+      "description": "Alta ed elegante, arriva dalle terre del sud. Con il suo lungo collo tocca quasi il cielo."
+    },
+    "a15": {
+      "name": "Sciacallo",
+      "description": "Animale del deserto e guida verso l'aldilà, servitore di Anubi."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Simbolo della vita che non finisce mai. Dèi e faraoni lo tengono spesso in mano."
+    },
+    "art2": {
+      "name": "Occhio di Horus",
+      "description": "Simbolo di protezione, di potere e di buona salute, legato al dio del cielo Horus."
+    },
+    "art3": {
+      "name": "Sistro",
+      "description": "Uno strumento musicale usato nelle feste sacre, legato alla dea Hathor."
+    },
+    "art4": {
+      "name": "Pilastro Djed",
+      "description": "Simbolo di stabilità e di rinascita, spesso legato a Osiride."
+    },
+    "art5": {
+      "name": "Cartiglio",
+      "description": "Un ovale con dentro il nome di un faraone scritto in geroglifici, per proteggere il suo nome per sempre."
+    },
+    "art6": {
+      "name": "Vaso canopo",
+      "description": "Un vaso sacro con la testa di un guardiano come coperchio. Ce n'erano quattro intorno a una bara, a fare la guardia."
+    },
+    "art7": {
+      "name": "Scettro",
+      "description": "Un bastone del potere portato da dèi e faraoni, simbolo del loro comando."
+    },
+    "art9": {
+      "name": "Piramide",
+      "description": "Una tomba eterna e la porta verso l'aldilà, costruita per durare per sempre per i faraoni."
+    },
+    "art10": {
+      "name": "Barca del sole",
+      "description": "La barca sacra che porta il dio del sole Ra attraverso il cielo, dall'alba al tramonto."
+    },
+    "art11": {
+      "name": "Obelisco",
+      "description": "Un'alta colonna di pietra con una piccola piramide in cima, che punta verso il cielo per onorare gli dèi."
+    },
+    "art12": {
+      "name": "Bastone e flagello",
+      "description": "Gli oggetti del re: mostrano che il faraone è il pastore e il protettore dell'Egitto."
+    },
+    "art14": {
+      "name": "Fiore di loto",
+      "description": "Simbolo della rinascita e del sole. Sboccia pulito dalle acque fangose del Nilo."
+    },
+    "art15": {
+      "name": "Corona con ureo",
+      "description": "Il copricapo del re con il cobra protettore. I faraoni lo portavano per essere protetti dagli dèi."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Foglia di canna",
+      "description": "Una sola canna, per il suono i. Messa dopo il nome di un dio, diventa il nome di una persona: Horus diventa Hori, quello di Horus."
+    }
+  }
+}

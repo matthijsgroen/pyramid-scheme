@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Świt przy Sfinksie",
+    "description": "Wielki Sfinks i napis u jego łap, którego nikt dziś nie umie przeczytać. Mapa mówi: zacznij tutaj."
+  },
+  "starter_2": {
+    "name": "Szlak handlarza papirusem",
+    "description": "Droga handlowa wzdłuż Nilu, pełna magazynów kupców. Kilku z nich nikt nigdy nie opróżnił."
+  },
+  "starter_3": {
+    "name": "Świątynia Bastet",
+    "description": "Świątynia Bastet. Koty były tu święte, a coroczne święto było największe w całym Egipcie: łodzie, muzyka, wszystko!"
+  },
+  "starter_4": {
+    "name": "Szkoła pisarzy",
+    "description": "Szkoła pisarzy, w której Egipt uczył się pisać. Sale lekcyjne wciąż leżą pod piaskiem."
+  },
+  "starter_treasure_tomb": {
+    "name": "Zapomniana skrytka kupca",
+    "description": "Piwnica kupca, a nie króla: dzbany ułożone jeden na drugim, zapieczętowane i podpisane. I nikogo na dole, kto by się kłócił.",
+    "mapHint": "Na skrawku widać drogę targową i drzwi do piwnicy. Kryjówka kupca, nic wielkiego."
+  },
+  "junior_1": {
+    "name": "Wędrówka świętych ibisów",
+    "description": "Kraina bagien i brodzące po nich ibisy. Egipcjanie obserwowali te ptaki: kiedy wracają, nadchodzi wielka woda."
+  },
+  "junior_2": {
+    "name": "Dolina rzemieślników",
+    "description": "Deir el-Medina, gdzie mieszkali budowniczowie grobowców. Wszystko do królewskiego grobu najpierw robiono tutaj, w formach."
+  },
+  "junior_3": {
+    "name": "Świątynia Thota",
+    "description": "Świątynia Thota. To on wymyślił pismo, prowadził zapiski i liczył. Czyli robił mniej więcej to samo co my."
+  },
+  "junior_4": {
+    "name": "Latarnia w Aleksandrii",
+    "description": "Latarnia Faros w Aleksandrii. Na szczycie ogień płonący całą noc, a żeglarze widzieli brzeg z odległości dnia drogi."
+  },
+  "junior_treasure_tomb": {
+    "name": "Ukryty skarbiec szlachcianki",
+    "description": "Skarbiec pewnej szlachcianki, pomalowany od podłogi do sufitu. Kupowała najpiękniejsze kopie, jakie były, i nigdy się do tego nie przyznała.",
+    "mapHint": "Staranny tusz, herb z pieczęcią w rogu. Ktoś ważny chciał, żeby o tej komnacie zapomniano."
+  },
+  "expert_1": {
+    "name": "Dolina Królów",
+    "description": "Dolina Królów. Przestano tu budować piramidy i schowano królewskie grobowce w jednej dolinie, pod szczytem w kształcie piramidy."
+  },
+  "expert_2": {
+    "name": "Świątynie w Karnaku",
+    "description": "Karnak, rozbudowywany przez dwa tysiące lat. Sama wielka sala ma sto trzydzieści cztery kolumny, a każda jest pokryta rzeźbami."
+  },
+  "expert_3": {
+    "name": "Wyprawa do delty Nilu",
+    "description": "Tam, gdzie Nil rozdziela się i rozlewa na zielono. Kraina Sobka: papirus, ryby i krokodyle, które czczono i karmiono."
+  },
+  "expert_4": {
+    "name": "Piramida Dżesera",
+    "description": "Schodkowa piramida Dżesera, pierwsza tak wielka budowla z kamienia. Jego architekta Imhotepa w końcu czczono jak boga."
+  },
+  "expert_treasure_tomb": {
+    "name": "Skarbiec arcykapłana",
+    "description": "Skarbiec arcykapłana, pod podłogą na dary. Wszystko, co tam leży, oddano bogu i nikt tego już nie wyjął.",
+    "mapHint": "Linie pokazują teren świątyni i schody prowadzące w dół, pod podłogę na dary."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Najświętsza komnata",
+    "description": "Zamknięta komnata w samym sercu świątyni. Arcykapłan wchodził tam raz dziennie, żeby umyć boga i go ubrać.",
+    "mapHint": "Korytarze biegną obok skarbców świątyni do zapieczętowanych drzwi. Przechodzili przez nie tylko najważniejsi kapłani."
+  },
+  "master_1": {
+    "name": "Wielka Piramida w Gizie",
+    "description": "Wielka Piramida. Dwadzieścia lat układania kamieni, a obok całe miasto, które karmiło robotników chlebem i piwem."
+  },
+  "master_2": {
+    "name": "Księga Umarłych",
+    "description": "To nie jedna książka, tylko zbiór zaklęć przepisywanych na zamówienie. W tańszych zostawiano puste miejsce na twoje imię."
+  },
+  "master_3": {
+    "name": "Klątwa faraonów",
+    "description": "Słynną klątwę wymyśliły gazety w 1923 roku. Egipcjanie chronili swoje grobowce drzwiami i papierkową robotą."
+  },
+  "master_4": {
+    "name": "Grobowiec Nefertari",
+    "description": "Grobowiec Nefertari, najpiękniej pomalowana komnata w Egipcie. Farby robiono z mielonych kamieni: azurytu, malachitu, ochry."
+  },
+  "master_treasure_tomb": {
+    "name": "Tajny skarb faraona",
+    "description": "Prywatny skarb króla, daleko, tam gdzie kończą się mapy. Wszystko, co z nim pochowano, wciąż tam jest.",
+    "mapHint": "Z jednej strony królewski kartusz, a droga kończy się daleko, pod gołym piaskiem."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Sala Ozyrysa",
+    "description": "Sala Ozyrysa, boga wylewów i zboża. Co tu trafi pod ziemię, to ma kiedyś wrócić.",
+    "mapHint": "Pod królewskimi komnatami mapa schodzi coraz niżej, do sali ze znakami obrzędów dla zmarłych."
+  },
+  "wizard_1": {
+    "name": "Słoneczna podróż Ra",
+    "description": "O zachodzie słońca Ra schodzi pod ziemię i ma do przebycia dwanaście godzin ciemności. Egipcjanie zapisali, co dzieje się w każdej z nich."
+  },
+  "wizard_2": {
+    "name": "Kolosy Memnona",
+    "description": "Dwa siedzące olbrzymy Amenhotepa III. Grecy uznali, że to ktoś inny, i ta nazwa trzyma się już dwa tysiące lat."
+  },
+  "wizard_3": {
+    "name": "Komnata Maat",
+    "description": "Komnata Maat. Ona jest porządkiem świata, a jej jedno strusie pióro to miara, do której porównuje się wszystko inne."
+  },
+  "wizard_4": {
+    "name": "Wieczna piramida",
+    "description": "Okładzina była z polerowanego wapienia, białego jak sól, tak równego, że błyszczał z odległości dnia marszu."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Skarbiec bogów",
+    "description": "Tu świątynia trzymała to, co należało do bogów. Nikt nie wchodził tu bez właściwej rzeczy w rękach.",
+    "mapHint": "Żaden znak na tym skrawku nie pochodzi ze świata ludzi. Cokolwiek tu narysowano, postawili to bogowie."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Kraina sił kosmosu",
+    "description": "Na suficie mapy gwiazd, namalowane tak, żeby zmarli w nocy wiedzieli, która godzina. W szybie wciąż wisi czyjaś lina.",
+    "mapHint": "Za boskim skarbcem linie zamieniają się w gwiezdne ścieżki. Tam siły życia i chaosu przechowuje się jak relikwie."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Tron wieczności",
+    "description": "Jedno krzesło pośrodku, a wokół czterdziestu dwóch sędziów. Każdy zadaje pytanie, na które masz odpowiedzieć „nie”.",
+    "mapHint": "Wszystkie gwiezdne ścieżki na tym kawałku prowadzą do jednego tronu w samym sercu krainy bogów."
+  }
+}

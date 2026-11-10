@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Dage by de Sfinks",
+    "description": "De Grutte Sfinks, en it skrift oan syn fuotten dat gjinien mear lêze kin. De kaart seit: hjir begjinne."
+  },
+  "starter_2": {
+    "name": "Papyrushannelersrûte",
+    "description": "In hannelswei lâns de Nyl, fol pakhuzen fan keaplju. In pear binne nea leechhelle."
+  },
+  "starter_3": {
+    "name": "Timpel fan Bastet",
+    "description": "De timpel fan Bastet. De katten wiene hjir hillich, en it feest elk jier wie it grutste fan Egypte — boaten, muzyk, alles derop en deroan."
+  },
+  "starter_4": {
+    "name": "Skriuwersakademy",
+    "description": "De skoalle fan de skriuwers, dêr't Egypte skriuwen learde. De lokalen lizze noch ûnder it sân."
+  },
+  "starter_treasure_tomb": {
+    "name": "Ferjitten Hannelersfoarried",
+    "description": "De kelder fan in hanneler, net fan in kening: krûken opstapele, fersegele en mei in label, en gjinien ûnder dy't tsjinsputteret.",
+    "mapHint": "It stikje tekenet in merkwei en in kelderdoar — in skûlplak fan in hanneler, neat grutters."
+  },
+  "junior_1": {
+    "name": "Tocht fan de Hillige Ibis",
+    "description": "Sompelân, en de ibis dy't der troch waadt. Egypte seach nei dizze fûgels: as sy weromkomme, komt it hege wetter."
+  },
+  "junior_2": {
+    "name": "Delling fan de Ambachtslju",
+    "description": "Deir el-Medina, dêr't de grêfbouwers wennen. Alles wat yn in keningsgrêf gie, waard hjir makke, yn mallen."
+  },
+  "junior_3": {
+    "name": "Timpel fan Thoth",
+    "description": "De timpel fan Thoth. Hy betocht it skrift, hold de boekhâlding by en die it rekkenwurk — sa'n bytsje wat wy ek dogge."
+  },
+  "junior_4": {
+    "name": "Fjoertoer fan Aleksandrje",
+    "description": "De Faros fan Aleksandrje. Boppe-yn in fjoer dat de hiele nacht baarnde, en seelju dy't de kust fûnen fan in dei farren fier."
+  },
+  "junior_treasure_tomb": {
+    "name": "Ferburgen Klûs fan de Eallju",
+    "description": "It ferwulf fan in eallefrou, fan flier oant plafond beskildere. Se kocht de moaiste kopyen dy't der wiene, en sei dat nea lûdop.",
+    "mapHint": "Fyn inket, in fersegele wapen yn 'e hoeke — ien fan stân woe dat dizze keamer ferjitten waard."
+  },
+  "expert_1": {
+    "name": "Delling fan de Keningen",
+    "description": "De Delling fan de Keningen. Se holden op mei piramiden bouwen en ferstoppen de keningsgrêven yn ien delling, ûnder in top dy't op in piramide liket."
+  },
+  "expert_2": {
+    "name": "Timpels fan Karnak",
+    "description": "Karnak, twatûzen jier lang útwreide. Allinnich de grutte seal hat al hûndertfjouwerentritich pylders, stik foar stik bewurke."
+  },
+  "expert_3": {
+    "name": "Tocht troch de Nyldelta",
+    "description": "Dêr't de Nyl him spjalt en grien útwaaiert. It lân fan Sobek — papyrus, fisk, en krokodillen dy't fereare en fuorre waarden."
+  },
+  "expert_4": {
+    "name": "Piramide fan Djoser",
+    "description": "De treppiramide fan Djoser, it earste bouwurk fan dy grutte yn stien. Syn arsjitekt Imhotep waard op it lêst as god fereare."
+  },
+  "expert_treasure_tomb": {
+    "name": "Skatkeamer fan de Hegepryster",
+    "description": "De skatkeamer fan in hegepryster, ûnder de offerflier. Alles dêrûnder is oan in god jûn en nea wer ophelle.",
+    "mapHint": "De linen tekenje in timpelterrein, en in trep dy't delgiet ûnder de offerflier."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Binnenste Hillichdom",
+    "description": "De fersegele keamer yn it hert fan de timpel. De hegepryster gie der ien kear deis yn, om de god te waskjen en oan te klaaien.",
+    "mapHint": "Gongen rinne foarby de timpelklûzen nei in fersegele doar — allinnich de heechste prysters kamen der troch."
+  },
+  "master_1": {
+    "name": "Grutte Piramide fan Gizeh",
+    "description": "De Grutte Piramide. Tweintich jier stien, en in hiel doarp dêrneist dat de ploegen te iten joech mei bôle en bier."
+  },
+  "master_2": {
+    "name": "Boek fan de Deaden",
+    "description": "Gjin boek mar in rige spreuken, op bestelling oerskreaun. By de goedkeape ferzjes bleau der in gat iepen dêr't dyn namme hearde."
+  },
+  "master_3": {
+    "name": "Flok fan de Farao's",
+    "description": "De ferneamde flok is yn 1923 troch kranten betocht. De Egyptners bewarren harren grêven mei doarren en boekhâlding."
+  },
+  "master_4": {
+    "name": "Grêf fan Nefertari",
+    "description": "It grêf fan Nefertari, de moaist beskildere keamer fan Egypte. De kleuren waarden út stien mealen — azurite, malachyt, oker."
+  },
+  "master_treasure_tomb": {
+    "name": "Geheime Skat fan de Farao",
+    "description": "De eigen skat fan in kening, dêr't de kaarten ophâlde. Wat mei him de grûn yn gie, leit der noch.",
+    "mapHint": "In keninklike kartoesj stiet yn 'e râne, en de rûte einiget fier fuort ûnder iepen sân."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Hal fan Osiris",
+    "description": "De seal fan Osiris. God fan it hege wetter en it nôt — wat hjir de grûn yn giet, wurdt werom ferwachte.",
+    "mapHint": "Ûnder de keninklike keamers giet de kaart fierder omleech, nei in hal tekene mei de riten fan de deaden."
+  },
+  "wizard_1": {
+    "name": "Sinnereis fan Ra",
+    "description": "Ra giet by sinne-ûndergong ûnder de wrâld troch en hat tolve oeren tsjuster foar him. Egypte skreau op wat der yn elk oere bart."
+  },
+  "wizard_2": {
+    "name": "Kolossen fan Memnon",
+    "description": "Twa sittende reuzen fan Amenhotep III. De Griken besleaten dat it immen oars wie, en dy namme bleau twatûzen jier plakken."
+  },
+  "wizard_3": {
+    "name": "Keamer fan Ma'at",
+    "description": "De keamer fan Ma'at. Sy is de oarder fan alle dingen, en har iene strúsfûgelfear is dêr't al it oare tsjin ôfwogen wurdt."
+  },
+  "wizard_4": {
+    "name": "Ivige Piramide",
+    "description": "De bekleding wie gepolearre kalkstien, wyt as sâlt, sa strak lein dat je him fan in dei rinnen fier glinsterjen seagen."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Klûs fan de Goaden",
+    "description": "Dêr't de timpel bewarre wat fan de goaden wie. Gjinien waard hjir oankundige sûnder it goede yn 'e hannen.",
+    "mapHint": "Gjin inkeld baken op dit stikje heart by de wrâld fan minsken — wat it ek sjen lit, goaden leinen it dêr."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Ryk fan de Kosmyske Krêften",
+    "description": "Stjerrekaarten oer it plafond, skildere sadat de deaden nachts it oere ôflêze koene. Immen syn tou hinget noch yn 'e skacht.",
+    "mapHint": "Foarby de godlike klûs brekke de linen út yn stjerrepaden, dêr't de krêften fan libben en gaos as reliken bewarre wurde."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Troan fan de Ivichheid",
+    "description": "Ien sit yn 'e midden en twaenfjirtich rjochters deromhinne, elk mei in fraach dêr't je nee op antwurdzje moatte.",
+    "mapHint": "Alle stjerrepaden op dit stikje komme byinoar by ien sit, yn it hert fan it godlike ryk."
+  }
+}

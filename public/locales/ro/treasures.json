@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Trage obiectul pe piatră ca s-o deblochezi",
+    "alsoAvailable": "Mai ai și:"
+  },
+  "perks": {
+    "max-health": "+½ inimă la viața maximă",
+    "armor": "Capcanele te rănesc mai puțin",
+    "trap-insight": "+1s la capcanele cu timp",
+    "pack-mule": "Un burduf cu apă vindecă două inimi",
+    "compass": "Piesă de busolă",
+    "detection": "Piesă de detector de coridoare",
+    "tier-unlock": "Deblochează expedițiile {{tier}}",
+    "tier-coming-soon": "Expedițiile {{tier}} vin într-o actualizare viitoare",
+    "location-key": "Dezvăluie încă un mormânt",
+    "partOf": "{{count}} din {{total}}"
+  },
+  "tiers": {
+    "stone": "Piatră",
+    "bronze": "Bronz",
+    "silver": "Argint",
+    "gold": "Aur",
+    "divine": "Divin"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Deben de argint",
+      "description": "O monedă egipteană veche de argint, folosită de negustori în comerțul de pe Nil."
+    },
+    "t2": {
+      "name": "Sul de papirus",
+      "description": "Sulul de socoteli al unui negustor, cu drumuri de negoț și liste de mărfuri prețioase."
+    },
+    "t3": {
+      "name": "Pieptene de fildeș",
+      "description": "Un pieptene de fildeș sculptat cu grijă, un lux adus din țări îndepărtate."
+    },
+    "t4": {
+      "name": "Opaiț de lut",
+      "description": "Un opaiț simplu, dar frumos, care lumina casa negustorului."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Brățară de aur",
+      "description": "O brățară de aur împodobită cu pietre prețioase, purtată de nobilii Egiptului."
+    },
+    "t6": {
+      "name": "Pumnal de ceremonie",
+      "description": "Un pumnal de ritual cu mâner bătut în pietre, folosit la ceremoniile nobililor."
+    },
+    "t7": {
+      "name": "Scarabeu de jad",
+      "description": "O amuletă-scarabeu de jad, semn al renașterii și al vieții veșnice."
+    },
+    "t8": {
+      "name": "Vas canopic din alabastru",
+      "description": "Un vas elegant de alabastru pentru uleiuri și parfumuri prețioase."
+    },
+    "t9": {
+      "name": "Baston de abanos",
+      "description": "Un baston lustruit de abanos, cu un ankh de aur în vârf."
+    },
+    "t10": {
+      "name": "Colier de lapis lazuli",
+      "description": "Un colier minunat din pietre rare de lapis lazuli, mult prețuit de cei bogați."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Ankh sfânt",
+      "description": "Un ankh de aur, semnul vieții veșnice, binecuvântat de preoții templului."
+    },
+    "t12": {
+      "name": "Oglindă de cupru",
+      "description": "O oglindă lustruită de cupru, folosită la ceremoniile de purificare."
+    },
+    "t13": {
+      "name": "Cădelniță",
+      "description": "O cădelniță de bronz împodobită, folosită la slujbele din templu."
+    },
+    "t14": {
+      "name": "Potir de ritual",
+      "description": "Un potir sfânt de argint, din care se turnau ofrande pentru zei."
+    },
+    "t15": {
+      "name": "Evantai de ceremonie",
+      "description": "Un evantai împodobit cu pene, folosit de preoți la ceremoniile din templu."
+    },
+    "t16": {
+      "name": "Mătănii",
+      "description": "Un șirag de mărgele binecuvântate, folosite la rugăciune."
+    },
+    "t17": {
+      "name": "Vas cu apă sfântă",
+      "description": "Un vas cu apă binecuvântată din fântâna sfântă a templului."
+    },
+    "t18": {
+      "name": "Clopotul templului",
+      "description": "Un clopot de bronz care chema credincioșii la rugăciune și vestea ceremoniile."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Sigiliul faraonului",
+      "description": "Un sigiliu regal străvechi, cu cartușul unui faraon uitat."
+    },
+    "t20": {
+      "name": "Glob de cristal",
+      "description": "Un glob de cristal despre care se spune că arată trecutul și viitorul."
+    },
+    "t21": {
+      "name": "Tăbliță cu hieroglife",
+      "description": "O tăbliță veche de piatră, cu profeții misterioase scrise în hieroglife."
+    },
+    "t22": {
+      "name": "Sceptru de aur",
+      "description": "Un sceptru minunat de aur, cu ochiul lui Horus în vârf."
+    },
+    "t23": {
+      "name": "Cuțit de obsidian",
+      "description": "Un cuțit de ceremonie din obsidian, ascuțit ca briciul, folosit la ritualuri vechi."
+    },
+    "t24": {
+      "name": "Bucată de meteorit",
+      "description": "O bucată de meteorit sfânt, despre care se credea că are putere divină."
+    },
+    "t25": {
+      "name": "Busola străveche",
+      "description": "Un instrument misterios de orientare care arată mereu spre comori ascunse."
+    },
+    "t26": {
+      "name": "Cristalul timpului",
+      "description": "Un cristal din legende, care strălucește cu puterea vremurilor de demult."
+    },
+    "t27": {
+      "name": "Mască de ritual",
+      "description": "O mască de aur împodobită, purtată de marii preoți la ceremoniile sfinte."
+    },
+    "t28": {
+      "name": "Torța flăcării veșnice",
+      "description": "O torță care arde cu o flacără veșnică, nestinsă din vremuri străvechi."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Coroana lui Ra",
+      "description": "Coroana din legende a zeului soarelui Ra, care strălucește de lumină și putere divină."
+    },
+    "t30": {
+      "name": "Toiagul lui Thot",
+      "description": "Toiagul înțelepciunii lui Thot, zeul cunoașterii, care ascunde toate secretele vechi."
+    },
+    "t31": {
+      "name": "Pana lui Maat",
+      "description": "Pana sfântă a lui Maat, zeița adevărului, cu care se cântăreau sufletele în lumea de dincolo."
+    },
+    "t32": {
+      "name": "Lacrimile lui Isis",
+      "description": "Lacrimile împietrite ale zeiței Isis, despre care se spune că te apără pentru totdeauna."
+    },
+    "t33": {
+      "name": "Inima lui Osiris",
+      "description": "Inima păstrată a lui Osiris, stăpânul lumii de dedesubt, care încă bate plină de viață."
+    },
+    "t34": {
+      "name": "Amuleta Ochiul lui Horus",
+      "description": "Cea mai puternică amuletă de protecție, cu toată puterea lui Horus în ea."
+    },
+    "t35": {
+      "name": "Șarpele Apep",
+      "description": "O bucată legată din șarpele haosului, Apep, închisă într-un vas sfânt."
+    },
+    "t36": {
+      "name": "Suflarea lui Shu",
+      "description": "O sticluță cu suflarea lui Shu, zeul aerului, care îți dă putere peste vânturi."
+    },
+    "t37": {
+      "name": "Solzul lui Sobek",
+      "description": "Un singur solz al zeului-crocodil Sobek, care te apără în apă."
+    },
+    "t38": {
+      "name": "Statuia paznic a lui Anubis",
+      "description": "O statuetă a lui Anubis care prinde viață ca să păzească comorile stăpânului ei."
+    },
+    "t39": {
+      "name": "Cartea morților",
+      "description": "Cartea morților întreagă, cu toate vrăjile de care ai nevoie în călătoria de dincolo."
+    },
+    "t40": {
+      "name": "Vârful piramidei",
+      "description": "Vârful de aur al Marii Piramide, cu puterea adunată a tuturor faraonilor."
+    }
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Aušra prie Sfinkso",
+    "description": "Didysis Sfinksas, o prie jo kojų užrašas, kurio neperskaito nė vienas gyvas žmogus. Žemėlapis sako: pradėk čia."
+  },
+  "starter_2": {
+    "name": "Papiruso pirklių kelias",
+    "description": "Prekybos kelias palei Nilą, o pakelėje pirklių sandėliai. Kai kurie taip ir liko neištuštinti."
+  },
+  "starter_3": {
+    "name": "Bastetės šventykla",
+    "description": "Bastetės šventykla. Katės čia buvo šventos, o kasmetinė šventė buvo didžiausia visame Egipte: laivai, muzika, viskas."
+  },
+  "starter_4": {
+    "name": "Raštininkų mokykla",
+    "description": "Raštininkų mokykla, kur Egiptas mokėsi rašyti. Klasės vis dar po smėliu."
+  },
+  "starter_treasure_tomb": {
+    "name": "Pamiršta pirklio slėptuvė",
+    "description": "Pirklio rūsys, ne karaliaus: ąsočiai sukrauti, užantspauduoti ir pažymėti, o apačioje nėra kam dėl jų ginčytis.",
+    "mapHint": "Skiautėje nupieštas turgaus kelias ir rūsio durys. Prekeivio slėptuvė, nieko daugiau."
+  },
+  "junior_1": {
+    "name": "Šventųjų ibisų kelionė",
+    "description": "Pelkių kraštas ir per jį braidantys ibisai. Egiptiečiai stebėjo šiuos paukščius: kai jie grįžta, ateina potvynis."
+  },
+  "junior_2": {
+    "name": "Meistrų slėnis",
+    "description": "Deir el Medina, kur gyveno kapų statytojai. Viskas, ko reikėjo karaliaus laidotuvėms, pirmiausia buvo pagaminta čia, formose."
+  },
+  "junior_3": {
+    "name": "Toto šventykla",
+    "description": "Toto šventykla. Jis išrado raštą, rašė metraščius ir viską skaičiavo. Beveik tą patį, ką mes čia ir darome."
+  },
+  "junior_4": {
+    "name": "Aleksandrijos švyturys",
+    "description": "Aleksandrijos Faras. Viršuje visą naktį dega ugnis, ir jūreiviai mato krantą net iš dienos kelio jūroje."
+  },
+  "junior_treasure_tomb": {
+    "name": "Slaptas didikės lobynas",
+    "description": "Didikės lobynas, išpieštas nuo grindų iki lubų. Ji pirko geriausias kopijas, kokias tik galima nupirkti, ir niekada to nesakė.",
+    "mapHint": "Dailus rašalas, kampe herbinis antspaudas. Kažkas svarbus norėjo, kad šis kambarys būtų pamirštas."
+  },
+  "expert_1": {
+    "name": "Karalių slėnis",
+    "description": "Karalių slėnis. Piramidžių nebestatė, o karalių kapus paslėpė viename slėnyje, po kalnu, panašiu į piramidę."
+  },
+  "expert_2": {
+    "name": "Karnako šventyklos",
+    "description": "Karnakas, statytas ir pristatinėtas du tūkstančius metų. Vien didžiojoje salėje yra šimtas trisdešimt keturios kolonos, ir kiekviena išraižyta."
+  },
+  "expert_3": {
+    "name": "Ekspedicija į Nilo deltą",
+    "description": "Ten, kur Nilas išsišakoja ir pasklinda žaliai. Sobeko kraštas: papirusai, žuvys ir krokodilai, kuriuos garbino ir maitino."
+  },
+  "expert_4": {
+    "name": "Džoserio piramidė",
+    "description": "Džoserio laiptuota piramidė, pirmas tokio dydžio akmeninis statinys. Jo architektą Imhotepą vėliau ėmė garbinti kaip dievą."
+  },
+  "expert_treasure_tomb": {
+    "name": "Vyriausiojo žynio lobynas",
+    "description": "Vyriausiojo žynio lobynas po aukų grindimis. Viskas, kas ten apačioje, buvo atiduota dievui ir niekada nebeišnešta.",
+    "mapHint": "Linijos rodo šventyklos kiemą ir laiptus, vedančius žemyn po aukų grindimis."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Vidinė šventovė",
+    "description": "Užantspauduotas kambarys šventyklos širdyje. Vyriausiasis žynys užeidavo kartą per dieną nuprausti ir aprengti dievo.",
+    "mapHint": "Koridoriai veda pro šventyklos rūsius prie užantspauduotų durų. Pro jas eidavo tik patys aukščiausi žyniai."
+  },
+  "master_1": {
+    "name": "Didžioji Gizos piramidė",
+    "description": "Didžioji piramidė. Dvidešimt metų akmens darbų, o šalia visas miestelis, kuris maitino darbininkus duona ir alumi."
+  },
+  "master_2": {
+    "name": "Mirusiųjų knyga",
+    "description": "Ne viena knyga, o užkeikimų rinkinys, perrašomas pagal užsakymą. Pigesnėse vietoj tavo vardo palikdavo tuščią vietą."
+  },
+  "master_3": {
+    "name": "Faraonų prakeiksmas",
+    "description": "Garsųjį prakeiksmą 1923 metais išgalvojo laikraščiai. Egiptiečiai savo kapus saugojo durimis ir popieriais."
+  },
+  "master_4": {
+    "name": "Nefertari kapas",
+    "description": "Nefertari kapas, gražiausiai išpieštas kambarys Egipte. Spalvos sumaltos iš akmenų: azurito, malachito, ochros."
+  },
+  "master_treasure_tomb": {
+    "name": "Slaptasis faraono lobis",
+    "description": "Asmeninis karaliaus lobis, ten, kur žemėlapiai pasiduoda. Visa, kas su juo pateko į žemę, vis dar ten.",
+    "mapHint": "Viename krašte karališkas kartušas, o kelias baigiasi toli, po atviru smėliu."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Ozyrio salė",
+    "description": "Ozyrio salė. Jis potvynio ir grūdų dievas: kas čia nueina po žeme, turi sugrįžti.",
+    "mapHint": "Po karališkais kambariais žemėlapis vis leidžiasi žemyn, į salę, paženklintą mirusiųjų apeigomis."
+  },
+  "wizard_1": {
+    "name": "Ra kelionė per naktį",
+    "description": "Saulei leidžiantis Ra nusileidžia po pasauliu ir turi pereiti dvylika tamsos valandų. Egiptiečiai užrašė, kas nutinka kiekvieną iš jų."
+  },
+  "wizard_2": {
+    "name": "Memnono kolosai",
+    "description": "Du sėdintys Amenhotepo III milžinai. Graikai nusprendė, kad tai kažkas kitas, ir tas vardas prilipo dviem tūkstančiams metų."
+  },
+  "wizard_3": {
+    "name": "Maat kambarys",
+    "description": "Maat kambarys. Ji yra pasaulio tvarka, o jos vienintelė stručio plunksna yra tai, su kuo lyginama visa kita."
+  },
+  "wizard_4": {
+    "name": "Amžinoji piramidė",
+    "description": "Jos danga buvo iš nušlifuoto kalkakmenio, baltutėlio kaip druska. Taip lygiai nutašyta, kad sužibėdavo net iš dienos kelio."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Dievų lobynas",
+    "description": "Čia šventykla laikė tai, kas priklausė dievams. Niekas nebūdavo įleistas be reikiamo daikto rankose.",
+    "mapHint": "Nė vienas ženklas šioje skiautėje nepriklauso žmonių pasauliui. Ką ji bevaizduotų, tai padėjo dievai."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Kosminių jėgų karalystė",
+    "description": "Per visas lubas žvaigždžių žemėlapiai, nupiešti tam, kad mirusieji naktį žinotų, kelinta valanda. Šachtoje vis dar kabo kažkieno virvė.",
+    "mapHint": "Už dieviškojo lobyno linijos išsiskiria į žvaigždžių takus, kur gyvybės ir chaoso jėgos saugomos kaip relikvijos."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Amžinybės sostas",
+    "description": "Viduryje vienas sostas, o aplink keturiasdešimt du teisėjai. Kiekvienas užduoda klausimą, į kurį turi atsakyti „ne“.",
+    "mapHint": "Visi žvaigždžių takai šioje skiautėje susibėga prie vieno sosto pačioje dieviškosios karalystės širdyje."
+  }
+}

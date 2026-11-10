@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Pedra",
+    "bronze": "Bronze",
+    "silver": "Plata",
+    "gold": "Or",
+    "divine": "Diví"
+  },
+  "sell_stone_1": {
+    "name": "Òstracon esquerdat",
+    "description": "Un tros de terrissa trencada on un escriba practicava les lletres. Ja estan tan esborrades que no es poden llegir."
+  },
+  "sell_stone_2": {
+    "name": "Gerra de fang esquerdada",
+    "description": "Una gerra per guardar gra o cervesa. Té un costat partit pel pes de tants i tants segles."
+  },
+  "sell_stone_3": {
+    "name": "Sandàlia de canya gastada",
+    "description": "Teixida amb canyes de papir. La sola és ben prima, de tant caminar-hi un treballador que ningú recorda."
+  },
+  "sell_stone_4": {
+    "name": "Retall de lli descolorit",
+    "description": "Una tira estripada de lli sense tenyir, de les que embolicaven les mòmies... o servien per apedaçar una vela."
+  },
+  "sell_stone_5": {
+    "name": "Ganivet de sílex trencat",
+    "description": "Un ganivet de sílex amb la punta trencada. Fàcil de fer, i encara més fàcil de canviar."
+  },
+  "sell_bronze_1": {
+    "name": "Amulet de bronze tort",
+    "description": "Un amulet protector barat. Va sortir tort del motlle i ningú el va adreçar mai."
+  },
+  "sell_bronze_2": {
+    "name": "Mirall de bronze rovellat",
+    "description": "Abans brillava tant que t'hi podies veure. Ara està ennuvolat de verd pels anys."
+  },
+  "sell_bronze_3": {
+    "name": "Ham de bronze esmussat",
+    "description": "L'eina d'un pescador. Va caure al Nil molt abans que tanquessin la tomba."
+  },
+  "sell_bronze_4": {
+    "name": "Campaneta de bronze",
+    "description": "Era per penjar a la porta d'un temple o al turmell d'una ballarina. Ara ja no sona bé."
+  },
+  "sell_bronze_5": {
+    "name": "Anell de bronze enfosquit",
+    "description": "Un anell senzill, fet per a un dit que fa molt de temps que és pols."
+  },
+  "sell_silver_1": {
+    "name": "Ankh de plata enfosquit",
+    "description": "Un símbol de la vida, gastat després de segles sota terra."
+  },
+  "sell_silver_2": {
+    "name": "Pinzell de kohl de plata",
+    "description": "Una vareta fina per pintar-se els ulls, com feien els rics. El kohl ja fa temps que no hi és."
+  },
+  "sell_silver_3": {
+    "name": "Bol de plata abonyegat",
+    "description": "Un bolet d'ofrenes, aixafat per un costat el dia que el sostre de sobre va caure."
+  },
+  "sell_silver_4": {
+    "name": "Agulla de cabell de plata",
+    "description": "Senzilla i sense adorns. Subjectava els cabells d'algú de qui ja no sabem el nom."
+  },
+  "sell_silver_5": {
+    "name": "Polsera de plata gastada",
+    "description": "Una polsera prima de plata amb el tancament trencat. Massa poca cosa per a un noble, massa bonica per a un treballador."
+  },
+  "sell_gold_1": {
+    "name": "Perleta d'or",
+    "description": "Una perla d'un collaret funerari que es va escampar fa molt de temps."
+  },
+  "sell_gold_2": {
+    "name": "Tros de pa d'or",
+    "description": "Un bocinet de pa d'or, arrencat de la cara d'una estàtua per lladres de tombes segles abans que tu arribessis."
+  },
+  "sell_gold_3": {
+    "name": "Arracada d'or prima",
+    "description": "Picada ben fina perquè l'or d'un noble arribés més lluny."
+  },
+  "sell_gold_4": {
+    "name": "Tros amb espurnes d'or",
+    "description": "Un tros d'arrebossat daurat, encara amb espurnes d'or de debò enganxades."
+  },
+  "sell_gold_5": {
+    "name": "Segell d'or esquerdat",
+    "description": "Un anell de segellar tan gastat que ja no es veu el dibuix. Ningú recorda de qui era."
+  },
+  "sell_divine_1": {
+    "name": "Escarabat de lapislàtzuli descolorit",
+    "description": "Tallat en lapislàtzuli preciós, portat de molt lluny per al renaixement d'un faraó. El color s'ha anat apagant amb els segles."
+  },
+  "sell_divine_2": {
+    "name": "Amulet d'ull de cornalina",
+    "description": "Un ull protector tallat en cornalina vermella com la sang, per allunyar la mala sort a l'altra vida."
+  },
+  "sell_divine_3": {
+    "name": "Tessel·la de turquesa",
+    "description": "Una sola peceta d'un mosaic trencat. Abans formava part de la cara d'un déu a la paret d'un temple."
+  },
+  "sell_divine_4": {
+    "name": "Tros de vas canopi d'alabastre",
+    "description": "Un tros d'un vas on es guardaven les vísceres d'un faraó. Una pedra preciosa per a una feina ben fosca."
+  },
+  "sell_divine_5": {
+    "name": "Ganivet ritual d'obsidiana",
+    "description": "Vidre de volcà, esmolat per a les cerimònies. No era per a la guerra, només per al temple."
+  }
+}

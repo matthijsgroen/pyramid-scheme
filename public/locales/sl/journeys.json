@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Zora pri Sfingi",
+    "description": "Velika sfinga in pisava ob njenih tačkah, ki je danes nihče ne zna prebrati. Zemljevid pravi: začni tukaj."
+  },
+  "starter_2": {
+    "name": "Pot trgovca s papirusom",
+    "description": "Trgovska pot ob Nilu, polna trgovskih skladišč. Nekaj jih ni nikoli nihče izpraznil."
+  },
+  "starter_3": {
+    "name": "Bastetin tempelj",
+    "description": "Tempelj boginje Bastet. Mačke so bile tu svete, njen praznik pa je bil največji v Egiptu – čolni, glasba, vse."
+  },
+  "starter_4": {
+    "name": "Šola pisarjev",
+    "description": "Šola za pisarje, kjer se je Egipt učil pisati. Učilnice so še vedno pod peskom."
+  },
+  "starter_treasure_tomb": {
+    "name": "Pozabljeno trgovčevo skrivališče",
+    "description": "Klet trgovca, ne kralja: vrči, zloženi drug na drugega, zapečateni in označeni. In nikogar spodaj, ki bi se prepiral zanje.",
+    "mapHint": "Na koščku je narisana tržna pot in vrata v klet – skrivališče trgovca, nič bolj imenitnega."
+  },
+  "junior_1": {
+    "name": "Selitev svetih ibisov",
+    "description": "Močvirje in ibisi, ki gazijo po njem. Egipčani so te ptice opazovali: ko se vrnejo, pride poplava."
+  },
+  "junior_2": {
+    "name": "Dolina obrtnikov",
+    "description": "Deir el-Medina, kjer so živeli graditelji grobnic. Vse za kraljevi pokop so najprej naredili tukaj, v kalupih."
+  },
+  "junior_3": {
+    "name": "Thothov tempelj",
+    "description": "Tempelj boga Thotha. Izumil je pisavo, vodil zapiske in štel – in to je skoraj vse, kar ves čas počnemo."
+  },
+  "junior_4": {
+    "name": "Svetilnik v Aleksandriji",
+    "description": "Faros v Aleksandriji. Na vrhu ogenj, ki gori vso noč, in mornarji, ki obalo najdejo že dan plovbe daleč."
+  },
+  "junior_treasure_tomb": {
+    "name": "Skriti trezor plemkinje",
+    "description": "Trezor plemkinje, poslikan od tal do stropa. Kupila je najlepše kopije, kar jih je bilo mogoče kupiti, a tega ni nikoli priznala.",
+    "mapHint": "Lepo črnilo in pečat z grbom v kotu – nekdo pomemben je hotel, da na to sobo vsi pozabijo."
+  },
+  "expert_1": {
+    "name": "Dolina kraljev",
+    "description": "Dolina kraljev. Nehali so graditi piramide in kraljeve grobnice skrili v eno dolino, pod vrh, ki je videti kot piramida."
+  },
+  "expert_2": {
+    "name": "Tempelj v Karnaku",
+    "description": "Karnak, ki so ga dograjevali dva tisoč let. Samo velika dvorana ima sto štiriintrideset stebrov in vsak je izrezljan."
+  },
+  "expert_3": {
+    "name": "Odprava v delto Nila",
+    "description": "Kjer se Nil razcepi in razlije v zeleno. Sobekova dežela – papirus, ribe in krokodili, ki so jih častili in hranili."
+  },
+  "expert_4": {
+    "name": "Džoserjeva piramida",
+    "description": "Džoserjeva stopničasta piramida, prva tako velika stavba iz kamna. Njegovega graditelja Imhotepa so pozneje častili kot boga."
+  },
+  "expert_treasure_tomb": {
+    "name": "Zakladnica velikega duhovnika",
+    "description": "Zakladnica velikega duhovnika, pod tlemi za darove. Vse tam spodaj so podarili bogu in nikoli več vzeli ven.",
+    "mapHint": "Črte kažejo tempeljsko dvorišče in stopnice, ki vodijo pod tla za darove."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Notranje svetišče",
+    "description": "Zapečatena soba v srcu templja. Veliki duhovnik je šel vanjo enkrat na dan, da je umil boga in ga oblekel.",
+    "mapHint": "Hodniki vodijo mimo tempeljskih kleti do zapečatenih vrat – skozi so smeli le najvišji duhovniki."
+  },
+  "master_1": {
+    "name": "Velika piramida v Gizi",
+    "description": "Velika piramida. Dvajset let kamenja in cel kraj ob njej, ki je delavce hranil s kruhom in pivom."
+  },
+  "master_2": {
+    "name": "Knjiga mrtvih",
+    "description": "Ni ena knjiga, ampak zbirka urokov, prepisanih po naročilu. V cenejših je ostal prazen prostor, kamor spada tvoje ime."
+  },
+  "master_3": {
+    "name": "Prekletstvo faraonov",
+    "description": "Slavno prekletstvo so si leta 1923 izmislili časopisi. Egipčani so grobnice varovali z vrati in papirji."
+  },
+  "master_4": {
+    "name": "Nefertarijina grobnica",
+    "description": "Nefertarijina grobnica, najlepše poslikana soba v Egiptu. Barve so zmleli iz kamna – azurit, malahit, oker."
+  },
+  "master_treasure_tomb": {
+    "name": "Faraonov skrivni zaklad",
+    "description": "Kraljev skrivni zaklad, tam, kjer zemljevidi obupajo. Kar so z njim zakopali, je še vedno spodaj.",
+    "mapHint": "Kraljeva kartuša označuje en rob, pot pa se konča daleč zunaj, pod odprtim peskom."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Ozirisova dvorana",
+    "description": "Ozirisova dvorana. Bog poplave in žita – kar gre tu pod zemljo, naj bi se spet vrnilo.",
+    "mapHint": "Pod kraljevimi sobanami se zemljevid spušča vse globlje, v dvorano z obredi za mrtve."
+  },
+  "wizard_1": {
+    "name": "Rajevo potovanje sonca",
+    "description": "Ra ob sončnem zahodu odide pod svet in mora prečkati dvanajst ur teme. Egipčani so zapisali, kaj se zgodi v vsaki uri."
+  },
+  "wizard_2": {
+    "name": "Memnonova kolosa",
+    "description": "Dva sedeča velikana Amenhotepa III. Grki so se odločili, da sta nekdo drug, in to ime se jih drži že dva tisoč let."
+  },
+  "wizard_3": {
+    "name": "Maatina soba",
+    "description": "Soba boginje Maat. Ona je red vseh stvari in njeno edino nojevo pero je merilo za vse drugo."
+  },
+  "wizard_4": {
+    "name": "Večna piramida",
+    "description": "Obloga je bila iz zglajenega apnenca, bela kot sol, tako natančno obdelana, da se je bleščala že dan hoje daleč."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Trezor bogov",
+    "description": "Kjer je tempelj hranil, kar je pripadalo bogovom. Nihče ni smel vstopiti brez prave stvari v rokah.",
+    "mapHint": "Nobena oznaka na tem koščku ni iz sveta ljudi – kar koli kaže, so tja postavili bogovi."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Kraljestvo vesoljnih sil",
+    "description": "Zvezdni zemljevidi čez ves strop, naslikani, da bi mrtvi ponoči vedeli, koliko je ura. V jašku še visi nekogaršnja vrv.",
+    "mapHint": "Za trezorjem bogov se črte razcepijo v zvezdne poti, kjer kot relikvije hranijo sile življenja in kaosa."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Prestol večnosti",
+    "description": "En sedež v sredini in dvainštirideset sodnikov okoli njega. Vsak te nekaj vpraša, ti pa moraš odgovoriti z ne.",
+    "mapHint": "Vse zvezdne poti na tem koščku se stečejo k enemu samemu sedežu v samem srcu kraljestva bogov."
+  }
+}

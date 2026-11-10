@@ -1,0 +1,51 @@
+/**
+ * The languages the game ships, each named in its own language for the picker. One entry per folder in
+ * `public/locales`. English and Dutch are written by hand and always complete; every other language may lag
+ * behind them, and a key it lacks falls back to English.
+ */
+export const LANGUAGES = [
+  { code: "en", name: "English" },
+  { code: "nl", name: "Nederlands" },
+  { code: "de", name: "Deutsch" },
+  { code: "fr", name: "Français" },
+  { code: "es", name: "Español (Latinoamérica)" },
+  { code: "es-ES", name: "Español (España)" },
+  { code: "pt-BR", name: "Português (Brasil)" },
+  { code: "pt-PT", name: "Português (Portugal)" },
+  { code: "it", name: "Italiano" },
+  { code: "pl", name: "Polski" },
+  { code: "cs", name: "Čeština" },
+  { code: "sk", name: "Slovenčina" },
+  { code: "hu", name: "Magyar" },
+  { code: "ro", name: "Română" },
+  { code: "bg", name: "Български" },
+  { code: "el", name: "Ελληνικά" },
+  { code: "ru", name: "Русский" },
+  { code: "uk", name: "Українська" },
+  { code: "be", name: "Беларуская" },
+  { code: "hr", name: "Hrvatski" },
+  { code: "sr", name: "Српски" },
+  { code: "bs", name: "Bosanski" },
+  { code: "sl", name: "Slovenščina" },
+  { code: "mk", name: "Македонски" },
+  { code: "sq", name: "Shqip" },
+  { code: "lt", name: "Lietuvių" },
+  { code: "lv", name: "Latviešu" },
+  { code: "et", name: "Eesti" },
+  { code: "fi", name: "Suomi" },
+  { code: "sv", name: "Svenska" },
+  { code: "da", name: "Dansk" },
+  { code: "nb", name: "Norsk bokmål" },
+  { code: "is", name: "Íslenska" },
+  { code: "mt", name: "Malti" },
+  { code: "tr", name: "Türkçe" },
+  { code: "ca", name: "Català" },
+  { code: "eu", name: "Euskara" },
+  { code: "gl", name: "Galego" },
+  { code: "cy", name: "Cymraeg" },
+  { code: "ga", name: "Gaeilge" },
+  { code: "fy", name: "Frysk" },
+  { code: "id", name: "Bahasa Indonesia" },
+] as const satisfies readonly { code: string; name: string }[]
+
+export const LANGUAGE_CODES: string[] = LANGUAGES.map(language => language.code)

@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Stien",
+    "bronze": "Brûns",
+    "silver": "Sulver",
+    "gold": "Goud",
+    "divine": "Godlik"
+  },
+  "sell_stone_1": {
+    "name": "Brutsen Ostrakon",
+    "description": "In brutsen skerf ierdewurk mei oefenoantekeningen fan in skriuwer — de letters te ferfage om te lêzen."
+  },
+  "sell_stone_2": {
+    "name": "Barsten Klaaikrûk",
+    "description": "In krûk foar nôt of bier, skuord troch it gewicht fan ieuwen."
+  },
+  "sell_stone_3": {
+    "name": "Fersliten Reiden Sandaal",
+    "description": "Weven út papyrusreid, de soal tin fersliten troch it deistich kuierjen fan in ferjitten arbeider."
+  },
+  "sell_stone_4": {
+    "name": "Ferfage Linnen Stripe",
+    "description": "In skuorde stripe ûnferve linnen, fan it soarte dat einleaze kearen om de deaden wikkele waard — of brûkt om in seil te meitsjen."
+  },
+  "sell_stone_5": {
+    "name": "Brutsen Fjoerstiennen Mes",
+    "description": "In slepen mes fan fjoerstien, ôfbrutsen oan 'e punt. Goedkeap makke, noch goedkeaper ferfongen."
+  },
+  "sell_bronze_1": {
+    "name": "Bûgd Brûnzen Amulet",
+    "description": "In goedkeap hingerke foar beskerming, skeef getten en nea rjochtset."
+  },
+  "sell_bronze_2": {
+    "name": "Ferwaarre Brûnzen Spegel",
+    "description": "Eartiids glêd genôch om dysels yn te sjen; no troebel grien troch de jierren."
+  },
+  "sell_bronze_3": {
+    "name": "Dofbrûnzen Fiskheak",
+    "description": "It ark fan in fisker, oerboard ferlern op 'e Nyl lang foardat it grêf fersegele waard."
+  },
+  "sell_bronze_4": {
+    "name": "Lyts Brûnzen Klokje",
+    "description": "Bedoeld om oan in timpeldoar of in dûnseres har ankel te hingjen — it klinkt net mear suver."
+  },
+  "sell_bronze_5": {
+    "name": "Ferkleurde Brûnzen Ring",
+    "description": "In ienfâldige ring, eartiids foar in finger dy't al lang ta stof fergien is."
+  },
+  "sell_silver_1": {
+    "name": "Ferkleurde Sulveren Ankh",
+    "description": "In teken fan libben, dof wurden troch ieuwen ûnder de grûn."
+  },
+  "sell_silver_2": {
+    "name": "Sulveren Kohlstokje",
+    "description": "In slank stokje dat eartiids de eagen fan de riken ferve — de kohl is al lang fuort."
+  },
+  "sell_silver_3": {
+    "name": "Ynduwde Sulveren Skaal",
+    "description": "In lyts offerskaaltsje, oan ien kant ynduwd doe't it plafond derboppe it op it lêst begoun."
+  },
+  "sell_silver_4": {
+    "name": "Sulveren Hierspjeld",
+    "description": "Ienfâldich en sûnder fersiering, hold eartiids it hier byinoar fan immen dy't syn namme kwyt is."
+  },
+  "sell_silver_5": {
+    "name": "Fersliten Sulveren Earmbân",
+    "description": "In tinne sulveren bân mei in brutsen slúter. Net fyn genôch foar in ealman, te fyn foar in arbeider."
+  },
+  "sell_gold_1": {
+    "name": "Lyts Gouden Kralt",
+    "description": "Ien kralt fan in grêfketting, lang lyn ferspraat."
+  },
+  "sell_gold_2": {
+    "name": "Stikje Blêdgoud",
+    "description": "In splinter blêdgoud, fan it gesicht fan in byld ôfpeuterd troch grêfrôvers, ieuwen foardat do kamst."
+  },
+  "sell_gold_3": {
+    "name": "Tinne Gouden Earring",
+    "description": "Tin slein om it goud fan in ealman fierder te rekken."
+  },
+  "sell_gold_4": {
+    "name": "Skerf mei Goudspikkels",
+    "description": "In brutsen stik fergule pleisterwurk, mei spikkeltsjes echt goud dy't der noch op plakke."
+  },
+  "sell_gold_5": {
+    "name": "Skansearre Gouden Segelring",
+    "description": "In segelring dêr't de gravuere fan te fersliten is om te herkennen — wa't er ek by hearde, is ferjitten."
+  },
+  "sell_divine_1": {
+    "name": "Ferfage Lapis-skarabee",
+    "description": "Snien út djoere lapis lazuli, fan fier helle foar de werberte fan in farao. De kleur is mei de ieuwen ferfage."
+  },
+  "sell_divine_2": {
+    "name": "Karneoalen Each-amulet",
+    "description": "In beskermjend each snien út bloedread karneool, bedoeld om ûnheil yn it hjirneimels ôf te kearen."
+  },
+  "sell_divine_3": {
+    "name": "Turkoaze Ynlechstikje",
+    "description": "Ien inkeld tegeltsje fan in stikkene mozayk, eartiids part fan it byld fan in god op in timpelmuorre."
+  },
+  "sell_divine_4": {
+    "name": "Albasten Kanopyske Skerf",
+    "description": "In brutsen stik fan in krûk foar de bewarre organen fan in farao — djoere stien foar in grimmich doel."
+  },
+  "sell_divine_5": {
+    "name": "Obsidiaanen Rituelmes",
+    "description": "Fulkanysk glês, slipe ta in mes foar seremoanjes, nea bedoeld foar de striid — allinnich foar de timpel."
+  }
+}
