@@ -112,7 +112,16 @@ export default defineConfig({
           // so 27 splash PNGs in the precache were 0.6 MB nobody read.
           // The Lock editor's web worker carries a second copy of the world and the web walk for a develop-mode
           // tool: fetched when the editor's web mode opens, never precached for players.
-          globIgnores: ["**/apple-splash-*.png", "**/webCheck.worker-*.js"],
+          // The icons and og-image are listed by the plugin itself (manifest icons, includeAssets) with a revision
+          // of their own. Globbed as well, the same URL shows up twice with two revisions, workbox throws while
+          // the worker starts, and what installs is a worker with no precache and no routes: nothing offline.
+          globIgnores: [
+            "**/apple-splash-*.png",
+            "**/webCheck.worker-*.js",
+            "pwa-*.png",
+            "maskable-icon-*.png",
+            "og-image.png",
+          ],
           // The whole game has to be playable offline, mosaic window included, so the stained-glass
           // artwork is precached — and the ceiling covers it UNOPTIMIZED. sharp is an optional peer
           // dep: when it fails to install (Linux CI) the image optimizer skips silently and the raw
