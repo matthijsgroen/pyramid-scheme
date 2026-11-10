@@ -483,7 +483,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
-## Nobleman — thirty-four
+## Nobleman — thirty-three
 
 The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
 first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
@@ -506,44 +506,6 @@ The last nine are the house's own kinds, new with its activities ([themed-rooms.
 § Junior): each has a primitive of its own in `renderProp.py` and a guarded block in `art/rebuild.sh`. The
 banquet table and the bed are two cells across, so their frame is landscape three by two; the harp and the
 potted tree stand a cell taller, so theirs is portrait two by five.
-
-### `junior/pillar` — a sandstone palmiform column, painted capital
-
-**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). The first roll came back a palm TREE, copying the default scaffold's splayed fronds at the floor's value; the scaffold is now `--contents=palmiform`, fronds upright and bound.
-
-**Attach:**
-
-1. `~/tile-previews/palm-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a PALMIFORM COLUMN, carved stone, painted. The round shaft is dressed SANDSTONE; the low disc
-under it is its BASE; the five rings round the top of the shaft are BANDS; the tall block flaring a
-little above them is the CAPITAL, palm fronds carved standing UPRIGHT side by side, bound tight to the
-shaft by the bands, their tips curling out only slightly at the very top; the square slab on top is the
-ABACUS. It is a column, not a tree: nothing spreads, nothing droops, every frond is carved stone pressed
-close against the next.
-
-The shaft, base and abacus are orange sandstone a clear step DARKER than the floor: #7e5230 on the
-shaft's face, #8a5a30 on the top faces, #6e4428 in shade, never as light as the floor #e2a86f. The bands
-are painted alternately red ochre #8a3a2a and Egyptian blue #2a5a9a. The fronds are painted leaf green
-#3b6b45, each frond's midrib a darker line #2f5a3c and its tip a touch lighter #4a7a50. A thin copper
-edge #8a4022 on the top band, gone verdigris #4f9a86.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold palm --contents=palmiform --spin=22 --colour=#7e5230 --colour-leaf=#3b6b45 --colour-accent=#2a5a9a --floor=#e2a86f
-yarn import-tile art/masters/props/junior/pillar.webp --tier=junior --name=pillar --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `junior/shelf` — a cedar linen press, folded linen
 
