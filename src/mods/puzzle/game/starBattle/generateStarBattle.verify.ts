@@ -168,9 +168,9 @@ describe.each(FAMILIES)("generateStarBattle for $name", ({ config, tiers }) => {
    * The region map is the whole clue, at every tier.
    *
    * A board carries no givens and no hatching — nothing but where the boundaries run — which is what the
-   * family's first draft got wrong (design doc §4). A board that shipped anything else would be a board
-   * doing some of the player's reasoning for them, so this guards the claim directly: the puzzle is a size,
-   * a quota and a region map, and every square is the player's to fill.
+   * family's first draft got wrong (star-battle.md: generation). A board that shipped anything else would be
+   * a board doing some of the player's reasoning for them, so this guards the claim directly: the puzzle is a
+   * size, a quota and a region map, and every square is the player's to fill.
    */
   it.each(tiers)("gives a %s board nothing but its region map", { timeout: 60_000 }, tier => {
     const options = config[tier]

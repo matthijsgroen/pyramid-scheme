@@ -17,8 +17,8 @@ import {
 } from "./techniques"
 
 /**
- * The guard on §3.3 of the design doc: **a rung must never say something the answer disagrees with, from any
- * state a player can be in.**
+ * The soundness guard star-battle.md asks for from the first commit: **a rung must never say something the
+ * answer disagrees with, from any state a player can be in.**
  *
  * Generation solves each board once, along one path, so it only exercises the states that path visits. A
  * player reaches states it never sees — the same marks in a different order, or more of them. A rung that is
