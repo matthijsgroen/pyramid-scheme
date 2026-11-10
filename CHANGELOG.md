@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Support for 42 languages.
 
+### Changed
+
+- Walls stand taller and show their murals; they fade when you walk behind them.
+
 ### Fixed
 
 - Standing in a room's doorway shows the arrow into the room again.

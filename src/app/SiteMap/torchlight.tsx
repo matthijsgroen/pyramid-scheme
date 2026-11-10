@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react"
 import type { FloorGrid, Tileset } from "@/game/siteTypes"
-import { CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
+import { CELL, FACE_H, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
 import { ClipLayer } from "./htmlLayers"
 import { boundsOf, type Rect } from "./tileRegions"
 import { tierPalette } from "./tileMaterials"
@@ -132,7 +132,7 @@ export const LitPlace = ({
   /** Which light this is. The map is read by data attribute, and a test counting the lamp must not
    * also count the daylight. */
   source?: "torch" | "beam"
-  /** Reach a wall band's worth ABOVE every lit cell, whether or not the cell north of it is lit.
+  /** Reach a whole drawn face (`FACE_H`) ABOVE every lit cell, whether or not the cell north of it is lit.
    *
    * For the pass that falls on what is STANDING. A prop is bottom-anchored in its cell and a face band
    * taller than it (`PROP_H`), and the explorer's head clears their own cell by about twenty units — so a
@@ -153,18 +153,19 @@ export const LitPlace = ({
     // Whether this cell's own north band is part of the light: always on the pass that reaches over
     // what is standing, and otherwise only where the cell above is lit too.
     const bandAbove = (r: number, c: number) => headroom || joinsTo.has(`${r - 1},${c}`)
+    // The pass over what stands reaches the whole drawn face, which rises above its gap.
+    const band = headroom ? FACE_H : WALL_H
     return [...keys].flatMap(key => {
       const [r, c] = key.split(",").map(Number)
       const parts: Rect[] = [[cellLeft(c), cellTop(r), CELL, CELL]]
-      if (bandAbove(r, c)) parts.push([cellLeft(c), cellTop(r) - WALL_H, CELL, WALL_H])
+      if (bandAbove(r, c)) parts.push([cellLeft(c), cellTop(r) - band, CELL, band])
       if (joinsTo.has(`${r},${c - 1}`)) {
         parts.push([cellLeft(c) - SIDE_W, cellTop(r), SIDE_W, CELL])
         // And the little square between two bands, which is the SEAM OF THE BACK WALL: two lit cells
         // side by side each carry their own band, and the wall runs on through the gap between them.
         // Filling both bands and not the seam leaves an unlit slit standing in the wall at every
         // column of a lit room — so the seam belongs to the light wherever both bands do.
-        if (bandAbove(r, c) && bandAbove(r, c - 1))
-          parts.push([cellLeft(c) - SIDE_W, cellTop(r) - WALL_H, SIDE_W, WALL_H])
+        if (bandAbove(r, c) && bandAbove(r, c - 1)) parts.push([cellLeft(c) - SIDE_W, cellTop(r) - band, SIDE_W, band])
       }
       return parts
     })

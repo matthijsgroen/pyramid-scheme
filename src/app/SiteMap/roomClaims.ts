@@ -598,13 +598,20 @@ export const cellFloorAt = (
 /** Which cells the map paints as floor and which as wall. Exported for tests: it is where the claim
  * rules above meet the wall model, and asserting on cells beats sniffing rendered SVG. */
 
-export const tileRegionsFor = (grid: FloorGrid, claims: RoomClaims, ownedKeys?: ReadonlySet<string>): TileRegions =>
+/** `arches` names the cells whose north gap has an arch standing in it, as `"row,col"`. */
+export const tileRegionsFor = (
+  grid: FloorGrid,
+  claims: RoomClaims,
+  ownedKeys?: ReadonlySet<string>,
+  arches?: ReadonlySet<string>
+): TileRegions =>
   buildTileRegions(
     grid.rows,
     grid.cols,
     (r, c) => cellFloorAt(grid, claims, ownedKeys, r, c),
     (r, c, dir) => isPassable(grid, claims, r, c, dir),
-    floorTier(grid)
+    floorTier(grid),
+    (r, c) => !!arches?.has(`${r},${c}`)
   )
 
 // A corridor is a "corner" (and thus a valid click target for corner-reveal/hidden-

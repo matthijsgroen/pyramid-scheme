@@ -169,9 +169,14 @@ glowing on a dark one.
 
 The three light ranks are told apart by hue — warm limestone, orange sandstone, cool silver — and by their
 finish: the merchant's stone is rough and cluttered, the nobleman's crisp, dressed and decorated. The two dark
-ones by their metal. Steps, measured by `yarn rank-colour`: **the wall face at least 25 L\* off the floor** (a light
-rank's face is shadowed to about 30 with `faceNight`) and **the props at least 25 L\* off it**, in either
+ones by their metal. Steps, measured by `yarn rank-colour`: **the props at least 25 L\* off the floor**, in either
 direction.
+
+**The wall face is shown as painted.** It holds no step against the floor: its own dark base band and the
+shadow it throws on the floor in front of it mark where the wall stands, and a face is drawn a full cell
+tall (`FACE_H`, the art's own 8:1), rising above its gap. A rank may still draw its walls darker than its
+floor's night with `faceNight` — a look chosen by eye per rank, not a number solved for: the merchant's
+limestone walls stay a shade darker, the nobleman's murals are shown as painted.
 
 ## Light and the map code
 
@@ -191,7 +196,7 @@ direction.
 
 The method is the one in `docs/instructions/map-rendering.md` § Measuring: off the art composited through
 the renderer's own operators, read as L\*, chroma and hue angle. `yarn rank-colour` (`scripts/rankColour.ts`)
-composites each rank's committed floor and wall-face art, with its metal and prop tokens, through the
+composites each rank's committed floor art, with its metal and prop tokens, through the
 renderer's wash; the rendered page is read separately in Storybook for sign-off, and the two differ by
 about 1–2 L\*. It prints, per rank:
 
@@ -201,22 +206,23 @@ about 1–2 L\*. It prints, per rank:
 - marker against floor, props against floor
 
 **Master's numbers are the bar.** A rank is done when its metal keeps at least master's chroma after the
-wash, its ground-to-metal contrast is at least master's, the marker holds 3:1, its wall face and its props
-stand at least 25 L\* off the floor (§ Light and dark floors) — and the user signs it off on screenshots of a real floor in the
-game, not on loose tiles.
+wash, its ground-to-metal contrast is at least master's, the marker holds 3:1, its props stand at least
+25 L\* off the floor (§ Light and dark floors) — and the user signs it off on screenshots of a real floor in the
+game, not on loose tiles. The wall face is judged on those screenshots alone (§ Light and dark floors).
 
 Current measurement:
 
 ```
-┌─────────┬──────────┬──────────┬────────────┬──────────────┬──────────┬───────────┬────────────┬──────────────────┬─────────────┐
-│ (index) │ floor L* │ floor C* │ metal C*   │ ground→metal │ marker   │ prop      │ face step  │ solved faceNight │ hue to next │
-├─────────┼──────────┼──────────┼────────────┼──────────────┼──────────┼───────────┼────────────┼──────────────────┼─────────────┤
-│ starter │ 56       │ 16.6     │ '39.7 LOW' │ '26 LOW'     │ '5.2 ok' │ '14 LOW'  │ '30 ok'    │ 0.55             │ 18.4        │
-│ junior  │ 29.8     │ 20       │ '26.1 LOW' │ '9.1 LOW'    │ '6.8 ok' │ '1.6 LOW' │ '10.4 LOW' │ 1                │ 157.9       │
-│ expert  │ 29       │ 5.8      │ '7.3 LOW'  │ '0.6 LOW'    │ '7 ok'   │ '0.6 LOW' │ '10.2 LOW' │ 1                │ 178         │
-│ master  │ 25.3     │ 5.8      │ '47.5 ok'  │ '31.8 ok'    │ '8 ok'   │ '31.8 ok' │ '8 LOW'    │ 1                │ 80.1        │
-│ wizard  │ 28       │ 12.9     │ '22.9 LOW' │ '2 LOW'      │ '7.2 ok' │ '5.8 LOW' │ '10 LOW'   │ 1                │ ''          │
-└─────────┴──────────┴──────────┴────────────┴──────────────┴──────────┴───────────┴────────────┴──────────────────┴─────────────┘
+┌─────────┬──────────┬──────────┬────────────┬──────────────┬───────────┬───────────┬─────────────┐
+│ (index) │ floor L* │ floor C* │ metal C*   │ ground→metal │ marker    │ prop      │ hue to next │
+├─────────┼──────────┼──────────┼────────────┼──────────────┼───────────┼───────────┼─────────────┤
+│ starter │ 56       │ 16.6     │ '39.7 LOW' │ '26 LOW'     │ '5.2 ok'  │ '32.8 ok' │ 13.9        │
+│ junior  │ 55.1     │ 32.4     │ '43.3 LOW' │ '18 LOW'     │ '5 ok'    │ '1 LOW'   │ 153.4       │
+│ expert  │ 37.8     │ 5.1      │ '7.3 LOW'  │ '9.3 LOW'    │ '5.1 ok'  │ '9.3 LOW' │ 178         │
+│ master  │ 25.3     │ 5.8      │ '47.5 ok'  │ '31.8 ok'    │ '8 ok'    │ '31.8 ok' │ 83.3        │
+│ wizard  │ 16.6     │ 19.1     │ '32.6 LOW' │ '25.7 LOW'   │ '10.5 ok' │ '42.6 ok' │ ''          │
+│ cave    │ 26.9     │ 2.5      │ '7 LOW'    │ '17.7 LOW'   │ '7.6 ok'  │ '25.2 ok' │ ''          │
+└─────────┴──────────┴──────────┴────────────┴──────────────┴───────────┴───────────┴─────────────┘
 ```
 
 In the game, starter_1 floor 0 reads floor L\* 42 — lighter, not yet more colourful: colour arrives with the surface repaint.

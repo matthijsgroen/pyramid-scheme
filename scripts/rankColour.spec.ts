@@ -1,12 +1,10 @@
 import { describe, expect, it } from "vitest"
-import { meanOpaque, measureRank, solveFaceNight, verdict, type RankInput } from "./rankColour"
+import { meanOpaque, measureRank, verdict, type RankInput } from "./rankColour"
 
 const input: RankInput = {
   floorArt: [150, 130, 110],
-  faceArt: [140, 120, 100],
   night: [20, 15, 10],
   nightAlpha: 0.2,
-  faceNight: 0,
   seatingPass: 0.45,
   accent: [200, 60, 40],
   prop: [190, 100, 50],
@@ -24,15 +22,6 @@ describe("measureRank", () => {
     const dark = measureRank({ ...input, floorArt: [30, 28, 25] })
     expect(pale.marker).toBeGreaterThan(3)
     expect(dark.marker).toBeGreaterThan(3)
-  })
-
-  it("solves the face night to the requested step", () => {
-    const faceNight = solveFaceNight(input, 7.5)
-    expect(measureRank({ ...input, faceNight }).faceStep).toBeCloseTo(7.5, 0)
-  })
-
-  it("asks for no face night when the art already steps far enough", () => {
-    expect(solveFaceNight({ ...input, faceArt: [60, 50, 40] }, 7.5)).toBe(0)
   })
 })
 
@@ -60,18 +49,6 @@ describe("verdict", () => {
     const lighter = measureRank({ ...input, floorArt: [40, 35, 30], prop: [240, 200, 120] })
     expect(verdict(darker, darker).prop).toBe(true)
     expect(verdict(lighter, lighter).prop).toBe(true)
-  })
-
-  it("counts a wall face lit above a dark floor as a step, the way it counts one shadowed below", () => {
-    const shadowed = measureRank({ ...input, faceArt: [50, 40, 30] })
-    const lit = measureRank({ ...input, floorArt: [40, 35, 30], faceArt: [200, 170, 110] })
-    expect(verdict(shadowed, shadowed).faceStep).toBe(true)
-    expect(verdict(lit, lit).faceStep).toBe(true)
-  })
-
-  it("fails a wall face too close to its floor to read as a wall", () => {
-    const flat = measureRank({ ...input, faceArt: [140, 120, 100] })
-    expect(verdict(flat, flat).faceStep).toBe(false)
   })
 })
 
