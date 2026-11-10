@@ -189,7 +189,8 @@ export const isSingleCell = ({ cols, rows }: PropFootprint): boolean => cols ===
 // vocabulary rather than a slice of DecorationKind: a stela is not a prop that could stand in the
 // middle of a chamber, and the two must not be confusable
 // (docs/game-design/spritesheet-renderer-prep.md, "Three things a tier dresses"). Resolved as
-// tiles/<tier>/<kind>.png at CELL x WALL_H — the band's own shape, not a square.
+// tiles/<tier>/<kind>.png, a cell wide at the tile's own aspect: 2:1 for a low item, up to the face's
+// brick for a tall one (`wallItemFrame`).
 export const WALL_DECORATION_KINDS = [
   "niche",
   "stela",

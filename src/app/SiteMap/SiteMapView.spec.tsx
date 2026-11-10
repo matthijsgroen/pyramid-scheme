@@ -8,7 +8,19 @@ import { footprintPath } from "./tileRegions"
 import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY, nodeArtOffset } from "./nodeArt"
 import { ExplorerFigure } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
-import { ARCH_H, ARCH_RISE, CELL, FACE_H, PROP_H, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
+import {
+  ARCH_H,
+  ARCH_RISE,
+  CELL,
+  FACE_H,
+  PROP_H,
+  SIDE_W,
+  WALL_FACE_H,
+  WALL_H,
+  cellCenter,
+  cellLeft,
+  cellTop,
+} from "./mapScale"
 import { ALL_STATES } from "./tileRegions"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
 import { tierPalette } from "./tileMaterials"
@@ -73,6 +85,13 @@ const urlOf = (el: HTMLElement) => /url\(["']?(.*?)["']?\)/.exec(el.style.backgr
  * A clipped sprite is laid out over its CLIP's box, never over the whole map — a map-sized layer has to be
  * rasterised at the map's size, which is what killed the renderer on a phone — so its art is placed inside
  * that box by `background-position` and the box's own offset puts it back in map space. */
+/** A tile size every tile reports while set, so a test can hang a made-up tall tile. */
+const sizeOverride = vi.hoisted(() => ({ current: undefined as readonly [number, number] | undefined }))
+vi.mock("./tileAssets", async importOriginal => {
+  const real = await importOriginal<typeof import("./tileAssets")>()
+  return { ...real, tileSize: (url: string) => sizeOverride.current ?? real.tileSize(url) }
+})
+
 const boxOf = (el: HTMLElement) => {
   if (el.style.clipPath) {
     const [bx, by] = [parseFloat(el.style.left), parseFloat(el.style.top)]
@@ -2985,6 +3004,19 @@ describe("SiteMapView — a prefab room", () => {
     const box = boxOf(niche)
     expect(box.h).toBe(WALL_H)
     expect(box.y - face.top).toBe(face.bottom - (box.y + box.h))
+  })
+
+  it("a tall wall item fills the face under its cap", () => {
+    sizeOverride.current = [112, 96]
+    try {
+      const { container } = render(<SiteMapView grid={grid} explorerPos={PREFAB_FORK} />)
+      const tall = boxOf(container.querySelector<HTMLElement>('[data-wall-item-at="3,4"] [data-wall-item]')!)
+      expect(tall.w).toBe(CELL)
+      expect(tall.h).toBe(48)
+      expect(tall.y).toBeCloseTo(cellTop(3) - WALL_FACE_H)
+    } finally {
+      sizeOverride.current = undefined
+    }
   })
 
   it("a mirrored room's ground steps draw flipped, under the explorer", () => {

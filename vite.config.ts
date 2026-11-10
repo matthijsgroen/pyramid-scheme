@@ -8,6 +8,7 @@ import path from "node:path"
 
 import info from "./package.json" with { type: "json" }
 import { PRODUCTION_BASE, pwaBuild } from "./scripts/pwaIdentity.ts"
+import { tileSizesPlugin } from "./scripts/tileSizesPlugin.ts"
 
 type WorkerCaches = {
   open: (
@@ -37,6 +38,7 @@ export default defineConfig({
       },
     }),
     htmlPlugin(),
+    tileSizesPlugin(path.resolve(import.meta.dirname, "./src/assets/tiles")),
     tailwindcss(),
     // **A locale edit is invisible until the page is reloaded**, which costs more than it sounds: i18next
     // fetches the files once at startup, and `public/` is outside the module graph, so HMR has nothing to

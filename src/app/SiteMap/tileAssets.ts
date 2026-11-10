@@ -1,4 +1,5 @@
 import type { Tileset } from "@/game/siteTypes"
+import sizes from "virtual:tile-sizes"
 import { type MechanismStyle, mechanismFolders, mechanismStyleOf } from "./mechanismStyle"
 
 // Every tile is one file, the filename is the key, and a missing one simply resolves to undefined
@@ -12,10 +13,17 @@ const urls = {
 
 /** Every tile by `<folder>/<name>`, the folder being everything between `tiles/` and the file. */
 const byTier = new Map<string, string>()
+const sizeByUrl = new Map<string, readonly [number, number]>()
 for (const [path, url] of Object.entries(urls)) {
   const match = /\/tiles\/(.+)\/([^/]+)\.png$/.exec(path)
-  if (match) byTier.set(`${match[1]}/${match[2]}`, url)
+  if (!match) continue
+  const key = `${match[1]}/${match[2]}`
+  byTier.set(key, url)
+  if (sizes[key]) sizeByUrl.set(url, sizes[key])
 }
+
+/** A tile's stored [width, height] in pixels, known before it loads, for a sprite drawn at its own aspect. */
+export const tileSize = (url: string): readonly [number, number] | undefined => sizeByUrl.get(url)
 
 /**
  * THE ART OF A RANK, or the art every rank shares — and nothing else.
