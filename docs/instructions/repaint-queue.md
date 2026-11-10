@@ -483,7 +483,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
-## Nobleman — thirty-one
+## Nobleman — thirty
 
 The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
 first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
@@ -506,39 +506,6 @@ The last nine are the house's own kinds, new with its activities ([themed-rooms.
 § Junior): each has a primitive of its own in `renderProp.py` and a guarded block in `art/rebuild.sh`. The
 banquet table and the bed are two cells across, so their frame is landscape three by two; the harp and the
 potted tree stand a cell taller, so theirs is portrait two by five.
-
-### `junior/hanging` — a dyed linen hanging with a woven border
-
-**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
-
-**Attach:**
-
-1. `~/tile-previews/hanging-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a LINEN HANGING. The two uprights are POSTS; the bar across their tops is the POLE; the cloth
-hanging from it is the LINEN; the marked band along its edge is the BORDER.
-
-The linen is DYED a deep red ochre #8a3a2a, falling in soft even folds, #6a2a20 in the shade of each
-fold. The border is woven in bands of Egyptian blue #2a5a9a and a thin leaf green #3b6b45, with one
-narrow line of undyed linen #d8c8a8, crisp. The posts and pole are oiled cedar #6b4226, with small copper
-caps #8a4022 at the pole's ends gone verdigris #4f9a86.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold hanging --contents=linen --spin=38 --colour=#6b4226 --colour-cloth=#8a3a2a --floor=#e2a86f
-yarn import-tile art/masters/props/junior/hanging.webp --tier=junior --name=hanging --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `junior/offeringTable` — a laid table with bread, fruit and lotus
 
