@@ -589,8 +589,9 @@ a haunch under the frame and a paw at the floor, the paws pointing right toward 
 
 The frame, footboard and legs are dark oiled CEDAR #6b4226, #7a4a2a on its top faces and #4a2c1a in
 shade; the legs carved as a lion's, muscled at the haunch, the paws with their toes. The footboard
-carries a painted panel of the household god BES between two rows of rosettes, in red ochre #8a3a2a,
-Egyptian blue #2a5a9a and black on a yellow ground #c9a040. The cover is DYED linen, a deep blue #2a4a7a,
+is seen ALMOST EDGE-ON, exactly as the reference draws it: its painted face points away from the viewer
+and stays unseen; only its narrow cedar edge shows, with one thin band of red ochre #8a3a2a and Egyptian
+blue #2a5a9a along it. Do not turn the footboard toward the viewer. The cover is DYED linen, a deep blue #2a4a7a,
 folded smooth, with a thin cream #d8c8a8 stripe along its edge.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
