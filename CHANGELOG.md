@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- On desktop, clicking the camp's map points you to the expedition list.
+
 ## 0.46.0 - 2026-11-10
 
 ### Added
