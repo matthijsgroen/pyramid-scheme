@@ -483,7 +483,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
-## Nobleman — nine
+## Nobleman — eight
 
 The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
 first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
@@ -572,38 +572,6 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 ```
 
 **Import:** `yarn import-tile art/masters/props/junior/stela-thoth.webp --tier=junior --name=stela-thoth --slot=wall --filter=smooth --headroom=0.18 --trim`
-
-### `junior/wigStand` — a wig on a carved head, on a cedar stand
-
-**Attach:**
-
-1. `~/tile-previews/wigStand-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a WIG STAND. The round disc at the bottom is the FOOT; the upright is the POST; the oval at
-the top is a carved wooden HEAD; the dark mass over and around it is a WIG: its crown on top, a long
-lappet falling down each side of the face, and its back hanging behind.
-
-The foot and post are dark CEDAR #6b4226. The head is plastered wood in a warm buff #9a7a5a, the face
-left smooth and plain, with no features painted on it. The wig is black hair #2a1f18 in fine even braids
-running straight down, bound at the ends of the lappets with thin bands of red ochre #8a3a2a and a small
-copper bead gone verdigris.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold wigStand --spin=10 --colour=#6b4226 --colour-limestone=#9a7a5a --floor=#e2a86f
-yarn import-tile art/masters/props/junior/wigStand.webp --tier=junior --name=wigStand --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `junior/pottedTree` — a fig tree in a painted pot
 
