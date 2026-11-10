@@ -11,7 +11,7 @@ import { waterskinHeal } from "@/mods/trap/game/waterskin"
 // slice (useModState). The four trap perks (max-health, armor, trap-insight, pack-mule) are read
 // here too — derived from the tomb treasures held via the earned-perks seam, never stored — so
 // toggling trap off drops all of it and core names none of it.
-// See collection-and-detector-design.md §7.4 and game/perkTotals.ts.
+// See collection-and-detector-design.md (perks are derived from treasures held) and game/perkTotals.ts.
 
 const BASE_MAX_HEALTH = 6
 const MAX_HEALTH_CAP = 12

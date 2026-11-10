@@ -186,7 +186,7 @@ export type LightbeamPuzzle = LightbeamPuzzleData & {
   /**
    * The modes this board was built to, in canonical order.
    *
-   * Carried as data rather than logged, for the reason §7 gave about its goals: a fallback that fires
+   * Carried as data rather than logged, for the reason lightbeam.md gives (why the board carries its modes): a fallback that fires
    * silently makes the whole pool decorative while every measurement still looks fine. A spec can assert what
    * a tier actually delivered, and the playtest bench can show what a board was meant to be.
    */
@@ -310,7 +310,7 @@ const buildGoldenPath = (
 
   // Legs share the grid, so their length has to know how many of them there are — and a crossing route
   // needs legs of DIFFERENT lengths, since a fold of equal legs comes back alongside its own line and
-  // stops one square short for ever (§5.2). Both derivations are the other generator's, unchanged.
+  // stops one square short for ever (lightbeam.md: crossings). Both derivations are the other generator's, unchanged.
   const spread = mayCross ? Math.ceil((turns + 1) / 2) : turns + 1
   const budget = Math.max(mayCross ? MIN_LEG + 1 : MIN_LEG, Math.floor((size - 1) / Math.max(1, spread)))
   const lengths = Array.from({ length: Math.max(1, budget - MIN_LEG + 1) }, (_, index) => MIN_LEG + index)
@@ -434,9 +434,9 @@ type Authoring = {
   /**
    * Wall-heavy: close a branch in stone even where the frame would have done it for nothing.
    *
-   * The frame is the cheapest terminator there is, which is why §5.1 measures a shipped board at 0.0–0.1 fixed
-   * walls — and it is also the least legible, because "it left the board" is a weaker sentence than "it hit
-   * that". This turns the preference round.
+   * The frame is the cheapest terminator there is, which is why a corridor left alone ends off the board
+   * rather than in stone — and it is also the least legible, because "it left the board" is a weaker sentence
+   * than "it hit that". This turns the preference round.
    */
   preferStone: boolean
 }
@@ -466,7 +466,7 @@ const occupancyOf = (movable: readonly MovablePiece[]): Occupancy => {
 /**
  * A piece a socket drives, and the states it can be in.
  *
- * **A driven piece is not the player's**, which is the whole reason a socket is worth reaching (§11.2). So it
+ * **A driven piece is not the player's**, which is the whole reason a socket is worth reaching (lightbeam.md). So it
  * is never "undecided": it sits at `resting` until one of its wirings fires, and then it is pinned. That makes
  * it invisible to the configuration space and invisible to the tree's fan-out.
  */
@@ -610,7 +610,7 @@ const corridorDies = (
 
     // A corridor crossing a socket changes the board under itself, so the loop guard starts again. Firing is
     // monotone, so this terminates — and it is what lets a **trap** work: the wrong setting's own light drops
-    // the stone that kills it (§11.1).
+    // the stone that kills it (lightbeam.md: a trap).
     let changed = false
     board.nodes.forEach((socket, index) => {
       if (!met.has(index) && cellKey(socket.at) === key) {
@@ -1301,7 +1301,7 @@ type Draft = {
   solution: number[]
   nodes: BeamNode[]
   wirings: NodeWiring[]
-  /** Which wiring is the trap, if any — the one §11.1 says must be the only reason a wrong setting fails. */
+  /** Which wiring is the trap, if any — the one lightbeam.md says must be the only reason a wrong setting fails. */
   trapWiring?: number
 }
 
@@ -1394,7 +1394,7 @@ const authorBranches = (
         continue
       }
       // No track fitted. **Reject the draft rather than quietly shipping a turn mirror**: a board that records
-      // `sliderHeavy` and carries no slider is the failure §7.2 describes — a silent fallback that fires often
+      // `sliderHeavy` and carries no slider is the failure lightbeam.md describes — a silent fallback that fires often
       // makes the whole pool decorative while every measurement still looks fine. Drafts are cheap here; a
       // dishonest board is not.
       return "noTrack"
@@ -1449,7 +1449,7 @@ const authorBranches = (
   if (movable.length < MIN_TAPPABLE) return undefined
   if (solution.some(state => state < 0)) return undefined
 
-  // Switch-heavy's other half: a **trap** (§11.1). One live bend's wrong setting is routed all the way to the
+  // Switch-heavy's other half: a **trap** (lightbeam.md). One live bend's wrong setting is routed all the way to the
   // shrine rather than closed, and then a socket on that corridor drops stone in front of it. The wrong setting
   // dies of its own light, and the trap is the only reason it fails — load-bearing by construction.
   let trapped: { corridor: { at: CellRef; enter: Direction; stop: MirrorAngle }; route: TrapRoute } | undefined
@@ -1545,7 +1545,7 @@ const authorBranches = (
         return undefined
 
   // A corner pair is kept whether or not a beam ends on it: it is there to be *read*, which is the one
-  // exception to §5.1's rule against stone the player cannot spend — the beam spends it, by going through.
+  // exception to lightbeam.md's rule against stone the player cannot spend — the beam spends it, by going through.
   // Kept as a pair or not at all, so a lone wall never reads as an ordinary dead end.
   const kept = new Set([...pruneStone(board, route, movable), ...(decorative.size > 1 ? decorative : [])])
   const fixed: FixedPiece[] = [
@@ -1688,7 +1688,7 @@ const attemptAuthored = (
     }
   }
 
-  // **A piece off the winning beam's line, on every board a tier asked branches of** (§6.1). Without one the
+  // **A piece off the winning beam's line, on every board a tier asked branches of** (lightbeam.md: `noShadow`). Without one the
   // board is solved by following the light and turning whatever it hits, which is the one thing this family's
   // difficulty rests on not being possible. It used to hold by construction, because a tier had one set of
   // dials; a flavour that turns `interactive` down, or one whose branch mirrors all get pruned as unreachable,
@@ -1712,7 +1712,7 @@ const attemptAuthored = (
     return undefined
   }
 
-  // §11.1's acceptance test, as a gate rather than a hope: **take the trap out and the board must stop being a
+  // The trap's acceptance test (lightbeam.md), as a gate rather than a hope: **take the trap out and the board must stop being a
   // puzzle.** Its own measurement is why this is checked rather than assumed — a socket placed on a wrong ray
   // the way shadows are placed produced 23 traps across 120 boards and every one of them was decoration,
   // because the setting it was meant to kill was already dead. Removing a wiring leaves its piece resting for

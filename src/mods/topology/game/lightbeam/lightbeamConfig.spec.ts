@@ -62,7 +62,7 @@ describe.each(difficulties)("at %s", tier => {
 })
 
 /**
- * §6.4's vocabulary ladder, asserted **in aggregate over a tier** rather
+ * lightbeam.md's vocabulary ladder, asserted **in aggregate over a tier** rather
  * than board by board. With modes drawn per board one wizard grid can legitimately out-measure another, and it
  * is the tier that has to grow.
  */
@@ -98,7 +98,7 @@ describe("the tier ramp", () => {
       expect(measured[step].space).toBeGreaterThan(measured[step - 1].space)
   })
 
-  /** Pieces that can stand in the winning beam's way — the count §6 says actually matters. */
+  /** Pieces that can stand in the winning beam's way — the count lightbeam.md says actually matters. */
   it("never shrinks the count of pieces on the route", () => {
     for (let step = 1; step < measured.length; step++)
       expect(measured[step].onRoute).toBeGreaterThanOrEqual(measured[step - 1].onRoute)
@@ -194,7 +194,7 @@ describe("the constraints the table has to respect", () => {
   })
 
   /**
-   * **A tier is a range of boards, not one recipe** (§7.4).
+   * **A tier is a range of boards, not one recipe** (lightbeam.md: flavours vary the dials per board).
    *
    * The regression this guards is the one playtesting reported: every lightbeam board on a tier played the same,
    * because a tier held one set of dials — starter was five turn mirrors and junior was six plus exactly one
@@ -208,7 +208,7 @@ describe("the constraints the table has to respect", () => {
     expect(shapes.size).toBeGreaterThan(2)
   })
 
-  /** Every piece §2 lists reaches the low tiers, one board at a time — that is what the pools are for. */
+  /** Every piece lightbeam.md lists reaches the low tiers, one board at a time — that is what the pools are for. */
   it("puts the family's whole vocabulary within reach of starter and junior", () => {
     const seen = new Set<string>()
     for (const tier of ["starter", "junior"] as const)

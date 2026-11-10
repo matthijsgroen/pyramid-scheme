@@ -1,7 +1,7 @@
 import type { SiteConfig, TreasureReward } from "@/worldGen/types"
 import type { WorldValidator } from "@/worldGen/validate"
 
-// Hieroglyph-owned world-gen finalize (docs/mods/distribution-primitive-design.md, §D): two pieces
+// Hieroglyph-owned world-gen finalize (docs/mods/distribution-primitive-design.md: the mod fills): two pieces
 // of hieroglyph-specific finalize logic kept out of the generic core serializer.
 // scripts/generateWorld.ts calls these before serialization — the sanctioned worldGen→mod crossing
 // (the script already imports mod data).

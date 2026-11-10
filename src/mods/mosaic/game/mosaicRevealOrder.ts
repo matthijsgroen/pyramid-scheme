@@ -6,7 +6,7 @@
 // every traced polygon to a (journey, level) step by that rule.
 //
 // A register therefore completes when its tier is played out, which is what lets a finished panel
-// trigger its own beat. See docs/game-design/story-and-time-brainstorm.md §3.
+// trigger its own beat. See docs/game-design/story-and-time-brainstorm.md: the five-panel mosaic.
 
 import { journeys } from "@/data/journeys"
 import { MOSAIC_PIECES } from "./mosaicPieces.generated"

@@ -11,9 +11,9 @@ import { reservedTreasureIndices } from "./game/reservedTreasureIndices"
 //  - `tombKey` (the tomb treasure: ward keys + location keys): found in tombs, opens pyramid ward
 //    floors, self-gates the tomb's next floor, reveals the next tomb, drives tier unlock. Positional
 //    tomb content (one treasure per floor), placed via this descriptor's `resolveTombTreasure` and
-//    harvested for reachability via `reachabilitySupport` (§E) — core world-gen names neither the
-//    reward type nor the gating currency; this mod owns handler/schema/state + placement + the
-//    reachability facts.
+//    harvested for reachability via `reachabilitySupport` (keys-and-locks-solver.md) — core world-gen
+//    names neither the reward type nor the gating currency; this mod owns handler/schema/state +
+//    placement + the reachability facts.
 //
 // Game-side only (no React). The reward handlers/effects/schemas + progression state (map-piece
 // count, tomb keys, tomb discovery) register app-side (registerModApps → ./app), gated on this mod
@@ -23,13 +23,13 @@ export const tombTreasureMod: ModDescriptor = {
   id: "tomb-treasure",
   currencyDistributions: [MAP_PIECE_CURRENCY],
   currencyMeta: MAP_PIECE_CURRENCY_META,
-  // §E: the reachability facts core must not name — tomb-key harvest, tomb map-piece entry lock,
+  // The reachability facts core must not name (keys-and-locks-solver.md) — tomb-key harvest, tomb map-piece entry lock,
   // tier-unlock ladder. Drops with the mod (a tomb-less world then has no tombs to gate).
   reachabilitySupport: TOMB_TREASURE_REACHABILITY,
-  // §E: tomb-content authoring — floor position → this tomb's `tombKey` perk stream, so core
+  // Tomb-content authoring (keys are positional tomb content) — floor position → this tomb's `tombKey` perk stream, so core
   // world-gen names no reward type. Drops with the mod.
   resolveTombTreasure,
-  // §E: which tomb floors are tier-unlock/location-key (spoken for), so pyramid ward wings skip
+  // Which tomb floors are tier-unlock/location-key (spoken for), so pyramid ward wings skip
   // them without core reading perk types. Drops with the mod.
   reservedTreasureIndices,
   // Sell the wizard_treasure_tomb_c map-piece copy at master_treasure_tomb_b's Fez shop (that copy

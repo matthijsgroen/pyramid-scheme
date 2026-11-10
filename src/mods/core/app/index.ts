@@ -10,7 +10,8 @@ import { CorridorPanel } from "./CorridorPanel"
 import "./treasureChest/plugin"
 import "./keyGate/plugin"
 
-// The corridor detector is the only perk core owns (a hidden corridor is core map structure, §7.1).
+// The corridor detector is the only perk core owns (a hidden corridor is core map structure,
+// collection-and-detector-design.md).
 // Describe it, and derive its level from the earned perks for the merged detector-level accessor.
 // Always registered (core is never toggled off).
 export const DETECTION_CAP = 4

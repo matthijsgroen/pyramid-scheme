@@ -30,7 +30,7 @@ const stepsFor = (puzzle: LightbeamPuzzleData) => {
 }
 
 // One gesture and no undo, which is the whole control scheme: a tap cycles a piece, and tapping round
-// again puts it back (design doc §7). There is no pad, no eraser and nothing to take back, so this screen
+// again puts it back (lightbeam.md: no undo). There is no pad, no eraser and nothing to take back, so this screen
 // is the shell, the board, and nothing in between.
 export const LightbeamPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
@@ -43,7 +43,7 @@ export const LightbeamPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
    *
    * A thicker beam travels the route it just proved, and the shrine flares once it arrives — the board saying
    * what the player did, in the terms the board is already made of. The shell freezes on "solved", so this
-   * has to finish first (docs/instructions/puzzle-screens.md §3): sixteen ticks is a smooth enough sweep for
+   * has to finish first (docs/instructions/puzzle-screens.md: a family may finish before it says "solved"): sixteen ticks is a smooth enough sweep for
    * a route, and a tap is refused while it runs, or a piece cycled mid-run would unlight the board its own
    * win is travelling along.
    */
