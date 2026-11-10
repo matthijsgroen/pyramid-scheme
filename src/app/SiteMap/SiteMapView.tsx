@@ -1310,7 +1310,9 @@ const WallItems = ({ items, patron, walls }: { items: readonly WallItem[]; patro
     {items.map(({ row, col, kind, tier, state }) => {
       const url = patronTileUrl(tier, kind, patron)
       const x = cellLeft(col)
-      const y = cellTop(row) - WALL_H
+      // Centred on the face, which is taller than the band the item is painted for, so the mural and the
+      // face's dark base show above and below it.
+      const y = cellTop(row) - (FACE_H + WALL_H) / 2
       const wash = stateWash[state]
       // Hung on a front wall, it fades with that wall: an item left standing on a faded face floats. Hung
       // on a wall behind one, it is drawn behind it, as everything standing there is.

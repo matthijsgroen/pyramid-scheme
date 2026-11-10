@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Wall decorations sit centred on the taller walls.
+
 ### Fixed
 
 - The game works offline again.
