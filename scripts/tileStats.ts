@@ -18,6 +18,10 @@
  *   `--slot=face` and it is graded as three bands against `wall` / `wallTop` / `wallBase` instead, with
  *   only the brick field deciding the verdict. An OBJECT — prop, wall item, archway, explorer — is held to
  *   the palette's ends and nothing else: it is meant to differ from the stone behind it.
+ * - THE WRONG GROUND. A wall item (`--slot=wall`) hangs on the wall face, not on the floor, so its step is
+ *   printed against the face as the map draws it (`wall` under `faceNight`, the night and the seating
+ *   pass) and never faults: a wall item reads by its own internal contrast — a light frame round a dark
+ *   recess — not by its mean, so it is judged by eye on the wall.
  *
  * A LIGHT rank — one whose floor stands above mid-grey through its own night — turns the object rule over
  * (docs/game-design/visual-direction.md, light and dark floors): an object passes on value when it stands
@@ -62,13 +66,25 @@ const atNight = (palette: TierPalette, colour: Rgb) => {
 
 export const isLightFloor = (palette: TierPalette) => atNight(palette, hexToRgb(palette.slab)) >= LIGHT_FLOOR
 
-/** How far below the floor an object of this mean colour is drawn, in L*: the night, then the seating
- * pass a standing thing takes (`measureRank`'s `seated`). Negative when it is drawn lighter. */
-export const objectStep = (palette: TierPalette, mean: Rgb) => {
+/** L* of a colour drawn standing: the night, then the seating pass a standing thing takes (`measureRank`'s
+ * `seated`). */
+const seatedL = (palette: TierPalette, colour: Rgb) => {
   const { rgb: night, alpha } = parseRgba(palette.shade)
-  const seated = wash(wash(mean, night, alpha), night, alpha * SEATING_PASS)
-  return atNight(palette, hexToRgb(palette.slab)) - toLch(seated).L
+  return toLch(wash(wash(colour, night, alpha), night, alpha * SEATING_PASS)).L
 }
+
+/** How far below the floor an object of this mean colour is drawn, in L*. Negative when it is drawn lighter. */
+export const objectStep = (palette: TierPalette, mean: Rgb) =>
+  atNight(palette, hexToRgb(palette.slab)) - seatedL(palette, mean)
+
+/** L* of the rank's wall face as the map draws it: its near-black at `faceNight` over the face, then the
+ * night and the seating pass, which lie over the face and over what hangs on it alike. */
+export const faceL = (palette: TierPalette) =>
+  seatedL(palette, wash(hexToRgb(palette.wall), hexToRgb(palette.outline), palette.faceNight))
+
+/** How far below the wall face a wall item of this mean colour is drawn, in L*. Negative when it is drawn
+ * lighter; either side reads, so the verdict takes its size. */
+export const wallStep = (palette: TierPalette, mean: Rgb) => faceL(palette) - seatedL(palette, mean)
 
 /** How far a floor's dark detail falls below its body under the night, in L*, from two luminance levels. */
 export const detailStep = (palette: TierPalette, body: number, detail: number) =>
@@ -99,11 +115,13 @@ const main = async () => {
   // are what make it one. Judging its spread the way a floor's is judged called every sill too contrasty.
   const isStep = slot === "sill"
   const isObject = ["prop", "arch", "wall", "explorer"].includes(slot)
+  const isWallItem = slot === "wall"
   const palette = tierPalette[tier]
   if (!palette) throw new Error(`unknown tier: ${tier}`)
 
-  // What this slot is made of. A face is wall, everything else is floor stone.
-  const material = isFace ? palette.wall : palette.slab
+  // What this slot is made of, or hangs on. A face and a wall item are measured against the wall, everything
+  // else against floor stone.
+  const material = isFace || isWallItem ? palette.wall : palette.slab
   const light = isLightFloor(palette)
   const lightest = lightestOf(palette)
   const darkest = lumOf(palette.joint)
@@ -176,7 +194,7 @@ const main = async () => {
     )}% darker than ${darkest}`
   )
   console.log(
-    `hue  mean ${hex(...mean)} against the ${isFace ? "wall's" : "slab's"} ${material}   ${
+    `hue  mean ${hex(...mean)} against the ${isFace || isWallItem ? "wall's" : "slab's"} ${material}   ${
       drift >= 0 ? "+" : ""
     }${Math.round(drift)} warmth`
   )
@@ -187,7 +205,14 @@ const main = async () => {
   const floorGap = at(50) - lumOf(palette.slab)
   // On a light floor the gap is read the way `yarn rank-colour` reads it: L* through the night, below.
   const step = objectStep(palette, mean)
-  if (isObject && light) {
+  const offWall = wallStep(palette, mean)
+  if (isWallItem)
+    console.log(
+      `against the wall it hangs on: ${Math.abs(offWall).toFixed(1)} L* ${offWall >= 0 ? "darker" : "lighter"} at night (judged by eye; the face is L* ${faceL(
+        palette
+      ).toFixed(1)})`
+    )
+  else if (isObject && light) {
     const { C } = toLch(mean)
     console.log(
       `against the floor it stands on: ${Math.abs(step).toFixed(1)} L* ${step >= 0 ? "darker" : "lighter"} at night (wants ${MIN_STEP} darker)   chroma ${C.toFixed(
@@ -223,31 +248,33 @@ const main = async () => {
     console.log(
       `dark detail: p5 sits ${detail.toFixed(1)} L* below the body at night (under ${MIN_STEP} keeps it floor)`
     )
-  const faults = isObject
-    ? [
-        // Only the LIGHT end. An object's dark end is its own shadow — the underside of a beam, the inner
-        // face of a post — which is what seats it in the world; the failure objects actually have is
-        // chalky highlights, the same white flaking that ruined the first floor.
-        tooLight >= 2 ? `${tooLight.toFixed(1)}% lighter than ${lightest} — restate the value clamp` : null,
-        light && step < MIN_STEP
-          ? `only ${step.toFixed(1)} L* below the floor at night — a light rank's object wants ${MIN_STEP}`
-          : null,
-        // 10 is about a palette step. Closer than that and the object is the floor's own value.
-        !light && Math.abs(floorGap) < 10
-          ? `only ${Math.abs(floorGap)} from the floor it stands on — it will not read against it`
-          : null,
-      ].filter(Boolean)
-    : [
-        tooContrasty && !isStep ? `too contrasty: p5–p95 spans ${spread}, restate the value clamp` : null,
-        // 15 is about the width of one palette step, so a drift past it is a different brown, not a variation.
-        Math.abs(drift) > 15
-          ? `${drift > 0 ? "too warm" : "too cool"} by ${Math.abs(Math.round(drift))}, restate the palette hexes`
-          : null,
-        // A surface that is not the value of its own material is the failure that inverts the map's depth.
-        offMaterial > 20
-          ? `${at(50) > lumOf(material) ? "too light" : "too dark"} by ${offMaterial} for ${material}`
-          : null,
-      ].filter(Boolean)
+  const faults = isWallItem
+    ? []
+    : isObject
+      ? [
+          // Only the LIGHT end. An object's dark end is its own shadow — the underside of a beam, the inner
+          // face of a post — which is what seats it in the world; the failure objects actually have is
+          // chalky highlights, the same white flaking that ruined the first floor.
+          tooLight >= 2 ? `${tooLight.toFixed(1)}% lighter than ${lightest} — restate the value clamp` : null,
+          light && step < MIN_STEP
+            ? `only ${step.toFixed(1)} L* below the floor at night — a light rank's object wants ${MIN_STEP}`
+            : null,
+          // 10 is about a palette step. Closer than that and the object is the floor's own value.
+          !light && Math.abs(floorGap) < 10
+            ? `only ${Math.abs(floorGap)} from the floor it stands on — it will not read against it`
+            : null,
+        ].filter(Boolean)
+      : [
+          tooContrasty && !isStep ? `too contrasty: p5–p95 spans ${spread}, restate the value clamp` : null,
+          // 15 is about the width of one palette step, so a drift past it is a different brown, not a variation.
+          Math.abs(drift) > 15
+            ? `${drift > 0 ? "too warm" : "too cool"} by ${Math.abs(Math.round(drift))}, restate the palette hexes`
+            : null,
+          // A surface that is not the value of its own material is the failure that inverts the map's depth.
+          offMaterial > 20
+            ? `${at(50) > lumOf(material) ? "too light" : "too dark"} by ${offMaterial} for ${material}`
+            : null,
+        ].filter(Boolean)
   console.log(faults.length === 0 ? "reads as one tomb — import it" : faults.join("\n"))
 }
 

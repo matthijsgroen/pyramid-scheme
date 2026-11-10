@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Bronze treasures and fallen mudbrick have new paintings.
 - Wall decorations sit centred on the taller walls.
 
 ### Fixed

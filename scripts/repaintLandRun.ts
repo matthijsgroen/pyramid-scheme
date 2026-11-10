@@ -8,6 +8,8 @@ import { makeSeamless } from "./makeSeamless"
 import { MIN_STEP, artMean, measureAll, measureRank, rankRow, verdict } from "./rankColour"
 import { fitToBase, landPlan, newestImage, substitute, type Step } from "./repaintLand"
 import type { Entry } from "./repaintQueue"
+import { wallStep } from "./tileStats"
+import { tierPalette } from "../src/app/SiteMap/tileMaterials"
 
 const BLENDER = process.env.BLENDER ?? "/Applications/Blender.app/Contents/MacOS/Blender"
 
@@ -36,12 +38,13 @@ const tileStats = (master: string, tier: string, slot: string | undefined) => {
   console.log(out)
   const lines = out.split("\n")
   if (/import it$/.test(lines[lines.length - 1])) return []
-  const last = lines.findLastIndex(line => /^(hue |against the floor)/.test(line))
+  const last = lines.findLastIndex(line => /^(hue |against the (floor|wall))/.test(line))
   return lines.slice(last + 1).map(line => `tile-stats: ${line}`)
 }
 
-/** The 25 L* rule for what was just imported: a floor through the rank's row, an object through its own art.
- * A face is shown as painted and has no step to keep. */
+/** The 25 L* rule for what was just imported: a floor through the rank's row, an object through its own art
+ * against the floor. A wall item's step off the wall face is printed and judged by eye, and a face is shown as
+ * painted: neither has a step to keep. */
 const rankRule = async (tier: Difficulty, name: string, slot: string | undefined) => {
   const { inputs, reports } = await measureAll()
   console.table({ [tier]: rankRow(tier, reports) })
@@ -49,7 +52,14 @@ const rankRule = async (tier: Difficulty, name: string, slot: string | undefined
   const round = (n: number) => Math.round(n * 10) / 10
   if (slot === "face") return []
   if (slot === "floor") return v.prop ? [] : [`prop step ${round(reports[tier].prop)} L* (wants ${MIN_STEP})`]
-  if (!["prop", "wall", "arch"].includes(slot ?? "")) return []
+  if (slot === "wall") {
+    const step = wallStep(tierPalette[tier], await artMean(tier, name))
+    console.log(
+      `${name} stands ${round(Math.abs(step))} L* ${step >= 0 ? "below" : "above"} the ${tier} wall face after the night`
+    )
+    return []
+  }
+  if (!["prop", "arch"].includes(slot ?? "")) return []
   const step = measureRank({ ...inputs[tier], prop: await artMean(tier, name) }).prop
   console.log(`${name} stands ${round(step)} L* off the ${tier} floor after the night`)
   return step >= MIN_STEP ? [] : [`${name} ${round(step)} L* off the floor (wants ${MIN_STEP})`]
