@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Standing in a room's doorway shows the arrow into the room again.
+- A gate or puzzle right beside the explorer shows an arrow towards it too.
 
 ## 0.45.0 - 2026-11-09
 
