@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Revisiting a finished expedition no longer shows it as in progress.
 - Buttons show the hand cursor again.
 - Standing in a room's doorway shows the arrow into the room again.
 - A gate or puzzle right beside the explorer shows an arrow towards it too.
