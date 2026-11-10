@@ -1,0 +1,254 @@
+{
+  "spots": {
+    "fire": "Feu de camp",
+    "sleeping": "Coin pour dormir",
+    "water": "Point d’eau",
+    "cooking": "Coin cuisine",
+    "donkey": "Coin de l’âne",
+    "camel": "Coin du chameau",
+    "mapTable": "Table des cartes",
+    "palmGarden": "Jardin de palmiers",
+    "ibisPond": "Mare aux ibis",
+    "lookout": "Poste de guet",
+    "godStatues": "Statues des dieux",
+    "starCanopy": "Toit d’étoiles"
+  },
+  "finds": {
+    "pot": "Marmite",
+    "seatCushions": "Coussins",
+    "reedMat": "Natte en roseau",
+    "blanket": "Couverture",
+    "tentRug": "Tapis de tente",
+    "tentFlag": "Fanion de tente",
+    "gourd": "Gourde",
+    "jar": "Jarre",
+    "secondJar": "Deuxième jarre",
+    "spiceRack": "Étagère à épices",
+    "breadBoard": "Planche à pain",
+    "starMap": "Carte du ciel",
+    "scrollCase": "Étui à rouleaux",
+    "astrolabe": "Astrolabe",
+    "reedGlobe": "Globe en roseau",
+    "seed": "Graine de palmier",
+    "secondPalm": "Graine de palmier",
+    "figTree": "Graine de figuier",
+    "papyrus": "Racine de papyrus",
+    "reeds": "Bouture de roseau",
+    "lotus": "Bulbe de lotus",
+    "flag": "Drapeau de guet",
+    "thoth": "Statuette de Thot",
+    "bastet": "Statuette de Bastet",
+    "anubis": "Statuette d’Anubis",
+    "ra": "Statuette de Râ",
+    "cloth": "Toile étoilée"
+  },
+  "structures": {
+    "stoneRing": "Cercle de pierres",
+    "fire": "Feu",
+    "cookingStones": "Pierres de cuisson",
+    "seatingStones": "Pierres pour s’asseoir",
+    "clayOven": "Four en argile",
+    "windbreak": "Pare-vent",
+    "tent": "Tente",
+    "secondTent": "Deuxième tente",
+    "pavilion": "Pavillon",
+    "well": "Puits",
+    "wellPulley": "Puits à poulie",
+    "tripod": "Trépied",
+    "breadOven": "Four à pain",
+    "dryingRack": "Séchoir",
+    "feast": "Festin",
+    "table": "Table des cartes",
+    "lotusPlanter": "Bac à lotus",
+    "edgeStones": "Bord de la mare",
+    "post": "Mât de guet",
+    "platform": "Plateforme de guet",
+    "ladder": "Échelle",
+    "roof": "Toit",
+    "signalFire": "Feu de signal",
+    "poles": "Mâts du toit",
+    "stars": "Étoiles",
+    "planets": "Planètes"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Pierres des champs",
+      "sandBed": "Lit de sable"
+    },
+    "fire": {
+      "tinder": "Petit bois",
+      "acaciaLogs": "Bûches d’acacia"
+    },
+    "cookingStones": {
+      "flatStone": "Pierre plate",
+      "supportStones": "Pierres de calage"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Gros galets lisses",
+      "sandstoneBlock": "Bloc de grès",
+      "hewnSlab": "Dalle taillée"
+    },
+    "clayOven": {
+      "ovenFloor": "Sole du four",
+      "firebricks": "Briques de four",
+      "smokeHole": "Trou à fumée",
+      "copperGrate": "Grille en cuivre"
+    },
+    "windbreak": {
+      "reedBundles": "Bottes de roseaux",
+      "stakes": "Piquets en bois"
+    },
+    "tent": {
+      "tentPoles": "Mâts de tente",
+      "wovenCloth": "Toile tissée",
+      "tentPegs": "Sardines"
+    },
+    "secondTent": {
+      "largeCloth": "Grande toile de tente",
+      "ridgePole": "Faîtière",
+      "guyRopes": "Cordes de tente",
+      "woolFloor": "Tapis de sol en laine"
+    },
+    "pavilion": {
+      "pavilionPosts": "Poteaux du pavillon",
+      "linenCanopy": "Toit en lin",
+      "hangingCurtains": "Rideaux",
+      "woolRugs": "Tapis en laine",
+      "woodenFloor": "Plancher en bois"
+    },
+    "well": {
+      "wellStones": "Pierres du puits",
+      "rope": "Longue corde",
+      "bucket": "Seau",
+      "windlass": "Treuil"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Roue de poulie",
+      "frame": "Cadre",
+      "hoistRope": "Corde de levage",
+      "counterweight": "Contrepoids",
+      "leatherBucket": "Seau en cuir"
+    },
+    "tripod": {
+      "tripodPoles": "Trois perches",
+      "binding": "Corde pour attacher",
+      "hook": "Crochet en bronze"
+    },
+    "breadOven": {
+      "mudBricks": "Briques de boue",
+      "clayPlaster": "Enduit d’argile",
+      "ovenLid": "Couvercle du four"
+    },
+    "dryingRack": {
+      "rackPoles": "Perches du séchoir",
+      "crossbar": "Barre transversale",
+      "wickerTray": "Plateau en osier",
+      "cords": "Cordes à suspendre"
+    },
+    "feast": {
+      "lowTable": "Table basse",
+      "breadBaskets": "Paniers de pain",
+      "roastDuck": "Canard rôti",
+      "beerJars": "Jarres de bière",
+      "fruitBowl": "Coupe de fruits"
+    },
+    "table": {
+      "tableTop": "Plateau de table",
+      "trestles": "Tréteaux",
+      "leatherStraps": "Lanières en cuir"
+    },
+    "lotusPlanter": {
+      "clayTub": "Bac en argile",
+      "nileSilt": "Limon du Nil",
+      "waterJar": "Jarre d’eau",
+      "lotusTubers": "Bulbes de lotus",
+      "stoneRim": "Bord en pierre"
+    },
+    "edgeStones": {
+      "riverStones": "Galets de rivière",
+      "clayBedding": "Couche d’argile",
+      "gravel": "Gravier",
+      "boundaryStakes": "Piquets de bordure"
+    },
+    "post": {
+      "postTrunk": "Tronc de palmier",
+      "footStones": "Pierres de fondation",
+      "wedges": "Cales",
+      "braces": "Étais"
+    },
+    "platform": {
+      "platformBeams": "Poutres",
+      "platformPlanks": "Planches",
+      "lashingRope": "Corde d’attache",
+      "edgeRail": "Rambarde"
+    },
+    "ladder": {
+      "ladderRails": "Montants de l’échelle",
+      "rungs": "Barreaux",
+      "groundPegs": "Piquets de sol",
+      "leatherLoops": "Boucles en cuir"
+    },
+    "roof": {
+      "roofPoles": "Perches du toit",
+      "thatch": "Feuilles de palmier",
+      "clayLayer": "Couche d’argile",
+      "bindingGrass": "Herbe à lier"
+    },
+    "signalFire": {
+      "fireBasin": "Vasque à feu",
+      "pitch": "Poix",
+      "dryBrushwood": "Broussailles sèches",
+      "flint": "Silex",
+      "bellows": "Soufflet"
+    },
+    "poles": {
+      "masts": "Mâts",
+      "cornerStones": "Pierres d’angle",
+      "stayLines": "Haubans",
+      "bigPegs": "Gros piquets",
+      "poleSockets": "Socles des mâts"
+    },
+    "stars": {
+      "goldLeaf": "Feuille d’or",
+      "needleThread": "Fil et aiguille",
+      "indigoDye": "Teinture indigo",
+      "chalk": "Craie",
+      "stencils": "Pochoirs"
+    },
+    "planets": {
+      "ochre": "Ocre",
+      "copperDiscs": "Disques en cuivre",
+      "lapisPowder": "Poudre de lapis",
+      "hangingLoops": "Boucles à suspendre",
+      "dividers": "Compas"
+    }
+  },
+  "collection": {
+    "title": "Constructions",
+    "progress": "{{found}} sur {{total}}",
+    "built": "construit",
+    "unknownPart": "???",
+    "open": "Voir les morceaux",
+    "close": "Cacher les morceaux"
+  },
+  "reward": {
+    "find": "Trouvaille pour le camp",
+    "part": "Morceau",
+    "progress": "{{name}} · {{found}} sur {{total}}"
+  },
+  "haul": {
+    "new": "Nouveau dans ton camp",
+    "parts_one": "{{name}} · {{count}} morceau",
+    "parts_many": "{{name}} · {{count}} morceaux",
+    "parts_other": "{{name}} · {{count}} morceaux"
+  },
+  "arrivals": {
+    "donkey": "Ton âne est au camp",
+    "cart": "Ta charrette est au camp",
+    "camel": "Ton chameau est au camp",
+    "secondDonkey": "Ton deuxième âne est au camp",
+    "secondCamel": "Ton deuxième chameau est au camp",
+    "sturdyCart": "Ta charrette plus solide est au camp",
+    "caravanBanner": "La bannière de ta caravane flotte au camp"
+  }
+}

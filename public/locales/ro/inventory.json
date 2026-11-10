@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Regele zeilor și stăpânul soarelui, care plutește în fiecare zi pe cer cu barca lui solară."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Zeul cu cap de șacal al mumiilor și al lumii de dincolo, ocrotitorul morților."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Zeul cerului cu cap de șoim și ocrotitorul faraonilor, fiul lui Osiris și al lui Isis."
+    },
+    "d4": {
+      "name": "Thot",
+      "description": "Zeul cu cap de ibis al înțelepciunii, al scrisului și al cunoașterii, păstrătorul socotelilor zeilor."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Zeița-pisică a ocrotirii, a bucuriei și a belșugului, care alungă duhurile rele."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Zeul-crocodil al Nilului, al belșugului și al vitejiei în luptă."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Zeul-scarabeu al renașterii, care rostogolește soarele pe cer."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Zeița-cobră, ocrotitoarea Egiptului de Jos și semn al puterii regale."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "Zeița magiei, a mamelor și a vindecării, soția credincioasă a lui Osiris."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "Zeul lumii de dedesubt, al morții și al învierii, judecătorul morților."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "Zeul haosului, al furtunilor și al deșertului, fratele și rivalul lui Osiris."
+    },
+    "d12": {
+      "name": "Nephthys",
+      "description": "Zeița jelaniei, care ocrotește morții, sora lui Isis."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Zeul creator și ocrotitorul meșteșugarilor și arhitecților, care a făcut lumea doar rostind cuvinte."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Zeița-leoaică a războiului și a vindecării, o ocrotitoare fioroasă care putea alunga bolile."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Zeița-vacă a iubirii, a muzicii și a mamelor, care îi îngrijea pe faraoni."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Faraon",
+      "description": "Conducătorul divin al Egiptului, privit ca un zeu viu și o punte între oameni și zei."
+    },
+    "p2": {
+      "name": "Mare preot",
+      "description": "Conducătorul templelor, care făcea ritualurile sfinte și păstra ordinea zeilor."
+    },
+    "p3": {
+      "name": "Scrib",
+      "description": "Un om învățat care știa să scrie și să citească, păstrătorul socotelilor și al cunoașterii."
+    },
+    "p4": {
+      "name": "Arhitect",
+      "description": "Meșterul care a gândit piramide, temple și monumente făcute să dureze veșnic."
+    },
+    "p5": {
+      "name": "General",
+      "description": "Comandantul armatelor, care păzea granițele Egiptului și lărgea imperiul."
+    },
+    "p6": {
+      "name": "Medic",
+      "description": "Vindecător care amesteca știința leacurilor cu vrăji ca să-i facă bine pe bolnavi."
+    },
+    "p7": {
+      "name": "Îmbălsămător",
+      "description": "Meșter sfânt care pregătea pe cineva pentru călătoria în lumea de dincolo."
+    },
+    "p8": {
+      "name": "Țăran",
+      "description": "Cel care dădea hrană Egiptului, lucrând pământul roditor de pe malul Nilului."
+    },
+    "p9": {
+      "name": "Meșteșugar",
+      "description": "Un meșter priceput care făcea obiecte frumoase, bijuterii și opere de artă pentru nobili și zei."
+    },
+    "p10": {
+      "name": "Negustor",
+      "description": "Comerciant care aducea mărfuri ciudate din țări îndepărtate, pe drumurile de negoț."
+    },
+    "p11": {
+      "name": "Vizir",
+      "description": "Primul sfetnic al faraonului, care avea grijă de treburile țării."
+    },
+    "p12": {
+      "name": "Oracol",
+      "description": "Profet sfânt care tălmăcea mesajele zeilor și ghicea viitorul."
+    },
+    "p13": {
+      "name": "Marinar",
+      "description": "Navigator pe Nil și pe Marea Mediterană, de neînlocuit pentru negoț și transport."
+    },
+    "p14": {
+      "name": "Pietrar",
+      "description": "Meșter în piatră, care sculpta hieroglife și a construit marile monumente ale Egiptului."
+    },
+    "p15": {
+      "name": "Paznic",
+      "description": "Ocrotitorul locurilor sfinte și al mormintelor, care avea grijă ca morții să se odihnească în pace."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Hipopotam",
+      "description": "Puternica fiară de râu a Nilului, temută pentru forța ei și pentru că își apără teritoriul."
+    },
+    "a2": {
+      "name": "Leu",
+      "description": "Regele animalelor, semn al puterii regale și al forței zeilor în deșert."
+    },
+    "a3": {
+      "name": "Elefant",
+      "description": "Un animal uriaș din ținuturile de la sud, prețuit pentru înțelepciunea și memoria lui."
+    },
+    "a4": {
+      "name": "Gazelă",
+      "description": "Locuitoare iute și grațioasă a deșertului, semn al vitezei și al eleganței."
+    },
+    "a5": {
+      "name": "Maimuță",
+      "description": "Un animal isteț legat de Thot, semn al inteligenței și al poznelor."
+    },
+    "a6": {
+      "name": "Pește",
+      "description": "Viețuitoare sfinte ale Nilului, care dădeau hrană și erau semn al belșugului."
+    },
+    "a7": {
+      "name": "Gâscă",
+      "description": "Pasăre sfântă din mlaștinile Nilului, legată de poveștile despre facerea lumii și de suflet."
+    },
+    "a8": {
+      "name": "Albină",
+      "description": "Semn al Egiptului de Jos și al puterii regale, cea care face mierea prețioasă."
+    },
+    "a9": {
+      "name": "Broască țestoasă",
+      "description": "O viețuitoare veche și înțeleaptă, care poartă greutatea lumii pe carapace."
+    },
+    "a10": {
+      "name": "Broască",
+      "description": "Semn al renașterii și al belșugului, care iese din apele Nilului ce dau viață."
+    },
+    "a11": {
+      "name": "Vultur",
+      "description": "Pasăre sfântă a Egiptului de Sus, chipul pământesc al zeiței ocrotitoare Nekhbet."
+    },
+    "a12": {
+      "name": "Bufniță",
+      "description": "Vânătoare înțeleaptă a nopții, păzitoarea cunoașterii ascunse și a secretelor vechi."
+    },
+    "a13": {
+      "name": "Berbec",
+      "description": "Animalul sfânt al lui Amon-Ra, semn al puterii divine și al conducerii."
+    },
+    "a14": {
+      "name": "Girafă",
+      "description": "Un animal înalt și grațios din ținuturile de la sud, care ajunge la cer cu gâtul lui lung."
+    },
+    "a15": {
+      "name": "Șacal",
+      "description": "Mâncător de resturi din deșert și călăuză spre lumea de dincolo, slujitorul lui Anubis."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Semnul vieții și al nemuririi, ținut adesea în mână de zei și faraoni."
+    },
+    "art2": {
+      "name": "Ochiul lui Horus",
+      "description": "Semn al ocrotirii, al puterii regale și al sănătății, legat de zeul cerului Horus."
+    },
+    "art3": {
+      "name": "Sistru",
+      "description": "Instrument muzical folosit la ceremoniile sfinte, legat de zeița Hathor."
+    },
+    "art4": {
+      "name": "Stâlpul Djed",
+      "description": "Semn al tăriei și al învierii, legat adesea de Osiris."
+    },
+    "art5": {
+      "name": "Cartuș",
+      "description": "Un oval în care e scris cu hieroglife numele unui faraon, ca să-l apere pentru totdeauna."
+    },
+    "art6": {
+      "name": "Vas canopic",
+      "description": "Un vas sfânt cu capacul în formă de cap de paznic — patru dintre ele stăteau în jurul sicriului și vegheau."
+    },
+    "art7": {
+      "name": "Sceptru",
+      "description": "Toiagul puterii, purtat de zei și faraoni ca semn că domnesc din voia zeilor."
+    },
+    "art9": {
+      "name": "Piramidă",
+      "description": "Mormânt veșnic și poartă spre lumea de dincolo, construit să dureze pentru totdeauna pentru faraoni."
+    },
+    "art10": {
+      "name": "Barca solară",
+      "description": "Barca sfântă care îl poartă pe zeul soarelui Ra pe cer, din zori până în amurg."
+    },
+    "art11": {
+      "name": "Obelisc",
+      "description": "Un stâlp înalt de piatră cu o mică piramidă în vârf, care se înalță spre cer în cinstea zeilor."
+    },
+    "art12": {
+      "name": "Cârja și biciul",
+      "description": "Însemnele regale care arată că faraonul e păstorul și ocrotitorul Egiptului."
+    },
+    "art14": {
+      "name": "Floare de lotus",
+      "description": "Semn al renașterii și al soarelui, care iese curată din apele mâloase ale Nilului."
+    },
+    "art15": {
+      "name": "Coroana cu ureus",
+      "description": "Coroana regală cu cobra ocrotitoare, purtată de faraoni ca apărare divină."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Frunză de trestie",
+      "description": "O singură trestie, care înseamnă sunetul i. Pus după numele unui zeu, face din el nume de om: Horus devine Hori, cel al lui Horus."
+    }
+  }
+}

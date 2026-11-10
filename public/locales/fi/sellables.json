@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Kivi",
+    "bronze": "Pronssi",
+    "silver": "Hopea",
+    "gold": "Kulta",
+    "divine": "Jumalallinen"
+  },
+  "sell_stone_1": {
+    "name": "Lohkeillut ruukunpala",
+    "description": "Rikkinäinen saviastian pala, johon kirjuri on raapustanut harjoituksiaan. Kirjaimet ovat liian haalistuneita luettaviksi."
+  },
+  "sell_stone_2": {
+    "name": "Haljennut saviruukku",
+    "description": "Ruukku viljaa tai olutta varten. Vuosisatojen paino on halkaissut sen kyljen."
+  },
+  "sell_stone_3": {
+    "name": "Kulunut ruokosandaali",
+    "description": "Punottu papyruksen ruo'oista. Joku unohdettu työläinen on kävellyt pohjan ohueksi."
+  },
+  "sell_stone_4": {
+    "name": "Haalistunut pellavanriekale",
+    "description": "Revennyt suikale värjäämätöntä pellavaa. Sellaista kiedottiin loputtomasti kuolleiden ympärille, tai sillä paikattiin purjeita."
+  },
+  "sell_stone_5": {
+    "name": "Katkennut piikiviterä",
+    "description": "Piikivestä lohkottu veitsi, jonka kärki on katkennut. Halpa tehdä, vielä halvempi vaihtaa."
+  },
+  "sell_bronze_1": {
+    "name": "Vääntynyt pronssiamuletti",
+    "description": "Halpa suojakoru, joka valettiin vinoon eikä sitä koskaan korjattu."
+  },
+  "sell_bronze_2": {
+    "name": "Ruostunut pronssipeili",
+    "description": "Joskus niin kiiltävä, että siitä näki kasvonsa. Nyt se on vanhuuttaan samean vihreä."
+  },
+  "sell_bronze_3": {
+    "name": "Tylsä pronssikoukku",
+    "description": "Kalastajan koukku, joka putosi Niiliin kauan ennen kuin hauta suljettiin."
+  },
+  "sell_bronze_4": {
+    "name": "Pieni pronssikello",
+    "description": "Tarkoitettu roikkumaan temppelin ovessa tai tanssijan nilkassa. Se ei enää soi puhtaasti."
+  },
+  "sell_bronze_5": {
+    "name": "Tummunut pronssisormus",
+    "description": "Tavallinen sormus sormeen, joka on jo aikoja sitten muuttunut tomuksi."
+  },
+  "sell_silver_1": {
+    "name": "Tummunut hopea-ankh",
+    "description": "Elämän merkki, joka on himmentynyt vuosisatoja maan alla."
+  },
+  "sell_silver_2": {
+    "name": "Hopeinen kajalpuikko",
+    "description": "Ohut puikko, jolla rikkaat rajasivat silmänsä. Meikki on kadonnut jo kauan sitten."
+  },
+  "sell_silver_3": {
+    "name": "Lommoinen hopeakulho",
+    "description": "Pieni uhrikulho, joka litistyi toiselta puolelta, kun katto lopulta romahti sen päälle."
+  },
+  "sell_silver_4": {
+    "name": "Hopeinen hiusneula",
+    "description": "Yksinkertainen ja koristeeton. Se piti joskus hiukset kasassa jollakulla, jonka nimeä kukaan ei muista."
+  },
+  "sell_silver_5": {
+    "name": "Kulunut hopearannekoru",
+    "description": "Ohut hopearengas, jonka lukko on rikki. Liian vaatimaton ylhäiselle, liian hieno työläiselle."
+  },
+  "sell_gold_1": {
+    "name": "Pieni kultahelmi",
+    "description": "Yksi helmi hautakaulakorusta, joka hajosi kauan sitten."
+  },
+  "sell_gold_2": {
+    "name": "Lehtikullan palanen",
+    "description": "Suikale lehtikultaa, jonka hautarosvot raaputtivat patsaan kasvoista vuosisatoja ennen sinua."
+  },
+  "sell_gold_3": {
+    "name": "Ohut kultakorvakoru",
+    "description": "Taottu ohueksi, jotta ylhäisen kulta riittäisi pidemmälle."
+  },
+  "sell_gold_4": {
+    "name": "Kultatäpläinen sirpale",
+    "description": "Pala kullattua laastia. Sen pinnassa on yhä pieniä hippuja oikeaa kultaa."
+  },
+  "sell_gold_5": {
+    "name": "Lohjennut kultasinettisormus",
+    "description": "Sinettisormus, jonka kaiverrus on kulunut tunnistamattomaksi. Kenen nimi siinä oli, sitä ei muista kukaan."
+  },
+  "sell_divine_1": {
+    "name": "Haalistunut lapis-skarabeus",
+    "description": "Kaiverrettu kallisarvoisesta lapislatsulista, joka tuotiin kaukaa faaraon uutta elämää varten. Väri on haalistunut vuosisatojen aikana."
+  },
+  "sell_divine_2": {
+    "name": "Karneolisilmäamuletti",
+    "description": "Suojeleva silmä veripunaisesta karneolista. Sen piti pitää huono onni loitolla tuonpuoleisessa."
+  },
+  "sell_divine_3": {
+    "name": "Turkoosinen mosaiikkipala",
+    "description": "Yksi laatta rikkoutuneesta mosaiikista. Se oli joskus osa jumalan kuvaa temppelin seinässä."
+  },
+  "sell_divine_4": {
+    "name": "Alabasterinen kanooppisirpale",
+    "description": "Pala ruukusta, jossa säilytettiin faaraon sisäelimiä. Kallista kiveä synkkään tarkoitukseen."
+  },
+  "sell_divine_5": {
+    "name": "Obsidiaaninen menoveitsi",
+    "description": "Tulivuoren lasia, hiottu juhlavaksi teräksi. Ei koskaan taisteluun, vain temppeliin."
+  }
+}

@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Konungur guðanna og guð sólarinnar. Hann siglir yfir himininn á sólarbátnum sínum á hverjum degi."
+    },
+    "d2": {
+      "name": "Anúbis",
+      "description": "Guð með sjakalahöfuð. Hann gætir hinna látnu og fylgir þeim í líf eftir dauðann."
+    },
+    "d3": {
+      "name": "Hórus",
+      "description": "Himinguð með fálkahöfuð og verndari faraóanna, sonur Ósíris og Ísisar."
+    },
+    "d4": {
+      "name": "Þót",
+      "description": "Guð með íbishöfuð. Guð viskunnar, skriftar og þekkingar, sem heldur skrá yfir allt."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Kattagyðja sem verndar, gleður og ver fólk gegn illum öndum."
+    },
+    "d6": {
+      "name": "Sóbek",
+      "description": "Krókódílaguð Nílar. Hann er sterkur og færir landinu frjósemi."
+    },
+    "d7": {
+      "name": "Kepri",
+      "description": "Bjölluguð endurfæðingar. Hann veltir sólinni yfir himininn eins og bolta."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Kóbragyðja og verndari Neðra-Egyptalands, tákn um vald konungsins."
+    },
+    "d9": {
+      "name": "Ísis",
+      "description": "Gyðja galdra, mæðra og lækninga, og trygg eiginkona Ósíris."
+    },
+    "d10": {
+      "name": "Ósíris",
+      "description": "Guð undirheima, dauða og upprisu. Hann dæmir hina látnu."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "Guð óreiðu, storma og eyðimerkurinnar, bróðir og keppinautur Ósíris."
+    },
+    "d12": {
+      "name": "Neftýs",
+      "description": "Gyðja sorgar sem verndar hina látnu, systir Ísisar."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Skapari og verndari smiða og byggingameistara. Hann skapaði heiminn með orðum."
+    },
+    "d14": {
+      "name": "Sekmet",
+      "description": "Ljónagyðja stríðs og lækninga. Grimmur verndari sem getur læknað sjúkdóma."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Kúagyðja ástar, tónlistar og mæðra, sem annast faraóana."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Faraó",
+      "description": "Konungur Egyptalands. Fólk trúði að hann væri lifandi guð, brú milli manna og guða."
+    },
+    "p2": {
+      "name": "Æðsti prestur",
+      "description": "Leiðtogi musterisins sem sér um helgar athafnir og heldur röð á hlutunum."
+    },
+    "p3": {
+      "name": "Skrifari",
+      "description": "Lærður maður sem kunni að lesa og skrifa og hélt skrá yfir allt."
+    },
+    "p4": {
+      "name": "Byggingameistari",
+      "description": "Meistarasmiður sem hannaði pýramída, musteri og minnismerki sem eiga að standa að eilífu."
+    },
+    "p5": {
+      "name": "Herforingi",
+      "description": "Foringi hersins sem varði landamæri Egyptalands og stækkaði ríkið."
+    },
+    "p6": {
+      "name": "Læknir",
+      "description": "Græðari sem notaði bæði lækningar og galdra til að hjálpa sjúkum."
+    },
+    "p7": {
+      "name": "Smyrjari",
+      "description": "Helgur handverksmaður sem bjó hina látnu undir ferðina í líf eftir dauðann."
+    },
+    "p8": {
+      "name": "Bóndi",
+      "description": "Ræktaði mat fyrir Egyptaland á frjósömum bökkum Nílar og fæddi allt ríkið."
+    },
+    "p9": {
+      "name": "Handverksmaður",
+      "description": "Flinkur smiður sem bjó til fallega hluti, skartgripi og listaverk fyrir höfðingja og guði."
+    },
+    "p10": {
+      "name": "Kaupmaður",
+      "description": "Verslaði og kom með framandi vörur frá fjarlægum löndum."
+    },
+    "p11": {
+      "name": "Vesír",
+      "description": "Æðsti ráðgjafi faraósins sem stjórnaði ríkinu fyrir hann."
+    },
+    "p12": {
+      "name": "Véfrétt",
+      "description": "Helgur spámaður sem las skilaboð guðanna og sagði fyrir um framtíðina."
+    },
+    "p13": {
+      "name": "Sjómaður",
+      "description": "Sigldi um Níl og Miðjarðarhafið og flutti vörur og fólk."
+    },
+    "p14": {
+      "name": "Steinsmiður",
+      "description": "Hjó myndletur í stein og reisti hin miklu minnismerki Egyptalands."
+    },
+    "p15": {
+      "name": "Vörður",
+      "description": "Verndari helgra staða og grafhýsa sem gætir þess að hinir látnu fái að hvílast."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Flóðhestur",
+      "description": "Sterkt dýr í Níl. Fólk óttaðist hann því hann ver svæðið sitt af krafti."
+    },
+    "a2": {
+      "name": "Ljón",
+      "description": "Konungur dýranna, tákn um vald konungsins og styrk guðanna í eyðimörkinni."
+    },
+    "a3": {
+      "name": "Fíll",
+      "description": "Risastórt dýr frá löndunum í suðri, þekkt fyrir visku og gott minni."
+    },
+    "a4": {
+      "name": "Gasella",
+      "description": "Snöggt og tignarlegt dýr í eyðimörkinni, tákn um hraða og fegurð."
+    },
+    "a5": {
+      "name": "Api",
+      "description": "Snjall api sem tengist Þót. Hann stendur fyrir gáfur og prakkarastrik."
+    },
+    "a6": {
+      "name": "Fiskur",
+      "description": "Helgar skepnur Nílar sem gáfu fólki mat og voru tákn frjósemi."
+    },
+    "a7": {
+      "name": "Gæs",
+      "description": "Helgur fugl úr mýrum Nílar, tengdur sögum um sköpun heimsins og sálina."
+    },
+    "a8": {
+      "name": "Býfluga",
+      "description": "Tákn Neðra-Egyptalands og konungsvalds, sem býr til dýrmætt hunang."
+    },
+    "a9": {
+      "name": "Skjaldbaka",
+      "description": "Ævaforn og vitur skepna sem ber þunga heimsins á skelinni sinni."
+    },
+    "a10": {
+      "name": "Froskur",
+      "description": "Tákn endurfæðingar og frjósemi, sem kemur upp úr flóðum Nílar."
+    },
+    "a11": {
+      "name": "Gammur",
+      "description": "Helgur fugl Efra-Egyptalands. Verndargyðjan Nekbet birtist sem gammur."
+    },
+    "a12": {
+      "name": "Ugla",
+      "description": "Vitur næturveiðari sem gætir falinnar þekkingar og ævafornra leyndarmála."
+    },
+    "a13": {
+      "name": "Hrútur",
+      "description": "Helgt dýr Amon-Ra, tákn um mátt guðanna og forystu."
+    },
+    "a14": {
+      "name": "Gíraffi",
+      "description": "Hávaxið og tignarlegt dýr frá löndunum í suðri sem teygir langan hálsinn upp til himins."
+    },
+    "a15": {
+      "name": "Sjakali",
+      "description": "Hrææta eyðimerkurinnar og leiðsögumaður í líf eftir dauðann, þjónn Anúbisar."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Tákn lífsins og eilífðarinnar. Guðir og faraóar halda oft á því."
+    },
+    "art2": {
+      "name": "Auga Hórusar",
+      "description": "Tákn verndar, konungsvalds og góðrar heilsu, tengt himinguðinum Hórusi."
+    },
+    "art3": {
+      "name": "Sistrum",
+      "description": "Hljóðfæri sem var notað við helgar athafnir, tengt gyðjunni Hathor."
+    },
+    "art4": {
+      "name": "Djed-súla",
+      "description": "Tákn stöðugleika og upprisu, oft tengt Ósíris."
+    },
+    "art5": {
+      "name": "Kartúsa",
+      "description": "Sporöskjulaga rammi utan um nafn faraós í myndletri, sem verndar nafnið hans að eilífu."
+    },
+    "art6": {
+      "name": "Kanópukrukka",
+      "description": "Helg krukka með höfuð verndara sem lok. Fjórar slíkar stóðu í kringum kistu og héldu vörð."
+    },
+    "art7": {
+      "name": "Veldissproti",
+      "description": "Stafur valds sem guðir og faraóar báru til marks um að þeir réðu."
+    },
+    "art9": {
+      "name": "Pýramídi",
+      "description": "Eilíft grafhýsi og hlið að lífinu eftir dauðann, byggt til að standa að eilífu fyrir faraóana."
+    },
+    "art10": {
+      "name": "Sólarbátur",
+      "description": "Helgur bátur sem ber sólguðinn Ra yfir himininn frá morgni til kvölds."
+    },
+    "art11": {
+      "name": "Broddsúla",
+      "description": "Há steinsúla með litlum pýramída efst, sem teygir sig til himins guðunum til heiðurs."
+    },
+    "art12": {
+      "name": "Stafur og svipa",
+      "description": "Konunglegt skart sem sýnir að faraóinn er hirðir og verndari Egyptalands."
+    },
+    "art14": {
+      "name": "Lótusblóm",
+      "description": "Tákn endurfæðingar og sólarinnar. Það kemur hreint upp úr drullugu vatni Nílar."
+    },
+    "art15": {
+      "name": "Úreuskóróna",
+      "description": "Konunglegt höfuðfat með verndandi kóbraslöngu, sem faraóar báru sér til verndar."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Reyrlauf",
+      "description": "Einn reyr sem stendur fyrir hljóðið i. Bætt aftan við nafn guðs verður það mannsnafn: Hórus verður Hori, sá sem tilheyrir Hórusi."
+    }
+  }
+}

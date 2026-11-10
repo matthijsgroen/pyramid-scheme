@@ -31,10 +31,19 @@ export const MARKER_HIT = CELL * 0.36 // ~20
 //
 // The north gap is tall, because it is the wall you look AT; the west gap is thin, because a wall
 // seen edge-on is only its own thickness.
-// WALL_H must DIVIDE CELL. The wall-face texture repeats on the face height, so every face lands on
-// the pattern origin only if the row pitch is a whole number of faces — otherwise each row samples a
-// different slice of the art and the dark ones read as black holes in the wall.
-export const WALL_H = CELL / 2 // 28 — the visible height of a back wall
+export const WALL_H = CELL / 2 // 28 — the gap between two rows that a back wall stands in
+
+/**
+ * How far a back wall rises ABOVE its own gap, over whatever lies north of it.
+ *
+ * The face art is painted at 8:1 and a cell wide is 56, so a face drawn only in its 28-unit gap showed
+ * every mural squashed to half its height. Growing the face upward instead of widening the gap leaves the
+ * pitch alone: cells, walks and taps stay where they are, and only the picture of the wall gets taller.
+ * Where the cell north of a wall is floor, the wall now stands in front of part of it — see `frontRuns`.
+ */
+export const FACE_GROW = CELL / 2 // 28
+/** The drawn height of a back wall: its gap plus what rises above it. Exactly the face art's 8:1. */
+export const FACE_H = WALL_H + FACE_GROW // 56
 
 // A prop sprite is a cell PLUS a face band tall, anchored by its BOTTOM edge on the cell's floor line.
 // Bottom-anchored is what makes it stand on the floor instead of floating over it; the band of headroom
@@ -54,12 +63,12 @@ export const SIDE_W = CELL / 4 // 14 — the thickness of a side wall, seen edge
  * Below it are the courses.
  *
  * It has to be a number the map can read because anything growing OUT of a wall has to start under the
- * coping. A root anchored to the band's top edge starts on the flat top instead, where nothing grows, and
+ * coping. A root anchored to the face's top edge starts on the flat top instead, where nothing grows, and
  * reads as hung on the wall rather than come through it. Keep this in step with that flag.
  */
 export const FACE_CAP = 0.14
-export const WALL_FACE_H = WALL_H * (1 - FACE_CAP) // 24.08 — the part of a band that is brick
-export const ROW_PITCH = CELL + WALL_H // 84 = 3 faces
+export const WALL_FACE_H = FACE_H * (1 - FACE_CAP) // 48.16 — the part of a face that is brick
+export const ROW_PITCH = CELL + WALL_H // 84
 export const COL_PITCH = CELL + SIDE_W // 70
 
 /** An archway grows out of the band in BOTH directions, because a doorway has to look walked-through:
@@ -144,6 +153,10 @@ export const PAD = CELL
  * that needs it — nothing is drawn below its floor line, and the side walls cut sprites rather than
  * being crossed by them. */
 export const PAD_TOP = PAD + WALL_H
+
+/** The y the face art starts at on the first row, and so on every row a pitch further down: where a
+ * wall-face pattern takes its origin, in the SVG stone and in the HTML front walls alike. */
+export const FACE_PATTERN_Y = PAD_TOP - FACE_GROW
 
 /** Top-left of a cell's own floor square, in SVG units. */
 export const cellLeft = (col: number): number => PAD + col * COL_PITCH + SIDE_W

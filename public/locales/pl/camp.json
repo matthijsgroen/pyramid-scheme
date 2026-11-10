@@ -1,0 +1,255 @@
+{
+  "spots": {
+    "fire": "Ognisko",
+    "sleeping": "Miejsce do spania",
+    "water": "Miejsce z wodą",
+    "cooking": "Kuchnia",
+    "donkey": "Miejsce dla osiołka",
+    "camel": "Miejsce dla wielbłąda",
+    "mapTable": "Stół z mapami",
+    "palmGarden": "Palmowy ogród",
+    "ibisPond": "Staw ibisów",
+    "lookout": "Punkt widokowy",
+    "godStatues": "Posągi bogów",
+    "starCanopy": "Gwiezdny dach"
+  },
+  "finds": {
+    "pot": "Garnek",
+    "seatCushions": "Poduszki do siedzenia",
+    "reedMat": "Mata z trzciny",
+    "blanket": "Koc",
+    "tentRug": "Dywanik do namiotu",
+    "tentFlag": "Flaga na namiot",
+    "gourd": "Tykwa",
+    "jar": "Dzban",
+    "secondJar": "Drugi dzban",
+    "spiceRack": "Półka na przyprawy",
+    "breadBoard": "Deska do chleba",
+    "starMap": "Mapa gwiazd",
+    "scrollCase": "Tuba na zwoje",
+    "astrolabe": "Astrolabium",
+    "reedGlobe": "Globus z trzciny",
+    "seed": "Nasionko palmy",
+    "secondPalm": "Nasionko palmy",
+    "figTree": "Nasionko figi",
+    "papyrus": "Korzeń papirusu",
+    "reeds": "Sadzonka trzciny",
+    "lotus": "Bulwa lotosu",
+    "flag": "Flaga na punkt widokowy",
+    "thoth": "Figurka Thota",
+    "bastet": "Figurka Bastet",
+    "anubis": "Figurka Anubisa",
+    "ra": "Figurka Ra",
+    "cloth": "Gwiezdne płótno"
+  },
+  "structures": {
+    "stoneRing": "Krąg z kamieni",
+    "fire": "Ogień",
+    "cookingStones": "Kamienie do gotowania",
+    "seatingStones": "Kamienie do siedzenia",
+    "clayOven": "Gliniany piec",
+    "windbreak": "Osłona od wiatru",
+    "tent": "Namiot",
+    "secondTent": "Drugi namiot",
+    "pavilion": "Pawilon",
+    "well": "Studnia",
+    "wellPulley": "Studnia z bloczkiem",
+    "tripod": "Trójnóg",
+    "breadOven": "Piec do chleba",
+    "dryingRack": "Suszarka",
+    "feast": "Uczta",
+    "table": "Stół z mapami",
+    "lotusPlanter": "Donica na lotosy",
+    "edgeStones": "Brzeg stawu",
+    "post": "Słup widokowy",
+    "platform": "Platforma widokowa",
+    "ladder": "Drabina",
+    "roof": "Dach",
+    "signalFire": "Ogień sygnałowy",
+    "poles": "Gwiezdne maszty",
+    "stars": "Gwiazdy",
+    "planets": "Planety"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Polne kamienie",
+      "sandBed": "Warstwa piasku"
+    },
+    "fire": {
+      "tinder": "Hubka",
+      "acaciaLogs": "Drewno akacji"
+    },
+    "cookingStones": {
+      "flatStone": "Płaski kamień",
+      "supportStones": "Kamienie podporowe"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Gładkie głazy",
+      "sandstoneBlock": "Blok z piaskowca",
+      "hewnSlab": "Ciosana płyta"
+    },
+    "clayOven": {
+      "ovenFloor": "Spód pieca",
+      "firebricks": "Cegły ogniotrwałe",
+      "smokeHole": "Dziura na dym",
+      "copperGrate": "Miedziany ruszt"
+    },
+    "windbreak": {
+      "reedBundles": "Snopki trzciny",
+      "stakes": "Drewniane paliki"
+    },
+    "tent": {
+      "tentPoles": "Maszty namiotu",
+      "wovenCloth": "Tkane płótno",
+      "tentPegs": "Śledzie do namiotu"
+    },
+    "secondTent": {
+      "largeCloth": "Duże płótno namiotu",
+      "ridgePole": "Belka dachu",
+      "guyRopes": "Linki naciągowe",
+      "woolFloor": "Wełniana podłoga"
+    },
+    "pavilion": {
+      "pavilionPosts": "Słupy pawilonu",
+      "linenCanopy": "Lniany dach",
+      "hangingCurtains": "Zasłony",
+      "woolRugs": "Wełniane dywany",
+      "woodenFloor": "Drewniana podłoga"
+    },
+    "well": {
+      "wellStones": "Kamienie studni",
+      "rope": "Długa lina",
+      "bucket": "Wiadro",
+      "windlass": "Kołowrót"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Bloczek",
+      "frame": "Rama",
+      "hoistRope": "Lina do wyciągania",
+      "counterweight": "Przeciwwaga",
+      "leatherBucket": "Skórzane wiadro"
+    },
+    "tripod": {
+      "tripodPoles": "Trzy kije",
+      "binding": "Sznurek do wiązania",
+      "hook": "Brązowy hak"
+    },
+    "breadOven": {
+      "mudBricks": "Cegły z mułu",
+      "clayPlaster": "Gliniany tynk",
+      "ovenLid": "Drzwiczki pieca"
+    },
+    "dryingRack": {
+      "rackPoles": "Słupki suszarki",
+      "crossbar": "Poprzeczka",
+      "wickerTray": "Wiklinowa taca",
+      "cords": "Sznurki"
+    },
+    "feast": {
+      "lowTable": "Niski stół",
+      "breadBaskets": "Koszyki z chlebem",
+      "roastDuck": "Pieczona kaczka",
+      "beerJars": "Dzbany z piwem",
+      "fruitBowl": "Misa z owocami"
+    },
+    "table": {
+      "tableTop": "Blat",
+      "trestles": "Kozły",
+      "leatherStraps": "Skórzane paski"
+    },
+    "lotusPlanter": {
+      "clayTub": "Gliniane koryto",
+      "nileSilt": "Muł z Nilu",
+      "waterJar": "Dzban na wodę",
+      "lotusTubers": "Bulwy lotosu",
+      "stoneRim": "Kamienny brzeg"
+    },
+    "edgeStones": {
+      "riverStones": "Kamienie z rzeki",
+      "clayBedding": "Warstwa gliny",
+      "gravel": "Żwir",
+      "boundaryStakes": "Paliki graniczne"
+    },
+    "post": {
+      "postTrunk": "Pień palmy",
+      "footStones": "Kamienie fundamentu",
+      "wedges": "Kliny",
+      "braces": "Podpory"
+    },
+    "platform": {
+      "platformBeams": "Belki nośne",
+      "platformPlanks": "Deski",
+      "lashingRope": "Lina do wiązania",
+      "edgeRail": "Barierka"
+    },
+    "ladder": {
+      "ladderRails": "Boki drabiny",
+      "rungs": "Szczeble",
+      "groundPegs": "Kołki w ziemi",
+      "leatherLoops": "Skórzane pętle"
+    },
+    "roof": {
+      "roofPoles": "Belki dachu",
+      "thatch": "Liście palmy",
+      "clayLayer": "Warstwa gliny",
+      "bindingGrass": "Trawa do wiązania"
+    },
+    "signalFire": {
+      "fireBasin": "Misa na ogień",
+      "pitch": "Smoła",
+      "dryBrushwood": "Suchy chrust",
+      "flint": "Krzemień",
+      "bellows": "Miech"
+    },
+    "poles": {
+      "masts": "Maszty",
+      "cornerStones": "Kamienie narożne",
+      "stayLines": "Linki",
+      "bigPegs": "Duże śledzie",
+      "poleSockets": "Podstawy masztów"
+    },
+    "stars": {
+      "goldLeaf": "Płatki złota",
+      "needleThread": "Igła z nitką",
+      "indigoDye": "Farba indygo",
+      "chalk": "Kreda",
+      "stencils": "Szablony"
+    },
+    "planets": {
+      "ochre": "Ochra",
+      "copperDiscs": "Miedziane krążki",
+      "lapisPowder": "Proszek z lapisu",
+      "hangingLoops": "Pętelki do wieszania",
+      "dividers": "Cyrkiel"
+    }
+  },
+  "collection": {
+    "title": "Budowle",
+    "progress": "{{found}} z {{total}}",
+    "built": "zbudowane",
+    "unknownPart": "???",
+    "open": "Pokaż części",
+    "close": "Ukryj części"
+  },
+  "reward": {
+    "find": "Znalezisko do obozu",
+    "part": "Część",
+    "progress": "{{name}} · {{found}} z {{total}}"
+  },
+  "haul": {
+    "new": "Nowe w twoim obozie",
+    "parts_one": "{{name}} · {{count}} część",
+    "parts_few": "{{name}} · {{count}} części",
+    "parts_many": "{{name}} · {{count}} części",
+    "parts_other": "{{name}} · {{count}} części"
+  },
+  "arrivals": {
+    "donkey": "Twój osiołek jest już w obozie",
+    "cart": "Twój wózek jest już w obozie",
+    "camel": "Twój wielbłąd jest już w obozie",
+    "secondDonkey": "Twój drugi osiołek jest już w obozie",
+    "secondCamel": "Twój drugi wielbłąd jest już w obozie",
+    "sturdyCart": "Twój mocniejszy wózek jest już w obozie",
+    "caravanBanner": "Sztandar twojej karawany wisi już w obozie"
+  }
+}

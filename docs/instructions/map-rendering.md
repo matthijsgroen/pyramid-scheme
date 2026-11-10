@@ -84,15 +84,19 @@ background, and **`ClipLayer`**, a box cut to a path — the size of its own SHA
   the night is a light hand — light enough that the rank keeps its colour, deep enough that a room nobody
   lights is not washed out. Starter, on pale limestone, is at **0.3**; the other ranks follow with their own
   art repaint. `yarn rank-colour` is the measurement.
-- **The ranks are held together by their targets and told apart by their hues.** A light night, and a wall face at least 25 L\* off its floor on every rank; starter ochre at C\* 6.6, junior ochre at 18.2,
+- **The ranks are held together by their targets and told apart by their hues.** A light night on every rank; starter ochre at C\* 6.6, junior ochre at 18.2,
   expert cold at 263°, wizard verdigris at 168°. Consistent is not flat: same rule everywhere, different
   character in it.
-- **A vertical face takes a helping of the night the floor does not** (`faceNight`). A lamp is carried at
-  floor level, so a wall takes its light at a glancing angle — and without that the two planes land within
-  a step of each other once the night is over both and a room reads as a floorplan with a change of
-  texture rather than as a place with walls. Solved per rank to the same RENDERED step, because it is what the player sees that has to agree; 0 where the art already
-  steps that far. The wall MASS takes none of it: it is the rock seen from above, so it is lit like
-  ground, and it already sits 9–14 L\* under the floor.
+- **A wall face is shown as painted.** Its own dark base band and the shadow it throws on the floor in
+  front of it are what put it above the ground; no L\* step against the floor is measured or required. A
+  rank may darken its faces with `faceNight` (its near-black over the face) as a look chosen by eye — starter
+  keeps its limestone walls a shade darker, junior shows its murals untouched. The wall MASS takes none of
+  it: it is the rock seen from above, so it is lit like ground.
+- **A face rises above its own gap.** It is drawn `FACE_H` (a cell) tall, the art's own 8:1, by growing
+  `FACE_GROW` upward over whatever lies north of the gap; the pitch, and with it every cell, walk and tap,
+  stays where it was. Where that is floor, the run of wall is drawn as a front wall (`FrontWalls`) over the
+  ground layers and under the shade, the light, the markers and everything standing, and the whole run
+  fades while the explorer is on a cell it rises over or walking through one.
 - **The light falls in the same two passes, and for the same reason read backwards.** A lit place drawn
   only under the shade's second pass hands a quarter of the tier's night back to everything the lamp just
   reached: measured on starter stone that took the lit floor from 114 to 89 and the explorer to 65 — a

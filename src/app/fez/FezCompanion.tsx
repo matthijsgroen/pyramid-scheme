@@ -88,7 +88,11 @@ export const FezCompanion: React.FC<{
     heard: conversations,
     progress: meeting && journeyProgress?.(meeting.journeyId),
   })
-  const value = useMemo(() => ({ ...contextValue, speaking, met }), [contextValue, speaking, met])
+  const conversation = activeConversation ?? undefined
+  const value = useMemo(
+    () => ({ ...contextValue, speaking, met, conversation }),
+    [contextValue, speaking, met, conversation]
+  )
 
   const beforeMeeting = activeConversation !== meeting?.conversation && !met
 

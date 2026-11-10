@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Sleamhnaigh an déantán ar an gcloch lena oscailt",
+    "alsoAvailable": "Ar fáil freisin:"
+  },
+  "perks": {
+    "max-health": "+½ croí le do shláinte uasta",
+    "armor": "Gortaíonn gaistí níos lú thú",
+    "trap-insight": "+1s ar ghaistí ama",
+    "pack-mule": "Leigheasann craiceann uisce dhá chroí",
+    "compass": "Páirt de chompás",
+    "detection": "Páirt d’aimsitheoir pasáistí",
+    "tier-unlock": "Osclaíonn sé turais {{tier}}",
+    "tier-coming-soon": "Tiocfaidh turais {{tier}} i nuashonrú níos déanaí",
+    "location-key": "Taispeánann sé tuama eile",
+    "partOf": "{{count}} as {{total}}"
+  },
+  "tiers": {
+    "stone": "Cloch",
+    "bronze": "Cré-umha",
+    "silver": "Airgead",
+    "gold": "Ór",
+    "divine": "Diaga"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Deben Airgid",
+      "description": "Bonn airgid ón seanÉigipt a d’úsáid ceannaithe le trádáil cois Níle."
+    },
+    "t2": {
+      "name": "Scrolla Paipír",
+      "description": "Scrolla taifid ceannaí, le bóithre trádála agus liostaí de lastas luachmhar."
+    },
+    "t3": {
+      "name": "Cíor Eabhair",
+      "description": "Cíor eabhair snoite go mion, rud só a tugadh ó thíortha i bhfad i gcéin."
+    },
+    "t4": {
+      "name": "Lampa Ola Cré",
+      "description": "Lampa ola simplí ach galánta a las seomraí an cheannaí."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Bráisléad Óir",
+      "description": "Bráisléad óir maisithe le clocha luachmhara, a chaith uaisle na hÉigipte."
+    },
+    "t6": {
+      "name": "Miodóg Searmanais",
+      "description": "Miodóg deasghnátha le cos seodach, a d’úsáidtí i searmanais na n-uasal."
+    },
+    "t7": {
+      "name": "Scarab Séide",
+      "description": "Ainglín cosanta scarab as séad, siombail na hathbhreithe agus na beatha síoraí."
+    },
+    "t8": {
+      "name": "Próca Canópach Alabastair",
+      "description": "Próca galánta alabastair le holaí agus cumhrán luachmhar a choinneáil."
+    },
+    "t9": {
+      "name": "Bata Siúil Éabainn",
+      "description": "Bata siúil snasta éabainn le ankh óir ar a bharr."
+    },
+    "t10": {
+      "name": "Muince Lapis Lazuli",
+      "description": "Muince álainn as clocha annamha lapis lazuli, a raibh dúil mhór ag na daoine saibhre inti."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Ankh Naofa",
+      "description": "Ankh óir a sheasann don bheatha shíoraí, beannaithe ag sagairt an teampaill."
+    },
+    "t12": {
+      "name": "Scáthán Copair",
+      "description": "Scáthán snasta copair a d’úsáidtí i searmanais ghlanta."
+    },
+    "t13": {
+      "name": "Túiseán",
+      "description": "Túiseán maisithe cré-umha a d’úsáidtí in adhradh an teampaill."
+    },
+    "t14": {
+      "name": "Cailís Deasghnátha",
+      "description": "Cailís naofa airgid a d’úsáidtí le deochanna a ofráil do na déithe."
+    },
+    "t15": {
+      "name": "Fean Searmanais",
+      "description": "Fean maisithe cleití a d’úsáid na sagairt le linn searmanas an teampaill."
+    },
+    "t16": {
+      "name": "Paidrín",
+      "description": "Sreang de choirníní beannaithe paidreoireachta don mhachnamh agus don adhradh."
+    },
+    "t17": {
+      "name": "Soitheach Uisce Choisricthe",
+      "description": "Soitheach le huisce beannaithe ó thobar naofa an teampaill."
+    },
+    "t18": {
+      "name": "Clog an Teampaill",
+      "description": "Clog cré-umha a ghlaodh ar dhaoine chun paidreoireachta agus a d’fhógair searmanais."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Séala an Fharó",
+      "description": "Séala ríoga ársa le cartús faró a bhfuil dearmad déanta air."
+    },
+    "t20": {
+      "name": "Cruinneog Chriostail",
+      "description": "Cruinneog chriostail rúndiamhrach a thaispeánann, deirtear, an t-am atá thart agus an todhchaí."
+    },
+    "t21": {
+      "name": "Táibléad Iairiglifí",
+      "description": "Táibléad cloiche ársa le tairngreachtaí rúndiamhracha i iairiglifí greanta air."
+    },
+    "t22": {
+      "name": "Ríshlat Óir",
+      "description": "Ríshlat iontach óir le súil Horus ar a barr."
+    },
+    "t23": {
+      "name": "Scian Obsaidiain",
+      "description": "Scian searmanais obsaidiain chomh géar le rásúr, a d’úsáidtí i ndeasghnátha ársa."
+    },
+    "t24": {
+      "name": "Blúire Dreige",
+      "description": "Píosa de dhreige naofa, a gcreideann daoine go bhfuil cumhacht dhiaga ann."
+    },
+    "t25": {
+      "name": "Compás Ársa",
+      "description": "Gléas loingseoireachta rúndiamhrach a dhíríonn i gcónaí ar sheoda folaithe."
+    },
+    "t26": {
+      "name": "Criostal an Ama",
+      "description": "Criostal finscéalach a lonraíonn le cumhacht na n-aoiseanna atá thart."
+    },
+    "t27": {
+      "name": "Masc Deasghnátha",
+      "description": "Masc maisithe óir a chaith ard-sagairt le linn searmanas naofa."
+    },
+    "t28": {
+      "name": "Tóirse na Lasrach Síoraí",
+      "description": "Tóirse a bhfuil lasair shíoraí ann, nár múchadh riamh ón seanaimsir."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Coróin Ra",
+      "description": "Coróin fhinscéalach dhia na gréine Ra, ag lonrú le solas agus cumhacht dhiaga."
+    },
+    "t30": {
+      "name": "Bata Thoth",
+      "description": "Bata eagna Thoth, dia an eolais, a bhfuil gach rún ársa ann."
+    },
+    "t31": {
+      "name": "Cleite Ma'at",
+      "description": "Cleite naofa Ma'at, bandia na fírinne, a d’úsáidtí le hanamacha a mheá sa saol eile."
+    },
+    "t32": {
+      "name": "Deora Isis",
+      "description": "Deora criostalaithe an bhandé Isis, a thugann cosaint shíoraí, deirtear."
+    },
+    "t33": {
+      "name": "Croí Osiris",
+      "description": "Croí caomhnaithe Osiris, tiarna an domhain thíos, ag preabadh le fórsa na beatha."
+    },
+    "t34": {
+      "name": "Ainglín Shúil Horus",
+      "description": "An t-ainglín cosanta is fearr, a bhfuil cumhacht iomlán Horus ann."
+    },
+    "t35": {
+      "name": "Nathair Apep",
+      "description": "Blúire ceangailte den nathair anoird Apep, faoi ghlas i soitheach naofa."
+    },
+    "t36": {
+      "name": "Anáil Shu",
+      "description": "Fial le hanáil Shu, dia an aeir, a thugann cumhacht ar na gaotha."
+    },
+    "t37": {
+      "name": "Lann Sobek",
+      "description": "Lann amháin ón dia crogaill Sobek, a thugann cosaint san uisce."
+    },
+    "t38": {
+      "name": "Dealbh Gharda Anubis",
+      "description": "Dealbh bheag de Anubis a thagann beo le seoda a húinéara a chosaint."
+    },
+    "t39": {
+      "name": "Leabhar na Marbh",
+      "description": "Leabhar na Marbh iomlán, le gach geasa a theastaíonn don turas go dtí an saol eile."
+    },
+    "t40": {
+      "name": "Caipchloch na Pirimide",
+      "description": "Caipchloch óir na Pirimide Móire, a bhfuil cumhacht na bhfarónna go léir bailithe inti."
+    }
+  }
+}

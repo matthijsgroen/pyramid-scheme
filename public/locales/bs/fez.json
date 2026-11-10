@@ -1,0 +1,1730 @@
+{
+  "not-found": "Izvini, razgovor koji tražiš ne postoji.",
+  "welcome": "Egipat! Stvarno sam ovdje.",
+  "welcome2": "A ova mapa… platio sam je mnogo previše. Bolje joj je da je tačna.",
+  "welcome3": "Hajde. Da vidimo gdje je taj krstić.",
+  "pyramidIntro": "Na ovom kamenju su brojevi. A neki fale…",
+  "pyramidIntro2": "Čekaj. Svaki kamen je zbir ona dva ispod njega! Jeste — i ovdje!",
+  "pyramidBlockedBlocks": "Hej, šta je sad ovo? Ovi blokovi su zapečaćeni. Neće da pokažu svoj broj!",
+  "pyramidBlockedBlocks2": "Nema veze. Pogledaj blokove oko njega — iz njih možeš izračunati.",
+  "pyramidBlockedBlocks3": "Samo što ga ne možeš upisati. Taj broj moraš zapamtiti.",
+  "pyramidBlockedBlocks4": "Hajde, došao si već ovako daleko. Možeš ti to!",
+  "levelCompleted": "Ha! Otvara se! Hajde, unutra.",
+  "exitPillar": {
+    "1": {
+      "fez": "Ha! Dnevno svjetlo! Vidiš onaj snop svjetla? Tuda izlazimo. Uđi u njega i ovdje smo gotovi."
+    },
+    "2": {
+      "fez": "Uvijek je samo jedan, skroz na kraju glavnog hodnika. Gdje god da lutamo, vratimo se do njega."
+    },
+    "3": {
+      "explorer": "Jedan izlaz. Zapamćeno."
+    }
+  },
+  "expeditionCompleted": "Čestitam, završio si pohod!",
+  "expeditionCompleted2": "Sada je otvoren novi pohod.",
+  "tombTutorial": "Uuu, pismo! Možemo li ga pročitati? S hijeroglifima koje smo našli… možda!",
+  "tombTutorial2": "Gle ti ovo, računi sa znakovima u njima! Vidiš ona prazna mjesta? Tu idu hijeroglifi. Tvoji, tamo dolje.",
+  "tombTutorial3": "Mali računi pokazuju kad je znak tačan. Tako otkrivamo koji znak ide gdje.",
+  "tombTutorial4": "Sve popunjeno? Onda se pojavi brava s brojevima. Veliki račun je šifra — i onda se grobnica otvori!",
+  "hieroglyphUnlock": "Imamo poseban predmet — s njim možemo pisati na jednom od onih zapečaćenih blokova!",
+  "hieroglyphUnlock2": "Dodirni kamen koji svijetli, pa prevuci predmet na njega da ga otključaš. Jedan blok po piramidi.",
+  "errorHighlightTutorial": "Ono blago što smo našli ima zgodan trik — upiši pogrešan odgovor i jedna greška zasvijetli crveno!",
+  "errorHighlightTutorial2": "Svijetli samo jedan blok odjednom, pa je i dalje izazov. Ali pomaže da suziš traženje!",
+  "earlyFeedbackTutorial": "Vidiš one blokove za provjeru? Postanu zeleni ili crveni dok ih popunjavaš — odmah znaš!",
+  "earlyFeedbackTutorial2": "Drži se njih dok rješavaš. Ako jedan pocrveni, nešto u blizini treba popraviti.",
+  "notEnoughHieroglyphs": "Ovaj pohod uvijek možeš prekinuti tako što se vratiš na ekran za putovanja.",
+  "notEnoughHieroglyphs2": "Možemo prekinuti pohod i negdje drugdje potražiti hijeroglife koji nam još fale.",
+  "tombLoot": "Vau, naše prvo blago! Bravo!",
+  "mapPiece": "Gle! E TO je mapa. Baš stara! Vrijedi više od obje naše zajedno!",
+  "mapPiece2": "Doduše, samo komadić. Svaki pohod ovdje u blizini krije po jedan, a zajedno pokazuju put do grobnice.",
+  "mapComplete": "Cijela je! Gle, svaki komadić se savršeno uklapa.",
+  "mapComplete2": "Eno, tamo gdje se sve linije sastaju. Tamo leži grobnica.",
+  "mapComplete3": "Sad je među našim putovanjima. Hoćemo li pogledati?",
+  "mapPiece3": "Prati na spisku pohoda koliko ih imamo. Ja ću sigurno brojati!",
+  "mosaicIntro": "Uuu, obojeno staklo! Gle kako hvata svjetlo — TO niko ne baca!",
+  "mosaicIntro2": "Dio je jedne slike. Cijeli prozor od stakla, i svaki komadić koji nađemo vrati jedan njen dio.",
+  "mosaicIntro3": "Zar ti nemaš negdje logor? Ponesi ih, pa ćemo ih tamo složiti. Hoću da vidim šta će ispasti!",
+  "mosaicReminder": "Pst! Oni stakleni komadići nam još zveckaju u torbi. Hoćemo li ih staviti u prozor u logoru?",
+  "mosaicStarter": "Mačka na vratima, a zmija bježi glavom bez obzira. To je vrijedilo jedne zdjelice mlijeka.",
+  "mosaicStarter2": "Egipćani su obožavali mačke baš zbog ovoga — ubijale su zmije i pacove koji su ulazili u žito.",
+  "mosaicStarter3": "Toliko su ih voljeli da su jednu pretvorili u boginju. Bastet. Čuvarica kuće, vrata i svih koji spavaju iza njih.",
+  "mosaicJunior": "Pogledaj mu ruku — neko mu pokazuje kako se drži pero.",
+  "mosaicJunior2": "Onaj s ptičjom glavom je Thoth. Pisanje, brojanje, vođenje zapisa — sve je to njegovo.",
+  "mosaicJunior3": "Ibis kojeg smo pratili uz rijeku? To je njegova ptica. I svaki broj koji smo upisali u neki zid pripada njemu.",
+  "mosaicExpert": "To svjetlo nije slučajno. Cijelu dvoranu su sagradili tako da padne baš tu, pravog jutra.",
+  "mosaicExpert2": "Sunce je Amon-Ra — onaj skriveni, i svjetlo koje svi vide. Oboje odjednom.",
+  "mosaicExpert3": "Ko može tako tačno izmjeriti nebo, može izmjeriti sve. Cijelim putem rješavamo njihove račune.",
+  "mosaicMaster": "Zelena koža, a žito mu raste pravo iz tijela. To je namjerno.",
+  "mosaicMaster2": "Oziris. Ubili su ga, pa su ga opet sastavili, i sad je on ono što se vraća svake godine kad rijeka poplavi polja.",
+  "mosaicMaster3": "Ovdje dolje to je cijela poenta: mrtav ne znači gotov. Vesela misao za grobnicu, a?",
+  "mosaicWizard": "Srce na jednoj strani. Jedno pero na drugoj. I u ravnoteži su.",
+  "mosaicWizard2": "Pero je Maat — istina, ravnoteža, sve onako kako treba da bude. Ako ti je srce teže od tog pera, ne prolaziš kroz vrata.",
+  "mosaicWizard3": "Šakal koji pridržava vagu je Anubis. On je taj koji te dovede ovamo.",
+  "mosaicFinale": "Odmakni se na tren. Pogledaj šta smo sve iznijeli iz onih piramida.",
+  "mosaicFinale2": "Svaki komad je dio njega — onoga koji pridržava vagu. Gledao nas je cijelim putem.",
+  "mosaicFinale3": "To je njegov zapis o nama. I rekao bih da je u ravnoteži.",
+  "shopFirstVisit": "A, evo nas. Moja tezga — pa rekao sam ti da sam tu zbog trgovine.",
+  "shopFirstVisit2": "Sve na ovoj tezgi sam odnekud iznio. Ovo ovdje je od prije dvije grobnice.",
+  "shopArrival": "A, moja tezga! Da poredam šta sam usput pokupio.",
+  "shopArrival2": "Rijetki nalazi koštaju najviše, ali platit ću ti za svaku sitnicu koju nosiš.",
+  "arrival": {
+    "starter_1": {
+      "1": {
+        "explorer": "Gle, tamo pozadi! Sfinga!"
+      },
+      "2": {
+        "explorer": "Ogromna je, čak i odavde."
+      },
+      "3": {
+        "explorer": "Kažu da ispod njenih šapa piše nešto. Nešto što niko ne zna pročitati."
+      },
+      "4": {
+        "explorer": "Kasnije. Prvo ova piramida!"
+      }
+    },
+    "starter_2": {
+      "1": {
+        "fez": "Ha! Konačno nešto što razumijem. Sve što je išlo uz Nil prvo je prošlo ovuda."
+      },
+      "2": {
+        "fez": "A trgovci sve zapisuju. Ko je šta kupio, ko je kome dužan, ko je kasnio…"
+      },
+      "3": {
+        "explorer": "Ko je kasnio?"
+      },
+      "4": {
+        "fez": "Naročito ko je kasnio!"
+      },
+      "5": {
+        "fez": "Tri hiljade godina. Robe nema, a računi su još tu. Tipično!"
+      }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Gle ta vrata! Ljudi su ovdje dolazili da traže zaštitu. A onda su takva vrata ostajala zatvorena."
+      },
+      "2": {
+        "explorer": "Zatvorena za koga?"
+      },
+      "3": {
+        "fez": "Za svakog ko nije lijepo zamolio. Uglavnom za nas."
+      },
+      "4": {
+        "fez": "Sve što je u ovoj zemlji zapečaćeno, neko je zapečatio ozbiljno. Baš ozbiljno."
+      },
+      "5": {
+        "fez": "A mačke! Ovdje su obožavali mačke. Nisu mogli ruke da drže dalje od njih."
+      }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "O, ovo mi se sviđa. Ovdje su učili pisati! Znak po znak, na razbijenim loncima — papirus je bio preskup za djecu."
+      },
+      "2": {
+        "explorer": "Vježbali su na smeću?"
+      },
+      "3": {
+        "fez": "Na čemu god je bilo! A kad naučiš dovoljno ovih znakova, zid odjednom više nije samo ukras."
+      },
+      "4": {
+        "explorer": "Ta Sfinga… hoću je još jednom pogledati."
+      },
+      "5": {
+        "fez": "Ne još. Uskoro."
+      }
+    },
+    "junior_1": {
+      "1": {
+        "fez": "Vraćali su se svake godine s poplavom, skoro tačno na dan."
+      },
+      "2": {
+        "fez": "Pa su ljudi počeli brojati dane između. Odatle dolazi kalendar — od ptica."
+      },
+      "3": {
+        "explorer": "Od ptica."
+      },
+      "4": {
+        "fez": "Od ptica i papirologije. Uvijek su to ptice i papirologija."
+      }
+    },
+    "junior_2": {
+      "1": {
+        "fez": "Ovdje su sve pravili. Ne grobnice — nego stvari koje su išle u njih."
+      },
+      "2": {
+        "fez": "Pogledaj kalupe. Ista narukvica, četrdeset puta."
+      },
+      "3": {
+        "explorer": "Za četrdeset ljudi?"
+      },
+      "4": {
+        "fez": "Za svakog ko je mogao platiti. Plemić je htio ono što ima kralj, po cijeni koju plemić može podnijeti."
+      }
+    },
+    "junior_3": {
+      "1": {
+        "fez": "Ovo je Thoth. Bog tajni i magije, prilično sam siguran."
+      },
+      "2": {
+        "explorer": "Prilično."
+      },
+      "3": {
+        "fez": "Devedeset posto. Uglavnom — znakovi koje skupljaš su njegovi."
+      }
+    },
+    "junior_4": {
+      "1": {
+        "fez": "Visok preko devedeset metara, a na vrhu vatra koja se nikad nije gasila."
+      },
+      "2": {
+        "fez": "Mornari su vidjeli obalu i s dan plovidbe daleko. Prije toga su je nalazili tako što bi se zabili u nju."
+      },
+      "3": {
+        "explorer": "Kako ovdje uopšte nešto nađeš bez toga?"
+      },
+      "4": {
+        "fez": "Pitaš nekoga ko je već bio tamo. To ti je cijeli moj posao."
+      }
+    },
+    "expert_1": {
+      "1": {
+        "fez": "Šezdesetak grobnica uklesanih u jednu dolinu, i baš svaka je otvorena prije nego što smo mi stigli."
+      },
+      "2": {
+        "explorer": "Ko ih je otvorio?"
+      },
+      "3": {
+        "fez": "Ljudi kao mi, uglavnom. Samo ranije."
+      },
+      "4": {
+        "fez": "Šta ti kažeš na to?"
+      },
+      "5": {
+        "explorer": "Da kasnimo."
+      }
+    },
+    "expert_2": {
+      "1": {
+        "fez": "Amon-Ra. Sunce. Svima najdraži, i vidiš zašto — pogledaj kolika je ova građevina."
+      },
+      "2": {
+        "explorer": "Dva imena."
+      },
+      "3": {
+        "fez": "Isti bog, mislim. Najpopularnijima su davali po dva."
+      }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Cijela zemlja je jedna zelena traka s obje strane jedne rijeke, a ovdje se raširi u ovo."
+      },
+      "2": {
+        "fez": "Sve raste. I sve grize."
+      },
+      "3": {
+        "explorer": "A zbog čega smo mi ovdje?"
+      },
+      "4": {
+        "fez": "Iskreno, nadao sam se — ni zbog jednog."
+      }
+    },
+    "expert_4": {
+      "1": {
+        "fez": "Prva. Prije nje kraljevi su išli ispod ravne ploče, kao i svi ostali."
+      },
+      "2": {
+        "fez": "Neko je stao ovdje i pomislio: a da to uradimo, ali šest puta, jedno na drugo?"
+      },
+      "3": {
+        "explorer": "Je li uspjelo?"
+      },
+      "4": {
+        "fez": "Ona još stoji, a on ne. Zavisi šta misliš pod tim."
+      }
+    },
+    "master_1": {
+      "1": {
+        "fez": "Dva miliona blokova. Neko ih je izbrojao."
+      },
+      "2": {
+        "explorer": "Neko ih je izbrojao?"
+      },
+      "3": {
+        "fez": "Uvijek neko broji. To ljudi zaborave kod svega ovoga — vodili su ga činovnici."
+      },
+      "4": {
+        "fez": "Prelijepo, zar ne? Ne smijem ni pomisliti kako je izgledao spisak plata."
+      }
+    },
+    "master_2": {
+      "1": {
+        "fez": "Upute. To je sve — šta da kažeš, i kojim redom, da putovanje prođe kako treba."
+      },
+      "2": {
+        "explorer": "Uputstvo."
+      },
+      "3": {
+        "fez": "Uputstvo za to kako biti mrtav. Ovi su baš sve zapisivali."
+      },
+      "4": {
+        "fez": "A to je, s obzirom na ono što tražimo, prva dobra vijest ove sedmice."
+      }
+    },
+    "master_3": {
+      "1": {
+        "fez": "A. Nečiji logor."
+      },
+      "2": {
+        "explorer": "Skorašnji?"
+      },
+      "3": {
+        "fez": "Otprilike skorašnji. Hrana iz konzerve i gadan kašalj, kako izgleda."
+      },
+      "4": {
+        "fez": "Otišli su dalje od ovoga i nisu ponijeli opremu sa sobom."
+      },
+      "5": {
+        "explorer": "Jesu li se vratili po nju?"
+      },
+      "6": {
+        "fez": "…Hajde da idemo dalje."
+      }
+    },
+    "master_4": {
+      "1": {
+        "fez": "E OVO su ostali pokušavali oponašati. Pogledaj boju — tri hiljade godina, a izgleda kao da je još mokra."
+      },
+      "2": {
+        "explorer": "Henut bi pobjesnila."
+      },
+      "3": {
+        "fez": "Henut bi pravila bilješke."
+      }
+    },
+    "wizard_1": {
+      "1": {
+        "fez": "Sunce noću ode ispod svijeta i izađe s druge strane. To ti je cijelo vjerovanje."
+      },
+      "2": {
+        "fez": "Dvanaest sati u mraku, svašta na putu, i neko ga mora prenijeti do kraja."
+      },
+      "3": {
+        "explorer": "To je ono što mi radimo."
+      },
+      "4": {
+        "fez": "Pokušavao sam to ne reći naglas."
+      },
+      "5": {
+        "explorer": "Pijesak još ulazi."
+      },
+      "6": {
+        "fez": "Ulazi već tri hiljade godina. Ne prestaje, samo ide ukrug."
+      },
+      "7": {
+        "fez": "Napuni se, okrene, krene ispočetka. Isto kao sunce."
+      }
+    },
+    "wizard_2": {
+      "1": {
+        "fez": "Dvojica, osamnaest metara visoki, i obojica su Amenhotep."
+      },
+      "2": {
+        "fez": "Grci su ih samo pogledali i odlučili da je to neki njihov junak. Memnon. Ime se zadržalo dvije hiljade godina."
+      },
+      "3": {
+        "explorer": "Čije ime piše na njemu?"
+      },
+      "4": {
+        "fez": "Njegovo. Uklesano u prijesto, tu gdje je oduvijek."
+      },
+      "5": {
+        "fez": "Niko ga nije pročitao."
+      },
+      "6": {
+        "fez": "Nakon zemljotresa sjeverni je pjevao u zoru. Jedan ton, svako jutro, kad bi sunce zagrijalo pukotinu."
+      },
+      "7": {
+        "explorer": "A sad?"
+      },
+      "8": {
+        "fez": "Jedan car ga je dao popraviti. Od tada nije pustio ni glasa."
+      }
+    },
+    "wizard_3": {
+      "1": {
+        "fez": "Vaga. Srce na jednoj strani, pero na drugoj — znači, dobro teško srce pobjeđuje, valjda."
+      },
+      "2": {
+        "explorer": "Na koju stranu ide nešto teško?"
+      },
+      "3": {
+        "fez": "…Dolje."
+      },
+      "4": {
+        "fez": "Oh."
+      },
+      "5": {
+        "fez": "Lagano. Hoćeš da bude LAGANO."
+      }
+    },
+    "wizard_4": {
+      "1": {
+        "fez": "Vrh se stavlja zadnji, i to zlatni, da cijela piramida uhvati prvo svjetlo."
+      },
+      "2": {
+        "explorer": "Za koga?"
+      },
+      "3": {
+        "fez": "Za svakog ko gleda. U tome je bila poenta — nikad nije bilo za čovjeka unutra."
+      }
+    }
+  },
+  "tomb": {
+    "starter": {
+      "1": {
+        "ipi": "Hej! Ruke k sebi! To je moj ćup!"
+      },
+      "2": {
+        "fez": "…Je li to ćup upravo nešto rekao?!"
+      },
+      "3": {
+        "ipi": "To sam bio ja. Treća polica, onaj okrnjeni. Taj je moj."
+      },
+      "4": {
+        "explorer": "Dobro, dobro! Ostaje gdje jeste. Ko si ti?"
+      },
+      "5": {
+        "ipi": "Ipi. Četrdeset godina sam vodio knjige. Četrdeset!"
+      },
+      "6": {
+        "fez": "Knjige? Čije?"
+      },
+      "7": {
+        "ipi": "Svačije! Ko je koliko dužan, do zadnje vreće žita."
+      },
+      "8": {
+        "ipi": "Ona Henut, gore sjeverno odavde? Jedanaest debena lapisa. Nikad nije platila!"
+      },
+      "9": {
+        "explorer": "I to još pamtiš, poslije toliko vremena?"
+      },
+      "10": {
+        "ipi": "Zapisano je! Ono što je zapisano, to se i desilo."
+      },
+      "11": {
+        "ipi": "Samo ti Horiji… Hori lađar, Hori pekar… i onaj drugi Hori."
+      },
+      "12": {
+        "fez": "Jeste li i vi imali mačke? Svi su imali mačke, zar ne? Slatka mala stvorenja!"
+      },
+      "13": {
+        "ipi": "Slatka? Bile su zbog žita! Znaš li ti koliko te košta jedan pacov za cijelu sezonu?"
+      },
+      "14": {
+        "fez": "…Aha. Dobro."
+      },
+      "15": {
+        "ipi": "Reci Henut da te Ipi poslao. To će joj pokvariti popodne."
+      },
+      "16": {
+        "fez": "Sviđa mi se!"
+      },
+      "17": {
+        "explorer": "Tebi se samo sviđa što mu još neko duguje pare."
+      }
+    },
+    "junior": {
+      "1": {
+        "henut": "Konačno. Sigurno ste došli zbog lapisa. Pretpostavljam da Ipi još priča o lapisu."
+      },
+      "2": {
+        "explorer": "Priča."
+      },
+      "3": {
+        "henut": "Bilo je staklo. Predivno staklo. On je to znao."
+      },
+      "4": {
+        "fez": "…Je li i narukvica bila od stakla?"
+      },
+      "5": {
+        "henut": "Sve ovdje je najbolja kopija koja se mogla kupiti, mladiću, i svaki komad sam sama izabrala."
+      },
+      "6": {
+        "henut": "Dakle. Zid. Treći znak — to nije moje ime. Neki šegrt s dlijetom, a niko ga nije pazio."
+      },
+      "7": {
+        "henut": "Učiš znakove. Vidi se. Popravi to."
+      }
+    },
+    "juniorFixed": {
+      "1": {
+        "henut": "Eto. Sad će i za hiljadu godina tu biti moje ime."
+      },
+      "2": {
+        "explorer": "Ipi ga je napisao tačno."
+      },
+      "3": {
+        "henut": "Ipi je sve pisao tačno. To mu je bila jedina dobra osobina."
+      },
+      "4": {
+        "fez": "Je li to važno, ovdje dolje?"
+      },
+      "5": {
+        "henut": "To je jedino što je važno."
+      },
+      "6": {
+        "fez": "Gore je imala cijeli zid s Thothom. Bog tajni."
+      },
+      "7": {
+        "henut": "Thoth broji. Thoth zapiše šta si uradio i to ostane zapisano."
+      },
+      "8": {
+        "henut": "Tajnama ljudi zovu računanje kad ga ne znaju."
+      },
+      "9": {
+        "henut": "Ako idete dalje — a očito idete — u Karnaku je jedan svećenik koji mrtvima duguje obred koji nikad nije obavio. Bit će nepodnošljiv zbog toga. Svećenici su takvi."
+      },
+      "10": {
+        "henut": "…Jesmo li se mi već sreli?"
+      },
+      "11": {
+        "fez": "Sjetio bih se."
+      },
+      "12": {
+        "henut": "Da. I ja bih."
+      }
+    },
+    "expert": {
+      "1": {
+        "priest": "Vi niste onaj koga čekam."
+      },
+      "2": {
+        "explorer": "A koga čekate?"
+      },
+      "3": {
+        "priest": "Nekoga s pečatom. Trebao je biti donesen ovamo, spušten tamo, i nad njim izgovorene riječi. Ništa od te tri stvari se nije desilo."
+      },
+      "4": {
+        "fez": "…Koliko dugo već čekate?"
+      },
+      "5": {
+        "priest": "Ne brojim. To ne bi bilo profesionalno."
+      },
+      "6": {
+        "priest": "Pravi dar je stvar koju je kralj držao kad su ga sahranili. Ne kopija. Ne nešto slično. Baš ta stvar, s njegovim znakom na njoj."
+      },
+      "7": {
+        "priest": "Donesite to i bit ćete najavljeni. Donesite bilo šta drugo i nećete."
+      },
+      "8": {
+        "explorer": "Najavljeni kome?"
+      },
+      "9": {
+        "priest": "Znat ćete. Svi saznaju, prije ili kasnije."
+      },
+      "10": {
+        "fez": "Ovaj je baš zaljubljen u sunce. Sav onaj Amon-Ra na ulazu."
+      },
+      "11": {
+        "priest": "Amon je onaj skriveni. Ra je onaj kojeg svako može vidjeti."
+      },
+      "12": {
+        "priest": "To je isti bog. To nije slučajnost, to je cijela ideja."
+      },
+      "13": {
+        "fez": "…Aha. Da. Znao sam ja to."
+      },
+      "14": {
+        "explorer": "Nisi."
+      },
+      "15": {
+        "fez": "Nisam."
+      }
+    },
+    "expertB": {
+      "1": {
+        "fez": "Ovdje niko nije bio. Ni mi, ni oni prije, niko."
+      },
+      "2": {
+        "explorer": "Kako znaš?"
+      },
+      "3": {
+        "fez": "Zato što u njoj još nešto ima."
+      }
+    },
+    "master": {
+      "1": {
+        "pharaoh": "Smijete prići. Prišli ste. Pa dobro."
+      },
+      "2": {
+        "fez": "Vaše veličanstvo."
+      },
+      "3": {
+        "pharaoh": "Da."
+      },
+      "4": {
+        "explorer": "Treba nam vaš pečat."
+      },
+      "5": {
+        "pharaoh": "Treba svima. Moj su uzeli dva puta, a vratili nijednom."
+      },
+      "6": {
+        "pharaoh": "Drugi put su ostavili kopiju. KOPIJU. U MOJOJ grobnici. Kao da ja neću pogledati."
+      },
+      "7": {
+        "explorer": "Je li kopija još ovdje?"
+      },
+      "8": {
+        "pharaoh": "Naravno da je još ovdje, ništa ne vrijedi. Stoji na polici gdje bi trebao biti pravi i — pogrešna je."
+      },
+      "9": {
+        "pharaoh": "Uzmite je ako hoćete. Odnesite je onom svećeniku. Vidite dokle ćete s njom stići."
+      },
+      "10": {
+        "fez": "…Njemu je ovo zabavno."
+      },
+      "11": {
+        "pharaoh": "Ovo mi je najbolja sedmica u devetsto godina."
+      },
+      "12": {
+        "fez": "Ono na zidu je Oziris. Gospodar mrtvih — tmurna posla."
+      },
+      "13": {
+        "pharaoh": "On je ZELEN, ti smiješna životinjo."
+      },
+      "14": {
+        "pharaoh": "Zelen kao polje pod poplavom. Ubili su ga i opet sastavili, i vraća se baš svake godine."
+      },
+      "15": {
+        "pharaoh": "Ovdje dolje to nije tmurno, to je cijela poenta. Mrtav ne znači gotov."
+      }
+    },
+    "wizard": {
+      "1": {
+        "priest": "Spustite ga. Tu. Da."
+      },
+      "2": {
+        "priest": "…"
+      },
+      "3": {
+        "priest": "Ovo sam uradio prvi put. Već sam počeo misliti da sam zaboravio kako se radi."
+      },
+      "4": {
+        "explorer": "I jeste li?"
+      },
+      "5": {
+        "priest": "Potpuno. Vratilo mi se."
+      }
+    },
+    "wizardB": {
+      "1": {
+        "fez": "Njihov konopac. Još je vezan."
+      },
+      "2": {
+        "explorer": "Stigli su dovde."
+      },
+      "3": {
+        "fez": "I dalje od ovoga. A onda su se popeli nazad uz njega."
+      },
+      "4": {
+        "explorer": "Tu je neka bilježnica."
+      },
+      "5": {
+        "fez": "Šta piše?"
+      },
+      "6": {
+        "explorer": "Ne mogu pročitati pismo. Vratili se po pečat. Napravili umjesto toga bolji."
+      },
+      "7": {
+        "explorer": "Niko nije nasjeo."
+      },
+      "8": {
+        "fez": "…Krivotvorili su ga jer nisu znali pročitati za šta služi."
+      },
+      "9": {
+        "explorer": "I onda su otišli kući."
+      }
+    },
+    "wizardC": {
+      "1": {
+        "fez": "Stani na tren. Pogledaj šta smo sve iznijeli iz onih piramida."
+      },
+      "2": {
+        "explorer": "To je slika."
+      },
+      "3": {
+        "fez": "Sve vrijeme je bila slika."
+      }
+    }
+  },
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Pećina! Na mapi su bila vrata podruma, a ovo je cijelo brdo!"
+      },
+      "2": {
+        "fez": "Pametan momak. Sakrij robu u brdo — nijednom lopovu to ne bi palo na pamet."
+      },
+      "3": {
+        "explorer": "Nama jeste."
+      },
+      "4": {
+        "fez": "Mi nismo lopovi. Mi smo kupci. Jako zakašnjeli kupci."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Mora da je ovo. Henut! Ona s jedanaest debena lapisa!"
+      },
+      "2": {
+        "fez": "Šta misliš — dobijamo li dio ako naplatimo dug?"
+      },
+      "3": {
+        "explorer": "Ti još ništa nisi naplatio."
+      },
+      "4": {
+        "fez": "Volim to izračunati unaprijed."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Znači, ovdje je Henutin svećenik. Nepodnošljiv, rekla je."
+      },
+      "2": {
+        "fez": "Šta misliš, da mu ponesemo nešto? Cvijeće?"
+      },
+      "3": {
+        "explorer": "Mrtav je."
+      },
+      "4": {
+        "fez": "Tim prije. Hoćeš da ostaviš dobar prvi utisak."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Ovdje je smio ulaziti samo vrhovni svećenik. A sad i mi!"
+      },
+      "2": {
+        "explorer": "A smijemo li mi?"
+      },
+      "3": {
+        "fez": "Nema nikog na vratima da kaže ne."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Gle, mapa ovdje jednostavno prestaje. Pijesak, i onda ništa."
+      },
+      "2": {
+        "explorer": "Onda smo na pravom mjestu."
+      },
+      "3": {
+        "fez": "To i ja kažem. Baš zato sam nervozan."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Ozirisova dvorana! Zelena, naravno. Jer se on vraća svake godine, kao žito."
+      },
+      "2": {
+        "explorer": "To si oduvijek znao."
+      },
+      "3": {
+        "fez": "Oduvijek."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Ostava samih bogova! Šta čuvaš kad već imaš sve?"
+      },
+      "2": {
+        "explorer": "Ono što ti ljudi donesu."
+      },
+      "3": {
+        "fez": "…Da. To će biti to."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Carstvo svemirskih sila. Gle, gle."
+      },
+      "2": {
+        "fez": "Da ja imam nešto za prodati što ne vrijedi mnogo, i ja bih ga tako nazvao."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Odjednom imam osjećaj da sam nešto pogriješio."
+      },
+      "2": {
+        "explorer": "Kao šta?"
+      },
+      "3": {
+        "fez": "Nemam pojma. To je najgore od svega."
+      }
+    }
+  },
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Tolike poluge i vrata, za jedan podrum!"
+      },
+      "2": {
+        "fez": "Onda tamo dolje ima nešto dobro. Niko se ne muči toliko zbog smeća."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Uh. Ova vrata su bila mnogo zahtjevnija od Ipijevih."
+      },
+      "2": {
+        "fez": "Pa dobro. Gospođa je imala para, naravno."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Uh, konačno! Ta pećina nas baš nije htjela pustiti unutra."
+      },
+      "2": {
+        "explorer": "Mislim da je u tome i bila poenta."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Pst… zašto ja šapućem?"
+      },
+      "2": {
+        "explorer": "Nemam pojma. I ja šapućem."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Fuh. Rep mi se još trese od onih zadnjih vrata."
+      },
+      "2": {
+        "fez": "Kralj koji ovako zaključava svoje stvari… baš ih ne želi izgubiti."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Vidiš? Ostani dovoljno dugo pod zemljom, i opet izađeš gore."
+      },
+      "2": {
+        "explorer": "Je li i to Oziris?"
+      },
+      "3": {
+        "fez": "Ne, to sam ja."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Ovakva vrata… nekad bismo se samo okrenuli i otišli."
+      },
+      "2": {
+        "explorer": "Više ne."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Tri sprata pećine, i tek onda ulazna vrata."
+      },
+      "2": {
+        "explorer": "Onda mora da se isplati."
+      },
+      "3": {
+        "fez": "To uvijek kažu. A onda unutra bude ćup."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Zadnji komad mraka. Osjećam to."
+      },
+      "2": {
+        "explorer": "To si rekao i kod prošlog."
+      },
+      "3": {
+        "fez": "I skoro sam bio u pravu."
+      }
+    }
+  },
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Gle ovo! Piramida, pod zemljom! Za jednog trgovca!"
+      },
+      "2": {
+        "fez": "Ili je jako dobro zarađivao, ili se jako dobro cjenkao."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Gle kako vrh sija na suncu! Pravo zlato, kladim se."
+      },
+      "2": {
+        "explorer": "U rupi u zemlji. Kome to sija?"
+      },
+      "3": {
+        "fez": "Njoj. Vidi se kakva je."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Hm. Smiješ li ti uopšte prodati nešto što već pripada nekom bogu?"
+      },
+      "2": {
+        "explorer": "Pitaj boga."
+      },
+      "3": {
+        "fez": "Radije ne bih."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Misliš li da onaj svećenik zna da mi ovdje lutamo?"
+      },
+      "2": {
+        "explorer": "On ne broji. To ne bi bilo profesionalno."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Gle je, sama samcata na suncu. Lijepa je, a?"
+      },
+      "2": {
+        "fez": "Da je samo nacrtamo i odemo?"
+      },
+      "3": {
+        "explorer": "Ti ne znaš crtati."
+      },
+      "4": {
+        "fez": "…Ne znam. Onda, idemo unutra."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Ko god je unutra, računa da će se vratiti. Takav je ovdje dogovor."
+      },
+      "2": {
+        "explorer": "Koliko već čeka?"
+      },
+      "3": {
+        "fez": "Dugo. Ali to ide uz posao. Biti mrtav je uglavnom čekanje."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "explorer": "Vau."
+      },
+      "2": {
+        "fez": "Da."
+      },
+      "3": {
+        "fez": "Nekad jednostavno nema šta više reći, je l' da?"
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Vidiš onu sunčanu mrlju na piramidi? Po njoj bi mogao znati koliko je sati."
+      },
+      "2": {
+        "explorer": "Pa koliko je sati?"
+      },
+      "3": {
+        "fez": "…Popodne. Otprilike. Nisam ja sat."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Eno je. Svaka linija na onoj mapi završava ovdje."
+      },
+      "2": {
+        "explorer": "Onda je ovo kraj."
+      },
+      "3": {
+        "fez": "Kraj mape, da. Čudno. Mislio sam da će to biti ljepši osjećaj."
+      }
+    }
+  },
+  "camp": {
+    "firstHome": {
+      "1": {
+        "fez": "Ovo je tvoj logor? Vatra i kovčeg?"
+      },
+      "2": {
+        "explorer": "Naš logor."
+      },
+      "3": {
+        "fez": "Naš. Dobro. Onda ja uzimam mjesto pored vatre."
+      },
+      "4": {
+        "fez": "Ja sam ipak gušter. Kad mi odgovara."
+      }
+    },
+    "homeHaul": {
+      "1": {
+        "fez": "Raspakivanje! Najbolji dio cijelog puta."
+      },
+      "2": {
+        "explorer": "Bolje od piramide?"
+      },
+      "3": {
+        "fez": "Piramida nije naša. Ovo jeste."
+      }
+    },
+    "homeEmpty": {
+      "1": {
+        "explorer": "Praznih ruku."
+      },
+      "2": {
+        "fez": "Pa šta? Hodali smo. I to se računa."
+      },
+      "3": {
+        "explorer": "Za šta se računa?"
+      },
+      "4": {
+        "fez": "Za moje noge. Jako su kratke, znaš."
+      }
+    },
+    "rested": {
+      "1": {
+        "fez": "Eto. Je li ti malo bolje?"
+      },
+      "2": {
+        "explorer": "Bila je to samo ogrebotina."
+      },
+      "3": {
+        "fez": "Nisam ni pogledao. I opet sam morao sjesti."
+      }
+    },
+    "chapterJunior": {
+      "1": {
+        "fez": "E, to je lijepo prošlo. Sljedeće!"
+      },
+      "2": {
+        "explorer": "Nije baš bilo tako lako."
+      },
+      "3": {
+        "fez": "Sad jeste. Poslije je sve lako."
+      }
+    },
+    "chapterExpert": {
+      "1": {
+        "fez": "Tamo imaju zamke. Prave. Grizu."
+      },
+      "2": {
+        "fez": "Povrijediš se? Onda se samo vratimo pješke. Kod kuće ćeš se oporaviti."
+      },
+      "3": {
+        "explorer": "A ti?"
+      },
+      "4": {
+        "fez": "Ja ću hodati iza tebe. Tamo je sigurnije."
+      }
+    },
+    "chapterMaster": {
+      "1": {
+        "fez": "Četiri piramide tamo. Sjećaš se kad je bila samo jedna?"
+      },
+      "2": {
+        "explorer": "To nije bilo tako davno."
+      },
+      "3": {
+        "fez": "Nije. Ali tako mi se čini."
+      }
+    },
+    "chapterWizard": {
+      "1": {
+        "fez": "Pogledaj onu zadnju. Sa zlatnim vrhom i svim!"
+      },
+      "2": {
+        "fez": "Ta će nas koštati. Zadnja uvijek košta."
+      },
+      "3": {
+        "explorer": "Koštati nas čega?"
+      },
+      "4": {
+        "fez": "…Više nisam siguran."
+      }
+    },
+    "firstFind": {
+      "1": {
+        "fez": "Gle ovo — kao da je oduvijek bilo tu!"
+      },
+      "2": {
+        "fez": "Svrbi me da mu okačim cijenu."
+      },
+      "3": {
+        "explorer": "Nemoj."
+      },
+      "4": {
+        "fez": "Ma ne, ne. Iz kuće se ne prodaje. Znam ja to."
+      }
+    },
+    "structureDone": {
+      "1": {
+        "fez": "Gotovo je! I zadnji komadić je na mjestu!"
+      },
+      "2": {
+        "explorer": "Sve smo sami napravili."
+      },
+      "3": {
+        "fez": "Pa. Ja sam uglavnom pokazivao prstom."
+      }
+    }
+  },
+  "animal": {
+    "forSale": {
+      "1": {
+        "fez": "Gle šta ima na tezgi! Sad se bavim i prevozom."
+      },
+      "2": {
+        "explorer": "Žvače."
+      },
+      "3": {
+        "fez": "To je uračunato u cijenu."
+      }
+    },
+    "boughtDonkey": {
+      "1": {
+        "fez": "Prodano! Jedan magarac. Tvrdoglav, ali nosi sve."
+      },
+      "2": {
+        "explorer": "Pa gdje je?"
+      },
+      "3": {
+        "fez": "Već je na putu kući. Radije hoda bez nas."
+      }
+    },
+    "blockedDonkey": {
+      "1": {
+        "fez": "Nećemo ići tako daleko sa svim ovim stvarima. Za to treba magarac."
+      },
+      "2": {
+        "fez": "A pogodi ko ima jednog? Ja. Na mojoj tezgi u Henutinom trezoru."
+      }
+    },
+    "throughDonkey": {
+      "1": {
+        "explorer": "Hoće da ide."
+      },
+      "2": {
+        "fez": "Danas. Pitaj ga opet sutra."
+      }
+    },
+    "arrivesDonkey": {
+      "1": {
+        "fez": "Eno ga! Stigao je prije nas."
+      },
+      "2": {
+        "explorer": "I vatru je našao."
+      },
+      "3": {
+        "fez": "Moje mjesto. Pa dobro. On je bio prvi."
+      }
+    },
+    "boughtCart": {
+      "1": {
+        "fez": "Kola! Dva točka, i skoro uopšte ne škripe."
+      },
+      "2": {
+        "explorer": "Skoro?"
+      },
+      "3": {
+        "fez": "Škripa ide gratis."
+      }
+    },
+    "blockedCart": {
+      "1": {
+        "fez": "Magarac neće da ponese još jednu torbu. Pitao sam ga."
+      },
+      "2": {
+        "fez": "Trebaju nam kola, eto šta. Ima ih na mojoj tezgi, kod vrhovnog svećenika."
+      }
+    },
+    "throughCart": {
+      "1": {
+        "explorer": "Čuješ li to?"
+      },
+      "2": {
+        "fez": "To su kola. Malo pjevaju."
+      },
+      "3": {
+        "explorer": "Cijelim putem?"
+      }
+    },
+    "arrivesCart": {
+      "1": {
+        "fez": "Kola u našem logoru! Sad izgledamo kao da nekamo idemo."
+      },
+      "2": {
+        "explorer": "Pa i idemo nekamo."
+      },
+      "3": {
+        "fez": "Da, ali sad to svi vide."
+      }
+    },
+    "boughtCamel": {
+      "1": {
+        "fez": "Kamila! Danima ide bez vode. Ja ne, da se zna."
+      },
+      "2": {
+        "explorer": "Gleda te."
+      },
+      "3": {
+        "fez": "Gleda me odozgo. Kamile uvijek gledaju odozgo."
+      }
+    },
+    "blockedCamel": {
+      "1": {
+        "fez": "Unutrašnje svetište? Pješke tamo nikad nećemo stići."
+      },
+      "2": {
+        "fez": "Srećom, ja imam kamilu. Na mojoj tezgi, kod vrhovnog svećenika."
+      }
+    },
+    "throughCamel": {
+      "1": {
+        "fez": "Kleknula je! Zbog mene!"
+      },
+      "2": {
+        "explorer": "Da se možemo popeti."
+      },
+      "3": {
+        "fez": "Pusti me da uživam."
+      }
+    },
+    "arrivesCamel": {
+      "1": {
+        "fez": "Eno je. Ponaša se kao da je logor njen."
+      },
+      "2": {
+        "explorer": "A magarac?"
+      },
+      "3": {
+        "fez": "Pravi se da je ne vidi. Isto kao ja."
+      }
+    },
+    "boughtSecondDonkey": {
+      "1": {
+        "fez": "Još jedan magarac! Sad prvi ima s kim pričati."
+      },
+      "2": {
+        "explorer": "Pričati?"
+      },
+      "3": {
+        "fez": "Njakati. To ti je pričanje, samo glasnije."
+      }
+    },
+    "blockedSecondDonkey": {
+      "1": {
+        "fez": "Magarac neće dalje. Ne sam, kaže."
+      },
+      "2": {
+        "explorer": "To je rekao?"
+      },
+      "3": {
+        "fez": "Ja govorim magareći. Hoće druga, a ja imam jednog na tezgi kod faraonovog blaga."
+      }
+    },
+    "throughSecondDonkey": {
+      "1": {
+        "fez": "Slušaj ih! Jedan glasniji od drugog."
+      },
+      "2": {
+        "explorer": "Ko pobjeđuje?"
+      },
+      "3": {
+        "fez": "Ne mi. Mi to moramo slušati."
+      }
+    },
+    "arrivesSecondDonkey": {
+      "1": {
+        "fez": "Gle ih. Kao da se znaju godinama."
+      },
+      "2": {
+        "explorer": "Kao mi."
+      },
+      "3": {
+        "fez": "Mi manje njačemo."
+      }
+    },
+    "boughtSecondCamel": {
+      "1": {
+        "fez": "Još jedna kamila. Da. Ni ja ih ne volim."
+      },
+      "2": {
+        "fez": "Ali ova bar izgleda dobroćudno."
+      },
+      "3": {
+        "explorer": "Gleda ti fes."
+      }
+    },
+    "blockedSecondCamel": {
+      "1": {
+        "fez": "Ozirisova dvorana. Jedna kamila nas tamo neće odnijeti."
+      },
+      "2": {
+        "fez": "Srećom imam još jednu, na tezgi kod faraonovog blaga. Moju baš zadnju."
+      },
+      "3": {
+        "explorer": "To uvijek kažeš."
+      }
+    },
+    "throughSecondCamel": {
+      "1": {
+        "fez": "Jede mi fes!"
+      },
+      "2": {
+        "explorer": "Dobroćudna kamila."
+      },
+      "3": {
+        "fez": "Previše dobroćudna."
+      }
+    },
+    "arrivesSecondCamel": {
+      "1": {
+        "fez": "Dvije kamile. Sad me obje gledaju odozgo."
+      },
+      "2": {
+        "explorer": "Onda stani kod magaraca."
+      },
+      "3": {
+        "fez": "Već stojim."
+      }
+    },
+    "boughtSturdyCart": {
+      "1": {
+        "fez": "Jača kola. Ova ne pjevaju na putu."
+      },
+      "2": {
+        "explorer": "Na njima je naslikano cvijeće."
+      },
+      "3": {
+        "fez": "Zbog jačine."
+      }
+    },
+    "blockedSturdyCart": {
+      "1": {
+        "fez": "Stara kola tamo neće stići cijela. Za to treba nešto jače."
+      },
+      "2": {
+        "fez": "Ima ih na mojoj tezgi u Trezoru bogova. Ali ne zbog boje, da se zna."
+      }
+    },
+    "throughSturdyCart": {
+      "1": {
+        "explorer": "Ništa ne škripi."
+      },
+      "2": {
+        "fez": "Vidiš? Jačina."
+      },
+      "3": {
+        "explorer": "A cvijeće?"
+      },
+      "4": {
+        "fez": "I ono malo pomaže."
+      }
+    },
+    "arrivesSturdyCart": {
+      "1": {
+        "fez": "Gle kako sjaje!"
+      },
+      "2": {
+        "explorer": "Ljepša su nego što treba."
+      },
+      "3": {
+        "fez": "Jesu. Nisam ih ni prodao zbog jačine."
+      }
+    },
+    "boughtCaravanBanner": {
+      "1": {
+        "fez": "Zastava. Bit ću iskren: ne otvara ništa."
+      },
+      "2": {
+        "explorer": "Pa šta onda radi?"
+      },
+      "3": {
+        "fez": "Vijori se. Predivno."
+      }
+    },
+    "arrivesCaravanBanner": {
+      "1": {
+        "fez": "Gle kako se vijori! Iznad našeg logora!"
+      },
+      "2": {
+        "explorer": "I dalje ništa ne otvara."
+      },
+      "3": {
+        "fez": "Ne. I ne mora."
+      }
+    }
+  },
+  "bond": {
+    "starter": {
+      "1": {
+        "fez": "To je bilo brzo."
+      },
+      "2": {
+        "explorer": "Bila su to samo vrata."
+      },
+      "3": {
+        "fez": "Meni bi trebala sedmica."
+      }
+    },
+    "starterTomb": {
+      "1": {
+        "fez": "Samo da se razumijemo. Ja sam tu zbog preprodaje. Kažem ti to sad, dok je još istina."
+      },
+      "2": {
+        "explorer": "Zapamćeno."
+      }
+    },
+    "junior": {
+      "1": {
+        "fez": "Malo si bio zašutio maloprije."
+      },
+      "2": {
+        "explorer": "Brojao sam."
+      },
+      "3": {
+        "fez": "Znam. Vidio sam ja ljude kako pogađaju. To nije bilo pogađanje."
+      }
+    },
+    "expert": {
+      "1": {
+        "fez": "To je bilo za dlaku."
+      },
+      "2": {
+        "explorer": "Bilo je sve u redu."
+      },
+      "3": {
+        "fez": "Bilo je za dlaku. Smijem to reći."
+      }
+    },
+    "master": {
+      "1": {
+        "fez": "Mogli bismo stati."
+      },
+      "2": {
+        "explorer": "Mogli bismo."
+      },
+      "3": {
+        "fez": "Kažem to samo da bude rečeno. Ne da to i uradimo."
+      }
+    },
+    "wizard": {
+      "1": {
+        "explorer": "Koliko ovo vrijedi?"
+      },
+      "2": {
+        "fez": "…"
+      },
+      "3": {
+        "fez": "Tome neću odrediti cijenu."
+      },
+      "4": {
+        "explorer": "Zapamćeno."
+      }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": {
+        "fez": "Uau. Ovo je maloprije bio zid."
+      },
+      "2": {
+        "explorer": "Iza njega je bio prolaz."
+      },
+      "3": {
+        "fez": "Svih tih godina ljudi su prolazili pored njega. Svih tih godina!"
+      }
+    }
+  },
+  "reading": {
+    "junior": {
+      "1": {
+        "explorer": "Ovdje je jedan red koji sad mogu pročitati."
+      },
+      "2": {
+        "explorer": "Dao sam hljeb gladnima."
+      },
+      "3": {
+        "fez": "Hljeb. U grobnici."
+      },
+      "4": {
+        "explorer": "I u prošloj je bio. Nisam znao da su to riječi."
+      }
+    },
+    "expert": {
+      "1": {
+        "explorer": "Drugi red. Vodu žednima."
+      },
+      "2": {
+        "fez": "Hljeb, a sad i voda. Nekome je baš bilo stalo da ga pamte kao darežljivog."
+      },
+      "3": {
+        "explorer": "Svi to imaju. Svaki zid, svaka grobnica, ista dva reda."
+      },
+      "4": {
+        "fez": "Onda su ili svi bili darežljivi, ili se to tako mora reći."
+      },
+      "5": {
+        "explorer": "Ili su po tome mjereni."
+      }
+    },
+    "master": {
+      "1": {
+        "explorer": "Odjeću golima. Treći red."
+      },
+      "2": {
+        "fez": "Hljeb, voda, odjeća. To je spisak stvari koje si poklonio."
+      },
+      "3": {
+        "explorer": "U grobnici čovjeka koji je sve ponio sa sobom."
+      },
+      "4": {
+        "fez": "…Da. Primijetio sam i ja."
+      }
+    },
+    "sphinx": {
+      "1": {
+        "fez": "Opet tamo gdje smo počeli. Nije se pomjerila."
+      },
+      "2": {
+        "explorer": "Pismo je još tu."
+      },
+      "3": {
+        "fez": "Možeš li ga pročitati?"
+      },
+      "4": {
+        "explorer": "Ime."
+      },
+      "5": {
+        "fez": "Čije?"
+      },
+      "6": {
+        "explorer": "Tvoje."
+      },
+      "7": {
+        "fez": "…"
+      },
+      "8": {
+        "fez": "Jesi li siguran?"
+      },
+      "9": {
+        "explorer": "Zapisano je."
+      },
+      "10": {
+        "fez": "Hm."
+      },
+      "11": {
+        "fez": "Hori."
+      },
+      "12": {
+        "fez": "U svakom selu u Egiptu bio je po jedan Hori."
+      },
+      "13": {
+        "fez": "Pa. To objašnjava fes."
+      }
+    }
+  },
+  "altar": {
+    "refused": {
+      "1": {
+        "priest": "Ne."
+      },
+      "2": {
+        "explorer": "Na njemu je njegov znak."
+      },
+      "3": {
+        "priest": "Na njemu je neki znak. Jako dobar znak. Urezao ga je neko s odličnim alatom ko ovdje nema šta tražiti, i to nedavno."
+      },
+      "4": {
+        "priest": "Čekam tri hiljade godina. Neću da me neko izigra u zadnjoj sedmici."
+      }
+    }
+  },
+  "meeting": {
+    "starter_1": {
+      "1": {
+        "voice": "Hej! Ne TU! Pazi kuda ideš!"
+      },
+      "2": {
+        "explorer": "Izvini! Ništa ne vidim! Gdje si?"
+      },
+      "3": {
+        "fez": "Ovdje dolje! Stojiš mi usred robe!"
+      },
+      "4": {
+        "explorer": "Gušter?! S fesom?"
+      },
+      "5": {
+        "fez": "Trgovac. A šta fali mom fesu?"
+      },
+      "6": {
+        "fez": "I ti si sigurno došao zbog piramide. Kupio mapu? Platio previše?"
+      },
+      "7": {
+        "explorer": "MNOGO previše."
+      },
+      "8": {
+        "fez": "I ja. Pff."
+      },
+      "9": {
+        "explorer": "Ono pismo na Sfingi… znaš li ga ti pročitati?"
+      },
+      "10": {
+        "fez": "Ne. Niko više ne zna. To postolje je nekad bilo plavo i zlatno, da znaš."
+      },
+      "11": {
+        "explorer": "A kako ti to znaš?"
+      },
+      "12": {
+        "fez": "…Čuo sam. Nego, šta ti tražiš ovdje dolje?"
+      },
+      "13": {
+        "explorer": "Nešto lijepo."
+      },
+      "14": {
+        "fez": "Lijepo se dobro prodaje! Znaš šta? Idem s tobom!"
+      },
+      "15": {
+        "explorer": "Šta? Sa mnom?"
+      },
+      "16": {
+        "fez": "Četiri oka vide više od dva. Hajde, piramida čeka!"
+      }
+    }
+  },
+  "end": {
+    "1": {
+      "fez": "Je li bilo lijepo?"
+    },
+    "2": {
+      "explorer": "Može proći."
+    }
+  },
+  "revisit": {
+    "starter": {
+      "north1": {
+        "1": {
+          "ipi": "Još si tu? Na sjever! Henut! Jedanaest debena!"
+        }
+      },
+      "north2": {
+        "1": {
+          "ipi": "Jedanaest debena lapisa. Henut. Sjever. Šta čekaš?"
+        }
+      },
+      "paid1": {
+        "1": {
+          "ipi": "I? Je li platila? …Nije. Naravno da nije."
+        }
+      },
+      "paid2": {
+        "1": {
+          "ipi": "Staklo? STAKLO? Ovdje piše lapis. Baš ovdje. Lapis!"
+        }
+      },
+      "later1": {
+        "1": {
+          "ipi": "Opet ti. Treća polica, onaj okrnjeni — još je moj. Ruke k sebi."
+        }
+      },
+      "later2": {
+        "1": {
+          "ipi": "Četrdeset godina knjiga, i nijedna se ne slaže. Nijedna!"
+        }
+      }
+    },
+    "junior": {
+      "wall1": {
+        "1": {
+          "henut": "Zid. Treći znak. To još nije moje ime."
+        }
+      },
+      "wall2": {
+        "1": {
+          "henut": "Ti si još ovdje, a ona guska je još na mom zidu. Popravi to."
+        }
+      },
+      "priest1": {
+        "1": {
+          "henut": "I dalje moje ime. Provjerila sam. A sad — Karnak, svećenik. Hajde, idi."
+        }
+      },
+      "priest2": {
+        "1": {
+          "henut": "Karnak! Čekao je dovoljno dugo. Idi i neka te najave."
+        }
+      },
+      "met1": {
+        "1": {
+          "henut": "I? Nepodnošljiv, zar ne? Rekla sam ti."
+        }
+      },
+      "later1": {
+        "1": {
+          "henut": "I dalje staklo. I dalje predivno. I dalje ja izabrala."
+        }
+      }
+    },
+    "expert": {
+      "seal1": {
+        "1": {
+          "priest": "Pečat. Donesen ovamo, spušten, riječi izgovorene nad njim. Čekat ću."
+        }
+      },
+      "seal2": {
+        "1": {
+          "priest": "A. Opet vi. I opet bez pečata."
+        }
+      },
+      "king1": {
+        "1": {
+          "priest": "Vidjeli ste kralja. Dobro. Ali baš ta stvar, pazite — ne nešto slično."
+        }
+      },
+      "later1": {
+        "1": {
+          "priest": "Opet vi. Ovdje više nema šta da se radi. Baš je mirno."
+        }
+      }
+    },
+    "master": {
+      "priest1": {
+        "1": {
+          "pharaoh": "Još ste tu? Svećeniku s tom kopijom! Hoću da čujem kako je prošlo."
+        }
+      },
+      "priest2": {
+        "1": {
+          "pharaoh": "Smijete prići. Opet. Je li je svećenik već vidio?"
+        }
+      },
+      "rite1": {
+        "1": {
+          "pharaoh": "Znači, konačno je obavio svoj obred. Dobro. Sad će biti nepodnošljiv zbog toga."
+        }
+      },
+      "later1": {
+        "1": {
+          "pharaoh": "I dalje najbolja sedmica u devetsto godina. I još traje!"
+        }
+      }
+    },
+    "wizard": {
+      "later1": {
+        "1": {
+          "priest": "…Da. Još se sjećam kako. Dobro."
+        }
+      },
+      "later2": {
+        "1": {
+          "priest": "Spušteno, riječi izgovorene. Gotovo. Čudan je to osjećaj."
+        }
+      }
+    }
+  }
+}

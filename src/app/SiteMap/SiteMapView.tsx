@@ -30,6 +30,7 @@ import {
   ARCH_DROP,
   ARCH_RISE,
   ARCH_W,
+  FACE_H,
   SIDE_W,
   WALL_H,
   cellCenter,
@@ -108,8 +109,10 @@ import { OccupantFigure } from "./OccupantFigure"
 import type { ReplaysAt } from "./roomReplays"
 import type { OccupantOf } from "./roomOccupants"
 import { DIR_MOVES } from "./corridorRuns"
-import { footprintRects, hasWallFace } from "./tileRegions"
-import type { Rect } from "./tileRegions"
+import { footprintRects, frontRuns, hasWallFace } from "./tileRegions"
+import type { FrontRun, Rect } from "./tileRegions"
+import { BehindWalls, FrontWalls } from "./FrontWalls"
+import { fadedRuns, onFadedRun, walkCells, wallFade, wallsBehind } from "./wallFades"
 import type { FloorAt } from "./tileRegions"
 import { MARKER_FILL, MARKER_OUTLINE } from "./markerColours"
 
@@ -200,13 +203,42 @@ type StandingSprite = {
    * line with") is for furniture the player passes NEAR; furniture he stands AT has to win instead, or
    * he stands on the lever and covers it. */
   atExplorer?: boolean
+  /** The box the sprite is drawn in, in map space, where it can cross a front wall (`FrontWalls`). */
+  box?: Rect
   node: ReactNode
 }
 
+/** The walls a standing sprite might fade with: front runs it stands IN FRONT of and overlaps. */
+type WallFades = { runs: readonly FrontRun[]; faded: ReadonlySet<string> }
+
 /** One half of the sorted set. Depth is DOM order: the list is already sorted by floor line, so the
  * later a thing is written the nearer the viewer it stands. A sprite that must be cut to its room
- * carries its own clip (see `Sprite`'s `clipTo`) rather than being wrapped in a clipping group. */
-const StandingLayer = ({ sprites }: { sprites: readonly StandingSprite[] }) => <>{sprites.map(s => s.node)}</>
+ * carries its own clip (see `Sprite`'s `clipTo`) rather than being wrapped in a clipping group.
+ *
+ * A sprite standing against a front wall fades with it: the wall is out of the way so the player behind
+ * it shows, and what stands in front of that wall would cover them just the same. One standing behind a
+ * front wall is drawn behind it (`BehindWalls`). */
+const StandingLayer = ({ sprites, walls }: { sprites: readonly StandingSprite[]; walls?: WallFades }) => (
+  <>
+    {sprites.map(s => {
+      const behind = walls && s.box ? wallsBehind(walls.runs, s.box, s.baseY) : []
+      if (walls && s.box && behind.length > 0)
+        return (
+          <BehindWalls key={s.key} runs={behind} faded={walls.faded} box={s.box}>
+            {s.node}
+          </BehindWalls>
+        )
+      const against = walls && s.box && walls.runs.filter(run => s.baseY > run.bounds[1] + run.bounds[3])
+      if (!against || !onFadedRun(against, new Set(against.map(run => run.key)), s.box!)) return s.node
+      const fade = wallFade(onFadedRun(against, walls.faded, s.box!))
+      return (
+        <div key={s.key} data-wall-fade={s.key} className={fade.className} style={{ opacity: fade.opacity }}>
+          {s.node}
+        </div>
+      )
+    })}
+  </>
+)
 
 /** For every cell, the cell you came FROM walking out of the floor's entrance — so a node can be drawn
  * on its own approach rather than on itself. Built once per floor and only when something asks, because
@@ -1214,16 +1246,34 @@ export const cornerRocksFor = (
   return rocks
 }
 
-const ROCK = CELL / 2
+/** As tall as the face it stands against, half on the face and half on the floor in front of it, its
+ * near edge on the side wall's centre line: the heap is the foot of BOTH walls. */
+const ROCK = FACE_H
 
-const CornerRocks = ({ rocks }: { rocks: readonly CornerRock[] }) => (
+/** The front run whose face a rock stands against, if that face rises in front of floor. Exported for tests. */
+// eslint-disable-next-line react-refresh/only-export-components -- pure function over the runs, exported so tests can assert on it
+export const cornerRockRun = (runs: readonly FrontRun[], { row, col }: { row: number; col: number }) =>
+  runs.find(run => run.behind.has(`${row - 1},${col}`))
+
+/** Drawn over the wall it stands against: a rock on a back wall over the stone, one on a front wall
+ * (`front`) over that wall, fading with its run. */
+const CornerRocks = ({ rocks, walls, front }: { rocks: readonly CornerRock[]; walls: WallFades; front: boolean }) => (
   <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-    {rocks.map(({ row, col, side, tier, state }) => {
+    {rocks.map(rock => {
+      const run = cornerRockRun(walls.runs, rock)
+      if (!!run !== front) return null
+      const { row, col, side, tier, state } = rock
       const x = side === "w" ? cellLeft(col) - SIDE_W / 2 : cellLeft(col) + CELL + SIDE_W / 2 - ROCK
-      const y = cellTop(row) - WALL_H / 2
+      const y = cellTop(row) - ROCK / 2
       const wash = stateWash[state]
+      const fade = wallFade(!!run && walls.faded.has(run.key))
       return (
-        <Fragment key={`${row},${col},${side}`}>
+        <div
+          key={`${row},${col},${side}`}
+          data-corner-rock-at={`${row},${col},${side}`}
+          className={fade.className}
+          style={{ opacity: fade.opacity }}
+        >
           <Sprite
             url={tileUrl(tier, "cornerRock")!}
             x={x}
@@ -1249,21 +1299,31 @@ const CornerRocks = ({ rocks }: { rocks: readonly CornerRock[] }) => (
               }}
             />
           )}
-        </Fragment>
+        </div>
       )
     })}
   </div>
 )
 
-const WallItems = ({ items, patron }: { items: readonly WallItem[]; patron?: Patron }) => (
+const WallItems = ({ items, patron, walls }: { items: readonly WallItem[]; patron?: Patron; walls: WallFades }) => (
   <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
     {items.map(({ row, col, kind, tier, state }) => {
       const url = patronTileUrl(tier, kind, patron)
       const x = cellLeft(col)
       const y = cellTop(row) - WALL_H
       const wash = stateWash[state]
-      return (
-        <Fragment key={`${row},${col}`}>
+      // Hung on a front wall, it fades with that wall: an item left standing on a faded face floats. Hung
+      // on a wall behind one, it is drawn behind it, as everything standing there is.
+      const box: Rect = [x, y, CELL, WALL_H]
+      const fade = wallFade(onFadedRun(walls.runs, walls.faded, box))
+      const behind = wallsBehind(walls.runs, box, cellTop(row))
+      const item = (
+        <div
+          key={`${row},${col}`}
+          data-wall-item-at={`${row},${col}`}
+          className={fade.className}
+          style={{ opacity: fade.opacity }}
+        >
           {url ? (
             // The band's shape, not a square: a wall item is painted on the face.
             <Sprite url={url} x={x} y={y} w={CELL} h={WALL_H} data-wall-item="" />
@@ -1293,7 +1353,14 @@ const WallItems = ({ items, patron }: { items: readonly WallItem[]; patron?: Pat
               }}
             />
           )}
-        </Fragment>
+        </div>
+      )
+      return behind.length > 0 ? (
+        <BehindWalls key={`${row},${col}`} runs={behind} faded={walls.faded} box={box}>
+          {item}
+        </BehindWalls>
+      ) : (
+        item
       )
     })}
   </div>
@@ -1362,9 +1429,11 @@ export const doorwaysFor = (grid: FloorGrid, claims: RoomClaims, ownedKeys?: Rea
 const Archways = ({
   doorways,
   explorerPos,
+  walls,
 }: {
   doorways: readonly Doorway[]
   explorerPos?: readonly [number, number]
+  walls: WallFades
 }) => (
   <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
     {doorways.map(({ row, col, tier }) => {
@@ -1373,6 +1442,10 @@ const Archways = ({
       // Faded while the player is IN the doorway — standing on either of the two cells it spans. Only
       // those two are ever behind it, so nothing else on the map dims.
       const under = !!explorerPos && explorerPos[1] === col && (explorerPos[0] === row || explorerPos[0] === row - 1)
+      const x = cellLeft(col) - SIDE_W
+      const y = cellTop(row) - WALL_H - ARCH_RISE
+      // And while the wall it stands in is out of the way: an arch left standing in a faded wall floats.
+      const inFadedWall = onFadedRun(walls.runs, walls.faded, [x, y, ARCH_W, ARCH_H])
       return (
         <Sprite
           key={`${row},${col}`}
@@ -1381,13 +1454,14 @@ const Archways = ({
           // Wider than the cell by a corner on each side: the jambs stand IN those corners — the wall's
           // own thickness — rather than inside the opening, so the way through stays a full cell wide and
           // the arch reads as built into the wall run instead of set into the hole.
-          x={cellLeft(col) - SIDE_W}
+          x={x}
           // The band, plus the crown standing proud of the wall above it and the jambs reaching down onto
           // the floor of the way through below it.
-          y={cellTop(row) - WALL_H - ARCH_RISE}
+          y={y}
           w={ARCH_W}
           h={ARCH_H}
-          opacity={under ? OCCLUDER_FADE : 1}
+          className={wallFade(false).className}
+          opacity={under || inFadedWall ? OCCLUDER_FADE : 1}
         />
       )
     })}
@@ -1478,6 +1552,7 @@ const MarkerCell = ({
   cy,
   onClick,
   ring = false,
+  walls,
   children,
 }: {
   /** The grid cell the marker belongs to, wherever it is drawn. */
@@ -1488,6 +1563,8 @@ const MarkerCell = ({
   /** An arrow of the ring around the explorer: its tap is a disc of `MARKER_HIT`, so two arrows half a cell out never
    * share a tap, and it may reach over him. */
   ring?: boolean
+  /** The front walls: a marker standing behind one is drawn behind it, as a prop there is (`BehindWalls`). */
+  walls?: WallFades
   children: ReactNode
 }) => {
   const box = ring ? MARKER_HIT * 2 : CELL
@@ -1513,20 +1590,59 @@ const MarkerCell = ({
       }}
     >
       {children && (
-        <svg
-          aria-hidden="true"
-          viewBox={`${-CELL / 2} ${-CELL / 2} ${CELL} ${CELL}`}
-          style={{
-            position: "absolute",
-            ...(ring
-              ? { left: (box - CELL) / 2, top: (box - CELL) / 2, width: CELL, height: CELL }
-              : { inset: 0, width: "100%", height: "100%" }),
-            overflow: "visible",
-          }}
-        >
+        <MarkerDrawing cx={cx} cy={cy} box={box} ring={ring} walls={walls}>
           {children}
-        </svg>
+        </MarkerDrawing>
       )}
+    </div>
+  )
+}
+
+/** A marker's drawing: a cell-sized `<svg>` centred on its spot. One standing behind a front wall — its spot
+ * further back than the wall's foot, its drawing reaching into it — is drawn behind that wall, cut where the
+ * wall is and showing through it while it fades. Only the drawing: the tap stays the marker's own box, so a
+ * marker behind a wall is still tapped through it. */
+const MarkerDrawing = ({
+  cx,
+  cy,
+  box,
+  ring,
+  walls,
+  children,
+}: {
+  cx: number
+  cy: number
+  /** The side of the marker's own box, centred on its spot: the drawing is laid out in it. */
+  box: number
+  ring: boolean
+  walls?: WallFades
+  children: ReactNode
+}) => {
+  const svg = (
+    <svg
+      aria-hidden="true"
+      viewBox={`${-CELL / 2} ${-CELL / 2} ${CELL} ${CELL}`}
+      style={{
+        position: "absolute",
+        ...(ring
+          ? { left: (box - CELL) / 2, top: (box - CELL) / 2, width: CELL, height: CELL }
+          : { inset: 0, width: "100%", height: "100%" }),
+        overflow: "visible",
+      }}
+    >
+      {children}
+    </svg>
+  )
+  const drawn: Rect = [cx - CELL / 2, cy - CELL / 2, CELL, CELL]
+  const behind = walls ? wallsBehind(walls.runs, drawn, cy) : []
+  if (!walls || behind.length === 0) return svg
+  const [ox, oy] = [cx - box / 2, cy - box / 2]
+  // Laid out in map space, where the walls are: the wrapper puts the map's origin back under the marker's box.
+  return (
+    <div style={{ position: "absolute", left: -ox, top: -oy, pointerEvents: "none" }}>
+      <BehindWalls runs={behind} faded={walls.faded} box={drawn}>
+        <div style={{ position: "absolute", left: ox, top: oy, width: box, height: box }}>{svg}</div>
+      </BehindWalls>
     </div>
   )
 }
@@ -1569,10 +1685,19 @@ export const SiteMapView = ({
     () => new Set(explorerPos ? litPlaceCells(grid, claims, explorerPos) : []),
     [grid, claims, explorerPos]
   )
-  // The place the explorer stands is drawn as current rather than done — see `drawnAsCurrent`.
+  const doorways = useMemo(() => doorwaysFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
+  // The place the explorer stands is drawn as current rather than done — see `drawnAsCurrent`. The wall
+  // over every arch is part of its run (see `buildTileRegions`); a doorway whose tier has no arch art
+  // stands no arch, so it stays an opening in the wall with nothing over it.
   const regions = useMemo(
-    () => tileRegionsFor(drawnAsCurrent(grid, torchPlace), claims, ownedKeys),
-    [grid, torchPlace, claims, ownedKeys]
+    () =>
+      tileRegionsFor(
+        drawnAsCurrent(grid, torchPlace),
+        claims,
+        ownedKeys,
+        new Set(doorways.filter(({ tier: at }) => tileOrPlaceholder(at, "arch")).map(({ row, col }) => `${row},${col}`))
+      ),
+    [grid, torchPlace, claims, ownedKeys, doorways]
   )
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const cornerRocks = useMemo(() => cornerRocksFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
@@ -1603,6 +1728,18 @@ export const SiteMapView = ({
       explorerPos[1] !== settledExplorerPos[1] ||
       waypoint?.[0] !== settledWaypoint?.[0] ||
       waypoint?.[1] !== settledWaypoint?.[1])
+  )
+  // The walls that rise in front of floor, and the ones the explorer is behind: where he stands, and on a
+  // walk every cell from where he set out to where he is going, so a wall clears before he reaches it and
+  // stays clear until he has arrived past it.
+  const runs = useMemo(() => frontRuns(regions), [regions])
+  const behindKey =
+    explorerPos && !explorerHidden
+      ? walkCells(isTraveling ? settledExplorerPos : explorerPos, explorerPos).join("|")
+      : ""
+  const walls = useMemo(
+    (): WallFades => ({ runs, faded: fadedRuns(runs, behindKey ? behindKey.split("|") : []) }),
+    [runs, behindKey]
   )
 
   const weight = useMemo(
@@ -1698,6 +1835,7 @@ export const SiteMapView = ({
       // A drop is sorted by its run's floor line, not its bottom edge: the art hangs below the floor, and
       // sorted by its edge it would be drawn over the player standing on it.
       baseY: sprite.key.startsWith("drop:") ? dropFloorLine(sprite) : sprite.y + (sprite.h ?? PROP_H),
+      box: [sprite.x, sprite.y, sprite.w ?? CELL, sprite.h ?? PROP_H],
       ...(sprite.light ? { light: sprite.light } : {}),
       // A drop is the exception: the player stands IN FRONT of it rather than working it, so on its own
       // mouth the general tie holds (he stands in front of what shares his floor line) and its parapet
@@ -1782,6 +1920,7 @@ export const SiteMapView = ({
       sprites.push({
         key: `prop:${cellKey}`,
         baseY: frame.baseY,
+        box: [frame.x, frame.y, frame.w, frame.h],
         node: (
           <PropAt
             key={`prop:${cellKey}`}
@@ -1801,6 +1940,7 @@ export const SiteMapView = ({
       sprites.push({
         key: `prefab:${prop.at}`,
         baseY: prop.frame.baseY,
+        box: [prop.frame.x, prop.frame.y, prop.frame.w, prop.frame.h],
         node: (
           <PrefabPropAt
             key={`prefab:${prop.at}`}
@@ -1843,6 +1983,7 @@ export const SiteMapView = ({
         .map(prop => ({
           key: `prefab:${prop.at}`,
           baseY: prop.frame.baseY,
+          box: [prop.frame.x, prop.frame.y, prop.frame.w, prop.frame.h] as Rect,
           node: <PrefabPropAt key={`prefab:${prop.at}`} prop={prop} grid={grid} />,
         })),
     [prefabProps, grid]
@@ -1893,7 +2034,6 @@ export const SiteMapView = ({
   const inFrontOfExplorer = seated.filter(
     s => overRider(s) || (!underRider(s) && (s.baseY > explorerBaseY || (s.baseY === explorerBaseY && s.atExplorer)))
   )
-  const doorways = useMemo(() => doorwaysFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   // Where the arches are, in the same terms the wall bands are built in, with the stone each one is cut
   // from — the sill in that gap is drawn to match it (see TileLayers.archedGaps).
   // The air on this floor: its rank's, with whatever hour it authors (moodSettings.ts).
@@ -2122,7 +2262,7 @@ export const SiteMapView = ({
               floorRects={floorRects}
             />
             {/* Under everything else that stands or lies here: the rock is the wall's own foot. */}
-            <CornerRocks rocks={cornerRocks} />
+            <CornerRocks rocks={cornerRocks} walls={walls} front={false} />
             <FloorScatter grid={grid} claims={claims} scatter={scatter} tier={tier} />
             <ArchShadows doorways={doorways} />
             <MapLife
@@ -2134,6 +2274,9 @@ export const SiteMapView = ({
                 return cell.type !== "empty" && cell.state !== "fogged"
               }}
             />
+            {/* Over everything lying on the floor behind them and under everything after: see FrontWalls. */}
+            <FrontWalls runs={walls.runs} faded={walls.faded} />
+            <CornerRocks rocks={cornerRocks} walls={walls} front />
             {/* Over the scarabs, under the wall items: something growing out of a wall is in front of the
               floor and behind whatever is hung on that wall. */}
             <MapGrowth
@@ -2156,7 +2299,7 @@ export const SiteMapView = ({
                 return room.type !== "empty" && room.state !== "fogged"
               }}
             />
-            <WallItems items={wallItems} patron={grid.patron} />
+            <WallItems items={wallItems} patron={grid.patron} walls={walls} />
 
             {/* THE WATER OR SAND OVER A SHUT REGION BARRIER, under the shade and the lamp so the floor's
                 own light is what tints it, and under the markers and everything standing so a mark on the
@@ -2232,6 +2375,7 @@ export const SiteMapView = ({
                   return (
                     <MarkerCell
                       at={[r, c]}
+                      walls={walls}
                       key={cellKey}
                       cx={spot.cx}
                       cy={spot.cy}
@@ -2265,6 +2409,7 @@ export const SiteMapView = ({
                   return (
                     <MarkerCell
                       at={[r, c]}
+                      walls={walls}
                       key={cellKey}
                       cx={spot.cx}
                       cy={spot.cy}
@@ -2286,6 +2431,7 @@ export const SiteMapView = ({
                   return (
                     <MarkerCell
                       at={[r, c]}
+                      walls={walls}
                       key={`${r},${c}`}
                       cx={spot.cx}
                       cy={spot.cy}
@@ -2358,6 +2504,7 @@ export const SiteMapView = ({
                     {arrow?.kind === "arrow" && arrowSpot && (
                       <MarkerCell
                         at={[r, c]}
+                        walls={walls}
                         cx={arrowSpot.cx}
                         cy={arrowSpot.cy}
                         ring={arrowSpot.ring}
@@ -2371,6 +2518,7 @@ export const SiteMapView = ({
                     )}
                     <MarkerCell
                       at={[r, c]}
+                      walls={walls}
                       cx={centre.cx}
                       cy={centre.cy}
                       onClick={!choice && offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
@@ -2435,13 +2583,13 @@ export const SiteMapView = ({
               carries a clip is laid out as a full-map layer with the art placed by background-position,
               which is why the footprint path needs no translating (see `Sprite`). */}
             <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-              <StandingLayer sprites={underfoot} />
+              <StandingLayer sprites={underfoot} walls={walls} />
               {/* The floor light first, so everything standing is standing IN it. */}
               {standing.map(s2 =>
                 s2.light ? <LightPool key={`light:${s2.key}`} r={s2.light.r} cx={s2.light.x} cy={s2.light.y} /> : null
               )}
 
-              <StandingLayer sprites={behindExplorer} />
+              <StandingLayer sprites={behindExplorer} walls={walls} />
 
               {explorerPos && !explorerHidden && (
                 <ExplorerDot
@@ -2468,7 +2616,7 @@ export const SiteMapView = ({
                 ))}
               {squeeze && <SqueezeRider squeeze={squeeze} />}
 
-              <StandingLayer sprites={inFrontOfExplorer} />
+              <StandingLayer sprites={inFrontOfExplorer} walls={walls} />
 
               {/* THE TALL PLANTS, over everything that walks. A palm is half again the height of the
                   explorer, so drawing it under them would put a person in front of a tree — and it
@@ -2494,7 +2642,7 @@ export const SiteMapView = ({
               />
 
               {/* Last, so a doorway passes in FRONT of the player walking under it — see Archways. */}
-              <Archways doorways={doorways} explorerPos={explorerPos} />
+              <Archways doorways={doorways} explorerPos={explorerPos} walls={walls} />
 
               {/* And the gate in front of the arch it is fitted into: the frame is the masonry of the
               opening, the gate is what has been hung in it, so the leaf is the nearer of the two. */}

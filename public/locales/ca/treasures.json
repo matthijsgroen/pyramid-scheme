@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Llisca l'objecte sobre la pedra per obrir-la",
+    "alsoAvailable": "També tens:"
+  },
+  "perks": {
+    "max-health": "+½ cor al teu màxim de vida",
+    "armor": "Les trampes et fan menys mal",
+    "trap-insight": "+1 s a les trampes amb temps",
+    "pack-mule": "Un odre d'aigua cura dos cors",
+    "compass": "Peça de la brúixola",
+    "detection": "Peça del cercador de passadissos",
+    "tier-unlock": "Obre les expedicions de nivell {{tier}}",
+    "tier-coming-soon": "Les expedicions de nivell {{tier}} arribaran en una actualització futura",
+    "location-key": "Mostra una altra tomba",
+    "partOf": "{{count}} de {{total}}"
+  },
+  "tiers": {
+    "stone": "Pedra",
+    "bronze": "Bronze",
+    "silver": "Plata",
+    "gold": "Or",
+    "divine": "Diví"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Deben de plata",
+      "description": "Una moneda de plata de l'antic Egipte. Els mercaders la feien servir per comerciar pel Nil."
+    },
+    "t2": {
+      "name": "Rotlle de papir",
+      "description": "El rotlle d'un mercader, amb les rutes de comerç i la llista de les càrregues valuoses."
+    },
+    "t3": {
+      "name": "Pinta d'ivori",
+      "description": "Una pinta d'ivori tallada amb molt de detall, un luxe portat de terres llunyanes."
+    },
+    "t4": {
+      "name": "Llàntia d'oli de terrissa",
+      "description": "Una llàntia d'oli senzilla però bonica, per il·luminar la casa del mercader."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Polsera d'or",
+      "description": "Una polsera d'or molt treballada, amb pedres precioses. La portaven els nobles d'Egipte."
+    },
+    "t6": {
+      "name": "Daga de cerimònia",
+      "description": "Una daga ritual amb el mànec ple de joies, per a les cerimònies dels nobles."
+    },
+    "t7": {
+      "name": "Escarabat de jade",
+      "description": "Un amulet protector de jade en forma d'escarabat, símbol de tornar a néixer i de viure per sempre."
+    },
+    "t8": {
+      "name": "Vas canopi d'alabastre",
+      "description": "Un vas d'alabastre elegant per guardar olis i perfums valuosos."
+    },
+    "t9": {
+      "name": "Bastó de banús",
+      "description": "Un bastó de banús polit, amb un ankh d'or a dalt."
+    },
+    "t10": {
+      "name": "Collaret de lapislàtzuli",
+      "description": "Un collaret preciós fet amb pedres rares de lapislàtzuli. Als rics els encantava."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Ankh sagrat",
+      "description": "Un ankh d'or, símbol de la vida eterna, beneït pels sacerdots del temple."
+    },
+    "t12": {
+      "name": "Mirall de coure",
+      "description": "Un mirall de coure polit per a les cerimònies de purificació."
+    },
+    "t13": {
+      "name": "Encenser",
+      "description": "Un encenser de bronze molt treballat, per als rituals del temple."
+    },
+    "t14": {
+      "name": "Calze ritual",
+      "description": "Un calze sagrat de plata per oferir begudes als déus."
+    },
+    "t15": {
+      "name": "Ventall de cerimònia",
+      "description": "Un ventall de plomes molt bonic que feien servir els sacerdots a les cerimònies del temple."
+    },
+    "t16": {
+      "name": "Collaret de pregària",
+      "description": "Un fil de perles beneïdes per pregar i meditar."
+    },
+    "t17": {
+      "name": "Gerro d'aigua sagrada",
+      "description": "Un gerro amb aigua beneïda del pou sagrat del temple."
+    },
+    "t18": {
+      "name": "Campana del temple",
+      "description": "Una campana de bronze per cridar la gent a pregar i anunciar les cerimònies."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Segell del faraó",
+      "description": "Un segell reial antic amb el cartutx d'un faraó oblidat."
+    },
+    "t20": {
+      "name": "Bola de vidre",
+      "description": "Una bola de cristall misteriosa que diuen que mostra el passat i el futur."
+    },
+    "t21": {
+      "name": "Tauleta de jeroglífics",
+      "description": "Una tauleta de pedra antiga amb profecies misterioses escrites en jeroglífics."
+    },
+    "t22": {
+      "name": "Ceptre d'or",
+      "description": "Un ceptre d'or magnífic, amb l'ull d'Horus a dalt."
+    },
+    "t23": {
+      "name": "Ganivet d'obsidiana",
+      "description": "Un ganivet de cerimònia d'obsidiana, tallant com una navalla, per a rituals antics."
+    },
+    "t24": {
+      "name": "Tros de meteorit",
+      "description": "Un tros de meteorit sagrat. La gent creia que tenia poder dels déus."
+    },
+    "t25": {
+      "name": "Brúixola antiga",
+      "description": "Un estri misteriós per orientar-se que sempre apunta cap als tresors amagats."
+    },
+    "t26": {
+      "name": "Cristall del temps",
+      "description": "Un cristall llegendari que brilla amb la força de temps molt antics."
+    },
+    "t27": {
+      "name": "Màscara ritual",
+      "description": "Una màscara d'or molt treballada que portaven els grans sacerdots a les cerimònies sagrades."
+    },
+    "t28": {
+      "name": "Torxa de la flama eterna",
+      "description": "Una torxa amb una flama que no s'ha apagat mai des de fa milers d'anys."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Corona de Ra",
+      "description": "La corona llegendària del déu del sol, Ra, que brilla amb llum i poder dels déus."
+    },
+    "t30": {
+      "name": "Bastó de Thoth",
+      "description": "El bastó de la saviesa de Thoth, déu del saber, que guarda tots els secrets antics."
+    },
+    "t31": {
+      "name": "Ploma de Ma'at",
+      "description": "La ploma sagrada de Ma'at, deessa de la veritat. Servia per pesar les ànimes a l'altra vida."
+    },
+    "t32": {
+      "name": "Llàgrimes d'Isis",
+      "description": "Llàgrimes de la deessa Isis convertides en cristall. Diuen que protegeixen per sempre."
+    },
+    "t33": {
+      "name": "Cor d'Osiris",
+      "description": "El cor d'Osiris, senyor del món dels morts. Encara batega ple de vida."
+    },
+    "t34": {
+      "name": "Amulet de l'Ull d'Horus",
+      "description": "L'amulet protector més fort, amb tot el poder d'Horus."
+    },
+    "t35": {
+      "name": "Serp d'Apep",
+      "description": "Un tros lligat de la serp del caos, Apep, tancat dins d'un vas sagrat."
+    },
+    "t36": {
+      "name": "Alè de Shu",
+      "description": "Un flascó amb l'alè de Shu, déu de l'aire, que dona poder sobre els vents."
+    },
+    "t37": {
+      "name": "Escata de Sobek",
+      "description": "Una sola escata del déu cocodril Sobek, que et protegeix a l'aigua."
+    },
+    "t38": {
+      "name": "Estàtua guardiana d'Anubis",
+      "description": "Una estàtua petita d'Anubis que cobra vida per vigilar els tresors del seu amo."
+    },
+    "t39": {
+      "name": "Llibre dels Morts",
+      "description": "El Llibre dels Morts sencer, amb tots els encanteris que calen per al viatge a l'altra vida."
+    },
+    "t40": {
+      "name": "Punta de la piràmide",
+      "description": "La punta d'or de la Gran Piràmide, amb el poder de tots els faraons junts."
+    }
+  }
+}

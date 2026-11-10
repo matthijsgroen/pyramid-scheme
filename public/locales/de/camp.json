@@ -1,0 +1,253 @@
+{
+  "spots": {
+    "fire": "Lagerfeuer",
+    "sleeping": "Schlafplatz",
+    "water": "Wasserstelle",
+    "cooking": "Kochstelle",
+    "donkey": "Eselplatz",
+    "camel": "Kamelplatz",
+    "mapTable": "Kartentisch",
+    "palmGarden": "Palmengarten",
+    "ibisPond": "Ibisteich",
+    "lookout": "Aussichtsposten",
+    "godStatues": "Götterstatuen",
+    "starCanopy": "Sternendach"
+  },
+  "finds": {
+    "pot": "Kochtopf",
+    "seatCushions": "Sitzkissen",
+    "reedMat": "Schilfmatte",
+    "blanket": "Decke",
+    "tentRug": "Zeltteppich",
+    "tentFlag": "Zeltfahne",
+    "gourd": "Kürbisflasche",
+    "jar": "Krug",
+    "secondJar": "Zweiter Krug",
+    "spiceRack": "Gewürzregal",
+    "breadBoard": "Brotbrett",
+    "starMap": "Sternkarte",
+    "scrollCase": "Rollenköcher",
+    "astrolabe": "Astrolabium",
+    "reedGlobe": "Schilf-Globus",
+    "seed": "Palmensamen",
+    "secondPalm": "Palmensamen",
+    "figTree": "Feigensamen",
+    "papyrus": "Papyruswurzel",
+    "reeds": "Schilfsteckling",
+    "lotus": "Lotusknolle",
+    "flag": "Aussichtsfahne",
+    "thoth": "Thoth-Figur",
+    "bastet": "Bastet-Figur",
+    "anubis": "Anubis-Figur",
+    "ra": "Ra-Figur",
+    "cloth": "Sternentuch"
+  },
+  "structures": {
+    "stoneRing": "Steinkreis",
+    "fire": "Feuer",
+    "cookingStones": "Kochsteine",
+    "seatingStones": "Sitzsteine",
+    "clayOven": "Lehmofen",
+    "windbreak": "Windschutz",
+    "tent": "Zelt",
+    "secondTent": "Zweites Zelt",
+    "pavilion": "Pavillon",
+    "well": "Brunnen",
+    "wellPulley": "Rollenbrunnen",
+    "tripod": "Dreibein",
+    "breadOven": "Brotofen",
+    "dryingRack": "Trockengestell",
+    "feast": "Festmahl",
+    "table": "Kartentisch",
+    "lotusPlanter": "Lotuskübel",
+    "edgeStones": "Teichrand",
+    "post": "Aussichtspfahl",
+    "platform": "Aussichtsplattform",
+    "ladder": "Leiter",
+    "roof": "Dach",
+    "signalFire": "Signalfeuer",
+    "poles": "Sternenmasten",
+    "stars": "Sterne",
+    "planets": "Planeten"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Feldsteine",
+      "sandBed": "Sandbett"
+    },
+    "fire": {
+      "tinder": "Zunder",
+      "acaciaLogs": "Akazienholz"
+    },
+    "cookingStones": {
+      "flatStone": "Flacher Stein",
+      "supportStones": "Stützsteine"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Glatte Felsbrocken",
+      "sandstoneBlock": "Sandsteinblock",
+      "hewnSlab": "Behauene Platte"
+    },
+    "clayOven": {
+      "ovenFloor": "Ofenboden",
+      "firebricks": "Ofenziegel",
+      "smokeHole": "Rauchloch",
+      "copperGrate": "Kupferrost"
+    },
+    "windbreak": {
+      "reedBundles": "Schilfbündel",
+      "stakes": "Holzpfähle"
+    },
+    "tent": {
+      "tentPoles": "Zeltstangen",
+      "wovenCloth": "Gewebtes Tuch",
+      "tentPegs": "Heringe"
+    },
+    "secondTent": {
+      "largeCloth": "Großes Zelttuch",
+      "ridgePole": "Firststange",
+      "guyRopes": "Spannseile",
+      "woolFloor": "Wollener Bodenteppich"
+    },
+    "pavilion": {
+      "pavilionPosts": "Pavillonpfosten",
+      "linenCanopy": "Leinendach",
+      "hangingCurtains": "Vorhänge",
+      "woolRugs": "Wollteppiche",
+      "woodenFloor": "Holzboden"
+    },
+    "well": {
+      "wellStones": "Brunnensteine",
+      "rope": "Langes Seil",
+      "bucket": "Eimer",
+      "windlass": "Seilwinde"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Seilrolle",
+      "frame": "Traggestell",
+      "hoistRope": "Zugseil",
+      "counterweight": "Gegengewicht",
+      "leatherBucket": "Ledereimer"
+    },
+    "tripod": {
+      "tripodPoles": "Drei Stangen",
+      "binding": "Bindeseil",
+      "hook": "Bronzehaken"
+    },
+    "breadOven": {
+      "mudBricks": "Lehmziegel",
+      "clayPlaster": "Lehmputz",
+      "ovenLid": "Ofenklappe"
+    },
+    "dryingRack": {
+      "rackPoles": "Gestellstangen",
+      "crossbar": "Querstange",
+      "wickerTray": "Flechtkorb",
+      "cords": "Hängeschnüre"
+    },
+    "feast": {
+      "lowTable": "Niedriger Tisch",
+      "breadBaskets": "Brotkörbe",
+      "roastDuck": "Entenbraten",
+      "beerJars": "Bierkrüge",
+      "fruitBowl": "Obstschale"
+    },
+    "table": {
+      "tableTop": "Tischplatte",
+      "trestles": "Böcke",
+      "leatherStraps": "Lederriemen"
+    },
+    "lotusPlanter": {
+      "clayTub": "Lehmtrog",
+      "nileSilt": "Nilschlamm",
+      "waterJar": "Wasserkrug",
+      "lotusTubers": "Lotusknollen",
+      "stoneRim": "Steinrand"
+    },
+    "edgeStones": {
+      "riverStones": "Flusssteine",
+      "clayBedding": "Lehmbett",
+      "gravel": "Kies",
+      "boundaryStakes": "Grenzpflöcke"
+    },
+    "post": {
+      "postTrunk": "Palmstamm",
+      "footStones": "Fundamentsteine",
+      "wedges": "Keile",
+      "braces": "Stützbalken"
+    },
+    "platform": {
+      "platformBeams": "Tragbalken",
+      "platformPlanks": "Bretter",
+      "lashingRope": "Zurrseil",
+      "edgeRail": "Geländer"
+    },
+    "ladder": {
+      "ladderRails": "Leiterholme",
+      "rungs": "Sprossen",
+      "groundPegs": "Bodenpflöcke",
+      "leatherLoops": "Lederschlaufen"
+    },
+    "roof": {
+      "roofPoles": "Dachstangen",
+      "thatch": "Palmblätter",
+      "clayLayer": "Lehmschicht",
+      "bindingGrass": "Bindegras"
+    },
+    "signalFire": {
+      "fireBasin": "Feuerschale",
+      "pitch": "Pech",
+      "dryBrushwood": "Trockenes Reisig",
+      "flint": "Feuerstein",
+      "bellows": "Blasebalg"
+    },
+    "poles": {
+      "masts": "Masten",
+      "cornerStones": "Ecksteine",
+      "stayLines": "Halteseile",
+      "bigPegs": "Große Heringe",
+      "poleSockets": "Mastfüße"
+    },
+    "stars": {
+      "goldLeaf": "Blattgold",
+      "needleThread": "Nadel und Faden",
+      "indigoDye": "Indigofarbe",
+      "chalk": "Kreide",
+      "stencils": "Schablonen"
+    },
+    "planets": {
+      "ochre": "Ocker",
+      "copperDiscs": "Kupferscheiben",
+      "lapisPowder": "Lapispulver",
+      "hangingLoops": "Aufhängeschlaufen",
+      "dividers": "Zirkel"
+    }
+  },
+  "collection": {
+    "title": "Bauwerke",
+    "progress": "{{found}} von {{total}}",
+    "built": "gebaut",
+    "unknownPart": "???",
+    "open": "Teile zeigen",
+    "close": "Teile verbergen"
+  },
+  "reward": {
+    "find": "Lagerfund",
+    "part": "Bauteil",
+    "progress": "{{name}} · {{found}} von {{total}}"
+  },
+  "haul": {
+    "new": "Neu in deinem Lager",
+    "parts_one": "{{name}} · {{count}} Teil",
+    "parts_other": "{{name}} · {{count}} Teile"
+  },
+  "arrivals": {
+    "donkey": "Dein Esel ist im Lager",
+    "cart": "Dein Karren ist im Lager",
+    "camel": "Dein Kamel ist im Lager",
+    "secondDonkey": "Dein zweiter Esel ist im Lager",
+    "secondCamel": "Dein zweites Kamel ist im Lager",
+    "sturdyCart": "Dein stabilerer Karren ist im Lager",
+    "caravanBanner": "Dein Karawanenbanner hängt im Lager"
+  }
+}

@@ -1,0 +1,254 @@
+{
+  "spots": {
+    "fire": "Foguera",
+    "sleeping": "Lloc per dormir",
+    "water": "Lloc de l'aigua",
+    "cooking": "Lloc per cuinar",
+    "donkey": "Lloc del ruc",
+    "camel": "Lloc del camell",
+    "mapTable": "Taula dels mapes",
+    "palmGarden": "Jardí de palmeres",
+    "ibisPond": "Bassa dels ibis",
+    "lookout": "Talaia",
+    "godStatues": "Estàtues dels déus",
+    "starCanopy": "Sostre d'estrelles"
+  },
+  "finds": {
+    "pot": "Olla",
+    "seatCushions": "Coixins per seure",
+    "reedMat": "Estora de canyes",
+    "blanket": "Manta",
+    "tentRug": "Catifa de la tenda",
+    "tentFlag": "Bandera de la tenda",
+    "gourd": "Carabassa",
+    "jar": "Gerra",
+    "secondJar": "Segona gerra",
+    "spiceRack": "Prestatge d'espècies",
+    "breadBoard": "Post del pa",
+    "starMap": "Mapa d'estrelles",
+    "scrollCase": "Tub de pergamins",
+    "astrolabe": "Astrolabi",
+    "reedGlobe": "Globus de canyes",
+    "seed": "Llavor de palmera",
+    "secondPalm": "Llavor de palmera",
+    "figTree": "Llavor de figuera",
+    "papyrus": "Arrel de papir",
+    "reeds": "Esqueix de canya",
+    "lotus": "Tubercle de lotus",
+    "flag": "Bandera de la talaia",
+    "thoth": "Estatueta de Thoth",
+    "bastet": "Estatueta de Bastet",
+    "anubis": "Estatueta d'Anubis",
+    "ra": "Estatueta de Ra",
+    "cloth": "Tela d'estrelles"
+  },
+  "structures": {
+    "stoneRing": "Cercle de pedres",
+    "fire": "Foc",
+    "cookingStones": "Pedres de cuinar",
+    "seatingStones": "Pedres per seure",
+    "clayOven": "Forn de fang",
+    "windbreak": "Para-vent",
+    "tent": "Tenda",
+    "secondTent": "Segona tenda",
+    "pavilion": "Pavelló",
+    "well": "Pou",
+    "wellPulley": "Pou amb politja",
+    "tripod": "Trípode",
+    "breadOven": "Forn de pa",
+    "dryingRack": "Assecador",
+    "feast": "Festí",
+    "table": "Taula dels mapes",
+    "lotusPlanter": "Jardinera de lotus",
+    "edgeStones": "Vora de la bassa",
+    "post": "Pal de la talaia",
+    "platform": "Plataforma de la talaia",
+    "ladder": "Escala",
+    "roof": "Teulada",
+    "signalFire": "Foc de senyals",
+    "poles": "Pals del sostre d'estrelles",
+    "stars": "Estrelles",
+    "planets": "Planetes"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Pedres del camp",
+      "sandBed": "Llit de sorra"
+    },
+    "fire": {
+      "tinder": "Esca",
+      "acaciaLogs": "Troncs d'acàcia"
+    },
+    "cookingStones": {
+      "flatStone": "Pedra plana",
+      "supportStones": "Pedres de suport"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Rocs llisos",
+      "sandstoneBlock": "Bloc de gres",
+      "hewnSlab": "Llosa tallada"
+    },
+    "clayOven": {
+      "ovenFloor": "Terra del forn",
+      "firebricks": "Maons de foc",
+      "smokeHole": "Forat del fum",
+      "copperGrate": "Graella de coure"
+    },
+    "windbreak": {
+      "reedBundles": "Feixos de canyes",
+      "stakes": "Estaques de fusta"
+    },
+    "tent": {
+      "tentPoles": "Pals de la tenda",
+      "wovenCloth": "Tela teixida",
+      "tentPegs": "Piquets"
+    },
+    "secondTent": {
+      "largeCloth": "Tela gran de tenda",
+      "ridgePole": "Biga del cim",
+      "guyRopes": "Cordes tensores",
+      "woolFloor": "Estora de llana"
+    },
+    "pavilion": {
+      "pavilionPosts": "Pals del pavelló",
+      "linenCanopy": "Sostre de lli",
+      "hangingCurtains": "Cortines",
+      "woolRugs": "Catifes de llana",
+      "woodenFloor": "Terra de fusta"
+    },
+    "well": {
+      "wellStones": "Pedres del pou",
+      "rope": "Corda llarga",
+      "bucket": "Galleda",
+      "windlass": "Torn"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Roda de la politja",
+      "frame": "Bastiment",
+      "hoistRope": "Corda per pujar",
+      "counterweight": "Contrapès",
+      "leatherBucket": "Galleda de cuir"
+    },
+    "tripod": {
+      "tripodPoles": "Tres pals",
+      "binding": "Corda per lligar",
+      "hook": "Ganxo de bronze"
+    },
+    "breadOven": {
+      "mudBricks": "Tovots",
+      "clayPlaster": "Arrebossat de fang",
+      "ovenLid": "Tapa del forn"
+    },
+    "dryingRack": {
+      "rackPoles": "Pals de l'assecador",
+      "crossbar": "Travesser",
+      "wickerTray": "Safata de vímet",
+      "cords": "Cordills per penjar"
+    },
+    "feast": {
+      "lowTable": "Taula baixa",
+      "breadBaskets": "Cistells de pa",
+      "roastDuck": "Ànec rostit",
+      "beerJars": "Gerres de cervesa",
+      "fruitBowl": "Fruitera"
+    },
+    "table": {
+      "tableTop": "Tauler",
+      "trestles": "Cavallets",
+      "leatherStraps": "Corretges de cuir"
+    },
+    "lotusPlanter": {
+      "clayTub": "Abeurador de fang",
+      "nileSilt": "Llim del Nil",
+      "waterJar": "Gerra d'aigua",
+      "lotusTubers": "Tubercles de lotus",
+      "stoneRim": "Vora de pedra"
+    },
+    "edgeStones": {
+      "riverStones": "Pedres de riu",
+      "clayBedding": "Llit de fang",
+      "gravel": "Grava",
+      "boundaryStakes": "Estaques de límit"
+    },
+    "post": {
+      "postTrunk": "Tronc de palmera",
+      "footStones": "Pedres de base",
+      "wedges": "Tascons",
+      "braces": "Puntals"
+    },
+    "platform": {
+      "platformBeams": "Bigues de suport",
+      "platformPlanks": "Taulons",
+      "lashingRope": "Corda per fermar",
+      "edgeRail": "Barana"
+    },
+    "ladder": {
+      "ladderRails": "Muntants de l'escala",
+      "rungs": "Graons",
+      "groundPegs": "Piquets de terra",
+      "leatherLoops": "Anelles de cuir"
+    },
+    "roof": {
+      "roofPoles": "Pals de la teulada",
+      "thatch": "Fulles de palmera",
+      "clayLayer": "Capa de fang",
+      "bindingGrass": "Herba per lligar"
+    },
+    "signalFire": {
+      "fireBasin": "Brasero",
+      "pitch": "Pega",
+      "dryBrushwood": "Brossa seca",
+      "flint": "Pedra foguera",
+      "bellows": "Manxa"
+    },
+    "poles": {
+      "masts": "Pals",
+      "cornerStones": "Pedres de cantonada",
+      "stayLines": "Cordes de subjecció",
+      "bigPegs": "Piquets grossos",
+      "poleSockets": "Bases dels pals"
+    },
+    "stars": {
+      "goldLeaf": "Pa d'or",
+      "needleThread": "Agulla i fil",
+      "indigoDye": "Tint d'anyil",
+      "chalk": "Guix",
+      "stencils": "Plantilles"
+    },
+    "planets": {
+      "ochre": "Ocre",
+      "copperDiscs": "Discos de coure",
+      "lapisPowder": "Pols de lapislàtzuli",
+      "hangingLoops": "Anelles per penjar",
+      "dividers": "Compàs"
+    }
+  },
+  "collection": {
+    "title": "Construccions",
+    "progress": "{{found}} de {{total}}",
+    "built": "construït",
+    "unknownPart": "???",
+    "open": "Mostra les peces",
+    "close": "Amaga les peces"
+  },
+  "reward": {
+    "find": "Troballa per al campament",
+    "part": "Peça",
+    "progress": "{{name}} · {{found}} de {{total}}"
+  },
+  "haul": {
+    "new": "Novetats al teu campament",
+    "parts_one": "{{name}} · {{count}} peça",
+    "parts_many": "{{name}} · {{count}} peces",
+    "parts_other": "{{name}} · {{count}} peces"
+  },
+  "arrivals": {
+    "donkey": "El teu ruc ja és al campament",
+    "cart": "El teu carro ja és al campament",
+    "camel": "El teu camell ja és al campament",
+    "secondDonkey": "El teu segon ruc ja és al campament",
+    "secondCamel": "El teu segon camell ja és al campament",
+    "sturdyCart": "El teu carro més fort ja és al campament",
+    "caravanBanner": "L'estendard de la teva caravana ja oneja al campament"
+  }
+}

@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Gudarnas kung och solens härskare. Varje dag seglar han över himlen i sin solbåt."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Gud med schakalhuvud. Han tar hand om mumierna och livet efter döden, och skyddar de döda."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Himmelsgud med falkhuvud som skyddar faraonerna. Han är son till Osiris och Isis."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "Gud med ibishuvud. Han kan allt om visdom, skrift och kunskap, och skriver upp allt gudarna gör."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Kattgudinna som står för skydd och glädje. Hon jagar bort onda andar."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Krokodilgud över floden Nilen. Han står för rika skördar och stridsmod."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Skarabéguden som står för nytt liv. Han rullar solen över himlen som en skalbagge rullar en kula."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Kobragudinna som skyddar Nedre Egypten. Hon är ett tecken på kungens makt."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "Gudinna för trolldom, mammor och läkekonst. Hon är Osiris trogna fru."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "Gud över dödsriket och över att vakna till liv igen. Han dömer de döda."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "Gud för kaos, stormar och öknen. Han är Osiris bror och fiende."
+    },
+    "d12": {
+      "name": "Nephthys",
+      "description": "Gudinna för sorg som skyddar de döda. Hon är syster till Isis."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Skaparguden som hjälper hantverkare och byggmästare. Han skapade världen genom att säga orden högt."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Lejongudinna för krig och läkekonst. Hon är en vild beskyddare som kan bota sjukdomar."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Kogudinna för kärlek, musik och mammor. Hon tar hand om faraonerna."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Farao",
+      "description": "Egyptens kung. Folk trodde att han var en levande gud, en bro mellan människor och gudar."
+    },
+    "p2": {
+      "name": "Överstepräst",
+      "description": "Den viktigaste prästen i templet. Han leder de heliga riterna och håller ordning åt gudarna."
+    },
+    "p3": {
+      "name": "Skrivare",
+      "description": "En av de få som kunde läsa och skriva. Skrivaren skrev upp allt och tog hand om kunskapen."
+    },
+    "p4": {
+      "name": "Arkitekt",
+      "description": "Byggmästare som ritade pyramider, tempel och monument som skulle stå för evigt."
+    },
+    "p5": {
+      "name": "General",
+      "description": "Arméns ledare. Han skyddade Egyptens gränser och gjorde riket större."
+    },
+    "p6": {
+      "name": "Läkare",
+      "description": "Botade sjuka med både läkekonst och trollformler."
+    },
+    "p7": {
+      "name": "Balsamerare",
+      "description": "Helig hantverkare som gjorde de döda redo för resan till livet efter döden."
+    },
+    "p8": {
+      "name": "Bonde",
+      "description": "Odlade mat åt hela Egypten på den bördiga marken längs Nilen."
+    },
+    "p9": {
+      "name": "Hantverkare",
+      "description": "Skicklig konstnär som gjorde vackra saker, smycken och konst åt de rika och åt gudarna."
+    },
+    "p10": {
+      "name": "Köpman",
+      "description": "Handlare som hämtade ovanliga varor från länder långt borta."
+    },
+    "p11": {
+      "name": "Vesir",
+      "description": "Faraos närmaste rådgivare. Han såg till att landet sköttes."
+    },
+    "p12": {
+      "name": "Orakel",
+      "description": "Helig spåman som förstod gudarnas budskap och kunde se in i framtiden."
+    },
+    "p13": {
+      "name": "Sjöman",
+      "description": "Seglade på Nilen och Medelhavet. Utan sjömän ingen handel och inga transporter."
+    },
+    "p14": {
+      "name": "Stenhuggare",
+      "description": "Högg hieroglyfer i sten och byggde Egyptens stora monument."
+    },
+    "p15": {
+      "name": "Väktare",
+      "description": "Vaktade heliga platser och gravar, så att de döda fick vila i fred för alltid."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Flodhäst",
+      "description": "Nilens starka flodjätte. Alla var rädda för den, för den försvarar sitt vatten."
+    },
+    "a2": {
+      "name": "Lejon",
+      "description": "Djurens kung. Ett tecken på kungens makt och gudarnas styrka i öknen."
+    },
+    "a3": {
+      "name": "Elefant",
+      "description": "Jättestort djur från länderna i söder. Folk beundrade dess klokhet och goda minne."
+    },
+    "a4": {
+      "name": "Gasell",
+      "description": "Snabbt och smidigt ökendjur. Ett tecken på fart och skönhet."
+    },
+    "a5": {
+      "name": "Apa",
+      "description": "Klok apa som hör ihop med Thoth. Den står för klokhet och bus."
+    },
+    "a6": {
+      "name": "Fisk",
+      "description": "Nilens heliga djur. Fisken gav mat och var ett tecken på rikedom."
+    },
+    "a7": {
+      "name": "Gås",
+      "description": "Helig fågel från Nilens träsk. Den hör ihop med berättelser om hur världen skapades, och med själen."
+    },
+    "a8": {
+      "name": "Bi",
+      "description": "Tecken för Nedre Egypten och kungens makt. Biet gör dyrbar honung."
+    },
+    "a9": {
+      "name": "Sköldpadda",
+      "description": "Urgammalt och klokt djur som bär hela världens tyngd på sitt skal."
+    },
+    "a10": {
+      "name": "Groda",
+      "description": "Tecken för nytt liv. Den kommer fram när Nilen svämmar över och ger liv åt landet."
+    },
+    "a11": {
+      "name": "Gam",
+      "description": "Helig fågel från Övre Egypten. Skyddsgudinnan Nekhbet visar sig som en gam."
+    },
+    "a12": {
+      "name": "Uggla",
+      "description": "Klok nattjägare som vaktar gömd kunskap och uråldriga hemligheter."
+    },
+    "a13": {
+      "name": "Bagge",
+      "description": "Amon-Ras heliga djur. Ett tecken på gudomlig makt och ledarskap."
+    },
+    "a14": {
+      "name": "Giraff",
+      "description": "Långt och elegant djur från länderna i söder. Med sin långa hals når den nästan himlen."
+    },
+    "a15": {
+      "name": "Schakal",
+      "description": "Öknens asätare och vägvisare till livet efter döden. Den tjänar Anubis."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Tecken för liv och evigt liv. Gudar och faraoner håller det ofta i handen."
+    },
+    "art2": {
+      "name": "Horus öga",
+      "description": "Tecken för skydd, kungens makt och god hälsa. Det hör ihop med himmelsguden Horus."
+    },
+    "art3": {
+      "name": "Sistrum",
+      "description": "Ett skallrande musikinstrument för heliga fester. Det hör ihop med gudinnan Hathor."
+    },
+    "art4": {
+      "name": "Djedpelare",
+      "description": "Tecken för styrka och att vakna till liv igen. Den hör ofta ihop med Osiris."
+    },
+    "art5": {
+      "name": "Kartusch",
+      "description": "En oval ram runt en faraos namn i hieroglyfer. Den skyddar namnet för evigt."
+    },
+    "art6": {
+      "name": "Kanopkruka",
+      "description": "Helig kruka med ett väktarhuvud som lock. Fyra sådana stod runt kistan och höll vakt."
+    },
+    "art7": {
+      "name": "Spira",
+      "description": "Maktstav som gudar och faraoner bar. Ett tecken på att de styrde."
+    },
+    "art9": {
+      "name": "Pyramid",
+      "description": "En evig grav och en port till livet efter döden. Byggd för att faraonerna skulle få vila för alltid."
+    },
+    "art10": {
+      "name": "Solbåt",
+      "description": "Den heliga båten som bär solguden Ra över himlen från morgon till kväll."
+    },
+    "art11": {
+      "name": "Obelisk",
+      "description": "Hög stenpelare med en liten pyramid överst. Den sträcker sig mot himlen för att hedra gudarna."
+    },
+    "art12": {
+      "name": "Herdestav och gissel",
+      "description": "Kungens tecken. De visar att farao är Egyptens herde och beskyddare."
+    },
+    "art14": {
+      "name": "Lotusblomma",
+      "description": "Tecken för nytt liv och för solen. Den växer upp ren ur Nilens leriga vatten."
+    },
+    "art15": {
+      "name": "Uraeuskrona",
+      "description": "Kunglig krona med en skyddande kobra. Faraonerna bar den som skydd från gudarna."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Vassblad",
+      "description": "Ett enda vassstrå, för ljudet i. Sätter man det efter en guds namn blir det ett människonamn: Horus blir Hori, han som hör till Horus."
+    }
+  }
+}

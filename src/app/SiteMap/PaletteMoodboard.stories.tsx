@@ -1,18 +1,18 @@
 import { useState } from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import type { Tileset } from "@/game/siteTypes"
-import { CELL, WALL_H } from "./mapScale"
+import { CELL, FACE_H } from "./mapScale"
 import { tierPalette } from "./tileMaterials"
 import { tileUrl } from "./tileAssets"
 
-// Every rank's floor, wall face and wall mass side by side, laid the way the map lays them (face, then the
-// face's night in `outline` at `faceNight`, then the rank's `shade` over everything), with knobs to try a
-// lighter face or another mass before anything is repainted. Nothing here writes back: it is for looking.
+// Every rank's floor, wall face and wall mass side by side, laid the way the map lays them (the face, then
+// the rank's own `faceNight` over it, then its `shade` over everything), with knobs to try a lighter face or
+// another mass before anything is repainted. Nothing here writes back: it is for looking.
 const TIERS: Tileset[] = ["starter", "junior", "expert", "master", "wizard", "cave"]
 const W = CELL * 6
 const MEGA = CELL * 8
 
-type Knobs = { faceLight: number; faceNight: number; wallBase: string }
+type Knobs = { faceLight: number; wallBase: string }
 
 const Scene = ({ tier, knobs }: { tier: Tileset; knobs: Knobs }) => {
   const palette = tierPalette[tier]
@@ -20,7 +20,7 @@ const Scene = ({ tier, knobs }: { tier: Tileset; knobs: Knobs }) => {
   const face = tileUrl(tier, "wall-face")
   // A corridor two cells deep: mass above, the back wall's face, the floor, mass below.
   const faceY = CELL
-  const floorY = faceY + WALL_H
+  const floorY = faceY + FACE_H
   const floorH = CELL * 2
   const H = floorY + floorH + CELL
   return (
@@ -32,17 +32,17 @@ const Scene = ({ tier, knobs }: { tier: Tileset; knobs: Knobs }) => {
           </pattern>
         )}
         {face && (
-          <pattern id={`mb-face-${tier}`} width={MEGA} height={WALL_H} patternUnits="userSpaceOnUse" y={faceY}>
-            <image href={face} width={MEGA} height={WALL_H} preserveAspectRatio="none" />
+          <pattern id={`mb-face-${tier}`} width={MEGA} height={FACE_H} patternUnits="userSpaceOnUse" y={faceY}>
+            <image href={face} width={MEGA} height={FACE_H} preserveAspectRatio="none" />
           </pattern>
         )}
       </defs>
       <rect width={W} height={H} fill={knobs.wallBase} />
       <rect y={floorY} width={W} height={floorH} fill={floor ? `url(#mb-floor-${tier})` : palette.slab} />
       <g style={{ filter: `brightness(${knobs.faceLight})` }}>
-        <rect y={faceY} width={W} height={WALL_H} fill={face ? `url(#mb-face-${tier})` : palette.wall} />
+        <rect y={faceY} width={W} height={FACE_H} fill={face ? `url(#mb-face-${tier})` : palette.wall} />
       </g>
-      <rect y={faceY} width={W} height={WALL_H} fill={palette.outline} opacity={knobs.faceNight} />
+      <rect y={faceY} width={W} height={FACE_H} fill={palette.outline} opacity={palette.faceNight} />
       <rect width={W} height={H} fill={palette.shade} />
     </svg>
   )
@@ -50,7 +50,7 @@ const Scene = ({ tier, knobs }: { tier: Tileset; knobs: Knobs }) => {
 
 const TierCard = ({ tier }: { tier: Tileset }) => {
   const palette = tierPalette[tier]
-  const initial: Knobs = { faceLight: 1, faceNight: palette.faceNight, wallBase: palette.wallBase }
+  const initial: Knobs = { faceLight: 1, wallBase: palette.wallBase }
   const [knobs, setKnobs] = useState(initial)
   const set = (patch: Partial<Knobs>) => setKnobs(k => ({ ...k, ...patch }))
   return (
@@ -71,17 +71,6 @@ const TierCard = ({ tier }: { tier: Tileset }) => {
           step={0.05}
           value={knobs.faceLight}
           onChange={e => set({ faceLight: Number(e.target.value) })}
-        />
-      </label>
-      <label className="flex items-center gap-2">
-        faceNight {knobs.faceNight.toFixed(2)} <span className="text-white/40">(now {palette.faceNight})</span>
-        <input
-          type="range"
-          min={0}
-          max={1}
-          step={0.05}
-          value={knobs.faceNight}
-          onChange={e => set({ faceNight: Number(e.target.value) })}
         />
       </label>
       <label className="flex items-center gap-2">
@@ -119,9 +108,9 @@ export default meta
 export const AllRanks: StoryObj<typeof meta> = {}
 
 // FLAT COLOURS: the same corridor in plain fills, so a palette is settled before anything is painted to it.
-// The numbers are L* after the night, as `yarn rank-colour` reads them; visual-direction.md wants the face at
-// least 25 off the floor, and the mass reads as a wall only when it is off the face as well.
-type Flat = { floor: string; face: string; top: string; mass: string; metal: string; faceNight: number; shade: number }
+// The numbers are L* after the night, as `yarn rank-colour` reads them; the mass reads as a wall only when
+// it is off the face.
+type Flat = { floor: string; face: string; top: string; mass: string; metal: string; shade: number }
 
 const hexRgb = (hex: string) => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16))
 const mix = (a: number[], b: number[], t: number) => a.map((v, i) => v * (1 - t) + b[i] * t)
@@ -140,17 +129,16 @@ const FlatCard = ({ tier }: { tier: Tileset }) => {
     top: palette.wallTop,
     mass: palette.wallBase,
     metal: palette.accent,
-    faceNight: palette.faceNight,
     shade: shadeAlpha,
   }
   const [flat, setFlat] = useState(initial)
   const set = (patch: Partial<Flat>) => setFlat(f => ({ ...f, ...patch }))
   const night = hexRgb(palette.outline)
   const lit = (hex: string, extra = 0) => lStar(mix(mix(hexRgb(hex), night, extra), night, flat.shade))
-  const L = { floor: lit(flat.floor), face: lit(flat.face, flat.faceNight), mass: lit(flat.mass) }
+  const L = { floor: lit(flat.floor), face: lit(flat.face, palette.faceNight), mass: lit(flat.mass) }
   const step = (a: number, b: number) => Math.abs(a - b)
   const faceY = CELL
-  const floorY = faceY + WALL_H
+  const floorY = faceY + FACE_H
   const H = floorY + CELL * 2 + CELL
   return (
     <div className="flex flex-col gap-2 rounded bg-neutral-800 p-3 text-xs text-white/80">
@@ -163,8 +151,8 @@ const FlatCard = ({ tier }: { tier: Tileset }) => {
       <svg width={W} height={H} className="block">
         <rect width={W} height={H} fill={flat.mass} />
         <rect y={faceY - 6} width={W} height={6} fill={flat.top} />
-        <rect y={faceY} width={W} height={WALL_H} fill={flat.face} />
-        <rect y={faceY} width={W} height={WALL_H} fill={palette.outline} opacity={flat.faceNight} />
+        <rect y={faceY} width={W} height={FACE_H} fill={flat.face} />
+        <rect y={faceY} width={W} height={FACE_H} fill={palette.outline} opacity={palette.faceNight} />
         <rect y={floorY} width={W} height={CELL * 2} fill={flat.floor} />
         <rect x={CELL * 2.5} y={floorY + CELL * 0.6} width={CELL} height={CELL * 0.8} rx={4} fill={flat.metal} />
         <rect width={W} height={H} fill={palette.outline} opacity={flat.shade} />
@@ -179,17 +167,6 @@ const FlatCard = ({ tier }: { tier: Tileset }) => {
         ))}
       </div>
       <label className="flex items-center gap-2">
-        faceNight {flat.faceNight.toFixed(2)}
-        <input
-          type="range"
-          min={0}
-          max={1}
-          step={0.05}
-          value={flat.faceNight}
-          onChange={e => set({ faceNight: Number(e.target.value) })}
-        />
-      </label>
-      <label className="flex items-center gap-2">
         night {flat.shade.toFixed(2)}
         <input
           type="range"
@@ -203,10 +180,6 @@ const FlatCard = ({ tier }: { tier: Tileset }) => {
       <div className="font-mono">
         L* floor {L.floor} · face {L.face} · mass {L.mass}
         <br />
-        <span className={step(L.floor, L.face) >= 25 ? "text-green-400" : "text-red-400"}>
-          floor↔face {step(L.floor, L.face)}
-        </span>
-        {" · "}
         <span className={step(L.face, L.mass) >= 10 ? "text-green-400" : "text-red-400"}>
           face↔mass {step(L.face, L.mass)}
         </span>
@@ -237,7 +210,6 @@ const lookOf = (tier: Tileset, patch: Partial<Look> = {}): Look => {
     top: p.wallTop,
     mass: p.wallBase,
     metal: p.accent,
-    faceNight: p.faceNight,
     outline: p.outline,
     shade: Number(/,\s*([\d.]+)\)$/.exec(p.shade)?.[1] ?? 0.3),
     ...patch,
@@ -246,22 +218,21 @@ const lookOf = (tier: Tileset, patch: Partial<Look> = {}): Look => {
 
 const RoomSketch = ({ look }: { look: Look }) => {
   const u = CELL
-  const room = { x: u, y: u * 1.5, w: u * 4, h: u * 3 }
+  const room = { x: u, y: u * 1.5 + FACE_H / 2, w: u * 4, h: u * 3 }
   const corridor = { x: room.x + room.w, y: room.y + u, w: u * 3, h: u }
   const walls = [
-    { x: room.x, y: room.y - WALL_H, w: room.w },
-    { x: corridor.x, y: corridor.y - WALL_H, w: corridor.w },
+    { x: room.x, y: room.y - FACE_H, w: room.w },
+    { x: corridor.x, y: corridor.y - FACE_H, w: corridor.w },
   ]
   const W2 = u * 9
-  const H2 = u * 5.5
+  const H2 = u * 5.5 + FACE_H / 2
   return (
     <svg width={W2} height={H2} className="block rounded">
       <rect width={W2} height={H2} fill={look.mass} />
       {walls.map((w, i) => (
         <g key={i}>
           <rect x={w.x} y={w.y - 6} width={w.w} height={6} fill={look.top} />
-          <rect x={w.x} y={w.y} width={w.w} height={WALL_H} fill={look.face} />
-          <rect x={w.x} y={w.y} width={w.w} height={WALL_H} fill={look.outline} opacity={look.faceNight} />
+          <rect x={w.x} y={w.y} width={w.w} height={FACE_H} fill={look.face} />
         </g>
       ))}
       <rect x={room.x} y={room.y} width={room.w} height={room.h} fill={look.floor} />
@@ -305,17 +276,16 @@ const Pair = ({
 export const Proposal: StoryObj<typeof meta> = {
   render: () => (
     <div className="flex min-h-screen flex-col gap-8 bg-neutral-900 p-6">
-      <Pair title="starter" now={lookOf("starter")} next={lookOf("starter", { faceNight: 0.45 })} />
       <Pair
         title="junior"
         now={lookOf("junior")}
-        next={lookOf("junior", { floor: "#e2bb8e", face: "#c9895a", top: "#ecc898", mass: "#3a1c0e", faceNight: 0.4 })}
+        next={lookOf("junior", { floor: "#e2bb8e", face: "#c9895a", top: "#ecc898", mass: "#3a1c0e" })}
       />
       <Pair
         title="voorstellen naast elkaar"
         labels={["starter", "junior"]}
-        now={lookOf("starter", { faceNight: 0.45 })}
-        next={lookOf("junior", { floor: "#e2bb8e", face: "#c9895a", top: "#ecc898", mass: "#3a1c0e", faceNight: 0.4 })}
+        now={lookOf("starter")}
+        next={lookOf("junior", { floor: "#e2bb8e", face: "#c9895a", top: "#ecc898", mass: "#3a1c0e" })}
       />
     </div>
   ),

@@ -77,9 +77,10 @@ meshscaffold() {
 # and it needs no --flatten — its own values land on the palette.
 yarn import-tile art/masters/surfaces/starter-floor.webp --tier=starter --name=floor --slot=floor \
   --filter=smooth --key=none --repeat=2.4
-# The wall face is the vivid starter's too, its master already seamless along x.
+# The wall face is the vivid starter's too, its master already seamless along x. Once across: the map shows a
+# face a cell tall at the 8:1 it is painted at.
 yarn import-tile art/masters/surfaces/starter-wall-face.webp --tier=starter --name=wall-face --slot=face \
-  --filter=smooth --key=none --headroom=0.14 --repeat=2
+  --filter=smooth --key=none --headroom=0.14 --repeat=1
 yarn import-tile art/masters/surfaces/starter-threshold.webp --tier=starter --name=threshold --slot=sill \
   --filter=smooth --key=none
 # The tableau and encounter wall, one whole wall laid with cover, so never made seamless.
@@ -620,8 +621,10 @@ yarn import-tile art/masters/surfaces/junior-threshold.webp --tier=junior --name
 # --repeat=1, not the docs' 2. The return is already one wall's height at 8:1 with the figures at the
 # right size; doubling it halves them and puts the whole procession on the strip twice.
 #
-# It sits at lum 98 against the floor's 156, which is 58 darker — the wall being darker than the floor in
-# front of it is where the map's depth comes from, and it is worth checking on every face.
+# No --brightness: the face sets the rank's wall tokens, sampled from this master (the field's median is
+# `wall`, the top 5% `wallTop`, the bottom 5% `wallBase`). The headroom cap is painted in `wallTop`, so
+# the line is re-run whenever that token moves. Its field sits at lum 137 against the floor's 176, and the
+# map shows it as painted.
 yarn import-tile art/masters/surfaces/junior-wall-face.webp --tier=junior --name=wall-face --slot=face \
   --filter=smooth --key=none --headroom=0.14
 #
@@ -697,8 +700,10 @@ yarn import-tile art/masters/surfaces/junior-threshold.webp --tier=junior --name
 # --repeat=1, not the docs' 2. The return is already one wall's height at 8:1 with the figures at the
 # right size; doubling it halves them and puts the whole procession on the strip twice.
 #
-# It sits at lum 98 against the floor's 156, which is 58 darker — the wall being darker than the floor in
-# front of it is where the map's depth comes from, and it is worth checking on every face.
+# No --brightness: the face sets the rank's wall tokens, sampled from this master (the field's median is
+# `wall`, the top 5% `wallTop`, the bottom 5% `wallBase`). The headroom cap is painted in `wallTop`, so
+# the line is re-run whenever that token moves. Its field sits at lum 137 against the floor's 176, and the
+# map shows it as painted.
 yarn import-tile art/masters/surfaces/junior-wall-face.webp --tier=junior --name=wall-face --slot=face \
   --filter=smooth --key=none --headroom=0.14
 #

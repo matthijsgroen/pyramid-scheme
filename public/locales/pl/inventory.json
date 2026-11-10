@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Król bogów i pan słońca. Każdego dnia płynie po niebie swoją słoneczną łodzią."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Bóg z głową szakala. Opiekuje się zmarłymi i strzeże drogi do zaświatów."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Bóg nieba z głową sokoła i obrońca faraonów. Syn Ozyrysa i Izydy."
+    },
+    "d4": {
+      "name": "Thot",
+      "description": "Bóg z głową ibisa. Bóg mądrości, pisma i wiedzy, który zapisuje wszystko, co ważne dla bogów."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Bogini-kotka. Chroni dom, przynosi radość i odpędza złe duchy."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Bóg-krokodyl rzeki Nil. Daje urodzajne pola i siłę w walce."
+    },
+    "d7": {
+      "name": "Chepri",
+      "description": "Bóg-skarabeusz, czyli żuk. Toczy słońce po niebie i daje nowy początek."
+    },
+    "d8": {
+      "name": "Wadżet",
+      "description": "Bogini-kobra, opiekunka Dolnego Egiptu i znak władzy króla."
+    },
+    "d9": {
+      "name": "Izyda",
+      "description": "Bogini czarów, mam i leczenia. Wierna żona Ozyrysa."
+    },
+    "d10": {
+      "name": "Ozyrys",
+      "description": "Bóg zaświatów, śmierci i powrotu do życia. Sądzi zmarłych."
+    },
+    "d11": {
+      "name": "Set",
+      "description": "Bóg chaosu, burz i pustyni. Brat i rywal Ozyrysa."
+    },
+    "d12": {
+      "name": "Neftyda",
+      "description": "Bogini smutku po zmarłych, która ich chroni. Siostra Izydy."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Bóg, który stworzył świat słowem. Opiekun rzemieślników i budowniczych."
+    },
+    "d14": {
+      "name": "Sachmet",
+      "description": "Bogini-lwica wojny i leczenia. Groźna obrończyni, która umie wyleczyć choroby."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Bogini-krowa miłości, muzyki i mam. Opiekowała się faraonami."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Faraon",
+      "description": "Władca Egiptu. Ludzie wierzyli, że jest żywym bogiem i łączy ludzi z bogami."
+    },
+    "p2": {
+      "name": "Arcykapłan",
+      "description": "Najważniejszy kapłan świątyni. Odprawiał święte obrzędy i dbał o porządek bogów."
+    },
+    "p3": {
+      "name": "Pisarz",
+      "description": "Ktoś, kto umiał czytać i pisać. Zapisywał ważne sprawy i strzegł wiedzy."
+    },
+    "p4": {
+      "name": "Architekt",
+      "description": "Mistrz budowy. Projektował piramidy, świątynie i pomniki na wieczność."
+    },
+    "p5": {
+      "name": "Generał",
+      "description": "Dowódca wojska. Bronił granic Egiptu i powiększał królestwo."
+    },
+    "p6": {
+      "name": "Lekarz",
+      "description": "Uzdrowiciel. Leczył chorych wiedzą i zaklęciami."
+    },
+    "p7": {
+      "name": "Balsamista",
+      "description": "Święty rzemieślnik, który przygotowywał zmarłego do podróży w zaświaty."
+    },
+    "p8": {
+      "name": "Rolnik",
+      "description": "Uprawiał żyzne pola nad Nilem, żeby całe królestwo miało co jeść."
+    },
+    "p9": {
+      "name": "Rzemieślnik",
+      "description": "Zręczny twórca pięknych przedmiotów, biżuterii i dzieł sztuki dla bogatych i dla bogów."
+    },
+    "p10": {
+      "name": "Kupiec",
+      "description": "Handlarz, który przywoził niezwykłe towary z dalekich krajów."
+    },
+    "p11": {
+      "name": "Wezyr",
+      "description": "Najważniejszy doradca faraona. Pilnował, żeby państwo dobrze działało."
+    },
+    "p12": {
+      "name": "Wyrocznia",
+      "description": "Święty wieszcz. Odczytywał wiadomości od bogów i przepowiadał przyszłość."
+    },
+    "p13": {
+      "name": "Żeglarz",
+      "description": "Pływał po Nilu i po morzu. Bez niego nie byłoby handlu ani podróży."
+    },
+    "p14": {
+      "name": "Kamieniarz",
+      "description": "Rzeźbił hieroglify w kamieniu i budował wielkie pomniki Egiptu."
+    },
+    "p15": {
+      "name": "Strażnik",
+      "description": "Pilnował świętych miejsc i grobowców, żeby zmarli mogli spać spokojnie na zawsze."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Hipopotam",
+      "description": "Potężne zwierzę z Nilu. Wszyscy bali się jego siły i tego, jak broni swojego terenu."
+    },
+    "a2": {
+      "name": "Lew",
+      "description": "Król zwierząt. Znak władzy króla i boskiej siły na pustyni."
+    },
+    "a3": {
+      "name": "Słoń",
+      "description": "Ogromne zwierzę z krajów na południu. Podziwiane za mądrość i dobrą pamięć."
+    },
+    "a4": {
+      "name": "Gazela",
+      "description": "Szybka i zgrabna mieszkanka pustyni. Znak prędkości i wdzięku."
+    },
+    "a5": {
+      "name": "Małpa",
+      "description": "Sprytne zwierzę związane z Thotem. Oznacza mądrość i psoty."
+    },
+    "a6": {
+      "name": "Ryba",
+      "description": "Święte stworzenia Nilu. Dawały jedzenie i były znakiem urodzaju."
+    },
+    "a7": {
+      "name": "Gęś",
+      "description": "Święty ptak z bagien nad Nilem. Związany z opowieściami o stworzeniu świata i z duszą."
+    },
+    "a8": {
+      "name": "Pszczoła",
+      "description": "Znak Dolnego Egiptu i władzy króla. Robi cenny miód."
+    },
+    "a9": {
+      "name": "Żółw",
+      "description": "Stare, mądre stworzenie, które nosi na skorupie ciężar świata."
+    },
+    "a10": {
+      "name": "Żaba",
+      "description": "Znak nowego życia i urodzaju. Wyskakuje z wód Nilu po wielkiej powodzi."
+    },
+    "a11": {
+      "name": "Sęp",
+      "description": "Święty ptak Górnego Egiptu. W tej postaci pojawiała się na ziemi bogini Nechbet."
+    },
+    "a12": {
+      "name": "Sowa",
+      "description": "Mądra nocna łowczyni. Strzeże ukrytej wiedzy i dawnych tajemnic."
+    },
+    "a13": {
+      "name": "Baran",
+      "description": "Święte zwierzę Amona-Ra. Znak boskiej siły i przywództwa."
+    },
+    "a14": {
+      "name": "Żyrafa",
+      "description": "Wysokie i zgrabne zwierzę z krajów na południu. Długą szyją sięga prawie do nieba."
+    },
+    "a15": {
+      "name": "Szakal",
+      "description": "Pustynny padlinożerca i przewodnik do zaświatów. Sługa Anubisa."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Znak życia i nieśmiertelności. Bogowie i faraonowie często trzymają go w dłoni."
+    },
+    "art2": {
+      "name": "Oko Horusa",
+      "description": "Znak ochrony, władzy króla i zdrowia. Należy do boga nieba Horusa."
+    },
+    "art3": {
+      "name": "Sistrum",
+      "description": "Grzechotka używana w świątyni podczas obrzędów. Należy do bogini Hathor."
+    },
+    "art4": {
+      "name": "Filar dżed",
+      "description": "Znak stałości i powrotu do życia. Często łączony z Ozyrysem."
+    },
+    "art5": {
+      "name": "Kartusz",
+      "description": "Owalna ramka z imieniem faraona zapisanym hieroglifami. Chroni jego imię na wieczność."
+    },
+    "art6": {
+      "name": "Urna kanopska",
+      "description": "Święty dzban z głową strażnika zamiast pokrywki. Cztery takie stały wokół trumny i trzymały wartę."
+    },
+    "art7": {
+      "name": "Berło",
+      "description": "Laska władzy. Nosili ją bogowie i faraonowie na znak, że rządzą z woli bogów."
+    },
+    "art9": {
+      "name": "Piramida",
+      "description": "Wieczny grobowiec i brama do zaświatów. Zbudowana dla faraonów, żeby przetrwała zawsze."
+    },
+    "art10": {
+      "name": "Słoneczna łódź",
+      "description": "Święta łódź, która wiezie boga słońca Ra po niebie od świtu do zmierzchu."
+    },
+    "art11": {
+      "name": "Obelisk",
+      "description": "Wysoki kamienny słup z małą piramidą na czubku. Sięga ku niebu, na cześć bogów."
+    },
+    "art12": {
+      "name": "Laska i bicz",
+      "description": "Królewskie znaki. Mówią, że faraon jest pasterzem i obrońcą Egiptu."
+    },
+    "art14": {
+      "name": "Kwiat lotosu",
+      "description": "Znak nowego życia i słońca. Wyrasta czysty z błotnistej wody Nilu."
+    },
+    "art15": {
+      "name": "Korona z ureuszem",
+      "description": "Królewskie nakrycie głowy z kobrą, która chroni faraona."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Liść trzciny",
+      "description": "Jedna trzcina, czyli głoska i. Dodana do imienia boga robi z niego imię człowieka: Horus zmienia się w Hori, czyli „ten od Horusa”."
+    }
+  }
+}

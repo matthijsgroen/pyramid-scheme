@@ -1,0 +1,844 @@
+{
+  "not-found": "Beklager, samtalen du leter etter finnes ikke.",
+  "welcome": "Egypt! Jeg er her på ordentlig.",
+  "welcome2": "Og dette kartet … jeg betalte altfor mye for det. Det bør stemme.",
+  "welcome3": "Kom igjen. La oss se hvor det krysset er.",
+
+  "pyramidIntro": "Det står tall på disse steinene. Og noen mangler …",
+  "pyramidIntro2": "Vent. Hver stein er de to under den, lagt sammen! Ja – her også!",
+
+  "pyramidBlockedBlocks": "Hei, hva er dette? De blokkene er forseglet. De vil ikke vise tallet sitt!",
+  "pyramidBlockedBlocks2": "Gjør ikke noe. Se på blokkene rundt – du kan regne det ut fra dem.",
+  "pyramidBlockedBlocks3": "Men du kan ikke skrive det inn. Det tallet må du huske i hodet.",
+  "pyramidBlockedBlocks4": "Kom igjen, du har kommet så langt. Du klarer dette!",
+
+  "levelCompleted": "Ha! Den åpner seg! Kom, inn med oss.",
+  "exitPillar": {
+    "1": { "fez": "Ha! Dagslys! Ser du den lysstrålen? Der går vi ut. Gå inn i den, så er vi ferdige her." },
+    "2": {
+      "fez": "Det finnes bare én, helt på slutten av hovedgangen. Uansett hvor vi vandrer, kommer vi tilbake hit."
+    },
+    "3": { "explorer": "Én vei ut. Notert." }
+  },
+  "expeditionCompleted": "Gratulerer, du klarte ekspedisjonen!",
+  "expeditionCompleted2": "En ny ekspedisjon er klar for deg.",
+
+  "tombTutorial": "Åå, skrift! Kan vi lese det? Med hieroglyfene vi har funnet … kanskje!",
+  "tombTutorial2": "Se, regnestykker med tegn i! Ser du de tomme rutene? Der skal hieroglyfene inn. Dine, der nede.",
+  "tombTutorial3": "De små regnestykkene viser deg når et tegn er riktig. Sånn finner vi ut hvilket tegn som hører hvor.",
+  "tombTutorial4": "Alt fylt ut? Da kommer det en tallås. Det store regnestykket er koden – og så åpner graven seg!",
+
+  "hieroglyphUnlock": "Vi har en spesiell gjenstand – med den kan vi skrive på en av de forseglede blokkene!",
+  "hieroglyphUnlock2": "Trykk på en stein som lyser, og dra gjenstanden over på den for å låse den opp. Én blokk per pyramide.",
+
+  "errorHighlightTutorial": "Den skatten vi fant, har et lurt triks – skriver du et feil svar, lyser én feil opp i rødt!",
+  "errorHighlightTutorial2": "Bare én blokk lyser om gangen, så det er fortsatt vanskelig. Men det hjelper deg å finne feilen!",
+
+  "earlyFeedbackTutorial": "Ser du de kontrollblokkene? De blir grønne eller røde mens du fyller ut – med en gang!",
+  "earlyFeedbackTutorial2": "Bruk dem som holdepunkter når du løser. Blir en rød, er det noe i nærheten som må fikses.",
+
+  "notEnoughHieroglyphs": "Du kan alltid stoppe denne ekspedisjonen ved å gå tilbake til reiseskjermen.",
+  "notEnoughHieroglyphs2": "Vi kan ta en pause fra ekspedisjonen og lete andre steder etter hieroglyfene vi fortsatt mangler.",
+
+  "tombLoot": "Wow, vår første skatt! Bra jobba!",
+  "mapPiece": "Se! DET er et ordentlig kart. Skikkelig gammelt! Verdt mer enn begge våre til sammen!",
+  "mapPiece2": "Men det er bare en bit av et, altså. Hver ekspedisjon her omkring gjemmer én, og sammen peker de mot en grav.",
+  "mapComplete": "Det er helt! Se, alle bitene passer akkurat.",
+  "mapComplete2": "Der, hvor alle strekene møtes. Der ligger det en grav.",
+  "mapComplete3": "Den står i reisene våre nå. Skal vi dra og se?",
+  "mapPiece3": "Følg med på ekspedisjonslista hvor mange vi har. Det skal i hvert fall jeg!",
+
+  "mosaicIntro": "Åå, farget glass! Se hvordan det glitrer – DET kaster man ikke!",
+  "mosaicIntro2": "Det er en bit av et bilde. Et helt vindu av glass, og hver bit vi finner, bringer litt av det tilbake.",
+  "mosaicIntro3": "Har ikke du en leir et sted? Ta dem med, så setter vi dem sammen der. Jeg vil se hva det blir!",
+  "mosaicReminder": "Psst! De glassbitene skrangler fortsatt rundt i sekken vår. Skal vi sette dem i vinduet i leiren?",
+
+  "mosaicStarter": "En katt i døra, og en slange som har det travelt med å komme seg vekk. Det var verdt en skål melk.",
+  "mosaicStarter2": "Egypterne elsket katter nettopp for dette – de drepte slangene og rottene som kom inn i kornet.",
+  "mosaicStarter3": "De elsket dem så høyt at de gjorde en til gudinne. Bastet. Hun passer på huset, døra og alle som sover bak den.",
+
+  "mosaicJunior": "Se på hånda hans – noen viser ham hvordan han skal holde pennen.",
+  "mosaicJunior2": "Han med fuglehodet er Thoth. Skrive, telle, holde orden på alt – det er hans greie.",
+  "mosaicJunior3": "Ibisen vi fulgte oppover elva? Det er fuglen hans. Hvert tall vi har fylt inn i en vegg, hører også til ham.",
+
+  "mosaicExpert": "Det lyset er ikke flaks. De bygde hele salen sånn at det skulle lande akkurat der, på riktig morgen.",
+  "mosaicExpert2": "Sola er Amon-Ra – den skjulte, og lyset alle kan se. Begge deler på en gang.",
+  "mosaicExpert3": "Den som kan måle himmelen så nøyaktig, kan måle hva som helst. Vi har løst regnestykkene deres hele veien.",
+
+  "mosaicMaster": "Grønn hud, og korn som vokser rett ut av ham. Det er med vilje.",
+  "mosaicMaster2": "Osiris. Han ble drept og satt sammen igjen, og nå er han det som kommer tilbake hvert år når elva flommer over åkrene.",
+  "mosaicMaster3": "Her nede er det hele poenget: død er ikke slutt. Hyggelig tanke i en grav, hva?",
+
+  "mosaicWizard": "Et hjerte på den ene siden. Én fjær på den andre. Og de veier like mye.",
+  "mosaicWizard2": "Fjæren er Ma’at – sannhet, balanse, sånn ting skal være. Er hjertet tyngre enn fjæren, slipper du ikke gjennom døra.",
+  "mosaicWizard3": "Sjakalen som holder vekten stødig, er Anubis. Det er han som følger deg hit.",
+
+  "mosaicFinale": "Ta et skritt tilbake. Se hva vi har båret opp fra de pyramidene.",
+  "mosaicFinale2": "Hver bit hører til ham – han som holder vekten stødig. Han har fulgt med hele veien.",
+  "mosaicFinale3": "Det er det han har skrevet om oss. Og jeg vil si det går opp.",
+
+  "shopFirstVisit": "Ah, her er vi. Boden min – jeg sa jo at jeg var med for handelens skyld.",
+  "shopFirstVisit2": "Alt på denne disken har jeg båret ut fra et eller annet sted. Den der kom fra to graver tilbake.",
+
+  "shopArrival": "Ah, boden min! La meg legge fram det jeg har plukket opp på veien.",
+  "shopArrival2": "Sjeldne funn koster mest, men jeg betaler deg for alt småtteriet du bærer på.",
+  "arrival": {
+    "starter_1": {
+      "1": { "explorer": "Se, der borte! Sfinksen!" },
+      "2": { "explorer": "Kjempestor, selv herfra." },
+      "3": { "explorer": "De sier det står skrift under potene. Som ingen kan lese." },
+      "4": { "explorer": "Senere. Denne pyramiden først!" }
+    },
+    "starter_2": {
+      "1": { "fez": "Ha! Endelig noe jeg skjønner meg på. Alt som skulle oppover Nilen, kom forbi her først." },
+      "2": {
+        "fez": "Og kjøpmenn skriver ned alt. Hvem som kjøpte hva, hvem som skyldte hvem, hvem som kom for sent …"
+      },
+      "3": { "explorer": "Hvem som kom for sent?" },
+      "4": { "fez": "Særlig hvem som kom for sent!" },
+      "5": { "fez": "Tre tusen år. Varene er borte, og kvitteringene ligger her fortsatt. Typisk!" }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Se på de dørene! Folk kom hit for å be om beskyttelse. Og så forble en sånn dør stengt."
+      },
+      "2": { "explorer": "Stengt for hvem?" },
+      "3": { "fez": "For alle som ikke spurte pent. For oss, mest." },
+      "4": { "fez": "Alt som er forseglet i dette landet, ble forseglet av noen som mente det. Virkelig mente det." },
+      "5": { "fez": "Og kattene! De forgudet katter her. Klarte bare ikke å la være å klappe dem." }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "Å, denne liker jeg. Her lærte de å skrive! Tegn for tegn, på knuste krukker – papyrus var altfor dyrt for barn."
+      },
+      "2": { "explorer": "Øvde de på søppel?" },
+      "3": {
+        "fez": "På det som fantes! Og kan du nok av disse, er en vegg plutselig ikke bare pynt lenger."
+      },
+      "4": { "explorer": "Den sfinksen … jeg vil se på den en gang til." },
+      "5": { "fez": "Ikke ennå. Snart." }
+    },
+
+    "junior_1": {
+      "1": { "fez": "De kom tilbake hvert år med flommen, nesten på dagen." },
+      "2": { "fez": "Så folk begynte å telle dagene imellom. Det er der kalenderen kommer fra – fugler." },
+      "3": { "explorer": "Fugler." },
+      "4": { "fez": "Fugler og papirarbeid. Det er alltid fugler og papirarbeid." }
+    },
+    "junior_2": {
+      "1": { "fez": "Det var her de laget alt sammen. Ikke gravene – tingene som skulle ned i dem." },
+      "2": { "fez": "Se på formene. Det samme armbåndet, førti ganger." },
+      "3": { "explorer": "Til førti mennesker?" },
+      "4": {
+        "fez": "Til alle som kunne betale. En adelsmann ville ha det en konge hadde, til en pris en adelsmann hadde råd til."
+      }
+    },
+    "junior_3": {
+      "1": { "fez": "Thoth, denne her. Gud for hemmeligheter og trolldom, er jeg ganske sikker på." },
+      "2": { "explorer": "Ganske." },
+      "3": { "fez": "Nitti prosent. Uansett – tegnene du har samlet, er hans." }
+    },
+    "junior_4": {
+      "1": { "fez": "Over hundre meter høyt, og et bål på toppen som aldri sluknet." },
+      "2": { "fez": "Sjømenn kunne finne kysten fra en hel dag unna. Før det fant de den ved å kræsje i den." },
+      "3": { "explorer": "Hvordan finner man noe her ute uten et sånt?" },
+      "4": { "fez": "Du spør noen som har vært der. Det er hele jobben min." }
+    },
+
+    "expert_1": {
+      "1": { "fez": "Over seksti graver hogd inn i én dal, og hver eneste en ble åpnet før vi kom." },
+      "2": { "explorer": "Av hvem?" },
+      "3": { "fez": "Folk som oss, stort sett. Tidligere." },
+      "4": { "fez": "Hva tenker du om det?" },
+      "5": { "explorer": "At vi er for sent ute." }
+    },
+    "expert_2": {
+      "1": { "fez": "Amon-Ra. Sola. Alles favoritt, og du skjønner hvorfor – se hvor stort det er." },
+      "2": { "explorer": "To navn." },
+      "3": { "fez": "Samme gud, tror jeg. De populære fikk et ekstra navn." }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Hele landet er en grønn stripe på hver side av én elv, og her brer det seg ut til dette."
+      },
+      "2": { "fez": "Alt vokser. Alt biter også." },
+      "3": { "explorer": "Hvilken av de to er vi her for?" },
+      "4": { "fez": "Jeg håpet egentlig på ingen av dem." }
+    },
+    "expert_4": {
+      "1": { "fez": "Den første. Før denne ble konger lagt under en flat stein, akkurat som alle andre." },
+      "2": { "fez": "Noen sto her og tenkte: hva om vi gjør det, men seks ganger, oppover." },
+      "3": { "explorer": "Virket det?" },
+      "4": { "fez": "Den står fortsatt, og det gjør ikke han. Kommer an på hva du mener." }
+    },
+
+    "master_1": {
+      "1": { "fez": "To millioner blokker. Noen har telt dem." },
+      "2": { "explorer": "Noen har telt dem?" },
+      "3": { "fez": "Noen teller alltid. Det er det folk glemmer med alt dette – det ble styrt av folk med lister." },
+      "4": { "fez": "Vakkert, ikke sant? Tør ikke tenke på hvordan lønnslista så ut." }
+    },
+    "master_2": {
+      "1": {
+        "fez": "En bruksanvisning. Det er alt det er – hva du skal si, og i hvilken rekkefølge, så reisen går som den skal."
+      },
+      "2": { "explorer": "En manual." },
+      "3": { "fez": "En manual for å være død. De skrev ned alt, disse folka." },
+      "4": { "fez": "Og med tanke på hva vi leter etter, er det den første gode nyheten hele uka." }
+    },
+    "master_3": {
+      "1": { "fez": "Ah. Noens leir." },
+      "2": { "explorer": "Ny?" },
+      "3": { "fez": "Sånn passe ny. Hermetikk og en stygg hoste, ser det ut som." },
+      "4": { "fez": "De gikk lenger inn enn dette, og de tok ikke med seg utstyret sitt." },
+      "5": { "explorer": "Kom de tilbake for å hente det?" },
+      "6": { "fez": "… La oss gå videre." }
+    },
+    "master_4": {
+      "1": {
+        "fez": "DETTE er det de andre prøvde å etterligne. Se på fargen – tre tusen år, og den ser fortsatt våt ut."
+      },
+      "2": { "explorer": "Henut ville blitt rasende." },
+      "3": { "fez": "Henut ville tatt notater." }
+    },
+
+    "wizard_1": {
+      "1": { "fez": "Sola går under verden om natta og kommer opp på den andre siden. Det er hele troen." },
+      "2": { "fez": "Tolv timer i mørket, med ting i veien, og noen må bære den gjennom." },
+      "3": { "explorer": "Det er det vi har holdt på med." },
+      "4": { "fez": "Jeg prøvde å ikke si det høyt." },
+      "5": { "explorer": "Sanden kommer fortsatt inn." },
+      "6": { "fez": "Den har kommet inn i tre tusen år. Den stopper ikke, den går bare rundt." },
+      "7": { "fez": "Fylles opp, snus, begynner på nytt. Akkurat som sola." }
+    },
+    "wizard_2": {
+      "1": { "fez": "To stykker, atten meter høye, og begge er Amenhotep." },
+      "2": {
+        "fez": "Grekerne tok en titt og bestemte at det var en av deres helter. Memnon. Det navnet ble hengende i to tusen år."
+      },
+      "3": { "explorer": "Hvem sitt navn står på den?" },
+      "4": { "fez": "Hans eget. Hogd inn i tronen, der det alltid har stått." },
+      "5": { "fez": "Ingen leste det." },
+      "6": {
+        "fez": "Etter jordskjelvet sang den nordlige ved soloppgang. En tone, hver morgen, når sola varmet sprekken."
+      },
+      "7": { "explorer": "Og nå?" },
+      "8": { "fez": "En keiser fikk den reparert. Den har ikke laget en lyd siden." }
+    },
+    "wizard_3": {
+      "1": {
+        "fez": "Vekten. Hjertet på den ene siden, fjæren på den andre – så et godt, tungt hjerte vinner, regner jeg med."
+      },
+      "2": { "explorer": "Hvilken vei går noe tungt?" },
+      "3": { "fez": "… Ned." },
+      "4": { "fez": "Å." },
+      "5": { "fez": "Lett. Du vil ha det LETT." }
+    },
+    "wizard_4": {
+      "1": { "fez": "Toppsteinen settes på sist, og den er av gull, så hele greia fanger det første lyset." },
+      "2": { "explorer": "For hvem?" },
+      "3": { "fez": "For alle som ser. Det var hele poenget – den var aldri for mannen der inne." }
+    }
+  },
+
+  "tomb": {
+    "starter": {
+      "1": { "ipi": "Hei! Fingrene av fatet! Det er krukka mi!" },
+      "2": { "fez": "… Sa den krukka nettopp noe?!" },
+      "3": { "ipi": "Det var meg. Tredje hylle, den med hakket. Den er min." },
+      "4": { "explorer": "Ok, ok! Den blir stående. Hvem er du?" },
+      "5": { "ipi": "Ipi. I førti år førte jeg regnskapet. Førti!" },
+      "6": { "fez": "Regnskapet? For hvem?" },
+      "7": { "ipi": "For alle! Hvem som skyldte hva, helt ned til siste sekk med korn." },
+      "8": { "ipi": "Den Henut, lenger nord herfra? Elleve deben lapis. Betalte aldri!" },
+      "9": { "explorer": "Og det husker du fortsatt, etter så lang tid?" },
+      "10": { "ipi": "Det står skrevet! Det som er skrevet ned, har skjedd." },
+      "11": { "ipi": "Bare de Hori-ene … Hori båtmannen, Hori bakeren … og den andre Hori." },
+      "12": { "fez": "Hadde du katter også? Alle hadde vel katter? Søte små nusser!" },
+      "13": { "ipi": "Søte? De var til kornet! Vet du hva én rotte koster deg i løpet av en hel sesong?" },
+      "14": { "fez": "… Å. Ja vel." },
+      "15": { "ipi": "Si til Henut at Ipi sendte deg. Det ødelegger ettermiddagen hennes." },
+      "16": { "fez": "Jeg liker ham!" },
+      "17": { "explorer": "Du liker bare at han fortsatt har penger til gode." }
+    },
+    "junior": {
+      "1": { "henut": "Endelig. Du kommer vel på grunn av lapisen. Ipi maser vel fortsatt om lapisen." },
+      "2": { "explorer": "Det gjør han." },
+      "3": { "henut": "Det var glass. Vakkert glass. Det visste han godt." },
+      "4": { "fez": "… Var armbåndet også av glass?" },
+      "5": {
+        "henut": "Alt her er den beste etterligningen som fantes å kjøpe for penger, unge mann, og jeg valgte hver eneste bit selv."
+      },
+      "6": {
+        "henut": "Så. Veggen. Det tredje tegnet – det er ikke navnet mitt. En eller annen lærling med meisel og ingen som passet på."
+      },
+      "7": { "henut": "Du har lært deg tegnene dine. Det ser jeg. Fiks det." }
+    },
+    "juniorFixed": {
+      "1": { "henut": "Sånn. Nå er det fortsatt navnet mitt om tusen år." },
+      "2": { "explorer": "Ipi stavet det riktig." },
+      "3": { "henut": "Ipi stavet alt riktig. Det var det eneste gode med ham." },
+      "4": { "fez": "Betyr det noe, her nede?" },
+      "5": { "henut": "Det er det eneste som betyr noe." },
+      "6": { "fez": "Hun hadde en hel vegg med Thoth der oppe. Gud for hemmeligheter." },
+      "7": { "henut": "Thoth teller. Thoth skriver ned hva du har gjort, og det blir stående." },
+      "8": { "henut": "Hemmeligheter er det folk kaller regning når de ikke kan regne selv." },
+      "9": {
+        "henut": "Hvis du skal videre – og det skal du tydeligvis – så er det en prest i Karnak som skylder de døde en tjeneste han aldri gjorde. Han kommer til å være helt uutholdelig om det. Prester er sånn."
+      },
+      "10": { "henut": "… Har vi møttes før?" },
+      "11": { "fez": "Det ville jeg husket." },
+      "12": { "henut": "Ja. Det ville jeg også." }
+    },
+    "expert": {
+      "1": { "priest": "Du er ikke den jeg venter på." },
+      "2": { "explorer": "Hvem venter du på, da?" },
+      "3": {
+        "priest": "Noen med seglet. Det skulle bringes hit, legges ned der, og leses over. Ingen av de tre tingene har skjedd."
+      },
+      "4": { "fez": "… Hvor lenge har du ventet?" },
+      "5": { "priest": "Jeg holder ikke telling. Det ville vært uprofesjonelt." },
+      "6": {
+        "priest": "Et ordentlig offer er noe en konge ble begravet med i hendene. Ikke en kopi. Ikke noe som ligner. Selve tingen, med merket hans på."
+      },
+      "7": { "priest": "Kom med det, så blir du meldt inn. Kom med noe annet, så blir du ikke det." },
+      "8": { "explorer": "Meldt inn til hvem?" },
+      "9": { "priest": "Det får du vite. Alle får vite det, til slutt." },
+      "10": { "fez": "Han er veldig glad i sola, han her. All den Amon-Ra utenfor." },
+      "11": { "priest": "Amon er den skjulte. Ra er den alle kan se." },
+      "12": { "priest": "De er samme gud. Det er ikke tilfeldig, det er hele poenget." },
+      "13": { "fez": "… Ja vel. Ja. Det visste jeg." },
+      "14": { "explorer": "Nei, det visste du ikke." },
+      "15": { "fez": "Nei, det visste jeg ikke." }
+    },
+    "expertB": {
+      "1": { "fez": "Ingen har vært her inne. Ikke vi, ikke de som kom før, ingen." },
+      "2": { "explorer": "Hvordan kan du vite det?" },
+      "3": { "fez": "Fordi det fortsatt er noe her." }
+    },
+    "master": {
+      "1": { "pharaoh": "Du kan tre nærmere. Du har tredd nærmere. Vel, vel." },
+      "2": { "fez": "Deres Majestet." },
+      "3": { "pharaoh": "Ja." },
+      "4": { "explorer": "Vi trenger seglet ditt." },
+      "5": { "pharaoh": "Det gjør alle. Mitt er tatt to ganger og levert tilbake aldri." },
+      "6": { "pharaoh": "Andre gangen la de igjen en kopi. En KOPI. I MIN grav. Som om jeg ikke skulle se etter." },
+      "7": { "explorer": "Er kopien her fortsatt?" },
+      "8": {
+        "pharaoh": "Selvfølgelig er den her fortsatt, den er verdiløs. Den ligger på hylla der den ekte skulle ligget, og er feil."
+      },
+      "9": { "pharaoh": "Ta den, du. Ta den med til den presten. Se hvor langt du kommer med den." },
+      "10": { "fez": "… Han koser seg med dette." },
+      "11": { "pharaoh": "Jeg har den beste uka på ni hundre år." },
+      "12": { "fez": "Osiris på veggen der. Herre over de døde – dystre greier." },
+      "13": { "pharaoh": "Han er GRØNN, ditt tåpelige dyr." },
+      "14": {
+        "pharaoh": "Grønn som en åker i flom. Han ble drept og satt sammen igjen, og han kommer tilbake hvert eneste år."
+      },
+      "15": { "pharaoh": "Her nede er det ikke dystert, det er hele poenget. Død er ikke slutt." }
+    },
+    "wizard": {
+      "1": { "priest": "Legg det ned. Der. Ja." },
+      "2": { "priest": "…" },
+      "3": { "priest": "Det er første gang jeg har gjort det. Jeg hadde begynt å tro at jeg hadde glemt hvordan." },
+      "4": { "explorer": "Hadde du det?" },
+      "5": { "priest": "Helt. Det kom tilbake." }
+    },
+    "wizardB": {
+      "1": { "fez": "Tauet deres. Fortsatt knyttet fast." },
+      "2": { "explorer": "De kom så langt." },
+      "3": { "fez": "Lenger enn dette. Og så klatret de opp igjen." },
+      "4": { "explorer": "Det ligger en notatbok her." },
+      "5": { "fez": "Hva står det i den?" },
+      "6": { "explorer": "Kan ikke lese skriften. Kom tilbake for seglet. Lagde et bedre i stedet." },
+      "7": { "explorer": "Ingen ble lurt." },
+      "8": { "fez": "… De forfalsket det fordi de ikke kunne lese hva det var til." },
+      "9": { "explorer": "Og så dro de hjem." }
+    },
+    "wizardC": {
+      "1": { "fez": "Stopp litt. Se hva vi har båret opp fra de pyramidene." },
+      "2": { "explorer": "Det er et bilde." },
+      "3": { "fez": "Det har vært et bilde hele tiden." }
+    }
+  },
+
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "En hule! Kartet viste en kjellerdør, og dette er en hel ås!" },
+      "2": { "fez": "Lur kar. Gjem varene dine inne i en ås – det kommer ingen tyv på." },
+      "3": { "explorer": "Det gjorde vi." },
+      "4": { "fez": "Vi er ikke tyver. Vi er kunder. Veldig sene kunder." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Det må være her. Henut! Hun med de elleve debenene lapis!" },
+      "2": { "fez": "Hva tror du – får vi beholde litt hvis vi krever dem inn?" },
+      "3": { "explorer": "Du har ikke krevd inn noe." },
+      "4": { "fez": "Jeg liker å regne på det tidlig." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Så det er her presten til Henut er. Uutholdelig, sa hun." },
+      "2": { "fez": "Hva tror du, skal vi ta med noe? Blomster?" },
+      "3": { "explorer": "Han er død." },
+      "4": { "fez": "Desto bedre grunn. Man vil jo gjøre et godt førsteinntrykk." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Bare øverstepresten fikk lov å gå inn her. Og nå vi!" },
+      "2": { "explorer": "Har vi lov?" },
+      "3": { "fez": "Det står ingen ved døra og sier nei." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Se, kartet bare stopper her. Sand, og så ingenting." },
+      "2": { "explorer": "Da er vi på riktig sted." },
+      "3": { "fez": "Det er det jeg mener. Det er akkurat det som gjør meg nervøs." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Osiris’ sal! Grønn, selvfølgelig. Fordi han kommer tilbake hvert år, som kornet." },
+      "2": { "explorer": "Det har du alltid visst." },
+      "3": { "fez": "Alltid." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "fez": "Gudenes eget lagerrom! Hva tar man vare på når man allerede har alt?" },
+      "2": { "explorer": "Det folk kommer med til deg." },
+      "3": { "fez": "… Ja. Det må være det." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Kosmiske krefters rike. Jaså, jaså." },
+      "2": { "fez": "Hvis jeg skulle selge noe som ikke var noe særlig, ville jeg kalt det det samme." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Jeg har plutselig en følelse av at jeg har gjort noe galt." },
+      "2": { "explorer": "Som hva?" },
+      "3": { "fez": "Aner ikke. Det er det verste." }
+    }
+  },
+
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Alle de spakene og dørene, for én kjeller!" },
+      "2": { "fez": "Da er det noe bra der nede. Ingen gjør seg så mye bry for skrot." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Puh. De dørene var mye mer kresne enn Ipis." },
+      "2": { "fez": "Tja. Fruen hadde jo penger." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Puh, endelig! Den hula ville virkelig ikke slippe oss inn." },
+      "2": { "explorer": "Jeg tror det var meningen." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Psst … hvorfor hvisker jeg?" },
+      "2": { "explorer": "Aner ikke. Jeg gjør det også." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Huff. Halen min skjelver fortsatt etter den siste døra." },
+      "2": { "fez": "En konge som låser inne tingene sine sånn … han vil virkelig ikke miste dem." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Ser du? Bli lenge nok under jorda, så kommer du opp igjen." },
+      "2": { "explorer": "Er det Osiris også?" },
+      "3": { "fez": "Nei, det er mitt eget." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "fez": "Sånne dører … før i tida ville vi bare snudd." },
+      "2": { "explorer": "Ikke nå lenger." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Tre etasjer med hule, og først da inngangsdøra." },
+      "2": { "explorer": "Da må det være verdt det." },
+      "3": { "fez": "Det sier de alltid. Og så er det en krukke." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Siste bit med mørke. Jeg kjenner det." },
+      "2": { "explorer": "Det sa du ved den forrige også." },
+      "3": { "fez": "Og da hadde jeg nesten rett." }
+    }
+  },
+
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Se der! En pyramide, under jorda! Til en kjøpmann!" },
+      "2": { "fez": "Enten tjente han veldig godt, eller så prutet han veldig godt." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Se hvordan toppen skinner i sola! Ekte gull, vedder jeg på." },
+      "2": { "explorer": "Nede i et hull i bakken. Hvem skinner den for?" },
+      "3": { "fez": "For henne. Man ser jo hvilken type hun er." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Hm. Har man egentlig lov til å selge noe som allerede tilhører en gud?" },
+      "2": { "explorer": "Spør guden." },
+      "3": { "fez": "Helst ikke." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Tror du presten vet at vi vandrer rundt her inne?" },
+      "2": { "explorer": "Han holder ikke telling. Det ville vært uprofesjonelt." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Se på den, helt alene i sola. Nydelig, ikke sant?" },
+      "2": { "fez": "Skal vi bare tegne den og dra?" },
+      "3": { "explorer": "Du kan ikke tegne." },
+      "4": { "fez": "… Nei. Inn med oss, da." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Den som ligger der inne, regner med å komme tilbake. Det er avtalen her." },
+      "2": { "explorer": "Hvor lenge har han ventet?" },
+      "3": { "fez": "Lenge. Men det hører med til jobben. Å være død er mest venting." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "explorer": "Wow." },
+      "2": { "fez": "Ja." },
+      "3": { "fez": "Noen ganger er det bare ingenting mer å si, er det vel." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Ser du den solflekken på pyramiden? Du kan se hva klokka er på den." },
+      "2": { "explorer": "Hva er klokka, da?" },
+      "3": { "fez": "… Ettermiddag. Omtrent. Jeg er ingen klokke." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Der er den. Hver strek på det kartet ender opp her." },
+      "2": { "explorer": "Da er dette slutten." },
+      "3": { "fez": "På kartet, ja. Rart. Jeg trodde det skulle føles bedre." }
+    }
+  },
+
+  "camp": {
+    "firstHome": {
+      "1": { "fez": "Er dette leiren din? Et bål og en kiste?" },
+      "2": { "explorer": "Leiren vår." },
+      "3": { "fez": "Vår. Greit. Da tar jeg plassen ved bålet." },
+      "4": { "fez": "Jeg er tross alt en øgle. Når det passer meg." }
+    },
+    "homeHaul": {
+      "1": { "fez": "Pakke ut! Det beste med hele turen." },
+      "2": { "explorer": "Bedre enn pyramiden?" },
+      "3": { "fez": "Pyramiden er ikke vår. Dette er." }
+    },
+    "homeEmpty": {
+      "1": { "explorer": "Tomhendt." },
+      "2": { "fez": "Og? Vi gikk. Det teller også." },
+      "3": { "explorer": "Teller for hva?" },
+      "4": { "fez": "For beina mine. De er veldig korte, vet du." }
+    },
+    "rested": {
+      "1": { "fez": "Sånn. Føles det litt bedre?" },
+      "2": { "explorer": "Det var bare en skramme." },
+      "3": { "fez": "Jeg så ikke engang på. Og likevel måtte jeg sette meg ned." }
+    },
+    "chapterJunior": {
+      "1": { "fez": "Det gikk jo fint. Neste!" },
+      "2": { "explorer": "Det var ikke så lett." },
+      "3": { "fez": "Det er det nå. Alt er lett etterpå." }
+    },
+    "chapterExpert": {
+      "1": { "fez": "Der ute har de feller. Ekte feller. De biter." },
+      "2": { "fez": "Blir du skadet? Da går vi bare tilbake. Hjemme blir du bra igjen." },
+      "3": { "explorer": "Og du, da?" },
+      "4": { "fez": "Jeg går bak deg. Det er tryggere der." }
+    },
+    "chapterMaster": {
+      "1": { "fez": "Fire pyramider der ute. Husker du da det bare var én?" },
+      "2": { "explorer": "Det er ikke så lenge siden." },
+      "3": { "fez": "Nei. Men det føles sånn." }
+    },
+    "chapterWizard": {
+      "1": { "fez": "Se på den siste. Med gulltopp og alt!" },
+      "2": { "fez": "Den kommer til å koste oss. Den siste gjør alltid det." },
+      "3": { "explorer": "Koste oss hva?" },
+      "4": { "fez": "… Jeg er ikke sikker lenger." }
+    },
+    "firstFind": {
+      "1": { "fez": "Se der – som om den alltid har stått der!" },
+      "2": { "fez": "Det klør i fingrene etter å henge en prislapp på den." },
+      "3": { "explorer": "Ikke gjør det." },
+      "4": { "fez": "Nei, nei. Man selger ikke hjemmefra. Det vet jeg." }
+    },
+    "structureDone": {
+      "1": { "fez": "Den er ferdig! Hver eneste bit er på plass!" },
+      "2": { "explorer": "Helt og holdent vårt eget verk." },
+      "3": { "fez": "Tja. Jeg pekte mest." }
+    }
+  },
+
+  "animal": {
+    "forSale": {
+      "1": { "fez": "Se hva som står ved boden! Nå driver jeg med transport også." },
+      "2": { "explorer": "Den tygger." },
+      "3": { "fez": "Det er inkludert i prisen." }
+    },
+    "boughtDonkey": {
+      "1": { "fez": "Solgt! Ett esel. Sta, men det bærer hva som helst." },
+      "2": { "explorer": "Hvor er det, da?" },
+      "3": { "fez": "Allerede på vei hjem. Det går heller uten oss." }
+    },
+    "blockedDonkey": {
+      "1": { "fez": "Vi går ikke så langt med alt dette her. Til det trengs det et esel." },
+      "2": { "fez": "Og gjett hvem som har et? Meg. Ved boden min i Henuts hvelv." }
+    },
+    "throughDonkey": {
+      "1": { "explorer": "Det vil gjerne." },
+      "2": { "fez": "I dag. Spør det igjen i morgen." }
+    },
+    "arrivesDonkey": {
+      "1": { "fez": "Der er det! Kom hit før oss." },
+      "2": { "explorer": "Fant bålet også." },
+      "3": { "fez": "Plassen min. Nåja. Det var her først." }
+    },
+    "boughtCart": {
+      "1": { "fez": "En kjerre! To hjul, og de skrangler nesten ikke." },
+      "2": { "explorer": "Nesten?" },
+      "3": { "fez": "Skranglingen får du gratis." }
+    },
+    "blockedCart": {
+      "1": { "fez": "Eselet vil ikke bære én sekk til. Jeg har spurt." },
+      "2": { "fez": "En kjerre, det er det vi trenger. Det står en ved boden min, hos øverstepresten." }
+    },
+    "throughCart": {
+      "1": { "explorer": "Hører du det?" },
+      "2": { "fez": "Det er kjerra. Den synger litt." },
+      "3": { "explorer": "Hele veien?" }
+    },
+    "arrivesCart": {
+      "1": { "fez": "En kjerre i leiren vår! Nå ser vi ut som vi skal et sted." },
+      "2": { "explorer": "Vi skal et sted." },
+      "3": { "fez": "Ja, men nå kan alle se det." }
+    },
+    "boughtCamel": {
+      "1": { "fez": "En kamel! Klarer seg i dagevis uten vann. Det gjør ikke jeg, altså." },
+      "2": { "explorer": "Den ser på deg." },
+      "3": { "fez": "Ned på meg. Kameler ser alltid ned på deg." }
+    },
+    "blockedCamel": {
+      "1": { "fez": "Det aller helligste? Dit kommer vi aldri til fots." },
+      "2": { "fez": "Heldigvis har jeg en kamel. Ved boden min, hos øverstepresten." }
+    },
+    "throughCamel": {
+      "1": { "fez": "Den kneler! For meg!" },
+      "2": { "explorer": "Så vi kan klatre opp." },
+      "3": { "fez": "La meg få ha dette." }
+    },
+    "arrivesCamel": {
+      "1": { "fez": "Der er den. Later som leiren er dens." },
+      "2": { "explorer": "Og eselet?" },
+      "3": { "fez": "Later som det ikke ser den. Akkurat som meg." }
+    },
+    "boughtSecondDonkey": {
+      "1": { "fez": "Et esel til! Nå har det første noen å snakke med." },
+      "2": { "explorer": "Snakke?" },
+      "3": { "fez": "Skryte. Det er å snakke, bare høyere." }
+    },
+    "blockedSecondDonkey": {
+      "1": { "fez": "Eselet vil ikke gå videre. Ikke alene, sier det." },
+      "2": { "explorer": "Sa det det?" },
+      "3": { "fez": "Jeg snakker esel. Det vil ha en kompis, og jeg har en ved boden min hos faraoens skatt." }
+    },
+    "throughSecondDonkey": {
+      "1": { "fez": "Hør på dem! Den ene skryter høyere enn den andre." },
+      "2": { "explorer": "Hvem vinner?" },
+      "3": { "fez": "Ikke vi. Vi må høre på det." }
+    },
+    "arrivesSecondDonkey": {
+      "1": { "fez": "Se på dem. Som om de har kjent hverandre i årevis." },
+      "2": { "explorer": "Som oss." },
+      "3": { "fez": "Vi skryter mindre." }
+    },
+    "boughtSecondCamel": {
+      "1": { "fez": "En kamel til. Ja. Jeg liker dem ikke jeg heller." },
+      "2": { "fez": "Men denne ser i det minste vennlig ut." },
+      "3": { "explorer": "Den ser på fezen din." }
+    },
+    "blockedSecondCamel": {
+      "1": { "fez": "Osiris’ sal. Med én kamel kommer vi ikke dit." },
+      "2": { "fez": "Heldigvis har jeg en til, ved boden min hos faraoens skatt. Min aller siste." },
+      "3": { "explorer": "Det sier du alltid." }
+    },
+    "throughSecondCamel": {
+      "1": { "fez": "Den spiser fezen min!" },
+      "2": { "explorer": "En vennlig kamel." },
+      "3": { "fez": "Altfor vennlig." }
+    },
+    "arrivesSecondCamel": {
+      "1": { "fez": "To kameler. Nå ser begge ned på meg." },
+      "2": { "explorer": "Gå og stå sammen med eslene, da." },
+      "3": { "fez": "Det gjør jeg allerede." }
+    },
+    "boughtSturdyCart": {
+      "1": { "fez": "En sterkere kjerre. Denne synger ikke på veien." },
+      "2": { "explorer": "Det er malt blomster på den." },
+      "3": { "fez": "For å gjøre den sterk." }
+    },
+    "blockedSturdyCart": {
+      "1": { "fez": "Den gamle kjerra kommer ikke fram i ett stykke. Det trengs noe sterkere." },
+      "2": { "fez": "Det står en ved boden min i Gudenes hvelv. Ikke på grunn av malingen, altså." }
+    },
+    "throughSturdyCart": {
+      "1": { "explorer": "Ingen skrangling." },
+      "2": { "fez": "Ser du? Sterk." },
+      "3": { "explorer": "Og blomstene?" },
+      "4": { "fez": "De hjelper litt de også." }
+    },
+    "arrivesSturdyCart": {
+      "1": { "fez": "Se hvordan den skinner!" },
+      "2": { "explorer": "Penere enn den trenger å være." },
+      "3": { "fez": "Ja. Jeg solgte den ikke fordi den var sterk heller." }
+    },
+    "boughtCaravanBanner": {
+      "1": { "fez": "En fane. Jeg skal være ærlig: den åpner ingenting." },
+      "2": { "explorer": "Hva gjør den, da?" },
+      "3": { "fez": "Den blafrer. Nydelig." }
+    },
+    "arrivesCaravanBanner": {
+      "1": { "fez": "Se den blafre! Over vår egen leir!" },
+      "2": { "explorer": "Åpner fortsatt ingenting." },
+      "3": { "fez": "Nei. Det trenger den ikke." }
+    }
+  },
+
+  "bond": {
+    "starter": {
+      "1": { "fez": "Det gikk fort." },
+      "2": { "explorer": "Det var en dør." },
+      "3": { "fez": "Jeg hadde brukt en uke." }
+    },
+    "starterTomb": {
+      "1": { "fez": "Bare så det er sagt. Jeg er med for å selge videre. Jeg sier det nå, mens det fortsatt er sant." },
+      "2": { "explorer": "Notert." }
+    },
+    "junior": {
+      "1": { "fez": "Du ble stille en stund der." },
+      "2": { "explorer": "Jeg telte." },
+      "3": { "fez": "Jeg vet. Jeg har sett folk gjette. Det der var ikke gjetting." }
+    },
+    "expert": {
+      "1": { "fez": "Det var nære på." },
+      "2": { "explorer": "Det gikk fint." },
+      "3": { "fez": "Det var nære på. Det har jeg lov til å si." }
+    },
+    "master": {
+      "1": { "fez": "Vi kunne stoppet." },
+      "2": { "explorer": "Vi kunne det." },
+      "3": { "fez": "Jeg sier det så det er sagt. Ikke så vi gjør det." }
+    },
+    "wizard": {
+      "1": { "explorer": "Hva er denne verdt?" },
+      "2": { "fez": "…" },
+      "3": { "fez": "Den skal jeg ikke sette pris på." },
+      "4": { "explorer": "Notert." }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": { "fez": "Oi. Det var en vegg for et øyeblikk siden." },
+      "2": { "explorer": "Det var en gang bak den." },
+      "3": { "fez": "I alle de årene gikk folk rett forbi. Alle de årene!" }
+    }
+  },
+
+  "reading": {
+    "junior": {
+      "1": { "explorer": "Her er det en linje jeg kan lese nå." },
+      "2": { "explorer": "Jeg ga brød til den som var sulten." },
+      "3": { "fez": "Brød. I en grav." },
+      "4": { "explorer": "Det står i den forrige også. Jeg visste ikke at det var ord." }
+    },
+    "expert": {
+      "1": { "explorer": "Andre linje. Vann til den som var tørst." },
+      "2": { "fez": "Brød, og nå vann. Noen ville veldig gjerne bli husket som gavmild." },
+      "3": { "explorer": "Alle har det. Hver vegg, hver grav, de samme to linjene." },
+      "4": { "fez": "Da var de enten alle sammen gavmilde, eller så er det det man skal si." },
+      "5": { "explorer": "Eller så er det det de ble veid etter." }
+    },
+    "master": {
+      "1": { "explorer": "Klær til den som ikke hadde noe. Tredje linje." },
+      "2": { "fez": "Brød, vann, klær. Det er en liste over ting som er gitt bort." },
+      "3": { "explorer": "I graven til en mann som tok med seg alt." },
+      "4": { "fez": "… Ja. Det hadde jeg også lagt merke til." }
+    },
+    "sphinx": {
+      "1": { "fez": "Tilbake der vi startet. Den har ikke flyttet seg." },
+      "2": { "explorer": "Skriften er der fortsatt." },
+      "3": { "fez": "Kan du lese den?" },
+      "4": { "explorer": "Et navn." },
+      "5": { "fez": "Hvem sitt?" },
+      "6": { "explorer": "Ditt." },
+      "7": { "fez": "…" },
+      "8": { "fez": "Er du sikker?" },
+      "9": { "explorer": "Det står skrevet." },
+      "10": { "fez": "Hm." },
+      "11": { "fez": "Hori." },
+      "12": { "fez": "Det fantes en Hori i hver eneste landsby i Egypt." },
+      "13": { "fez": "Ja ja. Det forklarer fezen." }
+    }
+  },
+
+  "altar": {
+    "refused": {
+      "1": { "priest": "Nei." },
+      "2": { "explorer": "Det har merket hans på seg." },
+      "3": {
+        "priest": "Det har et merke. Et veldig godt merke. Det ble skåret av noen med utmerket verktøy og ingenting å gjøre her, og ikke for lenge siden."
+      },
+      "4": { "priest": "Jeg har ventet i tre tusen år. Jeg lar meg ikke lure den siste uka." }
+    }
+  },
+
+  "meeting": {
+    "starter_1": {
+      "1": { "voice": "Hei! Ikke DER! Se deg for!" },
+      "2": { "explorer": "Unnskyld! Jeg ser ingenting! Hvor er du?" },
+      "3": { "fez": "Her nede! Du står midt i varene mine!" },
+      "4": { "explorer": "En øgle?! Med fez?" },
+      "5": { "fez": "En kjøpmann. Og hva er galt med fezen min?" },
+      "6": { "fez": "Du er her for pyramiden du også, vedder jeg på. Kjøpt et kart? Betalt altfor mye?" },
+      "7": { "explorer": "ALTFOR mye." },
+      "8": { "fez": "Jeg også. Pff." },
+      "9": { "explorer": "Skriften på sfinksen … kan du lese den?" },
+      "10": { "fez": "Nei. Ingen kan lenger. Den sokkelen var blå og gull en gang, vet du." },
+      "11": { "explorer": "Hvordan vet du det?" },
+      "12": { "fez": "… Hørt det. Så, hva er du ute etter her nede?" },
+      "13": { "explorer": "Noe kult." },
+      "14": { "fez": "Kult selger! Vet du hva? Jeg blir med deg!" },
+      "15": { "explorer": "Hva? Med meg?" },
+      "16": { "fez": "Fire øyne ser mer enn to. Kom igjen, pyramiden venter!" }
+    }
+  },
+
+  "end": {
+    "1": { "fez": "Var det kult?" },
+    "2": { "explorer": "Det holder." }
+  },
+
+  "revisit": {
+    "starter": {
+      "north1": { "1": { "ipi": "Fortsatt her? Nordover! Henut! Elleve deben!" } },
+      "north2": { "1": { "ipi": "Elleve deben lapis. Henut. Nord. Hva venter du på?" } },
+      "paid1": { "1": { "ipi": "Vel? Betalte hun? … Nei. Selvfølgelig ikke." } },
+      "paid2": { "1": { "ipi": "Glass? GLASS? Det står lapis. Akkurat her. Lapis!" } },
+      "later1": { "1": { "ipi": "Du igjen. Tredje hylle, den med hakket – fortsatt min. Fingrene av fatet." } },
+      "later2": { "1": { "ipi": "Førti år med regnskap, og ikke ett av dem går opp. Ikke ett!" } }
+    },
+    "junior": {
+      "wall1": { "1": { "henut": "Veggen. Det tredje tegnet. Det er fortsatt ikke navnet mitt." } },
+      "wall2": { "1": { "henut": "Du er fortsatt her, og den gåsa er fortsatt på veggen min. Fiks det." } },
+      "priest1": { "1": { "henut": "Fortsatt navnet mitt. Jeg sjekket. Så – Karnak, presten. Av sted med deg." } },
+      "priest2": { "1": { "henut": "Karnak! Han har ventet lenge nok. Gå og bli meldt inn." } },
+      "met1": { "1": { "henut": "Vel? Uutholdelig, ikke sant? Jeg sa det jo." } },
+      "later1": { "1": { "henut": "Fortsatt glass. Fortsatt vakkert. Fortsatt valgt av meg." } }
+    },
+    "expert": {
+      "seal1": { "1": { "priest": "Seglet. Brakt hit, lagt ned, lest over. Jeg venter." } },
+      "seal2": { "1": { "priest": "Ah. Du igjen. Og fortsatt uten segl." } },
+      "king1": { "1": { "priest": "Du har sett kongen. Bra. Selve tingen, husk – ikke noe som ligner." } },
+      "later1": { "1": { "priest": "Du igjen. Det er ingenting mer å gjøre her. Det er veldig avslappende." } }
+    },
+    "master": {
+      "priest1": { "1": { "pharaoh": "Fortsatt her? Til presten med den kopien! Jeg vil høre hvordan det går." } },
+      "priest2": { "1": { "pharaoh": "Du kan tre nærmere. Igjen. Har presten sett den ennå?" } },
+      "rite1": { "1": { "pharaoh": "Så han gjorde endelig ritualet sitt. Fint. Nå blir han uutholdelig om det." } },
+      "later1": { "1": { "pharaoh": "Fortsatt den beste uka på ni hundre år. Og den bare fortsetter!" } }
+    },
+    "wizard": {
+      "later1": { "1": { "priest": "… Ja. Jeg husker fortsatt hvordan. Bra." } },
+      "later2": { "1": { "priest": "Lagt ned, lest over. Ferdig. Det er en rar følelse." } }
+    }
+  }
+}

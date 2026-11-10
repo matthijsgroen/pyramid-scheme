@@ -7,9 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- A language choice shows during the first conversation.
+
+### Changed
+
+- On desktop, clicking the camp's map points you to the expedition list.
+- The language list is sorted alphabetically.
+
+## 0.46.0 - 2026-11-10
+
+### Added
+
+- Support for 42 languages.
+- Cave doorways stand in a rock gateway.
+
+### Changed
+
+- The language picker lists your own languages first.
+- Walls stand taller and show their murals; they fade when you walk behind them.
+
 ### Fixed
 
+- Revisiting a finished expedition no longer shows it as in progress.
+- Buttons show the hand cursor again.
 - Standing in a room's doorway shows the arrow into the room again.
+- A gate or puzzle right beside the explorer shows an arrow towards it too.
 
 ## 0.45.0 - 2026-11-09
 

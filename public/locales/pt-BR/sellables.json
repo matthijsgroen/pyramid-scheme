@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Pedra",
+    "bronze": "Bronze",
+    "silver": "Prata",
+    "gold": "Ouro",
+    "divine": "Divino"
+  },
+  "sell_stone_1": {
+    "name": "Caco riscado",
+    "description": "Um caco de cerâmica quebrado com os rabiscos de treino de um escriba. As letras estão tão apagadas que não dá para ler."
+  },
+  "sell_stone_2": {
+    "name": "Jarro de barro rachado",
+    "description": "Um jarro para guardar grãos ou cerveja, rachado de um lado pelo peso dos séculos."
+  },
+  "sell_stone_3": {
+    "name": "Sandália de junco gasta",
+    "description": "Trançada com junco de papiro. A sola ficou fininha de tanto um trabalhador antigo andar com ela."
+  },
+  "sell_stone_4": {
+    "name": "Retalho de linho desbotado",
+    "description": "Uma tira rasgada de linho cru, do tipo que enrolavam sem parar nos mortos. Ou que usavam para remendar uma vela de barco."
+  },
+  "sell_stone_5": {
+    "name": "Lâmina de sílex quebrada",
+    "description": "Uma faca de pedra lascada, com a ponta partida. Barata de fazer, mais barata ainda de trocar."
+  },
+  "sell_bronze_1": {
+    "name": "Amuleto de bronze torto",
+    "description": "Um amuleto barato de proteção. Saiu torto do molde e ninguém nunca consertou."
+  },
+  "sell_bronze_2": {
+    "name": "Espelho de bronze manchado",
+    "description": "Antes era tão brilhante que dava para se ver nele. Agora está todo verde de velho."
+  },
+  "sell_bronze_3": {
+    "name": "Anzol de bronze sem brilho",
+    "description": "Ferramenta de um pescador, que caiu do barco no Nilo muito antes de fecharem a tumba."
+  },
+  "sell_bronze_4": {
+    "name": "Sininho de bronze",
+    "description": "Era para ficar pendurado na porta de um templo ou no tornozelo de uma dançarina. Agora soa desafinado."
+  },
+  "sell_bronze_5": {
+    "name": "Anel de bronze escurecido",
+    "description": "Um anel simples, do tamanho de um dedo que já virou pó faz tempo."
+  },
+  "sell_silver_1": {
+    "name": "Ankh de prata escurecido",
+    "description": "Um sinal da vida, que perdeu o brilho depois de séculos debaixo da terra."
+  },
+  "sell_silver_2": {
+    "name": "Pincel de kohl de prata",
+    "description": "Uma varinha fina que os ricos usavam para pintar os olhos. O kohl acabou faz tempo."
+  },
+  "sell_silver_3": {
+    "name": "Tigela de prata amassada",
+    "description": "Uma tigelinha de oferendas, amassada de um lado quando o teto em cima dela finalmente caiu."
+  },
+  "sell_silver_4": {
+    "name": "Grampo de cabelo de prata",
+    "description": "Simples, sem enfeite. Já prendeu o cabelo de alguém cujo nome se perdeu."
+  },
+  "sell_silver_5": {
+    "name": "Pulseira de prata gasta",
+    "description": "Uma pulseira fina de prata, com o fecho quebrado. Simples demais para um nobre, chique demais para um trabalhador."
+  },
+  "sell_gold_1": {
+    "name": "Continha de ouro",
+    "description": "Uma conta de um colar de enterro, que se espalhou faz muito tempo."
+  },
+  "sell_gold_2": {
+    "name": "Pedacinho de folha de ouro",
+    "description": "Um fiapo de folha de ouro, arrancado do rosto de uma estátua por ladrões de tumba séculos antes de você chegar."
+  },
+  "sell_gold_3": {
+    "name": "Brinco fino de ouro",
+    "description": "Martelado bem fininho para o ouro de um nobre render mais."
+  },
+  "sell_gold_4": {
+    "name": "Caco com pontinhos de ouro",
+    "description": "Um pedaço quebrado de gesso dourado, com pontinhos de ouro de verdade ainda grudados."
+  },
+  "sell_gold_5": {
+    "name": "Anel de selo de ouro lascado",
+    "description": "Um anel de carimbo, com o desenho tão gasto que não dá mais para reconhecer. Ninguém lembra de quem era."
+  },
+  "sell_divine_1": {
+    "name": "Escaravelho de lápis-lazúli desbotado",
+    "description": "Entalhado em lápis-lazúli precioso, trazido de longe a um preço altíssimo para o renascer de um faraó. A cor desbotou com os séculos."
+  },
+  "sell_divine_2": {
+    "name": "Amuleto de olho de cornalina",
+    "description": "Um olho protetor entalhado em cornalina vermelho-sangue, para afastar o azar na vida depois da morte."
+  },
+  "sell_divine_3": {
+    "name": "Lasca de turquesa",
+    "description": "Um só pedacinho de um mosaico quebrado, que antes fazia parte do retrato de um deus na parede de um templo."
+  },
+  "sell_divine_4": {
+    "name": "Caco de vaso canópico de alabastro",
+    "description": "Pedaço de um vaso feito para guardar os órgãos de um faraó. Pedra preciosa para um trabalho meio sinistro."
+  },
+  "sell_divine_5": {
+    "name": "Lâmina de obsidiana dos rituais",
+    "description": "Vidro de vulcão, afiado para cerimônias e nunca para a guerra. Só para o templo."
+  }
+}

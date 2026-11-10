@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Geser benda ini ke atas batu untuk membukanya",
+    "alsoAvailable": "Juga tersedia:"
+  },
+  "perks": {
+    "max-health": "+½ hati untuk batas nyawamu",
+    "armor": "Mengurangi luka dari jebakan",
+    "trap-insight": "+1 detik pada jebakan berwaktu",
+    "pack-mule": "Satu kantong air menyembuhkan dua hati",
+    "compass": "Bagian kompas",
+    "detection": "Bagian pencari lorong",
+    "tier-unlock": "Membuka ekspedisi {{tier}}",
+    "tier-coming-soon": "Ekspedisi {{tier}} datang di pembaruan berikutnya",
+    "location-key": "Menunjukkan satu makam lagi",
+    "partOf": "{{count}} dari {{total}}"
+  },
+  "tiers": {
+    "stone": "Batu",
+    "bronze": "Perunggu",
+    "silver": "Perak",
+    "gold": "Emas",
+    "divine": "Ilahi"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Deben Perak",
+      "description": "Koin perak Mesir kuno. Para pedagang memakainya untuk berdagang di sepanjang Sungai Nil."
+    },
+    "t2": {
+      "name": "Gulungan Papirus",
+      "description": "Catatan seorang pedagang tentang jalur dagang dan daftar muatan berharga."
+    },
+    "t3": {
+      "name": "Sisir Gading",
+      "description": "Sisir gading berukir halus. Barang mewah dari negeri yang jauh."
+    },
+    "t4": {
+      "name": "Lampu Minyak Tanah Liat",
+      "description": "Lampu minyak sederhana tapi cantik, untuk menerangi rumah si pedagang."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Gelang Emas",
+      "description": "Gelang emas penuh hiasan dan batu permata, dipakai para bangsawan Mesir."
+    },
+    "t6": {
+      "name": "Belati Upacara",
+      "description": "Belati upacara dengan gagang berhias permata, dipakai dalam upacara bangsawan."
+    },
+    "t7": {
+      "name": "Kumbang Giok",
+      "description": "Jimat kumbang dari giok. Lambang kelahiran kembali dan hidup abadi."
+    },
+    "t8": {
+      "name": "Guci Pualam",
+      "description": "Guci pualam yang anggun untuk menyimpan minyak dan wewangian mahal."
+    },
+    "t9": {
+      "name": "Tongkat Kayu Eboni",
+      "description": "Tongkat jalan dari kayu eboni mengilap, dengan lambang ankh emas di atasnya."
+    },
+    "t10": {
+      "name": "Kalung Lapis Lazuli",
+      "description": "Kalung indah dari batu lapis lazuli yang langka, kesayangan orang kaya."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Ankh Suci",
+      "description": "Lambang ankh dari emas, tanda hidup abadi, diberkati para pendeta kuil."
+    },
+    "t12": {
+      "name": "Cermin Tembaga",
+      "description": "Cermin tembaga mengilap untuk upacara penyucian."
+    },
+    "t13": {
+      "name": "Pembakar Dupa",
+      "description": "Pembakar dupa dari perunggu penuh hiasan, untuk ibadah di kuil."
+    },
+    "t14": {
+      "name": "Piala Upacara",
+      "description": "Piala perak suci untuk menuang persembahan bagi para dewa."
+    },
+    "t15": {
+      "name": "Kipas Upacara",
+      "description": "Kipas bulu berhias yang dipakai pendeta saat upacara di kuil."
+    },
+    "t16": {
+      "name": "Untaian Manik Doa",
+      "description": "Untaian manik yang diberkati, untuk berdoa dan bersemadi."
+    },
+    "t17": {
+      "name": "Wadah Air Suci",
+      "description": "Wadah berisi air suci dari sumur kuil yang keramat."
+    },
+    "t18": {
+      "name": "Lonceng Kuil",
+      "description": "Lonceng perunggu untuk memanggil orang berdoa dan mengumumkan upacara."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Stempel Firaun",
+      "description": "Stempel kerajaan kuno dengan kartusy seorang firaun yang sudah terlupakan."
+    },
+    "t20": {
+      "name": "Bola Kristal",
+      "description": "Bola kristal misterius. Katanya bisa memperlihatkan masa lalu dan masa depan."
+    },
+    "t21": {
+      "name": "Lempeng Hieroglif",
+      "description": "Lempeng batu kuno berukir ramalan hieroglif yang penuh rahasia."
+    },
+    "t22": {
+      "name": "Tongkat Kerajaan Emas",
+      "description": "Tongkat kerajaan emas yang megah, dengan Mata Horus di puncaknya."
+    },
+    "t23": {
+      "name": "Pisau Obsidian",
+      "description": "Pisau upacara dari obsidian, setajam silet, untuk ritual kuno."
+    },
+    "t24": {
+      "name": "Pecahan Meteorit",
+      "description": "Sepotong meteorit keramat. Orang percaya ada kekuatan dewa di dalamnya."
+    },
+    "t25": {
+      "name": "Kompas Kuno",
+      "description": "Alat penunjuk arah misterius yang selalu menunjuk ke harta tersembunyi."
+    },
+    "t26": {
+      "name": "Kristal Waktu",
+      "description": "Kristal legendaris yang bersinar dengan kekuatan zaman dulu."
+    },
+    "t27": {
+      "name": "Topeng Upacara",
+      "description": "Topeng emas penuh hiasan, dipakai imam besar dalam upacara suci."
+    },
+    "t28": {
+      "name": "Obor Api Abadi",
+      "description": "Obor dengan api abadi yang tidak pernah padam sejak zaman kuno."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Mahkota Ra",
+      "description": "Mahkota legendaris dewa matahari Ra, memancarkan cahaya dan kekuatan dewa."
+    },
+    "t30": {
+      "name": "Tongkat Thoth",
+      "description": "Tongkat kebijaksanaan Thoth, dewa ilmu pengetahuan. Semua rahasia kuno ada di dalamnya."
+    },
+    "t31": {
+      "name": "Bulu Ma'at",
+      "description": "Bulu suci Ma'at, dewi kebenaran. Dipakai untuk menimbang jiwa di alam baka."
+    },
+    "t32": {
+      "name": "Air Mata Isis",
+      "description": "Air mata dewi Isis yang membeku jadi kristal. Katanya memberi perlindungan abadi."
+    },
+    "t33": {
+      "name": "Jantung Osiris",
+      "description": "Jantung Osiris, penguasa dunia bawah, yang masih berdenyut penuh tenaga."
+    },
+    "t34": {
+      "name": "Jimat Mata Horus",
+      "description": "Jimat pelindung terhebat, berisi seluruh kekuatan Horus."
+    },
+    "t35": {
+      "name": "Ular Apep",
+      "description": "Sepotong ular kekacauan Apep yang terikat dan dikurung dalam wadah suci."
+    },
+    "t36": {
+      "name": "Napas Shu",
+      "description": "Botol kecil berisi napas Shu, dewa udara. Memberi kuasa atas angin."
+    },
+    "t37": {
+      "name": "Sisik Sobek",
+      "description": "Sekeping sisik dewa buaya Sobek. Melindungimu di dalam air."
+    },
+    "t38": {
+      "name": "Patung Penjaga Anubis",
+      "description": "Patung kecil Anubis yang bisa hidup untuk menjaga harta pemiliknya."
+    },
+    "t39": {
+      "name": "Kitab Orang Mati",
+      "description": "Kitab Orang Mati yang lengkap, berisi semua mantra untuk perjalanan ke alam baka."
+    },
+    "t40": {
+      "name": "Puncak Piramida",
+      "description": "Batu puncak emas dari Piramida Agung, berisi kekuatan semua firaun."
+    }
+  }
+}

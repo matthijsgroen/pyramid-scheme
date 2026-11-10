@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Agimi te Sfinksi",
+    "description": "Sfinksi i Madh, dhe shkrimi te këmbët e tij që asnjë njeri i gjallë nuk di ta lexojë. Harta thotë: fillo këtu."
+  },
+  "starter_2": {
+    "name": "Rruga e tregtarit të papirusit",
+    "description": "Një rrugë tregtie buzë Nilit, plot me depot e tregtarëve. Disa prej tyre nuk u zbrazën kurrë."
+  },
+  "starter_3": {
+    "name": "Tempulli i Bastetës",
+    "description": "Tempulli i Bastetës. Macet këtu ishin të shenjta, dhe festa e çdo viti ishte më e madhja në Egjipt: varka, muzikë, gjithçka."
+  },
+  "starter_4": {
+    "name": "Shkolla e shkruesve",
+    "description": "Shkolla e shkruesve, ku Egjipti mësoi të shkruante. Klasat janë ende nën rërë."
+  },
+  "starter_treasure_tomb": {
+    "name": "Depoja e harruar e tregtarit",
+    "description": "Bodrumi i një tregtari, jo i një mbreti: shtamba njëra mbi tjetrën, të mbyllura dhe me etiketa. Dhe askush poshtë që të grindet për to.",
+    "mapHint": "Copa e letrës vizaton një rrugë tregu dhe derën e një bodrumi. Vendi ku fshihte gjërat një tregtar, asgjë më shumë."
+  },
+  "junior_1": {
+    "name": "Shtegtimi i ibisit të shenjtë",
+    "description": "Vend kënetash, dhe ibisët që ecin nëpër to. Egjipti i shikonte këta zogj: kur kthehen, vjen përmbytja."
+  },
+  "junior_2": {
+    "name": "Lugina e zejtarëve",
+    "description": "Deir el-Medina, ku jetonin ata që ndërtonin varret. Gjithçka për varrimin e një mbreti bëhej këtu më parë, në kallëpe."
+  },
+  "junior_3": {
+    "name": "Tempulli i Thothit",
+    "description": "Tempulli i Thothit. Ai shpiku shkrimin, mbante shënimet dhe bënte numërimet. Pra, pikërisht atë që po bëjmë ne gjithë kohën."
+  },
+  "junior_4": {
+    "name": "Fari i Aleksandrisë",
+    "description": "Fari i Aleksandrisë. Një zjarr në majë, që digjej gjithë natën, dhe detarët e gjenin bregun nga një ditë lundrim larg."
+  },
+  "junior_treasure_tomb": {
+    "name": "Thesari i fshehur i fisnikes",
+    "description": "Thesari i një gruaje fisnike, i pikturuar nga dyshemeja deri te tavani. Ajo bleu kopjet më të mira që mund të blinte, dhe nuk e tha kurrë.",
+    "mapHint": "Bojë e hollë, një vulë me stemë në cep. Dikush i rëndësishëm donte që kjo dhomë të harrohej."
+  },
+  "expert_1": {
+    "name": "Lugina e Mbretërve",
+    "description": "Lugina e Mbretërve. Ata pushuan së ndërtuari piramida dhe i fshehën varret mbretërore në një luginë, nën një majë mali që duket si piramidë."
+  },
+  "expert_2": {
+    "name": "Tempujt e Karnakut",
+    "description": "Karnaku, ku shtonin gjëra për dy mijë vjet. Vetëm salla e madhe ka njëqind e tridhjetë e katër kolona, secila e gdhendur."
+  },
+  "expert_3": {
+    "name": "Ekspedita në deltën e Nilit",
+    "description": "Ku Nili ndahet dhe shtrihet i gjelbër. Vendi i Sobekut: papirus, peshq, dhe krokodilë që i adhuronin dhe i ushqenin."
+  },
+  "expert_4": {
+    "name": "Piramida e Xhoserit",
+    "description": "Piramida me shkallë e Xhoserit, ndërtesa e parë kaq e madhe prej guri. Arkitektin e tij, Imhotepin, më vonë e kujtuan si zot."
+  },
+  "expert_treasure_tomb": {
+    "name": "Thesari i kryepriftit",
+    "description": "Thesari i një kryeprifti, nën dyshemenë e dhuratave. Gjithçka atje poshtë iu dha një perëndie dhe nuk u nxor më kurrë.",
+    "mapHint": "Vijat vizatojnë oborrin e një tempulli, dhe një shkallë që zbret nën dyshemenë e dhuratave."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Shenjtërorja e brendshme",
+    "description": "Dhoma e mbyllur në zemër të tempullit. Kryeprifti hynte një herë në ditë, për ta larë perëndinë dhe për ta veshur.",
+    "mapHint": "Korridoret kalojnë pranë thesareve të tempullit deri te një derë e mbyllur. Vetëm priftërinjtë më të lartë kaluan ndonjëherë prej saj."
+  },
+  "master_1": {
+    "name": "Piramida e Madhe e Gizës",
+    "description": "Piramida e Madhe. Njëzet vjet gurë, dhe një qytet i tërë pranë saj që i ushqente punëtorët me bukë dhe birrë."
+  },
+  "master_2": {
+    "name": "Libri i të Vdekurve",
+    "description": "Jo një libër, por një grup magjish, të kopjuara me porosi. Ato më të lirat linin një vend bosh ku duhej shkruar emri yt."
+  },
+  "master_3": {
+    "name": "Mallkimi i faraonëve",
+    "description": "Mallkimin e famshëm e shpikën gazetat në vitin 1923. Egjiptianët i ruanin varret me dyer dhe me letra."
+  },
+  "master_4": {
+    "name": "Varri i Nefertarit",
+    "description": "Varri i Nefertarit, dhoma më e bukur e pikturuar në Egjipt. Ngjyrat i bënin duke bluar gurë: azurit, malakit, okër."
+  },
+  "master_treasure_tomb": {
+    "name": "Thesari i fshehtë i faraonit",
+    "description": "Thesari i fshehtë i një mbreti, atje ku hartat nuk shkojnë më. Çfarëdo që u fut në tokë me të, është ende atje poshtë.",
+    "mapHint": "Një kartush mbretëror shënon njërën anë, dhe rruga mbaron shumë larg, nën rërë të hapur."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Salla e Osirisit",
+    "description": "Salla e Osirisit. Zoti i përmbytjes dhe i grurit: çfarëdo që futet nën tokë këtu, pritet të kthehet.",
+    "mapHint": "Poshtë dhomave mbretërore harta vazhdon të zbresë, në një sallë me shenjat e riteve të të vdekurve."
+  },
+  "wizard_1": {
+    "name": "Udhëtimi i diellit të Ras",
+    "description": "Ra zbret nën botë kur perëndon dielli dhe duhet të kalojë dymbëdhjetë orë errësirë. Egjipti shkroi çfarë ndodh në secilën."
+  },
+  "wizard_2": {
+    "name": "Kolosët e Memnonit",
+    "description": "Dy gjigantë ulur të Amenhotepit III. Grekët vendosën se ishin dikush tjetër, dhe ai emër mbeti për dy mijë vjet."
+  },
+  "wizard_3": {
+    "name": "Dhoma e Maatit",
+    "description": "Dhoma e Maatit. Ajo është rendi i gjërave, dhe pendën e saj të vetme të strucit e përdorin për të matur gjithçka tjetër."
+  },
+  "wizard_4": {
+    "name": "Piramida e përjetshme",
+    "description": "Veshja ishte gur gëlqeror i lëmuar, i bardhë si kripa, aq i saktë sa e shihje të shkëlqente nga një ditë ecje larg."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Thesari i perëndive",
+    "description": "Ku tempulli ruante gjërat e perëndive. Askush nuk hynte këtu pa sendin e duhur në duar.",
+    "mapHint": "Asnjë shenjë në këtë copë letre nuk i përket botës së njerëzve. Çfarëdo që tregon, e vendosën perënditë."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Mbretëria e forcave të qiellit",
+    "description": "Harta yjesh në të gjithë tavanin, të pikturuara që të vdekurit të dinin orën natën. Litari i dikujt varet ende në pus.",
+    "mapHint": "Pas thesarit hyjnor vijat ndahen në shtigje yjesh, ku forcat e jetës dhe të rrëmujës ruhen si relike."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Froni i përjetësisë",
+    "description": "Një fron në mes dhe dyzet e dy gjykatës rreth tij. Secili bën një pyetje, dhe ti duhet të përgjigjesh jo.",
+    "mapHint": "Çdo shteg yjesh në këtë copë takohet te një fron i vetëm, në zemër të mbretërisë hyjnore."
+  }
+}

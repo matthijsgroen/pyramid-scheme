@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Steinn",
+    "bronze": "Brons",
+    "silver": "Silfur",
+    "gold": "Gull",
+    "divine": "Guðdómlegt"
+  },
+  "sell_stone_1": {
+    "name": "Brotin leirflís",
+    "description": "Brotið leirbrot sem skrifari krotaði æfingar á. Stafirnir eru of máðir til að lesa þá."
+  },
+  "sell_stone_2": {
+    "name": "Sprungin leirkrukka",
+    "description": "Krukka fyrir korn eða bjór, sem hefur sprungið á annarri hliðinni undan þunga aldanna."
+  },
+  "sell_stone_3": {
+    "name": "Slitinn reyrsandali",
+    "description": "Fléttaður úr papýrusreyr. Sólinn er orðinn þunnur eftir daglega göngu löngu gleymds verkamanns."
+  },
+  "sell_stone_4": {
+    "name": "Upplitaður línbútur",
+    "description": "Rifin ræma af ólituðu líni, eins og því sem var vafið endalaust utan um hina látnu. Eða notað til að bæta segl."
+  },
+  "sell_stone_5": {
+    "name": "Brotið tinnublað",
+    "description": "Hnífur úr tinnusteini, brotinn í oddinn. Ódýrt að búa hann til og enn ódýrara að fá nýjan."
+  },
+  "sell_bronze_1": {
+    "name": "Beyglaður bronsverndargripur",
+    "description": "Ódýr verndargripur sem var steyptur skakkur og aldrei lagaður."
+  },
+  "sell_bronze_2": {
+    "name": "Tærður bronsspegill",
+    "description": "Einu sinni svo fægður að þú sást sjálfan þig í honum. Nú er hann orðinn grænn og mattur af elli."
+  },
+  "sell_bronze_3": {
+    "name": "Sljór bronsöngull",
+    "description": "Verkfæri fiskimanns sem datt útbyrðis í Níl löngu áður en gröfinni var lokað."
+  },
+  "sell_bronze_4": {
+    "name": "Lítil bronsbjalla",
+    "description": "Átti að hanga á musterisdyrum eða á ökkla dansara. Hún hljómar ekki rétt lengur."
+  },
+  "sell_bronze_5": {
+    "name": "Mattur bronshringur",
+    "description": "Einfaldur hringur, gerður fyrir fingur sem er löngu orðinn að dufti."
+  },
+  "sell_silver_1": {
+    "name": "Mattur silfurankh",
+    "description": "Tákn lífsins, orðið matt eftir aldir neðanjarðar."
+  },
+  "sell_silver_2": {
+    "name": "Silfurstafur fyrir augnmálningu",
+    "description": "Mjór stafur sem ríkt fólk notaði til að mála línur kringum augun. Málningin er löngu horfin."
+  },
+  "sell_silver_3": {
+    "name": "Beygluð silfurskál",
+    "description": "Lítil fórnarskál, kramin á annarri hliðinni þegar loftið fyrir ofan hana loksins hrundi."
+  },
+  "sell_silver_4": {
+    "name": "Silfurhárnál",
+    "description": "Einföld og skrautlaus. Hún hélt einu sinni hárinu frá andliti einhvers sem enginn man nafnið á."
+  },
+  "sell_silver_5": {
+    "name": "Slitið silfurarmband",
+    "description": "Mjótt silfurarmband með brotinni festingu. Ekki nógu fínt fyrir höfðingja en of fínt fyrir verkamann."
+  },
+  "sell_gold_1": {
+    "name": "Lítil gullperla",
+    "description": "Ein perla úr hálsfesti úr gröf, sem dreifðist fyrir löngu."
+  },
+  "sell_gold_2": {
+    "name": "Blaðgullsflís",
+    "description": "Örþunn flís af blaðgulli sem grafarræningjar flettu af andliti styttu öldum áður en þú komst."
+  },
+  "sell_gold_3": {
+    "name": "Þunnur gulleyrnalokkur",
+    "description": "Barinn þunnur svo gull höfðingjans dygði í meira."
+  },
+  "sell_gold_4": {
+    "name": "Gullflekkótt brot",
+    "description": "Brot af gylltu múrverki. Flekkir af ekta gulli loða enn við yfirborðið."
+  },
+  "sell_gold_5": {
+    "name": "Skörðóttur gullinnsiglishringur",
+    "description": "Innsiglishringur með svo máðri áletrun að ekki sést hvað stóð. Sá sem hann bar nafn er gleymdur."
+  },
+  "sell_divine_1": {
+    "name": "Upplitaður lapis-tordýfill",
+    "description": "Skorinn úr dýrmætum lapis lazuli sem var fluttur inn dýrum dómum fyrir endurfæðingu faraós. Liturinn hefur dofnað með öldunum."
+  },
+  "sell_divine_2": {
+    "name": "Augnaverndargripur úr karneóli",
+    "description": "Verndandi auga skorið úr blóðrauðum karneól, sem átti að verja gegn óhöppum í lífinu eftir dauðann."
+  },
+  "sell_divine_3": {
+    "name": "Túrkísflís",
+    "description": "Ein flís úr brotinni mósaíkmynd sem var einu sinni hluti af mynd af guði á musterisvegg."
+  },
+  "sell_divine_4": {
+    "name": "Alabastursbrot af kanópukrukku",
+    "description": "Brot af krukku sem átti að geyma innyfli faraós. Dýrmætur steinn í óhugnanlegum tilgangi."
+  },
+  "sell_divine_5": {
+    "name": "Helgihnífur úr hrafntinnu",
+    "description": "Eldfjallagler, slípað í helgan egg sem var aldrei ætlaður í bardaga. Aðeins fyrir musterið."
+  }
+}

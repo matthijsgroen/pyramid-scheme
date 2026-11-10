@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Egunsentia Esfingearen ondoan",
+    "description": "Esfinge Handia, eta haren oinetan bizirik dagoen inork irakur ezin duen idazkia. Mapak dio: hasi hemen."
+  },
+  "starter_2": {
+    "name": "Papiro-merkatariaren bidea",
+    "description": "Niloaren ondoko merkataritza-bidea, merkatarien biltegiz betea. Batzuk ez ziren inoiz hustu."
+  },
+  "starter_3": {
+    "name": "Bastet-en tenplua",
+    "description": "Bastet-en tenplua. Hemengo katuak sakratuak ziren, eta urteroko jaia Egiptoko handiena zen: txalupak, musika, denetarik."
+  },
+  "starter_4": {
+    "name": "Eskribauen eskola",
+    "description": "Eskribauen eskola, Egiptok idazten ikasi zuen lekua. Ikasgelak oraindik harearen azpian daude."
+  },
+  "starter_treasure_tomb": {
+    "name": "Merkatari ahaztuaren gordelekua",
+    "description": "Merkatari baten sotoa, ez errege batena: pitxerrak pilatuta, itxita eta etiketatuta, eta inor ez behean haiengatik eztabaidatzeko.",
+    "mapHint": "Paper-puskan merkatu-bide bat eta soto-ate bat daude marraztuta. Saltzaile baten ezkutalekua, ez besterik."
+  },
+  "junior_1": {
+    "name": "Ibis sakratuen bidaia",
+    "description": "Padurak, eta ibisak haien artean ibiltzen. Egiptok txori hauei begiratzen zien: itzultzen direnean, uholdea dator."
+  },
+  "junior_2": {
+    "name": "Artisauen harana",
+    "description": "Deir el-Medina, hilobi-egileak bizi ziren lekua. Errege baten hilobirako zen guztia hemen egiten zen lehenik, moldeetan."
+  },
+  "junior_3": {
+    "name": "Thothen tenplua",
+    "description": "Thothen tenplua. Berak asmatu zuen idazketa, idazkiak gordetzen zituen eta kontuak egiten. Guk ere hori egin dugu gehienbat!"
+  },
+  "junior_4": {
+    "name": "Alexandriako itsasargia",
+    "description": "Alexandriako Faroa. Su bat goian, gau osoan piztuta, eta marinelek kosta aurkitzen zuten egun bateko bidaiara."
+  },
+  "junior_treasure_tomb": {
+    "name": "Noblearen ganga ezkutua",
+    "description": "Emakume noble baten ganga, lurretik sabairaino margotua. Diruz eros zitezkeen kopiarik onenak erosi zituen, eta ez zuen inoiz esan.",
+    "mapHint": "Tinta fina, armarri-zigilu bat izkinan. Maila handiko norbaitek gela hau ahaztua izatea nahi zuen."
+  },
+  "expert_1": {
+    "name": "Erregeen harana",
+    "description": "Erregeen harana. Piramideak eraikitzeari utzi zioten, eta erregeen hilobiak haran batean ezkutatu zituzten, piramide-itxurako mendi baten azpian."
+  },
+  "expert_2": {
+    "name": "Karnakeko tenpluak",
+    "description": "Karnak, bi mila urtez handitzen joan zena. Areto handiak bakarrik ehun eta hogeita hamalau zutabe ditu, guztiak zizelkatuak."
+  },
+  "expert_3": {
+    "name": "Niloko deltara espedizioa",
+    "description": "Niloa banatu eta berde zabaltzen den lekua. Sobeken lurraldea: papiroa, arrainak, eta gurtu eta elikatzen zituzten krokodiloak."
+  },
+  "expert_4": {
+    "name": "Djoserren piramidea",
+    "description": "Djoserren maila-piramidea, tamaina horretan harriz eraikitako lehen gauza. Bere arkitekto Imhotep jainko bezala gogoratu zuten azkenean."
+  },
+  "expert_treasure_tomb": {
+    "name": "Apaiz nagusiaren altxortegia",
+    "description": "Apaiz nagusi baten altxortegia, eskaintzen zoruaren azpian. Behean dagoen guztia jainko bati eman zioten, eta ez zuten inoiz berriz atera.",
+    "mapHint": "Marrek tenplu-barruti bat erakusten dute, eta eskailera bat eskaintzen zoruaren azpira jaisten."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Santutegi barrena",
+    "description": "Tenpluaren bihotzeko gela itxia. Apaiz nagusia egunean behin sartzen zen, jainkoa garbitu eta janzteko.",
+    "mapHint": "Korridoreak tenpluko gangen ondotik doaz ate itxi bateraino. Apaiz gorenek bakarrik igaro zuten."
+  },
+  "master_1": {
+    "name": "Gizako Piramide Handia",
+    "description": "Piramide Handia. Hogei urte harri, eta ondoan herri oso bat langileei ogia eta garagardoa ematen."
+  },
+  "master_2": {
+    "name": "Hildakoen liburua",
+    "description": "Ez da liburu bat, sorginkeria-sorta bat baizik, eskaeraren arabera kopiatua. Merkeenek hutsune bat uzten zuten zure izenarentzat."
+  },
+  "master_3": {
+    "name": "Faraoien madarikazioa",
+    "description": "Madarikazio ospetsua egunkariek asmatu zuten 1923an. Egiptoarrek ateekin eta paperekin zaintzen zituzten hilobiak."
+  },
+  "master_4": {
+    "name": "Nefertariren hilobia",
+    "description": "Nefertariren hilobia, Egiptoko gelarik ondoen margotua. Koloreak harritik ehotzen zituzten: azurita, malakita, okrea."
+  },
+  "master_treasure_tomb": {
+    "name": "Faraoiaren altxor sekretua",
+    "description": "Errege baten altxor pribatua, mapak amore ematen duten lekuan. Berarekin lurpera joan zena oraindik behean dago.",
+    "mapHint": "Errege-kartutxo batek ertz bat markatzen du, eta bidea urrun amaitzen da, harea zabalaren azpian."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Osirisen aretoa",
+    "description": "Osirisen aretoa. Uholdearen eta aleen jainkoa: hemen lurpera doan guztia itzuliko dela espero da.",
+    "mapHint": "Errege-gelen azpian mapak jaisten jarraitzen du, hildakoen erritoz markatutako areto bateraino."
+  },
+  "wizard_1": {
+    "name": "Raren eguzki-bidaia",
+    "description": "Ra munduaren azpira doa ilunabarrean, eta hamabi ordu ilun ditu zeharkatzeko. Egiptok ordu bakoitzean gertatzen dena idatzi zuen."
+  },
+  "wizard_2": {
+    "name": "Memnonen kolosoak",
+    "description": "Amenhotep III.aren bi erraldoi eserita. Greziarrek beste norbait zirela erabaki zuten, eta izen hori bi mila urtez geratu zen."
+  },
+  "wizard_3": {
+    "name": "Ma'aten gela",
+    "description": "Ma'aten gela. Bera da gauzen ordena, eta bere ostruka-luma bakarrarekin neurtzen da beste guztia."
+  },
+  "wizard_4": {
+    "name": "Betiko piramidea",
+    "description": "Estalkia kareharri leundua zen, gatza bezain zuria, hain zehatz landua non egun bateko bidetik dirdira ikus zitekeen."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Jainkoen ganga",
+    "description": "Tenpluak jainkoena zena gordetzen zuen lekua. Hemen inor ez zen sartzen eskuetan gauza egokia eraman gabe.",
+    "mapHint": "Paper-puska honetako ezer ez da gizakien mundukoa. Marrazten duena, jainkoek jarri zuten hor."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Indar kosmikoen erresuma",
+    "description": "Izar-mapak sabai osoan, hildakoek gauez ordua jakin zezaten margotuak. Norbaiten soka oraindik dago zintzilik putzuan.",
+    "mapHint": "Jainkoen gangaren ondoren, marrak izar-bide bihurtzen dira, non bizitzaren eta nahasmenaren indarrak erlikia gisa gordetzen diren."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Betikotasunaren tronua",
+    "description": "Eserleku bakarra erdian eta berrogeita bi epaile inguruan. Bakoitzak galdera bat egiten dizu, eta ezetz erantzun behar duzu.",
+    "mapHint": "Puska honetako izar-bide guztiak eserleku bakar batera doaz, jainkoen erresumaren bihotz-bihotzera."
+  }
+}

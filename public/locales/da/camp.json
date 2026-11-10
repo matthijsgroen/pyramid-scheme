@@ -1,0 +1,253 @@
+{
+  "spots": {
+    "fire": "Lejrbål",
+    "sleeping": "Soveplads",
+    "water": "Vandsted",
+    "cooking": "Madplads",
+    "donkey": "Æselplads",
+    "camel": "Kamelplads",
+    "mapTable": "Kortbord",
+    "palmGarden": "Palmehave",
+    "ibisPond": "Ibisdam",
+    "lookout": "Udkigspost",
+    "godStatues": "Gudestatuer",
+    "starCanopy": "Stjernetag"
+  },
+  "finds": {
+    "pot": "Kogegryde",
+    "seatCushions": "Siddepuder",
+    "reedMat": "Sivmåtte",
+    "blanket": "Tæppe",
+    "tentRug": "Teltgulvtæppe",
+    "tentFlag": "Teltflag",
+    "gourd": "Græskarflaske",
+    "jar": "Krukke",
+    "secondJar": "Anden krukke",
+    "spiceRack": "Krydderihylde",
+    "breadBoard": "Brødbræt",
+    "starMap": "Stjernekort",
+    "scrollCase": "Rullehylster",
+    "astrolabe": "Astrolabium",
+    "reedGlobe": "Globus af siv",
+    "seed": "Palmefrø",
+    "secondPalm": "Palmefrø",
+    "figTree": "Figenfrø",
+    "papyrus": "Papyrusrod",
+    "reeds": "Sivstikling",
+    "lotus": "Lotusknold",
+    "flag": "Udkigsflag",
+    "thoth": "Thoth-figur",
+    "bastet": "Bastet-figur",
+    "anubis": "Anubis-figur",
+    "ra": "Ra-figur",
+    "cloth": "Stjerneklæde"
+  },
+  "structures": {
+    "stoneRing": "Stenring",
+    "fire": "Bål",
+    "cookingStones": "Kogesten",
+    "seatingStones": "Siddesten",
+    "clayOven": "Lerovn",
+    "windbreak": "Læhegn",
+    "tent": "Telt",
+    "secondTent": "Andet telt",
+    "pavilion": "Pavillon",
+    "well": "Brønd",
+    "wellPulley": "Brønd med trisse",
+    "tripod": "Trefod",
+    "breadOven": "Bageovn",
+    "dryingRack": "Tørrestativ",
+    "feast": "Festmåltid",
+    "table": "Kortbord",
+    "lotusPlanter": "Lotuskar",
+    "edgeStones": "Dambred",
+    "post": "Udkigspæl",
+    "platform": "Udkigsplatform",
+    "ladder": "Stige",
+    "roof": "Tag",
+    "signalFire": "Signalbål",
+    "poles": "Stjernemaster",
+    "stars": "Stjerner",
+    "planets": "Planeter"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Marksten",
+      "sandBed": "Sandleje"
+    },
+    "fire": {
+      "tinder": "Tønder",
+      "acaciaLogs": "Akaciebrænde"
+    },
+    "cookingStones": {
+      "flatStone": "Flad sten",
+      "supportStones": "Støttesten"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Glatte kampesten",
+      "sandstoneBlock": "Sandstensblok",
+      "hewnSlab": "Hugget stenplade"
+    },
+    "clayOven": {
+      "ovenFloor": "Ovnbund",
+      "firebricks": "Ildfaste sten",
+      "smokeHole": "Røghul",
+      "copperGrate": "Kobberrist"
+    },
+    "windbreak": {
+      "reedBundles": "Sivbundter",
+      "stakes": "Træpæle"
+    },
+    "tent": {
+      "tentPoles": "Teltstænger",
+      "wovenCloth": "Vævet stof",
+      "tentPegs": "Teltpløkker"
+    },
+    "secondTent": {
+      "largeCloth": "Stort teltstof",
+      "ridgePole": "Rygstang",
+      "guyRopes": "Barduner",
+      "woolFloor": "Uldent gulvtæppe"
+    },
+    "pavilion": {
+      "pavilionPosts": "Pavillonstolper",
+      "linenCanopy": "Tag af hør",
+      "hangingCurtains": "Gardiner",
+      "woolRugs": "Uldtæpper",
+      "woodenFloor": "Trægulv"
+    },
+    "well": {
+      "wellStones": "Brøndsten",
+      "rope": "Langt reb",
+      "bucket": "Spand",
+      "windlass": "Hejsespil"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Trissehjul",
+      "frame": "Bærestativ",
+      "hoistRope": "Hejsereb",
+      "counterweight": "Modvægt",
+      "leatherBucket": "Læderspand"
+    },
+    "tripod": {
+      "tripodPoles": "Tre stænger",
+      "binding": "Bindereb",
+      "hook": "Bronzekrog"
+    },
+    "breadOven": {
+      "mudBricks": "Lersten",
+      "clayPlaster": "Lerpuds",
+      "ovenLid": "Ovnlåge"
+    },
+    "dryingRack": {
+      "rackPoles": "Stativstænger",
+      "crossbar": "Tværstang",
+      "wickerTray": "Flettet bakke",
+      "cords": "Hængesnore"
+    },
+    "feast": {
+      "lowTable": "Lavt bord",
+      "breadBaskets": "Brødkurve",
+      "roastDuck": "Stegt and",
+      "beerJars": "Ølkrukker",
+      "fruitBowl": "Frugtskål"
+    },
+    "table": {
+      "tableTop": "Bordplade",
+      "trestles": "Bukke",
+      "leatherStraps": "Læderremme"
+    },
+    "lotusPlanter": {
+      "clayTub": "Lerkar",
+      "nileSilt": "Nilslam",
+      "waterJar": "Vandkrukke",
+      "lotusTubers": "Lotusknolde",
+      "stoneRim": "Stenkant"
+    },
+    "edgeStones": {
+      "riverStones": "Flodsten",
+      "clayBedding": "Lerleje",
+      "gravel": "Grus",
+      "boundaryStakes": "Afmærkningspæle"
+    },
+    "post": {
+      "postTrunk": "Palmestamme",
+      "footStones": "Fundamentsten",
+      "wedges": "Kiler",
+      "braces": "Skråstivere"
+    },
+    "platform": {
+      "platformBeams": "Bærebjælker",
+      "platformPlanks": "Planker",
+      "lashingRope": "Surringsreb",
+      "edgeRail": "Rækværk"
+    },
+    "ladder": {
+      "ladderRails": "Stigevanger",
+      "rungs": "Trin",
+      "groundPegs": "Jordpløkker",
+      "leatherLoops": "Læderløkker"
+    },
+    "roof": {
+      "roofPoles": "Tagstænger",
+      "thatch": "Palmeblade",
+      "clayLayer": "Lerlag",
+      "bindingGrass": "Bindegræs"
+    },
+    "signalFire": {
+      "fireBasin": "Ildskål",
+      "pitch": "Beg",
+      "dryBrushwood": "Tørre grene",
+      "flint": "Flintesten",
+      "bellows": "Blæsebælg"
+    },
+    "poles": {
+      "masts": "Master",
+      "cornerStones": "Hjørnesten",
+      "stayLines": "Stagliner",
+      "bigPegs": "Store pløkker",
+      "poleSockets": "Mastefødder"
+    },
+    "stars": {
+      "goldLeaf": "Bladguld",
+      "needleThread": "Nål og tråd",
+      "indigoDye": "Indigofarve",
+      "chalk": "Kridt",
+      "stencils": "Skabeloner"
+    },
+    "planets": {
+      "ochre": "Okker",
+      "copperDiscs": "Kobberskiver",
+      "lapisPowder": "Lapispulver",
+      "hangingLoops": "Ophængsløkker",
+      "dividers": "Passer"
+    }
+  },
+  "collection": {
+    "title": "Bygninger",
+    "progress": "{{found}} af {{total}}",
+    "built": "bygget",
+    "unknownPart": "???",
+    "open": "Vis dele",
+    "close": "Skjul dele"
+  },
+  "reward": {
+    "find": "Lejrfund",
+    "part": "Del",
+    "progress": "{{name}} · {{found}} af {{total}}"
+  },
+  "haul": {
+    "new": "Nyt i din lejr",
+    "parts_one": "{{name}} · {{count}} del",
+    "parts_other": "{{name}} · {{count}} dele"
+  },
+  "arrivals": {
+    "donkey": "Dit æsel står i lejren",
+    "cart": "Din vogn står i lejren",
+    "camel": "Din kamel står i lejren",
+    "secondDonkey": "Dit andet æsel står i lejren",
+    "secondCamel": "Din anden kamel står i lejren",
+    "sturdyCart": "Din stærkere vogn står i lejren",
+    "caravanBanner": "Dit karavanebanner hænger i lejren"
+  }
+}

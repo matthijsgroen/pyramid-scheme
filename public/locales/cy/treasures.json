@@ -1,0 +1,195 @@
+{
+  "hieroglyphUnlockPanel": {
+    "instruction": "Llithra'r trysor ar y garreg i'w hagor",
+    "alsoAvailable": "Ar gael hefyd:"
+  },
+  "perks": {
+    "max-health": "+½ calon at dy iechyd uchaf",
+    "armor": "Llai o niwed gan drapiau",
+    "trap-insight": "+1 eiliad ar drapiau ag amserydd",
+    "pack-mule": "Mae croen dŵr yn gwella dwy galon",
+    "compass": "Darn o gwmpawd",
+    "detection": "Darn o'r chwiliwr coridorau",
+    "tier-unlock": "Yn agor teithiau {{tier}}",
+    "tier-coming-soon": "Bydd teithiau {{tier}} yn dod mewn diweddariad nes ymlaen",
+    "location-key": "Yn dangos bedd arall",
+    "partOf": "{{count}} o {{total}}"
+  },
+  "tiers": {
+    "stone": "Carreg",
+    "bronze": "Efydd",
+    "silver": "Arian",
+    "gold": "Aur",
+    "divine": "Dwyfol"
+  },
+  "merchantCache": {
+    "t1": {
+      "name": "Deben Arian",
+      "description": "Hen ddarn arian o'r Aifft. Roedd masnachwyr yn ei ddefnyddio i brynu a gwerthu ar hyd y Nîl."
+    },
+    "t2": {
+      "name": "Sgrôl Bapyrws",
+      "description": "Sgrôl masnachwr. Mae'n dangos llwybrau masnach a rhestr o'r llwyth gwerthfawr."
+    },
+    "t3": {
+      "name": "Crib Ifori",
+      "description": "Crib ifori wedi'i gerfio'n gain. Peth moethus o wledydd pell."
+    },
+    "t4": {
+      "name": "Lamp Olew Glai",
+      "description": "Lamp olew syml ond hardd, i oleuo stafell y masnachwr."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Breichled Aur",
+      "description": "Breichled aur grand gyda cherrig gwerthfawr. Roedd uchelwyr yr Aifft yn ei gwisgo."
+    },
+    "t6": {
+      "name": "Dagr Seremonïol",
+      "description": "Dagr defod gyda gemau ar y carn. Ar gyfer seremonïau'r uchelwyr."
+    },
+    "t7": {
+      "name": "Sgarab Jâd",
+      "description": "Swyn sgarab o jâd i'th amddiffyn. Arwydd o fywyd newydd a bywyd am byth."
+    },
+    "t8": {
+      "name": "Jar Ganopig Alabastr",
+      "description": "Jar alabastr hardd i gadw olew a phersawr gwerthfawr."
+    },
+    "t9": {
+      "name": "Ffon Gerdded Eboni",
+      "description": "Ffon gerdded eboni sgleiniog gydag ankh aur ar ei phen."
+    },
+    "t10": {
+      "name": "Mwclis Lapis Lazuli",
+      "description": "Mwclis bendigedig o gerrig lapis lazuli prin. Roedd y cyfoethog wrth eu boddau ag ef."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Ankh Sanctaidd",
+      "description": "Ankh aur, arwydd bywyd am byth. Cafodd ei fendithio gan offeiriaid y deml."
+    },
+    "t12": {
+      "name": "Drych Copr",
+      "description": "Drych copr sgleiniog ar gyfer seremonïau glanhau."
+    },
+    "t13": {
+      "name": "Llosgydd Arogldarth",
+      "description": "Llosgydd arogldarth efydd addurnedig, ar gyfer addoli yn y deml."
+    },
+    "t14": {
+      "name": "Cwpan Defod",
+      "description": "Cwpan arian sanctaidd. Roedd offeiriaid yn tywallt diod ohono i'r duwiau."
+    },
+    "t15": {
+      "name": "Gwyntyll Seremonïol",
+      "description": "Gwyntyll o blu. Roedd offeiriaid yn ei defnyddio yn seremonïau'r deml."
+    },
+    "t16": {
+      "name": "Gleiniau Gweddi",
+      "description": "Llinyn o leiniau wedi'u bendithio, ar gyfer gweddïo."
+    },
+    "t17": {
+      "name": "Llestr Dŵr Sanctaidd",
+      "description": "Llestr gyda dŵr wedi'i fendithio o ffynnon sanctaidd y deml."
+    },
+    "t18": {
+      "name": "Cloch y Deml",
+      "description": "Cloch efydd i alw pobl i weddïo ac i gyhoeddi seremonïau."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Sêl y Pharo",
+      "description": "Hen sêl frenhinol gyda chartouche pharo mae pawb wedi'i anghofio."
+    },
+    "t20": {
+      "name": "Pelen Grisial",
+      "description": "Pelen grisial ryfedd. Mae pobl yn dweud ei bod yn dangos y gorffennol a'r dyfodol."
+    },
+    "t21": {
+      "name": "Llechen Hieroglyffau",
+      "description": "Hen lechen garreg gyda phroffwydoliaethau dirgel mewn hieroglyffau."
+    },
+    "t22": {
+      "name": "Teyrnwialen Aur",
+      "description": "Teyrnwialen aur ysblennydd gyda llygad Horus ar ei phen."
+    },
+    "t23": {
+      "name": "Cyllell Obsidian",
+      "description": "Cyllell obsidian finiog fel rasel, ar gyfer hen ddefodau."
+    },
+    "t24": {
+      "name": "Darn o Feteoryn",
+      "description": "Darn o feteoryn sanctaidd. Roedd pobl yn credu bod grym y duwiau ynddo."
+    },
+    "t25": {
+      "name": "Hen Gwmpawd",
+      "description": "Teclyn rhyfedd sydd bob amser yn pwyntio at drysor cudd."
+    },
+    "t26": {
+      "name": "Grisial Amser",
+      "description": "Grisial o'r hen chwedlau sy'n disgleirio â grym oesoedd a fu."
+    },
+    "t27": {
+      "name": "Mwgwd Defod",
+      "description": "Mwgwd aur addurnedig. Roedd archoffeiriaid yn ei wisgo mewn seremonïau sanctaidd."
+    },
+    "t28": {
+      "name": "Ffagl y Fflam Dragwyddol",
+      "description": "Ffagl gyda fflam sydd erioed wedi diffodd, ers yr hen amser."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Coron Ra",
+      "description": "Coron chwedlonol Ra, duw'r haul. Mae'n disgleirio â golau a grym y duwiau."
+    },
+    "t30": {
+      "name": "Ffon Thoth",
+      "description": "Ffon doethineb Thoth, duw gwybodaeth. Mae pob hen gyfrinach ynddi."
+    },
+    "t31": {
+      "name": "Pluen Ma'at",
+      "description": "Pluen sanctaidd Ma'at, duwies y gwir. Roedd yn cael ei defnyddio i bwyso eneidiau yn y byd nesaf."
+    },
+    "t32": {
+      "name": "Dagrau Isis",
+      "description": "Dagrau'r dduwies Isis, wedi troi'n grisial. Maen nhw'n dweud eu bod yn dy amddiffyn am byth."
+    },
+    "t33": {
+      "name": "Calon Osiris",
+      "description": "Calon Osiris, arglwydd yr isfyd. Mae'n dal i guro â bywyd."
+    },
+    "t34": {
+      "name": "Swyn Llygad Horus",
+      "description": "Y swyn amddiffyn gorau oll, gyda holl rym Horus ynddo."
+    },
+    "t35": {
+      "name": "Sarff Apep",
+      "description": "Darn o Apep, sarff anhrefn, wedi'i rwymo a'i gau mewn llestr sanctaidd."
+    },
+    "t36": {
+      "name": "Anadl Shu",
+      "description": "Potel fach gydag anadl Shu, duw'r awyr. Mae'n rhoi grym dros y gwyntoedd."
+    },
+    "t37": {
+      "name": "Cen Sobek",
+      "description": "Un cen oddi ar Sobek, duw'r crocodeil. Mae'n dy amddiffyn yn y dŵr."
+    },
+    "t38": {
+      "name": "Cerflun Gwarchod Anubis",
+      "description": "Cerflun bach o Anubis sy'n dod yn fyw i warchod trysorau ei berchennog."
+    },
+    "t39": {
+      "name": "Llyfr y Meirw",
+      "description": "Llyfr y Meirw yn gyfan, gyda phob swyn sydd ei angen ar gyfer y daith i'r byd nesaf."
+    },
+    "t40": {
+      "name": "Maen Copa'r Pyramid",
+      "description": "Maen aur copa'r Pyramid Mawr, gyda grym yr holl bharoaid ynddo."
+    }
+  }
+}

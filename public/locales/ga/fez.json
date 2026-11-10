@@ -1,0 +1,1730 @@
+{
+  "not-found": "Brón orm, níl an comhrá atá uait ann.",
+  "welcome": "An Éigipt! Táim anseo i ndáiríre.",
+  "welcome2": "Agus an léarscáil seo… d’íoc mé i bhfad an iomarca uirthi. Ba cheart di a bheith ceart.",
+  "welcome3": "Ar aghaidh linn. Féachaimis cá bhfuil an chros sin.",
+  "pyramidIntro": "Tá uimhreacha ar na clocha seo. Agus tá cuid acu ar iarraidh…",
+  "pyramidIntro2": "Fan! Is é gach cloch an dá chloch faoi, curtha le chéile! Sea — anseo freisin!",
+  "pyramidBlockedBlocks": "Hé, cad é seo? Tá na bloic sin séalaithe. Ní thaispeánfaidh siad a n-uimhir!",
+  "pyramidBlockedBlocks2": "Ná bac. Féach ar na bloic timpeall air — is féidir leat é a oibriú amach uathu sin.",
+  "pyramidBlockedBlocks3": "Ach ní féidir leat é a scríobh isteach. Caithfidh tú an uimhir sin a choinneáil i do cheann.",
+  "pyramidBlockedBlocks4": "Seo leat, tháinig tú chomh fada seo. Is féidir leat é seo a dhéanamh!",
+  "levelCompleted": "Ha! Tá sé ag oscailt! Seo, isteach linn.",
+  "exitPillar": {
+    "1": {
+      "fez": "Ha! Solas an lae! An bhfeiceann tú an ga solais sin? Sin é ár mbealach amach. Seas isteach ann, agus táimid réidh anseo."
+    },
+    "2": {
+      "fez": "Níl ach ceann amháin riamh, ag deireadh an phríomhphasáiste. Cibé áit eile a théimid, tagaimid ar ais chuige."
+    },
+    "3": {
+      "explorer": "Bealach amháin amach. Tuigim."
+    }
+  },
+  "expeditionCompleted": "Comhghairdeas, chríochnaigh tú an turas!",
+  "expeditionCompleted2": "Tá turas nua ar fáil anois.",
+  "tombTutorial": "Ó, scríbhneoireacht! An féidir linn í a léamh? Leis na hiairiglifí atá aimsithe againn… b’fhéidir!",
+  "tombTutorial2": "Féach air sin, suimeanna le comharthaí iontu! An bhfeiceann tú na spásanna folmha sin? Téann na hiairiglifí isteach ansin. Do chuid féin, thíos.",
+  "tombTutorial3": "Taispeánann na suimeanna beaga duit nuair atá comhartha ceart. Sin mar a aimsímid cén comhartha a théann cén áit.",
+  "tombTutorial4": "Iad go léir líonta? Ansin tagann glas uimhreacha. Is í an tsuim mhór an cód — agus ansin osclaíonn an tuama!",
+  "hieroglyphUnlock": "Tá déantán speisialta againn — ligeann sé dúinn scríobh ar cheann de na bloic shéalaithe sin!",
+  "hieroglyphUnlock2": "Tapáil cloch atá ag lonrú, ansin tarraing an déantán uirthi lena oscailt. Bloc amháin i ngach pirimid.",
+  "errorHighlightTutorial": "Tá cleas áisiúil ag an stór sin a d’aimsíomar — cuir freagra mícheart isteach agus lonróidh botún amháin dearg!",
+  "errorHighlightTutorial2": "Ní lonraíonn ach bloc amháin ag an am, mar sin tá dúshlán ann fós. Ach cabhraíonn sé leat!",
+  "earlyFeedbackTutorial": "An bhfeiceann tú na bloic seiceála sin? Éiríonn siad glas nó dearg fad a líonann tú iad — díreach ansin!",
+  "earlyFeedbackTutorial2": "Bain úsáid astu mar ancairí agus tú ag réiteach. Má éiríonn ceann dearg, caithfear rud éigin in aice leis a cheartú.",
+  "notEnoughHieroglyphs": "Is féidir leat an turas seo a stopadh i gcónaí ach dul ar ais chuig scáileán an taistil.",
+  "notEnoughHieroglyphs2": "Is féidir linn an turas a stopadh agus cuardach in áit eile do na hiairiglifí atá fós ag teastáil uainn.",
+  "tombLoot": "Wow, ár gcéad stór! Maith thú!",
+  "mapPiece": "Féach! ANOIS, sin léarscáil. Sean ceart! Is fiú níos mó í ná an dá cheann againne le chéile!",
+  "mapPiece2": "Níl ann ach píosa di, ar ndóigh. Tá ceann i bhfolach i ngach turas thart anseo, agus le chéile taispeánann siad an bealach go tuama.",
+  "mapComplete": "Tá sí iomlán! Féach, luíonn gach píosa díreach i gceart.",
+  "mapComplete2": "Ansin, áit a dtagann na línte go léir le chéile. Sin é an áit a bhfuil tuama.",
+  "mapComplete3": "Tá sé inár dturais anois. An rachaimid ag féachaint?",
+  "mapPiece3": "Coinnigh cuntas ar liosta na dturas. Déanfaidh mise é, cinnte!",
+  "mosaicIntro": "Ó, gloine dhaite! Féach mar a bheireann sí ar an solas — ní chaitheann duine ar bith é SIN amach!",
+  "mosaicIntro2": "Píosa amháin de phictiúr atá ann. Fuinneog iomlán gloine, agus tugann gach píosa a aimsímid cuid di ar ais.",
+  "mosaicIntro3": "Nach bhfuil campa agat áit éigin? Tóg leat iad agus cuirfimid le chéile ansin iad. Ba mhaith liom a fheiceáil cad a dhéanann siad!",
+  "mosaicReminder": "Psst! Tá na píosaí gloine sin fós ag gliogarnach inár mála. An gcuirfimid san fhuinneog iad sa champa?",
+  "mosaicStarter": "Cat sa doras, agus nathair ag imeacht faoi dheifir. B’fhiú babhla bainne é sin.",
+  "mosaicStarter2": "Bhí grá ag na hÉigiptigh do chait díreach mar gheall air seo — mharaigh siad na nathracha agus na francaigh a chuaigh isteach sa ghrán.",
+  "mosaicStarter3": "Bhí an oiread sin grá acu dóibh gur bhandia a rinne siad de cheann acu. Bastet. Cosantóir an tí, an dorais, agus gach duine ina chodladh taobh thiar de.",
+  "mosaicJunior": "Féach ar a lámh — tá duine éigin ag taispeáint dó conas an peann a choinneáil.",
+  "mosaicJunior2": "Is é Thoth an ceann le ceann éin. Scríbhneoireacht, comhaireamh, taifid a choinneáil — is leis-sean iad go léir.",
+  "mosaicJunior3": "An t-íbis a lean muid suas an abhainn? Sin é a éan. Is leis freisin gach uimhir a líon muid isteach i mballa.",
+  "mosaicExpert": "Ní ádh é an solas sin. Thóg siad an halla iomlán ionas go dtitfeadh sé díreach ansin, ar an maidin cheart.",
+  "mosaicExpert2": "Is é Amun-Ra an ghrian — an ceann i bhfolach, agus an solas a fheiceann gach duine. An dá rud ag an am céanna.",
+  "mosaicExpert3": "Duine ar bith atá in ann an spéir a thomhas chomh cruinn sin, tá sé in ann rud ar bith a thomhas. Táimid ag réiteach a gcuid matamaitice an bealach ar fad.",
+  "mosaicMaster": "Craiceann glas, agus cruithneacht ag fás díreach as. D’aon ghnó atá sé sin.",
+  "mosaicMaster2": "Osiris. Maraíodh é, agus cuireadh le chéile arís é, agus anois is é an rud a thagann ar ais gach bliain nuair a chlúdaíonn an abhainn na páirceanna.",
+  "mosaicMaster3": "Thíos anseo sin an smaoineamh ar fad: ní hé an bás an deireadh. Smaoineamh deas do thuama, nach ea?",
+  "mosaicWizard": "Croí ar thaobh amháin. Cleite amháin ar an taobh eile. Agus tá siad cothrom.",
+  "mosaicWizard2": "Is é Ma'at an cleite — an fhírinne, an chothromaíocht, mar ba cheart do rudaí a bheith. Croí níos troime ná an cleite sin agus ní théann tú tríd an doras.",
+  "mosaicWizard3": "Is é Anubis an seacál a choinníonn an mheá socair. Is é an té a shiúlann leat anseo.",
+  "mosaicFinale": "Seas siar nóiméad. Féach ar a bhfuil á iompar againn amach as na pirimidí sin.",
+  "mosaicFinale2": "Is cuid de gach píosa — an té a choinníonn an mheá socair. Bhí sé ag faire orainn an bealach ar fad.",
+  "mosaicFinale3": "Sin é a chuntas orainne. Agus déarfainn go bhfuil sé cothrom.",
+  "shopFirstVisit": "Á, seo linn. Mo stainnín — dúirt mé leat gur don trádáil a bhí mé ann.",
+  "shopFirstVisit2": "Gach rud ar an gcuntar seo, thug mé amach as áit éigin é. Tháinig an ceann sin ó dhá thuama siar.",
+  "shopArrival": "Á, mo stainnín! Lig dom na rudaí a fuair mé ar an mbealach a leagan amach.",
+  "shopArrival2": "Is iad na rudaí annamha is daoire, ach íocfaidh mé leat as aon mhionrudaí atá agat.",
+  "arrival": {
+    "starter_1": {
+      "1": {
+        "explorer": "Féach, ansin thiar! An Sfioncs!"
+      },
+      "2": {
+        "explorer": "Ollmhór, fiú ón áit seo."
+      },
+      "3": {
+        "explorer": "Deirtear go bhfuil scríbhneoireacht faoina lapaí. Nach féidir le duine ar bith a léamh."
+      },
+      "4": {
+        "explorer": "Níos déanaí. An phirimid seo ar dtús!"
+      }
+    },
+    "starter_2": {
+      "1": {
+        "fez": "Ha! Faoi dheireadh, rud a thuigim. Gach rud a chuaigh suas an Níl, tháinig sé thar an áit seo ar dtús."
+      },
+      "2": {
+        "fez": "Agus scríobhann ceannaithe gach rud síos. Cé a cheannaigh cad, cé a bhí fiacha ar cé, cé a bhí déanach…"
+      },
+      "3": {
+        "explorer": "Cé a bhí déanach?"
+      },
+      "4": {
+        "fez": "Go háirithe cé a bhí déanach!"
+      },
+      "5": {
+        "fez": "Trí mhíle bliain. Tá na hearraí imithe, agus tá na hadmhálacha fós anseo. Tipiciúil!"
+      }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Féach ar na doirse sin! Tháinig daoine anseo ag iarraidh cosanta. Agus ansin d’fhan doras mar sin dúnta."
+      },
+      "2": {
+        "explorer": "Dúnta ar cé?"
+      },
+      "3": {
+        "fez": "Ar dhuine ar bith nár iarr go deas. Orainne, den chuid is mó."
+      },
+      "4": {
+        "fez": "Gach rud séalaithe sa tír seo, shéalaigh duine éigin é agus bhí sé i gceist aige. I ndáiríre píre."
+      },
+      "5": {
+        "fez": "Agus na cait! Bhí siad craiceáilte faoi chait anseo. Ní fhéadfaidís a lámha a choinneáil uathu."
+      }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "Ó, is maith liom an ceann seo. Seo an áit ar fhoghlaim siad scríobh! Comhartha ar chomhartha, ar photaí briste — bhí páipéar papaír i bhfad ró-dhaor do pháistí."
+      },
+      "2": {
+        "explorer": "Chleacht siad ar bhruscar?"
+      },
+      "3": {
+        "fez": "Ar cibé rud a bhí ann! Agus foghlaim go leor díobh seo, agus go tobann ní maisiúchán é balla a thuilleadh."
+      },
+      "4": {
+        "explorer": "An Sfioncs sin… ba mhaith liom féachaint air arís."
+      },
+      "5": {
+        "fez": "Ní fós. Go luath."
+      }
+    },
+    "junior_1": {
+      "1": {
+        "fez": "Tháinig siad ar ais gach bliain leis an tuile, beagnach ar an lá céanna."
+      },
+      "2": {
+        "fez": "Mar sin thosaigh daoine ag comhaireamh na laethanta eatarthu. Sin é an áit as a dtagann an féilire — éin."
+      },
+      "3": {
+        "explorer": "Éin."
+      },
+      "4": {
+        "fez": "Éin agus páipéarachas. Is éin agus páipéarachas é i gcónaí."
+      }
+    },
+    "junior_2": {
+      "1": {
+        "fez": "Seo an áit a ndearna siad gach rud. Ní na tuamaí — na rudaí a chuaigh isteach iontu."
+      },
+      "2": {
+        "fez": "Féach ar na múnlaí. An bráisléad céanna, daichead uair."
+      },
+      "3": {
+        "explorer": "Do dhaichead duine?"
+      },
+      "4": {
+        "fez": "D’aon duine a bhí in ann íoc. Bhí uasal ag iarraidh an rud a bhí ag rí, ar phraghas a d’fhéadfadh uasal a íoc."
+      }
+    },
+    "junior_3": {
+      "1": {
+        "fez": "Thoth, an ceann seo. Dia na rún agus na draíochta, táim cuíosach cinnte."
+      },
+      "2": {
+        "explorer": "Cuíosach."
+      },
+      "3": {
+        "fez": "Nócha faoin gcéad. Ar aon nós — is leis-sean na comharthaí atá tú ag bailiú."
+      }
+    },
+    "junior_4": {
+      "1": {
+        "fez": "Trí chéad troigh de, agus tine ag an mbarr nach ndeachaigh as riamh."
+      },
+      "2": {
+        "fez": "D’aimsigh mairnéalaigh an cósta ó lá uaidh. Roimhe sin d’aimsigh siad é trí bhualadh isteach ann."
+      },
+      "3": {
+        "explorer": "Conas a aimsíonn tú rud ar bith anseo gan ceann?"
+      },
+      "4": {
+        "fez": "Fiafraíonn tú de dhuine a bhí ann cheana. Sin í mo cheird ar fad."
+      }
+    },
+    "expert_1": {
+      "1": {
+        "fez": "Seasca éigin tuama gearrtha isteach i ngleann amháin, agus osclaíodh gach ceann acu sular tháinig muid."
+      },
+      "2": {
+        "explorer": "Cé a d’oscail iad?"
+      },
+      "3": {
+        "fez": "Daoine cosúil linne, den chuid is mó. Níos luaithe."
+      },
+      "4": {
+        "fez": "Cad a cheapann tú?"
+      },
+      "5": {
+        "explorer": "Go bhfuilimid déanach."
+      }
+    },
+    "expert_2": {
+      "1": {
+        "fez": "Amun-Ra. An ghrian. An dia is fearr le gach duine, agus is léir cén fáth — féach ar mhéid na háite."
+      },
+      "2": {
+        "explorer": "Dhá ainm."
+      },
+      "3": {
+        "fez": "An dia céanna, sílim. Dhúbail siad na cinn ba mhó a raibh dúil ag daoine iontu."
+      }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Níl sa tír ar fad ach líne ghlas ar dhá thaobh abhann amháin, agus ansin osclaíonn sí amach anseo ina seo."
+      },
+      "2": {
+        "fez": "Fásann gach rud. Baineann gach rud plaic asat freisin."
+      },
+      "3": {
+        "explorer": "Cé acu sin a bhfuilimid anseo dó?"
+      },
+      "4": {
+        "fez": "Bhí súil agam nach mbeadh ceachtar acu."
+      }
+    },
+    "expert_4": {
+      "1": {
+        "fez": "An chéad cheann. Roimhe seo, chuaigh ríthe faoi leac chothrom cosúil le gach duine eile."
+      },
+      "2": {
+        "fez": "Sheas duine éigin anseo agus smaoinigh: cad faoi sin a dhéanamh, ach sé huaire, suas."
+      },
+      "3": {
+        "explorer": "Ar oibrigh sé?"
+      },
+      "4": {
+        "fez": "Tá sé fós ina sheasamh agus níl seisean. Braitheann sé ar cad atá i gceist agat."
+      }
+    },
+    "master_1": {
+      "1": {
+        "fez": "Dhá mhilliún bloc. Chomhair duine éigin iad."
+      },
+      "2": {
+        "explorer": "Chomhair duine éigin iad?"
+      },
+      "3": {
+        "fez": "Comhaireann duine éigin i gcónaí. Sin an chuid a ndéanann daoine dearmad uirthi — cléirigh a bhí i gceannas air seo go léir."
+      },
+      "4": {
+        "fez": "Álainn, nach bhfuil? Ní maith liom smaoineamh ar an bpá a bhí le híoc."
+      }
+    },
+    "master_2": {
+      "1": {
+        "fez": "Treoracha. Sin a bhfuil ann — cad atá le rá, agus cén t-ord, ionas go n-éireoidh leis an turas."
+      },
+      "2": {
+        "explorer": "Lámhleabhar."
+      },
+      "3": {
+        "fez": "Lámhleabhar le bheith marbh. Scríobh siad gach rud síos, an dream seo."
+      },
+      "4": {
+        "fez": "Agus, nuair a smaoiníonn tú ar a bhfuil á lorg againn, sin an chéad scéal maith ar feadh na seachtaine."
+      }
+    },
+    "master_3": {
+      "1": {
+        "fez": "Á. Campa duine éigin."
+      },
+      "2": {
+        "explorer": "Nua?"
+      },
+      "3": {
+        "fez": "Measartha nua. Bia stánaithe agus casacht ghránna, de réir dealraimh."
+      },
+      "4": {
+        "fez": "Chuaigh siad níos faide isteach ná seo agus níor thóg siad a gcuid trealaimh leo."
+      },
+      "5": {
+        "explorer": "Ar tháinig siad ar ais lena aghaidh?"
+      },
+      "6": {
+        "fez": "…Coinnímis orainn."
+      }
+    },
+    "master_4": {
+      "1": {
+        "fez": "Anois SEO é an rud a bhí na cinn eile ag déanamh aithrise air. Féach ar an dath — trí mhíle bliain agus tá sé fós cosúil le péint fhliuch."
+      },
+      "2": {
+        "explorer": "Bheadh Henut ar buile."
+      },
+      "3": {
+        "fez": "Bheadh Henut ag breacadh nótaí."
+      }
+    },
+    "wizard_1": {
+      "1": {
+        "fez": "Téann an ghrian faoin domhan san oíche agus tagann sí aníos ar an taobh eile. Sin an creideamh ar fad."
+      },
+      "2": {
+        "fez": "Dhá uair dhéag sa dorchadas, le rudaí sa bhealach, agus caithfidh duine éigin í a iompar tríd."
+      },
+      "3": {
+        "explorer": "Sin atá á dhéanamh againne."
+      },
+      "4": {
+        "fez": "Bhí mé ag iarraidh gan é sin a rá."
+      },
+      "5": {
+        "explorer": "Tá an gaineamh fós ag teacht isteach."
+      },
+      "6": {
+        "fez": "Tá sé ag teacht isteach le trí mhíle bliain. Ní stopann sé, téann sé timpeall."
+      },
+      "7": {
+        "fez": "Líonann sé, iompaíonn sé, tosaíonn sé arís. Díreach cosúil leis an ngrian."
+      }
+    },
+    "wizard_2": {
+      "1": {
+        "fez": "Dhá cheann acu, ocht méadar déag ar airde, agus is Amenhotep an dá cheann acu."
+      },
+      "2": {
+        "fez": "Thug na Gréagaigh súil amháin orthu agus shocraigh siad gur laoch dá gcuid féin a bhí ann. Memnon. D’fhan an t-ainm sin ar feadh dhá mhíle bliain."
+      },
+      "3": {
+        "explorer": "Cé leis an t-ainm atá air?"
+      },
+      "4": {
+        "fez": "A ainm féin. Gearrtha isteach sa ríchathaoir, áit a raibh sé riamh."
+      },
+      "5": {
+        "fez": "Níor léigh duine ar bith é."
+      },
+      "6": {
+        "fez": "Tar éis na crith talún, chan an ceann thuaidh le breacadh an lae. Nóta amháin, gach maidin, nuair a théigh an ghrian an scoilt."
+      },
+      "7": {
+        "explorer": "Agus anois?"
+      },
+      "8": {
+        "fez": "Chuir impire éigin á dheisiú é. Níor lig sé fuaim as ó shin."
+      }
+    },
+    "wizard_3": {
+      "1": {
+        "fez": "An mheá. Croí ar thaobh amháin, cleite ar an taobh eile — mar sin buann croí deas trom, is dócha."
+      },
+      "2": {
+        "explorer": "Cén treo a théann rud trom?"
+      },
+      "3": {
+        "fez": "…Síos."
+      },
+      "4": {
+        "fez": "Ó."
+      },
+      "5": {
+        "fez": "Éadrom. Ba cheart dó a bheith ÉADROM."
+      }
+    },
+    "wizard_4": {
+      "1": {
+        "fez": "Téann an chaipchloch ar deireadh agus is d’ór í, ionas go mbeireann an rud ar fad ar an gcéad solas."
+      },
+      "2": {
+        "explorer": "Do cé?"
+      },
+      "3": {
+        "fez": "D’aon duine atá ag féachaint. Sin an pointe — ní don fhear istigh a bhí sé riamh."
+      }
+    }
+  },
+  "tomb": {
+    "starter": {
+      "1": {
+        "ipi": "Hé! Lámha díot! Sin é mo phróca!"
+      },
+      "2": {
+        "fez": "…Ar labhair an próca sin díreach anois?!"
+      },
+      "3": {
+        "ipi": "Mise a labhair. An tríú seilf, an ceann leis an mbearna. Is liomsa é sin."
+      },
+      "4": {
+        "explorer": "Ceart go leor, ceart go leor! Fanfaidh sé ann. Cé thusa?"
+      },
+      "5": {
+        "ipi": "Ipi. Daichead bliain a choinnigh mé na leabhair chuntais. Daichead!"
+      },
+      "6": {
+        "fez": "Leabhair? Cé leis?"
+      },
+      "7": {
+        "ipi": "Le gach duine! Cé a bhí fiacha air, síos go dtí an mála gráin deireanach."
+      },
+      "8": {
+        "ipi": "An Henut sin, ó thuaidh as seo? Aon deben déag de lapis. Níor íoc sí riamh!"
+      },
+      "9": {
+        "explorer": "Agus is cuimhin leat é sin fós, tar éis an ama seo go léir?"
+      },
+      "10": {
+        "ipi": "Tá sé scríofa síos! Rud atá scríofa síos, tharla sé."
+      },
+      "11": {
+        "ipi": "Ach na Horithe sin… Hori an bádóir, Hori an báicéir… agus an Hori EILE sin."
+      },
+      "12": {
+        "fez": "An raibh cait agat freisin? Bhí cait ag gach duine, nach raibh? Rudaí beaga gleoite!"
+      },
+      "13": {
+        "ipi": "Gleoite? Don ghrán a bhí siad! An bhfuil a fhios agat cé mhéad a chosnaíonn francach amháin ort, ar feadh séasúir iomláin?"
+      },
+      "14": {
+        "fez": "…Ó. Ceart."
+      },
+      "15": {
+        "ipi": "Abair le Henut gurb é Ipi a chuir chuici thú. Millfidh sé sin a tráthnóna."
+      },
+      "16": {
+        "fez": "Is maith liom é!"
+      },
+      "17": {
+        "explorer": "Is maith leat go bhfuil airgead fós ag dul dó, sin an méid."
+      }
+    },
+    "junior": {
+      "1": {
+        "henut": "Faoi dheireadh. Tá sibh anseo faoin lapis, is dócha. Tá Ipi fós ag caint faoin lapis, déarfainn."
+      },
+      "2": {
+        "explorer": "Tá."
+      },
+      "3": {
+        "henut": "Gloine a bhí ann. Gloine álainn. Bhí a fhios aige."
+      },
+      "4": {
+        "fez": "…An gloine a bhí sa bhráisléad freisin?"
+      },
+      "5": {
+        "henut": "Gach rud anseo, is í an chóip is fearr a bhí ar fáil ar airgead í, a dhuine óig, agus roghnaigh mé féin gach píosa."
+      },
+      "6": {
+        "henut": "Anois. An balla. An tríú comhartha — ní hé sin m’ainm. Printíseach éigin le siséal agus gan duine ag faire air."
+      },
+      "7": {
+        "henut": "Bhí tú ag foghlaim do chuid comharthaí. Is léir dom. Ceartaigh é."
+      }
+    },
+    "juniorFixed": {
+      "1": {
+        "henut": "Sin é. Anois beidh sé fós ina ainm agamsa i gceann míle bliain."
+      },
+      "2": {
+        "explorer": "Litrigh Ipi i gceart é."
+      },
+      "3": {
+        "henut": "Litrigh Ipi gach rud i gceart. Sin an t-aon rud maith faoi."
+      },
+      "4": {
+        "fez": "An bhfuil tábhacht leis, thíos anseo?"
+      },
+      "5": {
+        "henut": "Is é an t-aon rud a bhfuil tábhacht leis."
+      },
+      "6": {
+        "fez": "Bhí balla iomlán de Thoth aici thuas ansin. Dia na rún."
+      },
+      "7": {
+        "henut": "Comhaireann Thoth. Scríobhann Thoth síos a ndearna tú agus fanann sé scríofa."
+      },
+      "8": {
+        "henut": "‘Rúin’ a thugann daoine ar mhatamaitic nuair nach bhfuil siad in ann í a dhéanamh."
+      },
+      "9": {
+        "henut": "Má tá tú ag dul ar aghaidh — agus is léir go bhfuil — tá sagart i Karnak a bhfuil seirbhís ag dul uaidh do na mairbh nach ndearna sé riamh. Beidh sé dochrach faoi. Bíonn sagairt."
+      },
+      "10": {
+        "henut": "…Ar bhuail muid le chéile cheana?"
+      },
+      "11": {
+        "fez": "Bheadh sé ar mo chuimhne."
+      },
+      "12": {
+        "henut": "Bheadh. Ar mo chuimhne féin freisin."
+      }
+    },
+    "expert": {
+      "1": {
+        "priest": "Ní tusa an duine a bhfuil mé ag fanacht leis."
+      },
+      "2": {
+        "explorer": "Cé leis a bhfuil tú ag fanacht?"
+      },
+      "3": {
+        "priest": "Le duine éigin a bhfuil an séala aige. Bhí sé le tabhairt anseo, le leagan síos ansin, agus le paidir a rá os a chionn. Níor tharla ceann ar bith de na trí rud sin."
+      },
+      "4": {
+        "fez": "…Cá fhad atá tú ag fanacht?"
+      },
+      "5": {
+        "priest": "Ní choinním cuntas. Ní bheadh sé gairmiúil."
+      },
+      "6": {
+        "priest": "Is ofráil cheart rud a bhí i lámh rí nuair a cuireadh é. Ní cóip. Ní macasamhail. An rud féin, lena mharc air."
+      },
+      "7": {
+        "priest": "Tabhair é sin agus fógrófar thú. Tabhair aon rud eile agus ní fhógrófar."
+      },
+      "8": {
+        "explorer": "Fógrófar do cé?"
+      },
+      "9": {
+        "priest": "Beidh a fhios agat. Bíonn a fhios ag gach duine, sa deireadh."
+      },
+      "10": {
+        "fez": "Tá sé an-tógtha leis an ngrian, an duine seo. An Amun-Ra sin ar fad amuigh chun tosaigh."
+      },
+      "11": {
+        "priest": "Is é Amun an ceann i bhfolach. Is é Ra an ceann is féidir le duine ar bith a fheiceáil."
+      },
+      "12": {
+        "priest": "Is iad an dia céanna iad. Ní comhtharlú é sin, is é an smaoineamh ar fad é."
+      },
+      "13": {
+        "fez": "…Ceart. Sea. Bhí a fhios agam é sin."
+      },
+      "14": {
+        "explorer": "Ní raibh."
+      },
+      "15": {
+        "fez": "Ní raibh."
+      }
+    },
+    "expertB": {
+      "1": {
+        "fez": "Níl duine ar bith tar éis a bheith anseo. Ní sinne, ní an dream roimhe, duine ar bith."
+      },
+      "2": {
+        "explorer": "Conas atá a fhios agat?"
+      },
+      "3": {
+        "fez": "Mar tá rud éigin fós ann."
+      }
+    },
+    "master": {
+      "1": {
+        "pharaoh": "Is féidir leat teacht i mo láthair. Tháinig tú. Go maith."
+      },
+      "2": {
+        "fez": "A Mhórgacht."
+      },
+      "3": {
+        "pharaoh": "Sea."
+      },
+      "4": {
+        "explorer": "Teastaíonn do shéala uainn."
+      },
+      "5": {
+        "pharaoh": "Teastaíonn sé ó gach duine. Tógadh mo cheann faoi dhó agus níor tugadh ar ais riamh é."
+      },
+      "6": {
+        "pharaoh": "An dara huair d’fhág siad cóip. CÓIP. I MO thuama. Amhail is nach bhféachfainn."
+      },
+      "7": {
+        "explorer": "An bhfuil an chóip fós anseo?"
+      },
+      "8": {
+        "pharaoh": "Ar ndóigh tá sí fós anseo, níl luach ar bith uirthi. Tá sí ar an tseilf ina mba cheart don cheann fíor a bheith, agus í mícheart."
+      },
+      "9": {
+        "pharaoh": "Tóg í más maith leat. Tabhair chuig an sagart sin í. Féach cá fhad a rachaidh tú léi."
+      },
+      "10": {
+        "fez": "…Tá sé ag baint taitnimh as seo."
+      },
+      "11": {
+        "pharaoh": "Tá an tseachtain is fearr agam le naoi gcéad bliain."
+      },
+      "12": {
+        "fez": "Osiris ar an mballa ansin. Tiarna na marbh — gnó gruama."
+      },
+      "13": {
+        "pharaoh": "Tá sé GLAS, a ainmhí amaideach."
+      },
+      "14": {
+        "pharaoh": "Glas mar pháirc faoi thuile. Maraíodh é agus cuireadh le chéile arís é agus tagann sé ar ais gach uile bhliain."
+      },
+      "15": {
+        "pharaoh": "Thíos anseo ní gruama é sin, is é an pointe ar fad é. Ní hé an bás an deireadh."
+      }
+    },
+    "wizard": {
+      "1": {
+        "priest": "Leag síos é. Ansin. Sea."
+      },
+      "2": {
+        "priest": "…"
+      },
+      "3": {
+        "priest": "Sin an chéad uair a rinne mé é sin. Bhí mé ag tosú ag ceapadh go raibh dearmad déanta agam conas."
+      },
+      "4": {
+        "explorer": "An raibh?"
+      },
+      "5": {
+        "priest": "Go hiomlán. Tháinig sé ar ais."
+      }
+    },
+    "wizardB": {
+      "1": {
+        "fez": "A rópa siúd. Fós ceangailte."
+      },
+      "2": {
+        "explorer": "Tháinig siad chomh fada seo."
+      },
+      "3": {
+        "fez": "Níos faide ná seo. Agus ansin chuaigh siad suas arís air."
+      },
+      "4": {
+        "explorer": "Tá leabhar nótaí anseo."
+      },
+      "5": {
+        "fez": "Cad a deir sé?"
+      },
+      "6": {
+        "explorer": "Ní féidir an scríbhneoireacht a léamh. Tháinig ar ais don séala. Rinne ceann níos fearr ina áit."
+      },
+      "7": {
+        "explorer": "Níor mealladh duine ar bith."
+      },
+      "8": {
+        "fez": "…Rinne siad góchumadh air mar nach raibh siad in ann léamh cad chuige a raibh sé."
+      },
+      "9": {
+        "explorer": "Agus ansin chuaigh siad abhaile."
+      }
+    },
+    "wizardC": {
+      "1": {
+        "fez": "Stop nóiméad. Féach ar a bhfuil á iompar againn amach as na pirimidí sin."
+      },
+      "2": {
+        "explorer": "Pictiúr atá ann."
+      },
+      "3": {
+        "fez": "Bhí sé ina phictiúr an t-am ar fad."
+      }
+    }
+  },
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Uaimh! Thaispeáin an léarscáil doras siléir, agus seo cnoc iomlán!"
+      },
+      "2": {
+        "fez": "Fear cliste. Folaigh do stoc taobh istigh de chnoc — ní smaoineodh gadaí ar bith air sin."
+      },
+      "3": {
+        "explorer": "Smaoinigh muidne air."
+      },
+      "4": {
+        "fez": "Ní gadaithe muid. Is custaiméirí muid. Custaiméirí an-déanach."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Caithfidh gurb é seo é. Henut! Aon deben déag de lapis, an bhean sin!"
+      },
+      "2": {
+        "fez": "Cad a cheapann tú — an bhfaighimid cuid de má bhailímid é?"
+      },
+      "3": {
+        "explorer": "Níor bhailigh tú faic."
+      },
+      "4": {
+        "fez": "Is maith liom é a oibriú amach go luath."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Mar sin seo an áit a bhfuil sagart Henut. Dochrach, a dúirt sí."
+      },
+      "2": {
+        "fez": "Cad a cheapann tú, ar cheart dúinn rud éigin a thabhairt? Bláthanna?"
+      },
+      "3": {
+        "explorer": "Tá sé marbh."
+      },
+      "4": {
+        "fez": "Is mó an chúis. Ba mhaith leat tús maith a dhéanamh."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Ní raibh cead ag aon duine teacht isteach anseo ach an t-ard-sagart. Agus anois sinne!"
+      },
+      "2": {
+        "explorer": "An bhfuil cead againn?"
+      },
+      "3": {
+        "fez": "Níl duine ar bith ar an doras le ‘ní hea’ a rá."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Féach, stopann an léarscáil díreach anseo. Gaineamh, agus ansin faic."
+      },
+      "2": {
+        "explorer": "Mar sin táimid san áit cheart."
+      },
+      "3": {
+        "fez": "Sin atá i gceist agam. Sin go díreach an rud a chuireann neirbhís orm."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Halla Osiris! Glas, ar ndóigh. Mar tagann sé ar ais gach bliain, cosúil leis an ngrán."
+      },
+      "2": {
+        "explorer": "Bhí a fhios sin agat i gcónaí."
+      },
+      "3": {
+        "fez": "I gcónaí."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Stóras na ndéithe féin! Cad a choinníonn tú nuair atá gach rud agat cheana féin?"
+      },
+      "2": {
+        "explorer": "Cibé rud a thugann daoine chugat."
+      },
+      "3": {
+        "fez": "…Sea. Sin é, is dócha."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Ríocht na bhFórsaí Cosmacha. Bhuel, bhuel."
+      },
+      "2": {
+        "fez": "Dá mbeadh rud agam le díol nach raibh mórán ann, sin an t-ainm a thabharfainn air freisin."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Tá an mothúchán seo agam go tobann go ndearna mé rud éigin mícheart."
+      },
+      "2": {
+        "explorer": "Cosúil le cad?"
+      },
+      "3": {
+        "fez": "Níl tuairim agam. Sin an chuid is measa."
+      }
+    }
+  },
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Na luamháin agus na doirse sin go léir, do shiléar amháin!"
+      },
+      "2": {
+        "fez": "Mar sin tá rud éigin maith thíos ansin. Ní théann duine ar bith chomh mór sin i dtrioblóid faoi bhruscar."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Fú. Bhí na doirse sin i bhfad níos mionchúisí ná doirse Ipi."
+      },
+      "2": {
+        "fez": "Bhuel. Bhí airgead ag an mbean uasal, ar ndóigh."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Fú, faoi dheireadh! Ní raibh an uaimh sin ag iarraidh sinn a ligean isteach ar chor ar bith."
+      },
+      "2": {
+        "explorer": "Sílim gurb é sin an smaoineamh."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Psst… cén fáth a bhfuil mé ag cogarnaíl?"
+      },
+      "2": {
+        "explorer": "Níl a fhios agam. Táim á dhéanamh freisin."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Fú. Tá m’eireaball fós ag crith ón doras deireanach sin."
+      },
+      "2": {
+        "fez": "Rí a chuireann a chuid rudaí faoi ghlas mar sin… níl sé ag iarraidh iad a chailleadh, i ndáiríre."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "An bhfeiceann tú? Fan faoin talamh fada go leor, agus tagann tú aníos arís."
+      },
+      "2": {
+        "explorer": "An é sin Osiris freisin?"
+      },
+      "3": {
+        "fez": "Ní hé, is liomsa an ceann sin."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Doirse mar sin… tráth, bheimis tar éis casadh timpeall."
+      },
+      "2": {
+        "explorer": "Ní a thuilleadh."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Trí urlár d’uaimh, agus ansin amháin an doras tosaigh."
+      },
+      "2": {
+        "explorer": "Caithfidh gur fiú é, mar sin."
+      },
+      "3": {
+        "fez": "Sin a deir siad i gcónaí. Agus ansin is próca é."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "An píosa deireanach dorchadais. Braithim é."
+      },
+      "2": {
+        "explorer": "Dúirt tú é sin ag an gceann deireanach."
+      },
+      "3": {
+        "fez": "Agus bhí mé beagnach ceart."
+      }
+    }
+  },
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Féach air sin! Pirimid, faoin talamh! Do cheannaí!"
+      },
+      "2": {
+        "fez": "Ceachtar acu thuill sé go maith, nó rinne sé margáil go maith."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Féach ar an mbarr ag lonrú sa ghrian! Ór fíor, geallaim."
+      },
+      "2": {
+        "explorer": "Síos i bpoll sa talamh. Cé dó a bhfuil sé ag lonrú?"
+      },
+      "3": {
+        "fez": "Di féin. Aithníonn tú an cineál."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Hm. An bhfuil cead agat rud a dhíol atá ag dia cheana féin?"
+      },
+      "2": {
+        "explorer": "Fiafraigh den dia."
+      },
+      "3": {
+        "fez": "B’fhearr liom gan."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "An gceapann tú go bhfuil a fhios ag an sagart sin go bhfuilimid ag fánaíocht thart anseo?"
+      },
+      "2": {
+        "explorer": "Ní choinníonn sé cuntas. Ní bheadh sé gairmiúil."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Féach air, ina aonar sa ghrian. Álainn, nach bhfuil?"
+      },
+      "2": {
+        "fez": "An ndéanfaimid pictiúr de agus imeacht?"
+      },
+      "3": {
+        "explorer": "Níl tú in ann tarraingt."
+      },
+      "4": {
+        "fez": "…Nílim. Isteach linn, mar sin."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Cibé duine atá istigh ansin, tá sé ag brath ar theacht ar ais. Sin an margadh thart anseo."
+      },
+      "2": {
+        "explorer": "Cá fhad atá sé ag fanacht?"
+      },
+      "3": {
+        "fez": "Tamall fada. Ach is cuid den jab é. Fanacht atá i gceist le bheith marbh, den chuid is mó."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "explorer": "Wow."
+      },
+      "2": {
+        "fez": "Sea."
+      },
+      "3": {
+        "fez": "Uaireanta níl faic eile le rá, an bhfuil?"
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "An bhfeiceann tú an paiste gréine sin ar an bpirimid? D’fhéadfá an t-am a insint uaidh."
+      },
+      "2": {
+        "explorer": "Cén t-am atá sé, mar sin?"
+      },
+      "3": {
+        "fez": "…Tráthnóna. Thart air sin. Ní clog mé."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Sin é. Críochnaíonn gach líne ar an léarscáil sin anseo."
+      },
+      "2": {
+        "explorer": "Mar sin seo an deireadh."
+      },
+      "3": {
+        "fez": "Deireadh na léarscáile, sea. Aisteach. Cheap mé go mbraithfeadh sé sin níos fearr."
+      }
+    }
+  },
+  "camp": {
+    "firstHome": {
+      "1": {
+        "fez": "An é seo do champa? Tine agus cófra?"
+      },
+      "2": {
+        "explorer": "Ár gcampa."
+      },
+      "3": {
+        "fez": "Ár gcampa. Ceart. Mar sin tógfaidh mise an áit in aice leis an tine."
+      },
+      "4": {
+        "fez": "Is laghairt mé, tar éis an tsaoil. Nuair a oireann sé dom."
+      }
+    },
+    "homeHaul": {
+      "1": {
+        "fez": "Díphacáil! An chuid is fearr den turas ar fad."
+      },
+      "2": {
+        "explorer": "Níos fearr ná an phirimid?"
+      },
+      "3": {
+        "fez": "Ní linne an phirimid. Is linne é seo."
+      }
+    },
+    "homeEmpty": {
+      "1": {
+        "explorer": "Lámh folamh."
+      },
+      "2": {
+        "fez": "Agus? Shiúil muid. Áirítear é sin freisin."
+      },
+      "3": {
+        "explorer": "I dtreo cad?"
+      },
+      "4": {
+        "fez": "Mo chosa. Tá siad an-ghearr, tá a fhios agat."
+      }
+    },
+    "rested": {
+      "1": {
+        "fez": "Seo. Ag mothú beagán níos fearr?"
+      },
+      "2": {
+        "explorer": "Ní raibh ann ach scríob."
+      },
+      "3": {
+        "fez": "Níor fhéach mé fiú. Agus fós bhí orm suí síos."
+      }
+    },
+    "chapterJunior": {
+      "1": {
+        "fez": "Bhuel, d’éirigh go maith leis sin. An chéad cheann eile!"
+      },
+      "2": {
+        "explorer": "Ní raibh sé chomh héasca sin."
+      },
+      "3": {
+        "fez": "Tá sé anois. Bíonn gach rud éasca ina dhiaidh."
+      }
+    },
+    "chapterExpert": {
+      "1": {
+        "fez": "Amuigh ansin tá gaistí acu. Cinn cheart. Baineann siad plaic asat."
+      },
+      "2": {
+        "fez": "Gortaithe? Ansin siúlaimid ar ais. Beidh tú ceart arís sa bhaile."
+      },
+      "3": {
+        "explorer": "Agus tusa?"
+      },
+      "4": {
+        "fez": "Siúlfaidh mé i do dhiaidh. Tá sé níos sábháilte ansin."
+      }
+    },
+    "chapterMaster": {
+      "1": {
+        "fez": "Ceithre phirimid amuigh ansin. An cuimhin leat nuair nach raibh ann ach an t-aon cheann amháin?"
+      },
+      "2": {
+        "explorer": "Níl sé sin chomh fada ó shin."
+      },
+      "3": {
+        "fez": "Níl. Ach mothaíonn sé mar sin."
+      }
+    },
+    "chapterWizard": {
+      "1": {
+        "fez": "Féach ar an gceann deireanach. Barr óir agus gach rud!"
+      },
+      "2": {
+        "fez": "Cosnóidh an ceann sin rud éigin orainn. Cosnaíonn an ceann deireanach i gcónaí."
+      },
+      "3": {
+        "explorer": "Cosnóidh sé cad orainn?"
+      },
+      "4": {
+        "fez": "…Nílim cinnte a thuilleadh."
+      }
+    },
+    "firstFind": {
+      "1": {
+        "fez": "Féach air sin — mar a bheadh sé ann riamh!"
+      },
+      "2": {
+        "fez": "Tá fonn orm lipéad praghais a chrochadh air."
+      },
+      "3": {
+        "explorer": "Ná déan."
+      },
+      "4": {
+        "fez": "Ní dhéanfaidh, ní dhéanfaidh. Ní dhíolann tú ón mbaile. Tá a fhios agam é sin."
+      }
+    },
+    "structureDone": {
+      "1": {
+        "fez": "Tá sé réidh! Tá gach píosa istigh!"
+      },
+      "2": {
+        "explorer": "Ár gcuid oibre féin ar fad."
+      },
+      "3": {
+        "fez": "Bhuel. Is mó a bhí mise ag díriú méire."
+      }
+    }
+  },
+  "animal": {
+    "forSale": {
+      "1": {
+        "fez": "Féach cad atá ag an stainnín! Déanaim iompar anois."
+      },
+      "2": {
+        "explorer": "Tá sé ag cogaint."
+      },
+      "3": {
+        "fez": "Tá sé sin san áireamh sa phraghas."
+      }
+    },
+    "boughtDonkey": {
+      "1": {
+        "fez": "Díolta! Asal amháin. Ceanndána, ach iompróidh sé rud ar bith."
+      },
+      "2": {
+        "explorer": "Agus cá bhfuil sé?"
+      },
+      "3": {
+        "fez": "Ar a bhealach abhaile cheana. B’fhearr leis siúl gan sinn."
+      }
+    },
+    "blockedDonkey": {
+      "1": {
+        "fez": "Nílimid ag siúl chomh fada sin leis an stuif seo go léir. Teastaíonn asal uainn."
+      },
+      "2": {
+        "fez": "Agus tomhais cé aige a bhfuil ceann? Agamsa. Ag mo stainnín i gcuas Henut."
+      }
+    },
+    "throughDonkey": {
+      "1": {
+        "explorer": "Tá sé sásta."
+      },
+      "2": {
+        "fez": "Inniu. Fiafraigh de arís amárach."
+      }
+    },
+    "arrivesDonkey": {
+      "1": {
+        "fez": "Seo é! Tháinig sé anseo romhainn."
+      },
+      "2": {
+        "explorer": "D’aimsigh sé an tine freisin."
+      },
+      "3": {
+        "fez": "M’áit. Bhuel. Bhí seisean ann ar dtús."
+      }
+    },
+    "boughtCart": {
+      "1": {
+        "fez": "Cairt! Dhá roth, agus is ar éigean a dhéanann siad gliogar."
+      },
+      "2": {
+        "explorer": "Is ar éigean?"
+      },
+      "3": {
+        "fez": "Tagann an gliogar saor in aisce."
+      }
+    },
+    "blockedCart": {
+      "1": {
+        "fez": "Ní thógfaidh an t-asal mála eile. D’fhiafraigh mé de."
+      },
+      "2": {
+        "fez": "Cairt, sin atá uainn. Tá ceann ag mo stainnín, ag an ard-sagart."
+      }
+    },
+    "throughCart": {
+      "1": {
+        "explorer": "An gcloiseann tú é sin?"
+      },
+      "2": {
+        "fez": "Sin í an chairt. Canann sí beagán."
+      },
+      "3": {
+        "explorer": "An bealach ar fad?"
+      }
+    },
+    "arrivesCart": {
+      "1": {
+        "fez": "Cairt inár gcampa! Anois tá cuma orainn go bhfuilimid ag dul áit éigin."
+      },
+      "2": {
+        "explorer": "Táimid ag dul áit éigin."
+      },
+      "3": {
+        "fez": "Táimid, ach anois tá a fhios ag gach duine."
+      }
+    },
+    "boughtCamel": {
+      "1": {
+        "fez": "Camall! Téann sé laethanta gan uisce. Ní théimse, bíodh a fhios agat."
+      },
+      "2": {
+        "explorer": "Tá sé ag féachaint ort."
+      },
+      "3": {
+        "fez": "Anuas orm. Féachann camaill anuas ort i gcónaí."
+      }
+    },
+    "blockedCamel": {
+      "1": {
+        "fez": "An Sanctóir Istigh? Ní shroichfimid riamh é de shiúl na gcos."
+      },
+      "2": {
+        "fez": "Mar a tharlaíonn sé, tá camall agam. Ag mo stainnín, ag an ard-sagart."
+      }
+    },
+    "throughCamel": {
+      "1": {
+        "fez": "Tá sé ar a ghlúine! Dom féin!"
+      },
+      "2": {
+        "explorer": "Ionas gur féidir linn dreapadh suas."
+      },
+      "3": {
+        "fez": "Lig dom é seo a bheith agam."
+      }
+    },
+    "arrivesCamel": {
+      "1": {
+        "fez": "Seo é. Ag iompar amhail is gur leis féin an campa."
+      },
+      "2": {
+        "explorer": "Agus an t-asal?"
+      },
+      "3": {
+        "fez": "Ag ligean air nach bhfeiceann sé é. Díreach cosúil liomsa."
+      }
+    },
+    "boughtSecondDonkey": {
+      "1": {
+        "fez": "Asal eile! Anois tá duine ag an gcéad cheann le labhairt leis."
+      },
+      "2": {
+        "explorer": "Labhairt?"
+      },
+      "3": {
+        "fez": "Grágaíl. Is caint í, ach níos airde."
+      }
+    },
+    "blockedSecondDonkey": {
+      "1": {
+        "fez": "Ní rachaidh an t-asal ar aghaidh. Ní leis féin, a deir sé."
+      },
+      "2": {
+        "explorer": "Dúirt sé é sin?"
+      },
+      "3": {
+        "fez": "Labhraím teanga na n-asal. Tá cara uaidh, agus tá ceann agam ag mo stainnín i dtaisce an fharó."
+      }
+    },
+    "throughSecondDonkey": {
+      "1": {
+        "fez": "Éist leo! Gach duine acu níos airde ná an duine eile."
+      },
+      "2": {
+        "explorer": "Cé atá ag buachan?"
+      },
+      "3": {
+        "fez": "Ní sinne. Caithfimid éisteacht leis."
+      }
+    },
+    "arrivesSecondDonkey": {
+      "1": {
+        "fez": "Féach orthu. Mar a bheadh aithne acu ar a chéile le blianta."
+      },
+      "2": {
+        "explorer": "Cosúil linne."
+      },
+      "3": {
+        "fez": "Grágaímidne níos lú."
+      }
+    },
+    "boughtSecondCamel": {
+      "1": {
+        "fez": "Camall eile. Sea. Ní maith liomsa iad ach oiread."
+      },
+      "2": {
+        "fez": "Ach ar a laghad tá cuma chairdiúil ar an gceann seo."
+      },
+      "3": {
+        "explorer": "Tá sé ag féachaint ar do fez."
+      }
+    },
+    "blockedSecondCamel": {
+      "1": {
+        "fez": "Halla Osiris. Ní thabharfaidh camall amháin ansin sinn."
+      },
+      "2": {
+        "fez": "Ar ámharaí an tsaoil tá ceann eile agam, ag mo stainnín i dtaisce an fharó. An ceann deireanach ar fad atá agam."
+      },
+      "3": {
+        "explorer": "Deir tú é sin i gcónaí."
+      }
+    },
+    "throughSecondCamel": {
+      "1": {
+        "fez": "Tá sé ag ithe mo fez!"
+      },
+      "2": {
+        "explorer": "Camall cairdiúil."
+      },
+      "3": {
+        "fez": "Ró-chairdiúil."
+      }
+    },
+    "arrivesSecondCamel": {
+      "1": {
+        "fez": "Dhá chamall. Anois féachann an bheirt acu anuas orm."
+      },
+      "2": {
+        "explorer": "Téigh agus seas leis na hasail, mar sin."
+      },
+      "3": {
+        "fez": "Tá mé ann cheana."
+      }
+    },
+    "boughtSturdyCart": {
+      "1": {
+        "fez": "Cairt níos láidre. Ní chanann an ceann seo ar an mbóthar."
+      },
+      "2": {
+        "explorer": "Tá bláthanna péinteáilte uirthi."
+      },
+      "3": {
+        "fez": "Don neart."
+      }
+    },
+    "blockedSturdyCart": {
+      "1": {
+        "fez": "Ní shroichfidh an seanchairt an áit sin in aon phíosa amháin. Teastaíonn rud níos láidre."
+      },
+      "2": {
+        "fez": "Tá ceann ag mo stainnín i gCuas na nDéithe. Ní mar gheall ar an bpéint, bíodh a fhios agat."
+      }
+    },
+    "throughSturdyCart": {
+      "1": {
+        "explorer": "Gan gliogar."
+      },
+      "2": {
+        "fez": "An bhfeiceann tú? Neart."
+      },
+      "3": {
+        "explorer": "Agus na bláthanna?"
+      },
+      "4": {
+        "fez": "Cabhraíonn siad beagán freisin."
+      }
+    },
+    "arrivesSturdyCart": {
+      "1": {
+        "fez": "Féach uirthi ag lonrú!"
+      },
+      "2": {
+        "explorer": "Níos deise ná mar is gá."
+      },
+      "3": {
+        "fez": "Sea. Níor dhíol mé í mar gheall ar an neart ach oiread."
+      }
+    },
+    "boughtCaravanBanner": {
+      "1": {
+        "fez": "Meirge. Beidh mé macánta: ní osclaíonn sé faic."
+      },
+      "2": {
+        "explorer": "Cad a dhéanann sé, mar sin?"
+      },
+      "3": {
+        "fez": "Croitheann sé sa ghaoth. Go hálainn."
+      }
+    },
+    "arrivesCaravanBanner": {
+      "1": {
+        "fez": "Féach air ag croitheadh! Os cionn ár gcampa féin!"
+      },
+      "2": {
+        "explorer": "Ní osclaíonn sé faic fós."
+      },
+      "3": {
+        "fez": "Ní osclaíonn. Ní gá dó."
+      }
+    }
+  },
+  "bond": {
+    "starter": {
+      "1": {
+        "fez": "Bhí sé sin tapa."
+      },
+      "2": {
+        "explorer": "Doras a bhí ann."
+      },
+      "3": {
+        "fez": "Bheadh seachtain tógtha agamsa."
+      }
+    },
+    "starterTomb": {
+      "1": {
+        "fez": "Ionas go mbeidh sé soiléir. Is don athdhíol atá mise ann. Táim á rá anois, fad atá sé fíor fós."
+      },
+      "2": {
+        "explorer": "Tuigim."
+      }
+    },
+    "junior": {
+      "1": {
+        "fez": "D’éirigh tú ciúin ar feadh tamaill ansin."
+      },
+      "2": {
+        "explorer": "Bhí mé ag comhaireamh."
+      },
+      "3": {
+        "fez": "Tá a fhios agam. Chonaic mé daoine ag tomhas. Ní tomhas a bhí ansin."
+      }
+    },
+    "expert": {
+      "1": {
+        "fez": "Bhí sé sin gar."
+      },
+      "2": {
+        "explorer": "Bhí sé ceart go leor."
+      },
+      "3": {
+        "fez": "Bhí sé gar. Tá cead agam é sin a rá."
+      }
+    },
+    "master": {
+      "1": {
+        "fez": "D’fhéadfaimis stopadh."
+      },
+      "2": {
+        "explorer": "D’fhéadfaimis."
+      },
+      "3": {
+        "fez": "Táim á rá ionas go mbeidh sé ráite. Ní ionas go ndéanfaimid é."
+      }
+    },
+    "wizard": {
+      "1": {
+        "explorer": "Cé mhéad is fiú an ceann seo?"
+      },
+      "2": {
+        "fez": "…"
+      },
+      "3": {
+        "fez": "Níl mé chun praghas a chur air sin."
+      },
+      "4": {
+        "explorer": "Tuigim."
+      }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": {
+        "fez": "Úps. Balla a bhí ansin soicind ó shin."
+      },
+      "2": {
+        "explorer": "Bhí pasáiste taobh thiar de."
+      },
+      "3": {
+        "fez": "Na blianta sin go léir, shiúil daoine díreach thairis. Na blianta sin go léir!"
+      }
+    }
+  },
+  "reading": {
+    "junior": {
+      "1": {
+        "explorer": "Tá líne anseo atá mé in ann a léamh anois."
+      },
+      "2": {
+        "explorer": "Thug mé arán don té a raibh ocras air."
+      },
+      "3": {
+        "fez": "Arán. I dtuama."
+      },
+      "4": {
+        "explorer": "Tá sé sa cheann deireanach freisin. Ní raibh a fhios agam gur focail a bhí ann."
+      }
+    },
+    "expert": {
+      "1": {
+        "explorer": "An dara líne. Uisce don té a raibh tart air."
+      },
+      "2": {
+        "fez": "Arán, agus anois uisce. Bhí duine éigin an-tógtha le cuimhneamh air mar dhuine flaithiúil."
+      },
+      "3": {
+        "explorer": "Tá sé ag gach duine. Gach balla, gach tuama, an dá líne chéanna."
+      },
+      "4": {
+        "fez": "Mar sin bhí siad go léir flaithiúil, nó is é an rud atá tú ceaptha a rá."
+      },
+      "5": {
+        "explorer": "Nó is é an rud ar a ndearnadh iad a mheá."
+      }
+    },
+    "master": {
+      "1": {
+        "explorer": "Éadaí don té a bhí nocht. An tríú líne."
+      },
+      "2": {
+        "fez": "Arán, uisce, éadaí. Liosta de rudaí a tugadh uathu atá ann."
+      },
+      "3": {
+        "explorer": "I dtuama fir a thóg gach rud leis."
+      },
+      "4": {
+        "fez": "…Sea. Thug mé é sin faoi deara freisin."
+      }
+    },
+    "sphinx": {
+      "1": {
+        "fez": "Ar ais san áit ar thosaigh muid. Níor bhog sé."
+      },
+      "2": {
+        "explorer": "Tá an scríbhneoireacht fós ann."
+      },
+      "3": {
+        "fez": "An féidir leat í a léamh?"
+      },
+      "4": {
+        "explorer": "Ainm."
+      },
+      "5": {
+        "fez": "Cé leis?"
+      },
+      "6": {
+        "explorer": "Leatsa."
+      },
+      "7": {
+        "fez": "…"
+      },
+      "8": {
+        "fez": "An bhfuil tú cinnte?"
+      },
+      "9": {
+        "explorer": "Tá sé scríofa síos."
+      },
+      "10": {
+        "fez": "Huh."
+      },
+      "11": {
+        "fez": "Hori."
+      },
+      "12": {
+        "fez": "Bhí Hori i ngach sráidbhaile san Éigipt."
+      },
+      "13": {
+        "fez": "Bhuel. Míníonn sé sin an fez."
+      }
+    }
+  },
+  "altar": {
+    "refused": {
+      "1": {
+        "priest": "Ní hea."
+      },
+      "2": {
+        "explorer": "Tá a mharc air."
+      },
+      "3": {
+        "priest": "Tá marc air. Is marc an-mhaith é. Ghearr duine éigin é le huirlisí den scoth agus gan gnó ar bith aige anseo, agus ní fada ó shin."
+      },
+      "4": {
+        "priest": "Táim ag fanacht le trí mhíle bliain. Ní ligfidh mé d’aon duine bob a bhualadh orm sa tseachtain dheireanach de."
+      }
+    }
+  },
+  "meeting": {
+    "starter_1": {
+      "1": {
+        "voice": "Hé! Ní ANSIN! Féach cá bhfuil tú ag dul!"
+      },
+      "2": {
+        "explorer": "Brón orm! Ní fheicim faic! Cá bhfuil tú?"
+      },
+      "3": {
+        "fez": "Thíos anseo! Tá tú i do sheasamh i lár mo chuid earraí!"
+      },
+      "4": {
+        "explorer": "Laghairt?! Le fez?"
+      },
+      "5": {
+        "fez": "Ceannaí. Agus cad atá cearr le mo fez?"
+      },
+      "6": {
+        "fez": "Tá tusa anseo don phirimid freisin, geallaim. Ceannaigh tú léarscáil? D’íoc tú i bhfad an iomarca?"
+      },
+      "7": {
+        "explorer": "I bhfad, I BHFAD an iomarca."
+      },
+      "8": {
+        "fez": "Mise freisin. Pff."
+      },
+      "9": {
+        "explorer": "An scríbhneoireacht ar an Sfioncs… an féidir leatsa í a léamh?"
+      },
+      "10": {
+        "fez": "Ní féidir. Ní féidir le duine ar bith, a thuilleadh. Bhí an bun sin gorm agus órga tráth, tá a fhios agat."
+      },
+      "11": {
+        "explorer": "Conas atá a fhios agatsa é sin?"
+      },
+      "12": {
+        "fez": "…Chuala mé é. Bhuel, cad atá á lorg agatsa anseo?"
+      },
+      "13": {
+        "explorer": "Rud éigin deas."
+      },
+      "14": {
+        "fez": "Díolann rudaí deasa go maith! An bhfuil a fhios agat cad é? Táim ag teacht leat!"
+      },
+      "15": {
+        "explorer": "Cad é? Liomsa?"
+      },
+      "16": {
+        "fez": "Feiceann beirt níos mó ná duine amháin. Seo leat, tá an phirimid sin ag fanacht!"
+      }
+    }
+  },
+  "end": {
+    "1": {
+      "fez": "An raibh sé deas?"
+    },
+    "2": {
+      "explorer": "Déanfaidh sé cúis."
+    }
+  },
+  "revisit": {
+    "starter": {
+      "north1": {
+        "1": {
+          "ipi": "Fós anseo? Ó thuaidh! Henut! Aon deben déag!"
+        }
+      },
+      "north2": {
+        "1": {
+          "ipi": "Aon deben déag de lapis. Henut. Ó thuaidh. Cad leis a bhfuil tú ag fanacht?"
+        }
+      },
+      "paid1": {
+        "1": {
+          "ipi": "Bhuel? Ar íoc sí? …Níor íoc. Ar ndóigh níor íoc."
+        }
+      },
+      "paid2": {
+        "1": {
+          "ipi": "Gloine? GLOINE? Lapis atá scríofa. Anseo díreach. Lapis!"
+        }
+      },
+      "later1": {
+        "1": {
+          "ipi": "Tusa arís. An tríú seilf, an ceann leis an mbearna — fós liomsa. Lámha díot."
+        }
+      },
+      "later2": {
+        "1": {
+          "ipi": "Daichead bliain de leabhair chuntais, agus níl ceann ar bith acu cothrom. Ceann ar bith!"
+        }
+      }
+    },
+    "junior": {
+      "wall1": {
+        "1": {
+          "henut": "An balla. An tríú comhartha. Ní hé m’ainm fós é."
+        }
+      },
+      "wall2": {
+        "1": {
+          "henut": "Tá tú fós anseo, agus tá an ghé sin fós ar mo bhalla. Ceartaigh é."
+        }
+      },
+      "priest1": {
+        "1": {
+          "henut": "M’ainm fós. Sheiceáil mé. Anois — Karnak, an sagart. Ar aghaidh leat."
+        }
+      },
+      "priest2": {
+        "1": {
+          "henut": "Karnak! Tá sé ag fanacht fada go leor. Téigh agus bí fógartha."
+        }
+      },
+      "met1": {
+        "1": {
+          "henut": "Bhuel? Dochrach, nach raibh? Dúirt mé é."
+        }
+      },
+      "later1": {
+        "1": {
+          "henut": "Gloine, fós. Álainn, fós. Roghnaithe agamsa, fós."
+        }
+      }
+    },
+    "expert": {
+      "seal1": {
+        "1": {
+          "priest": "An séala. Tugtha anseo, leagtha síos, paidir ráite os a chionn. Fanfaidh mé."
+        }
+      },
+      "seal2": {
+        "1": {
+          "priest": "Á. Tusa arís. Agus fós gan séala."
+        }
+      },
+      "king1": {
+        "1": {
+          "priest": "Chonaic tú an rí. Go maith. An rud féin, cuimhnigh — ní macasamhail."
+        }
+      },
+      "later1": {
+        "1": {
+          "priest": "Tusa arís. Níl faic fágtha le déanamh anseo. Tá sé an-suaimhneach."
+        }
+      }
+    },
+    "master": {
+      "priest1": {
+        "1": {
+          "pharaoh": "Fós anseo? Chuig an sagart leis an gcóip sin! Ba mhaith liom a chloisteáil conas a éireoidh leis."
+        }
+      },
+      "priest2": {
+        "1": {
+          "pharaoh": "Is féidir leat teacht i mo láthair. Arís. An bhfaca an sagart í fós?"
+        }
+      },
+      "rite1": {
+        "1": {
+          "pharaoh": "Mar sin rinne sé a dheasghnáth faoi dheireadh. Go maith. Anois beidh sé dofhulaingthe faoi."
+        }
+      },
+      "later1": {
+        "1": {
+          "pharaoh": "Fós an tseachtain is fearr le naoi gcéad bliain. Agus leanann sí ar aghaidh!"
+        }
+      }
+    },
+    "wizard": {
+      "later1": {
+        "1": {
+          "priest": "…Sea. Is cuimhin liom fós conas. Go maith."
+        }
+      },
+      "later2": {
+        "1": {
+          "priest": "Leagtha síos, paidir ráite. Déanta. Is aisteach an mothúchán é."
+        }
+      }
+    }
+  }
+}

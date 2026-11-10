@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Alba a l'Esfinx",
+    "description": "La Gran Esfinx, i a les seves potes una escriptura que ningú viu sap llegir. El mapa diu que comencis aquí."
+  },
+  "starter_2": {
+    "name": "La ruta del mercader de papir",
+    "description": "Un camí de comerç al costat del Nil, ple de magatzems de mercaders. N'hi ha uns quants que ningú va buidar mai."
+  },
+  "starter_3": {
+    "name": "Temple de Bastet",
+    "description": "El temple de Bastet. Aquí els gats eren sagrats, i la festa de cada any era la més gran d'Egipte: barques, música, de tot."
+  },
+  "starter_4": {
+    "name": "L'escola dels escribes",
+    "description": "L'escola on Egipte va aprendre a escriure. Les aules encara són sota la sorra."
+  },
+  "starter_treasure_tomb": {
+    "name": "L'amagatall del mercader oblidat",
+    "description": "El celler d'un mercader, no d'un rei: gerres apilades, tancades i amb etiqueta, i ningú allà baix per discutir-ne.",
+    "mapHint": "El tros de paper dibuixa un camí de mercat i la porta d'un celler. L'amagatall d'un comerciant, res més."
+  },
+  "junior_1": {
+    "name": "El viatge dels ibis sagrats",
+    "description": "Terra d'aiguamolls, amb ibis caminant per l'aigua. A Egipte miraven aquests ocells: quan tornen, arriba la crescuda del riu."
+  },
+  "junior_2": {
+    "name": "La vall dels artesans",
+    "description": "Deir el-Medina, on vivien els que feien les tombes. Tot el que anava a la tomba d'un rei es feia aquí primer, amb motlles."
+  },
+  "junior_3": {
+    "name": "Temple de Thoth",
+    "description": "El temple de Thoth. Ell va inventar l'escriptura, portava els registres i feia els comptes. Vaja, el mateix que fem nosaltres!"
+  },
+  "junior_4": {
+    "name": "El far d'Alexandria",
+    "description": "El far d'Alexandria. Un foc a dalt de tot, cremant tota la nit, perquè els mariners trobessin la costa des de molt lluny."
+  },
+  "junior_treasure_tomb": {
+    "name": "La cambra amagada de la noble",
+    "description": "La cambra d'una dama noble, pintada de dalt a baix. Va comprar les millors còpies que es podien pagar, i mai ho va dir a ningú.",
+    "mapHint": "Tinta fina i un segell amb escut al racó. Algú important volia que oblidessin aquesta cambra."
+  },
+  "expert_1": {
+    "name": "La Vall dels Reis",
+    "description": "La Vall dels Reis. Van deixar de fer piràmides i van amagar les tombes dels reis en una vall, sota un cim amb forma de piràmide."
+  },
+  "expert_2": {
+    "name": "Els temples de Karnak",
+    "description": "Karnak, on van anar afegint coses durant dos mil anys. Només la gran sala té cent trenta-quatre columnes, totes tallades."
+  },
+  "expert_3": {
+    "name": "Expedició al delta del Nil",
+    "description": "On el Nil es divideix i s'escampa tot verd. Terra de Sobek: papir, peixos i cocodrils que la gent adorava i alimentava."
+  },
+  "expert_4": {
+    "name": "La piràmide de Djoser",
+    "description": "La piràmide esglaonada de Djoser, la primera cosa tan gran feta de pedra. El seu arquitecte, Imhotep, va acabar recordat com un déu."
+  },
+  "expert_treasure_tomb": {
+    "name": "El tresor del gran sacerdot",
+    "description": "El tresor d'un gran sacerdot, sota el terra de les ofrenes. Tot el que hi ha allà baix es va regalar a un déu i ningú ho va treure mai més.",
+    "mapHint": "Les línies dibuixen el recinte d'un temple, i una escala que baixa sota el terra de les ofrenes."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "El santuari interior",
+    "description": "La cambra tancada al cor del temple. El gran sacerdot hi entrava un cop al dia per rentar el déu i vestir-lo.",
+    "mapHint": "Els passadissos passen pels magatzems del temple fins a una porta segellada. Només els sacerdots més importants la travessaven."
+  },
+  "master_1": {
+    "name": "La Gran Piràmide de Gizeh",
+    "description": "La Gran Piràmide. Vint anys de pedra, i tot un poble al costat donant pa i cervesa als treballadors."
+  },
+  "master_2": {
+    "name": "El Llibre dels Morts",
+    "description": "No és un sol llibre, sinó un recull d'encanteris copiats per encàrrec. Els més barats deixaven un espai en blanc per posar-hi el teu nom."
+  },
+  "master_3": {
+    "name": "La maledicció dels faraons",
+    "description": "La famosa maledicció la van inventar els diaris el 1923. Els egipcis protegien les tombes amb portes i paperassa."
+  },
+  "master_4": {
+    "name": "La tomba de Nefertari",
+    "description": "La tomba de Nefertari, la sala més ben pintada d'Egipte. Els colors es feien picant pedres: atzurita, malaquita, ocre."
+  },
+  "master_treasure_tomb": {
+    "name": "El tresor secret del faraó",
+    "description": "El tresor privat d'un rei, allà on els mapes ja no arriben. Tot el que van enterrar amb ell encara és allà baix.",
+    "mapHint": "Un cartutx reial marca una vora, i el camí acaba molt lluny, sota la sorra oberta."
+  },
+  "master_treasure_tomb_b": {
+    "name": "La sala d'Osiris",
+    "description": "La sala d'Osiris, déu de la crescuda i del gra. Tot el que aquí va sota terra, s'espera que torni.",
+    "mapHint": "Sota les cambres reials el mapa continua baixant, fins a una sala marcada amb els rituals dels morts."
+  },
+  "wizard_1": {
+    "name": "El viatge solar de Ra",
+    "description": "Ra baixa sota el món quan es pon el sol i ha de travessar dotze hores de foscor. Egipte va escriure què passa a cadascuna."
+  },
+  "wizard_2": {
+    "name": "Els colossos de Memnó",
+    "description": "Dos gegants asseguts d'Amenhotep III. Els grecs van decidir que eren algú altre, i aquell nom es va quedar dos mil anys."
+  },
+  "wizard_3": {
+    "name": "La cambra de Ma'at",
+    "description": "La cambra de Ma'at. Ella és l'ordre de les coses, i la seva única ploma d'estruç és la mesura de tota la resta."
+  },
+  "wizard_4": {
+    "name": "La piràmide eterna",
+    "description": "El revestiment era de pedra calcària polida, blanca com la sal, tan ben treballada que la veies brillar a un dia de camí."
+  },
+  "wizard_treasure_tomb": {
+    "name": "La cambra dels déus",
+    "description": "On el temple guardava el que era dels déus. Aquí no entrava ningú sense portar la cosa correcta a les mans.",
+    "mapHint": "Cap senyal d'aquest tros de paper és del món dels humans. El que sigui que dibuixa, ho van posar els déus."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "El regne de les forces del cosmos",
+    "description": "Mapes d'estrelles per tot el sostre, pintats perquè els morts sabessin l'hora de nit. La corda d'algú encara penja al pou.",
+    "mapHint": "Més enllà de la cambra dels déus, les línies es parteixen en camins d'estrelles, on es guarden les forces de la vida i del caos."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "El tron de l'eternitat",
+    "description": "Un seient al mig i quaranta-dos jutges al voltant. Cadascun et fa una pregunta, i tu has de respondre que no.",
+    "mapHint": "Tots els camins d'estrelles d'aquest tros arriben a un sol seient, al cor mateix del regne dels déus."
+  }
+}

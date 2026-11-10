@@ -225,10 +225,10 @@ const fitToDoorway = async (img: sharp.Sharp, w: number, h: number, smooth: bool
   const [top, bottom] = span(info.height, info.width, (y, x) => opaque(x, y))
   if (right < 0 || bottom < 0) throw new Error("nothing to import: the whole frame keyed out")
 
-  // The opening, measured on a row below the beam where only the two posts are left — scanning OUTWARD
-  // from the middle, because a beam overhangs its posts and a scan inward from the edge finds the gap
+  // The opening, measured on a row below the beam and above any rubble at the posts' feet, where only the two
+  // posts are left — scanning OUTWARD from the middle, because a beam overhangs its posts and a scan inward from the edge finds the gap
   // under that overhang instead of the doorway.
-  const probe = Math.round(bottom - (bottom - top) * 0.15)
+  const probe = Math.round(bottom - (bottom - top) * 0.35)
   const middle = Math.round((left + right) / 2)
   let openFrom = middle
   while (openFrom > left && !opaque(openFrom - 1, probe)) openFrom--

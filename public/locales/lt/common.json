@@ -1,0 +1,1970 @@
+{
+  "language": "Lietuvių",
+  "saveUnreadable": {
+    "title": "Nepavyksta įkelti tavo žaidimo",
+    "body": "Naršyklė dabar neatiduoda išsaugoto žaidimo. Bet jis nedingo: perkrauk puslapį ir pabandyk dar kartą.",
+    "banner": "Žaidimas nėra saugomas. Bakstelk, kad perkrautum.",
+    "reload": "Perkrauti",
+    "continue": "Žaisti toliau be išsaugojimo",
+    "reset": "Pradėti iš naujo (ištrinti išsaugojimą)",
+    "confirmReset": "Tai ištrins visą tavo žaidimą, ir to nebus galima atšaukti. Pradėti iš naujo?",
+    "confirmResetYes": "Taip, ištrinti",
+    "confirmResetNo": "Ne, grįžti"
+  },
+  "difficulty": {
+    "starter": "Pradedantysis",
+    "junior": "Jaunesnysis",
+    "expert": "Ekspertas",
+    "master": "Meistras",
+    "wizard": "Burtininkas"
+  },
+  "journeyLength": {
+    "short": "Trumpa",
+    "medium": "Vidutinė",
+    "long": "Ilga"
+  },
+  "time": {
+    "morning": "Rytas",
+    "afternoon": "Popietė",
+    "evening": "Vakaras",
+    "night": "Naktis"
+  },
+  "tomb": {},
+  "ui": {
+    "level": "Lygis",
+    "symbols": "ženklai",
+    "journey": "Kelionė",
+    "tableau": "Paveikslas",
+    "difficulty": "Sunkumas",
+    "length": "Ilgis",
+    "time": "Laikas",
+    "requiredPrestige": "Reikalingas šlovės lygis",
+    "rewards": "Prizai",
+    "coins": "Monetos",
+    "pieces": "Gabalėliai",
+    "description": "Aprašymas",
+    "expedition": "Ekspedicija",
+    "expeditionCompleted": "Ekspedicija baigta!",
+    "goBackToBase": "Atgal į stovyklą",
+    "backArrow": "←",
+    "back": "← Atgal",
+    "floor": "{{number}} aukštas",
+    "enterSite": "Įeiti vidun",
+    "prompt": {
+      "here": "Apžiūrėti",
+      "stairs": "Lipti laiptais",
+      "exit": "Išeiti iš čia",
+      "zipline": "Nusileisti lynu — atgal kelio nėra",
+      "oneWay": "Pereiti — atgal kelio nėra",
+      "liftStone": "Pakelti akmenį",
+      "setStone": "Padėti akmenį ant plokštės",
+      "postStone": "Įmesti akmenį",
+      "takeStone": "Paimti akmenį",
+      "squeeze": "Prasispausti",
+      "replay": "Žaisti dar kartą"
+    },
+    "blocked": {
+      "carrying": "Su akmeniu nepraeisi"
+    },
+    "backToMap": "Atgal į žemėlapį",
+    "continueExploration": "Tyrinėk piramides toliau.",
+    "startExpedition": "Pradėti ekspediciją",
+    "webBuriedPercent": "Dar {{percent}} % po smėliu",
+    "interruptExpedition": "Nutraukti ekspediciją",
+    "confirmInterruptExpedition": "Ar tikrai nori nutraukti šią ekspediciją? Ekspedicijos pažanga išliks, bet šio lygio pažanga dings!",
+    "cancel": "Atšaukti",
+    "settings": "Nustatymai",
+    "language": "Kalba",
+    "close": "Uždaryti",
+    "done": "Baigta",
+    "clearGameData": "Ištrinti žaidimo duomenis",
+    "confirmClearGameData": "Tai visam laikui ištrins visą pažangą, daiktus ir ištyrinėtas piramides. To nebus galima atšaukti.",
+    "disableTutorials": "Išjungti patarimus",
+    "treasureTomb": "Lobio vieta",
+    "requiresMapPieces": "Reikia žemėlapio gabalėlių",
+    "mapPieces": "Žemėlapio gabalėliai",
+    "completeExpeditionsToUnlock": "Baik ekspedicijas, kad atrakintum",
+    "availableSymbols": "Turimi ženklai:",
+    "fragmentsNeeded": "Reikia {{found}}/{{required}}",
+    "howToPlay": "Kaip žaisti",
+    "puzzleComplete": "Atsakymas:",
+    "puzzleCompleted": "Galvosūkis išspręstas",
+    "trapBlocked": "Per mažai sveikatos, kad bandytum įveikti šiuos spąstus",
+    "spiritsRejectCode": "Dvasios atmeta šį kodą",
+    "sacredSealBroken": "Šventas antspaudas sulaužytas",
+    "newExpeditionUnlocked": "Atrakinta nauja ekspedicija",
+    "newTombUnlocked": "Atrakintas naujas kapas",
+    "tierComingSoonTitle": "Lygio „{{tier}}“ ekspedicijos jau pakeliui",
+    "tierComingSoon": "Raktas pas tave, bet lygio „{{tier}}“ piramidės dar statomos. Jos atsiras vėlesniame atnaujinime — o kol kas tavo raktas atrakina daugiau jau pažįstamų piramidžių.",
+    "answerNow": "Atsakymas: ",
+    "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "resetPuzzle": "Iš naujo",
+    "hint": "Užuomina",
+    "undo": "Atšaukti",
+    "erase": "Ištrinti",
+    "notes": "Pastabos",
+    "solvedUnaided": "Išspręsta be jokios užuominos",
+    "solvedWithHints_one": "Išspręsta su {{count}} užuomina",
+    "solvedWithHints_few": "Išspręsta su {{count}} užuominomis",
+    "solvedWithHints_many": "Išspręsta su {{count}} užuominos",
+    "solvedWithHints_other": "Išspręsta su {{count}} užuominų",
+    "tapToContinue": "Bakstelk, kad tęstum",
+    "goal": "Tikslas"
+  },
+  "trap": {
+    "warning": "⚠ Koridorius su spąstais",
+    "canAttempt": "Gali pabandyti praeiti.",
+    "tooWeak": "Pavojingai silpnas — jei nepavyks, nieko nebeliks.",
+    "attempt": "Bandyti įveikti spąstus",
+    "turnAround": "Apsisukti",
+    "rested": "Pailsėjai prie laužo — vėl sveikas"
+  },
+  "gate": {
+    "title": "🔒 Užrakinti vartai",
+    "locked": "Dar neturi tinkamo rakto.",
+    "markedWith": "Į duris įkaltas ženklas:",
+    "unlocked": "Raktas pas tave.",
+    "pass": "Praeiti",
+    "turnAround": "Apsisukti",
+    "wardDescription": {
+      "starter": "Pirklio antspaudas užtveria šį praėjimą — jį atvers tik pirklio sargybos raktas.",
+      "junior": "Didiko herbas užrakina šį kelią — jį atrakina tik jo sargybos raktas.",
+      "expert": "Vyriausiojo žynio šventyklos apsauga saugo šias duris — jas atvers tik šventas raktas.",
+      "master": "Karališkas faraono antspaudas užveria šį praėjimą — jį įveiks tik valdovo raktas.",
+      "wizard": "Šiuos vartus saugo dievų apsauga — praeisi tik su dievišku raktu."
+    },
+    "needsKey": "Durys pažymėtos vienam raktui:",
+    "lockedColor": "Šiame aukšte to rakto dar neradai."
+  },
+  "chest": {
+    "tapToOpen": "Bakstelk, kad atidarytum",
+    "money_one": "{{count}} moneta",
+    "money_few": "{{count}} monetos",
+    "money_many": "{{count}} monetos",
+    "money_other": "{{count}} monetų",
+    "mapPiece": "Žemėlapio gabalėlis",
+    "mapPieceDescription": "Trapi žemėlapio skiautė, vedanti į kažkokią seniai pamirštą vietą. Gaila, kad iki viso žemėlapio dar toli...",
+    "mapPieceProgress": "Surinkta {{found}} iš {{required}} žemėlapio gabalėlių",
+    "mapPieceComplete": "Žemėlapis sveikas — jis veda į vietą: {{name}}.",
+    "hieroglyphFragment": "Hieroglifo gabalėlis",
+    "fragmentProgress": "Rasta {{found}} iš {{required}} gabalėlių",
+    "tombKey": "Kapo raktas",
+    "sandLever": "Smėlio svirtis",
+    "sandLeverDescription": "Patrauki ją, ir ji lieka nuleista. Kažkur toli nubėga smėlis.",
+    "webKey": "Užantspauduotas raktas",
+    "webKeyDescription": "Ant jo galvutės yra ženklas, kurį jau matei ant užantspauduotų durų kitur.",
+    "hieroglyphs": "Senoviniai hieroglifai",
+    "hieroglyphsDescription": "Šventi ženklai, iškalti šio kambario sienose. Jie papildo tavo žinias apie senovės pasaulį.",
+    "mosaicPiece": "Mozaikos gabalėlis",
+    "mosaicPieceDescription": "Žibanti stiklo plytelė, vienas didelės mozaikos gabalėlis. Padėk ją šalia kitų, ir paslėptas paveikslas pamažu išryškės.",
+    "waterskin": "Vandens maišas",
+    "waterskinDescription": "Vėsus vanduo. Išgeri jį iškart ir jauti, kaip žaizdos lengvėja."
+  },
+  "loot": {
+    "youFound": "Radai",
+    "expeditionReward": "Papildomas prizas už baigtą ekspediciją",
+    "clickToContinue": "Bakstelk bet kur, kad tęstum"
+  },
+  "money": {
+    "label": "Monetos"
+  },
+  "shop": {
+    "title": "Fezo prekystalis",
+    "invitation": "Apžiūrėti prekystalį",
+    "buy": "Pirkti",
+    "sell": "Parduoti",
+    "soldOut": "Išparduota",
+    "dismiss": "Išeiti",
+    "rareItems": "Reti radiniai",
+    "sellSection": "Niekučiai pardavimui",
+    "haul": {
+      "coins_one": "+{{count}} moneta",
+      "coins_few": "+{{count}} monetos",
+      "coins_many": "+{{count}} monetos",
+      "coins_other": "+{{count}} monetų",
+      "note": "Pakeliui rastos monetos"
+    }
+  },
+  "purchases": {
+    "donkey": {
+      "name": "Asilas",
+      "need": "Tau reikia asilo",
+      "opens": "Neša tavo daiktus. Su juo gali leistis į lygio „Ekspertas“ keliones."
+    },
+    "cart": {
+      "name": "Vežimas",
+      "need": "Tau reikia vežimo",
+      "opens": "Ant jo telpa visa stovykla. Su juo gali leistis į lygio „Meistras“ keliones."
+    },
+    "camel": {
+      "name": "Kupranugaris",
+      "need": "Tau reikia kupranugario",
+      "opens": "Eina kelias dienas be vandens. Jis nuneš tave į Vidinę šventovę."
+    },
+    "secondDonkey": {
+      "name": "Antras asilas",
+      "need": "Tau reikia antro asilo",
+      "opens": "Dar daugiau vietos daiktams. Su juo gali leistis į lygio „Burtininkas“ keliones."
+    },
+    "secondCamel": {
+      "name": "Antras kupranugaris",
+      "need": "Tau reikia antro kupranugario",
+      "opens": "Du kupranugariai neša pakankamai vandens kelionei į Ozyrio salę."
+    },
+    "sturdyCart": {
+      "name": "Tvirtesnis vežimas",
+      "need": "Tau reikia tvirtesnio vežimo",
+      "opens": "Nesulūš, net pakeliui į Kosminių jėgų karalystę."
+    },
+    "caravanBanner": {
+      "name": "Karavano vėliava",
+      "opens": "Nieko neatrakina. Tiesiog smagumui."
+    },
+    "hint": "Fez jį parduoda čia: {{place}}",
+    "devGrant": "Nupirkti visus gyvūnus"
+  },
+  "level": {
+    "completed": "Lygis įveiktas!"
+  },
+  "mosaic": {
+    "place_one": "Įstatyti {{count}} gabalėlį",
+    "place_few": "Įstatyti {{count}} gabalėlius",
+    "place_many": "Įstatyti {{count}} gabalėlio",
+    "place_other": "Įstatyti {{count}} gabalėlių",
+    "placing": "Įstatoma…",
+    "panel": {
+      "starter": "Sargė prie durų",
+      "junior": "Pirmoji pamoka",
+      "expert": "Įsileisti saulę",
+      "master": "Žaliasis karalius",
+      "wizard": "Plunksna ir širdis"
+    },
+    "entrance": {
+      "title": "Mozaika",
+      "label": "Mozaika {{found}}/{{total}}"
+    },
+    "haul": {
+      "pieces_one": "{{count}} mozaikos gabalėlis",
+      "pieces_few": "{{count}} mozaikos gabalėliai",
+      "pieces_many": "{{count}} mozaikos gabalėlio",
+      "pieces_other": "{{count}} mozaikos gabalėlių",
+      "note": "Spalvoto stiklo langui"
+    }
+  },
+  "collection": {
+    "tabs": {
+      "treasures": "Lobiai",
+      "hieroglyphs": "Hieroglifai",
+      "stories": "Istorijos",
+      "junk": "Niekučiai"
+    },
+    "tabsLabel": "Ką surinkai",
+    "tabNew_one": "{{label}} · {{count}} naujas",
+    "tabNew_few": "{{label}} · {{count}} nauji",
+    "tabNew_many": "{{label}} · {{count}} naujo",
+    "tabNew_other": "{{label}} · {{count}} naujų",
+    "empty": "Tavo skrynia dar tuščia",
+    "newLabel": "NAUJA",
+    "clickForDetails": "Bakstelk į plytelę, kad sužinotum daugiau",
+    "categories": {
+      "deities": "🏺 Dievai",
+      "professions": "⚱️ Profesijos",
+      "animals": "🐾 Gyvūnai",
+      "artifacts": "💎 Daiktai",
+      "treasures": "💰 Lobiai",
+      "junk": "🔷 Niekučiai",
+      "signs": "✍️ Ženklai"
+    },
+    "treasureCategories": {
+      "merchantCache": "💰 Pirklio slėptuvė",
+      "nobleVault": "👑 Didikų lobynas",
+      "templeSecrets": "🏛️ Šventyklos paslaptys",
+      "ancientRelics": "🏺 Senovės relikvijos",
+      "mythicalArtifacts": "✨ Mitiniai daiktai"
+    }
+  },
+  "detector": {
+    "compassTitle": "Kompasas",
+    "corridorTitle": "Koridorių ieškiklis",
+    "pickTarget": "Išsirink hieroglifą prie žemėlapių stalo stovykloje",
+    "allCollected": "Piramidėse, kurias jau tyrinėjai, kol kas nėra pasiekiamų gabalėlių",
+    "more": "dar +{{count}}",
+    "corridorHere": "Čia pat yra slaptas praėjimas",
+    "revealCorridor": "Atidaryti",
+    "corridorNearby": "Netoliese yra slaptas koridorius",
+    "corridorOnFloor": "Šiame aukšte laukia slaptas koridorius",
+    "lookingFor": "Ieškoma: {{symbol}}",
+    "access": {
+      "open": "Niekas žinomas jo neužtveria",
+      "unknown": "Gal dar nepasiekiamas — jis kape arba parduodamas"
+    },
+    "corridorNoneNearby": "Netoliese slapto koridoriaus nėra",
+    "corridorNoneOnFloor": "Šiame aukšte slapto koridoriaus nėra",
+    "corridorOtherFloor": "Kitame aukšte laukia slaptas koridorius",
+    "corridorNoneInPyramid": "Kituose aukštuose slapto koridoriaus nėra",
+    "title": "Detektorius",
+    "band": {
+      "none": "Nieko nerasta",
+      "pyramid": "Kažkas yra šioje piramidėje",
+      "floor": "Kažkas yra šiame aukšte",
+      "near": "Kažkas visai netoli",
+      "here": "Čia pat! Atidaryk detektorių"
+    },
+    "camp": {
+      "parts": "{{count}} iš {{total}} dalių",
+      "compassReach": {
+        "1": "mato piramidę",
+        "2": "mato aukštą",
+        "3": "parodo vietą"
+      },
+      "pickHeading": "Ko ieško kompasas?",
+      "onlyIncomplete": "Tik ženklų, kurių gabalėlį turi, kol jie nebus surinkti.",
+      "whereHeading": "Kur guli {{symbol}} gabalėliai",
+      "pickFirst": "Išsirink ženklą, kad pamatytum, kur guli jo gabalėliai.",
+      "follow": "Sekti šį ženklą",
+      "following": "Kompasas seka šį ženklą",
+      "nothingToFind": "Dar neturi nė vieno nesurinkto ženklo gabalėlio.",
+      "noneInReach": "Piramidėse, kurias jau tyrinėjai, kol kas nėra pasiekiamų gabalėlių.",
+      "corridorReach": {
+        "1": "girdi koridorių netoliese",
+        "2": "girdi visą šį aukštą",
+        "3": "girdi ir kitus aukštus",
+        "4": "girdi kitas keliones"
+      },
+      "corridorInPyramid": "Piramidės viduje jis klausosi uždarų koridorių.",
+      "corridorFarNext": "Su visomis keturiomis dalimis jis iš stovyklos girdi kitas keliones.",
+      "corridorWhere": "Kur koridorius dar uždarytas",
+      "corridorNone": "Kelionėse, kuriose buvai, uždarų koridorių nėra.",
+      "pyramid": "{{n}} piramidė",
+      "corridorCount_one": "{{count}} koridorius",
+      "corridorCount_few": "{{count}} koridoriai",
+      "corridorCount_many": "{{count}} koridoriaus",
+      "corridorCount_other": "{{count}} koridorių"
+    }
+  },
+  "keys": {
+    "blue": "Mėlynas raktas",
+    "red": "Raudonas raktas",
+    "green": "Žalias raktas",
+    "yellow": "Geltonas raktas",
+    "purple": "Violetinis raktas",
+    "bundle": "Raktų ryšulys",
+    "foundDescription": "Jis atrakina šios spalvos duris šiame aukšte.",
+    "heldTitle": "{{key}} — jau turi",
+    "neededTitle": "{{key}} — dar reikia"
+  },
+  "balance": {
+    "rules": {
+      "tap": "Bakstelk ženklą apačioje, tada skaičių. Bakstelk tą skaičių dar kartą, kad jį nuimtum.",
+      "same": "Ženklas ant visų svarstyklių sveria tiek pat.",
+      "cancel": "Nuimk tą patį nuo abiejų lėkščių, ir svarstyklės liks lygios. Bakstelk pažymėtą dalį — kas lieka, tampa nauja eilute.",
+      "swap": "Bakstelk ženklą, kurio priešingoje pusėje nėra tokio paties, tada eilutę, kur tas ženklas stovi vienas, ir iškeisk jį į tai, ką ta eilutė rodo."
+    },
+    "hint": {
+      "mistake": "Vienas tavo svoris svarstykles perkreipia. Nuimk jį ir pažiūrėk dar kartą.",
+      "alone": "Apšviestoje eilutėje {{glyph}} yra vienintelis ženklas be skaičiaus. Apskaičiuok, kiek jis sveria.",
+      "equalShares": "Apšviestoje eilutėje yra tik {{glyph}} prieš skaičių. Padalyk tą skaičių jiems po lygiai.",
+      "difference": "Dvi apšviestos eilutės skiriasi tik {{glyph}}. Palygink jas.",
+      "cancelGlyph": "Abiejose apšviestos eilutės lėkštėse yra {{glyph}}. Bakstelk vieną, kad nuimtum jį iš abiejų pusių — eilutė liks lygi.",
+      "cancelStones": "Abiejose apšviestos eilutės lėkštėse yra paprasti skaičiai. Bakstelk vieną, kad nuimtum tiek pat iš abiejų pusių.",
+      "swap": "Viena apšviesta eilutė rodo, kiek sveria vienas {{glyph}}. Bakstelk {{glyph}} kitoje apšviestoje eilutėje, tada bakstelk tą eilutę."
+    },
+    "swap": {
+      "pick": "Bakstelk apšviestą eilutę, kad iškeistum šį {{glyph}} į tai, kiek jis pagal tą eilutę sveria.",
+      "none": "Čia niekas nerodo, kiek sveria vienas {{glyph}}, ir priešingoje pusėje nėra tokio paties."
+    },
+    "goal": {
+      "default": "Kiekvienas ženklas turi savo svorį, ir visos svarstyklės lygios.",
+      "weighing": "Kiekvienas ženklas randa savo svorį, ir visos svarstyklės nusistovi lygiai."
+    },
+    "name": {
+      "default": "Svarstyklės",
+      "weighing": "Širdies svėrimas"
+    }
+  },
+  "sumplete": {
+    "rules": {
+      "tap": "Bakstelk kartą, kad išbrauktum skaičių, dar kartą, kad pažymėtum jį kaip paliekamą, ir dar kartą, kad išvalytum.",
+      "totals": "Mažas skaičius po kiekvienu tikslu rodo, kiek ta linija sudaro dabar."
+    },
+    "hint": {
+      "mistake": "Vienas iš ženklų čia negali būti teisingas. Atšauk jį ir pažiūrėk dar kartą.",
+      "tooBig": {
+        "row": "Šiai eilutei dar trūksta {{deficit}}. {{value}} yra daugiau, todėl jis negali likti.",
+        "col": "Šiam stulpeliui dar trūksta {{deficit}}. {{value}} yra daugiau, todėl jis negali likti."
+      },
+      "allStrike": {
+        "row": "Paliekami skaičiai šioje eilutėje jau sudaro tikslą, todėl visi kiti turi būti išbraukti.",
+        "col": "Paliekami skaičiai šiame stulpelyje jau sudaro tikslą, todėl visi kiti turi būti išbraukti."
+      },
+      "allKeep": {
+        "row": "Ši eilutė jau sudaro savo tikslą — pažymėk šiuos skaičius kaip paliekamus, tada bus galima išspręsti stulpelius, einančius per juos.",
+        "col": "Šis stulpelis jau sudaro savo tikslą — pažymėk šiuos skaičius kaip paliekamus, tada bus galima išspręsti eilutes, einančias per juos."
+      },
+      "parityKeep": {
+        "row": "Šiai eilutei dar trūksta {{deficit}}, o tai nelyginis skaičius. {{value}} yra vienintelis likęs nelyginis skaičius, todėl jis turi likti.",
+        "col": "Šiam stulpeliui dar trūksta {{deficit}}, o tai nelyginis skaičius. {{value}} yra vienintelis likęs nelyginis skaičius, todėl jis turi likti."
+      },
+      "parityStrike": {
+        "row": "Šiai eilutei dar trūksta {{deficit}}, o tai lyginis skaičius. {{value}} yra vienintelis likęs nelyginis skaičius, todėl jis turi būti išbrauktas.",
+        "col": "Šiam stulpeliui dar trūksta {{deficit}}, o tai lyginis skaičius. {{value}} yra vienintelis likęs nelyginis skaičius, todėl jis turi būti išbrauktas."
+      },
+      "onlyCombination": {
+        "row": "Tik vienas skaičių rinkinys šioje eilutėje sudaro {{deficit}}.",
+        "col": "Tik vienas skaičių rinkinys šiame stulpelyje sudaro {{deficit}}."
+      },
+      "inEveryCombinationKeep": {
+        "row": "Be {{value}} jokie kiti šios eilutės skaičiai nesudaro {{deficit}} — todėl jis turi likti.",
+        "col": "Be {{value}} jokie kiti šio stulpelio skaičiai nesudaro {{deficit}} — todėl jis turi likti."
+      },
+      "inEveryCombinationStrike": {
+        "row": "Jei paliksi {{value}}, šiai eilutei dar trūks {{remaining}}, o to nesudaro jokie kiti čia esantys skaičiai — todėl jis turi būti išbrauktas.",
+        "col": "Jei paliksi {{value}}, šiam stulpeliui dar trūks {{remaining}}, o to nesudaro jokie kiti čia esantys skaičiai — todėl jis turi būti išbrauktas."
+      },
+      "tooBig.row": "Šiai eilutei dar trūksta {{deficit}}, o {{value}} yra daugiau.",
+      "tooBig.col": "Šiam stulpeliui dar trūksta {{deficit}}, o {{value}} yra daugiau.",
+      "allStrike.row": "Paliekami skaičiai šioje eilutėje jau sudaro tikslą.",
+      "allStrike.col": "Paliekami skaičiai šiame stulpelyje jau sudaro tikslą.",
+      "allKeep.row": "Ši eilutė jau sudaro savo tikslą, todėl toliau galima išspręsti stulpelius, einančius per ją.",
+      "allKeep.col": "Šis stulpelis jau sudaro savo tikslą, todėl toliau galima išspręsti eilutes, einančias per jį.",
+      "parityKeep.row": "Šiai eilutei dar trūksta {{deficit}}, nelyginio skaičiaus, o {{value}} yra vienintelis likęs nelyginis skaičius.",
+      "parityKeep.col": "Šiam stulpeliui dar trūksta {{deficit}}, nelyginio skaičiaus, o {{value}} yra vienintelis likęs nelyginis skaičius.",
+      "parityStrike.row": "Šiai eilutei dar trūksta {{deficit}}, lyginio skaičiaus, o {{value}} yra vienintelis likęs nelyginis skaičius.",
+      "parityStrike.col": "Šiam stulpeliui dar trūksta {{deficit}}, lyginio skaičiaus, o {{value}} yra vienintelis likęs nelyginis skaičius.",
+      "onlyCombination.row": "Tik vienas skaičių rinkinys šioje eilutėje sudaro {{deficit}}.",
+      "onlyCombination.col": "Tik vienas skaičių rinkinys šiame stulpelyje sudaro {{deficit}}.",
+      "inEveryCombinationKeep.row": "Be {{value}} jokie kiti šios eilutės skaičiai nesudaro {{deficit}}.",
+      "inEveryCombinationKeep.col": "Be {{value}} jokie kiti šio stulpelio skaičiai nesudaro {{deficit}}.",
+      "inEveryCombinationStrike.row": "Jei paliksi {{value}}, šiai eilutei dar trūks {{remaining}}, o to nesudaro jokie kiti čia esantys skaičiai.",
+      "inEveryCombinationStrike.col": "Jei paliksi {{value}}, šiam stulpeliui dar trūks {{remaining}}, o to nesudaro jokie kiti čia esantys skaičiai.",
+      "action": {
+        "strike_one": "Išbrauk užbrūkšniuotą skaičių.",
+        "strike_few": "Išbrauk užbrūkšniuotus skaičius.",
+        "strike_many": "Išbrauk užbrūkšniuotus skaičius.",
+        "strike_other": "Išbrauk užbrūkšniuotus skaičius.",
+        "keep_one": "Pažymėk užbrūkšniuotą skaičių kaip paliekamą.",
+        "keep_few": "Pažymėk užbrūkšniuotus skaičius kaip paliekamus.",
+        "keep_many": "Pažymėk užbrūkšniuotus skaičius kaip paliekamus.",
+        "keep_other": "Pažymėk užbrūkšniuotus skaičius kaip paliekamus."
+      }
+    },
+    "goal": "Kiekvienos eilutės ir kiekvieno stulpelio suma lygi šalia esančiam skaičiui.",
+    "name": "Skaičiavimas"
+  },
+  "futoshiki": {
+    "rules": {
+      "signs": "Ženklas tarp dviejų langelių rodo į mažesnį iš dviejų skaičių.",
+      "enter": "Bakstelk langelį, tada skaičių. Bakstelėjus tą patį skaičių dar kartą, jis išimamas.",
+      "notes": "Įjunk pieštuką, kad užsirašytum, kokie skaičiai dar gali tikti langeliui. „Atšaukti“ atšaukia paskutinį ėjimą."
+    },
+    "hint": {
+      "mistake": {
+        "value": "Vienas iš čia esančių skaičių negali būti teisingas. Išimk jį ir pažiūrėk dar kartą.",
+        "note": "Šio langelio pastabos atmetė skaičių, kuris čia tinka. Išvalyk jas ir pradėk iš naujo."
+      },
+      "nakedSingle": "Visi kiti skaičiai jau užimti šioje eilutėje, šiame stulpelyje arba atmesti ženklų — šiam langeliui lieka tik {{value}}.",
+      "hiddenSingle": {
+        "row": "{{value}} netinka jokiam kitam šios eilutės langeliui, todėl jis turi būti čia.",
+        "col": "{{value}} netinka jokiam kitam šio stulpelio langeliui, todėl jis turi būti čia."
+      },
+      "signBound": {
+        "high": "Ženklas čia rodo į kitą pusę, į didesnį skaičių, todėl šiame langelyje negali būti {{value}}.",
+        "low": "Ženklas čia rodo į šį langelį, todėl kažkas turi būti už jį mažesnis — čia negali būti {{value}}."
+      },
+      "signVsValue": {
+        "less": "Ženklas sako, kad šis langelis mažesnis už kaimyną, o kaimyne yra {{value}}.",
+        "greater": "Ženklas sako, kad šis langelis didesnis už kaimyną, o kaimyne yra {{value}}."
+      },
+      "signChain": {
+        "high": "Sek ženklus nuo šio langelio: {{chain}} langeliai iš eilės turi būti vis didesni, todėl šis negali būti didesnis už {{bound}}.",
+        "low": "Sek ženklus iki šio langelio: {{chain}} langeliai iš eilės turi būti vis mažesni, todėl šis negali būti mažesnis už {{bound}}."
+      },
+      "signPair": {
+        "less": "Didžiausias skaičius, kuris dar gali būti kaimyne už ženklo, yra {{value}}, o šis langelis turi būti už jį mažesnis.",
+        "greater": "Mažiausias skaičius, kuris dar gali būti kaimyne už ženklo, yra {{value}}, o šis langelis turi būti už jį didesnis."
+      },
+      "nakedPair": {
+        "row": "Šiuose dviejuose langeliuose gali būti tik {{first}} ir {{second}}, viena ar kita tvarka, todėl jokiame kitame šios eilutės langelyje jų būti negali.",
+        "col": "Šiuose dviejuose langeliuose gali būti tik {{first}} ir {{second}}, viena ar kita tvarka, todėl jokiame kitame šio stulpelio langelyje jų būti negali."
+      },
+      "hiddenPair": {
+        "row": "Šioje eilutėje {{first}} ir {{second}} tinka tik šiems dviem langeliams, todėl niekas kitas į juos netinka.",
+        "col": "Šiame stulpelyje {{first}} ir {{second}} tinka tik šiems dviem langeliams, todėl niekas kitas į juos netinka."
+      },
+      "xWing": {
+        "row": "{{value}} kiekvienoje iš šių dviejų eilučių tinka tik dviem langeliams, ir jie yra tuose pačiuose stulpeliuose. Kad ir kaip išeitų, abu stulpeliai užimti — todėl kitur juose {{value}} būti negali.",
+        "col": "{{value}} kiekviename iš šių dviejų stulpelių tinka tik dviem langeliams, ir jie yra tose pačiose eilutėse. Kad ir kaip išeitų, abi eilutės užimtos — todėl kitur jose {{value}} būti negali."
+      },
+      "nakedTriple": {
+        "row": "Šiuose trijuose langeliuose kartu gali būti tik {{first}}, {{second}} ir {{third}}, todėl jokiame kitame šios eilutės langelyje nė vieno iš jų būti negali.",
+        "col": "Šiuose trijuose langeliuose kartu gali būti tik {{first}}, {{second}} ir {{third}}, todėl jokiame kitame šio stulpelio langelyje nė vieno iš jų būti negali."
+      },
+      "hiddenTriple": {
+        "row": "Šioje eilutėje {{first}}, {{second}} ir {{third}} tinka tik šiems trims langeliams, todėl niekas kitas į juos netinka.",
+        "col": "Šiame stulpelyje {{first}}, {{second}} ir {{third}} tinka tik šiems trims langeliams, todėl niekas kitas į juos netinka."
+      }
+    },
+    "goal": "Kiekvienoje eilutėje ir kiekviename stulpelyje kiekvienas skaičius yra lygiai vieną kartą.",
+    "name": "Daugiau ir mažiau"
+  },
+  "lightbeam": {
+    "rules": {
+      "mirrors": "Veidrodis atmuša šviesą bet kuria savo puse. Maži ženkliukai aplink jį rodo, kaip dar jis gali stovėti: dauguma pasuka šviesą ketvirčiu rato, o kai kurie mažiau ir nukreipia ją įstrižai.",
+      "walls": "Akmens luitas praryja šviesą. Lentos kraštas — irgi.",
+      "tap": "Bakstelk dalį, kad ją pakeistum: veidrodis pasisuka, slankiojanti dalis pasislenka į kitą vietą. Baltas kraštelis reiškia, kad ją gali judinti tu; visa kita yra galvosūkio dalis.",
+      "nodes": "Kai kurie akmenys sujungti su lizdu grindyse, ir jokiu bakstelėjimu jų nepajudinsi. Nusiųsk šviesą per lizdą, ir akmuo pasitrauks."
+    },
+    "hint": {
+      "entryRun": "Pradėk ten, kur šviesa jau eina: ji bėga tiesiai nuo disko iki pirmos dalies, kurią gali keisti. Tais langeliais šviesa eis, kad ir ką darytum.",
+      "exitRun": "Pažiūrėk į šventovę. Apšviesti galima tik vieną jos pusę — visi kiti keliai užtverti arba veda už lentos — todėl šviesa turi ateiti būtent ta linija.",
+      "wiringFires": {
+        "one": "Šviesa pakeliui turi pereiti tą lizdą — tai jau išsiaiškinai. Kai ji pereina, su lizdu sujungtas akmuo pasitraukia, ir kelias toliau atsiveria.",
+        "all": "Tas akmuo sujungtas su keliais lizdais, ir jis pajuda tik tada, kai šviesa pereina juos visus. Rask būdą nuvesti spindulį per visus."
+      },
+      "deadEnd": {
+        "wall": "Jei pastatysi taip, šviesa atsitrenks tiesiai į akmenį, ir niekas jos nebeišgelbės. Todėl taip statyti negalima.",
+        "disc": "Jei pastatysi taip, veidrodis nusiųs šviesą atgal tuo pačiu keliu, tiesiai į diską, iš kurio ji atėjo. Todėl taip statyti negalima.",
+        "edge": "Jei pastatysi taip, šviesa išbėgs už lentos krašto, ir niekas jos nebepagaus. Todėl taip statyti negalima.",
+        "loop": "Jei pastatysi taip, šviesa niekur nenueis — ji suksis ratu amžinai. Todėl taip statyti negalima."
+      },
+      "feedsExit": {
+        "wall": "Eik atgal nuo šventovės. Jei pastatysi taip, niekas negalės atnešti šviesos ta vienintele linija, kuri ją pasiekia — šviesa pakeliui užges akmenyje.",
+        "disc": "Eik atgal nuo šventovės. Jei pastatysi taip, šviesa turėtų ateiti iš tamsiosios disko pusės, o iš ten šviesa nesklinda.",
+        "edge": "Eik atgal nuo šventovės. Jei pastatysi taip, šviesa turėtų ateiti iš už lentos.",
+        "loop": "Eik atgal nuo šventovės. Jei pastatysi taip, šviesa, kuri turėtų ją pasiekti, tik suksis ratu amžinai."
+      },
+      "wiringDead": "Kad ir ką darytum, šviesa niekada nepasieks to lizdo — todėl su juo sujungtas akmuo liks savo vietoje, ir kelią gali skaityti tiesiai pro jį.",
+      "neverReached": "Šito nejudink. Šviesa jo nepasieks, kad ir kaip pastatytum kitus, todėl nesvarbu, ką su juo darysi.",
+      "onlySurvivor": "Išbandyk visas šio padėtis paeiliui: visos, išskyrus vieną, palieka šventovę tamsią. Ta viena ir yra atsakymas."
+    },
+    "goal": "Saulės šviesa bėga nuo disko iki šventovės.",
+    "name": "Šviesos spindulys"
+  },
+  "eclipse": {
+    "rules": {
+      "triple": "Trys vienodi iš eilės niekada negalimi, nei skersai, nei išilgai.",
+      "copies": "Jokios dvi eilutės negali būti vienodos, ir jokie du stulpeliai irgi.",
+      "signs": "Ženklas tarp dviejų langelių sako, kaip jie susiję: = reiškia vienodi, × reiškia skirtingi.",
+      "enter": "Bakstelk langelį, kad įdėtum saulę, dar kartą — mėnulį, dar kartą — kad ištuštintum."
+    },
+    "hint": {
+      "mistake": "Vienas iš šių ženklų negali būti teisingas.",
+      "sign.same": "= reiškia vienodi.",
+      "sign.different": "× reiškia skirtingi.",
+      "noTriple.pair": "Jau du {{mark}}, o trys iš eilės niekada negalimi.",
+      "noTriple.sandwich": "{{mark}} iš abiejų pusių, o trys iš eilės niekada negalimi.",
+      "signPair": "Šie du vienodi, o šalia jų stovi {{mark}}.",
+      "lineCount": "Šioje linijoje jau yra visi {{count}} {{mark}}.",
+      "noCopy": "Atvirkščiai būtų tokia pati kaip apšviesta linija.",
+      "linePairing.sameNoRoom": "Čia liko tik {{count}} {{mark}}, o šie du vienodi.",
+      "linePairing.differentTakesOne": "× poros užima visus {{mark}}, kuriems šioje linijoje yra vietos.",
+      "loneMark": "Liko vienas {{mark}}, ir tik vienas langelis neleidžia trims {{other}} atsidurti greta.",
+      "squeeze.triple": "Jei čia būtų {{mark}}, visi kiti būtų {{other}} — trys iš eilės.",
+      "squeeze.sign": "Jei čia būtų {{mark}}, visi kiti būtų {{other}} — ženklas nebetiktų.",
+      "squeeze.copy": "Jei čia būtų {{mark}}, visi kiti būtų {{other}} — linija taptų kopija.",
+      "action": {
+        "fill_one": "Įdėk {{mark}} į užbrūkšniuotą langelį.",
+        "fill_few": "Įdėk {{mark}} į užbrūkšniuotus langelius.",
+        "fill_many": "Įdėk {{mark}} į užbrūkšniuotus langelius.",
+        "fill_other": "Įdėk {{mark}} į užbrūkšniuotus langelius.",
+        "fillMixed": "Užpildyk užbrūkšniuotus langelius — tik taip išeina."
+      }
+    },
+    "goal": "Kiekviename langelyje yra saulė arba mėnulis, ir kiekvienoje linijoje jų po lygiai.",
+    "name": "Saulė ir mėnulis"
+  },
+  "constellation": {
+    "rules": {
+      "default": {
+        "straight": "Šviesos linijos eina tiesiai skersai arba išilgai, nuo vienos žvaigždės iki kitos.",
+        "pair": "Dvi žvaigždes gali jungti daugiausia dvi linijos.",
+        "cross": "Linijos niekada nesikerta ir niekada neina per žvaigždę.",
+        "enter": "Tempk nuo žvaigždės link kaimynės, kad nubrėžtum liniją, dar kartą — dvigubą, dar kartą — kad ištrintum."
+      },
+      "causeway": {
+        "straight": "Keliai eina tiesiai skersai arba išilgai, nuo vienos statybvietės iki kitos.",
+        "pair": "Dvi statybvietes gali jungti daugiausia du keliai.",
+        "cross": "Keliai niekada nesikerta ir niekada neina per statybvietę.",
+        "enter": "Tempk nuo statybvietės link kaimynės, kad nutiestum kelią, dar kartą — kad padvigubintum, dar kartą — kad išardytum."
+      },
+      "irrigation": {
+        "straight": "Kanalai eina tiesiai skersai arba išilgai, nuo vieno baseino iki kito.",
+        "pair": "Du baseinus gali jungti daugiausia du kanalai.",
+        "cross": "Kanalai niekada nesikerta ir niekada neina per baseiną.",
+        "enter": "Tempk nuo baseino link kaimyno, kad iškastum kanalą, dar kartą — kad praplatintum, dar kartą — kad užpiltum."
+      },
+      "ceiling": {
+        "straight": "Virvelės eina tiesiai skersai arba išilgai, nuo vienos žvaigždės iki kitos.",
+        "pair": "Dvi žvaigždes gali jungti daugiausia dvi virvelės.",
+        "cross": "Virvelės niekada nesikerta ir niekada neina per žvaigždę.",
+        "enter": "Tempk nuo žvaigždės link kaimynės, kad ištemptum virvelę, dar kartą — kad padvigubintum, dar kartą — kad nuimtum."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Viena iš šių linijų negali būti teisinga.",
+        "capacity": "Reikia linijų: {{count}}, o išėjimų vos pakanka.",
+        "settled": "Šis {{count}} jau turi visas savo linijas.",
+        "soleWayOut": "Liko tik vienas išėjimas, o dar reikia nubrėžti: {{count}}.",
+        "crossed": "Linija ten kirstų šitą.",
+        "atLeastOne": "Reikia linijų: {{count}}, o kiti išėjimai visų nesutalpins.",
+        "twinBlock.single": "Sujungus šias dvi, išeitų žvaigždynas iš dviejų žvaigždžių.",
+        "twinBlock.double": "Antra linija ten sudarytų žvaigždyną iš dviejų žvaigždžių.",
+        "isolation": "Ta linija atskirtų šias žvaigždes ({{count}}) nuo visų kitų.",
+        "action": {
+          "draw_one": "Nubrėžk pažymėtą liniją.",
+          "draw_few": "Nubrėžk pažymėtas linijas.",
+          "draw_many": "Nubrėžk pažymėtas linijas.",
+          "draw_other": "Nubrėžk pažymėtas linijas.",
+          "refuse_one": "Pažymėta linija lieka nenubrėžta.",
+          "refuse_few": "Pažymėtos linijos lieka nenubrėžtos.",
+          "refuse_many": "Pažymėtos linijos lieka nenubrėžtos.",
+          "refuse_other": "Pažymėtos linijos lieka nenubrėžtos.",
+          "refuseDouble": "Ten viena linija, ir ne daugiau."
+        }
+      },
+      "causeway": {
+        "mistake": "Vienas iš šių kelių negali būti teisingas.",
+        "capacity": "Reikia kelių: {{count}}, o išėjimų vos pakanka.",
+        "settled": "Šis {{count}} jau turi visus savo kelius.",
+        "soleWayOut": "Liko tik vienas išėjimas, o dar reikia nutiesti: {{count}}.",
+        "crossed": "Kelias ten kirstų šitą.",
+        "atLeastOne": "Reikia kelių: {{count}}, o kiti išėjimai visų nesutalpins.",
+        "twinBlock.single": "Sujungus šias dvi, išeitų kelių tinklas iš dviejų statybviečių.",
+        "twinBlock.double": "Antras kelias ten sudarytų kelių tinklą iš dviejų statybviečių.",
+        "isolation": "Tas kelias atskirtų šias statybvietes ({{count}}) nuo visų kitų.",
+        "action": {
+          "draw_one": "Nutiesk pažymėtą kelią.",
+          "draw_few": "Nutiesk pažymėtus kelius.",
+          "draw_many": "Nutiesk pažymėtus kelius.",
+          "draw_other": "Nutiesk pažymėtus kelius.",
+          "refuse_one": "Pažymėtas kelias lieka nenutiestas.",
+          "refuse_few": "Pažymėti keliai lieka nenutiesti.",
+          "refuse_many": "Pažymėti keliai lieka nenutiesti.",
+          "refuse_other": "Pažymėti keliai lieka nenutiesti.",
+          "refuseDouble": "Ten vienas kelias, ir ne daugiau."
+        }
+      },
+      "irrigation": {
+        "mistake": "Vienas iš šių kanalų negali būti teisingas.",
+        "capacity": "Reikia kanalų: {{count}}, o išėjimų vos pakanka.",
+        "settled": "Šis {{count}} jau turi visus savo kanalus.",
+        "soleWayOut": "Liko tik vienas išėjimas, o dar reikia iškasti: {{count}}.",
+        "crossed": "Kanalas ten kirstų šitą.",
+        "atLeastOne": "Reikia kanalų: {{count}}, o kiti išėjimai visų nesutalpins.",
+        "twinBlock.single": "Sujungus šiuos du, išeitų vandentiekis iš dviejų baseinų.",
+        "twinBlock.double": "Antras kanalas ten sudarytų vandentiekį iš dviejų baseinų.",
+        "isolation": "Tas kanalas atskirtų šiuos baseinus ({{count}}) nuo visų kitų.",
+        "action": {
+          "draw_one": "Iškask pažymėtą kanalą.",
+          "draw_few": "Iškask pažymėtus kanalus.",
+          "draw_many": "Iškask pažymėtus kanalus.",
+          "draw_other": "Iškask pažymėtus kanalus.",
+          "refuse_one": "Pažymėtas kanalas lieka neiškastas.",
+          "refuse_few": "Pažymėti kanalai lieka neiškasti.",
+          "refuse_many": "Pažymėti kanalai lieka neiškasti.",
+          "refuse_other": "Pažymėti kanalai lieka neiškasti.",
+          "refuseDouble": "Ten vienas kanalas, ir ne daugiau."
+        }
+      },
+      "ceiling": {
+        "mistake": "Viena iš šių virvelių negali būti teisinga.",
+        "capacity": "Reikia virvelių: {{count}}, o išėjimų vos pakanka.",
+        "settled": "Šis {{count}} jau turi visas savo virveles.",
+        "soleWayOut": "Liko tik vienas išėjimas, o dar reikia ištempti: {{count}}.",
+        "crossed": "Virvelė ten kirstų šitą.",
+        "atLeastOne": "Reikia virvelių: {{count}}, o kiti išėjimai visų nesutalpins.",
+        "twinBlock.single": "Sujungus šias dvi, išeitų nupieštas dangus iš dviejų žvaigždžių.",
+        "twinBlock.double": "Antra virvelė ten sudarytų nupieštą dangų iš dviejų žvaigždžių.",
+        "isolation": "Ta virvelė atskirtų šias žvaigždes ({{count}}) nuo visų kitų.",
+        "action": {
+          "draw_one": "Ištempk pažymėtą virvelę.",
+          "draw_few": "Ištempk pažymėtas virveles.",
+          "draw_many": "Ištempk pažymėtas virveles.",
+          "draw_other": "Ištempk pažymėtas virveles.",
+          "refuse_one": "Pažymėta virvelė lieka neištempta.",
+          "refuse_few": "Pažymėtos virvelės lieka neištemptos.",
+          "refuse_many": "Pažymėtos virvelės lieka neištemptos.",
+          "refuse_other": "Pažymėtos virvelės lieka neištemptos.",
+          "refuseDouble": "Ten viena virvelė, ir ne daugiau."
+        }
+      }
+    },
+    "goal": {
+      "default": "Visos žvaigždės priklauso vienam žvaigždynui, ir kiekvieną jungia tiek šviesos linijų, kiek rodo jos skaičius.",
+      "causeway": "Visos statybvietės priklauso vienam kelių tinklui, ir į kiekvieną veda tiek kelių, kiek rodo jos skaičius.",
+      "irrigation": "Visi baseinai priklauso vienam vandentiekiui, ir į kiekvieną teka tiek kanalų, kiek rodo jo skaičius.",
+      "ceiling": "Visos žvaigždės priklauso vienam nupieštam dangui, ir kiekvieną riša tiek auksinių virvelių, kiek rodo jos skaičius."
+    },
+    "name": {
+      "default": "Žvaigždėlapis",
+      "causeway": "Pylimų keliai",
+      "irrigation": "Vandentiekis",
+      "ceiling": "Nupieštos lubos"
+    }
+  },
+  "starBattle": {
+    "rules": {
+      "default": {
+        "touch": "Dvi žvaigždės negali liestis — net kampais.",
+        "enter": "Bakstelk langelį, kad jį atmestum, dar kartą — kad įdėtum žvaigždę, dar kartą — kad išvalytum."
+      },
+      "fields": {
+        "touch": "Dvi sodybos negali liestis — net kampais. Taip arti jos turėtų dalytis vienu šuliniu.",
+        "enter": "Bakstelk sklypą, kad jį atmestum, dar kartą — kad pastatytum sodybą, dar kartą — kad išvalytum."
+      },
+      "lamps": {
+        "touch": "Du žibintai negali stovėti greta — net kampais. Jų šviesa susilietų, ir aliejus būtų iššvaistytas.",
+        "walls": "Pilki akmens luitai yra grindų dalis: ant jų nieko negalima pastatyti, ir jie nėra langeliai.",
+        "enter": "Bakstelk plokštę, kad ją atmestum, dar kartą — kad padėtum žibintą, dar kartą — kad išvalytum."
+      },
+      "market": {
+        "touch": "Du prekystaliai negali stovėti greta — net kampais. Varžovai niekada neprekiauja vienas šalia kito.",
+        "walls": "Namai yra aikštės dalis: juose prekystalio nepastatysi, ir jie nėra vietos.",
+        "enter": "Bakstelk vietą, kad ją atmestum, dar kartą — kad pastatytum prekystalį, dar kartą — kad išvalytum."
+      },
+      "lotus": {
+        "touch": "Du lotosai negali plaukti greta — net kampais. Kiekvienam žiedui reikia laisvo vandens aplink.",
+        "walls": "Uolos kyšo iš tvenkinio: ant jų niekas neplaukia, ir jos nėra langeliai.",
+        "enter": "Bakstelk vandens lopinėlį, kad jį atmestum, dar kartą — kad paleistum lotosą, dar kartą — kad išvalytum."
+      },
+      "cats": {
+        "touch": "Dvi katės negali miegoti greta — net kampais. Kiekviena katė turi savo saulės lopinėlį.",
+        "walls": "Kolonos laiko šventyklą: ant jų katė nemiega, ir jos nėra langeliai.",
+        "enter": "Bakstelk plokštę, kad ją atmestum, dar kartą — kad paguldytum katę, dar kartą — kad išvalytum."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Šis ženklas negali būti teisingas.",
+        "touch": "Čia stovi {{token}}, o niekas negali liestis prie {{token}}.",
+        "groupFull.row_one": "Šioje eilutėje jau yra {{token}}.",
+        "groupFull.row_few": "Šioje eilutėje jau yra visi {{count}} {{token}}.",
+        "groupFull.row_many": "Šioje eilutėje jau yra visi {{count}} {{token}}.",
+        "groupFull.row_other": "Šioje eilutėje jau yra visi {{count}} {{token}}.",
+        "groupTight.row_one": "Šioje eilutėje liko tik vienas langelis.",
+        "groupTight.row_few": "Šioje eilutėje liko tik {{count}} langeliai.",
+        "groupTight.row_many": "Šioje eilutėje liko tik {{count}} langelio.",
+        "groupTight.row_other": "Šioje eilutėje liko tik {{count}} langelių.",
+        "onlyWay.row_one": "Yra tik vienas būdas įdėti {{token}} šioje eilutėje.",
+        "onlyWay.row_few": "Yra tik vienas būdas sutalpinti {{count}} {{token}} šioje eilutėje.",
+        "onlyWay.row_many": "Yra tik vienas būdas sutalpinti {{count}} {{token}} šioje eilutėje.",
+        "onlyWay.row_other": "Yra tik vienas būdas sutalpinti {{count}} {{token}} šioje eilutėje.",
+        "everyWay.row_one": "Kaip bedėliotum, šios eilutės {{token}} visada atsiduria čia.",
+        "everyWay.row_few": "Kaip bedėliotum šios eilutės {{count}} {{token}}, vienas visada atsiduria čia.",
+        "everyWay.row_many": "Kaip bedėliotum šios eilutės {{count}} {{token}}, vienas visada atsiduria čia.",
+        "everyWay.row_other": "Kaip bedėliotum šios eilutės {{count}} {{token}}, vienas visada atsiduria čia.",
+        "groupFull.col_one": "Šiame stulpelyje jau yra {{token}}.",
+        "groupFull.col_few": "Šiame stulpelyje jau yra visi {{count}} {{token}}.",
+        "groupFull.col_many": "Šiame stulpelyje jau yra visi {{count}} {{token}}.",
+        "groupFull.col_other": "Šiame stulpelyje jau yra visi {{count}} {{token}}.",
+        "groupTight.col_one": "Šiame stulpelyje liko tik vienas langelis.",
+        "groupTight.col_few": "Šiame stulpelyje liko tik {{count}} langeliai.",
+        "groupTight.col_many": "Šiame stulpelyje liko tik {{count}} langelio.",
+        "groupTight.col_other": "Šiame stulpelyje liko tik {{count}} langelių.",
+        "onlyWay.col_one": "Yra tik vienas būdas įdėti {{token}} šiame stulpelyje.",
+        "onlyWay.col_few": "Yra tik vienas būdas sutalpinti {{count}} {{token}} šiame stulpelyje.",
+        "onlyWay.col_many": "Yra tik vienas būdas sutalpinti {{count}} {{token}} šiame stulpelyje.",
+        "onlyWay.col_other": "Yra tik vienas būdas sutalpinti {{count}} {{token}} šiame stulpelyje.",
+        "everyWay.col_one": "Kaip bedėliotum, šio stulpelio {{token}} visada atsiduria čia.",
+        "everyWay.col_few": "Kaip bedėliotum šio stulpelio {{count}} {{token}}, vienas visada atsiduria čia.",
+        "everyWay.col_many": "Kaip bedėliotum šio stulpelio {{count}} {{token}}, vienas visada atsiduria čia.",
+        "everyWay.col_other": "Kaip bedėliotum šio stulpelio {{count}} {{token}}, vienas visada atsiduria čia.",
+        "groupFull.region_one": "Šioje srityje jau yra {{token}}.",
+        "groupFull.region_few": "Šioje srityje jau yra visi {{count}} {{token}}.",
+        "groupFull.region_many": "Šioje srityje jau yra visi {{count}} {{token}}.",
+        "groupFull.region_other": "Šioje srityje jau yra visi {{count}} {{token}}.",
+        "groupTight.region_one": "Šioje srityje liko tik vienas langelis.",
+        "groupTight.region_few": "Šioje srityje liko tik {{count}} langeliai.",
+        "groupTight.region_many": "Šioje srityje liko tik {{count}} langelio.",
+        "groupTight.region_other": "Šioje srityje liko tik {{count}} langelių.",
+        "onlyWay.region_one": "Yra tik vienas būdas įdėti {{token}} šioje srityje.",
+        "onlyWay.region_few": "Yra tik vienas būdas sutalpinti {{count}} {{token}} šioje srityje.",
+        "onlyWay.region_many": "Yra tik vienas būdas sutalpinti {{count}} {{token}} šioje srityje.",
+        "onlyWay.region_other": "Yra tik vienas būdas sutalpinti {{count}} {{token}} šioje srityje.",
+        "everyWay.region_one": "Kaip bedėliotum, šios srities {{token}} visada atsiduria čia.",
+        "everyWay.region_few": "Kaip bedėliotum šios srities {{count}} {{token}}, vienas visada atsiduria čia.",
+        "everyWay.region_many": "Kaip bedėliotum šios srities {{count}} {{token}}, vienas visada atsiduria čia.",
+        "everyWay.region_other": "Kaip bedėliotum šios srities {{count}} {{token}}, vienas visada atsiduria čia.",
+        "regionLine.row_one": "Pažymėtos srities {{token}} turi būti toje eilutėje.",
+        "regionLine.row_few": "Pažymėtos srities {{count}} {{token}} turi būti toje eilutėje.",
+        "regionLine.row_many": "Pažymėtos srities {{count}} {{token}} turi būti toje eilutėje.",
+        "regionLine.row_other": "Pažymėtos srities {{count}} {{token}} turi būti toje eilutėje.",
+        "lineRegion.row_one": "Tos eilutės {{token}} priklauso pažymėtai sričiai.",
+        "lineRegion.row_few": "Tos eilutės {{count}} {{token}} priklauso pažymėtai sričiai.",
+        "lineRegion.row_many": "Tos eilutės {{count}} {{token}} priklauso pažymėtai sričiai.",
+        "lineRegion.row_other": "Tos eilutės {{count}} {{token}} priklauso pažymėtai sričiai.",
+        "regionLine.col_one": "Pažymėtos srities {{token}} turi būti tame stulpelyje.",
+        "regionLine.col_few": "Pažymėtos srities {{count}} {{token}} turi būti tame stulpelyje.",
+        "regionLine.col_many": "Pažymėtos srities {{count}} {{token}} turi būti tame stulpelyje.",
+        "regionLine.col_other": "Pažymėtos srities {{count}} {{token}} turi būti tame stulpelyje.",
+        "lineRegion.col_one": "To stulpelio {{token}} priklauso pažymėtai sričiai.",
+        "lineRegion.col_few": "To stulpelio {{count}} {{token}} priklauso pažymėtai sričiai.",
+        "lineRegion.col_many": "To stulpelio {{count}} {{token}} priklauso pažymėtai sričiai.",
+        "lineRegion.col_other": "To stulpelio {{count}} {{token}} priklauso pažymėtai sričiai.",
+        "spanning.toRows": "Pažymėtos sritys kartu užpildo tas eilutes ({{count}}).",
+        "spanning.toCols": "Pažymėtos sritys kartu užpildo tuos stulpelius ({{count}}).",
+        "spanning.fromRows": "Pažymėtos eilutės savo {{count}} {{token}} gali gauti tik iš tų sričių.",
+        "spanning.fromCols": "Pažymėti stulpeliai savo {{count}} {{token}} gali gauti tik iš tų sričių.",
+        "wouldStrand.row": "Jei čia būtų {{token}}, pažymėtoje eilutėje nebeliktų vietos.",
+        "wouldStrand.col": "Jei čia būtų {{token}}, pažymėtame stulpelyje nebeliktų vietos.",
+        "wouldStrand.region": "Jei čia būtų {{token}}, pažymėtoje srityje nebeliktų vietos.",
+        "action": {
+          "ruleOut_one": "Atmesk užbrūkšniuotą langelį.",
+          "ruleOut_few": "Atmesk užbrūkšniuotus langelius.",
+          "ruleOut_many": "Atmesk užbrūkšniuotus langelius.",
+          "ruleOut_other": "Atmesk užbrūkšniuotus langelius.",
+          "place_one": "Įdėk {{token}} į užbrūkšniuotą langelį.",
+          "place_few": "Įdėk {{token}} į kiekvieną užbrūkšniuotą langelį.",
+          "place_many": "Įdėk {{token}} į kiekvieną užbrūkšniuotą langelį.",
+          "place_other": "Įdėk {{token}} į kiekvieną užbrūkšniuotą langelį."
+        }
+      },
+      "fields": {
+        "mistake": "Šis ženklas negali būti teisingas.",
+        "touch": "Čia stovi {{token}}, todėl jokiame gretimame sklype negali būti kitos.",
+        "groupFull.row_one": "Ši eilutė jau apstatyta.",
+        "groupFull.row_few": "Šioje eilutėje jau yra visos {{count}} {{token}}.",
+        "groupFull.row_many": "Šioje eilutėje jau yra visos {{count}} {{token}}.",
+        "groupFull.row_other": "Šioje eilutėje jau yra visos {{count}} {{token}}.",
+        "groupTight.row_one": "Šioje eilutėje liko tik vienas sklypas.",
+        "groupTight.row_few": "Šioje eilutėje liko tik {{count}} sklypai.",
+        "groupTight.row_many": "Šioje eilutėje liko tik {{count}} sklypo.",
+        "groupTight.row_other": "Šioje eilutėje liko tik {{count}} sklypų.",
+        "onlyWay.row_one": "Šioje eilutėje liko tik vienas sklypas, kur galima statyti.",
+        "onlyWay.row_few": "Yra tik vienas būdas sutalpinti {{count}} {{token}} šioje eilutėje.",
+        "onlyWay.row_many": "Yra tik vienas būdas sutalpinti {{count}} {{token}} šioje eilutėje.",
+        "onlyWay.row_other": "Yra tik vienas būdas sutalpinti {{count}} {{token}} šioje eilutėje.",
+        "everyWay.row_one": "Kaip bestatytum šioje eilutėje, {{token}} visada stovi čia.",
+        "everyWay.row_few": "Kaip bestatytum šioje eilutėje, viena iš {{count}} {{token}} visada stovi čia.",
+        "everyWay.row_many": "Kaip bestatytum šioje eilutėje, viena iš {{count}} {{token}} visada stovi čia.",
+        "everyWay.row_other": "Kaip bestatytum šioje eilutėje, viena iš {{count}} {{token}} visada stovi čia.",
+        "groupFull.col_one": "Šis stulpelis jau apstatytas.",
+        "groupFull.col_few": "Šiame stulpelyje jau yra visos {{count}} {{token}}.",
+        "groupFull.col_many": "Šiame stulpelyje jau yra visos {{count}} {{token}}.",
+        "groupFull.col_other": "Šiame stulpelyje jau yra visos {{count}} {{token}}.",
+        "groupTight.col_one": "Šiame stulpelyje liko tik vienas sklypas.",
+        "groupTight.col_few": "Šiame stulpelyje liko tik {{count}} sklypai.",
+        "groupTight.col_many": "Šiame stulpelyje liko tik {{count}} sklypo.",
+        "groupTight.col_other": "Šiame stulpelyje liko tik {{count}} sklypų.",
+        "onlyWay.col_one": "Šiame stulpelyje liko tik vienas sklypas, kur galima statyti.",
+        "onlyWay.col_few": "Yra tik vienas būdas sutalpinti {{count}} {{token}} šiame stulpelyje.",
+        "onlyWay.col_many": "Yra tik vienas būdas sutalpinti {{count}} {{token}} šiame stulpelyje.",
+        "onlyWay.col_other": "Yra tik vienas būdas sutalpinti {{count}} {{token}} šiame stulpelyje.",
+        "everyWay.col_one": "Kaip bestatytum šiame stulpelyje, {{token}} visada stovi čia.",
+        "everyWay.col_few": "Kaip bestatytum šiame stulpelyje, viena iš {{count}} {{token}} visada stovi čia.",
+        "everyWay.col_many": "Kaip bestatytum šiame stulpelyje, viena iš {{count}} {{token}} visada stovi čia.",
+        "everyWay.col_other": "Kaip bestatytum šiame stulpelyje, viena iš {{count}} {{token}} visada stovi čia.",
+        "groupFull.region_one": "Ši valda jau apstatyta.",
+        "groupFull.region_few": "Šioje valdoje jau yra visos {{count}} {{token}}.",
+        "groupFull.region_many": "Šioje valdoje jau yra visos {{count}} {{token}}.",
+        "groupFull.region_other": "Šioje valdoje jau yra visos {{count}} {{token}}.",
+        "groupTight.region_one": "Šioje valdoje liko tik vienas sklypas.",
+        "groupTight.region_few": "Šioje valdoje liko tik {{count}} sklypai.",
+        "groupTight.region_many": "Šioje valdoje liko tik {{count}} sklypo.",
+        "groupTight.region_other": "Šioje valdoje liko tik {{count}} sklypų.",
+        "onlyWay.region_one": "Šioje valdoje liko tik vienas sklypas, kur galima statyti.",
+        "onlyWay.region_few": "Yra tik vienas būdas sutalpinti {{count}} {{token}} šioje valdoje.",
+        "onlyWay.region_many": "Yra tik vienas būdas sutalpinti {{count}} {{token}} šioje valdoje.",
+        "onlyWay.region_other": "Yra tik vienas būdas sutalpinti {{count}} {{token}} šioje valdoje.",
+        "everyWay.region_one": "Kaip bestatytum šioje valdoje, {{token}} visada stovi čia.",
+        "everyWay.region_few": "Kaip bestatytum šioje valdoje, viena iš {{count}} {{token}} visada stovi čia.",
+        "everyWay.region_many": "Kaip bestatytum šioje valdoje, viena iš {{count}} {{token}} visada stovi čia.",
+        "everyWay.region_other": "Kaip bestatytum šioje valdoje, viena iš {{count}} {{token}} visada stovi čia.",
+        "regionLine.row_one": "Pažymėtos valdos {{token}} turi būti toje eilutėje.",
+        "regionLine.row_few": "Pažymėtos valdos {{count}} {{token}} turi būti toje eilutėje.",
+        "regionLine.row_many": "Pažymėtos valdos {{count}} {{token}} turi būti toje eilutėje.",
+        "regionLine.row_other": "Pažymėtos valdos {{count}} {{token}} turi būti toje eilutėje.",
+        "lineRegion.row_one": "Tos eilutės {{token}} priklauso pažymėtai valdai.",
+        "lineRegion.row_few": "Tos eilutės {{count}} {{token}} priklauso pažymėtai valdai.",
+        "lineRegion.row_many": "Tos eilutės {{count}} {{token}} priklauso pažymėtai valdai.",
+        "lineRegion.row_other": "Tos eilutės {{count}} {{token}} priklauso pažymėtai valdai.",
+        "regionLine.col_one": "Pažymėtos valdos {{token}} turi būti tame stulpelyje.",
+        "regionLine.col_few": "Pažymėtos valdos {{count}} {{token}} turi būti tame stulpelyje.",
+        "regionLine.col_many": "Pažymėtos valdos {{count}} {{token}} turi būti tame stulpelyje.",
+        "regionLine.col_other": "Pažymėtos valdos {{count}} {{token}} turi būti tame stulpelyje.",
+        "lineRegion.col_one": "To stulpelio {{token}} priklauso pažymėtai valdai.",
+        "lineRegion.col_few": "To stulpelio {{count}} {{token}} priklauso pažymėtai valdai.",
+        "lineRegion.col_many": "To stulpelio {{count}} {{token}} priklauso pažymėtai valdai.",
+        "lineRegion.col_other": "To stulpelio {{count}} {{token}} priklauso pažymėtai valdai.",
+        "spanning.toRows": "Pažymėtos valdos kartu užpildo tas eilutes ({{count}}).",
+        "spanning.toCols": "Pažymėtos valdos kartu užpildo tuos stulpelius ({{count}}).",
+        "spanning.fromRows": "Pažymėtos eilutės savo {{count}} {{token}} gali gauti tik iš tų valdų.",
+        "spanning.fromCols": "Pažymėti stulpeliai savo {{count}} {{token}} gali gauti tik iš tų valdų.",
+        "wouldStrand.row": "Jei čia būtų {{token}}, pažymėtoje eilutėje nebeliktų kur statyti.",
+        "wouldStrand.col": "Jei čia būtų {{token}}, pažymėtame stulpelyje nebeliktų kur statyti.",
+        "wouldStrand.region": "Jei čia būtų {{token}}, pažymėtoje valdoje nebeliktų kur statyti.",
+        "action": {
+          "ruleOut_one": "Atmesk užbrūkšniuotą sklypą.",
+          "ruleOut_few": "Atmesk užbrūkšniuotus sklypus.",
+          "ruleOut_many": "Atmesk užbrūkšniuotus sklypus.",
+          "ruleOut_other": "Atmesk užbrūkšniuotus sklypus.",
+          "place_one": "Pastatyk {{token}} užbrūkšniuotame sklype.",
+          "place_few": "Pastatyk {{token}} kiekviename užbrūkšniuotame sklype.",
+          "place_many": "Pastatyk {{token}} kiekviename užbrūkšniuotame sklype.",
+          "place_other": "Pastatyk {{token}} kiekviename užbrūkšniuotame sklype."
+        }
+      },
+      "lamps": {
+        "mistake": "Šis ženklas negali būti teisingas.",
+        "touch": "Čia yra {{token}}, o jokie du žibintai negali stovėti greta — kampai irgi skaičiuojasi.",
+        "groupFull.row_one": "Šioje eilutėje jau yra žibintas.",
+        "groupFull.row_few": "Šioje eilutėje jau yra visi {{count}} žibintai.",
+        "groupFull.row_many": "Šioje eilutėje jau yra visi {{count}} žibinto.",
+        "groupFull.row_other": "Šioje eilutėje jau yra visi {{count}} žibintų.",
+        "groupTight.row_one": "Šioje eilutėje liko tik viena plokštė.",
+        "groupTight.row_few": "Šioje eilutėje liko tik {{count}} plokštės.",
+        "groupTight.row_many": "Šioje eilutėje liko tik {{count}} plokštės.",
+        "groupTight.row_other": "Šioje eilutėje liko tik {{count}} plokščių.",
+        "onlyWay.row_one": "Tarp akmens luitų šioje eilutėje liko tik vienas langelis, kur tilptų žibintas.",
+        "onlyWay.row_few": "Yra tik vienas būdas sutalpinti {{count}} žibintus šioje eilutėje.",
+        "onlyWay.row_many": "Yra tik vienas būdas sutalpinti {{count}} žibinto šioje eilutėje.",
+        "onlyWay.row_other": "Yra tik vienas būdas sutalpinti {{count}} žibintų šioje eilutėje.",
+        "everyWay.row_one": "Kaip bedėliotum, šios eilutės žibintas visada atsiduria čia.",
+        "everyWay.row_few": "Kaip bedėliotum šios eilutės {{count}} žibintus, vienas visada atsiduria čia.",
+        "everyWay.row_many": "Kaip bedėliotum šios eilutės {{count}} žibinto, vienas visada atsiduria čia.",
+        "everyWay.row_other": "Kaip bedėliotum šios eilutės {{count}} žibintų, vienas visada atsiduria čia.",
+        "groupFull.col_one": "Šiame stulpelyje jau yra žibintas.",
+        "groupFull.col_few": "Šiame stulpelyje jau yra visi {{count}} žibintai.",
+        "groupFull.col_many": "Šiame stulpelyje jau yra visi {{count}} žibinto.",
+        "groupFull.col_other": "Šiame stulpelyje jau yra visi {{count}} žibintų.",
+        "groupTight.col_one": "Šiame stulpelyje liko tik viena plokštė.",
+        "groupTight.col_few": "Šiame stulpelyje liko tik {{count}} plokštės.",
+        "groupTight.col_many": "Šiame stulpelyje liko tik {{count}} plokštės.",
+        "groupTight.col_other": "Šiame stulpelyje liko tik {{count}} plokščių.",
+        "onlyWay.col_one": "Tarp akmens luitų šiame stulpelyje liko tik vienas langelis, kur tilptų žibintas.",
+        "onlyWay.col_few": "Yra tik vienas būdas sutalpinti {{count}} žibintus šiame stulpelyje.",
+        "onlyWay.col_many": "Yra tik vienas būdas sutalpinti {{count}} žibinto šiame stulpelyje.",
+        "onlyWay.col_other": "Yra tik vienas būdas sutalpinti {{count}} žibintų šiame stulpelyje.",
+        "everyWay.col_one": "Kaip bedėliotum, šio stulpelio žibintas visada atsiduria čia.",
+        "everyWay.col_few": "Kaip bedėliotum šio stulpelio {{count}} žibintus, vienas visada atsiduria čia.",
+        "everyWay.col_many": "Kaip bedėliotum šio stulpelio {{count}} žibinto, vienas visada atsiduria čia.",
+        "everyWay.col_other": "Kaip bedėliotum šio stulpelio {{count}} žibintų, vienas visada atsiduria čia.",
+        "lineBlock.rowsToCols": "Pažymėtos eilutės laiko savo žibintus tų stulpelių langeliuose, todėl tiems stulpeliams nebelieka.",
+        "lineBlock.colsToRows": "Pažymėti stulpeliai laiko savo žibintus tų eilučių langeliuose, todėl toms eilutėms nebelieka.",
+        "wouldStrand.row": "Jei čia būtų žibintas, pažymėtoje eilutėje nebeliktų vietos.",
+        "wouldStrand.col": "Jei čia būtų žibintas, pažymėtame stulpelyje nebeliktų vietos.",
+        "action": {
+          "ruleOut_one": "Atmesk užbrūkšniuotą langelį.",
+          "ruleOut_few": "Atmesk užbrūkšniuotus langelius.",
+          "ruleOut_many": "Atmesk užbrūkšniuotus langelius.",
+          "ruleOut_other": "Atmesk užbrūkšniuotus langelius.",
+          "place_one": "Padėk žibintą į užbrūkšniuotą langelį.",
+          "place_few": "Padėk žibintą į kiekvieną užbrūkšniuotą langelį.",
+          "place_many": "Padėk žibintą į kiekvieną užbrūkšniuotą langelį.",
+          "place_other": "Padėk žibintą į kiekvieną užbrūkšniuotą langelį."
+        }
+      },
+      "market": {
+        "mistake": "Šis ženklas negali būti teisingas.",
+        "touch": "Čia yra {{token}}, o jokie du prekystaliai negali stovėti greta — kampai irgi skaičiuojasi.",
+        "groupFull.row_one": "Šioje eilutėje jau yra prekystalis.",
+        "groupFull.row_few": "Šioje eilutėje jau yra visi {{count}} prekystaliai.",
+        "groupFull.row_many": "Šioje eilutėje jau yra visi {{count}} prekystalio.",
+        "groupFull.row_other": "Šioje eilutėje jau yra visi {{count}} prekystalių.",
+        "groupTight.row_one": "Šioje eilutėje liko tik viena vieta.",
+        "groupTight.row_few": "Šioje eilutėje liko tik {{count}} vietos.",
+        "groupTight.row_many": "Šioje eilutėje liko tik {{count}} vietos.",
+        "groupTight.row_other": "Šioje eilutėje liko tik {{count}} vietų.",
+        "onlyWay.row_one": "Tarp namų šioje eilutėje liko tik vienas langelis, kur tilptų prekystalis.",
+        "onlyWay.row_few": "Yra tik vienas būdas sutalpinti {{count}} prekystalius šioje eilutėje.",
+        "onlyWay.row_many": "Yra tik vienas būdas sutalpinti {{count}} prekystalio šioje eilutėje.",
+        "onlyWay.row_other": "Yra tik vienas būdas sutalpinti {{count}} prekystalių šioje eilutėje.",
+        "everyWay.row_one": "Kaip bedėliotum, šios eilutės prekystalis visada atsiduria čia.",
+        "everyWay.row_few": "Kaip bedėliotum šios eilutės {{count}} prekystalius, vienas visada atsiduria čia.",
+        "everyWay.row_many": "Kaip bedėliotum šios eilutės {{count}} prekystalio, vienas visada atsiduria čia.",
+        "everyWay.row_other": "Kaip bedėliotum šios eilutės {{count}} prekystalių, vienas visada atsiduria čia.",
+        "groupFull.col_one": "Šiame stulpelyje jau yra prekystalis.",
+        "groupFull.col_few": "Šiame stulpelyje jau yra visi {{count}} prekystaliai.",
+        "groupFull.col_many": "Šiame stulpelyje jau yra visi {{count}} prekystalio.",
+        "groupFull.col_other": "Šiame stulpelyje jau yra visi {{count}} prekystalių.",
+        "groupTight.col_one": "Šiame stulpelyje liko tik viena vieta.",
+        "groupTight.col_few": "Šiame stulpelyje liko tik {{count}} vietos.",
+        "groupTight.col_many": "Šiame stulpelyje liko tik {{count}} vietos.",
+        "groupTight.col_other": "Šiame stulpelyje liko tik {{count}} vietų.",
+        "onlyWay.col_one": "Tarp namų šiame stulpelyje liko tik vienas langelis, kur tilptų prekystalis.",
+        "onlyWay.col_few": "Yra tik vienas būdas sutalpinti {{count}} prekystalius šiame stulpelyje.",
+        "onlyWay.col_many": "Yra tik vienas būdas sutalpinti {{count}} prekystalio šiame stulpelyje.",
+        "onlyWay.col_other": "Yra tik vienas būdas sutalpinti {{count}} prekystalių šiame stulpelyje.",
+        "everyWay.col_one": "Kaip bedėliotum, šio stulpelio prekystalis visada atsiduria čia.",
+        "everyWay.col_few": "Kaip bedėliotum šio stulpelio {{count}} prekystalius, vienas visada atsiduria čia.",
+        "everyWay.col_many": "Kaip bedėliotum šio stulpelio {{count}} prekystalio, vienas visada atsiduria čia.",
+        "everyWay.col_other": "Kaip bedėliotum šio stulpelio {{count}} prekystalių, vienas visada atsiduria čia.",
+        "lineBlock.rowsToCols": "Pažymėtos eilutės laiko savo prekystalius tų stulpelių langeliuose, todėl tiems stulpeliams nebelieka.",
+        "lineBlock.colsToRows": "Pažymėti stulpeliai laiko savo prekystalius tų eilučių langeliuose, todėl toms eilutėms nebelieka.",
+        "wouldStrand.row": "Jei čia būtų prekystalis, pažymėtoje eilutėje nebeliktų vietos.",
+        "wouldStrand.col": "Jei čia būtų prekystalis, pažymėtame stulpelyje nebeliktų vietos.",
+        "action": {
+          "ruleOut_one": "Atmesk užbrūkšniuotą langelį.",
+          "ruleOut_few": "Atmesk užbrūkšniuotus langelius.",
+          "ruleOut_many": "Atmesk užbrūkšniuotus langelius.",
+          "ruleOut_other": "Atmesk užbrūkšniuotus langelius.",
+          "place_one": "Pastatyk prekystalį į užbrūkšniuotą langelį.",
+          "place_few": "Pastatyk prekystalį į kiekvieną užbrūkšniuotą langelį.",
+          "place_many": "Pastatyk prekystalį į kiekvieną užbrūkšniuotą langelį.",
+          "place_other": "Pastatyk prekystalį į kiekvieną užbrūkšniuotą langelį."
+        }
+      },
+      "lotus": {
+        "mistake": "Šis ženklas negali būti teisingas.",
+        "touch": "Čia yra {{token}}, o jokie du lotosai negali plaukti greta — kampai irgi skaičiuojasi.",
+        "groupFull.row_one": "Šioje eilutėje jau yra lotosas.",
+        "groupFull.row_few": "Šioje eilutėje jau yra visi {{count}} lotosai.",
+        "groupFull.row_many": "Šioje eilutėje jau yra visi {{count}} lotoso.",
+        "groupFull.row_other": "Šioje eilutėje jau yra visi {{count}} lotosų.",
+        "groupTight.row_one": "Šioje eilutėje liko tik vienas vandens lopinėlis.",
+        "groupTight.row_few": "Šioje eilutėje liko tik {{count}} vandens lopinėliai.",
+        "groupTight.row_many": "Šioje eilutėje liko tik {{count}} vandens lopinėlio.",
+        "groupTight.row_other": "Šioje eilutėje liko tik {{count}} vandens lopinėlių.",
+        "onlyWay.row_one": "Tarp uolų šioje eilutėje liko tik vienas langelis, kur tilptų lotosas.",
+        "onlyWay.row_few": "Yra tik vienas būdas sutalpinti {{count}} lotosus šioje eilutėje.",
+        "onlyWay.row_many": "Yra tik vienas būdas sutalpinti {{count}} lotoso šioje eilutėje.",
+        "onlyWay.row_other": "Yra tik vienas būdas sutalpinti {{count}} lotosų šioje eilutėje.",
+        "everyWay.row_one": "Kaip bedėliotum, šios eilutės lotosas visada atsiduria čia.",
+        "everyWay.row_few": "Kaip bedėliotum šios eilutės {{count}} lotosus, vienas visada atsiduria čia.",
+        "everyWay.row_many": "Kaip bedėliotum šios eilutės {{count}} lotoso, vienas visada atsiduria čia.",
+        "everyWay.row_other": "Kaip bedėliotum šios eilutės {{count}} lotosų, vienas visada atsiduria čia.",
+        "groupFull.col_one": "Šiame stulpelyje jau yra lotosas.",
+        "groupFull.col_few": "Šiame stulpelyje jau yra visi {{count}} lotosai.",
+        "groupFull.col_many": "Šiame stulpelyje jau yra visi {{count}} lotoso.",
+        "groupFull.col_other": "Šiame stulpelyje jau yra visi {{count}} lotosų.",
+        "groupTight.col_one": "Šiame stulpelyje liko tik vienas vandens lopinėlis.",
+        "groupTight.col_few": "Šiame stulpelyje liko tik {{count}} vandens lopinėliai.",
+        "groupTight.col_many": "Šiame stulpelyje liko tik {{count}} vandens lopinėlio.",
+        "groupTight.col_other": "Šiame stulpelyje liko tik {{count}} vandens lopinėlių.",
+        "onlyWay.col_one": "Tarp uolų šiame stulpelyje liko tik vienas langelis, kur tilptų lotosas.",
+        "onlyWay.col_few": "Yra tik vienas būdas sutalpinti {{count}} lotosus šiame stulpelyje.",
+        "onlyWay.col_many": "Yra tik vienas būdas sutalpinti {{count}} lotoso šiame stulpelyje.",
+        "onlyWay.col_other": "Yra tik vienas būdas sutalpinti {{count}} lotosų šiame stulpelyje.",
+        "everyWay.col_one": "Kaip bedėliotum, šio stulpelio lotosas visada atsiduria čia.",
+        "everyWay.col_few": "Kaip bedėliotum šio stulpelio {{count}} lotosus, vienas visada atsiduria čia.",
+        "everyWay.col_many": "Kaip bedėliotum šio stulpelio {{count}} lotoso, vienas visada atsiduria čia.",
+        "everyWay.col_other": "Kaip bedėliotum šio stulpelio {{count}} lotosų, vienas visada atsiduria čia.",
+        "lineBlock.rowsToCols": "Pažymėtos eilutės laiko savo lotosus tų stulpelių langeliuose, todėl tiems stulpeliams nebelieka.",
+        "lineBlock.colsToRows": "Pažymėti stulpeliai laiko savo lotosus tų eilučių langeliuose, todėl toms eilutėms nebelieka.",
+        "wouldStrand.row": "Jei čia būtų lotosas, pažymėtoje eilutėje nebeliktų vietos.",
+        "wouldStrand.col": "Jei čia būtų lotosas, pažymėtame stulpelyje nebeliktų vietos.",
+        "action": {
+          "ruleOut_one": "Atmesk užbrūkšniuotą langelį.",
+          "ruleOut_few": "Atmesk užbrūkšniuotus langelius.",
+          "ruleOut_many": "Atmesk užbrūkšniuotus langelius.",
+          "ruleOut_other": "Atmesk užbrūkšniuotus langelius.",
+          "place_one": "Paleisk lotosą į užbrūkšniuotą langelį.",
+          "place_few": "Paleisk lotosą į kiekvieną užbrūkšniuotą langelį.",
+          "place_many": "Paleisk lotosą į kiekvieną užbrūkšniuotą langelį.",
+          "place_other": "Paleisk lotosą į kiekvieną užbrūkšniuotą langelį."
+        }
+      },
+      "cats": {
+        "mistake": "Šis ženklas negali būti teisingas.",
+        "touch": "Čia yra {{token}}, o jokios dvi katės negali miegoti greta — kampai irgi skaičiuojasi.",
+        "groupFull.row_one": "Šioje eilutėje jau yra katė.",
+        "groupFull.row_few": "Šioje eilutėje jau yra visos {{count}} katės.",
+        "groupFull.row_many": "Šioje eilutėje jau yra visos {{count}} katės.",
+        "groupFull.row_other": "Šioje eilutėje jau yra visos {{count}} kačių.",
+        "groupTight.row_one": "Šioje eilutėje liko tik viena plokštė.",
+        "groupTight.row_few": "Šioje eilutėje liko tik {{count}} plokštės.",
+        "groupTight.row_many": "Šioje eilutėje liko tik {{count}} plokštės.",
+        "groupTight.row_other": "Šioje eilutėje liko tik {{count}} plokščių.",
+        "onlyWay.row_one": "Tarp kolonų šioje eilutėje liko tik vienas langelis, kur tilptų katė.",
+        "onlyWay.row_few": "Yra tik vienas būdas sutalpinti {{count}} kates šioje eilutėje.",
+        "onlyWay.row_many": "Yra tik vienas būdas sutalpinti {{count}} katės šioje eilutėje.",
+        "onlyWay.row_other": "Yra tik vienas būdas sutalpinti {{count}} kačių šioje eilutėje.",
+        "everyWay.row_one": "Kaip bedėliotum, šios eilutės katė visada atsiduria čia.",
+        "everyWay.row_few": "Kaip bedėliotum šios eilutės {{count}} kates, viena visada atsiduria čia.",
+        "everyWay.row_many": "Kaip bedėliotum šios eilutės {{count}} katės, viena visada atsiduria čia.",
+        "everyWay.row_other": "Kaip bedėliotum šios eilutės {{count}} kačių, viena visada atsiduria čia.",
+        "groupFull.col_one": "Šiame stulpelyje jau yra katė.",
+        "groupFull.col_few": "Šiame stulpelyje jau yra visos {{count}} katės.",
+        "groupFull.col_many": "Šiame stulpelyje jau yra visos {{count}} katės.",
+        "groupFull.col_other": "Šiame stulpelyje jau yra visos {{count}} kačių.",
+        "groupTight.col_one": "Šiame stulpelyje liko tik viena plokštė.",
+        "groupTight.col_few": "Šiame stulpelyje liko tik {{count}} plokštės.",
+        "groupTight.col_many": "Šiame stulpelyje liko tik {{count}} plokštės.",
+        "groupTight.col_other": "Šiame stulpelyje liko tik {{count}} plokščių.",
+        "onlyWay.col_one": "Tarp kolonų šiame stulpelyje liko tik vienas langelis, kur tilptų katė.",
+        "onlyWay.col_few": "Yra tik vienas būdas sutalpinti {{count}} kates šiame stulpelyje.",
+        "onlyWay.col_many": "Yra tik vienas būdas sutalpinti {{count}} katės šiame stulpelyje.",
+        "onlyWay.col_other": "Yra tik vienas būdas sutalpinti {{count}} kačių šiame stulpelyje.",
+        "everyWay.col_one": "Kaip bedėliotum, šio stulpelio katė visada atsiduria čia.",
+        "everyWay.col_few": "Kaip bedėliotum šio stulpelio {{count}} kates, viena visada atsiduria čia.",
+        "everyWay.col_many": "Kaip bedėliotum šio stulpelio {{count}} katės, viena visada atsiduria čia.",
+        "everyWay.col_other": "Kaip bedėliotum šio stulpelio {{count}} kačių, viena visada atsiduria čia.",
+        "lineBlock.rowsToCols": "Pažymėtos eilutės laiko savo kates tų stulpelių langeliuose, todėl tiems stulpeliams nebelieka.",
+        "lineBlock.colsToRows": "Pažymėti stulpeliai laiko savo kates tų eilučių langeliuose, todėl toms eilutėms nebelieka.",
+        "wouldStrand.row": "Jei čia būtų katė, pažymėtoje eilutėje nebeliktų vietos.",
+        "wouldStrand.col": "Jei čia būtų katė, pažymėtame stulpelyje nebeliktų vietos.",
+        "action": {
+          "ruleOut_one": "Atmesk užbrūkšniuotą langelį.",
+          "ruleOut_few": "Atmesk užbrūkšniuotus langelius.",
+          "ruleOut_many": "Atmesk užbrūkšniuotus langelius.",
+          "ruleOut_other": "Atmesk užbrūkšniuotus langelius.",
+          "place_one": "Paguldyk katę į užbrūkšniuotą langelį.",
+          "place_few": "Paguldyk katę į kiekvieną užbrūkšniuotą langelį.",
+          "place_many": "Paguldyk katę į kiekvieną užbrūkšniuotą langelį.",
+          "place_other": "Paguldyk katę į kiekvieną užbrūkšniuotą langelį."
+        }
+      }
+    },
+    "quota": {
+      "default": "Kiekvienoje eilutėje, stulpelyje ir srityje",
+      "fields": "Kiekvienoje eilutėje, stulpelyje ir valdoje",
+      "lamps": "Kiekvienoje eilutėje ir stulpelyje",
+      "market": "Kiekvienoje eilutėje ir stulpelyje",
+      "lotus": "Kiekvienoje eilutėje ir stulpelyje",
+      "cats": "Kiekvienoje eilutėje ir stulpelyje"
+    },
+    "goal": {
+      "default_one": "Kiekvienoje eilutėje, stulpelyje ir srityje yra lygiai viena žvaigždė.",
+      "default_few": "Kiekvienoje eilutėje, stulpelyje ir srityje yra lygiai {{count}} žvaigždės.",
+      "default_many": "Kiekvienoje eilutėje, stulpelyje ir srityje yra lygiai {{count}} žvaigždės.",
+      "default_other": "Kiekvienoje eilutėje, stulpelyje ir srityje yra lygiai {{count}} žvaigždžių.",
+      "fields_one": "Kiekvienoje eilutėje, stulpelyje ir valdoje yra lygiai viena sodyba.",
+      "fields_few": "Kiekvienoje eilutėje, stulpelyje ir valdoje yra lygiai {{count}} sodybos.",
+      "fields_many": "Kiekvienoje eilutėje, stulpelyje ir valdoje yra lygiai {{count}} sodybos.",
+      "fields_other": "Kiekvienoje eilutėje, stulpelyje ir valdoje yra lygiai {{count}} sodybų.",
+      "lamps": "Kiekvienoje eilutėje ir kiekviename stulpelyje yra lygiai vienas žibintas.",
+      "market": "Kiekvienoje eilutėje ir kiekviename stulpelyje yra lygiai vienas prekystalis.",
+      "lotus": "Kiekvienoje eilutėje ir kiekviename stulpelyje yra lygiai vienas lotosas.",
+      "cats": "Kiekvienoje eilutėje ir kiekviename stulpelyje yra lygiai viena katė."
+    },
+    "name": {
+      "default": "Žvaigždės atskirai",
+      "fields": "Sodybos",
+      "twinDefault": "Žvaigždžių poros",
+      "twinFields": "Sodybų poros",
+      "lamps": "Aliejiniai žibintai",
+      "market": "Turgaus prekystaliai",
+      "lotus": "Lotosų tvenkinys",
+      "cats": "Šventyklos katės"
+    }
+  },
+  "pairPuzzle": {
+    "name": {
+      "mummies": "Mumijų poilsis",
+      "beetles": "Mėšlavabaliai"
+    },
+    "goal": {
+      "mummies": "Šalia kiekvieno sarkofago guli viena mumija, o kiekvienoje eilutėje ir stulpelyje yra lygiai tiek mumijų, kiek parašyta šalia.",
+      "beetles": "Šalia kiekvieno mėšlo rutulio stovi vienas vabalas, o kiekvienoje eilutėje ir stulpelyje yra lygiai tiek vabalų, kiek parašyta šalia."
+    },
+    "rules": {
+      "mummies": {
+        "pair": "Kiekvienas sarkofagas turi vieną mumiją, gulinčią tiesiai virš, po, kairėje arba dešinėje jo, ir kiekviena mumija guli šalia savo sarkofago.",
+        "count": "Skaičius šalia eilutės ar stulpelio sako, kiek jame mumijų. Jis tampa žalias, kai mumijų lygiai tiek, ir raudonas, kai to nebeįmanoma pasiekti.",
+        "touch": "Dvi mumijos negali gulėti greta — net kampais.",
+        "enter": "Bakstelk langelį, kad jį atmestum, dar kartą — kad paguldytum mumiją, dar kartą — kad išvalytum. Tempk per langelius, kad atmestum visą eilę. Sarkofagų bakstelėti negalima."
+      },
+      "beetles": {
+        "pair": "Kiekvienas mėšlo rutulys turi vieną vabalą tiesiai virš, po, kairėje arba dešinėje jo, ir kiekvienas vabalas stovi šalia savo rutulio, kurį ridens.",
+        "count": "Skaičius šalia eilutės ar stulpelio sako, kiek jame vabalų. Jis tampa žalias, kai vabalų lygiai tiek, ir raudonas, kai to nebeįmanoma pasiekti.",
+        "touch": "Du vabalai negali stovėti greta — net kampais.",
+        "enter": "Bakstelk langelį, kad jį atmestum, dar kartą — kad padėtum vabalą, dar kartą — kad išvalytum. Tempk per langelius, kad atmestum visą eilę. Mėšlo rutulių bakstelėti negalima."
+      }
+    },
+    "hint": {
+      "mummies": {
+        "mistake": "Šis ženklas negali būti teisingas.",
+        "touch": "Ši mumija jau padėta, todėl šalia jos negali būti jokios kitos — net kampais.",
+        "zeroLine.row": "Šioje eilutėje nėra nė vienos mumijos, todėl ji visa tuščia.",
+        "zeroLine.col": "Šiame stulpelyje nėra nė vienos mumijos, todėl jis visas tuščias.",
+        "noAnchor": "Šalia šių langelių nėra sarkofago, todėl čia mumija gulėti negali.",
+        "lineFull.row_one": "Šioje eilutėje jau yra jos mumija.",
+        "lineFull.row_few": "Šioje eilutėje jau yra visos {{count}} mumijos.",
+        "lineFull.row_many": "Šioje eilutėje jau yra visos {{count}} mumijos.",
+        "lineFull.row_other": "Šioje eilutėje jau yra visos {{count}} mumijų.",
+        "lineFull.col_one": "Šiame stulpelyje jau yra jo mumija.",
+        "lineFull.col_few": "Šiame stulpelyje jau yra visos {{count}} mumijos.",
+        "lineFull.col_many": "Šiame stulpelyje jau yra visos {{count}} mumijos.",
+        "lineFull.col_other": "Šiame stulpelyje jau yra visos {{count}} mumijų.",
+        "lineTight.row_one": "Šioje eilutėje mumijai liko tik vienas langelis.",
+        "lineTight.row_few": "Šioje eilutėje liko lygiai tiek langelių, kiek reikia: {{count}} langeliai {{count}} mumijoms.",
+        "lineTight.row_many": "Šioje eilutėje liko lygiai tiek langelių, kiek reikia: {{count}} langelio {{count}} mumijoms.",
+        "lineTight.row_other": "Šioje eilutėje liko lygiai tiek langelių, kiek reikia: {{count}} langelių {{count}} mumijoms.",
+        "lineTight.col_one": "Šiame stulpelyje mumijai liko tik vienas langelis.",
+        "lineTight.col_few": "Šiame stulpelyje liko lygiai tiek langelių, kiek reikia: {{count}} langeliai {{count}} mumijoms.",
+        "lineTight.col_many": "Šiame stulpelyje liko lygiai tiek langelių, kiek reikia: {{count}} langelio {{count}} mumijoms.",
+        "lineTight.col_other": "Šiame stulpelyje liko lygiai tiek langelių, kiek reikia: {{count}} langelių {{count}} mumijoms.",
+        "onlyWay": "Šalia šio sarkofago jo mumijai liko tik vienas langelis.",
+        "claimed": "Šis sarkofagas jau turi savo mumiją, todėl langeliai šalia jo, kurių negali naudoti joks kitas sarkofagas, lieka tušti.",
+        "lineBlock.rowsToCols_one": "Pažymėtose eilutėse yra viena mumija daugiau, nei gali duoti jų pačių sarkofagai, todėl ji priklauso sarkofagui, esančiam visai šalia.",
+        "lineBlock.rowsToCols_few": "Pažymėtose eilutėse reikia daugiau mumijų, nei gali duoti jų pačių sarkofagai (trūksta: {{count}}), todėl jos priklauso sarkofagams, esantiems visai šalia.",
+        "lineBlock.rowsToCols_many": "Pažymėtose eilutėse reikia daugiau mumijų, nei gali duoti jų pačių sarkofagai (trūksta: {{count}}), todėl jos priklauso sarkofagams, esantiems visai šalia.",
+        "lineBlock.rowsToCols_other": "Pažymėtose eilutėse reikia daugiau mumijų, nei gali duoti jų pačių sarkofagai (trūksta: {{count}}), todėl jos priklauso sarkofagams, esantiems visai šalia.",
+        "lineBlock.colsToRows_one": "Pažymėtose stulpeliuose yra viena mumija daugiau, nei gali duoti jų pačių sarkofagai, todėl ji priklauso sarkofagui, esančiam visai šalia.",
+        "lineBlock.colsToRows_few": "Pažymėtose stulpeliuose reikia daugiau mumijų, nei gali duoti jų pačių sarkofagai (trūksta: {{count}}), todėl jos priklauso sarkofagams, esantiems visai šalia.",
+        "lineBlock.colsToRows_many": "Pažymėtose stulpeliuose reikia daugiau mumijų, nei gali duoti jų pačių sarkofagai (trūksta: {{count}}), todėl jos priklauso sarkofagams, esantiems visai šalia.",
+        "lineBlock.colsToRows_other": "Pažymėtose stulpeliuose reikia daugiau mumijų, nei gali duoti jų pačių sarkofagai (trūksta: {{count}}), todėl jos priklauso sarkofagams, esantiems visai šalia.",
+        "wouldStrand.row": "Jei čia būtų mumija, pažymėtoje eilutėje nebeliktų vietos mumijoms, kurių jai dar trūksta.",
+        "wouldStrand.col": "Jei čia būtų mumija, pažymėtame stulpelyje nebeliktų vietos mumijoms, kurių jai dar trūksta.",
+        "wouldStrand.anchor": "Jei čia būtų mumija, pažymėtam sarkofagui neliktų šalia langelio jo paties mumijai.",
+        "action": {
+          "ruleOut_one": "Atmesk užbrūkšniuotą langelį.",
+          "ruleOut_few": "Atmesk užbrūkšniuotus langelius.",
+          "ruleOut_many": "Atmesk užbrūkšniuotus langelius.",
+          "ruleOut_other": "Atmesk užbrūkšniuotus langelius.",
+          "place_one": "Paguldyk mumiją į užbrūkšniuotą langelį.",
+          "place_few": "Paguldyk mumiją į kiekvieną užbrūkšniuotą langelį.",
+          "place_many": "Paguldyk mumiją į kiekvieną užbrūkšniuotą langelį.",
+          "place_other": "Paguldyk mumiją į kiekvieną užbrūkšniuotą langelį."
+        }
+      },
+      "beetles": {
+        "mistake": "Šis ženklas negali būti teisingas.",
+        "touch": "Šis vabalas jau padėtas, todėl šalia jo negali būti jokio kito — net kampais.",
+        "zeroLine.row": "Šioje eilutėje nėra nė vieno vabalo, todėl ji visa tuščia.",
+        "zeroLine.col": "Šiame stulpelyje nėra nė vieno vabalo, todėl jis visas tuščias.",
+        "noAnchor": "Šalia šių langelių nėra mėšlo rutulio, todėl čia vabalas stovėti negali.",
+        "lineFull.row_one": "Šioje eilutėje jau yra jos vabalas.",
+        "lineFull.row_few": "Šioje eilutėje jau yra visi {{count}} vabalai.",
+        "lineFull.row_many": "Šioje eilutėje jau yra visi {{count}} vabalo.",
+        "lineFull.row_other": "Šioje eilutėje jau yra visi {{count}} vabalų.",
+        "lineFull.col_one": "Šiame stulpelyje jau yra jo vabalas.",
+        "lineFull.col_few": "Šiame stulpelyje jau yra visi {{count}} vabalai.",
+        "lineFull.col_many": "Šiame stulpelyje jau yra visi {{count}} vabalo.",
+        "lineFull.col_other": "Šiame stulpelyje jau yra visi {{count}} vabalų.",
+        "lineTight.row_one": "Šioje eilutėje vabalui liko tik vienas langelis.",
+        "lineTight.row_few": "Šioje eilutėje liko lygiai tiek langelių, kiek reikia: {{count}} langeliai {{count}} vabalams.",
+        "lineTight.row_many": "Šioje eilutėje liko lygiai tiek langelių, kiek reikia: {{count}} langelio {{count}} vabalams.",
+        "lineTight.row_other": "Šioje eilutėje liko lygiai tiek langelių, kiek reikia: {{count}} langelių {{count}} vabalams.",
+        "lineTight.col_one": "Šiame stulpelyje vabalui liko tik vienas langelis.",
+        "lineTight.col_few": "Šiame stulpelyje liko lygiai tiek langelių, kiek reikia: {{count}} langeliai {{count}} vabalams.",
+        "lineTight.col_many": "Šiame stulpelyje liko lygiai tiek langelių, kiek reikia: {{count}} langelio {{count}} vabalams.",
+        "lineTight.col_other": "Šiame stulpelyje liko lygiai tiek langelių, kiek reikia: {{count}} langelių {{count}} vabalams.",
+        "onlyWay": "Šalia šio mėšlo rutulio jo vabalui liko tik vienas langelis.",
+        "claimed": "Šis mėšlo rutulys jau turi savo vabalą, todėl langeliai šalia jo, kurių negali naudoti joks kitas rutulys, lieka tušti.",
+        "lineBlock.rowsToCols_one": "Pažymėtose eilutėse yra vienu vabalu daugiau, nei gali duoti jų pačių mėšlo rutuliai, todėl jis priklauso rutuliui, esančiam visai šalia.",
+        "lineBlock.rowsToCols_few": "Pažymėtose eilutėse reikia daugiau vabalų, nei gali duoti jų pačių mėšlo rutuliai (trūksta: {{count}}), todėl jie priklauso rutuliams, esantiems visai šalia.",
+        "lineBlock.rowsToCols_many": "Pažymėtose eilutėse reikia daugiau vabalų, nei gali duoti jų pačių mėšlo rutuliai (trūksta: {{count}}), todėl jie priklauso rutuliams, esantiems visai šalia.",
+        "lineBlock.rowsToCols_other": "Pažymėtose eilutėse reikia daugiau vabalų, nei gali duoti jų pačių mėšlo rutuliai (trūksta: {{count}}), todėl jie priklauso rutuliams, esantiems visai šalia.",
+        "lineBlock.colsToRows_one": "Pažymėtose stulpeliuose yra vienu vabalu daugiau, nei gali duoti jų pačių mėšlo rutuliai, todėl jis priklauso rutuliui, esančiam visai šalia.",
+        "lineBlock.colsToRows_few": "Pažymėtose stulpeliuose reikia daugiau vabalų, nei gali duoti jų pačių mėšlo rutuliai (trūksta: {{count}}), todėl jie priklauso rutuliams, esantiems visai šalia.",
+        "lineBlock.colsToRows_many": "Pažymėtose stulpeliuose reikia daugiau vabalų, nei gali duoti jų pačių mėšlo rutuliai (trūksta: {{count}}), todėl jie priklauso rutuliams, esantiems visai šalia.",
+        "lineBlock.colsToRows_other": "Pažymėtose stulpeliuose reikia daugiau vabalų, nei gali duoti jų pačių mėšlo rutuliai (trūksta: {{count}}), todėl jie priklauso rutuliams, esantiems visai šalia.",
+        "wouldStrand.row": "Jei čia būtų vabalas, pažymėtoje eilutėje nebeliktų vietos vabalams, kurių dar trūksta.",
+        "wouldStrand.col": "Jei čia būtų vabalas, pažymėtame stulpelyje nebeliktų vietos vabalams, kurių dar trūksta.",
+        "wouldStrand.anchor": "Jei čia būtų vabalas, pažymėtam mėšlo rutuliui neliktų šalia langelio jo paties vabalui.",
+        "action": {
+          "ruleOut_one": "Atmesk užbrūkšniuotą langelį.",
+          "ruleOut_few": "Atmesk užbrūkšniuotus langelius.",
+          "ruleOut_many": "Atmesk užbrūkšniuotus langelius.",
+          "ruleOut_other": "Atmesk užbrūkšniuotus langelius.",
+          "place_one": "Padėk vabalą į užbrūkšniuotą langelį.",
+          "place_few": "Padėk vabalą į kiekvieną užbrūkšniuotą langelį.",
+          "place_many": "Padėk vabalą į kiekvieną užbrūkšniuotą langelį.",
+          "place_other": "Padėk vabalą į kiekvieną užbrūkšniuotą langelį."
+        }
+      }
+    }
+  },
+  "rushHour": {
+    "name": {
+      "default": "Užtvara",
+      "market": "Užkimšta gatvelė"
+    },
+    "goal": {
+      "default": "Išstumk savo bloką pro tarpą dešinėje.",
+      "market": "Išstumk savo roges pro tarpą gatvės gale."
+    },
+    "rules": {
+      "default": {
+        "lanes": "Blokas slysta tik savo juosta — niekada į šoną ir niekada už lentos.",
+        "shove": "Tempk bloką, kad jį pastumtum. Jis sustoja ten, kur kas nors trukdo."
+      },
+      "market": {
+        "lanes": "Rogės slysta tik ta juosta, kurioje stovi — niekada į šoną ir niekada už gatvės.",
+        "shove": "Tempk roges, kad jas pastumtum. Jos sustoja ten, kur kas nors trukdo."
+      }
+    },
+    "hint": {
+      "default": {
+        "drive": "Kelias į priekį iki ten laisvas.",
+        "back": "Priekyje niekas nepasitrauks. Pirma patrauk savąjį atgal.",
+        "clear": "Tas blokas stovi skersai tavo juostos.",
+        "room": "Niekas nepajudės, kol nepajudės šitas.",
+        "push": {
+          "left": "Stumk jį į kairę, iki žiedo.",
+          "right": "Stumk jį į dešinę, iki žiedo.",
+          "up": "Stumk jį aukštyn, iki žiedo.",
+          "down": "Stumk jį žemyn, iki žiedo."
+        }
+      },
+      "market": {
+        "drive": "Juosta priešais tavąsias roges iki ten laisva.",
+        "back": "Priekyje niekas nepasitrauks. Pirma patrauk savo roges atgal.",
+        "clear": "Tas krovinys stovi skersai juostos, kuria turi išvažiuoti.",
+        "room": "Niekas nepajudės, kol nepatrauksi šito.",
+        "push": {
+          "left": "Stumk jį į kairę, iki žiedo.",
+          "right": "Stumk jį į dešinę, iki žiedo.",
+          "up": "Stumk jį gatve aukštyn, iki žiedo.",
+          "down": "Stumk jį gatve žemyn, iki žiedo."
+        }
+      }
+    }
+  },
+  "hidato": {
+    "rules": {
+      "default": {
+        "given": "Skaičiai, kurie jau yra koryje, yra galvosūkio dalis — jie lieka vietoje.",
+        "enter": "Bakstelk skaičių, kad tęstum eilę nuo jo, tada bakstelk gretimą tuščią akutę, kad eilė eitų toliau — arba tiesiog tempk per akutes, kuriomis ji eina.",
+        "back": "Bakstelk savo įrašytą skaičių ir bakstelk dar kartą, kad jį nuimtum kartu su viskuo, kas nuo jo kabo. Jei pratęsi eilę nuo skaičiaus kita kryptimi, nutiks tas pats. „Atšaukti“ atšaukia paskutinį ėjimą."
+      },
+      "channel": {
+        "given": "Jau sunumeruoti laukai yra galvosūkio dalis — jie lieka vietoje.",
+        "enter": "Bakstelk sunumeruotą lauką, kad paimtum vandenį iš ten, tada bakstelk sausą lauką šalia, kad kastum toliau — arba tiesiog tempk per laukus, kuriais eina kanalas.",
+        "back": "Bakstelk savo iškastą lauką ir bakstelk dar kartą, kad jį užpiltum kartu su kanalu, kuris nuo jo atkirstas. Jei kasi iš lauko kita kryptimi, nutiks tas pats. „Atšaukti“ atšaukia paskutinį ėjimą."
+      },
+      "scribe": {
+        "given": "Raudonu rašalu įrašyti skaičiai priklauso galvosūkiui — jie lieka vietoje.",
+        "enter": "Bakstelk skaičių, kad paimtum nendrę nuo jo, tada bakstelk tuščią vietą šalia, kad rašytum toliau — arba tiesiog tempk palei liniją.",
+        "back": "Bakstelk savo parašytą skaičių ir bakstelk dar kartą, kad jį nugrandytum kartu su linija, kuri nuo jo atkirsta. Jei rašai nuo skaičiaus kita kryptimi, nutiks tas pats. „Atšaukti“ atšaukia paskutinį ėjimą."
+      },
+      "chambers": {
+        "given": "Jau sunumeruotus kambarius iškirto statytojai — jie lieka vietoje.",
+        "enter": "Bakstelk sunumeruotą kambarį, kad tęstum praėjimą nuo jo, tada bakstelk užsandarintą kambarį šalia, kad prasimuštum — arba tiesiog tempk per kambarius, kuriais eina praėjimas.",
+        "back": "Bakstelk savo atidarytą kambarį ir bakstelk dar kartą, kad jį užsandarintum kartu su praėjimu, kuris nuo jo atkirstas. Jei prasimuši iš kambario kita kryptimi, nutiks tas pats. „Atšaukti“ atšaukia paskutinį ėjimą."
+      }
+    },
+    "goal": {
+      "default": "Kiekvienoje korio akutėje yra skaičius nuo 1 iki {{last}}, ir kiekvienas jų liečiasi su prieš jį einančiu skaičiumi.",
+      "channel": "Vienas kanalas laisto visą lygumą: kiekvienas laukas gauna savo eilę nuo 1 iki {{last}}, ir kiekvienas iškastas šalia prieš jį einančio lauko.",
+      "scribe": "Viena nenutrūkstanti skaičių linija kerta lapą: kiekvienoje vietoje yra skaičius nuo 1 iki {{last}}, ir kiekvienas šalia prieš jį einančio.",
+      "chambers": "Vienas praėjimas eina per visą kapą: kiekvienas kambarys atidaromas paeiliui nuo 1 iki {{last}}, ir į kiekvieną prasimušama iš prieš jį einančio kambario."
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": "Vienas iš šių skaičių negali būti teisingas.",
+          "sandwich": "{{before}} ir {{after}} kartu liečia tik vieną laisvą akutę.",
+          "neighbourForced": "Šalia {{from}} liko tik viena laisva akutė.",
+          "onlyCell": "Koryje nebėra kitos vietos skaičiui {{value}}.",
+          "onlyValue": "Jokis kitas skaičius negali pasiekti šios akutės."
+        },
+        "action": {
+          "place": "Įrašyk {{value}} į užbrūkšniuotą akutę."
+        }
+      },
+      "channel": {
+        "reason": {
+          "mistake": "Vienas iš šių skaičių negali būti teisingas.",
+          "sandwich": "{{before}} ir {{after}} kartu liečia tik vieną sausą lauką.",
+          "neighbourForced": "Šalia {{from}} liko tik vienas sausas laukas.",
+          "onlyCell": "Lygumoje nebėra kitos vietos skaičiui {{value}}.",
+          "onlyValue": "Jokis kitas skaičius negali pasiekti šio lauko."
+        },
+        "action": {
+          "place": "Iškask {{value}} užbrūkšniuotame lauke."
+        }
+      },
+      "scribe": {
+        "reason": {
+          "mistake": "Vienas iš šių skaičių negali būti teisingas.",
+          "sandwich": "{{before}} ir {{after}} kartu liečia tik vieną tuščią vietą.",
+          "neighbourForced": "Šalia {{from}} liko tik viena tuščia vieta.",
+          "onlyCell": "Lape nebėra kitos vietos skaičiui {{value}}.",
+          "onlyValue": "Jokis kitas skaičius negali pasiekti šios vietos."
+        },
+        "action": {
+          "place": "Parašyk {{value}} užbrūkšniuotoje vietoje."
+        }
+      },
+      "chambers": {
+        "reason": {
+          "mistake": "Vienas iš šių skaičių negali būti teisingas.",
+          "sandwich": "{{before}} ir {{after}} kartu liečia tik vieną užsandarintą kambarį.",
+          "neighbourForced": "Šalia {{from}} liko tik vienas užsandarintas kambarys.",
+          "onlyCell": "Kape nebėra kitos vietos skaičiui {{value}}.",
+          "onlyValue": "Jokis kitas skaičius negali pasiekti šio kambario."
+        },
+        "action": {
+          "place": "Atidaryk {{value}} užbrūkšniuotame kambaryje."
+        }
+      }
+    },
+    "name": {
+      "default": "Avilys",
+      "channel": "Kanalas",
+      "scribe": "Raštininko lapas",
+      "chambers": "Užsandarinti kambariai"
+    }
+  },
+  "sudoku": {
+    "rules": {
+      "default": {
+        "chambers": "Storos linijos padalija lentelę į šešis kambarius, dviejų langelių pločio ir trijų aukščio.",
+        "given": "Jau iškalti skaičiai yra galvosūkio dalis — jie lieka vietoje.",
+        "enter": "Bakstelk langelį, tada skaičių. Bakstelėjus tą patį skaičių dar kartą, jis išimamas.",
+        "notes": "Įjunk pieštuką, kad užsirašytum, kokie skaičiai dar gali tikti langeliui. „Atšaukti“ atšaukia paskutinį ėjimą."
+      },
+      "papyrus": {
+        "chambers": "Storos linijos padalija lapą į šešis laukelius, dviejų vietų pločio ir trijų aukščio.",
+        "given": "Raudonu rašalu įrašyti ženklai priklauso galvosūkiui — jie lieka vietoje.",
+        "enter": "Bakstelk vietą, tada ženklą. Bakstelėjus tą patį ženklą dar kartą, jis nugrandomas.",
+        "notes": "Paimk nendrinę plunksną, kad užsirašytum, kokie ženklai dar gali tikti vietai. „Atšaukti“ atšaukia paskutinį ėjimą."
+      }
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": {
+            "value": "Vienas iš čia esančių skaičių negali būti teisingas. Išimk jį ir pažiūrėk dar kartą.",
+            "note": "Šio langelio pastabos atmetė skaičių, kuris čia tinka. Išvalyk jas ir pradėk iš naujo."
+          },
+          "nakedSingle": "Šio langelio eilutė, stulpelis ir kambarys jau užėmė visus kitus skaičius.",
+          "hiddenSingle": {
+            "row": "{{token}} netinka jokiam kitam šios eilutės langeliui.",
+            "col": "{{token}} netinka jokiam kitam šio stulpelio langeliui.",
+            "box": "{{token}} netinka jokiam kitam šio kambario langeliui."
+          },
+          "pointing": {
+            "row": "Pažymėtame kambaryje {{token}} gali stovėti tik šioje eilutėje.",
+            "col": "Pažymėtame kambaryje {{token}} gali stovėti tik šiame stulpelyje."
+          },
+          "claiming": {
+            "row": "Pažymėtoje eilutėje {{token}} tinka tik šiame viename kambaryje.",
+            "col": "Pažymėtame stulpelyje {{token}} tinka tik šiame viename kambaryje."
+          }
+        },
+        "action": {
+          "place": "Įrašyk {{token}} į užbrūkšniuotą langelį.",
+          "ruleOut_one": "Atmesk {{token}} užbrūkšniuotame langelyje.",
+          "ruleOut_few": "Atmesk {{token}} užbrūkšniuotuose langeliuose.",
+          "ruleOut_many": "Atmesk {{token}} užbrūkšniuotuose langeliuose.",
+          "ruleOut_other": "Atmesk {{token}} užbrūkšniuotuose langeliuose."
+        }
+      },
+      "papyrus": {
+        "reason": {
+          "mistake": {
+            "value": "Vienas iš šių ženklų negali būti teisingas. Nugrandyk jį ir pažiūrėk dar kartą.",
+            "note": "Šios vietos pieštuko žymės atmetė ženklą, kuris čia tinka. Ištrink jas ir pradėk iš naujo."
+          },
+          "nakedSingle": "Šios vietos eilutė, stulpelis ir laukelis jau užėmė visus kitus ženklus.",
+          "hiddenSingle": {
+            "row": "{{token}} netinka jokiai kitai šios eilutės vietai.",
+            "col": "{{token}} netinka jokiai kitai šio stulpelio vietai.",
+            "box": "{{token}} netinka jokiai kitai šio laukelio vietai."
+          },
+          "pointing": {
+            "row": "Pažymėtame laukelyje {{token}} gali stovėti tik šioje eilutėje.",
+            "col": "Pažymėtame laukelyje {{token}} gali stovėti tik šiame stulpelyje."
+          },
+          "claiming": {
+            "row": "Pažymėtoje eilutėje {{token}} tinka tik šiame viename laukelyje.",
+            "col": "Pažymėtame stulpelyje {{token}} tinka tik šiame viename laukelyje."
+          }
+        },
+        "action": {
+          "place": "Įrašyk {{token}} užbrūkšniuotoje vietoje.",
+          "ruleOut_one": "Atmesk {{token}} užbrūkšniuotoje vietoje.",
+          "ruleOut_few": "Atmesk {{token}} užbrūkšniuotose vietose.",
+          "ruleOut_many": "Atmesk {{token}} užbrūkšniuotose vietose.",
+          "ruleOut_other": "Atmesk {{token}} užbrūkšniuotose vietose."
+        }
+      }
+    },
+    "goal": {
+      "default": "Kiekvienoje eilutėje, stulpelyje ir kambaryje kiekvienas iš šešių skaičių yra lygiai vieną kartą.",
+      "papyrus": "Kiekvienoje eilutėje, stulpelyje ir laukelyje kiekvienas iš šešių ženklų yra lygiai vieną kartą."
+    },
+    "name": {
+      "default": "Šeši kambariai",
+      "papyrus": "Raštininko knyga"
+    }
+  },
+  "crocodile": {
+    "name": "Krokodilų duobė",
+    "goal": "Pereik duobę iki kito kranto.",
+    "rules": {
+      "want": "Kiekvienas krokodilas nori vieno atsakymo iš akmenų eilės už jo: didžiausio arba mažiausio.",
+      "mark": "Kurio — rodo jo atvira burna ir ženklas šalia: > atsiveria į didžiausią atsakymą, < — į mažiausią.",
+      "bite": "Užlipk ant bet kurio kito akmens, ir jis įkąs: prarasi sveikatos ir pradėsi iš naujo nuo artimojo kranto."
+    },
+    "hint": {
+      "biggest": "Šis krokodilas nori didžiausio atsakymo. Tai {{value}}.",
+      "smallest": "Šis krokodilas nori mažiausio atsakymo. Tai {{value}}."
+    }
+  },
+  "canisters": {
+    "name": {
+      "default": "Talpyklos",
+      "grain": "Grūdų saikai",
+      "oil": "Aliejus žibintams",
+      "wine": "Pirklio rūsys",
+      "natron": "Kanopos",
+      "ink": "Raštinė"
+    },
+    "goal": {
+      "default_one": "Atmatuok prašomą kiekį ir pasakyk, kurioje talpykloje jis yra.",
+      "default_few": "Atmatuok kiekvieną prašomą kiekį paeiliui ir prieš kitą pasakyk, kurioje talpykloje jis yra.",
+      "default_many": "Atmatuok kiekvieną prašomą kiekį paeiliui ir prieš kitą pasakyk, kurioje talpykloje jis yra.",
+      "default_other": "Atmatuok kiekvieną prašomą kiekį paeiliui ir prieš kitą pasakyk, kurioje talpykloje jis yra.",
+      "grain_one": "Atmatuok prašomą grūdų kiekį ir pasakyk, kuriame saike jis yra.",
+      "grain_few": "Atmatuok kiekvieną grūdų kiekį paeiliui ir prieš kitą pasakyk, kuriame saike jis yra.",
+      "grain_many": "Atmatuok kiekvieną grūdų kiekį paeiliui ir prieš kitą pasakyk, kuriame saike jis yra.",
+      "grain_other": "Atmatuok kiekvieną grūdų kiekį paeiliui ir prieš kitą pasakyk, kuriame saike jis yra.",
+      "oil_one": "Atmatuok prašomą aliejaus kiekį ir pasakyk, kuriame ąsotyje jis yra.",
+      "oil_few": "Atmatuok kiekvieną aliejaus kiekį paeiliui ir prieš kitą pasakyk, kuriame ąsotyje jis yra.",
+      "oil_many": "Atmatuok kiekvieną aliejaus kiekį paeiliui ir prieš kitą pasakyk, kuriame ąsotyje jis yra.",
+      "oil_other": "Atmatuok kiekvieną aliejaus kiekį paeiliui ir prieš kitą pasakyk, kuriame ąsotyje jis yra.",
+      "wine_one": "Atmatuok prašomą vyno kiekį ir pasakyk, kurioje amforoje jis yra.",
+      "wine_few": "Atmatuok kiekvieną vyno kiekį paeiliui ir prieš kitą pasakyk, kurioje amforoje jis yra.",
+      "wine_many": "Atmatuok kiekvieną vyno kiekį paeiliui ir prieš kitą pasakyk, kurioje amforoje jis yra.",
+      "wine_other": "Atmatuok kiekvieną vyno kiekį paeiliui ir prieš kitą pasakyk, kurioje amforoje jis yra.",
+      "natron_one": "Atmatuok prašomą natrono kiekį ir pasakyk, kuriame inde jis yra.",
+      "natron_few": "Atmatuok kiekvieną natrono kiekį paeiliui ir prieš kitą pasakyk, kuriame inde jis yra.",
+      "natron_many": "Atmatuok kiekvieną natrono kiekį paeiliui ir prieš kitą pasakyk, kuriame inde jis yra.",
+      "natron_other": "Atmatuok kiekvieną natrono kiekį paeiliui ir prieš kitą pasakyk, kuriame inde jis yra.",
+      "ink_one": "Atmatuok prašomą rašalo kiekį ir pasakyk, kuriame puodelyje jis yra.",
+      "ink_few": "Atmatuok kiekvieną rašalo kiekį paeiliui ir prieš kitą pasakyk, kuriame puodelyje jis yra.",
+      "ink_many": "Atmatuok kiekvieną rašalo kiekį paeiliui ir prieš kitą pasakyk, kuriame puodelyje jis yra.",
+      "ink_other": "Atmatuok kiekvieną rašalo kiekį paeiliui ir prieš kitą pasakyk, kuriame puodelyje jis yra."
+    },
+    "rules": {
+      "method": {
+        "sums": "Kiekvieną kiekį gali gauti iš dviejų skaičių ant suolo, juos sudėjęs arba atėmęs: talpyklos dydis, kiek joje yra, arba kiek vietos joje liko.",
+        "backwards": "Tad eik atgal nuo prašomo kiekio — kurie du skaičiai jį sudaro, ir kaip gauti, kad abu būtų vienu metu?"
+      },
+      "claim": "Kai turi kiekį, bakstelk „šitas“. Jei nurodysi ne tą indą, prarasi ėjimą.",
+      "legs": "Tada kitas kiekis, matuojamas iš to, kas induose liko.",
+      "default": {
+        "moves": "Bakstelk talpyklą, kad ją paimtum, tada bakstelk kitą, kad į ją pilstum. Pilti liaujamasi, kai pirmoji ištuštėja arba antroji prisipildo.",
+        "contents": "Tai visas vanduo, koks yra — viena talpykla iš pradžių pilna, ir nieko negalima išpilti ar atsinešti.",
+        "levels": "Ant kiekvienos talpyklos parašyta, kiek joje yra ir kiek telpa, kai ji pilna."
+      },
+      "grain": {
+        "moves": "Bakstelk saiką, kad jį pakeltum, tada bakstelk kitą, kad į jį suberum grūdus. Berti liaujamasi, kai pirmasis ištuštėja arba antrasis prisipildo iki kraštų.",
+        "contents": "Tai visi grūdai, kokie yra — vienas saikas iš pradžių pilnas, ir nieko negalima iššluoti ar atsinešti iš klėties.",
+        "levels": "Ant kiekvieno saiko parašyta, kiek jame yra ir kiek telpa, kai jis pilnas iki kraštų."
+      },
+      "oil": {
+        "moves": "Bakstelk ąsotį, kad jį pakeltum, tada bakstelk kitą, kad į jį pilstum. Pilti liaujamasi, kai pirmasis ištuštėja arba antrasis prisipildo.",
+        "contents": "Tai visas aliejus, koks yra — vienas ąsotis iš pradžių pilnas, ir nieko negalima išpilti ar įsipilti.",
+        "levels": "Ant kiekvieno ąsočio parašyta, kiek jame yra ir kiek telpa, kai jis pilnas."
+      },
+      "wine": {
+        "moves": "Bakstelk amforą, kad ją pakeltum, tada bakstelk kitą, kad į ją perpiltum. Pilti liaujamasi, kai pirmoji ištuštėja arba antroji prisipildo.",
+        "contents": "Tai visas vynas, koks yra — viena amfora iš pradžių pilna, ir nieko negalima išlaistyti ar atsinešti iš rūsio.",
+        "levels": "Ant kiekvienos amforos parašyta, kiek joje yra ir kiek telpa, kai ji pilna."
+      },
+      "natron": {
+        "moves": "Bakstelk indą, kad jį pakeltum, tada bakstelk kitą, kad į jį suberum natroną. Berti liaujamasi, kai pirmasis ištuštėja arba antrasis prisipildo iki dangčio.",
+        "contents": "Tai visas natronas, koks yra — vienas indas iš pradžių pilnas, ir nieko negalima iššluoti ar atsinešti.",
+        "levels": "Ant kiekvieno indo parašyta, kiek jame yra ir kiek telpa, kai jis pilnas iki dangčio."
+      },
+      "ink": {
+        "moves": "Bakstelk puodelį, kad jį pakeltum, tada bakstelk kitą, kad į jį pilstum. Pilti liaujamasi, kai pirmasis ištuštėja arba antrasis prisipildo.",
+        "contents": "Tai visas rašalas, koks yra — vienas puodelis iš pradžių pilnas, ir nieko negalima išpilti ar pasigaminti naujo.",
+        "levels": "Ant kiekvieno puodelio parašyta, kiek jame yra ir kiek telpa, kai jis pilnas."
+      }
+    },
+    "hint": {
+      "goal": {
+        "leftover": "Einame atgal: {{amount}} yra {{content}} atėmus {{space}} — talpykla su {{content}} supilama į tą, kurioje liko {{space}} vietos.",
+        "full": "Einame atgal: {{amount}} yra talpyklos dydis, o {{a}} ir {{b}} kartu sudaro lygiai tiek.",
+        "sum": "Einame atgal: {{amount}} yra {{a}} ir {{b}} kartu."
+      },
+      "claim": "Iki to liko vienas pylimas. Tada išsiaiškink, kurioje talpykloje jis yra.",
+      "stuck": "Iš čia {{target}} nebeįmanoma atmatuoti per likusius ėjimus. Atšauk pylimą arba pradėk iš naujo.",
+      "overBudget": "Ėjimų nebeliko. Atšauk vieną arba pradėk iš naujo ir rask trumpesnį kelią.",
+      "next": {
+        "leftover": "Ankstesnis žingsnis: {{amount}} — {{content}} supilama ten, kur liko {{space}} vietos.",
+        "full": "Ankstesnis žingsnis: talpykla pilna iki {{amount}} — {{a}} ir {{b}} kartu.",
+        "sum": "Ankstesnis žingsnis: {{amount}} — {{a}} ir {{b}} kartu."
+      }
+    },
+    "movesLeft_one": "Liko {{count}} ėjimas",
+    "movesLeft_few": "Liko {{count}} ėjimai",
+    "movesLeft_many": "Liko {{count}} ėjimo",
+    "movesLeft_other": "Liko {{count}} ėjimų",
+    "legs": "atmatuota {{done}} iš {{total}}",
+    "wanted": "Atmatuok",
+    "claim": "šitas",
+    "claimAria": "Pasakyti, kad reikiamas kiekis yra talpykloje „{{capacity}}“"
+  },
+  "procession": {
+    "name": {
+      "default": "Surikiuotos valandos",
+      "funerary": "Diena darbininkų slėnyje",
+      "cosmos": "Nakties kelionė",
+      "water": "Potvynio diena",
+      "trade": "Diena prieplaukoje"
+    },
+    "goal": {
+      "default": "Perstumk kiekvieną įvykį į jo valandą, kol visi ženklai po diena galios.",
+      "funerary": "Perstumk kiekvieną darbą į jo valandą, kol visi ženklai po diena galios.",
+      "cosmos": "Perstumk kiekvieną šviesulį į jo valandą, kol visi ženklai po naktimi galios.",
+      "water": "Perstumk kiekvieną darbą į jo valandą, kol visi ženklai po diena galios.",
+      "trade": "Perstumk kiekvieną darbą į jo valandą, kol visi ženklai po diena galios."
+    },
+    "rules": {
+      "default": {
+        "lengths": "Kiekviena eilutė yra vienas įvykis, ir jis trunka tiek, kiek plati jo juosta. Kada jis vyksta — tai turi išsiaiškinti tu.",
+        "marks": "Linija po diena būna raudona, kol ji negalioja. Bakstelk ją, kad pažymėtum eilutes, apie kurias ji kalba.",
+        "drag": "Tempk juostą jos pačios eilute. Ji niekada neišeina už dienos ribų."
+      }
+    },
+    "hint": {
+      "default": {
+        "chain": "Tos eilutės vieta jau aiški, o ši nuo jos priklauso.",
+        "squeeze": "Dienos liko tik tiek, ir daugiau čia netelpa.",
+        "apart": "Atvirkščiai dienoje netilptų.",
+        "split": "Pabandyk atvirkščiai, ir kažkas kita sugenda.",
+        "move": "Nutempk pažymėtą juostą ant užbrūkšniuotų padalų."
+      }
+    },
+    "events": {
+      "default": [
+        "laužas",
+        "vandens nešimas",
+        "duonos kepimas",
+        "plaukimas valtimi",
+        "jaučių varymas",
+        "naktinė sargyba"
+      ],
+      "funerary": ["tinkavimas", "tinklelio braižymas", "raižymas", "dažymas", "auksavimas", "durų statymas"],
+      "cosmos": [
+        "saulės kelionė",
+        "žvaigždės patekėjimas",
+        "mėnulio sargyba",
+        "giedras dangus",
+        "aušra",
+        "metų apsisukimas"
+      ],
+      "water": ["potvynis", "kanalo kasimas", "baseino pildymas", "laukų laistymas", "kėlimas per upę", "pjūtis"],
+      "trade": [
+        "prekių rūšiavimas",
+        "duonos pardavimas",
+        "alaus pardavimas",
+        "kėlimas per upę",
+        "krovinių vežimas",
+        "skaičiavimas"
+      ]
+    },
+    "marks": {
+      "default": {
+        "pin": "{{a}} prasideda valandą {{tick}}.",
+        "handoff": "{{a}} prasideda tą akimirką, kai baigiasi {{b}}.",
+        "link_one": "{{a}} prasideda praėjus {{count}} valandai po to, kai baigiasi {{b}}.",
+        "link_few": "{{a}} prasideda praėjus {{count}} valandoms po to, kai baigiasi {{b}}.",
+        "link_many": "{{a}} prasideda praėjus {{count}} valandos po to, kai baigiasi {{b}}.",
+        "link_other": "{{a}} prasideda praėjus {{count}} valandų po to, kai baigiasi {{b}}.",
+        "before": "{{a}} baigiasi prieš prasidedant {{b}}.",
+        "apart": "{{a}} ir {{b}} niekada nevyksta tuo pačiu metu.",
+        "together": "{{a}} ir {{b}} kurį laiką vyksta kartu.",
+        "span_one": "Nuo pirmos pradžios iki paskutinės pabaigos — {{count}} valanda.",
+        "span_few": "Nuo pirmos pradžios iki paskutinės pabaigos — {{count}} valandos.",
+        "span_many": "Nuo pirmos pradžios iki paskutinės pabaigos — {{count}} valandos.",
+        "span_other": "Nuo pirmos pradžios iki paskutinės pabaigos — {{count}} valandų."
+      }
+    },
+    "door": {
+      "title": "Procesijos durys",
+      "hint": "Kiekviena plytelė, ant kurios užlipi, paleidžia savo darbą. Surikiuok dieną, tada eik plytelėmis ta tvarka.",
+      "read": "Diena perskaityta. Eik jos plytelėmis šia tvarka, nuo pirmosios.",
+      "hintButton": "Užuomina"
+    }
+  },
+  "story": {
+    "invitation": "Kalbėtis",
+    "log": {
+      "empty": "Kol kas nieko. Fez dar turės ką papasakoti."
+    },
+    "speaker": {
+      "fez": "Fez",
+      "explorer": "Tu",
+      "ipi": "Ipi",
+      "henut": "Henut",
+      "priest": "Žynys",
+      "pharaoh": "Faraonas",
+      "voice": "Balsas"
+    },
+    "wall": {
+      "wrong": "Kažkas neteisingai iškalė trečią ženklą. Jis neteisingas jau tris tūkstančius metų.",
+      "fixed": "Štai vėl jos vardas.",
+      "pick": "Įdėk tinkamą ženklą į jo vietą.",
+      "cannot": "Tu dar nežinai ženklo, kuris čia tinka. Kol kas."
+    },
+    "sphinx": {
+      "wrong": "Tas pats užrašas kaip lauke, bet čia smėlis jo nepasiekė. Du ženklai vis dar aiškūs, o trečiojo vietoje tarpas.",
+      "fixed": "Tai ir viskas.",
+      "pick": "Įdėk turimą ženklą į tarpą.",
+      "cannot": "Du ženklus žinai, o tarpo užpildyti negali. Kol kas.",
+      "gap": "Trūkstamas ženklas"
+    }
+  },
+  "lightbeamSwitch": {
+    "name": "Besisukanti šviesa",
+    "invitation": "Pasukti veidrodžius",
+    "goal": "Šviesa sustoja šventovėje, o išėjimas po ja atsiveria.",
+    "rules": {
+      "shrines": "Vienas šviesos diskas ir šventovė virš kiekvieno šios sankryžos išėjimo. Veidrodžiai ant grindų gali nunešti šviesą į bet kurią iš jų.",
+      "doors": "Išėjimas, kurį pasiekia šviesa, atsiveria, o kiti užsidaro. Vienas kelias šviesai — vienas kelias tau.",
+      "returning": "Rinkdamasis nieko neprarandi. Grįžk bet kada ir nusiųsk šviesą kitur — tas kelias atsivers, o šis užsidarys.",
+      "tap": "Bakstelk veidrodį, kad jį pasuktum. Bakstelėjus dar kartą, jis grįžta atgal."
+    },
+    "doorOpen": "{{way}} išėjimas: atviras",
+    "doorShut": "{{way}} išėjimas: uždarytas",
+    "way": {
+      "n": "Šiaurinis",
+      "e": "Rytinis",
+      "s": "Pietinis",
+      "w": "Vakarinis"
+    }
+  },
+  "handle": {
+    "name": "Svirtis",
+    "invitation": "Patraukti svirtį",
+    "goal": "Svirtis nuleista į vieną ar kitą pusę. Ką viena pusė atidaro, kita uždaro.",
+    "left": "Patraukti į kairę",
+    "right": "Patraukti į dešinę"
+  },
+  "torch": {
+    "name": "Deglas",
+    "invitation": "Uždegti deglą",
+    "goal": "Neuždegtas deglas. Kai jis įsidegs, jo nebeužgesinsi.",
+    "lit": "Deglas dega."
+  },
+  "gateFace": {
+    "title": "Laukiančios durys",
+    "hint": "Turi užsidegti visi ženklai, tik tada šios durys atsidarys.",
+    "lit": "{{owner}}: dega",
+    "unlit": "{{owner}}: dar ne",
+    "owner": {
+      "torch": "Deglas",
+      "handle": "Svirtis",
+      "key": "Raktas",
+      "web": "Smėlio ženklas",
+      "plateStone": "Akmuo ant plokštės",
+      "plateEmpty": "Tuščia plokštė",
+      "other": "Mechanizmas"
+    },
+    "orderHint": "Eik plytelėmis šia tvarka.",
+    "reset": "Pradėti iš naujo",
+    "spoiled": "Nepavyko: ant plytelės užlipta ne iš eilės.",
+    "tile": {
+      "unwalked": "{{step}} žingsnis: dar neužlipta",
+      "inOrder": "{{step}} žingsnis: užlipta iš eilės",
+      "outOfOrder": "{{step}} žingsnis: užlipta ne iš eilės"
+    }
+  },
+  "devLockEditor": {
+    "syntax": "Sintaksė",
+    "example": "Pavyzdys",
+    "useExample": "Naudoti pavyzdį",
+    "title": "Spynų redaktorius",
+    "notation": "Spynos užrašas",
+    "checks": "Patikros",
+    "drawing": "Brėžinys",
+    "carveAndPlay": "Iškirsti ir žaisti",
+    "copyLink": "Kopijuoti nuorodą",
+    "copied": "Nuoroda nukopijuota",
+    "failed": "Nepavyko nukopijuoti; nuoroda yra adreso juostoje",
+    "backToEditor": "← Redaktorius",
+    "close": "Uždaryti",
+    "open": "Spynų redaktorius",
+    "modeLock": "Spyna",
+    "modeWeb": "Tinklas",
+    "webNotation": "Tinklo užrašas",
+    "openWeb": "Atidaryti tinklą",
+    "checking": "Tikrinama…",
+    "checkedIn": "patikrinta per {{ms}} ms",
+    "worldCarved": "burtininko lygio aukštai iškirsti per {{ms}} ms, vieną kartą",
+    "simulation": "Patraukimai",
+    "noSimulation": "Nėra ką peržaisti, kol visos vietos nėra pasaulyje.",
+    "summary": "Santrauka",
+    "stillBuried": "Dar {{percent}} % po smėliu",
+    "nothingBuried": "Niekas neužpustyta",
+    "finishes": "baigiasi",
+    "stopsAt": "sustoja ties {{pct}} %",
+    "notOpenYet": "dar neatidaryta",
+    "pullAll": "Patraukti viską, kas pasiekiama",
+    "reset": "Iš naujo",
+    "progress": "pasiekiama: {{reachable}} · paimta {{pulled}} iš {{total}}",
+    "allTaken": "Viskas patraukta ir paimta.",
+    "potFront": "patraukta {{pulled}} iš {{total}} · riba ties {{pct}} %",
+    "potOpen": "patraukta {{pulled}} iš {{total}} · atidaryta",
+    "keys": "Raktai",
+    "keysNote": "kiekvienas atidaro antspaudą",
+    "log": "Kas nutiko",
+    "logEmpty": "Dar niekas nepatraukta.",
+    "logPull": "patraukia {{name}} vietoje {{at}}",
+    "logTake": "paima {{name}} vietoje {{at}}",
+    "logFront": "{{pot}} riba iki {{pct}} %",
+    "logPotOpen": "{{pot}} atidaryta",
+    "logSeal": "antspaudas vietoje {{at}} atidarytas",
+    "logNew": "nauja: {{names}}",
+    "pullPin": "patraukti svirtį {{name}}",
+    "takePin": "paimti raktą {{name}}",
+    "legendCleared": "išvalyta",
+    "legendBuried": "užpustyta",
+    "legendSeal": "antspaudas",
+    "legendPins": "● svirtis · ■ raktas · mažas = šoninė dalis"
+  },
+  "camp": {
+    "title": "Stovykla",
+    "continue": {
+      "heading": "Dabartinė ekspedicija",
+      "setOff": "Iškeliauti",
+      "pyramid": "Piramidė {{level}} iš {{count}} · {{tier}}",
+      "tomb": "Kapas · {{tier}}",
+      "empty": "Tavo žemėlapyje viskas atverta"
+    },
+    "hint_one": "{{count}} sena kelionė slepia kažką naujo",
+    "hint_few": "{{count}} senos kelionės slepia kažką naujo",
+    "hint_many": "{{count}} senos kelionės slepia kažką naujo",
+    "hint_other": "{{count}} senų kelionių slepia kažką naujo",
+    "comingHome": {
+      "title": "Grįžai į stovyklą",
+      "haulTitle": "Ką parsinešei iš šios kelionės",
+      "new": "NAUJA",
+      "unpack": "Išpakuoti",
+      "toCamp": "Į stovyklą"
+    },
+    "chapter": {
+      "subtitle": "Naujas skyrius",
+      "title": "Iškyla nauja piramidė",
+      "body": "Lygio „{{tier}}“ kelionės atvertos. Atsikvėpk stovykloje ir iškeliauk, kai būsi pasiruošęs.",
+      "journeyNote": "Pirmoji lygio „{{tier}}“ kelionė",
+      "later": "Vėliau"
+    },
+    "close": "Uždaryti",
+    "entrance": {
+      "collection": "Kolekcija",
+      "mosaic": "Mozaika",
+      "journeys": "Visos kelionės",
+      "detectors": "Detektoriai"
+    },
+    "mapTable": {
+      "title": "Žemėlapių stalas",
+      "journeys": "Kelionės"
+    }
+  },
+  "home": {
+    "haul": {
+      "times": "×{{count}}"
+    }
+  },
+  "journeys": {
+    "tierNeed": "Rask šį lobį",
+    "tierProgress": "Įveikta {{done}} iš {{total}}",
+    "tierLockedName": "Lygio „{{tier}}“ kelionės",
+    "toggleTier": "Rodyti arba slėpti lygio „{{tier}}“ keliones",
+    "now": "DABAR",
+    "newDot": "Yra ką naujo atrasti",
+    "noteCurrentPyramid": "Vyksta · piramidė {{level}} iš {{count}}",
+    "noteCurrentTomb": "Vyksta · kape",
+    "noteFinished": "Baigta",
+    "noteFinishedNews": "Baigta · yra ką naujo atrasti",
+    "noteOpen": "Dar neaplankyta",
+    "noteResumePyramid": "Jau pradėta · piramidė {{level}} iš {{count}}",
+    "noteResumeTomb": "Jau pradėta · kape",
+    "needProgress": "{{unit}}: {{found}} iš {{required}}",
+    "showStops": "Rodyti vietas: {{name}}",
+    "stopPyramid": "Piramidė",
+    "stopTomb": "Vieta"
+  },
+  "newVersion": {
+    "title": "Nauja versija!",
+    "name": "Žaidimas labai pasikeitė",
+    "body": "Todėl tavo kelionė prasideda iš naujo. Tavęs laukia nauji kapai, radiniai ir stovykla, kurią galėsi pasistatyti."
+  },
+  "devPrefabPreview": {
+    "firstDoor": "Prie pirmųjų durų",
+    "stop": "Prie sustojimo",
+    "secondDoor": "Prie antrųjų durų",
+    "doorsInUse_one": "Naudojamos durys: {{count}}",
+    "doorsInUse_few": "Naudojamos durys: {{count}}",
+    "doorsInUse_many": "Naudojamos durys: {{count}}",
+    "doorsInUse_other": "Naudojamos durys: {{count}}",
+    "walled": "užmūryta: {{count}}"
+  },
+  "devRoomEditor": {
+    "title": "Kambarių redaktorius",
+    "open": "Kambarių redaktorius",
+    "close": "Uždaryti",
+    "tier": "Lygis",
+    "catalogue": "Atidaryti kambarį",
+    "notation": "Kambario užrašas",
+    "copyLink": "Kopijuoti nuorodą",
+    "copyText": "Kopijuoti tekstą",
+    "copied": "Nukopijuota",
+    "failed": "Nepavyko nukopijuoti į iškarpinę",
+    "palette": "Paletė",
+    "unpainted": "dar nenupiešta",
+    "layout": "Išdėstymas",
+    "mirrored": "(atspindėta)",
+    "fill_one": "Užpildyti ({{count}} pasirinkimas)",
+    "fill_few": "Užpildyti ({{count}} pasirinkimai)",
+    "fill_many": "Užpildyti ({{count}} pasirinkimo)",
+    "fill_other": "Užpildyti ({{count}} pasirinkimų)",
+    "fromDoor": "Eiti nuo",
+    "toDoor": "Eiti iki",
+    "automatic": "Automatiškai",
+    "direction": {
+      "n": "Šiaurinės durys",
+      "e": "Rytinės durys",
+      "s": "Pietinės durys",
+      "w": "Vakarinės durys"
+    },
+    "checks": "Patikros",
+    "sound": "Kambarys praeina patikras",
+    "tierDisagrees": "Antraštėje nurodytas lygis {{header}}, o čia nubrėžta lygiu {{picked}}",
+    "undo": "Atšaukti",
+    "drawing": "Brėžinys",
+    "tool": {
+      "select": "Pasirinkti",
+      "wall": "Siena",
+      "floor": "Grindys",
+      "door": "Durų vieta",
+      "stop": "Sustojimas",
+      "chest": "Skrynia",
+      "portal": "Portalas",
+      "mechanism": "Mechanizmas",
+      "erase": "Ištrinti",
+      "copy": "Brėžti {{letter}}"
+    },
+    "againstWall": "Numesti daiktai stovi prie šiaurinės sienos",
+    "dropHint": "Nutempk paletės elementą ant langelio; jis užima savo plotą",
+    "newLayout": "Naujo išdėstymo pavadinimas",
+    "addLayout": "Kopijuoti kaip išdėstymą",
+    "inspector": {
+      "title": "Vieta {{letter}}",
+      "optional": "Nebūtina",
+      "kinds": "Rūšys",
+      "counted": "Užpildyti tik kai kurias",
+      "take": "Imti",
+      "of": "iš",
+      "per": "kiekvienam",
+      "perNone": "kiekvieną atskirai",
+      "drawAnother": "Brėžti dar vieną",
+      "close": "Uždaryti"
+    },
+    "refused": {
+      "notFree": "Ne ant laisvų grindų kambario viduje",
+      "wallRow": "Sienos vieta stovi pirmoje eilėje prie šiaurinės sienos",
+      "northWall": "Sienos daiktas kabo ant šiaurinės sienos",
+      "floorOnRing": "Išoriniame žiede gali būti tik sienos ir durų vietos",
+      "doorInside": "Durų vieta stovi išoriniame žiede",
+      "keepStop": "Sustojimas lieka: kad jį perkeltum, padėk jį kitur",
+      "noLetter": "Visos raidės užimtos",
+      "layoutName": "Duok išdėstymui pavadinimą, kurio neturi joks kitas",
+      "notation": "Užrašas to neleidžia: {{message}}"
+    },
+    "layer": {
+      "wall": "prie sienos",
+      "floor": "grindys",
+      "ground": "žemė",
+      "wallItem": "sienos daiktas"
+    },
+    "cell": "Langelis {{row}},{{col}}: {{what}}",
+    "cellWhat": {
+      "wall": "siena",
+      "floor": "laisvos grindys",
+      "door": "durų vieta",
+      "place": "{{letter}}, {{kinds}}"
+    },
+    "rewrites": "Brėžiant tekstas perrašomas: visi komentarai perkeliami į viršų"
+  }
+}

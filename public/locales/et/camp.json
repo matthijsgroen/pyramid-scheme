@@ -1,0 +1,253 @@
+{
+  "spots": {
+    "fire": "Lõkkeplats",
+    "sleeping": "Magamiskoht",
+    "water": "Veekoht",
+    "cooking": "Söögitegemise koht",
+    "donkey": "Eesli koht",
+    "camel": "Kaameli koht",
+    "mapTable": "Kaardilaud",
+    "palmGarden": "Palmiaed",
+    "ibisPond": "Iibisetiik",
+    "lookout": "Vaatetorn",
+    "godStatues": "Jumalakujud",
+    "starCanopy": "Tähekatus"
+  },
+  "finds": {
+    "pot": "Keedupott",
+    "seatCushions": "Istumispadjad",
+    "reedMat": "Pilliroomatt",
+    "blanket": "Tekk",
+    "tentRug": "Telgivaip",
+    "tentFlag": "Telgilipp",
+    "gourd": "Pudelkõrvits",
+    "jar": "Kann",
+    "secondJar": "Teine kann",
+    "spiceRack": "Vürtsiriiul",
+    "breadBoard": "Leivalaud",
+    "starMap": "Tähekaart",
+    "scrollCase": "Rullikarp",
+    "astrolabe": "Astrolaab",
+    "reedGlobe": "Pilliroost gloobus",
+    "seed": "Palmiseeme",
+    "secondPalm": "Palmiseeme",
+    "figTree": "Viigiseeme",
+    "papyrus": "Papüürusejuur",
+    "reeds": "Pilliroo pistik",
+    "lotus": "Lootosemugul",
+    "flag": "Vaatetorni lipp",
+    "thoth": "Thothi kujuke",
+    "bastet": "Basteti kujuke",
+    "anubis": "Anubise kujuke",
+    "ra": "Ra kujuke",
+    "cloth": "Tähelina"
+  },
+  "structures": {
+    "stoneRing": "Kiviring",
+    "fire": "Lõke",
+    "cookingStones": "Keedukivid",
+    "seatingStones": "Istumiskivid",
+    "clayOven": "Saviahi",
+    "windbreak": "Tuulevari",
+    "tent": "Telk",
+    "secondTent": "Teine telk",
+    "pavilion": "Paviljon",
+    "well": "Kaev",
+    "wellPulley": "Plokiga kaev",
+    "tripod": "Kolmjalg",
+    "breadOven": "Leivaahi",
+    "dryingRack": "Kuivatusrest",
+    "feast": "Pidusöök",
+    "table": "Kaardilaud",
+    "lotusPlanter": "Lootosekast",
+    "edgeStones": "Tiigi äär",
+    "post": "Vaatepost",
+    "platform": "Vaateplatvorm",
+    "ladder": "Redel",
+    "roof": "Katus",
+    "signalFire": "Märgutuli",
+    "poles": "Tähemastid",
+    "stars": "Tähed",
+    "planets": "Planeedid"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Põllukivid",
+      "sandBed": "Liivapõhi"
+    },
+    "fire": {
+      "tinder": "Tuletael",
+      "acaciaLogs": "Akaatsiahalud"
+    },
+    "cookingStones": {
+      "flatStone": "Lame kivi",
+      "supportStones": "Tugikivid"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Siledad rahnud",
+      "sandstoneBlock": "Liivakiviplokk",
+      "hewnSlab": "Tahutud plaat"
+    },
+    "clayOven": {
+      "ovenFloor": "Ahju põhi",
+      "firebricks": "Tulekindlad tellised",
+      "smokeHole": "Suitsuauk",
+      "copperGrate": "Vaskrest"
+    },
+    "windbreak": {
+      "reedBundles": "Pilliroo kimbud",
+      "stakes": "Puuvaiad"
+    },
+    "tent": {
+      "tentPoles": "Telgipostid",
+      "wovenCloth": "Kootud riie",
+      "tentPegs": "Telgivaiad"
+    },
+    "secondTent": {
+      "largeCloth": "Suur telgiriie",
+      "ridgePole": "Harjapuu",
+      "guyRopes": "Pingutusköied",
+      "woolFloor": "Villane põrandariie"
+    },
+    "pavilion": {
+      "pavilionPosts": "Paviljoni postid",
+      "linenCanopy": "Linane katus",
+      "hangingCurtains": "Eesriided",
+      "woolRugs": "Villased vaibad",
+      "woodenFloor": "Puupõrand"
+    },
+    "well": {
+      "wellStones": "Kaevukivid",
+      "rope": "Pikk köis",
+      "bucket": "Ämber",
+      "windlass": "Vinn"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Plokiratas",
+      "frame": "Tugiraam",
+      "hoistRope": "Tõsteköis",
+      "counterweight": "Vastukaal",
+      "leatherBucket": "Nahkämber"
+    },
+    "tripod": {
+      "tripodPoles": "Kolm vaia",
+      "binding": "Siduköis",
+      "hook": "Pronkskonks"
+    },
+    "breadOven": {
+      "mudBricks": "Savitellised",
+      "clayPlaster": "Savikrohv",
+      "ovenLid": "Ahjuluuk"
+    },
+    "dryingRack": {
+      "rackPoles": "Restipostid",
+      "crossbar": "Põikpuu",
+      "wickerTray": "Punutud alus",
+      "cords": "Riputusnöörid"
+    },
+    "feast": {
+      "lowTable": "Madal laud",
+      "breadBaskets": "Leivakorvid",
+      "roastDuck": "Praepart",
+      "beerJars": "Õllekannud",
+      "fruitBowl": "Puuviljakauss"
+    },
+    "table": {
+      "tableTop": "Lauaplaat",
+      "trestles": "Pukid",
+      "leatherStraps": "Nahkrihmad"
+    },
+    "lotusPlanter": {
+      "clayTub": "Saviküna",
+      "nileSilt": "Niiluse muda",
+      "waterJar": "Veekann",
+      "lotusTubers": "Lootosemugulad",
+      "stoneRim": "Kiviäär"
+    },
+    "edgeStones": {
+      "riverStones": "Jõekivid",
+      "clayBedding": "Savipõhi",
+      "gravel": "Kruus",
+      "boundaryStakes": "Piirivaiad"
+    },
+    "post": {
+      "postTrunk": "Palmitüvi",
+      "footStones": "Aluskivid",
+      "wedges": "Kiilud",
+      "braces": "Toed"
+    },
+    "platform": {
+      "platformBeams": "Kandepalgid",
+      "platformPlanks": "Lauad",
+      "lashingRope": "Seoköis",
+      "edgeRail": "Käsipuu"
+    },
+    "ladder": {
+      "ladderRails": "Redelipuud",
+      "rungs": "Pulgad",
+      "groundPegs": "Maavaiad",
+      "leatherLoops": "Nahkaasad"
+    },
+    "roof": {
+      "roofPoles": "Katusepuud",
+      "thatch": "Palmilehed",
+      "clayLayer": "Savikiht",
+      "bindingGrass": "Sidumisrohi"
+    },
+    "signalFire": {
+      "fireBasin": "Tulekauss",
+      "pitch": "Tõrv",
+      "dryBrushwood": "Kuiv hagu",
+      "flint": "Tulekivi",
+      "bellows": "Lõõts"
+    },
+    "poles": {
+      "masts": "Mastid",
+      "cornerStones": "Nurgakivid",
+      "stayLines": "Tugiköied",
+      "bigPegs": "Suured vaiad",
+      "poleSockets": "Mastijalad"
+    },
+    "stars": {
+      "goldLeaf": "Lehtkuld",
+      "needleThread": "Nõel ja niit",
+      "indigoDye": "Indigovärv",
+      "chalk": "Kriit",
+      "stencils": "Šabloonid"
+    },
+    "planets": {
+      "ochre": "Ookerkollane",
+      "copperDiscs": "Vaskkettad",
+      "lapisPowder": "Lasuriidipulber",
+      "hangingLoops": "Riputusaasad",
+      "dividers": "Sirkel"
+    }
+  },
+  "collection": {
+    "title": "Ehitised",
+    "progress": "{{found}} / {{total}}",
+    "built": "valmis",
+    "unknownPart": "???",
+    "open": "Näita osi",
+    "close": "Peida osad"
+  },
+  "reward": {
+    "find": "Laagrileid",
+    "part": "Osa",
+    "progress": "{{name}} · {{found}} / {{total}}"
+  },
+  "haul": {
+    "new": "Uus sinu laagris",
+    "parts_one": "{{name}} · {{count}} osa",
+    "parts_other": "{{name}} · {{count}} osa"
+  },
+  "arrivals": {
+    "donkey": "Sinu eesel on laagris",
+    "cart": "Sinu vanker on laagris",
+    "camel": "Sinu kaamel on laagris",
+    "secondDonkey": "Sinu teine eesel on laagris",
+    "secondCamel": "Sinu teine kaamel on laagris",
+    "sturdyCart": "Sinu tugevam vanker on laagris",
+    "caravanBanner": "Sinu karavani lipp lehvib laagris"
+  }
+}

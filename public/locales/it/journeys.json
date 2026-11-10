@@ -1,0 +1,127 @@
+{
+  "starter_1": {
+    "name": "Alba alla Sfinge",
+    "description": "La Grande Sfinge, e ai suoi piedi una scritta che nessuno sa più leggere. La mappa dice: si comincia da qui."
+  },
+  "starter_2": {
+    "name": "La via del mercante di papiro",
+    "description": "Una strada di commerci lungo il Nilo, piena di magazzini dei mercanti. Alcuni non sono mai stati svuotati."
+  },
+  "starter_3": {
+    "name": "Tempio di Bastet",
+    "description": "Il tempio di Bastet. Qui i gatti erano sacri, e la festa di ogni anno era la più grande d'Egitto: barche, musica, di tutto e di più."
+  },
+  "starter_4": {
+    "name": "Scuola degli scribi",
+    "description": "La scuola degli scribi, dove l'Egitto imparò a scrivere. Le aule sono ancora sotto la sabbia."
+  },
+  "starter_treasure_tomb": {
+    "name": "La scorta dimenticata del mercante",
+    "description": "La cantina di un mercante, non di un re: brocche impilate, sigillate e con l'etichetta, e laggiù nessuno che protesta.",
+    "mapHint": "Il pezzetto mostra una strada del mercato e la porta di una cantina: il nascondiglio di un mercante, niente di più."
+  },
+  "junior_1": {
+    "name": "Il volo degli ibis sacri",
+    "description": "Paludi, e gli ibis che ci camminano dentro. Gli Egizi guardavano questi uccelli: quando tornano, arriva la piena."
+  },
+  "junior_2": {
+    "name": "Valle degli artigiani",
+    "description": "Deir el-Medina, dove abitavano quelli che costruivano le tombe. Tutto quello che finiva nella tomba di un re veniva fatto prima qui, con gli stampi."
+  },
+  "junior_3": {
+    "name": "Tempio di Thoth",
+    "description": "Il tempio di Thoth. Ha inventato la scrittura, teneva i registri e faceva i conti: più o meno quello che facciamo anche noi."
+  },
+  "junior_4": {
+    "name": "Il Faro di Alessandria",
+    "description": "Il Faro di Alessandria. In cima un fuoco acceso tutta la notte, e i marinai che vedevano la costa da un giorno di viaggio."
+  },
+  "junior_treasure_tomb": {
+    "name": "La stanza segreta della nobile",
+    "description": "La stanza di una nobildonna, dipinta dal pavimento al soffitto. Ha comprato le copie più belle che c'erano, e non l'ha mai detto a nessuno.",
+    "mapHint": "Inchiostro fine, uno stemma nell'angolo: qualcuno di importante voleva che questa stanza fosse dimenticata."
+  },
+  "expert_1": {
+    "name": "Valle dei Re",
+    "description": "La Valle dei Re. Smisero di costruire piramidi e nascosero le tombe dei re in una sola valle, sotto una cima a forma di piramide."
+  },
+  "expert_2": {
+    "name": "I templi di Karnak",
+    "description": "Karnak, ingrandito per duemila anni. Solo la grande sala ha centotrentaquattro colonne, tutte scolpite."
+  },
+  "expert_3": {
+    "name": "Spedizione nel delta del Nilo",
+    "description": "Dove il Nilo si divide e si apre tutto verde. La terra di Sobek: papiro, pesci e coccodrilli che venivano adorati e nutriti."
+  },
+  "expert_4": {
+    "name": "Piramide di Djoser",
+    "description": "La piramide a gradoni di Djoser, la prima costruzione così grande fatta di pietra. Il suo architetto Imhotep alla fine fu adorato come un dio."
+  },
+  "expert_treasure_tomb": {
+    "name": "Il tesoro del sommo sacerdote",
+    "description": "Il tesoro di un sommo sacerdote, sotto il pavimento delle offerte. Tutto quello che c'è laggiù è stato donato a un dio e non è mai più uscito.",
+    "mapHint": "Le linee disegnano il recinto di un tempio, e una scala che scende sotto il pavimento delle offerte."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Il santuario segreto",
+    "description": "La stanza sigillata nel cuore del tempio. Il sommo sacerdote ci entrava una volta al giorno, per lavare il dio e vestirlo.",
+    "mapHint": "I corridoi passano accanto ai magazzini del tempio fino a una porta sigillata: solo i sacerdoti più importanti la attraversavano."
+  },
+  "master_1": {
+    "name": "La Grande Piramide di Giza",
+    "description": "La Grande Piramide. Vent'anni di pietre, e accanto un intero villaggio che dava pane e birra agli operai."
+  },
+  "master_2": {
+    "name": "Il Libro dei Morti",
+    "description": "Non un libro, ma un mucchio di formule magiche, copiate su ordinazione. In quelle più economiche c'era uno spazio vuoto dove andava il tuo nome."
+  },
+  "master_3": {
+    "name": "La maledizione dei faraoni",
+    "description": "La famosa maledizione se la sono inventata i giornali nel 1923. Gli Egizi proteggevano le tombe con porte e scartoffie."
+  },
+  "master_4": {
+    "name": "La tomba di Nefertari",
+    "description": "La tomba di Nefertari, la stanza dipinta meglio di tutto l'Egitto. I colori erano fatti con pietre macinate: azzurrite, malachite, ocra."
+  },
+  "master_treasure_tomb": {
+    "name": "Il tesoro segreto del faraone",
+    "description": "Il tesoro privato di un re, là dove le mappe finiscono. Quello che è finito sottoterra con lui è ancora laggiù.",
+    "mapHint": "Un cartiglio reale sul bordo, e la strada finisce lontano, sotto la sabbia aperta."
+  },
+  "master_treasure_tomb_b": {
+    "name": "La sala di Osiride",
+    "description": "La sala di Osiride. Dio della piena e del grano: quello che finisce sottoterra qui, si aspetta che torni su.",
+    "mapHint": "Sotto le stanze del re la mappa continua a scendere, fino a una sala piena dei riti dei morti."
+  },
+  "wizard_1": {
+    "name": "Il viaggio del sole di Ra",
+    "description": "Al tramonto Ra passa sotto il mondo e deve attraversare dodici ore di buio. Gli Egizi hanno scritto cosa succede in ognuna."
+  },
+  "wizard_2": {
+    "name": "I Colossi di Memnone",
+    "description": "Due giganti seduti di Amenhotep III. I Greci decisero che erano qualcun altro, e quel nome è rimasto per duemila anni."
+  },
+  "wizard_3": {
+    "name": "La stanza di Maat",
+    "description": "La stanza di Maat. Lei è l'ordine delle cose, e la sua unica piuma di struzzo è il peso con cui si misura tutto il resto."
+  },
+  "wizard_4": {
+    "name": "La piramide eterna",
+    "description": "Il rivestimento era di calcare lucidato, bianco come il sale, messo così preciso che lo vedevi brillare da un giorno di cammino."
+  },
+  "wizard_treasure_tomb": {
+    "name": "La camera degli dèi",
+    "description": "Il posto dove il tempio teneva le cose degli dèi. Nessuno entrava qui senza la cosa giusta in mano.",
+    "mapHint": "Su questo pezzetto non c'è niente del mondo degli uomini: qualunque cosa mostri, l'hanno messa lì gli dèi."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Il regno delle forze del cielo",
+    "description": "Mappe delle stelle su tutto il soffitto, dipinte perché i morti potessero leggere l'ora di notte. Nel pozzo pende ancora la corda di qualcuno.",
+    "mapHint": "Dopo la camera degli dèi le linee diventano sentieri di stelle, dove le forze della vita e del caos sono custodite come reliquie."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Il trono dell'eternità",
+    "description": "Un solo seggio al centro e quarantadue giudici intorno, e ognuno ti fa una domanda a cui devi rispondere di no.",
+    "mapHint": "Tutti i sentieri di stelle su questo pezzetto arrivano a un unico seggio, nel cuore del regno degli dèi."
+  }
+}

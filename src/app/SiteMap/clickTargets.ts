@@ -11,9 +11,8 @@ import {
   type CorridorRunTarget,
 } from "./corridorRuns"
 import { litClaimOwner, type RoomClaims } from "./roomClaims"
-import { shapeKindFor } from "./nodeKinds"
 import { roomChoices, roomEntry, type RoomChoice, type RoomChoiceTo } from "./roomChoices"
-import { doorFacing, markerCell } from "./roomWalk"
+import { doorFacing } from "./roomWalk"
 
 /**
  * WHAT A TAP ON A CELL DOES — the one rule, in one place.
@@ -123,7 +122,7 @@ export const clickTargetAt = (
  *
  * The SHAPE is read off what the offer names:
  * - `node`: a room. Its own node art is the marker, drawn for every lit room whatever the offer. Beside the player, a
- *   room with no marker on its own cell (a bare junction, a designed room's node) is an `arrow` instead.
+ *   room is an `arrow` instead, drawn on his ring while its node stays drawn where it stands.
  * - `arrow`: a way to walk, pointing where the tap leads from here — a corridor run's near end, or a
  *   drop's launch or landing, pointed at in the direction it is entered from its own node. An arrow is
  *   drawn ONLY AROUND THE PLAYER (`nearCells`): his own cell and one step along each way open from it.
@@ -149,14 +148,10 @@ export const markerAt = (
   if (choice) return { kind: "arrow", dir: choice.dir }
   const cell = cellAt(grid, r, c)
   if (cell.type !== "corridor") {
-    // A room right beside the player is the next step of the way he is standing in, so it points there when nothing
-    // else marks that step: a bare junction, or a designed room's node, whose marker is drawn on its stop. A room that
-    // holds something on its own cell keeps its own marker.
+    // A room right beside the player is the next step of the way he is standing in, so it points there, whatever
+    // stands in it: a gate or a puzzle beside him is a way on as much as a bare junction is.
     const step = ctx.nearCells.get(`${r},${c}`)
-    if (!step || cell.type !== "room") return { kind: "node" }
-    const [mr, mc] = markerCell(grid, r, c)
-    const unmarked = shapeKindFor(grid, r, c, cell) === "fork" || mr !== r || mc !== c
-    return unmarked ? { kind: "arrow", dir: step } : { kind: "node" }
+    return step && cell.type === "room" ? { kind: "arrow", dir: step } : { kind: "node" }
   }
   const runTarget = ctx.runTargets.get(`${r},${c}`)
   if (runTarget) return { kind: "arrow", dir: runTarget.dir }

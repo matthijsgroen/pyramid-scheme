@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Piedra",
+    "bronze": "Bronce",
+    "silver": "Plata",
+    "gold": "Oro",
+    "divine": "Divino"
+  },
+  "sell_stone_1": {
+    "name": "Ostracón astillado",
+    "description": "Un pedazo de barro roto con las prácticas de un escriba. Las letras están tan borrosas que no se leen."
+  },
+  "sell_stone_2": {
+    "name": "Cántaro rajado",
+    "description": "Un cántaro para trigo o cerveza, rajado de un lado por el peso de los siglos."
+  },
+  "sell_stone_3": {
+    "name": "Sandalia de junco gastada",
+    "description": "Tejida con juncos de papiro. La suela está gastadísima de tanto caminar de algún trabajador olvidado."
+  },
+  "sell_stone_4": {
+    "name": "Retazo de lino desteñido",
+    "description": "Una tira rota de lino sin teñir, de esas que envolvían a los muertos... o que servían para remendar una vela."
+  },
+  "sell_stone_5": {
+    "name": "Cuchillo de pedernal roto",
+    "description": "Un cuchillo de pedernal con la punta rota. Barato de hacer, y más barato de cambiar."
+  },
+  "sell_bronze_1": {
+    "name": "Amuleto de bronce torcido",
+    "description": "Un amuleto barato de protección. Salió torcido y nadie lo arregló."
+  },
+  "sell_bronze_2": {
+    "name": "Espejo de bronce oxidado",
+    "description": "Antes brillaba tanto que te podías ver. Ahora está verde y opaco de viejo."
+  },
+  "sell_bronze_3": {
+    "name": "Anzuelo de bronce sin filo",
+    "description": "Herramienta de un pescador, que se le cayó al Nilo mucho antes de que cerraran la tumba."
+  },
+  "sell_bronze_4": {
+    "name": "Campanita de bronce",
+    "description": "Era para colgar en la puerta de un templo o en el tobillo de una bailarina. Ya no suena bien."
+  },
+  "sell_bronze_5": {
+    "name": "Anillo de bronce opaco",
+    "description": "Un aro sencillo, para un dedo que hace mucho se volvió polvo."
+  },
+  "sell_silver_1": {
+    "name": "Anj de plata opaco",
+    "description": "Una señal de la vida, toda opaca después de siglos bajo tierra."
+  },
+  "sell_silver_2": {
+    "name": "Lápiz de ojos de plata",
+    "description": "Una varita delgada para pintarse los ojos con kohl. El kohl ya desapareció hace mucho."
+  },
+  "sell_silver_3": {
+    "name": "Cuenco de plata abollado",
+    "description": "Un cuenquito de ofrendas, aplastado de un lado cuando por fin se cayó el techo."
+  },
+  "sell_silver_4": {
+    "name": "Pasador de plata",
+    "description": "Sencillo y sin adornos. Sostenía el pelo de alguien cuyo nombre se perdió."
+  },
+  "sell_silver_5": {
+    "name": "Pulsera de plata gastada",
+    "description": "Una tira delgada de plata con el broche roto. Muy poca cosa para un noble, demasiado fina para un trabajador."
+  },
+  "sell_gold_1": {
+    "name": "Cuentita de oro",
+    "description": "Una cuenta de un collar de tumba, que se desparramó hace mucho."
+  },
+  "sell_gold_2": {
+    "name": "Pedacito de hoja de oro",
+    "description": "Una tirita de hoja de oro, arrancada de la cara de una estatua por ladrones de tumbas siglos antes de que tú llegaras."
+  },
+  "sell_gold_3": {
+    "name": "Pendiente de oro delgado",
+    "description": "Martillado bien delgado para que el oro de un noble alcanzara para más."
+  },
+  "sell_gold_4": {
+    "name": "Pedazo con motas de oro",
+    "description": "Un trozo roto de yeso dorado. Todavía tiene pegadas motitas de oro de verdad."
+  },
+  "sell_gold_5": {
+    "name": "Anillo de sello astillado",
+    "description": "Un anillo para sellar, tan gastado que ya no se ve el dibujo. Quien sea que nombraba, ya nadie lo recuerda."
+  },
+  "sell_divine_1": {
+    "name": "Escarabajo de lapislázuli desteñido",
+    "description": "Tallado en lapislázuli, una piedra carísima traída de lejos para que un faraón volviera a nacer. El color se desteñó con los siglos."
+  },
+  "sell_divine_2": {
+    "name": "Amuleto de ojo de cornalina",
+    "description": "Un ojo protector tallado en cornalina roja como la sangre, para alejar la mala suerte en el más allá."
+  },
+  "sell_divine_3": {
+    "name": "Trocito de turquesa",
+    "description": "Una sola pieza de un mosaico roto. Antes era parte de la cara de un dios en la pared de un templo."
+  },
+  "sell_divine_4": {
+    "name": "Pedazo de vaso canopo de alabastro",
+    "description": "Un trozo de un vaso donde guardaban órganos de un faraón. Piedra preciosa para un trabajo nada bonito."
+  },
+  "sell_divine_5": {
+    "name": "Cuchillo ritual de obsidiana",
+    "description": "Vidrio de volcán, afilado para ceremonias y nunca para pelear. Solo para el templo."
+  }
+}

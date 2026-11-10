@@ -1,0 +1,255 @@
+{
+  "spots": {
+    "fire": "Костёр",
+    "sleeping": "Место для сна",
+    "water": "Место для воды",
+    "cooking": "Кухня",
+    "donkey": "Место для ослика",
+    "camel": "Место для верблюда",
+    "mapTable": "Стол с картами",
+    "palmGarden": "Пальмовый сад",
+    "ibisPond": "Пруд ибисов",
+    "lookout": "Смотровая вышка",
+    "godStatues": "Статуи богов",
+    "starCanopy": "Звёздный навес"
+  },
+  "finds": {
+    "pot": "Котелок",
+    "seatCushions": "Подушки для сидения",
+    "reedMat": "Тростниковая циновка",
+    "blanket": "Одеяло",
+    "tentRug": "Коврик для шатра",
+    "tentFlag": "Флажок для шатра",
+    "gourd": "Тыква-фляга",
+    "jar": "Кувшин",
+    "secondJar": "Второй кувшин",
+    "spiceRack": "Полка для пряностей",
+    "breadBoard": "Доска для хлеба",
+    "starMap": "Карта звёзд",
+    "scrollCase": "Футляр для свитков",
+    "astrolabe": "Астролябия",
+    "reedGlobe": "Плетёный глобус",
+    "seed": "Семечко пальмы",
+    "secondPalm": "Семечко пальмы",
+    "figTree": "Семечко инжира",
+    "papyrus": "Корень папируса",
+    "reeds": "Побег тростника",
+    "lotus": "Клубень лотоса",
+    "flag": "Флаг для вышки",
+    "thoth": "Статуэтка Тота",
+    "bastet": "Статуэтка Бастет",
+    "anubis": "Статуэтка Анубиса",
+    "ra": "Статуэтка Ра",
+    "cloth": "Звёздная ткань"
+  },
+  "structures": {
+    "stoneRing": "Каменный круг",
+    "fire": "Огонь",
+    "cookingStones": "Камни для готовки",
+    "seatingStones": "Камни для сидения",
+    "clayOven": "Глиняная печка",
+    "windbreak": "Защита от ветра",
+    "tent": "Шатёр",
+    "secondTent": "Второй шатёр",
+    "pavilion": "Беседка",
+    "well": "Колодец",
+    "wellPulley": "Колодец с блоком",
+    "tripod": "Тренога",
+    "breadOven": "Хлебная печь",
+    "dryingRack": "Сушилка",
+    "feast": "Пир",
+    "table": "Стол с картами",
+    "lotusPlanter": "Кадка для лотоса",
+    "edgeStones": "Берег пруда",
+    "post": "Столб вышки",
+    "platform": "Площадка вышки",
+    "ladder": "Лестница",
+    "roof": "Крыша",
+    "signalFire": "Сигнальный огонь",
+    "poles": "Мачты навеса",
+    "stars": "Звёзды",
+    "planets": "Планеты"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Полевые камни",
+      "sandBed": "Песчаная подушка"
+    },
+    "fire": {
+      "tinder": "Трут",
+      "acaciaLogs": "Поленья акации"
+    },
+    "cookingStones": {
+      "flatStone": "Плоский камень",
+      "supportStones": "Камни-подпорки"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Гладкие валуны",
+      "sandstoneBlock": "Блок песчаника",
+      "hewnSlab": "Тёсаная плита"
+    },
+    "clayOven": {
+      "ovenFloor": "Под печки",
+      "firebricks": "Огнеупорные кирпичи",
+      "smokeHole": "Дымоход",
+      "copperGrate": "Медная решётка"
+    },
+    "windbreak": {
+      "reedBundles": "Связки тростника",
+      "stakes": "Деревянные колья"
+    },
+    "tent": {
+      "tentPoles": "Шесты шатра",
+      "wovenCloth": "Тканое полотно",
+      "tentPegs": "Колышки"
+    },
+    "secondTent": {
+      "largeCloth": "Большое полотно",
+      "ridgePole": "Верхняя жердь",
+      "guyRopes": "Растяжки",
+      "woolFloor": "Шерстяная подстилка"
+    },
+    "pavilion": {
+      "pavilionPosts": "Столбы беседки",
+      "linenCanopy": "Льняной навес",
+      "hangingCurtains": "Занавески",
+      "woolRugs": "Шерстяные ковры",
+      "woodenFloor": "Деревянный пол"
+    },
+    "well": {
+      "wellStones": "Камни колодца",
+      "rope": "Длинная верёвка",
+      "bucket": "Ведро",
+      "windlass": "Ворот"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Колесо блока",
+      "frame": "Опорная рама",
+      "hoistRope": "Подъёмная верёвка",
+      "counterweight": "Противовес",
+      "leatherBucket": "Кожаное ведро"
+    },
+    "tripod": {
+      "tripodPoles": "Три шеста",
+      "binding": "Верёвка для связки",
+      "hook": "Бронзовый крюк"
+    },
+    "breadOven": {
+      "mudBricks": "Глиняные кирпичи",
+      "clayPlaster": "Глиняная обмазка",
+      "ovenLid": "Заслонка"
+    },
+    "dryingRack": {
+      "rackPoles": "Стойки",
+      "crossbar": "Перекладина",
+      "wickerTray": "Плетёный поднос",
+      "cords": "Верёвочки"
+    },
+    "feast": {
+      "lowTable": "Низкий стол",
+      "breadBaskets": "Корзины с хлебом",
+      "roastDuck": "Жареная утка",
+      "beerJars": "Кувшины с напитками",
+      "fruitBowl": "Миска с фруктами"
+    },
+    "table": {
+      "tableTop": "Столешница",
+      "trestles": "Козлы",
+      "leatherStraps": "Кожаные ремешки"
+    },
+    "lotusPlanter": {
+      "clayTub": "Глиняное корыто",
+      "nileSilt": "Нильский ил",
+      "waterJar": "Кувшин с водой",
+      "lotusTubers": "Клубни лотоса",
+      "stoneRim": "Каменный край"
+    },
+    "edgeStones": {
+      "riverStones": "Речные камни",
+      "clayBedding": "Глиняное дно",
+      "gravel": "Гравий",
+      "boundaryStakes": "Колышки по краю"
+    },
+    "post": {
+      "postTrunk": "Ствол пальмы",
+      "footStones": "Камни основания",
+      "wedges": "Клинья",
+      "braces": "Подпорки"
+    },
+    "platform": {
+      "platformBeams": "Опорные балки",
+      "platformPlanks": "Доски",
+      "lashingRope": "Крепёжная верёвка",
+      "edgeRail": "Перила"
+    },
+    "ladder": {
+      "ladderRails": "Боковины лестницы",
+      "rungs": "Перекладины",
+      "groundPegs": "Колья в землю",
+      "leatherLoops": "Кожаные петли"
+    },
+    "roof": {
+      "roofPoles": "Жерди для крыши",
+      "thatch": "Пальмовые листья",
+      "clayLayer": "Слой глины",
+      "bindingGrass": "Трава для связки"
+    },
+    "signalFire": {
+      "fireBasin": "Чаша для огня",
+      "pitch": "Смола",
+      "dryBrushwood": "Сухой хворост",
+      "flint": "Кремень",
+      "bellows": "Мехи"
+    },
+    "poles": {
+      "masts": "Мачты",
+      "cornerStones": "Угловые камни",
+      "stayLines": "Тросы",
+      "bigPegs": "Большие колья",
+      "poleSockets": "Гнёзда для мачт"
+    },
+    "stars": {
+      "goldLeaf": "Сусальное золото",
+      "needleThread": "Иголка с ниткой",
+      "indigoDye": "Синяя краска индиго",
+      "chalk": "Мел",
+      "stencils": "Трафареты"
+    },
+    "planets": {
+      "ochre": "Охра",
+      "copperDiscs": "Медные диски",
+      "lapisPowder": "Порошок лазурита",
+      "hangingLoops": "Петельки",
+      "dividers": "Циркуль"
+    }
+  },
+  "collection": {
+    "title": "Постройки",
+    "progress": "{{found}} из {{total}}",
+    "built": "построено",
+    "unknownPart": "???",
+    "open": "Показать детали",
+    "close": "Скрыть детали"
+  },
+  "reward": {
+    "find": "Находка для лагеря",
+    "part": "Деталь",
+    "progress": "{{name}} · {{found}} из {{total}}"
+  },
+  "haul": {
+    "new": "Новое в твоём лагере",
+    "parts_one": "{{name}} · {{count}} деталь",
+    "parts_few": "{{name}} · {{count}} детали",
+    "parts_many": "{{name}} · {{count}} деталей",
+    "parts_other": "{{name}} · {{count}} детали"
+  },
+  "arrivals": {
+    "donkey": "Твой ослик уже в лагере",
+    "cart": "Твоя тележка уже в лагере",
+    "camel": "Твой верблюд уже в лагере",
+    "secondDonkey": "Твой второй ослик уже в лагере",
+    "secondCamel": "Твой второй верблюд уже в лагере",
+    "sturdyCart": "Твоя крепкая тележка уже в лагере",
+    "caravanBanner": "Знамя твоего каравана висит в лагере"
+  }
+}

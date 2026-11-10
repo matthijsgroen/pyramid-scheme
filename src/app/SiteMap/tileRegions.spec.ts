@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest"
 import type { CellState, Difficulty, FloorGrid, GridCell, RoomCell } from "@/game/siteTypes"
 import { allFloorRects, buildRoomClaims, tileRegionsFor } from "./roomClaims"
-import { ALL_STATES, buildTileRegions, faceShadowRects, rectsToPath } from "./tileRegions"
+import { ALL_STATES, buildTileRegions, faceShadowRects, frontRuns, grownFaceRects, rectsToPath } from "./tileRegions"
 import type { FloorAt, OpenBetween, Rect, StateGroups, TileRegions } from "./tileRegions"
-import { CELL, SIDE_W, WALL_H, cellLeft, cellTop } from "./mapScale"
+import { CELL, FACE_GROW, SIDE_W, WALL_H, cellLeft, cellTop } from "./mapScale"
 
 // Most cases here are about which rectangle is floor and which is wall, where connectivity is beside
 // the point: say everything adjacent is connected.
@@ -49,7 +49,7 @@ const of = (regions: TileRegions, tier: Difficulty): StateGroups => {
   return groups
 }
 const allFloor = (regions: TileRegions): Rect[] => across(regions, g => [g.floorRoom, g.floorCorridor])
-const allWall = (regions: TileRegions): Rect[] => across(regions, g => [g.wallMass, g.wallFace])
+const allWall = (regions: TileRegions): Rect[] => across(regions, g => [g.wallMass, g.wallFace, g.frontFace])
 
 describe("buildTileRegions — floor", () => {
   it("paints a floor square only where the caller says a cell is drawn", () => {
@@ -94,7 +94,7 @@ describe("buildTileRegions — the gap between two cells", () => {
       "starter"
     )
 
-    expect(has(of(regions, "starter").wallFace.reachable, northGap(1, 0))).toBe(true)
+    expect(has(allWall(regions), northGap(1, 0))).toBe(true)
     expect(has(allFloor(regions), northGap(1, 0))).toBe(false)
   })
 
@@ -117,7 +117,7 @@ describe("buildTileRegions — walls", () => {
     const solid = buildTileRegions(2, 1, gridOf({ "1,0": "reachable" }), allPassable, "starter")
     const flush = buildTileRegions(2, 1, gridOf({ "0,0": "reachable", "1,0": "reachable" }), nothingPassable, "starter")
 
-    const faces = [...across(solid, g => [g.wallFace]), ...across(flush, g => [g.wallFace])]
+    const faces = [...across(solid, g => [g.wallFace, g.frontFace]), ...across(flush, g => [g.wallFace, g.frontFace])]
     expect(faces.length).toBeGreaterThan(1)
     for (const [, , , h] of faces) expect(h).toBe(WALL_H)
   })
@@ -332,5 +332,99 @@ describe("a prefab room", () => {
     expect(has(floor, westGap(2, 1))).toBe(true)
     expect(has(floor, northGap(2, 0))).toBe(true)
     expect(has(floor, northGap(2, 1))).toBe(true)
+  })
+})
+
+// A face rises FACE_GROW above its gap. Where the cell north of a wall is floor, the wall stands in front of
+// part of it, and the renderer draws that wall over what lies behind it — and fades it.
+describe("buildTileRegions — walls standing in front of floor", () => {
+  // Row 1 is a corridor running east; row 0 holds one floor cell above its east end, walled off from it.
+  // Column 4 of row 1 is a second corridor beyond a side wall.
+  const eastOnly: OpenBetween = (r, c, dir) => dir === "e" && r === 1 && c < 2
+  const floor = gridOf({
+    "0,2": "reachable",
+    "1,0": "reachable",
+    "1,1": "reachable",
+    "1,2": "reachable",
+    "1,4": "reachable",
+  })
+
+  it("puts a face with floor north of it in front, and one with stone north of it with the stone", () => {
+    const regions = buildTileRegions(2, 5, floor, eastOnly, "starter")
+
+    expect(has(inAnyState(of(regions, "starter").frontFace), northGap(1, 2))).toBe(true)
+    expect(has(inAnyState(of(regions, "starter").wallFace), northGap(1, 4))).toBe(true)
+  })
+
+  it("puts the WHOLE run in front when any of it stands before floor, corners included", () => {
+    const regions = buildTileRegions(2, 5, floor, eastOnly, "starter")
+    const front = inAnyState(of(regions, "starter").frontFace)
+
+    expect(has(front, northGap(1, 0))).toBe(true)
+    expect(has(front, corner(1, 1))).toBe(true)
+    expect(has(inAnyState(of(regions, "starter").wallFace), northGap(1, 0))).toBe(false)
+  })
+
+  it("gathers a front run back into one run that knows which cells it rises over", () => {
+    const runs = frontRuns(buildTileRegions(2, 5, floor, eastOnly, "starter"))
+
+    expect(runs).toHaveLength(1)
+    expect([...runs[0].behind].sort()).toEqual(["0,0", "0,1", "0,2"])
+    expect(runs[0].bounds[1]).toBe(cellTop(1) - WALL_H - FACE_GROW)
+  })
+
+  describe("an arch in the wall", () => {
+    // Row 1 is a corridor; row 0 holds a passage behind its north wall, joined to it through column 1,
+    // where an arch stands.
+    const throughTheMiddle: OpenBetween = (r, c, dir) => (dir === "e" && c < 2) || (dir === "s" && r === 0 && c === 1)
+    const twoRows = gridOf({
+      "0,0": "reachable",
+      "0,1": "reachable",
+      "0,2": "reachable",
+      "1,0": "reachable",
+      "1,1": "reachable",
+      "1,2": "reachable",
+    })
+    const capOver = (c: number): Rect => [cellLeft(c), cellTop(1) - WALL_H, CELL, 0]
+
+    it("stands in the run as a face with no height of its own, so the wall rises over it", () => {
+      const regions = buildTileRegions(2, 3, twoRows, throughTheMiddle, "starter", (r, c) => r === 1 && c === 1)
+
+      expect(has(inAnyState(of(regions, "starter").frontFace), capOver(1))).toBe(true)
+      expect(frontRuns(regions)).toHaveLength(1)
+    })
+
+    it("throws no shadow", () => {
+      expect(faceShadowRects([capOver(1)], 7)).toEqual([])
+    })
+
+    it("has the cell it rises over behind the wall, as any face does, and not the cell in front of the doorway", () => {
+      const regions = buildTileRegions(2, 3, twoRows, throughTheMiddle, "starter", (r, c) => r === 1 && c === 1)
+      const [run] = frontRuns(regions)
+
+      expect(run.behind.has("0,1")).toBe(true)
+      expect(run.behind.has("1,1")).toBe(false)
+    })
+
+    it("leaves a doorway with no arch standing in it an opening, with no wall over it", () => {
+      const regions = buildTileRegions(2, 3, twoRows, throughTheMiddle, "starter", () => false)
+
+      expect(across(regions, g => [g.wallFace, g.frontFace]).some(([, , , h]) => h === 0)).toBe(false)
+      expect(frontRuns(regions)).toHaveLength(2)
+    })
+
+    it("caps nothing where no wall rises either side of it", () => {
+      const open: OpenBetween = (r, c, dir) => dir === "e" || (dir === "s" && r === 0 && c === 1)
+      const alone = gridOf({ "0,1": "reachable", "1,1": "reachable" })
+      const regions = buildTileRegions(2, 3, alone, open, "starter", (r, c) => r === 1 && c === 1)
+
+      expect(across(regions, g => [g.wallFace, g.frontFace]).some(([, , , h]) => h === 0)).toBe(false)
+    })
+  })
+
+  it("draws a face FACE_GROW taller, upward, with its foot on the same floor line", () => {
+    expect(grownFaceRects([northGap(1, 0)])).toEqual([
+      [cellLeft(0), cellTop(1) - WALL_H - FACE_GROW, CELL, WALL_H + FACE_GROW],
+    ])
   })
 })

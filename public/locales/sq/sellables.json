@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Gur",
+    "bronze": "Bronz",
+    "silver": "Argjend",
+    "gold": "Ar",
+    "divine": "Hyjnor"
+  },
+  "sell_stone_1": {
+    "name": "Copë balte e krisur",
+    "description": "Një copë enë e thyer, ku një shkrues provonte shkronjat. Ato janë zbehur aq shumë sa nuk lexohen më."
+  },
+  "sell_stone_2": {
+    "name": "Shtambë balte e plasaritur",
+    "description": "Një shtambë për grurë ose birrë. Pesha e shekujve e çau nga njëra anë."
+  },
+  "sell_stone_3": {
+    "name": "Sandale kallami e konsumuar",
+    "description": "E thurur me kallam papirusi. Shualli u hollua nga ecja e përditshme e një punëtori të harruar prej kohësh."
+  },
+  "sell_stone_4": {
+    "name": "Copë liri e zbehur",
+    "description": "Një rrip i grisur liri pa ngjyrë. Me të tillë mbështillnin të vdekurit pa fund, ose arnonin velat."
+  },
+  "sell_stone_5": {
+    "name": "Thikë stralli e thyer",
+    "description": "Një thikë stralli, e thyer në majë. E lirë për ta bërë, edhe më e lirë për ta zëvendësuar."
+  },
+  "sell_bronze_1": {
+    "name": "Hajmali bronzi e shtrembër",
+    "description": "Një hajmali e lirë mbrojtëse. U derdh shtrembër dhe askush nuk e ndreqi."
+  },
+  "sell_bronze_2": {
+    "name": "Pasqyrë bronzi e ndryshkur",
+    "description": "Dikur aq e ndritshme sa shihje fytyrën tënde në të. Tani është mbuluar me jeshile nga koha."
+  },
+  "sell_bronze_3": {
+    "name": "Grep peshkimi i mpirë",
+    "description": "Vegla e një peshkatari, që i ra në Nil shumë kohë para se të mbyllej varri."
+  },
+  "sell_bronze_4": {
+    "name": "Zile e vogël bronzi",
+    "description": "Bëhej për derën e një tempulli ose për kyçin e këmbës së një valltareje. Tani nuk tingëllon më mirë."
+  },
+  "sell_bronze_5": {
+    "name": "Unazë bronzi e nxirë",
+    "description": "Një unazë e thjeshtë, për një gisht që u bë pluhur prej kohësh."
+  },
+  "sell_silver_1": {
+    "name": "Ankh argjendi e nxirë",
+    "description": "Një shenjë e jetës, e zbehur nga shekujt nën tokë."
+  },
+  "sell_silver_2": {
+    "name": "Shkop argjendi për kohl",
+    "description": "Një shkop i hollë me të cilin të pasurit vizatonin sytë. Kohli ka ikur prej kohësh."
+  },
+  "sell_silver_3": {
+    "name": "Tas argjendi i shtypur",
+    "description": "Një tas i vogël dhuratash, i shtypur nga njëra anë kur më në fund u shemb tavani sipër tij."
+  },
+  "sell_silver_4": {
+    "name": "Karficë argjendi për flokë",
+    "description": "E thjeshtë dhe pa zbukurime. Dikur mbante flokët e dikujt, emri i të cilit ka humbur."
+  },
+  "sell_silver_5": {
+    "name": "Byzylyk argjendi i konsumuar",
+    "description": "Një rrip i hollë argjendi me kopsë të thyer. Jo aq i bukur për një fisnik, por shumë i bukur për një punëtor."
+  },
+  "sell_gold_1": {
+    "name": "Rruazë e vogël ari",
+    "description": "Një rruazë nga një gjerdan varri, që u shpërnda shumë kohë më parë."
+  },
+  "sell_gold_2": {
+    "name": "Copë flete ari",
+    "description": "Një copëz flete ari, që hajdutët e varreve e hoqën nga fytyra e një statuje shekuj para se të vije ti."
+  },
+  "sell_gold_3": {
+    "name": "Vath i hollë ari",
+    "description": "E rrahën shumë të hollë, që ari i një fisniku të mjaftonte për më shumë."
+  },
+  "sell_gold_4": {
+    "name": "Copë me pika ari",
+    "description": "Një copë suvaje të praruar. Pika ari të vërtetë ende ngjiten në sipërfaqe."
+  },
+  "sell_gold_5": {
+    "name": "Vulë ari e çarë",
+    "description": "Një unazë vule. Gdhendja është fshirë aq shumë sa nuk njihet më. Kushdo qoftë ai, është harruar."
+  },
+  "sell_divine_1": {
+    "name": "Skarabe lapisi e zbehur",
+    "description": "E gdhendur nga lapis lazuli i çmuar, sjellë nga larg me shumë para për rilindjen e një faraoni. Ngjyra është zbehur me shekujt."
+  },
+  "sell_divine_2": {
+    "name": "Hajmali-sy prej karneoli",
+    "description": "Një sy mbrojtës i gdhendur nga karneoli i kuq si gjaku. Duhej të largonte fatin e keq në jetën e përtejme."
+  },
+  "sell_divine_3": {
+    "name": "Copëz bruzi",
+    "description": "Një pllakëz e vetme nga një mozaik i copëtuar. Dikur ishte pjesë e fytyrës së një perëndie në murin e një tempulli."
+  },
+  "sell_divine_4": {
+    "name": "Copë kavanozi alabastri",
+    "description": "Një copë e thyer nga një kavanoz ku ruheshin organet e një faraoni. Gur i çmuar për një punë të zymtë."
+  },
+  "sell_divine_5": {
+    "name": "Thikë rituali prej obsidiani",
+    "description": "Xham vullkanik, i mprehur për ceremoni. Nuk ishte bërë kurrë për luftë, vetëm për tempullin."
+  }
+}

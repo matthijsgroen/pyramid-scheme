@@ -1,5 +1,17 @@
 import type { CellState, Tileset } from "@/game/siteTypes"
-import { CELL, PROP_H, SIDE_W, WALL_H, cellLeft, cellTop } from "./mapScale"
+import {
+  CELL,
+  COL_PITCH,
+  FACE_GROW,
+  PAD,
+  PAD_TOP,
+  PROP_H,
+  ROW_PITCH,
+  SIDE_W,
+  WALL_H,
+  cellLeft,
+  cellTop,
+} from "./mapScale"
 
 // Which rectangles the sprite renderer paints, grouped so each group becomes ONE filled path
 // instead of a rect per cell. Pure and grid-shaped: it knows nothing about SVG, claims or fog rules
@@ -54,8 +66,12 @@ export type StateGroups = {
   floorCorridor: Record<CellState, Rect[]>
   /** solid stone: whole cells of it, the corners between them, and side walls seen edge-on */
   wallMass: Record<CellState, Rect[]>
-  /** the north gaps you look at, every one of them exactly `WALL_H` tall */
+  /** the north gaps you look at, every one of them exactly `WALL_H` tall — and drawn `FACE_GROW` taller,
+   * upward, over whatever lies north of the gap (`grownFaceRects`) */
   wallFace: Record<CellState, Rect[]>
+  /** the faces of every wall RUN that rises in front of floor — a run with a walkable cell north of any
+   * part of it. Drawn over what lies behind it rather than with the stone: see `frontRuns`. */
+  frontFace: Record<CellState, Rect[]>
 }
 
 /** One set of groups per tier the floor actually holds — the renderer draws each with that tier's own
@@ -72,6 +88,7 @@ const emptyStateGroups = (): StateGroups => ({
   floorCorridor: emptyGroups(),
   wallMass: emptyGroups(),
   wallFace: emptyGroups(),
+  frontFace: emptyGroups(),
   threshold: [],
 })
 
@@ -127,9 +144,14 @@ export const buildTileRegions = (
   floorAt: FloorAt,
   openBetween: OpenBetween,
   /** What stone to use where no floor is in reach to say — the floor's own tier. */
-  fallbackTier: Tileset
+  fallbackTier: Tileset,
+  /** Whether the open gap north of this cell has an arch standing in it. */
+  arched: (row: number, col: number) => boolean = () => false
 ): TileRegions => {
   const regions: TileRegions = new Map()
+  // Every face, held back until the whole floor is walked: whether a face stands in front of floor is a
+  // question about its whole RUN, and a run is only known once its last piece is.
+  const faces: { groups: StateGroups; state: CellState; rect: Rect; overFloor: boolean }[] = []
   // A rect belongs to the tier of the cell it is part of — the same cell its STATE comes from, so
   // material and light never disagree about which room a rect belongs to.
   const groupsFor = (tier: Tileset): StateGroups => {
@@ -215,11 +237,26 @@ export const buildTileRegions = (
         const groups = groupsFor(tierAt([r, c], [r - 1, c]))
         floorGroup(groups, here, north)[brightest(here.state, north.state)!].push(northGap)
         if (here.tier !== north.tier) groupsFor(here.tier).threshold.push(northGap)
+        // AN ARCH STANDS IN A FULL-HEIGHT WALL. The arch is drawn at its own height, lower than the face
+        // rising either side of it, so its gap carries a face with no height of its own: drawn grown, that
+        // is the wall above the arch, in the run's own stone and light, and it fades with the run.
+        if (arched(r, c))
+          faces.push({
+            groups,
+            state: brightest(here.state, north.state)!,
+            rect: [x, y - WALL_H, CELL, 0],
+            overFloor: true,
+          })
       } else if (isMouth([r - 1, c], [r, c], "s")) {
         // The mouth of an unexplored passage. Left black on purpose: that opening is how the map says
         // the way carries on past what has been explored.
       } else if (isFaceGap(r, c)) {
-        groupsFor(tierAt([r, c], [r - 1, c])).wallFace[brightest(here!.state, north?.state)!].push(northGap)
+        faces.push({
+          groups: groupsFor(tierAt([r, c], [r - 1, c])),
+          state: brightest(here!.state, north?.state)!,
+          rect: northGap,
+          overFloor: !!north,
+        })
       } else {
         // The seam between this square and the one above it: drawn whenever BOTH are, so a run of rock
         // reads as rock rather than as bricks with the mortar missing.
@@ -291,10 +328,32 @@ export const buildTileRegions = (
           brightest(here.state, north.state, west.state, northWest.state)!
         ].push(corner)
       } else if (cornerLit) {
-        const group = continuesFaceRun ? cornerGroups.wallFace : cornerGroups.wallMass
-        group[cornerLit].push(corner)
+        if (continuesFaceRun) faces.push({ groups: cornerGroups, state: cornerLit, rect: corner, overFloor: false })
+        else cornerGroups.wallMass[cornerLit].push(corner)
       }
     }
+  }
+
+  // A run is the faces that meet end to end along one gap row. The whole run stands in front when any
+  // part of it does, so a wall fades as one wall rather than as the cells somebody stands behind.
+  const gapRows = new Map<number, typeof faces>()
+  for (const face of faces) gapRows.set(face.rect[1], [...(gapRows.get(face.rect[1]) ?? []), face])
+  for (const row of gapRows.values()) {
+    row.sort((a, b) => a.rect[0] - b.rect[0])
+    let run: typeof faces = []
+    const flush = () => {
+      // Above an arch only where the wall either side of it rises: in a run of its own it caps nothing.
+      if (run.every(f => f.rect[3] === 0)) run = []
+      const front = run.some(f => f.overFloor)
+      for (const f of run) (front ? f.groups.frontFace : f.groups.wallFace)[f.state].push(f.rect)
+      run = []
+    }
+    for (const face of row) {
+      const last = run.at(-1)
+      if (last && last.rect[0] + last.rect[2] !== face.rect[0]) flush()
+      run.push(face)
+    }
+    flush()
   }
 
   return regions
@@ -329,9 +388,10 @@ export const boundsOf = (rects: readonly Rect[]): { x: number; y: number; w: num
 }
 
 /** The hard shadow a face throws onto the floor in front of it. In this idiom that shadow, not any
- * shading on the floor itself, is what puts the wall above the ground. */
+ * shading on the floor itself, is what puts the wall above the ground. The wall above an arch has no foot
+ * on the floor, so it throws none. */
 export const faceShadowRects = (faces: readonly Rect[], height: number): Rect[] =>
-  faces.map(([x, y, w, h]) => [x, y + h, w, height])
+  faces.filter(([, , , h]) => h > 0).map(([x, y, w, h]) => [x, y + h, w, height])
 
 /**
  * The strip along the TOP of a wall face: the wall's own top surface, seen from above.
@@ -342,7 +402,48 @@ export const faceShadowRects = (faces: readonly Rect[], height: number): Rect[] 
  * solid thing rather than a painted line.
  */
 export const faceTopRects = (faces: readonly Rect[], depth: number): Rect[] =>
-  faces.map(([x, y, w]) => [x, y, w, depth])
+  grownFaceRects(faces).map(([x, y, w]) => [x, y, w, depth])
+
+/** A face as it is DRAWN: its gap, plus `FACE_GROW` rising above it over whatever lies north. */
+export const grownFaceRects = (faces: readonly Rect[]): Rect[] =>
+  faces.map(([x, y, w, h]) => [x, y - FACE_GROW, w, h + FACE_GROW])
+
+/** One piece of a front run: a face's gap, with the stone and the light it is drawn in. */
+export type FrontPiece = { rect: Rect; tier: Tileset; state: CellState }
+
+/**
+ * A run of back wall that rises in front of floor, as one thing the renderer can fade.
+ *
+ * `behind` is every cell a face of the run rises over, so "is anyone behind this wall" is one lookup.
+ * Corner pieces rise over the seam between two of those cells and add none of their own. The wall above an
+ * arch rises over the cell behind the doorway as any face does, so that cell is behind the run; the doorway
+ * itself, and the cell in front of it, are not.
+ */
+export type FrontRun = { key: string; pieces: FrontPiece[]; bounds: Rect; behind: ReadonlySet<string> }
+
+/** The front faces of a floor, gathered back into the runs they were cut from. */
+export const frontRuns = (regions: TileRegions): FrontRun[] => {
+  const pieces = [...regions].flatMap(([tier, groups]) =>
+    ALL_STATES.flatMap(state => groups.frontFace[state].map(rect => ({ rect, tier, state })))
+  )
+  pieces.sort((a, b) => a.rect[1] - b.rect[1] || a.rect[0] - b.rect[0])
+  const runs: FrontPiece[][] = []
+  for (const piece of pieces) {
+    const run = runs.at(-1)
+    const last = run?.at(-1)
+    if (run && last && last.rect[1] === piece.rect[1] && last.rect[0] + last.rect[2] === piece.rect[0]) run.push(piece)
+    else runs.push([piece])
+  }
+  return runs.map(run => {
+    const box = boundsOf(grownFaceRects(run.map(p => p.rect)))
+    const behind = new Set(
+      run
+        .filter(p => p.rect[2] === CELL)
+        .map(({ rect: [x, y] }) => `${(y - PAD_TOP) / ROW_PITCH - 1},${(x - PAD - SIDE_W) / COL_PITCH}`)
+    )
+    return { key: `${box.x},${box.y}`, pieces: run, bounds: [box.x, box.y, box.w, box.h], behind }
+  })
+}
 
 /** A room's own footprint as a clip path: each of its cells, grown upward by a prop's headroom so a
  * tall thing still crosses the wall band behind it.

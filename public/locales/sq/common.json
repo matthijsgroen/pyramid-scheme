@@ -1,0 +1,1704 @@
+{
+  "language": "Shqip",
+  "saveUnreadable": {
+    "title": "Loja jote nuk po ngarkohet",
+    "body": "Shfletuesi nuk po e jep tani lojën tënde të ruajtur. Por loja jote nuk ka humbur: ringarko faqen dhe provo përsëri.",
+    "banner": "Loja nuk po ruhet. Prek për ta ringarkuar.",
+    "reload": "Ringarko",
+    "continue": "Luaj pa ruajtur",
+    "reset": "Fillo nga e para (fshi lojën e ruajtur)",
+    "confirmReset": "Kjo fshin gjithë lojën tënde të ruajtur, dhe nuk kthehet më. Do të fillosh nga e para?",
+    "confirmResetYes": "Po, fshije lojën time",
+    "confirmResetNo": "Jo, kthehu mbrapa"
+  },
+  "difficulty": {
+    "starter": "Fillestar",
+    "junior": "Junior",
+    "expert": "Ekspert",
+    "master": "Mjeshtër",
+    "wizard": "Gjeni"
+  },
+  "journeyLength": {
+    "short": "E shkurtër",
+    "medium": "Mesatare",
+    "long": "E gjatë"
+  },
+  "time": {
+    "morning": "Mëngjes",
+    "afternoon": "Pasdite",
+    "evening": "Mbrëmje",
+    "night": "Natë"
+  },
+  "tomb": {},
+  "ui": {
+    "level": "Niveli",
+    "symbols": "simbole",
+    "journey": "Udhëtimi",
+    "tableau": "Tabloja",
+    "difficulty": "Vështirësia",
+    "length": "Gjatësia",
+    "time": "Koha",
+    "requiredPrestige": "Niveli i nderit që duhet",
+    "rewards": "Shpërblime",
+    "coins": "Monedha",
+    "pieces": "Copa",
+    "description": "Përshkrimi",
+    "expedition": "Ekspedita",
+    "expeditionCompleted": "Ekspedita mbaroi!",
+    "goBackToBase": "Kthehu në kamp",
+    "backArrow": "←",
+    "back": "← Mbrapa",
+    "floor": "Kati {{number}}",
+    "enterSite": "Hyr brenda",
+    "prompt": {
+      "here": "Shiko nga afër",
+      "stairs": "Merr shkallët",
+      "exit": "Dil nga ky vend",
+      "zipline": "Rrëshqit në litar. Nuk ka kthim mbrapa",
+      "oneWay": "Kalo matanë. Nuk ka kthim mbrapa",
+      "liftStone": "Ngri gurin",
+      "setStone": "Vëre gurin mbi pllakë",
+      "postStone": "Fute gurin",
+      "takeStone": "Merr gurin",
+      "squeeze": "Futu ngushtë",
+      "replay": "Luaj përsëri"
+    },
+    "blocked": {
+      "carrying": "Nuk mund të kalosh me gur në dorë"
+    },
+    "backToMap": "Kthehu te harta",
+    "continueExploration": "Vazhdo të eksplorosh piramidat.",
+    "startExpedition": "Nis ekspeditën",
+    "webBuriedPercent": "Ende {{percent}}% nën rërë",
+    "interruptExpedition": "Ndërprit ekspeditën",
+    "confirmInterruptExpedition": "A je i sigurt që do ta ndërpresësh këtë ekspeditë? Ekspedita ruhet, por çfarë ke bërë në këtë nivel humbet!",
+    "cancel": "Anulo",
+    "settings": "Cilësimet",
+    "language": "Gjuha",
+    "close": "Mbyll",
+    "done": "Gati",
+    "clearGameData": "Fshi të dhënat e lojës",
+    "confirmClearGameData": "Kjo fshin përgjithmonë gjithçka: përparimin, sendet dhe piramidat që ke eksploruar. Nuk kthehet më.",
+    "disableTutorials": "Çaktivizo mësimet",
+    "treasureTomb": "Vendi i thesarit",
+    "requiresMapPieces": "Duhen copa harte",
+    "mapPieces": "Copat e hartës",
+    "completeExpeditionsToUnlock": "Mbaro ekspedita që ta hapësh",
+    "availableSymbols": "Simbolet që ke:",
+    "fragmentsNeeded": "Duhen {{found}}/{{required}}",
+    "howToPlay": "Si luhet",
+    "puzzleComplete": "Përgjigjja është:",
+    "puzzleCompleted": "Enigma u zgjidh",
+    "trapBlocked": "Nuk ke mjaft jetë për ta provuar këtë kurth",
+    "spiritsRejectCode": "Shpirtrat nuk e pranojnë këtë kod",
+    "sacredSealBroken": "Vula e shenjtë u thye",
+    "newExpeditionUnlocked": "U hap një ekspeditë e re",
+    "newTombUnlocked": "U hap një varr i ri",
+    "tierComingSoonTitle": "Ekspeditat e nivelit {{tier}} janë rrugës",
+    "tierComingSoon": "Çelësin e ke, por piramidat e nivelit {{tier}} ende po ndërtohen. Do të vijnë në një përditësim të mëvonshëm. Deri atëherë, çelësi yt hap më shumë nga piramidat që i njeh tashmë.",
+    "answerNow": "Përgjigjja është: ",
+    "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "resetPuzzle": "Fillo nga e para",
+    "hint": "Ndihmë",
+    "undo": "Zhbëj",
+    "erase": "Fshi",
+    "notes": "Shënime",
+    "solvedUnaided": "E zgjidhe pa asnjë ndihmë",
+    "solvedWithHints_one": "E zgjidhe me {{count}} ndihmë",
+    "solvedWithHints_other": "E zgjidhe me {{count}} ndihma",
+    "tapToContinue": "Prek për të vazhduar",
+    "goal": "Qëllimi"
+  },
+  "trap": {
+    "warning": "⚠ Korridor me kurth",
+    "canAttempt": "Mund të provosh të kalosh.",
+    "tooWeak": "Je shumë i dobët. Nëse nuk ia del, do të mbetesh pa asgjë.",
+    "attempt": "Provo kurthin",
+    "turnAround": "Kthehu mbrapa",
+    "rested": "U çlodhe pranë zjarrit. Je përsëri në formë"
+  },
+  "gate": {
+    "title": "🔒 Portë e mbyllur",
+    "locked": "Ende nuk e ke çelësin e duhur.",
+    "markedWith": "Në derë është gdhendur një shenjë:",
+    "unlocked": "Çelësin e ke.",
+    "pass": "Kalo",
+    "turnAround": "Kthehu mbrapa",
+    "wardDescription": {
+      "starter": "Vula e një tregtari e mbyll këtë kalim. Vetëm çelësi i tij e hap.",
+      "junior": "Stema e një fisniku e mbyll këtë rrugë. Vetëm çelësi i tij e hap.",
+      "expert": "Mbrojtja e tempullit të një kryeprifti e ruan këtë derë. Vetëm çelësi i shenjtë e hap.",
+      "master": "Vula mbretërore e një faraoni e lidh këtë kalim. Vetëm çelësi i mbretit e thyen.",
+      "wizard": "Një mbrojtje e perëndive e mban këtë portë. Vetëm çelësi hyjnor kalon."
+    },
+    "needsKey": "Dera është shënuar për një çelës:",
+    "lockedColor": "Ende nuk e ke gjetur atë çelës në këtë kat."
+  },
+  "chest": {
+    "tapToOpen": "Prek për ta hapur",
+    "money_one": "{{count}} monedhë",
+    "money_other": "{{count}} monedha",
+    "mapPiece": "Copë harte",
+    "mapPieceDescription": "Një copë e brishtë harte për në një vend të harruar prej kohësh. Sa keq që mungon kaq shumë...",
+    "mapPieceProgress": "{{found}} nga {{required}} copa harte të mbledhura",
+    "mapPieceComplete": "Harta është e plotë. Të çon te {{name}}.",
+    "hieroglyphFragment": "Copë hieroglifi",
+    "fragmentProgress": "{{found}} nga {{required}} copa të gjetura",
+    "tombKey": "Çelësi i varrit",
+    "sandLever": "Levë rëre",
+    "sandLeverDescription": "E tërheq dhe mbetet poshtë. Diku larg, rëra po rrjedh jashtë.",
+    "webKey": "Çelës i vulosur",
+    "webKeyDescription": "Koka e tij ka një shenjë që e ke parë diku tjetër, në një derë të vulosur.",
+    "hieroglyphs": "Hieroglifë të lashtë",
+    "hieroglyphsDescription": "Shenja të shenjta të gdhendura në muret e kësaj dhome. Kuptimi i tyre të mëson më shumë për botën e lashtë.",
+    "mosaicPiece": "Copë mozaiku",
+    "mosaicPieceDescription": "Një pllakëz xhami që shkëlqen, një copë nga një mozaik i madh. Vëre pranë të tjerave dhe figura e fshehur del pak nga pak.",
+    "waterskin": "Calik uji",
+    "waterskinDescription": "Ujë i freskët. E pi menjëherë dhe plagët të lehtësohen."
+  },
+  "loot": {
+    "youFound": "Gjete",
+    "expeditionReward": "Shpërblim shtesë sepse mbarove ekspeditën",
+    "clickToContinue": "Prek kudo për të vazhduar"
+  },
+  "money": {
+    "label": "Monedha"
+  },
+  "shop": {
+    "title": "Tezga e Fezit",
+    "invitation": "Shiko tezgën",
+    "buy": "Bli",
+    "sell": "Shit",
+    "soldOut": "Mbaroi",
+    "dismiss": "Ik",
+    "rareItems": "Gjetje të rralla",
+    "sellSection": "Vogëlsira për të shitur",
+    "haul": {
+      "coins_one": "+{{count}} monedhë",
+      "coins_other": "+{{count}} monedha",
+      "note": "Monedha të gjetura rrugës"
+    }
+  },
+  "purchases": {
+    "donkey": {
+      "name": "Gomar",
+      "need": "Të duhet një gomar",
+      "opens": "Mban plaçkat e tua. Me të mund të nisesh në udhëtimet e nivelit Ekspert."
+    },
+    "cart": {
+      "name": "Karrocë",
+      "need": "Të duhet një karrocë",
+      "opens": "I gjithë kampi hyn në të. Me të mund të nisesh në udhëtimet e nivelit Mjeshtër."
+    },
+    "camel": {
+      "name": "Deve",
+      "need": "Të duhet një deve",
+      "opens": "Ecën me ditë pa ujë. Të çon në Shenjtëroren e brendshme."
+    },
+    "secondDonkey": {
+      "name": "Gomari i dytë",
+      "need": "Të duhet një gomar i dytë",
+      "opens": "Edhe më shumë vend për plaçka. Me të mund të nisesh në udhëtimet e nivelit Gjeni."
+    },
+    "secondCamel": {
+      "name": "Deveja e dytë",
+      "need": "Të duhet një deve e dytë",
+      "opens": "Dy deve mbajnë mjaft ujë për Sallën e Osirisit."
+    },
+    "sturdyCart": {
+      "name": "Karrocë më e fortë",
+      "need": "Të duhet një karrocë më e fortë",
+      "opens": "Nuk prishet, as rrugës për në Mbretërinë e forcave të qiellit."
+    },
+    "caravanBanner": {
+      "name": "Flamuri i karvanit",
+      "opens": "Nuk hap asgjë. Vetëm për qejf."
+    },
+    "hint": "Fez shet një në {{place}}",
+    "devGrant": "Bli të gjitha kafshët"
+  },
+  "level": {
+    "completed": "Niveli mbaroi!"
+  },
+  "mosaic": {
+    "place_one": "Vendos {{count}} copë",
+    "place_other": "Vendos {{count}} copa",
+    "placing": "Po vendos…",
+    "panel": {
+      "starter": "Rojtari te dera",
+      "junior": "Mësimi i parë",
+      "expert": "Le të hyjë dielli",
+      "master": "Mbreti i gjelbër",
+      "wizard": "Pendla dhe zemra"
+    },
+    "entrance": {
+      "title": "Mozaiku",
+      "label": "Mozaiku {{found}}/{{total}}"
+    },
+    "haul": {
+      "pieces_one": "{{count}} copë mozaiku",
+      "pieces_other": "{{count}} copa mozaiku",
+      "note": "Për dritaren me xhama me ngjyra"
+    }
+  },
+  "collection": {
+    "tabs": {
+      "treasures": "Thesare",
+      "hieroglyphs": "Hieroglifë",
+      "stories": "Histori",
+      "junk": "Vogëlsira"
+    },
+    "tabsLabel": "Çfarë ke mbledhur",
+    "tabNew_one": "{{label}} · {{count}} e re",
+    "tabNew_other": "{{label}} · {{count}} të reja",
+    "empty": "Sëndugu yt është ende bosh",
+    "newLabel": "E RE",
+    "clickForDetails": "Prek një pllakë për më shumë",
+    "categories": {
+      "deities": "🏺 Perëndi",
+      "professions": "⚱️ Profesione",
+      "animals": "🐾 Kafshë",
+      "artifacts": "💎 Sende të lashta",
+      "treasures": "💰 Thesare",
+      "junk": "🔷 Vogëlsira",
+      "signs": "✍️ Shenja"
+    },
+    "treasureCategories": {
+      "merchantCache": "💰 Depoja e tregtarit",
+      "nobleVault": "👑 Thesari i fisnikes",
+      "templeSecrets": "🏛️ Sekretet e tempullit",
+      "ancientRelics": "🏺 Relike të lashta",
+      "mythicalArtifacts": "✨ Sende legjendare"
+    }
+  },
+  "detector": {
+    "compassTitle": "Busulla",
+    "corridorTitle": "Gjetësi i korridoreve",
+    "pickTarget": "Zgjidh një hieroglif te tavolina e hartave në kamp",
+    "allCollected": "Ende asnjë copë që mund ta arrish në një piramidë ku ke qenë më parë",
+    "more": "+{{count}} të tjera",
+    "corridorHere": "Pikërisht këtu ka një kalim të fshehtë",
+    "revealCorridor": "Hape",
+    "corridorNearby": "Një korridor i fshehtë është afër",
+    "corridorOnFloor": "Një korridor i fshehtë pret në këtë kat",
+    "lookingFor": "Po kërkon {{symbol}}",
+    "access": {
+      "open": "Nuk dihet asgjë që e bllokon këtë",
+      "unknown": "Mund të mos arrihet ende: është brenda një varri ose në shitje"
+    },
+    "corridorNoneNearby": "Asnjë korridor i fshehtë afër",
+    "corridorNoneOnFloor": "Asnjë korridor i fshehtë në këtë kat",
+    "corridorOtherFloor": "Një korridor i fshehtë pret në një kat tjetër",
+    "corridorNoneInPyramid": "Asnjë korridor i fshehtë në një kat tjetër",
+    "title": "Detektori",
+    "band": {
+      "none": "Asgjë nuk u gjet",
+      "pyramid": "Diçka në këtë piramidë",
+      "floor": "Diçka në këtë kat",
+      "near": "Diçka afër",
+      "here": "Pikërisht këtu! Hape detektorin"
+    },
+    "camp": {
+      "parts": "{{count}} nga {{total}} pjesë",
+      "compassReach": {
+        "1": "sheh piramidën",
+        "2": "sheh katin",
+        "3": "tregon vendin"
+      },
+      "pickHeading": "Çfarë kërkon busulla?",
+      "onlyIncomplete": "Vetëm shenjat nga të cilat ke një copë, derisa të plotësohen.",
+      "whereHeading": "Ku janë copat e {{symbol}}",
+      "pickFirst": "Zgjidh një shenjë që të shohësh ku janë copat e saj.",
+      "follow": "Ndiq këtë shenjë",
+      "following": "Busulla po e ndjek këtë shenjë",
+      "nothingToFind": "Nuk ke ende asnjë copë nga një shenjë që nuk është e plotë.",
+      "noneInReach": "Ende asnjë copë që mund ta arrish në një piramidë ku ke qenë më parë.",
+      "corridorReach": {
+        "1": "dëgjon një korridor afër",
+        "2": "dëgjon gjithë këtë kat",
+        "3": "dëgjon edhe katet e tjera",
+        "4": "dëgjon udhëtime të tjera"
+      },
+      "corridorInPyramid": "Brenda një piramide dëgjon për korridore të mbyllura.",
+      "corridorFarNext": "Me të katër pjesët dëgjon udhëtime të tjera nga kampi.",
+      "corridorWhere": "Ku ka ende një korridor të mbyllur",
+      "corridorNone": "Asnjë korridor i mbyllur në një udhëtim ku ke qenë.",
+      "pyramid": "Piramida {{n}}",
+      "corridorCount_one": "{{count}} korridor",
+      "corridorCount_other": "{{count}} korridore"
+    }
+  },
+  "keys": {
+    "blue": "Çelësi blu",
+    "red": "Çelësi i kuq",
+    "green": "Çelësi i gjelbër",
+    "yellow": "Çelësi i verdhë",
+    "purple": "Çelësi vjollcë",
+    "bundle": "Një tufë çelësash",
+    "foundDescription": "Hap dyert e shënuara me këtë ngjyrë, në këtë kat.",
+    "heldTitle": "{{key}}: në dorë",
+    "neededTitle": "{{key}}: ende të duhet"
+  },
+  "balance": {
+    "rules": {
+      "tap": "Prek një shenjë poshtë, pastaj një numër. Prek përsëri atë numër që ta heqësh.",
+      "same": "Një shenjë peshon njësoj në çdo peshore.",
+      "cancel": "Hiq të njëjtën gjë nga të dyja pjatat dhe peshorja mbetet në ekuilibër. Prek një copë të shënuar për ta bërë. Ajo që mbetet ruhet si rresht i ri.",
+      "swap": "Prek një shenjë që nuk ka shoqe përballë, pastaj një rresht ku ajo shenjë qëndron vetëm, që ta ndërrosh me sa vlen ai rresht."
+    },
+    "hint": {
+      "mistake": "Një nga peshat që dhe e bën një peshore të anojë. Hiqe dhe shiko përsëri.",
+      "alone": "Te rreshti i ndriçuar, {{glyph}} është e vetmja copë pa numër. Gjej sa peshon.",
+      "equalShares": "Rreshti i ndriçuar ka vetëm {{glyph}} përballë një numri. Ndaje atë numër në mënyrë të barabartë mes tyre.",
+      "difference": "Të dy rreshtat e ndriçuar janë njësoj, përveç {{glyph}}. Krahasoji.",
+      "cancelGlyph": "Të dyja pjatat e rreshtit të ndriçuar kanë {{glyph}}. Prek njërën që ta heqësh nga të dyja anët. Rreshti mbetet në ekuilibër.",
+      "cancelStones": "Të dyja pjatat e rreshtit të ndriçuar kanë numra të thjeshtë. Prek njërin që të heqësh të njëjtën sasi nga të dyja anët.",
+      "swap": "Një rresht i ndriçuar tregon sa vlen një {{glyph}} e vetme. Prek {{glyph}} te rreshti tjetër i ndriçuar, pastaj prek atë rresht."
+    },
+    "swap": {
+      "pick": "Prek një rresht të ndriçuar që ta ndërrosh këtë {{glyph}} me sa thotë ai rresht se vlen.",
+      "none": "Këtu asgjë nuk tregon sa vlen një {{glyph}} e vetme, dhe asgjë përballë nuk përputhet."
+    },
+    "goal": {
+      "default": "Çdo shenjë ka një peshë, dhe çdo peshore është në ekuilibër.",
+      "weighing": "Çdo shenjë gjen peshën e vet, dhe çdo peshore qëndron drejt."
+    },
+    "name": {
+      "default": "Peshorja",
+      "weighing": "Peshimi i zemrës"
+    }
+  },
+  "sumplete": {
+    "rules": {
+      "tap": "Prek një herë për ta vizuar një numër, përsëri për ta shënuar si numër që mbetet, edhe një herë për ta pastruar.",
+      "totals": "Numri i vogël nën çdo objektiv tregon sa bën ajo vijë tani."
+    },
+    "hint": {
+      "mistake": "Një nga shenjat këtu nuk mund të jetë e saktë. Zhbëje dhe shiko përsëri.",
+      "tooBig": {
+        "row": "Këtij rreshti i duhen ende {{deficit}}. {{value}} është më e madhe se kaq, ndaj nuk mund të mbetet.",
+        "col": "Kësaj kolone i duhen ende {{deficit}}. {{value}} është më e madhe se kaq, ndaj nuk mund të mbetet."
+      },
+      "allStrike": {
+        "row": "Numrat që mbeten në këtë rresht e bëjnë tashmë objektivin, ndaj gjithë të tjerët duhet të ikin.",
+        "col": "Numrat që mbeten në këtë kolonë e bëjnë tashmë objektivin, ndaj gjithë të tjerët duhet të ikin."
+      },
+      "allKeep": {
+        "row": "Ky rresht e bën tashmë objektivin. Shënoji këta numra si numra që mbeten, që të zgjidhen kolonat që kalojnë prej tyre.",
+        "col": "Kjo kolonë e bën tashmë objektivin. Shënoji këta numra si numra që mbeten, që të zgjidhen rreshtat që kalojnë prej tyre."
+      },
+      "parityKeep": {
+        "row": "Këtij rreshti i duhen ende {{deficit}}, një numër tek. {{value}} është i vetmi numër tek që mbeti, ndaj duhet të mbetet.",
+        "col": "Kësaj kolone i duhen ende {{deficit}}, një numër tek. {{value}} është i vetmi numër tek që mbeti, ndaj duhet të mbetet."
+      },
+      "parityStrike": {
+        "row": "Këtij rreshti i duhen ende {{deficit}}, një numër çift. {{value}} është i vetmi numër tek që mbeti, ndaj duhet të ikë.",
+        "col": "Kësaj kolone i duhen ende {{deficit}}, një numër çift. {{value}} është i vetmi numër tek që mbeti, ndaj duhet të ikë."
+      },
+      "onlyCombination": {
+        "row": "Vetëm një grup numrash në këtë rresht bën {{deficit}}.",
+        "col": "Vetëm një grup numrash në këtë kolonë bën {{deficit}}."
+      },
+      "inEveryCombinationKeep": {
+        "row": "Pa {{value}}, asnjë grup nga numrat e tjerë të këtij rreshti nuk bën {{deficit}}. Ndaj duhet të mbetet.",
+        "col": "Pa {{value}}, asnjë grup nga numrat e tjerë të kësaj kolone nuk bën {{deficit}}. Ndaj duhet të mbetet."
+      },
+      "inEveryCombinationStrike": {
+        "row": "Po ta mbash {{value}}, këtij rreshti do t'i duheshin ende {{remaining}}, dhe asnjë nga numrat e tjerë këtu nuk e bën dot. Ndaj duhet të ikë.",
+        "col": "Po ta mbash {{value}}, kësaj kolone do t'i duheshin ende {{remaining}}, dhe asnjë nga numrat e tjerë këtu nuk e bën dot. Ndaj duhet të ikë."
+      },
+      "tooBig.row": "Këtij rreshti i duhen ende {{deficit}}, dhe {{value}} është më e madhe se kaq.",
+      "tooBig.col": "Kësaj kolone i duhen ende {{deficit}}, dhe {{value}} është më e madhe se kaq.",
+      "allStrike.row": "Numrat që mbeten në këtë rresht e bëjnë tashmë objektivin.",
+      "allStrike.col": "Numrat që mbeten në këtë kolonë e bëjnë tashmë objektivin.",
+      "allKeep.row": "Ky rresht e bën tashmë objektivin, ndaj tani mund të zgjidhen kolonat që kalojnë prej tij.",
+      "allKeep.col": "Kjo kolonë e bën tashmë objektivin, ndaj tani mund të zgjidhen rreshtat që kalojnë prej saj.",
+      "parityKeep.row": "Këtij rreshti i duhen ende {{deficit}}, një numër tek, dhe {{value}} është i vetmi numër tek që mbeti.",
+      "parityKeep.col": "Kësaj kolone i duhen ende {{deficit}}, një numër tek, dhe {{value}} është i vetmi numër tek që mbeti.",
+      "parityStrike.row": "Këtij rreshti i duhen ende {{deficit}}, një numër çift, dhe {{value}} është i vetmi numër tek që mbeti.",
+      "parityStrike.col": "Kësaj kolone i duhen ende {{deficit}}, një numër çift, dhe {{value}} është i vetmi numër tek që mbeti.",
+      "onlyCombination.row": "Vetëm një grup numrash në këtë rresht bën {{deficit}}.",
+      "onlyCombination.col": "Vetëm një grup numrash në këtë kolonë bën {{deficit}}.",
+      "inEveryCombinationKeep.row": "Pa {{value}}, asnjë grup nga numrat e tjerë të këtij rreshti nuk bën {{deficit}}.",
+      "inEveryCombinationKeep.col": "Pa {{value}}, asnjë grup nga numrat e tjerë të kësaj kolone nuk bën {{deficit}}.",
+      "inEveryCombinationStrike.row": "Po ta mbash {{value}}, këtij rreshti do t'i duheshin ende {{remaining}}, dhe asnjë nga numrat e tjerë këtu nuk e bën dot.",
+      "inEveryCombinationStrike.col": "Po ta mbash {{value}}, kësaj kolone do t'i duheshin ende {{remaining}}, dhe asnjë nga numrat e tjerë këtu nuk e bën dot.",
+      "action": {
+        "strike_one": "Vizoje numrin me viza.",
+        "strike_other": "Vizoji numrat me viza.",
+        "keep_one": "Shënoje numrin me viza si numër që mbetet.",
+        "keep_other": "Shënoji numrat me viza si numra që mbeten."
+      }
+    },
+    "goal": "Çdo rresht dhe çdo kolonë bën numrin që ka pranë.",
+    "name": "Numërimi"
+  },
+  "futoshiki": {
+    "rules": {
+      "signs": "Një shenjë mes dy katrorëve tregon nga numri më i vogël i të dyve.",
+      "enter": "Prek një katror, pastaj prek një numër. I njëjti numër përsëri e heq.",
+      "notes": "Kalo te lapsi që të shënosh numrat që mund të shkojnë ende në një katror. Zhbëj e kthen lëvizjen tënde të fundit."
+    },
+    "hint": {
+      "mistake": {
+        "value": "Një nga numrat këtu nuk mund të jetë i saktë. Hiqe dhe shiko përsëri.",
+        "note": "Shënimet e këtij katrori e kanë hequr numrin që i përket. Pastroji dhe fillo nga e para."
+      },
+      "nakedSingle": "Çdo numër tjetër është zënë tashmë në këtë rresht, në këtë kolonë, ose nga shenjat. Për këtë katror mbetet vetëm {{value}}.",
+      "hiddenSingle": {
+        "row": "{{value}} nuk shkon në asnjë katror tjetër të këtij rreshti, ndaj shkon këtu.",
+        "col": "{{value}} nuk shkon në asnjë katror tjetër të kësaj kolone, ndaj shkon këtu."
+      },
+      "signBound": {
+        "high": "Një shenjë këtu tregon nga një numër më i madh, ndaj ky katror nuk mund të ketë {{value}}.",
+        "low": "Një shenjë këtu tregon nga ky katror, ndaj diçka duhet të jetë më e vogël se ai. Nuk mund të ketë {{value}}."
+      },
+      "signVsValue": {
+        "less": "Shenja thotë se ky katror është më i vogël se fqinji i tij, dhe ai fqinj ka {{value}}.",
+        "greater": "Shenja thotë se ky katror është më i madh se fqinji i tij, dhe ai fqinj ka {{value}}."
+      },
+      "signChain": {
+        "high": "Ndiq shenjat nga ky katror: {{chain}} katrorë njëri pas tjetrit duhet të jenë secili më i madh se i mëparshmi, ndaj ky nuk mund të jetë mbi {{bound}}.",
+        "low": "Ndiq shenjat drejt këtij katrori: {{chain}} katrorë njëri pas tjetrit duhet të jenë secili më i vogël se i mëparshmi, ndaj ky nuk mund të jetë nën {{bound}}."
+      },
+      "signPair": {
+        "less": "Numri më i madh që mund të ketë ende fqinji matanë shenjës është {{value}}, dhe ky katror duhet të mbetet nën të.",
+        "greater": "Numri më i vogël që mund të ketë ende fqinji matanë shenjës është {{value}}, dhe ky katror duhet të mbetet mbi të."
+      },
+      "nakedPair": {
+        "row": "Këta dy katrorë mund të kenë vetëm {{first}} dhe {{second}}, në njërën renditje ose në tjetrën, ndaj asnjë katror tjetër në këtë rresht nuk mund të ketë asnjërin.",
+        "col": "Këta dy katrorë mund të kenë vetëm {{first}} dhe {{second}}, në njërën renditje ose në tjetrën, ndaj asnjë katror tjetër në këtë kolonë nuk mund të ketë asnjërin."
+      },
+      "hiddenPair": {
+        "row": "Në këtë rresht, {{first}} dhe {{second}} nuk shkojnë askund tjetër përveç këtyre dy katrorëve, ndaj asgjë tjetër nuk mund të shkojë në to.",
+        "col": "Në këtë kolonë, {{first}} dhe {{second}} nuk shkojnë askund tjetër përveç këtyre dy katrorëve, ndaj asgjë tjetër nuk mund të shkojë në to."
+      },
+      "xWing": {
+        "row": "{{value}} shkon vetëm në dy katrorë të secilit nga këta dy rreshta, dhe ata janë në të njëjtat kolona. Si do që të bjerë, të dyja kolonat janë zënë. Ndaj {{value}} nuk mund të shkojë askund tjetër në to.",
+        "col": "{{value}} shkon vetëm në dy katrorë të secilës nga këto dy kolona, dhe ata janë në të njëjtët rreshta. Si do që të bjerë, të dy rreshtat janë zënë. Ndaj {{value}} nuk mund të shkojë askund tjetër në to."
+      },
+      "nakedTriple": {
+        "row": "Këta tre katrorë kanë bashkë vetëm {{first}}, {{second}} dhe {{third}}, ndaj asnjë katror tjetër në këtë rresht nuk mund të marrë asnjërin nga të tre.",
+        "col": "Këta tre katrorë kanë bashkë vetëm {{first}}, {{second}} dhe {{third}}, ndaj asnjë katror tjetër në këtë kolonë nuk mund të marrë asnjërin nga të tre."
+      },
+      "hiddenTriple": {
+        "row": "Në këtë rresht, {{first}}, {{second}} dhe {{third}} nuk shkojnë askund tjetër përveç këtyre tre katrorëve, ndaj asgjë tjetër nuk mund të shkojë në to.",
+        "col": "Në këtë kolonë, {{first}}, {{second}} dhe {{third}} nuk shkojnë askund tjetër përveç këtyre tre katrorëve, ndaj asgjë tjetër nuk mund të shkojë në to."
+      }
+    },
+    "goal": "Çdo rresht dhe çdo kolonë ka secilin numër vetëm një herë.",
+    "name": "Më i madh dhe më i vogël"
+  },
+  "lightbeam": {
+    "rules": {
+      "mirrors": "Një pasqyrë e kthen dritën nga cilado faqe e saj. Shenjat e vogla rreth saj tregojnë si tjetër mund të qëndrojë: shumica e kthejnë dritën me një çerek rrotullimi, e disa më pak, dhe e dërgojnë pjerrtas.",
+      "walls": "Një bllok guri e gëlltit dritën. Po ashtu edhe buza e fushës.",
+      "tap": "Prek një copë që ta ndryshosh: një pasqyrë rrotullohet, një copë që rrëshqet shkon te vendi tjetër. Buza e bardhë do të thotë që e lëviz ti. Gjithçka tjetër është pjesë e enigmës.",
+      "nodes": "Disa gurë janë të lidhur me një fole në dysheme dhe asnjë prekje nuk i lëviz. Dërgoje dritën përmes folesë dhe guri rrëshqet mënjanë."
+    },
+    "hint": {
+      "entryRun": "Fillo aty ku drita shkon tashmë: ajo shkon drejt nga disku deri te copa e parë që mund ta ndryshosh. Ata katrorë e marrin dritën, çfarëdo që të bësh.",
+      "exitRun": "Shiko faltoren. Vetëm njëra anë e saj mund të ndriçohet. Çdo rrugë tjetër është e bllokuar ose shikon jashtë fushës. Ndaj drita duhet të vijë përgjatë asaj vije.",
+      "wiringFires": {
+        "one": "Drita duhet ta kalojë atë fole rrugës. Këtë e ke gjetur tashmë. Kur e kalon, guri i lidhur me të largohet nga rruga, dhe rruga më tej hapet.",
+        "all": "Ai gur është i lidhur me më shumë se një fole, dhe lëviz vetëm kur drita i ka kaluar të gjitha. Gjej një mënyrë ta çosh dritën përmes të gjithave."
+      },
+      "deadEnd": {
+        "wall": "Po ta vendosësh kështu, drita përplaset drejt në gur dhe asgjë nuk e shpëton. Ndaj nuk mund të jetë kështu.",
+        "disc": "Po ta vendosësh kështu, pasqyra e kthen dritën nga erdhi, deri brenda diskut nga doli. Ndaj nuk mund të jetë kështu.",
+        "edge": "Po ta vendosësh kështu, drita del jashtë fushës dhe asgjë nuk e kap. Ndaj nuk mund të jetë kështu.",
+        "loop": "Po ta vendosësh kështu, drita nuk shkon askund. Ajo sillet në rreth përgjithmonë. Ndaj nuk mund të jetë kështu."
+      },
+      "feedsExit": {
+        "wall": "Puno mbrapsht nga faltorja. Po ta vendosësh kështu, asgjë nuk e sjell dritën përgjatë së vetmes vijë që e arrin. Ajo shuhet në gur rrugës.",
+        "disc": "Puno mbrapsht nga faltorja. Po ta vendosësh kështu, drita duhet të dilte nga pjesa e errët e diskut, dhe andej nuk vjen dritë.",
+        "edge": "Puno mbrapsht nga faltorja. Po ta vendosësh kështu, drita duhet të vinte nga jashtë fushës për ta arritur.",
+        "loop": "Puno mbrapsht nga faltorja. Po ta vendosësh kështu, drita që duhet ta arrinte sillet në rreth përgjithmonë."
+      },
+      "wiringDead": "Çfarëdo që të bësh, drita nuk arrin dot kurrë te ajo fole. Ndaj guri i lidhur me të mbetet aty ku është, dhe ti mund ta lexosh rrugën drejt pranë tij.",
+      "neverReached": "Lëre këtë të qetë. Drita nuk e arrin dot, si do që të jenë të tjerat, ndaj çfarëdo që i bën nuk ka rëndësi.",
+      "onlySurvivor": "Provo çdo pozicion të kësaj njërin pas tjetrit, dhe të gjithë përveç njërit e lënë faltoren në errësirë. Ai është përgjigjja."
+    },
+    "goal": "Drita e diellit shkon nga disku te faltorja.",
+    "name": "Rrezja e dritës"
+  },
+  "eclipse": {
+    "rules": {
+      "triple": "Tre të njëjtë njëri pas tjetrit nuk lejohen kurrë, as horizontalisht, as vertikalisht.",
+      "copies": "Asnjë dy rreshta nuk mund të jenë njësoj, dhe as dy kolona.",
+      "signs": "Një shenjë mes dy katrorëve tregon si janë: = për njësoj, × për ndryshe.",
+      "enter": "Prek një katror për të vënë një diell, përsëri për një hënë, edhe një herë për ta zbrazur."
+    },
+    "hint": {
+      "mistake": "Një nga këto shenja nuk mund të jetë e saktë.",
+      "sign.same": "= do të thotë njësoj.",
+      "sign.different": "× do të thotë ndryshe.",
+      "noTriple.pair": "Ka tashmë dy {{mark}}, dhe tre njëri pas tjetrit nuk lejohen kurrë.",
+      "noTriple.sandwich": "{{mark}} nga të dyja anët, dhe tre njëri pas tjetrit nuk lejohen kurrë.",
+      "signPair": "Këta dy janë njësoj, dhe ai {{mark}} qëndron pranë tyre.",
+      "lineCount": "Kjo vijë i ka tashmë {{count}} {{mark}} e saj.",
+      "noCopy": "Anasjelltas do ta kopjonte vijën e ndriçuar.",
+      "linePairing.sameNoRoom": "Këtu kanë mbetur vetëm {{count}} {{mark}}, dhe këta dy janë njësoj.",
+      "linePairing.differentTakesOne": "Çiftet me × i zënë të gjithë {{mark}} që kanë vend në këtë vijë.",
+      "loneMark": "Ka mbetur një {{mark}}, dhe vetëm një katror i mban larg njëri-tjetrit tre {{other}}.",
+      "squeeze.triple": "{{mark}} këtu do t'i bënte të tjerët {{other}}: tre njëri pas tjetrit.",
+      "squeeze.sign": "{{mark}} këtu do t'i bënte të tjerët {{other}}: një shenjë nuk përputhet më.",
+      "squeeze.copy": "{{mark}} këtu do t'i bënte të tjerët {{other}}: vija bëhet kopje.",
+      "action": {
+        "fill_one": "Vër {{mark}} te katrori me viza.",
+        "fill_other": "Vër {{mark}} te katrorët me viza.",
+        "fillMixed": "Plotëso katrorët me viza. Ka vetëm një mënyrë që funksionon."
+      }
+    },
+    "goal": "Çdo katror ka një diell ose një hënë, dhe çdo vijë ka po aq nga njëri sa nga tjetri.",
+    "name": "Dielli dhe hëna"
+  },
+  "constellation": {
+    "rules": {
+      "default": {
+        "straight": "Vijat e dritës shkojnë drejt, horizontalisht ose vertikalisht, nga një yll te tjetri.",
+        "pair": "Dy yje mund të kenë bashkë jo më shumë se dy vija.",
+        "cross": "Vijat nuk kryqëzohen kurrë dhe nuk kalojnë kurrë përmes një ylli.",
+        "enter": "Tërhiq nga një yll drejt fqinjit të tij për të vizatuar një vijë, përsëri për një vijë të dyfishtë, edhe një herë për ta fshirë."
+      },
+      "causeway": {
+        "straight": "Rrugët e transportit shkojnë drejt, horizontalisht ose vertikalisht, nga një kantier te tjetri.",
+        "pair": "Dy kantiere mund të kenë bashkë jo më shumë se dy rrugë.",
+        "cross": "Rrugët nuk kryqëzohen kurrë dhe nuk kalojnë kurrë përmes një kantieri.",
+        "enter": "Tërhiq nga një kantier drejt fqinjit të tij për të shtruar një rrugë, përsëri për ta dyfishuar, edhe një herë për ta prishur."
+      },
+      "irrigation": {
+        "straight": "Kanalet shkojnë drejt, horizontalisht ose vertikalisht, nga një pellg te tjetri.",
+        "pair": "Dy pellgje mund të kenë bashkë jo më shumë se dy kanale.",
+        "cross": "Kanalet nuk kryqëzohen kurrë dhe nuk kalojnë kurrë përmes një pellgu.",
+        "enter": "Tërhiq nga një pellg drejt fqinjit të tij për të hapur një kanal, përsëri për ta zgjeruar, edhe një herë për ta mbushur."
+      },
+      "ceiling": {
+        "straight": "Kordonët shkojnë drejt, horizontalisht ose vertikalisht, nga një yll te tjetri.",
+        "pair": "Dy yje mund të kenë bashkë jo më shumë se dy kordonë.",
+        "cross": "Kordonët nuk kryqëzohen kurrë dhe nuk kalojnë kurrë përmes një ylli.",
+        "enter": "Tërhiq nga një yll drejt fqinjit të tij për të vënë një kordon, përsëri për ta dyfishuar, edhe një herë për ta hequr."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Një nga këto vija nuk mund të jetë e saktë.",
+        "capacity": "{{count}} vija, dhe mezi mjaftojnë rrugët për të dalë.",
+        "settled": "Ky {{count}} i ka vijat e veta.",
+        "soleWayOut": "Ka mbetur vetëm një rrugë për të dalë, dhe ende {{count}} për të vizatuar.",
+        "crossed": "Një vijë atje do ta kryqëzonte këtë.",
+        "atLeastOne": "{{count}} vija, dhe rrugët e tjera nuk i mbajnë dot të gjitha.",
+        "twinBlock.single": "Po t'i bashkosh ata dy, do të bëhej një yjësi me dy yje.",
+        "twinBlock.double": "Një vijë e dytë atje do të bënte një yjësi me dy yje.",
+        "isolation": "Ajo vijë do t'i mbyllte këta {{count}} yje larg të tjerëve.",
+        "action": {
+          "draw_one": "Vizato vijën e shënuar.",
+          "draw_other": "Vizato vijat e shënuara.",
+          "refuse_one": "Vija e shënuar mbetet pa u vizatuar.",
+          "refuse_other": "Vijat e shënuara mbeten pa u vizatuar.",
+          "refuseDouble": "Një vijë atje, dhe jo e dytë."
+        }
+      },
+      "causeway": {
+        "mistake": "Një nga këto rrugë nuk mund të jetë e saktë.",
+        "capacity": "{{count}} rrugë, dhe mezi mjaftojnë daljet.",
+        "settled": "Ky {{count}} i ka rrugët e veta.",
+        "soleWayOut": "Ka mbetur vetëm një dalje, dhe ende {{count}} për të shtruar.",
+        "crossed": "Një rrugë atje do ta kryqëzonte këtë.",
+        "atLeastOne": "{{count}} rrugë, dhe daljet e tjera nuk i mbajnë dot të gjitha.",
+        "twinBlock.single": "Po t'i bashkosh ata dy, do të bëhej një rrjet me vetëm dy kantiere.",
+        "twinBlock.double": "Një rrugë e dytë atje do të bënte një rrjet me vetëm dy kantiere.",
+        "isolation": "Ajo rrugë do t'i ndante këta {{count}} kantiere nga të tjerët.",
+        "action": {
+          "draw_one": "Shtro rrugën e shënuar.",
+          "draw_other": "Shtro rrugët e shënuara.",
+          "refuse_one": "Rruga e shënuar mbetet pa u ndërtuar.",
+          "refuse_other": "Rrugët e shënuara mbeten pa u ndërtuar.",
+          "refuseDouble": "Një rrugë atje, dhe jo e dytë."
+        }
+      },
+      "irrigation": {
+        "mistake": "Një nga këto kanale nuk mund të jetë i saktë.",
+        "capacity": "{{count}} kanale, dhe mezi mjaftojnë daljet.",
+        "settled": "Ky {{count}} i ka kanalet e veta.",
+        "soleWayOut": "Ka mbetur vetëm një dalje, dhe ende {{count}} për të hapur.",
+        "crossed": "Një kanal atje do ta kryqëzonte këtë.",
+        "atLeastOne": "{{count}} kanale, dhe daljet e tjera nuk i mbajnë dot të gjitha.",
+        "twinBlock.single": "Po t'i bashkosh ata dy, do të bëhej një sistem uji me vetëm dy pellgje.",
+        "twinBlock.double": "Një kanal i dytë atje do të bënte një sistem uji me vetëm dy pellgje.",
+        "isolation": "Ai kanal do t'i ndante këta {{count}} pellgje nga të tjerët.",
+        "action": {
+          "draw_one": "Hap kanalin e shënuar.",
+          "draw_other": "Hap kanalet e shënuara.",
+          "refuse_one": "Kanali i shënuar mbetet pa u hapur.",
+          "refuse_other": "Kanalet e shënuara mbeten pa u hapur.",
+          "refuseDouble": "Një kanal atje, dhe jo i dytë."
+        }
+      },
+      "ceiling": {
+        "mistake": "Një nga këta kordonë nuk mund të jetë i saktë.",
+        "capacity": "{{count}} kordonë, dhe mezi mjaftojnë daljet.",
+        "settled": "Ky {{count}} i ka kordonët e vet.",
+        "soleWayOut": "Ka mbetur vetëm një dalje, dhe ende {{count}} për të vënë.",
+        "crossed": "Një kordon atje do ta kryqëzonte këtë.",
+        "atLeastOne": "{{count}} kordonë, dhe daljet e tjera nuk i mbajnë dot të gjithë.",
+        "twinBlock.single": "Po t'i bashkosh ata dy, do të bëhej një qiell i pikturuar me vetëm dy yje.",
+        "twinBlock.double": "Një kordon i dytë atje do të bënte një qiell i pikturuar me vetëm dy yje.",
+        "isolation": "Ai kordon do t'i ndante këta {{count}} yje nga të tjerët.",
+        "action": {
+          "draw_one": "Vër kordonin e shënuar.",
+          "draw_other": "Vër kordonët e shënuar.",
+          "refuse_one": "Kordoni i shënuar mbetet pa u vënë.",
+          "refuse_other": "Kordonët e shënuar mbeten pa u vënë.",
+          "refuseDouble": "Një kordon atje, dhe jo i dytë."
+        }
+      }
+    },
+    "goal": {
+      "default": "Çdo yll varet në një yjësi të vetme, i lidhur me aq vija drite sa thotë numri i tij.",
+      "causeway": "Çdo kantier qëndron në një rrjet të vetëm rrugësh, me aq rrugë transporti sa thotë numri i tij.",
+      "irrigation": "Çdo pellg ushqen një sistem të vetëm uji, me aq kanale sa thotë numri i tij.",
+      "ceiling": "Çdo yll i përket një qielli të vetëm të pikturuar, i lidhur me aq kordonë ari sa thotë numri i tij."
+    },
+    "name": {
+      "default": "Harta e yjeve",
+      "causeway": "Rruga e gurëve",
+      "irrigation": "Sistemi i ujit",
+      "ceiling": "Tavani i pikturuar"
+    }
+  },
+  "starBattle": {
+    "rules": {
+      "default": {
+        "touch": "Asnjë dy yje nuk mund të prekin njëri-tjetrin, as në cep.",
+        "enter": "Prek një katror për ta përjashtuar, përsëri për të vënë një yll, edhe një herë për ta pastruar."
+      },
+      "fields": {
+        "touch": "Asnjë dy ferma nuk mund të prekin njëra-tjetrën, as në cep. Kaq afër, do të ndanin një pus.",
+        "enter": "Prek një parcelë për ta përjashtuar, përsëri për të ngritur një fermë, edhe një herë për ta pastruar."
+      },
+      "lamps": {
+        "touch": "Asnjë dy llamba vaji nuk mund të qëndrojnë pranë njëra-tjetrës, as në cep. Drita e tyre do të përzihej dhe vaji do të shkonte dëm.",
+        "walls": "Blloqet gri të gurit janë pjesë e dyshemesë: asgjë nuk mund të qëndrojë mbi to, dhe ato nuk janë katrorë.",
+        "enter": "Prek një pllakë për ta përjashtuar, përsëri për të vënë një llambë vaji, edhe një herë për ta pastruar."
+      },
+      "market": {
+        "touch": "Asnjë dy tezga nuk mund të qëndrojnë pranë njëra-tjetrës, as në cep. Rivalët nuk vendosen kurrë krah për krah.",
+        "walls": "Shtëpitë janë pjesë e sheshit: askush nuk mund të vendosë tezgë brenda tyre, dhe ato nuk janë vende.",
+        "enter": "Prek një vend për ta përjashtuar, përsëri për të ngritur një tezgë, edhe një herë për ta pastruar."
+      },
+      "lotus": {
+        "touch": "Asnjë dy lotusë nuk mund të notojnë pranë njëri-tjetrit, as në cep. Çdo lule do ujë të lirë rreth vetes.",
+        "walls": "Shkëmbinjtë dalin nga pellgu: asgjë nuk mund të notojë mbi to, dhe ata nuk janë katrorë.",
+        "enter": "Prek një copë uji për ta përjashtuar, përsëri për të vënë një lotus, edhe një herë për ta pastruar."
+      },
+      "cats": {
+        "touch": "Asnjë dy mace nuk mund të flenë pranë njëra-tjetrës, as në cep. Çdo mace e do copën e saj të diellit.",
+        "walls": "Shtyllat mbajnë tempullin: asnjë mace nuk mund të flejë mbi to, dhe ato nuk janë katrorë.",
+        "enter": "Prek një pllakë për ta përjashtuar, përsëri për të shtrirë një mace, edhe një herë për ta pastruar."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Kjo shenjë nuk mund të jetë e saktë.",
+        "touch": "Një {{token}} këtu, dhe asgjë nuk mund të prekë një {{token}}.",
+        "groupFull.row_one": "Ky rresht e ka tashmë {{token}}.",
+        "groupFull.row_other": "Ky rresht i ka tashmë {{count}} {{token}}.",
+        "groupFull.col_one": "Kjo kolonë e ka tashmë {{token}}.",
+        "groupFull.col_other": "Kjo kolonë i ka tashmë {{count}} {{token}}.",
+        "groupFull.region_one": "Kjo zonë e ka tashmë {{token}}.",
+        "groupFull.region_other": "Kjo zonë i ka tashmë {{count}} {{token}}.",
+        "groupTight.row_one": "Këtij rreshti i ka mbetur vetëm një katror.",
+        "groupTight.row_other": "Këtij rreshti i kanë mbetur vetëm {{count}} katrorë.",
+        "groupTight.col_one": "Kësaj kolone i ka mbetur vetëm një katror.",
+        "groupTight.col_other": "Kësaj kolone i kanë mbetur vetëm {{count}} katrorë.",
+        "groupTight.region_one": "Kësaj zone i ka mbetur vetëm një katror.",
+        "groupTight.region_other": "Kësaj zone i kanë mbetur vetëm {{count}} katrorë.",
+        "onlyWay.row_one": "Ka vetëm një mënyrë për të vënë një {{token}} në këtë rresht.",
+        "onlyWay.row_other": "Ka vetëm një mënyrë për të vënë {{count}} {{token}} në këtë rresht.",
+        "onlyWay.col_one": "Ka vetëm një mënyrë për të vënë një {{token}} në këtë kolonë.",
+        "onlyWay.col_other": "Ka vetëm një mënyrë për të vënë {{count}} {{token}} në këtë kolonë.",
+        "onlyWay.region_one": "Ka vetëm një mënyrë për të vënë një {{token}} në këtë zonë.",
+        "onlyWay.region_other": "Ka vetëm një mënyrë për të vënë {{count}} {{token}} në këtë zonë.",
+        "everyWay.row_one": "Kudo që të shkojë {{token}} e këtij rreshti, ajo është gjithmonë këtu.",
+        "everyWay.row_other": "Kudo që të shkojnë {{count}} {{token}} e këtij rreshti, njëra është gjithmonë këtu.",
+        "everyWay.col_one": "Kudo që të shkojë {{token}} e kësaj kolone, ajo është gjithmonë këtu.",
+        "everyWay.col_other": "Kudo që të shkojnë {{count}} {{token}} e kësaj kolone, njëra është gjithmonë këtu.",
+        "everyWay.region_one": "Kudo që të shkojë {{token}} e kësaj zone, ajo është gjithmonë këtu.",
+        "everyWay.region_other": "Kudo që të shkojnë {{count}} {{token}} e kësaj zone, njëra është gjithmonë këtu.",
+        "regionLine.row_one": "{{token}} e zonës së shënuar duhet të vijë nga ai rresht.",
+        "regionLine.row_other": "{{count}} {{token}} e zonës së shënuar duhet të vijnë nga ai rresht.",
+        "regionLine.col_one": "{{token}} e zonës së shënuar duhet të vijë nga ajo kolonë.",
+        "regionLine.col_other": "{{count}} {{token}} e zonës së shënuar duhet të vijnë nga ajo kolonë.",
+        "lineRegion.row_one": "{{token}} e atij rreshti i përket zonës së shënuar.",
+        "lineRegion.row_other": "{{count}} {{token}} e atij rreshti i përkasin zonës së shënuar.",
+        "lineRegion.col_one": "{{token}} e asaj kolone i përket zonës së shënuar.",
+        "lineRegion.col_other": "{{count}} {{token}} e asaj kolone i përkasin zonës së shënuar.",
+        "spanning.toRows": "Zonat e shënuara i mbushin bashkë ata {{count}} rreshta.",
+        "spanning.toCols": "Zonat e shënuara i mbushin bashkë ato {{count}} kolona.",
+        "spanning.fromRows": "Rreshtat e shënuar mund t'i marrin {{count}} {{token}} e tyre vetëm nga ato zona.",
+        "spanning.fromCols": "Kolonat e shënuara mund t'i marrin {{count}} {{token}} e tyre vetëm nga ato zona.",
+        "wouldStrand.row": "Një {{token}} këtu do ta linte rreshtin e shënuar pa vend.",
+        "wouldStrand.col": "Një {{token}} këtu do ta linte kolonën e shënuar pa vend.",
+        "wouldStrand.region": "Një {{token}} këtu do ta linte zonën e shënuar pa vend.",
+        "action": {
+          "ruleOut_one": "Përjashtoje katrorin me viza.",
+          "ruleOut_other": "Përjashtoji katrorët me viza.",
+          "place_one": "Vër një {{token}} te katrori me viza.",
+          "place_other": "Vër një {{token}} te çdo katror me viza."
+        }
+      },
+      "fields": {
+        "mistake": "Kjo shenjë nuk mund të jetë e saktë.",
+        "touch": "Një {{token}} këtu, dhe asnjë parcelë që e prek nuk mund të ketë një tjetër.",
+        "groupFull.row_one": "Ky rresht është punuar tashmë.",
+        "groupFull.row_other": "Ky rresht i ka tashmë {{count}} {{token}}.",
+        "groupFull.col_one": "Kjo kolonë është punuar tashmë.",
+        "groupFull.col_other": "Kjo kolonë i ka tashmë {{count}} {{token}}.",
+        "groupFull.region_one": "Kjo pronë është punuar tashmë.",
+        "groupFull.region_other": "Kjo pronë i ka tashmë {{count}} {{token}}.",
+        "groupTight.row_one": "Këtij rreshti i ka mbetur vetëm një parcelë.",
+        "groupTight.row_other": "Këtij rreshti i kanë mbetur vetëm {{count}} parcela.",
+        "groupTight.col_one": "Kësaj kolone i ka mbetur vetëm një parcelë.",
+        "groupTight.col_other": "Kësaj kolone i kanë mbetur vetëm {{count}} parcela.",
+        "groupTight.region_one": "Kësaj prone i ka mbetur vetëm një parcelë.",
+        "groupTight.region_other": "Kësaj prone i kanë mbetur vetëm {{count}} parcela.",
+        "onlyWay.row_one": "Në këtë rresht ka mbetur vetëm një parcelë ku mund të ndërtosh.",
+        "onlyWay.row_other": "Ka vetëm një mënyrë për të vënë {{count}} {{token}} përgjatë këtij rreshti.",
+        "onlyWay.col_one": "Në këtë kolonë ka mbetur vetëm një parcelë ku mund të ndërtosh.",
+        "onlyWay.col_other": "Ka vetëm një mënyrë për të vënë {{count}} {{token}} përgjatë kësaj kolone.",
+        "onlyWay.region_one": "Në këtë pronë ka mbetur vetëm një parcelë ku mund të ndërtosh.",
+        "onlyWay.region_other": "Ka vetëm një mënyrë për të vënë {{count}} {{token}} në këtë pronë.",
+        "everyWay.row_one": "Si do që të punohet ky rresht, {{token}} e tij qëndron këtu.",
+        "everyWay.row_other": "Si do që të punohet ky rresht, njëra nga {{count}} {{token}} e tij qëndron këtu.",
+        "everyWay.col_one": "Si do që të punohet kjo kolonë, {{token}} e saj qëndron këtu.",
+        "everyWay.col_other": "Si do që të punohet kjo kolonë, njëra nga {{count}} {{token}} e saj qëndron këtu.",
+        "everyWay.region_one": "Si do që të punohet kjo pronë, {{token}} e saj qëndron këtu.",
+        "everyWay.region_other": "Si do që të punohet kjo pronë, njëra nga {{count}} {{token}} e saj qëndron këtu.",
+        "regionLine.row_one": "{{token}} e pronës së shënuar duhet të vijë nga ai rresht.",
+        "regionLine.row_other": "{{count}} {{token}} e pronës së shënuar duhet të vijnë nga ai rresht.",
+        "regionLine.col_one": "{{token}} e pronës së shënuar duhet të vijë nga ajo kolonë.",
+        "regionLine.col_other": "{{count}} {{token}} e pronës së shënuar duhet të vijnë nga ajo kolonë.",
+        "lineRegion.row_one": "{{token}} e atij rreshti i përket pronës së shënuar.",
+        "lineRegion.row_other": "{{count}} {{token}} e atij rreshti i përkasin pronës së shënuar.",
+        "lineRegion.col_one": "{{token}} e asaj kolone i përket pronës së shënuar.",
+        "lineRegion.col_other": "{{count}} {{token}} e asaj kolone i përkasin pronës së shënuar.",
+        "spanning.toRows": "Pronat e shënuara i mbushin bashkë ata {{count}} rreshta.",
+        "spanning.toCols": "Pronat e shënuara i mbushin bashkë ato {{count}} kolona.",
+        "spanning.fromRows": "Rreshtat e shënuar mund t'i marrin {{count}} {{token}} e tyre vetëm nga ato prona.",
+        "spanning.fromCols": "Kolonat e shënuara mund t'i marrin {{count}} {{token}} e tyre vetëm nga ato prona.",
+        "wouldStrand.row": "Një {{token}} këtu do ta linte rreshtin e shënuar pa vend për të ndërtuar.",
+        "wouldStrand.col": "Një {{token}} këtu do ta linte kolonën e shënuar pa vend për të ndërtuar.",
+        "wouldStrand.region": "Një {{token}} këtu do ta linte pronën e shënuar pa vend për të ndërtuar.",
+        "action": {
+          "ruleOut_one": "Përjashtoje parcelën me viza.",
+          "ruleOut_other": "Përjashtoji parcelat me viza.",
+          "place_one": "Ngri një {{token}} te parcela me viza.",
+          "place_other": "Ngri një {{token}} te çdo parcelë me viza."
+        }
+      },
+      "lamps": {
+        "mistake": "Kjo shenjë nuk mund të jetë e saktë.",
+        "touch": "Një {{token}} këtu, dhe asnjë llambë vaji nuk mund të qëndrojë pranë një tjetre, as në cep.",
+        "groupFull.row_one": "Ky rresht e ka tashmë llambën e vet të vajit.",
+        "groupFull.col_one": "Kjo kolonë e ka tashmë llambën e saj të vajit.",
+        "groupFull.row_other": "Ky rresht i ka tashmë {{count}} llamba vaji.",
+        "groupFull.col_other": "Kjo kolonë i ka tashmë {{count}} llamba vaji.",
+        "groupTight.row_one": "Këtij rreshti i ka mbetur vetëm një pllakë.",
+        "groupTight.row_other": "Këtij rreshti i kanë mbetur vetëm {{count}} pllaka.",
+        "groupTight.col_one": "Kësaj kolone i ka mbetur vetëm një pllakë.",
+        "groupTight.col_other": "Kësaj kolone i kanë mbetur vetëm {{count}} pllaka.",
+        "onlyWay.row_one": "Mes blloqeve të gurit, në këtë rresht ka mbetur vetëm një katror për një llambë vaji.",
+        "onlyWay.col_one": "Mes blloqeve të gurit, në këtë kolonë ka mbetur vetëm një katror për një llambë vaji.",
+        "onlyWay.row_other": "Ka vetëm një mënyrë për të vënë {{count}} llamba vaji në këtë rresht.",
+        "onlyWay.col_other": "Ka vetëm një mënyrë për të vënë {{count}} llamba vaji në këtë kolonë.",
+        "everyWay.row_one": "Kudo që të shkojë llamba e vajit e këtij rreshti, ajo është gjithmonë këtu.",
+        "everyWay.col_one": "Kudo që të shkojë llamba e vajit e kësaj kolone, ajo është gjithmonë këtu.",
+        "everyWay.row_other": "Kudo që të shkojnë {{count}} llambat e vajit të këtij rreshti, njëra është gjithmonë këtu.",
+        "everyWay.col_other": "Kudo që të shkojnë {{count}} llambat e vajit të kësaj kolone, njëra është gjithmonë këtu.",
+        "lineBlock.rowsToCols": "Rreshtat e shënuar i mbajnë llambat e tyre të vajit te katrorët e atyre kolonave, ndaj ato kolona nuk kanë më vend për të tjera.",
+        "lineBlock.colsToRows": "Kolonat e shënuara i mbajnë llambat e tyre të vajit te katrorët e atyre rreshtave, ndaj ata rreshta nuk kanë më vend për të tjera.",
+        "wouldStrand.row": "Një llambë vaji këtu do ta linte rreshtin e shënuar pa vend.",
+        "wouldStrand.col": "Një llambë vaji këtu do ta linte kolonën e shënuar pa vend.",
+        "action": {
+          "ruleOut_one": "Përjashtoje katrorin me viza.",
+          "ruleOut_other": "Përjashtoji katrorët me viza.",
+          "place_one": "Vër një llambë vaji te katrori me viza.",
+          "place_other": "Vër një llambë vaji te çdo katror me viza."
+        }
+      },
+      "market": {
+        "mistake": "Kjo shenjë nuk mund të jetë e saktë.",
+        "touch": "Një {{token}} këtu, dhe asnjë tezgë nuk mund të qëndrojë pranë një tjetre, as në cep.",
+        "groupFull.row_one": "Ky rresht e ka tashmë tezgën e vet.",
+        "groupFull.col_one": "Kjo kolonë e ka tashmë tezgën e saj.",
+        "groupFull.row_other": "Ky rresht i ka tashmë {{count}} tezga.",
+        "groupFull.col_other": "Kjo kolonë i ka tashmë {{count}} tezga.",
+        "groupTight.row_one": "Këtij rreshti i ka mbetur vetëm një vend.",
+        "groupTight.row_other": "Këtij rreshti i kanë mbetur vetëm {{count}} vende.",
+        "groupTight.col_one": "Kësaj kolone i ka mbetur vetëm një vend.",
+        "groupTight.col_other": "Kësaj kolone i kanë mbetur vetëm {{count}} vende.",
+        "onlyWay.row_one": "Mes shtëpive, në këtë rresht ka mbetur vetëm një katror për një tezgë.",
+        "onlyWay.col_one": "Mes shtëpive, në këtë kolonë ka mbetur vetëm një katror për një tezgë.",
+        "onlyWay.row_other": "Ka vetëm një mënyrë për të vënë {{count}} tezga në këtë rresht.",
+        "onlyWay.col_other": "Ka vetëm një mënyrë për të vënë {{count}} tezga në këtë kolonë.",
+        "everyWay.row_one": "Kudo që të shkojë tezga e këtij rreshti, ajo është gjithmonë këtu.",
+        "everyWay.col_one": "Kudo që të shkojë tezga e kësaj kolone, ajo është gjithmonë këtu.",
+        "everyWay.row_other": "Kudo që të shkojnë {{count}} tezgat e këtij rreshti, njëra është gjithmonë këtu.",
+        "everyWay.col_other": "Kudo që të shkojnë {{count}} tezgat e kësaj kolone, njëra është gjithmonë këtu.",
+        "lineBlock.rowsToCols": "Rreshtat e shënuar i mbajnë tezgat e tyre te katrorët e atyre kolonave, ndaj ato kolona nuk kanë më vend për të tjera.",
+        "lineBlock.colsToRows": "Kolonat e shënuara i mbajnë tezgat e tyre te katrorët e atyre rreshtave, ndaj ata rreshta nuk kanë më vend për të tjera.",
+        "wouldStrand.row": "Një tezgë këtu do ta linte rreshtin e shënuar pa vend.",
+        "wouldStrand.col": "Një tezgë këtu do ta linte kolonën e shënuar pa vend.",
+        "action": {
+          "ruleOut_one": "Përjashtoje katrorin me viza.",
+          "ruleOut_other": "Përjashtoji katrorët me viza.",
+          "place_one": "Vër një tezgë te katrori me viza.",
+          "place_other": "Vër një tezgë te çdo katror me viza."
+        }
+      },
+      "lotus": {
+        "mistake": "Kjo shenjë nuk mund të jetë e saktë.",
+        "touch": "Një {{token}} këtu, dhe asnjë lotus nuk mund të notojë pranë një tjetri, as në cep.",
+        "groupFull.row_one": "Ky rresht e ka tashmë lotusin e vet.",
+        "groupFull.col_one": "Kjo kolonë e ka tashmë lotusin e saj.",
+        "groupFull.row_other": "Ky rresht i ka tashmë {{count}} lotusë.",
+        "groupFull.col_other": "Kjo kolonë i ka tashmë {{count}} lotusë.",
+        "groupTight.row_one": "Këtij rreshti i ka mbetur vetëm një copë uji.",
+        "groupTight.row_other": "Këtij rreshti i kanë mbetur vetëm {{count}} copa uji.",
+        "groupTight.col_one": "Kësaj kolone i ka mbetur vetëm një copë uji.",
+        "groupTight.col_other": "Kësaj kolone i kanë mbetur vetëm {{count}} copa uji.",
+        "onlyWay.row_one": "Mes shkëmbinjve, në këtë rresht ka mbetur vetëm një katror për një lotus.",
+        "onlyWay.col_one": "Mes shkëmbinjve, në këtë kolonë ka mbetur vetëm një katror për një lotus.",
+        "onlyWay.row_other": "Ka vetëm një mënyrë për të vënë {{count}} lotusë në këtë rresht.",
+        "onlyWay.col_other": "Ka vetëm një mënyrë për të vënë {{count}} lotusë në këtë kolonë.",
+        "everyWay.row_one": "Kudo që të shkojë lotusi i këtij rreshti, ai është gjithmonë këtu.",
+        "everyWay.col_one": "Kudo që të shkojë lotusi i kësaj kolone, ai është gjithmonë këtu.",
+        "everyWay.row_other": "Kudo që të shkojnë {{count}} lotusët e këtij rreshti, njëri është gjithmonë këtu.",
+        "everyWay.col_other": "Kudo që të shkojnë {{count}} lotusët e kësaj kolone, njëri është gjithmonë këtu.",
+        "lineBlock.rowsToCols": "Rreshtat e shënuar i mbajnë lotusët e tyre te katrorët e atyre kolonave, ndaj ato kolona nuk kanë më vend për të tjerë.",
+        "lineBlock.colsToRows": "Kolonat e shënuara i mbajnë lotusët e tyre te katrorët e atyre rreshtave, ndaj ata rreshta nuk kanë më vend për të tjerë.",
+        "wouldStrand.row": "Një lotus këtu do ta linte rreshtin e shënuar pa vend.",
+        "wouldStrand.col": "Një lotus këtu do ta linte kolonën e shënuar pa vend.",
+        "action": {
+          "ruleOut_one": "Përjashtoje katrorin me viza.",
+          "ruleOut_other": "Përjashtoji katrorët me viza.",
+          "place_one": "Vër një lotus te katrori me viza.",
+          "place_other": "Vër një lotus te çdo katror me viza."
+        }
+      },
+      "cats": {
+        "mistake": "Kjo shenjë nuk mund të jetë e saktë.",
+        "touch": "Një {{token}} këtu, dhe asnjë mace nuk mund të flejë pranë një tjetre, as në cep.",
+        "groupFull.row_one": "Ky rresht e ka tashmë macen e vet.",
+        "groupFull.col_one": "Kjo kolonë e ka tashmë macen e saj.",
+        "groupFull.row_other": "Ky rresht i ka tashmë {{count}} mace.",
+        "groupFull.col_other": "Kjo kolonë i ka tashmë {{count}} mace.",
+        "groupTight.row_one": "Këtij rreshti i ka mbetur vetëm një pllakë.",
+        "groupTight.row_other": "Këtij rreshti i kanë mbetur vetëm {{count}} pllaka.",
+        "groupTight.col_one": "Kësaj kolone i ka mbetur vetëm një pllakë.",
+        "groupTight.col_other": "Kësaj kolone i kanë mbetur vetëm {{count}} pllaka.",
+        "onlyWay.row_one": "Mes shtyllave, në këtë rresht ka mbetur vetëm një katror për një mace.",
+        "onlyWay.col_one": "Mes shtyllave, në këtë kolonë ka mbetur vetëm një katror për një mace.",
+        "onlyWay.row_other": "Ka vetëm një mënyrë për të vënë {{count}} mace në këtë rresht.",
+        "onlyWay.col_other": "Ka vetëm një mënyrë për të vënë {{count}} mace në këtë kolonë.",
+        "everyWay.row_one": "Kudo që të shkojë macja e këtij rreshti, ajo është gjithmonë këtu.",
+        "everyWay.col_one": "Kudo që të shkojë macja e kësaj kolone, ajo është gjithmonë këtu.",
+        "everyWay.row_other": "Kudo që të shkojnë {{count}} macet e këtij rreshti, njëra është gjithmonë këtu.",
+        "everyWay.col_other": "Kudo që të shkojnë {{count}} macet e kësaj kolone, njëra është gjithmonë këtu.",
+        "lineBlock.rowsToCols": "Rreshtat e shënuar i mbajnë macet e tyre te katrorët e atyre kolonave, ndaj ato kolona nuk kanë më vend për të tjera.",
+        "lineBlock.colsToRows": "Kolonat e shënuara i mbajnë macet e tyre te katrorët e atyre rreshtave, ndaj ata rreshta nuk kanë më vend për të tjera.",
+        "wouldStrand.row": "Një mace këtu do ta linte rreshtin e shënuar pa vend.",
+        "wouldStrand.col": "Një mace këtu do ta linte kolonën e shënuar pa vend.",
+        "action": {
+          "ruleOut_one": "Përjashtoje katrorin me viza.",
+          "ruleOut_other": "Përjashtoji katrorët me viza.",
+          "place_one": "Vër një mace te katrori me viza.",
+          "place_other": "Vër një mace te çdo katror me viza."
+        }
+      }
+    },
+    "quota": {
+      "default": "Për çdo rresht, kolonë dhe zonë",
+      "fields": "Për çdo rresht, kolonë dhe pronë",
+      "lamps": "Për çdo rresht dhe kolonë",
+      "market": "Për çdo rresht dhe kolonë",
+      "lotus": "Për çdo rresht dhe kolonë",
+      "cats": "Për çdo rresht dhe kolonë"
+    },
+    "goal": {
+      "default_one": "Çdo rresht, çdo kolonë dhe çdo zonë ka saktësisht një yll.",
+      "default_other": "Çdo rresht, çdo kolonë dhe çdo zonë ka saktësisht {{count}} yje.",
+      "fields_one": "Çdo rresht, çdo kolonë dhe çdo pronë ka saktësisht një fermë.",
+      "fields_other": "Çdo rresht, çdo kolonë dhe çdo pronë ka saktësisht {{count}} ferma.",
+      "lamps": "Çdo rresht dhe çdo kolonë ka saktësisht një llambë vaji.",
+      "market": "Çdo rresht dhe çdo kolonë ka saktësisht një tezgë tregu.",
+      "lotus": "Çdo rresht dhe çdo kolonë ka saktësisht një lotus.",
+      "cats": "Çdo rresht dhe çdo kolonë ka saktësisht një mace."
+    },
+    "name": {
+      "default": "Yje larg njëri-tjetrit",
+      "fields": "Fermat",
+      "twinDefault": "Yjet binjakë",
+      "twinFields": "Fermat binjake",
+      "lamps": "Llambat e vajit",
+      "market": "Tezgat e tregut",
+      "lotus": "Pellgu i lotusëve",
+      "cats": "Macet e tempullit"
+    }
+  },
+  "pairPuzzle": {
+    "name": {
+      "mummies": "Pushimi i mumieve",
+      "beetles": "Brumbujt e plehut"
+    },
+    "goal": {
+      "mummies": "Çdo sarkofag ka një mumie pranë vetes, dhe çdo rresht e kolonë ka saktësisht aq mumie sa thotë numri pranë tyre.",
+      "beetles": "Çdo top plehu ka një brumbull pranë vetes, dhe çdo rresht e kolonë ka saktësisht aq brumbuj sa thotë numri pranë tyre."
+    },
+    "rules": {
+      "mummies": {
+        "pair": "Çdo sarkofag ka një mumie që pushon drejt sipër, poshtë, majtas ose djathtas tij, dhe çdo mumie pushon pranë sarkofagut të vet.",
+        "count": "Numri pranë një rreshti ose kolone tregon sa mumie ka ajo. Bëhet i gjelbër kur vija ka saktësisht aq, dhe i kuq kur nuk mund të arrihet.",
+        "touch": "Asnjë dy mumie nuk mund të qëndrojnë pranë njëra-tjetrës, as në cep.",
+        "enter": "Prek një katror për ta përjashtuar, përsëri për të shtrirë një mumie, edhe një herë për ta pastruar. Tërhiq nëpër katrorë për të përjashtuar disa njëherësh. Sarkofagët nuk preken."
+      },
+      "beetles": {
+        "pair": "Çdo top plehu ka një brumbull drejt sipër, poshtë, majtas ose djathtas tij, dhe çdo brumbull qëndron pranë topit të vet për ta rrotulluar.",
+        "count": "Numri pranë një rreshti ose kolone tregon sa brumbuj ka ajo. Bëhet i gjelbër kur vija ka saktësisht aq, dhe i kuq kur nuk mund të arrihet.",
+        "touch": "Asnjë dy brumbuj nuk mund të qëndrojnë pranë njëri-tjetrit, as në cep.",
+        "enter": "Prek një katror për ta përjashtuar, përsëri për të vënë një brumbull, edhe një herë për ta pastruar. Tërhiq nëpër katrorë për të përjashtuar disa njëherësh. Topat e plehut nuk preken."
+      }
+    },
+    "hint": {
+      "mummies": {
+        "mistake": "Kjo shenjë nuk mund të jetë e saktë.",
+        "touch": "Kjo mumie është vendosur, ndaj asnjë tjetër nuk mund të qëndrojë pranë saj, as në cep.",
+        "zeroLine.row": "Ky rresht nuk ka asnjë mumie, ndaj është krejt bosh.",
+        "zeroLine.col": "Kjo kolonë nuk ka asnjë mumie, ndaj është krejt bosh.",
+        "noAnchor": "Këta katrorë nuk kanë sarkofag pranë, ndaj asnjë mumie nuk mund të pushojë këtu.",
+        "lineFull.row_one": "Ky rresht e ka tashmë mumien e vet.",
+        "lineFull.row_other": "Ky rresht i ka tashmë {{count}} mumiet e veta.",
+        "lineFull.col_one": "Kjo kolonë e ka tashmë mumien e saj.",
+        "lineFull.col_other": "Kjo kolonë i ka tashmë {{count}} mumiet e saj.",
+        "lineTight.row_one": "Këtij rreshti i ka mbetur vetëm një katror për mumien e vet.",
+        "lineTight.row_other": "Këtij rreshti i kanë mbetur saktësisht {{count}} katrorë për {{count}} mumiet e veta.",
+        "lineTight.col_one": "Kësaj kolone i ka mbetur vetëm një katror për mumien e saj.",
+        "lineTight.col_other": "Kësaj kolone i kanë mbetur saktësisht {{count}} katrorë për {{count}} mumiet e saj.",
+        "onlyWay": "Këtij sarkofagu i ka mbetur vetëm një katror pranë për mumien e vet.",
+        "claimed": "Ky sarkofag e ka tashmë mumien e vet, ndaj katrorët pranë tij që nuk i përdor asnjë sarkofag tjetër mbeten bosh.",
+        "lineBlock.rowsToCols_one": "Rreshtat e shënuar kanë një mumie më shumë nga sa mund të japin sarkofagët e tyre, ndaj ajo vjen nga një sarkofag pak jashtë tyre.",
+        "lineBlock.rowsToCols_other": "Rreshtat e shënuar kanë {{count}} mumie më shumë nga sa mund të japin sarkofagët e tyre, ndaj ato vijnë nga sarkofagë pak jashtë tyre.",
+        "lineBlock.colsToRows_one": "Kolonat e shënuara kanë një mumie më shumë nga sa mund të japin sarkofagët e tyre, ndaj ajo vjen nga një sarkofag pak jashtë tyre.",
+        "lineBlock.colsToRows_other": "Kolonat e shënuara kanë {{count}} mumie më shumë nga sa mund të japin sarkofagët e tyre, ndaj ato vijnë nga sarkofagë pak jashtë tyre.",
+        "wouldStrand.row": "Një mumie këtu do ta linte rreshtin e shënuar pa vend për mumiet që i duhen ende.",
+        "wouldStrand.col": "Një mumie këtu do ta linte kolonën e shënuar pa vend për mumiet që i duhen ende.",
+        "wouldStrand.anchor": "Një mumie këtu do ta linte sarkofagun e shënuar pa asnjë katror pranë për mumien e vet.",
+        "action": {
+          "ruleOut_one": "Përjashtoje katrorin me viza.",
+          "ruleOut_other": "Përjashtoji katrorët me viza.",
+          "place_one": "Shtri një mumie te katrori me viza.",
+          "place_other": "Shtri një mumie te çdo katror me viza."
+        }
+      },
+      "beetles": {
+        "mistake": "Kjo shenjë nuk mund të jetë e saktë.",
+        "touch": "Ky brumbull është vendosur, ndaj asnjë tjetër nuk mund të qëndrojë pranë tij, as në cep.",
+        "zeroLine.row": "Ky rresht nuk ka asnjë brumbull, ndaj është krejt bosh.",
+        "zeroLine.col": "Kjo kolonë nuk ka asnjë brumbull, ndaj është krejt bosh.",
+        "noAnchor": "Këta katrorë nuk kanë top plehu pranë, ndaj asnjë brumbull nuk mund të qëndrojë këtu.",
+        "lineFull.row_one": "Ky rresht e ka tashmë brumbullin e vet.",
+        "lineFull.row_other": "Ky rresht i ka tashmë {{count}} brumbujt e vet.",
+        "lineFull.col_one": "Kjo kolonë e ka tashmë brumbullin e saj.",
+        "lineFull.col_other": "Kjo kolonë i ka tashmë {{count}} brumbujt e saj.",
+        "lineTight.row_one": "Këtij rreshti i ka mbetur vetëm një katror për brumbullin e vet.",
+        "lineTight.row_other": "Këtij rreshti i kanë mbetur saktësisht {{count}} katrorë për {{count}} brumbujt e vet.",
+        "lineTight.col_one": "Kësaj kolone i ka mbetur vetëm një katror për brumbullin e saj.",
+        "lineTight.col_other": "Kësaj kolone i kanë mbetur saktësisht {{count}} katrorë për {{count}} brumbujt e saj.",
+        "onlyWay": "Këtij topi plehu i ka mbetur vetëm një katror pranë për brumbullin e vet.",
+        "claimed": "Ky top plehu e ka tashmë brumbullin e vet, ndaj katrorët pranë tij që nuk i përdor asnjë top tjetër mbeten bosh.",
+        "lineBlock.rowsToCols_one": "Rreshtat e shënuar kanë një brumbull më shumë nga sa mund të japin topat e tyre të plehut, ndaj ai vjen nga një top pak jashtë tyre.",
+        "lineBlock.rowsToCols_other": "Rreshtat e shënuar kanë {{count}} brumbuj më shumë nga sa mund të japin topat e tyre të plehut, ndaj ata vijnë nga topa pak jashtë tyre.",
+        "lineBlock.colsToRows_one": "Kolonat e shënuara kanë një brumbull më shumë nga sa mund të japin topat e tyre të plehut, ndaj ai vjen nga një top pak jashtë tyre.",
+        "lineBlock.colsToRows_other": "Kolonat e shënuara kanë {{count}} brumbuj më shumë nga sa mund të japin topat e tyre të plehut, ndaj ata vijnë nga topa pak jashtë tyre.",
+        "wouldStrand.row": "Një brumbull këtu do ta linte rreshtin e shënuar pa vend për brumbujt që i duhen ende.",
+        "wouldStrand.col": "Një brumbull këtu do ta linte kolonën e shënuar pa vend për brumbujt që i duhen ende.",
+        "wouldStrand.anchor": "Një brumbull këtu do ta linte topin e shënuar të plehut pa asnjë katror pranë për brumbullin e vet.",
+        "action": {
+          "ruleOut_one": "Përjashtoje katrorin me viza.",
+          "ruleOut_other": "Përjashtoji katrorët me viza.",
+          "place_one": "Vër një brumbull te katrori me viza.",
+          "place_other": "Vër një brumbull te çdo katror me viza."
+        }
+      }
+    }
+  },
+  "rushHour": {
+    "name": {
+      "default": "Bllokada",
+      "market": "Rruga e bllokuar"
+    },
+    "goal": {
+      "default": "Nxirre bllokun tënd nga e çara në të djathtë.",
+      "market": "Nxirre slitën tënde nga e çara në fund të rrugës."
+    },
+    "rules": {
+      "default": {
+        "lanes": "Një bllok rrëshqet vetëm përgjatë korsisë së vet. Kurrë anash, kurrë jashtë fushës.",
+        "shove": "Tërhiq një bllok që ta shtysh. Ndalon aty ku diçka i zë rrugën."
+      },
+      "market": {
+        "lanes": "Një slitë rrëshqet vetëm përgjatë korsisë ku qëndron. Kurrë anash, kurrë jashtë rrugës.",
+        "shove": "Tërhiq një slitë që ta shtysh. Ndalon aty ku diçka i zë rrugën."
+      }
+    },
+    "hint": {
+      "default": {
+        "drive": "Rruga përpara është e lirë deri atje.",
+        "back": "Asgjë përpara nuk lëviz. Së pari tërhiqe tëndin mbrapa, jashtë rrugës.",
+        "clear": "Ai bllok qëndron tërthor në korsinë tënde.",
+        "room": "Asgjë nuk lëviz derisa të lëvizë ai.",
+        "push": {
+          "left": "Shtyje majtas, deri te rrethi.",
+          "right": "Shtyje djathtas, deri te rrethi.",
+          "up": "Shtyje lart, deri te rrethi.",
+          "down": "Shtyje poshtë, deri te rrethi."
+        }
+      },
+      "market": {
+        "drive": "Korsia para tëndes është e lirë deri atje.",
+        "back": "Asgjë përpara nuk lëviz. Së pari tërhiqe slitën tënde mbrapa.",
+        "clear": "Ajo ngarkesë qëndron tërthor në korsinë nga del ti.",
+        "room": "Asgjë nuk lëviz derisa të zhvendoset ajo.",
+        "push": {
+          "left": "Shtyje majtas, deri te rrethi.",
+          "right": "Shtyje djathtas, deri te rrethi.",
+          "up": "Shtyje lart nëpër rrugë, deri te rrethi.",
+          "down": "Shtyje poshtë nëpër rrugë, deri te rrethi."
+        }
+      }
+    }
+  },
+  "hidato": {
+    "rules": {
+      "default": {
+        "given": "Numrat që janë tashmë në huall janë pjesë e enigmës. Ata nuk lëvizin.",
+        "enter": "Prek një numër për ta vazhduar vargun prej andej, pastaj prek një qeli bosh ngjitur për ta çuar më tej. Ose tërhiq drejt nëpër qelitë ku shkon.",
+        "back": "Prek një numër që vure dhe prek përsëri që ta heqësh, bashkë me çdo gjë që mbetet e varur prej tij. Po ta çosh vargun nga një numër në një drejtim tjetër, ndodh e njëjta gjë. Zhbëj e kthen lëvizjen tënde të fundit."
+      },
+      "channel": {
+        "given": "Arat që kanë tashmë numër janë pjesë e enigmës. Ato nuk lëvizin.",
+        "enter": "Prek një arë me numër për ta marrë ujin prej andej, pastaj prek një arë të thatë pranë saj për të gërmuar më tej. Ose tërhiq drejt përgjatë arave ku kalon kanali.",
+        "back": "Prek një arë që gërmove dhe prek përsëri që ta mbushësh, bashkë me çdo kanal që mbetet i ndarë prej saj. Po të gërmosh nga një arë në një drejtim tjetër, ndodh e njëjta gjë. Zhbëj e kthen lëvizjen tënde të fundit."
+      },
+      "scribe": {
+        "given": "Shifrat me bojë të kuqe janë të vetë enigmës. Ato nuk lëvizin.",
+        "enter": "Prek një shifër për ta marrë kallamin prej andej, pastaj prek një vend bosh pranë saj për të shkruar më tej. Ose tërhiq drejt përgjatë vijës.",
+        "back": "Prek një shifër që shkrove dhe prek përsëri që ta gërvishtësh, bashkë me çdo vijë që mbetet e ndarë prej saj. Po të shkruash nga një shifër në një drejtim tjetër, ndodh e njëjta gjë. Zhbëj e kthen lëvizjen tënde të fundit."
+      },
+      "chambers": {
+        "given": "Dhomat që kanë tashmë numër i gdhendën ndërtuesit. Ato nuk lëvizin.",
+        "enter": "Prek një dhomë me numër për ta vazhduar kalimin prej andej, pastaj prek një dhomë të mbyllur pranë saj për ta çarë. Ose tërhiq drejt përgjatë dhomave ku kalon kalimi.",
+        "back": "Prek një dhomë që hape dhe prek përsëri që ta mbyllësh, bashkë me çdo kalim që mbetet i ndarë prej saj. Po ta çash nga një dhomë në një drejtim tjetër, ndodh e njëjta gjë. Zhbëj e kthen lëvizjen tënde të fundit."
+      }
+    },
+    "goal": {
+      "default": "Çdo qeli e huallit ka një numër, nga 1 deri në {{last}}, secili në një qeli ngjitur me numrin para tij.",
+      "channel": "Një kanal i vetëm ujit gjithë fushën: çdo arë e ka radhën e vet, nga 1 deri në {{last}}, secila e gërmuar pranë arës para saj.",
+      "scribe": "Një vijë e pandërprerë shifrash kalon nëpër fletë: çdo vend ka një shifër, nga 1 deri në {{last}}, secila pranë shifrës para saj.",
+      "chambers": "Një kalim i vetëm përshkon gjithë varrin: çdo dhomë hapet me radhë, nga 1 deri në {{last}}, secila e çarë nga dhoma para saj."
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": "Një nga këta numra nuk mund të jetë i saktë.",
+          "sandwich": "{{before}} dhe {{after}} kanë mes tyre vetëm një qeli të lirë që i prek të dy.",
+          "neighbourForced": "{{from}} ka mbetur vetëm me një qeli të lirë pranë.",
+          "onlyCell": "Nuk ka asnjë vend tjetër në huall për {{value}}.",
+          "onlyValue": "Asnjë numër tjetër nuk e arrin dot këtë qeli."
+        },
+        "action": {
+          "place": "Vër {{value}} te qelia me viza."
+        }
+      },
+      "channel": {
+        "reason": {
+          "mistake": "Një nga këta numra nuk mund të jetë i saktë.",
+          "sandwich": "{{before}} dhe {{after}} kanë mes tyre vetëm një arë të thatë që i prek të dy.",
+          "neighbourForced": "Pranë {{from}} ka mbetur vetëm një arë e thatë.",
+          "onlyCell": "Askund tjetër në fushë nuk ka vend për {{value}}.",
+          "onlyValue": "Asnjë numër tjetër nuk e arrin dot këtë arë."
+        },
+        "action": {
+          "place": "Gërmo {{value}} te ara me viza."
+        }
+      },
+      "scribe": {
+        "reason": {
+          "mistake": "Një nga këto shifra nuk mund të jetë e saktë.",
+          "sandwich": "{{before}} dhe {{after}} kanë mes tyre vetëm një vend bosh që i prek të dyja.",
+          "neighbourForced": "Pranë {{from}} ka mbetur vetëm një vend bosh.",
+          "onlyCell": "Askund tjetër në fletë nuk ka vend për {{value}}.",
+          "onlyValue": "Asnjë shifër tjetër nuk e arrin dot këtë vend."
+        },
+        "action": {
+          "place": "Shkruaj {{value}} te vendi me viza."
+        }
+      },
+      "chambers": {
+        "reason": {
+          "mistake": "Një nga këta numra nuk mund të jetë i saktë.",
+          "sandwich": "{{before}} dhe {{after}} kanë mes tyre vetëm një dhomë të mbyllur që i prek të dy.",
+          "neighbourForced": "Pranë {{from}} ka mbetur vetëm një dhomë e mbyllur.",
+          "onlyCell": "Askund tjetër në varr nuk ka vend për {{value}}.",
+          "onlyValue": "Asnjë numër tjetër nuk e arrin dot këtë dhomë."
+        },
+        "action": {
+          "place": "Hap {{value}} te dhoma me viza."
+        }
+      }
+    },
+    "name": {
+      "default": "Koshere",
+      "channel": "Kanali",
+      "scribe": "Fleta e shkruesit",
+      "chambers": "Dhomat e mbyllura"
+    }
+  },
+  "sudoku": {
+    "rules": {
+      "default": {
+        "chambers": "Vijat e trasha e ndajnë fushën në gjashtë dhoma, dy katrorë të gjera dhe tre të larta.",
+        "given": "Numrat që janë gdhendur tashmë janë pjesë e enigmës. Ata nuk lëvizin.",
+        "enter": "Prek një katror, pastaj prek një numër. I njëjti numër përsëri e heq.",
+        "notes": "Kalo te lapsi që të shënosh numrat që mund të shkojnë ende në një katror. Zhbëj e kthen lëvizjen tënde të fundit."
+      },
+      "papyrus": {
+        "chambers": "Vijat e trasha e ndajnë fletën në gjashtë pjesë, dy vende të gjera dhe tre të larta.",
+        "given": "Shenjat me bojë të kuqe janë të vetë enigmës. Ato nuk lëvizin.",
+        "enter": "Prek një vend, pastaj prek një shenjë. E njëjta shenjë përsëri e gërvisht.",
+        "notes": "Merr penën e kallamit që të shënosh lehtë shenjat që mund të shkojnë ende në një vend. Zhbëj e kthen lëvizjen tënde të fundit."
+      }
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": {
+            "value": "Një nga numrat këtu nuk mund të jetë i saktë. Hiqe dhe shiko përsëri.",
+            "note": "Shënimet e këtij katrori e kanë hequr numrin që i përket. Pastroji dhe fillo nga e para."
+          },
+          "nakedSingle": "Rreshti, kolona dhe dhoma e këtij katrori i kanë zënë të gjithë numrat e tjerë.",
+          "hiddenSingle": {
+            "row": "{{token}} nuk shkon në asnjë katror tjetër të këtij rreshti.",
+            "col": "{{token}} nuk shkon në asnjë katror tjetër të kësaj kolone.",
+            "box": "{{token}} nuk shkon në asnjë katror tjetër të kësaj dhome."
+          },
+          "pointing": {
+            "row": "Brenda dhomës së shënuar, {{token}} mund të qëndrojë vetëm në këtë rresht.",
+            "col": "Brenda dhomës së shënuar, {{token}} mund të qëndrojë vetëm në këtë kolonë."
+          },
+          "claiming": {
+            "row": "Përgjatë rreshtit të shënuar, {{token}} shkon vetëm brenda kësaj dhome.",
+            "col": "Poshtë kolonës së shënuar, {{token}} shkon vetëm brenda kësaj dhome."
+          }
+        },
+        "action": {
+          "place": "Vër {{token}} te katrori me viza.",
+          "ruleOut_one": "Përjashtoje {{token}} nga katrori me viza.",
+          "ruleOut_other": "Përjashtoje {{token}} nga katrorët me viza."
+        }
+      },
+      "papyrus": {
+        "reason": {
+          "mistake": {
+            "value": "Një nga këto shenja nuk mund të jetë e saktë. Gërvishte dhe shiko përsëri.",
+            "note": "Shënimet e lehta të këtij vendi e kanë hequr shenjën që i përket. Fshiji dhe fillo nga e para."
+          },
+          "nakedSingle": "Rreshti, kolona dhe pjesa e këtij vendi i kanë zënë të gjitha shenjat e tjera.",
+          "hiddenSingle": {
+            "row": "{{token}} nuk shkon në asnjë vend tjetër të këtij rreshti.",
+            "col": "{{token}} nuk shkon në asnjë vend tjetër të kësaj kolone.",
+            "box": "{{token}} nuk shkon në asnjë vend tjetër të kësaj pjese."
+          },
+          "pointing": {
+            "row": "Brenda pjesës së shënuar, {{token}} mund të qëndrojë vetëm në këtë rresht.",
+            "col": "Brenda pjesës së shënuar, {{token}} mund të qëndrojë vetëm në këtë kolonë."
+          },
+          "claiming": {
+            "row": "Përgjatë rreshtit të shënuar, {{token}} shkon vetëm brenda kësaj pjese.",
+            "col": "Poshtë kolonës së shënuar, {{token}} shkon vetëm brenda kësaj pjese."
+          }
+        },
+        "action": {
+          "place": "Shkruaj {{token}} te vendi me viza.",
+          "ruleOut_one": "Përjashtoje {{token}} nga vendi me viza.",
+          "ruleOut_other": "Përjashtoje {{token}} nga vendet me viza."
+        }
+      }
+    },
+    "goal": {
+      "default": "Çdo rresht, çdo kolonë dhe çdo dhomë ka secilin nga gjashtë numrat vetëm një herë.",
+      "papyrus": "Çdo rresht, çdo kolonë dhe çdo pjesë ka secilën nga gjashtë shenjat vetëm një herë."
+    },
+    "name": {
+      "default": "Gjashtë dhoma",
+      "papyrus": "Regjistri i shkruesit"
+    }
+  },
+  "crocodile": {
+    "name": "Gropa e krokodilëve",
+    "goal": "Kalo gropën deri në bregun matanë.",
+    "rules": {
+      "want": "Çdo krokodil do një përgjigje nga rreshti i gurëve pas tij: më të madhen, ose më të voglën.",
+      "mark": "Goja e tij e hapur tregon cilën, dhe po ashtu shenja pranë tij: > hapet drejt përgjigjes më të madhe, < drejt më të voglës.",
+      "bite": "Shkel mbi çdo gur tjetër dhe ai të kafshon: humbet jetë dhe fillon përsëri nga bregu i afërt."
+    },
+    "hint": {
+      "biggest": "Ky krokodil do përgjigjen më të madhe. Ajo është {{value}}.",
+      "smallest": "Ky krokodil do përgjigjen më të vogël. Ajo është {{value}}."
+    }
+  },
+  "canisters": {
+    "name": {
+      "default": "Enët",
+      "grain": "Masat e grurit",
+      "oil": "Vaj për llambat",
+      "wine": "Bodrumi i tregtarit",
+      "natron": "Kavanozët kanopikë",
+      "ink": "Dhoma e shkrimit"
+    },
+    "goal": {
+      "default_one": "Mat sasinë që të kërkohet, dhe thuaj cila enë e ka.",
+      "default_other": "Mat secilën sasi që të kërkohet me radhë, dhe thuaj cila enë e ka para se të kalosh te tjetra.",
+      "grain_one": "Mat sasinë e grurit që të kërkohet, dhe thuaj cila masë e ka.",
+      "grain_other": "Mat secilën sasi gruri me radhë, dhe thuaj cila masë e ka para se të kalosh te tjetra.",
+      "oil_one": "Mat vajin që të kërkohet, dhe thuaj cila shtambë e ka.",
+      "oil_other": "Mat secilën sasi vaji me radhë, dhe thuaj cila shtambë e ka para se të kalosh te tjetra.",
+      "wine_one": "Mat verën që të kërkohet, dhe thuaj cila amforë e ka.",
+      "wine_other": "Mat secilën sasi vere me radhë, dhe thuaj cila amforë e ka para se të kalosh te tjetra.",
+      "natron_one": "Mat natronin që të kërkohet, dhe thuaj cili kavanoz e ka.",
+      "natron_other": "Mat secilën sasi natroni me radhë, dhe thuaj cili kavanoz e ka para se të kalosh te tjetra.",
+      "ink_one": "Mat bojën që të kërkohet, dhe thuaj cili poç e ka.",
+      "ink_other": "Mat secilën sasi boje me radhë, dhe thuaj cili poç e ka para se të kalosh te tjetra."
+    },
+    "rules": {
+      "method": {
+        "sums": "Çdo sasi që mund të bësh është dy numra në tavolinë të mbledhur ose të zbritur: sa nxë një enë, sa ka brenda, ose sa vend i ka mbetur.",
+        "backwards": "Ndaj puno mbrapsht nga sasia që të kërkohet: cilët dy numra e bëjnë, dhe si i bën që të dy të jenë aty në të njëjtën kohë?"
+      },
+      "claim": "Kur e ke sasinë, prek “kjo”. Po zgjodhe enën e gabuar, humbet një lëvizje.",
+      "legs": "Pastaj sasia tjetër, e matur nga çfarë kanë mbetur në enët.",
+      "default": {
+        "moves": "Prek një enë për ta ngritur, pastaj prek një tjetër për të derdhur në të. Derdhja ndalon kur e para zbrazet ose e dyta mbushet.",
+        "contents": "Ky është gjithë uji që ka. Një enë fillon plot, dhe asnjë nuk mund të hidhet ose të merret nga diku tjetër.",
+        "levels": "Çdo enë tregon sa ka brenda, dhe sa nxë kur është plot."
+      },
+      "grain": {
+        "moves": "Prek një masë për ta ngritur, pastaj prek një tjetër për të hedhur grurin në të. Hedhja ndalon kur e para zbrazet ose e dyta mbushet deri në buzë.",
+        "contents": "Ky është gjithë gruri që ka. Një masë fillon plot, dhe asnjë nuk mund të fshihet ose të merret nga hambari.",
+        "levels": "Çdo masë tregon sa ka brenda, dhe sa nxë kur është plot deri në buzë."
+      },
+      "oil": {
+        "moves": "Prek një shtambë për ta ngritur, pastaj prek një tjetër për të derdhur në të. Derdhja ndalon kur e para zbrazet ose e dyta mbushet.",
+        "contents": "Ky është gjithë vaji që ka. Një shtambë fillon plot, dhe asnjë nuk mund të derdhet jashtë ose të merret nga diku tjetër.",
+        "levels": "Çdo shtambë tregon sa ka brenda, dhe sa nxë kur është plot."
+      },
+      "wine": {
+        "moves": "Prek një amforë për ta ngritur, pastaj prek një tjetër për të derdhur në të. Derdhja ndalon kur e para zbrazet ose e dyta mbushet.",
+        "contents": "Kjo është gjithë vera që ka. Një amforë fillon plot, dhe asnjë nuk mund të derdhet përdhe ose të merret nga bodrumi.",
+        "levels": "Çdo amforë tregon sa ka brenda, dhe sa nxë kur është plot."
+      },
+      "natron": {
+        "moves": "Prek një kavanoz për ta ngritur, pastaj prek një tjetër për të hedhur natronin në të. Hedhja ndalon kur i pari zbrazet ose i dyti mbushet deri te kapaku.",
+        "contents": "Ky është gjithë natroni që ka. Një kavanoz fillon plot, dhe asnjë nuk mund të fshihet ose të merret nga diku tjetër.",
+        "levels": "Çdo kavanoz tregon sa ka brenda, dhe sa nxë kur është plot deri te kapaku."
+      },
+      "ink": {
+        "moves": "Prek një poç për ta ngritur, pastaj prek një tjetër për të derdhur në të. Derdhja ndalon kur i pari zbrazet ose i dyti mbushet.",
+        "contents": "Kjo është gjithë boja që ka. Një poç fillon plot, dhe asnjë nuk mund të derdhet jashtë ose të bëhet e re.",
+        "levels": "Çdo poç tregon sa ka brenda, dhe sa nxë kur është plot."
+      }
+    },
+    "hint": {
+      "goal": {
+        "leftover": "Duke punuar mbrapsht: {{amount}} është {{content}} pa {{space}}. Një enë me {{content}} e derdhur në një që ka vend për {{space}}.",
+        "full": "Duke punuar mbrapsht: {{amount}} është sa nxë një enë, dhe {{a}} plus {{b}} bëjnë saktësisht kaq.",
+        "sum": "Duke punuar mbrapsht: {{amount}} është {{a}} plus {{b}}."
+      },
+      "claim": "Kjo është vetëm një derdhje larg. Pastaj gjej cila enë e ka.",
+      "stuck": "Nga këtu {{target}} nuk mund të matet më me lëvizjet që të kanë mbetur. Ktheje një derdhje mbrapsht, ose fillo nga e para.",
+      "overBudget": "Nuk të kanë mbetur lëvizje. Ktheje një mbrapsht, ose fillo nga e para dhe gjej rrugën më të shkurtër.",
+      "next": {
+        "leftover": "Hapi para këtij: {{amount}}. {{content}} e derdhur aty ku ka vend për {{space}}.",
+        "full": "Hapi para këtij: një enë plot me {{amount}}. {{a}} plus {{b}}.",
+        "sum": "Hapi para këtij: {{amount}}. {{a}} plus {{b}}."
+      }
+    },
+    "movesLeft_one": "Të ka mbetur {{count}} lëvizje",
+    "movesLeft_other": "Të kanë mbetur {{count}} lëvizje",
+    "legs": "matur {{done}} nga {{total}}",
+    "wanted": "Mat",
+    "claim": "kjo",
+    "claimAria": "Thuaj që ena {{capacity}} e ka sasinë"
+  },
+  "procession": {
+    "name": {
+      "default": "Orët me radhë",
+      "funerary": "Dita në luginën e punëtorëve",
+      "cosmos": "Kalimi i natës",
+      "water": "Dita e përmbytjes",
+      "trade": "Dita në skelë"
+    },
+    "goal": {
+      "default": "Rrëshqite çdo ngjarje te ora e saj, derisa të gjitha shenjat poshtë ditës të jenë në rregull.",
+      "funerary": "Rrëshqite çdo punë te ora e saj, derisa të gjitha shenjat poshtë ditës të jenë në rregull.",
+      "cosmos": "Rrëshqite çdo dritë te ora e saj, derisa të gjitha shenjat poshtë natës të jenë në rregull.",
+      "water": "Rrëshqite çdo punë te ora e saj, derisa të gjitha shenjat poshtë ditës të jenë në rregull.",
+      "trade": "Rrëshqite çdo punë te ora e saj, derisa të gjitha shenjat poshtë ditës të jenë në rregull."
+    },
+    "rules": {
+      "default": {
+        "lengths": "Çdo rresht është një gjë që ndodh, dhe zgjat aq sa është i gjerë shiriti i saj. Kur ndodh, këtë e gjen ti.",
+        "marks": "Një vijë poshtë ditës bëhet e kuqe kur nuk është në rregull. Preke që të shohësh në rreth rreshtat për të cilët flet.",
+        "drag": "Tërhiq një shirit përgjatë rreshtit të vet. Ai nuk del kurrë nga dita."
+      }
+    },
+    "hint": {
+      "default": {
+        "chain": "Vendi i atij rreshti është caktuar tashmë, dhe ky varet prej tij.",
+        "squeeze": "Ka mbetur vetëm kaq ditë, dhe kjo është gjithçka që hyn.",
+        "apart": "Anasjelltas nuk hyn në ditë.",
+        "split": "Provoje anasjelltas dhe diçka tjetër prishet.",
+        "move": "Tërhiqe shiritin në rreth mbi vizat e shënuara me viza."
+      }
+    },
+    "events": {
+      "default": ["zjarri", "bartja e ujit", "pjekja e bukës", "udhëtimi me varkë", "ngarja e qeve", "roja e natës"],
+      "funerary": ["suvatimi", "vizatimi i rrjetës", "gdhendja", "pikturimi", "praritja", "vendosja e derës"],
+      "cosmos": ["kalimi i diellit", "lindja e yllit", "roja e hënës", "qielli i hapur", "agimi", "kthesa e vitit"],
+      "water": ["përmbytja", "gërmimi i kanalit", "mbushja e pellgut", "ujitja e arave", "kalimi me trap", "korrja"],
+      "trade": [
+        "renditja e mallrave",
+        "shitja e bukës",
+        "shitja e birrës",
+        "kalimi me trap",
+        "tërheqja e ngarkesës",
+        "numërimi"
+      ]
+    },
+    "marks": {
+      "default": {
+        "pin": "{{a}} fillon në orën {{tick}}.",
+        "handoff": "{{a}} fillon sapo mbaron {{b}}.",
+        "link_one": "{{a}} fillon {{count}} orë pasi mbaron {{b}}.",
+        "link_other": "{{a}} fillon {{count}} orë pasi mbaron {{b}}.",
+        "before": "{{a}} mbaron para se të fillojë {{b}}.",
+        "apart": "{{a}} dhe {{b}} nuk ndodhin kurrë në të njëjtën kohë.",
+        "together": "{{a}} dhe {{b}} ndodhin për një farë kohe njëkohësisht.",
+        "span_one": "Nga fillimi i parë deri në mbarimin e fundit është {{count}} orë.",
+        "span_other": "Nga fillimi i parë deri në mbarimin e fundit janë {{count}} orë."
+      }
+    },
+    "door": {
+      "title": "Dera e procesionit",
+      "hint": "Çdo pllakë ku shkel çliron punën e saj. Rendite ditën, pastaj ec mbi pllakat me atë radhë.",
+      "read": "Dita u lexua. Ec mbi pllakat e saj me këtë radhë, nga e para.",
+      "hintButton": "Ndihmë"
+    }
+  },
+  "story": {
+    "invitation": "Fol",
+    "log": {
+      "empty": "Ende asgjë. Fez do të ketë plot për të thënë."
+    },
+    "speaker": {
+      "fez": "Fez",
+      "explorer": "Ti",
+      "ipi": "Ipi",
+      "henut": "Henut",
+      "priest": "Prifti",
+      "pharaoh": "Faraoni",
+      "voice": "Një zë"
+    },
+    "wall": {
+      "wrong": "Dikush e gdhendi shenjën e tretë gabim. Ka qenë gabim për tre mijë vjet.",
+      "fixed": "Ky është përsëri emri i saj.",
+      "pick": "Vër shenjën e duhur në vendin e saj.",
+      "cannot": "Nuk e njeh shenjën që shkon këtu. Jo ende."
+    },
+    "sphinx": {
+      "wrong": "I njëjti shkrim si jashtë, por rëra nuk arriti kurrë deri këtu. Dy shenja ende të gdhendura qartë, dhe një vend bosh ku ishte e treta.",
+      "fixed": "Kjo është e gjitha.",
+      "pick": "Vër në vendin bosh shenjën që ke me vete.",
+      "cannot": "Dy shenja që i njeh, dhe një vend bosh që nuk e mbush dot. Jo ende.",
+      "gap": "Shenja që mungon"
+    }
+  },
+  "lightbeamSwitch": {
+    "name": "Drita që kthehet",
+    "invitation": "Rrotullo pasqyrat",
+    "goal": "Drita pushon në një faltore, dhe dalja poshtë saj është e hapur.",
+    "rules": {
+      "shrines": "Një disk drite, dhe një faltore mbi çdo dalje të këtij kryqëzimi. Pasqyrat në dysheme mund ta çojnë dritën te cilado prej tyre.",
+      "doors": "Dalja ku arrin drita është e hapur, dhe të tjerat janë të mbyllura. Një rrugë drite, një rrugë përpara.",
+      "returning": "Nuk humbet asgjë kur zgjedh. Kthehu brenda kur të duash dhe dërgoje dritën nga një rrugë tjetër. Ajo dalje hapet, dhe kjo mbyllet.",
+      "tap": "Prek një pasqyrë për ta rrotulluar. Po ta prekësh përsëri, kthehet si ishte."
+    },
+    "doorOpen": "Dalja {{way}}: e hapur",
+    "doorShut": "Dalja {{way}}: e mbyllur",
+    "way": {
+      "n": "veriore",
+      "e": "lindore",
+      "s": "jugore",
+      "w": "perëndimore"
+    }
+  },
+  "handle": {
+    "name": "Leva",
+    "invitation": "Tërhiq levën",
+    "goal": "Leva varet nga njëra anë ose nga tjetra. Çfarë hap njëra anë, tjetra e mbyll.",
+    "left": "Tërhiqe majtas",
+    "right": "Tërhiqe djathtas"
+  },
+  "torch": {
+    "name": "Pishtari",
+    "invitation": "Ndize pishtarin",
+    "goal": "Një pishtar i pandezur. Kur të digjet, nuk mund të shuhet më.",
+    "lit": "Pishtari po digjet."
+  },
+  "gateFace": {
+    "title": "Një derë që pret",
+    "hint": "Çdo shenjë duhet të digjet para se kjo derë të hapet.",
+    "lit": "{{owner}}: ndezur",
+    "unlit": "{{owner}}: jo ende",
+    "owner": {
+      "torch": "Pishtari",
+      "handle": "Leva",
+      "key": "Çelësi",
+      "web": "Një shenjë e rërës",
+      "plateStone": "Një gur mbi pllakë",
+      "plateEmpty": "Një pllakë bosh",
+      "other": "Mekanizmi"
+    },
+    "orderHint": "Ec mbi pllakat me këtë radhë.",
+    "reset": "Fillo përsëri",
+    "spoiled": "Radha u prish: shkele një pllakë jashtë radhës.",
+    "tile": {
+      "unwalked": "Hapi {{step}}: ende pa shkelur",
+      "inOrder": "Hapi {{step}}: shkelur me radhë",
+      "outOfOrder": "Hapi {{step}}: shkelur jashtë radhës"
+    }
+  },
+  "devLockEditor": {
+    "syntax": "Sintaksa",
+    "example": "Shembull",
+    "useExample": "Përdor shembullin",
+    "title": "Redaktori i bravave",
+    "notation": "Shënimi i bravës",
+    "checks": "Kontrollet",
+    "drawing": "Vizatimi",
+    "carveAndPlay": "Gdhend dhe luaj",
+    "copyLink": "Kopjo lidhjen",
+    "copied": "Lidhja u kopjua",
+    "failed": "Nuk u kopjua dot; lidhja është në shiritin e adresës",
+    "backToEditor": "← Redaktori",
+    "close": "Mbyll",
+    "open": "Redaktori i bravave",
+    "modeLock": "Bravë",
+    "modeWeb": "Rrjet",
+    "webNotation": "Shënimi i rrjetit",
+    "openWeb": "Hap një rrjet",
+    "checking": "Po kontrollon…",
+    "checkedIn": "kontrolluar në {{ms}} ms",
+    "worldCarved": "katet e nivelit Gjeni u gdhendën në {{ms}} ms, një herë",
+    "simulation": "Tërheqjet",
+    "noSimulation": "Nuk ka çfarë të luhet derisa çdo vend të jetë në botë.",
+    "summary": "Përmbledhje",
+    "stillBuried": "Ende {{percent}}% nën rërë",
+    "nothingBuried": "Asgjë nën rërë",
+    "finishes": "mbaron",
+    "stopsAt": "ndalon në {{pct}}%",
+    "notOpenYet": "ende jo e hapur",
+    "pullAll": "Tërhiq gjithçka që arrihet",
+    "reset": "Fillo nga e para",
+    "progress": "{{reachable}} që arrihen · {{pulled}} nga {{total}} të marra",
+    "allTaken": "Gjithçka u tërhoq dhe u mor.",
+    "potFront": "{{pulled}} nga {{total}} të tërhequra · fronti në {{pct}}%",
+    "potOpen": "{{pulled}} nga {{total}} të tërhequra · e hapur",
+    "keys": "Çelësat",
+    "keysNote": "secili hap një vulë",
+    "log": "Çfarë ndodhi",
+    "logEmpty": "Ende asgjë e tërhequr.",
+    "logPull": "tërheq {{name}} në {{at}}",
+    "logTake": "merr {{name}} në {{at}}",
+    "logFront": "fronti i {{pot}} në {{pct}}%",
+    "logPotOpen": "{{pot}} e hapur",
+    "logSeal": "vula në {{at}} e hapur",
+    "logNew": "e re: {{names}}",
+    "pullPin": "tërhiq levën {{name}}",
+    "takePin": "merr çelësin {{name}}",
+    "legendCleared": "pastruar",
+    "legendBuried": "nën rërë",
+    "legendSeal": "vulë",
+    "legendPins": "● levë · ■ çelës · i vogël = pjesë anësore"
+  },
+  "camp": {
+    "title": "Kampi",
+    "continue": {
+      "heading": "Ekspedita e tanishme",
+      "setOff": "Nisu",
+      "pyramid": "Piramida {{level}} nga {{count}} · {{tier}}",
+      "tomb": "Varri · {{tier}}",
+      "empty": "Gjithçka është e hapur në hartën tënde"
+    },
+    "hint_one": "{{count}} udhëtim i vjetër ka diçka të re për të zbuluar",
+    "hint_other": "{{count}} udhëtime të vjetra kanë diçka të re për të zbuluar",
+    "comingHome": {
+      "title": "Përsëri në kamp",
+      "haulTitle": "Çfarë solle nga ky udhëtim",
+      "new": "E RE",
+      "unpack": "Shpaketo",
+      "toCamp": "Në kamp"
+    },
+    "chapter": {
+      "subtitle": "Kapitull i ri",
+      "title": "Një piramidë e re duket në horizont",
+      "body": "Udhëtimet e nivelit {{tier}} janë hapur. Merr frymë në kamp dhe nisu kur të jesh gati.",
+      "journeyNote": "Udhëtimi i parë i nivelit {{tier}}",
+      "later": "Më vonë"
+    },
+    "close": "Mbyll",
+    "entrance": {
+      "collection": "Koleksioni",
+      "mosaic": "Mozaiku",
+      "journeys": "Të gjitha udhëtimet",
+      "detectors": "Detektorët"
+    },
+    "mapTable": {
+      "title": "Tavolina e hartave",
+      "journeys": "Udhëtimet"
+    }
+  },
+  "home": {
+    "haul": {
+      "times": "×{{count}}"
+    }
+  },
+  "journeys": {
+    "tierNeed": "Gjeje këtë thesar",
+    "tierProgress": "{{done}} nga {{total}} të kryera",
+    "tierLockedName": "Udhëtimet e nivelit {{tier}}",
+    "toggleTier": "Shfaq ose fshih udhëtimet e nivelit {{tier}}",
+    "now": "TANI",
+    "newDot": "Diçka e re për të zbuluar",
+    "noteCurrentPyramid": "Në vazhdim · piramida {{level}} nga {{count}}",
+    "noteCurrentTomb": "Në vazhdim · në varr",
+    "noteFinished": "Mbaruar",
+    "noteFinishedNews": "Mbaruar · diçka e re për të zbuluar",
+    "noteOpen": "Ende pa e vizituar",
+    "noteResumePyramid": "Filluar më parë · piramida {{level}} nga {{count}}",
+    "noteResumeTomb": "Filluar më parë · në varr",
+    "needProgress": "{{unit}}: {{found}} nga {{required}}",
+    "showStops": "Shfaq vendet e {{name}}",
+    "stopPyramid": "Piramidë",
+    "stopTomb": "Vend"
+  },
+  "newVersion": {
+    "title": "Një version i ri!",
+    "name": "Loja ka ndryshuar shumë",
+    "body": "Ndaj udhëtimi yt fillon nga e para. Të presin varre të reja, gjetje të reja dhe një kamp për të ndërtuar."
+  },
+  "devPrefabPreview": {
+    "firstDoor": "Te dera e parë",
+    "stop": "Te ndalesa",
+    "secondDoor": "Te dera e dytë",
+    "doorsInUse_one": "{{count}} derë në përdorim",
+    "doorsInUse_other": "{{count}} dyer në përdorim",
+    "walled": "{{count}} të murosura"
+  },
+  "devRoomEditor": {
+    "title": "Redaktori i dhomave",
+    "open": "Redaktori i dhomave",
+    "close": "Mbyll",
+    "tier": "Niveli",
+    "catalogue": "Hap një dhomë",
+    "notation": "Shënimi i dhomës",
+    "copyLink": "Kopjo lidhjen",
+    "copyText": "Kopjo tekstin",
+    "copied": "U kopjua",
+    "failed": "Nuk u kopjua dot në kujtesë",
+    "palette": "Paleta",
+    "unpainted": "ende pa pikturuar",
+    "layout": "Plani",
+    "mirrored": "(pasqyruar)",
+    "fill_one": "Mbush ({{count}} zgjedhje)",
+    "fill_other": "Mbush ({{count}} zgjedhje)",
+    "fromDoor": "Ec nga",
+    "toDoor": "Ec te",
+    "automatic": "Automatik",
+    "direction": {
+      "n": "Dera veriore",
+      "e": "Dera lindore",
+      "s": "Dera jugore",
+      "w": "Dera perëndimore"
+    },
+    "checks": "Kontrollet",
+    "sound": "Dhoma i kalon kontrollet",
+    "tierDisagrees": "Koka thotë nivelin {{header}}, këtu vizatuar në {{picked}}",
+    "undo": "Zhbëj",
+    "drawing": "Vizatimi",
+    "tool": {
+      "select": "Zgjidh",
+      "wall": "Mur",
+      "floor": "Dysheme",
+      "door": "Vend dere",
+      "stop": "Ndalesë",
+      "chest": "Sënduk",
+      "portal": "Portal",
+      "mechanism": "Mekanizëm",
+      "erase": "Fshi",
+      "copy": "Vizato {{letter}}"
+    },
+    "againstWall": "Sendet që lëshohen qëndrojnë pranë murit verior",
+    "dropHint": "Tërhiq një send të paletës mbi një qeli; ai zë vendin e vet",
+    "newLayout": "Emri i planit të ri",
+    "addLayout": "Kopjo si plan",
+    "inspector": {
+      "title": "Vendi {{letter}}",
+      "optional": "Opsional",
+      "kinds": "Llojet",
+      "counted": "Mbush vetëm disa",
+      "take": "Merr",
+      "of": "nga",
+      "per": "për",
+      "perNone": "secili më vete",
+      "drawAnother": "Vizato një tjetër",
+      "close": "Mbyll"
+    },
+    "refused": {
+      "notFree": "Nuk është në dysheme të lirë brenda dhomës",
+      "wallRow": "Një vend muri qëndron në rreshtin e parë brenda murit verior",
+      "northWall": "Një send muri varet në murin verior",
+      "floorOnRing": "Rrethi i jashtëm merr vetëm mure dhe vende dyersh",
+      "doorInside": "Një vend dere qëndron në rrethin e jashtëm",
+      "keepStop": "Ndalesa mbetet: vendose diku tjetër për ta lëvizur",
+      "noLetter": "Çdo shkronjë është zënë",
+      "layoutName": "Jepi planit një emër që nuk e ka asnjë plan tjetër",
+      "notation": "Shënimi nuk e pranon: {{message}}"
+    },
+    "layer": {
+      "wall": "pranë murit",
+      "floor": "dysheme",
+      "ground": "tokë",
+      "wallItem": "send muri"
+    },
+    "cell": "Qelia {{row}},{{col}}: {{what}}",
+    "cellWhat": {
+      "wall": "mur",
+      "floor": "dysheme e lirë",
+      "door": "vend dere",
+      "place": "{{letter}}, {{kinds}}"
+    },
+    "rewrites": "Vizatimi e rishkruan tekstin: çdo koment shkon në krye"
+  }
+}

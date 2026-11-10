@@ -64,7 +64,10 @@ vi.mock("@/ui/atoms/CampScene", () => ({
   CampScene: ({
     entrances,
   }: {
-    entrances?: Record<string, { label: string; badge?: number; onOpen: () => void } | undefined>
+    entrances?: Record<
+      string,
+      { label: string; badge?: number; onOpen: () => void; onPress?: (down: boolean) => void } | undefined
+    >
   }) => (
     <div data-testid="scene">
       {Object.entries(entrances ?? {}).map(([spot, e]) =>
@@ -73,6 +76,8 @@ vi.mock("@/ui/atoms/CampScene", () => ({
             key={spot}
             aria-label={e.badge === undefined ? e.label : `${e.label} (${e.badge})`}
             onClick={e.onOpen}
+            onPointerDown={() => e.onPress?.(true)}
+            onPointerUp={() => e.onPress?.(false)}
           >
             {e.label}
           </button>
@@ -243,13 +248,36 @@ describe(Base, () => {
     expect(screen.getByText("journeys content")).toBeTruthy()
   })
 
-  it("shows the journeys in the page on desktop, with no map entrance", () => {
+  it("shows the journeys in the page on desktop, where pressing the map points to them", () => {
+    vi.useFakeTimers()
+    stubDesktop(true)
+    renderBase()
+    const pressedPanel = () => document.querySelector("[data-pressed]")
+    expect(screen.getByText("journeys content")).toBeTruthy()
+
+    const map = screen.getByText("camp.entrance.journeys")
+    fireEvent.pointerDown(map)
+    expect(pressedPanel()?.textContent).toContain("journeys content")
+    fireEvent.pointerUp(map)
+    fireEvent.click(map)
+
+    expect(screen.queryByRole("dialog")).toBeNull()
+    act(() => vi.runAllTimers())
+    expect(pressedPanel()).toBeNull()
+    vi.useRealTimers()
+  })
+
+  it("presses the panel on desktop when the map is opened by key", () => {
+    vi.useFakeTimers()
     stubDesktop(true)
     renderBase()
 
-    expect(screen.getByText("journeys content")).toBeTruthy()
-    expect(screen.queryByText("camp.entrance.journeys")).toBeNull()
-    expect(screen.queryByRole("dialog")).toBeNull()
+    fireEvent.click(screen.getByText("camp.entrance.journeys"))
+
+    expect(document.querySelector("[data-pressed]")).toBeTruthy()
+    act(() => vi.runAllTimers())
+    expect(document.querySelector("[data-pressed]")).toBeNull()
+    vi.useRealTimers()
   })
 
   it("opens the map table on its journeys, with a tab per detector held", () => {

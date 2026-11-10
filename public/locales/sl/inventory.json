@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Kralj bogov in vladar sonca, ki vsak dan pluje čez nebo v svoji sončni barki."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Bog s šakaljo glavo, bog mumij in posmrtnega življenja, zaščitnik mrtvih."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Bog neba s sokoljo glavo in zaščitnik faraonov, sin Ozirisa in Izide."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "Bog z glavo ibisa, bog modrosti, pisave in znanja, ki hrani zapiske bogov."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Mačja boginja zaščite, veselja in rodovitnosti, ki varuje pred zlimi duhovi."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Krokodilji bog reke Nil, rodovitnosti in vojaške moči."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Bog skarabej, bog ponovnega rojstva, ki kotali sonce čez nebo."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Boginja kobra in zaščitnica Spodnjega Egipta, znak kraljeve moči."
+    },
+    "d9": {
+      "name": "Izida",
+      "description": "Boginja čarov, materinstva in zdravljenja, zvesta žena Ozirisa."
+    },
+    "d10": {
+      "name": "Oziris",
+      "description": "Bog podzemlja, smrti in vstajenja, sodnik mrtvih."
+    },
+    "d11": {
+      "name": "Set",
+      "description": "Bog kaosa, neviht in puščave, Ozirisov brat in tekmec."
+    },
+    "d12": {
+      "name": "Neftis",
+      "description": "Boginja žalovanja in varuhinja mrtvih, Izidina sestra."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Bog stvarnik in zaščitnik obrtnikov in graditeljev, ki je ustvarjal z izgovorjeno besedo."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Levja boginja vojne in zdravljenja, divja zaščitnica, ki zna pozdraviti bolezni."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Boginja krava, boginja ljubezni, glasbe in materinstva, ki skrbi za faraone."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Faraon",
+      "description": "Vladar Egipta, ki so ga imeli za živega boga in most med ljudmi in bogovi."
+    },
+    "p2": {
+      "name": "Veliki duhovnik",
+      "description": "Glavni duhovnik v templju, ki opravlja svete obrede in skrbi za red bogov."
+    },
+    "p3": {
+      "name": "Pisar",
+      "description": "Izobražen človek, ki je znal brati in pisati, varuh zapiskov in znanja."
+    },
+    "p4": {
+      "name": "Graditelj",
+      "description": "Mojster gradnje, ki je načrtoval piramide, templje in spomenike za večnost."
+    },
+    "p5": {
+      "name": "General",
+      "description": "Poveljnik vojske, ki je varoval meje Egipta in širil kraljestvo."
+    },
+    "p6": {
+      "name": "Zdravnik",
+      "description": "Zdravilec, ki je zdravniško znanje združil s čarobnimi obredi, da bi pozdravil bolne."
+    },
+    "p7": {
+      "name": "Balzamer",
+      "description": "Sveti obrtnik, ki je mrtve pripravil na pot v posmrtno življenje."
+    },
+    "p8": {
+      "name": "Kmet",
+      "description": "Skrbel je za hrano v Egiptu in obdeloval rodovitna polja ob Nilu, da je nahranil kraljestvo."
+    },
+    "p9": {
+      "name": "Obrtnik",
+      "description": "Spreten rokodelec, ki je izdeloval lepe predmete, nakit in umetnine za plemiče in bogove."
+    },
+    "p10": {
+      "name": "Trgovec",
+      "description": "Trgovec, ki je po trgovskih poteh prinašal redko blago iz daljnih dežel."
+    },
+    "p11": {
+      "name": "Vezir",
+      "description": "Glavni minister in svetovalec faraona, ki je nadziral upravo dežele."
+    },
+    "p12": {
+      "name": "Prerok",
+      "description": "Sveti prerok, ki je razlagal sporočila bogov in napovedoval prihodnost."
+    },
+    "p13": {
+      "name": "Mornar",
+      "description": "Krmar po Nilu in Sredozemlju, nujen za trgovino in prevoz."
+    },
+    "p14": {
+      "name": "Kamnosek",
+      "description": "Delavec s kamnom, ki je klesal hieroglife in gradil velike spomenike Egipta."
+    },
+    "p15": {
+      "name": "Varuh",
+      "description": "Zaščitnik svetih krajev in grobnic, ki skrbi za večni počitek mrtvih."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Povodni konj",
+      "description": "Močna rečna žival iz Nila, ki so se je bali zaradi moči in jeze, če ji prideš preblizu."
+    },
+    "a2": {
+      "name": "Lev",
+      "description": "Kralj živali, znak kraljeve moči in božanske sile v puščavi."
+    },
+    "a3": {
+      "name": "Slon",
+      "description": "Ogromna žival iz južnih dežel, cenjena zaradi modrosti in dobrega spomina."
+    },
+    "a4": {
+      "name": "Gazela",
+      "description": "Hitra in graciozna prebivalka puščave, znak hitrosti in lepote."
+    },
+    "a5": {
+      "name": "Opica",
+      "description": "Pametna žival, povezana s Thothom, znak bistrosti in vragolij."
+    },
+    "a6": {
+      "name": "Riba",
+      "description": "Svete živali iz Nila, ki dajejo hrano in so znak rodovitnosti."
+    },
+    "a7": {
+      "name": "Gos",
+      "description": "Sveta ptica iz močvirij ob Nilu, povezana z zgodbami o stvarjenju in z dušo."
+    },
+    "a8": {
+      "name": "Čebela",
+      "description": "Znak Spodnjega Egipta in kraljeve oblasti, ki dela dragoceni med."
+    },
+    "a9": {
+      "name": "Želva",
+      "description": "Starodavna modra žival, ki na svojem oklepu nosi težo sveta."
+    },
+    "a10": {
+      "name": "Žaba",
+      "description": "Znak ponovnega rojstva in rodovitnosti, ki prileze iz Nilovih poplav."
+    },
+    "a11": {
+      "name": "Jastreb",
+      "description": "Sveta ptica Zgornjega Egipta, zemeljska podoba boginje zaščitnice Nekhbet."
+    },
+    "a12": {
+      "name": "Sova",
+      "description": "Modra nočna lovka, varuhinja skritega znanja in starih skrivnosti."
+    },
+    "a13": {
+      "name": "Oven",
+      "description": "Sveta žival Amon-Raja, znak božanske moči in vodenja."
+    },
+    "a14": {
+      "name": "Žirafa",
+      "description": "Visoka in graciozna žival iz južnih dežel, ki z dolgim vratom seže do neba."
+    },
+    "a15": {
+      "name": "Šakal",
+      "description": "Puščavski mrhovinar in vodnik v posmrtno življenje, Anubisov služabnik."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Znak življenja in nesmrtnosti, ki ga pogosto držijo bogovi in faraoni."
+    },
+    "art2": {
+      "name": "Horusovo oko",
+      "description": "Znak zaščite, kraljeve moči in zdravja, povezan z bogom neba Horusom."
+    },
+    "art3": {
+      "name": "Sistrum",
+      "description": "Glasbilo za verske obrede, povezano z boginjo Hathor."
+    },
+    "art4": {
+      "name": "Steber džed",
+      "description": "Znak trdnosti in vstajenja, pogosto povezan z Ozirisom."
+    },
+    "art5": {
+      "name": "Kartuša",
+      "description": "Ovalni okvir s faraonovim imenom v hieroglifih, ki varuje njegovo ime za vedno."
+    },
+    "art6": {
+      "name": "Kanopa",
+      "description": "Svet vrč s pokrovom v obliki glave varuha – štirje so stali okoli krste in stražili."
+    },
+    "art7": {
+      "name": "Žezlo",
+      "description": "Palica moči in oblasti, ki so jo nosili bogovi in faraoni kot znak vladanja."
+    },
+    "art9": {
+      "name": "Piramida",
+      "description": "Večna grobnica in vrata v posmrtno življenje, zgrajena za faraone, da bi stala za vedno."
+    },
+    "art10": {
+      "name": "Sončna barka",
+      "description": "Sveti čoln, ki sončnega boga Raja od zore do mraka nosi čez nebo."
+    },
+    "art11": {
+      "name": "Obelisk",
+      "description": "Visok kamnit steber s piramido na vrhu, ki sega proti nebu v čast bogovom."
+    },
+    "art12": {
+      "name": "Pastirska palica in bič",
+      "description": "Kraljeva znamenja, ki kažejo, da je faraon pastir in zaščitnik Egipta."
+    },
+    "art14": {
+      "name": "Lotosov cvet",
+      "description": "Znak ponovnega rojstva in sonca, ki čist zraste iz blatne vode Nila."
+    },
+    "art15": {
+      "name": "Krona z ureusom",
+      "description": "Kraljevo pokrivalo z zaščitno kobro, ki so ga faraoni nosili za božje varstvo."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Trstični list",
+      "description": "En sam trst, ki pomeni glas i. Če ga dodaš imenu boga, dobiš moško ime: iz Horusa nastane Hori, tisti od Horusa."
+    }
+  }
+}

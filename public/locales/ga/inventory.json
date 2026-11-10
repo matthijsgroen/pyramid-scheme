@@ -1,0 +1,248 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Rí na ndéithe agus rí na gréine, ag seoladh trasna na spéire ina bhád gréine gach lá."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Dia le ceann seacáil, dia na mumaithe agus an tsaoil eile, cosantóir na marbh."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Dia na spéire le ceann seabhaic agus cosantóir na bhfarónna, mac Osiris agus Isis."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "Dia le ceann íbis, dia na eagna, na scríbhneoireachta agus an eolais, coimeádaí thaifid na ndéithe."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Bandia cait na cosanta, an áthais agus na torthúlachta, a chosnaíonn ar spioraid olca."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Dia crogaill abhainn na Níle, na torthúlachta agus an neart sa chath."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Dia an chiaróg scarab, dia na hathbhreithe agus na hathnuachana, a rollann an ghrian trasna na spéire."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Bandia cobra agus cosantóir na hÉigipte Íochtaraí, siombail chumhacht an rí."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "Bandia na draíochta, na máthairachta agus an leighis, bean chéile dhílis Osiris."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "Dia an domhain thíos, an bháis agus an aiséirí, breitheamh na marbh."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "Dia an anoird, na stoirmeacha agus an fhásaigh, deartháir agus céile comhraic Osiris."
+    },
+    "d12": {
+      "name": "Nephthys",
+      "description": "Bandia an bhróin agus cosantóir na marbh, deirfiúr Isis."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Dia a chruthaigh an domhan le focail labhartha, pátrún na gceardaithe agus na n-ailtirí."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Bandia leoin an chogaidh agus an leighis, cosantóir fíochmhar atá in ann galair a leigheas."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Bandia bó an ghrá, an cheoil agus na máthairachta, a thug aire do na farónna."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Faró",
+      "description": "Rí diaga na hÉigipte, dia beo, droichead idir na daoine agus na déithe."
+    },
+    "p2": {
+      "name": "Ard-Sagart",
+      "description": "Príomhcheannaire na dteampall, a dhéanann na deasghnátha naofa agus a choinníonn ord na ndéithe."
+    },
+    "p3": {
+      "name": "Scríobhaí",
+      "description": "Duine oilte a bhí in ann léamh agus scríobh, coimeádaí na dtaifead agus an eolais."
+    },
+    "p4": {
+      "name": "Ailtire",
+      "description": "Máistirthógálaí a dhear pirimidí, teampaill agus séadchomharthaí go deo."
+    },
+    "p5": {
+      "name": "Ginearál",
+      "description": "Ceannasaí arm a chosain teorainneacha na hÉigipte agus a mhéadaigh an impireacht."
+    },
+    "p6": {
+      "name": "Lia",
+      "description": "Leigheasóir a mheasc eolas leighis le draíocht leis na daoine tinne a leigheas."
+    },
+    "p7": {
+      "name": "Balsamóir",
+      "description": "Ceardaí naofa a d’ullmhaigh duine don turas go dtí an saol eile."
+    },
+    "p8": {
+      "name": "Feirmeoir",
+      "description": "Soláthraí bia na hÉigipte, ag obair ar thalamh torthúil na Níle leis an ríocht a bheathú."
+    },
+    "p9": {
+      "name": "Ceardaí",
+      "description": "Duine oilte a rinne rudaí áille, seodra agus ealaín do na huaisle agus do na déithe."
+    },
+    "p10": {
+      "name": "Ceannaí",
+      "description": "Trádálaí a thug earraí iontacha ó thíortha i bhfad i gcéin ar bhóithre trádála."
+    },
+    "p11": {
+      "name": "Vizier",
+      "description": "Príomh-aire agus comhairleoir an Fharó, a bhí i gceannas ar rialú na tíre."
+    },
+    "p12": {
+      "name": "Aitheascal",
+      "description": "Fáidh naofa a mhínigh teachtaireachtaí na ndéithe agus a d’inis an todhchaí."
+    },
+    "p13": {
+      "name": "Mairnéalach",
+      "description": "Loingseoir ar an Níl agus ar an Meánmhuir, riachtanach don trádáil agus don iompar."
+    },
+    "p14": {
+      "name": "Saor Cloiche",
+      "description": "Oibrí cloiche a ghreanaigh iairiglifí agus a thóg séadchomharthaí móra na hÉigipte."
+    },
+    "p15": {
+      "name": "Garda",
+      "description": "Cosantóir na n-áiteanna naofa agus na dtuamaí, a chinntigh suaimhneas síoraí na marbh."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Dobhareach",
+      "description": "Ainmhí láidir abhann na Níle, a raibh eagla ar dhaoine roimhe mar gheall ar a neart."
+    },
+    "a2": {
+      "name": "Leon",
+      "description": "Rí na n-ainmhithe, siombail chumhacht an rí agus neart diaga san fhásach."
+    },
+    "a3": {
+      "name": "Eilifint",
+      "description": "Ainmhí ollmhór ó thíortha an deiscirt, a bhfuil meas air mar gheall ar a eagna agus a chuimhne."
+    },
+    "a4": {
+      "name": "Gasail",
+      "description": "Ainmhí tapa galánta an fhásaigh, siombail luais agus maorgachta."
+    },
+    "a5": {
+      "name": "Moncaí",
+      "description": "Ainmhí cliste a bhaineann le Thoth, siombail na hintleachta agus na diabhlaíochta."
+    },
+    "a6": {
+      "name": "Iasc",
+      "description": "Créatúir naofa na Níle, a thug bia do dhaoine agus atá ina siombail torthúlachta."
+    },
+    "a7": {
+      "name": "Gé",
+      "description": "Éan naofa riasca na Níle, a bhaineann le scéalta faoi chruthú an domhain agus faoin anam."
+    },
+    "a8": {
+      "name": "Beach",
+      "description": "Siombail na hÉigipte Íochtaraí agus chumhacht an rí, a dhéanann mil luachmhar."
+    },
+    "a9": {
+      "name": "Turtar",
+      "description": "Créatúr ársa eagnaí, a iompraíonn meáchan an domhain ar a shliogán."
+    },
+    "a10": {
+      "name": "Frog",
+      "description": "Siombail na hathbhreithe agus na torthúlachta, a thagann amach as tuilte na Níle."
+    },
+    "a11": {
+      "name": "Bultúr",
+      "description": "Éan naofa na hÉigipte Uachtaraí, an chruth a bhí ag an mbandia cosanta Nekhbet ar talamh."
+    },
+    "a12": {
+      "name": "Ulchabhán",
+      "description": "Sealgaire eagnaí na hoíche, coimeádaí an eolais fholaithe agus na rún ársa."
+    },
+    "a13": {
+      "name": "Reithe",
+      "description": "Ainmhí naofa Amun-Ra, siombail na cumhachta diaga agus na ceannaireachta."
+    },
+    "a14": {
+      "name": "Sioráf",
+      "description": "Ainmhí ard galánta ó thíortha an deiscirt, a shroicheann na spéartha lena mhuineál fada."
+    },
+    "a15": {
+      "name": "Seacál",
+      "description": "Scavaire an fhásaigh agus treoraí go dtí an saol eile, seirbhíseach Anubis."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Siombail na beatha agus na síoraíochta, a bhíonn go minic i lámha na ndéithe agus na bhfarónna."
+    },
+    "art2": {
+      "name": "Súil Horus",
+      "description": "Siombail cosanta, cumhachta ríoga agus sláinte, a bhaineann le dia na spéire Horus."
+    },
+    "art3": {
+      "name": "Siostram",
+      "description": "Uirlis cheoil a d’úsáidtí i searmanais naofa, a bhaineann leis an mbandia Hathor."
+    },
+    "art4": {
+      "name": "Colún Djed",
+      "description": "Siombail na seasmhachta agus an aiséirí, a bhaineann go minic le Osiris."
+    },
+    "art5": {
+      "name": "Cartús",
+      "description": "Fráma ubhchruthach a bhfuil ainm faró ann i iairiglifí, a chosnaíonn a ainm go deo."
+    },
+    "art6": {
+      "name": "Próca Canópach",
+      "description": "Próca naofa le ceann garda mar chlúdach — sheas ceithre cinn acu timpeall ar chónra, ag faire."
+    },
+    "art7": {
+      "name": "Ríshlat",
+      "description": "Slat chumhachta a bhíodh ag déithe agus ag farónna mar shiombail dá réimeas diaga."
+    },
+    "art9": {
+      "name": "Pirimid",
+      "description": "Tuama síoraí agus geata go dtí an saol eile, tógtha le maireachtáil go deo do na farónna."
+    },
+    "art10": {
+      "name": "Bád Gréine",
+      "description": "Bád naofa a iompraíonn dia na gréine Ra trasna na spéire ó mhaidin go hoíche."
+    },
+    "art11": {
+      "name": "Oibilisc",
+      "description": "Colún ard cloiche le pirimid ar a bharr, ag síneadh suas i dtreo na spéire in onóir na ndéithe."
+    },
+    "art12": {
+      "name": "Bachall agus Súiste",
+      "description": "Comharthaí an rí, a thaispeánann gurb é an faró aoire agus cosantóir na hÉigipte."
+    },
+    "art14": {
+      "name": "Bláth Lóis",
+      "description": "Siombail na hathbhreithe agus na gréine, a thagann aníos glan as uisce lábach na Níle."
+    },
+    "art15": {
+      "name": "Coróin Uraeus",
+      "description": "Ceannbheart ríoga leis an gcobra cosanta air, a chaith na farónna mar chosaint dhiaga."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Duilleog Ghiolcaí",
+      "description": "Giolcach amháin, a sheasann don fhuaim i. Cuir le hainm dé é agus déanann sé ainm fir: déantar Hori de Horus, an té a bhaineann le Horus."
+    }
+  }
+}

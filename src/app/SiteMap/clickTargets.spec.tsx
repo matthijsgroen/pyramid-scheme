@@ -145,7 +145,7 @@ const ringOffset = (dir: Direction) =>
 const ringOffsets = (container: HTMLElement) => {
   const [x, y] = container.querySelector("[data-explorer]")!.getAttribute("data-at")!.split(",").map(Number)
   return Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]"))
-    .filter(el => el.querySelector(":scope > svg > polygon"))
+    .filter(el => el.querySelector("svg > polygon"))
     .map(el => {
       const cx = parseFloat(el.style.left) + parseFloat(el.style.width) / 2
       const cy = parseFloat(el.style.top) + parseFloat(el.style.height) / 2
@@ -371,7 +371,7 @@ describe("a room laid over a fork", () => {
         Math.abs(parseFloat(el.style.left) + parseFloat(el.style.width) / 2 - cx) < 1 &&
         Math.abs(parseFloat(el.style.top) + parseFloat(el.style.height) / 2 - cy) < 1
     )
-    expect(onDoor.filter(el => el.querySelector(":scope > svg > polygon"))).toHaveLength(0)
+    expect(onDoor.filter(el => el.querySelector("svg > polygon"))).toHaveLength(0)
   })
 
   it("offers no choices while he walks between two spots of the room", () => {
@@ -568,7 +568,7 @@ describe("the offers around a one-way drop", () => {
 
     // The four places a player stands at a drop, each asserted as the WHOLE of what is drawn: an arrow on a
     // launch or landing pointing the way it is entered from its own node (whether or not it has been
-    // walked), and the node art on a room.
+    // walked), the node art on a room, and an arrow back onto the room from the end beside it.
     describe.each(["reachable", "completed"] as const)("with every cell %s", state => {
       const { grid: stated, at: statedAt } = dropGrid(axis, "room", "room", state)
       const markersFrom = (from: readonly [number, number]) => {
@@ -592,12 +592,18 @@ describe("the offers around a one-way drop", () => {
 
       it("marks the launch with an arrow from beside it and from on it", () => {
         expect(markersFrom(statedAt(DROP_AT.fromNode))).toEqual(fromSide)
-        expect(markersFrom(statedAt(DROP_AT.launch))).toEqual(fromSide)
+        expect(markersFrom(statedAt(DROP_AT.launch))).toEqual({
+          ...fromSide,
+          [key(statedAt(DROP_AT.fromNode))]: { kind: "arrow", dir: axis.back },
+        })
       })
 
       it("marks the landing with an arrow from beside it and from on it", () => {
         expect(markersFrom(statedAt(DROP_AT.toNode))).toEqual(toSide)
-        expect(markersFrom(statedAt(DROP_AT.landing))).toEqual(toSide)
+        expect(markersFrom(statedAt(DROP_AT.landing))).toEqual({
+          ...toSide,
+          [key(statedAt(DROP_AT.toNode))]: { kind: "arrow", dir: axis.travel },
+        })
       })
     })
 
@@ -747,6 +753,23 @@ describe("a bare junction beside the player", () => {
   })
 })
 
+describe.each([
+  ["a gate", { roomType: "encounter", family: "sumplete", tags: ["gate"] }],
+  ["a puzzle", { roomType: "encounter", family: "sumplete" }],
+] as const)("%s beside the player", (_, node) => {
+  const grid = revealAll(forkFloor({ ...node, tags: "tags" in node ? [...node.tags] : undefined }))
+
+  it("points the step onto it with an arrow, though its node is drawn on its own cell", () => {
+    const ctx = offerContextFrom(grid, [4, 5], {})
+    expect(markerAt(grid, buildRoomClaims(grid), 4, 6, ctx)).toEqual({ kind: "arrow", dir: "e" })
+  })
+
+  it("draws that arrow on the map", () => {
+    const { container } = render(<SiteMapView grid={grid} explorerPos={[4, 5]} onCellClick={() => {}} />)
+    expect(ringOffsets(container)).toContain(ringOffset("e"))
+  })
+})
+
 describe("a designed room whose node stands just inside a door", () => {
   const grid = revealAll(edgePrefabFloor("L", { roomType: "encounter", family: "sumplete" }))
   const door = [2, 2] as const
@@ -763,9 +786,7 @@ describe("a designed room whose node stands just inside a door", () => {
     const south = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(el => {
       const cx = parseFloat(el.style.left) + parseFloat(el.style.width) / 2
       const cy = parseFloat(el.style.top) + parseFloat(el.style.height) / 2
-      return (
-        el.querySelector(":scope > svg > polygon") && `${Math.round(cx - x)},${Math.round(cy - y)}` === ringOffset("s")
-      )
+      return el.querySelector("svg > polygon") && `${Math.round(cx - x)},${Math.round(cy - y)}` === ringOffset("s")
     })
     expect(south).toBeDefined()
     fireEvent.click(south!)

@@ -125,7 +125,7 @@ whose colours the prompt tells the model to ignore.
 
 | Rank             | Floor                                | Wall face                                      | Sill                                     |
 | ---------------- | ------------------------------------ | ---------------------------------------------- | ---------------------------------------- |
-| junior · copper  | light orange sandstone, `#e2a86f`    | mid-tone, legible murals, ground `#c9895a`     | sandstone with a copper strip, `#c59261` |
+| junior · copper  | light orange sandstone, `#e2a86f`    | mid-tone, legible murals, ground `#b88050`     | sandstone with a copper strip, `#c59261` |
 | expert · silver  | light cool polished tiles, `#c9d0d6` | dark cool stone, sunk relief, ground `#7c8a98` | alabaster with a lapis line, `#b4bdc5`   |
 | master · gold    | **dark** granite, `#57534b`          | **light**, gilded relief, ground `#c4ad7c`     | red granite with a gold band, `#806a5e`  |
 | wizard · emerald | **dark** midnight nebula, `#161c38`  | **light**, calcite lit from behind, `#8fc4ab`  | green stone with a gold line, `#3f6b5c`  |
@@ -144,13 +144,13 @@ carries colour as strongly as it carries handling, and a floor entry could not a
 it is the path `--land` writes the return to.
 
 **The colours in these blocks are TARGETS.** `tierPalette` in `src/app/SiteMap/tileMaterials.ts` still holds the
-placeholder art's tokens for these four ranks (master's granite is the exception, and the target here is the
-same stone). After a rank's floor and wall face land, the ground tokens — `bed`, `slab`, `slabHi`, `slabLo`,
-`joint`, `wall`, `wallTop`, `wallBase` — are re-sampled from the new art and `yarn rank-colour` is run: the wall
-face at least 25 L\* off the floor (`MIN_STEP`). Junior and expert are light floors, so their faces are shadowed
-below the floor and `faceNight` is re-solved for them; master and wizard are DARK floors, so the face and the
-props sit on the LIGHT side, the face art carries the step on its own, and `faceNight` goes toward 0 as the
-cave's does.
+placeholder art's tokens for the surfaces that have not landed (junior's floor and wall face have; master's
+granite is the exception, and the target here is the same stone). After a rank's floor and wall face land, the
+ground tokens — `bed`, `slab`, `slabHi`, `slabLo`, `joint`, `wall`, `wallTop`, `wallBase` — are re-sampled
+from the new art and `yarn rank-colour` is run for the props. A wall face holds no L\* step against the floor:
+it is shown as painted, a cell tall at its own 8:1, and its dark base band and the shadow it throws on the floor
+mark the edge — so a face is painted with that base band, and judged by eye on a real floor. Whether a rank darkens
+its faces further is `faceNight`, a look chosen by eye per rank, never a number solved for.
 
 **A sill sits between the floor and the wall in value**, or it reads as a hole in the paving rather than a
 step across it. On a light rank that is a step darker than the floor; on a dark rank, a step lighter.
@@ -159,61 +159,6 @@ step across it. On a light rank that is a step darker than the floor; on a dark 
 **What `--land` does with them**: a floor is made seamless both ways and a face along x before the import. A
 face that comes back a third of 8:1 is laid three side by side first, as the Sphinx's are:
 `magick band.jpeg band.jpeg band.jpeg +append wide.png`.
-
-### `junior/wall-face` — a painted procession, legible, over a dado band
-
-**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). On the old dark red-brown plaster, with the night laid over the face, the murals and their figures could not be read, and the wall sank into the dark mass around the corridors. The plaster is now a mid-tone orange, a step under the new floor, and the figures are painted to stand off it.
-
-**Attach:** `art/masters/surfaces/junior-floor.webp` — the nobleman's floor, as the style reference
-
-```
-FRAME: a wide strip, exactly 8 times as wide as it is tall. Do not crop it and do not re-compose it square.
-
-Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
-Rank: a NOBLEMAN's tomb, built as his painted house — the second of five. Warm orange sandstone, precisely
-dressed and decorated: crisp, neat and ornamented, a great house kept in order. Copper vessels gone green at
-the rim, lotus and papyrus, rosettes, a banquet frieze. Festive and colourful.
-Lit evenly by lamplight and daylight together — every corner of the room is visible, nothing sinks into
-darkness.
-HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
-surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
-a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: floor #e2a86f / #eab277 / #dca26b on a #cf9863 bed, joints #a9784c,
-walls #c9895a with #ecc898 tops and #3a1c0e at the base, copper #c8642c with light #f2b48a and shade
-#55210c, verdigris #4f9a86, painted red ochre #a8442a, Egyptian blue #2f6f8f, linen #efe4cc, hair and
-eyes #2a1a0e.
-Every colour comes from that list. Nothing lighter than #f2dcb4, nothing darker than #2a1a0e.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it — the palette above is the only source of colour.
-
-Seamless horizontal strip of a plastered wall, seen straight on from the front at eye level.
-The whole wall is PAINTED, the way a nobleman's house is: smooth, even mud plaster over the stone, its
-ground a MID-TONE warm orange #c9895a — a clear step darker than the light floor in front of it, never
-lighter, and never dark brown.
-THREE REGISTERS of a painted procession run along it, small figures in profile the old Egyptian way, about
-thirty figures across the whole strip: on top, offering bearers carrying baskets, lotus bunches and copper
-jars; in the middle, cattle and geese driven along; at the bottom, a banquet — seated guests with lotus
-flowers, a harpist, servants pouring wine.
-THE FIGURES MUST READ against the plaster: each is painted in clear, saturated colour with a real step of
-value off the ground — deep Egyptian blue #2f6f8f, deep red ochre #a8442a, verdigris green #4f9a86, pale
-linen #efe4cc, dark hair #2a1a0e — fresh and crisp, not faded, not rubbed away. Neat, careful painting.
-A PAINTED DADO BAND along the foot of the wall, deep red ochre with a thin blue line above it; a crisp
-lotus-and-rosette border along the top. Thin copper #c8642c lines divide the registers, gone green
-#4f9a86 in places.
-The very top edge carries a lighter cap #ecc898 where the wall's top surface catches the light; the very
-bottom edge a darker base where it meets the floor. Those two bands, the dado, the border and the
-register lines run unbroken the whole width — they are the only things that do.
-It tiles left to right: no figure big enough to be recognised twice in a row, no crack or stain longer
-than an eighth of the strip.
-Even lighting left to right, no hotspot, no vignette. Edge to edge texture.
-```
-
-**Import:** `yarn import-tile art/masters/surfaces/junior-wall-face.webp --tier=junior --name=wall-face --slot=face --filter=smooth --key=none --headroom=0.14`
-
-`--repeat=1`, the default: the procession comes back at one wall's height, and doubling it halves the
-figures and puts the strip on the face twice.
 
 ### `junior/threshold` — a dressed sandstone step with a copper strip
 
@@ -235,7 +180,7 @@ surface, forms modelled with soft shading. Realistic materials, painted rather t
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
 a comic, not a cartoon. An edge is a change of value, never a stroke.
 Palette, strictly: floor #e2a86f / #eab277 / #dca26b on a #cf9863 bed, joints #a9784c,
-walls #c9895a with #ecc898 tops and #3a1c0e at the base, copper #c8642c with light #f2b48a and shade
+walls #b88050 with #d4a978 tops and #381d0e at the base, copper #c8642c with light #f2b48a and shade
 #55210c, verdigris #4f9a86.
 Every colour comes from that list. Nothing lighter than #f2dcb4, nothing darker than #6a4630.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
@@ -248,7 +193,8 @@ It is ONE band of stone across the whole width: a soft shadow along its far edge
 floor beyond, its own top surface across the middle, a soft shadow along its near edge. No object sits on
 it and nothing crosses it end to end except those two edges and one copper strip.
 The stone is the floor's own orange sandstone at #c59261 — the same paving as the chamber, laid as one long
-block with crisp, true edges, a step darker than the floor either side of it, never lighter.
+block with crisp, true edges, a step darker than the floor either side of it, never lighter, and a step
+lighter than the painted wall #b88050.
 Smoothly worn in the middle by feet, its ends square and whole. A thin strip of copper #c8642c set into the
 stone along its near edge, bright where it is still polished, gone verdigris green #4f9a86 at both ends
 where no foot reaches.
@@ -278,7 +224,7 @@ NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shadin
 a comic, not a cartoon. An edge is a change of value, never a stroke.
 Palette, strictly: stone #d29c67 lit, #9c7442 in shade, copper #c8642c with light #f2b48a and
 shade #55210c, verdigris #4f9a86, painted red ochre #a8442a, Egyptian blue #2f6f8f, linen #efe4cc.
-Nothing lighter than #f2dcb4, nothing darker than #3a1c0e.
+Nothing lighter than #f2dcb4, nothing darker than #381d0e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
 colours or its subject from it — the palette above is the only source of colour.
@@ -295,7 +241,8 @@ jambs, from under the lintel all the way down and off the bottom edge of the pic
 frame too, left of the left jamb, right of the right jamb, and above the lintel.
 Each jamb is about a sixth of the picture's width. The gap between them is the remaining two thirds.
 The stone is the floor's orange sandstone, a clear step DARKER than it so the doorway reads against the
-paving: #d29c67 in the light, #9c7442 in shadow. Crisp square arrises, true edges, cut by a mason.
+paving and lighter than the painted wall #b88050 it is cut through: #d29c67 in the light, #9c7442 in shadow.
+Crisp square arrises, true edges, cut by a mason.
 The front of the lintel carries a painted band: a row of rosettes in red ochre #a8442a and Egyptian blue
 #2f6f8f on linen #efe4cc, neat and fresh. A thin copper #c8642c strip runs along the lintel's lower edge,
 gone verdigris #4f9a86 at both ends — the only metal on it.
@@ -583,9 +530,9 @@ it, and no block different enough to be recognised twice in a row.
 Even lighting left to right, no hotspot, no vignette. Edge to edge texture.
 ```
 
-**Import:** `yarn import-tile art/masters/surfaces/wizard-wall-face.webp --tier=wizard --name=wall-face --slot=face --filter=smooth --key=none --headroom=0.14 --repeat=2`
+**Import:** `yarn import-tile art/masters/surfaces/wizard-wall-face.webp --tier=wizard --name=wall-face --slot=face --filter=smooth --key=none --headroom=0.14 --repeat=1`
 
-`--repeat=2`, the merchant's: a counted course of blocks comes back a size too big, as his bricks did.
+`--repeat=1`: a face is shown a cell tall at the 8:1 it is painted at, so the courses keep the size they were painted.
 
 ### `wizard/threshold` — a green stone step with a gold line
 
@@ -625,6 +572,54 @@ Even lighting left to right, no hotspot, no vignette.
 ```
 
 **Import:** `yarn import-tile art/masters/surfaces/wizard-threshold.webp --tier=wizard --name=threshold --slot=sill --filter=smooth --key=none`
+
+### `cave/arch` — a rough rock opening with a fallen-slab lintel
+
+**New:** cave doorways have no arch, so an opening in a cave wall shows as a bare notch. This gives them one, and with it the wall above the opening.
+
+**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's rock floor, as the style reference
+
+```
+FRAME: landscape, exactly 2.7 times as wide as it is tall. Do not re-compose it square.
+
+Top-down dungeon game tile art for a natural cave under the desert, below an ancient Egyptian tomb.
+No mason ever worked here: raw limestone, water-worn and cracked, dust and grit in every hollow.
+A dark cave lit only by the explorer's torch; the rock nearest the light is pale, nothing sinks into black.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Palette, strictly: pale rock #ccc6ba with tops #d8d2c4, rock in shade #8a8276, floor rock #615951 and
+#554e46, cracks and deep shade #2a2520.
+Nothing lighter than #e4dfd4, nothing darker than #1f1b16.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it — the palette above is the only source of colour.
+THE CAMERA: 30 degrees above the floor, looking slightly down. Depth going away from the viewer is
+squashed to HALF; height is barely squashed. A square block of rock shows a top face a bit more than HALF
+as deep as the front of it is tall — a clear band, not a sliver. Verticals stay vertical, horizontals
+stay horizontal: an orthographic squash, never a vanishing point. Not isometric, not photographic.
+
+A free-standing rock gateway, alone on a flat magenta #ff00ff background. Nothing else in the
+picture: no wall, no floor, no ground, no shadow cast on the magenta.
+The gateway is 2.7 times as wide as it is tall. Two rough rock PILLARS, one at the left and one at the
+right, and one long fallen SLAB of rock lying across the top of them, wedged where it fell. THE MIDDLE IS
+EMPTY — flat magenta #ff00ff between the pillars, from under the slab all the way down and off the bottom
+edge of the picture. Magenta OUTSIDE the gateway too, left of the left pillar, right of the right pillar,
+and above the slab.
+Each pillar is about a sixth of the picture's width. The gap between them is the remaining two thirds.
+The rock is the pale cave wall's limestone, #ccc6ba in the light and #8a8276 in shade: uneven, lumpy,
+cracked, its edges broken rather than cut. A few short stubs of stalactite hang from the slab's
+underside; small rubble lies at the foot of each pillar.
+EVERY PIECE SHOWS ITS TOP. The slab's whole upper face is visible as a band running the full width,
+lighter than its front. Each pillar shows the small top face where the slab rests on it.
+The underside of the slab, where it overhangs the opening, is in deep shadow #2a2520, and so is the inner
+face of each pillar. That darker edge around the empty middle is what makes the gateway read as a way
+through.
+Even lighting left to right, no hotspot, no vignette.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/cave-arch.webp --tier=cave --name=arch --slot=arch --filter=smooth`
 
 ---
 
@@ -3311,7 +3306,7 @@ nothing else does. Even lighting.
 **Prepare:** the generator returns a band about a third of a face's 8:1. Lay three side by side and make it seamless along x; that band is the master, `art/masters/surfaces/sphinx-wall-face.webp`:
 `magick band.jpeg band.jpeg band.jpeg +append wide.png && yarn make-seamless --axis=x wide.png`
 
-**Import:** `yarn import-tile art/masters/surfaces/sphinx-wall-face.webp --tier=sphinx --name=wall-face --slot=face --filter=smooth --key=none --headroom=0.14 --repeat=1` (check the face against the floor with `yarn rank-colour` and set `--brightness` from it)
+**Import:** `yarn import-tile art/masters/surfaces/sphinx-wall-face.webp --tier=sphinx --name=wall-face --slot=face --filter=smooth --key=none --headroom=0.14 --repeat=1` (judge the face on a real floor; it is shown as painted)
 
 ### `sphinx/threshold` — a step cut in the Sphinx's bedrock
 

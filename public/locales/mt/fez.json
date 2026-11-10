@@ -1,0 +1,1730 @@
+{
+  "not-found": "Skużani, il-konversazzjoni li qed tfittex ma teżistix.",
+  "welcome": "L-Eġittu! Verament wasalt.",
+  "welcome2": "U din il-mappa… ħallast wisq għaliha. Aħjar tkun tajba.",
+  "welcome3": "Ejja. Ħa naraw fejn hu dak is-salib.",
+  "pyramidIntro": "Hemm numri fuq dan il-ġebel. U xi wħud neqsin…",
+  "pyramidIntro2": "Stenna. Kull ġebla hi ż-żewġ ġebliet ta' taħtha miżjuda flimkien! Iva — hawn ukoll!",
+  "pyramidBlockedBlocks": "Ħej, x'inhu dan? Dawk il-blokki ssiġillati. Ma jurukx in-numru tagħhom!",
+  "pyramidBlockedBlocks2": "Ma jimpurtax. Ħares lejn il-blokki ta' madwaru — minnhom tista' taħdmu.",
+  "pyramidBlockedBlocks3": "Biss ma tistax tiktbu. Ikollok iżżomm dak in-numru f'moħħok.",
+  "pyramidBlockedBlocks4": "Ejja, wasalt s'hawn. Tista' tagħmilha!",
+  "levelCompleted": "Ħa! Qed jinfetaħ! Ejja, ġewwa.",
+  "exitPillar": {
+    "1": {
+      "fez": "Ħa! Dawl tax-xemx! Tara dak ir-raġġ dawl? Dik it-triq tagħna 'l barra. Idħol fih, u lestejna minn hawn."
+    },
+    "2": {
+      "fez": "Wieħed biss dejjem, eżatt fit-tarf tal-kuritur ewlieni. Kull fejn immorru ndawru, nerġgħu niġu lura għalih."
+    },
+    "3": {
+      "explorer": "Triq waħda 'l barra. Fhimt."
+    }
+  },
+  "expeditionCompleted": "Prosit talli lestejt l-ispedizzjoni!",
+  "expeditionCompleted2": "Issa hemm spedizzjoni ġdida lesta għalik.",
+  "tombTutorial": "Uuu, kitba! Nistgħu naqrawha? Bil-ġeroglifi li sibna… forsi!",
+  "tombTutorial2": "Ara ftit, somom b'sinjali fihom! Tara dawk l-ispazji vojta? Il-ġeroglifi jmorru hemm. Tiegħek, hawn isfel.",
+  "tombTutorial3": "Is-somom iż-żgħar jurik meta sinjal ikun tajjeb. Hekk insibu liema sinjal imur fejn.",
+  "tombTutorial4": "Imlejt kollox? Imbagħad jidher katnazz bin-numri. Is-somma l-kbira hi l-kodiċi — u l-qabar jinfetaħ!",
+  "hieroglyphUnlock": "Għandna oġġett speċjali — bih nistgħu niktbu fuq wieħed minn dawk il-blokki ssiġillati!",
+  "hieroglyphUnlock2": "Agħfas ġebla li tleqq, imbagħad kaxkar l-oġġett fuqha biex tiftaħha. Blokka waħda kull piramida.",
+  "errorHighlightTutorial": "Dak it-teżor li sibna għandu trick tajjeb — imla tweġiba ħażina u żball wieħed jixgħel aħmar!",
+  "errorHighlightTutorial2": "Blokka waħda biss tixgħel kull darba, allura għadha sfida. Imma tgħin biex issib fejn hu!",
+  "earlyFeedbackTutorial": "Tara dawk il-blokki ta' kontroll? Isiru ħodor jew ħomor hekk kif timlihom — tgħidlek minnufih!",
+  "earlyFeedbackTutorial2": "Użahom biex tistrieħ fuqhom waqt li ssolvi. Jekk wieħed isir aħmar, xi ħaġa fil-qrib trid tissewwa.",
+  "notEnoughHieroglyphs": "Dejjem tista' twaqqaf din l-ispedizzjoni billi tmur lura għall-iskrin tal-vjaġġi.",
+  "notEnoughHieroglyphs2": "Nistgħu nwaqqfu l-ispedizzjoni u nfittxu x'imkien ieħor il-ġeroglifi li għadna neħtieġu.",
+  "tombLoot": "Wow, l-ewwel teżor tagħna! Prosit!",
+  "mapPiece": "Ara! Issa DIN hija mappa. Antika sew! Tiswa aktar miż-żewġ mapep tagħna flimkien!",
+  "mapPiece2": "Biċċa minnha biss, eh. Kull spedizzjoni hawn taħbi waħda, u flimkien juru t-triq lejn qabar.",
+  "mapComplete": "Sħiħa! Ara, kull biċċa toqgħod eżatt.",
+  "mapComplete2": "Hemm, fejn jiltaqgħu l-linji kollha. Hemm jinsab qabar.",
+  "mapComplete3": "Issa qiegħed fil-vjaġġi tagħna. Immorru nħarsu?",
+  "mapPiece3": "Żomm l-għadd fil-lista tal-ispedizzjonijiet. Jien żgur li se nżommu!",
+  "mosaicIntro": "Uuu, ħġieġ ikkulurit! Ara kif jaqbad id-dawl — ħadd ma jarmi DAN!",
+  "mosaicIntro2": "Hi biċċa minn stampa. Tieqa sħiħa tal-ħġieġ, u kull biċċa li nsibu terġa' ġġib ftit minnha lura.",
+  "mosaicIntro3": "M'għandekx kamp x'imkien? Ħudhom miegħek u ngħaqqduhom hemm. Irrid nara x'toħroġ!",
+  "mosaicReminder": "Psst! Dawk il-biċċiet tal-ħġieġ għadhom iċekċku fil-borża. Inpoġġuhom fit-tieqa tal-kamp?",
+  "mosaicStarter": "Qattus fil-bieb, u serp jaħrab bil-għaġla. Dak kien jistħoqqlu skutella ħalib.",
+  "mosaicStarter2": "L-Eġizzjani kienu jħobbu l-qtates għal dan eżatt — kienu joqtlu s-sriep u l-ġrieden li jidħlu fil-qamħ.",
+  "mosaicStarter3": "Tant kienu jħobbuhom li għamlu waħda alla. Bastet. Tħares id-dar, il-bieb, u lil kulħadd jorqod warajh.",
+  "mosaicJunior": "Ħares lejn idu — xi ħadd qed jurih kif iżomm il-pinna.",
+  "mosaicJunior2": "Dak b'ras ta' għasfur hu Thoth. Il-kitba, l-għadd, iż-żamma tar-reġistri — kollha tiegħu.",
+  "mosaicJunior3": "L-ibis li segwejna max-xmara? Dak l-għasfur tiegħu. Kull numru li ktibna f'ħajt huwa tiegħu wkoll.",
+  "mosaicExpert": "Dak id-dawl mhux xorti. Bnew is-sala kollha biex jaqa' eżatt hemm, fil-għodwa t-tajba.",
+  "mosaicExpert2": "Ix-xemx hi Amun-Ra — dak moħbi, u d-dawl li kulħadd jara. It-tnejn f'daqqa.",
+  "mosaicExpert3": "Min jaf ikejjel is-sema daqshekk preċiż jista' jkejjel kollox. Aħna ilna nsolvu s-somom tagħhom it-triq kollha.",
+  "mosaicMaster": "Ġilda ħadra, u qamħ jikber dritt minnu. Dak apposta.",
+  "mosaicMaster2": "Osiris. Qatluh, reġgħu għaqqduh, u issa huwa dak li jerġa' jiġi kull sena meta x-xmara tgħarraq l-għelieqi.",
+  "mosaicMaster3": "Hawn isfel dik hi l-idea kollha: il-mewt mhix it-tmiem. Ħsieb ferrieħi għal qabar, hux?",
+  "mosaicWizard": "Qalb fuq naħa. Rixa waħda fuq l-oħra. U qed jibbilanċjaw.",
+  "mosaicWizard2": "Ir-rixa hi Ma'at — il-verità, il-bilanċ, kif suppost ikunu l-affarijiet. Qalb itqal minn dik ir-rixa u ma tgħaddix mill-bieb.",
+  "mosaicWizard3": "Ix-xakall li qed iżomm il-miżien hu Anubis. Huwa dak li jwasslek hawn.",
+  "mosaicFinale": "Oqgħod lura mument. Ħares lejn dak li ilna nġorru 'l fuq minn dawk il-piramidi.",
+  "mosaicFinale2": "Kull biċċa hi parti minnu — dak li jżomm il-miżien. Ilu jħarisna t-triq kollha.",
+  "mosaicFinale3": "Dak ir-reġistru tiegħu dwarna. U ngħid jien li jibbilanċja.",
+  "shopFirstVisit": "Aħ, hawn aħna. Il-mejda tiegħi — għedtlek li jien hawn għan-negozju.",
+  "shopFirstVisit2": "Kull ma hemm fuq din il-mejda ħriġtu minn x'imkien. Dak ġie minn żewġ oqbra ilu.",
+  "shopArrival": "Aħ, il-mejda tiegħi! Ħallini nqiegħed dak li ġbart fit-triq.",
+  "shopArrival2": "Is-sejbiet rari jiswew l-aktar, imma jien inħallsek għal kull ħaġa żgħira li qed iġġorr.",
+  "arrival": {
+    "starter_1": {
+      "1": {
+        "explorer": "Ara, hemm wara! L-Isfinġi!"
+      },
+      "2": {
+        "explorer": "Enormi, anke minn hawn."
+      },
+      "3": {
+        "explorer": "Jgħidu li hemm kitba taħt riġlejha. Li ħadd ma jaf jaqraha."
+      },
+      "4": {
+        "explorer": "Wara. L-ewwel din il-piramida!"
+      }
+    },
+    "starter_2": {
+      "1": {
+        "fez": "Ħa! Finalment, xi ħaġa li nifhem. Kull ma tela' man-Nil għadda minn hawn l-ewwel."
+      },
+      "2": {
+        "fez": "U l-merkanti jiktbu kollox. Min xtara xiex, min kien jaf lil min, min kien tard…"
+      },
+      "3": {
+        "explorer": "Min kien tard?"
+      },
+      "4": {
+        "fez": "Speċjalment min kien tard!"
+      },
+      "5": {
+        "fez": "Tlett elef sena. Il-merkanzija spiċċat, u l-irċevuti għadhom hawn. Tipiku!"
+      }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Ara dawk il-bibien! In-nies kienu jiġu hawn jitolbu l-ħarsien. U mbagħad bieb bħal dak jibqa' magħluq."
+      },
+      "2": {
+        "explorer": "Magħluq għal min?"
+      },
+      "3": {
+        "fez": "Għal kull min ma talabx bil-pulit. Għalina, l-aktar."
+      },
+      "4": {
+        "fez": "Kull ħaġa ssiġillata f'dan il-pajjiż, xi ħadd issiġillaha u kien jifhimha. Verament kien jifhimha."
+      },
+      "5": {
+        "fez": "U l-qtates! Kienu jmutu għall-qtates hawn. Ma setgħux iżommu jdejhom 'il bogħod minnhom."
+      }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "Oh, din togħġobni. Hawn tgħallmu jiktbu! Sinjal wara sinjal, fuq biċċiet ta' fuħħar miksur — il-papiru kien għali wisq għat-tfal."
+      },
+      "2": {
+        "explorer": "Kienu jitħarrġu fuq iż-żibel?"
+      },
+      "3": {
+        "fez": "Fuq kull ma kien hemm! U tgħallem biżżejjed minn dawn, u f'daqqa waħda ħajt ma jibqax biss tiżjin."
+      },
+      "4": {
+        "explorer": "Dik l-Isfinġi… nixtieq nerġa' nagħtiha ħarsa."
+      },
+      "5": {
+        "fez": "Mhux issa. Dalwaqt."
+      }
+    },
+    "junior_1": {
+      "1": {
+        "fez": "Kienu jiġu lura kull sena mal-għargħar, kważi fl-istess jum."
+      },
+      "2": {
+        "fez": "Allura n-nies bdew jgħoddu l-jiem bejniethom. Minn hemm ġej il-kalendarju — mill-għasafar."
+      },
+      "3": {
+        "explorer": "Mill-għasafar."
+      },
+      "4": {
+        "fez": "Għasafar u karti. Dejjem għasafar u karti."
+      }
+    },
+    "junior_2": {
+      "1": {
+        "fez": "Hawn kienu jagħmlu kollox. Mhux l-oqbra — l-affarijiet li jmorru fihom."
+      },
+      "2": {
+        "fez": "Ħares lejn il-forom. L-istess brazzuletta, erbgħin darba."
+      },
+      "3": {
+        "explorer": "Għal erbgħin persuna?"
+      },
+      "4": {
+        "fez": "Għal kull min seta' jħallas. Nobbli ried dak li kellu r-re, bi prezz li nobbli jiflaħ għalih."
+      }
+    },
+    "junior_3": {
+      "1": {
+        "fez": "Thoth, dan. Alla tas-sigrieti u tal-maġija, kważi żgur."
+      },
+      "2": {
+        "explorer": "Kważi."
+      },
+      "3": {
+        "fez": "Disgħin fil-mija. Xorta waħda — is-sinjali li ilek tiġbor huma tiegħu."
+      }
+    },
+    "junior_4": {
+      "1": {
+        "fez": "Mija u għoxrin metru għoli, u nar fil-quċċata li qatt ma ntefa."
+      },
+      "2": {
+        "fez": "Il-baħrin setgħu jsibu l-kosta minn ġurnata 'l bogħod. Qabel kienu jsibuha billi jaħbtu magħha."
+      },
+      "3": {
+        "explorer": "Kif issib xi ħaġa hawn barra mingħajr wieħed?"
+      },
+      "4": {
+        "fez": "Tistaqsi lil xi ħadd li diġà kien hemm. Dak ix-xogħol tiegħi kollu."
+      }
+    },
+    "expert_1": {
+      "1": {
+        "fez": "Xi sittin qabar maqtugħa f'wied wieħed, u kull wieħed minnhom infetaħ qabel wasalna."
+      },
+      "2": {
+        "explorer": "Minn min?"
+      },
+      "3": {
+        "fez": "Nies bħalna, l-aktar. Qabilna."
+      },
+      "4": {
+        "fez": "X'taħseb?"
+      },
+      "5": {
+        "explorer": "Li wasalna tard."
+      }
+    },
+    "expert_2": {
+      "1": {
+        "fez": "Amun-Ra. Ix-xemx. Il-favorit ta' kulħadd, u tifhem għaliex — ħares kemm hu kbir il-post."
+      },
+      "2": {
+        "explorer": "Żewġ ismijiet."
+      },
+      "3": {
+        "fez": "L-istess alla, naħseb. Lil dawk popolari kienu jirduppjawhom."
+      }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Il-pajjiż kollu hu linja ħadra fuq kull naħa ta' xmara waħda, u mbagħad hawn jinfetaħ u jsir hekk."
+      },
+      "2": {
+        "fez": "Kollox jikber. Kollox jigdem ukoll."
+      },
+      "3": {
+        "explorer": "Għal liema minnhom ġejna hawn?"
+      },
+      "4": {
+        "fez": "Jien kont nittama għal l-ebda waħda."
+      }
+    },
+    "expert_4": {
+      "1": {
+        "fez": "L-ewwel waħda. Qabel din, ir-rejiet kienu jmorru taħt ċangun ċatt bħal kulħadd."
+      },
+      "2": {
+        "fez": "Xi ħadd qagħad hawn u ħaseb: u jekk nagħmlu hekk, imma sitt darbiet, 'il fuq?"
+      },
+      "3": {
+        "explorer": "Ħadmet?"
+      },
+      "4": {
+        "fez": "Hi għadha wieqfa u hu le. Jiddependi x'tifhem."
+      }
+    },
+    "master_1": {
+      "1": {
+        "fez": "Żewġ miljun blokka. Xi ħadd għaddhom."
+      },
+      "2": {
+        "explorer": "Xi ħadd għaddhom?"
+      },
+      "3": {
+        "fez": "Dejjem hemm xi ħadd jgħodd. Dik il-parti li n-nies jinsew — kienu skrivani li jmexxu kollox."
+      },
+      "4": {
+        "fez": "Sabiħa, hux. Ma rridx naħseb kif kienet tidher il-lista tal-pagi."
+      }
+    },
+    "master_2": {
+      "1": {
+        "fez": "Istruzzjonijiet. Hekk biss — x'tgħid, b'liema ordni, biex il-vjaġġ imur sew."
+      },
+      "2": {
+        "explorer": "Manwal."
+      },
+      "3": {
+        "fez": "Manwal għal meta tkun mejjet. Kienu jiktbu kollox, dawn."
+      },
+      "4": {
+        "fez": "Li, meta tqis x'qed infittxu, hija l-ewwel aħbar tajba din il-ġimgħa kollha."
+      }
+    },
+    "master_3": {
+      "1": {
+        "fez": "Aħ. Il-kamp ta' xi ħadd."
+      },
+      "2": {
+        "explorer": "Riċenti?"
+      },
+      "3": {
+        "fez": "Kważi riċenti. Ikel fil-laned u sogħla kerha, milli jidher."
+      },
+      "4": {
+        "fez": "Daħlu aktar 'il ġewwa minn hawn u ma ħadux l-affarijiet tagħhom magħhom."
+      },
+      "5": {
+        "explorer": "Reġgħu ġew lura għalihom?"
+      },
+      "6": {
+        "fez": "…Ejja nkomplu mexjin."
+      }
+    },
+    "master_4": {
+      "1": {
+        "fez": "Issa DIN hi dik li l-oħrajn kienu jikkupjaw. Ħares lejn il-kulur — tlett elef sena u għadu jidher qisu niedi."
+      },
+      "2": {
+        "explorer": "Henut tinqala' bir-rabja."
+      },
+      "3": {
+        "fez": "Henut tkun qed tieħu n-noti."
+      }
+    },
+    "wizard_1": {
+      "1": {
+        "fez": "Ix-xemx tinżel taħt id-dinja bil-lejl u titla' min-naħa l-oħra. Dak hu t-twemmin kollu."
+      },
+      "2": {
+        "fez": "Tnax-il siegħa fid-dlam, b'affarijiet fit-triq, u xi ħadd irid iġorrha sal-aħħar."
+      },
+      "3": {
+        "explorer": "Dak li ilna nagħmlu aħna."
+      },
+      "4": {
+        "fez": "Kont qed nipprova ma ngħidux."
+      },
+      "5": {
+        "explorer": "Ir-ramel għadu dieħel."
+      },
+      "6": {
+        "fez": "Ilu dieħel tlett elef sena. Ma jieqafx, imur dawra biss."
+      },
+      "7": {
+        "fez": "Jimtela, jinqaleb, jerġa' jibda. Bħax-xemx."
+      }
+    },
+    "wizard_2": {
+      "1": {
+        "fez": "Tnejn minnhom, tmintax-il metru għoljin, u t-tnejn Amenhotep."
+      },
+      "2": {
+        "fez": "Il-Griegi taw ħarsa waħda u ddeċidew li kien eroj tagħhom. Memnon. L-isem baqa' għal elfejn sena."
+      },
+      "3": {
+        "explorer": "L-isem ta' min hemm fuqu?"
+      },
+      "4": {
+        "fez": "Tiegħu stess. Minqux fit-tron, fejn dejjem kien."
+      },
+      "5": {
+        "fez": "Ħadd ma qrah."
+      },
+      "6": {
+        "fez": "Wara t-terremot, dak tat-tramuntana kien ikanta mas-sebħ. Nota waħda, kull filgħodu, meta x-xemx issaħħan il-qasma."
+      },
+      "7": {
+        "explorer": "U issa?"
+      },
+      "8": {
+        "fez": "Imperatur sewwieh. Minn dakinhar ma għamilx ħoss."
+      }
+    },
+    "wizard_3": {
+      "1": {
+        "fez": "Il-miżien. Qalb fuq naħa, rixa fuq l-oħra — allura qalb tqila u tajba tirbaħ, naħseb."
+      },
+      "2": {
+        "explorer": "Ħaġa tqila lejn fejn tmur?"
+      },
+      "3": {
+        "fez": "…'L isfel."
+      },
+      "4": {
+        "fez": "Oh."
+      },
+      "5": {
+        "fez": "Ħafifa. Trid tkun ĦAFIFA."
+      }
+    },
+    "wizard_4": {
+      "1": {
+        "fez": "Il-ġebla tal-quċċata titqiegħed l-aħħar u tkun tad-deheb, biex il-ħaġa kollha taqbad l-ewwel dawl."
+      },
+      "2": {
+        "explorer": "Għal min?"
+      },
+      "3": {
+        "fez": "Għal kull min iħares. Dak kien il-punt — qatt ma kienet għar-raġel ta' ġewwa."
+      }
+    }
+  },
+  "tomb": {
+    "starter": {
+      "1": {
+        "ipi": "Ħej! Idejk 'il bogħod! Dik il-ġarra tiegħi!"
+      },
+      "2": {
+        "fez": "…Dik il-ġarra qalet xi ħaġa?!"
+      },
+      "3": {
+        "ipi": "JIEN tkellimt. It-tielet xkaffa, dik bil-qasma. Dik tiegħi."
+      },
+      "4": {
+        "explorer": "Okay, okay! Tibqa' f'postha. Int min int?"
+      },
+      "5": {
+        "ipi": "Ipi. Erbgħin sena żammejt il-kotba. Erbgħin!"
+      },
+      "6": {
+        "fez": "Kotba? Ta' min?"
+      },
+      "7": {
+        "ipi": "Ta' kulħadd! Min kellu jagħti xiex, sal-aħħar xkora qamħ."
+      },
+      "8": {
+        "ipi": "Dik Henut, hemm fuq lejn it-tramuntana? Ħdax-il deben lapis. Qatt ma ħallset!"
+      },
+      "9": {
+        "explorer": "U għadek tiftakar, wara dan iż-żmien kollu?"
+      },
+      "10": {
+        "ipi": "Miktub! Ħaġa miktuba hi ħaġa li ġrat."
+      },
+      "11": {
+        "ipi": "Biss dawk il-Horis… Hori d-dgħajsi, Hori l-furnar… u dak il-Hori L-IEĦOR."
+      },
+      "12": {
+        "fez": "Kellek qtates ukoll? Kulħadd kellu qtates, hux? Ħelwin!"
+      },
+      "13": {
+        "ipi": "Ħelwin? Kienu għall-qamħ! Taf kemm jiswielek ġurdien wieħed, f'staġun sħiħ?"
+      },
+      "14": {
+        "fez": "…Oh. Iva."
+      },
+      "15": {
+        "ipi": "Għid lil Henut li bagħtek Ipi. Hekk tħassrilha wara nofsinharha."
+      },
+      "16": {
+        "fez": "Jogħġobni dan!"
+      },
+      "17": {
+        "explorer": "Jogħġbok biss għax għadhom għandhom jagħtuh il-flus."
+      }
+    },
+    "junior": {
+      "1": {
+        "henut": "Fl-aħħar. Ġejt għal-lapis, żgur. Nissoponi li Ipi għadu jgerger fuq il-lapis."
+      },
+      "2": {
+        "explorer": "Iva."
+      },
+      "3": {
+        "henut": "Kien ħġieġ. Ħġieġ sabiħ. Kien jaf."
+      },
+      "4": {
+        "fez": "…Il-brazzuletta wkoll kienet ħġieġ?"
+      },
+      "5": {
+        "henut": "Kull ħaġa hawn hi l-aqwa imitazzjoni li setgħu jixtru l-flus, żagħżugħ, u għażiltha kollha jien stess."
+      },
+      "6": {
+        "henut": "Issa. Il-ħajt. It-tielet sinjal — dak mhux ismi. Xi apprendist b'lazzarin u ħadd ma jgħassu."
+      },
+      "7": {
+        "henut": "Int ilek titgħallem is-sinjali. Nara. Sewwih."
+      }
+    },
+    "juniorFixed": {
+      "1": {
+        "henut": "Hekk. Issa jibqa' ismi anke wara elf sena."
+      },
+      "2": {
+        "explorer": "Ipi kitbu sew."
+      },
+      "3": {
+        "henut": "Ipi kiteb kollox sew. Kienet l-unika ħaġa tajba fih."
+      },
+      "4": {
+        "fez": "Jimporta, hawn isfel?"
+      },
+      "5": {
+        "henut": "Hija l-unika ħaġa li timporta."
+      },
+      "6": {
+        "fez": "Kellha ħajt sħiħ ta' Thoth hemm fuq. Alla tas-sigrieti."
+      },
+      "7": {
+        "henut": "Thoth jgħodd. Thoth jikteb dak li għamilt u jibqa' miktub."
+      },
+      "8": {
+        "henut": "Is-sigrieti huma dak li n-nies isejħu l-aritmetika meta ma jafux jagħmluha."
+      },
+      "9": {
+        "henut": "Jekk se tkompli — u jidher ċar li iva — hemm qassis f'Karnak li għandu jagħmel servizz lill-mejtin li qatt ma għamlu. Se jkun insopportabbli fuqha. Il-qassisin hekk huma."
+      },
+      "10": {
+        "henut": "…Iltqajna qabel?"
+      },
+      "11": {
+        "fez": "Kont niftakar."
+      },
+      "12": {
+        "henut": "Iva. Jien ukoll."
+      }
+    },
+    "expert": {
+      "1": {
+        "priest": "Int mhux il-persuna li qed nistenna."
+      },
+      "2": {
+        "explorer": "Lil min qed tistenna?"
+      },
+      "3": {
+        "priest": "Lil xi ħadd bis-siġill. Kellu jinġieb hawn, jitqiegħed hemm, u jingħad xi kliem fuqu. L-ebda waħda minn dawn it-tliet affarijiet ma ġrat."
+      },
+      "4": {
+        "fez": "…Kemm ilek tistenna?"
+      },
+      "5": {
+        "priest": "Ma nżommx l-għadd. Ma jkunx professjonali."
+      },
+      "6": {
+        "priest": "Offerta xierqa hi ħaġa li re ndifen biha f'idu. Mhux kopja. Mhux xbieha. Il-ħaġa nnifisha, bil-marka tiegħu fuqha."
+      },
+      "7": {
+        "priest": "Ġib dik u titħabbar. Ġib xi ħaġa oħra u le."
+      },
+      "8": {
+        "explorer": "Titħabbar lil min?"
+      },
+      "9": {
+        "priest": "Tkun taf. Kulħadd ikun jaf, xi darba."
+      },
+      "10": {
+        "fez": "Dan jieħu gost ħafna bix-xemx. Dak l-Amun-Ra kollu quddiem."
+      },
+      "11": {
+        "priest": "Amun huwa dak moħbi. Ra huwa dak li kulħadd jara."
+      },
+      "12": {
+        "priest": "Huma l-istess alla. Dik mhix koinċidenza, hija l-idea kollha."
+      },
+      "13": {
+        "fez": "…Iva. Ovvja. Kont naf."
+      },
+      "14": {
+        "explorer": "Ma kontx taf."
+      },
+      "15": {
+        "fez": "Ma kontx naf."
+      }
+    },
+    "expertB": {
+      "1": {
+        "fez": "Ħadd ma daħal hawn. La aħna, la dawk ta' qabel, ħadd."
+      },
+      "2": {
+        "explorer": "Kif taf?"
+      },
+      "3": {
+        "fez": "Għax għad hemm xi ħaġa fih."
+      }
+    },
+    "master": {
+      "1": {
+        "pharaoh": "Tista' toqrob. Qrobt. Tajjeb ħafna."
+      },
+      "2": {
+        "fez": "Maestà."
+      },
+      "3": {
+        "pharaoh": "Iva."
+      },
+      "4": {
+        "explorer": "Għandna bżonn is-siġill tiegħek."
+      },
+      "5": {
+        "pharaoh": "Kulħadd għandu bżonnu. Tiegħi ttieħed darbtejn u qatt ma reġa' ġie lura."
+      },
+      "6": {
+        "pharaoh": "It-tieni darba ħallew kopja. KOPJA. Fil-qabar TIEGĦI. Qishom jien ma kontx se nħares."
+      },
+      "7": {
+        "explorer": "Il-kopja għadha hawn?"
+      },
+      "8": {
+        "pharaoh": "Mela għadha hawn, ma tiswa xejn. Qiegħda fuq l-ixkaffa fejn suppost ikun dak veru, ħażina."
+      },
+      "9": {
+        "pharaoh": "Ħudha jekk trid. Ħudha għand dak il-qassis. Ara kemm twasslek 'il bogħod."
+      },
+      "10": {
+        "fez": "…Qed jieħu gost b'dan."
+      },
+      "11": {
+        "pharaoh": "Qed ikolli l-aqwa ġimgħa f'disa' mitt sena."
+      },
+      "12": {
+        "fez": "Osiris fuq il-ħajt hemm. Sid il-mejtin — negozju kiebi."
+      },
+      "13": {
+        "pharaoh": "Huwa AĦDAR, annimal redikolu."
+      },
+      "14": {
+        "pharaoh": "Aħdar bħal għalqa fil-għargħar. Qatluh u reġgħu għaqqduh u jerġa' jiġi kull sena, kull waħda."
+      },
+      "15": {
+        "pharaoh": "Hawn isfel dak mhux kiebi, hu l-punt kollu. Il-mewt mhix it-tmiem."
+      }
+    },
+    "wizard": {
+      "1": {
+        "priest": "Poġġih. Hemm. Iva."
+      },
+      "2": {
+        "priest": "…"
+      },
+      "3": {
+        "priest": "Din l-ewwel darba li għamilt hekk. Kont bdejt naħseb li nsejt kif."
+      },
+      "4": {
+        "explorer": "Kont insejt?"
+      },
+      "5": {
+        "priest": "Għal kollox. Reġa' ġie f'moħħi."
+      }
+    },
+    "wizardB": {
+      "1": {
+        "fez": "Il-ħabel tagħhom. Għadu marbut."
+      },
+      "2": {
+        "explorer": "Waslu s'hawn."
+      },
+      "3": {
+        "fez": "Aktar minn hawn. U mbagħad telgħu lura minnu."
+      },
+      "4": {
+        "explorer": "Hemm notebook."
+      },
+      "5": {
+        "fez": "X'jgħid?"
+      },
+      "6": {
+        "explorer": "Ma nafx naqra l-kitba. Ġejna lura għas-siġill. Għamilna wieħed aħjar minflok."
+      },
+      "7": {
+        "explorer": "Ħadd ma nqarraq."
+      },
+      "8": {
+        "fez": "…Iffalsifikawh għax ma setgħux jaqraw għalxiex kien."
+      },
+      "9": {
+        "explorer": "U mbagħad marru d-dar."
+      }
+    },
+    "wizardC": {
+      "1": {
+        "fez": "Ieqaf mument. Ħares lejn dak li ilna nġorru 'l fuq minn dawk il-piramidi."
+      },
+      "2": {
+        "explorer": "Hija stampa."
+      },
+      "3": {
+        "fez": "Ilha stampa l-ħin kollu."
+      }
+    }
+  },
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Għar! Il-mappa wriet bieb ta' kantina, u din għolja sħiħa!"
+      },
+      "2": {
+        "fez": "Bil-għaqal dan. Aħbi l-merkanzija ġo għolja — l-ebda ħalliel ma jaħsibha."
+      },
+      "3": {
+        "explorer": "Aħna ħsibniha."
+      },
+      "4": {
+        "fez": "Aħna mhux ħallelin. Aħna klijenti. Klijenti tard ħafna."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Dan żgur hu. Henut! Ħdax-il deben lapis, dik!"
+      },
+      "2": {
+        "fez": "X'taħseb — nieħdu sehem jekk niġbruhom aħna?"
+      },
+      "3": {
+        "explorer": "Għadek ma ġbart xejn."
+      },
+      "4": {
+        "fez": "Inħobb naħdimha kmieni."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Allura hawn qiegħed il-qassis ta' Henut. Insopportabbli, qalet."
+      },
+      "2": {
+        "fez": "X'taħseb, inġibulu xi ħaġa? Fjuri?"
+      },
+      "3": {
+        "explorer": "Huwa mejjet."
+      },
+      "4": {
+        "fez": "Aktar u aktar. Trid tagħti impressjoni tajba l-ewwel darba."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Il-qassis il-kbir biss kien jitħalla jidħol hawn. U issa aħna!"
+      },
+      "2": {
+        "explorer": "Aħna nistgħu?"
+      },
+      "3": {
+        "fez": "M'hemm ħadd fil-bieb biex jgħid le."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Ara, il-mappa tieqaf hawn. Ramel, u mbagħad xejn."
+      },
+      "2": {
+        "explorer": "Mela qegħdin fil-post it-tajjeb."
+      },
+      "3": {
+        "fez": "Hekk qed ngħid. Eżatt dan li jagħmilni nervuż."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Is-sala ta' Osiris! Ħadra, ovvja. Għax jerġa' jiġi kull sena, bħall-qamħ."
+      },
+      "2": {
+        "explorer": "Dejjem kont taf dan."
+      },
+      "3": {
+        "fez": "Dejjem."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Il-maħżen tal-allat stess! X'iżżomm meta diġà għandek kollox?"
+      },
+      "2": {
+        "explorer": "Kull ma jġibulek in-nies."
+      },
+      "3": {
+        "fez": "…Iva. Dak ikun."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Is-Saltna tal-Qawwiet tal-Kosmos. Ara, ara."
+      },
+      "2": {
+        "fez": "Kieku kelli xi ħaġa x'inbigħ li ma tiswa xejn, hekk insejħilha jien ukoll."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "F'daqqa waħda għandi din is-sensazzjoni li għamilt xi ħaġa ħażina."
+      },
+      "2": {
+        "explorer": "Bħal xiex?"
+      },
+      "3": {
+        "fez": "M'għandi l-ebda idea. Dik l-agħar parti."
+      }
+    }
+  },
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Dawk il-lievi u l-bibien kollha, għal kantina waħda!"
+      },
+      "2": {
+        "fez": "Mela hemm xi ħaġa tajba hemm isfel. Ħadd ma jagħmel daqshekk xogħol għaż-żibel."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Uff. Dawk il-bibien kienu ħafna iktar pitgħana minn ta' Ipi."
+      },
+      "2": {
+        "fez": "Mela. Is-sinjura kellha l-flus, ovvja."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Uff, fl-aħħar! Dak l-għar verament ma riedniex ġewwa."
+      },
+      "2": {
+        "explorer": "Naħseb li dik kienet l-idea."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Psst… għaliex qed nitkellem bil-mod?"
+      },
+      "2": {
+        "explorer": "M'għandi idea. Qed nagħmel hekk jien ukoll."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Uff. Denbi għadu jirtogħod minn dak l-aħħar bieb."
+      },
+      "2": {
+        "fez": "Re li jaqfel l-affarijiet tiegħu hekk… verament ma jridx jitlifhom."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Tara? Ibqa' taħt l-art biżżejjed, u terġa' titla' 'l fuq."
+      },
+      "2": {
+        "explorer": "Dak Osiris ukoll?"
+      },
+      "3": {
+        "fez": "Le, dik tiegħi."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "fez": "Bibien bħal dawk… darba konna nduru lura u nitilqu."
+      },
+      "2": {
+        "explorer": "Mhux aktar."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Tliet sulari ta' għar, u mbagħad biss il-bieb ta' quddiem."
+      },
+      "2": {
+        "explorer": "Mela jrid ikun jiswa."
+      },
+      "3": {
+        "fez": "Hekk dejjem jgħidu. U mbagħad tkun ġarra."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "L-aħħar biċċa dlam. Qed inħossha."
+      },
+      "2": {
+        "explorer": "Hekk għedt fl-aħħar wieħed ukoll."
+      },
+      "3": {
+        "fez": "U kważi kelli raġun."
+      }
+    }
+  },
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": {
+        "fez": "Ara hawn! Piramida, taħt l-art! Għal merkant!"
+      },
+      "2": {
+        "fez": "Jew kien jaqla' tajjeb ħafna, jew kien jiftiehem tajjeb ħafna."
+      }
+    },
+    "junior_treasure_tomb": {
+      "1": {
+        "fez": "Ara l-ponta kif tleqq fix-xemx! Deheb veru, nimmaġina."
+      },
+      "2": {
+        "explorer": "F'toqba fl-art. Għal min qed tleqq?"
+      },
+      "3": {
+        "fez": "Għaliha. Tagħraf it-tip."
+      }
+    },
+    "expert_treasure_tomb": {
+      "1": {
+        "fez": "Ħm. Verament tista' tbigħ xi ħaġa li diġà hi ta' alla?"
+      },
+      "2": {
+        "explorer": "Staqsi lill-alla."
+      },
+      "3": {
+        "fez": "Nippreferi le."
+      }
+    },
+    "expert_treasure_tomb_b": {
+      "1": {
+        "fez": "Taħseb li dak il-qassis jaf li qed indawru hawn ġew?"
+      },
+      "2": {
+        "explorer": "Ma jżommx l-għadd. Ma jkunx professjonali."
+      }
+    },
+    "master_treasure_tomb": {
+      "1": {
+        "fez": "Ħarsilha, waħedha fix-xemx. Sabiħa, hux?"
+      },
+      "2": {
+        "fez": "Ma nagħmlux tpinġija u nitilqu?"
+      },
+      "3": {
+        "explorer": "Ma tafx tpinġi."
+      },
+      "4": {
+        "fez": "…Le. Mela ġewwa."
+      }
+    },
+    "master_treasure_tomb_b": {
+      "1": {
+        "fez": "Min hemm ġew qed jistenna li jerġa' lura. Hekk hu l-ftehim hawn."
+      },
+      "2": {
+        "explorer": "Kemm ilu jistenna?"
+      },
+      "3": {
+        "fez": "Żmien twil. Imma jiġi max-xogħol. Li tkun mejjet hu l-aktar stennija."
+      }
+    },
+    "wizard_treasure_tomb": {
+      "1": {
+        "explorer": "Wow."
+      },
+      "2": {
+        "fez": "Iva."
+      },
+      "3": {
+        "fez": "Kultant ma jibqa' xejn x'tgħid, hux."
+      }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": {
+        "fez": "Tara dik il-biċċa xemx fuq il-piramida? Tista' tgħid il-ħin biha."
+      },
+      "2": {
+        "explorer": "Mela x'ħin hu?"
+      },
+      "3": {
+        "fez": "…Wara nofsinhar. Bejn wieħed u ieħor. M'iniex arloġġ."
+      }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": {
+        "fez": "Hemm hi. Kull linja fuq dik il-mappa tispiċċa hawn."
+      },
+      "2": {
+        "explorer": "Mela dan it-tmiem."
+      },
+      "3": {
+        "fez": "Tal-mappa, iva. Stramba. Ħsibt li kont se nħossni aħjar."
+      }
+    }
+  },
+  "camp": {
+    "firstHome": {
+      "1": {
+        "fez": "Dan il-kamp tiegħek? Nar u senduq?"
+      },
+      "2": {
+        "explorer": "Il-kamp tagħna."
+      },
+      "3": {
+        "fez": "Tagħna. Tajjeb. Mela jien nieħu l-post ħdejn in-nar."
+      },
+      "4": {
+        "fez": "Wara kollox jien gremxula. Meta jaqbilli."
+      }
+    },
+    "homeHaul": {
+      "1": {
+        "fez": "Inżarmaw! L-aqwa parti tal-vjaġġ kollu."
+      },
+      "2": {
+        "explorer": "Aħjar mill-piramida?"
+      },
+      "3": {
+        "fez": "Il-piramida mhix tagħna. Dan tagħna."
+      }
+    },
+    "homeEmpty": {
+      "1": {
+        "explorer": "B'idejna vojta."
+      },
+      "2": {
+        "fez": "U x'fiha? Mxejna. Dak jgħodd ukoll."
+      },
+      "3": {
+        "explorer": "Lejn xiex?"
+      },
+      "4": {
+        "fez": "Għal riġlejja. Qosra ħafna, taf."
+      }
+    },
+    "rested": {
+      "1": {
+        "fez": "Hekk. Tħossok ftit aħjar?"
+      },
+      "2": {
+        "explorer": "Kienet grif biss."
+      },
+      "3": {
+        "fez": "Lanqas ħarist. U xorta kelli noqgħod bilqiegħda."
+      }
+    },
+    "chapterJunior": {
+      "1": {
+        "fez": "Mela, dik marret tajjeb. Li jmiss!"
+      },
+      "2": {
+        "explorer": "Ma kinitx daqshekk faċli."
+      },
+      "3": {
+        "fez": "Issa iva. Kollox faċli wara."
+      }
+    },
+    "chapterExpert": {
+      "1": {
+        "fez": "Hemm barra għandhom nases. Veri. Jigdmu."
+      },
+      "2": {
+        "fez": "Tweġġa'? Mela nimxu lura. Tfiq id-dar."
+      },
+      "3": {
+        "explorer": "U int?"
+      },
+      "4": {
+        "fez": "Jien nimxi warajk. Hemm aktar sigur."
+      }
+    },
+    "chapterMaster": {
+      "1": {
+        "fez": "Erba' piramidi hemm barra. Tiftakar meta kien hemm waħda biss?"
+      },
+      "2": {
+        "explorer": "Ma ilux daqshekk."
+      },
+      "3": {
+        "fez": "Le. Imma hekk jidher."
+      }
+    },
+    "chapterWizard": {
+      "1": {
+        "fez": "Ħares lejn l-aħħar waħda. B'ponta tad-deheb u kollox!"
+      },
+      "2": {
+        "fez": "Dik se tiswielna. L-aħħar waħda dejjem tiswa."
+      },
+      "3": {
+        "explorer": "Tiswielna xiex?"
+      },
+      "4": {
+        "fez": "…M'għadnix ċert."
+      }
+    },
+    "firstFind": {
+      "1": {
+        "fez": "Ara — qisu dejjem kien hemm!"
+      },
+      "2": {
+        "fez": "Għandi ġibda li nwaħħal tikketta bil-prezz fuqu."
+      },
+      "3": {
+        "explorer": "Le."
+      },
+      "4": {
+        "fez": "Le, le. Ma tbigħx mid-dar. Naf."
+      }
+    },
+    "structureDone": {
+      "1": {
+        "fez": "Lest! Kull biċċa f'postha!"
+      },
+      "2": {
+        "explorer": "Kollox xogħolna."
+      },
+      "3": {
+        "fez": "Mela. Jien l-aktar ippontajt."
+      }
+    }
+  },
+  "animal": {
+    "forSale": {
+      "1": {
+        "fez": "Ara x'hemm fuq il-mejda! Issa nagħmel it-trasport ukoll."
+      },
+      "2": {
+        "explorer": "Qed jomgħod."
+      },
+      "3": {
+        "fez": "Dak inkluż fil-prezz."
+      }
+    },
+    "boughtDonkey": {
+      "1": {
+        "fez": "Mibjugħ! Ħmar wieħed. Ras iebsa, imma jġorr kollox."
+      },
+      "2": {
+        "explorer": "Mela fejn hu?"
+      },
+      "3": {
+        "fez": "Diġà fit-triq lejn id-dar. Jippreferi jimxi mingħajrna."
+      }
+    },
+    "blockedDonkey": {
+      "1": {
+        "fez": "Mhux se nimxu daqshekk 'il bogħod b'dawn l-affarijiet kollha. Għal hekk trid ħmar."
+      },
+      "2": {
+        "fez": "U aqta' min għandu wieħed? Jien. Fuq il-mejda tiegħi fil-kamra ta' Henut."
+      }
+    },
+    "throughDonkey": {
+      "1": {
+        "explorer": "Lest jiġi."
+      },
+      "2": {
+        "fez": "Illum. Staqsih għada."
+      }
+    },
+    "arrivesDonkey": {
+      "1": {
+        "fez": "Hemm hu! Wasal qabilna."
+      },
+      "2": {
+        "explorer": "U sab in-nar ukoll."
+      },
+      "3": {
+        "fez": "Il-post tiegħi. Mela. Hu wasal l-ewwel."
+      }
+    },
+    "boughtCart": {
+      "1": {
+        "fez": "Karrettun! Żewġ roti, u bilkemm jagħmlu ħoss."
+      },
+      "2": {
+        "explorer": "Bilkemm?"
+      },
+      "3": {
+        "fez": "Il-ħoss b'xejn."
+      }
+    },
+    "blockedCart": {
+      "1": {
+        "fez": "Il-ħmar ma jridx jieħu borża oħra. Staqsejtu."
+      },
+      "2": {
+        "fez": "Karrettun, dak li għandna bżonn. Hemm wieħed fuq il-mejda tiegħi, għand il-qassis il-kbir."
+      }
+    },
+    "throughCart": {
+      "1": {
+        "explorer": "Tismgħu?"
+      },
+      "2": {
+        "fez": "Dak il-karrettun. Ikanta ftit."
+      },
+      "3": {
+        "explorer": "It-triq kollha?"
+      }
+    },
+    "arrivesCart": {
+      "1": {
+        "fez": "Karrettun fil-kamp tagħna! Issa nidhru qisna sejrin x'imkien."
+      },
+      "2": {
+        "explorer": "Aħna sejrin x'imkien."
+      },
+      "3": {
+        "fez": "Iva, imma issa kulħadd jista' jara."
+      }
+    },
+    "boughtCamel": {
+      "1": {
+        "fez": "Ġemel! Jimxi jiem sħaħ bla ilma. Jien le, eh."
+      },
+      "2": {
+        "explorer": "Qed iħares lejk."
+      },
+      "3": {
+        "fez": "Minn fuq għal isfel. L-iġmla dejjem iħarsu lejk minn fuq għal isfel."
+      }
+    },
+    "blockedCamel": {
+      "1": {
+        "fez": "Il-Kamra l-Aktar Qaddisa? Bil-mixi qatt ma naslu."
+      },
+      "2": {
+        "fez": "Ix-xorti trid li għandi ġemel. Fuq il-mejda tiegħi, għand il-qassis il-kbir."
+      }
+    },
+    "throughCamel": {
+      "1": {
+        "fez": "Inxtegħel għarkupptejh! Għalija!"
+      },
+      "2": {
+        "explorer": "Biex nitilgħu fuqu."
+      },
+      "3": {
+        "fez": "Ħallini nieħu gost."
+      }
+    },
+    "arrivesCamel": {
+      "1": {
+        "fez": "Hemm hu. Qisu l-kamp tiegħu."
+      },
+      "2": {
+        "explorer": "U l-ħmar?"
+      },
+      "3": {
+        "fez": "Qed jagħmel qisu ma jarahx. Bħali."
+      }
+    },
+    "boughtSecondDonkey": {
+      "1": {
+        "fez": "Ħmar ieħor! Issa l-ewwel wieħed għandu ma' min jitkellem."
+      },
+      "2": {
+        "explorer": "Jitkellem?"
+      },
+      "3": {
+        "fez": "Jinhaq. Qisu qed jitkellem, imma b'leħen għoli."
+      }
+    },
+    "blockedSecondDonkey": {
+      "1": {
+        "fez": "Il-ħmar ma jridx ikompli. Mhux waħdu, qed jgħid."
+      },
+      "2": {
+        "explorer": "Hekk qal?"
+      },
+      "3": {
+        "fez": "Jien nitkellem bil-ħmir. Irid ħabib, u għandi wieħed fuq il-mejda tiegħi fit-teżor tal-fargħun."
+      }
+    },
+    "throughSecondDonkey": {
+      "1": {
+        "fez": "Isma'hom! Kull wieħed aktar qawwi mill-ieħor."
+      },
+      "2": {
+        "explorer": "Min qed jirbaħ?"
+      },
+      "3": {
+        "fez": "Mhux aħna. Aħna rridu nisimgħuhom."
+      }
+    },
+    "arrivesSecondDonkey": {
+      "1": {
+        "fez": "Ħarsilhom. Qishom ilhom jafu lil xulxin is-snin."
+      },
+      "2": {
+        "explorer": "Bħalna."
+      },
+      "3": {
+        "fez": "Aħna ninhqu inqas."
+      }
+    },
+    "boughtSecondCamel": {
+      "1": {
+        "fez": "Ġemel ieħor. Iva. Lanqas jien ma nħobbhom."
+      },
+      "2": {
+        "fez": "Imma dan għallinqas jidher ħabib."
+      },
+      "3": {
+        "explorer": "Qed iħares lejn il-fez tiegħek."
+      }
+    },
+    "blockedSecondCamel": {
+      "1": {
+        "fez": "Is-Sala ta' Osiris. Ġemel wieħed mhux se jwassalna hemm."
+      },
+      "2": {
+        "fez": "Għax-xorti għandi ieħor, fuq il-mejda tiegħi fit-teżor tal-fargħun. L-aħħar wieħed tiegħi nett."
+      },
+      "3": {
+        "explorer": "Dejjem hekk tgħid."
+      }
+    },
+    "throughSecondCamel": {
+      "1": {
+        "fez": "Qed jiekol il-fez tiegħi!"
+      },
+      "2": {
+        "explorer": "Ġemel ħabib."
+      },
+      "3": {
+        "fez": "Ħabib iżżejjed."
+      }
+    },
+    "arrivesSecondCamel": {
+      "1": {
+        "fez": "Żewġ iġmla. Issa t-tnejn iħarsu lejja minn fuq għal isfel."
+      },
+      "2": {
+        "explorer": "Mela mur oqgħod mal-ħmir."
+      },
+      "3": {
+        "fez": "Diġà qiegħed."
+      }
+    },
+    "boughtSturdyCart": {
+      "1": {
+        "fez": "Karrettun aktar b'saħħtu. Dan ma jkantax fit-triq."
+      },
+      "2": {
+        "explorer": "Hemm fjuri miżbugħa fuqu."
+      },
+      "3": {
+        "fez": "Għas-saħħa."
+      }
+    },
+    "blockedSturdyCart": {
+      "1": {
+        "fez": "Il-karrettun il-qadim mhux se jasal sħiħ. Għal hemm trid xi ħaġa aktar b'saħħitha."
+      },
+      "2": {
+        "fez": "Hemm wieħed fuq il-mejda tiegħi fil-Kamra tal-Allat. Mhux għaż-żebgħa, eh."
+      }
+    },
+    "throughSturdyCart": {
+      "1": {
+        "explorer": "Ebda ħoss."
+      },
+      "2": {
+        "fez": "Tara? Saħħa."
+      },
+      "3": {
+        "explorer": "U l-fjuri?"
+      },
+      "4": {
+        "fez": "Jgħinu ftit ukoll."
+      }
+    },
+    "arrivesSturdyCart": {
+      "1": {
+        "fez": "Ara kif ileqq!"
+      },
+      "2": {
+        "explorer": "Isbaħ milli għandu bżonn."
+      },
+      "3": {
+        "fez": "Iva. Lanqas bigħtu għas-saħħa ma bigħtu."
+      }
+    },
+    "boughtCaravanBanner": {
+      "1": {
+        "fez": "Bandiera. Ħa nkun onest: ma tiftaħ xejn."
+      },
+      "2": {
+        "explorer": "Mela x'tagħmel?"
+      },
+      "3": {
+        "fez": "Tperper. B'mod sabiħ ħafna."
+      }
+    },
+    "arrivesCaravanBanner": {
+      "1": {
+        "fez": "Ara kif tperper! Fuq il-kamp tagħna stess!"
+      },
+      "2": {
+        "explorer": "Xorta ma tiftaħ xejn."
+      },
+      "3": {
+        "fez": "Le. M'għandhiex għalfejn."
+      }
+    }
+  },
+  "bond": {
+    "starter": {
+      "1": {
+        "fez": "Dik kienet malajr."
+      },
+      "2": {
+        "explorer": "Kien bieb."
+      },
+      "3": {
+        "fez": "Jien kont nieħu ġimgħa."
+      }
+    },
+    "starterTomb": {
+      "1": {
+        "fez": "Biex inkunu ċari. Jien hawn biex nerġa' nbigħ. Qed ngħidu issa, waqt li għadu veru."
+      },
+      "2": {
+        "explorer": "Fhimt."
+      }
+    },
+    "junior": {
+      "1": {
+        "fez": "Bqajt sieket ftit hemm."
+      },
+      "2": {
+        "explorer": "Kont qed ngħodd."
+      },
+      "3": {
+        "fez": "Naf. Rajt nies jaqtgħu. Dak ma kienx qtigħ."
+      }
+    },
+    "expert": {
+      "1": {
+        "fez": "Dik kienet qrib."
+      },
+      "2": {
+        "explorer": "Kollox sew."
+      },
+      "3": {
+        "fez": "Kienet qrib. Għandi dritt ngħid hekk."
+      }
+    },
+    "master": {
+      "1": {
+        "fez": "Nistgħu nieqfu."
+      },
+      "2": {
+        "explorer": "Nistgħu."
+      },
+      "3": {
+        "fez": "Qed ngħidu biex ikun intqal. Mhux biex nagħmluh."
+      }
+    },
+    "wizard": {
+      "1": {
+        "explorer": "Din kemm tiswa?"
+      },
+      "2": {
+        "fez": "…"
+      },
+      "3": {
+        "fez": "Lil din mhux se npoġġilha prezz."
+      },
+      "4": {
+        "explorer": "Fhimt."
+      }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": {
+        "fez": "Ara! Dak kien ħajt sekonda ilu."
+      },
+      "2": {
+        "explorer": "Kien hemm passaġġ warajh."
+      },
+      "3": {
+        "fez": "Dawk is-snin kollha n-nies għaddew minn ħdejh. Dawk is-snin kollha!"
+      }
+    }
+  },
+  "reading": {
+    "junior": {
+      "1": {
+        "explorer": "Hawn hemm linja li issa naf naqra."
+      },
+      "2": {
+        "explorer": "Tajt il-ħobż lil min kien bil-ġuħ."
+      },
+      "3": {
+        "fez": "Ħobż. F'qabar."
+      },
+      "4": {
+        "explorer": "Kienet fl-aħħar wieħed ukoll. Ma kontx naf li kienu kliem."
+      }
+    },
+    "expert": {
+      "1": {
+        "explorer": "It-tieni linja. L-ilma lil min kien bil-għatx."
+      },
+      "2": {
+        "fez": "Ħobż, u issa ilma. Xi ħadd ried ħafna jiftakruh bħala ġeneruż."
+      },
+      "3": {
+        "explorer": "Kulħadd għandu hekk. Kull ħajt, kull qabar, l-istess żewġ linji."
+      },
+      "4": {
+        "fez": "Mela jew kienu kollha ġenerużi, jew hija l-ħaġa li suppost tgħid."
+      },
+      "5": {
+        "explorer": "Jew hu dak li bih kienu jiżnuhom."
+      }
+    },
+    "master": {
+      "1": {
+        "explorer": "Ħwejjeġ lil min kien għeri. It-tielet linja."
+      },
+      "2": {
+        "fez": "Ħobż, ilma, ħwejjeġ. Hija lista ta' affarijiet li ngħataw."
+      },
+      "3": {
+        "explorer": "Fil-qabar ta' raġel li ħa kollox miegħu."
+      },
+      "4": {
+        "fez": "…Iva. Kont innutajt."
+      }
+    },
+    "sphinx": {
+      "1": {
+        "fez": "Lura fejn bdejna. Ma ċċaqlqitx."
+      },
+      "2": {
+        "explorer": "Il-kitba għadha hemm."
+      },
+      "3": {
+        "fez": "Taf taqraha?"
+      },
+      "4": {
+        "explorer": "Isem."
+      },
+      "5": {
+        "fez": "Ta' min?"
+      },
+      "6": {
+        "explorer": "Tiegħek."
+      },
+      "7": {
+        "fez": "…"
+      },
+      "8": {
+        "fez": "Żgur?"
+      },
+      "9": {
+        "explorer": "Miktub."
+      },
+      "10": {
+        "fez": "Ħm."
+      },
+      "11": {
+        "fez": "Hori."
+      },
+      "12": {
+        "fez": "Kien hemm Hori f'kull raħal tal-Eġittu."
+      },
+      "13": {
+        "fez": "Mela. Dak jispjega l-fez."
+      }
+    }
+  },
+  "altar": {
+    "refused": {
+      "1": {
+        "priest": "Le."
+      },
+      "2": {
+        "explorer": "Għandu l-marka tiegħu fuqu."
+      },
+      "3": {
+        "priest": "Għandu marka. Marka tajba ħafna. Naqqixha xi ħadd b'għodda eċċellenti u bla ebda xogħol hawn, u mhux ilu wisq."
+      },
+      "4": {
+        "priest": "Ilni nistenna tlett elef sena. Mhux se jqarrqu bija fl-aħħar ġimgħa."
+      }
+    }
+  },
+  "meeting": {
+    "starter_1": {
+      "1": {
+        "voice": "Ħej! Mhux HEMM! Ara fejn qed timxi!"
+      },
+      "2": {
+        "explorer": "Skużani! Ma nara xejn! Fejn int?"
+      },
+      "3": {
+        "fez": "Hawn isfel! Qed toqgħod fuq il-merkanzija tiegħi!"
+      },
+      "4": {
+        "explorer": "Gremxula?! Bil-fez?"
+      },
+      "5": {
+        "fez": "Merkant. U x'għandu l-fez tiegħi?"
+      },
+      "6": {
+        "fez": "Int ukoll ġejt għall-piramida, żgur. Xtrajt mappa? Ħallast wisq?"
+      },
+      "7": {
+        "explorer": "WISQ wisq."
+      },
+      "8": {
+        "fez": "Jien ukoll. Pff."
+      },
+      "9": {
+        "explorer": "Il-kitba fuq l-Isfinġi… taf taqraha?"
+      },
+      "10": {
+        "fez": "Le. Ħadd ma jaf aktar. Dik il-bażi kienet blu u deheb darba, taf."
+      },
+      "11": {
+        "explorer": "Kif taf int?"
+      },
+      "12": {
+        "fez": "…Smajt. Mela, x'qed tfittex hawn?"
+      },
+      "13": {
+        "explorer": "Xi ħaġa sabiħa."
+      },
+      "14": {
+        "fez": "Is-sabiħ jinbiegħ! Taf x'inhu? Ġej miegħek!"
+      },
+      "15": {
+        "explorer": "Xiex? Miegħi?"
+      },
+      "16": {
+        "fez": "Tnejn jaraw aktar minn wieħed. Ejja, dik il-piramida qed tistenna!"
+      }
+    }
+  },
+  "end": {
+    "1": {
+      "fez": "Kienet sabiħa?"
+    },
+    "2": {
+      "explorer": "Tgħaddi."
+    }
+  },
+  "revisit": {
+    "starter": {
+      "north1": {
+        "1": {
+          "ipi": "Għadek hawn? It-tramuntana! Henut! Ħdax-il deben!"
+        }
+      },
+      "north2": {
+        "1": {
+          "ipi": "Ħdax-il deben lapis. Henut. It-tramuntana. X'qed tistenna?"
+        }
+      },
+      "paid1": {
+        "1": {
+          "ipi": "Mela? Ħallset? …Le. Ovvja le."
+        }
+      },
+      "paid2": {
+        "1": {
+          "ipi": "Ħġieġ? ĦĠIEĠ? Lapis jgħid. Hawn eżatt. Lapis!"
+        }
+      },
+      "later1": {
+        "1": {
+          "ipi": "Int għal darb'oħra. It-tielet xkaffa, dik bil-qasma — għadha tiegħi. Idejk 'il bogħod."
+        }
+      },
+      "later2": {
+        "1": {
+          "ipi": "Erbgħin sena kotba, u l-ebda wieħed ma jibbilanċja. Lanqas wieħed!"
+        }
+      }
+    },
+    "junior": {
+      "wall1": {
+        "1": {
+          "henut": "Il-ħajt. It-tielet sinjal. Għadu mhux ismi."
+        }
+      },
+      "wall2": {
+        "1": {
+          "henut": "Għadek hawn, u dik il-wiżża għadha fuq il-ħajt tiegħi. Sewwiha."
+        }
+      },
+      "priest1": {
+        "1": {
+          "henut": "Għadu ismi. Iċċekkjajt. Issa — Karnak, il-qassis. Itlaq."
+        }
+      },
+      "priest2": {
+        "1": {
+          "henut": "Karnak! Ilu biżżejjed jistenna. Mur u titħabbar."
+        }
+      },
+      "met1": {
+        "1": {
+          "henut": "Mela? Insopportabbli, hux? Għedtlek jien."
+        }
+      },
+      "later1": {
+        "1": {
+          "henut": "Ħġieġ, għadu. Għadu sabiħ. Għadu magħżul minni."
+        }
+      }
+    },
+    "expert": {
+      "seal1": {
+        "1": {
+          "priest": "Is-siġill. Jinġieb hawn, jitqiegħed, jingħad kliem fuqu. Jien nistenna."
+        }
+      },
+      "seal2": {
+        "1": {
+          "priest": "Aħ. Int għal darb'oħra. U għad bla siġill."
+        }
+      },
+      "king1": {
+        "1": {
+          "priest": "Rajt lir-re. Tajjeb. Il-ħaġa nnifisha, eh — mhux xbieha."
+        }
+      },
+      "later1": {
+        "1": {
+          "priest": "Int għal darb'oħra. M'hemm xejn aktar x'tagħmel hawn. Kwiet ħafna."
+        }
+      }
+    },
+    "master": {
+      "priest1": {
+        "1": {
+          "pharaoh": "Għadek hawn? Għand il-qassis b'dik il-kopja! Irrid nisma' kif tmur."
+        }
+      },
+      "priest2": {
+        "1": {
+          "pharaoh": "Tista' toqrob. Għal darb'oħra. Il-qassis rahielha?"
+        }
+      },
+      "rite1": {
+        "1": {
+          "pharaoh": "Mela fl-aħħar għamel ir-rit tiegħu. Tajjeb. Issa se jkun insopportabbli fuqu."
+        }
+      },
+      "later1": {
+        "1": {
+          "pharaoh": "Għadha l-aqwa ġimgħa f'disa' mitt sena. U għadha għaddejja!"
+        }
+      }
+    },
+    "wizard": {
+      "later1": {
+        "1": {
+          "priest": "…Iva. Għadni niftakar kif. Tajjeb."
+        }
+      },
+      "later2": {
+        "1": {
+          "priest": "Imqiegħed, intqal kliem fuqu. Lest. Sensazzjoni stramba."
+        }
+      }
+    }
+  }
+}

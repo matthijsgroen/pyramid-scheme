@@ -65,6 +65,19 @@ describe("SettingsModal language selection", () => {
     rerender(<SettingsModal isOpen onClose={() => {}} startGame={() => {}} />)
     expect(selectIn(container).value).toBe("nl")
   })
+
+  it("lists the browser's languages first, then a divider, then the rest", () => {
+    vi.spyOn(navigator, "languages", "get").mockReturnValue(["de-DE", "en-US"])
+    const { container } = render(<SettingsModal isOpen onClose={() => {}} startGame={() => {}} />)
+    const options = [...selectIn(container).options]
+    expect(options.slice(0, 3).map(o => [o.value || o.textContent, o.disabled])).toEqual([
+      ["de", false],
+      ["en", false],
+      ["──────────", true],
+    ])
+    expect(options.filter(o => o.value === "de")).toHaveLength(1)
+    vi.restoreAllMocks()
+  })
 })
 
 describe("the developer block", () => {

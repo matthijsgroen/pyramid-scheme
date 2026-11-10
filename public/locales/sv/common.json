@@ -1,0 +1,1704 @@
+{
+  "language": "Svenska",
+  "saveUnreadable": {
+    "title": "Ditt spel kan inte laddas",
+    "body": "Webbläsaren lämnar inte ut ditt sparade spel just nu. Det är inte borta: ladda om sidan för att försöka igen.",
+    "banner": "Spelet sparas inte. Tryck för att ladda om.",
+    "reload": "Ladda om",
+    "continue": "Spela vidare utan att spara",
+    "reset": "Börja om (radera sparat spel)",
+    "confirmReset": "Det här raderar hela ditt sparade spel, och det går inte att ångra. Vill du börja om?",
+    "confirmResetYes": "Ja, radera mitt spel",
+    "confirmResetNo": "Nej, gå tillbaka"
+  },
+  "difficulty": {
+    "starter": "Nybörjare",
+    "junior": "Junior",
+    "expert": "Expert",
+    "master": "Mästare",
+    "wizard": "Trollkarl"
+  },
+  "journeyLength": {
+    "short": "Kort",
+    "medium": "Mellan",
+    "long": "Lång"
+  },
+  "time": {
+    "morning": "Morgon",
+    "afternoon": "Eftermiddag",
+    "evening": "Kväll",
+    "night": "Natt"
+  },
+  "tomb": {},
+  "ui": {
+    "level": "Nivå",
+    "symbols": "tecken",
+    "journey": "Resa",
+    "tableau": "Tablå",
+    "difficulty": "Svårighet",
+    "length": "Längd",
+    "time": "Tid",
+    "requiredPrestige": "Nivå som krävs",
+    "rewards": "Belöningar",
+    "coins": "Mynt",
+    "pieces": "Bitar",
+    "description": "Beskrivning",
+    "expedition": "Expedition",
+    "expeditionCompleted": "Expeditionen är klar!",
+    "goBackToBase": "Tillbaka till lägret",
+    "backArrow": "←",
+    "back": "← Tillbaka",
+    "floor": "Våning {{number}}",
+    "enterSite": "Gå in",
+    "prompt": {
+      "here": "Undersök",
+      "stairs": "Ta trappan",
+      "exit": "Lämna stället",
+      "zipline": "Åk linbanan – du kan inte komma tillbaka",
+      "oneWay": "Gå över – du kan inte komma tillbaka",
+      "liftStone": "Lyft stenen",
+      "setStone": "Lägg stenen på plattan",
+      "postStone": "Skjut in stenen",
+      "takeStone": "Ta stenen",
+      "squeeze": "Kläm dig igenom",
+      "replay": "Spela igen"
+    },
+    "blocked": {
+      "carrying": "Du kommer inte förbi med en sten"
+    },
+    "backToMap": "Tillbaka till kartan",
+    "continueExploration": "Fortsätt utforska pyramiderna.",
+    "startExpedition": "Starta expedition",
+    "webBuriedPercent": "Fortfarande {{percent}} % begravd",
+    "interruptExpedition": "Avbryt expeditionen",
+    "confirmInterruptExpedition": "Är du säker på att du vill avbryta expeditionen? Det du har klarat i expeditionen sparas, men nivån du är på börjar om!",
+    "cancel": "Avbryt",
+    "settings": "Inställningar",
+    "language": "Språk",
+    "close": "Stäng",
+    "done": "Klar",
+    "clearGameData": "Radera speldata",
+    "confirmClearGameData": "Det här raderar allt du har klarat, alla saker och alla utforskade pyramider för alltid. Det går inte att ångra.",
+    "disableTutorials": "Stäng av hjälptexter",
+    "treasureTomb": "Skattens plats",
+    "requiresMapPieces": "Kräver kartbitar",
+    "mapPieces": "Kartbitar",
+    "completeExpeditionsToUnlock": "Klara expeditioner för att låsa upp",
+    "availableSymbols": "Tecken du har:",
+    "fragmentsNeeded": "{{found}}/{{required}} behövs",
+    "howToPlay": "Så spelar du",
+    "puzzleComplete": "Svaret är:",
+    "puzzleCompleted": "Pusslet är löst",
+    "trapBlocked": "Du har inte tillräckligt med hälsa för den här fällan",
+    "spiritsRejectCode": "Andarna godtar inte den här koden",
+    "sacredSealBroken": "Det heliga sigillet är brutet",
+    "newExpeditionUnlocked": "En ny expedition är upplåst",
+    "newTombUnlocked": "En ny grav är upplåst",
+    "tierComingSoonTitle": "{{tier}}-expeditioner är på väg",
+    "tierComingSoon": "Du har nyckeln, men {{tier}}-pyramiderna byggs fortfarande. De kommer i en senare uppdatering – fram till dess öppnar din nyckel fler delar av pyramiderna du redan känner till.",
+    "answerNow": "Svaret är: ",
+    "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "resetPuzzle": "Börja om",
+    "hint": "Ledtråd",
+    "undo": "Ångra",
+    "erase": "Sudda",
+    "notes": "Anteckningar",
+    "solvedUnaided": "Löst utan en enda ledtråd",
+    "solvedWithHints_one": "Löst med {{count}} ledtråd",
+    "solvedWithHints_other": "Löst med {{count}} ledtrådar",
+    "tapToContinue": "Tryck för att fortsätta",
+    "goal": "Mål"
+  },
+  "trap": {
+    "warning": "⚠ Gång med fälla",
+    "canAttempt": "Du kan försöka ta dig förbi.",
+    "tooWeak": "Farligt svag – misslyckas du har du ingenting kvar.",
+    "attempt": "Försök med fällan",
+    "turnAround": "Vänd om",
+    "rested": "Utvilad vid elden – pigg igen"
+  },
+  "gate": {
+    "title": "🔒 Låst port",
+    "locked": "Du har inte rätt nyckel än.",
+    "markedWith": "Ett tecken är inhugget i dörren:",
+    "unlocked": "Du har nyckeln.",
+    "pass": "Gå igenom",
+    "turnAround": "Vänd om",
+    "wardDescription": {
+      "starter": "En köpmans sigill spärrar gången – bara köpmannens nyckel öppnar den.",
+      "junior": "En adelsmans vapen låser vägen – bara hans nyckel öppnar den.",
+      "expert": "Ett tempelskydd från en överstepräst vaktar dörren – bara den heliga nyckeln öppnar den.",
+      "master": "En faraos kungliga sigill spärrar gången – bara härskarens nyckel bryter det.",
+      "wizard": "Ett skydd från gudarna håller porten stängd – bara den gudomliga nyckeln släpper förbi dig."
+    },
+    "needsKey": "Dörren är märkt för en nyckel:",
+    "lockedColor": "Du har inte hittat den nyckeln på den här våningen än."
+  },
+  "chest": {
+    "tapToOpen": "Tryck för att öppna",
+    "money_one": "{{count}} mynt",
+    "money_other": "{{count}} mynt",
+    "mapPiece": "Kartbit",
+    "mapPieceDescription": "En skör bit av en karta till en plats som glömts bort för länge sedan. Synd att den är så långt ifrån hel...",
+    "mapPieceProgress": "{{found}} av {{required}} kartbitar hittade",
+    "mapPieceComplete": "Kartan är hel – den leder till {{name}}.",
+    "hieroglyphFragment": "Hieroglyfbit",
+    "fragmentProgress": "{{found}} av {{required}} bitar hittade",
+    "tombKey": "Gravnyckel",
+    "sandLever": "Sandspak",
+    "sandLeverDescription": "Du drar i den och den stannar nere. Någonstans långt borta rinner sand undan.",
+    "webKey": "Förseglad nyckel",
+    "webKeyDescription": "Huvudet har ett märke som du har sett på en förseglad dörr någon annanstans.",
+    "hieroglyphs": "Uråldriga hieroglyfer",
+    "hieroglyphsDescription": "Heliga tecken inhuggna i väggarna i den här kammaren. Deras betydelse gör att du förstår den gamla världen allt bättre.",
+    "mosaicPiece": "Mosaikbit",
+    "mosaicPieceDescription": "En glänsande glasbit, en del av en stor mosaik. Lägg den bredvid de andra, så kommer den gömda bilden sakta fram.",
+    "waterskin": "Vattensäck",
+    "waterskinDescription": "Kallt vatten. Du dricker det direkt och känner hur såren läker."
+  },
+  "loot": {
+    "youFound": "Du hittade",
+    "expeditionReward": "Extra belöning för att du klarade expeditionen",
+    "clickToContinue": "Tryck var som helst för att fortsätta"
+  },
+  "money": {
+    "label": "Mynt"
+  },
+  "shop": {
+    "title": "Fez stånd",
+    "invitation": "Titta på ståndet",
+    "buy": "Köp",
+    "sell": "Sälj",
+    "soldOut": "Slutsåld",
+    "dismiss": "Gå",
+    "rareItems": "Sällsynta fynd",
+    "sellSection": "Småsaker att sälja",
+    "haul": {
+      "coins_one": "+{{count}} mynt",
+      "coins_other": "+{{count}} mynt",
+      "note": "Lösa mynt på vägen"
+    }
+  },
+  "purchases": {
+    "donkey": {
+      "name": "Åsna",
+      "need": "Du behöver en åsna",
+      "opens": "Bär dina grejer. Med den kan du ge dig ut på Expert-resorna."
+    },
+    "cart": {
+      "name": "Kärra",
+      "need": "Du behöver en kärra",
+      "opens": "Hela lägret får plats på den. Med den kan du ge dig ut på Mästare-resorna."
+    },
+    "camel": {
+      "name": "Kamel",
+      "need": "Du behöver en kamel",
+      "opens": "Går i flera dagar utan vatten. Den tar dig till Det allra heligaste."
+    },
+    "secondDonkey": {
+      "name": "Andra åsnan",
+      "need": "Du behöver en andra åsna",
+      "opens": "Ännu mer bärkraft. Med den kan du ge dig ut på Trollkarl-resorna."
+    },
+    "secondCamel": {
+      "name": "Andra kamelen",
+      "need": "Du behöver en andra kamel",
+      "opens": "Två kameler bär tillräckligt med vatten för Osiris sal."
+    },
+    "sturdyCart": {
+      "name": "Stadigare kärra",
+      "need": "Du behöver en stadigare kärra",
+      "opens": "Går inte sönder, inte ens på vägen till De kosmiska krafternas rike."
+    },
+    "caravanBanner": {
+      "name": "Karavanbaner",
+      "opens": "Öppnar ingenting. Bara för skojs skull."
+    },
+    "hint": "Fez säljer en i {{place}}",
+    "devGrant": "Köp alla djur"
+  },
+  "level": {
+    "completed": "Nivån är klar!"
+  },
+  "mosaic": {
+    "place_one": "Lägg {{count}} bit",
+    "place_other": "Lägg {{count}} bitar",
+    "placing": "Lägger…",
+    "panel": {
+      "starter": "Väktaren vid dörren",
+      "junior": "Den första lektionen",
+      "expert": "Släpp in solen",
+      "master": "Den gröna kungen",
+      "wizard": "Fjädern och hjärtat"
+    },
+    "entrance": {
+      "title": "Mosaik",
+      "label": "Mosaik {{found}}/{{total}}"
+    },
+    "haul": {
+      "pieces_one": "{{count}} mosaikbit",
+      "pieces_other": "{{count}} mosaikbitar",
+      "note": "Till det färgade glasfönstret"
+    }
+  },
+  "collection": {
+    "tabs": {
+      "treasures": "Skatter",
+      "hieroglyphs": "Hieroglyfer",
+      "stories": "Berättelser",
+      "junk": "Småsaker"
+    },
+    "tabsLabel": "Det du har samlat",
+    "tabNew_one": "{{label}} · {{count}} ny",
+    "tabNew_other": "{{label}} · {{count}} nya",
+    "empty": "Din kista är fortfarande tom",
+    "newLabel": "NY",
+    "clickForDetails": "Tryck på en ruta för att se mer",
+    "categories": {
+      "deities": "🏺 Gudar",
+      "professions": "⚱️ Yrken",
+      "animals": "🐾 Djur",
+      "artifacts": "💎 Föremål",
+      "treasures": "💰 Skatter",
+      "junk": "🔷 Småsaker",
+      "signs": "✍️ Tecken"
+    },
+    "treasureCategories": {
+      "merchantCache": "💰 Köpmannens gömma",
+      "nobleVault": "👑 Adelns valv",
+      "templeSecrets": "🏛️ Templets hemligheter",
+      "ancientRelics": "🏺 Uråldriga reliker",
+      "mythicalArtifacts": "✨ Sagolika föremål"
+    }
+  },
+  "detector": {
+    "compassTitle": "Kompass",
+    "corridorTitle": "Gångsökare",
+    "pickTarget": "Välj en hieroglyf vid kartbordet i lägret",
+    "allCollected": "Ingen bit inom räckhåll än i en pyramid du har utforskat",
+    "more": "+{{count}} till",
+    "corridorHere": "Här finns en gömd gång",
+    "revealCorridor": "Öppna den",
+    "corridorNearby": "En gömd gång finns i närheten",
+    "corridorOnFloor": "En gömd gång väntar på den här våningen",
+    "lookingFor": "Letar efter {{symbol}}",
+    "access": {
+      "open": "Inget känt som stoppar dig här",
+      "unknown": "Går kanske inte att nå än – den ligger i en grav eller är till salu"
+    },
+    "corridorNoneNearby": "Ingen gömd gång i närheten",
+    "corridorNoneOnFloor": "Ingen gömd gång på den här våningen",
+    "corridorOtherFloor": "En gömd gång väntar på en annan våning",
+    "corridorNoneInPyramid": "Ingen gömd gång på en annan våning",
+    "title": "Detektor",
+    "band": {
+      "none": "Inget hittat",
+      "pyramid": "Något i den här pyramiden",
+      "floor": "Något på den här våningen",
+      "near": "Något i närheten",
+      "here": "Precis här! Öppna detektorn"
+    },
+    "camp": {
+      "parts": "{{count}} av {{total}} delar",
+      "compassReach": {
+        "1": "ser pyramiden",
+        "2": "ser våningen",
+        "3": "pekar ut platsen"
+      },
+      "pickHeading": "Vad letar kompassen efter?",
+      "onlyIncomplete": "Bara tecken som du har en bit av, tills de är hela.",
+      "whereHeading": "Var bitarna av {{symbol}} ligger",
+      "pickFirst": "Välj ett tecken för att se var dess bitar ligger.",
+      "follow": "Följ det här tecknet",
+      "following": "Kompassen följer det här tecknet",
+      "nothingToFind": "Du har ingen bit än av ett tecken som inte är helt.",
+      "noneInReach": "Ingen bit inom räckhåll än i en pyramid du har utforskat.",
+      "corridorReach": {
+        "1": "hör en gång i närheten",
+        "2": "hör hela våningen",
+        "3": "hör de andra våningarna också",
+        "4": "hör andra resor"
+      },
+      "corridorInPyramid": "Inne i en pyramid lyssnar den efter stängda gångar.",
+      "corridorFarNext": "Med alla fyra delarna hör den andra resor från lägret.",
+      "corridorWhere": "Där en gång fortfarande är stängd",
+      "corridorNone": "Ingen stängd gång på en resa du har varit på.",
+      "pyramid": "Pyramid {{n}}",
+      "corridorCount_one": "{{count}} gång",
+      "corridorCount_other": "{{count}} gångar"
+    }
+  },
+  "keys": {
+    "blue": "Blå nyckel",
+    "red": "Röd nyckel",
+    "green": "Grön nyckel",
+    "yellow": "Gul nyckel",
+    "purple": "Lila nyckel",
+    "bundle": "En nyckelknippa",
+    "foundDescription": "Den öppnar dörrarna med den här färgen, på den här våningen.",
+    "heldTitle": "{{key}} – har du",
+    "neededTitle": "{{key}} – behövs fortfarande"
+  },
+  "balance": {
+    "rules": {
+      "tap": "Tryck på ett tecken här nedanför, sen på en siffra. Tryck på samma siffra igen för att ta bort den.",
+      "same": "Ett tecken väger lika mycket på varje våg.",
+      "cancel": "Tar du bort samma sak från båda vågskålarna, så väger vågen fortfarande jämnt. Tryck på en markerad bit för att göra det – det som är kvar sparas som en ny rad.",
+      "swap": "Tryck på ett tecken som inte har något likadant mittemot, och sen på en rad där det tecknet står ensamt, för att byta det mot vad den raden är värd."
+    },
+    "hint": {
+      "mistake": "En av vikterna du har gett får en våg att tippa. Ta bort den och titta igen.",
+      "alone": "På den upplysta raden är {{glyph}} den enda biten som inte har någon siffra. Räkna ut vad den väger.",
+      "equalShares": "Den upplysta raden har bara {{glyph}} mot en siffra. Dela upp siffran lika mellan dem.",
+      "difference": "De två upplysta raderna är likadana, förutom {{glyph}}. Jämför dem.",
+      "cancelGlyph": "Båda vågskålarna på den upplysta raden har {{glyph}}. Tryck på en för att ta bort den från båda sidorna – raden väger fortfarande jämnt.",
+      "cancelStones": "Båda vågskålarna på den upplysta raden har vanliga siffror. Tryck på en för att ta bort lika mycket från båda sidorna.",
+      "swap": "En upplyst rad visar vad en enda {{glyph}} är värd. Tryck på {{glyph}} i den andra upplysta raden, och sen på den raden."
+    },
+    "swap": {
+      "pick": "Tryck på en upplyst rad för att byta {{glyph}} mot det som raden säger att den är värd.",
+      "none": "Inget här visar vad en ensam {{glyph}} är värd, och inget mittemot den är likadant."
+    },
+    "goal": {
+      "default": "Varje tecken har en vikt, och varje våg väger jämnt.",
+      "weighing": "Varje tecken hittar sin vikt, och varje våg står still i jämvikt."
+    },
+    "name": {
+      "default": "Balansvåg",
+      "weighing": "Hjärtats vägning"
+    }
+  },
+  "sumplete": {
+    "rules": {
+      "tap": "Tryck en gång för att stryka en siffra, en gång till för att markera att den stannar, och en gång till för att rensa.",
+      "totals": "Den lilla siffran under varje mål visar vad den raden blir just nu."
+    },
+    "hint": {
+      "mistake": "En av markeringarna här kan inte stämma. Ångra den och titta igen.",
+      "tooBig": {
+        "row": "Den här raden behöver fortfarande {{deficit}}. {{value}} är större än så, så den kan inte stanna.",
+        "col": "Den här kolumnen behöver fortfarande {{deficit}}. {{value}} är större än så, så den kan inte stanna."
+      },
+      "allStrike": {
+        "row": "Siffrorna som stannar i den här raden blir redan målet, så allt annat måste bort.",
+        "col": "Siffrorna som stannar i den här kolumnen blir redan målet, så allt annat måste bort."
+      },
+      "allKeep": {
+        "row": "Den här raden blir redan målet – markera att siffrorna stannar, så kan du räkna ut kolumnerna som går genom dem.",
+        "col": "Den här kolumnen blir redan målet – markera att siffrorna stannar, så kan du räkna ut raderna som går genom dem."
+      },
+      "parityKeep": {
+        "row": "Den här raden behöver fortfarande {{deficit}}, ett udda tal. {{value}} är det enda udda talet som är kvar, så det måste stanna.",
+        "col": "Den här kolumnen behöver fortfarande {{deficit}}, ett udda tal. {{value}} är det enda udda talet som är kvar, så det måste stanna."
+      },
+      "parityStrike": {
+        "row": "Den här raden behöver fortfarande {{deficit}}, ett jämnt tal. {{value}} är det enda udda talet som är kvar, så det måste bort.",
+        "col": "Den här kolumnen behöver fortfarande {{deficit}}, ett jämnt tal. {{value}} är det enda udda talet som är kvar, så det måste bort."
+      },
+      "onlyCombination": {
+        "row": "Bara en grupp siffror i den här raden blir {{deficit}} tillsammans.",
+        "col": "Bara en grupp siffror i den här kolumnen blir {{deficit}} tillsammans."
+      },
+      "inEveryCombinationKeep": {
+        "row": "Utan {{value}} kan inga av de andra siffrorna i den här raden bli {{deficit}} – så den måste stanna.",
+        "col": "Utan {{value}} kan inga av de andra siffrorna i den här kolumnen bli {{deficit}} – så den måste stanna."
+      },
+      "inEveryCombinationStrike": {
+        "row": "Behåller du {{value}}, så behöver raden fortfarande {{remaining}}, och det kan inga av de andra siffrorna här bli – så den måste bort.",
+        "col": "Behåller du {{value}}, så behöver kolumnen fortfarande {{remaining}}, och det kan inga av de andra siffrorna här bli – så den måste bort."
+      },
+      "tooBig.row": "Den här raden behöver fortfarande {{deficit}}, och {{value}} är större än så.",
+      "tooBig.col": "Den här kolumnen behöver fortfarande {{deficit}}, och {{value}} är större än så.",
+      "allStrike.row": "Siffrorna som stannar i den här raden blir redan målet.",
+      "allStrike.col": "Siffrorna som stannar i den här kolumnen blir redan målet.",
+      "allKeep.row": "Den här raden blir redan målet, så nu kan du räkna ut kolumnerna som går genom den.",
+      "allKeep.col": "Den här kolumnen blir redan målet, så nu kan du räkna ut raderna som går genom den.",
+      "parityKeep.row": "Den här raden behöver fortfarande {{deficit}}, ett udda tal, och {{value}} är det enda udda talet som är kvar.",
+      "parityKeep.col": "Den här kolumnen behöver fortfarande {{deficit}}, ett udda tal, och {{value}} är det enda udda talet som är kvar.",
+      "parityStrike.row": "Den här raden behöver fortfarande {{deficit}}, ett jämnt tal, och {{value}} är det enda udda talet som är kvar.",
+      "parityStrike.col": "Den här kolumnen behöver fortfarande {{deficit}}, ett jämnt tal, och {{value}} är det enda udda talet som är kvar.",
+      "onlyCombination.row": "Bara en grupp siffror i den här raden blir {{deficit}} tillsammans.",
+      "onlyCombination.col": "Bara en grupp siffror i den här kolumnen blir {{deficit}} tillsammans.",
+      "inEveryCombinationKeep.row": "Utan {{value}} kan inga av de andra siffrorna i den här raden bli {{deficit}}.",
+      "inEveryCombinationKeep.col": "Utan {{value}} kan inga av de andra siffrorna i den här kolumnen bli {{deficit}}.",
+      "inEveryCombinationStrike.row": "Behåller du {{value}}, så behöver raden fortfarande {{remaining}}, och det kan inga av de andra siffrorna här bli.",
+      "inEveryCombinationStrike.col": "Behåller du {{value}}, så behöver kolumnen fortfarande {{remaining}}, och det kan inga av de andra siffrorna här bli.",
+      "action": {
+        "strike_one": "Stryk den randiga siffran.",
+        "strike_other": "Stryk de randiga siffrorna.",
+        "keep_one": "Markera att den randiga siffran stannar.",
+        "keep_other": "Markera att de randiga siffrorna stannar."
+      }
+    },
+    "goal": "Varje rad och varje kolumn blir talet bredvid den.",
+    "name": "Räkningen"
+  },
+  "futoshiki": {
+    "rules": {
+      "signs": "Ett tecken mellan två rutor pekar på den minsta siffran av de två.",
+      "enter": "Tryck på en ruta och sen på en siffra. Samma siffra en gång till tar bort den igen.",
+      "notes": "Byt till pennan för att skriva upp vilka siffror en ruta fortfarande kan ha. Ångra tar tillbaka ditt senaste drag."
+    },
+    "hint": {
+      "mistake": {
+        "value": "En av siffrorna här kan inte stämma. Ta bort den och titta igen.",
+        "note": "Anteckningarna i den här rutan har uteslutit siffran som ska stå här. Rensa dem och börja om med rutan."
+      },
+      "nakedSingle": "Alla andra siffror är redan tagna i den här raden, den här kolumnen eller av tecknen – bara {{value}} är kvar för den här rutan.",
+      "hiddenSingle": {
+        "row": "{{value}} passar inte i någon annan ruta i den här raden, så den ska stå här.",
+        "col": "{{value}} passar inte i någon annan ruta i den här kolumnen, så den ska stå här."
+      },
+      "signBound": {
+        "high": "Ett tecken här pekar bort mot en större siffra, så den här rutan kan inte ha {{value}}.",
+        "low": "Ett tecken här pekar mot den här rutan, så något måste vara mindre än den – den kan inte ha {{value}}."
+      },
+      "signVsValue": {
+        "less": "Tecknet säger att den här rutan är mindre än sin granne, och grannen har {{value}}.",
+        "greater": "Tecknet säger att den här rutan är större än sin granne, och grannen har {{value}}."
+      },
+      "signChain": {
+        "high": "Följ tecknen från den här rutan: {{chain}} rutor i rad måste var och en vara större än den förra, så den här kan inte vara över {{bound}}.",
+        "low": "Följ tecknen in till den här rutan: {{chain}} rutor i rad måste var och en vara mindre än den förra, så den här kan inte vara under {{bound}}."
+      },
+      "signPair": {
+        "less": "Den största siffran som grannen på andra sidan tecknet fortfarande kan ha är {{value}}, och den här rutan måste vara under den.",
+        "greater": "Den minsta siffran som grannen på andra sidan tecknet fortfarande kan ha är {{value}}, och den här rutan måste vara över den."
+      },
+      "nakedPair": {
+        "row": "De här två rutorna kan bara ha {{first}} och {{second}}, i den ena eller andra ordningen, så ingen annan ruta i den här raden kan ha någon av dem.",
+        "col": "De här två rutorna kan bara ha {{first}} och {{second}}, i den ena eller andra ordningen, så ingen annan ruta i den här kolumnen kan ha någon av dem."
+      },
+      "hiddenPair": {
+        "row": "I den här raden passar {{first}} och {{second}} bara i de här två rutorna, så inget annat kan stå i dem.",
+        "col": "I den här kolumnen passar {{first}} och {{second}} bara i de här två rutorna, så inget annat kan stå i dem."
+      },
+      "xWing": {
+        "row": "{{value}} passar bara i två rutor i var och en av de här två raderna, och de står i samma kolumner. Hur det än blir, så är båda kolumnerna upptagna – så {{value}} kan inte stå någon annanstans i dem.",
+        "col": "{{value}} passar bara i två rutor i var och en av de här två kolumnerna, och de står i samma rader. Hur det än blir, så är båda raderna upptagna – så {{value}} kan inte stå någon annanstans i dem."
+      },
+      "nakedTriple": {
+        "row": "De här tre rutorna har bara {{first}}, {{second}} och {{third}} tillsammans, så ingen annan ruta i den här raden kan ta någon av de tre.",
+        "col": "De här tre rutorna har bara {{first}}, {{second}} och {{third}} tillsammans, så ingen annan ruta i den här kolumnen kan ta någon av de tre."
+      },
+      "hiddenTriple": {
+        "row": "I den här raden passar {{first}}, {{second}} och {{third}} bara i de här tre rutorna, så inget annat kan stå i dem.",
+        "col": "I den här kolumnen passar {{first}}, {{second}} och {{third}} bara i de här tre rutorna, så inget annat kan stå i dem."
+      }
+    },
+    "goal": "Varje rad och varje kolumn har varje siffra exakt en gång.",
+    "name": "Större och mindre"
+  },
+  "lightbeam": {
+    "rules": {
+      "mirrors": "En spegel böjer ljuset från båda sina sidor. De små märkena runt den visar hur den annars kan ligga: de flesta vrider ljuset ett kvarts varv, och några vrider det mindre och skickar iväg det snett.",
+      "walls": "Ett stenblock slukar ljuset. Det gör kanten på brädet också.",
+      "tap": "Tryck på en bit för att ändra den: en spegel vrids, en bit som glider flyttar sig till nästa plats. En vit kant betyder att du får flytta den; allt annat hör till pusslet.",
+      "nodes": "Viss sten sitter ihop med ett uttag i golvet, och den går inte att flytta genom att trycka. Skicka ljuset över uttaget, så glider stenen undan."
+    },
+    "hint": {
+      "entryRun": "Börja där ljuset redan går: det går rakt ut från skivan tills det når den första biten du kan ändra. De rutorna har ljus vad du än gör.",
+      "exitRun": "Titta på helgedomen. Bara en sida av den kan lysas upp alls – alla andra vägar in är spärrade eller vetter ut från brädet – så ljuset måste komma längs den linjen.",
+      "wiringFires": {
+        "one": "Ljuset måste gå över det uttaget på vägen – så mycket har du redan listat ut. När det går över, så dras stenen som sitter ihop med det undan, och vägen bortom öppnas.",
+        "all": "Den stenen sitter ihop med mer än ett uttag, och den flyttar sig först när ljuset har gått över alla. Hitta ett sätt att få strålen genom allihop."
+      },
+      "deadEnd": {
+        "wall": "Ställd så här går ljuset rakt in i sten, och inget kan rädda det. Så den kan inte stå så här.",
+        "disc": "Ställd så här skickar spegeln ljuset tillbaka samma väg, hela vägen in i skivan det kom från. Så den kan inte stå så här.",
+        "edge": "Ställd så här går ljuset ut över kanten på brädet, och inget fångar det. Så den kan inte stå så här.",
+        "loop": "Ställd så här kommer ljuset aldrig någonstans – det går runt i en ring för evigt. Så den kan inte stå så här."
+      },
+      "feedsExit": {
+        "wall": "Räkna baklänges från helgedomen. Ställd så här kan inget leverera ljuset längs den enda linjen som når fram – det dör i sten på vägen.",
+        "disc": "Räkna baklänges från helgedomen. Ställd så här skulle ljuset behöva komma från skivans mörka baksida, och därifrån kommer inget ljus.",
+        "edge": "Räkna baklänges från helgedomen. Ställd så här skulle ljuset behöva komma från utanför brädet för att nå fram.",
+        "loop": "Räkna baklänges från helgedomen. Ställd så här går ljuset som skulle nå fram bara runt i en ring för evigt i stället."
+      },
+      "wiringDead": "Vad du än gör, så kan ljuset aldrig nå det uttaget – så stenen som sitter ihop med det stannar precis där den är, och du kan läsa vägen rakt förbi den.",
+      "neverReached": "Låt den här vara. Ljuset kan inte nå den hur resten än står, så det spelar ingen roll vad du gör med den.",
+      "onlySurvivor": "Prova varje läge för den här i tur och ordning, och alla utom ett lämnar helgedomen mörk. Det läget är svaret."
+    },
+    "goal": "Solljuset går från skivan till helgedomen.",
+    "name": "Ljusstrålen"
+  },
+  "eclipse": {
+    "rules": {
+      "triple": "Tre likadana i rad är aldrig tillåtet, varken vågrätt eller lodrätt.",
+      "copies": "Inga två rader får se likadana ut, och inga två kolumner heller.",
+      "signs": "Ett tecken mellan två rutor säger hur de hör ihop: = betyder samma, × betyder olika.",
+      "enter": "Tryck på en ruta för att lägga en sol där, tryck igen för en måne, och en gång till för att tömma den."
+    },
+    "hint": {
+      "mistake": "En av de här markeringarna kan inte stämma.",
+      "sign.same": "= betyder samma.",
+      "sign.different": "× betyder olika.",
+      "noTriple.pair": "Redan två {{mark}}, och tre i rad är aldrig tillåtet.",
+      "noTriple.sandwich": "{{mark}} på båda sidor, och tre i rad är aldrig tillåtet.",
+      "signPair": "De här två är likadana, och den där {{mark}} står bredvid dem.",
+      "lineCount": "Den här linjen har redan sina {{count}} {{mark}}.",
+      "noCopy": "Tvärtom skulle det bli en kopia av den upplysta linjen.",
+      "linePairing.sameNoRoom": "Bara {{count}} {{mark}} kvar här, och de här två är likadana.",
+      "linePairing.differentTakesOne": "×-paren tar upp de {{mark}} som den här linjen har plats för.",
+      "loneMark": "En {{mark}} kvar, och bara en ruta håller isär tre {{other}}.",
+      "squeeze.triple": "{{mark}} här skulle göra resten till {{other}} – tre i rad.",
+      "squeeze.sign": "{{mark}} här skulle göra resten till {{other}} – ett tecken slutar stämma.",
+      "squeeze.copy": "{{mark}} här skulle göra resten till {{other}} – linjen blir en kopia.",
+      "action": {
+        "fill_one": "Lägg {{mark}} i den randiga rutan.",
+        "fill_other": "Lägg {{mark}} i de randiga rutorna.",
+        "fillMixed": "Fyll i de randiga rutorna – det finns bara ett sätt som fungerar."
+      }
+    },
+    "goal": "Varje ruta har en sol eller en måne, och varje linje har lika många av varje.",
+    "name": "Sol och måne"
+  },
+  "constellation": {
+    "rules": {
+      "default": {
+        "straight": "Ljuslinjer går rakt vågrätt eller lodrätt, från en stjärna till nästa.",
+        "pair": "Två stjärnor kan dela högst två linjer.",
+        "cross": "Linjer korsar aldrig varandra, och går aldrig genom en stjärna.",
+        "enter": "Dra från en stjärna mot sin granne för att rita en linje, igen för en dubbel, och en gång till för att ta bort den."
+      },
+      "causeway": {
+        "straight": "Transportvägar går rakt vågrätt eller lodrätt, från en byggplats till nästa.",
+        "pair": "Två byggplatser kan dela högst två vägar.",
+        "cross": "Vägar korsar aldrig varandra, och går aldrig genom en byggplats.",
+        "enter": "Dra från en byggplats mot sin granne för att lägga en väg, igen för att göra den dubbel, och en gång till för att riva upp den."
+      },
+      "irrigation": {
+        "straight": "Kanaler går rakt vågrätt eller lodrätt, från en damm till nästa.",
+        "pair": "Två dammar kan dela högst två kanaler.",
+        "cross": "Kanaler korsar aldrig varandra, och går aldrig genom en damm.",
+        "enter": "Dra från en damm mot sin granne för att gräva en kanal, igen för att göra den bredare, och en gång till för att fylla igen den."
+      },
+      "ceiling": {
+        "straight": "Snören går rakt vågrätt eller lodrätt, från en stjärna till nästa.",
+        "pair": "Två stjärnor kan dela högst två snören.",
+        "cross": "Snören korsar aldrig varandra, och går aldrig genom en stjärna.",
+        "enter": "Dra från en stjärna mot sin granne för att lägga ett snöre, igen för att göra det dubbelt, och en gång till för att ta bort det."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "En av de här linjerna kan inte stämma.",
+        "capacity": "{{count}} linjer, och precis tillräckligt med vägar ut.",
+        "settled": "Den här {{count}}:an har sina linjer.",
+        "soleWayOut": "Bara en väg ut kvar, och {{count}} till att rita.",
+        "crossed": "En linje där skulle korsa den här.",
+        "atLeastOne": "{{count}} linjer, och de andra vägarna ut räcker inte till alla.",
+        "twinBlock.single": "Om de två kopplas ihop blir det en stjärnbild med bara två stjärnor.",
+        "twinBlock.double": "En andra linje där skulle göra en stjärnbild med bara två stjärnor.",
+        "isolation": "Den linjen skulle stänga in de här {{count}} stjärnorna från resten.",
+        "action": {
+          "draw_one": "Rita den markerade linjen.",
+          "draw_other": "Rita de markerade linjerna.",
+          "refuse_one": "Den markerade linjen ska inte ritas.",
+          "refuse_other": "De markerade linjerna ska inte ritas.",
+          "refuseDouble": "En linje där, men ingen andra."
+        }
+      },
+      "causeway": {
+        "mistake": "En av de här vägarna kan inte stämma.",
+        "capacity": "{{count}} vägar, och precis tillräckligt med vägar ut.",
+        "settled": "Den här {{count}}:an har sina vägar.",
+        "soleWayOut": "Bara en väg ut kvar, och {{count}} till att lägga.",
+        "crossed": "En väg där skulle korsa den här.",
+        "atLeastOne": "{{count}} vägar, och de andra vägarna ut räcker inte till alla.",
+        "twinBlock.single": "Om de två kopplas ihop blir det ett vägnät med bara två platser.",
+        "twinBlock.double": "En andra väg där skulle göra ett vägnät med bara två platser.",
+        "isolation": "Den vägen skulle skära av de här {{count}} byggplatserna från resten.",
+        "action": {
+          "draw_one": "Lägg den markerade vägen.",
+          "draw_other": "Lägg de markerade vägarna.",
+          "refuse_one": "Den markerade vägen ska inte byggas.",
+          "refuse_other": "De markerade vägarna ska inte byggas.",
+          "refuseDouble": "En väg där, men ingen andra."
+        }
+      },
+      "irrigation": {
+        "mistake": "En av de här kanalerna kan inte stämma.",
+        "capacity": "{{count}} kanaler, och precis tillräckligt med vägar ut.",
+        "settled": "Den här {{count}}:an har sina kanaler.",
+        "soleWayOut": "Bara en väg ut kvar, och {{count}} till att gräva.",
+        "crossed": "En kanal där skulle korsa den här.",
+        "atLeastOne": "{{count}} kanaler, och de andra vägarna ut räcker inte till alla.",
+        "twinBlock.single": "Om de två kopplas ihop blir det ett vattensystem med bara två dammar.",
+        "twinBlock.double": "En andra kanal där skulle göra ett vattensystem med bara två dammar.",
+        "isolation": "Den kanalen skulle skära av de här {{count}} dammarna från resten.",
+        "action": {
+          "draw_one": "Gräv den markerade kanalen.",
+          "draw_other": "Gräv de markerade kanalerna.",
+          "refuse_one": "Den markerade kanalen ska inte grävas.",
+          "refuse_other": "De markerade kanalerna ska inte grävas.",
+          "refuseDouble": "En kanal där, men ingen andra."
+        }
+      },
+      "ceiling": {
+        "mistake": "Ett av de här snörena kan inte stämma.",
+        "capacity": "{{count}} snören, och precis tillräckligt med vägar ut.",
+        "settled": "Den här {{count}}:an har sina snören.",
+        "soleWayOut": "Bara en väg ut kvar, och {{count}} till att lägga.",
+        "crossed": "Ett snöre där skulle korsa det här.",
+        "atLeastOne": "{{count}} snören, och de andra vägarna ut räcker inte till alla.",
+        "twinBlock.single": "Om de två kopplas ihop blir det en målad himmel med bara två stjärnor.",
+        "twinBlock.double": "Ett andra snöre där skulle göra en målad himmel med bara två stjärnor.",
+        "isolation": "Det snöret skulle skära av de här {{count}} stjärnorna från resten.",
+        "action": {
+          "draw_one": "Lägg det markerade snöret.",
+          "draw_other": "Lägg de markerade snörena.",
+          "refuse_one": "Det markerade snöret ska inte läggas.",
+          "refuse_other": "De markerade snörena ska inte läggas.",
+          "refuseDouble": "Ett snöre där, men inget andra."
+        }
+      }
+    },
+    "goal": {
+      "default": "Varje stjärna hör till en enda stjärnbild, med lika många ljuslinjer som siffran säger.",
+      "causeway": "Varje byggplats hör till ett enda vägnät, med lika många transportvägar som siffran säger.",
+      "irrigation": "Varje damm hör till ett enda vattensystem, med lika många kanaler som siffran säger.",
+      "ceiling": "Varje stjärna hör till en enda målad himmel, med lika många guldsnören som siffran säger."
+    },
+    "name": {
+      "default": "Stjärnkartan",
+      "causeway": "Vägbanken",
+      "irrigation": "Vattensystemet",
+      "ceiling": "Det målade taket"
+    }
+  },
+  "starBattle": {
+    "rules": {
+      "default": {
+        "touch": "Inga två stjärnor får nudda varandra – hörn räknas också.",
+        "enter": "Tryck på en ruta för att utesluta den, tryck igen för att sätta en stjärna där, och en gång till för att rensa den."
+      },
+      "fields": {
+        "touch": "Inga två gårdar får nudda varandra – hörn räknas också. Så nära skulle de få dela på en brunn.",
+        "enter": "Tryck på en tomt för att utesluta den, tryck igen för att bygga en gård, och en gång till för att rensa den."
+      },
+      "lamps": {
+        "touch": "Inga två oljelampor får stå bredvid varandra – hörn räknas också. Ljuset från dem skulle gå in i varandra, och oljan skulle gå till spillo.",
+        "walls": "De grå stenblocken hör till golvet: inget kan stå på dem, och de räknas inte som rutor.",
+        "enter": "Tryck på en stenplatta för att utesluta den, tryck igen för att ställa en oljelampa där, och en gång till för att rensa den."
+      },
+      "market": {
+        "touch": "Inga två stånd får stå bredvid varandra – hörn räknas också. Konkurrenter ställer sig aldrig sida vid sida.",
+        "walls": "Husen hör till torget: ingen kan ställa ett stånd i ett hus, och de räknas inte som platser.",
+        "enter": "Tryck på en plats för att utesluta den, tryck igen för att ställa ett stånd där, och en gång till för att rensa den."
+      },
+      "lotus": {
+        "touch": "Inga två lotusblommor får flyta bredvid varandra – hörn räknas också. Varje blomma behöver öppet vatten runt sig.",
+        "walls": "Stenarna sticker upp ur dammen: inget kan flyta på dem, och de räknas inte som rutor.",
+        "enter": "Tryck på en vattenruta för att utesluta den, tryck igen för att lägga en lotus där, och en gång till för att rensa den."
+      },
+      "cats": {
+        "touch": "Inga två katter får sova bredvid varandra – hörn räknas också. Varje katt har sin egen solfläck.",
+        "walls": "Pelarna håller uppe templet: ingen katt kan sova på dem, och de räknas inte som rutor.",
+        "enter": "Tryck på en stenplatta för att utesluta den, tryck igen för att lägga en katt där, och en gång till för att rensa den."
+      }
+    },
+    "hint": {
+      "default": {
+        "mistake": "Den här markeringen kan inte stämma.",
+        "touch": "{{token}} här, och inget får nudda {{token}}.",
+        "groupFull.row_one": "Den här raden har redan sin {{token}}.",
+        "groupFull.row_other": "Den här raden har redan sina {{count}} {{token}}.",
+        "groupFull.col_one": "Den här kolumnen har redan sin {{token}}.",
+        "groupFull.col_other": "Den här kolumnen har redan sina {{count}} {{token}}.",
+        "groupFull.region_one": "Det här området har redan sin {{token}}.",
+        "groupFull.region_other": "Det här området har redan sina {{count}} {{token}}.",
+        "groupTight.row_one": "Den här raden har bara en ruta kvar.",
+        "groupTight.row_other": "Den här raden har bara {{count}} rutor kvar.",
+        "groupTight.col_one": "Den här kolumnen har bara en ruta kvar.",
+        "groupTight.col_other": "Den här kolumnen har bara {{count}} rutor kvar.",
+        "groupTight.region_one": "Det här området har bara en ruta kvar.",
+        "groupTight.region_other": "Det här området har bara {{count}} rutor kvar.",
+        "onlyWay.row_one": "Det finns bara ett sätt att få plats med {{token}} i den här raden.",
+        "onlyWay.row_other": "Det finns bara ett sätt att få plats med {{count}} {{token}} i den här raden.",
+        "onlyWay.col_one": "Det finns bara ett sätt att få plats med {{token}} i den här kolumnen.",
+        "onlyWay.col_other": "Det finns bara ett sätt att få plats med {{count}} {{token}} i den här kolumnen.",
+        "onlyWay.region_one": "Det finns bara ett sätt att få plats med {{token}} i det här området.",
+        "onlyWay.region_other": "Det finns bara ett sätt att få plats med {{count}} {{token}} i det här området.",
+        "everyWay.row_one": "Var radens {{token}} än hamnar, så är den alltid här.",
+        "everyWay.row_other": "Var radens {{count}} {{token}} än hamnar, så är en alltid här.",
+        "everyWay.col_one": "Var kolumnens {{token}} än hamnar, så är den alltid här.",
+        "everyWay.col_other": "Var kolumnens {{count}} {{token}} än hamnar, så är en alltid här.",
+        "everyWay.region_one": "Var områdets {{token}} än hamnar, så är den alltid här.",
+        "everyWay.region_other": "Var områdets {{count}} {{token}} än hamnar, så är en alltid här.",
+        "regionLine.row_one": "Det markerade områdets {{token}} måste ligga i den raden.",
+        "regionLine.row_other": "Det markerade områdets {{count}} {{token}} måste ligga i den raden.",
+        "regionLine.col_one": "Det markerade områdets {{token}} måste ligga i den kolumnen.",
+        "regionLine.col_other": "Det markerade områdets {{count}} {{token}} måste ligga i den kolumnen.",
+        "lineRegion.row_one": "Den radens {{token}} hör till det markerade området.",
+        "lineRegion.row_other": "Den radens {{count}} {{token}} hör till det markerade området.",
+        "lineRegion.col_one": "Den kolumnens {{token}} hör till det markerade området.",
+        "lineRegion.col_other": "Den kolumnens {{count}} {{token}} hör till det markerade området.",
+        "spanning.toRows": "De markerade områdena fyller de {{count}} raderna tillsammans.",
+        "spanning.toCols": "De markerade områdena fyller de {{count}} kolumnerna tillsammans.",
+        "spanning.fromRows": "De markerade raderna kan bara få sina {{count}} {{token}} från de områdena.",
+        "spanning.fromCols": "De markerade kolumnerna kan bara få sina {{count}} {{token}} från de områdena.",
+        "wouldStrand.row": "{{token}} här skulle inte lämna någon plats kvar i den markerade raden.",
+        "wouldStrand.col": "{{token}} här skulle inte lämna någon plats kvar i den markerade kolumnen.",
+        "wouldStrand.region": "{{token}} här skulle inte lämna någon plats kvar i det markerade området.",
+        "action": {
+          "ruleOut_one": "Uteslut den randiga rutan.",
+          "ruleOut_other": "Uteslut de randiga rutorna.",
+          "place_one": "Sätt {{token}} i den randiga rutan.",
+          "place_other": "Sätt {{token}} i varje randig ruta."
+        }
+      },
+      "fields": {
+        "mistake": "Den här markeringen kan inte stämma.",
+        "touch": "{{token}} här, och ingen tomt som nuddar den kan ha en till.",
+        "groupFull.row_one": "Den här raden är redan klar.",
+        "groupFull.row_other": "Den här raden har redan sina {{count}} {{token}}.",
+        "groupFull.col_one": "Den här kolumnen är redan klar.",
+        "groupFull.col_other": "Den här kolumnen har redan sina {{count}} {{token}}.",
+        "groupFull.region_one": "Den här ägan är redan klar.",
+        "groupFull.region_other": "Den här ägan har redan sina {{count}} {{token}}.",
+        "groupTight.row_one": "Den här raden har bara en tomt kvar.",
+        "groupTight.row_other": "Den här raden har bara {{count}} tomter kvar.",
+        "groupTight.col_one": "Den här kolumnen har bara en tomt kvar.",
+        "groupTight.col_other": "Den här kolumnen har bara {{count}} tomter kvar.",
+        "groupTight.region_one": "Den här ägan har bara en tomt kvar.",
+        "groupTight.region_other": "Den här ägan har bara {{count}} tomter kvar.",
+        "onlyWay.row_one": "Det finns bara en tomt kvar att bygga på i den här raden.",
+        "onlyWay.row_other": "Det finns bara ett sätt att få plats med {{count}} {{token}} längs den här raden.",
+        "onlyWay.col_one": "Det finns bara en tomt kvar att bygga på i den här kolumnen.",
+        "onlyWay.col_other": "Det finns bara ett sätt att få plats med {{count}} {{token}} längs den här kolumnen.",
+        "onlyWay.region_one": "Det finns bara en tomt kvar att bygga på i den här ägan.",
+        "onlyWay.region_other": "Det finns bara ett sätt att få plats med {{count}} {{token}} på den här ägan.",
+        "everyWay.row_one": "Hur raden än byggs, så står dess {{token}} här.",
+        "everyWay.row_other": "Hur raden än byggs, så står en av dess {{count}} {{token}} här.",
+        "everyWay.col_one": "Hur kolumnen än byggs, så står dess {{token}} här.",
+        "everyWay.col_other": "Hur kolumnen än byggs, så står en av dess {{count}} {{token}} här.",
+        "everyWay.region_one": "Hur ägan än byggs, så står dess {{token}} här.",
+        "everyWay.region_other": "Hur ägan än byggs, så står en av dess {{count}} {{token}} här.",
+        "regionLine.row_one": "Den markerade ägans {{token}} måste ligga i den raden.",
+        "regionLine.row_other": "Den markerade ägans {{count}} {{token}} måste ligga i den raden.",
+        "regionLine.col_one": "Den markerade ägans {{token}} måste ligga i den kolumnen.",
+        "regionLine.col_other": "Den markerade ägans {{count}} {{token}} måste ligga i den kolumnen.",
+        "lineRegion.row_one": "Den radens {{token}} hör till den markerade ägan.",
+        "lineRegion.row_other": "Den radens {{count}} {{token}} hör till den markerade ägan.",
+        "lineRegion.col_one": "Den kolumnens {{token}} hör till den markerade ägan.",
+        "lineRegion.col_other": "Den kolumnens {{count}} {{token}} hör till den markerade ägan.",
+        "spanning.toRows": "De markerade ägorna fyller de {{count}} raderna tillsammans.",
+        "spanning.toCols": "De markerade ägorna fyller de {{count}} kolumnerna tillsammans.",
+        "spanning.fromRows": "De markerade raderna kan bara få sina {{count}} {{token}} från de ägorna.",
+        "spanning.fromCols": "De markerade kolumnerna kan bara få sina {{count}} {{token}} från de ägorna.",
+        "wouldStrand.row": "{{token}} här skulle inte lämna någon plats att bygga på i den markerade raden.",
+        "wouldStrand.col": "{{token}} här skulle inte lämna någon plats att bygga på i den markerade kolumnen.",
+        "wouldStrand.region": "{{token}} här skulle inte lämna någon plats att bygga på i den markerade ägan.",
+        "action": {
+          "ruleOut_one": "Uteslut den randiga tomten.",
+          "ruleOut_other": "Uteslut de randiga tomterna.",
+          "place_one": "Bygg {{token}} på den randiga tomten.",
+          "place_other": "Bygg {{token}} på varje randig tomt."
+        }
+      },
+      "lamps": {
+        "mistake": "Den här markeringen kan inte stämma.",
+        "touch": "{{token}} här, och inga oljelampor får stå bredvid varandra – hörn räknas också.",
+        "groupFull.row_one": "Den här raden har redan sin oljelampa.",
+        "groupFull.col_one": "Den här kolumnen har redan sin oljelampa.",
+        "groupFull.row_other": "Den här raden har redan sina {{count}} oljelampor.",
+        "groupFull.col_other": "Den här kolumnen har redan sina {{count}} oljelampor.",
+        "groupTight.row_one": "Den här raden har bara en stenplatta kvar.",
+        "groupTight.row_other": "Den här raden har bara {{count}} stenplattor kvar.",
+        "groupTight.col_one": "Den här kolumnen har bara en stenplatta kvar.",
+        "groupTight.col_other": "Den här kolumnen har bara {{count}} stenplattor kvar.",
+        "onlyWay.row_one": "Mellan stenblocken finns det bara en ruta kvar i den här raden för en oljelampa.",
+        "onlyWay.col_one": "Mellan stenblocken finns det bara en ruta kvar i den här kolumnen för en oljelampa.",
+        "onlyWay.row_other": "Det finns bara ett sätt att få plats med {{count}} oljelampor i den här raden.",
+        "onlyWay.col_other": "Det finns bara ett sätt att få plats med {{count}} oljelampor i den här kolumnen.",
+        "everyWay.row_one": "Var radens oljelampa än hamnar, så är den alltid här.",
+        "everyWay.col_one": "Var kolumnens oljelampa än hamnar, så är den alltid här.",
+        "everyWay.row_other": "Var radens {{count}} oljelampor än hamnar, så är en alltid här.",
+        "everyWay.col_other": "Var kolumnens {{count}} oljelampor än hamnar, så är en alltid här.",
+        "lineBlock.rowsToCols": "De markerade raderna har sina oljelampor i rutorna i de kolumnerna, så de kolumnerna har inga över.",
+        "lineBlock.colsToRows": "De markerade kolumnerna har sina oljelampor i rutorna i de raderna, så de raderna har inga över.",
+        "wouldStrand.row": "En oljelampa här skulle inte lämna någon plats kvar i den markerade raden.",
+        "wouldStrand.col": "En oljelampa här skulle inte lämna någon plats kvar i den markerade kolumnen.",
+        "action": {
+          "ruleOut_one": "Uteslut den randiga rutan.",
+          "ruleOut_other": "Uteslut de randiga rutorna.",
+          "place_one": "Ställ en oljelampa i den randiga rutan.",
+          "place_other": "Ställ en oljelampa i varje randig ruta."
+        }
+      },
+      "market": {
+        "mistake": "Den här markeringen kan inte stämma.",
+        "touch": "{{token}} här, och inga stånd får stå bredvid varandra – hörn räknas också.",
+        "groupFull.row_one": "Den här raden har redan sitt stånd.",
+        "groupFull.col_one": "Den här kolumnen har redan sitt stånd.",
+        "groupFull.row_other": "Den här raden har redan sina {{count}} stånd.",
+        "groupFull.col_other": "Den här kolumnen har redan sina {{count}} stånd.",
+        "groupTight.row_one": "Den här raden har bara en plats kvar.",
+        "groupTight.row_other": "Den här raden har bara {{count}} platser kvar.",
+        "groupTight.col_one": "Den här kolumnen har bara en plats kvar.",
+        "groupTight.col_other": "Den här kolumnen har bara {{count}} platser kvar.",
+        "onlyWay.row_one": "Mellan husen finns det bara en ruta kvar i den här raden för ett stånd.",
+        "onlyWay.col_one": "Mellan husen finns det bara en ruta kvar i den här kolumnen för ett stånd.",
+        "onlyWay.row_other": "Det finns bara ett sätt att få plats med {{count}} stånd i den här raden.",
+        "onlyWay.col_other": "Det finns bara ett sätt att få plats med {{count}} stånd i den här kolumnen.",
+        "everyWay.row_one": "Var radens stånd än hamnar, så är det alltid här.",
+        "everyWay.col_one": "Var kolumnens stånd än hamnar, så är det alltid här.",
+        "everyWay.row_other": "Var radens {{count}} stånd än hamnar, så är ett alltid här.",
+        "everyWay.col_other": "Var kolumnens {{count}} stånd än hamnar, så är ett alltid här.",
+        "lineBlock.rowsToCols": "De markerade raderna har sina stånd i rutorna i de kolumnerna, så de kolumnerna har inga över.",
+        "lineBlock.colsToRows": "De markerade kolumnerna har sina stånd i rutorna i de raderna, så de raderna har inga över.",
+        "wouldStrand.row": "Ett stånd här skulle inte lämna någon plats kvar i den markerade raden.",
+        "wouldStrand.col": "Ett stånd här skulle inte lämna någon plats kvar i den markerade kolumnen.",
+        "action": {
+          "ruleOut_one": "Uteslut den randiga rutan.",
+          "ruleOut_other": "Uteslut de randiga rutorna.",
+          "place_one": "Ställ ett stånd i den randiga rutan.",
+          "place_other": "Ställ ett stånd i varje randig ruta."
+        }
+      },
+      "lotus": {
+        "mistake": "Den här markeringen kan inte stämma.",
+        "touch": "{{token}} här, och inga lotusblommor får flyta bredvid varandra – hörn räknas också.",
+        "groupFull.row_one": "Den här raden har redan sin lotus.",
+        "groupFull.col_one": "Den här kolumnen har redan sin lotus.",
+        "groupFull.row_other": "Den här raden har redan sina {{count}} lotusblommor.",
+        "groupFull.col_other": "Den här kolumnen har redan sina {{count}} lotusblommor.",
+        "groupTight.row_one": "Den här raden har bara en vattenruta kvar.",
+        "groupTight.row_other": "Den här raden har bara {{count}} vattenrutor kvar.",
+        "groupTight.col_one": "Den här kolumnen har bara en vattenruta kvar.",
+        "groupTight.col_other": "Den här kolumnen har bara {{count}} vattenrutor kvar.",
+        "onlyWay.row_one": "Mellan stenarna finns det bara en ruta kvar i den här raden för en lotus.",
+        "onlyWay.col_one": "Mellan stenarna finns det bara en ruta kvar i den här kolumnen för en lotus.",
+        "onlyWay.row_other": "Det finns bara ett sätt att få plats med {{count}} lotusblommor i den här raden.",
+        "onlyWay.col_other": "Det finns bara ett sätt att få plats med {{count}} lotusblommor i den här kolumnen.",
+        "everyWay.row_one": "Var radens lotus än hamnar, så är den alltid här.",
+        "everyWay.col_one": "Var kolumnens lotus än hamnar, så är den alltid här.",
+        "everyWay.row_other": "Var radens {{count}} lotusblommor än hamnar, så är en alltid här.",
+        "everyWay.col_other": "Var kolumnens {{count}} lotusblommor än hamnar, så är en alltid här.",
+        "lineBlock.rowsToCols": "De markerade raderna har sina lotusblommor i rutorna i de kolumnerna, så de kolumnerna har inga över.",
+        "lineBlock.colsToRows": "De markerade kolumnerna har sina lotusblommor i rutorna i de raderna, så de raderna har inga över.",
+        "wouldStrand.row": "En lotus här skulle inte lämna någon plats kvar i den markerade raden.",
+        "wouldStrand.col": "En lotus här skulle inte lämna någon plats kvar i den markerade kolumnen.",
+        "action": {
+          "ruleOut_one": "Uteslut den randiga rutan.",
+          "ruleOut_other": "Uteslut de randiga rutorna.",
+          "place_one": "Lägg en lotus i den randiga rutan.",
+          "place_other": "Lägg en lotus i varje randig ruta."
+        }
+      },
+      "cats": {
+        "mistake": "Den här markeringen kan inte stämma.",
+        "touch": "{{token}} här, och inga katter får sova bredvid varandra – hörn räknas också.",
+        "groupFull.row_one": "Den här raden har redan sin katt.",
+        "groupFull.col_one": "Den här kolumnen har redan sin katt.",
+        "groupFull.row_other": "Den här raden har redan sina {{count}} katter.",
+        "groupFull.col_other": "Den här kolumnen har redan sina {{count}} katter.",
+        "groupTight.row_one": "Den här raden har bara en stenplatta kvar.",
+        "groupTight.row_other": "Den här raden har bara {{count}} stenplattor kvar.",
+        "groupTight.col_one": "Den här kolumnen har bara en stenplatta kvar.",
+        "groupTight.col_other": "Den här kolumnen har bara {{count}} stenplattor kvar.",
+        "onlyWay.row_one": "Mellan pelarna finns det bara en ruta kvar i den här raden för en katt.",
+        "onlyWay.col_one": "Mellan pelarna finns det bara en ruta kvar i den här kolumnen för en katt.",
+        "onlyWay.row_other": "Det finns bara ett sätt att få plats med {{count}} katter i den här raden.",
+        "onlyWay.col_other": "Det finns bara ett sätt att få plats med {{count}} katter i den här kolumnen.",
+        "everyWay.row_one": "Var radens katt än hamnar, så är den alltid här.",
+        "everyWay.col_one": "Var kolumnens katt än hamnar, så är den alltid här.",
+        "everyWay.row_other": "Var radens {{count}} katter än hamnar, så är en alltid här.",
+        "everyWay.col_other": "Var kolumnens {{count}} katter än hamnar, så är en alltid här.",
+        "lineBlock.rowsToCols": "De markerade raderna har sina katter i rutorna i de kolumnerna, så de kolumnerna har inga över.",
+        "lineBlock.colsToRows": "De markerade kolumnerna har sina katter i rutorna i de raderna, så de raderna har inga över.",
+        "wouldStrand.row": "En katt här skulle inte lämna någon plats kvar i den markerade raden.",
+        "wouldStrand.col": "En katt här skulle inte lämna någon plats kvar i den markerade kolumnen.",
+        "action": {
+          "ruleOut_one": "Uteslut den randiga rutan.",
+          "ruleOut_other": "Uteslut de randiga rutorna.",
+          "place_one": "Lägg en katt i den randiga rutan.",
+          "place_other": "Lägg en katt i varje randig ruta."
+        }
+      }
+    },
+    "quota": {
+      "default": "Per rad, kolumn och område",
+      "fields": "Per rad, kolumn och äga",
+      "lamps": "Per rad och kolumn",
+      "market": "Per rad och kolumn",
+      "lotus": "Per rad och kolumn",
+      "cats": "Per rad och kolumn"
+    },
+    "goal": {
+      "default_one": "Varje rad, varje kolumn och varje område har exakt en stjärna.",
+      "default_other": "Varje rad, varje kolumn och varje område har exakt {{count}} stjärnor.",
+      "fields_one": "Varje rad, varje kolumn och varje äga har exakt en gård.",
+      "fields_other": "Varje rad, varje kolumn och varje äga har exakt {{count}} gårdar.",
+      "lamps": "Varje rad och varje kolumn har exakt en oljelampa.",
+      "market": "Varje rad och varje kolumn har exakt ett marknadsstånd.",
+      "lotus": "Varje rad och varje kolumn har exakt en lotus.",
+      "cats": "Varje rad och varje kolumn har exakt en katt."
+    },
+    "name": {
+      "default": "Stjärnor isär",
+      "fields": "Gårdar",
+      "twinDefault": "Tvillingstjärnor",
+      "twinFields": "Tvillinggårdar",
+      "lamps": "Oljelampor",
+      "market": "Marknadsstånd",
+      "lotus": "Lotusdammen",
+      "cats": "Tempelkatter"
+    }
+  },
+  "pairPuzzle": {
+    "name": {
+      "mummies": "Mumiernas vila",
+      "beetles": "Pillerbaggar"
+    },
+    "goal": {
+      "mummies": "Varje sarkofag får en mumie bredvid sig, och varje rad och kolumn har exakt så många mumier som siffran bredvid den.",
+      "beetles": "Varje dyngkula får en skalbagge bredvid sig, och varje rad och kolumn har exakt så många skalbaggar som siffran bredvid den."
+    },
+    "rules": {
+      "mummies": {
+        "pair": "Varje sarkofag har en mumie som vilar precis ovanför, under, till vänster eller till höger om den, och varje mumie vilar bredvid en egen sarkofag.",
+        "count": "Siffran bredvid en rad eller kolumn säger hur många mumier den har. Den blir grön när linjen har exakt så många, och röd när det inte går.",
+        "touch": "Inga två mumier får ligga bredvid varandra – hörn räknas också.",
+        "enter": "Tryck på en ruta för att utesluta den, tryck igen för att lägga en mumie där, och en gång till för att rensa den. Dra över rutor för att utesluta flera i rad. Sarkofagerna går inte att trycka på."
+      },
+      "beetles": {
+        "pair": "Varje dyngkula har en skalbagge precis ovanför, under, till vänster eller till höger om den, och varje skalbagge står bredvid en egen kula att rulla.",
+        "count": "Siffran bredvid en rad eller kolumn säger hur många skalbaggar den har. Den blir grön när linjen har exakt så många, och röd när det inte går.",
+        "touch": "Inga två skalbaggar får stå bredvid varandra – hörn räknas också.",
+        "enter": "Tryck på en ruta för att utesluta den, tryck igen för att sätta en skalbagge där, och en gång till för att rensa den. Dra över rutor för att utesluta flera i rad. Dyngkulorna går inte att trycka på."
+      }
+    },
+    "hint": {
+      "mummies": {
+        "mistake": "Den här markeringen kan inte stämma.",
+        "touch": "Den här mumien ligger här, så ingen annan får ligga bredvid den – hörn räknas också.",
+        "zeroLine.row": "Den här raden har inga mumier, så hela raden är tom.",
+        "zeroLine.col": "Den här kolumnen har inga mumier, så hela kolumnen är tom.",
+        "noAnchor": "De här rutorna har ingen sarkofag bredvid sig, så ingen mumie kan vila här.",
+        "lineFull.row_one": "Den här raden har redan sin mumie.",
+        "lineFull.row_other": "Den här raden har redan sina {{count}} mumier.",
+        "lineFull.col_one": "Den här kolumnen har redan sin mumie.",
+        "lineFull.col_other": "Den här kolumnen har redan sina {{count}} mumier.",
+        "lineTight.row_one": "Den här raden har bara en ruta kvar för sin mumie.",
+        "lineTight.row_other": "Den här raden har precis {{count}} rutor kvar för sina {{count}} mumier.",
+        "lineTight.col_one": "Den här kolumnen har bara en ruta kvar för sin mumie.",
+        "lineTight.col_other": "Den här kolumnen har precis {{count}} rutor kvar för sina {{count}} mumier.",
+        "onlyWay": "Den här sarkofagen har bara en ruta kvar bredvid sig för sin mumie.",
+        "claimed": "Den här sarkofagen har redan sin mumie, så rutorna bredvid den som ingen annan sarkofag kan använda förblir tomma.",
+        "lineBlock.rowsToCols_one": "De markerade raderna har en mumie mer än deras egna sarkofager kan ge, så den kommer från en sarkofag precis utanför dem.",
+        "lineBlock.rowsToCols_other": "De markerade raderna har {{count}} mumier mer än deras egna sarkofager kan ge, så de kommer från sarkofager precis utanför dem.",
+        "lineBlock.colsToRows_one": "De markerade kolumnerna har en mumie mer än deras egna sarkofager kan ge, så den kommer från en sarkofag precis utanför dem.",
+        "lineBlock.colsToRows_other": "De markerade kolumnerna har {{count}} mumier mer än deras egna sarkofager kan ge, så de kommer från sarkofager precis utanför dem.",
+        "wouldStrand.row": "En mumie här skulle inte lämna plats i den markerade raden för de mumier den fortfarande behöver.",
+        "wouldStrand.col": "En mumie här skulle inte lämna plats i den markerade kolumnen för de mumier den fortfarande behöver.",
+        "wouldStrand.anchor": "En mumie här skulle inte lämna någon ruta bredvid den markerade sarkofagen för dess egen mumie.",
+        "action": {
+          "ruleOut_one": "Uteslut den randiga rutan.",
+          "ruleOut_other": "Uteslut de randiga rutorna.",
+          "place_one": "Lägg en mumie på den randiga rutan.",
+          "place_other": "Lägg en mumie på varje randig ruta."
+        }
+      },
+      "beetles": {
+        "mistake": "Den här markeringen kan inte stämma.",
+        "touch": "Den här skalbaggen står här, så ingen annan får stå bredvid den – hörn räknas också.",
+        "zeroLine.row": "Den här raden har inga skalbaggar, så hela raden är tom.",
+        "zeroLine.col": "Den här kolumnen har inga skalbaggar, så hela kolumnen är tom.",
+        "noAnchor": "De här rutorna har ingen dyngkula bredvid sig, så ingen skalbagge kan stå här.",
+        "lineFull.row_one": "Den här raden har redan sin skalbagge.",
+        "lineFull.row_other": "Den här raden har redan sina {{count}} skalbaggar.",
+        "lineFull.col_one": "Den här kolumnen har redan sin skalbagge.",
+        "lineFull.col_other": "Den här kolumnen har redan sina {{count}} skalbaggar.",
+        "lineTight.row_one": "Den här raden har bara en ruta kvar för sin skalbagge.",
+        "lineTight.row_other": "Den här raden har precis {{count}} rutor kvar för sina {{count}} skalbaggar.",
+        "lineTight.col_one": "Den här kolumnen har bara en ruta kvar för sin skalbagge.",
+        "lineTight.col_other": "Den här kolumnen har precis {{count}} rutor kvar för sina {{count}} skalbaggar.",
+        "onlyWay": "Den här dyngkulan har bara en ruta kvar bredvid sig för sin skalbagge.",
+        "claimed": "Den här dyngkulan har redan sin skalbagge, så rutorna bredvid den som ingen annan kula kan använda förblir tomma.",
+        "lineBlock.rowsToCols_one": "De markerade raderna har en skalbagge mer än deras egna dyngkulor kan ge, så den kommer från en kula precis utanför dem.",
+        "lineBlock.rowsToCols_other": "De markerade raderna har {{count}} skalbaggar mer än deras egna dyngkulor kan ge, så de kommer från kulor precis utanför dem.",
+        "lineBlock.colsToRows_one": "De markerade kolumnerna har en skalbagge mer än deras egna dyngkulor kan ge, så den kommer från en kula precis utanför dem.",
+        "lineBlock.colsToRows_other": "De markerade kolumnerna har {{count}} skalbaggar mer än deras egna dyngkulor kan ge, så de kommer från kulor precis utanför dem.",
+        "wouldStrand.row": "En skalbagge här skulle inte lämna plats i den markerade raden för de skalbaggar den fortfarande behöver.",
+        "wouldStrand.col": "En skalbagge här skulle inte lämna plats i den markerade kolumnen för de skalbaggar den fortfarande behöver.",
+        "wouldStrand.anchor": "En skalbagge här skulle inte lämna någon ruta bredvid den markerade dyngkulan för dess egen skalbagge.",
+        "action": {
+          "ruleOut_one": "Uteslut den randiga rutan.",
+          "ruleOut_other": "Uteslut de randiga rutorna.",
+          "place_one": "Sätt en skalbagge på den randiga rutan.",
+          "place_other": "Sätt en skalbagge på varje randig ruta."
+        }
+      }
+    }
+  },
+  "rushHour": {
+    "name": {
+      "default": "Blockaden",
+      "market": "Den igenkorkade gränden"
+    },
+    "goal": {
+      "default": "Få ut ditt eget block genom öppningen till höger.",
+      "market": "Få ut din egen släde genom öppningen i slutet av gatan."
+    },
+    "rules": {
+      "default": {
+        "lanes": "Ett block glider bara längs sin egen fil – aldrig åt sidan, aldrig utanför brädet.",
+        "shove": "Dra i ett block för att skjuta det. Det stannar där något är i vägen."
+      },
+      "market": {
+        "lanes": "En släde glider bara längs filen den står i – aldrig åt sidan, aldrig ut ur gatan.",
+        "shove": "Dra i en släde för att skjuta den. Den stannar där något är i vägen."
+      }
+    },
+    "hint": {
+      "default": {
+        "drive": "Vägen framåt är fri så långt.",
+        "back": "Inget framför dig ger med sig. Backa först undan ditt eget.",
+        "clear": "Det blocket står tvärs över din egen fil.",
+        "room": "Inget kan röra sig förrän den där gör det.",
+        "push": {
+          "left": "Skjut den åt vänster, ända till ringen.",
+          "right": "Skjut den åt höger, ända till ringen.",
+          "up": "Skjut den uppåt, ända till ringen.",
+          "down": "Skjut den nedåt, ända till ringen."
+        }
+      },
+      "market": {
+        "drive": "Filen framför din är fri så långt.",
+        "back": "Inget framför dig ger med sig. Backa först din egen släde.",
+        "clear": "Den lasten står tvärs över filen du ska ut genom.",
+        "room": "Inget kan flytta sig förrän den där har flyttats.",
+        "push": {
+          "left": "Skjut den åt vänster, ända till ringen.",
+          "right": "Skjut den åt höger, ända till ringen.",
+          "up": "Skjut den uppför gatan, ända till ringen.",
+          "down": "Skjut den nerför gatan, ända till ringen."
+        }
+      }
+    }
+  },
+  "hidato": {
+    "rules": {
+      "default": {
+        "given": "Siffrorna som redan står i kakan hör till pusslet – de stannar kvar.",
+        "enter": "Tryck på en siffra för att fortsätta kedjan därifrån, och tryck sen på en tom cell som nuddar den för att fortsätta – eller dra rakt genom cellerna den går igenom.",
+        "back": "Tryck på en siffra du har lagt och tryck igen för att ta bort den, tillsammans med allt som hängde efter den. Om du fortsätter kedjan åt ett annat håll från en siffra händer samma sak. Ångra tar tillbaka ditt senaste drag."
+      },
+      "channel": {
+        "given": "Fälten som redan har siffror hör till pusslet – de stannar kvar.",
+        "enter": "Tryck på ett fält med siffra för att ta vattnet därifrån, och tryck sen på ett torrt fält bredvid för att gräva vidare – eller dra rakt längs fälten som kanalen går.",
+        "back": "Tryck på ett fält du har grävt och tryck igen för att fylla igen det, tillsammans med kanalen som blev avskuren från det. Om du gräver åt ett annat håll från ett fält händer samma sak. Ångra tar tillbaka ditt senaste drag."
+      },
+      "scribe": {
+        "given": "Siffrorna i rött bläck hör till pusslet – de stannar kvar.",
+        "enter": "Tryck på en siffra för att ta upp vasspennan där, och tryck sen på en tom plats bredvid för att skriva vidare – eller dra rakt längs linjen.",
+        "back": "Tryck på en siffra du har skrivit och tryck igen för att skrapa bort den, tillsammans med linjen som blev avskuren från den. Om du skriver åt ett annat håll från en siffra händer samma sak. Ångra tar tillbaka ditt senaste drag."
+      },
+      "chambers": {
+        "given": "Kamrarna som redan har siffror höggs ut av byggarna – de stannar kvar.",
+        "enter": "Tryck på en kammare med siffra för att fortsätta gången därifrån, och tryck sen på en stängd kammare bredvid för att bryta dig igenom – eller dra rakt längs kamrarna som gången går.",
+        "back": "Tryck på en kammare du har öppnat och tryck igen för att stänga den, tillsammans med gången som blev avskuren från den. Om du bryter igenom åt ett annat håll från en kammare händer samma sak. Ångra tar tillbaka ditt senaste drag."
+      }
+    },
+    "goal": {
+      "default": "Varje cell i kakan har en siffra, 1 till {{last}}, och varje siffra ligger i en cell som nuddar siffran före.",
+      "channel": "En enda kanal vattnar hela slätten: varje fält får sin tur, 1 till {{last}}, och vart och ett grävs bredvid fältet före.",
+      "scribe": "En hel obruten linje av siffror går över arket: varje plats har en siffra, 1 till {{last}}, och var och en står bredvid siffran före.",
+      "chambers": "En enda gång går genom hela graven: varje kammare öppnas i tur och ordning, 1 till {{last}}, och var och en bryts upp från kammaren före."
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": "En av de här siffrorna kan inte stämma.",
+          "sandwich": "{{before}} och {{after}} nuddar bara en enda tom cell mellan sig.",
+          "neighbourForced": "{{from}} har bara en tom cell kvar bredvid sig.",
+          "onlyCell": "Det finns ingen annan plats kvar i kakan för {{value}}.",
+          "onlyValue": "Ingen annan siffra kan nå den här cellen."
+        },
+        "action": {
+          "place": "Skriv {{value}} i den randiga cellen."
+        }
+      },
+      "channel": {
+        "reason": {
+          "mistake": "En av de här siffrorna kan inte stämma.",
+          "sandwich": "{{before}} och {{after}} nuddar bara ett enda torrt fält mellan sig.",
+          "neighbourForced": "Bara ett torrt fält är kvar bredvid {{from}}.",
+          "onlyCell": "Ingen annan plats på slätten kan ta {{value}}.",
+          "onlyValue": "Ingen annan siffra kan nå det här fältet."
+        },
+        "action": {
+          "place": "Gräv {{value}} i det randiga fältet."
+        }
+      },
+      "scribe": {
+        "reason": {
+          "mistake": "En av de här siffrorna kan inte stämma.",
+          "sandwich": "{{before}} och {{after}} nuddar bara en enda tom plats mellan sig.",
+          "neighbourForced": "Bara en tom plats är kvar bredvid {{from}}.",
+          "onlyCell": "Ingen annan plats på arket kan ta {{value}}.",
+          "onlyValue": "Ingen annan siffra kan nå den här platsen."
+        },
+        "action": {
+          "place": "Skriv {{value}} på den randiga platsen."
+        }
+      },
+      "chambers": {
+        "reason": {
+          "mistake": "En av de här siffrorna kan inte stämma.",
+          "sandwich": "{{before}} och {{after}} nuddar bara en enda stängd kammare mellan sig.",
+          "neighbourForced": "Bara en stängd kammare är kvar bredvid {{from}}.",
+          "onlyCell": "Ingen annan plats i graven kan ta {{value}}.",
+          "onlyValue": "Ingen annan siffra kan nå den här kammaren."
+        },
+        "action": {
+          "place": "Öppna {{value}} i den randiga kammaren."
+        }
+      }
+    },
+    "name": {
+      "default": "Bikupan",
+      "channel": "Kanalen",
+      "scribe": "Skrivarens ark",
+      "chambers": "Förseglade kamrar"
+    }
+  },
+  "sudoku": {
+    "rules": {
+      "default": {
+        "chambers": "De tjocka linjerna delar rutnätet i sex kammare, två rutor breda och tre höga.",
+        "given": "Siffrorna som redan är inhuggna hör till pusslet – de stannar kvar.",
+        "enter": "Tryck på en ruta och sen på en siffra. Samma siffra en gång till tar bort den igen.",
+        "notes": "Byt till pennan för att skriva upp vilka siffror en ruta fortfarande kan ha. Ångra tar tillbaka ditt senaste drag."
+      },
+      "papyrus": {
+        "chambers": "De tjocka linjerna delar arket i sex fält, två platser breda och tre höga.",
+        "given": "Tecknen i rött bläck hör till pusslet – de stannar kvar.",
+        "enter": "Tryck på en plats och sen på ett tecken. Samma tecken en gång till skrapar bort det.",
+        "notes": "Ta vasspennan för att skriva upp vilka tecken en plats fortfarande kan ha. Ångra tar tillbaka ditt senaste drag."
+      }
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": {
+            "value": "En av siffrorna här kan inte stämma. Ta bort den och titta igen.",
+            "note": "Anteckningarna i den här rutan har uteslutit siffran som ska stå här. Rensa dem och börja om med rutan."
+          },
+          "nakedSingle": "Den här rutans rad, kolumn och kammare har tagit alla andra siffror.",
+          "hiddenSingle": {
+            "row": "{{token}} passar inte i någon annan ruta i den här raden.",
+            "col": "{{token}} passar inte i någon annan ruta i den här kolumnen.",
+            "box": "{{token}} passar inte i någon annan ruta i den här kammaren."
+          },
+          "pointing": {
+            "row": "Inne i den markerade kammaren kan {{token}} bara stå på den här raden.",
+            "col": "Inne i den markerade kammaren kan {{token}} bara stå i den här kolumnen."
+          },
+          "claiming": {
+            "row": "Längs den markerade raden passar {{token}} bara inne i den här kammaren.",
+            "col": "Nerför den markerade kolumnen passar {{token}} bara inne i den här kammaren."
+          }
+        },
+        "action": {
+          "place": "Skriv {{token}} i den randiga rutan.",
+          "ruleOut_one": "Uteslut {{token}} från den randiga rutan.",
+          "ruleOut_other": "Uteslut {{token}} från de randiga rutorna."
+        }
+      },
+      "papyrus": {
+        "reason": {
+          "mistake": {
+            "value": "Ett av de här tecknen kan inte stämma. Skrapa bort det och titta igen.",
+            "note": "Blyertsmärkena på den här platsen har uteslutit tecknet som ska stå här. Sudda bort dem och börja om med platsen."
+          },
+          "nakedSingle": "Den här platsens rad, kolumn och fält har tagit alla andra tecken.",
+          "hiddenSingle": {
+            "row": "{{token}} passar inte på någon annan plats i den här raden.",
+            "col": "{{token}} passar inte på någon annan plats i den här kolumnen.",
+            "box": "{{token}} passar inte på någon annan plats i det här fältet."
+          },
+          "pointing": {
+            "row": "Inne i det markerade fältet kan {{token}} bara stå på den här raden.",
+            "col": "Inne i det markerade fältet kan {{token}} bara stå i den här kolumnen."
+          },
+          "claiming": {
+            "row": "Längs den markerade raden passar {{token}} bara inne i det här fältet.",
+            "col": "Nerför den markerade kolumnen passar {{token}} bara inne i det här fältet."
+          }
+        },
+        "action": {
+          "place": "Skriv {{token}} med bläck på den randiga platsen.",
+          "ruleOut_one": "Uteslut {{token}} från den randiga platsen.",
+          "ruleOut_other": "Uteslut {{token}} från de randiga platserna."
+        }
+      }
+    },
+    "goal": {
+      "default": "Varje rad, varje kolumn och varje kammare har var och en av de sex siffrorna exakt en gång.",
+      "papyrus": "Varje rad, varje kolumn och varje fält har vart och ett av de sex tecknen exakt en gång."
+    },
+    "name": {
+      "default": "Sex kamrar",
+      "papyrus": "Skrivarens register"
+    }
+  },
+  "crocodile": {
+    "name": "Krokodilgropen",
+    "goal": "Ta dig över gropen till andra stranden.",
+    "rules": {
+      "want": "Varje krokodil vill ha ett svar från raden med stenar bakom sig: det största eller det minsta.",
+      "mark": "Den öppna munnen visar vilket, och det gör tecknet bredvid också: > öppnar sig mot det största svaret, < mot det minsta.",
+      "bite": "Kliver du på någon annan sten så biter den: du förlorar hälsa och börjar om från den närmaste stranden."
+    },
+    "hint": {
+      "biggest": "Den här krokodilen vill ha det största svaret. Det är {{value}}.",
+      "smallest": "Den här krokodilen vill ha det minsta svaret. Det är {{value}}."
+    }
+  },
+  "canisters": {
+    "name": {
+      "default": "Behållarna",
+      "grain": "Sädesmåtten",
+      "oil": "Olja till lamporna",
+      "wine": "Köpmannens källare",
+      "natron": "Kanopkrukorna",
+      "ink": "Skrivarstugan"
+    },
+    "goal": {
+      "default_one": "Mät upp mängden som efterfrågas, och säg vilken behållare som har den.",
+      "default_other": "Mät upp varje mängd som efterfrågas i tur och ordning, och säg vilken behållare som har den innan nästa.",
+      "grain_one": "Mät upp mängden säd som efterfrågas, och säg vilket mått som har den.",
+      "grain_other": "Mät upp varje mängd säd i tur och ordning, och säg vilket mått som har den innan nästa.",
+      "oil_one": "Mät upp oljan som efterfrågas, och säg vilken kruka som har den.",
+      "oil_other": "Mät upp varje mängd olja i tur och ordning, och säg vilken kruka som har den innan nästa.",
+      "wine_one": "Mät upp vinet som efterfrågas, och säg vilken amfora som har det.",
+      "wine_other": "Mät upp varje mängd vin i tur och ordning, och säg vilken amfora som har det innan nästa.",
+      "natron_one": "Mät upp natronet som efterfrågas, och säg vilken kruka som har det.",
+      "natron_other": "Mät upp varje mängd natron i tur och ordning, och säg vilken kruka som har det innan nästa.",
+      "ink_one": "Mät upp bläcket som efterfrågas, och säg vilken burk som har det.",
+      "ink_other": "Mät upp varje mängd bläck i tur och ordning, och säg vilken burk som har det innan nästa."
+    },
+    "rules": {
+      "method": {
+        "sums": "Varje mängd du kan få fram är två tal på bänken ihoplagda eller dragna från varandra: en behållares storlek, vad som finns i den, eller hur mycket plats den har kvar.",
+        "backwards": "Räkna alltså baklänges från mängden som efterfrågas – vilka två tal blir den, och hur får du de två att finnas samtidigt?"
+      },
+      "claim": "När du har mängden, tryck på ”den här”. Väljer du fel kärl kostar det ett drag.",
+      "legs": "Sen nästa mängd, mätt från det som finns kvar i kärlen.",
+      "default": {
+        "moves": "Tryck på en behållare för att lyfta den, och tryck sen på en annan för att hälla i den. Det slutar hälla när den första är tom eller den andra är full.",
+        "contents": "Det här är allt vatten som finns – en behållare börjar full, och inget kan hällas bort eller hämtas.",
+        "levels": "Varje behållare visar hur mycket som finns i den, och hur mycket den rymmer när den är full."
+      },
+      "grain": {
+        "moves": "Tryck på ett mått för att lyfta det, och tryck sen på ett annat för att tömma säden i det. Det slutar när det första är tomt eller det andra är fullt till kanten.",
+        "contents": "Det här är all säd som finns – ett mått börjar fullt, och inget kan sopas bort eller hämtas från sädesboden.",
+        "levels": "Varje mått visar hur mycket som finns i det, och hur mycket det rymmer när det är fullt till kanten."
+      },
+      "oil": {
+        "moves": "Tryck på en kruka för att lyfta den, och tryck sen på en annan för att hälla i den. Det slutar hälla när den första är tom eller den andra är full.",
+        "contents": "Det här är all olja som finns – en kruka börjar full, och inget kan hällas bort eller hämtas.",
+        "levels": "Varje kruka visar hur mycket som finns i den, och hur mycket den rymmer när den är full."
+      },
+      "wine": {
+        "moves": "Tryck på en amfora för att lyfta den, och tryck sen på en annan för att hälla över i den. Det slutar hälla när den första är tom eller den andra är full.",
+        "contents": "Det här är allt vin som finns – en amfora börjar full, och inget kan spillas eller hämtas från källaren.",
+        "levels": "Varje amfora visar hur mycket som finns i den, och hur mycket den rymmer när den är full."
+      },
+      "natron": {
+        "moves": "Tryck på en kruka för att lyfta den, och tryck sen på en annan för att tömma natronet i den. Det slutar när den första är tom eller den andra är full upp till locket.",
+        "contents": "Det här är allt natron som finns – en kruka börjar full, och inget kan sopas bort eller hämtas.",
+        "levels": "Varje kruka visar hur mycket som finns i den, och hur mycket den rymmer när den är full upp till locket."
+      },
+      "ink": {
+        "moves": "Tryck på en burk för att lyfta den, och tryck sen på en annan för att hälla i den. Det slutar hälla när den första är tom eller den andra är full.",
+        "contents": "Det här är allt bläck som finns – en burk börjar full, och inget kan hällas ut eller rivas fram nytt.",
+        "levels": "Varje burk visar hur mycket som finns i den, och hur mycket den rymmer när den är full."
+      }
+    },
+    "hint": {
+      "goal": {
+        "leftover": "Baklänges: {{amount}} är {{content}} minus {{space}} – en behållare med {{content}} hälld i en som har plats för {{space}}.",
+        "full": "Baklänges: {{amount}} är en behållares storlek, och {{a}} och {{b}} tillsammans blir precis det.",
+        "sum": "Baklänges: {{amount}} är {{a}} och {{b}} tillsammans."
+      },
+      "claim": "Det är en hällning bort. Räkna sen ut vilken behållare som har det.",
+      "stuck": "Härifrån går det inte längre att mäta upp {{target}} med de drag du har kvar. Ta tillbaka en hällning, eller börja om brädet.",
+      "overBudget": "Det finns inga drag kvar. Ta tillbaka ett, eller börja om och hitta den kortare vägen.",
+      "next": {
+        "leftover": "Talet före det: {{amount}} – {{content}} hälld i plats för {{space}}.",
+        "full": "Talet före det: en behållare som står full med {{amount}} – {{a}} och {{b}} tillsammans.",
+        "sum": "Talet före det: {{amount}} – {{a}} och {{b}} tillsammans."
+      }
+    },
+    "movesLeft_one": "{{count}} drag kvar",
+    "movesLeft_other": "{{count}} drag kvar",
+    "legs": "mätt {{done}} av {{total}}",
+    "wanted": "Mät upp",
+    "claim": "den här",
+    "claimAria": "Säg att kärlet för {{capacity}} har mängden"
+  },
+  "procession": {
+    "name": {
+      "default": "De ordnade timmarna",
+      "funerary": "En dag i arbetarnas dal",
+      "cosmos": "Nattens överfart",
+      "water": "Översvämningens dag",
+      "trade": "En dag vid kajen"
+    },
+    "goal": {
+      "default": "Skjut allt som händer till sin timme, tills alla märken under dagen stämmer.",
+      "funerary": "Skjut varje uppgift till sin timme, tills alla märken under dagen stämmer.",
+      "cosmos": "Skjut varje ljus till sin timme, tills alla märken under natten stämmer.",
+      "water": "Skjut varje uppgift till sin timme, tills alla märken under dagen stämmer.",
+      "trade": "Skjut varje uppgift till sin timme, tills alla märken under dagen stämmer."
+    },
+    "rules": {
+      "default": {
+        "lengths": "Varje rad är en sak som händer, och den tar så lång tid som stapeln är bred. När den händer är det du ska lista ut.",
+        "marks": "En linje under dagen blir röd så länge den inte stämmer. Tryck på en för att ringa in raderna den handlar om.",
+        "drag": "Dra en stapel längs sin egen rad. Den lämnar aldrig dagen."
+      }
+    },
+    "hint": {
+      "default": {
+        "chain": "Den radens plats är redan bestämd, och den här hänger ihop med den.",
+        "squeeze": "Det finns bara så här mycket dag kvar, och det här är allt som får plats.",
+        "apart": "Tvärtom får det inte plats under dagen.",
+        "split": "Prova tvärtom, så går något annat sönder.",
+        "move": "Dra den inringade stapeln till de randiga strecken."
+      }
+    },
+    "events": {
+      "default": ["elden", "vattenbärandet", "bakningen", "båtturen", "oxdrivningen", "nattvakten"],
+      "funerary": ["putsningen", "rutritningen", "huggningen", "målningen", "förgyllningen", "dörrisättningen"],
+      "cosmos": [
+        "solens överfart",
+        "stjärnans uppgång",
+        "månens vakt",
+        "den öppna himlen",
+        "gryningen",
+        "årets vändning"
+      ],
+      "water": ["översvämningen", "kanalgrävningen", "dammfyllningen", "fältvattningen", "färjningen", "skörden"],
+      "trade": ["varusorteringen", "brödförsäljningen", "ölförsäljningen", "färjningen", "lastbärandet", "räkningen"]
+    },
+    "marks": {
+      "default": {
+        "pin": "{{a}} börjar vid timme {{tick}}.",
+        "handoff": "{{a}} börjar i samma stund som {{b}} är klar.",
+        "link_one": "{{a}} börjar {{count}} timme efter att {{b}} är klar.",
+        "link_other": "{{a}} börjar {{count}} timmar efter att {{b}} är klar.",
+        "before": "{{a}} är klar innan {{b}} börjar.",
+        "apart": "{{a}} och {{b}} pågår aldrig samtidigt.",
+        "together": "{{a}} och {{b}} pågår samtidigt en stund.",
+        "span_one": "Från första start till sista slut är det {{count}} timme.",
+        "span_other": "Från första start till sista slut är det {{count}} timmar."
+      }
+    },
+    "door": {
+      "title": "Processionsdörren",
+      "hint": "Varje platta du kliver på släpper loss sin uppgift. Ordna dagen, och gå sen på plattorna i den ordningen.",
+      "read": "Dagen är läst. Gå på plattorna i den här ordningen, från den första.",
+      "hintButton": "Ledtråd"
+    }
+  },
+  "story": {
+    "invitation": "Prata",
+    "log": {
+      "empty": "Inget än. Fez kommer att ha massor att säga."
+    },
+    "speaker": {
+      "fez": "Fez",
+      "explorer": "Du",
+      "ipi": "Ipi",
+      "henut": "Henut",
+      "priest": "Prästen",
+      "pharaoh": "Farao",
+      "voice": "En röst"
+    },
+    "wall": {
+      "wrong": "Någon högg det tredje tecknet fel. Det har varit fel i tre tusen år.",
+      "fixed": "Nu är det hennes namn igen.",
+      "pick": "Sätt rätt tecken på sin plats.",
+      "cannot": "Du kan inte tecknet som ska stå här. Inte än."
+    },
+    "sphinx": {
+      "wrong": "Samma skrift som utanför, men sanden nådde aldrig hit. Två tecken är fortfarande skarpa, och det finns ett tomrum där det tredje satt.",
+      "fixed": "Det är allt som står.",
+      "pick": "Sätt tecknet du bär på i tomrummet.",
+      "cannot": "Två tecken som du kan, och ett tomrum som du inte kan fylla. Inte än.",
+      "gap": "Tecknet som fattas"
+    }
+  },
+  "lightbeamSwitch": {
+    "name": "Det vridbara ljuset",
+    "invitation": "Vrid speglarna",
+    "goal": "Ljuset vilar i en helgedom, och utgången under den står öppen.",
+    "rules": {
+      "shrines": "En ljusskiva, och en helgedom över varje utgång från den här korsningen. Speglarna på golvet kan leda ljuset till vilken som helst av dem.",
+      "doors": "Utgången som ljuset når står öppen, och de andra är stängda. En väg för ljuset, en väg vidare.",
+      "returning": "Du förlorar inget på att välja. Gå tillbaka in när du vill och skicka ljuset åt ett annat håll i stället – då öppnas den vägen, och den här stängs.",
+      "tap": "Tryck på en spegel för att vrida den. Trycker du igen så vrids den tillbaka."
+    },
+    "doorOpen": "Utgång åt {{way}}: öppen",
+    "doorShut": "Utgång åt {{way}}: stängd",
+    "way": {
+      "n": "norr",
+      "e": "öster",
+      "s": "söder",
+      "w": "väster"
+    }
+  },
+  "handle": {
+    "name": "Spaken",
+    "invitation": "Dra i spaken",
+    "goal": "Spaken hänger åt ena eller andra hållet. Det som den ena sidan öppnar, stänger den andra.",
+    "left": "Dra den åt vänster",
+    "right": "Dra den åt höger"
+  },
+  "torch": {
+    "name": "Facklan",
+    "invitation": "Tänd facklan",
+    "goal": "En otänd fackla. När den väl brinner går den inte att släcka igen.",
+    "lit": "Facklan brinner."
+  },
+  "gateFace": {
+    "title": "En dörr som väntar",
+    "hint": "Varje tecken måste brinna innan den här dörren öppnas.",
+    "lit": "{{owner}}: tänd",
+    "unlit": "{{owner}}: inte än",
+    "owner": {
+      "torch": "Fackla",
+      "handle": "Spak",
+      "key": "Nyckel",
+      "web": "Ett tecken från sanden",
+      "plateStone": "En sten på en platta",
+      "plateEmpty": "En tom platta",
+      "other": "Mekanism"
+    },
+    "orderHint": "Gå på plattorna i den här ordningen.",
+    "reset": "Börja om",
+    "spoiled": "Det blev fel: en platta trampades i fel ordning.",
+    "tile": {
+      "unwalked": "Steg {{step}}: inte trampad än",
+      "inOrder": "Steg {{step}}: trampad i rätt ordning",
+      "outOfOrder": "Steg {{step}}: trampad i fel ordning"
+    }
+  },
+  "devLockEditor": {
+    "syntax": "Syntax",
+    "example": "Exempel",
+    "useExample": "Använd exemplet",
+    "title": "Låsredigerare",
+    "notation": "Låsnotation",
+    "checks": "Kontroller",
+    "drawing": "Ritning",
+    "carveAndPlay": "Hugg ut och spela",
+    "copyLink": "Kopiera länk",
+    "copied": "Länken är kopierad",
+    "failed": "Kunde inte kopiera; länken finns i adressfältet",
+    "backToEditor": "← Redigerare",
+    "close": "Stäng",
+    "open": "Låsredigerare",
+    "modeLock": "Lås",
+    "modeWeb": "Nät",
+    "webNotation": "Nätnotation",
+    "openWeb": "Öppna ett nät",
+    "checking": "Kontrollerar…",
+    "checkedIn": "kontrollerat på {{ms}} ms",
+    "worldCarved": "Trollkarl-våningar uthuggna på {{ms}} ms, en gång",
+    "simulation": "Drag i spakar",
+    "noSimulation": "Inget att spela igenom förrän varje plats finns i världen.",
+    "summary": "Sammanfattning",
+    "stillBuried": "Fortfarande {{percent}} % begravd",
+    "nothingBuried": "Inget begravt",
+    "finishes": "blir klar",
+    "stopsAt": "stannar vid {{pct}} %",
+    "notOpenYet": "inte öppen än",
+    "pullAll": "Dra i allt inom räckhåll",
+    "reset": "Börja om",
+    "progress": "{{reachable}} inom räckhåll · {{pulled}} av {{total}} tagna",
+    "allTaken": "Allt draget och taget.",
+    "potFront": "{{pulled}} av {{total}} dragna · fronten vid {{pct}} %",
+    "potOpen": "{{pulled}} av {{total}} dragna · öppen",
+    "keys": "Nycklar",
+    "keysNote": "var och en öppnar ett sigill",
+    "log": "Vad som hände",
+    "logEmpty": "Inget draget än.",
+    "logPull": "drar {{name}} i {{at}}",
+    "logTake": "tar {{name}} i {{at}}",
+    "logFront": "{{pot}} front till {{pct}} %",
+    "logPotOpen": "{{pot}} öppen",
+    "logSeal": "sigill i {{at}} öppet",
+    "logNew": "nytt: {{names}}",
+    "pullPin": "dra spak {{name}}",
+    "takePin": "ta nyckel {{name}}",
+    "legendCleared": "rensat",
+    "legendBuried": "begravt",
+    "legendSeal": "sigill",
+    "legendPins": "● spak · ■ nyckel · liten = sidodel"
+  },
+  "camp": {
+    "title": "Läger",
+    "continue": {
+      "heading": "Pågående expedition",
+      "setOff": "Ge dig av",
+      "pyramid": "Pyramid {{level}} av {{count}} · {{tier}}",
+      "tomb": "Grav · {{tier}}",
+      "empty": "Allt är öppet på din karta"
+    },
+    "hint_one": "{{count}} gammal resa har något nytt att upptäcka",
+    "hint_other": "{{count}} gamla resor har något nytt att upptäcka",
+    "comingHome": {
+      "title": "Tillbaka i lägret",
+      "haulTitle": "Det du fick med dig från resan",
+      "new": "NY",
+      "unpack": "Packa upp",
+      "toCamp": "Till lägret"
+    },
+    "chapter": {
+      "subtitle": "Nytt kapitel",
+      "title": "En ny pyramid tornar upp sig",
+      "body": "{{tier}}-resorna är öppna. Vila dig i lägret och ge dig av när du är redo.",
+      "journeyNote": "Första {{tier}}-resan",
+      "later": "Senare"
+    },
+    "close": "Stäng",
+    "entrance": {
+      "collection": "Samling",
+      "mosaic": "Mosaik",
+      "journeys": "Alla resor",
+      "detectors": "Detektorer"
+    },
+    "mapTable": {
+      "title": "Kartbord",
+      "journeys": "Resor"
+    }
+  },
+  "home": {
+    "haul": {
+      "times": "×{{count}}"
+    }
+  },
+  "journeys": {
+    "tierNeed": "Hitta den här skatten",
+    "tierProgress": "{{done}} av {{total}} klara",
+    "tierLockedName": "{{tier}}-resor",
+    "toggleTier": "Visa eller dölj {{tier}}-resorna",
+    "now": "NU",
+    "newDot": "Något nytt att upptäcka",
+    "noteCurrentPyramid": "Pågår · pyramid {{level}} av {{count}}",
+    "noteCurrentTomb": "Pågår · i graven",
+    "noteFinished": "Klar",
+    "noteFinishedNews": "Klar · något nytt att upptäcka",
+    "noteOpen": "Inte besökt än",
+    "noteResumePyramid": "Påbörjad · pyramid {{level}} av {{count}}",
+    "noteResumeTomb": "Påbörjad · i graven",
+    "needProgress": "{{unit}}: {{found}} av {{required}}",
+    "showStops": "Visa platserna i {{name}}",
+    "stopPyramid": "Pyramid",
+    "stopTomb": "Plats"
+  },
+  "newVersion": {
+    "title": "En ny version!",
+    "name": "Spelet har ändrats mycket",
+    "body": "Därför börjar din resa om från början. Nya gravar, fynd och ett läger att bygga väntar på dig."
+  },
+  "devPrefabPreview": {
+    "firstDoor": "Till första dörren",
+    "stop": "Till stoppet",
+    "secondDoor": "Till andra dörren",
+    "doorsInUse_one": "{{count}} dörr används",
+    "doorsInUse_other": "{{count}} dörrar används",
+    "walled": "{{count}} igenmurade"
+  },
+  "devRoomEditor": {
+    "title": "Rumsredigerare",
+    "open": "Rumsredigerare",
+    "close": "Stäng",
+    "tier": "Nivå",
+    "catalogue": "Öppna ett rum",
+    "notation": "Rumsnotation",
+    "copyLink": "Kopiera länk",
+    "copyText": "Kopiera text",
+    "copied": "Kopierat",
+    "failed": "Kunde inte kopiera till urklipp",
+    "palette": "Palett",
+    "unpainted": "inte målad än",
+    "layout": "Layout",
+    "mirrored": "(spegelvänd)",
+    "fill_one": "Fyll ({{count}} val)",
+    "fill_other": "Fyll ({{count}} val)",
+    "fromDoor": "Gå från",
+    "toDoor": "Gå till",
+    "automatic": "Automatiskt",
+    "direction": {
+      "n": "Norra dörren",
+      "e": "Östra dörren",
+      "s": "Södra dörren",
+      "w": "Västra dörren"
+    },
+    "checks": "Kontroller",
+    "sound": "Rummet klarar sina kontroller",
+    "tierDisagrees": "Rubriken säger nivå {{header}}, ritat här i {{picked}}",
+    "undo": "Ångra",
+    "drawing": "Ritning",
+    "tool": {
+      "select": "Välj",
+      "wall": "Vägg",
+      "floor": "Golv",
+      "door": "Dörrplats",
+      "stop": "Stopp",
+      "chest": "Kista",
+      "portal": "Portal",
+      "mechanism": "Mekanism",
+      "erase": "Sudda",
+      "copy": "Rita {{letter}}"
+    },
+    "againstWall": "Saker som släpps står mot norra väggen",
+    "dropHint": "Dra något från paletten till en cell; det tar så mycket plats som det behöver",
+    "newLayout": "Namn på ny layout",
+    "addLayout": "Kopiera som layout",
+    "inspector": {
+      "title": "Plats {{letter}}",
+      "optional": "Valfri",
+      "kinds": "Sorter",
+      "counted": "Fyll bara några",
+      "take": "Ta",
+      "of": "av",
+      "per": "per",
+      "perNone": "var och en för sig",
+      "drawAnother": "Rita en till",
+      "close": "Stäng"
+    },
+    "refused": {
+      "notFree": "Inte på fritt golv inne i rummet",
+      "wallRow": "En väggplats står på första raden innanför norra väggen",
+      "northWall": "En väggsak hänger på norra väggen",
+      "floorOnRing": "Yttre ringen tar bara väggar och dörrplatser",
+      "doorInside": "En dörrplats står på yttre ringen",
+      "keepStop": "Stoppet stannar: sätt det någon annanstans för att flytta det",
+      "noLetter": "Alla bokstäver är tagna",
+      "layoutName": "Ge layouten ett namn som ingen annan layout har",
+      "notation": "Notationen godtar det inte: {{message}}"
+    },
+    "layer": {
+      "wall": "mot väggen",
+      "floor": "golv",
+      "ground": "mark",
+      "wallItem": "väggsak"
+    },
+    "cell": "Cell {{row}},{{col}}: {{what}}",
+    "cellWhat": {
+      "wall": "vägg",
+      "floor": "fritt golv",
+      "door": "dörrplats",
+      "place": "{{letter}}, {{kinds}}"
+    },
+    "rewrites": "När du ritar skrivs texten om: alla kommentarer flyttas högst upp"
+  }
+}

@@ -31,7 +31,9 @@ import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { continueJourney, entryOpen, newToDiscoverCount } from "@/app/home/continueJourney"
 import { useElementSize } from "@/app/home/useElementSize"
 import { useIsDesktop } from "@/app/home/useIsDesktop"
+import { usePress } from "@/app/home/usePress"
 import { useWindowEntrance } from "@/app/home/useWindowEntrance"
+import { WelcomeLanguageChip } from "@/app/home/WelcomeLanguageChip"
 import { CampScene } from "@/ui/atoms/CampScene"
 import { TapHint } from "@/ui/atoms/TapHint"
 import { CampHud } from "@/ui/molecules/CampHud"
@@ -71,6 +73,7 @@ export const Base = ({
   const [arrived, setArrived] = useState<Arrival | undefined>()
   const forgetArrival = useCallback(() => setArrived(undefined), [])
   const [setOffHint, setOffTapped] = useTapHint("setOff")
+  const [panelPressed, pressPanel] = usePress()
 
   // Fez greets once the player has unpacked, not behind the coming-home screen.
   useEffect(() => {
@@ -157,10 +160,19 @@ export const Base = ({
         badge: windowEntrance.badge,
         onOpen: () => setPopup("window"),
       },
-      // On desktop the journeys stand beside the camp, so the table opens only for its detectors.
+      // On desktop the journeys stand beside the camp, so the table opens only for its detectors; without them
+      // pressing it points to the panel.
       mapTable:
         isDesktop && held.length === 0
-          ? undefined
+          ? {
+              label: t("camp.entrance.journeys"),
+              onPress: pressPanel,
+              // A key press has no pointer to let go: it shows the shortest press.
+              onOpen: () => {
+                pressPanel(true)
+                pressPanel(false)
+              },
+            }
           : {
               label: t(isDesktop ? "camp.entrance.detectors" : "camp.entrance.journeys"),
               onOpen: () => {
@@ -169,7 +181,7 @@ export const Base = ({
               },
             },
     }),
-    [t, windowEntrance, isDesktop, news.total, held]
+    [t, windowEntrance, isDesktop, news.total, held, pressPanel]
   )
 
   const continueCard = (
@@ -247,6 +259,9 @@ export const Base = ({
         // The card and the journey list wait while someone speaks: behind a conversation they only make the
         // screen busy.
         quiet={speaking}
+        pressed={panelPressed}
+        notice={<WelcomeLanguageChip />}
+        hudHeight={hud.height}
         card={<div ref={cardRef}>{continueCard}</div>}
         aside={
           isDesktop ? (

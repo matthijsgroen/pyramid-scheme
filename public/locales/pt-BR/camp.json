@@ -1,0 +1,254 @@
+{
+  "spots": {
+    "fire": "Fogueira",
+    "sleeping": "Lugar de dormir",
+    "water": "Lugar da água",
+    "cooking": "Cozinha",
+    "donkey": "Lugar do burro",
+    "camel": "Lugar do camelo",
+    "mapTable": "Mesa de mapas",
+    "palmGarden": "Jardim de palmeiras",
+    "ibisPond": "Lago dos íbis",
+    "lookout": "Mirante",
+    "godStatues": "Estátuas dos deuses",
+    "starCanopy": "Teto de estrelas"
+  },
+  "finds": {
+    "pot": "Panela",
+    "seatCushions": "Almofadas",
+    "reedMat": "Esteira de junco",
+    "blanket": "Cobertor",
+    "tentRug": "Tapete da barraca",
+    "tentFlag": "Bandeira da barraca",
+    "gourd": "Cabaça",
+    "jar": "Jarro",
+    "secondJar": "Segundo jarro",
+    "spiceRack": "Prateleira de temperos",
+    "breadBoard": "Tábua de pão",
+    "starMap": "Mapa das estrelas",
+    "scrollCase": "Porta-pergaminhos",
+    "astrolabe": "Astrolábio",
+    "reedGlobe": "Globo de junco",
+    "seed": "Semente de palmeira",
+    "secondPalm": "Semente de palmeira",
+    "figTree": "Semente de figo",
+    "papyrus": "Raiz de papiro",
+    "reeds": "Muda de junco",
+    "lotus": "Raiz de lótus",
+    "flag": "Bandeira do mirante",
+    "thoth": "Estatueta de Thoth",
+    "bastet": "Estatueta de Bastet",
+    "anubis": "Estatueta de Anúbis",
+    "ra": "Estatueta de Rá",
+    "cloth": "Pano de estrelas"
+  },
+  "structures": {
+    "stoneRing": "Roda de pedras",
+    "fire": "Fogo",
+    "cookingStones": "Pedras de cozinhar",
+    "seatingStones": "Pedras de sentar",
+    "clayOven": "Forno de barro",
+    "windbreak": "Quebra-vento",
+    "tent": "Barraca",
+    "secondTent": "Segunda barraca",
+    "pavilion": "Pavilhão",
+    "well": "Poço",
+    "wellPulley": "Poço com roldana",
+    "tripod": "Tripé",
+    "breadOven": "Forno de pão",
+    "dryingRack": "Varal de secar",
+    "feast": "Banquete",
+    "table": "Mesa de mapas",
+    "lotusPlanter": "Canteiro de lótus",
+    "edgeStones": "Beira do lago",
+    "post": "Poste do mirante",
+    "platform": "Plataforma do mirante",
+    "ladder": "Escada",
+    "roof": "Telhado",
+    "signalFire": "Fogo de sinal",
+    "poles": "Mastros do teto",
+    "stars": "Estrelas",
+    "planets": "Planetas"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Pedras do campo",
+      "sandBed": "Cama de areia"
+    },
+    "fire": {
+      "tinder": "Gravetos",
+      "acaciaLogs": "Lenha de acácia"
+    },
+    "cookingStones": {
+      "flatStone": "Pedra lisa",
+      "supportStones": "Pedras de apoio"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Pedregulhos lisos",
+      "sandstoneBlock": "Bloco de arenito",
+      "hewnSlab": "Laje talhada"
+    },
+    "clayOven": {
+      "ovenFloor": "Chão do forno",
+      "firebricks": "Tijolos de fogo",
+      "smokeHole": "Buraco da fumaça",
+      "copperGrate": "Grelha de cobre"
+    },
+    "windbreak": {
+      "reedBundles": "Feixes de junco",
+      "stakes": "Estacas de madeira"
+    },
+    "tent": {
+      "tentPoles": "Varas da barraca",
+      "wovenCloth": "Pano tecido",
+      "tentPegs": "Estacas da barraca"
+    },
+    "secondTent": {
+      "largeCloth": "Pano grande de barraca",
+      "ridgePole": "Viga do topo",
+      "guyRopes": "Cordas de esticar",
+      "woolFloor": "Tapete de lã"
+    },
+    "pavilion": {
+      "pavilionPosts": "Postes do pavilhão",
+      "linenCanopy": "Toldo de linho",
+      "hangingCurtains": "Cortinas",
+      "woolRugs": "Tapetes de lã",
+      "woodenFloor": "Piso de madeira"
+    },
+    "well": {
+      "wellStones": "Pedras do poço",
+      "rope": "Corda comprida",
+      "bucket": "Balde",
+      "windlass": "Manivela"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Roldana",
+      "frame": "Armação",
+      "hoistRope": "Corda de puxar",
+      "counterweight": "Contrapeso",
+      "leatherBucket": "Balde de couro"
+    },
+    "tripod": {
+      "tripodPoles": "Três varas",
+      "binding": "Corda de amarrar",
+      "hook": "Gancho de bronze"
+    },
+    "breadOven": {
+      "mudBricks": "Tijolos de barro",
+      "clayPlaster": "Reboco de argila",
+      "ovenLid": "Tampa do forno"
+    },
+    "dryingRack": {
+      "rackPoles": "Varas do varal",
+      "crossbar": "Travessa",
+      "wickerTray": "Bandeja de vime",
+      "cords": "Cordinhas de pendurar"
+    },
+    "feast": {
+      "lowTable": "Mesa baixa",
+      "breadBaskets": "Cestas de pão",
+      "roastDuck": "Pato assado",
+      "beerJars": "Jarras de cerveja",
+      "fruitBowl": "Fruteira"
+    },
+    "table": {
+      "tableTop": "Tampo da mesa",
+      "trestles": "Cavaletes",
+      "leatherStraps": "Tiras de couro"
+    },
+    "lotusPlanter": {
+      "clayTub": "Cocho de argila",
+      "nileSilt": "Lama do Nilo",
+      "waterJar": "Jarro de água",
+      "lotusTubers": "Raízes de lótus",
+      "stoneRim": "Borda de pedra"
+    },
+    "edgeStones": {
+      "riverStones": "Pedras de rio",
+      "clayBedding": "Cama de argila",
+      "gravel": "Cascalho",
+      "boundaryStakes": "Estacas de marcar"
+    },
+    "post": {
+      "postTrunk": "Tronco de palmeira",
+      "footStones": "Pedras da base",
+      "wedges": "Calços",
+      "braces": "Escoras"
+    },
+    "platform": {
+      "platformBeams": "Vigas de apoio",
+      "platformPlanks": "Tábuas",
+      "lashingRope": "Corda de amarrar",
+      "edgeRail": "Corrimão"
+    },
+    "ladder": {
+      "ladderRails": "Laterais da escada",
+      "rungs": "Degraus",
+      "groundPegs": "Pinos de chão",
+      "leatherLoops": "Alças de couro"
+    },
+    "roof": {
+      "roofPoles": "Varas do telhado",
+      "thatch": "Palha de palmeira",
+      "clayLayer": "Camada de argila",
+      "bindingGrass": "Capim de amarrar"
+    },
+    "signalFire": {
+      "fireBasin": "Bacia de fogo",
+      "pitch": "Piche",
+      "dryBrushwood": "Galhos secos",
+      "flint": "Pedra de fogo",
+      "bellows": "Fole"
+    },
+    "poles": {
+      "masts": "Mastros",
+      "cornerStones": "Pedras de canto",
+      "stayLines": "Cabos de firmar",
+      "bigPegs": "Estacas grandes",
+      "poleSockets": "Bases dos mastros"
+    },
+    "stars": {
+      "goldLeaf": "Folha de ouro",
+      "needleThread": "Agulha e linha",
+      "indigoDye": "Tinta anil",
+      "chalk": "Giz",
+      "stencils": "Moldes"
+    },
+    "planets": {
+      "ochre": "Ocre",
+      "copperDiscs": "Discos de cobre",
+      "lapisPowder": "Pó de lápis-lazúli",
+      "hangingLoops": "Argolas de pendurar",
+      "dividers": "Compasso"
+    }
+  },
+  "collection": {
+    "title": "Construções",
+    "progress": "{{found}} de {{total}}",
+    "built": "pronto",
+    "unknownPart": "???",
+    "open": "Mostrar peças",
+    "close": "Esconder peças"
+  },
+  "reward": {
+    "find": "Achado do acampamento",
+    "part": "Peça",
+    "progress": "{{name}} · {{found}} de {{total}}"
+  },
+  "haul": {
+    "new": "Novo no seu acampamento",
+    "parts_one": "{{name}} · {{count}} peça",
+    "parts_many": "{{name}} · {{count}} peças",
+    "parts_other": "{{name}} · {{count}} peças"
+  },
+  "arrivals": {
+    "donkey": "Seu burro chegou ao acampamento",
+    "cart": "Sua carroça chegou ao acampamento",
+    "camel": "Seu camelo chegou ao acampamento",
+    "secondDonkey": "Seu segundo burro chegou ao acampamento",
+    "secondCamel": "Seu segundo camelo chegou ao acampamento",
+    "sturdyCart": "Sua carroça mais forte chegou ao acampamento",
+    "caravanBanner": "O estandarte da sua caravana está no acampamento"
+  }
+}

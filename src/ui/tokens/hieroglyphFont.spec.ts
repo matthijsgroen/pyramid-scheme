@@ -55,7 +55,7 @@ describe("the shipped hieroglyph subset", () => {
    */
   it("is declared over the range the sweep covers", () => {
     const css = readFileSync(join(root, "src/index.css"), "utf8")
-    const declared = css.match(/unicode-range:\s*U\+([0-9A-Fa-f]+)-([0-9A-Fa-f]+)/)
+    const declared = css.match(/font-family:\s*"Hieroglyphs";[^}]*unicode-range:\s*U\+([0-9A-Fa-f]+)-([0-9A-Fa-f]+)/)
     expect(declared, "no unicode-range on the hieroglyph @font-face in src/index.css").not.toBeNull()
     const [first, last] = [parseInt(declared![1], 16), parseInt(declared![2], 16)]
     expect({ first, last }).toEqual({ first: HIEROGLYPH_RANGE.first, last: HIEROGLYPH_RANGE.last })

@@ -46,7 +46,8 @@ always one tap.
   taps on the "Kamp" title, its tools inside settings).
 - **Objects in the camp are entrances**: the **chest** opens the Verzameling (tabs, NIEUW marks, a badge
   with the number of new items; the story log is one of its tabs); the **stained-glass window** opens the
-  mosaic; the **map table** opens Alle reizen on a phone. The fire is not an entrance.
+  mosaic; the **map table** opens Alle reizen on a phone, and on desktop pressing it makes the side panel
+  grow and brighten while held. The fire is not an entrance.
 - **Coming home** is a moment: the fire, the hearts refilled, the haul found since the last homecoming,
   then **Uitpakken**. An empty haul shows only the fire and the hearts. Nothing chains into the next
   journey.

@@ -1,0 +1,253 @@
+{
+  "spots": {
+    "fire": "Tábortűz",
+    "sleeping": "Alvóhely",
+    "water": "Vízhely",
+    "cooking": "Főzőhely",
+    "donkey": "Szamárhely",
+    "camel": "Tevehely",
+    "mapTable": "Térképasztal",
+    "palmGarden": "Pálmakert",
+    "ibisPond": "Íbisz-tó",
+    "lookout": "Kilátó",
+    "godStatues": "Istenszobrok",
+    "starCanopy": "Csillagtető"
+  },
+  "finds": {
+    "pot": "Főzőfazék",
+    "seatCushions": "Ülőpárnák",
+    "reedMat": "Nádgyékény",
+    "blanket": "Takaró",
+    "tentRug": "Sátorszőnyeg",
+    "tentFlag": "Sátorzászló",
+    "gourd": "Tökkulacs",
+    "jar": "Korsó",
+    "secondJar": "Második korsó",
+    "spiceRack": "Fűszertartó",
+    "breadBoard": "Kenyérvágó deszka",
+    "starMap": "Csillagtérkép",
+    "scrollCase": "Tekercstartó",
+    "astrolabe": "Asztrolábium",
+    "reedGlobe": "Nádból font földgömb",
+    "seed": "Pálmamag",
+    "secondPalm": "Pálmamag",
+    "figTree": "Fügemag",
+    "papyrus": "Papiruszgyökér",
+    "reeds": "Nádhajtás",
+    "lotus": "Lótuszgumó",
+    "flag": "Kilátózászló",
+    "thoth": "Thot-szobrocska",
+    "bastet": "Básztet-szobrocska",
+    "anubis": "Anubisz-szobrocska",
+    "ra": "Ré-szobrocska",
+    "cloth": "Csillagos kendő"
+  },
+  "structures": {
+    "stoneRing": "Kőkör",
+    "fire": "Tűz",
+    "cookingStones": "Főzőkövek",
+    "seatingStones": "Ülőkövek",
+    "clayOven": "Agyagkemence",
+    "windbreak": "Szélfogó",
+    "tent": "Sátor",
+    "secondTent": "Második sátor",
+    "pavilion": "Pavilon",
+    "well": "Kút",
+    "wellPulley": "Csigás kút",
+    "tripod": "Háromláb",
+    "breadOven": "Kenyérsütő kemence",
+    "dryingRack": "Szárítóállvány",
+    "feast": "Lakoma",
+    "table": "Térképasztal",
+    "lotusPlanter": "Lótuszláda",
+    "edgeStones": "Tópart",
+    "post": "Kilátóoszlop",
+    "platform": "Kilátóállvány",
+    "ladder": "Létra",
+    "roof": "Tető",
+    "signalFire": "Jelzőtűz",
+    "poles": "Csillagárbocok",
+    "stars": "Csillagok",
+    "planets": "Bolygók"
+  },
+  "parts": {
+    "stoneRing": {
+      "fieldStones": "Mezei kövek",
+      "sandBed": "Homokágy"
+    },
+    "fire": {
+      "tinder": "Tapló",
+      "acaciaLogs": "Akácfahasábok"
+    },
+    "cookingStones": {
+      "flatStone": "Lapos kő",
+      "supportStones": "Tartókövek"
+    },
+    "seatingStones": {
+      "smoothBoulders": "Sima sziklák",
+      "sandstoneBlock": "Homokkőtömb",
+      "hewnSlab": "Faragott kőlap"
+    },
+    "clayOven": {
+      "ovenFloor": "Kemencealj",
+      "firebricks": "Tűzálló téglák",
+      "smokeHole": "Füstlyuk",
+      "copperGrate": "Rézrács"
+    },
+    "windbreak": {
+      "reedBundles": "Nádkötegek",
+      "stakes": "Facölöpök"
+    },
+    "tent": {
+      "tentPoles": "Sátorrudak",
+      "wovenCloth": "Szőtt vászon",
+      "tentPegs": "Sátorcövekek"
+    },
+    "secondTent": {
+      "largeCloth": "Nagy sátorvászon",
+      "ridgePole": "Gerincrúd",
+      "guyRopes": "Feszítőkötelek",
+      "woolFloor": "Gyapjú padlószőnyeg"
+    },
+    "pavilion": {
+      "pavilionPosts": "Pavilonoszlopok",
+      "linenCanopy": "Lenvászon tető",
+      "hangingCurtains": "Függönyök",
+      "woolRugs": "Gyapjúszőnyegek",
+      "woodenFloor": "Fapadló"
+    },
+    "well": {
+      "wellStones": "Kútkövek",
+      "rope": "Hosszú kötél",
+      "bucket": "Vödör",
+      "windlass": "Csörlő"
+    },
+    "wellPulley": {
+      "pulleyWheel": "Csigakerék",
+      "frame": "Tartóváz",
+      "hoistRope": "Emelőkötél",
+      "counterweight": "Ellensúly",
+      "leatherBucket": "Bőrvödör"
+    },
+    "tripod": {
+      "tripodPoles": "Három rúd",
+      "binding": "Kötözőkötél",
+      "hook": "Bronzkampó"
+    },
+    "breadOven": {
+      "mudBricks": "Vályogtéglák",
+      "clayPlaster": "Agyagtapasz",
+      "ovenLid": "Kemenceajtó"
+    },
+    "dryingRack": {
+      "rackPoles": "Állványrudak",
+      "crossbar": "Keresztrúd",
+      "wickerTray": "Fonott tálca",
+      "cords": "Akasztózsinórok"
+    },
+    "feast": {
+      "lowTable": "Alacsony asztal",
+      "breadBaskets": "Kenyereskosarak",
+      "roastDuck": "Sült kacsa",
+      "beerJars": "Sörös korsók",
+      "fruitBowl": "Gyümölcstál"
+    },
+    "table": {
+      "tableTop": "Asztallap",
+      "trestles": "Bakok",
+      "leatherStraps": "Bőrszíjak"
+    },
+    "lotusPlanter": {
+      "clayTub": "Agyagteknő",
+      "nileSilt": "Nílusi iszap",
+      "waterJar": "Vizeskorsó",
+      "lotusTubers": "Lótuszgumók",
+      "stoneRim": "Kőperem"
+    },
+    "edgeStones": {
+      "riverStones": "Folyami kövek",
+      "clayBedding": "Agyagágy",
+      "gravel": "Kavics",
+      "boundaryStakes": "Jelzőkarók"
+    },
+    "post": {
+      "postTrunk": "Pálmatörzs",
+      "footStones": "Alapkövek",
+      "wedges": "Ékek",
+      "braces": "Támasztékok"
+    },
+    "platform": {
+      "platformBeams": "Tartógerendák",
+      "platformPlanks": "Deszkák",
+      "lashingRope": "Kötözőkötél",
+      "edgeRail": "Korlát"
+    },
+    "ladder": {
+      "ladderRails": "Létraszárak",
+      "rungs": "Létrafokok",
+      "groundPegs": "Földcövekek",
+      "leatherLoops": "Bőrhurkok"
+    },
+    "roof": {
+      "roofPoles": "Tetőrudak",
+      "thatch": "Pálmalevelek",
+      "clayLayer": "Agyagréteg",
+      "bindingGrass": "Kötözőfű"
+    },
+    "signalFire": {
+      "fireBasin": "Tűztál",
+      "pitch": "Szurok",
+      "dryBrushwood": "Száraz rőzse",
+      "flint": "Tűzkő",
+      "bellows": "Fújtató"
+    },
+    "poles": {
+      "masts": "Árbocok",
+      "cornerStones": "Sarokkövek",
+      "stayLines": "Merevítőkötelek",
+      "bigPegs": "Nagy cövekek",
+      "poleSockets": "Oszloptalpak"
+    },
+    "stars": {
+      "goldLeaf": "Aranyfüst",
+      "needleThread": "Tű és cérna",
+      "indigoDye": "Indigófesték",
+      "chalk": "Kréta",
+      "stencils": "Sablonok"
+    },
+    "planets": {
+      "ochre": "Okker",
+      "copperDiscs": "Rézkorongok",
+      "lapisPowder": "Lazúrkőpor",
+      "hangingLoops": "Akasztóhurkok",
+      "dividers": "Körző"
+    }
+  },
+  "collection": {
+    "title": "Építmények",
+    "progress": "{{found}} / {{total}}",
+    "built": "megépült",
+    "unknownPart": "???",
+    "open": "Részek mutatása",
+    "close": "Részek elrejtése"
+  },
+  "reward": {
+    "find": "Táborba való lelet",
+    "part": "Alkatrész",
+    "progress": "{{name}} · {{found}} / {{total}}"
+  },
+  "haul": {
+    "new": "Új a táborodban",
+    "parts_one": "{{name}} · {{count}} alkatrész",
+    "parts_other": "{{name}} · {{count}} alkatrész"
+  },
+  "arrivals": {
+    "donkey": "Megjött a szamarad a táborba",
+    "cart": "Megjött a kocsid a táborba",
+    "camel": "Megjött a tevéd a táborba",
+    "secondDonkey": "Megjött a második szamarad a táborba",
+    "secondCamel": "Megjött a második tevéd a táborba",
+    "sturdyCart": "Megjött az erősebb kocsid a táborba",
+    "caravanBanner": "A karavánzászlód már a táborban lobog"
+  }
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Measures every rank's committed floor and wall art through the renderer's own night, against master.
+ * Measures every rank's committed floor art and palette through the renderer's own night, against master.
  *
  *   yarn rank-colour
  *
@@ -8,9 +8,9 @@
  * uses (a wash is `art × (1−a) + wash × a`, a standing thing takes a second pass of `SEATING_PASS` of the
  * night) and read CIELAB rather than a WCAG ratio. The checks are docs/game-design/visual-direction.md's:
  * a rank's metal keeps master's chroma after the night, stands at least master's L* off its floor, the
- * marker holds 3:1, and the wall face and the props stand at least 25 L* off the floor — below a light floor
- * or above a dark one. It also prints the `faceNight` that shadows a light rank's wall face 30 L* below its
- * floor, which is how that number is chosen.
+ * marker holds 3:1, and the props stand at least 25 L* off the floor — below a light floor or above a dark
+ * one. The wall face is not measured: it is shown as painted, and its own dark base band and the shadow it
+ * throws on the floor mark the edge.
  */
 
 import sharp from "sharp"
@@ -24,10 +24,8 @@ import { contrastRatio, hexToRgb, hueDistance, parseRgba, toLch, wash, type Lch,
 
 export type RankInput = {
   floorArt: Rgb
-  faceArt: Rgb
   night: Rgb
   nightAlpha: number
-  faceNight: number
   seatingPass: number
   accent: Rgb
   prop: Rgb
@@ -37,7 +35,6 @@ export type RankInput = {
 
 export type RankReport = {
   floor: Lch
-  faceStep: number
   metal: Lch
   groundToMetal: number
   marker: number
@@ -46,13 +43,11 @@ export type RankReport = {
 
 export const measureRank = (i: RankInput): RankReport => {
   const floor = wash(i.floorArt, i.night, i.nightAlpha)
-  const face = wash(wash(i.faceArt, i.night, i.nightAlpha), i.night, i.faceNight)
   const seated = (c: Rgb) => wash(wash(c, i.night, i.nightAlpha), i.night, i.nightAlpha * i.seatingPass)
   const floorLch = toLch(floor)
   const metal = toLch(seated(i.accent))
   return {
     floor: floorLch,
-    faceStep: floorLch.L - toLch(face).L,
     metal,
     groundToMetal: Math.abs(metal.L - floorLch.L),
     marker: Math.max(contrastRatio(i.markerFill, floor), contrastRatio(i.markerOutline, floor)),
@@ -60,28 +55,13 @@ export const measureRank = (i: RankInput): RankReport => {
   }
 }
 
-/** How far a wall face and a prop must stand off the floor, in L*, to read as wall and as object. */
+/** How far a prop must stand off the floor, in L*, to read as an object. */
 export const MIN_STEP = 25
-/** Where `solveFaceNight` aims a light rank's shadowed wall face. */
-export const FACE_STEP = 30
-
-export const solveFaceNight = (i: RankInput, target = FACE_STEP): number => {
-  if (measureRank({ ...i, faceNight: 0 }).faceStep >= target) return 0
-  let lo = 0
-  let hi = 1
-  for (let step = 0; step < 30; step++) {
-    const mid = (lo + hi) / 2
-    if (measureRank({ ...i, faceNight: mid }).faceStep < target) lo = mid
-    else hi = mid
-  }
-  return Math.round(hi * 100) / 100
-}
 
 export const verdict = (report: RankReport, bar: RankReport) => ({
   metalChroma: report.metal.C >= bar.metal.C,
   groundToMetal: report.groundToMetal >= bar.groundToMetal,
   marker: report.marker >= 3,
-  faceStep: Math.abs(report.faceStep) >= MIN_STEP,
   prop: report.prop >= MIN_STEP,
 })
 
@@ -113,10 +93,8 @@ export const inputFor = async (tier: Tileset): Promise<RankInput> => {
   const { rgb: night, alpha: nightAlpha } = parseRgba(palette.shade)
   return {
     floorArt: await artMean(tier, "floor"),
-    faceArt: await artMean(tier, "wall-face"),
     night,
     nightAlpha,
-    faceNight: palette.faceNight,
     seatingPass: SEATING_PASS,
     accent: hexToRgb(palette.accent),
     prop: hexToRgb(palette.prop),
@@ -138,11 +116,7 @@ export const measureAll = async () => {
 }
 
 /** One rank's row of the table, graded against master. */
-export const rankRow = (
-  tier: Difficulty,
-  inputs: Record<Difficulty, RankInput>,
-  reports: Record<Difficulty, RankReport>
-) => {
+export const rankRow = (tier: Difficulty, reports: Record<Difficulty, RankReport>) => {
   const r = reports[tier]
   const v = verdict(r, reports.master)
   const index = difficulties.indexOf(tier)
@@ -155,21 +129,17 @@ export const rankRow = (
     "ground→metal": `${round(r.groundToMetal)} ${v.groundToMetal ? "ok" : "LOW"}`,
     marker: `${round(r.marker)} ${v.marker ? "ok" : "LOW"}`,
     prop: `${round(r.prop)} ${v.prop ? "ok" : "LOW"}`,
-    "face step": `${round(r.faceStep)} ${v.faceStep ? "ok" : "LOW"}`,
-    "solved faceNight": solveFaceNight(inputs[tier]),
     "hue to next": next ? round(hueDistance(r.metal.h, reports[next].metal.h)) : "",
   }
 }
 
 const main = async () => {
-  const { inputs, reports } = await measureAll()
+  const { reports } = await measureAll()
   // The cave is a tileset and no rank: it is held to the same steps and printed under the five.
-  const cave = await inputFor("cave")
-  const caveInputs = { ...inputs, cave } as Record<Difficulty, RankInput>
-  const caveReports = { ...reports, cave: measureRank(cave) } as Record<Difficulty, RankReport>
+  const caveReports = { ...reports, cave: measureRank(await inputFor("cave")) } as Record<Difficulty, RankReport>
   console.table({
-    ...Object.fromEntries(difficulties.map(tier => [tier, rankRow(tier, inputs, reports)])),
-    cave: rankRow("cave" as Difficulty, caveInputs, caveReports),
+    ...Object.fromEntries(difficulties.map(tier => [tier, rankRow(tier, reports)])),
+    cave: rankRow("cave" as Difficulty, caveReports),
   })
 }
 

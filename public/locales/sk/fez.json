@@ -1,0 +1,838 @@
+{
+  "not-found": "Prepáč, rozhovor, ktorý hľadáš, neexistuje.",
+  "welcome": "Egypt! Naozaj som tu.",
+  "welcome2": "A táto mapa… stála ma strašne veľa. Dúfam, že sedí.",
+  "welcome3": "Tak poď. Pozrime sa, kde je ten krížik.",
+
+  "pyramidIntro": "Na tých kameňoch sú čísla. A pár ich chýba…",
+  "pyramidIntro2": "Počkaj. Každý kameň je súčet tých dvoch pod ním! Áno – aj tu!",
+
+  "pyramidBlockedBlocks": "Hej, čo je toto? Tie kamene sú zapečatené. Neukážu svoje číslo!",
+  "pyramidBlockedBlocks2": "Nevadí. Pozri sa na kamene okolo – z nich to vypočítaš.",
+  "pyramidBlockedBlocks3": "Len ho tam nemôžeš napísať. To číslo si musíš zapamätať.",
+  "pyramidBlockedBlocks4": "No tak, už si tak ďaleko. Ty to zvládneš!",
+
+  "levelCompleted": "Ha! Otvára sa! Poď, dnu.",
+  "exitPillar": {
+    "1": { "fez": "Ha! Denné svetlo! Vidíš ten lúč? Tadiaľ pôjdeme von. Vkroč doň a sme tu hotoví." },
+    "2": { "fez": "Je vždy len jeden, úplne na konci hlavnej chodby. Nech sa túlame kadekoľvek, vrátime sa k nemu." },
+    "3": { "explorer": "Jeden východ. Zapamätané." }
+  },
+  "expeditionCompleted": "Gratulujem, výprava je hotová!",
+  "expeditionCompleted2": "Čaká ťa nová výprava.",
+
+  "tombTutorial": "Óch, písmo! Vieme to prečítať? S hieroglyfmi, ktoré sme našli… možno!",
+  "tombTutorial2": "Pozri, príklady so znakmi! Vidíš tie prázdne miesta? Tam patria hieroglyfy. Tvoje, dole.",
+  "tombTutorial3": "Malé príklady ti ukážu, kedy je znak správne. Tak zistíme, ktorý znak kam patrí.",
+  "tombTutorial4": "Všetko vyplnené? Potom sa objaví číselný zámok. Veľký príklad je kód – a hrobka sa otvorí!",
+
+  "hieroglyphUnlock": "Máme zvláštny predmet – môžeme ním písať na jeden zo zapečatených kameňov!",
+  "hieroglyphUnlock2": "Ťukni na žiariaci kameň a potiahni naň predmet – kameň sa odomkne. Jeden kameň na pyramídu.",
+
+  "errorHighlightTutorial": "Ten poklad, čo sme našli, má šikovný trik – keď napíšeš zlú odpoveď, jedna chyba sa rozsvieti na červeno!",
+  "errorHighlightTutorial2": "Svieti vždy len jeden kameň, takže je to stále výzva. Ale pomôže ti to hľadať!",
+
+  "earlyFeedbackTutorial": "Vidíš tie kontrolné kamene? Keď ich vypĺňaš, zmenia sa na zelené alebo červené – hneď vieš, ako na tom si!",
+  "earlyFeedbackTutorial2": "Opri sa o ne, keď riešiš. Keď je niektorý červený, treba niečo opraviť niekde blízko.",
+
+  "notEnoughHieroglyphs": "Túto výpravu môžeš kedykoľvek zastaviť – stačí sa vrátiť na obrazovku cestovania.",
+  "notEnoughHieroglyphs2": "Môžeme výpravu prerušiť a hľadať hieroglyfy, ktoré nám ešte chýbajú, niekde inde.",
+
+  "tombLoot": "Páni, náš prvý poklad! Výborne!",
+  "mapPiece": "Pozri! TOTO je mapa. Poriadne stará! Má väčšiu cenu ako tie naše dve dokopy!",
+  "mapPiece2": "Ale je to len kúsok, hej. Každá výprava tu v okolí skrýva jeden a spolu ukazujú na hrobku.",
+  "mapComplete": "Je celá! Pozri, všetky kúsky do seba presne zapadajú.",
+  "mapComplete2": "Tam, kde sa stretávajú všetky čiary. Tam leží hrobka.",
+  "mapComplete3": "Už je medzi našimi cestami. Ideme sa pozrieť?",
+  "mapPiece3": "Sleduj v zozname výprav, koľko ich máme. Ja budem rátať určite!",
+
+  "mosaicIntro": "Óch, farebné sklo! Pozri, ako sa leskne – TO by nikto nevyhodil!",
+  "mosaicIntro2": "Je to kúsok obrázka. Celé okno zo skla a každý kúsok, čo nájdeme, z neho niečo vráti späť.",
+  "mosaicIntro3": "Nemáš niekde tábor? Zober ich so sebou a poskladáme ich tam. Chcem vidieť, čo z toho bude!",
+  "mosaicReminder": "Pst! Tie sklíčka nám stále hrkocú v taške. Dáme ich do okna v tábore?",
+
+  "mosaicStarter": "Mačka vo dverách a had, ktorý rýchlo uteká preč. To si zaslúžilo misku mlieka.",
+  "mosaicStarter2": "Egypťania mali mačky radi práve preto – chytali hady a potkany, čo sa dostali k obiliu.",
+  "mosaicStarter3": "Mali ich tak radi, že jednu urobili bohyňou. Bastet. Ochrankyňa domu, dverí a všetkých, čo za nimi spia.",
+
+  "mosaicJunior": "Pozri na jeho ruku – niekto mu ukazuje, ako sa drží pero.",
+  "mosaicJunior2": "Ten s vtáčou hlavou je Thovt. Písanie, počítanie, zapisovanie – to všetko je jeho.",
+  "mosaicJunior3": "Ten ibis, za ktorým sme išli hore riekou? To je jeho vták. A každé číslo, čo sme vpísali do steny, patrí tiež jemu.",
+
+  "mosaicExpert": "To svetlo nie je náhoda. Celú sieň postavili tak, aby dopadlo presne sem, v to správne ráno.",
+  "mosaicExpert2": "Slnko je Amon-Ra – ten skrytý aj svetlo, ktoré vidí každý. Oboje naraz.",
+  "mosaicExpert3": "Kto vie tak presne zmerať oblohu, zmeria čokoľvek. Celý čas riešime ich príklady.",
+
+  "mosaicMaster": "Zelená koža a z neho rastie pšenica. To je naschvál.",
+  "mosaicMaster2": "Osiris. Zabili ho, znova ho poskladali a teraz je tým, čo sa vracia každý rok, keď rieka zaleje polia.",
+  "mosaicMaster3": "Tu dole je to celá myšlienka: smrť nie je koniec. Veselá myšlienka do hrobky, čo povieš?",
+
+  "mosaicWizard": "Na jednej strane srdce. Na druhej jedno pero. A sú v rovnováhe.",
+  "mosaicWizard2": "Pero je Maat – pravda, rovnováha, to, ako to má byť. Keď je srdce ťažšie ako to pero, dverami neprejdeš.",
+  "mosaicWizard3": "Šakal, ktorý drží váhy, je Anubis. On je ten, kto ťa sem privedie.",
+
+  "mosaicFinale": "Odstúp na chvíľu. Pozri, čo všetko sme vyniesli z tých pyramíd.",
+  "mosaicFinale2": "Každý kúsok je časť z neho – z toho, kto drží váhy. Celý čas sa na nás díval.",
+  "mosaicFinale3": "Toto je jeho záznam o nás. A ja by som povedal, že je v rovnováhe.",
+
+  "shopFirstVisit": "Á, sme tu. Môj stánok – veď som hovoril, že idem kvôli obchodu.",
+  "shopFirstVisit2": "Všetko na tomto pulte som odniekiaľ vyniesol. Tamto je spred dvoch hrobiek.",
+
+  "shopArrival": "Á, môj stánok! Hneď vyložím, čo som cestou nazbieral.",
+  "shopArrival2": "Vzácne nálezy stoja najviac, ale zaplatím ti za každú drobnosť, čo nesieš.",
+  "arrival": {
+    "starter_1": {
+      "1": { "explorer": "Pozri, tamto vzadu! Sfinga!" },
+      "2": { "explorer": "Aj odtiaľto je obrovská." },
+      "3": { "explorer": "Vraj má pod labami nápis. Ktorý nikto nevie prečítať." },
+      "4": { "explorer": "Neskôr. Najprv táto pyramída!" }
+    },
+    "starter_2": {
+      "1": { "fez": "Ha! Konečne niečo, čomu rozumiem. Všetko, čo išlo hore Nílom, prešlo najprv tadiaľto." },
+      "2": { "fez": "A obchodníci si zapisujú VŠETKO. Kto čo kúpil, kto komu dlhoval, kto meškal…" },
+      "3": { "explorer": "Kto meškal?" },
+      "4": { "fez": "Hlavne kto meškal!" },
+      "5": { "fez": "Tritisíc rokov. Tovar je preč a účtenky sú tu stále. Typické!" }
+    },
+    "starter_3": {
+      "1": {
+        "fez": "Pozri na tie dvere! Sem chodili ľudia prosiť o ochranu. A potom také dvere ostali zatvorené."
+      },
+      "2": { "explorer": "Zatvorené pre koho?" },
+      "3": { "fez": "Pre každého, kto nepoprosil pekne. Hlavne pre nás." },
+      "4": { "fez": "Všetko zapečatené v tejto krajine zapečatil niekto, kto to myslel vážne. Fakt vážne." },
+      "5": { "fez": "A tie mačky! Tu mačky zbožňovali. Nemohli z nich spustiť ruky." }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "Ó, toto sa mi páči. Tu sa učili písať! Znak po znaku, na rozbitých hrncoch – papyrus bol pre deti priveľmi drahý."
+      },
+      "2": { "explorer": "Cvičili na smetiach?" },
+      "3": {
+        "fez": "Na tom, čo bolo! A keď ich poznáš dosť, zrazu stena už nie je len ozdoba."
+      },
+      "4": { "explorer": "Tá Sfinga… chcem sa na ňu ešte pozrieť." },
+      "5": { "fez": "Ešte nie. Čoskoro." }
+    },
+
+    "junior_1": {
+      "1": { "fez": "Vracali sa každý rok s povodňou, skoro presne v ten istý deň." },
+      "2": { "fez": "Tak ľudia začali počítať dni medzi tým. Odtiaľ pochádza kalendár – z vtákov." },
+      "3": { "explorer": "Z vtákov." },
+      "4": { "fez": "Z vtákov a papierov. Vždy sú to vtáky a papiere." }
+    },
+    "junior_2": {
+      "1": { "fez": "Tu to všetko vyrábali. Nie hrobky – veci, čo išli do nich." },
+      "2": { "fez": "Pozri na tie formy. Ten istý náramok, štyridsaťkrát." },
+      "3": { "explorer": "Pre štyridsať ľudí?" },
+      "4": { "fez": "Pre každého, kto mohol zaplatiť. Šľachtic chcel to, čo mal kráľ, za cenu, akú šľachtic unesie." }
+    },
+    "junior_3": {
+      "1": { "fez": "Toto je Thovt. Boh tajomstiev a kúziel, som si celkom istý." },
+      "2": { "explorer": "Celkom." },
+      "3": { "fez": "Na deväťdesiat percent. No nič – znaky, čo zbieraš, sú jeho." }
+    },
+    "junior_4": {
+      "1": { "fez": "Vyše deväťdesiat metrov a hore oheň, ktorý nikdy nezhasol." },
+      "2": { "fez": "Námorníci našli pobrežie už deň cesty od neho. Predtým ho našli tak, že doň narazili." },
+      "3": { "explorer": "Ako tu niečo nájdeš bez neho?" },
+      "4": { "fez": "Spýtaš sa niekoho, kto tam už bol. To je celé moje remeslo." }
+    },
+
+    "expert_1": {
+      "1": {
+        "fez": "Vyše šesťdesiat hrobiek vytesaných do jedného údolia a každú jednu otvorili skôr, ako sme prišli."
+      },
+      "2": { "explorer": "Kto?" },
+      "3": { "fez": "Väčšinou ľudia ako my. Skôr." },
+      "4": { "fez": "Čo si o tom myslíš?" },
+      "5": { "explorer": "Že sme prišli neskoro." }
+    },
+    "expert_2": {
+      "1": { "fez": "Amon-Ra. Slnko. Obľúbenec všetkých a vidíš prečo – pozri, aké je to obrovské." },
+      "2": { "explorer": "Dve mená." },
+      "3": { "fez": "Ten istý boh, myslím. Tým obľúbeným pridávali ešte jedno meno." }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Celá krajina je zelený pás po oboch stranách jednej rieky a tu sa to rozlieva do tohto."
+      },
+      "2": { "fez": "Všetko rastie. A všetko aj hryzie." },
+      "3": { "explorer": "A kvôli čomu z toho sme tu my?" },
+      "4": { "fez": "Ja som dúfal, že kvôli ničomu." }
+    },
+    "expert_4": {
+      "1": { "fez": "Úplne prvá. Predtým chodili králi pod plochú dosku ako všetci ostatní." },
+      "2": { "fez": "Niekto tu stál a pomyslel si: čo keby sme to urobili, ale šesťkrát, smerom hore." },
+      "3": { "explorer": "Vyšlo to?" },
+      "4": { "fez": "Ona tu ešte stojí a on už nie. Záleží, ako to myslíš." }
+    },
+
+    "master_1": {
+      "1": { "fez": "Dva milióny kameňov. Niekto ich spočítal." },
+      "2": { "explorer": "Niekto ich spočítal?" },
+      "3": { "fez": "Vždy niekto počíta. Na to ľudia zabúdajú – celé to riadili pisári." },
+      "4": { "fez": "Nádhera, však? Ani nechcem myslieť na to, ako vyzerali výplaty." }
+    },
+    "master_2": {
+      "1": { "fez": "Návod. Nič viac to nie je – čo povedať a v akom poradí, aby cesta dobre dopadla." },
+      "2": { "explorer": "Návod na použitie." },
+      "3": { "fez": "Návod, ako byť mŕtvy. Títo si naozaj všetko zapisovali." },
+      "4": { "fez": "A to je pri tom, čo hľadáme, prvá dobrá správa za celý týždeň." }
+    },
+    "master_3": {
+      "1": { "fez": "Ach. Niečí tábor." },
+      "2": { "explorer": "Nedávny?" },
+      "3": { "fez": "Celkom nedávny. Konzervy a zlý kašeľ, ako to tak vyzerá." },
+      "4": { "fez": "Išli ďalej dnu a veci tu nechali." },
+      "5": { "explorer": "Vrátili sa po ne?" },
+      "6": { "fez": "…Poďme radšej ďalej." }
+    },
+    "master_4": {
+      "1": {
+        "fez": "TOTO sa snažili napodobniť všetci ostatní. Pozri na tie farby – tritisíc rokov a vyzerajú ešte mokré."
+      },
+      "2": { "explorer": "Henut by zúrila." },
+      "3": { "fez": "Henut by si robila poznámky." }
+    },
+
+    "wizard_1": {
+      "1": { "fez": "Slnko v noci zíde pod svet a na druhej strane zase vyjde. To je celá ich viera." },
+      "2": { "fez": "Dvanásť hodín v tme, všade samé prekážky, a niekto ho musí preniesť na druhú stranu." },
+      "3": { "explorer": "To je presne to, čo robíme my." },
+      "4": { "fez": "Snažil som sa to nepovedať nahlas." },
+      "5": { "explorer": "Piesok sa sem stále sype." },
+      "6": { "fez": "Sype sa sem už tritisíc rokov. Neprestane, len sa točí dokola." },
+      "7": { "fez": "Naplní sa, prevráti, začne odznova. Ako slnko." }
+    },
+    "wizard_2": {
+      "1": { "fez": "Dvaja, osemnásť metrov vysokí, a obaja sú Amenhotep." },
+      "2": {
+        "fez": "Gréci sa raz pozreli a rozhodli sa, že je to ich hrdina. Memnón. To meno sa ich držalo dvetisíc rokov."
+      },
+      "3": { "explorer": "Čie meno je na ňom?" },
+      "4": { "fez": "Jeho vlastné. Vytesané do trónu, kde bolo vždy." },
+      "5": { "fez": "Nikto ho neprečítal." },
+      "6": {
+        "fez": "Po zemetrasení ten severný na úsvite spieval. Jeden tón, každé ráno, keď slnko zohrialo puklinu."
+      },
+      "7": { "explorer": "A teraz?" },
+      "8": { "fez": "Jeden cisár ho dal opraviť. Odvtedy nevydal ani hlások." }
+    },
+    "wizard_3": {
+      "1": { "fez": "Váhy. Srdce na jednej strane, pero na druhej – takže pekne ťažké srdce vyhrá, nie?" },
+      "2": { "explorer": "Kam ide niečo ťažké?" },
+      "3": { "fez": "…Dole." },
+      "4": { "fez": "Aha." },
+      "5": { "fez": "Ľahké. Srdce musí byť ĽAHKÉ." }
+    },
+    "wizard_4": {
+      "1": { "fez": "Vrcholový kameň ide hore posledný a je zo zlata, aby celá pyramída chytila prvé svetlo." },
+      "2": { "explorer": "Pre koho?" },
+      "3": { "fez": "Pre každého, kto sa pozerá. O to išlo – nikdy to nebolo pre toho, čo leží vnútri." }
+    }
+  },
+
+  "tomb": {
+    "starter": {
+      "1": { "ipi": "Hej! Ruky preč! To je môj džbán!" },
+      "2": { "fez": "…To ten džbán práve prehovoril?!" },
+      "3": { "ipi": "To som bol JA. Tretia polica, ten s vyštrbeným okrajom. Ten je môj." },
+      "4": { "explorer": "Dobre, dobre! Ostane tam. Kto si?" },
+      "5": { "ipi": "Ipi. Štyridsať rokov som viedol účty. Štyridsať!" },
+      "6": { "fez": "Účty? Koho?" },
+      "7": { "ipi": "Všetkých! Kto komu čo dlhoval, až po posledné vrece obilia." },
+      "8": { "ipi": "Tá Henut, tam na sever odtiaľto? Jedenásť debenov lazuritu. Nikdy nezaplatila!" },
+      "9": { "explorer": "A to si ešte pamätáš, po toľkom čase?" },
+      "10": { "ipi": "Je to zapísané! Čo je zapísané, to sa stalo." },
+      "11": { "ipi": "Len tí Horiovia… Hori lodník, Hori pekár… a ten DRUHÝ Hori." },
+      "12": { "fez": "Mali ste aj mačky? Každý mal mačky, nie? Také zlatíčka!" },
+      "13": { "ipi": "Zlatíčka? Boli kvôli obiliu! Vieš, koľko ťa stojí jeden potkan za celú sezónu?" },
+      "14": { "fez": "…Aha. Jasné." },
+      "15": { "ipi": "Povedz Henut, že ťa posiela Ipi. To jej pokazí celé popoludnie." },
+      "16": { "fez": "Ten sa mi páči!" },
+      "17": { "explorer": "Tebe sa len páči, že mu ešte niekto dlží peniaze." }
+    },
+    "junior": {
+      "1": { "henut": "Konečne. Určite ste prišli kvôli lazuritu. Ipi o ňom asi stále hundre." },
+      "2": { "explorer": "Hundre." },
+      "3": { "henut": "Bolo to sklo. Nádherné sklo. Veľmi dobre to vedel." },
+      "4": { "fez": "…A aj ten náramok bol zo skla?" },
+      "5": {
+        "henut": "Všetko tu je tá najlepšia napodobenina, akú si človek mohol kúpiť, mladý muž, a každý kúsok som si vybrala sama."
+      },
+      "6": {
+        "henut": "Tak. Stena. Tretí znak – to nie je moje meno. Nejaký učeň s dlátom a bez dozoru."
+      },
+      "7": { "henut": "Znaky už poznáš. To vidím hneď. Oprav to." }
+    },
+    "juniorFixed": {
+      "1": { "henut": "Tak. Teraz to bude moje meno aj o tisíc rokov." },
+      "2": { "explorer": "Ipi ho napísal správne." },
+      "3": { "henut": "Ipi písal všetko správne. To bola jeho jediná dobrá vlastnosť." },
+      "4": { "fez": "Záleží na tom tu dole?" },
+      "5": { "henut": "Je to to jediné, na čom záleží." },
+      "6": { "fez": "Mala tam hore celú stenu s Thovtom. Boh tajomstiev." },
+      "7": { "henut": "Thovt počíta. Thovt zapíše, čo si urobil, a ostane to zapísané." },
+      "8": { "henut": "Tajomstvá – tak ľudia volajú počty, keď ich sami nevedia." },
+      "9": {
+        "henut": "Ak pôjdete ďalej – a to zjavne pôjdete –, v Karnaku je kňaz, ktorý dlží mŕtvym obrad, čo nikdy nevykonal. Bude sa kvôli tomu tváriť neznesiteľne. Kňazi sú takí."
+      },
+      "10": { "henut": "…Nepoznáme sa?" },
+      "11": { "fez": "To by som si pamätal." },
+      "12": { "henut": "Áno. Ja tiež." }
+    },
+    "expert": {
+      "1": { "priest": "Vy nie ste ten, koho čakám." },
+      "2": { "explorer": "A koho čakáte?" },
+      "3": {
+        "priest": "Niekoho s pečaťou. Mal ju priniesť sem, položiť tamto a povedať nad ňou slová. Nič z toho sa nestalo."
+      },
+      "4": { "fez": "…Ako dlho už čakáte?" },
+      "5": { "priest": "Nepočítam to. Nebolo by to profesionálne." },
+      "6": {
+        "priest": "Poriadna obeta je vec, s ktorou pochovali kráľa. Nie kópia. Nie napodobenina. Tá vec sama, s jeho znakom."
+      },
+      "7": { "priest": "Prineste to a ohlásia vás. Prineste čokoľvek iné a neohlásia." },
+      "8": { "explorer": "Ohlásia komu?" },
+      "9": { "priest": "Uvidíte. Každý to raz uvidí." },
+      "10": { "fez": "Tento má veľmi rád slnko. Všade vonku samý Amon-Ra." },
+      "11": { "priest": "Amon je ten skrytý. Ra je ten, ktorého vidí každý." },
+      "12": { "priest": "Je to ten istý boh. To nie je náhoda, to je celá myšlienka." },
+      "13": { "fez": "…Jasné. Áno. To som vedel." },
+      "14": { "explorer": "Nevedel." },
+      "15": { "fez": "Nevedel." }
+    },
+    "expertB": {
+      "1": { "fez": "Sem ešte nikto nevkročil. Ani my, ani tí pred nami, nikto." },
+      "2": { "explorer": "Ako to vieš?" },
+      "3": { "fez": "Lebo tu ešte niečo je." }
+    },
+    "master": {
+      "1": { "pharaoh": "Môžete pristúpiť. Pristúpili ste. Nuž dobre." },
+      "2": { "fez": "Vaše veličenstvo." },
+      "3": { "pharaoh": "Áno." },
+      "4": { "explorer": "Potrebujeme vašu pečať." },
+      "5": { "pharaoh": "Tú potrebuje každý. Moju dvakrát odniesli a nikdy nevrátili." },
+      "6": { "pharaoh": "Druhý raz tu nechali kópiu. KÓPIU. V MOJEJ hrobke. Akoby som sa nepozrel." },
+      "7": { "explorer": "Je tá kópia ešte tu?" },
+      "8": {
+        "pharaoh": "Samozrejme, že je tu, nemá žiadnu cenu. Leží na polici, kde má byť tá pravá, a je zlá."
+      },
+      "9": { "pharaoh": "Pokojne si ju vezmite. Doneste ju tomu kňazovi. Uvidíte, ako ďaleko sa s ňou dostanete." },
+      "10": { "fez": "…On si to užíva." },
+      "11": { "pharaoh": "Mám najlepší týždeň za deväťsto rokov." },
+      "12": { "fez": "Tamto na stene je Osiris. Pán mŕtvych – pochmúrna vec." },
+      "13": { "pharaoh": "Je ZELENÝ, ty smiešne zviera." },
+      "14": {
+        "pharaoh": "Zelený ako zaliate pole. Zabili ho a znova poskladali a vracia sa každý jeden rok."
+      },
+      "15": { "pharaoh": "Tu dole to nie je pochmúrne, o to celé ide. Smrť nie je koniec." }
+    },
+    "wizard": {
+      "1": { "priest": "Položte to. Tam. Áno." },
+      "2": { "priest": "…" },
+      "3": { "priest": "Toto robím prvý raz. Už som si začínal myslieť, že som zabudol, ako sa to robí." },
+      "4": { "explorer": "A zabudli ste?" },
+      "5": { "priest": "Úplne. Vrátilo sa to." }
+    },
+    "wizardB": {
+      "1": { "fez": "Ich lano. Stále uviazané." },
+      "2": { "explorer": "Dostali sa až sem." },
+      "3": { "fez": "Ešte ďalej. A potom po ňom vyliezli späť hore." },
+      "4": { "explorer": "Je tu zápisník." },
+      "5": { "fez": "Čo v ňom je?" },
+      "6": { "explorer": "Nevieme prečítať písmo. Vrátili sme sa po pečať. Tak sme urobili lepšiu." },
+      "7": { "explorer": "Nikoho neoklamala." },
+      "8": { "fez": "…Sfalšovali ju, lebo nevedeli prečítať, na čo je." },
+      "9": { "explorer": "A potom išli domov." }
+    },
+    "wizardC": {
+      "1": { "fez": "Zastav sa na chvíľu. Pozri, čo všetko sme vyniesli z tých pyramíd." },
+      "2": { "explorer": "Je to obrázok." },
+      "3": { "fez": "Celý čas to bol obrázok." }
+    }
+  },
+
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Jaskyňa! Na mape boli dvere do pivnice a toto je celý kopec!" },
+      "2": { "fez": "Šikovný chlapík. Schovať tovar do kopca – na to žiadny zlodej nepríde." },
+      "3": { "explorer": "My sme prišli." },
+      "4": { "fez": "My nie sme zlodeji. My sme zákazníci. VEĽMI oneskorení zákazníci." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Tu to musí byť. Henut! Tá s jedenástimi debenmi lazuritu!" },
+      "2": { "fez": "Čo myslíš, dostaneme podiel, keď to vyberieme?" },
+      "3": { "explorer": "Ešte si nič nevybral." },
+      "4": { "fez": "Rád si to rátam vopred." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Takže tu je ten kňaz od Henut. Neznesiteľný, vravela." },
+      "2": { "fez": "Čo myslíš, mali by sme niečo priniesť? Kvety?" },
+      "3": { "explorer": "Je mŕtvy." },
+      "4": { "fez": "O to skôr. Chceš predsa urobiť dobrý prvý dojem." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Sem smel chodiť len veľkňaz. A teraz my!" },
+      "2": { "explorer": "A smieme?" },
+      "3": { "fez": "Pri dverách nestojí nikto, kto by povedal nie." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Pozri, mapa tu jednoducho končí. Piesok a potom nič." },
+      "2": { "explorer": "Tak sme na správnom mieste." },
+      "3": { "fez": "To práve myslím. Práve z toho som nervózny." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Osirisova sieň! Zelená, pravdaže. Lebo sa vracia každý rok, ako obilie." },
+      "2": { "explorer": "To si vedel vždy." },
+      "3": { "fez": "Vždy." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "fez": "Vlastná komora bohov! Čo si odložíš, keď už máš všetko?" },
+      "2": { "explorer": "To, čo ti ľudia prinesú." },
+      "3": { "fez": "…Áno. To bude ono." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Ríša vesmírnych síl. No pozrime sa." },
+      "2": { "fez": "Keby som predával niečo, čo nestojí za veľa, tiež by som to tak nazval." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Zrazu mám pocit, že som niečo pokazil." },
+      "2": { "explorer": "Čo?" },
+      "3": { "fez": "Netuším. To je na tom najhoršie." }
+    }
+  },
+
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Toľko pák a dverí kvôli jednej pivnici!" },
+      "2": { "fez": "Tak tam dole musí byť niečo dobré. Kvôli haraburdiu sa nikto tak nenadrie." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Uf. Tie dvere boli oveľa prísnejšie ako u Ipiho." },
+      "2": { "fez": "No hej. Pani mala, pravdaže, peniaze." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Uf, konečne! Tá jaskyňa nás tam fakt nechcela pustiť." },
+      "2": { "explorer": "Myslím, že o to išlo." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Pst… prečo vlastne šepkám?" },
+      "2": { "explorer": "Netuším. Ja tiež šepkám." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Fíha. Ešte mi od tých posledných dverí trasie chvost." },
+      "2": { "fez": "Kráľ, ktorý si takto zamyká veci… ten ich naozaj nechce stratiť." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Vidíš? Stačí byť dosť dlho pod zemou a zase vyjdeš hore." },
+      "2": { "explorer": "To je tiež od Osirisa?" },
+      "3": { "fez": "Nie, to je moje." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "fez": "Také dvere… kedysi by sme sa jednoducho otočili." },
+      "2": { "explorer": "Teraz už nie." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Tri poschodia jaskyne a až potom predné dvere." },
+      "2": { "explorer": "Tak to musí stáť za to." },
+      "3": { "fez": "To hovoria vždy. A potom je to džbán." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Posledný kúsok tmy. Cítim to." },
+      "2": { "explorer": "To si hovoril aj pri tých minulých." },
+      "3": { "fez": "A skoro som mal pravdu." }
+    }
+  },
+
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Pozri! Pyramída pod zemou! Pre obchodníka!" },
+      "2": { "fez": "Buď veľmi dobre zarábal, alebo sa veľmi dobre jednal." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Pozri, ako sa špička leskne na slnku! Stavím sa, že je to pravé zlato." },
+      "2": { "explorer": "V diere v zemi. Pre koho sa tu leskne?" },
+      "3": { "fez": "Pre ňu. Taký typ to je, to vidno hneď." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Hm. Smie sa vôbec predať niečo, čo už patrí bohovi?" },
+      "2": { "explorer": "Spýtaj sa boha." },
+      "3": { "fez": "Radšej nie." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Myslíš, že ten kňaz vie, že sa tu motáme?" },
+      "2": { "explorer": "On to nepočíta. Nebolo by to profesionálne." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Pozri, stojí tam celkom sama na slnku. Krásna, však?" },
+      "2": { "fez": "Čo keby sme ju len nakreslili a išli?" },
+      "3": { "explorer": "Ty nevieš kresliť." },
+      "4": { "fez": "…Neviem. Tak ideme dnu." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Kto tam leží, počíta s tým, že sa vráti. Taká je tu dohoda." },
+      "2": { "explorer": "Ako dlho už čaká?" },
+      "3": { "fez": "Dlho. Ale to k tomu patrí. Byť mŕtvy je hlavne čakanie." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "explorer": "Páni." },
+      "2": { "fez": "Hej." },
+      "3": { "fez": "Niekedy už jednoducho nie je čo povedať, však?" }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Vidíš tú škvrnu slnka na pyramíde? Podľa nej by si vedel, koľko je hodín." },
+      "2": { "explorer": "Tak koľko je?" },
+      "3": { "fez": "…Popoludnie. Zhruba. Nie som hodinky." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Tu je. Všetky čiary na tej mape končia tu." },
+      "2": { "explorer": "Tak toto je koniec." },
+      "3": { "fez": "Mapy, áno. Zvláštne. Myslel som, že to bude lepší pocit." }
+    }
+  },
+
+  "camp": {
+    "firstHome": {
+      "1": { "fez": "Toto je tvoj tábor? Ohník a truhla?" },
+      "2": { "explorer": "Náš tábor." },
+      "3": { "fez": "Náš. Dobre. Tak ja si beriem miestečko pri ohni." },
+      "4": { "fez": "Som predsa jašterica. Keď sa mi to hodí." }
+    },
+    "homeHaul": {
+      "1": { "fez": "Vybaľovanie! Najlepšia časť celej cesty." },
+      "2": { "explorer": "Lepšia ako pyramída?" },
+      "3": { "fez": "Pyramída nie je naša. Toto áno." }
+    },
+    "homeEmpty": {
+      "1": { "explorer": "Prázdne ruky." },
+      "2": { "fez": "No a? Chodili sme. Aj to sa ráta." },
+      "3": { "explorer": "A načo?" },
+      "4": { "fez": "Pre moje nohy. Sú veľmi krátke, vieš." }
+    },
+    "rested": {
+      "1": { "fez": "Tak. Už je ti trochu lepšie?" },
+      "2": { "explorer": "Bol to len škrabanec." },
+      "3": { "fez": "Ani som sa nepozrel. A aj tak som si musel sadnúť." }
+    },
+    "chapterJunior": {
+      "1": { "fez": "No, to sme zvládli pekne. Ďalšia!" },
+      "2": { "explorer": "Až také ľahké to nebolo." },
+      "3": { "fez": "Teraz už je. Potom je všetko ľahké." }
+    },
+    "chapterExpert": {
+      "1": { "fez": "Tam ďalej sú pasce. Skutočné. Hryzú." },
+      "2": { "fez": "Zraníš sa? Tak sa jednoducho vrátime. Doma sa dáš do poriadku." },
+      "3": { "explorer": "A ty?" },
+      "4": { "fez": "Ja pôjdem za tebou. Tam je to bezpečnejšie." }
+    },
+    "chapterMaster": {
+      "1": { "fez": "Tam vonku sú štyri pyramídy. Pamätáš, keď bola len jedna?" },
+      "2": { "explorer": "To nebolo tak dávno." },
+      "3": { "fez": "Nie. Ale tak sa to zdá." }
+    },
+    "chapterWizard": {
+      "1": { "fez": "Pozri na tú poslednú. So zlatou špičkou!" },
+      "2": { "fez": "Tá nás bude niečo stáť. Posledná stojí vždy najviac." },
+      "3": { "explorer": "Stáť čo?" },
+      "4": { "fez": "…Už ani neviem." }
+    },
+    "firstFind": {
+      "1": { "fez": "Pozri – akoby tu bolo odjakživa!" },
+      "2": { "fez": "Svrbí ma to zavesiť na to cenovku." },
+      "3": { "explorer": "To nerob." },
+      "4": { "fez": "Nie, nie. Z domu sa nepredáva. To viem." }
+    },
+    "structureDone": {
+      "1": { "fez": "Je to hotové! Všetky kúsky sú na mieste!" },
+      "2": { "explorer": "Celé našimi rukami." },
+      "3": { "fez": "No. Ja som hlavne ukazoval prstom." }
+    }
+  },
+
+  "animal": {
+    "forSale": {
+      "1": { "fez": "Pozri, čo je pri stánku! Už robím aj dopravu." },
+      "2": { "explorer": "Prežúva." },
+      "3": { "fez": "To je v cene." }
+    },
+    "boughtDonkey": {
+      "1": { "fez": "Predané! Jeden osol. Tvrdohlavý, ale unesie čokoľvek." },
+      "2": { "explorer": "A kde je?" },
+      "3": { "fez": "Už je na ceste domov. Radšej ide bez nás." }
+    },
+    "blockedDonkey": {
+      "1": { "fez": "S toľkými vecami tak ďaleko nepôjdeme. Na to treba osla." },
+      "2": { "fez": "A hádaj, kto jedného má? Ja. V mojom stánku v Henutinej klenotnici." }
+    },
+    "throughDonkey": {
+      "1": { "explorer": "Ide ochotne." },
+      "2": { "fez": "Dnes. Spýtaj sa ho zajtra." }
+    },
+    "arrivesDonkey": {
+      "1": { "fez": "Tu je! Prišiel skôr ako my." },
+      "2": { "explorer": "A našiel aj oheň." },
+      "3": { "fez": "Moje miesto. No. Bol tu prvý." }
+    },
+    "boughtCart": {
+      "1": { "fez": "Vozík! Dve kolesá a skoro vôbec nehrkocú." },
+      "2": { "explorer": "Skoro?" },
+      "3": { "fez": "Hrkot je zadarmo." }
+    },
+    "blockedCart": {
+      "1": { "fez": "Osol už neunesie ani jednu tašku. Pýtal som sa ho." },
+      "2": { "fez": "Vozík, ten potrebujeme. Jeden je v mojom stánku, u veľkňaza." }
+    },
+    "throughCart": {
+      "1": { "explorer": "Počuješ?" },
+      "2": { "fez": "To je vozík. Trochu si spieva." },
+      "3": { "explorer": "Celú cestu?" }
+    },
+    "arrivesCart": {
+      "1": { "fez": "Vozík v našom tábore! Teraz vyzeráme, že niekam ideme." },
+      "2": { "explorer": "Veď niekam ideme." },
+      "3": { "fez": "Áno, ale teraz to vidí každý." }
+    },
+    "boughtCamel": {
+      "1": { "fez": "Ťava! Vydrží dni bez vody. Ja teda nie." },
+      "2": { "explorer": "Pozerá na teba." },
+      "3": { "fez": "Zhora. Ťavy sa na teba vždy pozerajú zhora." }
+    },
+    "blockedCamel": {
+      "1": { "fez": "Najsvätejšia svätyňa? Tam sa pešo nikdy nedostaneme." },
+      "2": { "fez": "Ako na zavolanie mám ťavu. V mojom stánku, u veľkňaza." }
+    },
+    "throughCamel": {
+      "1": { "fez": "Kľaká si! Kvôli mne!" },
+      "2": { "explorer": "Aby sme si mohli vyliezť hore." },
+      "3": { "fez": "Nechaj mi tú radosť." }
+    },
+    "arrivesCamel": {
+      "1": { "fez": "Tu je. Správa sa, akoby tábor bol jeho." },
+      "2": { "explorer": "A osol?" },
+      "3": { "fez": "Robí, že ju nevidí. Ako ja." }
+    },
+    "boughtSecondDonkey": {
+      "1": { "fez": "Ďalší osol! Teraz má ten prvý s kým sa rozprávať." },
+      "2": { "explorer": "Rozprávať?" },
+      "3": { "fez": "Hýkať. To je rozprávanie, len nahlas." }
+    },
+    "blockedSecondDonkey": {
+      "1": { "fez": "Osol ďalej nepôjde. Nie sám, vraví." },
+      "2": { "explorer": "To povedal?" },
+      "3": { "fez": "Ja hovorím po oslovsky. Chce kamaráta a ja mám jedného v stánku vo faraónovom poklade." }
+    },
+    "throughSecondDonkey": {
+      "1": { "fez": "Počúvaj ich! Jeden hlasnejší ako druhý." },
+      "2": { "explorer": "Kto vyhráva?" },
+      "3": { "fez": "My nie. My to musíme počúvať." }
+    },
+    "arrivesSecondDonkey": {
+      "1": { "fez": "Pozri sa na nich. Akoby sa poznali roky." },
+      "2": { "explorer": "Ako my." },
+      "3": { "fez": "My menej hýkame." }
+    },
+    "boughtSecondCamel": {
+      "1": { "fez": "Ďalšia ťava. Áno. Ani ja ich nemám rád." },
+      "2": { "fez": "Ale táto aspoň vyzerá priateľsky." },
+      "3": { "explorer": "Pozerá na tvoj fez." }
+    },
+    "blockedSecondCamel": {
+      "1": { "fez": "Osirisova sieň. S jednou ťavou sa tam nedostaneme." },
+      "2": { "fez": "Našťastie mám ešte jednu, v stánku vo faraónovom poklade. Moju úplne poslednú." },
+      "3": { "explorer": "To hovoríš vždy." }
+    },
+    "throughSecondCamel": {
+      "1": { "fez": "Žerie mi fez!" },
+      "2": { "explorer": "Priateľská ťava." },
+      "3": { "fez": "Priveľmi priateľská." }
+    },
+    "arrivesSecondCamel": {
+      "1": { "fez": "Dve ťavy. Teraz sa na mňa obe pozerajú zhora." },
+      "2": { "explorer": "Tak sa postav k oslom." },
+      "3": { "fez": "Veď už tam stojím." }
+    },
+    "boughtSturdyCart": {
+      "1": { "fez": "Pevnejší vozík. Tento si na ceste nespieva." },
+      "2": { "explorer": "Sú na ňom namaľované kvety." },
+      "3": { "fez": "Kvôli pevnosti." }
+    },
+    "blockedSturdyCart": {
+      "1": { "fez": "Starý vozík tam nedôjde celý. Na to treba niečo pevnejšie." },
+      "2": { "fez": "Jeden je v mojom stánku v Klenotnici bohov. Nie kvôli farbe, aby bolo jasné." }
+    },
+    "throughSturdyCart": {
+      "1": { "explorer": "Nehrkoce." },
+      "2": { "fez": "Vidíš? Pevnosť." },
+      "3": { "explorer": "A tie kvety?" },
+      "4": { "fez": "Tie tiež trochu pomáhajú." }
+    },
+    "arrivesSturdyCart": {
+      "1": { "fez": "Pozri, ako sa leskne!" },
+      "2": { "explorer": "Krajší, ako musí byť." },
+      "3": { "fez": "Áno. Ani ja som ho nepredal kvôli pevnosti." }
+    },
+    "boughtCaravanBanner": {
+      "1": { "fez": "Vlajka. Úprimne: nič neotvorí." },
+      "2": { "explorer": "Tak čo robí?" },
+      "3": { "fez": "Viaje. Nádherne." }
+    },
+    "arrivesCaravanBanner": {
+      "1": { "fez": "Pozri, ako viaje! Nad naším vlastným táborom!" },
+      "2": { "explorer": "Stále nič neotvorí." },
+      "3": { "fez": "Nie. Ani nemusí." }
+    }
+  },
+
+  "bond": {
+    "starter": {
+      "1": { "fez": "To bolo rýchle." },
+      "2": { "explorer": "Boli to len dvere." },
+      "3": { "fez": "Mne by to trvalo týždeň." }
+    },
+    "starterTomb": {
+      "1": { "fez": "Len aby bolo jasné. Robím to kvôli predaju. Hovorím to teraz, kým je to ešte pravda." },
+      "2": { "explorer": "Zapamätané." }
+    },
+    "junior": {
+      "1": { "fez": "Chvíľu bolo od teba ticho." },
+      "2": { "explorer": "Počítanie." },
+      "3": { "fez": "Viem. Videl som ľudí hádať. Toto nebolo hádanie." }
+    },
+    "expert": {
+      "1": { "fez": "To bolo tesné." },
+      "2": { "explorer": "Bolo to v pohode." },
+      "3": { "fez": "Bolo to tesné. To snáď môžem povedať." }
+    },
+    "master": {
+      "1": { "fez": "Mohli by sme prestať." },
+      "2": { "explorer": "Mohli." },
+      "3": { "fez": "Hovorím to, aby to bolo povedané. Nie aby sme to urobili." }
+    },
+    "wizard": {
+      "1": { "explorer": "Akú cenu má toto?" },
+      "2": { "fez": "…" },
+      "3": { "fez": "Na toto cenovku nedám." },
+      "4": { "explorer": "Zapamätané." }
+    }
+  },
+  "discovery": {
+    "hiddenCorridor": {
+      "1": { "fez": "Ho-hó. Pred chvíľou tu bola stena." },
+      "2": { "explorer": "Za ňou bola chodba." },
+      "3": { "fez": "Toľko rokov okolo nej ľudia chodili. Toľko rokov!" }
+    }
+  },
+
+  "reading": {
+    "junior": {
+      "1": { "explorer": "Tu je riadok, ktorý už viem prečítať." },
+      "2": { "explorer": "Hladným som dával chlieb." },
+      "3": { "fez": "Chlieb. V hrobke." },
+      "4": { "explorer": "Bolo to aj v tej minulej. Až teraz vidím, že sú to slová." }
+    },
+    "expert": {
+      "1": { "explorer": "Druhý riadok. Smädným vodu." },
+      "2": { "fez": "Chlieb a teraz voda. Niekto veľmi chcel, aby si ho pamätali ako štedrého." },
+      "3": { "explorer": "Má to každý. Každá stena, každá hrobka, tie isté dva riadky." },
+      "4": { "fez": "Tak buď boli všetci štedrí, alebo sa to tak proste hovorí." },
+      "5": { "explorer": "Alebo podľa toho ich vážili." }
+    },
+    "master": {
+      "1": { "explorer": "Nahým šaty. Tretí riadok." },
+      "2": { "fez": "Chlieb, voda, šaty. Je to zoznam vecí, ktoré niekto rozdal." },
+      "3": { "explorer": "V hrobke človeka, ktorý si všetko vzal so sebou." },
+      "4": { "fez": "…Áno. To mi tiež neušlo." }
+    },
+    "sphinx": {
+      "1": { "fez": "Späť tam, kde sme začali. Ani sa nepohla." },
+      "2": { "explorer": "Nápis je tu stále." },
+      "3": { "fez": "Vieš ho prečítať?" },
+      "4": { "explorer": "Meno." },
+      "5": { "fez": "Čie?" },
+      "6": { "explorer": "Tvoje." },
+      "7": { "fez": "…" },
+      "8": { "fez": "Určite?" },
+      "9": { "explorer": "Je to zapísané." },
+      "10": { "fez": "Hm." },
+      "11": { "fez": "Hori." },
+      "12": { "fez": "V každej dedine v Egypte bol nejaký Hori." },
+      "13": { "fez": "No. To vysvetľuje ten fez." }
+    }
+  },
+
+  "altar": {
+    "refused": {
+      "1": { "priest": "Nie." },
+      "2": { "explorer": "Je na nej jeho znak." },
+      "3": {
+        "priest": "Je na nej nejaký znak. Veľmi dobrý znak. Vyrezal ho niekto s výborným náradím, kto tu nemal čo robiť, a to nie tak dávno."
+      },
+      "4": { "priest": "Čakám tritisíc rokov. V poslednom týždni sa nedám odbiť." }
+    }
+  },
+
+  "meeting": {
+    "starter_1": {
+      "1": { "voice": "Hej! TAM nie! Pozeraj sa, kam šliapeš!" },
+      "2": { "explorer": "Prepáč! Nič nevidím! Kde si?" },
+      "3": { "fez": "Tu dole! Stojíš mi priamo v tovare!" },
+      "4": { "explorer": "Jašterica?! S fezom?" },
+      "5": { "fez": "Obchodník. A čo je zlé na mojom feze?" },
+      "6": { "fez": "Aj ty si tu kvôli pyramíde, však? Kúpená mapa? Strašne drahá?" },
+      "7": { "explorer": "STRAŠNE drahá." },
+      "8": { "fez": "Moja tiež. Pff." },
+      "9": { "explorer": "Ten nápis na Sfinge… vieš ho prečítať?" },
+      "10": { "fez": "Nie. Už nikto. Ten podstavec bol kedysi modrý a zlatý, vieš?" },
+      "11": { "explorer": "Ako to vieš?" },
+      "12": { "fez": "…Počul som. Tak čo tu vlastne hľadáš?" },
+      "13": { "explorer": "Niečo pekné." },
+      "14": { "fez": "Pekné sa dobre predáva! Vieš čo? Idem s tebou!" },
+      "15": { "explorer": "Čo? So mnou?" },
+      "16": { "fez": "Viac očí viac vidí. Poď, pyramída čaká!" }
+    }
+  },
+
+  "end": {
+    "1": { "fez": "Bolo to pekné?" },
+    "2": { "explorer": "Ujde to." }
+  },
+
+  "revisit": {
+    "starter": {
+      "north1": { "1": { "ipi": "Ešte stále tu? Na sever! Henut! Jedenásť debenov!" } },
+      "north2": { "1": { "ipi": "Jedenásť debenov lazuritu. Henut. Sever. Na čo ešte čakáš?" } },
+      "paid1": { "1": { "ipi": "Tak čo? Zaplatila? …Nie. Pravdaže nie." } },
+      "paid2": { "1": { "ipi": "Sklo? SKLO? Tu sa píše lazurit. Čierne na bielom. Lazurit!" } },
+      "later1": { "1": { "ipi": "Zase ty. Tretia polica, ten vyštrbený – stále môj. Ruky preč." } },
+      "later2": { "1": { "ipi": "Štyridsať rokov účtov a ani jeden nesedí. Ani jeden!" } }
+    },
+    "junior": {
+      "wall1": { "1": { "henut": "Stena. Tretí znak. Stále to nie je moje meno." } },
+      "wall2": { "1": { "henut": "Ty si stále tu a tá hus je stále na mojej stene. Oprav to." } },
+      "priest1": { "1": { "henut": "Stále moje meno. Kontrolovala som. A teraz – Karnak, ten kňaz. Šup." } },
+      "priest2": { "1": { "henut": "Karnak! Čaká už dosť dlho. Choď sa dať ohlásiť." } },
+      "met1": { "1": { "henut": "Tak čo? Neznesiteľný, však? Hovorila som." } },
+      "later1": { "1": { "henut": "Stále sklo. Stále nádherné. Stále mnou vybrané." } }
+    },
+    "expert": {
+      "seal1": { "1": { "priest": "Pečať. Priniesť sem, položiť, povedať nad ňou slová. Počkám." } },
+      "seal2": { "1": { "priest": "Á. Zase vy. A stále bez pečate." } },
+      "king1": { "1": { "priest": "Boli ste u kráľa. Dobre. Tá vec sama, pamätajte – nie napodobenina." } },
+      "later1": { "1": { "priest": "Zase vy. Už tu nie je čo robiť. Je to veľmi pokojné." } }
+    },
+    "master": {
+      "priest1": { "1": { "pharaoh": "Ešte stále tu? K tomu kňazovi s tou kópiou! Chcem počuť, ako to dopadne." } },
+      "priest2": { "1": { "pharaoh": "Môžete pristúpiť. Zase. Už ju kňaz videl?" } },
+      "rite1": {
+        "1": { "pharaoh": "Tak konečne vykonal svoj obrad. Dobre. Teraz sa s tým bude neznesiteľne chváliť." }
+      },
+      "later1": { "1": { "pharaoh": "Stále najlepší týždeň za deväťsto rokov. A pokračuje!" } }
+    },
+    "wizard": {
+      "later1": { "1": { "priest": "…Áno. Stále si pamätám, ako sa to robí. Dobre." } },
+      "later2": { "1": { "priest": "Položené, slová povedané. Hotovo. Je to zvláštny pocit." } }
+    }
+  }
+}

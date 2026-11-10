@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Pietra",
+    "bronze": "Bronzo",
+    "silver": "Argento",
+    "gold": "Oro",
+    "divine": "Divino"
+  },
+  "sell_stone_1": {
+    "name": "Coccio scheggiato",
+    "description": "Un pezzo di vaso rotto con gli esercizi di uno scriba. Le lettere sono troppo sbiadite per leggerle."
+  },
+  "sell_stone_2": {
+    "name": "Brocca di argilla crepata",
+    "description": "Una brocca per il grano o la birra, spaccata su un lato dal peso dei secoli."
+  },
+  "sell_stone_3": {
+    "name": "Sandalo di canna consumato",
+    "description": "Intrecciato con canne di papiro. La suola è sottilissima, consumata dai passi di un operaio di tanto tempo fa."
+  },
+  "sell_stone_4": {
+    "name": "Straccio di lino sbiadito",
+    "description": "Una striscia strappata di lino, di quelle avvolte intorno ai morti. O usate per rattoppare una vela."
+  },
+  "sell_stone_5": {
+    "name": "Coltello di selce rotto",
+    "description": "Un coltello di selce con la punta spezzata. Costava poco farlo, e ancora meno sostituirlo."
+  },
+  "sell_bronze_1": {
+    "name": "Amuleto di bronzo piegato",
+    "description": "Un portafortuna da poco, venuto storto e mai raddrizzato."
+  },
+  "sell_bronze_2": {
+    "name": "Specchio di bronzo rovinato",
+    "description": "Una volta era così lucido che ci vedevi la tua faccia. Ora è verde e opaco per la vecchiaia."
+  },
+  "sell_bronze_3": {
+    "name": "Amo di bronzo opaco",
+    "description": "L'attrezzo di un pescatore, caduto nel Nilo molto prima che la tomba venisse chiusa."
+  },
+  "sell_bronze_4": {
+    "name": "Campanellino di bronzo",
+    "description": "Doveva stare appeso alla porta di un tempio o alla caviglia di una ballerina. Ormai suona stonato."
+  },
+  "sell_bronze_5": {
+    "name": "Anello di bronzo scurito",
+    "description": "Un anello semplice, fatto per un dito che è diventato polvere tanto tempo fa."
+  },
+  "sell_silver_1": {
+    "name": "Ankh d'argento scurito",
+    "description": "Un simbolo della vita, diventato opaco dopo secoli sottoterra."
+  },
+  "sell_silver_2": {
+    "name": "Bastoncino d'argento per il trucco",
+    "description": "Un bastoncino sottile che i ricchi usavano per truccarsi gli occhi. Il trucco è sparito da un pezzo."
+  },
+  "sell_silver_3": {
+    "name": "Ciotola d'argento ammaccata",
+    "description": "Una ciotolina per le offerte, schiacciata su un lato quando il soffitto alla fine è crollato."
+  },
+  "sell_silver_4": {
+    "name": "Forcina d'argento",
+    "description": "Semplice, senza decorazioni. Un tempo teneva fermi i capelli di qualcuno di cui nessuno ricorda il nome."
+  },
+  "sell_silver_5": {
+    "name": "Braccialetto d'argento consumato",
+    "description": "Un sottile cerchio d'argento con la chiusura rotta. Non abbastanza bello per un nobile, troppo bello per un operaio."
+  },
+  "sell_gold_1": {
+    "name": "Perlina d'oro",
+    "description": "Una perlina di una collana funebre, sparpagliata tanto tempo fa."
+  },
+  "sell_gold_2": {
+    "name": "Pezzetto di foglia d'oro",
+    "description": "Una scaglia di foglia d'oro, staccata dal viso di una statua dai ladri di tombe secoli prima del tuo arrivo."
+  },
+  "sell_gold_3": {
+    "name": "Orecchino d'oro sottile",
+    "description": "Battuto sottilissimo, per far bastare l'oro di un nobile per più cose."
+  },
+  "sell_gold_4": {
+    "name": "Coccio con puntini d'oro",
+    "description": "Un pezzo di intonaco dorato, con ancora qualche puntino d'oro vero attaccato sopra."
+  },
+  "sell_gold_5": {
+    "name": "Anello con sigillo scheggiato",
+    "description": "Un anello per sigillare, con il disegno così consumato che non si riconosce più. Di chi era? Nessuno lo sa."
+  },
+  "sell_divine_1": {
+    "name": "Scarabeo di lapislazzuli sbiadito",
+    "description": "Scolpito nel prezioso lapislazzuli, portato da lontano a caro prezzo per la rinascita di un faraone. Il colore è sbiadito con i secoli."
+  },
+  "sell_divine_2": {
+    "name": "Amuleto a occhio di corniola",
+    "description": "Un occhio protettore scolpito nella corniola rosso sangue, per tenere lontana la sfortuna nell'aldilà."
+  },
+  "sell_divine_3": {
+    "name": "Tessera di turchese",
+    "description": "Una sola tessera di un mosaico in frantumi. Un tempo faceva parte del ritratto di un dio sul muro di un tempio."
+  },
+  "sell_divine_4": {
+    "name": "Coccio di vaso canopo in alabastro",
+    "description": "Un pezzo rotto di un vaso fatto per custodire gli organi di un faraone. Una pietra preziosa per un lavoro un po' macabro."
+  },
+  "sell_divine_5": {
+    "name": "Coltello sacro di ossidiana",
+    "description": "Vetro dei vulcani, affilato per le cerimonie e mai per la battaglia: solo per il tempio."
+  }
+}
