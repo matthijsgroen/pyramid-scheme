@@ -12,8 +12,11 @@ import {
 } from "./campScene/campLayout"
 import type { CampCatalogue, CampFound } from "./campScene/campTypes"
 
-/** `label` is the translated name the caller composes, e.g. "Mosaic 61/252". */
-export type CampEntrance = { label: string; badge?: number; onOpen: () => void }
+/**
+ * `label` is the translated name the caller composes, e.g. "Mosaic 61/252". `onPress` hears the pointer go down
+ * on the entrance (true) and let go or leave it (false).
+ */
+export type CampEntrance = { label: string; badge?: number; onOpen: () => void; onPress?: (down: boolean) => void }
 
 export type CampSceneProps = {
   /** The container's size in px; the caller measures it. */
@@ -461,7 +464,8 @@ export const CampScene = ({
     tagsSoFar.push({ ...box, x: area.x + place.shift, y: place.above ? overTop : below })
   }
   const entranceButtons = areas.map(area => {
-    const { label, badge, onOpen } = entrances[area.spot as (typeof entranceSpots)[number]]!
+    const { label, badge, onOpen, onPress } = entrances[area.spot as (typeof entranceSpots)[number]]!
+    const release = onPress && (() => onPress(false))
     const { above, shift } = tagPlace.get(area.spot)!
     return (
       <button
@@ -470,6 +474,10 @@ export const CampScene = ({
         className={ENTRANCE}
         aria-label={badge === undefined ? label : `${label} (${badge})`}
         onClick={onOpen}
+        onPointerDown={onPress && (() => onPress(true))}
+        onPointerUp={release}
+        onPointerCancel={release}
+        onPointerLeave={release}
         style={{ left: area.x, top: area.y + area.height / 2, width: area.width, height: area.height }}
       >
         {badge !== undefined && <span className={ENTRANCE_BADGE}>{badge}</span>}
