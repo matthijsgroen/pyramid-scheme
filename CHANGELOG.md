@@ -7,12 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### Changed
-
-- Walls stand taller and show their murals; they fade when you walk behind them.
 ### Added
 
 - Support for 42 languages.
+
+### Changed
+
+- Walls stand taller and show their murals; they fade when you walk behind them.
 
 ### Fixed
 
