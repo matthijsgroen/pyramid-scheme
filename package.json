@@ -25,6 +25,7 @@
     "import-portrait": "tsx scripts/importPortrait.ts",
     "import-panel": "tsx scripts/importPanel.ts",
     "import-camp": "tsx scripts/importCamp.ts",
+    "import-reading": "tsx scripts/importReading.ts",
     "camp-cut": "tsx scripts/campCut.ts",
     "camp-look": "tsx scripts/campLook.ts",
     "camp-layers": "tsx scripts/campLayers.ts",

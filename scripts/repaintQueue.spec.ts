@@ -201,6 +201,13 @@ describe("a collection icon's entry", () => {
     expect(part.out).toBe("src/assets/camp/parts/well-rope.webp")
   })
 
+  it("lands a reading backdrop in the reading folder, named by --name", () => {
+    const [e] = parse(
+      "### `sphinx/x` — x\n```\np\n```\n**Import:** `yarn import-reading art/masters/x.webp --name=wallX`"
+    )
+    expect(e.out).toBe("src/assets/reading/wallX.webp")
+  })
+
   it("lands in the camp folder when the Import line names no --out-dir", () => {
     const [e] = parse("### `part/x-y` — y\n```\np\n```\n**Import:** `yarn import-camp <file> --name=x-y`")
     expect(e.out).toBe("src/assets/camp/x-y.webp")

@@ -5,6 +5,8 @@
  * exactly to the extent they have been paying attention — and fixable only with a sign they hold.
  * That is the whole gate: no glyph, no repair, and the room says so rather than refusing silently.
  */
+import type { Panel } from "./panel"
+
 export type Wall = {
   /** The signs as cut, left to right — including the one that is not right. */
   cut: string[]
@@ -23,6 +25,8 @@ export type Wall = {
   copy: string
   /** Played when the wall is put right. */
   after: string
+  /** The wall as painted, and where on it the signs are written. */
+  panel: Panel
 }
 
 /**
@@ -46,6 +50,14 @@ export const WALLS: Record<string, Wall> = {
     answer: "a12",
     copy: "story.wall",
     after: "tomb.juniorFixed",
+    // The inside of the standing cartouche on `namePanel`, short of its rounded ends.
+    panel: {
+      art: "henutNamePanel",
+      aspect: 1024 / 888,
+      signs: { x: 0.38, y: 0.13, width: 0.24, height: 0.72 },
+      flow: "column",
+      frame: 0,
+    },
   },
   starter_1: {
     cut: ["art5", "d3", ""],
@@ -54,6 +66,13 @@ export const WALLS: Record<string, Wall> = {
     missing: true,
     copy: "story.sphinx",
     after: "reading.sphinx",
+    // No painting yet (repaint queue, `sphinx/namePanel`): a lying cartouche is drawn round the signs.
+    panel: {
+      aspect: 1.3,
+      signs: { x: 0.22, y: 0.28, width: 0.56, height: 0.44 },
+      flow: "row",
+      frame: 0,
+    },
   },
 }
 

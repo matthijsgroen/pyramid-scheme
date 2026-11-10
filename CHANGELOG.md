@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Wall decorations sit centred on the taller walls.
+- The Sphinx's wall reads as a painted cartouche.
 
 ### Fixed
 

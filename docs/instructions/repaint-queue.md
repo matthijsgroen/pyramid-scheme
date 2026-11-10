@@ -3274,7 +3274,7 @@ yarn import-tile art/masters/props/wizard/mat.webp --tier=wizard --name=mat --sl
 
 ---
 
-## The Sphinx — four
+## The Sphinx — five
 
 The inside of the Sphinx is cut from the plateau's own bedrock: layered limestone, swept clean of the sand that
 keeps burying the outside. Four surfaces, the same loop as the cave's.
@@ -3352,6 +3352,32 @@ its colours or its subject from it. Same aspect as the reference; do not re-comp
 ```
 
 **Import:** `yarn import-panel art/masters/tombWall/sphinx.webp --tier=sphinx`
+
+### `sphinx/namePanel` — the Sphinx's name panel, an empty lying cartouche
+
+**New:** the wall the player reads inside the Sphinx (`WALLS.starter_1`): a cartouche, the Horus falcon and the space the sand took. The reading screen writes the signs into it, so the cartouche is EMPTY. Until it lands the screen draws a cartouche of its own.
+
+**Attach:**
+
+1. `art/masters/props/junior/namePanel.webp` — Henut's name panel: the same kind of plate, for its slab, border, rope and flat paint
+2. `art/masters/surfaces/cave-wall-face.webp` — the bedrock it is cut in, for the stone only
+
+```
+A single flat object, painted in flat matte gouache, on pure magenta #FF00FF. Landscape, exactly seven units wide by five tall. Do not re-compose it square. ONE OBJECT, AND IT FILLS THE FRAME, reaching the left and right edges. The magenta fills the frame around it to its edges: there is no wall, no floor and no surface behind the object. Seen straight on, flat, no perspective.
+
+The object: a NAME PANEL, a flat rectangular slab dressed smooth in the Sphinx's own yellow limestone #c9b48c,
+with a narrow red ochre #8a3a2a border, its edges softened by age.
+
+Filling the middle of it, LYING ON ITS SIDE, is one large CARTOUCHE: a long rounded oval of knotted rope,
+painted thick in red ochre #8a3a2a, with the tied bar standing upright across its RIGHT end. INSIDE THE
+CARTOUCHE IS EMPTY: plain smooth limestone #d8c49c, no signs, no face, no marks at all. Lay the slab, border
+and rope out like the first attached painting, turned so the cartouche lies along the slab; take only the
+stone's colour from the second. No writing anywhere on the panel.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Inside the Sphinx: the plateau's bedrock, cut and never built, swept clean of sand. Nothing lighter than #e6d6b2, nothing darker than #3a2e20.
+```
+
+**Import:** `yarn import-reading art/masters/props/sphinx/namePanel.webp --name=sphinxNamePanel` — then give `WALLS.starter_1.panel` `art: "sphinxNamePanel"`, the image's aspect, and the cartouche's inside as its `signs` rectangle.
 
 ---
 
