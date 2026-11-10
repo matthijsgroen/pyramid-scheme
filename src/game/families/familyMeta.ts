@@ -16,9 +16,9 @@ export type FamilyKeyRequirementResolver = (ctx: FamilyKeyRequirementResolverCtx
 /** How the map draws a room of a family that works a mechanism. The family declares it, so the map never
  * guesses a drawing from what the room is for. */
 export type FamilyDrawing = {
-  /** The marker the room wears at every rank: "handle" is the lever glyph, "mechanism" the family's own
+  /** The marker the room wears at every rank: "lever" is the lever glyph, "mechanism" the family's own
    * `icon`. This is also the whole drawing wherever `art` is not painted. */
-  marker: "handle" | "mechanism"
+  marker: "lever" | "mechanism"
   /** Furniture drawn beside the marker where it is painted: "lever" at a rank that has its three pieces,
    * "standingTorch" the shared one, unlit or lit by the control's position. Unset: the marker alone. */
   art?: "lever" | "standingTorch"
