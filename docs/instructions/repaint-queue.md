@@ -483,7 +483,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
-## Nobleman — six
+## Nobleman — five
 
 The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
 first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
@@ -572,37 +572,6 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 ```
 
 **Import:** `yarn import-tile art/masters/props/junior/stela-thoth.webp --tier=junior --name=stela-thoth --slot=wall --filter=smooth --headroom=0.18 --trim`
-
-### `junior/headrest` — a carved cedar headrest
-
-**Attach:**
-
-1. `~/tile-previews/headrest-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a HEADREST. The curved crescent at the top is the CRADLE the neck lies in; the short upright
-under it is the COLUMN; the long flat block at the bottom is the FOOT.
-
-Dark oiled CEDAR #6b4226, #7a4a2a on its top faces and #4a2c1a in shade, the grain running along the
-cradle's curve. The column is carved with shallow vertical flutes. A thin band of Egyptian blue #2a5a9a
-and red ochre #8a3a2a is painted round the column's top, and the cradle's ends are capped with a sliver
-of copper gone verdigris.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold headrest --spin=6 --colour=#6b4226 --floor=#e2a86f
-yarn import-tile art/masters/props/junior/headrest.webp --tier=junior --name=headrest --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.55
-```
 
 ### `junior/grindstone` — a saddle quern on its plastered emplacement
 
