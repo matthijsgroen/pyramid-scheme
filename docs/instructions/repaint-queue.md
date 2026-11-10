@@ -483,7 +483,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
-## Nobleman — eleven
+## Nobleman — ten
 
 The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
 first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
@@ -572,39 +572,6 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 ```
 
 **Import:** `yarn import-tile art/masters/props/junior/stela-thoth.webp --tier=junior --name=stela-thoth --slot=wall --filter=smooth --headroom=0.18 --trim`
-
-### `junior/harp` — a standing bow harp
-
-**Attach:**
-
-1. `~/tile-previews/harp-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by five tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a standing BOW HARP. The great curved arm is the HARP's body: its thick lower end, resting on
-the block at the foot, is the SOUND BOX, and it narrows as it curves up into the NECK; the small block at
-the top of the neck is a carved HEAD; the thin vertical lines in the curve's mouth are the STRINGS.
-
-The arm is dark oiled CEDAR #6b4226, #4a2c1a in shade. The sound box is covered in tawny stretched hide
-#7e5a3a painted with a band of red ochre #8a3a2a and Egyptian blue #2a5a9a rosettes. The head at the top
-is painted, a small red-brown #8c4a36 face under a blue wig. The strings are pale gut, thin and taut,
-each tied to the neck with a little peg. The foot block is cedar with a thin copper band #8a4022 gone
-verdigris.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold harp --spin=4 --width=448 --height=1120 --colour=#6b4226 --floor=#e2a86f
-yarn import-tile art/masters/props/junior/harp.webp --tier=junior --name=harp --slot=prop \
-  --tall=1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `junior/dressingTable` — a cedar table with a copper mirror and kohl pots
 
