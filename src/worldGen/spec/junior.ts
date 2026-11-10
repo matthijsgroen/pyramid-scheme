@@ -181,6 +181,10 @@ export const juniorRules: Rule[] = [
   // family and leave three rooms in five undressed; a marsh should not have a room in it that is not wet.
   journey("junior_1").pyramid("1-3", { encounter: "water" }),
 
+  // **The Temple of Thoth prefers the scribe's rooms.** Its story is writing itself, and `scribe` dresses all
+  // three of its families; the pool is too short to restrict to, so `puzzle` keeps every other family in.
+  journey("junior_3").pyramid("1-4", { encounter: ["scribe", "puzzle"] }),
+
   // Ward wings on back-half pyramids, difficulty cycling expert→master→wizard.
   journey("junior_1").pyramid(3, { wardWings: [WING.expert()] }),
   journey("junior_2").pyramid(3, { wardWings: [WING.master()], sideSections: [holdChest(0)] }),
@@ -274,9 +278,20 @@ export const juniorRules: Rule[] = [
         nodes: [
           expertBetweenTableaus,
           { where: "last", encounter: "capstone" },
-          { where: TOMB_ROOMS_PER_FLOOR.junior + 2, encounter: "conversation" },
+          // Her own dressing room, at her mirror, as Ipi has his ledger room in starter_treasure_tomb.
+          {
+            where: TOMB_ROOMS_PER_FLOOR.junior + 2,
+            encounter: "conversation",
+            activity: "dressingRoom",
+            room: "henutVanity",
+          },
           // Her wall, in the room after she asks: she says "fix it" and the next door along is it.
-          { where: TOMB_ROOMS_PER_FLOOR.junior + 3, encounter: "reading" },
+          {
+            where: TOMB_ROOMS_PER_FLOOR.junior + 3,
+            encounter: "reading",
+            activity: "householdShrine",
+            room: "henutWall",
+          },
         ],
         // Fez shop — a 6-slot stock node, filled by the mods (currency pieces).
         // Empty until resolveShopStock lands; the shop mods own its content.

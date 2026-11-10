@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - The game works offline again.
+- The noble's ward gates call their owner a woman.
 
 ## 0.47.0 - 2026-11-10
 

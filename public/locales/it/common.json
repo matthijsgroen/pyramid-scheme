@@ -127,7 +127,6 @@
     "turnAround": "Torna indietro",
     "wardDescription": {
       "starter": "Il sigillo di un mercante blocca questo passaggio: solo la sua chiave lo apre.",
-      "junior": "Lo stemma di una nobile chiude questa strada: solo la sua chiave la apre.",
       "expert": "Il sigillo del tempio di un sommo sacerdote protegge questa porta: solo la sua chiave sacra la apre.",
       "master": "Il sigillo reale di un faraone blocca questo passaggio: solo la chiave del re lo spezza.",
       "wizard": "Un sigillo degli dèi tiene chiuso questo cancello: solo la sua chiave divina lo apre."

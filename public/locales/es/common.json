@@ -127,7 +127,6 @@
     "turnAround": "Darse la vuelta",
     "wardDescription": {
       "starter": "El sello de un comerciante cierra este paso. Solo su llave lo abre.",
-      "junior": "El escudo de una familia noble cierra este camino. Solo su llave lo levanta.",
       "expert": "El sello del templo de un sumo sacerdote cuida esta puerta. Solo la llave sagrada la abre.",
       "master": "El sello real de un faraón cierra este paso. Solo la llave del rey lo rompe.",
       "wizard": "Un sello de los dioses cierra esta puerta. Solo la llave divina pasa."

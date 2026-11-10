@@ -1,0 +1,18 @@
+// designed by: Claude
+// junior. Henut's wall: the false door that carries her name on the north wall, offering tables either side of it and a lamp beyond each, and the stop facing the name.
+room henutWall
+tier junior
+activity householdShrine
+
+layout
+# # n f n # #
+# l o . o l #
+d . . s . . d
+# . . . . . #
+# # d # d # #
+
+f wallItem stela
+n wallItem sconce
+l wall lamp
+o wall offeringTable
+s stop

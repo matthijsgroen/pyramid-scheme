@@ -129,7 +129,6 @@
     "turnAround": "Cas timpeall",
     "wardDescription": {
       "starter": "Tá séala ceannaí ag dúnadh an phasáiste seo — ní osclóidh ach a eochair chosanta é.",
-      "junior": "Tá suaitheantas uasail ag cur an bhealaigh seo faoi ghlas — ní ardóidh ach a eochair chosanta é.",
       "expert": "Tá cosaint teampaill ard-sagairt ar an doras seo — caithfidh a eochair naofa é a oscailt.",
       "master": "Tá séala ríoga faró ag ceangal an phasáiste seo — ní bhrisfidh ach eochair an rí é.",
       "wizard": "Tá cosaint na ndéithe ar an ngeata seo — ní rachaidh aon rud thairis ach a eochair dhiaga."

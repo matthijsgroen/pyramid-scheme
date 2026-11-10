@@ -126,7 +126,6 @@
     "turnAround": "Käänny takaisin",
     "wardDescription": {
       "starter": "Kauppiaan sinetti sulkee tämän käytävän. Vain hänen suoja-avaimensa avaa sen.",
-      "junior": "Ylhäisen vaakuna lukitsee tämän tien. Vain hänen suoja-avaimensa avaa sen.",
       "expert": "Ylipapin temppelisuoja vartioi tätä ovea. Vain sen pyhä avain avaa sen.",
       "master": "Faaraon kuninkaallinen sinetti sitoo tämän käytävän. Vain hallitsijan avain murtaa sen.",
       "wizard": "Jumalten suoja pitää tätä porttia. Vain sen jumalallinen avain pääsee läpi."

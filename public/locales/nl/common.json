@@ -126,7 +126,7 @@
     "turnAround": "Omdraaien",
     "wardDescription": {
       "starter": "Een handelaarszegel verspert deze doorgang — enkel hun wachtsleutel opent hem.",
-      "junior": "Het wapen van een edelman sluit deze weg — alleen zijn wachtsleutel licht het op.",
+      "junior": "Het wapen van een edelvrouw sluit deze weg — alleen haar wachtsleutel licht het op.",
       "expert": "De tempelban van een hogepriester bewaakt deze deur — enkel de heilige sleutel opent hem.",
       "master": "Het koninklijke zegel van een farao bindt deze doorgang — enkel de sleutel van de vorst verbreekt het.",
       "wizard": "Een ban van de goden houdt deze poort — niets dan de goddelijke sleutel komt erlangs."
@@ -265,7 +265,7 @@
     },
     "treasureCategories": {
       "merchantCache": "💰 Handelaars Voorraad",
-      "nobleVault": "👑 Edelman's Verborgen Kluis",
+      "nobleVault": "👑 Kluis van de Edelvrouw",
       "templeSecrets": "🏛️ Tempel Geheimen",
       "ancientRelics": "🏺 Oude Relieken",
       "mythicalArtifacts": "✨ Mythische Artefacten"
