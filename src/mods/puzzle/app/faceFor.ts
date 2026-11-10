@@ -1,5 +1,6 @@
 /**
- * Which of a family's faces a room wears, out of the two things it is told (`puzzle-screens.md` §2).
+ * Which of a family's faces a room wears, out of the two things it is told (`puzzle-screens.md`: the role
+ * says which place this is, the theme what it is like right now).
  *
  * **One resolver for every family**, where there used to be six near-identical copies. They differed only
  * in ways nobody meant them to: one filtered `night` and another did not, one let a role that maps to the
@@ -40,7 +41,8 @@ export const faceFor = (
 ): string => {
   // **A theme naming one of this family's own faces wins outright**, which is what makes every face
   // reachable in the puzzle lab, where only a theme can be picked. It is the lab's affordance and not an
-  // authoring path (journeys.md §2), so `default` is read as silence rather than as a name.
+  // authoring path (journeys.md: face names are not authoring vocabulary), so `default` is read as silence
+  // rather than as a name.
   if (theme !== undefined && theme !== "default" && known.includes(theme)) return theme
 
   const roles = role === undefined ? [] : Array.isArray(role) ? role : [role]
@@ -69,7 +71,8 @@ export const faceFor = (
 }
 
 /**
- * The hour, laid over the place rather than replacing it (`puzzle-screens.md` §2).
+ * The hour, laid over the place rather than replacing it (`puzzle-screens.md`: the ambience layers on the
+ * identity).
  *
  * **A face declares what an ambience changes about it, and nothing else has to know.** A causeway at night
  * is still a causeway: the overlay carries only the ground and what stands on it, so the identity the role

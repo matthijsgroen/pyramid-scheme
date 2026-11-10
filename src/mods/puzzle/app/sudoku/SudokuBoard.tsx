@@ -36,7 +36,8 @@ type Props = {
    */
   twinned?: number
   /**
-   * Which value the completion run is on (`puzzle-screens.md` §3), or unset for no run.
+   * Which value the completion run is on (`puzzle-screens.md`: the board finishes before "solved"), or
+   * unset for no run.
    *
    * **A tick is a VALUE, not a square**, and that is this family's own rule read back rather than a house
    * style: what the board claims is that each of the six stands once in every row, every column and every
@@ -58,7 +59,8 @@ type Props = {
 /**
  * The squares a hint is about, hatched.
  *
- * **The words name this** (`puzzle-screens.md` §4.2), which is the whole reason it is a hatch and not
+ * **The words name this** (`puzzle-screens.md`: hatched means the squares a hint settles), which is the
+ * whole reason it is a hatch and not
  * another ring or another shade: "rule out 𓁹 in the hatched squares" leaves nothing to match up, where
  * "the rest of the chamber" leaves the player deciding which squares that was.
  */
@@ -123,7 +125,7 @@ const NoteGrid: FC<{
 )
 
 // Sized off its container and the viewport height, never off a pixel constant: the board has to fit a
-// phone screen without pan or zoom (docs/instructions/puzzle-screens.md §1).
+// phone screen without pan or zoom (docs/instructions/puzzle-screens.md: the board fits the phone).
 export const SudokuBoard: FC<Props> = ({
   puzzle,
   cells,

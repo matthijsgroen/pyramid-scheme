@@ -10,7 +10,7 @@ import { skinFor as rushHourSkinFor } from "./rushHour/skins"
 /**
  * Every family says what a finished board looks like, in both languages.
  *
- * The goal is the one line above the rules (`puzzle-screens.md` §1) and it is the first thing a player reads,
+ * The goal is the one line above the rules (`puzzle-screens.md`) and it is the first thing a player reads,
  * so a family that reaches the screen without one shows a raw translation key where its point should be.
  * Listing the families here rather than testing them one by one is deliberate: a per-family spec cannot
  * notice the family somebody adds next.
@@ -59,7 +59,7 @@ describe("the goal above the rules", () => {
    * **Every board says what it is called**, in both languages.
    *
    * A room is recognisable by its board once it is open and not at all before that, so the name is what a
-   * player says to themselves about it (`puzzle-screens.md` §1.2). Listed here rather than tested per
+   * player says to themselves about it (`puzzle-screens.md`). Listed here rather than tested per
    * family for the same reason the goal is: a per-family spec cannot notice the family somebody adds next.
    */
   it.each(FAMILIES)("%s says what it is called, in both languages", family => {
@@ -111,7 +111,7 @@ describe("the goal above the rules", () => {
   })
 
   /**
-   * The RULES are worded per place too, and for the same reason (`puzzle-screens.md` §1.1): a causeway board
+   * The RULES are worded per place too, and for the same reason (`puzzle-screens.md`): a causeway board
    * telling the player that lines run from one star to the next is describing something absent from the
    * screen.
    */
@@ -124,7 +124,7 @@ describe("the goal above the rules", () => {
   })
 
   /**
-   * The HINTS are worded per place as well (`puzzle-screens.md` §4.3) — every rung of the ladder, and the
+   * The HINTS are worded per place as well (`puzzle-screens.md`) — every rung of the ladder, and the
    * move each one asks for. A rung with no phrasing for the place a room is reaches the player as a raw
    * translation key, which is worse than no hint at all.
    */

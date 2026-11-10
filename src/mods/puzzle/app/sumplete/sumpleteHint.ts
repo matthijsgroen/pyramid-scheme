@@ -17,7 +17,8 @@ export type SumpleteHint = {
    * The move the reason asks for, and how many numbers it is about.
    *
    * A second line, and an imperative one, naming the numbers by how the board draws them
-   * (`puzzle-screens.md` §4): several of these rungs decide a whole line's worth at once, and "so everything
+   * (`puzzle-screens.md`: a hint is the reason, then the move, and names the marking): several of these
+   * rungs decide a whole line's worth at once, and "so everything
    * else has to go" left the player working out which numbers that was.
    */
   action?: { key: "strike" | "keep"; count: number }

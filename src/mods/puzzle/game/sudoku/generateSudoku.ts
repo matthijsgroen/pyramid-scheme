@@ -29,7 +29,7 @@ export type SudokuPuzzle = SudokuPuzzleData & {
 export type SudokuVariant = "plain" | "hiddenDigit" | "mirrored"
 
 export type SudokuOptions = {
-  /** The strongest deduction a board may demand (design doc §5). */
+  /** The strongest deduction a board may demand (`sudoku.md`: the cap is a tier's difficulty dial). */
   techniqueCap?: DemandId
   /**
    * The shapes this tier may ship, one drawn per seed. Unset means `plain` only.
@@ -40,14 +40,14 @@ export type SudokuOptions = {
    */
   variants?: SudokuVariant[]
   /**
-   * The fewest squares that ship filled in (design doc §5.1). A FLOOR on the digging rather than a
+   * The fewest squares that ship filled in (`sudoku.md`). A FLOOR on the digging rather than a
    * quota: squares come out one at a time for as long as the ladder still reaches the end unaided,
    * and the floor is where that stops early. So a gentle tier is not handed a board thinned to the
    * bone and then propped back up — it is a board that was never thinned that far.
    */
   minGivens?: number
   /**
-   * The gentlest rung the board may not fall short of (design doc §5.3), and the dig's own target.
+   * The gentlest rung the board may not fall short of (`sudoku.md`), and the dig's own target.
    *
    * Stated as "the ladder below this one leaves the board standing", which is the only form of the
    * claim that means anything: reading back the hardest step a solve HAPPENED to take proves nothing,
@@ -63,16 +63,16 @@ export const SUDOKU_SIZE = 6
 export const SUDOKU_BOX_WIDTH = 2
 export const SUDOKU_BOX_HEIGHT = 3
 
-// Generation is fill-then-dig, per docs/game-design/puzzles/sudoku.md §3: draw a full grid, then take
+// Generation is fill-then-dig, per docs/game-design/puzzles/sudoku.md: draw a full grid, then take
 // squares away for as long as the technique solver still reaches the end unaided. Every intermediate
 // board is settled by deduction, so the one that ships is too — and that also settles uniqueness,
 // since each step along the way was forced. No separate solution counter has to run.
 //
 // The ceiling is set by the LIVE fallback rather than by the offline pass, which is the only place it
-// is ever spent: a listed seed is built in exactly one attempt (`puzzle-screens.md` §6.1), and the
+// is ever spent: a listed seed is built in exactly one attempt (`puzzle-screens.md`), and the
 // offline pass tests one attempt per seed too, so this number governs the path taken when a bucket is
 // missing — a tier being tuned, or the lab. The top tier's rung is rare on a grid this small (about
-// one dig in fifty, design doc §3.1), so the loop would happily spend hundreds of attempts; sixty is
+// one dig in fifty, per `sudoku.md`), so the loop would happily spend hundreds of attempts; sixty is
 // about 1.8s of a phone's main thread, and past that a board nobody is waiting for costs more than the
 // rung is worth. What comes back then is the nearest miss below, never nothing.
 const MAX_ATTEMPTS = 60
@@ -120,7 +120,7 @@ const filledCells = (givens: (number | undefined)[][]): SudokuCellRef[] =>
 
 /**
  * Whether this board is one the loop below would have kept, and what the ladder needed to settle it
- * (`docs/instructions/puzzle-screens.md` §6.1).
+ * (`docs/instructions/puzzle-screens.md`: `grade` is at least as strict as the loop's gate).
  *
  * The loop calls it on the finished board — after the digging that decides it — so it is the gate
  * rather than a second opinion about it.
@@ -170,7 +170,7 @@ export const generateSudoku = (
     // gentler ladder can still finish the board, the dig looks for a removal that stops it, and takes
     // an ordinary one only when the look comes up empty. A plain random dig practically never lands a
     // 6x6 that needs more than a single — the grid is too small for the harder reasons to be forced
-    // by accident (design doc §3.1).
+    // by accident (`sudoku.md`: the dig has to seek the tier's rung).
     let givens: (number | undefined)[][] = solution.map(row => [...row])
     // The hidden value goes before anything else, and the whole attempt stands or falls on it: a board
     // the ladder cannot finish without that value shown is not one more square away from working.
@@ -229,7 +229,7 @@ export const generateSudoku = (
     // same floor — it simply fell to a gentler reason than the tier asked for. Kept as the nearest
     // miss rather than thrown away, so a room whose bucket is missing gets a slightly gentler board
     // instead of no board at all. `grade` is what tells the two apart, which is why the offline pass
-    // lists a seed only when it grades (`puzzle-screens.md` §6.1).
+    // lists a seed only when it grades (`puzzle-screens.md`).
     nearest ??= board
   }
   if (nearest) return nearest
