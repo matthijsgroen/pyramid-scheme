@@ -483,7 +483,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
-## Nobleman — thirteen
+## Nobleman — twelve
 
 The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
 first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
@@ -511,28 +511,6 @@ The last nine are the house's own kinds, new with its activities ([themed-rooms.
 § Junior): each has a primitive of its own in `renderProp.py` and a guarded block in `art/rebuild.sh`. The
 banquet table and the bed are two cells across, so their frame is landscape three by two; the harp and the
 potted tree stand a cell taller, so theirs is portrait two by five.
-
-### `junior/stela` — a false-door stela painted as red granite
-
-**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
-
-**Attach:** `~/tile-previews/junior-plain.png` — the material reference. A flat item has no scaffold.
-
-```
-A single flat object, painted in flat matte gouache, on pure magenta #FF00FF. Landscape, exactly two units wide by one tall. Do not re-compose it into a square. ONE OBJECT, AND IT FILLS THE FRAME, reaching the left and right edges. The magenta fills the frame around it to its edges: there is no wall, no floor and no surface behind the object. Seen straight on, flat, no perspective.
-
-The object: a FALSE-DOOR STELA, a flat slab with nested recessed frames.
-
-It is painted to imitate RED GRANITE, as a nobleman's was: a deep red-brown #7a3e30 speckled with darker
-#5a2a20 and paler #a06050 flecks, crisp and clean, DARKER than the orange plaster it will hang on. The
-frames are edged in red ochre #8a3a2a; the central panel shows the nobleman seated at a table of loaves,
-painted in yellow #c9a040, Egyptian blue #2a5a9a and black on the dark ground; columns of small yellow
-hieroglyphs run down the jambs.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
-```
-
-**Import:** `yarn import-tile art/masters/props/junior/stela.webp --tier=junior --name=stela --slot=wall --filter=smooth --headroom=0.18`
 
 ### `junior/tallyBoard` — a plastered household board, columns of hieroglyphs
 
