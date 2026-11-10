@@ -483,7 +483,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
-## Nobleman — twelve
+## Nobleman — eleven
 
 The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
 first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
@@ -572,39 +572,6 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 ```
 
 **Import:** `yarn import-tile art/masters/props/junior/stela-thoth.webp --tier=junior --name=stela-thoth --slot=wall --filter=smooth --headroom=0.18 --trim`
-
-### `junior/banquetTable` — a long cedar table laid for a feast
-
-**Attach:**
-
-1. `~/tile-previews/banquetTable-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, three units wide by two tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a long BANQUET TABLE. The long top and the four legs are the TABLE; the two tall stoppered
-vessels standing in rings at its ends are WINE JARS; the flat disc on the left carries LOAVES; the bowl
-on the right is heaped with FRUIT; the two small vessels are CUPS.
-
-The table is dark oiled CEDAR #6b4226, #7a4a2a on its top faces and #4a2c1a in shade, its grain running
-along the top. The loaves are baked brown #9a5a30 on a red-brown pottery platter #8c4a36. The fruit is
-dark red figs #6a2a2a and green grapes #4a6a3a, with a blue LOTUS #2a5a9a laid across them. The wine jars
-are red-brown pottery #8c4a36 with a painted collar of blue lotus petals and dark mud stoppers #5a5048;
-the cups are the same pottery, one with a thin copper rim gone verdigris.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold banquetTable --spin=-6 --width=672 --height=448 --colour=#6b4226 --floor=#e2a86f
-yarn import-tile art/masters/props/junior/banquetTable.webp --tier=junior --name=banquetTable --slot=prop \
-  --cells=2x1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `junior/harp` — a standing bow harp
 
