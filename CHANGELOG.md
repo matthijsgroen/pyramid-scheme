@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- A language choice shows during the first conversation.
+
 ### Changed
 
 - On desktop, clicking the camp's map points you to the expedition list.
+- The language list is sorted alphabetically.
 
 ## 0.46.0 - 2026-11-10
 
