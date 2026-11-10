@@ -519,13 +519,14 @@ potted tree stand a cell taller, so theirs is portrait two by five.
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a LAMP STAND. The tall upright is the STAND; the foot is its BASE; the small vessel at the
-top is the LAMP, and the nub above it the FLAME.
+The object: a LAMP STAND. The tall upright is the STAND; the foot is its BASE; the wide flat disc at the
+top is a DRIP-TRAY; the small round pot standing in the middle of it is the oil LAMP; the teardrop rising
+from the centre of the lamp's top is its FLAME, burning straight up out of the lamp.
 
 The stand is turned cedar #6b4226, oiled, #4a2c1a in shade, with a painted ring in red ochre #8a3a2a and
-Egyptian blue #2a5a9a near the top. The lamp is red-brown fired pottery #8c4a36, sooted black at the lip;
-the flame a small warm orange tongue. A thin copper drip-tray #8a4022 under the lamp, gone verdigris
-#4f9a86 at its edge.
+Egyptian blue #2a5a9a near the top. The drip-tray is thin copper #8a4022, gone verdigris #4f9a86 at its
+edge. The lamp is red-brown fired pottery #8c4a36, sooted black round its lip. The flame is warm orange
+#e8913a with a pale core #f6c86a, the brightest thing on the whole object; no glow and no rays round it.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -535,7 +536,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold lamp --contents=stand --spin=8 --colour=#6b4226 --colour-metal=#6b4226 --floor=#e2a86f
+scaffold lamp --contents=vessel --spin=8 --colour=#6b4226 --colour-metal=#6b4226 --colour-pottery=#8c4a36 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/lamp.webp --tier=junior --name=lamp --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```

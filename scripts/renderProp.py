@@ -780,7 +780,11 @@ def prim_lamp():
     rank's row is that this one is bronze and the merchant's is wood, and a scaffold that does not say so
     comes back as another wooden stool."""
     contents = arg("contents", "stool")
-    stand = contents == "stand"
+    # `vessel` is the stand with a pottery lamp ON its saucer and the flame rising from the lamp's top,
+    # centred. On `stand` the flame is a nub on the side spout, and at 56 units that nub is one orange
+    # pixel: the repaint put a pot on the saucer and the lamp stopped reading as a lamp.
+    vessel = contents == "vessel"
+    stand = contents == "stand" or vessel
     part = "metal" if stand or contents == "tree" else None
 
     def put(obj):
@@ -873,6 +877,20 @@ def prim_lamp():
     # a pinched lip, but the same clearance on the stand's 0.17 saucer read as a flame floating beside the
     # lamp. Its own number per rank, and the merchant's is left at 0.13 to the digit: the geometry a master
     # was painted over cannot move afterwards or the mask cuts a shape the art no longer fills.
+    if vessel:
+        # The saucer becomes a thin drip tray, and the lamp is a squat pot on it: a body, a shoulder
+        # narrowing to a lip, and a TEARDROP of flame standing on the lip. The flame is a stretched sphere,
+        # not a cone — a sharp cone a fifth of the object tall was the most salient shape in the picture —
+        # and at about a tenth of the drawn height it reads as fire without becoming the subject.
+        put(cyl(dish_r, 0.03, z=h + 0.015, verts=20))
+        mark(cyl(0.085, 0.075, z=h + 0.03 + 0.0375, verts=18), "pottery")
+        mark(cone(0.085, 0.045, 0.04, z=h + 0.105 + 0.02, verts=18), "pottery")
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=0.04, location=(0, 0, h + 0.20))
+        flame = bpy.context.object
+        flame.scale = (1.0, 0.8, 1.9)
+        bpy.ops.object.transform_apply(scale=True)
+        mark(flame, "flame!nocast")
+        return join_all()
     put(cyl(dish_r, 0.05, x=lamp_x, y=lamp_y, z=h + 0.025, verts=20))
     put(box(0.075, 0.05, 0.03, x=spout_x, y=lamp_y, z=h + 0.03))
     bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.028, radius2=0.0, depth=0.055,
@@ -4772,6 +4790,8 @@ PART_COLOURS = {
     "stone": "#4e4840",
     # A potted tree's crown: leaf green, the one green part a prop has, so foliage is never read as stone.
     "leaf": "#6b7a48",
+    # A lamp's flame: the brightest thing on a prop, and the one part that is meant to be.
+    "flame": "#e8913a",
     # Fruit heaped in a bowl — figs and grapes, dark red, so a heap of it is never read as more bread.
     "fruit": "#7a3b34",
     # NOCAST is not a colour: a part kept out of the footprint is still painted the rank's stone.
