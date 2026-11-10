@@ -483,7 +483,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
-## Nobleman — seven
+## Nobleman — six
 
 The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
 first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
@@ -572,40 +572,6 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 ```
 
 **Import:** `yarn import-tile art/masters/props/junior/stela-thoth.webp --tier=junior --name=stela-thoth --slot=wall --filter=smooth --headroom=0.18 --trim`
-
-### `junior/bed` — a cedar bed on lion legs
-
-**Attach:**
-
-1. `~/tile-previews/bed-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, three units wide by two tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a BED. The long frame sloping down to the left is the BED FRAME; the long surface on it is
-the LINEN cover; the tall panel at the left end is the FOOTBOARD; the four legs are LION LEGS, each with
-a haunch under the frame and a paw at the floor, the paws pointing right toward the head of the bed.
-
-The frame, footboard and legs are dark oiled CEDAR #6b4226, #7a4a2a on its top faces and #4a2c1a in
-shade; the legs carved as a lion's, muscled at the haunch, the paws with their toes. The footboard
-is seen ALMOST EDGE-ON, exactly as the reference draws it: its painted face points away from the viewer
-and stays unseen; only its narrow cedar edge shows, with one thin band of red ochre #8a3a2a and Egyptian
-blue #2a5a9a along it. Do not turn the footboard toward the viewer. The cover is DYED linen, a deep blue #2a4a7a,
-folded smooth, with a thin cream #d8c8a8 stripe along its edge.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold bed --spin=5 --width=672 --height=448 --colour=#6b4226 --colour-cloth=#2a4a7a --floor=#e2a86f
-yarn import-tile art/masters/props/junior/bed.webp --tier=junior --name=bed --slot=prop \
-  --cells=2x1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `junior/headrest` — a carved cedar headrest
 
