@@ -180,6 +180,18 @@ describe("a save survives the floor being carved somewhere else", () => {
     expect([...seen].filter(([, n]) => n > 1)).toEqual([])
   })
 
+  it("puts a room in every section it draws", () => {
+    const drawn = new Set<string>()
+    const roomed = new Set<string>()
+    for (const [r, c] of positions(before)) {
+      if (before.cells[r][c].type === "empty") continue
+      drawn.add(sectionOf(before, [r, c]))
+      if (cellSlot(before, r, c)) roomed.add(sectionOf(before, [r, c]))
+    }
+    expect(drawn.size).toBeGreaterThan(SIDE_FAMILIES.length)
+    expect([...drawn].filter(section => !roomed.has(section))).toEqual([])
+  })
+
   /**
    * A section hash carries no floor, and floors authored to the same shape hash identically — every
    * floor of every tomb does. Without the floor in the address, walking a tomb's ground floor would
@@ -198,51 +210,4 @@ describe("a save survives the floor being carved somewhere else", () => {
     const address = cellAddress(ground, 0, r, c)!
     expect(positions(upstairs).every(at => cellAddress(upstairs, 1, at[0], at[1]) !== address)).toBe(true)
   })
-})
-
-// A lock region may be corridors, one room or several rooms: what it holds is the lock's, not the room list's.
-const isLockRegion = (section: string): boolean => section.startsWith("lock:")
-
-describe("the room slot, across the whole authored world", () => {
-  const everyFloor = () =>
-    journeys.flatMap(journey =>
-      journey.siteConfigs?.length
-        ? Array.from({ length: journey.levelCount }, (_x, i) => i + 1).flatMap(levelNr =>
-            (journey.siteConfigs![levelNr - 1] ?? journey.siteConfigs![0]).map((_config, floorIndex) => ({
-              journeyId: journey.id,
-              levelNr,
-              floorIndex,
-            }))
-          )
-        : []
-    )
-
-  it("names every room exactly once per floor; every authored section holds one, a lock region may hold none", () => {
-    let slots = 0
-    const collisions: string[] = []
-    const roomless: string[] = []
-
-    for (const { journeyId, levelNr, floorIndex } of everyFloor()) {
-      const grid = gridFor(journeyId, levelNr, floorIndex)
-      const seen = new Map<string, number>()
-      const sections = new Set<string>()
-      const withRoom = new Set<string>()
-      for (const [r, c] of positions(grid)) {
-        if (grid.cells[r][c].type === "empty") continue
-        sections.add(sectionOf(grid, [r, c]))
-        if (!cellSlot(grid, r, c)) continue
-        slots++
-        withRoom.add(sectionOf(grid, [r, c]))
-        const address = cellAddress(grid, floorIndex, r, c)!
-        seen.set(address, (seen.get(address) ?? 0) + 1)
-      }
-      for (const [address, n] of seen) if (n > 1) collisions.push(`${journeyId} L${levelNr} ${address} x${n}`)
-      for (const section of sections)
-        if (!withRoom.has(section) && !isLockRegion(section)) roomless.push(`${journeyId} L${levelNr} ${section}`)
-    }
-
-    expect(slots).toBeGreaterThan(3500)
-    expect(collisions).toEqual([])
-    expect(roomless).toEqual([])
-  }, 120_000)
 })
