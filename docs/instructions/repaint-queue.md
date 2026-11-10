@@ -533,7 +533,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold mat --spin=9 --shadow=0.5 --colour=#625a2c --floor=#e2a86f
+scaffold mat --spin=9 --thickness=0.018 --shadow=0.5 --colour=#625a2c --floor=#e2a86f
 yarn import-tile art/masters/props/junior/mat.webp --tier=junior --name=mat --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```

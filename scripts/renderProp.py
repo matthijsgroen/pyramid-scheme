@@ -1369,8 +1369,12 @@ def prim_mat():
     So the sheet is left alone and the weave carries it: a coarse checker of eight squares across is
     about 6 units apiece at slot size, which survives where a spiral or a frayed straw does not. What
     geometry still owes the prop is a shape that is not a FLOOR TILE, and --spin is what buys that — a
-    rug lying askew of the grid cannot be read as part of the paving, and it costs one flag."""
-    box(0.95, 0.72, 0.055, z=0.0275)
+    rug lying askew of the grid cannot be read as part of the paving, and it costs one flag.
+
+    `--thickness` sets the sheet's depth: a painted fringe follows whatever side the mask leaves it, so a
+    rank that paints one wants the side thinner than the default."""
+    t = float(arg("thickness", "0.055"))
+    box(0.95, 0.72, t, z=t / 2)
     return join_all()
 
 
