@@ -8,10 +8,11 @@
 /**
  * The vessel a face is poured out of, drawn from the paths its skin carries.
  *
- * **The silhouette carries the drawing** (design doc §7): the figures under a vessel say the amount exactly,
- * and the outline is what tells one size from another across a bench without being read. Which is also why the shape belongs to the
- * FACE rather than to this file — grain measured into a korenmaat and wine decanted between amphorae are
- * not the same act, and an amphora full of grain reads as coloured water.
+ * **The silhouette carries the drawing** (canisters.md: heights are indicative, the numbers exact): the
+ * figures under a vessel say the amount exactly, and the outline is what tells one size from another across a
+ * bench without being read. Which is also why the shape belongs to the FACE rather than to this file — grain
+ * measured into a korenmaat and wine decanted between amphorae are not the same act, and an amphora full of
+ * grain reads as coloured water.
  */
 export type VesselShape = {
   /** The closed outline the contents are clipped to. */

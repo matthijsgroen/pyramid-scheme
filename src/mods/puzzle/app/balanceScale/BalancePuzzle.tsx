@@ -27,7 +27,7 @@ import { skinFor } from "./skins"
 type Props = {
   puzzle: BalancePuzzleData
   difficulty?: Difficulty
-  /** The pool this room was allocated for — which place it is (`puzzle-screens.md` §2). */
+  /** The pool this room was allocated for — which place (`puzzle-screens.md`: the role is the identity). */
   role?: string | string[]
   /** The hour its site authored. */
   theme?: string
@@ -53,7 +53,8 @@ export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room
     [glyphs, scales, maxValue, puzzle.cancelling]
   )
   // What this board lets the player do, which the tier decides: cancelling is off where taking
-  // things off both pans would do the puzzle's own arithmetic (design doc §5).
+  // things off both pans would do the puzzle's own arithmetic (balance-scale.md: cancelling is off at
+  // starter).
   const moves = { cancelling: puzzle.cancelling !== false, swapping: techniqueCap === "swap" }
 
   // Derived on every change: whether there is a hint at all is what shows the button. What the player is
@@ -68,7 +69,8 @@ export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room
    * The scales settle one at a time before the shell is told, top to bottom.
    *
    * The shell freezes the board and starts its banner the moment it hears "solved", so the celebration has to
-   * happen BEFORE that word is said (`puzzle-screens.md` §3) — the family reports the solve a beat later.
+   * happen BEFORE that word is said (`puzzle-screens.md`: the board freezes on solve, the banner follows) —
+   * the family reports the solve a beat later.
    * Input is refused for that beat, or a weight changed mid-run would land a solve on a board that is no
    * longer solved.
    */

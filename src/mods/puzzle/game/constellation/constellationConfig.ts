@@ -1,9 +1,9 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { ConstellationOptions } from "./generateConstellation"
 
-// Tier settings, per docs/game-design/puzzles/constellation.md §5. Each tier adds ONE rung and generation is
-// made to prove it: `techniqueCap` says how far the reasoning may go, `requires` says the tier's own rung has
-// to fire, and `requiresCount` says how often.
+// Tier settings, per docs/game-design/puzzles/constellation.md's difficulty knobs. Each tier adds ONE rung
+// and generation is made to prove it: `techniqueCap` says how far the reasoning may go, `requires` says the
+// tier's own rung has to fire, and `requiresCount` says how often.
 //
 // `doubleChance` and `spareChance` are the number mix, which is the dial that actually scales this family: a
 // sky of 3s and 4s opens itself, because a high number has few ways to be satisfied and forces its own lines,

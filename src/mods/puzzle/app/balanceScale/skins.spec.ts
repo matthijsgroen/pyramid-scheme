@@ -5,7 +5,7 @@ import { skinFor } from "./skins"
 describe("which place a balance room is", () => {
   it.each(["funerary", "judgement"])("draws the weighing of the heart for %s", role => {
     // The narrow place and the wide one are the same room for this family: the weighing IS what a scale
-    // does in a tomb (docs/game-design/journeys.md §9).
+    // does in a tomb (docs/game-design/journeys.md: judgement is the narrow place inside funerary).
     expect(skinFor(role, undefined).name).toBe("weighing")
   })
 
@@ -28,7 +28,7 @@ describe("which place a balance room is", () => {
 
   it("reads default and night as nothing said, so the hour never cancels the place", () => {
     // A judgement hall after dark is still a judgement hall: the ambience layers onto the identity rather
-    // than replacing it (puzzle-screens.md §2).
+    // than replacing it (puzzle-screens.md: the ambience is the place, not the puzzle).
     expect(skinFor("judgement", "night").name).toBe("weighing")
     expect(skinFor("judgement", "default").name).toBe("weighing")
   })

@@ -27,7 +27,7 @@ export type BalanceOptions = {
   /**
    * Whether a glyph may stand on both pans of one scale — the shape that forces the cancel move.
    * Numbers on both pans are left alone either way: a row like `🪲 7 = 15` is read, not cancelled,
-   * because reading ranks above tidying (§4.1).
+   * because reading ranks above tidying (balance-scale.md: cancelling is not a rung).
    */
   cancelling?: boolean
   /** Fewest cancels a board must demand — the tier where taking things off both pans arrives. */
@@ -50,10 +50,10 @@ export const GLYPH_POOL: Glyph[] = ["🪲", "🏺", "🐍", "🦅", "🐈", "�
 const MAX_ATTEMPTS = 2500
 const MAX_SCALE_DRAWS = 60
 
-// Generation is draw-and-reject, per docs/game-design/puzzles/balance-scale.md §3. The gate that
-// matters is the last one: the technique solver must settle every glyph AND need exactly the tier's
-// cap to do it, so an "expert" board cannot be a junior board wearing a label. Settling also settles
-// uniqueness — every step was forced, so no second set of weights works.
+// Generation is draw-and-reject, per docs/game-design/puzzles/balance-scale.md's generation gates. The gate
+// that matters is the last one: the technique solver must settle every glyph AND need exactly the tier's cap
+// to do it, so an "expert" board cannot be a junior board wearing a label. Settling also settles uniqueness —
+// every step was forced, so no second set of weights works.
 
 const sumItems = (items: PanItem[], values: Record<Glyph, number>): number =>
   items.reduce((sum, item) => sum + (item.kind === "weight" ? item.value : values[item.glyph]), 0)
@@ -169,7 +169,7 @@ const withoutRedundantScales = (puzzle: BalancePuzzleData, cap: TechniqueId): Ba
 
 /**
  * Whether this board is one the loop below would have kept, and what the ladder needed to settle it
- * (`docs/instructions/puzzle-screens.md` §6.1).
+ * (`docs/instructions/puzzle-screens.md`: the seed search happens on a build machine, not a phone).
  *
  * The loop calls it on each candidate, so it is the gate rather than a second opinion about it. The
  * board that ships has had its redundant scales trimmed afterwards, and trimming only ever removes a

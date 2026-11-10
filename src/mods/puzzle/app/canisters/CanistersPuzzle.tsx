@@ -25,7 +25,7 @@ import { skinFor } from "./skins"
 type Props = {
   puzzle: CanistersPuzzleData
   difficulty?: Difficulty
-  /** The pool this room was allocated for — which place it is (`puzzle-screens.md` §2). */
+  /** The pool this room was allocated for — which place (`puzzle-screens.md`: the role is the identity). */
   role?: string | string[]
   /** The hour its site authored. */
   theme?: string
@@ -52,7 +52,8 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, ro
   const wanted = puzzle.targets[Math.min(state.measured, puzzle.targets.length - 1)]
 
   // **Two sentences, and the second is the one that makes the first usable.** An amount to aim for is
-  // only advice if the player knows why they would want it, and the reason is the search (design doc §4).
+  // only advice if the player knows why they would want it, and the reason is the search (canisters.md:
+  // the hint hands over links of the chain of sums).
   // So the hint says what the volume asked for is made of and what the next amount is, and leaves the
   // middle — which pour, in what order — where it belongs.
   const hintText = useMemo(() => {
@@ -68,7 +69,8 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, ro
   const { hint: frozen, freeze, drop } = useFrozenHint(() => hintText)
 
   // One tick a leg: what the player measured lights in the order it was claimed, which is the board saying
-  // back what was done rather than a generic flourish (puzzle-screens.md §3).
+  // back what was done rather than a generic flourish (puzzle-screens.md: the board freezes on solve, the
+  // banner follows).
   const celebration = useCelebration(solved, puzzle.targets.length)
 
   return (
