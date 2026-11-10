@@ -30,6 +30,7 @@ import {
   ARCH_DROP,
   ARCH_RISE,
   ARCH_W,
+  FACE_H,
   SIDE_W,
   WALL_H,
   cellCenter,
@@ -1245,16 +1246,34 @@ export const cornerRocksFor = (
   return rocks
 }
 
-const ROCK = CELL / 2
+/** As tall as the face it stands against, half on the face and half on the floor in front of it, its
+ * near edge on the side wall's centre line: the heap is the foot of BOTH walls. */
+const ROCK = FACE_H
 
-const CornerRocks = ({ rocks }: { rocks: readonly CornerRock[] }) => (
+/** The front run whose face a rock stands against, if that face rises in front of floor. Exported for tests. */
+// eslint-disable-next-line react-refresh/only-export-components -- pure function over the runs, exported so tests can assert on it
+export const cornerRockRun = (runs: readonly FrontRun[], { row, col }: { row: number; col: number }) =>
+  runs.find(run => run.behind.has(`${row - 1},${col}`))
+
+/** Drawn over the wall it stands against: a rock on a back wall over the stone, one on a front wall
+ * (`front`) over that wall, fading with its run. */
+const CornerRocks = ({ rocks, walls, front }: { rocks: readonly CornerRock[]; walls: WallFades; front: boolean }) => (
   <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-    {rocks.map(({ row, col, side, tier, state }) => {
+    {rocks.map(rock => {
+      const run = cornerRockRun(walls.runs, rock)
+      if (!!run !== front) return null
+      const { row, col, side, tier, state } = rock
       const x = side === "w" ? cellLeft(col) - SIDE_W / 2 : cellLeft(col) + CELL + SIDE_W / 2 - ROCK
-      const y = cellTop(row) - WALL_H / 2
+      const y = cellTop(row) - ROCK / 2
       const wash = stateWash[state]
+      const fade = wallFade(!!run && walls.faded.has(run.key))
       return (
-        <Fragment key={`${row},${col},${side}`}>
+        <div
+          key={`${row},${col},${side}`}
+          data-corner-rock-at={`${row},${col},${side}`}
+          className={fade.className}
+          style={{ opacity: fade.opacity }}
+        >
           <Sprite
             url={tileUrl(tier, "cornerRock")!}
             x={x}
@@ -1280,7 +1299,7 @@ const CornerRocks = ({ rocks }: { rocks: readonly CornerRock[] }) => (
               }}
             />
           )}
-        </Fragment>
+        </div>
       )
     })}
   </div>
@@ -2243,7 +2262,7 @@ export const SiteMapView = ({
               floorRects={floorRects}
             />
             {/* Under everything else that stands or lies here: the rock is the wall's own foot. */}
-            <CornerRocks rocks={cornerRocks} />
+            <CornerRocks rocks={cornerRocks} walls={walls} front={false} />
             <FloorScatter grid={grid} claims={claims} scatter={scatter} tier={tier} />
             <ArchShadows doorways={doorways} />
             <MapLife
@@ -2257,6 +2276,7 @@ export const SiteMapView = ({
             />
             {/* Over everything lying on the floor behind them and under everything after: see FrontWalls. */}
             <FrontWalls runs={walls.runs} faded={walls.faded} />
+            <CornerRocks rocks={cornerRocks} walls={walls} front />
             {/* Over the scarabs, under the wall items: something growing out of a wall is in front of the
               floor and behind whatever is hung on that wall. */}
             <MapGrowth

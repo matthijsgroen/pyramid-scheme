@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { act, render, fireEvent, screen } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { SiteMapView, approachCells, cornerRocksFor, nodeSpritesFor, wallItemsFor } from "./SiteMapView"
+import { SiteMapView, approachCells, cornerRockRun, cornerRocksFor, nodeSpritesFor, wallItemsFor } from "./SiteMapView"
 import { allFloorRects, buildRoomClaims, tileRegionsFor } from "./roomClaims"
 import { grassMatsFor } from "./floorScatter"
 import { footprintPath } from "./tileRegions"
@@ -1257,6 +1257,12 @@ describe("corner rocks", () => {
 
   it("leaves a tileset without corner rock art bare", () => {
     expect(rocksIn({ ...doorwayGrid(), tileset: "cave" }, () => false)).toEqual([])
+  })
+
+  it("belongs to the front run whose face it stands against, so it fades with that wall", () => {
+    const run = { key: "front", pieces: [], bounds: [0, 0, 0, 0] as Rect, behind: new Set(["1,2", "1,3"]) }
+    expect(cornerRockRun([run], { row: 2, col: 3 })?.key).toBe("front")
+    expect(cornerRockRun([run], { row: 1, col: 3 })).toBeUndefined()
   })
 })
 
