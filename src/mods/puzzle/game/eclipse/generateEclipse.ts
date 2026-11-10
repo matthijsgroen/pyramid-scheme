@@ -189,7 +189,7 @@ const meetsDemand = (
 
 /**
  * Whether this board is one the loop below would have kept, and what the ladder needed to settle it
- * (`docs/instructions/puzzle-screens.md` §6.1).
+ * (`docs/instructions/puzzle-screens.md`: only seeds clean on the first attempt get listed).
  *
  * Both go through `meetsDemand`, so an offline pass filtering seeds by this admits exactly the boards
  * this generator accepts. That matters more here than elsewhere: when no attempt hits the tier's quota the

@@ -16,17 +16,17 @@ export type FutoshikiPuzzle = FutoshikiPuzzleData & {
 }
 
 export type FutoshikiOptions = {
-  /** The strongest deduction a board may demand (design doc §5). */
+  /** The strongest deduction a board may demand (futoshiki.md: the technique cap). */
   techniqueCap?: DemandId
   /**
-   * The fewest squares that ship pre-filled (design doc §5.1). A floor, not a quota: a board whose
+   * The fewest squares that ship pre-filled (futoshiki.md). A floor, not a quota: a board whose
    * own deduction needed more keeps them, and one that needed fewer is topped up from the answer
    * after the signs are thinned — so the extra numbers are a gift to the player rather than
    * something the signs were thinned against.
    */
   prefill?: number
   /**
-   * Rungs the board must actually TURN ON to be solvable (design doc §5.3). Because the solver only
+   * Rungs the board must actually TURN ON to be solvable (futoshiki.md). Because the solver only
    * ever reaches for the cheapest technique that fires, a solve whose hardest step is one of these
    * is a board that stalls without it — so this is a guarantee the player needs the reasoning, not
    * a hope that it turns up. Any one of them satisfies the gate.
@@ -34,14 +34,14 @@ export type FutoshikiOptions = {
   requires?: DemandId[]
 }
 
-// Generation is build-then-thin, per docs/game-design/puzzles/futoshiki.md §3: draw a Latin square,
+// Generation is build-then-thin, per docs/game-design/puzzles/futoshiki.md: draw a Latin square,
 // write down every sign it implies, then take signs and pre-filled numbers away for as long as the
 // technique solver still reaches the end unaided. Every intermediate board is settled by deduction, so
 // the one that ships is too — and that also settles uniqueness, since each step along the way was
 // forced. No separate solution counter has to run.
 //
-// A tier that insists on a rung (§5.3) throws most attempts away, so the ceiling is far above the
-// handful a plain draw needs — wizard spends about seven.
+// A tier that insists on a rung (futoshiki.md: `requires`) throws most attempts away, so the ceiling is
+// far above the handful a plain draw needs — wizard spends about seven.
 const MAX_ATTEMPTS = 400
 
 // Pruning reaches a fixpoint in two sweeps on every tier measured; the third is the guard, not the plan.
@@ -103,7 +103,7 @@ const filledCount = (givens: (number | undefined)[][]): number =>
 
 /**
  * Whether this board is one the loop below would have kept, and what the ladder needed to settle it
- * (`docs/instructions/puzzle-screens.md` §6.1).
+ * (`docs/instructions/puzzle-screens.md`: only seeds clean on the first attempt get listed).
  *
  * The loop calls it on the finished board — after the thinning that decides it and the pre-filled
  * numbers that soften it — so it is the gate rather than a second opinion about it.
@@ -177,7 +177,7 @@ export const generateFutoshiki = (
 
     // Then the gift: numbers handed back to the player on top of a board already thinned without
     // them. Granted after the signs are settled rather than before, so the tier's generosity never
-    // costs the board a sign (design doc §5.1).
+    // costs the board a sign (futoshiki.md: prefill is topped up after the signs are thinned).
     if (prefill !== undefined)
       for (const cell of shuffle(
         cellsWhere(kept, value => value === undefined),

@@ -1,7 +1,8 @@
 import { TECHNIQUES, type TechniqueId } from "./techniques"
 
 /**
- * What a tier may ask of a board, per docs/game-design/puzzles/futoshiki.md §5.2.
+ * What a tier may ask of a board, per docs/game-design/puzzles/futoshiki.md: an allowance is a set of
+ * demands, not a depth.
  *
  * This is a COARSER vocabulary than the solver's eleven techniques, and deliberately so: a pair and a
  * triple are the same idea at a different width, so a tier that says "this board needs a hidden

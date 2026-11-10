@@ -15,7 +15,7 @@ describe("the hidato hint", () => {
     expect(hint.place).toBe(board.solution[hint.cell])
     expect(hint.key).toBeTruthy()
     // Whatever the reason argues from, it never argues from the cell it is settling: evidence and
-    // conclusion are marked differently and must not be the same cell (puzzle-screens.md §4.2).
+    // conclusion are marked differently and must not be the same cell (puzzle-screens.md).
     expect(hint.evidence.has(hint.cell)).toBe(false)
   })
 

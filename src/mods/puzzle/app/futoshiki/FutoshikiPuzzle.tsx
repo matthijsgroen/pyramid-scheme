@@ -63,7 +63,7 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
    * that really are 1 swell and keep it, the rest roll on to 2, and so on to the width of the grid.
    *
    * The shell freezes the board and starts its banner the moment it hears "solved", so the celebration has to
-   * happen BEFORE that word is said (`puzzle-screens.md` §3) — the family reports the solve a beat later, and
+   * happen BEFORE that word is said (`puzzle-screens.md`) — the family reports the solve a beat later, and
    * input is refused for that beat, or a number changed mid-run would land a solve on a board that is no
    * longer solved.
    *

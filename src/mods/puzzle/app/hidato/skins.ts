@@ -8,7 +8,7 @@ import { Sign, Sprout } from "./glyphs"
  *
  * The family emits logical state only — a cell is empty, holds a number the puzzle wrote in, holds one the
  * player wrote, and is or is not on the run they have drawn — and a skin decides the pixels
- * (`docs/instructions/puzzle-screens.md` §2).
+ * (`docs/instructions/puzzle-screens.md`: the family renders states, the skin renders pixels).
  */
 
 /** Everything about a cell the skin needs in order to colour it. */
@@ -46,7 +46,7 @@ export type HidatoSkin = {
   /**
    * What the completion run leaves on each cell it passes, or nothing where finishing is the light alone.
    *
-   * The clock is core's and shared; what it looks like is the skin's entirely (`puzzle-screens.md` §3) —
+   * The clock is core's and shared; what it looks like is the skin's entirely (`puzzle-screens.md`) —
    * so a skin says what the mark is, how it arrives, and what colour it is in, and the board only places
    * it. A plant grows out of the ground it is rooted in; ink simply appears.
    */
@@ -155,8 +155,8 @@ const sheet: HidatoSkin = {
 
 /**
  * **A comb of sealed chambers.** The same board read as a tomb: a cell is a chamber cut out of the rock, and
- * the run is the passage broken through from one to the next (`PUZZLE_FAMILIES.md` §11.1, Tomb / Burial
- * Logic — the reading this family already had there, drawn at last).
+ * the run is the passage broken through from one to the next (`PUZZLE_FAMILIES.md` theme taxonomy, Tomb /
+ * Burial Logic — the reading this family already had there, drawn at last).
  *
  * **The run OPENS a chamber**, which is why this skin asks about `reached` where the hive does not. On a comb
  * the line is a record of what the player decided; in a tomb it is a way in. A number standing in a chamber
@@ -205,7 +205,7 @@ const SKINS: Record<string, HidatoSkin> = { default: hive, channel, scribe: shee
  * Which place this room is, resolved the same way every family resolves it (`app/faceFor.ts`).
  *
  * The map itself lives on this family's `FamilyMeta`, where world-gen can read it too
- * (`docs/instructions/puzzle-screens.md` §2).
+ * (`docs/instructions/puzzle-screens.md`: `FamilyMeta.themes` lists the skins a family has).
  */
 export const skinFor = (
   role: string | string[] | undefined,

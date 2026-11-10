@@ -43,7 +43,7 @@ describe("generateHidato", () => {
     for (const seed of SEEDS) {
       const shape = new Set(generateHidato(seed, options).cells.map(hexKey))
       // The hexagon one size down is whole — this is the guard against the walk going round the
-      // outside and leaving a hole through the middle (design doc §3.1).
+      // outside and leaving a hole through the middle (hidato.md).
       for (const cell of hexagon(options.radius - 1)) expect(shape.has(hexKey(cell)), `${tier} ${seed}`).toBe(true)
       // What is left sits on the next ring out, in one contiguous arc of it.
       const ring = hexRing(options.radius).map(hexKey)
@@ -64,7 +64,7 @@ describe("generateHidato", () => {
         .map(([key]) => hexFromKey(key))
       // The longest unbroken stretch of run sitting on the comb's outer ring. Left to Warnsdorff alone
       // this reached 11 of 19 cells — a run that laps the rim is one a player can guess before reading a
-      // number, which is what the dial exists to stop (design doc §3.3).
+      // number, which is what the dial exists to stop (hidato.md).
       let longest = 0
       let streak = 0
       for (const cell of path) {

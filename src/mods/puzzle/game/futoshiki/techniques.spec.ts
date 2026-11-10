@@ -344,7 +344,7 @@ describe("firstFutoshikiMistake", () => {
 
 describe("every rung a tier can ask for", () => {
   // The sweep is over the DEMANDS, not the eleven techniques, because the demands are what generation
-  // promises (design doc §5.2). A width the ladder distinguishes but no tier asks for — a hidden
+  // promises (futoshiki.md). A width the ladder distinguishes but no tier asks for — a hidden
   // triple, say — is a finer reason the hint layer may still reach, not a promise being broken. The
   // top tier is swept deeper than the rest because its rungs are the rare ones.
   const seedsFor = (difficulty: (typeof difficulties)[number]) => (difficulty === "wizard" ? 16 : 8)

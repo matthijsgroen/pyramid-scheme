@@ -20,7 +20,8 @@ type Props = {
   /** Constraint indices the current hint points at. */
   litSigns?: ReadonlySet<number>
   /**
-   * Which number the completion run is on (`puzzle-screens.md` §3), or unset for no run.
+   * Which number the completion run is on (`puzzle-screens.md`: the family owns its celebration), or unset
+   * for no run.
    *
    * The whole board counts together: a square holding this number or lower has settled and shows its own
    * digit, and every square still to come shows the count instead — so the board rolls 1, 2, 3 … and each
@@ -127,7 +128,7 @@ const NoteGrid: FC<{
  *
  * Giving the signs grid tracks of their own instead would spend a quarter of the width on them, and
  * that is what a 7-wide board cannot afford: on a 360px screen the squares have to keep every pixel
- * to stay a thumb wide (docs/instructions/puzzle-screens.md §1).
+ * to stay a thumb wide (docs/instructions/puzzle-screens.md: tap targets of at least 44px).
  */
 const SignLayer: FC<{ puzzle: FutoshikiPuzzleData; conflicts: FutoshikiConflicts; lit?: ReadonlySet<number> }> = ({
   puzzle,
@@ -168,7 +169,7 @@ const SignLayer: FC<{ puzzle: FutoshikiPuzzleData; conflicts: FutoshikiConflicts
 )
 
 // Sized off its container and the viewport height, never off a pixel constant: the board has to fit a
-// phone screen without pan or zoom (docs/instructions/puzzle-screens.md §1).
+// phone screen without pan or zoom (docs/instructions/puzzle-screens.md).
 export const FutoshikiBoard: FC<Props> = ({
   puzzle,
   cells,

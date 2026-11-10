@@ -103,7 +103,7 @@ describe("EclipsePuzzle", () => {
       act(() => cellsIn(container)[cell].click())
       if (mark === "moon") act(() => cellsIn(container)[cell].click())
     })
-    // The banner lands 0.8s after the last mark (puzzle-screens.md §3), reporting the solve time wordlessly.
+    // The banner lands 0.8s after the last mark (puzzle-screens.md), reporting the solve time wordlessly.
     await waitFor(() => expect(within(container).getByText(/⏱/)).toBeDefined(), { timeout: 5000 })
     expect(solved).toBe(false) // the banner waits for a tap; solving does not leave the room by itself
   })

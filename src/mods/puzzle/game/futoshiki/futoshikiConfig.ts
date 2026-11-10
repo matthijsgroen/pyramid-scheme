@@ -1,14 +1,14 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FutoshikiOptions } from "./generateFutoshiki"
 
-// Tier settings, from docs/game-design/puzzles/futoshiki.md §5. Three dials now, and they answer three
-// different questions: the CAP is what a board may demand of the player, PREFILL is how much of the
-// answer it is handed to start with, and REQUIRES is the reasoning it is guaranteed to need. How many
-// signs a board shows is still not a dial — it falls out of the cap, a weak ladder sparing few and a
+// Tier settings, from docs/game-design/puzzles/futoshiki.md's difficulty knobs. Three dials now, and they
+// answer three different questions: the CAP is what a board may demand of the player, PREFILL is how much
+// of the answer it is handed to start with, and REQUIRES is the reasoning it is guaranteed to need. How
+// many signs a board shows is still not a dial — it falls out of the cap, a weak ladder sparing few and a
 // strong one stripping the board bare.
 //
 // 6 wide is the ceiling. Seven was bought for the top rungs of the ladder, on the belief that nothing
-// above sign pair fires below it; measurement says otherwise (§4.3), and seven cost a 45-minute solve
+// above sign pair fires below it; measurement says otherwise (futoshiki.md), and seven cost a 45-minute solve
 // against a 3-minute budget. What separates wizard from master is no longer the grid: master may
 // reach for a naked subset but never a hidden one, and a wizard board is handed nothing and must
 // genuinely turn on a hidden subset or an x-wing to fall.
@@ -24,7 +24,7 @@ export const FUTOSHIKI_CONFIG: Record<Difficulty, { size: number } & FutoshikiOp
   // being skipped — T3 was reachable at no tier's cap — and it is the cheapest sentence in the ladder:
   // "that square is already a 4, and this one has to be smaller."
   //
-  // It also fixes what §5.1 calls the squeezed gentle end: a T2 cap cannot manufacture signs, so
+  // It also fixes what futoshiki.md calls the squeezed gentle end: a T2 cap cannot manufacture signs, so
   // starter carries ~3 of them against 4 given numbers, and a T3 cap yields roughly four signs against
   // 1.7 numbers. So junior is where the board stops looking like a Latin square with hints, without
   // growing a single square.

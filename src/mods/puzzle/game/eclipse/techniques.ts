@@ -1,6 +1,7 @@
 import { brokenLinks, lines, other, type EclipsePuzzle, type Link, type Mark } from "./eclipse"
 
-// The deduction system behind both generation and hints, per docs/game-design/puzzles/eclipse.md §4.
+// The deduction system behind both generation and hints, per docs/game-design/puzzles/eclipse.md (its
+// deduction ladder).
 // Ordered by how well each reason EXPLAINS itself rather than by how much it decides: a sign next to a
 // filled cell is a sentence the player can repeat back, and "assume the other mark and watch it break"
 // is the last resort precisely because it explains nothing about the board.
