@@ -483,7 +483,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
-## Nobleman — twenty
+## Nobleman — nineteen
 
 The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
 first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
@@ -506,57 +506,6 @@ The last nine are the house's own kinds, new with its activities ([themed-rooms.
 § Junior): each has a primitive of its own in `renderProp.py` and a guarded block in `art/rebuild.sh`. The
 banquet table and the bed are two cells across, so their frame is landscape three by two; the harp and the
 potted tree stand a cell taller, so theirs is portrait two by five.
-
-### `junior/sarcophagus` — a black-ground anthropoid coffin
-
-**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
-
-**Attach:**
-
-1. `~/tile-previews/sarcophagus-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: an upright ANTHROPOID COFFIN, a wrapped figure carved in wood. The upper marked part is the
-COFFIN; the block under it is its BASE.
-
-It is a COFFIN AND NOT A BOX: carve the outline of a wrapped body (a rounded head, shoulders, a body
-tapering to the feet) out of the rough block. No anatomy beyond that outline.
-
-PAINTED as a nobleman's black coffin: a BLACK resin ground #2a1f18 over the whole body, #3a2e26 on its
-top planes, crossed by narrow bands of yellow #c9a040, with a column of yellow hieroglyphs down the
-front. A striped wig in Egyptian blue #2a5a9a and black, a broad collar of red ochre #8a3a2a, blue and
-leaf green bands across the chest. The face is a calm flat mask in red-brown #8c4a36. The base is painted
-black too.
-
-THE REFERENCE IS A ROUGHED-OUT BLOCK, deliberately left fat. CHANGE, freely, and ONLY this: the contour
-of the figure, and only by CUTTING. CARVE INWARD ONLY — nothing may end up further left, right, higher or
-lower than the rough shape reaches.
-
-EVERYTHING ELSE IS FIXED:
-
-1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them. It is not a photograph and not an isometric view.
-3. IT STANDS upright, facing the viewer.
-4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows. Do not swing it round, do not flatten it.
-5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is. The figure is the marked upper part; the base is the lower part. Do not shrink the figure onto a taller base.
-
-You are re-carving a shape, not re-staging a photograph.
-
-ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF. Nothing is added below the plinth — no ground, no shadow, no floor.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold statue --contents=mummiform --spin=11 --colour=#4a3e34 --colour-figure=#5a4e44 --floor=#e2a86f
-yarn import-tile art/masters/props/junior/sarcophagus.webp --tier=junior --name=sarcophagus --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `junior/shrine-anubis` — a false door with Anubis on its panel
 
