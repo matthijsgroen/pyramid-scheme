@@ -96,6 +96,39 @@ describe(collectSlots, () => {
     expect(puzzles.map(s => s.wardKeys)).toEqual([[], ["outer"], ["outer", "inner"]])
   })
 
+  it("names each slot by where its reward is written: floor, side section, sub-section, puzzle or end", () => {
+    const site: SiteConfig = [
+      {
+        pathPuzzles: 1,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        rewards: [undefined],
+        mainEndReward: { type: "fragmentSlot" },
+        sideSections: [
+          { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+          {
+            pathPuzzles: 1,
+            difficulty: "starter",
+            end: "treasure",
+            rewards: [undefined],
+            endReward: { type: "fragmentSlot" },
+            sideSections: [
+              { pathPuzzles: 0, difficulty: "starter", end: "treasure", endReward: { type: "fragmentSlot" } },
+            ],
+          },
+        ],
+      },
+    ]
+    expect(collectSlots({ starter_1: [site] }).map(s => s.address)).toEqual([
+      "starter_1/0/0/p0",
+      "starter_1/0/0/s1/p0",
+      "starter_1/0/0/mainEnd",
+      "starter_1/0/0/s1/end",
+      "starter_1/0/0/s1/s0/end",
+    ])
+  })
+
   it("assign() mutates the underlying config in place", () => {
     const site = siteWithFragmentSlot()
     const slots = collectSlots({ starter_1: [site] })

@@ -73,9 +73,17 @@ All defined in `src/mods/shop/game/pricing.ts`:
   every ground a player can stand in, smallest first, junk is placed until
   the money lying there is 1.1× what its shops sell, then the world up to
   1.1× all stock — a 10% margin, so buying everything means finding nearly
-  everything. A slice of loose coins on puzzle solves comes first, early
-  tiers first. A chest no ground needs keeps a little loose change, since an
-  empty end would change which ends the carve picks as key hosts.
+  everything. A slice of loose coins on puzzle solves comes first, sized by
+  what the tier's own shops sell. A chest no ground needs keeps a little loose
+  change, since an empty end would change which ends the carve picks as key hosts.
+- **Tier-local fill**: the fill runs one journey tier at a time, starter
+  first, and each tier sees only its own rooms and shops and those of the
+  tiers below it. Lower tiers' money counts as income in a higher tier's
+  grounds; nothing a higher tier holds reaches a lower tier's fill, so
+  re-authoring a higher tier never moves a lower tier's money. A released
+  tier is not filled at all: `src/data/releasedLoot.json` holds its money
+  and junk slot by slot (starter's, as it shipped), and the bake stops if
+  that record and the tier's slots no longer match.
 - **Sinks**: all 13 rare collectibles (mandatory for 100% completion), the 7
   purchases and Fez's 14 waterskins.
 - **Guard, enforced at world-gen time** (`src/mods/shop/game/economyGuard.ts`,

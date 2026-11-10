@@ -14,6 +14,10 @@ import type { ResolveEncounter } from "../game/siteAssembler"
 export type Slot = {
   ref: FloorRef
   journeyId: string
+  /** Where the slot stands in its journey's configs, by position: `journeyId/level/floor`, then `/s<k>` per side
+   * section, then `/p<i>` for a puzzle room's reward or `/end` (`/mainEnd` on a floor's main path) for a path end.
+   * collectSlots always stamps it. */
+  address?: string
   tier: Tier
   /** Ward keys already gating this slot (its section's and sub-section's tomb-key gates, for an end and a puzzle
    * alike) — empty means ungated. Used by a currency's own distribution rule (e.g. hieroglyph fragments preferring
@@ -108,6 +112,7 @@ export const collectSlots = (
     // difficulty. Difficulty and Tier share the same value set (difficultyLevels.ts).
     const addSlot = (
       ref: FloorRef,
+      address: string,
       difficulty: Difficulty,
       wardKeys: string[],
       isPlaceholder: boolean,
@@ -119,6 +124,7 @@ export const collectSlots = (
       slots.push({
         ref,
         journeyId,
+        address,
         tier: difficulty as Tier,
         wardKeys,
         isPlaceholder,
@@ -148,6 +154,7 @@ export const collectSlots = (
       const emitPuzzle = (
         rewards: (TreasureReward | undefined)[] | undefined,
         ref: FloorRef,
+        path: string,
         chain: {
           difficulty: Difficulty
           difficultiesByIndex?: Record<number, Difficulty>
@@ -182,6 +189,7 @@ export const collectSlots = (
           slots.push({
             ref,
             journeyId,
+            address: `${path}/p${i}`,
             tier: chain.difficulty as Tier,
             wardKeys,
             isPlaceholder: frag !== undefined,
@@ -200,34 +208,45 @@ export const collectSlots = (
       }
       floors.forEach((floor, floorIndex) => {
         const pRef: FloorRef = { journeyId, levelIndex, floorIndex }
-        emitPuzzle(floor.rewards, pRef, floor, floor.encounter, floor.encountersByIndex, false, [])
-        for (const section of floor.sideSections) {
+        const floorPath = `${journeyId}/${levelIndex}/${floorIndex}`
+        emitPuzzle(floor.rewards, pRef, floorPath, floor, floor.encounter, floor.encountersByIndex, false, [])
+        floor.sideSections.forEach((section, k) => {
           const secHidden = !!section.hidden
           const secWardKeys = tombKeysOf(section)
           emitPuzzle(
             section.rewards,
             pRef,
+            `${floorPath}/s${k}`,
             section,
             section.encounter,
             section.encountersByIndex,
             secHidden,
             secWardKeys
           )
-          for (const sub of section.sideSections ?? [])
-            emitPuzzle(sub.rewards, pRef, sub, sub.encounter, sub.encountersByIndex, secHidden || !!sub.hidden, [
-              ...secWardKeys,
-              ...tombKeysOf(sub),
-            ])
-        }
+          ;(section.sideSections ?? []).forEach((sub, m) =>
+            emitPuzzle(
+              sub.rewards,
+              pRef,
+              `${floorPath}/s${k}/s${m}`,
+              sub,
+              sub.encounter,
+              sub.encountersByIndex,
+              secHidden || !!sub.hidden,
+              [...secWardKeys, ...tombKeysOf(sub)]
+            )
+          )
+        })
       })
 
       floors.forEach((floor, floorIndex) => {
         const ref: FloorRef = { journeyId, levelIndex, floorIndex }
+        const floorPath = `${journeyId}/${levelIndex}/${floorIndex}`
         if (floor.mainEndReward?.type === "fragmentSlot") {
           const f = floor
           const sentinel = floor.mainEndReward as FragmentSlotReward
           addSlot(
             ref,
+            `${floorPath}/mainEnd`,
             floor.difficulty,
             [],
             true,
@@ -239,7 +258,7 @@ export const collectSlots = (
             sentinel
           )
         }
-        for (const section of floor.sideSections) {
+        for (const [k, section] of floor.sideSections.entries()) {
           const sWardKeys = section.gate?.type === "tomb-key" ? [section.gate.wardKeyId] : []
           const secHidden = !!section.hidden
           // A section whose `end` is a stairhead (`"staircase"` / `{ stairId }`) is a pure
@@ -255,6 +274,7 @@ export const collectSlots = (
             const s = section
             addSlot(
               ref,
+              `${floorPath}/s${k}/end`,
               section.difficulty,
               sWardKeys,
               true,
@@ -271,6 +291,7 @@ export const collectSlots = (
             s.endReward = sentinel
             addSlot(
               ref,
+              `${floorPath}/s${k}/end`,
               section.difficulty,
               sWardKeys,
               false,
@@ -282,7 +303,7 @@ export const collectSlots = (
               sentinel
             )
           }
-          for (const sub of section.sideSections ?? []) {
+          for (const [m, sub] of (section.sideSections ?? []).entries()) {
             const subWardKeys = [...sWardKeys, ...(sub.gate?.type === "tomb-key" ? [sub.gate.wardKeyId] : [])]
             const subHidden = secHidden || !!sub.hidden
             const subShopEnd = endsInShop(sub)
@@ -291,6 +312,7 @@ export const collectSlots = (
               const ss = sub
               addSlot(
                 ref,
+                `${floorPath}/s${k}/s${m}/end`,
                 sub.difficulty,
                 subWardKeys,
                 true,
@@ -305,6 +327,7 @@ export const collectSlots = (
               ss.endReward = sentinel
               addSlot(
                 ref,
+                `${floorPath}/s${k}/s${m}/end`,
                 sub.difficulty,
                 subWardKeys,
                 false,
