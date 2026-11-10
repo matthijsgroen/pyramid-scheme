@@ -27,14 +27,14 @@ const shipped = (tier: Difficulty): ProcessionPuzzle => {
 
 describe("the ladder", () => {
   /**
-   * **Every rung the solver claims is a rung something actually needs** (`puzzle-screens.md` §7). A rung
-   * nothing reaches is a rung nobody has debugged.
+   * **Every rung the solver claims is a rung something actually needs** (`puzzle-screens.md`: definition of
+   * done). A rung nothing reaches is a rung nobody has debugged.
    *
    * Three of the four are what the shipped tiers ask for. **`chain` is deliberately not one of them**: a
    * board whose every bar is fixed by a pin or a link off one is a board the player is told rather than one
    * they work out, which stopped being acceptable the moment each mark said itself in words
-   * (`procession.md` §3). It stays a rung because the ladder has to start somewhere and the hint wording
-   * keys on it — the board below is what keeps it honest.
+   * (`procession.md`: nothing ships at the bottom rung). It stays a rung because the ladder has to start
+   * somewhere and the hint wording keys on it — the board below is what keeps it honest.
    */
   it("has shipped boards that need each rung above the floor", () => {
     const reached = new Set<Rung>()

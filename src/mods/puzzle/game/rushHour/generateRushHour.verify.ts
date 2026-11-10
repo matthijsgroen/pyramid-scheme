@@ -11,9 +11,9 @@ import { configHash } from "@/game/seeds/configHash"
  * Every board the generator would ship, checked against the two things a shipped board has to be: gettable
  * out at all, and gettable out in as many moves as its tier says.
  *
- * **Scanned the way the offline pass scans** (`docs/instructions/puzzle-screens.md` §6.1) — one attempt a
- * seed, misses skipped — because that is the only search whose result is what players get. Asking the
- * generator for its full loop here would test a path only the puzzle lab takes.
+ * **Scanned the way the offline pass scans** (`docs/instructions/puzzle-screens.md`: seed lists) — one
+ * attempt a seed, misses skipped — because that is the only search whose result is what players get. Asking
+ * the generator for its full loop here would test a path only the puzzle lab takes.
  */
 const scan = (tier: Difficulty, seeds: number) => {
   const options = RUSH_HOUR_CONFIG[tier]
@@ -44,8 +44,9 @@ const noOverlap = (puzzle: RushHourPuzzle) => {
 
 describe("generating a blockade", () => {
   // The three tiers a spec can afford to search for itself, with windows sized off the measured hit rate
-  // (family doc §3.2). Master and wizard cost seconds a seed and are covered by the shipped seeds instead —
-  // see the test below, which is the same board a room actually opens.
+  // (`rush-hour.md`: piece count alone does not make a board hard). Master and wizard cost seconds a seed and
+  // are covered by the shipped seeds instead — see the test below, which is the same board a room actually
+  // opens.
   it.each([
     ["starter", 6],
     ["junior", 6],

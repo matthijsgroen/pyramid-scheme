@@ -13,9 +13,9 @@ import {
  * **There is no technique ladder here and there should not be one.** Every other logic family settles
  * squares by argument, and its tiers are the arguments a board demands. A blockade demands no arguments at
  * all: nothing about a position is uncertain, and the difficulty is entirely how far the way out is in
- * MOVES (`docs/game-design/puzzles/rush-hour.md` §3). A breadth-first search over positions measures
- * exactly that, and the same search answers both questions this family has — how hard is this board, and
- * what is the next right move.
+ * MOVES (`docs/game-design/puzzles/rush-hour.md`: difficulty is distance). A breadth-first search over
+ * positions measures exactly that, and the same search answers both questions this family has — how hard is
+ * this board, and what is the next right move.
  *
  * A board is 6×6 with a dozen pieces, so a whole position graph is tens of thousands of states: small
  * enough to walk twice for a board the build machine keeps, and small enough to walk once for a hint the
@@ -74,11 +74,11 @@ export const optimalPath = (puzzle: RushHourPuzzle, from: RushHourState): Move[]
 /**
  * How far every position in this board's own component sits from the way out.
  *
- * **This is what makes a tier**, and it is the generator's half of the search (§3.1). One piece set — the
- * lanes and lengths, which never change — has one component of positions, and every position in it is a
- * board that could be handed to a player. Measuring them all at once means one search answers "which
- * starting position is a junior board and which is a wizard one" for the whole set, instead of drawing
- * positions at random and solving each.
+ * **This is what makes a tier**, and it is the generator's half of the search (`rush-hour.md`: the search
+ * does both jobs). One piece set — the lanes and lengths, which never change — has one component of
+ * positions, and every position in it is a board that could be handed to a player. Measuring them all at once
+ * means one search answers "which starting position is a junior board and which is a wizard one" for the
+ * whole set, instead of drawing positions at random and solving each.
  *
  * Two passes and neither can be skipped: the first walks out from wherever the set was drawn and collects
  * the positions that are already solved; the second is a breadth-first search backwards from all of them at

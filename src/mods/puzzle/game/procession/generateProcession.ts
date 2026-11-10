@@ -5,7 +5,10 @@ import { markHolds } from "./procession"
 import { countArrangements, requiredRung, RUNGS, type Rung } from "./solveProcession"
 
 export type ProcessionOptions = {
-  /** How wide the day is. The board's only size knob, and the one the phone binds (family doc §5). */
+  /**
+   * How wide the day is. The board's only size knob, and the one the phone binds (procession.md: sixteen
+   * ticks is the ceiling).
+   */
   ticks: number
   /** How many things happen in it — one to a row. */
   bars: number
@@ -15,7 +18,10 @@ export type ProcessionOptions = {
   maxGap: number
   /** Which marks this tier may be built from. THIS is what the lower rungs are made of (`READS`). */
   kinds: readonly MarkKind[]
-  /** The band the board's required rung must fall in. THIS is the tier (family doc §3). */
+  /**
+   * The band the board's required rung must fall in. THIS is the tier (procession.md: the weakest rung that
+   * settles the board).
+   */
   minRung: Rung
   maxRung: Rung
   /**
@@ -28,7 +34,8 @@ export type ProcessionOptions = {
    * Counted as CANDIDATES struck by a supposition rather than as suppositions made, which is the number
    * the solver actually has; one supposition often strikes several. The ceiling matters as much as the
    * floor: a board where almost nothing yields to propagation is a board the player supposes their way
-   * through square by square, which is the long-and-not-hard shape §3.2 of the catalogue rules out.
+   * through square by square, which is the long-and-not-hard shape PUZZLE_FAMILIES.md rules out: difficulty
+   * is not duration.
    */
   minSplits: number
   maxSplits: number
@@ -131,7 +138,7 @@ const scramble = (random: () => number, puzzle: ProcessionPuzzle): ProcessionPuz
 /**
  * A board whose marks admit exactly one arrangement, and which needs the rung its tier asks for.
  *
- * **Rolled, read off, thinned, then judged** — the shape `puzzle-screens.md` §6.1 asks a searching family
+ * **Rolled, read off, thinned, then judged** — the shape `puzzle-screens.md` asks a searching family
  * to have, where the gate is a separate thing from the construction. The construction cannot fail: any day
  * yields marks that describe it exactly. What varies is whether the thinned board lands in the tier's band,
  * and that is `gradeProcession`, which the loop below calls rather than re-implements.

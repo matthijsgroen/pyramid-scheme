@@ -1,14 +1,15 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { StarBattleOptions } from "./generateStarBattle"
 
-// Tier settings, per docs/game-design/puzzles/star-battle.md §5.
+// Tier settings, per docs/game-design/puzzles/star-battle.md: region-size spread is the knob.
 //
 // **Two knobs, and they pull against each other.** `regionSpread` decides how uneven the regions are, and a
 // STEEPER spread makes an EASIER board, because a one-square region hands the player a star. The gates above
 // it — `minRegion`, `noLineRegions`, `firstStarAfter` — take those gifts back: a region has to be three
 // squares and has to touch two rows and two columns, and the first star may not land until the player has
 // eliminated for a few steps. Measured against a LinkedIn Queens board, which has no gift at all and which
-// this ladder could not move a single square on before `wouldStrand` existed (design doc §3.5).
+// this ladder could not move a single square on before `wouldStrand` existed (star-battle.md: what a played
+// board showed).
 export const STAR_BATTLE_CONFIG: Record<Difficulty, StarBattleOptions> = {
   // Counting alone, on the smallest grid, with regions uneven enough that a one-square one opens the board.
   // **The gifts are the teaching here** and stay: nothing on this tier needs the boundary to mean more than

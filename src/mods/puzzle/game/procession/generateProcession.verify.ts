@@ -13,8 +13,8 @@ const TIERS = difficulties.filter(tier => difficultyCompare(tier, PROCESSION_MET
 
 /**
  * The board a room is dealt, built the way play time builds it: the shipped seed, one attempt, no loop
- * (`docs/instructions/puzzle-screens.md` §6.1). Searching for fresh boards here would test a path only the
- * puzzle lab takes, and pay for it in seconds a tier.
+ * (`docs/instructions/puzzle-screens.md`: seed lists). Searching for fresh boards here would test a path only
+ * the puzzle lab takes, and pay for it in seconds a tier.
  */
 const shipped = (tier: Difficulty): ProcessionPuzzle => {
   const options = PROCESSION_CONFIG[tier]

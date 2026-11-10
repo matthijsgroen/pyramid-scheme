@@ -3,7 +3,7 @@ import type { RushHourOptions } from "./generateRushHour"
 
 /**
  * Every tier is 6×6, and the ladder is carried by how far the way out is in MOVES
- * (`docs/game-design/puzzles/rush-hour.md` §3).
+ * (`docs/game-design/puzzles/rush-hour.md`: difficulty is distance, in moves).
  *
  * **The grid is not the knob and the piece count is only half of one.** A 6×6 lands on 58px cells at
  * 390px wide, which is a comfortable drag; 7×7 is 49px and 8×8 is 43px, on a board whose only gesture is
@@ -25,7 +25,7 @@ import type { RushHourOptions } from "./generateRushHour"
  * **The climb is why the middle of the ladder lands almost every seed** (`generateRushHour`): a set that
  * comes out too shallow is nudged one piece at a time rather than thrown away. What the cost column pays for
  * is that climb — a wizard seed is a hundred times a starter one — and it is the seed list's whole reason for
- * existing (`puzzle-screens.md` §6.1).
+ * existing (`puzzle-screens.md`: the search happens on a build machine, not a phone).
  *
  * **The climb is capped at eight nudges because it is what the PLAYER pays** (`generateRushHour`): a listed
  * seed replays its draw and its climb when the room opens. That cap is why the deep tiers hit two or seven
@@ -45,7 +45,7 @@ export const RUSH_HOUR_CONFIG: Record<Difficulty, RushHourOptions> = {
   // that is already nearly full, so it costs depth at wizard's piece count while buying it at this one.
   master: { size: 6, pieces: 12, blockers: 3, walls: 1, minMoves: 16, maxMoves: 22 },
   // The top band. The hardest board that exists on a 6×6 with these pieces is 51 moves (the whole space has
-  // been enumerated — family doc §7), so this asks for roughly the top half of what the mechanic has: above
+  // been enumerated — `rush-hour.md`), so this asks for roughly the top half of what the mechanic has: above
   // the classic set's own "expert" range, under the point where a room becomes an evening.
   wizard: { size: 6, pieces: 13, blockers: 3, walls: 0, minMoves: 24, maxMoves: 35 },
 }

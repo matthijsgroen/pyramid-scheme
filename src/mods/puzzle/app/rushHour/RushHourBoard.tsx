@@ -10,7 +10,10 @@ type Props = {
   /** The piece the current hint is about, and the cells it would end up on. */
   hintPiece?: number
   hintCells?: readonly number[]
-  /** True once the board is solved, so the player's piece leaves by the gap (`puzzle-screens.md` §3). */
+  /**
+   * True once the board is solved, so the player's piece leaves by the gap (`puzzle-screens.md`: the board
+   * finishes before "solved").
+   */
   leaving?: boolean
   /** A piece was shoved to a new offset. Reported per cell crossed, so a drag is a run of these. */
   onSlide: (index: number, offset: number) => void
@@ -152,7 +155,8 @@ export const RushHourBoard: FC<Props> = ({ puzzle, state, skin, hintPiece, hintC
                 height: `${(piece.horizontal ? 1 : piece.len) * share}%`,
                 // **The player's piece has a nose**, which is the signal a player who reads no colour gets:
                 // it is the only piece on the board that is not a plain rectangle, and it points at the way
-                // out (`puzzle-screens.md` §2). A painted face draws its own prow, so the clip stands down.
+                // out (`puzzle-screens.md`: no colour-only signal). A painted face draws its own prow, so the
+                // clip stands down.
                 clipPath: mine && !skin.art ? "polygon(0 0, 82% 0, 100% 50%, 82% 100%, 0 100%)" : undefined,
               }}
             >
@@ -171,7 +175,7 @@ export const RushHourBoard: FC<Props> = ({ puzzle, state, skin, hintPiece, hintC
                   // rather than off the cell lines, which they can: the handles are visibly part of the thing.
                   //
                   // **A piece across the board is the piece along it, turned** — one image serves both axes,
-                  // which only works because the art has no lighting direction (`rush-hour.md` §5). A turned
+                  // which only works because the art has no lighting direction (`rush-hour.md`). A turned
                   // image swaps the box it fills, so it is hung off the middle and spun there.
                   style={{
                     top: "50%",
