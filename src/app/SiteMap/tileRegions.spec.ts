@@ -394,11 +394,16 @@ describe("buildTileRegions — walls standing in front of floor", () => {
       expect(frontRuns(regions)).toHaveLength(1)
     })
 
-    it("throws no shadow, and the cell under it is not behind the wall", () => {
-      const regions = buildTileRegions(2, 3, twoRows, throughTheMiddle, "starter", (r, c) => r === 1 && c === 1)
-
+    it("throws no shadow", () => {
       expect(faceShadowRects([capOver(1)], 7)).toEqual([])
-      expect(frontRuns(regions)[0].behind.has("0,1")).toBe(false)
+    })
+
+    it("has the cell it rises over behind the wall, as any face does, and not the cell in front of the doorway", () => {
+      const regions = buildTileRegions(2, 3, twoRows, throughTheMiddle, "starter", (r, c) => r === 1 && c === 1)
+      const [run] = frontRuns(regions)
+
+      expect(run.behind.has("0,1")).toBe(true)
+      expect(run.behind.has("1,1")).toBe(false)
     })
 
     it("leaves a doorway with no arch standing in it an opening, with no wall over it", () => {

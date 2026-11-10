@@ -88,12 +88,19 @@ const chestBehindAWall = () =>
     [corridor(["n", "e"]), corridor(["w", "e"]), corridor(["w"])],
   ])
 
-const chestLayers = (container: HTMLElement) => {
-  const behind = container.querySelector<HTMLElement>("[data-behind-wall]")
+const layersOf = (behind: Element | null | undefined) => {
   if (!behind) throw new Error("nothing is drawn behind a wall")
   const [clear, ...underWalls] = Array.from(behind.querySelectorAll<HTMLElement>(":scope > div"))
   return { clear, underWall: underWalls[0].firstElementChild as HTMLElement }
 }
+
+const chestLayers = (container: HTMLElement) =>
+  layersOf(
+    Array.from(container.querySelectorAll("[data-behind-wall]")).find(b => b.querySelector("[data-node-sprite]"))
+  )
+
+const markerAt = (container: HTMLElement, at: string) =>
+  container.querySelector<HTMLElement>(`[data-marker-at="${at}"]`)!
 
 describe("something standing behind a wall", () => {
   it("is cut where the wall stands in front of it, so the wall shows there", () => {
@@ -111,11 +118,53 @@ describe("something standing behind a wall", () => {
     expect(Number(chestLayers(container).underWall.style.opacity)).toBe(1)
   })
 
-  it("leaves the explorer and the markers out of it", () => {
+  it("leaves the explorer out of it", () => {
     const { container } = render(<SiteMapView grid={chestBehindAWall()} explorerPos={[0, 2]} revealAllCells />)
-    const behind = container.querySelector("[data-behind-wall]")!
 
-    expect(behind.querySelector("[data-explorer], [data-marker-cell]")).toBeNull()
+    for (const behind of container.querySelectorAll("[data-behind-wall]"))
+      expect(behind.querySelector("[data-explorer]")).toBeNull()
+  })
+})
+
+describe("a marker behind a wall", () => {
+  it("is cut where the wall stands in front of it", () => {
+    const { container } = render(<SiteMapView grid={chestBehindAWall()} explorerPos={[1, 2]} revealAllCells />)
+    const { clear, underWall } = layersOf(markerAt(container, "0,1").querySelector("[data-behind-wall]"))
+
+    expect(clear.style.clipPath).toMatch(/^path\(evenodd,/)
+    expect(clear.querySelector("[data-shape-kind]")).not.toBeNull()
+    expect(Number(underWall.style.opacity)).toBe(0)
+  })
+
+  it("shows whole over the wall while that wall is faded", () => {
+    const { container } = render(<SiteMapView grid={chestBehindAWall()} explorerPos={[0, 2]} revealAllCells />)
+    const { underWall } = layersOf(markerAt(container, "0,1").querySelector("[data-behind-wall]"))
+
+    expect(Number(underWall.style.opacity)).toBe(1)
+  })
+
+  it("is still tapped through the wall, on its own box", () => {
+    const onCellClick = vi.fn()
+    const { container } = render(
+      <SiteMapView grid={chestBehindAWall()} explorerPos={[1, 2]} revealAllCells onCellClick={onCellClick} />
+    )
+    const marker = markerAt(container, "0,1")
+
+    expect(container.querySelectorAll('[data-marker-at="0,1"]')).toHaveLength(1)
+    expect(marker.style.pointerEvents).toBe("auto")
+    for (const layer of marker.querySelectorAll<HTMLElement>("[data-behind-wall]"))
+      expect(layer.parentElement!.style.pointerEvents).toBe("none")
+    marker.click()
+    expect(onCellClick).toHaveBeenCalledWith(0, 1)
+  })
+
+  it("is drawn over the wall it stands in front of", () => {
+    const { container } = render(<SiteMapView grid={chestBehindAWall()} explorerPos={[0, 2]} revealAllCells />)
+
+    const inFront = container.querySelectorAll('[data-marker-at^="1,"]')
+
+    expect(inFront.length).toBeGreaterThan(0)
+    for (const marker of inFront) expect(marker.querySelector("[data-behind-wall]")).toBeNull()
   })
 })
 
@@ -169,6 +218,18 @@ describe("an arch in a wall standing in front of floor", () => {
 
     const { container } = render(<SiteMapView grid={archBehindAWall()} explorerPos={[0, 3]} revealAllCells />)
     expect(Number(archOf(container).style.opacity)).toBe(OCCLUDER_FADE)
+  })
+
+  it("fades its wall while the explorer stands on the cell the wall over the arch rises over", () => {
+    const { container } = render(<SiteMapView grid={archBehindAWall()} explorerPos={[0, 2]} revealAllCells />)
+
+    expect(drawnWalls(container).filter(wall => wall.hasAttribute("data-faded"))).toHaveLength(1)
+  })
+
+  it("leaves its wall solid while the explorer stands in the doorway", () => {
+    const { container } = render(<SiteMapView grid={archBehindAWall()} explorerPos={[1, 2]} revealAllCells />)
+
+    expect(drawnWalls(container).filter(wall => wall.hasAttribute("data-faded"))).toEqual([])
   })
 })
 

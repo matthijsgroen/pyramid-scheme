@@ -1533,6 +1533,7 @@ const MarkerCell = ({
   cy,
   onClick,
   ring = false,
+  walls,
   children,
 }: {
   /** The grid cell the marker belongs to, wherever it is drawn. */
@@ -1543,6 +1544,8 @@ const MarkerCell = ({
   /** An arrow of the ring around the explorer: its tap is a disc of `MARKER_HIT`, so two arrows half a cell out never
    * share a tap, and it may reach over him. */
   ring?: boolean
+  /** The front walls: a marker standing behind one is drawn behind it, as a prop there is (`BehindWalls`). */
+  walls?: WallFades
   children: ReactNode
 }) => {
   const box = ring ? MARKER_HIT * 2 : CELL
@@ -1568,20 +1571,59 @@ const MarkerCell = ({
       }}
     >
       {children && (
-        <svg
-          aria-hidden="true"
-          viewBox={`${-CELL / 2} ${-CELL / 2} ${CELL} ${CELL}`}
-          style={{
-            position: "absolute",
-            ...(ring
-              ? { left: (box - CELL) / 2, top: (box - CELL) / 2, width: CELL, height: CELL }
-              : { inset: 0, width: "100%", height: "100%" }),
-            overflow: "visible",
-          }}
-        >
+        <MarkerDrawing cx={cx} cy={cy} box={box} ring={ring} walls={walls}>
           {children}
-        </svg>
+        </MarkerDrawing>
       )}
+    </div>
+  )
+}
+
+/** A marker's drawing: a cell-sized `<svg>` centred on its spot. One standing behind a front wall — its spot
+ * further back than the wall's foot, its drawing reaching into it — is drawn behind that wall, cut where the
+ * wall is and showing through it while it fades. Only the drawing: the tap stays the marker's own box, so a
+ * marker behind a wall is still tapped through it. */
+const MarkerDrawing = ({
+  cx,
+  cy,
+  box,
+  ring,
+  walls,
+  children,
+}: {
+  cx: number
+  cy: number
+  /** The side of the marker's own box, centred on its spot: the drawing is laid out in it. */
+  box: number
+  ring: boolean
+  walls?: WallFades
+  children: ReactNode
+}) => {
+  const svg = (
+    <svg
+      aria-hidden="true"
+      viewBox={`${-CELL / 2} ${-CELL / 2} ${CELL} ${CELL}`}
+      style={{
+        position: "absolute",
+        ...(ring
+          ? { left: (box - CELL) / 2, top: (box - CELL) / 2, width: CELL, height: CELL }
+          : { inset: 0, width: "100%", height: "100%" }),
+        overflow: "visible",
+      }}
+    >
+      {children}
+    </svg>
+  )
+  const drawn: Rect = [cx - CELL / 2, cy - CELL / 2, CELL, CELL]
+  const behind = walls ? wallsBehind(walls.runs, drawn, cy) : []
+  if (!walls || behind.length === 0) return svg
+  const [ox, oy] = [cx - box / 2, cy - box / 2]
+  // Laid out in map space, where the walls are: the wrapper puts the map's origin back under the marker's box.
+  return (
+    <div style={{ position: "absolute", left: -ox, top: -oy, pointerEvents: "none" }}>
+      <BehindWalls runs={behind} faded={walls.faded} box={drawn}>
+        <div style={{ position: "absolute", left: ox, top: oy, width: box, height: box }}>{svg}</div>
+      </BehindWalls>
     </div>
   )
 }
@@ -2313,6 +2355,7 @@ export const SiteMapView = ({
                   return (
                     <MarkerCell
                       at={[r, c]}
+                      walls={walls}
                       key={cellKey}
                       cx={spot.cx}
                       cy={spot.cy}
@@ -2346,6 +2389,7 @@ export const SiteMapView = ({
                   return (
                     <MarkerCell
                       at={[r, c]}
+                      walls={walls}
                       key={cellKey}
                       cx={spot.cx}
                       cy={spot.cy}
@@ -2367,6 +2411,7 @@ export const SiteMapView = ({
                   return (
                     <MarkerCell
                       at={[r, c]}
+                      walls={walls}
                       key={`${r},${c}`}
                       cx={spot.cx}
                       cy={spot.cy}
@@ -2439,6 +2484,7 @@ export const SiteMapView = ({
                     {arrow?.kind === "arrow" && arrowSpot && (
                       <MarkerCell
                         at={[r, c]}
+                        walls={walls}
                         cx={arrowSpot.cx}
                         cy={arrowSpot.cy}
                         ring={arrowSpot.ring}
@@ -2452,6 +2498,7 @@ export const SiteMapView = ({
                     )}
                     <MarkerCell
                       at={[r, c]}
+                      walls={walls}
                       cx={centre.cx}
                       cy={centre.cy}
                       onClick={!choice && offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
