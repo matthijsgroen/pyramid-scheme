@@ -483,7 +483,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
-## Nobleman — three
+## Nobleman — two
 
 The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
 first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
@@ -511,27 +511,6 @@ The last nine are the house's own kinds, new with its activities ([themed-rooms.
 § Junior): each has a primitive of its own in `renderProp.py` and a guarded block in `art/rebuild.sh`. The
 banquet table and the bed are two cells across, so their frame is landscape three by two; the harp and the
 potted tree stand a cell taller, so theirs is portrait two by five.
-
-### `junior/tallyBoard` — a plastered household board, columns of hieroglyphs
-
-**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
-
-**Attach:** `~/tile-previews/junior-plain.png` — the material reference. A flat item has no scaffold.
-
-```
-A single flat object, painted in flat matte gouache, on pure magenta #FF00FF. Nearly square, exactly seven units wide by six tall. Do not re-compose it into a landscape strip. ONE OBJECT, AND IT FILLS THE FRAME, reaching the left and right edges. The magenta fills the frame around it to its edges: there is no wall, no floor and no surface behind the object. Seen straight on, flat, no perspective.
-
-The object: a household account BOARD, a flat wooden board coated in plaster, with a narrow cedar frame
-#6b4226.
-
-The plaster is old and smoke-darkened to a warm grey-brown #74604a, never white. On it, neat columns of
-small HIEROGLYPHS (birds, reeds, loaves, water lines) in black #2a1f18, with the column heads in red
-ochre #8a3a2a. No modern writing, no letters, no numbers. A copper hanging ring at the top, gone green.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
-```
-
-**Import:** `yarn import-tile art/masters/props/junior/tallyBoard.webp --tier=junior --name=tallyBoard --slot=wall --tall --filter=smooth`
 
 ### `junior/stela-anubis` — a black-painted stela with Anubis
 
