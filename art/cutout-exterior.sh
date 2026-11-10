@@ -1,6 +1,6 @@
 #!/bin/bash
 # Cuts an exterior object (a hill, a ruin) off its magenta render. Its shadow is the game's own, cast in CSS:
-#   art/cutout-exterior.sh <master> <out.png> [keep-height]
+#   art/cutout-exterior.sh <master> <out.webp> [keep-height]
 # The generator paints its shadow magenta-dark and often a band of sand along the bottom edge, so the key
 # is by HUE rather than by distance from #ff00ff, and `keep-height` cuts the band off (default: all rows).
 # Holes the key bites into dark paint (a cave mouth is reddish black) are filled from the outside in.
@@ -13,4 +13,4 @@ magick "$T/src.png" -colorspace HSL -fx "Hu=u.r*360; Sa=u.g; ((Hu>265 || Hu<12) 
   -morphology Open Disk:2 -threshold 50% -bordercolor black -border 1 -fill red -draw "color 0,0 floodfill" \
   -shave 1x1 -fill white +opaque red -fill black -opaque red -morphology Erode Disk:1.5 -blur 0x1 "$T/alpha.png"
 magick "$T/src.png" "$T/alpha.png" -alpha off -compose CopyOpacity -composite "$T/keyed.png"
-magick "$T/keyed.png" -trim +repage -resize 1200x -depth 8 "$OUT"
+magick "$T/keyed.png" -trim +repage -resize 1200x -depth 8 -quality 90 -define webp:alpha-quality=100 "$OUT"

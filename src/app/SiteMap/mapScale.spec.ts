@@ -1,5 +1,18 @@
 import { describe, expect, it } from "vitest"
-import { CELL, COL_PITCH, PROP_H, ROW_PITCH, cellCenter, propFrame } from "./mapScale"
+import {
+  CELL,
+  COL_PITCH,
+  FACE_H,
+  PROP_H,
+  ROW_PITCH,
+  WALL_FACE_H,
+  WALL_H,
+  cellCenter,
+  cellLeft,
+  cellTop,
+  propFrame,
+  wallItemFrame,
+} from "./mapScale"
 
 describe("propFrame", () => {
   it("draws a single-cell prop exactly where a prop has always stood", () => {
@@ -39,5 +52,38 @@ describe("propFrame", () => {
     expect(tall.h).toBe(PROP_H + CELL)
     expect(tall.baseY).toBe(flat.baseY)
     expect(tall.y).toBe(flat.y - CELL)
+  })
+})
+
+describe("wallItemFrame", () => {
+  const faceTop = cellTop(3) - FACE_H
+
+  it("a 2:1 tile is the band's height, centred on the face", () => {
+    const { x, y, w, h } = wallItemFrame(3, 2, [112, 56])
+    expect([x, w, h]).toEqual([cellLeft(2), CELL, WALL_H])
+    expect(y - faceTop).toBe(cellTop(3) - (y + h))
+  })
+
+  it("a tile with no size takes the 2:1 band", () => {
+    expect(wallItemFrame(3, 2)).toEqual(wallItemFrame(3, 2, [112, 56]))
+  })
+
+  it("a taller tile is drawn at its own aspect, a cell wide", () => {
+    const { w, h } = wallItemFrame(3, 2, [100, 80])
+    expect(w).toBe(CELL)
+    expect(h).toBeCloseTo(CELL * 0.8)
+  })
+
+  it("a tile as tall as the brick fills the face under the cap", () => {
+    const { y, h } = wallItemFrame(3, 2, [112, 96.32])
+    expect(h).toBeCloseTo(WALL_FACE_H)
+    expect(y).toBeCloseTo(cellTop(3) - WALL_FACE_H)
+    expect(y + h).toBeCloseTo(cellTop(3))
+  })
+
+  it("never rises into the cap, however tall the tile", () => {
+    const { y, h } = wallItemFrame(3, 2, [50, 200])
+    expect(h).toBeCloseTo(WALL_FACE_H)
+    expect(y).toBeCloseTo(cellTop(3) - WALL_FACE_H)
   })
 })

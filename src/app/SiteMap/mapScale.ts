@@ -190,3 +190,17 @@ export const propFrame = (
   const baseY = cellTop(row + footprint.rows - 1) + CELL
   return { x: cellLeft(col), y: baseY - h, w, h, baseY }
 }
+
+/**
+ * Where a wall item hanging over (row, col) is drawn: a cell wide, at its tile's own aspect, centred on the
+ * face and never higher than the face's cap — so a 2:1 tile sits in the face's middle and a tall one fills
+ * the brick under the coping. `size` is the tile's stored pixels; without one it takes the 2:1 band.
+ */
+export const wallItemFrame = (
+  row: number,
+  col: number,
+  size?: readonly [number, number]
+): { x: number; y: number; w: number; h: number } => {
+  const h = size ? Math.min((CELL * size[1]) / size[0], WALL_FACE_H) : WALL_H
+  return { x: cellLeft(col), y: Math.max(cellTop(row) - (FACE_H + h) / 2, cellTop(row) - WALL_FACE_H), w: CELL, h }
+}
