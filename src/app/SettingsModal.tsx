@@ -1,7 +1,7 @@
 import { type FC, type KeyboardEvent, use, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { version } from "@/../package.json"
-import { LANGUAGES } from "@/i18n/languages"
+import { LANGUAGES, preferredLanguages } from "@/i18n/languages"
 import { clearGameData, useGameStorage } from "@/support/useGameStorage"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { closeOnEscape, focusOnMount, trapTab } from "@/ui/atoms/dialogFocus"
@@ -131,11 +131,22 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, startGa
               onChange={e => handleLanguageChange(e.target.value)}
               className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
             >
-              {LANGUAGES.map(({ code, name }) => (
-                <option key={code} value={code} lang={code}>
-                  {name}
-                </option>
-              ))}
+              {(() => {
+                const option = ({ code, name }: (typeof LANGUAGES)[number]) => (
+                  <option key={code} value={code} lang={code}>
+                    {name}
+                  </option>
+                )
+                const preferred = preferredLanguages(navigator.languages ?? [])
+                if (preferred.length === 0) return LANGUAGES.map(option)
+                return [
+                  ...preferred.map(option),
+                  <option key="divider" disabled>
+                    ──────────
+                  </option>,
+                  ...LANGUAGES.filter(language => !preferred.includes(language)).map(option),
+                ]
+              })()}
             </select>
           </div>
 
