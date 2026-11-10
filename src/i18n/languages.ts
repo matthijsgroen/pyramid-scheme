@@ -49,3 +49,21 @@ export const LANGUAGES = [
 ] as const satisfies readonly { code: string; name: string }[]
 
 export const LANGUAGE_CODES: string[] = LANGUAGES.map(language => language.code)
+
+type Language = (typeof LANGUAGES)[number]
+
+/**
+ * The shipped languages the browser says its user reads, in the browser's order: an exact code first
+ * (`pt-BR`), else the first shipped variant of the same language (`nl-BE` reads Dutch, `es-MX` the first Spanish).
+ */
+export const preferredLanguages = (browser: readonly string[]): Language[] => {
+  const base = (code: string) => code.toLowerCase().split("-")[0]
+  const found: Language[] = []
+  for (const wanted of browser) {
+    const match =
+      LANGUAGES.find(language => language.code.toLowerCase() === wanted.toLowerCase()) ??
+      LANGUAGES.find(language => base(language.code) === base(wanted))
+    if (match && !found.includes(match)) found.push(match)
+  }
+  return found
+}
