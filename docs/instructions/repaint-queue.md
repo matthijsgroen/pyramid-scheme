@@ -513,7 +513,7 @@ potted tree stand a cell taller, so theirs is portrait two by five.
 
 **Attach:**
 
-1. `~/tile-previews/statue-anubis-junior-previous.png` — the previous painting, repainted over: it already holds the scaffold's pose and silhouette, smoother than the blocks
+1. `~/tile-previews/statue-anubis-junior-previous.png` — the first roll over the scaffold, repainted over: its pose, head and materials are right, only its carving is too blocky
 2. `~/tile-previews/junior-plain.png` — the material reference
 
 ```
@@ -528,7 +528,7 @@ The jackal is painted matte BLACK #2a1f18, #3a2e26 on his top planes: long muzzl
 a thin copper collar #8a4022 gone verdigris at its knot, the one mark of metal. The chest under him is
 dark cedar #6b4226, painted with a band of Egyptian blue #2a5a9a and red ochre #8a3a2a rosettes.
 
-THE REFERENCE IS A FINISHED PAINTING of this statue, in the wrong materials. Keep every contour, the pose and the smooth modelling exactly; REPAINT ONLY the materials: the jackal as described, and its pale stone base becomes the painted cedar chest.
+THE REFERENCE IS A PAINTING of this statue in the right pose and the right materials, but carved too BLOCKY. Keep the pose, the turn of the head, the chest and every outer contour exactly; SOFTEN ONLY the carving of the jackal: round the flat facets into smooth muscle and a sleek, polished body, inside the outline it already has.
 
 EVERYTHING ELSE IS FIXED:
 
