@@ -389,7 +389,7 @@ const cellCls = (view: CellView, state: { lit: boolean; movable: boolean }) =>
   clsx(
     "relative flex aspect-square min-h-0 items-center justify-center rounded bg-stone-800 p-[8%] transition-colors",
     {
-      // A vacant stop has to read as somewhere a piece can go rather than as an empty square (design doc §9).
+      // A vacant stop has to read as somewhere a piece can go rather than as an empty square (lightbeam.md).
       // The piece's own outline says whose it is, and it says so up in the layer above.
       "outline-2 -outline-offset-2 outline-stone-500/70 outline-dashed":
         view.kind === "stop" && view.track && !state.lit,

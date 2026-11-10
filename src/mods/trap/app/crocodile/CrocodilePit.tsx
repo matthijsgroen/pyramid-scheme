@@ -195,7 +195,7 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
                       <div
                         // Wrapping rather than clipping: a row is authored to fit (see crocodileConfig),
                         // and if a locale or a font ever makes one wider anyway, it folds instead of
-                        // running off the screen — no horizontal scroll, ever (puzzle-screens.md §1).
+                        // running off the screen — no horizontal scroll, ever (puzzle-screens.md).
                         className="flex w-full flex-wrap items-center justify-center gap-1.5"
                       >
                         {stones.map((stone, index) => {

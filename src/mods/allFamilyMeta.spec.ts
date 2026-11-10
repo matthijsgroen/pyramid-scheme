@@ -17,7 +17,7 @@ const dresses = (id: string, role: string) =>
 
 describe("allocating a family for a role", () => {
   /**
-   * **Prefer mode weights the bag toward the families that dress the role** (`journeys.md` §10). Without it
+   * **Prefer mode weights the bag toward the families that dress the role** (`journeys.md`: restrict or prefer). Without it
    * a themed pool inside the whole catalogue dressed about a third of the rooms it was asked for, which
    * reads as scattered rather than as a place: the journey was authored and almost nothing looked it.
    */

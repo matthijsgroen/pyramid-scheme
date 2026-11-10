@@ -5,7 +5,7 @@ import type { LightbeamPuzzle } from "./generateLightbeam"
 /**
  * The whole of the player's answer: which state each movable piece is in.
  *
- * There is no undo stack here, and that is deliberate (design doc §7). A tap cycles a piece, and cycling
+ * There is no undo stack here, and that is deliberate (lightbeam.md: no undo). A tap cycles a piece, and cycling
  * round again puts it back — the move is its own inverse, so nothing a tap does is unrecoverable. The
  * Futoshiki argument for undo was that a placement destroyed pencilled work elsewhere; nothing here
  * destroys anything.

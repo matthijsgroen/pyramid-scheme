@@ -8,8 +8,9 @@ import { findUnbakedSwitchBoards } from "@/worldGen/validate"
 import { ALL_FAMILY_META } from "@/mods/allFamilyMeta"
 import { FORK_SHAPES } from "@/game/forkShape"
 
-// The guard on the shipped artifact (`docs/instructions/puzzle-screens.md` §6.1). A miss is never *wrong* — play
-// time falls back to generating live — so this does not protect correctness. It protects the reason
+// The guard on the shipped artifact (`docs/instructions/puzzle-screens.md`: the search happens on a build
+// machine, not a phone). A miss is never *wrong* — play time falls back to generating live — so this
+// does not protect correctness. It protects the reason
 // the lists exist: a dial moved, the key moved with it, and the top tier is quietly back to searching
 // on the player's phone.
 const demands = enumerateConfigs(worldLevelSites, ALL_FAMILY_META)
@@ -61,7 +62,7 @@ describe("shipped puzzle seeds", () => {
   describe.each(demands.map(demand => [demandLabel(demand), demand] as const))("%s", (_name, demand) => {
     // **Budgeted for the dearest family rather than the average one.** Rebuilding one board costs what
     // that family's generator costs: microseconds for sumplete, about a second for rush hour, whose
-    // generator searches and then climbs (docs/game-design/puzzles/rush-hour.md §3.1). Three boards a
+    // generator searches and then climbs (docs/game-design/puzzles/rush-hour.md: one breadth-first search does both jobs). Three boards a
     // bucket at a second each blows the default 5s, and the answer is the budget rather than fewer
     // boards — the middle and last entries are exactly where a half-filled list goes wrong.
     it("still builds a board its own generator would keep, on the first attempt", { timeout: 30_000 }, () => {

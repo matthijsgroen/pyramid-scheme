@@ -42,7 +42,7 @@ type Props = {
    *
    * **The only control the shell takes from a family**, because a step back is the only one that means the
    * same thing on every board. Notes and erase change what the NEXT tap does, which makes them part of the
-   * keypad rather than part of the chrome — they live in the pads (`puzzle-screens.md` §3).
+   * keypad rather than part of the chrome — they live in the pads (`puzzle-screens.md`: notes and erase are not chrome).
    */
   undo?: Control
   /**
@@ -81,7 +81,7 @@ type Props = {
    * or a list of them, is a set of icons that all mean "a puzzle". The name is what a player says to
    * themselves about a room, and it is worth the line it takes.
    *
-   * **Worded per identity, like everything else over the board** (`puzzle-screens.md` §1.1): the family
+   * **Worded per identity, like everything else over the board** (`puzzle-screens.md`: the family supplies the name): the family
    * hands over a name, not an id, so the same mechanic dressed as a causeway is called one. Core never
    * learns a family's names — it only knows where to put one.
    *
@@ -101,7 +101,7 @@ const formatDuration = (ms: number): string => {
   return seconds < 60 ? `${seconds}s` : `${Math.floor(seconds / 60)}:${`${seconds % 60}`.padStart(2, "0")}`
 }
 
-// Every control is a thumb wide and a thumb tall (docs/instructions/puzzle-screens.md §1) — the pads have
+// Every control is a thumb wide and a thumb tall (puzzle-screens.md: tap targets ≥ 44px) — the pads have
 // always been, and the chrome around them used to be half that. The two under the board share the width
 // evenly, so they land in the same place on every family and are reachable without looking.
 const pillCls =
@@ -111,7 +111,7 @@ const spent = "bg-stone-800/50 text-stone-600"
 // The chrome every puzzle family wears: back and reset at the top, undo and hint as two pills under the
 // board (the hint with its cooldown and idle nudge), then the completed banner and the rules. Families
 // supply the board and their own hint text, and whatever their input surface needs — a pad's notes and
-// eraser are the pad's (docs/instructions/puzzle-screens.md §3).
+// eraser are the pad's (docs/instructions/puzzle-screens.md: notes and erase are not chrome).
 export const PuzzleFamilyShell = ({
   onSolved,
   onCancel,
@@ -148,7 +148,7 @@ export const PuzzleFamilyShell = ({
   const [finishing, setFinishing] = useState(false)
 
   // How long the board took, stopped at the solve rather than at the banner, and counting only the time it
-  // was actually on screen. This is the instrument for PUZZLE_FAMILIES.md §3.2's solve-time budget — a tier
+  // was actually on screen. This is the instrument for PUZZLE_FAMILIES.md's solve-time budget — a tier
   // nobody has timed is a tier whose duration is unknown — and the lab plays the real screen, so timing a
   // tier there needs nothing of its own.
   const elapsedMs = useVisibleElapsed()

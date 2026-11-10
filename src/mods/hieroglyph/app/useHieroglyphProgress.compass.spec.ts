@@ -18,8 +18,9 @@ vi.mock("@/support/useGameStorage", () => ({
 
 const { useHieroglyphProgress } = await import("./useHieroglyphProgress")
 
-// The compass target is the picker's product (§3C): set on Collection, read by core via the seam.
-// It lives in the mod's own persisted state, so this proves the pick-target step end-to-end at the
+// The compass target is the picker's product (collection-and-detector-design.md): set on Collection,
+// read by core via the seam. It lives in the mod's own persisted state, so this proves the pick-target
+// step end-to-end at the
 // state layer (the full navigate-to-a-site UI flow isn't runnable headless — same harness limit as
 // the other phases).
 describe("compass target (Collection picker, §3C)", () => {

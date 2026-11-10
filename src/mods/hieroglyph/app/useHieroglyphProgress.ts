@@ -16,8 +16,8 @@ const hieroglyphRequired = hieroglyphRequiredRaw as Record<string, number>
 // hieroglyph concern, imported here, not in core.
 
 // collectedFragments: which pieces are found. The compass level is NOT stored — it is derived from
-// the treasures held (§7.4), so it drops with the mod without needing a slice of its own.
-// compassTarget: the hieroglyph the player is hunting (picked on the Collection screen, §3C) — lives
+// the treasures held (collection-and-detector-design.md), so it drops with the mod without needing a slice of its own.
+// compassTarget: the hieroglyph the player is hunting (picked on the Collection screen) — lives
 // here too so it persists across navigation into a site and drops with the mod (core reads it via the
 // compassTarget seam).
 type HieroglyphState = { collectedFragments: string[]; compassTarget: string | null } // fragment = "hieroglyphId:pieceIndex"
@@ -39,7 +39,7 @@ export type HieroglyphProgressAPI = {
   // True once the mod's own save has been read.
   loaded: boolean
   compassLevel: number
-  // The hunted hieroglyph (set from the Collection picker, §3C); null = not hunting.
+  // The hunted hieroglyph (set from the Collection picker); null = not hunting.
   compassTarget: string | null
   setCompassTarget: (hieroglyphId: string | null) => void
 }
