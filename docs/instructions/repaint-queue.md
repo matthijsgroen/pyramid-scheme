@@ -201,7 +201,7 @@ where no foot reaches.
 Even lighting left to right, no hotspot, no vignette.
 ```
 
-**Import:** `yarn import-tile art/masters/surfaces/junior-threshold.webp --tier=junior --name=threshold --slot=sill --filter=smooth --key=none`
+**Import:** `yarn import-tile art/masters/surfaces/junior-threshold.webp --tier=junior --name=threshold --slot=sill --filter=smooth --key=none --brightness=0.88`
 
 ### `junior/arch` — a dressed sandstone doorway with a painted lintel
 
@@ -254,6 +254,8 @@ Even lighting left to right, no hotspot, no vignette.
 ```
 
 **Import:** `yarn import-tile art/masters/surfaces/junior-arch.webp --tier=junior --name=arch --slot=arch --filter=smooth`
+
+Landed 2026-11-10: the roll's lintel kept, its jambs replaced by straight crops of their own front faces (the roll drew them leaning inward). The master is that composite.
 
 ### `expert/wall-face` — cool dressed stone in sunk-relief columns
 
