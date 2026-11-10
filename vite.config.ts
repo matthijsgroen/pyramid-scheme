@@ -156,10 +156,8 @@ export default defineConfig({
             "maskable-icon-*.png",
             "og-image.png",
           ],
-          // The whole game has to be playable offline, mosaic window included, so the stained-glass
-          // artwork is precached — and the ceiling covers it UNOPTIMIZED. sharp is an optional peer
-          // dep: when it fails to install (Linux CI) the image optimizer skips silently and the raw
-          // 3.9 MB PNG ships, which the 2 MB default would reject and fail the build.
+          // The whole game has to be playable offline, so every file is precached however big. The main
+          // bundle carries the baked world and is 2.6 MB, which the 2 MB default would reject and fail the build.
           maximumFileSizeToCacheInBytes: 4_500_000,
           cleanupOutdatedCaches: true,
           clientsClaim: true,
