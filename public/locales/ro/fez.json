@@ -559,9 +559,7 @@
 
   "animal": {
     "forSale": {
-      "1": { "fez": "Uite ce am la tarabă! Acum fac și transport." },
-      "2": { "explorer": "Mestecă." },
-      "3": { "fez": "E inclus în preț." }
+      "1": { "fez": "Uite ce am la tarabă! Acum fac și transport." }
     },
     "boughtDonkey": {
       "1": { "fez": "Vândut! Un măgar. Încăpățânat, dar duce orice." },

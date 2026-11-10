@@ -44,11 +44,37 @@ it ships; tick it off there.
 
 ### Junior
 
+**Build:**
+
 - [ ] Rooms that grow for larger art: a room claims more floor where a prop's footprint needs it, the walk path
       routed round it (the banquet table and the lotus pool in the middle). The same question for every tier after.
 - [ ] Art: `junior/threshold`; the junior props and the six activities (themed-rooms.md, "Junior"), then their props' repaint.
 - [ ] Pass-through chambers read as rooms on the re-laid junior floors (1.17 a floor today).
 - [ ] The nobleman's ward door, `door/ward-junior`.
+- [ ] Henut's rooms, her wall's answer and the scribes at Thoth merged (PR #382), and the money fill.
+- [ ] The last junior bake done, then junior's carve recorded: `yarn junior-freeze:record`, commit
+      `src/data/juniorCarve.json`; `yarn junior-freeze` passes, not skipped (handover-junior-release.md, E1).
+
+**Checks in the game:**
+
+- [ ] A save that finished starter: the junior chapter plays at the camp and the four junior expeditions open.
+- [ ] Each junior arrival plays once, on the first pyramid of `junior_1` … `junior_4`.
+- [ ] `bond.junior` plays on a board in a junior expedition, and never on a junior-level board in a starter one.
+- [ ] Every junior floor plays to its exit, its lock solved, on a phone and on desktop.
+- [ ] Henut's tomb: the cave, the pillar and the cavern beats; her scene in her vanity room; her wall set right
+      with Hathor, a sign a junior player holds, and `tomb.juniorFixed` after it.
+- [ ] The reading screen at Henut's wall reads on a phone and on desktop.
+- [ ] The tall wall items (stelae, tally board) stand on the wall face, not over the floor.
+- [ ] A starter save carries over untouched: `yarn starter-freeze` green, the explorer where they stood.
+
+**Designer choices:**
+
+- [ ] The water locks in the Valley of the Craftsmen (`waterMoves`, `sluice` on `junior_2`), not on the flood
+      journey: swap, move or keep.
+- [ ] The map texts that give away the junior arrivals and Henut's "it was glass"; the NL tomb title
+      "Edelman's Verborgen Kluis" for a noblewoman's tomb.
+- [ ] Where `reading.junior` plays, or that it waits.
+- [ ] Fez says nothing at junior's first lock mechanics: keep it so, or a line where he teaches.
 
 ### Expert
 

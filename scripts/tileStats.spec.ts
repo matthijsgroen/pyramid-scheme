@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { TierPalette } from "../src/app/SiteMap/tileMaterials"
-import { detailStep, isLightFloor, lightestOf, objectStep } from "./tileStats"
+import { detailStep, faceL, isLightFloor, lightestOf, objectStep, wallStep } from "./tileStats"
 import { MIN_STEP } from "./rankColour"
 
 const pale: TierPalette = {
@@ -48,6 +48,29 @@ describe("objectStep", () => {
 
   it("goes negative for an object lighter than the floor", () => {
     expect(objectStep(pale, [250, 245, 235])).toBeLessThan(0)
+  })
+})
+
+describe("wallStep", () => {
+  const midWall: TierPalette = { ...pale, wall: "#907860", faceNight: 0 }
+
+  it("is positive for a wall item drawn darker than its face", () => {
+    expect(wallStep(midWall, [30, 22, 18])).toBeGreaterThan(0)
+  })
+
+  it("is negative for a wall item drawn lighter than its face", () => {
+    expect(wallStep(midWall, [250, 245, 235])).toBeLessThan(0)
+  })
+
+  it("measures against the face, not the floor: a colour far off the floor can sit near the wall", () => {
+    const terracotta: [number, number, number] = [110, 70, 50]
+    expect(objectStep(midWall, terracotta)).toBeGreaterThanOrEqual(MIN_STEP)
+    expect(Math.abs(wallStep(midWall, terracotta))).toBeLessThan(MIN_STEP)
+  })
+
+  it("darkens the face by faceNight, so the same item stands further above it", () => {
+    expect(faceL(pale)).toBeLessThan(faceL(midWall))
+    expect(wallStep(pale, [200, 190, 170])).toBeLessThan(wallStep(midWall, [200, 190, 170]))
   })
 })
 

@@ -1,1 +1,7 @@
 yarn lint-staged
+
+# Betterer hashes every file it records, so its results move with any edit to such a file:
+# precommit mode rewrites and stages .betterer.results, and refuses the commit only on a new issue.
+if git diff --cached --name-only --diff-filter=ACMRD | grep -qE '^(src/.*\.tsx?|\.betterer\.(ts|results))$'; then
+  yarn exec betterer precommit
+fi

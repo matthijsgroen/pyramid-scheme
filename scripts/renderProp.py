@@ -780,7 +780,11 @@ def prim_lamp():
     rank's row is that this one is bronze and the merchant's is wood, and a scaffold that does not say so
     comes back as another wooden stool."""
     contents = arg("contents", "stool")
-    stand = contents == "stand"
+    # `vessel` is the stand with a pottery lamp ON its saucer and the flame rising from the lamp's top,
+    # centred. On `stand` the flame is a nub on the side spout, and at 56 units that nub is one orange
+    # pixel: the repaint put a pot on the saucer and the lamp stopped reading as a lamp.
+    vessel = contents == "vessel"
+    stand = contents == "stand" or vessel
     part = "metal" if stand or contents == "tree" else None
 
     def put(obj):
@@ -873,6 +877,20 @@ def prim_lamp():
     # a pinched lip, but the same clearance on the stand's 0.17 saucer read as a flame floating beside the
     # lamp. Its own number per rank, and the merchant's is left at 0.13 to the digit: the geometry a master
     # was painted over cannot move afterwards or the mask cuts a shape the art no longer fills.
+    if vessel:
+        # The saucer becomes a thin drip tray, and the lamp is a squat pot on it: a body, a shoulder
+        # narrowing to a lip, and a TEARDROP of flame standing on the lip. The flame is a stretched sphere,
+        # not a cone — a sharp cone a fifth of the object tall was the most salient shape in the picture —
+        # and at about a tenth of the drawn height it reads as fire without becoming the subject.
+        put(cyl(dish_r, 0.03, z=h + 0.015, verts=20))
+        mark(cyl(0.085, 0.075, z=h + 0.03 + 0.0375, verts=18), "pottery")
+        mark(cone(0.085, 0.045, 0.04, z=h + 0.105 + 0.02, verts=18), "pottery")
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=0.04, location=(0, 0, h + 0.20))
+        flame = bpy.context.object
+        flame.scale = (1.0, 0.8, 1.9)
+        bpy.ops.object.transform_apply(scale=True)
+        mark(flame, "flame!nocast")
+        return join_all()
     put(cyl(dish_r, 0.05, x=lamp_x, y=lamp_y, z=h + 0.025, verts=20))
     put(box(0.075, 0.05, 0.03, x=spout_x, y=lamp_y, z=h + 0.03))
     bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.028, radius2=0.0, depth=0.055,
@@ -980,6 +998,35 @@ def prim_palm():
         bud.scale = (1.0, 1.0, 1.35)
         bpy.ops.object.transform_apply(scale=True)
         mark(bud, "body")
+        return join_all()
+    if arg("contents") == "palmiform":
+        # The nobleman's PALMIFORM column: a stone shaft whose capital is palm fronds standing UPRIGHT,
+        # bound tight round the shaft's top by bands and flaring only a little at their tips, with a square
+        # abacus on top. The default branch below splays its fronds at 66 degrees, and a repaint that keeps
+        # every silhouette paints that literally: it came back a cartoon palm TREE.
+        #
+        # The capital is a solid flared CORE with the fronds standing on its face, not fronds alone: a ring
+        # of separate blades leaves magenta between them, and that gap is what reads as foliage in the air.
+        # Each frond is two segments, a long one nearly upright and a short tip leaning out further, which
+        # is the whole of the flare — the width the default buys by splaying comes from the core instead.
+        shaft_h = 0.88
+        mark(cone(0.265, 0.265, 0.07, z=0.035, verts=20), "body")
+        mark(cone(0.215, 0.195, shaft_h, z=shaft_h / 2, verts=20), "body")
+        # Five bands binding the fronds to the shaft, proud of it by more than a hairline (`prim_mask`).
+        for i in range(5):
+            mark(cyl(0.222, 0.038, z=shaft_h - 0.02 + i * 0.046, verts=20), "accent")
+        cap_z, cap_h = shaft_h + 0.21, 0.52
+        mark(cone(0.195, 0.290, cap_h, z=cap_z + cap_h / 2, verts=20), "leaf!nocast")
+        for i in range(12):
+            spin = math.radians(i * 30 + 15)
+            for h, lean, z0 in ((0.42, 9, cap_z), (0.11, 26, cap_z + 0.41)):
+                r0 = 0.195 + (z0 - cap_z) / cap_h * 0.095
+                frond = box(0.105, 0.04, h)
+                frond.data.transform(Matrix.Translation((0.0, 0.0, h / 2)))
+                frond.rotation_euler = (0.0, math.radians(lean), spin)
+                frond.location = (math.cos(spin) * r0, math.sin(spin) * r0, z0)
+                mark(frond, "leaf!nocast")
+        mark(box(0.36, 0.36, 0.07, z=cap_z + cap_h + 0.035), nocast("body"))
         return join_all()
     shaft_h = 1.55
     bpy.ops.mesh.primitive_cone_add(vertices=16, radius1=0.16, radius2=0.13, depth=shaft_h,
@@ -1322,8 +1369,12 @@ def prim_mat():
     So the sheet is left alone and the weave carries it: a coarse checker of eight squares across is
     about 6 units apiece at slot size, which survives where a spiral or a frayed straw does not. What
     geometry still owes the prop is a shape that is not a FLOOR TILE, and --spin is what buys that — a
-    rug lying askew of the grid cannot be read as part of the paving, and it costs one flag."""
-    box(0.95, 0.72, 0.055, z=0.0275)
+    rug lying askew of the grid cannot be read as part of the paving, and it costs one flag.
+
+    `--thickness` sets the sheet's depth: a painted fringe follows whatever side the mask leaves it, so a
+    rank that paints one wants the side thinner than the default."""
+    t = float(arg("thickness", "0.055"))
+    box(0.95, 0.72, t, z=t / 2)
     return join_all()
 
 
@@ -3580,8 +3631,11 @@ def prim_statue():
     masks. The silhouette then belongs to the paint, which is the intention here rather than a defect.
     """
     contents = arg("contents", "seated")
-    plinth_h = 0.09
-    mark(box(0.62, 0.46, plinth_h, z=plinth_h / 2), "body")
+    # --no-plinth stands the figure on the paving itself: a rank whose coffin stands in a room rather
+    # than on display wants no slab under it, and a painted slab cannot be cut away afterwards.
+    plinth_h = 0.0 if arg("no-plinth") else 0.09
+    if plinth_h:
+        mark(box(0.62, 0.46, plinth_h, z=plinth_h / 2), "body")
     b = plinth_h
 
     if contents == "mummiform":
@@ -4743,6 +4797,8 @@ PART_COLOURS = {
     "stone": "#4e4840",
     # A potted tree's crown: leaf green, the one green part a prop has, so foliage is never read as stone.
     "leaf": "#6b7a48",
+    # A lamp's flame: the brightest thing on a prop, and the one part that is meant to be.
+    "flame": "#e8913a",
     # Fruit heaped in a bowl — figs and grapes, dark red, so a heap of it is never read as more bread.
     "fruit": "#7a3b34",
     # NOCAST is not a colour: a part kept out of the footprint is still painted the rank's stone.

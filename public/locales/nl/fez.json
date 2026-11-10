@@ -560,8 +560,8 @@
   "animal": {
     "forSale": {
       "1": { "fez": "Kijk eens wat ik in de kraam heb! Vanaf nu verkoop ik ook vervoer." },
-      "2": { "explorer": "Het staat te kauwen." },
-      "3": { "fez": "Dat zit bij de prijs in." }
+      "2": { "explorer": "Ik zie alleen een tekening." },
+      "3": { "fez": "Het origineel eet meer." }
     },
     "boughtDonkey": {
       "1": { "fez": "Verkocht! Eén ezel. Koppig, maar hij draagt alles." },

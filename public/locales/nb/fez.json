@@ -561,9 +561,7 @@
 
   "animal": {
     "forSale": {
-      "1": { "fez": "Se hva som står ved boden! Nå driver jeg med transport også." },
-      "2": { "explorer": "Den tygger." },
-      "3": { "fez": "Det er inkludert i prisen." }
+      "1": { "fez": "Se hva som står ved boden! Nå driver jeg med transport også." }
     },
     "boughtDonkey": {
       "1": { "fez": "Solgt! Ett esel. Sta, men det bærer hva som helst." },

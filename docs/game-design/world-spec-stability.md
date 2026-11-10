@@ -140,6 +140,8 @@ Tiers are authored independently, and the lower ones must not move while the hig
 - The hash is over sorted-key JSON of each journey's site configs: key order and `undefined` fields cannot move it, array order can (a different floor or decoration order is a different authoring).
 - A tier with no journeys, or a journey with no baked config, throws; it is never an empty hash.
 
+The loot fill that would otherwise reach across tiers, the shop's money and junk, runs a tier at a time and never reads a higher tier (`src/mods/shop/game/loot.ts`), and a released tier's money and junk are read from `src/data/releasedLoot.json` rather than filled.
+
 When a change to a tier is deliberate: regenerate the world, run `yarn vitest run src/data/tierFingerprints.spec.ts`, and copy the new hash from the failure message into the JSON for that tier (and `journeyCount` if journeys were added or removed). Commit the JSON change with the authoring that caused it. If a tier you did not mean to touch is red, that is the drift this guard exists to catch: fix the cause, do not update the value.
 
 ---

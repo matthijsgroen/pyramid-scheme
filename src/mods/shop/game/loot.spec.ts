@@ -3,7 +3,7 @@ import { allocateDistributions, type Distribution } from "@/worldGen/slotAllocat
 import type { Slot } from "@/worldGen/slots"
 import type { SiteConfig, SubSection, TreasureReward } from "@/worldGen/types"
 import { SELL_VALUE_BY_TIER } from "@/data/sellables"
-import { makeShopMoneyEconomy } from "./loot"
+import { makeShopMoneyEconomy, type JourneyTierOf, type ReleasedLoot } from "./loot"
 import { groundLedger, incomeOf, runEconomyGuard } from "./economyGuard"
 import { groundWorld, lens, purchase, tableOf, walkOver, type GroundJourney } from "./groundWorlds.testing"
 import type { PurchaseTable } from "./purchases"
@@ -11,8 +11,16 @@ import type { PurchaseTable } from "./purchases"
 // Every made-up slot is a starter puzzle, so every junk drop is worth the stone sell value.
 const STONE = SELL_VALUE_BY_TIER.stone
 
-// The empty puzzles of a made-up world as loot slots, a slot of the journeys in `chests` ranked as a chest is.
-const slotsOf = (configs: Record<string, SiteConfig[]>, chests: readonly string[] = []): Slot[] => {
+// Every made-up journey is a starter journey, and no made-up tier is released.
+const MADE_UP = { released: {}, journeyTier: () => "starter" as const }
+
+// The empty puzzles of a made-up world as loot slots, a slot of the journeys in `chests` ranked as a chest is, each of
+// its journey's tier.
+const slotsOf = (
+  configs: Record<string, SiteConfig[]>,
+  chests: readonly string[] = [],
+  journeyTier: JourneyTierOf = () => "starter"
+): Slot[] => {
   const slots: Slot[] = []
   for (const [journeyId, sites] of Object.entries(configs))
     sites.forEach((site, levelIndex) =>
@@ -24,7 +32,8 @@ const slotsOf = (configs: Record<string, SiteConfig[]>, chests: readonly string[
             slots.push({
               ref: { journeyId, levelIndex, floorIndex },
               journeyId,
-              tier: "starter",
+              address: `${journeyId}/${puzzleSeq}`,
+              tier: journeyTier(journeyId) ?? "starter",
               wardKeys: [],
               isPlaceholder: false,
               kind: "puzzle",
@@ -48,11 +57,15 @@ const slotsOf = (configs: Record<string, SiteConfig[]>, chests: readonly string[
 const fill = (
   journeys: Record<string, GroundJourney>,
   table: PurchaseTable,
-  { chests = [], also = [] }: { chests?: string[]; also?: Distribution[] } = {}
+  {
+    chests = [],
+    also = [],
+    economy = MADE_UP,
+  }: { chests?: string[]; also?: Distribution[]; economy?: { released: ReleasedLoot; journeyTier: JourneyTierOf } } = {}
 ) => {
   const { configs } = groundWorld(journeys)
-  const slots = slotsOf(configs, chests)
-  allocateDistributions(new Set(slots), [makeShopMoneyEconomy(table), ...also], configs, 0, () => {
+  const slots = slotsOf(configs, chests, economy.journeyTier)
+  allocateDistributions(new Set(slots), [makeShopMoneyEconomy(table, economy), ...also], configs, 0, () => {
     const walk = walkOver(configs, journeys)
     return { walk, isKey: walk.isKey }
   })
@@ -167,7 +180,7 @@ describe("shopMoneyEconomy fill", () => {
     }))
     allocateDistributions(
       new Set([...slotsOf(configs), ...endSlots]),
-      [makeShopMoneyEconomy(tableOf({}))],
+      [makeShopMoneyEconomy(tableOf({}), MADE_UP)],
       configs,
       0,
       () => {
@@ -199,10 +212,59 @@ describe("shopMoneyEconomy fill", () => {
     const { configs } = groundWorld({ start: { slots: 28 } })
     const slots = slotsOf(configs).map((slot, i) => ({ ...slot, tier: i < 3 ? "starter" : "wizard" }) as Slot)
     expect(() =>
-      allocateDistributions(new Set(slots), [makeShopMoneyEconomy(tableOf({}))], configs, 0, () => {
+      allocateDistributions(new Set(slots), [makeShopMoneyEconomy(tableOf({}), MADE_UP)], configs, 0, () => {
         const walk = walkOver(configs, { start: {} })
         return { walk, isKey: walk.isKey }
       })
     ).toThrow(/completeness/)
+  })
+})
+
+describe("shopMoneyEconomy fill, a tier at a time", () => {
+  // Two made-up tiers, both open from the start, so one ground holds both tiers' rooms and both shops.
+  const TIERS: Record<string, "junior" | "expert"> = { low: "junior", high: "expert" }
+  const byTier = (released: ReleasedLoot = {}) => ({ released, journeyTier: (id: string) => TIERS[id] })
+  const table = tableOf({ K: 10 * STONE, R: 20 * STONE, S: 30 * STONE })
+  const low: GroundJourney = { slots: 30, stock: [purchase("K")] }
+
+  it("a change in a higher tier leaves a lower tier's fill untouched", () => {
+    const before = fill({ low, high: { slots: 40, stock: [purchase("R")] } }, table, { economy: byTier() })
+    const after = fill({ low, high: { slots: 60, stock: [purchase("R"), purchase("S")] } }, table, {
+      economy: byTier(),
+    })
+    expect(after.configs.high).not.toEqual(before.configs.high)
+    expect(after.configs.low).toEqual(before.configs.low)
+  })
+
+  it("a higher tier counts the money a lower tier left in its grounds", () => {
+    const high: GroundJourney = { slots: 40, stock: [purchase("R")] }
+    const poor = fill({ low, high }, table, { economy: byTier() })
+    const rich = fill({ low: { ...low, money: [30 * STONE] }, high }, table, { economy: byTier() })
+    const placedIn = (configs: Record<string, SiteConfig[]>) =>
+      configs.high[0][0].rewards!.reduce((sum, r) => sum + (r ? incomeOf(r) : 0), 0)
+    expect(placedIn(rich.configs)).toBeLessThan(placedIn(poor.configs))
+    expect(() =>
+      runEconomyGuard(rich.configs, [], rich.walk, { purchases: tableOf({ K: 10 * STONE, R: 20 * STONE }) })
+    ).not.toThrow()
+  })
+
+  it("a released tier holds exactly its record, and the tier above is filled around it", () => {
+    const record = { "low/0": { type: "money", amount: 3 }, "low/1": { type: "sellable", itemId: "sell_stone_2" } }
+    const { configs, walk } = fill({ low, high: { slots: 40, stock: [purchase("R")] } }, table, {
+      economy: byTier({ junior: record }),
+    })
+    expect(configs.low[0][0].rewards!.slice(0, 2)).toEqual([record["low/0"], record["low/1"]])
+    expect(configs.low[0][0].rewards!.slice(2).every(r => r === undefined)).toBe(true)
+    expect(() =>
+      runEconomyGuard(configs, [], walk, { purchases: tableOf({ K: 10 * STONE, R: 20 * STONE }) })
+    ).not.toThrow()
+  })
+
+  it("a released record naming no slot the fill was handed stops the build", () => {
+    expect(() =>
+      fill({ low, high: { slots: 40, stock: [purchase("R")] } }, table, {
+        economy: byTier({ junior: { "low/99": { type: "money", amount: 1 } } }),
+      })
+    ).toThrow(/low\/99/)
   })
 })

@@ -555,9 +555,7 @@
 
   "animal": {
     "forSale": {
-      "1": { "fez": "Poglej, kaj je na stojnici! Zdaj prodajam tudi prevoz." },
-      "2": { "explorer": "Prežvekuje." },
-      "3": { "fez": "To je vključeno v ceno." }
+      "1": { "fez": "Poglej, kaj je na stojnici! Zdaj prodajam tudi prevoz." }
     },
     "boughtDonkey": {
       "1": { "fez": "Prodano! En osel. Trmast, ampak nese vse." },

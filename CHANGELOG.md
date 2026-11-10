@@ -9,12 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Bronze treasures and fallen mudbrick have new paintings.
 - Wall decorations sit centred on the taller walls.
 
 ### Fixed
 
 - The game works offline again.
 - The noble's ward gates call their owner a woman.
+- Fez's remark about how you solve puzzles now waits for the right tier.
+- At Fez's stall the explorer no longer sees an animal that is not there.
 
 ## 0.47.0 - 2026-11-10
 

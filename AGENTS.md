@@ -113,6 +113,9 @@ fails even when another was fixed elsewhere in the same commit — which a singl
 After genuinely fixing some, run `yarn betterer:update` and commit the smaller results file; never
 update it to make a push go through. Today's one guard: design-doc references must name a file, not
 a `§` inside one (docs/instructions/comments.md).
+The pre-commit hook (installed by `yarn install`) runs `betterer precommit` when a staged file is under
+`src/`: it rewrites and stages `.betterer.results` for hash-only changes and refuses the commit on a
+new issue, while CI's `yarn betterer` fails on any results file that does not match.
 
 `yarn lint` runs with **`--max-warnings`** pinned at the current warning count, so a rule kept at
 `warn` while its backlog is worked through still cannot grow: one new warning fails the run. Clearing
