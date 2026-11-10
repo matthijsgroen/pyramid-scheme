@@ -3,6 +3,17 @@
 Merged work nobody has played yet. Each entry says where to go and what to look for; strike it when it has been
 played, and open an issue or a task for anything that plays wrong.
 
+## Junior, before its release
+
+- **Henut's tomb, floor 1 (develop mode, Jump: Henut's wall; PR #382).** Her scene in her vanity room, then her wall: does it ask for Hathor, and does setting it right play `tomb.juniorFixed`?
+- **The reading screen at Henut's wall.** Does it read on a phone and on desktop, and is it clear what to set where?
+- **A board solved unaided in a junior expedition** plays `bond.junior`; the same in a starter expedition on a junior-level board (`starter_2` pyramid 1) does not.
+- **The tall wall items (stelae, tally board) on a junior floor.** Do they stand on the wall face at their own aspect, and read as stone on the light floor?
+- **The junior props in their rooms (PR #383).** Each in its own material colours, copper only as accent, sized against the explorer?
+- **Junior rooms with a patron Thoth statue (`junior_1`, `junior_3`, the shrine and garden rooms).** Does the god read as the floor's, and not as decor?
+- **Temple of Thoth (`junior_3`) pyramids 1-4.** Do scribe puzzles come up more than other kinds, and does the temple now read as writing?
+- **The water locks in the Valley of the Craftsmen (`junior_2` pyramids 3 and 4, `waterMoves`, `sluice`).** Open design question: does a flooded hall in the dry valley read as wrong, or would they sit better on the flood journey (`junior_1`)?
+
 ## The procession door
 
 - **Lock editor, Carve and play, a lock with a procession door** (`P procession …`; the lesson `tilesInOrder` and `plates` carry a plain sequence). Walk a tile or two, open the door:
