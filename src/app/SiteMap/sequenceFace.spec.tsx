@@ -19,6 +19,7 @@ import {
   sequenceHarness,
   tilesOf,
   allTilesOf,
+  drawnOnce,
   type Place,
 } from "./sequenceHarness.testing"
 import "@/mods/registerModApps"
@@ -173,7 +174,9 @@ describe.each(FLOORS)("the door of a sequence over $name", ({ name }) => {
     const { container } = render(
       <SiteMapView grid={revealed(h.current().grid!)} currentFloor={0} mechanismStates={h.current().mechanismStates} />
     )
-    const looks = Array.from(container.querySelectorAll("[data-plate]")).map(el => el.getAttribute("data-status"))
+    const looks = Array.from(container.querySelectorAll("[data-plate]"))
+      .filter(drawnOnce)
+      .map(el => el.getAttribute("data-status"))
     expect(looks).toHaveLength(allTilesOf(grid).length)
     expect(new Set(looks)).toEqual(new Set(["unwalked"]))
   })

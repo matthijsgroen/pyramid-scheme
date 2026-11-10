@@ -18,7 +18,8 @@ const washColour = ({ fill, opacity }: { fill: string; opacity: number }) =>
  * the near part of it — as a wall in front of a passage does. Drawn in the SVG stone it would sit under
  * everything laid on that floor: the sand, the scatter, the scarabs would all lie on top of the wall. Here
  * it sits over those and under the shade and the light, so it is lit exactly as the stone around it is,
- * and under the markers and everything standing, so a mark and the explorer are never hidden by it.
+ * and under the markers and everything standing, so the explorer is never hidden by it. A marker or a prop
+ * standing BEHIND it is drawn behind it all the same (`BehindWalls`).
  *
  * When the explorer is behind a run — on a cell it rises over, or walking through one — the WHOLE run
  * fades, not only the part in front of them, so the floor behind reads as one place again.
@@ -85,7 +86,7 @@ export const FrontWalls = ({ runs, faded }: { runs: readonly FrontRun[]; faded: 
 /**
  * SOMETHING STANDING BEHIND A FRONT WALL, drawn behind it.
  *
- * Everything standing is drawn over the front walls, so the explorer and what stands in front of a wall
+ * Everything standing and every marker is drawn over the front walls, so the explorer and what stands in front of a wall
  * are never covered by one. What stands BEHIND a wall is cut where the wall is drawn instead, so the wall
  * shows there, lit as the stone around it is. While that wall is faded the cut-away part shows again,
  * over the faded wall, the way the explorer behind it does.
@@ -131,7 +132,7 @@ export const BehindWalls = ({
     <div data-behind-wall="">
       {layer(`path(evenodd, "${rectsToPath([outer], origin)}${allWalls}")`)}
       {walls.map(({ run, rects }) => (
-        <div key={run.key} data-behind-faded={faded.has(run.key) ? "" : undefined}>
+        <div key={run.key} data-behind-copy="" data-behind-faded={faded.has(run.key) ? "" : undefined}>
           {layer(
             `path("${rectsToPath(rects, origin)}")`,
             { opacity: faded.has(run.key) ? 1 : 0 },

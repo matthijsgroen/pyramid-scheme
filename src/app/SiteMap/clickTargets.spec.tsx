@@ -145,7 +145,7 @@ const ringOffset = (dir: Direction) =>
 const ringOffsets = (container: HTMLElement) => {
   const [x, y] = container.querySelector("[data-explorer]")!.getAttribute("data-at")!.split(",").map(Number)
   return Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]"))
-    .filter(el => el.querySelector(":scope > svg > polygon"))
+    .filter(el => el.querySelector("svg > polygon"))
     .map(el => {
       const cx = parseFloat(el.style.left) + parseFloat(el.style.width) / 2
       const cy = parseFloat(el.style.top) + parseFloat(el.style.height) / 2
@@ -371,7 +371,7 @@ describe("a room laid over a fork", () => {
         Math.abs(parseFloat(el.style.left) + parseFloat(el.style.width) / 2 - cx) < 1 &&
         Math.abs(parseFloat(el.style.top) + parseFloat(el.style.height) / 2 - cy) < 1
     )
-    expect(onDoor.filter(el => el.querySelector(":scope > svg > polygon"))).toHaveLength(0)
+    expect(onDoor.filter(el => el.querySelector("svg > polygon"))).toHaveLength(0)
   })
 
   it("offers no choices while he walks between two spots of the room", () => {
@@ -786,9 +786,7 @@ describe("a designed room whose node stands just inside a door", () => {
     const south = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(el => {
       const cx = parseFloat(el.style.left) + parseFloat(el.style.width) / 2
       const cy = parseFloat(el.style.top) + parseFloat(el.style.height) / 2
-      return (
-        el.querySelector(":scope > svg > polygon") && `${Math.round(cx - x)},${Math.round(cy - y)}` === ringOffset("s")
-      )
+      return el.querySelector("svg > polygon") && `${Math.round(cx - x)},${Math.round(cy - y)}` === ringOffset("s")
     })
     expect(south).toBeDefined()
     fireEvent.click(south!)
