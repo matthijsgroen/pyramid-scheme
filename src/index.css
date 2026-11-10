@@ -6,6 +6,12 @@
     -webkit-appearance: none;
     margin: 0;
   }
+
+  /* Tailwind v4 leaves a button the default arrow; every clickable thing here shows the hand. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
 }
 
 /*
