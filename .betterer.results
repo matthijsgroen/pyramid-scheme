@@ -60,7 +60,7 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/game/dressingTags.ts:2120563608": [
       [6, 58, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/game/families/familyMeta.ts:2381613669": [
+    "src/game/families/familyMeta.ts:1786720837": [
       [104, 42, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [110, 69, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [116, 77, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
@@ -996,22 +996,7 @@ exports[`design doc references name a file, not a paragraph`] = {
 };
 
 exports[`core names no mod family id`] = {
-  value: `{
-    "src/app/SiteMap/nodeKinds.ts:2520423621": [
-      [18, 4, 8, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "1887827023"]
-    ],
-    "src/app/SiteMap/nodeShapes.tsx:368171751": [
-      [488, 9, 8, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "1887827023"]
-    ],
-    "src/app/SiteMap/torchlight.tsx:3806882337": [
-      [120, 11, 7, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "880952199"],
-      [133, 11, 7, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "880952199"],
-      [177, 29, 7, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "880952199"]
-    ],
-    "src/game/families/familyMeta.ts:2381613669": [
-      [20, 10, 8, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "1887827023"]
-    ]
-  }`
+  value: `{}`
 };
 
 exports[`a seeded shuffle draws once per element, never inside a comparator`] = {

@@ -11,7 +11,7 @@ export const HANDLE_META: FamilyMeta = {
   tags: ["handle", DEFAULT_CONTROL_ROLE],
   icon: "🎚️",
   color: "amber",
-  drawing: { marker: "handle", art: "lever" },
+  drawing: { marker: "lever", art: "lever" },
   // The lever is not a loot slot: what it hands over is the floor's own shape.
   rewardPriority: 0,
   invitation: "handle.invitation",

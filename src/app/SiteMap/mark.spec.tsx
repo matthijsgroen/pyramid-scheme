@@ -69,7 +69,7 @@ describe("a mark", () => {
     const mark = markFor(2)
     const { container } = render(
       <svg>
-        <NodeShape type="handle" state="reachable" mark={mark} />
+        <NodeShape type="lever" state="reachable" mark={mark} />
       </svg>
     )
     expect(container.textContent).toContain(String.fromCodePoint(mark.glyph))
