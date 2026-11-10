@@ -82,8 +82,9 @@ describe("DetectorPanel precision by level (§7.2)", () => {
     expect(screen.queryByText(/F1|F2|\(3,4\)/)).toBeNull()
   })
 
-  // L1 is "which pyramid" (§7.2), not "which journey" — a journey holds several, so two pyramids of
-  // one journey must stay separate lines. Keying on journeyId alone used to merge them.
+  // L1 is "which pyramid" (collection-and-detector-design.md: compass L1 names the pyramid), not "which
+  // journey" — a journey holds several, so two pyramids of one journey must stay separate lines. Keying
+  // on journeyId alone used to merge them.
   it("compass L1 lists two pyramids of the same journey separately", () => {
     renderCompass(1, [
       { ...COMPASS[0], levelIdx: 0 },
@@ -125,8 +126,8 @@ describe("DetectorPanel precision by level (§7.2)", () => {
     expect(screen.getByText("Sphinx Dawn L1 F2 · (5,2)")).toBeTruthy()
   })
 
-  // The corridor readout widens outward one scope per level (§7.2), and each unlocked scope answers
-  // either way. A scope that only spoke up when it had news read as a broken detector.
+  // The corridor readout widens outward one scope per level (collection-and-detector-design.md), and each
+  // unlocked scope answers either way. A scope that only spoke up when it had news read as a broken detector.
   const corridorBase = {
     labels,
     activeDetector: "hiddenPassageway" as const,

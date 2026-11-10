@@ -131,7 +131,7 @@ export const reachableFrom = (
 // Iterative key collection: simulate exploration. BFS → collect reachable keys → unlock
 // new gates → repeat. Correctly handles key chains (key behind a gate) and self-referential
 // ones (a room's own tombKey reward opening its own further gate — pyramid-interior-
-// design.md §8, "the treasure IS the key"). Exported for src/worldGen/reachability.ts's
+// design.md: "the treasure IS the key"). Exported for src/worldGen/reachability.ts's
 // coarse graph, which needs the same fixed point across a whole multi-floor site.
 // The walk options pass straight to `reachableFrom` — see there for what the permissive bracket and
 // `hiddenOpen` open. The `withheld` key is never collected, even standing in reach: the gate walk asks

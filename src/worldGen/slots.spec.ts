@@ -143,7 +143,7 @@ describe(collectSlots, () => {
 
   it("never surfaces an open tomb-key gate whose end is a stairhead, not a treasure", () => {
     // buildSite.ts's wireSideSectionStaircases: a section whose `end` is a stairhead is a pure
-    // floor-to-floor connector ("the treasure IS the key", pyramid-interior-design.md §8) — and
+    // floor-to-floor connector ("the treasure IS the key", pyramid-interior-design.md) — and
     // carve/mainRooms.ts's own room-building never attaches a reward to that stairhead cell. If a
     // currency filled this slot anyway, the reward would be silently unreachable in play.
     const siteWithStairheadGate: SiteConfig = [

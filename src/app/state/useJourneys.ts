@@ -85,9 +85,10 @@ export type StoredJourneyStateV3 = {
    * `${levelNr}:${mechanismAddress}` as its position is: the steps ever walked, and whether the order was read.
    * Absent reads as nothing walked and nothing read. */
   sequenceReads?: Record<string, SequenceRead>
-  // Corridor detector (§7.2, found = noticed via proximity): both keyed `${levelNr}:${sectionAddress}`.
-  // `known` = hidden corridors on floors the player has viewed; `found` = ones the detector stopped
-  // them at. Outstanding (known \ found) drives the L3 pyramid + L4 travel "unexplored corridor" markers.
+  // Corridor detector (collection-and-detector-design.md, found = noticed via proximity): both keyed
+  // `${levelNr}:${sectionAddress}`. `known` = hidden corridors on floors the player has viewed; `found` =
+  // ones the detector stopped them at. Outstanding (known \ found) drives the L3 pyramid + L4 travel
+  // "unexplored corridor" markers.
   knownHiddenCorridors?: string[]
   foundHiddenCorridors?: string[]
   // Per-floor "still stuff to find here" summary, keyed `${levelNr}:${floorIndex}`, recomputed each

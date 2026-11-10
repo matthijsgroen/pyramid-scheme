@@ -60,7 +60,8 @@ export type Distribution = {
 // ponytail: greedy per-distribution (each takes up to its max in list order). Fine while at most
 // one distribution with a nonzero `min` competes for a given slot pool; upgrade to
 // min-first-across-all (place every distribution's min before anyone grows toward max) when a
-// second nonzero-min distribution contends for the same slots (design doc §placement, Increment 2).
+// second nonzero-min distribution contends for the same slots (distribution-primitive-design.md, open
+// questions).
 export const allocateDistributions = (
   available: Set<Slot>,
   distributions: readonly Distribution[],

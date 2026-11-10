@@ -494,7 +494,7 @@ describe("sequences that hide their order", () => {
   })
 })
 
-// ── corridor detector: known / found / outstanding (§7.2 P4) ────────────────────
+// ── corridor detector: known / found / outstanding (collection-and-detector-design.md) ──
 
 describe("hidden corridor tracking", () => {
   // The api captures `journeys` at creation, so reads must run against a freshly-built api over the

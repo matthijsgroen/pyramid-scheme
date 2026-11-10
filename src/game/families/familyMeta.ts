@@ -102,19 +102,20 @@ export type FamilyMeta = {
   // traps); structural families (treasure/gate) leave it unset.
   minTier?: Difficulty
   // Alternative generators this family can be built by, offered in the playtesting bench and nowhere else
-  // (docs/instructions/puzzle-screens.md §6). Unset = one generator, and no picker. A family lists a name
-  // here while a second construction is being measured against the shipped one — lightbeam's authored
-  // generator is the case it exists for — and the name reaches `generate` as FamilyContext.variant. It is
-  // deliberately not part of world-gen: a variant is something a developer plays, not something a room is
-  // authored to.
+  // (docs/instructions/puzzle-screens.md: the puzzle lab). Unset = one generator, and no picker. A family
+  // lists a name here while a second construction is being measured against the shipped one — lightbeam's
+  // authored generator is the case it exists for — and the name reaches `generate` as FamilyContext.variant.
+  // It is deliberately not part of world-gen: a variant is something a developer plays, not something a room
+  // is authored to.
   variants?: string[]
-  // Skins this family can wear (docs/instructions/puzzle-screens.md §2) — the `theme` values it
-  // recognises on FamilyContext. Unset = only its default skin. Playtesting reads this to offer
-  // the themes a family actually has; an unlisted theme still falls back to the default skin.
+  // Skins this family can wear (docs/instructions/puzzle-screens.md: the family renders states, the skin
+  // pixels) — the `theme` values it recognises on FamilyContext. Unset = only its default skin. Playtesting
+  // reads this to offer the themes a family actually has; an unlisted theme still falls back to the default
+  // skin.
   themes?: string[]
   /**
    * Which of this family's own faces serve which ROLE — the shared role vocabulary on the left, this
-   * family's own face ids on the right (docs/instructions/puzzle-screens.md §2).
+   * family's own face ids on the right (docs/instructions/puzzle-screens.md: the role is the identity).
    *
    * **Out here rather than in the family's own skin file, which is where these maps used to live.** A
    * private map cannot be read by world-gen, and world-gen is what has to weigh a preferred role, warn
@@ -133,8 +134,9 @@ export type FamilyMeta = {
   // most families provide none. The one place a family declares "I gate on holding
   // something," right alongside its other facts, not a separate registry to remember.
   resolveKeyRequirements?: FamilyKeyRequirementResolver
-  // How this family builds a board, and how it judges one (`docs/instructions/puzzle-screens.md` §6.1). Unset means
-  // the family generates live on every open, which is what every family did before there were lists.
+  // How this family builds a board, and how it judges one (`docs/instructions/puzzle-screens.md`: seed
+  // lists). Unset means the family generates live on every open, which is what every family did before there
+  // were lists.
   seedable?: SeedableFamily
   /**
    * What a realisation of the `sequence` control tells core about its tiles and its door. Unset: the tiles wear
@@ -155,7 +157,7 @@ export type FamilyMeta = {
   }
 }
 
-// --- Offline seed lists (`docs/instructions/puzzle-screens.md` §6.1) -----------------------------------------
+// --- Offline seed lists (`docs/instructions/puzzle-screens.md`: seed lists) ---------------------------------
 
 // The slice of an encounter's context that reaches a generator. Deliberately narrower than the app's
 // FamilyContext, and the narrowness is the point: `theme` picks a skin and never reaches generation, so

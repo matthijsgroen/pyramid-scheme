@@ -7,7 +7,7 @@ const VERIFIED_ATTEMPTS = 1
 
 /**
  * Builds a family's board for one encounter, from its list where there is one
- * (`docs/instructions/puzzle-screens.md` §6.1).
+ * (`docs/instructions/puzzle-screens.md`: a list miss falls through to live generation).
  *
  * Which entry a room takes is dealt to it by `ctx.boardIndex` (src/game/seeds/boardIndex.ts), so no two
  * rooms in the world take the same one. `seed` — a hash of the room's identity — is the fallback for a

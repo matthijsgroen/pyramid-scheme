@@ -97,8 +97,8 @@ export const validateRewardCounts = (
   const unknownTombIds: string[] = []
   const hiddenGating: string[] = []
 
-  // A hidden corridor is a discovery-gated OPTIONAL pocket (keys-and-locks-solver.md §E /
-  // collection-and-detector-design.md §7.3): structurally reachable but never guaranteed
+  // A hidden corridor is a discovery-gated OPTIONAL pocket (collection-and-detector-design.md:
+  // only optional loot may sit there): structurally reachable but never guaranteed
   // reachable, so a progression-gating currency the solver must guarantee (a map piece, or a
   // registered gating currency like a hieroglyph fragment) may NEVER sit there — placing one
   // would soft-lock a player who can't reveal the corridor. placeFragments excludes hidden slots
@@ -165,10 +165,10 @@ export const validateRewardCounts = (
 }
 
 // NOTE: the old `validateDiscovery` post-build check (secondary-tomb discovery + ward-key
-// ordering) was retired in §E — the worklist reachability model (src/worldGen/reachability.ts +
-// placeFragments.ts) already subsumes and strengthens it: secondary-tomb enterability is
-// count-aware there (a tomb's own `piecesRequired` map pieces) vs this check's existence-only BFS,
-// and ward-key ordering is enforced structurally by the fine per-floor BFS + settleHarvest + the
+// ordering) was retired (keys-and-locks-solver.md: why retiring it is safe) — the worklist reachability model
+// (src/worldGen/reachability.ts + placeFragments.ts) already subsumes and strengthens it: secondary-tomb
+// enterability is count-aware there (a tomb's own `piecesRequired` map pieces) vs this check's existence-only
+// BFS, and ward-key ordering is enforced structurally by the fine per-floor BFS + settleHarvest + the
 // winnability sweep (placeFragments.ts, which hard-fails if any lock stays blocking). See
 // docs/game-design/keys-and-locks-solver.md.
 
