@@ -483,7 +483,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
-## Nobleman — eighteen
+## Nobleman — seventeen
 
 The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
 first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
@@ -506,52 +506,6 @@ The last nine are the house's own kinds, new with its activities ([themed-rooms.
 § Junior): each has a primitive of its own in `renderProp.py` and a guarded block in `art/rebuild.sh`. The
 banquet table and the bed are two cells across, so their frame is landscape three by two; the harp and the
 potted tree stand a cell taller, so theirs is portrait two by five.
-
-### `junior/statue-anubis` — Anubis couchant, black, on a painted chest
-
-**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
-
-**Attach:**
-
-1. `~/tile-previews/statue-anubis-junior-previous.png` — the first roll over the scaffold, repainted over: its pose, head and materials are right, only its carving is too blocky
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: ANUBIS as a jackal lying down on a chest. The upper marked part is the ANIMAL; the block
-under it is the CHEST it lies on.
-
-IT IS A CARVED OBJECT, smoothly modelled, the legs never leave the body.
-
-The jackal is painted matte BLACK #2a1f18, #3a2e26 on his top planes: long muzzle, two tall pointed ears,
-a thin copper collar #8a4022 gone verdigris at its knot, the one mark of metal. The chest under him is
-dark cedar #6b4226, painted with a band of Egyptian blue #2a5a9a and red ochre #8a3a2a rosettes.
-
-THE REFERENCE IS A PAINTING of this statue in the right pose and the right materials, but carved too BLOCKY. Keep the pose, the turn of the head, the chest and every outer contour exactly; SOFTEN ONLY the carving of the jackal: round the flat facets into smooth muscle and a sleek, polished body, inside the outline it already has.
-
-EVERYTHING ELSE IS FIXED:
-
-1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them. It is not a photograph and not an isometric view.
-3. HE LIES with his forelegs stretched out in front, head raised, along the chest.
-4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows. Do not swing it round, do not flatten it.
-5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is. The figure is the marked upper part; the base is the lower part. Do not shrink the figure onto a taller base.
-
-The animal is as big as the reference makes it.
-
-ANYTHING DRAWN OUTSIDE THE REFERENCE'S SHAPE IS CUT OFF. Nothing is added below the plinth — no ground, no shadow, no floor.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold statue --contents=couchant --spin=-22 --colour=#6b4226 --colour-figure=#5a4e44 --floor=#e2a86f
-yarn import-tile art/masters/props/junior/statue-anubis.webp --tier=junior --name=statue-anubis --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `junior/shrine-thoth` — a false door with Thoth's ibis on its panel
 
