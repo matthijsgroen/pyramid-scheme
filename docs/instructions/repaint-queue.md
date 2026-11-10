@@ -114,7 +114,7 @@ landed. `prop-pipeline.md` has the numbers.
 
 ---
 
-## Rank surfaces — ten
+## Rank surfaces — seven
 
 The floor, the wall face and the sill of the four ranks above the merchant, in the character of
 [visual-direction.md](../game-design/visual-direction.md): ground plus metal, the floor darkening rank by rank
@@ -160,102 +160,8 @@ step across it. On a light rank that is a step darker than the floor; on a dark 
 face that comes back a third of 8:1 is laid three side by side first, as the Sphinx's are:
 `magick band.jpeg band.jpeg band.jpeg +append wide.png`.
 
-### `junior/threshold` — a dressed sandstone step with a copper strip
-
-**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). The 2026-11-02 roll was liked, a dark step with a bright copper strip gone green at both ends; keep that, lighter, in the new orange stone, and crisp rather than crumbled.
-
-**Attach:** `art/masters/surfaces/junior-floor.webp` — the nobleman's floor, as the style reference
-
-```
-FRAME: a wide strip, exactly 5 times as wide as it is tall, filling the frame edge to edge. Do not re-compose it square.
-
-Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
-Rank: a NOBLEMAN's tomb, built as his painted house — the second of five. Warm orange sandstone, precisely
-dressed and decorated: crisp, neat and ornamented, a great house kept in order. Copper vessels gone green at
-the rim, lotus and papyrus, rosettes, a banquet frieze. Festive and colourful.
-Lit evenly by lamplight and daylight together — every corner of the room is visible, nothing sinks into
-darkness.
-HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
-surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
-a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: floor #e2a86f / #eab277 / #dca26b on a #cf9863 bed, joints #a9784c,
-walls #b88050 with #d4a978 tops and #381d0e at the base, copper #c8642c with light #f2b48a and shade
-#55210c, verdigris #4f9a86.
-Every colour comes from that list. Nothing lighter than #f2dcb4, nothing darker than #6a4630.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it — the palette above is the only source of colour.
-
-A single dressed sandstone step seen from straight above, spanning the full width of a doorway, with no
-background.
-It is ONE band of stone across the whole width: a soft shadow along its far edge where it drops to the
-floor beyond, its own top surface across the middle, a soft shadow along its near edge. No object sits on
-it and nothing crosses it end to end except those two edges and one copper strip.
-The stone is the floor's own orange sandstone at #c59261 — the same paving as the chamber, laid as one long
-block with crisp, true edges, a step darker than the floor either side of it, never lighter, and a step
-lighter than the painted wall #b88050.
-Smoothly worn in the middle by feet, its ends square and whole. A thin strip of copper #c8642c set into the
-stone along its near edge, bright where it is still polished, gone verdigris green #4f9a86 at both ends
-where no foot reaches.
-Even lighting left to right, no hotspot, no vignette.
-```
-
-**Import:** `yarn import-tile art/masters/surfaces/junior-threshold.webp --tier=junior --name=threshold --slot=sill --filter=smooth --key=none --brightness=0.88`
-
-### `junior/arch` — a dressed sandstone doorway with a painted lintel
-
-**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). The doorway is repainted against the new light orange floor, crisp and decorated where the merchant's is rough timber.
-
-**Attach:** `art/masters/surfaces/junior-floor.webp` — the nobleman's floor, as the style reference
-
-```
-FRAME: landscape, exactly 2.7 times as wide as it is tall. Do not re-compose it square.
-
-Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
-Rank: a NOBLEMAN's tomb, built as his painted house — the second of five. Warm orange sandstone, precisely
-dressed and decorated: crisp, neat and ornamented, a great house kept in order. Copper vessels gone green at
-the rim, lotus and papyrus, rosettes, a banquet frieze. Festive and colourful.
-Lit evenly by lamplight and daylight together — every corner of the room is visible, nothing sinks into
-darkness.
-HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
-surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
-a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: stone #d29c67 lit, #9c7442 in shade, copper #c8642c with light #f2b48a and
-shade #55210c, verdigris #4f9a86, painted red ochre #a8442a, Egyptian blue #2f6f8f, linen #efe4cc.
-Nothing lighter than #f2dcb4, nothing darker than #381d0e.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it — the palette above is the only source of colour.
-THE CAMERA: 30 degrees above the floor, looking slightly down. Depth going away from the viewer is
-squashed to HALF; height is barely squashed. A square stone block shows a top face a bit more than HALF
-as deep as the front of it is tall — a clear band, not a sliver. Verticals stay vertical, horizontals
-stay horizontal: an orthographic squash, never a vanishing point. Not isometric, not photographic.
-
-A free-standing stone doorway frame, alone on a flat magenta #ff00ff background. Nothing else in the
-picture: no wall, no floor, no ground, no shadow cast on the magenta.
-The frame is 2.7 times as wide as it is tall. Two dressed sandstone JAMBS, one at the left and one at the
-right, and a LINTEL lying across the top of them. THE MIDDLE IS EMPTY — flat magenta #ff00ff between the
-jambs, from under the lintel all the way down and off the bottom edge of the picture. Magenta OUTSIDE the
-frame too, left of the left jamb, right of the right jamb, and above the lintel.
-Each jamb is about a sixth of the picture's width. The gap between them is the remaining two thirds.
-The stone is the floor's orange sandstone, a clear step DARKER than it so the doorway reads against the
-paving and lighter than the painted wall #b88050 it is cut through: #d29c67 in the light, #9c7442 in shadow.
-Crisp square arrises, true edges, cut by a mason.
-The front of the lintel carries a painted band: a row of rosettes in red ochre #a8442a and Egyptian blue
-#2f6f8f on linen #efe4cc, neat and fresh. A thin copper #c8642c strip runs along the lintel's lower edge,
-gone verdigris #4f9a86 at both ends — the only metal on it.
-EVERY PIECE SHOWS ITS TOP. The lintel's whole upper face is visible as a band running the full width,
-lighter than its front. Each jamb shows the small top face where the lintel rests on it.
-The underside of the lintel, where it overhangs the opening, is in shadow, and so is the inner face of each
-jamb. That darker edge around the empty middle is what makes the gateway read as a way through.
-Even lighting left to right, no hotspot, no vignette.
-```
-
-**Import:** `yarn import-tile art/masters/surfaces/junior-arch.webp --tier=junior --name=arch --slot=arch --filter=smooth`
-
-Landed 2026-11-10: the roll's lintel kept, its jambs replaced by straight crops of their own front faces (the roll drew them leaning inward). The master is that composite.
+**An arch whose jambs come back leaning is fixed in the master, not re-rolled**: keep the roll's lintel and
+replace each jamb with a straight crop of its own front face. `junior/arch` landed that way.
 
 ### `expert/wall-face` — cool dressed stone in sunk-relief columns
 
@@ -575,54 +481,6 @@ Even lighting left to right, no hotspot, no vignette.
 
 **Import:** `yarn import-tile art/masters/surfaces/wizard-threshold.webp --tier=wizard --name=threshold --slot=sill --filter=smooth --key=none`
 
-### `cave/arch` — a rough rock opening with a fallen-slab lintel
-
-**New:** cave doorways have no arch, so an opening in a cave wall shows as a bare notch. This gives them one, and with it the wall above the opening.
-
-**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's rock floor, as the style reference
-
-```
-FRAME: landscape, exactly 2.7 times as wide as it is tall. Do not re-compose it square.
-
-Top-down dungeon game tile art for a natural cave under the desert, below an ancient Egyptian tomb.
-No mason ever worked here: raw limestone, water-worn and cracked, dust and grit in every hollow.
-A dark cave lit only by the explorer's torch; the rock nearest the light is pale, nothing sinks into black.
-HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
-surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
-a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: pale rock #ccc6ba with tops #d8d2c4, rock in shade #8a8276, floor rock #615951 and
-#554e46, cracks and deep shade #2a2520.
-Nothing lighter than #e4dfd4, nothing darker than #1f1b16.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it — the palette above is the only source of colour.
-THE CAMERA: 30 degrees above the floor, looking slightly down. Depth going away from the viewer is
-squashed to HALF; height is barely squashed. A square block of rock shows a top face a bit more than HALF
-as deep as the front of it is tall — a clear band, not a sliver. Verticals stay vertical, horizontals
-stay horizontal: an orthographic squash, never a vanishing point. Not isometric, not photographic.
-
-A free-standing rock gateway, alone on a flat magenta #ff00ff background. Nothing else in the
-picture: no wall, no floor, no ground, no shadow cast on the magenta.
-The gateway is 2.7 times as wide as it is tall. Two rough rock PILLARS, one at the left and one at the
-right, and one long fallen SLAB of rock lying across the top of them, wedged where it fell. THE MIDDLE IS
-EMPTY — flat magenta #ff00ff between the pillars, from under the slab all the way down and off the bottom
-edge of the picture. Magenta OUTSIDE the gateway too, left of the left pillar, right of the right pillar,
-and above the slab.
-Each pillar is about a sixth of the picture's width. The gap between them is the remaining two thirds.
-The rock is the pale cave wall's limestone, #ccc6ba in the light and #8a8276 in shade: uneven, lumpy,
-cracked, its edges broken rather than cut. A few short stubs of stalactite hang from the slab's
-underside; small rubble lies at the foot of each pillar.
-EVERY PIECE SHOWS ITS TOP. The slab's whole upper face is visible as a band running the full width,
-lighter than its front. Each pillar shows the small top face where the slab rests on it.
-The underside of the slab, where it overhangs the opening, is in deep shadow #2a2520, and so is the inner
-face of each pillar. That darker edge around the empty middle is what makes the gateway read as a way
-through.
-Even lighting left to right, no hotspot, no vignette.
-```
-
-**Import:** `yarn import-tile art/masters/surfaces/cave-arch.webp --tier=cave --name=arch --slot=arch --filter=smooth`
-
 ---
 
 ## Nobleman — thirty-four
@@ -637,14 +495,21 @@ Each reuses the geometry its tile already ships with, so the scaffold lines are 
 new floor. The imports carry no `--brightness` or `--saturation`: those are measured against the new floor
 with `yarn tile-stats` once the return is in.
 
+**Every body colour here is a hex, and every one is DARK.** The floor is light (L\* 72) and `--land` wants
+the object's mean 25 L\* below it after the night: a body no lighter than L\* 38, with pale things (linen,
+alabaster, cream) kept to small accents. Measured, a third of the sprite in pale linen fails however dark
+the rest is, so a white-linen hanging is dyed, pale limestone is painted (red granite, black, blue) and
+the statues are dark wood. Each scaffold's `--colour` is the entry's body hex: a repaint keeps the
+scaffold's value, and `tierPalette.junior.prop`, #e0c193, is lighter than the floor.
+
 The last nine are the house's own kinds, new with its activities ([themed-rooms.md](../game-design/themed-rooms.md)
 § Junior): each has a primitive of its own in `renderProp.py` and a guarded block in `art/rebuild.sh`. The
 banquet table and the bed are two cells across, so their frame is landscape three by two; the harp and the
 potted tree stand a cell taller, so theirs is portrait two by five.
 
-### `junior/pillar` — a sandstone palm column, painted capital
+### `junior/pillar` — a sandstone palmiform column, painted capital
 
-**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
+**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). The first roll came back a palm TREE, copying the default scaffold's splayed fronds at the floor's value; the scaffold is now `--contents=palmiform`, fronds upright and bound.
 
 **Attach:**
 
@@ -654,13 +519,18 @@ potted tree stand a cell taller, so theirs is portrait two by five.
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a PALM COLUMN. The tall shaft is dressed orange sandstone, crisp and true; the spreading
-crown at its top is the CAPITAL, carved as palm fronds; the block under the shaft is its BASE.
+The object: a PALMIFORM COLUMN, carved stone, painted. The round shaft is dressed SANDSTONE; the low disc
+under it is its BASE; the five rings round the top of the shaft are BANDS; the tall block flaring a
+little above them is the CAPITAL, palm fronds carved standing UPRIGHT side by side, bound tight to the
+shaft by the bands, their tips curling out only slightly at the very top; the square slab on top is the
+ABACUS. It is a column, not a tree: nothing spreads, nothing droops, every frond is carved stone pressed
+close against the next.
 
-The shaft is the warm orange sandstone of the floor, a step darker so it stands off it, with a thin
-painted band below the capital in red ochre and Egyptian blue. The fronds are PAINTED GREEN, a fresh leaf
-green with blue-green ribs, each frond crisp at its tip. A thin copper ring binds the top of the shaft,
-gone verdigris at its edge.
+The shaft, base and abacus are orange sandstone a clear step DARKER than the floor: #7e5230 on the
+shaft's face, #8a5a30 on the top faces, #6e4428 in shade, never as light as the floor #e2a86f. The bands
+are painted alternately red ochre #8a3a2a and Egyptian blue #2a5a9a. The fronds are painted leaf green
+#3b6b45, each frond's midrib a darker line #2f5a3c and its tip a touch lighter #4a7a50. A thin copper
+edge #8a4022 on the top band, gone verdigris #4f9a86.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -670,9 +540,9 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold palm --spin=22 --colour=#e0c193 --floor=#e2a86f
+scaffold palm --contents=palmiform --spin=22 --colour=#7e5230 --colour-leaf=#3b6b45 --colour-accent=#2a5a9a --floor=#e2a86f
 yarn import-tile art/masters/props/junior/pillar.webp --tier=junior --name=pillar --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --mask-grow=100
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `junior/shelf` — a cedar linen press, folded linen
@@ -687,12 +557,14 @@ yarn import-tile art/masters/props/junior/pillar.webp --tier=junior --name=pilla
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a LINEN PRESS. The open frame is the CARCASS; the stacks on its shelves are folded LINEN;
-the small box on the top course is a MIRROR CASE.
+The object: a LINEN PRESS. The open frame is the CARCASS; the stacks on its shelves are folded LINEN; the
+round disc on a handle lying on the top course is a hand MIRROR.
 
-The carcass is reddish-brown CEDAR, oiled and smooth, its grain running along each board. The linen is
-clean white and cream, each fold crisp, one stack edged with a red ochre stripe and one with blue. The
-mirror case is painted wood with a copper clasp.
+The carcass is dark oiled CEDAR #6b4226, #7a4a2a on its top faces and #4a2c1a in shade, its grain running
+along each board. The linen is unbleached and sits in the press's shade: a warm greige #9a8a6c, only the
+front fold of each stack catching the light at #d8c8a8, one stack edged with a red ochre #8a3a2a stripe
+and one with Egyptian blue #2a5a9a. The mirror is copper #8a4022 on a cedar handle, gone verdigris
+#4f9a86 at its rim. The press stands well DARKER than the light orange floor #e2a86f.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -702,7 +574,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold shelf --contents=linen --spin=5 --colour=#e0c193 --floor=#e2a86f
+scaffold shelf --contents=linen --spin=5 --colour=#6b4226 --colour-cloth=#9a8a6c --floor=#e2a86f
 yarn import-tile art/masters/props/junior/shelf.webp --tier=junior --name=shelf --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -719,12 +591,13 @@ yarn import-tile art/masters/props/junior/shelf.webp --tier=junior --name=shelf 
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: an ablution BASIN. The three splayed legs and the drum they meet are the STAND; the open
-bowl above it is the BASIN; the disc inside it is WATER.
+The object: an ablution BASIN. The three splayed legs and the drum they meet are the STAND; the open bowl
+above it is the BASIN; the disc inside it is WATER.
 
-The stand is dark oiled CEDAR, reddish-brown. The bowl is BEATEN COPPER — the one place this rank's metal
-is the object itself — warm orange-brown, hammer-marked, gone verdigris green at the rim and in a streak
-down the side. The water is a still clear blue-green surface, lighter at the rim, not a hole.
+The stand is dark oiled CEDAR #6b4226, #4a2c1a in shade. The bowl is BEATEN COPPER, the one place this
+rank's metal is the object itself: a deep orange-brown #8a4022, hammer-marked, gone verdigris #4f9a86 at
+the rim and in a streak down the side. The water is a still, dark blue-green surface #2f5a5a, a little
+lighter #3f6f6a at the rim, not a hole.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -734,12 +607,12 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold basin --contents=bowl --spin=14 --colour=#e0c193 --floor=#e2a86f
+scaffold basin --contents=bowl --spin=14 --colour=#6b4226 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/basin.webp --tier=junior --name=basin --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
-### `junior/hanging` — a linen hanging with a dyed border
+### `junior/hanging` — a dyed linen hanging with a woven border
 
 **Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
@@ -751,12 +624,13 @@ yarn import-tile art/masters/props/junior/basin.webp --tier=junior --name=basin 
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a LINEN HANGING. The two uprights are POSTS; the bar across their tops is the POLE; the
-cloth hanging from it is the LINEN; the marked band along its edge is the BORDER.
+The object: a LINEN HANGING. The two uprights are POSTS; the bar across their tops is the POLE; the cloth
+hanging from it is the LINEN; the marked band along its edge is the BORDER.
 
-The linen is fine bleached white, falling in soft even folds. The border is dyed in bands: red ochre,
-Egyptian blue and a thin leaf green, crisp and bright. The posts and pole are oiled cedar, reddish-brown,
-with small copper caps at the pole's ends.
+The linen is DYED a deep red ochre #8a3a2a, falling in soft even folds, #6a2a20 in the shade of each
+fold. The border is woven in bands of Egyptian blue #2a5a9a and a thin leaf green #3b6b45, with one
+narrow line of undyed linen #d8c8a8, crisp. The posts and pole are oiled cedar #6b4226, with small copper
+caps #8a4022 at the pole's ends gone verdigris #4f9a86.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -766,7 +640,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold hanging --contents=linen --spin=38 --colour=#e0c193 --floor=#e2a86f
+scaffold hanging --contents=linen --spin=38 --colour=#6b4226 --colour-cloth=#8a3a2a --floor=#e2a86f
 yarn import-tile art/masters/props/junior/hanging.webp --tier=junior --name=hanging --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -777,7 +651,7 @@ yarn import-tile art/masters/props/junior/hanging.webp --tier=junior --name=hang
 
 **Attach:**
 
-1. `~/tile-previews/market-junior.png` — the scaffold
+1. `~/tile-previews/offeringTable-junior.png` — the scaffold
 2. `~/tile-previews/junior-plain.png` — the material reference
 
 ```
@@ -786,9 +660,10 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 The object: a LAID TABLE. The top and the legs are the TABLE; the domed shapes on it are LOAVES; the
 round shapes are FRUIT; the tall stoppered vessel standing in a ring is a WINE JAR.
 
-The table is pale sycamore wood, smooth and light brown. The loaves are baked golden-brown and floury,
-the fruit dark red figs and green-gold grapes, a few blue LOTUS flowers laid across them. The jar is red
-pottery with a painted band of blue and a mud stopper.
+The table is dark oiled CEDAR #6b4226, #7a4a2a on its top faces and #4a2c1a in shade. The loaves are
+baked brown #9a5a30, floury only on top; the fruit dark red figs #6a2a2a and green grapes #4a6a3a, a few
+blue LOTUS flowers #2a5a9a laid across them. The jar is red-brown pottery #8c4a36 with a painted band of
+Egyptian blue and a dark mud stopper #5a5048.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -798,7 +673,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold market --contents=laid --spin=-16 --colour=#e0c193 --floor=#e2a86f
+scaffold market --contents=laid --spin=-16 --colour=#6b4226 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/offeringTable.webp --tier=junior --name=offeringTable --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -818,9 +693,10 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 The object: a LAMP STAND. The tall upright is the STAND; the foot is its BASE; the small vessel at the
 top is the LAMP, and the nub above it the FLAME.
 
-The stand is turned cedar, reddish-brown and oiled, with a painted ring in red ochre and blue near the
-top. The lamp is pale fired pottery, sooted at the lip; the flame a small warm orange tongue. A thin
-copper drip-tray under the lamp, gone green at its edge.
+The stand is turned cedar #6b4226, oiled, #4a2c1a in shade, with a painted ring in red ochre #8a3a2a and
+Egyptian blue #2a5a9a near the top. The lamp is red-brown fired pottery #8c4a36, sooted black at the lip;
+the flame a small warm orange tongue. A thin copper drip-tray #8a4022 under the lamp, gone verdigris
+#4f9a86 at its edge.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -830,7 +706,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold lamp --contents=stand --spin=8 --colour=#e0c193 --floor=#e2a86f
+scaffold lamp --contents=stand --spin=8 --colour=#6b4226 --colour-metal=#6b4226 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/lamp.webp --tier=junior --name=lamp --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -849,9 +725,10 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 
 The object: a sealed CHEST. The box is the BODY; the top is the LID; the knobs and cord are the SEAL.
 
-The body is reddish-brown CEDAR, its boards crisp and true. The lid carries a painted band of rosettes in
-red ochre, blue and white on a cream ground. The knobs are copper gone verdigris; the cord is pale linen
-string, sealed with a lump of grey clay.
+The body is dark CEDAR #6b4226, #4a2c1a in shade, its boards crisp and true. The lid's top is painted
+Egyptian blue #2a5a9a with a band of small rosettes in red ochre #8a3a2a and cream #d8c8a8, the blue
+ground showing between them. The knobs are copper #8a4022 gone verdigris #4f9a86; the cord is linen
+string, sealed with a lump of dark grey clay #5a5048.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -861,7 +738,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold sealedChest --spin=-27 --colour=#e0c193 --floor=#e2a86f
+scaffold sealedChest --spin=-27 --colour=#6b4226 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/chestProp.webp --tier=junior --name=chestProp --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -878,12 +755,14 @@ yarn import-tile art/masters/props/junior/chestProp.webp --tier=junior --name=ch
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a FALSE DOOR with an OFFERING TABLE before it. The tall slab with its recessed frames is
-the false door; the low slab in front is the table.
+The object: a FALSE DOOR with an OFFERING TABLE before it. The tall slab with its recessed frames is the
+false door; the low slab in front is the table.
 
-The false door is pale dressed limestone, cooler and lighter than the floor, its frames edged in red
-ochre and its recessed panel painted Egyptian blue, with neat columns of small dark hieroglyphs on the
-jambs. The table is the same limestone with two loaves and a blue lotus on it.
+The false door is painted to imitate RED GRANITE, as a nobleman's was: a deep red-brown #7a3e30 speckled
+with darker #5a2a20 and paler #a06050 flecks, its frames edged in red ochre #8a3a2a and its recessed
+panel painted Egyptian blue #2a5a9a, with neat columns of small hieroglyphs in yellow #c9a040 on the
+jambs. The table is the same painted granite with two brown loaves #9a5a30 and a blue lotus on it. It
+stands well DARKER than the light orange floor #e2a86f.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -893,7 +772,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#e2a86f
+scaffold falseDoor --spin=6 --colour=#7a3e30 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/shrine.webp --tier=junior --name=shrine --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -912,9 +791,9 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 
 The object: a MAT lying flat on the floor.
 
-Woven RUSH, a warm straw-green to golden colour, a step darker than the orange floor so it reads apart
-from it, the weave running in crisp even rows. A woven border in red ochre and dark blue runs round its
-edge.
+Woven RUSH, an olive straw #625a2c with golden lights #7a6a34, clearly DARKER than the orange floor
+#e2a86f so it reads apart from it, the weave running in crisp even rows. A woven border in red ochre
+#8a3a2a and dark blue #2a4a7a runs round its edge.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -924,7 +803,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold mat --spin=9 --shadow=0.5 --colour=#e0c193 --floor=#e2a86f
+scaffold mat --spin=9 --shadow=0.5 --colour=#625a2c --floor=#e2a86f
 yarn import-tile art/masters/props/junior/mat.webp --tier=junior --name=mat --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -943,9 +822,10 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 
 The object: a BRAZIER. The stand is the base; the open bowl on it holds the FIRE.
 
-The stand and bowl are red-brown fired POTTERY, with a painted black-and-cream band round the bowl and a
-thin copper rim gone green. Glowing coals in the bowl, deep orange and red, with a few small flames —
-light, not smoke.
+The stand and bowl are red-brown fired POTTERY #8c4a36, #6a3828 in shade, with a painted band of black
+#2a1f18 and cream round the bowl and a thin copper rim #8a4022 gone verdigris. The bowl is full of banked
+coals under dark grey ash #4a4038, glowing deep orange and red only in the cracks between them, with a
+few small flames: light, not smoke.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -955,7 +835,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold brazier --lit=1 --colour=#e0c193 --floor=#e2a86f
+scaffold brazier --lit=1 --colour=#8c4a36 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/brazier.webp --tier=junior --name=brazier --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.7
 ```
@@ -966,7 +846,7 @@ yarn import-tile art/masters/props/junior/brazier.webp --tier=junior --name=braz
 
 **Attach:**
 
-1. `~/tile-previews/rubblepile-junior.png` — the scaffold
+1. `~/tile-previews/rubblePile-junior.png` — the scaffold
 2. `~/tile-previews/junior-plain.png` — the material reference
 
 ```
@@ -974,9 +854,10 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 
 The object: a heap of FALLEN PLASTER and the mudbrick behind it.
 
-The broken pieces are mud plaster, warm orange-tan, their faces still carrying fragments of painting —
-red ochre, Egyptian blue, a bit of leaf green — and their broken edges raw tan. Mudbrick chunks among
-them are darker brown. Fine pale dust between the pieces.
+The broken pieces are mud plaster, #7e5a3a on their faces, still carrying fragments of painting (red
+ochre #8a3a2a, Egyptian blue #2a5a9a, a bit of leaf green) and their broken edges raw brown #6e4a30.
+Mudbrick chunks among them are darker, #5a3a24. A little fine dust between the pieces, no paler than
+#9a7a5a. The heap stands clearly DARKER than the orange floor #e2a86f.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -986,7 +867,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold rubblePile --contents=plaster --shadow=0.6 --colour=#e0c193 --floor=#e2a86f
+scaffold rubblePile --contents=plaster --shadow=0.6 --colour=#7e5a3a --floor=#e2a86f
 yarn import-tile art/masters/props/junior/rubblePile.webp --tier=junior --name=rubblePile --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1005,9 +886,9 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 
 The object: a JAR RACK. The frame is the RACK; the vessels standing in it are JARS.
 
-The rack is reddish-brown cedar. The jars are fired pottery, red-brown and buff, each with a painted
-collar of blue lotus petals, one glazed Egyptian blue; their mud stoppers are grey. A copper ladle hangs
-on the rack, gone green.
+The rack is dark oiled cedar #6b4226, #4a2c1a in shade. The jars are red-brown fired pottery #8c4a36,
+#6a3828 in shade, each with a painted collar of blue lotus petals #2a5a9a, one glazed Egyptian blue all
+over; their mud stoppers are dark grey #5a5048.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -1017,7 +898,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold jarrack --colour=#e0c193 --floor=#e2a86f
+scaffold jarrack --colour=#6b4226 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/jarRack.webp --tier=junior --name=jarRack --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1028,7 +909,7 @@ yarn import-tile art/masters/props/junior/jarRack.webp --tier=junior --name=jarR
 
 **Attach:**
 
-1. `~/tile-previews/rubblepile-junior.png` — the scaffold
+1. `~/tile-previews/rubbleSpill-junior.png` — the scaffold
 2. `~/tile-previews/junior-plain.png` — the material reference
 
 ```
@@ -1036,8 +917,8 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 
 The object: a SPILL of grit and broken plaster fanned across the floor.
 
-Tan and orange plaster crumbs, a few flat flakes still painted red ochre or blue, mudbrick grit darker
-brown, all a step darker than the orange floor so the spill reads against it.
+Plaster crumbs #7e5a3a and mudbrick grit #5a3a24, a few flat flakes still painted red ochre #8a3a2a or
+Egyptian blue #2a5a9a, all clearly DARKER than the orange floor #e2a86f so the spill reads against it.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -1047,12 +928,12 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold rubblePile --contents=spill --colour=#e0c193 --floor=#e2a86f
+scaffold rubblePile --contents=spill --colour=#7e5a3a --floor=#e2a86f
 yarn import-tile art/masters/props/junior/rubbleSpill.webp --tier=junior --name=rubbleSpill --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
-### `junior/statue` — the nobleman's painted ka-statue, seated
+### `junior/statue` — the nobleman's ka-statue in dark wood, seated
 
 **Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
@@ -1064,17 +945,19 @@ yarn import-tile art/masters/props/junior/rubbleSpill.webp --tier=junior --name=
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a seated KA-STATUE of the nobleman, cut from one block of limestone. The upper marked part
-is the FIGURE; the block under it is the SEAT and PLINTH.
+The object: a seated KA-STATUE of the nobleman, carved from one block of dark ACACIA WOOD. The upper
+marked part is the FIGURE; the block under it is the SEAT and PLINTH.
 
 IT IS A CARVED OBJECT AND NOT A PERSON. Block-carved: flat planes, hard arrises, the figure never
 leaves its block, nothing undercut. No anatomy is modelled. The figure is CLOTHED, no bare torso — bare
 painted flesh is what turns a statue into a cartoon character.
 
-PAINTED as his house is: a pleated white linen robe covering him from shoulders to shins, a black
-shoulder-length wig, a broad collar of blue, green and red bands. His face and hands are painted a warm
-red-brown and kept as flat planes. The seat and plinth are pale limestone with a band of small dark
-hieroglyphs along the front.
+PAINTED as his house is, on dark wood: the figure is the oiled wood itself, #5e3a22, #6e4428 on its top
+planes, with his face and hands left bare wood in flat planes. A pleated robe from his shoulders to his
+shins, in the wood's own colour with its pleats carved, its hem edged with a thin cream line #d8c8a8. A
+black shoulder-length wig #2a1f18, a broad collar of Egyptian blue #2a5a9a, leaf green #3b6b45 and red
+ochre #8a3a2a bands. The seat and plinth are painted black #2a1f18, #3a2e26 on their top faces, with a
+band of small yellow #c9a040 hieroglyphs along the front.
 
 THE REFERENCE IS A ROUGHED-OUT BLOCK, deliberately left fat. CHANGE, freely, and ONLY this: the contour
 of the figure, and only by CUTTING. CARVE INWARD ONLY — nothing may end up further left, right, higher or
@@ -1098,18 +981,18 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold statue --contents=seated --spin=7 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#e2a86f
+scaffold statue --contents=seated --spin=7 --colour=#4a3e34 --colour-figure=#6e4428 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/statue.webp --tier=junior --name=statue --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
-### `junior/sarcophagus` — a painted anthropoid coffin
+### `junior/sarcophagus` — a black-ground anthropoid coffin
 
 **Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
-1. `~/tile-previews/statue-junior.png` — the scaffold
+1. `~/tile-previews/sarcophagus-junior.png` — the scaffold
 2. `~/tile-previews/junior-plain.png` — the material reference
 
 ```
@@ -1118,12 +1001,14 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 The object: an upright ANTHROPOID COFFIN, a wrapped figure carved in wood. The upper marked part is the
 COFFIN; the block under it is its BASE.
 
-It is a COFFIN AND NOT A BOX: carve the outline of a wrapped body — a rounded head, shoulders, a body
-tapering to the feet — out of the rough block. No anatomy beyond that outline.
+It is a COFFIN AND NOT A BOX: carve the outline of a wrapped body (a rounded head, shoulders, a body
+tapering to the feet) out of the rough block. No anatomy beyond that outline.
 
-PAINTED on a warm yellow ground: a striped blue-and-black wig, a broad collar of red, blue and green
-bands across the chest, a column of dark hieroglyphs down the front. The face is a calm flat red-brown
-mask. The base is pale limestone.
+PAINTED as a nobleman's black coffin: a BLACK resin ground #2a1f18 over the whole body, #3a2e26 on its
+top planes, crossed by narrow bands of yellow #c9a040, with a column of yellow hieroglyphs down the
+front. A striped wig in Egyptian blue #2a5a9a and black, a broad collar of red ochre #8a3a2a, blue and
+leaf green bands across the chest. The face is a calm flat mask in red-brown #8c4a36. The base is painted
+black too.
 
 THE REFERENCE IS A ROUGHED-OUT BLOCK, deliberately left fat. CHANGE, freely, and ONLY this: the contour
 of the figure, and only by CUTTING. CARVE INWARD ONLY — nothing may end up further left, right, higher or
@@ -1147,7 +1032,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold statue --contents=mummiform --spin=11 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#e2a86f
+scaffold statue --contents=mummiform --spin=11 --colour=#4a3e34 --colour-figure=#5a4e44 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/sarcophagus.webp --tier=junior --name=sarcophagus --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1158,7 +1043,7 @@ yarn import-tile art/masters/props/junior/sarcophagus.webp --tier=junior --name=
 
 **Attach:**
 
-1. `~/tile-previews/falsedoor-junior.png` — the scaffold
+1. `~/tile-previews/shrine-anubis-junior.png` — the scaffold
 2. `~/tile-previews/junior-plain.png` — the material reference
 
 ```
@@ -1167,9 +1052,10 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 The object: a FALSE DOOR with an OFFERING TABLE before it, dedicated to ANUBIS. The tall slab with its
 recessed frames is the false door; the low slab in front is the table.
 
-The false door is pale dressed limestone, its frames edged in red ochre. The recessed panel carries
-ANUBIS painted lying down: a BLACK JACKAL, long muzzle, two tall pointed ears, on a blue ground. The
-table is the same limestone with two loaves on it.
+The false door is painted to imitate RED GRANITE, as a nobleman's was: a deep red-brown #7a3e30 speckled
+with darker #5a2a20 and paler #a06050 flecks, its frames edged in red ochre #8a3a2a. The recessed panel
+carries ANUBIS painted lying down: a BLACK JACKAL #2a1f18, long muzzle, two tall pointed ears, on an
+Egyptian blue ground #2a5a9a. The table is the same painted granite with two brown loaves #9a5a30 on it.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -1179,7 +1065,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#e2a86f
+scaffold falseDoor --spin=6 --colour=#7a3e30 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/shrine-anubis.webp --tier=junior --name=shrine-anubis --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1190,7 +1076,7 @@ yarn import-tile art/masters/props/junior/shrine-anubis.webp --tier=junior --nam
 
 **Attach:**
 
-1. `~/tile-previews/statue-junior.png` — the scaffold
+1. `~/tile-previews/statue-anubis-junior.png` — the scaffold
 2. `~/tile-previews/junior-plain.png` — the material reference
 
 ```
@@ -1201,9 +1087,9 @@ under it is the CHEST it lies on.
 
 IT IS A CARVED OBJECT: block-carved, flat planes, the legs never leave the block.
 
-The jackal is painted matte BLACK: long muzzle, two tall pointed ears, a thin copper collar gone green at
-its knot — the one mark of metal. The chest under him is cedar, painted with a band of blue and red ochre
-rosettes on cream.
+The jackal is painted matte BLACK #2a1f18, #3a2e26 on his top planes: long muzzle, two tall pointed ears,
+a thin copper collar #8a4022 gone verdigris at its knot, the one mark of metal. The chest under him is
+dark cedar #6b4226, painted with a band of Egyptian blue #2a5a9a and red ochre #8a3a2a rosettes.
 
 THE REFERENCE IS A ROUGHED-OUT BLOCK, deliberately left fat. CHANGE, freely, and ONLY this: the contour
 of the figure, and only by CUTTING. CARVE INWARD ONLY — nothing may end up further left, right, higher or
@@ -1227,7 +1113,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold statue --contents=couchant --spin=-22 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#e2a86f
+scaffold statue --contents=couchant --spin=-22 --colour=#6b4226 --colour-figure=#5a4e44 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/statue-anubis.webp --tier=junior --name=statue-anubis --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1238,7 +1124,7 @@ yarn import-tile art/masters/props/junior/statue-anubis.webp --tier=junior --nam
 
 **Attach:**
 
-1. `~/tile-previews/falsedoor-junior.png` — the scaffold
+1. `~/tile-previews/shrine-thoth-junior.png` — the scaffold
 2. `~/tile-previews/junior-plain.png` — the material reference
 
 ```
@@ -1247,9 +1133,11 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 The object: a FALSE DOOR with an OFFERING TABLE before it, dedicated to THOTH. The tall slab with its
 recessed frames is the false door; the low slab in front is the table.
 
-The false door is pale dressed limestone, its frames edged in red ochre. The recessed panel carries
-Thoth's IBIS painted standing: white body, black head and neck, a long curved down-swept beak, on a blue
-ground. The table is the same limestone with a scribe's palette and a blue lotus on it.
+The false door is painted to imitate RED GRANITE, as a nobleman's was: a deep red-brown #7a3e30 speckled
+with darker #5a2a20 and paler #a06050 flecks, its frames edged in red ochre #8a3a2a. The recessed panel
+carries Thoth's IBIS painted standing: white body #d8c8a8, black head and neck, a long curved down-swept
+beak, on an Egyptian blue ground #2a5a9a. The table is the same painted granite with a scribe's palette
+and a blue lotus on it.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -1259,33 +1147,36 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#e2a86f
+scaffold falseDoor --spin=6 --colour=#7a3e30 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/shrine-thoth.webp --tier=junior --name=shrine-thoth --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
-### `junior/statue-thoth` — Thoth seated, ibis-headed
+### `junior/statue-thoth` — Thoth seated, ibis-headed, in dark wood
 
 **Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
 **Attach:**
 
-1. `~/tile-previews/statue-junior.png` — the scaffold
+1. `~/tile-previews/statue-thoth-junior.png` — the scaffold
 2. `~/tile-previews/junior-plain.png` — the material reference
 
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a seated statue of THOTH, cut from one block of limestone. The upper marked part is the
-FIGURE; the block under it is the SEAT and PLINTH.
+The object: a seated statue of THOTH, carved from one block of dark ACACIA WOOD. The upper marked part is
+the FIGURE; the block under it is the SEAT and PLINTH.
 
 IT IS A CARVED OBJECT AND NOT A PERSON. Block-carved: flat planes, hard arrises, the figure never
 leaves its block, nothing undercut. No anatomy is modelled. The figure is CLOTHED, no bare torso — bare
 painted flesh is what turns a statue into a cartoon character.
 
-His head is an IBIS head, black, with a long curved down-swept beak — the one mark that says who he is.
-He wears a pleated white kilt and a broad collar of blue, green and red bands that covers his shoulders.
-The seat and plinth are pale limestone with a band of small dark hieroglyphs along the front.
+His head is an IBIS head, painted black #2a1f18, with a long curved down-swept beak: the one mark that
+says who he is. His body is the oiled wood itself, #5e3a22, #6e4428 on its top planes, in a pleated robe
+from his collar to his shins, its pleats carved, its hem edged with a thin cream line #d8c8a8. A broad
+collar of Egyptian blue #2a5a9a, leaf green #3b6b45 and red ochre #8a3a2a bands covers his shoulders. The
+seat and plinth are painted black #2a1f18 with a band of small yellow #c9a040 hieroglyphs along the
+front.
 
 THE REFERENCE IS A ROUGHED-OUT BLOCK, deliberately left fat. CHANGE, freely, and ONLY this: the contour
 of the figure, and only by CUTTING. CARVE INWARD ONLY — nothing may end up further left, right, higher or
@@ -1309,7 +1200,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold statue --contents=seated --spin=7 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#e2a86f
+scaffold statue --contents=seated --spin=7 --colour=#4a3e34 --colour-figure=#6e4428 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/statue-thoth.webp --tier=junior --name=statue-thoth --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1326,12 +1217,14 @@ yarn import-tile art/masters/props/junior/statue-thoth.webp --tier=junior --name
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a lamp niche. The frame around the opening is the SURROUND — jambs, lintel and sill; inside
-it stands a pottery LAMP, and the nub above it is the FLAME.
+The object: a lamp niche. The frame around the opening is the SURROUND (jambs, lintel and sill). On the
+sill stand a pottery LAMP at the left with the nub of its FLAME on top, a round covered BOWL in the
+middle, and a small OIL JAR at the right; the two low blocks between them are STANDS.
 
-The surround is painted plaster, crisp: a red ochre frame with a blue line inside it and a row of small
-rosettes along the lintel. The recess behind is in soft shade. The lamp is pale fired pottery, sooted at
-the lip, on a small copper dish gone green; the flame a small warm orange tongue.
+The surround is painted plaster, crisp: a red ochre #8a3a2a frame with an Egyptian blue #2a5a9a line
+inside it and a row of small cream rosettes along the lintel. The recess behind is in deep shade #3a2418.
+The lamp, bowl and jar are red-brown fired pottery #8c4a36, the lamp sooted at its lip on a small copper
+dish gone verdigris; the flame a small warm orange tongue.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -1341,7 +1234,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold niche --contents=lamp --shear=0.5 --width=448 --height=224 --colour=#e0c193 --sun=0
+scaffold niche --contents=lamp --shear=0.5 --width=448 --height=224 --colour=#8a3a2a --sun=0
 yarn import-tile art/masters/props/junior/niche.webp --tier=junior --name=niche --slot=wall \
   --filter=smooth --mask="$OBJ" --headroom=0.18
 ```
@@ -1358,12 +1251,12 @@ yarn import-tile art/masters/props/junior/niche.webp --tier=junior --name=niche 
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a sconce on a wall. The upright plate at the left is fixed to the WALL; the bar reaching right
-is the ARM; the diagonal below it is a BRACE; the small vessel at the arm's end is the LAMP, and the nub
-above it the FLAME.
+The object: a sconce on a wall. The upright plate at the left is fixed to the WALL; the bar reaching
+right is the ARM; the diagonal below it is a BRACE; the small vessel at the arm's end is the LAMP, and
+the nub above it the FLAME.
 
-The bracket is COPPER, warm orange-brown, gone verdigris green along its edges and joints. The lamp is
-pale fired pottery, sooted at its lip; the flame a small warm orange tongue.
+The bracket is COPPER, a deep orange-brown #8a4022, gone verdigris #4f9a86 along its edges and joints.
+The lamp is red-brown fired pottery #8c4a36, sooted at its lip; the flame a small warm orange tongue.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -1373,12 +1266,12 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold sconce --shear=0.5 --width=448 --height=224 --margin=1.4 --colour=#e0c193 --sun=0
+scaffold sconce --shear=0.5 --width=448 --height=224 --margin=1.4 --colour=#8a4022 --sun=0
 yarn import-tile art/masters/props/junior/sconce.webp --tier=junior --name=sconce --slot=wall \
   --filter=smooth --mask="$OBJ" --headroom=0.18
 ```
 
-### `junior/stela` — a painted limestone false-door stela
+### `junior/stela` — a false-door stela painted as red granite
 
 **Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
@@ -1387,11 +1280,13 @@ yarn import-tile art/masters/props/junior/sconce.webp --tier=junior --name=sconc
 ```
 A single flat object, painted in flat matte gouache, on pure magenta #FF00FF. Landscape, exactly two units wide by one tall. Do not re-compose it into a square. ONE OBJECT, AND IT FILLS THE FRAME, reaching the left and right edges. The magenta fills the frame around it to its edges: there is no wall, no floor and no surface behind the object. Seen straight on, flat, no perspective.
 
-The object: a FALSE-DOOR STELA, a flat slab of dressed limestone with nested recessed frames.
+The object: a FALSE-DOOR STELA, a flat slab with nested recessed frames.
 
-Pale, cool-cream limestone, crisp and clean, lighter than the orange plaster it will hang on. The frames
-are edged in red ochre; the central panel shows the nobleman seated at a table of loaves, painted in red
-ochre, Egyptian blue and black; columns of small dark hieroglyphs run down the jambs.
+It is painted to imitate RED GRANITE, as a nobleman's was: a deep red-brown #7a3e30 speckled with darker
+#5a2a20 and paler #a06050 flecks, crisp and clean, DARKER than the orange plaster it will hang on. The
+frames are edged in red ochre #8a3a2a; the central panel shows the nobleman seated at a table of loaves,
+painted in yellow #c9a040, Egyptian blue #2a5a9a and black on the dark ground; columns of small yellow
+hieroglyphs run down the jambs.
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
 ```
@@ -1407,19 +1302,19 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 ```
 A single flat object, painted in flat matte gouache, on pure magenta #FF00FF. Landscape, exactly two units wide by one tall. Do not re-compose it into a square. ONE OBJECT, AND IT FILLS THE FRAME, reaching the left and right edges. The magenta fills the frame around it to its edges: there is no wall, no floor and no surface behind the object. Seen straight on, flat, no perspective.
 
-The object: a household account BOARD, a flat wooden board coated in white plaster, with a narrow
-cedar frame.
+The object: a household account BOARD, a flat wooden board coated in plaster, with a narrow cedar frame
+#6b4226.
 
-On the plaster, neat columns of small HIEROGLYPHS — birds, reeds, loaves, water lines — in black, with
-the column heads in red ochre. No modern writing, no letters, no numbers. A copper hanging ring at the top,
-gone green.
+The plaster is old and smoke-darkened to a warm grey-brown #74604a, never white. On it, neat columns of
+small HIEROGLYPHS (birds, reeds, loaves, water lines) in black #2a1f18, with the column heads in red
+ochre #8a3a2a. No modern writing, no letters, no numbers. A copper hanging ring at the top, gone green.
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
 ```
 
 **Import:** `yarn import-tile art/masters/props/junior/tallyBoard.webp --tier=junior --name=tallyBoard --slot=wall --filter=smooth --headroom=0.18`
 
-### `junior/stela-anubis` — a limestone stela with Anubis
+### `junior/stela-anubis` — a black-painted stela with Anubis
 
 **Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
@@ -1428,18 +1323,18 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 ```
 A single flat object, painted in flat matte gouache, on pure magenta #FF00FF. Landscape, exactly two units wide by one tall. Do not re-compose it into a square. ONE OBJECT, AND IT FILLS THE FRAME, reaching the left and right edges. The magenta fills the frame around it to its edges: there is no wall, no floor and no surface behind the object. Seen straight on, flat, no perspective.
 
-The object: a round-topped STELA, a flat slab of dressed limestone.
+The object: a round-topped STELA, a flat slab of dressed limestone painted over.
 
-Pale, cool-cream limestone, crisp and clean. In its upper panel ANUBIS is painted lying down: a BLACK
-JACKAL, long muzzle, two tall pointed ears, on an Egyptian blue ground framed in red ochre. Below, columns
-of small dark hieroglyphs.
+The whole slab is painted BLACK #2a1f18, matte and clean. In its upper panel ANUBIS is painted lying
+down: a black jackal, long muzzle, two tall pointed ears, on an Egyptian blue ground #2a5a9a framed in
+red ochre #8a3a2a. Below, columns of small yellow #c9a040 hieroglyphs.
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
 ```
 
 **Import:** `yarn import-tile art/masters/props/junior/stela-anubis.webp --tier=junior --name=stela-anubis --slot=wall --filter=smooth --headroom=0.18`
 
-### `junior/stela-thoth` — a limestone stela with Thoth's ibis
+### `junior/stela-thoth` — a blue-painted stela with Thoth's ibis
 
 **Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
 
@@ -1448,11 +1343,11 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 ```
 A single flat object, painted in flat matte gouache, on pure magenta #FF00FF. Landscape, exactly two units wide by one tall. Do not re-compose it into a square. ONE OBJECT, AND IT FILLS THE FRAME, reaching the left and right edges. The magenta fills the frame around it to its edges: there is no wall, no floor and no surface behind the object. Seen straight on, flat, no perspective.
 
-The object: a round-topped STELA, a flat slab of dressed limestone.
+The object: a round-topped STELA, a flat slab of dressed limestone painted over.
 
-Pale, cool-cream limestone, crisp and clean. In its upper panel Thoth's IBIS is painted standing: white
-body, black head and neck, a long curved down-swept beak, on an Egyptian blue ground framed in red ochre.
-Below, columns of small dark hieroglyphs.
+The whole slab is painted a deep Egyptian blue #24406a, matte and clean. In its upper panel Thoth's IBIS
+is painted standing: white body #d8c8a8, black head and neck, a long curved down-swept beak, on a lighter
+blue ground #2a5a9a framed in red ochre #8a3a2a. Below, columns of small yellow #c9a040 hieroglyphs.
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
 ```
@@ -1470,13 +1365,14 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, three units wide by two tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a long BANQUET TABLE. The long top and the four legs are the TABLE; the two tall stoppered
-vessels standing in rings at its ends are WINE JARS; the flat disc on the left carries LOAVES; the bowl on
-the right is heaped with FRUIT; the two small vessels are CUPS.
+vessels standing in rings at its ends are WINE JARS; the flat disc on the left carries LOAVES; the bowl
+on the right is heaped with FRUIT; the two small vessels are CUPS.
 
-The table is reddish-brown CEDAR, oiled and smooth, its grain running along the top. The loaves are baked
-golden-brown and floury on a pale pottery platter. The fruit is dark red figs and green-gold grapes, with
-a blue LOTUS flower laid across them. The wine jars are red pottery with a painted collar of blue lotus
-petals and grey mud stoppers; the cups are pale pottery, one with a thin copper rim gone verdigris.
+The table is dark oiled CEDAR #6b4226, #7a4a2a on its top faces and #4a2c1a in shade, its grain running
+along the top. The loaves are baked brown #9a5a30 on a red-brown pottery platter #8c4a36. The fruit is
+dark red figs #6a2a2a and green grapes #4a6a3a, with a blue LOTUS #2a5a9a laid across them. The wine jars
+are red-brown pottery #8c4a36 with a painted collar of blue lotus petals and dark mud stoppers #5a5048;
+the cups are the same pottery, one with a thin copper rim gone verdigris.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -1486,7 +1382,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold banquetTable --spin=-6 --width=672 --height=448 --colour=#e0c193 --floor=#e2a86f
+scaffold banquetTable --spin=-6 --width=672 --height=448 --colour=#6b4226 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/banquetTable.webp --tier=junior --name=banquetTable --slot=prop \
   --cells=2x1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1505,10 +1401,11 @@ The object: a standing BOW HARP. The great curved arm is the HARP's body: its th
 the block at the foot, is the SOUND BOX, and it narrows as it curves up into the NECK; the small block at
 the top of the neck is a carved HEAD; the thin vertical lines in the curve's mouth are the STRINGS.
 
-The arm is reddish-brown CEDAR, oiled and smooth. The sound box is covered in pale stretched leather
-painted with a band of red ochre and Egyptian blue rosettes. The head at the top is painted, a small
-face under a blue wig. The strings are pale gut, thin and taut, each tied to the neck with a little
-peg. The foot block is cedar with a thin copper band gone verdigris.
+The arm is dark oiled CEDAR #6b4226, #4a2c1a in shade. The sound box is covered in tawny stretched hide
+#7e5a3a painted with a band of red ochre #8a3a2a and Egyptian blue #2a5a9a rosettes. The head at the top
+is painted, a small red-brown #8c4a36 face under a blue wig. The strings are pale gut, thin and taut,
+each tied to the neck with a little peg. The foot block is cedar with a thin copper band #8a4022 gone
+verdigris.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -1518,7 +1415,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold harp --spin=4 --width=448 --height=1120 --colour=#e0c193 --floor=#e2a86f
+scaffold harp --spin=4 --width=448 --height=1120 --colour=#6b4226 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/harp.webp --tier=junior --name=harp --slot=prop \
   --tall=1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1534,13 +1431,14 @@ yarn import-tile art/masters/props/junior/harp.webp --tier=junior --name=harp --
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a DRESSING TABLE. The top and the four legs are the TABLE; the round disc standing on a
-handle at the left is a MIRROR; the three small lidded vessels on the right are KOHL POTS and an
-OINTMENT JAR.
+handle at the left is a MIRROR; the three small lidded vessels on the right are KOHL POTS and an OINTMENT
+JAR.
 
-The table is reddish-brown CEDAR, oiled and smooth. The mirror is polished COPPER — the one place this
-rank's metal is the object itself — a warm orange-brown disc, gone verdigris green at its rim, on a cedar
-handle carved as a papyrus stem. Two pots are pale white ALABASTER, one is blue-glazed faience; their lids
-are domed.
+The table is dark oiled CEDAR #6b4226, #7a4a2a on its top faces and #4a2c1a in shade. The mirror is
+polished COPPER, the one place this rank's metal is the object itself: a deep orange-brown disc #8a4022,
+gone verdigris #4f9a86 at its rim, on a cedar handle carved as a papyrus stem. Two pots are white
+ALABASTER #d8c8a8, small, the only pale things on it; one is blue-glazed faience #2a5a9a; their lids are
+domed.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -1550,7 +1448,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold dressingTable --spin=4 --colour=#e0c193 --floor=#e2a86f
+scaffold dressingTable --spin=4 --colour=#6b4226 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/dressingTable.webp --tier=junior --name=dressingTable --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1565,13 +1463,14 @@ yarn import-tile art/masters/props/junior/dressingTable.webp --tier=junior --nam
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a WIG STAND. The round disc at the bottom is the FOOT; the upright is the POST; the pale oval
-at the top is a carved wooden HEAD; the dark mass over and around it is a WIG — its crown on top, a long
+The object: a WIG STAND. The round disc at the bottom is the FOOT; the upright is the POST; the oval at
+the top is a carved wooden HEAD; the dark mass over and around it is a WIG: its crown on top, a long
 lappet falling down each side of the face, and its back hanging behind.
 
-The foot and post are reddish-brown CEDAR. The head is pale plastered wood, the face left smooth and
-plain, with no features painted on it. The wig is black hair in fine even braids running straight down,
-bound at the ends of the lappets with thin bands of red ochre and a small copper bead gone verdigris.
+The foot and post are dark CEDAR #6b4226. The head is plastered wood in a warm buff #9a7a5a, the face
+left smooth and plain, with no features painted on it. The wig is black hair #2a1f18 in fine even braids
+running straight down, bound at the ends of the lappets with thin bands of red ochre #8a3a2a and a small
+copper bead gone verdigris.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -1581,7 +1480,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold wigStand --spin=10 --colour=#e0c193 --floor=#e2a86f
+scaffold wigStand --spin=10 --colour=#6b4226 --colour-limestone=#9a7a5a --floor=#e2a86f
 yarn import-tile art/masters/props/junior/wigStand.webp --tier=junior --name=wigStand --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1599,9 +1498,10 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 The object: a TREE IN A POT. The flared vessel at the bottom is the POT, with its RIM and the dark EARTH
 inside it; the upright is the TRUNK; the rounded clumps above are the tree's CROWN of leaves.
 
-The pot is red-brown fired POTTERY with a painted band of blue lotus petals under the rim. The earth is
-dark brown. The trunk is grey-brown bark. The crown is a sycamore fig: dense leaf green, fresh and
-varied, the clumps a step lighter on top, with a few small round figs, orange-red, among the leaves.
+The pot is red-brown fired POTTERY #8c4a36 with a painted band of blue lotus petals #2a5a9a under the
+rim. The earth is dark brown #3a2418. The trunk is grey-brown bark #5a4a3a. The crown is a sycamore fig:
+dense leaf green #3b6b45, #2f5a3c in the shade of each clump and #4a7a50 on their tops, with a few small
+round figs, orange-red, among the leaves.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -1611,7 +1511,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold pottedTree --spin=12 --width=448 --height=1120 --colour=#e0c193 --floor=#e2a86f
+scaffold pottedTree --spin=12 --width=448 --height=1120 --colour=#8c4a36 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/pottedTree.webp --tier=junior --name=pottedTree --slot=prop \
   --tall=1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1626,14 +1526,15 @@ yarn import-tile art/masters/props/junior/pottedTree.webp --tier=junior --name=p
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, three units wide by two tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a BED. The long frame sloping down to the left is the BED FRAME; the pale surface on it is the
-LINEN cover; the tall panel at the left end is the FOOTBOARD; the four legs are LION LEGS, each with a
-haunch under the frame and a paw at the floor, the paws pointing right toward the head of the bed.
+The object: a BED. The long frame sloping down to the left is the BED FRAME; the long surface on it is
+the LINEN cover; the tall panel at the left end is the FOOTBOARD; the four legs are LION LEGS, each with
+a haunch under the frame and a paw at the floor, the paws pointing right toward the head of the bed.
 
-The frame, footboard and legs are reddish-brown CEDAR, oiled and smooth; the legs carved as a lion's,
-muscled at the haunch, the paws with their toes. The footboard carries a painted panel of the household
-god BES between two rows of rosettes, in red ochre, Egyptian blue and black on cream. The linen is
-clean white and cream, folded smooth, with a thin red ochre stripe along its edge.
+The frame, footboard and legs are dark oiled CEDAR #6b4226, #7a4a2a on its top faces and #4a2c1a in
+shade; the legs carved as a lion's, muscled at the haunch, the paws with their toes. The footboard
+carries a painted panel of the household god BES between two rows of rosettes, in red ochre #8a3a2a,
+Egyptian blue #2a5a9a and black on a yellow ground #c9a040. The cover is DYED linen, a deep blue #2a4a7a,
+folded smooth, with a thin cream #d8c8a8 stripe along its edge.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -1643,7 +1544,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold bed --spin=5 --width=672 --height=448 --colour=#e0c193 --floor=#e2a86f
+scaffold bed --spin=5 --width=672 --height=448 --colour=#6b4226 --colour-cloth=#2a4a7a --floor=#e2a86f
 yarn import-tile art/masters/props/junior/bed.webp --tier=junior --name=bed --slot=prop \
   --cells=2x1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1661,9 +1562,10 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 The object: a HEADREST. The curved crescent at the top is the CRADLE the neck lies in; the short upright
 under it is the COLUMN; the long flat block at the bottom is the FOOT.
 
-Reddish-brown CEDAR, oiled and smooth, the grain running along the cradle's curve. The column is carved
-with shallow vertical flutes. A thin band of Egyptian blue and red ochre is painted round the column's
-top, and the cradle's ends are capped with a sliver of copper gone verdigris.
+Dark oiled CEDAR #6b4226, #7a4a2a on its top faces and #4a2c1a in shade, the grain running along the
+cradle's curve. The column is carved with shallow vertical flutes. A thin band of Egyptian blue #2a5a9a
+and red ochre #8a3a2a is painted round the column's top, and the cradle's ends are capped with a sliver
+of copper gone verdigris.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -1673,7 +1575,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold headrest --spin=6 --colour=#e0c193 --floor=#e2a86f
+scaffold headrest --spin=6 --colour=#6b4226 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/headrest.webp --tier=junior --name=headrest --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.55
 ```
@@ -1692,9 +1594,10 @@ The object: a SADDLE QUERN for grinding grain. The low block is the EMPLACEMENT;
 sloping down to the left, is the LOWER STONE; the pale bar lying across it is the HANDSTONE; the bowl at
 the left end catches the FLOUR; the heap at the right end is GRAIN waiting to be ground.
 
-The emplacement is mud plaster, warm tan, smoothed by hand, a step darker than the orange floor. The
-lower stone is dark grey-brown quartzite, its top worn smooth and pale with flour. The handstone is pale
-sandstone. The bowl is red-brown pottery holding white flour; the grain is golden emmer.
+The emplacement is mud plaster #6e4a30, #5a3a24 in shade, smoothed by hand, clearly DARKER than the
+orange floor #e2a86f. The lower stone is dark grey-brown quartzite #4a4038, its top worn smooth and
+dusted with flour #b8a888 only along the grinding path. The handstone is sandstone #8a5a30. The bowl is
+red-brown pottery #8c4a36 holding white flour; the grain is golden emmer #a07a3a.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -1704,7 +1607,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold grindstone --spin=6 --colour=#e0c193 --floor=#e2a86f
+scaffold grindstone --spin=6 --colour=#6e4a30 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/grindstone.webp --tier=junior --name=grindstone --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1723,9 +1626,10 @@ The object: a BREAD OVEN. The tall round body is the OVEN, its thick lip the RIM
 it the open MOUTH; the dark square at its foot is the STOKE HOLE; the stepped cone standing against it is
 a stack of conical BREAD MOULDS, one nested in the next.
 
-The oven is sun-dried Nile clay, warm brown, hand-smoothed, blackened with soot round the mouth and the
-stoke hole. Inside the mouth is dark, with a faint orange glow of embers deep in it; the stoke hole the
-same. The bread moulds are red-brown fired pottery, each rim a slightly paler line.
+The oven is sun-dried Nile clay, a dark warm brown #6e4a30, #5a3a24 in shade, hand-smoothed, blackened
+with soot #2a1f18 round the mouth and the stoke hole. Inside the mouth is dark, with a faint orange glow
+of embers deep in it; the stoke hole the same. The bread moulds are red-brown fired pottery #8c4a36, each
+rim a slightly paler line #a05a40.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -1735,7 +1639,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold breadOven --spin=14 --colour=#e0c193 --floor=#e2a86f
+scaffold breadOven --spin=14 --colour=#6e4a30 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/breadOven.webp --tier=junior --name=breadOven --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```

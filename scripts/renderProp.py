@@ -981,6 +981,35 @@ def prim_palm():
         bpy.ops.object.transform_apply(scale=True)
         mark(bud, "body")
         return join_all()
+    if arg("contents") == "palmiform":
+        # The nobleman's PALMIFORM column: a stone shaft whose capital is palm fronds standing UPRIGHT,
+        # bound tight round the shaft's top by bands and flaring only a little at their tips, with a square
+        # abacus on top. The default branch below splays its fronds at 66 degrees, and a repaint that keeps
+        # every silhouette paints that literally: it came back a cartoon palm TREE.
+        #
+        # The capital is a solid flared CORE with the fronds standing on its face, not fronds alone: a ring
+        # of separate blades leaves magenta between them, and that gap is what reads as foliage in the air.
+        # Each frond is two segments, a long one nearly upright and a short tip leaning out further, which
+        # is the whole of the flare — the width the default buys by splaying comes from the core instead.
+        shaft_h = 0.88
+        mark(cone(0.265, 0.265, 0.07, z=0.035, verts=20), "body")
+        mark(cone(0.215, 0.195, shaft_h, z=shaft_h / 2, verts=20), "body")
+        # Five bands binding the fronds to the shaft, proud of it by more than a hairline (`prim_mask`).
+        for i in range(5):
+            mark(cyl(0.222, 0.038, z=shaft_h - 0.02 + i * 0.046, verts=20), "accent")
+        cap_z, cap_h = shaft_h + 0.21, 0.52
+        mark(cone(0.195, 0.290, cap_h, z=cap_z + cap_h / 2, verts=20), "leaf!nocast")
+        for i in range(12):
+            spin = math.radians(i * 30 + 15)
+            for h, lean, z0 in ((0.42, 9, cap_z), (0.11, 26, cap_z + 0.41)):
+                r0 = 0.195 + (z0 - cap_z) / cap_h * 0.095
+                frond = box(0.105, 0.04, h)
+                frond.data.transform(Matrix.Translation((0.0, 0.0, h / 2)))
+                frond.rotation_euler = (0.0, math.radians(lean), spin)
+                frond.location = (math.cos(spin) * r0, math.sin(spin) * r0, z0)
+                mark(frond, "leaf!nocast")
+        mark(box(0.36, 0.36, 0.07, z=cap_z + cap_h + 0.035), nocast("body"))
+        return join_all()
     shaft_h = 1.55
     bpy.ops.mesh.primitive_cone_add(vertices=16, radius1=0.16, radius2=0.13, depth=shaft_h,
                                     location=(0, 0, shaft_h / 2))
