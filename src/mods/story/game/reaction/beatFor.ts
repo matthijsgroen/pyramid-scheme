@@ -1,8 +1,12 @@
 import type { Reaction } from "@/app/reactions/reactionContributions"
+import { journeyTier } from "@/data/journeyStructure"
 import { STORY_BEATS } from "./storyBeats"
 
 /**
  * Which bond beat a move is worth, if any.
+ *
+ * `bond.starter` and `bond.junior` follow the tier of the journey the solve happened in (a treasure
+ * tomb counts at its own tier), never the board's difficulty, so the two land in different journeys.
  *
  * Fez remarking on how somebody plays is the rail most likely to ruin him, so the restraint lives
  * here rather than in the copy: **one beat per move, and nearly every move is worth nothing.**
@@ -34,9 +38,12 @@ const solvedBeat = (reaction: Extract<Reaction, { kind: "solved" }>): string | u
 
   if (!reaction.unaided) return undefined
   // He notices the first time at each of the two tiers where noticing means something: the tier
-  // where solving one is new, and the tier where he stops being surprised by it.
-  if (reaction.tier === "starter") return "bond.starter"
-  if (reaction.tier === "junior") return "bond.junior"
+  // where solving one is new, and the tier where he stops being surprised by it. The tier is the
+  // journey's, not the board's: a starter journey holds junior boards, and a beat that plays once
+  // ever would otherwise be spent there, before the junior journeys it was written for.
+  const tier = journeyTier(reaction.journeyId)
+  if (tier === "starter") return "bond.starter"
+  if (tier === "junior") return "bond.junior"
   return undefined
 }
 

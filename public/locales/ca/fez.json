@@ -563,9 +563,7 @@
 
   "animal": {
     "forSale": {
-      "1": { "fez": "Mira què tinc a la parada! Ara també venc transport." },
-      "2": { "explorer": "Està mastegant." },
-      "3": { "fez": "Això ja entra en el preu." }
+      "1": { "fez": "Mira què tinc a la parada! Ara també venc transport." }
     },
     "boughtDonkey": {
       "1": { "fez": "Venut! Un ruc. Tossut, però ho porta tot." },

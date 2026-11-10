@@ -559,9 +559,7 @@
 
   "animal": {
     "forSale": {
-      "1": { "fez": "Vidi što je na štandu! Sad prodajem i prijevoz." },
-      "2": { "explorer": "Žvače." },
-      "3": { "fez": "To je uračunato u cijenu." }
+      "1": { "fez": "Vidi što je na štandu! Sad prodajem i prijevoz." }
     },
     "boughtDonkey": {
       "1": { "fez": "Prodano! Jedan magarac. Tvrdoglav, ali nosi sve." },

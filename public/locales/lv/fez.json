@@ -1077,12 +1077,6 @@
     "forSale": {
       "1": {
         "fez": "Paskat, kas ir bodītē! Es tagad nodarbojos ar pārvadājumiem."
-      },
-      "2": {
-        "explorer": "Tas košļā."
-      },
-      "3": {
-        "fez": "Tas ir iekļauts cenā."
       }
     },
     "boughtDonkey": {

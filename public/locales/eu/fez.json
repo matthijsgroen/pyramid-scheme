@@ -569,9 +569,7 @@
 
   "animal": {
     "forSale": {
-      "1": { "fez": "Begira zer dagoen postuan! Orain garraioa ere saltzen dut." },
-      "2": { "explorer": "Murtxikatzen ari da." },
-      "3": { "fez": "Hori prezioan sartuta dago." }
+      "1": { "fez": "Begira zer dagoen postuan! Orain garraioa ere saltzen dut." }
     },
     "boughtDonkey": {
       "1": { "fez": "Salduta! Asto bat. Burugogorra, baina edozer eramaten du." },

@@ -28,10 +28,20 @@ describe("what Fez is willing to remark on", () => {
     expect(beatFor(solved({ unaided: true }))).toBe("bond.starter")
   })
 
-  it("notices again a tier later, and never after that", () => {
+  it("notices again a journey tier later, and never after that", () => {
     expect(beatFor(solved({ unaided: true, tier: "junior", journeyId: "junior_2" }))).toBe("bond.junior")
-    for (const tier of ["expert", "master", "wizard"] as const)
-      expect(beatFor(solved({ unaided: true, tier }))).toBeUndefined()
+    for (const journeyId of ["expert_1", "master_1", "wizard_1"])
+      expect(beatFor(solved({ unaided: true, tier: "junior", journeyId }))).toBeUndefined()
+  })
+
+  it("follows the journey's tier, not the board's", () => {
+    expect(beatFor(solved({ unaided: true, tier: "junior", journeyId: "starter_2" }))).toBe("bond.starter")
+    expect(beatFor(solved({ unaided: true, tier: "junior", journeyId: "junior_1" }))).toBe("bond.junior")
+  })
+
+  it("counts a treasure tomb at its own tier", () => {
+    expect(beatFor(solved({ unaided: true, tier: "starter", journeyId: "starter_treasure_tomb" }))).toBe("bond.starter")
+    expect(beatFor(solved({ unaided: true, tier: "expert", journeyId: "junior_treasure_tomb" }))).toBe("bond.junior")
   })
 
   it("keeps a trap out of the beats that are about solving", () => {

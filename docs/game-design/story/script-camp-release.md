@@ -604,13 +604,13 @@ fires (once built): Fez's stall — the first time it shows a purchase (the donk
 > **Fez (pointUp):** Kijk eens wat ik in de kraam heb! Vanaf nu verkoop ik ook vervoer.
 > _en:_ Look what's at the stall! I do transport now.
 >
-> **Explorer:** Het staat te kauwen.
-> _en:_ It's chewing.
+> **Explorer:** Ik zie alleen een tekening.
+> _en:_ I only see a drawing.
 >
-> **Fez:** Dat zit bij de prijs in.
-> _en:_ That's included in the price.
+> **Fez:** Het origineel eet meer.
+> _en:_ The original eats more.
 
-Names no animal, so it holds whichever purchase shows first; the explorer's line assumes it is an animal (true for the donkey).
+Names no animal, so it holds whichever purchase shows first; the stall shows a drawing of the purchase, not the animal itself, which walks to the camp once bought (`animal.boughtDonkey`). Fez's answer assumes it is an animal (true for the donkey).
 
 ### `animal.boughtDonkey`
 

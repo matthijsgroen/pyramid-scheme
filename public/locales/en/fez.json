@@ -553,8 +553,8 @@
   "animal": {
     "forSale": {
       "1": { "fez": "Look what's at the stall! I do transport now." },
-      "2": { "explorer": "It's chewing." },
-      "3": { "fez": "That's included in the price." }
+      "2": { "explorer": "I only see a drawing." },
+      "3": { "fez": "The original eats more." }
     },
     "boughtDonkey": {
       "1": { "fez": "Sold! One donkey. Stubborn, but he'll carry anything." },
