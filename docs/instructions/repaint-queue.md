@@ -483,7 +483,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
-## Nobleman — eight
+## Nobleman — seven
 
 The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
 first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
@@ -572,37 +572,6 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 ```
 
 **Import:** `yarn import-tile art/masters/props/junior/stela-thoth.webp --tier=junior --name=stela-thoth --slot=wall --filter=smooth --headroom=0.18 --trim`
-
-### `junior/pottedTree` — a fig tree in a painted pot
-
-**Attach:**
-
-1. `~/tile-previews/pottedTree-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by five tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a TREE IN A POT. The flared vessel at the bottom is the POT, with its RIM and the dark EARTH
-inside it; the upright is the TRUNK; the rounded clumps above are the tree's CROWN of leaves.
-
-The pot is red-brown fired POTTERY #8c4a36 with a painted band of blue lotus petals #2a5a9a under the
-rim. The earth is dark brown #3a2418. The trunk is grey-brown bark #5a4a3a. The crown is a sycamore fig:
-dense leaf green #3b6b45, #2f5a3c in the shade of each clump and #4a7a50 on their tops, with a few small
-round figs, orange-red, among the leaves.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold pottedTree --spin=12 --width=448 --height=1120 --colour=#8c4a36 --floor=#e2a86f
-yarn import-tile art/masters/props/junior/pottedTree.webp --tier=junior --name=pottedTree --slot=prop \
-  --tall=1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `junior/bed` — a cedar bed on lion legs
 
