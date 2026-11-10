@@ -568,7 +568,7 @@ describe("the offers around a one-way drop", () => {
 
     // The four places a player stands at a drop, each asserted as the WHOLE of what is drawn: an arrow on a
     // launch or landing pointing the way it is entered from its own node (whether or not it has been
-    // walked), and the node art on a room.
+    // walked), the node art on a room, and an arrow back onto the room from the end beside it.
     describe.each(["reachable", "completed"] as const)("with every cell %s", state => {
       const { grid: stated, at: statedAt } = dropGrid(axis, "room", "room", state)
       const markersFrom = (from: readonly [number, number]) => {
@@ -592,12 +592,18 @@ describe("the offers around a one-way drop", () => {
 
       it("marks the launch with an arrow from beside it and from on it", () => {
         expect(markersFrom(statedAt(DROP_AT.fromNode))).toEqual(fromSide)
-        expect(markersFrom(statedAt(DROP_AT.launch))).toEqual(fromSide)
+        expect(markersFrom(statedAt(DROP_AT.launch))).toEqual({
+          ...fromSide,
+          [key(statedAt(DROP_AT.fromNode))]: { kind: "arrow", dir: axis.back },
+        })
       })
 
       it("marks the landing with an arrow from beside it and from on it", () => {
         expect(markersFrom(statedAt(DROP_AT.toNode))).toEqual(toSide)
-        expect(markersFrom(statedAt(DROP_AT.landing))).toEqual(toSide)
+        expect(markersFrom(statedAt(DROP_AT.landing))).toEqual({
+          ...toSide,
+          [key(statedAt(DROP_AT.toNode))]: { kind: "arrow", dir: axis.travel },
+        })
       })
     })
 
@@ -742,6 +748,23 @@ describe("a bare junction beside the player", () => {
 
   it("draws that arrow on the map", () => {
     const grid = revealAll(forkFloor())
+    const { container } = render(<SiteMapView grid={grid} explorerPos={[4, 5]} onCellClick={() => {}} />)
+    expect(ringOffsets(container)).toContain(ringOffset("e"))
+  })
+})
+
+describe.each([
+  ["a gate", { roomType: "encounter", family: "sumplete", tags: ["gate"] }],
+  ["a puzzle", { roomType: "encounter", family: "sumplete" }],
+] as const)("%s beside the player", (_, node) => {
+  const grid = revealAll(forkFloor({ ...node, tags: "tags" in node ? [...node.tags] : undefined }))
+
+  it("points the step onto it with an arrow, though its node is drawn on its own cell", () => {
+    const ctx = offerContextFrom(grid, [4, 5], {})
+    expect(markerAt(grid, buildRoomClaims(grid), 4, 6, ctx)).toEqual({ kind: "arrow", dir: "e" })
+  })
+
+  it("draws that arrow on the map", () => {
     const { container } = render(<SiteMapView grid={grid} explorerPos={[4, 5]} onCellClick={() => {}} />)
     expect(ringOffsets(container)).toContain(ringOffset("e"))
   })
