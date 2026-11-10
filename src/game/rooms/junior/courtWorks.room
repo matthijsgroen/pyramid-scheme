@@ -1,0 +1,16 @@
+// designed by: Claude
+// junior. A court with the lever or torch where the pool would be: two potted trees in the corners of the north wall.
+room courtWorks
+tier junior
+activity gardenCourt
+
+layout
+# # d # d # #
+# t . . . t #
+d . . m . . d
+# . . s . . #
+# # d # d # #
+
+t wall pottedTree
+m mechanism
+s stop

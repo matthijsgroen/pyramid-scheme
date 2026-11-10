@@ -66,8 +66,8 @@ export const lockBeforeFloorContent = (name: LockName): Pick<FloorConstraint, "l
   }
 }
 
-/** A catalogue lock on the main floor of a pyramid. */
+/** A catalogue lock on the main floor of a pyramid, with that floor's own packing and rooms where it names them. */
 export const lockOnMainFloor = (
   name: LockName,
-  floor: { packing?: number } = {}
+  floor: Pick<FloorConstraint, "packing" | "rooms"> = {}
 ): Pick<PyramidConstraint, "floorLocks"> => ({ floorLocks: { 0: { ...lockOnFloor(name), ...floor } } })
