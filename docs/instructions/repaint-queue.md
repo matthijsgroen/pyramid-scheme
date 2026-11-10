@@ -483,7 +483,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
-## Nobleman — two
+## Nobleman — one
 
 The nobleman's existing props, repainted for the rank's new light orange floor. Each is its own thing
 first: cedar is cedar, linen is linen, pottery is pottery, painted in red ochre, Egyptian blue and leaf
@@ -511,26 +511,6 @@ The last nine are the house's own kinds, new with its activities ([themed-rooms.
 § Junior): each has a primitive of its own in `renderProp.py` and a guarded block in `art/rebuild.sh`. The
 banquet table and the bed are two cells across, so their frame is landscape three by two; the harp and the
 potted tree stand a cell taller, so theirs is portrait two by five.
-
-### `junior/stela-thoth` — a blue-painted stela with Thoth's ibis
-
-**Re-roll:** the rank's palette moved (2026-11-03, `Topology/Palette moodboard`). Repainted against the new light orange floor, in its own material's colours; copper only as a trim.
-
-**Attach:** `~/tile-previews/junior-plain.png` — the material reference. A flat item has no scaffold.
-
-```
-A single flat object, painted in flat matte gouache, on pure magenta #FF00FF. Nearly square, exactly seven units wide by six tall. Do not re-compose it into a landscape strip. ONE OBJECT, AND IT FILLS THE FRAME, reaching the left and right edges. The magenta fills the frame around it to its edges: there is no wall, no floor and no surface behind the object. Seen straight on, flat, no perspective.
-
-The object: a round-topped STELA, a flat slab of dressed limestone painted over.
-
-The whole slab is painted a deep Egyptian blue #24406a, matte and clean. In its upper panel Thoth's IBIS
-is painted standing: white body #d8c8a8, black head and neck, a long curved down-swept beak, on a lighter
-blue ground #2a5a9a framed in red ochre #8a3a2a. Below, columns of small yellow #c9a040 hieroglyphs.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
-```
-
-**Import:** `yarn import-tile art/masters/props/junior/stela-thoth.webp --tier=junior --name=stela-thoth --slot=wall --tall --filter=smooth --trim`
 
 ### `junior/namePanel` — Henut's name in a cartouche, with Hathor's face
 
