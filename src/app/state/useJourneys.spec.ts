@@ -717,6 +717,52 @@ describe("navigation mutators are awaitable", () => {
   })
 })
 
+describe("revisiting a finished journey", () => {
+  const stored = (journeyId: string, overrides: Partial<StoredJourneyStateV3> = {}) =>
+    makeStoredJourney({ journeyId, ...overrides })
+  const run = (journeys: StoredJourneyStateV3[]) => {
+    let state = journeys
+    const api = createJourneysV3Api({
+      journeys: state,
+      setJourneys: updater => {
+        state = typeof updater === "function" ? updater(state) : updater
+      },
+      journeyData: journeys.map(j => makeJourneyData(j.journeyId, 2)),
+    })
+    return { api, state: () => state }
+  }
+
+  it("is not in progress while active again, and a first run is", () => {
+    const { api } = run([
+      stored("made-up-done", { active: true, completionCount: 1, levelNr: 2 }),
+      stored("made-up-first", { active: true, completionCount: 0 }),
+    ])
+    expect(api.getJourney("made-up-done")?.inProgress).toBe(false)
+    expect(api.getJourney("made-up-first")?.inProgress).toBe(true)
+  })
+
+  it("is left behind when another journey is started", () => {
+    const { api, state } = run([stored("made-up-done", { active: true, completionCount: 1, interiorLevelNr: 2 })])
+    void api.startJourney(makeJourneyData("made-up-new"))
+    expect(state().map(j => [j.journeyId, j.active, j.interiorLevelNr])).toEqual([
+      ["made-up-done", false, null],
+      ["made-up-new", true, null],
+    ])
+  })
+
+  it("is left behind when a pyramid of another journey is visited", () => {
+    const { api, state } = run([
+      stored("made-up-done", { active: true, completionCount: 1 }),
+      stored("made-up-other", { active: false, completionCount: 1 }),
+    ])
+    void api.visitLevel("made-up-other", 1)
+    expect(state().map(j => [j.journeyId, j.active])).toEqual([
+      ["made-up-done", false],
+      ["made-up-other", true],
+    ])
+  })
+})
+
 describe("the re-laid pyramids step", () => {
   const stateful = (stored: StoredJourneyStateV3) => {
     let state = [stored]

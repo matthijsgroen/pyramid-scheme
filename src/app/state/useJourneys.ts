@@ -109,7 +109,8 @@ export type StoredJourneyStateV3 = {
 }
 
 export type CombinedJourneyState = StoredJourneyStateV3 & {
-  inProgress: boolean // derived: same as active
+  /** Active on a first run. A finished journey made active again is being revisited: no run is under way. */
+  inProgress: boolean
   randomSeed: number
   progressPercentage: number
   journey: TranslatedJourney
@@ -247,6 +248,10 @@ const leavingFor = (j: StoredJourneyStateV3, levelNr: number) => {
   return { ...remembered, ...standingIn({ ...j, pyramidPositions }, levelNr) }
 }
 
+/** A journey other than the one set off on: one journey is active at a time. */
+const leftBehind = (j: StoredJourneyStateV3): StoredJourneyStateV3 =>
+  j.active ? { ...j, active: false, interiorLevelNr: null } : j
+
 /** The pyramid positions without `levelNr`'s. */
 const forgetting = (j: StoredJourneyStateV3, levelNr: number) => {
   if (!j.pyramidPositions?.[levelNr]) return {}
@@ -337,7 +342,7 @@ export const createJourneysV3Api = ({
       : generateNewSeed(hashString(journeyId), journeyState.completionCount + 1)
     return {
       ...journeyState,
-      inProgress: journeyState.active,
+      inProgress: journeyState.active && journeyState.completionCount === 0,
       journey: journeyInfo,
       randomSeed,
       progressPercentage,
@@ -366,12 +371,12 @@ export const createJourneysV3Api = ({
                     interiorLevelNr: null,
                   }
                 : { ...j, active: true }
-              : j
+              : leftBehind(j)
           )
         )
       )
     }
-    return Promise.resolve(setJourneys(prev => [...prev, freshJourney(journey.id)]))
+    return Promise.resolve(setJourneys(prev => [...prev.map(leftBehind), freshJourney(journey.id)]))
   }
 
   const enterAt: JourneyAPI["enterAt"] = (journeyId, levelNr, address, walked) =>
@@ -386,9 +391,7 @@ export const createJourneysV3Api = ({
           positionKey: address && isPlaceAddress(address) ? address : null,
           standingKey: address,
         })
-        const others = prev.map(j =>
-          j.journeyId === journeyId ? placed(j) : j.active ? { ...j, active: false, interiorLevelNr: null } : j
-        )
+        const others = prev.map(j => (j.journeyId === journeyId ? placed(j) : leftBehind(j)))
         return prev.some(j => j.journeyId === journeyId) ? others : [...others, placed(freshJourney(journeyId))]
       })
     )
@@ -427,7 +430,7 @@ export const createJourneysV3Api = ({
                 ...leavingFor(j, targetLevelNr),
                 interiorLevelNr: null,
               }
-            : j
+            : leftBehind(j)
         )
       )
     )
