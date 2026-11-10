@@ -30,7 +30,7 @@ describe("which place a hidato room is", () => {
   })
 
   it("reads default and night as nothing said, so the hour never cancels the place", () => {
-    // A channel after dark is still a channel: the ambience layers onto the identity (puzzle-screens.md §2).
+    // A channel after dark is still a channel: the ambience layers onto the identity (puzzle-screens.md).
     expect(skinFor("water", "night").name).toBe("channel")
     expect(skinFor("water", "default").name).toBe("channel")
   })

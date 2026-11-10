@@ -88,7 +88,7 @@ describe("the hidato board the player leaves", () => {
     const armed = pickUpHidato(createHidatoState(puzzle), "0,0")
     expect(armed.pen).toBe("0,0")
     // The press that starts a drag lands on the cell the run is already on, and must leave it alone:
-    // armHidato would toggle it off here, and the drag would then have nothing to carry (design doc §6.5).
+    // armHidato would toggle it off here, and the drag would then have nothing to carry (hidato.md).
     expect(pickUpHidato(armed, "0,0").pen).toBe("0,0")
     // An empty cell is still nothing to carry a run on from.
     expect(pickUpHidato(createHidatoState(puzzle), "2,0").pen).toBeUndefined()

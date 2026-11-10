@@ -38,7 +38,7 @@ const reducedMotion = (reduce: boolean) =>
   }))
 
 /**
- * The board finishes itself before the shell hears the word "solved" (`puzzle-screens.md` §3).
+ * The board finishes itself before the shell hears the word "solved" (`puzzle-screens.md`).
  *
  * Here it is one sweep across the grid, top-left corner to bottom-right, a diagonal at a time — so the run
  * says "the whole board" rather than pointing at any square in it. The constraints are the shared ones: under

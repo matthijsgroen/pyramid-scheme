@@ -52,7 +52,7 @@ const reducedMotion = (reduce: boolean) =>
 const shown = (root: HTMLElement) => cellsIn(root).map(cell => Number(cell.textContent))
 
 /**
- * The board finishes itself before the shell hears the word "solved" (`puzzle-screens.md` §3).
+ * The board finishes itself before the shell hears the word "solved" (`puzzle-screens.md`).
  *
  * Here the run COUNTS UP: the whole grid rolls to 1, the squares that really are 1 keep it and swell, the rest
  * roll on to 2, and so on — because order is what this family is about. The constraints are the shared ones:

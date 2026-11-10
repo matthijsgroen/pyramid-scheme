@@ -1,6 +1,7 @@
 import { hexDistance, hexKey, hexNeighbours, type Hex } from "./hex"
 
-// The deduction system behind both generation and hints, per docs/game-design/puzzles/hidato.md §4.
+// The deduction system behind both generation and hints, per docs/game-design/puzzles/hidato.md (its
+// technique ladder).
 //
 // Two vocabularies, and they answer different questions. **Pruning** is what the board is allowed to
 // know — which cells a number could still sit in — and it is the tier dial, because each level is a
@@ -9,7 +10,7 @@ import { hexDistance, hexKey, hexNeighbours, type Hex } from "./hex"
 // WHY, and the ordering is by how well that reason explains itself rather than by strength.
 
 /**
- * How far the board reasons about where a number could go. A tier caps this (design doc §5).
+ * How far the board reasons about where a number could go. A tier caps this (hidato.md).
  *
  * **Two rungs, and the missing third is the finding.** A distance bound — "this cell is 4 steps from the
  * 7, so it cannot hold the 9" — was built as the middle rung and measured to be worth nothing: iterated
@@ -51,7 +52,7 @@ export type HidatoSolveResult = {
   values: Record<string, number>
 }
 
-/** How many steps a path enumeration may explore before it gives up and says nothing (design doc §4.4). */
+/** How many steps a path enumeration may explore before it gives up and says nothing (hidato.md: gap rung). */
 const PATH_BUDGET = 40_000
 
 type Solver = {
@@ -264,7 +265,8 @@ const readValues = (solver: Solver): Record<string, number> =>
  * Fills the comb by deduction alone, at the strength a tier allows.
  *
  * Every step is forced, so a board this settles has exactly one solution and no separate solution
- * counter has to run — which is what lets generation gate on this one function (design doc §3).
+ * counter has to run — which is what lets generation gate on this one function (hidato.md: uniqueness
+ * needs no solution counter).
  */
 export const solveHidatoByTechniques = (
   puzzle: HidatoPuzzleData,
