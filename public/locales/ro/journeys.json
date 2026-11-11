@@ -21,24 +21,19 @@
     "mapHint": "Bucățica de hartă arată un drum de piață și ușa unei pivnițe — ascunzătoarea unui negustor, nimic mai mult."
   },
   "junior_1": {
-    "name": "Zborul ibișilor sfinți",
-    "description": "Ținut de mlaștini, cu ibiși care umblă prin apă. Egiptenii îi urmăreau: când se întorc păsările, vine și revărsarea Nilului."
+    "name": "Zborul ibișilor sfinți"
   },
   "junior_2": {
-    "name": "Valea meșteșugarilor",
-    "description": "Deir el-Medina, unde locuiau cei care făceau mormintele. Tot ce intra într-un mormânt regal era făcut aici întâi, în tipare."
+    "name": "Valea meșteșugarilor"
   },
   "junior_3": {
-    "name": "Templul lui Thot",
-    "description": "Templul lui Thot. El a inventat scrisul, ținea socotelile și număra totul — cam ce facem și noi de ceva vreme."
+    "name": "Templul lui Thot"
   },
   "junior_4": {
-    "name": "Farul din Alexandria",
-    "description": "Farul din Alexandria. Un foc în vârf, care ardea toată noaptea, iar marinarii vedeau coasta de la o zi de mers cu corabia."
+    "name": "Farul din Alexandria"
   },
   "junior_treasure_tomb": {
     "name": "Seiful ascuns al nobilei",
-    "description": "Seiful unei doamne nobile, pictat din podea până în tavan. Și-a cumpărat cele mai frumoase copii pe bani și n-a spus-o niciodată.",
     "mapHint": "Cerneală fină, un sigiliu cu blazon în colț — cineva de rang mare voia ca această cameră să fie uitată."
   },
   "expert_1": {

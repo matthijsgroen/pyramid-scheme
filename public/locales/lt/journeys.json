@@ -21,24 +21,19 @@
     "mapHint": "Skiautėje nupieštas turgaus kelias ir rūsio durys. Prekeivio slėptuvė, nieko daugiau."
   },
   "junior_1": {
-    "name": "Šventųjų ibisų kelionė",
-    "description": "Pelkių kraštas ir per jį braidantys ibisai. Egiptiečiai stebėjo šiuos paukščius: kai jie grįžta, ateina potvynis."
+    "name": "Šventųjų ibisų kelionė"
   },
   "junior_2": {
-    "name": "Meistrų slėnis",
-    "description": "Deir el Medina, kur gyveno kapų statytojai. Viskas, ko reikėjo karaliaus laidotuvėms, pirmiausia buvo pagaminta čia, formose."
+    "name": "Meistrų slėnis"
   },
   "junior_3": {
-    "name": "Toto šventykla",
-    "description": "Toto šventykla. Jis išrado raštą, rašė metraščius ir viską skaičiavo. Beveik tą patį, ką mes čia ir darome."
+    "name": "Toto šventykla"
   },
   "junior_4": {
-    "name": "Aleksandrijos švyturys",
-    "description": "Aleksandrijos Faras. Viršuje visą naktį dega ugnis, ir jūreiviai mato krantą net iš dienos kelio jūroje."
+    "name": "Aleksandrijos švyturys"
   },
   "junior_treasure_tomb": {
     "name": "Slaptas didikės lobynas",
-    "description": "Didikės lobynas, išpieštas nuo grindų iki lubų. Ji pirko geriausias kopijas, kokias tik galima nupirkti, ir niekada to nesakė.",
     "mapHint": "Dailus rašalas, kampe herbinis antspaudas. Kažkas svarbus norėjo, kad šis kambarys būtų pamirštas."
   },
   "expert_1": {

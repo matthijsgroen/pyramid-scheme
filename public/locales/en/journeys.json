@@ -22,23 +22,23 @@
   },
   "junior_1": {
     "name": "Sacred Ibis Migration",
-    "description": "Marsh country, and the ibis wading through it. Egypt watched these birds: when they come back, the flood is coming."
+    "description": "Reed marshes along the Nile, and the ibis wading through them. Sacred birds — and not for the reason you'd think."
   },
   "junior_2": {
     "name": "Valley of the Artisans",
-    "description": "Deir el-Medina, where the tomb-makers lived. Everything that went into a royal burial was made here first, in moulds."
+    "description": "Deir el-Medina, the village of the tomb-makers. Their workshops are still standing, and so is some of the work."
   },
   "junior_3": {
     "name": "Temple of Thoth",
-    "description": "Thoth's temple. He invented writing, kept the records and did the counting — which is most of what we have been doing."
+    "description": "Thoth's temple. Everybody knows his name; ask three people what he was god of and you get three answers."
   },
   "junior_4": {
     "name": "Lighthouse of Alexandria",
-    "description": "The Pharos of Alexandria. A fire at the top, burning all night, and sailors finding the coast a day's sail out."
+    "description": "The Pharos of Alexandria, one of the seven wonders. What is left of it lies in the harbour, under the water."
   },
   "junior_treasure_tomb": {
     "name": "Noble's Hidden Vault",
-    "description": "A noblewoman's vault, painted floor to ceiling. She bought the finest copies money could buy, and never once said so.",
+    "description": "A noblewoman's vault, painted floor to ceiling, and everything in it still where she put it.",
     "mapHint": "Fine ink, a crested seal in the corner — someone of standing wanted this room forgotten."
   },
   "expert_1": {

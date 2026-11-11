@@ -21,24 +21,19 @@
     "mapHint": "Sobekan ini menggambar jalan pasar dan pintu gudang. Tempat sembunyi seorang pedagang, tidak lebih."
   },
   "junior_1": {
-    "name": "Perjalanan Burung Ibis Suci",
-    "description": "Daerah rawa, dan burung ibis yang berjalan di airnya. Orang Mesir memperhatikan burung ini: kalau mereka pulang, banjir Sungai Nil akan datang."
+    "name": "Perjalanan Burung Ibis Suci"
   },
   "junior_2": {
-    "name": "Lembah Para Perajin",
-    "description": "Deir el-Medina, tempat tinggal para pembuat makam. Semua barang untuk makam raja dibuat di sini dulu, pakai cetakan."
+    "name": "Lembah Para Perajin"
   },
   "junior_3": {
-    "name": "Kuil Thoth",
-    "description": "Kuil Dewa Thoth. Dia yang menemukan tulisan, mencatat semuanya, dan berhitung. Mirip dengan yang kita kerjakan dari tadi!"
+    "name": "Kuil Thoth"
   },
   "junior_4": {
-    "name": "Mercusuar Aleksandria",
-    "description": "Pharos di Aleksandria. Di puncaknya ada api yang menyala sepanjang malam, dan pelaut bisa menemukan pantai dari jarak sehari berlayar."
+    "name": "Mercusuar Aleksandria"
   },
   "junior_treasure_tomb": {
     "name": "Ruang Rahasia Bangsawan",
-    "description": "Ruang rahasia seorang bangsawan wanita, dilukis dari lantai sampai langit-langit. Dia membeli tiruan paling bagus yang bisa dibeli, dan tidak pernah bilang siapa-siapa.",
     "mapHint": "Tinta halus, cap lambang keluarga di pojok. Seseorang yang terpandang ingin ruangan ini dilupakan."
   },
   "expert_1": {

@@ -21,24 +21,19 @@
     "mapHint": "Kaardijupil on turutee ja keldriuks — kaupmehe peidukoht, ei midagi uhkemat."
   },
   "junior_1": {
-    "name": "Pühade iibiste rändetee",
-    "description": "Sooala ja iibised, kes selles sumpavad. Egiptlased jälgisid neid linde: kui nad tagasi tulevad, tuleb üleujutus."
+    "name": "Pühade iibiste rändetee"
   },
   "junior_2": {
-    "name": "Meistrite org",
-    "description": "Deir el-Medina, kus elasid hauakambrite ehitajad. Kõik, mis kuninga hauda läks, tehti siin enne vormides valmis."
+    "name": "Meistrite org"
   },
   "junior_3": {
-    "name": "Thothi tempel",
-    "description": "Thothi tempel. Tema leiutas kirja, pidas arvet ja tegi arvutusi — umbes sedasama, mida meiegi teeme."
+    "name": "Thothi tempel"
   },
   "junior_4": {
-    "name": "Aleksandria majakas",
-    "description": "Aleksandria Pharos. Tipus põles terve öö tuli ja meremehed nägid rannikut juba päeva teekonna kauguselt."
+    "name": "Aleksandria majakas"
   },
   "junior_treasure_tomb": {
     "name": "Aadliku salakamber",
-    "description": "Aadlidaami kamber, põrandast laeni maalitud. Ta ostis parimad koopiad, mida raha eest sai, ega öelnud seda kunagi kellelegi.",
     "mapHint": "Peen tint ja nurgas vapiga pitser — keegi tähtis tahtis, et see tuba ununeks."
   },
   "expert_1": {

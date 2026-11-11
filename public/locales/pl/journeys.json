@@ -21,24 +21,19 @@
     "mapHint": "Na skrawku widać drogę targową i drzwi do piwnicy. Kryjówka kupca, nic wielkiego."
   },
   "junior_1": {
-    "name": "Wędrówka świętych ibisów",
-    "description": "Kraina bagien i brodzące po nich ibisy. Egipcjanie obserwowali te ptaki: kiedy wracają, nadchodzi wielka woda."
+    "name": "Wędrówka świętych ibisów"
   },
   "junior_2": {
-    "name": "Dolina rzemieślników",
-    "description": "Deir el-Medina, gdzie mieszkali budowniczowie grobowców. Wszystko do królewskiego grobu najpierw robiono tutaj, w formach."
+    "name": "Dolina rzemieślników"
   },
   "junior_3": {
-    "name": "Świątynia Thota",
-    "description": "Świątynia Thota. To on wymyślił pismo, prowadził zapiski i liczył. Czyli robił mniej więcej to samo co my."
+    "name": "Świątynia Thota"
   },
   "junior_4": {
-    "name": "Latarnia w Aleksandrii",
-    "description": "Latarnia Faros w Aleksandrii. Na szczycie ogień płonący całą noc, a żeglarze widzieli brzeg z odległości dnia drogi."
+    "name": "Latarnia w Aleksandrii"
   },
   "junior_treasure_tomb": {
     "name": "Ukryty skarbiec szlachcianki",
-    "description": "Skarbiec pewnej szlachcianki, pomalowany od podłogi do sufitu. Kupowała najpiękniejsze kopie, jakie były, i nigdy się do tego nie przyznała.",
     "mapHint": "Staranny tusz, herb z pieczęcią w rogu. Ktoś ważny chciał, żeby o tej komnacie zapomniano."
   },
   "expert_1": {

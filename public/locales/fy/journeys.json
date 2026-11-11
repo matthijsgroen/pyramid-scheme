@@ -21,24 +21,19 @@
     "mapHint": "It stikje tekenet in merkwei en in kelderdoar — in skûlplak fan in hanneler, neat grutters."
   },
   "junior_1": {
-    "name": "Tocht fan de Hillige Ibis",
-    "description": "Sompelân, en de ibis dy't der troch waadt. Egypte seach nei dizze fûgels: as sy weromkomme, komt it hege wetter."
+    "name": "Tocht fan de Hillige Ibis"
   },
   "junior_2": {
-    "name": "Delling fan de Ambachtslju",
-    "description": "Deir el-Medina, dêr't de grêfbouwers wennen. Alles wat yn in keningsgrêf gie, waard hjir makke, yn mallen."
+    "name": "Delling fan de Ambachtslju"
   },
   "junior_3": {
-    "name": "Timpel fan Thoth",
-    "description": "De timpel fan Thoth. Hy betocht it skrift, hold de boekhâlding by en die it rekkenwurk — sa'n bytsje wat wy ek dogge."
+    "name": "Timpel fan Thoth"
   },
   "junior_4": {
-    "name": "Fjoertoer fan Aleksandrje",
-    "description": "De Faros fan Aleksandrje. Boppe-yn in fjoer dat de hiele nacht baarnde, en seelju dy't de kust fûnen fan in dei farren fier."
+    "name": "Fjoertoer fan Aleksandrje"
   },
   "junior_treasure_tomb": {
     "name": "Ferburgen Klûs fan de Eallju",
-    "description": "It ferwulf fan in eallefrou, fan flier oant plafond beskildere. Se kocht de moaiste kopyen dy't der wiene, en sei dat nea lûdop.",
     "mapHint": "Fyn inket, in fersegele wapen yn 'e hoeke — ien fan stân woe dat dizze keamer ferjitten waard."
   },
   "expert_1": {
