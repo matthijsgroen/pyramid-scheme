@@ -109,10 +109,10 @@ const FLOORS_WITH_MECHANICS = [
 // The floors holding a one-way drop with every mod.
 const FLOORS_WITH_DROPS = [
   "junior_1 level 1 floor 0",
+  "junior_2 level 4 floor 0",
   "junior_3 level 2 floor 0",
   "junior_3 level 3 floor 0",
   "junior_3 level 4 floor 0",
-  "junior_4 level 2 floor 0",
   "junior_4 level 3 floor 0",
   "junior_4 level 4 floor 0",
   "expert_2 level 1 floor 0",
