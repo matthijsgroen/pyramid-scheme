@@ -21,24 +21,19 @@
     "mapHint": "O pedaço de papel mostra uma rua de mercado e a porta de um porão. O esconderijo de um comerciante, nada de mais."
   },
   "junior_1": {
-    "name": "A Viagem dos Íbis Sagrados",
-    "description": "Terra de pântanos, com íbis andando pela água. O Egito ficava de olho nessas aves: quando elas voltam, a cheia do rio está chegando."
+    "name": "A Viagem dos Íbis Sagrados"
   },
   "junior_2": {
-    "name": "Vale dos Artesãos",
-    "description": "Deir el-Medina, onde moravam os construtores de tumbas. Tudo o que ia para o enterro de um rei era feito aqui primeiro, em moldes."
+    "name": "Vale dos Artesãos"
   },
   "junior_3": {
-    "name": "Templo de Thoth",
-    "description": "O templo de Thoth. Ele inventou a escrita, guardava os registros e fazia as contas. Quase tudo o que a gente anda fazendo!"
+    "name": "Templo de Thoth"
   },
   "junior_4": {
-    "name": "Farol de Alexandria",
-    "description": "O Farol de Alexandria. Um fogo lá no alto, queimando a noite toda, e os marinheiros achando a costa a um dia de viagem de distância."
+    "name": "Farol de Alexandria"
   },
   "junior_treasure_tomb": {
     "name": "Cofre Escondido da Nobre",
-    "description": "O cofre de uma nobre, pintado do chão até o teto. Ela comprou as melhores cópias que o dinheiro podia pagar, e nunca contou isso a ninguém.",
     "mapHint": "Tinta fina, um brasão no canto: alguém importante queria que esta sala fosse esquecida."
   },
   "expert_1": {

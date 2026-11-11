@@ -21,24 +21,19 @@
     "mapHint": "Gabaliņā ieskicēts tirgus ceļš un pagraba durvis — tirgotāja slēptuve, nekas vairāk."
   },
   "junior_1": {
-    "name": "Svēto ibisu ceļš",
-    "description": "Purvaina zeme un ibisi, kas pa to brien. Ēģipte vēroja šos putnus: kad tie atgriežas, nāk plūdi."
+    "name": "Svēto ibisu ceļš"
   },
   "junior_2": {
-    "name": "Amatnieku ieleja",
-    "description": "Deir el-Medīna, kur dzīvoja kapu cēlēji. Viss, kas nonāca karaliskā kapā, vispirms tika darināts šeit, veidnēs."
+    "name": "Amatnieku ieleja"
   },
   "junior_3": {
-    "name": "Tota templis",
-    "description": "Tota templis. Viņš izgudroja rakstību, glabāja pierakstus un skaitīja — tieši to, ko mēs lielākoties esam darījuši."
+    "name": "Tota templis"
   },
   "junior_4": {
-    "name": "Aleksandrijas bāka",
-    "description": "Aleksandrijas Fara. Augšā uguns, kas dega visu nakti, un jūrnieki atrada krastu jau dienas brauciena attālumā."
+    "name": "Aleksandrijas bāka"
   },
   "junior_treasure_tomb": {
     "name": "Dižciltīgās slēptā velve",
-    "description": "Dižciltīgas kundzes velve, apgleznota no grīdas līdz griestiem. Viņa nopirka labākās kopijas, kādas var nopirkt par naudu, un nekad to neteica skaļi.",
     "mapHint": "Smalka tinte, zīmogs ar ģerboni stūrī — kāds no augstas kārtas gribēja, lai šo istabu aizmirst."
   },
   "expert_1": {

@@ -21,24 +21,19 @@
     "mapHint": "Útržek ukazuje tržní cestu a dveře do sklepa – skrýš kupce, nic víc."
   },
   "junior_1": {
-    "name": "Let posvátných ibisů",
-    "description": "Bažiny a ibisové, kteří se jimi brodí. Egypťané tyhle ptáky sledovali: když se vrátí, přijde povodeň."
+    "name": "Let posvátných ibisů"
   },
   "junior_2": {
-    "name": "Údolí řemeslníků",
-    "description": "Dér el-Medína, kde bydleli stavitelé hrobek. Všechno, co šlo do královského hrobu, se tu nejdřív vyrobilo ve formách."
+    "name": "Údolí řemeslníků"
   },
   "junior_3": {
-    "name": "Thothův chrám",
-    "description": "Chrám boha Thotha. Vymyslel písmo, zapisoval všechno a počítal – vlastně přesně to, co děláme my."
+    "name": "Thothův chrám"
   },
   "junior_4": {
-    "name": "Maják v Alexandrii",
-    "description": "Maják Faros v Alexandrii. Nahoře hořel oheň celou noc a námořníci podle něj našli pobřeží i z celodenní plavby daleko."
+    "name": "Maják v Alexandrii"
   },
   "junior_treasure_tomb": {
     "name": "Skrytá komnata šlechtičny",
-    "description": "Komnata jedné šlechtičny, pomalovaná od podlahy až ke stropu. Koupila si ty nejkrásnější kopie, jaké šly sehnat, a nikdy to nikomu neřekla.",
     "mapHint": "Jemný inkoust, pečeť se znakem v rohu – někdo urozený chtěl, aby se na tuhle místnost zapomnělo."
   },
   "expert_1": {

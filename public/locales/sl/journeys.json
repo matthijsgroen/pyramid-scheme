@@ -21,24 +21,19 @@
     "mapHint": "Na koščku je narisana tržna pot in vrata v klet – skrivališče trgovca, nič bolj imenitnega."
   },
   "junior_1": {
-    "name": "Selitev svetih ibisov",
-    "description": "Močvirje in ibisi, ki gazijo po njem. Egipčani so te ptice opazovali: ko se vrnejo, pride poplava."
+    "name": "Selitev svetih ibisov"
   },
   "junior_2": {
-    "name": "Dolina obrtnikov",
-    "description": "Deir el-Medina, kjer so živeli graditelji grobnic. Vse za kraljevi pokop so najprej naredili tukaj, v kalupih."
+    "name": "Dolina obrtnikov"
   },
   "junior_3": {
-    "name": "Thothov tempelj",
-    "description": "Tempelj boga Thotha. Izumil je pisavo, vodil zapiske in štel – in to je skoraj vse, kar ves čas počnemo."
+    "name": "Thothov tempelj"
   },
   "junior_4": {
-    "name": "Svetilnik v Aleksandriji",
-    "description": "Faros v Aleksandriji. Na vrhu ogenj, ki gori vso noč, in mornarji, ki obalo najdejo že dan plovbe daleč."
+    "name": "Svetilnik v Aleksandriji"
   },
   "junior_treasure_tomb": {
     "name": "Skriti trezor plemkinje",
-    "description": "Trezor plemkinje, poslikan od tal do stropa. Kupila je najlepše kopije, kar jih je bilo mogoče kupiti, a tega ni nikoli priznala.",
     "mapHint": "Lepo črnilo in pečat z grbom v kotu – nekdo pomemben je hotel, da na to sobo vsi pozabijo."
   },
   "expert_1": {

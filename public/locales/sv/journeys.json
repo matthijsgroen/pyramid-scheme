@@ -21,24 +21,19 @@
     "mapHint": "Lappen visar en marknadsgata och en källardörr – en handlares gömställe, inget finare än så."
   },
   "junior_1": {
-    "name": "De heliga ibisarnas flytt",
-    "description": "Träskmark, och ibisfåglar som vadar genom den. Egypterna höll koll på fåglarna: när de kommer tillbaka är översvämningen på väg."
+    "name": "De heliga ibisarnas flytt"
   },
   "junior_2": {
-    "name": "Hantverkarnas dal",
-    "description": "Deir el-Medina, där gravbyggarna bodde. Allt som skulle ner i en kunglig grav gjordes här först, i formar."
+    "name": "Hantverkarnas dal"
   },
   "junior_3": {
-    "name": "Thoths tempel",
-    "description": "Thoths tempel. Han uppfann skriften, skrev upp allt och räknade – ungefär det vi också håller på med."
+    "name": "Thoths tempel"
   },
   "junior_4": {
-    "name": "Fyren i Alexandria",
-    "description": "Faros i Alexandria. En eld på toppen som brann hela natten, så att sjömännen hittade kusten en hel dags segling bort."
+    "name": "Fyren i Alexandria"
   },
   "junior_treasure_tomb": {
     "name": "Adelsdamens hemliga valv",
-    "description": "En adelsdams valv, målat från golv till tak. Hon köpte de finaste kopiorna som fanns, och sa aldrig ett ord om det.",
     "mapHint": "Fint bläck, ett sigill med vapen i hörnet – någon fin person ville att det här rummet skulle glömmas."
   },
   "expert_1": {

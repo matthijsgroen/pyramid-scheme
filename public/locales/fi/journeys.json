@@ -21,24 +21,19 @@
     "mapHint": "Paperinpalassa on luonnos kauppatiestä ja kellarin ovesta. Kauppiaan piilopaikka, ei mitään hienompaa."
   },
   "junior_1": {
-    "name": "Pyhien iibisten muutto",
-    "description": "Suomaata, ja iibikset kahlaamassa sen läpi. Egyptissä näitä lintuja seurattiin: kun ne palaavat, tulva on tulossa."
+    "name": "Pyhien iibisten muutto"
   },
   "junior_2": {
-    "name": "Käsityöläisten laakso",
-    "description": "Deir el-Medina, jossa hautojen rakentajat asuivat. Kaikki, mitä kuninkaan hautaan pantiin, tehtiin ensin täällä muoteissa."
+    "name": "Käsityöläisten laakso"
   },
   "junior_3": {
-    "name": "Thothin temppeli",
-    "description": "Thothin temppeli. Hän keksi kirjoituksen, piti kirjaa ja laski laskut. Aika lailla sitä, mitä mekin olemme tehneet."
+    "name": "Thothin temppeli"
   },
   "junior_4": {
-    "name": "Aleksandrian majakka",
-    "description": "Aleksandrian Faros. Huipulla tuli, joka paloi koko yön, ja merimiehet löysivät rannikon päivän purjehduksen päästä."
+    "name": "Aleksandrian majakka"
   },
   "junior_treasure_tomb": {
     "name": "Ylhäisen piilotettu holvi",
-    "description": "Ylhäisen naisen holvi, maalattu lattiasta kattoon. Hän osti hienoimmat kopiot, mitä rahalla sai, eikä koskaan kertonut sitä kenellekään.",
     "mapHint": "Hienoa mustetta ja vaakunasinetti nurkassa. Joku arvohenkilö halusi tämän huoneen unohtuvan."
   },
   "expert_1": {

@@ -21,24 +21,19 @@
     "mapHint": "El trocito dibuja un camino de mercado y la puerta de un sótano. El escondite de un comerciante, nada más."
   },
   "junior_1": {
-    "name": "El viaje del ibis sagrado",
-    "description": "Tierra de pantanos, y los ibis caminando por el agua. Egipto los vigilaba: cuando vuelven, llega la crecida del río."
+    "name": "El viaje del ibis sagrado"
   },
   "junior_2": {
-    "name": "El valle de los artesanos",
-    "description": "Deir el-Medina, donde vivían los que hacían las tumbas. Todo lo que iba en una tumba real se hacía aquí primero, en moldes."
+    "name": "El valle de los artesanos"
   },
   "junior_3": {
-    "name": "Templo de Thoth",
-    "description": "El templo de Thoth. Él inventó la escritura, llevaba los registros y hacía las cuentas. O sea, casi todo lo que hemos estado haciendo."
+    "name": "Templo de Thoth"
   },
   "junior_4": {
-    "name": "El faro de Alejandría",
-    "description": "El faro de Alejandría. Un fuego en la punta que ardía toda la noche, y los marineros veían la costa desde un día de viaje."
+    "name": "El faro de Alejandría"
   },
   "junior_treasure_tomb": {
     "name": "La bóveda escondida de la noble",
-    "description": "La bóveda de una noble, pintada del suelo al techo. Compró las mejores copias que el dinero podía pagar, y nunca se lo dijo a nadie.",
     "mapHint": "Tinta fina y un sello con escudo en la esquina. Alguien importante quería que esta sala se olvidara."
   },
   "expert_1": {

@@ -21,24 +21,19 @@
     "mapHint": "Komadić mape crta pijačni put i vrata podruma — skrovište nekog trgovca, ništa veće."
   },
   "junior_1": {
-    "name": "Selidba svetih ibisa",
-    "description": "Močvarni kraj, i ibisi koji gaze kroz njega. Egipćani su pazili na ove ptice: kad se vrate, stiže i poplava."
+    "name": "Selidba svetih ibisa"
   },
   "junior_2": {
-    "name": "Dolina zanatlija",
-    "description": "Deir el-Medina, gdje su živjeli graditelji grobnica. Sve što je išlo u kraljevski grob prvo je napravljeno ovdje, u kalupima."
+    "name": "Dolina zanatlija"
   },
   "junior_3": {
-    "name": "Hram boga Thotha",
-    "description": "Thothov hram. On je izmislio pismo, vodio zapise i sve brojao — baš ono što i mi uglavnom radimo."
+    "name": "Hram boga Thotha"
   },
   "junior_4": {
-    "name": "Svjetionik u Aleksandriji",
-    "description": "Faros u Aleksandriji. Na vrhu vatra koja gori cijelu noć, a mornari vide obalu i kad su dan plovidbe daleko."
+    "name": "Svjetionik u Aleksandriji"
   },
   "junior_treasure_tomb": {
     "name": "Skriveni trezor plemkinje",
-    "description": "Trezor jedne plemkinje, oslikan od poda do stropa. Kupila je najljepše kopije koje se mogu kupiti, i nikad to nikom nije rekla.",
     "mapHint": "Fino mastilo, pečat s grbom u ćošku — neko ugledan htio je da se ova soba zaboravi."
   },
   "expert_1": {

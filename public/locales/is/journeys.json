@@ -21,24 +21,19 @@
     "mapHint": "Snifsið sýnir markaðsveg og kjallaradyr. Felustaður kaupmanns, ekkert fínna en það."
   },
   "junior_1": {
-    "name": "Ferðir íbisfuglanna",
-    "description": "Mýrlendi og íbisfuglar sem vaða um það. Egyptar fylgdust með þessum fuglum: þegar þeir koma aftur er flóðið á leiðinni."
+    "name": "Ferðir íbisfuglanna"
   },
   "junior_2": {
-    "name": "Dalur handverksfólksins",
-    "description": "Deir el-Medina, þar sem grafhýsasmiðirnir bjuggu. Allt sem fór í konunglega gröf var fyrst búið til hér, í mótum."
+    "name": "Dalur handverksfólksins"
   },
   "junior_3": {
-    "name": "Musteri Þóts",
-    "description": "Musteri Þóts. Hann fann upp skriftina, hélt skrárnar og taldi allt. Það er einmitt mest af því sem við höfum verið að gera."
+    "name": "Musteri Þóts"
   },
   "junior_4": {
-    "name": "Vitinn í Alexandríu",
-    "description": "Faros í Alexandríu. Eldur efst sem logaði alla nóttina, og sjómenn sáu ströndina heilan dag úti á sjó."
+    "name": "Vitinn í Alexandríu"
   },
   "junior_treasure_tomb": {
     "name": "Falin hvelfing aðalskonunnar",
-    "description": "Hvelfing aðalskonu, máluð frá gólfi upp í loft. Hún keypti bestu eftirlíkingar sem fáanlegar voru og sagði aldrei neinum frá því.",
     "mapHint": "Fínt blek og skjaldarmerki í horninu. Einhver mikilvægur vildi að þessu herbergi yrði gleymt."
   },
   "expert_1": {

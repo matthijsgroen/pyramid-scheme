@@ -21,24 +21,19 @@
     "mapHint": "Il pezzetto mostra una strada del mercato e la porta di una cantina: il nascondiglio di un mercante, niente di più."
   },
   "junior_1": {
-    "name": "Il volo degli ibis sacri",
-    "description": "Paludi, e gli ibis che ci camminano dentro. Gli Egizi guardavano questi uccelli: quando tornano, arriva la piena."
+    "name": "Il volo degli ibis sacri"
   },
   "junior_2": {
-    "name": "Valle degli artigiani",
-    "description": "Deir el-Medina, dove abitavano quelli che costruivano le tombe. Tutto quello che finiva nella tomba di un re veniva fatto prima qui, con gli stampi."
+    "name": "Valle degli artigiani"
   },
   "junior_3": {
-    "name": "Tempio di Thoth",
-    "description": "Il tempio di Thoth. Ha inventato la scrittura, teneva i registri e faceva i conti: più o meno quello che facciamo anche noi."
+    "name": "Tempio di Thoth"
   },
   "junior_4": {
-    "name": "Il Faro di Alessandria",
-    "description": "Il Faro di Alessandria. In cima un fuoco acceso tutta la notte, e i marinai che vedevano la costa da un giorno di viaggio."
+    "name": "Il Faro di Alessandria"
   },
   "junior_treasure_tomb": {
     "name": "La stanza segreta della nobile",
-    "description": "La stanza di una nobildonna, dipinta dal pavimento al soffitto. Ha comprato le copie più belle che c'erano, e non l'ha mai detto a nessuno.",
     "mapHint": "Inchiostro fine, uno stemma nell'angolo: qualcuno di importante voleva che questa stanza fosse dimenticata."
   },
   "expert_1": {
