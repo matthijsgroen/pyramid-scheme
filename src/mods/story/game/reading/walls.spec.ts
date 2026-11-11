@@ -1,13 +1,24 @@
 import { describe, expect, it } from "vitest"
 import { allItems } from "@/mods/hieroglyph/game/symbolCatalogue"
-import { WALLS, canRepair, legible, wallFor } from "./walls"
+import { WALLS, canRepair, isRepaired, legible, wallFor, type Wall } from "./walls"
 
 const held = (...ids: string[]) => new Set(ids.map(id => `hieroglyph:${id}`))
+const everyWall = Object.entries(WALLS).flatMap(([journeyId, walls]) => walls.map(wall => ({ journeyId, wall })))
+
+const madeUp: Wall = {
+  at: { levelNr: 3, floor: 2 },
+  cut: ["d1", "a1", "p1"],
+  wrongAt: 1,
+  answer: "a2",
+  copy: "test.wall",
+  after: "test.fixed",
+  panel: { aspect: 1, signs: { x: 0, y: 0, width: 1, height: 1 }, flow: "row" },
+}
 
 describe("a wall to be put right", () => {
   it("is cut from signs the player can actually collect", () => {
     const known = new Set(allItems.map(item => item.id))
-    const unknown = Object.values(WALLS).flatMap(wall =>
+    const unknown = everyWall.flatMap(({ wall }) =>
       [...wall.cut, wall.answer].filter(id => id !== "" && !known.has(id))
     )
 
@@ -15,7 +26,7 @@ describe("a wall to be put right", () => {
   })
 
   it("puts the wrong sign inside its own line, and never the right one", () => {
-    for (const wall of Object.values(WALLS)) {
+    for (const { wall } of everyWall) {
       expect(wall.wrongAt).toBeGreaterThanOrEqual(0)
       expect(wall.wrongAt).toBeLessThan(wall.cut.length)
       expect(wall.cut[wall.wrongAt]).not.toBe(wall.answer)
@@ -23,37 +34,41 @@ describe("a wall to be put right", () => {
   })
 
   it("leaves a scoured slot empty, so there is nothing there to misread", () => {
-    for (const wall of Object.values(WALLS).filter(w => w.missing)) expect(wall.cut[wall.wrongAt]).toBe("")
+    for (const { wall } of everyWall.filter(({ wall }) => wall.missing)) expect(wall.cut[wall.wrongAt]).toBe("")
   })
 
   it("cannot be repaired with a sign the player has not learned", () => {
-    const wall = wallFor("junior_treasure_tomb")!
-
-    expect(canRepair(wall, held(...wall.cut.filter(id => id !== wall.answer)))).toBe(false)
-    expect(canRepair(wall, held(wall.answer))).toBe(true)
+    expect(canRepair(madeUp, held(...madeUp.cut))).toBe(false)
+    expect(canRepair(madeUp, held(madeUp.answer))).toBe(true)
   })
 
   it("reads back only the signs that have been learned", () => {
-    const wall = wallFor("junior_treasure_tomb")!
-
-    expect(legible(wall, held(wall.cut[0], wall.cut[2]))).toEqual(wall.cut.map((_, i) => i === 0 || i === 2))
+    expect(legible(madeUp, held("d1", "p1"))).toEqual([true, false, true])
   })
 
-  it("has nothing to say about a journey with no wall in it", () => {
-    expect(wallFor("starter_2")).toBeUndefined()
+  it("stands put right once the scene its repair plays has been heard, and not before", () => {
+    expect(isRepaired(madeUp, {})).toBe(false)
+    expect(isRepaired(madeUp, { "some.other": true })).toBe(false)
+    expect(isRepaired(madeUp, { [madeUp.after]: true })).toBe(true)
   })
 })
 
-describe("the Sphinx", () => {
-  const sphinx = wallFor("starter_1")!
-
-  it("reads as a god's name until the reed leaf goes in", () => {
-    expect(legible(sphinx, held("art5", "d3"))).toEqual([true, true, false])
-    expect(canRepair(sphinx, held("art5", "d3"))).toBe(false)
-    expect(canRepair(sphinx, held("s1"))).toBe(true)
+describe("where a wall stands", () => {
+  it("is found on its own floor of its own site, and on no other", () => {
+    for (const { journeyId, wall } of everyWall) {
+      expect(wallFor(journeyId, wall.at.levelNr, wall.at.floor)).toBe(wall)
+      expect(wallFor(journeyId, wall.at.levelNr, wall.at.floor + 100)).toBeUndefined()
+      expect(wallFor(journeyId, wall.at.levelNr + 100, wall.at.floor)).toBeUndefined()
+    }
   })
 
-  it("plays the ending once it is put right", () => {
-    expect(sphinx.after).toBe("reading.sphinx")
+  it("is one wall per place, so a reading room never has two to choose from", () => {
+    const places = everyWall.map(({ journeyId, wall }) => `${journeyId}@${wall.at.levelNr}/${wall.at.floor}`)
+
+    expect(places.filter((place, i) => places.indexOf(place) !== i)).toEqual([])
+  })
+
+  it("has nothing to say about a journey with no wall in it", () => {
+    expect(wallFor("no_such_journey", 1, 0)).toBeUndefined()
   })
 })

@@ -21,4 +21,9 @@ describe("hieroglyphCategory", () => {
     expect(hieroglyphCategory("a1")).toBe("animals")
     expect(hieroglyphCategory("a15")).toBe("animals")
   })
+
+  it("maps the given signs (o*) to the offerings namespace and the sounds (s*) to the signs namespace", () => {
+    expect(hieroglyphCategory("o1")).toBe("offerings")
+    expect(hieroglyphCategory("s1")).toBe("signs")
+  })
 })

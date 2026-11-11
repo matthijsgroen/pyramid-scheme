@@ -8,7 +8,13 @@
  * Keyed by the scene a room plays. Each list runs latest first and the first state whose `after` has been
  * heard wins; the last state has no condition. Every line is the ghost's alone (revisits.spec), so the
  * Fez-before-meeting gate never drops one.
+ *
+ * A gift owed comes before any of it (`giftDue`): a ghost whose formula wall the player has seen gives the
+ * sign on the next visit, whatever state the story is in, and only then goes back to its lines. Each giver
+ * has a state for after the gift, placed in the order the story reaches it.
  */
+import { FORMULA, formulaGift, formulaHint, type FormulaRow } from "@/mods/story/game/reading/formula"
+
 export type RevisitState = {
   /** A conversation id that must have been heard for this state to apply. */
   after?: string
@@ -19,22 +25,26 @@ export type RevisitState = {
 export const REVISITS: Readonly<Record<string, readonly RevisitState[]>> = {
   "tomb.starter": [
     { after: "tomb.expert", lines: ["revisit.starter.later1", "revisit.starter.later2"] },
+    { after: "formula.junior.gift", lines: ["revisit.starter.gave1"] },
     { after: "tomb.junior", lines: ["revisit.starter.paid1", "revisit.starter.paid2"] },
     { lines: ["revisit.starter.north1", "revisit.starter.north2"] },
   ],
   "tomb.junior": [
     { after: "tomb.master", lines: ["revisit.junior.later1"] },
+    { after: "formula.expert.gift", lines: ["revisit.junior.gave1"] },
     { after: "tomb.expert", lines: ["revisit.junior.met1"] },
     { after: "tomb.juniorFixed", lines: ["revisit.junior.priest1", "revisit.junior.priest2"] },
     { lines: ["revisit.junior.wall1", "revisit.junior.wall2"] },
   ],
   "tomb.expert": [
     { after: "tomb.wizard", lines: ["revisit.expert.later1"] },
+    { after: "formula.master.gift", lines: ["revisit.expert.gave1"] },
     { after: "tomb.master", lines: ["revisit.expert.king1"] },
     { lines: ["revisit.expert.seal1", "revisit.expert.seal2"] },
   ],
   "tomb.master": [
     { after: "reading.sphinx", lines: ["revisit.master.later1"] },
+    { after: "formula.wizard.gift", lines: ["revisit.master.gave1"] },
     { after: "tomb.wizard", lines: ["revisit.master.rite1"] },
     { lines: ["revisit.master.priest1", "revisit.master.priest2"] },
   ],
@@ -45,8 +55,15 @@ export const REVISITS: Readonly<Record<string, readonly RevisitState[]>> = {
 export const revisitLines = (scene: string, heard: Readonly<Record<string, boolean>>): readonly string[] =>
   REVISITS[scene]?.find(state => state.after === undefined || heard[state.after] === true)?.lines ?? []
 
+/** The gift a ghost owes on this visit: its scene heard, its wall seen (the hint heard), the gift not yet given. */
+export const giftDue = (scene: string, heard: Readonly<Record<string, boolean>>): FormulaRow | undefined =>
+  FORMULA.find(
+    row => row.giver === scene && heard[scene] === true && heard[formulaHint(row)] === true && !heard[formulaGift(row)]
+  )
+
 /**
- * What a conversation room plays on this visit: the whole scene until it has been heard, then one line.
+ * What a conversation room plays on this visit: the whole scene until it has been heard, then a gift owed,
+ * then one line.
  * `pick` is a number in [0, 1) choosing among the state's lines.
  */
 export const sceneOnVisit = (
@@ -55,6 +72,8 @@ export const sceneOnVisit = (
   pick: () => number = Math.random
 ): string => {
   if (heard[scene] !== true) return scene
+  const gift = giftDue(scene, heard)
+  if (gift) return formulaGift(gift)
   const lines = revisitLines(scene, heard)
   return lines.length === 0 ? scene : lines[Math.floor(pick() * lines.length)]
 }

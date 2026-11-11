@@ -1,7 +1,7 @@
 import type { FC } from "react"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
-import { useInventoryCategory } from "@/mods/hieroglyph/app/useInventoryTranslations"
+import { useInventoryCategory, type InventoryCategory } from "@/mods/hieroglyph/app/useInventoryTranslations"
 import { getItemFirstLevel } from "../game/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { useHieroglyphProgress } from "./useHieroglyphProgress"
@@ -15,13 +15,11 @@ import type { CollectionSectionProps } from "@/app/pages/collectionSectionRegist
 // shown as an empty / partial ("Ra 1/3") / collected slot. Registered app-side and gated on the
 // mod (see ./collection), so it drops out of the shared Collection screen when the mod is off.
 
-type HieroglyphCategory = "deities" | "professions" | "animals" | "artifacts" | "signs"
-
 // Signs last: they are the group that is not a noun, and there is one of them.
-const CATEGORIES: HieroglyphCategory[] = ["deities", "professions", "animals", "artifacts", "signs"]
+const CATEGORIES: InventoryCategory[] = ["deities", "professions", "animals", "artifacts", "offerings", "signs"]
 
 const CategoryGridSection: FC<{
-  category: HieroglyphCategory
+  category: InventoryCategory
   selectedItem: CollectionSectionProps["selectedItem"]
   onSelect: CollectionSectionProps["onSelect"]
   inventory: Record<string, number | undefined>

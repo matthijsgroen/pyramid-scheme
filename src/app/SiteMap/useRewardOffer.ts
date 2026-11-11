@@ -5,6 +5,8 @@ import type { MergedRewardContributions } from "./rewardContributions"
 export type PendingReward = {
   reward: TreasureReward
   keyColors?: readonly KeyColor[]
+  /** Handed over by somebody rather than found: the popup says so. */
+  received?: boolean
   onCollect: () => void
 }
 

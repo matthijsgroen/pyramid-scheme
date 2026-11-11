@@ -11,13 +11,16 @@
   "pyramidBlockedBlocks4": "Kom op, je bent al zo ver gekomen. Dit kun jij!",
   "levelCompleted": "Ha! Hij gaat open! Kom, naar binnen.",
   "exitPillar": {
-    "1": { "fez": "Ha! Daglicht! Zie je die lichtstraal? Daar gaan we naar buiten. Erin stappen, en we zijn klaar hier." },
-    "2": { "fez": "Er is er maar één, altijd helemaal aan het eind van de hoofdgang. Waar we ook rondzwerven, we komen hier terug." },
+    "1": {
+      "fez": "Ha! Daglicht! Zie je die lichtstraal? Daar gaan we naar buiten. Erin stappen, en we zijn klaar hier."
+    },
+    "2": {
+      "fez": "Er is er maar één, altijd helemaal aan het eind van de hoofdgang. Waar we ook rondzwerven, we komen hier terug."
+    },
     "3": { "explorer": "Eén uitgang. Genoteerd." }
   },
   "expeditionCompleted": "Gefeliciteerd met het voltooien van de expeditie!",
   "expeditionCompleted2": "Een nieuwe expeditie is nu beschikbaar.",
-
 
   "tombTutorial": "Ooh, tekst! Kunnen we dat lezen? Met de hiërogliefen die we gevonden hebben… misschien!",
   "tombTutorial2": "Kijk nou, sommen met tekens erin! Zie je die lege plekjes? Daar gaan de hiërogliefen in. Die van jou, hieronder.",
@@ -809,8 +812,31 @@
     "2": { "explorer": "Het kan ermee door." }
   },
 
+  "formula": {
+    "junior": {
+      "hint": { "1": { "fez": "[Fez at the junior wall: the slot wants bread, go back to Ipi — designer copy]" } },
+      "gift": { "1": { "ipi": "[Ipi gives bread — designer copy]" } }
+    },
+    "expert": {
+      "hint": { "1": { "fez": "[Fez at the expert wall: the slot wants linen, go back to Henut — designer copy]" } },
+      "gift": { "1": { "henut": "[Henut gives linen — designer copy]" } }
+    },
+    "master": {
+      "hint": {
+        "1": { "fez": "[Fez at the master wall: the slot wants water, go back to the high priest — designer copy]" }
+      },
+      "gift": { "1": { "priest": "[the high priest gives water — designer copy]" } }
+    },
+    "wizard": {
+      "hint": {
+        "1": { "fez": "[Fez at the wizard wall: the slot wants the boat, go back to the pharaoh — designer copy]" }
+      },
+      "gift": { "1": { "pharaoh": "[the pharaoh gives the boat — designer copy]" } }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": { "1": { "ipi": "[Ipi, after giving bread — designer copy]" } },
       "north1": { "1": { "ipi": "Nog steeds hier? Naar het noorden! Henut! Elf deben!" } },
       "north2": { "1": { "ipi": "Elf deben lapis. Henut. Noorden. Waar wacht je nog op?" } },
       "paid1": { "1": { "ipi": "En? Heeft ze betaald? …Nee. Natuurlijk niet." } },
@@ -819,6 +845,7 @@
       "later2": { "1": { "ipi": "Veertig jaar boeken, en er klopt er niet één. Niet één!" } }
     },
     "junior": {
+      "gave1": { "1": { "henut": "[Henut, after giving linen — designer copy]" } },
       "wall1": { "1": { "henut": "De muur. Het derde teken. Het is nog steeds mijn naam niet." } },
       "wall2": { "1": { "henut": "Jij bent er nog, en die gans staat nog steeds op mijn muur. Zet het recht." } },
       "priest1": { "1": { "henut": "Nog steeds mijn naam. Ik heb gekeken. En nu — Karnak, die priester. Hup." } },
@@ -827,12 +854,14 @@
       "later1": { "1": { "henut": "Nog steeds glas. Nog steeds prachtig. Nog steeds door mij uitgezocht." } }
     },
     "expert": {
+      "gave1": { "1": { "priest": "[the high priest, after giving water — designer copy]" } },
       "seal1": { "1": { "priest": "Het zegel. Hierheen gebracht, neergelegd, uitgesproken. Ik wacht wel." } },
       "seal2": { "1": { "priest": "Ah. U weer. En nog steeds geen zegel." } },
       "king1": { "1": { "priest": "U bent bij de koning geweest. Goed. Het ding zelf, let wel — geen gelijkenis." } },
       "later1": { "1": { "priest": "U weer. Er valt hier niets meer te doen. Het is heel rustgevend." } }
     },
     "master": {
+      "gave1": { "1": { "pharaoh": "[the pharaoh, after giving the boat — designer copy]" } },
       "priest1": {
         "1": { "pharaoh": "Nog steeds hier? Naar die priester met die kopie! Ik wil horen hoe het afloopt." }
       },

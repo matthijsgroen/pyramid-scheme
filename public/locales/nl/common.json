@@ -162,6 +162,7 @@
   },
   "loot": {
     "youFound": "Je hebt gevonden",
+    "youReceived": "Je kreeg",
     "expeditionReward": "Extra beloning voor het voltooien van de expeditie",
     "clickToContinue": "Tik ergens om door te gaan"
   },
@@ -265,6 +266,7 @@
       "artifacts": "💎 Artefacten",
       "treasures": "💰 Schatten",
       "junk": "🔷 Snuisterijen",
+      "offerings": "🍞 Gaven",
       "signs": "✍️ Tekens"
     },
     "treasureCategories": {

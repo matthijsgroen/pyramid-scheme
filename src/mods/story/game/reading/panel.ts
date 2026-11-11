@@ -11,7 +11,7 @@ export type Rect = { x: number; y: number; width: number; height: number }
 export type Flow = "column" | "row"
 
 export type Panel = {
-  /** The backdrop the signs are written on, by name (`src/assets/reading/<art>.webp`); none draws a cartouche. */
+  /** The backdrop the signs are written on, by name (`src/assets/reading/<art>.webp`); none draws a slab. */
   art?: string
   /** Width over height of the panel — the backdrop's own, so the signs land where it painted the cartouche. */
   aspect: number
@@ -19,7 +19,7 @@ export type Panel = {
   signs: Rect
   flow: Flow
   /**
-   * The cut sign the painted cartouche itself stands for. It is the frame, so it is not written again
+   * The cut sign the painted cartouche itself stands for; unset, the wall has no cartouche. It is the frame, so it is not written again
    * inside it.
    */
   frame?: number

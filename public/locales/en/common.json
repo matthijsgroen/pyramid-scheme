@@ -162,6 +162,7 @@
   },
   "loot": {
     "youFound": "You found",
+    "youReceived": "You received",
     "expeditionReward": "Extra reward for completing the expedition",
     "clickToContinue": "Tap anywhere to continue"
   },
@@ -265,6 +266,7 @@
       "artifacts": "💎 Artifacts",
       "treasures": "💰 Treasures",
       "junk": "🔷 Trinkets",
+      "offerings": "🍞 Offerings",
       "signs": "✍️ Signs"
     },
     "treasureCategories": {

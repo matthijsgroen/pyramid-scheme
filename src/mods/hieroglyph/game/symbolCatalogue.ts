@@ -330,7 +330,7 @@ export const egyptianArtifacts = [
   {
     id: "art10",
     name: "Solar Barque",
-    symbol: "𓂧",
+    symbol: "𓊞",
     description: "Sacred boat that carries the sun god Ra across the sky from dawn to dusk.",
   },
   {
@@ -360,6 +360,40 @@ export const egyptianArtifacts = [
 ]
 
 /**
+ * Things given away — bread, linen, water, a boat — each by a ghost, whole, on a revisit.
+ *
+ * Never tableau symbols and never placed in the world: a sign here is a gift, not loot, and its only
+ * use is the empty slot of a formula wall. Which ghost gives which, and at what tier it counts, is
+ * `GIVEN_SIGNS` (`hieroglyphData.ts`).
+ */
+export const egyptianOfferings = [
+  {
+    id: "o1",
+    name: "Bread",
+    symbol: "𓏐",
+    description: "[Bread — designer copy]",
+  },
+  {
+    id: "o2",
+    name: "Linen",
+    symbol: "𓋳",
+    description: "[Linen — designer copy]",
+  },
+  {
+    id: "o3",
+    name: "Water",
+    symbol: "𓈗",
+    description: "[Water — designer copy]",
+  },
+  {
+    id: "o4",
+    name: "Boat",
+    symbol: "𓊛",
+    description: "[Boat — designer copy]",
+  },
+]
+
+/**
  * Sounds, not things — the one group that is not a noun.
  *
  * Every other sign in the catalogue names something: a god, a trade, an animal, a jar. These spell.
@@ -382,6 +416,7 @@ export const allItems = [
   ...egyptianProfessions,
   ...egyptianAnimals,
   ...egyptianArtifacts,
+  ...egyptianOfferings,
   ...egyptianSigns,
 ]
 // Helper function to get inventory item by ID
