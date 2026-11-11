@@ -1,4 +1,4 @@
-import { use, useMemo } from "react"
+import { use, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { getOwnedKeys } from "@/game/gridNavigation"
 import { concealShutGround } from "@/game/concealment"
@@ -44,6 +44,7 @@ import { PuzzleRoomContext } from "@/mods/core/app/puzzleState"
 import { DetectorPanel } from "@/ui/atoms/DetectorPanel"
 import { DetectorButton } from "@/ui/atoms/DetectorButton"
 import { BackButton } from "@/ui/atoms/BackButton"
+import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { FloorBadge } from "@/ui/atoms/FloorBadge"
 import { SiteHudBar } from "@/ui/atoms/SiteHudBar"
 import { FloorKeyRing } from "@/ui/molecules/FloorKeyRing"
@@ -208,7 +209,8 @@ export const SiteMapScreen = ({
     playTraversal,
     opensOnArrival,
   })
-  useExitIntro(prompt?.kind, use(FezContext).showConversation, { journeyId, levelNr: levelIndex + 1, exterior })
+  const fez = use(FezContext)
+  useExitIntro(prompt?.kind, fez.showConversation, { journeyId, levelNr: levelIndex + 1, exterior })
 
   const promptLabel = usePromptLabel()
   const promptCell = prompt?.kind === "room" ? grid?.cells[prompt.at[0]]?.[prompt.at[1]] : undefined
@@ -216,6 +218,10 @@ export const SiteMapScreen = ({
   const noticeLabel = useNoticeLabel()
 
   const ActiveEncounterComponent = encounter.family?.Component ?? null
+  // Escape asks before leaving: a stray key must not throw the player out of a site. The Back button leaves at once.
+  const [confirmingLeave, setConfirmingLeave] = useState(false)
+  // Keys reach the map only while nothing is open over it.
+  const mapOnTop = !encounter.isOpen && !rewardOffer.pending && !exit.leaving && !fez.speaking && !confirmingLeave
 
   if (!grid) {
     return <div className="p-4 text-red-400">Site layout unavailable.</div>
@@ -242,6 +248,8 @@ export const SiteMapScreen = ({
           notice={notice && { label: noticeLabel, at: notice.at }}
           occupantOf={occupantOf}
           replaysAt={replaysAt}
+          keysActive={mapOnTop}
+          onBack={() => setConfirmingLeave(true)}
           className="size-full"
         />
       </div>
@@ -337,6 +345,15 @@ export const SiteMapScreen = ({
         </EncounterModal>
       )}
       <RewardFlow pendingReward={rewardOffer.pending} onDismiss={rewardOffer.dismiss} />
+      <ConfirmModal
+        isOpen={confirmingLeave}
+        title={t("ui.leaveSite")}
+        message={t("ui.confirmLeaveSite")}
+        confirmText={t("ui.leave")}
+        cancelText={t("ui.stay")}
+        onConfirm={onCancel}
+        onCancel={() => setConfirmingLeave(false)}
+      />
     </div>
   )
 }

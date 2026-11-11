@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Walk the map with arrow keys or WASD.
+
 ### Changed
 
 - Bronze treasures and fallen mudbrick have new paintings.

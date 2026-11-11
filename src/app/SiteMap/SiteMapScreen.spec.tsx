@@ -155,7 +155,10 @@ describe(SiteMapScreen, () => {
   })
 
   const showConversation = vi.fn()
-  const renderScreen = async (onSiteComplete = () => {}, level: { exterior?: string; lastLevel?: boolean } = {}) => {
+  const renderScreen = async (
+    onSiteComplete = () => {},
+    level: { exterior?: string; lastLevel?: boolean; onCancel?: () => void } = {}
+  ) => {
     const result = render(
       <FezContext.Provider value={{ showConversation }}>
         <SiteMapScreen
@@ -166,7 +169,7 @@ describe(SiteMapScreen, () => {
           exterior={level.exterior}
           lastLevel={level.lastLevel ?? false}
           onSiteComplete={onSiteComplete}
-          onCancel={() => {}}
+          onCancel={level.onCancel ?? (() => {})}
         />
       </FezContext.Provider>
     )
@@ -285,6 +288,49 @@ describe(SiteMapScreen, () => {
     // Taking the way out hands over to the exit transition, which completes the site when it finishes.
     expect(container.querySelector("[data-map-prompt]")).toBeNull()
     expect(container.querySelector(".animate-entrance-zoom")).not.toBeNull()
+  })
+
+  describe("by keyboard", () => {
+    const key = async (code: string) => {
+      fireEvent.keyDown(window, { code })
+      fireEvent.keyUp(window, { code })
+      await act(async () => {
+        vi.advanceTimersByTime(1000)
+      })
+    }
+
+    it("walks the way an arrow key points and takes the way out with Enter", async () => {
+      const { container } = await renderScreen()
+
+      await key("ArrowRight")
+      expect(goInPrompt(container).textContent).toBe("ui.prompt.exit")
+
+      await key("Enter")
+      expect(container.querySelector(".animate-entrance-zoom")).not.toBeNull()
+    })
+
+    it("asks before Escape leaves the site, and stays when the player says so", async () => {
+      const onCancel = vi.fn()
+      const { getByRole } = await renderScreen(() => {}, { onCancel })
+
+      await key("Escape")
+      expect(onCancel).not.toHaveBeenCalled()
+      fireEvent.click(getByRole("button", { name: "ui.stay" }))
+      expect(onCancel).not.toHaveBeenCalled()
+
+      await key("Escape")
+      fireEvent.click(getByRole("button", { name: "ui.leave" }))
+      expect(onCancel).toHaveBeenCalledTimes(1)
+    })
+
+    it("walks nowhere while the question to leave is open", async () => {
+      const { container, getByRole } = await renderScreen()
+
+      await key("Escape")
+      await key("ArrowRight")
+      expect(container.querySelector("[data-map-prompt]")).toBeNull()
+      expect(getByRole("dialog")).toBeTruthy()
+    })
   })
 
   describe("what the prompt beside the explorer says", () => {
