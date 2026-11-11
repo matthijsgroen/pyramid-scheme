@@ -1414,7 +1414,7 @@
       "voice": "En stemme"
     },
     "wall": {
-      "wrong": "Noen hogg det tredje tegnet feil. Det har vært feil i tre tusen år.",
+      "wrong": "Noen hogg det andre tegnet feil. Det har vært feil i tre tusen år.",
       "fixed": "Nå er det navnet hennes igjen.",
       "pick": "Sett det riktige tegnet på plassen.",
       "cannot": "Du kjenner ikke tegnet som hører hjemme her. Ikke ennå."

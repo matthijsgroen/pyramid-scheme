@@ -1537,7 +1537,7 @@
       "voice": "Glas"
     },
     "wall": {
-      "wrong": "Netko je krivo uklesao treći znak. Kriv je već tri tisuće godina.",
+      "wrong": "Netko je krivo uklesao drugi znak. Kriv je već tri tisuće godina.",
       "fixed": "To je opet njezino ime.",
       "pick": "Stavi pravi znak na njegovo mjesto.",
       "cannot": "Još ne znaš znak koji ovamo pripada. Još ne."

@@ -1572,7 +1572,7 @@
       "voice": "Une voix"
     },
     "wall": {
-      "wrong": "Quelqu’un a mal gravé le troisième signe. Il est faux depuis trois mille ans.",
+      "wrong": "Quelqu’un a mal gravé le deuxième signe. Il est faux depuis trois mille ans.",
       "fixed": "C’est de nouveau son nom.",
       "pick": "Mets le bon signe à sa place.",
       "cannot": "Tu ne connais pas encore le signe qui va ici."

@@ -1681,7 +1681,7 @@
       "voice": "Balsas"
     },
     "wall": {
-      "wrong": "Kažkas neteisingai iškalė trečią ženklą. Jis neteisingas jau tris tūkstančius metų.",
+      "wrong": "Kažkas neteisingai iškalė antrą ženklą. Jis neteisingas jau tris tūkstančius metų.",
       "fixed": "Štai vėl jos vardas.",
       "pick": "Įdėk tinkamą ženklą į jo vietą.",
       "cannot": "Tu dar nežinai ženklo, kuris čia tinka. Kol kas."

@@ -1414,7 +1414,7 @@
       "voice": "Hääl"
     },
     "wall": {
-      "wrong": "Keegi raius kolmanda märgi valesti. See on olnud vale kolm tuhat aastat.",
+      "wrong": "Keegi raius teise märgi valesti. See on olnud vale kolm tuhat aastat.",
       "fixed": "Nüüd on see jälle tema nimi.",
       "pick": "Pane õige märk selle asemele.",
       "cannot": "Sa ei tunne märki, mis siia kuulub. Veel mitte."

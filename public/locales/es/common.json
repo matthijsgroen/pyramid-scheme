@@ -1572,7 +1572,7 @@
       "voice": "Una voz"
     },
     "wall": {
-      "wrong": "Alguien talló mal el tercer signo. Lleva tres mil años mal.",
+      "wrong": "Alguien talló mal el segundo signo. Lleva tres mil años mal.",
       "fixed": "Ese es su nombre otra vez.",
       "pick": "Pon el signo correcto en su lugar.",
       "cannot": "No conoces el signo que va aquí. Todavía no."

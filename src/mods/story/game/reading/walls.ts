@@ -32,7 +32,7 @@ export type Wall = {
 /**
  * Henut's wall, in the junior tomb.
  *
- * Her name inside a cartouche, and the third sign is a goose where an owl belongs — the confusion
+ * Her name inside a cartouche, and the second sign inside it is a goose where an owl belongs — the confusion
  * an apprentice actually makes, because the bird signs differ by a beak. She is not wrong to be
  * annoyed: it is not her name until it is fixed.
  *

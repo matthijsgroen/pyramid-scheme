@@ -1414,7 +1414,7 @@
       "voice": "Rödd"
     },
     "wall": {
-      "wrong": "Einhver hjó þriðja táknið vitlaust. Það hefur verið vitlaust í þrjú þúsund ár.",
+      "wrong": "Einhver hjó annað táknið vitlaust. Það hefur verið vitlaust í þrjú þúsund ár.",
       "fixed": "Þetta er nafnið hennar aftur.",
       "pick": "Settu rétta táknið á sinn stað.",
       "cannot": "Þú þekkir ekki táknið sem á heima hér. Ekki enn."

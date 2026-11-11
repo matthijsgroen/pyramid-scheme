@@ -1449,7 +1449,7 @@
       "voice": "En stemme"
     },
     "wall": {
-      "wrong": "Nogen har hugget det tredje tegn forkert. Det har været forkert i tre tusind år.",
+      "wrong": "Nogen har hugget det andet tegn forkert. Det har været forkert i tre tusind år.",
       "fixed": "Nu er det hendes navn igen.",
       "pick": "Sæt det rigtige tegn på plads.",
       "cannot": "Du kender ikke det tegn, der hører til her. Ikke endnu."

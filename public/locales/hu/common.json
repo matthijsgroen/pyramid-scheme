@@ -1449,7 +1449,7 @@
       "voice": "Egy hang"
     },
     "wall": {
-      "wrong": "Valaki rosszul véste ki a harmadik jelet. Háromezer éve rossz.",
+      "wrong": "Valaki rosszul véste ki a második jelet. Háromezer éve rossz.",
       "fixed": "Ez megint az ő neve.",
       "pick": "Tedd a helyére a jó jelet.",
       "cannot": "Még nem ismered a jelet, ami ide kell. Egyelőre."

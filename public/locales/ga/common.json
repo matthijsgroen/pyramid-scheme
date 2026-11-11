@@ -1811,7 +1811,7 @@
       "voice": "Guth"
     },
     "wall": {
-      "wrong": "Ghearr duine éigin an tríú comhartha mícheart. Tá sé mícheart le trí mhíle bliain.",
+      "wrong": "Ghearr duine éigin an dara comhartha mícheart. Tá sé mícheart le trí mhíle bliain.",
       "fixed": "Sin a hainm arís.",
       "pick": "Cuir an comhartha ceart ina áit.",
       "cannot": "Níl an comhartha a bhaineann anseo ar eolas agat. Ní fós."

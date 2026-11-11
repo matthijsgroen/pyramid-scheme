@@ -1414,7 +1414,7 @@
       "voice": "Ääni"
     },
     "wall": {
-      "wrong": "Joku hakkasi kolmannen merkin väärin. Se on ollut väärin kolmetuhatta vuotta.",
+      "wrong": "Joku hakkasi toisen merkin väärin. Se on ollut väärin kolmetuhatta vuotta.",
       "fixed": "Siinä on taas hänen nimensä.",
       "pick": "Pane oikea merkki paikalleen.",
       "cannot": "Et tunne merkkiä, joka tähän kuuluu. Et vielä."

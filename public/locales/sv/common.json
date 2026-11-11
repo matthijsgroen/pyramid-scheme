@@ -1421,7 +1421,7 @@
       "voice": "En röst"
     },
     "wall": {
-      "wrong": "Någon högg det tredje tecknet fel. Det har varit fel i tre tusen år.",
+      "wrong": "Någon högg det andra tecknet fel. Det har varit fel i tre tusen år.",
       "fixed": "Nu är det hennes namn igen.",
       "pick": "Sätt rätt tecken på sin plats.",
       "cannot": "Du kan inte tecknet som ska stå här. Inte än."
