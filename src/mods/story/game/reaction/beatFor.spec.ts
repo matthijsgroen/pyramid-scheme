@@ -48,9 +48,11 @@ describe("what Fez is willing to remark on", () => {
     expect(beatFor(solved({ tags: ["trap"], unaided: true, tier: "starter" }))).toBeUndefined()
   })
 
-  it("remarks on a trap only when it was close", () => {
-    expect(beatFor(solved({ tags: ["trap"], close: true }))).toBe("bond.expert")
-    expect(beatFor(solved({ tags: ["trap"], close: false }))).toBeUndefined()
+  it("remarks on a trap only when it was close, and only in an expert journey", () => {
+    expect(beatFor(solved({ tags: ["trap"], close: true, journeyId: "expert_1" }))).toBe("bond.expert")
+    expect(beatFor(solved({ tags: ["trap"], close: false, journeyId: "expert_1" }))).toBeUndefined()
+    for (const journeyId of ["starter_1", "junior_1", "master_1"])
+      expect(beatFor(solved({ tags: ["trap"], close: true, journeyId }))).toBeUndefined()
   })
 
   it("waits until the tomb is behind them for the two that answer a tomb", () => {
@@ -150,8 +152,8 @@ describe("the beats the rail can reach", () => {
 
   const reachable = [
     beatFor(solved({ unaided: true, tier: "starter" })),
-    beatFor(solved({ unaided: true, tier: "junior" })),
-    beatFor(solved({ tags: ["trap"], close: true })),
+    beatFor(solved({ unaided: true, tier: "junior", journeyId: "junior_1" })),
+    beatFor(solved({ tags: ["trap"], close: true, journeyId: "expert_1" })),
     beatFor({ kind: "siteLeft", journeyId: "starter_treasure_tomb", lastLevel: true }),
     beatFor({ kind: "siteLeft", journeyId: "wizard_treasure_tomb_c", lastLevel: true }),
   ]

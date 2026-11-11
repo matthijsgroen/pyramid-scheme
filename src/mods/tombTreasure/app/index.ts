@@ -44,7 +44,7 @@ if (isModEnabled("tomb-treasure")) {
           const { keyId } = tombKeySchema.parse(reward)
           // Holding the key IS holding its perk — the earned-perks provider below derives it. No
           // perk is dispatched or banked here, so a key granted any other way (the dev menu's
-          // "All treasures + keys") carries its perk too. See §7.4/§8.1.
+          // "All treasures + keys") carries its perk too. See collection-and-detector-design.md: perks are derived.
           tomb.addTombKey(keyId)
         },
       },

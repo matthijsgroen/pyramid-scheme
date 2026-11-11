@@ -25,7 +25,7 @@ export const hintIdleDelay = (difficulty?: Difficulty): number => HINT_IDLE_MS_B
 
 /**
  * When the hint button may be pressed and when it should ask to be pressed, per
- * docs/instructions/puzzle-screens.md §3. Lives here rather than in each family so every puzzle
+ * docs/instructions/puzzle-screens.md: hint, cooldown and idle nudge are the shell's. Lives here rather than in each family so every puzzle
  * behaves the same: a hint costs a wait, and a player who has stopped moving gets the button nudged
  * at them rather than being left stuck. The idle wait is the caller's to choose (see hintIdleDelay).
  */

@@ -78,7 +78,7 @@ describe("the classic board", () => {
 
 /**
  * **What the player is actually deciding**, and the reason this variant is gated on forks rather than on
- * forcing (design doc §4).
+ * forcing (canisters.md: 87% of steps still offer more than one pour worth making).
  *
  * Pouring is the only move, so there are no wasteful ones for a local rule to prune. What is left forks,
  * usually two ways, and that fork is the puzzle.
@@ -119,7 +119,8 @@ describe("a line forks rather than forcing", () => {
 
 describe("what can be measured", () => {
   it("finds a line from a non-empty start, which is what makes a second leg safe", () => {
-    // A leg after the first begins from wherever the last one left the canisters (design doc §5).
+    // A leg after the first begins from wherever the last one left the canisters (canisters.md: generation
+    // searches from where the water is standing).
     const line = shortestLine(CLASSIC, [3, 5, 0], 6)
     expect(line).not.toBeNull()
     expect(playLine(CLASSIC, [3, 5, 0], line!)).toContain(6)

@@ -17,7 +17,7 @@ export type CanistersOptions = {
   canisters: number
   /** The full canister's size, which is also all the water there is. */
   maxCapacity: number
-  /** The shortest a leg's own line may be, and the difficulty dial (§3). */
+  /** The shortest a leg's own line may be, and the difficulty dial (canisters.md tiers). */
   minLine: number
   /**
    * The longest a leg's own line may be — the ceiling that makes a tier teach one thing.
@@ -58,8 +58,9 @@ const setsFor = (canisters: number, maxCapacity: number): Capacities[] => {
 }
 
 /**
- * Draw-and-measure (§3). A board is a set of canisters, the big one full, a run of targets and a budget.
- * Nothing is carved and nothing hidden, so generation can only fail on being too easy.
+ * Draw-and-measure (canisters.md: draw a set, then a volume it can reach). A board is a set of canisters, the
+ * big one full, a run of targets and a budget. Nothing is carved and nothing hidden, so generation can only
+ * fail on being too easy.
  */
 export const generateCanisters = (seed: number, options: CanistersOptions): CanistersPuzzle => {
   const random = mulberry32(seed)

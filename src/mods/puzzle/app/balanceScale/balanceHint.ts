@@ -24,7 +24,7 @@ export type BalanceHint = {
  * fires. Which techniques are allowed comes from the board's own cap, so a starter board never
  * explains itself with reasoning it was never built to need.
  *
- * Two rules the wording depends on, both learned in playtesting (design doc §6):
+ * Two rules the wording depends on, both learned in playtesting (balance-scale.md, Hints):
  *
  * - **A hint names the move, never the weight.** The solver knows what the glyph weighs at every one
  *   of these steps and says none of it. The arithmetic is the part worth doing.

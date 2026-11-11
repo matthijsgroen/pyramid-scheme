@@ -12,9 +12,9 @@ describe("bandFromHits — precision the level actually grants", () => {
     expect(bandFromHits(3, [])).toBe("none")
   })
 
-  // The whole point of the ladder (§7.2): at L1 the compass knows only WHICH PYRAMID holds a hit, so
-  // a hit two steps away must still read "pyramid". Feeding raw distance to the dot would hand the
-  // player L3 precision at L1.
+  // The whole point of the ladder (collection-and-detector-design.md): at L1 the compass knows only WHICH
+  // PYRAMID holds a hit, so a hit two steps away must still read "pyramid". Feeding raw distance to the dot
+  // would hand the player L3 precision at L1.
   it("caps at pyramid on L1 even when the hit is underfoot", () => {
     expect(bandFromHits(1, [hit(true, true)])).toBe("pyramid")
   })

@@ -1,7 +1,7 @@
 /**
  * The blockade: pieces stuck in lanes, one of them yours, and the way out on the east edge.
  *
- * The rules whole (`docs/game-design/puzzles/rush-hour.md` §2): a piece occupies whole cells along one
+ * The rules whole (`docs/game-design/puzzles/rush-hour.md`): a piece occupies whole cells along one
  * lane and may slide either way along it until something stops it — never across, never off. The board is
  * done when piece 0 reaches the edge it leaves by. **There is no illegal state and no move budget**, so
  * this family has no mistakes to catch: every position a player can reach is a position they can leave.
@@ -27,11 +27,11 @@ export type RushHourPuzzle = {
   /**
    * Cells nothing may ever stand on, as `row * size + col`.
    *
-   * **A knob for making a board harder without making it fuller** (family doc §3.2). A wall pins the pieces
-   * around it exactly as another piece would, but it can never be shoved out of the way, so it lengthens
-   * every route past it — the enumeration of the whole 6×6 space puts the hardest wall-less board at 51
-   * moves and the hardest one-wall board at 60. Never in the player's own lane: one east of them could
-   * never be got out of the way, and one west only shortens the board.
+   * **A knob for making a board harder without making it fuller** (`rush-hour.md`: three knobs, and none is
+   * the grid). A wall pins the pieces around it exactly as another piece would, but it can never be shoved
+   * out of the way, so it lengthens every route past it — the enumeration of the whole 6×6 space puts the
+   * hardest wall-less board at 51 moves and the hardest one-wall board at 60. Never in the player's own lane:
+   * one east of them could never be got out of the way, and one west only shortens the board.
    */
   walls?: readonly number[]
   /**
@@ -111,7 +111,7 @@ const rangeIn = (
 /**
  * The board with one piece moved, clamped into its legal range.
  *
- * **Clamped rather than refused.** The gesture is a drag along a lane (§4), and a drag that runs into
+ * **Clamped rather than refused.** The gesture is a drag along a lane, and a drag that runs into
  * something should leave the piece where it stopped — a refusal would drop the whole gesture because its
  * end was too far.
  */

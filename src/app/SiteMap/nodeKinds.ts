@@ -16,7 +16,7 @@ export type ShapeKind =
   | "trap"
   | "fork"
   | "switch"
-  | "handle"
+  | "lever"
   | "mechanism"
   | "plate"
   | "gate"
@@ -109,7 +109,7 @@ export const nodeRadius: Record<ShapeKind, number> = {
   // the dot a plain junction gets.
   switch: NODE_RADIUS_PUZZLE,
   // A lever is somewhere to go, so it is sized like a room rather than like a junction's dot.
-  handle: NODE_RADIUS_PUZZLE,
+  lever: NODE_RADIUS_PUZZLE,
   // A mechanism marked by its family's icon is somewhere to go like a lever, and sized like one.
   mechanism: NODE_RADIUS_PUZZLE,
   // A pressure plate is stepped on rather than entered, so it is the size of a room and no larger.

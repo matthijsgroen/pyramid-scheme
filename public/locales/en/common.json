@@ -73,6 +73,10 @@
     "interruptExpedition": "Interrupt expedition",
     "confirmInterruptExpedition": "Are you sure you want to interrupt this expedition? Expedition progress will be kept, but level progress will be lost!",
     "cancel": "Cancel",
+    "leaveSite": "Leave this site?",
+    "confirmLeaveSite": "Press Leave to walk back out, or Stay to keep exploring.",
+    "leave": "Leave",
+    "stay": "Stay",
     "settings": "Settings",
     "language": "Language",
     "close": "Close",
@@ -1373,14 +1377,7 @@
       }
     },
     "events": {
-      "default": [
-        "the fire",
-        "the water carrying",
-        "the baking",
-        "the boat trip",
-        "the ox driving",
-        "the night watch"
-      ],
+      "default": ["the fire", "the water carrying", "the baking", "the boat trip", "the ox driving", "the night watch"],
       "funerary": [
         "the plastering",
         "the grid drawing",

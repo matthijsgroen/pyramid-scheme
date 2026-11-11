@@ -84,8 +84,8 @@ describe("the blockade's hint", () => {
   })
   /**
    * **The counter-intuitive move gets its own sentence.** Shoving your own piece AWAY from the way out is
-   * the documented place people stall (family doc §7), and `drive`'s wording — "the way ahead is clear that
-   * far" — is not vague about it but wrong.
+   * the documented place people stall (rush-hour.md: counter-intuitive moves are a measured difficulty), and
+   * `drive`'s wording — "the way ahead is clear that far" — is not vague about it but wrong.
    */
   it("says so when the move is backwards", () => {
     //  . . . W H H     the player has to back LEFT so W can drop through its row; only then can H slide

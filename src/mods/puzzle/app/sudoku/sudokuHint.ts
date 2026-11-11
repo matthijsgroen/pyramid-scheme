@@ -11,7 +11,7 @@ import {
 } from "@/mods/puzzle/game/sudoku/techniques"
 import { techniquesFor, type DemandId } from "@/mods/puzzle/game/sudoku/demands"
 
-/** What the player is asked to DO about the reason — the second line of a hint (§4.1). */
+/** What the player is asked to DO about the reason — the second line of a hint (`puzzle-screens.md`). */
 export type SudokuMove = {
   kind: "place" | "ruleOut"
   value: number

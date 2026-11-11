@@ -42,11 +42,11 @@ const reducedMotion = (reduce: boolean) =>
 
 /**
  * The board finishes itself before the shell hears the word "solved" — the ordering constellation and
- * lightbeam already run (`puzzle-screens.md` §3), on the family that shares constellation's two places.
+ * lightbeam already run (`puzzle-screens.md`), on the family that shares constellation's two places.
  *
  * That ordering is the whole feature: the shell freezes the board and starts its banner on `solved`, so a
  * celebration has to run first — and inside about a second, because the shell stops its solve-time clock at
- * that same moment and that number is what PUZZLE_FAMILIES.md §3.2's budget is measured with.
+ * that same moment and that number is what PUZZLE_FAMILIES.md's solve-time budget is measured with.
  */
 describe("the completion run", () => {
   it("lights the answers before the banner arrives, then reports the solve", { timeout: 120_000 }, async () => {

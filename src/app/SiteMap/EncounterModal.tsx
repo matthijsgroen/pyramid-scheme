@@ -4,8 +4,8 @@ import { imageMap, WALL_SIZE } from "@/ui/atoms/tombImageMap"
 
 // The frame every encounter (puzzle, trap, shop, gate, chest) is presented in. Scrolls
 // vertically so a family can put its rules below the board while the board itself stays within
-// the viewport (docs/instructions/puzzle-screens.md §1). Shared with the dev puzzle lab, so what
-// is playtested is the real presentation.
+// the viewport (docs/instructions/puzzle-screens.md: the board fits the phone, the page scrolls). Shared with
+// the dev puzzle lab, so what is playtested is the real presentation.
 //
 // `p-safe-edge` (index.css) rather than a plain gap: the page is drawn `viewport-fit=cover`, so `inset-0`
 // reaches under the status bar and the home indicator, and this frame — unlike the centred overlays — pins

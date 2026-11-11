@@ -18,8 +18,9 @@ import { ALL_SELLABLES, SELLABLES_BY_TIER } from "@/data/sellables"
 // eligible for `kind: "puzzle"` slots only, and the fill's loose change on puzzle solves, laid before the grounds so
 // solving a puzzle still pays out.
 //
-// Reward COUNTS (the golden guard) are not the acceptance gate, as TARGET.md §35 says: counts stay green while empty
-// chests ship. An invariant over the generated world catches that drift.
+// Reward COUNTS (the golden guard) are not the acceptance gate, as TARGET.md says (toggle-off is the gate,
+// not matching counts): counts stay green while empty chests ship. An invariant over the generated world
+// catches that drift.
 
 // A treasure chest = a path end authored `end: "treasure"` that is meant to hold loot. A fez-shop
 // section also authors `end: "treasure"`, but there the SHOP is the treasure (its stock lives in

@@ -1,7 +1,7 @@
 import type { Mark, ProcessionPuzzle } from "./procession"
 
 /**
- * The ladder, as five rungs (`docs/game-design/puzzles/procession.md` §3).
+ * The ladder, as five rungs (`docs/game-design/puzzles/procession.md`: the tier is the weakest rung).
  *
  * A bar's knowledge is the SET of ticks it could still start on, and solving is that set narrowing. Which
  * marks a rung is allowed to read is the whole of what separates one rung from the next, so a rung is
@@ -25,7 +25,7 @@ const READS: Record<Rung, readonly Mark["kind"][]> = {
  *
  * **One rung, not a depth ladder.** A supposition inside a supposition was designed as the top rung and
  * does not occur: across 900 boards rolled at the widest days and bar counts this family will ship, not one
- * needed a second level (`procession.md` §3). What DOES separate the top two tiers is how many separate
+ * needed a second level (`procession.md`). What DOES separate the top two tiers is how many separate
  * suppositions a board asks for, which is a count rather than a depth.
  */
 const SPLITS: Record<Rung, boolean> = { chain: false, squeeze: false, apart: false, split: true }
@@ -49,7 +49,7 @@ const only = (row: readonly boolean[]): number | undefined => {
   return found.length === 1 ? found[0] : undefined
 }
 
-/** One bar becoming certain, and what made it certain. The hint reads this list (`procession.md` §7). */
+/** One bar becoming certain, and what made it certain. The hint reads this list (`procession.md`: hints). */
 export type Settling = { bar: number; tick: number; rung: Rung }
 
 type Pass = {
@@ -72,7 +72,8 @@ type Pass = {
 const propagate = (puzzle: ProcessionPuzzle, domains: Domains, marks: readonly Mark[], rung: Rung): Pass => {
   const pass: Pass = { alive: true, steps: 0, splits: 0, settled: [] }
   // Recorded as it happens rather than swept up at the end, because the ORDER is what the hint reads: the
-  // bar a stuck player is told about is the first one the ladder could have fixed for itself (§7).
+  // bar a stuck player is told about is the first one the ladder could have fixed for itself
+  // (`procession.md`: hints).
   const strike = (bar: number, tick: number) => {
     if (!domains[bar][tick]) return
     domains[bar][tick] = false
@@ -109,7 +110,7 @@ const propagate = (puzzle: ProcessionPuzzle, domains: Domains, marks: readonly M
         case "together": {
           // The support check, and the rung the family's whole upper half rests on: a start survives only
           // if the OTHER bar has somewhere to stand alongside it. Where one order of an `apart` pair does
-          // not fit on lengths alone, this is what collapses it without a guess (family doc §3, R3).
+          // not fit on lengths alone, this is what collapses it without a guess (`procession.md`, R3).
           const wanted = mark.kind === "together"
           for (const [self, other] of [
             [mark.a, mark.b],
@@ -226,7 +227,7 @@ export const deduce = (puzzle: ProcessionPuzzle, rung: Rung): Deduction => {
 }
 
 /**
- * The weakest rung that settles this board, which IS its tier (`procession.md` §3).
+ * The weakest rung that settles this board, which IS its tier (`procession.md`).
  *
  * Undefined means the ladder does not reach it — a board still undetermined after the split rung has run
  * out of technique, and the generator's gate throws it away.

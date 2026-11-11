@@ -11,7 +11,7 @@ import { difficulties } from "@/data/difficultyLevels"
 
 /**
  * The seam a room and the puzzle lab actually build a board through
- * (`docs/instructions/puzzle-screens.md` §6.1) — not the generator underneath it.
+ * (`docs/instructions/puzzle-screens.md`: a room is dealt a listed seed) — not the generator underneath it.
  *
  * Nothing else covers it: the generator's own spec calls `generateSudoku` directly and would stay green
  * while the seam above it was broken. Now that the family is authored into the world

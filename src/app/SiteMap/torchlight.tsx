@@ -118,7 +118,7 @@ export const LitPlace = ({
   strength,
   headroom = false,
   fill = TORCH_FILL,
-  source = "torch",
+  source = "lamp",
 }: {
   grid: FloorGrid
   claims: RoomClaims
@@ -131,7 +131,7 @@ export const LitPlace = ({
   fill?: LightFill
   /** Which light this is. The map is read by data attribute, and a test counting the lamp must not
    * also count the daylight. */
-  source?: "torch" | "beam"
+  source?: "lamp" | "beam"
   /** Reach a whole drawn face (`FACE_H`) ABOVE every lit cell, whether or not the cell north of it is lit.
    *
    * For the pass that falls on what is STANDING. A prop is bottom-anchored in its cell and a face band
@@ -175,7 +175,7 @@ export const LitPlace = ({
   const rects = rectsFor(lit, lit)
   return (
     <ClipLayer
-      data-torch={source === "torch" ? (headroom ? "standing" : "lit") : undefined}
+      data-torch={source === "lamp" ? (headroom ? "standing" : "lit") : undefined}
       data-beam={source === "beam" ? (headroom ? "standing" : "lit") : undefined}
       className={leaving ? FADE_OUT : FADE_IN}
       feather={TORCH_FEATHER}

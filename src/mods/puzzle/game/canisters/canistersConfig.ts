@@ -1,7 +1,8 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { CanistersOptions } from "./generateCanisters"
 
-// Tier settings, from docs/game-design/puzzles/canisters.md §5.
+// Tier settings, from docs/game-design/puzzles/canisters.md: one new idea a tier, and board size is not a
+// knob.
 //
 // **One volume a board, at every tier.** Measuring a second one from the first's leftovers doubles the
 // board and asks the same question twice, and playtesting says the first one is already the hard part — a

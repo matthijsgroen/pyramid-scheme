@@ -1,7 +1,8 @@
 import { TECHNIQUES, type TechniqueId } from "./techniques"
 
 /**
- * What a tier may ask of a board, per docs/game-design/puzzles/sudoku.md §5.2.
+ * What a tier may ask of a board, per docs/game-design/puzzles/sudoku.md: three demands over four
+ * techniques.
  *
  * COARSER than the solver's four techniques, and deliberately so: pointing and claiming are one idea
  * read from either side, so a tier that says "this board needs a chamber-line reason" should not care

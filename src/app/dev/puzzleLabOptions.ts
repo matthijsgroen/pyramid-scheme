@@ -36,7 +36,7 @@ export const NO_ROLE = "(no role)"
 
 /**
  * The roles a family can be allocated for, which for a family with more than one identity is also the list
- * of faces it can wear (docs/instructions/puzzle-screens.md §2).
+ * of faces it can wear (docs/instructions/puzzle-screens.md: the role is the identity, so a role picks a face).
  *
  * Its own picker because a role and a theme answer different questions, and a lab that could only set the
  * theme could not show the combination that matters: a place at a time of day — a causeway at night.

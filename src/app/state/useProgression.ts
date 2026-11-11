@@ -3,9 +3,9 @@ import { useGameStorage } from "@/support/useGameStorage"
 import { createLedger, type Ledger, type LedgerState } from "@/game/ledger/ledger"
 
 // No perk is stored here any more. Core owns the corridor detector's MEANING (a hidden corridor is
-// core map structure — see collection-and-detector-design.md §7.1), but its level is derived from
-// the treasures held, in mods/core/app/index.ts. Same for every other perk, each in its owning mod.
-// See game/perkTotals.ts for why a perk is never banked in save state.
+// core map structure — see collection-and-detector-design.md: core owns the corridor detector), but its level
+// is derived from the treasures held, in mods/core/app/index.ts. Same for every other perk, each in its
+// owning mod. See game/perkTotals.ts for why a perk is never banked in save state.
 
 // The ledger starts empty and creates currency keys lazily on first grant — core seeds no
 // currency id, so a mod owns which ids exist (shop's money, mosaic's mosaicPiece, …) while core

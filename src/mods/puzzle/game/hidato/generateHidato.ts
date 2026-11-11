@@ -11,11 +11,11 @@ export type HidatoPuzzle = HidatoPuzzleData & {
 }
 
 export type HidatoOptions = {
-  /** The hexagon the comb is carved out of — its radius in cells (design doc §5). */
+  /** The hexagon the comb is carved out of — its radius in cells (hidato.md: tiers). */
   radius: number
   /** How many cells the comb has, i.e. the last number on the board. */
   cells: number
-  /** The strongest reading a board may demand (design doc §5). */
+  /** The strongest reading a board may demand (hidato.md: a tier caps the pruning rung). */
   pruning: PruningId
   /**
    * The fewest numbers that ship written in. A floor, not a quota: the board is thinned to what its
@@ -23,10 +23,11 @@ export type HidatoOptions = {
    * to the player rather than something the thinning was measured against.
    */
   givens: number
-  /** The rung the board must genuinely turn on: it has to STALL one level below this (design doc §5.2). */
+  /** The rung the board must genuinely turn on: it has to STALL one level below this (hidato.md). */
   requires?: PruningId
   /**
-   * How often the walk ignores its own heuristic and steps somewhere at random, 0–1 (design doc §3.3).
+   * How often the walk ignores its own heuristic and steps somewhere at random, 0–1 (hidato.md: the run must
+   * not just go round the outside).
    *
    * Warnsdorff on its own hugs the boundary, because a boundary cell is the one with the fewest ways
    * out. Left to it, the answer laps the rim — which a player learns to expect. This is the dial that
@@ -34,8 +35,9 @@ export type HidatoOptions = {
    */
   wander?: number
   /**
-   * The longest stretch of the run allowed to sit on the comb's outer ring (design doc §3.3). Unset =
-   * no limit, which is right for the smallest comb: a lap of a 14-cell hive is most of the board.
+   * The longest stretch of the run allowed to sit on the comb's outer ring (hidato.md: the run must
+   * not just go round the outside). Unset = no limit, which is right for the smallest comb: a lap of a
+   * 14-cell hive is most of the board.
    */
   rimStreak?: number
 }
@@ -97,7 +99,7 @@ const carveRun = (
       // for later strands them, and a stranded cell is the walk failing rather than a board being hard.
       //
       // `wander` is what stops it also being a habit: some of the time the walk takes any open cell
-      // instead, which is what lets it leave the rim and come back (design doc §3.3).
+      // instead, which is what lets it leave the rim and come back (hidato.md: `wander`).
       const tightest = Math.min(...options.map(option => openings(option, used).length))
       const choices = random() < wander ? options : options.filter(option => openings(option, used).length === tightest)
       trail.push(shuffle(choices, random)[0])
@@ -112,7 +114,7 @@ const carveRun = (
 
 /**
  * The longest stretch of the run that stays on the comb's outer ring — the measure of "it just goes
- * round the outside", and the one thing about a run's SHAPE the generator judges (design doc §3.3).
+ * round the outside", and the one thing about a run's SHAPE the generator judges (hidato.md: `rimStreak`).
  */
 const longestRimLap = (trail: Hex[], radius: number): number => {
   let longest = 0
@@ -130,7 +132,7 @@ const inReadingOrder = (cells: Hex[]): Hex[] => [...cells].sort((a, b) => a.r - 
 
 /**
  * Whether this board is one the loop below would have kept, and what the ladder needed to settle it
- * (`docs/instructions/puzzle-screens.md` §6.1).
+ * (`docs/instructions/puzzle-screens.md`: only seeds clean on the first attempt get listed).
  *
  * The weakest rung that settles the board is BOTH halves of the gate at once: past the tier's cap it is
  * a board the tier may not ask for, and short of what the tier requires it is a board that never turns

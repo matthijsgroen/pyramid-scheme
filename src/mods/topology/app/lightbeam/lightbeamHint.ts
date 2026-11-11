@@ -46,8 +46,8 @@ const asHint = (puzzle: LightbeamPuzzle, step: LightbeamStep): LightbeamHint => 
  * is worth saying, which is what `pickLightbeamHint` does and which costs nothing. So this is derived **once per
  * board** and every hint after the first is free.
  *
- * It is also why the whole thing is precomputable offline (`docs/instructions/puzzle-screens.md` §6.1): a pure function of
- * the puzzle, and about 400 bytes serialised.
+ * It is also why the whole thing is precomputable offline (`docs/instructions/puzzle-screens.md`: seed lists
+ * are searched on a build machine): a pure function of the puzzle, and about 400 bytes serialised.
  */
 export const lightbeamHintSteps = (puzzle: LightbeamPuzzle): LightbeamStep[] =>
   solveLightbeamByTechniques(puzzle, puzzle.techniqueCap).steps

@@ -225,7 +225,7 @@ export type StairLinks = {
 // Wires an authored site's stairs: each side section ending in a stairhead, and each floor's main path, pairs with the
 // entrance of the floor it leads to by one shared stairId. This is the chaining mechanism for authored multi-floor
 // sites, whether a shortcut is ward-gated by an external key (a pyramid's authored floors[]) or self-gated by the
-// floor's own treasure (a tomb's, pyramid-interior-design.md §8: "the treasure IS the key").
+// floor's own treasure (a tomb's, pyramid-interior-design.md: "the treasure IS the key").
 //
 // - A stair section leads to its `toFloor`, else the next floor. The floor it enters is off the main walk, and so is
 //   every floor a stair from an off-walk floor enters: one exit per site, at the main path's end, so such a floor's
@@ -362,7 +362,7 @@ const applyFloorLocks = (
 // too — see the auto multi-floor branch below). Used for both pyramids (authored floors[]
 // is the exception) and tombs (authored floors[] is the only shape they ever use, one entry
 // per treasure) — a tomb is structurally the same as a pyramid interior
-// (pyramid-interior-design.md §8), just always taking this one branch.
+// (pyramid-interior-design.md: a tomb is one multi-floor site), just always taking this one branch.
 export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<TExtra>): { floors: FloorConfig[] } => {
   const { journeyId, tier, pyramidIndex: i, levelCount, pathPuzzles: pp, constraint, difficulty, resolveReward } = ctx
   const {
@@ -469,7 +469,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           // line of authoring (`journey("junior_4").pyramid("1-5", { encounter: "sky" })`). Tombs are
           // unaffected: they author every floor's role explicitly.
           encounter: fc.encounter ?? constraint.encounter,
-          // Resolve this floor's authored `nodes` selectors → per-node encounter overrides (§G).
+          // Resolve this floor's authored `nodes` selectors → per-node encounter overrides (ARCHITECTURE.md:
+          // node selectors).
           encountersByIndex: resolveNodeSelectors(fc.nodes, floorPP),
           activitiesByIndex: resolveNodeActivities(fc.nodes, floorPP),
           chambersByIndex: resolveNodeChambers(fc.nodes, floorPP),

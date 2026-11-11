@@ -2,8 +2,9 @@ import type { FC } from "react"
 import { useTranslation } from "react-i18next"
 
 // Read below the board, never in the way of it: the puzzle is solvable without ever reading this
-// (docs/instructions/puzzle-screens.md §1, PUZZLE_FAMILIES.md P2). Worded per place, like the goal
-// above it — signs are inked onto a sheet, figures are cut into stone (§4.3).
+// (docs/instructions/puzzle-screens.md: the rules sit below the board, reached by scrolling;
+// PUZZLE_FAMILIES.md P2). Worded per place, like the goal above it — signs are inked onto a sheet,
+// figures are cut into stone (puzzle-screens.md: a mechanic with several faces words each one).
 export const SudokuRules: FC<{ skin: string }> = ({ skin }) => {
   const { t } = useTranslation("common")
   return (

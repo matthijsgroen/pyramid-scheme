@@ -116,10 +116,10 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
    * the board asserts is that each of the six stands exactly once in every row, every column and every
    * chamber. Lighting all six homes of a value together says that from the value's side, and rolling up
    * a chamber that holds all six says it from the chamber's — one rule, and each face says the half its
-   * own ground can say (design doc §9.1).
+   * own ground can say (`sudoku.md`).
    *
    * The shell freezes the board and starts its banner the moment it hears "solved"
-   * (`puzzle-screens.md` §3), so the run has to happen BEFORE that word is said — the family reports the
+   * (`puzzle-screens.md`), so the run has to happen BEFORE that word is said — the family reports the
    * solve a beat later, and input is refused for that beat, or a value changed mid-run would land a
    * solve on a board that is no longer solved.
    *
@@ -134,7 +134,7 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
   // and a grid cut another way would separate them.
   const ticks = skin.scroll ? boxCount(puzzle) : size
   // A roll asks for the whole second `useCelebration` allows, where a value only needs its flare: an
-  // edge has to be slow enough to be read as one crossing (design doc §9.1).
+  // edge has to be slow enough to be read as one crossing (`sudoku.md`: a roll takes the full second).
   const celebration = useCelebration(finished, ticks, skin.scroll ? 1000 : undefined)
   const reached = celebration.progress > 0 ? Math.round(celebration.progress * ticks) : undefined
   const counted = skin.scroll ? undefined : reached

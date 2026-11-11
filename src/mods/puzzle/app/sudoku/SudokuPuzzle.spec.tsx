@@ -35,7 +35,7 @@ const cellsIn = (root: HTMLElement) =>
 const twinnedIn = (root: HTMLElement) =>
   cellsIn(root).filter(cell => cell.style.backgroundImage.includes("linear-gradient(rgb"))
 
-/** The squares a hint SETTLES, which the board hatches and its sentence names (§4.2). */
+/** The squares a hint SETTLES, which the board hatches and its sentence names (`puzzle-screens.md`). */
 const hatchedIn = (root: HTMLElement) =>
   cellsIn(root).filter(cell => cell.style.backgroundImage.includes("repeating-linear-gradient(45deg"))
 
@@ -71,7 +71,7 @@ describe("SudokuPuzzle", () => {
     const shown = container.textContent ?? ""
     expect(shown).toContain("sudoku.hint.default.reason.")
     // A reason and a MOVE, which is the two-line rule: a reason alone leaves the player working out
-    // what it wants of them (`puzzle-screens.md` §4.1).
+    // what it wants of them (`puzzle-screens.md`).
     expect(shown).toContain("sudoku.hint.default.action.")
     // And the squares the move talks about are marked, so "the hatched squares" has a referent.
     expect(hatchedIn(container).length).toBeGreaterThan(0)

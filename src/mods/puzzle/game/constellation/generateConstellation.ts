@@ -31,9 +31,10 @@ export type ConstellationOptions = {
   /**
    * How often a line is drawn double, and how often a spare line is added between stars already placed.
    *
-   * Together these are the **number mix** the family scales on (docs/game-design/puzzles/constellation.md
-   * §5): both raise the numbers on the board, and a high number forces its own lines where a low one forces
-   * nothing. Leaning them out is what makes a wizard sky harder than a master one of the same width.
+   * Together these are the **number mix** the family scales on (docs/game-design/puzzles/constellation.md:
+   * the real dial): both raise the numbers on the board, and a high number forces its own lines where a low
+   * one forces nothing. Leaning them out is what makes a wizard sky harder than a master one of the same
+   * width.
    */
   doubleChance: number
   spareChance: number
@@ -105,8 +106,8 @@ const occupied = (size: number, drawing: Drawing): Set<number> =>
  * Each step reaches out from a star already placed, two or more cells along a row or column, and drops a new
  * star with a line to it. The reach has to be at least two so the line is visible between them, the path has
  * to be clear of stars and of other lines, and the new star may not sit against one already placed —
- * touching stars are two hit areas that cannot be pressed apart (§8), and the line between them would have
- * no sky to be seen in.
+ * touching stars are two hit areas that cannot be pressed apart (constellation.md board requirements), and
+ * the line between them would have no sky to be seen in.
  *
  * Connectivity is free: every star arrives attached to one already in the sky, so the drawing is one
  * constellation by construction and the rule never has to be checked.
@@ -207,7 +208,7 @@ const meetsDemand = (
 
 /**
  * Whether this board is one the loop below would have kept, and what the ladder needed to settle it
- * (`docs/instructions/puzzle-screens.md` §6.1).
+ * (`docs/instructions/puzzle-screens.md`: the seed search happens on a build machine, not a phone).
  *
  * Both go through `meetsDemand`, so an offline pass filtering seeds by this admits exactly the boards
  * this generator accepts. That matters more here than elsewhere: when no attempt hits the tier's quota the

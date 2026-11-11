@@ -64,7 +64,7 @@ describe.each(difficulties)("at %s", difficulty => {
   /**
    * **Exactly one winning route.** Not one winning *configuration*: a decoy's setting is free by construction —
    * the light never reaches it — so any tier that puts a piece off the winning beam's line has many winning
-   * configurations and only one winning route. That is the property §5 gate 5 asks for and the one the player
+   * configurations and only one winning route. That is the property lightbeam.md's uniqueness gate asks for and the one the player
    * actually solves for.
    */
   it("has exactly one winning route", () => {
@@ -355,7 +355,7 @@ describe("the two-branches-combine counterexample", () => {
  * Phase 2's construction: branches that turn, and the mirrors they turn at.
  *
  * A branch mirror is off the golden path by construction, so the winning beam never meets it — which makes it
- * a decoy, and a **shadow** where it stands in a wrong ray. That is the piece §6.1 measured as the only thing
+ * a decoy, and a **shadow** where it stands in a wrong ray. That is the piece lightbeam.md measured as the only thing
  * that makes the technique cap bite, and here it falls out of authoring rather than being scattered on top.
  */
 describe("branches that turn", () => {
@@ -439,7 +439,7 @@ describe("branches that turn", () => {
 /**
  * `interactive` is a share with a floor, and the floor is what stops it producing an unopenable board.
  *
- * Three tappable pieces is where §5's opening rules already put the family, so a share asking for fewer is
+ * Three tappable pieces is where lightbeam.md's opening gate already puts the family, so a share asking for fewer is
  * raised to it rather than honoured — which is why 0.4 and 0.2 produce the same board on a six-bend route.
  */
 describe("the interactive share", () => {
@@ -480,7 +480,7 @@ describe("the interactive share", () => {
  * A shadow defeats `deadEnd` by design, so a tier capped there cannot carry one.
  *
  * Measured rather than assumed: starter's dials with `branchDepth` 1 fail `notSettled` on every attempt of
- * every seed. That is the vocabulary ladder (§6.4) showing up as a hard constraint on the tier table rather
+ * every seed. That is the vocabulary ladder (lightbeam.md: one new thing a tier) showing up as a hard constraint on the tier table rather
  * than a preference — decoys and shadows are only fair once a rung can prove a piece irrelevant.
  */
 describe("branch depth against the technique cap", () => {
@@ -734,7 +734,7 @@ describe("sliding walls", () => {
 })
 
 /**
- * Flavours: the dial set is drawn per board, so a tier is a range rather than one recipe (§7.4).
+ * Flavours: the dial set is drawn per board, so a tier is a range rather than one recipe (lightbeam.md: flavours vary the dials per board).
  *
  * The failure this guards is what playtesting reported — every board on a tier the same shape, because a tier
  * had exactly one set of dials and dials do not vary. A pool only fixes that if the draw actually lands on
@@ -1001,7 +1001,7 @@ describe("traps", () => {
   })
 
   /**
-   * The classification is the thinking (§11.1): the winning beam fires the door's wiring and **not** the trap's.
+   * The classification is the thinking (lightbeam.md: some sockets must be reached, some dodged): the winning beam fires the door's wiring and **not** the trap's.
    * A board where the light crosses every socket on its way past is a checklist, not a choice.
    */
   it("leaves one wiring unfired by the winning beam", () => {
@@ -1013,9 +1013,9 @@ describe("traps", () => {
   })
 
   /**
-   * §11.1's acceptance test. Remove the trap's wiring and its stone never drops, so the wrong setting it was
+   * The trap's acceptance test (lightbeam.md). Remove the trap's wiring and its stone never drops, so the wrong setting it was
    * killing survives — and the board has two routes. That is what load-bearing means here, and it is asserted
-   * directly the way §5.1's walls are.
+   * directly the way authored walls are.
    */
   it("is load-bearing: take it out and the board stops being a puzzle", () => {
     for (const board of boards) {
@@ -1039,7 +1039,7 @@ describe("traps", () => {
   })
 
   /**
-   * `wiringDead` is what §11.1 says a trap board cannot settle without: the stone the trap might drop sits
+   * `wiringDead` is what lightbeam.md says a trap board cannot settle without: the stone the trap might drop sits
    * `unknown` across the board until a rung can prove the wiring never fires.
    */
   it("needs the rung that proves a wiring can never fire", () => {

@@ -68,7 +68,7 @@ body {
 
 @font-face {
   font-family: "Limelight";
-  src: url(./assets/Limelight-Regular.ttf) format("truetype");
+  src: url(./assets/Limelight-Regular.woff2) format("woff2");
 }
 
 /*

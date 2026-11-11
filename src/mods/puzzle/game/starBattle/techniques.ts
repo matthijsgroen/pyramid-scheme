@@ -11,9 +11,9 @@ import {
   type StarBattlePuzzle,
 } from "./starBattle"
 
-// The deduction system behind both generation and hints, per docs/game-design/puzzles/star-battle.md §3.
-// Ordered by how well each reason EXPLAINS itself rather than by how much it decides — the rule every
-// family doc here holds its ladder to.
+// The deduction system behind both generation and hints, per docs/game-design/puzzles/star-battle.md: the
+// deduction ladder. Ordered by how well each reason EXPLAINS itself rather than by how much it decides — the
+// rule every family doc here holds its ladder to.
 export const STAR_BATTLE_TECHNIQUES = [
   "touch",
   "groupFull",
@@ -68,7 +68,7 @@ export type StarBattleStep = {
    *
    * **A sentence that says "this row" has to have a row to point at.** So the evidence is the whole group
    * being counted, or the whole region being squeezed, and not merely the squares inside it that happen to
-   * be interesting: a hint that names a region in words has already failed (design doc §7).
+   * be interesting: a hint that names a region in words has already failed (star-battle.md: hints).
    */
   cells: number[]
   decisions: StarBattleDecision[]
@@ -273,7 +273,7 @@ const lineKinds = (puzzle: StarBattlePuzzle) => [
  * A region squeezed into one line spends that line's quota.
  *
  * The first of the two rungs that need a region boundary to mean anything, and the family's own reasoning
- * (design doc §3): the region's stars have to come out of the line, and the line owes exactly that many, so
+ * (star-battle.md): the region's stars have to come out of the line, and the line owes exactly that many, so
  * the rest of the line holds none.
  */
 const regionLineSteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep[] =>
@@ -373,7 +373,7 @@ const blockSweep = (
  * Two groups whose free squares fit inside two groups of the other kind, quotas agreeing.
  *
  * The top rung, and the generalisation of the two above from one group to two. **Rows and columns are swept
- * separately, never together** — a cover built from both is the unsoundness the design doc's §3.3 records,
+ * separately, never together** — a cover built from both is the unsoundness star-battle.md records,
  * because every square belongs to a row AND a column, so a mixed cover counts each star twice and the quota
  * arithmetic silently agrees on boards it has no business deciding.
  *

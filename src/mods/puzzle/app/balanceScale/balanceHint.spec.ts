@@ -31,7 +31,8 @@ describe("buildBalanceHint", () => {
   })
 
   // The point of the rewrite: the solver knows b is 4 at this step and says none of it. Doing the
-  // arithmetic is the part worth keeping for the player (design doc §6).
+  // arithmetic is the part worth keeping for the player (balance-scale.md: a hint names the move, never
+  // the weight).
   it("never carries the weight it knows", () => {
     const hint = buildBalanceHint(puzzle, {}, [], solution, "difference")
     expect(Object.keys(hint!.params)).toEqual(["glyph"])

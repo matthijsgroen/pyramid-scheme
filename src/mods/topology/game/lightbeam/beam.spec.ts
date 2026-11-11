@@ -397,8 +397,9 @@ describe("eachConfig", () => {
 })
 
 // ---------------------------------------------------------------------------------------------------
-// Switch nodes (design doc §11.1). A socket is a transparent cell; crossing it fires every wiring whose
-// sockets have all been crossed, and the pieces those wirings name move.
+// Switch nodes (lightbeam.md: a wiring names a set of sockets and one piece). A socket is a transparent
+// cell; crossing it fires every wiring whose sockets have all been crossed, and the pieces those
+// wirings name move.
 // ---------------------------------------------------------------------------------------------------
 
 /**

@@ -31,7 +31,7 @@ type Props = {
  * **Percentages of the frame rather than pixels**, so the day is as wide as the screen can make it and a
  * tick is never a number this file knows. A tick at the top tier is around 24px, which is not a tap target
  * — but nothing is tapped here. **The thing a finger grabs is the BAR**, two ticks wide at the very least,
- * and the snap does the precision (`docs/game-design/puzzles/procession.md` §5).
+ * and the snap does the precision (`docs/game-design/puzzles/procession.md`: the touch target is the bar).
  */
 export const ProcessionBoard: FC<Props> = ({
   puzzle,
@@ -65,7 +65,7 @@ export const ProcessionBoard: FC<Props> = ({
    */
   const sentence = (mark: Mark): string => {
     const name = (row: number) => t(`procession.events.${skin.name}.${cast(row) % skin.glyphs.length}`)
-    // **The frames are place-neutral, so one set serves every face.** `puzzle-screens.md` §4.3 warns off a
+    // **The frames are place-neutral, so one set serves every face.** `puzzle-screens.md` warns off a
     // shared template with a noun in its slot, and the case it warns about is a verb that changes with the
     // noun — a line is drawn, a road is laid, a channel is dug. Nothing changes here but the subject:
     // everything starts, runs and is done, whether it is a rite or a star. A face that ever needs its own

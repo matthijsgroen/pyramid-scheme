@@ -81,8 +81,9 @@ describe("pouring a board", () => {
 describe("claiming a volume", () => {
   /**
    * The board says what each vessel holds, so what stops a player pouring at random and watching for the
-   * number is the budget rather than the reading (§2): the line is the optimal one exactly, and a claim
-   * costs a move like any other. Solving is still an act — the player says which vessel it is.
+   * number is the budget rather than the reading (canisters.md: the budget makes it a puzzle): the line is
+   * the optimal one exactly, and a claim costs a move like any other. Solving is still an act — the player
+   * says which vessel it is.
    */
   it("is not solved by the right amount appearing — it has to be claimed", () => {
     let state = split(board)
@@ -156,7 +157,8 @@ describe("running out of moves", () => {
   const tight: CanistersPuzzle = { capacities: [8, 5, 3], start: [8, 0, 0], targets: [4], budget: 1 }
 
   it("stops the pouring, rather than letting the water keep moving on credit", () => {
-    // The budget IS the puzzle (§2): a counter that reads nought while the board plays on is not a budget.
+    // The budget IS the puzzle (canisters.md: pours stop when it is spent): a counter that reads nought while
+    // the board plays on is not a budget.
     let state = holdCanister(createCanistersState(tight), 0)
     state = pourInto(state, tight, 1)
     expect(movesLeft(tight, state)).toBe(0)

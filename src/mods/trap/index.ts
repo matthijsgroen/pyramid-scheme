@@ -9,7 +9,7 @@ import { HEALTH_CURRENCY_META } from "./game/healthCurrency"
 
 // The trap mod descriptor. Owns health, the damage traps deal and the waterskin that heals it; the
 // trap encounter families (arithmetic-reflex, clock-reflex); and the crocodile capstone (a puzzle
-// that spends health, so it is trap-owned — see crocodile.md §6). Toggle off by removing it from
+// that spends health, so it is trap-owned — see crocodile.md). Toggle off by removing it from
 // src/mods/registeredMods.ts — trap-tagged rooms then resolve via the family-absence pass-through
 // (SiteMapScreen), and no waterskin is placed.
 //

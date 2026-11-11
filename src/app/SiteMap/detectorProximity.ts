@@ -17,10 +17,10 @@ export const PULSE_SECONDS: Record<Exclude<ProximityBand, "none">, number> = {
 /**
  * A detector's reading, narrowed to what its own level is allowed to know.
  *
- * Precision is the point of the detector ladder (§7.2), so the dot must not leak past it: at L1 the
- * compass knows only which pyramid holds a hit, so its best band is "pyramid" however close the hit
- * physically is. L2 adds the floor, L3 adds the exact cell and with it "near". Feeding the dot raw
- * distances would hand the player L3 precision at L1.
+ * Precision is the point of the detector ladder (collection-and-detector-design.md), so the dot must not leak
+ * past it: at L1 the compass knows only which pyramid holds a hit, so its best band is "pyramid" however
+ * close the hit physically is. L2 adds the floor, L3 adds the exact cell and with it "near". Feeding the dot
+ * raw distances would hand the player L3 precision at L1.
  */
 export const bandFromHits = (
   level: number,

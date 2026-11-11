@@ -42,7 +42,7 @@ describe("generateFutoshiki", () => {
     })
 
     // Signs are thinned against the board's OWN minimum, before the tier hands any numbers back
-    // (design doc §5.1) — so the bar is that no sign was spare when the thinning stopped, which is
+    // (futoshiki.md: prefill) — so the bar is that no sign was spare when the thinning stopped, which is
     // what keeps the sign count from collapsing. A number given afterwards may well retire one, and
     // that is the gift doing its job rather than a sign wasted.
     it("shows no sign the thinning could have spared — the signs are settled before the gift", () => {

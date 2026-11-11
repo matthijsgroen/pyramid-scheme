@@ -73,6 +73,10 @@
     "interruptExpedition": "Onderbreek expeditie",
     "confirmInterruptExpedition": "Weet je zeker dat je deze expeditie wilt onderbreken? Expeditie voortgang wordt bewaard, maar niveau voortgang gaat verloren!",
     "cancel": "Annuleren",
+    "leaveSite": "Deze plek verlaten?",
+    "confirmLeaveSite": "Kies Verlaten om naar buiten te gaan, of Blijven om verder te zoeken.",
+    "leave": "Verlaten",
+    "stay": "Blijven",
     "settings": "Instellingen",
     "language": "Taal",
     "close": "Sluiten",
@@ -1373,14 +1377,7 @@
       }
     },
     "events": {
-      "default": [
-        "het vuur",
-        "het water halen",
-        "het bakken",
-        "de boottocht",
-        "het ossen drijven",
-        "de nachtwake"
-      ],
+      "default": ["het vuur", "het water halen", "het bakken", "de boottocht", "het ossen drijven", "de nachtwake"],
       "funerary": [
         "het pleisteren",
         "het uitzetten van het raster",

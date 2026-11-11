@@ -81,7 +81,7 @@ export const familyIsTrap = (encounter: string | string[] | undefined, defaultTa
 // puzzle family = its meta joins ALL_FAMILY_META via the mod aggregator and enters the pool
 // automatically — no core edit, no spec edit. This is the seam that makes puzzle types pluggable.
 // Roles every board can serve. A role list mixing one of these with a themed role is the PREFER mode
-// (`docs/game-design/journeys.md` §10): the structural tag re-admits every family, and the themed one says
+// (`journeys.md`: restrict or prefer): the structural tag re-admits every family, and the themed one says
 // what the journey would like the room to look like. Kept in step with `rolePools.verify.ts`'s copy, which
 // skips the same tags when it checks pool sizes — a themed pool is a variety risk and a structural one is not.
 const STRUCTURAL_ROLES = new Set(["puzzle", "trap", "treasure", "gate", "shop", "capstone", "tomb-puzzle"])
@@ -155,7 +155,7 @@ const shuffled = (bag: readonly string[], rng: () => number): string[] => {
  * place with things in it. Dealing hands out the whole bag before any family comes back, so a chain of
  * five in a pool of thirteen is five different puzzles, every time, at every seed.
  *
- * The role is untouched by any of this — it still dresses the whole section (`journeys.md` §5). What
+ * The role is untouched by any of this — it still dresses the whole section (`journeys.md`: the section picks the role). What
  * varies down a corridor is which puzzle stands in the room, not what the room looks like.
  *
  * A pool of one deals that one family repeatedly: there is nothing else to hand out.

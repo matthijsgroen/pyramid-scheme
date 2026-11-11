@@ -2,7 +2,8 @@ import type { FC } from "react"
 import { useTranslation } from "react-i18next"
 
 // Read below the board, never in the way of it: the puzzle is solvable without ever reading this
-// (docs/instructions/puzzle-screens.md §1, PUZZLE_FAMILIES.md P2).
+// (docs/instructions/puzzle-screens.md: the rules sit below the board, reached by scrolling;
+// PUZZLE_FAMILIES.md P2).
 export const SumpleteRules: FC = () => {
   const { t } = useTranslation("common")
   return (

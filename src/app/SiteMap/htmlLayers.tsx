@@ -138,7 +138,7 @@ export const ClipLayer = ({
    * is, and it is not what LIGHT is — the lit place ended on a rectangle drawn around a room, which read
    * as a bright tile laid on the floor rather than as a lamp burning in the middle of one.
    *
-   * THE BLUR CANNOT GO ON THIS ELEMENT. A filter is applied BEFORE the clip (CSS Filter Effects §2.2), so
+   * THE BLUR CANNOT GO ON THIS ELEMENT. A filter is applied BEFORE the clip (the CSS Filter Effects spec), so
    * a blurred box cut to a path comes back with the same hard path. It has to go on a PARENT: the child
    * is clipped, the parent rasterises that result and softens it, and the light spills a little past the
    * shape — onto the wall a lamp in the room would be lighting anyway.
