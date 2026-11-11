@@ -92,6 +92,8 @@ import { useRegionBarrierCovers } from "./useRegionBarrierCovers"
 import { REVEAL_FADE_MS, useRevealWave } from "./useRevealWave"
 import { ARROW_RADIUS, PROMPT_LIFT, ringPoint } from "./arrowRing"
 import { buildOfferContext, clickTargetAt, markerAt, type OfferContext, type OfferMarker } from "./clickTargets"
+import { ringArrows, tapCellAt } from "./ringArrows"
+import { useMapKeys } from "./useMapKeys"
 import {
   FACE_SHADOW,
   allFloorRects,
@@ -171,6 +173,10 @@ type Props = {
   replaysAt?: ReplaysAt
   /** Draws every mechanism piece in this style instead of its tileset's (`MECHANISM_STYLE`): a review sheet's. */
   mechanismStyle?: MechanismStyle
+  /** Arrow keys and WASD press the ring arrows, Enter or Space the prompt, Escape `onBack` (`useMapKeys`). Off unless the
+   * map is the top layer. */
+  keysActive?: boolean
+  onBack?: () => void
   className?: string
 }
 
@@ -1671,6 +1677,8 @@ export const SiteMapView = ({
   occupantOf,
   replaysAt,
   mechanismStyle,
+  keysActive = false,
+  onBack,
   className,
 }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
@@ -2138,6 +2146,14 @@ export const SiteMapView = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [grid, offerKey, isTraveling, freeWalk]
   )
+  const arrows = useMemo(() => ringArrows(grid, claims, offerContext), [grid, claims, offerContext])
+  useMapKeys({
+    active: keysActive && !!onCellClick,
+    arrows,
+    onMove: (row, col) => onCellClick?.(row, col),
+    onConfirm: prompt?.onTake,
+    onBack,
+  })
 
   // THE ARROWS AROUND THE EXPLORER are drawn half a cell from where he stands (`ringPoint`), not on the cells they
   // lead to; a tap still names the cell. Dots and nodes further off stay on their own cells.
@@ -2429,6 +2445,7 @@ export const SiteMapView = ({
                   const offer = clickTargetAt(grid, claims, r, c, offerContext)
                   const marker = markerAt(grid, claims, r, c, offerContext, offer)
                   const spot = markerSpot(marker, { cx, cy })
+                  const tap = tapCellAt(offerContext, r, c, offer)
                   return (
                     <MarkerCell
                       at={[r, c]}
@@ -2437,7 +2454,7 @@ export const SiteMapView = ({
                       cx={spot.cx}
                       cy={spot.cy}
                       ring={spot.ring}
-                      onClick={offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
+                      onClick={tap && onCellClick ? () => onCellClick(tap[0], tap[1]) : undefined}
                     >
                       {drawCorridorMarker(marker)}
                     </MarkerCell>
@@ -2497,6 +2514,7 @@ export const SiteMapView = ({
                 // The arrow a room's own cell wears beside the player (`markerAt`), drawn on its ring beside the node.
                 const arrow = markerAt(grid, claims, r, c, offerContext, offer)
                 const arrowSpot = arrow?.kind === "arrow" ? markerSpot(arrow, cellCenter(r, c)) : undefined
+                const tap = tapCellAt(offerContext, r, c, offer)
 
                 return (
                   <Fragment key={`${r},${c}`}>
@@ -2509,10 +2527,7 @@ export const SiteMapView = ({
                         cx={arrowSpot.cx}
                         cy={arrowSpot.cy}
                         ring={arrowSpot.ring}
-                        onClick={
-                          onCellClick &&
-                          (choice ? () => onCellClick(r, c) : offer ? () => onCellClick(offer[0], offer[1]) : undefined)
-                        }
+                        onClick={tap && onCellClick ? () => onCellClick(tap[0], tap[1]) : undefined}
                       >
                         <RunTargetArrow dir={arrow.dir} />
                       </MarkerCell>

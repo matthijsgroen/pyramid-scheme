@@ -4,7 +4,7 @@ Aanleiding: twee playtesters willen de ontdekkingsreiziger met de pijltjestoetse
 dekt toetsenbord en game controller (Gamepad API) voor drie gebieden: de kaart, menu's en schermen, puzzels.
 Touch blijft leidend en verandert nergens: elke toets doet wat een tik al doet, via dezelfde code.
 
-Status: plan, niets gebouwd. Visuele stappen hebben eerst een spike + goedgekeurd plaatje nodig (gemarkeerd met **spike**).
+Status: slice 1 gebouwd, de rest is plan. Visuele stappen hebben eerst een spike + goedgekeurd plaatje nodig (gemarkeerd met **spike**).
 
 ---
 
@@ -131,9 +131,9 @@ toetsaanslag dan niet. Dat dekt `NumberLock`, `InputBlock`, tableau-invoer zonde
 
 ## 3. De kaart
 
-**Regel:** `move(d)` = de tik die de ring-pijl in richting `d` doet (`choice ? arrowCell : offer`, precies zoals
-`SiteMapView.tsx:2512-2514`), doorgegeven aan `onCellClick`. `confirm` = `prompt.onTake`. `back` = de BackButton van
-`SiteMapScreen.tsx:226` (`onCancel`).
+**Regel:** `move(d)` = de tik die de ring-pijl in richting `d` doet (`tapCellAt` in `ringArrows.ts`, dezelfde
+functie waarmee de renderer de tik op een pijl doorgeeft), doorgegeven aan `onCellClick`. `confirm` = `prompt.onTake`.
+`back` = vraagt eerst of de speler de site verlaat (`ConfirmModal`, V4); pas daarna `onCancel`.
 
 Wat er daardoor gratis meekomt:
 
@@ -242,10 +242,10 @@ verplaatst die listener naar een laag zonder gedrag te veranderen (specs van sli
 
 | #   | Vraag                                                                                     | Aanbeveling                                                                            |
 | --- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| V1  | WASD naast pijltjes?                                                                      | Ja, op fysieke positie (`event.code`), dus ZQSD op AZERTY                              |
-| V2  | Pijl vasthouden: doorlopen naar de volgende stop na aankomst, of één stop per druk?       | Doorlopen na aankomst (zoals OS-repeat), nooit halverwege bijsturen                    |
-| V3  | Richting zonder pijl: niets, of een kleine "kan niet"-reactie?                            | Niets in slice 1; reactie alleen na spike                                              |
-| V4  | Escape op de kaart = de Terug-knop (site verlaten), zonder extra bevestiging?             | Ja: `back` = zichtbare terugknop, overal hetzelfde                                     |
+| V1  | WASD naast pijltjes?                                                                      | **Besloten:** ja, op fysieke positie (`event.code`), dus ZQSD op AZERTY                |
+| V2  | Pijl vasthouden: doorlopen naar de volgende stop na aankomst, of één stop per druk?       | **Besloten:** doorlopen na aankomst, nooit halverwege bijsturen                        |
+| V3  | Richting zonder pijl: niets, of een kleine "kan niet"-reactie?                            | **Besloten:** niets                                                                    |
+| V4  | Escape op de kaart = de Terug-knop (site verlaten), zonder extra bevestiging?             | **Besloten:** Escape vraagt eerst bevestiging (`ConfirmModal`); de Terug-knop niet     |
 | V5  | Padknoppen positioneel (onder = bevestigen) of op label (Nintendo A rechts)?              | Positioneel; standard mapping kent alleen posities                                     |
 | V6  | Toetsglyphs (⏎, Ⓐ) tonen bij toetsen/pad?                                                 | Ja, alleen in keys/pad-modus, na spike (slice 8)                                       |
 | V7  | Rush hour: één zet per vak of per pakken→loslaten?                                        | Pakken→loslaten = één zet, net als een sleep                                           |
