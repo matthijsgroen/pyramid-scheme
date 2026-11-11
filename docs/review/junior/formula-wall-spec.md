@@ -76,6 +76,8 @@ N35A en P1 staan er al in (P1 ook als verkoopwaar `sell_gold_2` in `src/data/sel
   tableau-tekens, alleen voor de formulemuur. In `allItems` (`:380`) **vóór** `egyptianSigns`.
 - **Niet** in `TOMB_SYMBOLS` (`src/mods/hieroglyph/game/tableaus.ts:28`, en het duplicaat in
   `src/mods/hieroglyph/app/plugin.tsx:21`). Daar zou de patch-lus ze in een grafbord drukken.
+- **De microverhalen blijven heel.** De tableau-teksten (`tableaus.json`) noemen tekens bij naam; geen tableau gebruikt
+  een gift-id. Een generieke test in `tableaus.spec.ts` ("geen tableau gebruikt een gift-teken") houdt dat zo.
 - **Namen uniek houden.** `tableaus.ts:111` bouwt `nameToId` uit `allItems`, laatste wint. Een gift met dezelfde naam als
   een verhaalobject (`objectsForStories`) zou een tableau naar het gift-teken laten wijzen, en dan beweegt de bake wél.
   Vandaag botst "Bread", "Linen", "Water" en "Boat" met niets (grep). Een generieke test "elke naam in de catalogus komt
@@ -392,7 +394,7 @@ applyReward({ type: "hieroglyphFragment", hieroglyphId: gift.sign, pieceIndex: 0
 - De story-mod importeert de hieroglyph-mod hiervoor niet; hij noemt alleen het beloningstype, zoals de muren
   hieroglyph-ids noemen. Hieroglyph uit: de gift speelt, er gebeurt niets (de muur is dan ook niet te lezen). Story uit:
   geen conversatie- en leesplugin, de kamers zijn doorloop (bestaand).
-- Geen beloningspopup: de scène is de aankondiging, en de Collectie toont "nieuw" (V5).
+- Na de scène het bestaande beloningsscherm, met de kop "Je kreeg:" in plaats van "Je vond:" (V5): een gift, geen vondst.
 
 ### 5.4 Save
 
@@ -494,15 +496,15 @@ Slices 1–3 kunnen samen in één PR (geen bake, samen ±1 dag). Slice 4 bakt �
 
 ---
 
-## 10. Open vragen voor de designer
+## 10. Besluiten (designer, 2026-11-11)
 
-| #   | Vraag                                                                                                             | Aanbeveling                                                                                                                                                                                                                                                                                                                               |
+| #   | Vraag                                                                                                             | Besluit                                                                                                                                                                                                                                                                                                                                   |
 | --- | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | V1  | De boot: `art10` kan niet (de speler heeft hem al, §1.1). Welk teken wordt `o4`? En `art10` zelf tekent een hand. | **`o4` = P1 𓊛**, de gewone boot: het woord in de formule is een veerboot "voor wie er geen had", en hij staat al in het font. `art10` apart herstellen naar P3 𓊞 (de heilige bark die hij zegt te zijn); raakt de bake niet. Dan zijn de twee boten verschillend en allebei juist.                                                        |
 | V2  | Wat toont elke muur: alleen het eigen woord (A), overal de hele regel (B), of de gaven tot nu toe (C)?            | **C.** Niets wordt verklapt, de lijst groeit zichtbaar, en de wizard-muur is de eerste plek met de hele regel (§3.2).                                                                                                                                                                                                                     |
 | V3  | Gat (`missing`) of miscut?                                                                                        | **Gat.** De geest gaf je het teken net; de vraag is "heb je het", niet "welk".                                                                                                                                                                                                                                                            |
 | V4  | Ook een formulemuur in `_b`/`_c`-graven?                                                                          | **Nee.** Eén regel per tier, één beat. Wizard: `wizard_treasure_tomb`, door dezelfde regel.                                                                                                                                                                                                                                               |
-| V5  | Popup bij de gift, of alleen de scène?                                                                            | **Alleen de scène.** Een gift, geen vondst; de Collectie toont "nieuw".                                                                                                                                                                                                                                                                   |
+| V5  | Popup bij de gift, of alleen de scène?                                                                            | **Beloningsscherm met de kop "Je kreeg:".** Een gift, geen vondst.                                                                                                                                                                                                                                                                        |
 | V6  | Expert/master/wizard: de eerste prefab-kamers van die tiers. Mogen ze al vóór de art-ronde?                       | **Ja.** Dezelfde props als junior; master en wizard vallen terug op de `default`-tegels (§4.1).                                                                                                                                                                                                                                           |
 | V7  | Hint: één keer of bij elk bezoek zolang het teken ontbreekt?                                                      | **Elk bezoek.** Eén regel, en de enige wegwijzer (geen kaartmarkering, gedeelde `cannot`).                                                                                                                                                                                                                                                |
 | V7b | Blijft een herstelde muur hersteld?                                                                               | **Ja, voor alle muren tegelijk, en zonder nieuwe opslag:** een muur waarvan `after` gehoord is, staat hersteld (Henut `tomb.juniorFixed`, Sphinx `reading.sphinx`, formule `reading.<tier>`). Nu belangrijker: de speler houdt het teken, dus een kapotte muur bij een tweede bezoek nodigt uit tot opnieuw doen. Klein, past in slice 1. |
