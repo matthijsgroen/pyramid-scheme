@@ -4,8 +4,8 @@ import type { SumpleteOptions } from "./generateSumplete"
 
 export type SumpleteConfig = { size: number } & SumpleteOptions
 
-// Tier settings, from docs/game-design/puzzles/sumplete.md §5. The technique cap is the real dial:
-// it is what a board may DEMAND of the player, so a big grid that falls to counting alone stays easy
+// Tier settings, from docs/game-design/puzzles/sumplete.md's difficulty knobs. The technique cap is the
+// real dial: it is what a board may DEMAND of the player, so a big grid that falls to counting alone stays easy
 // and a small one that needs combinations does not. Sizes are paired to the cap that a board of that
 // size can actually be generated under.
 export const SUMPLETE_CONFIG: Record<Difficulty, SumpleteConfig> = {
@@ -22,7 +22,7 @@ export const SUMPLETE_CONFIG: Record<Difficulty, SumpleteConfig> = {
 /**
  * The options one encounter builds its board from. Split out from the plugin so a build script with no
  * React can derive the same ones, and so their hash can key this tier's seed list
- * (`docs/instructions/puzzle-screens.md` §6.1).
+ * (`docs/instructions/puzzle-screens.md`: a bucket is keyed by a hash of the options).
  */
 export const resolveSumpleteOptions = ({ difficulty }: FamilyGenerationCtx): SumpleteConfig =>
   SUMPLETE_CONFIG[difficulty ?? "starter"]

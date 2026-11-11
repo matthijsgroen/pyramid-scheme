@@ -2,7 +2,10 @@ import type { ProcessionPuzzle, ProcessionState } from "@/mods/puzzle/game/proce
 import { deduce, requiredRung, type Rung } from "@/mods/puzzle/game/procession/solveProcession"
 
 export type ProcessionHint = {
-  /** Which sentence says why, keyed by the rung that reaches it (`puzzle-screens.md` §4.3). */
+  /**
+   * Which sentence says why, keyed by the rung that reaches it (`puzzle-screens.md`: hints are worded per
+   * identity).
+   */
   rung: Rung
   /** The row it is about, and the tick the bar belongs on — the ticks the board hatches. */
   bar: number
@@ -15,7 +18,7 @@ export type ProcessionHint = {
  * **A hint here is shaped differently from a grid family's, because the board is never empty.** Every bar
  * is somewhere from the first frame, so there is no blank cell to fill — what a stuck player has is a bar
  * in the wrong place. So the ladder is run from nothing known, in its own order, and the hint is the
- * earliest thing it settles that the board disagrees with (`procession.md` §7).
+ * earliest thing it settles that the board disagrees with (`procession.md`: hints).
  *
  * Derived only when asked: the split rung supposes its way over every candidate on the board, which is
  * cheap on six bars and not free.

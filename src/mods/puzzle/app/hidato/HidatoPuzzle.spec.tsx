@@ -29,7 +29,7 @@ const numbersIn = (root: HTMLElement) => [...root.querySelectorAll("svg text")].
 
 /**
  * A press and a release on the same cell. The press alone is not a tap: it picks the run up and leaves
- * what the touch meant to be decided when the finger lifts (design doc §6.5).
+ * what the touch meant to be decided when the finger lifts (hidato.md: a tap is decided on release).
  */
 const tapCell = (cell: SVGGElement, root: HTMLElement) =>
   act(() => {
@@ -44,7 +44,7 @@ const press = (root: HTMLElement, puzzle: HidatoBoardData, key: string) =>
 const release = (root: HTMLElement) => act(() => void fireEvent.pointerUp(root.querySelector("svg")!, { pointerId: 1 }))
 
 /**
- * Where a cell's centre lands on screen, from the board's own viewBox and the layout its design doc §7
+ * Where a cell's centre lands on screen, from the board's own viewBox and the layout hidato.md
  * states: pointy-top axial, q east and r south-east. Written out here rather than imported so a change
  * to either half has to be a deliberate change to both.
  */
@@ -189,7 +189,7 @@ describe("the hidato screen", () => {
     expect(numbersIn(container)).toContain("2")
 
     // Now press that very cell to start another drag. Reading the press as a tap took the 2 straight
-    // back off, and every move after it did nothing — the run had been put down (§6.5).
+    // back off, and every move after it did nothing — the run had been put down (hidato.md).
     press(container, puzzle, cellOf(puzzle, 2))
     expect(numbersIn(container)).toContain("2")
     dragTo(container, hexFromKey(cellOf(puzzle, 3)))

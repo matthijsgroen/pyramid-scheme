@@ -24,7 +24,7 @@ vi.mock("@/app/SiteMap/perkContributions", () => ({ useMergedEarnedPerks: () => 
 const { useTrapProgress } = await import("./useTrapProgress")
 const { trapDamage } = await import("@/mods/trap/game/trapHealth")
 
-// The trap-owned perks (§8.0.1) are derived from the treasures held, so holding the treasure IS
+// The trap-owned perks (collection-and-detector-design.md) are derived from the treasures held, so holding the treasure IS
 // holding the perk — there is no grant to miss, and no banked number that can drift from it.
 describe("trap perks derived from the treasures held", () => {
   it("starts at the base values when no treasure carries a trap perk", () => {

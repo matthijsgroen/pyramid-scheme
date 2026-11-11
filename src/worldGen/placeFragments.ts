@@ -326,7 +326,7 @@ export const placeFragments = (
         // that slot's tagged bucket — so the gating worklist can't spill e.g. a hieroglyph into a
         // mosaic shop slot. Non-shop slots stay soft (any currency, any node).
         // Hidden slots are excluded outright: a hidden corridor is a discovery-gated OPTIONAL pocket
-        // (keys-and-locks-solver.md §E / collection-and-detector-design.md §7.3), structurally
+        // (collection-and-detector-design.md: only optional loot may sit there), structurally
         // reachable but never guaranteed reachable (needs the corridor detector or a lucky stumble),
         // so a progression-gating currency the solver must guarantee may never land there. They stay
         // available for the capped/dynamic filler passes below — optional loot is exactly their role.

@@ -1,5 +1,5 @@
-// The two detector modes and their owning mods (see collection-and-detector-design.md §7.1):
-// compass←hieroglyph, corridor←core. Each owner registers a hook that reads its own
+// The two detector modes and their owning mods (see collection-and-detector-design.md: two detectors, two
+// owners): compass←hieroglyph, corridor←core. Each owner registers a hook that reads its own
 // perk level; core reads the merged accessor and names no mod. Same seam shape as keyProviders.ts.
 export type DetectorLevelMode = "compass" | "corridor"
 export type UseDetectorLevel = () => number

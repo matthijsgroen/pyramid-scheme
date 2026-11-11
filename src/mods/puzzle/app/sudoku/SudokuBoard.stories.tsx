@@ -21,7 +21,8 @@ const meta = {
     backgrounds: { default: "dungeon", values: [{ name: "dungeon", value: "#110d08" }] },
   },
   // The board sizes off its container and the viewport, the way it has to on a phone
-  // (`puzzle-screens.md` §1) — so a story that gives it no container shows a thumbnail of one.
+  // (`puzzle-screens.md`: the board fits the phone) — so a story that gives it no container shows a
+  // thumbnail of one.
   decorators: [
     Story => (
       <div className="w-sm max-w-full">
@@ -92,7 +93,7 @@ export const PapyrusWithNotes: Story = { args: pencilled(starter, register) }
 
 /**
  * A hint on screen: the squares it SETTLES are hatched, the squares it argues FROM are ringed. The two
- * never look the same, or "this square" is a guess between six of them (`puzzle-screens.md` §4.2).
+ * never look the same, or "this square" is a guess between six of them (`puzzle-screens.md`).
  */
 const hinted = (puzzle: typeof starter, skin: typeof carved) => {
   const state = createSudokuState(puzzle)
@@ -143,7 +144,7 @@ export const PapyrusWithTwins: Story = { args: twinned(starter, register) }
 
 /**
  * The finished register filing itself: each chamber is taken up as a scroll, one after the next, and laid
- * back out — the solved board is the reward, so it cannot be left rolled up (`puzzle-screens.md` §3).
+ * back out — the solved board is the reward, so it cannot be left rolled up (`puzzle-screens.md`).
  *
  * **Frozen partway**, at three different heights, because a 420ms run is not something a screenshot can
  * hold: the story pauses each roll at a different point of its own animation rather than playing the wave

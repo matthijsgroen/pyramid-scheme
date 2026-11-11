@@ -99,7 +99,7 @@ const floorSeed = (journeyId: string, levelIdx: number, floorIdx: number): numbe
   generateNewSeed(hashString(journeyId), 1) + (levelIdx + 1) + floorIdx
 
 // The hieroglyph mod's compass scanner: every world location of the target hieroglyph's fragment
-// pieces the player hasn't collected yet. Level-aware (§7.2 narrow inward): the raw hits always
+// pieces the player hasn't collected yet. Level-aware (the compass narrows inward, collection-and-detector-design.md): the raw hits always
 // carry pyramid (journeyId) + floor (levelIdx/floorIdx); at level 3 each hit also gets its exact
 // `cell`, resolved by assembling that floor. Lower levels skip assembly (the panel hides the finer
 // fields anyway). Registered from the mod's app entrypoint, so core surfaces compass hits without

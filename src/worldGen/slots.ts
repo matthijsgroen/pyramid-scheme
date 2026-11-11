@@ -39,7 +39,7 @@ export type Slot = {
    * exclusively by the dynamic loot pass (mod-owned distributions). */
   kind: "end" | "puzzle"
   /** True when this slot lives in a hidden (discovery-gated) section — a hidden corridor is an
-   * OPTIONAL loot pocket (docs/mods/collection-and-detector-design.md §7.3): structurally
+   * OPTIONAL loot pocket (docs/mods/collection-and-detector-design.md): structurally
    * reachable but off the guaranteed path, since discovery isn't guaranteed (needs the corridor
    * detector or a lucky stumble). So the gating worklist must NEVER place a progression-gating
    * currency here — placeFragments excludes hidden end slots. Only optional filler (capped/dynamic)
@@ -56,9 +56,10 @@ export type Slot = {
    * distribution-primitive-design.md). */
   rewardPriority: number
   /** The concrete family this slot's node resolved to (e.g. "fez-shop", "sumplete"), when known —
-   * the §A.3 encounter identity a mod's placement/fill joins on (a shop's stock slots carry
-   * "fez-shop"). Undefined for a plain treasure end. Distinct from rewardPriority (a number): this
-   * is the family id, so a mod can target "shop slots" directly instead of via the weight proxy. */
+   * the encounter identity a mod's placement/fill joins on (distribution-primitive-design.md: the `eligible`
+   * join) (a shop's stock slots carry "fez-shop"). Undefined for a plain treasure end. Distinct from
+   * rewardPriority (a number): this is the family id, so a mod can target "shop slots" directly instead of
+   * via the weight proxy. */
   encounter?: string
   /** Assign this slot's reward, or clear it to empty (`undefined`) — a leftover placeholder with
    * no filler (e.g. a chest when the shop mod is off) becomes an empty path end. */
@@ -150,7 +151,7 @@ export const collectSlots = (
       // tomb side paths still bear loot — no special-casing, it falls out of the family weights.
       // Per-node overrides (authored `nodes` selectors, e.g. a capstone or an every-3rd trap) are
       // resolved PER room index: a weight-0 family (crocodile/trap) at position k makes only that
-      // room loot-ineligible, not its neighbours (§G).
+      // room loot-ineligible, not its neighbours (ARCHITECTURE.md: node selectors).
       const emitPuzzle = (
         rewards: (TreasureReward | undefined)[] | undefined,
         ref: FloorRef,
@@ -263,7 +264,7 @@ export const collectSlots = (
           const secHidden = !!section.hidden
           // A section whose `end` is a stairhead (`"staircase"` / `{ stairId }`) is a pure
           // floor-to-floor connector, never a loot node — buildSite.ts's `wireSideSectionStaircases`
-          // ("the treasure IS the key", pyramid-interior-design.md §8) and the carve's own
+          // ("the treasure IS the key", pyramid-interior-design.md) and the carve's own
           // room-building (the stairhead branch never reads `endReward`) agree: only an
           // `end: "treasure"` section can actually display/grant a reward at runtime. An open
           // tomb-key gate leading to a stairhead must never be handed to a currency as a fillable

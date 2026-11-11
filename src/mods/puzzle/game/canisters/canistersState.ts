@@ -41,9 +41,9 @@ export const createCanistersState = (puzzle: CanistersPuzzle): CanistersState =>
 })
 
 /**
- * The amount in a canister is never shown and never checked for the player (design doc §7): they work it
- * out and then SAY so. A board that lit up the moment the right amount appeared would let a player pour at
- * random and watch for it, which is the whole puzzle handed over.
+ * The amount in a canister is never checked for the player (canisters.md: claiming a vessel is the only way
+ * to finish the board): they work it out and then SAY so. A board that lit up the moment the right amount
+ * appeared would let a player pour at random and watch for it, which is the whole puzzle handed over.
  */
 const holdsWanted = (puzzle: CanistersPuzzle, volumes: Volumes, measured: number, canister: number): boolean =>
   measured < puzzle.targets.length && volumes[canister] === puzzle.targets[measured]
@@ -62,10 +62,11 @@ export const holdCanister = produce((state: CanistersState, canister: number) =>
 /**
  * Pours what is held into another canister.
  *
- * **A pour that cannot be paid for does not happen.** The budget IS the puzzle (design doc §2), so once it
- * is spent the water stops moving and the board stands as it is — undo gives a move back, reset gives them
- * all. Claiming is deliberately still allowed: the budget counts pours, so the last one of a line leaves
- * nothing in hand, and a board whose final claim were refused could never be finished at all.
+ * **A pour that cannot be paid for does not happen.** The budget IS the puzzle (canisters.md: it is
+ * enforced), so once it is spent the water stops moving and the board stands as it is — undo gives a move
+ * back, reset gives them all. Claiming is deliberately still allowed: the budget counts pours, so the last
+ * one of a line leaves nothing in hand, and a board whose final claim were refused could never be finished at
+ * all.
  *
  * **A tap that cannot pour picks that canister up instead.** Tapping a full vessel while holding another
  * has no other meaning on this board, and answering it by quietly putting down what was held is a dead

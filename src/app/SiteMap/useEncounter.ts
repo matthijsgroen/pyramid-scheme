@@ -91,8 +91,9 @@ export const useEncounter = ({
       familyOrdinal: cell?.type === "room" ? cell.familyOrdinal : undefined,
       boardIndex: cell?.type === "room" ? cell.boardIndex : undefined,
       encounterArgs: cell?.type === "room" ? cell.encounterArgs : undefined,
-      // The skin this room was authored to wear (docs/instructions/puzzle-screens.md §2). Core carries the
-      // name and reads nothing into it; unset means every family draws its default.
+      // The skin this room was authored to wear (docs/instructions/puzzle-screens.md: the role is the
+      // identity, the theme layers on it). Core carries the name and reads nothing into it; unset means every
+      // family draws its default.
       theme: cell?.type === "room" ? cell.theme : undefined,
       role: cell?.type === "room" ? cell.role : undefined,
       requiredKeyId: cell?.type === "room" ? cell.requiredKeyId : undefined,

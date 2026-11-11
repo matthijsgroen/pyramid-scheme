@@ -9,11 +9,12 @@ import type { Glyph } from "@/mods/puzzle/game/balanceScale/techniques"
  * are the pieces whose weight the player is solving for, and `generateBalance.ts` says the thing that
  * matters about them: _"Weights whose value is not written on them. Any distinguishable set works — the
  * solver never reads a glyph, it only cares that the same one weighs the same everywhere."_ So a glyph is
- * an identity and the symbol standing for it is presentation, exactly as a sudoku value is a position and
- * the sign drawn for it is the skin's call (`docs/instructions/puzzle-screens.md` §2).
+ * an identity and the symbol standing for it is presentation, exactly as a sudoku value is a position and the
+ * sign drawn for it is the skin's call (`docs/instructions/puzzle-screens.md`: the family renders states, the
+ * skin renders pixels).
  *
  * Which is why weighing a heart against a feather needs no new rule: it is this family's own mechanic with
- * its unknowns renamed. `PUZZLE_FAMILIES.md` titles it "§4.2 Balance scale (weighing of the heart)", so the
+ * its unknowns renamed. `PUZZLE_FAMILIES.md` titles it "Balance scale (weighing of the heart)", so the
  * funerary reading is what the family was before `trade` was attached to it.
  *
  * ponytail: the GROUND is not skinned — the board's stone-and-amber stays hardcoded in `BalanceBoard.tsx`.
@@ -76,7 +77,7 @@ const SKINS: Record<string, BalanceSkin> = { default: scale, weighing }
  * Which place this room is, resolved the same way every family resolves it (`app/faceFor.ts`).
  *
  * The map itself lives on this family's `FamilyMeta`, where world-gen can read it too
- * (`docs/instructions/puzzle-screens.md` §2).
+ * (`docs/instructions/puzzle-screens.md`: a site names a role, never a skin).
  */
 export const skinFor = (
   role: string | string[] | undefined,

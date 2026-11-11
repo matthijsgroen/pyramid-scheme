@@ -18,14 +18,14 @@ type Props = {
   onTogglePencil: () => void
 }
 
-// Every control is at least a thumb wide (docs/instructions/puzzle-screens.md §1), and the pad wraps
-// rather than shrinking, so it still fits a 360px screen.
+// Every control is at least a thumb wide (docs/instructions/puzzle-screens.md: tap targets ≥ 44px), and
+// the pad wraps rather than shrinking, so it still fits a 360px screen.
 const buttonCls = "flex h-11 min-w-11 items-center justify-center rounded border px-2 text-lg transition-colors"
 
 /**
  * The values, and the two keys that change what pressing one MEANS.
  *
- * **Notes and the eraser are pad furniture, not chrome** (`puzzle-screens.md` §3): they re-aim the keys
+ * **Notes and the eraser are pad furniture, not chrome** (`puzzle-screens.md`): they re-aim the keys
  * above them, so they belong in the same grid, cut to the same square. Undo is the shell's, because a step
  * back means the same thing on a board with no pad at all.
  */

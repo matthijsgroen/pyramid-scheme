@@ -106,8 +106,9 @@ export const MOD_WORLD_VALIDATORS: WorldValidator[] = REGISTERED_MODS.flatMap(m 
   m.worldValidator ? [m.worldValidator] : []
 )
 
-// Every mod's reachability support (§E), merged into one — the currency-specific facts core
-// reachability must not name (tomb-key harvest, tomb map-piece entry lock, tier-unlock ladder).
+// Every mod's reachability support (keys-and-locks-solver.md: gates hold every mod's requirement),
+// merged into one — the currency-specific facts core reachability must not name (tomb-key harvest,
+// tomb map-piece entry lock, tier-unlock ladder).
 // A single-answer hook (a threshold, a reward's bucket) takes the first contributor's defined
 // answer. The gates concatenate in registry order instead: every mod's entry locks and tier groups
 // all stand, so a gate holds every mod's requirement (AND across mods, OR within one group). An empty
@@ -151,14 +152,15 @@ export const MOD_REACHABILITY_SUPPORT: ReachabilitySupport = {
   resolvePassage: resolvePassageRealisation,
 }
 
-// The tomb-treasure content resolver (§E): maps a tomb's floor position → its `tombKey` reward, so
-// core world-gen names no reward type. First contributing mod wins (one provider expected); with
+// The tomb-treasure content resolver (keys-and-locks-solver.md: keys are positional tomb content):
+// maps a tomb's floor position → its `tombKey` reward, so core world-gen names no reward type.
+// First contributing mod wins (one provider expected); with
 // none (mod off), buildConfigs places no tomb treasures. Injected by scripts/generateWorld.ts.
 export const MOD_TOMB_TREASURE_RESOLVER: TombTreasureResolver | undefined = REGISTERED_MODS.map(
   m => m.resolveTombTreasure
 ).find(r => r !== undefined)
 
-// Which tomb floors are reserved for tier-unlock/location-key treasures (§E) — so a pyramid's ward
+// Which tomb floors are reserved for tier-unlock/location-key treasures — so a pyramid's ward
 // wings skip them without core world-gen reading perk types. First contributing mod wins; with none
 // (mod off), nothing is reserved. Injected into buildConfigs by scripts/generateWorld.ts.
 export const MOD_RESERVED_TREASURE_INDICES: ((tombId: string) => number[]) | undefined = REGISTERED_MODS.map(

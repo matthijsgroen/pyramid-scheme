@@ -54,7 +54,7 @@ const drawColumn = (options: CrocodileOptions, random: () => number): Stone[] | 
 }
 
 /**
- * Builds one crossing (docs/game-design/puzzles/crocodile.md §3).
+ * Builds one crossing (docs/game-design/puzzles/crocodile.md: one gate, and it is not solvability).
  *
  * There is no route to search for: every column has exactly one stone its crocodile wants, so any set of
  * columns is already a crossable board. The only thing generation has to work at is that the answer

@@ -73,7 +73,8 @@ describe("StarBattlePuzzle", () => {
       act(() => cellsIn(container)[cell].click())
       act(() => cellsIn(container)[cell].click())
     })
-    // The banner lands a beat after the last star (puzzle-screens.md §3), reporting the solve time wordlessly.
+    // The banner lands a beat after the last star (puzzle-screens.md: the banner reports the solve time),
+    // reporting the solve time wordlessly.
     await waitFor(() => expect(within(container).getByText(/⏱/)).toBeDefined(), { timeout: 5000 })
     expect(solved).toBe(false) // the banner waits for a tap; solving does not leave the room by itself
   })

@@ -3,7 +3,7 @@ import { PROCESSION_STEPS } from "@/game/mechanics/sequence"
 import type { ProcessionOptions } from "./generateProcession"
 
 /**
- * The ladder, tier by tier (`docs/game-design/puzzles/procession.md` §5).
+ * The ladder, tier by tier (`docs/game-design/puzzles/procession.md`: tiers, as measured).
  *
  * **The rung is the tier and the size is the bookkeeping.** A wider day and another bar do not make a
  * board harder — they make it longer — so what separates one tier from the next is the weakest rung that
@@ -78,7 +78,7 @@ export const PROCESSION_CONFIG: Record<Difficulty, ProcessionOptions> = {
   },
   // A sixth bar and the widest day, where most of what is known is known by supposition. The ceiling is as
   // load-bearing as the floor: past twenty struck candidates a board stops being hard and starts being
-  // long, which is the shape §3.2 of the catalogue rules out. 2.4% of seeds.
+  // long, which is the shape PUZZLE_FAMILIES.md rules out. 2.4% of seeds.
   wizard: {
     ticks: 16,
     bars: 6,

@@ -21,7 +21,7 @@ import { skinFor } from "./skins"
 type Props = {
   puzzle: RushHourPuzzleData
   difficulty?: Difficulty
-  /** The pool this room was drawn from — which place it is (docs/instructions/puzzle-screens.md §2). */
+  /** The pool this room was drawn from — which place it is (docs/instructions/puzzle-screens.md). */
   role?: string | string[]
   /** The ambience its site authored, or a skin named outright. */
   theme?: string
@@ -55,8 +55,8 @@ export const RushHourPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, roo
    * The player's piece drives out before the shell is told.
    *
    * The shell freezes the board and starts its banner the moment it hears "solved"
-   * (`puzzle-screens.md` §3), so the piece has to leave BEFORE that word is said. One beat, one piece —
-   * the run this family has is the thing the whole board was about.
+   * (`puzzle-screens.md`: a completion animation runs before "solved"), so the piece has to leave BEFORE that
+   * word is said. One beat, one piece — the run this family has is the thing the whole board was about.
    */
   const finished = rushHourSolved(puzzle, state)
   const celebration = useCelebration(finished, 1)

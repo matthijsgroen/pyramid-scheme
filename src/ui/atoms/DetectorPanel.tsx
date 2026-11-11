@@ -27,7 +27,8 @@ type Props = {
   activeDetector: DetectorMode
   compassLevel: number // 0 = not unlocked
   detectionLevel: number // 0 = not unlocked
-  // The hunted hieroglyph, picked on the Collection screen (§3C). null = nothing picked yet.
+  // The hunted hieroglyph, picked on the Collection screen (collection-and-detector-design.md). null =
+  // nothing picked yet.
   compassTarget: string | null
   // How to SHOW the target (id → glyph) and a hit (journey, pyramid, floor). Injected rather than
   // looked up here: this is a presentational atom, and the target's meaning is mod-owned.
@@ -40,9 +41,9 @@ type Props = {
   // stop it, so this row carries the off switch and not just the choice.
   detectorTitles?: Record<Exclude<DetectorMode, null>, string>
   onSetDetector?: (mode: DetectorMode) => void
-  // Corridor detector widens outward (§7.2), one scope per level: L1 = within a few steps of the
-  // player, L2 = anywhere on this floor, L3 = any other floor of this pyramid (L4 adds the marker on
-  // the journey map). Each scope reports either way once unlocked.
+  // Corridor detector widens outward (collection-and-detector-design.md), one scope per level: L1 = within a
+  // few steps of the player, L2 = anywhere on this floor, L3 = any other floor of this pyramid (L4 adds the
+  // marker on the journey map). Each scope reports either way once unlocked.
   corridorNearby?: boolean
   /** Standing at a hidden corridor's mouth: the readout offers to open it, and only then does it open. */
   onRevealCorridor?: () => void

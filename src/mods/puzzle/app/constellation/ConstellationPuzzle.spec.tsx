@@ -18,7 +18,8 @@ vi.mock("./constellationHint", async importOriginal => {
   return { ...actual, buildConstellationHint: vi.fn(actual.buildConstellationHint) }
 })
 
-// The stars, in puzzle order: the only touch targets on the board (§8).
+// The stars, in puzzle order: the only touch targets on the board (constellation.md: empty cells take no
+// input).
 const starsIn = (root: HTMLElement) =>
   within(root)
     .getAllByRole("button")
@@ -27,8 +28,9 @@ const starsIn = (root: HTMLElement) =>
 /**
  * One drag: press a star, travel far enough to mean a direction, release.
  *
- * The gesture is a direction rather than a destination (§6), so the deltas below are all the board needs —
- * which is also why it can be driven without any layout.
+ * The gesture is a direction rather than a destination (constellation.md: the line runs to whichever star
+ * lies that way), so the deltas below are all the board needs — which is also why it can be driven without
+ * any layout.
  */
 const drag = (star: HTMLElement, deltaRow: number, deltaCol: number) => {
   act(() => {
@@ -104,9 +106,10 @@ describe("ConstellationPuzzle", () => {
   /**
    * A skin is pixels and nothing else, which is what makes a third one cheap.
    *
-   * Every skin has to keep the three node states apart by fill and outline rather than by hue alone (§9), so
-   * what a skin test can check is that the same board draws differently and that an unknown name still draws
-   * something. The mechanic is asserted everywhere else in this file; none of it is repeated per skin.
+   * Every skin has to keep the three node states apart by fill and outline rather than by hue alone
+   * (constellation.md: the accessibility floor every skin keeps), so what a skin test can check is that the
+   * same board draws differently and that an unknown name still draws something. The mechanic is asserted
+   * everywhere else in this file; none of it is repeated per skin.
    */
   describe("skins", () => {
     const puzzle = generateConstellation(3, CONSTELLATION_CONFIG.starter)
@@ -196,7 +199,8 @@ describe("ConstellationPuzzle", () => {
       const { deltaRow, deltaCol } = directionOf(puzzle, pair)
       for (let line = 0; line < count; line++) drag(starsIn(container)[puzzle.pairs[pair].a], deltaRow, deltaCol)
     })
-    // The banner lands 0.8s after the last line (puzzle-screens.md §3), reporting the solve time wordlessly.
+    // The banner lands 0.8s after the last line (puzzle-screens.md: the board freezes on solve, the banner
+    // follows), reporting the solve time wordlessly.
     await waitFor(() => expect(within(container).getByText(/⏱/)).toBeDefined(), { timeout: 5000 })
     expect(solved).toBe(false) // the banner waits for a tap; solving does not leave the room by itself
   })

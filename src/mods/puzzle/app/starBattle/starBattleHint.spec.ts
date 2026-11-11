@@ -102,7 +102,10 @@ describe("every reason the ladder can give is phrased in both locales", () => {
   // itself when one is missing, which reaches the player as raw text.
   const actions = ["ruleOut_one", "ruleOut_other", "place_one", "place_other"]
 
-  /** The places this mechanic wears. Every sentence below has to exist in each of them (§4.3). */
+  /**
+   * The places this mechanic wears. Every sentence below has to exist in each of them (`puzzle-screens.md`:
+   * hints are worded per identity).
+   */
   const PLACES = ["default", "fields"]
 
   const placeIn = (locale: typeof en | typeof nl, place: string) =>
@@ -149,7 +152,7 @@ describe("every reason the ladder can give is phrased in both locales", () => {
 
   it("has the goal and the rules in both", () => {
     for (const locale of [en, nl]) {
-      // The goal is its own section above the rules (`puzzle-screens.md` §1), not a bullet in them.
+      // The goal is its own section above the rules (`puzzle-screens.md`), not a bullet in them.
       // Stated per place AND per quota: both families share this screen, so the goal is the one line that
       // says which of the two rules the board in front of the player is under, in the words of where it is.
       const goals = locale.starBattle.goal as unknown as Record<string, string>

@@ -16,7 +16,7 @@ import { faceFor, withAmbience } from "../faceFor"
  * **A face either paints itself or it does not.** A painted face fills `art`, and the board stretches each
  * image over the box it had already sized; a face that leaves `art` undefined keeps the plain fills below
  * and nothing else changes. So a third face is a table entry and a block of sentences, not a change to the
- * board (`docs/game-design/art-pipeline.md` §A).
+ * board (`docs/game-design/art-pipeline.md`: rush hour pieces).
  */
 export type RushHourSkin = {
   /** Which place this is, as its own name — the goal, the rules and every hint sentence are keyed on it. */
@@ -53,15 +53,15 @@ export type RushHourSkin = {
   /** What a hint argues from and the piece it is ABOUT. */
   evidence: string
   focus: string
-  /** What the player's piece wears as it leaves (`puzzle-screens.md` §3). */
+  /** What the player's piece wears as it leaves (`puzzle-screens.md`: the board finishes before "solved"). */
   celebrate: string
   /**
    * The painted face, if this one has been drawn.
    *
    * **Each image is stretched over the box the board already computed**, which is what keeps the art
    * honest: a piece's length is decided by the grid and the picture obeys it, so a hull can never claim a
-   * cell it does not own (`rush-hour.md` §5). A vertical piece is the horizontal image turned 90°, which
-   * only works because the art carries no lighting direction.
+   * cell it does not own (`rush-hour.md`: length is the grid's to decide). A vertical piece is the horizontal
+   * image turned 90°, which only works because the art carries no lighting direction.
    */
   art?: { ground: string; piece2: string; piece3: string; player: string; wall: string }
 }
@@ -75,8 +75,8 @@ const SKINS: Record<string, RushHourSkin> = {
    *
    * **The player's piece is a shape before it is a colour.** It is the one piece on the board whose
    * identity a player must never doubt, and colour alone would fail a player who reads no hue
-   * (`puzzle-screens.md` §2) — so it carries a pointed end no other piece has, and the amber is the
-   * second signal rather than the first.
+   * (`puzzle-screens.md`: the skin renders pixels) — so it carries a pointed end no other piece has, and the
+   * amber is the second signal rather than the first.
    */
   default: {
     name: "default",

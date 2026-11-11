@@ -291,9 +291,9 @@ describe("firstSudokuMistake", () => {
 
 describe("every rung a tier can ask for", () => {
   // The sweep is over the DEMANDS, not the four techniques, because the demands are what generation
-  // promises (design doc §5.2). Which SIDE of the chamber-line rung a board turns on — the chamber's
-  // or the line's — is a finer reason the hint layer names and no tier asks for; both are covered by
-  // their own boards above.
+  // promises (`sudoku.md`: the demands are what a tier may say). Which SIDE of the chamber-line rung a
+  // board turns on — the chamber's or the line's — is a finer reason the hint layer names and no tier
+  // asks for; both are covered by their own boards above.
   it("is reachable — each one fires on a real board", () => {
     const fired = new Set<string>()
     for (const difficulty of difficulties)

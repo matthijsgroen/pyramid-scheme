@@ -32,7 +32,7 @@ const twinName = (skin: string) => (skin === "fields" ? "twinFields" : "twinDefa
 type Props = {
   puzzle: StarBattlePuzzleWithAnswer
   difficulty?: Difficulty
-  /** The pool this room was drawn from — which place it is (docs/instructions/puzzle-screens.md §2). */
+  /** The pool this room was drawn from — which place it is (docs/instructions/puzzle-screens.md). */
   role?: string | string[]
   /** The ambience its site authored, or a skin named outright. */
   theme?: string
@@ -63,7 +63,7 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
    * The board finishes itself before the shell is told, one answer at a time.
    *
    * The shell freezes the board and starts its banner the moment it hears "solved", so the celebration has to
-   * happen BEFORE that word is said (`puzzle-screens.md` §3) — the family reports the solve a beat later.
+   * happen BEFORE that word is said (`puzzle-screens.md`) — the family reports the solve a beat later.
    * Input is refused for that beat, or a tap could clear a star mid-run and the solve would land on a board
    * that is no longer solved.
    */
@@ -82,8 +82,9 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
   const hintText = useCallback(() => {
     if (!hint) return undefined
     // The glyph in the sentence is the place's own token, so a hint says the thing standing in the square
-    // rather than naming it — and the sentences themselves are keyed per place (§4.3), because a shared
-    // template with a noun in a slot breaks on the first locale that inflects around it.
+    // rather than naming it — and the sentences themselves are keyed per place (`puzzle-screens.md`: hints
+    // are worded per identity), because a shared template with a noun in a slot breaks on the first locale
+    // that inflects around it.
     const params = { ...hint.params, token: skin.token }
     const reason = t(`starBattle.hint.${skin.name}.${hint.key}`, params)
     if (!hint.action) return reason

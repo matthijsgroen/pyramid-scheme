@@ -1,20 +1,21 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { BalanceOptions } from "./generateBalance"
 
-// Tier settings, from docs/game-design/puzzles/balance-scale.md §5. Each tier adds ONE thing, and
-// generation is made to prove it: `techniqueCap` says what a board must demand, `minCancels` and
-// `minSwaps` say that the move a tier introduces actually comes up rather than showing up in a third
-// of the draws.
+// Tier settings, from docs/game-design/puzzles/balance-scale.md's difficulty knobs. Each tier adds ONE thing,
+// and generation is made to prove it: `techniqueCap` says what a board must demand, `minCancels` and
+// `minSwaps` say that the move a tier introduces actually comes up rather than showing up in a third of the
+// draws.
 //
-// The whole ladder sits one notch above where it started (§5). `🪲 7 = 15` is the bottom of the family's
-// own scale on paper, and in the hand it is one subtraction and then the board is over — a tier that
-// teaches the rule rather than a tier that asks anything of it. So reading a row is what a starter board
-// *is made of* rather than what it demands, and every tier above moved up with it.
+// The whole ladder sits one notch above where it started (balance-scale.md: the floor is a tier up).
+// `🪲 7 = 15` is the bottom of the family's own scale on paper, and in the hand it is one subtraction and
+// then the board is over — a tier that teaches the rule rather than a tier that asks anything of it. So
+// reading a row is what a starter board *is made of* rather than what it demands, and every tier above
+// moved up with it.
 export const BALANCE_CONFIG: Record<Difficulty, BalanceOptions> = {
   // Share a number out between equal glyphs. Two glyphs and two scales, and still nothing to cancel:
-  // cancelling would do the board's own arithmetic here (§4.1), and reading a row is already in the
-  // board — sharing out is what settles the second glyph, so the first read is a step rather than the
-  // whole puzzle.
+  // cancelling would do the board's own arithmetic here (balance-scale.md: withheld below junior), and
+  // reading a row is already in the board — sharing out is what settles the second glyph, so the first read
+  // is a step rather than the whole puzzle.
   starter: {
     glyphCount: 2,
     scaleCount: 2,

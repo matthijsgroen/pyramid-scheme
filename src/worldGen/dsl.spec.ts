@@ -16,7 +16,7 @@ import {
 } from "./dsl"
 import { parsePrefab } from "../game/prefabNotation"
 
-// ── Node selectors → per-index encounter overrides (§G) ───────────────────────
+// ── Node selectors → per-index encounter overrides (ARCHITECTURE.md: Authoring: node selectors) ──
 
 describe("resolveNodeActivities", () => {
   it("resolves an authored activity to its 0-based node index", () => {

@@ -3,7 +3,7 @@ import { countArrangements, requiredRung } from "./solveProcession"
 /**
  * The procession: a day drawn as a track of ticks, and things that happen in it.
  *
- * The rules whole (`docs/game-design/puzzles/procession.md` §2): every bar's LENGTH is given and no bar's
+ * The rules whole (`docs/game-design/puzzles/procession.md`): every bar's LENGTH is given and no bar's
  * START is, the player slides a bar along its own row, and the board is done when every mark between them
  * holds. **There is no illegal placement** — a bar may sit anywhere its row allows and a mark whose
  * condition is broken simply draws as broken, so this family has no fail state and no move history worth
@@ -14,7 +14,8 @@ import { countArrangements, requiredRung } from "./solveProcession"
 export type Bar = { len: number; start: number }
 
 /**
- * What the arrangement has to satisfy. Six kinds, two of which carry a numeral (family doc §2.1).
+ * What the arrangement has to satisfy. Six kinds, two of which carry a numeral (procession.md: the six
+ * marks).
  *
  * `link` with a zero gap is a handoff — the same mark with a zero on it rather than a seventh kind — and
  * `apart` is the only one that does not say which way round, which is what the upper ladder is made of.

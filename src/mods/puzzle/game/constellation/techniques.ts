@@ -1,9 +1,9 @@
 import { crossingsByPair, MAX_LINES, pairsByStar, type ConstellationPuzzle } from "./constellation"
 
-// The deduction system behind both generation and hints, per docs/game-design/puzzles/constellation.md §3.
-// Ordered by how well each reason EXPLAINS itself rather than by how much it decides: "only one way left, so
-// both lines go there" is a sentence the player can repeat back, and "that line would seal these six off from
-// the rest" is last because it is the one reason they have to trace a group to check.
+// The deduction system behind both generation and hints, per docs/game-design/puzzles/constellation.md's
+// ladder. Ordered by how well each reason EXPLAINS itself rather than by how much it decides: "only one way
+// left, so both lines go there" is a sentence the player can repeat back, and "that line would seal these six
+// off from the rest" is last because it is the one reason they have to trace a group to check.
 export const CONSTELLATION_TECHNIQUES = [
   "capacity",
   "settled",

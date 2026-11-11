@@ -21,7 +21,7 @@ import { skinFor } from "./skins"
 type Props = {
   puzzle: ProcessionPuzzleData
   difficulty?: Difficulty
-  /** The pool this room was drawn from — which place it is (docs/instructions/puzzle-screens.md §2). */
+  /** The pool this room was drawn from — which place it is (docs/instructions/puzzle-screens.md). */
   role?: string | string[]
   /** The ambience its site authored, or a skin named outright. */
   theme?: string

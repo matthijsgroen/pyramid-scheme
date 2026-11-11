@@ -10,7 +10,8 @@ describe("which place a sudoku room is", () => {
 
   it("draws the carved wall for the tomb, which is the wall it was already drawing", () => {
     // Not a dress: the default face IS signs cut into a chamber wall, so the claim this family makes
-    // about `funerary` is that it reads as the place already (docs/game-design/journeys.md §9).
+    // about `funerary` is that it reads as the place already (docs/game-design/journeys.md: its funerary
+    // face is signs cut into a wall).
     expect(skinFor("funerary", undefined).name).toBe("default")
   })
 
@@ -40,7 +41,7 @@ describe("which place a sudoku room is", () => {
 
   it("reads default and night as nothing said, so the hour never cancels the place", () => {
     // A scribe's sheet after dark is still a scribe's sheet: the ambience layers onto the identity
-    // rather than replacing it (puzzle-screens.md §2).
+    // rather than replacing it (puzzle-screens.md).
     expect(skinFor("scribe", "night").name).toBe("papyrus")
     expect(skinFor("scribe", "default").name).toBe("papyrus")
   })
@@ -101,7 +102,7 @@ describe("which place a sudoku room is", () => {
   })
 
   it("gives the register a scroll to roll up and the carved wall none, because stone does not roll", () => {
-    // What a FINISHED board does is the face's too (design doc §9.1): a sheet is rolled up and put away,
+    // What a FINISHED board does is the face's too (`sudoku.md`): a sheet is rolled up and put away,
     // a wall catches the light. Carrying the scroll here is what picks the run, so this is the switch —
     // a face with one counts its chambers, a face without counts its values.
     expect(skinFor("scribe", undefined).scroll).toBeDefined()

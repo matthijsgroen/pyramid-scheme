@@ -73,7 +73,7 @@ export type LightbeamBoard = {
   /** Beam segments proven to happen. Keyed so a stretch that gains a known exit reads as new. */
   forced: Map<string, BeamSegment>
   shrineEntry?: Direction
-  /** Pieces the light provably never touches — the decoys (§4.2). */
+  /** Pieces the light provably never touches — the decoys (lightbeam.md: T6 is the point). */
   free: Set<number>
   /** Wirings proven to fire. Monotone, like `forced`, so it folds into the same fixpoint loop. */
   fired: Set<number>

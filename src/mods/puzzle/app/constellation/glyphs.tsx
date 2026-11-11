@@ -15,7 +15,8 @@ import type { FC } from "react"
  * finish would have nothing left to say.
  *
  * It grows above the disc rather than behind the number: drawn behind it, a digit on top of a stem is a digit
- * you have to work to read, and the number is the clue (§8).
+ * you have to work to read, and the number is the clue (constellation.md: a number stays readable with lines
+ * touching it).
  */
 export const Plant: FC<{ grown: boolean; flowering?: boolean }> = ({ grown, flowering }) => (
   <svg viewBox="0 0 24 24" className="size-full" aria-hidden focusable="false">

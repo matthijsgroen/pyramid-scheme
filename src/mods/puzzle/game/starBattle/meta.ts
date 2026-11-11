@@ -6,10 +6,10 @@ export const STAR_BATTLE_META: FamilyMeta = {
   id: "star-battle",
   ownerMod: "puzzle",
   // The same pools twin stars draws from, and the same two faces, because a skin dresses a board and this
-  // is the same board (design doc §9). NOT `light` — that is the narrower pool for the families about light
-  // itself, and this one is about where things sit.
+  // is the same board (star-battle.md: both families wear both skins). NOT `light` — that is the narrower
+  // pool for the families about light itself, and this one is about where things sit.
   tags: ["puzzle", "sky", "water", "agriculture"],
-  // Configured for every tier (docs/game-design/puzzles/star-battle.md §5).
+  // Configured for every tier (docs/game-design/puzzles/star-battle.md: the difficulty knobs).
   // Stars on a dark ground IS the sky face, so `sky` declares the default rather than nothing — the claim
   // that this family can carry a night journey has to be in the data. `light` used to be here and is gone:
   // this family does not carry that tag.

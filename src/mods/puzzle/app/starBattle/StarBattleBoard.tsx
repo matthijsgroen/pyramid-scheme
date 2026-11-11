@@ -30,7 +30,10 @@ type Props = {
   decided?: ReadonlySet<number>
   /** The one square the current hint is ABOUT, drawn strongest of all. */
   focus?: number
-  /** The answers that have had their turn in the completion run, so far (`puzzle-screens.md` §3). */
+  /**
+   * The answers that have had their turn in the completion run, so far (`puzzle-screens.md`: the board
+   * finishes before "solved").
+   */
   celebrated?: ReadonlySet<number>
   onTapCell: (cell: number) => void
   /** A run of squares ruled out in one gesture — see the drag handlers below. */

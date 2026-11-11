@@ -21,7 +21,7 @@ export type BalanceState = {
   values: BalanceAssignment
   /** The glyph the number palette is setting. */
   selected?: Glyph
-  /** Rows worked out from the scales — the player's own scratch (design doc §7). */
+  /** Rows worked out from the scales — the player's scratch (balance-scale.md: notes). */
   notes: Note[]
   /** A glyph tapped in a pan with no twin to cancel, waiting for a row that says what it is worth. */
   pending?: { ref: EquationRef; glyph: Glyph }

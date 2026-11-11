@@ -61,8 +61,8 @@ const reducedMotion = (reduce: boolean) =>
  *
  * That ordering is the whole feature: the shell freezes the board and starts its banner on `solved`, so a
  * celebration has to run first — and it has to run inside about a second, because the shell stops its
- * solve-time clock at that same moment and that number is what PUZZLE_FAMILIES.md §3.2's budget is measured
- * with.
+ * solve-time clock at that same moment and that number is what PUZZLE_FAMILIES.md's solve-time budget
+ * (difficulty is not duration) is measured with.
  */
 describe("the completion run", () => {
   it("blooms the nodes before the banner arrives, then reports the solve", async () => {

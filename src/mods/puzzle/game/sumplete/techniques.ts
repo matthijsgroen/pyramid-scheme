@@ -1,4 +1,5 @@
-// The deduction system behind both generation and hints, per docs/game-design/puzzles/sumplete.md §4.
+// The deduction system behind both generation and hints, per docs/game-design/puzzles/sumplete.md's
+// technique ladder.
 // Techniques are ordered by how well their reason EXPLAINS itself, not by strength: the last one
 // subsumes every earlier one, so ranking it first would make every hint "I enumerated every subset",
 // which teaches nothing. Among the cheap ones, the strike-producing techniques come before the
@@ -52,7 +53,7 @@ const linesOf = (puzzle: SumpletePuzzleData, marks: SumpleteMark[][]): Line[] =>
 // Every combination of the undecided cells that reaches the deficit exactly, as index sets into
 // `cells`. Equal values in one line produce SEPARATE combinations here (index sets, not value
 // multisets), which is what stops "only one combination" from claiming a forced answer where
-// swapping two identical numbers gives another (§4.2).
+// swapping two identical numbers gives another (`sumplete.md`: duplicate values).
 const combinations = (cells: LineCell[], deficit: number): number[][] => {
   const found: number[][] = []
   const walk = (index: number, remaining: number, picked: number[]) => {
@@ -116,7 +117,7 @@ const IMPLEMENTATIONS: Record<TechniqueId, Technique> = {
   // Last resort: a cell every combination uses must stay, one no combination uses must go. Reported
   // ONE cell at a time, because that is the form the reason survives in — "drop this 9 and the rest
   // of the line can no longer reach 11" is checkable, while the same claim about seven cells at once
-  // is just "I enumerated every subset" (§4.1).
+  // is just "I enumerated every subset" (`sumplete.md`: the ordering is about explainability).
   inEveryCombination: (_line, deficit, unknown) => {
     const combos = combinations(unknown, deficit)
     if (combos.length === 0) return undefined
@@ -133,7 +134,7 @@ export const techniqueRank = (id: TechniqueId): number => TECHNIQUES.indexOf(id)
 /**
  * The cheapest technique that decides something on this board, or undefined when nothing is forced.
  * Ties break on the smallest deficit — the small clues are where the player is being taught to look,
- * so hints arrive in that order (§6).
+ * so hints arrive in that order (`sumplete.md`).
  */
 export const nextStep = (
   puzzle: SumpletePuzzleData,

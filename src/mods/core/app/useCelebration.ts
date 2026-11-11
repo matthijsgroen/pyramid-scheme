@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react"
  * A board finishing itself before the family says "solved".
  *
  * The shell freezes the board and starts its banner the moment `solved` goes true
- * (docs/instructions/puzzle-screens.md §3), so a completion animation belongs before that word: a family
+ * (docs/instructions/puzzle-screens.md: a family may finish before it says "solved"), so a completion animation belongs before that word: a family
  * runs this and hands the shell `done`. Nothing else in core takes part.
  *
  * **What this owns is the clock, not the animation.** It reports how far along the run is and when it is
@@ -15,7 +15,7 @@ import { useEffect, useRef, useState } from "react"
  * Two rules it enforces on every caller, because both are easy to get wrong and neither is cosmetic:
  *
  * - **The run is capped at about a second.** The shell stops its solve-time clock when it hears "solved",
- *   and that number is the instrument for PUZZLE_FAMILIES.md §3.2's solve-time budget — a three-second
+ *   and that number is the instrument for PUZZLE_FAMILIES.md's solve-time budget — a three-second
  *   flourish would quietly add three seconds to every board of that family that anyone measures.
  * - **`prefers-reduced-motion` skips the whole thing**, the wait as well as the motion. It reports `done`
  *   at once with `progress` still at 0, so a family drawing its animation from `progress` draws none of it

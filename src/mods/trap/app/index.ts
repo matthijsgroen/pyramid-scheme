@@ -19,13 +19,13 @@ import "./clockReflex/plugin"
 import "./crocodile/plugin" // the tomb capstone: a puzzle that bites, not a trap (crocodile.md §6)
 
 // Trap-owned perk ids (granted by tomb treasures via the perk seam). describe reads treasures.json
-// `perks.<type>` — a shared namespace, mod-owned keys (see §8.0.1 i18n decision).
+// `perks.<type>` — a shared namespace, mod-owned keys (see collection-and-detector-design.md's i18n decision).
 const TRAP_PERKS = new Set(["max-health", "armor", "trap-insight", "pack-mule"])
 
 // Trap's app-side registration (side-effect), self-gated on the mod being enabled:
 // - the HUD widget (health),
 // - the reward contribution: the waterskin claim effect (./rewardContribution),
-// - the perk contribution: describes the four trap-owned perks (§7.4),
+// - the perk contribution: describes the four trap-owned perks,
 // - the homecoming: health is restored on coming back to camp, and the rest panel shows it,
 // - the home haul: a waterskin leaves no line,
 // - the home tags: whether coming home refilled a heart.
