@@ -28,9 +28,10 @@ export type Wall = {
 /**
  * Henut's wall, in the junior tomb.
  *
- * Her name inside a cartouche, and the third sign is a goose where an owl belongs — the confusion
- * an apprentice actually makes, because the bird signs differ by a beak. She is not wrong to be
- * annoyed: it is not her name until it is fixed.
+ * Her name inside a cartouche, and the third sign is a goose where Hathor belongs: the lady of
+ * beauty, of mirrors and of kohl, whose name a vain noblewoman would carry in her own. Hathor is
+ * the junior sign the tableaus on this same floor ask for before her room, so a player who reaches
+ * the wall holds it. She is not wrong to be annoyed: it is not her name until it is fixed.
  *
  * The Sphinx. The wall stands inside it, down the ward stair of `starter_1`.
  *
@@ -43,7 +44,7 @@ export const WALLS: Record<string, Wall> = {
   junior_treasure_tomb: {
     cut: ["art5", "a11", "a7", "a12"],
     wrongAt: 2,
-    answer: "a12",
+    answer: "d15",
     copy: "story.wall",
     after: "tomb.juniorFixed",
   },

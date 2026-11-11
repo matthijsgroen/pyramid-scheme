@@ -126,7 +126,6 @@
     "turnAround": "Pööra ümber",
     "wardDescription": {
       "starter": "Kaupmehe pitser sulgeb selle käigu — ainult tema kaitsevõti teeb selle lahti.",
-      "junior": "Aadliku vapp lukustab selle tee — ainult tema kaitsevõti avab selle.",
       "expert": "Ülempreestri templikaitse valvab seda ust — avada saab ainult püha võtmega.",
       "master": "Vaarao kuninglik pitser seob selle käigu — ainult valitseja võti murrab selle.",
       "wizard": "Jumalate kaitse hoiab seda väravat — läbi saab ainult jumaliku võtmega."

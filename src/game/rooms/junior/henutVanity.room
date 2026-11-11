@@ -1,0 +1,20 @@
+// designed by: Claude
+// junior. Henut's dressing room in her tomb: Henut at the north wall between her dressing table with its copper mirror and her wig on its stand, north of the place you stop; her linen press and a second wig in the corners.
+room henutVanity
+tier junior
+activity dressingRoom
+mirror
+
+layout
+# n # # # n #
+# . t . w . #
+d . . s . . d
+# h . . . f #
+# # d # d # #
+
+t wall dressingTable
+w wall wigStand
+h floor wigStand | shelf
+f floor shelf
+n wallItem sconce
+s stop

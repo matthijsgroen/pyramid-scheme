@@ -29,14 +29,14 @@ describe("a wall to be put right", () => {
   it("cannot be repaired with a sign the player has not learned", () => {
     const wall = wallFor("junior_treasure_tomb")!
 
-    expect(canRepair(wall, held("art5", "a11"))).toBe(false)
-    expect(canRepair(wall, held("a12"))).toBe(true)
+    expect(canRepair(wall, held(...wall.cut.filter(id => id !== wall.answer)))).toBe(false)
+    expect(canRepair(wall, held(wall.answer))).toBe(true)
   })
 
   it("reads back only the signs that have been learned", () => {
     const wall = wallFor("junior_treasure_tomb")!
 
-    expect(legible(wall, held("art5", "a7"))).toEqual([true, false, true, false])
+    expect(legible(wall, held(wall.cut[0], wall.cut[2]))).toEqual(wall.cut.map((_, i) => i === 0 || i === 2))
   })
 
   it("has nothing to say about a journey with no wall in it", () => {

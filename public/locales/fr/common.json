@@ -127,7 +127,6 @@
     "turnAround": "Faire demi-tour",
     "wardDescription": {
       "starter": "Le sceau d’un marchand bloque ce passage. Seule sa clé de garde peut l’ouvrir.",
-      "junior": "Le blason d’une noble ferme ce chemin. Seule sa clé de garde peut l’ouvrir.",
       "expert": "La protection du temple d’un grand prêtre garde cette porte. Seule la clé sacrée peut l’ouvrir.",
       "master": "Le sceau royal d’un pharaon ferme ce passage. Seule la clé du roi peut le briser.",
       "wizard": "Une protection des dieux garde cette porte. Rien ne passe, sauf la clé divine."

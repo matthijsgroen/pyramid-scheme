@@ -125,7 +125,6 @@
     "turnAround": "Putar balik",
     "wardDescription": {
       "starter": "Segel seorang pedagang menutup lorong ini. Hanya kunci segelnya yang bisa membukanya.",
-      "junior": "Lambang seorang bangsawan mengunci jalan ini. Hanya kunci segelnya yang bisa membukanya.",
       "expert": "Segel kuil seorang imam besar menjaga pintu ini. Kunci sucinya yang harus membukanya.",
       "master": "Segel kerajaan seorang firaun mengikat lorong ini. Hanya kunci sang raja yang bisa mematahkannya.",
       "wizard": "Segel para dewa menahan gerbang ini. Tidak ada yang bisa lewat kecuali dengan kunci dewanya."

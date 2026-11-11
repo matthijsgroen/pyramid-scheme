@@ -126,7 +126,6 @@
     "turnAround": "Vänd om",
     "wardDescription": {
       "starter": "En köpmans sigill spärrar gången – bara köpmannens nyckel öppnar den.",
-      "junior": "En adelsmans vapen låser vägen – bara hans nyckel öppnar den.",
       "expert": "Ett tempelskydd från en överstepräst vaktar dörren – bara den heliga nyckeln öppnar den.",
       "master": "En faraos kungliga sigill spärrar gången – bara härskarens nyckel bryter det.",
       "wizard": "Ett skydd från gudarna håller porten stängd – bara den gudomliga nyckeln släpper förbi dig."
