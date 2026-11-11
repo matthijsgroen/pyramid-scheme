@@ -146,6 +146,7 @@
     "mapPieceDescription": "A brittle scrap of a map to some long-forgotten place. A shame it's nowhere near complete...",
     "mapPieceProgress": "{{found}} of {{required}} map pieces gathered",
     "mapPieceComplete": "The map is whole — it leads to {{name}}.",
+    "hieroglyph": "Hieroglyph",
     "hieroglyphFragment": "Hieroglyph Fragment",
     "fragmentProgress": "{{found}} of {{required}} fragments found",
     "tombKey": "Tomb Key",

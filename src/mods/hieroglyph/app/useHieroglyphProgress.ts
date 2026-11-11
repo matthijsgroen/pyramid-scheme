@@ -14,6 +14,8 @@ const hieroglyphRequired: Record<string, number> = {
   ...GIVEN_REQUIRED,
 }
 
+export const requiredPieces = (hieroglyphId: string): number => hieroglyphRequired[hieroglyphId] ?? 2
+
 // Hieroglyph-owned collection state: which fragment pieces of which hieroglyph the player has found.
 // A fragment is one piece of a multi-piece hieroglyph (stored as an "id:pieceIndex" set); a
 // hieroglyph is complete once its required pieces are all found. Lives in the mod's own persisted
@@ -69,11 +71,11 @@ export const useHieroglyphProgress = (): HieroglyphProgressAPI => {
       hasFragment: (hieroglyphId, pieceIndex) => state.collectedFragments.includes(`${hieroglyphId}:${pieceIndex}`),
       hieroglyphProgress: hieroglyphId => ({
         found: found(hieroglyphId),
-        required: hieroglyphRequired[hieroglyphId] ?? 2,
+        required: requiredPieces(hieroglyphId),
       }),
       completedHieroglyphKeys: new Set(
         Object.keys(hieroglyphRequired)
-          .filter(id => found(id) >= (hieroglyphRequired[id] ?? 2))
+          .filter(id => found(id) >= requiredPieces(id))
           .map(id => `hieroglyph:${id}`)
       ),
       hieroglyphFragments: Object.fromEntries(
