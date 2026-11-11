@@ -22,7 +22,7 @@ describe("the next thing to say to the player", () => {
     expect(hint?.cells.size).toBeGreaterThan(0)
     expect(hint?.move).toBeDefined()
     // The move settles what the board hatched, so the sentence and the marking cannot disagree
-    // (`puzzle-screens.md` §4.2).
+    // (`puzzle-screens.md`: the words name the marking).
     expect(hint?.move?.count).toBe(hint?.cells.size)
     // And the square the cursor is sent to is one of them, so asking for a hint aims the pad at what
     // the sentence is about rather than leaving the player to find it.
@@ -37,7 +37,7 @@ describe("the next thing to say to the player", () => {
     expect(hint?.key).toBe("mistake.value")
     expect(hint?.cells).toEqual(new Set([sudokuCellKey(row, col)]))
     // A mistake hint asks for nothing: the way out of a wrong mark is the player's to find, and
-    // naming it would be naming the answer (`puzzle-screens.md` §4.1).
+    // naming it would be naming the answer (`puzzle-screens.md`).
     expect(hint?.move).toBeUndefined()
   })
 

@@ -1,14 +1,14 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { SudokuOptions } from "./generateSudoku"
 
-// Tier settings, from docs/game-design/puzzles/sudoku.md §5.
+// Tier settings, from docs/game-design/puzzles/sudoku.md's difficulty knobs.
 //
 // **The grid never moves**: every tier is the same 6 wide, cut into three chambers across and two
 // down. So what is left are three settings answering three different questions — the CAP is the
 // hardest reason a board may ASK for, DEMANDS is the reason it is guaranteed to NEED, and the FLOOR
 // is how much of the answer it is handed to start with.
 //
-// A 6x6 has a low ceiling and this table is honest about it (design doc §5.4): what separates wizard
+// A 6x6 has a low ceiling and this table is honest about it (`sudoku.md`): what separates wizard
 // from master is not a new kind of reasoning, because there is no further kind this grid can force —
 // it is the same chamber-line reasoning with nothing handed over.
 //
@@ -40,6 +40,6 @@ export const SUDOKU_CONFIG: Record<Difficulty, SudokuOptions> = {
   // that row everywhere else, and a value pinned to one chamber along a row is off the rest of that
   // chamber. It is the only reason on this ladder that is about the CHAMBERS rather than about a
   // square, and about one dig in fifty produces a 6x6 that genuinely needs it — which is exactly what
-  // makes it the top tier rather than a rung on the way up (design doc §5.4).
+  // makes it the top tier rather than a rung on the way up (`sudoku.md`).
   wizard: { techniqueCap: "boxLine", minGivens: 0, demands: "boxLine", variants: ALL_SHAPES },
 }

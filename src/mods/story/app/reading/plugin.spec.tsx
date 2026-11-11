@@ -2,6 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { act, fireEvent, render, screen } from "@testing-library/react"
 import { FezContext } from "@/app/fez/context"
+import { allItems } from "@/mods/hieroglyph/game/symbolCatalogue"
 import { wallFor } from "@/mods/story/game/reading/walls"
 
 // What the player has finished collecting — the only thing that decides what they can read or fix.
@@ -20,7 +21,10 @@ const wall = wallFor("junior_treasure_tomb")!
 beforeEach(() => vi.useFakeTimers())
 afterEach(() => vi.useRealTimers())
 const settle = () => act(() => vi.advanceTimersByTime(1000))
-const symbols = { art5: "𓍷", a11: "𓅐", a7: "𓅬", a12: "𓅓" }
+const symbolOf = (id: string) => allItems.find(item => item.id === id)!.symbol
+const answer = wall.answer
+const miscut = wall.cut[wall.wrongAt]
+const others = wall.cut.filter(id => id !== answer)
 
 const show = (ids: string[], journeyId = "junior_treasure_tomb") => {
   held = new Set(ids.map(id => `hieroglyph:${id}`))
@@ -47,35 +51,34 @@ describe("a wall with a sign cut wrong", () => {
   it("shows the line as cut, wrong sign and all", () => {
     show([])
 
-    for (const id of wall.cut)
-      expect(screen.getAllByText(symbols[id as keyof typeof symbols]).length).toBeGreaterThan(0)
+    for (const id of wall.cut) expect(screen.getAllByText(symbolOf(id)).length).toBeGreaterThan(0)
   })
 
   it("says plainly that it cannot be fixed yet, when the sign is not known", () => {
-    show(["art5", "a11"])
+    show(others)
 
     expect(screen.getByText("story.wall.cannot")).toBeTruthy()
   })
 
   it("offers the repair once the right sign has been collected", () => {
-    show(["a12"])
+    show([answer])
 
     expect(screen.getByText("story.wall.pick")).toBeTruthy()
   })
 
   it("carries on the conversation when the right sign goes in", () => {
-    const { showConversation } = show(["a12", "a7"])
+    const { showConversation } = show([answer, miscut])
 
-    fireEvent.click(screen.getAllByRole("button").find(b => b.textContent === symbols.a12)!)
+    fireEvent.click(screen.getAllByRole("button").find(b => b.textContent === symbolOf(answer))!)
     settle()
 
     expect(showConversation).toHaveBeenCalledWith(wall.after, expect.any(Function), { story: true, forceReplay: true })
   })
 
   it("does not carry on for a sign that does not belong there", () => {
-    const { showConversation } = show(["a12", "a7"])
+    const { showConversation } = show([answer, miscut])
 
-    fireEvent.click(screen.getAllByRole("button").find(b => b.textContent === symbols.a7)!)
+    fireEvent.click(screen.getAllByRole("button").find(b => b.textContent === symbolOf(miscut))!)
     settle()
 
     expect(showConversation).not.toHaveBeenCalled()

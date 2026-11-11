@@ -126,7 +126,6 @@
     "turnAround": "Visszafordulok",
     "wardDescription": {
       "starter": "Egy kereskedő pecsétje zárja el ezt az utat – csak az ő őrkulcsa nyitja ki.",
-      "junior": "Egy nemes címere zárja ezt az utat – csak az ő őrkulcsa nyitja ki.",
       "expert": "Egy főpap templomi védelme őrzi ezt az ajtót – csak a szent kulcs nyitja ki.",
       "master": "Egy fáraó királyi pecsétje zárja ezt az utat – csak az uralkodó kulcsa töri meg.",
       "wizard": "Az istenek védelme tartja ezt a kaput – csak az isteni kulcs nyitja ki."

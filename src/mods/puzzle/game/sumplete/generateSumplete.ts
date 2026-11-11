@@ -12,13 +12,13 @@ export type SumpleteGrid = {
 }
 
 export type SumpleteOptions = {
-  /** The strongest deduction a board may demand. Lower caps make gentler boards (design doc §5). */
+  /** The strongest deduction a board may demand. Lower caps make gentler boards (`sumplete.md`). */
   techniqueCap?: TechniqueId
   /** Highest cell value; the range is 1..maxValue. */
   maxValue?: number
 }
 
-// Generation is draw-and-reject, per docs/game-design/puzzles/sumplete.md §3. The naive construction
+// Generation is draw-and-reject, per docs/game-design/puzzles/sumplete.md. The naive construction
 // (random keep-mask, targets read off it) is what produces lone-number answers, zero targets and
 // boards that need a guess — so a candidate only survives if every line keeps at least two cells and
 // strikes at least one, AND the technique solver settles the whole board.
@@ -51,7 +51,7 @@ const drawMask = (random: () => number, gridSize: number): boolean[][] | undefin
 
 /**
  * Whether this board is one the loop below would have kept, and what the ladder needed to settle it
- * (`docs/instructions/puzzle-screens.md` §6.1).
+ * (`docs/instructions/puzzle-screens.md`: `grade` is at least as strict as the loop's gate).
  *
  * The loop calls it too, so an offline pass filtering seeds by it admits exactly the boards this
  * generator accepts rather than holding a second opinion about them.

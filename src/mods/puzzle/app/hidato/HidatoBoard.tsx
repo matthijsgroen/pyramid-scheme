@@ -6,7 +6,7 @@ import type { HidatoPuzzleData } from "@/mods/puzzle/game/hidato/techniques"
 
 type Props = {
   puzzle: HidatoPuzzleData
-  /** Which place this room is — the board renders logical state, the skin renders pixels (§2). */
+  /** Which place this room is — the board draws state, the skin draws pixels (puzzle-screens.md). */
   skin: HidatoSkin
   /** Every number on the board, by cell key. */
   values: Record<string, number>
@@ -17,29 +17,31 @@ type Props = {
    *
    * The numbers alone join the run's head to a written-in number standing next door to it, and stroking
    * that join in is the board digging a length of channel the player did not: the last cell is theirs to
-   * carry the run into (design doc §7.1).
+   * carry the run into (hidato.md: the run is drawn along its joins and no further).
    */
   carried?: number
   /** The cell the current hint settles — drawn hatched, the marking its words name. */
   hatched?: string
-  /** Cells the current hint argues from — ringed, never hatched (puzzle-screens.md §4.2). */
+  /** Cells the current hint argues from — ringed, never hatched (puzzle-screens.md: one marking, one meaning). */
   marked?: ReadonlySet<string>
   /**
-   * How far the completion run has counted (`puzzle-screens.md` §3), or unset for no run.
+   * How far the completion run has counted (`puzzle-screens.md`: the family owns its celebration), or unset
+   * for no run.
    *
    * The run flies the comb in the order the numbers say: every cell at or below this number is lit, so
    * the light travels 1 → last along the path the player just proved. What the board is about is one
    * unbroken order, so reading that order back is the board showing its own answer.
    */
   lit?: number
-  /** A finger landing on a cell — the run is picked up there and nothing else is decided yet (§6.5). */
+  /** A finger landing on a cell — the run is picked up there and nothing else is decided yet (hidato.md). */
   onPickUp: (key: string) => void
   /**
    * A press and release on the same cell: carry the run on, or take a number back off.
    *
    * `wasPen` says whether the run was ALREADY standing on that cell when the finger landed, which the
    * board is the only one that can still tell: by the time the tap is known to be a tap, the press has
-   * picked the run up there, so "is this the cell the run is on" answers yes either way (§6.5).
+   * picked the run up there, so "is this the cell the run is on" answers yes either way (hidato.md:
+   * a tap is decided on release).
    */
   onTap: (key: string, wasPen: boolean) => void
   /** A cell the finger has been dragged into — carry the run on, or back out of the cell it came from. */
@@ -47,7 +49,8 @@ type Props = {
 }
 
 // One unit of the drawing, in viewBox units — everything else is a multiple of it, so the comb scales
-// with its container and never off a pixel constant (docs/instructions/puzzle-screens.md §1).
+// with its container and never off a pixel constant (docs/instructions/puzzle-screens.md: boards size off
+// available space).
 const CELL = 10
 
 // A hair under the full cell, which leaves the mortar line between neighbouring hexes.
@@ -71,8 +74,8 @@ const hexPoints = (cell: Hex): string => {
  *
  * **Square deliberately, even though no comb is.** The board is sized off the viewport's shorter side
  * (`max-w-[min(56vh,26rem)]`), and a taller-than-wide drawing given that width comes out taller than the
- * space there is — which is the one thing a puzzle board may not do (puzzle-screens.md §1). A square box
- * makes the width the whole constraint, exactly as it is for the grid families.
+ * space there is — which is the one thing a puzzle board may not do (puzzle-screens.md: the board fits the
+ * viewport). A square box makes the width the whole constraint, exactly as it is for the grid families.
  */
 const viewBox = (cells: Hex[]): { x: number; y: number; side: number } => {
   const centres = cells.map(centre)
@@ -168,7 +171,7 @@ export const HidatoBoard: FC<Props> = ({
     // Captured on the whole board, so the moves keep arriving once the finger has left the cell it
     // started on — which is every drag past the first step.
     surface.current?.setPointerCapture(event.pointerId)
-    // The press only picks the run up. What the touch MEANT is decided when it lifts (§6.5).
+    // The press only picks the run up. What the touch MEANT is decided when it lifts (hidato.md).
     onPickUp(key)
   }
 
@@ -185,7 +188,7 @@ export const HidatoBoard: FC<Props> = ({
     // so a finger travelling between two neighbours clips the corners of the cells beside them — and a
     // clipped cell is a step the player did not mean to make. Reading a cell only from its middle
     // costs nothing (the previous one simply stays current a moment longer) and makes a drag land where
-    // it was aimed (design doc §6.5).
+    // it was aimed (hidato.md: a finger enters a cell only once well inside it).
     const middle = centre(cell)
     if (Math.hypot(at.x - middle.x, at.y - middle.y) > CELL * 0.72) return
     const key = hexKey(cell)
@@ -205,7 +208,7 @@ export const HidatoBoard: FC<Props> = ({
 
   return (
     // The board claims its own gestures — a drag across it draws the run rather than scrolling the page,
-    // which is reached from the chrome around it (design doc §6).
+    // which is reached from the chrome around it (hidato.md: the run is carried, and dragging draws it).
     <svg
       ref={surface}
       viewBox={`${box.x} ${box.y} ${box.side} ${box.side}`}

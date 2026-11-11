@@ -48,7 +48,8 @@ const reducedMotion = (reduce: boolean) =>
   }))
 
 /**
- * The board finishes itself before the shell hears the word "solved" (`puzzle-screens.md` §3).
+ * The board finishes itself before the shell hears the word "solved" (`puzzle-screens.md`: the board freezes
+ * on solve, the banner follows).
  *
  * What that looks like here is the family's own instrument: a beam that has come level rocks once and
  * settles, one scale at a time. The constraints are the shared ones — under a second, no input while it

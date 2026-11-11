@@ -26,8 +26,9 @@ type Props = {
   theme?: string
   onTapCell: (cell: number) => void
   /**
-   * How many diagonals of the completion run have arrived (`puzzle-screens.md` §3), counted from the top-left
-   * corner. Every square on a diagonal that has been reached is lit; unset means no run.
+   * How many diagonals of the completion run have arrived (`puzzle-screens.md`: the family owns its
+   * celebration), counted from the top-left corner. Every square on a diagonal that has been reached is lit;
+   * unset means no run.
    */
   wave?: number
 }
@@ -68,7 +69,8 @@ const Moon: FC = () => (
 )
 
 /**
- * The night pair, for a site authored `theme: "night"` (docs/game-design/puzzles/eclipse.md §9).
+ * The night pair, for a site authored `theme: "night"` (docs/game-design/puzzles/eclipse.md: night swaps
+ * in star and dark sky).
  *
  * The rule the default pair is drawn to holds here too, and it is the whole reason a second skin is cheap:
  * two marks that differ in OUTLINE, so the board is readable without colour. A star against an empty sky
@@ -92,7 +94,8 @@ const DarkSky: FC = () => (
 
 /**
  * Which pair of glyphs a skin draws. The family emits `Mark`; a skin decides what a mark looks like
- * (docs/instructions/puzzle-screens.md §2), and an unknown skin name silently falls back to the default.
+ * (docs/instructions/puzzle-screens.md: the family renders states, the skin renders pixels), and an unknown
+ * skin name silently falls back to the default.
  */
 const SKINS: Record<string, Record<Mark, FC>> = {
   default: { sun: Sun, moon: Moon },
@@ -152,7 +155,7 @@ const Sign: FC<{ puzzle: EclipsePuzzle; link: Link; broken: boolean }> = ({ puzz
  *
  * **The words name this**, which is the whole reason it is a hatch rather than another ring or another shade:
  * a hint that says "put 🌙 in the hatched squares" leaves nothing to match up, where "so the rest are 🌙"
- * leaves the player deciding which squares that was (`puzzle-screens.md` §4).
+ * leaves the player deciding which squares that was (`puzzle-screens.md`).
  */
 const HATCH = {
   backgroundImage: "repeating-linear-gradient(45deg, transparent 0 5px, rgba(252,211,77,0.45) 5px 7px)",

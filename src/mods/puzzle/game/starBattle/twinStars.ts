@@ -10,14 +10,15 @@ import type { StarBattleOptions } from "./generateStarBattle"
  * **It is a second family because the rule is different, not because the board is bigger.** A tier may ask
  * for harder reasoning; it may not change what the player is being asked to do, and "two" changes every
  * sentence on the screen. Everything below the rule is shared outright: the same board, the same three
- * marks, the same drag, the same six rungs, the same hints (design doc §11).
+ * marks, the same drag, the same six rungs, the same hints (star-battle.md, twin stars).
  *
  * What the second star buys is the reason this exists. At one star a group is answered the moment its star
  * is found; at two, a group stays a capacity argument until its last star lands — `groupTight` fires ten
  * times a board here against eight at one star, and it fires on squares rather than on a single square. It
  * also gives the mechanic a PAIR to name, which is the strongest fiction a skin on this board can hang on
- * (§11.3): two watchmen to a district, two torches to a chamber, two households to a field. Strongest, not
- * only — one farmstead to a holding reads perfectly well, which is why both families wear both faces.
+ * (star-battle.md: the pair is what a skin can name): two watchmen to a district, two torches to a chamber,
+ * two households to a field. Strongest, not only — one farmstead to a holding reads perfectly well, which is
+ * why both families wear both faces.
  */
 export const TWIN_STARS_META: FamilyMeta = {
   id: "twin-stars",
@@ -31,7 +32,7 @@ export const TWIN_STARS_META: FamilyMeta = {
   // 8×8 is the SMALLEST grid this rule has boards on — 7×7 and 6×6 admit no legal star set at all (two to
   // a row and two to a column that never touch does not fit). The debut is a junior one anyway, because the
   // tier is set by what a board ASKS rather than by how wide it is: the junior draw hands over a third of
-  // its regions and never needs a region reading (§11.2).
+  // its regions and never needs a region reading (star-battle.md: twin stars is 8×8 at every tier).
   // The same board and the same faces as star battle, which it shares a screen with.
   faces: {
     sky: ["default"],

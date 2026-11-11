@@ -5,9 +5,9 @@ import type { FC } from "react"
  * exports components may export nothing else — fast refresh needs the split, and the skin table next door is
  * not a component.
  *
- * Both are drawn to the same rule: **a shape, not a colour** (design doc §8). The answer has to be readable
- * at arm's length on a phone and by a player who reads no hue at all, so each one is a silhouette that
- * survives being small.
+ * Both are drawn to the same rule: **a shape, not a colour** (star-battle.md: colour alone cannot carry a
+ * clue). The answer has to be readable at arm's length on a phone and by a player who reads no hue at all, so
+ * each one is a silhouette that survives being small.
  */
 
 /** The answer over a sky. */

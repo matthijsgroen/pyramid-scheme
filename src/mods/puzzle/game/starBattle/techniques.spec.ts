@@ -139,7 +139,8 @@ describe("the ladder", () => {
 
   /**
    * Every rung the solver claims has to be reachable from a board the generator actually draws
-   * (`puzzle-screens.md` §7.5). A technique no tier can trigger is a technique that has never been read.
+   * (`puzzle-screens.md`: a family is done when every claimed technique fires). A technique no tier can
+   * trigger is a technique that has never been read.
    *
    * **Across the mechanic, not across one family.** `onlyWay` is inert at one star to a group by
    * construction (see its comment), so a ladder checked against star battle alone would report a rung no

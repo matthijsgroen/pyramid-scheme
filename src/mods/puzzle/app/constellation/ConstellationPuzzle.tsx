@@ -37,7 +37,7 @@ const toDo = (hint: ConstellationHint) => hint.bounds.filter(bound => (bound.min
 type Props = {
   puzzle: ConstellationPuzzleWithAnswer
   difficulty?: Difficulty
-  /** The ambience the site authored, or a skin named outright (docs/game-design/puzzles/constellation.md §9). */
+  /** The ambience the site authored, or a skin named outright (puzzles/constellation.md theming). */
   theme?: string
   /** Which room this is, so an undressed one still draws a face of its own (faceFor.ts). */
   room?: string
@@ -82,8 +82,8 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
    * A function rather than a string, so the shell only reaches for the text once the hint is on screen.
    *
    * Two lines, both spoken in the place this room is: the reason, then the move it asks for
-   * (`puzzle-screens.md` §4.1, §4.3). A waterworks board saying "that line would seal these 4 stars off from
-   * the rest" is describing something that is not on the screen.
+   * (`puzzle-screens.md`: hints are worded per identity). A waterworks board saying "that line would seal
+   * these 4 stars off from the rest" is describing something that is not on the screen.
    */
   const hintText = useCallback(() => {
     if (!hint) return undefined

@@ -18,7 +18,7 @@ export const CROCODILE_META: FamilyMeta = {
   color: "green",
   rewardPriority: 0, // the tomb's treasure follows directly after — that's its payoff, not this pool
   // No `seedable`: the seed lists exist for generators that are expensive to run on a phone, and this
-  // one draws a handful of formulas and walks a sorted pool (crocodile.md §3). It builds live on every
+  // one draws a handful of formulas and walks a sorted pool (crocodile.md: no seed list). It builds live on every
   // open, as every family did before there were lists — an artifact bucket would cost a build step to
   // save a millisecond. `gradeCrossing` is still the acceptance gate, it is just applied where the
   // board is built rather than offline.

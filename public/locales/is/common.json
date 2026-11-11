@@ -126,7 +126,6 @@
     "turnAround": "Snúa við",
     "wardDescription": {
       "starter": "Innsigli kaupmanns lokar þessum gangi. Aðeins varðlykillinn hans opnar hann.",
-      "junior": "Skjaldarmerki aðalsmanns læsir þessari leið. Aðeins varðlykillinn hans opnar hana.",
       "expert": "Musterisvörn æðsta prests gætir þessara dyra. Aðeins helgi lykillinn opnar þær.",
       "master": "Konunglegt innsigli faraós bindur þennan gang. Aðeins lykill konungsins rýfur það.",
       "wizard": "Vörn guðanna heldur þessu hliði. Ekkert kemst í gegn nema guðdómlegi lykillinn."

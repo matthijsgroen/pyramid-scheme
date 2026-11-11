@@ -26,12 +26,12 @@ export type StarBattleOptions = {
    * The region count does NOT follow the quota — there are `size` regions either way, so a two-star region
    * is the same size as a one-star region and says twice as much. Halving the region count instead (one
    * star to a line, two to a region) doubles every region and the map stops being a clue at all; measured
-   * at 0 of 4000 boards settling, and recorded in design doc §10.
+   * at 0 of 4000 boards settling, and recorded in star-battle.md as the reading that failed.
    */
   quota: number
   /**
    * How unevenly the regions are sized, as the exponent their target sizes follow — and **this is the
-   * family's real difficulty knob**, not the technique cap (design doc §5).
+   * family's real difficulty knob**, not the technique cap (star-battle.md: difficulty knobs).
    *
    * Sizes go as `(n + 1) ** spread`, so 1 is a gentle ramp, 2 a square spread, 3 a steep one. Pushing it up
    * makes boards EASIER and cheaper to find, because a one-square region is a star handed over: at 3 on an
@@ -99,9 +99,9 @@ export type StarBattleOptions = {
  * How many region maps to draw before giving up.
  *
  * Generation is a rejection loop — **a board carries no clue but its region map, so the map is what has to
- * be right** (design doc §4). Most maps are not: about half work at 5×5 and under one in a hundred at 8×8,
- * and a tier's required rung throws away more of what is left. A draw is a fraction of a millisecond, so the
- * ceiling is set by what the top tier needs rather than by what a cheap tier would like.
+ * be right** (star-battle.md: generation). Most maps are not: about half work at 5×5 and under one in a
+ * hundred at 8×8, and a tier's required rung throws away more of what is left. A draw is a fraction of a
+ * millisecond, so the ceiling is set by what the top tier needs rather than by what a cheap tier would like.
  */
 const MAX_ATTEMPTS = 20_000
 
@@ -114,9 +114,10 @@ export const techniquesUpTo = (
  * A legal star set: `quota` to a row, `quota` to a column, no two touching. Drawn by backtracking down the
  * rows, choosing the row's stars together so a pair that touches is rejected where it is made.
  *
- * **The stars come first and the regions are drawn around them** (design doc §4), which is the whole ordering
- * of this generator: draw the regions first and the star set has to be found inside them, which is a rejection
- * loop on top of a rejection loop. This way every region holds its stars by construction.
+ * **The stars come first and the regions are drawn around them** (star-battle.md: generation), which is the
+ * whole ordering of this generator: draw the regions first and the star set has to be found inside them,
+ * which is a rejection loop on top of a rejection loop. This way every region holds its stars by
+ * construction.
  *
  * Columns are walked in a shuffled order and picked in increasing position within it, so a row's stars are
  * drawn as a random COMBINATION rather than a random sequence — the same pair reached two ways is one draw,
@@ -338,9 +339,9 @@ export const settles = (puzzle: StarBattlePuzzle, allowed: StarBattleTechniqueId
  *
  * **Nothing is thinned, because there is nothing to thin**: the board's only clue is where the region
  * boundaries run, and a boundary cannot be taken away without redrawing the region. So a miss is a redraw,
- * the shape constellation's generation has (§4.21) — and the technique solver reaching the answer forwards is
- * what settles uniqueness at the same time, since every step along the way was forced. No solution counter
- * runs anywhere in this family.
+ * the shape constellation's generation has (PUZZLE_FAMILIES.md, Constellation) — and the technique solver
+ * reaching the answer forwards is what settles uniqueness at the same time, since every step along the way
+ * was forced. No solution counter runs anywhere in this family.
  */
 // How many times the tier's own rungs fired. A board is kept on this, and a near miss ranked by it.
 export const demandedRungs = (
@@ -392,7 +393,7 @@ const meetsMapShape = (puzzle: StarBattlePuzzle, { noLineRegions }: StarBattleOp
 
 /**
  * Whether this board is one the loop below would have kept, and what the ladder needed to settle it
- * (`docs/instructions/puzzle-screens.md` §6.1).
+ * (`docs/instructions/puzzle-screens.md`: seed lists keep the gate separate from the construction).
  *
  * Both go through `meetsDemand`, so an offline pass filtering seeds by this admits exactly the boards
  * this generator accepts. That matters more here than elsewhere: when no attempt hits the tier's quota the

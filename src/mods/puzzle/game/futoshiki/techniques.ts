@@ -1,4 +1,5 @@
-// The deduction system behind both generation and hints, per docs/game-design/puzzles/futoshiki.md §4.
+// The deduction system behind both generation and hints, per docs/game-design/puzzles/futoshiki.md (its
+// technique ladder).
 // Techniques are ordered by how well their reason EXPLAINS itself, not by strength: the last two
 // subsume the sign techniques above them, so ranking them first would make every hint "I propagated
 // bounds", which teaches nothing. Placements come before eliminations — writing a number in moves the

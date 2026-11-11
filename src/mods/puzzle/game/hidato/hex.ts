@@ -4,8 +4,8 @@
 // third cube axis is implied (-q-r). Two cells touch when they differ by one of the six steps below,
 // which is what the whole family reduces to — consecutive numbers must occupy touching cells.
 //
-// This is the second layout engine the catalogue carries (PUZZLE_FAMILIES.md §10 open question 4 chose
-// the hive over the square grid), so it stays small and self-contained: coordinates, neighbours,
+// This is the second layout engine the catalogue carries (PUZZLE_FAMILIES.md, the shared grid engine: the
+// hive was chosen over the square grid), so it stays small and self-contained: coordinates, neighbours,
 // distance, and the shape a board is drawn inside. Nothing about pixels — the board component owns that.
 
 export type Hex = { q: number; r: number }
@@ -60,7 +60,7 @@ export const hexagon = (radius: number): Hex[] => {
  *
  * That ordering is what the generator needs: a comb smaller than its hexagon is the full hexagon one
  * size down plus an ARC of the next ring, and an arc is a hive with a row half-built rather than a
- * hexagon with holes punched in it (design doc §3).
+ * hexagon with holes punched in it (hidato.md: the shape is an arc rather than a scatter).
  */
 export const hexRing = (radius: number): Hex[] => {
   if (radius === 0) return [{ q: 0, r: 0 }]

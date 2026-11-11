@@ -1,5 +1,5 @@
-// The deduction system behind both generation and hints, per docs/game-design/puzzles/balance-scale.md
-// §4.
+// The deduction system behind both generation and hints, per docs/game-design/puzzles/balance-scale.md's
+// technique ladder.
 //
 // The rule that shapes this file: **the solver never reasons about a scale the player cannot see.**
 // It used to cancel matching glyphs silently, so a hint would call a glyph "the only one left" while
@@ -274,7 +274,7 @@ export const newRowTest = (equations: Equation[], assignment: BalanceAssignment)
  * This is deliberately strict, and it is a rule about the puzzles rather than about the solver. A
  * looser test — "fewer different glyphs than before" — lets the solver chase two- and three-move
  * chains, and it wanders: it fills the board with rows that were on the way to something. A board
- * whose route needs that is simply not generated (design doc §4.4).
+ * whose route needs that is simply not generated (balance-scale.md: a move has to get somewhere).
  */
 const leadsSomewhere = (note: Note, assignment: BalanceAssignment, maxValue: number): boolean => {
   const end = fullyCancelled(note, assignment)
@@ -408,8 +408,8 @@ const readingsFor = (cap: TechniqueId): (typeof TECHNIQUES)[number][] =>
   TECHNIQUES.slice(0, techniqueRank(cap) + 1).filter(id => id !== "swap")
 
 /**
- * The cheapest technique that moves this board on, or undefined when nothing is forced. Each
- * technique scans top-down, so hints walk down the board in the order it is read (§6).
+ * The cheapest technique that moves this board on, or undefined when nothing is forced. Each technique scans
+ * top-down, so hints walk down the board in the order it is read (balance-scale.md hint tie-break).
  */
 export const nextStep = (
   puzzle: BalancePuzzleData,

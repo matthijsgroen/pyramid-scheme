@@ -213,7 +213,7 @@ export const starterRules: Rule[] = [
   // four families (`rolePools.verify.ts`'s floor): balance scale weighs the goods, constellation lays the
   // haul road, canisters measures the wine and the oil, procession walks the day at the quay. Thirteen
   // sections over that pool is 3.3 turns each, well inside the 4.8 the least varied journey already ships
-  // (docs/game-design/journeys.md §10).
+  // (docs/game-design/journeys.md: 4.8× is the variety bar).
   //
   // **Its starter sections draw from three of the four**, because canisters debuts at junior (its own
   // meta says why: three starter rooms cannot teach an arithmetic). That is 4.3 turns each on those

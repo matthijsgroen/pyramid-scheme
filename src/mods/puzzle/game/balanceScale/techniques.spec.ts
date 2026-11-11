@@ -148,7 +148,7 @@ describe("swapping a glyph for what a row says it is worth", () => {
 })
 
 // The board marks these and the rules mention the move only where they exist, so what the page says
-// you can do and what it lets you do are the same thing (design doc §7).
+// you can do and what it lets you do are the same thing (balance-scale.md board requirements).
 describe("pieces that can come off both pans", () => {
   it("marks a glyph standing opposite itself, and numbers against numbers", () => {
     const row = scale("a b 3", "b 9")

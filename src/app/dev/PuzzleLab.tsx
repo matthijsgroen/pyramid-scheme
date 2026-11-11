@@ -98,9 +98,9 @@ export const PuzzleLab: FC = () => {
   )
 
   // The bench is manual quality control, so it plays the boards that ship and nothing else.
-  // `family.generate` reads the seed list (docs/instructions/puzzle-screens.md §6.1), so the counter picks an
-  // entry rather than seeding a board and "new puzzle" walks the tier's real list, wrapping at its end. A
-  // board only the bench can reach is a board nobody is checking.
+  // `family.generate` reads the seed list (docs/instructions/puzzle-screens.md: seed lists), so the counter
+  // picks an entry rather than seeding a board and "new puzzle" walks the tier's real list, wrapping at its
+  // end. A board only the bench can reach is a board nobody is checking.
   //
   // While a dial is being tuned this is moot: changed options miss their bucket and the board is searched for
   // live, which is what tuning wants. The distinction only appears once a tier has settled and been filled.

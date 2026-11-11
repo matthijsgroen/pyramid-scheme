@@ -110,8 +110,8 @@ describe("pathEndToReward", () => {
   })
 
   it('"treasure" → an untagged fragmentSlot (a loot slot with no preference)', () => {
-    // A treasure room gives loot (pyramid-interior-design.md §10); the slot has no `prefers`, so the
-    // solver fills it with whatever's spare. Same as "fragment".
+    // A treasure room gives loot (pyramid-interior-design.md: money and sellables fill empty chests); the
+    // slot has no `prefers`, so the solver fills it with whatever's spare. Same as "fragment".
     expect(pathEndToReward("treasure")).toEqual({ type: "fragmentSlot" })
   })
 })

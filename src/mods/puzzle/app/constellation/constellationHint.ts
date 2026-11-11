@@ -23,7 +23,8 @@ export type ConstellationHint = {
   /** The stars the reason points at: for a sealing reason, the group it would close. */
   stars: ReadonlySet<number>
   /**
-   * The move the reason asks for, and how many lines it is about (`puzzle-screens.md` §4.1).
+   * The move the reason asks for, and how many lines it is about (`puzzle-screens.md`: the reason, then the
+   * move).
    *
    * Read off the bounds the step decides rather than declared per technique: a rung that pushes a pair's
    * floor up is asking for a line, and one that pulls its ceiling to nought is asking for none. `refuseDouble`

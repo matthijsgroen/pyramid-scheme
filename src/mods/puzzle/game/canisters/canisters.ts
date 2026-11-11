@@ -1,5 +1,5 @@
 // The move engine and the deduction system behind both generation and hints, per
-// docs/game-design/puzzles/canisters.md §4.
+// docs/game-design/puzzles/canisters.md: the hint is read off the shortest line, not a technique ladder.
 //
 // **The water in front of the player is all the water there is.** One canister starts full, and the only
 // move is pouring one into another until the source is empty or the destination is full. That conservation
@@ -20,10 +20,10 @@ export type CanistersPuzzle = {
   start: Volumes
   /**
    * The volumes asked for, in order. Each is measured from wherever the last one left the canisters, so a
-   * leg is a fresh problem rather than a longer line (design doc §5).
+   * leg is a fresh problem rather than a longer line (canisters.md tiers).
    */
   targets: number[]
-  /** Moves allowed for the whole board: the optimal line's length. The budget IS the puzzle (§2). */
+  /** Moves allowed for the whole board: the optimal line's length. The budget IS the puzzle (canisters.md). */
   budget: number
 }
 
@@ -59,7 +59,7 @@ export const applyMove = (capacities: Capacities, volumes: Volumes, move: Move):
  * The pours worth considering: the ones that do not put the water back where it just came from.
  *
  * It prunes almost nothing, and there is nothing stronger to reach for: pouring is the only move, so there
- * are no wasteful ones to catch. 87% of steps still fork (§4) — this narrows the board rather than
+ * are no wasteful ones to catch. 87% of steps still fork (canisters.md) — this narrows the board rather than
  * deciding it.
  */
 export const usefulMoves = (capacities: Capacities, volumes: Volumes, seen: ReadonlySet<string>): Move[] =>
@@ -75,7 +75,8 @@ export const forcedMove = (capacities: Capacities, volumes: Volumes, seen: Reado
  * The shortest line from `start` to any canister holding `target`, or null where none exists.
  *
  * A search, and only at generation time: the state space is bounded by the capacities and never large.
- * Nothing at play time calls it — a hint sourced from a search is a hint that cannot say why (§4).
+ * Nothing at play time calls it — a hint sourced from a search is a hint that cannot say why (canisters.md:
+ * the hint gives the sums, never the pours).
  */
 export const shortestLine = (capacities: Capacities, start: Volumes, target: number): Move[] | null => {
   if (start.includes(target)) return []
@@ -116,7 +117,7 @@ export const playLine = (capacities: Capacities, start: Volumes, line: readonly 
  * How many pours fork at more than one useful choice along a line — what a player is actually deciding.
  *
  * A step is rarely down to one move, so this rather than "is it forced" is the difficulty signal a board
- * is gated on (§3).
+ * is gated on (canisters.md: the difficulty is how many steps fork).
  */
 export const forkCount = (capacities: Capacities, start: Volumes, line: readonly Move[]): number => {
   const seen = new Set([volumeKey(start)])

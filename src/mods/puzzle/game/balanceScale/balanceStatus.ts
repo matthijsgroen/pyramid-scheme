@@ -17,7 +17,7 @@ const panTotal = (items: PanItem[], values: BalanceAssignment): number | undefin
   }, 0)
 
 // A scale still holding a glyph without a weight reads as UNKNOWN, never as level: a board of
-// level-looking scales that is not solved would be a lie (design doc §7).
+// level-looking scales that is not solved would be a lie (balance-scale.md board requirements).
 const lineOf = (scale: Scale, values: BalanceAssignment): BalanceLine => {
   const left = panTotal(scale.left, values)
   const right = panTotal(scale.right, values)

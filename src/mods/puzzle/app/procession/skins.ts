@@ -44,7 +44,7 @@ export type ProcessionSkin = {
   /** What a hint points at: the ticks it settles, and the row it is about. */
   hatch: string
   focus: string
-  /** What a finished day wears (`puzzle-screens.md` §3). */
+  /** What a finished day wears (`puzzle-screens.md`: the board finishes before it says "solved"). */
   celebrate: string
 }
 

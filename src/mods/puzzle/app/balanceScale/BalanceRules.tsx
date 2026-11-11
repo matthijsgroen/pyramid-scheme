@@ -11,11 +11,11 @@ type Props = {
 }
 
 // Read below the board, never in the way of it: the puzzle is solvable without ever reading this
-// (docs/instructions/puzzle-screens.md §1, PUZZLE_FAMILIES.md P2).
+// (docs/instructions/puzzle-screens.md: the rules sit below the fold; PUZZLE_FAMILIES.md P2).
 //
 // Only the moves this board actually affords are listed. A starter board is one scale and one glyph,
 // and five rules over it is a wall of text about things that cannot happen — the rules grow with the
-// board, the same way the ladder does (design doc §7).
+// board, the same way the ladder does (balance-scale.md: the rules list only the moves this board affords).
 export const BalanceRules: FC<Props> = ({ manyRows, cancelling, swapping }) => {
   const { t } = useTranslation("common")
   return (

@@ -126,7 +126,6 @@
     "turnAround": "Vend om",
     "wardDescription": {
       "starter": "En købmands segl spærrer gangen — kun hans vogternøgle kan åbne den.",
-      "junior": "En adelsmands våbenskjold låser vejen — kun hans vogternøgle kan løfte det.",
       "expert": "En ypperstepræsts tempelsegl vogter døren — kun den hellige nøgle kan åbne den.",
       "master": "En faraos kongelige segl lukker gangen — kun herskerens nøgle kan bryde det.",
       "wizard": "Et segl fra guderne holder porten — kun gudernes egen nøgle kommer forbi."

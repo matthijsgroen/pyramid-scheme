@@ -62,7 +62,7 @@ const carved = skinFor(undefined, undefined)
 const register = skinFor("scribe", undefined)
 
 /**
- * The board reads itself back before the shell hears the word "solved" (`puzzle-screens.md` §3).
+ * The board reads itself back before the shell hears the word "solved" (`puzzle-screens.md`).
  *
  * A tick is a VALUE rather than a square, because that is this family's own claim: each of the six
  * stands once in every row, every column and every chamber, so all six homes of a value settle
@@ -153,7 +153,7 @@ describe("the completion run", () => {
 })
 
 /**
- * **The register finishes another way, and that is the skin's to decide** (`puzzle-screens.md` §3 leaves
+ * **The register finishes another way, and that is the skin's to decide** (`puzzle-screens.md` leaves
  * the look of a run entirely to the family). A sheet is not lit when it is done with, it is rolled up and
  * put away — so each chamber of a solved register is taken up as its own scroll, one after the next.
  *

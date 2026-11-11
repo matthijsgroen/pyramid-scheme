@@ -23,8 +23,8 @@ export type EclipseHint = {
    *
    * A reason on its own leaves the player working out what it wants of them, and several of these rungs fill
    * a whole line — so the squares are hatched and the move names the hatching
-   * (`puzzle-screens.md` §4). `fillMixed` is the reading where the squares do not all take the same mark,
-   * which `noCopy` and the pairing rungs can produce.
+   * (`puzzle-screens.md`: the words name the marking). `fillMixed` is the reading where the squares do not
+   * all take the same mark, which `noCopy` and the pairing rungs can produce.
    */
   decided: ReadonlySet<number>
   action: { key: "fill" | "fillMixed"; mark?: string; count: number } | undefined

@@ -84,8 +84,8 @@ export const regionCells = (puzzle: StarBattlePuzzle): number[][] =>
 /**
  * Every group that owes stars: the rows, the columns and the regions.
  *
- * Rows and columns are lines and a region is not, and that difference IS the family (§2 of the design doc) —
- * but the two counting rungs treat all three alike, so they are handed the one list.
+ * Rows and columns are lines and a region is not, and that difference IS the family (star-battle.md: why this
+ * family) — but the two counting rungs treat all three alike, so they are handed the one list.
  */
 export const groupsOf = (puzzle: StarBattlePuzzle): number[][] => [
   ...rows(puzzle.size),
@@ -133,9 +133,9 @@ export const cycleStarBattleCell = (
 /**
  * Rules out a run of squares in one move — what a drag across the board leaves behind.
  *
- * Elimination is what a player spends a board doing (§6), and it comes in runs: the rest of a row, the far
- * end of a region. Tapping each one is the same move over and over, so a drag does the run and this applies
- * it.
+ * Elimination is what a player spends a board doing (star-battle.md: the elimination comes first), and it
+ * comes in runs: the rest of a row, the far end of a region. Tapping each one is the same move over and over,
+ * so a drag does the run and this applies it.
  *
  * **Squares already marked are left exactly as they are**, which is the property that makes the gesture safe
  * to make broad: a drag can never take a star back, so nobody has to aim it carefully. And it pushes ONE

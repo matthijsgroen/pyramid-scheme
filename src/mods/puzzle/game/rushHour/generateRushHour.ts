@@ -4,7 +4,7 @@ import { cellsOf, type Piece, type RushHourPuzzle } from "./rushHour"
 import { distancesToGoal, optimalPath } from "./solveRushHour"
 
 export type RushHourOptions = {
-  /** Cells to a side. One size at every tier — see the family doc §3.2 for why it is not the knob. */
+  /** Cells to a side. One size at every tier — `rush-hour.md` says why it is not the knob. */
   size: number
   /** How many pieces stand on the board, the player's own included. */
   pieces: number
@@ -12,8 +12,8 @@ export type RushHourOptions = {
    * How many pieces must CROSS the player's lane on the way out, before the rest are scattered.
    *
    * **The knob that makes a board deep rather than merely full.** A set drawn at random tops out around
-   * nine moves however many pieces it holds (§3.1, measured): most of them are nowhere near the way out,
-   * so the player drives past them. Demanding that three pieces stand across the lane is what forces the
+   * nine moves however many pieces it holds (`rush-hour.md`, measured): most of them are nowhere near the way
+   * out, so the player drives past them. Demanding that three pieces stand across the lane is what forces the
    * chain of "and to move that one, first move this one" the long boards are made of.
    */
   blockers: number
@@ -26,7 +26,10 @@ export type RushHourOptions = {
    * cell is a hole in the floor, not a thing to plan with.
    */
   walls: number
-  /** The band a board's shortest solution must fall in, in moves. THIS is the tier (§3). */
+  /**
+   * The band a board's shortest solution must fall in, in moves. THIS is the tier (`rush-hour.md`: difficulty
+   * is distance).
+   */
   minMoves: number
   maxMoves: number
 }
@@ -35,8 +38,8 @@ export type RushHourOptions = {
  * How many piece sets are drawn before the search gives up and hands back its nearest miss.
  *
  * A set is cheap to draw and expensive to measure, so the loop is short by design: the offline pass
- * (`docs/instructions/puzzle-screens.md` §6.1) walks seeds, and a seed that misses is skipped rather than
- * hammered.
+ * (`docs/instructions/puzzle-screens.md`: seed lists) walks seeds, and a seed that misses is skipped rather
+ * than hammered.
  */
 const MAX_ATTEMPTS = 60
 
@@ -186,12 +189,13 @@ const measure = (board: RushHourPuzzle, within: number) => {
 /**
  * A board whose shortest way out is as long as the tier asks for.
  *
- * **Drawn as a piece set, climbed, then chosen as a position** (§3.1), and the middle step is the one that
- * earns its keep. One set has one component of positions, and one bounded search labels all of them — so a
- * set can be scored by the deepest position in it, and a set that scores badly can be nudged rather than
- * thrown away. Random sets alone top out around nineteen moves however they are drawn (measured): the long
- * boards are rare enough that sampling will not find them, which is exactly what the published enumeration
- * of the whole 6×6 space shows — the commonest board is eleven moves and the hardest that exists is 51.
+ * **Drawn as a piece set, climbed, then chosen as a position** (`rush-hour.md`: the search does both jobs),
+ * and the middle step is the one that earns its keep. One set has one component of positions, and one bounded
+ * search labels all of them — so a set can be scored by the deepest position in it, and a set that scores
+ * badly can be nudged rather than thrown away. Random sets alone top out around nineteen moves however they
+ * are drawn (measured): the long boards are rare enough that sampling will not find them, which is exactly
+ * what the published enumeration of the whole 6×6 space shows — the commonest board is eleven moves and the
+ * hardest that exists is 51.
  *
  * So each attempt draws a set and then re-rolls one piece at a time, keeping every change that does not
  * make the deepest position shallower, until the band is reached or the climb runs out. The offsets a set

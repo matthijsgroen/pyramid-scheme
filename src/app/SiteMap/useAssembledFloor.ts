@@ -269,7 +269,8 @@ export const maskHiddenCells = (
   junctionSections: ReadonlyMap<string, ReadonlySet<string>>
 } => {
   // Collect positions of hidden, unrevealed cells, remembering each one's section so a junction
-  // can be tied to the specific corridor it borders (the "found = noticed" mark, §7.2).
+  // can be tied to the specific corridor it borders (the "found = noticed" mark,
+  // collection-and-detector-design.md).
   const hiddenPos = new Map<string, string>()
   const hiddenSections = new Set<string>()
   for (let r = 0; r < grid.rows; r++) {

@@ -15,7 +15,8 @@ type Props = {
   onTogglePencil: () => void
 }
 
-// Every control is at least a thumb wide (docs/instructions/puzzle-screens.md §1), and the pad wraps
+// Every control is at least a thumb wide (docs/instructions/puzzle-screens.md: tap targets ≥ 44px), and the
+// pad wraps
 // rather than shrinking, so a 7-number pad still fits a 360px screen.
 const keyCls = "flex h-11 min-w-11 items-center justify-center rounded border text-lg transition-colors"
 
@@ -26,7 +27,7 @@ const padColumns = (size: number) => Math.ceil(size / Math.ceil(size / 6))
 /**
  * The numbers, and the two keys that change what pressing one MEANS.
  *
- * **Notes and the eraser are pad furniture, not chrome** (`puzzle-screens.md` §3). They were briefly up in
+ * **Notes and the eraser are pad furniture, not chrome** (`puzzle-screens.md`). They were briefly up in
  * the shell's control row with undo and hint, wearing words, and that read as a toolbar: three labelled
  * buttons of equal weight, one of which silently re-aimed every key above it. Down here, cut to the same
  * square as a number and standing in the same grid, the pencil says what it is — the mode the keys are in.

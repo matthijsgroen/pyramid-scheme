@@ -96,6 +96,39 @@ describe(collectSlots, () => {
     expect(puzzles.map(s => s.wardKeys)).toEqual([[], ["outer"], ["outer", "inner"]])
   })
 
+  it("names each slot by where its reward is written: floor, side section, sub-section, puzzle or end", () => {
+    const site: SiteConfig = [
+      {
+        pathPuzzles: 1,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        rewards: [undefined],
+        mainEndReward: { type: "fragmentSlot" },
+        sideSections: [
+          { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+          {
+            pathPuzzles: 1,
+            difficulty: "starter",
+            end: "treasure",
+            rewards: [undefined],
+            endReward: { type: "fragmentSlot" },
+            sideSections: [
+              { pathPuzzles: 0, difficulty: "starter", end: "treasure", endReward: { type: "fragmentSlot" } },
+            ],
+          },
+        ],
+      },
+    ]
+    expect(collectSlots({ starter_1: [site] }).map(s => s.address)).toEqual([
+      "starter_1/0/0/p0",
+      "starter_1/0/0/s1/p0",
+      "starter_1/0/0/mainEnd",
+      "starter_1/0/0/s1/end",
+      "starter_1/0/0/s1/s0/end",
+    ])
+  })
+
   it("assign() mutates the underlying config in place", () => {
     const site = siteWithFragmentSlot()
     const slots = collectSlots({ starter_1: [site] })
@@ -110,7 +143,7 @@ describe(collectSlots, () => {
 
   it("never surfaces an open tomb-key gate whose end is a stairhead, not a treasure", () => {
     // buildSite.ts's wireSideSectionStaircases: a section whose `end` is a stairhead is a pure
-    // floor-to-floor connector ("the treasure IS the key", pyramid-interior-design.md §8) — and
+    // floor-to-floor connector ("the treasure IS the key", pyramid-interior-design.md) — and
     // carve/mainRooms.ts's own room-building never attaches a reward to that stairhead cell. If a
     // currency filled this slot anyway, the reward would be silently unreachable in play.
     const siteWithStairheadGate: SiteConfig = [

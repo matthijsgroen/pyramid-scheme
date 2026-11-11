@@ -1,7 +1,7 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { Operation } from "@/game/formulas/formulas"
 
-/** The dials one crossing is built from (docs/game-design/puzzles/crocodile.md §4). */
+/** The dials one crossing is built from (docs/game-design/puzzles/crocodile.md: the tier table). */
 export type CrocodileOptions = {
   /** Columns of stones between the two banks — one crocodile each, so one decision per column. */
   columns: number

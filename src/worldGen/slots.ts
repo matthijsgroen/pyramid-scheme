@@ -14,6 +14,10 @@ import type { ResolveEncounter } from "../game/siteAssembler"
 export type Slot = {
   ref: FloorRef
   journeyId: string
+  /** Where the slot stands in its journey's configs, by position: `journeyId/level/floor`, then `/s<k>` per side
+   * section, then `/p<i>` for a puzzle room's reward or `/end` (`/mainEnd` on a floor's main path) for a path end.
+   * collectSlots always stamps it. */
+  address?: string
   tier: Tier
   /** Ward keys already gating this slot (its section's and sub-section's tomb-key gates, for an end and a puzzle
    * alike) — empty means ungated. Used by a currency's own distribution rule (e.g. hieroglyph fragments preferring
@@ -35,7 +39,7 @@ export type Slot = {
    * exclusively by the dynamic loot pass (mod-owned distributions). */
   kind: "end" | "puzzle"
   /** True when this slot lives in a hidden (discovery-gated) section — a hidden corridor is an
-   * OPTIONAL loot pocket (docs/mods/collection-and-detector-design.md §7.3): structurally
+   * OPTIONAL loot pocket (docs/mods/collection-and-detector-design.md): structurally
    * reachable but off the guaranteed path, since discovery isn't guaranteed (needs the corridor
    * detector or a lucky stumble). So the gating worklist must NEVER place a progression-gating
    * currency here — placeFragments excludes hidden end slots. Only optional filler (capped/dynamic)
@@ -52,9 +56,10 @@ export type Slot = {
    * distribution-primitive-design.md). */
   rewardPriority: number
   /** The concrete family this slot's node resolved to (e.g. "fez-shop", "sumplete"), when known —
-   * the §A.3 encounter identity a mod's placement/fill joins on (a shop's stock slots carry
-   * "fez-shop"). Undefined for a plain treasure end. Distinct from rewardPriority (a number): this
-   * is the family id, so a mod can target "shop slots" directly instead of via the weight proxy. */
+   * the encounter identity a mod's placement/fill joins on (distribution-primitive-design.md: the `eligible`
+   * join) (a shop's stock slots carry "fez-shop"). Undefined for a plain treasure end. Distinct from
+   * rewardPriority (a number): this is the family id, so a mod can target "shop slots" directly instead of
+   * via the weight proxy. */
   encounter?: string
   /** Assign this slot's reward, or clear it to empty (`undefined`) — a leftover placeholder with
    * no filler (e.g. a chest when the shop mod is off) becomes an empty path end. */
@@ -108,6 +113,7 @@ export const collectSlots = (
     // difficulty. Difficulty and Tier share the same value set (difficultyLevels.ts).
     const addSlot = (
       ref: FloorRef,
+      address: string,
       difficulty: Difficulty,
       wardKeys: string[],
       isPlaceholder: boolean,
@@ -119,6 +125,7 @@ export const collectSlots = (
       slots.push({
         ref,
         journeyId,
+        address,
         tier: difficulty as Tier,
         wardKeys,
         isPlaceholder,
@@ -144,10 +151,11 @@ export const collectSlots = (
       // tomb side paths still bear loot — no special-casing, it falls out of the family weights.
       // Per-node overrides (authored `nodes` selectors, e.g. a capstone or an every-3rd trap) are
       // resolved PER room index: a weight-0 family (crocodile/trap) at position k makes only that
-      // room loot-ineligible, not its neighbours (§G).
+      // room loot-ineligible, not its neighbours (ARCHITECTURE.md: node selectors).
       const emitPuzzle = (
         rewards: (TreasureReward | undefined)[] | undefined,
         ref: FloorRef,
+        path: string,
         chain: {
           difficulty: Difficulty
           difficultiesByIndex?: Record<number, Difficulty>
@@ -182,6 +190,7 @@ export const collectSlots = (
           slots.push({
             ref,
             journeyId,
+            address: `${path}/p${i}`,
             tier: chain.difficulty as Tier,
             wardKeys,
             isPlaceholder: frag !== undefined,
@@ -200,34 +209,45 @@ export const collectSlots = (
       }
       floors.forEach((floor, floorIndex) => {
         const pRef: FloorRef = { journeyId, levelIndex, floorIndex }
-        emitPuzzle(floor.rewards, pRef, floor, floor.encounter, floor.encountersByIndex, false, [])
-        for (const section of floor.sideSections) {
+        const floorPath = `${journeyId}/${levelIndex}/${floorIndex}`
+        emitPuzzle(floor.rewards, pRef, floorPath, floor, floor.encounter, floor.encountersByIndex, false, [])
+        floor.sideSections.forEach((section, k) => {
           const secHidden = !!section.hidden
           const secWardKeys = tombKeysOf(section)
           emitPuzzle(
             section.rewards,
             pRef,
+            `${floorPath}/s${k}`,
             section,
             section.encounter,
             section.encountersByIndex,
             secHidden,
             secWardKeys
           )
-          for (const sub of section.sideSections ?? [])
-            emitPuzzle(sub.rewards, pRef, sub, sub.encounter, sub.encountersByIndex, secHidden || !!sub.hidden, [
-              ...secWardKeys,
-              ...tombKeysOf(sub),
-            ])
-        }
+          ;(section.sideSections ?? []).forEach((sub, m) =>
+            emitPuzzle(
+              sub.rewards,
+              pRef,
+              `${floorPath}/s${k}/s${m}`,
+              sub,
+              sub.encounter,
+              sub.encountersByIndex,
+              secHidden || !!sub.hidden,
+              [...secWardKeys, ...tombKeysOf(sub)]
+            )
+          )
+        })
       })
 
       floors.forEach((floor, floorIndex) => {
         const ref: FloorRef = { journeyId, levelIndex, floorIndex }
+        const floorPath = `${journeyId}/${levelIndex}/${floorIndex}`
         if (floor.mainEndReward?.type === "fragmentSlot") {
           const f = floor
           const sentinel = floor.mainEndReward as FragmentSlotReward
           addSlot(
             ref,
+            `${floorPath}/mainEnd`,
             floor.difficulty,
             [],
             true,
@@ -239,12 +259,12 @@ export const collectSlots = (
             sentinel
           )
         }
-        for (const section of floor.sideSections) {
+        for (const [k, section] of floor.sideSections.entries()) {
           const sWardKeys = section.gate?.type === "tomb-key" ? [section.gate.wardKeyId] : []
           const secHidden = !!section.hidden
           // A section whose `end` is a stairhead (`"staircase"` / `{ stairId }`) is a pure
           // floor-to-floor connector, never a loot node — buildSite.ts's `wireSideSectionStaircases`
-          // ("the treasure IS the key", pyramid-interior-design.md §8) and the carve's own
+          // ("the treasure IS the key", pyramid-interior-design.md) and the carve's own
           // room-building (the stairhead branch never reads `endReward`) agree: only an
           // `end: "treasure"` section can actually display/grant a reward at runtime. An open
           // tomb-key gate leading to a stairhead must never be handed to a currency as a fillable
@@ -255,6 +275,7 @@ export const collectSlots = (
             const s = section
             addSlot(
               ref,
+              `${floorPath}/s${k}/end`,
               section.difficulty,
               sWardKeys,
               true,
@@ -271,6 +292,7 @@ export const collectSlots = (
             s.endReward = sentinel
             addSlot(
               ref,
+              `${floorPath}/s${k}/end`,
               section.difficulty,
               sWardKeys,
               false,
@@ -282,7 +304,7 @@ export const collectSlots = (
               sentinel
             )
           }
-          for (const sub of section.sideSections ?? []) {
+          for (const [m, sub] of (section.sideSections ?? []).entries()) {
             const subWardKeys = [...sWardKeys, ...(sub.gate?.type === "tomb-key" ? [sub.gate.wardKeyId] : [])]
             const subHidden = secHidden || !!sub.hidden
             const subShopEnd = endsInShop(sub)
@@ -291,6 +313,7 @@ export const collectSlots = (
               const ss = sub
               addSlot(
                 ref,
+                `${floorPath}/s${k}/s${m}/end`,
                 sub.difficulty,
                 subWardKeys,
                 true,
@@ -305,6 +328,7 @@ export const collectSlots = (
               ss.endReward = sentinel
               addSlot(
                 ref,
+                `${floorPath}/s${k}/s${m}/end`,
                 sub.difficulty,
                 subWardKeys,
                 false,

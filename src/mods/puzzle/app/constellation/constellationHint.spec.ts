@@ -7,7 +7,7 @@ import { buildConstellationHint } from "./constellationHint"
 /**
  * Every rung ends in a move, and the move is read off the bounds the rung decides.
  *
- * `puzzle-screens.md` §4.1 asks for a reason and then an imperative; here the imperative is derived rather
+ * `puzzle-screens.md` asks a hint for a reason and then an imperative; here the imperative is derived rather
  * than written per technique, so what needs guarding is the derivation — a rung whose bounds fall through
  * every case would leave a reason with nothing after it, and nobody would notice until they read a board.
  */

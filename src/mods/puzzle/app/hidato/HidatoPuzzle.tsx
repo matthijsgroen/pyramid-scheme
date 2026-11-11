@@ -57,8 +57,9 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
    * order the player just proved, read back along the path they drew.
    *
    * The shell freezes the board and starts its banner the moment it hears "solved"
-   * (`puzzle-screens.md` §3), so the flight has to happen before that word is said, and no tap may land
-   * while it runs or a number pulled back out would report a solve on a board that is no longer solved.
+   * (`puzzle-screens.md`: a completion animation belongs before "solved"), so the flight has to happen
+   * before that word is said, and no tap may land while it runs or a number pulled back out would report a
+   * solve on a board that is no longer solved.
    * `lit` reads off `progress` rather than `done`, which is what keeps reduced motion honest: a skipped
    * run reports done with progress still at 0, so nothing lights and the board is simply the answer.
    */
@@ -97,7 +98,8 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
           skin={skin}
           values={state.values}
           pen={state.pen}
-          // The whole channel once the board is done: the light runs the length of it (design doc §7.1).
+          // The whole channel once the board is done: the light runs the length of it (hidato.md: the run is
+          // one line).
           carried={finished ? undefined : carriedTo(state)}
           hatched={hintVisible ? hint?.cell : undefined}
           marked={hintVisible ? hint?.evidence : undefined}
@@ -107,7 +109,7 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
             reportInput("look")
             // A press picks the run up and decides nothing else: what the touch meant is known only
             // once it lifts, and reading it as a tap here rubbed out the very number a drag was
-            // starting from (design doc §6.5).
+            // starting from (hidato.md: a tap is decided on release).
             setState(prev => pickUpHidato(prev, key))
           }}
           onTap={(key, wasPen) => {

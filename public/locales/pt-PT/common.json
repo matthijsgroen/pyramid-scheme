@@ -127,7 +127,6 @@
     "turnAround": "Dar meia-volta",
     "wardDescription": {
       "starter": "O selo de um mercador fecha esta passagem. Só a chave dele a abre.",
-      "junior": "O brasão de um nobre tranca este caminho. Só a chave dele o abre.",
       "expert": "Um selo do templo do sumo sacerdote guarda esta porta. Só a chave sagrada a abre.",
       "master": "O selo real de um faraó fecha esta passagem. Só a chave do rei a abre.",
       "wizard": "Um selo dos deuses fecha este portão. Só a chave divina deixa passar."

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next"
 import type { LightbeamPuzzleData } from "@/mods/topology/game/lightbeam/beam"
 
 // Read below the board, never in the way of it: the puzzle is solvable without ever reading this
-// (docs/instructions/puzzle-screens.md §1, PUZZLE_FAMILIES.md P2).
+// (docs/instructions/puzzle-screens.md: rules go below the fold, PUZZLE_FAMILIES.md P2).
 //
 // The socket line appears only on a board that has one. A rule about a mechanic that is not on the grid in
 // front of you is worse than no rule — it sends the player looking for something that is not there.

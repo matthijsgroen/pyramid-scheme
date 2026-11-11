@@ -127,7 +127,6 @@
     "turnAround": "Fes mitja volta",
     "wardDescription": {
       "starter": "El segell d'un mercader tanca aquest pas. Només la seva clau el pot obrir.",
-      "junior": "L'escut d'una família noble tanca aquest camí. Només la seva clau l'aixeca.",
       "expert": "Un segell del temple d'un gran sacerdot protegeix aquesta porta. L'ha d'obrir la seva clau sagrada.",
       "master": "El segell reial d'un faraó tanca aquest pas. Només la clau del rei el trenca.",
       "wizard": "Un segell dels déus tanca aquesta porta. Només hi passa la seva clau divina."

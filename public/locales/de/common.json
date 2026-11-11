@@ -126,7 +126,6 @@
     "turnAround": "Umkehren",
     "wardDescription": {
       "starter": "Das Siegel eines Händlers versperrt diesen Gang – nur sein Schutzschlüssel öffnet ihn.",
-      "junior": "Das Wappen einer vornehmen Familie verschließt diesen Weg – nur ihr Schutzschlüssel hebt es auf.",
       "expert": "Der Tempelbann eines Hohepriesters bewacht diese Tür – nur sein heiliger Schlüssel öffnet sie.",
       "master": "Das königliche Siegel eines Pharaos verschließt diesen Gang – nur der Schlüssel des Herrschers bricht es.",
       "wizard": "Ein Bann der Götter hält dieses Tor – nur der göttliche Schlüssel kommt hindurch."

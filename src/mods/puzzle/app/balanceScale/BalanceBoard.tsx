@@ -30,7 +30,7 @@ type Props = {
   pending?: { ref: EquationRef; glyph: Glyph }
   /** Which rows can answer that tap. */
   swapSources?: EquationRef[]
-  /** The scales that have had their turn in the completion run (`puzzle-screens.md` §3). */
+  /** The scales that have had their turn in the completion run (`balance-scale.md`: beams settle first). */
   celebrated?: ReadonlySet<number>
   /** Whether this board offers taking things off both pans, and trading a glyph. */
   moves: { cancelling: boolean; swapping: boolean }
@@ -207,8 +207,8 @@ const NoteRow: FC<RowProps & { onRemove: () => void }> = ({ scale, lit, offering
   </div>
 )
 
-// Sized off its container, never off a pixel constant: the scales, the notes, the glyph row and the
-// weight palette all have to fit a phone screen without pan or zoom (puzzle-screens.md §1).
+// Sized off its container, never off a pixel constant: the scales, the notes, the glyph row and the weight
+// palette all have to fit a phone screen without pan or zoom (puzzle-screens.md: the board fits the phone).
 export const BalanceBoard: FC<Props> = ({
   scales,
   lines,

@@ -128,7 +128,6 @@
     "turnAround": "Zawróć",
     "wardDescription": {
       "starter": "Pieczęć kupca zamyka to przejście. Otworzy je tylko jego klucz.",
-      "junior": "Herb szlachcica zamyka tę drogę. Otworzy ją tylko jego klucz.",
       "expert": "Świątynna pieczęć arcykapłana strzeże tych drzwi. Musi je otworzyć jego święty klucz.",
       "master": "Królewska pieczęć faraona zamyka to przejście. Złamie ją tylko klucz władcy.",
       "wizard": "Tej bramy strzegą bogowie. Przejdzie tylko ich boski klucz."

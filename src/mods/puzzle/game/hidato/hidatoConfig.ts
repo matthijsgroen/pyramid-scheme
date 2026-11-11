@@ -1,12 +1,13 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { HidatoOptions } from "./generateHidato"
 
-// Tier settings, from docs/game-design/puzzles/hidato.md §5. Three dials, answering three questions:
+// Tier settings, from docs/game-design/puzzles/hidato.md's tiers. Three dials, answering three questions:
 // how big the comb is, how much of the run is handed over, and how hard the board is allowed to read.
 //
 // The comb stays inside a radius-3 hexagon — seven cells across, which is what a 360px screen fits at
-// a thumb's width (docs/instructions/puzzle-screens.md §1) — everywhere except wizard, which spends
-// that room on a ring further out and is the only tier that does (design doc §5.1).
+// a thumb's width (docs/instructions/puzzle-screens.md: tap targets ≥ 44px) — everywhere except wizard,
+// which spends that room on a ring further out and is the only tier that does (hidato.md: wizard spends
+// tap-target room on reach).
 //
 // **The reading only steps up once**, because the ladder only has two rungs (techniques.ts's note on
 // PRUNINGS says why the third was dropped). So the first three tiers grow the comb and hand over less
@@ -21,7 +22,7 @@ export const HIDATO_CONFIG: Record<Difficulty, HidatoOptions> = {
   expert: { radius: 3, cells: 26, pruning: "adjacency", givens: 9, wander: 0.35, rimStreak: 4 },
   // The whole radius-3 hive: 37 cells, and a run that has to be threaded rather than followed.
   master: { radius: 3, cells: 37, pruning: "gapPath", givens: 9, requires: "gapPath", wander: 0.4, rimStreak: 3 },
-  // A ring further out — 61 cells, nine across (design doc §5.1).
+  // A ring further out — 61 cells, nine across (hidato.md: wizard spends tap-target room on reach).
   //
   // The rim allowance goes UP with the ring rather than staying put: 4 of a 24-cell ring is the same
   // share of it as 3 of an 18-cell one, and holding the old number here halved the first-attempt yield

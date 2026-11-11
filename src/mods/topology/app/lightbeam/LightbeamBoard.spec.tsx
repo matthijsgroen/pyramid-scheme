@@ -150,7 +150,7 @@ describe("LightbeamBoard", () => {
    * The tick lies **across** its bearing, not along it. A
    * radial tick is collinear with the beam whenever a stop's line is the line the beam leaves on, and the
    * beam is drawn over the pieces with `mix-blend-screen`, so it came out cream: the mark loses its meaning
-   * and §9's "nothing but light is drawn amber" breaks in the same stroke.
+   * and lightbeam.md's board rule "nothing but light is drawn amber" breaks in the same stroke.
    *
    * Asserted as geometry rather than as a picture: the tick's own direction must be perpendicular to the
    * radius from the cell centre to its midpoint. A radial tick would score 1 here; a tangential one scores 0.

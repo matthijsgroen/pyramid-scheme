@@ -17,51 +17,42 @@ After the starter release saves are never reset again. No player reaches a junio
 so **junior's carve may change freely until then** — and not after. Everything that moves a wall (activities, new
 prop kinds, designed rooms, the bake) lands before the release; painting moves no wall and can land any time.
 
-State (2026-11-03): junior has 29 tiles, all in the old palette; no activities in code; no designed rooms; all 16
-junior floors carry a lock (the three stand-ins are on expert floors). The new palette is in `tileMaterials.ts`.
+State (2026-11-10): the six activities, the nine new kinds and the junior rooms are on `main` (#355); the junior
+art waits in PR #383; Henut's rooms, her wall's Hathor answer and the scribes at Thoth wait in PR #382, which moves
+starter's and wizard's loot by one chest each and needs the designer's choice before it merges. A money-fill PR is in
+flight too. The release checks are filed (`review-camp-release.md` §0, Junior) and the unplayed junior work is in
+`playtest-backlog.md`.
 
 ## The queue
 
 Owner **C** is Claude, **U** is the user.
 
-### A. Surfaces — U paints, C lands
+### A–D. Surfaces, activities, rooms, props — done or in review
 
-| #   | Owner | Task                                                                                    |
-| --- | ----- | --------------------------------------------------------------------------------------- |
-| A1  | U     | `junior/floor`, then `junior/wall-face`, then `junior/threshold` (prompts in the queue) |
-| A2  | C     | Land each, measure, re-sample the junior tokens from the landed floor and face          |
-| A3  | C     | Queue `junior/arch` in the new palette                                                  |
-
-### B. Activities in code — C, moves the carve
-
-| #   | Task                                                                                                                                               |
-| --- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| B1  | The six junior activities in `src/game/activities.ts` (banquet, dressing room, household shrine, garden court, bedroom, bakery-brewery)            |
-| B2  | The nine new kinds with placeholders and footprints: banquetTable, harp, dressingTable, wigStand, pottedTree, bed, headrest, grindstone, breadOven |
-| B3  | Re-bake; junior floors move, starter's freeze stays green                                                                                          |
-
-### C. Designed rooms — C writes, U reviews, moves the carve
-
-| #   | Task                                                                                                    |
-| --- | ------------------------------------------------------------------------------------------------------- |
-| C1  | At least one `.room` per junior activity in `src/game/rooms/junior/`, crisp and ordered, plus big rooms |
-| C2  | Placements per junior journey in the world spec; a look per room in the journey inspector               |
-
-### D. Props — C prepares, U paints
-
-| #   | Owner | Task                                                                                                |
-| --- | ----- | --------------------------------------------------------------------------------------------------- |
-| D1  | C     | Scaffolds and queue entries for the nine new kinds (B2)                                             |
-| D2  | C     | Queue entries for the 26 existing junior props in the new palette, each in its own material colours |
-| D3  | U     | Paint them with `--land`                                                                            |
+- B (activities, kinds, re-bake) and C (designed rooms, placements) are on `main` (#355).
+- A and D (surfaces, the 26 props in the new palette, the nine new kinds, the tall wall items) are in PR #383.
 
 ### E. Release — C prepares, U releases
 
-| #   | Task                                                                                                       |
-| --- | ---------------------------------------------------------------------------------------------------------- |
-| E1  | Freeze guard for junior: every junior floor's carve recorded, the same way `starterCarve.json` does        |
-| E2  | `LAST_RELEASED_DIFFICULTY = "junior"`                                                                      |
-| E3  | Release checks filed under junior in `review-camp-release.md` §0; playtest backlog for what was not played |
+| #   | State                            | Task                                                                                                       |
+| --- | -------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| E1  | Tooling ready, record at release | Freeze guard for junior: every junior floor's carve recorded, the same way `starterCarve.json` does        |
+| E2  | U, at release                    | `LAST_RELEASED_DIFFICULTY = "junior"`                                                                      |
+| E3  | Done                             | Release checks filed under junior in `review-camp-release.md` §0; playtest backlog for what was not played |
+
+**Recording E1.** `yarn junior-freeze` runs in `yarn verify` and in CI's build job, and is skipped while
+`src/data/juniorCarve.json` does not exist. Record it right before the release, after the last junior bake (PR #382,
+the money fill and anything else that moves a junior wall merged and baked): run `yarn junior-freeze:record` on a
+clean, up-to-date `main`, check the file names every junior floor, and commit it with the release. From then on
+`yarn junior-freeze` fails whenever a junior floor carves differently, and the file changes only with a save
+migration, as `starterCarve.json` does. Both tiers share `src/app/SiteMap/tierCarveFreeze.testing.ts`.
+
+## What remains
+
+- PR #382: the designer's choice on the moved starter and wizard chest, then merge and re-bake.
+- PR #383 and the money fill merged.
+- The last junior bake, then E1's recording and E2, then `yarn release`.
+- The checks in `review-camp-release.md` §0, Junior, ticked; the designer choices listed there decided.
 
 ## Open
 

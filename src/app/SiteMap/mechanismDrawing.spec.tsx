@@ -35,7 +35,7 @@ const fakeMeta = (id: string, icon: string, drawing?: FamilyMeta["drawing"]): Fa
 const FAKES = {
   undeclared: fakeMeta("zz-undeclared", "🧪"),
   icon: fakeMeta("zz-icon", "🔔", { marker: "mechanism" }),
-  lever: fakeMeta("zz-lever", "🪝", { marker: "handle", art: "lever" }),
+  lever: fakeMeta("zz-lever", "🪝", { marker: "lever", art: "lever" }),
 }
 for (const meta of Object.values(FAKES))
   registerFamily({ meta, generate: () => ({ satisfied: true }), Component: () => null })
@@ -137,7 +137,7 @@ describe("a mechanism's room is drawn as its realisation, on real carved floors"
               expect(hasLeverStack(container, r, c), `${where}: no lever stack on a torch`).toBe(false)
             } else if (cell.family === "handle") {
               seen.handle++
-              expect(drawn.kind, where).toBe("handle")
+              expect(drawn.kind, where).toBe("lever")
               expect(drawn.icon, where).toBeUndefined()
               expect(hasLeverStack(container, r, c), `${where}: lever stack`).toBe(true)
             }

@@ -10,7 +10,7 @@ export type HidatoState = {
    * The number the run is being carried on from: the cell key the next tap counts from.
    *
    * A run needs somewhere to be picked up, and this is it — there is no number pad, because a comb of
-   * 37 cells would need a pad of 37 buttons (design doc §6). Tapping a number picks the run up there;
+   * 37 cells would need a pad of 37 buttons (hidato.md). Tapping a number picks the run up there;
    * tapping a touching cell carries it on.
    */
   pen?: string
@@ -26,7 +26,7 @@ export type HidatoState = {
   /**
    * The joins the run has been carried along, by the lower of the two numbers they hold.
    *
-   * **The line is drawn along these and no further** (design doc §7.1). A number the puzzle wrote in
+   * **The line is drawn along these and no further** (hidato.md). A number the puzzle wrote in
    * standing next door to the run's head is joined to it by the numbers alone, and stroking that join in
    * is the board digging a length of channel the player did not — the last step into a written-in number
    * is theirs to make.
@@ -99,7 +99,7 @@ export const armHidato = produce((state: HidatoState, key: string) => {
  *
  * What a finger landing on a cell means cannot be settled until it lifts: pressing a number to START A
  * DRAG must not be read as tapping it, or a drag begun on the cell the run is already standing on
- * rubs that number out before the finger has moved (design doc §6.5). So the press only ever picks the
+ * rubs that number out before the finger has moved (hidato.md). So the press only ever picks the
  * run up, and the tap is decided on release.
  */
 export const pickUpHidato = produce((state: HidatoState, key: string) => {

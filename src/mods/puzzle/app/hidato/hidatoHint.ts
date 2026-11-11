@@ -12,9 +12,9 @@ export type HidatoHint = {
   params: { value?: number; before?: number; after?: number; from?: number }
   /** The cell the hint settles — the board hatches it, and the move names the hatching. */
   cell: string
-  /** The cells the reason argues from — ringed rather than hatched (puzzle-screens.md §4.2). */
+  /** The cells the reason argues from — ringed, not hatched (puzzle-screens.md: one marking, one meaning). */
   evidence: ReadonlySet<string>
-  /** The number to write, or undefined for a mistake hint, which asks for nothing (§4.1). */
+  /** The number to write, or undefined for a mistake hint, which asks for nothing (puzzle-screens.md). */
   place?: number
 }
 

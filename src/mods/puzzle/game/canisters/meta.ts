@@ -29,9 +29,9 @@ export const CANISTERS_META: FamilyMeta = {
     funerary: ["natron", "oil"],
   },
   minTier: "junior",
-  // Two faces on one board would be an understatement: six places, each with its own vessel, ground and
-  // way of behaving. A site never names a skin, it names a role (docs/instructions/puzzle-screens.md §2);
-  // the lab's picker is what reads this list.
+  // Two faces on one board would be an understatement: six places, each with its own vessel, ground and way
+  // of behaving. A site never names a skin, it names a role (docs/instructions/puzzle-screens.md: no site
+  // names a skin); the lab's picker is what reads this list.
   themes: ["default", "grain", "oil", "wine", "natron", "ink"],
   icon: "🏺",
   color: "sky",

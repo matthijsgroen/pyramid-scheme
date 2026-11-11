@@ -56,10 +56,10 @@ export const tileOrPlaceholder = (tier: Tileset, name: string): string | undefin
  *
  * The same convention `sharedTileFrames` uses for animation frames, and for the same reason — adding one
  * is dropping a PNG in, with no manifest to keep by hand. What it buys is a kind with MORE THAN ONE
- * drawing: the brief's §5 asks for it so that a room does not have to mean one picture, and the merchant's
- * trade room is the case that wanted it first. Tomb painting shows goods sold out of big reed baskets set
- * on the floor as often as off a table, and both are the same statement — this is where they sold — so
- * they belong to one KIND rather than to two.
+ * drawing: tile-art-brief.md's variants (`rubble-2.png`) ask for it so that a room does not have to mean one
+ * picture, and the merchant's trade room is the case that wanted it first. Tomb painting shows goods sold out
+ * of big reed baskets set on the floor as often as off a table, and both are the same statement — this is
+ * where they sold — so they belong to one KIND rather than to two.
  *
  * A kind, not a pool: adding a variant FILE cannot move anything. `pickDressing` draws from the kind pool
  * and only the pool's LENGTH changes what lands where, so a second drawing of `offeringTable` reshuffles

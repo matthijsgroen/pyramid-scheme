@@ -1,10 +1,10 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { EclipseOptions } from "./generateEclipse"
 
-// Tier settings, per docs/game-design/puzzles/eclipse.md §5. Each tier adds ONE rung, and generation is made
-// to prove it: `techniqueCap` says how far the reasoning may go, `requires` says the tier's own rung has to
-// fire, and `requiresCount` says how often — one hard step in a thirty-step solve is the tier below it with a
-// moment of thought in the middle.
+// Tier settings, per docs/game-design/puzzles/eclipse.md's difficulty knobs. Each tier adds ONE rung, and
+// generation is made to prove it: `techniqueCap` says how far the reasoning may go, `requires` says the
+// tier's own rung has to fire, and `requiresCount` says how often — one hard step in a thirty-step solve
+// is the tier below it with a moment of thought in the middle.
 //
 // `variants` is the other axis (same doc, "Variants"): the same tier, a different board to read. A tier lists
 // `copyFree` only once its cap reaches `noCopy`, because below that the rung is off the ladder already and the

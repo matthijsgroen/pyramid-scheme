@@ -43,7 +43,7 @@ const board = (difficulty: keyof typeof LIGHTBEAM_CONFIG, seed: number, extra: L
 const starter = board("starter", 1)
 const expert = board("expert", 2)
 const wizard = board("wizard", 4)
-/** A generated wizard board, which since §11.1 landed means one carrying a door and its two sockets. */
+/** A generated wizard board: switch-heavy, so it carries a door and its two sockets. */
 const wizardDoors = board("wizard", 11)
 /** A generated wizard board whose winning route folds back through its own line (`crossings`). */
 const wizardCrossing = board("wizard", 2)

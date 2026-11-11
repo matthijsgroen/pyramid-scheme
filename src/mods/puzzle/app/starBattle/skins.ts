@@ -17,7 +17,7 @@ import { Cat, Farmstead, Lotus, MarketStall, OilLamp, Star } from "./glyphs"
  *
  * The family emits logical state only — a square is empty, ruled out by the player, or holds the answer; a
  * boundary either separates two regions or does not — and a skin decides the pixels
- * (`docs/instructions/puzzle-screens.md` §2).
+ * (`docs/instructions/puzzle-screens.md`: the family renders states, the skin renders pixels).
  *
  * **The rings are skinned along with the ground, and they have to be.** They are what a hint points with,
  * and an amber ring drawn for a night sky disappears on a sunlit board — an affordance that survives only on
@@ -66,10 +66,11 @@ export type StarBattleSkin = {
   evidence: string
   focus: string
   conflict: string
-  /** What an answer wears for its turn in the completion run (`puzzle-screens.md` §3), and it is a per-skin
-   *  choice rather than one house style: a STAR swelling as it brightens reads as catching the light, and the
-   *  same swell on a farmstead standing in a plot — a building set in the ground — reads as the board twitching.
-   *  So the sky blooms and the flood plain only flares (see index.css). */
+  /** What an answer wears for its turn in the completion run (`puzzle-screens.md`: the board finishes
+   *  before "solved"), and it is a per-skin choice rather than one house style: a STAR swelling as it
+   *  brightens reads as catching the light, and the same swell on a farmstead standing in a plot — a building
+   *  set in the ground — reads as the board twitching. So the sky blooms and the flood plain only flares
+   *  (see index.css). */
   celebrate: string
 }
 
@@ -100,10 +101,11 @@ const SKINS: Record<string, StarBattleSkin> = {
     celebrate: "animate-bloom",
   },
   /**
-   * **Farmsteads on the flood plain** (PUZZLE_FAMILIES.md §11.1, Water & Agriculture, and the family doc
-   * §11.3). The rules read straight across and the reason for each one is the place: a holding takes its
-   * quota of households, a row of plots takes the same, and two farmsteads may not sit within reach of each
-   * other because that close they would be drawing on the same well.
+   * **Farmsteads on the flood plain** (PUZZLE_FAMILIES.md theme taxonomy, Water & Agriculture, and
+   * star-battle.md: the pair is what a skin can name). The rules read straight across and the reason for each
+   * one is the place: a holding takes its quota of households, a row of plots takes the same, and two
+   * farmsteads may not sit within reach of each other because that close they would be drawing on the same
+   * well.
    *
    * **Daylight, which is the deliberate opposite of the sky the same board wears by default** — you work a
    * field under the sun. Everything follows from the ground being LIGHT: the walls are the water in the
@@ -246,7 +248,7 @@ export const REGIONLESS_SKINS: Record<string, StarBattleSkin> = {
  * Which place this room is, resolved the same way every family resolves it (`app/faceFor.ts`).
  *
  * The map itself lives on this family's `FamilyMeta`, where world-gen can read it too
- * (`docs/instructions/puzzle-screens.md` §2).
+ * (`docs/instructions/puzzle-screens.md`: a site names a role, never a skin).
  */
 export const skinFor = (
   puzzle: StarBattlePuzzle,

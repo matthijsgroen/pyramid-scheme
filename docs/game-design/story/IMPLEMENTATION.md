@@ -227,7 +227,7 @@ screen to talk about. `pyramidIntro` follows it, because it is about the board.
 ### Reading is ACTIVE (decided)
 
 The player picks the sign, rather than the line resolving because they happen to hold enough glyphs. The
-first one is Henut's wall: her name in a cartouche with a goose where an owl belongs, and the tray offers
+first one is Henut's wall: her name in a cartouche with a goose where Hathor belongs, and the tray offers
 only hieroglyphs they have completed. **Holding the sign is the gate** — without it they can look, and are
 told plainly they cannot fix it yet. Never a fail state.
 

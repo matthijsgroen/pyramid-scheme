@@ -15,7 +15,8 @@
  * `yarn import-tile`, or `art/masters/props/<tier>/<name>.webp`), makes a floor seamless both ways and a
  * face along x, runs the entry's own import (its fenced `sh` block, scaffold renders included, or its
  * `**Import:**` line), then prints `tile-stats` and the rank's `rank-colour` row and ends on IMPORT, or
- * RE-ROLL with the failing number: a tile-stats fault, or a step under 25 L* off the floor.
+ * RE-ROLL with the failing number: a tile-stats fault, or a step under 25 L* off the floor. A wall item's
+ * step off the wall face is printed only: it is judged by eye on the wall.
  *
  * Three queues feed it, because the kinds of art are owed in the same sense and a person with an hour
  * at the generator wants one list: `docs/instructions/repaint-queue.md` for tiles, and

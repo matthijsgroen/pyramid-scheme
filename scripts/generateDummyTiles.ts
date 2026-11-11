@@ -437,9 +437,19 @@ const shapes: Record<Kind, (p: Palette) => string> = {
 // Hung ON the wall, so these are drawn on the face band: TILE wide, BAND tall, and nothing touches
 // the band's bottom edge — that edge is the floor line, and an item resting on it reads as standing
 // in the room rather than hanging above it.
-type WallKind = "niche" | "stela" | "sconce" | "veil" | "starShaft" | "wallShrine" | "tallyBoard" | "mask"
+type WallKind = "niche" | "stela" | "sconce" | "veil" | "starShaft" | "wallShrine" | "tallyBoard" | "mask" | "namePanel"
 
-const WALL_KINDS: WallKind[] = ["niche", "stela", "sconce", "veil", "starShaft", "wallShrine", "tallyBoard", "mask"]
+const WALL_KINDS: WallKind[] = [
+  "niche",
+  "stela",
+  "sconce",
+  "veil",
+  "starShaft",
+  "wallShrine",
+  "tallyBoard",
+  "mask",
+  "namePanel",
+]
 
 const H = BAND // the band, top to floor line
 const wallShapes: Record<WallKind, (p: Palette) => string> = {
@@ -475,6 +485,10 @@ const wallShapes: Record<WallKind, (p: Palette) => string> = {
     <rect x="10" y="5" width="36" height="${H - 12}" fill="${p.prop}"/>
     ${[15, 20, 25, 33, 38].map(x => `<rect x="${x}" y="8" width="2" height="${H - 18}" fill="${p.propDark}"/>`).join("")}
     <rect x="10" y="5" width="36" height="2" fill="${p.accent}" opacity="0.6"/>`,
+  namePanel: p => `
+    <rect x="12" y="3" width="32" height="${H - 8}" fill="${p.prop}"/>
+    <rect x="20" y="6" width="16" height="${H - 14}" rx="6" fill="none" stroke="${p.accent}"/>
+    ${[9, 14, 19].map(y => `<rect x="25" y="${y}" width="6" height="3" fill="${p.propDark}"/>`).join("")}`,
   mask: p => `
     <rect x="20" y="4" width="16" height="4" fill="${p.accent}"/>
     <ellipse cx="28" cy="${H / 2 + 1}" rx="10" ry="${H / 2 - 5}" fill="${p.prop}"/>

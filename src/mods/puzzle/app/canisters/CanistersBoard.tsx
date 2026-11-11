@@ -71,8 +71,9 @@ const HEIGHT = { max: 10, min: 4 }
  * The least water a canister may be drawn with while holding any at all.
  *
  * One measure in a 14 is a twentieth of the vessel, and drawn honestly it disappears into the foot — so a
- * canister with something in it looked exactly like one that had run dry. That is the single reading a
- * pour has to leave behind (§7), so it gets a floor: still clearly less than anything else, never nothing.
+ * canister with something in it looked exactly like one that had run dry. That is the single reading a pour
+ * has to leave behind (canisters.md: anything above empty is drawn at least a sliver), so it gets a floor:
+ * still clearly less than anything else, never nothing.
  */
 const MIN_VISIBLE = 0.08
 
@@ -83,11 +84,12 @@ const MIN_VISIBLE = 0.08
  * 8 — that proportion is what the player reasons with. The numbers sit under the shape rather than on it,
  * because inside an empty vessel there is nothing for them to be read against.
  *
- * **What is in it is written too, against what it holds** (design doc §7). The level is still drawn, and it
- * still carries the reading a pour has to leave behind — which canister ran out, and so whether the pour
- * was limited by what you had or by what fits. What the figure adds is that holding the running amounts in
- * your head is no longer the price of reading the board: the puzzle is choosing the pours, and a player who
- * loses track of a total is not being asked a better question, only a harder one to bookkeep.
+ * **What is in it is written too, against what it holds** (canisters.md: the amount is written, the level
+ * indicative). The level is still drawn, and it still carries the reading a pour has to leave behind — which
+ * canister ran out, and so whether the pour was limited by what you had or by what fits. What the figure adds
+ * is that holding the running amounts in your head is no longer the price of reading the board: the puzzle is
+ * choosing the pours, and a player who loses track of a total is not being asked a better question, only a
+ * harder one to bookkeep.
  */
 const Canister: FC<{
   capacity: number

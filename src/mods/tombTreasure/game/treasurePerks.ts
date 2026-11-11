@@ -1,6 +1,6 @@
 // The perk each tomb treasure grants (its gameplay meaning). Owned by the tomb-treasure mod:
 // core world-gen carries only the structural keyId ordering (TOMB_PERK_IDS/TIER_UNLOCK_PERK_ID in
-// @/data/treasurePerks). Encoded from pyramid-interior-design.md §14. keyId = "<tomb>_<floor>".
+// @/data/treasurePerks). Encoded from pyramid-interior-design.md's treasure perk table. keyId = "<tomb>_<floor>".
 // "none" means the treasure is a pure ward/location key (no accumulating perk).
 
 export type TreasurePerk =

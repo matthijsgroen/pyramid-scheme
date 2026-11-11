@@ -126,7 +126,6 @@
     "turnAround": "Geri dön",
     "wardDescription": {
       "starter": "Bu geçidi bir tüccar mührü kapatıyor. Onu sadece tüccarın koruma anahtarı açar.",
-      "junior": "Bu yolu bir soylunun arması kilitliyor. Onu sadece onun koruma anahtarı açar.",
       "expert": "Bu kapıyı bir başrahibin tapınak koruması bekliyor. Onu kutsal anahtarı açmalı.",
       "master": "Bu geçidi bir firavunun kral mührü bağlıyor. Onu sadece hükümdarın anahtarı kırar.",
       "wizard": "Bu kapıyı tanrıların koruması tutuyor. Tanrısal anahtarından başka hiçbir şey geçemez."

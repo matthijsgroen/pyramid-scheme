@@ -2,7 +2,7 @@ import { cellsOf, exitLane, type RushHourPuzzle, type RushHourState } from "@/mo
 import { optimalPath, type Move } from "@/mods/puzzle/game/rushHour/solveRushHour"
 
 export type RushHourHint = {
-  /** Which sentence says why, keyed per place (`puzzle-screens.md` §4.3). */
+  /** Which sentence says why, keyed per place (`puzzle-screens.md`: hints are worded per identity). */
   key: "drive" | "back" | "clear" | "room"
   /** Which way the piece is being pushed, as its own sentence — a hint has to be followable without sight. */
   action: "left" | "right" | "up" | "down"
@@ -15,9 +15,10 @@ export type RushHourHint = {
 /**
  * The next right move, and why it is the next right move.
  *
- * **The search IS the hint here** (`docs/game-design/puzzles/rush-hour.md` §4). There is no ladder of
- * techniques to report, because nothing on this board is deduced; what a stuck player needs is the one
- * move that shortens the way out, which is the first step of a shortest solution from where they are.
+ * **The search IS the hint here** (`docs/game-design/puzzles/rush-hour.md`: the hint is the next move). There
+ * is no ladder of techniques to report, because nothing on this board is deduced; what a stuck player needs
+ * is the one move that shortens the way out, which is the first step of a shortest solution from where they
+ * are.
  *
  * The reason is read off that move rather than argued separately, and it is honest at four strengths: the
  * player's own piece moving forward means the way is open that far; the player's own piece moving BACK is
@@ -26,8 +27,8 @@ export type RushHourHint = {
  *
  * **The backwards case is called out because it is the documented place people get stuck.** Moving away
  * from the goal is the "counter-intuitive move" the problem-solving literature measures as a difficulty
- * factor (family doc §7), and a hint that says "the way ahead is clear that far" about a leftward shove is
- * not merely vague — it is wrong.
+ * factor (`rush-hour.md`'s research notes), and a hint that says "the way ahead is clear that far" about a
+ * leftward shove is not merely vague — it is wrong.
  *
  * Derived only when asked, like every family whose solver costs something.
  */

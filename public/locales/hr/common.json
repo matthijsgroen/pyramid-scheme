@@ -127,7 +127,6 @@
     "turnAround": "Okreni se",
     "wardDescription": {
       "starter": "Trgovčev pečat zatvara ovaj prolaz — otvara ga samo njegov ključ.",
-      "junior": "Plemićki grb zaključava ovaj put — podiže ga samo plemićev ključ.",
       "expert": "Hramska zaštita velikog svećenika čuva ova vrata — otvoriti ih može samo sveti ključ.",
       "master": "Faraonov kraljevski pečat drži ovaj prolaz — slomiti ga može samo vladarev ključ.",
       "wizard": "Zaštita bogova drži ova vrata — proći se može samo s božanskim ključem."

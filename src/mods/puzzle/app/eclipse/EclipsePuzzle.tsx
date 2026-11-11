@@ -46,7 +46,7 @@ export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, 
    * The board finishes itself before the shell is told, as one diagonal sweep across it.
    *
    * The shell freezes the board and starts its banner the moment it hears "solved", so the celebration has to
-   * happen BEFORE that word is said (`puzzle-screens.md` §3) — the family reports the solve a beat later, and
+   * happen BEFORE that word is said (`puzzle-screens.md`) — the family reports the solve a beat later, and
    * input is refused for that beat, or a tap could change a mark and land the solve on a board that is no
    * longer solved.
    *
@@ -61,7 +61,7 @@ export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, 
   /**
    * A function rather than a string, so the shell only reaches for the text once the hint is on screen.
    *
-   * Two lines: the reason, then the move it asks for (`puzzle-screens.md` §4).
+   * Two lines: the reason, then the move it asks for (`puzzle-screens.md`).
    */
   const hintText = useCallback(() => {
     if (!hint) return undefined

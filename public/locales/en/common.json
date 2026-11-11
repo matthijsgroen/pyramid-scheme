@@ -73,6 +73,10 @@
     "interruptExpedition": "Interrupt expedition",
     "confirmInterruptExpedition": "Are you sure you want to interrupt this expedition? Expedition progress will be kept, but level progress will be lost!",
     "cancel": "Cancel",
+    "leaveSite": "Leave this site?",
+    "confirmLeaveSite": "Press Leave to walk back out, or Stay to keep exploring.",
+    "leave": "Leave",
+    "stay": "Stay",
     "settings": "Settings",
     "language": "Language",
     "close": "Close",
@@ -126,7 +130,7 @@
     "turnAround": "Turn around",
     "wardDescription": {
       "starter": "A merchant's seal bars this passage — only their ward key will part it.",
-      "junior": "A nobleman's crest locks this way — his ward key alone lifts it.",
+      "junior": "A noblewoman's crest locks this way — her ward key alone lifts it.",
       "expert": "A high priest's temple ward guards this door — its sacred key must open it.",
       "master": "A pharaoh's royal seal binds this passage — only the sovereign's key breaks it.",
       "wizard": "A ward of the gods holds this gate — nothing but its divine key will pass."
@@ -1373,14 +1377,7 @@
       }
     },
     "events": {
-      "default": [
-        "the fire",
-        "the water carrying",
-        "the baking",
-        "the boat trip",
-        "the ox driving",
-        "the night watch"
-      ],
+      "default": ["the fire", "the water carrying", "the baking", "the boat trip", "the ox driving", "the night watch"],
       "funerary": [
         "the plastering",
         "the grid drawing",
