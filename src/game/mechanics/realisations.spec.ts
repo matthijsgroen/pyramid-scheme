@@ -136,6 +136,29 @@ describe("taking off what no registered mod realises", () => {
     expect(bare.cells[0][1].type).toBe("corridor")
   })
 
+  it("keeps the designed room laid over a mechanism with no realisation, with nothing standing at the mechanism's place", () => {
+    const works = {
+      name: "works",
+      layout: 0,
+      mirrored: false,
+      rect: { top: 0, left: 0, rows: 1, cols: 1 },
+      stop: [0, 0] as const,
+      nodeArt: [0, 0] as const,
+      objects: [{ kind: "shrine" as const, layer: "wall" as const, top: 0, left: 0, rows: 1, cols: 1 }],
+      blocked: [],
+      doors: [],
+    }
+    const { nodeArt: _nodeArt, ...withoutMechanism } = works
+    const bare = degradeUnrealised(
+      rowGrid([{ ...lever("nowhere"), prefabRoom: works }, door(), ground(["w"])]),
+      TOPOLOGY_OFF.resolveEncounter,
+      NOTHING
+    )
+
+    expect(bare.cells[0][0]).toMatchObject({ type: "corridor", prefabRoom: withoutMechanism })
+    expect(bare.cells[0][0]).not.toHaveProperty("prefabRoom.nodeArt")
+  })
+
   it("changes nothing on a floor whose every mechanism is realised", () => {
     const grid = rowGrid([lever("handle"), door(), ground(["w"])])
     expect(degradeUnrealised(grid, resolveEncounterMeta, NOTHING)).toBe(grid)

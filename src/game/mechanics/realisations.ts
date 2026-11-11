@@ -2,7 +2,7 @@ import { DEFAULT_CONTROL_ROLE, DOOR_FACE_ROLE } from "../encounterFallback"
 import { isSequence, isWeights, type Control } from "../obstacles"
 import { oneWayRuns } from "../gridNavigation"
 import type { ResolveEncounter } from "../siteAssembler"
-import type { CorridorCell, Direction, FloorGrid, GridCell, RoomCell } from "../siteTypes"
+import type { CorridorCell, Direction, FloorGrid, GridCell, PrefabRoom, RoomCell } from "../siteTypes"
 
 // CORE OWNS EVERY CONTROL KIND AND A MOD ONLY DRESSES ONE. A mechanism whose realisation no registered mod
 // provides is not a mistake in the floor: it is carved exactly as if it were there, and what a mod's absence
@@ -51,7 +51,11 @@ export const unrealisedPipes = (controls: readonly Control[], resolve: ResolveEn
       .map(control => control.id)
   )
 
-/** What a corridor keeps of the room it was: its place in the carve and nothing the room held. */
+/** A designed room with no mechanism standing in it: the room keeps its walls, its place for one stays empty. */
+const withoutNodeArt = ({ nodeArt: _nodeArt, ...room }: PrefabRoom): PrefabRoom => room
+
+/** What a corridor keeps of the room it was: its place in the carve and the designed room laid over it, and nothing
+ * the room held. */
 const groundOf = (cell: RoomCell): CorridorCell => ({
   type: "corridor",
   dirs: cell.dirs,
@@ -64,6 +68,7 @@ const groundOf = (cell: RoomCell): CorridorCell => ({
   ...(cell.legacySectionHash !== undefined ? { legacySectionHash: cell.legacySectionHash } : {}),
   ...(cell.ordinal !== undefined ? { ordinal: cell.ordinal } : {}),
   ...(cell.hidden !== undefined ? { hidden: cell.hidden } : {}),
+  ...(cell.prefabRoom !== undefined ? { prefabRoom: withoutNodeArt(cell.prefabRoom) } : {}),
 })
 
 /** The ways out of a room, less the gate keys that no longer stand. */
@@ -88,7 +93,11 @@ const bareJunction = (cell: RoomCell, dropped: ReadonlySet<string>): RoomCell =>
     mark: _mark,
     ...rest
   } = cell
-  return { ...rest, ...(cell.exits ? exitsWithout(cell, dropped) : {}) }
+  return {
+    ...rest,
+    ...(cell.prefabRoom !== undefined ? { prefabRoom: withoutNodeArt(cell.prefabRoom) } : {}),
+    ...(cell.exits ? exitsWithout(cell, dropped) : {}),
+  }
 }
 
 type Unrealised = {
