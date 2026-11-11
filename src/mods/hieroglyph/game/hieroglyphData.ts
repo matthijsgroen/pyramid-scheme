@@ -30,6 +30,19 @@ const FRAGMENT_MATRIX: Record<Tier, Record<number, number> & { revisit: number }
 // sign absent from this table can never complete — but the number is 1 and it never scales by tier.
 const WHOLE_SIGNS: Record<string, number> = { s1: 1 }
 
+/**
+ * Signs a ghost gives away whole, on a revisit (`egyptianOfferings`), and the tier each counts at: the
+ * tier of the formula wall whose empty slot it fills, which is where it becomes worth something. Never
+ * placed in the world, so never in HIEROGLYPH_REQUIRED (the bake's table) nor in TIER_BY_HIEROGLYPH
+ * (its placement filter). One piece completes one.
+ */
+export const GIVEN_SIGNS: Readonly<Record<string, Tier>> = { o1: "junior", o2: "expert", o3: "master", o4: "wizard" }
+
+/** What completes each given sign: its one piece. */
+export const GIVEN_REQUIRED: Readonly<Record<string, number>> = Object.fromEntries(
+  Object.keys(GIVEN_SIGNS).map(id => [id, 1])
+)
+
 export const HIEROGLYPH_REQUIRED: Record<string, number> = (() => {
   const result: Record<string, number> = { ...WHOLE_SIGNS }
   for (const [tier, ids] of Object.entries(TOMB_SYMBOLS) as [Tier, string[]][]) {

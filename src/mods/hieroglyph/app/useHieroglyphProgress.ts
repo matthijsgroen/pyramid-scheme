@@ -5,8 +5,14 @@ import { perkStacks } from "@/game/perkTotals"
 // The generated `hieroglyphRequired` is baked generically (core annotates no mod export), so TS
 // infers a literal shape — the mod owns the type: it's a per-hieroglyph piece-count lookup.
 import { hieroglyphRequired as hieroglyphRequiredRaw } from "@/data/generatedWorld"
+import { GIVEN_REQUIRED } from "@/mods/hieroglyph/game/hieroglyphData"
 
-const hieroglyphRequired = hieroglyphRequiredRaw as Record<string, number>
+// The baked fragment targets, plus the signs a ghost gives whole: those are never baked, and without
+// their one piece here they would fall to the default 2 and never complete.
+const hieroglyphRequired: Record<string, number> = {
+  ...(hieroglyphRequiredRaw as Record<string, number>),
+  ...GIVEN_REQUIRED,
+}
 
 // Hieroglyph-owned collection state: which fragment pieces of which hieroglyph the player has found.
 // A fragment is one piece of a multi-piece hieroglyph (stored as an "id:pieceIndex" set); a

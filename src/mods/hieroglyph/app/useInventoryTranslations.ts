@@ -4,68 +4,44 @@ import {
   egyptianProfessions,
   egyptianAnimals,
   egyptianArtifacts,
+  egyptianOfferings,
   egyptianSigns,
 } from "@/mods/hieroglyph/game/symbolCatalogue"
+
+export type InventoryCategory = "deities" | "professions" | "animals" | "artifacts" | "offerings" | "signs"
+
+// Each group's id prefix, its translation group and its signs. `art` before `a`: the longer prefix first.
+const GROUPS: readonly (readonly [prefix: string, category: InventoryCategory, items: typeof egyptianDeities])[] = [
+  ["d", "deities", egyptianDeities],
+  ["s", "signs", egyptianSigns],
+  ["p", "professions", egyptianProfessions],
+  ["o", "offerings", egyptianOfferings],
+  ["art", "artifacts", egyptianArtifacts],
+  ["a", "animals", egyptianAnimals],
+]
 
 // Hook to get translated inventory item
 export const useInventoryItem = () => {
   const { t } = useTranslation("inventory")
 
-  // Find the item in all collections
-  const allItems = [
-    ...egyptianDeities,
-    ...egyptianProfessions,
-    ...egyptianAnimals,
-    ...egyptianArtifacts,
-    ...egyptianSigns,
-  ]
-
   return (id: string) => {
-    const item = allItems.find(item => item.id === id)
-
-    if (!item) {
-      return null
-    }
-
-    // Determine the category based on ID prefix
-    let category = ""
-    if (id.startsWith("d")) category = "deities"
-    else if (id.startsWith("s")) category = "signs"
-    else if (id.startsWith("p")) category = "professions"
-    else if (id.startsWith("art")) category = "artifacts"
-    else if (id.startsWith("a")) category = "animals"
+    const group = GROUPS.find(([prefix]) => id.startsWith(prefix))
+    const item = group?.[2].find(item => item.id === id)
+    if (!group || !item) return null
 
     return {
       id: item.id,
       symbol: item.symbol,
-      name: t(`${category}.${id}.name`),
-      description: t(`${category}.${id}.description`),
+      name: t(`${group[1]}.${id}.name`),
+      description: t(`${group[1]}.${id}.description`),
     }
   }
 }
 
 // Function to get all items from a category with translations
-export const useInventoryCategory = (category: "deities" | "professions" | "animals" | "artifacts" | "signs") => {
+export const useInventoryCategory = (category: InventoryCategory) => {
   const { t } = useTranslation("inventory")
-
-  let items
-  switch (category) {
-    case "deities":
-      items = egyptianDeities
-      break
-    case "professions":
-      items = egyptianProfessions
-      break
-    case "animals":
-      items = egyptianAnimals
-      break
-    case "artifacts":
-      items = egyptianArtifacts
-      break
-    case "signs":
-      items = egyptianSigns
-      break
-  }
+  const items = GROUPS.find(([, name]) => name === category)?.[2] ?? []
 
   return items.map(item => ({
     id: item.id,

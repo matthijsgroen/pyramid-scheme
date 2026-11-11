@@ -239,6 +239,24 @@
       "description": "Koninklijke hoofdtooi met de beschermende cobra, gedragen door farao's als goddelijke bescherming."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Brood",
+      "description": "[Bread — designer copy]"
+    },
+    "o2": {
+      "name": "Linnen",
+      "description": "[Linen — designer copy]"
+    },
+    "o3": {
+      "name": "Water",
+      "description": "[Water — designer copy]"
+    },
+    "o4": {
+      "name": "Boot",
+      "description": "[Boat — designer copy]"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Rietblad",

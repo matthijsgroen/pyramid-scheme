@@ -4,6 +4,7 @@ import tableausTranslations from "../../../../public/locales/en/tableaus.json"
 import { egyptianAnimals, egyptianArtifacts, egyptianDeities, egyptianProfessions } from "./symbolCatalogue"
 import { TOMB_JOURNEYS } from "@/worldGen/data"
 import { tombFormulaFor } from "./tombFormula"
+import { GIVEN_SIGNS } from "./hieroglyphData"
 import type { Difficulty } from "@/data/difficultyLevels"
 
 // Tombs with their FLOOR counts, off the table world-gen builds from — a tomb journey's own
@@ -147,6 +148,13 @@ describe("Tableau System", () => {
       const allTombSymbols = Object.values(TOMB_SYMBOLS).flat()
       allTombSymbols.forEach(symbol => expect(usedSymbols.has(symbol)).toBe(true))
       expect(usedSymbols.size).toBe(allTombSymbols.length)
+    })
+
+    it("never asks for a sign a ghost gives — a gift is not a tableau symbol, in any tomb", () => {
+      const asked = new Set(tableauLevels.flatMap(tableau => tableau.inventoryIds))
+      const listed = new Set(Object.values(TOMB_SYMBOLS).flat())
+
+      expect(Object.keys(GIVEN_SIGNS).filter(id => asked.has(id) || listed.has(id))).toEqual([])
     })
 
     it("should have positive run numbers", () => {

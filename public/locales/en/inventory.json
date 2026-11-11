@@ -239,6 +239,24 @@
       "description": "Royal headdress featuring the protective cobra, worn by pharaohs as divine protection."
     }
   },
+  "offerings": {
+    "o1": {
+      "name": "Bread",
+      "description": "[Bread — designer copy]"
+    },
+    "o2": {
+      "name": "Linen",
+      "description": "[Linen — designer copy]"
+    },
+    "o3": {
+      "name": "Water",
+      "description": "[Water — designer copy]"
+    },
+    "o4": {
+      "name": "Boat",
+      "description": "[Boat — designer copy]"
+    }
+  },
   "signs": {
     "s1": {
       "name": "Reed Leaf",

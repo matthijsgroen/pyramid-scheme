@@ -1,5 +1,6 @@
 import { TOMB_SYMBOLS } from "@/mods/hieroglyph/game/tableaus"
 import { TIER_BY_HIEROGLYPH } from "@/mods/hieroglyph/game/hieroglyphCurrency"
+import { GIVEN_SIGNS } from "@/mods/hieroglyph/game/hieroglyphData"
 import { difficulties, type Difficulty } from "@/data/difficultyLevels"
 
 /**
@@ -11,7 +12,9 @@ import { difficulties, type Difficulty } from "@/data/difficultyLevels"
  *
  * A sign granted whole appears in no tableau, so it has no first level to find — it falls back to
  * the tier its one chest was authored at, which is the same thing the Collection wants to say:
- * where you get it.
+ * where you get it. A sign a ghost gives is in neither: it takes the tier of the wall it fills.
  */
 export const getItemFirstLevel = (itemId: string): Difficulty =>
-  difficulties.find(key => TOMB_SYMBOLS[key].some(item => item === itemId)) ?? TIER_BY_HIEROGLYPH[itemId]
+  difficulties.find(key => TOMB_SYMBOLS[key].some(item => item === itemId)) ??
+  TIER_BY_HIEROGLYPH[itemId] ??
+  GIVEN_SIGNS[itemId]

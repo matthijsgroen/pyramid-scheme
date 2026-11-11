@@ -21,7 +21,7 @@ import { TableauInventory } from "./TableauInventory"
 import "./plugin"
 import "./collection"
 import { registerDevGrants } from "@/app/dev/devActionContributions"
-import { HIEROGLYPH_REQUIRED } from "../game/hieroglyphData"
+import { GIVEN_REQUIRED, HIEROGLYPH_REQUIRED } from "../game/hieroglyphData"
 
 // hieroglyph's app entrypoint (side-effect): the tableau family plugin + the Collection section
 // (both self-gated in their own files), plus the gated reward/detector registrations:
@@ -75,7 +75,8 @@ if (isModEnabled("hieroglyph")) {
     () => useModState("hieroglyph", {})[2]
   )
 
-  // Without every hieroglyph, jumping to a late tomb hits a wall of unfillable tableau formulas.
+  // Without every hieroglyph, jumping to a late tomb hits a wall of unfillable tableau formulas — and a
+  // formula wall cannot be put right without the gift its slot asks for.
   registerDevGrants(() => {
     const { addFragment } = useHieroglyphProgress()
     return useMemo(
@@ -83,7 +84,7 @@ if (isModEnabled("hieroglyph")) {
         {
           label: "All hieroglyphs",
           grant: () => {
-            for (const [hieroglyphId, required] of Object.entries(HIEROGLYPH_REQUIRED))
+            for (const [hieroglyphId, required] of Object.entries({ ...HIEROGLYPH_REQUIRED, ...GIVEN_REQUIRED }))
               for (let piece = 0; piece < required; piece++) addFragment(hieroglyphId, piece)
           },
         },
