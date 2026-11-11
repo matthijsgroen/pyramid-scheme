@@ -1,5 +1,5 @@
 // designed by: Claude
-// expert. The lever that opens the exit shuts the door behind you;
+// junior. The lever that opens the exit shuts the door behind you;
 // the only way home is a drop.
 
 in -[Y]- hall -[H:a]- leverRoom
