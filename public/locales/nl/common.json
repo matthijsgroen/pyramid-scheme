@@ -146,6 +146,7 @@
     "mapPieceDescription": "Een brokkelig stuk van een kaart naar een lang vergeten plek. Jammer dat het bij lange na niet compleet is...",
     "mapPieceProgress": "{{found}} van {{required}} kaartdelen verzameld",
     "mapPieceComplete": "De kaart is compleet — hij leidt naar {{name}}.",
+    "hieroglyph": "Hiëroglief",
     "hieroglyphFragment": "Hiërogliefenfragment",
     "fragmentProgress": "{{found}} van {{required}} fragmenten gevonden",
     "tombKey": "Tombesleutel",
