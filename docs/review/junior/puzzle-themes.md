@@ -129,7 +129,7 @@ op haar muur te verbeteren.
 | 2 · 6        | tableau, canisters (expert), tableau, tableau, crocodile                                                 | eclipse                  | geen | geen                                 | Anubis  | tomb-puzzle             |
 
 Tableau-titels uit `tableaus.json`: "Royal Scepters" en "Pharaoh's Mark". Die passen bij het verhaal: regalia
-gekocht als kopie. "Eye of the Market" en "Merchant's Eye" vallen eruit (M6). **Hathor** staat in vier
+gekocht als kopie. "Eye of the Market" en "Merchant's Eye" noemen de tekens op hun tableau (M6). **Hathor** staat in vier
 tableau-beschrijvingen.
 
 ---
@@ -194,6 +194,8 @@ activity: "dressingRoom", room: "henutDressing" }`. Kijk ook of de reading-muur 
 
 ### M5 · De Vallei krijgt de kamers van een rijke edelman, niet van een ambachtsman · [SMAAK binnen R1]
 
+**Opgelost.** Vallei: torch (pyr 1) krijgt `shrineWorks` + `bakery` + `quernRoom`, de plaat (pyr 3) `shrineRoom` in plaats van `dressingRoom`; tuinhof en kleedkamers weg, geen rol.
+
 - **Wat.** In junior_2 staan bigGardenCourt (lotusvijver), twee keer dressingRoom en een bedroom. Junior
   heeft nu eenmaal alleen het edelmanshuis (R1). Maar binnen dat huis passen sommige kamers juist wél bij Deir
   el-Medina. De huizen daar zijn dé archeologische bron voor het Bes-huisaltaar, de broodoven en de maalsteen.
@@ -209,6 +211,8 @@ activity: "dressingRoom", room: "henutDressing" }`. Kijk ook of de reading-muur 
   voorkeur als je R7 hier loslaat.
 
 ### M6 · Koopmanssmaak in het edelmanshuis · [SMAAK]
+
+**Uitgesteld.** De tableau-titels blijven: een titel noemt de tekens op het tableau (`objectsForStories.ts`: Eye of Horus + Merchant). Open blijven alleen de koopmans-face van balance-scale en Sumplete "De Telling".
 
 - **Wat.** De default-face van balance-scale is "the merchant's own pieces". Die staat 4× in junior_3 en 2× in
   junior_2. Sumplete heet "De Telling", en turfstreepjes zijn het motief van starter. Twee tableau-titels van Henut
@@ -230,6 +234,8 @@ activity: "dressingRoom", room: "henutDressing" }`. Kijk ook of de reading-muur 
   dragen. Heel licht, maar een mooie echo.
 
 ### M8 · Het banket ontbreekt bijna, terwijl het junior's handtekening is · [SMAAK]
+
+**Opgelost.** `banquetRoom` staat op junior_3 pyr 2 (naast bedroom) en junior_4 pyr 2 (naast bakery): op beide is het midden vrij. junior_3 pyr 1 niet, daar staat musicRoom al.
 
 - **Wat.** Visual-direction typeert junior als "festive, banquet friezes". Toch staat er op 16 hoofdverdiepingen
   maar één banketzaal (`bigBanquetHall`, junior_4 pyr 1), plus twee keer `musicRoom`. De gewone `banquetRoom` wordt
@@ -277,6 +283,8 @@ activity: "dressingRoom", room: "henutDressing" }`. Kijk ook of de reading-muur 
   patroon-art te laten zien. Dit kost art. Doe je niets, dan blijft het generieke beeld staan, en dat is prima.
 
 ### M12 · Kleinigheden · [SMAAK]
+
+**Opgelost.** junior_1 pyr 2: `bakery` + `shrineRoom` + `gardenCourt`, alle drie geplaatst (bedroom stond er nooit echt). junior_3 pyr 4: `bakery` in plaats van `shrineRoom`.
 
 - **junior_1 pyr 2.** `bedroom` (rol `sky`) staat in een `water`-reis. R2 grijpt bij een prefab niet in, maar een
   carve-kamer mocht hier niet staan. De `shrineRoom` ernaast is te verdedigen, want Thoth-beelden in de Ibis-reis
