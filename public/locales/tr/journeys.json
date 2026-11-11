@@ -21,24 +21,19 @@
     "mapHint": "Bu parçada bir pazar yolu ve bir kiler kapısı çizili. Bir tüccarın saklandığı yer, daha fazlası değil."
   },
   "junior_1": {
-    "name": "Kutsal İbislerin Göçü",
-    "description": "Bataklık ülkesi ve içinde yürüyen ibisler. Mısırlılar bu kuşları izlerdi: onlar geri gelince, Nil taşacak demekti."
+    "name": "Kutsal İbislerin Göçü"
   },
   "junior_2": {
-    "name": "Ustalar Vadisi",
-    "description": "Deir el-Medina. Mezar yapan ustalar burada yaşardı. Bir kral mezarına giren her şey önce burada, kalıplarda yapılırdı."
+    "name": "Ustalar Vadisi"
   },
   "junior_3": {
-    "name": "Thoth Tapınağı",
-    "description": "Thoth'un tapınağı. Yazıyı o buldu, kayıtları o tuttu, hesapları o yaptı. Yani aşağı yukarı bizim yaptığımız şeyleri!"
+    "name": "Thoth Tapınağı"
   },
   "junior_4": {
-    "name": "İskenderiye Feneri",
-    "description": "İskenderiye'nin Pharos'u. Tepesinde bütün gece yanan bir ateş vardı. Denizciler kıyıyı bir günlük yoldan görürdü."
+    "name": "İskenderiye Feneri"
   },
   "junior_treasure_tomb": {
     "name": "Soylunun Gizli Odası",
-    "description": "Soylu bir kadının yerden tavana boyanmış odası. Paranın alabileceği en güzel kopyaları almış, ama bunu hiç kimseye söylememiş.",
     "mapHint": "İnce mürekkep, köşede armalı bir mühür. Önemli biri bu odanın unutulmasını istemiş."
   },
   "expert_1": {

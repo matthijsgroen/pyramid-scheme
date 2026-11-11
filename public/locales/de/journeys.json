@@ -21,24 +21,19 @@
     "mapHint": "Auf dem Fetzen sind eine Marktstraße und eine Kellertür gezeichnet – das Versteck eines Händlers, mehr nicht."
   },
   "junior_1": {
-    "name": "Der Zug der heiligen Ibisse",
-    "description": "Sumpfland, und Ibisse, die hindurchwaten. Ägypten hat diese Vögel genau beobachtet: Wenn sie zurückkommen, kommt auch die Flut."
+    "name": "Der Zug der heiligen Ibisse"
   },
   "junior_2": {
-    "name": "Tal der Handwerker",
-    "description": "Deir el-Medina, wo die Grabbauer wohnten. Alles, was in ein Königsgrab kam, wurde zuerst hier gemacht, in Gussformen."
+    "name": "Tal der Handwerker"
   },
   "junior_3": {
-    "name": "Tempel des Thoth",
-    "description": "Der Tempel des Thoth. Er hat die Schrift erfunden, alles aufgeschrieben und gezählt – also so ziemlich das, was wir die ganze Zeit machen."
+    "name": "Tempel des Thoth"
   },
   "junior_4": {
-    "name": "Leuchtturm von Alexandria",
-    "description": "Der Pharos von Alexandria. Oben ein Feuer, das die ganze Nacht brennt, und Seeleute, die die Küste schon aus einer Tagesreise Entfernung finden."
+    "name": "Leuchtturm von Alexandria"
   },
   "junior_treasure_tomb": {
     "name": "Verborgene Kammer der Edeldame",
-    "description": "Die Kammer einer reichen Dame, vom Boden bis zur Decke bemalt. Sie kaufte die besten Nachbildungen, die man für Geld bekommen konnte – und hat es nie jemandem verraten.",
     "mapHint": "Feine Tinte, ein Wappensiegel in der Ecke – jemand Vornehmes wollte, dass dieser Raum vergessen wird."
   },
   "expert_1": {

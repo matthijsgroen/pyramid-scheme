@@ -1659,7 +1659,7 @@
       "voice": "Hlas"
     },
     "wall": {
-      "wrong": "Někdo vytesal třetí znak špatně. Je špatně už tři tisíce let.",
+      "wrong": "Někdo vytesal druhý znak špatně. Je špatně už tři tisíce let.",
       "fixed": "Teď je tam zase její jméno.",
       "pick": "Dej na jeho místo správný znak.",
       "cannot": "Znak, který sem patří, ještě neznáš. Zatím ne."

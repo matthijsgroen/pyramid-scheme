@@ -21,24 +21,19 @@
     "mapHint": "Tarraingíonn an blúire bóthar margaidh agus doras siléir — áit fholaigh ceannaí, faic níos mó ná sin."
   },
   "junior_1": {
-    "name": "Imirce an Íbis Naofa",
-    "description": "Tír riasca, agus an t-íbis ag lapadaíl tríd. Bhíodh an Éigipt ag faire ar na héin seo: nuair a thagann siad ar ais, tá an tuile ag teacht."
+    "name": "Imirce an Íbis Naofa"
   },
   "junior_2": {
-    "name": "Gleann na gCeardaithe",
-    "description": "Deir el-Medina, áit a raibh cónaí ar lucht déanta na dtuamaí. Rinneadh gach rud d’adhlacadh ríoga anseo ar dtús, i múnlaí."
+    "name": "Gleann na gCeardaithe"
   },
   "junior_3": {
-    "name": "Teampall Thoth",
-    "description": "Teampall Thoth. Chum sé an scríbhneoireacht, choinnigh sé na taifid agus rinne sé an comhaireamh — agus sin an chuid is mó dá bhfuil á dhéanamh againne."
+    "name": "Teampall Thoth"
   },
   "junior_4": {
-    "name": "Teach Solais Alexandria",
-    "description": "Pharos Alexandria. Tine ag an mbarr, ar lasadh ar feadh na hoíche, agus mairnéalaigh ag aimsiú an chósta lá seoltóireachta amach."
+    "name": "Teach Solais Alexandria"
   },
   "junior_treasure_tomb": {
     "name": "Cuas Folaithe an Uasail",
-    "description": "Cuas bean uasal, péinteáilte ón urlár go dtí an tsíleáil. Cheannaigh sí na cóipeanna ab fhearr a bhí ar fáil, agus níor dhúirt sí é sin riamh.",
     "mapHint": "Dúch breá, séala le suaitheantas sa chúinne — bhí duine mór ag iarraidh go ndéanfaí dearmad ar an seomra seo."
   },
   "expert_1": {

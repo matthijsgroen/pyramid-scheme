@@ -1571,7 +1571,7 @@
       "voice": "Una veu"
     },
     "wall": {
-      "wrong": "Algú va tallar malament el tercer signe. Fa tres mil anys que està malament.",
+      "wrong": "Algú va tallar malament el segon signe. Fa tres mil anys que està malament.",
       "fixed": "Torna a ser el seu nom.",
       "pick": "Posa el signe correcte al seu lloc.",
       "cannot": "No coneixes el signe que va aquí. Encara no."

@@ -61,7 +61,10 @@ export const parse = (md: string): Entry[] =>
             ? join(camp.outRoot, `${camp.name}.webp`)
             : importLine?.startsWith("yarn import-panel ")
               ? join("src/assets/tombWall", `${/--tier=(\w+)/.exec(importLine)?.[1]}.webp`)
-              : join("src/assets/tiles", key.split("/")[0], `${key.split("/")[1]}.png`),
+              : // A reading backdrop is the reading screen's, named by --name.
+                importLine?.startsWith("yarn import-reading ")
+                ? join("src/assets/reading", `${/--name=(\S+)/.exec(importLine)?.[1]}.webp`)
+                : join("src/assets/tiles", key.split("/")[0], `${key.split("/")[1]}.png`),
           importedBy:
             importLine ?? `yarn import-tile <file> --tier=${key.split("/")[0]} --name=${key.split("/")[1]} --slot=prop`,
           importScript,

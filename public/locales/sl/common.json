@@ -1659,7 +1659,7 @@
       "voice": "Glas"
     },
     "wall": {
-      "wrong": "Nekdo je tretji znak vklesal narobe. Narobe je že tri tisoč let.",
+      "wrong": "Nekdo je drugi znak vklesal narobe. Narobe je že tri tisoč let.",
       "fixed": "To je spet njeno ime.",
       "pick": "Postavi pravi znak na njegovo mesto.",
       "cannot": "Znaka, ki spada sem, še ne poznaš. Še ne."

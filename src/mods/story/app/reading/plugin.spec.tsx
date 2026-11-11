@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import { describe, expect, it, vi } from "vitest"
-import { fireEvent, render, screen } from "@testing-library/react"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { act, fireEvent, render, screen } from "@testing-library/react"
 import { FezContext } from "@/app/fez/context"
 import { allItems } from "@/mods/hieroglyph/game/symbolCatalogue"
 import { wallFor } from "@/mods/story/game/reading/walls"
@@ -16,6 +16,11 @@ vi.mock("@/mods/registeredMods", () => ({ isModEnabled: () => false }))
 const { ReadingComponent } = await import("./plugin")
 
 const wall = wallFor("junior_treasure_tomb")!
+
+// The scene waits for the sign's crossfade, so every click is followed by the time it takes.
+beforeEach(() => vi.useFakeTimers())
+afterEach(() => vi.useRealTimers())
+const settle = () => act(() => vi.advanceTimersByTime(1000))
 const symbolOf = (id: string) => allItems.find(item => item.id === id)!.symbol
 const answer = wall.answer
 const miscut = wall.cut[wall.wrongAt]
@@ -65,6 +70,7 @@ describe("a wall with a sign cut wrong", () => {
     const { showConversation } = show([answer, miscut])
 
     fireEvent.click(screen.getAllByRole("button").find(b => b.textContent === symbolOf(answer))!)
+    settle()
 
     expect(showConversation).toHaveBeenCalledWith(wall.after, expect.any(Function), { story: true, forceReplay: true })
   })
@@ -73,6 +79,7 @@ describe("a wall with a sign cut wrong", () => {
     const { showConversation } = show([answer, miscut])
 
     fireEvent.click(screen.getAllByRole("button").find(b => b.textContent === symbolOf(miscut))!)
+    settle()
 
     expect(showConversation).not.toHaveBeenCalled()
   })
@@ -101,6 +108,7 @@ describe("the Sphinx, with a sign the sand took", () => {
 
     expect(screen.getByText("story.sphinx.cannot")).toBeTruthy()
     fireEvent.click(gap())
+    settle()
 
     expect(showConversation).not.toHaveBeenCalled()
   })
@@ -109,6 +117,7 @@ describe("the Sphinx, with a sign the sand took", () => {
     const { showConversation } = show(["art5", "d3", "s1"], "starter_1")
 
     fireEvent.click(gap())
+    settle()
 
     expect(showConversation).toHaveBeenCalledWith(sphinx.after, expect.any(Function), {
       story: true,

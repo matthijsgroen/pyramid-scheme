@@ -21,24 +21,19 @@
     "mapHint": "Stumpen viser en markedsvej og en kælderdør — en købmands gemmested, ikke noget finere."
   },
   "junior_1": {
-    "name": "De hellige ibisser",
-    "description": "Sumpland, og ibisserne der vader igennem det. Egypten holdt øje med de fugle: når de kommer tilbage, kommer oversvømmelsen."
+    "name": "De hellige ibisser"
   },
   "junior_2": {
-    "name": "Håndværkernes dal",
-    "description": "Deir el-Medina, hvor gravbyggerne boede. Alt, der kom i en kongegrav, blev først lavet her, i forme."
+    "name": "Håndværkernes dal"
   },
   "junior_3": {
-    "name": "Thoths tempel",
-    "description": "Thoths tempel. Han opfandt skriften, skrev alt ned og regnede det hele ud — lidt ligesom os."
+    "name": "Thoths tempel"
   },
   "junior_4": {
-    "name": "Fyrtårnet i Alexandria",
-    "description": "Pharos i Alexandria. Et bål på toppen, der brændte hele natten, så sømænd kunne finde kysten en dags sejlads ude."
+    "name": "Fyrtårnet i Alexandria"
   },
   "junior_treasure_tomb": {
     "name": "Adelsdamens skjulte hvælving",
-    "description": "En adelsdames hvælving, malet fra gulv til loft. Hun købte de flotteste kopier, man kunne få — og sagde det aldrig højt.",
     "mapHint": "Fint blæk og et våbenskjold i hjørnet — en fin person ville have, at dette rum blev glemt."
   },
   "expert_1": {

@@ -21,24 +21,19 @@
     "mapHint": "Mae'r darn papur yn dangos ffordd farchnad a drws seler — cuddfan masnachwr, dim byd mwy crand."
   },
   "junior_1": {
-    "name": "Taith yr Ibis Sanctaidd",
-    "description": "Tir corsiog, a'r ibis yn cerdded drwy'r dŵr. Roedd yr Aifft yn gwylio'r adar yma: pan maen nhw'n dod 'nôl, mae'r llifogydd ar y ffordd."
+    "name": "Taith yr Ibis Sanctaidd"
   },
   "junior_2": {
-    "name": "Dyffryn y Crefftwyr",
-    "description": "Deir el-Medina, lle roedd gwneuthurwyr y beddau'n byw. Cafodd popeth ar gyfer bedd brenin ei wneud yma gyntaf, mewn mowldiau."
+    "name": "Dyffryn y Crefftwyr"
   },
   "junior_3": {
-    "name": "Teml Thoth",
-    "description": "Teml Thoth. Fe ddyfeisiodd ysgrifennu, cadw'r cofnodion a gwneud y cyfrif — sef y rhan fwyaf o beth rydyn ni wedi bod yn ei wneud."
+    "name": "Teml Thoth"
   },
   "junior_4": {
-    "name": "Goleudy Alecsandria",
-    "description": "Pharos Alecsandria. Tân ar y top yn llosgi drwy'r nos, a morwyr yn gweld yr arfordir o ddiwrnod o hwylio i ffwrdd."
+    "name": "Goleudy Alecsandria"
   },
   "junior_treasure_tomb": {
     "name": "Claddgell Gudd yr Uchelwraig",
-    "description": "Claddgell uchelwraig, wedi'i phaentio o'r llawr i'r nenfwd. Prynodd hi'r copïau gorau oedd ar gael, a ddwedodd hi ddim gair am hynny erioed.",
     "mapHint": "Inc da, a sêl gydag arfbais yn y gornel — roedd rhywun pwysig eisiau i bawb anghofio'r stafell hon."
   },
   "expert_1": {

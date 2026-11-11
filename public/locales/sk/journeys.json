@@ -21,24 +21,19 @@
     "mapHint": "Útržok ukazuje trhovú cestu a dvere do pivnice – skrýšu obchodníka, nič veľkolepé."
   },
   "junior_1": {
-    "name": "Let posvätných ibisov",
-    "description": "Močiare a ibisy, ktoré sa nimi brodia. Egypťania tie vtáky sledovali: keď sa vrátia, príde povodeň."
+    "name": "Let posvätných ibisov"
   },
   "junior_2": {
-    "name": "Údolie remeselníkov",
-    "description": "Dér el-Medína, kde bývali tí, čo stavali hrobky. Všetko do kráľovského hrobu tu najprv odliali do foriem."
+    "name": "Údolie remeselníkov"
   },
   "junior_3": {
-    "name": "Chrám boha Thovta",
-    "description": "Thovtov chrám. Thovt vymyslel písmo, zapisoval všetko a počítal – a to je väčšina toho, čo sme robili aj my."
+    "name": "Chrám boha Thovta"
   },
   "junior_4": {
-    "name": "Maják v Alexandrii",
-    "description": "Maják Faros v Alexandrii. Hore celú noc horí oheň a námorníci vidia pobrežie už deň cesty od neho."
+    "name": "Maják v Alexandrii"
   },
   "junior_treasure_tomb": {
     "name": "Skrytá klenotnica šľachtičnej",
-    "description": "Klenotnica jednej šľachtičnej, pomaľovaná od podlahy po strop. Kúpila si tie najlepšie kópie, aké sa dali, a nikdy sa nepriznala.",
     "mapHint": "Jemný atrament a v rohu pečať s erbom – niekto vážený chcel, aby sa na túto miestnosť zabudlo."
   },
   "expert_1": {
