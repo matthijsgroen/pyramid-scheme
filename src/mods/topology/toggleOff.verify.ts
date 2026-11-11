@@ -3,7 +3,7 @@ import { dropUnownedAuthoring } from "@/worldGen/modOwnedAuthoring"
 import { assembleFloor, type ResolveEncounter } from "@/game/siteAssembler"
 import { TOPOLOGY_OFF, dirsApartFromDrops, dirsOf } from "@/game/testSupport/modOff"
 import type { FloorConfig as GameFloorConfig } from "@/game/siteTypes"
-import { allFloors, resolveKeyRequirements } from "@/app/SiteMap/worldFloors.testing"
+import { allFloors, resolveKeyRequirements, type Floor } from "@/app/SiteMap/worldFloors.testing"
 import { resolveEncounter } from "@/app/families/familyRegistry"
 import { validateSite } from "@/game/siteValidator"
 import type { ValidationReason, ValidationResult } from "@/game/siteTypes"
@@ -23,6 +23,26 @@ const topologyOff: ResolveEncounter = TOPOLOGY_OFF.resolveEncounter
 const FORKS = [{ exits: 2, count: 1 }]
 const SWITCHES = { encounter: "lightbeamSwitch", min: 1, max: 1 }
 
+// The whole world is ~230 floors, and three carves of each runs past the verify suite's time limit, so the
+// sweep asks a fixed sample: every journey's first and last floor (so every journey and tier is in it),
+// each journey's first floor that lays a lock (where topology's mechanisms stand; a laid lock is the
+// slowest carve, so one per journey), and every eighth floor between.
+const SAMPLE_EVERY = 8
+const sampledFloors = (): Floor[] => {
+  const floors = allFloors()
+  const hasLock = (floor: Floor) => (floor.config.locks ?? []).length > 0
+  const firstLock = new Set(
+    floors.flatMap(floor => (floors.find(f => f.journeyId === floor.journeyId && hasLock(f)) === floor ? [floor] : []))
+  )
+  return floors.filter(
+    (floor, i) =>
+      (i % SAMPLE_EVERY === 0 && !hasLock(floor)) ||
+      firstLock.has(floor) ||
+      floors[i - 1]?.journeyId !== floor.journeyId ||
+      floors[i + 1]?.journeyId !== floor.journeyId
+  )
+}
+
 type Carve = {
   label: string
   forksOnly: string | null
@@ -36,12 +56,12 @@ type Carve = {
 }
 
 describe("the carve a floor authoring forks gets", () => {
-  // Assembling every authored floor three times is a few hundred maze carves,
+  // Assembling every sampled floor three times is a couple of hundred maze carves,
   // paid once here rather than by whichever test happens to run first. A floor whose lock is laid
   // carves no plain junction, so it refuses the added one only after its whole ladder: minutes, under load.
   const carves: Carve[] = []
   beforeAll(() => {
-    for (const floor of allFloors()) {
+    for (const floor of sampledFloors()) {
       const withForks = { ...floor.config, forks: FORKS }
       const authored = { ...withForks, switches: SWITCHES }
       const opts = (resolve: ResolveEncounter, config: GameFloorConfig, off = false) =>
@@ -75,13 +95,15 @@ describe("the carve a floor authoring forks gets", () => {
     }
   })
 
-  it("was asked of the whole baked world, not of a handful of floors", () => {
-    expect(carves.length).toBeGreaterThan(100)
+  it("was asked of every journey in the baked world, not of a handful of floors", () => {
+    const journeys = new Set(allFloors().map(floor => floor.journeyId))
+    expect(new Set(sampledFloors().map(floor => floor.journeyId))).toEqual(journeys)
+    expect(carves.length).toBeGreaterThan(50)
   })
 
   it("stood a switch in every floor that carved the junction, or nothing below compares a switch", () => {
     const assembled = carves.filter(carve => carve.withSwitch !== null)
-    expect(assembled.length).toBeGreaterThan(50)
+    expect(assembled.length).toBeGreaterThan(25)
     expect(carves.filter(carve => carve.held).length).toBe(assembled.length)
   })
 
