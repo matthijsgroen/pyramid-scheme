@@ -186,7 +186,7 @@ describe("every floor of the real world", () => {
           })
         })
       )
-  }, 900_000)
+  })
 
   it("was asked of the whole world, not of a handful of floors", () => {
     expect(carved.length).toBeGreaterThan(200)
