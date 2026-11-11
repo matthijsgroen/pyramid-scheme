@@ -1,12 +1,9 @@
 {
-  "junior_4#2#0": {
+  "junior_2#4#0": {
     "kind": "sidePaths",
-    "hash": "84cb9fb6a0a8e70e27aa6b71c31605e4d6c986b7",
+    "hash": "4273c5dbb037c5115ef3680a58456d7279898dde",
     "sidePaths": {
-      "outsideLock": [
-        2,
-        3
-      ]
+      "outsideLock": [2, 3]
     }
   }
 }
