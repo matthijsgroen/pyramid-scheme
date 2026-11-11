@@ -166,7 +166,7 @@ let off: Record<string, SiteConfig[]>
 beforeAll(() => {
   on = build(TOPOLOGY_ON.modIds, TOPOLOGY_ON.resolveEncounter)
   off = build(TOPOLOGY_OFF.modIds, TOPOLOGY_OFF.resolveEncounter)
-}, 300_000)
+})
 
 describe("every floor of the real world", () => {
   let carved: Carved[] = []
@@ -293,7 +293,7 @@ describe("the shipped world, built with the topology mod off", () => {
       )
     expect(assembled).toBeGreaterThan(150)
     expect(failed).toEqual([])
-  }, 300_000)
+  })
 
   it("walks reachability over every site of the shipped world with the mod off, throwing on none", () => {
     const support = {
@@ -323,7 +323,7 @@ describe("the shipped world, built with the topology mod off", () => {
       })
     expect(refused).toEqual([])
     expect(walked).toBeGreaterThan(80)
-  }, 300_000)
+  })
 
   it("keeps every mechanic authored on a shipped floor: nothing is stripped", () => {
     const authored = (world: Record<string, SiteConfig[]>) =>

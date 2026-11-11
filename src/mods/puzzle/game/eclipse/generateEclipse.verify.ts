@@ -13,7 +13,7 @@ const variantBoards = (options: EclipseOptions, count = 4) =>
 
 describe("eclipse generation", () => {
   // A top-tier board is most of a second to draw, and these ask for six of them.
-  it.each(difficulties)("draws %s boards whose answer obeys both grid rules", { timeout: 60_000 }, difficulty => {
+  it.each(difficulties)("draws %s boards whose answer obeys both grid rules", difficulty => {
     for (const board of boards(difficulty)) {
       expect(eclipseSolved(board, { marks: board.solution })).toBe(true)
       for (const line of lines(board.size)) {
@@ -23,22 +23,18 @@ describe("eclipse generation", () => {
     }
   })
 
-  it.each(difficulties)(
-    "draws %s boards the tier's own reasoning settles, and no more",
-    { timeout: 60_000 },
-    difficulty => {
-      // The variant the seed drew is part of which ladder the board was accepted under.
-      for (const board of boards(difficulty)) {
-        const result = solveEclipseByTechniques(board, techniquesUpTo(board.techniqueCap, board.variant))
-        expect(result.settled).toBe(true)
-        expect(result.marks).toEqual([...board.solution])
-        // Deduction settles it, so it has exactly one solution — nothing was ever guessed.
-        expect(result.steps.length).toBeGreaterThan(0)
-      }
+  it.each(difficulties)("draws %s boards the tier's own reasoning settles, and no more", difficulty => {
+    // The variant the seed drew is part of which ladder the board was accepted under.
+    for (const board of boards(difficulty)) {
+      const result = solveEclipseByTechniques(board, techniquesUpTo(board.techniqueCap, board.variant))
+      expect(result.settled).toBe(true)
+      expect(result.marks).toEqual([...board.solution])
+      // Deduction settles it, so it has exactly one solution — nothing was ever guessed.
+      expect(result.steps.length).toBeGreaterThan(0)
     }
-  )
+  })
 
-  it.each(difficulties)("makes a %s board demand the rung its tier introduces", { timeout: 60_000 }, difficulty => {
+  it.each(difficulties)("makes a %s board demand the rung its tier introduces", difficulty => {
     const { requires, requiresCount = 1 } = ECLIPSE_CONFIG[difficulty]
     if (!requires) return
     // The quota, not one occurrence: a single hard step in a thirty-step solve is the tier below it.
@@ -73,7 +69,7 @@ describe("eclipse generation", () => {
 })
 
 describe("eclipse variants", () => {
-  it.each(difficulties)("draws every variant %s lists, across its seeds", { timeout: 120_000 }, difficulty => {
+  it.each(difficulties)("draws every variant %s lists, across its seeds", difficulty => {
     const listed = ECLIPSE_CONFIG[difficulty].variants ?? ["mixed"]
     // One attempt a seed: the variant is drawn before any board, so this asks what the seeds pick rather
     // than what they manage to build.
@@ -94,7 +90,7 @@ describe("eclipse variants", () => {
     }
   })
 
-  it("ships a signless board with no signs on it, settled by the grid rules alone", { timeout: 60_000 }, () => {
+  it("ships a signless board with no signs on it, settled by the grid rules alone", () => {
     const options = { ...ECLIPSE_CONFIG.expert, variants: ["signless" as const] }
     for (const board of variantBoards(options)) {
       expect(board.links).toEqual([])
@@ -104,7 +100,7 @@ describe("eclipse variants", () => {
     }
   })
 
-  it("settles a copyFree board without ever reading one line against another", { timeout: 60_000 }, () => {
+  it("settles a copyFree board without ever reading one line against another", () => {
     const options = { ...ECLIPSE_CONFIG.expert, variants: ["copyFree" as const] }
     for (const board of variantBoards(options)) {
       const result = solveEclipseByTechniques(board, techniquesUpTo(board.techniqueCap, "copyFree"))

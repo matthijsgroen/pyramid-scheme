@@ -10,7 +10,7 @@ const SEEDS = [1, 2, 3, 4, 5, 6]
 const TIERS: Difficulty[] = ["starter", "junior", "expert", "master", "wizard"]
 
 describe("generateHidato", () => {
-  it.each(TIERS)("draws a %s board that deduction alone finishes", { timeout: 60_000 }, tier => {
+  it.each(TIERS)("draws a %s board that deduction alone finishes", tier => {
     const options = HIDATO_CONFIG[tier]
     for (const seed of SEEDS) {
       const board = generateHidato(seed, options)

@@ -23,7 +23,6 @@ describe("every authored floor assembles at its runtime seed", () => {
     expect(allFloors().length).toBeGreaterThan(100)
   })
 
-  // Assembling the whole world is a few hundred maze carves — well past the default 5s budget.
   it("assembles all of them", () => {
     const failures = allFloors()
       .map(floor => {
@@ -36,7 +35,7 @@ describe("every authored floor assembles at its runtime seed", () => {
       .filter((f): f is string => f !== null)
 
     expect(failures, `${failures.length} floor(s) cannot be assembled:\n${failures.join("\n")}`).toEqual([])
-  }, 60_000)
+  })
 
   // `SubSection.difficulty` is authored off-tier on purpose — a gentle pocket on a hard floor, a ward
   // section pitched above the rest — and for a long while none of that reached a board: every room
@@ -54,7 +53,7 @@ describe("every authored floor assembles at its runtime seed", () => {
     })
 
     expect(stamped.length).toBeGreaterThan(0)
-  }, 60_000)
+  })
 })
 
 // Encounters are authored per pyramid and re-authored constantly — a new puzzle family, a journey
@@ -103,28 +102,24 @@ describe("no encounter can move a wall", () => {
 
   // A plain puzzle, a tomb puzzle, and a TRAP — the last one is the case that used to carve
   // differently, and the reason this sweep exists.
-  it.each(["sumplete", "arithmetic-reflex"])(
-    "survives every room becoming %s",
-    family => {
-      const moved: string[] = []
-      for (const floor of allFloors()) {
-        const opts = {
-          resolveKeyRequirements,
-          floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
-        }
-        const before = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, opts)
-        const after = assembleFloor(floor.journeyId, rethemed(floor.config, family), floor.seed, resolveEncounter, opts)
-        if (!before.success || !after.success) continue
-        if (shape(before.grid) !== shape(after.grid)) moved.push(`${floor.label}: walls moved`)
-        else if (sectionHashes(before.grid) !== sectionHashes(after.grid))
-          moved.push(`${floor.label}: section hash moved`)
+  it.each(["sumplete", "arithmetic-reflex"])("survives every room becoming %s", family => {
+    const moved: string[] = []
+    for (const floor of allFloors()) {
+      const opts = {
+        resolveKeyRequirements,
+        floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
       }
-      expect(moved, `${moved.length} floor(s) changed on an encounter swap:\n${moved.slice(0, 10).join("\n")}`).toEqual(
-        []
-      )
-    },
-    120_000
-  )
+      const before = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, opts)
+      const after = assembleFloor(floor.journeyId, rethemed(floor.config, family), floor.seed, resolveEncounter, opts)
+      if (!before.success || !after.success) continue
+      if (shape(before.grid) !== shape(after.grid)) moved.push(`${floor.label}: walls moved`)
+      else if (sectionHashes(before.grid) !== sectionHashes(after.grid))
+        moved.push(`${floor.label}: section hash moved`)
+    }
+    expect(moved, `${moved.length} floor(s) changed on an encounter swap:\n${moved.slice(0, 10).join("\n")}`).toEqual(
+      []
+    )
+  })
 })
 
 // Which world-spec settings may move a floor, and which may not. Two rules, and this sweep is what
@@ -260,14 +255,10 @@ describe("what a world-spec setting may and may not move", () => {
     ],
   ]
 
-  it.each(INERT)(
-    "%s moves nothing",
-    (_label, mutate) => {
-      const { wallsMoved } = compare(mutate)
-      expect(wallsMoved, `${wallsMoved.length} floor(s) moved:\n${wallsMoved.slice(0, 5).join("\n")}`).toEqual([])
-    },
-    120_000
-  )
+  it.each(INERT)("%s moves nothing", (_label, mutate) => {
+    const { wallsMoved } = compare(mutate)
+    expect(wallsMoved, `${wallsMoved.length} floor(s) moved:\n${wallsMoved.slice(0, 5).join("\n")}`).toEqual([])
+  })
 
   // Rule 1b — the dressing a room is given moves no cell's type or dirs, so section hashes hold by design:
   // every cell's type and dirs must stay identical on every floor.
@@ -295,17 +286,13 @@ describe("what a world-spec setting may and may not move", () => {
     ],
   ]
 
-  it.each(DRESSING)(
-    "%s moves no cell's type or dirs",
-    (_label, mutate) => {
-      const { dirsMoved } = compare(mutate)
-      expect(
-        dirsMoved,
-        `${dirsMoved.length} floor(s) changed a cell's type or dirs:\n${dirsMoved.slice(0, 5).join("\n")}`
-      ).toEqual([])
-    },
-    120_000
-  )
+  it.each(DRESSING)("%s moves no cell's type or dirs", (_label, mutate) => {
+    const { dirsMoved } = compare(mutate)
+    expect(
+      dirsMoved,
+      `${dirsMoved.length} floor(s) changed a cell's type or dirs:\n${dirsMoved.slice(0, 5).join("\n")}`
+    ).toEqual([])
+  })
 
   // Rule 2 — these are all allowed to re-carve, but never silently.
   const STRUCTURAL: Array<[string, (c: FloorConfig) => FloorConfig]> = [
@@ -347,18 +334,14 @@ describe("what a world-spec setting may and may not move", () => {
     ],
   ]
 
-  it.each(STRUCTURAL)(
-    "%s never re-carves without rehashing",
-    (_label, mutate) => {
-      const { reshapedWithoutRehashing } = compare(mutate)
-      expect(
-        reshapedWithoutRehashing,
-        `${reshapedWithoutRehashing.length} floor(s) were re-carved while their section hashes held still:\n` +
-          reshapedWithoutRehashing.slice(0, 5).join("\n")
-      ).toEqual([])
-    },
-    120_000
-  )
+  it.each(STRUCTURAL)("%s never re-carves without rehashing", (_label, mutate) => {
+    const { reshapedWithoutRehashing } = compare(mutate)
+    expect(
+      reshapedWithoutRehashing,
+      `${reshapedWithoutRehashing.length} floor(s) were re-carved while their section hashes held still:\n` +
+        reshapedWithoutRehashing.slice(0, 5).join("\n")
+    ).toEqual([])
+  })
 })
 
 // Boards are DEALT, not drawn: every room in the world takes a different entry of its family's seed
@@ -426,7 +409,7 @@ describe("no two rooms in the world serve the same board", () => {
       shared.map(([board, where]) => `${board}: ${where.join(" || ")}`),
       `${shared.length} board(s) served to more than one room`
     ).toEqual([])
-  }, 120_000)
+  })
 
   // The invariant the dealing rests on, stated on its own so a bucket that outgrows its list fails here
   // with the bucket named, rather than as a pile of shared boards. `yarn generate-seeds` is the fix.
@@ -440,7 +423,7 @@ describe("no two rooms in the world serve the same board", () => {
       .map(([bucket, rooms]) => `${bucket}: ${rooms} rooms over a ${puzzleSeeds[bucket]?.length ?? 0}-seed list`)
 
     expect(tooSmall, "run `yarn generate-seeds`").toEqual([])
-  }, 120_000)
+  })
 })
 
 describe("a rank is dressed with what it is authored to hold", () => {
@@ -450,7 +433,6 @@ describe("a rank is dressed with what it is authored to hold", () => {
   // funerary/judgement/cosmos, a crystal cosmos/sky/light). Its guard was "is this kind drawn at this
   // rank", answered by whether a FILE exists — and every kind has a placeholder, so every rank could
   // reach the whole vocabulary.
-  // Assembling and dressing the whole world, like the sweeps above: well past the default 5s budget.
   it("places no prop of a kind its own rank never authors", () => {
     const wrong: string[] = []
     for (const floor of allFloors()) {
@@ -465,7 +447,7 @@ describe("a rank is dressed with what it is authored to hold", () => {
         if (!authored.includes(kind)) wrong.push(`${floor.label} ${cell}: ${kind} at ${tier}`)
     }
     expect(wrong.slice(0, 10)).toEqual([])
-  }, 60_000)
+  })
 })
 
 // The one floor the world authors a switch onto (src/worldGen/spec/junior.ts). Nothing else would
@@ -549,7 +531,7 @@ describe("a room marked explored on arrival holds no reward", () => {
     for (const room of arrivalMarked) {
       expect(room.reward, `${room.where} is marked explored on arrival yet carries a reward`).toBeUndefined()
     }
-  }, 60_000)
+  })
 })
 
 // A floor's chamber count is an intent seated without a draw: it never refuses an attempt and moves no other
@@ -575,5 +557,5 @@ describe("a floor's chamber count moves no wall at the pinned layout", () => {
     })
 
     expect(moved, `${moved.length} floor(s):\n${moved.slice(0, 10).join("\n")}`).toEqual([])
-  }, 120_000)
+  })
 })

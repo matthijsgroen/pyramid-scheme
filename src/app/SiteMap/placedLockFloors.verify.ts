@@ -44,7 +44,7 @@ beforeAll(() => {
       ),
     })
   }
-}, 600_000)
+})
 
 const withLock = () =>
   carved.flatMap(c => {

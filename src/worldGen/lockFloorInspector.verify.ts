@@ -68,7 +68,7 @@ let plain: Record<string, SiteConfig[]>
 
 beforeAll(() => {
   plain = build()
-}, 600_000)
+})
 
 describe("the journey inspector on lock floors", () => {
   // The inspector carries no family registry, so it refuses a floor that stands a switch before carving it

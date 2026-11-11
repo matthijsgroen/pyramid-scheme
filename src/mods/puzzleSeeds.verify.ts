@@ -38,9 +38,7 @@ describe("shipped puzzle seeds", () => {
     expect(thin).toEqual([])
   })
 
-  // Two boards built for every bucket the world has, so the budget is the sweep's size rather than the
-  // default 5s a single-board test is written against.
-  it("builds a room's board from the list rather than from the room's own seed", { timeout: 60_000 }, () => {
+  it("builds a room's board from the list rather than from the room's own seed", () => {
     const roomSeed = 123456
     for (const demand of demands) {
       const meta = ALL_FAMILY_META.find(family => family.id === demand.familyId)!
@@ -60,12 +58,9 @@ describe("shipped puzzle seeds", () => {
   // Sampled rather than swept: a full re-verify is the CLI's job, and re-solving every board of every
   // family would put minutes of the top tiers' solver time into every test run.
   describe.each(demands.map(demand => [demandLabel(demand), demand] as const))("%s", (_name, demand) => {
-    // **Budgeted for the dearest family rather than the average one.** Rebuilding one board costs what
-    // that family's generator costs: microseconds for sumplete, about a second for rush hour, whose
-    // generator searches and then climbs (docs/game-design/puzzles/rush-hour.md: one breadth-first search does both jobs). Three boards a
-    // bucket at a second each blows the default 5s, and the answer is the budget rather than fewer
-    // boards — the middle and last entries are exactly where a half-filled list goes wrong.
-    it("still builds a board its own generator would keep, on the first attempt", { timeout: 30_000 }, () => {
+    // Three boards a bucket rather than fewer: the middle and last entries are exactly where a half-filled
+    // list goes wrong.
+    it("still builds a board its own generator would keep, on the first attempt", () => {
       const seedable = ALL_FAMILY_META.find(family => family.id === demand.familyId)?.seedable
       const options = seedable!.resolveOptions(demand.ctx)
       const seeds = puzzleSeeds[demand.hash] ?? []

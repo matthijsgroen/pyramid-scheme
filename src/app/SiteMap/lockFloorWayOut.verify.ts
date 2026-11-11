@@ -358,5 +358,5 @@ describe("a way open out of the player's cell, on a carved lock floor", () => {
     // The report this guards stood on a drop's landing, so the walk must have stood on one.
     const dropEnds = [...dropEndsOf(lockGrid).keys()]
     expect(dropEnds.filter(key => stood.has(key)).length).toBeGreaterThan(0)
-  }, 170_000)
+  })
 })

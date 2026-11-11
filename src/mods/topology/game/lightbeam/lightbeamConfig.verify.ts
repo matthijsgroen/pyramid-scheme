@@ -29,7 +29,7 @@ describe("the boards the suite tests are the boards the generator makes", () => 
    * the fresh one that still had them — the corruption and the check cancelled out. Strict equality is
    * what tells `undefined` from `null`, which is the whole failure this guard exists to catch.
    */
-  it("still matches, board for board", { timeout: 300_000 }, () => {
+  it("still matches, board for board", () => {
     expect(FIXTURE).toStrictEqual(lightbeamFixture())
   })
 })
@@ -42,7 +42,7 @@ describe.each(difficulties)("at %s", tier => {
   })
 
   /** A top-tier solve enumerates tens of thousands of configurations — 7.1s at wizard, measured. */
-  it("is reachable by deduction alone inside its own cap", { timeout: 300_000 }, () => {
+  it("is reachable by deduction alone inside its own cap", () => {
     for (const board of boards) expect(solveLightbeamByTechniques(board, board.techniqueCap).settled).toBe(true)
   })
 
@@ -50,7 +50,7 @@ describe.each(difficulties)("at %s", tier => {
    * The reason a board is expensive should be the board, not the search. Route-then-obstruct pays 70 to 356
    * discarded drafts a board at the top three tiers; this construction pays a handful.
    */
-  it("costs a handful of attempts a board, not hundreds", { timeout: 300_000 }, () => {
+  it("costs a handful of attempts a board, not hundreds", () => {
     const { size, ...options } = LIGHTBEAM_CONFIG[tier]
     let rejects = 0
     const gates = new Map<LightbeamGate, number>()
@@ -76,7 +76,7 @@ describe.each(difficulties)("at %s", tier => {
  * half that needs the ladder run over every board — 6.1s at wizard.
  */
 describe("a trap on a board that did not draw wall-heavy", () => {
-  it.each(["master", "wizard"] as const)("fires its wiring at %s", { timeout: 300_000 }, tier => {
+  it.each(["master", "wizard"] as const)("fires its wiring at %s", tier => {
     let trapped = 0
     for (const board of FIXTURE[tier]) {
       if (!board.modes.includes("switchHeavy") || board.modes.includes("wallHeavy")) continue

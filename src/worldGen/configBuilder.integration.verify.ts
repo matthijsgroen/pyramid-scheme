@@ -105,11 +105,6 @@ const countRewards = (configs: Record<string, SiteConfig[]>) => {
   return { mapPieces, mosaicPieces }
 }
 
-// A full world build assembles every reachable floor, so these budgets are seconds, not
-// milliseconds — and they have to hold on a CI runner well slower than a dev machine. They were
-// already within 40% of the old 20s ceiling before the assembler's recovery phase (which resolves
-// floors reachability used to silently skip) made a build ~30% dearer, so this leaves real headroom
-// rather than something to shave again the next time the world grows.
 describe("buildConfigs golden guard", () => {
   it("hits reward targets exactly (map + mosaic from their mods)", () => {
     const configs = buildRealConfigs()
@@ -117,13 +112,13 @@ describe("buildConfigs golden guard", () => {
       mapPieces: WORLD_TARGETS.mapPieceRewards,
       mosaicPieces: MOSAIC_TOTAL,
     })
-  }, 600_000)
+  })
 
   it("is deterministic across runs", () => {
     const first = buildRealConfigs()
     const second = buildRealConfigs()
     expect(second).toEqual(first)
-  }, 600_000)
+  })
 
   // Reachability answers "can this be got to"; a collection also has to be asked "is there enough
   // of it", per register and never as one world total. The numbers are pinned rather than derived
@@ -158,7 +153,7 @@ describe("buildConfigs golden guard", () => {
       { pickLayout: pinsFrom(generatedWorldConfigs) }
     )
     expect(reachableMosaicCounts(reachableRewards)).toEqual(MOSAIC_STEPS_BY_TIER)
-  }, 600_000)
+  })
 })
 
 // The world's one authored switch, read back out of a real build. Which ways out it shuts and what
@@ -175,7 +170,7 @@ it("authors junior_2 pyramid 2's floor 0 as a switch fork, with no key hung by h
     section => section.gate?.type === "floor-key" && "keyId" in section.gate && section.gate.keyId !== undefined
   )
   expect(authoredKeys).toEqual([])
-}, 90_000)
+})
 
 describe("tomb floor linking — ward-path shortcuts", () => {
   // Built in beforeAll (not the describe body) so it runs AFTER the top-level beforeAll sets
@@ -183,7 +178,7 @@ describe("tomb floor linking — ward-path shortcuts", () => {
   let floors: FloorConfig[]
   beforeAll(() => {
     floors = buildRealConfigs().junior_treasure_tomb[1] // level 2, the cavern
-  }, 600_000)
+  })
 
   it("the tomb's one exit ends floor 0, and every deeper floor is left by its stair back up", () => {
     expect(floors.map(floor => floor.exitOrStaircase)).toEqual(["exit", ...floors.slice(1).map(() => "none")])
