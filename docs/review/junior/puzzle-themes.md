@@ -71,9 +71,9 @@ Geen rol, dus `puzzle` en alleen default-faces. Geen thema, geen patroon. Verhaa
 | ----------------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | ------- | ---------------- |
 | 1 · 1                   | eclipse (Zon en Maan), canisters (De Kruiken), star-battle (Sterren Apart)               | sumplete (De Telling) [p], procession (Geordende Uren), rush-hour (Blokkade), lightbeam, leeg, rush-hour [v]                      | torch (les): fakkel → torch                                                                         | dressingRoom (kleedkamer), shrineRoom p (huisaltaar), bigGardenCourt p (grote tuinhof) | —       | puzzle (alles)   |
 | 2 · 1                   | eclipse, futoshiki (Groter en Kleiner), sumplete (Telling), constellation (Sterrenkaart) | futoshiki [p], hidato (Honingraat) [st], star-battle, **balance-scale (Weegschaal) ×2**, eclipse, twin-stars, leeg, canisters [v] | leverSwapsDoors (les): hendel → handle, **plus** de enige wisselvork in de wereld (lightbeamSwitch) | geen (`lessonFloor`, zonder `house`)                                                   | —       | puzzle           |
-| 3 · 1                   | sudoku (Zes Kamers), procession (Geordende Uren), hidato (Honingraat), futoshiki         | kaartstuk-leeg, leeg [p], hidato [p], canisters, rush-hour, leeg, constellation [v], vleugel [p]                                  | **waterMoves** (les): hendel → handle, gebied → **water**                                           | quernRoom* (maalsteen), bedroom (slaapkamer), dressingRoom (kleedkamer)                | —       | puzzle           |
+| 3 · 1                   | sudoku (Zes Kamers), procession (Geordende Uren), hidato (Honingraat), futoshiki         | kaartstuk-leeg, leeg [p], hidato [p], canisters, rush-hour, leeg, constellation [v], vleugel [p]                                  | **stoneOnAPlate** (les): stenen → stonePlate                                                        | quernRoom* (maalsteen), bedroom (slaapkamer), dressingRoom (kleedkamer)                | —       | puzzle           |
 | 3 · 2 (vleugel, expert) | hidato, sudoku                                                                           | sudoku [v]                                                                                                                        | geen                                                                                                | geen                                                                                   | —       | puzzle           |
-| 4 · 1                   | lightbeam, canisters, eclipse, twin-stars, hidato                                        | leeg [p], futoshiki, sudoku, leeg, canisters [v], vleugel [p], rush-hour [st][p]                                                  | **sluice** (slot): hendel → handle, buit → torch, gebied → **water**                                | bakery (bakkerij-brouwerij, naar het midden geschoven, central 0.5)                    | —       | puzzle           |
+| 4 · 1                   | lightbeam, canisters, eclipse, twin-stars, hidato                                        | leeg [p], futoshiki, sudoku, leeg, canisters [v], vleugel [p], rush-hour [st][p]                                                  | **overlook** (slot): hendels → handle, drops → zipline                                              | shrineWorks* p (huisaltaar)                                                            | —       | puzzle           |
 | 4 · 2 (vleugel, master) | procession, canisters                                                                    | sumplete [v]                                                                                                                      | geen                                                                                                | geen                                                                                   | —       | puzzle           |
 
 ### junior_3 · Tempel van Thoth
@@ -98,15 +98,15 @@ staan er **Weegschaal ×4, De Telling ×6 en De Blokkade ×5**.
 Rol `["light", "sky"]` (beperkt), thema **nacht**, geen patroon. Verhaal: het vuur bovenin, navigatie, "you ask
 someone who has been".
 
-| Pyr · verd.             | Hoofdpad                                                                                | Zijpaden                                                                                              | Slot · mechanisme                                                                | Ontworpen kamers                                        | Patroon | Rol / aankleding  |
-| ----------------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------- | ------- | ----------------- |
-| 1 · 1                   | twin-stars (Tweelingsterren), star-battle (Sterren Apart), constellation (Sterrenkaart) | star-battle [p], star-battle, eclipse (nacht), star-battle, leeg, constellation [v]                   | stoneOnAPlate (les): stenen → stonePlate                                         | bigBanquetHall (banket), bedroom, courtWorks* (tuinhof) | —       | light+sky · nacht |
-| 2 · 1                   | constellation, twin-stars, lightbeam (Lichtstraal), eclipse                             | lightbeam [p], constellation, twin-stars, leeg, constellation [v], lightbeam [st][p]                  | overlook (slot): hendels → handle, drops → zipline                               | shrineWorks* p (huisaltaar)                             | —       | light+sky · nacht |
-| 3 · 1                   | canisters (**Olie voor de Lampen**), constellation, star-battle, eclipse                | kaartstuk-leeg, star-battle [p], lightbeam [st], twin-stars, canisters, twin-stars, leeg, eclipse [v] | seesaw (slot): hendels → handle, drops → zipline                                 | geen                                                    | —       | light+sky · nacht |
-| 4 · 1                   | canisters (Olie), eclipse, twin-stars, star-battle, lightbeam                           | leeg [p], twin-stars, lightbeam, eclipse, leeg, star-battle [v], vleugel [p]                          | **lamplighter** (slot): bord → lightbeamSwitch, A/B → **handle**, drop → zipline | shrineRoom p (huisaltaar met lampen)                    | —       | light+sky · nacht |
-| 4 · 2 (vleugel, master) | star-battle, lightbeam                                                                  | twin-stars [v]                                                                                        | geen                                                                             | geen                                                    | —       | light+sky · nacht |
-| 5 · 1                   | eclipse, twin-stars, star-battle, constellation, canisters (Olie)                       | leeg [p], twin-stars, lightbeam, lightbeam, leeg, lightbeam [v], vleugel [p], lightbeam [st][p]       | **tide** (slot): hendel → handle, sleutel → torch, gebied → water                | dressingRoom (kleedkamer), musicRoom* (banket)          | —       | light+sky · nacht |
-| 5 · 2 (vleugel, junior) | star-battle                                                                             | constellation [v]                                                                                     | geen                                                                             | geen                                                    | —       | light+sky · nacht |
+| Pyr · verd.             | Hoofdpad                                                                                | Zijpaden                                                                                              | Slot · mechanisme                                                           | Ontworpen kamers                                                    | Patroon | Rol / aankleding  |
+| ----------------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------- | ------- | ----------------- |
+| 1 · 1                   | twin-stars (Tweelingsterren), star-battle (Sterren Apart), constellation (Sterrenkaart) | star-battle [p], star-battle, eclipse (nacht), star-battle, leeg, constellation [v]                   | **waterMoves** (les): hendel → handle, gebied → **water**                   | bigBanquetHall (banket), bedroom, courtWorks* (tuinhof)             | —       | light+sky · nacht |
+| 2 · 1                   | constellation, twin-stars, lightbeam (Lichtstraal), eclipse                             | lightbeam [p], constellation, twin-stars, leeg, constellation [v], lightbeam [st][p]                  | **sluice** (slot): hendel → handle, buit → torch, gebied → **water**        | bakery (bakkerij-brouwerij, naar het midden geschoven, central 0.5) | —       | light+sky · nacht |
+| 3 · 1                   | canisters (**Olie voor de Lampen**), constellation, star-battle, eclipse                | kaartstuk-leeg, star-battle [p], lightbeam [st], twin-stars, canisters, twin-stars, leeg, eclipse [v] | seesaw (slot): hendels → handle, drops → zipline                            | geen                                                                | —       | light+sky · nacht |
+| 4 · 1                   | canisters (Olie), eclipse, twin-stars, star-battle, lightbeam                           | leeg [p], twin-stars, lightbeam, eclipse, leeg, star-battle [v], vleugel [p]                          | lamplighter (slot): bord → lightbeamSwitch, A/B → **torch**, drop → zipline | shrineRoom p (huisaltaar met lampen)                                | —       | light+sky · nacht |
+| 4 · 2 (vleugel, master) | star-battle, lightbeam                                                                  | twin-stars [v]                                                                                        | geen                                                                        | geen                                                                | —       | light+sky · nacht |
+| 5 · 1                   | eclipse, twin-stars, star-battle, constellation, canisters (Olie)                       | leeg [p], twin-stars, lightbeam, lightbeam, leeg, lightbeam [v], vleugel [p], lightbeam [st][p]       | **tide** (slot): hendel → handle, sleutel → torch, gebied → water           | dressingRoom (kleedkamer), courtWorks* (tuinhof)                    | —       | light+sky · nacht |
+| 5 · 2 (vleugel, junior) | star-battle                                                                             | constellation [v]                                                                                     | geen                                                                        | geen                                                                | —       | light+sky · nacht |
 
 Dit valt op: van de 61 puzzelkamers zijn er **star-battle 12 + twin-stars 10**. Dat zijn 22 kamers (36%) met
 hetzelfde sterrenrooster op hetzelfde scherm. Daarnaast lightbeam 12. Het hoofdpad heeft constellation twee keer
@@ -165,6 +165,8 @@ activity: "dressingRoom", room: "henutDressing" }`. Kijk ook of de reading-muur 
 
 ### M3 · De waterloten staan in de droge vallei, niet in de vloedreis · [SMAAK, met R5 als randvoorwaarde]
 
+**Opgelost.** Al het water staat in de Vuurtoren (waterMoves pyr 1, sluice pyr 2, tide pyr 5); de Vallei draagt stoneOnAPlate (pyr 3) en overlook (pyr 4).
+
 - **Wat.** `waterMoves` (junior_2 pyr 3) en `sluice` (junior_2 pyr 4) staan in de **Vallei van de Ambachtslieden**.
   De **Ibis-migratie**, de reis over moeras en vloed, heeft geen enkel waterslot. `tide` in de Vuurtoren (pyr 5)
   past juist goed: zee en getij.
@@ -218,6 +220,8 @@ activity: "dressingRoom", room: "henutDressing" }`. Kijk ook of de reading-muur 
 
 ### M7 · De Vuurtoren: de kamers lezen als slaapvertrekken · [SMAAK binnen R1/R2]
 
+**Opgelost.** tide (pyr 5) krijgt `courtWorks` in plaats van `musicRoom`; de plaat staat nu naast `quernRoom` in de Vallei (junior_2 pyr 3).
+
 - **Wat.** Alle geplaatste kamers voldoen aan R2. Maar het tide-slot (pyr 5) krijgt `dressingRoom` + `musicRoom`,
   en het stoneOnAPlate-slot (pyr 1) `bigBanquetHall` + `bedroom` + `courtWorks`. Een lamp-kamer bij lamplighter
   (`shrineRoom` met lampen, pyr 4) past juist uitstekend.
@@ -231,10 +235,12 @@ activity: "dressingRoom", room: "henutDressing" }`. Kijk ook of de reading-muur 
   maar één banketzaal (`bigBanquetHall`, junior_4 pyr 1), plus twee keer `musicRoom`. De gewone `banquetRoom` wordt
   nergens geplaatst. Ter vergelijking: bedroom staat er 5×, dressingRoom 4× en shrineRoom 4× (+1 works).
 - **Voorstel.** Zet `banquetRoom` (central 0.8) op een verdieping waar het midden vrij is. Kandidaten zijn junior_3
-  pyr 2 (beforeYouJump, waar bedroom naar 0.5 is geschoven), junior_2 pyr 4 (sluice, bakery op 0.5) en junior_3
+  pyr 2 (beforeYouJump, waar bedroom naar 0.5 is geschoven), junior_4 pyr 2 (sluice, bakery op 0.5) en junior_3
   pyr 1 (vier kamers, waarvan musicRoom al banket is).
 
 ### M9 · lamplighter in de Vuurtoren steekt niets aan · [SMAAK]
+
+**Opgelost.** A en B zijn fakkels (`torch` → torch); `yarn lock` bewijst het slot opnieuw, in 3 stappen.
 
 - **Wat.** De kop van het slot zegt "Light west first". In de Vuurtoren had het niet passender gekund. Maar A en B
   zijn `toggle` → handle: de speler trekt aan twee hendels.
@@ -278,9 +284,7 @@ activity: "dressingRoom", room: "henutDressing" }`. Kijk ook of de reading-muur 
   `bigGardenCourt`.
 - **junior_3 pyr 4 (cellar).** Het slot heet kelder, de kamer is een huisaltaar. `bakery` (bierkruiken) leest meer
   als kelder. Heel licht.
-- **junior_4 pyr 1 (stoneOnAPlate).** De "natural homes" van stenen zijn Djoser, Giza en het Dodenboek
-  (lock-curriculum). Bovendien staat stoneOnAPlate ook op expert_4 site 1 (stand-in). In een vuurtoren van
-  steenblokken kan het, maar het is het zwakste lesslot qua plek.
+- **junior_4 pyr 1.** **Opgelost:** stoneOnAPlate staat in de Vallei (junior_2 pyr 3), junior_4 pyr 1 draagt waterMoves.
 
 ---
 
@@ -294,15 +298,15 @@ het graf. De verdieping kies je met de knop "Floor →".
 | Wat (punt)                                    | Inspector                                                                                       | Waar je op let                                                                                                          |
 | --------------------------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | Henuts scène zonder kamer (M1)                | TombInspector · junior · idx 0 · pyramid **2** · floor **1**                                    | De 5e en 6e node (conversation, reading) staan in de gang tussen tableau 3 en de krokodil. Is er ruimte voor een kamer? |
-| Water in de vallei (M3)                       | Inspector · junior · idx **1** · pyramid **3** · floor 1                                        | waterMoves: de ondergelopen hal, met quernRoom/bedroom/dressingRoom ernaast                                             |
-| Water in de vallei (M3)                       | idx **1** · pyramid **4** · floor 1                                                             | sluice: twee hallen water, bakery in het midden                                                                         |
+| Water in de Vuurtoren (M3)                    | Inspector · junior · idx **3** · pyramid **1** · floor 1                                        | waterMoves: de ondergelopen hal, met bigBanquetHall/bedroom/courtWorks ernaast                                          |
+| Water in de Vuurtoren (M3)                    | idx **3** · pyramid **2** · floor 1                                                             | sluice: twee hallen water, bakery in het midden                                                                         |
 | Wisselvork + les op één site (M3a, bijvangst) | idx **1** · pyramid **2** · floor 1                                                             | lightbeamSwitch in de kruising naast de leverSwapsDoors-hendel; geen kamers                                             |
 | Vallei-kamers (M5)                            | idx **1** · pyramid **1** · floor 1                                                             | bigGardenCourt + dressingRoom + shrineRoom bij het torch-slot. Kan de tuinhof plaats maken voor bakkerij of altaar?     |
 | Thoth zonder schrift (M4, M6)                 | idx **2** · pyramid **2**, **3**, **4** · floor 1                                               | Weegschaal op elk hoofdpad. Bekijk in de puzzle lab hoe "Weegschaal" eruitziet naast "Schrijversvel"                    |
 | Banket ontbreekt (M8)                         | idx **2** · pyramid **2** · floor 1                                                             | bedroom op 0.5. Is het midden vrij voor `banquetRoom`?                                                                  |
-| Vuurtoren tide-kamers (M7)                    | idx **3** · pyramid **5** · floor 1                                                             | dressingRoom + musicRoom bij het tide-water. Kan courtWorks de mechanisme-regio nemen?                                  |
-| Vuurtoren plaat-kamers (M7)                   | idx **3** · pyramid **1** · floor 1                                                             | bigBanquetHall, bedroom, courtWorks rond de stenen plaat                                                                |
-| lamplighter met hendels (M9)                  | idx **3** · pyramid **4** · floor 1                                                             | De hendels A/B in west/oost, het lightbeam-bord in `in`, shrineRoom met lampen                                          |
+| Vuurtoren tide-kamers (M7)                    | idx **3** · pyramid **5** · floor 1                                                             | dressingRoom + courtWorks bij het tide-water                                                                            |
+| Vallei plaat-kamers (M7)                      | idx **1** · pyramid **3** · floor 1                                                             | quernRoom, bedroom, dressingRoom rond de stenen plaat                                                                   |
+| lamplighter met fakkels (M9)                  | idx **3** · pyramid **4** · floor 1                                                             | De fakkels A/B in west/oost, het lightbeam-bord in `in`, shrineRoom met lampen                                          |
 | Sterrenrooster-herhaling (M10)                | idx **3** · pyramid **1** → **2** · floor 1                                                     | constellation aan het eind van pyr 1 en het begin van pyr 2; star-battle 3× op pyr 1 alleen al                          |
 | Ibis: slaapkamer in waterreis (M12)           | idx **0** · pyramid **2** · floor 1                                                             | shrineRoom (Thoth-beelden), gardenCourt, bedroom                                                                        |
 | Ibis: constellation-overwicht (M10)           | idx **0** · pyramid **2** + **3** · floor 1                                                     | Waterwerk 6× over de zijpaden                                                                                           |
@@ -313,10 +317,7 @@ het graf. De verdieping kies je met de knop "Floor →".
 
 ## 4. Bijvangst (niet thematisch, wel gezien)
 
-- **Verouderde tier-labels in slotkoppen.** In de map `junior/` zeggen `sluice`, `tide`, `lamplighter` en `seesaw`
-  "master." en `cellar`, `overlook` en `dropHome` "expert.". Bij de lessen `waterMoves`, `doorWaitsForTwo` en
-  `stoneOnAPlate` staat "LESSON, expert". De map bepaalt de tier, dus alleen de kop klopt niet. Die koppen zijn van
-  Claude, niet van de ontwerper.
+- **Tier-labels in slotkoppen.** **Opgelost:** elke slotkop in `junior/` zegt junior.
 - **Eén laag per site (R5).** junior_2 pyr 2 heeft de leverSwapsDoors-les **en** de wisselvork met een
   lightbeam-bord. Het bord is al eerder geleerd (junior_1 pyr 3), maar strikt genomen zijn het twee mechanieken op
   één site.

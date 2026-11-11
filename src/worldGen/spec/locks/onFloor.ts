@@ -12,7 +12,7 @@ const LOCK_BINDINGS = {
   overlook: { toggle: "handle", "one-way": "zipline" },
   doubleBack: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
   seesaw: { toggle: "handle", "one-way": "zipline" },
-  lamplighter: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
+  lamplighter: { "fork-switch": "lightbeamSwitch", flame: "torch", "one-way": "zipline" },
   sluice: { toggle: "handle", activator: "torch", "region-barrier": "water" },
   tide: { toggle: "handle", activator: "torch", "region-barrier": "water" },
   keyring: { toggle: "handle", activator: "torch" },
