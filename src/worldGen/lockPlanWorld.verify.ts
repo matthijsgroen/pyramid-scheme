@@ -50,7 +50,7 @@ beforeAll(() => {
     undefined,
     { pickLayout: pinsFrom(generatedWorldConfigs) }
   )
-}, 180_000)
+})
 
 const floorsOf = (journeyId?: string): GameFloorConfig[] =>
   Object.entries(world)

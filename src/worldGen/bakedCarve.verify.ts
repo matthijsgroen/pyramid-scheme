@@ -28,5 +28,5 @@ describe("the baked (packing, seed) pair of every shipped floor", () => {
       return found ? [`${f.key}: ${found.criterion} — ${found.detail}`] : []
     })
     expect(refused).toEqual([])
-  }, 120000)
+  })
 })

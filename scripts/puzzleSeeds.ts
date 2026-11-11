@@ -245,8 +245,8 @@ const writeArtifact = (buckets: Bucket[], allHashes: Set<string>) => {
 // Run: yarn generate-seeds
 //
 // Seeds proven to build a graded board on their first attempt, filed by the hash of the options they
-// were proven under (docs/instructions/puzzle-screens.md §6.1). Parsed from one string rather than written as an
-// object literal, which is cheaper for the engine to read.
+// were proven under (docs/instructions/puzzle-screens.md: seed lists). Parsed from one string rather than
+// written as an object literal, which is cheaper for the engine to read.
 export const puzzleSeeds: Record<string, number[]> = JSON.parse(
   '${JSON.stringify(sorted)}'
 )
@@ -406,8 +406,8 @@ if (command === "generate") {
 // Run: yarn generate-seeds
 //
 // Seeds proven to build a graded board on their first attempt, filed by the hash of the options they
-// were proven under (docs/instructions/puzzle-screens.md §6.1). Parsed from one string rather than written as an
-// object literal, which is cheaper for the engine to read.
+// were proven under (docs/instructions/puzzle-screens.md: seed lists). Parsed from one string rather than
+// written as an object literal, which is cheaper for the engine to read.
 export const puzzleSeeds: Record<string, number[]> = JSON.parse(
   '${JSON.stringify(sorted)}'
 )

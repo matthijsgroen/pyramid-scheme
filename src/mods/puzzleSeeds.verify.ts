@@ -38,9 +38,7 @@ describe("shipped puzzle seeds", () => {
     expect(thin).toEqual([])
   })
 
-  // Two boards built for every bucket the world has, so the budget is the sweep's size rather than the
-  // default 5s a single-board test is written against.
-  it("builds a room's board from the list rather than from the room's own seed", { timeout: 60_000 }, () => {
+  it("builds a room's board from the list rather than from the room's own seed", () => {
     const roomSeed = 123456
     for (const demand of demands) {
       const meta = ALL_FAMILY_META.find(family => family.id === demand.familyId)!
@@ -60,12 +58,9 @@ describe("shipped puzzle seeds", () => {
   // Sampled rather than swept: a full re-verify is the CLI's job, and re-solving every board of every
   // family would put minutes of the top tiers' solver time into every test run.
   describe.each(demands.map(demand => [demandLabel(demand), demand] as const))("%s", (_name, demand) => {
-    // **Budgeted for the dearest family rather than the average one.** Rebuilding one board costs what
-    // that family's generator costs: microseconds for sumplete, about a second for rush hour, whose
-    // generator searches and then climbs (docs/game-design/puzzles/rush-hour.md: one breadth-first search does both jobs). Three boards a
-    // bucket at a second each blows the default 5s, and the answer is the budget rather than fewer
-    // boards — the middle and last entries are exactly where a half-filled list goes wrong.
-    it("still builds a board its own generator would keep, on the first attempt", { timeout: 30_000 }, () => {
+    // Three boards a bucket rather than fewer: the middle and last entries are exactly where a half-filled
+    // list goes wrong.
+    it("still builds a board its own generator would keep, on the first attempt", () => {
       const seedable = ALL_FAMILY_META.find(family => family.id === demand.familyId)?.seedable
       const options = seedable!.resolveOptions(demand.ctx)
       const seeds = puzzleSeeds[demand.hash] ?? []
@@ -99,44 +94,44 @@ const DEMAND_WITHOUT_SWITCHES = [
   "hidato/master: 44",
   "canisters/master: 41",
   "eclipse/master: 33",
-  "eclipse/expert: 33",
   "procession/expert: 33",
-  "sudoku/expert: 30",
+  "eclipse/expert: 32",
   "sudoku/master: 30",
+  "sudoku/expert: 29",
+  "canisters/expert: 29",
   "twin-stars/master: 29",
   "sumplete/expert: 29",
-  "canisters/expert: 28",
-  "constellation/junior: 28",
   "sumplete/master: 28",
+  "constellation/expert: 27",
   "futoshiki/master: 27",
-  "hidato/starter: 26",
-  "constellation/expert: 26",
+  "constellation/junior: 26",
+  "hidato/expert: 26",
   "star-battle/master: 26",
-  "rush-hour/expert: 25",
-  "hidato/expert: 25",
+  "hidato/starter: 25",
+  "twin-stars/expert: 25",
   "rush-hour/master: 24",
-  "twin-stars/expert: 24",
+  "rush-hour/expert: 24",
   "lightbeam/master: 24",
   "rush-hour/starter: 23",
-  "lightbeam/expert: 23",
-  "canisters/junior: 20",
-  "star-battle/junior: 20",
+  "lightbeam/expert: 22",
+  "canisters/junior: 19",
   "balance-scale/expert: 19",
+  "star-battle/junior: 19",
+  "sudoku/starter: 18",
   "balance-scale/starter: 18",
+  "lightbeam/junior: 18",
   "futoshiki/expert: 18",
-  "sudoku/starter: 17",
   "twin-stars/junior: 17",
   "lightbeam/starter: 16",
+  "eclipse/junior: 16",
   "star-battle/expert: 16",
-  "eclipse/junior: 15",
-  "lightbeam/junior: 14",
-  "hidato/junior: 12",
   "procession/junior: 11",
-  "rush-hour/junior: 10",
-  "sumplete/junior: 8",
+  "hidato/junior: 11",
   "futoshiki/junior: 8",
-  "balance-scale/junior: 6",
-  "sudoku/junior: 3",
+  "sudoku/junior: 8",
+  "rush-hour/junior: 7",
+  "balance-scale/junior: 7",
+  "sumplete/junior: 5",
   "procession/expert door4: 1",
 ]
 

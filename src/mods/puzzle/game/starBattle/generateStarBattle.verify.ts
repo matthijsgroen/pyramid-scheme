@@ -79,7 +79,7 @@ const contiguous = (puzzle: StarBattlePuzzle, region: number) => {
 describe.each(FAMILIES)("generateStarBattle for $name", ({ config, tiers }) => {
   const boardAt = drawOnce()
 
-  it.each(tiers)("draws a %s board that deduction alone finishes", { timeout: 60_000 }, tier => {
+  it.each(tiers)("draws a %s board that deduction alone finishes", tier => {
     const options = config[tier]
     const board = boardAt(config, tier)
     const result = solveStarBattleByTechniques(board, techniquesUpTo(options.techniqueCap))
@@ -90,7 +90,7 @@ describe.each(FAMILIES)("generateStarBattle for $name", ({ config, tiers }) => {
     expect(techniqueRank(result.deepest!)).toBeLessThanOrEqual(techniqueRank(options.techniqueCap))
   })
 
-  it.each(tiers)("draws a %s board whose answer obeys the rules", { timeout: 60_000 }, tier => {
+  it.each(tiers)("draws a %s board whose answer obeys the rules", tier => {
     const options = config[tier]
     const board = boardAt(config, tier)
     const marks = board.solution.map(star => (star ? ("star" as const) : undefined))
@@ -111,7 +111,7 @@ describe.each(FAMILIES)("generateStarBattle for $name", ({ config, tiers }) => {
 
   // Three full draws off the seed list, at a tier whose gates throw most maps away — seconds, not the
   // 5ms a tier without them took.
-  it("is seeded: the same seed draws the same sky, a different one draws another", { timeout: 60_000 }, () => {
+  it("is seeded: the same seed draws the same sky, a different one draws another", () => {
     const options = config.expert
     expect(generateStarBattle(11, options)).toEqual(generateStarBattle(11, options))
     expect(generateStarBattle(11, options)).not.toEqual(generateStarBattle(12, options))
@@ -125,7 +125,7 @@ describe.each(FAMILIES)("generateStarBattle for $name", ({ config, tiers }) => {
    * earns its place — and it answers exactly rather than allowing a near miss, because the fallback the
    * loop ships when no attempt meets the quota is a board `grade` returns null for.
    */
-  it.each(tiers.filter(tier => config[tier].requires))("spends its own rung at %s", { timeout: 60_000 }, tier => {
+  it.each(tiers.filter(tier => config[tier].requires))("spends its own rung at %s", tier => {
     expect(gradeStarBattle(boardAt(config, tier), config[tier])).not.toBeNull()
   })
 
@@ -138,7 +138,6 @@ describe.each(FAMILIES)("generateStarBattle for $name", ({ config, tiers }) => {
    */
   it.each(tiers.filter(tier => config[tier].noLineRegions))(
     "draws every %s region across two rows and two columns",
-    { timeout: 60_000 },
     tier => {
       const board = boardAt(config, tier)
       for (let region = 0; region < board.size; region++) {
@@ -154,7 +153,6 @@ describe.each(FAMILIES)("generateStarBattle for $name", ({ config, tiers }) => {
 
   it.each(tiers.filter(tier => config[tier].firstStarAfter))(
     "makes a %s board eliminate before it hands over a star",
-    { timeout: 60_000 },
     tier => {
       const options = config[tier]
       const board = boardAt(config, tier)
@@ -172,7 +170,7 @@ describe.each(FAMILIES)("generateStarBattle for $name", ({ config, tiers }) => {
    * a board doing some of the player's reasoning for them, so this guards the claim directly: the puzzle is a
    * size, a quota and a region map, and every square is the player's to fill.
    */
-  it.each(tiers)("gives a %s board nothing but its region map", { timeout: 60_000 }, tier => {
+  it.each(tiers)("gives a %s board nothing but its region map", tier => {
     const options = config[tier]
     const board = boardAt(config, tier)
     expect(Object.keys(board).sort(), tier).toEqual(["quota", "regions", "size", "solution", "techniqueCap"])
@@ -224,23 +222,19 @@ describe("a board does not depend on the engine's sort", () => {
   }
 
   // Generating a wizard board twice — once through a merge sort written in TypeScript rather than the
-  // engine's own — runs to about three seconds here and past the five-second default on a CI runner. A
+  // engine's own — runs to about three seconds here. A
   // listed seed is drawn in one attempt, which is both what play does and the board a room is dealt; a
   // tier with no list left to draw from falls back to the attempt loop.
-  it.each(["junior", "expert", "master", "wizard"] as const)(
-    "builds the same twin stars board at %s",
-    tier => {
-      const options = TWIN_STARS_CONFIG[tier]
-      const listed = puzzleSeeds[configHash(options)] ?? []
-      const [seed, attempts] = listed.length ? [listed[0], 1] : [12345, undefined]
-      const ours = generateStarBattle(seed, options, attempts)
-      const theirs = underMergeSort(() => generateStarBattle(seed, options, attempts))
+  it.each(["junior", "expert", "master", "wizard"] as const)("builds the same twin stars board at %s", tier => {
+    const options = TWIN_STARS_CONFIG[tier]
+    const listed = puzzleSeeds[configHash(options)] ?? []
+    const [seed, attempts] = listed.length ? [listed[0], 1] : [12345, undefined]
+    const ours = generateStarBattle(seed, options, attempts)
+    const theirs = underMergeSort(() => generateStarBattle(seed, options, attempts))
 
-      expect(theirs.regions).toEqual(ours.regions)
-      expect(theirs.solution).toEqual(ours.solution)
-    },
-    60_000
-  )
+    expect(theirs.regions).toEqual(ours.regions)
+    expect(theirs.solution).toEqual(ours.solution)
+  })
 
   it("builds every listed board of a tier under either sort, which is what the list promises", () => {
     const options = TWIN_STARS_CONFIG.expert
@@ -259,5 +253,5 @@ describe("a board does not depend on the engine's sort", () => {
     )
 
     expect(broken).toEqual([])
-  }, 120_000)
+  })
 })

@@ -109,10 +109,10 @@ const FLOORS_WITH_MECHANICS = [
 // The floors holding a one-way drop with every mod.
 const FLOORS_WITH_DROPS = [
   "junior_1 level 1 floor 0",
+  "junior_2 level 4 floor 0",
   "junior_3 level 2 floor 0",
   "junior_3 level 3 floor 0",
   "junior_3 level 4 floor 0",
-  "junior_4 level 2 floor 0",
   "junior_4 level 3 floor 0",
   "junior_4 level 4 floor 0",
   "expert_2 level 1 floor 0",
@@ -166,7 +166,7 @@ let off: Record<string, SiteConfig[]>
 beforeAll(() => {
   on = build(TOPOLOGY_ON.modIds, TOPOLOGY_ON.resolveEncounter)
   off = build(TOPOLOGY_OFF.modIds, TOPOLOGY_OFF.resolveEncounter)
-}, 300_000)
+})
 
 describe("every floor of the real world", () => {
   let carved: Carved[] = []
@@ -186,7 +186,7 @@ describe("every floor of the real world", () => {
           })
         })
       )
-  }, 900_000)
+  })
 
   it("was asked of the whole world, not of a handful of floors", () => {
     expect(carved.length).toBeGreaterThan(200)
@@ -293,7 +293,7 @@ describe("the shipped world, built with the topology mod off", () => {
       )
     expect(assembled).toBeGreaterThan(150)
     expect(failed).toEqual([])
-  }, 300_000)
+  })
 
   it("walks reachability over every site of the shipped world with the mod off, throwing on none", () => {
     const support = {
@@ -323,7 +323,7 @@ describe("the shipped world, built with the topology mod off", () => {
       })
     expect(refused).toEqual([])
     expect(walked).toBeGreaterThan(80)
-  }, 300_000)
+  })
 
   it("keeps every mechanic authored on a shipped floor: nothing is stripped", () => {
     const authored = (world: Record<string, SiteConfig[]>) =>

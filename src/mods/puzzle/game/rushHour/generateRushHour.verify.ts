@@ -51,7 +51,7 @@ describe("generating a blockade", () => {
     ["starter", 6],
     ["junior", 6],
     ["expert", 4],
-  ] as const)("draws %s boards inside their band, all solvable", { timeout: 120_000 }, (tier, seeds) => {
+  ] as const)("draws %s boards inside their band, all solvable", (tier, seeds) => {
     const kept = scan(tier, seeds)
     expect(kept.length, `no ${tier} board in ${seeds} seeds`).toBeGreaterThan(0)
     const options = RUSH_HOUR_CONFIG[tier]
@@ -75,7 +75,7 @@ describe("generating a blockade", () => {
    * shipped list already holds seeds proven to build in one attempt, and re-grading one is the same
    * assertion for a fraction of the work.
    */
-  it.each(["master", "wizard"] as const)("builds its shipped %s board inside the band", { timeout: 60_000 }, tier => {
+  it.each(["master", "wizard"] as const)("builds its shipped %s board inside the band", tier => {
     const options = RUSH_HOUR_CONFIG[tier]
     const seeds = puzzleSeeds[configHash(options)]
     expect(seeds?.length, `no shipped seeds for ${tier} — run yarn generate-seeds`).toBeGreaterThan(0)

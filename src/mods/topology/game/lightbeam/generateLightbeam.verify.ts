@@ -71,7 +71,7 @@ describe.each(difficulties)("at %s", difficulty => {
     for (const board of boards) expect(reachableDeviations(board, board.solution)?.winning.size).toBe(1)
   })
 
-  it("is reachable by deduction alone, inside its own cap", { timeout: 120_000 }, () => {
+  it("is reachable by deduction alone, inside its own cap", () => {
     for (const board of boards) expect(solveLightbeamByTechniques(board, board.techniqueCap).settled).toBe(true)
   })
 

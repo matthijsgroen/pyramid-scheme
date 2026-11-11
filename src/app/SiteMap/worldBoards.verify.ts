@@ -77,5 +77,5 @@ describe("every room in the world builds the board its tap asks for", () => {
 
   it("builds every one of them", () => {
     expect(failures()).toEqual([])
-  }, 1_200_000)
+  })
 })

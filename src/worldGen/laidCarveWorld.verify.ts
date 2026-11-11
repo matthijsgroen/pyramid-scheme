@@ -59,13 +59,13 @@ const VARIANTS: Record<string, { make: () => FloorConfig; minimum: number }> = {
   },
 }
 
-describe("a mirrorFork is carved from the structure laid for it", { timeout: 300_000 }, () => {
+describe("a mirrorFork is carved from the structure laid for it", () => {
   for (const [name, { make, minimum }] of Object.entries(VARIANTS))
     describe(name, () => {
       let carves: LaidCarve[]
       beforeAll(() => {
         carves = carve(make())
-      }, 240_000)
+      })
       // A check over the carves that did not carve would pass for nothing, so every one asks for the rate first.
       const carved = () => {
         const found = carves.flatMap(result => (result.ok ? [result] : []))
