@@ -344,11 +344,7 @@ kan lezen. Die regel (`.4`) verwijst naar "het vorige" graf, dus naar Ipi's graf
 
 ### 2.3 `bond.junior` wijkt af van het script
 
-- Volgens het script speelt hij "on a board solved unaided **after a wrong claim earlier in the tier**".
-  De code kijkt alleen naar het eerste bord op junior-niveau dat zonder hint is opgelost.
-- Er zijn al junior-borden in starter. Een voorbeeld is `starter_2` piramide 1, verdieping 2, die op
-  junior-niveau staat. Een starter-speler hoort deze beat dus **waarschijnlijk al vóór junior**. Speel het
-  na om het te bevestigen.
+**Opgelost.** Elke bond-beat op een opgelost bord of een val volgt de tier van de reis, niet van het bord (`beatFor.ts`): `bond.junior` speelt alleen in een junior-reis, `bond.expert` alleen in een expert-reis.
 
 ### 2.4 Kaartteksten verklappen de beats
 
