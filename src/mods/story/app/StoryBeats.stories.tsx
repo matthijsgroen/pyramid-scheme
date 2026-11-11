@@ -6,7 +6,9 @@ import { journeys } from "@/data/journeys"
 import { Fez } from "@/app/fez/Fez"
 import { JOURNEYS_WITH_ARRIVAL } from "@/app/fez/arrivalConversation"
 import { sceneFor } from "../game/conversation/sceneFor"
-import { WALLS } from "../game/reading/walls"
+import { WALLS, canRepair, legible, type Wall } from "../game/reading/walls"
+import { allItems } from "@/mods/hieroglyph/game/symbolCatalogue"
+import { WallScreen } from "./reading/WallScreen"
 
 // EVERY STORY BEAT, PLAYED AS THE GAME PLAYS IT, with where it lands. The beats are read from `fez.json` and
 // their places from the baked world, `sceneFor`, `WALLS` and `JOURNEYS_WITH_ARRIVAL`, so a beat nothing fires
@@ -131,12 +133,48 @@ const BeatCard = ({ beat, onPlay }: { beat: Beat; onPlay: () => void }) => (
   </li>
 )
 
+// Every sign held, so the tray is as full as it gets.
+const HELD = new Set(allItems.map(item => `hieroglyph:${item.id}`))
+
+/** A wall's screen at phone size, holding every sign: put the right one in to see it swap. */
+const WallPreview = ({ journeyId, wall }: { journeyId: string; wall: Wall }) => {
+  const [picked, setPicked] = useState<string | null>(null)
+  return (
+    <figure className="grid gap-1">
+      <figcaption className="flex items-center gap-2 text-sm text-stone-300">
+        {nameOf(journeyId)} ({journeyId})
+        <button type="button" className="rounded bg-stone-700 px-2 py-0.5" onClick={() => setPicked(null)}>
+          Reset
+        </button>
+      </figcaption>
+      <div data-wall={journeyId} className="h-211 w-[390px] max-w-full overflow-hidden border border-stone-700">
+        <WallScreen
+          wall={wall}
+          known={legible(wall, HELD)}
+          repairable={canRepair(wall, HELD)}
+          owned={allItems.map(item => item.id)}
+          picked={picked}
+          onPut={setPicked}
+          onBack={() => setPicked(null)}
+        />
+      </div>
+    </figure>
+  )
+}
+
 const StoryBeats = ({ kind }: { kind: Kind }) => {
   const [playing, setPlaying] = useState<string>()
   const [run, setRun] = useState(0)
   const beats = catalogue()[kind]
   return (
     <div className="min-h-screen bg-stone-900 p-4">
+      {kind === "reading" && (
+        <div className="mb-4 flex flex-wrap gap-4">
+          {Object.entries(WALLS).map(([journeyId, wall]) => (
+            <WallPreview key={journeyId} journeyId={journeyId} wall={wall} />
+          ))}
+        </div>
+      )}
       <ul className="grid gap-2">
         {beats.map(beat => (
           <BeatCard

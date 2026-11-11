@@ -1543,7 +1543,7 @@
       "voice": "Neki glas"
     },
     "wall": {
-      "wrong": "Neko je treći znak uklesao pogrešno. I pogrešan je već tri hiljade godina.",
+      "wrong": "Neko je drugi znak uklesao pogrešno. I pogrešan je već tri hiljade godina.",
       "fixed": "To je opet njeno ime.",
       "pick": "Stavi pravi znak na njegovo mjesto.",
       "cannot": "Ne znaš znak koji ovdje ide. Još ne."

@@ -899,6 +899,11 @@ if [ -f art/masters/props/junior/breadOven.webp ]; then
     --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 fi
 
+# Henut's name panel as the reading screen's backdrop, 1024 wide: the screen writes her signs inside the
+# empty cartouche. Its sign rectangle in walls.ts is a share of this trimmed image, so re-measure it if a repaint
+# moves the cartouche.
+yarn import-reading art/masters/props/junior/namePanel.webp --name=henutNamePanel
+
 # expert — the priest
 #
 # His three surfaces, re-rolled to the current standard, and the prompts are junior's with the priest's

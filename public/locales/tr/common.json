@@ -1413,7 +1413,7 @@
       "voice": "Bir ses"
     },
     "wall": {
-      "wrong": "Biri üçüncü işareti yanlış kazımış. Üç bin yıldır yanlış duruyor.",
+      "wrong": "Biri ikinci işareti yanlış kazımış. Üç bin yıldır yanlış duruyor.",
       "fixed": "İşte yine onun adı.",
       "pick": "Doğru işareti yerine koy.",
       "cannot": "Buraya ait olan işareti bilmiyorsun. Henüz değil."

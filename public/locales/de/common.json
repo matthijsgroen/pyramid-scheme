@@ -1448,7 +1448,7 @@
       "voice": "Eine Stimme"
     },
     "wall": {
-      "wrong": "Jemand hat das dritte Zeichen falsch gemeißelt. Seit dreitausend Jahren ist es falsch.",
+      "wrong": "Jemand hat das zweite Zeichen falsch gemeißelt. Seit dreitausend Jahren ist es falsch.",
       "fixed": "Das ist wieder ihr Name.",
       "pick": "Setz das richtige Zeichen an seinen Platz.",
       "cannot": "Du kennst das Zeichen noch nicht, das hierher gehört. Noch nicht."

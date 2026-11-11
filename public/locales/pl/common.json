@@ -1694,7 +1694,7 @@
       "voice": "Głos"
     },
     "wall": {
-      "wrong": "Ktoś źle wykuł trzeci znak. I jest źle od trzech tysięcy lat.",
+      "wrong": "Ktoś źle wykuł drugi znak. I jest źle od trzech tysięcy lat.",
       "fixed": "To znowu jest jej imię.",
       "pick": "Wstaw właściwy znak na jego miejsce.",
       "cannot": "Nie znasz znaku, który tu pasuje. Jeszcze nie."
