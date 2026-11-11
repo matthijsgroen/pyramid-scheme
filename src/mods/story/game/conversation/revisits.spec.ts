@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest"
 import { readFileSync } from "node:fs"
 import { spokenLines, type Speaker } from "@/app/fez/arrivalConversation"
-import { REVISITS, playsAgain, revisitLines, sceneOnVisit } from "./revisits"
+import { FORMULA, formulaGift, formulaHint } from "@/mods/story/game/reading/formula"
+import { REVISITS, giftDue, playsAgain, revisitLines, sceneOnVisit } from "./revisits"
 
 const heard = (...ids: string[]): Record<string, boolean> => Object.fromEntries(ids.map(id => [id, true]))
 
@@ -31,6 +32,54 @@ describe(sceneOnVisit, () => {
   it("replays the scene when nothing is written for coming back", () => {
     expect(sceneOnVisit("tomb.expertB", heard("tomb.expertB"))).toBe("tomb.expertB")
   })
+})
+
+const givers = FORMULA.map(row => [row.giver, row] as const)
+
+describe(giftDue, () => {
+  it.each(givers)("is nothing until the wall has been seen (%s)", (giver, row) => {
+    expect(giftDue(giver, heard(giver))).toBeUndefined()
+    expect(giftDue(giver, heard(formulaHint(row)))).toBeUndefined()
+  })
+
+  it.each(givers)("is owed once the ghost has been met and its wall seen (%s)", (giver, row) => {
+    expect(giftDue(giver, heard(giver, formulaHint(row)))).toBe(row)
+  })
+
+  it.each(givers)("is given once (%s)", (giver, row) => {
+    expect(giftDue(giver, heard(giver, formulaHint(row), formulaGift(row)))).toBeUndefined()
+  })
+
+  it("is never owed by a ghost that gives nothing", () => {
+    const giving = new Set(FORMULA.map(row => row.giver))
+    const everyWallSeen = heard(...FORMULA.map(formulaHint))
+    const others = Object.keys(REVISITS).filter(scene => !giving.has(scene))
+
+    expect(others.filter(scene => giftDue(scene, { ...everyWallSeen, [scene]: true }))).toEqual([])
+  })
+})
+
+describe("a visit with a gift owed", () => {
+  it.each(givers)("plays the gift before any line, whatever state the story is in (%s)", (giver, row) => {
+    const states = (REVISITS[giver] ?? []).flatMap(state => (state.after ? [state.after] : []))
+    const record = heard(giver, formulaHint(row), ...states.filter(id => id !== formulaGift(row)))
+
+    expect(sceneOnVisit(giver, record, () => 0)).toBe(formulaGift(row))
+  })
+
+  it.each(givers)("still plays the whole scene first when the ghost has not been met (%s)", (giver, row) => {
+    expect(sceneOnVisit(giver, heard(formulaHint(row)))).toBe(giver)
+  })
+
+  it.each(givers)(
+    "goes back to the ghost's lines once given, starting with a word about the gift (%s)",
+    (giver, row) => {
+      const afterGift = REVISITS[giver]?.find(state => state.after === formulaGift(row))
+
+      expect(afterGift).toBeDefined()
+      expect(revisitLines(giver, heard(giver, formulaHint(row), formulaGift(row)))).toBe(afterGift!.lines)
+    }
+  )
 })
 
 describe(playsAgain, () => {

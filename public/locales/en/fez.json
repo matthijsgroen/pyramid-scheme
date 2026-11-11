@@ -15,12 +15,13 @@
   "levelCompleted": "Ha! It's opening! Come on, inside.",
   "exitPillar": {
     "1": { "fez": "Ha! Daylight! See that shaft of light? That's our way out. Step in, and we're done here." },
-    "2": { "fez": "Only ever the one, right at the end of the main corridor. Wherever else we wander, we come back to it." },
+    "2": {
+      "fez": "Only ever the one, right at the end of the main corridor. Wherever else we wander, we come back to it."
+    },
     "3": { "explorer": "One way out. Noted." }
   },
   "expeditionCompleted": "Congratulations on completing the expedition!",
   "expeditionCompleted2": "A new expedition is now available.",
-
 
   "tombTutorial": "Ooh, writing! Can we read it? With the hieroglyphs we've found… maybe!",
   "tombTutorial2": "Look at that, sums with signs in them! See those empty slots? The hieroglyphs go in there. Yours, down below.",
@@ -798,8 +799,31 @@
     "2": { "explorer": "It'll do." }
   },
 
+  "formula": {
+    "junior": {
+      "hint": { "1": { "fez": "[Fez at the junior wall: the slot wants bread, go back to Ipi — designer copy]" } },
+      "gift": { "1": { "ipi": "[Ipi gives bread — designer copy]" } }
+    },
+    "expert": {
+      "hint": { "1": { "fez": "[Fez at the expert wall: the slot wants linen, go back to Henut — designer copy]" } },
+      "gift": { "1": { "henut": "[Henut gives linen — designer copy]" } }
+    },
+    "master": {
+      "hint": {
+        "1": { "fez": "[Fez at the master wall: the slot wants water, go back to the high priest — designer copy]" }
+      },
+      "gift": { "1": { "priest": "[the high priest gives water — designer copy]" } }
+    },
+    "wizard": {
+      "hint": {
+        "1": { "fez": "[Fez at the wizard wall: the slot wants the boat, go back to the pharaoh — designer copy]" }
+      },
+      "gift": { "1": { "pharaoh": "[the pharaoh gives the boat — designer copy]" } }
+    }
+  },
   "revisit": {
     "starter": {
+      "gave1": { "1": { "ipi": "[Ipi, after giving bread — designer copy]" } },
       "north1": { "1": { "ipi": "Still here? North! Henut! Eleven deben!" } },
       "north2": { "1": { "ipi": "Eleven deben of lapis. Henut. North. What are you waiting for?" } },
       "paid1": { "1": { "ipi": "Well? Did she pay? …No. Of course not." } },
@@ -808,6 +832,7 @@
       "later2": { "1": { "ipi": "Forty years of books, and not one of them balances. Not one!" } }
     },
     "junior": {
+      "gave1": { "1": { "henut": "[Henut, after giving linen — designer copy]" } },
       "wall1": { "1": { "henut": "The wall. Third sign. It is still not my name." } },
       "wall2": { "1": { "henut": "You are still here, and that goose is still on my wall. Fix it." } },
       "priest1": { "1": { "henut": "Still my name. I checked. Now — Karnak, the priest. Off you go." } },
@@ -816,12 +841,14 @@
       "later1": { "1": { "henut": "Glass, still. Still beautiful. Still chosen by me." } }
     },
     "expert": {
+      "gave1": { "1": { "priest": "[the high priest, after giving water — designer copy]" } },
       "seal1": { "1": { "priest": "The seal. Brought here, set down, spoken over. I will wait." } },
       "seal2": { "1": { "priest": "Ah. You again. And still no seal." } },
       "king1": { "1": { "priest": "You have seen the king. Good. The thing itself, mind — not a likeness." } },
       "later1": { "1": { "priest": "You again. There is nothing left to do here. It is very restful." } }
     },
     "master": {
+      "gave1": { "1": { "pharaoh": "[the pharaoh, after giving the boat — designer copy]" } },
       "priest1": { "1": { "pharaoh": "Still here? To the priest with that copy! I want to hear how it goes." } },
       "priest2": { "1": { "pharaoh": "You may approach. Again. Has the priest seen it yet?" } },
       "rite1": { "1": { "pharaoh": "So he finally did his rite. Good. Now he will be unbearable about it." } },

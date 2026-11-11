@@ -14,6 +14,8 @@ type Props = {
     reward: TreasureReward
     /** Set when the chest held this floor's key(s) — core chrome, see floorKeyDisplay below. */
     keyColors?: readonly KeyColor[]
+    /** Handed over by somebody rather than found: the popup says so. */
+    received?: boolean
     onCollect: () => void
   } | null
   onDismiss: () => void
@@ -84,7 +86,7 @@ export const RewardFlow: FC<Props> = ({ pendingReward, onDismiss }) => {
         rarity={display.rarity}
         itemComponent={display.ItemVisual}
         onDismiss={handleDismiss}
-        youFoundLabel={t("loot.youFound")}
+        youFoundLabel={t(pendingReward.received ? "loot.youReceived" : "loot.youFound")}
         clickToContinueLabel={t("loot.clickToContinue")}
       />
     </>

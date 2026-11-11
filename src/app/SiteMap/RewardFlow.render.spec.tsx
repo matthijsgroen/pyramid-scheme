@@ -136,3 +136,27 @@ describe("RewardFlow — money and sellable rewards", () => {
     expect(container.textContent).toContain("not_a_real_item")
   })
 })
+
+describe("RewardFlow — the heading", () => {
+  beforeEach(() => vi.useFakeTimers())
+  afterEach(() => vi.useRealTimers())
+
+  const heading = (received?: boolean) => {
+    const { container } = render(
+      <RewardFlow
+        pendingReward={{ reward: { type: "money", amount: 1 }, received, onCollect: vi.fn() }}
+        onDismiss={() => {}}
+      />
+    )
+    advanceThroughReveal()
+    return container.querySelector("h2")?.textContent
+  }
+
+  it("says the reward was found", () => {
+    expect(heading()).toBe("loot.youFound")
+  })
+
+  it("says it was received when somebody handed it over", () => {
+    expect(heading(true)).toBe("loot.youReceived")
+  })
+})

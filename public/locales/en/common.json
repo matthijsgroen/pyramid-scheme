@@ -162,6 +162,7 @@
   },
   "loot": {
     "youFound": "You found",
+    "youReceived": "You received",
     "expeditionReward": "Extra reward for completing the expedition",
     "clickToContinue": "Tap anywhere to continue"
   },
