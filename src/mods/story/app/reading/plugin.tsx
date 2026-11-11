@@ -1,10 +1,12 @@
-import { use, useEffect, useState } from "react"
+import { use, useEffect, useRef, useState } from "react"
 import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
 import { isModEnabled } from "@/mods/registeredMods"
 import { READING_META } from "@/mods/story/game/reading/meta"
-import { canRepair, legible, wallFor, type Wall } from "@/mods/story/game/reading/walls"
+import { canRepair, isRepaired, legible, wallFor, type Wall } from "@/mods/story/game/reading/walls"
 import { useHieroglyphProgress } from "@/mods/hieroglyph/app/useHieroglyphProgress"
 import { FezContext } from "@/app/fez/context"
+import { floorOfAddress } from "@/app/SiteMap/cellIdentity"
+import { useGameStorage } from "@/support/useGameStorage"
 import { WallScreen } from "./WallScreen"
 
 /** Long enough to see the sign put right before the scene covers it: the panel's crossfade. */
@@ -21,14 +23,28 @@ const reducedMotion = () =>
  * player who does not have the right hieroglyph can look, and is told plainly that they cannot fix
  * it yet, rather than being refused by a room that says nothing.
  *
- * Never a fail state: the wall stays wrong, the room stays open, and they can come back.
+ * Never a fail state: the wall stays wrong, the room stays open, and they can come back — and a wall that
+ * has a hint plays it each time they do, for as long as the sign is missing. Put right once, it stays put
+ * right: every visit after shows it whole.
  */
 export const ReadingComponent: FamilyPlugin["Component"] = ({ ctx, journeys, onCancel }) => {
   const fez = use(FezContext)
-  const { completedHieroglyphKeys } = useHieroglyphProgress()
+  const { completedHieroglyphKeys, loaded: signsLoaded } = useHieroglyphProgress()
+  const [heard, , heardLoaded] = useGameStorage<Record<string, boolean>>("conversations", {})
   const [picked, setPicked] = useState<string | null>(null)
 
-  const wall: Wall | undefined = wallFor(ctx.journeyId)
+  const wall: Wall | undefined = wallFor(ctx.journeyId, ctx.levelNr, floorOfAddress(ctx.address))
+  const loaded = signsLoaded && heardLoaded
+  const repaired = wall !== undefined && isRepaired(wall, heard)
+  const repairable = wall !== undefined && canRepair(wall, completedHieroglyphKeys)
+
+  // Asked once per visit, once both saves are read: before that every wall looks unrepaired and every sign unheld.
+  const hinted = useRef(false)
+  useEffect(() => {
+    if (!loaded || hinted.current || !wall?.hint || repaired || repairable) return
+    hinted.current = true
+    fez.showConversation(wall.hint, undefined, { story: true, forceReplay: true })
+  }, [loaded, wall, repaired, repairable, fez])
 
   useEffect(() => {
     journeys.markCellExplored(ctx.address)
@@ -39,16 +55,17 @@ export const ReadingComponent: FamilyPlugin["Component"] = ({ ctx, journeys, onC
     if (!wall) onCancel()
   }, [wall, onCancel])
 
-  const fixed = wall !== undefined && picked === wall.answer
+  // Putting the sign in is what plays the scene; a wall shown repaired from an earlier visit plays nothing.
+  const put = wall !== undefined && picked === wall.answer
   useEffect(() => {
-    if (!wall || !fixed) return
+    if (!wall || !put) return
     const play = () => fez.showConversation(wall.after, () => onCancel(), { story: true, forceReplay: true })
     if (reducedMotion()) return play()
     const timer = setTimeout(play, SWAP_MS)
     return () => clearTimeout(timer)
-  }, [fixed, wall, fez, onCancel])
+  }, [put, wall, fez, onCancel])
 
-  if (!wall) return null
+  if (!wall || !loaded) return null
 
   // Only signs the player has finished are offered — the tray IS what they can read.
   const owned = [...completedHieroglyphKeys].map(key => key.replace("hieroglyph:", ""))
@@ -57,9 +74,9 @@ export const ReadingComponent: FamilyPlugin["Component"] = ({ ctx, journeys, onC
     <WallScreen
       wall={wall}
       known={legible(wall, completedHieroglyphKeys)}
-      repairable={canRepair(wall, completedHieroglyphKeys)}
+      repairable={repairable}
       owned={owned}
-      picked={picked}
+      picked={repaired ? wall.answer : picked}
       onPut={setPicked}
       onBack={onCancel}
     />

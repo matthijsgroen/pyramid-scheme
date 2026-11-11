@@ -28,8 +28,12 @@ const PAINT: CSSProperties = {
 // The crossfade of a sign put right. Reduced motion swaps it at once.
 const FADE = "motion-safe:transition-opacity motion-safe:duration-700"
 
-/** The slab and the rope, drawn, for a wall nobody has painted yet. */
-const DrawnCartouche: (props: { panel: Panel }) => ReactElement = ({ panel }) => {
+/**
+ * The slab, drawn, for a wall nobody has painted yet — and round the signs the rope of a cartouche only
+ * when the wall has one (`Panel.frame`): a cartouche encloses a name, and without one the signs are a
+ * line written on a bare stela.
+ */
+const DrawnSlab: (props: { panel: Panel }) => ReactElement = ({ panel }) => {
   const { signs, flow } = panel
   // The rope stands clear of the signs, in panel-width units: further along the line, where its ends round.
   const along = 0.09
@@ -49,14 +53,19 @@ const DrawnCartouche: (props: { panel: Panel }) => ReactElement = ({ panel }) =>
   return (
     <div aria-hidden className="absolute inset-0 rounded-[2cqw] bg-[#e3cfa5] shadow-[inset_0_0_6cqw_#b8976866]">
       <div className="absolute inset-[3.5%] border-[0.8cqw] border-[#8a3a2a]" />
-      {/* Twisted rope: diagonal strands, with the plaster laid back over all but a ring of them. */}
-      <div
-        className="absolute rounded-full bg-[repeating-linear-gradient(55deg,#7a3022_0_0.9cqw,#a4523b_0.9cqw_1.6cqw)]"
-        style={percent(rope)}
-      >
-        <div className="absolute inset-[1.8cqw] rounded-full bg-[#ecdcbb]" />
-      </div>
-      <div className="absolute rounded-full bg-[#8a3a2a]" style={percent(bar)} />
+      {panel.frame !== undefined && (
+        <>
+          {/* Twisted rope: diagonal strands, with the plaster laid back over all but a ring of them. */}
+          <div
+            data-testid="cartouche-rope"
+            className="absolute rounded-full bg-[repeating-linear-gradient(55deg,#7a3022_0_0.9cqw,#a4523b_0.9cqw_1.6cqw)]"
+            style={percent(rope)}
+          >
+            <div className="absolute inset-[1.8cqw] rounded-full bg-[#ecdcbb]" />
+          </div>
+          <div className="absolute rounded-full bg-[#8a3a2a]" style={percent(bar)} />
+        </>
+      )}
     </div>
   )
 }
@@ -90,7 +99,7 @@ export const WallPanel = ({ wall, known, fixed, gapLabel, onGap }: Props) => {
       {art ? (
         <img src={art} alt="" className="absolute inset-0 size-full drop-shadow-lg" draggable={false} />
       ) : (
-        <DrawnCartouche panel={panel} />
+        <DrawnSlab panel={panel} />
       )}
       {/* The cartouche is the frame sign itself: named for a reader, not written twice. */}
       {panel.frame !== undefined && <span className="sr-only">{symbolOf(wall.cut[panel.frame])}</span>}

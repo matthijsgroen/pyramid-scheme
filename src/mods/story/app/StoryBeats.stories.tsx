@@ -100,7 +100,7 @@ const catalogue = (): Record<Kind, Beat[]> => {
         beat.placement = kind === "tomb" ? TOMB_ROOM : MEETING_ROOM
       }
     }
-    const wall = Object.entries(WALLS).find(([, candidate]) => candidate.after === id)
+    const wall = Object.entries(WALLS).find(([, candidates]) => candidates.some(candidate => candidate.after === id))
     if (wall) {
       const [journeyId] = wall
       beat.landed = `After the wall is read in ${nameOf(journeyId)} (${journeyId}), ${readingRooms.get(journeyId)?.join("; ") ?? "no reading room"}.`
@@ -170,9 +170,11 @@ const StoryBeats = ({ kind }: { kind: Kind }) => {
     <div className="min-h-screen bg-stone-900 p-4">
       {kind === "reading" && (
         <div className="mb-4 flex flex-wrap gap-4">
-          {Object.entries(WALLS).map(([journeyId, wall]) => (
-            <WallPreview key={journeyId} journeyId={journeyId} wall={wall} />
-          ))}
+          {Object.entries(WALLS).flatMap(([journeyId, walls]) =>
+            walls.map(wall => (
+              <WallPreview key={`${journeyId}@${wall.at.levelNr}/${wall.at.floor}`} journeyId={journeyId} wall={wall} />
+            ))
+          )}
         </div>
       )}
       <ul className="grid gap-2">
