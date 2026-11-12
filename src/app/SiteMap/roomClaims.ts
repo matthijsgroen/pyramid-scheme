@@ -501,6 +501,20 @@ export const isPassable = (grid: FloorGrid, claims: RoomClaims, r: number, c: nu
   return !!own && own === other
 }
 
+/** Whether the cell beside this one, toward `dir`, is drawn floor with no wall between: what a node's
+ * furniture may step toward and be drawn over. Ground alone is not enough — another room's claim or a
+ * corridor running past can sit flush against a cell with a wall between. */
+export const opensToward = (grid: FloorGrid, claims: RoomClaims, r: number, c: number, dir: Direction): boolean => {
+  const [dr, dc] = DIR_MOVES[dir]
+  const nr = r + dr
+  const nc = c + dc
+  const ground = cellAt(grid, nr, nc).type !== "empty" || claims.claimedBy.has(`${nr},${nc}`)
+  if (!ground) return false
+  // `isPassable` asks south and east only, so north and west are asked from the neighbour's side.
+  if (dir === "s" || dir === "e") return isPassable(grid, claims, r, c, dir)
+  return isPassable(grid, claims, nr, nc, dir === "n" ? "s" : "e")
+}
+
 // **A wall is a cell, not an edge.** Whether two neighbouring drawn cells read as one open space is
 // no longer a question the renderer asks: they are both floor, and the wall is whatever cell the map
 // draws no floor for (see tileRegions.ts). Two junctions each claiming their side of the void

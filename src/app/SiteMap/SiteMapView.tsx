@@ -42,7 +42,7 @@ import {
   propFrame,
   wallItemFrame,
 } from "./mapScale"
-import { DROP_ART, LOOTED_OPACITY, NODE_OVER_ART_OPACITY, nodeArtOffset, type NodeSprite } from "./nodeArt"
+import { DROP_ART, LOOTED_OPACITY, NODE_OVER_ART_OPACITY, type NodeSprite } from "./nodeArt"
 import { stateWash, tierPalette } from "./tileMaterials"
 import { ClipLayer, OCCLUDER_FADE, Sprite } from "./htmlLayers"
 import { moodFor, growthTile } from "./moodSettings"
@@ -104,11 +104,12 @@ import {
   cellTileset,
   floorTier,
   isPassable,
+  opensToward,
   litClaimOwner,
   tileRegionsFor,
   type RoomClaims,
 } from "./roomClaims"
-import { occupantOffset, prefabArtOffset, standingOffset } from "./standingSpot"
+import { nodeArtStep, occupantOffset, prefabArtOffset, standingOffset } from "./standingSpot"
 import { markerCell, walkPoints, type WalkPoint } from "./roomWalk"
 import { prefabRoomAt, prefabRoomCells } from "@/game/roomShape"
 import { OccupantFigure } from "./OccupantFigure"
@@ -418,27 +419,16 @@ export const nodeSpritesFor = (
    * that and broke the other half: where the step pointed at VOID, the clip went with it and the chest
    * was drawn out over the dark beyond the wall.
    *
-   * So the clip grows, but only into ground the room is OPEN to (`isPassable`, the test the walls are
-   * drawn from). Ground alone is not enough: another room's claim or a corridor running past can sit
-   * flush against this cell with a wall between, and a clip that admitted it drew the chest through that
-   * wall. Where there is open paving beside it the chest overlaps the paving; where there is a wall it is
-   * cut at the wall, which is what the clip is for.
+   * So the clip grows, but only into floor the room is open to (`opensToward`): a neighbouring room's
+   * claim or a corridor running past behind a wall stays out, and the chest is cut at the wall.
    */
   const clipCells = (footprint: readonly string[]): string[] => {
     const cells = new Set(footprint)
     for (const key of footprint) {
       const [r, c] = key.split(",").map(Number)
-      // `isPassable` asks south and east only, so north and west are asked from the neighbour's side.
-      for (const [nr, nc, open] of [
-        [r - 1, c, () => isPassable(grid, claims, r - 1, c, "s")],
-        [r + 1, c, () => isPassable(grid, claims, r, c, "s")],
-        [r, c - 1, () => isPassable(grid, claims, r, c - 1, "e")],
-        [r, c + 1, () => isPassable(grid, claims, r, c, "e")],
-      ] as const) {
-        const neighbourKey = `${nr},${nc}`
-        if (cells.has(neighbourKey)) continue
-        const isFloor = cellAt(grid, nr, nc).type !== "empty" || claims.claimedBy.has(neighbourKey)
-        if (isFloor && open()) cells.add(neighbourKey)
+      for (const dir of ["n", "s", "w", "e"] as const) {
+        const [dr, dc] = DIR_MOVES[dir]
+        if (opensToward(grid, claims, r, c, dir)) cells.add(`${r + dr},${c + dc}`)
       }
     }
     return [...cells]
@@ -607,7 +597,7 @@ export const nodeSpritesFor = (
               )
             : undefined
         if (!url && !leverUrls) continue
-        const { dx, dy } = prefabArtOffset(grid, r, c) ?? nodeArtOffset(cell.dirs)
+        const { dx, dy } = prefabArtOffset(grid, claims, r, c) ?? nodeArtStep(grid, claims, r, c)
         const placed = {
           x: cx + dx - CELL / 2,
           y: cy + dy + CELL / 2 - PROP_H,
@@ -638,7 +628,7 @@ export const nodeSpritesFor = (
         // for a stair's cresset.
         const url = tileOrPlaceholder(tier, "exit")
         if (!url) continue
-        const art = prefabArtOffset(grid, r, c) ?? { dx: 0, dy: 0 }
+        const art = prefabArtOffset(grid, claims, r, c) ?? { dx: 0, dy: 0 }
         const [ex, ey] = [cx + art.dx, cy + art.dy]
         out.push({
           footprint,
@@ -686,7 +676,7 @@ export const nodeSpritesFor = (
         if (!back || !arm || !front) continue
         // Stepped off its own doorways exactly as a chest is (`nodeArtOffset`): a lever is a cell's
         // worth of furniture like any other, not a doorway fitting.
-        const { dx, dy } = prefabArtOffset(grid, r, c) ?? nodeArtOffset(cell.dirs)
+        const { dx, dy } = prefabArtOffset(grid, claims, r, c) ?? nodeArtStep(grid, claims, r, c)
         // THE CONTROL'S CURRENT POSITION, NOT ALWAYS ITS INITIAL ONE: the same address `openDoorsFor`
         // reads a saved position off, falling back to the mechanism's own `initial` for the same reason
         // it does — a save with no entry yet is standing wherever the floor was authored to start it.
@@ -716,7 +706,7 @@ export const nodeSpritesFor = (
         const spent = isSpentAt(grid, floorIndex, r, c, cell, mechanismStates)
         const url = mechanismTileUrl(tier, spent ? "torchLit" : "torchUnlit", mechanismStyle)
         if (!url) continue
-        const { dx, dy } = prefabArtOffset(grid, r, c) ?? nodeArtOffset(cell.dirs)
+        const { dx, dy } = prefabArtOffset(grid, claims, r, c) ?? nodeArtStep(grid, claims, r, c)
         const x = cx + dx - CELL / 2
         const floorLine = cy + dy + CELL / 2
         out.push({
@@ -792,7 +782,7 @@ export const nodeSpritesFor = (
         // east drew its torch on the right and lit the floor on the left.
         const flameOnRight = side !== undefined
         const flameDx = (flameOnRight === mirrored ? -1 : 1) * STAIR_FLAME_DX
-        const art = prefabArtOffset(grid, r, c) ?? { dx: 0, dy: 0 }
+        const art = prefabArtOffset(grid, claims, r, c) ?? { dx: 0, dy: 0 }
         const [sx, sy] = [cx + art.dx, cy + art.dy]
         out.push({
           // ONLY THE DESCENDING FLIGHTS CARRY A CRESSET. A shaft is a hole in the floor and needs a

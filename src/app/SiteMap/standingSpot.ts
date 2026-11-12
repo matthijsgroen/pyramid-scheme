@@ -5,7 +5,7 @@ import { DIR_MOVES } from "./corridorRuns"
 import { COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import { shapeKindFor } from "./nodeKinds"
 import { nodeArtOffset } from "./nodeArt"
-import type { RoomClaims } from "./roomClaims"
+import { opensToward, type RoomClaims } from "./roomClaims"
 import { roomStop } from "./roomWalk"
 
 export type StandingOffset = { readonly dx: number; readonly dy: number }
@@ -28,13 +28,32 @@ const prefabStop = (grid: FloorGrid, r: number, c: number) => {
 /** Where a prefab room's chest, portal or mechanism is drawn, relative to its node's centre: a mechanism on the
  * prefab's place for it, anything else at the stop, stepped aside as on a corridor node with no south door.
  * Undefined outside a prefab room, where the art stands as its node decides. */
-export const prefabArtOffset = (grid: FloorGrid, r: number, c: number): StandingOffset | undefined => {
+export const prefabArtOffset = (
+  grid: FloorGrid,
+  claims: RoomClaims,
+  r: number,
+  c: number
+): StandingOffset | undefined => {
   const room = prefabRoomAt(grid, r, c)
   if (!room) return undefined
   if (room.nodeArt) return offsetTo(r, c, room.nodeArt)
   const stop = offsetTo(r, c, room.stop)
-  const step = nodeArtOffset(undefined)
+  const step = openStep(grid, claims, ...room.stop, nodeArtOffset(undefined))
   return { dx: stop.dx + step.dx, dy: stop.dy + step.dy }
+}
+
+/** `nodeArtOffset`'s step, kept only along an axis whose side of the cell is floor it is open to
+ * (`opensToward`). Stepped toward a wall, the art hangs past the cell and is cut there, so on that axis it
+ * stands centred instead. */
+const openStep = (grid: FloorGrid, claims: RoomClaims, r: number, c: number, step: StandingOffset): StandingOffset => ({
+  dx: step.dx === 0 || opensToward(grid, claims, r, c, step.dx > 0 ? "e" : "w") ? step.dx : 0,
+  dy: step.dy === 0 || opensToward(grid, claims, r, c, step.dy > 0 ? "s" : "n") ? step.dy : 0,
+})
+
+/** Where a node's own furniture stands in its cell: away from its doorways, never toward a wall. */
+export const nodeArtStep = (grid: FloorGrid, claims: RoomClaims, r: number, c: number): StandingOffset => {
+  const cell = cellAt(grid, r, c)
+  return openStep(grid, claims, r, c, nodeArtOffset(cell.type === "empty" ? undefined : cell.dirs))
 }
 
 // Beside it first, on the floor line the flight stands on; in front of it next; behind it last.
@@ -57,7 +76,6 @@ export const standingOffset = (grid: FloorGrid, claims: RoomClaims, r: number, c
  * spare, in the corner a node's furniture takes, away from every way out. In a prefab room fit for somebody, north of
  * its stop; in one that is not, beside the stop: east of it, else west, on the room's free floor. */
 export const occupantOffset = (grid: FloorGrid, claims: RoomClaims, r: number, c: number): StandingOffset => {
-  const cell = cellAt(grid, r, c)
   const room = prefabRoomAt(grid, r, c)
   if (room?.actor) return offsetTo(r, c, room.actor)
   if (room) {
@@ -67,7 +85,7 @@ export const occupantOffset = (grid: FloorGrid, claims: RoomClaims, r: number, c
       .find(([sr, sc]) => inRect(room.rect, sr, sc) && !blocked.has(`${sr},${sc}`))
     if (beside) return offsetTo(r, c, beside)
   }
-  return besideNode(grid, claims, r, c) ?? nodeArtOffset(cell.type === "empty" ? undefined : cell.dirs)
+  return besideNode(grid, claims, r, c) ?? nodeArtStep(grid, claims, r, c)
 }
 
 /** A bare cell of this room's own floor next to its node — claimed by it, empty in the grid, no prop on it. */

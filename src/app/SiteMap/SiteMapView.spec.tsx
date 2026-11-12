@@ -3077,6 +3077,7 @@ describe("SiteMapView — a prefab room", () => {
     )!
     const step = nodeArtOffset(undefined)
     expect(chest.x).toBeCloseTo(cellCenter(2, 4).cx + step.dx - CELL / 2)
-    expect(chest.y).toBeCloseTo(cellCenter(2, 4).cy + step.dy + CELL / 2 - PROP_H)
+    // The stop is on the room's south row, so it is not stepped south into the wall.
+    expect(chest.y).toBeCloseTo(cellCenter(2, 4).cy + CELL / 2 - PROP_H)
   })
 })
