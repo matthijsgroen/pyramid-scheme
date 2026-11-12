@@ -94,10 +94,59 @@ const edgeKey = (r1: number, c1: number, r2: number, c2: number): string => {
   return a < b ? `${a}|${b}` : `${b}|${a}`
 }
 
+// Decoration only ever lands on an empty claimed cell — the room's own space, never a passage
+// through it (see noteClaim in buildRoomClaims).
+//
+// **A prop stands against a wall where it can.** Its sprite is a cell plus a face band tall, so it
+// leans a band's worth into the cell to its north; on a cell with void above, that headroom lands on
+// wall, which is where a statue belongs and where nothing can be behind it. On a cell with floor above
+// it, the statue leans over ground the player walks, and the explorer dot — drawn last — passes in
+// FRONT of its head.
+const wallBehind = (grid: FloorGrid, cellKey: string): boolean => {
+  const [r, c] = cellKey.split(",").map(Number)
+  return cellAt(grid, r - 1, c).type === "empty"
+}
+// ON THE MAP, not off the edge of it. A claim takes out-of-bounds cells too — the renderer reads
+// beyond the grid as void — so an edge room's own furniture could stand in the margin outside the
+// floor, which is where the Temple of Bastet put its statue of her. Inside first, and the
+// wall-behind preference decides among what is left.
+export const isOnGrid = (grid: FloorGrid, key: string): boolean => {
+  const [r, c] = key.split(",").map(Number)
+  return r >= 0 && c >= 0 && r < grid.rows && c < grid.cols
+}
+/** Every cell a prop's footprint covers from its north-west `anchor`, anchor first, row by row. */
+export const propFootprintCells = (anchor: string, { cols, rows }: PropFootprint): string[] => {
+  const [r, c] = anchor.split(",").map(Number)
+  return Array.from({ length: rows * cols }, (_, i) => `${r + Math.floor(i / cols)},${c + (i % cols)}`)
+}
+// A BIGGER PROP NEEDS ALL ITS FLOOR. Every cell of the footprint must be one of `usable` — the room's own
+// free floor — so it never stands on a passage, a node, another room's claim or another prop. Among the
+// anchors that fit, the wall-behind preference reads the footprint's whole top row. A single cell comes
+// out exactly as `usable.find(wallBehind) ?? usable[0]`.
+/** The cells a prop of `kind` covers when it stands on `usable`, anchor first. `against: "stone"` takes only a fit
+ * with wall behind it: a room already holding its prop gains nothing from a second one leaning over the floor. */
+export const propStandingCells = (
+  grid: FloorGrid,
+  kind: DecorationKind,
+  usable: readonly string[],
+  against: "stone" | "stoneFirst" = "stoneFirst",
+  footprintOf: (kind: DecorationKind) => PropFootprint = decorationFootprint
+): string[] | undefined => {
+  const footprint = footprintOf(kind)
+  const free = new Set(usable)
+  const fits = usable
+    .map(anchor => propFootprintCells(anchor, footprint))
+    .filter(cells => cells.every(k => free.has(k)))
+  const backed = fits.find(cells => cells.slice(0, footprint.cols).every(k => wallBehind(grid, k)))
+  return against === "stone" ? backed : (backed ?? fits[0])
+}
+
 export type RoomClaims = {
   /** claimed-cell key ("r,c") -> owning room's key ("r,c") */
   claimedBy: ReadonlyMap<string, string>
-  /** each prop by its ANCHOR cell, the north-west one of its footprint (decorationFootprint) */
+  /** each room's claimed EMPTY cells by owner key, in claim order: the floor its props are chosen from */
+  propCandidates: ReadonlyMap<string, readonly string[]>
+  /** each prop by its ANCHOR cell, the north-west one of its footprint (decorationFootprint), leaders before companions */
   decorationAt: ReadonlyMap<string, DecorationKind>
   /** every cell a prop covers, anchors included: what scatter and standing spots keep clear of */
   decorationCells: ReadonlySet<string>
@@ -247,47 +296,9 @@ export const buildRoomClaims = (
     }
   }
 
-  // Decoration only ever lands on an empty claimed cell — the room's own space, never a passage
-  // through it (see noteClaim).
-  //
-  // **A prop stands against a wall where it can.** Its sprite is a cell plus a face band tall, so it
-  // leans a band's worth into the cell to its north; on a cell with void above, that headroom lands on
-  // wall, which is where a statue belongs and where nothing can be behind it. On a cell with floor above
-  // it, the statue leans over ground the player walks, and the explorer dot — drawn last — passes in
-  // FRONT of its head. Half the props in the world stood that way before this preference.
-  const wallBehind = (cellKey: string): boolean => {
-    const [r, c] = cellKey.split(",").map(Number)
-    return cellAt(grid, r - 1, c).type === "empty"
-  }
-  // ON THE MAP, not off the edge of it. A claim takes out-of-bounds cells too — the renderer reads
-  // beyond the grid as void — so an edge room's own furniture could stand in the margin outside the
-  // floor, which is where the Temple of Bastet put its statue of her. Inside first, and the
-  // wall-behind preference decides among what is left.
-  const onGrid = (key: string): boolean => {
-    const [r, c] = key.split(",").map(Number)
-    return r >= 0 && c >= 0 && r < grid.rows && c < grid.cols
-  }
-  // A BIGGER PROP NEEDS ALL ITS FLOOR. Every cell of the footprint must be one of `usable` — the room's own
-  // free floor — so it never stands on a passage, a node, another room's claim or another prop. Among the
-  // anchors that fit, the wall-behind preference reads the footprint's whole top row. A single cell comes
-  // out exactly as `usable.find(wallBehind) ?? usable[0]`.
-  const footprintCells = (anchor: string, { cols, rows }: PropFootprint): string[] => {
-    const [r, c] = anchor.split(",").map(Number)
-    return Array.from({ length: rows * cols }, (_, i) => `${r + Math.floor(i / cols)},${c + (i % cols)}`)
-  }
-  // `against: "stone"` takes only a fit with wall behind it: a room already holding its prop gains nothing
-  // from a second one leaning over the floor.
-  const standOn = (
-    kind: DecorationKind,
-    usable: readonly string[],
-    against: "stone" | "stoneFirst" = "stoneFirst"
-  ): string[] | undefined => {
-    const footprint = footprintOf(kind)
-    const free = new Set(usable)
-    const fits = usable.map(anchor => footprintCells(anchor, footprint)).filter(cells => cells.every(k => free.has(k)))
-    const backed = fits.find(cells => cells.slice(0, footprint.cols).every(wallBehind))
-    return against === "stone" ? backed : (backed ?? fits[0])
-  }
+  const onGrid = (key: string): boolean => isOnGrid(grid, key)
+  const standOn = (kind: DecorationKind, usable: readonly string[], against: "stone" | "stoneFirst" = "stoneFirst") =>
+    propStandingCells(grid, kind, usable, against, footprintOf)
   // The floor a room owns on the map, its claims inside the grid.
   const claimedOnGrid = new Map<string, number>()
   for (const [key, ownerKey] of claimedBy)
@@ -368,7 +379,7 @@ export const buildRoomClaims = (
     }
   )) {
     decorationAt.set(anchor, kind)
-    for (const key of footprintCells(anchor, footprintOf(kind))) decorationCells.add(key)
+    for (const key of propFootprintCells(anchor, footprintOf(kind))) decorationCells.add(key)
   }
 
   /**
@@ -416,7 +427,7 @@ export const buildRoomClaims = (
     }
   }
 
-  return { claimedBy, decorationAt, decorationCells, openEdges, joinedOwners }
+  return { claimedBy, propCandidates: ownerPropCandidates, decorationAt, decorationCells, openEdges, joinedOwners }
 }
 
 // The room a claimed cell renders as part of, if that room is lit — the claim borrows the owner's
