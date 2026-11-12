@@ -57,7 +57,7 @@ const REACT_AND_UI_STAY_OUT = {
 
 export default tseslint.config(
   [
-    globalIgnores(["dist", "storybook-static", ".yarn", "node_modules", ".claude"]),
+    globalIgnores(["dist", "storybook-static", ".yarn", "node_modules", ".claude", "docs/review/**/spike"]),
     {
       files: ["**/*.{ts,tsx}"],
       extends: [
