@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - At Fez's stall the explorer no longer sees an animal that is not there.
 - Entering a room no longer stands the explorer on its lever.
 - A chest no longer pokes through the wall beside it.
+- Opening a chest no longer makes it jump.
 
 ## 0.47.0 - 2026-11-10
 

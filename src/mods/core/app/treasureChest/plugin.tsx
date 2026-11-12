@@ -43,8 +43,8 @@ export const TreasureComponent: FamilyPlugin["Component"] = ({ ctx, onSolved }) 
         disabled={opened}
         onClick={handleOpen}
         className={clsx(
-          "relative",
-          opened ? "cursor-default" : "cursor-pointer motion-safe:transition-transform motion-safe:hover:scale-105"
+          "relative motion-safe:transition-transform",
+          opened ? "cursor-default" : "cursor-pointer motion-safe:hover:scale-105"
         )}
       >
         {opened && <div className="absolute inset-x-4 bottom-0 h-1/3 rounded-full bg-amber-300/30 blur-xl" />}
@@ -56,7 +56,13 @@ export const TreasureComponent: FamilyPlugin["Component"] = ({ ctx, onSolved }) 
           style={{ imageRendering: ART_IMAGE_RENDERING }}
         />
       </button>
-      {!opened && <p className="mt-6 text-sm text-amber-300 motion-safe:animate-pulse">{label}</p>}
+      {/* Kept in the layout once open, so the centred chest does not jump down. */}
+      <p
+        aria-hidden={opened}
+        className={clsx("mt-6 text-sm text-amber-300", opened ? "invisible" : "motion-safe:animate-pulse")}
+      >
+        {label}
+      </p>
     </div>,
     document.body
   )
