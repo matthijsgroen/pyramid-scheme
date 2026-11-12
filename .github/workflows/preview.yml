@@ -38,7 +38,7 @@ jobs:
           VITE_BASE: /pyramid-scheme-preview/
           VITE_STORAGE_PREFIX: "preview:"
           # The preview plays what the next release ships, so it is tested as players will meet it.
-          VITE_LAST_RELEASED_DIFFICULTY: starter
+          VITE_LAST_RELEASED_DIFFICULTY: junior
           # Playtesting happens on the preview, so it carries the developer tools; the release does not.
           VITE_DEV_TOOLS: "true"
       - name: Add .nojekyll
