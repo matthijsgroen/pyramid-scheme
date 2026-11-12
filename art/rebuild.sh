@@ -866,6 +866,11 @@ yarn import-tile "$OPEN" --tier=junior --name=chestPropOpen --slot=prop --filter
   --brightness=1.12
 rm -f "$OPEN"
 
+# The ward-key chest: the cavetto chest in gold leaf, copper and faience over ebony.
+scaffold sealedChest --contents=cavetto --spin=-27 --colour=#3a2a20 --floor=#e2a86f
+yarn import-tile art/masters/props/junior/wardChest.webp --tier=junior --name=wardChest --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
 scaffold falseDoor --spin=6
 yarn import-tile art/masters/props/junior/shrine.webp --tier=junior --name=shrine --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"

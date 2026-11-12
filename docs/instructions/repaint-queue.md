@@ -136,37 +136,6 @@ seen nearly edge-on, which keeps it a narrow band above the chest.
 wood, the richest thing on the floor, still matte like the rest of the set. It is a new shape, so it has a scaffold: the
 nobleman's sealed chest at starter, the cavetto chest at junior.
 
-### `junior/wardChest` — the nobleman's coffer, cavetto lid, copper bound
-
-**Attach:**
-
-1. `~/tile-previews/wardChest-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a TREASURE CHEST on four short feet, the noblewoman's greatest treasure — one look should say an epic treasure is inside. The band round its top is where the LID meets the body. Above that the three slabs stepping out one over the other are a CAVETTO CORNICE forming the lid. The sunken rectangle on the front face is an INLAID PANEL.
-
-Dark ebony, #3a2a20, covered in GOLD LEAF at every edge: the cornice's three steps are gilded, #d9a93f, the feet are gilded, gold corner plates hold the body. The panel is inlaid EGYPTIAN BLUE faience, #2f5e9e, with a row of gold lotus flowers, their hearts carnelian, #a8432c. The lid band is COPPER, #c07a42, set with turquoise faience studs, #3f9a8c.
-
-Gold and copper here are flat colours, not metal: no highlights, no reflections, no shine, no sparkle. There is no cord and no seal.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. A noble tomb's treasure: gold leaf, Egyptian blue faience, carnelian and copper.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold sealedChest --contents=cavetto --spin=-27 --colour=#3a2a20 --floor=#e2a86f
-yarn import-tile art/masters/props/junior/wardChest.webp --tier=junior --name=wardChest --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
 ### `junior/wardChestOpen` — the nobleman's coffer, lid up, empty
 
 Paint `junior/wardChest` first: this is an edit of its master.
