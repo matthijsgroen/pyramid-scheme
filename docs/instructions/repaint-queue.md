@@ -114,6 +114,218 @@ landed. `prop-pipeline.md` has the numbers.
 
 ---
 
+## Chests — six
+
+The treasure room's chest, OPEN, and the ward key's own chest, shut and open, for the two ranks that ship.
+Both ranks hold ward keys (`tombKey` rewards) on their floors. The map draws a chest open once it is taken,
+and the chest's screen draws the same chest shut until it is tapped and open after; a drawing still owed
+falls back down one chain (`chestChain` in `tileAssets.ts`): `wardChestOpen` to `wardChest` to `chestProp`,
+`chestPropOpen` to `chestProp`. So each entry lands on its own, in any order, and nothing shows a dummy
+where the shut chest is painted.
+
+**An open chest is EMPTY.** The reward is shown separately, so the mouth is dark — no gold, no glow, nothing
+spilling out.
+
+**There is no open-lid scaffold.** `renderProp.py` draws `chest` and `sealedChest` shut only, so an open
+chest is an EDIT of the shut chest's own painted master, and imports with the shut chest's scaffold for its
+shadow but WITHOUT `--mask`: the shut silhouette would clip the raised lid. A lid tipped up into a wide pale
+plane reads as a table (`prim_chest`'s docstring), so each prompt stands the lid UPRIGHT behind the body,
+seen nearly edge-on, which keeps it a narrow band above the chest.
+
+**A ward key's chest is visibly MORE PRECIOUS in its own rank's materials**, never in a richer rank's: the
+merchant's best box is still cedar and faience, not gold. It is a new shape, so it has a scaffold: the
+nobleman's sealed chest at starter, the cavetto chest at junior.
+
+### `starter/chestPropOpen` — the merchant's crate, lid off, empty
+
+**Attach:**
+
+1. `art/masters/props/starter/chestProp.webp` — the chest itself, to edit: shape, silhouette, camera
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: two reed baskets and a rope-handled wooden crate stacked together, a stoppered jar on the crate. Same objects, same camera, same paint. Keep every edge, every proportion and every silhouette of the baskets and of the crate's body exactly as in the reference image — do not move, resize, straighten, add, remove or restyle them, and do not change the angle they stand at.
+
+THE ONE CHANGE: the crate is OPEN. Its lid is lifted off and stands upright against the back of the crate, seen almost edge-on, a narrow plank band rising above the crate's back edge. The jar that stood on the lid is gone. The crate's mouth is an EMPTY dark interior, #3a2e20 at its deepest, with the inside of the near wall catching a little light. Nothing inside: no gold, no glow, nothing spilling out.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR'S MATERIAL. Take only its paint quality from it; nothing of that floor appears in the picture.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, soft brush texture, no outlines. A merchant's storehouse: worn timber, reed, rope and fired clay, nothing gilded.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the chest, its lid and its shadow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold chest --floor=#d8c8a8
+yarn import-tile art/masters/props/starter/chestPropOpen.webp --tier=starter --name=chestPropOpen --slot=prop \
+  --filter=smooth --seat="$SHADOW"
+```
+
+### `junior/chestPropOpen` — the nobleman's sealed chest, lid up, empty
+
+**Attach:**
+
+1. `art/masters/props/junior/chestProp.webp` — the chest itself, to edit: shape, silhouette, camera
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: one box on four short feet, a band round its top where the lid meets the body, a cord with a seal over the lid. Same object, same camera, same paint. Keep every edge, every proportion and every silhouette of the body, the band and the feet exactly as in the reference image — do not move, resize, straighten, add, remove or restyle them, and do not change the angle it stands at.
+
+THE ONE CHANGE: the chest is OPEN. The cord is cut and hangs loose down the front, the seal broken. The lid is raised on its back hinge and stands UPRIGHT behind the body, seen almost edge-on, a narrow painted band rising above the chest's back edge. The chest's mouth is an EMPTY dark interior, #381d0e at its deepest, the inside of the near wall catching a little light. Nothing inside: no gold, no glow, nothing spilling out.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR'S MATERIAL. Take only its paint quality from it; nothing of that floor appears in the picture.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, soft brush texture, no outlines. A nobleman's painted house: cedar painted in red ochre, Egyptian blue and leaf green, copper only as a hasp or a band, gone verdigris.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the chest, its lid and its shadow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold sealedChest --spin=-27
+yarn import-tile art/masters/props/junior/chestPropOpen.webp --tier=junior --name=chestPropOpen --slot=prop \
+  --filter=smooth --seat="$SHADOW"
+```
+
+### `starter/wardChest` — the merchant's best box, sealed
+
+**Attach:**
+
+1. `~/tile-previews/wardChest-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a CHEST on four short feet, the merchant's one valuable box, kept apart from his crates. The band round its top is where the LID meets the body. The strap over the lid and down its front is a knotted CORD, and the round lump on it is a clay SEAL.
+
+Dark cedar, #694935, oiled and well kept where everything else he owns is worn. The band round the lid is painted red ochre, #9a4a2c. A single small TURQUOISE FAIENCE knob, #3f9a8c, is set in the middle of the lid band, the one bright thing on the box. The cord is undyed flax, #8a7656; the seal is grey Nile clay stamped with a scarab, #6c6257.
+
+There is no gold anywhere on it: a merchant's treasure is cedar and faience.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. A merchant's storehouse: limestone and whitewashed mudbrick, red ochre and terracotta, one turquoise faience accent.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold sealedChest --spin=-27 --colour=#694935 --floor=#d8c8a8
+yarn import-tile art/masters/props/starter/wardChest.webp --tier=starter --name=wardChest --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `starter/wardChestOpen` — the merchant's best box, seal broken, empty
+
+Paint `starter/wardChest` first: this is an edit of its master.
+
+**Attach:**
+
+1. `art/masters/props/starter/wardChest.webp` — the chest itself, to edit: shape, silhouette, camera
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: a cedar box on four short feet, a red ochre band where the lid meets the body, a turquoise knob on the lid, a cord with a clay seal over it. Same object, same camera, same paint. Keep every edge, every proportion and every silhouette of the body, the band and the feet exactly as in the reference image — do not move, resize, straighten, add, remove or restyle them, and do not change the angle it stands at.
+
+THE ONE CHANGE: the chest is OPEN. The cord is cut and hangs loose down the front, the clay seal broken in two. The lid is raised on its back hinge and stands UPRIGHT behind the body, seen almost edge-on, a narrow cedar band rising above the chest's back edge, its turquoise knob still on it. The chest's mouth is an EMPTY dark interior, #3a2e20 at its deepest, the inside of the near wall catching a little light. Nothing inside: no gold, no glow, nothing spilling out.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR'S MATERIAL. Take only its paint quality from it; nothing of that floor appears in the picture.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, soft brush texture, no outlines.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the chest, its lid and its shadow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold sealedChest --spin=-27 --colour=#694935 --floor=#d8c8a8
+yarn import-tile art/masters/props/starter/wardChestOpen.webp --tier=starter --name=wardChestOpen --slot=prop \
+  --filter=smooth --seat="$SHADOW"
+```
+
+### `junior/wardChest` — the nobleman's coffer, cavetto lid, copper bound
+
+**Attach:**
+
+1. `~/tile-previews/wardChest-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a CHEST on four short feet, the nobleman's finest coffer. The band round its top is where the LID meets the body. Above that the three slabs stepping out one over the other are a CAVETTO CORNICE forming the lid. The sunken rectangle on the front face is a PAINTED PANEL.
+
+Dark cedar, #5a3a22. The panel is painted with a row of lotus flowers, red ochre #9a4a2c, Egyptian blue #2f5e9e and leaf green #4f7a3a, on a dark cedar ground. The band round the lid is COPPER, #9c5a32, gone verdigris, #4f8a74, in its corners and along its lower edge. The cornice's steps are cedar, edged in a thin line of the same blue.
+
+Copper here is a flat colour, not a metal: no highlights, no reflections, no shine. There is no gold anywhere on it, and no cord and no seal.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. A nobleman's painted house: warm sandstone, cedar painted in red ochre, Egyptian blue and leaf green, copper gone verdigris.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold sealedChest --contents=cavetto --spin=-27 --colour=#5a3a22 --floor=#e2a86f
+yarn import-tile art/masters/props/junior/wardChest.webp --tier=junior --name=wardChest --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/wardChestOpen` — the nobleman's coffer, lid up, empty
+
+Paint `junior/wardChest` first: this is an edit of its master.
+
+**Attach:**
+
+1. `art/masters/props/junior/wardChest.webp` — the chest itself, to edit: shape, silhouette, camera
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: a cedar coffer on four short feet, a copper band where the lid meets the body, a stepped cavetto lid, a painted lotus panel on its front. Same object, same camera, same paint. Keep every edge, every proportion and every silhouette of the body, the band, the panel and the feet exactly as in the reference image — do not move, resize, straighten, add, remove or restyle them, and do not change the angle it stands at.
+
+THE ONE CHANGE: the coffer is OPEN. The cavetto lid is raised on its back hinge and stands UPRIGHT behind the body, seen almost edge-on, a narrow stepped band rising above the coffer's back edge. The coffer's mouth is an EMPTY dark interior, #381d0e at its deepest, the inside of the near wall catching a little light. Nothing inside: no gold, no glow, nothing spilling out.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR'S MATERIAL. Take only its paint quality from it; nothing of that floor appears in the picture.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, soft brush texture, no outlines.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the coffer, its lid and its shadow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold sealedChest --contents=cavetto --spin=-27 --colour=#5a3a22 --floor=#e2a86f
+yarn import-tile art/masters/props/junior/wardChestOpen.webp --tier=junior --name=wardChestOpen --slot=prop \
+  --filter=smooth --seat="$SHADOW"
+```
+
 ## Rank surfaces — seven
 
 The floor, the wall face and the sill of the four ranks above the merchant, in the character of

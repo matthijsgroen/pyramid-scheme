@@ -61,7 +61,7 @@ import { scatterFor } from "./floorScatter"
 import { roomStop } from "./roomWalk"
 import { OCCLUDER_FADE } from "./htmlLayers"
 import { CHAMBER_SCALE, GROWTH_POOLS, growthTile } from "./moodSettings"
-import { sharedTileUrl } from "./tileAssets"
+import { chestTileUrl, sharedTileUrl } from "./tileAssets"
 import { STANDING_RELIEF, lampStrength } from "./lighting"
 import { BeamLight } from "./MapBeams"
 
@@ -222,6 +222,32 @@ describe("a node's furniture and the clip it is cut to", () => {
     }
     const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} />)
     expect(urlOf(spriteMatching(container, "chestProp")[0])).toContain("junior")
+  })
+
+  describe("a ward key's chest", () => {
+    // Master, because no chest of its own is painted there: the ward key's chest and the plain one resolve apart.
+    const wardGrid = (state: CellState): FloorGrid => ({
+      ...makeGrid([
+        [empty, empty, empty],
+        [empty, { ...treasureCell(["w"]), state, reward: { type: "tombKey", keyId: "made_up" } } as GridCell, empty],
+        [empty, empty, empty],
+      ]),
+      difficulty: "master",
+    })
+    const chestUrlIn = (container: HTMLElement) =>
+      spritesIn(container)
+        .map(urlOf)
+        .find(url => /chest/i.test(url))
+
+    it("draws the ward key's own chest, shut, beside an untaken ward key", () => {
+      const { container } = render(<SiteMapView grid={wardGrid("reachable")} onCellClick={() => {}} />)
+      expect(chestUrlIn(container)).toBe(chestTileUrl("master", "master", "wardChest", false))
+    })
+
+    it("draws it open once the key is taken", () => {
+      const { container } = render(<SiteMapView grid={wardGrid("completed")} onCellClick={() => {}} />)
+      expect(chestUrlIn(container)).toBe(chestTileUrl("master", "master", "wardChest", true))
+    })
   })
 
   it("grows the clip into the paving beside it, so a chest is not cut by its own offset", () => {

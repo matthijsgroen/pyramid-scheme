@@ -12,18 +12,21 @@ type ApplyCtx = { progression: ProgressionAPI; inventory: InventoryAPI; journeyI
 export type LeverTiles = { back: string; arm: string; front: string }
 
 /**
- * HOW A REWARD STANDS IN ITS ROOM when it is not the chest: a prop drawn in the chest's place, or a lever whose arm
- * is down once the reward is taken. `stand` is what draws while the painting named first is owed, so the
- * placement can be judged before the art exists; a tile of the first name that gets painted takes over unchanged.
- * `mark` is the mark it wears, matched against the doors it opens.
+ * HOW A REWARD STANDS IN ITS ROOM when it is not the plain chest: a prop drawn in the chest's place, a lever whose
+ * arm is down once the reward is taken, or a chest of its own (`chestChain`: its open drawing once taken, and the
+ * plain chest while it is unpainted — on the map and in the chest's own screen alike). `stand` is what draws while
+ * the painting named first is owed, so the placement can be judged before the art exists; a tile of the first name
+ * that gets painted takes over unchanged. `mark` is the mark it wears, matched against the doors it opens.
  */
 export type RewardArt = { mark?: Mark } & (
-  { kind: "prop"; tile: string; stand: string } | { kind: "lever"; tiles: LeverTiles; stand: LeverTiles }
+  | { kind: "prop"; tile: string; stand: string }
+  | { kind: "lever"; tiles: LeverTiles; stand: LeverTiles }
+  | { kind: "chest"; tile: string }
 )
 
 export type RewardHandler<R extends TreasureReward = TreasureReward> = {
   type: R["type"]
-  /** Drawn in the room in place of the chest, where the reward is not a chest's. Absent: the chest. */
+  /** Drawn in the room in place of the plain chest. Absent: the plain chest. */
   art?: (reward: R) => RewardArt | undefined
   // The state write for a claim that only touches CORE state (progression/inventory). Reward
   // types whose effect needs a mod's own state (e.g. a fragment → hieroglyph's collection) omit this and register

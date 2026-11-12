@@ -51,6 +51,8 @@ import { MapGrowth, MapLife, MapWeather } from "./MapMood"
 import { hashString } from "@/support/hashString"
 import {
   ART_IMAGE_RENDERING,
+  CHEST_TILE,
+  chestTileUrl,
   patronTileUrl,
   tileOrPlaceholder,
   tileSize,
@@ -586,13 +588,17 @@ export const nodeSpritesFor = (
         // A REWARD THAT IS NOT A CHEST'S stands as what it is (`RewardArt`): painted, or the stand-in it names.
         const rewardArt = cell.reward ? getRewardHandler(cell.reward.type)?.art?.(cell.reward) : undefined
         const ownKey = rewardArt?.kind === "prop" ? rewardArt.tile : undefined
+        const taken = cell.state === "completed" && !staysOpen(cell)
         const url =
           rewardArt?.kind === "prop"
             ? (tileUrl(tier, rewardArt.tile) ?? tileOrPlaceholder(tier, rewardArt.stand))
-            : // A tileset that is no rank (the cave) has no chest of its own: someone carried this one in, so
-              // it is the chest of the rank the room was authored at.
-              (tileUrl(tier, "chestProp") ??
-              tileOrPlaceholder(cell.difficulty ?? grid.difficulty ?? "starter", "chestProp"))
+            : // A taken chest stands open; a reward that names a chest of its own (a ward key's) draws that one.
+              chestTileUrl(
+                tier,
+                cell.difficulty ?? grid.difficulty ?? "starter",
+                rewardArt?.kind === "chest" ? rewardArt.tile : CHEST_TILE,
+                taken
+              )
         const leverUrls =
           rewardArt?.kind === "lever"
             ? (["back", "arm", "front"] as const).map(
@@ -609,7 +615,7 @@ export const nodeSpritesFor = (
           mirrored: false,
           // A chest whose family keeps its room open wears no ✓ and is not dimmed: the ✓ and the fade are
           // the pair that say emptied.
-          ...(cell.state === "completed" && !staysOpen(cell) ? { badge: "taken" as const } : {}),
+          ...(taken ? { badge: "taken" as const } : {}),
           ...(rewardArt?.mark ? { mark: rewardArt.mark } : {}),
         }
         if (leverUrls) {

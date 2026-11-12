@@ -1,26 +1,37 @@
 // @vitest-environment jsdom
-import { render } from "@testing-library/react"
-import { describe, expect, it, vi } from "vitest"
+import { act, fireEvent, render, screen } from "@testing-library/react"
+import { afterEach, describe, expect, it, vi } from "vitest"
 import { TreasureComponent } from "./plugin"
 import { EncounterModal } from "@/app/SiteMap/EncounterModal"
+import { registerRewardHandler } from "@/app/SiteMap/rewardHandlerRegistry"
+import { chestTileUrl } from "@/app/SiteMap/tileAssets"
 import type { FamilyContext } from "@/app/families/familyRegistry"
 
-// i18n is never initialized in tests — identity passthrough is enough (the "tap to open" copy is
-// irrelevant to the variant we assert on).
+// i18n is never initialized in tests — identity passthrough is enough.
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }))
 
-// The ornate "vibrant" chest is the only variant that renders the ankh glyph "☥"; wooden/muted don't.
-// So its presence in the DOM is a reliable proxy for "the fancy chest rendered".
-const ANKH = "☥"
+registerRewardHandler({
+  type: "madeUpRelic",
+  art: () => ({ kind: "chest", tile: "wardChest" }),
+  emoji: "",
+  text: () => ({ itemName: "", icon: "" }),
+})
 
-const renderChest = (reward?: { type: string }) => {
-  const ctx = { reward } as unknown as FamilyContext
+// Master, because no chest of its own is painted there: shut, open and the ward key's chest all resolve apart.
+const renderChest = (reward?: { type: string }, onSolved = () => {}) => {
+  const ctx = { reward, difficulty: "master", tileset: "master" } as unknown as FamilyContext
   // TreasureComponent only reads ctx + onSolved; the other family props are unused here.
-  const props = { ctx, onSolved: () => {} } as unknown as Parameters<typeof TreasureComponent>[0]
+  const props = { ctx, onSolved } as unknown as Parameters<typeof TreasureComponent>[0]
   return render(<TreasureComponent {...props} />)
 }
+
+const chestSrc = () => screen.getByRole("button", { name: "chest.tapToOpen" }).querySelector("img")?.getAttribute("src")
+
+afterEach(() => {
+  vi.useRealTimers()
+})
 
 describe("a chest in the encounter frame", () => {
   it("leaves the frame empty, so no bar is drawn behind it, and still asks to be opened", () => {
@@ -37,19 +48,34 @@ describe("a chest in the encounter frame", () => {
   })
 })
 
-describe("treasure chest variant", () => {
-  it("renders the ornate chest when the reward is a ward key (tombKey)", () => {
-    const { baseElement: container } = renderChest({ type: "tombKey" })
-    expect(container.textContent).toContain(ANKH)
+describe("the chest's painting", () => {
+  it("shows the rank's chest shut, then open once tapped, and only then hands over to the reward", () => {
+    vi.useFakeTimers()
+    const onSolved = vi.fn()
+    renderChest({ type: "mosaicPiece" }, onSolved)
+    expect(chestSrc()).toBe(chestTileUrl("master", "master", "chestProp", false))
+
+    fireEvent.click(screen.getByRole("button", { name: "chest.tapToOpen" }))
+    expect(chestSrc()).toBe(chestTileUrl("master", "master", "chestProp", true))
+    expect(onSolved).not.toHaveBeenCalled()
+
+    act(() => vi.runAllTimers())
+    expect(onSolved).toHaveBeenCalledTimes(1)
   })
 
-  it("renders the plain wooden chest for other rewards", () => {
-    const { baseElement: container } = renderChest({ type: "mosaicPiece" })
-    expect(container.textContent).not.toContain(ANKH)
+  it("shows the chest a reward names for itself", () => {
+    renderChest({ type: "madeUpRelic" })
+    expect(chestSrc()).toBe(chestTileUrl("master", "master", "wardChest", false))
   })
 
-  it("renders the plain wooden chest when there is no reward", () => {
-    const { baseElement: container } = renderChest(undefined)
-    expect(container.textContent).not.toContain(ANKH)
+  it("opens once, however often it is tapped", () => {
+    vi.useFakeTimers()
+    const onSolved = vi.fn()
+    renderChest(undefined, onSolved)
+    const button = screen.getByRole("button", { name: "chest.tapToOpen" })
+    fireEvent.click(button)
+    fireEvent.click(button)
+    act(() => vi.runAllTimers())
+    expect(onSolved).toHaveBeenCalledTimes(1)
   })
 })

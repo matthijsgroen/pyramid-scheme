@@ -46,6 +46,9 @@ type Kind =
   | "basin"
   | "sarcophagus"
   | "chestProp"
+  | "chestPropOpen"
+  | "wardChest"
+  | "wardChestOpen"
   | "offeringTable"
   | "jarRack"
   | "brazier"
@@ -92,7 +95,11 @@ const ALL_KINDS: Kind[] = [
   "statue",
   "basin",
   "sarcophagus",
+  // The chest is node art rather than a pool's, and so are its open drawing and the ward key's own chest.
   "chestProp",
+  "chestPropOpen",
+  "wardChest",
+  "wardChestOpen",
   "offeringTable",
   "jarRack",
   "brazier",
@@ -297,6 +304,26 @@ const shapes: Record<Kind, (p: Palette) => string> = {
     <rect x="14" y="${BASE - 18}" width="28" height="18" fill="${p.propDark}"/>
     <rect x="14" y="${BASE - 26}" width="28" height="8" fill="${p.prop}"/>
     <rect x="26" y="${BASE - 20}" width="4" height="8" fill="${p.accent}"/>`,
+  // Open: the lid stands up behind the body and the mouth is dark — the reward is shown on its own.
+  chestPropOpen: p => `
+    <rect x="14" y="${BASE - 40}" width="28" height="14" fill="${p.prop}"/>
+    <rect x="14" y="${BASE - 18}" width="28" height="18" fill="${p.propDark}"/>
+    <rect x="16" y="${BASE - 26}" width="24" height="8" fill="${p.outline}"/>`,
+  // The ward key's chest: the same box, banded in the accent and standing on feet, so it reads as worth more.
+  wardChest: p => `
+    <rect x="16" y="${BASE - 4}" width="4" height="4" fill="${p.accent}"/>
+    <rect x="36" y="${BASE - 4}" width="4" height="4" fill="${p.accent}"/>
+    <rect x="12" y="${BASE - 22}" width="32" height="18" fill="${p.propDark}"/>
+    <rect x="12" y="${BASE - 32}" width="32" height="10" fill="${p.accent}"/>
+    <rect x="12" y="${BASE - 14}" width="32" height="3" fill="${p.accent}"/>
+    <rect x="25" y="${BASE - 26}" width="6" height="10" fill="${p.prop}"/>`,
+  wardChestOpen: p => `
+    <rect x="16" y="${BASE - 4}" width="4" height="4" fill="${p.accent}"/>
+    <rect x="36" y="${BASE - 4}" width="4" height="4" fill="${p.accent}"/>
+    <rect x="12" y="${BASE - 48}" width="32" height="16" fill="${p.accent}"/>
+    <rect x="12" y="${BASE - 22}" width="32" height="18" fill="${p.propDark}"/>
+    <rect x="12" y="${BASE - 14}" width="32" height="3" fill="${p.accent}"/>
+    <rect x="14" y="${BASE - 32}" width="28" height="10" fill="${p.outline}"/>`,
   offeringTable: p => `
     <rect x="8" y="${BASE - 20}" width="40" height="5" fill="${p.prop}"/>
     <rect x="12" y="${BASE - 15}" width="5" height="15" fill="${p.propDark}"/>
