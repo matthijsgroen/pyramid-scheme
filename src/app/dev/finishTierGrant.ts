@@ -8,6 +8,7 @@ import { useInventory } from "@/app/Inventory/useInventory"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useProgression } from "@/app/state/useProgression"
 import { registerDevGrants } from "./devActionContributions"
+import { DEV_TOOLS } from "./devToolsBuild"
 import { finishTier } from "./finishTier"
 import { useMergedTierFinish } from "./tierFinishContributions"
 
@@ -54,4 +55,4 @@ const useFinishTierGrant = () => {
   )
 }
 
-registerDevGrants(useFinishTierGrant)
+if (DEV_TOOLS) registerDevGrants(useFinishTierGrant)

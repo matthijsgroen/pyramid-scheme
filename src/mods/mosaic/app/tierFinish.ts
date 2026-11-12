@@ -1,5 +1,6 @@
 import { useCallback } from "react"
 import { registerTierFinish, type TierFinished } from "@/app/dev/tierFinishContributions"
+import { DEV_TOOLS } from "@/app/dev/devToolsBuild"
 import { useMarkHeard } from "@/app/fez/useMarkHeard"
 import { useProgression } from "@/app/state/useProgression"
 import { isModEnabled } from "@/mods/registeredMods"
@@ -36,4 +37,4 @@ export const useMosaicTierFinish = () => {
   )
 }
 
-if (isModEnabled("mosaic")) registerTierFinish(useMosaicTierFinish)
+if (DEV_TOOLS && isModEnabled("mosaic")) registerTierFinish(useMosaicTierFinish)

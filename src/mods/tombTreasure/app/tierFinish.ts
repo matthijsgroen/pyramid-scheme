@@ -1,5 +1,6 @@
 import { useCallback } from "react"
 import { registerTierFinish, type TierFinished } from "@/app/dev/tierFinishContributions"
+import { DEV_TOOLS } from "@/app/dev/devToolsBuild"
 import { useMarkHeard } from "@/app/fez/useMarkHeard"
 import { isModEnabled } from "@/mods/registeredMods"
 
@@ -14,4 +15,4 @@ export const useTombTreasureTierFinish = () => {
   )
 }
 
-if (isModEnabled("tomb-treasure")) registerTierFinish(useTombTreasureTierFinish)
+if (DEV_TOOLS && isModEnabled("tomb-treasure")) registerTierFinish(useTombTreasureTierFinish)
