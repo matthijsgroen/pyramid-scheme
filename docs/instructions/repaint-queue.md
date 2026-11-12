@@ -138,40 +138,28 @@ nobleman's sealed chest at starter, the cavetto chest at junior.
 
 ### `starter/chestProp` — the merchant's crate, alone
 
-**The chest's screen draws this tile on its own**, so it must read as ONE chest: no reed baskets, no jar.
-Painted over the lone `crate` scaffold, so it keeps the set's oblique top-down camera (the lid's top face
-seen from above). Paint this before `starter/chestPropOpen`, which is an edit of it.
-
-**Prepare:** `yarn render-prop --primitive=crate --floor=#d8c8a8 --out="$HOME/tile-previews/crate-starter.png"`
+**The chest's screen draws this tile on its own**, so it must read as ONE chest: the reed baskets and the jar
+go. An erase, not a repaint: the crate keeps its own pixels and camera. Paint this before
+`starter/chestPropOpen`, which is an edit of it.
 
 **Attach:**
 
-1. `~/tile-previews/crate-starter.png` — the scaffold: shape, silhouette, camera
-2. `art/masters/props/starter/chestProp.webp` — the crate as painted now: its wood, rope and paint only
+1. `art/masters/props/starter/chestProp.webp` — the chest as painted now
 
 ```
-FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+Edit the attached image. Keep its frame, size and camera exactly.
 
-THE FIRST ATTACHED IMAGE IS THE SCAFFOLD: a crate seen from above at an angle. The big pale face at the top is the LID'S TOP, seen from above; the dark face below it is the crate's FRONT; the thin band between is the lid's rim. Keep every edge, every proportion and every silhouette exactly as in the first reference — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. The top face stays as large as it is: that is the camera looking down.
+REMOVE the two stacked reed baskets on the right and the stoppered clay jar on the crate's lid. Where the baskets stood becomes flat #ff00ff magenta background. Where the jar stood, continue the lid's planks so the lid is bare and shut.
 
-THE SECOND ATTACHED IMAGE IS THE CRATE'S PAINT: take its worn timber planks, its rope handle on the front, its colours and its brushwork. Nothing else from it: not its baskets, not its jar, not its camera.
+CHANGE NOTHING ELSE. The wooden crate stays exactly where it is, at its size, with every plank, its rope handle, its corner post and its paint untouched. Do not move it, centre it, redraw it or turn it.
 
-The lid's top is planks running left to right, worn and shut. The rope handle hangs on the front face.
+The dark floor band under the objects becomes magenta too, except the crate's own shadow directly under it, painted #3A342C.
 
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all. No floor band, no ground under the shadow.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, soft brush texture, no outlines. A merchant's storehouse: worn timber and rope, nothing gilded.
-
-BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the crate and its shadow.
+BACKGROUND: flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the crate and its shadow.
 ```
 
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold crate --floor=#d8c8a8
-yarn import-tile art/masters/props/starter/chestProp.webp --tier=starter --name=chestProp --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
+Then, once the return is in `~/Downloads`, Claude imports it: centres the crate in the frame and seats it on
+the crate's own shadow.
 
 ### `starter/chestPropOpen` — the merchant's crate, lid off, empty
 
