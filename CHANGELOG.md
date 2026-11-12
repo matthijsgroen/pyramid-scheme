@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The Sphinx's wall reads as a painted cartouche.
 - Developer tools no longer ship in the released game.
 - Opening a treasure chest shows the painted chest from the map.
+- A taken chest stands open, and a ward key's chest looks like treasure.
 
 ### Fixed
 
