@@ -17,6 +17,7 @@ import { TombTreasureCollectionSection } from "./TombTreasureCollectionSection"
 import { useTombTreasureTab } from "./collectionTab"
 import { mapPieceSchema, tombKeySchema } from "./rewardSchemas"
 import { registerDevGrants } from "@/app/dev/devActionContributions"
+import { DEV_TOOLS } from "@/app/dev/devToolsBuild"
 import { TOMB_PERK_IDS } from "@/data/treasurePerks"
 import { piecesRequiredFor, TOMB_PIECES_REQUIRED } from "../game/piecesRequired"
 
@@ -115,30 +116,31 @@ if (isModEnabled("tomb-treasure")) {
     }
   })
 
-  registerDevGrants(() => {
-    const { addTombKey, collectMapPiece, mapPieceCount, discoverTomb } = useTombTreasureProgress()
-    return useMemo(
-      () => [
-        {
-          // Every ward key, tier unlock and perk at once — including the detectors testing needs.
-          label: "All treasures + keys",
-          grant: () => {
-            for (const perkIds of Object.values(TOMB_PERK_IDS)) for (const id of perkIds) addTombKey(id)
+  if (DEV_TOOLS)
+    registerDevGrants(() => {
+      const { addTombKey, collectMapPiece, mapPieceCount, discoverTomb } = useTombTreasureProgress()
+      return useMemo(
+        () => [
+          {
+            // Every ward key, tier unlock and perk at once — including the detectors testing needs.
+            label: "All treasures + keys",
+            grant: () => {
+              for (const perkIds of Object.values(TOMB_PERK_IDS)) for (const id of perkIds) addTombKey(id)
+            },
           },
-        },
-        {
-          // Tombs open on a map-piece threshold, not a key, so they need their own grant.
-          label: "All map pieces",
-          grant: () => {
-            for (const tombId of Object.keys(TOMB_PERK_IDS)) {
-              const missing = piecesRequiredFor(tombId) - mapPieceCount(tombId)
-              for (let i = 0; i < missing; i++) collectMapPiece(tombId)
-              discoverTomb(tombId)
-            }
+          {
+            // Tombs open on a map-piece threshold, not a key, so they need their own grant.
+            label: "All map pieces",
+            grant: () => {
+              for (const tombId of Object.keys(TOMB_PERK_IDS)) {
+                const missing = piecesRequiredFor(tombId) - mapPieceCount(tombId)
+                for (let i = 0; i < missing; i++) collectMapPiece(tombId)
+                discoverTomb(tombId)
+              }
+            },
           },
-        },
-      ],
-      [addTombKey, collectMapPiece, mapPieceCount, discoverTomb]
-    )
-  })
+        ],
+        [addTombKey, collectMapPiece, mapPieceCount, discoverTomb]
+      )
+    })
 }

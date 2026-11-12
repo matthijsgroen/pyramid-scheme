@@ -97,10 +97,10 @@ describe("the developer block", () => {
     expect(screen.queryByTestId("save-transfer")).toBeNull()
   })
 
-  it("shows the playtesting panel, lock editor button and lab in develop mode", () => {
+  it("shows the playtesting panel, lock editor button and lab in develop mode", async () => {
     const { container } = renderIn(true)
 
-    expect(container.textContent).toContain("Playtesting tools")
+    expect(await screen.findByText(/Playtesting tools/)).toBeTruthy()
     expect(container.textContent).toContain("devLockEditor.open")
     expect(screen.getByTestId("puzzle-lab")).toBeTruthy()
     expect(screen.getByTestId("save-transfer")).toBeTruthy()
@@ -117,7 +117,7 @@ describe("SettingsModal as a dialog", () => {
     expect(onClose).toHaveBeenCalledOnce()
   })
 
-  it("mounts the playtesting tools only while open in develop mode", () => {
+  it("mounts the playtesting tools only while open in develop mode", async () => {
     const withDevelop = (isOpen: boolean, isDevelopMode: boolean) => (
       <DevelopContext.Provider value={{ isDevelopMode, setDevelopMode: () => {} }}>
         <SettingsModal isOpen={isOpen} onClose={() => {}} startGame={() => {}} />
@@ -126,7 +126,7 @@ describe("SettingsModal as a dialog", () => {
     const { rerender } = render(withDevelop(true, false))
     expect(screen.queryByTestId("puzzle-lab")).toBeNull()
     rerender(withDevelop(true, true))
-    expect(screen.getByTestId("puzzle-lab")).toBeTruthy()
+    expect(await screen.findByTestId("puzzle-lab")).toBeTruthy()
     rerender(withDevelop(false, true))
     expect(screen.queryByTestId("puzzle-lab")).toBeNull()
   })

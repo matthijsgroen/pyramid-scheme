@@ -1,5 +1,6 @@
 import { useMemo } from "react"
 import { registerDevJumps } from "@/app/dev/devActionContributions"
+import { DEV_TOOLS } from "@/app/dev/devToolsBuild"
 import { useJourneys } from "@/app/state/useJourneys"
 import { assemblePlayedFloor } from "@/app/SiteMap/useAssembledFloor"
 import { cellAddress, findByAddress, floorOfAddress } from "@/app/SiteMap/cellIdentity"
@@ -65,4 +66,4 @@ const useStoryJumps = () => {
   )
 }
 
-if (isModEnabled("story")) registerDevJumps(useStoryJumps)
+if (DEV_TOOLS && isModEnabled("story")) registerDevJumps(useStoryJumps)
