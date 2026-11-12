@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest"
-import { openSave, sealSave } from "./envelope"
+import { MAX_SAVE_BYTES, openSave, sealSave } from "./envelope"
 
 const json = JSON.stringify({ hello: "pyramid", n: [1, 2, 3] })
 const t = 1_800_000_000_000
@@ -56,5 +56,16 @@ describe("save card envelope", () => {
       ok: false,
       reason: "notASave",
     })
+  })
+
+  it("refuses a save that inflates past the cap", async () => {
+    const sealed = await sealSave("x".repeat(MAX_SAVE_BYTES + 1), t)
+    expect(sealed.length).toBeLessThan(26_000)
+    expect(await openSave(sealed, t)).toEqual({ ok: false, reason: "tampered" })
+  })
+
+  it("opens a save right at the cap", async () => {
+    const big = "x".repeat(MAX_SAVE_BYTES)
+    expect(await openSave(await sealSave(big, t), t)).toMatchObject({ ok: true, json: big })
   })
 })

@@ -1753,6 +1753,7 @@
       "future": "Deze kaart komt uit de toekomst: kijk of de klok op beide apparaten goed staat.",
       "otherEpoch": "Deze kaart komt uit een andere versie van het spel.",
       "newerGame": "Deze kaart komt uit een nieuwere versie: werk eerst het spel bij."
-    }
+    },
+    "writeFailed": "De save kon niet worden opgeslagen; dit apparaat houdt zijn eigen save."
   }
 }

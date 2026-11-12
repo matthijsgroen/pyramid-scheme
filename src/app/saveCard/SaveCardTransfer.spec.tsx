@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { SAVE_EPOCH } from "@/app/saveEpoch"
 import { splitChunks } from "./chunks"
@@ -112,7 +112,18 @@ describe("making a travel card", () => {
     fireEvent.click(await screen.findByRole("button", { name: "saveCard.share" }))
 
     await waitFor(() => expect(share).toHaveBeenCalledTimes(1))
-    expect(screen.queryByRole("status")?.textContent ?? "").toBe("")
+    await act(() => new Promise(resolve => setTimeout(resolve, 0)))
+    expect(screen.getByRole("status").textContent).toBe("")
+  })
+
+  it("says so when sharing fails", async () => {
+    const share = vi.fn().mockRejectedValue(new DOMException("not now", "NotAllowedError"))
+    Object.assign(navigator, { share, canShare: () => true })
+
+    await makeCard()
+    fireEvent.click(await screen.findByRole("button", { name: "saveCard.share" }))
+
+    await waitFor(() => expect(screen.getByRole("status").textContent).toBe("saveCard.shareFailed"))
   })
 })
 
@@ -148,7 +159,7 @@ describe("reading a travel card", () => {
     [
       "a save over 2 MB",
       () => card(JSON.stringify({ ...save, pad: "x".repeat(2_100_000) })),
-      "saveCard.refused.notACard",
+      "saveCard.refused.tampered",
     ],
     [
       "an edited card",
@@ -183,6 +194,17 @@ describe("reading a travel card", () => {
     expect((await screen.findByRole("status")).textContent).toBe(message)
     expect(confirm).toHaveBeenCalledTimes(0)
     expect(mocks.writeGameData).toHaveBeenCalledTimes(0)
+  })
+
+  it("keeps the page when the save cannot be written", async () => {
+    mocks.readCard.mockResolvedValue(await card(JSON.stringify(save)))
+    mocks.writeGameData.mockRejectedValue(new Error("quota"))
+    confirm.mockReturnValue(true)
+
+    await readCardFile()
+
+    await waitFor(() => expect(screen.getByRole("status").textContent).toBe("saveCard.writeFailed"))
+    expect(reload).toHaveBeenCalledTimes(0)
   })
 
   it("names an unreadable image as no card", async () => {

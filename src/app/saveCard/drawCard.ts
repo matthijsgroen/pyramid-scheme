@@ -5,6 +5,7 @@ import { BORDER, cardLayout, QUIET_ZONE, type CardLayout } from "./cardLayout"
 import { encodeChunks, rasterCodes, type RgbaImage } from "./rasterCodes"
 
 const LONG_SIDE = 2_000
+const READ_LONG_SIDE = 3_000
 const FONT = `Limelight, "Pyramid Greek", "Pyramid Cyrillic", serif`
 const INK = "#2b2118"
 const GOLD = "#e0a526"
@@ -187,15 +188,17 @@ export const drawCard = async (chunks: Uint8Array[], validUntil: Date, t: TFunct
   )
 }
 
-/** The pixels of an image file, at its own size. */
+/** The pixels of an image file, scaled down to READ_LONG_SIDE when larger, so a camera photo stays within canvas limits. */
 export const imageFromFile = async (file: Blob): Promise<RgbaImage> => {
   const bitmap = await createImageBitmap(file)
+  const scale = Math.min(1, READ_LONG_SIDE / Math.max(bitmap.width, bitmap.height))
   const canvas = document.createElement("canvas")
-  canvas.width = bitmap.width
-  canvas.height = bitmap.height
+  canvas.width = Math.round(bitmap.width * scale)
+  canvas.height = Math.round(bitmap.height * scale)
   const g = canvas.getContext("2d", { willReadFrequently: true })
   if (!g) throw new Error("No 2D canvas")
-  g.drawImage(bitmap, 0, 0)
+  g.imageSmoothingQuality = "high"
+  g.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
   bitmap.close()
   return g.getImageData(0, 0, canvas.width, canvas.height)
 }

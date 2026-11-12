@@ -1,5 +1,7 @@
 export const VALID_FOR_MS = 15 * 60_000
 export const FUTURE_SKEW_MS = 5 * 60_000
+/** Far above any real save; a card that inflates past it is refused while it inflates. */
+export const MAX_SAVE_BYTES = 2_000_000
 
 export type OpenResult =
   { ok: true; json: string; stampedAt: number } | { ok: false; reason: "notASave" | "tampered" | "expired" | "future" }
@@ -21,15 +23,43 @@ const getKey = async (): Promise<CryptoKey> => {
   return crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["encrypt", "decrypt"])
 }
 
-const pipe = async (bytes: Uint8Array, stream: CompressionStream | DecompressionStream): Promise<Uint8Array> => {
+const deflate = async (bytes: Uint8Array): Promise<Uint8Array> => {
+  const stream = new CompressionStream("deflate-raw")
   const writer = stream.writable.getWriter()
   writer.write(bytes as Uint8Array<ArrayBuffer>).catch(() => undefined)
   writer.close().catch(() => undefined)
   return new Uint8Array(await new Response(stream.readable).arrayBuffer())
 }
 
+const inflate = async (bytes: Uint8Array): Promise<Uint8Array> => {
+  const stream = new DecompressionStream("deflate-raw")
+  const writer = stream.writable.getWriter()
+  writer.write(bytes as Uint8Array<ArrayBuffer>).catch(() => undefined)
+  writer.close().catch(() => undefined)
+  const reader = stream.readable.getReader()
+  const parts: Uint8Array[] = []
+  let length = 0
+  for (;;) {
+    const { done, value } = await reader.read()
+    if (done) break
+    length += value.length
+    if (length > MAX_SAVE_BYTES) {
+      await reader.cancel()
+      throw new Error("Save inflates past the cap")
+    }
+    parts.push(value)
+  }
+  const out = new Uint8Array(length)
+  let offset = 0
+  for (const part of parts) {
+    out.set(part, offset)
+    offset += part.length
+  }
+  return out
+}
+
 export const sealSave = async (json: string, now: number): Promise<Uint8Array> => {
-  const compressed = await pipe(new TextEncoder().encode(json), new CompressionStream("deflate-raw"))
+  const compressed = await deflate(new TextEncoder().encode(json))
 
   const header = new Uint8Array(HEADER_LENGTH)
   header.set(MAGIC, 0)
@@ -80,7 +110,7 @@ export const openSave = async (bytes: Uint8Array, now: number): Promise<OpenResu
         bytes.slice(HEADER_LENGTH) as Uint8Array<ArrayBuffer>
       )
     )
-    json = new TextDecoder().decode(await pipe(compressed, new DecompressionStream("deflate-raw")))
+    json = new TextDecoder().decode(await inflate(compressed))
   } catch {
     return { ok: false, reason: "tampered" }
   }
