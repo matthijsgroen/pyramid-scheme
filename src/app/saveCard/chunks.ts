@@ -21,11 +21,13 @@ export const splitChunks = (payload: Uint8Array, transferId: number): Uint8Array
   })
 }
 
+/** Number of chunks a chunk says its card holds, or undefined when it is not a chunk. */
+export const chunkCount = (chunk: Uint8Array): number | undefined =>
+  chunk.length >= HEADER_LENGTH && chunk[0] === CHUNK_TAG ? chunk[3] & 0x0f : undefined
+
 export const joinChunks = (chunks: Uint8Array[]): Uint8Array | undefined => {
   if (chunks.length === 0) return undefined
-  if (chunks.some(chunk => chunk.length < HEADER_LENGTH || chunk[0] !== CHUNK_TAG)) {
-    return undefined
-  }
+  if (chunks.some(chunk => chunkCount(chunk) === undefined)) return undefined
   const count = chunks[0][3] & 0x0f
   const id = (chunks[0][1] << 8) | chunks[0][2]
   if (chunks.length !== count) return undefined
