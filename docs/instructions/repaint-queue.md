@@ -136,6 +136,40 @@ seen nearly edge-on, which keeps it a narrow band above the chest.
 merchant's best box is still cedar and faience, not gold. It is a new shape, so it has a scaffold: the
 nobleman's sealed chest at starter, the cavetto chest at junior.
 
+### `starter/chestProp` — the merchant's crate, alone
+
+**The chest's screen draws this tile on its own**, so it must read as ONE chest: the reed baskets and the jar
+beside and on the crate go. Paint this before `starter/chestPropOpen`, which is an edit of it.
+
+**Attach:**
+
+1. `art/masters/props/starter/chestProp.webp` — the chest as painted now, to edit
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: two reed baskets and a rope-handled wooden crate stacked together, a stoppered jar on the crate. Keep the CRATE exactly: every edge, every proportion, its rope handle, its paint, the angle it stands at.
+
+THE ONE CHANGE: the crate stands ALONE. Remove both reed baskets and the stoppered jar entirely; where they stood is background. The crate's lid is shut and bare. Move the crate to the middle of the frame, same size.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR'S MATERIAL. Take only its paint quality from it; nothing of that floor appears in the picture.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all. No floor band, no ground under the shadow.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, soft brush texture, no outlines. A merchant's storehouse: worn timber and rope, nothing gilded.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the crate and its shadow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold chest --floor=#d8c8a8
+yarn import-tile art/masters/props/starter/chestProp.webp --tier=starter --name=chestProp --slot=prop \
+  --filter=smooth --seat="$SHADOW"
+```
+
 ### `starter/chestPropOpen` — the merchant's crate, lid off, empty
 
 **Attach:**
@@ -146,9 +180,9 @@ nobleman's sealed chest at starter, the cavetto chest at junior.
 ```
 FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
 
-THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: two reed baskets and a rope-handled wooden crate stacked together, a stoppered jar on the crate. Same objects, same camera, same paint. Keep every edge, every proportion and every silhouette of the baskets and of the crate's body exactly as in the reference image — do not move, resize, straighten, add, remove or restyle them, and do not change the angle they stand at.
+THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: a rope-handled wooden crate standing alone. Same crate, same camera, same paint. Keep every edge, every proportion and every silhouette of the crate's body exactly as in the reference image — do not move, resize, straighten, add or restyle it, and do not change the angle it stands at. Add nothing beside it: no baskets, no jars.
 
-THE ONE CHANGE: the crate is OPEN. Its lid is lifted off and stands upright against the back of the crate, seen almost edge-on, a narrow plank band rising above the crate's back edge. The jar that stood on the lid is gone. The crate's mouth is an EMPTY dark interior, #3a2e20 at its deepest, with the inside of the near wall catching a little light. Nothing inside: no gold, no glow, nothing spilling out.
+THE ONE CHANGE: the crate is OPEN. Its lid is lifted off and stands upright against the back of the crate, seen almost edge-on, a narrow plank band rising above the crate's back edge. The crate's mouth is an EMPTY dark interior, #3a2e20 at its deepest, with the inside of the near wall catching a little light. Nothing inside: no gold, no glow, nothing spilling out.
 
 THE SECOND ATTACHED IMAGE IS THE FLOOR'S MATERIAL. Take only its paint quality from it; nothing of that floor appears in the picture.
 
