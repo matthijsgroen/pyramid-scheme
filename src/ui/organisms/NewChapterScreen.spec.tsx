@@ -1,11 +1,19 @@
 // @vitest-environment jsdom
-import { afterEach, describe, expect, it, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { cleanup, fireEvent, render, screen } from "@testing-library/react"
 
 import type { NewChapterScreenProps } from "./NewChapterScreen"
+import { listenForPageLayers } from "@/app/input/pageLayers"
 import { NewChapterScreen } from "./NewChapterScreen"
 
 afterEach(cleanup)
+
+// Dialogs are input layers: Escape reaches them through the app's input stack.
+let stopListening = () => {}
+beforeEach(() => {
+  stopListening = listenForPageLayers()
+})
+afterEach(() => stopListening())
 
 const props: NewChapterScreenProps = {
   title: "A new pyramid",

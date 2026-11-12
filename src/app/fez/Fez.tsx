@@ -1,6 +1,7 @@
 import clsx from "clsx"
 import { useEffect, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
+import { useInputLayer } from "@/app/input/useInputLayer"
 import { spokenLines, type Speaker } from "./arrivalConversation"
 import { Portrait } from "./Portrait"
 import { portraitFor } from "./portraits"
@@ -103,12 +104,21 @@ export const Fez: FC<{
     }
   }, [messages.length, onComplete, showMessage, visible, messageIndex])
 
-  const onNextMessage = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation()
+  const nextMessage = () => {
     if (showMessage && visible) {
       setShowMessage(false)
     }
   }
+  const onNextMessage = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+    nextMessage()
+  }
+  // Over everything while it plays: confirm is the tap that moves it on, and back does not skip it.
+  useInputLayer(({ action, released, repeat }) => {
+    if (released || action.kind !== "confirm") return false
+    if (!repeat) nextMessage()
+    return true
+  }, !unmet)
 
   // Clamped, because the portrait slides in BEFORE the first line is showing (messageIndex 0) and an
   // out-of-range read there fell back to Fez: he appeared with an empty bubble, then vanished as the

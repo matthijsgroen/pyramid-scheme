@@ -4,7 +4,7 @@ Aanleiding: twee playtesters willen de ontdekkingsreiziger met de pijltjestoetse
 dekt toetsenbord en game controller (Gamepad API) voor drie gebieden: de kaart, menu's en schermen, puzzels.
 Touch blijft leidend en verandert nergens: elke toets doet wat een tik al doet, via dezelfde code.
 
-Status: slice 1 gebouwd, cursor-look besloten, de rest is plan. Visuele stappen hebben eerst een spike + goedgekeurd plaatje nodig (gemarkeerd met **spike**).
+Status: slice 1 en 2 gebouwd, cursor-look besloten, de rest is plan. Visuele stappen hebben eerst een spike + goedgekeurd plaatje nodig (gemarkeerd met **spike**).
 
 ---
 

@@ -1,24 +1,35 @@
 import type { KeyboardEvent } from "react"
 
-const FOCUSABLE =
+export const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
-// A stable ref callback for a dialog (give it tabIndex -1): focus moves in once, when it mounts, so the keys
-// reach it, and returns to whatever opened it when it unmounts.
+/** Announced on `document` with the element as detail; the app's input layers listen (src/app/input). */
+export const INPUT_LAYER_OPENED = "inputlayer:opened"
+export const INPUT_LAYER_CLOSED = "inputlayer:closed"
+
+const announce = (type: string, el: HTMLElement) => {
+  document.dispatchEvent(new CustomEvent(type, { detail: el }))
+}
+
+// A stable ref callback: the element is the top input layer while it is mounted, so it gets the keys and the
+// pad. Its control marked `data-input-back` is what `back` (Escape) presses.
+export const layerOnMount = (el: HTMLElement | null) => {
+  if (!el) return
+  announce(INPUT_LAYER_OPENED, el)
+  return () => announce(INPUT_LAYER_CLOSED, el)
+}
+
+// A stable ref callback for a dialog (give it tabIndex -1): it becomes the top input layer, and focus moves in
+// once, when it mounts, and returns to whatever opened it when it unmounts.
 export const focusOnMount = (el: HTMLElement | null) => {
   if (!el) return
   const opener = document.activeElement
+  const closeLayer = layerOnMount(el)
   el.focus()
   return () => {
+    closeLayer?.()
     if (opener instanceof HTMLElement && opener.isConnected) opener.focus()
   }
-}
-
-// Escape closes only the dialog it was pressed in: one nested inside (a confirmation) closes itself first.
-export const closeOnEscape = (close: () => void) => (event: KeyboardEvent<HTMLElement>) => {
-  if (event.key !== "Escape") return
-  if ((event.target as Element).closest('[role="dialog"]') !== event.currentTarget) return
-  close()
 }
 
 // Tab walks the dialog's own controls and wraps, so focus never lands on the page behind it.

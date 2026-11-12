@@ -1,6 +1,7 @@
 import type { FC, ReactNode } from "react"
 import type { Tileset } from "@/game/siteTypes"
 import { imageMap, WALL_SIZE } from "@/ui/atoms/tombImageMap"
+import { layerOnMount } from "@/ui/atoms/dialogFocus"
 
 // The frame every encounter (puzzle, trap, shop, gate, chest) is presented in. Scrolls
 // vertically so a family can put its rules below the board while the board itself stays within
@@ -43,7 +44,10 @@ export const EncounterModal: FC<{ children: ReactNode; tileset?: Tileset }> = ({
   const wall = tileset ? imageMap[tileset] : undefined
   const art = wall?.image
   return (
-    <div className="fixed inset-0 z-20 flex justify-center overflow-x-hidden overflow-y-auto bg-black/80 p-safe-edge has-[[data-encounter-content]:empty]:hidden">
+    <div
+      ref={layerOnMount}
+      className="fixed inset-0 z-20 flex justify-center overflow-x-hidden overflow-y-auto bg-black/80 p-safe-edge has-[[data-encounter-content]:empty]:hidden"
+    >
       <div
         className="relative m-auto flex w-full max-w-md flex-col items-center gap-4 overflow-hidden rounded-lg border border-amber-900 bg-stone-900 p-3"
         style={

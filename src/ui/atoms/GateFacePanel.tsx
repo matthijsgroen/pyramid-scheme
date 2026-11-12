@@ -115,7 +115,7 @@ export const GateFacePanel: FC<GateFacePanelProps> = ({
         {children}
       </div>
     )}
-    <button onClick={onTurnAround} className="text-sm text-stone-400 hover:text-stone-200">
+    <button data-input-back onClick={onTurnAround} className="text-sm text-stone-400 hover:text-stone-200">
       {turnAroundLabel}
     </button>
   </div>

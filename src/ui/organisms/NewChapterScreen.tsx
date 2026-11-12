@@ -1,5 +1,5 @@
-import type { FC, KeyboardEvent } from "react"
-import { closeOnEscape, focusOnMount, trapTab } from "@/ui/atoms/dialogFocus"
+import type { FC } from "react"
+import { focusOnMount, trapTab } from "@/ui/atoms/dialogFocus"
 
 export type NewChapterScreenProps = {
   title: string
@@ -26,11 +26,6 @@ export const NewChapterScreen: FC<NewChapterScreenProps> = ({
   closeLabel,
   onClose,
 }) => {
-  const escape = closeOnEscape(onClose)
-  const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    escape(event)
-    trapTab(event)
-  }
   return (
     <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/40 lg:items-center">
       <section
@@ -39,7 +34,7 @@ export const NewChapterScreen: FC<NewChapterScreenProps> = ({
         aria-modal="true"
         aria-labelledby="new-chapter-title"
         tabIndex={-1}
-        onKeyDown={onKeyDown}
+        onKeyDown={trapTab}
         className="flex w-full max-w-lg flex-col gap-3 rounded-t-[20px] bg-camp-paper px-4 pt-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-camp-ink outline-none lg:rounded-[20px] lg:border-2 lg:border-camp-ink lg:p-8"
       >
         <div className="text-xs font-extrabold tracking-widest text-camp-label uppercase">{subtitle}</div>
@@ -64,6 +59,7 @@ export const NewChapterScreen: FC<NewChapterScreenProps> = ({
         )}
         <button
           type="button"
+          data-input-back
           onClick={onClose}
           className="h-11 rounded-xl border-2 border-camp-ink bg-camp-card text-[15px] font-extrabold"
         >

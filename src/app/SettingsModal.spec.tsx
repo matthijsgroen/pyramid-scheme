@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { render, cleanup, fireEvent, screen } from "@testing-library/react"
-import { describe, expect, it, vi, afterEach } from "vitest"
+import { describe, expect, it, vi, afterEach, beforeEach } from "vitest"
+import { listenForPageLayers } from "@/app/input/pageLayers"
 
 // `language` stands in for i18n's own current language, so a test can move it the way
 // changeLanguage would and then re-render — which is what react-i18next does for real.
@@ -35,6 +36,13 @@ vi.mock("@/app/state/useJourneys", async importOriginal => ({
 
 const { SettingsModal } = await import("./SettingsModal")
 const { DevelopContext } = await import("@/contexts/DevelopMode")
+
+// Dialogs are input layers: Escape reaches them through the app's input stack.
+let stopListening = () => {}
+beforeEach(() => {
+  stopListening = listenForPageLayers()
+})
+afterEach(() => stopListening())
 
 const selectIn = (container: HTMLElement) => container.querySelector<HTMLSelectElement>("#language-select")!
 

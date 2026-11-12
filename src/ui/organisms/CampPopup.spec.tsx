@@ -1,10 +1,19 @@
 // @vitest-environment jsdom
-import { afterEach, describe, expect, it, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { cleanup, fireEvent, render, screen } from "@testing-library/react"
 
+import { listenForPageLayers } from "@/app/input/pageLayers"
+import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { CampPopup } from "./CampPopup"
 
 afterEach(cleanup)
+
+// Dialogs are input layers: Escape reaches them through the app's input stack.
+let stopListening = () => {}
+beforeEach(() => {
+  stopListening = listenForPageLayers()
+})
+afterEach(() => stopListening())
 
 describe("CampPopup", () => {
   it("is a dialog labelled by its title", () => {
@@ -31,16 +40,24 @@ describe("CampPopup", () => {
 })
 
 describe("CampPopup dialog behaviour", () => {
-  it("ignores an Escape pressed inside a dialog nested in it", () => {
+  it("leaves Escape to a confirmation open inside it, which is the dialog on top", () => {
     const onClose = vi.fn()
+    const onCancel = vi.fn()
     render(
       <CampPopup title="Journeys" closeLabel="Close" onClose={onClose}>
-        <div role="dialog" aria-label="Confirm">
-          <button>Yes</button>
-        </div>
+        <ConfirmModal
+          isOpen
+          title="Sure?"
+          message="Made-up question"
+          confirmText="Yes"
+          cancelText="No"
+          onConfirm={() => {}}
+          onCancel={onCancel}
+        />
       </CampPopup>
     )
     fireEvent.keyDown(screen.getByText("Yes"), { key: "Escape" })
+    expect(onCancel).toHaveBeenCalledOnce()
     expect(onClose).not.toHaveBeenCalled()
   })
 

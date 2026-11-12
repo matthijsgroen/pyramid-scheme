@@ -145,3 +145,32 @@ describe("a face over the pose", () => {
     expect(drawn("calm").face).toBeNull()
   })
 })
+
+describe("a conversation by key", () => {
+  const play = () => {
+    vi.useFakeTimers()
+    render(<Fez conversation="arrival.starter_1" onComplete={() => {}} />)
+    for (let i = 0; i < 20; i++) act(() => void vi.advanceTimersByTime(100))
+  }
+  const settle = () => {
+    for (let i = 0; i < 20; i++) act(() => void vi.advanceTimersByTime(100))
+    vi.useRealTimers()
+  }
+  const speaker = () => screen.getByRole("img").getAttribute("alt")
+
+  it("moves on a line with Enter, the way a tap does", () => {
+    play()
+    const first = speaker()
+    fireEvent.keyDown(window, { code: "Enter" })
+    settle()
+    expect(speaker()).not.toBe(first)
+  })
+
+  it("is never skipped with Escape", () => {
+    play()
+    const first = speaker()
+    fireEvent.keyDown(window, { code: "Escape" })
+    settle()
+    expect(speaker()).toBe(first)
+  })
+})
