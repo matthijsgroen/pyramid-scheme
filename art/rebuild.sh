@@ -871,6 +871,18 @@ scaffold sealedChest --contents=cavetto --spin=-27 --colour=#3a2a20 --floor=#e2a
 yarn import-tile art/masters/props/junior/wardChest.webp --tier=junior --name=wardChest --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
+# The same chest open, untrimmed like starter's: the shut trim scaled it 1.0244 and moved it -42,+251 px
+# (-11,+67 at the render's scale). The mask is the shut silhouette plus the top 340 rows for the lid.
+OPEN=$(mktemp -t chestopen).png
+magick -size 1686x2528 xc:"#ff00ff" \( art/masters/props/junior/wardChestOpen.webp -resize 1686x2528! -resize 102.44% \) \
+  -geometry -42+251 -composite "$OPEN"
+magick -size 448x672 xc:none \( "$OBJ" -resize 102.44% \) -geometry -11+67 -composite \
+  \( -size 448x340 xc:white \) -geometry +0+0 -composite "$OBJ"
+magick -size 448x672 xc:none \( "$SHADOW" -resize 102.44% \) -geometry -11+67 -composite "$SHADOW"
+yarn import-tile "$OPEN" --tier=junior --name=wardChestOpen --slot=prop --filter=smooth --mask="$OBJ" --seat="$SHADOW" \
+  --no-trim
+rm -f "$OPEN"
+
 scaffold falseDoor --spin=6
 yarn import-tile art/masters/props/junior/shrine.webp --tier=junior --name=shrine --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
