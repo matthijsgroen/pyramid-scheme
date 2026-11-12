@@ -136,31 +136,6 @@ seen nearly edge-on, which keeps it a narrow band above the chest.
 merchant's best box is still cedar and faience, not gold. It is a new shape, so it has a scaffold: the
 nobleman's sealed chest at starter, the cavetto chest at junior.
 
-### `starter/chestProp` — the merchant's crate, alone
-
-**The chest's screen draws this tile on its own**, so it must read as ONE chest: the reed baskets and the jar
-go. An erase, not a repaint: the crate keeps its own pixels and camera. Paint this before
-`starter/chestPropOpen`, which is an edit of it.
-
-**Attach:**
-
-1. `art/masters/props/starter/chestProp.webp` — the chest as painted now
-
-```
-Edit the attached image. Keep its frame, size and camera exactly.
-
-REMOVE the two stacked reed baskets on the right and the stoppered clay jar on the crate's lid. Where the baskets stood becomes flat #ff00ff magenta background. Where the jar stood, continue the lid's planks so the lid is bare and shut.
-
-CHANGE NOTHING ELSE. The wooden crate stays exactly where it is, at its size, with every plank, its rope handle, its corner post and its paint untouched. Do not move it, centre it, redraw it or turn it.
-
-The dark floor band under the objects becomes magenta too, except the crate's own shadow directly under it, painted #3A342C.
-
-BACKGROUND: flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the crate and its shadow.
-```
-
-Then, once the return is in `~/Downloads`, Claude imports it: centres the crate in the frame and seats it on
-the crate's own shadow.
-
 ### `starter/chestPropOpen` — the merchant's crate, lid off, empty
 
 **Attach:**

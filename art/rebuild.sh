@@ -94,11 +94,13 @@ scaffold shelf --colour=#9a6a3c --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/shelf.webp --tier=starter --name=shelf --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
-# No --saturation: masking away this repaint's invented floor leaves only wood and reed, which are
-# already the warmest things in the rank. 1.3 put it at +38 against a target band of +22 to +25.
+# The crate alone: the chest screen draws this tile by itself, so the baskets and jar were erased from the
+# first master and the crate moved to the frame's middle (+303 px). Its seat is the `chest` scaffold's
+# shadow cut to the crate's part (x < 285) and moved the same distance at the render's scale (+80 px).
 scaffold chest --floor=#d8c8a8
+magick -size 448x672 xc:none \( "$SHADOW" -crop 285x672+0+0 +repage \) -geometry +80+0 -composite "$SHADOW"
 yarn import-tile art/masters/props/starter/chestProp.webp --tier=starter --name=chestProp --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+  --filter=smooth --seat="$SHADOW" --scale=0.6
 
 # --depth=0.65 must match what the master was painted over: a circular dish gives a top face so large
 # under this shear that the thing reads as a round table.
