@@ -118,6 +118,19 @@ scaffold sealedChest --spin=-27 --colour=#3a2a20 --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/wardChest.webp --tier=starter --name=wardChest --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
+# The same chest open, an edit of the shut master, imported untrimmed so it lands where the shut import put
+# it: the shut trim scaled it 1.0484 and moved it -83,+205 px (-22,+55 at the render's scale). The mask is
+# the shut silhouette plus the frame's top 300 rows for the raised lid; it cuts away the painted shadow.
+OPEN=$(mktemp -t chestopen).png
+magick -size 1686x2528 xc:"#ff00ff" \( art/masters/props/starter/wardChestOpen.webp -resize 1686x2528! -resize 104.84% \) \
+  -geometry -83+205 -composite "$OPEN"
+magick -size 448x672 xc:none \( "$OBJ" -resize 104.84% \) -geometry -22+55 -composite \
+  \( -size 448x300 xc:white \) -geometry +0+0 -composite "$OBJ"
+magick -size 448x672 xc:none \( "$SHADOW" -resize 104.84% \) -geometry -22+55 -composite "$SHADOW"
+yarn import-tile "$OPEN" --tier=starter --name=wardChestOpen --slot=prop --filter=smooth --mask="$OBJ" --seat="$SHADOW" \
+  --no-trim
+rm -f "$OPEN"
+
 # --depth=0.65 must match what the master was painted over: a circular dish gives a top face so large
 # under this shear that the thing reads as a round table.
 scaffold brazier --depth=0.65 --colour=#9a6a3c --floor=#d8c8a8

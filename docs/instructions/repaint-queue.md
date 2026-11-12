@@ -136,39 +136,6 @@ seen nearly edge-on, which keeps it a narrow band above the chest.
 wood, the richest thing on the floor, still matte like the rest of the set. It is a new shape, so it has a scaffold: the
 nobleman's sealed chest at starter, the cavetto chest at junior.
 
-### `starter/wardChestOpen` — the merchant's best box, seal broken, empty
-
-Paint `starter/wardChest` first: this is an edit of its master.
-
-**Attach:**
-
-1. `art/masters/props/starter/wardChest.webp` — the chest itself, to edit: shape, silhouette, camera
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
-
-THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: a gold-bound ebony treasure chest on four short feet, a faience panel with a gold scarab on its front, a gold cord with a red wax seal over it. Same object, same camera, same paint. Keep every edge, every proportion and every silhouette of the body, the band and the feet exactly as in the reference image — do not move, resize, straighten, add, remove or restyle them, and do not change the angle it stands at.
-
-THE ONE CHANGE: the chest is OPEN. The cord is cut and hangs loose down the front, the wax seal broken in two. The lid is raised on its back hinge and stands open behind the body, its gold edging toward us. The chest's mouth is an EMPTY dark interior, #3a2e20 at its deepest, the inside of the near wall catching a little light. Nothing inside: no gold, no glow, nothing spilling out.
-
-THE SECOND ATTACHED IMAGE IS THE FLOOR'S MATERIAL. Take only its paint quality from it; nothing of that floor appears in the picture.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, soft brush texture, no outlines.
-
-BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the chest, its lid and its shadow.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold sealedChest --spin=-27 --colour=#3a2a20 --floor=#d8c8a8
-yarn import-tile art/masters/props/starter/wardChestOpen.webp --tier=starter --name=wardChestOpen --slot=prop \
-  --filter=smooth --seat="$SHADOW"
-```
-
 ### `junior/wardChest` — the nobleman's coffer, cavetto lid, copper bound
 
 **Attach:**
