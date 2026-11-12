@@ -267,7 +267,7 @@ const forgetting = (j: StoredJourneyStateV3, levelNr: number) => {
 
 // Module constants, not inline literals: a fresh literal on every render makes every consumer of
 // useOfflineStorage look like a different default to anything comparing by identity.
-const INITIAL_STORAGE_VERSIONS = { journeys: 3, inventory: 1, answers: 1 }
+export const INITIAL_STORAGE_VERSIONS = { journeys: 3, inventory: 1, answers: 1 }
 const NO_JOURNEYS: StoredJourneyStateV3[] = []
 
 const freshJourney = (journeyId: string): StoredJourneyStateV3 => ({

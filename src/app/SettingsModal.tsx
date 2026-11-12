@@ -8,6 +8,7 @@ import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { closeOnEscape, focusOnMount, trapTab } from "@/ui/atoms/dialogFocus"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DevTools } from "@/app/dev/devToolsBuild"
+import { SaveCardTransfer } from "@/app/saveCard/SaveCardTransfer"
 
 type SettingsModalProps = {
   isOpen: boolean
@@ -19,6 +20,7 @@ type SettingsModalProps = {
 export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, startGame }) => {
   const { t, i18n } = useTranslation("common")
   const [showClearConfirm, setShowClearConfirm] = useState(false)
+  const [showSaveCard, setShowSaveCard] = useState(false)
   const [tutorialsEnabled, setTutorialsEnabled] = useGameStorage<boolean>("tutorialsEnabled", true)
   const { isDevelopMode } = use(DevelopContext)
   const handleClearGameData = async () => {
@@ -99,6 +101,18 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, startGa
               className="size-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
           </label>
+
+          {/* Move the save to another device */}
+          <div className="space-y-2">
+            <button
+              onClick={() => setShowSaveCard(open => !open)}
+              aria-expanded={showSaveCard}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 font-medium text-gray-800 transition-colors hover:bg-gray-50"
+            >
+              {t("saveCard.title")}
+            </button>
+            {showSaveCard && <SaveCardTransfer />}
+          </div>
 
           {/* Clear game data */}
           <div>

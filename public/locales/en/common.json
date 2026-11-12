@@ -1728,5 +1728,33 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Drawing rewrites the text: every comment moves to the top"
+  },
+  "saveCard": {
+    "title": "Travel card",
+    "explain": "Take your expedition to another device: make a card here and read it there within 15 minutes.",
+    "make": "Make travel card",
+    "share": "Share card",
+    "download": "Download card",
+    "read": "Read travel card",
+    "busy": "One moment…",
+    "makeFailed": "The card could not be made.",
+    "shareFailed": "Sharing did not work; download the card instead.",
+    "confirm_one": "Replace the expedition on this device with the one on the card ({{count}} journey)?",
+    "confirm_other": "Replace the expedition on this device with the one on the card ({{count}} journeys)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Travel card · take your expedition along",
+    "validUntil": "valid until {{time}}",
+    "codes_one": "{{count}} code",
+    "codes_other": "{{count}} codes",
+    "refused": {
+      "notACard": "This is not a travel card.",
+      "tampered": "This card has been changed and can no longer be read.",
+      "expired": "This card has expired; make a new one.",
+      "future": "This card comes from the future: check the clock on both devices.",
+      "otherEpoch": "This card is from another version of the game.",
+      "newerGame": "This card comes from a newer version: update the game first."
+    },
+    "writeFailed": "The save could not be written; this device kept its own.",
+    "writeLost": "The save could not be replaced and this device's save may be incomplete."
   }
 }

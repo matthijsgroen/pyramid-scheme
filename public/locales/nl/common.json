@@ -1728,5 +1728,33 @@
       "place": "{{letter}}, {{kinds}}"
     },
     "rewrites": "Tekenen herschrijft de tekst: elk commentaar gaat naar boven"
+  },
+  "saveCard": {
+    "title": "Reiskaart",
+    "explain": "Neem je expeditie mee naar een ander apparaat: maak hier een kaart en lees hem daar binnen 15 minuten in.",
+    "make": "Maak reiskaart",
+    "share": "Deel kaart",
+    "download": "Download kaart",
+    "read": "Lees reiskaart",
+    "busy": "Even geduld…",
+    "makeFailed": "De kaart kon niet gemaakt worden.",
+    "shareFailed": "Delen lukte niet; download de kaart.",
+    "confirm_one": "De expeditie op dit apparaat vervangen door die op de kaart ({{count}} reis)?",
+    "confirm_other": "De expeditie op dit apparaat vervangen door die op de kaart ({{count}} reizen)?",
+    "cardTitle": "Pyramid Scheme",
+    "subtitle": "Reiskaart · neem je expeditie mee",
+    "validUntil": "geldig tot {{time}}",
+    "codes_one": "{{count}} code",
+    "codes_other": "{{count}} codes",
+    "refused": {
+      "notACard": "Dit is geen reiskaart.",
+      "tampered": "Deze kaart is aangepast en niet meer te lezen.",
+      "expired": "Deze kaart is verlopen; maak een nieuwe.",
+      "future": "Deze kaart komt uit de toekomst: kijk of de klok op beide apparaten goed staat.",
+      "otherEpoch": "Deze kaart komt uit een andere versie van het spel.",
+      "newerGame": "Deze kaart komt uit een nieuwere versie: werk eerst het spel bij."
+    },
+    "writeFailed": "De save kon niet worden opgeslagen; dit apparaat houdt zijn eigen save.",
+    "writeLost": "De save kon niet vervangen worden; de save op dit apparaat is mogelijk onvolledig."
   }
 }

@@ -1,0 +1,60 @@
+export type Rect = { x: number; y: number; w: number; h: number }
+
+/** Card geometry in QR modules; writer and reader share it, so no geometry travels in the image. */
+export type CardLayout = {
+  W: number
+  H: number
+  /** Top-left of each code's quiet zone. */
+  cells: { x: number; y: number }[]
+  /** Modules per side of one code. */
+  size: number
+  header: Rect
+  footer: Rect
+}
+
+export const QUIET_ZONE = 4
+/** Codes on one card; a chunk header's count nibble holds it. */
+export const MAX_CODES = 9
+/** jsqr-es6 never reads version 23 at level L. */
+export const UNREADABLE_VERSION = 23
+export const BORDER = 7
+const HEADER_SHARE = 0.24
+const FOOTER_SHARE = 0.09
+
+const qrSize = (version: number) => 17 + 4 * version
+
+/**
+ * Portrait card: codes in a grid of at most ceil(√n) columns, as many as keep the card taller than
+ * wide, with the last row centred, a header band above and a footer band below, all inside a border.
+ * Header and footer scale with the grid width.
+ */
+export const cardLayout = (n: number, version: number): CardLayout => {
+  const size = qrSize(version)
+  const cell = size + 2 * QUIET_ZONE
+  const shape = (cols: number) => {
+    const rows = Math.ceil(n / cols)
+    const gridW = cols * cell
+    const headerH = Math.round(gridW * HEADER_SHARE)
+    const footerH = Math.round(gridW * FOOTER_SHARE)
+    return { cols, rows, gridW, gridH: rows * cell, headerH, footerH }
+  }
+  let grid = shape(Math.ceil(Math.sqrt(n)))
+  while (grid.cols > 1 && grid.gridW > grid.gridH + grid.headerH + grid.footerH) grid = shape(grid.cols - 1)
+  const { cols, rows, gridW, gridH, headerH, footerH } = grid
+  const cells = Array.from({ length: n }, (_, i) => {
+    const col = i % cols
+    const row = Math.floor(i / cols)
+    const inRow = row === rows - 1 ? n - cols * (rows - 1) : cols
+    // whole modules, so a card drawn at an integer px/module keeps every module on the pixel grid
+    const offset = Math.floor(((cols - inRow) * cell) / 2)
+    return { x: BORDER + offset + col * cell, y: BORDER + headerH + row * cell }
+  })
+  return {
+    W: gridW + 2 * BORDER,
+    H: gridH + headerH + footerH + 2 * BORDER,
+    cells,
+    size,
+    header: { x: BORDER, y: BORDER, w: gridW, h: headerH },
+    footer: { x: BORDER, y: BORDER + headerH + gridH, w: gridW, h: footerH },
+  }
+}
