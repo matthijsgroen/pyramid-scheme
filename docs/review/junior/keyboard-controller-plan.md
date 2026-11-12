@@ -4,7 +4,7 @@ Aanleiding: twee playtesters willen de ontdekkingsreiziger met de pijltjestoetse
 dekt toetsenbord en game controller (Gamepad API) voor drie gebieden: de kaart, menu's en schermen, puzzels.
 Touch blijft leidend en verandert nergens: elke toets doet wat een tik al doet, via dezelfde code.
 
-Status: slice 1 gebouwd, de rest is plan. Visuele stappen hebben eerst een spike + goedgekeurd plaatje nodig (gemarkeerd met **spike**).
+Status: slice 1 gebouwd, cursor-look besloten, de rest is plan. Visuele stappen hebben eerst een spike + goedgekeurd plaatje nodig (gemarkeerd met **spike**).
 
 ---
 
@@ -102,8 +102,9 @@ toetsaanslag dan niet. Dat dekt `NumberLock`, `InputBlock`, tableau-invoer zonde
 - Een `data-input="touch|keys|pad"` op `<html>`, gezet door de laatst gebruikte bron (pointerdown → touch).
   **Focusringen en cursors tekenen alleen bij keys/pad.** Touch ziet dus niets nieuws — dat is de garantie dat touch
   ongewijzigd blijft.
-- Eén focusring-token in `src/ui/tokens`/`principles` (kleur, dikte, offset), gebruikt door elke knop en elke
-  bordcursor. **spike**: hoe de ring eruitziet op steen/amber (kamp, menu, bord) en of de bordcursor dezelfde ring is.
+- **Besloten (spike `spike/board-cursor`, story Mods/Spikes/Board cursor):** knoppen krijgen een zachte amber gloed
+  met hoekhaken (variant B); de bordcursor is een opgetilde cel: iets groter, lichter, met schaduw en dunne rand
+  (variant C). Kleur uit de `ember`-ramp (`--color-ember-400`, "glow, focus" in `docs/design/camp-palette.md`).
 - Toetsglyphs op knoppen (⏎ / Ⓐ naast de prompt, Z / Ⓧ op undo) alleen bij keys/pad. **spike** + designerkeuze (V6).
 
 ### 2.5 Waar het woont (core blijft mod-agnostisch)
