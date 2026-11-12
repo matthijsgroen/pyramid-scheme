@@ -113,6 +113,11 @@ magick -size 448x672 xc:none \( "$SHADOW" \) -geometry +0+154 -composite "$SHADO
 yarn import-tile "$OPEN" --tier=starter --name=chestPropOpen --slot=prop --filter=smooth --seat="$SHADOW" --no-trim
 rm -f "$OPEN"
 
+# The ward-key chest: the same sealed chest as junior's, gold leaf and faience over ebony.
+scaffold sealedChest --spin=-27 --colour=#3a2a20 --floor=#d8c8a8
+yarn import-tile art/masters/props/starter/wardChest.webp --tier=starter --name=wardChest --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
 # --depth=0.65 must match what the master was painted over: a circular dish gives a top face so large
 # under this shear that the thing reads as a round table.
 scaffold brazier --depth=0.65 --colour=#9a6a3c --floor=#d8c8a8

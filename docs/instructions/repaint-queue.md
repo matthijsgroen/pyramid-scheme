@@ -136,37 +136,6 @@ seen nearly edge-on, which keeps it a narrow band above the chest.
 wood, the richest thing on the floor, still matte like the rest of the set. It is a new shape, so it has a scaffold: the
 nobleman's sealed chest at starter, the cavetto chest at junior.
 
-### `starter/wardChest` — the merchant's best box, sealed
-
-**Attach:**
-
-1. `~/tile-previews/wardChest-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a TREASURE CHEST on four short feet, the most precious thing in the merchant's storehouse — one look should say an epic treasure is inside. The band round its top is where the LID meets the body. The strap over the lid and down its front is a CORD, and the round lump on it is a SEAL.
-
-Dark ebony, #3a2a20, framed in GOLD LEAF: gold bands along every edge of the lid and the body, gold corner plates, gold feet, #d9a93f. The front of the body carries an inlaid panel of TURQUOISE FAIENCE, #3f9a8c, with a gold scarab spreading its wings across it. The lid band is gold set with a row of small faience and carnelian (#a8432c) studs. The cord is braided gold thread; the seal is red wax, #8e2a22, stamped with an ankh.
-
-Gold here is a flat warm colour, not a metal: no highlights, no reflections, no shine, no sparkle.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. A merchant's storehouse: limestone and whitewashed mudbrick, red ochre and terracotta. A treasure among them: gold leaf and turquoise faience.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold sealedChest --spin=-27 --colour=#3a2a20 --floor=#d8c8a8
-yarn import-tile art/masters/props/starter/wardChest.webp --tier=starter --name=wardChest --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
 ### `starter/wardChestOpen` — the merchant's best box, seal broken, empty
 
 Paint `starter/wardChest` first: this is an edit of its master.
