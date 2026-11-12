@@ -1,4 +1,4 @@
-import { use, useCallback, useEffect, useMemo, useState } from "react"
+import { Suspense, use, useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import "@/mods/registerModApps"
 import { AllJourneys } from "@/app/pages/AllJourneysPage"
@@ -11,7 +11,7 @@ import { useAvailableJourneyIds } from "@/app/pages/useAvailableJourneyIds"
 import { SettingsModal } from "@/app/SettingsModal"
 import { hudWidgets } from "@/app/SiteMap/hudRegistry"
 import { useHeldKeysLoaded, useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
-import { LockEditorHost } from "@/app/dev/LockEditorHost"
+import { DEV_TOOLS, LockEditorHost } from "@/app/dev/devToolsBuild"
 import { useSecretTaps } from "@/app/dev/useSecretTaps"
 import { FezContext } from "@/app/fez/context"
 import { chapterToAnnounce, needsChapterRecord } from "@/game/homeSave"
@@ -80,8 +80,8 @@ export const Base = ({
     if (!cameHome && greet) showConversation("welcome")
   }, [showConversation, cameHome, greet])
 
-  // Seven taps on the title toggles develop mode, on any build: phone playtesting happens against the
-  // deployed one. See useSecretTaps for why seven taps is safe to ship.
+  // Seven taps on the title toggles develop mode, in a build that carries the developer tools: phone
+  // playtesting happens against the preview. A release counts no taps and shows no countdown.
   const { tap, remaining } = useSecretTaps(useCallback(() => setDevelopMode(prev => !prev), [setDevelopMode]))
 
   const [sceneRef, scene] = useElementSize()
@@ -226,8 +226,8 @@ export const Base = ({
           <div ref={hudRef}>
             <CampHud
               title={t("camp.title")}
-              onTitleTap={tap}
-              tapsLeft={remaining}
+              onTitleTap={DEV_TOOLS ? tap : () => {}}
+              tapsLeft={DEV_TOOLS ? remaining : undefined}
               devBadge={isDevelopMode ? "DEV" : undefined}
               settingsLabel={t("ui.settings")}
               onSettings={() => setShowSettings(true)}
@@ -308,7 +308,11 @@ export const Base = ({
       {settled && !cameHome && !announced && <HomeHooks arrived={arrived} onReported={forgetArrival} />}
       {announced && <NewChapter tier={announced} startGame={startGame} onClose={() => setChapterClosed(true)} />}
       <SettingsModal isOpen={showSettings} onClose={() => setShowSettings(false)} startGame={startGame} />
-      {isDevelopMode && <LockEditorHost />}
+      {LockEditorHost && isDevelopMode && (
+        <Suspense fallback={null}>
+          <LockEditorHost />
+        </Suspense>
+      )}
     </>
   )
 }

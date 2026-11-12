@@ -2,6 +2,7 @@ import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { registerHaulLines } from "@/app/home/haulLines"
 import { registerDevGrants } from "@/app/dev/devActionContributions"
+import { DEV_TOOLS } from "@/app/dev/devToolsBuild"
 import { registerGateNeeds } from "@/app/pages/gateNeeds"
 import { registerHeldKeysProvider } from "@/app/SiteMap/keyProviders"
 import { registerCollectionSection } from "@/app/pages/collectionSectionRegistry"
@@ -67,19 +68,20 @@ if (isModEnabled("shop")) {
     () => useModState("shop", emptyPurchaseSave)[2]
   )
   registerGateNeeds(usePurchaseGateNeeds)
-  registerDevGrants(() => {
-    const { record } = usePurchases()
-    const { t } = useTranslation("common")
-    return useMemo(
-      () => [
-        {
-          label: t("purchases.devGrant"),
-          grant: () => {
-            for (const purchase of PURCHASES) void record(purchase.id)
+  if (DEV_TOOLS)
+    registerDevGrants(() => {
+      const { record } = usePurchases()
+      const { t } = useTranslation("common")
+      return useMemo(
+        () => [
+          {
+            label: t("purchases.devGrant"),
+            grant: () => {
+              for (const purchase of PURCHASES) void record(purchase.id)
+            },
           },
-        },
-      ],
-      [record, t]
-    )
-  })
+        ],
+        [record, t]
+      )
+    })
 }

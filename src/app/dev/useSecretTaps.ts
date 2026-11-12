@@ -1,13 +1,11 @@
 import { useCallback, useRef, useState } from "react"
 
-// The Android "tap Build number seven times" gesture, for reaching develop mode on a DEPLOYED
-// build. The previous single tap was gated on NODE_ENV === "development", so it did nothing on the
-// hosted build — which is where phone playtesting actually happens.
+// The Android "tap Build number seven times" gesture, for reaching develop mode on a deployed
+// preview build — which is where phone playtesting happens. A release build carries no developer
+// tools (devToolsBuild.ts), so there the taps open nothing.
 //
-// Seven deliberate taps inside a short window is what makes it safe to leave enabled in production:
-// it cannot be hit by accident, unlike a single tap on a header a player may well prod. Nothing here
-// is persisted, so a reload always returns to normal play — a stuck cheat flag on a public build
-// would be worse than the inconvenience of re-tapping.
+// Seven deliberate taps inside a short window cannot be hit by accident, unlike a single tap on a
+// header a player may well prod. Nothing here is persisted, so a reload always returns to normal play.
 
 export const SECRET_TAP_COUNT = 7
 // Long enough for a deliberate but unhurried sequence; short enough that stray taps minutes apart
