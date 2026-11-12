@@ -13,7 +13,7 @@ import {
   prefabForkFloor,
 } from "./floorFixtures.testing"
 import { roomChoices, roomEntry, roomHub, type RoomChoice, type RoomChoiceTo } from "./roomChoices"
-import { freeCells } from "./roomWalk"
+import { freeCells, roomPath } from "./roomWalk"
 
 type Cell = readonly [number, number]
 
@@ -183,5 +183,33 @@ describe("the choices read off distances", () => {
       const standing = key.split(",").map(Number) as unknown as Cell
       expect(roomChoices(grid, node, standing), key).toEqual(choicesByListing(grid, node, standing))
     }
+  })
+})
+
+const withNodeArt = (grid: FloorGrid, node: Cell, nodeArt: Cell): FloorGrid => {
+  const cells = grid.cells.map(row => [...row])
+  const cell = cells[node[0]][node[1]]
+  if (cell.type === "empty" || !cell.prefabRoom) throw new Error("no room")
+  cells[node[0]][node[1]] = { ...cell, prefabRoom: { ...cell.prefabRoom, nodeArt } }
+  return { ...grid, cells }
+}
+
+describe("a room's node art standing on a straight arm", () => {
+  // On the hall's south arm, where entering by the south door would stand him were nothing drawn there.
+  const NODE_ART: Cell = [5, 6]
+  const leverHall = withNodeArt(hall, PREFAB_FORK, NODE_ART)
+
+  it("is walked round, so no hub or entry stands him on it", () => {
+    expect(roomHub(hall, PREFAB_FORK, doorOf(hall, PREFAB_FORK, "s"))).toEqual(NODE_ART)
+    expect(freeCells(leverHall, PREFAB_FORK, prefabRoomAt(leverHall, ...PREFAB_FORK)!).has(keyOf(NODE_ART))).toBe(false)
+    for (const door of roomDoors(leverHall, ...PREFAB_FORK)) {
+      expect(roomHub(leverHall, PREFAB_FORK, door), door.side).not.toEqual(NODE_ART)
+      expect(roomEntry(leverHall, PREFAB_FORK, door)?.at, door.side).not.toEqual(NODE_ART)
+    }
+  })
+
+  it("leaves every door a walk to the stop", () => {
+    for (const door of roomDoors(leverHall, ...PREFAB_FORK))
+      expect(() => roomPath(leverHall, PREFAB_FORK, { doorAt: door.at }, "stop"), door.side).not.toThrow()
   })
 })

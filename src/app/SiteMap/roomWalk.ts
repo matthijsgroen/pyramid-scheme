@@ -42,11 +42,13 @@ export const freeCells = (grid: FloorGrid, node: Cell, room: PrefabRoom): Set<st
   const { top, left, rows, cols } = room.rect
   for (let r = top; r < top + rows; r++)
     for (let c = left; c < left + cols; c++) if (!blocked.has(`${r},${c}`)) free.add(`${r},${c}`)
-  // What stands in the room's middle is walked round, whether or not a straight arm leads through it.
+  // What stands in the room's middle is walked round, whether or not a straight arm leads through it: its objects, and
+  // the node's own art (a lever, a torch) on its mechanism place, which is worked from the stop, never stood in.
   for (const object of room.objects)
     if (object.layer !== "ground")
       for (let r = object.top; r < object.top + object.rows; r++)
         for (let c = object.left; c < object.left + object.cols; c++) free.delete(`${r},${c}`)
+  if (room.nodeArt) free.delete(keyOf(room.nodeArt))
   const cell = grid.cells[node[0]]?.[node[1]]
   const family = cell?.type === "room" ? cell.family : undefined
   if (room.actor && family && getFamilyPlugin(family)?.meta.actor) free.delete(keyOf(room.actor))
