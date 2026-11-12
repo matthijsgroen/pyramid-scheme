@@ -20,18 +20,23 @@ const FOOTER_SHARE = 0.09
 const qrSize = (version: number) => 17 + 4 * version
 
 /**
- * Portrait card: codes in a ceil(√n)-column grid with the last row centred, a header band above
- * and a footer band below, all inside a border. Header and footer scale with the grid width.
+ * Portrait card: codes in a grid of at most ceil(√n) columns, as many as keep the card taller than
+ * wide, with the last row centred, a header band above and a footer band below, all inside a border.
+ * Header and footer scale with the grid width.
  */
 export const cardLayout = (n: number, version: number): CardLayout => {
   const size = qrSize(version)
-  const cols = Math.ceil(Math.sqrt(n))
-  const rows = Math.ceil(n / cols)
   const cell = size + 2 * QUIET_ZONE
-  const gridW = cols * cell
-  const gridH = rows * cell
-  const headerH = Math.round(gridW * HEADER_SHARE)
-  const footerH = Math.round(gridW * FOOTER_SHARE)
+  const shape = (cols: number) => {
+    const rows = Math.ceil(n / cols)
+    const gridW = cols * cell
+    const headerH = Math.round(gridW * HEADER_SHARE)
+    const footerH = Math.round(gridW * FOOTER_SHARE)
+    return { cols, rows, gridW, gridH: rows * cell, headerH, footerH }
+  }
+  let grid = shape(Math.ceil(Math.sqrt(n)))
+  while (grid.cols > 1 && grid.gridW > grid.gridH + grid.headerH + grid.footerH) grid = shape(grid.cols - 1)
+  const { cols, rows, gridW, gridH, headerH, footerH } = grid
   const cells = Array.from({ length: n }, (_, i) => {
     const col = i % cols
     const row = Math.floor(i / cols)

@@ -59,6 +59,14 @@ describe("save card codes", () => {
     expect(await readCard(boxDownscale(card, 1_280))).toEqual(chunks)
   })
 
+  it("reads a two-code card scaled down to 1280 px", async () => {
+    const chunks = splitChunks(bytes(5_000, 6), 0x0222)
+    expect(chunks).toHaveLength(2)
+    const card = await drawCard(chunks, 3)
+    expect(card.height).toBeGreaterThan(card.width)
+    expect(await readCard(boxDownscale(card, 1_280))).toEqual(chunks)
+  })
+
   it("reads a one-code card", async () => {
     const chunks = splitChunks(bytes(1_701 - 4, 4), 7)
     expect(chunks).toHaveLength(1)
