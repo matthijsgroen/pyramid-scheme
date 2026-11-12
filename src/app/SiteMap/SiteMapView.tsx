@@ -418,28 +418,27 @@ export const nodeSpritesFor = (
    * that and broke the other half: where the step pointed at VOID, the clip went with it and the chest
    * was drawn out over the dark beyond the wall.
    *
-   * So the clip grows, but only into ground. A neighbour counts if the grid has something there — and a
-   * CLAIMED cell counts too, because a chamber's own floor is `type: "empty"` in the grid and the claim
-   * is a render-time fact, which is the trap `floorScatter` and `MapGrowth` both record. Where there is
-   * paving beside it the chest overlaps the paving; where there is masonry it is still cut at the
-   * masonry, which is what the clip was for.
+   * So the clip grows, but only into ground the room is OPEN to (`isPassable`, the test the walls are
+   * drawn from). Ground alone is not enough: another room's claim or a corridor running past can sit
+   * flush against this cell with a wall between, and a clip that admitted it drew the chest through that
+   * wall. Where there is open paving beside it the chest overlaps the paving; where there is a wall it is
+   * cut at the wall, which is what the clip is for.
    */
   const clipCells = (footprint: readonly string[]): string[] => {
     const cells = new Set(footprint)
     for (const key of footprint) {
       const [r, c] = key.split(",").map(Number)
-      for (const [dr, dc] of [
-        [-1, 0],
-        [1, 0],
-        [0, -1],
-        [0, 1],
+      // `isPassable` asks south and east only, so north and west are asked from the neighbour's side.
+      for (const [nr, nc, open] of [
+        [r - 1, c, () => isPassable(grid, claims, r - 1, c, "s")],
+        [r + 1, c, () => isPassable(grid, claims, r, c, "s")],
+        [r, c - 1, () => isPassable(grid, claims, r, c - 1, "e")],
+        [r, c + 1, () => isPassable(grid, claims, r, c, "e")],
       ] as const) {
-        const nr = r + dr
-        const nc = c + dc
         const neighbourKey = `${nr},${nc}`
         if (cells.has(neighbourKey)) continue
         const isFloor = cellAt(grid, nr, nc).type !== "empty" || claims.claimedBy.has(neighbourKey)
-        if (isFloor) cells.add(neighbourKey)
+        if (isFloor && open()) cells.add(neighbourKey)
       }
     }
     return [...cells]
