@@ -1,3 +1,4 @@
+import "./tierFinish"
 import { useModState } from "@/app/state/useModState"
 import { use, useMemo } from "react"
 import { FezContext } from "@/app/fez/context"

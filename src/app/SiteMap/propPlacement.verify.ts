@@ -4,8 +4,8 @@ import { assembleFloor } from "@/game/siteAssembler"
 import { revealAll } from "@/game/gridNavigation"
 import { portalKindOf } from "@/game/roomFootprint"
 import { prefabRoomAt, prefabRoomCells } from "@/game/roomShape"
-import type { FloorGrid } from "@/game/siteTypes"
-import { buildRoomClaims } from "./roomClaims"
+import { decorationFootprint, type FloorGrid } from "@/game/siteTypes"
+import { buildRoomClaims, isOnGrid, propFootprintCells, propStandingCells } from "./roomClaims"
 import { wallItemsFor } from "./SiteMapView"
 
 // The pools authored per rank (spec/*.ts) only mean something if props actually land on rooms. This
@@ -150,8 +150,7 @@ describe("authored wall-item pools reach real walls", () => {
 // A prop sprite is a cell plus a face band tall, so it leans a band into the cell to its north. That
 // headroom is what gives a statue height, and it belongs on WALL: over floor it hangs above ground the
 // player walks, and the explorer dot — drawn later — passes in front of the statue's head instead of
-// behind it. So the prop cell is chosen for having void above it (buildRoomClaims). Half the props in
-// the world stood the other way before that preference existed.
+// behind it. So the prop cell is chosen for having void above it (buildRoomClaims).
 describe("a prop stands against a wall", () => {
   // Measured PER ROOM KIND, because the two kinds of room have different amounts of wall to offer and
   // one bound over both hides that. A dead end is a pocket with stone on three sides; a FORK is a
@@ -159,16 +158,21 @@ describe("a prop stands against a wall", () => {
   // it at all. Lumped together they read 6.2%, which says nothing about either. An entrance a side
   // section hangs off forks too, so it counts as a fork here, not as a portal. A stairhead is tallied on its own
   // whatever its ways out: the player crosses its room to the stair.
-  const openBehindByOwner = (): Map<string, { props: number; open: number }> => {
-    const tally = new Map<string, { props: number; open: number }>()
+  // `chose` counts the leaning props whose room still had a stone-backed fit on the floor the claimer chose from:
+  // its claimed empty cells inside the grid (all of them when none is), less what an earlier prop of the room took.
+  type Tally = { props: number; open: number; chose: number }
+  const openBehindByOwner = (): Map<string, Tally> => {
+    const tally = new Map<string, Tally>()
     for (const [siteId, levels] of Object.entries(generatedWorldConfigs).slice(0, 12)) {
       levels.flat().forEach((floor, i) => {
         const result = assembleFloor(`${siteId}:${i}`, floor, 7)
         if (!result.success) return
         const grid = revealAll(result.grid)
         const claims = buildRoomClaims(grid)
-        for (const [key] of claims.decorationAt) {
-          const [or, oc] = (claims.claimedBy.get(key) ?? key).split(",").map(Number)
+        const takenByOwner = new Map<string, Set<string>>()
+        for (const [key, prop] of claims.decorationAt) {
+          const ownerKey = claims.claimedBy.get(key) ?? key
+          const [or, oc] = ownerKey.split(",").map(Number)
           const owner = grid.cells[or]?.[oc]
           // A way in or out the player can leave more than one way is a junction: it is tallied with the forks.
           const kind =
@@ -183,8 +187,19 @@ describe("a prop stands against a wall", () => {
                     : "portal"
           const [r, c] = key.split(",").map(Number)
           const north = grid.cells[r - 1]?.[c]
-          const row = tally.get(kind) ?? { props: 0, open: 0 }
-          tally.set(kind, { props: row.props + 1, open: row.open + (north && north.type !== "empty" ? 1 : 0) })
+          const leans = north !== undefined && north.type !== "empty"
+          const taken = takenByOwner.get(ownerKey) ?? new Set<string>()
+          const free = (claims.propCandidates.get(ownerKey) ?? []).filter(k => !taken.has(k))
+          const inside = free.filter(k => isOnGrid(grid, k))
+          const hadStone = propStandingCells(grid, prop, inside.length ? inside : free, "stone") !== undefined
+          for (const k of propFootprintCells(key, decorationFootprint(prop))) taken.add(k)
+          takenByOwner.set(ownerKey, taken)
+          const row = tally.get(kind) ?? { props: 0, open: 0, chose: 0 }
+          tally.set(kind, {
+            props: row.props + 1,
+            open: row.open + (leans ? 1 : 0),
+            chose: row.chose + (leans && hadStone ? 1 : 0),
+          })
         }
       })
     }
@@ -195,9 +210,11 @@ describe("a prop stands against a wall", () => {
     const tally = openBehindByOwner()
     const ends = tally.get("encounter")!
     expect(ends.props).toBeGreaterThan(0)
-    // 0 of 10 end rooms measured. A room whose only spare cell has floor above it still gets its prop — a prop is
-    // better than a bare chamber, and one leaning statue is cheaper than a second claim rule.
-    expect(ends.open / ends.props).toBeLessThan(0.08)
+    // The claimer takes a stone-backed fit whenever the room has one, for the leader and the god's second statue
+    // alike, and still places the prop when it has none: a prop is better than a bare chamber. So a pocket's prop
+    // leans over floor only when nothing in its room was backed by stone, and how often that happens is the
+    // world's shape, not the rule.
+    expect(ends.chose).toBe(0)
   })
 
   it("never leans a stairhead's prop over floor, where the player crosses the room to the stair", () => {
