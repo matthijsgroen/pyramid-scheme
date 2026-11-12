@@ -16,6 +16,15 @@ export const dispatchInput = (signal: InputSignal): boolean => {
 }
 
 /**
+ * Whether `target` lies within the top layer. A layer without an element is the whole page, and a key with no
+ * element focused belongs to whatever is on top.
+ */
+export const topLayerHolds = (target: EventTarget | null): boolean => {
+  const scope = layers.at(-1)?.element
+  return !scope || !(target instanceof Node) || target === document.body || scope.contains(target)
+}
+
+/**
  * Opens an input layer on top of the stack and returns the function that closes it. A layer with an `element`
  * that holds an already open layer's element goes in beneath that one: React attaches a child before its
  * parent, so a dialog opened inside another in the same render must still end up on top of it.
@@ -25,7 +34,7 @@ export const openLayer = (handler: InputHandler, element?: Element): (() => void
   const inside = element ? layers.findIndex(open => open.element && element.contains(open.element)) : -1
   if (inside === -1) layers.push(layer)
   else layers.splice(inside, 0, layer)
-  stopKeyboard ??= listenToKeyboard(dispatchInput)
+  stopKeyboard ??= listenToKeyboard(dispatchInput, { onTop: topLayerHolds })
 
   return () => {
     const at = layers.indexOf(layer)

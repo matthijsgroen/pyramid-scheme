@@ -166,6 +166,19 @@ describe("a conversation by key", () => {
     expect(speaker()).not.toBe(first)
   })
 
+  it("moves on with Enter while a board beneath it still has focus, and the board never sees the key", () => {
+    const boardKeys = vi.fn((event: React.KeyboardEvent) => event.preventDefault())
+    render(<div tabIndex={0} data-testid="board" onKeyDown={boardKeys} />)
+    const board = screen.getByTestId("board")
+    board.focus()
+    play()
+    const first = speaker()
+    fireEvent.keyDown(board, { code: "Enter", key: "Enter" })
+    settle()
+    expect(speaker()).not.toBe(first)
+    expect(boardKeys).not.toHaveBeenCalled()
+  })
+
   it("is never skipped with Escape", () => {
     play()
     const first = speaker()

@@ -74,6 +74,18 @@ describe("the keyboard as an input source", () => {
     expect(delivered().map(signal => signal.action.kind)).toEqual(["back"])
   })
 
+  it("takes a key pressed on something beneath the top layer before that element sees it", () => {
+    stop()
+    stop = listenToKeyboard(deliver, { onTop: () => false })
+    const board = document.body.appendChild(document.createElement("button"))
+    const boardKeys = vi.fn()
+    board.addEventListener("keydown", boardKeys)
+    const event = press("Enter", {}, board)
+    expect(delivered().map(signal => signal.action.kind)).toEqual(["confirm"])
+    expect(boardKeys).not.toHaveBeenCalled()
+    expect(event.defaultPrevented).toBe(true)
+  })
+
   it("leaves a key something already handled", () => {
     const button = document.body.appendChild(document.createElement("button"))
     button.addEventListener("keydown", event => event.preventDefault())
