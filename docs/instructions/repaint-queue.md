@@ -149,6 +149,8 @@ beside and on the crate go. Paint this before `starter/chestPropOpen`, which is 
 ```
 FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
 
+CAMERA: the crate's FRONT FACE is square to the camera, flat, exactly as in the first reference: no side face shows, no corner turns toward us, nothing recedes to the left or right. Depth is shown only by the top being drawn ABOVE the front face as a shallow band, as deep as the lid band in the reference. No vanishing point: parallel edges stay parallel.
+
 THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: two reed baskets and a rope-handled wooden crate stacked together, a stoppered jar on the crate. Keep the CRATE exactly: every edge, every proportion, its rope handle, its paint, the angle it stands at.
 
 THE ONE CHANGE: the crate stands ALONE. Remove both reed baskets and the stoppered jar entirely; where they stood is background. The crate's lid is shut and bare. Move the crate to the middle of the frame, same size.
@@ -180,9 +182,11 @@ yarn import-tile art/masters/props/starter/chestProp.webp --tier=starter --name=
 ```
 FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
 
+CAMERA: the crate's FRONT FACE is square to the camera, flat, exactly as in the first reference: no side face shows, no corner turns toward us, nothing recedes to the left or right. Depth is shown only by the top being drawn ABOVE the front face as a shallow band, as deep as the lid band in the reference. No vanishing point: parallel edges stay parallel.
+
 THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: a rope-handled wooden crate standing alone. Same crate, same camera, same paint. Keep every edge, every proportion and every silhouette of the crate's body exactly as in the reference image — do not move, resize, straighten, add or restyle it, and do not change the angle it stands at. Add nothing beside it: no baskets, no jars.
 
-THE ONE CHANGE: the crate is OPEN. Its lid is lifted off and stands upright against the back of the crate, seen almost edge-on, a narrow plank band rising above the crate's back edge. The crate's mouth is an EMPTY dark interior, #3a2e20 at its deepest, with the inside of the near wall catching a little light. Nothing inside: no gold, no glow, nothing spilling out.
+THE ONE CHANGE: the crate is OPEN. Its lid is lifted off and stands upright behind the crate, its flat face toward us, a plank band rising above the crate's back edge. The open mouth is the shallow top band only, dark inside; the crate keeps the height and width of the shut one. The crate's mouth is an EMPTY dark interior, #3a2e20 at its deepest, with the inside of the near wall catching a little light. Nothing inside: no gold, no glow, nothing spilling out.
 
 THE SECOND ATTACHED IMAGE IS THE FLOOR'S MATERIAL. Take only its paint quality from it; nothing of that floor appears in the picture.
 
