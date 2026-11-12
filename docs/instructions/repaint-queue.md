@@ -132,8 +132,8 @@ shadow but WITHOUT `--mask`: the shut silhouette would clip the raised lid. A li
 plane reads as a table (`prim_chest`'s docstring), so each prompt stands the lid UPRIGHT behind the body,
 seen nearly edge-on, which keeps it a narrow band above the chest.
 
-**A ward key's chest is visibly MORE PRECIOUS in its own rank's materials**, never in a richer rank's: the
-merchant's best box is still cedar and faience, not gold. It is a new shape, so it has a scaffold: the
+**A ward key's chest says EPIC TREASURE at a glance**, at every rank: gold leaf and faience inlay over dark
+wood, the richest thing on the floor, still matte like the rest of the set. It is a new shape, so it has a scaffold: the
 nobleman's sealed chest at starter, the cavetto chest at junior.
 
 ### `starter/wardChest` — the merchant's best box, sealed
@@ -146,23 +146,23 @@ nobleman's sealed chest at starter, the cavetto chest at junior.
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a CHEST on four short feet, the merchant's one valuable box, kept apart from his crates. The band round its top is where the LID meets the body. The strap over the lid and down its front is a knotted CORD, and the round lump on it is a clay SEAL.
+The object: a TREASURE CHEST on four short feet, the most precious thing in the merchant's storehouse — one look should say an epic treasure is inside. The band round its top is where the LID meets the body. The strap over the lid and down its front is a CORD, and the round lump on it is a SEAL.
 
-Dark cedar, #694935, oiled and well kept where everything else he owns is worn. The band round the lid is painted red ochre, #9a4a2c. A single small TURQUOISE FAIENCE knob, #3f9a8c, is set in the middle of the lid band, the one bright thing on the box. The cord is undyed flax, #8a7656; the seal is grey Nile clay stamped with a scarab, #6c6257.
+Dark ebony, #3a2a20, framed in GOLD LEAF: gold bands along every edge of the lid and the body, gold corner plates, gold feet, #d9a93f. The front of the body carries an inlaid panel of TURQUOISE FAIENCE, #3f9a8c, with a gold scarab spreading its wings across it. The lid band is gold set with a row of small faience and carnelian (#a8432c) studs. The cord is braided gold thread; the seal is red wax, #8e2a22, stamped with an ankh.
 
-There is no gold anywhere on it: a merchant's treasure is cedar and faience.
+Gold here is a flat warm colour, not a metal: no highlights, no reflections, no shine, no sparkle.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
 The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
 
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. A merchant's storehouse: limestone and whitewashed mudbrick, red ochre and terracotta, one turquoise faience accent.
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. A merchant's storehouse: limestone and whitewashed mudbrick, red ochre and terracotta. A treasure among them: gold leaf and turquoise faience.
 ```
 
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold sealedChest --spin=-27 --colour=#694935 --floor=#d8c8a8
+scaffold sealedChest --spin=-27 --colour=#3a2a20 --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/wardChest.webp --tier=starter --name=wardChest --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -179,9 +179,9 @@ Paint `starter/wardChest` first: this is an edit of its master.
 ```
 FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
 
-THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: a cedar box on four short feet, a red ochre band where the lid meets the body, a turquoise knob on the lid, a cord with a clay seal over it. Same object, same camera, same paint. Keep every edge, every proportion and every silhouette of the body, the band and the feet exactly as in the reference image — do not move, resize, straighten, add, remove or restyle them, and do not change the angle it stands at.
+THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: a gold-bound ebony treasure chest on four short feet, a faience panel with a gold scarab on its front, a gold cord with a red wax seal over it. Same object, same camera, same paint. Keep every edge, every proportion and every silhouette of the body, the band and the feet exactly as in the reference image — do not move, resize, straighten, add, remove or restyle them, and do not change the angle it stands at.
 
-THE ONE CHANGE: the chest is OPEN. The cord is cut and hangs loose down the front, the clay seal broken in two. The lid is raised on its back hinge and stands UPRIGHT behind the body, seen almost edge-on, a narrow cedar band rising above the chest's back edge, its turquoise knob still on it. The chest's mouth is an EMPTY dark interior, #3a2e20 at its deepest, the inside of the near wall catching a little light. Nothing inside: no gold, no glow, nothing spilling out.
+THE ONE CHANGE: the chest is OPEN. The cord is cut and hangs loose down the front, the wax seal broken in two. The lid is raised on its back hinge and stands open behind the body, its gold edging toward us. The chest's mouth is an EMPTY dark interior, #3a2e20 at its deepest, the inside of the near wall catching a little light. Nothing inside: no gold, no glow, nothing spilling out.
 
 THE SECOND ATTACHED IMAGE IS THE FLOOR'S MATERIAL. Take only its paint quality from it; nothing of that floor appears in the picture.
 
@@ -195,7 +195,7 @@ BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere 
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold sealedChest --spin=-27 --colour=#694935 --floor=#d8c8a8
+scaffold sealedChest --spin=-27 --colour=#3a2a20 --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/wardChestOpen.webp --tier=starter --name=wardChestOpen --slot=prop \
   --filter=smooth --seat="$SHADOW"
 ```
@@ -210,23 +210,23 @@ yarn import-tile art/masters/props/starter/wardChestOpen.webp --tier=starter --n
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a CHEST on four short feet, the nobleman's finest coffer. The band round its top is where the LID meets the body. Above that the three slabs stepping out one over the other are a CAVETTO CORNICE forming the lid. The sunken rectangle on the front face is a PAINTED PANEL.
+The object: a TREASURE CHEST on four short feet, the noblewoman's greatest treasure — one look should say an epic treasure is inside. The band round its top is where the LID meets the body. Above that the three slabs stepping out one over the other are a CAVETTO CORNICE forming the lid. The sunken rectangle on the front face is an INLAID PANEL.
 
-Dark cedar, #5a3a22. The panel is painted with a row of lotus flowers, red ochre #9a4a2c, Egyptian blue #2f5e9e and leaf green #4f7a3a, on a dark cedar ground. The band round the lid is COPPER, #9c5a32, gone verdigris, #4f8a74, in its corners and along its lower edge. The cornice's steps are cedar, edged in a thin line of the same blue.
+Dark ebony, #3a2a20, covered in GOLD LEAF at every edge: the cornice's three steps are gilded, #d9a93f, the feet are gilded, gold corner plates hold the body. The panel is inlaid EGYPTIAN BLUE faience, #2f5e9e, with a row of gold lotus flowers, their hearts carnelian, #a8432c. The lid band is COPPER, #c07a42, set with turquoise faience studs, #3f9a8c.
 
-Copper here is a flat colour, not a metal: no highlights, no reflections, no shine. There is no gold anywhere on it, and no cord and no seal.
+Gold and copper here are flat colours, not metal: no highlights, no reflections, no shine, no sparkle. There is no cord and no seal.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
 The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
 
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. A nobleman's painted house: warm sandstone, cedar painted in red ochre, Egyptian blue and leaf green, copper gone verdigris.
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. A noble tomb's treasure: gold leaf, Egyptian blue faience, carnelian and copper.
 ```
 
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold sealedChest --contents=cavetto --spin=-27 --colour=#5a3a22 --floor=#e2a86f
+scaffold sealedChest --contents=cavetto --spin=-27 --colour=#3a2a20 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/wardChest.webp --tier=junior --name=wardChest --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -243,9 +243,9 @@ Paint `junior/wardChest` first: this is an edit of its master.
 ```
 FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
 
-THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: a cedar coffer on four short feet, a copper band where the lid meets the body, a stepped cavetto lid, a painted lotus panel on its front. Same object, same camera, same paint. Keep every edge, every proportion and every silhouette of the body, the band, the panel and the feet exactly as in the reference image — do not move, resize, straighten, add, remove or restyle them, and do not change the angle it stands at.
+THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: a gold-bound ebony treasure chest on four short feet, a copper band where the lid meets the body, a gilded stepped cavetto lid, a blue faience panel with gold lotuses on its front. Same object, same camera, same paint. Keep every edge, every proportion and every silhouette of the body, the band, the panel and the feet exactly as in the reference image — do not move, resize, straighten, add, remove or restyle them, and do not change the angle it stands at.
 
-THE ONE CHANGE: the coffer is OPEN. The cavetto lid is raised on its back hinge and stands UPRIGHT behind the body, seen almost edge-on, a narrow stepped band rising above the coffer's back edge. The coffer's mouth is an EMPTY dark interior, #381d0e at its deepest, the inside of the near wall catching a little light. Nothing inside: no gold, no glow, nothing spilling out.
+THE ONE CHANGE: the coffer is OPEN. The cavetto lid is raised on its back hinge and stands open behind the body, its gilded steps toward us. The coffer's mouth is an EMPTY dark interior, #381d0e at its deepest, the inside of the near wall catching a little light. Nothing inside: no gold, no glow, nothing spilling out.
 
 THE SECOND ATTACHED IMAGE IS THE FLOOR'S MATERIAL. Take only its paint quality from it; nothing of that floor appears in the picture.
 
@@ -259,7 +259,7 @@ BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere 
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold sealedChest --contents=cavetto --spin=-27 --colour=#5a3a22 --floor=#e2a86f
+scaffold sealedChest --contents=cavetto --spin=-27 --colour=#3a2a20 --floor=#e2a86f
 yarn import-tile art/masters/props/junior/wardChestOpen.webp --tier=junior --name=wardChestOpen --slot=prop \
   --filter=smooth --seat="$SHADOW"
 ```
