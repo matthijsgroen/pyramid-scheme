@@ -4,7 +4,7 @@ import { COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import { PREFAB_CHEST, PREFAB_FORK, fitForkFloor, prefabChestFloor, prefabForkFloor } from "./floorFixtures.testing"
 import { roomStop } from "./roomWalk"
 import { buildRoomClaims } from "./roomClaims"
-import { occupantOffset, prefabArtOffset, standingOffset } from "./standingSpot"
+import { nodeArtStep, occupantOffset, prefabArtOffset, standingOffset } from "./standingSpot"
 import { nodeArtOffset } from "./nodeArt"
 
 const state: CellState = "completed"
@@ -124,14 +124,20 @@ describe("where the explorer stands in a prefab room", () => {
       [empty, { type: "room", roomType: "encounter", dirs: new Set<Direction>(["n"]), state }, empty],
       [empty, empty, empty],
     ])
-    expect(occupantOffset(plain, buildRoomClaims(plain), 1, 1)).not.toEqual({ dx: 0, dy: 0 })
+    expect(occupantOffset(plain, buildRoomClaims(plain), 1, 1)).toEqual(
+      nodeArtStep(plain, buildRoomClaims(plain), 1, 1)
+    )
   })
 
-  it("the chest art stands at the stop, stepped aside as on a corridor node", () => {
+  it("the chest art stands at the stop, stepped aside as on a corridor node where there is floor to step to", () => {
     const vault = prefabChestFloor()
     const stop = standingOffset(vault, buildRoomClaims(vault), ...PREFAB_CHEST)
     const step = nodeArtOffset(undefined)
-    expect(prefabArtOffset(vault, ...PREFAB_CHEST)).toEqual({ dx: stop.dx + step.dx, dy: stop.dy + step.dy })
+    // The stop is on the room's south row, so the step south would point at its wall.
+    expect(prefabArtOffset(vault, buildRoomClaims(vault), ...PREFAB_CHEST)).toEqual({
+      dx: stop.dx + step.dx,
+      dy: stop.dy,
+    })
   })
 })
 
@@ -153,6 +159,31 @@ describe("where somebody the room is for stands", () => {
       [empty, talk(["n"]), empty],
       [empty, empty, empty],
     ])
-    expect(occupantOffset(grid, buildRoomClaims(grid), 1, 1)).toEqual(nodeArtOffset(new Set(["n"])))
+    expect(occupantOffset(grid, buildRoomClaims(grid), 1, 1)).toEqual(nodeArtStep(grid, buildRoomClaims(grid), 1, 1))
+  })
+})
+
+describe("where a node's furniture stands in its cell", () => {
+  const talk = (dirs: Direction[]): GridCell => ({ type: "room", roomType: "encounter", dirs: new Set(dirs), state })
+  const step = nodeArtOffset(undefined)
+
+  it("steps away from its doorways toward floor it is open to", () => {
+    const grid = floor([
+      [empty, empty, empty],
+      [corridor(["e"]), talk(["w", "e"]), corridor(["w"])],
+      [empty, empty, empty],
+    ])
+    // Across, the exits cancel and it steps east, onto the open corridor; the step south meets no floor.
+    expect(nodeArtStep(grid, buildRoomClaims(grid), 1, 1)).toEqual({ dx: step.dx, dy: 0 })
+  })
+
+  it("stands centred on an axis whose step would point at a wall", () => {
+    const grid = floor([
+      [empty, empty, empty, empty],
+      // Doors east and south step it north-west: west is another room's floor with a wall between.
+      [talk(["s"]), corridor([]), talk(["e", "s"]), corridor(["w"])],
+      [corridor(["n"]), empty, corridor(["n"]), empty],
+    ])
+    expect(nodeArtStep(grid, buildRoomClaims(grid), 1, 2)).toEqual({ dx: 0, dy: 0 })
   })
 })

@@ -294,6 +294,22 @@ describe("a node's furniture and the clip it is cut to", () => {
         }
     for (const [, x] of d.matchAll(/M(-?\d+(?:\.\d+)?) /g)) expect(ground.has(Number(x))).toBe(true)
   })
+
+  it("stops at the wall to a neighbouring room's floor, though that floor is real ground", () => {
+    const junction: GridCell = { type: "room", roomType: "fork", dirs: new Set<Direction>(["s"]), state: "completed" }
+    const down: GridCell = { type: "corridor", dirs: new Set<Direction>(["n"]), state: "completed" }
+    const grid = makeGrid([
+      [empty, empty, empty, empty],
+      // Doors east and south step the chest north-west, toward the junction's claim with no door between.
+      [junction, empty, treasureCell(["e", "s"]), corridorBetween(true)],
+      [down, empty, down, empty],
+    ])
+    expect(buildRoomClaims(grid).claimedBy.get("1,1")).toBe("1,0")
+    const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} />)
+    const d = clipOf(container.querySelector<HTMLElement>("[data-node-sprite='chest:1,2']"))
+    expect(d).toContain(`M${cellLeft(2)} `)
+    expect(d).not.toContain(`M${cellLeft(1)} `)
+  })
 })
 
 describe("what a condition grows on", () => {
@@ -3061,6 +3077,7 @@ describe("SiteMapView — a prefab room", () => {
     )!
     const step = nodeArtOffset(undefined)
     expect(chest.x).toBeCloseTo(cellCenter(2, 4).cx + step.dx - CELL / 2)
-    expect(chest.y).toBeCloseTo(cellCenter(2, 4).cy + step.dy + CELL / 2 - PROP_H)
+    // The stop is on the room's south row, so it is not stepped south into the wall.
+    expect(chest.y).toBeCloseTo(cellCenter(2, 4).cy + CELL / 2 - PROP_H)
   })
 })
