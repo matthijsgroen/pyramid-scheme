@@ -8,6 +8,9 @@ import { useTombTreasureProgress } from "./useTombTreasureProgress"
 import { useTreasurePerkLabel } from "./useTreasurePerkLabel"
 import { mapPieceSchema, tombKeySchema } from "./rewardSchemas"
 
+/** The ward key's chest, `tiles/<tier>/wardChest.png` and its `wardChestOpen`. */
+export const WARD_CHEST_TILE = "wardChest"
+
 // The map-piece / tomb-key rewards' synchronous popup text/emoji (used by the generic RewardFlow
 // fallback and the shop stock list), plus the map piece's rich display (where the map leads + how
 // much of it is gathered). The rich display is hook-based so it can read the mod's own map-piece
@@ -27,6 +30,8 @@ export const registerTombTreasureRewardDisplay = () => {
   registerRewardHandler({
     type: "tombKey",
     emoji: "🗝",
+    // The most precious thing a chest holds comes in a chest of its own.
+    art: () => ({ kind: "chest", tile: WARD_CHEST_TILE }),
     // A tomb key IS a specific treasure (the perk stream — "the treasure IS the key"), so show the
     // treasure actually received, not the opaque key type. Falls back to the generic label if the
     // keyId isn't a catalog treasure (e.g. a bare structural key).

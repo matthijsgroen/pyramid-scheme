@@ -51,6 +51,49 @@ export const placeholderUrl = (name: string): string | undefined => byTier.get(`
 export const tileOrPlaceholder = (tier: Tileset, name: string): string | undefined =>
   tileUrl(tier, name) ?? placeholderUrl(name)
 
+/** The treasure chest every rank draws: the closed drawing a room's marker stands beside. */
+export const CHEST_TILE = "chestProp"
+
+/**
+ * THE DRAWINGS A CHEST MAY BE SHOWN AS, the one wanted first. A chest of its own (a ward key's `wardChest`)
+ * falls back to the plain chest, and an open chest (`<tile>Open`) to the same chest shut — one chain for
+ * every chest at every rank, so an unpainted drawing never leaves a room without a chest.
+ */
+export const chestChain = (tile: string, open: boolean): string[] => [
+  ...new Set([...(open ? [`${tile}Open`] : []), tile, CHEST_TILE]),
+]
+
+/**
+ * What to draw for a chest in a room paved in `tileset` and authored at `rank`: the first PAINTED drawing
+ * down `chestChain`, in the tileset and then in the rank — a cave has no chest of its own, so someone carried
+ * this one in and it is the rank's — and only after every painting the stand-in. Painted beats placeholder,
+ * so a rank whose shut chest is painted never shows a dummy where its open one is owed.
+ */
+export const chestTileIn = (
+  painted: (tier: Tileset, name: string) => string | undefined,
+  standIn: (name: string) => string | undefined,
+  tileset: Tileset,
+  rank: Tileset,
+  tile: string,
+  open: boolean
+): string | undefined => {
+  const chain = chestChain(tile, open)
+  for (const tier of [tileset, rank])
+    for (const name of chain) {
+      const url = painted(tier, name)
+      if (url) return url
+    }
+  for (const name of chain) {
+    const url = standIn(name)
+    if (url) return url
+  }
+  return undefined
+}
+
+/** `chestTileIn` over the art on disk. */
+export const chestTileUrl = (tileset: Tileset, rank: Tileset, tile: string, open: boolean): string | undefined =>
+  chestTileIn(tileUrl, placeholderUrl, tileset, rank, tile, open)
+
 /**
  * Every drawing a tier has for one name: `<name>`, `<name>-2`, `<name>-3`, as far as they go.
  *

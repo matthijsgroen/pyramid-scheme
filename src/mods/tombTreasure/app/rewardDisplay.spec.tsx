@@ -149,3 +149,14 @@ describe("tomb-treasure reward display", () => {
     expect(tombKeyDisplay("not_a_treasure").itemName).toBe("chest.tombKey")
   })
 })
+
+describe("the ward key's chest", () => {
+  it("stands in a chest of its own", async () => {
+    const { getRewardHandler } = await import("@/app/SiteMap/rewardHandlerRegistry")
+    const { WARD_CHEST_TILE } = await import("./rewardDisplay")
+    expect(getRewardHandler("tombKey")?.art?.({ type: "tombKey", keyId: "made_up" })).toEqual({
+      kind: "chest",
+      tile: WARD_CHEST_TILE,
+    })
+  })
+})
