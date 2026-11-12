@@ -136,39 +136,6 @@ seen nearly edge-on, which keeps it a narrow band above the chest.
 merchant's best box is still cedar and faience, not gold. It is a new shape, so it has a scaffold: the
 nobleman's sealed chest at starter, the cavetto chest at junior.
 
-### `starter/chestPropOpen` — the merchant's crate, lid off, empty
-
-**Attach:**
-
-1. `art/masters/props/starter/chestProp.webp` — the chest itself, to edit: shape, silhouette, camera
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
-
-CAMERA: exactly the first reference's: seen from above at an angle, the crate's front face below and its top seen from above. Do not turn it, do not flatten it to a front view.
-
-THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: a rope-handled wooden crate standing alone. Same crate, same camera, same paint. Keep every edge, every proportion and every silhouette of the crate's body exactly as in the reference image — do not move, resize, straighten, add or restyle it, and do not change the angle it stands at. Add nothing beside it: no baskets, no jars.
-
-THE ONE CHANGE: the crate is OPEN. Its lid is lifted off and leans upright against the crate's back edge, its planks toward us, rising above the crate. Where the shut lid's top face was, the crate's open MOUTH is seen from above: the inside of the back wall and the floor of the crate, framed by the plank rims. The crate keeps its height, width and front face. The mouth is an EMPTY dark interior, #3a2e20 at its deepest, with the inside of the near wall catching a little light. Nothing inside: no gold, no glow, nothing spilling out.
-
-THE SECOND ATTACHED IMAGE IS THE FLOOR'S MATERIAL. Take only its paint quality from it; nothing of that floor appears in the picture.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, soft brush texture, no outlines. A merchant's storehouse: worn timber, reed, rope and fired clay, nothing gilded.
-
-BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the chest, its lid and its shadow.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold crate --floor=#d8c8a8
-yarn import-tile art/masters/props/starter/chestPropOpen.webp --tier=starter --name=chestPropOpen --slot=prop \
-  --filter=smooth --seat="$SHADOW"
-```
-
 ### `junior/chestPropOpen` — the nobleman's sealed chest, lid up, empty
 
 **Attach:**

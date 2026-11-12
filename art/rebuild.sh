@@ -102,6 +102,17 @@ magick -size 448x672 xc:none \( "$SHADOW" -crop 285x672+0+0 +repage \) -geometry
 yarn import-tile art/masters/props/starter/chestProp.webp --tier=starter --name=chestProp --slot=prop \
   --filter=smooth --seat="$SHADOW" --scale=0.6
 
+# The same crate open, drawn as an edit of the shut master and so standing in the same place in its frame.
+# The shut import's trim moved that crate 578 px down to the floor line at 1:1; the open one is moved by
+# hand and imported untrimmed, so opening it never shifts or rescales the crate. Its seat is the shut
+# crate's seat moved the same way (+154 px at the render's scale).
+OPEN=$(mktemp -t chestopen).png
+magick -size 1686x2528 xc:"#ff00ff" \( art/masters/props/starter/chestPropOpen.webp -resize 1686x2528! \) \
+  -geometry +0+578 -composite "$OPEN"
+magick -size 448x672 xc:none \( "$SHADOW" \) -geometry +0+154 -composite "$SHADOW"
+yarn import-tile "$OPEN" --tier=starter --name=chestPropOpen --slot=prop --filter=smooth --seat="$SHADOW" --no-trim
+rm -f "$OPEN"
+
 # --depth=0.65 must match what the master was painted over: a circular dish gives a top face so large
 # under this shear that the thing reads as a round table.
 scaffold brazier --depth=0.65 --colour=#9a6a3c --floor=#d8c8a8
