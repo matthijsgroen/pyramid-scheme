@@ -20,6 +20,7 @@ import { HIEROGLYPH_SYMBOLS } from "./hieroglyphSymbols"
 import { TableauInventory } from "./TableauInventory"
 import "./plugin"
 import "./collection"
+import "./tierFinish"
 import { registerDevGrants } from "@/app/dev/devActionContributions"
 import { GIVEN_REQUIRED, HIEROGLYPH_REQUIRED } from "../game/hieroglyphData"
 

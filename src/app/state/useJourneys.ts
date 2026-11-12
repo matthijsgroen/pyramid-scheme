@@ -141,6 +141,11 @@ export type JourneyAPI = {
   completeJourney: () => void
   cancelJourney: () => void
   completeLevel: () => void
+  /** Writes journey `journeyId` down as played to its end — every site completed, none under way — with each
+   * `{ levelNr, address }` explored. Explored cells already in the save stay. */
+  finishJourney: (journeyId: string, explored: readonly { levelNr: number; address: string }[]) => Promise<unknown>
+  /** Every cell explored on any level of the journey, as `${levelNr}:${address}`. */
+  exploredAddresses: (journeyId: string) => ReadonlySet<string>
   /** `address` is the cell read off the grid with `cellAddress` — it carries the authoring section the
    * entry is filed under. */
   markCellExplored: (address: string) => void
@@ -457,6 +462,34 @@ export const createJourneysV3Api = ({
             }
           : j
       )
+    )
+  }
+
+  // Persistent interiors keep their count at 1, as completeJourney does.
+  const finishJourney: JourneyAPI["finishJourney"] = (journeyId, explored) => {
+    const levelCount = journeyData.find(j => j.id === journeyId)?.levelCount ?? 1
+    const finished = (j: StoredJourneyStateV3): StoredJourneyStateV3 => ({
+      ...explored.reduce((acc, { levelNr, address }) => withExplored(acc, levelNr, address), j),
+      levelNr: levelCount + 1,
+      completionCount: Math.max(j.completionCount, 1),
+      active: false,
+      interiorLevelNr: null,
+      positionKey: null,
+      standingKey: null,
+    })
+    return Promise.resolve(
+      setJourneys(prev =>
+        prev.some(j => j.journeyId === journeyId)
+          ? prev.map(j => (j.journeyId === journeyId ? finished(j) : j))
+          : [...prev, finished(freshJourney(journeyId))]
+      )
+    )
+  }
+
+  const exploredAddresses = (journeyId: string): ReadonlySet<string> => {
+    const j = journeys.find(j => j.journeyId === journeyId)
+    return new Set(
+      Object.entries(j?.exploredCells ?? {}).flatMap(([section, keys]) => keys.map(key => `${section}#${key}`))
     )
   }
 
@@ -790,6 +823,8 @@ export const createJourneysV3Api = ({
     completeJourney,
     cancelJourney,
     completeLevel,
+    finishJourney,
+    exploredAddresses,
     markCellExplored,
     getExploredCells,
     updatePosition,

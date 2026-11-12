@@ -24,7 +24,7 @@ import { STORY_BEATS } from "./storyBeats"
  * is the same sentence answered fifty hours later — so it goes where the script puts it, after the
  * picture rather than after any particular piece of it.
  */
-const ON_LEAVING: Record<string, string> = {
+export const ON_LEAVING: Record<string, string> = {
   starter_treasure_tomb: "bond.starterTomb",
   wizard_treasure_tomb_c: "bond.wizard",
 }

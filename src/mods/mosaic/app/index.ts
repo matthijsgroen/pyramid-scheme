@@ -1,3 +1,4 @@
+import "./tierFinish"
 import { use } from "react"
 import { z } from "zod"
 import { FezContext } from "@/app/fez/context"

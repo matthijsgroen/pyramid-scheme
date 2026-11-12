@@ -1,5 +1,6 @@
 import { useMergedDevGrants, useMergedDevJumps } from "./devActionContributions"
 import type { DevAction } from "@/ui/molecules/DevPanel"
+import "./finishTierGrant"
 
 // The cheat menu's actions, so expert+ content is reachable without replaying up to it. Grants come
 // from the mod that owns what they hand out, through the same public APIs real play uses, so a
