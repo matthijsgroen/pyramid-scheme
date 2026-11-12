@@ -1754,6 +1754,7 @@
       "otherEpoch": "This card is from another version of the game.",
       "newerGame": "This card comes from a newer version: update the game first."
     },
-    "writeFailed": "The save could not be written; this device kept its own."
+    "writeFailed": "The save could not be written; this device kept its own.",
+    "writeLost": "The save could not be replaced and this device's save may be incomplete."
   }
 }

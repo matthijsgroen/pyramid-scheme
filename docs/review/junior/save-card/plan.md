@@ -34,10 +34,12 @@
 ### Task 1: Envelop en stukken
 
 **Files:**
+
 - Create: `src/app/saveCard/envelope.ts`, `src/app/saveCard/chunks.ts`
 - Test: `src/app/saveCard/envelope.spec.ts`, `src/app/saveCard/chunks.spec.ts`
 
 **Interfaces:**
+
 - Produces:
   - `sealSave(json: string, now: number): Promise<Uint8Array>`
   - `openSave(bytes: Uint8Array, now: number): Promise<OpenResult>` met `type OpenResult = { ok: true; json: string; stampedAt: number } | { ok: false; reason: "notASave" | "tampered" | "expired" | "future" }`
@@ -61,21 +63,23 @@
 ### Task 2: Save trimmen en import toetsen
 
 **Files:**
+
 - Create: `src/app/saveCard/trimSave.ts`
 - Modify: `src/app/state/useJourneys.ts` (exporteer `INITIAL_STORAGE_VERSIONS`)
 - Test: `src/app/saveCard/trimSave.spec.ts`
 
 **Interfaces:**
+
 - Produces:
   - `trimSave(data: Record<string, unknown>): Record<string, unknown>`
   - `checkImport(data: Record<string, unknown>): { ok: true } | { ok: false; reason: "otherEpoch" | "newerGame" }`
 
-Wat `trimSave` weglaat (per journey in `journeys`): gangcellen in `exploredCells` (sleutels die met `~` beginnen), `floorExploration` (en zet `floorExplorationVersion: 0` zodat de bestaande backfill hem herberekent), `knownHiddenCorridors`, en top-level `puzzleState`/`levelAnswers` (bord in uitvoering). Lege arrays/objecten na het trimmen vallen weg. Al het andere blijft byte-gelijk. Controleer eerst in `useAssembledFloor.ts` (`applyExplored`) dat gangen inderdaad uit het hoogwatermerk van kamers terugkomen; zo niet, stop en meld.
+Wat `trimSave` doet (per journey in `journeys`): gangcellen in `exploredCells` (`<verdieping>/~<n>`) worden per verdieping als reeksen bewaard (`0/~3`,`0/~4`,`0/~5` → `0/~3-5`) en `expandSave` zet ze bij import terug; `floorExploration` houdt alleen zijn sleutels (lege samenvattingen, `floorExplorationVersion: 0`, zodat de bestaande backfill elke verdieping herberekent); `knownHiddenCorridors` en top-level `puzzleState`/`levelAnswers` (bord in uitvoering) vallen weg. Al het andere blijft byte-gelijk.
 
 `checkImport`: `data.saveEpoch !== SAVE_EPOCH` → `"otherEpoch"`; een waarde in `data.storageVersions` hoger dan in `INITIAL_STORAGE_VERSIONS` → `"newerGame"`.
 
 - [ ] **Stap 1: tests** (gemaakte save, geen geschreven content):
-  - `drops corridor cells and keeps every place`: `exploredCells: { "0:a": ["~3", "p1", "~4", "xkey"] }` → `["p1", "xkey"]`.
+  - `files a run of corridor cells as one range` / `gives back every walked cell once expanded`.
   - `asks the backfill to recompute floor summaries`: `floorExploration` weg, `floorExplorationVersion === 0`.
   - `keeps what play cannot derive`: `mechanismStates`, `foundHiddenCorridors`, `sequenceReads`, mod-state en `conversations` diepgelijk aan de invoer.
   - `drops the board in progress`: `puzzleState`, `levelAnswers` afwezig.
@@ -86,11 +90,13 @@ Wat `trimSave` weglaat (per journey in `journeys`): gangcellen in `exploredCells
 ### Task 3: Layout, raster en lezer
 
 **Files:**
+
 - Create: `src/app/saveCard/cardLayout.ts`, `src/app/saveCard/rasterCodes.ts`, `src/app/saveCard/readCard.ts`
 - Modify: `package.json` (`qrcode`, `@types/qrcode`, `jsqr-es6`)
 - Test: `src/app/saveCard/readCard.spec.ts`
 
 **Interfaces:**
+
 - Produces:
   - `type CardLayout = { W: number; H: number; cells: { x: number; y: number }[]; size: number; header: Rect; footer: Rect }` in modules (zoals `layout()` in spike/lib.mjs).
   - `cardLayout(n: number, version: number): CardLayout`
@@ -112,15 +118,18 @@ Algoritme van `readCard` = spike/rectify.mjs: grijs maken → `findFrame` (eerst
 ### Task 4: Kaart tekenen en scherm bij Instellingen
 
 **Files:**
+
 - Create: `src/app/saveCard/drawCard.ts`, `src/app/saveCard/SaveCardTransfer.tsx`
 - Modify: `src/app/SettingsModal.tsx` (knop + paneel, elke build), `public/locales/en/*.json`, `public/locales/nl/*.json` (keys onder `saveCard.*`), `CHANGELOG.md`
 - Test: `src/app/saveCard/SaveCardTransfer.spec.tsx`
 
 **Interfaces:**
+
 - Consumes: Task 1–3, `readGameData`/`writeGameData` (`src/support/useGameStorage.ts`).
 - Produces: `drawCard(chunks: Uint8Array[], validUntil: Date, t: TFunction): Promise<Blob>` (canvas, PNG); `<SaveCardTransfer />`.
 
 Flow:
+
 - **Maak kaart:** `readGameData` → `trimSave` → `sealSave(JSON, Date.now())` → `splitChunks(…, random 16-bit id)` → `drawCard` → `navigator.share({ files: [png] })`; als `share` ontbreekt of `canShare` nee zegt, `<a download="reiskaart.png">`. Een afgebroken deelmenu (`AbortError`) is geen fout.
 - **Lees kaart:** `<input type="file" accept="image/*">` → bitmap → canvas → `readCard` → `joinChunks` → `openSave(…, Date.now())` → `checkImport` → bevestigen (`window.confirm`, met het aantal reizen) → `writeGameData` → `location.reload()`.
 - Elke weigering krijgt een eigen melding: geen reiskaart, verlopen, klok loopt voor, aangepast, andere spelversie (epoch), werk eerst het spel bij.

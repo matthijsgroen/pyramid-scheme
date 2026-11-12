@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest"
+import type { FloorGrid } from "@/game/siteTypes"
+import { RELAID_FLOORS_VERSION } from "../SiteMap/relaidPyramids"
+import { repairFloorExploration } from "../SiteMap/repairFloorExploration"
 import { SAVE_EPOCH } from "../saveEpoch"
-import { INITIAL_STORAGE_VERSIONS } from "../state/useJourneys"
-import { checkImport, trimSave } from "./trimSave"
+import { INITIAL_STORAGE_VERSIONS, MECHANISM_SLOT_VERSION } from "../state/useJourneys"
+import { checkImport, expandSave, trimSave } from "./trimSave"
 
 const journeyOf = (data: Record<string, unknown>) => (data.journeys as Record<string, unknown>[])[0]
 
@@ -11,8 +14,11 @@ const save = (extra: Record<string, unknown> = {}): Record<string, unknown> => (
   journeys: [
     {
       journeyId: "j1",
-      exploredCells: { "0:a": ["~3", "p1", "~4", "xkey"] },
-      floorExploration: { "0:0": { open: true, keySets: [["k"]] } },
+      exploredCells: {
+        "1:a": ["0/~3", "0/p1", "0/~5", "0/~4", "0/xkey", "0/~9", "0/~2|3", "1/~4", "1/~5"],
+        "2:b": ["0/~1"],
+      },
+      floorExploration: { "1:0": { open: true, keySets: [["k"]] }, "1:1": { open: false, keySets: [] } },
       floorExplorationVersion: 1,
       knownHiddenCorridors: ["0:a"],
       foundHiddenCorridors: ["0:b"],
@@ -27,21 +33,55 @@ const save = (extra: Record<string, unknown> = {}): Record<string, unknown> => (
   ...extra,
 })
 
+const asSets = (cells: unknown) =>
+  Object.fromEntries(
+    Object.entries(cells as Record<string, string[]>).map(([section, keys]) => [section, new Set(keys)])
+  )
+
 describe("trimSave", () => {
-  it("drops corridor cells and keeps every place", () => {
-    expect((journeyOf(trimSave(save())).exploredCells as Record<string, string[]>)["0:a"]).toEqual(["p1", "xkey"])
+  it("files a run of corridor cells as one range", () => {
+    expect(new Set((journeyOf(trimSave(save())).exploredCells as Record<string, string[]>)["1:a"])).toEqual(
+      new Set(["0/~3-5", "0/p1", "0/xkey", "0/~9", "0/~2|3", "1/~4-5"])
+    )
   })
 
-  it("drops a section and the record when only corridors were walked", () => {
-    const data = save({ journeys: [{ journeyId: "j", exploredCells: { "0:a": ["~1"] } }] })
-    expect(journeyOf(trimSave(data))).not.toHaveProperty("exploredCells")
+  it("gives back every walked cell once expanded", () => {
+    const input = save()
+    expect(asSets(journeyOf(expandSave(trimSave(input))).exploredCells)).toEqual(asSets(journeyOf(input).exploredCells))
   })
 
   it("asks the backfill to recompute floor summaries", () => {
     const journey = journeyOf(trimSave(save()))
-    expect(journey).not.toHaveProperty("floorExploration")
+    expect(Object.keys(journey.floorExploration as object)).toEqual(["1:0", "1:1"])
     expect(journey.floorExplorationVersion).toBe(0)
     expect(journey).not.toHaveProperty("knownHiddenCorridors")
+  })
+
+  it("gets one summary per floor back from the backfill", () => {
+    const grid: FloorGrid = {
+      cells: [
+        [
+          {
+            type: "room",
+            roomType: "portal",
+            dirs: new Set(["e"]),
+            state: "completed",
+            sectionAddress: "a",
+            ordinal: "0",
+          },
+          { type: "corridor", dirs: new Set(["w"]), state: "fogged", sectionAddress: "a", ordinal: "1" },
+        ],
+      ],
+      rows: 1,
+      cols: 2,
+      entrancePos: [0, 0],
+      exitPos: [0, 1],
+      siteId: "made-up",
+      staircases: {},
+    }
+    const journey = journeyOf(expandSave(trimSave(save())))
+    const repaired = repairFloorExploration({ ...journey, levelNr: 1, completionCount: 0 }, () => grid)
+    expect(Object.keys(repaired.floorExploration).sort()).toEqual(["1:0", "1:1"])
   })
 
   it("keeps what play cannot derive", () => {
@@ -78,6 +118,25 @@ describe("checkImport", () => {
   it("refuses a save from a newer game", () => {
     const storageVersions = { ...INITIAL_STORAGE_VERSIONS, journeys: INITIAL_STORAGE_VERSIONS.journeys + 1 }
     expect(checkImport(save({ storageVersions }))).toEqual({ ok: false, reason: "newerGame" })
+  })
+
+  it.each([
+    ["mechanismSlotVersion", MECHANISM_SLOT_VERSION + 1],
+    ["relaidFloorsVersion", RELAID_FLOORS_VERSION + 1],
+  ])("refuses a journey from a newer game: %s", (key, value) => {
+    const data = save()
+    journeyOf(data)[key] = value
+    expect(checkImport(data)).toEqual({ ok: false, reason: "newerGame" })
+  })
+
+  it("accepts a journey from this game", () => {
+    const data = save()
+    Object.assign(journeyOf(data), {
+      mechanismSlotVersion: MECHANISM_SLOT_VERSION,
+      relaidFloorsVersion: RELAID_FLOORS_VERSION,
+      floorExplorationVersion: 99,
+    })
+    expect(checkImport(data)).toEqual({ ok: true })
   })
 
   it("accepts an older storage version", () => {

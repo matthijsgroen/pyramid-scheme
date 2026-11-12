@@ -196,14 +196,53 @@ describe("reading a travel card", () => {
     expect(mocks.writeGameData).toHaveBeenCalledTimes(0)
   })
 
-  it("keeps the page when the save cannot be written", async () => {
+  it("files corridor ranges cell by cell before writing", async () => {
+    const trimmed = { ...save, journeys: [{ journeyId: "a", exploredCells: { "1:a": ["0/~3-5", "0/p1"] } }] }
+    mocks.readCard.mockResolvedValue(await card(JSON.stringify(trimmed)))
+    confirm.mockReturnValue(true)
+
+    await readCardFile()
+
+    await waitFor(() => expect(reload).toHaveBeenCalledTimes(1))
+    const written = mocks.writeGameData.mock.calls[0][0] as { journeys: { exploredCells: Record<string, string[]> }[] }
+    expect(new Set(written.journeys[0].exploredCells["1:a"])).toEqual(new Set(["0/~3", "0/~4", "0/~5", "0/p1"]))
+  })
+
+  it("puts this device's save back when the card's cannot be written", async () => {
+    const own = { saveEpoch: SAVE_EPOCH, journeys: [{ journeyId: "mine" }] }
+    mocks.readGameData.mockResolvedValue(own)
+    mocks.readCard.mockResolvedValue(await card(JSON.stringify(save)))
+    mocks.writeGameData.mockRejectedValueOnce(new Error("quota"))
+    confirm.mockReturnValue(true)
+
+    await readCardFile()
+
+    await waitFor(() => expect(screen.getByRole("status").textContent).toBe("saveCard.writeFailed"))
+    expect(mocks.writeGameData.mock.calls).toEqual([[save], [own]])
+    expect(reload).toHaveBeenCalledTimes(0)
+  })
+
+  it("says this device's save may be incomplete when it cannot be put back", async () => {
     mocks.readCard.mockResolvedValue(await card(JSON.stringify(save)))
     mocks.writeGameData.mockRejectedValue(new Error("quota"))
     confirm.mockReturnValue(true)
 
     await readCardFile()
 
+    await waitFor(() => expect(screen.getByRole("status").textContent).toBe("saveCard.writeLost"))
+    expect(mocks.writeGameData).toHaveBeenCalledTimes(2)
+    expect(reload).toHaveBeenCalledTimes(0)
+  })
+
+  it("writes nothing when this device's save cannot be read first", async () => {
+    mocks.readGameData.mockRejectedValue(new Error("blocked"))
+    mocks.readCard.mockResolvedValue(await card(JSON.stringify(save)))
+    confirm.mockReturnValue(true)
+
+    await readCardFile()
+
     await waitFor(() => expect(screen.getByRole("status").textContent).toBe("saveCard.writeFailed"))
+    expect(mocks.writeGameData).toHaveBeenCalledTimes(0)
     expect(reload).toHaveBeenCalledTimes(0)
   })
 

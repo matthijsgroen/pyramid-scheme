@@ -1754,6 +1754,7 @@
       "otherEpoch": "Deze kaart komt uit een andere versie van het spel.",
       "newerGame": "Deze kaart komt uit een nieuwere versie: werk eerst het spel bij."
     },
-    "writeFailed": "De save kon niet worden opgeslagen; dit apparaat houdt zijn eigen save."
+    "writeFailed": "De save kon niet worden opgeslagen; dit apparaat houdt zijn eigen save.",
+    "writeLost": "De save kon niet vervangen worden; de save op dit apparaat is mogelijk onvolledig."
   }
 }

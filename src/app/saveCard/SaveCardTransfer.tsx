@@ -6,7 +6,7 @@ import { splitChunks, joinChunks } from "./chunks"
 import { drawCard, imageFromFile } from "./drawCard"
 import { openSave, sealSave, VALID_FOR_MS } from "./envelope"
 import { readCard } from "./readCard"
-import { checkImport, trimSave } from "./trimSave"
+import { checkImport, expandSave, trimSave } from "./trimSave"
 
 type Json = Record<string, unknown>
 type Refusal = "notACard" | "tampered" | "expired" | "future" | "otherEpoch" | "newerGame"
@@ -23,12 +23,37 @@ const openCard = async (file: Blob): Promise<Opened> => {
     if (!payload) return NOT_A_CARD
     const opened = await openSave(payload, Date.now())
     if (!opened.ok) return opened.reason === "notASave" ? NOT_A_CARD : { ok: false, reason: opened.reason }
-    const data: unknown = JSON.parse(opened.json)
-    if (typeof data !== "object" || data === null || Array.isArray(data)) return NOT_A_CARD
-    const check = checkImport(data as Json)
-    return check.ok ? { ok: true, data: data as Json } : check
+    const parsed: unknown = JSON.parse(opened.json)
+    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return NOT_A_CARD
+    const data = expandSave(parsed as Json)
+    const check = checkImport(data)
+    return check.ok ? { ok: true, data } : check
   } catch {
     return NOT_A_CARD
+  }
+}
+
+type Replaced = "replaced" | "kept" | "lost"
+
+// The store is cleared before it is written, so a failed write can leave half a save; this device's own
+// save is read first and written back then.
+const replaceSave = async (data: Json): Promise<Replaced> => {
+  let own: Json
+  try {
+    own = await readGameData()
+  } catch {
+    return "kept"
+  }
+  try {
+    await writeGameData(data)
+    return "replaced"
+  } catch {
+    try {
+      await writeGameData(own)
+      return "kept"
+    } catch {
+      return "lost"
+    }
   }
 }
 
@@ -96,11 +121,9 @@ export const SaveCardTransfer: FC = () => {
     if (!opened.ok) return setStatus(refusal(opened.reason))
     const journeys = Array.isArray(opened.data.journeys) ? opened.data.journeys.length : 0
     if (!window.confirm(t("saveCard.confirm", { count: journeys }))) return
-    try {
-      await writeGameData(opened.data)
-    } catch {
-      return setStatus(t("saveCard.writeFailed"))
-    }
+    const replaced = await replaceSave(opened.data)
+    if (replaced === "kept") return setStatus(t("saveCard.writeFailed"))
+    if (replaced === "lost") return setStatus(t("saveCard.writeLost"))
     window.location.reload()
   }
 
