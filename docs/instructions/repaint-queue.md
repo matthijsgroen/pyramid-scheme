@@ -136,37 +136,6 @@ seen nearly edge-on, which keeps it a narrow band above the chest.
 merchant's best box is still cedar and faience, not gold. It is a new shape, so it has a scaffold: the
 nobleman's sealed chest at starter, the cavetto chest at junior.
 
-### `junior/chestPropOpen` — the nobleman's sealed chest, lid up, empty
-
-**Attach:**
-
-1. `art/masters/props/junior/chestProp.webp` — the chest itself, to edit: shape, silhouette, camera
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
-
-THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: one box on four short feet, a band round its top where the lid meets the body, a cord with a seal over the lid. Same object, same camera, same paint. Keep every edge, every proportion and every silhouette of the body, the band and the feet exactly as in the reference image — do not move, resize, straighten, add, remove or restyle them, and do not change the angle it stands at.
-
-THE ONE CHANGE: the chest is OPEN. The cord is cut and hangs loose down the front, the seal broken. The lid is raised on its back hinge and stands UPRIGHT behind the body, seen almost edge-on, a narrow painted band rising above the chest's back edge. The chest's mouth is an EMPTY dark interior, #381d0e at its deepest, the inside of the near wall catching a little light. Nothing inside: no gold, no glow, nothing spilling out.
-
-THE SECOND ATTACHED IMAGE IS THE FLOOR'S MATERIAL. Take only its paint quality from it; nothing of that floor appears in the picture.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, soft brush texture, no outlines. A nobleman's painted house: cedar painted in red ochre, Egyptian blue and leaf green, copper only as a hasp or a band, gone verdigris.
-
-BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the chest, its lid and its shadow.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold sealedChest --spin=-27
-yarn import-tile art/masters/props/junior/chestPropOpen.webp --tier=junior --name=chestPropOpen --slot=prop \
-  --filter=smooth --seat="$SHADOW"
-```
-
 ### `starter/wardChest` — the merchant's best box, sealed
 
 **Attach:**

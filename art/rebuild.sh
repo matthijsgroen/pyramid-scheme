@@ -837,6 +837,17 @@ scaffold sealedChest --spin=-27
 yarn import-tile art/masters/props/junior/chestProp.webp --tier=junior --name=chestProp --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=1.12
 
+# The same chest open, an edit of the shut master, imported untrimmed so it lands exactly where the shut
+# import put the chest: the shut trim scaled it 1.04 and moved it -74,+214 px. The seat goes the same way
+# at the render's scale (-20,+57).
+OPEN=$(mktemp -t chestopen).png
+magick -size 1688x2530 xc:"#ff00ff" \( art/masters/props/junior/chestPropOpen.webp -resize 1688x2530! -resize 104% \) \
+  -geometry -74+214 -composite "$OPEN"
+magick -size 448x672 xc:none \( "$SHADOW" -resize 104% \) -geometry -20+57 -composite "$SHADOW"
+yarn import-tile "$OPEN" --tier=junior --name=chestPropOpen --slot=prop --filter=smooth --seat="$SHADOW" --no-trim \
+  --brightness=1.12
+rm -f "$OPEN"
+
 scaffold falseDoor --spin=6
 yarn import-tile art/masters/props/junior/shrine.webp --tier=junior --name=shrine --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
