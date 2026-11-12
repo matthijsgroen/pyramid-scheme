@@ -138,24 +138,25 @@ nobleman's sealed chest at starter, the cavetto chest at junior.
 
 ### `starter/chestProp` — the merchant's crate, alone
 
-**The chest's screen draws this tile on its own**, so it must read as ONE chest: the reed baskets and the jar
-beside and on the crate go. Paint this before `starter/chestPropOpen`, which is an edit of it.
+**The chest's screen draws this tile on its own**, so it must read as ONE chest: no reed baskets, no jar.
+Painted over the lone `crate` scaffold, so it keeps the set's oblique top-down camera (the lid's top face
+seen from above). Paint this before `starter/chestPropOpen`, which is an edit of it.
+
+**Prepare:** `yarn render-prop --primitive=crate --floor=#d8c8a8 --out="$HOME/tile-previews/crate-starter.png"`
 
 **Attach:**
 
-1. `art/masters/props/starter/chestProp.webp` — the chest as painted now, to edit
-2. `~/tile-previews/starter-plain.png` — the material reference
+1. `~/tile-previews/crate-starter.png` — the scaffold: shape, silhouette, camera
+2. `art/masters/props/starter/chestProp.webp` — the crate as painted now: its wood, rope and paint only
 
 ```
 FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
 
-CAMERA: the crate's FRONT FACE is square to the camera, flat, exactly as in the first reference: no side face shows, no corner turns toward us, nothing recedes to the left or right. Depth is shown only by the top being drawn ABOVE the front face as a shallow band, as deep as the lid band in the reference. No vanishing point: parallel edges stay parallel.
+THE FIRST ATTACHED IMAGE IS THE SCAFFOLD: a crate seen from above at an angle. The big pale face at the top is the LID'S TOP, seen from above; the dark face below it is the crate's FRONT; the thin band between is the lid's rim. Keep every edge, every proportion and every silhouette exactly as in the first reference — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. The top face stays as large as it is: that is the camera looking down.
 
-THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: two reed baskets and a rope-handled wooden crate stacked together, a stoppered jar on the crate. Keep the CRATE exactly: every edge, every proportion, its rope handle, its paint, the angle it stands at.
+THE SECOND ATTACHED IMAGE IS THE CRATE'S PAINT: take its worn timber planks, its rope handle on the front, its colours and its brushwork. Nothing else from it: not its baskets, not its jar, not its camera.
 
-THE ONE CHANGE: the crate stands ALONE. Remove both reed baskets and the stoppered jar entirely; where they stood is background. The crate's lid is shut and bare. Move the crate to the middle of the frame, same size.
-
-THE SECOND ATTACHED IMAGE IS THE FLOOR'S MATERIAL. Take only its paint quality from it; nothing of that floor appears in the picture.
+The lid's top is planks running left to right, worn and shut. The rope handle hangs on the front face.
 
 The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all. No floor band, no ground under the shadow.
 
@@ -167,9 +168,9 @@ BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere 
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold chest --floor=#d8c8a8
+scaffold crate --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/chestProp.webp --tier=starter --name=chestProp --slot=prop \
-  --filter=smooth --seat="$SHADOW"
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `starter/chestPropOpen` — the merchant's crate, lid off, empty
@@ -182,11 +183,11 @@ yarn import-tile art/masters/props/starter/chestProp.webp --tier=starter --name=
 ```
 FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
 
-CAMERA: the crate's FRONT FACE is square to the camera, flat, exactly as in the first reference: no side face shows, no corner turns toward us, nothing recedes to the left or right. Depth is shown only by the top being drawn ABOVE the front face as a shallow band, as deep as the lid band in the reference. No vanishing point: parallel edges stay parallel.
+CAMERA: exactly the first reference's: seen from above at an angle, the crate's front face below and its top seen from above. Do not turn it, do not flatten it to a front view.
 
 THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: a rope-handled wooden crate standing alone. Same crate, same camera, same paint. Keep every edge, every proportion and every silhouette of the crate's body exactly as in the reference image — do not move, resize, straighten, add or restyle it, and do not change the angle it stands at. Add nothing beside it: no baskets, no jars.
 
-THE ONE CHANGE: the crate is OPEN. Its lid is lifted off and stands upright behind the crate, its flat face toward us, a plank band rising above the crate's back edge. The open mouth is the shallow top band only, dark inside; the crate keeps the height and width of the shut one. The crate's mouth is an EMPTY dark interior, #3a2e20 at its deepest, with the inside of the near wall catching a little light. Nothing inside: no gold, no glow, nothing spilling out.
+THE ONE CHANGE: the crate is OPEN. Its lid is lifted off and leans upright against the crate's back edge, its planks toward us, rising above the crate. Where the shut lid's top face was, the crate's open MOUTH is seen from above: the inside of the back wall and the floor of the crate, framed by the plank rims. The crate keeps its height, width and front face. The mouth is an EMPTY dark interior, #3a2e20 at its deepest, with the inside of the near wall catching a little light. Nothing inside: no gold, no glow, nothing spilling out.
 
 THE SECOND ATTACHED IMAGE IS THE FLOOR'S MATERIAL. Take only its paint quality from it; nothing of that floor appears in the picture.
 
@@ -200,7 +201,7 @@ BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere 
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold chest --floor=#d8c8a8
+scaffold crate --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/chestPropOpen.webp --tier=starter --name=chestPropOpen --slot=prop \
   --filter=smooth --seat="$SHADOW"
 ```
