@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Walk the map with arrow keys or WASD.
+- Move your save to another device with a travel card in Settings.
 
 ### Changed
 
