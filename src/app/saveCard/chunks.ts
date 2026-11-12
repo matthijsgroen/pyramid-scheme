@@ -1,13 +1,14 @@
+import { MAX_CODES } from "./cardLayout"
+
 const CHUNK_TAG = 0x50 // "P"
 const HEADER_LENGTH = 4
 const MAX_CHUNK_BYTES = 2_904
 const MAX_PAYLOAD = MAX_CHUNK_BYTES - HEADER_LENGTH
-const MAX_CHUNKS = 9
 
 export const splitChunks = (payload: Uint8Array, transferId: number): Uint8Array[] => {
   const count = Math.max(1, Math.ceil(payload.length / MAX_PAYLOAD))
-  if (count > MAX_CHUNKS) {
-    throw new Error(`Payload needs ${count} chunks, at most ${MAX_CHUNKS}`)
+  if (count > MAX_CODES) {
+    throw new Error(`Payload needs ${count} chunks, at most ${MAX_CODES}`)
   }
   return Array.from({ length: count }, (_, index) => {
     const part = payload.subarray(index * MAX_PAYLOAD, (index + 1) * MAX_PAYLOAD)

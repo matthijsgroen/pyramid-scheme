@@ -1,13 +1,10 @@
 import type { CardLayout } from "./cardLayout"
-import { BORDER, QUIET_ZONE } from "./cardLayout"
+import { BORDER, QUIET_ZONE, UNREADABLE_VERSION } from "./cardLayout"
 
 export type RgbaImage = { width: number; height: number; data: Uint8ClampedArray }
 
 const INK = [0x2b, 0x21, 0x18] as const
 const PAPER = [0xff, 0xf8, 0xea] as const
-
-/** jsqr-es6 never reads version 23 at level L. */
-const UNREADABLE_VERSION = 23
 
 /**
  * Encodes every chunk as a byte-mode, level-L code at one shared version: the smallest that

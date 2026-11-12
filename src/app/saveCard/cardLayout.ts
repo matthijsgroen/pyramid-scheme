@@ -13,6 +13,10 @@ export type CardLayout = {
 }
 
 export const QUIET_ZONE = 4
+/** Codes on one card; a chunk header's count nibble holds it. */
+export const MAX_CODES = 9
+/** jsqr-es6 never reads version 23 at level L. */
+export const UNREADABLE_VERSION = 23
 export const BORDER = 7
 const HEADER_SHARE = 0.24
 const FOOTER_SHARE = 0.09

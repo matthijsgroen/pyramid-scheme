@@ -1,13 +1,11 @@
 import type { CardLayout, Rect } from "./cardLayout"
-import { cardLayout, QUIET_ZONE } from "./cardLayout"
+import { cardLayout, MAX_CODES, QUIET_ZONE, UNREADABLE_VERSION } from "./cardLayout"
 import { chunkCount, joinChunks } from "./chunks"
 import type { RgbaImage } from "./rasterCodes"
 
 type Grey = { g: Float32Array; w: number; h: number }
 type Decode = (data: Uint8ClampedArray, width: number, height: number) => Uint8Array | undefined
 
-const MAX_CODES = 9
-const UNREADABLE_VERSION = 23
 const DARK = 90
 const ASPECT_TOLERANCE = 0.01
 const MIN_TIMING_SCORE = 0.85
