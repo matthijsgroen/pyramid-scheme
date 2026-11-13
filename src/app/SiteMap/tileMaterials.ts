@@ -100,12 +100,11 @@ export const tierPalette: Record<Tileset, TierPalette> = {
     wall: "#6b7c8f",
     wallTop: "#7a8d9e",
     wallBase: "#2c3640",
-    // Dressed stone, deep enough that nothing of the desert gets down here. The cold one, and the one
-    // rank whose night is meant to read blue — so its near-black is the blue-grey its own stone is cut
-    // from rather than a wash borrowed from another rank.
-    shade: "rgba(23,28,34,0.63)",
+    // A priest's temple: the lightest floor of the five, cool alabaster-grey, so the night is the lightest
+    // hand and the torch burns low. The cold one, so its near-black is its own blue-grey.
+    shade: "rgba(23,28,34,0.15)",
     faceNight: 0.31,
-    lamp: 1,
+    lamp: 0.3,
     prop: "#a7b2be",
     propDark: "#69737f",
     outline: "#171c22",
