@@ -1,0 +1,52 @@
+// A new lock. Save to redraw; lines starting with // are ignored.
+//
+//  in -- hall                    corridor, nothing on it; in and out are the way in and the way out
+//  in -[S1]- hall                gate: open while S1 is in its second state
+//  in -[S1:a]- hall              gate: open while S1 is in state a
+//  in -[A+B]- hall               every owner   ·   -[A|B]- any owner
+//  hall >> in                    one-way
+//  in -[Y]- >> hall              one join, several barriers, in order from the left region
+//  hall -[sluice:wet]            region gate: hall impassable unless sluice is wet
+//  S1 toggle @s1                 two states a b, back and forth, starts at a
+//  sluice toggle @hall dry wet   the same, its states named
+//  T1 activator @hall            off then on, for good — a torch, or a floor key
+//  Y fork @in                    a fork puzzle: the gates naming it are its ways
+//  P sequence hall vault reset hall-vault   steps in order, reset at that gate; -[P]- opens when done
+//  p1 plate @hall   p2 plate @hall stone   a plate, empty or with a stone on it; any stone presses any plate
+//  in -[p1]- hall   in -[p1:empty]- hall    open while a stone rests on p1, or while none does
+//  in -[unladen]- hall           only with empty hands: a zipline, a narrow passage
+//  hall *   s2 $   spare ?   corridor -     takes puzzles, a reward, anything, nothing
+//  // comment
+//
+//  catalogue: cellar, clockwork, counterweight, doubleBack, dropHome, keyring, lamplighter, masonsRamp, observatory, overlook, plates, relay, seesaw, sluice, tide, twoLamps, twoStones
+//
+
+in -- passage -[P1+P2]- out
+
+in -- hall
+
+hall -[P3]- hall2 -[P4]- altar
+
+P1 plate @passage stone
+P2 plate @passage
+
+P3 plate @hall
+
+P4 plate @altar stone
+
+
+altar -[P4:empty]- backroom
+
+P5 plate @backroom
+
+backroom -- hall3
+
+hall3 -[unladen]- hall2
+
+hall2 -[P4:empty]- hall5
+
+S1 activator @hall5
+
+
+
+hall3 -[S1]- passage

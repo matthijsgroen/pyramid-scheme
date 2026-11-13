@@ -1,0 +1,12 @@
+in -[G1+G2]- out
+in -- room1
+room1 -[Y]- >> topLeft
+room1 -[Y]- >> topRight
+
+topLeft >> in
+topRight >> in
+
+Y board @room1
+
+G1 lever @topLeft
+G2 lever @topRight
