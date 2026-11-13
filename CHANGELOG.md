@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [ and ] or the shoulder buttons switch tabs in the camp windows.
 - Escape or the controller's B goes on from a found treasure and a finished level, and leaves the expedition.
 - Puzzle rules show the keys or controller buttons, and the prompts and pills show their button.
+- Eclipse, sumplete, pair puzzle, star battle and futoshiki show their keys and buttons under the rules.
 
 ### Changed
 

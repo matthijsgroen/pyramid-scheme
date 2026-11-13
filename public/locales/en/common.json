@@ -442,7 +442,11 @@
       }
     },
     "goal": "Every row and every column adds up to the number beside it.",
-    "name": "The Tally"
+    "name": "The Tally",
+    "controls": {
+      "move": "choose a number",
+      "mark": "cross out, keep or clear"
+    }
   },
   "futoshiki": {
     "rules": {
@@ -498,7 +502,15 @@
       }
     },
     "goal": "Every row and every column shows each number exactly once.",
-    "name": "Greater and Lesser"
+    "name": "Greater and Lesser",
+    "controls": {
+      "move": "choose a square",
+      "type": "write a number",
+      "choose": "choose a number or the eraser",
+      "place": "write it",
+      "pencil": "pencil",
+      "erase": "erase"
+    }
   },
   "lightbeam": {
     "rules": {
@@ -562,7 +574,11 @@
       }
     },
     "goal": "Every square holds a sun or a moon, and every line holds as many of one as of the other.",
-    "name": "Sun and Moon"
+    "name": "Sun and Moon",
+    "controls": {
+      "move": "choose a square",
+      "mark": "change the mark"
+    }
   },
   "constellation": {
     "rules": {
@@ -963,6 +979,11 @@
       "market": "Market Stalls",
       "lotus": "Lotus Pond",
       "cats": "Temple Cats"
+    },
+    "controls": {
+      "move": "choose a square",
+      "mark": "change the mark",
+      "sweep": "hold and move: rule out a row"
     }
   },
   "pairPuzzle": {
@@ -1049,6 +1070,11 @@
           "place_other": "Put a beetle on each hatched square."
         }
       }
+    },
+    "controls": {
+      "move": "choose a square",
+      "mark": "change the mark",
+      "sweep": "hold and move: rule out a row"
     }
   },
   "rushHour": {

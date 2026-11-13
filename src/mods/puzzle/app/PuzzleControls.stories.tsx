@@ -9,6 +9,16 @@ import { ConstellationRules } from "./constellation/ConstellationRules"
 import { useConstellationControls } from "./constellation/constellationControls"
 import { SudokuRules } from "./sudoku/SudokuRules"
 import { useSudokuControls } from "./sudoku/sudokuControls"
+import { EclipseRules } from "./eclipse/EclipseRules"
+import { useEclipseControls } from "./eclipse/eclipseControls"
+import { SumpleteRules } from "./sumplete/SumpleteRules"
+import { useSumpleteControls } from "./sumplete/sumpleteControls"
+import { PairPuzzleRules } from "./pairPuzzle/PairPuzzleRules"
+import { usePairPuzzleControls } from "./pairPuzzle/pairPuzzleControls"
+import { StarBattleRules } from "./starBattle/StarBattleRules"
+import { useStarBattleControls } from "./starBattle/starBattleControls"
+import { FutoshikiRules } from "./futoshiki/FutoshikiRules"
+import { useFutoshikiControls } from "./futoshiki/futoshikiControls"
 
 const noop = () => {}
 
@@ -40,6 +50,11 @@ const Families: FC = () => {
   const rushHour = useRushHourControls()
   const constellation = useConstellationControls()
   const sudoku = useSudokuControls(6)
+  const eclipse = useEclipseControls()
+  const sumplete = useSumpleteControls()
+  const pairPuzzle = usePairPuzzleControls()
+  const starBattle = useStarBattleControls()
+  const futoshiki = useFutoshikiControls(5)
   return (
     <div className="flex min-h-screen flex-wrap items-start justify-center gap-6 bg-stone-900 p-6">
       <Panel
@@ -60,6 +75,21 @@ const Families: FC = () => {
         rules={<SudokuRules skin="default" />}
         controls={sudoku}
       />
+      <Panel title={t("eclipse.name")} goal={t("eclipse.goal")} rules={<EclipseRules signs />} controls={eclipse} />
+      <Panel title={t("sumplete.name")} goal={t("sumplete.goal")} rules={<SumpleteRules />} controls={sumplete} />
+      <Panel
+        title={t("pairPuzzle.name.mummies")}
+        goal={t("pairPuzzle.goal.mummies")}
+        rules={<PairPuzzleRules skin="mummies" />}
+        controls={pairPuzzle}
+      />
+      <Panel
+        title={t("starBattle.name.default")}
+        goal={t("starBattle.goal.default", { count: 1 })}
+        rules={<StarBattleRules skin="default" walls={false} />}
+        controls={starBattle}
+      />
+      <Panel title={t("futoshiki.name")} goal={t("futoshiki.goal")} rules={<FutoshikiRules />} controls={futoshiki} />
     </div>
   )
 }

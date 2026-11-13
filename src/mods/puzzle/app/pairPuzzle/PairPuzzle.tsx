@@ -22,6 +22,7 @@ import { buildPairHint } from "./pairPuzzleHint"
 import { pairSkinFor } from "./skins"
 import { PairPuzzleBoard } from "./PairPuzzleBoard"
 import { PairPuzzleRules } from "./PairPuzzleRules"
+import { usePairPuzzleControls } from "./pairPuzzleControls"
 
 const MARKS: MarkVocabulary<PairMark> = { place: "piece", ruleOut: "empty" }
 
@@ -38,6 +39,7 @@ type Props = {
 
 export const PairPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
+  const controls = usePairPuzzleControls()
   const [state, setState] = usePuzzleState(() => createPairState(puzzle), puzzle)
   const skin = pairSkinFor(role, theme, puzzle.size, room)
 
@@ -84,6 +86,7 @@ export const PairPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room, o
       title={t(`pairPuzzle.name.${skin.name}`)}
       goal={t(`pairPuzzle.goal.${skin.name}`)}
       rules={<PairPuzzleRules skin={skin.name} />}
+      controls={controls}
     >
       {({ reportInput, hintVisible, boardInput }) => (
         <PairPuzzleBoard
