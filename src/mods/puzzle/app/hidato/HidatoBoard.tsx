@@ -1,8 +1,11 @@
 import clsx from "clsx"
 import { useRef, type FC, type PointerEvent } from "react"
+import type { InputHandler } from "@/app/input/actions"
+import { useInputLayer } from "@/app/input/useInputLayer"
 import { hexDistance, hexFromKey, hexKey, type Hex } from "@/mods/puzzle/game/hidato/hex"
 import type { HidatoSkin } from "./skins"
 import type { HidatoPuzzleData } from "@/mods/puzzle/game/hidato/techniques"
+import { NEIGHBOUR_KEYS, neighbourOf, useHidatoCursor } from "./useHidatoCursor"
 
 type Props = {
   puzzle: HidatoPuzzleData
@@ -46,7 +49,23 @@ type Props = {
   onTap: (key: string, wasPen: boolean) => void
   /** A cell the finger has been dragged into — carry the run on, or back out of the cell it came from. */
   onDrag: (key: string) => void
+  /** Puts the run down without changing a number: back, by keys or pad, while the run is picked up. */
+  onLift?: () => void
+  /** The shell's `boardInput`: with it the board takes keys and pad, a cursor on the cells. */
+  boardInput?: (board: InputHandler) => InputHandler
+  /** Labels the cursor's six neighbours with the key and pad button that reach each one. */
+  guide?: boolean
 }
+
+/** What reaches each neighbour, in NEIGHBOUR_KEYS order: the keys, then the pad. */
+const GUIDE = [
+  ["↑ W", "✚↑"],
+  ["⇧↑ E", "Y ✚↑"],
+  ["→ D", "✚→"],
+  ["⇧↓ X", "Y ✚↓"],
+  ["↓ S", "✚↓"],
+  ["← A", "✚←"],
+]
 
 // One unit of the drawing, in viewBox units — everything else is a multiple of it, so the comb scales
 // with its container and never off a pixel constant (docs/instructions/puzzle-screens.md: boards size off
@@ -150,6 +169,9 @@ export const HidatoBoard: FC<Props> = ({
   onPickUp,
   onTap,
   onDrag,
+  onLift = () => {},
+  boardInput,
+  guide,
 }) => {
   const box = viewBox(puzzle.cells)
   const surface = useRef<SVGSVGElement>(null)
@@ -166,7 +188,31 @@ export const HidatoBoard: FC<Props> = ({
   const finish = skin.finish
   const Mark = finish?.Mark
 
+  // A tap by keys is the press and the release a finger makes, so it reaches the same two handlers in order.
+  const press = (key: string) => {
+    const wasPen = pen === key
+    onPickUp(key)
+    onTap(key, wasPen)
+  }
+  const keys = useHidatoCursor({
+    cells,
+    start: Object.entries(puzzle.givens).find(([, value]) => value === 1)?.[0] ?? hexKey(puzzle.cells[0]),
+    pen,
+    onPress: press,
+    onDrag,
+    onLift,
+  })
+  // Back puts a picked-up run down before the shell hears it (and leaves); everything else goes through the shell.
+  useInputLayer(
+    signal => (signal.action.kind === "back" && keys.handle(signal)) || (boardInput?.(keys.handle)(signal) ?? false),
+    boardInput !== undefined
+  )
+  // Named after the cell, so boards that draw the same cell share one identical clip and a render is repeatable.
+  const clip = `hidato-cursor-${keys.at.replace(",", "_")}`
+  const cursor = boardInput && lit === undefined ? hexFromKey(keys.at) : undefined
+
   const begin = (key: string) => (event: PointerEvent<SVGGElement>) => {
+    keys.point(key)
     drag.current = { at: key, moved: false, wasPen: pen === key }
     // Captured on the whole board, so the moves keep arriving once the finger has left the cell it
     // started on — which is every drag past the first step.
@@ -206,6 +252,61 @@ export const HidatoBoard: FC<Props> = ({
     if (gesture && !gesture.moved) onTap(gesture.at, gesture.wasPen)
   }
 
+  const look = (key: string) => {
+    const value = values[key]
+    return {
+      given: puzzle.givens[key] !== undefined,
+      filled: value !== undefined,
+      reached: reached.has(key),
+      lit: lit !== undefined && value !== undefined && value <= lit,
+    }
+  }
+
+  /** A cell's wax and its markings, without its number. */
+  const face = (cell: Hex) => {
+    const key = hexKey(cell)
+    return (
+      <>
+        <polygon
+          points={hexPoints(cell)}
+          strokeWidth={CELL * 0.09}
+          className={clsx(skin.cell(look(key)), "transition-colors")}
+        />
+        {hatched === key && <polygon points={hexPoints(cell)} fill="url(#hidato-hatch)" opacity={0.55} />}
+        {/* Evidence gets a ring, never the hatching: one ring over six cells would make "this cell" a
+            guess between them (puzzle-screens.md §4.2). */}
+        {(pen === key || marked?.has(key)) && (
+          <polygon
+            points={hexPoints(cell)}
+            fill="none"
+            strokeWidth={CELL * 0.16}
+            className={pen === key ? skin.pen : skin.evidence}
+          />
+        )}
+      </>
+    )
+  }
+
+  const number = (cell: Hex) => {
+    const key = hexKey(cell)
+    const value = values[key]
+    if (value === undefined) return null
+    const { x, y } = centre(cell)
+    return (
+      <text
+        key={key}
+        x={x}
+        y={y}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize={CELL * 0.82}
+        className={clsx("font-semibold", skin.ink({ ...look(key), filled: true }))}
+      >
+        {value}
+      </text>
+    )
+  }
+
   return (
     // The board claims its own gestures — a drag across it draws the run rather than scrolling the page,
     // which is reached from the chrome around it (hidato.md: the run is carried, and dragging draws it).
@@ -224,48 +325,19 @@ export const HidatoBoard: FC<Props> = ({
           <line x1="0" y1="0" x2="0" y2="4" className={skin.hatch} strokeWidth="1.6" />
         </pattern>
       </defs>
+      {cursor && (
+        <defs>
+          <clipPath id={clip}>
+            <polygon points={hexPoints(cursor)} />
+          </clipPath>
+        </defs>
+      )}
       {puzzle.cells.map(cell => {
         const key = hexKey(cell)
-        const value = values[key]
-        const given = puzzle.givens[key] !== undefined
+        // The keys' tap is the board's layer, not a focus stop per cell: one cursor rather than a tab per hex.
         return (
-          <g
-            key={key}
-            role="button"
-            tabIndex={0}
-            onPointerDown={begin(key)}
-            onKeyDown={event => {
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault()
-                onTap(key, pen === key)
-              }
-            }}
-            className="cursor-pointer outline-none"
-          >
-            <polygon
-              points={hexPoints(cell)}
-              strokeWidth={CELL * 0.09}
-              className={clsx(
-                skin.cell({
-                  given,
-                  filled: value !== undefined,
-                  reached: reached.has(key),
-                  lit: lit !== undefined && value !== undefined && value <= lit,
-                }),
-                "transition-colors"
-              )}
-            />
-            {hatched === key && <polygon points={hexPoints(cell)} fill="url(#hidato-hatch)" opacity={0.55} />}
-            {/* Evidence gets a ring, never the hatching: one ring over six cells would make "this cell" a
-                guess between them (puzzle-screens.md §4.2). */}
-            {(pen === key || marked?.has(key)) && (
-              <polygon
-                points={hexPoints(cell)}
-                fill="none"
-                strokeWidth={CELL * 0.16}
-                className={pen === key ? skin.pen : skin.evidence}
-              />
-            )}
+          <g key={key} role="button" onPointerDown={begin(key)} className="cursor-pointer">
+            {face(cell)}
           </g>
         )
       })}
@@ -296,35 +368,61 @@ export const HidatoBoard: FC<Props> = ({
           className={clsx("pointer-events-none", skin.litRun)}
         />
       )}
-      <g className="pointer-events-none">
-        {puzzle.cells.map(cell => {
-          const key = hexKey(cell)
-          const value = values[key]
-          if (value === undefined) return null
-          const { x, y } = centre(cell)
+      {/* The keys' cursor (look C): the cell under it drawn again over the comb, lifted — larger, lighter, on a
+          shadow, with an ember rim, its stretch of the run with it. Under the numbers, so every number is
+          drawn once. With the run picked up the rim is thicker and paler: a direction now carries the run
+          rather than the cursor. */}
+      {cursor && (
+        <g
+          data-held={keys.held || undefined}
+          className="pointer-events-none svg-cursor"
+          transform={(({ x, y }) => `translate(${x} ${y}) scale(1.18) translate(${-x} ${-y})`)(centre(cursor))}
+        >
+          {face(cursor)}
+          {line.length > 1 && (
+            <polyline
+              points={polyline(line)}
+              clipPath={`url(#${clip})`}
+              fill="none"
+              strokeWidth={CELL * 0.24}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={skin.run}
+            />
+          )}
+          <polygon
+            points={hexPoints(cursor)}
+            fill="none"
+            strokeWidth={CELL * (keys.held ? 0.2 : 0.13)}
+            className={keys.held ? "stroke-ember-200" : "stroke-ember-400"}
+          />
+        </g>
+      )}
+      <g className="pointer-events-none">{puzzle.cells.map(number)}</g>
+      {cursor &&
+        guide &&
+        NEIGHBOUR_KEYS.map(({ dir, right }, index) => {
+          const key = neighbourOf(keys.at, dir, right)
+          if (!cells.has(key)) return null
+          const { x, y } = centre(hexFromKey(key))
           return (
             <text
               key={key}
               x={x}
-              y={y}
               textAnchor="middle"
-              dominantBaseline="central"
-              fontSize={CELL * 0.82}
-              className={clsx(
-                "font-semibold",
-                skin.ink({
-                  given: puzzle.givens[key] !== undefined,
-                  filled: true,
-                  reached: reached.has(key),
-                  lit: lit !== undefined && value <= lit,
-                })
-              )}
+              fontSize={CELL * 0.34}
+              strokeWidth={CELL * 0.07}
+              className="pointer-events-none svg-cursor fill-ember-200 stroke-stone-950 font-bold [paint-order:stroke]"
             >
-              {value}
+              <tspan x={x} y={y - CELL * 0.1}>
+                {GUIDE[index][0]}
+              </tspan>
+              <tspan x={x} y={y + CELL * 0.38}>
+                {GUIDE[index][1]}
+              </tspan>
             </text>
           )
         })}
-      </g>
       {/* What the completion run leaves behind on a skin that has something to leave: a plant on every cell
           the water has reached, rooted on the cell's own ground and coming up in the run's order
           (design doc §9). A skin without one finishes with the light alone. */}

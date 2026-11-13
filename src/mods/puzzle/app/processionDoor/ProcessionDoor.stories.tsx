@@ -63,3 +63,31 @@ export const PartlyUnlocked: Story = { args: { walked: [true, false, true, false
 export const Solved: Story = { args: { walked: [true, true, true, true], read: true } }
 
 export const BesideATorch: Story = { args: { walked: [true, true, true, false], torch: "unlit" } }
+
+const press = (code: string) => {
+  window.dispatchEvent(new KeyboardEvent("keydown", { code, cancelable: true }))
+  window.dispatchEvent(new KeyboardEvent("keyup", { code }))
+}
+
+/**
+ * The door as a keyboard or pad player sees it: brackets (look B) on the bar of the cursor's row, which passes the
+ * locked rows by. Up and down change the row, left and right slide its bar one hour a press, H asks for the hint
+ * once no bar is locked, Escape turns around.
+ */
+export const KeyboardCursor: Story = {
+  args: { walked: [true, false, true, true] },
+  globals: { input: "keys" },
+}
+
+/**
+ * Read: the board has nothing left to move, so a direction walks the door's buttons, brackets on the focused one,
+ * and Enter presses it. Here the focus is on reset, one up from turning around.
+ */
+export const KeyboardRead: Story = {
+  args: { walked: [true, true, true, true], read: true },
+  globals: { input: "keys" },
+  play: () => {
+    for (let step = 0; step < 20 && !document.activeElement?.matches("[data-input-back]"); step++) press("ArrowDown")
+    press("ArrowUp")
+  },
+}

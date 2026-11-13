@@ -203,7 +203,7 @@ export const ProcessionBoard: FC<Props> = ({
                     skin.bars[index % skin.bars.length],
                     about(index) && `ring-2 ${skin.focus}`,
                     hintBar === index && `ring-2 ${skin.focus}`,
-                    boardInput && keys.cursor === index && !solved && "cursor-brackets",
+                    boardInput && keys.cursor === index && !solved && !isLocked(index) && "cursor-brackets",
                     solved && skin.celebrate
                   )}
                   style={{ left: `${start * share}%`, width: `${bar.len * share}%` }}

@@ -12,6 +12,9 @@ const KEYS: Record<string, InputAction> = {
   KeyD: { kind: "move", dir: "e" },
   KeyS: { kind: "move", dir: "s" },
   KeyA: { kind: "move", dir: "w" },
+  // Beside W and below D: with WASD these give each of a hex's six neighbours its own key.
+  KeyE: { kind: "veer", dir: "n" },
+  KeyX: { kind: "veer", dir: "s" },
   Enter: { kind: "confirm" },
   NumpadEnter: { kind: "confirm" },
   Space: { kind: "confirm" },

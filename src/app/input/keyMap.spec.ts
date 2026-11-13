@@ -8,6 +8,8 @@ describe("which action a key means", () => {
   it.each([
     ["ArrowUp", { kind: "move", dir: "n" }],
     ["KeyD", { kind: "move", dir: "e" }],
+    ["KeyE", { kind: "veer", dir: "n" }],
+    ["KeyX", { kind: "veer", dir: "s" }],
     ["Space", { kind: "confirm" }],
     ["NumpadEnter", { kind: "confirm" }],
     ["Escape", { kind: "back" }],
