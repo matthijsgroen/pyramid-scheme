@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Walk the map with arrow keys or WASD.
+- Constellation: Enter picks up a star, then an arrow draws the line.
 - Escape closes dialogs, the shop and puzzles; Enter moves a conversation on.
 - Backspace erases a number on the board, and goes back where nothing erases.
 - A game controller walks the map, moves through dialogs and backs out of them.
