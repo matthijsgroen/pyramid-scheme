@@ -46,6 +46,7 @@ export const CampHud: FC<CampHudProps> = ({
       {children}
       <button
         type="button"
+        data-input-menu
         aria-label={settingsLabel}
         onClick={onSettings}
         className="flex size-9 items-center justify-center rounded-full text-camp-paper hover:bg-white/10"

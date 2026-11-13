@@ -2,14 +2,22 @@ import { FOCUSABLE } from "@/ui/atoms/dialogFocus"
 import type { InputHandler } from "./actions"
 import { nearestInDirection } from "./spatialNavigation"
 
-const usable = (el: HTMLElement) => !el.closest("[inert]") && el.checkVisibility?.() !== false
+const usable = (el: HTMLElement) =>
+  !el.closest("[inert]") && el.checkVisibility?.({ visibilityProperty: true }) !== false
 
 const controlsIn = (root: HTMLElement) => [...root.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(usable)
 
+const press = (root: HTMLElement, selector: string) => {
+  const control = [...root.querySelectorAll<HTMLElement>(`${selector}:not(:disabled)`)].find(usable)
+  control?.click()
+  return !!control
+}
+
 /**
- * A layer that is a piece of the page (a dialog, the encounter frame): `move` focuses the nearest control in
- * that direction within it, `confirm` clicks the focused control, and `back` clicks its visible way back, the
- * control marked `data-input-back`. Without one, `back` does nothing.
+ * A layer that is a piece of the page (a dialog, the encounter frame, the camp): `move` focuses the nearest
+ * control in that direction within it, `confirm` clicks the focused control, `back` clicks its visible way back
+ * (the control marked `data-input-back`) and `menu` its settings (`data-input-menu`). Without one, they do
+ * nothing.
  */
 export const domLayerHandler =
   (root: HTMLElement): InputHandler =>
@@ -37,11 +45,7 @@ export const domLayerHandler =
       focusedHere.click()
       return true
     }
-    if (action.kind === "back") {
-      const way = [...root.querySelectorAll<HTMLElement>("[data-input-back]:not(:disabled)")].find(usable)
-      if (!way) return false
-      way.click()
-      return true
-    }
+    if (action.kind === "back") return press(root, "[data-input-back]")
+    if (action.kind === "menu") return press(root, "[data-input-menu]")
     return false
   }

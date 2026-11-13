@@ -1,3 +1,4 @@
+import { layerOnMount } from "@/ui/atoms/dialogFocus"
 import type { CSSProperties, FC, ReactNode, Ref } from "react"
 
 /** From `lg`, the width of the panel standing over the scene's right side. */
@@ -40,7 +41,11 @@ export const CampHomeLayout: FC<CampHomeLayoutProps> = ({
   notice,
   hudHeight = 0,
 }) => (
-  <div className="relative h-(--screen-height) overflow-hidden bg-camp-night lg:grid lg:grid-cols-[minmax(0,1fr)_440px] lg:grid-rows-[auto_minmax(0,1fr)]">
+  // The camp is an input layer of its own: the arrows walk its controls, Start opens its settings.
+  <div
+    ref={layerOnMount}
+    className="focus-brackets relative h-(--screen-height) overflow-hidden bg-camp-night lg:grid lg:grid-cols-[minmax(0,1fr)_440px] lg:grid-rows-[auto_minmax(0,1fr)]"
+  >
     <div className="absolute inset-x-0 top-0 z-10 pt-safe-top lg:static lg:col-span-2 lg:bg-camp-night lg:pt-safe-top">
       {hud}
     </div>
