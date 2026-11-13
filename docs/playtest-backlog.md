@@ -14,6 +14,16 @@ played, and open an issue or a task for anything that plays wrong.
 - **Temple of Thoth (`junior_3`) pyramids 1-4.** Do scribe puzzles come up more than other kinds, and does the temple now read as writing?
 - **Junior's first lock mechanics without Fez** (`dropDown`, `leverOpensADoor`, `torch`, `waterMoves`, `doorWaitsForTwo`, `stoneOnAPlate`, `leverSwapsDoors`). Does each lesson floor teach its control on its own? Where it does not, propose one Fez line there.
 
+## Keys and controller
+
+- **Known: a DualSense Edge sends no button presses in Firefox-based browsers (Zen, macOS).** The pad connects
+  (`054c-0df2-DualSense Edge Wireless Controller`, mapping `standard`) but no button or stick ever reads as
+  pressed, also on hardwaretester.com/gamepad. Chrome works. Not ours to fix; play with a controller in Chrome.
+- **A Switch 2 controller in Chrome.** Does the browser see it, with which id and mapping? Do A/B land on the
+  right actions (its A and B sit swapped from Xbox)? The Controls block shows Xbox letters for it until a
+  Nintendo look is added.
+- **Canisters by keys.** Enter on the jar you hold: does it put it down?
+
 ## The procession door
 
 - **Lock editor, Carve and play, a lock with a procession door** (`P procession …`; the lesson `tilesInOrder` and `plates` carry a plain sequence). Walk a tile or two, open the door:
