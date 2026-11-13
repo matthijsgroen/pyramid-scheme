@@ -2,7 +2,8 @@ import type { Preview } from "@storybook/react-vite"
 import { I18nextProvider } from "react-i18next"
 import i18n from "./i18n"
 import "../src/index.css"
-import { Suspense, useEffect } from "react"
+import { Suspense, useEffect, useState } from "react"
+import { listenForPageLayers } from "../src/app/input/pageLayers"
 
 const withI18next = (Story, context) => {
   const { locale } = context.globals
@@ -37,6 +38,25 @@ const withInput = (Story, context) => {
   return <Story />
 }
 
+// A story with `parameters.pageLayers` takes keys as the game does: the encounter frame and dialogs it draws
+// join the input stack, so a direction walks their buttons and Escape presses their way back.
+const withPageLayers = (Story, context) => {
+  const on = context.parameters.pageLayers === true
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [listening, setListening] = useState(false)
+
+  // The story mounts once the listener is up: a frame announces itself as it mounts, and only once.
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    if (!on) return
+    const stop = listenForPageLayers()
+    setListening(true)
+    return stop
+  }, [on])
+
+  return !on || listening ? <Story /> : null
+}
+
 const preview: Preview = {
   tags: ["autodocs"],
   parameters: {
@@ -56,7 +76,7 @@ const preview: Preview = {
       },
     },
   },
-  decorators: [withI18next, withInput],
+  decorators: [withI18next, withInput, withPageLayers],
 }
 
 export const globalTypes = {

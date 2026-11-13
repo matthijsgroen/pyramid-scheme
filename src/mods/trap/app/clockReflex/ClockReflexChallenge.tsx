@@ -1,5 +1,6 @@
 import { useState, type FC } from "react"
 import { TrapCountdown } from "@/mods/trap/app/TrapCountdown"
+import { useChoiceKeys } from "@/mods/trap/app/useChoiceKeys"
 import type { ClockQuestion } from "@/mods/trap/game/clockReflex/generate"
 import { ClockFace, DigitalTime } from "@/ui/atoms/ClockFace"
 
@@ -20,12 +21,13 @@ export const ClockReflexChallenge: FC<Props> = ({ question, timeLimit, onPass, o
     if (choice === question.answer) onPass()
     else onFail()
   }
+  const choices = useChoiceKeys(question.choices.length, index => answer(question.choices[index]))
 
   return (
     <div className="flex w-72 flex-col gap-4">
       <TrapCountdown timeLimit={timeLimit} onExpire={onFail} />
       <ClockFace time={question.time} className="mx-auto w-48" />
-      <div className="grid grid-cols-2 gap-3">
+      <div ref={choices} className="board-focus grid grid-cols-2 gap-3">
         {question.choices.map(choice => (
           <button
             key={choice}

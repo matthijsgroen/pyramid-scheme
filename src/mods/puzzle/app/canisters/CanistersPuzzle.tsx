@@ -93,7 +93,7 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, ro
       goal={t(`canisters.goal.${skin.name}`, { count: puzzle.targets.length })}
       rules={<CanistersRules skin={skin.name} legs={puzzle.targets.length} />}
     >
-      {({ reportInput }) => (
+      {({ reportInput, boardInput }) => (
         <div className="flex flex-col items-center gap-3">
           <div className="flex items-baseline gap-2">
             <span className="text-sm text-stone-300">{t("canisters.wanted")}</span>
@@ -105,6 +105,7 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, ro
             )}
           </div>
           <CanistersBoard
+            boardInput={boardInput}
             capacities={puzzle.capacities}
             volumes={state.volumes}
             held={state.held}

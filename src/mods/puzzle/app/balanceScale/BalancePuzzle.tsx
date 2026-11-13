@@ -115,8 +115,9 @@ export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room
         />
       }
     >
-      {({ reportInput, hintVisible }) => (
+      {({ reportInput, hintVisible, boardInput }) => (
         <BalanceBoard
+          boardInput={boardInput}
           scales={scales}
           lines={lines}
           notes={state.notes}

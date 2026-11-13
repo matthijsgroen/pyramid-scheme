@@ -1,6 +1,8 @@
 import { useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import clsx from "clsx"
+import type { InputHandler } from "@/app/input/actions"
+import { useFocusBoard } from "@/app/input/useFocusBoard"
 import type { Capacities, Volumes } from "@/mods/puzzle/game/canisters/canisters"
 import { Vessel } from "./Vessel"
 import type { CanistersSkin } from "./skins"
@@ -26,6 +28,8 @@ type Props = {
   onPour: (to: number) => void
   /** The player says this canister holds the volume that was asked for. */
   onClaim: (canister: number) => void
+  /** The shell's `boardInput`: with it the board takes keys and pad, its focus as the cursor. */
+  boardInput?: (board: InputHandler) => InputHandler
 }
 
 /**
@@ -167,13 +171,21 @@ export const CanistersBoard: FC<Props> = ({
   onHold,
   onPour,
   onClaim,
+  boardInput,
 }) => {
   const { t } = useTranslation("common")
+  const root = useFocusBoard<HTMLDivElement>({ wrap: boardInput, open: boardInput !== undefined, focusFirst: true })
   const tallest = Math.max(...capacities)
   const { tipping, settle } = useTipping(lastPour)
   const { answer, settle: settleAnswer } = useAnswer(claimed)
   return (
-    <div className={clsx("flex w-full max-w-[min(52vh,26rem)] flex-col gap-3 rounded-xl p-4 select-none", skin.board)}>
+    <div
+      ref={root}
+      className={clsx(
+        "board-focus flex w-full max-w-[min(52vh,26rem)] flex-col gap-3 rounded-xl p-4 select-none",
+        skin.board
+      )}
+    >
       <div className="flex items-end justify-center gap-3">
         {capacities.map((capacity, canister) => (
           <div key={canister} className="flex flex-col items-center gap-2">
