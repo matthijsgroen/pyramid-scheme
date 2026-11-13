@@ -63,9 +63,16 @@ export const HandleComponent: FamilyPlugin["Component"] = ({ ctx, journeys, onSo
           )
         })}
       </div>
-      <button data-input-back onClick={() => onSolved()} className="text-sm text-stone-400 hover:text-stone-200">
-        {t("ui.backToMap")}
-      </button>
+      {/* Look B on the way back only: the lever's own buttons wear the board cursor. */}
+      <span className="focus-brackets contents">
+        <button
+          data-input-back
+          onClick={() => onSolved()}
+          className="rounded px-2 text-sm text-stone-400 hover:text-stone-200"
+        >
+          {t("ui.backToMap")}
+        </button>
+      </span>
     </div>
   )
 }

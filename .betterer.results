@@ -26,3 +26,28 @@ exports[`core names no mod family id`] = {
 exports[`a seeded shuffle draws once per element, never inside a comparator`] = {
   value: `{}`
 };
+
+exports[`every clicked element is reachable by keys`] = {
+  value: `{
+    "src/app/SiteMap/SiteMapView.tsx:4078626362": [
+      [1577, 4, 509, "A clicked element the keys cannot reach: make it a <button>, give it role and tabIndex, or mark a backdrop aria-hidden.", "1522147696"]
+    ],
+    "src/mods/mosaic/app/StainedGlassMosaic.tsx:3293791392": [
+      [129, 8, 534, "A clicked element the keys cannot reach: make it a <button>, give it role and tabIndex, or mark a backdrop aria-hidden.", "3278363048"]
+    ],
+    "src/mods/puzzle/app/balanceScale/BalanceBoard.tsx:1565669438": [
+      [174, 4, 522, "A clicked element the keys cannot reach: make it a <button>, give it role and tabIndex, or mark a backdrop aria-hidden.", "1665953556"],
+      [213, 2, 392, "A clicked element the keys cannot reach: make it a <button>, give it role and tabIndex, or mark a backdrop aria-hidden.", "3247503341"]
+    ],
+    "src/ui/atoms/Block.tsx:1824631130": [
+      [15, 4, 611, "A clicked element the keys cannot reach: make it a <button>, give it role and tabIndex, or mark a backdrop aria-hidden.", "1463644439"]
+    ],
+    "src/ui/atoms/Chest.tsx:3689357750": [
+      [16, 6, 335, "A clicked element the keys cannot reach: make it a <button>, give it role and tabIndex, or mark a backdrop aria-hidden.", "57616697"]
+    ],
+    "src/ui/molecules/HieroglyphTile.tsx:1180811863": [
+      [95, 6, 894, "A clicked element the keys cannot reach: make it a <button>, give it role and tabIndex, or mark a backdrop aria-hidden.", "351818623"],
+      [146, 4, 376, "A clicked element the keys cannot reach: make it a <button>, give it role and tabIndex, or mark a backdrop aria-hidden.", "383827870"]
+    ]
+  }`
+};

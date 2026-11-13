@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { afterEach, beforeAll, describe, expect, it } from "vitest"
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest"
 import { cleanup, fireEvent, render } from "@testing-library/react"
 import { act, useState } from "react"
 import type { Pyramid } from "@/game/types"
@@ -84,5 +84,23 @@ describe("PyramidDisplay by keys", () => {
     for (let i = 0; i < 8; i++) key("BracketRight")
     key("BracketLeft")
     expect(answers()).toEqual({ A: 7 })
+  })
+})
+
+describe("PyramidDisplay's way back", () => {
+  it("is the screen's: Escape while the board has the keys goes back", () => {
+    const onBack = vi.fn()
+    render(
+      <PyramidDisplay levelNr={1} pyramid={pyramid} values={{}} decorated={false} onBack={onBack} onAnswer={() => {}} />
+    )
+    key("Escape")
+    expect(onBack).toHaveBeenCalledTimes(1)
+  })
+
+  it("takes no keys once nobody can answer it", () => {
+    const onBack = vi.fn()
+    render(<PyramidDisplay levelNr={1} pyramid={pyramid} values={{}} decorated={false} onBack={onBack} />)
+    key("Escape")
+    expect(onBack).not.toHaveBeenCalled()
   })
 })

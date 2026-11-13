@@ -26,9 +26,16 @@ export const TorchComponent: FamilyPlugin["Component"] = ({ ctx, journeys, onSol
           {t("torch.invitation")}
         </button>
       )}
-      <button data-input-back onClick={() => onSolved()} className="text-sm text-stone-400 hover:text-stone-200">
-        {t("ui.backToMap")}
-      </button>
+      {/* Look B on the way back only: the torch's own button wears the board cursor. */}
+      <span className="focus-brackets contents">
+        <button
+          data-input-back
+          onClick={() => onSolved()}
+          className="rounded px-2 text-sm text-stone-400 hover:text-stone-200"
+        >
+          {t("ui.backToMap")}
+        </button>
+      </span>
     </div>
   )
 }

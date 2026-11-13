@@ -151,7 +151,12 @@ export const Fez: FC<{
   return (
     // Clipped, so a portrait hanging past a phone's edge never scrolls the page sideways. Above a site's interior
     // (z-30), which a conversation room plays over, and under the popups and screens at z-40 and up.
-    <div ref={overlay} className="fixed inset-0 z-35 overflow-hidden bg-black/10" onClick={onNextMessage}>
+    <div
+      ref={overlay}
+      role="presentation"
+      className="fixed inset-0 z-35 overflow-hidden bg-black/10"
+      onClick={onNextMessage}
+    >
       {/* The column the game's panels share (max-w-md), centred: on a wide screen the viewport's
           corners are far from the game and from each other, and the two speakers stood in them. On a
           phone the column is the screen, so nothing moves there. */}

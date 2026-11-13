@@ -1,5 +1,6 @@
 import { BettererFileTest } from "@betterer/betterer"
 import { readFile } from "node:fs/promises"
+import ts from "typescript"
 
 const COMMENT = /^\s*(\/\/|\*|\/\*)/
 
@@ -46,6 +47,32 @@ const MOD_FAMILY_MESSAGE =
   "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue)."
 const NOT_CORE_SOURCE =
   /(\.spec\.|\.stories\.|\.testing\.|\.verify\.|\/testSupport\/|\/encounterFallback\.ts$|\/playgroundCarve\.ts$|\/carveFixtures\.ts$)/
+
+// An element that answers a click must answer the keys too. A native control does; anything else says what it is
+// (`role` and `tabIndex`), or is a backdrop (`aria-hidden`), or a pointer shortcut whose keyboard way lies elsewhere
+// (`role="presentation"`).
+const NATIVE_CONTROLS = new Set(["button", "a", "input", "select", "textarea", "label", "summary", "option"])
+const CLICK_MESSAGE =
+  "A clicked element the keys cannot reach: make it a <button>, give it role and tabIndex, or mark a backdrop aria-hidden."
+const unreachableClicks = (fileName: string, text: string) => {
+  const source = ts.createSourceFile(fileName, text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+  const found: ts.JsxOpeningLikeElement[] = []
+  const visit = (node: ts.Node) => {
+    if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
+      const tag = node.tagName.getText(source)
+      const names = new Map(
+        node.attributes.properties.filter(ts.isJsxAttribute).map(attr => [attr.name.getText(source), attr])
+      )
+      const role = names.get("role")?.initializer?.getText(source)
+      const reachable =
+        names.has("aria-hidden") || role === '"presentation"' || (names.has("role") && names.has("tabIndex"))
+      if (/^[a-z]/.test(tag) && !NATIVE_CONTROLS.has(tag) && names.has("onClick") && !reachable) found.push(node)
+    }
+    ts.forEachChild(node, visit)
+  }
+  visit(source)
+  return found.map(node => [node.getStart(source), node.getEnd()] as const)
+}
 
 // Guards that only ever get better: each one reports an issue per occurrence, per file, and
 // .betterer.results pins what is still outstanding. Lower it by fixing one and running
@@ -99,4 +126,13 @@ export default {
         }
       }
     }).include("./src/**/*.ts", "./src/**/*.tsx"),
+
+  "every clicked element is reachable by keys": () =>
+    new BettererFileTest(async (filePaths, fileTestResult) => {
+      for (const filePath of filePaths) {
+        const fileText = await readFile(filePath, "utf8")
+        const file = fileTestResult.addFile(filePath, fileText)
+        for (const [start, end] of unreachableClicks(filePath, fileText)) file.addIssue(start, end, CLICK_MESSAGE)
+      }
+    }).include("./src/**/*.tsx"),
 }

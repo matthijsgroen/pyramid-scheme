@@ -1,5 +1,6 @@
 import { type FC, type ReactNode, useEffect, useRef, useState } from "react"
 import clsx from "clsx"
+import { layerOnMount } from "./dialogFocus"
 
 type LootPopupProps = {
   isOpen: boolean
@@ -99,9 +100,10 @@ export const LootPopup: FC<LootPopupProps> = ({
   const colors = rarityColors[rarity]
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div ref={layerOnMount} className="focus-brackets fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop with animation */}
       <div
+        aria-hidden
         className={clsx("absolute inset-0 transition-all duration-500", {
           "bg-black/0": animationPhase === "hidden",
           "bg-black/10": animationPhase === "burst",
@@ -220,7 +222,15 @@ export const LootPopup: FC<LootPopupProps> = ({
 
               {/* Dismiss instruction */}
               {animationPhase === "visible" && (
-                <p className={clsx("animate-pulse text-sm font-medium", colors.text)}>{clickToContinueLabel}</p>
+                <button
+                  type="button"
+                  data-input-back
+                  autoFocus
+                  onClick={handleDismiss}
+                  className={clsx("pointer-events-auto animate-pulse rounded px-2 text-sm font-medium", colors.text)}
+                >
+                  {clickToContinueLabel}
+                </button>
               )}
             </div>
           )}

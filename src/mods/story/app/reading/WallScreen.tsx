@@ -57,13 +57,16 @@ export const WallScreen = ({ wall, known, repairable, owned, picked, onPut, onBa
         </>
       )}
 
-      <button
-        data-input-back
-        onClick={onBack}
-        className="mt-auto shrink-0 rounded bg-amber-800 px-5 py-2 text-sm font-bold"
-      >
-        {t("ui.back")}
-      </button>
+      {/* Look B on the way back only: the tray's glyphs wear the board cursor. */}
+      <span className="focus-brackets contents">
+        <button
+          data-input-back
+          onClick={onBack}
+          className="mt-auto shrink-0 rounded bg-amber-800 px-5 py-2 text-sm font-bold"
+        >
+          {t("ui.back")}
+        </button>
+      </span>
     </div>
   )
 }

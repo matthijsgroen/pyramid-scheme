@@ -221,7 +221,7 @@ const WebSyntax: FC<{ onClose: () => void }> = ({ onClose }) => {
   const { t } = useTranslation()
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3">
-      <div className="absolute inset-0 bg-black/70" onClick={onClose} />
+      <div aria-hidden className="absolute inset-0 bg-black/70" onClick={onClose} />
       <div
         role="dialog"
         aria-modal="true"

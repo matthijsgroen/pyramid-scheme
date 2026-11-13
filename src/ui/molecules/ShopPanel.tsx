@@ -29,7 +29,7 @@ export const ShopPanel: FC<Props> = ({
 
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/70" onClick={onDismiss} />
+      <div aria-hidden className="absolute inset-0 bg-black/70" onClick={onDismiss} />
       <div
         ref={layerOnMount}
         className="focus-brackets relative z-10 mx-4 flex max-h-[90vh] w-full max-w-sm flex-col rounded-2xl border border-amber-700/50 bg-stone-900 p-5 shadow-2xl"
