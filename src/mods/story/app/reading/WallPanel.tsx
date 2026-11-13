@@ -1,12 +1,13 @@
 import type { CSSProperties, ReactElement } from "react"
 import clsx from "clsx"
+import formulaPanel from "@/assets/reading/formulaPanel.webp"
 import henutNamePanel from "@/assets/reading/henutNamePanel.webp"
 import type { Wall } from "@/mods/story/game/reading/walls"
 import { glyphSize, inscribed, signCells, type Panel, type Rect } from "@/mods/story/game/reading/panel"
 import { getInventoryItemById } from "@/mods/hieroglyph/game/symbolCatalogue"
 
 /** `Panel.art` names → the imported backdrop (`yarn import-reading`). */
-const ART: Record<string, string> = { henutNamePanel }
+const ART: Record<string, string> = { formulaPanel, henutNamePanel }
 
 const symbolOf = (id: string) => getInventoryItemById(id)?.symbol ?? "?"
 
