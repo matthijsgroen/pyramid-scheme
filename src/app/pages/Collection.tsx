@@ -139,8 +139,10 @@ export const CollectionPage: FC = () => {
         {section && current ? (
           <div className="pb-safe-bottom">
             {/* The open tab's section from a mod: it registers itself gated on its mod, so a tab drops
-                out with its mod — core names none. */}
-            <div role="tabpanel" id={panelId} aria-labelledby={`${panelId}-tab-${current.id}`} tabIndex={0}>
+                out with its mod — core names none. The panel is no focus stop of its own: the arrows
+                aim at a control's centre, and the panel's sits among its items, so moving down from
+                the tabs would land on the panel and go no further. */}
+            <div role="tabpanel" id={panelId} aria-labelledby={`${panelId}-tab-${current.id}`}>
               <section.Component
                 selectedItem={selectedItem}
                 onSelect={setSelectedItem}
