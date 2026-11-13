@@ -424,29 +424,6 @@ The last nine are the house's own kinds, new with its activities ([themed-rooms.
 banquet table and the bed are two cells across, so their frame is landscape three by two; the harp and the
 potted tree stand a cell taller, so theirs is portrait two by five.
 
-## Ward doors — one
-
-The door the gate popup shows behind a ward gate. The prompt names what an Egyptian door is made of and says
-what it is not: the first nobleman's door came back European, raised panels, iron bolts and red wax.
-
-### `door/ward-expert` — the high priest's ward door
-
-1. `art/masters/surfaces/expert-wall-face.webp` — the priest's wall face, for the brushwork and the colours only
-
-```
-FRAME: square, 1:1. The door stands alone, centred and seen straight on, filling about 85% of the height. Do not crop it and do not re-compose it.
-
-STYLE: hand-painted digital art, matte: soft brush texture, grit and speckle, NO outlines anywhere, every edge is a change of value between painted areas. Even, soft, cool clear light from the upper left. No glow cast on anything, no light pool, no cast shadow, no ground, no floor, no steps. No text, no letters, no hieroglyphs, no figures, no border.
-
-THE ATTACHED IMAGE IS A WALL, already painted in the finished style of this set. Take ONLY its brushwork and its colour range. Nothing of the wall itself appears in the picture.
-
-SUBJECT: An ancient Egyptian temple's sanctuary door, belonging to a high priest. A double-leaf door of polished red-brown CEDAR: the wood is the door, smooth fine-grained vertical planks, warm against the cool stone around it. Silver #9fb3c8 is only an ACCENT on it: one narrow band of beaten silver across the top and the bottom of each leaf, fixed with small round silver nail heads, and nothing more. NOT a metal door, NOT sheet metal, NOT steel, NOT a vault, no rivets down the seams. NO raised panels, NO iron, NO ring handles, NO hinges showing, NO European hardware. The doorway is a frame of pale polished alabaster #b4bdc5, cloudy and faintly veined, with a cavetto cornice over the lintel, the cornice's hollow inlaid with three bands of lapis blue #2c4f8c. A single silver bolt slides across both leaves through two silver staples. A linen cord runs between two small silver knobs, one on each leaf, sealed with a lump of grey Nile clay pressed flat with a seal, NOT red wax. Clean, calm and serene: nothing worn, nothing broken, nothing living. The door is shut.
-
-BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges, right up to the door's frame. No wall, no gradient, no shadow.
-```
-
-**Import:** `yarn import-camp <file> --out-dir=src/assets/doors --name=ward-expert --size=512`
-
 ## Priest — fifteen
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and

@@ -1839,3 +1839,6 @@ yarn import-tile art/masters/ghosts/ghost-pharaoh.webp --tier=default --name=gho
 
 # The ward doors the gate popup shows behind a ward gate.
 yarn import-camp art/masters/camp/doors/ward-junior.webp --out-dir=src/assets/doors --name=ward-junior --size=512
+# The priest's: cedar with silver bands, an alabaster frame with lapis in the cornice. Faced all over in silver,
+# as temple doors were, it read as a steel vault door; the silver is an accent only.
+yarn import-camp art/masters/camp/doors/ward-expert.webp --out-dir=src/assets/doors --name=ward-expert --size=512
