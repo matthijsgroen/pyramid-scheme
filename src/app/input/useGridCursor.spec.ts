@@ -134,6 +134,82 @@ describe(useGridCursor, () => {
     ])
   })
 
+  describe("with a sweep", () => {
+    // A 3×3 board whose centre cannot join a run.
+    const sweepOn = () => {
+      const onSweep = vi.fn()
+      const onConfirm = vi.fn()
+      const takes = (row: number, col: number) => !(row === 1 && col === 1)
+      const hook = renderHook(() => useGridCursor({ rows: 3, cols: 3, onConfirm, sweep: { takes, onSweep } }))
+      const send = (s: InputSignal) => {
+        let used = false
+        act(() => {
+          used = hook.result.current.handle(s)
+        })
+        return used
+      }
+      return { hook, send, onSweep, onConfirm }
+    }
+    const alt = signal({ kind: "alt" })
+    const altUp = signal({ kind: "alt" }, { released: true })
+
+    it("hands over the run once, on letting go of alt, from the cell it started on", () => {
+      const { send, onSweep } = sweepOn()
+      expect(send(alt)).toBe(true)
+      send(move("e"))
+      send(move("e"))
+      expect(onSweep).not.toHaveBeenCalled()
+      expect(send(altUp)).toBe(true)
+      expect(onSweep.mock.calls).toEqual([
+        [
+          [
+            { row: 0, col: 0 },
+            { row: 0, col: 1 },
+            { row: 0, col: 2 },
+          ],
+        ],
+      ])
+    })
+
+    it("shows the run while alt is held and clears it on letting go", () => {
+      const { hook, send } = sweepOn()
+      send(alt)
+      send(move("s"))
+      expect(hook.result.current.swept).toEqual([
+        { row: 0, col: 0 },
+        { row: 1, col: 0 },
+      ])
+      send(altUp)
+      expect(hook.result.current.swept).toEqual([])
+    })
+
+    it("passes over a cell the board refuses, and takes each cell once", () => {
+      const { send, onSweep } = sweepOn()
+      send(move("s"))
+      send(alt)
+      send(signal({ kind: "alt" }, { repeat: true }))
+      send(move("e"))
+      send(move("e"))
+      send(move("w"))
+      send(move("w"))
+      send(altUp)
+      expect(onSweep).toHaveBeenCalledOnce()
+      expect(onSweep.mock.calls[0][0]).toEqual([
+        { row: 1, col: 0 },
+        { row: 1, col: 2 },
+      ])
+    })
+
+    it("does nothing when alt is let go without a step, the way a drag that never leaves its cell is no sweep", () => {
+      const { send, onSweep, onConfirm } = sweepOn()
+      send(alt)
+      send(altUp)
+      send(move("e"))
+      expect(onSweep).not.toHaveBeenCalled()
+      expect(onConfirm).not.toHaveBeenCalled()
+    })
+  })
+
   it("stays on the board when the board shrinks", () => {
     const onConfirm = vi.fn()
     const hook = renderHook(({ size }) => useGridCursor({ rows: size, cols: size, onConfirm }), {
