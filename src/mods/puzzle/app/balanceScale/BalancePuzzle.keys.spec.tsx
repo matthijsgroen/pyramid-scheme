@@ -74,6 +74,27 @@ describe("BalancePuzzle by keys", () => {
     expect(keyed).toEqual(["🪶3", "🪲4"])
   })
 
+  it("goes back up to the feather it came down from, where the beetle sits between two", () => {
+    const keys = renderPuzzle()
+    const [, second] = keys.pieces()
+    const beetle = keys.pieces()[4]
+    // The pans centre their pieces, so the beetle below stands between the two feathers above it.
+    const at = new Map<Element, { left: number; top: number }>([
+      [keys.pieces()[0], { left: 0, top: 0 }],
+      [second, { left: 40, top: 0 }],
+      [beetle, { left: 20, top: 40 }],
+    ])
+    vi.mocked(HTMLElement.prototype.getBoundingClientRect).mockImplementation(function (this: HTMLElement) {
+      const { left, top } = at.get(this) ?? { left: 0, top: -1000 }
+      return { left, top, width: 10, height: 10 } as DOMRect
+    })
+    act(() => second.focus())
+    press("ArrowDown")
+    expect(document.activeElement).toBe(beetle)
+    press("ArrowUp")
+    expect(document.activeElement).toBe(second)
+  })
+
   it("trades a glyph by keys as taps trade it: the piece, then the row that answers it", () => {
     const keys = renderPuzzle()
     expect(document.activeElement).toBe(keys.pieces()[0])

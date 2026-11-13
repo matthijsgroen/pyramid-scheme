@@ -183,3 +183,77 @@ describe("moving and confirming in a piece of the page", () => {
     expect(onYes).toHaveBeenCalledTimes(1)
   })
 })
+
+describe("going back the way a move came", () => {
+  // The control below sits between the two above, so the way up ties and the first in the page wins.
+  const between = () => {
+    const root = dialog()
+    const left = button(root, "Left", { left: 0, top: 0 })
+    const right = button(root, "Right", { left: 40, top: 0 })
+    const below = button(root, "Below", { left: 20, top: 40 })
+    return { root, left, right, below }
+  }
+  const move = (root: HTMLElement, dir: "n" | "e" | "s" | "w") => domLayerHandler(root)(signal({ kind: "move", dir }))
+
+  it("ties to the first in the page without a move to go back on", () => {
+    const { root, left, below } = between()
+    below.focus()
+    move(root, "n")
+    expect(document.activeElement).toBe(left)
+  })
+
+  it("returns to the control the move started at, back and forth", () => {
+    const { root, right, below } = between()
+    right.focus()
+    for (let i = 0; i < 2; i++) {
+      move(root, "s")
+      expect(document.activeElement).toBe(below)
+      move(root, "n")
+      expect(document.activeElement).toBe(right)
+    }
+  })
+
+  it("takes the nearest again for any other direction", () => {
+    const { root, left, right, below } = between()
+    right.focus()
+    move(root, "s")
+    move(root, "n")
+    move(root, "w")
+    expect(document.activeElement).toBe(left)
+    move(root, "s")
+    expect(document.activeElement).toBe(below)
+    move(root, "n")
+    expect(document.activeElement).toBe(left)
+  })
+
+  it("takes the nearest when the focus went elsewhere since", () => {
+    const { root, left, right, below } = between()
+    right.focus()
+    move(root, "s")
+    left.focus()
+    move(root, "e")
+    expect(document.activeElement).toBe(right)
+    below.focus()
+    move(root, "n")
+    expect(document.activeElement).toBe(left)
+  })
+})
+
+describe("reaching a tab row", () => {
+  it("lands on the selected tab from a control above its row, however far to the side the tab sits", () => {
+    const root = dialog()
+    const close = button(root, "Close", { left: 100, top: 0 })
+    const row = root.appendChild(document.createElement("div"))
+    row.setAttribute("role", "tablist")
+    row.getBoundingClientRect = () => ({ left: 0, top: 40, width: 120, height: 10 }) as DOMRect
+    const selected = button(row, "Treasures", { left: 0, top: 40 })
+    selected.setAttribute("role", "tab")
+    const other = button(row, "Tablets", { left: 100, top: 40 })
+    other.setAttribute("role", "tab")
+    other.tabIndex = -1
+    button(root, "Cell", { left: 100, top: 80 })
+    close.focus()
+    domLayerHandler(root)(signal({ kind: "move", dir: "s" }))
+    expect(document.activeElement).toBe(selected)
+  })
+})
