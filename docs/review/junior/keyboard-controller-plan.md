@@ -114,6 +114,7 @@ loslaten`). Het blok volgt `data-input`: bij keys toetsen, bij pad padknoppen, b
   aangesloten maar ongebruikte pad toont dus niets. Padglyphs volgen het merk van de pad (Xbox A/B, PlayStation ✕/◯,
   uit `Gamepad.id`; onbekend = Xbox). De spelregels zelf blijven over het spel; "Tap" daarin wordt neutraal ("Kies").
   Claude schrijft de regels; ze gaan mee in de vertaalronde.
+  Hidato toont daar welke toets bij welke buur hoort (W/E/A/D/S/X, pad: D-pad + Y), niet op het bord.
 
 ### 2.5 Waar het woont (core blijft mod-agnostisch)
 
