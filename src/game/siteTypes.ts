@@ -134,6 +134,7 @@ export const DECORATION_KINDS = [
   "counter",
   "scribeDesk",
   "banquetTable",
+  "lotusPool",
   "harp",
   "dressingTable",
   "wigStand",
@@ -192,6 +193,7 @@ export const DECORATION_FOOTPRINTS: Partial<Record<DecorationKind, PropFootprint
   floorClutter: { cols: 1, rows: 1, tall: 0, ground: true },
   // A long table laid for a feast, two cells across.
   banquetTable: { cols: 2, rows: 1, tall: 0 },
+  lotusPool: { cols: 2, rows: 1, tall: 0 },
   // A bed on lion legs lies at full length, two cells across.
   bed: { cols: 2, rows: 1, tall: 0 },
   // A standing harp and a tree in its pot both rise a cell above the frame.

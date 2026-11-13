@@ -10,13 +10,13 @@ layout
 # # d # d # #
 # t . c . t #
 d . . . . . d
-# . . b . . #
+# . b b . . #
 d . . . . . d
 # p . s . p #
 # # d # d # #
 
 t wall pottedTree
 c wall pillar
-b floor basin
+b floor lotusPool
 p floor? patron
 s stop

@@ -86,7 +86,7 @@ export const ACTIVITIES: readonly Activity[] = [
   },
   {
     id: "gardenCourt",
-    props: ["basin", "pottedTree", "pillar", "mat"],
+    props: ["lotusPool", "basin", "pottedTree", "pillar", "mat"],
     wall: [],
     roles: ["water", "sky"],
     theme: "junior",
