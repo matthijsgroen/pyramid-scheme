@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { freshState, plainFloor, prepOf, straightWalk, isPuzzleRoom } from "./carveFixtures"
-import { placeMainContent } from "./placeMainContent"
+import { placeMainContent, spreadBetweenPins } from "./placeMainContent"
 import { assembleFloor } from "./assembleFloor"
 import { validateSite } from "../siteValidator"
 import type { FloorConfig, RoomCell } from "../siteTypes"
@@ -75,5 +75,19 @@ describe("carved through assembleFloor", () => {
       expect(rewards.filter(r => r === undefined)).toHaveLength(2)
       expect(validateSite(result.grid)).toEqual({ valid: true })
     }
+  })
+})
+
+describe("spreadBetweenPins", () => {
+  it("spreads the pieces before a late room over the free nodes ahead of it, the room on its own node", () => {
+    // 20 nodes, the room pinned as piece 7 of 10 at node 12, its zone 10..14 not free.
+    const free = (index: number) => index < 10 || index > 14
+    const wants = spreadBetweenPins(10, new Map([[7, 12]]), 20, free)
+
+    expect(wants).toHaveLength(10)
+    expect(wants[7]).toBe(12)
+    expect(wants.slice(0, 7).every(index => index > 0 && index < 10 && free(index))).toBe(true)
+    expect(new Set(wants.slice(0, 7)).size).toBe(7)
+    expect(wants.slice(8).every(index => index > 14 && index < 19)).toBe(true)
   })
 })

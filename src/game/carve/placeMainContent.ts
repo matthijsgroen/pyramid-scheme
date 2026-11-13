@@ -33,6 +33,60 @@ import { pass } from "./state"
  * anchor, and every other piece is moved forward past the room's nodes, or back where nothing free lies ahead of the
  * next pinned piece, each piece kept after the one before it.
  */
+/**
+ * Each piece at its wanted index, moved forward past a room's nodes or back where nothing free lies ahead of the
+ * next pinned piece, each kept after the one before it; null when one has nowhere to stand.
+ */
+const placeAroundRooms = (
+  wants: readonly number[],
+  pinnedAt: ReadonlyMap<number, number>,
+  length: number,
+  free: (index: number) => boolean
+): number[] | null => {
+  const placed: number[] = []
+  for (const [slot, wanted] of wants.entries()) {
+    const before = placed[placed.length - 1] ?? 0
+    const pinned = pinnedAt.get(slot)
+    if (pinned !== undefined) {
+      if (pinned <= before) return null
+      placed.push(pinned)
+      continue
+    }
+    const bound = Math.min(length - 1, ...[...pinnedAt].filter(([later]) => later > slot).map(([, step]) => step))
+    let index = Math.max(wanted, before + 1)
+    while (index < bound && !free(index)) index += 1
+    if (index >= bound) for (index = Math.min(wanted, bound) - 1; index > before && !free(index);) index -= 1
+    if (index <= before) return null
+    placed.push(index)
+  }
+  return placed
+}
+
+/**
+ * The pieces between two pinned rooms spread over the FREE nodes of that stretch alone. The whole-path spread
+ * ignores where a room landed, so a room pinned late in a long list leaves the pieces before it crowding its
+ * zone. Recovery carves with this, so a floor that spread starves still finds a carve.
+ */
+export const spreadBetweenPins = (
+  contentCount: number,
+  pinnedAt: ReadonlyMap<number, number>,
+  length: number,
+  free: (index: number) => boolean
+): number[] => {
+  const pins = [[-1, 0], ...[...pinnedAt].sort((x, y) => x[0] - y[0]), [contentCount, length - 1]]
+  const wants: number[] = []
+  for (let p = 0; p + 1 < pins.length; p++) {
+    const [fromSlot, from] = pins[p]
+    const [toSlot, to] = pins[p + 1]
+    const count = toSlot - fromSlot - 1
+    const frees = Array.from({ length: Math.max(0, to - from - 1) }, (_, i) => from + 1 + i).filter(free)
+    for (let j = 0; j < count; j++)
+      wants.push(frees.length >= count ? frees[Math.floor(((j + 1) * frees.length) / (count + 1))] : from + 1 + j)
+    if (toSlot < contentCount) wants.push(to)
+  }
+  return wants
+}
+
 export const placeMainContent = pass(
   "placeMainContent",
   ["maze", "regions", "lay"],
@@ -51,29 +105,17 @@ export const placeMainContent = pass(
       const pinnedAt = new Map<number, number>()
       for (const { on } of blocks)
         if ("main" in on && on.pin !== undefined) pinnedAt.set(on.pin + (leverOnMain ? 1 : 0), on.main)
-      const wants = spreadContentIndices(contentCount, 1, mainPath.length)
-      for (const [slot, wanted] of wants.entries()) {
-        const before = placed[placed.length - 1] ?? 0
-        const pinned = pinnedAt.get(slot)
-        if (pinned !== undefined) {
-          if (pinned <= before) return { retry: [] }
-          placed.push(pinned)
-          continue
-        }
-        const bound = Math.min(
-          mainPath.length - 1,
-          ...[...pinnedAt].filter(([later]) => later > slot).map(([, step]) => step)
-        )
-        const free = (index: number) => {
-          const key = `${mainPath[index][0]},${mainPath[index][1]}`
-          return !seams.has(index) && !held.has(key) && !zone.has(key)
-        }
-        let index = Math.max(wanted, before + 1)
-        while (index < bound && !free(index)) index += 1
-        if (index >= bound) for (index = Math.min(wanted, bound) - 1; index > before && !free(index);) index -= 1
-        if (index <= before) return { retry: [] }
-        placed.push(index)
+      const free = (index: number) => {
+        const key = `${mainPath[index][0]},${mainPath[index][1]}`
+        return !seams.has(index) && !held.has(key) && !zone.has(key)
       }
+      // Only recovery spreads between the rooms: a floor that carves on an ordinary attempt keeps its carve.
+      const wants = state.rung.recovery
+        ? spreadBetweenPins(contentCount, pinnedAt, mainPath.length, free)
+        : spreadContentIndices(contentCount, 1, mainPath.length)
+      const around = placeAroundRooms(wants, pinnedAt, mainPath.length, free)
+      if (!around) return { retry: [] }
+      placed.push(...around)
     }
     for (const wanted of state.lay || blocks.length > 0 ? [] : spreadContentIndices(contentCount, 1, mainPath.length)) {
       let index = wanted
