@@ -31,7 +31,7 @@ itereren jullie.
 
 ## Werkwijze
 
-Eigen worktree per PR, branch off `origin/main`. Merge zelf bij groene CI: controleer elke job
-(`gh pr checks N | awk -F'\t' '{print $1": "$2}'`). CHANGELOG `## Unreleased` één korte regel per spelerszichtbare
-PR; conflicten in CHANGELOG en de statusregel van het plan los je op met een rebase. Kijk in de browser, niet alleen
+Eigen worktree per PR, branch off `origin/main`. Merge zelf bij groene CI: wacht met
+`yarn pr:wait N` (toont elke job, stopt meteen bij een conflict). CHANGELOG `## Unreleased` één korte regel per spelerszichtbare
+PR; conflicten in CHANGELOG en de statusregel van het plan los je op door `origin/main` in de branch te mergen (force-push wordt geweigerd). Kijk in de browser, niet alleen
 naar code. Korte commits, geen historische comments. Antwoord de designer in het Nederlands, kort.

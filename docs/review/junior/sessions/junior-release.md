@@ -27,7 +27,7 @@ De laatste junior-bake en `yarn junior-freeze:record` zijn ook van jou; `yarn re
 
 ## Werkwijze
 
-Eigen worktree per PR, branch off `origin/main`. Merge zelf bij groene CI: controleer elke job
-(`gh pr checks N | awk -F'\t' '{print $1": "$2}'`). CHANGELOG `## Unreleased` krijgt één korte regel per
-spelerszichtbare PR; conflicten daarin en in statusregels los je op met een rebase. Korte commits, geen
+Eigen worktree per PR, branch off `origin/main`. Merge zelf bij groene CI: wacht met
+`yarn pr:wait N` (toont elke job, stopt meteen bij een conflict). CHANGELOG `## Unreleased` krijgt één korte regel per
+spelerszichtbare PR; conflicten daarin en in statusregels los je op door `origin/main` in de branch te mergen (force-push wordt geweigerd). Korte commits, geen
 historische comments, geen tests op geschreven content. Antwoord de designer in het Nederlands, kort.

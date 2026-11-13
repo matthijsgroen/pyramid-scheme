@@ -101,6 +101,7 @@ yarn betterer:update # Record a guard's new, lower state after fixing occurrence
 yarn build        # Production build
 yarn loot-report  # The loot in the baked world against demand, writes docs/loot-report.md
 yarn storybook    # Component docs at http://localhost:6006
+yarn pr:wait <N>  # Waits for a PR's CI, prints every job; stops at once on a conflict with main
 ```
 
 Run `yarn verify` before considering a change complete. The ORDER is the reason it exists: `lint --fix`
@@ -169,6 +170,10 @@ Worktrees/branches here often start from a Warp script that generates a random p
 | `release.yml` | Manual dispatch             | Bumps `package.json` and `CHANGELOG.md` from the Unreleased section, then deploys to GitHub Pages                        |
 
 Deploys only happen as part of a release — there is no separate deploy workflow.
+
+Wait for a PR's CI with `yarn pr:wait <N>`, never a hand-made `gh pr checks` loop. A PR that conflicts with main
+starts no run at all, so "no checks" is not "still running": the script says so at once. Resolve a conflict by
+merging `origin/main` into the branch and pushing again; a force-push after a rebase is refused here.
 
 ---
 

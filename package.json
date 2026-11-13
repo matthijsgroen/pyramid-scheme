@@ -10,6 +10,7 @@
     "test": "vitest",
     "carve-digests": "tsx scripts/carveDigests.ts",
     "lock": "tsx scripts/lock.ts",
+    "pr:wait": "tsx scripts/prWait.ts",
     "room": "tsx scripts/room.ts",
     "preview": "vite preview",
     "check-types": "tsc -b",
