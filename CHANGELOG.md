@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Walk the map with arrow keys or WASD.
 - Escape closes dialogs, the shop and puzzles; Enter moves a conversation on.
+- A game controller walks the map, moves through dialogs and backs out of them.
 - Move your save to another device with a travel card in Settings.
 
 ### Changed
