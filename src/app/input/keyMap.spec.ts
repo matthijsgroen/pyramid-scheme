@@ -15,6 +15,7 @@ describe("which action a key means", () => {
     ["KeyZ", { kind: "undo" }],
     ["ShiftLeft", { kind: "alt" }],
     ["KeyN", { kind: "alt" }],
+    ["Delete", { kind: "erase" }],
     ["BracketLeft", { kind: "prev" }],
     ["PageDown", { kind: "next" }],
     ["KeyH", { kind: "hint" }],

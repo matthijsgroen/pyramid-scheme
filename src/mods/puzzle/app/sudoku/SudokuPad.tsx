@@ -1,6 +1,7 @@
 import clsx from "clsx"
 import type { FC } from "react"
 import { useTranslation } from "react-i18next"
+import type { PadPick } from "../padKeys"
 import type { SudokuSkin } from "./skins"
 
 type Props = {
@@ -13,6 +14,8 @@ type Props = {
   exhausted: ReadonlySet<number>
   /** No square is picked, so a value has nowhere to go yet. */
   disabled: boolean
+  /** The key a game pad's shoulder buttons have picked, which its confirm presses (padKeys). */
+  picked?: PadPick
   onValue: (value: number) => void
   onErase: () => void
   onTogglePencil: () => void
@@ -29,7 +32,17 @@ const buttonCls = "flex h-11 min-w-11 items-center justify-center rounded border
  * above them, so they belong in the same grid, cut to the same square. Undo is the shell's, because a step
  * back means the same thing on a board with no pad at all.
  */
-export const SudokuPad: FC<Props> = ({ size, skin, pencil, exhausted, disabled, onValue, onErase, onTogglePencil }) => {
+export const SudokuPad: FC<Props> = ({
+  size,
+  skin,
+  pencil,
+  exhausted,
+  disabled,
+  picked,
+  onValue,
+  onErase,
+  onTogglePencil,
+}) => {
   const { t } = useTranslation("common")
   return (
     <div className="flex w-full max-w-[min(56vh,26rem)] flex-col items-center gap-1.5">
@@ -52,7 +65,8 @@ export const SudokuPad: FC<Props> = ({ size, skin, pencil, exhausted, disabled, 
               disabled ? skin.pad.disabledKey : pencil ? skin.pad.pencilKey : skin.pad.key,
               // A value with every square of its own already spoken for is dimmed, not removed: the
               // pad must not reshuffle under a finger mid-solve.
-              exhausted.has(value) && !disabled && "opacity-40"
+              exhausted.has(value) && !disabled && "opacity-40",
+              picked === value && "board-cursor"
             )}
           >
             <skin.Glyph value={value} />
@@ -74,7 +88,12 @@ export const SudokuPad: FC<Props> = ({ size, skin, pencil, exhausted, disabled, 
           onClick={onErase}
           disabled={disabled}
           aria-label={t("ui.erase")}
-          className={clsx(buttonCls, "w-11", disabled ? `${skin.pad.disabledKey} opacity-40` : skin.pad.key)}
+          className={clsx(
+            buttonCls,
+            "w-11",
+            disabled ? `${skin.pad.disabledKey} opacity-40` : skin.pad.key,
+            picked === "erase" && "board-cursor"
+          )}
         >
           🧽
         </button>

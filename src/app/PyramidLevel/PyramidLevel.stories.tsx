@@ -95,6 +95,44 @@ export const Junior: Story = {
   },
 }
 
+/**
+ * Played by keys: arrows or WASD move along a floor and between floors, a digit fills the block and opens it
+ * for typing, Enter opens it empty. On a game pad LB/RB count the block's value down and up.
+ */
+export const KeyboardCursor: Story = {
+  args: {
+    floorCount: 5,
+    openBlockPercentage: 0.5,
+    blockedBlockPercentage: 0,
+    minNumber: 1,
+    maxNumber: 10,
+  },
+  globals: { input: "keys" },
+  render: function Render({ levelNr, floorCount }) {
+    const [values, setValues] = useState<Record<string, number | undefined>>({})
+    const content = generateLevel(
+      levelNr,
+      { floorCount, openBlockCount: 5, blockedBlockCount: 0, lowestFloorNumberRange: [1, 10] },
+      mulberry32(1234567)
+    )
+    return (
+      <DesertBackdrop levelNr={1} start="morning">
+        <div className="relative flex size-full flex-col">
+          <div className="flex w-full flex-1 items-center justify-center">
+            <PyramidDisplay
+              levelNr={levelNr}
+              pyramid={content.pyramid}
+              decorationOffset={0}
+              values={values}
+              onAnswer={(id, value) => setValues(now => ({ ...now, [id]: value }))}
+            />
+          </div>
+        </div>
+      </DesertBackdrop>
+    )
+  },
+}
+
 export const EntranceAnimation: Story = {
   args: {
     floorCount: 5,

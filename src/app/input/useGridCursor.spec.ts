@@ -105,6 +105,35 @@ describe(useGridCursor, () => {
     button.remove()
   })
 
+  it("lands only on the stops it is given, the nearest one each way, even off the line", () => {
+    const stops = [
+      { row: 0, col: 0 },
+      { row: 1, col: 3 },
+      { row: 3, col: 1 },
+    ]
+    const hook = renderHook(() => useGridCursor({ rows: 4, cols: 4, stops, onConfirm: () => {} }))
+    const send = (dir: Direction) => act(() => void hook.result.current.handle(move(dir)))
+    send("e")
+    expect(hook.result.current).toMatchObject({ row: 1, col: 3 })
+    send("e")
+    expect(hook.result.current).toMatchObject({ row: 1, col: 3 })
+    send("s")
+    expect(hook.result.current).toMatchObject({ row: 3, col: 1 })
+    send("n")
+    expect(hook.result.current).toMatchObject({ row: 0, col: 0 })
+  })
+
+  it("tells the board where each direction took it", () => {
+    const onMove = vi.fn()
+    const hook = renderHook(() => useGridCursor({ rows: 3, cols: 3, onConfirm: () => {}, onMove }))
+    act(() => void hook.result.current.handle(move("s")))
+    act(() => void hook.result.current.handle(move("e")))
+    expect(onMove.mock.calls).toEqual([
+      [1, 0],
+      [1, 1],
+    ])
+  })
+
   it("stays on the board when the board shrinks", () => {
     const onConfirm = vi.fn()
     const hook = renderHook(({ size }) => useGridCursor({ rows: size, cols: size, onConfirm }), {

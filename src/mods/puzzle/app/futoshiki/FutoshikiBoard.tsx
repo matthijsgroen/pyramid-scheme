@@ -1,5 +1,8 @@
 import clsx from "clsx"
 import type { FC } from "react"
+import type { InputHandler, InputSignal } from "@/app/input/actions"
+import { useGridCursor, type GridCell } from "@/app/input/useGridCursor"
+import { useInputLayer } from "@/app/input/useInputLayer"
 import type { FutoshikiCell } from "@/mods/puzzle/game/futoshiki/futoshikiState"
 import { futoshikiNoteKey, type FutoshikiConflicts } from "@/mods/puzzle/game/futoshiki/futoshikiStatus"
 import {
@@ -29,6 +32,12 @@ type Props = {
    */
   counted?: number
   onSelect: (row: number, col: number) => void
+  /** The shell's `boardInput`: with it the board takes keys and pad, a cursor whose confirm is a tap. */
+  boardInput?: (board: InputHandler) => InputHandler
+  /** Where a direction took the cursor: the picked square follows it. */
+  onCursor?: (row: number, col: number) => void
+  /** The pad's keys, for the square under the cursor (padKeys), asked before the cursor's own. */
+  padKeys?: (signal: InputSignal, at: GridCell) => boolean
 }
 
 // One chevron, turned four ways: the point of the mark always opens toward the bigger number, in
@@ -180,8 +189,27 @@ export const FutoshikiBoard: FC<Props> = ({
   litSigns,
   counted,
   onSelect,
+  boardInput,
+  onCursor,
+  padKeys,
 }) => {
   const { size } = puzzle
+  const cursor = useGridCursor({
+    rows: size,
+    cols: size,
+    start: () => {
+      const open = Math.max(
+        cells.flat().findIndex(cell => !cell.given),
+        0
+      )
+      return { row: Math.floor(open / size), col: open % size }
+    },
+    onConfirm: onSelect,
+    onMove: onCursor,
+  })
+  const handle: InputHandler = signal =>
+    !!padKeys?.(signal, { row: cursor.row, col: cursor.col }) || cursor.handle(signal)
+  useInputLayer(boardInput ? boardInput(handle) : handle, boardInput !== undefined)
   return (
     <div className="relative aspect-square w-full max-w-[min(56vh,26rem)] select-none">
       <div
@@ -198,12 +226,15 @@ export const FutoshikiBoard: FC<Props> = ({
             return (
               <button
                 key={key}
-                onClick={() => onSelect(rowIndex, colIndex)}
-                className={cellCls(cell, {
-                  lit: highlighted?.has(key) ?? false,
-                  selected: selected?.row === rowIndex && selected?.col === colIndex,
-                  conflicted,
-                })}
+                onClick={() => cursor.tap(rowIndex, colIndex)}
+                className={clsx(
+                  cellCls(cell, {
+                    lit: highlighted?.has(key) ?? false,
+                    selected: selected?.row === rowIndex && selected?.col === colIndex,
+                    conflicted,
+                  }),
+                  cursor.at(rowIndex, colIndex) && "board-cursor"
+                )}
               >
                 {cell.value === undefined ? (
                   <NoteGrid notes={cell.notes} size={size} row={rowIndex} col={colIndex} stranded={stranded} />

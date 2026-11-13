@@ -58,10 +58,9 @@ const renderAt = async (levelNr: number) => {
   return result
 }
 
-// The playable board is the only focusable one (the decorative neighbours are inert), so its
-// layer is the one wrapping the focusable container.
+// The decorative neighbours are inert, so the playable board's layer is the one that is not.
 const playableLayer = (container: HTMLElement) =>
-  container.querySelector('[tabindex="0"]')?.closest<HTMLElement>("div.absolute.inset-0") ?? null
+  container.querySelector<HTMLElement>("div.absolute.inset-0:not([inert])")
 
 // The "thrown off-screen, next level incoming" transform, applied both declaratively and by the
 // parallax scroll handler.
@@ -121,13 +120,11 @@ describe("PyramidExpedition — focus", () => {
     await clearGameData()
   })
 
-  it("makes only the playable board focusable, so the decorative ones can't scroll it out of view", async () => {
-    // Three boards mount at once inside one scroll container. Every focusable container in there
+  it("makes the decorative boards inert, so they can't scroll the playable one out of view", async () => {
+    // Three boards mount at once inside one scroll container. Every focusable element in there
     // is somewhere the browser may scroll to when something takes focus.
     const { container } = await renderAt(1)
 
-    expect(container.querySelectorAll('[tabindex="0"]')).toHaveLength(1)
-    // …and the decorative layers are inert, so their inputs leave the tab order too.
     expect(container.querySelectorAll("div.absolute.inset-0[inert]")).toHaveLength(2)
   })
 })

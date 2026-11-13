@@ -1,4 +1,5 @@
-import { useMemo, type FC } from "react"
+import { useMemo, useState, type FC } from "react"
+import { padKeys, type PadPick } from "@/mods/puzzle/app/padKeys"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
 import { classifyItemMove, openItems, type Decision } from "@/mods/core/app/markMoveEffect"
@@ -81,6 +82,7 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
   const skin = skinFor(role, theme, 0, room)
   const [state, setState] = usePuzzleState(() => createSudokuState(puzzle), puzzle)
   const { selected, pencil, selectCell, focusCell, togglePencil, clearSelection } = useSudokuEntry()
+  const [picked, setPicked] = useState<PadPick>()
 
   const values = useMemo(() => sudokuValues(state), [state])
   /**
@@ -156,13 +158,43 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
     )
   }
 
-  const enterValue = (value: number, reportInput: (effect: InputEffect) => void) => {
-    if (!selected) return
-    const { row, col } = selected
+  const enterValue = (value: number, reportInput: (effect: InputEffect) => void, at = selected) => {
+    if (!at) return
+    const { row, col } = at
     const next = pencil ? toggleSudokuNote(state, row, col, value) : setSudokuValue(state, row, col, value)
     reportInput(effectOf(next, row, col))
     setState(next)
   }
+
+  const erase = (reportInput: (effect: InputEffect) => void, at = selected) => {
+    if (finished || !at) return
+    const next = clearSudokuCell(state, at.row, at.col)
+    reportInput(effectOf(next, at.row, at.col))
+    setState(next)
+  }
+
+  const togglePencilMode = (reportInput: (effect: InputEffect) => void) => {
+    reportInput("look")
+    togglePencil()
+  }
+
+  // A key acts on the square under the cursor, and picks it, as a tap would have first.
+  const keysFor = (reportInput: (effect: InputEffect) => void) =>
+    padKeys({
+      size,
+      picked,
+      onPick: setPicked,
+      onValue: (value, at) => {
+        if (finished) return
+        focusCell(at.row, at.col)
+        enterValue(value, reportInput, at)
+      },
+      onErase: at => {
+        focusCell(at.row, at.col)
+        erase(reportInput, at)
+      },
+      onTogglePencil: () => togglePencilMode(reportInput),
+    })
 
   return (
     <PuzzleFamilyShell
@@ -206,9 +238,16 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
       goal={t(`sudoku.goal.${skin.name}`)}
       rules={<SudokuRules skin={skin.name} />}
     >
-      {({ reportInput, hintVisible }) => (
+      {({ reportInput, hintVisible, boardInput }) => (
         <>
           <SudokuBoard
+            boardInput={boardInput}
+            padKeys={keysFor(reportInput)}
+            onCursor={(row, col) => {
+              if (finished) return
+              reportInput("look")
+              focusCell(row, col)
+            }}
             puzzle={puzzle}
             cells={state.cells}
             skin={skin}
@@ -232,17 +271,10 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
             pencil={pencil}
             exhausted={exhaustedValues(values, size)}
             disabled={!selected || finished}
+            picked={picked}
             onValue={value => enterValue(value, reportInput)}
-            onErase={() => {
-              if (finished || !selected) return
-              const next = clearSudokuCell(state, selected.row, selected.col)
-              reportInput(effectOf(next, selected.row, selected.col))
-              setState(next)
-            }}
-            onTogglePencil={() => {
-              reportInput("look")
-              togglePencil()
-            }}
+            onErase={() => erase(reportInput)}
+            onTogglePencil={() => togglePencilMode(reportInput)}
           />
         </>
       )}

@@ -4,7 +4,7 @@ Aanleiding: twee playtesters willen de ontdekkingsreiziger met de pijltjestoetse
 dekt toetsenbord en game controller (Gamepad API) voor drie gebieden: de kaart, menu's en schermen, puzzels.
 Touch blijft leidend en verandert nergens: elke toets doet wat een tik al doet, via dezelfde code.
 
-Status: slice 1, 2 en 4 gebouwd, slice 5a (puzzelcontract, `useGridCursor`, cursor C; sumplete en eclipse) gebouwd, de rest is plan. Pad-repeat: eerste herhaling na 24 polls, daarna elke 8. Visuele stappen hebben eerst een spike + goedgekeurd plaatje nodig (gemarkeerd met **spike**).
+Status: slice 1, 2 en 4 gebouwd, slice 5 gebouwd (puzzelcontract, `useGridCursor`, cursor C; sumplete, eclipse, star battle, sudoku, futoshiki, shrine beam, crocodile, tableau-piramide; `erase` = Delete, Backspace blijft `back`; LB/RB lopen sudoku/futoshiki langs het pad incl. gum), de rest is plan. Pad-repeat: eerste herhaling na 24 polls, daarna elke 8. Visuele stappen hebben eerst een spike + goedgekeurd plaatje nodig (gemarkeerd met **spike**).
 
 ---
 

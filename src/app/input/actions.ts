@@ -7,6 +7,7 @@ export type InputAction =
   | { kind: "back" }
   | { kind: "undo" }
   | { kind: "alt" }
+  | { kind: "erase" }
   | { kind: "prev" }
   | { kind: "next" }
   | { kind: "hint" }

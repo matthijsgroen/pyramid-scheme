@@ -65,6 +65,12 @@ export const ThreeWaysOneStandingOpen: Story = {
   })(),
 }
 
+/** Played by keys: the cursor lands on mirrors only, the nearest one each way; Enter or Space turns it. */
+export const KeyboardCursor: Story = {
+  args: { board: facing("three", ["n", "e", "w"]), exits: fork(["n", "e", "w"]) },
+  globals: { input: "keys" },
+}
+
 /** The widest board, where a cell is at its smallest and the tap targets reach furthest past it. */
 export const Wizard: Story = {
   args: { board: facing("three", ["n", "e", "w"], 3, "wizard"), exits: fork(["n", "e", "w"]) },

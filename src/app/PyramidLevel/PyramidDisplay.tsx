@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, type FC } from "react"
+import { useMemo, type FC } from "react"
+import { useInputLayer } from "@/app/input/useInputLayer"
 import { usePyramidNavigation } from "@/app/PyramidLevel/usePyramidNavigation"
 import type { Pyramid } from "@/game/types"
 import { Block } from "@/ui/atoms/Block"
@@ -63,33 +64,22 @@ export const PyramidDisplay: FC<{
   // Render the pyramid blocks
   const floorCount = pyramid.floorCount
   const floorStartIndices = createFloorStartIndices(floorCount)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const { selectedBlockIndex, setSelectedBlockIndex, focusInput, setFocusInput, handleKeyDown } = usePyramidNavigation(
+  const { selectedBlockIndex, setSelectedBlockIndex, focusInput, setFocusInput, handle } = usePyramidNavigation(
     floorStartIndices,
     floorCount,
     blocks,
-    onAnswer
+    onAnswer,
+    values
   )
+  // Scenery boards take no keys: several are mounted at once, and only the playable one may answer them.
+  useInputLayer(handle, interactive)
   const complete = !focusInput && isComplete({ levelNr: 1, pyramid, values })
   const correctAnswers = useMemo(() => getAnswers(pyramid), [pyramid])
   const decorationNumber = levelNr + decorationOffset
   const position = getPosition(decorationNumber)
 
-  // `preventScroll` rather than `autoFocus`: the board lives in a scrollable, parallax-transformed
-  // container, and letting the browser scroll to whatever just took focus drags the pyramids out
-  // of view. Focus here only exists to receive the arrow-key navigation.
-  useEffect(() => {
-    if (!interactive) return
-    containerRef.current?.focus({ preventScroll: true })
-  }, [interactive])
-
   return (
-    <div
-      ref={containerRef}
-      className="relative flex flex-col items-center focus:outline-none"
-      tabIndex={interactive ? 0 : undefined}
-      onKeyDown={handleKeyDown}
-    >
+    <div className="relative flex flex-col items-center">
       {floorStartIndices.map((startIndex, floor) => {
         // if complete, check if all answers of this row are correct
         const isCorrect = blocks
@@ -111,10 +101,7 @@ export const PyramidDisplay: FC<{
                   disabled={complete && isCorrect}
                   shouldFocus={selectedBlockIndex === startIndex + index && focusInput}
                   onSelect={() => setSelectedBlockIndex(startIndex + index)}
-                  onBlur={() => {
-                    setFocusInput(false)
-                    containerRef.current?.focus({ preventScroll: true })
-                  }}
+                  onBlur={() => setFocusInput(false)}
                   onChange={value => onAnswer?.(block.id, value)}
                 />
               ) : (
@@ -137,7 +124,12 @@ export const PyramidDisplay: FC<{
                   <div className="animate-stone-entrance">{blockEl}</div>
                 </div>
               ) : (
-                <span key={block.id}>{blockEl}</span>
+                <span
+                  key={block.id}
+                  className={clsx(interactive && !completed && selectedBlockIndex === blockIndex && "board-cursor")}
+                >
+                  {blockEl}
+                </span>
               )
             })}
             <div
