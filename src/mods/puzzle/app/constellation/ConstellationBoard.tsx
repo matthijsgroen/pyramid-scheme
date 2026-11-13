@@ -1,6 +1,9 @@
 import clsx from "clsx"
 import { useMemo, useRef, useState, type FC, type PointerEvent } from "react"
 import { mulberry32 } from "@/game/random"
+import type { Direction } from "@/game/siteTypes"
+import type { InputHandler } from "@/app/input/actions"
+import { useInputLayer } from "@/app/input/useInputLayer"
 import {
   colOf,
   degreeOf,
@@ -12,6 +15,7 @@ import {
   type ConstellationPuzzle,
 } from "@/mods/puzzle/game/constellation/constellation"
 import { skinFor, type Skin } from "./skins"
+import { DELTA, useConstellationCursor } from "./useConstellationCursor"
 
 type Props = {
   puzzle: ConstellationPuzzle
@@ -31,6 +35,8 @@ type Props = {
   /** Nodes that have had their turn in the completion run (see useCelebration). */
   celebrated?: ReadonlySet<number>
   onDrawLine: (pair: number) => void
+  /** The shell's `boardInput`: with it the board takes keys and pad, a cursor on the stars. */
+  boardInput?: (board: InputHandler) => InputHandler
 }
 
 // A drag has to travel before it means a direction: a press that never moves is a cancel, since dragging is
@@ -167,6 +173,7 @@ export const ConstellationBoard: FC<Props> = ({
   room,
   celebrated,
   onDrawLine,
+  boardInput,
 }) => {
   const byStar = pairsByStar(puzzle)
   const skin = skinFor(role, theme, 0, room)
@@ -177,8 +184,13 @@ export const ConstellationBoard: FC<Props> = ({
   const drag = useRef<{ x: number; y: number; star: number; pair?: number } | undefined>(undefined)
   const [candidate, setCandidate] = useState<number | undefined>()
 
+  const keys = useConstellationCursor({ puzzle, onDrawLine })
+  useInputLayer(boardInput ? boardInput(keys.handle) : keys.handle, boardInput !== undefined)
+  const showCursor = boardInput !== undefined && !celebrated?.size
+
   const beginDrag = (star: number) => (event: PointerEvent<HTMLButtonElement>) => {
     drag.current = { x: event.clientX, y: event.clientY, star }
+    keys.point(star)
     event.currentTarget.setPointerCapture(event.pointerId)
   }
 
@@ -227,14 +239,19 @@ export const ConstellationBoard: FC<Props> = ({
         {puzzle.stars.map((star, index) => {
           const held = degreeOf(byStar, state.lines, index)
           const { left, top } = positionOf(puzzle, index)
+          const cursor = showCursor && keys.cursor === index
           return (
             <button
               key={index}
+              data-held={(cursor && keys.alt) || undefined}
               onPointerDown={beginDrag(index)}
               onPointerMove={moveDrag}
               onPointerUp={endDrag}
               onPointerCancel={endDrag}
-              className="absolute flex aspect-square -translate-1/2 items-center justify-center"
+              className={clsx(
+                "absolute flex aspect-square -translate-1/2 items-center justify-center rounded-full",
+                cursor && "cursor-brackets z-10"
+              )}
               style={{ left: `${left}%`, top: `${top}%`, width: `${(100 / puzzle.size) * HIT_SCALE}%` }}
             >
               <span
@@ -269,6 +286,7 @@ export const ConstellationBoard: FC<Props> = ({
                 )}
                 <span className="relative">{star.count}</span>
               </span>
+              {cursor && keys.alt && <LineArrows puzzle={puzzle} star={index} />}
             </button>
           )
         })}
@@ -276,3 +294,22 @@ export const ConstellationBoard: FC<Props> = ({
     </div>
   )
 }
+
+const ARROW: Record<Direction, { place: string; clip: string }> = {
+  n: { place: "top-0 left-1/2 -translate-x-1/2 -translate-y-1/2", clip: "polygon(0 100%, 50% 0, 100% 100%)" },
+  e: { place: "top-1/2 right-0 translate-x-1/2 -translate-y-1/2", clip: "polygon(0 0, 100% 50%, 0 100%)" },
+  s: { place: "bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2", clip: "polygon(0 0, 50% 100%, 100% 0)" },
+  w: { place: "top-1/2 left-0 -translate-x-1/2 -translate-y-1/2", clip: "polygon(100% 0, 0 50%, 100% 100%)" },
+}
+
+/** While alt is held: an arrow on each side of the cursor's star with a line a direction would cycle. */
+const LineArrows: FC<{ puzzle: ConstellationPuzzle; star: number }> = ({ puzzle, star }) =>
+  (Object.keys(ARROW) as Direction[])
+    .filter(dir => pairTowards(puzzle, star, ...DELTA[dir]) !== undefined)
+    .map(dir => (
+      <span
+        key={dir}
+        className={clsx("pointer-events-none absolute cursor-only size-3.5 bg-ember-300", ARROW[dir].place)}
+        style={{ clipPath: ARROW[dir].clip }}
+      />
+    ))
