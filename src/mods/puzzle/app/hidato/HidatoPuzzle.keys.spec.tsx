@@ -68,7 +68,33 @@ const cursorAt = (root: HTMLElement) => {
   return hexKey({ q: Math.round(q), r: Math.round(r) })
 }
 
-const open = (onCancel = () => {}) => {
+// Seven cells with the 3 in the centre, picked up there: up-left is the 5 the puzzle wrote in, which does not go
+// on from the 3, and up-right is where the 4 goes.
+//     5 4
+//    2 3 1
+//     6 7
+const leftBlocked: HidatoPuzzleData = {
+  cells: hexagon(1),
+  givens: { "1,0": 1, "0,0": 3, "0,-1": 5, "-1,1": 7 },
+  solution: { "1,0": 1, "0,1": 2, "0,0": 3, "1,-1": 4, "0,-1": 5, "-1,0": 6, "-1,1": 7 },
+  pruning: "adjacency",
+}
+// The same with the 4 written in up-right, so the run passes through it.
+const leftBlockedRightGiven: HidatoPuzzleData = { ...leftBlocked, givens: { ...leftBlocked.givens, "1,-1": 4 } }
+// The same without the 5, so the 4 could go up-left or up-right.
+const bothOpen: HidatoPuzzleData = { ...leftBlocked, givens: { "1,0": 1, "0,0": 3, "-1,1": 7 } }
+// Mirrored: up-right is the 5 written in, up-left is where the 4 goes.
+//     4 5
+//    1 3 6
+//     2 7
+const rightBlocked: HidatoPuzzleData = {
+  cells: hexagon(1),
+  givens: { "-1,0": 1, "0,0": 3, "1,-1": 5, "0,1": 7 },
+  solution: { "-1,0": 1, "-1,1": 2, "0,0": 3, "0,-1": 4, "1,-1": 5, "1,0": 6, "0,1": 7 },
+  pruning: "adjacency",
+}
+
+const open = (onCancel = () => {}, board = puzzle) => {
   vi.stubGlobal("matchMedia", (query: string) => ({
     matches: query.includes("reduce"),
     media: query,
@@ -77,7 +103,7 @@ const open = (onCancel = () => {}) => {
   }))
   const onSolved = vi.fn()
   const { container } = render(
-    <HidatoPuzzle puzzle={puzzle} difficulty="starter" onSolved={onSolved} onCancel={onCancel} />
+    <HidatoPuzzle puzzle={board} difficulty="starter" onSolved={onSolved} onCancel={onCancel} />
   )
   const undo = () => within(container).getByRole<HTMLButtonElement>("button", { name: /↩/ })
   const svg = container.querySelector("svg")!
@@ -221,6 +247,54 @@ describe("HidatoPuzzle by keys", () => {
     press("Enter")
     press("ArrowUp")
     expect(numbers(keys.container)).toEqual({ ...puzzle.givens, "0,-1": 2 })
+  })
+
+  it("with a run picked up, goes up to the right where only the right-hand cell lets it go on", () => {
+    const keys = open(undefined, leftBlocked)
+    press("ArrowLeft")
+    press("Enter")
+    press("ArrowUp")
+    expect(numbers(keys.container)).toEqual({ ...leftBlocked.givens, "1,-1": 4 })
+    expect(cursorAt(keys.container)).toBe("1,-1")
+  })
+
+  it("with a run picked up, goes up to the right to pass through the next number written in there", () => {
+    const keys = open(undefined, leftBlockedRightGiven)
+    press("ArrowLeft")
+    press("Enter")
+    press("ArrowUp")
+    expect(cursorAt(keys.container)).toBe("1,-1")
+  })
+
+  it("with a run picked up, keeps up on the left where both sides let it go on", () => {
+    const keys = open(undefined, bothOpen)
+    press("ArrowLeft")
+    press("Enter")
+    press("ArrowUp")
+    expect(numbers(keys.container)).toEqual({ ...bothOpen.givens, "0,-1": 4 })
+  })
+
+  it("without a run picked up, goes up to the left whatever stands there", () => {
+    const keys = open(undefined, leftBlocked)
+    press("ArrowLeft")
+    press("ArrowUp")
+    expect(cursorAt(keys.container)).toBe("0,-1")
+  })
+
+  it("bent right with a run picked up, goes to the left where only the left-hand cell lets it go on", () => {
+    const keys = open(undefined, rightBlocked)
+    press("ArrowRight")
+    press("Enter")
+    shifted("ArrowUp")
+    expect(numbers(keys.container)).toEqual({ ...rightBlocked.givens, "0,-1": 4 })
+  })
+
+  it("bent right with a run picked up, keeps to the right where both sides let it go on", () => {
+    const keys = open(undefined, bothOpen)
+    press("ArrowLeft")
+    press("Enter")
+    press("KeyE")
+    expect(numbers(keys.container)).toEqual({ ...bothOpen.givens, "1,-1": 4 })
   })
 
   it("puts the run down on Escape instead of leaving, and leaves on the next", () => {

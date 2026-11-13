@@ -27,12 +27,18 @@ export const neighbourOf = (key: string, dir: Direction, right: boolean): string
 
 /**
  * The cell a direction moves to from `key` on this board: the neighbour it aims at, or for up and down the one on
- * the other side where that one is off the board. Undefined where neither is on it.
+ * the other side where that one is off the board, or where only that one `goes` (the run can step into it).
+ * Undefined where neither is on it.
  */
-export const reach = (cells: ReadonlySet<string>, key: string, dir: Direction, right: boolean): string | undefined => {
-  const aimed = neighbourOf(key, dir, right)
-  const next = cells.has(aimed) ? aimed : neighbourOf(key, dir, !right)
-  return cells.has(next) ? next : undefined
+export const reach = (
+  cells: ReadonlySet<string>,
+  key: string,
+  dir: Direction,
+  right: boolean,
+  goes?: (cell: string) => boolean
+): string | undefined => {
+  const sides = [neighbourOf(key, dir, right), neighbourOf(key, dir, !right)].filter(cell => cells.has(cell))
+  return (goes && sides.find(goes)) ?? sides[0]
 }
 
 type Options = {
@@ -41,6 +47,8 @@ type Options = {
   start: string
   /** The cell the run is picked up at: while there is one, the cursor is on it. */
   pen?: string
+  /** Whether the picked-up run can step into a cell: up and down take the side where it can. */
+  goes?: (key: string) => boolean
   /** A tap on a cell: the press and the release a finger makes, in that order. */
   onPress: (key: string) => void
   /** The run dragged into a touching cell. */
@@ -51,11 +59,11 @@ type Options = {
 
 /**
  * Keys and pad on the comb. Up or down reaches the neighbour on the other side where the one it aims at is not on
- * the board. Without a run picked up, a direction moves the cursor to that neighbour. With one,
- * the cursor is the run's head and a direction drags the run into that neighbour, so it moves only as far as the
- * run does. Confirm taps the cell under the cursor; back puts a picked-up run down before it leaves the board.
+ * the board, or, with a run picked up, where only the other side lets the run go on. Without a run picked up, a
+ * direction moves the cursor to that neighbour. With one, the cursor is the run's head and a direction drags the
+ * run into that neighbour, so it moves only as far as the run does. Confirm taps the cell under the cursor; back puts a picked-up run down before it leaves the board.
  */
-export const useHidatoCursor = ({ cells, start, pen, onPress, onDrag, onLift }: Options) => {
+export const useHidatoCursor = ({ cells, start, pen, goes, onPress, onDrag, onLift }: Options) => {
   const [free, setFree] = useState(start)
   // Where the run was put down is where the cursor carries on from, however it was put down (undo, a tap).
   const [lastPen, setLastPen] = useState(pen)
@@ -67,7 +75,7 @@ export const useHidatoCursor = ({ cells, start, pen, onPress, onDrag, onLift }: 
   const at = pen ?? free
 
   const go = (dir: Direction, right: boolean) => {
-    const next = reach(cells, at, dir, right)
+    const next = reach(cells, at, dir, right, pen === undefined ? undefined : goes)
     if (next === undefined) return
     if (pen === undefined) setFree(next)
     else onDrag(next)

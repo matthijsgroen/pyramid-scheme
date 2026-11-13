@@ -15,6 +15,8 @@ type Props = {
   values: Record<string, number>
   /** The cell the run is picked up at, if any. */
   pen?: string
+  /** Whether the picked-up run can step into a cell: up and down by keys take the side where it can. */
+  goes?: (key: string) => boolean
   /**
    * How far the run has been carried by hand — the stroke is drawn no further, and unset draws it all.
    *
@@ -162,6 +164,7 @@ export const HidatoBoard: FC<Props> = ({
   skin,
   values,
   pen,
+  goes,
   carried,
   hatched,
   marked,
@@ -198,6 +201,7 @@ export const HidatoBoard: FC<Props> = ({
     cells,
     start: Object.entries(puzzle.givens).find(([, value]) => value === 1)?.[0] ?? hexKey(puzzle.cells[0]),
     pen,
+    goes,
     onPress: press,
     onDrag,
     onLift,

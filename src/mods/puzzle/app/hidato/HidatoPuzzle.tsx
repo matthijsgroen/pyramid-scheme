@@ -108,6 +108,8 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
           skin={skin}
           values={state.values}
           pen={state.pen}
+          // The run can go on into a cell where a step there changes the board.
+          goes={key => stepHidato(state, key, puzzle) !== state}
           // The whole channel once the board is done: the light runs the length of it (hidato.md: the run is
           // one line).
           carried={finished ? undefined : carriedTo(state)}
