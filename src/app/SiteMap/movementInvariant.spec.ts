@@ -714,22 +714,25 @@ describe("the guard actually fires", () => {
 // `clickTargetAt` while the marker re-derived its own condition. Only the marker rule is broken here (a
 // corner dot draws nothing); the grid, the offers and the taps stay the real ones.
 describe("the marker guard actually fires", () => {
-  // (0,0) room -> (0,1) a corner the player has not walked, the dot's own cell -> (1,1) a corner the
-  // player has already walked, which draws nothing by decision -> (1,2) a room.
+  // (0,0) room -> (0,1) a straight step, the run's arrow -> (0,2) a corner the player has not walked, the dot's own
+  // cell -> (1,2) a corner the player has already walked, which draws nothing by decision -> (1,3) a room. Neither
+  // corner is beside him, where a stop is drawn as the arrow onto it.
   const grid: FloorGrid = {
     siteId: "marker-guard",
     rows: 2,
-    cols: 3,
+    cols: 4,
     entrancePos: [0, 0],
-    exitPos: [1, 2],
+    exitPos: [1, 3],
     staircases: {},
     cells: [
       [
         { type: "room", roomType: "encounter", dirs: new Set(["e"]), state: "reachable" },
+        { type: "corridor", dirs: new Set(["w", "e"]), state: "reachable" },
         { type: "corridor", dirs: new Set(["w", "s"]), state: "reachable" },
         { type: "empty" },
       ],
       [
+        { type: "empty" },
         { type: "empty" },
         { type: "corridor", dirs: new Set(["n", "e"]), state: "completed" },
         { type: "room", roomType: "encounter", dirs: new Set(["w"]), state: "reachable" },
@@ -737,8 +740,8 @@ describe("the marker guard actually fires", () => {
     ],
   }
   const explorerPos = [0, 0] as const
-  const dot = [0, 1] as const
-  const corner = [1, 1] as const
+  const dot = [0, 2] as const
+  const corner = [1, 2] as const
   const message = ([r, c]: readonly [number, number]) => {
     const { cx, cy } = cellCenter(r, c)
     return `a tap at (left ${cx - CELL / 2}px, top ${cy - CELL / 2}px) draws nothing, from ${explorerPos}`

@@ -1,7 +1,7 @@
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
 import { prefabRoomAt, prefabRoomCells, roomPlaceOf } from "@/game/roomShape"
-import { dropEndsOf, findPath, walkableFrom } from "@/game/gridNavigation"
+import { dropEndsOf, dropLaunchedAt, findPath, walkableFrom } from "@/game/gridNavigation"
 import { passageCrossing } from "@/game/passages"
 import {
   NO_RUN_TARGETS,
@@ -156,12 +156,14 @@ export const markerAt = (
   const runTarget = ctx.runTargets.get(`${r},${c}`)
   if (runTarget) return { kind: "arrow", dir: runTarget.dir }
   // A launch or landing is a stopping point wherever it is, but an arrow appears only AROUND THE PLAYER:
-  // beside it or on it the arrow points the way it is entered from its own node. Further off it answers
-  // to the same rule as any other stopping point — a dot while it is somewhere the player has yet to go,
-  // and nothing once he has been there, so a walked floor does not fill up with his own history.
+  // beside it, or under him on a launch, the arrow points the way it is entered from its own node. Under him a
+  // landing points back across the drop, a way he cannot go, so it draws as the ground he stands on. Further off
+  // it answers to the same rule as any other stopping point — a dot while it is somewhere the player has yet to
+  // go, and nothing once he has been there, so a walked floor does not fill up with his own history.
   const entered = ctx.dropEnds.get(`${r},${c}`)
   if (entered) {
-    if (ctx.nearCells.has(`${r},${c}`)) return { kind: "arrow", dir: entered }
+    const step = ctx.nearCells.get(`${r},${c}`)
+    if (step || (step === null && dropLaunchedAt(grid, r, c))) return { kind: "arrow", dir: entered }
     return cell.state === "completed" ? null : { kind: "dot" }
   }
   // A door of a designed room in use is a stopping point like a corner, whatever its shape; beside the player it
@@ -169,7 +171,7 @@ export const markerAt = (
   const door = roomPlaceOf(grid, r, c) === "door"
   const stop = door || isCorridorCorner(cell.dirs)
   if (cell.state === "reachable" && stop) {
-    const step = door ? ctx.nearCells.get(`${r},${c}`) : undefined
+    const step = ctx.nearCells.get(`${r},${c}`)
     return step ? { kind: "arrow", dir: step } : { kind: "dot" }
   }
   // A corner the player has already walked is drawn ground they can see, so it needs no marker to be
