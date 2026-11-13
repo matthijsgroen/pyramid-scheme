@@ -5,7 +5,7 @@ import { useInputLayer } from "@/app/input/useInputLayer"
 import { hexDistance, hexFromKey, hexKey, type Hex } from "@/mods/puzzle/game/hidato/hex"
 import type { HidatoSkin } from "./skins"
 import type { HidatoPuzzleData } from "@/mods/puzzle/game/hidato/techniques"
-import { NEIGHBOUR_KEYS, neighbourOf, useHidatoCursor } from "./useHidatoCursor"
+import { NEIGHBOUR_KEYS, neighbourOf, reach, useHidatoCursor } from "./useHidatoCursor"
 
 type Props = {
   puzzle: HidatoPuzzleData
@@ -404,22 +404,29 @@ export const HidatoBoard: FC<Props> = ({
         NEIGHBOUR_KEYS.map(({ dir, right }, index) => {
           const key = neighbourOf(keys.at, dir, right)
           if (!cells.has(key)) return null
+          // Its own key first, then any up or down that falls back onto it.
+          const lines = [
+            index,
+            ...NEIGHBOUR_KEYS.flatMap((other, at) =>
+              at !== index && reach(cells, keys.at, other.dir, other.right) === key ? [at] : []
+            ),
+          ].flatMap(at => GUIDE[at])
+          const size = lines.length > 2 ? CELL * 0.27 : CELL * 0.34
           const { x, y } = centre(hexFromKey(key))
           return (
             <text
               key={key}
               x={x}
               textAnchor="middle"
-              fontSize={CELL * 0.34}
+              fontSize={size}
               strokeWidth={CELL * 0.07}
               className="pointer-events-none svg-cursor fill-ember-200 stroke-stone-950 font-bold [paint-order:stroke]"
             >
-              <tspan x={x} y={y - CELL * 0.1}>
-                {GUIDE[index][0]}
-              </tspan>
-              <tspan x={x} y={y + CELL * 0.38}>
-                {GUIDE[index][1]}
-              </tspan>
+              {lines.map((line, at) => (
+                <tspan key={at} x={x} y={y + size * 0.4 + (at - (lines.length - 1) / 2) * size * 1.4}>
+                  {line}
+                </tspan>
+              ))}
             </text>
           )
         })}

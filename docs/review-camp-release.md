@@ -69,12 +69,11 @@ it ships; tick it off there.
 
 **Designer choices:**
 
-- [ ] The water locks in the Valley of the Craftsmen (`waterMoves`, `sluice` on `junior_2`), not on the flood
-      journey: swap, move or keep.
-- [ ] The map texts that give away the junior arrivals and Henut's "it was glass"; the NL tomb title
-      "Edelman's Verborgen Kluis" for a noblewoman's tomb.
-- [ ] Where `reading.junior` plays, or that it waits.
-- [ ] Fez says nothing at junior's first lock mechanics: keep it so, or a line where he teaches.
+- [x] The water locks (`waterMoves`, `sluice`): kept on the Lighthouse (`junior_4`), where the lore puts them.
+- [x] The map texts that give away the junior arrivals and Henut's "it was glass"; the NL tomb title
+      "Edelman's Verborgen Kluis" for a noblewoman's tomb: new card texts and "Verborgen Kluis van de Edelvrouw".
+- [x] Where `reading.junior` plays: at the formula wall in Henut's tomb.
+- [x] Fez says nothing at junior's first lock mechanics: kept silent; a line only where a playtest shows the board does not teach.
 
 ### Expert
 

@@ -23,7 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - The tutorials checkbox sits left of its label, so the arrows reach the buttons below.
-- The Op pad button has a soft colour fade.
 - Bronze treasures and fallen mudbrick have new paintings.
 - Wall decorations sit centred on the taller walls.
 - The Sphinx's wall reads as a painted cartouche.

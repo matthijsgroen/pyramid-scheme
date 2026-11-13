@@ -60,20 +60,31 @@ const comb = hexagon(2)
  * Which key reaches which of the six neighbours, written on them: the keyboard on top, the pad below (✚ is the
  * D-pad, Y held bends it right). Arrows move the cursor and the labels go with it.
  */
+const guided = (start: string) => () => (
+  <EncounterModal tileset="junior">
+    <HidatoBoard
+      puzzle={{ cells: comb, givens: { [start]: 1 } }}
+      skin={skinFor(undefined, undefined)}
+      values={{ [start]: 1 }}
+      onPickUp={() => {}}
+      onTap={() => {}}
+      onDrag={() => {}}
+      boardInput={handler => handler}
+      guide
+    />
+  </EncounterModal>
+)
+
 export const NeighbourKeys: Story = {
   args: { tileset: "junior", children: null },
-  render: () => (
-    <EncounterModal tileset="junior">
-      <HidatoBoard
-        puzzle={{ cells: comb, givens: { "0,0": 1 } }}
-        skin={skinFor(undefined, undefined)}
-        values={{ "0,0": 1 }}
-        onPickUp={() => {}}
-        onTap={() => {}}
-        onDrag={() => {}}
-        boardInput={handler => handler}
-        guide
-      />
-    </EncounterModal>
-  ),
+  render: guided("0,0"),
+}
+
+/**
+ * The cursor on the comb's left corner, where the upper-left and lower-left cells are off the board: ↑ and ↓
+ * fall back to the right, so those cells carry both their own keys and the plain ones.
+ */
+export const NeighbourKeysAtEdge: Story = {
+  args: { tileset: "junior", children: null },
+  render: guided("-2,0"),
 }
