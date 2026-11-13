@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { keyAction } from "./keyMap"
+import { keyAction, keyFallback } from "./keyMap"
 
 const key = (code: string, extra: Partial<Parameters<typeof keyAction>[0]> = {}) =>
   keyAction({ code, key: "", ctrlKey: false, metaKey: false, altKey: false, ...extra })
@@ -11,7 +11,7 @@ describe("which action a key means", () => {
     ["Space", { kind: "confirm" }],
     ["NumpadEnter", { kind: "confirm" }],
     ["Escape", { kind: "back" }],
-    ["Backspace", { kind: "back" }],
+    ["Backspace", { kind: "erase" }],
     ["KeyZ", { kind: "undo" }],
     ["ShiftLeft", { kind: "alt" }],
     ["KeyN", { kind: "alt" }],
@@ -46,5 +46,12 @@ describe("which action a key means", () => {
   it("means nothing for a key it does not know", () => {
     expect(key("KeyQ")).toBeUndefined()
     expect(key("Digit0")).toBeUndefined()
+  })
+
+  it("goes back on Backspace where nothing erases, and has no fallback for other keys", () => {
+    expect(keyFallback({ code: "Backspace", key: "", ctrlKey: false, metaKey: false, altKey: false })).toEqual({
+      kind: "back",
+    })
+    expect(keyFallback({ code: "Delete", key: "", ctrlKey: false, metaKey: false, altKey: false })).toBeUndefined()
   })
 })

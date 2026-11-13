@@ -16,7 +16,7 @@ const KEYS: Record<string, InputAction> = {
   NumpadEnter: { kind: "confirm" },
   Space: { kind: "confirm" },
   Escape: { kind: "back" },
-  Backspace: { kind: "back" },
+  Backspace: { kind: "erase" },
   KeyZ: { kind: "undo" },
   KeyN: { kind: "alt" },
   ShiftLeft: { kind: "alt" },
@@ -31,6 +31,9 @@ const KEYS: Record<string, InputAction> = {
   ...Object.fromEntries(DIGITS.map(value => [`Numpad${value}`, { kind: "value", value }])),
 }
 
+// A key whose action nothing on top uses means this instead: Backspace erases, and where nothing erases it goes back.
+const FALLBACK: Record<string, InputAction> = { Backspace: { kind: "back" } }
+
 type Key = Pick<KeyboardEvent, "code" | "key" | "ctrlKey" | "metaKey" | "altKey">
 
 /**
@@ -43,3 +46,6 @@ export const keyAction = (event: Key): InputAction | undefined => {
   if (event.ctrlKey || event.metaKey) return code === "KeyZ" ? KEYS.KeyZ : undefined
   return KEYS[code]
 }
+
+/** What a key means when nothing on top used its action. */
+export const keyFallback = (event: Key): InputAction | undefined => FALLBACK[event.code || event.key]
