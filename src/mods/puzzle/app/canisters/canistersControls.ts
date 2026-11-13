@@ -8,5 +8,6 @@ export const useCanistersControls = (): ControlStep[] => {
   return [
     { keys: [arrows], pad: [pad("dpad")], label: t("canisters.controls.move") },
     { keys: [key("Enter")], pad: [pad("a")], label: t("canisters.controls.press") },
+    { keys: [key("Enter"), key("Esc")], pad: [pad("a"), pad("b")], label: t("canisters.controls.putDown") },
   ]
 }
