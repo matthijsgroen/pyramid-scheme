@@ -1,5 +1,8 @@
 import clsx from "clsx"
 import { useRef, useState, type CSSProperties, type FC, type PointerEvent } from "react"
+import type { InputHandler } from "@/app/input/actions"
+import { useGridCursor } from "@/app/input/useGridCursor"
+import { useInputLayer } from "@/app/input/useInputLayer"
 import { colOf, rowOf } from "@/mods/puzzle/game/starBattle/starBattle"
 import {
   lineStatus,
@@ -29,6 +32,8 @@ type Props = {
   onTapCell: (cell: number) => void
   /** A run of squares ruled out in one gesture. */
   onSweepCells: (cells: number[]) => void
+  /** The shell's `boardInput`: with it the board takes keys and pad, a cursor whose confirm is a tap. */
+  boardInput?: (board: InputHandler) => InputHandler
 }
 
 /** The player's own "not here": a dot, slight on purpose, since it is the mark they make most of. */
@@ -56,8 +61,31 @@ export const PairPuzzleBoard: FC<Props> = ({
   pairing,
   onTapCell,
   onSweepCells,
+  boardInput,
 }) => {
   const { size } = puzzle
+  const cellAt = (row: number, col: number) => row * size + col
+  // An anchor is printed, not marked: the cursor may stand on it, but a confirm or a run takes nothing there.
+  const cursor = useGridCursor({
+    rows: size,
+    cols: size,
+    start: () => {
+      const open = Math.max(
+        puzzle.anchors.findIndex(anchor => !anchor),
+        0
+      )
+      return { row: rowOf(size, open), col: colOf(size, open) }
+    },
+    onConfirm: (row, col) => {
+      if (!puzzle.anchors[cellAt(row, col)]) onTapCell(cellAt(row, col))
+    },
+    sweep: {
+      takes: (row, col) => !puzzle.anchors[cellAt(row, col)],
+      onSweep: cells => onSweepCells(cells.map(({ row, col }) => cellAt(row, col))),
+    },
+  })
+  useInputLayer(boardInput ? boardInput(cursor.handle) : cursor.handle, boardInput !== undefined)
+  const keySwept = new Set(cursor.swept.map(({ row, col }) => cellAt(row, col)))
   const arrived = new Set([...(celebrated ?? [])].flatMap(piece => pairing?.get(piece) ?? []))
   // The step from a piece to its anchor, in squares, for the walk the skin draws.
   const walkTo = (piece: number): CSSProperties | undefined => {
@@ -164,7 +192,8 @@ export const PairPuzzleBoard: FC<Props> = ({
                 "flex aspect-square min-h-0 items-center justify-center p-[10%]",
                 skin.anchor,
                 ring,
-                arrived.has(cell) && skin.anchorCelebrate
+                arrived.has(cell) && skin.anchorCelebrate,
+                cursor.at(rowOf(size, cell), colOf(size, cell)) && "board-cursor"
               )}
             >
               <span className={clsx("block size-full", arrived.has(cell) && skin.anchorGlyphCelebrate)}>
@@ -184,14 +213,15 @@ export const PairPuzzleBoard: FC<Props> = ({
                   swallowClick.current = false
                   return
                 }
-                onTapCell(cell)
+                cursor.tap(rowOf(size, cell), colOf(size, cell))
               }}
               // `min-h-0` for the same WebKit reason as star battle: a glyph's percentage size must not set
               // the square's minimum, or marked squares outgrow their track.
               className={clsx(
                 "flex aspect-square min-h-0 items-center justify-center border p-[10%] transition-colors",
                 spent.has(cell) && !decided?.has(cell) ? skin.spent : skin.cell,
-                ring
+                ring,
+                cursor.at(rowOf(size, cell), colOf(size, cell)) && "board-cursor"
               )}
             >
               {value === "piece" ? (
@@ -201,7 +231,7 @@ export const PairPuzzleBoard: FC<Props> = ({
                 >
                   <skin.Glyph />
                 </span>
-              ) : value === "empty" || sweeping.includes(cell) ? (
+              ) : value === "empty" || sweeping.includes(cell) || keySwept.has(cell) ? (
                 <span className={clsx("block size-full p-[25%]", skin.dark)}>
                   <EmptyGlyph />
                 </span>

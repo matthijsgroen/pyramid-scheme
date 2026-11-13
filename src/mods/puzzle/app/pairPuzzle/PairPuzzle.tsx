@@ -85,8 +85,9 @@ export const PairPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room, o
       goal={t(`pairPuzzle.goal.${skin.name}`)}
       rules={<PairPuzzleRules skin={skin.name} />}
     >
-      {({ reportInput, hintVisible }) => (
+      {({ reportInput, hintVisible, boardInput }) => (
         <PairPuzzleBoard
+          boardInput={boardInput}
           puzzle={puzzle}
           state={state}
           skin={skin}

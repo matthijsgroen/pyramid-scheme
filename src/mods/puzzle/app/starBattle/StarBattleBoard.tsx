@@ -99,7 +99,6 @@ export const StarBattleBoard: FC<Props> = ({
   boardInput,
 }) => {
   const { size } = puzzle
-  // Keys tap only; the sweep stays a pointer gesture.
   const cursor = useGridCursor({
     rows: size,
     cols: size,
@@ -114,7 +113,13 @@ export const StarBattleBoard: FC<Props> = ({
     onConfirm: (row, col) => {
       if (!isWall(puzzle, row * size + col)) onTapCell(row * size + col)
     },
+    // Held alt and the arrows are the drag below: the same run, past stone, landing as one move.
+    sweep: {
+      takes: (row, col) => !isWall(puzzle, row * size + col),
+      onSweep: cells => onSweepCells(cells.map(({ row, col }) => row * size + col)),
+    },
   })
+  const keySwept = new Set(cursor.swept.map(({ row, col }) => row * size + col))
   useInputLayer(boardInput ? boardInput(cursor.handle) : cursor.handle, boardInput !== undefined)
   const grid = useRef<HTMLDivElement | null>(null)
   /**
@@ -265,7 +270,7 @@ export const StarBattleBoard: FC<Props> = ({
                 <span className={clsx("block size-full", skin.answer, celebrated?.has(cell) && skin.celebrate)}>
                   <skin.Glyph />
                 </span>
-              ) : value === "dark" || sweeping.includes(cell) ? (
+              ) : value === "dark" || sweeping.includes(cell) || keySwept.has(cell) ? (
                 <span className={clsx("block size-full", skin.dark)}>
                   <DarkGlyph />
                 </span>
