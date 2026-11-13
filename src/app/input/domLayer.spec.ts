@@ -84,6 +84,62 @@ describe("menu in a piece of the page", () => {
   })
 })
 
+describe("prev and next in a piece of the page", () => {
+  const tabRow = (root: HTMLElement, labels: string[]) => {
+    const row = root.appendChild(document.createElement("div"))
+    row.setAttribute("role", "tablist")
+    const tabs = labels.map(label => {
+      const tab = button(row, label)
+      tab.setAttribute("role", "tab")
+      tab.addEventListener("click", () => tabs.forEach(t => t.setAttribute("aria-selected", String(t === tab))))
+      return tab
+    })
+    tabs[0].setAttribute("aria-selected", "true")
+    return tabs
+  }
+
+  it("turn its tabs, wrapping at either end", () => {
+    const root = dialog()
+    const [first, , last] = tabRow(root, ["Treasures", "Tablets", "Mosaic"])
+    const turn = domLayerHandler(root)
+    turn(signal({ kind: "prev" }))
+    expect(last.getAttribute("aria-selected")).toBe("true")
+    turn(signal({ kind: "next" }))
+    expect(first.getAttribute("aria-selected")).toBe("true")
+  })
+
+  it("take the focus along when it is on the tabs, and leave it elsewhere", () => {
+    const root = dialog()
+    const [first, second] = tabRow(root, ["Treasures", "Tablets"])
+    const close = button(root, "Close")
+    first.focus()
+    domLayerHandler(root)(signal({ kind: "next" }))
+    expect(document.activeElement).toBe(second)
+    close.focus()
+    domLayerHandler(root)(signal({ kind: "next" }))
+    expect(document.activeElement).toBe(close)
+  })
+
+  it("leave the arrows only the selected tab to land on", () => {
+    const root = dialog()
+    const close = button(root, "Close", { left: 40, top: 0 })
+    const [selected, other] = tabRow(root, ["Treasures", "Tablets"])
+    selected.tabIndex = 0
+    other.tabIndex = -1
+    selected.getBoundingClientRect = () => ({ left: 0, top: 40, width: 10, height: 10 }) as DOMRect
+    other.getBoundingClientRect = () => ({ left: 40, top: 40, width: 10, height: 10 }) as DOMRect
+    close.focus()
+    domLayerHandler(root)(signal({ kind: "move", dir: "s" }))
+    expect(document.activeElement).toBe(selected)
+  })
+
+  it("do nothing without tabs", () => {
+    const root = dialog()
+    button(root, "Close")
+    expect(domLayerHandler(root)(signal({ kind: "next" }))).toBe(false)
+  })
+})
+
 describe("moving and confirming in a piece of the page", () => {
   it("moves focus to the nearest control in that direction", () => {
     const root = dialog()
