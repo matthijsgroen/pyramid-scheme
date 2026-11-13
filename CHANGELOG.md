@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The tutorials checkbox in Settings shows when keys or controller reach it.
 - Keys and controller reach the treasures and trinkets in the collection.
 - Arrow keys go back where they came from, and reach the tab row in camp windows.
+- Hidato: up and down reach the other upper or lower neighbour when one side has none.
 
 ## 0.47.0 - 2026-11-10
 
