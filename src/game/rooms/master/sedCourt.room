@@ -1,0 +1,18 @@
+// designed by: Claude
+// master. The Sed court, a set piece: the double throne under its canopy on the north wall, and down the court the
+// boundary markers the king runs between to prove he can still rule.
+room sedCourt
+tier master
+
+layout
+# # d # # # # d # #
+# . . . t t . . . #
+d . . . . . . . . d
+# . b . . . . b . #
+# . . . . . . . . #
+# . b . . s . b . #
+# # # d # # d # # #
+
+t wall sedThrone
+b floor boundaryMarker
+s stop

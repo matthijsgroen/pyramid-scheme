@@ -1,0 +1,18 @@
+// designed by: Claude
+// master. The boat pit: the funeral barque lies at full length down the middle, an offering table at its prow.
+room boatPit
+tier master
+mirror
+
+layout
+# # d # d # # #
+# . . . . . o #
+d . . . . . . d
+# . b b b . . #
+# . . . . . . #
+# . . s . . . #
+# # d # # d # #
+
+b floor funeralBoat
+o wall offeringTable
+s stop

@@ -3631,6 +3631,8 @@ def prim_statue():
     masks. The silhouette then belongs to the paint, which is the intention here rather than a defect.
     """
     contents = arg("contents", "seated")
+    if contents == "fallen":
+        return _statue_fallen()
     # --no-plinth stands the figure on the paving itself: a rank whose coffin stands in a room rather
     # than on display wants no slab under it, and a painted slab cannot be cut away afterwards.
     plinth_h = 0.0 if arg("no-plinth") else 0.09
@@ -4621,6 +4623,495 @@ def prim_breadoven():
     return join_all()
 
 
+# THE PHARAOH'S SET PIECES (themed-rooms.md, Master): the throne room, the treasury, the Sed court, the sun
+# court, the boat pit and the statue hall. Gold is `body`, so the rank's --colour gilds what the king owns;
+# his black granite is `stone`, ebony and cedar `timber`, alabaster and ivory `limestone`, linen and
+# feathers `cloth`. The seated colossus is no primitive of its own: it is `prim_statue --contents=seated`
+# rendered into its two-by-two frame, and the toppled one is `prim_statue --contents=fallen`.
+
+
+def _bar(p0, p1, depth, thick, part, y=0.0):
+    """`_segment` at a depth: a bar from P0 to P1 in the x-z plane at `y`, overlapping its neighbours by a
+    little at each end, for `prim_mask`'s reason that a hairline is a gap."""
+    (x0, z0), (x1, z1) = p0, p1
+    length = math.hypot(x1 - x0, z1 - z0) + thick * 0.5
+    bar = box(length, depth, thick)
+    return mark(turn(bar, -math.degrees(math.atan2(z1 - z0, x1 - x0)), "Y", (x0 + x1) / 2, y, (z0 + z1) / 2), part)
+
+
+def _lion_leg(x, y, h, z0=0.0, facing=-1, part="body", s=1.0):
+    """A lion leg in profile, `prim_bed`'s: a haunch under the frame, a slim shin, and a paw on a drum
+    reaching in X toward `facing` (-1 is left). X is the one axis a paw can reach along and still read."""
+    mark(box(0.07 * s, 0.07 * s, h, x=x, y=y, z=z0 + h / 2), part)
+    mark(box(0.14 * s, 0.08 * s, 0.16 * s, x=x - facing * 0.02 * s, y=y, z=z0 + h - 0.09 * s), part)
+    mark(cyl(0.055 * s, 0.05 * s, x=x + facing * 0.02 * s, y=y, z=z0 + 0.025 * s, verts=12), part)
+    mark(box(0.16 * s, 0.08 * s, 0.06 * s, x=x + facing * 0.06 * s, y=y, z=z0 + 0.08 * s), part)
+
+
+def _throne(x, z0, facing=-1, s=1.0, part="body"):
+    """A lion-legged THRONE IN PROFILE, facing `facing` in X: four legs, a seat, a high back slab at its rear
+    and a solid arm panel down each side.
+
+    In profile because that is where a throne's identity is — the lion legs and the back rising behind the
+    seat are both outlines in the x-z plane, the one the shear leaves alone. Face on, it is a box with a
+    taller box behind it. The arms are low PANELS, not rails: on rails it rendered as a kitchen chair; as
+    tall as the seat is deep they hid it and the throne was an armchair. Short and set back, the seat's
+    front edge shows under the king's knees."""
+    sw, d, seat_z = 0.52 * s, 0.44 * s, 0.40 * s
+    for lx in (-sw / 2 + 0.07 * s, sw / 2 - 0.07 * s):
+        for sy in (-1, 1):
+            _lion_leg(x + lx, sy * (d / 2 - 0.05 * s), seat_z - 0.03 * s, z0, facing, part, s)
+    mark(box(sw, d, 0.07 * s, x=x, z=z0 + seat_z), part)
+    # The back, at the rear, the tallest thing: mass behind the centre buys drawn height twice (`prim_statue`).
+    mark(box(0.08 * s, d, 0.66 * s, x=x - facing * (sw / 2 - 0.04 * s), z=z0 + seat_z + 0.31 * s), part)
+    for sy in (-1, 1):
+        mark(box(sw * 0.72, 0.04 * s, 0.13 * s, x=x - facing * sw * 0.12, y=sy * (d / 2 - 0.02 * s), z=z0 + seat_z + 0.12 * s), part)
+
+
+def prim_throne():
+    """The pharaoh's THRONE, two cells long: a lion-legged throne in profile, facing left, raised on a dais
+    of two black granite steps, with a footstool before it.
+
+    The dais is stepped at the LEFT, the way the throne faces, so the climb to it is the long low run in
+    front of the king: two steps are two lines across the dais's front face, which is what says dais and
+    not plinth. The throne is most of the picture, and the dais only as deep as the throne needs: deeper,
+    it was a granite floor with a chair on it. The footstool is ebony, a separate small mass on the upper
+    step."""
+    L, D = 1.70, 0.62
+    mark(box(L, D, 0.08, z=0.04), "stone")
+    mark(box(1.20, D - 0.10, 0.08, x=0.25, z=0.12), "stone")
+    _throne(0.48, 0.16, facing=-1, s=1.35)
+    mark(box(0.30, 0.34, 0.09, x=-0.05, y=-0.04, z=0.16 + 0.045), "timber")
+    return join_all()
+
+
+def prim_regaliastand():
+    """A REGALIA STAND: an ebony post on a granite base, the DOUBLE CROWN on a board at its top, and the CROOK
+    and FLAIL leaning crossed against its front.
+
+    Crossed in the x-z plane, for `prim_sconce`'s reason: anything that must read as reaching sideways runs
+    in X, and two staffs crossed into an X are the king's sign before anything is painted on them. The crook
+    turns its hook outward at the top right; the flail hangs its three strands at the top left.
+
+    The crown is two parts, so its two halves arrive told apart: the red crown's mortar and the tall back
+    spire in `accent`, the white crown's bulb rising out of it in `limestone`."""
+    mark(box(0.60, 0.32, 0.08, z=0.04), "stone")
+    mark(box(0.07, 0.07, 0.86, y=0.06, z=0.08 + 0.43), "timber")
+    mark(box(0.26, 0.22, 0.04, y=0.05, z=0.96), "timber")
+    cz = 0.98
+    mark(cyl(0.11, 0.13, y=0.05, z=cz + 0.065, verts=18), "accent")
+    mark(box(0.05, 0.05, 0.26, x=0.085, y=0.10, z=cz + 0.13 + 0.06), "accent")
+    mark(cone(0.08, 0.04, 0.22, y=0.04, z=cz + 0.11 + 0.11, verts=16), "limestone")
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=6, radius=0.045, location=(0.0, 0.04, cz + 0.35))
+    mark(bpy.context.object, "limestone")
+    # The crook, from the base at the left up to the right, its hook curling out and down.
+    fy = -0.10
+    _bar((-0.22, 0.10), (0.14, 0.80), 0.04, 0.04, "body", y=fy)
+    for p0, p1 in (((0.14, 0.80), (0.20, 0.88)), ((0.20, 0.88), (0.27, 0.87)), ((0.27, 0.87), (0.30, 0.79))):
+        _bar(p0, p1, 0.04, 0.04, "body", y=fy)
+    # The flail, from the base at the right up to the left, three strands hanging from its head.
+    _bar((0.22, 0.10), (-0.14, 0.80), 0.04, 0.04, "body", y=fy - 0.03)
+    for tx in (-0.25, -0.21, -0.17):
+        _bar((-0.14, 0.81), (tx, 0.58), 0.03, 0.03, "accent", y=fy - 0.03)
+    return join_all()
+
+
+def prim_fan():
+    """A CEREMONIAL FAN, one cell and a cell taller: a half-round palm of ostrich feathers on a long gilded
+    staff, standing in a footed granite base.
+
+    The feathers fan out in the x-z plane, `prim_harp`'s front plane, so the half-round draws as a true
+    half-round; turned in y it would collapse to a stick. Each plume overlaps its neighbours at the palm, so
+    the fan is one shape with a scalloped edge, not a starburst. `nocast`, because the head stands in the
+    air and would lay a dark fan on the floor beside the stand."""
+    mark(cone(0.17, 0.11, 0.08, z=0.04, verts=18), "stone")
+    mark(cyl(0.06, 0.08, z=0.12, verts=14), "stone")
+    top = 1.62
+    mark(cyl(0.025, top - 0.10, z=0.10 + (top - 0.10) / 2, verts=10), "body")
+    for zb in (0.55, 1.05):
+        mark(cyl(0.035, 0.04, z=zb, verts=10), "accent")
+    palm = cyl(0.10, 0.05, z=top, verts=20)
+    palm.rotation_euler = (math.pi / 2, 0.0, 0.0)
+    mark(palm, nocast("body"))
+    n = 11
+    for i in range(n):
+        a = math.radians(-78 + 156 * i / (n - 1))
+        ux, uz = math.sin(a), math.cos(a)
+        p0 = (0.06 * ux, top + 0.06 * uz)
+        p1 = (0.40 * ux, top + 0.40 * uz)
+        # The tip droops a little outward, as a plume does.
+        p2 = (0.50 * ux + 0.04 * (1 if ux >= 0 else -1), top + 0.47 * uz - 0.03)
+        _bar(p0, p1, 0.03, 0.10, nocast("cloth"), y=0.01 * (i % 2))
+        _bar(p1, p2, 0.03, 0.08, nocast("cloth"), y=0.01 * (i % 2))
+    return join_all()
+
+
+def prim_canopicchest():
+    """The CANOPIC CHEST: a gilded shrine-shaped chest on a sledge, its cavetto cornice framing the top, and
+    the four human-headed alabaster LIDS of the jars inside standing up out of it in two rows.
+
+    The lids are what make it canopic and not a chest. Two rows of two: under z + k*y the back pair draws
+    higher than the front, so four heads read as four rather than as a row — and each has `prim_statue`'s
+    nemes, the one part of a head whose outline reads at this size. The inside of the chest round them is
+    VOID, proud of the cornice's top for the altar channel's reason."""
+    w, d, h, sl = 0.62, 0.50, 0.40, 0.06
+    for sy in (-1, 1):
+        mark(box(w + 0.16, 0.06, sl, y=sy * (d / 2 - 0.08), z=sl / 2), "timber")
+    mark(box(w, d, h, z=sl + h / 2), "body")
+    top = sl + h
+    mark(box(w + 0.03, d + 0.03, 0.035, z=top), "metal")
+    mark(box(w + 0.07, d + 0.05, 0.04, z=top + 0.035), "body")
+    mark(box(w + 0.12, d + 0.08, 0.03, z=top + 0.07), "body")
+    rim = top + 0.085
+    mark(box(w - 0.04, d - 0.04, 0.012, z=rim + 0.004), VOID)
+    mark(box(w * 0.62, 0.03, h * 0.52, y=-(d / 2) - 0.004, z=sl + h * 0.50), "accent")
+    for hx in (-0.14, 0.14):
+        for hy in (-0.10, 0.10):
+            mark(cyl(0.075, 0.05, x=hx, y=hy, z=rim + 0.025, verts=14), "limestone")
+            mark(box(0.10, 0.10, 0.11, x=hx, y=hy, z=rim + 0.05 + 0.065), "limestone")
+            bpy.ops.mesh.primitive_cone_add(vertices=4, radius1=0.10, radius2=0.065, depth=0.11,
+                                            location=(hx, hy + 0.01, rim + 0.05 + 0.065))
+            nemes = bpy.context.object
+            nemes.rotation_euler = (0, 0, math.radians(45))
+            bpy.ops.object.transform_apply(rotation=True)
+            nemes.scale = (1.0, 0.72, 1.0)
+            bpy.ops.object.transform_apply(scale=True)
+            mark(recalc_outward(nemes), "limestone")
+    return join_all()
+
+
+def prim_tributeheap():
+    """TRIBUTE laid on the floor: a stack of EBONY LOGS, a LEOPARD SKIN hung over them, two IVORY TUSKS
+    lying in front, and GOLD RINGS leaning against the pile.
+
+    Every piece is a different part, because a heap in one colour is a heap. The pelt hangs DOWN THE FRONT
+    of the logs, in the front plane, where its outline and its dangling paws are drawn true; laid over the
+    top it would be one more pale field. The tusks curve UP in the x-z plane and the rings stand upright in
+    it, so the curve and the circle both read — a ring lying flat is a thin ellipse and nothing else."""
+    for ly, lz in ((0.02, 0.07), (0.17, 0.07), (0.095, 0.19)):
+        _lying(0.07, 0.66, 0.0, ly, lz, verts=12, part="timber")
+    mark(box(0.40, 0.025, 0.22, x=-0.02, y=-0.06, z=0.15), "cloth")
+    for px, pz in ((-0.20, 0.06), (0.16, 0.07)):
+        mark(box(0.05, 0.025, 0.11, x=px, y=-0.06, z=pz), "cloth")
+    mark(box(0.08, 0.025, 0.07, x=-0.06, y=-0.065, z=0.285), "cloth")
+    pts = ((-0.40, 0.04), (-0.24, 0.05), (-0.08, 0.09), (0.04, 0.15), (0.11, 0.23))
+    for ty, scale in ((-0.18, 1.0), (-0.24, 0.85)):
+        for i in range(len(pts) - 1):
+            th = 0.07 * scale * (1 - i / len(pts)) + 0.015
+            (x0, z0), (x1, z1) = pts[i], pts[i + 1]
+            _bar((x0 * scale, z0 * scale), (x1 * scale, z1 * scale), th, th, "limestone", y=ty)
+    for rx, ry in ((0.22, -0.12), (0.31, -0.15), (0.26, -0.20)):
+        bpy.ops.mesh.primitive_torus_add(major_radius=0.065, minor_radius=0.018, major_segments=20, minor_segments=8,
+                                         location=(rx, ry, 0.08), rotation=(math.pi / 2, 0.0, 0.0))
+        mark(bpy.context.object, "body")
+    return join_all()
+
+
+def prim_shabtibox():
+    """A SHABTI BOX: a painted chest on two runners, open, three of its figures standing up out of it and a
+    row of four more on the floor in front, its vaulted lid set down on end against its left side.
+
+    The figures are mummiform, `prim_statue`'s coffin outline at a finger's height: a body narrowing to the
+    feet under a head whose wig is WIDER than the body, which is the whole of what says figure rather than
+    peg. Stood in a row in front they are what says shabti and not jewel box — the box alone is any box.
+    Their heads and shoulders stand over the rim, and the inside of the box is VOID. The lid is a half-round
+    in the front plane (`_half_disc`), the vault seen end on; laid flat beside the box it drew as a log."""
+    w, d, h, rn = 0.42, 0.28, 0.20, 0.04
+    for sy in (-1, 1):
+        mark(box(w + 0.04, 0.04, rn, y=sy * (d / 2 - 0.05), z=rn / 2), "timber")
+    mark(box(w, d, h, z=rn + h / 2), "timber")
+    top = rn + h
+    mark(box(w + 0.01, d + 0.01, 0.03, z=top - 0.04), "accent")
+    mark(box(w - 0.04, d - 0.04, 0.01, z=top + 0.003), VOID)
+
+    def shabti(x, y, z):
+        mark(cone(0.032, 0.042, 0.13, x=x, y=y, z=z + 0.065, verts=4), "figure")
+        mark(box(0.085, 0.055, 0.055, x=x, y=y, z=z + 0.145), "figure")
+        mark(box(0.062, 0.05, 0.05, x=x, y=y - 0.004, z=z + 0.19), "figure")
+
+    for sx in (-0.12, 0.0, 0.12):
+        shabti(sx, 0.03, top - 0.09)
+    for i, sx in enumerate((-0.21, -0.07, 0.07, 0.21)):
+        shabti(sx, -0.25 - 0.012 * (i % 2), 0.0)
+    mark(box(0.06, 0.24, 0.12, x=-w / 2 - 0.03, y=0.02, z=0.06), "timber")
+    _half_disc(0.11, 0.24, -w / 2 - 0.03, 0.02, 0.12, "timber")
+    return join_all()
+
+
+def prim_pyramidion():
+    """A PYRAMIDION, a pyramid's gilded capstone, standing on a low granite plinth in the sun court.
+
+    A four-sided cone turned 45 degrees, so its base is square to the plinth. That is all it is, and it is
+    enough: spun on the floor, one face is lit and the next is not, and the line between them is the apex
+    the sun is meant to catch."""
+    mark(box(0.64, 0.64, 0.10, z=0.05), "stone")
+    mark(box(0.50, 0.50, 0.03, z=0.115), "metal")
+    bpy.ops.mesh.primitive_cone_add(vertices=4, radius1=0.33, radius2=0.0, depth=0.46, location=(0.0, 0.0, 0.13 + 0.23))
+    p = bpy.context.object
+    p.rotation_euler = (0, 0, math.radians(45))
+    bpy.ops.object.transform_apply(rotation=True)
+    mark(p, "body")
+    return join_all()
+
+
+def prim_lightshaft():
+    """A PATCH OF SUNLIGHT on the floor, fallen through a slot in the roof: a sheet as thin as the mesh
+    allows (`prim_mat`'s rule — any thickness draws as a raised edge), its core in `daylight` and a wider,
+    thinner fringe under it in `haze`, both meant to be rendered `--unlit`.
+
+    A PARALLELOGRAM in plan, not a rectangle: the sun comes in at a slant, so a square slot throws a sheared
+    patch, and a rectangle lying on the grid reads as a floor tile (`prim_mat`). It is GROUND, walked over,
+    and it casts nothing."""
+
+    def sheet(w, d, slant, t, part):
+        bm = bmesh.new()
+        corners = ((-w / 2 - slant, -d / 2), (w / 2 - slant, -d / 2), (w / 2 + slant, d / 2), (-w / 2 + slant, d / 2))
+        bottom = [bm.verts.new((x, y, 0.0)) for x, y in corners]
+        top = [bm.verts.new((x, y, t)) for x, y in corners]
+        bm.faces.new(top)
+        bm.faces.new(list(reversed(bottom)))
+        for i in range(4):
+            j = (i + 1) % 4
+            bm.faces.new((bottom[i], bottom[j], top[j], top[i]))
+        mesh = bpy.data.meshes.new(part)
+        bm.to_mesh(mesh)
+        bm.free()
+        obj = bpy.data.objects.new(part, mesh)
+        bpy.context.collection.objects.link(obj)
+        return mark(obj, part)
+
+    sheet(0.86, 0.66, 0.16, 0.003, nocast("haze"))
+    sheet(0.70, 0.50, 0.13, 0.006, nocast("daylight"))
+    return join_all()
+
+
+def _wheel(x, y, z, r, spokes=6, part="body"):
+    """A SPOKED WHEEL standing in the x-z plane, its axle along Y: a rim, a hub, and `spokes` spokes as
+    `spokes / 2` bars through the hub. In the front plane, `prim_cart`'s reason: it draws as a true circle."""
+    bpy.ops.mesh.primitive_torus_add(major_radius=r, minor_radius=0.035, major_segments=32, minor_segments=8,
+                                     location=(0.0, 0.0, 0.0), rotation=(math.pi / 2, 0.0, 0.0))
+    rim = bpy.context.object
+    rim.location = (x, y, z)
+    mark(rim, part)
+    hub = cyl(0.07, 0.12, verts=12)
+    mark(turn(hub, 90, "X", x, y, z), part)
+    for i in range(spokes // 2):
+        spoke = box(2 * r, 0.03, 0.028)
+        mark(turn(spoke, 180.0 * i / (spokes // 2) + 90.0 / (spokes // 2), "Y", x, y, z), part)
+
+
+def prim_chariot():
+    """The king's CHARIOT, two cells by two: a gilded car with its breastwork to the front, standing on two
+    six-spoked wheels at the rear of the car, its pole running forward and up to a yoke.
+
+    Seen from the side, `prim_cart`'s gift: each wheel is a disc in the front plane and draws as a true
+    circle, and the far one shows k*y higher behind the car. The axle is at the car's REAR edge, the way an
+    Egyptian chariot carries it, and the pole sweeps up from under the car to the yoke at a horse's
+    withers. Spun so the pole runs away into the frame rather than across it, which is what spends the two
+    rows of depth the footprint gives it."""
+    wheel_r, track = 0.44, 0.62
+    axle_x = 0.30
+    floor_z = wheel_r + 0.02
+    mark(box(0.52, 0.80, 0.04, x=0.08, z=floor_z), "body")
+    # The breastwork: the front panel, high, and a rail down each side sweeping back to the car's floor.
+    mark(box(0.05, 0.80, 0.50, x=-0.16, z=floor_z + 0.25), "body")
+    mark(box(0.03, 0.70, 0.30, x=-0.19, z=floor_z + 0.24), "accent")
+    for sy in (-1, 1):
+        _bar((-0.16, floor_z + 0.48), (0.32, floor_z + 0.14), 0.04, 0.045, "body", y=sy * 0.38)
+        _bar((0.32, floor_z + 0.14), (0.33, floor_z), 0.04, 0.04, "body", y=sy * 0.38)
+    axle = cyl(0.035, 2 * track + 0.12, verts=12)
+    mark(turn(axle, 90, "X", axle_x, 0.0, wheel_r), "timber")
+    for sy in (-1, 1):
+        _wheel(axle_x, sy * track, wheel_r, wheel_r)
+    # The pole: under the car's floor and out to the left, rising to the yoke.
+    pole = ((0.20, floor_z - 0.04), (-0.30, floor_z - 0.02), (-0.80, floor_z + 0.08), (-1.20, floor_z + 0.24), (-1.45, floor_z + 0.40))
+    for p0, p1 in zip(pole, pole[1:]):
+        _bar(p0, p1, 0.06, 0.06, "body")
+    yx, yz = pole[-1]
+    mark(box(0.07, 0.96, 0.06, x=yx, z=yz + 0.04), "body")
+    for sy in (-1, 1):
+        mark(box(0.06, 0.06, 0.16, x=yx, y=sy * 0.32, z=yz - 0.05), "body")
+    return join_all()
+
+
+def prim_sedthrone():
+    """The SED FESTIVAL'S DOUBLE THRONE, two cells across and a cell taller: two lion-legged thrones set
+    BACK TO BACK on one granite dais, one facing left for Upper Egypt and one right for Lower, under a light
+    canopy on four slender posts.
+
+    `_throne`'s profile twice, mirrored, so the two backs rise together in the middle and the two seats
+    reach out either side: that symmetry IS the double throne. The canopy is thin and its posts slim, so it
+    frames the pair rather than boxing it; a row of small uraei stands along its front edge."""
+    L, D = 2.00, 0.80
+    mark(box(L, D, 0.12, z=0.06), "stone")
+    for sx in (-1, 1):
+        mark(box(0.24, 0.50, 0.06, x=sx * (L / 2 + 0.11), z=0.03), "stone")
+        _throne(sx * 0.36, 0.12, facing=sx)
+    cz = 1.62
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            mark(box(0.05, 0.05, cz - 0.12, x=sx * (L / 2 - 0.06), y=sy * (D / 2 - 0.06), z=0.12 + (cz - 0.12) / 2), "body")
+    mark(box(L + 0.02, D - 0.02, 0.05, z=cz + 0.025), "cloth")
+    mark(box(L + 0.08, D + 0.02, 0.04, z=cz + 0.07), "body")
+    for i in range(11):
+        mark(box(0.05, 0.035, 0.08, x=-(L / 2) + 0.05 + i * (L - 0.10) / 10, y=-(D / 2) + 0.01, z=cz + 0.13), "accent")
+    return join_all()
+
+
+def _half_disc(r, thick, x, y, z, part, verts=16):
+    """A half-round standing in the x-z plane on its flat side, `thick` deep in Y: the half-disc built as a
+    polygon and extruded, so its round face is the FRONT face and draws true. A cylinder with its lower half
+    deleted loses its end caps with the deleted vertices, and the caps are the half-round."""
+    bm = bmesh.new()
+    arc = [(x + r * math.cos(math.pi * i / verts), z + r * math.sin(math.pi * i / verts)) for i in range(verts + 1)]
+    front = [bm.verts.new((px, y - thick / 2, pz)) for px, pz in arc]
+    back = [bm.verts.new((px, y + thick / 2, pz)) for px, pz in arc]
+    bm.faces.new(front)
+    bm.faces.new(list(reversed(back)))
+    for i in range(verts):
+        bm.faces.new((front[i + 1], front[i], back[i], back[i + 1]))
+    bm.faces.new((front[0], front[-1], back[-1], back[0]))
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    mesh = bpy.data.meshes.new(part)
+    bm.to_mesh(mesh)
+    bm.free()
+    obj = bpy.data.objects.new(part, mesh)
+    bpy.context.collection.objects.link(obj)
+    return mark(obj, part)
+
+
+def prim_boundarymarker():
+    """A SED FESTIVAL BOUNDARY MARKER, one of the pair the king runs between: a low stone whose PLAN is a B
+    — a straight back and two half-round lobes bulging toward the viewer — on a thin bedding course.
+
+    The B is in the plan, the way the markers in Djoser's court are laid, and the projection keeps a plan
+    better than it sounds: the top face draws the outline at k of its depth and the front face carries the
+    two curves as a scalloped edge. Stood up as two half-rounds in the front plane it read as an open
+    book. Low, because it is a mark on the ground the king runs round, not a stela."""
+
+    def b_plan(r, back, inset=0.0, spine=0.08, n=14):
+        # The spine runs along the back, `spine` deep, so the notch between the lobes stops short of it.
+        pts = [(-2 * r + inset, back + spine - inset), (2 * r - inset, back + spine - inset)]
+        for cx, first, last in ((r, 0, n), (-r, 1, n)):
+            for i in range(first, last + 1):
+                a = math.radians(-i * 180.0 / n)
+                pts.append((cx + (r - inset) * math.cos(a), back + (r - inset) * math.sin(a)))
+        return pts
+
+    def prism(pts, z0, h, part):
+        bm = bmesh.new()
+        lo = [bm.verts.new((x, y, z0)) for x, y in pts]
+        hi = [bm.verts.new((x, y, z0 + h)) for x, y in pts]
+        bm.faces.new(hi)
+        bm.faces.new(list(reversed(lo)))
+        for i in range(len(pts)):
+            j = (i + 1) % len(pts)
+            bm.faces.new((lo[i], lo[j], hi[j], hi[i]))
+        bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+        mesh = bpy.data.meshes.new(part)
+        bm.to_mesh(mesh)
+        bm.free()
+        obj = bpy.data.objects.new(part, mesh)
+        bpy.context.collection.objects.link(obj)
+        return mark(obj, part)
+
+    prism(b_plan(0.26, 0.0), 0.0, 0.05, "stone")
+    prism(b_plan(0.26, 0.0, inset=0.025), 0.05, 0.16, "limestone")
+    return join_all()
+
+
+def prim_funeralboat():
+    """The king's FUNERAL BARQUE in its boat pit, three cells long: a cedar hull curving up at both ends into
+    PAPYRUS-BUNDLE posts that curl inward, a cabin amidships, two steering oars at the stern, all lying in a
+    trench edged with a granite coping.
+
+    The hull is built in slices along X, each slice from the keel to the sheer, both rising at the ends: the
+    sheer line is the boat, and in the front plane it draws as a true curve. The pit is a coping round a
+    VOID floor proud of the paving (the altar channel's law); the near coping crosses in front of the hull,
+    and that crossing is what says the boat lies IN the pit rather than on a mat."""
+    pl, pd, ch, cw = 3.00, 0.74, 0.07, 0.09
+    for sy in (-1, 1):
+        mark(box(pl, cw, ch, y=sy * (pd / 2 - cw / 2), z=ch / 2), "stone")
+    for sx in (-1, 1):
+        mark(box(cw, pd, ch, x=sx * (pl / 2 - cw / 2), z=ch / 2), "stone")
+    mark(box(pl - 2 * cw + 0.02, pd - 2 * cw + 0.02, 0.012, z=0.006), VOID)
+    L, n = 2.50, 48
+    for i in range(n):
+        xm = -L / 2 + L * (i + 0.5) / n
+        t = xm / (L / 2)
+        keel = 0.03 + 0.26 * t ** 6
+        sheer = 0.24 + 0.22 * t ** 4
+        half_d = 0.25 * math.sqrt(max(0.0, 1 - t * t)) + 0.04
+        mark(box(L / n + 0.01, 2 * half_d, sheer - keel, x=xm, z=(sheer + keel) / 2), "timber")
+    # The papyrus-bundle ends: each post rises out of the hull's tip and curls back inward, ending in an umbel.
+    for sx in (-1, 1):
+        ends = ((sx * (L / 2 - 0.02), 0.44), (sx * (L / 2 + 0.05), 0.62), (sx * (L / 2 + 0.01), 0.76), (sx * (L / 2 - 0.09), 0.80))
+        for j, (p0, p1) in enumerate(zip(ends, ends[1:])):
+            _bar(p0, p1, 0.07, 0.08 - 0.015 * j, "timber")
+        # The umbel flares INWARD and down over the deck, as the bundle's bound end bends back on itself.
+        ux, uz = ends[-1]
+        umbel = cone(0.03, 0.09, 0.12, verts=12)
+        mark(turn(umbel, -sx * 115, "Y", ux - sx * 0.05, 0.0, uz - 0.03), "accent")
+    # The cabin amidships, a shrine of painted panels under a flat roof.
+    mid = 0.24
+    mark(box(0.58, 0.32, 0.26, x=0.06, z=mid + 0.13), "accent")
+    mark(box(0.66, 0.38, 0.04, x=0.06, z=mid + 0.28), "timber")
+    # Two steering oars at the stern (right), raked down into the pit from their posts.
+    for sy in (-1, 1):
+        mark(box(0.04, 0.04, 0.26, x=L / 2 - 0.36, y=sy * 0.14, z=0.38 + 0.13), "timber")
+        _bar((L / 2 - 0.30, 0.62), (L / 2 - 0.80, 0.08), 0.04, 0.04, "timber", y=sy * 0.18)
+        mark(box(0.18, 0.03, 0.06, x=L / 2 - 0.78, y=sy * 0.18, z=0.08), "timber")
+    return join_all()
+
+def _statue_fallen():
+    """`prim_statue --contents=fallen`: the seated colossus TOPPLED, lying on its side along X with its head
+    to the left, broken at the knees — the shins and feet still standing on the empty plinth at the right.
+
+    ON ITS SIDE and not on its back, and that is the projection choosing. Turned about Y the seated figure's
+    FRONT stays facing the viewer, so the front plane carries the nemes, the face, the torso and the throne
+    behind it exactly as the standing one does, only lying down; fallen backwards the face would turn up
+    into the top plane, which the shear compresses to k of its depth. The feet left on the plinth are what
+    say toppled and not laid out, and they keep the pose's own L: the break is at the top of the shins.
+
+    The same envelope as every other pose: roughed fat, carved inward by the paint."""
+    # The seated body, as `prim_statue` builds it, without its shins and feet. The throne is cut from the
+    # same block as the king and lies with him, so it is `figure` too and narrower than the standing
+    # pose's: in the plinth's gold, on its side, it rose behind the figure as a box twice his size.
+    mark(box(0.34, 0.30, 0.62, y=0.09, z=0.31), "figure")
+    mark(box(0.34, 0.34, 0.10, y=-0.06, z=0.32), "figure")
+    mark(box(0.30, 0.22, 0.11, y=-0.16, z=0.40), "figure")
+    torso_z, torso_h = 0.62, 0.30
+    mark(box(0.32, 0.20, torso_h, y=0.01, z=torso_z + torso_h / 2), "figure")
+    for sx in (-1, 1):
+        mark(box(0.075, 0.14, torso_h * 0.82, x=sx * 0.20, y=-0.02, z=torso_z + torso_h * 0.44), "figure")
+    top = torso_z + torso_h
+    mark(box(0.09, 0.10, 0.05, z=top + 0.025), "figure")
+    mark(box(0.17, 0.17, 0.17, z=top + 0.135), "figure")
+    bpy.ops.mesh.primitive_cone_add(vertices=4, radius1=0.21, radius2=0.135, depth=0.20, location=(0, 0.01, top + 0.13))
+    nemes = bpy.context.object
+    nemes.rotation_euler = (0, 0, math.radians(45))
+    bpy.ops.object.transform_apply(rotation=True)
+    nemes.scale = (1.0, 0.72, 1.0)
+    bpy.ops.object.transform_apply(scale=True)
+    mark(recalc_outward(nemes), "figure")
+    body = join_all()
+    # Over onto its side, head to the left: (x, y, z) -> (-z, y, x), then down onto the floor.
+    body.data.transform(Matrix.Translation((0.40, 0.0, 0.235)) @ Matrix.Rotation(math.radians(-90), 4, "Y"))
+    # The plinth where it stood, the shins and feet still on it, broken off at the knee.
+    px, b = 0.98, 0.09
+    mark(box(0.62, 0.46, b, x=px, z=b / 2), "body")
+    mark(box(0.44, 0.10, 0.10, x=px, y=0.09, z=b + 0.05), "body")
+    mark(box(0.28, 0.10, 0.24, x=px, y=-0.12, z=b + 0.12), "figure")
+    mark(box(0.30, 0.14, 0.06, x=px, y=-0.17, z=b + 0.03), "figure")
+    # The broken stone lies BETWEEN them, overlapping both, so the wreck is one heap and not three things.
+    for (cx, cy, s, a) in ((0.47, -0.14, 0.14, 18), (0.60, -0.24, 0.11, -27), (0.40, -0.30, 0.08, 41), (0.66, -0.06, 0.12, 9)):
+        chunk = box(s, s * 0.9, s * 0.7)
+        chunk.rotation_euler = (math.radians(a * 0.3), math.radians(-a * 0.4), math.radians(a))
+        chunk.location = (cx, cy, s * 0.35)
+        mark(chunk, "figure")
+    return join_all()
+
+
 PRIMITIVES.update(
     {
         "statue": prim_statue,
@@ -4676,6 +5167,18 @@ PRIMITIVES.update(
         "headrest": prim_headrest,
         "grindstone": prim_grindstone,
         "breadOven": prim_breadoven,
+        "throne": prim_throne,
+        "regaliaStand": prim_regaliastand,
+        "fan": prim_fan,
+        "canopicChest": prim_canopicchest,
+        "tributeHeap": prim_tributeheap,
+        "shabtiBox": prim_shabtibox,
+        "pyramidion": prim_pyramidion,
+        "lightShaft": prim_lightshaft,
+        "chariot": prim_chariot,
+        "sedThrone": prim_sedthrone,
+        "boundaryMarker": prim_boundarymarker,
+        "funeralBoat": prim_funeralboat,
     }
 )
 

@@ -1,0 +1,16 @@
+// designed by: Claude
+// master. The shabti room: the boxes of servant figures that will work for the king, a shelf of more along the wall.
+room shabtiRoom
+tier master
+mirror
+
+layout
+# # d # # #
+# x . r x #
+d . . . . d
+# . s . . #
+# d # # d #
+
+x wall shabtiBox
+r wall shelf
+s stop

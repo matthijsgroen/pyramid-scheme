@@ -1,0 +1,15 @@
+// designed by: Claude
+// master. A treasury with the lever or torch before the tribute: one heap on the north wall, the mechanism in front.
+room tributeWorks
+tier master
+
+layout
+# # d # d # #
+# . . h . . #
+d . . m . . d
+# . . s . . #
+# # d # d # #
+
+h wall tributeHeap
+m mechanism
+s stop

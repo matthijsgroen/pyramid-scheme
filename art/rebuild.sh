@@ -1672,6 +1672,118 @@ scaffold lever --contents=arm --shadow=0 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/default/leverArm.webp --tier=default --name=leverArm --slot=prop \
   --filter=smooth --mask="$OBJ" --brightness=0.9 --no-trim
 
+# master — the pharaoh
+#
+# His node chests and his set pieces (themed-rooms.md, Master): the throne room, the treasury, the Sed
+# court, the sun court, the boat pit and the statue hall. Each block runs once its master is in; until then
+# the scaffold is in the repaint queue. All are rendered over the rank's dark granite floor, gold as the
+# body colour, and his black granite as --colour-stone, darker than the floor so a dais or a plinth does not
+# melt into the paving it stands on. A multi-cell frame is rendered at its own aspect (`propFrameSize`):
+# 2x1 is 126x84, 3:2; 2x2 is 126x168, 3:4; 3x1 is 196x84, 7:3; a cell taller adds 56 to the height. The
+# long ones are spun under 10 degrees, because a large spin turns a long length into depth, which draws as
+# height; the chariot alone is spun far, so its pole runs back into its second row.
+#
+# The open chests are imported TRIMMED for now: junior's untrimmed placement is measured off the shut
+# chest's own import, and the pharaoh's shut chest has not landed.
+if [ -f art/masters/props/master/chestPropOpen.webp ]; then
+  scaffold sealedChest --contents=cavetto --spin=25 --colour=#d9a93f --floor=#57534b
+  yarn import-tile art/masters/props/master/chestPropOpen.webp --tier=master --name=chestPropOpen --slot=prop \
+    --filter=smooth --seat="$SHADOW"
+fi
+if [ -f art/masters/props/master/wardChest.webp ]; then
+  scaffold sealedChest --spin=-27 --colour=#4a3a2c --floor=#57534b --colour-metal=#d9a93f
+  yarn import-tile art/masters/props/master/wardChest.webp --tier=master --name=wardChest --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/master/wardChestOpen.webp ]; then
+  scaffold sealedChest --spin=-27 --colour=#4a3a2c --floor=#57534b --colour-metal=#d9a93f
+  yarn import-tile art/masters/props/master/wardChestOpen.webp --tier=master --name=wardChestOpen --slot=prop \
+    --filter=smooth --seat="$SHADOW"
+fi
+if [ -f art/masters/props/master/throne.webp ]; then
+  scaffold throne --spin=-6 --width=672 --height=448 --colour=#d9a93f --floor=#57534b --colour-stone=#2f2c28
+  yarn import-tile art/masters/props/master/throne.webp --tier=master --name=throne --slot=prop \
+    --cells=2x1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/master/regaliaStand.webp ]; then
+  scaffold regaliaStand --spin=8 --colour=#d9a93f --floor=#57534b --colour-stone=#2f2c28 --colour-timber=#3a2a20
+  yarn import-tile art/masters/props/master/regaliaStand.webp --tier=master --name=regaliaStand --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/master/fan.webp ]; then
+  scaffold fan --spin=4 --width=448 --height=1120 --colour=#d9a93f --floor=#57534b --colour-stone=#2f2c28
+  yarn import-tile art/masters/props/master/fan.webp --tier=master --name=fan --slot=prop \
+    --tall=1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/master/canopicChest.webp ]; then
+  scaffold canopicChest --spin=16 --colour=#d9a93f --floor=#57534b --colour-stone=#2f2c28 --colour-timber=#3a2a20
+  yarn import-tile art/masters/props/master/canopicChest.webp --tier=master --name=canopicChest --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.8
+fi
+if [ -f art/masters/props/master/tributeHeap.webp ]; then
+  scaffold tributeHeap --spin=10 --colour=#d9a93f --floor=#57534b --colour-timber=#3a2a20 --colour-cloth=#c08a3e \
+    --colour-limestone=#e6dcc4
+  yarn import-tile art/masters/props/master/tributeHeap.webp --tier=master --name=tributeHeap --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+# A shabti box is a forearm long, so it is scaled well down.
+if [ -f art/masters/props/master/shabtiBox.webp ]; then
+  scaffold shabtiBox --spin=12 --colour=#d9a93f --floor=#57534b --colour-timber=#3a2a20 --colour-figure=#4f8a80
+  yarn import-tile art/masters/props/master/shabtiBox.webp --tier=master --name=shabtiBox --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.6
+fi
+if [ -f art/masters/props/master/pyramidion.webp ]; then
+  scaffold pyramidion --spin=18 --colour=#d9a93f --floor=#57534b --colour-stone=#2f2c28
+  yarn import-tile art/masters/props/master/pyramidion.webp --tier=master --name=pyramidion --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.75
+fi
+# Sunlight on the floor: ground, unlit, and casting nothing, so there is no seat to lay under it.
+if [ -f art/masters/props/master/lightShaft.webp ]; then
+  scaffold lightShaft --spin=14 --shadow=0 --unlit=daylight,haze --colour=#d9a93f --floor=#57534b
+  yarn import-tile art/masters/props/master/lightShaft.webp --tier=master --name=lightShaft --slot=prop \
+    --filter=smooth --mask="$OBJ"
+fi
+if [ -f art/masters/props/master/chariot.webp ]; then
+  scaffold chariot --spin=-35 --width=672 --height=896 --colour=#d9a93f --floor=#57534b --colour-timber=#3a2a20
+  yarn import-tile art/masters/props/master/chariot.webp --tier=master --name=chariot --slot=prop \
+    --cells=2x2 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/master/sedThrone.webp ]; then
+  scaffold sedThrone --spin=-4 --width=756 --height=840 --colour=#d9a93f --floor=#57534b --colour-stone=#2f2c28 \
+    --colour-cloth=#d8ccb0
+  yarn import-tile art/masters/props/master/sedThrone.webp --tier=master --name=sedThrone --slot=prop \
+    --cells=2x1 --tall=1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/master/boundaryMarker.webp ]; then
+  scaffold boundaryMarker --spin=10 --colour=#d9a93f --floor=#57534b --colour-stone=#2f2c28 --colour-limestone=#d8ceb6
+  yarn import-tile art/masters/props/master/boundaryMarker.webp --tier=master --name=boundaryMarker --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.85
+fi
+if [ -f art/masters/props/master/funeralBoat.webp ]; then
+  scaffold funeralBoat --spin=-3 --width=980 --height=420 --colour=#d9a93f --floor=#57534b --colour-stone=#2f2c28 \
+    --colour-timber=#7a4a2c
+  yarn import-tile art/masters/props/master/funeralBoat.webp --tier=master --name=funeralBoat --slot=prop \
+    --cells=3x1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+# The colossus is `prim_statue`'s seated pose in a two-by-two frame a cell taller; toppled, its own pose.
+if [ -f art/masters/props/master/colossus.webp ]; then
+  scaffold statue --contents=seated --spin=-8 --width=630 --height=1120 --colour=#d9a93f --colour-figure=#8a7434 \
+    --floor=#57534b
+  yarn import-tile art/masters/props/master/colossus.webp --tier=master --name=colossus --slot=prop \
+    --cells=2x2 --tall=1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/master/fallenColossus.webp ]; then
+  scaffold statue --contents=fallen --spin=-4 --width=980 --height=420 --colour=#d9a93f --colour-figure=#8a7434 \
+    --floor=#57534b
+  yarn import-tile art/masters/props/master/fallenColossus.webp --tier=master --name=fallenColossus --slot=prop \
+    --cells=3x1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+# His envoy frieze is FLAT: no mesh, no mask, the return's own edge is the tile.
+if [ -f art/masters/props/master/envoyFrieze.webp ]; then
+  yarn import-tile art/masters/props/master/envoyFrieze.webp --tier=master --name=envoyFrieze --slot=wall \
+    --filter=smooth --trim
+fi
+
 # THE MECHANICS
 #
 # The pressure plate, SHARED across ranks (`tiles/default/`, drawn at every rank), in three looks that swap

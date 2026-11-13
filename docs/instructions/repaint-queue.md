@@ -3843,3 +3843,616 @@ BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills 
 ```
 
 **Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_divine_5 --size=256`
+
+---
+
+## Pharaoh — the set pieces
+
+His three node chests and the kinds new with his activities ([themed-rooms.md](../game-design/themed-rooms.md)
+§ Master): the treasury, the audience, the burial chamber, the Sed court, the sun court, the statue hall, the boat
+pit and the shabti room. Each prop has a primitive in `renderProp.py` and a guarded block in `art/rebuild.sh`;
+the seated colossus is `prim_statue`'s seated pose and the toppled one its `fallen` pose, so both are ENVELOPES
+and carve inward like `master/statue`. The envoy frieze is the one FLAT thing here, straight to the generator.
+
+The frames follow the footprints (`propFrameSize`). A single cell is portrait two by three and the fan, a cell
+taller, two by five. The throne is two cells across, landscape three by two; the Sed throne is two across and a
+cell taller, nine by ten, nearly square. The chariot is two by two, three by four; the colossus two by two and a
+cell taller, nine by sixteen. The funeral boat and the fallen colossus are three cells long, landscape seven by
+three.
+
+The open chests are EDITS of the shut chests' own painted masters, so each waits for its shut chest: paint
+`master/chestProp` before `master/chestPropOpen`, and `master/wardChest` before `master/wardChestOpen`.
+
+The light shaft is sunlight lying on the floor, and its scaffold is only the shape of the patch: a thin
+parallelogram rendered unlit. It is a FLAT FLOOR OVERLAY, not an object — the paint fills the shape with light
+on granite, and nothing stands up out of it.
+
+### `master/chestPropOpen` — the gilded chest, lid up, empty
+
+Paint `master/chestProp` first: this is an edit of its master.
+
+**Attach:**
+
+1. `art/masters/props/master/chestProp.webp` — the chest itself, to edit: shape, silhouette, camera
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: a gilded chest on four short feet, a band where the lid meets the body, a stepped cavetto cornice forming the lid, an inlaid cartouche panel on its front. Same object, same camera, same paint. Keep every edge, every proportion and every silhouette of the body, the band, the panel and the feet exactly as in the reference image — do not move, resize, straighten, add, remove or restyle them, and do not change the angle it stands at.
+
+THE ONE CHANGE: the chest is OPEN. The cavetto lid is raised on its back hinge and stands UPRIGHT behind the body, seen almost edge-on, a narrow stepped gilded band rising above the chest's back edge. The chest's mouth is an EMPTY dark interior, #1e1a16 at its deepest, the inside of the near wall catching a little light on bare dark timber. Nothing inside: no gold, no glow, nothing spilling out.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR'S MATERIAL. Take only its paint quality from it; nothing of that floor appears in the picture.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the chest, its lid and its shadow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold sealedChest --contents=cavetto --spin=25 --colour=#d9a93f --floor=#57534b
+yarn import-tile art/masters/props/master/chestPropOpen.webp --tier=master --name=chestPropOpen --slot=prop \
+  --filter=smooth --seat="$SHADOW"
+```
+
+### `master/wardChest` — the king's sealed coffer, ebony and ivory, gold bound
+
+**Attach:**
+
+1. `~/tile-previews/wardChest-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a CHEST on four short feet, the king's own sealed coffer. The band round its top is where the LID meets the body, and the lid overhangs it on every side. The strap over the lid and down its front is a CORD tied round two knobs, and the round lump on it is a clay SEAL.
+
+EBONY, near-black with a deep brown grain, #2e2620, inlaid with narrow strips of creamy IVORY that divide the front and the sides into panels, each panel set with a small gilded rosette. The band round the lid is gold leaf, a flat warm ochre-yellow, worn through to the ebony at the corners. The cord is undyed linen, #b8ab8e. The seal is grey Nile clay, #6c6257, stamped with a recumbent jackal over nine bound captives — the royal necropolis seal, drawn as a small picture.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold sealedChest --spin=-27 --colour=#4a3a2c --floor=#57534b --colour-metal=#d9a93f
+yarn import-tile art/masters/props/master/wardChest.webp --tier=master --name=wardChest --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `master/wardChestOpen` — the king's coffer, seal broken, empty
+
+Paint `master/wardChest` first: this is an edit of its master.
+
+**Attach:**
+
+1. `art/masters/props/master/wardChest.webp` — the chest itself, to edit: shape, silhouette, camera
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+FRAME: portrait, two units wide by three tall, exactly as the first reference. Do not re-compose it into a square. Paint over the first reference image itself.
+
+THE FIRST ATTACHED IMAGE IS THE CHEST, already painted: an ebony coffer on four short feet, inlaid with ivory strips and gilded rosettes, a gold band where the lid meets the body, a linen cord with a clay seal over the lid. Same object, same camera, same paint. Keep every edge, every proportion and every silhouette of the body, the band and the feet exactly as in the reference image — do not move, resize, straighten, add, remove or restyle them, and do not change the angle it stands at.
+
+THE ONE CHANGE: the coffer is OPEN. The cord is cut and hangs loose down the front, the clay seal broken in two. The lid is raised on its back hinge and stands UPRIGHT behind the body, seen almost edge-on, a narrow ebony band rising above the coffer's back edge. The coffer's mouth is an EMPTY dark interior, #1e1a16 at its deepest, the inside of the near wall catching a little light. Nothing inside: no gold, no glow, nothing spilling out.
+
+THE SECOND ATTACHED IMAGE IS THE FLOOR'S MATERIAL. Take only its paint quality from it; nothing of that floor appears in the picture.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) everywhere outside the chest, its lid and its shadow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold sealedChest --spin=-27 --colour=#4a3a2c --floor=#57534b --colour-metal=#d9a93f
+yarn import-tile art/masters/props/master/wardChestOpen.webp --tier=master --name=wardChestOpen --slot=prop \
+  --filter=smooth --seat="$SHADOW"
+```
+
+### `master/throne` — a lion-legged throne on a stepped dais
+
+**Attach:**
+
+1. `~/tile-previews/throne-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, three units wide by two tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: the king's THRONE on its DAIS, the throne facing left. The tall slab at the right is the throne's BACK; the low panel along its side is an ARM; the seat lies between them; the four legs are LION LEGS, each ending in a paw resting on a small drum, the paws reaching left. The two dark slabs stepping up under it are the DAIS, and the small block on the upper step in front of the throne is a FOOTSTOOL.
+
+The throne is GILDED — gold leaf over wood, a flat warm ochre-yellow — worn through to dark timber on the arm's top edge and on the paws, where hands and feet have rubbed it. The arm panel is filled with a winged cobra, its wings in blue-green faience and red carnelian inlay. The back is inlaid with a band of faience and gold rosettes along its top. The footstool is ebony inlaid with ivory, its top painted with a row of small bound captives lying face down, the king's enemies under his feet. The dais is polished BLACK GRANITE, close-grained, with a thin gold line along each step's edge.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold throne --spin=-6 --width=672 --height=448 --colour=#d9a93f --floor=#57534b --colour-stone=#2f2c28
+yarn import-tile art/masters/props/master/throne.webp --tier=master --name=throne --slot=prop \
+  --cells=2x1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `master/regaliaStand` — the crook, the flail and the double crown on a stand
+
+**Attach:**
+
+1. `~/tile-previews/regaliaStand-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a REGALIA STAND. The slab at the foot is its BASE; the upright is the POST; the board on top carries the DOUBLE CROWN — the squat cylinder with the tall narrow plate rising at its back is the DESHRET, the red crown of Lower Egypt, and the tall bulb rising out of it is the HEDJET, the white crown of Upper Egypt, with its round knob on top. The two staffs leaning crossed against the post's front are the CROOK, its hook curling out at the top right, and the FLAIL, its three strands hanging from its head at the top left.
+
+The base is polished black granite; the post and the board are ebony. The deshret is red, a deep red ochre, matte like painted leather; the hedjet is a pale creamy white, its knob a little darker. A small gold COBRA rears at the front of the crown. The crook is banded all along its length in gold and dark blue faience; the flail's handle is gold, its strands strings of blue and gold beads.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold regaliaStand --spin=8 --colour=#d9a93f --floor=#57534b --colour-stone=#2f2c28 --colour-timber=#3a2a20
+yarn import-tile art/masters/props/master/regaliaStand.webp --tier=master --name=regaliaStand --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `master/fan` — an ostrich-feather fan on a long gilded staff
+
+**Attach:**
+
+1. `~/tile-previews/fan-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by five tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a CEREMONIAL FAN standing in its stand. The footed block at the bottom is the STAND; the long upright is the STAFF, with two bands round it; the round disc at the top is the fan's PALM, and the half-round spread above it is the fan itself, made of OSTRICH FEATHERS set side by side in the palm.
+
+The stand is polished black granite. The staff is gilded, its two bands blue-green faience. The palm is gilded and chased with a small lotus. The feathers are soft and full, each a long plume with a drooping tip, set alternately white and pale brown-grey, their edges feathery and soft against the magenta.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold fan --spin=4 --width=448 --height=1120 --colour=#d9a93f --floor=#57534b --colour-stone=#2f2c28
+yarn import-tile art/masters/props/master/fan.webp --tier=master --name=fan --slot=prop \
+  --tall=1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `master/canopicChest` — a gilded shrine-shaped chest, four jar lids
+
+**Attach:**
+
+1. `~/tile-previews/canopicChest-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a CANOPIC CHEST, the shrine that holds the four jars of the king's organs. The box is the SHRINE, standing on a SLEDGE of two runners; the band round its top is a moulding, and the slabs stepping out over it are a CAVETTO CORNICE. The sunken rectangle on its front is an INLAID PANEL. Standing up out of the top, inside the cornice, are the four LIDS of the jars, two in front and two behind, each a carved HEAD of the king in a striped royal headcloth.
+
+The shrine is GILDED — gold leaf over wood, a flat warm ochre-yellow — worn through to dark timber on the cornice's steps and its front corners. The panel holds a kneeling goddess spreading her winged arms across it, her wings in blue-green faience and dark blue lapis. The sledge is ebony. The four heads are creamy ALABASTER, faintly banded, the stripes of the headcloth and the eyes picked out in thin black lines, the faces calm and plain. The top of the chest round the heads is in deep shadow.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold canopicChest --spin=16 --colour=#d9a93f --floor=#57534b --colour-stone=#2f2c28 --colour-timber=#3a2a20
+yarn import-tile art/masters/props/master/canopicChest.webp --tier=master --name=canopicChest --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.8
+```
+
+### `master/tributeHeap` — tribute of foreign peoples: ebony, ivory, a leopard skin, gold rings
+
+**Attach:**
+
+1. `~/tile-previews/tributeHeap-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: TRIBUTE laid on the floor. The three dark round logs stacked at the back are EBONY LOGS; the flat shape hanging down their front is a LEOPARD SKIN, its two dangling legs at its lower corners and its head at the top; the two long pale curved shapes lying in front are ELEPHANT TUSKS; the three upright circles at the right are heavy GOLD RINGS leaning together.
+
+The ebony is near-black with a deep brown grain, its cut ends a paler brown showing the rings of the wood. The leopard skin is tawny ochre with dark brown rosettes all over it, its paws and the edge of the pelt a little ragged. The tusks are creamy ivory, yellowed toward the root and smooth toward the tip. The rings are gold, thick and plain.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold tributeHeap --spin=10 --colour=#d9a93f --floor=#57534b --colour-timber=#3a2a20 --colour-cloth=#c08a3e \
+  --colour-limestone=#e6dcc4
+yarn import-tile art/masters/props/master/tributeHeap.webp --tier=master --name=tributeHeap --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `master/shabtiBox` — a painted shabti box, its figures standing by
+
+**Attach:**
+
+1. `~/tile-previews/shabtiBox-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a SHABTI BOX and its figures. The box stands on two RUNNERS, open, with a painted BAND round its top; the three small figures standing up out of it and the row of four in front of it are SHABTIS, small mummiform servant figures; the half-round on its end against the box's left side is the box's vaulted LID, set down.
+
+The box is wood painted black, its band and the edges of the lid painted ochre-yellow, and on its front a small painted scene of the king before a seated god, in red ochre, gold and blue. The inside of the box is in deep shadow. The shabtis are blue-green FAIENCE, each wrapped like a mummy with its arms crossed, a black-painted wig, a calm plain face, and a small hoe in each hand drawn in black.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold shabtiBox --spin=12 --colour=#d9a93f --floor=#57534b --colour-timber=#3a2a20 --colour-figure=#4f8a80
+yarn import-tile art/masters/props/master/shabtiBox.webp --tier=master --name=shabtiBox --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.6
+```
+
+### `master/pyramidion` — a gilded capstone on a granite plinth
+
+The sun court stands several together; their sparkle is paint now and animation later.
+
+**Attach:**
+
+1. `~/tile-previews/pyramidion-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a PYRAMIDION, the capstone of a pyramid, standing on a low PLINTH. The pyramid is the capstone; the thin band under it is its gilded bedding; the slab under that is the plinth.
+
+The capstone is GILDED all over, a flat warm ochre-yellow, its faces a little different from each other in value as the light falls on them. Cut into the face toward the viewer, in shallow relief, is a WINGED SUN DISC with a pair of eyes beneath it, drawn as small pictures. A few tiny bright flecks of light-gold, #f5dc8e, catch along the apex and the top of its edges — that is all the sun does here. The plinth is polished black granite.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine, beyond those few flecks at the apex.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold pyramidion --spin=18 --colour=#d9a93f --floor=#57534b --colour-stone=#2f2c28
+yarn import-tile art/masters/props/master/pyramidion.webp --tier=master --name=pyramidion --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.75
+```
+
+### `master/lightShaft` — a patch of sunlight lying on the floor
+
+A FLAT FLOOR OVERLAY, walked over. The scaffold is the patch's shape and nothing else, so the prompt fills the
+shape with light and says nothing stands in it. The mask is the patch; there is no seat, because light casts
+no shadow.
+
+**Attach:**
+
+1. `~/tile-previews/lightShaft-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A flat shape lying on the floor, seen from above, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a PATCH OF SUNLIGHT on the floor of a dark granite hall, the sun falling through a slot in the roof far above. The pale shape is the patch of light; its outer rim is the soft edge of it.
+
+Paint the light ON the stone: dark granite washed warm by low sun, a pale warm gold #e8d4a0 at the heart of the patch, deepening through #d9a93f toward its rim, the edge soft and slightly hazy rather than a hard line. A few fine specks of drifting dust catch the light inside it, and the faint grain of the granite shows through. There are no slab joints, no lines and no cracks inside the patch, and nothing stands in it.
+
+Fill the whole shape to its edges. It is light and only light: no object, no beam, no rays, no lamp.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections, no shadow. Matte throughout. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold lightShaft --spin=14 --shadow=0 --unlit=daylight,haze --colour=#d9a93f --floor=#57534b
+yarn import-tile art/masters/props/master/lightShaft.webp --tier=master --name=lightShaft --slot=prop \
+  --filter=smooth --mask="$OBJ"
+```
+
+### `master/chariot` — the king's gilded chariot on six-spoked wheels
+
+**Attach:**
+
+1. `~/tile-previews/chariot-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, three units wide by four tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: the king's CHARIOT, standing without its horses. The platform is the CAR's floor; the upright panel at its front is the BREASTWORK, with a rail sweeping back from its top down each side; the two great circles are the WHEELS, each with SIX SPOKES and a HUB, on an AXLE across the back of the car; the long curved timber running forward from under the car and rising is the POLE, and the bar across its end, with two short hanging pieces, is the YOKE.
+
+The car, the rails and the pole are GILDED — gold leaf over wood, a flat warm ochre-yellow — worn through to dark timber along the rails and the pole's top, where hands and harness have rubbed it. The breastwork panel is inlaid with rows of rosettes in blue-green faience, red carnelian and dark blue lapis. The wheels are gilded wood, their rims bound with a dark leather tyre, their hubs and spokes gilded. The axle is dark wood. The car's floor is a woven leather mesh, dark brown.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold chariot --spin=-35 --width=672 --height=896 --colour=#d9a93f --floor=#57534b --colour-timber=#3a2a20
+yarn import-tile art/masters/props/master/chariot.webp --tier=master --name=chariot --slot=prop \
+  --cells=2x2 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `master/sedThrone` — the Sed festival's double throne under its canopy
+
+**Attach:**
+
+1. `~/tile-previews/sedThrone-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Nearly square, nine units wide by ten tall, exactly as the reference. Do not re-compose it into an exact square. Paint over the reference image itself.
+
+The object: the DOUBLE THRONE of the Sed festival. Two lion-legged THRONES stand BACK TO BACK on one DAIS, the left one facing left and the right one facing right, their two tall backs rising side by side in the middle. Each has a low ARM panel and four LION LEGS with paws on small drums. The dais has a short STEP at each end. Over them stands a light CANOPY: four slender POSTS at the corners, a thin linen ROOF, a stepped CORNICE on top of it, and along the cornice's front edge a row of small rearing COBRAS.
+
+The thrones are GILDED — gold leaf over wood, a flat warm ochre-yellow — the left one's arm panel inlaid with a white lily and the right one's with a papyrus clump, the plants of the two lands, in faience and carnelian. The dais is polished black granite with a thin gold line along its edge. The posts and the cornice are gilded; the roof is pale linen, its underside in soft shade. The cobras are gold with blue-green faience hoods.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold sedThrone --spin=-4 --width=756 --height=840 --colour=#d9a93f --floor=#57534b --colour-stone=#2f2c28 \
+  --colour-cloth=#d8ccb0
+yarn import-tile art/masters/props/master/sedThrone.webp --tier=master --name=sedThrone --slot=prop \
+  --cells=2x1 --tall=1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `master/boundaryMarker` — a B-shaped Sed festival boundary stone
+
+**Attach:**
+
+1. `~/tile-previews/boundaryMarker-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a BOUNDARY MARKER of the Sed festival, one of the pair the king runs between to claim his land. It is a low STONE laid flat on the ground, shaped in plan like a letter B on its back: a straight back edge and two rounded LOBES bulging toward the viewer. It rests on a thin dark BEDDING course that shows round its foot.
+
+The marker is fine white LIMESTONE, dressed smooth and flat on top, its edges softened, a little dust settled in the notch between the lobes. Along its top, close to the edge, runs a thin incised line filled with gold. The bedding is black granite.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold boundaryMarker --spin=10 --colour=#d9a93f --floor=#57534b --colour-stone=#2f2c28 --colour-limestone=#d8ceb6
+yarn import-tile art/masters/props/master/boundaryMarker.webp --tier=master --name=boundaryMarker --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.85
+```
+
+### `master/funeralBoat` — a cedar funeral barque in its boat pit
+
+**Attach:**
+
+1. `~/tile-previews/funeralBoat-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, seven units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: the king's FUNERAL BOAT lying in its BOAT PIT. The long curved shape is the HULL, rising at both ends into a tall POST bound from papyrus stems, each curling inward at the top into a flaring UMBEL; the box amidships is the CABIN under its flat ROOF; the two long timbers raking down at the right are STEERING OARS on their posts. The rectangular border round it all is the COPING of the pit, and the dark floor inside it is the pit's bottom in deep shadow.
+
+The hull is CEDAR, warm reddish-brown, its long planks edged and pegged, oiled and smooth. The posts are bound with bands of red ochre and gold where the papyrus stems are tied; the umbels are painted green and gold. The cabin is panelled in blue, green and red ochre under a gilded cornice. The oar blades are each painted with an eye. The coping is polished black granite; the pit's bottom is near-black.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold funeralBoat --spin=-3 --width=980 --height=420 --colour=#d9a93f --floor=#57534b --colour-stone=#2f2c28 \
+  --colour-timber=#7a4a2c
+yarn import-tile art/masters/props/master/funeralBoat.webp --tier=master --name=funeralBoat --slot=prop \
+  --cells=3x1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `master/colossus` — a seated colossus of the king
+
+**Attach:**
+
+1. `~/tile-previews/colossus-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a seated COLOSSUS of the king, cut from one block of black granite. He sits upright on a block THRONE, facing the viewer, hands flat on his knees. The tapering mass on his head is the NEMES, the striped royal headcloth, falling to his shoulders; a short false BEARD hangs from his chin. The slab he and his throne stand on is the PLINTH.
+
+IT IS A CARVED OBJECT AND NOT A PERSON, and this matters more than any other line here. Egyptian statuary is BLOCK-CARVED: flat planes, hard arrises, and the figure never leaves the block it was cut from. His arms stay joined to his sides, his legs stay joined to the throne and to each other, and there is no daylight anywhere between a limb and the stone behind it. Nothing is undercut and nothing projects past the front edge of the plinth.
+
+NO ANATOMY IS MODELLED: no muscle bellies, no nipples, no navel, no tendons, no separated toes, and not one highlight on a shoulder or a knee — a highlight there means a body is being painted, so paint the flat plane instead. He wears a pleated KILT to the knee and a broad COLLAR over his chest. He has no expression, no gesture and no lifelike proportions. This is a royal colossus with a fixed face, not a character and not an illustration of a man.
+
+The stone is one material throughout, the figure, the throne and the plinth alike. Gilding is a flat colour laid over that stone, not a skin the figure wears.
+
+THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job is to take the last of the waste off it.
+
+CHANGE, freely, and ONLY this: the contour of the figure himself, and only by CUTTING. A shoulder gets its slope, a knee its arris, a jaw its plane. These are chisel cuts on a block, not modelling in clay — every mass stays square-shouldered and stays recognisably the mass it already is.
+
+CARVE INWARD ONLY. Every cut goes INSIDE the rough shape you were given — take stone away, never add it outside the block's outline. Nothing may end up further left, right, higher or lower than the rough shape reaches.
+
+EVERYTHING ELSE IS FIXED, and these five are not negotiable:
+
+1. THE FRAME. Portrait, nine units wide by sixteen tall, exactly as the reference. Do not re-compose it into a square.
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either. This is the ONE thing about the picture you are given rather than asked for.
+3. HE SITS, facing the viewer, on his throne, his shins upright and his feet together on the plinth. Do not stand him up and do not turn him.
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows, how its edges run. Do not swing it round, do not flatten it, do not straighten it.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+
+POLISHED BLACK GRANITE, close-grained, with a fine pale speckle. Gold leaf, a flat warm ochre-yellow, picks out ONLY the stripes of his nemes, the bands of his collar and the rearing cobra on his brow. His face and hands are bare granite. The throne's side is carved in sunk relief with two plants knotted round a lung and windpipe — the union of the two lands — drawn as a picture. The plinth is black granite with a gilded line along its top edge.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
+
+ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF, fingers and toes included, and a clipped limb reads as an amputation. Nothing is added below the plinth either — no ground, no shadow, no floor.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=seated --spin=-8 --width=630 --height=1120 --colour=#d9a93f --colour-figure=#8a7434 \
+  --floor=#57534b
+yarn import-tile art/masters/props/master/colossus.webp --tier=master --name=colossus --slot=prop \
+  --cells=2x2 --tall=1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `master/fallenColossus` — the colossus toppled, broken at the knees
+
+**Attach:**
+
+1. `~/tile-previews/fallenColossus-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a seated COLOSSUS of the king, cut from one block of black granite, that has TOPPLED and lies on its side. His head, in the striped NEMES headcloth, is at the LEFT; his torso, his arms and the block THRONE he sat on lie along the ground to the right of it, his chest and face still turned toward the viewer, the stumps of his thighs reaching toward the viewer and ending in a broken face. At the RIGHT, apart from him, his empty PLINTH still stands, and on it his SHINS and FEET, broken off at the knee. Between the two lie broken BLOCKS fallen from the break.
+
+IT IS A CARVED OBJECT AND NOT A PERSON, and this matters more than any other line here. Egyptian statuary is BLOCK-CARVED: flat planes, hard arrises, and the figure never leaves the block it was cut from. His arms stay joined to his sides and to the throne, and there is no daylight anywhere between a limb and the stone behind it.
+
+NO ANATOMY IS MODELLED: no muscle bellies, no nipples, no navel, no tendons, no separated toes, and not one highlight on a shoulder or a knee — a highlight there means a body is being painted, so paint the flat plane instead. He wears a pleated KILT and a broad COLLAR. He has no expression and no lifelike proportions. This is a broken monument, not a fallen man.
+
+The stone is one material throughout, the figure, the throne, the plinth and the fallen blocks alike. Every break is a raw, rough, paler face of fresh stone, granular and unpolished, against the polished surfaces round it.
+
+THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job is to take the last of the waste off it.
+
+CHANGE, freely, and ONLY this: the contour of the figure himself and of the broken stone, and only by CUTTING. A shoulder gets its slope, a jaw its plane, a break its ragged edge. These are chisel cuts on a block, not modelling in clay — every mass stays square-shouldered and stays recognisably the mass it already is.
+
+CARVE INWARD ONLY. Every cut goes INSIDE the rough shape you were given — take stone away, never add it outside the block's outline. Nothing may end up further left, right, higher or lower than the rough shape reaches.
+
+EVERYTHING ELSE IS FIXED, and these five are not negotiable:
+
+1. THE FRAME. Landscape, seven units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either. This is the ONE thing about the picture you are given rather than asked for.
+3. HE LIES ON HIS SIDE, head to the left, his front toward the viewer. Do not stand him up, do not roll him onto his back, and do not join him to the feet on the plinth.
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows, how its edges run. Do not swing it round, do not flatten it, do not straighten it.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+
+POLISHED BLACK GRANITE, close-grained, with a fine pale speckle, dulled with dust where it lies. Gold leaf, a flat warm ochre-yellow, survives only in worn traces on the stripes of his nemes and the bands of his collar, scraped through to the stone. His face is bare granite. The plinth is black granite with a worn gilded line along its top edge.
+
+You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
+
+ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF. Nothing is added below the figure or the plinth either — no ground, no shadow, no floor.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=fallen --spin=-4 --width=980 --height=420 --colour=#d9a93f --colour-figure=#8a7434 \
+  --floor=#57534b
+yarn import-tile art/masters/props/master/fallenColossus.webp --tier=master --name=fallenColossus --slot=prop \
+  --cells=3x1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `master/envoyFrieze` — a painted frieze of foreign envoys bringing tribute
+
+**Attach:** `~/tile-previews/master-plain.png` — the material reference. A flat item has no scaffold.
+
+```
+A single flat object, painted in flat matte gouache, on pure magenta #FF00FF. Landscape, exactly two units wide by one tall. Do not re-compose it square. ONE OBJECT, AND IT FILLS THE FRAME, reaching the left and right edges. The magenta fills the frame around it to its edges: there is no wall, no floor and no surface behind the object. Seen straight on, flat, no perspective.
+
+The object: a painted FRIEZE, a long plastered panel with a border of blue and gold bands along its top and bottom. Between the borders walks a PROCESSION of foreign ENVOYS, all in profile and all facing right, each one carrying tribute to the king: a Nubian with a tray of gold rings and a leopard skin over his arm, a Syrian with a tall gold vase, a man of Punt carrying a small incense tree in a basket, and a second Nubian leading a giraffe on a rope. Every figure is CLOTHED to the shins in a long robe or a long kilt — white linen, a red-and-blue patterned wool, a spotted hide — and drawn in the flat Egyptian manner, the figures evenly spaced along one ground line.
+
+The ground of the panel is a pale warm ochre, #e8d4a0. The figures are painted in flat fields of red ochre, black, Egyptian blue, white and gold, with thin dark outlines as on a tomb wall. The gold is a flat warm ochre-yellow, #d9a93f. No word, no letter, no numeral and no hieroglyph appears anywhere on it.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+**Import:** `yarn import-tile art/masters/props/master/envoyFrieze.webp --tier=master --name=envoyFrieze --slot=wall --filter=smooth --trim`

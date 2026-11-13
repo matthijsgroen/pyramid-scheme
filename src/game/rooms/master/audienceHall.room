@@ -1,0 +1,20 @@
+// designed by: Claude
+// master. The throne room, a set piece: the throne on its dais against the north wall between two fans, the regalia on
+// a stand, envoys bringing tribute painted either side, two columns down the hall.
+room audienceHall
+tier master
+
+layout
+# # d f # # f # d #
+# . . a t t a g . #
+d . . . . . . . . d
+# . p . . . . p . #
+# . . . . s . . . #
+# # d # # # # d # #
+
+t wall throne
+a wall fan
+g wall regaliaStand
+p floor pillar
+f wallItem envoyFrieze
+s stop

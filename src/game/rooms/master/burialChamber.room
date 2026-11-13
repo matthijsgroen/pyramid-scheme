@@ -1,0 +1,21 @@
+// designed by: Claude
+// master. The burial chamber: the sarcophagus in the middle, the canopic chest at its head, the king's statue and his
+// mask on the north wall, a false door between.
+room burialChamber
+tier master
+mirror
+
+layout
+# # d k f # # #
+# u . . . o . #
+d . . . . . . d
+# . . x . . . #
+# . . . s . . #
+# # d # # d # #
+
+u wall statue
+o wall canopicChest
+x floor sarcophagus
+k wallItem mask
+f wallItem stela
+s stop
