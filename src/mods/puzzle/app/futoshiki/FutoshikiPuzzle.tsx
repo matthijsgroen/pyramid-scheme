@@ -1,4 +1,5 @@
-import { useMemo, type FC } from "react"
+import { useMemo, useState, type FC } from "react"
+import { padKeys, type PadPick } from "@/mods/puzzle/app/padKeys"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
 import { useTranslation } from "react-i18next"
@@ -45,6 +46,7 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
   const { size, solution, techniqueCap } = puzzle
   const [state, setState] = usePuzzleState(() => createFutoshikiState(puzzle), puzzle)
   const { selected, pencil, selectCell, focusCell, togglePencil, clearSelection } = useFutoshikiEntry()
+  const [picked, setPicked] = useState<PadPick>()
 
   const values = useMemo(() => futoshikiValues(state), [state])
   const conflicts = useMemo(() => futoshikiConflicts(puzzle, values), [puzzle, values])
@@ -87,6 +89,41 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
     setState(next)
   }
 
+  const enterNumber = (value: number, reportInput: (effect: InputEffect) => void, at = selected) => {
+    if (!at) return
+    const { row, col } = at
+    const next = pencil ? toggleFutoshikiNote(state, row, col, value) : setFutoshikiValue(state, row, col, value)
+    apply(next, row, col, reportInput)
+  }
+
+  const erase = (reportInput: (effect: InputEffect) => void, at = selected) => {
+    if (finished || !at) return
+    apply(clearFutoshikiCell(state, at.row, at.col), at.row, at.col, reportInput)
+  }
+
+  const togglePencilMode = (reportInput: (effect: InputEffect) => void) => {
+    reportInput("look")
+    togglePencil()
+  }
+
+  // A key acts on the square under the cursor, and picks it, as a tap would have first.
+  const keysFor = (reportInput: (effect: InputEffect) => void) =>
+    padKeys({
+      size,
+      picked,
+      onPick: setPicked,
+      onValue: (value, at) => {
+        if (finished) return
+        focusCell(at.row, at.col)
+        enterNumber(value, reportInput, at)
+      },
+      onErase: at => {
+        focusCell(at.row, at.col)
+        erase(reportInput, at)
+      },
+      onTogglePencil: () => togglePencilMode(reportInput),
+    })
+
   return (
     <PuzzleFamilyShell
       onSolved={onSolved}
@@ -110,9 +147,16 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
       goal={t("futoshiki.goal")}
       rules={<FutoshikiRules />}
     >
-      {({ reportInput, hintVisible }) => (
+      {({ reportInput, hintVisible, boardInput }) => (
         <>
           <FutoshikiBoard
+            boardInput={boardInput}
+            padKeys={keysFor(reportInput)}
+            onCursor={(row, col) => {
+              if (finished) return
+              reportInput("look")
+              focusCell(row, col)
+            }}
             puzzle={puzzle}
             cells={state.cells}
             conflicts={conflicts}
@@ -132,22 +176,10 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
             pencil={pencil}
             exhausted={exhaustedNumbers(values, size)}
             disabled={!selected || finished}
-            onNumber={value => {
-              if (!selected) return
-              const { row, col } = selected
-              const next = pencil
-                ? toggleFutoshikiNote(state, row, col, value)
-                : setFutoshikiValue(state, row, col, value)
-              apply(next, row, col, reportInput)
-            }}
-            onErase={() => {
-              if (finished || !selected) return
-              apply(clearFutoshikiCell(state, selected.row, selected.col), selected.row, selected.col, reportInput)
-            }}
-            onTogglePencil={() => {
-              reportInput("look")
-              togglePencil()
-            }}
+            picked={picked}
+            onNumber={value => enterNumber(value, reportInput)}
+            onErase={() => erase(reportInput)}
+            onTogglePencil={() => togglePencilMode(reportInput)}
           />
         </>
       )}

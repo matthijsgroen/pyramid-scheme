@@ -1,6 +1,7 @@
 import clsx from "clsx"
 import type { FC } from "react"
 import { useTranslation } from "react-i18next"
+import type { PadPick } from "../padKeys"
 
 type Props = {
   size: number
@@ -10,6 +11,8 @@ type Props = {
   exhausted: ReadonlySet<number>
   /** No cell is picked, so a number has nowhere to go yet. */
   disabled: boolean
+  /** The key a game pad's shoulder buttons have picked, which its confirm presses (padKeys). */
+  picked?: PadPick
   onNumber: (value: number) => void
   onErase: () => void
   onTogglePencil: () => void
@@ -32,7 +35,16 @@ const padColumns = (size: number) => Math.ceil(size / Math.ceil(size / 6))
  * buttons of equal weight, one of which silently re-aimed every key above it. Down here, cut to the same
  * square as a number and standing in the same grid, the pencil says what it is — the mode the keys are in.
  */
-export const FutoshikiPad: FC<Props> = ({ size, pencil, exhausted, disabled, onNumber, onErase, onTogglePencil }) => {
+export const FutoshikiPad: FC<Props> = ({
+  size,
+  pencil,
+  exhausted,
+  disabled,
+  picked,
+  onNumber,
+  onErase,
+  onTogglePencil,
+}) => {
   const { t } = useTranslation("common")
   return (
     <div className="flex w-full max-w-[min(56vh,26rem)] flex-col items-center gap-1.5">
@@ -52,6 +64,7 @@ export const FutoshikiPad: FC<Props> = ({ size, pencil, exhausted, disabled, onN
               // A number with every square of its own already spoken for is dimmed, not removed:
               // the pad must not reshuffle under a finger mid-solve.
               "opacity-40": exhausted.has(value) && !disabled,
+              "board-cursor": picked === value,
             })}
           >
             {value}
@@ -81,7 +94,8 @@ export const FutoshikiPad: FC<Props> = ({ size, pencil, exhausted, disabled, onN
           className={clsx(
             keyCls,
             "w-11",
-            disabled ? "border-stone-700 bg-stone-900 opacity-40" : "border-stone-600 bg-stone-800 hover:bg-stone-700"
+            disabled ? "border-stone-700 bg-stone-900 opacity-40" : "border-stone-600 bg-stone-800 hover:bg-stone-700",
+            picked === "erase" && "board-cursor"
           )}
         >
           🧽
