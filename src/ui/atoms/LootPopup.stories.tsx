@@ -60,7 +60,7 @@ const meta = {
   },
   args: {
     youFoundLabel: "You found",
-    clickToContinueLabel: "Click to continue",
+    clickToContinueLabel: "Continue",
   },
 } satisfies Meta<typeof LootPopup>
 
@@ -313,7 +313,7 @@ export const AllRarities: Story = {
           itemComponent={<TreasureItem symbol={rarityData[currentRarity].symbol} rarity={currentRarity} />}
           onDismiss={() => setIsOpen(false)}
           youFoundLabel="You found"
-          clickToContinueLabel="Click to continue"
+          clickToContinueLabel="Continue"
         />
       </div>
     )

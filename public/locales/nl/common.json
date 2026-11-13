@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Je voortgang kan niet geladen worden",
     "body": "De browser geeft je opgeslagen spel nu niet vrij. Je save is niet weg: herlaad de pagina om het opnieuw te proberen.",
-    "banner": "Voortgang wordt niet opgeslagen. Tik om te herladen.",
+    "banner": "Voortgang wordt niet opgeslagen. Opnieuw laden.",
     "reload": "Herlaad",
     "continue": "Speel verder zonder opslaan",
     "reset": "Begin opnieuw (save wissen)",
@@ -110,7 +110,7 @@
     "solvedUnaided": "Opgelost zonder ook maar één hint",
     "solvedWithHints_one": "Opgelost met {{count}} hint",
     "solvedWithHints_other": "Opgelost met {{count}} hints",
-    "tapToContinue": "Tik om verder te gaan",
+    "tapToContinue": "Verder",
     "goal": "Doel",
     "controls": "Bediening",
     "controlsUndo": "ongedaan maken",
@@ -143,7 +143,7 @@
     "lockedColor": "Die sleutel heb je op deze verdieping nog niet gevonden."
   },
   "chest": {
-    "tapToOpen": "Tik om te openen",
+    "tapToOpen": "Openen",
     "money_one": "{{count}} munt",
     "money_other": "{{count}} munten",
     "mapPiece": "Kaartdeel",
@@ -169,7 +169,7 @@
     "youFound": "Je hebt gevonden",
     "youReceived": "Je kreeg",
     "expeditionReward": "Extra beloning voor het voltooien van de expeditie",
-    "clickToContinue": "Tik ergens om door te gaan"
+    "clickToContinue": "Ga verder"
   },
   "money": {
     "label": "Munten"
@@ -263,7 +263,7 @@
     "tabNew_other": "{{label}} · {{count}} nieuw",
     "empty": "Je kist is nog leeg",
     "newLabel": "NIEUW",
-    "clickForDetails": "Tik op een tegel voor details",
+    "clickForDetails": "Kies een tegel voor details",
     "categories": {
       "deities": "🏺 Goden",
       "professions": "⚱️ Beroepen",
@@ -362,12 +362,12 @@
       "alone": "In de opgelichte rij is {{glyph}} het enige stuk zonder getal erop. Reken uit wat het weegt.",
       "equalShares": "In de opgelichte rij staan alleen maar {{glyph}} tegenover een getal. Verdeel dat getal eerlijk.",
       "difference": "De twee opgelichte rijen zijn hetzelfde, behalve {{glyph}}. Vergelijk ze.",
-      "cancelGlyph": "Aan beide kanten van de opgelichte rij ligt {{glyph}}. Tik er één aan om hem aan beide kanten weg te halen — de rij blijft kloppen.",
-      "cancelStones": "Aan beide kanten van de opgelichte rij liggen gewone getallen. Tik er één aan om aan beide kanten evenveel weg te halen.",
-      "swap": "Eén opgelichte rij zegt wat één {{glyph}} in zijn eentje waard is. Tik op de {{glyph}} in de andere opgelichte rij en dan op die rij."
+      "cancelGlyph": "Aan beide kanten van de opgelichte rij ligt {{glyph}}. Kies er één om hem aan beide kanten weg te halen — de rij blijft kloppen.",
+      "cancelStones": "Aan beide kanten van de opgelichte rij liggen gewone getallen. Kies er één om aan beide kanten evenveel weg te halen.",
+      "swap": "Eén opgelichte rij zegt wat één {{glyph}} in zijn eentje waard is. Kies de {{glyph}} in de andere opgelichte rij en dan die rij."
     },
     "swap": {
-      "pick": "Tik op een opgelichte rij om deze {{glyph}} te ruilen voor wat die rij zegt dat hij waard is.",
+      "pick": "Kies een opgelichte rij om deze {{glyph}} te ruilen voor wat die rij zegt dat hij waard is.",
       "none": "Niets hier zegt wat één {{glyph}} in zijn eentje waard is, en er ligt niets gelijks tegenover."
     },
     "goal": {
@@ -1447,7 +1447,7 @@
         "squeeze": "Er is nog maar zoveel dag over, en dit is alles wat er past.",
         "apart": "Andersom past het niet in de dag.",
         "split": "Probeer het andersom en er breekt iets anders.",
-        "move": "Sleep de omringde balk op de gearceerde streepjes."
+        "move": "Schuif de omringde balk op de gearceerde streepjes."
       }
     },
     "events": {

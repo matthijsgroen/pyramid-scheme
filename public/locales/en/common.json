@@ -3,7 +3,7 @@
   "saveUnreadable": {
     "title": "Your progress can't be loaded",
     "body": "The browser won't hand over your saved game right now. Your save isn't gone: reload the page to try again.",
-    "banner": "Progress isn't being saved. Tap to reload.",
+    "banner": "Progress isn't being saved. Reload.",
     "reload": "Reload",
     "continue": "Play on without saving",
     "reset": "Start over (delete save)",
@@ -110,7 +110,7 @@
     "solvedUnaided": "Solved without a single hint",
     "solvedWithHints_one": "Solved with {{count}} hint",
     "solvedWithHints_other": "Solved with {{count}} hints",
-    "tapToContinue": "Tap to continue",
+    "tapToContinue": "Continue",
     "goal": "Goal",
     "controls": "Controls",
     "controlsUndo": "undo",
@@ -143,7 +143,7 @@
     "lockedColor": "You haven't found that key on this floor yet."
   },
   "chest": {
-    "tapToOpen": "Tap to open",
+    "tapToOpen": "Open",
     "money_one": "{{count}} coin",
     "money_other": "{{count}} coins",
     "mapPiece": "Map Piece",
@@ -169,7 +169,7 @@
     "youFound": "You found",
     "youReceived": "You received",
     "expeditionReward": "Extra reward for completing the expedition",
-    "clickToContinue": "Tap anywhere to continue"
+    "clickToContinue": "Continue"
   },
   "money": {
     "label": "Coins"
@@ -263,7 +263,7 @@
     "tabNew_other": "{{label}} · {{count}} new",
     "empty": "Your chest is still empty",
     "newLabel": "NEW",
-    "clickForDetails": "Tap a tile for details",
+    "clickForDetails": "Choose a tile for details",
     "categories": {
       "deities": "🏺 Deities",
       "professions": "⚱️ Professions",
@@ -362,12 +362,12 @@
       "alone": "On the lit row, {{glyph}} is the only piece left without a number on it. Work out what it weighs.",
       "equalShares": "The lit row holds nothing but {{glyph}} against a number. Share that number out between them.",
       "difference": "The two lit rows are the same apart from {{glyph}}. Compare them.",
-      "cancelGlyph": "Both pans of the lit row hold {{glyph}}. Tap one to take it off both sides — the row stays balanced.",
-      "cancelStones": "Both pans of the lit row hold plain numbers. Tap one to take the same amount off both sides.",
-      "swap": "One lit row says what a single {{glyph}} is worth on its own. Tap the {{glyph}} in the other lit row, then tap that row."
+      "cancelGlyph": "Both pans of the lit row hold {{glyph}}. Choose one to take it off both sides — the row stays balanced.",
+      "cancelStones": "Both pans of the lit row hold plain numbers. Choose one to take the same amount off both sides.",
+      "swap": "One lit row says what a single {{glyph}} is worth on its own. Choose the {{glyph}} in the other lit row, then choose that row."
     },
     "swap": {
-      "pick": "Tap a lit row to trade this {{glyph}} for what that row says it is worth.",
+      "pick": "Choose a lit row to trade this {{glyph}} for what that row says it is worth.",
       "none": "Nothing here says what one {{glyph}} on its own is worth, and nothing opposite it matches."
     },
     "goal": {
@@ -1447,7 +1447,7 @@
         "squeeze": "There is only so much day left, and this is all of it that fits.",
         "apart": "The other way round does not fit in the day.",
         "split": "Try it the other way round and something else breaks.",
-        "move": "Drag the ringed bar onto the hatched ticks."
+        "move": "Slide the ringed bar onto the hatched ticks."
       }
     },
     "events": {
