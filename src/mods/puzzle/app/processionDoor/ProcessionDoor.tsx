@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
+import type { InputHandler } from "@/app/input/actions"
+import { domLayerHandler } from "@/app/input/domLayer"
 import type { SequenceFace } from "@/game/gateFace"
 import { GateFacePanel, type GateFaceMarker } from "@/ui/atoms/GateFacePanel"
 import { castGlyphs } from "@/mods/puzzle/game/procession/casts"
@@ -71,53 +73,71 @@ export const ProcessionDoor: FC<Props> = ({
 
   const [hinted, setHinted] = useState(false)
   const hint = hinted && !solved ? buildProcessionHint(puzzle, shown) : undefined
+  // A hint can name any bar, so it waits until none is locked.
+  const hintOffered = !solved && !hinted && locked.every(lock => !lock)
+
+  // Keys and pad: the board's cursor while there is a bar to move, the hint key as the hint button's tap, and
+  // the door's buttons (reset, turn around) by focus, the way the encounter frame walks them.
+  const [root, setRoot] = useState<HTMLDivElement | null>(null)
+  const keys =
+    (board: InputHandler): InputHandler =>
+    signal => {
+      if (signal.action.kind === "hint" && !signal.released) {
+        if (hintOffered && !signal.repeat) setHinted(true)
+        return hintOffered
+      }
+      if (!solved && board(signal)) return true
+      return root !== null && domLayerHandler(root)(signal)
+    }
 
   return (
-    <GateFacePanel
-      title={t("procession.door.title")}
-      hint={t(read ? "procession.door.read" : "procession.door.hint")}
-      markers={markers}
-      turnAroundLabel={t("gate.turnAround")}
-      onTurnAround={onTurnAround}
-    >
-      <ProcessionBoard
-        puzzle={puzzle}
-        state={shown}
-        skin={skin}
-        broken={brokenMarks(puzzle, shown)}
-        onFocus={() => {}}
-        hintBar={hint?.bar}
-        hintTick={hint?.tick}
-        solved={solved}
-        locked={read ? undefined : locked}
-        casting={casting}
-        onSlide={(bar, start) => {
-          if (solved || locked[bar]) return
-          const moved = slideBar(puzzle, shown, bar, start)
-          if (moved === shown) return
-          setStarts(moved.starts)
-          onStarts([...moved.starts])
-        }}
-      />
-      {hint && (
-        <p className="text-sm text-stone-300">
-          {t(`procession.hint.default.${hint.rung}`)} {t("procession.hint.default.move")}
-        </p>
-      )}
-      {/* A hint can name any bar, so it waits until none is locked. */}
-      {!solved && !hinted && locked.every(lock => !lock) && (
-        <button onClick={() => setHinted(true)} className="text-sm text-amber-200 hover:text-amber-100">
-          {t("procession.door.hintButton")}
-        </button>
-      )}
-      {read && onReset && (
-        <button
-          onClick={onReset}
-          className="rounded border border-amber-400 px-3 py-1 text-sm text-amber-200 hover:bg-amber-900/50"
-        >
-          {t("gateFace.reset")}
-        </button>
-      )}
-    </GateFacePanel>
+    <div ref={setRoot} className="focus-brackets">
+      <GateFacePanel
+        title={t("procession.door.title")}
+        hint={t(read ? "procession.door.read" : "procession.door.hint")}
+        markers={markers}
+        turnAroundLabel={t("gate.turnAround")}
+        onTurnAround={onTurnAround}
+      >
+        <ProcessionBoard
+          puzzle={puzzle}
+          state={shown}
+          skin={skin}
+          broken={brokenMarks(puzzle, shown)}
+          onFocus={() => {}}
+          boardInput={keys}
+          hintBar={hint?.bar}
+          hintTick={hint?.tick}
+          solved={solved}
+          locked={read ? undefined : locked}
+          casting={casting}
+          onSlide={(bar, start) => {
+            if (solved || locked[bar]) return
+            const moved = slideBar(puzzle, shown, bar, start)
+            if (moved === shown) return
+            setStarts(moved.starts)
+            onStarts([...moved.starts])
+          }}
+        />
+        {hint && (
+          <p className="text-sm text-stone-300">
+            {t(`procession.hint.default.${hint.rung}`)} {t("procession.hint.default.move")}
+          </p>
+        )}
+        {hintOffered && (
+          <button onClick={() => setHinted(true)} className="text-sm text-amber-200 hover:text-amber-100">
+            {t("procession.door.hintButton")}
+          </button>
+        )}
+        {read && onReset && (
+          <button
+            onClick={onReset}
+            className="rounded border border-amber-400 px-3 py-1 text-sm text-amber-200 hover:bg-amber-900/50"
+          >
+            {t("gateFace.reset")}
+          </button>
+        )}
+      </GateFacePanel>
+    </div>
   )
 }
