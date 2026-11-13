@@ -377,6 +377,11 @@
     "name": {
       "default": "Balance Scale",
       "weighing": "Weighing of the Heart"
+    },
+    "controls": {
+      "move": "choose a piece, row or button",
+      "press": "press it",
+      "weigh": "give the chosen glyph that weight"
     }
   },
   "sumplete": {
@@ -1187,6 +1192,13 @@
       "channel": "The Channel",
       "scribe": "Scribe's Sheet",
       "chambers": "Sealed Chambers"
+    },
+    "controls": {
+      "move": "go to a cell beside it; up and down lean left",
+      "right": "up-right or down-right",
+      "grab": "pick up the run, or take your number off",
+      "carry": "with the run picked up: carry it on",
+      "drop": "put the run down"
     }
   },
   "sudoku": {
@@ -1288,6 +1300,10 @@
     "hint": {
       "biggest": "This crocodile wants the biggest answer. That is {{value}}.",
       "smallest": "This crocodile wants the smallest answer. That is {{value}}."
+    },
+    "controls": {
+      "move": "choose a stone",
+      "step": "step on it"
     }
   },
   "canisters": {
@@ -1371,7 +1387,11 @@
     "legs": "measured {{done}} of {{total}}",
     "wanted": "Measure out",
     "claim": "this one",
-    "claimAria": "Say the {{capacity}} holds the amount"
+    "claimAria": "Say the {{capacity}} holds the amount",
+    "controls": {
+      "move": "choose a vessel or the “this one” under it",
+      "press": "pick up, pour in here, or claim"
+    }
   },
   "procession": {
     "name": {
@@ -1457,6 +1477,11 @@
       "hint": "Each tile you step on frees its doing. Order the day, then walk the tiles in that order.",
       "read": "The day is read. Walk its tiles in this order, from the first.",
       "hintButton": "Hint"
+    },
+    "controls": {
+      "row": "choose a row",
+      "slide": "slide its bar",
+      "mark": "pick a line under the day"
     }
   },
   "story": {
@@ -1511,6 +1536,10 @@
       "e": "Eastern",
       "s": "Southern",
       "w": "Western"
+    },
+    "controls": {
+      "move": "choose a mirror",
+      "turn": "turn it"
     }
   },
   "handle": {

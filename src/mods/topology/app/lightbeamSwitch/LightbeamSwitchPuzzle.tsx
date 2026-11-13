@@ -16,6 +16,7 @@ import {
   stateFitsBoard,
   turnSwitchMirror,
 } from "../../game/lightbeamSwitch/lightbeamSwitchState"
+import { useLightbeamSwitchControls } from "./lightbeamSwitchControls"
 
 type Props = {
   /** Already turned to face this room, so a shrine's bearing is the bearing of the door it opens. */
@@ -94,6 +95,7 @@ export const LightbeamSwitchPuzzle: FC<Props> = ({
   onSolved,
 }) => {
   const { t } = useTranslation("common")
+  const controls = useLightbeamSwitchControls()
   const [rawState, setState] = usePuzzleState(() => createLightbeamSwitchState(board, savedAngles), board)
   // `usePuzzleState` hands back whatever it last stored for this ROOM, unchecked against this render's
   // board — the room key survives a world regeneration that the board underneath it does not. A record
@@ -157,6 +159,7 @@ export const LightbeamSwitchPuzzle: FC<Props> = ({
       onReset={() => setState(createLightbeamSwitchState(board))}
       title={t("lightbeamSwitch.name")}
       goal={t("lightbeamSwitch.goal")}
+      controls={controls}
       rules={
         <ul className="list-disc space-y-1 pl-4">
           <li>{t("lightbeamSwitch.rules.shrines")}</li>

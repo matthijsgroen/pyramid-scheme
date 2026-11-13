@@ -75,3 +75,9 @@ export const KeyboardCursor: Story = {
 export const Wizard: Story = {
   args: { board: facing("three", ["n", "e", "w"], 3, "wizard"), exits: fork(["n", "e", "w"]) },
 }
+
+/** Played by pad: the same cursor, with the pad's buttons under the rules. */
+export const PadCursor: Story = {
+  args: { board: facing("three", ["n", "e", "w"]), exits: fork(["n", "e", "w"]) },
+  globals: { input: "pad", pad: "xbox" },
+}

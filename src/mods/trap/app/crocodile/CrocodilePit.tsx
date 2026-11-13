@@ -24,6 +24,7 @@ import { useTrapProgress } from "@/mods/trap/app/useTrapProgress"
 import explorer from "@/assets/tiles/default/explorer-n-1.png"
 import crocodileOpen from "@/assets/crocodile-250.png"
 import crocodileClosed from "@/assets/crocodile-closed-250.png"
+import { useCrocodileControls } from "./crocodileControls"
 
 type Props = {
   puzzle: CrossingPuzzle
@@ -113,6 +114,7 @@ const StoneKeys: FC<{
 
 export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
+  const controls = useCrocodileControls()
   const trap = useTrapProgress()
   const [state, setState] = useState(createCrossingState)
   const { path, bittenAt } = state
@@ -144,6 +146,7 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
       idleMs={hintIdleDelay(difficulty)}
       title={t("crocodile.name")}
       goal={t("crocodile.goal")}
+      controls={controls}
       rules={
         <ul className="list-disc space-y-1 pl-5">
           <li>{t("crocodile.rules.want")}</li>

@@ -23,6 +23,7 @@ import { useFrozenHint } from "@/mods/core/app/useFrozenHint"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { skinFor } from "./skins"
+import { useHidatoControls } from "./hidatoControls"
 
 type Props = {
   puzzle: HidatoPuzzleData
@@ -39,6 +40,7 @@ type Props = {
 
 export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
+  const controls = useHidatoControls()
   // Which place this room is. The board, the goal, the rules and every hint sentence are drawn from it.
   const skin = skinFor(role, theme, 0, room)
   const [state, setState] = usePuzzleState(() => createHidatoState(puzzle), puzzle)
@@ -90,6 +92,7 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
       idleMs={hintIdleDelay(difficulty)}
       title={t(`hidato.name.${skin.name}`)}
       goal={t(`hidato.goal.${skin.name}`, { last })}
+      controls={controls}
       rules={<HidatoRules skin={skin.name} />}
     >
       {({ reportInput, hintVisible, boardInput }) => (

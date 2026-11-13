@@ -377,6 +377,11 @@
     "name": {
       "default": "Weegschaal",
       "weighing": "Het Wegen van het Hart"
+    },
+    "controls": {
+      "move": "kies een stuk, rij of knop",
+      "press": "drukken",
+      "weigh": "geef het gekozen teken dat gewicht"
     }
   },
   "sumplete": {
@@ -1187,6 +1192,13 @@
       "channel": "Het Kanaal",
       "scribe": "Schrijversvel",
       "chambers": "Gesloten Kamers"
+    },
+    "controls": {
+      "move": "naar een vakje ernaast; op en neer gaan schuin links",
+      "right": "schuin rechts op of neer",
+      "grab": "reeks oppakken, of je getal weghalen",
+      "carry": "met de reeks in de hand: verder leggen",
+      "drop": "reeks neerleggen"
     }
   },
   "sudoku": {
@@ -1288,6 +1300,10 @@
     "hint": {
       "biggest": "Deze krokodil wil het grootste antwoord. Dat is {{value}}.",
       "smallest": "Deze krokodil wil het kleinste antwoord. Dat is {{value}}."
+    },
+    "controls": {
+      "move": "kies een steen",
+      "step": "erop stappen"
     }
   },
   "canisters": {
@@ -1371,7 +1387,11 @@
     "legs": "{{done}} van {{total}} afgemeten",
     "wanted": "Meet af",
     "claim": "deze",
-    "claimAria": "Zeg dat de {{capacity}} de hoeveelheid bevat"
+    "claimAria": "Zeg dat de {{capacity}} de hoeveelheid bevat",
+    "controls": {
+      "move": "kies een vat of de “deze” eronder",
+      "press": "oppakken, hierin gieten of aanwijzen"
+    }
   },
   "procession": {
     "name": {
@@ -1457,6 +1477,11 @@
       "hint": "Elke tegel waar je op stapt maakt zijn bezigheid vrij. Orden de dag en loop dan de tegels in die volgorde.",
       "read": "De dag is gelezen. Loop de tegels in deze volgorde, vanaf de eerste.",
       "hintButton": "Hint"
+    },
+    "controls": {
+      "row": "kies een rij",
+      "slide": "balk schuiven",
+      "mark": "kies een regel onder de dag"
     }
   },
   "story": {
@@ -1511,6 +1536,10 @@
       "e": "Oostelijke",
       "s": "Zuidelijke",
       "w": "Westelijke"
+    },
+    "controls": {
+      "move": "kies een spiegel",
+      "turn": "draaien"
     }
   },
   "handle": {

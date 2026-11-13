@@ -23,6 +23,7 @@ import { BalanceBoard } from "./BalanceBoard"
 import { BalanceRules } from "./BalanceRules"
 import { buildBalanceHint } from "./balanceHint"
 import { skinFor } from "./skins"
+import { useBalanceControls } from "./balanceControls"
 
 type Props = {
   puzzle: BalancePuzzleData
@@ -43,6 +44,7 @@ const symbolise = (params: { glyph?: string }, symbol: (glyph: string) => string
 
 export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
+  const controls = useBalanceControls(puzzle.maxValue)
   const skin = skinFor(role, theme, 0, room)
   const { glyphs, scales, maxValue, solution, techniqueCap } = puzzle
   const [state, setState] = usePuzzleState(() => createBalanceState(glyphs), puzzle)
@@ -107,6 +109,7 @@ export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room
       idleMs={hintIdleDelay(difficulty)}
       title={t(`balance.name.${skin.name}`)}
       goal={t(`balance.goal.${skin.name}`)}
+      controls={controls}
       rules={
         <BalanceRules
           manyRows={scales.length > 1}
