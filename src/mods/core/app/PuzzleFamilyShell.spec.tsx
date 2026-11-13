@@ -1,7 +1,10 @@
 // @vitest-environment jsdom
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { PuzzleFamilyShell } from "./PuzzleFamilyShell"
+import type { ComponentProps } from "react"
+import { PuzzleFamilyShell, type PuzzleShellApi } from "./PuzzleFamilyShell"
+import type { InputHandler } from "@/app/input/actions"
+import { useInputLayer } from "@/app/input/useInputLayer"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { listenForPageLayers } from "@/app/input/pageLayers"
 import { layerOnMount } from "@/ui/atoms/dialogFocus"
@@ -255,5 +258,83 @@ describe("leaving a board by key", () => {
     fireEvent.keyDown(screen.getByText("cell"), { code: "Escape" })
     expect(onCancel).toHaveBeenCalledTimes(1)
     stopListening()
+  })
+})
+
+describe("a board that takes keys", () => {
+  afterEach(cleanup)
+
+  const key = (code: string) =>
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent("keydown", { code, cancelable: true }))
+      window.dispatchEvent(new KeyboardEvent("keyup", { code }))
+    })
+
+  const Board = ({ api, board }: { api: PuzzleShellApi; board: InputHandler }) => {
+    useInputLayer(api.boardInput(board))
+    return <button>cell</button>
+  }
+
+  const renderWith = (props: Partial<ComponentProps<typeof PuzzleFamilyShell>> = {}) => {
+    const board = vi.fn<InputHandler>(({ released }) => !released)
+    const onCancel = vi.fn()
+    const onSolved = vi.fn()
+    render(
+      <PuzzleFamilyShell onSolved={onSolved} onCancel={onCancel} {...props}>
+        {api => <Board api={api} board={board} />}
+      </PuzzleFamilyShell>
+    )
+    const boardGot = () => board.mock.calls.filter(([signal]) => !signal.released).map(([signal]) => signal.action)
+    return { boardGot, onCancel, onSolved }
+  }
+
+  it("hands the board its directions and confirm", () => {
+    const { boardGot } = renderWith()
+    key("ArrowRight")
+    key("Enter")
+    expect(boardGot()).toEqual([{ kind: "move", dir: "e" }, { kind: "confirm" }])
+  })
+
+  it("keeps back, undo and hint for the shell's own buttons", () => {
+    const undo = vi.fn()
+    const { boardGot, onCancel } = renderWith({ undo: { onPress: undo, enabled: true }, hint: "do this" })
+    key("KeyZ")
+    expect(undo).toHaveBeenCalledTimes(1)
+    key("KeyH")
+    expect(screen.getByText("do this")).toBeTruthy()
+    key("Escape")
+    expect(onCancel).toHaveBeenCalledTimes(1)
+    expect(boardGot()).toEqual([])
+  })
+
+  it("presses undo only where its button could be pressed", () => {
+    const undo = vi.fn()
+    renderWith({ undo: { onPress: undo, enabled: false } })
+    key("KeyZ")
+    expect(undo).not.toHaveBeenCalled()
+  })
+
+  it("never gives undo or hint to the board, even in a family that has neither", () => {
+    const { boardGot } = renderWith()
+    key("KeyZ")
+    key("KeyH")
+    expect(boardGot()).toEqual([])
+  })
+
+  it("keeps keys off a finishing board, and Enter leaves the solved banner", () => {
+    vi.useFakeTimers()
+    try {
+      const { boardGot, onSolved } = renderWith({ solved: true })
+      key("ArrowLeft")
+      key("Enter")
+      expect(boardGot()).toEqual([])
+      expect(onSolved).not.toHaveBeenCalled()
+
+      act(() => vi.advanceTimersByTime(5000))
+      key("Enter")
+      expect(onSolved).toHaveBeenCalledExactlyOnceWith({ unaided: true })
+    } finally {
+      vi.useRealTimers()
+    }
   })
 })

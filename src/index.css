@@ -960,6 +960,34 @@ body {
     calc(var(--spacing-safe-bottom) + var(--spacing) * 2) calc(var(--spacing-safe-left) + var(--spacing) * 2);
 }
 
+/* The board cursor (keyboard-controller-plan.md, cursor look C): the cell under it lifts off the board, larger,
+   lighter, on a shadow, with an ember rim. Drawn for keys and pad only, so touch sees nothing new.
+
+   The rim is an outline and the shadows a filter, so a family's own rings (box-shadow) still show on it. The
+   dark halo under the rim holds it apart from a pale cell, and the tint is under the cell's content, so a
+   digit or a glyph keeps its own colour. */
+@utility board-cursor {
+  :root:is([data-input="keys"], [data-input="pad"]) & {
+    position: relative;
+    z-index: 5;
+    transform: scale(1.18);
+    outline: 3px solid var(--color-ember-400);
+    outline-offset: 1px;
+    /* A cell's colour fade would start the rim from the text colour, flashing it white as the cursor lands. */
+    transition-property: color, background-color, border-color;
+    filter: brightness(1.2) drop-shadow(0 0 1.5px var(--color-stone-950)) drop-shadow(0 7px 8px rgb(0 0 0 / 0.75));
+  }
+  :root:is([data-input="keys"], [data-input="pad"]) &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: color-mix(in srgb, var(--color-ember-200) 22%, transparent);
+    pointer-events: none;
+  }
+}
+
 @custom-variant mdh {
   @media (height >= 48rem /* 768px */) {
     @slot;
