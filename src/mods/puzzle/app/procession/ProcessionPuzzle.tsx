@@ -76,8 +76,9 @@ export const ProcessionPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
       goal={t(`procession.goal.${skin.name}`)}
       rules={<ProcessionRules skin={skin.name} />}
     >
-      {({ reportInput, hintVisible }) => (
+      {({ reportInput, hintVisible, boardInput }) => (
         <ProcessionBoard
+          boardInput={boardInput}
           puzzle={puzzle}
           state={state}
           skin={skin}

@@ -1044,6 +1044,72 @@ body {
   }
 }
 
+/*
+ * Look B on an object a board's own cursor stands on (a sledge, a bar), drawn on the element itself rather than
+ * on a focused control. `data-held` marks the object taken in hand: thicker, longer, lighter brackets and a
+ * stronger glow. The element must already be positioned.
+ */
+@utility cursor-brackets {
+  :root:is([data-input="keys"], [data-input="pad"]) &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow:
+      inset 0 0 0 2px color-mix(in srgb, var(--color-ember-400) 55%, transparent),
+      inset 0 0 14px 2px color-mix(in srgb, var(--color-ember-400) 35%, transparent);
+  }
+  :root:is([data-input="keys"], [data-input="pad"]) &::after {
+    --arm: 14px;
+    --line: 3px;
+    --ink: var(--color-ember-400);
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(var(--ink) 0 0) top left / var(--arm) var(--line),
+      linear-gradient(var(--ink) 0 0) top left / var(--line) var(--arm),
+      linear-gradient(var(--ink) 0 0) top right / var(--arm) var(--line),
+      linear-gradient(var(--ink) 0 0) top right / var(--line) var(--arm),
+      linear-gradient(var(--ink) 0 0) bottom left / var(--arm) var(--line),
+      linear-gradient(var(--ink) 0 0) bottom left / var(--line) var(--arm),
+      linear-gradient(var(--ink) 0 0) bottom right / var(--arm) var(--line),
+      linear-gradient(var(--ink) 0 0) bottom right / var(--line) var(--arm);
+    background-repeat: no-repeat;
+    filter: drop-shadow(0 0 1.5px var(--color-stone-950));
+  }
+  :root:is([data-input="keys"], [data-input="pad"]) &[data-held]::before {
+    box-shadow:
+      inset 0 0 0 3px var(--color-ember-300),
+      inset 0 0 22px 6px color-mix(in srgb, var(--color-ember-400) 60%, transparent);
+  }
+  :root:is([data-input="keys"], [data-input="pad"]) &[data-held]::after {
+    --arm: 22px;
+    --line: 5px;
+    --ink: var(--color-ember-300);
+    filter: drop-shadow(0 0 1.5px var(--color-stone-950)) drop-shadow(0 0 5px var(--color-ember-400));
+  }
+}
+
+/* The held object itself, lifted off the board under its brackets: a little larger, lighter, with a shadow. */
+@utility cursor-lift {
+  :root:is([data-input="keys"], [data-input="pad"]) &[data-held] {
+    z-index: 5;
+    transform: scale(1.06);
+    filter: brightness(1.15) drop-shadow(0 6px 6px rgb(0 0 0 / 0.7));
+  }
+}
+
+/* Drawn for keys and pad only, as the cursor is: a mark that says what the keys will do (the lane arrows). */
+@utility cursor-only {
+  display: none;
+  :root:is([data-input="keys"], [data-input="pad"]) & {
+    display: block;
+  }
+}
+
 @custom-variant mdh {
   @media (height >= 48rem /* 768px */) {
     @slot;
