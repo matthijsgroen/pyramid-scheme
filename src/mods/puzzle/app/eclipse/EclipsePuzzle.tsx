@@ -88,8 +88,9 @@ export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, 
       goal={t("eclipse.goal")}
       rules={<EclipseRules signs={puzzle.links.length > 0} />}
     >
-      {({ reportInput, hintVisible }) => (
+      {({ reportInput, hintVisible, boardInput }) => (
         <EclipseBoard
+          boardInput={boardInput}
           puzzle={puzzle}
           state={state}
           theme={theme}

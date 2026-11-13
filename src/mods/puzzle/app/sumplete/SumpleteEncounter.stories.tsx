@@ -64,6 +64,37 @@ export const Starter: Story = {
   ),
 }
 
+/**
+ * The board as a keyboard or pad player sees it: the cursor (look C, the lifted cell) on the cell it starts
+ * on. Arrows or WASD move it, Enter or Space cycles the cell, Z undoes, H asks for the hint, Escape leaves.
+ */
+export const KeyboardCursor: Story = {
+  args: { tileset: "starter", children: null },
+  globals: { input: "keys" },
+  render: () => (
+    <EncounterModal tileset="starter">
+      <Sumplete difficulty="junior" />
+    </EncounterModal>
+  ),
+}
+
+/** The cursor on every rank's wall: it has to read on the pale stones as well as the dark ones. */
+export const KeyboardCursorEveryRank: Story = {
+  args: { children: null },
+  globals: { input: "keys" },
+  render: () => (
+    <div className="flex flex-col gap-8">
+      {[...difficulties, "cave" as const, "sphinx" as const].map(tileset => (
+        <div key={tileset} className="relative min-h-180">
+          <EncounterModal tileset={tileset}>
+            <Sumplete difficulty="starter" />
+          </EncounterModal>
+        </div>
+      ))}
+    </div>
+  ),
+}
+
 /** Every rank's wall behind the same board: the blocks have to work on all five stones. */
 export const EveryRank: Story = {
   args: { children: null },

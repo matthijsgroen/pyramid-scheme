@@ -23,6 +23,20 @@ const withI18next = (Story, context) => {
   )
 }
 
+// The input last used, as the game marks it on <html>: cursors and focus rings draw for keys and pad only.
+const withInput = (Story, context) => {
+  const { input } = context.globals
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    const root = document.documentElement
+    if (input) root.dataset.input = input
+    else delete root.dataset.input
+  }, [input])
+
+  return <Story />
+}
+
 const preview: Preview = {
   tags: ["autodocs"],
   parameters: {
@@ -42,7 +56,7 @@ const preview: Preview = {
       },
     },
   },
-  decorators: [withI18next],
+  decorators: [withI18next, withInput],
 }
 
 export const globalTypes = {
@@ -54,6 +68,19 @@ export const globalTypes = {
       items: [
         { value: "en", title: "English" },
         { value: "nl", title: "Nederlands" },
+      ],
+      showName: true,
+    },
+  },
+  input: {
+    name: "Input",
+    description: "The input last used: keys and pad draw the board cursor",
+    toolbar: {
+      icon: "button",
+      items: [
+        { value: "touch", title: "Touch" },
+        { value: "keys", title: "Keys" },
+        { value: "pad", title: "Pad" },
       ],
       showName: true,
     },

@@ -7,6 +7,7 @@ import { HINT_COOLDOWN_MS, useHintAvailability, type InputEffect } from "./useHi
 import type { SolveOutcome } from "@/app/reactions/reactionContributions"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
+import type { InputHandler } from "@/app/input/actions"
 
 export type PuzzleShellApi = {
   /** Call when the board reaches its solved state. */
@@ -18,6 +19,11 @@ export type PuzzleShellApi = {
   reportInput: (effect?: InputEffect) => void
   /** True while the hint is on screen — families highlight the cells it names. */
   hintVisible: boolean
+  /**
+   * How a board opts into keys and pad: it opens an input layer with `boardInput(itsHandler)`. Back, undo and
+   * hint are the shell's, pressed through the same handlers as its buttons; everything else goes to the board.
+   */
+  boardInput: (board: InputHandler) => InputHandler
 }
 
 /**
@@ -181,6 +187,45 @@ export const PuzzleFamilyShell = ({
     reportInput()
     control.onPress()
   }
+  const leave = () => {
+    cancelSolve()
+    onCancel()
+  }
+  const askHint = () => {
+    reveal()
+    onHintRevealed?.()
+  }
+  // Reported here because this is the only place that knows: a board finished without a
+  // hint is the one thing about HOW it was played that nobody downstream can reconstruct.
+  const carryOn = () => onSolved({ unaided: hintsUsed === 0 })
+
+  const boardInput =
+    (board: InputHandler): InputHandler =>
+    signal => {
+      const { action, repeat, released } = signal
+      if (released) return board(signal)
+      if (action.kind === "back") {
+        if (!repeat) leave()
+        return true
+      }
+      if (solvedBanner) {
+        if (action.kind !== "confirm") return false
+        if (!repeat) carryOn()
+        return true
+      }
+      if (finishing) return false
+      if (action.kind === "undo") {
+        if (!undo) return false
+        if (!repeat && undo.enabled) press(undo)()
+        return true
+      }
+      if (action.kind === "hint") {
+        if (!hint) return false
+        if (!repeat && !cooling) askHint()
+        return true
+      }
+      return board(signal)
+    }
 
   return (
     <>
@@ -192,10 +237,7 @@ export const PuzzleFamilyShell = ({
             where every other screen in the game keeps its way out. */}
         <button
           data-input-back
-          onClick={() => {
-            cancelSolve()
-            onCancel()
-          }}
+          onClick={leave}
           className="flex h-11 items-center rounded px-2 text-sm text-stone-300 hover:bg-stone-800"
         >
           ← {t("ui.backToMap")}
@@ -242,7 +284,7 @@ export const PuzzleFamilyShell = ({
           finishing && "opacity-90"
         )}
       >
-        {children({ solved: handleSolved, reportInput, hintVisible: revealed && hint !== undefined })}
+        {children({ solved: handleSolved, reportInput, hintVisible: revealed && hint !== undefined, boardInput })}
       </div>
       {/* **Two slots, and only ever two.** A step back and a hint are the only controls that mean the same
           thing on every board, so they are the only ones that earn a fixed place — landed on by thumb,
@@ -271,10 +313,7 @@ export const PuzzleFamilyShell = ({
             "history" — and help is the thing worth being able to find without reading. */}
         {hint && (
           <button
-            onClick={() => {
-              reveal()
-              onHintRevealed?.()
-            }}
+            onClick={askHint}
             disabled={cooling}
             className={clsx(pillCls, "relative overflow-hidden", {
               "bg-amber-700 text-amber-100 hover:bg-amber-600": !cooling && !nudging,
@@ -324,9 +363,7 @@ export const PuzzleFamilyShell = ({
       )}
       {solvedBanner && (
         <button
-          // Reported here because this is the only place that knows: a board finished without a
-          // hint is the one thing about HOW it was played that nobody downstream can reconstruct.
-          onClick={() => onSolved({ unaided: hintsUsed === 0 })}
+          onClick={carryOn}
           className="absolute inset-0 flex flex-col items-center justify-center rounded-lg bg-stone-900/40"
         >
           <span className="flex flex-col items-center gap-1 rounded-lg bg-stone-900/90 px-6 py-4">
