@@ -257,3 +257,35 @@ describe("reaching a tab row", () => {
     expect(document.activeElement).toBe(selected)
   })
 })
+
+describe("reaching a checkbox", () => {
+  const wideAt = (el: HTMLElement, top: number) => {
+    el.getBoundingClientRect = () => ({ left: 0, top, width: 400, height: 10 }) as DOMRect
+    return el
+  }
+  // A wide field, a checkbox at the far left of its full-width label row, and a wide button below.
+  const form = () => {
+    const root = dialog()
+    wideAt(button(root, "Language"), 0)
+    const row = wideAt(root.appendChild(document.createElement("label")), 40)
+    const checkbox = row.appendChild(document.createElement("input"))
+    checkbox.type = "checkbox"
+    checkbox.getBoundingClientRect = () => ({ left: 0, top: 40, width: 10, height: 10 }) as DOMRect
+    const below = wideAt(button(root, "Travel card"), 80)
+    return { root, checkbox, below }
+  }
+
+  it("lands on a checkbox from a wide control below its label row", () => {
+    const { root, checkbox, below } = form()
+    below.focus()
+    domLayerHandler(root)(signal({ kind: "move", dir: "n" }))
+    expect(document.activeElement).toBe(checkbox)
+  })
+
+  it("leaves a checkbox for the wide control below its label row", () => {
+    const { root, checkbox, below } = form()
+    checkbox.focus()
+    domLayerHandler(root)(signal({ kind: "move", dir: "s" }))
+    expect(document.activeElement).toBe(below)
+  })
+})

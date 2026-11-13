@@ -66,6 +66,14 @@ describe("the keyboard as an input source", () => {
     expect(deliver).not.toHaveBeenCalled()
   })
 
+  it("moves on from a checkbox with the arrows, and leaves Space to toggle it", () => {
+    const checkbox = document.body.appendChild(document.createElement("input"))
+    checkbox.type = "checkbox"
+    press("ArrowDown", {}, checkbox)
+    press("Space", {}, checkbox)
+    expect(delivered().map(signal => signal.action)).toEqual([{ kind: "move", dir: "s" }])
+  })
+
   it("leaves Enter and Space on a focused button to press that button, but not Escape", () => {
     const button = document.body.appendChild(document.createElement("button"))
     press("Enter", {}, button)
