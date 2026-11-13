@@ -12,7 +12,7 @@ played, and open an issue or a task for anything that plays wrong.
 - **The junior props in their rooms (PR #383).** Each in its own material colours, copper only as accent, sized against the explorer?
 - **Junior rooms with a patron Thoth statue (`junior_1`, `junior_3`, the shrine and garden rooms).** Does the god read as the floor's, and not as decor?
 - **Temple of Thoth (`junior_3`) pyramids 1-4.** Do scribe puzzles come up more than other kinds, and does the temple now read as writing?
-- **The water locks in the Valley of the Craftsmen (`junior_2` pyramids 3 and 4, `waterMoves`, `sluice`).** Open design question: does a flooded hall in the dry valley read as wrong, or would they sit better on the flood journey (`junior_1`)?
+- **Junior's first lock mechanics without Fez** (`dropDown`, `leverOpensADoor`, `torch`, `waterMoves`, `doorWaitsForTwo`, `stoneOnAPlate`, `leverSwapsDoors`). Does each lesson floor teach its control on its own? Where it does not, propose one Fez line there.
 
 ## The procession door
 
