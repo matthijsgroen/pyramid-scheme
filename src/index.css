@@ -989,6 +989,18 @@ body {
   }
 }
 
+/* A mark on the edge of the cursor's cell (a futoshiki or eclipse sign) steps outward as the cell lifts, by
+   half of what the cell grows, so it stays on the lifted edge. The board sets the way out as --beside-x and
+   --beside-y (-1, 0 or 1) and a cell's length as --cell. */
+@utility cursor-beside {
+  :root:is([data-input="keys"], [data-input="pad"]) & {
+    transform: translate(
+      calc(var(--beside-x, 0) * (var(--cursor-lift, 1.18) - 1) / 2 * var(--cell)),
+      calc(var(--beside-y, 0) * (var(--cursor-lift, 1.18) - 1) / 2 * var(--cell))
+    );
+  }
+}
+
 /* Look C inside an SVG board, where a cell cannot carry an outline or a ::before: the board draws the cursor
    cell again on top, scaled, and this lightens it and lays its shadow. Hidden for touch. */
 @utility svg-cursor {

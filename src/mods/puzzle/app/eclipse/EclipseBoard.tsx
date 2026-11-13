@@ -120,21 +120,36 @@ const signShare = (size: number) => 34 - (size - 4) * 4
  * pair takes the weight the board needs at every grid size. It rides on a dark disc because it sits in the
  * gutter, where the two squares behind it would otherwise cut through the strokes.
  */
-const Sign: FC<{ puzzle: EclipsePuzzle; link: Link; broken: boolean }> = ({ puzzle, link, broken }) => {
+const Sign: FC<{ puzzle: EclipsePuzzle; link: Link; broken: boolean; cursor: number }> = ({
+  puzzle,
+  link,
+  broken,
+  cursor,
+}) => {
   const { size } = puzzle
   const share = 100 / size
   // Midway between the two cells' centres, which is the shared edge whichever way the pair lies.
   const left = ((colOf(size, link.a) + colOf(size, link.b)) / 2 + 0.5) * share
   const top = ((rowOf(size, link.a) + rowOf(size, link.b)) / 2 + 0.5) * share
+  // Away from the cursor's square, when it is one of the pair: `cursor-beside` steps the sign out with the lift.
+  const [from, to] = cursor === link.a ? [link.a, link.b] : cursor === link.b ? [link.b, link.a] : [0, 0]
   return (
     <span
       className={clsx(
         // No percentage padding here: it would resolve against the whole board rather than this disc, which
         // inflated a 30px mark to 100px. The strokes are inset inside the viewBox instead.
-        "absolute z-10 aspect-square -translate-1/2 rounded-full bg-stone-950",
+        "absolute z-10 aspect-square -translate-1/2 cursor-beside rounded-full bg-stone-950",
         broken ? "text-red-400" : "text-stone-200"
       )}
-      style={{ left: `${left}%`, top: `${top}%`, width: `${signShare(size) / size}%` }}
+      style={{
+        left: `${left}%`,
+        top: `${top}%`,
+        width: `${signShare(size) / size}%`,
+        // A square is this many of the disc's own widths, which is what a percentage in a translate measures.
+        ["--cell" as string]: `${10000 / signShare(size)}%`,
+        ["--beside-x" as string]: colOf(size, to) - colOf(size, from),
+        ["--beside-y" as string]: rowOf(size, to) - rowOf(size, from),
+      }}
     >
       <svg viewBox="0 0 24 24" className="size-full" aria-hidden focusable="false">
         <g stroke="currentColor" strokeWidth={3.5} strokeLinecap="round" fill="none">
@@ -248,7 +263,13 @@ export const EclipseBoard: FC<Props> = ({
         })}
       </div>
       {puzzle.links.map(link => (
-        <Sign key={linkKey(link)} puzzle={puzzle} link={link} broken={broken.has(linkKey(link))} />
+        <Sign
+          key={linkKey(link)}
+          puzzle={puzzle}
+          link={link}
+          broken={broken.has(linkKey(link))}
+          cursor={cursor.row * size + cursor.col}
+        />
       ))}
     </div>
   )
