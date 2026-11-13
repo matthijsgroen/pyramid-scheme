@@ -1138,22 +1138,22 @@
     "rules": {
       "default": {
         "given": "De getallen die al in de raat staan horen bij de puzzel — die blijven staan.",
-        "enter": "Kies een getal om de reeks daar op te pakken en dan een leeg vakje ernaast om verder te gaan — of leg hem in één keer door de vakjes waar de reeks langs gaat.",
+        "enter": "Trek een lijn vanaf een getal door de lege vakjes ernaast om de reeks verder te leggen.",
         "back": "Kies een getal dat je zelf legde en kies het nog eens om het er weer af te halen, samen met alles wat er los van komt te liggen. De reeks een andere kant op leggen doet hetzelfde. Ongedaan maken haalt je laatste zet terug."
       },
       "channel": {
         "given": "De akkers die al een getal hebben horen bij de puzzel — die blijven staan.",
-        "enter": "Kies een akker met een getal om het water daar op te pakken en dan een droge akker ernaast om verder te graven — of graaf in één keer langs de akkers waar het kanaal langs loopt.",
+        "enter": "Graaf een kanaal vanaf een akker met een getal door de droge akkers ernaast om het water verder te leiden.",
         "back": "Kies een akker die je groef en kies hem nog eens om hem weer dicht te gooien, samen met het kanaal dat er los van komt te liggen. Een andere kant op graven doet hetzelfde. Ongedaan maken haalt je laatste zet terug."
       },
       "scribe": {
         "given": "De tekens die in rood staan horen bij de puzzel — die blijven staan.",
-        "enter": "Kies een teken om daar de rietpen op te pakken en dan een lege plek ernaast om verder te schrijven — of schrijf in één keer langs de regel.",
+        "enter": "Schrijf een regel vanaf een teken door de lege plekken ernaast om verder te tellen.",
         "back": "Kies een teken dat je zelf schreef en kies het nog eens om het weg te schrapen, samen met de regel die er los van komt te liggen. Een andere kant op schrijven doet hetzelfde. Ongedaan maken haalt je laatste zet terug."
       },
       "chambers": {
         "given": "De kamers die al een getal hebben zijn door de bouwers uitgehouwen — die blijven staan.",
-        "enter": "Kies een kamer met een getal om de gang daar op te pakken en dan een gesloten kamer ernaast om door te breken — of breek in één keer door langs de kamers waar de gang langs loopt.",
+        "enter": "Breek een gang vanaf een kamer met een getal door de gesloten kamers ernaast om verder te komen.",
         "back": "Kies een kamer die je opende en kies hem nog eens om hem weer dicht te zetten, samen met de gang die er los van komt te liggen. Een andere kant op doorbreken doet hetzelfde. Ongedaan maken haalt je laatste zet terug."
       }
     },

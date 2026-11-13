@@ -1138,22 +1138,22 @@
     "rules": {
       "default": {
         "given": "The numbers already in the comb are part of the puzzle — they stay put.",
-        "enter": "Choose a number to pick the run up there, then a touching empty cell to carry it on — or carry it straight on through the cells it goes.",
+        "enter": "Draw a line from a number through the empty cells beside it to carry the run on.",
         "back": "Choose a number you laid and choose it again to take it back off, along with anything left hanging on it. Carrying the run a different way out of a number does the same. Undo takes back your last move."
       },
       "channel": {
         "given": "The fields already numbered are part of the puzzle — they stay put.",
-        "enter": "Choose a numbered field to pick the water up there, then a dry field beside it to dig on — or dig straight on along the fields the channel runs.",
+        "enter": "Dig a channel from a numbered field through the dry fields beside it to carry the water on.",
         "back": "Choose a field you dug and choose it again to fill it back in, along with any channel left cut off from it. Digging a different way out of a field does the same. Undo takes back your last move."
       },
       "scribe": {
         "given": "The figures inked in red are the puzzle's own — they stay put.",
-        "enter": "Choose a figure to take up the reed there, then an empty space beside it to write on — or write straight on along the line.",
+        "enter": "Write a line from a figure through the empty spaces beside it to carry the count on.",
         "back": "Choose a figure you wrote and choose it again to scrape it off, along with any line left cut off from it. Writing a different way out of a figure does the same. Undo takes back your last move."
       },
       "chambers": {
         "given": "The chambers already numbered were cut by the builders — they stay put.",
-        "enter": "Choose a numbered chamber to take up the passage there, then a sealed chamber beside it to break through — or break straight on along the chambers the passage runs.",
+        "enter": "Break a passage from a numbered chamber through the sealed chambers beside it to carry it on.",
         "back": "Choose a chamber you opened and choose it again to seal it up, along with any passage left cut off from it. Breaking through a different way out of a chamber does the same. Undo takes back your last move."
       }
     },
