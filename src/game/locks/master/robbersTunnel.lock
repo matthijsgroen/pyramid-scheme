@@ -1,0 +1,18 @@
+// designed by: Claude
+// master. The robbers' tunnel: their crawl is narrow and ends in a drop, so nothing comes down it in your hands,
+// and its trapdoor holds while a stone lies on the shelf above: the shelf's stone goes down the robbers' shaft.
+// Below, the robbers' stone props the ladder home, and the vault's two plates want both stones at once.
+in -- hall
+hall -[K]- out
+hall -[u:empty]- landing
+landing -[unladen]- crawl
+crawl >> pit
+hall -- shaft
+pit -[p]- >> hall
+pit -[q1+q2]- vault
+P pipe @shaft @pit
+u plate @hall stone
+p plate @pit stone
+q1 plate @pit
+q2 plate @pit
+K activator @vault

@@ -1,0 +1,22 @@
+// designed by: Claude
+// master. Nefertari's groundwater: salt water stands in the tomb, and her painted hall must stay dry. The way out
+// floats only on high water, and high water drowns the painted hall unless a stone on the sill plate holds its dam.
+// The one stone is wanted twice: first in the cellar, dry only while its water is let down, to reach the key; then
+// on the sill, whose room is dry only while the cellar's water stands high.
+in -- court
+court -[T+K+S:high]- out
+court -- painted
+court -- east
+court -- cellar
+cellar -- deep
+deep -[d]- vault
+painted -[S:low|p]
+east -[R:high]
+deep -[R:low]
+S toggle @court low high
+R toggle @cellar high low
+p plate @east
+d plate @deep
+q plate @painted stone
+T torch @painted
+K activator @vault

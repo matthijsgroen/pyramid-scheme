@@ -1,0 +1,21 @@
+// designed by: Claude
+// master. Giza's sun court: two mirrors throw the sun into the halls, and a hall in shadow cannot be crossed and
+// puts its torch out. The vault's plate wants the stone from the east hall, and the vault is lit only while both
+// mirrors face away: fetch the stone and the key before the torches, or light them twice.
+in -- court
+court -[T1+T2+K]- out
+court -- east
+court -- west
+court -- north
+court -- tower
+north -[p]- vault
+east -[A:b]
+west -[B:b]
+north -[A:a+B:a]
+A toggle @court
+B toggle @tower
+p plate @north
+q plate @east stone
+T1 torch @east
+T2 torch @west
+K activator @vault
