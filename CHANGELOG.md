@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Canisters: a picked-up vessel shows it is held, and Enter or Escape puts it down.
 - Beside a drop on the map, the arrows show only the ways you can walk, and a corner right beside you gets an arrow.
 - On the unequal and sun-and-moon puzzles the signs beside the keyboard cursor step out with it instead of hiding.
 - The game works offline again.

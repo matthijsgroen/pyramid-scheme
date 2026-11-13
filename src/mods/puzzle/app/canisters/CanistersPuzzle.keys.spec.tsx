@@ -21,8 +21,8 @@ afterEach(() => {
 /** A 5 and a 3: one pour leaves the 2 that is asked for in the 5. */
 const puzzle: CanistersPuzzleData = { capacities: [5, 3], start: [5, 0], targets: [2], budget: 4 }
 
-const open = () => {
-  const { container } = render(<CanistersPuzzle puzzle={puzzle} onSolved={() => {}} onCancel={() => {}} />)
+const open = (onCancel = () => {}) => {
+  const { container } = render(<CanistersPuzzle puzzle={puzzle} onSolved={() => {}} onCancel={onCancel} />)
   const labelled = (prefix: string) =>
     within(container)
       .getAllByRole("button")
@@ -32,6 +32,7 @@ const open = () => {
     claims: () => labelled("canisters.claimAria"),
     read: () => labelled("canister of").map(vessel => vessel.getAttribute("aria-label")),
     left: () => within(container).getByText("canisters.movesLeft").textContent,
+    held: () => labelled("canister of").map(vessel => vessel.querySelector("[data-held]") !== null),
   }
 }
 
@@ -78,5 +79,31 @@ describe("CanistersPuzzle by keys", () => {
     )
     act(() => taps.claims()[0].click())
     expect(keyed).toEqual(taps.left())
+  })
+
+  it("marks the picked-up canister as held, and only that one, while the cursor walks on", () => {
+    const keys = open()
+    press("Enter")
+    press("ArrowRight")
+    press("ArrowRight")
+    expect(document.activeElement).toBe(keys.vessels()[1])
+    expect(keys.held()).toEqual([true, false])
+  })
+
+  it("confirm on the held canister puts it down", () => {
+    const keys = open()
+    press("Enter")
+    press("Enter")
+    expect(keys.held()).toEqual([false, false])
+  })
+
+  it("back puts the held canister down rather than leaving the board", () => {
+    const onCancel = vi.fn()
+    const keys = open(onCancel)
+    press("Enter")
+    press("Escape")
+    expect(keys.held()).toEqual([false, false])
+    expect(onCancel).not.toHaveBeenCalled()
+    expect(keys.read()).toEqual(["canister of 5, holding 5", "canister of 3, holding 0"])
   })
 })

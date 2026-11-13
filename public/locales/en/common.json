@@ -1416,7 +1416,8 @@
     "claimAria": "Say the {{capacity}} holds the amount",
     "controls": {
       "move": "choose a vessel or the “this one” under it",
-      "press": "pick up, pour in here, or claim"
+      "press": "pick up, pour in here, or claim",
+      "putDown": "put the held vessel down again"
     }
   },
   "procession": {
