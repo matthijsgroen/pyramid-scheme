@@ -2028,59 +2028,6 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 
 **Import:** `yarn import-reading art/masters/props/sphinx/namePanel.webp --name=sphinxNamePanel` — then give `WALLS.starter_1.panel` `art: "sphinxNamePanel"`, the image's aspect, and the cartouche's inside as its `signs` rectangle.
 
-### `junior/lotusPool` — a lotus pool sunk into the court
-
-**New:** the garden court's pool, two cells across (`--cells=2x1`, like the banquet table), standing in the middle
-of `gardenCourt` and `bigGardenCourt` in place of the one-cell basin. The scaffold is the priest's sacred pool at
-the table's frame, with the junior floor laid round it by `--context`: a hole is not a product shot
-(`prop-pipeline.md`). No `--seat`: the coping is flush with the paving, so nothing stands up to cast.
-
-**Attach:**
-
-1. `~/tile-previews/lotusPool-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A single object painted in flat matte gouache, seen from above and slightly in front, in the same raked view as the reference. Landscape, three units wide by two tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself. No perspective and no vanishing point: verticals stay vertical, horizontals stay horizontal.
-
-The scene: a POOL cut down into a stone floor. The whole frame is that floor, and the pool is a hole in
-it. You are painting a floor with a pool in it, not an object standing on a surface.
-
-The field filling the frame is the PAVING. The dark rectangle sunk into it is the pool. The low border
-running all the way round it is a stone COPING, bedded flush with the paving on all four sides, and the
-length of it nearest you passes IN FRONT of the pool. The ledge at the lower left, below the surface, is a
-STEP walking down into it.
-
-The water is still, clear green-blue, darker toward the far end. On it float flat round LOTUS PADS, a
-few blue LOTUS flowers open among them, and one white one; a small grey-blue fish shows under the surface
-near the step. Nothing stands up out of the water higher than a flower.
-
-Nothing here is a tank, a tub, a trough or a basin, and nothing has an outside you could see. NOTHING
-STANDS ABOVE THE PAVING — not even the coping, which is bedded level with it, its top face in the same
-plane as the slabs it is set into.
-
-The paving is orange sandstone in large squares, as the reference; keep every joint of the ruled grid
-where it is, so the paving reads as one floor running out of the picture on all four sides. The coping is
-pale limestone in one unbroken course, and there is no shadow beside it.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nobleman's house: orange sandstone, painted plaster, cedar, linen, reed and pottery, each in its OWN colours so it reads at a glance as what it is. Copper is an accent only — a rim, a band, a hasp, gone verdigris green at the edges — never a tint over the whole object.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold basin --contents=pool --width=672 --height=448 --colour=#e0c193 --floor=#e2a86f
-yarn import-tile art/masters/props/junior/lotusPool.webp --tier=junior --name=lotusPool --slot=prop \
-  --cells=2x1 --filter=smooth --mask="$OBJ"
-```
-
-Then `lotusPool` joins the decoration kinds with a `{ cols: 2, rows: 1, tall: 0 }` footprint, takes the basin's
-place in both garden courts, and junior is baked again.
-
----
-
 ## Patrons — seventeen
 
 **IF A GOD COMES BACK AS THE HEAP, `prim_shrine` TAKES `--contents=standing`.** The default contents is

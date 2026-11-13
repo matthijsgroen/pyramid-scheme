@@ -917,6 +917,11 @@ if [ -f art/masters/props/junior/banquetTable.webp ]; then
   yarn import-tile art/masters/props/junior/banquetTable.webp --tier=junior --name=banquetTable --slot=prop \
     --cells=2x1 --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 fi
+if [ -f art/masters/props/junior/lotusPool.webp ]; then
+  scaffold basin --contents=pool --width=672 --height=448 --colour=#e0c193 --floor=#e2a86f
+  yarn import-tile art/masters/props/junior/lotusPool.webp --tier=junior --name=lotusPool --slot=prop \
+    --cells=2x1 --filter=smooth --mask="$OBJ"
+fi
 if [ -f art/masters/props/junior/harp.webp ]; then
   scaffold harp --spin=4 --width=448 --height=1120 --colour=#e0c193 --floor=#e2a86f
   yarn import-tile art/masters/props/junior/harp.webp --tier=junior --name=harp --slot=prop \

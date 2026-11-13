@@ -119,6 +119,7 @@ export const juniorRules: Rule[] = [
       "rubblePile",
       "mat",
       "banquetTable",
+      "lotusPool",
       "harp",
       "dressingTable",
       "wigStand",

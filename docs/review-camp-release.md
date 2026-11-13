@@ -46,7 +46,7 @@ it ships; tick it off there.
 
 **Build:**
 
-- [ ] Rooms that grow for larger art: a room claims more floor where a prop's footprint needs it, the walk path
+- [x] Rooms that grow for larger art: a room claims more floor where a prop's footprint needs it, the walk path
       routed round it (the banquet table and the lotus pool in the middle). The same question for every tier after.
 - [x] Art: `junior/threshold`; the junior props and the six activities (themed-rooms.md, "Junior"), then their props' repaint.
 - [ ] Pass-through chambers read as rooms on the re-laid junior floors (1.17 a floor today).
