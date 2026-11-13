@@ -91,21 +91,20 @@ export const tierPalette: Record<Tileset, TierPalette> = {
     outline: "#241708",
   },
   expert: {
-    bed: "#7d8894",
-    slab: "#8d98a5",
-    slabHi: "#98a3b0",
-    slabLo: "#828d9a",
-    joint: "#2b333d",
+    bed: "#a9b2bc",
+    slab: "#bdc7cf",
+    slabHi: "#cad3db",
+    slabLo: "#b3bdc7",
+    joint: "#7f8996",
     accent: METALS.expert.accent,
-    wall: "#5b6675",
-    wallTop: "#7c8797",
-    wallBase: "#323a46",
-    // Dressed stone, deep enough that nothing of the desert gets down here. The cold one, and the one
-    // rank whose night is meant to read blue — so its near-black is the blue-grey its own stone is cut
-    // from rather than a wash borrowed from another rank.
-    shade: "rgba(23,28,34,0.63)",
+    wall: "#6b7c8f",
+    wallTop: "#7a8d9e",
+    wallBase: "#2c3640",
+    // A priest's temple: the lightest floor of the five, cool alabaster-grey, so the night is the lightest
+    // hand and the torch burns low. The cold one, so its near-black is its own blue-grey.
+    shade: "rgba(23,28,34,0.15)",
     faceNight: 0.31,
-    lamp: 1,
+    lamp: 0.3,
     prop: "#a7b2be",
     propDark: "#69737f",
     outline: "#171c22",
