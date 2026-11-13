@@ -46,8 +46,10 @@ export const PyramidDisplay: FC<{
   // expedition screen). Such a board must not be focusable: several are mounted at once inside one
   // scroll container, and focusing an off-centre one scrolls the playable board out of view.
   interactive?: boolean
+  onBack?: () => void
   onAnswer?: (blockId: string, value: number | undefined) => void
 }> = ({
+  onBack,
   pyramid,
   values,
   completed = false,
@@ -71,8 +73,14 @@ export const PyramidDisplay: FC<{
     onAnswer,
     values
   )
-  // Scenery boards take no keys: several are mounted at once, and only the playable one may answer them.
-  useInputLayer(handle, interactive)
+  // Scenery boards take no keys: several are mounted at once, and only the playable one may answer them. A
+  // board nobody can answer any more (solved, revealed) leaves them to the screen around it.
+  useInputLayer(signal => {
+    if (handle(signal)) return true
+    if (signal.action.kind !== "back" || !onBack) return false
+    if (!signal.released && !signal.repeat) onBack()
+    return !signal.released
+  }, interactive && !!onAnswer)
   const complete = !focusInput && isComplete({ levelNr: 1, pyramid, values })
   const correctAnswers = useMemo(() => getAnswers(pyramid), [pyramid])
   const decorationNumber = levelNr + decorationOffset

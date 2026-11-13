@@ -28,6 +28,7 @@ import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { Header } from "@/ui/atoms/Header"
 import { ActionButton } from "@/ui/atoms/ActionButton"
+import { layerOnMount } from "@/ui/atoms/dialogFocus"
 
 const generateExpeditionLevel = (journey: Journey, baseSeed: number, levelNr: number): PyramidLevel | null => {
   const random = mulberry32(generateNewSeed(baseSeed, levelNr))
@@ -152,10 +153,10 @@ export const PyramidExpedition: FC<{
 
   return backdrop(
     <>
-      <div className="flex size-full flex-col">
+      <div ref={layerOnMount} className="focus-brackets flex size-full flex-col">
         <div className="flex-shrink-0 bg-gradient-to-t from-transparent via-transparent to-black/30 backdrop-blur-sm">
           <Header className={textColor}>
-            <button onClick={onClose} className="mr-3 cursor-pointer text-lg font-bold focus:outline-none">
+            <button data-input-back onClick={onClose} className="mr-3 cursor-pointer rounded px-1 text-lg font-bold">
               {t("ui.backArrow")}
             </button>
             <h1 className="pointer-events-none mt-0 inline-block  text-center font-pyramid font-bold lg:text-2xl">
@@ -257,6 +258,7 @@ export const PyramidExpedition: FC<{
                   decorated={!levelSetup?.exterior}
                   grounded={levelSetup?.exterior === "cavern"}
                   onComplete={flow.completeLevel}
+                  onBack={onClose}
                   dayTime={dayTime}
                   revealed={revealSolvedBoard || boardSolved}
                   entranceBlockId={entering || levelCompleted || revealSolvedBoard ? entranceBlockId : undefined}

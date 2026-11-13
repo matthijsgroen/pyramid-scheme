@@ -27,7 +27,7 @@ export const ConfirmModal: FC<ConfirmModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50" onClick={onCancel} />
+      <div aria-hidden className="absolute inset-0 bg-black/50" onClick={onCancel} />
 
       {/* Modal */}
       <div

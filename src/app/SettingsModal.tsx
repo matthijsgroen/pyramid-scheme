@@ -47,7 +47,7 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, startGa
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50" onClick={handleClose} />
+      <div aria-hidden className="absolute inset-0 bg-black/50" onClick={handleClose} />
 
       {/* Modal */}
       <div

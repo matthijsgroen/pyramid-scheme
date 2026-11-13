@@ -9,6 +9,8 @@ export const Level: FC<{
   content: PyramidLevel
   storageKey?: string
   onComplete?: () => void
+  /** What `back` (Escape, B) does while the board has the keys: the screen's own way back. */
+  onBack?: () => void
   decorationOffset?: number
   decorated?: boolean
   /** The board stands on the bottom of its space (a cave floor) instead of in its middle. */
@@ -22,6 +24,7 @@ export const Level: FC<{
   content,
   storageKey,
   onComplete,
+  onBack,
   decorationOffset = 0,
   decorated,
   grounded = false,
@@ -81,6 +84,7 @@ export const Level: FC<{
           completed={completed}
           entranceBlockId={entranceBlockId}
           interactive={interactive}
+          onBack={onBack}
           onAnswer={
             storageKey && !revealed
               ? (blockId: string, value: number | undefined) => {
