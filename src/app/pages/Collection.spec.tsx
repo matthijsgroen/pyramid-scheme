@@ -1,5 +1,8 @@
 // @vitest-environment jsdom
-import { render, fireEvent, screen, waitFor, cleanup, act } from "@testing-library/react"
+import { render, renderHook, fireEvent, screen, waitFor, cleanup, act } from "@testing-library/react"
+import { controlsInARow, press } from "@/app/input/controlsInARow.testing"
+import { useInputRoot } from "@/app/input/useInputRoot"
+import { layerOnMount } from "@/ui/atoms/dialogFocus"
 import { useCollectionSeen } from "./useCollectionSeen"
 import type { FC } from "react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
@@ -181,5 +184,26 @@ describe(CollectionPage, () => {
     })
 
     expect(stored()).toEqual({ a: ["a1"] })
+  })
+
+  it("leads the arrows from the tabs straight to the open tab's items", async () => {
+    controlsInARow()
+    register("a", 1)
+    setTab("a", { ids: ["a1"] })
+    await seenSave({ a: ["a1"] })
+    render(
+      <div ref={layerOnMount}>
+        <CollectionPage />
+      </div>
+    )
+    const tab = await screen.findByRole("tab")
+    const root = renderHook(() => useInputRoot())
+    tab.focus()
+
+    press("ArrowRight")
+
+    expect(document.activeElement).toBe(screen.getByText("Item a1"))
+    root.unmount()
+    vi.restoreAllMocks()
   })
 })

@@ -1,6 +1,9 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, afterEach } from "vitest"
-import { render, screen, fireEvent, cleanup } from "@testing-library/react"
+import { render, renderHook, screen, fireEvent, cleanup } from "@testing-library/react"
+import { controlsInARow, press } from "@/app/input/controlsInARow.testing"
+import { useInputRoot } from "@/app/input/useInputRoot"
+import { layerOnMount } from "@/ui/atoms/dialogFocus"
 import { CollectibleSlot } from "./CollectibleSlot"
 
 afterEach(cleanup)
@@ -90,5 +93,39 @@ describe("CollectibleSlot new label", () => {
     render(<CollectibleSlot state="collected" symbol="𓂀" difficulty="junior" newLabel="NIEUW" onClick={onClick} />)
     fireEvent.click(screen.getByText("𓂀"))
     expect(onClick).toHaveBeenCalledOnce()
+  })
+})
+
+describe("CollectibleSlot in a piece of the page", () => {
+  it("is walked with the arrows and opened with Enter, past an empty slot it does not stop on", () => {
+    controlsInARow()
+    const onCollected = vi.fn()
+    const onPartial = vi.fn()
+    render(
+      <div ref={layerOnMount}>
+        <CollectibleSlot state="collected" symbol="𓂀" difficulty="junior" onClick={onCollected} />
+        <CollectibleSlot state="empty" onClick={vi.fn()} />
+        <CollectibleSlot
+          state="partial"
+          symbol="𓅱"
+          difficulty="junior"
+          progress={{ found: 1, required: 3 }}
+          onClick={onPartial}
+        />
+      </div>
+    )
+    const root = renderHook(() => useInputRoot())
+
+    press("ArrowRight")
+    expect(document.activeElement).toBe(screen.getByText("𓂀").closest("button"))
+    press("ArrowRight")
+    press("ArrowRight")
+    expect(document.activeElement?.textContent).toContain("𓅱")
+    press("Enter")
+    expect(onPartial).toHaveBeenCalledOnce()
+    expect(onCollected).not.toHaveBeenCalled()
+
+    root.unmount()
+    vi.restoreAllMocks()
   })
 })

@@ -1,4 +1,5 @@
-import type { FC } from "react"
+import type { FC, ReactNode } from "react"
+import clsx from "clsx"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { HieroglyphTile } from "./HieroglyphTile"
 import { Badge } from "@/ui/atoms/Badge"
@@ -39,6 +40,19 @@ export const CollectibleSlot: FC<CollectibleSlotProps> = props => {
   )
 }
 
+// A clickable slot is a button, so the keyboard and a pad reach it like any other control; the tile lifts on
+// the button's hover and press as it does on a tile that takes the click itself.
+const Pressable: FC<{ onClick?: () => void; children: ReactNode }> = ({ onClick, children }) =>
+  onClick ? (
+    <button type="button" onClick={onClick} className="group inline-flex w-fit cursor-pointer rounded-lg">
+      {children}
+    </button>
+  ) : (
+    children
+  )
+
+const LIFT = "group-hover:-translate-y-1 group-hover:scale-105 group-active:translate-y-0 group-active:scale-95"
+
 const SlotBody: FC<CollectibleSlotProps> = ({
   state,
   symbol,
@@ -53,31 +67,35 @@ const SlotBody: FC<CollectibleSlotProps> = ({
 }) => {
   if (state === "empty") return <HieroglyphTile empty size={size} className={className} />
 
+  const tileClassName = clsx(onClick && LIFT, className)
+
   if (state === "partial")
     return (
       <Badge label={progress ? `${progress.found}/${progress.required}` : undefined}>
-        <HieroglyphTile
-          symbol={symbol}
-          difficulty={difficulty}
-          fragmentProgress={progress}
-          selected={selected}
-          onClick={onClick}
-          size={size}
-          className={className}
-        />
+        <Pressable onClick={onClick}>
+          <HieroglyphTile
+            symbol={symbol}
+            difficulty={difficulty}
+            fragmentProgress={progress}
+            selected={selected}
+            size={size}
+            className={tileClassName}
+          />
+        </Pressable>
       </Badge>
     )
 
   const tile = (
-    <HieroglyphTile
-      symbol={symbol}
-      imageUrl={imageUrl}
-      difficulty={difficulty}
-      selected={selected}
-      onClick={onClick}
-      size={size}
-      className={className}
-    />
+    <Pressable onClick={onClick}>
+      <HieroglyphTile
+        symbol={symbol}
+        imageUrl={imageUrl}
+        difficulty={difficulty}
+        selected={selected}
+        size={size}
+        className={tileClassName}
+      />
+    </Pressable>
   )
   // Only stackable sections pass `count`, so other sections keep the bare tile (no wrapper div).
   return count !== undefined ? <Badge count={count}>{tile}</Badge> : tile
