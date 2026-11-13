@@ -970,7 +970,8 @@ body {
   :root:is([data-input="keys"], [data-input="pad"]) & {
     position: relative;
     z-index: 5;
-    transform: scale(1.18);
+    /* A piece as wide as its board (a whole row) sets a smaller lift, or it would spill over the board's edge. */
+    transform: scale(var(--cursor-lift, 1.18));
     outline: 3px solid var(--color-ember-400);
     outline-offset: 1px;
     /* A cell's colour fade would start the rim from the text colour, flashing it white as the cursor lands. */
@@ -978,6 +979,28 @@ body {
     filter: brightness(1.2) drop-shadow(0 0 1.5px var(--color-stone-950)) drop-shadow(0 7px 8px rgb(0 0 0 / 0.75));
   }
   :root:is([data-input="keys"], [data-input="pad"]) &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: color-mix(in srgb, var(--color-ember-200) 22%, transparent);
+    pointer-events: none;
+  }
+}
+
+/* The same look on a board of buttons, where the cursor is the focus: on whichever control within has it. */
+@utility board-focus {
+  :root:is([data-input="keys"], [data-input="pad"]) & :focus {
+    position: relative;
+    z-index: 5;
+    transform: scale(var(--cursor-lift, 1.18));
+    outline: 3px solid var(--color-ember-400);
+    outline-offset: 1px;
+    transition-property: color, background-color, border-color;
+    filter: brightness(1.2) drop-shadow(0 0 1.5px var(--color-stone-950)) drop-shadow(0 7px 8px rgb(0 0 0 / 0.75));
+  }
+  :root:is([data-input="keys"], [data-input="pad"]) & :focus::before {
     content: "";
     position: absolute;
     inset: 0;

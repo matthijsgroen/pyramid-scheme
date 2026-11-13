@@ -15,6 +15,8 @@ import {
 import { buildBalanceHint } from "./balanceHint"
 import { skinFor } from "./skins"
 import { BalanceBoard } from "./BalanceBoard"
+import { BalancePuzzle } from "./BalancePuzzle"
+import { EncounterModal } from "@/app/SiteMap/EncounterModal"
 
 const meta = {
   title: "Puzzle/BalanceBoard",
@@ -105,4 +107,20 @@ export const Played: Story = {
       </div>
     )
   },
+}
+
+/**
+ * The board as a keyboard or pad player sees it, in the frame it is met in: the focus is the cursor (look C,
+ * the lifted piece) and starts on the first piece. Arrows or WASD walk the pieces, rows and palette, Enter
+ * or Space presses, a digit sets that weight, H asks for the hint, Escape leaves.
+ */
+export const KeyboardCursor: Story = {
+  args: staticArgs(wizard),
+  globals: { input: "keys" },
+  parameters: { layout: "fullscreen" },
+  render: () => (
+    <EncounterModal tileset="master">
+      <BalancePuzzle puzzle={board("master", 2)} difficulty="master" onSolved={noop} onCancel={noop} />
+    </EncounterModal>
+  ),
 }

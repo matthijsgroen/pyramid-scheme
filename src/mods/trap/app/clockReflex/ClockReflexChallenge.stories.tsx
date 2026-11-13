@@ -34,6 +34,16 @@ export const Wizard: Story = {
   args: { question: generate(5, "wizard"), timeLimit: TRAP_TIME_LIMITS_SECONDS.wizard },
 }
 
+/**
+ * The choices as a keyboard or pad player sees them, untimed so it holds still: nothing is focused as the
+ * clock starts, so a stray Enter picks nothing. A digit 1–4 picks that choice outright; arrows or WASD walk
+ * them (the focus is the cursor, look C) and Enter or Space picks the focused one.
+ */
+export const KeyboardCursor: Story = {
+  args: { timeLimit: 0 },
+  globals: { input: "keys" },
+}
+
 /** Every tier's question, to see how far apart the four readings sit as the grid gets finer. */
 export const EveryTier: Story = {
   render: () => (

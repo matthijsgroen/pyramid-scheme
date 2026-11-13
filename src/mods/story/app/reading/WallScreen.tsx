@@ -39,7 +39,7 @@ export const WallScreen = ({ wall, known, repairable, owned, picked, onPut, onBa
           {/* A scoured slot takes the sign the player holds, so there is nothing to choose between
               and no tray to show — see Wall.missing. */}
           {!wall.missing && (
-            <div className="flex min-h-0 max-w-sm flex-1 flex-wrap content-start justify-center gap-2 overflow-y-auto">
+            <div className="board-focus flex min-h-0 max-w-sm flex-1 flex-wrap content-start justify-center gap-2 overflow-y-auto p-2">
               {owned.map(id => (
                 <button
                   key={id}

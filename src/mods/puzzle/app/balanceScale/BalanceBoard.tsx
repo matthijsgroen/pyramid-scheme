@@ -1,5 +1,7 @@
 import clsx from "clsx"
-import type { CSSProperties, FC } from "react"
+import type { CSSProperties, FC, KeyboardEvent } from "react"
+import type { InputHandler } from "@/app/input/actions"
+import { useFocusBoard } from "@/app/input/useFocusBoard"
 import type { BalanceLine } from "@/mods/puzzle/game/balanceScale/balanceStatus"
 import {
   hasTwin,
@@ -43,6 +45,8 @@ type Props = {
   onTapPiece: (ref: EquationRef, pan: Pan, index: number) => void
   onTapRow: (ref: EquationRef) => void
   onRemoveNote: (index: number) => void
+  /** The shell's `boardInput`: with it the board takes keys and pad, its focus as the cursor. */
+  boardInput?: (board: InputHandler) => InputHandler
 }
 
 // How far the heavy pan drops. Small on purpose: the pans hold numbers the player is reading, and a
@@ -51,6 +55,23 @@ const DROP_PX = 7
 const TILT_DEG = 4
 
 const dropOf = (status: BalanceLine["status"]): number => (status === "left" ? 1 : status === "right" ? -1 : 0)
+
+/**
+ * A row that answers a pending glyph, as a control: focusable while it offers, and pressed by Enter or Space
+ * the way a button is, through the same click a tap makes. It holds the pieces' buttons, so it cannot be one.
+ */
+const offeringRow = (offering: boolean) =>
+  offering
+    ? {
+        role: "button",
+        tabIndex: 0,
+        onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => {
+          if (event.target !== event.currentTarget || (event.key !== "Enter" && event.key !== " ")) return
+          event.preventDefault()
+          event.currentTarget.click()
+        },
+      }
+    : {}
 
 const refEquals = (a: EquationRef, b: EquationRef) => a.kind === b.kind && a.index === b.index
 const refIn = (refs: EquationRef[] | undefined, ref: EquationRef) =>
@@ -153,12 +174,16 @@ const ScaleRow: FC<RowProps & { line: BalanceLine }> = ({
   return (
     <div
       onClick={offering ? onTapRow : undefined}
-      className={clsx("relative flex w-full items-start gap-2 rounded-lg border px-2 pt-3 pb-1 transition-colors", {
-        "border-green-700 bg-green-950/40": line.status === "level",
-        "border-stone-700 bg-stone-900/40": line.status !== "level",
-        "ring-2 ring-sky-400": lit,
-        "cursor-pointer border-amber-400 ring-2 ring-amber-400": offering,
-      })}
+      {...offeringRow(offering)}
+      className={clsx(
+        "relative flex w-full items-start gap-2 rounded-lg border px-2 pt-3 pb-1 transition-colors [--cursor-lift:1.03]",
+        {
+          "border-green-700 bg-green-950/40": line.status === "level",
+          "border-stone-700 bg-stone-900/40": line.status !== "level",
+          "ring-2 ring-sky-400": lit,
+          "cursor-pointer border-amber-400 ring-2 ring-amber-400": offering,
+        }
+      )}
     >
       {/* The beam: the tilt is the feedback this whole family teaches with. */}
       <div
@@ -188,7 +213,8 @@ const ScaleRow: FC<RowProps & { line: BalanceLine }> = ({
 const NoteRow: FC<RowProps & { onRemove: () => void }> = ({ scale, lit, offering, onTapRow, onRemove, ...chips }) => (
   <div
     onClick={offering ? onTapRow : undefined}
-    className={clsx("flex w-full items-center gap-1 rounded border border-dashed px-2 py-1", {
+    {...offeringRow(offering)}
+    className={clsx("flex w-full items-center gap-1 rounded border border-dashed px-2 py-1 [--cursor-lift:1.03]", {
       "border-stone-600 bg-stone-900/60": !lit && !offering,
       "border-sky-400 ring-1 ring-sky-400": lit,
       "cursor-pointer border-amber-400 ring-1 ring-amber-400": offering,
@@ -230,7 +256,20 @@ export const BalanceBoard: FC<Props> = ({
   onTapPiece,
   onTapRow,
   onRemoveNote,
+  boardInput,
 }) => {
+  // A digit is that weight's key on the palette below.
+  const onSignal: InputHandler = ({ action, repeat, released }) => {
+    if (released || action.kind !== "value" || action.value > maxValue) return false
+    if (!repeat) onPickWeight(action.value)
+    return true
+  }
+  const root = useFocusBoard<HTMLDivElement>({
+    wrap: boardInput,
+    open: boardInput !== undefined,
+    focusFirst: true,
+    onSignal,
+  })
   const rowProps = (ref: EquationRef, scale: Scale) => ({
     values,
     highlighted,
@@ -246,7 +285,7 @@ export const BalanceBoard: FC<Props> = ({
   })
 
   return (
-    <div className="flex w-full max-w-[min(52vh,26rem)] flex-col gap-2 select-none">
+    <div ref={root} className="board-focus flex w-full max-w-[min(52vh,26rem)] flex-col gap-2 select-none">
       {scales.map((scale, index) => (
         <ScaleRow
           key={index}
