@@ -8,6 +8,8 @@ import type { SolveOutcome } from "@/app/reactions/reactionContributions"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import type { InputHandler } from "@/app/input/actions"
+import { ControlsBlock, type ControlLine } from "@/ui/molecules/ControlsBlock"
+import { key, pad } from "@/ui/atoms/glyphs"
 
 export type PuzzleShellApi = {
   /** Call when the board reaches its solved state. */
@@ -98,6 +100,8 @@ type Props = {
   title?: string
   /** The rules of this puzzle, shown under the board — scrolled to, never popped up. */
   rules?: ReactNode
+  /** The family's own keys and pad buttons, shown under the rules for keys and pad only. */
+  controls?: readonly ControlLine[]
   children: (api: PuzzleShellApi) => ReactNode
 }
 
@@ -131,6 +135,7 @@ export const PuzzleFamilyShell = ({
   goal,
   title,
   rules,
+  controls,
   children,
 }: Props) => {
   const { t } = useTranslation("common")
@@ -359,6 +364,17 @@ export const PuzzleFamilyShell = ({
               {rules}
             </>
           )}
+          {/* The shell's own three close the block, since they are the shell's on every board. */}
+          <ControlsBlock
+            lines={[
+              ...(controls ?? []),
+              [
+                ...(undo ? [{ keys: [key("Z")], pad: [pad("x")], label: t("ui.controlsUndo") }] : []),
+                ...(hint ? [{ keys: [key("H")], pad: [pad("select")], label: t("ui.controlsHint") }] : []),
+                { keys: [key("Esc")], pad: [pad("b")], label: t("ui.controlsLeave") },
+              ],
+            ]}
+          />
         </div>
       )}
       {solvedBanner && (

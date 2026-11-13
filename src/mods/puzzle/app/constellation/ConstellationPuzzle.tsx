@@ -21,6 +21,7 @@ import { skinFor } from "./skins"
 
 import { buildConstellationHint, type ConstellationHint } from "./constellationHint"
 import { ConstellationRules } from "./ConstellationRules"
+import { useConstellationControls } from "./constellationControls"
 
 /**
  * What a pair is held to. A pair that must be drawn is carried out by lines towards its floor, never past its
@@ -51,6 +52,7 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
   const { t } = useTranslation("common")
   // Which place this room is. The goal and the rules are both worded from it, so they are resolved once.
   const { name: skin } = skinFor(role, theme, 0, room)
+  const controls = useConstellationControls()
   const [state, setState] = usePuzzleState(() => createConstellationState(puzzle), puzzle)
 
   // The top rung walks groups across the whole board: derived only once asked for, and held as it was until a
@@ -108,6 +110,7 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
       title={t(`constellation.name.${skin}`)}
       goal={t(`constellation.goal.${skin}`)}
       rules={<ConstellationRules skin={skin} />}
+      controls={controls}
     >
       {({ reportInput, hintVisible, boardInput }) => (
         <ConstellationBoard
