@@ -138,9 +138,9 @@ an ask placed in an optional room is an arc the player can walk past.
 
 `story.reading.expert.*` — Plays when the formula wall on floor 1 of `expert_treasure_tomb` is put right, with the sign Henut gave on a revisit (`formula.expert.gift`, after Fez's `formula.expert.hint` at the empty wall).
 
-> **Explorer:** Second line. _Water to the thirsty._
+> **Explorer:** Second line. _Clothes to the naked._
 >
-> **Fez:** Bread, and now water. Somebody was very keen to be remembered as generous.
+> **Fez:** Bread, and now clothes. Somebody was very keen to be remembered as generous.
 >
 > **Explorer:** Everybody has it. Every wall, every tomb, the same two lines.
 >
