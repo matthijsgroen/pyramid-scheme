@@ -36,7 +36,7 @@ export const ConfirmModal: FC<ConfirmModalProps> = ({
         aria-modal="true"
         aria-label={title}
         tabIndex={-1}
-        className="relative z-10 mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl outline-none"
+        className="focus-brackets relative z-10 mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl outline-none"
       >
         <h2 className="mb-4 text-xl font-bold text-gray-900">{title}</h2>
 

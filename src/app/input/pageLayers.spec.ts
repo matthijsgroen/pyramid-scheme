@@ -52,6 +52,16 @@ describe("a piece of the page as an input layer", () => {
     unmount?.()
   })
 
+  it("is taken up by a listener that starts after it mounted, as the app root's does", () => {
+    stop()
+    const { el, onBack } = withWayBack()
+    const unmount = layerOnMount(el)
+    stop = listenForPageLayers()
+    escape()
+    expect(onBack).toHaveBeenCalledTimes(1)
+    unmount?.()
+  })
+
   it("is closed with the rest when nobody listens any more", () => {
     const { el, onBack } = withWayBack()
     layerOnMount(el)

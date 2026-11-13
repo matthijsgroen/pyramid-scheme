@@ -57,7 +57,7 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, startGa
         aria-labelledby="settings-title"
         tabIndex={-1}
         onKeyDown={trapTab}
-        className="relative z-10 mx-4 max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-lg bg-white p-6 shadow-xl outline-none"
+        className="focus-brackets relative z-10 mx-4 max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-lg bg-white p-6 shadow-xl outline-none"
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 id="settings-title" className="text-xl font-bold text-gray-900">

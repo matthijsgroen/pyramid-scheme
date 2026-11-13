@@ -35,7 +35,7 @@ export const NewChapterScreen: FC<NewChapterScreenProps> = ({
         aria-labelledby="new-chapter-title"
         tabIndex={-1}
         onKeyDown={trapTab}
-        className="flex w-full max-w-lg flex-col gap-3 rounded-t-[20px] bg-camp-paper px-4 pt-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-camp-ink outline-none lg:rounded-[20px] lg:border-2 lg:border-camp-ink lg:p-8"
+        className="focus-brackets flex w-full max-w-lg flex-col gap-3 rounded-t-[20px] bg-camp-paper px-4 pt-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-camp-ink outline-none lg:rounded-[20px] lg:border-2 lg:border-camp-ink lg:p-8"
       >
         <div className="text-xs font-extrabold tracking-widest text-camp-label uppercase">{subtitle}</div>
         <h1 id="new-chapter-title" className="font-pyramid text-[26px] leading-tight">

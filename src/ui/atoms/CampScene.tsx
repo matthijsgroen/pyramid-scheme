@@ -152,7 +152,7 @@ const EMBER_LEFT = `${EMBER} animate-camp-ember-left`
 
 const ENTRANCE = [
   "pointer-events-auto absolute flex [transform:translate(-50%,-100%)] cursor-pointer flex-col items-center justify-end",
-  "border-0 bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e0b33f]",
+  "border-0 bg-transparent p-0",
 ].join(" ")
 const TAG_LOOK = [
   "rounded-[10px] border-[1.5px] border-[#2b2118] bg-[#fff6e2] px-[9px] py-[2px]",

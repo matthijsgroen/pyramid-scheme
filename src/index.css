@@ -1016,8 +1016,11 @@ body {
  * whichever control within has the focus, which stays its own size.
  */
 @utility focus-brackets {
-  :root:is([data-input="keys"], [data-input="pad"]) & :focus {
+  /* A control placed by its own position keeps it: the brackets hang off any positioned box. */
+  :root:is([data-input="keys"], [data-input="pad"]) & :focus:not(.absolute, .fixed, .sticky) {
     position: relative;
+  }
+  :root:is([data-input="keys"], [data-input="pad"]) & :focus {
     outline: none;
     box-shadow:
       inset 0 0 0 2px color-mix(in srgb, var(--color-ember-400) 55%, transparent),

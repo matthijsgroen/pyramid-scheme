@@ -32,7 +32,7 @@ export const ComingHomeScreen: FC<ComingHomeScreenProps> = ({
       aria-labelledby="coming-home-title"
       tabIndex={-1}
       onKeyDown={trapTab}
-      className="grid w-full max-w-md grid-cols-1 content-start justify-items-center gap-4 outline-none lg:max-w-3xl lg:grid-cols-[14rem_minmax(0,1fr)] lg:grid-rows-[auto_auto_1fr] lg:justify-items-stretch lg:gap-x-7 lg:rounded-[20px] lg:border-2 lg:border-camp-ink lg:bg-camp-paper lg:p-8 lg:text-camp-ink"
+      className="focus-brackets grid w-full max-w-md grid-cols-1 content-start justify-items-center gap-4 outline-none lg:max-w-3xl lg:grid-cols-[14rem_minmax(0,1fr)] lg:grid-rows-[auto_auto_1fr] lg:justify-items-stretch lg:gap-x-7 lg:rounded-[20px] lg:border-2 lg:border-camp-ink lg:bg-camp-paper lg:p-8 lg:text-camp-ink"
     >
       <h1
         id="coming-home-title"

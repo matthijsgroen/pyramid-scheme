@@ -32,7 +32,7 @@ export const ShopPanel: FC<Props> = ({
       <div className="absolute inset-0 bg-black/70" onClick={onDismiss} />
       <div
         ref={layerOnMount}
-        className="relative z-10 mx-4 flex max-h-[90vh] w-full max-w-sm flex-col rounded-2xl border border-amber-700/50 bg-stone-900 p-5 shadow-2xl"
+        className="focus-brackets relative z-10 mx-4 flex max-h-[90vh] w-full max-w-sm flex-col rounded-2xl border border-amber-700/50 bg-stone-900 p-5 shadow-2xl"
       >
         <div className="mb-4 flex shrink-0 items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-2">

@@ -6,6 +6,7 @@ export const FOCUSABLE =
 /** Announced on `document` with the element as detail; the app's input layers listen (src/app/input). */
 export const INPUT_LAYER_OPENED = "inputlayer:opened"
 export const INPUT_LAYER_CLOSED = "inputlayer:closed"
+export const INPUT_LAYER_MARK = "data-input-layer"
 
 const announce = (type: string, el: HTMLElement) => {
   document.dispatchEvent(new CustomEvent(type, { detail: el }))
@@ -15,8 +16,13 @@ const announce = (type: string, el: HTMLElement) => {
 // pad. Its control marked `data-input-back` is what `back` (Escape) presses.
 export const layerOnMount = (el: HTMLElement | null) => {
   if (!el) return
+  // Marked too, for listeners that start after it mounted: the app root's effect runs after its children's refs.
+  el.setAttribute(INPUT_LAYER_MARK, "")
   announce(INPUT_LAYER_OPENED, el)
-  return () => announce(INPUT_LAYER_CLOSED, el)
+  return () => {
+    el.removeAttribute(INPUT_LAYER_MARK)
+    announce(INPUT_LAYER_CLOSED, el)
+  }
 }
 
 // A stable ref callback for a dialog (give it tabIndex -1): it becomes the top input layer, and focus moves in

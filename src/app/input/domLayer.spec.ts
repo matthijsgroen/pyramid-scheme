@@ -69,6 +69,21 @@ describe("back in a piece of the page", () => {
   })
 })
 
+describe("menu in a piece of the page", () => {
+  it("presses its settings, and does nothing without them", () => {
+    const root = dialog()
+    const plain = domLayerHandler(root)
+    button(root, "Unpack")
+    expect(plain(signal({ kind: "menu" }))).toBe(false)
+    const gear = button(root, "Settings")
+    gear.setAttribute("data-input-menu", "")
+    const onSettings = vi.fn()
+    gear.addEventListener("click", onSettings)
+    expect(plain(signal({ kind: "menu" }))).toBe(true)
+    expect(onSettings).toHaveBeenCalledTimes(1)
+  })
+})
+
 describe("moving and confirming in a piece of the page", () => {
   it("moves focus to the nearest control in that direction", () => {
     const root = dialog()
