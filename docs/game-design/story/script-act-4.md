@@ -139,7 +139,7 @@ sent to `master_2`. This says only that what they hold is wrong.
 
 ## The inscription, line three
 
-`story.reading.master.*`
+`story.reading.master.*` — Plays when the formula wall on floor 1 of `master_treasure_tomb` is put right, with the sign the priest gave on a revisit (`formula.master.gift`, after Fez's `formula.master.hint` at the empty wall).
 
 > **Explorer:** _Clothes to the naked._ Third line.
 >

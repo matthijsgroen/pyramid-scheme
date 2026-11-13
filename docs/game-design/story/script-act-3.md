@@ -136,7 +136,7 @@ an ask placed in an optional room is an arc the player can walk past.
 
 ## The inscription, line two
 
-`story.reading.expert.*`
+`story.reading.expert.*` — Plays when the formula wall on floor 1 of `expert_treasure_tomb` is put right, with the sign Henut gave on a revisit (`formula.expert.gift`, after Fez's `formula.expert.hint` at the empty wall).
 
 > **Explorer:** Second line. _Water to the thirsty._
 >

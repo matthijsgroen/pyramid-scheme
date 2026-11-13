@@ -2116,6 +2116,34 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 
 **Import:** `yarn import-reading art/masters/props/sphinx/namePanel.webp --name=sphinxNamePanel` — then give `WALLS.starter_1.panel` `art: "sphinxNamePanel"`, the image's aspect, and the cartouche's inside as its `signs` rectangle.
 
+### `default/formulaPanel` — the formula stela, one empty register
+
+**New:** the wall the player reads on the second floor of each tier's first treasure tomb (`formulaWall` in
+`src/mods/story/game/reading/formula.ts`): the things given away, written along one register. One painting for
+all four tiers. The reading screen writes the signs into the register from its left end, so the register is
+EMPTY of signs; what a shorter wall leaves unwritten reads as worn script. Until it lands the screen draws a
+bare slab, and the map a placeholder.
+
+**Attach:**
+
+1. `art/masters/props/junior/namePanel.webp` — Henut's name panel: the same kind of plate, for its slab, border and flat paint
+2. `art/masters/surfaces/junior-wall-face.webp` — the wall it stands on, for the stone only
+
+```
+A single flat object, painted in flat matte gouache, on pure magenta #FF00FF. Landscape, exactly twelve units wide by five tall. Do not re-compose it square. ONE OBJECT, AND IT FILLS THE FRAME, reaching the left and right edges. The magenta fills the frame around it to its edges: there is no wall, no floor and no surface behind the object. Seen straight on, flat, no perspective.
+
+The object: a LYING STELA, a flat rectangular slab of dressed limestone #c9b48c with a rounded top edge and a
+narrow red ochre #8a3a2a border, its edges softened by age. Across its middle runs ONE horizontal register
+between two thin incised lines: a band of plain smooth stone #d8c49c, four sign-widths long, EMPTY: no signs,
+no face, no marks in it. Above the register a narrow frieze of faint, worn, unreadable script, too eroded to
+make out a single sign. Lay the slab and border out like the first attached painting, turned to lie; take only
+the stone's colour from the second.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, evenly lit, crisp and clean. Nothing lighter than #e6d6b2, nothing darker than #3a2e20.
+```
+
+**Import:** `yarn import-reading art/masters/props/default/formulaPanel.webp --name=formulaPanel`, and the same master as the map's wall item in `src/assets/tiles/default/formulaPanel.png` — then give `formulaWall`'s `panel` `art: "formulaPanel"`, the image's aspect, and the register's inside as its `signs` rectangle (four cells; a wall of `n` signs takes the first `n`).
+
 ---
 
 ## Patrons — seventeen

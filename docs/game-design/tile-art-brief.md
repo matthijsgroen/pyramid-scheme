@@ -339,6 +339,9 @@ Painted into the face band above a cell — bounded things that hang **on** a wa
 | **breach** ⭑   | robbers' hole punched through mudbrick, plaster fallen   | plaster hacked through, mural cut in half       | **plug removed**, cord seal hanging, dark void behind | pried-off inlay, sockets left in the gold         | a crack with light coming through it              |
 | **plug** ⭑     | mud-brick fill, hand-smoothed                            | plastered-over doorway, outline showing         | **mud-brick plug, cord seal intact**                  | granite blocking stone, half-lowered              | an opening that closed itself                     |
 
+**formulaPanel** is one painting for every rank (`default/formulaPanel`): a lying stela with one empty
+register, where the reading screen writes the things given away. Placed only by the four formula rooms.
+
 ⭑ = new kind, no code change needed — `WallDecorationKind` takes them and the pools author them.
 
 **The priest's cloth is SEE-THROUGH, and no other rank's is.** His veil and his hanging are rendered
