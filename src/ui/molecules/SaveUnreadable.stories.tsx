@@ -9,7 +9,7 @@ const meta = {
     labels: {
       title: "Your progress can't be loaded",
       body: "The browser won't hand over your saved game right now. Your save isn't gone: reload the page to try again.",
-      banner: "Progress isn't being saved. Tap to reload.",
+      banner: "Progress isn't being saved. Reload.",
       reload: "Reload",
       continue: "Play on without saving",
       reset: "Start over (delete save)",

@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Opening a treasure chest shows the painted chest from the map.
 - A taken chest stands open, and a ward key's chest looks like treasure.
 - Puzzle rules no longer assume a finger: they describe the move, the Controls block the keys.
+- Hints and buttons no longer say tap: they read right with keys and controller too.
 
 ### Fixed
 
