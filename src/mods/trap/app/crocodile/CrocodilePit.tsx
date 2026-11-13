@@ -1,4 +1,7 @@
-import { useState, type FC } from "react"
+import { useState, type FC, type ReactNode } from "react"
+import type { InputHandler } from "@/app/input/actions"
+import { useGridCursor } from "@/app/input/useGridCursor"
+import { useInputLayer } from "@/app/input/useInputLayer"
 import clsx from "clsx"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
@@ -96,6 +99,18 @@ const WantMark: FC<{ sign: Sign; dimmed: boolean }> = ({ sign, dimmed }) => (
   </span>
 )
 
+/** A cursor along the row being answered, whose confirm is the tap on that stone. */
+const StoneKeys: FC<{
+  stones: number
+  boardInput: (board: InputHandler) => InputHandler
+  onStep: (stone: number) => void
+  children: (cursor: ReturnType<typeof useGridCursor>) => ReactNode
+}> = ({ stones, boardInput, onStep, children }) => {
+  const cursor = useGridCursor({ rows: 1, cols: Math.max(stones, 1), onConfirm: (_row, stone) => onStep(stone) })
+  useInputLayer(boardInput(cursor.handle))
+  return children(cursor)
+}
+
 export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const trap = useTrapProgress()
@@ -137,7 +152,7 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
         </ul>
       }
     >
-      {({ reportInput }) => {
+      {({ reportInput, boardInput }) => {
         const tapStone = (column: number, stone: number) => {
           // A tap the pit ignores changes nothing, so it only looks.
           const ignored = bittenAt || column !== facing
@@ -150,134 +165,148 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
         }
 
         return (
-          <div className="flex w-full flex-col items-center gap-2">
-            <p className="font-pyramid text-lg text-red-300" aria-label={`${trap.currentHealth}/${trap.maxHealth}`}>
-              {"❤️".repeat(trap.currentHealth)}
-              <span className="opacity-30">{"❤️".repeat(Math.max(trap.maxHealth - trap.currentHealth, 0))}</span>
-            </p>
+          <StoneKeys
+            stones={puzzle.columns[facing]?.length ?? 0}
+            boardInput={boardInput}
+            onStep={stone => tapStone(facing, stone)}
+          >
+            {cursor => (
+              <div className="flex w-full flex-col items-center gap-2">
+                <p className="font-pyramid text-lg text-red-300" aria-label={`${trap.currentHealth}/${trap.maxHealth}`}>
+                  {"❤️".repeat(trap.currentHealth)}
+                  <span className="opacity-30">{"❤️".repeat(Math.max(trap.maxHealth - trap.currentHealth, 0))}</span>
+                </p>
 
-            {/* A STAGE of its own height: every row is positioned against its bottom edge rather than
+                {/* A STAGE of its own height: every row is positioned against its bottom edge rather than
                 stacked in flow, which is what lets the whole pit slide forward a row at a time. */}
-            <div className="relative h-[48vh] min-h-80 w-full overflow-hidden rounded-lg bg-gradient-to-b from-blue-950 to-blue-800">
-              {/* The far bank — the row AFTER the last one, so it takes its place from the same depth
+                <div className="relative h-[48vh] min-h-80 w-full overflow-hidden rounded-lg bg-gradient-to-b from-blue-950 to-blue-800">
+                  {/* The far bank — the row AFTER the last one, so it takes its place from the same depth
                   maths as everything else. It starts as a line near the top of the pit and comes closer
                   with every step, arriving at the front when the crossing is done. */}
-              <div
-                className="absolute bottom-10 flex w-full flex-col items-center transition-all duration-400"
-                style={rowPlacement(puzzle.columns.length - facing)}
-              >
-                <div className="relative h-4 w-3/4 rounded-full bg-amber-700">
-                  {/* The crossing is over the moment the far bank is reached, so that is where the
+                  <div
+                    className="absolute bottom-10 flex w-full flex-col items-center transition-all duration-400"
+                    style={rowPlacement(puzzle.columns.length - facing)}
+                  >
+                    <div className="relative h-4 w-3/4 rounded-full bg-amber-700">
+                      {/* The crossing is over the moment the far bank is reached, so that is where the
                       character is standing when the shell says so. */}
-                  {finished && (
-                    <img src={explorer} alt="" className="absolute -top-10 left-1/2 h-10 w-auto -translate-x-1/2" />
-                  )}
-                </div>
-              </div>
-
-              {puzzle.columns
-                .map((stones, column) => ({ stones, column }))
-                .reverse()
-                .map(({ stones, column }) => {
-                  // Depth is measured from the row being answered, not from the bank: the pit slides so
-                  // that whichever row is next stands at the front, full size and readable, with the rest
-                  // of the crossing receding behind it.
-                  const depth = column - facing
-                  return (
-                    <div
-                      key={column}
-                      className={clsx(
-                        "absolute bottom-10 flex w-full flex-col items-center transition-all duration-400",
-                        depth < 0 && "opacity-60 blur-[1px]"
-                      )}
-                      style={rowPlacement(depth)}
-                    >
-                      <div
-                        // Wrapping rather than clipping: a row is authored to fit (see crocodileConfig),
-                        // and if a locale or a font ever makes one wider anyway, it folds instead of
-                        // running off the screen — no horizontal scroll, ever (puzzle-screens.md).
-                        className="flex w-full flex-wrap items-center justify-center gap-1.5"
-                      >
-                        {stones.map((stone, index) => {
-                          const crossed = column < path.length && path[column] === index
-                          const standing = crossed && column === path.length - 1
-                          const offered = column === facing
-                          const bittenHere = bittenAt?.column === column && bittenAt.stone === index
-                          return (
-                            <button
-                              key={index}
-                              onClick={() => tapStone(column, index)}
-                              disabled={!offered}
-                              className={clsx(
-                                // Sized off the screen rather than off a pixel guess: three stones a row
-                                // have to sit side by side on a 360px phone and still be a 44px tap target.
-                                // Only the front row is ever at full size, so this is what a sum is read at.
-                                "relative min-h-11 rounded-full border-2 px-2.5 py-2 font-pyramid text-[clamp(0.95rem,4.2vw,1.25rem)] whitespace-nowrap",
-                                standing && "border-amber-300 bg-amber-700 text-amber-50 ring-2 ring-amber-200",
-                                crossed && !standing && "border-emerald-500 bg-emerald-900 text-emerald-100",
-                                !crossed && offered && "border-amber-500 bg-stone-700 text-amber-100 active:scale-95",
-                                !crossed && !offered && "border-stone-600 bg-stone-800/70 text-amber-200/50"
-                              )}
-                            >
-                              {formulaToString(stone.formula, {}, "no")}
-                              {standing && !finished && (
-                                <img
-                                  src={explorer}
-                                  alt=""
-                                  className="absolute -top-10 left-1/2 h-10 w-auto -translate-x-1/2"
-                                />
-                              )}
-                              {bittenHere && (
-                                <img
-                                  src={crocodileClosed}
-                                  alt=""
-                                  className={clsx(
-                                    "absolute -top-6 left-1/2 w-20 -translate-x-1/2 animate-bounce",
-                                    puzzle.signs[column] === "biggest" && "-scale-x-100"
-                                  )}
-                                />
-                              )}
-                            </button>
-                          )
-                        })}
-                      </div>
-
-                      {/* The crocodile guarding THIS row, drawn on the near side of it — the one the player
-                        is about to feed — with the mark saying which of its stones it wants. Rows already
-                        crossed have nothing left to ask, so theirs is not drawn. */}
-                      {depth >= 0 && (
-                        <div
-                          className={clsx("flex items-center justify-center gap-2 pt-1", depth !== 0 && "opacity-60")}
-                        >
-                          {/* The source art faces RIGHT, so "biggest" is the mirrored one: `>` opens to
-                              the left and so must the mouth. */}
-                          <img
-                            src={crocodileOpen}
-                            alt=""
-                            className={clsx("w-14", puzzle.signs[column] === "biggest" && "-scale-x-100")}
-                          />
-                          <WantMark sign={puzzle.signs[column]} dimmed={depth !== 0} />
-                        </div>
+                      {finished && (
+                        <img src={explorer} alt="" className="absolute -top-10 left-1/2 h-10 w-auto -translate-x-1/2" />
                       )}
                     </div>
-                  )
-                })}
+                  </div>
 
-              {/* The near bank: the foothold the crossing starts from, and the one it returns to after a
+                  {puzzle.columns
+                    .map((stones, column) => ({ stones, column }))
+                    .reverse()
+                    .map(({ stones, column }) => {
+                      // Depth is measured from the row being answered, not from the bank: the pit slides so
+                      // that whichever row is next stands at the front, full size and readable, with the rest
+                      // of the crossing receding behind it.
+                      const depth = column - facing
+                      return (
+                        <div
+                          key={column}
+                          className={clsx(
+                            "absolute bottom-10 flex w-full flex-col items-center transition-all duration-400",
+                            depth < 0 && "opacity-60 blur-[1px]"
+                          )}
+                          style={rowPlacement(depth)}
+                        >
+                          <div
+                            // Wrapping rather than clipping: a row is authored to fit (see crocodileConfig),
+                            // and if a locale or a font ever makes one wider anyway, it folds instead of
+                            // running off the screen — no horizontal scroll, ever (puzzle-screens.md).
+                            className="flex w-full flex-wrap items-center justify-center gap-1.5"
+                          >
+                            {stones.map((stone, index) => {
+                              const crossed = column < path.length && path[column] === index
+                              const standing = crossed && column === path.length - 1
+                              const offered = column === facing
+                              const bittenHere = bittenAt?.column === column && bittenAt.stone === index
+                              return (
+                                <button
+                                  key={index}
+                                  onClick={() => (offered ? cursor.tap(0, index) : tapStone(column, index))}
+                                  disabled={!offered}
+                                  className={clsx(
+                                    // Sized off the screen rather than off a pixel guess: three stones a row
+                                    // have to sit side by side on a 360px phone and still be a 44px tap target.
+                                    // Only the front row is ever at full size, so this is what a sum is read at.
+                                    "relative min-h-11 rounded-full border-2 px-2.5 py-2 font-pyramid text-[clamp(0.95rem,4.2vw,1.25rem)] whitespace-nowrap",
+                                    standing && "border-amber-300 bg-amber-700 text-amber-50 ring-2 ring-amber-200",
+                                    crossed && !standing && "border-emerald-500 bg-emerald-900 text-emerald-100",
+                                    !crossed &&
+                                      offered &&
+                                      "border-amber-500 bg-stone-700 text-amber-100 active:scale-95",
+                                    !crossed && !offered && "border-stone-600 bg-stone-800/70 text-amber-200/50",
+                                    offered && !finished && cursor.at(0, index) && "board-cursor"
+                                  )}
+                                >
+                                  {formulaToString(stone.formula, {}, "no")}
+                                  {standing && !finished && (
+                                    <img
+                                      src={explorer}
+                                      alt=""
+                                      className="absolute -top-10 left-1/2 h-10 w-auto -translate-x-1/2"
+                                    />
+                                  )}
+                                  {bittenHere && (
+                                    <img
+                                      src={crocodileClosed}
+                                      alt=""
+                                      className={clsx(
+                                        "absolute -top-6 left-1/2 w-20 -translate-x-1/2 animate-bounce",
+                                        puzzle.signs[column] === "biggest" && "-scale-x-100"
+                                      )}
+                                    />
+                                  )}
+                                </button>
+                              )
+                            })}
+                          </div>
+
+                          {/* The crocodile guarding THIS row, drawn on the near side of it — the one the player
+                        is about to feed — with the mark saying which of its stones it wants. Rows already
+                        crossed have nothing left to ask, so theirs is not drawn. */}
+                          {depth >= 0 && (
+                            <div
+                              className={clsx(
+                                "flex items-center justify-center gap-2 pt-1",
+                                depth !== 0 && "opacity-60"
+                              )}
+                            >
+                              {/* The source art faces RIGHT, so "biggest" is the mirrored one: `>` opens to
+                              the left and so must the mouth. */}
+                              <img
+                                src={crocodileOpen}
+                                alt=""
+                                className={clsx("w-14", puzzle.signs[column] === "biggest" && "-scale-x-100")}
+                              />
+                              <WantMark sign={puzzle.signs[column]} dimmed={depth !== 0} />
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+
+                  {/* The near bank: the foothold the crossing starts from, and the one it returns to after a
                   bite. It is a stage element like any row — the row before the first one — so the first
                   step slides it out of the frame the same way every later step slides a crossed row out. */}
-              <div
-                className="absolute bottom-10 flex w-full flex-col items-center transition-all duration-400"
-                style={rowPlacement(-1 - facing)}
-              >
-                <div className="relative h-4 w-2/3 rounded-full bg-amber-700">
-                  {path.length === 0 && (
-                    <img src={explorer} alt="" className="absolute -top-10 left-1/2 h-10 w-auto -translate-x-1/2" />
-                  )}
+                  <div
+                    className="absolute bottom-10 flex w-full flex-col items-center transition-all duration-400"
+                    style={rowPlacement(-1 - facing)}
+                  >
+                    <div className="relative h-4 w-2/3 rounded-full bg-amber-700">
+                      {path.length === 0 && (
+                        <img src={explorer} alt="" className="absolute -top-10 left-1/2 h-10 w-auto -translate-x-1/2" />
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
+            )}
+          </StoneKeys>
         )
       }}
     </PuzzleFamilyShell>

@@ -1,5 +1,8 @@
 import clsx from "clsx"
 import type { FC } from "react"
+import type { InputHandler } from "@/app/input/actions"
+import { useGridCursor } from "@/app/input/useGridCursor"
+import { useInputLayer } from "@/app/input/useInputLayer"
 import {
   cellKey,
   directionStep,
@@ -84,12 +87,25 @@ type Props = {
   /** Labels the shrine at that index for a screen reader; the board itself says nothing about them. */
   shrineLabel?: (shrine: number) => string
   onTurn: (mirror: number) => void
+  /** The shell's `boardInput`: with it the board takes keys and pad, a cursor that lands on mirrors only. */
+  boardInput?: (board: InputHandler) => InputHandler
 }
 
-export const ShrineBeamBoard: FC<Props> = ({ grid, shrines, angles, shrineLabel, onTurn }) => {
+export const ShrineBeamBoard: FC<Props> = ({ grid, shrines, angles, shrineLabel, onTurn, boardInput }) => {
   const { size, sun, mirrors } = grid
   const walk = traceBeam(grid, shrines, angles)
   const mirrorAt = new Map(mirrors.map((at, index) => [cellKey(at), index]))
+  const cursor = useGridCursor({
+    rows: size,
+    cols: size,
+    start: () => mirrors[0] ?? { row: 0, col: 0 },
+    stops: mirrors,
+    onConfirm: (row, col) => {
+      const mirror = mirrorAt.get(cellKey({ row, col }))
+      if (mirror !== undefined) onTurn(mirror)
+    },
+  })
+  useInputLayer(boardInput ? boardInput(cursor.handle) : cursor.handle, boardInput !== undefined)
   const mirrorCells = new Set(mirrorAt.keys())
   return (
     // `isolate`, so the layering below is this board's own rather than whatever stacking context an
@@ -111,7 +127,11 @@ export const ShrineBeamBoard: FC<Props> = ({ grid, shrines, angles, shrineLabel,
             return (
               // `z-10` is what makes the target below reach anything: every cell is positioned, so a
               // later one in reading order paints — and takes taps — over an earlier one's overhang.
-              <button key={cellKey(at)} onClick={() => onTurn(mirror)} className={clsx(cls, "z-10")}>
+              <button
+                key={cellKey(at)}
+                onClick={() => cursor.tap(at.row, at.col)}
+                className={clsx(cls, "z-10", cursor.at(at.row, at.col) && "board-cursor")}
+              >
                 <Mirror angle={angles[mirror]} stops={TURN_ANGLES} movable />
                 {/* The target, reaching past the cell wherever the board leaves room — see tapInset. */}
                 <span className="absolute" style={{ inset: tapInset(mirrorCells, at) }} />

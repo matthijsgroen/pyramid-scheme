@@ -168,7 +168,7 @@ export const LightbeamSwitchPuzzle: FC<Props> = ({
         </ul>
       }
     >
-      {({ reportInput }) => (
+      {({ reportInput, boardInput }) => (
         <div
           className="grid w-full max-w-[min(56vh,26rem)] items-center justify-items-center gap-1"
           style={{ gridTemplateColumns: "12% minmax(0, 1fr) 12%", gridTemplateRows: "12% minmax(0, 1fr) 12%" }}
@@ -193,6 +193,7 @@ export const LightbeamSwitchPuzzle: FC<Props> = ({
           ))}
           <div className="col-start-2 row-start-2 w-full">
             <ShrineBeamBoard
+              boardInput={boardInput}
               grid={board.grid}
               shrines={board.shrines.map(shrine => shrine.at)}
               angles={state.angles}
