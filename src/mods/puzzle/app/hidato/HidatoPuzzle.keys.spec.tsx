@@ -55,6 +55,19 @@ const numbers = (root: HTMLElement) =>
     })
   )
 
+/** The cell under the keys' cursor, read off the lifted hex drawn at its centre. */
+const cursorAt = (root: HTMLElement) => {
+  const [x, y] = root
+    .querySelector("g.svg-cursor")!
+    .getAttribute("transform")!
+    .match(/translate\(([-\d.e]+) ([-\d.e]+)\)/)!
+    .slice(1)
+    .map(Number)
+  const r = y / 15
+  const q = x / (Math.sqrt(3) * 10) - r / 2
+  return hexKey({ q: Math.round(q), r: Math.round(r) })
+}
+
 const open = (onCancel = () => {}) => {
   vi.stubGlobal("matchMedia", (query: string) => ({
     matches: query.includes("reduce"),
@@ -168,6 +181,46 @@ describe("HidatoPuzzle by keys", () => {
     press("ArrowRight")
     expect(numbers(keys.container)).toEqual(puzzle.givens)
     expect(keys.undo().disabled).toBe(true)
+  })
+
+  it("goes up and down to the right-hand cell where the left-hand one is off the board", () => {
+    const keys = open()
+    expect(cursorAt(keys.container)).toBe("-1,0")
+    press("ArrowUp")
+    expect(cursorAt(keys.container)).toBe("0,-1")
+    press("ArrowDown")
+    expect(cursorAt(keys.container)).toBe("-1,0")
+    press("ArrowDown")
+    expect(cursorAt(keys.container)).toBe("-1,1")
+  })
+
+  it("still goes up to the left-hand cell where both upper cells are on the board", () => {
+    const keys = open()
+    press("ArrowRight")
+    press("ArrowUp")
+    expect(cursorAt(keys.container)).toBe("0,-1")
+  })
+
+  it("bent right, goes to the left-hand cell where the right-hand one is off the board", () => {
+    const keys = open()
+    press("ArrowRight")
+    press("ArrowRight")
+    shifted("ArrowUp")
+    expect(cursorAt(keys.container)).toBe("1,-1")
+    press("KeyX")
+    expect(cursorAt(keys.container)).toBe("1,0")
+    shifted("ArrowDown")
+    expect(cursorAt(keys.container)).toBe("0,1")
+    press("KeyE")
+    press("KeyE")
+    expect(cursorAt(keys.container)).toBe("1,-1")
+  })
+
+  it("extends a picked-up run to the right-hand cell where the left-hand one is off the board", () => {
+    const keys = open()
+    press("Enter")
+    press("ArrowUp")
+    expect(numbers(keys.container)).toEqual({ ...puzzle.givens, "0,-1": 2 })
   })
 
   it("puts the run down on Escape instead of leaving, and leaves on the next", () => {
