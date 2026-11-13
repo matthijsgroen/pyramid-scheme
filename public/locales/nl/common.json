@@ -111,7 +111,11 @@
     "solvedWithHints_one": "Opgelost met {{count}} hint",
     "solvedWithHints_other": "Opgelost met {{count}} hints",
     "tapToContinue": "Tik om verder te gaan",
-    "goal": "Doel"
+    "goal": "Doel",
+    "controls": "Bediening",
+    "controlsUndo": "ongedaan maken",
+    "controlsHint": "hint",
+    "controlsLeave": "terug naar de kaart"
   },
   "trap": {
     "warning": "⚠ Gevaarlijke Gang",
@@ -348,10 +352,10 @@
   },
   "balance": {
     "rules": {
-      "tap": "Tik hieronder op een teken en dan op een getal. Tik nog een keer op dat getal om het weg te halen.",
+      "tap": "Kies hieronder een teken en dan een getal. Kies dat getal nog een keer om het weg te halen.",
       "same": "Een teken weegt op elke weegschaal evenveel.",
-      "cancel": "Haal aan beide kanten hetzelfde weg en een weegschaal blijft kloppen. Tik op een gemarkeerd stuk: wat overblijft komt als nieuwe rij eronder.",
-      "swap": "Tik op een teken waar niets gelijks tegenover ligt, en dan op een rij waar dat teken alleen staat, om het te ruilen voor wat die rij waard is."
+      "cancel": "Haal aan beide kanten hetzelfde weg en een weegschaal blijft kloppen. Kies een gemarkeerd stuk: wat overblijft komt als nieuwe rij eronder.",
+      "swap": "Kies een teken waar niets gelijks tegenover ligt, en dan een rij waar dat teken alleen staat, om het te ruilen voor wat die rij waard is."
     },
     "hint": {
       "mistake": "Een van de gewichten die je gaf laat een weegschaal doorslaan. Haal het weg en kijk opnieuw.",
@@ -373,11 +377,16 @@
     "name": {
       "default": "Weegschaal",
       "weighing": "Het Wegen van het Hart"
+    },
+    "controls": {
+      "move": "kies een stuk, rij of knop",
+      "press": "drukken",
+      "weigh": "geef het gekozen teken dat gewicht"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Tik één keer om een getal weg te strepen, nog een keer om het te bewaren, nog een keer om het leeg te maken.",
+      "tap": "Kies een getal één keer om het weg te strepen, nog een keer om het te bewaren, nog een keer om het leeg te maken.",
       "totals": "Het kleine getal onder elk doel is wat die lijn nu optelt."
     },
     "hint": {
@@ -438,12 +447,16 @@
       }
     },
     "goal": "Elke rij en elke kolom telt op tot het getal ernaast.",
-    "name": "De Telling"
+    "name": "De Telling",
+    "controls": {
+      "move": "kies een getal",
+      "mark": "wegstrepen, houden of leeg"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "Een teken tussen twee vakjes wijst naar het kleinste getal van de twee.",
-      "enter": "Tik op een vakje en dan op een getal. Hetzelfde getal nog een keer haalt het er weer uit.",
+      "enter": "Kies een vakje en dan een getal. Hetzelfde getal nog een keer haalt het er weer uit.",
       "notes": "Zet het potlood aan om op te schrijven welke getallen nog in een vakje kunnen. Met ongedaan maken neem je je laatste zet terug."
     },
     "hint": {
@@ -494,14 +507,22 @@
       }
     },
     "goal": "Elke rij en elke kolom laat elk getal precies één keer zien.",
-    "name": "Groter en Kleiner"
+    "name": "Groter en Kleiner",
+    "controls": {
+      "move": "kies een vakje",
+      "type": "schrijf een getal",
+      "choose": "kies een getal of de gum",
+      "place": "schrijf het",
+      "pencil": "potlood",
+      "erase": "gummen"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "Een spiegel buigt het licht langs elk van zijn kanten. De streepjes eromheen laten zien hoe hij nog kan liggen: de meeste geven een kwartslag, sommige blijven daar net onder en sturen het licht schuin weg.",
       "walls": "Een blok steen slokt het licht op. De rand van het bord ook.",
-      "tap": "Tik op een stuk om het te veranderen: een spiegel draait, een schuivend stuk gaat naar de volgende plek. Een witte rand betekent dat jij het mag verzetten; al het andere hoort bij de puzzel.",
-      "nodes": "Sommige stenen zitten vast aan een contactpunt in de vloer; daar helpt geen enkele tik tegen. Stuur het licht over het contactpunt en de steen schuift opzij."
+      "tap": "Kies een stuk om het te veranderen: een spiegel draait, een schuivend stuk gaat naar de volgende plek. Een witte rand betekent dat jij het mag verzetten; al het andere hoort bij de puzzel.",
+      "nodes": "Sommige stenen zitten vast aan een contactpunt in de vloer; die krijg je zelf niet van hun plek. Stuur het licht over het contactpunt en de steen schuift opzij."
     },
     "hint": {
       "entryRun": "Begin waar het licht al komt: het loopt recht vanaf de schijf tot het eerste stuk dat je kunt veranderen. Die vakjes dragen het licht, wat je ook doet.",
@@ -534,7 +555,7 @@
       "triple": "Drie dezelfde op een rij mag nooit, niet horizontaal en niet verticaal.",
       "copies": "Geen twee rijen mogen hetzelfde zijn, en geen twee kolommen.",
       "signs": "Een teken tussen twee vakjes zegt hoe ze zich verhouden: = voor gelijk, × voor verschillend.",
-      "enter": "Tik op een vakje voor een zon, tik nog eens voor een maan, en nog eens om het leeg te maken."
+      "enter": "Kies een vakje voor een zon, nog eens voor een maan, en nog eens om het leeg te maken."
     },
     "hint": {
       "mistake": "Een van deze tekens kan niet goed zijn.",
@@ -558,7 +579,11 @@
       }
     },
     "goal": "Elk vakje heeft een zon of een maan, en elke lijn heeft er evenveel van de een als van de ander.",
-    "name": "Zon en Maan"
+    "name": "Zon en Maan",
+    "controls": {
+      "move": "kies een vakje",
+      "mark": "ander teken"
+    }
   },
   "constellation": {
     "rules": {
@@ -566,25 +591,25 @@
         "straight": "Lichtlijnen lopen recht, horizontaal of verticaal, van de ene ster naar de volgende.",
         "pair": "Tussen twee sterren passen maximaal twee lijnen.",
         "cross": "Lijnen kruisen elkaar nooit, en lopen nooit door een ster heen.",
-        "enter": "Sleep van een ster naar zijn buur voor een lijn, nog eens voor een dubbele, en nog eens om hem weg te halen."
+        "enter": "Trek een lijn van een ster naar zijn buur, nog eens voor een dubbele, en nog eens om hem weg te halen."
       },
       "causeway": {
         "straight": "Sleepwegen lopen recht, horizontaal of verticaal, van de ene plaats naar de volgende.",
         "pair": "Tussen twee plaatsen passen maximaal twee wegen.",
         "cross": "Wegen kruisen elkaar nooit, en lopen nooit door een plaats heen.",
-        "enter": "Sleep van een plaats naar zijn buur om een weg aan te leggen, nog eens om hem te verdubbelen, en nog eens om hem op te breken."
+        "enter": "Leg een weg van een plaats naar zijn buur, nog eens om hem te verdubbelen, en nog eens om hem op te breken."
       },
       "irrigation": {
         "straight": "Kanalen lopen recht, horizontaal of verticaal, van het ene bekken naar het volgende.",
         "pair": "Tussen twee bekkens passen maximaal twee kanalen.",
         "cross": "Kanalen kruisen elkaar nooit, en lopen nooit door een bekken heen.",
-        "enter": "Sleep van een bekken naar zijn buur om een kanaal te graven, nog eens om het te verbreden, en nog eens om het te dempen."
+        "enter": "Graaf een kanaal van een bekken naar zijn buur, nog eens om het te verbreden, en nog eens om het te dempen."
       },
       "ceiling": {
         "straight": "Snoeren lopen recht, horizontaal of verticaal, van de ene ster naar de volgende.",
         "pair": "Tussen twee sterren passen maximaal twee snoeren.",
         "cross": "Snoeren kruisen elkaar nooit, en lopen nooit door een ster heen.",
-        "enter": "Sleep van een ster naar zijn buur om een snoer te leggen, nog eens om het te verdubbelen, en nog eens om het weg te halen."
+        "enter": "Span een snoer van een ster naar zijn buur, nog eens om het te verdubbelen, en nog eens om het weg te halen."
       }
     },
     "hint": {
@@ -672,37 +697,44 @@
       "causeway": "Sleepweg",
       "irrigation": "Waterwerk",
       "ceiling": "Beschilderd Plafond"
+    },
+    "controls": {
+      "pick": "kies een ster",
+      "grab": "oppakken",
+      "draw": "trek een lijn die kant op",
+      "release": "loslaten",
+      "alt": "vasthouden en wijzen: een lijn, een dubbele, geen"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "Twee sterren mogen elkaar nooit raken — ook niet met een punt.",
-        "enter": "Tik een vakje om het af te strepen, tik weer voor een ster, en nog eens om het te wissen."
+        "enter": "Kies een vakje om het af te strepen, nog eens voor een ster, en nog eens om het te wissen."
       },
       "fields": {
         "touch": "Twee boerderijen mogen elkaar nooit raken — ook niet met een punt. Zo dicht bij elkaar delen ze één put.",
-        "enter": "Tik een akker om die af te strepen, tik weer voor een boerderij, en nog eens om het te wissen."
+        "enter": "Kies een akker om die af te strepen, nog eens voor een boerderij, en nog eens om het te wissen."
       },
       "lamps": {
         "touch": "Twee olielampen mogen nooit naast elkaar staan — ook niet schuin. Hun lichtkringen overlappen dan, en de olie is verspild.",
         "walls": "De grijze stenen blokken horen bij de vloer: er kan niets op staan, en het is geen vakje.",
-        "enter": "Tik een tegel om die af te strepen, tik weer voor een olielamp, en nog eens om het te wissen."
+        "enter": "Kies een tegel om die af te strepen, nog eens voor een olielamp, en nog eens om het te wissen."
       },
       "market": {
         "touch": "Twee kramen mogen nooit naast elkaar staan — ook niet schuin. Concurrenten staan nooit naast elkaar.",
         "walls": "De huizen horen bij het plein: daar kan niemand een kraam neerzetten, en het is geen plek.",
-        "enter": "Tik een plek om die af te strepen, tik weer voor een kraam, en nog eens om het te wissen."
+        "enter": "Kies een plek om die af te strepen, nog eens voor een kraam, en nog eens om het te wissen."
       },
       "lotus": {
         "touch": "Twee lotussen mogen nooit naast elkaar drijven — ook niet schuin. Elke bloem heeft open water om zich heen nodig.",
         "walls": "De rotsen steken boven de vijver uit: er kan niets op drijven, en het is geen vakje.",
-        "enter": "Tik een stukje water om het af te strepen, tik weer voor een lotus, en nog eens om het te wissen."
+        "enter": "Kies een stukje water om het af te strepen, nog eens voor een lotus, en nog eens om het te wissen."
       },
       "cats": {
         "touch": "Twee katten mogen nooit naast elkaar slapen — ook niet schuin. Elke kat houdt zijn eigen plekje zon.",
         "walls": "De pilaren dragen de tempel: er kan geen kat op slapen, en het is geen vakje.",
-        "enter": "Tik een tegel om die af te strepen, tik weer voor een kat, en nog eens om het te wissen."
+        "enter": "Kies een tegel om die af te strepen, nog eens voor een kat, en nog eens om het te wissen."
       }
     },
     "hint": {
@@ -952,6 +984,11 @@
       "market": "Marktkramen",
       "lotus": "Lotusvijver",
       "cats": "Tempelkatten"
+    },
+    "controls": {
+      "move": "kies een vakje",
+      "mark": "ander teken",
+      "sweep": "vasthouden en bewegen: streep een rij weg"
     }
   },
   "pairPuzzle": {
@@ -968,13 +1005,13 @@
         "pair": "Bij elke sarcofaag rust precies één mummie, direct erboven, eronder, links of rechts ervan, en elke mummie rust naast een eigen sarcofaag.",
         "count": "Het getal naast een rij of kolom zegt hoeveel mummies erin liggen. Het wordt groen als de lijn precies dat aantal heeft, en rood als het niet meer kan kloppen.",
         "touch": "Geen twee mummies mogen naast elkaar liggen — hoeken tellen mee.",
-        "enter": "Tik een vakje aan om het uit te sluiten, nog eens om er een mummie neer te leggen, en nog eens om het te wissen. Sleep over vakjes om een reeks uit te sluiten. Sarcofagen zijn niet aan te tikken."
+        "enter": "Kies een vakje om het uit te sluiten, nog eens om er een mummie neer te leggen, en nog eens om het te wissen. Sluit een reeks vakjes in één haal uit. Sarcofagen kun je niet markeren."
       },
       "beetles": {
         "pair": "Bij elke mestbal staat precies één kever, direct erboven, eronder, links of rechts ervan, en elke kever staat naast een eigen bal om te rollen.",
         "count": "Het getal naast een rij of kolom zegt hoeveel kevers erin staan. Het wordt groen als de lijn precies dat aantal heeft, en rood als het niet meer kan kloppen.",
         "touch": "Geen twee kevers mogen naast elkaar staan — hoeken tellen mee.",
-        "enter": "Tik een vakje aan om het uit te sluiten, nog eens om er een kever neer te zetten, en nog eens om het te wissen. Sleep over vakjes om een reeks uit te sluiten. Mestballen zijn niet aan te tikken."
+        "enter": "Kies een vakje om het uit te sluiten, nog eens om er een kever neer te zetten, en nog eens om het te wissen. Sluit een reeks vakjes in één haal uit. Mestballen kun je niet markeren."
       }
     },
     "hint": {
@@ -1038,6 +1075,11 @@
           "place_other": "Zet een kever op elk gearceerd vakje."
         }
       }
+    },
+    "controls": {
+      "move": "kies een vakje",
+      "mark": "ander teken",
+      "sweep": "vasthouden en bewegen: streep een rij weg"
     }
   },
   "rushHour": {
@@ -1052,11 +1094,11 @@
     "rules": {
       "default": {
         "lanes": "Een blok schuift alleen over zijn eigen baan — nooit zijwaarts, nooit van het bord af.",
-        "shove": "Sleep een blok om het te duwen. Het stopt waar iets in de weg staat."
+        "shove": "Duw een blok langs zijn baan. Het stopt waar iets in de weg staat."
       },
       "market": {
         "lanes": "Een slee schuift alleen over de baan waarin hij staat — nooit zijwaarts, nooit de straat uit.",
-        "shove": "Sleep een slee om hem te duwen. Hij stopt waar iets in de weg staat."
+        "shove": "Duw een slee langs zijn baan. Hij stopt waar iets in de weg staat."
       }
     },
     "hint": {
@@ -1084,29 +1126,35 @@
           "down": "Duw hem de straat af, tot aan de ring."
         }
       }
+    },
+    "controls": {
+      "pick": "kies een blok",
+      "grab": "pakken",
+      "slide": "schuiven",
+      "release": "loslaten"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "De getallen die al in de raat staan horen bij de puzzel — die blijven staan.",
-        "enter": "Tik op een getal om de reeks daar op te pakken en tik dan op een leeg vakje ernaast om verder te gaan — of sleep in één keer door de vakjes waar de reeks langs gaat.",
-        "back": "Tik op een getal dat je zelf legde en tik nogmaals om het er weer af te halen, samen met alles wat er los van komt te liggen. De reeks een andere kant op leggen doet hetzelfde. Ongedaan maken haalt je laatste zet terug."
+        "enter": "Trek een lijn vanaf een getal door de lege vakjes ernaast om de reeks verder te leggen.",
+        "back": "Kies een getal dat je zelf legde en kies het nog eens om het er weer af te halen, samen met alles wat er los van komt te liggen. De reeks een andere kant op leggen doet hetzelfde. Ongedaan maken haalt je laatste zet terug."
       },
       "channel": {
         "given": "De akkers die al een getal hebben horen bij de puzzel — die blijven staan.",
-        "enter": "Tik op een akker met een getal om het water daar op te pakken en tik dan op een droge akker ernaast om verder te graven — of sleep in één keer langs de akkers waar het kanaal langs loopt.",
-        "back": "Tik op een akker die je groef en tik nogmaals om hem weer dicht te gooien, samen met het kanaal dat er los van komt te liggen. Een andere kant op graven doet hetzelfde. Ongedaan maken haalt je laatste zet terug."
+        "enter": "Graaf een kanaal vanaf een akker met een getal door de droge akkers ernaast om het water verder te leiden.",
+        "back": "Kies een akker die je groef en kies hem nog eens om hem weer dicht te gooien, samen met het kanaal dat er los van komt te liggen. Een andere kant op graven doet hetzelfde. Ongedaan maken haalt je laatste zet terug."
       },
       "scribe": {
         "given": "De tekens die in rood staan horen bij de puzzel — die blijven staan.",
-        "enter": "Tik op een teken om daar de rietpen op te pakken en tik dan op een lege plek ernaast om verder te schrijven — of sleep in één keer langs de regel.",
-        "back": "Tik op een teken dat je zelf schreef en tik nogmaals om het weg te schrapen, samen met de regel die er los van komt te liggen. Een andere kant op schrijven doet hetzelfde. Ongedaan maken haalt je laatste zet terug."
+        "enter": "Schrijf een regel vanaf een teken door de lege plekken ernaast om verder te tellen.",
+        "back": "Kies een teken dat je zelf schreef en kies het nog eens om het weg te schrapen, samen met de regel die er los van komt te liggen. Een andere kant op schrijven doet hetzelfde. Ongedaan maken haalt je laatste zet terug."
       },
       "chambers": {
         "given": "De kamers die al een getal hebben zijn door de bouwers uitgehouwen — die blijven staan.",
-        "enter": "Tik op een kamer met een getal om de gang daar op te pakken en tik dan op een gesloten kamer ernaast om door te breken — of sleep in één keer langs de kamers waar de gang langs loopt.",
-        "back": "Tik op een kamer die je opende en tik nogmaals om hem weer dicht te zetten, samen met de gang die er los van komt te liggen. Een andere kant op doorbreken doet hetzelfde. Ongedaan maken haalt je laatste zet terug."
+        "enter": "Breek een gang vanaf een kamer met een getal door de gesloten kamers ernaast om verder te komen.",
+        "back": "Kies een kamer die je opende en kies hem nog eens om hem weer dicht te zetten, samen met de gang die er los van komt te liggen. Een andere kant op doorbreken doet hetzelfde. Ongedaan maken haalt je laatste zet terug."
       }
     },
     "goal": {
@@ -1170,6 +1218,13 @@
       "channel": "Het Kanaal",
       "scribe": "Schrijversvel",
       "chambers": "Gesloten Kamers"
+    },
+    "controls": {
+      "move": "naar een vakje ernaast; op en neer gaan schuin links",
+      "right": "schuin rechts op of neer",
+      "grab": "reeks oppakken, of je getal weghalen",
+      "carry": "met de reeks in de hand: verder leggen",
+      "drop": "reeks neerleggen"
     }
   },
   "sudoku": {
@@ -1177,13 +1232,13 @@
       "default": {
         "chambers": "De dikke lijnen verdelen het raster in zes kamers, twee vakjes breed en drie hoog.",
         "given": "De getallen die al ingehakt zijn horen bij de puzzel — die blijven staan.",
-        "enter": "Tik op een vakje en tik daarna op een getal. Hetzelfde getal nog een keer haalt het er weer uit.",
+        "enter": "Kies een vakje en dan een getal. Hetzelfde getal nog een keer haalt het er weer uit.",
         "notes": "Schakel over op het potlood om de getallen te noteren die een vakje nog kan bevatten. Ongedaan maken neemt je laatste zet terug."
       },
       "papyrus": {
         "chambers": "De dikke pennenstreken verdelen het vel in zes panelen, twee plekken breed en drie hoog.",
         "given": "De tekens in rode inkt horen bij de puzzel — die blijven staan.",
-        "enter": "Tik op een plek en tik daarna op een teken. Hetzelfde teken nog een keer schraapt het weer weg.",
+        "enter": "Kies een plek en dan een teken. Hetzelfde teken nog een keer schraapt het weer weg.",
         "notes": "Neem de rietpen op om de tekens te noteren die een plek nog kan dragen. Ongedaan maken neemt je laatste zet terug."
       }
     },
@@ -1250,6 +1305,14 @@
     "name": {
       "default": "Zes Kamers",
       "papyrus": "Het Register van de Schrijver"
+    },
+    "controls": {
+      "move": "kies een vakje",
+      "type": "schrijf een getal",
+      "choose": "kies een getal of de gum",
+      "place": "schrijf het",
+      "pencil": "potlood",
+      "erase": "gummen"
     }
   },
   "crocodile": {
@@ -1263,6 +1326,10 @@
     "hint": {
       "biggest": "Deze krokodil wil het grootste antwoord. Dat is {{value}}.",
       "smallest": "Deze krokodil wil het kleinste antwoord. Dat is {{value}}."
+    },
+    "controls": {
+      "move": "kies een steen",
+      "step": "erop stappen"
     }
   },
   "canisters": {
@@ -1293,35 +1360,35 @@
         "sums": "Elke hoeveelheid die je kunt maken is twee getallen van de bank, bij elkaar op of van elkaar af: de maat van een kruik, wat erin zit, of de ruimte die er nog bij kan.",
         "backwards": "Werk dus terug vanaf de gevraagde hoeveelheid — welke twee getallen maken die, en hoe krijg je die twee tegelijk op de bank?"
       },
-      "claim": "Heb je de hoeveelheid? Tik dan op “deze”. Het verkeerde vat aanwijzen kost een zet.",
+      "claim": "Heb je de hoeveelheid? Kies dan “deze”. Het verkeerde vat aanwijzen kost een zet.",
       "legs": "Daarna de volgende hoeveelheid, gemeten vanuit wat er nog in de vaten staat.",
       "default": {
-        "moves": "Tik op een kruik om hem op te pakken en tik dan op een andere om over te gieten. Het gieten stopt zodra de eerste leeg is of de tweede vol.",
+        "moves": "Pak een kruik op en kies dan een andere om over te gieten. Het gieten stopt zodra de eerste leeg is of de tweede vol.",
         "contents": "Dit is al het water dat er is — één kruik begint vol, en er kan niets weg en niets bij.",
         "levels": "Op elke kruik staat hoeveel erin zit, en hoeveel er vol in gaat."
       },
       "grain": {
-        "moves": "Tik op een maat om hem op te tillen en tik dan op een andere om het graan erin te storten. Het storten stopt zodra de eerste leeg is of de tweede tot de rand staat.",
+        "moves": "Til een maat op en kies dan een andere om het graan erin te storten. Het storten stopt zodra de eerste leeg is of de tweede tot de rand staat.",
         "contents": "Dit is al het graan dat er is — één maat begint vol, en er kan niets weg en niets bij uit de schuur.",
         "levels": "Op elke maat staat hoeveel erin zit, en hoeveel er tot de rand in gaat."
       },
       "oil": {
-        "moves": "Tik op een kruik om hem op te tillen en tik dan op een andere om over te gieten. Het gieten stopt zodra de eerste leeg is of de tweede vol.",
+        "moves": "Til een kruik op en kies dan een andere om over te gieten. Het gieten stopt zodra de eerste leeg is of de tweede vol.",
         "contents": "Dit is alle olie die er is — één kruik begint vol, en er kan niets weg en niets bij.",
         "levels": "Op elke kruik staat hoeveel erin zit, en hoeveel er vol in gaat."
       },
       "wine": {
-        "moves": "Tik op een amfoor om hem op te tillen en tik dan op een andere om over te schenken. Het schenken stopt zodra de eerste leeg is of de tweede vol.",
+        "moves": "Til een amfoor op en kies dan een andere om over te schenken. Het schenken stopt zodra de eerste leeg is of de tweede vol.",
         "contents": "Dit is alle wijn die er is — één amfoor begint vol, en er kan niets weg en niets bij uit de kelder.",
         "levels": "Op elke amfoor staat hoeveel erin zit, en hoeveel er vol in gaat."
       },
       "natron": {
-        "moves": "Tik op een canope om hem op te tillen en tik dan op een andere om het natron erin te storten. Het storten stopt zodra de eerste leeg is of de tweede tot het deksel staat.",
+        "moves": "Til een canope op en kies dan een andere om het natron erin te storten. Het storten stopt zodra de eerste leeg is of de tweede tot het deksel staat.",
         "contents": "Dit is al het natron dat er is — één canope begint vol, en er kan niets weg en niets bij.",
         "levels": "Op elke canope staat hoeveel erin zit, en hoeveel er tot de deksel in gaat."
       },
       "ink": {
-        "moves": "Tik op een pot om hem op te tillen en tik dan op een andere om over te gieten. Het gieten stopt zodra de eerste leeg is of de tweede vol.",
+        "moves": "Til een pot op en kies dan een andere om over te gieten. Het gieten stopt zodra de eerste leeg is of de tweede vol.",
         "contents": "Dit is alle inkt die er is — één pot begint vol, en er kan niets weg en niets bij gewreven.",
         "levels": "Op elke pot staat hoeveel erin zit, en hoeveel er vol in gaat."
       }
@@ -1346,7 +1413,11 @@
     "legs": "{{done}} van {{total}} afgemeten",
     "wanted": "Meet af",
     "claim": "deze",
-    "claimAria": "Zeg dat de {{capacity}} de hoeveelheid bevat"
+    "claimAria": "Zeg dat de {{capacity}} de hoeveelheid bevat",
+    "controls": {
+      "move": "kies een vat of de “deze” eronder",
+      "press": "oppakken, hierin gieten of aanwijzen"
+    }
   },
   "procession": {
     "name": {
@@ -1366,8 +1437,8 @@
     "rules": {
       "default": {
         "lengths": "Elke rij is één ding dat gebeurt, en het duurt zo lang als zijn balk breed is. Wanneer het gebeurt zoek jij uit.",
-        "marks": "Een regel onder de dag kleurt rood zolang hij niet klopt. Tik erop om de rijen te omringen waar hij over gaat.",
-        "drag": "Sleep een balk over zijn eigen rij. Hij gaat de dag nooit uit."
+        "marks": "Een regel onder de dag kleurt rood zolang hij niet klopt. Kies hem om de rijen te omringen waar hij over gaat.",
+        "drag": "Schuif een balk over zijn eigen rij. Hij gaat de dag nooit uit."
       }
     },
     "hint": {
@@ -1432,6 +1503,11 @@
       "hint": "Elke tegel waar je op stapt maakt zijn bezigheid vrij. Orden de dag en loop dan de tegels in die volgorde.",
       "read": "De dag is gelezen. Loop de tegels in deze volgorde, vanaf de eerste.",
       "hintButton": "Hint"
+    },
+    "controls": {
+      "row": "kies een rij",
+      "slide": "balk schuiven",
+      "mark": "kies een regel onder de dag"
     }
   },
   "story": {
@@ -1477,7 +1553,7 @@
       "shrines": "Eén schijf licht, en een heiligdom boven elke doorgang van dit kruispunt. De spiegels op de vloer kunnen het licht naar elk ervan brengen.",
       "doors": "De doorgang die het licht bereikt staat open, de andere zijn dicht. Eén route, één weg verder.",
       "returning": "Kiezen kost je niets. Loop wanneer je wilt weer binnen en stuur het licht een andere kant op — die gaat open, en deze gaat dicht.",
-      "tap": "Tik op een spiegel om hem te draaien. Nog een tik zet hem terug."
+      "tap": "Kies een spiegel om hem te draaien. Kies hem nog eens om hem terug te zetten."
     },
     "doorOpen": "{{way}} doorgang: open",
     "doorShut": "{{way}} doorgang: dicht",
@@ -1486,6 +1562,10 @@
       "e": "Oostelijke",
       "s": "Zuidelijke",
       "w": "Westelijke"
+    },
+    "controls": {
+      "move": "kies een spiegel",
+      "turn": "draaien"
     }
   },
   "handle": {

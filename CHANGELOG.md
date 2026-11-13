@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Walk the map with arrow keys or WASD.
 - Constellation: Enter picks up a star, then an arrow draws the line.
 - Escape closes dialogs, the shop and puzzles; Enter moves a conversation on.
+- Hidato, procession, balance, canisters, shrine beam and the crocodile pit show their keys and buttons under the rules.
 - Backspace erases a number on the board, and goes back where nothing erases.
 - A game controller walks the map, moves through dialogs and backs out of them.
 - The Tally, Sun and Moon, star and number-square puzzles, pair puzzles, mirror switches, scales, canisters, blockades, ordered hours and their doors, star maps, honeycombs, the crocodile pit, reflex traps, levers, torches, reading walls and pyramid boards play by keys or controller; hold Shift or Y to sweep marks.
@@ -19,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The camp and its windows play by keys or controller, and Start opens Settings.
 - [ and ] or the shoulder buttons switch tabs in the camp windows.
 - Escape or the controller's B goes on from a found treasure and a finished level, and leaves the expedition.
+- Puzzle rules show the keys or controller buttons, and the prompts and pills show their button.
+- Eclipse, sumplete, pair puzzle, star battle and futoshiki show their keys and buttons under the rules.
 
 ### Changed
 
@@ -28,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Developer tools no longer ship in the released game.
 - Opening a treasure chest shows the painted chest from the map.
 - A taken chest stands open, and a ward key's chest looks like treasure.
+- Puzzle rules no longer assume a finger: they describe the move, the Controls block the keys.
 
 ### Fixed
 

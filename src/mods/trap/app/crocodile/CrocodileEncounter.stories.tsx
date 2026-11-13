@@ -29,3 +29,6 @@ export const KeyboardCursor: Story = {
     </EncounterModal>
   ),
 }
+
+/** Played by pad: the same cursor, with the pad's buttons under the rules. */
+export const PadCursor: Story = { ...KeyboardCursor, globals: { input: "pad", pad: "xbox" } }

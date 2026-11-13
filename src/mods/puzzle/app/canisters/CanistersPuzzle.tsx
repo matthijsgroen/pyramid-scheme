@@ -21,6 +21,7 @@ import { CanistersBoard } from "./CanistersBoard"
 import { CanistersRules } from "./CanistersRules"
 import { buildCanistersHint } from "./canistersHint"
 import { skinFor } from "./skins"
+import { useCanistersControls } from "./canistersControls"
 
 type Props = {
   puzzle: CanistersPuzzleData
@@ -37,6 +38,7 @@ type Props = {
 
 export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
+  const controls = useCanistersControls()
   // The board's own shape, so a role with several places picks the same one for this room every time and a
   // different one for the room next door (`skins.ts`).
   const shape = [...puzzle.capacities, ...puzzle.start, ...puzzle.targets].reduce(
@@ -91,6 +93,7 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, ro
       // read as a fixed instruction, and on a board that asks for several in turn the sentence quietly
       // changed under the player. Up there it is a figure that visibly ticks over as each leg is claimed.
       goal={t(`canisters.goal.${skin.name}`, { count: puzzle.targets.length })}
+      controls={controls}
       rules={<CanistersRules skin={skin.name} legs={puzzle.targets.length} />}
     >
       {({ reportInput, boardInput }) => (

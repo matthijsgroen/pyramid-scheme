@@ -5,6 +5,7 @@ import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import { SumpleteBoard } from "@/mods/puzzle/app/sumplete/SumpleteBoard"
 import { SumpleteRules } from "@/mods/puzzle/app/sumplete/SumpleteRules"
+import { useSumpleteControls } from "@/mods/puzzle/app/sumplete/sumpleteControls"
 import { buildSumpleteHint } from "@/mods/puzzle/app/sumplete/sumpleteHint"
 import { computeColLines, computeRowLines, isSumpleteSolved } from "@/mods/puzzle/game/sumplete/sumpleteStatus"
 import { createSumpleteState, toggleSumpleteCell } from "@/mods/puzzle/game/sumplete/sumpleteState"
@@ -32,6 +33,7 @@ const cellMark = (cells: SumpleteMark[][], key: string): SumpleteMark => {
 
 export const SumpletePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
+  const controls = useSumpleteControls()
   const { grid, rowTargets, colTargets, solution, techniqueCap } = puzzle
   const [state, setState] = usePuzzleState(() => createSumpleteState(grid.length), puzzle)
 
@@ -94,6 +96,7 @@ export const SumpletePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCanc
       title={t("sumplete.name")}
       goal={t("sumplete.goal")}
       rules={<SumpleteRules />}
+      controls={controls}
     >
       {({ reportInput, hintVisible, boardInput }) => (
         <SumpleteBoard

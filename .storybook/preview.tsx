@@ -24,16 +24,19 @@ const withI18next = (Story, context) => {
   )
 }
 
-// The input last used, as the game marks it on <html>: cursors and focus rings draw for keys and pad only.
+// The input last used and the brand of pad, as the game marks them on <html>: cursors and focus rings draw for
+// keys and pad only, and pad buttons wear the brand's look.
 const withInput = (Story, context) => {
-  const { input } = context.globals
+  const { input, pad } = context.globals
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     const root = document.documentElement
     if (input) root.dataset.input = input
     else delete root.dataset.input
-  }, [input])
+    if (pad) root.dataset.pad = pad
+    else delete root.dataset.pad
+  }, [input, pad])
 
   return <Story />
 }
@@ -101,6 +104,18 @@ export const globalTypes = {
         { value: "touch", title: "Touch" },
         { value: "keys", title: "Keys" },
         { value: "pad", title: "Pad" },
+      ],
+      showName: true,
+    },
+  },
+  pad: {
+    name: "Pad",
+    description: "The brand of pad: which face buttons pad glyphs wear",
+    toolbar: {
+      icon: "controls",
+      items: [
+        { value: "xbox", title: "Xbox" },
+        { value: "playstation", title: "PlayStation" },
       ],
       showName: true,
     },

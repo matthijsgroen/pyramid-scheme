@@ -71,6 +71,7 @@ import { PLATE_TILE } from "./plateArt"
 import { PIPE_HOLE_TILE } from "./pipeHoleArt"
 import { drawingOf, familyIconOf, isLockedGate, isSpentAt, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
+import { ActionGlyph } from "@/app/input/ActionGlyph"
 import { MapNotice } from "@/ui/atoms/MapNotice"
 import { MarkArtBadge } from "./mark"
 import { getRewardHandler } from "./rewardHandlerRegistry"
@@ -2711,7 +2712,11 @@ export const SiteMapView = ({
                     pointerEvents: "auto",
                   }}
                 >
-                  <MapActionPrompt label={prompt.label} onClick={prompt.onTake} />
+                  <MapActionPrompt
+                    label={prompt.label}
+                    onClick={prompt.onTake}
+                    glyph={<ActionGlyph action="confirm" />}
+                  />
                 </div>
               )}
               {/* THE LIVE REGION IS ALWAYS IN THE PAGE and only its text is swapped: a region inserted together with

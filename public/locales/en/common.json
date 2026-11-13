@@ -111,7 +111,11 @@
     "solvedWithHints_one": "Solved with {{count}} hint",
     "solvedWithHints_other": "Solved with {{count}} hints",
     "tapToContinue": "Tap to continue",
-    "goal": "Goal"
+    "goal": "Goal",
+    "controls": "Controls",
+    "controlsUndo": "undo",
+    "controlsHint": "hint",
+    "controlsLeave": "back to the map"
   },
   "trap": {
     "warning": "⚠ Trapped Corridor",
@@ -348,10 +352,10 @@
   },
   "balance": {
     "rules": {
-      "tap": "Tap a glyph below, then a number. Tap that number again to take it off.",
+      "tap": "Choose a glyph below, then a number. Choose that number again to take it off.",
       "same": "A glyph weighs the same on every scale.",
-      "cancel": "Take the same thing off both pans and a scale stays balanced. Tap a marked piece to do it — what is left is kept as a new row.",
-      "swap": "Tap a glyph with nothing like it opposite, then a row where that glyph stands alone, to trade it for what that row is worth."
+      "cancel": "Take the same thing off both pans and a scale stays balanced. Choose a marked piece to do it — what is left is kept as a new row.",
+      "swap": "Choose a glyph with nothing like it opposite, then a row where that glyph stands alone, to trade it for what that row is worth."
     },
     "hint": {
       "mistake": "One of the weights you gave makes a scale tip. Take it off and look again.",
@@ -373,11 +377,16 @@
     "name": {
       "default": "Balance Scale",
       "weighing": "Weighing of the Heart"
+    },
+    "controls": {
+      "move": "choose a piece, row or button",
+      "press": "press it",
+      "weigh": "give the chosen glyph that weight"
     }
   },
   "sumplete": {
     "rules": {
-      "tap": "Tap once to cross a number out, again to mark it as one you keep, again to clear it.",
+      "tap": "Choose a number once to cross it out, again to mark it as one you keep, again to clear it.",
       "totals": "The small number under each target is what that line adds up to right now."
     },
     "hint": {
@@ -438,12 +447,16 @@
       }
     },
     "goal": "Every row and every column adds up to the number beside it.",
-    "name": "The Tally"
+    "name": "The Tally",
+    "controls": {
+      "move": "choose a number",
+      "mark": "cross out, keep or clear"
+    }
   },
   "futoshiki": {
     "rules": {
       "signs": "A sign between two squares points at the smaller number of the two.",
-      "enter": "Tap a square, then tap a number. The same number again takes it back out.",
+      "enter": "Choose a square, then a number. The same number again takes it back out.",
       "notes": "Switch to the pencil to jot down the numbers a square could still hold. Undo takes back your last move."
     },
     "hint": {
@@ -494,14 +507,22 @@
       }
     },
     "goal": "Every row and every column shows each number exactly once.",
-    "name": "Greater and Lesser"
+    "name": "Greater and Lesser",
+    "controls": {
+      "move": "choose a square",
+      "type": "write a number",
+      "choose": "choose a number or the eraser",
+      "place": "write it",
+      "pencil": "pencil",
+      "erase": "erase"
+    }
   },
   "lightbeam": {
     "rules": {
       "mirrors": "A mirror bends the light off either of its faces. The small marks around it show the other ways it can lie: most turn the light a quarter, and some stop short of that and send it off at a slant.",
       "walls": "A block of stone swallows the light. So does the edge of the board.",
-      "tap": "Tap a piece to change it: a mirror turns, a sliding piece moves to its next spot. A white edge means it is yours to move; anything else is part of the puzzle.",
-      "nodes": "Some stone is wired to a socket in the floor and no tap will move it. Send the light across the socket and the stone slides aside."
+      "tap": "Choose a piece to change it: a mirror turns, a sliding piece moves to its next spot. A white edge means it is yours to move; anything else is part of the puzzle.",
+      "nodes": "Some stone is wired to a socket in the floor and will not move for you. Send the light across the socket and the stone slides aside."
     },
     "hint": {
       "entryRun": "Start where the light already goes: it runs straight from the disc until it meets the first piece you can change. Those squares carry the light whatever you do.",
@@ -534,7 +555,7 @@
       "triple": "Three of the same in a row is never allowed, across or down.",
       "copies": "No two rows may read alike, and no two columns either.",
       "signs": "A sign between two squares says how they compare: = for the same, × for different.",
-      "enter": "Tap a square to put a sun there, tap again for a moon, tap once more to empty it."
+      "enter": "Choose a square to put a sun there, again for a moon, once more to empty it."
     },
     "hint": {
       "mistake": "One of these marks cannot be right.",
@@ -558,7 +579,11 @@
       }
     },
     "goal": "Every square holds a sun or a moon, and every line holds as many of one as of the other.",
-    "name": "Sun and Moon"
+    "name": "Sun and Moon",
+    "controls": {
+      "move": "choose a square",
+      "mark": "change the mark"
+    }
   },
   "constellation": {
     "rules": {
@@ -566,25 +591,25 @@
         "straight": "Lines of light run straight across or down, from one star to the next.",
         "pair": "Two stars can share at most two lines.",
         "cross": "Lines never cross, and never pass through a star.",
-        "enter": "Drag from a star toward its neighbour to draw a line, again for a double, once more to clear it."
+        "enter": "Draw a line from a star toward its neighbour, again for a double, once more to clear it."
       },
       "causeway": {
         "straight": "Haul roads run straight across or down, from one site to the next.",
         "pair": "Two sites can share at most two roads.",
         "cross": "Roads never cross, and never run through a site.",
-        "enter": "Drag from a site toward its neighbour to lay a road, again to double it, once more to tear it up."
+        "enter": "Lay a road from a site toward its neighbour, again to double it, once more to tear it up."
       },
       "irrigation": {
         "straight": "Channels run straight across or down, from one basin to the next.",
         "pair": "Two basins can share at most two channels.",
         "cross": "Channels never cross, and never run through a basin.",
-        "enter": "Drag from a basin toward its neighbour to dig a channel, again to widen it, once more to fill it in."
+        "enter": "Dig a channel from a basin toward its neighbour, again to widen it, once more to fill it in."
       },
       "ceiling": {
         "straight": "Cords run straight across or down, from one star to the next.",
         "pair": "Two stars can share at most two cords.",
         "cross": "Cords never cross, and never run through a star.",
-        "enter": "Drag from a star toward its neighbour to lay a cord, again to double it, once more to lift it off."
+        "enter": "Stretch a cord from a star toward its neighbour, again to double it, once more to lift it off."
       }
     },
     "hint": {
@@ -672,37 +697,44 @@
       "causeway": "Causeway",
       "irrigation": "Waterworks",
       "ceiling": "Painted Ceiling"
+    },
+    "controls": {
+      "pick": "choose a star",
+      "grab": "pick it up",
+      "draw": "draw a line that way",
+      "release": "let go",
+      "alt": "hold and point: a line, a double, none"
     }
   },
   "starBattle": {
     "rules": {
       "default": {
         "touch": "No two stars may touch — corners count.",
-        "enter": "Tap a square to rule it out, tap again to put a star there, once more to clear it."
+        "enter": "Choose a square to rule it out, again to put a star there, once more to clear it."
       },
       "fields": {
         "touch": "No two farmsteads may touch — corners count. That close, they would share one well.",
-        "enter": "Tap a plot to rule it out, tap again to raise a farmstead, once more to clear it."
+        "enter": "Choose a plot to rule it out, again to raise a farmstead, once more to clear it."
       },
       "lamps": {
         "touch": "No two oil lamps may stand next to each other — corners count. Their pools of light would overlap, and the oil would be wasted.",
         "walls": "The grey stone blocks are part of the floor: nothing can stand on one, and it is not a square.",
-        "enter": "Tap a flagstone to rule it out, tap again to set an oil lamp there, once more to clear it."
+        "enter": "Choose a flagstone to rule it out, again to set an oil lamp there, once more to clear it."
       },
       "market": {
         "touch": "No two stalls may stand next to each other — corners count. Rivals never set up side by side.",
         "walls": "The houses are part of the square: nobody can set up a stall in one, and it is not a spot.",
-        "enter": "Tap a spot to rule it out, tap again to set up a stall there, once more to clear it."
+        "enter": "Choose a spot to rule it out, again to set up a stall there, once more to clear it."
       },
       "lotus": {
         "touch": "No two lotuses may float next to each other — corners count. Each flower needs open water around it.",
         "walls": "The rocks stick up out of the pond: nothing can float on one, and it is not a square.",
-        "enter": "Tap a patch of water to rule it out, tap again to float a lotus there, once more to clear it."
+        "enter": "Choose a patch of water to rule it out, again to float a lotus there, once more to clear it."
       },
       "cats": {
         "touch": "No two cats may sleep next to each other — corners count. Each cat keeps its own patch of sun.",
         "walls": "The pillars hold up the temple: no cat can sleep on one, and it is not a square.",
-        "enter": "Tap a flagstone to rule it out, tap again to lay a cat there, once more to clear it."
+        "enter": "Choose a flagstone to rule it out, again to lay a cat there, once more to clear it."
       }
     },
     "hint": {
@@ -952,6 +984,11 @@
       "market": "Market Stalls",
       "lotus": "Lotus Pond",
       "cats": "Temple Cats"
+    },
+    "controls": {
+      "move": "choose a square",
+      "mark": "change the mark",
+      "sweep": "hold and move: rule out a row"
     }
   },
   "pairPuzzle": {
@@ -968,13 +1005,13 @@
         "pair": "Each sarcophagus has one mummy resting directly above, below, left or right of it, and every mummy rests beside a sarcophagus of its own.",
         "count": "The number beside a row or column says how many mummies it holds. It turns green when the line holds exactly that many, and red when it cannot be met.",
         "touch": "No two mummies may stand next to each other — corners count.",
-        "enter": "Tap a square to rule it out, tap again to lay a mummy there, once more to clear it. Drag across squares to rule out a run. Sarcophagi cannot be tapped."
+        "enter": "Choose a square to rule it out, again to lay a mummy there, once more to clear it. Rule out a run of squares in one sweep. Sarcophagi cannot be marked."
       },
       "beetles": {
         "pair": "Each dung ball has one beetle directly above, below, left or right of it, and every beetle stands beside a ball of its own to roll.",
         "count": "The number beside a row or column says how many beetles it holds. It turns green when the line holds exactly that many, and red when it cannot be met.",
         "touch": "No two beetles may stand next to each other — corners count.",
-        "enter": "Tap a square to rule it out, tap again to put a beetle there, once more to clear it. Drag across squares to rule out a run. Dung balls cannot be tapped."
+        "enter": "Choose a square to rule it out, again to put a beetle there, once more to clear it. Rule out a run of squares in one sweep. Dung balls cannot be marked."
       }
     },
     "hint": {
@@ -1038,6 +1075,11 @@
           "place_other": "Put a beetle on each hatched square."
         }
       }
+    },
+    "controls": {
+      "move": "choose a square",
+      "mark": "change the mark",
+      "sweep": "hold and move: rule out a row"
     }
   },
   "rushHour": {
@@ -1052,11 +1094,11 @@
     "rules": {
       "default": {
         "lanes": "A block only slides along its own lane — never sideways, never off the board.",
-        "shove": "Drag a block to shove it. It stops where something is in the way."
+        "shove": "Shove a block along its lane. It stops where something is in the way."
       },
       "market": {
         "lanes": "A sledge only slides along the lane it stands in — never sideways, never out of the street.",
-        "shove": "Drag a sledge to shove it. It stops where something is in the way."
+        "shove": "Shove a sledge along its lane. It stops where something is in the way."
       }
     },
     "hint": {
@@ -1084,29 +1126,35 @@
           "down": "Shove it down the street, as far as the ring."
         }
       }
+    },
+    "controls": {
+      "pick": "choose a block",
+      "grab": "take it",
+      "slide": "slide",
+      "release": "let go"
     }
   },
   "hidato": {
     "rules": {
       "default": {
         "given": "The numbers already in the comb are part of the puzzle — they stay put.",
-        "enter": "Tap a number to pick the run up there, then tap a touching empty cell to carry it on — or drag straight through the cells it goes.",
-        "back": "Tap a number you laid and tap it again to take it back off, along with anything left hanging on it. Carrying the run a different way out of a number does the same. Undo takes back your last move."
+        "enter": "Draw a line from a number through the empty cells beside it to carry the run on.",
+        "back": "Choose a number you laid and choose it again to take it back off, along with anything left hanging on it. Carrying the run a different way out of a number does the same. Undo takes back your last move."
       },
       "channel": {
         "given": "The fields already numbered are part of the puzzle — they stay put.",
-        "enter": "Tap a numbered field to pick the water up there, then tap a dry field beside it to dig on — or drag straight along the fields the channel runs.",
-        "back": "Tap a field you dug and tap it again to fill it back in, along with any channel left cut off from it. Digging a different way out of a field does the same. Undo takes back your last move."
+        "enter": "Dig a channel from a numbered field through the dry fields beside it to carry the water on.",
+        "back": "Choose a field you dug and choose it again to fill it back in, along with any channel left cut off from it. Digging a different way out of a field does the same. Undo takes back your last move."
       },
       "scribe": {
         "given": "The figures inked in red are the puzzle's own — they stay put.",
-        "enter": "Tap a figure to take up the reed there, then tap an empty space beside it to write on — or drag straight along the line.",
-        "back": "Tap a figure you wrote and tap it again to scrape it off, along with any line left cut off from it. Writing a different way out of a figure does the same. Undo takes back your last move."
+        "enter": "Write a line from a figure through the empty spaces beside it to carry the count on.",
+        "back": "Choose a figure you wrote and choose it again to scrape it off, along with any line left cut off from it. Writing a different way out of a figure does the same. Undo takes back your last move."
       },
       "chambers": {
         "given": "The chambers already numbered were cut by the builders — they stay put.",
-        "enter": "Tap a numbered chamber to take up the passage there, then tap a sealed chamber beside it to break through — or drag straight along the chambers the passage runs.",
-        "back": "Tap a chamber you opened and tap it again to seal it up, along with any passage left cut off from it. Breaking through a different way out of a chamber does the same. Undo takes back your last move."
+        "enter": "Break a passage from a numbered chamber through the sealed chambers beside it to carry it on.",
+        "back": "Choose a chamber you opened and choose it again to seal it up, along with any passage left cut off from it. Breaking through a different way out of a chamber does the same. Undo takes back your last move."
       }
     },
     "goal": {
@@ -1170,6 +1218,13 @@
       "channel": "The Channel",
       "scribe": "Scribe's Sheet",
       "chambers": "Sealed Chambers"
+    },
+    "controls": {
+      "move": "go to a cell beside it; up and down lean left",
+      "right": "up-right or down-right",
+      "grab": "pick up the run, or take your number off",
+      "carry": "with the run picked up: carry it on",
+      "drop": "put the run down"
     }
   },
   "sudoku": {
@@ -1177,13 +1232,13 @@
       "default": {
         "chambers": "The heavy lines cut the grid into six chambers, two squares wide and three tall.",
         "given": "The numbers already carved in are part of the puzzle — they stay put.",
-        "enter": "Tap a square, then tap a number. The same number again takes it back out.",
+        "enter": "Choose a square, then a number. The same number again takes it back out.",
         "notes": "Switch to the pencil to jot down the numbers a square could still hold. Undo takes back your last move."
       },
       "papyrus": {
         "chambers": "The heavy rules divide the sheet into six panels, two spaces wide and three tall.",
         "given": "The signs inked in red are the puzzle's own — they stay put.",
-        "enter": "Tap a space, then tap a sign. The same sign again scrapes it off.",
+        "enter": "Choose a space, then a sign. The same sign again scrapes it off.",
         "notes": "Take up the reed pen to pencil in the signs a space could still carry. Undo takes back your last move."
       }
     },
@@ -1250,6 +1305,14 @@
     "name": {
       "default": "Six Chambers",
       "papyrus": "The Scribe's Register"
+    },
+    "controls": {
+      "move": "choose a square",
+      "type": "write a number",
+      "choose": "choose a number or the eraser",
+      "place": "write it",
+      "pencil": "pencil",
+      "erase": "erase"
     }
   },
   "crocodile": {
@@ -1263,6 +1326,10 @@
     "hint": {
       "biggest": "This crocodile wants the biggest answer. That is {{value}}.",
       "smallest": "This crocodile wants the smallest answer. That is {{value}}."
+    },
+    "controls": {
+      "move": "choose a stone",
+      "step": "step on it"
     }
   },
   "canisters": {
@@ -1293,35 +1360,35 @@
         "sums": "Every amount you can make is two numbers on the bench put together or taken apart: a canister's size, what is in it, or the room it has left.",
         "backwards": "So work back from the amount asked for — which two numbers make it, and how do you get those two standing at the same time?"
       },
-      "claim": "When you have the amount, tap “this one”. Naming the wrong vessel costs a move.",
+      "claim": "When you have the amount, choose “this one”. Naming the wrong vessel costs a move.",
       "legs": "Then the next amount, measured from whatever the vessels are left holding.",
       "default": {
-        "moves": "Tap a canister to pick it up, then tap another to pour into it. A pour stops when the first runs dry or the second is full.",
+        "moves": "Pick up a canister, then choose another to pour into it. A pour stops when the first runs dry or the second is full.",
         "contents": "This is all the water there is — one canister starts full, and none can be thrown away or fetched.",
         "levels": "Each canister says how much is in it, against how much it holds when full."
       },
       "grain": {
-        "moves": "Tap a measure to lift it, then tap another to tip the grain in. Tipping stops when the first is empty or the second is level with its rim.",
+        "moves": "Lift a measure, then choose another to tip the grain in. Tipping stops when the first is empty or the second is level with its rim.",
         "contents": "This is all the grain there is — one measure starts full, and none can be swept away or fetched from the granary.",
         "levels": "Each measure says how much is in it, against how much it holds when level with its rim."
       },
       "oil": {
-        "moves": "Tap a jar to lift it, then tap another to pour into it. A pour stops when the first runs dry or the second is full.",
+        "moves": "Lift a jar, then choose another to pour into it. A pour stops when the first runs dry or the second is full.",
         "contents": "This is all the oil there is — one jar starts full, and none can be poured away or drawn.",
         "levels": "Each jar says how much is in it, against how much it holds when full."
       },
       "wine": {
-        "moves": "Tap an amphora to lift it, then tap another to decant into it. Decanting stops when the first runs dry or the second is full.",
+        "moves": "Lift an amphora, then choose another to decant into it. Decanting stops when the first runs dry or the second is full.",
         "contents": "This is all the wine there is — one amphora starts full, and none can be spilled or fetched from the cellar.",
         "levels": "Each amphora says how much is in it, against how much it holds when full."
       },
       "natron": {
-        "moves": "Tap a jar to lift it, then tap another to tip the natron in. Tipping stops when the first is empty or the second is filled to its lid.",
+        "moves": "Lift a jar, then choose another to tip the natron in. Tipping stops when the first is empty or the second is filled to its lid.",
         "contents": "This is all the natron there is — one jar starts full, and none can be swept away or fetched.",
         "levels": "Each jar says how much is in it, against how much it holds when filled to its lid."
       },
       "ink": {
-        "moves": "Tap a pot to lift it, then tap another to pour into it. A pour stops when the first runs dry or the second is full.",
+        "moves": "Lift a pot, then choose another to pour into it. A pour stops when the first runs dry or the second is full.",
         "contents": "This is all the ink there is — one pot starts full, and none can be tipped out or ground fresh.",
         "levels": "Each pot says how much is in it, against how much it holds when full."
       }
@@ -1346,7 +1413,11 @@
     "legs": "measured {{done}} of {{total}}",
     "wanted": "Measure out",
     "claim": "this one",
-    "claimAria": "Say the {{capacity}} holds the amount"
+    "claimAria": "Say the {{capacity}} holds the amount",
+    "controls": {
+      "move": "choose a vessel or the “this one” under it",
+      "press": "pick up, pour in here, or claim"
+    }
   },
   "procession": {
     "name": {
@@ -1366,8 +1437,8 @@
     "rules": {
       "default": {
         "lengths": "Each row is one thing that happens, and it takes as long as its bar is wide. When it happens is what you work out.",
-        "marks": "A line under the day turns red while it does not hold. Tap one to ring the rows it is about.",
-        "drag": "Drag a bar along its own row. It never leaves the day."
+        "marks": "A line under the day turns red while it does not hold. Choose one to ring the rows it is about.",
+        "drag": "Slide a bar along its own row. It never leaves the day."
       }
     },
     "hint": {
@@ -1432,6 +1503,11 @@
       "hint": "Each tile you step on frees its doing. Order the day, then walk the tiles in that order.",
       "read": "The day is read. Walk its tiles in this order, from the first.",
       "hintButton": "Hint"
+    },
+    "controls": {
+      "row": "choose a row",
+      "slide": "slide its bar",
+      "mark": "pick a line under the day"
     }
   },
   "story": {
@@ -1477,7 +1553,7 @@
       "shrines": "One disc of light, and a shrine over every way out of this junction. The mirrors on the floor can carry the light to any of them.",
       "doors": "The way out the light reaches stands open, and the others are shut. One routing, one way on.",
       "returning": "Nothing is lost by choosing. Walk back in whenever you like and send the light another way instead — that way opens, and this one closes.",
-      "tap": "Tap a mirror to turn it. Tapping it again puts it back."
+      "tap": "Choose a mirror to turn it. Choose it again to put it back."
     },
     "doorOpen": "{{way}} way out: open",
     "doorShut": "{{way}} way out: shut",
@@ -1486,6 +1562,10 @@
       "e": "Eastern",
       "s": "Southern",
       "w": "Western"
+    },
+    "controls": {
+      "move": "choose a mirror",
+      "turn": "turn it"
     }
   },
   "handle": {

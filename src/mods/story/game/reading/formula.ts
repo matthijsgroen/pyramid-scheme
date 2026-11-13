@@ -50,11 +50,12 @@ export const formulaWall = (i: number): Wall => {
     copy: "story.formula",
     hint: formulaHint(row),
     after: `reading.${row.wall}`,
-    // No painting yet (repaint queue, `formulaPanel`): a bare lying stela. Its one register holds four
-    // signs, so a shorter wall fills only the start of it.
+    // The lying stela's one register holds four signs, so a shorter wall fills only the start of it. The
+    // rectangle is a share of the trimmed painting: re-measure it if a repaint moves the register.
     panel: {
-      aspect: 2.4,
-      signs: { x: 0.1, y: 0.3, width: (0.8 * (i + 1)) / FORMULA.length, height: 0.4 },
+      art: "formulaPanel",
+      aspect: 1024 / 393,
+      signs: { x: 0.04, y: 0.36, width: (0.9 * (i + 1)) / FORMULA.length, height: 0.27 },
       flow: "row",
     },
   }

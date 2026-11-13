@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next"
 import { SudokuBoard } from "@/mods/puzzle/app/sudoku/SudokuBoard"
 import { SudokuPad } from "@/mods/puzzle/app/sudoku/SudokuPad"
 import { SudokuRules } from "@/mods/puzzle/app/sudoku/SudokuRules"
+import { useSudokuControls } from "./sudokuControls"
 import { buildSudokuHint } from "@/mods/puzzle/app/sudoku/sudokuHint"
 import { useSudokuEntry } from "@/mods/puzzle/app/sudoku/useSudokuEntry"
 import { skinFor } from "@/mods/puzzle/app/sudoku/skins"
@@ -77,6 +78,7 @@ const exhaustedValues = (values: (number | undefined)[][], size: number): Readon
 export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const { size, solution, techniqueCap } = puzzle
+  const controls = useSudokuControls(size)
   // Which place this room is. The board, the pad, the name, the goal, the rules and every hint
   // sentence are drawn from it — including what a value LOOKS like, which is this family's second face.
   const skin = skinFor(role, theme, 0, room)
@@ -237,6 +239,7 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
       title={t(`sudoku.name.${skin.name}`)}
       goal={t(`sudoku.goal.${skin.name}`)}
       rules={<SudokuRules skin={skin.name} />}
+      controls={controls}
     >
       {({ reportInput, hintVisible, boardInput }) => (
         <>
