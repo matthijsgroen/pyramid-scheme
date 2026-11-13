@@ -1011,6 +1011,39 @@ body {
   }
 }
 
+/*
+ * Look B, for things that are not cells (a canister, a button): a soft ember glow and four corner brackets on
+ * whichever control within has the focus, which stays its own size.
+ */
+@utility focus-brackets {
+  :root:is([data-input="keys"], [data-input="pad"]) & :focus {
+    position: relative;
+    outline: none;
+    box-shadow:
+      inset 0 0 0 2px color-mix(in srgb, var(--color-ember-400) 55%, transparent),
+      inset 0 0 14px 2px color-mix(in srgb, var(--color-ember-400) 35%, transparent);
+  }
+  :root:is([data-input="keys"], [data-input="pad"]) & :focus::after {
+    --arm: 14px;
+    --line: 3px;
+    content: "";
+    position: absolute;
+    inset: -4px;
+    pointer-events: none;
+    background:
+      linear-gradient(var(--color-ember-400) 0 0) top left / var(--arm) var(--line),
+      linear-gradient(var(--color-ember-400) 0 0) top left / var(--line) var(--arm),
+      linear-gradient(var(--color-ember-400) 0 0) top right / var(--arm) var(--line),
+      linear-gradient(var(--color-ember-400) 0 0) top right / var(--line) var(--arm),
+      linear-gradient(var(--color-ember-400) 0 0) bottom left / var(--arm) var(--line),
+      linear-gradient(var(--color-ember-400) 0 0) bottom left / var(--line) var(--arm),
+      linear-gradient(var(--color-ember-400) 0 0) bottom right / var(--arm) var(--line),
+      linear-gradient(var(--color-ember-400) 0 0) bottom right / var(--line) var(--arm);
+    background-repeat: no-repeat;
+    filter: drop-shadow(0 0 1.5px var(--color-stone-950));
+  }
+}
+
 @custom-variant mdh {
   @media (height >= 48rem /* 768px */) {
     @slot;

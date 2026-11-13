@@ -182,7 +182,7 @@ export const CanistersBoard: FC<Props> = ({
     <div
       ref={root}
       className={clsx(
-        "board-focus flex w-full max-w-[min(52vh,26rem)] flex-col gap-3 rounded-xl p-4 select-none",
+        "focus-brackets flex w-full max-w-[min(52vh,26rem)] flex-col gap-3 rounded-xl p-4 select-none",
         skin.board
       )}
     >
