@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The Tally, Sun and Moon, star and number-square puzzles, mirror switches, scales, canisters, blockades, ordered hours, star maps, the crocodile pit, reflex traps, levers, torches, reading walls and pyramid boards play by keys or controller.
 - Move your save to another device with a travel card in Settings.
 - The camp and its windows play by keys or controller, and Start opens Settings.
+- [ and ] or the shoulder buttons switch tabs in the camp windows.
 
 ### Changed
 
