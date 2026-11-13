@@ -4,7 +4,7 @@ Aanleiding: twee playtesters willen de ontdekkingsreiziger met de pijltjestoetse
 dekt toetsenbord en game controller (Gamepad API) voor drie gebieden: de kaart, menu's en schermen, puzzels.
 Touch blijft leidend en verandert nergens: elke toets doet wat een tik al doet, via dezelfde code.
 
-Status: slice 1, 2 en 4 gebouwd, slice 5 gebouwd (puzzelcontract, `useGridCursor`, cursor C; sumplete, eclipse, star battle, sudoku, futoshiki, shrine beam, crocodile, tableau-piramide; `erase` = Delete, Backspace blijft `back`; LB/RB lopen sudoku/futoshiki langs het pad incl. gum), de rest is plan. Pad-repeat: eerste herhaling na 24 polls, daarna elke 8. Visuele stappen hebben eerst een spike + goedgekeurd plaatje nodig (gemarkeerd met **spike**).
+Status: slice 1, 2 en 4 gebouwd, slice 5 gebouwd (puzzelcontract, `useGridCursor`, cursor C; sumplete, eclipse, star battle, sudoku, futoshiki, shrine beam, crocodile, tableau-piramide; `erase` = Delete en Backspace; Backspace is `back` waar niets wist; LB/RB lopen sudoku/futoshiki langs het pad incl. gum), de rest is plan. Pad-repeat: eerste herhaling na 24 polls, daarna elke 8. Visuele stappen hebben eerst een spike + goedgekeurd plaatje nodig (gemarkeerd met **spike**).
 
 ---
 
@@ -68,12 +68,13 @@ Core kent acties, geen toetsen. Toetsen en padknoppen worden op acties gemapt; c
 | --------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------------- |
 | `move(n/e/s/w)`                                           | pijltjes, WASD (via `event.code`, dus ZQSD op AZERTY) | D-pad, linkerstick (drempel 0.5)              |
 | `confirm`                                                 | Enter, Spatie                                         | onderste knop (0: A / ✕)                      |
-| `back`                                                    | Escape, Backspace (niet in een invoerveld)            | rechter knop (1: B / ◯)                       |
+| `back`                                                    | Escape; Backspace waar niets wist                     | rechter knop (1: B / ◯)                       |
 | `undo`                                                    | Z, Ctrl/Cmd+Z                                         | linker knop (2: X / ▢)                        |
 | `alt` (familie-eigen: notities, uitsluiten, slepen-modus) | N / Shift                                             | bovenste knop (3: Y / △)                      |
 | `prev` / `next` (tabs, waarde wisselen)                   | `[` `]`, PageUp/PageDown                              | LB / RB (4/5)                                 |
 | `hint`                                                    | H                                                     | Select/View (8)                               |
 | `menu` (instellingen)                                     | — (Escape op topniveau valt onder `back`)             | Start/Menu (9)                                |
+| `erase`                                                   | Delete, Backspace (niet in een invoerveld)            | — (gum op de pad-rij)                         |
 | `value(n)`                                                | cijfers 1–9                                           | — (pad gebruikt de pad-knoppen op het scherm) |
 
 Herhaling bij vasthouden: toetsenbord gebruikt de OS-repeat (`event.repeat`), pad telt polls (eerste herhaling na
@@ -191,7 +192,7 @@ familie die al heeft); `confirm` = de tik op de cursorcel, via dezelfde handler 
 | sumplete                                                  | pijltjes cursor, Enter = tikcyclus (weg/houden/leeg)                   | D-pad, A                                                                    |
 | eclipse                                                   | idem (zon/maan/leeg)                                                   | idem                                                                        |
 | star battle                                               | idem (uitsluiten/ster/leeg)                                            | idem                                                                        |
-| sudoku                                                    | cursor + cijfers direct; N = potlood; Delete = gum                     | D-pad cursor; A opent/focust de pad-rij, LB/RB kiest waarde, A plaatst (V8) |
+| sudoku                                                    | cursor + cijfers direct; N = potlood; Delete/Backspace = gum           | D-pad cursor; A opent/focust de pad-rij, LB/RB kiest waarde, A plaatst (V8) |
 | futoshiki                                                 | idem sudoku                                                            | idem                                                                        |
 | shrine beam / lightbeamSwitch (`ShrineBeamBoard.tsx:114`) | cursor op spiegels, Enter = draaien                                    | D-pad, A                                                                    |
 | crocodile (val, `CrocodilePit.tsx:209`)                   | cursor per kolom/steen, Enter = stap                                   | D-pad, A                                                                    |

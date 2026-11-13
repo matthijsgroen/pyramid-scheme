@@ -1,5 +1,5 @@
 import type { InputAction, InputSignal } from "./actions"
-import { keyAction } from "./keyMap"
+import { keyAction, keyFallback } from "./keyMap"
 
 // A field being typed into keeps every key, Escape and the arrows included.
 const EDITABLE = 'input, textarea, select, [contenteditable=""], [contenteditable="true"]'
@@ -46,20 +46,28 @@ export const listenToKeyboard = (
     return !action || event.defaultPrevented || isEditable(event.target) ? undefined : action
   }
 
+  // Delivers `action`, or the key's fallback when nothing used it, and holds whichever was used.
+  const send = (action: InputAction, event: KeyboardEvent) => {
+    held.set(event.code, action)
+    if (deliver(signal(action, event))) return true
+    const fallback = keyFallback(event)
+    if (!fallback) return false
+    held.set(event.code, fallback)
+    return deliver(signal(fallback, event))
+  }
+
   const beneath = (event: KeyboardEvent) => {
     const action = actionOf(event)
     if (!action || onTop(event.target)) return
     event.stopPropagation()
     event.preventDefault()
-    held.set(event.code, action)
-    deliver(signal(action, event))
+    send(action, event)
   }
   const down = (event: KeyboardEvent) => {
     const action = actionOf(event)
     if (!action) return
     if (action.kind === "confirm" && pressesItself(event.target)) return
-    held.set(event.code, action)
-    if (deliver(signal(action, event))) event.preventDefault()
+    if (send(action, event)) event.preventDefault()
   }
   const up = (event: KeyboardEvent) => {
     const action = held.get(event.code)

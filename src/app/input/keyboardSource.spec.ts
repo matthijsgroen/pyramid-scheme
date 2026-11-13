@@ -74,6 +74,17 @@ describe("the keyboard as an input source", () => {
     expect(delivered().map(signal => signal.action.kind)).toEqual(["back"])
   })
 
+  it("erases on Backspace, and goes back with it where nothing erased", () => {
+    deliver.mockImplementation(signal => signal.action.kind !== "erase")
+    const event = press("Backspace")
+    expect(delivered().map(signal => signal.action.kind)).toEqual(["erase", "back"])
+    expect(event.defaultPrevented).toBe(true)
+    deliver.mockClear()
+    lift("Backspace")
+    expect(delivered().map(signal => [signal.action.kind, signal.released])).toEqual([["back", true]])
+    deliver.mockImplementation(() => used)
+  })
+
   it("takes a key pressed on something beneath the top layer before that element sees it", () => {
     stop()
     stop = listenToKeyboard(deliver, { onTop: () => false })

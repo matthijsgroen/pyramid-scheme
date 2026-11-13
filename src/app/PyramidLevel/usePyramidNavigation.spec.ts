@@ -108,10 +108,17 @@ describe(usePyramidNavigation, () => {
     expect(fresh.onAnswer).toHaveBeenLastCalledWith("A", 1)
   })
 
+  it("empties an open block on erase", () => {
+    const { send, onAnswer } = navigate({ A: 3 })
+    expect(send({ kind: "erase" })).toBe(true)
+    expect(onAnswer).toHaveBeenLastCalledWith("A", undefined)
+  })
+
   it("leaves a closed block's value alone", () => {
     const { result, send, onAnswer } = navigate()
     act(() => result.current.setSelectedBlockIndex(5))
     expect(send({ kind: "next" })).toBe(false)
+    expect(send({ kind: "erase" })).toBe(false)
     expect(onAnswer).not.toHaveBeenCalled()
   })
 })

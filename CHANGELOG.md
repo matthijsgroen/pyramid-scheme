@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Walk the map with arrow keys or WASD.
 - Escape closes dialogs, the shop and puzzles; Enter moves a conversation on.
+- Backspace erases a number on the board, and goes back where nothing erases.
 - A game controller walks the map, moves through dialogs and backs out of them.
 - The Tally, Sun and Moon, star and number-square puzzles, mirror switches, the crocodile pit and pyramid boards play by keys or controller.
 - Move your save to another device with a travel card in Settings.

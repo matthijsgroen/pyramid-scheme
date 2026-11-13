@@ -6,7 +6,8 @@ import { getFloorAndIndex } from "@/game/pyramidBlocks"
 /**
  * The tableau's cursor for keys and pad: a direction steps along a floor or onto the floor above or below
  * (each floor one block longer than the last), confirm opens the block's field for typing, a digit fills
- * the block and opens it, and `prev`/`next` count its value down or up for a pad that has no digits.
+ * the block and opens it, erase empties it, and `prev`/`next` count its value down or up for a pad that has no
+ * digits.
  */
 export const usePyramidNavigation = (
   floorStartIndices: number[],
@@ -43,6 +44,10 @@ export const usePyramidNavigation = (
           onAnswer?.(block.id, action.value)
           setFocusInput(true)
         }
+        return true
+      case "erase":
+        if (!onAnswer || !block.isOpen) return false
+        if (!repeat) onAnswer(block.id, undefined)
         return true
       case "prev":
       case "next": {
