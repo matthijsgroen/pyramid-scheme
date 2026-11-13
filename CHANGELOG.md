@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Developer tools no longer ship in the released game.
 - Opening a treasure chest shows the painted chest from the map.
 - A taken chest stands open, and a ward key's chest looks like treasure.
+- Puzzle rules no longer assume a finger: they describe the move, the Controls block the keys.
 
 ### Fixed
 
