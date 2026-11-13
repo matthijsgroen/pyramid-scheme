@@ -442,7 +442,11 @@
       }
     },
     "goal": "Elke rij en elke kolom telt op tot het getal ernaast.",
-    "name": "De Telling"
+    "name": "De Telling",
+    "controls": {
+      "move": "kies een getal",
+      "mark": "wegstrepen, houden of leeg"
+    }
   },
   "futoshiki": {
     "rules": {
@@ -498,7 +502,15 @@
       }
     },
     "goal": "Elke rij en elke kolom laat elk getal precies één keer zien.",
-    "name": "Groter en Kleiner"
+    "name": "Groter en Kleiner",
+    "controls": {
+      "move": "kies een vakje",
+      "type": "schrijf een getal",
+      "choose": "kies een getal of de gum",
+      "place": "schrijf het",
+      "pencil": "potlood",
+      "erase": "gummen"
+    }
   },
   "lightbeam": {
     "rules": {
@@ -562,7 +574,11 @@
       }
     },
     "goal": "Elk vakje heeft een zon of een maan, en elke lijn heeft er evenveel van de een als van de ander.",
-    "name": "Zon en Maan"
+    "name": "Zon en Maan",
+    "controls": {
+      "move": "kies een vakje",
+      "mark": "ander teken"
+    }
   },
   "constellation": {
     "rules": {
@@ -963,6 +979,11 @@
       "market": "Marktkramen",
       "lotus": "Lotusvijver",
       "cats": "Tempelkatten"
+    },
+    "controls": {
+      "move": "kies een vakje",
+      "mark": "ander teken",
+      "sweep": "vasthouden en bewegen: streep een rij weg"
     }
   },
   "pairPuzzle": {
@@ -1049,6 +1070,11 @@
           "place_other": "Zet een kever op elk gearceerd vakje."
         }
       }
+    },
+    "controls": {
+      "move": "kies een vakje",
+      "mark": "ander teken",
+      "sweep": "vasthouden en bewegen: streep een rij weg"
     }
   },
   "rushHour": {

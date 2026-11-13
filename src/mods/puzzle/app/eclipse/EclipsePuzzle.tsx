@@ -19,6 +19,7 @@ import type { EclipsePuzzleWithAnswer } from "@/mods/puzzle/game/eclipse/generat
 import { buildEclipseHint } from "./eclipseHint"
 import { EclipseBoard } from "./EclipseBoard"
 import { EclipseRules } from "./EclipseRules"
+import { useEclipseControls } from "./eclipseControls"
 
 type Props = {
   puzzle: EclipsePuzzleWithAnswer
@@ -34,6 +35,7 @@ const CYCLE: readonly (Mark | undefined)[] = [undefined, "sun", "moon"]
 
 export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
+  const controls = useEclipseControls()
   const [state, setState] = usePuzzleState(() => createEclipseState(puzzle), puzzle)
 
   // A hint reads the board, and the top rung enumerates every legal filling of every line: derived only once
@@ -87,6 +89,7 @@ export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, 
       title={t("eclipse.name")}
       goal={t("eclipse.goal")}
       rules={<EclipseRules signs={puzzle.links.length > 0} />}
+      controls={controls}
     >
       {({ reportInput, hintVisible, boardInput }) => (
         <EclipseBoard
