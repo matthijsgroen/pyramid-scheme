@@ -109,8 +109,9 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
       goal={t(`constellation.goal.${skin}`)}
       rules={<ConstellationRules skin={skin} />}
     >
-      {({ reportInput, hintVisible }) => (
+      {({ reportInput, hintVisible, boardInput }) => (
         <ConstellationBoard
+          boardInput={boardInput}
           puzzle={puzzle}
           state={state}
           highlighted={hintVisible ? shown : undefined}
