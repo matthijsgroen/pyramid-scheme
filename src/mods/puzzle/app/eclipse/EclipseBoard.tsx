@@ -1,5 +1,8 @@
 import clsx from "clsx"
 import type { FC } from "react"
+import type { InputHandler } from "@/app/input/actions"
+import { useGridCursor } from "@/app/input/useGridCursor"
+import { useInputLayer } from "@/app/input/useInputLayer"
 import {
   brokenLinks,
   colOf,
@@ -31,6 +34,8 @@ type Props = {
    * unset means no run.
    */
   wave?: number
+  /** The shell's `boardInput`: with it the board takes keys and pad, a cursor whose confirm is a tap. */
+  boardInput?: (board: InputHandler) => InputHandler
 }
 
 /**
@@ -175,8 +180,32 @@ const markGlyph = (value: Mark | undefined, theme: string | undefined, celebrati
   )
 }
 
-export const EclipseBoard: FC<Props> = ({ puzzle, state, highlighted, decided, focus, theme, wave, onTapCell }) => {
+export const EclipseBoard: FC<Props> = ({
+  puzzle,
+  state,
+  highlighted,
+  decided,
+  focus,
+  theme,
+  wave,
+  onTapCell,
+  boardInput,
+}) => {
   const { size } = puzzle
+  const cursor = useGridCursor({
+    rows: size,
+    cols: size,
+    start: () => {
+      const open = state.marks.findIndex((_mark, cell) => !isGiven(puzzle, cell))
+      return { row: rowOf(size, Math.max(open, 0)), col: colOf(size, Math.max(open, 0)) }
+    },
+    // A given is a disabled button: a tap on it does nothing, and so does a confirm.
+    onConfirm: (row, col) => {
+      const cell = row * size + col
+      if (!isGiven(puzzle, cell)) onTapCell(cell)
+    },
+  })
+  useInputLayer(boardInput ? boardInput(cursor.handle) : cursor.handle, boardInput !== undefined)
   // Held back a beat: a tap on the way to the other mark is not a mistake (see the hook).
   const conflicts = useDelayedConflicts(state.marks, marks => eclipseConflicts(puzzle, { marks }))
   const broken = new Set(brokenLinks(puzzle, state).map(linkKey))
@@ -196,7 +225,7 @@ export const EclipseBoard: FC<Props> = ({ puzzle, state, highlighted, decided, f
           return (
             <button
               key={cell}
-              onClick={() => onTapCell(cell)}
+              onClick={() => cursor.tap(rowOf(size, cell), colOf(size, cell))}
               disabled={given}
               style={decided?.has(cell) ? HATCH : undefined}
               className={clsx(
@@ -209,7 +238,8 @@ export const EclipseBoard: FC<Props> = ({ puzzle, state, highlighted, decided, f
                 // Evidence and conclusion cannot look the same: a hint saying "this square" while six squares
                 // wear one ring leaves the player to guess which square it meant.
                 highlighted?.has(cell) && cell !== focus && "ring-2 ring-sky-300/60",
-                cell === focus && "ring-4 ring-amber-300"
+                cell === focus && "ring-4 ring-amber-300",
+                cursor.at(rowOf(size, cell), colOf(size, cell)) && "board-cursor"
               )}
             >
               {markGlyph(value, theme, celebrating)}

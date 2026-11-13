@@ -1,5 +1,8 @@
 import clsx from "clsx"
 import type { FC } from "react"
+import type { InputHandler } from "@/app/input/actions"
+import { useGridCursor } from "@/app/input/useGridCursor"
+import { useInputLayer } from "@/app/input/useInputLayer"
 import type { SumpleteLine } from "@/mods/puzzle/game/sumplete/sumpleteStatus"
 import type { SumpleteMark } from "@/mods/puzzle/game/sumplete/techniques"
 
@@ -19,6 +22,8 @@ type Props = {
    */
   checked?: number
   onToggle: (row: number, col: number) => void
+  /** The shell's `boardInput`: with it the board takes keys and pad, a cursor whose confirm is a tap. */
+  boardInput?: (board: InputHandler) => InputHandler
 }
 
 const cellKey = (row: number, col: number) => `${row},${col}`
@@ -75,8 +80,20 @@ const LineTarget: FC<{ line: SumpleteLine; checking?: boolean }> = ({ line, chec
 // (docs/instructions/puzzle-screens.md: the board fits a 360×640 phone). Width comes from the container
 // rather than from `vw`, so
 // the modal's own padding can never push the board past the screen edge.
-export const SumpleteBoard: FC<Props> = ({ grid, cells, rows, cols, highlighted, litLine, checked, onToggle }) => {
+export const SumpleteBoard: FC<Props> = ({
+  grid,
+  cells,
+  rows,
+  cols,
+  highlighted,
+  litLine,
+  checked,
+  onToggle,
+  boardInput,
+}) => {
   const size = grid.length
+  const cursor = useGridCursor({ rows: size, cols: size, onConfirm: onToggle })
+  useInputLayer(boardInput ? boardInput(cursor.handle) : cursor.handle, boardInput !== undefined)
   const inLitLine = (row: number, col: number) =>
     litLine ? (litLine.kind === "row" ? litLine.index === row : litLine.index === col) : false
   return (
@@ -89,8 +106,11 @@ export const SumpleteBoard: FC<Props> = ({ grid, cells, rows, cols, highlighted,
           {values.map((value, col) => (
             <button
               key={col}
-              onClick={() => onToggle(row, col)}
-              className={cellCls(cells[row][col], highlighted?.has(cellKey(row, col)) ?? false, inLitLine(row, col))}
+              onClick={() => cursor.tap(row, col)}
+              className={clsx(
+                cellCls(cells[row][col], highlighted?.has(cellKey(row, col)) ?? false, inLitLine(row, col)),
+                cursor.at(row, col) && "board-cursor"
+              )}
               style={highlighted?.has(cellKey(row, col)) ? HATCH : undefined}
             >
               <span>{value}</span>

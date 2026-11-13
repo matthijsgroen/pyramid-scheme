@@ -95,8 +95,9 @@ export const SumpletePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCanc
       goal={t("sumplete.goal")}
       rules={<SumpleteRules />}
     >
-      {({ reportInput, hintVisible }) => (
+      {({ reportInput, hintVisible, boardInput }) => (
         <SumpleteBoard
+          boardInput={boardInput}
           grid={grid}
           cells={state.cells}
           rows={rows}
