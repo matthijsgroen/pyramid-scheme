@@ -98,6 +98,7 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
       onSolved={onSolved}
       onCancel={onCancel}
       solved={celebration.done}
+      finished={finished}
       onReset={() => setState(createStarBattleState(puzzle))}
       // A tap is its own eraser, so undo is for stepping back off a run of squares darkened on a wrong
       // reading — which is the mistake a board of mostly-elimination produces.

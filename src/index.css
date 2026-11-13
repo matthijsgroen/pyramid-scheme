@@ -967,7 +967,7 @@ body {
    dark halo under the rim holds it apart from a pale cell, and the tint is under the cell's content, so a
    digit or a glyph keeps its own colour. */
 @utility board-cursor {
-  :root:is([data-input="keys"], [data-input="pad"]) & {
+  :root:is([data-input="keys"], [data-input="pad"]) &:not([data-finished] *) {
     position: relative;
     z-index: 5;
     /* A piece as wide as its board (a whole row) sets a smaller lift, or it would spill over the board's edge. */
@@ -978,7 +978,7 @@ body {
     transition-property: color, background-color, border-color;
     filter: brightness(1.2) drop-shadow(0 0 1.5px var(--color-stone-950)) drop-shadow(0 7px 8px rgb(0 0 0 / 0.75));
   }
-  :root:is([data-input="keys"], [data-input="pad"]) &::before {
+  :root:is([data-input="keys"], [data-input="pad"]) &:not([data-finished] *)::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -993,7 +993,7 @@ body {
    half of what the cell grows, so it stays on the lifted edge. The board sets the way out as --beside-x and
    --beside-y (-1, 0 or 1) and a cell's length as --cell. */
 @utility cursor-beside {
-  :root:is([data-input="keys"], [data-input="pad"]) & {
+  :root:is([data-input="keys"], [data-input="pad"]) &:not([data-finished] *) {
     transform: translate(
       calc(var(--beside-x, 0) * (var(--cursor-lift, 1.18) - 1) / 2 * var(--cell)),
       calc(var(--beside-y, 0) * (var(--cursor-lift, 1.18) - 1) / 2 * var(--cell))
@@ -1005,7 +1005,7 @@ body {
    cell again on top, scaled, and this lightens it and lays its shadow. Hidden for touch. */
 @utility svg-cursor {
   display: none;
-  :root:is([data-input="keys"], [data-input="pad"]) & {
+  :root:is([data-input="keys"], [data-input="pad"]) &:not([data-finished] *) {
     display: inline;
     filter: brightness(1.2) drop-shadow(0 0 0.3px var(--color-stone-950)) drop-shadow(0 1.2px 1.4px rgb(0 0 0 / 0.75));
   }
@@ -1013,7 +1013,7 @@ body {
 
 /* The same look on a board of buttons, where the cursor is the focus: on whichever control within has it. */
 @utility board-focus {
-  :root:is([data-input="keys"], [data-input="pad"]) & :focus {
+  :root:is([data-input="keys"], [data-input="pad"]) &:not([data-finished] *) :focus {
     position: relative;
     z-index: 5;
     transform: scale(var(--cursor-lift, 1.18));
@@ -1022,7 +1022,7 @@ body {
     transition-property: color, background-color, border-color;
     filter: brightness(1.2) drop-shadow(0 0 1.5px var(--color-stone-950)) drop-shadow(0 7px 8px rgb(0 0 0 / 0.75));
   }
-  :root:is([data-input="keys"], [data-input="pad"]) & :focus::before {
+  :root:is([data-input="keys"], [data-input="pad"]) &:not([data-finished] *) :focus::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -1041,12 +1041,12 @@ body {
 @utility focus-brackets {
   /* A control placed by its own position keeps it: the brackets hang off any positioned box. */
   :root:is([data-input="keys"], [data-input="pad"])
-    &
+    &:not([data-finished] *)
     :is(:focus, label:has(> :is([type="checkbox"], [type="radio"]):focus)):not(.absolute, .fixed, .sticky) {
     position: relative;
   }
   :root:is([data-input="keys"], [data-input="pad"])
-    &
+    &:not([data-finished] *)
     :is(:focus, label:has(> :is([type="checkbox"], [type="radio"]):focus)) {
     outline: none;
     box-shadow:
@@ -1054,7 +1054,7 @@ body {
       inset 0 0 14px 2px color-mix(in srgb, var(--color-ember-400) 35%, transparent);
   }
   :root:is([data-input="keys"], [data-input="pad"])
-    &
+    &:not([data-finished] *)
     :is(:focus, label:has(> :is([type="checkbox"], [type="radio"]):focus))::after {
     --arm: 14px;
     --line: 3px;
@@ -1082,7 +1082,7 @@ body {
  * stronger glow. The element must already be positioned.
  */
 @utility cursor-brackets {
-  :root:is([data-input="keys"], [data-input="pad"]) &::before {
+  :root:is([data-input="keys"], [data-input="pad"]) &:not([data-finished] *)::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -1092,7 +1092,7 @@ body {
       inset 0 0 0 2px color-mix(in srgb, var(--color-ember-400) 55%, transparent),
       inset 0 0 14px 2px color-mix(in srgb, var(--color-ember-400) 35%, transparent);
   }
-  :root:is([data-input="keys"], [data-input="pad"]) &::after {
+  :root:is([data-input="keys"], [data-input="pad"]) &:not([data-finished] *)::after {
     --arm: 14px;
     --line: 3px;
     --ink: var(--color-ember-400);
@@ -1112,12 +1112,12 @@ body {
     background-repeat: no-repeat;
     filter: drop-shadow(0 0 1.5px var(--color-stone-950));
   }
-  :root:is([data-input="keys"], [data-input="pad"]) &[data-held]::before {
+  :root:is([data-input="keys"], [data-input="pad"]) &:not([data-finished] *)[data-held]::before {
     box-shadow:
       inset 0 0 0 3px var(--color-ember-300),
       inset 0 0 22px 6px color-mix(in srgb, var(--color-ember-400) 60%, transparent);
   }
-  :root:is([data-input="keys"], [data-input="pad"]) &[data-held]::after {
+  :root:is([data-input="keys"], [data-input="pad"]) &:not([data-finished] *)[data-held]::after {
     --arm: 22px;
     --line: 5px;
     --ink: var(--color-ember-300);
@@ -1127,7 +1127,7 @@ body {
 
 /* The held object itself, lifted off the board under its brackets: a little larger, lighter, with a shadow. */
 @utility cursor-lift {
-  :root:is([data-input="keys"], [data-input="pad"]) &[data-held] {
+  :root:is([data-input="keys"], [data-input="pad"]) &:not([data-finished] *)[data-held] {
     z-index: 5;
     transform: scale(1.06);
     filter: brightness(1.15) drop-shadow(0 6px 6px rgb(0 0 0 / 0.7));
@@ -1137,7 +1137,7 @@ body {
 /* Drawn for keys and pad only, as the cursor is: a mark that says what the keys will do (the lane arrows). */
 @utility cursor-only {
   display: none;
-  :root:is([data-input="keys"], [data-input="pad"]) & {
+  :root:is([data-input="keys"], [data-input="pad"]) &:not([data-finished] *) {
     display: block;
   }
 }

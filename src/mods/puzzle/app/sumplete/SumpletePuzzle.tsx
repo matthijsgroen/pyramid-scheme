@@ -77,6 +77,7 @@ export const SumpletePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCanc
       onSolved={onSolved}
       onCancel={onCancel}
       solved={celebration.done}
+      finished={finished}
       onReset={() => setState(createSumpleteState(grid.length))}
       // Two lines: the reason, then the move it asks for (`puzzle-screens.md`).
       hint={

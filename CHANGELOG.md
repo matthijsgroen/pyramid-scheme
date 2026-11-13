@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Sudoku: the cursor steps away when the board is solved, and [ ] skip numbers already used up.
 - Beside a drop on the map, the arrows show only the ways you can walk, and a corner right beside you gets an arrow.
 - On the unequal and sun-and-moon puzzles the signs beside the keyboard cursor step out with it instead of hiding.
 - The game works offline again.

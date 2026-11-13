@@ -45,6 +45,8 @@ type Props = {
   onCancel: () => void
   /** For families whose win state is derived from the board rather than raised as an event. */
   solved?: boolean
+  /** The board is complete and finishing itself, before `solved`: from here on no cursor is drawn on it. */
+  finished?: boolean
   /** Restores the board's start state. Omit for families with nothing to reset. */
   onReset?: () => void
   /**
@@ -134,6 +136,7 @@ export const PuzzleFamilyShell = ({
   onSolved,
   onCancel,
   solved,
+  finished,
   onReset,
   undo,
   hint,
@@ -293,6 +296,8 @@ export const PuzzleFamilyShell = ({
           Sumplete, the one board built out of fixed-size cells, was the one it was judged on. */}
       <div
         inert={finishing}
+        // The cursor looks in index.css draw nothing inside this.
+        data-finished={finished || finishing || undefined}
         className={clsx(
           "flex w-full flex-col items-center gap-4 rounded-lg bg-black/30 p-3",
           finishing && "opacity-90"

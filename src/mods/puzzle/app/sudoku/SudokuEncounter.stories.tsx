@@ -30,3 +30,36 @@ export const KeyboardCursor: Story = {
     </EncounterModal>
   ),
 }
+
+// Three squares open (1 and 2 across the top, 4 below the 2): every 3 is placed, so LB/RB pass over it, and
+// the 1 and the 2 run out as they go in. Solving it shows the board finishing without a cursor.
+export const AlmostSolved: Story = {
+  args: { tileset: "junior", children: null },
+  render: () => (
+    <EncounterModal tileset="junior">
+      <SudokuPuzzle
+        puzzle={{
+          size: 4,
+          boxWidth: 2,
+          boxHeight: 2,
+          givens: [
+            [undefined, undefined, 3, 4],
+            [3, undefined, 1, 2],
+            [2, 1, 4, 3],
+            [4, 3, 2, 1],
+          ],
+          solution: [
+            [1, 2, 3, 4],
+            [3, 4, 1, 2],
+            [2, 1, 4, 3],
+            [4, 3, 2, 1],
+          ],
+          techniqueCap: "nakedSingle",
+        }}
+        difficulty="junior"
+        onSolved={() => {}}
+        onCancel={() => {}}
+      />
+    </EncounterModal>
+  ),
+}

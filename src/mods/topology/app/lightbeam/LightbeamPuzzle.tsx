@@ -63,6 +63,7 @@ export const LightbeamPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
       onSolved={onSolved}
       onCancel={onCancel}
       solved={celebration.done}
+      finished={solved}
       onReset={() => setState(createLightbeamState(puzzle))}
       hint={solved ? undefined : hintText}
       onHintRevealed={freeze}

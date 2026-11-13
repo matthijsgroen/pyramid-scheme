@@ -66,6 +66,7 @@ export const ProcessionPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
       onSolved={onSolved}
       onCancel={onCancel}
       solved={celebration.done}
+      finished={finished}
       onReset={() => {
         setState(createProcessionState(puzzle))
         setFocus(undefined)

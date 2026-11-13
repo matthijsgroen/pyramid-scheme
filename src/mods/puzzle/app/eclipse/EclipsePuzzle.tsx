@@ -78,6 +78,7 @@ export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, 
       onSolved={onSolved}
       onCancel={onCancel}
       solved={celebration.done}
+      finished={finished}
       onReset={() => setState(createEclipseState(puzzle))}
       // A tap is its own eraser here, so undo is for stepping back off a run of squares filled on a
       // wrong reading — which is the mistake a board read the wrong way round produces.

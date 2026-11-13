@@ -13,8 +13,8 @@ const signal = (action: InputAction, extra: Partial<InputSignal> = {}): InputSig
 
 const at = { row: 1, col: 2 }
 
-const padOf = (size = 4, picked?: PadPick) => {
-  const pad = { size, picked, onPick: vi.fn(), onValue: vi.fn(), onErase: vi.fn(), onTogglePencil: vi.fn() }
+const padOf = (size = 4, picked?: PadPick, exhausted?: ReadonlySet<number>) => {
+  const pad = { size, picked, exhausted, onPick: vi.fn(), onValue: vi.fn(), onErase: vi.fn(), onTogglePencil: vi.fn() }
   return { pad, press: (action: InputAction, extra?: Partial<InputSignal>) => padKeys(pad)(signal(action, extra), at) }
 }
 
@@ -46,6 +46,19 @@ describe(padKeys, () => {
     [1, "prev", "erase"],
   ] as const)("from %s, %s picks %s", (picked, kind, expected) => {
     const { pad, press } = padOf(4, picked)
+    press({ kind })
+    expect(pad.onPick).toHaveBeenCalledWith(expected)
+  })
+
+  it.each([
+    [undefined, "next", 2],
+    [undefined, "prev", 3],
+    [2, "next", 3],
+    [3, "next", "erase"],
+    ["erase", "next", 2],
+    [2, "prev", "erase"],
+  ] as const)("with 1 and 4 used up, from %s, %s picks %s", (picked, kind, expected) => {
+    const { pad, press } = padOf(4, picked, new Set([1, 4]))
     press({ kind })
     expect(pad.onPick).toHaveBeenCalledWith(expected)
   })

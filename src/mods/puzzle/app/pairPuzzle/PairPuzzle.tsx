@@ -77,6 +77,7 @@ export const PairPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room, o
       onSolved={onSolved}
       onCancel={onCancel}
       solved={celebration.done}
+      finished={finished}
       onReset={() => setState(createPairState(puzzle))}
       undo={{ onPress: () => setState(undoPair(state)), enabled: canUndoPair(state) && !finished }}
       hint={hintText}

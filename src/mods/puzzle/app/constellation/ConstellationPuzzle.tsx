@@ -100,6 +100,7 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
       onSolved={onSolved}
       onCancel={onCancel}
       solved={celebration.done}
+      finished={finished}
       onReset={() => setState(createConstellationState(puzzle))}
       // A drag gives one pair back, so undo is for stepping back off a run of lines drawn on a wrong reading.
       undo={{ onPress: () => setState(undoConstellation), enabled: canUndoConstellation(state) && !finished }}

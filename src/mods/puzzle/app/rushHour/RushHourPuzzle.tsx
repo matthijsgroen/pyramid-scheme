@@ -80,6 +80,7 @@ export const RushHourPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, roo
       onSolved={onSolved}
       onCancel={onCancel}
       solved={celebration.done}
+      finished={finished}
       onReset={() => {
         gesture.current = "none"
         setPast([createRushHourState(puzzle)])
