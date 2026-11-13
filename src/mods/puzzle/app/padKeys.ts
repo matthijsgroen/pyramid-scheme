@@ -7,6 +7,8 @@ export type PadPick = number | "erase"
 type Pad = {
   size: number
   picked?: PadPick
+  /** Values with nothing left to place, which the pad dims: `prev`/`next` pass over them. */
+  exhausted?: ReadonlySet<number>
   onPick: (pick: PadPick) => void
   /** The pad's value key, pressed for the square at `at`. */
   onValue: (value: number, at: GridCell) => void
@@ -14,10 +16,13 @@ type Pad = {
   onTogglePencil: () => void
 }
 
-const step = (size: number, picked: PadPick | undefined, by: 1 | -1): PadPick => {
+const step = ({ size, picked, exhausted }: Pad, by: 1 | -1): PadPick => {
   const keys: PadPick[] = [...Array.from({ length: size }, (_unused, index) => index + 1), "erase"]
-  const from = picked === undefined ? (by > 0 ? -1 : keys.length - 1) : keys.indexOf(picked)
-  return keys[(from + by + keys.length) % keys.length]
+  const open = (key: PadPick) => key === "erase" || !exhausted?.has(key)
+  let at = picked === undefined ? (by > 0 ? -1 : keys.length - 1) : keys.indexOf(picked)
+  do at = (at + by + keys.length) % keys.length
+  while (!open(keys[at]))
+  return keys[at]
 }
 
 /**
@@ -42,7 +47,7 @@ export const padKeys =
         return true
       case "prev":
       case "next":
-        pad.onPick(step(pad.size, pad.picked, action.kind === "next" ? 1 : -1))
+        pad.onPick(step(pad, action.kind === "next" ? 1 : -1))
         return true
       case "confirm":
         if (pad.picked === undefined) return false

@@ -80,6 +80,7 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, ro
       onSolved={onSolved}
       onCancel={onCancel}
       solved={celebration.done}
+      finished={solved}
       onReset={() => setState(createCanistersState(puzzle))}
       // Undo gives the MOVE back as well as the pour (`undoPour`), so on this board it is the way out of a
       // budget spent on a wrong reading — not merely a convenience.

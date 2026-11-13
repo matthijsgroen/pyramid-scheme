@@ -55,6 +55,10 @@ const padIn = (root: HTMLElement, label: string) =>
 
 const drawn = (root: HTMLElement) => cellsIn(root).map(cell => cell.innerHTML)
 
+// What index.css lifts as the cursor: the class, outside a board that is finishing.
+const lifted = (root: HTMLElement) =>
+  [...root.querySelectorAll(".board-cursor")].filter(element => !element.closest("[data-finished]"))
+
 const renderPuzzle = () => {
   const onSolved = vi.fn()
   const { container } = render(<SudokuPuzzle puzzle={puzzle} onSolved={onSolved} onCancel={() => {}} />)
@@ -120,13 +124,47 @@ describe("SudokuPuzzle by keys", () => {
       key("ArrowDown")
       key("BracketLeft")
       key("BracketLeft")
-      key("BracketLeft")
-      // 2 → 1 → the eraser → 4, round the end of the pad.
+      // 2 → the eraser → 4, round the end of the pad and past the 1, which is all placed.
       expect(padIn(container, "4").classList.contains("board-cursor")).toBe(true)
       key("Enter")
       act(() => vi.advanceTimersByTime(5000))
       key("Enter")
       expect(onSolved).toHaveBeenCalledOnce()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it("[ and ] pass over a value already placed in every row, but never over the eraser", () => {
+    const { container } = renderPuzzle()
+    key("Digit1")
+    key("BracketLeft")
+    expect(padIn(container, "4").classList.contains("board-cursor")).toBe(true)
+    key("BracketRight")
+    expect(padIn(container, "ui.erase").classList.contains("board-cursor")).toBe(true)
+    key("BracketRight")
+    expect(padIn(container, "2").classList.contains("board-cursor")).toBe(true)
+  })
+
+  it("keeps the pick on a value it has just used up, as the dimmed key stays pressable", () => {
+    const { container } = renderPuzzle()
+    key("BracketRight")
+    key("Enter")
+    expect(padIn(container, "1").classList.contains("board-cursor")).toBe(true)
+  })
+
+  it("draws no cursor once the board is solved, while it finishes", () => {
+    vi.useFakeTimers()
+    try {
+      const { container, onSolved } = renderPuzzle()
+      key("Digit1")
+      key("ArrowRight")
+      key("Digit2")
+      key("ArrowDown")
+      expect(lifted(container)).not.toEqual([])
+      key("Digit4")
+      expect(lifted(container)).toEqual([])
+      expect(onSolved).not.toHaveBeenCalled()
     } finally {
       vi.useRealTimers()
     }

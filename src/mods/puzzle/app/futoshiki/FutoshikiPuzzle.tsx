@@ -51,6 +51,7 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
   const [picked, setPicked] = useState<PadPick>()
 
   const values = useMemo(() => futoshikiValues(state), [state])
+  const exhausted = exhaustedNumbers(values, size)
   const conflicts = useMemo(() => futoshikiConflicts(puzzle, values), [puzzle, values])
   const stranded = useMemo(() => strandedNotes(puzzle, values, futoshikiNotes(state)), [puzzle, values, state])
   // Derived on every change: whether there is a hint at all is what shows the button. What the player is
@@ -113,6 +114,7 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
     padKeys({
       size,
       picked,
+      exhausted,
       onPick: setPicked,
       onValue: (value, at) => {
         if (finished) return
@@ -131,6 +133,7 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
       onSolved={onSolved}
       onCancel={onCancel}
       solved={celebration.done}
+      finished={finished}
       onReset={() => {
         setState(createFutoshikiState(puzzle))
         clearSelection()
@@ -177,7 +180,7 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
           <FutoshikiPad
             size={size}
             pencil={pencil}
-            exhausted={exhaustedNumbers(values, size)}
+            exhausted={exhausted}
             disabled={!selected || finished}
             picked={picked}
             onNumber={value => enterNumber(value, reportInput)}

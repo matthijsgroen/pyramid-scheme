@@ -99,6 +99,7 @@ export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room
       onSolved={onSolved}
       onCancel={onCancel}
       solved={celebration.done}
+      finished={finished}
       onReset={() => setState(createBalanceState(glyphs))}
       // **The hint names a piece by the symbol the board is drawing**, so it goes through the face too. A
       // sentence that typed the generator's own glyph while the board drew this room's would be pointing at

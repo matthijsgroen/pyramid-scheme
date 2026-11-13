@@ -74,6 +74,7 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
       onSolved={onSolved}
       onCancel={onCancel}
       solved={celebration.done}
+      finished={finished}
       onReset={() => setState(createHidatoState(puzzle))}
       undo={{ onPress: () => setState(undoHidato), enabled: canUndoHidato(state) && !finished }}
       hint={

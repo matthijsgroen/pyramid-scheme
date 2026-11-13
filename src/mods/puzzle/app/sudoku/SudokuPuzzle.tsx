@@ -87,6 +87,7 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
   const [picked, setPicked] = useState<PadPick>()
 
   const values = useMemo(() => sudokuValues(state), [state])
+  const exhausted = exhaustedValues(values, size)
   /**
    * The value under the picked square, which every square holding it then washes to show.
    *
@@ -185,6 +186,7 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
     padKeys({
       size,
       picked,
+      exhausted,
       onPick: setPicked,
       onValue: (value, at) => {
         if (finished) return
@@ -203,6 +205,7 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
       onSolved={onSolved}
       onCancel={onCancel}
       solved={celebration.done}
+      finished={finished}
       onReset={() => {
         setState(createSudokuState(puzzle))
         clearSelection()
@@ -272,7 +275,7 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
             size={size}
             skin={skin}
             pencil={pencil}
-            exhausted={exhaustedValues(values, size)}
+            exhausted={exhausted}
             disabled={!selected || finished}
             picked={picked}
             onValue={value => enterValue(value, reportInput)}

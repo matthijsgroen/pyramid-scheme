@@ -52,6 +52,10 @@ const padIn = (root: HTMLElement, label: string) =>
 
 const drawn = (root: HTMLElement) => cellsIn(root).map(cell => cell.innerHTML)
 
+// What index.css lifts as the cursor: the class, outside a board that is finishing.
+const lifted = (root: HTMLElement) =>
+  [...root.querySelectorAll(".board-cursor")].filter(element => !element.closest("[data-finished]"))
+
 const renderPuzzle = () => {
   const onSolved = vi.fn()
   const { container } = render(<FutoshikiPuzzle puzzle={puzzle} onSolved={onSolved} onCancel={() => {}} />)
@@ -112,6 +116,34 @@ describe("FutoshikiPuzzle by keys", () => {
       act(() => vi.advanceTimersByTime(5000))
       key("Enter")
       expect(onSolved).toHaveBeenCalledOnce()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it("the shoulder buttons pass over a number already placed in every row, but never over the eraser", () => {
+    const { container } = renderPuzzle()
+    key("Digit1")
+    key("PageUp")
+    expect(padIn(container, "3").classList.contains("board-cursor")).toBe(true)
+    key("PageDown")
+    expect(padIn(container, "ui.erase").classList.contains("board-cursor")).toBe(true)
+    key("PageDown")
+    expect(padIn(container, "2").classList.contains("board-cursor")).toBe(true)
+  })
+
+  it("draws no cursor once the board is solved, while it finishes", () => {
+    vi.useFakeTimers()
+    try {
+      const { container, onSolved } = renderPuzzle()
+      key("Digit1")
+      key("ArrowRight")
+      key("Digit2")
+      key("ArrowDown")
+      expect(lifted(container)).not.toEqual([])
+      key("Digit3")
+      expect(lifted(container)).toEqual([])
+      expect(onSolved).not.toHaveBeenCalled()
     } finally {
       vi.useRealTimers()
     }
