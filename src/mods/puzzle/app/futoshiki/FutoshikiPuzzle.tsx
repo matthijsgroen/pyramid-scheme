@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next"
 import { FutoshikiBoard } from "@/mods/puzzle/app/futoshiki/FutoshikiBoard"
 import { FutoshikiPad } from "@/mods/puzzle/app/futoshiki/FutoshikiPad"
 import { FutoshikiRules } from "@/mods/puzzle/app/futoshiki/FutoshikiRules"
+import { useFutoshikiControls } from "@/mods/puzzle/app/futoshiki/futoshikiControls"
 import { buildFutoshikiHint } from "@/mods/puzzle/app/futoshiki/futoshikiHint"
 import { useFutoshikiEntry } from "@/mods/puzzle/app/futoshiki/useFutoshikiEntry"
 import type { FutoshikiPuzzle as FutoshikiPuzzleData } from "@/mods/puzzle/game/futoshiki/generateFutoshiki"
@@ -44,6 +45,7 @@ const exhaustedNumbers = (values: (number | undefined)[][], size: number): Reado
 export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const { size, solution, techniqueCap } = puzzle
+  const controls = useFutoshikiControls(size)
   const [state, setState] = usePuzzleState(() => createFutoshikiState(puzzle), puzzle)
   const { selected, pencil, selectCell, focusCell, togglePencil, clearSelection } = useFutoshikiEntry()
   const [picked, setPicked] = useState<PadPick>()
@@ -146,6 +148,7 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
       title={t("futoshiki.name")}
       goal={t("futoshiki.goal")}
       rules={<FutoshikiRules />}
+      controls={controls}
     >
       {({ reportInput, hintVisible, boardInput }) => (
         <>

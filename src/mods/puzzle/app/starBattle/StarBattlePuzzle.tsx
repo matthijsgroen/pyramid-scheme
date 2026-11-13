@@ -23,6 +23,7 @@ import { buildStarBattleHint } from "./starBattleHint"
 import { skinFor } from "./skins"
 import { StarBattleBoard } from "./StarBattleBoard"
 import { StarBattleRules } from "./StarBattleRules"
+import { useStarBattleControls } from "./starBattleControls"
 
 const MARKS: MarkVocabulary<CellMark> = { place: "star", ruleOut: "dark" }
 
@@ -44,6 +45,7 @@ type Props = {
 
 export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
+  const controls = useStarBattleControls()
   const [state, setState] = usePuzzleState(() => createStarBattleState(puzzle), puzzle)
   // Which place this room is. The board, the goal, the rules and every hint sentence are all drawn from it,
   // so it is resolved once.
@@ -107,6 +109,7 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
       title={t(`starBattle.name.${puzzle.quota > 1 ? twinName(skin.name) : skin.name}`)}
       goal={t(`starBattle.goal.${skin.name}`, { count: puzzle.quota })}
       rules={<StarBattleRules skin={skin.name} walls={isRegionless(puzzle)} />}
+      controls={controls}
     >
       {({ reportInput, hintVisible, boardInput }) => (
         <>
