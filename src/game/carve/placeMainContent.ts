@@ -89,7 +89,7 @@ export const spreadBetweenPins = (
 
 export const placeMainContent = pass(
   "placeMainContent",
-  ["maze", "regions", "lay"],
+  ["maze", "regions", "lay", "rung"],
   ["content"],
   (prep, state) => {
     const { contentCount, leverOnMain } = prep.sizing
