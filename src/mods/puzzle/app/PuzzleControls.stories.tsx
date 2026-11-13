@@ -9,6 +9,14 @@ import { ConstellationRules } from "./constellation/ConstellationRules"
 import { useConstellationControls } from "./constellation/constellationControls"
 import { SudokuRules } from "./sudoku/SudokuRules"
 import { useSudokuControls } from "./sudoku/sudokuControls"
+import { HidatoRules } from "./hidato/HidatoRules"
+import { useHidatoControls } from "./hidato/hidatoControls"
+import { ProcessionRules } from "./procession/ProcessionRules"
+import { useProcessionControls } from "./procession/processionControls"
+import { BalanceRules } from "./balanceScale/BalanceRules"
+import { useBalanceControls } from "./balanceScale/balanceControls"
+import { CanistersRules } from "./canisters/CanistersRules"
+import { useCanistersControls } from "./canisters/canistersControls"
 import { EclipseRules } from "./eclipse/EclipseRules"
 import { useEclipseControls } from "./eclipse/eclipseControls"
 import { SumpleteRules } from "./sumplete/SumpleteRules"
@@ -50,6 +58,10 @@ const Families: FC = () => {
   const rushHour = useRushHourControls()
   const constellation = useConstellationControls()
   const sudoku = useSudokuControls(6)
+  const hidato = useHidatoControls()
+  const procession = useProcessionControls()
+  const balance = useBalanceControls(6)
+  const canisters = useCanistersControls()
   const eclipse = useEclipseControls()
   const sumplete = useSumpleteControls()
   const pairPuzzle = usePairPuzzleControls()
@@ -74,6 +86,30 @@ const Families: FC = () => {
         goal={t("sudoku.goal.default")}
         rules={<SudokuRules skin="default" />}
         controls={sudoku}
+      />
+      <Panel
+        title={t("hidato.name.default")}
+        goal={t("hidato.goal.default", { last: 12 })}
+        rules={<HidatoRules skin="default" />}
+        controls={hidato}
+      />
+      <Panel
+        title={t("procession.name.default")}
+        goal={t("procession.goal.default")}
+        rules={<ProcessionRules skin="default" />}
+        controls={procession}
+      />
+      <Panel
+        title={t("balance.name.default")}
+        goal={t("balance.goal.default")}
+        rules={<BalanceRules manyRows cancelling={false} swapping={false} />}
+        controls={balance}
+      />
+      <Panel
+        title={t("canisters.name.default")}
+        goal={t("canisters.goal.default", { count: 1 })}
+        rules={<CanistersRules skin="default" legs={1} />}
+        controls={canisters}
       />
       <Panel title={t("eclipse.name")} goal={t("eclipse.goal")} rules={<EclipseRules signs />} controls={eclipse} />
       <Panel title={t("sumplete.name")} goal={t("sumplete.goal")} rules={<SumpleteRules />} controls={sumplete} />

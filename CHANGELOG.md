@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Walk the map with arrow keys or WASD.
 - Constellation: Enter picks up a star, then an arrow draws the line.
 - Escape closes dialogs, the shop and puzzles; Enter moves a conversation on.
+- Hidato, procession, balance, canisters, shrine beam and the crocodile pit show their keys and buttons under the rules.
 - Backspace erases a number on the board, and goes back where nothing erases.
 - A game controller walks the map, moves through dialogs and backs out of them.
 - The Tally, Sun and Moon, star and number-square puzzles, pair puzzles, mirror switches, scales, canisters, blockades, ordered hours and their doors, star maps, honeycombs, the crocodile pit, reflex traps, levers, torches, reading walls and pyramid boards play by keys or controller; hold Shift or Y to sweep marks.

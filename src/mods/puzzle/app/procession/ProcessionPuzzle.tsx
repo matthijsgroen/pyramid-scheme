@@ -17,6 +17,7 @@ import { buildProcessionHint } from "./processionHint"
 import { ProcessionBoard } from "./ProcessionBoard"
 import { ProcessionRules } from "./ProcessionRules"
 import { skinFor } from "./skins"
+import { useProcessionControls } from "./processionControls"
 
 type Props = {
   puzzle: ProcessionPuzzleData
@@ -33,6 +34,7 @@ type Props = {
 
 export const ProcessionPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
+  const controls = useProcessionControls()
   const skin = skinFor(role, theme, room)
   /**
    * Where the bars stand, and nothing else.
@@ -74,6 +76,7 @@ export const ProcessionPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
       idleMs={hintIdleDelay(difficulty)}
       title={t(`procession.name.${skin.name}`)}
       goal={t(`procession.goal.${skin.name}`)}
+      controls={controls}
       rules={<ProcessionRules skin={skin.name} />}
     >
       {({ reportInput, hintVisible, boardInput }) => (
