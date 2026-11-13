@@ -108,7 +108,7 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
       goal={t(`starBattle.goal.${skin.name}`, { count: puzzle.quota })}
       rules={<StarBattleRules skin={skin.name} walls={isRegionless(puzzle)} />}
     >
-      {({ reportInput, hintVisible }) => (
+      {({ reportInput, hintVisible, boardInput }) => (
         <>
           {/* **The quota is stated above the board, the way canisters states the amount it wants.** Two
               families share this screen and this board, and what separates them is one number: the goal
@@ -129,6 +129,7 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
             </span>
           </div>
           <StarBattleBoard
+            boardInput={boardInput}
             puzzle={puzzle}
             state={state}
             skin={skin}

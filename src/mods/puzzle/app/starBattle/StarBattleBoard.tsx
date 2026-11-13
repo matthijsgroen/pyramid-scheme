@@ -1,5 +1,8 @@
 import clsx from "clsx"
 import { useRef, useState, type FC, type PointerEvent } from "react"
+import type { InputHandler } from "@/app/input/actions"
+import { useGridCursor } from "@/app/input/useGridCursor"
+import { useInputLayer } from "@/app/input/useInputLayer"
 import {
   colOf,
   isRegionless,
@@ -38,6 +41,8 @@ type Props = {
   onTapCell: (cell: number) => void
   /** A run of squares ruled out in one gesture — see the drag handlers below. */
   onSweepCells: (cells: number[]) => void
+  /** The shell's `boardInput`: with it the board takes keys and pad, a cursor whose confirm is a tap. */
+  boardInput?: (board: InputHandler) => InputHandler
 }
 
 /**
@@ -91,8 +96,26 @@ export const StarBattleBoard: FC<Props> = ({
   celebrated,
   onTapCell,
   onSweepCells,
+  boardInput,
 }) => {
   const { size } = puzzle
+  // Keys tap only; the sweep stays a pointer gesture.
+  const cursor = useGridCursor({
+    rows: size,
+    cols: size,
+    start: () => {
+      const open = Math.max(
+        state.marks.findIndex((_mark, cell) => !isWall(puzzle, cell)),
+        0
+      )
+      return { row: rowOf(size, open), col: colOf(size, open) }
+    },
+    // Stone is not a square a mark can go in: a confirm on it does nothing, as a tap on it does.
+    onConfirm: (row, col) => {
+      if (!isWall(puzzle, row * size + col)) onTapCell(row * size + col)
+    },
+  })
+  useInputLayer(boardInput ? boardInput(cursor.handle) : cursor.handle, boardInput !== undefined)
   const grid = useRef<HTMLDivElement | null>(null)
   /**
    * The gesture in flight, and the squares it has ruled out so far.
@@ -184,7 +207,16 @@ export const StarBattleBoard: FC<Props> = ({
           isWall(puzzle, cell) ? (
             // Stone is floor plan, not a control: no button, no pointer handlers, so a tap or a drag that starts
             // on it does nothing and a screen reader is not offered a square it cannot use.
-            <div key={cell} data-wall aria-hidden className={clsx("aspect-square min-h-0", skin.stone)} />
+            <div
+              key={cell}
+              data-wall
+              aria-hidden
+              className={clsx(
+                "aspect-square min-h-0",
+                skin.stone,
+                cursor.at(rowOf(size, cell), colOf(size, cell)) && "board-cursor"
+              )}
+            />
           ) : (
             <button
               key={cell}
@@ -202,7 +234,7 @@ export const StarBattleBoard: FC<Props> = ({
                   swallowClick.current = false
                   return
                 }
-                onTapCell(cell)
+                cursor.tap(rowOf(size, cell), colOf(size, cell))
               }}
               className={clsx(
                 // `min-h-0` is load-bearing. A grid item's automatic minimum size comes from its CONTENT, and
@@ -225,7 +257,8 @@ export const StarBattleBoard: FC<Props> = ({
                   ? `ring-2 ring-inset ${skin.conflict}`
                   : cell === focus
                     ? `ring-3 ring-inset ${skin.focus}`
-                    : highlighted?.has(cell) && `ring-2 ring-inset ${skin.evidence}`
+                    : highlighted?.has(cell) && `ring-2 ring-inset ${skin.evidence}`,
+                cursor.at(rowOf(size, cell), colOf(size, cell)) && "board-cursor"
               )}
             >
               {value === "star" ? (
