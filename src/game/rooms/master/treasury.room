@@ -1,0 +1,19 @@
+// designed by: Claude
+// master. The pharaoh's treasury: tribute of foreign peoples heaped between a shelf of gold vessels and the jar rack.
+room treasury
+tier master
+mirror
+holds chest
+
+layout
+# # d n # #
+# e . h r #
+d . . . . d
+# . s . . #
+# d # # d #
+
+e wall jarRack
+h wall tributeHeap
+r wall shelf
+n wallItem niche
+s stop

@@ -142,6 +142,21 @@ export const DECORATION_KINDS = [
   "headrest",
   "grindstone",
   "breadOven",
+  // The pharaoh's own (docs/game-design/themed-rooms.md). Placed by designed rooms only until master's activities land.
+  "chariot",
+  "tributeHeap",
+  "throne",
+  "regaliaStand",
+  "fan",
+  "canopicChest",
+  "sedThrone",
+  "boundaryMarker",
+  "pyramidion",
+  "lightShaft",
+  "colossus",
+  "fallenColossus",
+  "funeralBoat",
+  "shabtiBox",
   "cart",
   "litter",
   "floorClutter",
@@ -182,6 +197,20 @@ export const DECORATION_FOOTPRINTS: Partial<Record<DecorationKind, PropFootprint
   // A standing harp and a tree in its pot both rise a cell above the frame.
   harp: { cols: 1, rows: 1, tall: 1 },
   pottedTree: { cols: 1, rows: 1, tall: 1 },
+  // The pharaoh's set pieces. A chariot stands on its two wheels with its pole out front, two cells by two.
+  chariot: { cols: 2, rows: 2, tall: 0 },
+  // A throne on its dais, and the Sed festival's double throne under its canopy, two cells across.
+  throne: { cols: 2, rows: 1, tall: 0 },
+  sedThrone: { cols: 2, rows: 1, tall: 1 },
+  // A feather fan on its long staff rises a cell above the frame.
+  fan: { cols: 1, rows: 1, tall: 1 },
+  // Sunlight falling through a shaft onto the floor, walked through.
+  lightShaft: { cols: 1, rows: 1, tall: 0, ground: true },
+  // A seated colossus, two cells by two and a cell taller; fallen, it lies three cells long.
+  colossus: { cols: 2, rows: 2, tall: 1 },
+  fallenColossus: { cols: 3, rows: 1, tall: 0 },
+  // The funeral boat lies in its pit at full length.
+  funeralBoat: { cols: 3, rows: 1, tall: 0 },
 }
 export const decorationFootprint = (kind: DecorationKind): PropFootprint => DECORATION_FOOTPRINTS[kind] ?? SINGLE_CELL
 export const isSingleCell = ({ cols, rows }: PropFootprint): boolean => cols === 1 && rows === 1
@@ -208,6 +237,8 @@ export const WALL_DECORATION_KINDS = [
   // The tomb's formula: a lying stela with one register, the things given away written along it. Placed by a
   // designed room only, like namePanel.
   "formulaPanel",
+  // The pharaoh's audience hall: foreign envoys bringing tribute, a painted frieze. Placed by a designed room only.
+  "envoyFrieze",
 ] as const
 export type WallDecorationKind = (typeof WALL_DECORATION_KINDS)[number]
 

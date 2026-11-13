@@ -1,0 +1,18 @@
+// designed by: Claude
+// master. The sun court, a set piece: small golden pyramids stand in the sunlight falling through the roof; two of the
+// four shafts may stay dark.
+room sunCourt
+tier master
+
+layout
+# # d # # # d # #
+# . . y . y . . #
+d . l . . . l . d
+# . . . y . . . #
+# . l . . . l . #
+# . . . s . . . #
+# # d # # # d # #
+
+y floor pyramidion
+l ground? lightShaft 2 of 4
+s stop

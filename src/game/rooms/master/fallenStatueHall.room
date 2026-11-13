@@ -1,0 +1,18 @@
+// designed by: Claude
+// master. The statue hall of a fallen pyramid: the colossus lies across the hall where it fell, rubble from its plinth.
+room fallenStatueHall
+tier master
+mirror
+
+layout
+# # d # # # d # #
+# r . . . . . . #
+d . . . . . . . d
+# . . c c c . . #
+# . . . . . . r #
+# . . . s . . . #
+# # d # # # d # #
+
+c floor fallenColossus
+r floor rubblePile
+s stop

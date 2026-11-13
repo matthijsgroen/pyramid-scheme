@@ -1,0 +1,15 @@
+// designed by: Claude
+// master. A shabti room with the lever or torch: two shabti boxes in the corners of the north wall, the mechanism between.
+room shabtiWorks
+tier master
+
+layout
+# # d # d # #
+# x . . . x #
+d . . m . . d
+# . . s . . #
+# # d # d # #
+
+x wall shabtiBox
+m mechanism
+s stop

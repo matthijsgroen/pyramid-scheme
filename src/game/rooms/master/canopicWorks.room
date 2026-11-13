@@ -1,0 +1,16 @@
+// designed by: Claude
+// master. A burial room with the lever or torch: the canopic chest alone under the false door, the mechanism before it.
+room canopicWorks
+tier master
+
+layout
+# # d f d # #
+# . . o . . #
+d . . m . . d
+# . . s . . #
+# # d # d # #
+
+o wall canopicChest
+f wallItem stela
+m mechanism
+s stop

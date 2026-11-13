@@ -1,0 +1,21 @@
+// designed by: Claude
+// master. The great treasury, a set piece: the king's chariot in the middle, tribute heaped along the north wall.
+room bigTreasury
+tier master
+holds chest
+
+layout
+# # d # n # d # #
+# h . r . e . h #
+d . . . . . . . d
+# . . . c c . . #
+# . . . c c . . #
+# . . . s . . . #
+# # d # # # d # #
+
+h wall tributeHeap
+r wall shelf
+e wall jarRack
+c floor chariot
+n wallItem niche
+s stop

@@ -46,8 +46,7 @@ is its skin). Starter's, the merchant's house:
 
 Junior and up get their own activities when their rank is repainted. **The count grows by one per rank**, as the
 floors grow (designer, 2026-10-27): starter 5, junior 6, expert 7, master 8, wizard 9. The lists as they stand:
-purification, offering, sanctuary, House of Life, star-watching (expert); treasury, audience, burial chamber,
-armoury (master); the weighing of the heart, Nut's sky, the sun barque, the primordial waters (wizard) — each
+purification, offering, sanctuary, House of Life, star-watching (expert); master's eight below; the weighing of the heart, Nut's sky, the sun barque, the primordial waters (wizard) — each
 filled to its count at its repaint. **Weighing returns at the end**: goods in the merchant's storehouse, the heart
 before the gods — the same scale.
 
@@ -77,6 +76,37 @@ starter's, these six junior's. A theme may reuse kinds another theme has too (th
 merchant's amphorae with a junior look), as long as the activity fits its tier. A room draws only on the activities of
 its **pyramid's** tier, whatever difficulty its section is played at: a junior side path in a merchant's pyramid carries
 his pool and stays his. A tier with no activities of its own yet wears the first themed tier's, starter's five.
+
+### Master — the pharaoh
+
+Decided 2026-11-13 with the designer. The embalming room is left to the priest (purification). The armoury became the
+Sed court: a pharaoh proves his rule by running, not by storing spears.
+
+| Activity       | Props                                                                     | Wall                     |
+| -------------- | ------------------------------------------------------------------------- | ------------------------ |
+| treasury       | **tributeHeap**, **chariot** (set piece), shelf, jarRack                  | niche                    |
+| audience       | **throne** (on its dais), **regaliaStand**, **fan**, pillar               | **envoyFrieze**          |
+| burial chamber | sarcophagus, **canopicChest**, statue                                     | mask, stela (false door) |
+| Sed court      | **sedThrone**, **boundaryMarker**                                         | —                        |
+| sun court      | **pyramidion**, **lightShaft** (on the floor)                             | —                        |
+| statue hall    | **colossus**, or **fallenColossus** where the site has fallen, rubblePile | lamp                     |
+| boat pit       | **funeralBoat**, offeringTable                                            | —                        |
+| shabti room    | **shabtiBox**, shelf                                                      | —                        |
+
+Footprints (`DECORATION_FOOTPRINTS`): chariot and colossus 2×2 (the colossus a cell taller), throne 2×1, sedThrone
+2×1 a cell taller, fallenColossus and funeralBoat 3×1, fan a cell taller, lightShaft a ground kind; the rest 1×1.
+
+Master floors are big and may stack storeys, alternating a floor of halls with a floor of big locks
+([lock-curriculum](lock-curriculum.md)). The rooms follow that: a **big hall** per set piece (`bigTreasury`,
+`audienceHall`, `sedCourt`, `sunCourt`, `statueHall`, `fallenStatueHall`, `boatPit`) for the hall floors, small rooms
+(`treasury`, `audienceRoom`, `burialChamber`, `shabtiRoom`) and mechanism rooms (`tributeWorks`, `canopicWorks`,
+`shabtiWorks`) for the lock floors.
+
+**Not live yet.** The kinds and rooms exist; no master pool or spec names them, so the bake does not change. The
+activities enter `activities.ts` and the rooms enter `src/worldGen/spec/master.ts` together, in master's bake, after
+the junior freeze. A **fallen** site is a new condition kind (beside overgrowth and flooding) that picks
+`fallenStatueHall` over `statueHall`; it is designed, not built. The sun court's sparkle on the pyramidions is
+paint first, animation later.
 
 ## 2. Who has the room: one purpose, by precedence
 

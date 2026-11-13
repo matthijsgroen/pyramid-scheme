@@ -1,0 +1,16 @@
+// designed by: Claude
+// master. The statue hall, a set piece: the seated colossus of the king against the north wall, a lamp either side.
+room statueHall
+tier master
+
+layout
+# # d # # # # d #
+# . . l c c l . #
+d . . . c c . . d
+# . . . . . . . #
+# . . . s . . . #
+# # d # # # d # #
+
+c wall colossus
+l wall lamp
+s stop

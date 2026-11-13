@@ -1,0 +1,17 @@
+// designed by: Claude
+// master. A small audience room: the regalia on its stand under the envoy frieze, a fan beside it.
+room audienceRoom
+tier master
+mirror
+
+layout
+# # d f # #
+# . . g a #
+d . . . . d
+# . s . . #
+# d # # d #
+
+g wall regaliaStand
+a wall fan
+f wallItem envoyFrieze
+s stop
