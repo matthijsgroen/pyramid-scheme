@@ -21,6 +21,7 @@ const KEYS: Record<string, InputAction> = {
   KeyN: { kind: "alt" },
   ShiftLeft: { kind: "alt" },
   ShiftRight: { kind: "alt" },
+  Delete: { kind: "erase" },
   BracketLeft: { kind: "prev" },
   PageUp: { kind: "prev" },
   BracketRight: { kind: "next" },
