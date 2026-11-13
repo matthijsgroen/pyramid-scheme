@@ -22,7 +22,7 @@ expert-tombe verkocht.
 | #   | Gat                                                                                                                                                                                                       | Waar de speler het ziet                            |
 | --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
 | 1   | Props als placeholder en de mechanismen in `default`-kleur op de donkere vloer (hendels zie je nauwelijks)                                                                                                | Meteen, op de eerste master-vloer                  |
-| 2   | Locks op 18 van de 19 sites. Een master-vloer speelt nu als een expert-vloer met vloersleutels.                                                                                                           | Op de eerste master-vloer                          |
+| 2   | Grote locks en grote zalen (zie §4.1): nu 1 lock op 19 sites en 1 verdieping per pyramide, dus een master-vloer speelt als een expert-vloer met vloersleutels.                                            | Op de eerste master-vloer                          |
 | 3   | Kamers en activiteiten: geen master-prefabs, 0 van de 8 activiteiten                                                                                                                                      | Meteen, de kamers zijn junior-achtig               |
 | 4   | `wall-face`, `threshold` en `door/ward-master` geschilderd. `wardChest`, `wardChestOpen` en `chestPropOpen` hebben nog geen prompt.                                                                       | De eerste ward-vleugel en de eerste kist           |
 | 5   | Buit ongelijk verdeeld: `master_3` en `master_4` hebben maar 10–15 % buit en geen puzzelgeld, tegen 58–81 % in `master_1` en `master_2`                                                                   | Halverwege de tier                                 |
@@ -43,11 +43,18 @@ expert-tombe verkocht.
 
 ## 4. Open beslissingen (met aanbeveling)
 
-1. **Hoeveel master-locks?** Het curriculum wil er 19, met expert-locks die elk twee keer terugkomen. Maar "één puzzel
-   per vloer, geen lock twee keer" zegt het tegenovergestelde. _Aanbeveling:_ één lock als sluitstuk per journey, op
-   de laatste site, zoals expert dat doet. Dat zijn er 4: `weighingOfTheHeart` (`master_2`, staat al), `masonsRamp` op
-   Giza (`master_1`, de bouwplaats), `bathHouse` op `master_3` of `master_4`, en één nieuwe. De andere sites houden hun
-   vloersleutels, zoals `lock-placement.md` voor master al zegt.
+1. **Lock-escalatie (designer, 2026-11-13):** starter heeft geen locks, junior introduceert mechanieken, expert
+   mixt ze, master diept mechanieken ver uit en mixt. Master mag grote vloeren en meerdere verdiepingen hebben, en
+   wisselt twee soorten vloer af: grote zalen met set pieces, en vloeren met een grote lock. Gevolgen:
+   - Vandaag heeft elke master-pyramide **1 hoofdvloer** (`mainFloors` niet gezet; wizard heeft 2), plus de
+     ward-vleugel. Meer verdiepingen is een DSL-wijziging in `src/worldGen/spec/master.ts`, dus een nieuwe carve.
+     Dat mag tot de master-release.
+   - Een vloer met een grote zaal vraagt kamers die meer vloer innemen dan een junior-kamer, en props van meerdere
+     cellen. Die komen eerst bij expert (zie §5).
+   - Een vloer met een grote lock is ongeveer bathHouse-groot (~14 acties). _Aanbeveling:_ wissel per pyramide af:
+     de ene verdieping een zaal, de andere een lock. Dat geeft per journey 2–3 locks in plaats van 5, ongeveer 10
+     in totaal. Begin met `weighingOfTheHeart` (staat al), `bathHouse` en `masonsRamp`. Uitdiepen kan per journey
+     één mechaniek als thema: water bij Nefertari, stenen en pijp in Giza.
 2. **`bathHouse`:** is het klaar voor `main`, en wordt de `Gate`-reeks een processiedeur (`procession` in plaats van
    `sequence`)? _Aanbeveling:_ zet hem op `main` zoals hij is en speel de processie in de lock-editor voordat je kiest.
 3. **De Hal van Osiris zonder geest:** _Aanbeveling:_ schrijf `tomb.masterB`. Elke andere tombe heeft een scène.
