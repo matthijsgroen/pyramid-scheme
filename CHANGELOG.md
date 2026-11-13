@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Entering a room no longer stands the explorer on its lever.
 - A chest no longer pokes through the wall beside it.
 - Opening a chest no longer makes it jump.
+- The tutorials checkbox in Settings shows when keys or controller reach it.
 
 ## 0.47.0 - 2026-11-10
 
