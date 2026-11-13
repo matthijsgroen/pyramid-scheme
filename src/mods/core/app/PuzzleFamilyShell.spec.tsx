@@ -3,6 +3,8 @@ import { act, cleanup, fireEvent, render, screen } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { PuzzleFamilyShell } from "./PuzzleFamilyShell"
 import { DevelopContext } from "@/contexts/DevelopMode"
+import { listenForPageLayers } from "@/app/input/pageLayers"
+import { layerOnMount } from "@/ui/atoms/dialogFocus"
 
 vi.mock("react-i18next", () => ({ useTranslation: () => ({ t: (key: string) => key }) }))
 
@@ -234,5 +236,24 @@ describe("develop mode", () => {
     } finally {
       vi.useRealTimers()
     }
+  })
+})
+
+describe("leaving a board by key", () => {
+  afterEach(cleanup)
+
+  it("leaves with Escape the way its back button does", () => {
+    const stopListening = listenForPageLayers()
+    const onCancel = vi.fn()
+    render(
+      <div ref={layerOnMount}>
+        <PuzzleFamilyShell onSolved={() => {}} onCancel={onCancel}>
+          {() => <button>cell</button>}
+        </PuzzleFamilyShell>
+      </div>
+    )
+    fireEvent.keyDown(screen.getByText("cell"), { code: "Escape" })
+    expect(onCancel).toHaveBeenCalledTimes(1)
+    stopListening()
   })
 })

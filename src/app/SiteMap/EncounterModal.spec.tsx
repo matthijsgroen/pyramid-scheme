@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
-import { afterEach, describe, expect, it } from "vitest"
-import { cleanup, render } from "@testing-library/react"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { cleanup, fireEvent, render, screen } from "@testing-library/react"
+import { listenForPageLayers } from "@/app/input/pageLayers"
 import { EncounterModal } from "./EncounterModal"
 import { imageMap } from "@/ui/atoms/tombImageMap"
 
@@ -77,5 +78,38 @@ describe("an encounter with nothing on screen", () => {
     )
 
     expect((container.firstElementChild as HTMLElement).matches(":has([data-encounter-content]:empty)")).toBe(false)
+  })
+})
+
+describe("leaving an encounter by key", () => {
+  let stopListening = () => {}
+  beforeEach(() => {
+    stopListening = listenForPageLayers()
+  })
+  afterEach(() => stopListening())
+
+  it("presses the encounter's own way back on Escape", () => {
+    const onBack = vi.fn()
+    render(
+      <EncounterModal>
+        <button data-input-back onClick={onBack}>
+          Back to the map
+        </button>
+        <button>A cell</button>
+      </EncounterModal>
+    )
+    fireEvent.keyDown(screen.getByText("A cell"), { code: "Escape" })
+    expect(onBack).toHaveBeenCalledTimes(1)
+  })
+
+  it("does nothing on Escape for an encounter with no way back, such as a running trap", () => {
+    const onPick = vi.fn()
+    render(
+      <EncounterModal>
+        <button onClick={onPick}>4</button>
+      </EncounterModal>
+    )
+    fireEvent.keyDown(window, { code: "Escape" })
+    expect(onPick).not.toHaveBeenCalled()
   })
 })

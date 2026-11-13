@@ -1,5 +1,5 @@
-import type { FC, KeyboardEvent, ReactNode } from "react"
-import { closeOnEscape, focusOnMount, trapTab } from "@/ui/atoms/dialogFocus"
+import type { FC, ReactNode } from "react"
+import { focusOnMount, trapTab } from "@/ui/atoms/dialogFocus"
 
 export type CampPopupProps = {
   title: string
@@ -15,11 +15,6 @@ const TITLE_ID = "camp-popup-title"
 // Everything the camp opens (journeys, collection, shop) is a popup over it: an inset panel on a phone that
 // takes the height inside the safe edges, a large centred panel from `lg`. The camp shows through it, blurred.
 export const CampPopup: FC<CampPopupProps> = ({ title, closeLabel, onClose, fill = false, children }) => {
-  const escape = closeOnEscape(onClose)
-  const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    escape(event)
-    trapTab(event)
-  }
   return (
     <div className="fixed inset-0 z-50 flex items-stretch justify-center bg-black/40 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] lg:items-center lg:p-4">
       <div
@@ -28,7 +23,7 @@ export const CampPopup: FC<CampPopupProps> = ({ title, closeLabel, onClose, fill
         aria-modal="true"
         aria-labelledby={TITLE_ID}
         tabIndex={-1}
-        onKeyDown={onKeyDown}
+        onKeyDown={trapTab}
         className={`flex min-h-0 w-full flex-col overflow-hidden rounded-[18px] bg-camp-glass-solid text-camp-ink ring-1 ring-camp-glass-edge outline-none ring-inset supports-backdrop-filter:bg-camp-glass supports-backdrop-filter:backdrop-blur-lg supports-backdrop-filter:backdrop-saturate-160 ${fill ? "lg:h-full" : ""} lg:max-h-full lg:max-w-4xl lg:rounded-[20px]`}
       >
         <div className="flex items-center justify-between gap-3 pr-0.5 pl-4 lg:pl-6">
@@ -37,6 +32,7 @@ export const CampPopup: FC<CampPopupProps> = ({ title, closeLabel, onClose, fill
           </h2>
           <button
             type="button"
+            data-input-back
             aria-label={closeLabel}
             onClick={onClose}
             className="flex size-11 items-center justify-center rounded-full hover:bg-black/5"

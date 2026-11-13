@@ -6,6 +6,7 @@ import { DevelopContext } from "@/contexts/DevelopMode"
 import { FezContext } from "@/app/fez/context"
 import type { Reaction } from "@/app/reactions/reactionContributions"
 import { clearGameData, latestGameValue, writeGameData } from "@/support/useGameStorage"
+import { listenForPageLayers } from "@/app/input/pageLayers"
 
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
@@ -141,6 +142,13 @@ const renderBase = (startGame = vi.fn(), cameHome = false, speaking = false) => 
   )
   return startGame
 }
+
+// Dialogs are input layers: Escape reaches them through the app's input stack.
+let stopListening = () => {}
+beforeEach(() => {
+  stopListening = listenForPageLayers()
+})
+afterEach(() => stopListening())
 
 beforeEach(async () => {
   reported.length = 0

@@ -72,7 +72,7 @@ const KeyGateComponent: FamilyPlugin["Component"] = ({ puzzle, ctx, onSolved, on
             {t("gate.pass")}
           </button>
         )}
-        <button onClick={onCancel} className="text-sm text-stone-400 hover:text-stone-200">
+        <button data-input-back onClick={onCancel} className="text-sm text-stone-400 hover:text-stone-200">
           {t("gate.turnAround")}
         </button>
       </div>

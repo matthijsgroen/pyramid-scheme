@@ -145,3 +145,45 @@ describe("a face over the pose", () => {
     expect(drawn("calm").face).toBeNull()
   })
 })
+
+describe("a conversation by key", () => {
+  const play = () => {
+    vi.useFakeTimers()
+    render(<Fez conversation="arrival.starter_1" onComplete={() => {}} />)
+    for (let i = 0; i < 20; i++) act(() => void vi.advanceTimersByTime(100))
+  }
+  const settle = () => {
+    for (let i = 0; i < 20; i++) act(() => void vi.advanceTimersByTime(100))
+    vi.useRealTimers()
+  }
+  const speaker = () => screen.getByRole("img").getAttribute("alt")
+
+  it("moves on a line with Enter, the way a tap does", () => {
+    play()
+    const first = speaker()
+    fireEvent.keyDown(window, { code: "Enter" })
+    settle()
+    expect(speaker()).not.toBe(first)
+  })
+
+  it("moves on with Enter while a board beneath it still has focus, and the board never sees the key", () => {
+    const boardKeys = vi.fn((event: React.KeyboardEvent) => event.preventDefault())
+    render(<div tabIndex={0} data-testid="board" onKeyDown={boardKeys} />)
+    const board = screen.getByTestId("board")
+    board.focus()
+    play()
+    const first = speaker()
+    fireEvent.keyDown(board, { code: "Enter", key: "Enter" })
+    settle()
+    expect(speaker()).not.toBe(first)
+    expect(boardKeys).not.toHaveBeenCalled()
+  })
+
+  it("is never skipped with Escape", () => {
+    play()
+    const first = speaker()
+    fireEvent.keyDown(window, { code: "Escape" })
+    settle()
+    expect(speaker()).toBe(first)
+  })
+})

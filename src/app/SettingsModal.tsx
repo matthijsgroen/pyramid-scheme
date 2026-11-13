@@ -1,11 +1,11 @@
-import { type FC, type KeyboardEvent, Suspense, use, useState } from "react"
+import { type FC, Suspense, use, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { version } from "@/../package.json"
 import { languageChoices } from "@/i18n/languages"
 import { LanguageSelect } from "@/ui/atoms/LanguageSelect"
 import { clearGameData, useGameStorage } from "@/support/useGameStorage"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
-import { closeOnEscape, focusOnMount, trapTab } from "@/ui/atoms/dialogFocus"
+import { focusOnMount, trapTab } from "@/ui/atoms/dialogFocus"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DevTools } from "@/app/dev/devToolsBuild"
 import { SaveCardTransfer } from "@/app/saveCard/SaveCardTransfer"
@@ -42,12 +42,6 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, startGa
     onClose()
   }
 
-  const escape = closeOnEscape(handleClose)
-  const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    escape(event)
-    trapTab(event)
-  }
-
   if (!isOpen) return null
 
   return (
@@ -62,14 +56,19 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, startGa
         aria-modal="true"
         aria-labelledby="settings-title"
         tabIndex={-1}
-        onKeyDown={onKeyDown}
+        onKeyDown={trapTab}
         className="relative z-10 mx-4 max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-lg bg-white p-6 shadow-xl outline-none"
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 id="settings-title" className="text-xl font-bold text-gray-900">
             {t("ui.settings")}
           </h2>
-          <button onClick={handleClose} className="text-gray-400 hover:text-gray-600" aria-label={t("ui.close")}>
+          <button
+            data-input-back
+            onClick={handleClose}
+            className="text-gray-400 hover:text-gray-600"
+            aria-label={t("ui.close")}
+          >
             <svg className="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>

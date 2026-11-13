@@ -1,5 +1,5 @@
 import { type FC, type ReactNode } from "react"
-import { closeOnEscape, focusOnMount } from "@/ui/atoms/dialogFocus"
+import { focusOnMount } from "@/ui/atoms/dialogFocus"
 
 type ConfirmModalProps = {
   isOpen: boolean
@@ -36,7 +36,6 @@ export const ConfirmModal: FC<ConfirmModalProps> = ({
         aria-modal="true"
         aria-label={title}
         tabIndex={-1}
-        onKeyDown={closeOnEscape(onCancel)}
         className="relative z-10 mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl outline-none"
       >
         <h2 className="mb-4 text-xl font-bold text-gray-900">{title}</h2>
@@ -45,6 +44,7 @@ export const ConfirmModal: FC<ConfirmModalProps> = ({
 
         <div className="flex justify-end gap-3">
           <button
+            data-input-back
             onClick={onCancel}
             className="rounded-lg bg-gray-200 px-4 py-2 font-medium text-gray-800 transition-colors hover:bg-gray-300"
           >

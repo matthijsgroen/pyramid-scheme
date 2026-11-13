@@ -1,6 +1,7 @@
 import clsx from "clsx"
-import { useEffect, useState, type FC } from "react"
+import { useEffect, useRef, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
+import { useInputLayer } from "@/app/input/useInputLayer"
 import { spokenLines, type Speaker } from "./arrivalConversation"
 import { Portrait } from "./Portrait"
 import { portraitFor } from "./portraits"
@@ -103,12 +104,27 @@ export const Fez: FC<{
     }
   }, [messages.length, onComplete, showMessage, visible, messageIndex])
 
-  const onNextMessage = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation()
+  const nextMessage = () => {
     if (showMessage && visible) {
       setShowMessage(false)
     }
   }
+  const onNextMessage = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+    nextMessage()
+  }
+  // Over everything while it plays, the board still focused beneath it included: confirm is the tap that moves
+  // it on, and back does not skip it.
+  const overlay = useRef<HTMLDivElement>(null)
+  useInputLayer(
+    ({ action, released, repeat }) => {
+      if (released || action.kind !== "confirm") return false
+      if (!repeat) nextMessage()
+      return true
+    },
+    !unmet,
+    overlay
+  )
 
   // Clamped, because the portrait slides in BEFORE the first line is showing (messageIndex 0) and an
   // out-of-range read there fell back to Fez: he appeared with an empty bubble, then vanished as the
@@ -135,7 +151,7 @@ export const Fez: FC<{
   return (
     // Clipped, so a portrait hanging past a phone's edge never scrolls the page sideways. Above a site's interior
     // (z-30), which a conversation room plays over, and under the popups and screens at z-40 and up.
-    <div className="fixed inset-0 z-35 overflow-hidden bg-black/10" onClick={onNextMessage}>
+    <div ref={overlay} className="fixed inset-0 z-35 overflow-hidden bg-black/10" onClick={onNextMessage}>
       {/* The column the game's panels share (max-w-md), centred: on a wide screen the viewport's
           corners are far from the game and from each other, and the two speakers stood in them. On a
           phone the column is the screen, so nothing moves there. */}

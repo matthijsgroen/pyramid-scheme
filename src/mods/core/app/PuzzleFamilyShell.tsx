@@ -191,6 +191,7 @@ export const PuzzleFamilyShell = ({
         {/* Leaving is not a move on the board, so it sits away from the ones that are: alone at the top,
             where every other screen in the game keeps its way out. */}
         <button
+          data-input-back
           onClick={() => {
             cancelSolve()
             onCancel()

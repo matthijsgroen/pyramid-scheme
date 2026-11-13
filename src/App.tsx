@@ -11,6 +11,7 @@ import PWABadge from "./PWABadge"
 import { SaveUnreadableGuard } from "@/app/SaveUnreadableGuard"
 import { useHomecoming } from "@/app/homecomingRegistry"
 import { NewVersionNotice } from "@/app/NewVersionNotice"
+import { useInputRoot } from "@/app/input/useInputRoot"
 
 function App({ newVersion = false }: { newVersion?: boolean }) {
   const [inGame, setInGame] = useState(false)
@@ -18,6 +19,7 @@ function App({ newVersion = false }: { newVersion?: boolean }) {
   const [announcing, setAnnouncing] = useState(newVersion)
   // Set at the two ways home, never stored: a reload at base shows no coming-home screen.
   const [cameHome, setCameHome] = useState(false)
+  useInputRoot()
   const journeys = useJourneys()
   const comeHome = useHomecoming()
   const { activeJourneyId, getJourney, completeLevel, completeJourney } = journeys

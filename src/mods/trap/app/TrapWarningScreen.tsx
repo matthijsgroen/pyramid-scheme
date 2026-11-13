@@ -27,7 +27,7 @@ export const TrapWarningScreen: FC<Props> = ({ currentHealth, maxHealth, attempt
         <button onClick={onAttempt} className="rounded bg-amber-700 px-6 py-2 text-amber-100 hover:bg-amber-600">
           {t("trap.attempt")}
         </button>
-        <button onClick={onTurnAround} className="text-sm text-stone-400 hover:text-stone-200">
+        <button data-input-back onClick={onTurnAround} className="text-sm text-stone-400 hover:text-stone-200">
           {t("trap.turnAround")}
         </button>
       </div>
