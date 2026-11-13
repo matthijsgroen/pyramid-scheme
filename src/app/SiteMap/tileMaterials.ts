@@ -97,9 +97,9 @@ export const tierPalette: Record<Tileset, TierPalette> = {
     slabLo: "#828d9a",
     joint: "#2b333d",
     accent: METALS.expert.accent,
-    wall: "#5b6675",
-    wallTop: "#7c8797",
-    wallBase: "#323a46",
+    wall: "#6b7c8f",
+    wallTop: "#7a8d9e",
+    wallBase: "#2c3640",
     // Dressed stone, deep enough that nothing of the desert gets down here. The cold one, and the one
     // rank whose night is meant to read blue — so its near-black is the blue-grey its own stone is cut
     // from rather than a wash borrowed from another rank.

@@ -979,6 +979,14 @@ yarn import-reading art/masters/props/junior/namePanel.webp --name=henutNamePane
 # back too dark. The rule is the ordering, not the number.
 yarn import-tile art/masters/surfaces/expert-floor.webp --tier=expert --name=floor --slot=floor \
   --filter=smooth --key=none --repeat=1.4 --flatten=0.45
+# The WALL FACE: blue-grey stone cut with lapis-filled text columns, djed, was, moon and ibis between them.
+# The master is the generator's PASTED preview, 1024x123: the download of this roll came back with
+# blank, faded stretches the preview does not have (a broken download, not the prompt). The face is
+# drawn at 896x112, so the paste still covers the tile.
+#
+# No --brightness: the face sets the rank's wall tokens, sampled from this master (the field's median is
+# `wall`, the top 5% `wallTop`, the bottom 5% `wallBase`), so the headroom line is re-run whenever
+# `wallTop` moves.
 yarn import-tile art/masters/surfaces/expert-wall-face.webp --tier=expert --name=wall-face --slot=face \
   --filter=smooth --key=none --headroom=0.14
 # THIS MASTER IS STORED CROPPED, 4128 wide down to 2384, and that is not tidying. The return came back

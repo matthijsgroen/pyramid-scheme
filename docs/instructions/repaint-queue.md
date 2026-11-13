@@ -163,57 +163,9 @@ face that comes back a third of 8:1 is laid three side by side first, as the Sph
 **An arch whose jambs come back leaning is fixed in the master, not re-rolled**: keep the roll's lintel and
 replace each jamb with a straight crop of its own front face. `junior/arch` landed that way.
 
-### `expert/wall-face` — cool dressed stone in sunk-relief columns
-
-**Attach:** `art/masters/surfaces/expert-floor.webp` — the priest's NEW floor, as the style reference (paint `expert/floor` first)
-
-```
-FRAME: a wide strip, exactly 8 times as wide as it is tall. Do not crop it and do not re-compose it square.
-
-Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
-Rank: a HIGH PRIEST's tomb, built as a clean temple — the third of five. Pale polished tiles and alabaster,
-light satin curtains, silver lamps, lapis inlay, ceiling stars, djed and was pillars, sunk-relief text
-columns, Thoth's ibis. Light, cool and serene; one slow thread of incense; nothing living.
-Lit evenly by a cool clear light — every corner of the room is visible, nothing sinks into darkness.
-HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
-surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
-a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: floor #c9d0d6 / #d6dce1 / #bcc4cb on a #aab3bb bed, joints #6f7d8a,
-walls #7c8a98 with #aeb9c4 tops and #2e3946 at the base, silver #9fb3c8 with light #e6eef6 and shade
-#4b5d75, lapis #2c4f8c.
-Every colour comes from that list. Nothing lighter than #eef2f5, nothing darker than #1a212a.
-Cool and clear: the silver and the lapis read from across the room. The STONE stays calm — the ground is
-quiet so the metal can stand out on it.
-No modern text, no Latin letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it — the palette above is the only source of colour.
-
-Seamless horizontal strip of a temple wall, seen straight on from the front at eye level.
-Fine dressed blue-grey stone, #7c8a98, a clear step DARKER and cooler than the pale tiled floor in front
-of it, never lighter, so the room keeps its depth. The blocks are large and their joints barely show.
-The wall is cut with VERTICAL COLUMNS of sunk-relief hieroglyphs, about twenty columns across the whole
-strip, each column a narrow panel of small signs cut INTO the stone and filled with lapis blue #2c4f8c,
-the fill worn thin in places. The signs are small and soft, read as texture at this size, never as
-letters. Between every few columns a taller carved emblem breaks the rhythm: a djed pillar, a was
-sceptre, a crescent moon, an ibis standing — cut the same way, no larger than a column is wide.
-A thin silver #9fb3c8 band inlaid along the top of the carved field, and a plain dado of the same stone
-below it.
-The very top edge carries a lighter cap #aeb9c4 where the wall's top surface catches the light; the very
-bottom edge a darker base #2e3946 where it meets the floor. Those two bands and the silver line run
-unbroken the whole width — they are the only things that do.
-It tiles left to right: no emblem big enough to be recognised twice in a row, no crack or stain longer
-than an eighth of the strip.
-Even lighting left to right, no hotspot, no vignette. Edge to edge texture.
-```
-
-**Import:** `yarn import-tile art/masters/surfaces/expert-wall-face.webp --tier=expert --name=wall-face --slot=face --filter=smooth --key=none --headroom=0.14`
-
-`--repeat=1`, the default: the columns come back at one wall's height.
-
 ### `expert/threshold` — an alabaster step with a lapis line
 
-**Attach:** `art/masters/surfaces/expert-floor.webp` — the priest's NEW floor, as the style reference (paint `expert/floor` first)
+**Attach:** `art/masters/surfaces/expert-floor.webp` — the priest's floor (landed), as the style reference
 
 ```
 FRAME: a wide strip, exactly 5 times as wide as it is tall, filling the frame edge to edge. Do not re-compose it square.
