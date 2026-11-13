@@ -1,0 +1,17 @@
+// designed by: Claude
+// junior. The tomb's formula: the list of things given away on a stela on the north wall, an offering table before it, a lamp either side, the stop facing it.
+room formulaWallJunior
+tier junior
+
+layout
+# # n f n # #
+# l . o . l #
+d . . s . . d
+# . . . . . #
+# # d # d # #
+
+f wallItem formulaPanel
+n wallItem sconce
+l wall lamp
+o wall offeringTable
+s stop

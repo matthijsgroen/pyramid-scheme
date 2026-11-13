@@ -195,12 +195,14 @@ the register `cast.md` already commits to.
 ### What reading needs from the glyphs
 
 A line is stored as a sequence of glyph ids and rendered per glyph: held, and the word shows; not held, and
-an inert mark does. The wall never changes — the player does.
+an inert mark does. Each wall never changes — the player does.
 
-The catalogue is 58 nouns in four groups (`symbolCatalogue.ts`): 15 gods, 15 professions, 15 animals, 13
-artifacts. **That vocabulary can write who did what, and cannot write the tomb-autobiography formula** —
-bread, water and clothes are not in it, and only the boat is (`Solar Barque`). Which is what ruled candidate
-A out, and what a name sidesteps entirely.
+The catalogue is six groups (`symbolCatalogue.ts`): 15 gods, 15 professions, 15 animals, 13 artifacts, the
+four Offerings and the Signs. **The tomb-autobiography formula is written with the Offerings** — bread, linen,
+water, a boat — and none of them is found: each is given whole by a ghost of the tier below, on a revisit, for
+the formula wall in the next tier's first treasure tomb (`../../review/junior/formula-wall-spec.md`). Each wall
+shows the gifts so far and one empty slot; the wizard wall is the first to carry the whole line. The ending
+stays a name.
 
 **A line costs almost nothing to translate**, because it is assembled from glyph names that are already
 translated: ids plus one connective template, rather than a sentence per locale.
@@ -221,6 +223,9 @@ real texts, all are translations, and **each would have been translated again, l
 which is the argument that retired them.
 
 ### A. The tomb autobiography formula — Old Kingdom
+
+The formula stands in the game as a wall per tier (above); this section weighs it as the ending, and the
+ending is the name.
 
 > I gave bread to the hungry, water to the thirsty, clothes to the naked, and a boat to him who had none.
 

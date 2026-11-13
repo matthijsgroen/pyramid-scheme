@@ -48,10 +48,10 @@ it ships; tick it off there.
 
 - [ ] Rooms that grow for larger art: a room claims more floor where a prop's footprint needs it, the walk path
       routed round it (the banquet table and the lotus pool in the middle). The same question for every tier after.
-- [ ] Art: `junior/threshold`; the junior props and the six activities (themed-rooms.md, "Junior"), then their props' repaint.
+- [x] Art: `junior/threshold`; the junior props and the six activities (themed-rooms.md, "Junior"), then their props' repaint.
 - [ ] Pass-through chambers read as rooms on the re-laid junior floors (1.17 a floor today).
-- [ ] The nobleman's ward door, `door/ward-junior`.
-- [ ] Henut's rooms, her wall's answer and the scribes at Thoth merged (PR #382), and the money fill.
+- [x] The nobleman's ward door, `door/ward-junior`.
+- [x] Henut's rooms, her wall's answer and the scribes at Thoth merged (PR #382), and the money fill.
 - [ ] The last junior bake done, then junior's carve recorded: `yarn junior-freeze:record`, commit
       `src/data/juniorCarve.json`; `yarn junior-freeze` passes, not skipped (handover-junior-release.md, E1).
 

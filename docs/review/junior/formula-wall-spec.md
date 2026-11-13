@@ -5,7 +5,7 @@ him who had none") is een lijst van dingen die iemand weggaf. De doden in de gra
 hier geven ze iets. Elk schatgraf vanaf junior krijgt één formulemuur met één leeg vak. Het teken voor dat vak krijgt de
 speler van de geest van het graf één tier lager, bij een terugbezoek. Een gift, geen loot: het hele teken in één keer.
 
-Status: spec, niets gebouwd. Bouwt op twee open PR's: #382 (`junior/henut-and-copy`: Henuts kamers en tekst) en #387
+Status: slices 1–3 gebouwd (#405), slice 4 gebouwd (formulekamers, bake), slice 5 (art) in de repaint-queue. Bouwde op #382 (`junior/henut-and-copy`: Henuts kamers en tekst) en #387
 (`feat/reading-panel`: `Wall.panel`, `WallScreen`/`WallPanel`). Refs naar die branches staan erbij; de rest is `main`
 op 2026-11-11 (na #400).
 

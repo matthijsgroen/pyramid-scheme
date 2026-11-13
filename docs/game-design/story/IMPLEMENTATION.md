@@ -231,8 +231,12 @@ first one is Henut's wall: her name in a cartouche with a goose where Hathor bel
 only hieroglyphs they have completed. **Holding the sign is the gate** — without it they can look, and are
 told plainly they cannot fix it yet. Never a fail state.
 
-The wall data is `src/mods/story/game/reading/walls.ts`, one entry per journey.
-`reading.junior/expert/master` — the formula on every tomb wall — are authored with no room yet.
+The wall data is `src/mods/story/game/reading/walls.ts`, one wall per place (`at: { levelNr, floor }`), so
+a journey can hold two. The formula walls come from one table (`reading/formula.ts`): one per tier from
+junior up, on floor 1 of the first treasure tomb, a gap (`missing`) on the shared lying stela
+`formulaPanel`. Opened without the sign, the wall plays its `hint` — Fez naming the ghost to go back to —
+every visit; heard once, it is the proof the wall was seen, and that ghost's next visit plays
+`formula.<tier>.gift` and hands the sign over whole. A wall whose `after` has been heard stands repaired.
 
 ### How the Sphinx assembles its name (decided, built)
 
@@ -262,7 +266,6 @@ standing in a tableau's place costs the tier a fragment host. `placement.spec.ts
 
 | Left                                        | Blocked on                                                                                                                    |
 | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `reading.junior/expert/master`              | nothing — authored, and the encounter exists; three tomb rooms to author                                                      |
 | `story.end.*`                               | nothing — authored, and nothing fires it. Where it goes is the decision                                                       |
 | The new beats in the story log              | nothing — `ALL_SCENES` is arrivals and tombs, so `bond.*`, `reading.*` and `end` never appear                                 |
 | The Sphinx inscription artwork              | nothing — the encounter draws catalogue glyphs today                                                                          |

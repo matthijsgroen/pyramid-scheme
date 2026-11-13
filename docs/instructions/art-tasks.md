@@ -303,6 +303,7 @@ library.
 No mesh, no mask; the generation's own silhouette is the tile.
 
 - `junior/tallyBoard` — 5 rooms, estate ledger board, ink columns
+- `default/formulaPanel` — 4 rooms, the formula stela, one empty register; also the reading backdrop (repaint-queue.md)
 
 ## 8. The other three ranks
 

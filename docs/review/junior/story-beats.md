@@ -333,14 +333,13 @@ Twee uitwegen, aan jou om te kiezen:
 - Of verplaats de priester-introductie naar `tomb.junior`, en laat het herstel echt een late beloning
   zijn.
 
-### 2.2 `reading.junior` is geschreven, maar niet bedraad
+### 2.2 `reading.junior` speelt bij de formulemuur
 
 Hier leest de speler voor het eerst een regel van de formule: "I gave bread to the hungry." /
 "Ik gaf brood aan wie honger had." De tekst staat in `fez.json`: 4 regels, de verkenner en Fez.
 
-Er is geen kamer en geen trigger. Volgens `IMPLEMENTATION.md` ("What is left") is hij "authored, and the
-encounter exists; three tomb rooms to author". Het script wil dat hij speelt zodra de speler een hele regel
-kan lezen. Die regel (`.4`) verwijst naar "het vorige" graf, dus naar Ipi's graf.
+Hij speelt als de formulemuur op verdieping 1 van `junior_treasure_tomb` hersteld is, met het brood dat Ipi
+geeft (`formula-wall-spec.md`). Regel `.4` verwijst naar "het vorige" graf, dus naar Ipi's graf.
 
 ### 2.3 `bond.junior` wijkt af van het script
 

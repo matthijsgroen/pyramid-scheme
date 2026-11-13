@@ -111,6 +111,11 @@ after.
 that clearing it is balance restored. All three belong here, at the clearing — not at the arrival
 (`what-the-player-knows.md`: a belief stated in order to be used later reads as a lesson).
 
+## The inscription, whole
+
+`story.reading.wizard.*` — the whole line for the first time: bread, linen, water, a boat, and who gave each.
+Plays when the formula wall on floor 1 of `wizard_treasure_tomb` is put right, with the sign the pharaoh gave on a revisit (`formula.wizard.gift`, after Fez's `formula.wizard.hint` at the empty wall). Not written yet (placeholder in `fez.json`).
+
 ## The Sphinx — `starter_1`, behind its ward gate
 
 `story.reading.sphinx.*` — **the ending.** Everything in the game is a delivery system for this, and it

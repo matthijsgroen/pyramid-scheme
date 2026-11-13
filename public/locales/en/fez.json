@@ -733,17 +733,21 @@
       "4": { "explorer": "It is in the last one too. I did not know it was words." }
     },
     "expert": {
-      "1": { "explorer": "Second line. Water to the thirsty." },
-      "2": { "fez": "Bread, and now water. Somebody was very keen to be remembered as generous." },
+      "1": { "explorer": "Second line. _Clothes to the naked._" },
+      "2": { "fez": "Bread, and now clothes. Somebody was very keen to be remembered as generous." },
       "3": { "explorer": "Everybody has it. Every wall, every tomb, the same two lines." },
       "4": { "fez": "Then either they were all generous, or it is the thing you are supposed to say." },
       "5": { "explorer": "Or it is what they were measured on." }
     },
     "master": {
-      "1": { "explorer": "Clothes to the naked. Third line." },
-      "2": { "fez": "Bread, water, clothes. It is a list of things given away." },
+      "1": { "explorer": "_Water to the thirsty._ Third line." },
+      "2": { "fez": "Bread, clothes, water. It is a list of things given away." },
       "3": { "explorer": "In the tomb of a man who took everything with him." },
       "4": { "fez": "…Yes. I had noticed that." }
+    },
+    "wizard": {
+      "1": { "explorer": "[EN: the whole line for the first time: bread, linen, water, a boat — designer copy]" },
+      "2": { "fez": "[EN: and who gave each — designer copy]" }
     },
     "sphinx": {
       "1": { "fez": "Back where we started. It has not moved." },

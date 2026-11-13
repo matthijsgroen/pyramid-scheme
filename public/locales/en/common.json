@@ -1454,6 +1454,13 @@
       "pick": "Put the right sign in its place.",
       "cannot": "You do not know the sign that belongs here. Not yet."
     },
+    "formula": {
+      "wrong": "[EN: the line of things given away, one slot empty — designer copy]",
+      "fixed": "[EN: the line is whole again — designer copy]",
+      "pick": "[EN: put the sign you were given in the empty slot — designer copy]",
+      "cannot": "[EN: you do not have the sign that belongs here yet — designer copy]",
+      "gap": "[EN: the missing sign — designer copy]"
+    },
     "sphinx": {
       "wrong": "The same writing as outside, but the sand never reached it here. Two signs still cut clean, and a space where the third was.",
       "fixed": "That is the whole of it.",

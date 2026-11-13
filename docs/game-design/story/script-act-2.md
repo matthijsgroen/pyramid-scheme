@@ -130,8 +130,8 @@ everyone has met her.
 
 ## The inscription, line one
 
-`story.reading.junior.*` — fires the first time the player can read a full line of the formula that is
-written in **every** tomb, because it genuinely was.
+`story.reading.junior.*` — the first line of the formula that is written in **every** tomb, because it
+genuinely was. Plays when the formula wall on floor 1 of `junior_treasure_tomb` is put right, with the sign Ipi gave on a revisit (`formula.junior.gift`, after Fez's `formula.junior.hint` at the empty wall).
 
 > **Explorer (pointUp):** There is a line here I can read now.
 >

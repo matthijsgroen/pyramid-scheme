@@ -1,6 +1,7 @@
 import type { SiteConfig } from "@/game/siteTypes"
 import { findEncounterRoom } from "@/game/encounterRoom"
 import { CONVERSATION_META } from "./conversation/meta"
+import { FORMULA } from "./reading/formula"
 import { READING_META } from "./reading/meta"
 
 /** A story room a develop-mode jump lands in, named by what is authored there rather than where the carve put it. */
@@ -18,7 +19,15 @@ export const STORY_ROOMS: readonly StoryRoom[] = [
   // sceneFor plays `tomb.starter` here, which is Ipi's.
   { label: "Jump: Ipi's tomb", journeyId: "starter_treasure_tomb", encounter: CONVERSATION_META.id },
   // wallFor's junior_treasure_tomb wall is Henut's name.
-  { label: "Jump: Henut's wall", journeyId: "junior_treasure_tomb", encounter: READING_META.id },
+  { label: "Jump: Henut's wall", journeyId: "junior_treasure_tomb", encounter: READING_META.id, levelNr: 2, floor: 0 },
+  // The formula walls, one floor above each tier's first ghost (formula.ts).
+  ...FORMULA.map(row => ({
+    label: `Jump: formula (${row.wall})`,
+    journeyId: `${row.wall}_treasure_tomb`,
+    encounter: READING_META.id,
+    levelNr: 2,
+    floor: 1,
+  })),
 ]
 
 /** Where a jump to `room` stands the explorer: the room itself, or — while no such room is authored — the
