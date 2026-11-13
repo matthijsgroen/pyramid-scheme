@@ -512,6 +512,30 @@ The last nine are the house's own kinds, new with its activities ([themed-rooms.
 banquet table and the bed are two cells across, so their frame is landscape three by two; the harp and the
 potted tree stand a cell taller, so theirs is portrait two by five.
 
+## Ward doors — one
+
+The door the gate popup shows behind a ward gate. The first nobleman's door came back European: raised
+panels, iron barrel bolts and a red wax seal. The prompt now names what an Egyptian door is made of, and
+says what it is not.
+
+### `door/ward-junior` — the nobleman's ward door
+
+1. `art/masters/surfaces/junior-wall-face.webp` — the junior wall face, for the brushwork and the colours only
+
+```
+FRAME: square, 1:1. The door stands alone, centred and seen straight on, filling about 85% of the height. Do not crop it and do not re-compose it.
+
+STYLE: hand-painted digital art, matte: soft brush texture, grit and speckle, NO outlines anywhere, every edge is a change of value between painted areas. Even, soft light from the upper left, lamplit and warm. No glow cast on anything, no light pool, no cast shadow, no ground, no floor, no steps. No text, no letters, no hieroglyphs, no figures, no border.
+
+THE ATTACHED IMAGE IS A WALL, already painted in the finished style of this set. Take ONLY its brushwork and its colour range. Nothing of the wall itself appears in the picture.
+
+SUBJECT: An ancient Egyptian nobleman's house door. A double-leaf door of dark cedar, each leaf made of plain vertical planks held by two horizontal battens fixed with wooden pegs, the wood smooth and well oiled. NO raised panels, NO iron, NO European hardware. The doorway is a frame of whitewashed plaster with a cavetto cornice over the lintel, the cornice painted in bands of red ochre, Egyptian blue and leaf green. A single wooden bolt slides across both leaves through copper staples gone faintly verdigris. A linen cord runs between two wooden knobs, one on each leaf, sealed with a lump of grey-brown Nile clay pressed flat with a seal, NOT red wax. Well kept, the owner's wealth in the wood and the painted cornice. The door is shut.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges, right up to the door's frame. No wall, no gradient, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/doors --name=ward-junior --size=512`
+
 ## Priest — fifteen
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and
