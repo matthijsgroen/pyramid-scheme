@@ -1223,7 +1223,7 @@
       "move": "go to a cell beside it; up and down lean left",
       "right": "up-right or down-right",
       "grab": "pick up the run, or take your number off",
-      "carry": "with the run picked up: carry it on",
+      "carry": "with the run picked up: carry it on; up and down go to the side where it can go on",
       "drop": "put the run down"
     }
   },

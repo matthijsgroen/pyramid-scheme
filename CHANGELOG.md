@@ -46,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Keys and controller reach the treasures and trinkets in the collection.
 - Arrow keys go back where they came from, and reach the tab row in camp windows.
 - Hidato: up and down reach the other upper or lower neighbour when one side has none.
+- Hidato: with a run picked up, up and down go to the side where it can go on.
 
 ## 0.47.0 - 2026-11-10
 

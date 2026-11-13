@@ -1223,7 +1223,7 @@
       "move": "naar een vakje ernaast; op en neer gaan schuin links",
       "right": "schuin rechts op of neer",
       "grab": "reeks oppakken, of je getal weghalen",
-      "carry": "met de reeks in de hand: verder leggen",
+      "carry": "met de reeks in de hand: verder leggen; op en neer kiezen de kant waar de reeks verder kan",
       "drop": "reeks neerleggen"
     }
   },
