@@ -989,6 +989,16 @@ body {
   }
 }
 
+/* Look C inside an SVG board, where a cell cannot carry an outline or a ::before: the board draws the cursor
+   cell again on top, scaled, and this lightens it and lays its shadow. Hidden for touch. */
+@utility svg-cursor {
+  display: none;
+  :root:is([data-input="keys"], [data-input="pad"]) & {
+    display: inline;
+    filter: brightness(1.2) drop-shadow(0 0 0.3px var(--color-stone-950)) drop-shadow(0 1.2px 1.4px rgb(0 0 0 / 0.75));
+  }
+}
+
 /* The same look on a board of buttons, where the cursor is the focus: on whichever control within has it. */
 @utility board-focus {
   :root:is([data-input="keys"], [data-input="pad"]) & :focus {

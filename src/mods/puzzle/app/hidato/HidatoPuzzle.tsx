@@ -92,8 +92,15 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
       goal={t(`hidato.goal.${skin.name}`, { last })}
       rules={<HidatoRules skin={skin.name} />}
     >
-      {({ reportInput, hintVisible }) => (
+      {({ reportInput, hintVisible, boardInput }) => (
         <HidatoBoard
+          boardInput={boardInput}
+          onLift={() => {
+            if (finished) return
+            reportInput("look")
+            // Putting the run back down where it stands: arming the cell it is on toggles it off.
+            setState(prev => (prev.pen === undefined ? prev : armHidato(prev, prev.pen)))
+          }}
           puzzle={puzzle}
           skin={skin}
           values={state.values}
