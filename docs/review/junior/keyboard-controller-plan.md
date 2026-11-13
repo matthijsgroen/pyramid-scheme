@@ -107,6 +107,12 @@ toetsaanslag dan niet. Dat dekt `NumberLock`, `InputBlock`, tableau-invoer zonde
   met hoekhaken (variant B); de bordcursor is een opgetilde cel: iets groter, lichter, met schaduw en dunne rand
   (variant C). Kleur uit de `ember`-ramp (`--color-ember-400`, "glow, focus" in `docs/design/camp-palette.md`).
 - Toetsglyphs op knoppen (⏎ / Ⓐ naast de prompt, Z / Ⓧ op undo) alleen bij keys/pad. **spike** + designerkeuze (V6).
+- **Besloten: blok "Bediening" bij de spelregels.** Elke puzzel krijgt onder "How to play" een kort blok
+  "Bediening" met de toetsen of padknoppen van die familie, in glyphs (`[A] pakken · [D-pad] schuiven · [A]
+loslaten`). Het blok volgt `data-input`: bij keys toetsen, bij pad padknoppen, bij touch geen blok. Een
+  aangesloten maar ongebruikte pad toont dus niets. Padglyphs volgen het merk van de pad (Xbox A/B, PlayStation ✕/◯,
+  uit `Gamepad.id`; onbekend = Xbox). De spelregels zelf blijven over het spel; "Tap" daarin wordt neutraal ("Kies").
+  Claude schrijft de regels; ze gaan mee in de vertaalronde.
 
 ### 2.5 Waar het woont (core blijft mod-agnostisch)
 
@@ -233,7 +239,7 @@ Elke slice landt los, heeft een consument en een CHANGELOG `## Unreleased`-regel
 | 5    | Puzzelcontract in shell (undo/hint/back) + `useGridCursor` + makkelijke families (sumplete, eclipse, star battle tik, sudoku, futoshiki, shrine beam, crocodile); tableau-piramide erop                                                                               | die families           | M–L                             | **ja** (bordcursor)                              |
 | 6    | Middel-families (balance, canisters, reflex-vallen, hendel, leeswand)                                                                                                                                                                                                 | die families           | M                               | nee, tenzij geselecteerde bron niet zichtbaar is |
 | 7a–e | Moeilijke families, elk een eigen slice: rush hour, procession, constellation, hidato, sweep                                                                                                                                                                          | per familie            | S–M elk                         | **ja** (vastgepakt-staat)                        |
-| 8    | Toetsglyphs op prompt en pillen in keys/pad-modus                                                                                                                                                                                                                     | iedereen met toetsen   | S                               | **ja**                                           |
+| 8    | Toetsglyphs op prompt en pillen in keys/pad-modus; blok "Bediening" bij de spelregels per familie (§2.4), "Tap" in de spelregels neutraal                                                                                                                             | iedereen met toetsen   | S                               | **ja**                                           |
 
 Slice 1 heeft bewust nog geen inputkern: een `keydown`-listener op de kaart, gebouwd op de pure `ringArrows`. Slice 2
 verplaatst die listener naar een laag zonder gedrag te veranderen (specs van slice 1 blijven groen).
