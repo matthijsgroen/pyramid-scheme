@@ -1,8 +1,6 @@
 import { Fragment, type FC } from "react"
-import { useTranslation } from "react-i18next"
-import { useModality, type PadBrand } from "@/app/input/useModality"
 import { KeyGlyph } from "@/ui/atoms/KeyGlyph"
-import type { Glyph } from "@/ui/atoms/glyphs"
+import type { Glyph, PadBrand } from "@/ui/atoms/glyphs"
 
 /** Glyphs side by side are alternatives ("Enter / Esc"); a "+" between two means held together. */
 export type Chord = readonly (Glyph | "+")[]
@@ -13,11 +11,8 @@ export type Chord = readonly (Glyph | "+")[]
  */
 export type ControlStep = { keys?: Chord; pad?: Chord; label: string }
 
-/** A line of steps, read left to right as one gesture; separate lines are separate gestures. */
-export type ControlLine = readonly ControlStep[]
-
 const ChordGlyphs: FC<{ chord: Chord; brand: PadBrand }> = ({ chord, brand }) => (
-  <span className="inline-flex items-center gap-0.5">
+  <span className="inline-flex shrink-0 items-center gap-0.5">
     {chord.map((part, index) => {
       if (part === "+")
         return (
@@ -37,32 +32,29 @@ const ChordGlyphs: FC<{ chord: Chord; brand: PadBrand }> = ({ chord, brand }) =>
 )
 
 /**
- * The family's keys or pad buttons, under its rules. Follows `<html data-input>`: keys show keys, pad shows pad
+ * The keys or pad buttons of a board, one step a line, under its rules. Keys show keycaps, pad shows pad
  * buttons in its brand's look, touch shows nothing.
  */
-export const ControlsBlock: FC<{ lines: readonly ControlLine[] }> = ({ lines }) => {
-  const { t } = useTranslation("common")
-  const { input, brand } = useModality()
+export const ControlsBlock: FC<{
+  heading: string
+  input: "touch" | "keys" | "pad"
+  brand: PadBrand
+  steps: readonly ControlStep[]
+}> = ({ heading, input, brand, steps }) => {
   if (input === "touch") return null
-  const shown = lines
-    .map(line => line.flatMap(step => (step[input] ? [{ chord: step[input], label: step.label }] : [])))
-    .filter(line => line.length > 0)
+  const shown = steps.flatMap(step => {
+    const chord = step[input]
+    return chord ? [{ chord, label: step.label }] : []
+  })
   if (shown.length === 0) return null
   return (
     <>
-      <h3 className="mt-3 mb-1 font-pyramid text-stone-300">{t("ui.controls")}</h3>
+      <h3 className="mt-3 mb-1 font-pyramid text-stone-300">{heading}</h3>
       <ul className="space-y-1.5">
-        {shown.map((line, lineIndex) => (
-          <li key={lineIndex} className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-            {line.map(({ chord, label }, stepIndex) => (
-              <Fragment key={stepIndex}>
-                {stepIndex > 0 && <span className="text-stone-600">·</span>}
-                <span className="inline-flex items-center gap-1.5">
-                  <ChordGlyphs chord={chord} brand={brand} />
-                  <span>{label}</span>
-                </span>
-              </Fragment>
-            ))}
+        {shown.map(({ chord, label }, index) => (
+          <li key={index} className="flex items-center gap-2">
+            <ChordGlyphs chord={chord} brand={brand} />
+            <span>{label}</span>
           </li>
         ))}
       </ul>

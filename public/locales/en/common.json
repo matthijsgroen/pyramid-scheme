@@ -682,7 +682,7 @@
       "grab": "pick it up",
       "draw": "draw a line that way",
       "release": "let go",
-      "alt": "or hold and point: a line, a double, none"
+      "alt": "hold and point: a line, a double, none"
     }
   },
   "starBattle": {

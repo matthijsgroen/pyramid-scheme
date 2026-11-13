@@ -1,8 +1,6 @@
 import { useSyncExternalStore } from "react"
+import { PAD_BRANDS, type PadBrand } from "@/ui/atoms/glyphs"
 import type { Modality } from "./modality"
-
-/** Which face buttons a pad wears: Xbox letters or PlayStation shapes. Unknown pads read as Xbox. */
-export type PadBrand = "xbox" | "playstation"
 
 const subscribe = (notify: () => void) => {
   const observer = new MutationObserver(notify)
@@ -11,7 +9,10 @@ const subscribe = (notify: () => void) => {
 }
 
 const readInput = (): Modality => (document.documentElement.dataset.input as Modality | undefined) ?? "touch"
-const readBrand = (): PadBrand => (document.documentElement.dataset.pad === "playstation" ? "playstation" : "xbox")
+const readBrand = (): PadBrand => {
+  const marked = document.documentElement.dataset.pad
+  return PAD_BRANDS.find(brand => brand === marked) ?? "xbox"
+}
 
 /** The input last used, as `<html data-input>` says, and the brand of pad as `<html data-pad>` says. */
 export const useModality = (): { input: Modality; brand: PadBrand } => {

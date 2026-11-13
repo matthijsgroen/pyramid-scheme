@@ -1,33 +1,24 @@
 import type { FC } from "react"
 import clsx from "clsx"
-import type { PadBrand } from "@/app/input/useModality"
 
-import type { Glyph, PadButton } from "./glyphs"
+import type { Glyph, PadBrand, PadButton } from "./glyphs"
 
 // A keycap: a raised stone key with a thicker lower lip, so it reads as something pressed down.
 const cap =
-  "inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-stone-500 border-b-[3px] bg-stone-800 px-1.5 font-sans text-xs leading-none font-semibold text-stone-100"
-const miniCap =
-  "flex size-[0.85rem] items-center justify-center rounded-[3px] border border-stone-500 border-b-2 bg-stone-800 text-[0.5rem] leading-none text-stone-100"
+  "inline-flex items-center justify-center rounded-md border border-b-[3px] border-stone-500 bg-stone-800 font-sans leading-none font-semibold text-stone-100"
+const capSize = { md: "h-6 min-w-6 px-1.5 text-xs", sm: "h-5 min-w-5 px-1 text-[0.65rem]" }
 
-const Arrows: FC = () => (
-  <span className="inline-grid grid-cols-3 gap-px align-middle" role="img" aria-label="↑ ← ↓ →">
-    <span />
-    <span className={miniCap}>▲</span>
-    <span />
-    <span className={miniCap}>◀</span>
-    <span className={miniCap}>▼</span>
-    <span className={miniCap}>▶</span>
-  </span>
-)
+// The four arrow keys as one wide keycap: they are one control, and four tiny caps do not read at this size.
+const ARROWS = "←↑↓→"
 
-// Xbox letters on their own colours; PlayStation shapes in their colours on a grey button.
+// The face colours of each brand, toned towards the stone around them: still the green A and the blue cross,
+// never a sticker on the wall.
 const FACE: Record<PadBrand, Record<"a" | "b" | "x" | "y", { text: string; cls: string; name: string }>> = {
   xbox: {
-    a: { text: "A", cls: "bg-green-600 text-white", name: "A" },
-    b: { text: "B", cls: "bg-red-600 text-white", name: "B" },
-    x: { text: "X", cls: "bg-blue-600 text-white", name: "X" },
-    y: { text: "Y", cls: "bg-amber-400 text-stone-900", name: "Y" },
+    a: { text: "A", cls: "bg-emerald-800 text-emerald-100 ring-1 ring-emerald-600", name: "A" },
+    b: { text: "B", cls: "bg-red-900 text-red-100 ring-1 ring-red-700", name: "B" },
+    x: { text: "X", cls: "bg-sky-900 text-sky-100 ring-1 ring-sky-700", name: "X" },
+    y: { text: "Y", cls: "bg-amber-700 text-amber-50 ring-1 ring-amber-500", name: "Y" },
   },
   playstation: {
     a: { text: "✕", cls: "bg-stone-700 text-sky-300 ring-1 ring-stone-500", name: "Cross" },
@@ -47,8 +38,15 @@ const MIDDLE: Record<PadBrand, Record<"start" | "select", { text: string; name: 
   playstation: { start: { text: "≡", name: "Options" }, select: { text: "⧉", name: "Create" } },
 }
 
-const DPad: FC = () => (
-  <svg viewBox="0 0 24 24" className="inline-block size-6 align-middle" role="img" aria-label="D-pad">
+type Size = keyof typeof capSize
+
+const DPad: FC<{ size: Size }> = ({ size }) => (
+  <svg
+    viewBox="0 0 24 24"
+    className={clsx("inline-block align-middle", size === "sm" ? "size-5" : "size-6")}
+    role="img"
+    aria-label="D-pad"
+  >
     <path
       d="M9 2h6v7h7v6h-7v7H9v-7H2V9h7z"
       className="fill-stone-700 stroke-stone-400"
@@ -62,8 +60,8 @@ const DPad: FC = () => (
   </svg>
 )
 
-const PadGlyph: FC<{ button: PadButton; brand: PadBrand }> = ({ button, brand }) => {
-  if (button === "dpad") return <DPad />
+const PadGlyph: FC<{ button: PadButton; brand: PadBrand; size: Size }> = ({ button, brand, size }) => {
+  if (button === "dpad") return <DPad size={size} />
   if (button === "lb" || button === "rb")
     return (
       <span
@@ -91,7 +89,8 @@ const PadGlyph: FC<{ button: PadButton; brand: PadBrand }> = ({ button, brand })
   return (
     <span
       className={clsx(
-        "inline-flex size-6 items-center justify-center rounded-full font-sans text-xs leading-none font-bold shadow-[inset_0_-2px_0_rgb(0_0_0/0.35)]",
+        "inline-flex items-center justify-center rounded-full font-sans leading-none font-bold shadow-[inset_0_-2px_0_rgb(0_0_0/0.35)]",
+        size === "sm" ? "size-5 text-[0.65rem]" : "size-6 text-xs",
         cls
       )}
       role="img"
@@ -102,9 +101,18 @@ const PadGlyph: FC<{ button: PadButton; brand: PadBrand }> = ({ button, brand })
   )
 }
 
-/** A keyboard key as a keycap, or a pad button in the look of the pad's brand. */
-export const KeyGlyph: FC<{ glyph: Glyph; brand?: PadBrand }> = ({ glyph, brand = "xbox" }) => {
-  if (glyph.kind === "arrows") return <Arrows />
-  if (glyph.kind === "key") return <kbd className={cap}>{glyph.label}</kbd>
-  return <PadGlyph button={glyph.button} brand={brand} />
+/** A keyboard key as a keycap, or a pad button in the look of the pad's brand. `sm` fits inside a small label. */
+export const KeyGlyph: FC<{ glyph: Glyph; brand?: PadBrand; size?: Size }> = ({
+  glyph,
+  brand = "xbox",
+  size = "md",
+}) => {
+  if (glyph.kind === "arrows")
+    return (
+      <kbd className={clsx(cap, size === "sm" ? "h-5 px-1.5 text-xs" : "h-7 px-2 text-base", "tracking-wide")}>
+        {ARROWS}
+      </kbd>
+    )
+  if (glyph.kind === "key") return <kbd className={clsx(cap, capSize[size])}>{glyph.label}</kbd>
+  return <PadGlyph button={glyph.button} brand={brand} size={size} />
 }

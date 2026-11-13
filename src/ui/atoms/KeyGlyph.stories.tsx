@@ -1,7 +1,7 @@
 import type { FC } from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { KeyGlyph } from "./KeyGlyph"
-import { arrows, key, pad, type Glyph, type PadButton } from "./glyphs"
+import { arrows, key, pad, type Glyph, type PadBrand, type PadButton } from "./glyphs"
 
 const KEYS: Glyph[] = [
   key("Enter"),
@@ -18,7 +18,7 @@ const KEYS: Glyph[] = [
 ]
 const PAD: PadButton[] = ["a", "b", "x", "y", "lb", "rb", "dpad", "start", "select"]
 
-const Row: FC<{ label: string; glyphs: Glyph[]; brand?: "xbox" | "playstation" }> = ({ label, glyphs, brand }) => (
+const Row: FC<{ label: string; glyphs: Glyph[]; brand?: PadBrand }> = ({ label, glyphs, brand }) => (
   <div className="flex items-center gap-4">
     <span className="w-28 text-sm text-stone-400">{label}</span>
     <div className="flex flex-wrap items-center gap-3">
