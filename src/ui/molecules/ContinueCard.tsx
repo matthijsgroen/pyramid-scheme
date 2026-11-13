@@ -29,7 +29,7 @@ export const ContinueCard: FC<ContinueCardProps> = ({
     <button
       type="button"
       onClick={onSetOff}
-      className="h-13 w-full rounded-xl bg-camp-accent px-4 text-[17px] font-extrabold text-camp-on-accent hover:bg-camp-accent-hover"
+      className="h-13 w-full rounded-xl bg-linear-to-r from-camp-accent to-camp-accent-hover px-4 text-[17px] font-extrabold text-camp-on-accent hover:from-camp-accent-hover hover:to-ochre-700"
     >
       {setOffLabel}
     </button>
