@@ -3,6 +3,8 @@ import type { Direction } from "@/game/siteTypes"
 /** What a player means, whichever key or pad button said it. Consumers see these, never keys. */
 export type InputAction =
   | { kind: "move"; dir: Direction }
+  /** Up or down bent to the right: the upper-right or lower-right cell, on a board whose cells have six neighbours. */
+  | { kind: "veer"; dir: "n" | "s" }
   | { kind: "confirm" }
   | { kind: "back" }
   | { kind: "undo" }
