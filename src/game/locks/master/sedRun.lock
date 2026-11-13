@@ -1,0 +1,18 @@
+// designed by: Claude
+// master. The Sed court: the king runs between the boundary markers to prove he can still rule, the north's in the
+// white crown, the south's in the red. Touch the four markers in the festival's order, north and south in turn;
+// the ways between them run one way, so every change of crown is a walk back to the court. Then both thrones.
+in -- court
+court -[P+N+S]- out
+court -[C:white]- m1
+m1 -[C:white]- >> m2
+m2 >> court
+court -[C:red]- m3
+m3 -[C:red]- >> m4
+m4 >> court
+m2 -- northThrone
+m4 -- southThrone
+P sequence m1 m3 m2 m4
+C toggle @court white red
+N activator @northThrone
+S activator @southThrone

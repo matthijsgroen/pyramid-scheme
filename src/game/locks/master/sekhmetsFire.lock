@@ -1,0 +1,22 @@
+// designed by: Claude
+// master. Sekhmet's fire: three braziers in three halls, and two doors the robbers broke that let the desert wind
+// in. Each door swung shut stills one hall and lets the wind into another, where it puts the fire out. The key lies
+// past the one hall only the first wind leaves still: fetch it before you shut a door, and light last.
+in -- court
+court -[T1+T2+T3+K]- out
+court -- h1
+court -- h2
+h1 -- h3
+h2 -- vault
+h1 -[W:b|V:b]
+h2 -[W:a|V:b]
+h3 -[W:b|V:a]
+vault -[W:a+V:a]
+court -- v
+h2 -- w
+V toggle @v
+W toggle @w
+T1 torch @h1
+T2 torch @h2
+T3 torch @h3
+K activator @vault

@@ -1,0 +1,18 @@
+// designed by: Claude
+// master. The fallen colossus: you slide down its shoulder into the hall it fell across, and there is no climbing
+// back. Every lever along the body opens the way on and shuts one you came by; the hand is reached only once the
+// feet are turned and the right arm's lever thrown, and the way out stands at the left arm, opened from the hand.
+in -- head
+head >> chest
+chest -[A:a]- armL
+chest -[A:b]- armR
+armL -[B:b]- feet
+armR -[B:a+C:a]- feet
+feet >> chest
+armR -[C:b+B:b]- >> hand
+hand >> chest
+armL -[D:b]- out
+A toggle @chest
+B toggle @armR
+C toggle @feet
+D toggle @hand

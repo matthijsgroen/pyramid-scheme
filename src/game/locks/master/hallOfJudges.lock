@@ -1,0 +1,15 @@
+// designed by: Claude
+// master. The hall of the judges: the confession before the assessors, one shrine at a time in the order the door
+// shows; walk into a shrine early and the confession starts again at the door. Each judge's lever opens the next
+// shrine only with the lever before it set back, so the way on runs back through shrines already passed.
+in -- hall
+hall -[P]- out
+hall -- j1
+hall -[A:b]- j2
+hall -[A:a+B:b]- j3
+hall -[B:a+C:b]- j4
+hall -[A:b+C:b]- j5
+A toggle @j1
+B toggle @j2
+C toggle @j3
+P procession j1 j2 j3 j4 j5
