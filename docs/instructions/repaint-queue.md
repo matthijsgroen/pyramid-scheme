@@ -163,46 +163,6 @@ face that comes back a third of 8:1 is laid three side by side first, as the Sph
 **An arch whose jambs come back leaning is fixed in the master, not re-rolled**: keep the roll's lintel and
 replace each jamb with a straight crop of its own front face. `junior/arch` landed that way.
 
-### `expert/threshold` — an alabaster step with a lapis line
-
-**Attach:** `art/masters/surfaces/expert-floor.webp` — the priest's floor (landed), as the style reference
-
-```
-FRAME: a wide strip, exactly 5 times as wide as it is tall, filling the frame edge to edge. Do not re-compose it square.
-
-Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
-Rank: a HIGH PRIEST's tomb, built as a clean temple — the third of five. Pale polished tiles and alabaster,
-light satin curtains, silver lamps, lapis inlay, ceiling stars, djed and was pillars, sunk-relief text
-columns, Thoth's ibis. Light, cool and serene; one slow thread of incense; nothing living.
-Lit evenly by a cool clear light — every corner of the room is visible, nothing sinks into darkness.
-HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
-surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
-a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: floor #c9d0d6 / #d6dce1 / #bcc4cb on a #aab3bb bed, joints #6f7d8a,
-walls #7c8a98 with #aeb9c4 tops and #2e3946 at the base, silver #9fb3c8 with light #e6eef6 and shade
-#4b5d75, lapis #2c4f8c.
-Every colour comes from that list. Nothing lighter than #eef2f5, nothing darker than #1a212a.
-Cool and clear: the silver and the lapis read from across the room. The STONE stays calm — the ground is
-quiet so the metal can stand out on it.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it — the palette above is the only source of colour.
-
-A single alabaster step seen from straight above, spanning the full width of a doorway, with no
-background.
-It is ONE band of stone across the whole width: a soft shadow along its far edge where it drops to the
-floor beyond, its own polished top surface across the middle, a soft shadow along its near edge. No object
-sits on it and nothing crosses it end to end except those two edges and one inlaid line.
-The stone is cool alabaster at #b4bdc5, cloudy and faintly veined — one long block, a step darker than the
-tiled floor either side of it, never lighter.
-Polished smooth, a gentle hollow in the middle where feet cross it. One thin line of lapis #2c4f8c inlaid
-along its near edge, edged in silver #9fb3c8, whole and clean.
-Even lighting left to right, no hotspot, no vignette.
-```
-
-**Import:** `yarn import-tile art/masters/surfaces/expert-threshold.webp --tier=expert --name=threshold --slot=sill --filter=smooth --key=none`
-
 ### `master/floor` — dark polished granite, gold dust in the joints
 
 **Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's rock floor, for paint quality only: it has no slabs, so it hands the generator no layout to copy

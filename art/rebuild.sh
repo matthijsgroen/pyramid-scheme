@@ -965,18 +965,7 @@ yarn import-reading art/masters/props/junior/namePanel.webp --name=henutNamePane
 
 # expert — the priest
 #
-# His three surfaces, re-rolled to the current standard, and the prompts are junior's with the priest's
-# row swapped in — the six lessons in art-tasks.md held, so this rank cost three rolls and no retries.
-#
 # --repeat=1.4 on the floor: the return came back at about five slabs across where the rank draws seven.
-# No repeat on the face, which arrives as one wall's height at 8:1 with its hieroglyph columns already
-# the right size.
-#
-# --brightness=1.32 on the SILL, for the opposite reason to the nobleman's. Basalt returned very dark —
-# lum 94, level with the wall face — and a sill has to sit BETWEEN the floor and the wall or it reads as
-# a hole in the paving rather than a step across it. 1.32 puts it at 124 between the face's 98 and the
-# floor's 138. The nobleman's needed lifting because it came back too pale; this one because it came
-# back too dark. The rule is the ordering, not the number.
 yarn import-tile art/masters/surfaces/expert-floor.webp --tier=expert --name=floor --slot=floor \
   --filter=smooth --key=none --repeat=1.4 --flatten=0.45
 # The WALL FACE: blue-grey stone cut with lapis-filled text columns, djed, was, moon and ibis between them.
@@ -989,24 +978,16 @@ yarn import-tile art/masters/surfaces/expert-floor.webp --tier=expert --name=flo
 # `wallTop` moves.
 yarn import-tile art/masters/surfaces/expert-wall-face.webp --tier=expert --name=wall-face --slot=face \
   --filter=smooth --key=none --headroom=0.14
-# THIS MASTER IS STORED CROPPED, 4128 wide down to 2384, and that is not tidying. The return came back
-# with a bright frame ramping from 244 at the edge to the picture's own 90 — and a sill REPEATS, once
-# per cell along a run, so the two ramps met and drew a pale bar every 56 units. It measured 99 between
-# edge and middle where every other rank sits between 2 and 15.
+# The SILL: one flat alabaster slab with a lapis strip edged in silver along its near edge. Asked for
+# without "one flat slab, not steps", it came back as three stacked ridges and no strip.
 #
-# THE RAMP IS LONG, which is the part that has to be measured rather than eyeballed: it does not settle
-# until 938px in on the left and 583 in from the right, and it is ASYMMETRIC, so a symmetric crop leaves
-# one edge still climbing. A first attempt at 230 each side looked fixed and still butted 128 against
-# 117. The bounds here are the pair that both settle AND match each other — 1058 and 3441, 90.4 against
-# 90.0 — found by walking the column means rather than by looking.
+# THE MASTER IS STORED CROPPED, 1024 tall down to 939: the top 85 rows were a flat neutral grey (#515151)
+# the generator painted as background, which would have drawn a dark bar along every sill.
 #
-# `make-seamless` is the wrong tool and was tried twice: it makes the edges MATCH, which they then did
-# to within 1, but it does that by wrapping the frame into the picture, so the bar simply moved inboard
-# — and with --roll it came back as two bright wedges instead of one. A FRAME IS NOT A SEAM. Top and
-# bottom are untouched: that ramp is the sill's own registration, light step edge over dark base, which
-# every rank shares and which a vertical pass would destroy.
+# No --brightness: it lands at lum 175 between the floor's 193 and the wall face's 118, which is the
+# ordering a sill needs. tile-stats still measures it against the old floor tokens and asks for a re-roll.
 yarn import-tile art/masters/surfaces/expert-threshold.webp --tier=expert --name=threshold --slot=sill \
-  --filter=smooth --key=none --brightness=1.32
+  --filter=smooth --key=none
 
 # His WALL ITEMS. Both are modelled and rendered with --shear=0.5, because both stand off the wall: the
 # band is the same oblique world at HALF depth, so a niche's own floor draws ABOVE its front lip and that
