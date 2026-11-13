@@ -1023,20 +1023,27 @@ body {
 
 /*
  * Look B, for things that are not cells (a canister, a button): a soft ember glow and four corner brackets on
- * whichever control within has the focus, which stays its own size.
+ * whichever control within has the focus, which stays its own size. A checkbox or radio draws no pseudo-element
+ * and in some browsers no shadow either, so the label it sits in wears the look for it.
  */
 @utility focus-brackets {
   /* A control placed by its own position keeps it: the brackets hang off any positioned box. */
-  :root:is([data-input="keys"], [data-input="pad"]) & :focus:not(.absolute, .fixed, .sticky) {
+  :root:is([data-input="keys"], [data-input="pad"])
+    &
+    :is(:focus, label:has(> :is([type="checkbox"], [type="radio"]):focus)):not(.absolute, .fixed, .sticky) {
     position: relative;
   }
-  :root:is([data-input="keys"], [data-input="pad"]) & :focus {
+  :root:is([data-input="keys"], [data-input="pad"])
+    &
+    :is(:focus, label:has(> :is([type="checkbox"], [type="radio"]):focus)) {
     outline: none;
     box-shadow:
       inset 0 0 0 2px color-mix(in srgb, var(--color-ember-400) 55%, transparent),
       inset 0 0 14px 2px color-mix(in srgb, var(--color-ember-400) 35%, transparent);
   }
-  :root:is([data-input="keys"], [data-input="pad"]) & :focus::after {
+  :root:is([data-input="keys"], [data-input="pad"])
+    &
+    :is(:focus, label:has(> :is([type="checkbox"], [type="radio"]):focus))::after {
     --arm: 14px;
     --line: 3px;
     content: "";
