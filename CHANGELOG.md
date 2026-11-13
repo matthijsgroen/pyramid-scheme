@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A chest no longer pokes through the wall beside it.
 - Opening a chest no longer makes it jump.
 - Keys and controller reach the treasures and trinkets in the collection.
+- Arrow keys go back where they came from, and reach the tab row in camp windows.
 
 ## 0.47.0 - 2026-11-10
 
