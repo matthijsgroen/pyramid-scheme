@@ -23,6 +23,8 @@ export const REPEAT_DELAY = 24
 export const REPEAT_EVERY = 8
 
 type Pad = Pick<Gamepad, "index" | "connected" | "axes"> & {
+  /** The browser's name for the pad; absent on a pad that gives none. */
+  id?: string
   buttons: readonly Pick<GamepadButton, "pressed" | "value">[]
 }
 
@@ -62,9 +64,10 @@ const heldControls = (pad: Pad) => {
  * Turns connected game pads into input signals for `deliver`. Polls once a frame while at least one pad is
  * connected, and not at all without one. A press is delivered once, on the poll it goes down; a held direction
  * repeats after `REPEAT_DELAY` polls and then every `REPEAT_EVERY`; letting go is delivered as a release.
+ * A press comes with the `id` of the pad that made it, so the brand can follow the pad in hand.
  */
 export const listenToGamepads = (
-  deliver: (signal: InputSignal) => void,
+  deliver: (signal: InputSignal, padId?: string) => void,
   {
     target = window,
     pads = () => target.navigator.getGamepads?.() ?? [],
@@ -76,8 +79,8 @@ export const listenToGamepads = (
   const state = new Map<number, Map<string, { action: InputAction; polls: number }>>()
   let frame: number | undefined
 
-  const send = (action: InputAction, repeat: boolean, released: boolean) =>
-    deliver({ action, source: "pad", repeat, released, target: target.document.activeElement })
+  const send = (action: InputAction, repeat: boolean, released: boolean, padId?: string) =>
+    deliver({ action, source: "pad", repeat, released, target: target.document.activeElement }, padId)
 
   const letGo = (index: number) => {
     for (const { action } of state.get(index)?.values() ?? []) send(action, false, true)
@@ -100,9 +103,9 @@ export const listenToGamepads = (
       for (const [key, action] of after) {
         const polls = (before.get(key)?.polls ?? -1) + 1
         next.set(key, { action, polls })
-        if (polls === 0) send(action, false, false)
+        if (polls === 0) send(action, false, false, pad.id)
         else if (action.kind === "move" && polls >= REPEAT_DELAY && (polls - REPEAT_DELAY) % REPEAT_EVERY === 0)
-          send(action, true, false)
+          send(action, true, false, pad.id)
       }
       state.set(pad.index, next)
     }

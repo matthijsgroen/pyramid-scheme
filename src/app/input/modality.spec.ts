@@ -32,3 +32,17 @@ describe("the input last used", () => {
     expect(mode()).toBe("pad")
   })
 })
+
+describe("the brand of pad", () => {
+  const connect = (id: string) =>
+    window.dispatchEvent(Object.assign(new Event("gamepadconnected"), { gamepad: { id } }))
+
+  it("is marked on <html> by the pad that connects, without changing the input", () => {
+    setModality("keys")
+    connect("DualSense Wireless Controller (STANDARD GAMEPAD Vendor: 054c Product: 0ce6)")
+    expect(document.documentElement.dataset.pad).toBe("playstation")
+    expect(mode()).toBe("keys")
+    connect("Xbox Wireless Controller (STANDARD GAMEPAD Vendor: 045e Product: 0b13)")
+    expect(document.documentElement.dataset.pad).toBe("xbox")
+  })
+})

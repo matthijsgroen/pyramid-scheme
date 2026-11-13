@@ -8,6 +8,10 @@ import type { SolveOutcome } from "@/app/reactions/reactionContributions"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import type { InputHandler } from "@/app/input/actions"
+import { ControlsBlock, type ControlStep } from "@/ui/molecules/ControlsBlock"
+import { ActionGlyph } from "@/app/input/ActionGlyph"
+import { ACTION_GLYPHS, type SharedAction } from "@/app/input/actionGlyphs"
+import { useModality } from "@/app/input/useModality"
 
 export type PuzzleShellApi = {
   /** Call when the board reaches its solved state. */
@@ -98,6 +102,8 @@ type Props = {
   title?: string
   /** The rules of this puzzle, shown under the board — scrolled to, never popped up. */
   rules?: ReactNode
+  /** The family's own keys and pad buttons, one step a line, shown under the rules for keys and pad only. */
+  controls?: readonly ControlStep[]
   children: (api: PuzzleShellApi) => ReactNode
 }
 
@@ -113,6 +119,12 @@ const formatDuration = (ms: number): string => {
 const pillCls =
   "flex h-11 flex-1 items-center justify-center gap-1 rounded-full px-3 text-sm font-medium transition-colors"
 const spent = "bg-stone-800/50 text-stone-600"
+
+const shared = (action: SharedAction, label: string): ControlStep => ({
+  keys: [ACTION_GLYPHS[action].keys],
+  pad: [ACTION_GLYPHS[action].pad],
+  label,
+})
 
 // The chrome every puzzle family wears: back and reset at the top, undo and hint as two pills under the
 // board (the hint with its cooldown and idle nudge), then the completed banner and the rules. Families
@@ -131,10 +143,12 @@ export const PuzzleFamilyShell = ({
   goal,
   title,
   rules,
+  controls,
   children,
 }: Props) => {
   const { t } = useTranslation("common")
   const { isDevelopMode } = use(DevelopContext)
+  const { input, brand } = useModality()
   const [solvedBanner, setSolvedBanner] = useState(false)
   const [scheduleSolve, cancelSolve] = useTimeout()
   const { revealed, cooling, nudging, hintsUsed, reveal, reportInput } = useHintAvailability(idleMs)
@@ -305,6 +319,7 @@ export const PuzzleFamilyShell = ({
             className={clsx(pillCls, undo.enabled ? "bg-stone-800 text-stone-200 hover:bg-stone-700" : spent)}
           >
             ↩ {t("ui.undo")}
+            <ActionGlyph action="undo" />
           </button>
         ) : (
           <div className="flex-1" />
@@ -328,7 +343,10 @@ export const PuzzleFamilyShell = ({
                 style={{ animationDuration: `${HINT_COOLDOWN_MS}ms` }}
               />
             )}
-            <span className="relative">💡 {t("ui.hint")}</span>
+            <span className="relative flex items-center gap-1">
+              💡 {t("ui.hint")}
+              <ActionGlyph action="hint" />
+            </span>
           </button>
         )}
       </div>
@@ -359,6 +377,18 @@ export const PuzzleFamilyShell = ({
               {rules}
             </>
           )}
+          {/* The shell's own three close the block, since they are the shell's on every board. */}
+          <ControlsBlock
+            heading={t("ui.controls")}
+            input={input}
+            brand={brand}
+            steps={[
+              ...(controls ?? []),
+              ...(undo ? [shared("undo", t("ui.controlsUndo"))] : []),
+              ...(hint ? [shared("hint", t("ui.controlsHint"))] : []),
+              shared("back", t("ui.controlsLeave")),
+            ]}
+          />
         </div>
       )}
       {solvedBanner && (

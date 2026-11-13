@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The camp and its windows play by keys or controller, and Start opens Settings.
 - [ and ] or the shoulder buttons switch tabs in the camp windows.
 - Escape or the controller's B goes on from a found treasure and a finished level, and leaves the expedition.
+- Puzzle rules show the keys or controller buttons, and the prompts and pills show their button.
 
 ### Changed
 

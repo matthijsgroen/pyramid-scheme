@@ -111,7 +111,11 @@
     "solvedWithHints_one": "Solved with {{count}} hint",
     "solvedWithHints_other": "Solved with {{count}} hints",
     "tapToContinue": "Tap to continue",
-    "goal": "Goal"
+    "goal": "Goal",
+    "controls": "Controls",
+    "controlsUndo": "undo",
+    "controlsHint": "hint",
+    "controlsLeave": "back to the map"
   },
   "trap": {
     "warning": "⚠ Trapped Corridor",
@@ -672,6 +676,13 @@
       "causeway": "Causeway",
       "irrigation": "Waterworks",
       "ceiling": "Painted Ceiling"
+    },
+    "controls": {
+      "pick": "choose a star",
+      "grab": "pick it up",
+      "draw": "draw a line that way",
+      "release": "let go",
+      "alt": "hold and point: a line, a double, none"
     }
   },
   "starBattle": {
@@ -1084,6 +1095,12 @@
           "down": "Shove it down the street, as far as the ring."
         }
       }
+    },
+    "controls": {
+      "pick": "choose a block",
+      "grab": "take it",
+      "slide": "slide",
+      "release": "let go"
     }
   },
   "hidato": {
@@ -1250,6 +1267,14 @@
     "name": {
       "default": "Six Chambers",
       "papyrus": "The Scribe's Register"
+    },
+    "controls": {
+      "move": "choose a square",
+      "type": "write a number",
+      "choose": "choose a number or the eraser",
+      "place": "write it",
+      "pencil": "pencil",
+      "erase": "erase"
     }
   },
   "crocodile": {

@@ -17,6 +17,7 @@ import {
 import { buildRushHourHint } from "./rushHourHint"
 import { RushHourBoard } from "./RushHourBoard"
 import { RushHourRules } from "./RushHourRules"
+import { useRushHourControls } from "./rushHourControls"
 import { skinFor } from "./skins"
 
 type Props = {
@@ -35,6 +36,7 @@ type Props = {
 export const RushHourPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const skin = skinFor(role, theme, 0, room)
+  const controls = useRushHourControls()
   /**
    * Every position the player has stood in, the current one last.
    *
@@ -96,6 +98,7 @@ export const RushHourPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, roo
       title={t(`rushHour.name.${skin.name}`)}
       goal={t(`rushHour.goal.${skin.name}`)}
       rules={<RushHourRules skin={skin.name} />}
+      controls={controls}
     >
       {({ reportInput, hintVisible, boardInput }) => (
         <RushHourBoard
