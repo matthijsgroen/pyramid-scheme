@@ -25,6 +25,16 @@ export const neighbourOf = (key: string, dir: Direction, right: boolean): string
   return hexKey({ q: q + step.q, r: r + step.r })
 }
 
+/**
+ * The cell a direction moves to from `key` on this board: the neighbour it aims at, or for up and down the one on
+ * the other side where that one is off the board. Undefined where neither is on it.
+ */
+export const reach = (cells: ReadonlySet<string>, key: string, dir: Direction, right: boolean): string | undefined => {
+  const aimed = neighbourOf(key, dir, right)
+  const next = cells.has(aimed) ? aimed : neighbourOf(key, dir, !right)
+  return cells.has(next) ? next : undefined
+}
+
 type Options = {
   cells: ReadonlySet<string>
   /** Where the cursor starts. Read once. */
@@ -57,9 +67,8 @@ export const useHidatoCursor = ({ cells, start, pen, onPress, onDrag, onLift }: 
   const at = pen ?? free
 
   const go = (dir: Direction, right: boolean) => {
-    const aimed = neighbourOf(at, dir, right)
-    const next = cells.has(aimed) ? aimed : neighbourOf(at, dir, !right)
-    if (!cells.has(next)) return
+    const next = reach(cells, at, dir, right)
+    if (next === undefined) return
     if (pen === undefined) setFree(next)
     else onDrag(next)
   }
