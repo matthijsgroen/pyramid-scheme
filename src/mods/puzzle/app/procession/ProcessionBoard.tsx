@@ -3,7 +3,10 @@ import { useEffect, useRef, useState, type FC, type PointerEvent } from "react"
 import { useTranslation } from "react-i18next"
 import type { Mark, ProcessionPuzzle, ProcessionState } from "@/mods/puzzle/game/procession/procession"
 import { lastStart } from "@/mods/puzzle/game/procession/procession"
+import type { InputHandler } from "@/app/input/actions"
+import { useInputLayer } from "@/app/input/useInputLayer"
 import type { ProcessionSkin } from "./skins"
+import { useProcessionCursor } from "./useProcessionCursor"
 
 type Props = {
   puzzle: ProcessionPuzzle
@@ -23,6 +26,8 @@ type Props = {
   locked?: readonly boolean[]
   /** Which of the skin's doings each row is, where it is not the row's own index (a procession door). */
   casting?: readonly number[]
+  /** The shell's `boardInput`: with it the board takes keys and pad, a cursor on the rows. */
+  boardInput?: (board: InputHandler) => InputHandler
 }
 
 /**
@@ -46,12 +51,28 @@ export const ProcessionBoard: FC<Props> = ({
   onSlide,
   locked,
   casting,
+  boardInput,
 }) => {
   const { t } = useTranslation("common")
   const cast = (row: number) => casting?.[row] ?? row
   const isLocked = (row: number) => locked?.[row] ?? false
   const frame = useRef<HTMLDivElement>(null)
   const [drag, setDrag] = useState<{ index: number; from: number; origin: number } | undefined>()
+  const markButtons = useRef<(HTMLButtonElement | null)[]>([])
+
+  const keys = useProcessionCursor({
+    starts: state.starts,
+    locked,
+    marks: puzzle.marks.length,
+    focus,
+    // A mark picked by keys may sit below the fold, under a board as tall as the screen.
+    onFocus: mark => {
+      onFocus(mark)
+      if (mark !== undefined) markButtons.current[mark]?.scrollIntoView?.({ block: "nearest" })
+    },
+    onSlide,
+  })
+  useInputLayer(boardInput ? boardInput(keys.handle) : keys.handle, boardInput !== undefined)
 
   /**
    * A mark as a sentence about two doings.
@@ -168,9 +189,11 @@ export const ProcessionBoard: FC<Props> = ({
                   aria-label={`bar ${index + 1}`}
                   aria-disabled={isLocked(index) || undefined}
                   data-locked={isLocked(index) || undefined}
+                  data-cursor={(boardInput && keys.cursor === index) || undefined}
                   onPointerDown={event => {
                     if (isLocked(index)) return
                     event.currentTarget.setPointerCapture(event.pointerId)
+                    keys.point(index)
                     onFocus(undefined)
                     setDrag({ index, from: event.clientX, origin: start })
                   }}
@@ -180,6 +203,7 @@ export const ProcessionBoard: FC<Props> = ({
                     skin.bars[index % skin.bars.length],
                     about(index) && `ring-2 ${skin.focus}`,
                     hintBar === index && `ring-2 ${skin.focus}`,
+                    boardInput && keys.cursor === index && !solved && "cursor-brackets",
                     solved && skin.celebrate
                   )}
                   style={{ left: `${start * share}%`, width: `${bar.len * share}%` }}
@@ -215,6 +239,9 @@ export const ProcessionBoard: FC<Props> = ({
         {puzzle.marks.map((mark, index) => (
           <li key={index}>
             <button
+              ref={button => {
+                markButtons.current[index] = button
+              }}
               aria-label={`mark ${index + 1}`}
               onClick={() => onFocus(focus === index ? undefined : index)}
               className={clsx(

@@ -1,4 +1,4 @@
-import { useCallback, type FC } from "react"
+import { useCallback, useRef, type FC } from "react"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
@@ -10,6 +10,7 @@ import {
   createRushHourState,
   rushHourSolved,
   slidePiece,
+  stateKey,
   type RushHourPuzzle as RushHourPuzzleData,
   type RushHourState,
 } from "@/mods/puzzle/game/rushHour/rushHour"
@@ -44,6 +45,11 @@ export const RushHourPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, roo
    */
   const [past, setPast] = usePuzzleState<RushHourState[]>(() => [createRushHourState(puzzle)], puzzle)
   const state = past[past.length - 1]
+  /**
+   * Where the piece in hand stands in its move: just taken, or already shoved. Every slide from taking a piece to
+   * letting it go is one move, a drag's and a held key's alike, so one undo takes the whole of it back.
+   */
+  const gesture = useRef<"none" | "open" | "moved">("none")
 
   /**
    * The hint as it was when the player asked, which is also what gates the search: nothing is built
@@ -72,9 +78,15 @@ export const RushHourPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, roo
       onSolved={onSolved}
       onCancel={onCancel}
       solved={celebration.done}
-      onReset={() => setPast([createRushHourState(puzzle)])}
+      onReset={() => {
+        gesture.current = "none"
+        setPast([createRushHourState(puzzle)])
+      }}
       undo={{
-        onPress: () => setPast(stack => (stack.length > 1 ? stack.slice(0, -1) : stack)),
+        onPress: () => {
+          gesture.current = "none"
+          setPast(stack => (stack.length > 1 ? stack.slice(0, -1) : stack))
+        },
         enabled: past.length > 1 && !finished,
       }}
       hint={hintText}
@@ -85,7 +97,7 @@ export const RushHourPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, roo
       goal={t(`rushHour.goal.${skin.name}`)}
       rules={<RushHourRules skin={skin.name} />}
     >
-      {({ reportInput, hintVisible }) => (
+      {({ reportInput, hintVisible, boardInput }) => (
         <RushHourBoard
           puzzle={puzzle}
           state={state}
@@ -93,12 +105,29 @@ export const RushHourPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, roo
           hintPiece={hintVisible ? hint?.move.index : undefined}
           hintCells={hintVisible ? hint?.cells : undefined}
           leaving={finished}
+          boardInput={boardInput}
+          onGrab={() => {
+            gesture.current = "open"
+          }}
           onSlide={(index, offset) => {
             if (finished) return // the piece is leaving; nothing may change under the run
             const moved = slidePiece(puzzle, state, index, offset)
             if (moved === state) return
             reportInput()
-            setPast(stack => [...stack, moved])
+            // Decided now, not inside the updater: React may run that after the gesture has moved on.
+            const sameMove = gesture.current === "moved"
+            if (gesture.current === "open") gesture.current = "moved"
+            setPast(stack => (sameMove ? [...stack.slice(0, -1), moved] : [...stack, moved]))
+          }}
+          onRelease={() => {
+            // A piece put back where it was taken from made no move.
+            if (gesture.current === "moved")
+              setPast(stack =>
+                stack.length > 1 && stateKey(stack[stack.length - 1]) === stateKey(stack[stack.length - 2])
+                  ? stack.slice(0, -1)
+                  : stack
+              )
+            gesture.current = "none"
           }}
         />
       )}
