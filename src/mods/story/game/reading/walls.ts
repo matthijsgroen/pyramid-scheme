@@ -5,6 +5,7 @@
  * exactly to the extent they have been paying attention — and fixable only with a sign they hold.
  * That is the whole gate: no glyph, no repair, and the room says so rather than refusing silently.
  */
+import { formulaWall } from "./formula"
 import type { Panel } from "./panel"
 
 /** Where a wall stands inside its journey: which site, and which floor of it. */
@@ -75,7 +76,11 @@ export const WALLS: Readonly<Record<string, readonly Wall[]>> = {
         frame: 0,
       },
     },
+    formulaWall(0),
   ],
+  expert_treasure_tomb: [formulaWall(1)],
+  master_treasure_tomb: [formulaWall(2)],
+  wizard_treasure_tomb: [formulaWall(3)],
   starter_1: [
     {
       at: { levelNr: 1, floor: 6 },

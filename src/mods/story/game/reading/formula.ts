@@ -6,6 +6,8 @@
  * seen the wall. A gift, not loot: the whole sign at once. Signs are named by id, as every wall names
  * them; the reward that carries one is the hieroglyph mod's to apply.
  */
+import type { Wall } from "./walls"
+
 export type FormulaRow = {
   /** The tier whose first treasure tomb stands the wall. */
   wall: string
@@ -31,3 +33,29 @@ export const formulaGift = (row: FormulaRow): string => `formula.${row.wall}.gif
 /** What the gift puts in the player's hands: the sign, whole — its one and only piece. */
 export const giftReward = (row: FormulaRow) =>
   ({ type: "hieroglyphFragment", hieroglyphId: row.sign, pieceIndex: 0 }) as const
+
+/**
+ * The wall of row `i`, on the second floor of its tier's first treasure tomb: the signs given so far, in the
+ * order they were given, then the empty slot for this row's. Each wall is a different length, and none of
+ * them ever changes; the wizard wall is the first to carry the whole line.
+ */
+export const formulaWall = (i: number): Wall => {
+  const row = FORMULA[i]
+  return {
+    at: { levelNr: 2, floor: 1 },
+    cut: [...FORMULA.slice(0, i).map(given => given.sign), ""],
+    wrongAt: i,
+    answer: row.sign,
+    missing: true,
+    copy: "story.formula",
+    hint: formulaHint(row),
+    after: `reading.${row.wall}`,
+    // No painting yet (repaint queue, `formulaPanel`): a bare lying stela. Its one register holds four
+    // signs, so a shorter wall fills only the start of it.
+    panel: {
+      aspect: 2.4,
+      signs: { x: 0.1, y: 0.3, width: (0.8 * (i + 1)) / FORMULA.length, height: 0.4 },
+      flow: "row",
+    },
+  }
+}

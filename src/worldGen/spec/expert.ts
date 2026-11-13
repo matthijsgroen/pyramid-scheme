@@ -245,8 +245,13 @@ export const expertRules: Rule[] = [
       // A side path opting into the same hieroglyph-fragment assignment pyramids use.
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 2,
-        nodes: [masterBetweenTableaus, { where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 3,
+        nodes: [
+          masterBetweenTableaus,
+          { where: "last", encounter: "capstone" },
+          // The formula wall, the room before the crocodile: its empty slot asks for the sign the ghost of the tier below gives.
+          { where: TOMB_ROOMS_PER_FLOOR.expert + 2, encounter: "reading", room: "formulaWallExpert" },
+        ],
         sideSections: [{ pathPuzzles: 1, endReward: "fragmentSlot" }],
       },
       {

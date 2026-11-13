@@ -205,6 +205,9 @@ export const WALL_DECORATION_KINDS = [
   // A named owner's panel: her name in a cartouche, cut where a reader is meant to stop and read it. Placed by a
   // designed room only, never dealt from a pool, so it serves no activity.
   "namePanel",
+  // The tomb's formula: a lying stela with one register, the things given away written along it. Placed by a
+  // designed room only, like namePanel.
+  "formulaPanel",
 ] as const
 export type WallDecorationKind = (typeof WALL_DECORATION_KINDS)[number]
 

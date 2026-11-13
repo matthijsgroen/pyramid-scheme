@@ -299,8 +299,13 @@ export const juniorRules: Rule[] = [
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 2,
-        nodes: [expertBetweenTableaus, { where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 3,
+        nodes: [
+          expertBetweenTableaus,
+          { where: "last", encounter: "capstone" },
+          // The formula wall, the room before the crocodile: its empty slot asks for the sign the ghost of the tier below gives.
+          { where: TOMB_ROOMS_PER_FLOOR.junior + 2, encounter: "reading", room: "formulaWallJunior" },
+        ],
       },
       // A tomb is designed exactly like a pyramid — a side path with a mosaic reward.
       {

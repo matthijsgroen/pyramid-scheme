@@ -745,6 +745,10 @@
       "3": { "explorer": "In the tomb of a man who took everything with him." },
       "4": { "fez": "…Yes. I had noticed that." }
     },
+    "wizard": {
+      "1": { "explorer": "[EN: the whole line for the first time: bread, linen, water, a boat — designer copy]" },
+      "2": { "fez": "[EN: and who gave each — designer copy]" }
+    },
     "sphinx": {
       "1": { "fez": "Back where we started. It has not moved." },
       "2": { "explorer": "The writing is still there." },

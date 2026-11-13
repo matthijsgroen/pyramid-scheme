@@ -225,8 +225,13 @@ export const masterRules: Rule[] = [
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 2,
-        nodes: [wizardBetweenTableaus, { where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 3,
+        nodes: [
+          wizardBetweenTableaus,
+          { where: "last", encounter: "capstone" },
+          // The formula wall, the room before the crocodile: its empty slot asks for the sign the ghost of the tier below gives.
+          { where: TOMB_ROOMS_PER_FLOOR.master + 2, encounter: "reading", room: "formulaWallMaster" },
+        ],
       },
       {
         mainEndReward: "tombTreasure",

@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1011878963
+export const worldContentHash = 1944100515
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -29160,7 +29160,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
       {
-        pathPuzzles: 5,
+        pathPuzzles: 6,
         difficulty: "junior",
         end: "treasure",
         exitOrStaircase: "none",
@@ -29262,13 +29262,30 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         patron: "anubis",
         wallDecorations: ["stela", "niche", "sconce"],
         role: "tomb-puzzle",
-        encountersByIndex: { 0: "tableau", 1: "sumplete", 2: "tableau", 3: "tableau", 4: "crocodile" },
+        encountersByIndex: { 0: "tableau", 1: "sumplete", 2: "tableau", 3: "tableau", 4: "reading", 5: "crocodile" },
+        prefabs: {
+          formulaWallJunior: {
+            name: "formulaWallJunior",
+            tier: "junior",
+            mirror: false,
+            designedBy: "Claude",
+            layouts: [{ name: "", cells: ["##nfn##", "#l.o.l#", "d..s..d", "#.....#", "##d#d##"] }],
+            places: {
+              f: { letter: "f", layer: "wallItem", optional: false, kinds: ["formulaPanel"], cols: 1, rows: 1 },
+              n: { letter: "n", layer: "wallItem", optional: false, kinds: ["sconce"], cols: 1, rows: 1 },
+              l: { letter: "l", layer: "wall", optional: false, kinds: ["lamp"], cols: 1, rows: 1 },
+              o: { letter: "o", layer: "wall", optional: false, kinds: ["offeringTable"], cols: 1, rows: 1 },
+            },
+            specials: { s: "stop" },
+          },
+        },
+        prefabsByIndex: { 4: "formulaWallJunior" },
         difficultiesByIndex: { 1: "expert" },
         packing: 0.2,
         seed: 6562157303560528,
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "junior_a_2" },
-        rewards: [undefined, undefined, undefined, undefined, undefined],
+        rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
       },
       {
         pathPuzzles: 5,
@@ -29948,7 +29965,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         rewards: [undefined, { type: "waterskin" }, undefined, undefined, undefined, undefined, undefined],
       },
       {
-        pathPuzzles: 6,
+        pathPuzzles: 7,
         difficulty: "expert",
         end: "treasure",
         exitOrStaircase: "none",
@@ -30054,15 +30071,33 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           2: "tableau",
           3: "tableau",
           4: "tableau",
-          5: "crocodile",
+          5: "reading",
+          6: "crocodile",
         },
+        prefabs: {
+          formulaWallExpert: {
+            name: "formulaWallExpert",
+            tier: "expert",
+            mirror: false,
+            designedBy: "Claude",
+            layouts: [{ name: "", cells: ["##nfn##", "#l.o.l#", "d..s..d", "#.....#", "##d#d##"] }],
+            places: {
+              f: { letter: "f", layer: "wallItem", optional: false, kinds: ["formulaPanel"], cols: 1, rows: 1 },
+              n: { letter: "n", layer: "wallItem", optional: false, kinds: ["sconce"], cols: 1, rows: 1 },
+              l: { letter: "l", layer: "wall", optional: false, kinds: ["lamp"], cols: 1, rows: 1 },
+              o: { letter: "o", layer: "wall", optional: false, kinds: ["offeringTable"], cols: 1, rows: 1 },
+            },
+            specials: { s: "stop" },
+          },
+        },
+        prefabsByIndex: { 5: "formulaWallExpert" },
         difficultiesByIndex: { 1: "master" },
         corridorStraightness: 0.35,
         packing: 0.1,
         seed: 7024856084026399,
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "expert_a_2" },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
       {
         pathPuzzles: 6,
@@ -30875,7 +30910,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         rewards: [undefined, { type: "waterskin" }, undefined, undefined, undefined, undefined, undefined, undefined],
       },
       {
-        pathPuzzles: 7,
+        pathPuzzles: 8,
         difficulty: "master",
         end: "treasure",
         exitOrStaircase: "none",
@@ -30951,8 +30986,26 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           3: "tableau",
           4: "tableau",
           5: "tableau",
-          6: "crocodile",
+          6: "reading",
+          7: "crocodile",
         },
+        prefabs: {
+          formulaWallMaster: {
+            name: "formulaWallMaster",
+            tier: "master",
+            mirror: false,
+            designedBy: "Claude",
+            layouts: [{ name: "", cells: ["##nfn##", "#l.o.l#", "d..s..d", "#.....#", "##d#d##"] }],
+            places: {
+              f: { letter: "f", layer: "wallItem", optional: false, kinds: ["formulaPanel"], cols: 1, rows: 1 },
+              n: { letter: "n", layer: "wallItem", optional: false, kinds: ["sconce"], cols: 1, rows: 1 },
+              l: { letter: "l", layer: "wall", optional: false, kinds: ["lamp"], cols: 1, rows: 1 },
+              o: { letter: "o", layer: "wall", optional: false, kinds: ["offeringTable"], cols: 1, rows: 1 },
+            },
+            specials: { s: "stop" },
+          },
+        },
+        prefabsByIndex: { 6: "formulaWallMaster" },
         difficultiesByIndex: { 1: "wizard" },
         packing: 0.1,
         seed: 6589218256995085,
@@ -30961,6 +31014,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         rewards: [
           undefined,
           { type: "campPart", structure: "dryingRack", part: "wickerTray" },
+          undefined,
           undefined,
           undefined,
           undefined,
@@ -32042,7 +32096,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
       },
       {
-        pathPuzzles: 8,
+        pathPuzzles: 9,
         difficulty: "wizard",
         end: "treasure",
         exitOrStaircase: "none",
@@ -32118,8 +32172,26 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           4: "tableau",
           5: "tableau",
           6: "tableau",
-          7: "crocodile",
+          7: "reading",
+          8: "crocodile",
         },
+        prefabs: {
+          formulaWallWizard: {
+            name: "formulaWallWizard",
+            tier: "wizard",
+            mirror: false,
+            designedBy: "Claude",
+            layouts: [{ name: "", cells: ["##nfn##", "#l.o.l#", "d..s..d", "#.....#", "##d#d##"] }],
+            places: {
+              f: { letter: "f", layer: "wallItem", optional: false, kinds: ["formulaPanel"], cols: 1, rows: 1 },
+              n: { letter: "n", layer: "wallItem", optional: false, kinds: ["sconce"], cols: 1, rows: 1 },
+              l: { letter: "l", layer: "wall", optional: false, kinds: ["lamp"], cols: 1, rows: 1 },
+              o: { letter: "o", layer: "wall", optional: false, kinds: ["offeringTable"], cols: 1, rows: 1 },
+            },
+            specials: { s: "stop" },
+          },
+        },
+        prefabsByIndex: { 7: "formulaWallWizard" },
         difficultiesByIndex: { 1: "wizard" },
         packing: 0.1,
         seed: 6433541520964357,
@@ -32128,6 +32200,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         rewards: [
           undefined,
           { type: "campPart", structure: "stars", part: "needleThread" },
+          undefined,
           undefined,
           undefined,
           undefined,

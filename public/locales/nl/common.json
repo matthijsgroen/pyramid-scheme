@@ -1454,6 +1454,13 @@
       "pick": "Zet het juiste teken op zijn plaats.",
       "cannot": "Je kent het teken dat hier hoort nog niet."
     },
+    "formula": {
+      "wrong": "[NL: the line of things given away, one slot empty — designer copy]",
+      "fixed": "[NL: the line is whole again — designer copy]",
+      "pick": "[NL: put the sign you were given in the empty slot — designer copy]",
+      "cannot": "[NL: you do not have the sign that belongs here yet — designer copy]",
+      "gap": "[NL: the missing sign — designer copy]"
+    },
     "sphinx": {
       "wrong": "Hetzelfde schrift als buiten, maar hier is het zand er nooit bij gekomen. Twee tekens nog scherp gehakt, en een lege plek waar het derde stond.",
       "fixed": "Dat is het, in zijn geheel.",

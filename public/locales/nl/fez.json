@@ -758,6 +758,10 @@
       "3": { "explorer": "In het graf van een man die alles meenam." },
       "4": { "fez": "…Ja. Dat was mij ook opgevallen." }
     },
+    "wizard": {
+      "1": { "explorer": "[NL: the whole line for the first time: bread, linen, water, a boat — designer copy]" },
+      "2": { "fez": "[NL: and who gave each — designer copy]" }
+    },
     "sphinx": {
       "1": { "fez": "Terug waar we begonnen. Hij heeft zich niet verroerd." },
       "2": { "explorer": "Het schrift staat er nog." },
