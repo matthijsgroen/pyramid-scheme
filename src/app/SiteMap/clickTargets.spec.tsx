@@ -15,7 +15,7 @@ import {
 import { buildRoomClaims } from "./roomClaims"
 import type { Direction, FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
-import { CELL, cellCenter } from "./mapScale"
+import { cellCenter } from "./mapScale"
 import { roomDoors, roomPlaceOf } from "@/game/roomShape"
 import { DIR_MOVES } from "./corridorRuns"
 import {
@@ -481,11 +481,10 @@ describe("the corridor detector's hint", () => {
 
     const onCellClick = vi.fn()
     const { container } = render(<SiteMapView grid={grid} explorerPos={[0, 0]} onCellClick={onCellClick} />)
-    const junction = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
-      el => parseFloat(el.style.left) === cellCenter(0, 1).cx - CELL / 2
-    )
+    // Beside him, the junction is the arrow onto it.
+    const junction = container.querySelector<HTMLElement>('[data-marker-at="0,1"]:has(svg > polygon)')
 
-    expect(junction?.querySelector("circle[stroke]")).toBeTruthy()
+    expect(junction).toBeTruthy()
     expect(junction?.style.cursor).toBe("pointer")
   })
 })
@@ -567,8 +566,9 @@ describe("the offers around a one-way drop", () => {
     })
 
     // The four places a player stands at a drop, each asserted as the WHOLE of what is drawn: an arrow on a
-    // launch or landing pointing the way it is entered from its own node (whether or not it has been
-    // walked), the node art on a room, and an arrow back onto the room from the end beside it.
+    // launch or landing beside him pointing the way it is entered from its own node (whether or not it has been
+    // walked), the node art on a room, and an arrow back onto the room from the end beside it. Under him only a
+    // launch keeps its arrow: a landing's would point back across the drop, so it draws as any stop he stands on.
     describe.each(["reachable", "completed"] as const)("with every cell %s", state => {
       const { grid: stated, at: statedAt } = dropGrid(axis, "room", "room", state)
       const markersFrom = (from: readonly [number, number]) => {
@@ -598,10 +598,10 @@ describe("the offers around a one-way drop", () => {
         })
       })
 
-      it("marks the landing with an arrow from beside it and from on it", () => {
+      it("marks the landing with an arrow from beside it, and no way back across the drop from on it", () => {
         expect(markersFrom(statedAt(DROP_AT.toNode))).toEqual(toSide)
         expect(markersFrom(statedAt(DROP_AT.landing))).toEqual({
-          ...toSide,
+          [key(statedAt(DROP_AT.landing))]: state === "completed" ? null : { kind: "dot" },
           [key(statedAt(DROP_AT.toNode))]: { kind: "arrow", dir: axis.travel },
         })
       })

@@ -2,7 +2,7 @@
 import { fireEvent, render } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import type { FloorGrid } from "@/game/siteTypes"
-import { revealAll } from "@/game/gridNavigation"
+import { dropLaunchedAt, revealAll } from "@/game/gridNavigation"
 import { offerContextFrom, offeredTargets } from "./clickTargets"
 import { buildRoomClaims } from "./roomClaims"
 import { ringArrowList, ringArrows } from "./ringArrows"
@@ -44,6 +44,14 @@ const FLOORS: Record<string, FloorGrid> = {
       KINDS.map(kind => [`a drop going ${axis.travel} from a ${kind}`, dropGrid(axis, kind, kind, "reachable").grid])
     )
   ),
+  ...Object.fromEntries(
+    AXES.flatMap(axis =>
+      KINDS.map(kind => [
+        `a drop going ${axis.travel} to a ${kind}, entered below it`,
+        dropGrid(axis, kind, kind, "reachable", "toNode").grid,
+      ])
+    )
+  ),
 }
 
 /** Every place the player can stand by taking offers from the entrance, waypoints of designed rooms included. */
@@ -82,9 +90,37 @@ describe("the arrows around the explorer", () => {
   }
 })
 
+describe("outside a designed room, the arrows around the explorer are the ways he can walk", () => {
+  for (const [name, floor] of Object.entries(FLOORS)) {
+    it(`point every way open from where he stands, and lead off his cell except to take a drop, on ${name}`, () => {
+      const grid = revealAll(floor)
+      const claims = buildRoomClaims(grid)
+      for (const { at, waypoint } of placesOn(grid)) {
+        const ctx = offerContextFrom(grid, at, { waypoint })
+        if (ctx.choices.size > 0) continue
+        const arrows = ringArrowList(grid, claims, ctx)
+        const ownCell = arrows.filter(({ tap }) => tap[0] === at[0] && tap[1] === at[1])
+        const open = grid.cells[at[0]][at[1]]
+        expect(
+          {
+            pointed: arrows.map(({ dir }) => dir).filter(dir => open.type !== "empty" && open.dirs.has(dir)),
+            onHisCell: ownCell.length > 0 && !dropLaunchedAt(grid, ...at),
+          },
+          `standing at ${at}`
+        ).toEqual({ pointed: open.type === "empty" ? [] : [...open.dirs], onHisCell: false })
+      }
+    })
+  }
+})
+
 // What a key presses is what a tap on the drawn arrow hands on: rendered, every ring arrow clicked.
 describe("an arrow key and a tap on the arrow", () => {
-  for (const name of ["a plain corridor with corners", "a designed room over a fork", "a crossing"]) {
+  for (const name of [
+    "a plain corridor with corners",
+    "a designed room over a fork",
+    "a crossing",
+    "a drop going e to a corridor, entered below it",
+  ]) {
     it(`hand on the same cell on ${name}`, () => {
       const grid = revealAll(FLOORS[name])
       const claims = buildRoomClaims(grid)

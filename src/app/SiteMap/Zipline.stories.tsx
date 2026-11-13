@@ -79,3 +79,12 @@ export const SouthAtLanding: Story = {
 export const NorthAtLanding: Story = {
   args: { grid: north.grid, explorerPos: north.landing, className: TALL },
 }
+
+const deadEnd = (() => {
+  const axis = AXES.find(a => a.travel === "e")!
+  const { grid, at, dropAt } = dropGrid(axis, "corridor", "corridor", "reachable", "fromNode", oneWayRunCells("e"))
+  return { grid: addressed({ ...grid, difficulty: "junior" }), landing: at(dropAt.landing) }
+})()
+
+/** At the landing with a dead end of corridor beyond it: one arrow, onto the dead end, and none back across the drop. */
+export const EastAtLandingBeforeADeadEnd: Story = { args: { grid: deadEnd.grid, explorerPos: deadEnd.landing } }
