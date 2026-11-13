@@ -1847,3 +1847,6 @@ yarn import-tile art/masters/ghosts/ghost-ipi.webp --tier=default --name=ghost-i
 yarn import-tile art/masters/ghosts/ghost-henut.webp --tier=default --name=ghost-henut --slot=explorer --filter=smooth
 yarn import-tile art/masters/ghosts/ghost-priest.webp --tier=default --name=ghost-priest --slot=explorer --filter=smooth
 yarn import-tile art/masters/ghosts/ghost-pharaoh.webp --tier=default --name=ghost-pharaoh --slot=explorer --filter=smooth
+
+# The ward doors the gate popup shows behind a ward gate.
+yarn import-camp art/masters/camp/doors/ward-junior.webp --out-dir=src/assets/doors --name=ward-junior --size=512

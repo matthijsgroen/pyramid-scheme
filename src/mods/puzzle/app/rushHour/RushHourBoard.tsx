@@ -1,7 +1,10 @@
 import clsx from "clsx"
 import { useRef, useState, type FC, type PointerEvent } from "react"
+import type { InputHandler } from "@/app/input/actions"
+import { useInputLayer } from "@/app/input/useInputLayer"
 import { exitLane, legalRange, type RushHourPuzzle, type RushHourState } from "@/mods/puzzle/game/rushHour/rushHour"
 import type { RushHourSkin } from "./skins"
+import { useRushHourCursor } from "./useRushHourCursor"
 
 type Props = {
   puzzle: RushHourPuzzle
@@ -17,6 +20,11 @@ type Props = {
   leaving?: boolean
   /** A piece was shoved to a new offset. Reported per cell crossed, so a drag is a run of these. */
   onSlide: (index: number, offset: number) => void
+  /** A piece taken in hand, by a finger or by keys: the slides until `onRelease` are one move. */
+  onGrab?: (index: number) => void
+  onRelease?: () => void
+  /** The shell's `boardInput`: with it the board takes keys and pad, a cursor on the pieces. */
+  boardInput?: (board: InputHandler) => InputHandler
 }
 
 /**
@@ -33,12 +41,35 @@ type Props = {
  * **So the frame keeps a gutter to its east and the way out is drawn in it**, outside the board where no
  * piece can cover it. The frame takes 92% of the width it is given and the marker has the rest.
  */
-export const RushHourBoard: FC<Props> = ({ puzzle, state, skin, hintPiece, hintCells, leaving, onSlide }) => {
+export const RushHourBoard: FC<Props> = ({
+  puzzle,
+  state,
+  skin,
+  hintPiece,
+  hintCells,
+  leaving,
+  onSlide,
+  onGrab = () => {},
+  onRelease = () => {},
+  boardInput,
+}) => {
   const frame = useRef<HTMLDivElement>(null)
   /** The piece being dragged: which one, where the finger went down, and the offset it started at. */
   const [drag, setDrag] = useState<{ index: number; from: number; origin: number } | undefined>()
   const share = 100 / puzzle.size
   const lane = exitLane(puzzle)
+
+  const keys = useRushHourCursor({ puzzle, state, onGrab, onSlide, onRelease })
+  // A held piece hears back (let go) before the shell does (leave); everything else goes through the shell.
+  useInputLayer(
+    signal => (keys.held && keys.handle(signal)) || (boardInput?.(keys.handle)(signal) ?? false),
+    boardInput !== undefined
+  )
+  const held = keys.held && !leaving
+  const letGo = () => {
+    if (drag) onRelease()
+    setDrag(undefined)
+  }
 
   /**
    * A drag, resolved to whole cells and committed as it goes.
@@ -70,8 +101,8 @@ export const RushHourBoard: FC<Props> = ({ puzzle, state, skin, hintPiece, hintC
           }
         }
         onPointerMove={onPointerMove}
-        onPointerUp={() => setDrag(undefined)}
-        onPointerCancel={() => setDrag(undefined)}
+        onPointerUp={letGo}
+        onPointerCancel={letGo}
       >
         {/* The lanes. Drawn as cell edges rather than as a grid image: half the reading of this board is
           counting how many cells a piece owns and how many are free in front of it. */}
@@ -128,8 +159,11 @@ export const RushHourBoard: FC<Props> = ({ puzzle, state, skin, hintPiece, hintC
               key={index}
               role="button"
               aria-label={`piece ${index + 1}`}
+              data-held={(held && keys.cursor === index) || undefined}
               onPointerDown={event => {
                 event.currentTarget.setPointerCapture(event.pointerId)
+                keys.point(index)
+                onGrab(index)
                 setDrag({
                   index,
                   from: piece.horizontal ? event.clientX : event.clientY,
@@ -141,7 +175,7 @@ export const RushHourBoard: FC<Props> = ({ puzzle, state, skin, hintPiece, hintC
                 // and a box that moves by `left`/`top` leaves that shadow smeared across the street behind
                 // it on iOS. On its own layer the move is a composite rather than a repaint, so nothing of
                 // the piece is left where it has been.
-                "absolute transform-gpu rounded-lg border-2 transition-[left,top] duration-150",
+                "absolute cursor-lift transform-gpu rounded-lg border-2 transition-[left,top] duration-150",
                 mine ? skin.player : skin.piece,
                 mine ? skin.playerEdge : skin.pieceEdge,
                 pinned ? "cursor-default" : "cursor-grab",
@@ -190,6 +224,8 @@ export const RushHourBoard: FC<Props> = ({ puzzle, state, skin, hintPiece, hintC
             </div>
           )
         })}
+
+        {boardInput && !leaving && <PieceCursor puzzle={puzzle} state={state} index={keys.cursor} held={held} />}
       </div>
 
       {/* The way out, drawn OUTSIDE the board on the player's own lane.
@@ -211,6 +247,59 @@ export const RushHourBoard: FC<Props> = ({ puzzle, state, skin, hintPiece, hintC
           }}
         />
       </div>
+    </div>
+  )
+}
+
+/**
+ * The keys' cursor, drawn over the piece rather than on it: the player's piece is clipped to a nose, which would
+ * cut the brackets off. Held, the brackets thicken and an arrow at each end of the piece shows which way along
+ * its lane it can still go.
+ */
+const PieceCursor: FC<{ puzzle: RushHourPuzzle; state: RushHourState; index: number; held: boolean }> = ({
+  puzzle,
+  state,
+  index,
+  held,
+}) => {
+  const share = 100 / puzzle.size
+  const piece = puzzle.pieces[index]
+  const offset = state.offsets[index]
+  const [low, high] = legalRange(puzzle, state, index)
+  const arrow = "cursor-only absolute size-3.5 bg-ember-300"
+  return (
+    <div
+      data-held={held || undefined}
+      className="cursor-brackets pointer-events-none absolute cursor-lift z-10 rounded-lg transition-[left,top] duration-150"
+      style={{
+        left: `${(piece.horizontal ? offset : piece.lane) * share}%`,
+        top: `${(piece.horizontal ? piece.lane : offset) * share}%`,
+        width: `${(piece.horizontal ? piece.len : 1) * share}%`,
+        height: `${(piece.horizontal ? 1 : piece.len) * share}%`,
+      }}
+    >
+      {held && offset > low && (
+        <span
+          className={clsx(
+            arrow,
+            piece.horizontal ? "top-1/2 left-1.5 -translate-y-1/2" : "top-1.5 left-1/2 -translate-x-1/2"
+          )}
+          style={{
+            clipPath: piece.horizontal ? "polygon(100% 0, 0 50%, 100% 100%)" : "polygon(0 100%, 50% 0, 100% 100%)",
+          }}
+        />
+      )}
+      {held && offset < high && (
+        <span
+          className={clsx(
+            arrow,
+            piece.horizontal ? "top-1/2 right-1.5 -translate-y-1/2" : "bottom-1.5 left-1/2 -translate-x-1/2"
+          )}
+          style={{
+            clipPath: piece.horizontal ? "polygon(0 0, 100% 50%, 0 100%)" : "polygon(0 0, 50% 100%, 100% 0)",
+          }}
+        />
+      )}
     </div>
   )
 }
