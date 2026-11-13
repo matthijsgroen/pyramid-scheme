@@ -91,14 +91,14 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, startGa
           </div>
 
           {/* Disable tutorials */}
-          <label className="-mx-3 flex items-center justify-between gap-2 rounded-lg px-3 py-2">
-            <span className="text-sm font-medium text-gray-700">{t("ui.disableTutorials")}</span>
+          <label className="-mx-3 flex items-center gap-3 rounded-lg px-3 py-2">
             <input
               type="checkbox"
               checked={!tutorialsEnabled}
               onChange={e => setTutorialsEnabled(!e.target.checked)}
               className="size-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
+            <span className="text-sm font-medium text-gray-700">{t("ui.disableTutorials")}</span>
           </label>
 
           {/* Move the save to another device */}

@@ -41,8 +41,8 @@ const letGo = (code: string) =>
     window.dispatchEvent(new KeyboardEvent("keyup", { code }))
   })
 
-const open = () => {
-  const { container } = render(<ConstellationPuzzle puzzle={puzzle} onSolved={() => {}} onCancel={() => {}} />)
+const open = (onCancel = () => {}) => {
+  const { container } = render(<ConstellationPuzzle puzzle={puzzle} onSolved={() => {}} onCancel={onCancel} />)
   const star = (index: number) =>
     within(container)
       .getAllByRole("button")
@@ -93,6 +93,60 @@ describe("ConstellationPuzzle by keys", () => {
     taps.drag(2, 0, 1)
     expect(keyed).toEqual(taps.board())
     expect(keyed).not.toEqual(open().board())
+  })
+
+  it("cycles the line a direction points at once Enter has picked the star up, as a drag that way cycles it", () => {
+    const keys = open()
+    press("Enter")
+    expect(keys.star(0).dataset.held).toBe("true")
+    press("ArrowRight")
+    press("ArrowRight")
+    expect(keys.star(0).className).toContain("cursor-brackets")
+    const keyed = keys.board()
+    cleanup()
+
+    const taps = open()
+    taps.drag(0, 0, 1)
+    taps.drag(0, 0, 1)
+    expect(keyed).toEqual(taps.board())
+  })
+
+  it("lets the star go on a second Enter, so a direction moves the cursor again", () => {
+    const keys = open()
+    press("Enter")
+    press("Enter")
+    expect(keys.star(0).dataset.held).toBeUndefined()
+    const before = keys.board()
+    press("ArrowRight")
+    expect(keys.star(1).className).toContain("cursor-brackets")
+    expect(keys.board()).toEqual(before)
+  })
+
+  it("lets a held star go on Escape instead of leaving the board", () => {
+    const onCancel = vi.fn()
+    const keys = open(onCancel)
+    press("Enter")
+    press("Escape")
+    expect(keys.star(0).dataset.held).toBeUndefined()
+    expect(onCancel).not.toHaveBeenCalled()
+    press("ArrowRight")
+    expect(keys.star(1).className).toContain("cursor-brackets")
+  })
+
+  it("shows the held star while alt is held down, and not after", () => {
+    const keys = open()
+    hold("ShiftLeft")
+    expect(keys.star(0).dataset.held).toBe("true")
+    letGo("ShiftLeft")
+    expect(keys.star(0).dataset.held).toBeUndefined()
+  })
+
+  it("lets a held star go when a pointer takes a star", () => {
+    const keys = open()
+    press("Enter")
+    keys.drag(2, 0, 0)
+    expect(keys.star(0).dataset.held).toBeUndefined()
+    expect(keys.star(2).dataset.held).toBeUndefined()
   })
 
   it("cycles once for a held direction, not on its repeat", () => {

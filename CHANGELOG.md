@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Walk the map with arrow keys or WASD.
+- Constellation: Enter picks up a star, then an arrow draws the line.
 - Escape closes dialogs, the shop and puzzles; Enter moves a conversation on.
 - Backspace erases a number on the board, and goes back where nothing erases.
 - A game controller walks the map, moves through dialogs and backs out of them.
@@ -21,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The tutorials checkbox sits left of its label, so the arrows reach the buttons below.
+- The Op pad button has a soft colour fade.
 - Bronze treasures and fallen mudbrick have new paintings.
 - Wall decorations sit centred on the taller walls.
 - The Sphinx's wall reads as a painted cartouche.
@@ -30,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- On the unequal and sun-and-moon puzzles the signs beside the keyboard cursor step out with it instead of hiding.
 - The game works offline again.
 - The noble's ward gates call their owner a woman.
 - Fez's remark about how you solve puzzles now waits for the right tier.
@@ -40,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The tutorials checkbox in Settings shows when keys or controller reach it.
 - Keys and controller reach the treasures and trinkets in the collection.
 - Arrow keys go back where they came from, and reach the tab row in camp windows.
+- Hidato: up and down reach the other upper or lower neighbour when one side has none.
 
 ## 0.47.0 - 2026-11-10
 

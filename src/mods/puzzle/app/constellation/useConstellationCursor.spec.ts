@@ -21,12 +21,14 @@ const pairBetween = (a: number, b: number) =>
 
 const setup = () => {
   const onDrawLine = vi.fn()
-  const { result } = renderHook(() => useConstellationCursor({ puzzle, onDrawLine }))
+  const { result, rerender } = renderHook(({ done }) => useConstellationCursor({ puzzle, onDrawLine, done }), {
+    initialProps: { done: false },
+  })
   const send = (action: InputAction, { released = false, repeat = false } = {}) =>
     act(() => {
       result.current.handle({ action, source: "pad", repeat, released, target: null })
     })
-  return { result, send, onDrawLine }
+  return { result, send, onDrawLine, solve: () => rerender({ done: true }) }
 }
 
 describe("useConstellationCursor", () => {
@@ -57,5 +59,15 @@ describe("useConstellationCursor", () => {
     send({ kind: "move", dir: "e" })
     send({ kind: "move", dir: "e" }, { repeat: true })
     expect(onDrawLine).toHaveBeenCalledTimes(1)
+  })
+
+  it("lets a held star go once the board is solved, and picks none up after", () => {
+    const { result, send, solve } = setup()
+    send({ kind: "confirm" })
+    expect(result.current.held).toBe(true)
+    solve()
+    expect(result.current.held).toBe(false)
+    send({ kind: "confirm" })
+    expect(result.current.held).toBe(false)
   })
 })

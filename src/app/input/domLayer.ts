@@ -15,13 +15,19 @@ const OPPOSITE: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" 
 // Kept per layer, outside the handler: a new handler is made for every signal.
 const lastMove = new WeakMap<HTMLElement, { from: HTMLElement; to: HTMLElement; dir: Direction }>()
 
+// A checkbox in its label is the label's row: that row is what shows focus, and what a player aims for.
+const boxOf = (el: HTMLElement): Rect => {
+  const row = el.matches('input[type="checkbox"]') ? el.closest("label") : null
+  return (row ?? el).getBoundingClientRect()
+}
+
 /**
  * A tab out of the tab order leaves only the selected one to land on, which may sit far to one side. Measured
  * as a sliver at the point of its row nearest the move's line, the row counts as straight ahead wherever it
  * lies across from the control the move starts at.
  */
 const measure = (el: HTMLElement, from: Rect, dir: Direction): Rect => {
-  const rect = el.getBoundingClientRect()
+  const rect = boxOf(el)
   const row = el.getAttribute("role") === "tab" ? el.closest<HTMLElement>('[role="tablist"]') : null
   if (!row) return rect
   const span = row.getBoundingClientRect()
@@ -82,7 +88,7 @@ export const domLayerHandler =
         last && last.to === origin && last.dir === OPPOSITE[action.dir] && controls.includes(last.from)
           ? last.from
           : undefined
-      const start = origin.getBoundingClientRect()
+      const start = boxOf(origin)
       const rects = controls.map(el => (el === origin ? start : measure(el, start, action.dir)))
       const nearest = nearestInDirection(start, rects, action.dir)
       const next = back ?? (nearest === undefined ? undefined : controls[nearest])

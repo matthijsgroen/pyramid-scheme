@@ -38,6 +38,16 @@ export const KeyboardCursor: Story = {
   ),
 }
 
+/** A board with = and × signs on its edges: a sign beside the cursor steps out with the lift. */
+export const KeyboardCursorSigns: Story = {
+  args: { tileset: "expert", children: null },
+  render: () => (
+    <EncounterModal tileset="expert">
+      <Eclipse difficulty="expert" />
+    </EncounterModal>
+  ),
+}
+
 /** The night skin: the cursor over a star and a dark sky. */
 export const KeyboardCursorNight: Story = {
   args: { tileset: "cave", children: null },

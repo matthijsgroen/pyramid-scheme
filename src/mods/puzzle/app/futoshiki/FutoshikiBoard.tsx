@@ -138,33 +138,45 @@ const NoteGrid: FC<{
  * Giving the signs grid tracks of their own instead would spend a quarter of the width on them, and
  * that is what a 7-wide board cannot afford: on a 360px screen the squares have to keep every pixel
  * to stay a thumb wide (docs/instructions/puzzle-screens.md: tap targets of at least 44px).
+ *
+ * The layer stacks above the cursor's lift, and a sign on the cursor's square steps out with the lift
+ * (`cursor-beside`), so the lifted square never covers it.
  */
-const SignLayer: FC<{ puzzle: FutoshikiPuzzleData; conflicts: FutoshikiConflicts; lit?: ReadonlySet<number> }> = ({
-  puzzle,
-  conflicts,
-  lit,
-}) => (
+const SignLayer: FC<{
+  puzzle: FutoshikiPuzzleData
+  conflicts: FutoshikiConflicts
+  lit?: ReadonlySet<number>
+  cursor: GridCell
+}> = ({ puzzle, conflicts, lit, cursor }) => (
   <div
-    className="@container pointer-events-none absolute inset-0 grid gap-px"
+    className="@container pointer-events-none absolute inset-0 z-10 grid gap-px"
     style={{
       gridTemplateColumns: `repeat(${puzzle.size}, minmax(0, 1fr))`,
       gridTemplateRows: `repeat(${puzzle.size}, minmax(0, 1fr))`,
+      ["--cell" as string]: `calc(100cqw / ${puzzle.size})`,
     }}
   >
     {puzzle.constraints.map((constraint, index) => {
       const broken = conflicts.constraints.has(index)
       const down = constraint.direction === "down"
+      const onFirst = cursor.row === constraint.row && cursor.col === constraint.col
+      const onSecond = down
+        ? cursor.row === constraint.row + 1 && cursor.col === constraint.col
+        : cursor.row === constraint.row && cursor.col === constraint.col + 1
+      const away = onFirst ? 1 : onSecond ? -1 : 0
       return (
         <span
           key={`${constraint.row},${constraint.col},${constraint.direction}`}
           style={{
             gridColumn: `${constraint.col + 1} / span ${down ? 1 : 2}`,
             gridRow: `${constraint.row + 1} / span ${down ? 2 : 1}`,
+            ["--beside-x" as string]: down ? 0 : away,
+            ["--beside-y" as string]: down ? away : 0,
           }}
           // The mark sits straight on the gutter with no disc behind it: the gap between two squares is
           // already a dark line, so the chevron reads as a notch in the stone without one, and the disc
           // was ink the board did not need.
-          className={clsx("place-self-center leading-none", {
+          className={clsx("cursor-beside place-self-center leading-none", {
             "text-stone-300": !broken && !lit?.has(index),
             "text-amber-300": !broken && lit?.has(index),
             "text-red-400": broken,
@@ -257,7 +269,7 @@ export const FutoshikiBoard: FC<Props> = ({
           })
         )}
       </div>
-      <SignLayer puzzle={puzzle} conflicts={conflicts} lit={litSigns} />
+      <SignLayer puzzle={puzzle} conflicts={conflicts} lit={litSigns} cursor={{ row: cursor.row, col: cursor.col }} />
     </div>
   )
 }

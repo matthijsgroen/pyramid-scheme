@@ -25,6 +25,16 @@ export const neighbourOf = (key: string, dir: Direction, right: boolean): string
   return hexKey({ q: q + step.q, r: r + step.r })
 }
 
+/**
+ * The cell a direction moves to from `key` on this board: the neighbour it aims at, or for up and down the one on
+ * the other side where that one is off the board. Undefined where neither is on it.
+ */
+export const reach = (cells: ReadonlySet<string>, key: string, dir: Direction, right: boolean): string | undefined => {
+  const aimed = neighbourOf(key, dir, right)
+  const next = cells.has(aimed) ? aimed : neighbourOf(key, dir, !right)
+  return cells.has(next) ? next : undefined
+}
+
 type Options = {
   cells: ReadonlySet<string>
   /** Where the cursor starts. Read once. */
@@ -40,7 +50,8 @@ type Options = {
 }
 
 /**
- * Keys and pad on the comb. Without a run picked up, a direction moves the cursor to that neighbour. With one,
+ * Keys and pad on the comb. Up or down reaches the neighbour on the other side where the one it aims at is not on
+ * the board. Without a run picked up, a direction moves the cursor to that neighbour. With one,
  * the cursor is the run's head and a direction drags the run into that neighbour, so it moves only as far as the
  * run does. Confirm taps the cell under the cursor; back puts a picked-up run down before it leaves the board.
  */
@@ -56,8 +67,8 @@ export const useHidatoCursor = ({ cells, start, pen, onPress, onDrag, onLift }: 
   const at = pen ?? free
 
   const go = (dir: Direction, right: boolean) => {
-    const next = neighbourOf(at, dir, right)
-    if (!cells.has(next)) return
+    const next = reach(cells, at, dir, right)
+    if (next === undefined) return
     if (pen === undefined) setFree(next)
     else onDrag(next)
   }

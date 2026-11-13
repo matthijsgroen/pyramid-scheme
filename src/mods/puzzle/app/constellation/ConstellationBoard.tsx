@@ -6,6 +6,7 @@ import type { InputHandler } from "@/app/input/actions"
 import { useInputLayer } from "@/app/input/useInputLayer"
 import {
   colOf,
+  constellationSolved,
   degreeOf,
   MAX_LINES,
   pairsByStar,
@@ -184,8 +185,15 @@ export const ConstellationBoard: FC<Props> = ({
   const drag = useRef<{ x: number; y: number; star: number; pair?: number } | undefined>(undefined)
   const [candidate, setCandidate] = useState<number | undefined>()
 
-  const keys = useConstellationCursor({ puzzle, onDrawLine })
-  useInputLayer(boardInput ? boardInput(keys.handle) : keys.handle, boardInput !== undefined)
+  const keys = useConstellationCursor({ puzzle, onDrawLine, done: constellationSolved(puzzle, state) })
+  const lifted = keys.held || keys.alt
+  // A held star hears back (let go) before the shell does (leave); everything else goes through the shell.
+  useInputLayer(
+    signal =>
+      (keys.held && signal.action.kind === "back" && keys.handle(signal)) ||
+      (boardInput ? boardInput(keys.handle) : keys.handle)(signal),
+    boardInput !== undefined
+  )
   const showCursor = boardInput !== undefined && !celebrated?.size
 
   const beginDrag = (star: number) => (event: PointerEvent<HTMLButtonElement>) => {
@@ -243,7 +251,7 @@ export const ConstellationBoard: FC<Props> = ({
           return (
             <button
               key={index}
-              data-held={(cursor && keys.alt) || undefined}
+              data-held={(cursor && lifted) || undefined}
               onPointerDown={beginDrag(index)}
               onPointerMove={moveDrag}
               onPointerUp={endDrag}
@@ -286,7 +294,7 @@ export const ConstellationBoard: FC<Props> = ({
                 )}
                 <span className="relative">{star.count}</span>
               </span>
-              {cursor && keys.alt && <LineArrows puzzle={puzzle} star={index} />}
+              {cursor && lifted && <LineArrows puzzle={puzzle} star={index} />}
             </button>
           )
         })}
@@ -302,7 +310,7 @@ const ARROW: Record<Direction, { place: string; clip: string }> = {
   w: { place: "top-1/2 left-0 -translate-x-1/2 -translate-y-1/2", clip: "polygon(100% 0, 0 50%, 100% 100%)" },
 }
 
-/** While alt is held: an arrow on each side of the cursor's star with a line a direction would cycle. */
+/** While the star is held: an arrow on each side of the cursor's star with a line a direction would cycle. */
 const LineArrows: FC<{ puzzle: ConstellationPuzzle; star: number }> = ({ puzzle, star }) =>
   (Object.keys(ARROW) as Direction[])
     .filter(dir => pairTowards(puzzle, star, ...DELTA[dir]) !== undefined)
