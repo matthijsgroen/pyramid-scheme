@@ -1416,7 +1416,8 @@
     "claimAria": "Zeg dat de {{capacity}} de hoeveelheid bevat",
     "controls": {
       "move": "kies een vat of de “deze” eronder",
-      "press": "oppakken, hierin gieten of aanwijzen"
+      "press": "oppakken, hierin gieten of aanwijzen",
+      "putDown": "het opgepakte vat weer neerzetten"
     }
   },
   "procession": {

@@ -120,41 +120,51 @@ const Canister: FC<{
       // nothing about what it is.
       aria-label={`canister of ${capacity}, holding ${volume}`}
     >
-      <div
-        style={{
-          height: `${rem}rem`,
-          width: `${rem * 0.62}rem`,
-          // Near the foot, so the vessel is tipped rather than spun (index.css's `pour`).
-          transformOrigin: "50% 88%",
-          ...(tilt !== 0 ? ({ "--tilt": tilt } as Record<string, number>) : {}),
-        }}
+      {/* A held vessel is lifted off the bench in every input mode; for keys and pad it also wears the held
+          brackets, which stay on it while the focus walks to where it will be poured. */}
+      <span
+        data-held={held || undefined}
         className={clsx(
-          "rounded",
-          tilt !== 0 && "animate-pour",
-          // A refused claim shakes the canister; an accepted one catches the light. Both animate, and not
-          // only for the look: the board learns the answer is over from `animationend`, so an answer that
-          // played nothing would never be cleared and its colour would stay for the rest of the board.
-          answered === "no" && "animate-refuse",
-          answered === "yes" && "animate-flare"
+          "relative flex flex-col items-center gap-1 rounded transition-[translate] duration-150 ease-out motion-reduce:transition-none",
+          held && "cursor-brackets cursor-lift -translate-y-2"
         )}
-        onAnimationEnd={tilt !== 0 ? onSettled : answered !== undefined ? onAnswered : undefined}
       >
-        <Vessel
-          shape={skin.shape}
-          settles={skin.settles}
-          fill={volume === 0 ? 0 : Math.max(volume / capacity, MIN_VISIBLE)}
-          // An accepted claim turns the water the colour a measured volume wears, for as long as the
-          // answer lasts — the same green the completion run uses, because it means the same thing.
-          liquid={celebrating === true || answered === "yes" ? skin.measured : skin.liquid}
-          outline={held ? skin.held : skin.outline}
-          tipping={tilt !== 0}
-        />
-      </div>
-      <span className={clsx("text-lg leading-none font-semibold", skin.label)}>
-        {/* What is in it, against what it holds. The amount is the louder of the two because it is the one
+        <div
+          style={{
+            height: `${rem}rem`,
+            width: `${rem * 0.62}rem`,
+            // Near the foot, so the vessel is tipped rather than spun (index.css's `pour`).
+            transformOrigin: "50% 88%",
+            ...(tilt !== 0 ? ({ "--tilt": tilt } as Record<string, number>) : {}),
+          }}
+          className={clsx(
+            "rounded",
+            tilt !== 0 && "animate-pour",
+            // A refused claim shakes the canister; an accepted one catches the light. Both animate, and not
+            // only for the look: the board learns the answer is over from `animationend`, so an answer that
+            // played nothing would never be cleared and its colour would stay for the rest of the board.
+            answered === "no" && "animate-refuse",
+            answered === "yes" && "animate-flare"
+          )}
+          onAnimationEnd={tilt !== 0 ? onSettled : answered !== undefined ? onAnswered : undefined}
+        >
+          <Vessel
+            shape={skin.shape}
+            settles={skin.settles}
+            fill={volume === 0 ? 0 : Math.max(volume / capacity, MIN_VISIBLE)}
+            // An accepted claim turns the water the colour a measured volume wears, for as long as the
+            // answer lasts — the same green the completion run uses, because it means the same thing.
+            liquid={celebrating === true || answered === "yes" ? skin.measured : skin.liquid}
+            outline={held ? skin.held : skin.outline}
+            tipping={tilt !== 0}
+          />
+        </div>
+        <span className={clsx("text-lg leading-none font-semibold", skin.label)}>
+          {/* What is in it, against what it holds. The amount is the louder of the two because it is the one
             that moves; the size behind it stays legible as the thing the player picks vessels by. */}
-        {volume}
-        <span className="opacity-60">/{capacity}</span>
+          {volume}
+          <span className="opacity-60">/{capacity}</span>
+        </span>
       </span>
     </button>
   )
@@ -174,7 +184,16 @@ export const CanistersBoard: FC<Props> = ({
   boardInput,
 }) => {
   const { t } = useTranslation("common")
-  const root = useFocusBoard<HTMLDivElement>({ wrap: boardInput, open: boardInput !== undefined, focusFirst: true })
+  // A held canister hears back (put it down) before the shell does (leave the board).
+  const wrap =
+    boardInput &&
+    ((board: InputHandler): InputHandler =>
+      signal => {
+        if (held === undefined || signal.action.kind !== "back") return boardInput(board)(signal)
+        if (!signal.released && !signal.repeat) onHold(held)
+        return true
+      })
+  const root = useFocusBoard<HTMLDivElement>({ wrap, open: boardInput !== undefined, focusFirst: true })
   const tallest = Math.max(...capacities)
   const { tipping, settle } = useTipping(lastPour)
   const { answer, settle: settleAnswer } = useAnswer(claimed)
