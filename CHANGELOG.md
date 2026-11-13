@@ -25,9 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The tutorials checkbox sits left of its label, so the arrows reach the buttons below.
 - Wall decorations sit centred on the taller walls.
-- The Sphinx's wall reads as a painted cartouche.
 - Developer tools no longer ship in the released game.
 - Opening a treasure chest shows the painted chest from the map.
 - A taken chest stands open, and a ward key's chest looks like treasure.
