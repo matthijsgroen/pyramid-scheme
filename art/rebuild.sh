@@ -963,6 +963,12 @@ fi
 # moves the cartouche.
 yarn import-reading art/masters/props/junior/namePanel.webp --name=henutNamePanel
 
+# The formula stela, one painting for all four tiers: the reading screen writes the signs into its one register,
+# and the map shows it as a wall item. `formulaWall`'s sign rectangle is a share of the trimmed reading image.
+yarn import-reading art/masters/props/default/formulaPanel.webp --name=formulaPanel
+yarn import-tile art/masters/props/default/formulaPanel.webp --tier=default --name=formulaPanel --slot=wall \
+  --filter=smooth --headroom=0.18
+
 # expert — the priest
 #
 # --repeat=1.4 on the floor: the return came back at about five slabs across where the rank draws seven.
