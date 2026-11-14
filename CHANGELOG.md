@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Walk the map with arrow keys or WASD.
+- A light grows behind a chest as it opens, in its own colour for ward chests.
 - Constellation: Enter picks up a star, then an arrow draws the line.
 - Escape closes dialogs, the shop and puzzles; Enter moves a conversation on.
 - Hidato, procession, balance, canisters, shrine beam and the crocodile pit show their keys and buttons under the rules.
