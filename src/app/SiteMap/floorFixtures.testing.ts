@@ -334,3 +334,16 @@ export const stallFloor = (node: Partial<RoomCell> = {}): FloorGrid => {
   cells[STALL_NODE[0]][STALL_NODE[1]] = { ...(cells[2][4] as RoomCell), prefabRoom }
   return { ...grid, cells }
 }
+
+/** A puzzle node at `PUZZLE_ABOVE.node` in a 1-wide corridor, its corridor cell south of it at `PUZZLE_ABOVE.stand`,
+ * then the entrance. Everything is lit, so standing on `stand` offers the node as the ring's north arrow. */
+export const PUZZLE_ABOVE = { node: [0, 0], stand: [1, 0] } as const
+export const puzzleAboveFloor = (): FloorGrid => {
+  const grid = floorFrom(["R", ".", "E"])
+  return {
+    ...grid,
+    cells: grid.cells.map(row =>
+      row.map(cell => (cell.type === "empty" || cell.state === "reachable" ? cell : { ...cell, state: "reachable" }))
+    ),
+  }
+}

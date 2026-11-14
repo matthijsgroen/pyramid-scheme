@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useMemo, useState, type ReactNode } from "react"
+import { Fragment, useCallback, useEffect, useMemo, useState, type ReactElement, type ReactNode } from "react"
 import type {
   CellState,
   DecorationKind,
@@ -2209,6 +2209,239 @@ export const SiteMapView = ({
     [grid, currentFloor, mechanismStates]
   )
 
+  // AN ARROW OF THE RING IS LIFTED OUT OF THE MARKERS into a layer of its own over everything standing (`ringCells`): it
+  // reaches half a cell into the next cell, and the node drawn there would cover it and take its tap.
+  const ringCells: ReactNode[] = []
+  const offRing = (ring: boolean, el: ReactElement) => {
+    if (!ring) return el
+    ringCells.push(el)
+    return null
+  }
+
+  const markerCells = Array.from({ length: grid.rows + 2 }, (_, ri) => {
+    const r = ri - 1
+    return Array.from({ length: grid.cols + 2 }, (_, ci) => {
+      const c = ci - 1
+      const cell = cellAt(grid, r, c)
+      const cellKey = `${r},${c}`
+      // A prefab room's node is drawn on its stop and an arm it absorbed at its door; the tap stays the cell's own.
+      const moved = movedMarkers.get(cellKey)
+      const centre = cellCenter(...(moved ?? [r, c]))
+      // A room choice's arrow stands on its own cell, the first step of the way it points.
+      const choice = offerContext.choices.get(cellKey)
+      const { cx, cy } = choice ? cellCenter(r, c) : centre
+      const claimOwner = litClaimOwner(grid, claims, r, c)
+
+      // A ROOM CHOICE IS DRAWN WHATEVER ITS CELL IS: a room's floor the carve left bare is still the
+      // first step of a way. Its tap is handed on as its own cell (`roomChoiceAt`). A choice on the
+      // node's own cell is drawn with the node, below.
+      if (choice && cell.type !== "room") {
+        const marker = markerAt(grid, claims, r, c, offerContext)
+        const spot = markerSpot(marker, { cx, cy })
+        return offRing(
+          spot.ring,
+          <MarkerCell
+            at={[r, c]}
+            walls={walls}
+            key={cellKey}
+            cx={spot.cx}
+            cy={spot.cy}
+            ring={spot.ring}
+            onClick={onCellClick && (() => onCellClick(r, c))}
+          >
+            {drawCorridorMarker(marker)}
+          </MarkerCell>
+        )
+      }
+
+      // A cell claimed by a neighboring room — genuine void (including one step
+      // outside the grid), or a corridor absorbed as a gate's approach or a
+      // diagonal's flank anchor (see buildRoomClaims) — renders as part of that
+      // room, always, using the OWNER's state for the floor tint. The claim shape
+      // is a static function of the finished grid (independent of exploration
+      // progress), so the whole blob must render as a single visual unit — hiding
+      // a claimed corridor while its own fog state lags behind the owner's is what
+      // punched the "spotty" holes in an otherwise-explored room. Click/interaction
+      // still uses the corridor's own state, since it's a real, independently
+      // progressed passage for gameplay purposes even though it looks unified.
+      //
+      // **A fogged owner takes only what is its own.** Its void cells go dark with it, but a
+      // claimed CORRIDOR is a real passage the player may already have lit from the far end —
+      // it falls through to the corridor rendering below and stands on its own state, rather
+      // than leaving the rooms around it opening onto a gap that draws nothing.
+      if (claimOwner) {
+        const offer = clickTargetAt(grid, claims, r, c, offerContext)
+        const marker = cell.type === "corridor" ? markerAt(grid, claims, r, c, offerContext, offer) : null
+        const spot = markerSpot(marker, { cx, cy })
+        const tap = tapCellAt(grid, offerContext, r, c, offer)
+        return offRing(
+          spot.ring,
+          <MarkerCell
+            at={[r, c]}
+            walls={walls}
+            key={cellKey}
+            cx={spot.cx}
+            cy={spot.cy}
+            ring={spot.ring}
+            onClick={tap && onCellClick ? () => onCellClick(tap[0], tap[1]) : undefined}
+          >
+            {drawCorridorMarker(marker)}
+          </MarkerCell>
+        )
+      }
+
+      if (cell.type === "empty") return null
+      if (cell.state === "fogged") return null
+
+      if (cell.type === "corridor") {
+        const offer = clickTargetAt(grid, claims, r, c, offerContext)
+        const marker = markerAt(grid, claims, r, c, offerContext, offer)
+        const spot = markerSpot(marker, { cx, cy })
+        const tap = tapCellAt(grid, offerContext, r, c, offer)
+        return offRing(
+          spot.ring,
+          <MarkerCell
+            at={[r, c]}
+            walls={walls}
+            key={`${r},${c}`}
+            cx={spot.cx}
+            cy={spot.cy}
+            ring={spot.ring}
+            onClick={tap && onCellClick ? () => onCellClick(tap[0], tap[1]) : undefined}
+          >
+            {drawCorridorMarker(marker)}
+          </MarkerCell>
+        )
+      }
+
+      // room cell
+      const state = cell.state
+      // Reached, and done with. A room its family keeps open is reached and never done with, so it
+      // is left out of everything below that says finished — the dim and the ✓ alike.
+      // A USED ACTIVATOR OR A LIT TORCH IS DONE, THOUGH ITS ROOM STAYS OPEN: it has no move left, so
+      // it wears the dim and the ✓ a finished room does. Read off the mechanism's position, so it
+      // shows without the player touching it; an unlit or doused torch wears neither.
+      const spent = isSpentAt(grid, currentFloor ?? 0, r, c, cell, mechanismStates)
+      // A SEQUENCE TILE SAYS HOW THE RUN STANDS ON IT, never "done": walked is its own look.
+      const plateStatus = tileStatusAt(grid, currentFloor ?? 0, r, c, mechanismStates)
+      const isCompleted =
+        (state === "completed" && !staysOpen(cell) && !cell.sequenceTile && !cell.plate && !cell.pipeHole) || spent
+      const shapeKind = shapeKindFor(grid, r, c, cell)
+      // Portals (entrance/stairhead/exit) are transitions, not tasks — they can't be
+      // "completed", so they never get the completed dim or the ✓ badge even though the
+      // entrance is always marked explored (useAssembledFloor) and used staircases complete.
+      const isPortal = shapeKind === "entrance" || shapeKind === "stairhead" || shapeKind === "exit"
+      const offer = clickTargetAt(grid, claims, r, c, offerContext)
+      // A fogged room never reaches here — the loop above draws unlit cells — so no guard is
+      // needed to keep a chest out of the dark.
+      const hasChest = shapeKind === "treasure" && !cell.tags?.includes("shop")
+      const isStair = shapeKind === "stairhead"
+      const goesUp = isStair && stairClimbs(grid, cell, r, c)
+      const hasStair = isStair && !!tileOrPlaceholder(cellTileset(cell, grid, tier), goesUp ? "stair-up" : "stair-down")
+      // A DRAWN EXIT LOSES ITS MARKER for the stairhead's reason: the art IS the node, and unlike
+      // a gate it carries no key colour and no state — a portal is a transition, never completed
+      // — so the vector has nothing left to say that the doorway does not say better.
+      const hasExit = shapeKind === "exit" && !!tileOrPlaceholder(cellTileset(cell, grid, tier), "exit")
+      // A PAINTED PLATE IS THE NODE, as a flight is: the vector slab underneath has nothing more to say.
+      const hasPlate = drawnPlates.has(`plate:${r},${c}`)
+      // A STANDING TORCH IS THE NODE, as a plate is: the flame square under it would put a second torch on the tile.
+      const hasTorch =
+        drawingOf(cell)?.art === "standingTorch" &&
+        !!mechanismTileUrl(cellTileset(cell, grid, tier), "torchUnlit", mechanismStyle)
+      // A PAINTED LEVER IS THE NODE, as a torch is: the marker square under it would put a second lever on the tile.
+      const hasLever =
+        drawingOf(cell)?.art === "lever" &&
+        !!mechanismTileUrl(cellTileset(cell, grid, tier), "leverBaseBack", mechanismStyle) &&
+        !!mechanismTileUrl(cellTileset(cell, grid, tier), "leverArm", mechanismStyle) &&
+        !!mechanismTileUrl(cellTileset(cell, grid, tier), "leverBaseFront", mechanismStyle)
+      const roomR = nodeRadius[shapeKind]
+      // A WAY A SWITCH SHUT IS A WALL, AND A WALL WEARS NO NODE. The bars standing in its doorway
+      // already say the way is closed; a gate marker on top of them offers a second reading — a
+      // door to walk up to and be told what it wants — which is the one thing this cell is not.
+      // Every other gate carries the family that renders it, and keeps its marker.
+      const sealedWay = isSealedWayOut(cell)
+      const locked = isLockedGate(cell, ownedKeys)
+      const displayState: CellState = locked && state === "reachable" ? "visible" : state
+      // The arrow a room's own cell wears beside the player (`markerAt`), drawn on its ring beside the node.
+      const arrow = markerAt(grid, claims, r, c, offerContext, offer)
+      const arrowSpot = arrow?.kind === "arrow" ? markerSpot(arrow, cellCenter(r, c)) : undefined
+      const tap = tapCellAt(grid, offerContext, r, c, offer)
+
+      return (
+        <Fragment key={`${r},${c}`}>
+          {/* A room choice on the node's own cell is its tap, handed on as the cell; the node stays drawn
+            on its stop. */}
+          {arrow?.kind === "arrow" &&
+            arrowSpot &&
+            offRing(
+              arrowSpot.ring,
+              <MarkerCell
+                key={`arrow:${r},${c}`}
+                at={[r, c]}
+                walls={walls}
+                cx={arrowSpot.cx}
+                cy={arrowSpot.cy}
+                ring={arrowSpot.ring}
+                onClick={tap && onCellClick ? () => onCellClick(tap[0], tap[1]) : undefined}
+              >
+                <RunTargetArrow dir={arrow.dir} />
+              </MarkerCell>
+            )}
+          {/* The node is tapped on the cell it is drawn on (`drawnOwner`), whatever choice its own cell holds. */}
+          <MarkerCell
+            at={[r, c]}
+            walls={walls}
+            cx={centre.cx}
+            cy={centre.cy}
+            onClick={offer && onCellClick ? () => onCellClick(...(moved ?? ([r, c] as const))) : undefined}
+          >
+            {/* A FLIGHT SAYS STAIRS BETTER THAN A MARKER DOES, so where one is drawn the marker
+              goes out entirely rather than merely easing back the way a chest's does. The
+              stair is the only node whose art IS the node — a chest stands BESIDE a treasure
+              room's marker and still needs it to say which room — so this is the one place the
+              vector can be spared. Opacity rather than a skipped render, which keeps every cell's
+              drawing the same shape whatever is on it; the tap is the cell's own box either way. */}
+            <g
+              data-shape-kind={shapeKind}
+              opacity={
+                sealedWay || hasStair || hasExit || hasPlate || hasTorch || hasLever
+                  ? 0
+                  : isCompleted && !isPortal
+                    ? 0.45
+                    : hasChest
+                      ? NODE_OVER_ART_OPACITY
+                      : 1
+              }
+            >
+              <NodeShape
+                type={shapeKind}
+                state={displayState}
+                gateVariant={cell.gateVariant}
+                keyColor={cell.keyColor}
+                keyColors={cell.keyColors}
+                difficulty={wardKeyDifficulty(cell.requiredKeyId)}
+                icon={familyIconOf(cell)}
+                mark={cell.mark}
+                tileset={cellTileset(cell, grid, tier)}
+                mechanismStyle={mechanismStyle}
+                plate={
+                  cell.sequenceTile && plateStatus ? { glyph: cell.sequenceTile.glyph, status: plateStatus } : undefined
+                }
+              />
+            </g>
+            {/* A chest wears its own badge (`nodeSpritesFor`), because it stands over this one. A room
+              that plays again wears the replay symbol where the ✓ would be. */}
+            {replaysAt?.(cell) ? (
+              <ReplayBadge r={roomR} />
+            ) : (
+              isCompleted && !isPortal && !hasChest && shapeKind !== "fork" && <CompletedBadge r={roomR} />
+            )}
+          </MarkerCell>
+        </Fragment>
+      )
+    })
+  })
+
   return (
     /* The map's window, and the frame the air hangs in: the scrolling box is what MOVES, so a weather
        layer inside it would be dragged about with the floor. See MapWeather. */
@@ -2371,228 +2604,10 @@ export const SiteMapView = ({
 
             {/* THE MARKERS: an icon per cell, each in a little `<svg>` of its own — a shape per kind, a
                 colour per state, key badges on the rim. Over the stone, under everything standing on it,
-                and the only layer that takes a tap. Vector, and staying vector: a static drawing costs a
-                paint once and never again; it was animation inside SVG that cost the map everything. */}
-            {Array.from({ length: grid.rows + 2 }, (_, ri) => {
-              const r = ri - 1
-              return Array.from({ length: grid.cols + 2 }, (_, ci) => {
-                const c = ci - 1
-                const cell = cellAt(grid, r, c)
-                const cellKey = `${r},${c}`
-                // A prefab room's node is drawn on its stop and an arm it absorbed at its door; the tap stays the cell's own.
-                const moved = movedMarkers.get(cellKey)
-                const centre = cellCenter(...(moved ?? [r, c]))
-                // A room choice's arrow stands on its own cell, the first step of the way it points.
-                const choice = offerContext.choices.get(cellKey)
-                const { cx, cy } = choice ? cellCenter(r, c) : centre
-                const claimOwner = litClaimOwner(grid, claims, r, c)
-
-                // A ROOM CHOICE IS DRAWN WHATEVER ITS CELL IS: a room's floor the carve left bare is still the
-                // first step of a way. Its tap is handed on as its own cell (`roomChoiceAt`). A choice on the
-                // node's own cell is drawn with the node, below.
-                if (choice && cell.type !== "room") {
-                  const marker = markerAt(grid, claims, r, c, offerContext)
-                  const spot = markerSpot(marker, { cx, cy })
-                  return (
-                    <MarkerCell
-                      at={[r, c]}
-                      walls={walls}
-                      key={cellKey}
-                      cx={spot.cx}
-                      cy={spot.cy}
-                      ring={spot.ring}
-                      onClick={onCellClick && (() => onCellClick(r, c))}
-                    >
-                      {drawCorridorMarker(marker)}
-                    </MarkerCell>
-                  )
-                }
-
-                // A cell claimed by a neighboring room — genuine void (including one step
-                // outside the grid), or a corridor absorbed as a gate's approach or a
-                // diagonal's flank anchor (see buildRoomClaims) — renders as part of that
-                // room, always, using the OWNER's state for the floor tint. The claim shape
-                // is a static function of the finished grid (independent of exploration
-                // progress), so the whole blob must render as a single visual unit — hiding
-                // a claimed corridor while its own fog state lags behind the owner's is what
-                // punched the "spotty" holes in an otherwise-explored room. Click/interaction
-                // still uses the corridor's own state, since it's a real, independently
-                // progressed passage for gameplay purposes even though it looks unified.
-                //
-                // **A fogged owner takes only what is its own.** Its void cells go dark with it, but a
-                // claimed CORRIDOR is a real passage the player may already have lit from the far end —
-                // it falls through to the corridor rendering below and stands on its own state, rather
-                // than leaving the rooms around it opening onto a gap that draws nothing.
-                if (claimOwner) {
-                  const offer = clickTargetAt(grid, claims, r, c, offerContext)
-                  const marker = cell.type === "corridor" ? markerAt(grid, claims, r, c, offerContext, offer) : null
-                  const spot = markerSpot(marker, { cx, cy })
-                  const tap = tapCellAt(grid, offerContext, r, c, offer)
-                  return (
-                    <MarkerCell
-                      at={[r, c]}
-                      walls={walls}
-                      key={cellKey}
-                      cx={spot.cx}
-                      cy={spot.cy}
-                      ring={spot.ring}
-                      onClick={tap && onCellClick ? () => onCellClick(tap[0], tap[1]) : undefined}
-                    >
-                      {drawCorridorMarker(marker)}
-                    </MarkerCell>
-                  )
-                }
-
-                if (cell.type === "empty") return null
-                if (cell.state === "fogged") return null
-
-                if (cell.type === "corridor") {
-                  const offer = clickTargetAt(grid, claims, r, c, offerContext)
-                  const marker = markerAt(grid, claims, r, c, offerContext, offer)
-                  const spot = markerSpot(marker, { cx, cy })
-                  const tap = tapCellAt(grid, offerContext, r, c, offer)
-                  return (
-                    <MarkerCell
-                      at={[r, c]}
-                      walls={walls}
-                      key={`${r},${c}`}
-                      cx={spot.cx}
-                      cy={spot.cy}
-                      ring={spot.ring}
-                      onClick={tap && onCellClick ? () => onCellClick(tap[0], tap[1]) : undefined}
-                    >
-                      {drawCorridorMarker(marker)}
-                    </MarkerCell>
-                  )
-                }
-
-                // room cell
-                const state = cell.state
-                // Reached, and done with. A room its family keeps open is reached and never done with, so it
-                // is left out of everything below that says finished — the dim and the ✓ alike.
-                // A USED ACTIVATOR OR A LIT TORCH IS DONE, THOUGH ITS ROOM STAYS OPEN: it has no move left, so
-                // it wears the dim and the ✓ a finished room does. Read off the mechanism's position, so it
-                // shows without the player touching it; an unlit or doused torch wears neither.
-                const spent = isSpentAt(grid, currentFloor ?? 0, r, c, cell, mechanismStates)
-                // A SEQUENCE TILE SAYS HOW THE RUN STANDS ON IT, never "done": walked is its own look.
-                const plateStatus = tileStatusAt(grid, currentFloor ?? 0, r, c, mechanismStates)
-                const isCompleted =
-                  (state === "completed" && !staysOpen(cell) && !cell.sequenceTile && !cell.plate && !cell.pipeHole) ||
-                  spent
-                const shapeKind = shapeKindFor(grid, r, c, cell)
-                // Portals (entrance/stairhead/exit) are transitions, not tasks — they can't be
-                // "completed", so they never get the completed dim or the ✓ badge even though the
-                // entrance is always marked explored (useAssembledFloor) and used staircases complete.
-                const isPortal = shapeKind === "entrance" || shapeKind === "stairhead" || shapeKind === "exit"
-                const offer = clickTargetAt(grid, claims, r, c, offerContext)
-                // A fogged room never reaches here — the loop above draws unlit cells — so no guard is
-                // needed to keep a chest out of the dark.
-                const hasChest = shapeKind === "treasure" && !cell.tags?.includes("shop")
-                const isStair = shapeKind === "stairhead"
-                const goesUp = isStair && stairClimbs(grid, cell, r, c)
-                const hasStair =
-                  isStair && !!tileOrPlaceholder(cellTileset(cell, grid, tier), goesUp ? "stair-up" : "stair-down")
-                // A DRAWN EXIT LOSES ITS MARKER for the stairhead's reason: the art IS the node, and unlike
-                // a gate it carries no key colour and no state — a portal is a transition, never completed
-                // — so the vector has nothing left to say that the doorway does not say better.
-                const hasExit = shapeKind === "exit" && !!tileOrPlaceholder(cellTileset(cell, grid, tier), "exit")
-                // A PAINTED PLATE IS THE NODE, as a flight is: the vector slab underneath has nothing more to say.
-                const hasPlate = drawnPlates.has(`plate:${r},${c}`)
-                // A STANDING TORCH IS THE NODE, as a plate is: the flame square under it would put a second torch on the tile.
-                const hasTorch =
-                  drawingOf(cell)?.art === "standingTorch" &&
-                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "torchUnlit", mechanismStyle)
-                // A PAINTED LEVER IS THE NODE, as a torch is: the marker square under it would put a second lever on the tile.
-                const hasLever =
-                  drawingOf(cell)?.art === "lever" &&
-                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "leverBaseBack", mechanismStyle) &&
-                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "leverArm", mechanismStyle) &&
-                  !!mechanismTileUrl(cellTileset(cell, grid, tier), "leverBaseFront", mechanismStyle)
-                const roomR = nodeRadius[shapeKind]
-                // A WAY A SWITCH SHUT IS A WALL, AND A WALL WEARS NO NODE. The bars standing in its doorway
-                // already say the way is closed; a gate marker on top of them offers a second reading — a
-                // door to walk up to and be told what it wants — which is the one thing this cell is not.
-                // Every other gate carries the family that renders it, and keeps its marker.
-                const sealedWay = isSealedWayOut(cell)
-                const locked = isLockedGate(cell, ownedKeys)
-                const displayState: CellState = locked && state === "reachable" ? "visible" : state
-                // The arrow a room's own cell wears beside the player (`markerAt`), drawn on its ring beside the node.
-                const arrow = markerAt(grid, claims, r, c, offerContext, offer)
-                const arrowSpot = arrow?.kind === "arrow" ? markerSpot(arrow, cellCenter(r, c)) : undefined
-                const tap = tapCellAt(grid, offerContext, r, c, offer)
-
-                return (
-                  <Fragment key={`${r},${c}`}>
-                    {/* A room choice on the node's own cell is its tap, handed on as the cell; the node stays drawn
-                      on its stop. */}
-                    {arrow?.kind === "arrow" && arrowSpot && (
-                      <MarkerCell
-                        at={[r, c]}
-                        walls={walls}
-                        cx={arrowSpot.cx}
-                        cy={arrowSpot.cy}
-                        ring={arrowSpot.ring}
-                        onClick={tap && onCellClick ? () => onCellClick(tap[0], tap[1]) : undefined}
-                      >
-                        <RunTargetArrow dir={arrow.dir} />
-                      </MarkerCell>
-                    )}
-                    {/* The node is tapped on the cell it is drawn on (`drawnOwner`), whatever choice its own cell holds. */}
-                    <MarkerCell
-                      at={[r, c]}
-                      walls={walls}
-                      cx={centre.cx}
-                      cy={centre.cy}
-                      onClick={offer && onCellClick ? () => onCellClick(...(moved ?? ([r, c] as const))) : undefined}
-                    >
-                      {/* A FLIGHT SAYS STAIRS BETTER THAN A MARKER DOES, so where one is drawn the marker
-                        goes out entirely rather than merely easing back the way a chest's does. The
-                        stair is the only node whose art IS the node — a chest stands BESIDE a treasure
-                        room's marker and still needs it to say which room — so this is the one place the
-                        vector can be spared. Opacity rather than a skipped render, which keeps every cell's
-                        drawing the same shape whatever is on it; the tap is the cell's own box either way. */}
-                      <g
-                        data-shape-kind={shapeKind}
-                        opacity={
-                          sealedWay || hasStair || hasExit || hasPlate || hasTorch || hasLever
-                            ? 0
-                            : isCompleted && !isPortal
-                              ? 0.45
-                              : hasChest
-                                ? NODE_OVER_ART_OPACITY
-                                : 1
-                        }
-                      >
-                        <NodeShape
-                          type={shapeKind}
-                          state={displayState}
-                          gateVariant={cell.gateVariant}
-                          keyColor={cell.keyColor}
-                          keyColors={cell.keyColors}
-                          difficulty={wardKeyDifficulty(cell.requiredKeyId)}
-                          icon={familyIconOf(cell)}
-                          mark={cell.mark}
-                          tileset={cellTileset(cell, grid, tier)}
-                          mechanismStyle={mechanismStyle}
-                          plate={
-                            cell.sequenceTile && plateStatus
-                              ? { glyph: cell.sequenceTile.glyph, status: plateStatus }
-                              : undefined
-                          }
-                        />
-                      </g>
-                      {/* A chest wears its own badge (`nodeSpritesFor`), because it stands over this one. A room
-                        that plays again wears the replay symbol where the ✓ would be. */}
-                      {replaysAt?.(cell) ? (
-                        <ReplayBadge r={roomR} />
-                      ) : (
-                        isCompleted && !isPortal && !hasChest && shapeKind !== "fork" && <CompletedBadge r={roomR} />
-                      )}
-                    </MarkerCell>
-                  </Fragment>
-                )
-              })
-            })}
+                and with the ring and the prompt the only layers that take a tap. Vector, and staying vector:
+                a static drawing costs a paint once and never again; it was animation inside SVG that cost the
+                map everything. */}
+            {markerCells}
 
             {/* EVERYTHING STANDING ON THE FLOOR IS SORTED AGAINST THE PLAYER, and the player is drawn in
               the middle of it. Anything whose floor line is LOWER than his is nearer the viewer and is
@@ -2707,6 +2722,10 @@ export const SiteMapView = ({
                 floorRects={floorRects}
                 share={tierPalette[tier].lamp}
               />
+
+              {/* THE RING AROUND THE EXPLORER, over everything standing and under the prompt: an arrow points the way,
+                  so no node, sprite or shade may cover it, and its tap wins where it reaches over a node's box. */}
+              {ringCells}
 
               {/* AFTER THE LIGHT AND THE SHADE, and last of everything: the prompt is a thing the player
                   taps rather than a thing in the room, so neither pass may dim it and nothing standing
