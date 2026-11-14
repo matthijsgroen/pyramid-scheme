@@ -2918,14 +2918,14 @@ describe("SiteMapView — a prefab room", () => {
     return { ...view, seen }
   }
 
-  it("draws a prefab room's node marker on its stop, and a tap there walks to the room", () => {
+  it("draws a prefab room's node marker on its stop, and a tap there is handed on as the stop", () => {
     const onClick = vi.fn()
     const { container } = render(<SiteMapView grid={grid} onCellClick={onClick} explorerPos={[4, 0]} />)
     const fork = markerAtCentre(container, stop).find(el => el.querySelector("[data-shape-kind='fork']"))
     expect(fork).toBeDefined()
     expect(markerAtCentre(container, PREFAB_FORK)).toHaveLength(0)
     fireEvent.click(fork!)
-    expect(onClick).toHaveBeenCalledWith(...PREFAB_FORK)
+    expect(onClick).toHaveBeenCalledWith(...stop)
   })
 
   it("an absorbed arm offers nothing; the room's door it leads to is a stop", () => {

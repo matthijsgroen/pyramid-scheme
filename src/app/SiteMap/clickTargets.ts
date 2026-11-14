@@ -12,7 +12,7 @@ import {
 } from "./corridorRuns"
 import { litClaimOwner, type RoomClaims } from "./roomClaims"
 import { roomChoices, roomEntry, type RoomChoice, type RoomChoiceTo } from "./roomChoices"
-import { doorFacing } from "./roomWalk"
+import { doorFacing, drawnOwner } from "./roomWalk"
 
 /**
  * WHAT A TAP ON A CELL DOES — the one rule, in one place.
@@ -67,28 +67,18 @@ const corridorOffer = (
   return ctx.freeWalk || (stoppingPoint && (corner || dropEnd)) || !!runTarget || runEnd ? target : null
 }
 
-/** The node of the designed room whose node art stands at r,c, if one does. */
-export const nodeArtOwner = (grid: FloorGrid, r: number, c: number): readonly [number, number] | undefined => {
-  const owner = prefabRoomCells(grid).get(`${r},${c}`)
-  if (owner === undefined) return undefined
-  const [nr, nc] = owner.split(",").map(Number)
-  const art = prefabRoomAt(grid, nr, nc)?.nodeArt
-  return art && art[0] === r && art[1] === c ? [nr, nc] : undefined
-}
-
 export const clickTargetAt = (
   grid: FloorGrid,
   claims: RoomClaims,
-  r: number,
-  c: number,
+  tapR: number,
+  tapC: number,
   ctx: OfferContext
 ): readonly [number, number] | null => {
   // A ROOM CHOICE IS ITS CELL'S ONE OFFER, whatever else stands there: a door it leads out by, the stop, or a waypoint.
-  const choice = ctx.choices.get(`${r},${c}`)
+  const choice = ctx.choices.get(`${tapR},${tapC}`)
   if (choice) return choice.to.at
-  // A ROOM'S NODE ART IS ITS NODE: the lever drawn on its mechanism place is tapped as the room is.
-  const artOf = nodeArtOwner(grid, r, c)
-  if (artOf) return clickTargetAt(grid, claims, artOf[0], artOf[1], ctx)
+  // WHAT IS DRAWN AND USED IS TAPPED WHERE IT IS DRAWN: a designed room's lever, chest, marker or figure is its node.
+  const [r, c] = drawnOwner(grid, tapR, tapC) ?? [tapR, tapC]
   const cell = cellAt(grid, r, c)
   // A designed room's own floor is walked by the room, never stopped on: its ways meet it at its doors. Beside the
   // player, a step onto it is offered as the walk to the room's node.
@@ -134,8 +124,8 @@ export const clickTargetAt = (
  *
  * The SHAPE is read off what the offer names:
  * - `node`: a room. Its own node art is the marker, drawn for every lit room whatever the offer. Beside the player, a
- *   room is an `arrow` instead, drawn on his ring while its node stays drawn where it stands. A designed room's node
- *   art on its own cell (a lever on its mechanism place) is that room's `node`: the art is the marker.
+ *   room is an `arrow` instead, drawn on his ring while its node stays drawn where it stands. A cell of a designed
+ *   room's floor that something used is drawn on (`drawnOwner`: a lever, a chest, a figure) is that room's `node`.
  * - `arrow`: a way to walk, pointing where the tap leads from here — a corridor run's near end, or a
  *   drop's launch or landing, pointed at in the direction it is entered from its own node. An arrow is
  *   drawn ONLY AROUND THE PLAYER (`nearCells`): his own cell and one step along each way open from it.
@@ -159,13 +149,12 @@ export const markerAt = (
   if (!offer) return null
   const choice = ctx.choices.get(`${r},${c}`)
   if (choice) return { kind: "arrow", dir: choice.dir }
-  if (nodeArtOwner(grid, r, c)) return { kind: "node" }
   const cell = cellAt(grid, r, c)
-  if (cell.type !== "corridor") {
-    // A room right beside the player is the next step of the way he is standing in, so it points there, whatever
-    // stands in it: a gate or a puzzle beside him is a way on as much as a bare junction is.
+  if (cell.type !== "corridor" || drawnOwner(grid, r, c)) {
+    // A room, or what a designed room draws, right beside the player is the next step of the way he is standing in, so
+    // it points there, whatever stands in it: a gate or a puzzle beside him is a way on as much as a bare junction is.
     const step = ctx.nearCells.get(`${r},${c}`)
-    return step && cell.type === "room" ? { kind: "arrow", dir: step } : { kind: "node" }
+    return step && cell.type !== "empty" ? { kind: "arrow", dir: step } : { kind: "node" }
   }
   const runTarget = ctx.runTargets.get(`${r},${c}`)
   if (runTarget) return { kind: "arrow", dir: runTarget.dir }
@@ -256,16 +245,17 @@ const NO_CHOICES: ReadonlyMap<string, RoomChoice> = new Map()
 /**
  * The room choice a tap at r,c takes, standing in the room whose node is `node`: the one whose arrow stands there, else
  * the one leading there. The map hands an arrow's tap on as the arrow's own cell, since a waypoint can be the node's own
- * cell; a tap leading to `node` itself is the room's own (its node is drawn on the stop), never a choice.
+ * cell; a tap leading to `node` itself, or to what it draws (`drawnOwner`), is the room's own, never a choice.
  */
 export const roomChoiceAt = (
+  grid: FloorGrid,
   ctx: OfferContext,
   node: readonly [number, number],
   r: number,
   c: number
 ): RoomChoice | undefined =>
   ctx.choices.get(`${r},${c}`) ??
-  (r === node[0] && c === node[1]
+  ((r === node[0] && c === node[1]) || drawnOwner(grid, r, c)
     ? undefined
     : [...ctx.choices.values()].find(({ to }) => to.at[0] === r && to.at[1] === c))
 

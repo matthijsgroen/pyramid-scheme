@@ -264,7 +264,7 @@ const JourneyInspector = ({
     // Reckoned on the grid the map draws: revealed, every door is open to him.
     const seen = revealAll ? revealGrid(grid) : grid
     const ctx = offerContextFrom(seen, pos, { freeWalk: revealAll, waypoint })
-    const choice = roomChoiceAt(ctx, pos, tapRow, tapCol)
+    const choice = roomChoiceAt(grid, ctx, pos, tapRow, tapCol)
     setPlace(choice?.to.kind === "waypoint" ? { pos, waypoint: choice.to.at } : null)
     if (choice?.to.kind === "waypoint") return
     // Entering a room by a door stands him on its hub, or takes him straight on, as in play.

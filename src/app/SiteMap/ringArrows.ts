@@ -1,14 +1,18 @@
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { clickTargetAt, markerAt, type OfferContext } from "./clickTargets"
 import type { RoomClaims } from "./roomClaims"
+import { drawnOwner } from "./roomWalk"
 
-/** The cell a tap on r,c hands on: a room choice's own cell (`roomChoiceAt` reads it back), else the offer it resolves to. */
+/** The cell a tap on r,c hands on: a room choice's own cell (`roomChoiceAt` reads it back), or a cell something used is
+ * drawn on (`drawnOwner`; its node may hold a choice's arrow), else the offer it resolves to. */
 export const tapCellAt = (
+  grid: FloorGrid,
   ctx: OfferContext,
   r: number,
   c: number,
   offer: readonly [number, number] | null
-): readonly [number, number] | null => (ctx.choices.has(`${r},${c}`) ? [r, c] : offer)
+): readonly [number, number] | null =>
+  offer && (ctx.choices.has(`${r},${c}`) || drawnOwner(grid, r, c)) ? [r, c] : offer
 
 export type RingArrow = { dir: Direction; at: readonly [number, number]; tap: readonly [number, number] }
 
@@ -20,7 +24,7 @@ export const ringArrowList = (grid: FloorGrid, claims: RoomClaims, ctx: OfferCon
     const [r, c] = key.split(",").map(Number)
     const offer = clickTargetAt(grid, claims, r, c, ctx)
     const marker = markerAt(grid, claims, r, c, ctx, offer)
-    const tap = tapCellAt(ctx, r, c, offer)
+    const tap = tapCellAt(grid, ctx, r, c, offer)
     return marker?.kind === "arrow" && tap ? [{ dir: marker.dir, at: [r, c] as const, tap }] : []
   })
 }

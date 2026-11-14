@@ -34,8 +34,8 @@ const armCells = (grid: FloorGrid, [r, c]: Cell): Set<string> => {
   return cells
 }
 
-/** The room's floor the walk may cross: its rect but what is blocked, its node and arms always, and never the cell
- * somebody stands on: the actor cell of a room whose family has somebody in it. */
+/** The room's floor the walk may cross: its rect but what is blocked, its node and arms always, and the cell somebody
+ * stands on (`drawnAt`) only where nothing else joins the stop to a door. */
 export const freeCells = (grid: FloorGrid, node: Cell, room: PrefabRoom): Set<string> => {
   const blocked = new Set(room.blocked)
   const free = armCells(grid, node)
@@ -49,10 +49,35 @@ export const freeCells = (grid: FloorGrid, node: Cell, room: PrefabRoom): Set<st
       for (let r = object.top; r < object.top + object.rows; r++)
         for (let c = object.left; c < object.left + object.cols; c++) free.delete(`${r},${c}`)
   if (room.nodeArt) free.delete(keyOf(room.nodeArt))
-  const cell = grid.cells[node[0]]?.[node[1]]
-  const family = cell?.type === "room" ? cell.family : undefined
-  if (room.actor && family && getFamilyPlugin(family)?.meta.actor) free.delete(keyOf(room.actor))
+  // Somebody standing in the room is walked round as well, unless the room has no other way from its stop to a door.
+  const actor = drawnAt(grid, node)?.actor
+  if (actor) {
+    free.delete(keyOf(actor))
+    if (
+      !joins(
+        free,
+        room.stop,
+        roomDoors(grid, ...node).map(door => door.inside)
+      )
+    )
+      free.add(keyOf(actor))
+  }
   return free
+}
+
+/** Whether `free` joins `from` to every one of `ends`, cell to cell. */
+const joins = (free: ReadonlySet<string>, from: Cell, ends: readonly Cell[]): boolean => {
+  const seen = new Set([keyOf(from)])
+  const queue = [from]
+  for (let i = 0; i < queue.length; i++)
+    for (const [dr, dc] of Object.values(STEP)) {
+      const next: Cell = [queue[i][0] + dr, queue[i][1] + dc]
+      if (free.has(keyOf(next)) && !seen.has(keyOf(next))) {
+        seen.add(keyOf(next))
+        queue.push(next)
+      }
+    }
+  return ends.every(end => seen.has(keyOf(end)))
 }
 
 type Box = { x0: number; y0: number; x1: number; y1: number }
@@ -254,10 +279,41 @@ export const stepsBetween = (a: WalkPoint, b: WalkPoint): number =>
 export const walkSteps = (points: readonly WalkPoint[]): number =>
   points.slice(1).reduce((sum, p, i) => sum + stepsBetween(points[i], p), 0)
 
-/** Where a cell's marker is drawn: a prefab room's node at its stop, an absorbed arm cell at its door. */
+/** Where a cell's marker is drawn: a prefab room's node at its stop, a cell something used is drawn on at itself
+ * (`drawnOwner`), any other absorbed arm cell at its door. */
 export const markerCell = (grid: FloorGrid, r: number, c: number): Cell => {
   const node = nodeOf(grid, [r, c])
   if (!node) return [r, c]
-  if (node[0] === r && node[1] === c) return roomStop(grid, r, c) ?? [r, c]
+  if (node[0] === r && node[1] === c) return drawnAt(grid, node)?.marker ?? [r, c]
+  if (drawnOwner(grid, r, c)) return [r, c]
   return armOf(grid, node, [r, c])?.inside ?? [r, c]
+}
+
+/** The cells a designed room draws what is used in it on: its node art (a lever, a chest) on its place for it, else at
+ * the stop; its marker at the stop; somebody its family has in it north of the stop in a room fit for them, else beside
+ * the stop, east of it, else west, on the room's free floor. */
+export type DrawnCells = { art: Cell; marker: Cell; actor?: Cell }
+
+export const drawnAt = (grid: FloorGrid, node: Cell): DrawnCells | undefined => {
+  const room = prefabRoomAt(grid, node[0], node[1])
+  if (!room) return undefined
+  const cell = grid.cells[node[0]]?.[node[1]]
+  const family = cell?.type === "room" ? cell.family : undefined
+  const blocked = new Set(room.blocked)
+  const actor =
+    family && getFamilyPlugin(family)?.meta.actor
+      ? (room.actor ??
+        [1, -1]
+          .map(dc => [room.stop[0], room.stop[1] + dc] as const)
+          .find(([r, c]) => inRect(room.rect, r, c) && !blocked.has(`${r},${c}`)))
+      : undefined
+  return { art: room.nodeArt ?? room.stop, marker: room.stop, ...(actor ? { actor } : {}) }
+}
+
+/** WHAT IS DRAWN AND USED IS TAPPED WHERE IT IS DRAWN: the node of the designed room that draws something used on r,c
+ * (`drawnAt`); a tap there is a tap on that node. */
+export const drawnOwner = (grid: FloorGrid, r: number, c: number): Cell | undefined => {
+  const node = nodeOf(grid, [r, c])
+  const drawn = node && drawnAt(grid, node)
+  return drawn && [drawn.art, drawn.marker, drawn.actor].some(at => at?.[0] === r && at[1] === c) ? node : undefined
 }

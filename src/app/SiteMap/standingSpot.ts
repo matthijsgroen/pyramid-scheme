@@ -1,12 +1,12 @@
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
-import { inRect, prefabRoomAt, prefabRoomCells } from "@/game/roomShape"
+import { prefabRoomAt, prefabRoomCells } from "@/game/roomShape"
 import { DIR_MOVES } from "./corridorRuns"
 import { COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import { shapeKindFor } from "./nodeKinds"
 import { nodeArtOffset } from "./nodeArt"
 import { opensToward, type RoomClaims } from "./roomClaims"
-import { roomStop } from "./roomWalk"
+import { drawnAt, roomStop } from "./roomWalk"
 
 export type StandingOffset = { readonly dx: number; readonly dy: number }
 
@@ -35,11 +35,12 @@ export const prefabArtOffset = (
   c: number
 ): StandingOffset | undefined => {
   const room = prefabRoomAt(grid, r, c)
-  if (!room) return undefined
-  if (room.nodeArt) return offsetTo(r, c, room.nodeArt)
-  const stop = offsetTo(r, c, room.stop)
-  const step = openStep(grid, claims, ...room.stop, nodeArtOffset(undefined))
-  return { dx: stop.dx + step.dx, dy: stop.dy + step.dy }
+  const art = drawnAt(grid, [r, c])?.art
+  if (!room || !art) return undefined
+  const at = offsetTo(r, c, art)
+  if (room.nodeArt) return at
+  const step = openStep(grid, claims, ...art, nodeArtOffset(undefined))
+  return { dx: at.dx + step.dx, dy: at.dy + step.dy }
 }
 
 /** `nodeArtOffset`'s step, kept only along an axis whose side of the cell is floor it is open to
@@ -76,15 +77,8 @@ export const standingOffset = (grid: FloorGrid, claims: RoomClaims, r: number, c
  * spare, in the corner a node's furniture takes, away from every way out. In a prefab room fit for somebody, north of
  * its stop; in one that is not, beside the stop: east of it, else west, on the room's free floor. */
 export const occupantOffset = (grid: FloorGrid, claims: RoomClaims, r: number, c: number): StandingOffset => {
-  const room = prefabRoomAt(grid, r, c)
-  if (room?.actor) return offsetTo(r, c, room.actor)
-  if (room) {
-    const blocked = new Set(room.blocked)
-    const beside = [1, -1]
-      .map(dc => [room.stop[0], room.stop[1] + dc] as const)
-      .find(([sr, sc]) => inRect(room.rect, sr, sc) && !blocked.has(`${sr},${sc}`))
-    if (beside) return offsetTo(r, c, beside)
-  }
+  const actor = drawnAt(grid, [r, c])?.actor
+  if (actor) return offsetTo(r, c, actor)
   return besideNode(grid, claims, r, c) ?? nodeArtStep(grid, claims, r, c)
 }
 

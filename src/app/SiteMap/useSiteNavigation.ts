@@ -217,7 +217,7 @@ export const useSiteNavigation = ({
       })
       // A ROOM CHOICE NAMES WHERE IT LEADS. A waypoint is stood on and written nowhere; the stop is the room's node, and
       // a door is walked to like any other.
-      const choice = roomChoiceAt(ctx, explorerPos, tapRow, tapCol)
+      const choice = roomChoiceAt(grid, ctx, explorerPos, tapRow, tapCol)
       if (choice?.to.kind === "waypoint") {
         setPrompt(null)
         setNotice(null)

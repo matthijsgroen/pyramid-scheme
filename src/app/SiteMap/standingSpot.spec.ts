@@ -2,10 +2,12 @@ import { describe, expect, it } from "vitest"
 import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 import { COL_PITCH, ROW_PITCH, cellCenter } from "./mapScale"
 import { PREFAB_CHEST, PREFAB_FORK, fitForkFloor, prefabChestFloor, prefabForkFloor } from "./floorFixtures.testing"
-import { roomStop } from "./roomWalk"
+import { freeCells, roomStop } from "./roomWalk"
+import { prefabRoomAt } from "@/game/roomShape"
 import { buildRoomClaims } from "./roomClaims"
 import { nodeArtStep, occupantOffset, prefabArtOffset, standingOffset } from "./standingSpot"
 import { nodeArtOffset } from "./nodeArt"
+import { registerFamily } from "@/app/families/familyRegistry"
 
 const state: CellState = "completed"
 const empty: GridCell = { type: "empty" }
@@ -109,16 +111,27 @@ describe("where the explorer stands in a prefab room", () => {
   })
 
   it("somebody in a fit room stands north of the stop; elsewhere beside the node", () => {
-    const fit = fitForkFloor()
+    const SOMEBODY = "spec-somebody"
+    registerFamily({
+      meta: { id: SOMEBODY, ownerMod: "test", tags: [], icon: "", color: "", rewardPriority: 0, actor: true },
+      generate: () => null,
+      Component: () => null,
+    })
+    const fit = fitForkFloor({ family: SOMEBODY })
     const fitStop = roomStop(fit, ...PREFAB_FORK)!
     expect(cellOf(PREFAB_FORK, occupantOffset(fit, buildRoomClaims(fit), ...PREFAB_FORK))).toEqual([
       fitStop[0] - 1,
       fitStop[1],
     ])
-    expect(cellOf(PREFAB_FORK, occupantOffset(grid, buildRoomClaims(grid), ...PREFAB_FORK))).toEqual([
+    const unfit = prefabForkFloor({ family: SOMEBODY })
+    expect(cellOf(PREFAB_FORK, occupantOffset(unfit, buildRoomClaims(unfit), ...PREFAB_FORK))).toEqual([
       stop[0],
       stop[1] + 1,
     ])
+    // Beside the stop on floor the room has other ways round, so the walk never crosses them.
+    expect(freeCells(unfit, PREFAB_FORK, prefabRoomAt(unfit, ...PREFAB_FORK)!).has(`${stop[0]},${stop[1] + 1}`)).toBe(
+      false
+    )
     const plain = floor([
       [empty, corridor(["s"]), empty],
       [empty, { type: "room", roomType: "encounter", dirs: new Set<Direction>(["n"]), state }, empty],
